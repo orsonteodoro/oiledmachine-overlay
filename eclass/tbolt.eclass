@@ -87,6 +87,13 @@ _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEG
 # Optimize large (>2MB) statically linked programs/libraries to reduce iTLB
 # misses.
 
+# @ECLASS_VARIABLE: UOPTS_BOLT_HUGIFY_SIZE
+# @DESCRIPTION:
+# Set the threshold for .so/exe size to apply -hugify to avoid wasting page space.
+# Default setting - If the library or executable is an order of magnitude larger (20 MiB),
+# suggest hugepage (2 MiB) support.
+UOPTS_BOLT_HUGIFY_SIZE=${UOPTS_BOLT_HUGIFY_SIZE:-20971520}
+
 # @ECLASS_VARIABLE: UOPTS_BOLT_PATH
 # @DESCRIPTION:
 # The absolute path to the folder containing llvm-bolt.
@@ -220,6 +227,24 @@ _setup_llvm() {
 	fi
 }
 
+# @FUNCTION: _tbolt_filter_hugify
+# @DESCRIPTION:
+# Removes hugify from UOPTS_BOLT_OPTIMIZATIONS
+_tbolt_filter_hugify() {
+	export _UOPTS_USER_WANTS_HUGIFY=0
+	local list=""
+	local f
+	for f in ${UOPTS_BOLT_OPTIMIZATIONS} ; do
+	# Only apply to targets that qualify to avoid wasted page space.
+		if [[ "${f}" == "-hugify" ]] ; then
+			export _UOPTS_USER_WANTS_HUGIFY=1
+		else
+			list+=" ${f}"
+		fi
+	done
+	export UOPTS_BOLT_OPTIMIZATIONS="${list}"
+}
+
 # @FUNCTION: tbolt_setup
 # @DESCRIPTION:
 # You must call this in pkg_setup
@@ -234,12 +259,7 @@ tbolt_setup() {
 	# Keep in sync with
 	# https://github.com/llvm/llvm-project/blob/main/bolt/README.md?plain=1#L183
 	export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=ext-tsp -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats"}
-	if [[ "${UOPTS_BOLT_HUGIFY}" == "1" ]] ; then
-		if ! [[ "${UOPTS_BOLT_OPTIMIZATIONS}" =~ "-hugify" ]] ; then
-			UOPTS_BOLT_OPTIMIZATIONS+=" -hugify"
-		fi
-	fi
-	if [[ "${UOPTS_BOLT_OPTIMIZATIONS}" =~ "-hugify" ]] ; then
+	if [[ "${UOPTS_BOLT_OPTIMIZATIONS}" =~ "-hugify" || "${UOPTS_BOLT_HUGIFY}" == "1" ]] ; then
 		if ! linux_config_exists ; then
 ewarn "You must enable CONFIG_TRANSPARENT_HUGEPAGE for BOLT -hugify support."
 		else
@@ -248,6 +268,8 @@ ewarn "You must enable CONFIG_TRANSPARENT_HUGEPAGE for BOLT -hugify support."
 			fi
 		fi
 	fi
+
+	_tbolt_filter_hugify
 
 	if [[ -z "${_UOPTS_ECLASS}" ]] ; then
 eerror
@@ -486,6 +508,10 @@ ewarn "Missing .rela.text skipping ${p}"
 				is_boltable=0
 			fi
 			if (( ${is_boltable} == 1 )) ; then
+				local size=$(stat -c "%s" "${p}")
+				if (( ${size} >= ${UOPTS_BOLT_HUGIFY_SIZE} )) ; then
+ewarn "QA:  Enable UOPTS_BOLT_HUGIFY=1 support in ebuild."
+				fi
 				# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
 einfo "vanilla -> BOLT instrumented:  ${p}"
 				if [[ ! -e "${p}.orig" ]] ; then
@@ -497,7 +523,8 @@ ewarn "${p}.orig existed and BUILD_DIR was not completely wiped."
 					"${p}.orig" \
 					-instrument \
 					-o "${p}" \
-					-instrumentation-file "${bolt_data_staging_dir}/${bn}.fdata" || die
+					-instrumentation-file "${bolt_data_staging_dir}/${bn}.fdata" \
+					|| die
 			fi
 		) &
 	# `wait -n` can only be used with unicore or MAKEOPTS="-j1".
@@ -580,6 +607,12 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 			fi
 			if (( ${is_boltable} == 1 )) ; then
 				local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
+				if [[ "${UOPTS_BOLT_HUGIFY}" == "1" || "${_UOPTS_USER_WANTS_HUGIFY}" == "1" ]] ; then
+					local size=$(stat -c "%s" "${p}")
+					if (( ${size} >= ${UOPTS_BOLT_HUGIFY_SIZE} )) ; then
+						args+=( -hugify )
+					fi
+				fi
 einfo "vanilla -> BOLT optimized:  ${p}"
 				if [[ "${skip_inst}" == "yes" ]] ; then
 					mv "${p}"{,.orig} || die
@@ -589,7 +622,8 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 					"${p}.orig" \
 					-o "${p}" \
 					-data="${bolt_data_staging_dir}/${bn}.fdata" \
-					${args[@]} || die
+					${args[@]} \
+					|| die
 				rm -rf "${p}.orig" || die
 			fi
 		) &

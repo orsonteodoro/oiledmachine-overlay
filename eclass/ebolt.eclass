@@ -87,6 +87,13 @@ _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEG
 # Optimize large (>2MB) statically linked programs/libraries to reduce iTLB
 # misses.
 
+# @ECLASS_VARIABLE: UOPTS_BOLT_HUGIFY_SIZE
+# @DESCRIPTION:
+# Set the threshold for .so/exe size to apply -hugify to avoid wasting page space.
+# Default setting - If the library or executable is an order of magnitude larger (20 MiB),
+# suggest hugepage (2 MiB) support.
+UOPTS_BOLT_HUGIFY_SIZE=${UOPTS_BOLT_HUGIFY_SIZE:-20971520}
+
 # @ECLASS_VARIABLE: UOPTS_BOLT_PATH
 # @DESCRIPTION:
 # The absolute path to the folder containing llvm-bolt.
@@ -223,6 +230,24 @@ _setup_llvm() {
 	fi
 }
 
+# @FUNCTION: _ebolt_filter_hugify
+# @DESCRIPTION:
+# Removes hugify from UOPTS_BOLT_OPTIMIZATIONS
+_ebolt_filter_hugify() {
+	export _UOPTS_USER_WANTS_HUGIFY=0
+	local list=""
+	local f
+	for f in ${UOPTS_BOLT_OPTIMIZATIONS} ; do
+	# Only apply to targets that qualify to avoid wasted page space.
+		if [[ "${f}" == "-hugify" ]] ; then
+			export _UOPTS_USER_WANTS_HUGIFY=1
+		else
+			list+=" ${f}"
+		fi
+	done
+	export UOPTS_BOLT_OPTIMIZATIONS="${list}"
+}
+
 # @FUNCTION: ebolt_setup
 # @DESCRIPTION:
 # You must call this in pkg_setup
@@ -234,12 +259,7 @@ ebolt_setup() {
 	# Keep in sync with
 	# https://github.com/llvm/llvm-project/blob/main/bolt/README.md?plain=1#L183
 	export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=ext-tsp -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats"}
-	if [[ "${UOPTS_BOLT_HUGIFY}" == "1" ]] ; then
-		if ! [[ "${UOPTS_BOLT_OPTIMIZATIONS}" =~ "-hugify" ]] ; then
-			UOPTS_BOLT_OPTIMIZATIONS+=" -hugify"
-		fi
-	fi
-	if [[ "${UOPTS_BOLT_OPTIMIZATIONS}" =~ "-hugify" ]] ; then
+	if [[ "${UOPTS_BOLT_OPTIMIZATIONS}" =~ "-hugify" || "${UOPTS_BOLT_HUGIFY}" == "1" ; then
 		if ! linux_config_exists ; then
 ewarn "You must enable CONFIG_TRANSPARENT_HUGEPAGE for BOLT -hugify support."
 		else
@@ -248,6 +268,8 @@ ewarn "You must enable CONFIG_TRANSPARENT_HUGEPAGE for BOLT -hugify support."
 			fi
 		fi
 	fi
+
+	_ebolt_filter_hugify
 
 	if [[ -z "${_UOPTS_ECLASS}" ]] ; then
 eerror
@@ -585,13 +607,18 @@ ewarn "Missing .rela.text.  Skipping ${p}"
 					is_boltable=0
 				fi
 				if (( ${is_boltable} == 1 )) ; then
+					local size=$(stat -c "%s" "${p}")
+					if (( ${size} >= ${UOPTS_BOLT_HUGIFY_SIZE} )) ; then
+ewarn "QA:  Enable UOPTS_BOLT_HUGIFY=1 support in ebuild."
+					fi
 					# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
 einfo "vanilla -> BOLT instrumented:  ${p}"
 					LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
 						"${p}" \
 						-instrument \
 						-o "${p}.bolt" \
-						-instrumentation-file "${EPREFIX}${bolt_data_suffix_dir}/${bn}.fdata" || die
+						-instrumentation-file "${EPREFIX}${bolt_data_suffix_dir}/${bn}.fdata" \
+						|| die
 					mv "${p}" "${p}.orig" || die
 					mv "${p}.bolt" "${p}" || die
 				fi
@@ -676,6 +703,12 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 				fi
 				if (( ${is_boltable} == 1 )) ; then
 					local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
+					if [[ "${UOPTS_BOLT_HUGIFY}" == "1" || "${_UOPTS_USER_WANTS_HUGIFY}" == "1" ]] ; then
+						local size=$(stat -c "%s" "${p}")
+						if (( ${size} >= ${UOPTS_BOLT_HUGIFY_SIZE} )) ; then
+							args+=( -hugify )
+						fi
+					fi
 					local bn=$(basename "${p}")
 einfo "vanilla -> BOLT optimized:  ${p}"
 					LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
@@ -877,6 +910,12 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 				fi
 				if (( ${is_boltable} == 1 )) ; then
 					local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
+					if [[ "${UOPTS_BOLT_HUGIFY}" == "1" || "${_UOPTS_USER_WANTS_HUGIFY}" == "1" ]] ; then
+						local size=$(stat -c "%s" "${p}")
+						if (( ${size} >= ${UOPTS_BOLT_HUGIFY_SIZE} )) ; then
+							args+=( -hugify )
+						fi
+					fi
 					if [[ ! -e "${p}.orig" ]] ; then
 						cp -a "${p}" "${p}.orig" || true
 					fi
