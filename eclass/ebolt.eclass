@@ -93,9 +93,9 @@ _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEG
 # @ECLASS_VARIABLE: UOPTS_BOLT_HUGIFY_SIZE
 # @DESCRIPTION:
 # Set the threshold for .so/exe size to apply -hugify to avoid wasting page space.
-# Default setting - If the library or executable is an order of magnitude larger (20 MiB),
+# Default setting - If the library or executable is orders of magnitude larger (200 MiB),
 # suggest hugepage (2 MiB) support.
-UOPTS_BOLT_HUGIFY_SIZE=${UOPTS_BOLT_HUGIFY_SIZE:-20971520}
+UOPTS_BOLT_HUGIFY_SIZE=${UOPTS_BOLT_HUGIFY_SIZE:-20971520000}
 
 # @ECLASS_VARIABLE: UOPTS_BOLT_PATH
 # @DESCRIPTION:
