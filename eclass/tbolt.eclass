@@ -426,7 +426,7 @@ ewarn "Number of files to scan:  ${n_files}"
 ewarn "Scanning ${tree}"
 	local n_cores=$(__get_nprocs)
 	local n_procs
-	n_procs=$(python -c "print(int(n_cores * ${UOPTS_BOLT_FORK_MULTIPLIER}))")
+	n_procs=$(python -c "print(int(${n_cores} * ${UOPTS_BOLT_FORK_MULTIPLIER}))")
 	(( "${n_procs}" <= 0 )) && n_procs=1
 	local p
 	for p in ${file_list[@]} ; do
@@ -507,7 +507,7 @@ ewarn "Number of files to scan:  ${n_files}"
 ewarn "Scanning ${tree}"
 	local n_cores=$(__get_nprocs)
 	local n_procs
-	n_procs=$(python -c "print(int(n_cores * ${UOPTS_BOLT_FORK_MULTIPLIER}))")
+	n_procs=$(python -c "print(int(${n_cores} * ${UOPTS_BOLT_FORK_MULTIPLIER}))")
 	(( "${n_procs}" <= 0 )) && n_procs=1
 	local p
 	for p in ${file_list[@]} ; do
