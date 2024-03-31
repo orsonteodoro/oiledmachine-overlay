@@ -510,6 +510,8 @@ _src_compile_bolt_inst() {
 	# install, it is deterministic but takes too long.
 	if [[ "${BOLT_PHASE}" == "INST" ]] ; then
 		[[ -z "${BUILD_DIR}" ]] && die "BUILD_DIR cannot be empty"
+		_UOPTS_BOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
+		local bolt_data_suffix_dir="${_UOPTS_BOLT_DATA_DIR}/${_UOPTS_BOLT_SUFFIX}"
 		local file_list=(
 			$(find "${BUILD_DIR}" \
 				-type f \
@@ -597,6 +599,7 @@ einfo "vanilla -> BOLT instrumented:  ${p}"
 _src_compile_bolt_opt() {
 	if [[ "${BOLT_PHASE}" == "OPT" ]] ; then
 		[[ -z "${BUILD_DIR}" ]] && die "BUILD_DIR cannot be empty"
+		local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 		local file_list=(
 			$(find "${BUILD_DIR}" \
 				-type f \
