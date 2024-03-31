@@ -576,7 +576,7 @@ einfo "vanilla -> BOLT instrumented:  ${p}"
 				fi
 			) &
 			job_list=( $(jobs -r -p) )
-			while (( ${#job_list[@]} > ${n_procs} )) ; do
+			while (( ${#job_list[@]} >= ${n_procs} )) ; do
 				sleep 0.1
 				job_list=( $(jobs -r -p) )
 			done
@@ -664,7 +664,7 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 				fi
 			) &
 			job_list=( $(jobs -r -p) )
-			while (( ${#job_list[@]} > ${n_procs} )) ; do
+			while (( ${#job_list[@]} >= ${n_procs} )) ; do
 				sleep 0.1
 				job_list=( $(jobs -r -p) )
 			done
@@ -866,7 +866,7 @@ einfo "BOLT instrumented -> optimized:  ${p}"
 			fi
 		) &
 		job_list=( $(jobs -r -p) )
-		while (( ${#job_list[@]} > ${n_procs} )) ; do
+		while (( ${#job_list[@]} >= ${n_procs} )) ; do
 			sleep 0.1
 			job_list=( $(jobs -r -p) )
 		done

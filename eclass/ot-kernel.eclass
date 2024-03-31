@@ -11775,7 +11775,7 @@ einfo "Installing unsigned kernel"
 			fi
 		) &
 		job_list=( $(jobs -r -p) )
-		while (( ${#job_list[@]} > ${n_procs} )) ; do
+		while (( ${#job_list[@]} >= ${n_procs} )) ; do
 			sleep 0.1
 			job_list=( $(jobs -r -p) )
 		done
@@ -11821,7 +11821,7 @@ einfo
 				fi
 			) &
 			job_list=( $(jobs -r -p) )
-			while (( ${#job_list[@]} > ${n_procs} )) ; do
+			while (( ${#job_list[@]} >= ${n_procs} )) ; do
 				sleep 0.1
 				job_list=( $(jobs -r -p) )
 			done
