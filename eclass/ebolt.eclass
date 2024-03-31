@@ -90,10 +90,6 @@ _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEG
 # misses.
 # Note PREEMPT_RT is incompatible with hugify support.
 
-# @ECLASS_VARIABLE: UOPTS_BOLT_HUGIFYABLE
-# @DESCRIPTION:
-# Mark the package hugify aware but not forced.
-
 # @ECLASS_VARIABLE: UOPTS_BOLT_HUGIFY_SIZE
 # @DESCRIPTION:
 # Set the threshold for .so/exe size to apply -hugify to avoid wasting page space.
