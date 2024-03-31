@@ -237,7 +237,7 @@ eerror
 		die
 	fi
 
-	UOPTS_BOLT_FORK_MULTIPLIER=${UOPTS_BOLT_FORK_MULTIPLIER:-2}
+	UOPTS_BOLT_FORK_MULTIPLIER=${UOPTS_BOLT_FORK_MULTIPLIER:-1} # 2G per process
 }
 
 # @FUNCTION: _ebolt_prepare_bolt
@@ -329,7 +329,7 @@ ewarn "Compiler is not supported for EBOLT."
 			export CXX="${CHOST}-g++"
 		fi
 
-		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
+		#"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
 		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
 			| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
 		local bolt_major_pv="${bolt_pv%%.*}"
@@ -398,13 +398,10 @@ ebolt_get_phase() {
 	_UOPTS_BOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
 	_ebolt_meets_bolt_requirements
 	local ret=$?
-einfo "ret:  $?"
 
 	if ! use ebolt ; then
-einfo "BOLT DISABLED"
 		result="NO_BOLT"
 	elif ! is_abi_boltable ; then
-einfo "NOT BOLTABLE"
 		result="NO_BOLT"
 	elif use ebolt && [[ "${UOPTS_BOLT_FORCE_INST}" == "1" ]] ; then
 		result="INST"
@@ -512,6 +509,7 @@ _src_compile_bolt_inst() {
 einfo "Touched _src_compile_bolt_inst"
 	# There is a time to quality ratio here.  If we keep it in
 	# install, it is deterministic but takes too long.
+einfo "BOLT_PHASE:  ${BOLT_PHASE}"
 	if [[ "${BOLT_PHASE}" == "INST" ]] ; then
 einfo "Instrumenting BOLT"
 		[[ -z "${BUILD_DIR}" ]] && die "BUILD_DIR cannot be empty"
@@ -689,7 +687,7 @@ ebolt_src_install() {
 			export CXX="${CHOST}-g++"
 		fi
 
-		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
+		#"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
 		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
 			| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
 		local bolt_major_pv="${bolt_pv%%.*}"
