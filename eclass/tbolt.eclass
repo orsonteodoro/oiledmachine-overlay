@@ -86,8 +86,7 @@ _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEG
 # @USER_VARIABLE
 # @DESCRIPTION:
 # The user can decide to enable hugify support.
-# Optimize large (>2MB) statically linked programs/libraries to reduce iTLB
-# misses.
+# Optimize large (>=2MB) linked programs/libraries to reduce iTLB misses.
 # Note PREEMPT_RT is incompatible with hugify support.
 
 # @ECLASS_VARIABLE: UOPTS_BOLT_HUGIFY_SIZE
