@@ -64,7 +64,7 @@ HOMEPAGE="
 "
 LICENSE="BSD"
 KEYWORDS="~amd64"
-IUSE="
+IUSE+="
 doc examples -ilp64 mkl openblas tbb openmp test
 "
 if ! [[ "${MAGMA_ROCM}" == "1" ]] ; then
