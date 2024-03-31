@@ -11772,7 +11772,7 @@ einfo "Installing unsigned kernel"
 			fi
 		) &
 		local njobs=$(jobs -r -p | wc -l)
-		[[ ${njobs} -ge ${nprocs} ]] && wait -n
+		[[ ${njobs} -gt ${nprocs} ]] && wait -n
 	done
 	wait
 	export IFS=$' \t\n'
@@ -11809,7 +11809,7 @@ einfo
 				fi
 			) &
 			local njobs=$(jobs -r -p | wc -l)
-			[[ ${njobs} -ge ${nprocs} ]] && wait -n
+			[[ ${njobs} -gt ${nprocs} ]] && wait -n
 		done
 		wait
 		export IFS=$' \t\n'

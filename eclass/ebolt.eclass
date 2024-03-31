@@ -578,7 +578,7 @@ einfo "vanilla -> BOLT instrumented:  ${p}"
 			) &
 			local job_list=( $(jobs -r -p) )
 			local n_jobs=${#job_list[@]}
-			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
+			[[ ${n_jobs} -gt ${n_procs} ]] && wait -n
 		done
 		wait
 	fi
@@ -660,7 +660,7 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 			) &
 			local job_list=( $(jobs -r -p) )
 			local n_jobs=${#job_list[@]}
-			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
+			[[ ${n_jobs} -gt ${n_procs} ]] && wait -n
 		done
 		wait
 	fi
@@ -854,7 +854,7 @@ einfo "BOLT instrumented -> optimized:  ${p}"
 		) &
 		local job_list=( $(jobs -r -p) )
 		local n_jobs=${#job_list[@]}
-		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
+		[[ ${n_jobs} -gt ${n_procs} ]] && wait -n
 	done
 	wait
 
