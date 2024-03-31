@@ -80,7 +80,7 @@ fi
 # Existing groups can be users, wheel
 # New groups can be epgo, pgo, etc.
 _uopts_check_group() {
-	if ( has epgo && use epgo ) || ( has ebolt && use ebolt ) ; then
+	if ( has epgo ${IUSE_EFFECTIVE} && use epgo ) || ( has ebolt ${IUSE_EFFECTIVE} && use ebolt ) ; then
 		if [[ -z "${UOPTS_GROUP}" || -z "${UOPTS_USER}" ]] ; then
 eerror
 eerror "The UOPTS_GROUP and UOPTS_USER must be defined either in a per-package"
@@ -111,11 +111,11 @@ uopts_setup() {
 	[[ "${UOPTS_SUPPORT_TBOLT}" == "1" ]] && tbolt_setup
 
 	local instr_vars=""
-	if ( has ebolt ${IUSE} && use ebolt ) || ( has bolt ${IUSE} && use bolt ) ; then
+	if ( has ebolt ${IUSE_EFFECTIVE} && use ebolt ) || ( has bolt ${IUSE_EFFECTIVE} && use bolt ) ; then
 		instr_vars+=" UOPTS_BOLT_FORCE_INST=1"
 	fi
 
-	if ( has epgo ${IUSE} && use epgo ) || ( has pgo ${IUSE} && use pgo ) ; then
+	if ( has epgo ${IUSE_EFFECTIVE} && use epgo ) || ( has pgo ${IUSE_EFFECTIVE} && use pgo ) ; then
 		instr_vars+=" UOPTS_PGO_FORCE_PGI=1"
 	fi
 
@@ -124,8 +124,8 @@ einfo "If the build fails, try \`${instr_vars} emerge -1 =${CATEGORY}/${PN}-${PV
 	fi
 
 	if \
-		   has epgo ${IUSE} && use epgo \
-		&& has pgo ${IUSE}  && use pgo \
+		   has epgo ${IUSE_EFFECTIVE} && use epgo \
+		&& has pgo ${IUSE_EFFECTIVE}  && use pgo \
 		&& [[ -n "${_EPGO_ECLASS}" && -n "${_TPGO_ECLASS}" ]] \
 	; then
 eerror
@@ -134,8 +134,8 @@ eerror
 		die
 	fi
 	if \
-		   has ebolt ${IUSE} && use ebolt \
-		&& has bolt ${IUSE}  && use bolt \
+		   has ebolt ${IUSE_EFFECTIVE} && use ebolt \
+		&& has bolt ${IUSE_EFFECTIVE}  && use bolt \
 		&& [[ -n "${_EBOLT_ECLASS}" && -n "${_TBOLT_ECLASS}" ]] \
 	; then
 # You are allow to use ebolt and bolt in llvm ebuilds.
@@ -191,7 +191,7 @@ uopts_n_training() {
 uopts_src_compile() {
 	local is_pgoable=1
 	local skip_pgi="no"
-	if has pgo ${IUSE} && [[ -n "${_TPGO_ECLASS}" ]] ; then
+	if has pgo ${IUSE_EFFECTIVE} && [[ -n "${_TPGO_ECLASS}" ]] ; then
 		_UOPTS_PGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
 		if declare -f train_meets_requirements > /dev/null ; then
 			if train_meets_requirements ; then
@@ -215,7 +215,7 @@ einfo "is_tpgo_profile_reusable=${skip_pgi} "
 
 	local is_boltable=1
 	local skip_inst="no"
-	if has bolt ${IUSE} && [[ -n "${_TBOLT_ECLASS}" ]] ; then
+	if has bolt ${IUSE_EFFECTIVE} && [[ -n "${_TBOLT_ECLASS}" ]] ; then
 		_UOPTS_BOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
 		if declare -f train_meets_requirements > /dev/null ; then
 			if train_meets_requirements ; then
@@ -249,11 +249,11 @@ eerror
 
 	local PGO_PHASE="NO_PGO"
 	local BOLT_PHASE="NO_BOLT"
-	if has ebolt ${IUSE} && use ebolt ; then
+	if has ebolt ${IUSE_EFFECTIVE} && use ebolt ; then
 		BOLT_PHASE=$(ebolt_get_phase)
 	fi
 
-	if has pgo ${IUSE} && use pgo && (( ${is_pgoable} == 1 )) && [[ -n "${_TPGO_ECLASS}" ]] ; then
+	if has pgo ${IUSE_EFFECTIVE} && use pgo && (( ${is_pgoable} == 1 )) && [[ -n "${_TPGO_ECLASS}" ]] ; then
 		TRAIN_MUX="tpgo"
 		if [[ "${skip_pgi}" == "no" ]] && (( ${_UOPTS_REQUIRE_TRAINING} == 1 )) ; then
 			PGO_PHASE="PGI"
@@ -277,10 +277,10 @@ eerror
 		# The Fallback
 		PGO_PHASE="NO_PGO"
 		BOLT_PHASE="NO_BOLT"
-		if has epgo ${IUSE} && use epgo ; then
+		if has epgo ${IUSE_EFFECTIVE} && use epgo ; then
 			PGO_PHASE=$(epgo_get_phase)
 		fi
-		if has ebolt ${IUSE} && use ebolt ; then
+		if has ebolt ${IUSE_EFFECTIVE} && use ebolt ; then
 			BOLT_PHASE=$(ebolt_get_phase)
 		fi
 		declare -f _src_prepare > /dev/null && _src_prepare
@@ -290,7 +290,7 @@ eerror
 
 	if ! [[ "${ABI}" =~ ("arm64"|"amd64") ]] ; then
 		: # Skip trainer
-	elif has bolt ${IUSE} && use bolt && (( ${is_boltable} == 1 )) && [[ -n "${_TBOLT_ECLASS}" ]] ; then
+	elif has bolt ${IUSE_EFFECTIVE} && use bolt && (( ${is_boltable} == 1 )) && [[ -n "${_TBOLT_ECLASS}" ]] ; then
 		TRAIN_MUX="tbolt"
 		if [[ "${skip_inst}" == "no" ]] ; then
 			BOLT_PHASE="INST"
@@ -302,12 +302,12 @@ eerror
 		fi
 		BOLT_PHASE="OPT"
 		_tbolt_opt_tree "${BUILD_DIR}"
-	elif has ebolt ${IUSE} && use ebolt && [[ -n "${_EBOLT_ECLASS}" ]] ; then
-		if has ebolt ${IUSE} && use ebolt ; then
+	elif has ebolt ${IUSE_EFFECTIVE} && use ebolt && [[ -n "${_EBOLT_ECLASS}" ]] ; then
+		if has ebolt ${IUSE_EFFECTIVE} && use ebolt ; then
 			BOLT_PHASE=$(ebolt_get_phase)
 		fi
-		has ebolt ${IUSE} && use ebolt && _src_compile_bolt_inst
-		has ebolt ${IUSE} && use ebolt && _src_compile_bolt_opt
+		has ebolt ${IUSE_EFFECTIVE} && use ebolt && _src_compile_bolt_inst
+		has ebolt ${IUSE_EFFECTIVE} && use ebolt && _src_compile_bolt_opt
 	fi
 }
 
@@ -331,10 +331,10 @@ uopts_pkg_postinst() {
 	[[ "${UOPTS_SUPPORT_TBOLT}" == "1" ]] && tbolt_pkg_postinst
 
 	if \
-		   ( has bolt  && use bolt ) \
-		|| ( has ebolt && use ebolt ) \
-		|| ( has epgo  && use epgo ) \
-		|| ( has pgo   && use pgo ) \
+		   ( has bolt ${IUSE_EFFECTIVE}  && use bolt ) \
+		|| ( has ebolt ${IUSE_EFFECTIVE} && use ebolt ) \
+		|| ( has epgo ${IUSE_EFFECTIVE}  && use epgo ) \
+		|| ( has pgo ${IUSE_EFFECTIVE}   && use pgo ) \
 	; then
 einfo
 einfo "Further training details can be found in:"
