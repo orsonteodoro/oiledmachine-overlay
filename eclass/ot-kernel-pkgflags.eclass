@@ -8231,8 +8231,7 @@ ot-kernel-pkgflags_recoil() { # DONE
 # Applies kernel config flags for the redis package
 ot-kernel-pkgflags_redis() { # DONE
 	if ot-kernel_has_version_pkgflags "dev-db/redis" ; then
-		:
-		#_ot-kernel_y_thp # Added for performance reasons.  8-16% benefit but disabled for latency spike issue
+		_ot-kernel_y_thp # Added for performance reasons.  ~8-16% benefit
 	fi
 }
 
@@ -11607,7 +11606,11 @@ _ot-kernel_y_thp() {
 		is_rt=1
 	fi
 
-	if grep -q -e "^CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE=y" && (( ${is_rt} != 1 )) ; then
+	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
+	if [[ "${work_profile}" == "http-server-busy" ]] ; then
+	# Avoid latency spike case
+		ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
+	elif grep -q -e "^CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE=y" && (( ${is_rt} != 1 )) ; then
 		ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
 	else
 		ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
