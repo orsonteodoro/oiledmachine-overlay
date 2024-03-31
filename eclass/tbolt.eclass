@@ -480,12 +480,16 @@ ewarn "${p}.orig existed and BUILD_DIR was not completely wiped."
 			fi
 		) &
 		job_list=( $(jobs -r -p) )
-		n_jobs=${#job_list[@]}
-		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
+		while (( ${#job_list[@]} > ${n_procs} )) ; do
+			sleep 0.1
+			job_list=( $(jobs -r -p) )
+		done
 	done
 	job_list=( $(jobs -r -p) )
-	n_jobs=${#job_list[@]}
-	[[ ${n_jobs} -ge 1 ]] && wait
+	while (( ${#job_list[@]} >= 1 )) ; do
+		sleep 0.1
+		job_list=( $(jobs -r -p) )
+	done
 }
 
 # @FUNCTION: _tbolt_opt_tree
@@ -567,12 +571,16 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 			fi
 		) &
 		job_list=( $(jobs -r -p) )
-		n_jobs=${#job_list[@]}
-		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
+		while (( ${#job_list[@]} > ${n_procs} )) ; do
+			sleep 0.1
+			job_list=( $(jobs -r -p) )
+		done
 	done
 	job_list=( $(jobs -r -p) )
-	n_jobs=${#job_list[@]}
-	[[ ${n_jobs} -ge 1 ]] && wait
+	while (( ${#job_list[@]} >= 1 )) ; do
+		sleep 0.1
+		job_list=( $(jobs -r -p) )
+	done
 }
 
 # @FUNCTION: _tbolt_src_pre_train

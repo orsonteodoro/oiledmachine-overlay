@@ -11766,6 +11766,7 @@ einfo "Installing unsigned kernel"
 	cd "${ED}" || die
 	local job_list
 	local n_jobs
+	local n_procs=$(ot-kernel_get_nprocs)
 	local f
 	for f in $(find boot -type f) ; do
 		(
@@ -11774,12 +11775,16 @@ einfo "Installing unsigned kernel"
 			fi
 		) &
 		job_list=( $(jobs -r -p) )
-		n_jobs=${#job_list[@]}
-		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
+		while (( ${#job_list[@]} > ${n_procs} )) ; do
+			sleep 0.1
+			job_list=( $(jobs -r -p) )
+		done
 	done
 	job_list=( $(jobs -r -p) )
-	n_jobs=${#job_list[@]}
-	[[ ${n_jobs} -ge 1 ]] && wait
+	while (( ${#job_list[@]} >= 1 )) ; do
+		sleep 0.1
+		job_list=( $(jobs -r -p) )
+	done
 	export IFS=$' \t\n'
 }
 
@@ -11799,9 +11804,9 @@ einfo "Installing the kernel sources"
 		insinto /usr/src
 		doins -r "${BUILD_DIR}" # Sanitize file permissions
 
-		local nprocs=$(ot-kernel_get_nprocs)
+		local n_procs=$(ot-kernel_get_nprocs)
 einfo
-einfo "nprocs:  ${nprocs}"
+einfo "n_procs:  ${n_procs}"
 einfo "Restoring +x bit"
 einfo
 		cd "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}" || die
@@ -11816,12 +11821,16 @@ einfo
 				fi
 			) &
 			job_list=( $(jobs -r -p) )
-			n_jobs=${#job_list[@]}
-			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
+			while (( ${#job_list[@]} > ${n_procs} )) ; do
+				sleep 0.1
+				job_list=( $(jobs -r -p) )
+			done
 		done
 		job_list=( $(jobs -r -p) )
-		n_jobs=${#job_list[@]}
-		[[ ${n_jobs} -ge 1 ]] && wait
+		while (( ${#job_list[@]} >= 1 )) ; do
+			sleep 0.1
+			job_list=( $(jobs -r -p) )
+		done
 		export IFS=$' \t\n'
 	fi
 }

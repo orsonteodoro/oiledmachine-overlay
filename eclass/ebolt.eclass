@@ -576,13 +576,16 @@ einfo "vanilla -> BOLT instrumented:  ${p}"
 				fi
 			) &
 			job_list=( $(jobs -r -p) )
-			n_jobs=${#job_list[@]}
-			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
+			while (( ${#job_list[@]} > ${n_procs} )) ; do
+				sleep 0.1
+				job_list=( $(jobs -r -p) )
+			done
 		done
-einfo "Done"
 		job_list=( $(jobs -r -p) )
-		n_jobs=${#job_list[@]}
-		[[ ${n_jobs} -ge 1 ]] && wait
+		while (( ${#job_list[@]} >= 1 )) ; do
+			sleep 0.1
+			job_list=( $(jobs -r -p) )
+		done
 	fi
 }
 
@@ -661,13 +664,16 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 				fi
 			) &
 			job_list=( $(jobs -r -p) )
-			n_jobs=${#job_list[@]}
-			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
+			while (( ${#job_list[@]} > ${n_procs} )) ; do
+				sleep 0.1
+				job_list=( $(jobs -r -p) )
+			done
 		done
-einfo "Done"
 		job_list=( $(jobs -r -p) )
-		n_jobs=${#job_list[@]}
-		[[ ${n_jobs} -ge 1 ]] && wait
+		while (( ${#job_list[@]} >= 1 )) ; do
+			sleep 0.1
+			job_list=( $(jobs -r -p) )
+		done
 	fi
 }
 
@@ -860,13 +866,17 @@ einfo "BOLT instrumented -> optimized:  ${p}"
 			fi
 		) &
 		job_list=( $(jobs -r -p) )
-		n_jobs=${#job_list[@]}
-		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
+		while (( ${#job_list[@]} > ${n_procs} )) ; do
+			sleep 0.1
+			job_list=( $(jobs -r -p) )
+		done
+	done
+	job_list=( $(jobs -r -p) )
+	while (( ${#job_list[@]} >= 1 )) ; do
+		sleep 0.1
+		job_list=( $(jobs -r -p) )
 	done
 einfo "Done"
-	job_list=( $(jobs -r -p) )
-	n_jobs=${#job_list[@]}
-	[[ ${n_jobs} -ge 1 ]] && wait
 
 	# Using best effort to BOLT while undoing failed optimization.
 	for p in $(grep "obj" "${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS" \
