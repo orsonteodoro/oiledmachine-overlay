@@ -443,10 +443,13 @@ profile.
 
 #### BOLT environment variables
 
+BOLTFLAGS - Same as UOPTS_BOLT_OPTIMIZATIONS with the same requirements.
+It is like the analog to CFLAGS but for llvm-bolt.
+
 UOPTS_BOLT_FORCE_INST - 1 to reset to INST temporarily.
 
 UOPTS_BOLT_OPTIMIZATIONS - Optimization flags to pass to llvm-bolt, overriding
-the defaults.  It is like the analog to CFLAGS but for llvm-bolt.
+the defaults.
 (It is preferred to change this on a
 [per package env](https://wiki.gentoo.org/wiki//etc/portage/package.env)
 level instead of systemwide via /etc/portage/make.conf.  To see more

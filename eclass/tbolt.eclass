@@ -122,7 +122,12 @@ _UOPTS_BOLT_PATH="" # Set in tbolt_setup
 # @ECLASS_VARIABLE: UOPTS_BOLT_OPTIMIZATIONS
 # @USER_VARIABLE
 # @DESCRIPTION:
-# Allow to override the default BOLT optimization setting
+# Allow to override the default BOLT optimization setting.
+
+# @ECLASS_VARIABLE: BOLTFLAGS
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Analog to CFLAGS with the same requirements as UOPTS_BOLT_OPTIMIZATIONS.
 
 # @ECLASS_VARIABLE: UOPTS_BOLT_MALLOC
 # @DESCRIPTION:
@@ -259,6 +264,9 @@ tbolt_setup() {
 	# Keep in sync with
 	# https://github.com/llvm/llvm-project/blob/main/bolt/README.md?plain=1#L183
 	export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=ext-tsp -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats"}
+	if [[ -n "${BOLTFLAGS}" ]] ; then
+		UOPTS_BOLT_OPTIMIZATIONS="${BOLTFLAGS}"
+	fi
 	if [[ "${UOPTS_BOLT_OPTIMIZATIONS}" =~ "-hugify" || "${UOPTS_BOLT_HUGIFY}" == "1" ]] ; then
 		if ! linux_config_exists ; then
 ewarn "You must enable CONFIG_TRANSPARENT_HUGEPAGE for BOLT -hugify support."
