@@ -422,8 +422,6 @@ ewarn "OSMesa will be slow without enabling USE=llvm"
 }
 
 pkg_setup() {
-#	export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=ext-tsp -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats --peepholes=none --no-eliminate-unreachable --conservative-instrumentation"}
-#	export UOPTS_BOLT_OPTIMIZATIONS="-reorder-blocks=ext-tsp -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats --peepholes=none --no-eliminate-unreachable --conservative-instrumentation"
 	check_libstdcxx
 	# Warning message for bug 459306
 	if use llvm && has_version "sys-devel/llvm[!debug=]" ; then
