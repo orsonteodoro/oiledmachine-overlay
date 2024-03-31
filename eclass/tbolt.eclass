@@ -79,7 +79,8 @@ _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEG
 # @USER_VARIABLE
 # @DESCRIPTION:
 # A multiplier m in forks=m*ncpus for parallel loop processing.  Increasing may
-# increase utilization or wasted resources.
+# increase utilization or wasted resources.  This can be a decimal (ex. 0.5).
+# Each llvm-bolt is 2G per process.
 
 # @ECLASS_VARIABLE: UOPTS_BOLT_PATH
 # @DESCRIPTION:
@@ -235,7 +236,7 @@ eerror
 		die
 	fi
 
-	UOPTS_BOLT_FORK_MULTIPLIER=${UOPTS_BOLT_FORK_MULTIPLIER:-1} # 2G per process
+	UOPTS_BOLT_FORK_MULTIPLIER=${UOPTS_BOLT_FORK_MULTIPLIER:-0.5}
 }
 
 # @FUNCTION: _tbolt_prepare_bolt
@@ -423,7 +424,10 @@ _tbolt_inst_tree() {
 ewarn "Finding binaries to BOLT.  Please wait..."
 ewarn "Number of files to scan:  ${n_files}"
 ewarn "Scanning ${tree}"
-	local n_procs=$(( $(__get_nprocs) * ${UOPTS_BOLT_FORK_MULTIPLIER} ))
+	local n_cores=$(__get_nprocs)
+	local n_procs
+	n_procs=$(python -c "print(int(n_cores) * ${UOPTS_BOLT_FORK_MULTIPLIER})")
+	(( "${n_procs}" == 0 )) && n_procs=1
 	local p
 	for p in ${file_list[@]} ; do
 		x_files=$((${x_files} + 1))
@@ -501,7 +505,10 @@ _tbolt_opt_tree() {
 ewarn "Finding binaries to BOLT.  Please wait..."
 ewarn "Number of files to scan:  ${n_files}"
 ewarn "Scanning ${tree}"
-	local n_procs=$(( $(__get_nprocs) * ${UOPTS_BOLT_FORK_MULTIPLIER} ))
+	local n_cores=$(__get_nprocs)
+	local n_procs
+	n_procs=$(python -c "print(int(n_cores) * ${UOPTS_BOLT_FORK_MULTIPLIER})")
+	(( "${n_procs}" == 0 )) && n_procs=1
 	local p
 	for p in ${file_list[@]} ; do
 		x_files=$((${x_files} + 1))
