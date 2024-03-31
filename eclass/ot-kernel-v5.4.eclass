@@ -27,6 +27,7 @@ KERNEL_RELEASE_DATE="20191124" # of first stable release
 CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.4/tools/build/feature/Makefile#L318
 GCC_COMPAT=( {13..4} )
 LLVM_COMPAT=( {18..10} )
+LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 GCC_SLOT_NOT_KCP=( ${GCC_COMPAT[@]} ) # Without kernel-compiler-patch
 GCC_SLOT_KCP="${GCC_COMPAT[0]}" # With kernel-compiler-patch
 DISABLE_DEBUG_PV="1.4.1"
@@ -267,12 +268,12 @@ gen_clang_llvm_pair() {
 KCP_RDEPEND="
 	clang? (
 		|| (
-			$(gen_clang_llvm_pair 10 ${LLVM_COMPAT[0]})
+			$(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT})
 		)
 	)
 	|| (
 		>=sys-devel/gcc-6.5.0
-		$(gen_clang_llvm_pair 10 ${LLVM_COMPAT[0]})
+		$(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT})
 	)
 "
 

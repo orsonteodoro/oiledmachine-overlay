@@ -42,7 +42,8 @@ KERNEL_RELEASE_DATE="99999999" # of first stable release
 CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.9/tools/build/feature/Makefile#L331
 GCC_COMPAT=( {13..5} )
 # llvm slot originally 16, testing 18
-LLVM_COMPAT=( {18..10} )
+LLVM_COMPAT=( {18..13} )
+LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 CLANG_PGO_SUPPORTED=1
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
@@ -199,7 +200,7 @@ d29d596279f9ce7a33c7cc68277886e49381ea05
 cf9b1dacabb1ef62481a452f7f169e1679e2da49
 a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 ) # newest
-RUST_PV="1.74.1"
+RUST_PV="1.76.0"
 
 BBRV3_KV="6.4.0" # According to Makefile, but the net folder has tagged net-6.5-rc1 commit
 BBRV3_VERSION="7542cc7" # Latest commit in the branch
@@ -433,7 +434,7 @@ gen_clang_llvm_pair() {
 KCP_RDEPEND="
 	clang? (
 		|| (
-			$(gen_clang_llvm_pair 12 ${LLVM_COMPAT[0]})
+			$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
 		)
 	)
 	|| (
@@ -443,7 +444,7 @@ KCP_RDEPEND="
 				>=sys-devel/gcc-12
 			)
 		)
-		$(gen_clang_llvm_pair 12 ${LLVM_COMPAT[0]})
+		$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
 	)
 "
 
@@ -530,18 +531,18 @@ CDEPEND+="
 	)
 	lto? (
 		|| (
-			$(gen_lto_rdepend 11 ${LLVM_COMPAT[0]})
+			$(gen_lto_rdepend 11 ${LLVM_MAX_SLOT})
 		)
 	)
 	kcfi? (
 		arm64? (
 			|| (
-				$(gen_kcfi_rdepend 16 ${LLVM_COMPAT[0]})
+				$(gen_kcfi_rdepend 16 ${LLVM_MAX_SLOT})
 			)
 		)
 		amd64? (
 			|| (
-				$(gen_kcfi_rdepend 16 ${LLVM_COMPAT[0]})
+				$(gen_kcfi_rdepend 16 ${LLVM_MAX_SLOT})
 			)
 		)
 	)
@@ -555,19 +556,19 @@ CDEPEND+="
 		)
 		clang? (
 			|| (
-				$(gen_clang_pgo_rdepend 13 ${LLVM_COMPAT[0]})
+				$(gen_clang_pgo_rdepend 13 ${LLVM_MAX_SLOT})
 			)
 		)
 	)
 	s390? (
 		|| (
-			$(gen_clang_pgo_rdepend 15 ${LLVM_COMPAT[0]})
+			$(gen_clang_pgo_rdepend 15 ${LLVM_MAX_SLOT})
 		)
 	)
 	shadowcallstack? (
 		arm64? (
 			|| (
-				$(gen_shadowcallstack_rdepend 10 ${LLVM_COMPAT[0]})
+				$(gen_shadowcallstack_rdepend 10 ${LLVM_MAX_SLOT})
 			)
 		)
 	)

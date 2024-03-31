@@ -27,6 +27,7 @@ KERNEL_RELEASE_DATE="20220731" # of first stable release
 CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v5.19/tools/build/feature/Makefile#L318
 GCC_COMPAT=( {13..4} )
 LLVM_COMPAT=( {18..10} )
+LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"

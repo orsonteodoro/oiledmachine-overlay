@@ -29,6 +29,7 @@ KERNEL_RELEASE_DATE="20221211" # of first stable release
 CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.1/tools/build/feature/Makefile#L318
 GCC_COMPAT=( {13..5} )
 LLVM_COMPAT=( {18..11} )
+LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 CLANG_PGO_SUPPORTED=1
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
@@ -370,14 +371,14 @@ gen_clang_llvm_pair() {
 KCP_RDEPEND="
 	clang? (
 		|| (
-			$(gen_clang_llvm_pair 12 ${LLVM_COMPAT[0]})
+			$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
 		)
 	)
 	|| (
 		(
 			>=sys-devel/gcc-11.1
 		)
-		$(gen_clang_llvm_pair 12 ${LLVM_COMPAT[0]})
+		$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
 	)
 "
 
@@ -458,18 +459,18 @@ CDEPEND+="
 	)
 	lto? (
 		|| (
-			$(gen_lto_rdepend 11 ${LLVM_COMPAT[0]})
+			$(gen_lto_rdepend 11 ${LLVM_MAX_SLOT})
 		)
 	)
 	kcfi? (
 		arm64? (
 			|| (
-				$(gen_kcfi_rdepend 16 ${LLVM_COMPAT[0]})
+				$(gen_kcfi_rdepend 16 ${LLVM_MAX_SLOT})
 			)
 		)
 		amd64? (
 			|| (
-				$(gen_kcfi_rdepend 16 ${LLVM_COMPAT[0]})
+				$(gen_kcfi_rdepend 16 ${LLVM_MAX_SLOT})
 			)
 		)
 	)
@@ -480,19 +481,19 @@ CDEPEND+="
 		)
 		clang? (
 			|| (
-				$(gen_clang_pgo_rdepend 13 ${LLVM_COMPAT[0]})
+				$(gen_clang_pgo_rdepend 13 ${LLVM_MAX_SLOT})
 			)
 		)
 	)
 	s390? (
 		|| (
-			$(gen_clang_pgo_rdepend 15 ${LLVM_COMPAT[0]})
+			$(gen_clang_pgo_rdepend 15 ${LLVM_MAX_SLOT})
 		)
 	)
 	shadowcallstack? (
 		arm64? (
 			|| (
-				$(gen_shadowcallstack_rdepend 10 ${LLVM_COMPAT[0]})
+				$(gen_shadowcallstack_rdepend 10 ${LLVM_MAX_SLOT})
 			)
 		)
 	)
