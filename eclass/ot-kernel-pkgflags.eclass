@@ -505,6 +505,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_libfido2
 	ot-kernel-pkgflags_libforensic1394
 	ot-kernel-pkgflags_libgpiod
+	ot-kernel-pkgflags_liblinear
 	ot-kernel-pkgflags_libmicrohttpd
 	ot-kernel-pkgflags_libmtp
 	ot-kernel-pkgflags_libnetfilter_acct
@@ -560,6 +561,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_midi
 	ot-kernel-pkgflags_minidlna
 	ot-kernel-pkgflags_minijail
+	ot-kernel-pkgflags_mongodb
 	ot-kernel-pkgflags_mono
 	ot-kernel-pkgflags_mpd
 	ot-kernel-pkgflags_mpg123
@@ -650,6 +652,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_rasdaemon
 	ot-kernel-pkgflags_read_edid
 	ot-kernel-pkgflags_recoil
+	ot-kernel-pkgflags_redis
 	ot-kernel-pkgflags_roct
 	ot-kernel-pkgflags_rocksdb
 	ot-kernel-pkgflags_rr
@@ -5385,6 +5388,15 @@ ot-kernel-pkgflags_libgpiod() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_liblinear
+# @DESCRIPTION:
+# Applies kernel config flags for the liblinear package
+ot-kernel-pkgflags_liblinear() { # DONE
+	if ot-kernel_has_version_pkgflags "dev-libs/liblinear" ; then
+		_ot-kernel_y_thp # Added for performance reasons.  ~36-39% benefit
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_libmicrohttpd
 # @DESCRIPTION:
 # Applies kernel config flags for the libmicrohttpd package
@@ -6320,6 +6332,15 @@ ot-kernel-pkgflags_minijail() { # DONE
 		ot-kernel_y_configopt "CONFIG_SECCOMP"
 		ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_mongodb
+# @DESCRIPTION:
+# Applies kernel config flags for the mongodb package
+ot-kernel-pkgflags_mongodb() { # DONE
+	if ot-kernel_has_version_pkgflags "dev-db/mongodb" ; then
+		_ot-kernel_y_thp # Added for performance reasons.  ~15-29% benefit.
 	fi
 }
 
@@ -8202,6 +8223,15 @@ ot-kernel-pkgflags_read_edid() { # DONE
 ot-kernel-pkgflags_recoil() { # DONE
 	if ot-kernel_has_version_pkgflags "app-misc/recoll" ; then
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_redis
+# @DESCRIPTION:
+# Applies kernel config flags for the redis package
+ot-kernel-pkgflags_redis() { # DONE
+	if ot-kernel_has_version_pkgflags "dev-db/redis" ; then
+		_ot-kernel_y_thp # Added for performance reasons.  8-16% benefit
 	fi
 }
 
