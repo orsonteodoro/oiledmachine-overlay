@@ -11099,6 +11099,17 @@ eerror
 
 _OT_KERNEL_FORCE_SWAP_OFF=0
 
+# @FUNCTION: ot-kernel_print_thp_status
+# @DESCRIPTION:
+# Prints the transparent huge page status for this config.
+ot-kernel_print_thp_status() {
+	if grep -q -e "^CONFIG_TRANSPARENT_HUGEPAGE=y" "${path_config}" ; then
+einfo "Transparent Huge Pages (THP):  ON"
+	else
+einfo "Transparent Huge Pages (THP):  OFF"
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -11235,6 +11246,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_set_kconfig_cpu_scheduler_post
 
 	ot-kernel_set_kconfig_from_envvar_array
+	ot-kernel_print_thp_status
 
 	if [[ -e "${BUILD_DIR}/.config" ]] ; then
 		if has exfat ${IUSE_EFFECTIVE} && ! use exfat ; then
