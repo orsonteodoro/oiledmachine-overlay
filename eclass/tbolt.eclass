@@ -271,7 +271,7 @@ tbolt_setup() {
 		if ! linux_config_exists ; then
 ewarn "You must enable CONFIG_TRANSPARENT_HUGEPAGE for BOLT -hugify support."
 		else
-			if ! linux_chkconfig_builtin "CONFIG_TRANSPARENT_HUGEPAGE" ; then
+			if ! linux_chkconfig_builtin "TRANSPARENT_HUGEPAGE" ; then
 ewarn "You must enable CONFIG_TRANSPARENT_HUGEPAGE for BOLT -hugify support."
 			fi
 		fi
