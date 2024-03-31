@@ -328,7 +328,7 @@ in the metadata.xml.
 * media-libs/libjpeg-turbo (pgo, bolt)
 * media-libs/libspng (pgo, bolt)
 * media-libs/libvpx (pgo, bolt)
-* media-libs/mesa (epgo, ebolt?)
+* media-libs/mesa (epgo, ebolt)
 * media-video/ffmpeg (pgo, bolt)
 * media-gfx/blender (pgo, bolt?)
 * net-libs/nodejs (pgo)
