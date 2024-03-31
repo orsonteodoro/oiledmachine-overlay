@@ -479,7 +479,7 @@ ewarn "${p}.orig existed and BUILD_DIR was not completely wiped."
 		) &
 		local job_list=( $(jobs -r -p) )
 		local n_jobs=${#job_list[@]}
-		[[ ${n_jobs} -gt ${n_procs} ]] && wait -n
+		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
 	wait
 }
@@ -562,7 +562,7 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 		) &
 		local job_list=( $(jobs -r -p) )
 		local n_jobs=${#job_list[@]}
-		[[ ${n_jobs} -gt ${n_procs} ]] && wait -n
+		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
 	wait
 }

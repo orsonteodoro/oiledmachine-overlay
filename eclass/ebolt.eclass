@@ -506,12 +506,9 @@ __get_nprocs() {
 # @DESCRIPTION:
 # Instrument the build tree
 _src_compile_bolt_inst() {
-einfo "Touched _src_compile_bolt_inst"
 	# There is a time to quality ratio here.  If we keep it in
 	# install, it is deterministic but takes too long.
-einfo "BOLT_PHASE:  ${BOLT_PHASE}"
 	if [[ "${BOLT_PHASE}" == "INST" ]] ; then
-einfo "Instrumenting BOLT"
 		[[ -z "${BUILD_DIR}" ]] && die "BUILD_DIR cannot be empty"
 		local file_list=(
 			$(find "${BUILD_DIR}" \
@@ -530,7 +527,6 @@ ewarn "Scanning ${BUILD_DIR}"
 		local n_procs
 		n_procs=$(python -c "print(int(${n_cores} * ${UOPTS_BOLT_FORK_MULTIPLIER}))")
 		(( "${n_procs}" <= 0 )) && n_procs=1
-einfo "DEBUG:  n_procs=${n_procs} n_cores=${n_cores}"
 		local p
 		for p in ${file_list[@]} ; do
 			x_files=$((${x_files} + 1))
@@ -579,7 +575,7 @@ einfo "vanilla -> BOLT instrumented:  ${p}"
 			) &
 			local job_list=( $(jobs -r -p) )
 			local n_jobs=${#job_list[@]}
-			[[ ${n_jobs} -gt ${n_procs} ]] && wait -n
+			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 		done
 		wait
 	fi
@@ -589,9 +585,7 @@ einfo "vanilla -> BOLT instrumented:  ${p}"
 # @DESCRIPTION:
 # Optimize the build tree
 _src_compile_bolt_opt() {
-einfo "Touched _src_compile_bolt_opt()"
 	if [[ "${BOLT_PHASE}" == "OPT" ]] ; then
-einfo "Optimizing BOLT"
 		[[ -z "${BUILD_DIR}" ]] && die "BUILD_DIR cannot be empty"
 		local file_list=(
 			$(find "${BUILD_DIR}" \
@@ -610,7 +604,6 @@ ewarn "Scanning ${BUILD_DIR}"
 		local n_procs
 		n_procs=$(python -c "print(int(${n_cores} * ${UOPTS_BOLT_FORK_MULTIPLIER}))")
 		(( "${n_procs}" <= 0 )) && n_procs=1
-einfo "DEBUG:  n_procs=${n_procs} n_cores=${n_cores}"
 		local p
 		for p in ${file_list[@]} ; do
 			x_files=$((${x_files} + 1))
@@ -662,7 +655,7 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 			) &
 			local job_list=( $(jobs -r -p) )
 			local n_jobs=${#job_list[@]}
-			[[ ${n_jobs} -gt ${n_procs} ]] && wait -n
+			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 		done
 		wait
 	fi
@@ -796,7 +789,6 @@ ewarn "Scanning files in file list from ${EROOT}/var/db/pkg/${CATEGORY}/${P}/CON
 	local n_procs
 	n_procs=$(python -c "print(int(${n_cores} * ${UOPTS_BOLT_FORK_MULTIPLIER}))")
 	(( "${n_procs}" <= 0 )) && n_procs=1
-einfo "DEBUG:  n_procs=${n_procs} n_cores=${n_cores}"
 	local p
 	for p in ${file_list[@]} ; do
 		x_files=$((${x_files} + 1))
@@ -857,7 +849,7 @@ einfo "BOLT instrumented -> optimized:  ${p}"
 		) &
 		local job_list=( $(jobs -r -p) )
 		local n_jobs=${#job_list[@]}
-		[[ ${n_jobs} -gt ${n_procs} ]] && wait -n
+		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
 	wait
 
