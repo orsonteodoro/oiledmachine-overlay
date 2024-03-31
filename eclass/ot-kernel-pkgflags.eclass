@@ -8231,7 +8231,8 @@ ot-kernel-pkgflags_recoil() { # DONE
 # Applies kernel config flags for the redis package
 ot-kernel-pkgflags_redis() { # DONE
 	if ot-kernel_has_version_pkgflags "dev-db/redis" ; then
-		_ot-kernel_y_thp # Added for performance reasons.  8-16% benefit
+		:
+		#_ot-kernel_y_thp # Added for performance reasons.  8-16% benefit but disabled for latency spike issue
 	fi
 }
 
