@@ -83,9 +83,16 @@ _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEG
 # Each llvm-bolt is 2G per process.
 
 # @ECLASS_VARIABLE: UOPTS_BOLT_HUGIFY
+# @USER_VARIABLE
 # @DESCRIPTION:
+# The user can decide to enable hugify support.
 # Optimize large (>2MB) statically linked programs/libraries to reduce iTLB
 # misses.
+# Note PREEMPT_RT is incompatible with hugify support.
+
+# @ECLASS_VARIABLE: UOPTS_BOLT_HUGIFYABLE
+# @DESCRIPTION:
+# Mark the package hugify aware but not forced.
 
 # @ECLASS_VARIABLE: UOPTS_BOLT_HUGIFY_SIZE
 # @DESCRIPTION:

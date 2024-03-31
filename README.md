@@ -448,6 +448,9 @@ It is like the analog to CFLAGS but for llvm-bolt.
 
 UOPTS_BOLT_FORCE_INST - 1 to reset to INST temporarily.
 
+UOPTS_BOLT_HUGIFY - 1 to enable hugify to minimize iTLB misses, 0 to disable.
+Hugify is not compatible with CONFIG_PREEMPT_RT.
+
 UOPTS_BOLT_OPTIMIZATIONS - Optimization flags to pass to llvm-bolt, overriding
 the defaults.
 (It is preferred to change this on a
