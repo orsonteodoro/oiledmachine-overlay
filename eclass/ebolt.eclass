@@ -17,7 +17,7 @@ esac
 if [[ -z ${_EBOLT_ECLASS} ]] ; then
 _EBOLT_ECLASS=1
 
-inherit flag-o-matic toolchain-funcs
+inherit flag-o-matic linux-check toolchain-funcs
 
 IUSE+=" ebolt"
 RESTRICT+=" strip" # Don't strip at all
@@ -82,6 +82,11 @@ _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEG
 # increase utilization or wasted resources.  This can be a decimal (ex. 0.5).
 # Each llvm-bolt is 2G per process.
 
+# @ECLASS_VARIABLE: UOPTS_BOLT_HUGIFY
+# @DESCRIPTION:
+# Optimize large (>2MB) statically linked programs/libraries to reduce iTLB
+# misses.
+
 # @ECLASS_VARIABLE: UOPTS_BOLT_PATH
 # @DESCRIPTION:
 # The absolute path to the folder containing llvm-bolt.
@@ -92,6 +97,7 @@ _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEG
 _UOPTS_BOLT_PATH="" # Set in ebolt_setup
 
 # @ECLASS_VARIABLE: UOPTS_BOLT_OPTIMIZATIONS
+# @USER_VARIABLE
 # @DESCRIPTION:
 # Allow to override the default BOLT optimization setting
 
@@ -228,6 +234,20 @@ ebolt_setup() {
 	# Keep in sync with
 	# https://github.com/llvm/llvm-project/blob/main/bolt/README.md?plain=1#L183
 	export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=ext-tsp -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats"}
+	if [[ "${UOPTS_BOLT_HUGIFY}" == "1" ]] ; then
+		if ! [[ "${UOPTS_BOLT_OPTIMIZATIONS}" =~ "-hugify" ]] ; then
+			UOPTS_BOLT_OPTIMIZATIONS+=" -hugify"
+		fi
+	fi
+	if [[ "${UOPTS_BOLT_OPTIMIZATIONS}" =~ "-hugify" ]] ; then
+		if ! linux_config_exists ; then
+ewarn "You must enable CONFIG_TRANSPARENT_HUGEPAGE for BOLT -hugify support."
+		else
+			if ! linux_chkconfig_builtin "CONFIG_TRANSPARENT_HUGEPAGE" ; then
+ewarn "You must enable CONFIG_TRANSPARENT_HUGEPAGE for BOLT -hugify support."
+			fi
+		fi
+	fi
 
 	if [[ -z "${_UOPTS_ECLASS}" ]] ; then
 eerror
