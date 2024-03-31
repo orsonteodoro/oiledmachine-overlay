@@ -238,7 +238,7 @@ eerror
 		die
 	fi
 
-	UOPTS_BOLT_FORK_MULTIPLIER=${UOPTS_BOLT_FORK_MULTIPLIER:-0.5}
+	UOPTS_BOLT_FORK_MULTIPLIER=${UOPTS_BOLT_FORK_MULTIPLIER:-"0.5"}
 }
 
 # @FUNCTION: _ebolt_prepare_bolt
@@ -528,7 +528,7 @@ ewarn "Number of files to scan:  ${n_files}"
 ewarn "Scanning ${BUILD_DIR}"
 		local n_cores=$(__get_nprocs)
 		local n_procs
-		n_procs=$(python -c "print(int(n_cores) * ${UOPTS_BOLT_FORK_MULTIPLIER})")
+		n_procs=$(python -c "print(int(n_cores * ${UOPTS_BOLT_FORK_MULTIPLIER}))")
 		(( "${n_procs}" <= 0 )) && n_procs=1
 		local p
 		for p in ${file_list[@]} ; do
@@ -607,7 +607,7 @@ ewarn "Number of files to scan:  ${n_files}"
 ewarn "Scanning ${BUILD_DIR}"
 		local n_cores=$(__get_nprocs)
 		local n_procs
-		n_procs=$(python -c "print(int(n_cores) * ${UOPTS_BOLT_FORK_MULTIPLIER})")
+		n_procs=$(python -c "print(int(n_cores * ${UOPTS_BOLT_FORK_MULTIPLIER}))")
 		(( "${n_procs}" <= 0 )) && n_procs=1
 		local p
 		for p in ${file_list[@]} ; do
@@ -792,7 +792,7 @@ ewarn "Number of files to scan:  ${n_files}"
 ewarn "Scanning files in file list from ${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS"
 	local n_cores=$(__get_nprocs)
 	local n_procs
-	n_procs=$(python -c "print(int(n_cores) * ${UOPTS_BOLT_FORK_MULTIPLIER})")
+	n_procs=$(python -c "print(int(n_cores * ${UOPTS_BOLT_FORK_MULTIPLIER}))")
 	(( "${n_procs}" <= 0 )) && n_procs=1
 	local p
 	for p in ${file_list[@]} ; do
