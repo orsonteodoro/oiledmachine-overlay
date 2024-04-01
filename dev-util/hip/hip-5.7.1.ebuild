@@ -26,7 +26,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm system-llvm test r23"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm system-llvm test r24"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -132,6 +132,7 @@ HIPAMD_PATCHES=(
 	"${FILESDIR}/hipamd-5.7.0-hiprtc-header.patch"
 	"${FILESDIR}/hipamd-5.7.0-fix-install-cmake-files.patch"
 	"${FILESDIR}/hipamd-5.7.2-link-hsa-runtime64.patch"
+	"A"
 )
 HIPCC_PATCHES=(
 	"${FILESDIR}/hipcc-5.6.0-fno-stack-protector.patch"
