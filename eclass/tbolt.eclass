@@ -240,29 +240,29 @@ _setup_llvm() {
 	fi
 }
 
-# @FUNCTION: _tbolt_filter_hugify
+# @FUNCTION: _tbolt_convert_hugify_to_env
 # @DESCRIPTION:
-# Removes hugify from UOPTS_BOLT_OPTIMIZATIONS
-_tbolt_filter_hugify() {
+# Convert UOPTS_BOLT_OPTIMIZATIONS="-hugify" to flag _UOPTS_USER_WANTS_HUGIFY=1
+_tbolt_convert_hugify_to_env() {
 	export _UOPTS_USER_WANTS_HUGIFY=0
-	local list=""
-	local f
-	for f in ${UOPTS_BOLT_OPTIMIZATIONS} ; do
+	local list=()
+	local flag
+	for flag in ${UOPTS_BOLT_OPTIMIZATIONS} ; do
 	# Only apply to targets that qualify to avoid wasted page space.
-		if [[ "${f}" == "-hugify" ]] ; then
+		if [[ "${flag}" == "-hugify" ]] ; then
 			export _UOPTS_USER_WANTS_HUGIFY=1
 		else
-			list+=" ${f}"
+			list+=( "${flag}" )
 		fi
 	done
-	export UOPTS_BOLT_OPTIMIZATIONS="${list}"
+	export UOPTS_BOLT_OPTIMIZATIONS="${list[@]}"
 }
 
 # @FUNCTION: filter_boltflags
 # @DESCRIPTION:
 # Remove banned UOPTS_BOLT_OPTIMIZATIONS
 filter_boltflags() {
-	local list=""
+	local list=()
 	local flag
 	for flag in ${UOPTS_BOLT_OPTIMIZATIONS} ; do
 		if [[ -n "${UOPTS_BOLT_EXCLUDE_FLAGS}" ]] ; then
@@ -271,12 +271,12 @@ filter_boltflags() {
 				if [[ "${flag}" == "${excluded_flag}" ]] ; then
 					:
 				else
-					list+=" ${flag}"
+					list+=( "${flag}" )
 				fi
 			done
 		fi
 	done
-	echo "${list}"
+	echo "${list[@]}"
 }
 
 # @FUNCTION: tbolt_is_boltflag_banned
@@ -327,7 +327,7 @@ ewarn "You must enable CONFIG_TRANSPARENT_HUGEPAGE for BOLT -hugify support."
 		fi
 	fi
 
-	_tbolt_filter_hugify
+	_tbolt_convert_hugify_to_env
 
 	if [[ -z "${_UOPTS_ECLASS}" ]] ; then
 eerror
