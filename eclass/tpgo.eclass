@@ -349,6 +349,12 @@ eerror
 			_tpgo_append_flags \
 				-fprofile-generate="${pgo_data_staging_dir}"
 		elif tc-is-gcc ; then
+			_tpgo_is_profile_reusable
+			if [[ "$?" == "1" ]] ; then
+einfo "Wiping old PGO pofile from staging dir."
+				find "${pgo_data_staging_dir}" -name "*gcda" -delete
+			fi
+
 			_tpgo_append_flags \
 				-fprofile-generate \
 				-fprofile-dir="${pgo_data_staging_dir}"

@@ -219,6 +219,11 @@ eerror
 			_epgo_append_flags \
 				-fprofile-generate="${pgo_data_suffix_dir}"
 		elif tc-is-gcc ; then
+			_epgo_meets_pgo_requirements
+			if [[ "$?" == "1" ]] ; then
+einfo "Wiping old PGO pofile from staging dir."
+				find "${pgo_data_staging_dir}" -name "*gcda" -delete
+			fi
 			_epgo_append_flags \
 				-fprofile-generate \
 				-fprofile-dir="${pgo_data_suffix_dir}"
