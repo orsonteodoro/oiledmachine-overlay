@@ -168,6 +168,7 @@ python_check_deps() {
 }
 
 pkg_setup() {
+ewarn "The 5.1.x series may require a compiler switch to gcc:12"
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
 }
