@@ -455,7 +455,7 @@ CONFIG_PREEMPT_RT.  The optimization only applies to hot code not data sections
 threshold value in the *bolt eclasses will determine when the benefits of hugify
 is allowed and it is not clear due to the lack of experimental analysis or
 research paper by upstream of size of the executable or shared object is needed
-to gain a benefit.(EXPERIMENTAL)
+to gain a benefit.  (EXPERIMENTAL, amd64 only)
 
 UOPTS_BOLT_OPTIMIZATIONS - Optimization flags to pass to llvm-bolt, overriding
 the defaults.
