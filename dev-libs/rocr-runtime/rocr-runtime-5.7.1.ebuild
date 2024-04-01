@@ -27,7 +27,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	+aqlprofile debug system-llvm
-	r3
+	r4
 "
 CDEPEND="
 	dev-libs/elfutils
@@ -35,6 +35,7 @@ CDEPEND="
 RDEPEND="
 	!dev-libs/rocr-runtime:0
 	${CDEPEND}
+	dev-libs/roct-thunk-interface:${ROCM_SLOT}
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 "
 DEPEND="
