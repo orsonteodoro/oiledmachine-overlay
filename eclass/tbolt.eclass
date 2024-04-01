@@ -95,7 +95,7 @@ _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEG
 # Default setting - If the library or executable is orders of magnitude larger,
 # suggest hugepage (2 MiB) support.  It is not clear when the benefits start to
 # actually happen.
-#UOPTS_BOLT_HUGIFY_SIZE=${UOPTS_BOLT_HUGIFY_SIZE:-20971520000} # 200 MiB for production
+#UOPTS_BOLT_HUGIFY_SIZE=${UOPTS_BOLT_HUGIFY_SIZE:-1073741824} # 1 GiB for production
 UOPTS_BOLT_HUGIFY_SIZE=${UOPTS_BOLT_HUGIFY_SIZE:-20971520} # 20 MiB for testing
 
 # @ECLASS_VARIABLE: UOPTS_BOLT_PATH
