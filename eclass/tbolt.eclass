@@ -522,16 +522,13 @@ ewarn "Skipping ${p} because of missing .rela.text section"
 			fi
 			if (( ${is_boltable} == 1 )) ; then
 				local size=$(stat -c "%s" "${p}")
-				if (( ${size} >= ${UOPTS_BOLT_HUGIFY_SIZE} )) ; then
-ewarn "QA:  Enable UOPTS_BOLT_HUGIFY=1 support in ebuild."
-				fi
 				# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
-einfo "Instrumenting ${p} with BOLT"
 				if [[ ! -e "${p}.orig" ]] ; then
 					mv "${p}"{,.orig} || die
 				else
 ewarn "${p}.orig existed and BUILD_DIR was not completely wiped."
 				fi
+einfo "Instrumenting ${p} with BOLT"
 				LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
 					"${p}.orig" \
 					-instrument \

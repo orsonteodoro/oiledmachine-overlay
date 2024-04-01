@@ -621,9 +621,6 @@ ewarn "Skipping ${p} because of missing .rela.text section"
 				fi
 				if (( ${is_boltable} == 1 )) ; then
 					local size=$(stat -c "%s" "${p}")
-					if (( ${size} >= ${UOPTS_BOLT_HUGIFY_SIZE} )) ; then
-ewarn "QA:  Enable UOPTS_BOLT_HUGIFY=1 support in ebuild."
-					fi
 einfo "Instrumenting ${p} with BOLT"
 					# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
 					LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
