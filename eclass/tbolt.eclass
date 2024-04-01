@@ -89,6 +89,10 @@ _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEG
 # Optimize large (>=2MB) linked programs/libraries to reduce iTLB misses.
 # Note PREEMPT_RT is incompatible with hugify support.
 
+# @ECLASS_VARIABLE: UOPTS_BOLT_HUGIFABLE
+# @DESCRIPTION:
+# Hugify is allowed (1) or disallowed (0) by the ebuild developer.
+
 # @ECLASS_VARIABLE: UOPTS_BOLT_HUGIFY_SIZE
 # @DESCRIPTION:
 # Set the threshold for .so/exe size to apply -hugify to avoid wasting page space.
@@ -619,7 +623,9 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 				local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
 				if [[ "${UOPTS_BOLT_HUGIFY}" == "1" || "${_UOPTS_USER_WANTS_HUGIFY}" == "1" ]] ; then
 					local size=$(stat -c "%s" "${p}")
-					if (( ${size} >= ${UOPTS_BOLT_HUGIFY_SIZE} )) ; then
+					if [[ "${UOPTS_BOLT_HUGIFABLE}" == "0" ]] ; then
+ewarn "Hugify is disallowed for ${PN}."
+					elif (( ${size} >= ${UOPTS_BOLT_HUGIFY_SIZE} )) ; then
 einfo "Hugifing "$(basename "${p}")" with a file size of "$(python -c "print(${size}/1048576)")" MiB"
 						args+=( -hugify )
 					fi
