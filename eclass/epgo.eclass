@@ -276,6 +276,7 @@ eerror
 			_epgo_append_flags \
 				-fprofile-use="${pgo_data_staging_dir}/pgo-custom.profdata"
 		elif tc-is-gcc ; then
+ewarn "If you see \"profile count data file not found\" that is a bug in gcc with name mangling.  If you want to avoid these errors, PGO with clang instead."
 			_epgo_append_flags \
 				-fprofile-correction \
 				-fprofile-use \

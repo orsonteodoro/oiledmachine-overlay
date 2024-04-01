@@ -12072,6 +12072,7 @@ einfo "Generating counter summary and histogram and adding to the PGO profile"
 				fi
 				echo "${pgo_phase}" > "${pgo_phase_statefile}" || die
 einfo "Building ${pgo_phase}"
+ewarn "If you see \"profile count data file not found\" that is a bug in gcc with name mangling.  If you want to avoid these errors, PGO with clang instead."
 				args+=(
 					"GCC_PGO_PHASE=${makefile_pgo_phase}"
 					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
@@ -12093,6 +12094,7 @@ einfo "Building ${pgo_phase}"
 				fi
 # For resuming or rebuilding as PDO phase
 einfo "Building ${pgo_phase}"
+ewarn "If you see \"profile count data file not found\" that is a bug in gcc with name mangling.  If you want to avoid these errors, PGO with clang instead."
 				args+=(
 					"GCC_PGO_PHASE=${makefile_pgo_phase}"
 					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
