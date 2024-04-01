@@ -108,6 +108,11 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
+_src_configure_compiler() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+}
+
 _src_configure() {
 	cd "${EMESON_SOURCE}" || die
 	append-cppflags -I"${EPREFIX}/usr/include/miniz"

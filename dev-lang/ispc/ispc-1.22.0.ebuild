@@ -242,6 +242,24 @@ src_prepare() {
 
 src_configure() { :; }
 
+_src_confgure_compiler() {
+	local wants_llvm=0
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		if use llvm-${s} ; then
+			wants_llvm=1
+			break
+		fi
+	done
+	if use lto || (( ${wants_llvm} == 1 )) ; then
+		export CC="${CHOST}-clang-${LLVM_SLOT}"
+		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+	else
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
+	fi
+}
+
 _src_configure() {
 	local wants_llvm=0
 	local s

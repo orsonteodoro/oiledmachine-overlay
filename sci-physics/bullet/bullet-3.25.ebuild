@@ -515,14 +515,17 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
-_src_configure() {
-	# The tc-check-openmp does not print slot/version details
+_src_configure_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 einfo "CC:\t\t${CC}"
 einfo "CXX:\t\t${CXX}"
-	${CC} --version
-	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
+	${CC} --version || die
+}
+
+_src_configure() {
+	# The tc-check-openmp does not print slot/version details
+	[[ "${MERGE_TYPE}" != "binary" ]] && use openmp && tc-check-openmp
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 	uopts_src_configure

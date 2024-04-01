@@ -71,12 +71,19 @@ src_prepare() {
 
 src_configure() { :; }
 
-_src_configure() {
-	uopts_src_configure
+_src_configure_compiler() {
 	if use pgo || use bolt ; then
 		# Force use of the performant one.
 		export CC="${CHOST}-clang"
+		export CXX="${CHOST}-clang++"
+	else
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
 	fi
+}
+
+_src_configure() {
+	uopts_src_configure
 	tc-is-gcc && replace-flags '-O*' '-O1' # >= -O2 breaks with instrumented PGO by gcc.
 	tc-is-clang && replace-flags '-O*' '-O3'
 	strip-unsupported-flags

@@ -302,6 +302,11 @@ src_prepare() {
 
 src_configure() { :; }
 
+_src_configure_compiler() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+}
+
 _src_configure() {
 einfo
 einfo "PGO PHASE:  ${PGO_PHASE}"

@@ -434,6 +434,11 @@ einfo "Converting .profraw -> .profdata"
 	fi
 }
 
+_src_configure_compiler() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+}
+
 _src_configure() {
 	export ENINJA_BUILD_DIR="out/"$(usex debug "Debug" "Release")
 	uopts_src_configure

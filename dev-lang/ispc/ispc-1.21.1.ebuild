@@ -242,7 +242,7 @@ src_prepare() {
 
 src_configure() { :; }
 
-_src_configure() {
+_src_confgure_compiler() {
 	local wants_llvm=0
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
@@ -258,6 +258,9 @@ _src_configure() {
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
 	fi
+}
+
+_src_configure() {
 	if ! has_version "sys-devel/llvm:${LLVM_SLOT}=[dump(+)]" ; then
 		append-cppflags -DNDEBUG
 	fi

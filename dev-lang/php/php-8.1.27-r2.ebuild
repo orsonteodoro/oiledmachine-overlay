@@ -635,8 +635,7 @@ eerror
 	fi
 }
 
-_src_configure() {
-	check_libstdcxx
+_src_configure_compiler() {
 	if use clang ; then
 		export CC="${CHOST}-clang-${LLVM_SLOT}"
 		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
@@ -662,6 +661,10 @@ _src_configure() {
 		append-ldflags -lgcov
 		append-flags -Wno-error=coverage-mismatch # Unbreak configure check
 	fi
+}
+
+_src_configure() {
+	check_libstdcxx
 	#UOPTS_IMPLS="_${sapi}"
 	uopts_src_configure # Wipes -fprofile*
 	if use clang ; then

@@ -309,6 +309,11 @@ src_prepare() {
 
 src_configure() { :; }
 
+_src_configure_compiler() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+}
+
 _src_configure() {
 	uopts_src_configure # Wipes -fprofile*
 	# Filter LTO for legacy branch with ODR violations (bug #855242)
