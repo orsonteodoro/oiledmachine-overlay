@@ -131,7 +131,7 @@ HIPAMD_PATCHES=(
 	"${FILESDIR}/hipamd-5.7.0-hiprtc-includes-path.patch"
 	"${FILESDIR}/hipamd-5.7.0-hiprtc-header.patch"
 	"${FILESDIR}/hipamd-5.7.0-fix-install-cmake-files.patch"
-	"${FILESDIR}/hipamd-5.7.2-link-hsa-runtime64.patch"
+	"${FILESDIR}/hipamd-5.7.1-link-hsa-runtime64.patch"
 	"A"
 )
 HIPCC_PATCHES=(

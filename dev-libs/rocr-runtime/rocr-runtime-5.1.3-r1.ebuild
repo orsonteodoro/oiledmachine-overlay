@@ -27,7 +27,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	+aqlprofile debug system-llvm
-	r2
+	r3
 "
 CDEPEND="
 	dev-libs/elfutils
@@ -57,6 +57,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
+	"${FILESDIR}/${PN}-5.7.1-link-amd_comgr.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 
