@@ -198,6 +198,11 @@ _epgo_configure() {
 	use epgo && addpredict "${EPREFIX}${UOPTS_PGO_PROFILES_DIR}"
 	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		if tc-is-clang ; then
+			_epgo_meets_pgo_requirements
+			if [[ "$?" == "1" ]] ; then
+einfo "Wiping old PGO pofile from staging dir."
+				find "${pgo_data_staging_dir}" -name "*.profraw" -delete
+			fi
 			local clang_pv=$(clang-fullversion)
 			local use_arg=""
 			if [[ "${_MULTILIB_BUILD_ECLASS}" == "1" ]] ; then
@@ -222,7 +227,7 @@ eerror
 			_epgo_meets_pgo_requirements
 			if [[ "$?" == "1" ]] ; then
 einfo "Wiping old PGO pofile from staging dir."
-				find "${pgo_data_staging_dir}" -name "*gcda" -delete
+				find "${pgo_data_staging_dir}" -name "*.gcda" -delete
 			fi
 			_epgo_append_flags \
 				-fprofile-generate \
