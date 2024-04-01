@@ -1974,7 +1974,7 @@ _is_version3() {
 
 src_configure() { :; }
 
-_src_configure_toolchain() {
+_src_configure_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 }
