@@ -242,7 +242,7 @@ src_prepare() {
 
 src_configure() { :; }
 
-_src_confgure_compiler() {
+_src_configure_compiler() {
 	local wants_llvm=0
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
