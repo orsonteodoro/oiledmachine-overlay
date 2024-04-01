@@ -371,6 +371,11 @@ _tpgo_custom_clean() {
 		&& emake clean -C contrib/minizip
 }
 
+_src_configure_compiler() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+}
+
 _src_configure() {
 	einfo "Called _src_configure"
 	cd "${BUILD_DIR}" || die
