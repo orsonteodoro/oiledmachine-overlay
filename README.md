@@ -452,8 +452,8 @@ UOPTS_BOLT_HUGIFY - 1 to enable hugify to minimize iTLB misses with large
 libraries and executables, 0 to disable.  Hugify is not compatible with
 CONFIG_PREEMPT_RT.  The optimization only applies to hot code not data sections
 (e.g. data tables, text, art assets).  At this time the UOPTS_BOLT_HUGIFY_SIZE
-threshold value in the bolt eclass will determine when the benefits of hugify is
-allowed and it is not clear by upstream of size of the executable or shared
+threshold value in the *bolt eclasses will determine when the benefits of hugify
+is allowed and it is not clear by upstream of size of the executable or shared
 object is needed to gain a benefit.(EXPERIMENTAL)
 
 UOPTS_BOLT_OPTIMIZATIONS - Optimization flags to pass to llvm-bolt, overriding
