@@ -267,6 +267,11 @@ append_all() {
 
 src_configure() { :; }
 
+_src_configure_compiler() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+}
+
 _src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
