@@ -58,7 +58,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
-	"${FILESDIR}/${PN}-5.7.1-link-amd_comgr.patch"
+	"${FILESDIR}/${PN}-5.7.1-link-hsakmt.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 
