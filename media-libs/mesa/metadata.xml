@@ -58,6 +58,11 @@
   PGO training and BOLT training to ensure code coverage is consistent for
   the PGO/BOLT profiles.
 
+  While Mesa is known as an OpenGL library, it may have portions for other
+  APIs like Vulkan, OpenCL, VA-API or those connected to USE flags.  Those
+  should be considered maybe added to PGO/BOLT training routine before
+  transitioning from the training phase to optimization phase.
+
   Q:  Why do you not run unattended PGO?
   A:  There are different versions of OpenGL and each version needs to be
       trained independently.  It is more efficient to train off the actively
