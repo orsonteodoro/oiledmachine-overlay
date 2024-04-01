@@ -26,8 +26,11 @@ MY_PV="${PV}" # ver_test context
 KERNEL_RELEASE_DATE="20191124" # of first stable release
 CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.4/tools/build/feature/Makefile#L318
 GCC_COMPAT=( {13..4} )
+GCC_MAX_SLOT=${GCC_COMPAT[0]}
+GCC_MIN_SLOT=${GCC_COMPAT[-1]}
 LLVM_COMPAT=( {18..10} )
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
+LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
 GCC_SLOT_NOT_KCP=( ${GCC_COMPAT[@]} ) # Without kernel-compiler-patch
 GCC_SLOT_KCP="${GCC_COMPAT[0]}" # With kernel-compiler-patch
 DISABLE_DEBUG_PV="1.4.1"

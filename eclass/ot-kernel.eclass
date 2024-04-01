@@ -1317,7 +1317,7 @@ einfo "PATH=${PATH} (before)"
 				| tr ":" "\n" \
 				| sed -E -e "/ccache/d" \
 				| tr "\n" ":" \
-				| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_COMPAT[0]}/bin:${PWD}/install/bin|g")
+				| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_MAX_SLOT}/bin:${PWD}/install/bin|g")
 einfo "PATH=${PATH} (after)"
 		fi
 	fi
@@ -2110,13 +2110,13 @@ ot-kernel_compiler_not_found() {
 eerror
 eerror "These are the required slot ranges.  Either choose..."
 eerror
-eerror "GCC_MIN_SLOT: ${GCC_COMPAT[-1]}"
-eerror "GCC_MAX_SLOT: ${GCC_COMPAT[0]}"
+eerror "GCC_MIN_SLOT: ${GCC_MIN_SLOT}"
+eerror "GCC_MAX_SLOT: ${GCC_MAX_SLOT}"
 eerror
 eerror "  or"
 eerror
-eerror "LLVM_MIN_SLOT: ${LLVM_COMPAT[-1]}"
-eerror "LLVM_MAX_SLOT: ${LLVM_COMPAT[0]}"
+eerror "LLVM_MIN_SLOT: ${LLVM_MIN_SLOT}"
+eerror "LLVM_MAX_SLOT: ${LLVM_MAX_SLOT}"
 eerror
 eerror "You should re-emerge the one of the allowed compiler slots."
 eerror
@@ -6800,8 +6800,8 @@ ot-kernel_show_llvm_requirement() {
 eerror
 eerror "Make sure the following valid slots is installed:"
 eerror
-eerror "LLVM_MIN_SLOT: ${LLVM_COMPAT[-1]}"
-eerror "LLVM_MAX_SLOT: ${LLVM_COMPAT[0]}"
+eerror "LLVM_MIN_SLOT: ${LLVM_MIN_SLOT}"
+eerror "LLVM_MAX_SLOT: ${LLVM_MAX_SLOT}"
 eerror
 eerror "Reason:  ${msg}"
 eerror
@@ -11387,7 +11387,7 @@ eerror
 # Gets a ready to use clang compiler
 get_llvm_slot() {
 	local llvm_slot
-	for llvm_slot in $(seq ${LLVM_COMPAT[0]} -1 ${LLVM_COMPAT[-1]}) ; do
+	for llvm_slot in $(seq ${LLVM_MAX_SLOT} -1 ${LLVM_MIN_SLOT}) ; do
 		ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" && is_clang_ready && break
 	done
 	echo "${llvm_slot}"
@@ -11398,7 +11398,7 @@ get_llvm_slot() {
 # Gets a ready to use gcc compiler
 get_gcc_slot() {
 	local gcc_slot
-	for gcc_slot in $(seq ${GCC_COMPAT[0]} -1 ${GCC_COMPAT[-1]}) ; do
+	for gcc_slot in $(seq ${GCC_MAX_SLOT} -1 ${GCC_MIN_SLOT}) ; do
 		ot-kernel_has_version "${GCC_PKG}:${gcc_slot}" && is_gcc_ready && break
 	done
 	echo "${gcc_slot}"

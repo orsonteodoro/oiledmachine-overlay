@@ -41,9 +41,12 @@ fi
 KERNEL_RELEASE_DATE="99999999" # of first stable release
 CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.9/tools/build/feature/Makefile#L331
 GCC_COMPAT=( {13..5} )
+GCC_MAX_SLOT=${GCC_COMPAT[0]}
+GCC_MIN_SLOT=${GCC_COMPAT[-1]}
 # llvm slot originally 16, testing 18
 LLVM_COMPAT=( {18..13} )
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
+LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
 CLANG_PGO_SUPPORTED=1
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
