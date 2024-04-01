@@ -623,7 +623,7 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 				if [[ "${UOPTS_BOLT_HUGIFY}" == "1" || "${_UOPTS_USER_WANTS_HUGIFY}" == "1" ]] ; then
 					local size=$(stat -c "%s" "${p}")
 					if (( ${size} >= ${UOPTS_BOLT_HUGIFY_SIZE} )) ; then
-einfo "Hugified "$(basename "${p}")" "$(python -c "print(${size}/1048576) MiB")
+einfo "Hugified "$(basename "${p}")" "$(python -c "print(${size}/1048576)")" MiB"
 						args+=( -hugify )
 					fi
 				fi
