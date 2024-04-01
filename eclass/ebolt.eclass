@@ -279,6 +279,8 @@ filter_boltflags() {
 			if (( ${is_banned} == 0 )) ; then
 				list+=( "${flag}" )
 			fi
+		else
+			list+=( "${flag}" )
 		fi
 	done
 	echo "${list[@]}"
