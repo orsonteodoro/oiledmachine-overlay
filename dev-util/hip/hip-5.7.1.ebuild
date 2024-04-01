@@ -131,6 +131,7 @@ HIPAMD_PATCHES=(
 	"${FILESDIR}/hipamd-5.7.0-hiprtc-includes-path.patch"
 	"${FILESDIR}/hipamd-5.7.0-hiprtc-header.patch"
 	"${FILESDIR}/hipamd-5.7.0-fix-install-cmake-files.patch"
+	"${FILESDIR}/hipamd-5.7.2-link-hsa-runtime64.patch"
 )
 HIPCC_PATCHES=(
 	"${FILESDIR}/hipcc-5.6.0-fno-stack-protector.patch"
@@ -164,7 +165,6 @@ ewarn
 src_prepare() {
 	cmake_src_prepare
 	eapply "${HIPAMD_PATCHES[@]}"
-
 	eapply_user
 
 	# Use the ebuild slot number, otherwise git hash is attempted in vain.

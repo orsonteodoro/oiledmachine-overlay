@@ -128,6 +128,7 @@ HIPAMD_PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-hip-config-not-cuda.patch"
 	"${FILESDIR}/${PN}-5.6.0-hip-host-not-cuda.patch"
 	"${FILESDIR}/hipamd-5.6.0-path-changes.patch"
+	"${FILESDIR}/hipamd-5.7.2-link-hsa-runtime64.patch"
 )
 HIPCC_PATCHES=(
 	"${FILESDIR}/hipcc-5.6.0-fno-stack-protector.patch"
