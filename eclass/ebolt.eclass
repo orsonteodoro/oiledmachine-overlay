@@ -269,14 +269,16 @@ filter_boltflags() {
 	local flag
 	for flag in ${UOPTS_BOLT_OPTIMIZATIONS} ; do
 		if [[ -n "${UOPTS_BOLT_EXCLUDE_FLAGS[@]}" ]] ; then
+			local is_banned=0
 			local excluded_flag
 			for excluded_flag in ${UOPTS_BOLT_EXCLUDE_FLAGS[@]} ; do
 				if [[ "${flag}" == "${excluded_flag}" ]] ; then
-					:
-				else
-					list+=( "${flag}" )
+					is_banned=1
 				fi
 			done
+			if (( ${is_banned} == 0 )) ; then
+				list+=( "${flag}" )
+			fi
 		fi
 	done
 	echo "${list[@]}"
