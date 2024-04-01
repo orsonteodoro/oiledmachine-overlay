@@ -27,7 +27,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	+aqlprofile debug system-llvm
-	r4
+	r5
 "
 CDEPEND="
 	dev-libs/elfutils
@@ -59,7 +59,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
-	"${FILESDIR}/${PN}-5.7.1-link-hsakmt.patch"
+	"${FILESDIR}/${PN}-5.2.3-link-hsakmt.patch"
 )
 
 pkg_setup() {
