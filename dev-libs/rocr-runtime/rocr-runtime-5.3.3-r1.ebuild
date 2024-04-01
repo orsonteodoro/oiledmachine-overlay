@@ -59,7 +59,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
-	"${FILESDIR}/${PN}-5.2.3-link-hsakmt.patch"
+	"${FILESDIR}/${PN}-5.3.3-link-hsakmt.patch"
 )
 
 pkg_setup() {
