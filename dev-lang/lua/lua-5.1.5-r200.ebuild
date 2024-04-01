@@ -74,6 +74,11 @@ src_prepare() {
 
 src_configure() { :; }
 
+_src_configure_compiler() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+}
+
 _src_configure() {
 	uopts_src_configure
 	if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then
