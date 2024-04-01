@@ -75,6 +75,10 @@ _UOPTS_BOLT_CATPN_DATA_DIR=${_UOPTS_BOLT_CATPN_DATA_DIR:-"${UOPTS_BOLT_PROFILES_
 # The path to the program BOLT profile with version specificity.
 _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEGORY}/${PN}/${UOPTS_SLOT}"}
 
+# @ECLASS_VARIABLE: UOPTS_BOLT_EXCLUDE_FLAGS
+# @DESCRIPTION:
+# List of flags to filter out
+
 # @ECLASS_VARIABLE: UOPTS_BOLT_FORK_MULTIPLIER
 # @USER_VARIABLE
 # @DESCRIPTION:
@@ -88,10 +92,6 @@ _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEG
 # The user can decide to enable hugify support.
 # Optimize large (>=2MB) linked programs/libraries to reduce iTLB misses.
 # Note PREEMPT_RT is incompatible with hugify support.
-
-# @ECLASS_VARIABLE: UOPTS_BOLT_HUGIFABLE
-# @DESCRIPTION:
-# Hugify is allowed (1) or disallowed (0) by the ebuild developer.
 
 # @ECLASS_VARIABLE: UOPTS_BOLT_HUGIFY_SIZE
 # @DESCRIPTION:
@@ -258,6 +258,43 @@ _tbolt_filter_hugify() {
 	export UOPTS_BOLT_OPTIMIZATIONS="${list}"
 }
 
+# @FUNCTION: filter_boltflags
+# @DESCRIPTION:
+# Remove banned UOPTS_BOLT_OPTIMIZATIONS
+filter_boltflags() {
+	local list=""
+	local flag
+	for flag in ${UOPTS_BOLT_OPTIMIZATIONS} ; do
+		if [[ -n "${UOPTS_BOLT_EXCLUDE_FLAGS}" ]] ; then
+			local excluded_flag
+			for excluded_flag in ${UOPTS_BOLT_EXCLUDE_FLAGS} ; do
+				if [[ "${flag}" == "${excluded_flag}" ]] ; then
+					:
+				else
+					list+=" ${flag}"
+				fi
+			done
+		fi
+	done
+	echo "${list}"
+}
+
+# @FUNCTION: tbolt_is_boltflag_banned
+# @DESCRIPTION:
+# Check if a flag is banned
+tbolt_is_boltflag_banned() {
+	local flag="${1}"
+	if [[ -n "${UOPTS_BOLT_EXCLUDE_FLAGS}" ]] ; then
+		local excluded_flag
+		for excluded_flag in ${UOPTS_BOLT_EXCLUDE_FLAGS} ; do
+			if [[ "${flag}" == "${excluded_flag}" ]] ; then
+				return 0
+			fi
+		done
+	fi
+	return 1
+}
+
 # @FUNCTION: tbolt_setup
 # @DESCRIPTION:
 # You must call this in pkg_setup
@@ -275,6 +312,10 @@ tbolt_setup() {
 	if [[ -n "${BOLTFLAGS}" ]] ; then
 		UOPTS_BOLT_OPTIMIZATIONS="${BOLTFLAGS}"
 	fi
+	if tbolt_is_boltflag_banned "-hugify" ; then
+		UOPTS_BOLT_HUGIFY=0
+	fi
+	UOPTS_BOLT_OPTIMIZATIONS=$(filter_boltflags)
 	if [[ "${UOPTS_BOLT_OPTIMIZATIONS}" =~ "-hugify" || "${UOPTS_BOLT_HUGIFY}" == "1" ]] ; then
 		linux-info_pkg_setup
 		if ! linux_config_exists ; then
@@ -623,7 +664,7 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 				local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
 				if [[ "${UOPTS_BOLT_HUGIFY}" == "1" || "${_UOPTS_USER_WANTS_HUGIFY}" == "1" ]] ; then
 					local size=$(stat -c "%s" "${p}")
-					if [[ "${UOPTS_BOLT_HUGIFABLE}" == "0" ]] ; then
+					if [[ "${UOPTS_BOLT_HUGIFIABLE}" == "0" ]] ; then
 ewarn "Hugify is disallowed for ${PN}."
 					elif (( ${size} >= ${UOPTS_BOLT_HUGIFY_SIZE} )) ; then
 einfo "Hugifing "$(basename "${p}")" with a file size of "$(python -c "print(${size}/1048576)")" MiB"
