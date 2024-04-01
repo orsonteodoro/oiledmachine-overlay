@@ -77,7 +77,7 @@ _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEG
 
 # @ECLASS_VARIABLE: UOPTS_BOLT_EXCLUDE_FLAGS
 # @DESCRIPTION:
-# List of flags to filter out
+# An array of llvm-bolt flags to filter out.
 
 # @ECLASS_VARIABLE: UOPTS_BOLT_FORK_MULTIPLIER
 # @USER_VARIABLE
@@ -265,9 +265,9 @@ filter_boltflags() {
 	local list=()
 	local flag
 	for flag in ${UOPTS_BOLT_OPTIMIZATIONS} ; do
-		if [[ -n "${UOPTS_BOLT_EXCLUDE_FLAGS}" ]] ; then
+		if [[ -n "${UOPTS_BOLT_EXCLUDE_FLAGS[@]}" ]] ; then
 			local excluded_flag
-			for excluded_flag in ${UOPTS_BOLT_EXCLUDE_FLAGS} ; do
+			for excluded_flag in ${UOPTS_BOLT_EXCLUDE_FLAGS[@]} ; do
 				if [[ "${flag}" == "${excluded_flag}" ]] ; then
 					:
 				else
@@ -284,9 +284,9 @@ filter_boltflags() {
 # Check if a flag is banned
 tbolt_is_boltflag_banned() {
 	local flag="${1}"
-	if [[ -n "${UOPTS_BOLT_EXCLUDE_FLAGS}" ]] ; then
+	if [[ -n "${UOPTS_BOLT_EXCLUDE_FLAGS[@]}" ]] ; then
 		local excluded_flag
-		for excluded_flag in ${UOPTS_BOLT_EXCLUDE_FLAGS} ; do
+		for excluded_flag in ${UOPTS_BOLT_EXCLUDE_FLAGS[@]} ; do
 			if [[ "${flag}" == "${excluded_flag}" ]] ; then
 				return 0
 			fi
