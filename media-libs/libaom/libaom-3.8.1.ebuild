@@ -373,11 +373,16 @@ append_all() {
 	append-ldflags ${@}
 }
 
-_src_configure() {
+_src_configure_compiler() {
 	if use aocc ; then
 		aocc_src_configure
+	else
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
 	fi
+}
 
+_src_configure() {
 einfo "CFLAGS:  ${CFLAGS}"
 
 	# Follow upstream recommendations in README (bug #921438) and avoid

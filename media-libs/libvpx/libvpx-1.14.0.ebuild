@@ -454,6 +454,15 @@ src_prepare() {
 
 src_configure() { :; }
 
+_src_configure_compiler() {
+	if use aocc ; then
+		aocc_src_configure
+	else
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
+	fi
+}
+
 _src_configure() {
 	export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}"
@@ -461,10 +470,6 @@ _src_configure() {
 	[[ -f Makefile ]] && emake clean
 	unset CODECS #357487
 	einfo "PGO_PHASE: ${PGO_PHASE}"
-
-	if use aocc ; then
-		aocc_src_configure
-	fi
 
 	add_sandbox_exceptions
 
