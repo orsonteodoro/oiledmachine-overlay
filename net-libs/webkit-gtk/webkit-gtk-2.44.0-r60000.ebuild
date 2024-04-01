@@ -95,8 +95,8 @@ tr uk vi zh_CN
 LLVM_COMPAT=( 14 )
 LLVM_MAX_SLOT="${LLVM_COMPAT[-1]}"
 MESA_PV="18.0.0_rc5"
-MITIGATION_DATE=""
-MITIGATION_URI="" # Shown if minor version matches in report.
+MITIGATION_DATE="Mar 26, 2024"
+MITIGATION_URI="https://webkitgtk.org/security/WSA-2024-0002.html" # Shown if minor version matches in report.
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( python3_{10..12} )
 SELECTED_LTO="" # global var not const
