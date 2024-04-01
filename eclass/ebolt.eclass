@@ -616,7 +616,7 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 					is_boltable=0
 				fi
 				if (( ${is_boltable} == 1 )) && ! has_relocs "${p}" ; then
-ewarn "Missing .rela.text.  Skipping ${p}"
+ewarn "Skipping ${p} because of missing .rela.text section"
 					is_boltable=0
 				fi
 				if (( ${is_boltable} == 1 )) ; then
@@ -624,8 +624,8 @@ ewarn "Missing .rela.text.  Skipping ${p}"
 					if (( ${size} >= ${UOPTS_BOLT_HUGIFY_SIZE} )) ; then
 ewarn "QA:  Enable UOPTS_BOLT_HUGIFY=1 support in ebuild."
 					fi
+einfo "Instrumenting ${p} with BOLT"
 					# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
-einfo "vanilla -> BOLT instrumented:  ${p}"
 					LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
 						"${p}" \
 						-instrument \
@@ -719,12 +719,11 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 					if [[ "${UOPTS_BOLT_HUGIFY}" == "1" || "${_UOPTS_USER_WANTS_HUGIFY}" == "1" ]] ; then
 						local size=$(stat -c "%s" "${p}")
 						if (( ${size} >= ${UOPTS_BOLT_HUGIFY_SIZE} )) ; then
-einfo "Hugified "$(basename "${p}")" "$(python -c "print(${size}/1048576)")" MiB"
+einfo "Hugifing "$(basename "${p}")" with a file size of "$(python -c "print(${size}/1048576)")" MiB"
 							args+=( -hugify )
 						fi
 					fi
-					local bn=$(basename "${p}")
-einfo "vanilla -> BOLT optimized:  ${p}"
+einfo "Optimizing ${p} with BOLT"
 					LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
 						"${p}" \
 						-o "${p}.bolt" \
@@ -933,7 +932,7 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 					if [[ ! -e "${p}.orig" ]] ; then
 						cp -a "${p}" "${p}.orig" || true
 					fi
-einfo "BOLT instrumented -> optimized:  ${p}"
+einfo "Optimizing ${p} with BOLT"
 					if ! LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
 						"${p}" \
 						-o "${p}.bolt" \
