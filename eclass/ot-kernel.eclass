@@ -8271,7 +8271,7 @@ ewarn "Using slub-tiny lowers security."
 	ot-kernel_y_configopt "CONFIG_${alloc_name}"
 einfo "Using ${alloc_name}"
 	if [[ "${alloc_name}" == "SLUB" ]] \
-		&& (( ${sub_tiny} != 1 )) \
+		&& (( ${slub_tiny} != 1 )) \
 		&& grep -q -E -e "^CONFIG_SMP=y" "${path_config}" \
 	; then
 		ot-kernel_y_configopt "CONFIG_SLUB_CPU_PARTIAL" # Implies security
@@ -8290,7 +8290,7 @@ ot-kernel_set_kconfig_auto_set_slab_allocator() {
 einfo "Using ${x}"
 	elif [[ "${slab_allocator}" == "auto" ]] ; then
 		if grep -q -E -e "^CONFIG_EMBEDDED=y" "${path_config}" ; then
-			if ver_test "${KV_MAJOR_MINOR}" -lt 6.4 ; then
+			if ver_test "${KV_MAJOR_MINOR}" -lt "6.4" ; then
 				ot-kernel_set_kconfig_slab_allocator "slob"
 			else
 				ot-kernel_set_kconfig_slab_allocator "slub"
