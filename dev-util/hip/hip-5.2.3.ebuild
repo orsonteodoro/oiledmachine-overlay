@@ -130,6 +130,7 @@ HIPAMD_PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-hip-host-not-cuda.patch"
 	"${FILESDIR}/hipamd-5.2.3-path-changes.patch"
 	"${FILESDIR}/hipamd-5.7.1-link-hsa-runtime64.patch"
+	"${FILESDIR}/hipamd-5.2.3-set-rpath-hiprtc.patch"
 )
 OCL_PATCHES=(
 	"${FILESDIR}/rocm-opencl-runtime-5.3.3-path-changes.patch"
