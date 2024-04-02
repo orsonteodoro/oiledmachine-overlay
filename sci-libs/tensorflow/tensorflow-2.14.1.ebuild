@@ -670,6 +670,17 @@ gen_llvm_bdepend() {
 	done
 }
 
+gen_gcc_bdepend() {
+	local s
+	echo "|| ("
+	for s in ${GCC_COMPAT[@]} ; do
+		echo "
+			=sys-devel/gcc-${s}*:${s}
+		"
+	done
+	echo ")"
+}
+
 # Did not find grpc-tools
 # grpcio-tools versioning based on grpcio
 # GCC:11 - Based on archlinux
@@ -681,6 +692,14 @@ BDEPEND="
 	dev-java/java-config
 	dev-libs/protobuf:${PROTOBUF_SLOT}
 	dev-util/patchelf
+	!clang? (
+		!cuda? (
+			$(gen_gcc_bdepend)
+		)
+	)
+	!cuda? (
+		sys-devel/gcc:12
+	)
 	!python? (
 		dev-lang/python
 	)
@@ -794,11 +813,12 @@ einfo "PATH:\t${PATH}"
 	use cuda && GCC_COMPAT=( ${GCC_SLOT_WITH_CUDA} )
 	local s
 	for s in ${GCC_COMPAT[@]} ; do
-		symlink_ver=$(gcc_symlink_ver ${s})
+		local symlink_ver=$(gcc_symlink_ver ${s})
 		export CC=${CHOST}-gcc-${symlink_ver}
 		export CXX=${CHOST}-g++-${symlink_ver}
 		export CPP="${CHOST}-g++-${symlink_ver} -E"
 		if ${CC} --version 2>/dev/null 1>/dev/null ; then
+			check_libstdcxx ${s}
 einfo "Switched to gcc:${s}"
 			found=1
 			break
@@ -926,6 +946,25 @@ eerror
 	fi
 }
 
+check_libstdcxx() {
+	local slot="${1}"
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot=${gcc_current_profile##*-}
+
+	if ver_test "${gcc_current_profile_slot}" -ne "${slot}" ; then
+eerror
+eerror "You must switch to GCC ${slot}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${slot}"
+eerror "  source /etc/profile"
+eerror
+eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
+eerror "to the default immediately after this package has been merged."
+eerror
+		die
+	fi
+}
+
 pkg_setup() {
 use rocm && ewarn "The rocm USE flag is currently broken"
 	export CC=$(tc-getCC)
@@ -975,6 +1014,7 @@ ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 			ROCM_VERSION="${HIP_5_0_VERSION}"
 		fi
 	elif tc-is-clang || use clang ; then
+		use_gcc
 		use_clang
 	elif tc-is-gcc ; then
 		use_gcc
@@ -984,6 +1024,12 @@ einfo "Use only GCC or Clang.  This package (CC=${CC}) also might not be"
 einfo "completely installed."
 einfo
 		die
+	fi
+
+	if tc-is-clang ; then
+		if use cuda ; then
+			check_libstdcxx 11
+		fi
 	fi
 
 	if use rocm ; then
