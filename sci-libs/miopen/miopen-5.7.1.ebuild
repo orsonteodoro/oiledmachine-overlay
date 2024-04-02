@@ -103,10 +103,14 @@ DEPEND="
 	>=dev-cpp/nlohmann_json-3.10.4:=
 "
 BDEPEND="
+	sys-devel/binutils[gold,plugins]
 	virtual/pkgconfig
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	mlir? (
 		=sci-libs/rocMLIR-${ROCM_SLOT}*:${ROCM_SLOT}[fat-librockcompiler(+)]
+	)
+	system-llvm? (
+		>=sys-devel/llvmgold-${LLVM_SLOT}
 	)
 "
 RESTRICT="
@@ -279,6 +283,12 @@ filter_test_gpus() {
 }
 
 src_configure() {
+	# Prevent linking error:
+	# libhsa-runtime64.so: undefined reference to `hsaKmtReplaceAsanHeaderPage'
+	append-flags -Wl,-fuse-ld=gold
+	append-ldflags -fuse-ld=gold
+	filter-flags -Wl,--as-needed
+
 	if ! use debug ; then
 		append-cflags "-DNDEBUG"
 		append-cxxflags "-DNDEBUG"
@@ -291,7 +301,8 @@ src_configure() {
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBoost_USE_STATIC_LIBS=OFF
 		-DBUILD_TESTS=$(usex test ON OFF)
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/${EROCM_PATH}"
+	# Removed double slash (//) to fix error "file called with network path DESTINATION."
+		-DCMAKE_INSTALL_PREFIX=$(realpath -m "${EPREFIX}/${EROCM_PATH}")
 		-DCMAKE_SKIP_RPATH=ON
 		-DMIOPEN_BACKEND=HIP
 		-DMIOPEN_TEST_ALL=$(usex test ON OFF)
