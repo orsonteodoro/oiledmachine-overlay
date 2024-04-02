@@ -24,9 +24,13 @@ DESCRIPTION="Radeon Open Compute Thunk Interface"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface"
 CONFIG_CHECK="~HSA_AMD ~HMM_MIRROR ~ZONE_DEVICE ~DRM_AMDGPU ~DRM_AMDGPU_USERPTR"
 LICENSE="MIT"
+# Don't strip hsaKmtReplaceAsanHeaderPage \
+RESTRICT="
+	strip
+"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
-r2
+r3
 "
 RDEPEND="
 	!dev-libs/roct-thunk-interface:0
