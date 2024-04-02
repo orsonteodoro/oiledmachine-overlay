@@ -331,7 +331,21 @@ ewarn
 	fi
 }
 
+add_sandbox_rules() {
+	local exceptions=(
+		"/usr/lib/${EPYTHON}/site-packages/Cython/Distutils/__pycache__"
+		"/usr/lib/${EPYTHON}/site-packages/Cython.3/Distutils/__pycache__"
+	)
+einfo "Adding sandbox rules"
+	local path
+	for path in ${exceptions[@]} ; do
+einfo "addpredict ${path}"
+		addpredict "${path}"
+	done
+}
+
 src_compile() {
+	add_sandbox_rules
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 # Repeated fails when fetch is incomplete or not completely atomic.
 	if [[ ! -e "${distdir}/${PN}/${PV}/.finished" ]] ; then
@@ -357,21 +371,7 @@ einfo "Wiping incomplete yarn download."
 		"${wheel_path}"
 }
 
-add_sandbox_rules() {
-	local exceptions=(
-		"/usr/lib/${EPYTHON}/site-packages/Cython/Distutils/__pycache__"
-		"/usr/lib/${EPYTHON}/site-packages/Cython.3/Distutils/__pycache__"
-	)
-einfo "Adding sandbox rules"
-	local path
-	for path in ${exceptions[@]} ; do
-einfo "addpredict ${path}"
-		addpredict "${path}"
-	done
-}
-
 src_install() {
-	add_sandbox_rules
 	# The distutils eclass is broken.
 	local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
 	multibuild_merge_root "${d}" "${D%/}"
