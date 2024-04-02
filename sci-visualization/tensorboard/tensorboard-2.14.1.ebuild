@@ -332,8 +332,11 @@ check_file_count() {
 		| wc -l)
 	if (( ${nfiles_actual} != ${nfiles_expected} )) ; then
 ewarn
-ewarn "Detected missing files.  Run \`rm -rf ${distdir}/${PN}/${PV}\` if build"
-ewarn "doesn't work."
+ewarn "Detected missing files."
+ewarn
+ewarn "1. Retry again to re-download missing tarballs."
+ewarn "2. If the build doesn't work during the build step, run"
+ewarn "\`rm -rf ${distdir}/${PN}/${PV}\` if build fails."
 ewarn
 ewarn "nfile_actual:\t${nfiles_actual}."
 ewarn "nfile_expected:\t${nfiles_expected}."
@@ -367,7 +370,21 @@ einfo "Wiping incomplete yarn download."
 		"${wheel_path}"
 }
 
+add_sandbox_rules() {
+	local exceptions=(
+		"/usr/lib/${EPYTHON}/site-packages/Cython/Distutils/__pycache__"
+		"/usr/lib/${EPYTHON}/site-packages/Cython.3/Distutils/__pycache__"
+	)
+einfo "Adding sandbox rules"
+	local path
+	for path in ${exceptions[@]} ; do
+einfo "addpredict ${path}"
+		addpredict "${path}"
+	done
+}
+
 src_install() {
+	add_sandbox_rules
 	# The distutils eclass is broken.
 	local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
 	multibuild_merge_root "${d}" "${D%/}"
