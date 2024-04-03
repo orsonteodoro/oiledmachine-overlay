@@ -513,7 +513,7 @@ _compile() {
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
 		bits=default \
-		target=${configuration} \
+		target=${target} \
 		${options_extra[@]} \
 		"CFLAGS=${CFLAGS}" \
 		"CCFLAGS=${CXXFLAGS}" \
@@ -673,6 +673,7 @@ einfo "Creating export template"
 }
 
 src_compile_linux() {
+	local target="editor"
 	local configuration="release_debug"
 einfo "Building Linux editor"
 	if use mono ; then
