@@ -537,7 +537,7 @@ pkg_postinst() {
 	einfo "CPU microarchitectures:  See metadata.xml"
 	einfo
 	if use custom ; then
-		if use standard ; then
+		if use mono ; then
 einfo
 einfo "The following still must be done for export templates (Mono/C#):"
 einfo
@@ -545,7 +545,7 @@ einfo "  mkdir -p ~/.local/share/godot/templates/${PV}.${STATUS}.mono"
 einfo "  cp -aT /usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates/mono/templates ~/.local/share/godot/templates/${PV}.${STATUS}.mono"
 einfo
 		fi
-		if use mono ; then
+		if use standard ; then
 einfo
 einfo "The following still must be done for export templates (standard):"
 einfo
