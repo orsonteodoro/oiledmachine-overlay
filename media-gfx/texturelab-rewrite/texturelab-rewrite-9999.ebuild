@@ -46,7 +46,7 @@ https://github.com/githubuser0xFFFF/Qt-Advanced-Docking-System/archive/${QT_ADVA
 fi
 S="${WORKDIR}/${PN}-${PV}"
 
-DESCRIPTION="Qt rewrite of the Free, Cross-Platform, GPU-Accelerated Procedural Texture Generator"
+DESCRIPTION="A rewrite of the Free, Cross-Platform, GPU-Accelerated Procedural Texture Generator in Qt"
 HOMEPAGE="
 https://github.com/njbrown/texturelab/tree/rewrite
 "
