@@ -687,12 +687,14 @@ src_configure() {
 }
 
 _compile() {
+	# Define lto here because scons does not evaluate lto= as steady-state.
 	scons ${options_x11[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
 		bits=default \
 		target=${target} \
 		${options_extra[@]} \
+		lto=$(usex lto "thin" "none") \
 		"CFLAGS=${CFLAGS}" \
 		"CCFLAGS=${CXXFLAGS}" \
 		"LINKFLAGS=${LDFLAGS}" || die
@@ -830,7 +832,6 @@ einfo "Mono support:  Building final binary"
 	# CI adds mono_static=yes
 	options_extra=(
 		$(set_production)
-		lto=$(usex lto "thin" "none") # Define here because scons does not evaluate as steady-state
 		module_mono_enabled=yes
 
 # Will re-enable once the godot-mono-runtime* is complete
@@ -846,7 +847,6 @@ einfo "Creating export template"
 	# tools=yes (default)
 	local options_extra=(
 		$(set_production)
-		lto=$(usex lto "thin" "none") # Define here because scons does not evaluate as steady-state
 		module_mono_enabled=no
 	)
 	_compile
