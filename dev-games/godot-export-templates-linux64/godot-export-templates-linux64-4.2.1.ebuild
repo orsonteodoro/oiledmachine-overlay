@@ -680,6 +680,7 @@ einfo "Building for 64-bit Linux"
 		${options_extra[@]} \
 		bits=${bitness} \
 		target=${configuration} \
+		lto=$(usex lto "thin" "none") \
 		tools=no \
 		|| die
 }
