@@ -75,12 +75,11 @@ SLOT="0"
 # qsv is enabled by default upstream
 # vlc is enabled by default upstream
 IUSE+="
-+alsa aja amf +browser +browser-panels coreaudio-encoder
--decklink -fdk +freetype ftl +ipv6 jack libaom +lua +new-mpegts-output nvafx
-nvenc nvvfx oss +pipewire +pulseaudio +python +qt6 +rtmps +speexdsp -test
-+hevc mac-syphon qsv +rnnoise +service-updates -sndio +speexdsp svt-av1
-+v4l2 vaapi +vlc +virtualcam +vst +wayland +webrtc win-dshow +websocket -win-mf
-+whatsnew x264
++alsa aja amf +browser +browser-panels coreaudio-encoder -decklink -fdk
++freetype ftl +hevc +ipv6 jack libaom +lua  mac-syphon +new-mpegts-output nvafx
+nvenc nvvfx oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
++service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
++vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
 r6
 "
@@ -226,8 +225,7 @@ DEPEND_PLUGINS_AJA="
 		${DEPEND_LIBX11}
 		media-libs/ntv2
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui]
-			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=[X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui,widgets,X]
 		)
 	)
 "
@@ -251,7 +249,7 @@ DEPEND_PLUGINS_DECKLINK_CAPTIONS="
 	decklink? (
 		${DEPEND_LIBX11}
 		qt6? (
-			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=[X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[widgets,X]
 		)
 	)
 "
@@ -261,8 +259,7 @@ DEPEND_PLUGINS_DECKLINK_OUTPUT_UI="
 	decklink? (
 		${DEPEND_LIBX11}
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui]
-			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=[X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui,widgets,X]
 		)
 	)
 "
@@ -279,8 +276,7 @@ DEPEND_PLUGINS_DECKLINK="
 DEPEND_PLUGINS_FRONTEND_TOOLS="
 	${DEPEND_LIBX11}
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui]
-		>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=[X]
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui,widgets,X]
 	)
 "
 
@@ -338,7 +334,7 @@ DEPEND_PLUGINS_OBS_OUTPUTS="
 DEPEND_PLUGINS_OBS_BROWSER="
 	browser? (
 		qt6? (
-			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=[X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui,widgets,X]
 		)
 		|| (
 			>=net-libs/cef-bin-${CEF_PV}:=
@@ -374,7 +370,7 @@ DEPEND_PLUGINS_VST="
 	vst? (
 		${DEPEND_LIBOBS}
 		qt6? (
-			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=[X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[widgets,X]
 		)
 	)
 "
