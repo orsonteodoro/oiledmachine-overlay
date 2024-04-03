@@ -9,12 +9,11 @@ KEYWORDS="~amd64 ~riscv ~x86"
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 IUSE_EXPORT_TEMPLATES="
-android dedicated-server headless-server ios ios-plugins javascript linux32
-+linux64 macos mingw32 mingw64 prebuilt-export-templates
+android headless-server ios ios-plugins javascript linux32 +linux64 macos
+mingw32 mingw64 prebuilt-export-templates
 "
 IUSE=" ${IUSE_EXPORT_TEMPLATES} +demos -export-templates"
 REQUIRED_USE="
-	!dedicated-server
 	!headless-server
 	!ios-plugins
 "
@@ -23,9 +22,6 @@ RDEPEND="
 	dev-games/godot-editor:${SLOT}
 	android? (
 		dev-games/godot-export-templates-android:${SLOT}
-	)
-	dedicated-server? (
-		dev-games/godot-dedicated-server:${SLOT}
 	)
 	demos? (
 		dev-games/godot-demo-projects:${PV%%.*}/$(ver_cut 1-2 ${PV})

@@ -664,7 +664,7 @@ einfo "Building for 64-bit Linux"
 		${options_modules_shared[@]} \
 		${options_extra[@]} \
 		bits=${bitness} \
-		target=${configuration} \
+		target=template_${configuration} \
 		lto=$(usex lto "thin" "none") \
 		tools=no \
 		|| die
@@ -720,9 +720,9 @@ src_compile_linux_no_mono() {
 src_compile_linux() {
 	local bitness=64
 	local configuration
-	for configuration in release release_debug ; do
+	for configuration in release debug ; do
 einfo "Creating export template"
-		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
+		if ! use debug && [[ "${configuration}" == "debug" ]] ; then
 			continue
 		fi
 		if use mono ; then

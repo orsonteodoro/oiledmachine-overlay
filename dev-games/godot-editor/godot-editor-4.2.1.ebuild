@@ -854,7 +854,7 @@ einfo "Creating export template"
 
 src_compile_linux() {
 	local target="editor"
-	local configuration="release_debug"
+	local configuration="debug"
 einfo "Building Linux editor"
 	if use mono ; then
 		src_compile_linux_yes_mono

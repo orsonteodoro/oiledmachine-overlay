@@ -353,7 +353,7 @@ einfo "Creating export templates"
 		${options_modules[@]} \
 		${options_modules_static[@]} \
 		${options_extra[@]} \
-		target=${configuration} \
+		target=template_${configuration} \
 		tools=no \
 		|| die
 }
@@ -401,9 +401,9 @@ src_compile_javascript_no_mono() {
 src_compile_javascript()
 {
 	local configuration
-	for configuration in release release_debug ; do
+	for configuration in release debug ; do
 einfo "Creating export template"
-		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
+		if ! use debug && [[ "${configuration}" == "debug" ]] ; then
 			continue
 		fi
 		if use mono ; then

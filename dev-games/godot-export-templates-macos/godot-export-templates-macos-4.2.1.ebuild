@@ -320,7 +320,7 @@ src_configure() {
 
 get_configuration2() {
 	[[ "${configuration}" == "release" ]] && echo "opt"
-	[[ "${configuration}" == "release_debug" ]] && echo "opt.debug"
+	[[ "${configuration}" == "debug" ]] && echo "opt.debug"
 }
 
 get_configuration3() {
@@ -354,7 +354,7 @@ _compile()
 				${options_mono[@]} \
 				${options_extra[@]} \
 				arch=${arch} \
-				target=${configuration} \
+				target=template_${configuration} \
 				tools=no \
 				OSXCROSS_ROOT=${EGODOT_MACOS_SYSROOT} \
 				|| die
@@ -405,9 +405,9 @@ src_compile_osx()
 	cp -r misc/dist/osx_template.app . || die
 	mkdir -p osx_template.app/Contents/MacOS || die
 	local configuration
-	for configuration in release release_debug ; do
+	for configuration in release debug ; do
 		einfo "Creating export template"
-		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
+		if ! use debug && [[ "${configuration}" == "debug" ]] ; then
 			continue
 		fi
 		if use mono ; then

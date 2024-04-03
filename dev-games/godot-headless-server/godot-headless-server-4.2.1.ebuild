@@ -442,7 +442,8 @@ _compile() {
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
 		${options_extra[@]} \
-		target=${configuration} \
+		target=${target} \
+		lto=$(usex lto "thin" "none") \
 		tools=yes \
 		|| die
 }
@@ -497,7 +498,8 @@ src_configure_server_no_mono() {
 
 src_compile_server()
 {
-	local configuration="release_debug"
+	local target="editor"
+	local configuration="debug"
 einfo "Building headless editor server"
 	if use mono ; then
 		src_configure_server_yes_mono

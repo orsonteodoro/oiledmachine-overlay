@@ -310,7 +310,7 @@ _compile() {
 				${options_mono[@]} \
 				android_arch=${arch} \
 				bits=${bitness} \
-				target=${configuration} \
+				target=template_${configuration} \
 				tools=no \
 				ndk_platform=${NDK_PLATFORM} \
 				|| die
@@ -355,9 +355,9 @@ src_compile_android_no_mono() {
 
 src_compile_android() {
 	local configuration
-	for configuration in release release_debug ; do
+	for configuration in release debug ; do
 		einfo "Creating export template"
-		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
+		if ! use debug && [[ "${configuration}" == "debug" ]] ; then
 			continue
 		fi
 		if use mono ; then

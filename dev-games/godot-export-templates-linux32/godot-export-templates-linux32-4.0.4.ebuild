@@ -663,7 +663,7 @@ einfo "Building for 32-bit Linux"
 		${options_modules_shared[@]} \
 		${options_extra[@]} \
 		bits=${bitness} \
-		target=${configuration} \
+		target=template_${configuration} \
 		lto=$(usex lto "thin" "none") \
 		tools=no \
 		|| die
@@ -721,9 +721,9 @@ src_compile_linux() {
 	# This is to prevent a merge conflict
 	local bitness=32
 	local configuration
-	for configuration in release release_debug ; do
+	for configuration in release debug ; do
 einfo "Creating export template"
-		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
+		if ! use debug && [[ "${configuration}" == "debug" ]] ; then
 			continue
 		fi
 		if use mono ; then

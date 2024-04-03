@@ -314,7 +314,7 @@ src_configure() {
 
 get_configuration2() {
 	[[ "${configuration}" == "release" ]] && echo "opt"
-	[[ "${configuration}" == "release_debug" ]] && echo "opt.debug"
+	[[ "${configuration}" == "debug" ]] && echo "opt.debug"
 }
 
 get_configuration3() {
@@ -403,7 +403,7 @@ _compile() {
 				ios_simulator=${ios_simulator} \
 				arch=${arch} \
 				bits=${bitness} \
-				target=${configuration} \
+				target=template_${configuration} \
 				tools=no \
 				ios_triple=${ios_triple} \
 				|| die
@@ -466,9 +466,9 @@ src_compile_ios() {
 	mkdir -p "out"
 	cp -a misc/dist/ios_xcode/* "out" || die
 	local configuration
-	for configuration in release release_debug ; do
+	for configuration in release debug ; do
 		einfo "Creating export template"
-		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
+		if ! use debug && [[ "${configuration}" == "debug" ]] ; then
 			continue
 		fi
 		if use mono ; then

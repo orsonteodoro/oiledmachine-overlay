@@ -337,7 +337,7 @@ einfo "Building for Windows (x86-64)"
 		${options_modules_static[@]} \
 		${options_extra[@]} \
 		bits=${bitness} \
-		target=${configuration} \
+		target=template_${configuration} \
 		|| die
 }
 
@@ -383,9 +383,9 @@ src_compile_windows()
 {
 	local bitness=64
 	local configuration
-	for configuration in release release_debug ; do
+	for configuration in release debug ; do
 einfo "Creating export template"
-		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
+		if ! use debug && [[ "${configuration}" == "debug" ]] ; then
 			continue
 		fi
 		if use mono ; then
