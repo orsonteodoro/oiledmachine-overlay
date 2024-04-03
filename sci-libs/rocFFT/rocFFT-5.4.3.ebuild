@@ -14,6 +14,14 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1100
 	gfx1102
 )
+AMDGPU_TARGETS_AOT=(
+	gfx906
+	gfx908
+	gfx90a
+	gfx1030
+	gfx1100
+	gfx1102
+)
 CUDA_TARGETS_COMPAT=(
 	sm_60
 	sm_70
@@ -42,7 +50,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda perfscripts +rocm system-llvm test r2
++aot benchmark cuda perfscripts +rocm system-llvm test r2
 "
 gen_cuda_required_use() {
 	local x
@@ -68,6 +76,12 @@ REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
 	${PYTHON_REQUIRED_USE}
+	aot? (
+		rocm
+		|| (
+			${AMDGPU_TARGETS_AOT[@]/#/amdgpu_targets_}
+		)
+	)
 	cuda? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -132,6 +146,7 @@ RESTRICT="
 S="${WORKDIR}/rocFFT-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-add-stdexcept-header.patch"
+	"${FILESDIR}/${PN}-5.4.3-aot-optional.patch"
 	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
 )
 
@@ -229,6 +244,7 @@ src_configure() {
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+			-DBUILD_AOT=$(usex aot ON OFF)
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
