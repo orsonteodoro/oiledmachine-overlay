@@ -275,6 +275,14 @@ gen_rocm_depends() {
 				dev-util/rocm-compiler:${s}[system-llvm=]
 		"
 
+		if ver_test "${s}" -ge "5.5" ; then
+			echo "
+				rocm_${u}? (
+					~dev-libs/rocm-core-${pv}:${s}
+				)
+			"
+		fi
+
 		# Indirect dependencies
 		echo "
 				~dev-libs/rocm-comgr-${pv}:${s}
