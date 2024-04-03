@@ -1,0 +1,371 @@
+diff -urp texturelab-rewrite-9999.orig/src/ads/demo/CMakeLists.txt texturelab-rewrite-9999/src/ads/demo/CMakeLists.txt
+--- texturelab-rewrite-9999.orig/src/ads/demo/CMakeLists.txt	2024-04-02 20:00:18.832615266 -0700
++++ texturelab-rewrite-9999/src/ads/demo/CMakeLists.txt	2024-04-02 20:00:40.704424073 -0700
+@@ -1,5 +1,6 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_demo VERSION ${VERSION_SHORT}) 
++include(GNUInstallDirs)
+ 
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+ find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+@@ -33,9 +34,9 @@ set_target_properties(AdvancedDockingSys
+     CXX_EXTENSIONS OFF
+     VERSION ${VERSION_SHORT}
+     EXPORT_NAME "Qt Advanced Docking System Demo"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/bin"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_BINDIR}"
+ )
+ #if(BUILD_STATIC)
+ #    target_compile_definitions(AdvancedDockingSystemDemo PRIVATE ADS_STATIC)
+diff -urp texturelab-rewrite-9999.orig/src/ads/examples/centralwidget/CMakeLists.txt texturelab-rewrite-9999/src/ads/examples/centralwidget/CMakeLists.txt
+--- texturelab-rewrite-9999.orig/src/ads/examples/centralwidget/CMakeLists.txt	2024-04-02 20:00:19.008613727 -0700
++++ texturelab-rewrite-9999/src/ads/examples/centralwidget/CMakeLists.txt	2024-04-02 20:00:40.704424073 -0700
+@@ -1,5 +1,6 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_example_centralwidget VERSION ${VERSION_SHORT}) 
++include(GNUInstallDirs)
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+ find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+@@ -22,7 +23,7 @@ set_target_properties(CentralWidgetExamp
+     CXX_EXTENSIONS OFF
+     VERSION ${VERSION_SHORT}
+     EXPORT_NAME "Qt Advanced Docking System Central Widget Example"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/bin"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_BINDIR}"
+ )
+diff -urp texturelab-rewrite-9999.orig/src/ads/examples/deleteonclose/CMakeLists.txt texturelab-rewrite-9999/src/ads/examples/deleteonclose/CMakeLists.txt
+--- texturelab-rewrite-9999.orig/src/ads/examples/deleteonclose/CMakeLists.txt	2024-04-02 20:00:19.012613692 -0700
++++ texturelab-rewrite-9999/src/ads/examples/deleteonclose/CMakeLists.txt	2024-04-02 20:00:40.704424073 -0700
+@@ -1,5 +1,6 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_example_deleteonclose VERSION ${VERSION_SHORT}) 
++include(GNUInstallDirs)
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+ find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+@@ -18,7 +19,7 @@ set_target_properties(DeleteOnCloseTest
+     CXX_EXTENSIONS OFF
+     VERSION ${VERSION_SHORT}
+     EXPORT_NAME "Qt Advanced Docking System Delete on Close Example"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/bin"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_BINDIR}"
+ )
+diff -urp texturelab-rewrite-9999.orig/src/ads/examples/dockindock/CMakeLists.txt texturelab-rewrite-9999/src/ads/examples/dockindock/CMakeLists.txt
+--- texturelab-rewrite-9999.orig/src/ads/examples/dockindock/CMakeLists.txt	2024-04-02 20:00:19.012613692 -0700
++++ texturelab-rewrite-9999/src/ads/examples/dockindock/CMakeLists.txt	2024-04-02 20:00:40.704424073 -0700
+@@ -1,5 +1,6 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_example_dockindock VERSION ${VERSION_SHORT}) 
++include(GNUInstallDirs)
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+ find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+@@ -25,7 +26,7 @@ set_target_properties(DockInDockExample
+     CXX_EXTENSIONS OFF
+     VERSION ${VERSION_SHORT}
+     EXPORT_NAME "Qt Advanced Docking System Simple Example"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/bin"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_BINDIR}"
+ )
+diff -urp texturelab-rewrite-9999.orig/src/ads/examples/emptydockarea/CMakeLists.txt texturelab-rewrite-9999/src/ads/examples/emptydockarea/CMakeLists.txt
+--- texturelab-rewrite-9999.orig/src/ads/examples/emptydockarea/CMakeLists.txt	2024-04-02 20:00:19.012613692 -0700
++++ texturelab-rewrite-9999/src/ads/examples/emptydockarea/CMakeLists.txt	2024-04-02 20:00:40.704424073 -0700
+@@ -1,5 +1,6 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_example_centralwidget VERSION ${VERSION_SHORT}) 
++include(GNUInstallDirs)
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+ find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+@@ -22,7 +23,7 @@ set_target_properties(EmptyDockAreaExamp
+     CXX_EXTENSIONS OFF
+     VERSION ${VERSION_SHORT}
+     EXPORT_NAME "Qt Advanced Docking System Empty Dock Area Example"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/bin"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_BINDIR}"
+ )
+diff -urp texturelab-rewrite-9999.orig/src/ads/examples/hideshow/CMakeLists.txt texturelab-rewrite-9999/src/ads/examples/hideshow/CMakeLists.txt
+--- texturelab-rewrite-9999.orig/src/ads/examples/hideshow/CMakeLists.txt	2024-04-02 20:00:19.012613692 -0700
++++ texturelab-rewrite-9999/src/ads/examples/hideshow/CMakeLists.txt	2024-04-02 20:00:40.704424073 -0700
+@@ -1,5 +1,6 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_example_hideshow VERSION ${VERSION_SHORT}) 
++include(GNUInstallDirs)
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+ find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+@@ -22,7 +23,7 @@ set_target_properties(HideShowExample PR
+     CXX_EXTENSIONS OFF
+     VERSION ${VERSION_SHORT}
+     EXPORT_NAME "Qt Advanced Docking System Hide,Show Example"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/bin"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_BINDIR}"
+ )
+diff -urp texturelab-rewrite-9999.orig/src/ads/examples/sidebar/CMakeLists.txt texturelab-rewrite-9999/src/ads/examples/sidebar/CMakeLists.txt
+--- texturelab-rewrite-9999.orig/src/ads/examples/sidebar/CMakeLists.txt	2024-04-02 20:00:19.016613657 -0700
++++ texturelab-rewrite-9999/src/ads/examples/sidebar/CMakeLists.txt	2024-04-02 20:00:40.704424073 -0700
+@@ -1,5 +1,6 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_example_sidebar VERSION ${VERSION_SHORT}) 
++include(GNUInstallDirs)
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+ find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+@@ -22,7 +23,7 @@ set_target_properties(SidebarExample PRO
+     CXX_EXTENSIONS OFF
+     VERSION ${VERSION_SHORT}
+     EXPORT_NAME "Qt Advanced Docking System Sidebar Example"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/bin"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_BINDIR}"
+ )
+diff -urp texturelab-rewrite-9999.orig/src/ads/examples/simple/CMakeLists.txt texturelab-rewrite-9999/src/ads/examples/simple/CMakeLists.txt
+--- texturelab-rewrite-9999.orig/src/ads/examples/simple/CMakeLists.txt	2024-04-02 20:00:19.016613657 -0700
++++ texturelab-rewrite-9999/src/ads/examples/simple/CMakeLists.txt	2024-04-02 20:00:40.704424073 -0700
+@@ -1,5 +1,6 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(ads_example_simple VERSION ${VERSION_SHORT}) 
++include(GNUInstallDirs)
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+ find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets REQUIRED)
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+@@ -22,7 +23,7 @@ set_target_properties(SimpleExample PROP
+     CXX_EXTENSIONS OFF
+     VERSION ${VERSION_SHORT}
+     EXPORT_NAME "Qt Advanced Docking System Simple Example"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/bin"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_BINDIR}"
+ )
+diff -urp texturelab-rewrite-9999.orig/src/ads/src/CMakeLists.txt texturelab-rewrite-9999/src/ads/src/CMakeLists.txt
+--- texturelab-rewrite-9999.orig/src/ads/src/CMakeLists.txt	2024-04-02 20:00:19.020613621 -0700
++++ texturelab-rewrite-9999/src/ads/src/CMakeLists.txt	2024-04-02 20:03:10.123118459 -0700
+@@ -1,5 +1,6 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(QtAdvancedDockingSystem LANGUAGES CXX VERSION ${VERSION_SHORT})
++include(GNUInstallDirs)
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui Widgets REQUIRED)
+ if (UNIX AND NOT APPLE)
+@@ -76,9 +77,9 @@ set_target_properties(qtadvanceddocking
+     CXX_EXTENSIONS OFF
+     VERSION ${VERSION_SHORT}
+     EXPORT_NAME "qtadvanceddocking"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/lib"
+-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/bin"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_LIBDIR}"
++    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${ads_PlatformDir}/${CMAKE_INSTALL_BINDIR}"
+ )
+ if(QT_VERSION_MAJOR STREQUAL "5")
+     set_target_properties(qtadvanceddocking PROPERTIES
+@@ -97,30 +98,30 @@ write_basic_package_version_file(
+     COMPATIBILITY SameMajorVersion
+ )
+ install(FILES ${ads_HEADERS}
+-    DESTINATION include
++    DESTINATION ${CMAKE_INSTALL_LIBDIR}/texturelab/include
+     COMPONENT headers
+ )
+ install(FILES
+     "${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE"
+     "${CMAKE_CURRENT_SOURCE_DIR}/../gnu-lgpl-v2.1.md"
+-    DESTINATION license/ads
++    DESTINATION ${CMAKE_INSTALL_DATADIR}/doc/$ENV{PN}-$ENV{PVR}/licenses/ads
+     COMPONENT license
+ )
+ install(TARGETS qtadvanceddocking
+     EXPORT adsTargets
+-    RUNTIME DESTINATION bin
+-    LIBRARY DESTINATION lib
+-    ARCHIVE DESTINATION lib
+-    INCLUDES DESTINATION include
++    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
++    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/texturelab/${CMAKE_INSTALL_LIBDIR}
++    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/texturelab/${CMAKE_INSTALL_LIBDIR}
++    INCLUDES DESTINATION ${CMAKE_INSTALL_LIBDIR}/texturelab/include
+ )
+ 
+ install(EXPORT adsTargets
+     FILE adsTargets.cmake
+     NAMESPACE ads::
+-    DESTINATION lib/cmake/qtadvanceddocking
++    DESTINATION ${CMAKE_INSTALL_LIBDIR}/texturelab/cmake/qtadvanceddocking
+ )
+ install(FILES qtadvanceddockingConfig.cmake "${CMAKE_CURRENT_BINARY_DIR}/qtadvanceddockingConfigVersion.cmake"
+-    DESTINATION lib/cmake/qtadvanceddocking
++    DESTINATION ${CMAKE_INSTALL_LIBDIR}/texturelab/cmake/qtadvanceddocking
+ )
+ 
+ target_include_directories(qtadvanceddocking PUBLIC
+diff -urp texturelab-rewrite-9999.orig/src/colorpicker/CMakeLists.txt texturelab-rewrite-9999/src/colorpicker/CMakeLists.txt
+--- texturelab-rewrite-9999.orig/src/colorpicker/CMakeLists.txt	2024-04-02 20:00:17.824624078 -0700
++++ texturelab-rewrite-9999/src/colorpicker/CMakeLists.txt	2024-04-02 20:00:40.708424039 -0700
+@@ -1,5 +1,6 @@
+ 
+ cmake_minimum_required(VERSION 3.5)
++include(GNUInstallDirs)
+ 
+ 
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+@@ -29,9 +30,9 @@ set_target_properties(colorpicker PROPER
+     AUTORCC ON
+     CXX_EXTENSIONS OFF
+     EXPORT_NAME "Color Picker"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
++    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}"
+ )
+ 
+ if(QT_VERSION_MAJOR STREQUAL "5")
+@@ -60,9 +61,9 @@ set_target_properties(colorpicker_app PR
+     AUTORCC ON
+     CXX_EXTENSIONS OFF
+     EXPORT_NAME "Viewer Sample App"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
++    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}"
+ )
+ 
+ if(QT_VERSION_MAJOR STREQUAL "5")
+@@ -73,4 +74,4 @@ elseif(QT_VERSION_MAJOR STREQUAL "6")
+     set_target_properties(colorpicker_app PROPERTIES
+         CXX_STANDARD 17
+         CXX_STANDARD_REQUIRED ON)
+-endif()
+\ No newline at end of file
++endif()
+diff -urp texturelab-rewrite-9999.orig/src/nodegraph/CMakeLists.txt texturelab-rewrite-9999/src/nodegraph/CMakeLists.txt
+--- texturelab-rewrite-9999.orig/src/nodegraph/CMakeLists.txt	2024-04-02 20:00:17.824624078 -0700
++++ texturelab-rewrite-9999/src/nodegraph/CMakeLists.txt	2024-04-02 20:00:40.708424039 -0700
+@@ -1,5 +1,6 @@
+ 
+ cmake_minimum_required(VERSION 3.5)
++include(GNUInstallDirs)
+ 
+ 
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+@@ -34,9 +35,9 @@ set_target_properties(nodegraph PROPERTI
+     AUTORCC ON
+     CXX_EXTENSIONS OFF
+     EXPORT_NAME "Nodegraph Library"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
++    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}"
+ )
+ 
+ if(QT_VERSION_MAJOR STREQUAL "5")
+@@ -66,9 +67,9 @@ set_target_properties(nodegraph_app PROP
+     AUTORCC ON
+     CXX_EXTENSIONS OFF
+     EXPORT_NAME "Nodegraph App"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
++    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}"
+ )
+ 
+ if(QT_VERSION_MAJOR STREQUAL "5")
+@@ -83,4 +84,4 @@ endif()
+ 
+ # if(QT_VERSION_MAJOR EQUAL 6)
+ #     qt_finalize_executable(qtapp)
+-# endif()
+\ No newline at end of file
++# endif()
+diff -urp texturelab-rewrite-9999.orig/src/texturelab/CMakeLists.txt texturelab-rewrite-9999/src/texturelab/CMakeLists.txt
+--- texturelab-rewrite-9999.orig/src/texturelab/CMakeLists.txt	2024-04-02 20:00:17.828624042 -0700
++++ texturelab-rewrite-9999/src/texturelab/CMakeLists.txt	2024-04-02 20:00:40.708424039 -0700
+@@ -147,6 +147,7 @@ else()
+ endif()
+ 
+ # note: openglwidgets is qt6 only
++target_link_options(texturelab PUBLIC -Wl,-rpath=${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/texturelab/${CMAKE_INSTALL_LIBDIR})
+ target_link_libraries(texturelab PRIVATE Qt${QT_VERSION_MAJOR}::Widgets 
+                                          Qt${QT_VERSION_MAJOR}::OpenGL 
+                                          Qt${QT_VERSION_MAJOR}::OpenGLWidgets 
+diff -urp texturelab-rewrite-9999.orig/src/viewer3d/CMakeLists.txt texturelab-rewrite-9999/src/viewer3d/CMakeLists.txt
+--- texturelab-rewrite-9999.orig/src/viewer3d/CMakeLists.txt	2024-04-02 20:00:17.840623938 -0700
++++ texturelab-rewrite-9999/src/viewer3d/CMakeLists.txt	2024-04-02 20:00:40.708424039 -0700
+@@ -1,6 +1,6 @@
+ 
+ cmake_minimum_required(VERSION 3.5)
+-
++include(GNUInstallDirs)
+ 
+ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+ find_package(Qt${QT_VERSION_MAJOR} 5.5 COMPONENTS Core Gui Widgets OpenGLWidgets REQUIRED)
+@@ -46,9 +46,9 @@ set_target_properties(viewer3d PROPERTIE
+     AUTORCC ON
+     CXX_EXTENSIONS OFF
+     EXPORT_NAME "3d Viewer"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
++    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}"
+ )
+ 
+ if(QT_VERSION_MAJOR STREQUAL "5")
+@@ -79,8 +79,8 @@ set_target_properties(viewer3d_app PROPE
+     AUTORCC ON
+     CXX_EXTENSIONS OFF
+     EXPORT_NAME "Viewer Sample App"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
+     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+ )
+ 
+@@ -92,4 +92,4 @@ elseif(QT_VERSION_MAJOR STREQUAL "6")
+     set_target_properties(viewer3d_app PROPERTIES
+         CXX_STANDARD 17
+         CXX_STANDARD_REQUIRED ON)
+-endif()
+\ No newline at end of file
++endif()
