@@ -41,7 +41,8 @@ DESCRIPTION="CU / ROCM agnostic hip FFT implementation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipFFT"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-cuda +rocm r1
+cuda +rocm system-llvm
+r1
 "
 gen_cuda_required_use() {
 	local x
