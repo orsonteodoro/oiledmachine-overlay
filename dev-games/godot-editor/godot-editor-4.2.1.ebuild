@@ -830,6 +830,7 @@ einfo "Mono support:  Building final binary"
 	# CI adds mono_static=yes
 	options_extra=(
 		$(set_production)
+		lto=$(usex lto "thin" "none") # Define here because scons does not evaluate as steady-state
 		module_mono_enabled=yes
 
 # Will re-enable once the godot-mono-runtime* is complete
@@ -845,6 +846,7 @@ einfo "Creating export template"
 	# tools=yes (default)
 	local options_extra=(
 		$(set_production)
+		lto=$(usex lto "thin" "none") # Define here because scons does not evaluate as steady-state
 		module_mono_enabled=no
 	)
 	_compile
@@ -867,6 +869,7 @@ src_compile() {
 		production=$(usex !debug)
 	)
 	local options_linux=(
+		lto=$(usex lto "thin" "none")
 		platform="linuxbsd"
 	)
 	local options_x11=(

@@ -812,6 +812,7 @@ einfo "Mono support:  Building the Mono glue generator"
 	# mono_glue=yes (default)
 	local options_extra=(
 		$(set_production)
+		lto=$(usex lto "thin" "none") # Define here because scons does not evaluate as steady-state
 		module_mono_enabled=yes
 		mono_glue=no
 	)
@@ -838,6 +839,7 @@ einfo "Creating export template"
 	# tools=yes (default)
 	local options_extra=(
 		$(set_production)
+		lto=$(usex lto "thin" "none") # Define here because scons does not evaluate as steady-state
 		module_mono_enabled=no
 	)
 	_compile
