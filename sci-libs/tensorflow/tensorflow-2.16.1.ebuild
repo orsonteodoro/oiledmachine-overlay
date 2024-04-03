@@ -204,6 +204,7 @@ EGIT_COMMIT_FXDIV="63058eff77e11aa15bf531df5dd34395ec3017c8"			# From https://gi
 EGIT_COMMIT_GEMMLOWP="16e8662c34917be0065110bfcd9cc27d30f52fdf"			# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/gemmlowp/workspace.bzl
 EGIT_COMMIT_GOOGLEAPIS="6b3fdcea8bc5398be4e7e9930c693f0ea09316a0"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl#L305
 EGIT_COMMIT_HIGHWAYHASH="c13d28517a4db259d738ea4886b1f00352a3cc33"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/highwayhash/workspace.bzl
+EGIT_COMMIT_IMPLIB_SO="5fb84c2a750434b9df1da67d67b749eb929598f1"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/implib_so/workspace.bzl#L9
 EGIT_COMMIT_LIBEIGEN="aa6964bf3a34fd607837dd8123bc42465185c4f8"			# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/eigen3/workspace.bzl
 EGIT_COMMIT_LLVM="8697bbe2d4aed109520e83c6beab52196ec5b702"			# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/llvm/workspace.bzl
 EGIT_COMMIT_ML_DTYPES="2ca30a2b3c0744625ae3d6988f5596740080bbd0"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/py/ml_dtypes/workspace.bzl#L10
@@ -270,10 +271,12 @@ https://github.com/google/XNNPACK/archive/${EGIT_COMMIT_XNNPACK}.zip -> XNNPACK-
 https://github.com/Maratyszcza/pthreadpool/archive/${EGIT_COMMIT_PTHREADPOOL}.zip -> pthreadpool-${EGIT_COMMIT_PTHREADPOOL}.zip
 https://github.com/Maratyszcza/FP16/archive/${EGIT_COMMIT_FP16}.zip -> FP16-${EGIT_COMMIT_FP16}.zip
 https://github.com/Maratyszcza/FXdiv/archive/${EGIT_COMMIT_FXDIV}.zip -> FXdiv-${EGIT_COMMIT_FXDIV}.zip
+https://github.com/yugr/Implib.so/archive/${EGIT_COMMIT_IMPLIB_SO}.tar.gz -> Implib.so-${EGIT_COMMIT_IMPLIB_SO}.tar.gz
 https://gitlab.com/libeigen/eigen/-/archive/${EGIT_COMMIT_LIBEIGEN}/eigen-${EGIT_COMMIT_LIBEIGEN}.tar.gz -> eigen-${EGIT_COMMIT_LIBEIGEN}.tar.gz
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/jax-ml/ml_dtypes/archive/${EGIT_COMMIT_ML_DTYPES}/ml_dtypes-${EGIT_COMMIT_ML_DTYPES}.tar.gz -> ml_dtypes-${EGIT_COMMIT_ML_DTYPES}.tar.gz
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.zip -> protobuf-${PROTOBUF_PV}.zip
 https://storage.googleapis.com/mirror.tensorflow.org/gitlab.mpcdf.mpg.de/mtr/ducc/-/archive/${EGIT_COMMIT_DUCC}/ducc-${EGIT_COMMIT_DUCC}.tar.gz
+
 	cuda? (
 https://github.com/NVIDIA/cudnn-frontend/archive/refs/tags/v${CUDNN_FRONTEND_PV}.zip -> cudnn-frontend-v${CUDNN_FRONTEND_PV}.zip
 https://github.com/NVlabs/cub/archive/${CUB_PV}.zip -> cub-${CUB_PV}.zip

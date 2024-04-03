@@ -198,6 +198,7 @@ EGIT_COMMIT_FXDIV="63058eff77e11aa15bf531df5dd34395ec3017c8"			# From https://gi
 EGIT_COMMIT_GEMMLOWP="e844ffd17118c1e17d94e1ba4354c075a4577b88"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/gemmlowp/workspace.bzl
 EGIT_COMMIT_GOOGLEAPIS="6b3fdcea8bc5398be4e7e9930c693f0ea09316a0"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl#L305
 EGIT_COMMIT_HIGHWAYHASH="c13d28517a4db259d738ea4886b1f00352a3cc33"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/highwayhash/workspace.bzl
+EGIT_COMMIT_IMPLIB_SO="5fb84c2a750434b9df1da67d67b749eb929598f1"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/implib_so/workspace.bzl#L9
 EGIT_COMMIT_LIBEIGEN="66e8f38891841bf88ee976a316c0c78a52f0cee5"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/eigen3/workspace.bzl
 EGIT_COMMIT_LLVM="49cb1595c1b3ae1de3684fea6148363c15bae12a"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/llvm/workspace.bzl
 EGIT_COMMIT_ML_DTYPES="2ca30a2b3c0744625ae3d6988f5596740080bbd0"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/py/ml_dtypes/workspace.bzl#L10
@@ -266,6 +267,7 @@ https://github.com/google/XNNPACK/archive/${EGIT_COMMIT_XNNPACK}.zip -> XNNPACK-
 https://github.com/Maratyszcza/pthreadpool/archive/${EGIT_COMMIT_PTHREADPOOL}.zip -> pthreadpool-${EGIT_COMMIT_PTHREADPOOL}.zip
 https://github.com/Maratyszcza/FP16/archive/${EGIT_COMMIT_FP16}.zip -> FP16-${EGIT_COMMIT_FP16}.zip
 https://github.com/Maratyszcza/FXdiv/archive/${EGIT_COMMIT_FXDIV}.zip -> FXdiv-${EGIT_COMMIT_FXDIV}.zip
+https://github.com/yugr/Implib.so/archive/${EGIT_COMMIT_IMPLIB_SO}.tar.gz -> Implib.so-${EGIT_COMMIT_IMPLIB_SO}.tar.gz
 https://gitlab.com/libeigen/eigen/-/archive/${EGIT_COMMIT_LIBEIGEN}/eigen-${EGIT_COMMIT_LIBEIGEN}.tar.gz -> eigen-${EGIT_COMMIT_LIBEIGEN}.tar.gz
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/jax-ml/ml_dtypes/archive/${EGIT_COMMIT_ML_DTYPES}/ml_dtypes-${EGIT_COMMIT_ML_DTYPES}.tar.gz -> ml_dtypes-${EGIT_COMMIT_ML_DTYPES}.tar.gz
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.zip -> protobuf-${PROTOBUF_PV}.zip
