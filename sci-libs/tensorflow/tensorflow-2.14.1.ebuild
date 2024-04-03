@@ -503,6 +503,13 @@ gen_rocm_rdepend() {
 				)
 			)
 		"
+		if ver_test "${s}" -ge "5.5" ; then
+			echo "
+				rocm_${u}? (
+					~dev-libs/rocm-core-${pv}:${s}
+				)
+			"
+		fi
 	done
 }
 
