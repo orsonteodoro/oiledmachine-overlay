@@ -500,6 +500,7 @@ gen_rocm_rdepend() {
 				~dev-util/hip-${pv}:${s}[rocm,system-llvm=]
 				~dev-util/roctracer-${pv}:${s}
 				~sci-libs/hipBLAS-${pv}:${s}[rocm]
+				~sci-libs/hipFFT-${pv}:${s}[rocm]
 				~sci-libs/hipSOLVER-${pv}:${s}[rocm]
 				~sci-libs/hipSPARSE-${pv}:${s}[rocm]
 				~sci-libs/rocBLAS-${pv}:${s}[rocm]

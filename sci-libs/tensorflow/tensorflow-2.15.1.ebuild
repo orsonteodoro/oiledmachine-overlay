@@ -475,7 +475,7 @@ CUDA_CDEPEND="
 	(
 		<dev-util/nvidia-cuda-toolkit-$(( $(ver_cut 1 ${CUDA_PV}) + 1 )):=[profiler]
 		>=dev-util/nvidia-cuda-toolkit-${CUDA_PV}:=[profiler]
-		sys-devel/gcc:12
+		sys-devel/gcc:${GCC_SLOT_WITH_CUDA}
 	)
 "
 
@@ -493,6 +493,7 @@ gen_rocm_rdepend() {
 				~dev-util/hip-${pv}:${s}[rocm,system-llvm=]
 				~dev-util/roctracer-${pv}:${s}
 				~sci-libs/hipBLAS-${pv}:${s}[rocm]
+				~sci-libs/hipFFT-${pv}:${s}[rocm]
 				~sci-libs/hipSOLVER-${pv}:${s}[rocm]
 				~sci-libs/hipSPARSE-${pv}:${s}[rocm]
 				~sci-libs/rocBLAS-${pv}:${s}[rocm]
