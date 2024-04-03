@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/RodZill4/material-maker/issues</bugs-to>
+    <remote-id type="github">RodZill4/material-maker</remote-id>
+  </upstream>
+  <use>
+    <flag name="desktop">
+      Build the production desktop version.
+    </flag>
+    <flag name="html5">
+      Build the evaluation version only for the web browser.
+    </flag>
+  </use>
+</pkgmetadata>

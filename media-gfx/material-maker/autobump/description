@@ -1,0 +1,4 @@
+AUTOBUMP=1
+CATEGORY="dev-games"
+PN="material-maker"
+BUMP_POLICY="new-patch-versions-per-minor-major"
