@@ -774,9 +774,8 @@ PATCHES=(
 )
 ROCM_PATCHES=(
 	"0050-fix-rocm-build-scripts.patch"
-#	"0050-fix-rocm-headers.patch" # Enable if >= ROCm 5.6 ; Patch not updated
+	"0050-fix-rocm-headers.patch"
 	"0050-fix-rocm-source-code.patch"
-#	"0050-fix-rocm-support-find_rocm_config.patch" # Enable if >= ROCm 5.6 ; Patch not updated
 	"0050-fix-rocm-support.patch"
 	"0050-toolchain-prefix.patch"
 )
@@ -1329,14 +1328,6 @@ einfo "Preventing stall.  Removing -Os."
 	# Prefixify hard-coded command locations
 	hprefixify -w /host_compiler_prefix/ third_party/gpus/cuda_configure.bzl
 
-	sed -i -e "s|@TENSORFLOW_PV@|${PV}|g" \
-		"${S}/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl" \
-		|| die
-
-	sed -i -e "s|@TENSORFLOW_PV@|${PV}|g" \
-		"${S}/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
-		|| die
-
 	gen_gcc_ar
 
 	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
@@ -1348,6 +1339,16 @@ einfo "Preventing stall.  Removing -Os."
 	default
 
 	patch_rocm
+
+	if use rocm ; then
+		sed -i -e "s|@TENSORFLOW_PV@|${PV}|g" \
+			"${S}/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl" \
+			|| die
+
+		sed -i -e "s|@TENSORFLOW_PV@|${PV}|g" \
+			"${S}/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
+			|| die
+	fi
 
 	use python && python_copy_sources
 

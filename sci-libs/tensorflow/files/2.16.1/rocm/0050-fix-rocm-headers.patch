@@ -2,75 +2,8 @@
 Original patch:  https://gist.githubusercontent.com/raw/ed891528aacf0c5baf3a789e5e9aaead
 Context:  https://bugs.gentoo.org/705712#c29
 
-diff -urp tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/hipsolver_wrapper.h tensorflow-2.13.0/tensorflow/compiler/xla/stream_executor/rocm/hipsolver_wrapper.h
---- tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/hipsolver_wrapper.h	2023-06-28 11:38:35.000000000 -0700
-+++ tensorflow-2.13.0/tensorflow/compiler/xla/stream_executor/rocm/hipsolver_wrapper.h	2023-08-16 10:55:21.013539390 -0700
-@@ -24,7 +24,7 @@ limitations under the License.
- 
- #if TF_ROCM_VERSION >= 40500
- 
--#include "rocm/include/hipsolver.h"
-+#include "rocm/include/hipsolver/hipsolver.h"
- #include "tensorflow/compiler/xla/stream_executor/platform/dso_loader.h"
- #include "tensorflow/compiler/xla/stream_executor/platform/port.h"
- #include "tensorflow/tsl/platform/env.h"
-diff -urp tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/hipsparse_wrapper.h tensorflow-2.13.0/tensorflow/compiler/xla/stream_executor/rocm/hipsparse_wrapper.h
---- tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/hipsparse_wrapper.h	2023-06-28 11:38:35.000000000 -0700
-+++ tensorflow-2.13.0/tensorflow/compiler/xla/stream_executor/rocm/hipsparse_wrapper.h	2023-08-16 10:55:21.013539390 -0700
-@@ -21,7 +21,7 @@ limitations under the License.
- #define TENSORFLOW_COMPILER_XLA_STREAM_EXECUTOR_ROCM_HIPSPARSE_WRAPPER_H_
- 
- #if (TF_ROCM_VERSION >= 50200)
--#include "rocm/include/hipsparse/hipsparse.h"
-+#include "rocm/include/hipsparse/hipsparse.h"
- #else
- #include "rocm/include/hipsparse.h"
- #endif
-diff -urp tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/rocm_blas.h tensorflow-2.13.0/tensorflow/compiler/xla/stream_executor/rocm/rocm_blas.h
---- tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/rocm_blas.h	2023-06-28 11:38:35.000000000 -0700
-+++ tensorflow-2.13.0/tensorflow/compiler/xla/stream_executor/rocm/rocm_blas.h	2023-08-16 10:55:21.013539390 -0700
-@@ -23,7 +23,7 @@ limitations under the License.
- #include "absl/base/thread_annotations.h"
- #include "absl/synchronization/mutex.h"
- #include "absl/types/span.h"
--#include "rocm/include/rocblas.h"
-+#include "rocm/include/rocblas/rocblas.h"
- #include "tensorflow/compiler/xla/stream_executor/blas.h"
- #include "tensorflow/compiler/xla/stream_executor/platform/port.h"
- #include "tensorflow/compiler/xla/stream_executor/plugin_registry.h"
-diff -urp tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/rocm_fft.h tensorflow-2.13.0/tensorflow/compiler/xla/stream_executor/rocm/rocm_fft.h
---- tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/rocm_fft.h	2023-06-28 11:38:35.000000000 -0700
-+++ tensorflow-2.13.0/tensorflow/compiler/xla/stream_executor/rocm/rocm_fft.h	2023-08-16 10:55:31.541539052 -0700
-@@ -22,12 +22,12 @@ limitations under the License.
- 
- #if TENSORFLOW_USE_ROCM
- 
-+#include "rocm/rocm_config.h"
- #if (TF_ROCM_VERSION >= 50200)
--#include "rocm/include/hipfft/hipfft.h"
-+#include "rocm/include/hipfft/hipfft.h"
- #else
- #include "rocm/include/hipfft.h"
- #endif
--#include "rocm/rocm_config.h"
- 
- #endif
- 
-diff -urp tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/rocsolver_wrapper.h tensorflow-2.13.0/tensorflow/compiler/xla/stream_executor/rocm/rocsolver_wrapper.h
---- tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/rocsolver_wrapper.h	2023-06-28 11:38:35.000000000 -0700
-+++ tensorflow-2.13.0/tensorflow/compiler/xla/stream_executor/rocm/rocsolver_wrapper.h	2023-08-16 10:55:21.013539390 -0700
-@@ -22,7 +22,7 @@ limitations under the License.
- 
- #include "rocm/rocm_config.h"
- #if (TF_ROCM_VERSION >= 50200)
--#include "rocm/include/rocsolver/rocsolver.h"
-+#include "rocm/include/rocsolver/rocsolver.h"
- #else
- #include "rocm/include/rocsolver.h"
- #endif
-diff -urp tensorflow-2.13.0.orig/tensorflow/core/util/gpu_solvers.h tensorflow-2.13.0/tensorflow/core/util/gpu_solvers.h
---- tensorflow-2.13.0.orig/tensorflow/core/util/gpu_solvers.h	2023-06-28 11:38:35.000000000 -0700
-+++ tensorflow-2.13.0/tensorflow/core/util/gpu_solvers.h	2023-08-16 10:55:21.013539390 -0700
+--- a/tensorflow/core/util/gpu_solvers.h.orig	2024-03-05 16:30:15.000000000 -0800
++++ b/tensorflow/core/util/gpu_solvers.h	2024-04-03 15:25:09.333985812 -0700
 @@ -32,7 +32,7 @@ limitations under the License.
  #include "third_party/gpus/cuda/include/cusolverDn.h"
  #else
@@ -78,5 +11,5 @@ diff -urp tensorflow-2.13.0.orig/tensorflow/core/util/gpu_solvers.h tensorflow-2
 -#include "rocm/include/rocblas.h"
 +#include "rocm/include/rocblas/rocblas.h"
  #include "rocm/rocm_config.h"
- #include "tensorflow/compiler/xla/stream_executor/blas.h"
+ #include "xla/stream_executor/blas.h"
  #if TF_ROCM_VERSION >= 40500
