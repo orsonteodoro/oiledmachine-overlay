@@ -60,7 +60,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSPARSE"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="cuda +rocm system-llvm test r2"
+IUSE="cuda +rocm system-llvm test r3"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
@@ -148,7 +148,7 @@ src_configure() {
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
-		-DCMAKE_INSTALL_INCLUDEDIR="include/hipsparse"
+		-DCMAKE_INSTALL_INCLUDEDIR="include"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DUSE_CUDA=$(usex cuda ON OFF)
 	)
