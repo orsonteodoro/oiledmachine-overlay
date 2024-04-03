@@ -246,7 +246,7 @@ https://github.com/bazelbuild/rules_swift/releases/download/${RULES_SWIFT_PV}/ru
 https://github.com/dmlc/dlpack/archive/${EGIT_COMMIT_DLPACK}.tar.gz -> dlpack-${EGIT_COMMIT_DLPACK}.tar.gz
 https://github.com/facebook/zstd/archive/v${ZSTD_PV}.zip -> zstd-v${ZSTD_PV}.tar.gz
 https://github.com/google/benchmark/archive/${EGIT_COMMIT_BENCHMARK}.tar.gz -> benchmark-${EGIT_COMMIT_FARMHASH}.tar.gz
-https://github.com/google/brotli/archive/${EGIT_COMMIT_BROTLI}.zip -> brotli-${EGIT_COMMIT_BROTLI}
+https://github.com/google/brotli/archive/${EGIT_COMMIT_BROTLI}.zip -> brotli-${EGIT_COMMIT_BROTLI}.zip
 https://github.com/google/farmhash/archive/${EGIT_COMMIT_FARMHASH}.tar.gz -> farmhash-${EGIT_COMMIT_FARMHASH}.tar.gz
 https://github.com/google/gemmlowp/archive/${EGIT_COMMIT_GEMMLOWP}.zip -> gemmlowp-${EGIT_COMMIT_GEMMLOWP}.zip
 https://github.com/google/highwayhash/archive/${EGIT_COMMIT_HIGHWAYHASH}.tar.gz -> highwayhash-${EGIT_COMMIT_HIGHWAYHASH}.tar.gz
