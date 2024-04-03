@@ -1495,8 +1495,8 @@ einfo
 			export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags \
 				| tr ";" ",")
 			export TF_ROCM_LLVM_SLOT="${LLVM_SLOT}"
-			export HIP_PATH="${EPREFIX}/usr"
-			export ROCM_PATH="${EPREFIX}/usr"
+			export HIP_PATH="${ROCM_PATH}"
+			export ROCM_PATH="${ROCM_PATH}"
 
 # See https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/.bazelrc#L296
 			local gcc_slot=$(gcc-major-version)

@@ -45,7 +45,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
-benchmark cuda +rocm system-llvm +tensile r1
+benchmark cuda +rocm system-llvm +tensile r2
 "
 gen_cuda_required_use() {
 	local x
@@ -214,7 +214,7 @@ ewarn
 		)
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
-		export ROCM_PATH="${ESYSROOT}/usr"
+		export ROCM_PATH="${ROCM_PATH}"
 		einfo "get_amdgpu_flags:  $(get_amdgpu_flags)"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"

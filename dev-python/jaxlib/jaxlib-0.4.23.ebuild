@@ -1022,7 +1022,7 @@ ewarn
 		export HOST_C_COMPILER="${EPREFIX}/usr/bin/${CC}"
 		export HOST_CXX_COMPILER="${EPREFIX}/usr/bin/${CXX}"
 		export JAX_ROCM_VERSION="${rocm_version//./}"
-		export ROCM_PATH="${ESYSROOT}/usr"
+		export ROCM_PATH="${ROCM_PATH}"
 		export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags \
 			| tr ";" ",")
 einfo "GCC_HOST_COMPILER_PATH:  ${GCC_HOST_COMPILER_PATH}"

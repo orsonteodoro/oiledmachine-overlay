@@ -16,7 +16,7 @@
    if (NOT DEFINED ROCM_PATH)
      if (NOT DEFINED ENV{ROCM_PATH})
 -      set(ROCM_PATH "/opt/rocm" CACHE PATH "Path to which ROCm has been installed")
-+      set(ROCM_PATH "/usr" CACHE PATH "Path to which ROCm has been installed")
++      set(ROCM_PATH "@EPREFIX_ROCM_PATH@" CACHE PATH "Path to which ROCm has been installed")
      else()
        set(ROCM_PATH $ENV{ROCM_PATH} CACHE PATH "Path to which ROCm has been installed")
      endif()
@@ -36,7 +36,7 @@
    endif()
  
 -  set(DEFAULT_ROCM_PATH "/opt/rocm" CACHE PATH "Fallback path to search for ROCm installs")
-+  set(DEFAULT_ROCM_PATH "/usr" CACHE PATH "Fallback path to search for ROCm installs")
++  set(DEFAULT_ROCM_PATH "@EPREFIX_ROCM_PATH@" CACHE PATH "Fallback path to search for ROCm installs")
    target_compile_definitions(obj.MLIRGPUTransforms
      PRIVATE
      __DEFAULT_ROCM_PATH__="${DEFAULT_ROCM_PATH}"

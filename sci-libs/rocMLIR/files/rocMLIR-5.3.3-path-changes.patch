@@ -254,7 +254,7 @@ diff -urp rocMLIR-rocm-5.3.3.orig/mlir/tools/mlir-rocm-runner/CMakeLists.txt roc
 -  find_package(HIP)
 -  if (NOT HIP_FOUND)
 +  if (NOT DEFINED ROCM_PATH) # oteodoro:  added
-+    set(ROCM_PATH "/usr")
++    set(ROCM_PATH "@EPREFIX_ROCM_PATH@")
 +  endif()
 +  set(HIP_PATH "${ROCM_PATH}" CACHE PATH " Path to which HIP has been installed") # oteodoro:  edited
 +  set(CMAKE_MODULE_PATH "${HIP_PATH}/@LIBDIR@/cmake/hip" ${CMAKE_MODULE_PATH}) # oteodoro:  edited

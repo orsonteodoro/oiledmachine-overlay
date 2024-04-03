@@ -24,7 +24,7 @@ LICENSE="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE="
 	debug rocm_4_3 rocm_4_5 test
-	r2
+	r3
 "
 REQUIRED_USE="
 	rocm_4_3? (
