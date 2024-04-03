@@ -236,11 +236,11 @@ Context:  https://bugs.gentoo.org/705712#c29
 +    repository_ctx,
 +    name = "files",
 +        srcs = [
-+            "/usr/include/hipblas.h",           # oteodoro:  sorted/updated for distro
-+            "/usr/include/hipblas-export.h",
-+            "/usr/include/hipblas-version.h",
-+            "/usr/include/nccl_net.h",
-+            "/usr/include/rccl.h",
++            "@ESYSROOT_LLVM_PATH@/include/hipblas/hipblas.h",           # oteodoro:  sorted/updated for distro
++            "@ESYSROOT_LLVM_PATH@/include/hipblas/hipblas-export.h",
++            "@ESYSROOT_LLVM_PATH@/include/hipblas/hipblas-version.h",
++            "@ESYSROOT_LLVM_PATH@/include/rccl/nccl_net.h",
++            "@ESYSROOT_LLVM_PATH@/include/rccl/rccl.h",
 +        ],
 +        outs = [
 +            "rocm/include/hipblas.h",
