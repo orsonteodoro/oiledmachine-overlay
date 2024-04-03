@@ -35,7 +35,7 @@ DESCRIPTION="CU / ROCM agnostic hip FFT implementation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipFFT"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-cuda +rocm
+cuda +rocm r1
 "
 gen_cuda_required_use() {
 	local x
@@ -115,7 +115,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_RIDER=OFF
 		-DBUILD_CLIENTS_TESTS=OFF
-		-DCMAKE_INSTALL_INCLUDEDIR="include/hipfft"
+		-DCMAKE_INSTALL_INCLUDEDIR="include"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_MODULE_PATH="${EPREFIX}/usr/$(get_libdir)/cmake"
 		-DCMAKE_MODULE_PATH="${EPREFIX}/usr/$(get_libdir)/cmake/hip"

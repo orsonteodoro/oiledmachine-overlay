@@ -40,7 +40,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda perfscripts +rocm system-llvm test r2
+benchmark cuda perfscripts +rocm system-llvm test r4
 "
 gen_cuda_required_use() {
 	local x
@@ -195,7 +195,7 @@ src_configure() {
 		-DBUILD_CLIENTS_RIDER=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SELFTEST=$(usex test ON OFF)
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
-		-DCMAKE_INSTALL_INCLUDEDIR="include/rocFFT/"
+		-DCMAKE_INSTALL_INCLUDEDIR="include"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_SKIP_RPATH=ON
 		-DPYTHON3_EXE="${EPYTHON}"

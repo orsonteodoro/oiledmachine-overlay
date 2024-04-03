@@ -10,7 +10,7 @@ diff -urp tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/hi
  #if TF_ROCM_VERSION >= 40500
  
 -#include "rocm/include/hipsolver.h"
-+#include "rocm/include/hipsolver/hipsolver/hipsolver.h"
++#include "rocm/include/hipsolver/hipsolver.h"
  #include "tensorflow/compiler/xla/stream_executor/platform/dso_loader.h"
  #include "tensorflow/compiler/xla/stream_executor/platform/port.h"
  #include "tensorflow/tsl/platform/env.h"
@@ -22,7 +22,7 @@ diff -urp tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/hi
  
  #if (TF_ROCM_VERSION >= 50200)
 -#include "rocm/include/hipsparse/hipsparse.h"
-+#include "rocm/include/hipsparse/hipsparse/hipsparse.h"
++#include "rocm/include/hipsparse/hipsparse.h"
  #else
  #include "rocm/include/hipsparse.h"
  #endif
@@ -48,7 +48,7 @@ diff -urp tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/ro
 +#include "rocm/rocm_config.h"
  #if (TF_ROCM_VERSION >= 50200)
 -#include "rocm/include/hipfft/hipfft.h"
-+#include "rocm/include/hipfft/hipfft/hipfft.h"
++#include "rocm/include/hipfft/hipfft.h"
  #else
  #include "rocm/include/hipfft.h"
  #endif
@@ -64,7 +64,7 @@ diff -urp tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/ro
  #include "rocm/rocm_config.h"
  #if (TF_ROCM_VERSION >= 50200)
 -#include "rocm/include/rocsolver/rocsolver.h"
-+#include "rocm/include/rocsolver/rocsolver/rocsolver.h"
++#include "rocm/include/rocsolver/rocsolver.h"
  #else
  #include "rocm/include/rocsolver.h"
  #endif

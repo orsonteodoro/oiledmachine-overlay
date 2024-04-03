@@ -44,7 +44,7 @@ LICENSE="MIT"
 RESTRICT="mirror"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-rocm samples +openmp mpi system-llvm r1
+rocm samples +openmp mpi system-llvm r2
 "
 gen_rocm_required_use() {
 	local x
@@ -137,7 +137,7 @@ src_configure() {
 		-DBUILD_CLIENTS_SAMPLES=$(usex samples ON OFF)
 		-DBUILD_CLIENTS_TESTS=OFF
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
-		-DCMAKE_INSTALL_INCLUDEDIR="include/rocALUTION"
+		-DCMAKE_INSTALL_INCLUDEDIR="include"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/cmake/hip"
 		-DSUPPORT_HIP=$(usex rocm ON OFF)

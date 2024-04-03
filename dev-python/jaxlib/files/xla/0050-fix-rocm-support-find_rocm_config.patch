@@ -5,9 +5,10 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/gpus/fin
 @@ -72,7 +72,7 @@ def _find_rocm_config(rocm_install_path)
    def rocm_version_numbers(path):
      possible_version_files = [
-         "include/rocm-core/rocm_version.h",  # ROCm 5.2
+-        "include/rocm-core/rocm_version.h",  # ROCm 5.2
++        "include/rocm-core/rocm_version.h",  # ROCm 5.2, 5.6
 -        "include/rocm_version.h",  # ROCm 5.1 and prior
-+        "include/rocm_version.h",  # ROCm 5.6, 5.1 and prior
++        "include/rocm_version.h",  # ROCm 5.1 and prior
      ]
      version_file = None
      for f in possible_version_files:
@@ -51,7 +52,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/gpus/fin
  
    def rocfft_version_numbers(path):
      possible_version_files = [
-+        "include/rocFFT/rocfft/rocfft-version.h",  # ROCm 5.6
++        "include/rocfft/rocfft-version.h",  # ROCm 5.6
          "include/rocfft/rocfft-version.h",  # ROCm 5.2
          "rocfft/include/rocfft-version.h",  # ROCm 5.1 and prior
      ]
@@ -59,7 +60,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/gpus/fin
  
    def hipfft_version_numbers(path):
      possible_version_files = [
-+        "include/hipfft/hipfft/hipfft-version.h",  # ROCm 5.6
++        "include/hipfft/hipfft-version.h",  # ROCm 5.6
          "include/hipfft/hipfft-version.h",  # ROCm 5.2
          "hipfft/include/hipfft-version.h",  # ROCm 5.1 and prior
      ]
@@ -76,7 +77,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/gpus/fin
  
    def hipsparse_version_numbers(path):
      possible_version_files = [
-+        "include/hipsparse/hipsparse/hipsparse-version.h",  # ROCm 5.6
++        "include/hipsparse/hipsparse-version.h",  # ROCm 5.6
          "include/hipsparse/hipsparse-version.h",  # ROCm 5.2
          "hipsparse/include/hipsparse-version.h",  # ROCm 5.1 and prior
      ]
@@ -84,7 +85,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/gpus/fin
  
    def hipsolver_version_numbers(path):
      possible_version_files = [
-+        "include/hipsolver/hipsolver/internal/hipsolver-version.h",  # ROCm 5.6
++        "include/hipsolver/internal/hipsolver-version.h",  # ROCm 5.6
          "include/hipsolver/internal/hipsolver-version.h",  # ROCm 5.2
          "hipsolver/include/internal/hipsolver-version.h",  # ROCm 5.1
          "hipsolver/include/hipsolver-version.h",  # ROCm 5.0 and prior
@@ -92,7 +93,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/gpus/fin
  
    def rocsolver_version_numbers(path):
      possible_version_files = [
-+        "include/rocsolver/rocsolver/rocsolver-version.h",  # ROCm 5.6
++        "include/rocsolver/rocsolver-version.h",  # ROCm 5.6
          "include/rocsolver/rocsolver-version.h",  # ROCm 5.2
          "rocsolver/include/rocsolver-version.h",  # ROCm 5.1 and prior
      ]
@@ -102,9 +103,10 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/thir
 @@ -72,7 +72,7 @@ def _find_rocm_config(rocm_install_path)
    def rocm_version_numbers(path):
      possible_version_files = [
-         "include/rocm-core/rocm_version.h",  # ROCm 5.2
+-        "include/rocm-core/rocm_version.h",  # ROCm 5.2
++        "include/rocm-core/rocm_version.h",  # ROCm 5.2, 5.6
 -        "include/rocm_version.h",  # ROCm 5.1 and prior
-+        "include/rocm_version.h",  # ROCm 5.6, 5.1 and prior
++        "include/rocm_version.h",  # ROCm 5.1 and prior
      ]
      version_file = None
      for f in possible_version_files:
@@ -148,7 +150,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/thir
  
    def rocfft_version_numbers(path):
      possible_version_files = [
-+        "include/rocFFT/rocfft/rocfft-version.h",  # ROCm 5.6
++        "include/rocfft/rocfft-version.h",  # ROCm 5.6
          "include/rocfft/rocfft-version.h",  # ROCm 5.2
          "rocfft/include/rocfft-version.h",  # ROCm 5.1 and prior
      ]
@@ -156,7 +158,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/thir
  
    def hipfft_version_numbers(path):
      possible_version_files = [
-+        "include/hipfft/hipfft/hipfft-version.h",  # ROCm 5.6
++        "include/hipfft/hipfft-version.h",  # ROCm 5.6
          "include/hipfft/hipfft-version.h",  # ROCm 5.2
          "hipfft/include/hipfft-version.h",  # ROCm 5.1 and prior
      ]
@@ -173,7 +175,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/thir
  
    def hipsparse_version_numbers(path):
      possible_version_files = [
-+        "include/hipsparse/hipsparse/hipsparse-version.h",  # ROCm 5.6
++        "include/hipsparse/hipsparse-version.h",  # ROCm 5.6
          "include/hipsparse/hipsparse-version.h",  # ROCm 5.2
          "hipsparse/include/hipsparse-version.h",  # ROCm 5.1 and prior
      ]
@@ -181,7 +183,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/thir
  
    def hipsolver_version_numbers(path):
      possible_version_files = [
-+        "include/hipsolver/hipsolver/internal/hipsolver-version.h",  # ROCm 5.6
++        "include/hipsolver/internal/hipsolver-version.h",  # ROCm 5.6
          "include/hipsolver/internal/hipsolver-version.h",  # ROCm 5.2
          "hipsolver/include/internal/hipsolver-version.h",  # ROCm 5.1
          "hipsolver/include/hipsolver-version.h",  # ROCm 5.0 and prior
@@ -189,7 +191,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/thir
  
    def rocsolver_version_numbers(path):
      possible_version_files = [
-+        "include/rocsolver/rocsolver/rocsolver-version.h",  # ROCm 5.6
++        "include/rocsolver/rocsolver-version.h",  # ROCm 5.6
          "include/rocsolver/rocsolver-version.h",  # ROCm 5.2
          "rocsolver/include/rocsolver-version.h",  # ROCm 5.1 and prior
      ]

@@ -22,7 +22,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/
  #if TF_ROCM_VERSION >= 40500
  #if TF_ROCM_VERSION >= 50600
 -#include "rocm/include/hipsolver/hipsolver.h"
-+#include "rocm/include/hipsolver/hipsolver/hipsolver.h"
++#include "rocm/include/hipsolver/hipsolver.h"
  #else
  
  #include "rocm/include/hipsolver.h"
@@ -34,7 +34,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/
  
  #if (TF_ROCM_VERSION >= 50200)
 -#include "rocm/include/hipsparse/hipsparse.h"
-+#include "rocm/include/hipsparse/hipsparse/hipsparse.h"
++#include "rocm/include/hipsparse/hipsparse.h"
  #else
  #include "rocm/include/hipsparse.h"
  #endif
@@ -46,7 +46,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/
  
  #if (TF_ROCM_VERSION >= 50200)
 -#include "rocm/include/hipfft/hipfft.h"
-+#include "rocm/include/hipfft/hipfft/hipfft.h"
++#include "rocm/include/hipfft/hipfft.h"
  #else
  #include "rocm/include/hipfft.h"
  #endif
@@ -58,7 +58,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/
  #include "rocm/rocm_config.h"
  #if (TF_ROCM_VERSION >= 50200)
 -#include "rocm/include/rocsolver/rocsolver.h"
-+#include "rocm/include/rocsolver/rocsolver/rocsolver.h"
++#include "rocm/include/rocsolver/rocsolver.h"
  #else
  #include "rocm/include/rocsolver.h"
  #endif
