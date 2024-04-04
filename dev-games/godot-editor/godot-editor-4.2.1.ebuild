@@ -1026,7 +1026,7 @@ _install_linux_editor() {
 	local d_base="/usr/$(get_libdir)/${MY_PN}/${SLOT_MAJ}"
 	exeinto "${d_base}/bin"
 	local f
-	f=$(basename bin/godot*tools*)
+	f=$(basename bin/godot*editor*)
 	doexe "bin/${f}"
 	dosym \
 		"${d_base}/bin/${f}" \
