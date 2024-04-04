@@ -187,6 +187,7 @@ RULES_JVM_PV="4.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1
 RULES_PKG_PV="0.7.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace3.bzl
 RULES_PYTHON_PV="0.1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/WORKSPACE#L19
 RULES_SWIFT_PV="1.5.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl
+TRITON_TAG="cl601105910"	# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/triton/workspace.bzl#L8
 ZSTD_PV="1.4.5"
 # RULES_DOCKER dumped?
 
@@ -285,6 +286,9 @@ https://github.com/nvidia/nccl/archive/v${NCCL_PV}.tar.gz -> nvidia-nccl-v${NCCL
 	python? (
 https://github.com/intel/ARM_NEON_2_x86_SSE/archive/${EGIT_COMMIT_ARM_NEON_2_X86_SSE}.tar.gz -> ARM_NEON_2_x86_SSE-${EGIT_COMMIT_ARM_NEON_2_X86_SSE}.tar.gz
 https://storage.googleapis.com/mirror.tensorflow.org/docs.python.org/2.7/_sources/license.rst.txt -> tensorflow-1.15.0-python-license.rst.txt
+	)
+	xla? (
+https://github.com/openxla/triton/archive/${TRITON_TAG}.tar.gz -> trition-${TRITON_TAG}.tar.gz
 	)
 "
 
