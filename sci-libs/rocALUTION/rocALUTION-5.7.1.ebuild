@@ -44,7 +44,7 @@ LICENSE="MIT"
 RESTRICT="mirror"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-rocm samples +openmp mpi system-llvm r2
+rocm samples +openmp mpi system-llvm r3
 "
 gen_rocm_required_use() {
 	local x
@@ -156,11 +156,19 @@ eerror
 	fi
 
 	if use openmp ; then
-		mycmakeargs+=(
-			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
-			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
-		)
+		if use system-llvm ; then
+			mycmakeargs+=(
+				-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
+				-DOpenMP_CXX_LIB_NAMES="libomp"
+				-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
+			)
+		else
+			mycmakeargs+=(
+				-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
+				-DOpenMP_CXX_LIB_NAMES="libomp"
+				-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so"
+			)
+		fi
 	fi
 
 	if use rocm ; then
@@ -181,6 +189,7 @@ src_install() {
         cmake_src_install
         chrpath --delete "${D}/usr/$(get_libdir)/librocalution.so.0.1" || die
 	rocm_mv_docs
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
