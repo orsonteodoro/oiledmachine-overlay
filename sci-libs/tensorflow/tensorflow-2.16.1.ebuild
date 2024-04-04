@@ -431,9 +431,11 @@ gen_required_use_rocm_targets() {
 		"
 	done
 }
+# hardened is required to unbreak brotli build
 REQUIRED_USE="
 	$(gen_required_use_cuda_targets)
 	$(gen_required_use_rocm_targets)
+	hardened
 	?? (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
