@@ -1348,24 +1348,6 @@ einfo "Preventing stall.  Removing -Os."
 	use python && python_copy_sources
 
 	use cuda && cuda_add_sandbox
-
-		local p
-		for p in $(find "${WORKDIR}" -name ".bzl") ; do
-			if grep -q -e "-D_FORTIFY_SOURCE=1" "${p}" ; then
-einfo "Removing -D_FORTIFY_SOURCE=1 from ${p}"
-				sed -i \
-					-e "s|-D_FORTIFY_SOURCE=1|-D_FORTIFY_SOURCE=0|g" \
-					"${p}" \
-					|| die
-			fi
-			if grep -q -e "-fstack-protector" "${p}" ; then
-einfo "Removing -D_FORTIFY_SOURCE=1 from ${p}"
-				sed -i \
-					-e "s|-fstack-protector|-fno-stack-protector|g" \
-					"${p}" \
-					|| die
-			fi
-		done
 }
 
 load_env() {
