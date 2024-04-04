@@ -152,13 +152,13 @@ desktop_build_winux() {
 	godot \
 		--headless \
 		-v \
-		--export-release "${godot_template}" \
+		--export-release "${export_template}" \
 		"build/${MY_PV}_${MY_PV}_${os}/${MY_PV}.${suffix}" \
 		|| die
 	godot \
 		--headless \
 		-v \
-		--export-release "${godot_template}" \
+		--export-release "${export_template}" \
 		"build/${MY_PV}_${MY_PV}_${os}/${MY_PV}.${suffix}" \
 		|| die
 }
@@ -166,7 +166,7 @@ desktop_build_winux() {
 desktop_build_mac() {
 	bin/godot \
 		-v \
-		--export "${godot_template}" \
+		--export "${export_template}" \
 		"build/mac/${MY_PV}.${suffix}" \
 		|| die
 }
@@ -278,19 +278,19 @@ src_compile() {
 	if use desktop ; then
 		local arch
 		local os
-		local godot_template
+		local export_template
 		if use amd64 && use kernel_linux ; then
 			suffix="x86_64"
 			os="linux"
-			godot_template="Linux/X11"
+			export_template="Linux/X11"
 		elif use elibc_mingw ; then
 			suffix="exe"
 			os="windows"
-			godot_template="Windows"
+			export_template="Windows"
 		elif use kernel_Darwin ; then
 			suffix="zip"
 			os="MacOS"
-			godot_template="Mac OSX"
+			export_template="Mac OSX"
 		else
 eerror "OS/ARCH not supported"
 			die
