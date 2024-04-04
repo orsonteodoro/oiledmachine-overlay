@@ -86,7 +86,7 @@ RDEPEND="
 		)
 		!system-llvm? (
 			~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-			~sys-devel/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 		)
 		system-llvm? (
 			sys-libs/libomp:${LLVM_SLOT}
@@ -97,7 +97,7 @@ RDEPEND="
 		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
 		!system-llvm? (
 			~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-			~sys-devel/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 		)
 		system-llvm? (
 			sys-libs/libomp:${LLVM_SLOT}
