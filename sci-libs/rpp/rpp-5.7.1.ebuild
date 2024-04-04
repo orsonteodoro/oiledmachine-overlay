@@ -87,12 +87,12 @@ RDEPEND="
 		sys-devel/llvm-roc:=
 	)
 	>=dev-libs/boost-1.72:=
-	dev-libs/rocm-compiler:${ROCM_SLOT}[system-llvm=]
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	opencl? (
 		virtual/opencl
 	)
 	rocm? (
-		dev-util/hip:${ROCM_SLOT}[rocm]
+		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 		dev-libs/rocm-device-libs:${ROCM_SLOT}
 		dev-util/hip:=
 	)
