@@ -832,25 +832,29 @@ ewarn
 		"third_party/tsl/third_party/gpus"
 	)
 
-if use rocm ; then
-	local dirpath
-	for dirpath in ${L[@]} ; do
-#		rm "${dirpath}/find_rocm_config.py.gz.base64" || die
-		pushd "${dirpath}" || die
-			pigz -z -k find_rocm_config.py || die
-			mv find_rocm_config.py.zz find_rocm_config.py.gz || die
-			base64 --wrap=0 find_rocm_config.py.gz > find_rocm_config.py.gz.base64 || die
-		popd
-	done
+	if use rocm ; then
+		local dirpath
+		for dirpath in ${L[@]} ; do
+			rm -f "${dirpath}/find_rocm_config.py.gz.base64"
+			pushd "${dirpath}" || die
+				pigz -z -k find_rocm_config.py || die
+				mv find_rocm_config.py.zz find_rocm_config.py.gz || die
+				base64 --wrap=0 \
+					find_rocm_config.py.gz \
+					> \
+					find_rocm_config.py.gz.base64 \
+					|| die
+			popd
+		done
 
-	sed -i -e "s|@JAXLIB_PV@|${PV}|g" \
-		"third_party/tsl/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl" \
-		|| die
+		sed -i -e "s|@JAXLIB_PV@|${PV}|g" \
+			"third_party/tsl/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl" \
+			|| die
 
-	sed -i -e "s|@JAXLIB_PV@|${PV}|g" \
-		"third_party/tsl/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
-		|| die
-fi
+		sed -i -e "s|@JAXLIB_PV@|${PV}|g" \
+			"third_party/tsl/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
+			|| die
+	fi
 
 	gen_gcc_ar
 
