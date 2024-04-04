@@ -1126,10 +1126,8 @@ src_unpack() {
 
 setup_linker() {
 	# The package likes to use lld with gcc which is disallowed.
-	if use system-llvm ; then
-		LLD="ld.lld"
-	else
-		LLD="lld"
+	LLD="ld.lld"
+	if ! use system-llvm ; then
 		if ! has_version "sys-devel/llvm-roc:${ROCM_SLOT}" ; then
 eerror "Missing sys-devel/llvm-roc:${ROCM_SLOT}"
 			die
