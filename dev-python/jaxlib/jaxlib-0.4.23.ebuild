@@ -382,7 +382,12 @@ setup_linker() {
 		LLD="ld.lld"
 	else
 		LLD="lld"
+		if ! has_version "sys-devel/llvm-roc:${ROCM_SLOT}" ; then
+eerror "Missing sys-devel/llvm-roc:${ROCM_SLOT}"
+			die
+		fi
 	fi
+einfo "PATH:\t${PATH}"
 	local lld_pv=-1
 	if tc-is-clang \
 		&& ${LLD} --version 2>/dev/null 1>/dev/null ; then
@@ -695,7 +700,6 @@ src_unpack() {
 	mkdir -p "${WORKDIR}/tarballs" || die
 	mkdir -p "${WORKDIR}/patches" || die
 	bazel_load_distfiles "${bazel_external_uris}"
-einfo "DEBUG: UNPACKED BAZEL"
 }
 
 load_env() {

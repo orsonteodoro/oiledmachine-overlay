@@ -1093,6 +1093,10 @@ setup_linker() {
 		LLD="ld.lld"
 	else
 		LLD="lld"
+		if ! has_version "sys-devel/llvm-roc:${ROCM_SLOT}" ; then
+eerror "Missing sys-devel/llvm-roc:${ROCM_SLOT}"
+			die
+		fi
 	fi
 	local lld_pv=-1
 	if tc-is-clang \
