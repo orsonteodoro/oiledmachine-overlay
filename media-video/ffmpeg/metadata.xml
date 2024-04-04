@@ -863,7 +863,7 @@
   <flag name="gpl">
     Synonym for gpl2x/gpl3x USE flags to build a GPL-2.0+/GPL-3.0+ package.
     Certain license incompatibilities may be encountered.  This USE flag is kept
-    for compatibility.
+    for compatibility for ebuilds from the distro repo.
 
     Enabling makes the gpl and nonfree USE flags inclusive-or which was the
     original ebuild design.
