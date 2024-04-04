@@ -179,6 +179,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="ktx">
       Enables KTX texture container support.
     </flag>
+    <flag name="layers">
+      Enables Vulkan Validation Layers for debugging Vulkan support.
+    </flag>
     <flag name="lightmapper_cpu">
       Enables the CPU based lightmapper generator module.
     </flag>

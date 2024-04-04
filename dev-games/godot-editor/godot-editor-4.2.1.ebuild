@@ -89,7 +89,7 @@ IUSE_AUDIO="
 "
 IUSE_BUILD="
 ${SANITIZERS[@]}
-clang debug jit lld lto +neon +optimize-speed optimize-size portable
+clang debug jit layers lld lto +neon +optimize-speed optimize-size portable
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
 +astc +bmp +brotli +cvtt +dds +etc +exr +hdr +jpeg +ktx +minizip -mp1 -mp2 +mp3
@@ -164,6 +164,12 @@ REQUIRED_USE+="
 	gdscript_lsp? (
 		jsonrpc
 		websocket
+	)
+	layers? (
+		|| (
+			volk
+			vulkan
+		)
 	)
 	lld? (
 		clang
@@ -452,7 +458,7 @@ DEPEND+="
 	)
 	vulkan? (
 		!volk? (
-			media-libs/vulkan-loader[X]
+			media-libs/vulkan-loader[layers?,X]
 		)
 	)
 "
