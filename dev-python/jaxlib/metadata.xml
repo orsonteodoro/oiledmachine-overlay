@@ -28,6 +28,10 @@
     <flag name="cuda">
       Add dependencies for GPU support
     </flag>
+    <flag name="hardened">
+      Enable upstream hardened flags typically _FORTIFY_SOURCE=1,
+      -fstack-protector, Full RELRO
+    </flag>
     <flag name="rocm">
       Add dependencies for GPU support
     </flag>
