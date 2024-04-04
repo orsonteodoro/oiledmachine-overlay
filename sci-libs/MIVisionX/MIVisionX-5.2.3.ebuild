@@ -217,11 +217,19 @@ eerror
 				-DOpenMP_libgomp_LIBRARY="${gomp_abspath}"
 			)
 		else
-			mycmakeargs+=(
-				-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
-				-DOpenMP_CXX_LIB_NAMES="libomp"
-				-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
-			)
+			if use system-llvm ; then
+				mycmakeargs+=(
+					-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
+					-DOpenMP_CXX_LIB_NAMES="libomp"
+					-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
+				)
+			else
+				mycmakeargs+=(
+					-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
+					-DOpenMP_CXX_LIB_NAMES="libomp"
+					-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so"
+				)
+			fi
 		fi
 		IFS=$'\n'
 		sed \
