@@ -846,9 +846,6 @@ ewarn
 
 		sed -i -e "s|@JAXLIB_PV@|${PV}|g" \
 			"third_party/tsl/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl" \
-			|| die
-
-		sed -i -e "s|@JAXLIB_PV@|${PV}|g" \
 			"third_party/tsl/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
 			|| die
 	fi

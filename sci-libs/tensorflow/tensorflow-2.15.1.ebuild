@@ -1351,9 +1351,6 @@ einfo "Preventing stall.  Removing -Os."
 	if use rocm ; then
 		sed -i -e "s|@TENSORFLOW_PV@|${PV}|g" \
 			"${S}/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl" \
-			|| die
-
-		sed -i -e "s|@TENSORFLOW_PV@|${PV}|g" \
 			"${S}/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
 			|| die
 	fi
