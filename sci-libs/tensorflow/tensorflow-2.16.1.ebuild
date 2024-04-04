@@ -1016,7 +1016,7 @@ einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
 	if use rocm ; then
-ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
+ewarn "ROCm support is a Work In Progress (WIP)"
 		use_gcc
 
 		# Build with GCC but initialize LLVM_SLOT.

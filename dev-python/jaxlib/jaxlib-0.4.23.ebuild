@@ -357,6 +357,12 @@ BDEPEND+="
 S="${WORKDIR}/jax-jax-v${PV}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md CITATION.bib README.md )
+ROCM_PATCHES=(
+	"0050-fix-rocm-build-scripts.patch"
+	"0050-fix-rocm-source-code.patch"
+	"0050-fix-rocm-support.patch"
+	"0050-toolchain-prefix.patch"
+)
 
 distutils_enable_tests "pytest"
 
@@ -622,7 +628,7 @@ einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
 	if use rocm ; then
-ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
+ewarn "ROCm support is a Work In Progress (WIP)"
 		use_gcc
 
 		# Build with GCC but initialize LLVM_SLOT.
@@ -684,6 +690,7 @@ src_unpack() {
 	mkdir -p "${WORKDIR}/tarballs" || die
 	mkdir -p "${WORKDIR}/patches" || die
 	bazel_load_distfiles "${bazel_external_uris}"
+einfo "DEBUG: UNPACKED BAZEL"
 }
 
 load_env() {
@@ -762,12 +769,15 @@ ewarn
 
 	if use rocm ; then
 		cd "${S}" || die
-		eapply "${FILESDIR}/${PN}-0.4.14-rocm-headers.patch"
+		eapply "${FILESDIR}/${PV}/${PN}-0.4.14-rocm-headers.patch"
 	fi
 
 	cd "${WORKDIR}/xla-${EGIT_XLA_COMMIT}" || die
 	if use rocm ; then
-		eapply -p1 "${FILESDIR}/xla/"*
+		local f
+		for f in ${ROCM_PATCHES[@]} ; do
+			eapply -p1 "${FILESDIR}/${PV}/xla/${f}"
+		done
 	fi
 
 	# Speed up symbol replacement for @...@ by reducing search space.
@@ -811,11 +821,9 @@ ewarn
 	cd "${XLA_S}" || die
 
 	local L=(
-		"third_party/gpus"
 		"third_party/tsl/third_party/gpus"
 	)
 
-# FIXME:
 if use rocm ; then
 	local dirpath
 	for dirpath in ${L[@]} ; do
@@ -828,12 +836,10 @@ if use rocm ; then
 	done
 
 	sed -i -e "s|@JAXLIB_PV@|${PV}|g" \
-		"third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl" \
 		"third_party/tsl/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl" \
 		|| die
 
 	sed -i -e "s|@JAXLIB_PV@|${PV}|g" \
-		"third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
 		"third_party/tsl/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
 		|| die
 fi
