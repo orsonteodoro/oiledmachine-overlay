@@ -378,15 +378,20 @@ eerror
 
 setup_linker() {
 	# The package likes to use lld with gcc which is disallowed.
+	if use system-llvm ; then
+		LLD="ld.lld"
+	else
+		LLD="lld"
+	fi
 	local lld_pv=-1
 	if tc-is-clang \
-		&& ld.lld --version 2>/dev/null 1>/dev/null ; then
-		lld_pv=$(ld.lld --version \
+		&& ${LLD} --version 2>/dev/null 1>/dev/null ; then
+		lld_pv=$(${LLD} --version \
 			| awk '{print $2}')
 	fi
 	if use rocm ; then
 einfo "Using LLD"
-		ld.lld --version || die
+		${LLD} --version || die
 		filter-flags '-fuse-ld=*'
 		append-ldflags -fuse-ld=lld
 		BUILD_LDFLAGS+=" -fuse-ld=lld"
@@ -425,7 +430,7 @@ einfo "Using mold (TESTING)"
 		) \
 	then
 einfo "Using LLD (TESTING)"
-		ld.lld --version || die
+		${LLD} --version || die
 		filter-flags '-fuse-ld=*'
 		append-ldflags -fuse-ld=lld
 		BUILD_LDFLAGS+=" -fuse-ld=lld"
