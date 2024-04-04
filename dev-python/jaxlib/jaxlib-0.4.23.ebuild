@@ -771,8 +771,8 @@ EOF
 
 python_prepare_all() {
 ewarn
-ewarn "If build failure, use MAKEOPTS=\"-j1\"."
-ewarn "Expect memory use 6-11 GiB per process."
+ewarn "If build failure, use MAKEOPTS=\"-j1\".  Expect memory use to be 6-11"
+ewarn "GiB per process."
 ewarn
 
 	if use rocm ; then
