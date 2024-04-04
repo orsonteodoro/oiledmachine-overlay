@@ -42,7 +42,7 @@
       Avoid unbuildable package on big endian machines.
     </flag>
     <flag name="clang">
-      Use of Clang + LLD to build the package
+      Use Clang + LLD to build the package
     </flag>
     <flag name="cuda">
       Enable support for NVIDIA® GPUs
@@ -59,7 +59,9 @@
       expense of minor version availability in HIP/ROCm contexts.
     </flag>
     <flag name="xla">
-      XLA (Accelerated Linear Algebra) Optimizing Compiler for TensorFlow
+      Enables and builds the XLA (Accelerated Linear Algebra) compiler for
+      fusing linear algebra operations into single GPU kernel to improve
+      speed and memory use.
     </flag>
   </use>
 </pkgmetadata>

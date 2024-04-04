@@ -155,7 +155,7 @@ inherit rocm toolchain-funcs
 
 ABSEIL_PY_PV="1.0.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace2.bzl
 APPLE_SUPPORT_PV="1.6.0"	# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace2.bzl
-CUDA_PV="12.2"			# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/tools/pip_package/setup.py#L397
+CUDA_PV="11.8"			# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/tools/pip_package/setup.py#L397
 BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace3.bzl
 CUB_PV="1.9.9"			# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace2.bzl
 CUDNN_FRONTEND_PV="0.9"		# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace2.bzl
