@@ -15,6 +15,8 @@ RCEDIT_PV="1.1.1"
 inherit python-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/RodZill4/material-maker.git"
 	FALLBACK_COMMIT="1a86d73967479c43db5fa17e5adda5e54a0c886f" # Apr 23, 2023
 	MY_PV="1_3"
 	inherit git-r3
@@ -39,7 +41,7 @@ HOMEPAGE="
 "
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="+desktop doc html5"
+IUSE+=" +desktop doc html5"
 REQUIRED_USE="
 	|| (
 		desktop
