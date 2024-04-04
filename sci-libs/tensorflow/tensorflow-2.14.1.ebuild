@@ -113,7 +113,7 @@ inherit rocm toolchain-funcs
 # https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/tools/ci_build/Dockerfile.rbe.rocm-ubuntu18.04-manylinux2010-multipython#L19 # rocm version min
 # https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/tools/ci_build/Dockerfile.rbe.rocm-ubuntu20.04-manylinux2014-multipython#L20 # rocm version max
 # https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/tools/dockerfiles/partials/ubuntu/nvidia.partial.Dockerfile	# cuda/cudnn major.minor versions
-# https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/tools/pip_package/setup.py#L356				# cuda version
+# https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/tools/pip_package/setup.py#L171				# cuda version
 # https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/tools/ci_build/release/requirements_common.txt		# python deps versions ; pinned
 # https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/tools/ci_build/release/requirements_ubuntu.txt		# python deps versions ; pinned ; depends on requirements_common.txt
 # https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/tools/pip_package/setup.py#L84				# python deps versions
@@ -155,7 +155,7 @@ inherit rocm toolchain-funcs
 
 ABSEIL_PY_PV="1.0.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace2.bzl
 APPLE_SUPPORT_PV="1.6.0"	# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace2.bzl
-CUDA_PV="11.8"			# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/tools/pip_package/setup.py#L397
+CUDA_PV="11.8"			# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/tools/pip_package/setup.py#L171
 BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace3.bzl
 CUB_PV="1.9.9"			# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace2.bzl
 CUDNN_FRONTEND_PV="0.9"		# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace2.bzl
