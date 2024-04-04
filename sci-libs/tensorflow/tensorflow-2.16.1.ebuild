@@ -407,7 +407,7 @@ IUSE="
 ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${HIP_SLOTS2[@]}
-alt-ssl -big-endian +clang cuda custom-optimization-level +hardened mpi +python
+alt-ssl -big-endian +clang cuda custom-optimization-level mpi +python
 rocm system-llvm test xla
 r1
 "
@@ -1331,38 +1331,36 @@ ewarn
 	setup_linker
 
 	if ! use custom-optimization-level ; then
-		# Upstream uses a mix of -O3 and -O2.
-		# In some contexts -Os causes a stall.
+	# Upstream uses a mix of -O3 and -O2.
+	# In some contexts -Os causes a stall.
 		filter-flags '-O*'
 	fi
-
 	if is-flagq '-Os' ; then
 einfo "Preventing stall.  Removing -Os."
 		filter-flags '-Os'
 	fi
 
-	if ! use hardened && false ; then
-		# It has to be done this way, because we cannot edit the build
-		# files before configure time because the build system
-		# system generates them in compile time and doesn't unpack them
-		# early.
+# Make _FORTIFY_SOURCE=1 work
+# Prevent warning as error with _FORTIFY_SOURCE
+	replace-flags '-O0' '-O1'
 
-		BUILD_CPPFLAGS+=" -Wno-error=cpp"
-		append-cppflags -Wno-error=cpp
+	if ! use hardened ; then
+	# It has to be done this way, because the tarballs are not unpacked at
+	# this point.
 
-		# SSP buffer overflow protection
-		# -fstack-protector-all is <7% penalty
+	# SSP buffer overflow protection
+	# -fstack-protector-all is <7% penalty
 		BUILD_CFLAGS+=" -fno-stack-protector"
 		BUILD_CXXFLAGS+=" -fno-stack-protector"
 		append-flags -fno-stack-protector
 
-		# FORTIFY_SOURCE is buffer overflow checks for string/*alloc functions
-		# -FORTIFY_SOURCE=2 is <1% penalty
+	# FORTIFY_SOURCE is buffer overflow checks for string/*alloc functions
+	# -FORTIFY_SOURCE=2 is <1% penalty
 		BUILD_CPPFLAGS+=" -D_FORTIFY_SOURCE=0"
 		append-cppflags -D_FORTIFY_SOURCE=0
 
-		# Full RELRO is GOT protection
-		# Full RELRO is <1% penalty ; <1 ms difference
+	# Full RELRO is GOT protection
+	# Full RELRO is <1% penalty ; <1 ms difference
 		append-ldflags -Wl,-z,norelro
 		append-ldflags -Wl,-z,lazy
 		BUILD_LDFLAGS+=" -Wl,-z,norelro"
@@ -1404,10 +1402,16 @@ einfo "Preventing stall.  Removing -Os."
 	use cuda && cuda_add_sandbox
 
 	if use llvm_slot_15 ; then
-		sed -i \
-			-e "/Wno-gnu-offsetof-extensions/d" \
-			"${S}/.bazelrc" \
-			|| die
+		local p
+		for p in $(find "${WORKDIR}" -name ".bazelrc") ; do
+einfo "Removing -Wno-gnu-offsetof-extensions for llvm 15 in ${p}"
+			if grep -q -e "-Wno-gnu-offsetof-extensions" "${p}" ; then
+				sed -i \
+					-e "/-Wno-gnu-offsetof-extensions/d" \
+					"${p}" \
+					|| die
+			fi
+		done
 	fi
 }
 

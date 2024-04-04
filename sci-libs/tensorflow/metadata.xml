@@ -48,7 +48,8 @@
       Enable support for NVIDIA® GPUs
     </flag>
     <flag name="hardened">
-      If disabled, it will disable SSP, FORTIFY_SOURCE, Full RELRO.
+      Enable upstream hardened settings with _FORTIFY_SOURCE=1,
+      -fstack-protector, Full RELRO.
     </flag>
     <flag name="rocm">
       Enable support for AMD GPUs
