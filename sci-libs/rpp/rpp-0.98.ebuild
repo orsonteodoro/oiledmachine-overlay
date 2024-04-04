@@ -46,7 +46,7 @@ IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
 cpu opencl rocm system-llvm test
-r1
+r2
 "
 gen_rocm_required_use() {
 	local x
@@ -227,11 +227,19 @@ eerror
 		)
 	else
 einfo "Using libomp"
-		mycmakeargs+=(
-			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp -Wno-unused-command-line-argument"
-			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
-		)
+		if use system-llvm ; then
+			mycmakeargs+=(
+				-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp -Wno-unused-command-line-argument"
+				-DOpenMP_CXX_LIB_NAMES="libomp"
+				-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
+			)
+		else
+			mycmakeargs+=(
+				-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp -Wno-unused-command-line-argument"
+				-DOpenMP_CXX_LIB_NAMES="libomp"
+				-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so"
+			)
+		fi
 	fi
 
 	rocm_src_configure
@@ -240,6 +248,7 @@ einfo "Using libomp"
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
