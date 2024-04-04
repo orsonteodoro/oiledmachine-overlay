@@ -33,7 +33,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu +enhanced-message ffmpeg +loom +migraphx +neural-net opencl opencv
 +rocal +rocm +rpp system-llvm
-r3
+r4
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -307,6 +307,7 @@ src_install() {
 	doins -r "${staging_dir}/"*
 	sanitize_permissions
 	fix_rpath
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
