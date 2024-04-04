@@ -245,7 +245,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="ogg">
       Enables support for the Ogg container format.
     </flag>
-    <flag name="opengl3">
+    <flag name="opengl">
       Enables support for OpenGL3/GLES3.
     </flag>
     <flag name="opensimplex">
@@ -401,11 +401,13 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="text-server-adv">
       Enables support for bidirectional fonts, complex text layout,
       contexutal OpenType features.
+      (This is faster than text-server-fb)
     </flag>
     <flag name="text-server-fb">
       Enables support for the fallback text server without bidirectional
       fonts, without complex text layout, and without contexutal OpenType
       features.
+      (This is slower than text-server-adv)
     </flag>
     <flag name="tga">
       Enables support for the TGA image format.

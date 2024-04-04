@@ -102,7 +102,7 @@ IUSE_INPUT="
 camera -gamepad +touch
 "
 IUSE_LIBS="
-+freetype +graphite +opengl3 +opensimplex +pcre2 +text-server-adv
++freetype +graphite +opengl +opensimplex +pcre2 +text-server-adv
 -text-server-fb +volk +vulkan
 "
 IUSE_NET="
@@ -141,8 +141,14 @@ IUSE+="
 REQUIRED_USE+="
 	3d
 	advanced-gui
+	brotli
 	freetype
+	opengl
 	svg
+	^^ (
+		text-server-adv
+		text-server-fb
+	)
 	clang? (
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -324,7 +330,6 @@ DEPEND+="
 	net-libs/libasyncns
 	sys-apps/tcp-wrappers
 	sys-apps/util-linux
-	virtual/opengl
 	x11-libs/libICE
 	x11-libs/libSM
 	x11-libs/libXau
@@ -354,6 +359,9 @@ DEPEND+="
 	)
         gamepad? (
 		virtual/libudev
+	)
+	opengl? (
+		virtual/opengl
 	)
 	speech? (
 		!pulseaudio? (
@@ -617,6 +625,9 @@ ewarn "Do not emerge this directly use dev-games/godot-meta instead."
 	if use gdscript ; then
 ewarn "The gdscript USE flag is untested."
 	fi
+	if use text-server-fb ; then
+ewarn "text-server-fb is slow.  Consider text-server-adv instead."
+	fi
 
 	python-any-r1_pkg_setup
 	if use lto && use clang ; then
@@ -876,7 +887,7 @@ src_compile() {
 		platform="x11"
 		dbus=$(usex dbus)
 		pulseaudio=$(usex pulseaudio)
-		opengl3=$(usex opengl3)
+		opengl3=$(usex opengl)
 		touch=$(usex touch)
 		udev=$(usex gamepad)
 		use_alsa=$(usex alsa)
