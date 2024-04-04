@@ -712,7 +712,7 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 }
 
 # Keep in sync with tensorflow ebuild
-prepare_tensorflow() {
+prepare_jaxlib() {
 	load_env
 	setup_linker
 
@@ -929,7 +929,7 @@ python_compile() {
 	load_env
 	local args=()
 
-	prepare_tensorflow
+	prepare_jaxlib
 
 	bazel_setup_bazelrc
 
