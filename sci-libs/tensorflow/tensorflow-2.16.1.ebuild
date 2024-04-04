@@ -1347,6 +1347,9 @@ einfo "Preventing stall.  Removing -Os."
 		# system generates them in compile time and doesn't unpack them
 		# early.
 
+		BUILD_CPPFLAGS+=" -Wno-error=cpp"
+		append-cppflags -Wno-error=cpp
+
 		# SSP buffer overflow protection
 		# -fstack-protector-all is <7% penalty
 		BUILD_CFLAGS+=" -fno-stack-protector"
@@ -1399,6 +1402,13 @@ einfo "Preventing stall.  Removing -Os."
 	use python && python_copy_sources
 
 	use cuda && cuda_add_sandbox
+
+	if use llvm_slot_15 ; then
+		sed -i \
+			-e "/Wno-gnu-offsetof-extensions/d" \
+			"${S}/.bazelrc" \
+			|| die
+	fi
 }
 
 load_env() {

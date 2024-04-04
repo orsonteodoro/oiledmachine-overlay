@@ -1295,6 +1295,9 @@ einfo "Preventing stall.  Removing -Os."
 		# system generates them in compile time and doesn't unpack them
 		# early.
 
+		BUILD_CPPFLAGS+=" -Wno-error=cpp"
+		append-cppflags -Wno-error=cpp
+
 		# SSP buffer overflow protection
 		# -fstack-protector-all is <7% penalty
 		BUILD_CFLAGS+=" -fno-stack-protector"
