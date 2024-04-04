@@ -2,10 +2,10 @@
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# SECURITY:  Bump every minor version.  Several CVEs announced:
-# https://github.com/tensorflow/tensorflow/releases/tag/v2.11.1
-
 EAPI=8
+
+# SECURITY:  Bump every minor version.  Check if CVE announced:
+# https://github.com/tensorflow/tensorflow/releases/tag/v2.16.1
 
 MY_PV="${PV/_rc/-rc}"
 MY_P="${PN}-${MY_PV}"
