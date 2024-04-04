@@ -153,13 +153,13 @@ LICENSE="
 		BSD-2
 	)
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+#KEYWORDS="~amd64 ~arm64" # Needs install test
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # ROCm version:  https://github.com/google/jax/blob/jaxlib-v0.4.23/build/rocm/ci_build.sh#L52
 IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-clang custom-optimization-level cpu cuda +hardened portable rocm system-llvm r1
+clang -custom-optimization-level cpu cuda +hardened rocm system-llvm r1
 
 rocm_5_6
 "

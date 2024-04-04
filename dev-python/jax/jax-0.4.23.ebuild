@@ -25,7 +25,7 @@ https://github.com/google/jax
 LICENSE="
 	Apache-2.0
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 australis cuda doc experimental test
