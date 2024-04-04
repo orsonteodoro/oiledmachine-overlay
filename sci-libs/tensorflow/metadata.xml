@@ -61,7 +61,7 @@
     <flag name="xla">
       Enables and builds the XLA (Accelerated Linear Algebra) compiler for
       fusing linear algebra operations into single GPU kernel to improve
-      speed and memory use.
+      speed and memory use.  Compatibile with CPUs, GPUs.
     </flag>
   </use>
 </pkgmetadata>
