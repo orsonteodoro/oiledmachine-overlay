@@ -1322,13 +1322,23 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 		for s in ${LLVM_COMPAT[@]} ; do
 			use "llvm_slot_${s}" && llvm_slot=${s}
 		done
-		mycmakeargs+=(
-			-DOPENMP_CUSTOM=ON
-			-DOPENMP_FOUND=ON
-			-DOpenMP_C_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
-			-DOpenMP_C_LIB_NAMES="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
-			-DOpenMP_LINKER_FLAGS="${ESYSROOT}/usr/lib/llvm/${llvm_slot}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
-		)
+		if use system-llvm ; then
+			mycmakeargs+=(
+				-DOPENMP_CUSTOM=ON
+				-DOPENMP_FOUND=ON
+				-DOpenMP_C_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
+				-DOpenMP_C_LIB_NAMES="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
+				-DOpenMP_LINKER_FLAGS="${ESYSROOT}/usr/lib/llvm/${llvm_slot}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
+			)
+		else
+			mycmakeargs+=(
+				-DOPENMP_CUSTOM=ON
+				-DOPENMP_FOUND=ON
+				-DOpenMP_C_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
+				-DOpenMP_C_LIB_NAMES="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
+				-DOpenMP_LINKER_FLAGS="${ESYSROOT}/usr/lib/llvm/${llvm_slot}/$(get_libdir)/libomp.so"
+			)
+		fi
 	fi
 
 	if use openmp && tc-is-gcc ; then

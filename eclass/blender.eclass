@@ -1364,6 +1364,9 @@ blender_src_install() {
 		mv "${ED}/usr/share/doc/blender"{,-${SLOT_MAJ}} || die
 	fi
 	mv "${ED}/usr/share/man/man1/blender"{,-${SLOT_MAJ}}".1" || die
+	if use rocm ; then
+		rocm_fix_rpath
+	fi
 }
 
 blender_pkg_postinst() {
