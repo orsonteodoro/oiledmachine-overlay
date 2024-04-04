@@ -1289,7 +1289,7 @@ einfo "Preventing stall.  Removing -Os."
 		filter-flags '-Os'
 	fi
 
-	if ! use hardened ; then
+	if ! use hardened && false ; then
 		# It has to be done this way, because we cannot edit the build
 		# files before configure time because the build system
 		# system generates them in compile time and doesn't unpack them
