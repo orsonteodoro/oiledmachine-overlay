@@ -161,7 +161,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-clang custom-optimization-level cpu cuda hardened portable rocm system-llvm r1
+clang custom-optimization-level cpu cuda +hardened portable rocm system-llvm r1
 
 rocm_6_0
 "
