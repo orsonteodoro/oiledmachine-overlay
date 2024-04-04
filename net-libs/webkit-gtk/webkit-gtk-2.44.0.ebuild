@@ -117,10 +117,9 @@ UOPTS_SUPPORT_TPGO=0
 USE_RUBY=" ruby31 ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
 
-inherit check-linker check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr
-inherit linux-info llvm multilib-minimal pax-utils python-any-r1 ruby-single
-inherit toolchain-funcs uopts
-inherit cflags-depends
+inherit cflags-depends check-linker check-reqs cmake desktop flag-o-matic git-r3
+inherit gnome2 lcnr linux-info llvm multilib-minimal pax-utils python-any-r1
+inherit ruby-single toolchain-funcs uopts
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
 #
