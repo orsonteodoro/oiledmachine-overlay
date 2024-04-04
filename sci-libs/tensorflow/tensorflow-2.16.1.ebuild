@@ -288,7 +288,7 @@ https://storage.googleapis.com/mirror.tensorflow.org/docs.python.org/2.7/_source
 	)
 "
 
-#KEYWORDS="~amd64" # Ebuild not finished
+#KEYWORDS="~amd64 ~arm64" # Still needs install test
 SRC_URI="
 ${bazel_external_uris}
 https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz
@@ -407,8 +407,8 @@ IUSE="
 ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${HIP_SLOTS2[@]}
-alt-ssl -big-endian +clang cuda custom-optimization-level +hardened mpi +python
-rocm system-llvm test xla
+alt-ssl -big-endian +clang cuda -custom-optimization-level +hardened -mpi +python
+rocm system-llvm test +xla
 r1
 "
 gen_required_use_cuda_targets() {
