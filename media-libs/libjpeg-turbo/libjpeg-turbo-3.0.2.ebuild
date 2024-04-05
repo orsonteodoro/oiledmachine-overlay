@@ -291,6 +291,11 @@ _src_configure() {
 		append_all -fno-sanitize=cfi-icall # breaks precompiled cef based apps
 	fi
 
+	if is-flagq "-Ofast" ; then
+		# Precaution
+		append_all $(test-flags -fno-allow-store-data-races)
+        fi
+
 	if use static-libs && [[ "${lib_type}" == "static" ]] ;then
 		mycmakeargs+=(
 			-DENABLE_SHARED=OFF
