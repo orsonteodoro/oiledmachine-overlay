@@ -294,7 +294,7 @@ _src_configure() {
 	if is-flagq "-Ofast" ; then
 		# Precaution
 		append_all $(test-flags -fno-allow-store-data-races)
-        fi
+	fi
 
 	if use static-libs && [[ "${lib_type}" == "static" ]] ;then
 		mycmakeargs+=(
