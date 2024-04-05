@@ -38,7 +38,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu +enhanced-message ffmpeg -fp16 +loom +migraphx +neural-net opencl opencv
 +rocal +rocm +rpp system-llvm system-rapidjson
-ebuild-revision-7
+ebuild-revision-8
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -224,7 +224,7 @@ src_configure() {
 
 		if use rocal-python ; then
 			mycmakeargs+=(
-				-DCMAKE_INSTALL_PREFIX_PYTHON="${EPREFIX}${EROCM_PATH}/usr/lib/${EPATH}/site-packages"
+				-DCMAKE_INSTALL_PREFIX_PYTHON="${EPREFIX}${EROCM_PATH}/lib/${EPATH}/site-packages"
 			)
 		fi
 
