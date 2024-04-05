@@ -51,7 +51,7 @@
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.1
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.6
-#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.7
+#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.8
 # kernel_compiler_patch:
 #	https://github.com/graysky2/kernel_compiler_patch
 # MUQSS CPU Scheduler (official, EOL 5.12):
@@ -85,7 +85,6 @@
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.6/
-#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.7/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.8/
 # Project C CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/Project%20C
@@ -103,7 +102,7 @@
 #	https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.5...zen-kernel:6.5/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
-#	https://github.com/torvalds/linux/compare/v6.7...zen-kernel:6.7/zen-sauce
+#	https://github.com/torvalds/linux/compare/v6.8...zen-kernel:6.8/zen-sauce
 
 case ${EAPI:-0} in
 	[78]) ;;

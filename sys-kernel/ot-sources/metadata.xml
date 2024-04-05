@@ -154,21 +154,6 @@
 		    TRESOR (x86-64) [5]			E
 		    zen-sauce				N
 
-    6.7 (Stable)					A
-		    -rt	(RT_PREEMPT)			A
-		    Clang PGO				E
-		    Clear Linux patchset		N
-		    genpatches				A
-		    kernel_compiler_patch		A
-		    Nest				R
-		    Project C				A
-		    TCP BBR v2 [5]			E
-		    TCP BBR v3 [5]			E
-		    TRESOR (AES-NI) [5]			b
-		    TRESOR (x86) [5]			b
-		    TRESOR (x86-64) [5]			E
-		    zen-sauce				A
-
     6.8 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				E
