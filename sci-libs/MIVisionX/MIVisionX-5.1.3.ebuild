@@ -5,23 +5,28 @@ EAPI=8
 
 LLVM_SLOT=14
 PYTHON_COMPAT=( python3_10 ) # U 18/20
+RAPIDJSON_COMMIT="232389d4f1012dddec4ef84861face2d2ba85709" # committer-date:<2022-06-19
+RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-single-r1 toolchain-funcs rocm
 
-RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
-if [[ ${PV} == *9999 ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/"
 	inherit git-r3
 else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/${PN}-rocm-${PV}"
+	S_RAPIDJSON="${WORKDIR}/rapidjson-${RAPIDJSON_COMMIT}"
 	SRC_URI="
 https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 https://github.com/rrawther/libjpeg-turbo/archive/${RRAWTHER_LIBJPEG_TURBO_COMMIT}.tar.gz
 	-> rrawther-libjpeg-turbo-${RRAWTHER_LIBJPEG_TURBO_COMMIT:0:7}.tar.gz
+	!system-rapidjson? (
+https://github.com/Tencent/rapidjson/archive/${RAPIDJSON_COMMIT}.tar.gz -> rapidjson-${RAPIDJSON_COMMIT:0:7}.tar.gz
+	)
 	"
-	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-rocm-${PV}"
 fi
 
 DESCRIPTION="MIVisionX toolkit is a set of comprehensive computer vision and \
@@ -31,8 +36,9 @@ HOMEPAGE="https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-cpu ffmpeg +loom +migraphx +neural-net opencl opencv +rocal +rocm +rpp system-llvm
-r4
+cpu ffmpeg +loom +migraphx +neural-net opencl opencv +rocal +rocm +rpp
+system-llvm system-rapidjson
+r6
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -112,6 +118,9 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	>=dev-cpp/eigen-3:=
+	system-rapidjson? (
+		=dev-libs/rapidjson-9999
+	)
 "
 BDEPEND="
 	${PYTHON_DEPS}
@@ -139,6 +148,7 @@ src_prepare() {
 	sed \
 		-i \
 		-e "s|Python3 REQUIRED|Python3 ${EPYTHON/python/} EXACT REQUIRED|g" \
+		-e "s|Python3 QUIET|Python3 ${EPYTHON/python/} EXACT QUIET|g" \
 		"rocAL/rocAL_pybind/CMakeLists.txt" \
 		|| die
 	rocm_src_prepare
@@ -149,14 +159,29 @@ src_configure() {
         append-flags -Wl,-fuse-ld=gold
         append-ldflags -fuse-ld=gold
 
+	append-cppflags -D__STDC_CONSTANT_MACROS
+
+	if use rocal && ! use system-rapidjson ; then
+		append-cppflags -I"${WORKDIR}/install/${EPREFIX}${EROCM_PATH}/$(get_libdir)/rapidjson/include"
+		append-ldflags -L"${WORKDIR}/install/${EPREFIX}${EROCM_PATH}/$(get_libdir)/rapidjson/lib"
+	fi
+
+# Avoid
+# ModuleNotFoundError: No module named 'setuptools'
+	export PYTHONPATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/:${PYTHONPATH}"
+	export PYTHONPATH="${ESYSROOT}/${EROCM_PATH}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
+
 	build_libjpeg_turbo
+	build_rapidjson
 	cd "${S}" || die
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
+		-DCMAKE_INSTALL_PREFIX_PYTHON="${EPREFIX}${EROCM_PATH}/usr/lib/${EPATH}/site-packages"
 		-DGPU_SUPPORT=$(usex cpu OFF ON)
 		-DLOOM=$(usex loom ON OFF)
 		-DMIGRAPHX=$(usex migraphx ON OFF)
 		-DNEURAL_NET=$(usex neural-net ON OFF)
+		-DPYTHON_EXECUTABLE="/usr/bin/${EPYTHON}"
 		-DROCAL=$(usex rocal ON OFF)
 	)
 
@@ -189,9 +214,9 @@ src_configure() {
 		if use rocal ; then
 			# FIXME: fix prefix in TURBO_JPEG_PATH.
 			local staging_dir="${WORKDIR}/install"
-			export TURBO_JPEG_PATH="${staging_dir}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo"
+			export TURBO_JPEG_PATH="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/libjpeg-turbo"
 			mycmakeargs+=(
-				-DTURBO_JPEG_PATH="${staging_dir}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo"
+				-DTURBO_JPEG_PATH="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/libjpeg-turbo"
 				-DPYBIND11_INCLUDES="${ESYSROOT}/usr/include"
 			)
 		fi
@@ -261,7 +286,7 @@ build_libjpeg_turbo() {
 	mkdir -p "build" || die
 	cd "build" || die
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX="${staging_dir}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo"
+		-DCMAKE_INSTALL_PREFIX="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/libjpeg-turbo"
 		-DCMAKE_BUILD_TYPE=RELEASE
 		-DENABLE_STATIC=FALSE
 		-DCMAKE_INSTALL_DEFAULT_LIBDIR=lib
@@ -272,6 +297,24 @@ build_libjpeg_turbo() {
 		|| die
 	emake || die
 	emake install || die
+}
+
+build_rapidjson() {
+	local staging_dir="${WORKDIR}/install"
+	use system-rapidjson && return
+	pushd "${S_RAPIDJSON}" || die
+		mkdir build || die
+		cd build || die
+		local mycmakeargs=(
+			-DCMAKE_INSTALL_PREFIX="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/rapidjson"
+		)
+		cmake \
+			"${mycmakeargs[@]}" \
+			.. \
+			|| die
+		emake
+		emake install || die
+	popd
 }
 
 sanitize_permissions() {
@@ -297,19 +340,23 @@ sanitize_permissions() {
 fix_rpath() {
 	local rpath
 	local file_path
-	rpath=$(patchelf --print-rpath "${ED}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/librocal.so")
-	rpath="${EPREFIX}${EROCM_PATH}/$(get_libdir)/${PN}/third_party/libjpeg-turbo/lib:${rpath}"
-	file_path="${ED}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/librocal.so"
-	patchelf \
-		--set-rpath "${rpath}" \
-		"${file_path}" \
-		|| die
-	rpath="${EPREFIX}${EROCM_PATH}/$(get_libdir)/${PN}/third_party/libjpeg-turbo/lib"
-	file_path=$(realpath "${ED}/${EPREFIX}${EROCM_PATH}/lib/${EPYTHON}/site-packages/rocal_pybind.cpython-"*"-linux-gnu.so")
-	patchelf \
-		--set-rpath "${rpath}" \
-		"${file_path}" \
-		|| die
+	if use rocal ; then
+		rpath=$(patchelf --print-rpath "${ED}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/librocal.so")
+		rpath="${EPREFIX}${EROCM_PATH}/$(get_libdir)/libjpeg-turbo/lib:${rpath}"
+		file_path="${ED}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/librocal.so"
+		patchelf \
+			--set-rpath "${rpath}" \
+			"${file_path}" \
+			|| die
+	fi
+	if use rocal-python ; then
+		rpath="${EPREFIX}${EROCM_PATH}/$(get_libdir)/libjpeg-turbo/lib"
+		file_path=$(realpath "${ED}/${EPREFIX}${EROCM_PATH}/lib/${EPYTHON}/site-packages/rocal_pybind.cpython-"*"-linux-gnu.so")
+		patchelf \
+			--set-rpath "${rpath}" \
+			"${file_path}" \
+			|| die
+	fi
 }
 
 src_install() {
