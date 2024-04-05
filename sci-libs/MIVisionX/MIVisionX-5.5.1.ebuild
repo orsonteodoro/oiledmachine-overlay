@@ -38,7 +38,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu +debug +enhanced-message ffmpeg -fp16 +loom +migraphx +neural-net opencl
 opencv +rocal +rocal-python +rocm +rpp system-llvm system-rapidjson
-r6
+ebuild-revision-7
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -181,7 +181,6 @@ src_configure() {
 		-DAMD_FP16_SUPPORT=$(usex fp16 ON OFF)
 		-DBUILD_DEV=$(usex debug ON OFF)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
-		-DCMAKE_INSTALL_PREFIX_PYTHON="${EPREFIX}${EROCM_PATH}/usr/lib/${EPATH}/site-packages"
 		-DENHANCED_MESSAGE=$(usex enhanced-message ON OFF)
 		-DGPU_SUPPORT=$(usex cpu OFF ON)
 		-DLOOM=$(usex loom ON OFF)
@@ -228,15 +227,15 @@ src_configure() {
 			)
 		fi
 
-		if use rpp ; then
+		if use rocal-python ; then
 			mycmakeargs+=(
-				-DAMDRPP_PATH="${ESYSROOT}/usr"
+				-DCMAKE_INSTALL_PREFIX_PYTHON="${EPREFIX}${EROCM_PATH}/usr/lib/${EPATH}/site-packages"
 			)
 		fi
 
-		if use rocal-python ; then
+		if use rpp ; then
 			mycmakeargs+=(
-				-DCMAKE_INSTALL_PREFIX_PYTHON="$(python_get_sitedir)"
+				-DAMDRPP_PATH="${ESYSROOT}/usr"
 			)
 		fi
 

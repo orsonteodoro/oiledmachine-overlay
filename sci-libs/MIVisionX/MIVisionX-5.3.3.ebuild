@@ -38,7 +38,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu +enhanced-message ffmpeg +loom +migraphx +neural-net opencl opencv +rocal
 +rocm +rpp system-llvm system-rapidjson
-r6
+ebuild-revision-7
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -176,7 +176,6 @@ src_configure() {
 	cd "${S}" || die
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
-		-DCMAKE_INSTALL_PREFIX_PYTHON="${EPREFIX}${EROCM_PATH}/usr/lib/${EPATH}/site-packages"
 		-DENHANCED_MESSAGE=$(usex enhanced-message ON OFF)
 		-DGPU_SUPPORT=$(usex cpu OFF ON)
 		-DLOOM=$(usex loom ON OFF)
@@ -219,6 +218,12 @@ src_configure() {
 			mycmakeargs+=(
 				-DTURBO_JPEG_PATH="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/libjpeg-turbo"
 				-DPYBIND11_INCLUDES="${ESYSROOT}/usr/include"
+			)
+		fi
+
+		if use rocal-python ; then
+			mycmakeargs+=(
+				-DCMAKE_INSTALL_PREFIX_PYTHON="${EPREFIX}${EROCM_PATH}/usr/lib/${EPATH}/site-packages"
 			)
 		fi
 
