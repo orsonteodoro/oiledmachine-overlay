@@ -119,6 +119,10 @@ BDEPEND="
 	>=dev-build/cmake-3.5
 	dev-util/patchelf
 	virtual/pkgconfig
+	system-llvm? (
+		>=sys-devel/llvmgold-${LLVM_SLOT}
+		sys-devel/binutils[gold,plugins]
+	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-change-libjpeg-turbo-search-path.patch"
@@ -142,6 +146,10 @@ src_prepare() {
 }
 
 src_configure() {
+	# Fix libhsa-runtime64.so: undefined reference to `hsaKmtReplaceAsanHeaderPage'
+        append-flags -Wl,-fuse-ld=gold
+        append-ldflags -fuse-ld=gold
+
 	build_libjpeg_turbo
 	cd "${S}" || die
 	local mycmakeargs=(
@@ -291,15 +299,15 @@ sanitize_permissions() {
 fix_rpath() {
 	local rpath
 	local file_path
-	rpath=$(patchelf --print-rpath "${ED}/${EPREFIX}/usr/$(get_libdir)/librocal.so")
-	rpath="${EPREFIX}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo/lib:${rpath}"
-	file_path="${ED}/${EPREFIX}/usr/$(get_libdir)/librocal.so"
+	rpath=$(patchelf --print-rpath "${ED}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/librocal.so")
+	rpath="${EPREFIX}${EROCM_PATH}/$(get_libdir)/${PN}/third_party/libjpeg-turbo/lib:${rpath}"
+	file_path="${ED}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/librocal.so"
 	patchelf \
 		--set-rpath "${rpath}" \
 		"${file_path}" \
 		|| die
-	rpath="${EPREFIX}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo/lib"
-	file_path=$(realpath "${ED}/${EPREFIX}/usr/lib/${EPYTHON}/site-packages/rocal_pybind.cpython-"*"-linux-gnu.so")
+	rpath="${EPREFIX}${EROCM_PATH}/$(get_libdir)/${PN}/third_party/libjpeg-turbo/lib"
+	file_path=$(realpath "${ED}/${EPREFIX}${EROCM_PATH}/lib/${EPYTHON}/site-packages/rocal_pybind.cpython-"*"-linux-gnu.so")
 	patchelf \
 		--set-rpath "${rpath}" \
 		"${file_path}" \
