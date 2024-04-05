@@ -81,7 +81,7 @@ RDEPEND="
 	dev-libs/openssl
 	~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
 	ffmpeg? (
-		>=media-video/ffmpeg-4.4.2[fdk,gpl,libass,x264,x265,nonfree]
+		>=media-video/ffmpeg-4.4.2:0/56.58.58[fdk,gpl,libass,x264,x265,nonfree]
 	)
 	neural-net? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
@@ -171,8 +171,14 @@ src_configure() {
 		-DROCAL_PYTHON=$(usex rocal-python ON OFF)
 	)
 
-	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_SLOT}}"
-	export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_SLOT}}"
+	if use system-llvm ; then
+		export CC="${HIP_CC:-${CHOST}-clang-${LLVM_SLOT}}"
+		export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_SLOT}}"
+	else
+		export CC="${HIP_CC:-clang}"
+		export CXX="${HIP_CXX:-clang++}"
+	fi
+	export CPP="${CXX} -E"
 
 	if use opencl ; then
 		mycmakeargs+=(
