@@ -73,6 +73,7 @@ EAPI=8
 # For ffmpeg:0/x.y.z, y must be <= 59.
 ALSA_LIB="1.2.4"
 ATK_PV="2.38.0"
+BUILD_ID_AMD64="g4d59ad7c" # Change this after every bump
 CAIRO_PV="1.16.0"
 CLANG_PV="17"
 DEFAULT_CONFIGURATION="stable"
@@ -84,6 +85,12 @@ EXPECTED_CR_DEPENDS_FINGERPRINT="\
 27ee98a40fe37c9897bb941d98535b999543c44eae9c2460513379387621ce6e\
 89ce438d5e3c3df6230912b1eebf3c45c70bd9def0deb9fb047ed13256019a7c\
 " # Packages fingerprint of internal dependency Chromium for CEF
+FFMPEG_COMPAT=(
+	"0/56.58.58" # 4.4
+	"0/55.57.57" # 3.4
+	"0/54.56.56" # 2.4
+	"0/52.54.54" # 0.11, 1.0, 1.1 1.2
+)
 FFMPEG_SLOT="0/58.60.60" # Same as 6.0 in chromium tarball [do not use] ; 0/libavutil_major.libavcodec_major.libavformat_major
 FONTCONFIG_PV="2.14.2" # Use vendored list for versioning
 FREETYPE_PV="2.13.2" # Use vendored list for versioning
@@ -160,7 +167,6 @@ SRC_URI+="
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	MY_PV=$(ver_cut 1-4 ${PV})
 	MY_REV=$(ver_cut 6 ${PV})
-	BUILD_ID_AMD64="g4d59ad7c" # Change this after every bump
 	if [[ -z "${MY_REV}" ]] ; then
 		_BUILD_ID_AMD64="${BUILD_ID_AMD64}"
 	else
@@ -203,11 +209,26 @@ REQUIRED_USE+="
 	)
 "
 
+gen_ffmpeg_depends() {
+	echo "
+		|| (
+	"
+	local s
+	for s in ${FFMPEG_COMPAT[@]} ; do
+		echo "
+			media-video/ffmpeg:${s}
+		"
+	done
+	echo "
+		)
+	"
+}
+
 # media-video/ffmpeg:${FFMPEG_SLOT} # From chromium tarball
 # <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
 OPTIONAL_RDEPENDS_LISTED="
 	ffmpeg? (
-		<media-video/ffmpeg-5
+		$(gen_ffmpeg_depends)
 	)
 	libnotify? (
 		>=x11-libs/libnotify-0.7.6
