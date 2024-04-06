@@ -48,6 +48,7 @@ EOF
 
 		rm extern-uris.txt
 		rm uris-lst.txt
+		rm uris-lst.txt.t
 	done
 }
 
