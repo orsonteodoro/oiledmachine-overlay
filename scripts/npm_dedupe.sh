@@ -30,7 +30,8 @@ npm_updater_main_dedupe()
 	for pv in ${versions[@]} ; do
 		echo "Updating ${pv}"
 
-		sed -n -e '/UPDATER_START_NPM_EXTERNAL_URIS/,/UPDATER_END_NPM_EXTERNAL_URIS/{//!p}' "${PN}-${pv}.ebuild" | sed -e "1d" -e '$d' | sort | uniq > uris-lst.txt
+		sed -n -e '/UPDATER_START_NPM_EXTERNAL_URIS/,/UPDATER_END_NPM_EXTERNAL_URIS/{//!p}' "${PN}-${pv}.ebuild" | sed -e "1d" -e '$d' > uris-lst.txt.t
+		cat uris-lst.txt.t | LC_COLLATE=C sort | uniq > uris-lst.txt
 
 		cat "${PN}-${pv}.ebuild" | sed -e '/UPDATER_START_NPM_EXTERNAL_URIS/,/UPDATER_END_NPM_EXTERNAL_URIS/{//!d}' > "${PN}-${pv}.ebuild.t"
 		mv "${PN}-${pv}.ebuild"{.t,}

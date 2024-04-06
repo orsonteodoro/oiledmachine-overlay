@@ -15,7 +15,7 @@ npm_updater_gen_npm_uris() {
 	local row
 	local uri
 	for row in ${NPM_EXTERNAL_URIS} ; do
-		[[ "${row}" =~ "http" ]] || continue
+		[[ "${row}" =~ "http" || "${row}" =~ "git+ssh" ]] || continue
 		local uri=$(echo "${row}" \
 			| cut -f 1 -d "#")
 		uri=$(echo "${uri}" | sed -e "s|[?].*||")
