@@ -108,11 +108,11 @@ CR_CLANG_USED_UNIX_TIMESTAMP="1707930042" # Cached.  Use below to obtain this. \
 #	| grep -F -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
 # Change also LLVM_OFFICIAL_SLOT
 DISABLE_AUTOFORMATTING="yes"
-FFMPEG_LIBAVUTIL_SOVER="58.36.100" # third_party/ffmpeg/libavutil/version.h
-FFMPEG_LIBAVCODEC_SOVER="60.37.100" # third_party/ffmpeg/libavcodec/version*.h
-FFMPEG_LIBAVFORMAT_SOVER="60.20.100" # third_party/ffmpeg/libavformat/version*.h
-FFMPEG_PV="6.0" # It should be 9999 but relaxed.  ; They don't use a tagged version.
-FFMPEG_SUBSLOT="$(ver_cut 1 ${FFMPEG_LIBAVUTIL_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVCODEC_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVFORMAT_SOVER})"
+# See also
+# third_party/ffmpeg/libavutil/version.h
+# third_party/ffmpeg/libavcodec/version*.h
+# third_party/ffmpeg/libavformat/version*.h
+FFMPEG_SLOT="0/58.60.60" # libavutil_sover_maj,libavcodec_sover_maj,libformat_sover_maj
 GCC_COMPAT=( {14..10} )
 GCC_PV="10.2.1" # Minimum
 GN_PV="0.2154"
@@ -685,7 +685,7 @@ LIBVA_DEPEND="
 		>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},drm(+),wayland?,X?]
 		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		system-ffmpeg? (
-			media-video/ffmpeg:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},vaapi]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},vaapi]
 		)
 	)
 "
@@ -880,19 +880,19 @@ COMMON_DEPEND="
 			>=media-libs/opus-1.4:=[${MULTILIB_USEDEP}]
 		)
 		proprietary-codecs? (
-			media-video/ffmpeg:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},encode?,opus?,vorbis?,vpx?]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,vorbis?,vpx?]
 		)
 		proprietary-codecs-disable? (
-			media-video/ffmpeg:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		proprietary-codecs-disable-nc-developer? (
-			media-video/ffmpeg:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		proprietary-codecs-disable-nc-user? (
-			media-video/ffmpeg:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-nc-user,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-nc-user,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		|| (
-			media-video/ffmpeg:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-samba]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
 			>=net-fs/samba-4.5.10-r1[${MULTILIB_USEDEP},-debug(-)]
 		)
 	)
@@ -937,7 +937,7 @@ RDEPEND+="
 	)
 	bindist? (
 		!ffmpeg-chromium? (
-			>=media-video/ffmpeg-6.1-r1:0/${FFMPEG_SUBSLOT}[chromium]
+			>=media-video/ffmpeg-6.1-r1:${FFMPEG_SLOT}[chromium]
 		)
 		ffmpeg-chromium? (
 			media-video/ffmpeg-chromium:${PV%%\.*}
