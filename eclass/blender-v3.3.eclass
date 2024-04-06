@@ -633,10 +633,12 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		<media-libs/embree-4
 	)
 	ffmpeg? (
-		<media-video/ffmpeg-6:=\
+		|| (
+			media-video/ffmpeg:0/56.58.58:=\
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
-		>=media-video/ffmpeg-4:=\
+			media-video/ffmpeg:0/57.59.59:=\
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
+		)
 	)
 	fftw? (
 		>=sci-libs/fftw-3.3.10:3.0=
