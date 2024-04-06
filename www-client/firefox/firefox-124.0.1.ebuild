@@ -111,7 +111,18 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 EBUILD_MAINTAINER_MODE=0
-FFMPEG_PV="4.4.1" # This corresponds to y in x.y.z from the subslot.
+FFMPEG_COMPAT=(
+	"0/58.60.60" # 6.0
+	"0/57.59.59" # 5.0
+	"0/56.58.58" # 4.0
+	"0/55.57.57" # 3.0
+	"0/54.56.56" # 2.4
+	"0/52.55.55" # 2.0
+	"0/52.54.54" # 1.1, 1.2
+	"0/51.54.54" # 0.11, 1.0
+	"0/51.53.53" # 0.10
+	"0/50.53.53" # 0.8
+)
 FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
@@ -522,12 +533,68 @@ UDEV_RDEPEND="
 	)
 "
 
+gen_ffmpeg_cdepend0() {
+	local s
+	for s in ${FFMPEG_COMPAT} ; do
+		echo "
+			media-video/ffmpeg:${s}[${MULTILIB_USEDEP},dav1d?,opus?,vaapi?,vpx?]
+		"
+	done
+}
+
+gen_ffmpeg_cdepend1() {
+	local s
+	for s in ${FFMPEG_COMPAT} ; do
+		echo "
+			(
+				!<dev-libs/openssl-3
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable,vaapi?,vpx?,-x264,-x265,-xvid]
+			)
+			(
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable,vaapi?,vpx?,-x264,-x265,-xvid]
+			)
+		"
+	done
+}
+
+gen_ffmpeg_cdepend2() {
+	local s
+	for s in ${FFMPEG_COMPAT} ; do
+		echo "
+			(
+				!<dev-libs/openssl-3
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vpx?,-x264,-x265,-xvid]
+			)
+			(
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vpx?,-x264,-x265,-xvid]
+			)
+		"
+	done
+}
+
+gen_ffmpeg_cdepend3() {
+	local s
+	for s in ${FFMPEG_COMPAT} ; do
+		echo "
+			(
+				!<dev-libs/openssl-3
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-user,vaapi?,vpx?,-x264,-x265,-xvid]
+			)
+			(
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-user,vaapi?,vpx?,-x264,-x265,-xvid]
+			)
+		"
+	done
+}
+
 # x86_64 will use ffvpx and system-ffmpeg but others will use system-ffmpeg
 NON_FREE_CDEPENDS="
 	proprietary-codecs? (
 		media-libs/mesa[${MULTILIB_USEDEP},proprietary-codecs]
 		system-ffmpeg? (
-			media-video/ffmpeg[${MULTILIB_USEDEP},dav1d?,opus?,vaapi?,vpx?]
+			|| (
+				$(gen_ffmpeg_cdepend0)
+			)
 		)
 		vaapi? (
 			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
@@ -537,13 +604,7 @@ NON_FREE_CDEPENDS="
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 		system-ffmpeg? (
 			|| (
-				(
-					!<dev-libs/openssl-3
-					>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable,vaapi?,vpx?,-x264,-x265,-xvid]
-				)
-				(
-					>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable,vaapi?,vpx?,-x264,-x265,-xvid]
-				)
+				$(gen_ffmpeg_cdepend1)
 			)
 		)
 	)
@@ -551,13 +612,7 @@ NON_FREE_CDEPENDS="
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 		system-ffmpeg? (
 			|| (
-				(
-					!<dev-libs/openssl-3
-					>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vpx?,-x264,-x265,-xvid]
-				)
-				(
-					>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vpx?,-x264,-x265,-xvid]
-				)
+				$(gen_ffmpeg_cdepend2)
 			)
 		)
 	)
@@ -565,13 +620,7 @@ NON_FREE_CDEPENDS="
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 		system-ffmpeg? (
 			|| (
-				(
-					!<dev-libs/openssl-3
-					>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-user,vaapi?,vpx?,-x264,-x265,-xvid]
-				)
-				(
-					>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-user,vaapi?,vpx?,-x264,-x265,-xvid]
-				)
+				$(gen_ffmpeg_cdepend3)
 			)
 		)
 	)
