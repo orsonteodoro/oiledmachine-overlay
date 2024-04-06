@@ -223,12 +223,24 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/npmpkg-}"
 				tar -cf "${dest}/${fn_raw}" * || die
 			popd >/dev/null 2>&1 || die
 			rm -rf "${path}" || die
+
+# npm cache cannot be used because of lack of documentation for git snapshot
+# support.
 			#npm cache add "${dest}/${fn_raw}" || die
 		else
 			bn=$(echo "${uri}" \
 				| cut -f 3 -d " ")
 einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/npmpkg-}"
 			cp -a "${DISTDIR}/${bn}" "${dest}/${bn/npmpkg-}" || die
+
+# Testing new change:
+#
+# Previously, the package-locks.json were edited directly to change the URI to
+# either file:<path> for tarballs or <abs path> to repo snapshots.  This was
+# very fast but did not work because when the tarballs were unpacked, they
+# contained the same problem of URIs.  The npm cache change may address this
+# problem but has a huge penalty for using npm cache util.
+ewarn "Adding ${dest}/${bn/npmpkg-} to cache.  A slowdown may be encountered.  Please wait..."
 			npm cache add "${dest}/${bn/npmpkg-}"
 		fi
 	done
@@ -277,6 +289,8 @@ npm_transform_uris_default() {
 			"${lockfile}") ; do
 			local bn=$(basename "${uri}")
 			local newname=$(npm_gen_new_name "${uri}")
+
+# Disabled because of npm cache changes
 			if [[ "${uri}" =~ "\.tgz" ]] ; then
 				: #sed -i -e "s|${uri}|file:${WORKDIR}/npm-packages-offline-cache/${newname}|g" "${lockfile}" || die
 			else
