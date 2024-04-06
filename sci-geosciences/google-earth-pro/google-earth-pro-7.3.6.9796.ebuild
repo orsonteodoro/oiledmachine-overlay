@@ -97,8 +97,8 @@ LICENSE="
 	!system-qt5? (
 		BSD
 		BSD-2
-		LGPL-2.1
 		google-earth-pro-7.3.4
+		LGPL-2.1
 	)
 	!system-spnav? (
 		BSD
