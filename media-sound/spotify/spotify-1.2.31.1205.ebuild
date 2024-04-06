@@ -89,7 +89,7 @@ FFMPEG_COMPAT=(
 	"0/56.58.58" # 4.4
 	"0/55.57.57" # 3.4
 	"0/54.56.56" # 2.4
-	"0/52.54.54" # 0.11, 1.0, 1.1 1.2
+	"0/52.54.54" # 0.11, 1.0, 1.1, 1.2
 )
 FFMPEG_SLOT="0/58.60.60" # Same as 6.0 in chromium tarball [do not use] ; 0/libavutil_major.libavcodec_major.libavformat_major
 FONTCONFIG_PV="2.14.2" # Use vendored list for versioning
