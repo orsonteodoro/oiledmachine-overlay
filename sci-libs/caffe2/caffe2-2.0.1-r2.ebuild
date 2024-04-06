@@ -28,6 +28,11 @@ CUDA_TARGETS_COMPAT=(
 	sm_80
 	sm_86
 )
+FFMPEG_COMPAT=(
+	"0/56.58.58" # 4.2 (U20 dockerfile)
+	"0/54.56.56" # 2.8 (U16 docs)
+	"0/52.54.54" # 1.2 (U14 docs)
+)
 LLVM_COMPAT=(
 	15 # ROCm slot
 	12 10 9 8 7 # Upstream build.sh, pull.yml
@@ -163,6 +168,23 @@ gen_rocm_depends() {
 		"
 	done
 }
+
+gen_ffmpeg_depends() {
+	echo "
+		|| (
+	"
+	local s
+	for s in ${FFMPEG_COMPAT[@]} ; do
+		echo "
+			media-video/ffmpeg:${s}
+		"
+	done
+	echo "
+		)
+		media-video/ffmpeg:=
+	"
+}
+
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-cpp/glog-0.5.0
@@ -214,7 +236,7 @@ RDEPEND="
 		dev-libs/FBGEMM
 	)
 	ffmpeg? (
-		media-video/ffmpeg:=
+		$(gen_ffmpeg_depends)
 	)
 	gloo? (
 		sci-libs/gloo[cuda?]
