@@ -158,6 +158,10 @@ src_unpack() {
 	fi
 }
 
+src_prepare() {
+	default
+}
+
 multilib_src_configure() {
 	local so_c=$(grep -F "set(LT_CURRENT" "${S}/CMakeLists.txt" \
 		| grep -E -o "[0-9]+")
