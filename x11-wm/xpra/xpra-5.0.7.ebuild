@@ -4,10 +4,13 @@
 
 EAPI=8
 
+# D10, U22.04
+
 MY_PV="$(ver_cut 1-4)"
 
 DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_EXT=1
+FFMPEG_SLOT="0/56.58.58"
 PYTHON_COMPAT=( python3_10 ) # Upstream only tests with 3.10
 
 inherit cuda distutils-r1 flag-o-matic linux-info prefix tmpfiles udev
@@ -391,7 +394,7 @@ RDEPEND+="
 		>=x11-drivers/evdi-1.9
 	)
 	ffmpeg? (
-		>=media-video/ffmpeg-4.0:0=[vpx?,x264?,x265?]
+		media-video/ffmpeg:${FFMPEG_SLOT}[vpx?,x264?,x265?]
 	)
 	gnome-shell? (
 		gnome-extra/gnome-shell-extension-appindicator
@@ -548,7 +551,7 @@ RDEPEND+="
 	)
 	vaapi? (
 		>=media-libs/libva-2.1.0[drm(+),X?,wayland?]
-		>=media-video/ffmpeg-4.4:0=[vaapi]
+		media-video/ffmpeg:${FFMPEG_SLOT}[vaapi]
 		media-libs/vaapi-drivers
 	)
 	vpx? (
