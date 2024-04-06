@@ -144,12 +144,12 @@ ELECTRON_APP_LICENSES="
 	UoI-NCSA
 	ZLIB
 	|| (
-		MIT
-		public-domain
 		(
 			MIT
 			public-domain
 		)
+		MIT
+		public-domain
 	)
 	|| (
 		LGPL-2.1+
