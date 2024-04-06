@@ -166,8 +166,12 @@ RDEPEND+="
 		>=sci-libs/dcmtk-3.6.1
 	)
 	ffmpeg? (
-		<media-video/ffmpeg-5.2:=
-		>=media-video/ffmpeg-3.0:=
+		|| (
+			media-video/ffmpeg:55.57.57
+			media-video/ffmpeg:56.58.58
+			media-video/ffmpeg:57.59.59
+		)
+		media-video/ffmpeg:=
 	)
 	field3d? (
 		>=media-libs/Field3D-1.7.3:=
