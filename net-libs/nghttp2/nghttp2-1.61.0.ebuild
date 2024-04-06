@@ -6,7 +6,7 @@ EAPI=8
 # U22.04
 
 MRUBY_COMMIT="32279e4128527bab4c961854b9cce727a060abea"
-MUNIT_COMMIT="fe21fbd5acc81cdeee26e18df5afd6aba3d92d7a"
+MUNIT_COMMIT="ad886b646ec31de46566c3748f3ac301d9776e15"
 NEVERBLEED_COMMIT="929e470260d460dacc20a10601c2d3c7a9f386b2"
 PYTHON_COMPAT=( python3_{10..12} )
 USE_RUBY="ruby31 ruby32 ruby33"
@@ -60,8 +60,8 @@ RESTRICT="
 		test
 	)
 "
-SO_CURRENT="41"
-SO_AGE="27"
+SO_CURRENT="42"
+SO_AGE="28"
 SLOT="0/1.$((${SO_CURRENT} - ${SO_AGE}))"
 # bpf is default ON if clang and http3
 # doc is default on upstream
@@ -81,7 +81,7 @@ REQUIRED_USE="
 "
 SSL_DEPEND="
 	>=dev-libs/libevent-2.0.8[${MULTILIB_USEDEP},ssl]
-	>=net-libs/ngtcp2-1.3.0[${MULTILIB_USEDEP},openssl]
+	>=net-libs/ngtcp2-1.4.0[${MULTILIB_USEDEP},openssl]
 	|| (
 		(
 			>=dev-libs/openssl-1.1.1w:0[${MULTILIB_USEDEP},-bindist(-)]
