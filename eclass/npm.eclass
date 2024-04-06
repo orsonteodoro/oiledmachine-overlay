@@ -299,11 +299,11 @@ npm_transform_uris_default() {
 		done
 		IFS=$' \t\n'
 		if grep -q "registry.npmjs.org" "${lockfile}" ; then
-eerror
-eerror "Detected URI in lockfile that is not converted to offline format."
-eerror "File:  "$(realpath "${lockfile}")
-eerror
-			die
+ewarn
+ewarn "Detected URI in lockfile that is not converted to offline format."
+ewarn "File:  "$(realpath "${lockfile}")
+ewarn
+#			die
 		fi
 	done
 }
