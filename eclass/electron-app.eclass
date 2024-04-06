@@ -145,6 +145,18 @@ ELECTRON_APP_LICENSES="
 	ZLIB
 	|| (
 		(
+			GPL-2+
+			MPL-2.0
+		)
+		(
+			LGPL-2.1+
+			MPL-2.0
+		)
+		GPL-2.0+
+		MPL-2.0
+	)
+	|| (
+		(
 			MIT
 			public-domain
 		)
@@ -155,18 +167,6 @@ ELECTRON_APP_LICENSES="
 		LGPL-2.1+
 		GPL-2+
 		MPL-1.1
-	)
-	|| (
-		(
-			GPL-2+
-			MPL-2.0
-		)
-		(
-			LGPL-2.1+
-			MPL-2.0
-		)
-		GPL-2.0+
-		MPL-2.0
 	)
 " # The ^^ (mutually exclusion) does not work.  It is assumed the user will choose
 # outside the computer.
