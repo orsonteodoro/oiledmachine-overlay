@@ -211,21 +211,25 @@ _npm_cp_tarballs() {
 				| cut -f 3 -d " ")
 einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/npmpkg-}"
 			local fn="${bn/npmpkg-}"
+			fn_raw="${fn}"
 			fn="${fn/.tgz}"
 			local path=$(mktemp -d -p "${T}")
 			pushd "${path}" >/dev/null 2>&1 || die
 # See https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths
 				tar --strip-components=1 -xvf "${DISTDIR}/${bn}" || die
-				mkdir -p "${dest}/${fn}" || die
-				mv * "${dest}/${fn}" || die
+
+#				mkdir -p "${dest}/${fn}" || die
+#				mv * "${dest}/${fn}" || die
+				tar -cf "${dest}/${fn_raw}" * || die
 			popd >/dev/null 2>&1 || die
 			rm -rf "${path}" || die
-			npm cache add "${dest}/${fn}" || die
+			#npm cache add "${dest}/${fn_raw}" || die
 		else
 			bn=$(echo "${uri}" \
 				| cut -f 3 -d " ")
 einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/npmpkg-}"
 			cp -a "${DISTDIR}/${bn}" "${dest}/${bn/npmpkg-}" || die
+			npm cache add "${dest}/${bn/npmpkg-}"
 		fi
 	done
 	IFS=$' \t\n'
@@ -244,7 +248,7 @@ npm_gen_new_name() {
 		local project_name=$(echo "${uri}" \
 			| cut -f 5 -d "/" \
 			| cut -f 1 -d "#" \
-			| cut -f 1 -d ".")
+			| sed -e "s|.git$||")
 		echo "${project_name}.git-${commit_id}"
 	elif [[ "${uri}" =~ "@" ]] ; then
 		local ns=$(echo "${uri}" \
@@ -274,16 +278,16 @@ npm_transform_uris_default() {
 			local bn=$(basename "${uri}")
 			local newname=$(npm_gen_new_name "${uri}")
 			if [[ "${uri}" =~ "\.tgz" ]] ; then
-				sed -i -e "s|${uri}|file:${WORKDIR}/npm-packages-offline-cache/${newname}|g" "${lockfile}" || die
+				: #sed -i -e "s|${uri}|file:${WORKDIR}/npm-packages-offline-cache/${newname}|g" "${lockfile}" || die
 			else
-				sed -i -e "s|${uri}|${WORKDIR}/npm-packages-offline-cache/${newname}|g" "${lockfile}" || die
+				: #sed -i -e "s|${uri}|${WORKDIR}/npm-packages-offline-cache/${newname}|g" "${lockfile}" || die
 			fi
 		done
 		IFS=$' \t\n'
 		if grep -q "registry.npmjs.org" "${lockfile}" ; then
 eerror
 eerror "Detected URI in lockfile that is not converted to offline format."
-eerror "File:  ${lockfile}"
+eerror "File:  "$(realpath "${lockfile}")
 eerror
 			die
 		fi

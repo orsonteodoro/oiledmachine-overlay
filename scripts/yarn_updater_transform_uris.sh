@@ -26,7 +26,7 @@ yarn_updater_gen_yarn_uris() {
 			local project_name=$(echo "${row}" \
 				| cut -f 5 -d "/" \
 				| cut -f 1 -d "#" \
-				| cut -f 1 -d ".")
+				| sed -e "s|.git$||")
 			echo "https://github.com/${owner}/${project_name}/archive/${commit_id}.tar.gz -> yarnpkg-${project_name}.git-${commit_id}.tgz"
 		elif [[ "${row}" =~ "->" ]] ; then
 			echo "${uri}"

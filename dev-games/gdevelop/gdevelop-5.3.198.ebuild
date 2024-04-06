@@ -46,14 +46,13 @@ NPM_MULTI_LOCKFILE=1
 NPM_OFFLINE=1 # Completely offline (2) is broken.
 # If missing tarball, the misdiagnosed error gets produced:
 # tarball data for ... seems to be corrupted. Trying again.
-NPM_AUDIT_FIX=1
+NPM_AUDIT_FIX=0 # lockfiles are already audit fixed
 PYTHON_COMPAT=( python3_{10,11} ) # CI uses 3.8, 3.9
 UDEV_PV="245.4"
 
 inherit check-reqs desktop electron-app evar_dump flag-o-matic llvm-r1 npm
 inherit python-r1 toolchain-funcs xdg
 
-#https://github.com/markandrus/webidl2/archive/e470735423d73fbbc20d472d9e0174592b80a463.tar.gz -> npmpkg-webidl2.git-e470735423d73fbbc20d472d9e0174592b80a463.tgz
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
 https://github.com/4ian/lingui-react/archive/dc6b1e013470d952cf85f96cc4affdd28e29634a.tar.gz -> npmpkg-lingui-react.git-dc6b1e013470d952cf85f96cc4affdd28e29634a.tgz
@@ -61,6 +60,7 @@ https://github.com/4ian/react-mosaic/archive/d5ef155119d786c08c7c72e34997dcef2f0
 https://github.com/4ian/webidl-tools/archive/348f9c03afc9d8f278efccdd74543e265a41fd11.tar.gz -> npmpkg-webidl-tools.git-348f9c03afc9d8f278efccdd74543e265a41fd11.tgz
 https://github.com/devsnek/node-register-scheme/archive/e7cc9a63a1f512565da44cb57316d9fb10750e17.tar.gz -> npmpkg-node-register-scheme.git-e7cc9a63a1f512565da44cb57316d9fb10750e17.tgz
 https://github.com/discordjs/rpc/archive/9e7de2a6d917591f10a66389e62e1dc053c04fec.tar.gz -> npmpkg-rpc.git-9e7de2a6d917591f10a66389e62e1dc053c04fec.tgz
+https://github.com/markandrus/webidl2.js/archive/e470735423d73fbbc20d472d9e0174592b80a463.tar.gz -> npmpkg-webidl2.js.git-e470735423d73fbbc20d472d9e0174592b80a463.tgz
 https://registry.npmjs.org/7zip-bin/-/7zip-bin-5.2.0.tgz -> npmpkg-7zip-bin-5.2.0.tgz
 https://registry.npmjs.org/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz -> npmpkg-@aashutoshrathi-word-wrap-1.2.6.tgz
 https://registry.npmjs.org/@algolia/events/-/events-4.0.1.tgz -> npmpkg-@algolia-events-4.0.1.tgz
