@@ -220,6 +220,7 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/npmpkg-}"
 				mv * "${dest}/${fn}" || die
 			popd >/dev/null 2>&1 || die
 			rm -rf "${path}" || die
+			npm cache add "${dest}/${fn}" || die
 		else
 			bn=$(echo "${uri}" \
 				| cut -f 3 -d " ")
@@ -272,7 +273,7 @@ npm_transform_uris_default() {
 			"${lockfile}") ; do
 			local bn=$(basename "${uri}")
 			local newname=$(npm_gen_new_name "${uri}")
-			if [[ "${bn}" =~ "\.tgz" ]] ; then
+			if [[ "${uri}" =~ "\.tgz" ]] ; then
 				sed -i -e "s|${uri}|file:${WORKDIR}/npm-packages-offline-cache/${newname}|g" "${lockfile}" || die
 			else
 				sed -i -e "s|${uri}|${WORKDIR}/npm-packages-offline-cache/${newname}|g" "${lockfile}" || die

@@ -164,11 +164,11 @@ inherit flag-o-matic-om lcnr llvm multilib-minimal ninja-utils pax-utils
 inherit python-any-r1 qmake-utils readme.gentoo-r1 toolchain-funcs uopts
 inherit xdg-utils
 
-PATCHSET_PPC64="122.0.6261.57-1raptor0~deb12u1"
+PATCHSET_PPC64="123.0.6312.86-1raptor0~deb12u1"
 PATCH_REVISION=""
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 
-KEYWORDS="~amd64 ~arm64"
+KEYWORDS="~amd64 ~arm64 ~ppc64"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	!system-toolchain? (
@@ -191,9 +191,6 @@ HOMEPAGE="https://www.chromium.org/"
 # emerge does not understand ^^ in the LICENSE variable and have been replaced
 # with ||.  You should choose at most one at some instances.
 LICENSE="
-	BSD
-	chromium-$(ver_cut 1-3 ${PV}).x.html
-	custom
 	(
 		all-rights-reserved
 		MIT
@@ -214,6 +211,7 @@ LICENSE="
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
 	Boost-1.0
+	BSD
 	BSD-2
 	BSD-4
 	base64
@@ -221,6 +219,8 @@ LICENSE="
 	CC-BY-3.0
 	CC-BY-4.0
 	CC-BY-ND-2.5
+	chromium-$(ver_cut 1-3 ${PV}).x.html
+	custom
 	FLEX
 	FTL
 	fft2d
@@ -266,21 +266,21 @@ LICENSE="
 		widevine
 	)
 	|| (
-		MPL-1.1
 		GPL-2
 		LGPL-2.1
+		MPL-1.1
 	)
 	|| (
 		(
-			MPL-2.0
 			GPL-2+
+			MPL-2.0
 		)
 		(
-			MPL-2.0
 			LGPL-2.1+
+			MPL-2.0
 		)
-		MPL-2.0
 		GPL-2.0+
+		MPL-2.0
 	)
 "
 #
@@ -441,8 +441,8 @@ CPU_FLAGS_ARM=(
 CPU_FLAGS_X86=(
 	avx2
 	sse2
-	ssse3
 	sse4_2
+	ssse3
 )
 IUSE_LIBCXX=(
 	bundled-libcxx
@@ -451,21 +451,21 @@ IUSE_LIBCXX=(
 # CFI Basic (.a) mode requires all third party modules built as static.
 
 # Option defaults based on build files.
-IUSE_CODECS="
-+dav1d
-+openh264
-+opus
-+libaom
-+vpx
-+vaapi-hevc
-+vorbis
-"
+IUSE_CODECS=(
+	+dav1d
+	+libaom
+	+openh264
+	+opus
+	+vaapi-hevc
+	+vorbis
+	+vpx
+)
 
 # Option defaults based on build files.
 IUSE="
 ${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_}
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
-${IUSE_CODECS}
+${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 bindist bluetooth +bundled-libcxx branch-protection +cfi +cups -debug +encode
 ffmpeg-chromium -gtk4 -hangouts -headless +js-type-check +kerberos +official
@@ -608,9 +608,6 @@ REQUIRED_USE+="
 		proprietary-codecs
 	)
 	official? (
-		!amd64? (
-			!cfi
-		)
 		!debug
 		!epgo
 		!hangouts
@@ -651,6 +648,9 @@ REQUIRED_USE+="
 		vpx
 		wayland
 		X
+		!amd64? (
+			!cfi
+		)
 		amd64? (
 			pulseaudio
 			cfi
@@ -834,8 +834,8 @@ COMMON_SNAPSHOT_DEPEND="
 VIRTUAL_UDEV="
 	|| (
 		>=sys-apps/systemd-252.5[${MULTILIB_USEDEP}]
-		>=sys-fs/udev-252.5[${MULTILIB_USEDEP}]
 		>=sys-fs/eudev-2.1.1[${MULTILIB_USEDEP}]
+		>=sys-fs/udev-252.5[${MULTILIB_USEDEP}]
 	)
 "
 
@@ -843,8 +843,8 @@ COMMON_DEPEND="
 	!headless? (
 		${VIRTUAL_UDEV}
 		(
-			>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},wayland?,X?]
 			>=media-libs/libglvnd-1.3.2[${MULTILIB_USEDEP},X?]
+			>=media-libs/mesa-${MESA_PV}:=[${MULTILIB_USEDEP},wayland?,X?]
 		)
 		>=app-accessibility/at-spi2-core-2.44.1:2[${MULTILIB_USEDEP}]
 		>=x11-libs/cairo-1.16.0:=[${MULTILIB_USEDEP}]
@@ -912,6 +912,9 @@ CLANG_RDEPEND="
 	)
 "
 RDEPEND+="
+	${COMMON_DEPEND}
+	${CLANG_RDEPEND}
+	virtual/ttf-fonts
 	!headless? (
 		qt5? (
 			>=dev-qt/qtgui-${QT5_PV}:5[wayland?,X?]
@@ -928,9 +931,6 @@ RDEPEND+="
 			>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland?,X?]
 		)
 	)
-	${COMMON_DEPEND}
-	${CLANG_RDEPEND}
-	virtual/ttf-fonts
 	selinux? (
 		>=sys-libs/libselinux-3.1[${MULTILIB_USEDEP}]
 		sec-policy/selinux-chromium
@@ -945,6 +945,7 @@ RDEPEND+="
 	)
 "
 DEPEND+="
+	${COMMON_DEPEND}
 	!headless? (
 		!gtk4? (
 			>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland?,X?]
@@ -953,7 +954,6 @@ DEPEND+="
 			>=gui-libs/gtk-${GTK4_PV}:4[wayland?,X?]
 		)
 	)
-	${COMMON_DEPEND}
 "
 CLANG_BDEPEND="
 	bundled-libcxx? (
