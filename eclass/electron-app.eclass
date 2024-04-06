@@ -51,7 +51,8 @@ inherit chromium-2 desktop
 
 # [A] Supported versions (LTS) are listed in
 # https://www.electronjs.org/docs/latest/tutorial/electron-timelines
-ELECTRON_APP_ELECTRON_PV_SUPPORTED="25.0"
+# Update every two months.  Next bump is Jun.
+ELECTRON_APP_ELECTRON_PV_SUPPORTED="27.0"
 
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:-"npm"} # can be npm, yarn
 ELECTRON_APP_ECLASS_DEBUG=${ELECTRON_APP_ECLASS_DEBUG:-"debug"} # debug or production
@@ -70,16 +71,28 @@ ${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP:-"0"}
 # For Electron 18.2.2 from electron-builder
 # See comments below for details.
 ELECTRON_APP_LICENSES="
-	custom
-	( all-rights-reserved HPND )
-	( custom ISC all-rights-reserved )
-	( LGPL-2.1 LGPL-2.1+ )
-	( MPL-1.1 GPL-2 )
+	(
+		all-rights-reserved
+		HPND
+	)
+	(
+		all-rights-reserved
+		custom
+		ISC
+	)
+	(
+		LGPL-2.1
+		LGPL-2.1+
+	)
+	(
+		GPL-2
+		MPL-1.1
+	)
 	android
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
-	APSL-2
 	AFL-2.0
+	APSL-2
 	BitstreamVera
 	Boost-1.0
 	BSD
@@ -90,6 +103,7 @@ ELECTRON_APP_LICENSES="
 	CC-BY-SA-3.0
 	CPL-1.0
 	curl
+	custom
 	EPL-1.0
 	GPL-2
 	GPL-2-with-classpath-exception
@@ -112,26 +126,48 @@ ELECTRON_APP_LICENSES="
 	libpng
 	libpng2
 	libstdc++
+	libwebm-PATENTS
 	neon_2_sse
 	NEWLIB
 	MPL-1.1
 	MPL-2.0
 	Ms-PL
-	OFL-1.1
 	minpack
+	OFL-1.1
 	openssl
 	ooura
 	Prior-BSD-License
 	SunPro
-	Unicode-DFS-2016
 	unicode
+	Unicode-DFS-2016
 	unRAR
 	UoI-NCSA
-	libwebm-PATENTS
 	ZLIB
-	|| ( public-domain MIT ( public-domain MIT ) )
-	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
-	|| ( ( MPL-2.0 GPL-2+ ) ( MPL-2.0 LGPL-2.1+ ) MPL-2.0 GPL-2.0+ )
+	|| (
+		MIT
+		public-domain
+		(
+			MIT
+			public-domain
+		)
+	)
+	|| (
+		LGPL-2.1+
+		GPL-2+
+		MPL-1.1
+	)
+	|| (
+		(
+			GPL-2+
+			MPL-2.0
+		)
+		(
+			LGPL-2.1+
+			MPL-2.0
+		)
+		GPL-2.0+
+		MPL-2.0
+	)
 " # The ^^ (mutually exclusion) does not work.  It is assumed the user will choose
 # outside the computer.
 
@@ -328,14 +364,14 @@ COMMON_DEPEND="
 	dev-libs/fribidi
 	dev-libs/glib:2
 	dev-libs/gmp
-	dev-libs/libffi
-	dev-libs/libtasn1
 	dev-libs/libbsd
+	dev-libs/libffi
 	dev-libs/libpcre:3
+	dev-libs/libtasn1
 	dev-libs/libunistring
-	dev-libs/nss
 	dev-libs/nettle
 	dev-libs/nspr
+	dev-libs/nss
 	media-gfx/graphite2
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -365,8 +401,8 @@ COMMON_DEPEND="
 	)
 	X? (
 		x11-libs/libX11
-		x11-libs/libXScrnSaver
 		x11-libs/libXau
+		x11-libs/libxcb
 		x11-libs/libXcomposite
 		x11-libs/libXcursor
 		x11-libs/libXdamage
@@ -376,18 +412,20 @@ COMMON_DEPEND="
 		x11-libs/libXi
 		x11-libs/libXrandr
 		x11-libs/libXrender
+		x11-libs/libXScrnSaver
+		x11-libs/libxshmfence
 		x11-libs/libXtst
 		x11-libs/libXxf86vm
-		x11-libs/libxcb
-		x11-libs/libxshmfence
 	)
 "
 
 if [[ -n "${ELECTRON_APP_ELECTRON_PV}" ]] \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_PV}") \
-		-ge \
-	   ${ELECTRON_APP_ELECTRON_PV_SUPPORTED} ; then
-	:; # E20, E21, E22, E23 supported upstream
+	&& \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_PV}") \
+			-ge \
+		"${ELECTRON_APP_ELECTRON_PV_SUPPORTED}" \
+; then
+	: # E20, E21, E22, E23 supported upstream
 else
 	if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
 eerror
@@ -403,50 +441,64 @@ fi
 
 # See https://github.com/angular/angular/blob/4.0.x/package.json
 if [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 2.0 \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le 2.4 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "2.0" \
+	&& \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le "2.4" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-5.4.1
 		<net-libs/nodejs-7
 	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 4.0 \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le 4.4 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "4.0" \
+	&& \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le "4.4" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-6.9.5
 		<net-libs/nodejs-7
 	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 5.0 \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le 6.0 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "5.0" \
+	&& \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le "6.0" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-8.9.1
 		<net-libs/nodejs-9
 	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 6.1 \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le 8.2 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "6.1" \
+	&& \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le "8.2" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-10.9.0
 		<net-libs/nodejs-11
 	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 9.0 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_PV}") -le 11.2.8 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "9.0" \
+	&& \
+	ver_test $(ver_cut 1   "${ELECTRON_APP_ANGULAR_PV}") -le "11.2.8" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-10.9.0
 		<net-libs/nodejs-13
 	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 11.2.9 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_PV}") -le 11.2.14 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "11.2.9" \
+	&& \
+	ver_test $(ver_cut 1   "${ELECTRON_APP_ANGULAR_PV}") -le "11.2.14" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-10.19.0
 		<net-libs/nodejs-16
 	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 12.0.0 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_PV}") -le 12.2.11 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "12.0.0" \
+	&& \
+	ver_test $(ver_cut 1   "${ELECTRON_APP_ANGULAR_PV}") -le "12.2.11" \
+) ; then
 	COMMON_DEPEND+="
 		|| (
 			>=net-libs/nodejs-12.20.0:12
@@ -454,8 +506,10 @@ elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
 		)
 	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 13 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_PV}") -lt 14 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "13" \
+	&& \
+	ver_test $(ver_cut 1   "${ELECTRON_APP_ANGULAR_PV}") -lt "14" \
+) ; then
 	COMMON_DEPEND+="
 		|| (
 			>=net-libs/nodejs-12.20.0:12
@@ -464,8 +518,10 @@ elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
 		)
 	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 14 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_PV}") -lt 15 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "14" \
+	&& \
+	ver_test $(ver_cut 1   "${ELECTRON_APP_ANGULAR_PV}") -lt "15" \
+) ; then
 	COMMON_DEPEND+="
 		|| (
 			>=net-libs/nodejs-14.15:14
@@ -473,8 +529,10 @@ elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
 		)
 	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 15 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_PV}") -lt 16 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "15" \
+	&& \
+	ver_test $(ver_cut 1   "${ELECTRON_APP_ANGULAR_PV}") -lt "16" \
+) ; then
 	COMMON_DEPEND+="
 		|| (
 			>=net-libs/nodejs-14.20:14
@@ -483,8 +541,10 @@ elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
 		)
 	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 16 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_PV}") -le 9999 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge "16" \
+	&& \
+	ver_test $(ver_cut 1   "${ELECTRON_APP_ANGULAR_PV}") -le "9999" \
+) ; then
 	COMMON_DEPEND+="
 		|| (
 			>=net-libs/nodejs-16.14.0:16
@@ -495,68 +555,88 @@ fi
 
 # See https://github.com/facebook/react/blob/master/package.json
 if [[ "${ELECTRON_APP_REACT_PV}" == "ignore" ]] ; then
-	:;
+	:
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -ge 0.3 \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -le 0.13 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -ge "0.3" \
+	&& \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -le "0.13" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-0.10.0
 	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -eq 0.14 ; then
+	&& \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -eq "0.14" \
+; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-4
 		<net-libs/nodejs-5
 	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -ge 15.0 \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -le 15.6 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -ge "15.0" \
+	&& \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -le "15.6" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-4
 		<net-libs/nodejs-8
 	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -eq 16.3 ; then
+	&& \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -eq "16.3" \
+; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-8
 		<net-libs/nodejs-11
 	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -eq 16.4 ; then
+	&& \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -eq "16.4" \
+; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-8
 		<net-libs/nodejs-10
 	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -ge 16.8.3 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -le 16.8.6 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -ge "16.8.3" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -le "16.8.6" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-8
 		<net-libs/nodejs-12
 	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -ge 16.13.0 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -le 16.13.1 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -ge "16.13.0" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -le "16.13.1" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-8
 		<net-libs/nodejs-14
 	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -ge 16.14.0 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -lt 18 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -ge "16.14.0" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -lt "18" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-8
 		<net-libs/nodejs-15
 	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -ge 18 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -lt 18 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -ge "18" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -lt "18" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-12.17
 		<net-libs/nodejs-18
 	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_PV}") -ge 9999 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_PV}") -ge "9999" \
+; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-16
 		<net-libs/nodejs-21
@@ -565,25 +645,32 @@ fi
 
 # See https://github.com/microsoft/TypeScript/blob/v2.0.7/package.json
 if [[ -n "${ELECTRON_APP_TYPESCRIPT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_TYPESCRIPT_PV}") -ge 2.0 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_PV}") -le 2.1.4 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_TYPESCRIPT_PV}") -ge "2.0" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_PV}") -le "2.1.4" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-0.8.0
 	"
 elif [[ -n "${ELECTRON_APP_TYPESCRIPT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_PV}") -ge 2.1.5 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_TYPESCRIPT_PV}") -lt 5.0.2 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_PV}") -ge "2.1.5" \
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_TYPESCRIPT_PV}")   -lt "5.0.2" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-4.2.0
 	"
 elif [[ -n "${ELECTRON_APP_TYPESCRIPT_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_PV}") -ge 5.0.2 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_TYPESCRIPT_PV}") -le 5.0.4 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_PV}") -ge "5.0.2" \
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_TYPESCRIPT_PV}")   -le "5.0.4" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-12.20
 	"
 elif [[ -n "${ELECTRON_APP_TYPESCRIPT_PV}" ]] && \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_PV}") -gt 5.0.4 ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_PV}") -gt "5.0.4" \
+; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-14.17
 	"
@@ -591,47 +678,63 @@ fi
 
 # See https://github.com/facebook/react-native/blob/0.63-stable/package.json
 if [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge 0.13 \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -le 0.55 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge "0.13" \
+	&& \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -le "0.55" \
+) ; then
 	COMMON_DEPEND+="" # doesn't say
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge 0.13 \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -le 0.55 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge "0.13" \
+	&& \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -le "0.55" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-4
 	"
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -eq 0.56 ; then
+	&& \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -eq "0.56" \
+; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-8
 	"
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge 0.57 \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -le 0.62 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge "0.57" \
+	&& \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -le "0.62" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-8.3
 	"
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge 0.63 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_NATIVE_PV}") -lt 0.64 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge "0.63" \
+	&& \
+	ver_test $(ver_cut 1   "${ELECTRON_APP_REACT_NATIVE_PV}") -lt "0.64" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-10
 	"
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge 0.64 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_NATIVE_PV}") -le 0.67 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge "0.64" \
+	&& \
+	ver_test $(ver_cut 1   "${ELECTRON_APP_REACT_NATIVE_PV}") -le "0.67" ) \
+; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-12
 	"
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge 0.68 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_NATIVE_PV}") -le 0.71.12 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge "0.68" \
+	&& \
+	ver_test $(ver_cut 1   "${ELECTRON_APP_REACT_NATIVE_PV}") -le "0.71.12" \
+) ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-14
 	"
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -gt 0.71.12 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_NATIVE_PV}") -le 9999 ) ; then
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -gt "0.71.12" \
+	&& \
+	ver_test $(ver_cut 1   "${ELECTRON_APP_REACT_NATIVE_PV}") -le "9999" \
+) ; then
 	# Same as react 18.2.0
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-12.17
@@ -643,7 +746,7 @@ fi
 if [[ -n "${ELECTRON_APP_SHARP_PV}" ]] ; then
 	ELECTRON_APP_VIPS_PV=${ELECTRON_APP_VIPS_PV:-"8.14.5"}
 	IUSE+=" +system-vips"
-	if ver_test "${ELECTRON_APP_SHARP_PV}" -ge 0.30 ; then
+	if ver_test "${ELECTRON_APP_SHARP_PV}" -ge "0.30" ; then
 		IUSE+=" cpu_flags_x86_sse4_2"
 		REQUIRED_USE+="
 			!cpu_flags_x86_sse4_2? (
@@ -672,49 +775,79 @@ fi
 # in the v13/index.d.ts, where v13 is a particular node version.
 # For @types/node
 if [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 0 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "0" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-0*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 4 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "4" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-4*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 6 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "6" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-6*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 7 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "7" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-7*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 8 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "8" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-8*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 9 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "9" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-9*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 10 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "10" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-10*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 11 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "11" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-11*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 12 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "12" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-12*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 13 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "13" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-13*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 14 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "14" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-14*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 15 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "15" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-15*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 16 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "16" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-16*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 17 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "17" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-17*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 18 ; then
+	&& \
+	ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq "18" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-18*"
 fi
 
@@ -722,85 +855,119 @@ fi
 # https://github.com/vuejs/core/blob/v3.3.9/package.json
 # Some are based on @types/node
 if [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 0.6.0 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 0.11.10 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "0.6.0" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "0.11.10" \
+) ; then
 	COMMON_DEPEND+=" =net-libs/nodejs-0.10*" # .travis.yml
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 0.12.0 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 0.12.0 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "0.12.0" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "0.12.0" \
+) ; then
 	COMMON_DEPEND+=" net-libs/iojs" # doesn't say
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 0.12.1 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 0.12.1 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "0.12.1" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "0.12.1" \
+) ; then
 	COMMON_DEPEND+=" ~net-libs/iojs-2.0.1" # .travis.yml
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 0.12.2 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 0.12.2 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "0.12.2" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "0.12.2" \
+) ; then
 	COMMON_DEPEND+=" " # doesn't say
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 0.12.0 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 1.0.8 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "0.12.0" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "1.0.8" \
+) ; then
 	COMMON_DEPEND+=" ~net-libs/iojs-2.0.1" # .travis.yml
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 1.0.9 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 1.0.17 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "1.0.9" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "1.0.17" \
+) ; then
 	COMMON_DEPEND+=" =net-libs/nodejs-4*" # based on circle.yml
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 1.0.18 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 1.0.28 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "1.0.18" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "1.0.28" \
+) ; then
 	COMMON_DEPEND+=" =net-libs/nodejs-5*" # based on circle.yml
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 2.0.0 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 2.4.4 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "2.0.0" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "2.4.4" \
+) ; then
 	COMMON_DEPEND+=" =net-libs/nodejs-6*" # based on circle.yml
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 2.5.0 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 2.5.22 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "2.5.0" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "2.5.22" \
+) ; then
 	# based on @types/node restriction
 	COMMON_DEPEND+=" =net-libs/nodejs-8*" # ^8.0.33 ; they did the testing in node6 in <=2.5.7
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 2.6.0 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 2.6.10 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "2.6.0" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "2.6.10" \
+) ; then
 	# based on @types/node restriction
 	COMMON_DEPEND+=" =net-libs/nodejs-10*" # ^10.12.18
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 2.6.11 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 2.6.14 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "2.6.11" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "2.6.14" \
+) ; then
 	# based on @types/node restriction
 	# dev branch
 	COMMON_DEPEND+=" =net-libs/nodejs-12*" # ^12.12.0
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 2.7 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 2.7.15 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "2.7" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "2.7.15" \
+) ; then
 	# based on @types/node restriction
 	# dev branch
 	COMMON_DEPEND+=" =net-libs/nodejs-17*" # ^17.0.41
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 3.0 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 3.2.6 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "3.0" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "3.2.6" \
+) ; then
 	COMMON_DEPEND+=" >=net-libs/nodejs-10"
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 3.2.7 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 3.2.37 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "3.2.7" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "3.2.37" \
+) ; then
 	COMMON_DEPEND+=" >=net-libs/nodejs-16.5"
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 3.2.38 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 3.3.4 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "3.2.38" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le "3.3.4" \
+) ; then
 	COMMON_DEPEND+=" >=net-libs/nodejs-16.11"
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 3.3.5 ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge "3.3.5" ; then
 	COMMON_DEPEND+=" >=net-libs/nodejs-18.12"
 fi
 
 if [[ -n "${ELECTRON_APP_VUE_CORE_PV}" ]] &&
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -eq 3.0.0 ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -eq "3.0.0" \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-10*"
 elif [[ -n "${ELECTRON_APP_VUE_CORE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -ge 3.0.1 \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -lt 3.2 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -ge "3.0.1" \
+	&& \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -lt "3.2" \
+) ; then
 	COMMON_DEPEND+=" =net-libs/nodejs-14*" # ^14.10.1
 elif [[ -n "${ELECTRON_APP_VUE_CORE_PV}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -ge 3.2 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -ge "3.2" ) \
+; then
 	COMMON_DEPEND+=" =net-libs/nodejs-16*" # ^16.4.7
 fi
 

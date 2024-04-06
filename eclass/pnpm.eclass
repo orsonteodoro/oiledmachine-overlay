@@ -17,7 +17,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-if [[ -z ${_PNPM_ECLASS} ]]; then
+if [[ -z "${_PNPM_ECLASS}" ]]; then
 _PNPM_ECLASS=1
 
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile
@@ -68,12 +68,12 @@ epnpm() {
 # @DESCRIPTION:
 # Smooth out network settings.
 pnpm_network_settings() {
+	pnpm config set fetch-retries ${PNPM_NETWORK_FETCH_RETRIES} || die # 2 -> lucky number 7
+	pnpm config set fetch-retry-maxtimeout ${PNPM_NETWORK_FETCH_RETRY_MAXTIMEOUT} || die # 1 min -> 5 min
+	pnpm config set fetch-retry-mintimeout ${PNPM_NETWORK_FETCH_RETRY_MINTIMEOUT} || die # 10 s -> 1 min
+	pnpm config set fetch-timeout ${PNPM_NETWORK_FETCH_TIMEOUT} || die # 1 min -> 5 min
 	pnpm config set network-concurrency ${PNPM_NETWORK_NETWORK_CONCURRENCY} || die # 16 -> 1
 	pnpm config set maxsockets ${PNPM_NETWORK_MAXSOCKETS} || die # 3 * network-concurrency -> 1
-	pnpm config set fetch-retries ${PNPM_NETWORK_FETCH_RETRIES} || die # 2 -> lucky number 7
-	pnpm config set fetch-retry-mintimeout ${PNPM_NETWORK_FETCH_RETRY_MINTIMEOUT} || die # 10 s -> 1 min
-	pnpm config set fetch-retry-maxtimeout ${PNPM_NETWORK_FETCH_RETRY_MAXTIMEOUT} || die # 1 min -> 5 min
-	pnpm config set fetch-timeout ${PNPM_NETWORK_FETCH_TIMEOUT} || die # 1 min -> 5 min
 }
 
 # @FUNCTION: pnpm_hydrate
@@ -158,7 +158,7 @@ eerror
 			die
 		fi
 	fi
-	:;#npm_check_network_sandbox
+	: #npm_check_network_sandbox
 }
 
 # @FUNCTION: pnpm_src_unpack

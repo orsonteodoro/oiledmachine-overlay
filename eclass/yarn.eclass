@@ -36,7 +36,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-if [[ -z ${_YARN_ECLASS} ]]; then
+if [[ -z "${_YARN_ECLASS}" ]]; then
 _YARN_ECLASS=1
 
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test src_install
@@ -185,7 +185,7 @@ eerror "   \`corepack prepare --all --activate\`"
 	local path=$(find "${WORKDIR}" -name "package.json" -type f \
 		| head -n 1)
 	path=$(realpath $(dirname "${path}"))
-	pushd "${path}" || die
+	pushd "${path}" >/dev/null 2>&1 || die
 		local yarn_pv=$(/usr/bin/yarn --version)
 		if ! [[ "${yarn_pv}" =~ [0-9]+\.[0-9]+\.[0-9]+ ]] ; then
 eerror
@@ -196,10 +196,10 @@ eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
 eerror "env to be able to download micropackages."
 eerror
 				die
-		elif ver_test ${yarn_pv} -ge 1 ; then
-			:;#yarn_check_network_sandbox
+		elif ver_test "${yarn_pv}" -ge "1" ; then
+			: #yarn_check_network_sandbox
 		fi
-	popd
+	popd >/dev/null 2>&1 || die
 }
 
 # @FUNCTION: yarn_pkg_setup
@@ -275,10 +275,10 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
 			local fn="${bn/yarnpkg-}"
 			fn="${fn/.tgz}"
 			local path=$(mktemp -d -p "${T}")
-			pushd "${path}" || die
+			pushd "${path}" >/dev/null 2>&1 || die
 				tar --strip-components=1 -xvf "${DISTDIR}/${bn}" || die
 				tar -cf "${dest}/${fn}" * || die
-			popd
+			popd >/dev/null 2>&1 || die
 			rm -rf "${path}" || die
 		else
 			bn=$(echo "${uri}" \
@@ -295,16 +295,16 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
 # Use the ebuild lockfiles
 _yarn_src_unpack_default_ebuild() {
 	if [[ "${YARN_ELECTRON_OFFLINE:-1}" == "0" ]] ; then
-		:;
+		:
 	elif [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
 		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 	fi
-	if [[ ${PV} =~ 9999 ]] ; then
-		:;
+	if [[ "${PV}" =~ "9999" ]] ; then
+		:
 	elif [[ -n "${YARN_TARBALL}" ]] ; then
-		unpack ${YARN_TARBALL}
+		unpack "${YARN_TARBALL}"
 	else
-		unpack ${P}.tar.gz
+		unpack "${P}.tar.gz"
 	fi
 	yarn_check
 	cd "${S}" || die
@@ -357,12 +357,12 @@ _yarn_src_unpack_default_ebuild() {
 # Use the upstream lockfiles
 _yarn_src_unpack_default_upstream() {
 	export ELECTRON_SKIP_BINARY_DOWNLOAD=1
-	if [[ ${PV} =~ 9999 ]] ; then
-		:;
+	if [[ "${PV}" =~ "9999" ]] ; then
+		:
 	elif [[ -n "${YARN_TARBALL}" ]] ; then
-		unpack ${YARN_TARBALL}
+		unpack "${YARN_TARBALL}"
 	else
-		unpack ${P}.tar.gz
+		unpack "${P}.tar.gz"
 	fi
 	yarn_check
 	cd "${S}" || die
@@ -492,12 +492,12 @@ einfo "Running:\tyarn ${cmd[@]}"
 # Use the default ebuild updater
 _yarn_src_unpack_update_ebuild() {
 einfo "Updating lockfile"
-		if [[ ${PV} =~ 9999 ]] ; then
-			:;
+		if [[ "${PV}" =~ "9999" ]] ; then
+			:
 		elif [[ -n "${YARN_TARBALL}" ]] ; then
-			unpack ${YARN_TARBALL}
+			unpack "${YARN_TARBALL}"
 		else
-			unpack ${P}.tar.gz
+			unpack "${P}.tar.gz"
 		fi
 		cd "${S}" || die
 		rm -f package-lock.json
@@ -539,12 +539,12 @@ einfo "Updating lockfile"
 # Use the default yarn updater with upstream lockfiles
 _yarn_src_unpack_update_upstream() {
 einfo "Updating lockfile"
-		if [[ ${PV} =~ 9999 ]] ; then
-			:;
+		if [[ "${PV}" =~ "9999" ]] ; then
+			:
 		elif [[ -n "${YARN_TARBALL}" ]] ; then
-			unpack ${YARN_TARBALL}
+			unpack "${YARN_TARBALL}"
 		else
-			unpack ${P}.tar.gz
+			unpack "${P}.tar.gz"
 		fi
 		cd "${S}" || die
 }

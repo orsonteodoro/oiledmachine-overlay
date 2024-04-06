@@ -17,7 +17,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-if [[ -z ${_NPM_ECLASS} ]]; then
+if [[ -z "${_NPM_ECLASS}" ]]; then
 _NPM_ECLASS=1
 
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test src_install
@@ -36,11 +36,11 @@ else
 fi
 
 _npm_set_globals() {
-	NPM_TRIES="${NPM_TRIES:-10}"
-	NPM_NETWORK_FETCH_RETRIES=${NPM_NETWORK_FETCH_RETRIES:-"7"}
-	NPM_NETWORK_RETRY_MINTIMEOUT=${NPM_NETWORK_RETRY_MINTIMEOUT:-"100000"}
-	NPM_NETWORK_RETRY_MAXTIMEOUT=${NPM_NETWORK_RETRY_MAXTIMEOUT:-"300000"}
-	NPM_NETWORK_MAX_SOCKETS=${NPM_NETWORK_MAX_SOCKETS:-"1"}
+	NPM_NETWORK_FETCH_RETRIES=${NPM_NETWORK_FETCH_RETRIES:-7}
+	NPM_NETWORK_MAX_SOCKETS=${NPM_NETWORK_MAX_SOCKETS:-1}
+	NPM_NETWORK_RETRY_MAXTIMEOUT=${NPM_NETWORK_RETRY_MAXTIMEOUT:-300000}
+	NPM_NETWORK_RETRY_MINTIMEOUT=${NPM_NETWORK_RETRY_MINTIMEOUT:-100000}
+	NPM_TRIES=${NPM_TRIES:-10}
 }
 _npm_set_globals
 unset -f _npm_set_globals
@@ -85,6 +85,7 @@ unset -f _npm_set_globals
 # @ECLASS_VARIABLE: NPM_OFFLINE
 # @DESCRIPTION:
 # Use npm eclass in offline install mode.
+# Valid values: 1 [partial offline], 2 [completely offline], 0 [online]
 
 # @ECLASS_VARIABLE: NPM_ROOT
 # @DESCRIPTION:
@@ -191,7 +192,7 @@ eerror
 			die
 		fi
 	fi
-	:;#npm_check_network_sandbox
+	: #npm_check_network_sandbox
 }
 
 # @FUNCTION: _npm_cp_tarballs
@@ -212,10 +213,12 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/npmpkg-}"
 			local fn="${bn/npmpkg-}"
 			fn="${fn/.tgz}"
 			local path=$(mktemp -d -p "${T}")
-			pushd "${path}" || die
+			pushd "${path}" >/dev/null 2>&1 || die
+# See https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths
 				tar --strip-components=1 -xvf "${DISTDIR}/${bn}" || die
-				tar -cf "${dest}/${fn}" * || die
-			popd
+				mkdir -p "${dest}/${fn}" || die
+				mv * "${dest}/${fn}" || die
+			popd >/dev/null 2>&1 || die
 			rm -rf "${path}" || die
 		else
 			bn=$(echo "${uri}" \
@@ -241,7 +244,7 @@ npm_gen_new_name() {
 			| cut -f 5 -d "/" \
 			| cut -f 1 -d "#" \
 			| cut -f 1 -d ".")
-		echo "${project_name}.git-${commit_id}.tgz"
+		echo "${project_name}.git-${commit_id}"
 	elif [[ "${uri}" =~ "@" ]] ; then
 		local ns=$(echo "${uri}" \
 			| grep -E -o -e "@[a-zA-Z0-9._-]+")
@@ -269,7 +272,11 @@ npm_transform_uris_default() {
 			"${lockfile}") ; do
 			local bn=$(basename "${uri}")
 			local newname=$(npm_gen_new_name "${uri}")
-			sed -i -e "s|${uri}|file:${WORKDIR}/npm-packages-offline-cache/${newname}|g" "${lockfile}" || die
+			if [[ "${bn}" =~ "\.tgz" ]] ; then
+				sed -i -e "s|${uri}|file:${WORKDIR}/npm-packages-offline-cache/${newname}|g" "${lockfile}" || die
+			else
+				sed -i -e "s|${uri}|${WORKDIR}/npm-packages-offline-cache/${newname}|g" "${lockfile}" || die
+			fi
 		done
 		IFS=$' \t\n'
 		if grep -q "registry.npmjs.org" "${lockfile}" ; then
@@ -286,20 +293,21 @@ eerror
 # @DESCRIPTION:
 # Use the ebuild lockfiles
 _npm_src_unpack_default_ebuild() {
+	local offline="${NPM_OFFLINE:-1}"
 	if [[ "${NPM_ELECTRON_OFFLINE:-1}" == "0" ]] ; then
-		:;
-	elif [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
+		:
+	elif [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
 		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 	fi
-	if [[ ${PV} =~ 9999 ]] ; then
-		:;
+	if [[ "${PV}" =~ "9999" ]] ; then
+		:
 	elif [[ -n "${NPM_TARBALL}" ]] ; then
-		unpack ${NPM_TARBALL}
+		unpack "${NPM_TARBALL}"
 	else
-		unpack ${P}.tar.gz
+		unpack "${P}.tar.gz"
 	fi
 	cd "${S}" || die
-	if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
+	if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
 		_npm_cp_tarballs
 		rm -f "package-lock.json" || true
 		if [[ -e "${FILESDIR}/${PV}" && "${NPM_MULTI_LOCKFILE}" == "1" && -n "${NPM_ROOT}" ]] ; then
@@ -329,13 +337,18 @@ einfo "Missing package-lock.json"
 		else
 			npm_transform_uris_default
 		fi
+		if declare -f npm_transform_uris_post > /dev/null ; then
+			npm_transform_uris_post
+		fi
 	fi
 	local args=()
 	if declare -f npm_unpack_install_pre > /dev/null ; then
 		npm_unpack_install_pre
 	fi
 	local extra_args=()
-	if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
+	if [[ "${offline}" == "2" ]] ; then
+		extra_args+=( "--offline" )
+	elif [[ "${offline}" == "1" ]] ; then
 		extra_args+=( "--prefer-offline" )
 	fi
 	enpm install \
@@ -350,15 +363,16 @@ einfo "Missing package-lock.json"
 # @DESCRIPTION:
 # Use the upstream lockfiles
 _npm_src_unpack_default_upstream() {
-	if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
+	local offline="${NPM_OFFLINE:-1}"
+	if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
 		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 	fi
-	if [[ ${PV} =~ 9999 ]] ; then
-		:;
+	if [[ "${PV}" =~ "9999" ]] ; then
+		:
 	elif [[ -n "${NPM_TARBALL}" ]] ; then
-		unpack ${NPM_TARBALL}
+		unpack "${NPM_TARBALL}"
 	else
-		unpack ${P}.tar.gz
+		unpack "${P}.tar.gz"
 	fi
 	cd "${S}" || die
 	local args=()
@@ -366,7 +380,9 @@ _npm_src_unpack_default_upstream() {
 		npm_unpack_install_pre
 	fi
 	local extra_args=()
-	if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
+	if [[ "${offline}" == "2" ]] ; then
+		extra_args+=( "--offline" )
+	elif [[ "${offline}" == "1" ]] ; then
 		extra_args+=( "--prefer-offline" )
 	fi
 	enpm install \
@@ -483,7 +499,8 @@ npm_network_settings() {
 # @DESCRIPTION:
 # Load the package manager in the sandbox.
 npm_hydrate() {
-	if [[ "${NPM_OFFLINE:-1}" == "0" ]] ; then
+	local offline="${NPM_OFFLINE:-1}"
+	if [[ "${offline}" == "0" ]] ; then
 		COREPACK_ENABLE_NETWORK="1" # It still requires online.
 	else
 		COREPACK_ENABLE_NETWORK="${COREPACK_ENABLE_NETWORK:-0}"
@@ -514,12 +531,12 @@ npm_src_unpack() {
 	npm_hydrate
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		if [[ ${PV} =~ 9999 ]] ; then
-			:;
+		if [[ "${PV}" =~ "9999" ]] ; then
+			:
 		elif [[ -n "${NPM_TARBALL}" ]] ; then
-			unpack ${NPM_TARBALL}
+			unpack "${NPM_TARBALL}"
 		else
-			unpack ${P}.tar.gz
+			unpack "${P}.tar.gz"
 		fi
 		cd "${S}" || die
 		rm -f package-lock.json
@@ -545,7 +562,8 @@ npm_src_unpack() {
 
 		die
 	else
-		if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
+		local offline="${NPM_OFFLINE:-1}"
+		if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
 			#export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 			export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
 			export ELECTRON_CACHE="${HOME}/.cache/electron"
@@ -570,7 +588,10 @@ npm_src_compile() {
 	local cmd="${NPM_BUILD_SCRIPT:-build}"
 	grep -q -e "\"${cmd}\"" package.json || return
 	local extra_args=()
-	if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
+	local offline="${NPM_OFFLINE:-1}"
+	if [[ "${offline}" == "2" ]] ; then
+		extra_args+=( "--offline" )
+	elif [[ "${offline}" == "1" ]] ; then
 		extra_args+=( "--prefer-offline" )
 	fi
 	npm run ${cmd} \
