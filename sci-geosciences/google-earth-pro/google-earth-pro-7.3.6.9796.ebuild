@@ -1,28 +1,55 @@
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+EAPI=8
+
 # To find the version use:
 # dpkg -I 'google-earth-pro-stable_7.3.3_amd64.deb'
 
-EAPI=8
+MY_PN="${PN}"
+MY_PN="${MY_PN//-/}"
+MY_PN="${MY_PN//pro/}"
+MY_PV=$(ver_cut 1-3 ${PV})
+
+EXPAT_PV="2.2.1"
+# See https://support.google.com/earth/answer/168344?hl=en for list of direct links \
+EXPECTED_SHA512="\
+8dd6677e12bd5fbc5ed8d90e53989437f55e15bff178bb3eb24649947a1f3179\
+4ee90c226cbe9323177aa3bb31afc39aaa99b0ab8622949af53755dbccf29483\
+"
+DEST_FN_AMD64="${PN}-stable_${MY_PV}_${EXPECTED_SHA512:0:7}_amd64.deb"
+LIBPNG_PV="1.2.56"
+LIBTIFF_PV="4.0.10"
+GDAL_PV="2.4.4" # approximate
+FFMPEG_PV="4.4.2"
+FFMPEG_SLOT="56.58.58"
+ICU_PV="54.1"
+LANGS=(
+ar bg ca cs da de el en es-419 es fa fil fi fr he hi hr hu id it ja ko lt lv nl
+no pl pt-PT pt ro ru sk sl sr sv th tr uk vi zh-Hans zh-Hant-HK zh-Hant
+)
+OPENSSL_PV="1.0.2u"
+QA_PREBUILT="*"
+QT_CATEGORY="dev-qt"
+QT_SLOT="5"
+QT_VERSION="5.5.1" # The version distributed with ${PN}
+POSTGIS_PV="5.2.0"
+SRC_FN_AMD64="${PN}-stable_${MY_PV}_amd64.deb"
+ZLIB_PV="1.2.3"
 
 inherit desktop pax-utils unpacker xdg
 
+SRC_URI="
+	amd64? (
+		${DEST_FN_AMD64}
+	)
+"
+
 DESCRIPTION="A 3D interface to the planet"
 HOMEPAGE="https://earth.google.com/"
-# See https://support.google.com/earth/answer/168344?hl=en for list of direct links
-EXPECTED_SHA512="\
-327b915e1e832e7abca5d8c3187695a74300d3afcef38f433e7395bb3cfeb7a7\
-7aafd418df5e1408223fad0b6547e512740adb6d48755558b4576002c427eb09\
-"
-MY_PV=$(ver_cut 1-3 ${PV})
-SRC_FN_AMD64="${PN}-stable_${MY_PV}_amd64.deb"
-DEST_FN_AMD64="${PN}-stable_${MY_PV}_${EXPECTED_SHA512:0:7}_amd64.deb"
-SRC_URI="amd64? ( ${DEST_FN_AMD64} )"
 # See opt/google/earth/pro/resources/licenses.rcc or Help > About for the full
 # license list.
 LICENSE="
-	google-earth-pro-7.3.6
 	Apache-2.0
 	BSD
 	Boost-1.0
@@ -30,6 +57,7 @@ LICENSE="
 	FIPL-1.0
 	FTL
 	GEOTRANS
+	google-earth-pro-7.3.6
 	GPL-2
 	IJG
 	Info-ZIP
@@ -40,15 +68,41 @@ LICENSE="
 	MIT
 	MS-RL
 	SCEA
-	!system-expat? ( MIT )
-	!system-ffmpeg? ( LGPL-2.1 BSD )
-	!system-gdal? ( BSD Info-ZIP MIT Qhull HDF-EOS gdal-degrib-and-g2clib SunPro )
-	!system-gpsbabel? ( GPL-2+ )
-	!system-icu? ( BSD )
-	!system-openssl? ( openssl )
-	!system-qt5? ( BSD-2 BSD LGPL-2.1 google-earth-pro-7.3.4 )
-	!system-spnav? ( BSD )
 	ZLIB
+	!system-expat? (
+		MIT
+	)
+	!system-ffmpeg? (
+		BSD
+		LGPL-2.1
+	)
+	!system-gdal? (
+		BSD
+		HDF-EOS
+		gdal-degrib-and-g2clib
+		Info-ZIP
+		MIT
+		Qhull
+		SunPro
+	)
+	!system-gpsbabel? (
+		GPL-2+
+	)
+	!system-icu? (
+		BSD
+	)
+	!system-openssl? (
+		openssl
+	)
+	!system-qt5? (
+		BSD
+		BSD-2
+		LGPL-2.1
+		google-earth-pro-7.3.4
+	)
+	!system-spnav? (
+		BSD
+	)
 "
 # libvpx is BSD.  libvpx is referenced in ffmpeg and possibly internally
 # WebKit BSD-2, BSD (ANGLE), LGPL-2.1 (for WebCore), plus possibly some
@@ -57,21 +111,12 @@ LICENSE="
 SLOT="0"
 KEYWORDS="~amd64"
 RESTRICT="fetch strip" # fetch for more control and determinism
-LANGS=(
-ar bg ca cs da de el en es-419 es fa fil fi fr he hi hr hu id it ja ko lt lv nl
-no pl pt-PT pt ro ru sk sl sr sv th tr uk vi zh-Hans zh-Hant-HK zh-Hant
-)
 IUSE="
 ${LANGS[@]/#/l10n_}
 +l10n_en system-expat system-ffmpeg system-icu system-gdal system-gpsbabel
 system-openssl system-qt5 system-spnav
 "
 LANGS+=( en )
-MY_PN="${PN}"
-MY_PN="${MY_PN//-/}"
-MY_PN="${MY_PN//pro/}"
-
-QA_PREBUILT="*"
 
 # TODO: find a way to unbundle libQt
 
@@ -81,17 +126,6 @@ QA_PREBUILT="*"
 # ${PN} requires U14.04 libraries minimum
 
 # Using system-openssl, system-icu USE flags requires custom slotting
-
-EXPAT_PV="2.2.1"
-GDAL_PV="2.4.4" # approximate
-  LIBPNG_PV="1.2.56"
-  LIBTIFF_PV="4.0.10"
-  POSTGIS_PV="5.2.0"
-  ZLIB_PV="1.2.3"
-FFMPEG_PV="4.4.2"
-ICU_PV="54.1"
-OPENSSL_PV="1.0.2u"
-QT_VERSION="5.5.1" # The version distributed with ${PN}
 
 # Using system Qt may likely require the older exact libraries.  Choices are...
 #
@@ -111,8 +145,6 @@ QT_VERSION="5.5.1" # The version distributed with ${PN}
 # User can either choose to keep ebuild in same folder, or it may require a
 # seperate SLOT depending on the choice.
 #
-QT_CATEGORY="dev-qt"
-QT_SLOT="5"
 DPKG_RDEPEND="
 	>=media-libs/alsa-lib-1.1.3
 	>=media-libs/fontconfig-2.12.6
@@ -148,8 +180,7 @@ INTERNAL_DEPS="
 		>=dev-libs/expat-${EXPAT_PV}
 	)
 	system-ffmpeg? (
-		<media-video/ffmpeg-4
-		>=media-video/ffmpeg-${FFMPEG_PV}
+		>=media-video/ffmpeg-${FFMPEG_PV}:0/56.58.58
 	)
 	system-gdal? (
 		>=sci-libs/gdal-${GDAL_PV}:2
@@ -196,9 +227,7 @@ S="${WORKDIR}"
 
 pkg_setup() {
 	if use system-expat ; then
-ewarn
 ewarn "Using system-expat has not been tested"
-ewarn
 	else
 ewarn
 ewarn "The internal Expat ${EXPAT_PV} library may contain CVE advisories.  For details see"
@@ -207,14 +236,10 @@ ewarn
 	fi
 	# The FFmpeg 4.4.2 critical was patched
 	if use system-ffmpeg ; then
-ewarn
 ewarn "Using system-ffmpeg has not been tested"
-ewarn
 	fi
 	if use system-gdal ; then
-ewarn
 ewarn "Using system-gdal has not been tested"
-ewarn
 	else
 ewarn
 ewarn "The internal GDAL ${GDAL_PV} library may contain CVE advisories.  For details see"
@@ -222,9 +247,7 @@ ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=ove
 ewarn
 	fi
 	if use system-icu ; then
-ewarn
 ewarn "Using system-icu has not been tested"
-ewarn
 	else
 ewarn
 ewarn "The internal ICU ${ICU_PV} library may contain known CVE advisories.  For details see"
@@ -232,9 +255,7 @@ ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=ove
 ewarn
 	fi
 	if use system-openssl ; then
-ewarn
 ewarn "Using system-openssl has not been tested"
-ewarn
 	else
 ewarn
 ewarn "The internal OpenSSL ${OPENSSL_PV} contains known CVE advisories and is End Of Life (EOL).  For details see"
@@ -271,62 +292,80 @@ eerror
 		QTX11EXTRAS_PV=$(pkg-config --modversion Qt5X11Extras)
 		# Qt5XcbQpa covered by Qt5Gui
 		if ver_test ${QT_VERSION} -ne ${QTCORE_PV} ; then
-			die "QT_VERSION is not the same version as Qt5Core"
+eerror "QT_VERSION is not the same version as Qt5Core"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTDBUS_PV} ; then
-			die "QT_VERSION is not the same version as Qt5DBus"
+eerror "QT_VERSION is not the same version as Qt5DBus"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTGUI_PV} ; then
-			die "QT_VERSION is not the same version as Qt5Gui"
+eerror "QT_VERSION is not the same version as Qt5Gui"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTMULTIMEDIA_PV} ; then
-			die "QT_VERSION is not the same version as Qt5Multimedia"
+eerror "QT_VERSION is not the same version as Qt5Multimedia"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTNETWORK_PV} ; then
-			die "QT_VERSION is not the same version as Qt5Network"
+eerror "QT_VERSION is not the same version as Qt5Network"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTOPENGL_PV} ; then
-			die "QT_VERSION is not the same version as Qt5OpenGL"
+eerror "QT_VERSION is not the same version as Qt5OpenGL"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTPOSITIONING_PV} ; then
-			die "QT_VERSION is not the same version as Qt5Positioning"
+eerror "QT_VERSION is not the same version as Qt5Positioning"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTPRINTSUPPORT_PV} ; then
-			die "QT_VERSION is not the same version as Qt5PrintSupport"
+eerror "QT_VERSION is not the same version as Qt5PrintSupport"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTQML_PV} ; then
-			die "QT_VERSION is not the same version as Qt5Qml (qtdeclarative)"
+eerror "QT_VERSION is not the same version as Qt5Qml (qtdeclarative)"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTSCRIPT_PV} ; then
-			die "QT_VERSION is not the same version as Qt5Script"
+eerror "QT_VERSION is not the same version as Qt5Script"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTSENSORS_PV} ; then
-			die "QT_VERSION is not the same version as Qt5Sensors"
+eerror "QT_VERSION is not the same version as Qt5Sensors"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTSQL_PV} ; then
-			die "QT_VERSION is not the same version as Qt5Sql"
+eerror "QT_VERSION is not the same version as Qt5Sql"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTSVG_PV} ; then
-			die "QT_VERSION is not the same version as Qt5Svg"
+eerror "QT_VERSION is not the same version as Qt5Svg"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTWEBCHANNEL_PV} ; then
-			die "QT_VERSION is not the same version as Qt5WebChannel"
+eerror "QT_VERSION is not the same version as Qt5WebChannel"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTWEBKIT_PV} ; then
-			die "QT_VERSION is not the same version as Qt5WebKit"
+eerror "QT_VERSION is not the same version as Qt5WebKit"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTWEBSOCKETS_PV} ; then
-			die "QT_VERSION is not the same version as Qt5WebSockets"
+eerror "QT_VERSION is not the same version as Qt5WebSockets"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTWIDGETS_PV} ; then
-			die "QT_VERSION is not the same version as Qt5Widgets"
+eerror "QT_VERSION is not the same version as Qt5Widgets"
+			die
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTX11EXTRAS_PV} ; then
-			die "QT_VERSION is not the same version as Qt5X11Extras"
+eerror "QT_VERSION is not the same version as Qt5X11Extras"
+			die
 		fi
 	fi
 	if use system-spnav ; then
-		ewarn "Using system-spnav has not been tested"
+ewarn "Using system-spnav has not been tested"
 	fi
 }
 
@@ -339,16 +378,17 @@ pkg_nofetch() {
 		local hash_cmd="\$(sha512sum ${SRC_FN_AMD64} | cut -f 1 -d ' ' | cut -c 1-7)"
 		dest_fn="${PN}-stable_$(ver_cut 1-3 ${PV})_${hash_cmd}_amd64.deb"
 	else
-		die "${ARCH} is not supported"
+eerror "${ARCH} is not supported"
+		die
 	fi
-	einfo
-	einfo "Please download"
-	einfo
-	einfo "  ${src_fn}"
-	einfo
-	einfo "from ${HOMEPAGE} and place them in ${distdir} as ${dest_fn}"
-	einfo "The shell assumes bash."
-	einfo
+einfo
+einfo "Please download"
+einfo
+einfo "  ${src_fn}"
+einfo
+einfo "from ${HOMEPAGE} and place them in ${distdir} as ${dest_fn}"
+einfo "The shell assumes bash."
+einfo
 }
 
 src_unpack() {
@@ -356,10 +396,12 @@ src_unpack() {
 	if use amd64 ; then
 		arch="amd64"
 	else
-		die "${ARCH} not supported"
+eerror "${ARCH} is not supported"
+		die
 	fi
 	local FN=${DEST_FN_AMD64}
-	X_SHA512=$(sha512sum "${DISTDIR}/${FN}" | cut -f 1 -d " ")
+	X_SHA512=$(sha512sum "${DISTDIR}/${FN}" \
+		| cut -f 1 -d " ")
 	if [[ "${X_SHA512}" != "${EXPECTED_SHA512}" ]] ; then
 eerror
 eerror "sha512sum X_SHA512=${X_SHA512} (download) is not"
@@ -371,31 +413,31 @@ eerror
 	# the data.tar.lzma as well
 	unpack_deb ${FN}
 	if use system-expat ; then
-		einfo "Removing bundled expat"
+einfo "Removing bundled expat"
 		pushd opt/google/earth/pro || die
 		rm -v libexpat.so.1 || die
 		popd || die
 	fi
 	if use system-gdal ; then
-		einfo "Removing bundled gdal"
+einfo "Removing bundled gdal"
 		pushd opt/google/earth/pro || die
 		rm -v libgdal.so.1 || die
 		popd || die
 	fi
 	if use system-icu ; then
-		einfo "Removing bundled icu"
+einfo "Removing bundled icu"
 		pushd opt/google/earth/pro || die
 		rm -v libicudata.so.54 libicuuc.so.54 libicui18n.so.54 || die
 		popd || die
 	fi
 	if use system-spnav ; then
-		einfo "Removing bundled spnav"
+einfo "Removing bundled spnav"
 		pushd opt/google/earth/pro || die
 		rm -v libspnav.so || die
 		popd || die
 	fi
 	if use system-qt5 ; then
-		einfo "Removing bundled qt5"
+einfo "Removing bundled qt5"
 		pushd opt/google/earth/pro || die
 		rm -v \
 		      libQt5Core.so.5 \
@@ -434,7 +476,7 @@ src_prepare() {
 	rm -rf xdg-mime xdg-settings || die
 	mv ${PN}.desktop "${WORKDIR}/usr/share/applications" || die
 	if use system-gpsbabel ; then
-		einfo "Switching to the system's GPSBabel"
+einfo "Switching to the system's GPSBabel"
 		sed -i -e "s|# if |if |" googleearth || die
 		rm gpsbabel || die
 	fi
@@ -473,7 +515,7 @@ src_install() {
 	mv "${ED}/opt/google/earth/pro/lang/"* "${T}/langs" || die
 	insinto /opt/google/earth/pro/lang
 	for l in ${L10N} ; do
-		einfo "Installing language ${l}"
+einfo "Installing language ${l}"
 		doins "${T}/langs/${l}.qm"
 	done
 }
