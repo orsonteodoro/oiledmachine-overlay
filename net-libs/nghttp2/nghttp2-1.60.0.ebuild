@@ -9,10 +9,9 @@ MRUBY_COMMIT="32279e4128527bab4c961854b9cce727a060abea"
 MUNIT_COMMIT="fe21fbd5acc81cdeee26e18df5afd6aba3d92d7a"
 NEVERBLEED_COMMIT="929e470260d460dacc20a10601c2d3c7a9f386b2"
 PYTHON_COMPAT=( python3_{10..12} )
-RUBY_OPTIONAL="yes"
 USE_RUBY="ruby31 ruby32 ruby33"
 
-inherit cmake-multilib python-r1 ruby-ng toolchain-funcs
+inherit cmake multilib-minimal python-r1 ruby-single toolchain-funcs
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
@@ -63,7 +62,7 @@ RESTRICT="
 "
 SO_CURRENT="41"
 SO_AGE="27"
-SLOT="0/$((${SO_CURRENT} - ${SO_AGE}))"
+SLOT="0/1.$((${SO_CURRENT} - ${SO_AGE}))"
 # bpf is default ON if clang and http3
 # doc is default on upstream
 # hpack-tools is enabled on CI
@@ -73,15 +72,11 @@ SLOT="0/$((${SO_CURRENT} - ${SO_AGE}))"
 IUSE="
 -bpf debug doc +hpack-tools -http3 -mruby -neverbleed +jemalloc -static-libs
 systemd test +threads +utils +xml
+ebuild-revision-1
 "
 REQUIRED_USE="
 	doc? (
 		${PYTHON_REQUIRED_USE}
-	)
-	mruby? (
-		|| (
-			$(ruby_get_use_targets)
-		)
 	)
 "
 SSL_DEPEND="
@@ -137,7 +132,7 @@ BDEPEND="
 		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
 	)
 	mruby? (
-		$(ruby_implementations_depend)
+		${RUBY_DEPS}
 		sys-devel/bison
 	)
 	|| (
@@ -148,7 +143,6 @@ BDEPEND="
 
 pkg_setup() {
 	use doc && python_setup
-	use mruby && ruby-ng_pkg_setup
 	if tc-is-clang && use http3 && ! use bpf ; then
 ewarn "bpf is default ON upstream if clang ON, http3 ON"
 	fi
@@ -180,7 +174,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	default
+	cmake_src_prepare
 }
 
 multilib_src_configure() {
@@ -225,8 +219,16 @@ eerror
 	cmake_src_configure
 }
 
+multilib_src_compile() {
+	cmake_src_compile
+}
+
 multilib_src_test() {
 	eninja check
+}
+
+multilib_src_install() {
+	cmake_src_install
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.54.0 (20230709)
