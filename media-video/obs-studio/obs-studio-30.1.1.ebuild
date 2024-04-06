@@ -4,9 +4,38 @@
 
 EAPI=8
 
+# U 22.04
+
+#
+# To find differences between release use:
+#
+# S1="/var/tmp/portage/media-video/obs-studio-28.1.2/work/obs-studio-28.1.2" \
+# S2="/var/tmp/portage/media-video/obs-studio-29.1.1/work/obs-studio-29.1.1" ; \
+# for x in $(find ${S2} -name "CMakeLists.txt" -o -name "*.cmake" | cut -f 9- -d "/" | sort) ; do \
+#   diff -urp "${S1}/${x}" "${S2}/${x}" ; \
+# done
+#
+
+# 103 is EOL.  The current Cr version is 122.
+# See also
+# https://github.com/obsproject/obs-studio/blob/30.1.0/build-aux/modules/99-cef.json
+# https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
+# https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
+CEF_PV="103"
 CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
+FFMPEG_COMPAT=(
+	"0/58.60.60" # 6.1
+	"0/56.58.58" # 4.4
+)
+LIBVA_PV="2.14.0"
+LIBX11_PV="1.7.5"
 LUA_COMPAT=( luajit )
+MAKEOPTS="-j1"
+MESA_PV="22.0.1"
 PYTHON_COMPAT=( python3_{8..11} )
+QT6_PV="6.2.4"
+QT6_SLOT="$(ver_cut 1 ${QT6_PV})"
+SWIG_PV="4.0.2"
 
 inherit cmake flag-o-matic git-r3 lcnr lua-single python-single-r1 xdg-utils
 
@@ -17,6 +46,7 @@ EGIT_SUBMODULES=(
 	'-plugins/win-dshow'
 	'-plugins/enc-amf'
 )
+KEYWORDS="~amd64 ~x86"
 SRC_URI=""
 
 DESCRIPTION="Software for live streaming and screen recording"
@@ -64,7 +94,6 @@ LICENSE="
 	)
 "
 # custom - plugins/enc-amf/AMF/LICENSE.txt
-KEYWORDS="~amd64 ~x86"
 SLOT="0"
 # aja is enabled by default upstream
 # amf is enabled by default upstream
@@ -136,33 +165,6 @@ REQUIRED_USE+="
 	)
 "
 
-#
-# To find differences between release use:
-#
-# S1="/var/tmp/portage/media-video/obs-studio-28.1.2/work/obs-studio-28.1.2" \
-# S2="/var/tmp/portage/media-video/obs-studio-29.1.1/work/obs-studio-29.1.1" ; \
-# for x in $(find ${S2} -name "CMakeLists.txt" -o -name "*.cmake" | cut -f 9- -d "/" | sort) ; do \
-#   diff -urp "${S1}/${x}" "${S2}/${x}" ; \
-# done
-#
-
-# 103 is EOL.  The current Cr version is 122.
-CEF_PV="103"
-# See also
-# https://github.com/obsproject/obs-studio/blob/30.1.0/build-aux/modules/99-cef.json
-# https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
-# https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
-
-# U 22.04
-
-FFMPEG_PV="4.4.2"
-LIBVA_PV="2.14.0"
-LIBX11_PV="1.7.5"
-MESA_PV="22.0.1"
-QT6_PV="6.2.4"
-QT6_SLOT="$(ver_cut 1 ${QT6_PV})"
-SWIG_PV="4.0.2"
-
 # Based on 20.04 See
 # azure-pipelines.yml
 # .github/workflows/main.yml
@@ -187,8 +189,25 @@ BDEPEND+="
 	)
 "
 
+gen_ffmpeg_depend() {
+	local use_deps="${1}"
+	echo "
+		|| (
+	"
+	local s
+	for s in ${FFMPEG_COMPAT[@]} ; do
+		echo "
+			media-video/ffmpeg:${s}${use_deps}
+		"
+	done
+	echo "
+		)
+		media-video/ffmpeg:=
+	"
+}
+
 DEPEND_FFMPEG="
-	>=media-video/ffmpeg-${FFMPEG_PV}:=[libaom?,opus,svt-av1?]
+	$(gen_ffmpeg_depend '[libaom?,opus,svt-av1?]')
 "
 
 DEPEND_LIBX11="
@@ -308,11 +327,11 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 		>=net-libs/srt-1.4.4
 	)
 	nvenc? (
-		>=media-video/ffmpeg-${FFMPEG_PV}[nvenc]
+		$(gen_ffmpeg_depend '[nvenc]')
 	)
 	vaapi? (
+		$(gen_ffmpeg_depend '[vaapi]')
 		>=media-libs/libva-${LIBVA_PV}[X,wayland?]
-		>=media-video/ffmpeg-${FFMPEG_PV}[vaapi]
 		media-libs/vaapi-drivers
 	)
 "
@@ -410,6 +429,7 @@ DEPEND_PLUGINS_WEBRTC="
 # >=media-sound/jack2-1.9.12
 # >=sys-fs/udev-237
 DEPEND_PLUGINS="
+	$(gen_ffmpeg_depend '[x264]')
 	${DEPEND_CURL}
 	${DEPEND_DEPS_FILE_UPDATER}
 	${DEPEND_DEPS_MEDIA_PLAYBACK}
@@ -429,7 +449,6 @@ DEPEND_PLUGINS="
 	${DEPEND_PLUGINS_RNNOISE}
 	${DEPEND_PLUGINS_VST}
 	${DEPEND_PLUGINS_WEBRTC}
-	>=media-video/ffmpeg-${FFMPEG_PV}:=[x264]
 	alsa? (
 		>=media-libs/alsa-lib-1.2.6.1
 	)
@@ -578,7 +597,6 @@ DEPEND+="
 #  The module is licensed as MIT.
 
 RESTRICT="mirror" # Speed up download of the latest release.
-MAKEOPTS="-j1"
 PATCHES=(
 	# https://github.com/obsproject/obs-studio/pull/3335
 	"${FILESDIR}/${PN}-26.1.2-python-3.8.patch"
