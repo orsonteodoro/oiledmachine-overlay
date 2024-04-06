@@ -6,7 +6,10 @@
 	<email>media-video@gentoo.org</email>
 </maintainer>
 <!--
-  The oiledmachine-overlay provides this ebuild for PGO/BOLT optimization.
+
+  oiledmachine-overlay notes:
+
+  This fork provides this ebuild for PGO/BOLT optimization.
 
   USE flag status:
 
