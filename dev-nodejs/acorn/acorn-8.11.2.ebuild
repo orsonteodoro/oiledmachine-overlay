@@ -4,6 +4,10 @@
 
 EAPI=8
 
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}"
+SRC_URI=""
+
 DESCRIPTION="A small, fast, JavaScript-based JavaScript parser Resources"
 HOMEPAGE="
 https://github.com/acornjs/acorn
@@ -11,7 +15,7 @@ https://github.com/acornjs/acorn
 LICENSE="
 	MIT
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 CDEPEND+="
@@ -27,9 +31,6 @@ RDEPEND+="
 BDEPEND+="
 	${CDEPEND}
 "
-SRC_URI=""
-S="${WORKDIR}"
-RESTRICT="mirror"
 
 pkg_postinst() {
 	npm install -g "acorn@${PV}"

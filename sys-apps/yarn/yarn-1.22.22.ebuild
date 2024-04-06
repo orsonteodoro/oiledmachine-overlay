@@ -4,6 +4,10 @@
 
 EAPI=8
 
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}"
+SRC_URI=""
+
 DESCRIPTION="Fast, reliable, and secure dependency management."
 HOMEPAGE="
 https://classic.yarnpkg.com/
@@ -12,10 +16,10 @@ https://github.com/yarnpkg/yarn
 LICENSE="
 	BSD-2
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT_MAJOR="${PV%%.*}"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
-IUSE+=" +ssl r2"
+IUSE+=" +ssl ebuild-revision-2"
 CDEPEND+="
 	!sys-apps/yarn:0
 	>=net-libs/nodejs-4[corepack,ssl?]
@@ -29,9 +33,6 @@ RDEPEND+="
 BDEPEND+="
 	${CDEPEND}
 "
-SRC_URI=""
-S="${WORKDIR}"
-RESTRICT="mirror"
 
 pkg_postinst() {
 	corepack enable

@@ -4,21 +4,24 @@
 
 EAPI=8
 
-DESCRIPTION="Fast, reliable, and secure dependency management."
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}"
+SRC_URI=""
+
+DESCRIPTION="Fast, disk space efficient package manager"
 HOMEPAGE="
-https://yarnpkg.com/
-https://github.com/yarnpkg/berry
+https://pnpm.io/
+https://github.com/pnpm/pnpm
 "
 LICENSE="
-	BSD-2
+	MIT
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT_MAJOR="${PV%%.*}"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
-IUSE+=" +ssl r2"
+IUSE+=" ebuild-revision-2"
 CDEPEND+="
-	!sys-apps/yarn:0
-	>=net-libs/nodejs-18.17[corepack,ssl?]
+	>=net-libs/nodejs-18.14[corepack,ssl]
 "
 DEPEND+="
 	${CDEPEND}
@@ -29,9 +32,6 @@ RDEPEND+="
 BDEPEND+="
 	${CDEPEND}
 "
-SRC_URI=""
-S="${WORKDIR}"
-RESTRICT="mirror"
 
 pkg_postinst() {
 	corepack enable
@@ -47,5 +47,4 @@ einfo "Removing ${PN}-${SLOT_MAJOR}.tgz"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# Although a previous ebuild with the same name exists, this ebuild is
-# independently created.  This is the a hydrated tarball version.
+# OILEDMACHINE-OVERLAY-TEST:  passed (8.10.5, 20231219)

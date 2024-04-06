@@ -7,6 +7,10 @@ EAPI=8
 LOCKFILE_VER="2" # See https://docs.npmjs.com/cli/v9/configuring-npm/package-lock-json#lockfileversion
 # See also https://github.com/npm/cli/blob/v8.13.0/package-lock.json#L4
 
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}"
+SRC_URI=""
+
 DESCRIPTION="The package manager for JavaScript"
 HOMEPAGE="
 https://docs.npmjs.com/cli
@@ -15,9 +19,9 @@ https://github.com/npm/cli
 LICENSE="
 	Artistic-2
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="${LOCKFILE_VER}/$(ver_cut 1-2 ${PV})"
-IUSE+=" +ssl r3"
+IUSE+=" +ssl ebuild-revision-3"
 CDEPEND+="
 	!sys-apps/npm:0
 	|| (
@@ -35,9 +39,6 @@ RDEPEND+="
 BDEPEND+="
 	${CDEPEND}
 "
-SRC_URI=""
-S="${WORKDIR}"
-RESTRICT="mirror"
 
 pkg_postinst() {
 	corepack enable

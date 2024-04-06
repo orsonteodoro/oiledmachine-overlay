@@ -6,11 +6,8 @@
 
 EAPI=8
 
-# The following are locked for deterministic builds.  Bump if vulnerability encountered.
-AUTOCANNON_PV="7.4.0"
-WRK_PV="1.2.1"
-
 ACORN_PV="8.11.3"
+AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 BENCHMARK_TYPES=(
 	assert
 	async_hooks
@@ -54,9 +51,10 @@ BENCHMARK_TYPES=(
 	zlib
 )
 CONFIG_CHECK="~ADVISE_SYSCALLS"
-COREPACK_PV="0.24.0"
-NGHTTP2_PV="1.58.0"
-NPM_PV="10.2.4" # See https://github.com/nodejs/node/blob/v21.6.2/deps/npm/package.json
+COREPACK_PV="0.25.0"
+LTO_TYPE="none" # Global var
+NGHTTP2_PV="1.60.0"
+NPM_PV="10.5.0" # See https://github.com/nodejs/node/blob/v20.12.1/deps/npm/package.json
 PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -64,16 +62,17 @@ UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
+WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 inherit bash-completion-r1 flag-o-matic flag-o-matic-om linux-info ninja-utils
 inherit pax-utils python-any-r1 check-linker lcnr toolchain-funcs uopts
 inherit xdg-utils
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
+S="${WORKDIR}/node-v${PV}"
 SRC_URI="
 https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz
 "
-S="${WORKDIR}/node-v${PV}"
 
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
 HOMEPAGE="https://nodejs.org/"
@@ -111,9 +110,8 @@ acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
 +npm mold pax-kernel +snapshot +ssl system-icu +system-ssl test
 
 $(gen_iuse_pgo)
-man pgo r3
+man pgo ebuild-revision-3
 "
-
 gen_required_use_pgo() {
 	local t
 	for t in ${BENCHMARK_TYPES[@]} ; do
@@ -142,17 +140,17 @@ REQUIRED_USE+="
 "
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Feb 13, 2024
+# Last deps commit date:  Apr 2, 2024
 RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.1.0
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.48.0:=
-	>=net-dns/c-ares-1.20.1
+	>=dev-libs/libuv-1.47.0:=
+	>=net-dns/c-ares-1.27.0
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3
 	system-icu? (
-		>=dev-libs/icu-74.1:=
+		>=dev-libs/icu-74.2:=
 	)
 	system-ssl? (
 		>=dev-libs/openssl-3.0.13:0=
@@ -195,12 +193,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
 )
 
-pkg_pretend() {
-	(use x86 && ! use cpu_flags_x86_sse2) && \
-		die "Your CPU doesn't support the required SSE2 instruction."
-	# Already applied 6ca785b
-}
-
 _count_useflag_slots() {
 	local useflag="${1}"
 	local tot=0
@@ -212,6 +204,18 @@ _count_useflag_slots() {
 	echo "${tot}"
 }
 
+_is_flagq_last() {
+	local flag="${1}"
+	local olast=$(echo "${CFLAGS}" \
+		| grep -o -E -e "-O(0|g|1|z|s|2|3|4|fast)" \
+		| tr " " "\n" \
+		| tail -n 1)
+einfo "CFLAGS:\t${CFLAGS}"
+einfo "olast:\t${olast}"
+	[[ "${flag}" == "${olast}" ]] && return 0
+	return 1
+}
+
 _print_merge_useflag_conflicts() {
 	local useflag="${1}"
 	local x
@@ -221,13 +225,19 @@ _print_merge_useflag_conflicts() {
 	done
 }
 
+pkg_pretend() {
+	(use x86 && ! use cpu_flags_x86_sse2) && \
+		die "Your CPU doesn't support the required SSE2 instruction."
+	# Already applied 6ca785b
+}
+
 pkg_setup() {
 	python-any-r1_pkg_setup
 	linux-info_pkg_setup
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2024-06-01."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2026-04-30."
 
 	# Prevent merge conflicts
 	if use man && (( $(_count_useflag_slots "man") > 1 ))
@@ -270,19 +280,6 @@ ewarn
 	uopts_setup
 }
 
-is_flagq_last() {
-	local flag="${1}"
-	local olast=$(echo "${CFLAGS}" \
-		| grep -o -E -e "-O(0|g|1|z|s|2|3|4|fast)" \
-		| tr " " "\n" \
-		| tail -n 1)
-einfo "CFLAGS:\t${CFLAGS}"
-einfo "olast:\t${olast}"
-	[[ "${flag}" == "${olast}" ]] && return 0
-	return 1
-}
-
-LTO_TYPE="none"
 src_prepare() {
 	default
 	tc-export AR CC CXX PKG_CONFIG
@@ -319,36 +316,36 @@ src_prepare() {
 	local r2="-O3"
 	if use custom-optimization ; then
 		local oflag="-O3"
-		if is_flagq_last '-O0'; then
+		if _is_flagq_last '-O0'; then
 ewarn "Using -O0 may disable _FORITIFY_SOURCE lowering security"
 			oflag="-O0"
-		elif is_flagq_last '-Og'; then
+		elif _is_flagq_last '-Og'; then
 			if use pgo ; then
 ewarn "Using -Og with PGO is uncommon"
 			fi
 			oflag="-Og"
-		elif is_flagq_last '-O1'; then
+		elif _is_flagq_last '-O1'; then
 			if use pgo ; then
 ewarn "Using -O1 with PGO is uncommon"
 			fi
 			oflag="-O1"
-		elif is_flagq_last '-O2'; then
+		elif _is_flagq_last '-O2'; then
 			if use pgo ; then
 ewarn "Using -O2 with PGO is uncommon"
 			fi
 			oflag="-O2"
-		elif is_flagq_last '-O3'; then
+		elif _is_flagq_last '-O3'; then
 			oflag="-O3"
-		elif is_flagq_last '-O4'; then
+		elif _is_flagq_last '-O4'; then
 			oflag="-O4"
-		elif is_flagq_last '-Ofast'; then
+		elif _is_flagq_last '-Ofast'; then
 			oflag="-Ofast"
-		elif is_flagq_last '-Os'; then
+		elif _is_flagq_last '-Os'; then
 			if use pgo ; then
 ewarn "Using -Os with PGO is uncommon"
 			fi
 			oflag="-Os"
-		elif is_flagq_last '-Oz'; then
+		elif _is_flagq_last '-Oz'; then
 			if use pgo ; then
 ewarn "Using -Oz with PGO is uncommon"
 			fi
