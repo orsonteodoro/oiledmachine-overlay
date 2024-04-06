@@ -76,8 +76,8 @@ LICENSE="
 		BSD-2
 	)
 	qsv? (
-		GPL-2
 		BSD
+		GPL-2
 	)
 	vst? (
 		GPL-2+
