@@ -5,15 +5,19 @@ EAPI=8
 
 # U22.04
 
+MRUBY_COMMIT="87260e7bb1a9edfb2ce9b41549c4142129061ca5"
+NEVERBLEED_COMMIT="929e470260d460dacc20a10601c2d3c7a9f386b2"
 PYTHON_COMPAT=( python3_{10..12} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby31 ruby32 ruby33"
 
 inherit cmake-multilib python-r1 ruby-ng toolchain-funcs
 
-MRUBY_COMMIT="87260e7bb1a9edfb2ce9b41549c4142129061ca5"
-NEVERBLEED_COMMIT="929e470260d460dacc20a10601c2d3c7a9f386b2"
-
+KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
+~s390 ~sparc ~x86 ~amd64-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
+"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/nghttp2/nghttp2/releases/download/v${PV}/${P}.tar.xz
 	mruby? (
@@ -24,10 +28,6 @@ https://github.com/mruby/mruby/archive/${MRUBY_COMMIT}.tar.gz
 https://github.com/tatsuhiro-t/neverbleed/archive/${NEVERBLEED_COMMIT}.tar.gz
 	-> neverbleed-${NEVERBLEED_COMMIT:0:7}.tar.gz
 	)
-"
-KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
-~s390 ~sparc ~x86 ~amd64-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
 "
 
 DESCRIPTION="HTTP/2 C Library"

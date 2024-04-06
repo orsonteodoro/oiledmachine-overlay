@@ -5,16 +5,20 @@ EAPI=8
 
 # U22.04
 
+MRUBY_COMMIT="32279e4128527bab4c961854b9cce727a060abea"
+MUNIT_COMMIT="fe21fbd5acc81cdeee26e18df5afd6aba3d92d7a"
+NEVERBLEED_COMMIT="929e470260d460dacc20a10601c2d3c7a9f386b2"
 PYTHON_COMPAT=( python3_{10..12} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby31 ruby32 ruby33"
 
 inherit cmake-multilib python-r1 ruby-ng toolchain-funcs
 
-MRUBY_COMMIT="32279e4128527bab4c961854b9cce727a060abea"
-NEVERBLEED_COMMIT="929e470260d460dacc20a10601c2d3c7a9f386b2"
-MUNIT_COMMIT="fe21fbd5acc81cdeee26e18df5afd6aba3d92d7a"
-
+KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
+~s390 ~sparc ~x86 ~amd64-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
+"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/nghttp2/nghttp2/releases/download/v${PV}/${P}.tar.xz
 	mruby? (
@@ -29,10 +33,6 @@ https://github.com/tatsuhiro-t/neverbleed/archive/${NEVERBLEED_COMMIT}.tar.gz
 https://github.com/ngtcp2/munit/archive/${MUNIT_COMMIT}.tar.gz
 	-> munit-${MUNIT_COMMIT:0:7}.tar.gz
 	)
-"
-KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
-~s390 ~sparc ~x86 ~amd64-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
 "
 
 DESCRIPTION="HTTP/2 C Library"
