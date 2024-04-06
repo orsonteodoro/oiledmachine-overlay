@@ -763,22 +763,6 @@ REQUIRED_USE+="
 	)
 "
 
-gen_ffmpeg_depends0() {
-	local use_deps="${1}"
-	echo "
-		|| (
-	"
-	local s
-	for s in ${FFMPEG_COMPAT} ; do
-			echo "
-				
-			"
-	done
-	echo "
-		)
-	"
-}
-
 gen_ffmpeg_g722_depends() {
 	local use_deps="${1}"
 	echo "
