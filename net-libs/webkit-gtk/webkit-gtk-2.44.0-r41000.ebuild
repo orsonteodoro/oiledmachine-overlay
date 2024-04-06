@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# D11, D12, U20, U22, U24
+
 # -r revision notes
 # -rabcde
 # ab = WEBKITGTK_API_VERSION version (4.1)
@@ -35,8 +37,8 @@ EAPI=8
 #   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Tools/gtk/install-dependencies
 #   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Tools/gtk/dependencies
 #   https://github.com/WebKit/WebKit/tree/webkitgtk-2.44.0/Tools/glib/dependencies
-#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
-#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
+#   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
+#   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/GCCRequirement.html
 
 #
 # To compare changes, Use:
@@ -81,6 +83,11 @@ CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 CLANG_PV="13"
 CMAKE_MAKEFILE_GENERATOR="ninja"
 CXX_STD="20"
+FFMPEG_COMPAT=(
+	"0/58.60.60" # 6.1
+	"0/57.59.59" # 5.1
+	"0/56.58.58" # 4.3
+)
 FONTCONFIG_PV="2.13.0"
 FREETYPE_PV="2.9.0"
 GCC_PV="10.2.0"
@@ -756,6 +763,45 @@ REQUIRED_USE+="
 	)
 "
 
+gen_ffmpeg_g722_depends() {
+	local use_deps="${1}"
+	echo "
+		|| (
+	"
+	local s
+	for s in ${FFMPEG_COMPAT} ; do
+			echo "
+				(
+					!<dev-libs/openssl-3
+					media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,-fdk,-kvazaar,-openh264,openssl,-vaapi,-x264,-x265,-xvid]
+				)
+				(
+					media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,-fdk,-kvazaar,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
+				)
+			"
+	done
+	echo "
+		)
+		media-video/ffmpeg:=
+	"
+}
+
+gen_ffmpeg_vaapi_depends() {
+	echo "
+		|| (
+	"
+	local s
+	for s in ${FFMPEG_COMPAT[@]} ; do
+		echo "
+			media-video/ffmpeg:${s}[${MULTILIB_USEDEP},vaapi]
+		"
+	done
+	echo "
+		)
+		media-video/ffmpeg:=
+	"
+}
+
 RDEPEND_PROPRIETARY_CODECS_DISABLE="
 	!media-plugins/gst-plugins-dash
 	!media-plugins/gst-plugins-hls
@@ -766,15 +812,7 @@ RDEPEND_PROPRIETARY_CODECS_DISABLE="
 	!media-plugins/gst-plugins-x265
 	g722? (
 		!<media-video/ffmpeg-5[openssl]
-		|| (
-			(
-				!<dev-libs/openssl-3
-				>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,-fdk,-kvazaar,-openh264,openssl,-vaapi,-x264,-x265,-xvid]
-			)
-			(
-				>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,-fdk,-kvazaar,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
-			)
-		)
+		$(gen_ffmpeg_g722_depends)
 	)
 	gles2? (
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
@@ -884,12 +922,12 @@ RDEPEND+="
 			>=media-plugins/gst-plugins-speex-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		)
 		vaapi? (
+			$(gen_ffmpeg_vaapi_depends)
 			!vaapi-stateless-decoding? (
 				>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
 			)
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
 			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
-			media-video/ffmpeg[${MULTILIB_USEDEP},vaapi]
 		)
 		vaapi-stateless-decoding? (
 			>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
