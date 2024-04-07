@@ -11,6 +11,7 @@
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/libvips/libvips/issues</bugs-to>
+    <remote-id type="cpe">cpe:/a:libvips:libvips</remote-id>
     <remote-id type="github">libvips/libvips</remote-id>
   </upstream>
   <use>
