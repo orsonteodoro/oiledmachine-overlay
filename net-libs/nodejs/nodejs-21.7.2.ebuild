@@ -53,7 +53,7 @@ TRAINER_TYPES=(
 CONFIG_CHECK="~ADVISE_SYSCALLS"
 COREPACK_PV="0.25.2"
 LTO_TYPE="none" # Global var
-MULTIPLEXER_VER="9"
+MULTIPLEXER_VER="10"
 NGHTTP2_PV="1.60.0"
 NPM_PV="10.5.0" # See https://github.com/nodejs/node/blob/v21.7.2/deps/npm/package.json
 PYTHON_COMPAT=( python3_{8..11} )
@@ -111,7 +111,7 @@ acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
 +npm mold pax-kernel +snapshot +ssl system-icu +system-ssl test
 
 $(gen_iuse_pgo)
-man pgo ebuild-revision-4
+man pgo ebuild-revision-5
 "
 
 gen_required_use_pgo() {
