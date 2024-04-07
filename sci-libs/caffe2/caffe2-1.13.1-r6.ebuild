@@ -29,7 +29,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_86
 )
 FFMPEG_COMPAT=(
-	"0/55.57.57" # 3.4 (U18 dockfile)
+	"0/55.57.57" # 3.4 (U18 dockerfile)
 	"0/54.56.56" # 2.8 (U16 docs)
 	"0/52.54.54" # 1.2 (U14 docs)
 )
