@@ -7,6 +7,7 @@
     <name>Tupone Alfredo</name>
   </maintainer>
   <upstream>
+    <remote-id type="cpe">cpe:/a:linuxfoundation:pytorch</remote-id>
     <remote-id type="github">pytorch/pytorch</remote-id>
   </upstream>
 </pkgmetadata>
