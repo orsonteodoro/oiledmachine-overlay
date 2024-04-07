@@ -319,7 +319,6 @@ fi
 if [[ "${ELECTRON_APP_FEATURE_VAAPI}" == "1" ]] ; then
 	IUSE+=" vaapi"
 	ELECTRON_APP_OPTIONAL_DEPEND+="
-		media-video/ffmpeg[vaapi?]
 		vaapi? (
 			media-libs/libva[drm(+),X?,wayland?]
 			media-libs/vaapi-drivers
@@ -348,13 +347,7 @@ CHROMIUM_DEPEND="
 	app-accessibility/speech-dispatcher
 	dev-db/sqlite:3
 "
-# Electron only
-# Assumes U 18.04 builder but allows for older U LTS if libs present.
-RPATH_OVERRIDE_DEPEND="
-	media-video/ffmpeg
-" # System libs that are not used which the bundle version overrides.
 COMMON_DEPEND="
-	${RPATH_OVERRIDE_DEPEND}
 	${CHROMIUM_DEPEND}
 	${ELECTRON_APP_OPTIONAL_DEPEND}
 	app-accessibility/at-spi2-atk:2
