@@ -18,6 +18,9 @@
     upon internally.
   </longdescription>
   <!--
+
+    oiledmachine-overlay notes:
+
     This is an ebuild fork with more detailed VA-API dependency requirement
     checks.
 
@@ -104,6 +107,7 @@
   -->
   <upstream>
     <doc lang="en">https://obsproject.com/wiki/Home</doc>
+    <remote-id type="github">obsproject/obs-studio</remote-id>
   </upstream>
   <use>
     <flag name="aja">
@@ -263,7 +267,4 @@
       when building.
     </flag>
   </use>
-  <upstream>
-    <remote-id type="github">obsproject/obs-studio</remote-id>
-  </upstream>
 </pkgmetadata>
