@@ -16,6 +16,18 @@
     <email>sci@gentoo.org</email>
     <name>Gentoo Science Project</name>
   </maintainer>
+  <!--
+
+    oiledmachine-overlay notes:
+
+    The purpose of this ebuild fork is to ensure consistency between Blender or
+    its dependencies, or meet the minimum requirements of Blender.
+
+  -->
+  <upstream>
+    <remote-id type="cpe">cpe:/a:openimageio:openimageio</remote-id>
+    <remote-id type="github">OpenImageIO/oiio</remote-id>
+  </upstream>
   <use>
     <flag name="aom">
       Enable AV1 support through libaom
@@ -84,15 +96,4 @@
       Enable WebP image support
     </flag>
   </use>
-  <!--
-
-    oiledmachine-overlay notes:
-
-    The purpose of this ebuild fork is to ensure consistency between Blender or
-    its dependencies, or meet the minimum requirements of Blender.
-
-  -->
-  <upstream>
-    <remote-id type="github">OpenImageIO/oiio</remote-id>
-  </upstream>
 </pkgmetadata>
