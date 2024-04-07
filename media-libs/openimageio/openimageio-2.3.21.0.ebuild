@@ -167,9 +167,9 @@ RDEPEND+="
 	)
 	ffmpeg? (
 		|| (
-			media-video/ffmpeg:55.57.57
-			media-video/ffmpeg:56.58.58
-			media-video/ffmpeg:57.59.59
+			media-video/ffmpeg:0/55.57.57
+			media-video/ffmpeg:0/56.58.58
+			media-video/ffmpeg:0/57.59.59
 		)
 		media-video/ffmpeg:=
 	)
