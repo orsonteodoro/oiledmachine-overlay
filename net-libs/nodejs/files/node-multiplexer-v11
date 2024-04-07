@@ -35,7 +35,7 @@ get_installed_versions() {
 	done
 }
 
-if (( ${found} == 1 )) ; then
+if (( ${found} == 0 )) ; then
 echo "Header version:  ${ACTIVE_VERSION}"
 echo "Requested version:  ${NODE_VERSION}"
 echo "Installed versions:  $(get_installed_versions)"
