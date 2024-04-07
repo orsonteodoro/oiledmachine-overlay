@@ -2,12 +2,13 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Ebuild only from the oiledmachine-overlay -->
+    <!-- Ebuild from the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
     <changelog>http://pam-python.sourceforge.net/ChangeLog.txt</changelog>
+    <remote-id type="cpe">cpe:/a:pam-python_project:pam-python</remote-id>
     <remote-id type="sourceforge">pam-python</remote-id>
   </upstream>
   <use>
