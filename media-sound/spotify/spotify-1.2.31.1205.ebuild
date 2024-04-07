@@ -224,8 +224,6 @@ gen_ffmpeg_depends() {
 	"
 }
 
-# media-video/ffmpeg:${FFMPEG_SLOT} # From chromium tarball
-# <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
 OPTIONAL_RDEPENDS_LISTED="
 	ffmpeg? (
 		$(gen_ffmpeg_depends)
