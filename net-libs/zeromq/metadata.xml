@@ -12,14 +12,11 @@
     <name>Thomas Deutschmann</name>
   </maintainer>
   <upstream>
-    <maintainer>
-      <email>sustrik@fastmq.com</email>
-      <name>Martin Sustrik</name>
-    </maintainer>
     <doc>http://zguide.zeromq.org/page:all</doc>
-      <bugs-to>https://github.com/zeromq/libzmq/issues</bugs-to>
-      <remote-id type="github">zeromq/zeromq4-1</remote-id>
-      <remote-id type="github">zeromq/libzmq</remote-id>
+    <bugs-to>https://github.com/zeromq/libzmq/issues</bugs-to>
+    <remote-id type="cpe">cpe:/a:zeromq:libzmq</remote-id>
+    <remote-id type="github">zeromq/zeromq4-1</remote-id>
+    <remote-id type="github">zeromq/libzmq</remote-id>
   </upstream>
   <longdescription lang="en">
     The 0MQ lightweight messaging kernel is a library which
@@ -29,10 +26,12 @@
     message queues, multiple messaging patterns, message filtering
     (subscriptions), seamless access to multiple transport protocols
     and more.
-
-    The oiledmachine-overlay ebuild fork primarly is for the multilib
-    enabled package.
   </longdescription>
+  <!--
+    oiledmachine-overlay notes:
+
+    This ebuild fork is primarly for multilib support.
+  -->
   <slots>
     <subslots>Reflect ABI of libzmq.so.</subslots>
   </slots>
