@@ -117,6 +117,10 @@
       arcade.
 
   -->
+  <upstream>
+    <remote-id type="cpe">cpe:/a:mesa3d:mesa</remote-id>
+    <remote-id type="freedesktop-gitlab">mesa/mesa</remote-id>
+  </upstream>
   <use>
     <flag name="d3d9">
       Enable Direct 3D9 API through Nine state tracker. Can be used together
@@ -169,8 +173,4 @@
       Ebuild fork revision
     </flag>
   </use>
-  <upstream>
-    <remote-id type="cpe">cpe:/a:mesa3d:mesa</remote-id>
-    <remote-id type="freedesktop-gitlab">mesa/mesa</remote-id>
-  </upstream>
 </pkgmetadata>
