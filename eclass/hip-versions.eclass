@@ -1,7 +1,6 @@
 # Copyright 2024 Orson Teodoro
 # Distributed under the terms of the GNU General Public License v2
 
-# Latest supported for this overlay
 HIP_3_5_VERSION="3.5.1"
 HIP_3_7_VERSION="3.7.0"
 HIP_3_9_VERSION="3.9.0"
@@ -12,6 +11,7 @@ HIP_4_2_VERSION="4.2.0"
 HIP_4_3_VERSION="4.3.1"
 HIP_4_5_VERSION="4.5.2"
 HIP_5_0_VERSION="5.0.2"
+# The latest supported for this overlay below
 HIP_5_1_VERSION="5.1.3"
 HIP_5_2_VERSION="5.2.3"
 HIP_5_3_VERSION="5.3.3"
@@ -31,8 +31,8 @@ HIP_4_1_LLVM_SLOT="12"
 HIP_4_2_LLVM_SLOT="12"
 HIP_4_3_LLVM_SLOT="13"
 HIP_4_5_LLVM_SLOT="13"
-HIP_4_5_LLVM_SLOT="13"
 HIP_5_0_LLVM_SLOT="14"
+# The latest supported for this overlay below
 HIP_5_1_LLVM_SLOT="14"
 HIP_5_2_LLVM_SLOT="14"
 HIP_5_3_LLVM_SLOT="15"
