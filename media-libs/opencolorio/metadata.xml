@@ -1,12 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<!-- maintainer-needed -->
-	<longdescription lang="en">OpenColorIO (OCIO) is a complete color management solution geared towards motion picture production with an emphasis on visual effects and computer animation.</longdescription>
-	<upstream>
-		<remote-id type="github">imageworks/OpenColorIO</remote-id>
-	</upstream>
-	<longdescription>
-		Ebuild fork for ilmbase and imath dependency conflict resolution.
-	</longdescription>
+  <maintainer type="person" proxied="yes">
+    <!-- Distro ebuild maintainers -->
+    <email>negril.nx+gentoo@gmail.com</email>
+    <name>Paul Zander</name>
+  </maintainer>
+  <maintainer type="project" proxied="proxy">
+    <!-- Distro ebuild maintainers -->
+    <email>proxy-maint@gentoo.org</email>
+    <name>Proxy Maintainers</name>
+  </maintainer>
+  <longdescription lang="en">
+    OpenColorIO (OCIO) is a complete color management solution geared towards
+    motion picture production with an emphasis on visual effects and computer
+    animation.
+  </longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
+
+    Ebuild fork for ilmbase and imath dependency conflict resolution.
+
+  -->
+  <upstream>
+    <remote-id type="github">imageworks/OpenColorIO</remote-id>
+  </upstream>
+  <use>
+    <flag name="apps">
+      Build the OCIO command line apps
+    </flag>
+  </use>
 </pkgmetadata>
