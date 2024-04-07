@@ -21,18 +21,17 @@ else
 	DOC_PV="${SRC_PV}"
 	#printf -v DOC_PV "%u%02u%02u00" $(ver_rs 1-3 " ")
 
+	KEYWORDS="
+~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
+sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
+~x64-solaris
+	"
+	S="${WORKDIR}/${PN}-src-${SRC_PV}"
 	SRC_URI="
 		https://sqlite.org/2023/${PN}-src-${SRC_PV}.zip
 		doc? (
 			https://sqlite.org/2023/${PN}-doc-${DOC_PV}.zip
 		)
-	"
-	S="${WORKDIR}/${PN}-src-${SRC_PV}"
-
-	KEYWORDS="
-~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
-sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
-~x64-solaris
 	"
 fi
 
