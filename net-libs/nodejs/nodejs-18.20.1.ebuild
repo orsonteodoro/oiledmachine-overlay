@@ -326,7 +326,9 @@ src_prepare() {
 		local oflag="-O3"
 		if _is_flagq_last '-O0'; then
 ewarn "Using -O0 may disable _FORITIFY_SOURCE lowering security"
-			oflag="-O0"
+			oflag="-O1"
+			replace-flags '-O0' '-O1'
+ewarn "Changing -O0 -> -O1 to avoid always_inline build error."
 		elif _is_flagq_last '-Og'; then
 			if use pgo ; then
 ewarn "Using -Og with PGO is uncommon"
