@@ -11,7 +11,7 @@ EAPI=8
 # https://github.com/boltgolt/howdy/blob/v2.6.1/src/cli.py#L111
 
 # ffmpeg - USE flag broken
-# opencv - USE flag works
+# opencv - works
 # pyv4l2 - USE flag broken
 
 PYTHON_COMPAT=( python3_{8..11} )
@@ -61,8 +61,7 @@ REQUIRED_USE+="
 		cuda
 	)
 "
-DEPEND+="
-	${PYTHON_DEPS}
+RDEPEND+="
 	$(python_gen_cond_dep '
 		sys-auth/pam-python[${PYTHON_SINGLE_USEDEP}]
 		>=sci-libs/dlib-19.16[${PYTHON_USEDEP},python]
@@ -70,6 +69,7 @@ DEPEND+="
 		dev-python/numpy[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP},contribhdf,python,v4l]
 	')
+	${PYTHON_DEPS}
 	>=dev-libs/inih-52
 	app-admin/sudo
 	sys-libs/pam
@@ -92,8 +92,8 @@ DEPEND+="
 		media-libs/libv4l
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	${PYTHON_DEPS}

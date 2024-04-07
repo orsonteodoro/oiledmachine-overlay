@@ -11,7 +11,7 @@ EAPI=8
 # https://github.com/boltgolt/howdy/blob/beta/howdy/src/cli.py#L122
 
 # ffmpeg - USE flag broken
-# opencv - USE flag works
+# opencv - works
 # pyv4l2 - USE flag broken
 
 PYTHON_COMPAT=( python3_{8..11} )
@@ -24,11 +24,11 @@ if [[ ${PV} =~ 9999 ]] ; then
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${PN}-${PV}"
 else
+	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI+="
 https://github.com/boltgolt/howdy/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
-	S="${WORKDIR}/${PN}-${PV}"
 fi
 SRC_URI+="
 https://github.com/davisking/dlib-models/raw/master/dlib_face_recognition_resnet_model_v1.dat.bz2
@@ -68,14 +68,14 @@ REQUIRED_USE+="
 		cuda
 	)
 "
-DEPEND+="
-	${PYTHON_DEPS}
+RDEPEND+="
 	$(python_gen_cond_dep '
 		>=sci-libs/dlib-19.16[${PYTHON_USEDEP},python]
 		dev-libs/boost[${PYTHON_USEDEP},python]
 		dev-python/numpy[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP},contribhdf,png,python,v4l]
 	')
+	${PYTHON_DEPS}
 	>=dev-libs/inih-52
 	app-admin/sudo
 	sys-libs/pam
@@ -111,8 +111,8 @@ DEPEND+="
 		media-libs/libv4l
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	${PYTHON_DEPS}
