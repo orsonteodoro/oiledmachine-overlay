@@ -16,6 +16,17 @@
     <email>mjo@gentoo.org</email>
     <name>Michael Orlitzky</name>
   </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This ebuild fork is maintained to provide BOLT and PGO optimization.
+
+  -->
+  <upstream>
+    <remote-id type="cpe">cpe:/a:php:php</remote-id>
+    <remote-id type="github">php/php-src</remote-id>
+  </upstream>
   <use>
     <flag name="apparmor">
       Support FPM application confinement through
@@ -189,7 +200,4 @@
       Build the XSL extension
     </flag>
   </use>
-  <upstream>
-    <remote-id type="github">php/php-src</remote-id>
-  </upstream>
 </pkgmetadata>
