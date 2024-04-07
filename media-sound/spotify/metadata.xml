@@ -15,6 +15,9 @@
   Ebuild fork for improved compatibility.
 
   -->
+  <upstream>
+    <remote-id type="cpe">cpe:/a:spotify:spotify</remote-id>
+  </upstream>
   <use>
     <flag name="beta">
       Downloads and installs the latest beta version.
