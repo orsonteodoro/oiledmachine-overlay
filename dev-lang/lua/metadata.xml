@@ -7,16 +7,25 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <maintainer type="person">
-    <!-- Ebuild originator -->
+    <!-- Ebuild originators -->
     <email>williamh@gentoo.org</email>
     <name>William Hubbs</name>
   </maintainer>
   <maintainer type="person">
+    <!-- Ebuild originators -->
     <email>robbat2@gentoo.org</email>
     <name>Robin H. Johnson</name>
   </maintainer>
-  <longdescription>
-  </longdescription>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This ebuild is maintained to provided BOLT and PGO optimization.
+
+  -->
+  <upstream>
+    <remote-id type="cpe">cpe:/a:lua:lua</remote-id>
+  </upstream>
   <use>
     <flag name="deprecated">
       Make deprecated data structures/routines available
