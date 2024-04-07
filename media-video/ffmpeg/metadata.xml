@@ -469,6 +469,10 @@
      XML does not support double hyphens in xml comments in compatibility mode.
 
 -->
+<upstream>
+  <remote-id type="cpe">cpe:/a:ffmpeg:ffmpeg</remote-id>
+  <remote-id type="github">FFmpeg/FFmpeg</remote-id>
+</upstream>
 <use>
   <flag name="amf">
     Enables support with the Advanced Media Framework (AMF)
