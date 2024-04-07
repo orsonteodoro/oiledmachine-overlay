@@ -175,6 +175,7 @@
     <bugs-to>
       https://developer.blender.org/
     </bugs-to>
+    <remote-id type="cpe">cpe:/a:blender:blender</remote-id>
   </upstream>
   <use>
     <flag name="abi9-compat">
