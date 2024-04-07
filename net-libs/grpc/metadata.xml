@@ -16,9 +16,13 @@
     <name>Georgy Yakovlev</name>
   </maintainer>
   <!--
+
+    oiledmachine-overlay notes:
+
     The purpose of the ebuild fork is to provide multilib support.  This
     ebuild-package may be deleted once multilib support is added to the original
     ebuild.
+
   -->
   <upstream>
     <remote-id type="cpe">cpe:/a:grpc:grpc</remote-id>
