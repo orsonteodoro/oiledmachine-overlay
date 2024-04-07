@@ -13,6 +13,13 @@
     <remote-id type="cpe">cpe:/a:sqlite:sqlite</remote-id>
     <remote-id type="github">sqlite/sqlite</remote-id>
   </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This ebuild fork is maintained for bolt and pgo optimization.
+
+  -->
   <use>
     <flag name="secure-delete">
       Enable overwriting of deleted content with zeros by default
