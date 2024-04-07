@@ -10,6 +10,10 @@ EAPI=8
 # For versioning, see
 # https://github.com/boltgolt/howdy/blob/beta/howdy/src/cli.py#L122
 
+# ffmpeg - USE flag broken
+# opencv - USE flag works
+# pyv4l2 - USE flag broken
+
 PYTHON_COMPAT=( python3_{8..11} )
 
 inherit git-r3 meson python-single-r1
@@ -52,6 +56,8 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 +bash-completion cuda -ffmpeg +gtk -pyv4l2 r13
 "
 REQUIRED_USE+="
+	!ffmpeg
+	!pyv4l2
 	${PYTHON_REQUIRED_USE}
 	cuda? (
 		|| (
@@ -83,7 +89,7 @@ DEPEND+="
 		$(python_gen_cond_dep '
 			dev-python/ffmpeg-python[${PYTHON_USEDEP}]
 		')
-		media-video/ffmpeg[v4l]
+		media-video/ffmpeg:0/56.58.58[v4l]
 	)
 	gtk? (
 		$(python_gen_cond_dep '
