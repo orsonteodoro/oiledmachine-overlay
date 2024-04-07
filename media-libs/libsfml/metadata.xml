@@ -9,11 +9,15 @@
     You can use SFML as a minimal windowing system to interface with OpenGL, or
     as a fully-featured multimedia library for building games or interactive
     programs.
+  </longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
 
     The ebuild assumes separate ESYSROOTs if you want to port outside of
     Linux.
 
-  </longdescription>
+  -->
   <upstream>
     <remote-id type="github">SFML/SFML</remote-id>
     <remote-id type="sourceforge">sfml</remote-id>
