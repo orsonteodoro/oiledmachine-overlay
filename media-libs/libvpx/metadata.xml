@@ -124,6 +124,10 @@
     For custom training details, see README.md of this overlay.
 
   -->
+  <upstream>
+    <remote-id type="cpe">cpe:/a:john_koleszar:libvpx</remote-id>
+    <remote-id type="github">webmproject/libvpx</remote-id>
+  </upstream>
   <use>
     <flag name="chromium">
       Prevent symbol conflicts in the browser(testing)
