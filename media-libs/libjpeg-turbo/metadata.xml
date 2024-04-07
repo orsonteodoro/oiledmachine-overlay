@@ -36,9 +36,9 @@
     For custom trainer support see the README.md in the overlay.
   -->
   <upstream>
+    <remote-id type="cpe">cpe:/a:libjpeg-turbo:libjpeg-turbo</remote-id>
     <remote-id type="github">libjpeg-turbo/libjpeg-turbo</remote-id>
     <remote-id type="sourceforge">libjpeg-turbo</remote-id>
-    <remote-id type="cpe">cpe:/a:libjpeg-turbo:libjpeg-turbo</remote-id>
   </upstream>
   <use>
     <!-- added to ebuild by oiledmachine-overlay -->
