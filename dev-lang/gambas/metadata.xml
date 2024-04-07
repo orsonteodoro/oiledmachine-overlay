@@ -20,6 +20,7 @@
     <bugs-to>http://gambaswiki.org/wiki/doc/report</bugs-to>
     <changelog>http://gambaswiki.org/wiki/doc/release</changelog>
     <doc lang="en">http://gambas.sourceforge.net/en/main.html</doc>
+    <remote-id type="cpe">cpe:/a:gambas_project:gambas</remote-id>
     <remote-id type="gitlab">gambas/gambas</remote-id>
   </upstream>
   <use>
