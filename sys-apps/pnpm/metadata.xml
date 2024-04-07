@@ -7,6 +7,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
+    <remote-id type="cpe">cpe:/a:pnpm:pnpm</remote-id>
     <remote-id type="github">pnpm/pnpm</remote-id>
     <bugs-to>
       https://github.com/pnpm/pnpm/issues

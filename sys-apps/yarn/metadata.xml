@@ -7,6 +7,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
+    <remote-id type="cpe">cpe:/a:yarnpkg:yarn</remote-id>
     <remote-id type="github">yarnpkg/berry</remote-id>
     <bugs-to>
       https://github.com/yarnpkg/yarn/issues
