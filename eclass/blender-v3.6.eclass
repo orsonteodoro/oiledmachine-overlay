@@ -675,13 +675,14 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 	)
 	ffmpeg? (
 		|| (
-			media-video/ffmpeg:0/56.58.58:=\
+			media-video/ffmpeg:0/56.58.58\
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
-			media-video/ffmpeg:0/57.59.59:=\
+			media-video/ffmpeg:0/57.59.59\
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
-			media-video/ffmpeg:0/58.60.60:=\
+			media-video/ffmpeg:0/58.60.60\
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
 		)
+		media-video/ffmpeg:=
 	)
 	fftw? (
 		>=sci-libs/fftw-3.3.10:3.0=
