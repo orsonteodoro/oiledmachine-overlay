@@ -67,7 +67,7 @@ inherit bash-completion-r1 flag-o-matic flag-o-matic-om linux-info ninja-utils
 inherit pax-utils python-any-r1 check-linker lcnr toolchain-funcs uopts
 inherit xdg-utils
 
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~s390 ~x86 ~amd64-linux ~x64-macos"
 S="${WORKDIR}/node-v${PV}"
 SRC_URI="
 https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz
