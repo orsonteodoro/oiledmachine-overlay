@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <maintainer type="project">
-    <!-- ebuild fork only on the oiledmachine-overlay -->
-    <email>mozilla@gentoo.org</email>
-    <name>Gentoo Mozilla Team</name>
+  <maintainer type="person">
+    <!-- Distro ebuild maintainer -->
+    <email>kumba@gentoo.org</email>
+    <name>Joshua Kinard</name>
   </maintainer>
-  <maintainer type="project">
-    <!-- ebuild originators -->
-    <email>mozilla@gentoo.org</email>
-    <name>Gentoo Mozilla Team</name>
-  </maintainer>
-  <longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
+
     This is an ebuild fork to PGO optimize this library.
 
     With pgo and epgo USE flags disabled, 12 functions are manually expanded or
     shrunk.  Details can be found in commit
     a9fa2defdbe98b849151688cb70e24ba55dc8587 .
-  </longdescription>
+
+  -->
   <use>
     <flag name="bolt">
       Perform 3 step BOLT optimization in one emerge.  (EXPERIMENTAL/TESTING)
