@@ -11,6 +11,10 @@
     <email>voyageur@gentoo.org</email>
     <name>Bernard Cafarelli</name>
   </maintainer>
+  <upstream>
+    <remote-id type="cpe">cpe:/a:nghttp2:nghttp2</remote-id>
+    <remote-id type="github">nghttp2/nghttp2</remote-id>
+  </upstream>
   <use>
     <flag name="hpack-tools">
       Install HPACK (header compression) helper tools
@@ -26,8 +30,4 @@
       nghttpx [reverse proxy]
     </flag>
   </use>
-  <upstream>
-    <remote-id type="cpe">cpe:/a:nghttp2:nghttp2</remote-id>
-    <remote-id type="github">nghttp2/nghttp2</remote-id>
-  </upstream>
 </pkgmetadata>
