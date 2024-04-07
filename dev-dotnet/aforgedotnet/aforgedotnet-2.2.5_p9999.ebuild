@@ -8,9 +8,17 @@ MY_PN="AForge.NET"
 
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/andrewkirillov/AForge.NET.git"
+FFMPEG_COMPAT=(
+	#"0/56.58.58" # 4.4 (Testing, ebuild maintainer change)
+	"0/51.53.53" # 0.10.16 (Upstream)
+)
 USE_DOTNET="net40"
 
 inherit dotnet gac mono git-r3
+
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
+SRC_URI=""
 
 DESCRIPTION="AForge.NET Framework is a C# framework designed for developers and \
 researchers in the fields of Computer Vision and Artificial Intelligence - \
@@ -18,18 +26,42 @@ image processing, neural networks, genetic algorithms, machine learning, \
 robotics, etc."
 HOMEPAGE="http://www.aforgenet.com/"
 LICENSE="LGPL-3 GPL-3"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
-RDEPEND+="
-	media-video/ffmpeg
-	kinect? ( dev-libs/libfreenect )
+IUSE="
+${USE_DOTNET} developer gac kinect ximea
 "
-DEPEND+=" ${RDEPEND}"
-IUSE="${USE_DOTNET} developer gac kinect ximea"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
+REQUIRED_USE="
+	gac? (
+		net40
+	)
+	|| (
+		${USE_DOTNET}
+	)
+"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RESTRICT="mirror"
-SRC_URI=""
-S="${WORKDIR}/${P}"
+gen_ffmpeg_depends() {
+	echo "
+		|| (
+	"
+	local s
+	for s in ${FFMPEG_COMPAT[@]} ; do
+		echo "
+			media-video/ffmpeg:${s}
+		"
+	done
+	echo "
+		)
+	"
+}
+RDEPEND+="
+	$(gen_ffmpeg_depends)
+	kinect? (
+		>=dev-libs/libfreenect-0.1.2
+	)
+"
+DEPEND+="
+	${RDEPEND}
+"
 
 src_prepare() {
 	default
