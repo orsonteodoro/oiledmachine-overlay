@@ -13,6 +13,9 @@
 
       https://support.google.com/earth/answer/21955?hl=en#zippy=%2Clinux-system-configuration
   </longdescription>
+  <upstream>
+    <remote-id type="cpe">cpe:/a:google:earth</remote-id>
+  </upstream>
   <changelog>https://support.google.com/earth/answer/40901</changelog>
   <use>
     <flag name="system-expat">Use the system's Expat library instead of the

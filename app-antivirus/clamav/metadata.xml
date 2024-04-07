@@ -66,6 +66,7 @@
     </flag>
   </use>
   <upstream>
+    <remote-id type="cpe">cpe:/a:clamav:clamav</remote-id>
     <remote-id type="github">Cisco-Talos/clamav</remote-id>
   </upstream>
   <slots>

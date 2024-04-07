@@ -17,6 +17,7 @@
 
   </longdescription>
   <upstream>
+    <remote-id type="cpe">cpe:/a:chromiumembedded:chromium_embedded_framework</remote-id>
     <remote-id type="bitbucket">chromiumembedded/cef</remote-id>
   </upstream>
   <use>

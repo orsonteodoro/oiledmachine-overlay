@@ -18,6 +18,7 @@
     for details on PGO support and custom PGO training.
   -->
   <upstream>
+    <remote-id type="cpe">cpe:/a:mono:mono</remote-id>
     <remote-id type="github">mono/mono</remote-id>
     <changelog>https://www.mono-project.com/docs/about-mono/releases/</changelog>
   </upstream>

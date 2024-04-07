@@ -14,9 +14,7 @@
     libyuv performs YUV scaling and conversion.
   </longdescription>
   <upstream>
-    <maintainer status="active">
-      <name>Sam Hocevar</name>
-    </maintainer>
+    <remote-id type="cpe">cpe:/a:libcaca_project:libcaca</remote-id>
   </upstream>
   <use>
     <flag name="256-colors-ncurses">

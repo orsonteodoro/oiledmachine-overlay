@@ -49,6 +49,7 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
   <bugs-to>
     https://developer.mozilla.org/en-US/docs/Mozilla/QA/Bug_writing_guidelines
   </bugs-to>
+  <remote-id type="cpe">cpe:/a:mozilla:firefox</remote-id>
 </upstream>
 <use>
   <flag name="bindist">

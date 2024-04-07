@@ -55,6 +55,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <doc lang="ru">https://docs.godotengine.org/ru/latest/</doc>
     <doc lang="uk">https://docs.godotengine.org/uk/latest/</doc>
     <doc lang="zh_CN">https://docs.godotengine.org/zh_CN/latest/</doc>
+    <remote-id type="cpe">cpe:/a:godotengine:godot_engine</remote-id>
     <remote-id type="github">godotengine/godot</remote-id>
   </upstream>
   <use>

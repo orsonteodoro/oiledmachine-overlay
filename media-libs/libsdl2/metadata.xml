@@ -26,6 +26,7 @@
     SIMD & ARMv7a NEON optimizations.
   -->
   <upstream>
+    <remote-id type="cpe">cpe:/a:libsdl:simple_directmedia_layer</remote-id>
     <bugs-to>https://github.com/libsdl-org/SDL/issues</bugs-to>
   </upstream>
   <use>
