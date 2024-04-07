@@ -1,0 +1,22 @@
+diff -urp blender-4.1.0.orig/source/blender/io/usd/CMakeLists.txt blender-4.1.0/source/blender/io/usd/CMakeLists.txt
+--- blender-4.1.0.orig/source/blender/io/usd/CMakeLists.txt	2024-03-01 02:45:39.000000000 -0800
++++ blender-4.1.0/source/blender/io/usd/CMakeLists.txt	2024-04-07 00:35:34.470536867 -0700
+@@ -77,6 +77,7 @@ set(INC_SYS
+   ${BOOST_INCLUDE_DIR}
+   ${TBB_INCLUDE_DIR}
+   ${PYTHON_INCLUDE_DIR}
++  ${PYTHON_INCLUDE_DIRS}
+ 
+ )
+ 
+@@ -210,6 +211,8 @@ list(APPEND LIB
+   ${PYTHON_LIBRARIES}
+   ${USD_LIBRARIES}
+   ${TBB_LIBRARIES}
++  ${PYTHON_LINKFLAGS}
++  ${PYTHON_LIBRARIES}
+ )
+ 
+ if(WITH_OPENVDB)
+Only in blender-4.1.0/source/blender/io/usd: CMakeLists.txt.orig
+Only in blender-4.1.0/source/blender/io/usd: CMakeLists.txt.rej

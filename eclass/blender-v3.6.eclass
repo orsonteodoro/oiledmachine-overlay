@@ -39,7 +39,7 @@ FFMPEG_IUSE+="
 	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
 "
 
-LLVM_COMPAT=( {15..12} )
+LLVM_COMPAT=( {16..11} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 LLVM_MAX_UPSTREAM=15 # (inclusive)
 
@@ -64,12 +64,25 @@ LEGACY_TBB_SLOT="2"
 LIBOGG_PV="1.3.5"
 LIBSNDFILE_PV="1.2.2"
 ONETBB_SLOT="0"
-OPENEXR_V3_PV="3.1.9 3.1.8 3.1.7"
+OPENEXR_V3_PV=(
+	"3.2.4"
+	"3.2.3"
+	"3.2.1"
+	"3.2.0"
+	"3.1.13"
+	"3.1.12"
+	"3.1.11"
+	"3.1.10"
+	"3.1.9"
+	"3.1.8"
+	"3.1.7"
+)
 OSL_PV="1.11"
 PUGIXML_PV="1.10"
 THEORA_PV="1.1.1"
 
 CUDA_TARGETS_COMPAT=(
+	compute_75
 	sm_30
 	sm_35
 	sm_37
@@ -81,7 +94,6 @@ CUDA_TARGETS_COMPAT=(
 	sm_75
 	sm_86
 	sm_89
-	compute_89
 )
 
 AMDGPU_TARGETS_COMPAT=(
@@ -101,10 +113,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 ROCM_SLOTS=(
-	rocm_5_4
-	rocm_5_3
-	rocm_5_2
-	rocm_5_1
+	rocm_5_5
 )
 
 IUSE+="
@@ -170,6 +179,9 @@ REQUIRED_USE+="
 		!cycles
 		!nls
 		!openvdb
+	)
+	!rocm? (
+		!llvm_slot_16
 	)
 	!tbb? (
 		!cycles
@@ -311,20 +323,8 @@ REQUIRED_USE+="
 			${ROCM_SLOTS[@]}
 		)
 	)
-	rocm_5_4? (
-		llvm_slot_15
-		rocm
-	)
-	rocm_5_3? (
-		llvm_slot_15
-		rocm
-	)
-	rocm_5_2? (
-		llvm_slot_14
-		rocm
-	)
-	rocm_5_1? (
-		llvm_slot_14
+	rocm_5_5? (
+		llvm_slot_16
 		rocm
 	)
 	theora? (
@@ -436,7 +436,7 @@ gen_oiio_depends() {
 
 gen_openexr_pairs() {
 	local pv
-	for pv in ${OPENEXR_V3_PV} ; do
+	for pv in ${OPENEXR_V3_PV[@]} ; do
 		echo "
 			(
 				~media-libs/openexr-${pv}:=
@@ -633,7 +633,7 @@ RDEPEND+="
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
 			)
 		)
-		cuda_targets_compute_89? (
+		cuda_targets_compute_75? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-12*:=
 				=dev-util/nvidia-cuda-toolkit-11*:=
@@ -818,6 +818,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 			~media-libs/mesa-22.3.6[X?]
 			~media-libs/mesa-22.3.5[X?]
 			 ~media-libs/mesa-22.3.7[X?]
+			=media-libs/mesa-23.0*[X?]
 			=media-libs/mesa-23.1.0[X?]
 			=media-libs/mesa-23.1.1[X?]
 			=media-libs/mesa-23.1.2[X?]
@@ -841,6 +842,17 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		)
 		system-llvm? (
 			sys-libs/libomp:15
+		)
+	)
+	llvm_slot_16? (
+		|| (
+			=media-libs/mesa-22.3*[X?]
+			=media-libs/mesa-23.0*[X?]
+			=media-libs/mesa-23.1*[X?]
+			=media-libs/mesa-23.2*[X?]
+			=media-libs/mesa-23.3*[X?]
+			=media-libs/mesa-24.0*[X?]
+			=media-libs/mesa-9999[X?]
 		)
 	)
 	materialx? (
@@ -911,32 +923,11 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		media-libs/harfbuzz[truetype]
 	)
 	rocm? (
-		rocm_5_4? (
-			~dev-util/hip-${HIP_5_4_VERSION}:5.4[rocm,system-llvm=]
+		rocm_5_5? (
+			~dev-util/hip-${HIP_5_5_VERSION}:5.5[rocm,system-llvm=]
 			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-${HIP_5_4_VERSION}:5.4
-				~sys-libs/llvm-roc-libomp-${HIP_5_4_VERSION}:5.4
-			)
-		)
-		rocm_5_3? (
-			~dev-util/hip-${HIP_5_3_VERSION}:5.3[rocm,system-llvm=]
-			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-${HIP_5_3_VERSION}:5.3
-				~sys-libs/llvm-roc-libomp-${HIP_5_3_VERSION}:5.3
-			)
-		)
-		rocm_5_2? (
-			~dev-util/hip-${HIP_5_2_VERSION}:5.2[rocm,system-llvm=]
-			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-${HIP_5_2_VERSION}:5.2
-				~sys-libs/llvm-roc-libomp-${HIP_5_2_VERSION}:5.2
-			)
-		)
-		rocm_5_1? (
-			~dev-util/hip-${HIP_5_1_VERSION}:5.1[rocm,system-llvm=]
-			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-${HIP_5_1_VERSION}:5.1
-				~sys-libs/llvm-roc-libomp-${HIP_5_1_VERSION}:5.1
+				~dev-libs/rocm-opencl-runtime-${HIP_5_5_VERSION}:5.5
+				~sys-libs/llvm-roc-libomp-${HIP_5_5_VERSION}:5.5
 			)
 		)
 		dev-util/hip:=
@@ -1169,26 +1160,12 @@ ewarn
 	fi
 
 	if use rocm ; then
-	# Upstream uses hip 5.5.0 external_libs.cmake which uses llvm 16.
-	# It is not possible because of version_mex excludes 16 in install_linux_packages.py.
-	# It will cause an emerge conflict.
-	# It may also trigger a multiple LLVMs loaded bug.
-		if use rocm_5_4 ; then
-			export LLVM_SLOT=15
-			export ROCM_SLOT="5.4"
-			export ROCM_VERSION="${HIP_5_4_VERSION}"
-		elif use rocm_5_3 ; then
-			export LLVM_SLOT=15
-			export ROCM_SLOT="5.3"
-			export ROCM_VERSION="${HIP_5_3_VERSION}"
-		elif use rocm_5_2 ; then
-			export LLVM_SLOT=14
-			export ROCM_SLOT="5.2"
-			export ROCM_VERSION="${HIP_5_2_VERSION}"
-		elif use rocm_5_1 ; then
-			export LLVM_SLOT=14
-			export ROCM_SLOT="5.1"
-			export ROCM_VERSION="${HIP_5_1_VERSION}"
+# It is assumed that the referenced versions are tested upstream.
+# Unlisted versions are assumed to break.
+		if use rocm_5_5 ; then
+			export LLVM_SLOT=16
+			export ROCM_SLOT="5.5"
+			export ROCM_VERSION="${HIP_5_5_VERSION}"
 		elif use llvm-13 || use llvm-12 ; then
 eerror
 eerror "ROCm < 5.1 is not supported on the distro."
@@ -1199,8 +1176,7 @@ eerror
 eerror
 eerror "No matching llvm/hip pair."
 eerror
-eerror "llvm-15 can only pair with hip 5.3.3, 5.4.3"
-eerror "llvm-14 can only pair with hip 5.1.3, 5.2.3"
+eerror "llvm-16 can only pair with hip ${HIP_5_5_VERSION}"
 eerror
 			die
 		fi
@@ -1262,14 +1238,8 @@ ewarn
 			|| die
 
 		local rocm_version=""
-		if use rocm_5_4 ; then
-			rocm_version="${HIP_5_4_VERSION}"
-		elif use rocm_5_3 ; then
-			rocm_version="${HIP_5_3_VERSION}"
-		elif use rocm_5_2 ; then
-			rocm_version="${HIP_5_2_VERSION}"
-		elif use rocm_5_1 ; then
-			rocm_version="${HIP_5_1_VERSION}"
+		if use rocm_5_5 ; then
+			rocm_version="${HIP_5_5_VERSION}"
 		fi
 
 		sed -i "s|HIP 5.5.0|HIP ${rocm_version}|g" \
