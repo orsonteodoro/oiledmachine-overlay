@@ -317,10 +317,10 @@ src_prepare() {
 	)
 
 	# -O3 removal breaks _FORITIFY_SOURCE
-	local a1="-O3"
-	local r1="-O2"
-	local a2="-O2"
-	local r2="-O3"
+	local a1="-O3" # Similar to replace-flags
+	local r1="-O2" # Similar to filter-flags
+	local a2="-O2" # Similar to replace-flags
+	local r2="-O3" # Similar to filter-flags
 	if use custom-optimization ; then
 		local oflag="-O3"
 		if _is_flagq_last '-O0'; then

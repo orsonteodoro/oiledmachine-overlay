@@ -135,8 +135,8 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     <flag name="systemtap">
       Enable SystemTAP/DTrace tracing.
     </flag>
-    <flag name="rN">
-      Bump ebuild revision (INTERNAL USE ONLY)
+    <flag name="ebuild-revision-N">
+      Bumped ebuild revision (INTERNAL USE ONLY)
     </flag>
   </use>
 </pkgmetadata>
