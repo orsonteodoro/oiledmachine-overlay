@@ -17,7 +17,7 @@
 
   oiledmachine-overlay notes:
 
-  This ebuild fork is maintained for bolt and pgo optimization.
+  This ebuild fork is maintained for BOLT and PGO optimization.
 
   -->
   <use>
