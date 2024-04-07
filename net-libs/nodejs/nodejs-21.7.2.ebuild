@@ -8,7 +8,7 @@ EAPI=8
 
 ACORN_PV="8.11.3"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
-BENCHMARK_TYPES=(
+TRAINER_TYPES=(
 	assert
 	async_hooks
 	blob
@@ -53,6 +53,7 @@ BENCHMARK_TYPES=(
 CONFIG_CHECK="~ADVISE_SYSCALLS"
 COREPACK_PV="0.25.2"
 LTO_TYPE="none" # Global var
+MULTIPLEXER_VER="9"
 NGHTTP2_PV="1.60.0"
 NPM_PV="10.5.0" # See https://github.com/nodejs/node/blob/v21.7.2/deps/npm/package.json
 PYTHON_COMPAT=( python3_{8..11} )
@@ -100,7 +101,7 @@ SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 gen_iuse_pgo() {
 	local t
-	for t in ${BENCHMARK_TYPES[@]} ; do
+	for t in ${TRAINER_TYPES[@]} ; do
 		echo " ${PN}_pgo_trainers_${t}"
 	done
 }
@@ -110,12 +111,12 @@ acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
 +npm mold pax-kernel +snapshot +ssl system-icu +system-ssl test
 
 $(gen_iuse_pgo)
-man pgo ebuild-revision-3
+man pgo ebuild-revision-4
 "
 
 gen_required_use_pgo() {
 	local t
-	for t in ${BENCHMARK_TYPES[@]} ; do
+	for t in ${TRAINER_TYPES[@]} ; do
 		echo " ${PN}_pgo_trainers_${t}? ( pgo )"
 	done
 }
@@ -262,12 +263,20 @@ eerror
                 fi
 	done
 
+	if [[ -n "${NODEJS_EXCLUDED_BENCHMARKS}" ]] ; then
+eerror
+eerror "NODEJS_EXCLUDED_BENCHMARKS has been renamed to NODEJS_EXCLUDED_TRAINERS."
+eerror "Please update your /etc/portage/make.conf or package.env."
+eerror
+		die
+	fi
+
 	if use ${PN}_pgo_trainers_string_decoder \
-		&& [[ ! ( "${NODEJS_EXCLUDED_BENCHMARKS}" =~ \
+		&& [[ ! ( "${NODEJS_EXCLUDED_TRAINERS}" =~ \
 			"benchmark/string_decoder/string-decoder.js" ) ]] ; then
 ewarn
 ewarn "The benchmark/string_decoder/string-decoder.js may take hours to"
-ewarn "complete.  Consider adding it to the NODEJS_EXCLUDED_BENCHMARKS"
+ewarn "complete.  Consider adding it to the NODEJS_EXCLUDED_TRAINERS"
 ewarn "per-package envvar set."
 ewarn
 	fi
@@ -275,7 +284,7 @@ ewarn
 	if use ${PN}_pgo_trainers_path ; then
 ewarn
 ewarn "The benchmark/path/resolve-win32.js may not reflect typical usage."
-ewarn "Consider adding it to the NODEJS_EXCLUDED_BENCHMARKS."
+ewarn "Consider adding it to the NODEJS_EXCLUDED_TRAINERS."
 ewarn
 	fi
 	uopts_setup
@@ -285,29 +294,46 @@ src_prepare() {
 	default
 	tc-export AR CC CXX PKG_CONFIG
 	export V=1
-	export BUILDTYPE=Release
+	export CONFIGURATION="Release"
 
 	# Fix compilation on Darwin
 	# https://code.google.com/p/gyp/issues/detail?id=260
-	sed -i -e "/append('-arch/d" tools/gyp/pylib/gyp/xcode_emulation.py || die
-
-	# Less verbose install output (stating the same as portage, basically)
-	sed -i -e "/print/d" tools/install.py || die
+	sed -i \
+		-e "/append('-arch/d" \
+		"tools/gyp/pylib/gyp/xcode_emulation.py" \
+		|| die
 
 	# Proper libdir, hat tip @ryanpcmcquen https://github.com/iojs/io.js/issues/504
 	local LIBDIR=$(get_libdir)
-	sed -i -e "s|lib/|${LIBDIR}/|g" tools/install.py || die
-	sed -i -e "s/'lib'/'${LIBDIR}'/" deps/npm/lib/npm.js || die
+	sed -i \
+		-e "s|lib/|${LIBDIR}/|g" \
+		"tools/install.py" \
+		|| die
+	sed -i \
+		-e "s/'lib'/'${LIBDIR}'/" \
+		"deps/npm/lib/npm.js" \
+		|| die
 
 	# Avoid writing a depfile, not useful
-	sed -i -e "/DEPFLAGS =/d" tools/gyp/pylib/gyp/generator/make.py || die
+	sed -i \
+		-e "/DEPFLAGS =/d" \
+		"tools/gyp/pylib/gyp/generator/make.py" \
+		|| die
 
 	local FP=(
-		$(grep -l -r -e "-O3" $(find deps/openssl -name "*.gn*" -o -name "*gyp*"))
-		common.gypi
-		deps/llhttp/common.gypi
-		deps/uv/common.gypi
-		node.gypi
+		$(grep -l -r -e "-O3" \
+			$(find "deps/openssl" \
+				\( \
+					-name "*.gn*" \
+					-o \
+					-name "*.gyp" \
+				\) \
+			) \
+		)
+		"common.gypi"
+		"deps/llhttp/common.gypi"
+		"deps/uv/common.gypi"
+		"node.gypi"
 	)
 
 	# -O3 removal breaks _FORITIFY_SOURCE
@@ -372,16 +398,17 @@ ewarn "Using -Oz with PGO is uncommon"
 		tools/v8_gypfiles/toolchain.gypi \
 		|| die
 
-	# debug builds. change install path, remove optimisations and override buildtype
+	# debug builds. change install path, remove optimisations and override CONFIGURATION
 	if use debug; then
-		sed -i -e "s|out/Release/|out/Debug/|g" \
-			tools/install.py \
+		sed -i \
+			-e "s|out/Release/|out/Debug/|g" \
+			"tools/install.py" \
 			|| die
-		BUILDTYPE=Debug
+		CONFIGURATION="Debug"
 	fi
 
 	# We need to disable mprotect on two files when it builds Bug 694100.
-	use pax-kernel && PATCHES+=( "${FILESDIR}"/${PN}-13.8.0-paxmarking.patch )
+	use pax-kernel && PATCHES+=( "${FILESDIR}/${PN}-13.8.0-paxmarking.patch" )
 
 	# All this test does is check if the npm CLI produces warnings of any sort,
 	# failing if it does. Overkill, much? Especially given one possible warning
@@ -439,7 +466,8 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
-	export ENINJA_BUILD_DIR="out/"$(usex debug "Debug" "Release")
+	local configuration=$(usex debug "Debug" "Release")
+	export ENINJA_BUILD_DIR="out/${configuration}"
 	uopts_src_configure
 	xdg_environment_reset
 
@@ -448,11 +476,17 @@ _src_configure() {
 		--shared-brotli
 		--shared-cares
 		--shared-libuv
-		--shared-nghttp2
+
+# Commenting out fixes:
+# ld: obj/deps/ngtcp2/nghttp3/lib/nghttp3.nghttp3_http.o: in function `nghttp3_http_parse_priority':
+# nghttp3_http.c:(.text+0x30): undefined reference to `sf_parser_init'
+# ld: nghttp3_http.c:(.text+0x42): undefined reference to `sf_parser_dict'
+		#--shared-nghttp2
+
 		--shared-zlib
 	)
 
-	[[ "${LTO_TYPE}" =~ "lto" ]] && myconf+=( --enable-lto )
+	[[ "${LTO_TYPE}" =~ "lto"     ]] && myconf+=( --enable-lto )
 	[[ "${LTO_TYPE}" =~ "thinlto" ]] && myconf+=( --with-thinlto )
 	[[ "${LTO_TYPE}" =~ "goldlto" ]] && myconf+=( --with-goldlto )
 	[[ "${LTO_TYPE}" =~ "moldlto" ]] && myconf+=( --with-moldlto )
@@ -462,15 +496,16 @@ ewarn "If moldlto fails for gcc, try clang."
 	fi
 
 	# LTO compiler flags are handled by configure.py itself
-	filter-flags '-flto*' \
+	filter-flags \
+		'-flto*' \
+		'-fprofile*' \
 		'-fuse-ld*' \
-		'-fprofile*'
+		'-O*'
 
 	if use mold && [[ "${LTO_TYPE}" == "none" || -z "${LTO_TYPE}" ]] ; then
 		append-ldflags -fuse-ld=mold
 	fi
 
-	filter-flags '-O*'
 	use debug && myconf+=( --debug )
 	if use system-icu; then
 		myconf+=( --with-intl=system-icu )
@@ -503,12 +538,12 @@ ewarn "If moldlto fails for gcc, try clang."
 		linux_use_bundled_binutils=0
 		linux_use_bundled_gold=0" \
 	"${EPYTHON}" configure.py \
-		--prefix="${EPREFIX}"/usr \
-		--dest-cpu=${myarch} \
-		"${myconf[@]}" || die
+		--prefix="${EPREFIX}/usr" \
+		--dest-cpu="${myarch}" \
+		${myconf[@]} || die
 
 	# Prevent double build on install.
-	sed -i -e "s|^install: all|install: |g" Makefile || die
+	sed -i -e "s|^install: all|install: |g" "Makefile" || die
 
 	# Prevent build failure
 #/usr/bin/*-ld:
@@ -516,26 +551,30 @@ ewarn "If moldlto fails for gcc, try clang."
 # failed to set dynamic section sizes: nonrepresentable section on output
 	if [[ -e "${S}/out/Release/obj/test_crypto_engine.ninja" ]] ; then
 einfo "Removing CFI Cross-DSO from test_crypto_engine"
-		sed -i -e "s|-fsanitize-cfi-cross-dso||g" \
-			"${S}/out/Release/obj/test_crypto_engine.ninja" || die
-		sed -i -e "s|-fsanitize-cfi-cross-dso||g" \
-			"${S}/out/Debug/obj/test_crypto_engine.ninja" || die
+		sed -i \
+			-e "s|-fsanitize-cfi-cross-dso||g" \
+			"${S}/out/Release/obj/test_crypto_engine.ninja" \
+			|| die
+		sed -i \
+			-e "s|-fsanitize-cfi-cross-dso||g" \
+			"${S}/out/Debug/obj/test_crypto_engine.ninja" \
+			|| die
 	fi
 }
 
 _src_compile() {
-	eninja -C ${ENINJA_BUILD_DIR}
+	eninja -C "${ENINJA_BUILD_DIR}"
 }
 
 init_local_npm() {
-	if use ${PN}_pgo_trainers_http || use ${PN}_pgo_trainers_https ; then
+	if use "${PN}_pgo_trainers_http" || use "${PN}_pgo_trainers_https" ; then
 		DEFAULT_BENCHMARKER="autocannon" # \
 		# Upstream uses wrk by default but autocannon does typical npm downloads.
 		if [[ "${DEFAULT_BENCHMARKER}" == "wrk" ]] ; then
 			# FIXME:  Problems with benchmark script when using wrk.
 			mkdir -p "${S}/node_modules/wrk" || die
 			cd "${S}/node_modules/wrk" || die
-			npm install wrk@${WRK_PV} || die
+			npm install "wrk@${WRK_PV}" || die
 			mkdir -p "${S}/node_modules/.bin" || die
 			cat > "${S}/node_modules/.bin/wrk" <<EOF
 #!${EPREFIX}/bin/bash
@@ -545,22 +584,25 @@ EOF
 		elif [[ "${DEFAULT_BENCHMARKER}" == "autocannon" ]] ; then
 			mkdir -p "${S}/node_modules/autocannon" || die
 			cd "${S}/node_modules/autocannon" || die
-			npm install autocannon@${AUTOCANNON_PV} || die
+			npm install "autocannon@${AUTOCANNON_PV}" || die
 		fi
 	fi
 }
 
 train_trainer_custom() {
-	local benchmark=( $(grep -l -r -e "createBenchmark" "benchmark" | sort) )
-	unset accepted
-	declare -A accepted
+	local benchmark=(
+		$(grep -l -r -e "createBenchmark" "benchmark" \
+			| sort)
+	)
+	unset accepted_trainers
+	declare -A accepted_trainers
 	local t
 	local b
-	for t in ${BENCHMARK_TYPES[@]} ; do
+	for t in ${TRAINER_TYPES[@]} ; do
 		for b in ${benchmark[@]} ; do
 			if use "${PN}_pgo_trainers_${t}" \
-				&& [[ "${b}" =~ ^benchmark/${t}/ ]] ; then
-				accepted["${b//\//_}"]="${b}"
+				&& [[ "${b}" =~ ^"benchmark/${t}/" ]] ; then
+				accepted_trainers["${b//\//_}"]="${b}"
 			fi
 		done
 	done
@@ -578,22 +620,23 @@ train_trainer_custom() {
 	export PATH
 
 	# This needs additional args.
-	NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/http/_chunky_http_client.js"
+	NODEJS_EXCLUDED_TRAINERS+=" benchmark/http/_chunky_http_client.js"
 
 	# Unhandled exception error node:events:371
-	NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/http2/write.js"
+	NODEJS_EXCLUDED_TRAINERS+=" benchmark/http2/write.js"
 
 	# benchmark/common.js:238 throw new Error('called end() with operation count <= 0');
-	NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/net/net-pipe.js"
+	NODEJS_EXCLUDED_TRAINERS+=" benchmark/net/net-pipe.js"
 
-	use ${PN}_pgo_trainers_module \
-		|| NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/module/module-loader.js"
-einfo "NODEJS_EXCLUDED_BENCHMARKS=${NODEJS_EXCLUDED_BENCHMARKS}"
+	if ! use "${PN}_pgo_trainers_module" ; then
+		NODEJS_EXCLUDED_TRAINERS+=" benchmark/module/module-loader.js"
+	fi
+einfo "NODEJS_EXCLUDED_TRAINERS=${NODEJS_EXCLUDED_TRAINERS}"
 	init_local_npm
 	cd "${S}" || die # Ensure PGO profiles are from this dir.
 	local b
-	for b in $(echo ${accepted[@]} | tr " " "\n" | sort) ; do
-		if [[ "${NODEJS_EXCLUDED_BENCHMARKS}" =~ "${b}" ]] ; then
+	for b in $(echo ${accepted_trainers[@]} | tr " " "\n" | sort) ; do
+		if [[ "${NODEJS_EXCLUDED_TRAINERS}" =~ "${b}" ]] ; then
 einfo "Skipping ${b}"
 			continue
 		fi
@@ -601,7 +644,7 @@ einfo "Running benchmark ${b}"
 		benchmark_failed_message() {
 eerror
 eerror "A possibly broken or incomplete support for the ${b} script was"
-eerror "encountered.  Add NODEJS_EXCLUDED_BENCHMARKS=\"${b}\" as a space"
+eerror "encountered.  Add NODEJS_EXCLUDED_TRAINERS=\"${b}\" as a space"
 eerror "separated list.  See metadata.xml for details."
 eerror
 			die
@@ -611,17 +654,17 @@ eerror
 		local fail=0
 		while (( ${tries} <= 3 && ( ${fail} == 1 || ${tries} == 1 ) )) ; do
 			fail=0
-			if [[ "${b}" =~ ^benchmark/http/ \
-				|| "${b}" =~ ^benchmark/https/ ]] ; then
-				if which autocannon 2>/dev/null 1>/dev/null ; then
-					node "${b}" benchmarker=autocannon \
+			if [[ "${b}" =~ ^"benchmark/http/" \
+				|| "${b}" =~ ^"benchmark/https/" ]] ; then
+				if which autocannon >/dev/null 2>&1 ; then
+					node "${b}" benchmarker="autocannon" \
 						|| fail=1
 				else
-					node "${b}" benchmarker=wrk \
+					node "${b}" benchmarker="wrk" \
 						|| fail=1
 				fi
-			elif [[ "${b}" =~ ^benchmark/http2/ ]] ; then
-				node "${b}" benchmarker=h2load \
+			elif [[ "${b}" =~ ^"benchmark/http2/" ]] ; then
+				node "${b}" benchmarker="h2load" \
 					|| fail=1
 			else
 				node "${b}" \
@@ -637,8 +680,8 @@ einfo "Benchmark failed.  Trying again."
 		fi
 	done
 	if [[ -e "pgo-custom-trainer.sh" ]] ; then
-		chown portage:portage pgo-custom-trainer.sh || die
-		chmod +x pgo-custom-trainer.sh || die
+		chown "portage:portage" "pgo-custom-trainer.sh" || die
+		chmod +x "pgo-custom-trainer.sh" || die
 		./pgo-custom-trainer.sh || die
 	fi
 
@@ -675,21 +718,24 @@ src_install() {
 	local D_BASE="/${REL_D_BASE}"
 	local ED_BASE="${ED}/${REL_D_BASE}"
 
-	${EPYTHON} tools/install.py install "${D}" "${EPREFIX}/usr" || die
+	${EPYTHON} tools/install.py install \
+		--dest-dir "${D}" \
+		--prefix "${EPREFIX}/usr" \
+		|| die
 
-	mv "${ED}"/usr/bin/node{,${SLOT_MAJOR}} || die
+	mv "${ED}/usr/bin/node"{"","${SLOT_MAJOR}"} || die
 	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
-		dosym node${SLOT_MAJOR} /usr/bin/node
+		dosym "node${SLOT_MAJOR}" "/usr/bin/node"
 	fi
-	pax-mark -m "${ED}"/usr/bin/node${SLOT_MAJOR}
+	pax-mark -m "${ED}/usr/bin/node${SLOT_MAJOR}"
 
 	# set up a symlink structure that node-gyp expects..
 	local D_INCLUDE_BASE="/usr/include/node${SLOT_MAJOR}"
-	dodir ${D_INCLUDE_BASE}/deps/{v8,uv}
-	dosym . ${D_INCLUDE_BASE}/src
+	dodir "${D_INCLUDE_BASE}/deps/"{"v8","uv"}
+	dosym "." "${D_INCLUDE_BASE}/src"
 	local var
 	for var in deps/{uv,v8}/include; do
-		dosym ../.. ${D_INCLUDE_BASE}/${var}
+		dosym "../.." "${D_INCLUDE_BASE}/${var}"
 	done
 
 	# Avoid merge conflict
@@ -698,7 +744,7 @@ src_install() {
 
 	if use doc; then
 		docinto html
-		dodoc -r "${S}"/doc/*
+		dodoc -r "${S}/doc/"*
 	fi
 
 	if ! use man ; then
@@ -710,10 +756,13 @@ src_install() {
 	rm -rf "${ED}/usr/bin/npm"
 	rm -rf "${ED}/usr/bin/npx"
 
-	mv "${ED}"/usr/share/doc/node "${ED}"/usr/share/doc/${PF} || die
+	mv \
+		"${ED}/usr/share/doc/node" \
+		"${ED}/usr/share/doc/${PF}" \
+		|| die
 
 	# Let eselect-nodejs handle switching corepack
-	dodir /usr/$(get_libdir)/corepack
+	dodir "/usr/$(get_libdir)/corepack"
 	mv \
 		"${ED}/usr/$(get_libdir)/node_modules/corepack" \
 		"${ED}/usr/$(get_libdir)/corepack/node${SLOT_MAJOR}" \
@@ -725,7 +774,7 @@ src_install() {
 
 src_test() {
 	if has usersandbox ${FEATURES}; then
-		rm -f "${S}"/test/parallel/test-fs-mkdir.js
+		rm -f "${S}/test/parallel/test-fs-mkdir.js"
 ewarn
 ewarn "You are emerging ${PN} with 'usersandbox' enabled. Excluding tests known"
 ewarn "to fail in this mode.  For full test coverage, emerge =${CATEGORY}/${PF}"
@@ -733,11 +782,11 @@ ewarn "with 'FEATURES=-usersandbox'."
 ewarn
 	fi
 
-	out/${BUILDTYPE}/cctest || die
+	"out/${CONFIGURATION}/cctest" || die
 	"${EPYTHON}" \
-		tools/test.py \
-		--mode=${BUILDTYPE,,} \
-		--flaky-tests=dontcare \
+		"tools/test.py" \
+		--mode="${CONFIGURATION,,}" \
+		--flaky-tests="dontcare" \
 		-J \
 		message \
 		parallel \
@@ -749,12 +798,18 @@ pkg_postinst() {
 	if has_version ">=net-libs/nodejs-${PV}" ; then
 einfo "Found higher slots, manually change the headers with \`eselect nodejs\`."
 	else
-		eselect nodejs set node${SLOT_MAJOR}
+		eselect nodejs set "node${SLOT_MAJOR}"
 	fi
-	cp "${FILESDIR}/node-multiplexer-v8" "${EROOT}/usr/bin/node" || die
-	sed -i -e "s|__EPREFIX__|${EPREFIX}|g" "${EROOT}/usr/bin/node" || die
-	chmod 0755 /usr/bin/node || die
-	chown root:root /usr/bin/node || die
+	cp \
+		"${FILESDIR}/node-multiplexer-v${MULTIPLEXER_VER}" \
+		"${EROOT}/usr/bin/node" \
+		|| die
+	sed -i \
+		-e "s|__EPREFIX__|${EPREFIX}|g" \
+		"${EROOT}/usr/bin/node" \
+		|| die
+	chmod 0755 "/usr/bin/node" || die
+	chown "root:root" "/usr/bin/node" || die
 	grep -q -F "NODE_VERSION" "${EROOT}/usr/bin/node" || die "Wrapper did not copy."
 einfo
 einfo "When compiling with nodejs multislot, you to switch via"
