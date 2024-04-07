@@ -3,8 +3,16 @@
 <pkgmetadata>
   <!-- Distro request:  maintainer-needed -->
   <upstream>
+    <remote-id type="cpe">cpe:/a:libpng:libpng</remote-id>
     <remote-id type="github">ispc/ispc</remote-id>
   </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This ebuild fork is maintained to provide PGO optimization.
+
+  -->
   <use>
     <flag name="cpu">
       Add CPU support
