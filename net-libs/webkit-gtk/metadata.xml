@@ -207,6 +207,9 @@ emerge DHconfig "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       https://github.com/WebKit/WebKit/commit/790a01a3ec741d8752990a809d1ab489d9637e3d
 
   -->
+  <upstream>
+    <remote-id type="cpe">cpe:/a:webkitgtk:webkitgtk</remote-id>
+  </upstream>
   <use>
     <flag name="64kb-page-block">
       Enables support for 64 KB page block systems with a big penalty on
