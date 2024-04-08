@@ -11,6 +11,7 @@
     <email>perfinion@gentoo.org</email>
   </maintainer>
   <upstream>
+    <remote-id type="cpe">cpe:/a:google:bazel</remote-id>
     <remote-id type="github">bazelbuild/bazel</remote-id>
   </upstream>
   <longdescription>
