@@ -32,6 +32,7 @@
     </flag>
     <flag name="tpm">
       Enable support for Trusted Platform Module (TPM) using
-      <pkg>app-crypt/trousers</pkg></flag>
-    </use>
+      <pkg>app-crypt/trousers</pkg>
+    </flag>
+  </use>
 </pkgmetadata>
