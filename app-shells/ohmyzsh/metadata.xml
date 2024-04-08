@@ -31,6 +31,7 @@
   <upstream>
     <bugs-to>https://github.com/ohmyzsh/ohmyzsh/issues</bugs-to>
     <doc lang="en">https://github.com/ohmyzsh/ohmyzsh/wiki</doc>
+    <remote-id type="cpe">cpe:/a:planetargon:oh_my_zsh</remote-id>
     <remote-id type="github">ohmyzsh/ohmyzsh</remote-id>
   </upstream>
   <use>
