@@ -6,6 +6,9 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <upstream>
+    <remote-id type="cpe">cpe:/a:appimage:libappimage</remote-id>
+  </upstream>
   <use>
     <flag name="rN">
       Bumps the ebuild revision (FOR INTERNAL USE ONLY)
