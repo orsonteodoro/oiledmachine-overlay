@@ -203,13 +203,17 @@ _npm_cp_tarballs() {
 	local dest="${WORKDIR}/npm-packages-offline-cache"
 	mkdir -p "${dest}" || die
 	IFS=$'\n'
+
+	local tarballs=()
+
+einfo "Copying/expanding tarballs to ${dest}"
 	local uri
 	for uri in ${NPM_EXTERNAL_URIS} ; do
 		local bn
 		if [[ "${uri}" =~ "->" && "${uri}" =~ ".git" ]] ; then
 			bn=$(echo "${uri}" \
 				| cut -f 3 -d " ")
-einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/npmpkg-}"
+#einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/npmpkg-}"
 			local fn="${bn/npmpkg-}"
 			fn_raw="${fn}"
 			fn="${fn/.tgz}"
@@ -218,32 +222,23 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/npmpkg-}"
 # See https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths
 				tar --strip-components=1 -xvf "${DISTDIR}/${bn}" || die
 
-#				mkdir -p "${dest}/${fn}" || die
-#				mv * "${dest}/${fn}" || die
-				tar -cf "${dest}/${fn_raw}" * || die
+				mkdir -p "${dest}/${fn}" || die
+				mv * "${dest}/${fn}" || die
 			popd >/dev/null 2>&1 || die
 			rm -rf "${path}" || die
-
-# npm cache cannot be used because of lack of documentation for git snapshot
-# support.
-			#npm cache add "${dest}/${fn_raw}" || die
 		else
 			bn=$(echo "${uri}" \
 				| cut -f 3 -d " ")
-einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/npmpkg-}"
+#einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/npmpkg-}"
 			cp -a "${DISTDIR}/${bn}" "${dest}/${bn/npmpkg-}" || die
-
-# Testing new change:
-#
-# Previously, the package-locks.json were edited directly to change the URI to
-# either file:<path> for tarballs or <abs path> to repo snapshots.  This was
-# very fast but did not work because when the tarballs were unpacked, they
-# contained the same problem of URIs.  The npm cache change may address this
-# problem but has a huge penalty for using npm cache util.
-ewarn "Adding ${dest}/${bn/npmpkg-} to cache.  A slowdown may be encountered.  Please wait..."
-			npm cache add "${dest}/${bn/npmpkg-}"
+			tarballs+=( "${dest}/${bn/npmpkg-}" )
 		fi
 	done
+
+ewarn "Adding tarballs to cache.  Please wait..."
+einfo "running:  npm cache add ${tarballs[@]}"
+	npm cache add ${tarballs[@]}
+
 	IFS=$' \t\n'
 }
 
@@ -272,40 +267,6 @@ npm_gen_new_name() {
 		echo "${bn}"
 	fi
 
-}
-
-# @FUNCTION: npm_transform_uris_default
-# @DESCRIPTION:
-# Convert package-lock.json for offline install.
-npm_transform_uris_default() {
-	local lockfile
-	for lockfile in $(find . -name "package-lock.json") ; do
-		IFS=$'\n'
-		local uri
-		for uri in $(grep -E -o \
-			-e "http[s]?://registry.npmjs.org/([@a-zA-Z0-9._-]+/)+-/([@a-zA-Z0-9._-]+.tgz)" \
-			-e "git\+https://git@github.com[^#]+#[a-zA-Z0-9]+" \
-			-e "git\+ssh://git@github.com[^#]+#[a-zA-Z0-9]+" \
-			"${lockfile}") ; do
-			local bn=$(basename "${uri}")
-			local newname=$(npm_gen_new_name "${uri}")
-
-# Disabled because of npm cache changes
-			if [[ "${uri}" =~ "\.tgz" ]] ; then
-				: #sed -i -e "s|${uri}|file:${WORKDIR}/npm-packages-offline-cache/${newname}|g" "${lockfile}" || die
-			else
-				: #sed -i -e "s|${uri}|${WORKDIR}/npm-packages-offline-cache/${newname}|g" "${lockfile}" || die
-			fi
-		done
-		IFS=$' \t\n'
-		if grep -q "registry.npmjs.org" "${lockfile}" ; then
-ewarn
-ewarn "Detected URI in lockfile that is not converted to offline format."
-ewarn "File:  "$(realpath "${lockfile}")
-ewarn
-#			die
-		fi
-	done
 }
 
 # @FUNCTION: _npm_src_unpack_default_upstream
@@ -349,15 +310,6 @@ _npm_src_unpack_default_ebuild() {
 		else
 einfo "Missing package-lock.json"
 			die
-		fi
-		if declare -f npm_transform_uris > /dev/null ; then
-			# For repo
-			npm_transform_uris
-		else
-			npm_transform_uris_default
-		fi
-		if declare -f npm_transform_uris_post > /dev/null ; then
-			npm_transform_uris_post
 		fi
 	fi
 	local args=()

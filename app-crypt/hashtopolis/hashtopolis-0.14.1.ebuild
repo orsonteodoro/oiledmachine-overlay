@@ -1726,12 +1726,6 @@ einfo "package-lock.json -> ${dest}"
 				cp -aT "${FILESDIR}/${PV}" "${S_WEBUI}" || die
 			fi
 			npm_hydrate
-	                if declare -f npm_transform_uris > /dev/null ; then
-				# For repo
-				npm_transform_uris
-			else
-				npm_transform_uris_default
-			fi
 #			enpm install --prefer-offline
 			enpm install --offline
 		fi

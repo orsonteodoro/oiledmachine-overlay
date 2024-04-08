@@ -4,6 +4,22 @@
 
 EAPI=8
 
+#node:internal/modules/cjs/loader:1031
+#  throw err;
+#  ^
+#
+#Error: Cannot find module '/var/tmp/portage/dev-games/gdevelop-5.3.198/work/GDevelop-5.3.198/GDevelop.js/node_modules/webidl-tools/bin/webidl-tools-flow'
+#    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:1028:15)
+#    at Function.Module._load (node:internal/modules/cjs/loader:873:27)
+#    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)
+#    at node:internal/main/run_main_module:22:47 {
+#  code: 'MODULE_NOT_FOUND',
+#  requireStack: []
+#}
+#✅ Properly generated GDevelop.js types.
+
+
+
 # Wayland error:
 #16:40:31.141 › GDevelop Electron app starting...
 #[1499650:0604/164031.146935:ERROR:ozone_platform_x11.cc(248)] Missing X server or $DISPLAY
@@ -3292,65 +3308,12 @@ pkg_setup() {
 	export GENERATE_SOURCEMAP=false
 }
 
-# @FUNCTION: npm_transform_uris_post
-# @DESCRIPTION:
-# Modify package-lock.jsons for repo snapshots.
-npm_transform_uris_post() {
-	local dest="${WORKDIR}/npm-packages-offline-cache"
-	local pairs=(
-		"github:4ian/webidl-tools#348f9c03afc9d8f278efccdd74543e265a41fd11;${dest}/webidl-tools.git-348f9c03afc9d8f278efccdd74543e265a41fd11"
-		"github:discordjs/rpc;${dest}/rpc.git-9e7de2a6d917591f10a66389e62e1dc053c04fec"
-		"github:devsnek/node-register-scheme;${dest}/node-register-scheme.git-e7cc9a63a1f512565da44cb57316d9fb10750e17"
-		"github:4ian/lingui-react#master;${dest}/lingui-react.git-dc6b1e013470d952cf85f96cc4affdd28e29634a"
-		"github:4ian/react-mosaic#v3.1.0;${dest}/react-mosaic.git-d5ef155119d786c08c7c72e34997dcef2f01f98b"
-	)
-
-	local lockfiles=(
-		"GDevelop.js/package-lock.json"			# Required step #1
-		"newIDE/app/package-lock.json"			# Required step #2
-		"GDJS/package-lock.json"			# Required step #2a
-		"newIDE/electron-app/package-lock.json"		# Required step #3
-		"newIDE/electron-app/app/package-lock.json"	# Required step #3a
-#		"newIDE/web-app/package-lock.json"
-#		"GDJS/tests/package-lock.json"
-	)
-
-	local lockfile
-	for lockfile in ${lockfiles[@]} ; do
-		local dirpath=$(dirname "${S}/${lockfile}")
-		NPM_PROJECT_ROOT="${dirpath}"
-		pushd "${NPM_PROJECT_ROOT}" >/dev/null 2>&1 || die
-			for pair in ${pairs[@]} ; do
-				local before="${pair%;*}"
-				local after="${pair#*;}"
-				if grep -q -e "${before}" "${S}/${lockfile}" ; then
-einfo "Editing ${S}/${lockfile} for ${before} -> ${after}"
-					sed -i -e "s|${before}|${after}|g" "${S}/${lockfile}" || die
-einfo "Editing ${S}/${lockfile/-lock/} for ${before} -> ${after}"
-					sed -i -e "s|${before}|${after}|g" "${S}/${lockfile/-lock/}" || die
-				fi
-			done
-		popd >/dev/null 2>&1 || die
-	done
-}
-
 # @FUNCTION: __npm_src_unpack_default
 # @DESCRIPTION:
 # Unpacks a npm application.
 __npm_src_unpack_default() {
 evar_dump "NPM_PROJECT_ROOT" "${NPM_PROJECT_ROOT}"
 	local offline="${NPM_OFFLINE:-1}"
-	if [[ "${offline}" == "0" ]] ; then
-		:
-	elif declare -f npm_transform_uris > /dev/null ; then
-		# For repo
-		npm_transform_uris
-	else
-		npm_transform_uris_default
-	fi
-	if declare -f npm_transform_uris_post > /dev/null ; then
-		npm_transform_uris_post
-	fi
 	local args=()
 	if declare -f npm_unpack_install_pre > /dev/null ; then
 		npm_unpack_install_pre
@@ -3376,10 +3339,6 @@ evar_dump "NPM_PROJECT_ROOT" "${NPM_PROJECT_ROOT}"
 		enpm audit fix \
 			${NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS}
 	fi
-}
-
-npm_transform_uris() {
-	einfo "Skipped npm_transform_uris.  Already processed"
 }
 
 # @FUNCTION: __npm_src_unpack
@@ -3444,18 +3403,14 @@ __npm_src_unpack() {
 		fi
 
 		local lockfiles=(
-			"GDevelop.js/package-lock.json"			# Required step #1
 			"newIDE/app/package-lock.json"			# Required step #2
+			"GDevelop.js/package-lock.json"			# Required step #1
 			"GDJS/package-lock.json"			# Required step #2a
 			"newIDE/electron-app/package-lock.json"		# Required step #3
 			"newIDE/electron-app/app/package-lock.json"	# Required step #3a
 #			"newIDE/web-app/package-lock.json"
 #			"GDJS/tests/package-lock.json"
 		)
-
-		pushd "${WORKDIR}" >/dev/null 2>&1 || die
-			npm_transform_uris_default
-		popd >/dev/null 2>&1 || die
 
 		local lockfile
 		for lockfile in ${lockfiles[@]} ; do
@@ -3618,8 +3573,16 @@ src_configure() { :; }
 
 build_gdevelop_js() {
 einfo "Compiling ${MY_PN}.js"
+	pushd "${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/app" >/dev/null 2>&1 || die
+		enpm install "@lingui/core@2.7.3"
+		enpm audit fix
+	popd || die
 # In https://github.com/4ian/GDevelop/blob/v5.3.195/GDevelop.js/Gruntfile.js#L88
 	pushd "${WORKDIR}/${MY_PN}-${MY_PV}/${MY_PN}.js" >/dev/null 2>&1 || die
+		pushd "node_modules/webidl-tools" >/dev/null 2>&1 || die
+			enpm install
+			enpm audit fix
+		popd || die
 		enpm run build -- --force --dev
 	popd >/dev/null 2>&1 || die
 	if [[ ! -f "${S_BAK}/Binaries/embuild/${MY_PN}.js/libGD.wasm" ]]
