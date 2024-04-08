@@ -6,14 +6,22 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
+
     You may define an alternative compiler with per-package environmental
     variables for CC_ALT and CXX_ALT.
 
     The compiler must be feature complete -std=c+++11.
 
     The CPU must at a minimal support SSE2.
-  </longdescription>
+
+  -->
+  <upstream>
+    <bugs-to>https://github.com/embree/embree/issues</bugs-to>
+    <remote-id type="github">embree/embree</remote-id>
+  </upstream>
   <use>
     <flag name="allow-auto-vectorization">
       Allows auto-vectorization optimization
