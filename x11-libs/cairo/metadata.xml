@@ -27,6 +27,10 @@
       2.  2nd emerge will do actual PGO or testing.
 
   -->
+  <upstream>
+    <remote-id type="cpe">cpe:/a:cairographics:cairo</remote-id>
+    <remote-id type="freedesktop-gitlab">cairo/cairo</remote-id>
+  </upstream>
   <use>
     <flag name="opengl" restrict="&gt;=x11-libs/cairo-1.10.0">
       Build the OpenGL backend
@@ -44,7 +48,4 @@
       Built-in support to mark memory regions
     </flag>
   </use>
-  <upstream>
-    <remote-id type="cpe">cpe:/a:cairographics:cairo</remote-id>
-  </upstream>
 </pkgmetadata>
