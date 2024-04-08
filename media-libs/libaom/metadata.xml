@@ -115,6 +115,9 @@
     For custom training details, see README.md of this overlay.
 
   -->
+  <upstream>
+    <remote-id type="cpe">cpe:/a:aomedia:aomedia</remote-id>
+  </upstream>
   <use>
     <flag name="asm">
       Use the optimized assembly based code paths
