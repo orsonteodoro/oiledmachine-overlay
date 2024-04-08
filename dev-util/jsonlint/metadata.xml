@@ -2,14 +2,15 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Ebuild fork only in the oiledmachine-overlay -->
+    <!-- Ebuild fork on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
   </longdescription>
   <upstream>
-    <bugs-to>https://github.com/imsnif/synp/issues</bugs-to>
-    <remote-id type="github">imsnif/synp</remote-id>
+    <bugs-to>https://github.com/prantlf/jsonlint/issues</bugs-to>
+    <remote-id type="cpe">cpe:/a:jsonlint_project:jsonlint_c%2b%2b</remote-id>
+    <remote-id type="github">prantlf/jsonlint</remote-id>
   </upstream>
 </pkgmetadata>
