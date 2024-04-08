@@ -3,7 +3,8 @@
 <pkgmetadata>
   <!-- Distro request:  maintainer-needed -->
   <upstream>
-    <remote-id type="sourceforge">hunspell</remote-id>
+    <remote-id type="cpe">cpe:/a:hunspell_project:hunspell</remote-id>
     <remote-id type="github">hunspell/hunspell</remote-id>
+    <remote-id type="sourceforge">hunspell</remote-id>
   </upstream>
 </pkgmetadata>
