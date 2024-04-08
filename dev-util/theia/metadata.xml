@@ -11,6 +11,7 @@
   <upstream>
     <bugs-to>https://github.com/eclipse-theia/theia/issues</bugs-to>
     <changelog>https://github.com/eclipse-theia/theia/blob/master/CHANGELOG.md</changelog>
+    <remote-id type="cpe">cpe:/a:eclipse:theia</remote-id>
     <remote-id type="github">eclipse-theia/theia</remote-id>
   </upstream>
   <slots>
