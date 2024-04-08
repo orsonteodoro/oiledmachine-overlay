@@ -9,10 +9,8 @@
   <!-- Ebuild originator: -->
   <!-- The reagentoo overlay -->
   <upstream>
-    <maintainer status="active">
-      <name>WebAssembly Community Group</name>
-    </maintainer>
     <bugs-to>https://github.com/WebAssembly/binaryen/issues</bugs-to>
+    <remote-id type="cpe">cpe:/a:webassembly:binaryen</remote-id>
     <remote-id type="github">WebAssembly/binaryen</remote-id>
   </upstream>
   <use>
