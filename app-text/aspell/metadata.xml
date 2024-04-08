@@ -6,7 +6,7 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <!-- Ebuild originally obtained from the gentoo-overlay -->
+  <!-- Ebuild originally from the distro -->
   <maintainer type="person">
     <!-- Ebuild originator -->
     <email>conikost@gentoo.org</email>
@@ -24,6 +24,7 @@
   -->
   <upstream>
     <bugs-to>https://github.com/GNUAspell/aspell/issues</bugs-to>
+    <remote-id type="cpe">cpe:/a:gnu:aspell</remote-id>
     <remote-id type="github">GNUAspell/aspell</remote-id>
   </upstream>
 </pkgmetadata>
