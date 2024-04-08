@@ -34,8 +34,9 @@
     either Blender or its dependencies.
   -->
   <upstream>
-    <remote-id type="github">oneapi-src/oneTBB</remote-id>
     <bugs-to>https://github.com/oneapi-src/oneTBB/issues</bugs-to>
+    <remote-id type="cpe">cpe:/a:intel:threading_building_blocks</remote-id>
+    <remote-id type="github">oneapi-src/oneTBB</remote-id>
   </upstream>
   <use>
     <flag name="debug">
