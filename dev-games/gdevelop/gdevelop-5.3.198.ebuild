@@ -3572,6 +3572,9 @@ cat <<EOF > "${T}/electron-builder-config.txt"
     ],
   },
 EOF
+	else
+eerror "ABI=${ABI} is not supported."
+		die
 	fi
 	sed -i \
 		-e "/__GDEVELOP_ELECTRON_BUILDER_CONFIG__/r ${T}/electron-builder-config.txt" \
