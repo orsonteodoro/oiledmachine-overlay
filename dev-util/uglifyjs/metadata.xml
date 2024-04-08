@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-<!-- for this ebuild version only on the oiledmachine-overlay -->
-<maintainer type="person" status="active">
-  <email>orsonteodoro@hotmail.com</email>
-  <name>Orson Teodoro</name>
-</maintainer>
-<use>
-  <flag name="brotli">Enables brotli compression for clipboard.</flag>
-  <flag name="gzip">Enables accepting gzip compressed files.</flag>
-  <flag name="minify">Enables minifying the client.</flag>
-</use>
+  <maintainer type="person" status="active">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/mishoo/UglifyJS/issues</bugs-to>
+    <remote-id type="cpe">cpe:/a:uglifyjs_project:uglifyjs</remote-id>
+    <remote-id type="github">mishoo/UglifyJS</remote-id>
+  </upstream>
+  <use>
+    <flag name="brotli">
+      Enables brotli compression for clipboard.
+    </flag>
+    <flag name="gzip">
+      Enables accepting gzip compressed files.
+    </flag>
+    <flag name="minify">
+      Enables minifying the client.
+    </flag>
+  </use>
 </pkgmetadata>
