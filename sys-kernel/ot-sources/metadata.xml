@@ -3934,6 +3934,7 @@ unset OT_KERNEL_PRIVATE_KEY
     <bugs-to>
       https://github.com/orsonteodoro/oiledmachine-overlay/issues
     </bugs-to>
+    <remote-id type="cpe">cpe:/o:linux:linux_kernel</remote-id>
   </upstream>
   <use>
     <flag name="bbrv2">
