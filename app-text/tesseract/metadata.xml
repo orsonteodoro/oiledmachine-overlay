@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
   <maintainer type="person">
     <!-- Ebuild originators -->
     <email>voyageur@gentoo.org</email>
@@ -25,6 +24,7 @@
 
   -->
   <upstream>
+    <remote-id type="cpe">cpe:/a:tesseract_ocr_project:tesseract_ocr</remote-id>
     <remote-id type="github">tesseract-ocr/tesseract</remote-id>
   </upstream>
   <use>
