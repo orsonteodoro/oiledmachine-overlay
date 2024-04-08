@@ -2,16 +2,18 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- ebuild fork only from the oiledmachine-overlay -->
+    <!-- Ebuild fork on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <maintainer type="project">
-    <!-- ebuild originator -->
+    <!-- Ebuild originators -->
     <email>sound@gentoo.org</email>
     <name>Gentoo Sound project</name>
   </maintainer>
   <upstream>
+    <remote-id type="cpe">cpe:/a:flac_project:flac</remote-id>
+    <remote-id type="github">xiph/flac</remote-id>
     <remote-id type="sourceforge">flac</remote-id>
   </upstream>
 </pkgmetadata>
