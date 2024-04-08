@@ -220,8 +220,7 @@ einfo "Copying/expanding tarballs to ${dest}"
 			local path=$(mktemp -d -p "${T}")
 			pushd "${path}" >/dev/null 2>&1 || die
 # See https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths
-				tar --strip-components=1 -xvf "${DISTDIR}/${bn}" || die
-
+				tar --strip-components=1 -xvf "${DISTDIR}/${bn}" >/dev/null 2>&1 || die
 				mkdir -p "${dest}/${fn}" || die
 				mv * "${dest}/${fn}" || die
 			popd >/dev/null 2>&1 || die

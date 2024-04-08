@@ -3547,6 +3547,42 @@ einfo "package-lock.json -> ${dest}"
 	grep -e "Error while copying @electron/remote" "${T}/build.log" && die
 }
 
+gen_electron_builder_config() {
+	# See https://github.com/4ian/GDevelop/blob/v5.3.198/newIDE/electron-app/electron-builder-config.js
+	# https://www.electron.build/configuration/configuration
+	if [[ "${ABI}" == "amd64" ]] ; then
+cat <<EOF > "${T}/electron-builder-config.txt"
+  linux: {
+    target: [
+      {
+        target: 'dir',
+        arch: ['x64'],
+      },
+    ],
+  },
+EOF
+	elif [[ "${ABI}" == "arm64" ]] ; then
+cat <<EOF > "${T}/electron-builder-config.txt"
+  linux: {
+    target: [
+      {
+        target: 'dir',
+        arch: ['arm64'],
+      },
+    ],
+  },
+EOF
+	fi
+	sed -i \
+		-e "/__GDEVELOP_ELECTRON_BUILDER_CONFIG__/r ${T}/electron-builder-config.txt" \
+		"newIDE/electron-app/electron-builder-config.js" \
+		|| die
+	sed -i \
+		-e "/__GDEVELOP_ELECTRON_BUILDER_CONFIG__/d" \
+		"newIDE/electron-app/electron-builder-config.js" \
+		|| die
+}
+
 src_prepare() {
 	default
 
@@ -3560,6 +3596,10 @@ src_prepare() {
 "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-00.patch"
 	eapply \
 "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-01.patch"
+	eapply \
+"${FILESDIR}/${PN}-5.3.198-electron-builder-placeholder.patch"
+
+	gen_electron_builder_config
 
 	#xdg_src_prepare # calls src_unpack
 	# Patches have already have been applied.
