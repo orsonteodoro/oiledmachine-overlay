@@ -4,22 +4,6 @@
 
 EAPI=8
 
-#node:internal/modules/cjs/loader:1031
-#  throw err;
-#  ^
-#
-#Error: Cannot find module '/var/tmp/portage/dev-games/gdevelop-5.3.198/work/GDevelop-5.3.198/GDevelop.js/node_modules/webidl-tools/bin/webidl-tools-flow'
-#    at Function.Module._resolveFilename (node:internal/modules/cjs/loader:1028:15)
-#    at Function.Module._load (node:internal/modules/cjs/loader:873:27)
-#    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)
-#    at node:internal/main/run_main_module:22:47 {
-#  code: 'MODULE_NOT_FOUND',
-#  requireStack: []
-#}
-#✅ Properly generated GDevelop.js types.
-
-
-
 # Wayland error:
 #16:40:31.141 › GDevelop Electron app starting...
 #[1499650:0604/164031.146935:ERROR:ozone_platform_x11.cc(248)] Missing X server or $DISPLAY
