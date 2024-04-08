@@ -21,6 +21,10 @@
     encrypts its databasee with AES either by passphrase or a key file,
     compatible with a PDA and Windows version.
   </longdescription>
+  <upstream>
+    <remote-id type="cpe">cpe:/a:keepassxc:keepassxc</remote-id>
+    <remote-id type="github">keepassxreboot/keepassxc</remote-id>
+  </upstream>
   <use>
     <flag name="autotype">
       Add support to autotype the passwords into other applications
@@ -52,7 +56,4 @@
       HMAC-SHA1 protocol
     </flag>
   </use>
-  <upstream>
-    <remote-id type="github">keepassxreboot/keepassxc</remote-id>
-  </upstream>
 </pkgmetadata>
