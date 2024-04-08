@@ -11,6 +11,7 @@
     <email>zmedico@gentoo.org</email>
   </maintainer>
   <upstream>
+    <remote-id type="cpe">cpe:/a:civetweb_project:civetweb</remote-id>
     <remote-id type="github">civetweb/civetweb</remote-id>
   </upstream>
   <use>
