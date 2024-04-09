@@ -3,19 +3,21 @@
 
 EAPI=8
 
+# U 22.04
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} )
+UDEV_PV="249.11"
 
 inherit distutils-r1 udev
 
+KEYWORDS="~amd64"
+SRC_URI="https://github.com/liquidctl/liquidctl/releases/download/v${PV}/${P}.tar.gz"
+
 DESCRIPTION="Cross-platform tool and drivers for liquid coolers and other devices"
 HOMEPAGE="https://github.com/liquidctl/liquidctl"
-SRC_URI="https://github.com/liquidctl/liquidctl/releases/download/v${PV}/${P}.tar.gz"
 LICENSE="GPL-3+"
 SLOT="0"
-KEYWORDS="~amd64"
-# U 22.04
-UDEV_PV="249.11"
 RDEPEND="
 	>=dev-libs/libusb-1.0.25
 	>=dev-python/crcmod-1.7[${PYTHON_USEDEP}]

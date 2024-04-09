@@ -4,15 +4,19 @@
 
 EAPI=8
 
+# U 22.04
+
 DISTUTILS_USE_PEP517="poetry"
+QT_PV="6.6.2"
 PYTHON_COMPAT=( python3_{10..11} ) # Can support 3.12 but limited by Nuitka
 
 inherit desktop distutils-r1 xdg
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-gui"
 SRC_URI="
 https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${PV}.tar.bz2
 "
-S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-gui"
 
 DESCRIPTION="coolercontrol-gui is the frontend UI, client of the daemon program, and main coolercontrol program and desktop application"
 HOMEPAGE="
@@ -22,7 +26,7 @@ https://gitlab.com/coolercontrol/coolercontrol/-/tree/main/coolercontrol-gui
 LICENSE="
 	GPL-3+
 "
-KEYWORDS="~amd64"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" hwmon wayland X r2"
 REQUIRED_USE="
@@ -31,19 +35,18 @@ REQUIRED_USE="
 		X
 	)
 "
-# U 20.04
 RDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/APScheduler-3.10.4[${PYTHON_USEDEP}]
+	>=dev-python/APScheduler-3.8.1[${PYTHON_USEDEP}]
 	>=dev-python/dataclass-wizard-0.22.2[${PYTHON_USEDEP}]
-	>=dev-python/jeepney-0.8.0[${PYTHON_USEDEP}]
-	>=dev-python/matplotlib-3.8.2[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.26.2[${PYTHON_USEDEP}]
-	>=dev-python/pyside6-6.6.0[${PYTHON_USEDEP},svg,widgets,xml]
-	>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
-	>=dev-python/setproctitle-1.3.3[${PYTHON_USEDEP}]
-	>=dev-qt/qtbase-6.6.0[wayland?,X?]
-	>=media-libs/mesa-20.0.4
+	>=dev-python/jeepney-0.7.1[${PYTHON_USEDEP}]
+	>=dev-python/matplotlib-3.5.1[${PYTHON_USEDEP}]
+	>=dev-python/numpy-1.21.5[${PYTHON_USEDEP}]
+	>=dev-python/requests-2.25.1[${PYTHON_USEDEP}]
+	>=dev-python/setproctitle-1.2.2[${PYTHON_USEDEP}]
+	>=media-libs/mesa-22.0.1
+	~dev-python/pyside6-${QT_PV}[${PYTHON_USEDEP},svg,widgets,xml]
+	~dev-qt/qtbase-${QT_PV}[wayland?,X?]
 	hwmon? (
 		>=sys-apps/lm-sensors-3.6.0
 	)
@@ -54,11 +57,10 @@ DEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/Nuitka-1.9[${PYTHON_USEDEP}]
-	>=dev-python/poetry-1.4.2[${PYTHON_USEDEP}]
-	>=dev-build/make-4.2.1
+	>=dev-python/Nuitka-0.6.19.1[${PYTHON_USEDEP}]
+	>=dev-python/poetry-1.1.12[${PYTHON_USEDEP}]
+	>=dev-build/make-4.3
 "
-RESTRICT="mirror"
 
 pkg_setup() {
 ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/coolercontrol instead."

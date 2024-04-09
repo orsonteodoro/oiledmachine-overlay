@@ -4,15 +4,18 @@
 
 EAPI=8
 
+# U 22.04
+
 DISTUTILS_USE_PEP517="poetry"
 PYTHON_COMPAT=( python3_{10,11} ) # Can support 3.12 but limited by Nuitka
 
 inherit lcnr distutils-r1
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-liqctld"
 SRC_URI="
 https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${PV}.tar.bz2
 "
-S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-liqctld"
 
 DESCRIPTION="liqctld is a daemon for interacting with liquidctl on a system level"
 HOMEPAGE="
@@ -22,34 +25,27 @@ https://gitlab.com/coolercontrol/coolercontrol/-/tree/main/coolercontrol-liqctld
 LICENSE="
 	GPL-3+
 "
-KEYWORDS="~amd64"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" openrc systemd r1"
-# U 20.04
 RDEPEND+="
 	${PYTHON_DEPS}
-	>=app-misc/liquidctl-1.13.0[${PYTHON_USEDEP}]
-	>=dev-python/fastapi-0.104.1[${PYTHON_USEDEP}]
+	>=app-misc/liquidctl-1.5.1[${PYTHON_USEDEP}]
+	>=dev-python/fastapi-0.63.0[${PYTHON_USEDEP}]
 	>=dev-python/orjson-3.9.10[${PYTHON_USEDEP}]
-	>=dev-python/setproctitle-1.3.3[${PYTHON_USEDEP}]
-	>=dev-python/uvicorn-0.24.0[${PYTHON_USEDEP}]
-	>=dev-libs/libusb-1.0.23
+	>=dev-python/setproctitle-1.2.2[${PYTHON_USEDEP}]
+	>=dev-python/uvicorn-0.15.0[${PYTHON_USEDEP}]
+	>=dev-libs/libusb-1.0.25
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/Nuitka-1.8.6[${PYTHON_USEDEP}]
-	>=dev-python/poetry-1.4.2[${PYTHON_USEDEP}]
-	>=dev-build/make-4.2.1
+	>=dev-python/Nuitka-0.6.19.1[${PYTHON_USEDEP}]
+	>=dev-python/poetry-1.1.12[${PYTHON_USEDEP}]
+	>=dev-build/make-4.3
 "
-RESTRICT="mirror"
-
-pkg_setup() {
-ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/coolercontrol instead."
-	python_setup
-}
 
 set_gui_port() {
 	local L=(
@@ -71,6 +67,11 @@ set_liqctld_port() {
 	for p in "${L[@]}" ; do
 		sed -i -e "s|11986|${port}|g" "${p}" || die
 	done
+}
+
+pkg_setup() {
+ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/coolercontrol instead."
+	python_setup
 }
 
 python_configure() {
