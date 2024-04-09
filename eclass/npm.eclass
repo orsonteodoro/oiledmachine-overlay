@@ -530,7 +530,9 @@ npm_src_unpack() {
 			npm_update_lock_audit_post
 		fi
 
-		die
+		_npm_check_errors
+einfo "Finished updating lockfiles."
+		exit 0
 	else
 		local offline="${NPM_OFFLINE:-1}"
 		if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then

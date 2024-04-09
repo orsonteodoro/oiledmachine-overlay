@@ -3524,7 +3524,9 @@ einfo "package-lock.json -> ${dest}"
 			popd >/dev/null 2>&1 || die
 		done
 
-		die
+		_npm_check_errors
+einfo "Finished updating lockfiles."
+		exit 0
 	else
 		__npm_src_unpack
 	fi

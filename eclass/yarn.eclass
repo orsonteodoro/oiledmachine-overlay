@@ -660,7 +660,9 @@ einfo "Called yarn_src_unpack"
 		else
 			_yarn_src_unpack_update_upstream
 		fi
-		die
+		_yarn_check_errors
+einfo "Finished updating lockfiles."
+		exit 0
 	else
 		#export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 		export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
