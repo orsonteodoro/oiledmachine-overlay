@@ -431,23 +431,32 @@ einfo "Running:\tnpm ${cmd[@]}"
 __npm_patch() {
 	local npm_slot="${NPM_SLOT:-3}"
 einfo "Running __npm_patch() for NPM_SLOT=${npm_slot}"
-	local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
+	local npm_pv
+	local bin_path
+	if [[ -e "${HOME}/.cache/node/corepack/v1/npm" ]] ; then
+		npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/v1/npm/"*))
+		bin_path="${HOME}/.cache/node/corepack/v1/npm/${npm_pv}/bin"
+	else
+		npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
+		bin_path="${HOME}/.cache/node/corepack/npm/${npm_pv}/bin"
+	fi
+
 	if [[ "${npm_slot}" == "1" ]] ; then
 		sed -i \
-			-e "s|\$basedir/node_modules/npm/bin|${HOME}/.cache/node/corepack/npm/${npm_pv}/bin|g" \
-			"${HOME}/.cache/node/corepack/npm/${npm_pv}/bin/npm" || die
+			-e "s|\$basedir/node_modules/npm/bin|${bin_path}|g" \
+			"${bin_path}/npm" || die
 		sed -i \
-			-e "s|\$basedir/node_modules/npm/bin|${HOME}/.cache/node/corepack/npm/${npm_pv}/bin|g" \
-			"${HOME}/.cache/node/corepack/npm/${npm_pv}/bin/npx" || die
+			-e "s|\$basedir/node_modules/npm/bin|${bin_path}|g" \
+			"${bin_path}/npx" || die
 	fi
 	if [[ "${npm_slot}" == "2"  || "${npm_slot}" == "3" ]] ; then
 		sed -i \
-			-e "s|\$CLI_BASEDIR/node_modules/npm/bin|${HOME}/.cache/node/corepack/npm/${npm_pv}/bin|g" \
-			-e "s|\$NPM_PREFIX/node_modules/npm/bin|${HOME}/.cache/node/corepack/npm/${npm_pv}/bin|g" \
-			"${HOME}/.cache/node/corepack/npm/${npm_pv}/bin/npm" || die
+			-e "s|\$CLI_BASEDIR/node_modules/npm/bin|${bin_path}|g" \
+			-e "s|\$NPM_PREFIX/node_modules/npm/bin|${bin_path}|g" \
+			"${bin_path}/npm" || die
 		sed -i \
-			-e "s|\$CLI_BASEDIR/node_modules/npm/bin|${HOME}/.cache/node/corepack/npm/${npm_pv}/bin|g" \
-			"${HOME}/.cache/node/corepack/npm/${npm_pv}/bin/npx" || die
+			-e "s|\$CLI_BASEDIR/node_modules/npm/bin|${bin_path}|g" \
+			"${bin_path}/npx" || die
 	fi
 }
 
@@ -488,8 +497,14 @@ eerror
 einfo "Hydrating npm..."
 	corepack hydrate "${ESYSROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
 	__npm_patch
-	local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
-	export PATH=".:${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
+
+	if [[ -e "${HOME}/.cache/node/corepack/v1/npm" ]] ; then
+		local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/v1/npm/"*))
+		export PATH=".:${HOME}/.cache/node/corepack/v1/npm/${npm_pv}/bin:${PATH}"
+	else
+		local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
+		export PATH=".:${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
+	fi
 
 	npm_network_settings
 }
