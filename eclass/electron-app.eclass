@@ -256,7 +256,10 @@ ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 
 IUSE+=" wayland +X"
 REQUIRED_USE+="
-	|| ( wayland X )
+	|| (
+		wayland
+		X
+	)
 "
 
 ELECTRON_APP_OPTIONAL_DEPEND=" "
