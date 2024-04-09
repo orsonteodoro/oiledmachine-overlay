@@ -20,389 +20,381 @@ YARN_LOCKFILE_SOURCE="upstream"
 YARN_OFFLINE=1
 YARN_TEST_SCRIPT="test:theia"
 # Generated from
-# find /var/tmp/portage/dev-util/theia-1.43.0/work/theia-1.43.0/ -type f -executable \
+# find /var/tmp/portage/dev-util/theia-1.48.3/work/theia-1.48.3/ -type f -executable \
 #	| grep -v ".ts$" \
 #	| grep -v "LICENSE" \
 #	| grep -v "README" \
 #	| grep -v ".json$" \
-#	| sed -e "s|/var/tmp/portage/dev-util/theia-1.43.0/work/theia-1.43.0|/opt/theia|"
+#	| sed -e "s|/var/tmp/portage/dev-util/theia-1.48.3/work/theia-1.48.3|/opt/theia|" \
+#	| LC_COLLATE=C sort
 YARN_EXE_LIST="
-/opt/theia/node_modules/lunr/build/release.sh
-/opt/theia/node_modules/native-keymap/build/Release/keymapping.node
-/opt/theia/node_modules/native-keymap/build/Release/obj.target/keymapping.node
-/opt/theia/node_modules/native-keymap/bin/linux-x64-113/native-keymap.node
-/opt/theia/node_modules/puppeteer/node_modules/js-yaml/bin/js-yaml.js
-/opt/theia/node_modules/nan/tools/1to2.js
-/opt/theia/node_modules/webpack/bin/webpack.js
-/opt/theia/node_modules/tmp/node_modules/rimraf/bin.js
-/opt/theia/node_modules/ps-tree/index.js
-/opt/theia/node_modules/ps-tree/bin/ps-tree.js
-/opt/theia/node_modules/rimraf/bin.js
-/opt/theia/node_modules/git-semver-tags/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/git-semver-tags/cli.js
-/opt/theia/node_modules/regenerate-unicode-properties/index.js
-/opt/theia/node_modules/@vscode/ripgrep/bin/rg
-/opt/theia/node_modules/typedoc-plugin-external-module-map/publish.js
-/opt/theia/node_modules/unicode-property-aliases-ecmascript/index.js
-/opt/theia/node_modules/typescript/bin/tsc
-/opt/theia/node_modules/typescript/bin/tsserver
-/opt/theia/node_modules/mkdirp-infer-owner/node_modules/mkdirp/bin/cmd.js
-/opt/theia/node_modules/write-pkg/node_modules/semver/bin/semver
-/opt/theia/node_modules/eslint/node_modules/ignore/index.js
-/opt/theia/node_modules/eslint/bin/eslint.js
-/opt/theia/node_modules/tsconfig-paths/node_modules/json5/lib/cli.js
-/opt/theia/node_modules/electron/cli.js
-/opt/theia/node_modules/electron/dist/electron
-/opt/theia/node_modules/electron/dist/libGLESv2.so
-/opt/theia/node_modules/electron/dist/libvk_swiftshader.so
-/opt/theia/node_modules/electron/dist/libEGL.so
-/opt/theia/node_modules/electron/dist/chrome-sandbox
-/opt/theia/node_modules/electron/dist/libvulkan.so.1
-/opt/theia/node_modules/electron/dist/chrome_crashpad_handler
-/opt/theia/node_modules/unicode-canonical-property-names-ecmascript/index.js
-/opt/theia/node_modules/playwright-core/lib/cli/cli.js
-/opt/theia/node_modules/playwright-core/cli.js
-/opt/theia/node_modules/playwright-core/bin/reinstall_msedge_stable_mac.sh
-/opt/theia/node_modules/playwright-core/bin/reinstall_chrome_beta_linux.sh
-/opt/theia/node_modules/playwright-core/bin/reinstall_chrome_beta_mac.sh
-/opt/theia/node_modules/playwright-core/bin/reinstall_msedge_stable_linux.sh
-/opt/theia/node_modules/playwright-core/bin/reinstall_msedge_dev_mac.sh
-/opt/theia/node_modules/playwright-core/bin/reinstall_chrome_stable_mac.sh
-/opt/theia/node_modules/playwright-core/bin/reinstall_msedge_beta_mac.sh
-/opt/theia/node_modules/playwright-core/bin/reinstall_msedge_beta_linux.sh
-/opt/theia/node_modules/playwright-core/bin/reinstall_msedge_dev_linux.sh
-/opt/theia/node_modules/playwright-core/bin/reinstall_chrome_stable_linux.sh
-/opt/theia/node_modules/route-parser/scripts/compile_parser.js
-/opt/theia/node_modules/nyc/node_modules/rimraf/bin.js
-/opt/theia/node_modules/nyc/index.js
-/opt/theia/node_modules/nyc/bin/nyc.js
-/opt/theia/node_modules/lerna/node_modules/rimraf/bin.js
-/opt/theia/node_modules/lerna/node_modules/typescript/bin/tsc
-/opt/theia/node_modules/lerna/node_modules/typescript/bin/tsserver
-/opt/theia/node_modules/lerna/node_modules/npm-packlist/bin/index.js
-/opt/theia/node_modules/lerna/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/lerna/node_modules/npm-package-arg/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/lerna/node_modules/pacote/node_modules/npm-packlist/bin/index.js
-/opt/theia/node_modules/lerna/node_modules/pacote/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/lerna/node_modules/pacote/node_modules/@npmcli/run-script/lib/node-gyp-bin/node-gyp.cmd
-/opt/theia/node_modules/lerna/node_modules/pacote/node_modules/@npmcli/run-script/lib/node-gyp-bin/node-gyp
-/opt/theia/node_modules/lerna/node_modules/pacote/lib/bin.js
-/opt/theia/node_modules/lerna/node_modules/mkdirp/bin/cmd.js
-/opt/theia/node_modules/lerna/node_modules/js-yaml/bin/js-yaml.js
-/opt/theia/node_modules/lerna/node_modules/npm-registry-fetch/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/lerna/node_modules/@npmcli/run-script/lib/node-gyp-bin/node-gyp.cmd
-/opt/theia/node_modules/lerna/node_modules/@npmcli/run-script/lib/node-gyp-bin/node-gyp
-/opt/theia/node_modules/lerna/dist/cli.js
-/opt/theia/node_modules/detect-libc/bin/detect-libc.js
-/opt/theia/node_modules/errno/build.js
-/opt/theia/node_modules/errno/cli.js
-/opt/theia/node_modules/keytar/node_modules/prebuild-install/bin.js
-/opt/theia/node_modules/keytar/build/Release/keytar.node
-/opt/theia/node_modules/keytar/build/Release/obj.target/keytar.node
-/opt/theia/node_modules/color-support/bin.js
-/opt/theia/node_modules/npm-run-all/node_modules/which/bin/which
-/opt/theia/node_modules/npm-run-all/bin/npm-run-all.js
-/opt/theia/node_modules/flat-cache/node_modules/rimraf/bin.js
-/opt/theia/node_modules/puppeteer-core/node_modules/rimraf/bin.js
-/opt/theia/node_modules/@nrwl/devkit/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/@nrwl/tao/index.js
-/opt/theia/node_modules/@nrwl/cli/bin/nx.js
-/opt/theia/node_modules/webpack-cli/bin/cli.js
-/opt/theia/node_modules/uuid/dist/bin/uuid
-/opt/theia/node_modules/jsesc/bin/jsesc
-/opt/theia/node_modules/@playwright/test/lib/cli.js
-/opt/theia/node_modules/@playwright/test/cli.js
-/opt/theia/node_modules/log-update/node_modules/wrap-ansi/index.js
-/opt/theia/node_modules/acorn/bin/acorn
-/opt/theia/node_modules/terser/bin/terser
-/opt/theia/node_modules/terser/bin/uglifyjs
-/opt/theia/node_modules/electron-mocha/node_modules/js-yaml/bin/js-yaml.js
-/opt/theia/node_modules/electron-mocha/node_modules/mocha/lib/cli/cli.js
-/opt/theia/node_modules/electron-mocha/node_modules/mocha/bin/_mocha
-/opt/theia/node_modules/electron-mocha/node_modules/mocha/bin/mocha
-/opt/theia/node_modules/electron-mocha/bin/electron-mocha
-/opt/theia/node_modules/npm-packlist/bin/index.js
-/opt/theia/node_modules/get-pkg-repo/src/cli.js
-/opt/theia/node_modules/lzma-native/liblzma-config.sh
-/opt/theia/node_modules/lzma-native/bin/lzmajs
-/opt/theia/node_modules/lzma-native/liblzma-build.sh
-/opt/theia/node_modules/mustache/bin/mustache
-/opt/theia/node_modules/is-docker/cli.js
-/opt/theia/node_modules/wide-align/align.js
-/opt/theia/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/json5/lib/cli.js
-/opt/theia/node_modules/open/xdg-open
-/opt/theia/node_modules/spawn-wrap/node_modules/rimraf/bin.js
-/opt/theia/node_modules/trash/lib/macos-trash
-/opt/theia/node_modules/shell-env/node_modules/which/bin/which
-/opt/theia/node_modules/nx/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/nx/node_modules/js-yaml/bin/js-yaml.js
-/opt/theia/node_modules/nx/node_modules/axios/lib/adapters/http.js
-/opt/theia/node_modules/nx/bin/nx.js
-/opt/theia/node_modules/nx/src/native/nx.linux-x64-gnu.node
-/opt/theia/node_modules/eslint-plugin-import/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/cacache/node_modules/rimraf/bin.js
-/opt/theia/node_modules/cacache/node_modules/mkdirp/bin/cmd.js
-/opt/theia/node_modules/slice-ansi/index.js
-/opt/theia/node_modules/drivelist/build/Release/drivelist.node
-/opt/theia/node_modules/drivelist/build/Release/obj.target/drivelist.node
-/opt/theia/node_modules/drivelist/bin/linux-x64-113/drivelist.node
-/opt/theia/node_modules/@msgpackr-extract/msgpackr-extract-linux-x64/node.napi.glibc.node
-/opt/theia/node_modules/@msgpackr-extract/msgpackr-extract-linux-x64/node.abi108.glibc.node
-/opt/theia/node_modules/@msgpackr-extract/msgpackr-extract-linux-x64/node.abi108.musl.node
-/opt/theia/node_modules/@msgpackr-extract/msgpackr-extract-linux-x64/node.napi.musl.node
-/opt/theia/node_modules/marked/bin/marked.js
-/opt/theia/node_modules/uglify-js/bin/uglifyjs
-/opt/theia/node_modules/pacote/node_modules/rimraf/bin.js
-/opt/theia/node_modules/pacote/node_modules/mkdirp/bin/cmd.js
-/opt/theia/node_modules/pacote/lib/bin.js
-/opt/theia/node_modules/tslint/node_modules/semver/bin/semver
-/opt/theia/node_modules/tslint/bin/tslint
-/opt/theia/node_modules/mkdirp/bin/cmd.js
-/opt/theia/node_modules/@zkochan/js-yaml/bin/js-yaml.js
-/opt/theia/node_modules/regjsparser/node_modules/jsesc/bin/jsesc
-/opt/theia/node_modules/regjsparser/bin/parser
-/opt/theia/node_modules/node-gyp-build/build-test.js
-/opt/theia/node_modules/node-gyp-build/bin.js
-/opt/theia/node_modules/node-gyp-build/optional.js
-/opt/theia/node_modules/escodegen/bin/escodegen.js
-/opt/theia/node_modules/escodegen/bin/esgenerate.js
-/opt/theia/node_modules/is-ci/bin.js
-/opt/theia/node_modules/babel-plugin-polyfill-corejs2/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/@babel/helper-compilation-targets/node_modules/semver/bin/semver.js
+/opt/theia/dev-packages/cli/bin/theia
+/opt/theia/dev-packages/cli/bin/theia-patch.js
+/opt/theia/dev-packages/ffmpeg/build/Release/ffmpeg.node
+/opt/theia/dev-packages/ffmpeg/build/Release/obj.target/ffmpeg.node
+/opt/theia/dev-packages/private-ext-scripts/theia-ext.js
+/opt/theia/dev-packages/private-ext-scripts/theia-run.js
+/opt/theia/dev-packages/private-ext-scripts/theia-ts-clean.js
+/opt/theia/dev-packages/private-re-exports/bin/theia-re-exports.js
+/opt/theia/examples/browser/lib/backend/native/rg
+/opt/theia/examples/browser/lib/build/Release/spawn-helper
 /opt/theia/node_modules/@babel/core/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/@babel/helper-define-polyfill-provider/node_modules/semver/bin/semver.js
+/opt/theia/node_modules/@babel/helper-compilation-targets/node_modules/semver/bin/semver.js
+/opt/theia/node_modules/@babel/helper-create-class-features-plugin/node_modules/semver/bin/semver.js
+/opt/theia/node_modules/@babel/helper-create-regexp-features-plugin/node_modules/semver/bin/semver.js
 /opt/theia/node_modules/@babel/parser/bin/babel-parser.js
 /opt/theia/node_modules/@babel/plugin-transform-runtime/node_modules/semver/bin/semver.js
 /opt/theia/node_modules/@babel/preset-env/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/which/bin/node-which
-/opt/theia/node_modules/unicode-match-property-ecmascript/index.js
-/opt/theia/node_modules/concurrently/src/main.js
-/opt/theia/node_modules/puppeteer-to-istanbul/node_modules/mkdirp/bin/cmd.js
-/opt/theia/node_modules/puppeteer-to-istanbul/bin/puppeteer-js-runner.js
-/opt/theia/node_modules/less/node_modules/semver/bin/semver
-/opt/theia/node_modules/less/bin/lessc
-/opt/theia/node_modules/node-pty/build/Release/spawn-helper
-/opt/theia/node_modules/node-pty/build/Release/obj.target/pty.node
-/opt/theia/node_modules/node-pty/build/Release/pty.node
-/opt/theia/node_modules/node-pty/bin/linux-x64-113/node-pty.node
-/opt/theia/node_modules/conventional-commits-parser/cli.js
-/opt/theia/node_modules/rc/cli.js
-/opt/theia/node_modules/rc/index.js
-/opt/theia/node_modules/postcss/node_modules/nanoid/bin/nanoid.cjs
 /opt/theia/node_modules/@electron/get/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/he/bin/he
-/opt/theia/node_modules/update-browserslist-db/cli.js
-/opt/theia/node_modules/read-pkg/node_modules/semver/bin/semver
-/opt/theia/node_modules/msgpackr-extract/bin/download-prebuilds.js
-/opt/theia/node_modules/espree/node_modules/acorn/bin/acorn
-/opt/theia/node_modules/istanbul-lib-processinfo/node_modules/rimraf/bin.js
-/opt/theia/node_modules/import-local/fixtures/cli.js
-/opt/theia/node_modules/wildcard/test/all.js
-/opt/theia/node_modules/wildcard/test/objects.js
-/opt/theia/node_modules/wildcard/test/arrays.js
-/opt/theia/node_modules/wildcard/test/strings.js
-/opt/theia/node_modules/wildcard/yarn.lock
-/opt/theia/node_modules/wildcard/index.js
-/opt/theia/node_modules/wildcard/.travis.yml
-/opt/theia/node_modules/wildcard/examples/objects.js
-/opt/theia/node_modules/wildcard/examples/arrays.js
-/opt/theia/node_modules/wildcard/examples/strings.js
-/opt/theia/node_modules/browserslist/cli.js
-/opt/theia/node_modules/extract-zip/cli.js
-/opt/theia/node_modules/uri-js/yarn.lock
-/opt/theia/node_modules/uri-js/dist/es5/uri.all.js
-/opt/theia/node_modules/uri-js/dist/es5/uri.all.min.js
-/opt/theia/node_modules/uri-js/dist/es5/uri.all.min.js.map
-/opt/theia/node_modules/uri-js/dist/es5/uri.all.js.map
-/opt/theia/node_modules/uri-js/dist/esnext/regexps-iri.js
-/opt/theia/node_modules/uri-js/dist/esnext/util.js.map
-/opt/theia/node_modules/uri-js/dist/esnext/uri.js.map
-/opt/theia/node_modules/uri-js/dist/esnext/index.js
-/opt/theia/node_modules/uri-js/dist/esnext/util.js
-/opt/theia/node_modules/uri-js/dist/esnext/schemes/https.js.map
-/opt/theia/node_modules/uri-js/dist/esnext/schemes/urn.js.map
-/opt/theia/node_modules/uri-js/dist/esnext/schemes/urn-uuid.js
-/opt/theia/node_modules/uri-js/dist/esnext/schemes/ws.js.map
-/opt/theia/node_modules/uri-js/dist/esnext/schemes/http.js.map
-/opt/theia/node_modules/uri-js/dist/esnext/schemes/urn.js
-/opt/theia/node_modules/uri-js/dist/esnext/schemes/https.js
-/opt/theia/node_modules/uri-js/dist/esnext/schemes/http.js
-/opt/theia/node_modules/uri-js/dist/esnext/schemes/urn-uuid.js.map
-/opt/theia/node_modules/uri-js/dist/esnext/schemes/mailto.js.map
-/opt/theia/node_modules/uri-js/dist/esnext/schemes/wss.js.map
-/opt/theia/node_modules/uri-js/dist/esnext/schemes/ws.js
-/opt/theia/node_modules/uri-js/dist/esnext/schemes/wss.js
-/opt/theia/node_modules/uri-js/dist/esnext/schemes/mailto.js
-/opt/theia/node_modules/uri-js/dist/esnext/regexps-uri.js
-/opt/theia/node_modules/uri-js/dist/esnext/index.js.map
-/opt/theia/node_modules/uri-js/dist/esnext/uri.js
-/opt/theia/node_modules/uri-js/dist/esnext/regexps-iri.js.map
-/opt/theia/node_modules/uri-js/dist/esnext/regexps-uri.js.map
-/opt/theia/node_modules/resolve/bin/resolve
-/opt/theia/node_modules/mime/cli.js
-/opt/theia/node_modules/mime/src/build.js
-/opt/theia/node_modules/umd-compat-loader/node_modules/json5/lib/cli.js
-/opt/theia/node_modules/electron-rebuild/lib/src/cli.js
-/opt/theia/node_modules/unicode-match-property-value-ecmascript/index.js
-/opt/theia/node_modules/seek-bzip/bin/seek-bzip-table
-/opt/theia/node_modules/seek-bzip/bin/seek-bunzip
-/opt/theia/node_modules/recast/node_modules/esprima/bin/esvalidate.js
-/opt/theia/node_modules/recast/node_modules/esprima/bin/esparse.js
-/opt/theia/node_modules/recast/example/to-while
-/opt/theia/node_modules/recast/example/identity
-/opt/theia/node_modules/recast/example/generic-identity
-/opt/theia/node_modules/recast/example/add-braces
-/opt/theia/node_modules/tar/node_modules/mkdirp/bin/cmd.js
-/opt/theia/node_modules/traverse/index.js
-/opt/theia/node_modules/traverse/examples/stringify.js
-/opt/theia/node_modules/traverse/examples/json.js
-/opt/theia/node_modules/traverse/examples/leaves.js
-/opt/theia/node_modules/traverse/examples/negative.js
-/opt/theia/node_modules/ejs/lib/ejs.js
-/opt/theia/node_modules/ejs/bin/cli.js
-/opt/theia/node_modules/babel-polyfill/scripts/build-dist.sh
-/opt/theia/node_modules/eslint-plugin-react/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/eslint-plugin-react/node_modules/resolve/bin/resolve
-/opt/theia/node_modules/eslint-plugin-react/lib/rules/jsx-curly-brace-presence.js
-/opt/theia/node_modules/js-yaml/bin/js-yaml.js
-/opt/theia/node_modules/config-chain/index.js
-/opt/theia/node_modules/improved-yarn-audit/bin/improved-yarn-audit
-/opt/theia/node_modules/handlebars/bin/handlebars
-/opt/theia/node_modules/handlebars/print-script
-/opt/theia/node_modules/temp/node_modules/rimraf/bin.js
+/opt/theia/node_modules/@eslint/eslintrc/node_modules/ignore/index.js
+/opt/theia/node_modules/@eslint/eslintrc/node_modules/js-yaml/bin/js-yaml.js
+/opt/theia/node_modules/@isaacs/cliui/node_modules/wrap-ansi/index.js
+/opt/theia/node_modules/@istanbuljs/load-nyc-config/node_modules/js-yaml/bin/js-yaml.js
+/opt/theia/node_modules/@lerna/create/node_modules/mkdirp/bin/cmd.js
+/opt/theia/node_modules/@lerna/create/node_modules/rimraf/dist/cjs/src/bin.js
+/opt/theia/node_modules/@lerna/create/node_modules/uuid/dist/bin/uuid
+/opt/theia/node_modules/@lerna/create/node_modules/wrap-ansi/index.js
+/opt/theia/node_modules/@msgpackr-extract/msgpackr-extract-linux-x64/node.abi108.glibc.node
+/opt/theia/node_modules/@msgpackr-extract/msgpackr-extract-linux-x64/node.abi108.musl.node
+/opt/theia/node_modules/@msgpackr-extract/msgpackr-extract-linux-x64/node.napi.glibc.node
+/opt/theia/node_modules/@msgpackr-extract/msgpackr-extract-linux-x64/node.napi.musl.node
+/opt/theia/node_modules/@npmcli/git/node_modules/which/bin/which.js
+/opt/theia/node_modules/@npmcli/installed-package-contents/lib/index.js
+/opt/theia/node_modules/@npmcli/move-file/node_modules/mkdirp/bin/cmd.js
+/opt/theia/node_modules/@npmcli/move-file/node_modules/rimraf/bin.js
+/opt/theia/node_modules/@npmcli/promise-spawn/node_modules/which/bin/which.js
+/opt/theia/node_modules/@npmcli/run-script/lib/node-gyp-bin/node-gyp
+/opt/theia/node_modules/@npmcli/run-script/lib/node-gyp-bin/node-gyp.cmd
+/opt/theia/node_modules/@npmcli/run-script/node_modules/which/bin/which.js
+/opt/theia/node_modules/@nrwl/tao/index.js
+/opt/theia/node_modules/@nx/devkit/node_modules/semver/bin/semver.js
+/opt/theia/node_modules/@playwright/test/cli.js
+/opt/theia/node_modules/@vscode/ripgrep/bin/rg
+/opt/theia/node_modules/@vscode/vsce/node_modules/keytar/build/Release/keytar.node
+/opt/theia/node_modules/@vscode/vsce/node_modules/node-addon-api/tools/conversion.js
+/opt/theia/node_modules/@vscode/vsce/node_modules/prebuild-install/bin.js
+/opt/theia/node_modules/@vscode/vsce/vsce
+/opt/theia/node_modules/@webpack-cli/info/node_modules/envinfo/dist/cli.js
+/opt/theia/node_modules/@yarnpkg/parsers/node_modules/js-yaml/bin/js-yaml.js
+/opt/theia/node_modules/@zkochan/js-yaml/bin/js-yaml.js
 /opt/theia/node_modules/JSONStream/bin.js
 /opt/theia/node_modules/JSONStream/index.js
-/opt/theia/node_modules/envinfo/dist/cli.js
-/opt/theia/node_modules/react-tooltip/node_modules/uuid/dist/bin/uuid
-/opt/theia/node_modules/jake/bin/cli.js
-/opt/theia/node_modules/jake/bin/bash_completion.sh
-/opt/theia/node_modules/loose-envify/cli.js
-/opt/theia/node_modules/cssesc/bin/cssesc
-/opt/theia/node_modules/make-dir/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/yargs/node_modules/wrap-ansi/index.js
-/opt/theia/node_modules/flat/cli.js
-/opt/theia/node_modules/conventional-changelog-writer/node_modules/semver/bin/semver.js
+/opt/theia/node_modules/acorn/bin/acorn
+/opt/theia/node_modules/allure-commandline/bin/allure
+/opt/theia/node_modules/allure-commandline/dist/bin/allure
+/opt/theia/node_modules/allure-commandline/dist/bin/allure.bat
+/opt/theia/node_modules/atomically/test/basic.js
+/opt/theia/node_modules/atomically/test/concurrency.js
+/opt/theia/node_modules/atomically/test/integration.js
+/opt/theia/node_modules/axios/lib/adapters/http.js
+/opt/theia/node_modules/babel-plugin-polyfill-corejs2/node_modules/semver/bin/semver.js
+/opt/theia/node_modules/babel-polyfill/scripts/build-dist.sh
+/opt/theia/node_modules/browserfs/dist/scripts/make_xhrfs_index.js
+/opt/theia/node_modules/browserfs/scripts/make_iso_fixtures.sh
+/opt/theia/node_modules/browserslist/cli.js
+/opt/theia/node_modules/cacache/node_modules/glob/dist/esm/bin.mjs
+/opt/theia/node_modules/cacheable-lookup/source/index.js
+/opt/theia/node_modules/chainsaw/index.js
+/opt/theia/node_modules/cliui/node_modules/wrap-ansi/index.js
+/opt/theia/node_modules/color-support/bin.js
+/opt/theia/node_modules/concurrently/src/main.js
 /opt/theia/node_modules/conventional-changelog-writer/cli.js
-/opt/theia/node_modules/git-raw-commits/cli.js
-/opt/theia/node_modules/esprima/bin/esvalidate.js
+/opt/theia/node_modules/conventional-commits-parser/cli.js
+/opt/theia/node_modules/conventional-recommended-bump/cli.js
+/opt/theia/node_modules/cosmiconfig/node_modules/typescript/bin/tsc
+/opt/theia/node_modules/cosmiconfig/node_modules/typescript/bin/tsserver
+/opt/theia/node_modules/cpu-features/build/Release/cpufeatures.node
+/opt/theia/node_modules/cpu-features/build/Release/obj.target/cpufeatures.node
+/opt/theia/node_modules/cpu-features/deps/cpu_features/cmake/ci/doc/generate_image.sh
+/opt/theia/node_modules/cpu-features/deps/cpu_features/scripts/make_release.sh
+/opt/theia/node_modules/cpu-features/deps/cpu_features/scripts/run_integration.sh
+/opt/theia/node_modules/cpu-features/deps/cpu_features/scripts/test_integration.sh
+/opt/theia/node_modules/crc-32/bin/crc32.njs
+/opt/theia/node_modules/cssesc/bin/cssesc
+/opt/theia/node_modules/detect-libc/bin/detect-libc.js
+/opt/theia/node_modules/drivelist/build/Release/drivelist.node
+/opt/theia/node_modules/drivelist/build/Release/obj.target/drivelist.node
+/opt/theia/node_modules/ejs/bin/cli.js
+/opt/theia/node_modules/ejs/lib/ejs.js
+/opt/theia/node_modules/electron-mocha/bin/electron-mocha
+/opt/theia/node_modules/electron-mocha/node_modules/mocha/bin/_mocha
+/opt/theia/node_modules/electron-mocha/node_modules/mocha/bin/mocha
+/opt/theia/node_modules/electron-mocha/node_modules/mocha/lib/cli/cli.js
+/opt/theia/node_modules/electron-mocha/node_modules/wrap-ansi/index.js
+/opt/theia/node_modules/electron-rebuild/lib/src/cli.js
+/opt/theia/node_modules/electron/cli.js
+/opt/theia/node_modules/electron/dist/chrome-sandbox
+/opt/theia/node_modules/electron/dist/chrome_crashpad_handler
+/opt/theia/node_modules/electron/dist/electron
+/opt/theia/node_modules/electron/dist/libEGL.so
+/opt/theia/node_modules/electron/dist/libGLESv2.so
+/opt/theia/node_modules/electron/dist/libffmpeg.so
+/opt/theia/node_modules/electron/dist/libvk_swiftshader.so
+/opt/theia/node_modules/electron/dist/libvulkan.so.1
+/opt/theia/node_modules/envinfo/dist/cli.js
+/opt/theia/node_modules/errno/build.js
+/opt/theia/node_modules/errno/cli.js
+/opt/theia/node_modules/escodegen/bin/escodegen.js
+/opt/theia/node_modules/escodegen/bin/esgenerate.js
+/opt/theia/node_modules/eslint-plugin-import/node_modules/semver/bin/semver.js
+/opt/theia/node_modules/eslint-plugin-react/lib/rules/jsx-curly-brace-presence.js
+/opt/theia/node_modules/eslint-plugin-react/node_modules/resolve/bin/resolve
+/opt/theia/node_modules/eslint-plugin-react/node_modules/semver/bin/semver.js
+/opt/theia/node_modules/eslint/bin/eslint.js
+/opt/theia/node_modules/eslint/node_modules/ignore/index.js
+/opt/theia/node_modules/eslint/node_modules/js-yaml/bin/js-yaml.js
+/opt/theia/node_modules/espree/node_modules/acorn/bin/acorn
 /opt/theia/node_modules/esprima/bin/esparse.js
-/opt/theia/node_modules/node-gyp/node_modules/rimraf/bin.js
-/opt/theia/node_modules/node-gyp/gyp/pylib/gyp/easy_xml_test.py
-/opt/theia/node_modules/node-gyp/gyp/pylib/gyp/generator/msvs_test.py
+/opt/theia/node_modules/esprima/bin/esvalidate.js
+/opt/theia/node_modules/extract-zip/cli.js
+/opt/theia/node_modules/find-git-repositories/build/Release/findGitRepos.node
+/opt/theia/node_modules/find-git-repositories/build/Release/obj.target/findGitRepos.node
+/opt/theia/node_modules/flat-cache/node_modules/rimraf/bin.js
+/opt/theia/node_modules/flat/cli.js
+/opt/theia/node_modules/get-pkg-repo/node_modules/wrap-ansi/index.js
+/opt/theia/node_modules/get-pkg-repo/src/cli.js
+/opt/theia/node_modules/git-raw-commits/cli.js
+/opt/theia/node_modules/git-semver-tags/cli.js
+/opt/theia/node_modules/handlebars/bin/handlebars
+/opt/theia/node_modules/he/bin/he
+/opt/theia/node_modules/http-server/bin/http-server
+/opt/theia/node_modules/if-env/bin/if-env.js
+/opt/theia/node_modules/image-size/bin/image-size.js
+/opt/theia/node_modules/import-local/fixtures/cli.js
+/opt/theia/node_modules/improved-yarn-audit/bin/improved-yarn-audit
+/opt/theia/node_modules/is-ci/bin.js
+/opt/theia/node_modules/is-docker/cli.js
+/opt/theia/node_modules/is-potential-custom-element-name/index.js
+/opt/theia/node_modules/istanbul-lib-instrument/node_modules/semver/bin/semver.js
+/opt/theia/node_modules/istanbul-lib-processinfo/node_modules/rimraf/bin.js
+/opt/theia/node_modules/jake/bin/bash_completion.sh
+/opt/theia/node_modules/jake/bin/cli.js
+/opt/theia/node_modules/js-yaml/bin/js-yaml.js
+/opt/theia/node_modules/jsesc/bin/jsesc
+/opt/theia/node_modules/json5/lib/cli.js
+/opt/theia/node_modules/keytar/build/Release/keytar.node
+/opt/theia/node_modules/keytar/build/Release/obj.target/keytar.node
+/opt/theia/node_modules/keytar/node_modules/prebuild-install/bin.js
+/opt/theia/node_modules/keytar/node_modules/semver/bin/semver
+/opt/theia/node_modules/lerna/dist/cli.js
+/opt/theia/node_modules/lerna/node_modules/mkdirp/bin/cmd.js
+/opt/theia/node_modules/lerna/node_modules/rimraf/dist/cjs/src/bin.js
+/opt/theia/node_modules/lerna/node_modules/typescript/bin/tsc
+/opt/theia/node_modules/lerna/node_modules/typescript/bin/tsserver
+/opt/theia/node_modules/lerna/node_modules/uuid/dist/bin/uuid
+/opt/theia/node_modules/lerna/node_modules/wrap-ansi/index.js
+/opt/theia/node_modules/less/bin/lessc
+/opt/theia/node_modules/less/node_modules/semver/bin/semver
+/opt/theia/node_modules/loose-envify/cli.js
+/opt/theia/node_modules/lunr/build/release.sh
+/opt/theia/node_modules/lzma-native/bin/lzmajs
+/opt/theia/node_modules/lzma-native/liblzma-build.sh
+/opt/theia/node_modules/lzma-native/liblzma-config.sh
+/opt/theia/node_modules/make-dir/node_modules/semver/bin/semver.js
+/opt/theia/node_modules/markdown-it/bin/markdown-it.js
+/opt/theia/node_modules/marked/bin/marked.js
+/opt/theia/node_modules/meow/node_modules/read-pkg/node_modules/semver/bin/semver
+/opt/theia/node_modules/mime/cli.js
+/opt/theia/node_modules/mime/src/build.js
+/opt/theia/node_modules/mkdirp/bin/cmd.js
+/opt/theia/node_modules/mocha/bin/_mocha
+/opt/theia/node_modules/mocha/bin/mocha.js
+/opt/theia/node_modules/mocha/lib/cli/cli.js
+/opt/theia/node_modules/mocha/node_modules/nanoid/bin/nanoid.cjs
+/opt/theia/node_modules/mocha/node_modules/wrap-ansi/index.js
+/opt/theia/node_modules/msgpackr-extract/bin/download-prebuilds.js
+/opt/theia/node_modules/mustache/bin/mustache
+/opt/theia/node_modules/nan/tools/1to2.js
+/opt/theia/node_modules/nano/node_modules/axios/lib/adapters/http.js
+/opt/theia/node_modules/nanoid/bin/nanoid.cjs
+/opt/theia/node_modules/native-keymap/build/Release/keymapping.node
+/opt/theia/node_modules/native-keymap/build/Release/obj.target/keymapping.node
+/opt/theia/node_modules/node-addon-api/tools/conversion.js
+/opt/theia/node_modules/node-gyp-build-optional-packages/bin.js
+/opt/theia/node_modules/node-gyp-build-optional-packages/build-test.js
+/opt/theia/node_modules/node-gyp-build-optional-packages/optional.js
+/opt/theia/node_modules/node-gyp-build/bin.js
+/opt/theia/node_modules/node-gyp-build/build-test.js
+/opt/theia/node_modules/node-gyp-build/optional.js
+/opt/theia/node_modules/node-gyp/bin/node-gyp.js
+/opt/theia/node_modules/node-gyp/gyp/gyp
+/opt/theia/node_modules/node-gyp/gyp/gyp.bat
+/opt/theia/node_modules/node-gyp/gyp/gyp_main.py
+/opt/theia/node_modules/node-gyp/gyp/pylib/gyp/MSVSSettings_test.py
 /opt/theia/node_modules/node-gyp/gyp/pylib/gyp/__init__.py
 /opt/theia/node_modules/node-gyp/gyp/pylib/gyp/common_test.py
-/opt/theia/node_modules/node-gyp/gyp/pylib/gyp/input_test.py
-/opt/theia/node_modules/node-gyp/gyp/pylib/gyp/MSVSSettings_test.py
-/opt/theia/node_modules/node-gyp/gyp/pylib/gyp/win_tool.py
-/opt/theia/node_modules/node-gyp/gyp/pylib/gyp/mac_tool.py
+/opt/theia/node_modules/node-gyp/gyp/pylib/gyp/easy_xml_test.py
 /opt/theia/node_modules/node-gyp/gyp/pylib/gyp/flock_tool.py
-/opt/theia/node_modules/node-gyp/gyp/gyp
-/opt/theia/node_modules/node-gyp/gyp/gyp_main.py
+/opt/theia/node_modules/node-gyp/gyp/pylib/gyp/generator/msvs_test.py
+/opt/theia/node_modules/node-gyp/gyp/pylib/gyp/input_test.py
+/opt/theia/node_modules/node-gyp/gyp/pylib/gyp/mac_tool.py
+/opt/theia/node_modules/node-gyp/gyp/pylib/gyp/win_tool.py
 /opt/theia/node_modules/node-gyp/gyp/test_gyp.py
-/opt/theia/node_modules/node-gyp/gyp/gyp.bat
-/opt/theia/node_modules/node-gyp/gyp/tools/pretty_vcproj.py
 /opt/theia/node_modules/node-gyp/gyp/tools/emacs/run-unit-tests.sh
 /opt/theia/node_modules/node-gyp/gyp/tools/graphviz.py
 /opt/theia/node_modules/node-gyp/gyp/tools/pretty_gyp.py
 /opt/theia/node_modules/node-gyp/gyp/tools/pretty_sln.py
+/opt/theia/node_modules/node-gyp/gyp/tools/pretty_vcproj.py
+/opt/theia/node_modules/node-gyp/node_modules/mkdirp/bin/cmd.js
+/opt/theia/node_modules/node-gyp/node_modules/rimraf/bin.js
 /opt/theia/node_modules/node-gyp/update-gyp.py
-/opt/theia/node_modules/node-gyp/bin/node-gyp.js
-/opt/theia/node_modules/tree-kill/cli.js
-/opt/theia/node_modules/tree-kill/index.js
-/opt/theia/node_modules/find-git-repositories/build/Release/findGitRepos.node
-/opt/theia/node_modules/find-git-repositories/build/Release/obj.target/findGitRepos.node
-/opt/theia/node_modules/find-git-repositories/bin/linux-x64-113/find-git-repositories.node
-/opt/theia/node_modules/nanoid/bin/nanoid.cjs
-/opt/theia/node_modules/cacheable-lookup/source/index.js
-/opt/theia/node_modules/axios/lib/adapters/http.js
-/opt/theia/node_modules/strong-log-transformer/bin/sl-log-transformer.js
-/opt/theia/node_modules/typedoc/bin/typedoc
-/opt/theia/node_modules/wrap-ansi/index.js
-/opt/theia/node_modules/node-addon-api/tools/conversion.js
-/opt/theia/node_modules/strip-dirs/index.js
-/opt/theia/node_modules/is-potential-custom-element-name/index.js
+/opt/theia/node_modules/node-pty/build/Release/pty.node
+/opt/theia/node_modules/node-pty/build/Release/spawn-helper
 /opt/theia/node_modules/nopt/bin/nopt.js
-/opt/theia/node_modules/parse-url/dist/index.mjs
-/opt/theia/node_modules/parse-url/dist/index.js
-/opt/theia/node_modules/@npmcli/run-script/lib/node-gyp-bin/node-gyp.cmd
-/opt/theia/node_modules/@npmcli/run-script/lib/node-gyp-bin/node-gyp
-/opt/theia/node_modules/@npmcli/move-file/node_modules/rimraf/bin.js
-/opt/theia/node_modules/@npmcli/move-file/node_modules/mkdirp/bin/cmd.js
-/opt/theia/node_modules/@npmcli/git/node_modules/mkdirp/bin/cmd.js
-/opt/theia/node_modules/@npmcli/arborist/node_modules/rimraf/bin.js
-/opt/theia/node_modules/@npmcli/arborist/node_modules/mkdirp/bin/cmd.js
-/opt/theia/node_modules/@npmcli/arborist/node_modules/nopt/bin/nopt.js
-/opt/theia/node_modules/@npmcli/arborist/bin/index.js
-/opt/theia/node_modules/@npmcli/installed-package-contents/index.js
-/opt/theia/node_modules/conventional-recommended-bump/cli.js
-/opt/theia/node_modules/@eslint/eslintrc/node_modules/ignore/index.js
-/opt/theia/node_modules/nsfw/node_modules/node-addon-api/tools/conversion.js
+/opt/theia/node_modules/normalize-package-data/node_modules/semver/bin/semver
+/opt/theia/node_modules/npm-packlist/bin/index.js
+/opt/theia/node_modules/npm-run-all/bin/npm-run-all.js
+/opt/theia/node_modules/npm-run-all/node_modules/which/bin/which
 /opt/theia/node_modules/nsfw/build/Release/nsfw.node
 /opt/theia/node_modules/nsfw/build/Release/obj.target/nsfw.node
-/opt/theia/node_modules/nsfw/bin/linux-x64-113/nsfw.node
-/opt/theia/node_modules/istanbul-lib-instrument/node_modules/semver/bin/semver.js
-/opt/theia/node_modules/meow/node_modules/read-pkg/node_modules/semver/bin/semver
-/opt/theia/node_modules/node-gyp-build-optional-packages/build-test.js
-/opt/theia/node_modules/node-gyp-build-optional-packages/bin.js
-/opt/theia/node_modules/node-gyp-build-optional-packages/optional.js
-/opt/theia/node_modules/mocha/node_modules/js-yaml/bin/js-yaml.js
-/opt/theia/node_modules/mocha/node_modules/nanoid/bin/nanoid.cjs
-/opt/theia/node_modules/mocha/lib/cli/cli.js
-/opt/theia/node_modules/mocha/bin/_mocha
-/opt/theia/node_modules/mocha/bin/mocha.js
-/opt/theia/node_modules/allure-commandline/dist/bin/allure
-/opt/theia/node_modules/allure-commandline/dist/bin/allure.bat
-/opt/theia/node_modules/allure-commandline/bin/allure
-/opt/theia/node_modules/node-abi/node_modules/semver/bin/semver
-/opt/theia/node_modules/chainsaw/index.js
-/opt/theia/node_modules/if-env/bin/if-env.js
-/opt/theia/node_modules/atomically/test/integration.js
-/opt/theia/node_modules/atomically/test/basic.js
-/opt/theia/node_modules/atomically/test/concurrency.js
-/opt/theia/node_modules/bin-links/node_modules/rimraf/bin.js
-/opt/theia/node_modules/image-size/bin/image-size.js
-/opt/theia/node_modules/markdown-it/bin/markdown-it.js
+/opt/theia/node_modules/nsfw/node_modules/node-addon-api/tools/conversion.js
+/opt/theia/node_modules/nx/bin/nx.js
+/opt/theia/node_modules/nx/node_modules/open/xdg-open
+/opt/theia/node_modules/nx/node_modules/semver/bin/semver.js
+/opt/theia/node_modules/nyc/bin/nyc.js
+/opt/theia/node_modules/nyc/index.js
+/opt/theia/node_modules/nyc/node_modules/rimraf/bin.js
+/opt/theia/node_modules/open/xdg-open
+/opt/theia/node_modules/opener/bin/opener-bin.js
+/opt/theia/node_modules/pacote/lib/bin.js
+/opt/theia/node_modules/parse-semver/node_modules/semver/bin/semver
+/opt/theia/node_modules/parse-url/dist/index.js
+/opt/theia/node_modules/parse-url/dist/index.mjs
+/opt/theia/node_modules/patch-package/dist/index.js
+/opt/theia/node_modules/patch-package/index.js
+/opt/theia/node_modules/playwright-core/bin/reinstall_chrome_beta_linux.sh
+/opt/theia/node_modules/playwright-core/bin/reinstall_chrome_beta_mac.sh
+/opt/theia/node_modules/playwright-core/bin/reinstall_chrome_stable_linux.sh
+/opt/theia/node_modules/playwright-core/bin/reinstall_chrome_stable_mac.sh
+/opt/theia/node_modules/playwright-core/bin/reinstall_msedge_beta_linux.sh
+/opt/theia/node_modules/playwright-core/bin/reinstall_msedge_beta_mac.sh
+/opt/theia/node_modules/playwright-core/bin/reinstall_msedge_dev_linux.sh
+/opt/theia/node_modules/playwright-core/bin/reinstall_msedge_dev_mac.sh
+/opt/theia/node_modules/playwright-core/bin/reinstall_msedge_stable_linux.sh
+/opt/theia/node_modules/playwright-core/bin/reinstall_msedge_stable_mac.sh
+/opt/theia/node_modules/playwright-core/cli.js
+/opt/theia/node_modules/playwright-core/lib/cli/cli.js
+/opt/theia/node_modules/playwright-core/lib/utilsBundleImpl/xdg-open
+/opt/theia/node_modules/playwright/cli.js
+/opt/theia/node_modules/playwright/lib/cli.js
+/opt/theia/node_modules/postcss/node_modules/nanoid/bin/nanoid.cjs
 /opt/theia/node_modules/prebuild-install/bin.js
-/opt/theia/node_modules/@phenomnomnominal/tsquery/node_modules/typescript/bin/tsc
-/opt/theia/node_modules/@phenomnomnominal/tsquery/node_modules/typescript/bin/tsserver
-/opt/theia/dev-packages/private-ext-scripts/theia-ts-clean.js
-/opt/theia/dev-packages/private-ext-scripts/theia-run.js
-/opt/theia/dev-packages/private-ext-scripts/theia-ext.js
-/opt/theia/dev-packages/ffmpeg/build/Release/ffmpeg.node
-/opt/theia/dev-packages/ffmpeg/build/Release/obj.target/ffmpeg.node
-/opt/theia/dev-packages/application-package/node_modules/semver/bin/semver
-/opt/theia/dev-packages/ovsx-client/node_modules/semver/bin/semver
-/opt/theia/dev-packages/private-re-exports/bin/theia-re-exports.js
-/opt/theia/dev-packages/cli/node_modules/rimraf/bin.js
-/opt/theia/dev-packages/cli/bin/theia
-/opt/theia/packages/git/src/electron-node/askpass/askpass.sh
+/opt/theia/node_modules/prebuild-install/node_modules/semver/bin/semver
+/opt/theia/node_modules/ps-tree/bin/ps-tree.js
+/opt/theia/node_modules/ps-tree/index.js
+/opt/theia/node_modules/puppeteer-core/node_modules/rimraf/bin.js
+/opt/theia/node_modules/puppeteer-to-istanbul/bin/puppeteer-js-runner.js
+/opt/theia/node_modules/puppeteer-to-istanbul/node_modules/mkdirp/bin/cmd.js
+/opt/theia/node_modules/rc/cli.js
+/opt/theia/node_modules/rc/index.js
+/opt/theia/node_modules/react-tooltip/node_modules/uuid/dist/bin/uuid
+/opt/theia/node_modules/read-package-json/node_modules/glob/dist/esm/bin.mjs
+/opt/theia/node_modules/recast/example/add-braces
+/opt/theia/node_modules/recast/example/generic-identity
+/opt/theia/node_modules/recast/example/identity
+/opt/theia/node_modules/recast/example/to-while
+/opt/theia/node_modules/recast/node_modules/esprima/bin/esparse.js
+/opt/theia/node_modules/recast/node_modules/esprima/bin/esvalidate.js
+/opt/theia/node_modules/regenerate-unicode-properties/index.js
+/opt/theia/node_modules/regjsparser/bin/parser
+/opt/theia/node_modules/regjsparser/node_modules/jsesc/bin/jsesc
+/opt/theia/node_modules/resolve/bin/resolve
+/opt/theia/node_modules/rimraf/bin.js
+/opt/theia/node_modules/route-parser/scripts/compile_parser.js
+/opt/theia/node_modules/secure-compare/index.js
+/opt/theia/node_modules/seek-bzip/bin/seek-bunzip
+/opt/theia/node_modules/seek-bzip/bin/seek-bzip-table
+/opt/theia/node_modules/semver/bin/semver.js
+/opt/theia/node_modules/shell-env/node_modules/which/bin/which
+/opt/theia/node_modules/sigstore/bin/sigstore.js
+/opt/theia/node_modules/slice-ansi/index.js
+/opt/theia/node_modules/spawn-wrap/node_modules/rimraf/bin.js
+/opt/theia/node_modules/ssh2/lib/protocol/crypto/build/Release/obj.target/sshcrypto.node
+/opt/theia/node_modules/ssh2/lib/protocol/crypto/build/Release/sshcrypto.node
+/opt/theia/node_modules/strip-dirs/index.js
+/opt/theia/node_modules/strong-log-transformer/bin/sl-log-transformer.js
+/opt/theia/node_modules/tar/node_modules/mkdirp/bin/cmd.js
+/opt/theia/node_modules/temp/node_modules/rimraf/bin.js
+/opt/theia/node_modules/terser/bin/terser
+/opt/theia/node_modules/terser/bin/uglifyjs
+/opt/theia/node_modules/tmp/node_modules/rimraf/bin.js
+/opt/theia/node_modules/trash/lib/macos-trash
+/opt/theia/node_modules/traverse/examples/json.js
+/opt/theia/node_modules/traverse/examples/leaves.js
+/opt/theia/node_modules/traverse/examples/negative.js
+/opt/theia/node_modules/traverse/examples/stringify.js
+/opt/theia/node_modules/traverse/index.js
+/opt/theia/node_modules/tree-kill/cli.js
+/opt/theia/node_modules/tree-kill/index.js
+/opt/theia/node_modules/tsconfig-paths/node_modules/json5/lib/cli.js
+/opt/theia/node_modules/tslint/bin/tslint
+/opt/theia/node_modules/tslint/node_modules/js-yaml/bin/js-yaml.js
+/opt/theia/node_modules/tslint/node_modules/semver/bin/semver
+/opt/theia/node_modules/typedoc-plugin-external-module-map/publish.js
+/opt/theia/node_modules/typedoc/bin/typedoc
+/opt/theia/node_modules/typescript/bin/tsc
+/opt/theia/node_modules/typescript/bin/tsserver
+/opt/theia/node_modules/uglify-js/bin/uglifyjs
+/opt/theia/node_modules/umd-compat-loader/node_modules/json5/lib/cli.js
+/opt/theia/node_modules/unicode-canonical-property-names-ecmascript/index.js
+/opt/theia/node_modules/unicode-match-property-ecmascript/index.js
+/opt/theia/node_modules/unicode-match-property-value-ecmascript/index.js
+/opt/theia/node_modules/unicode-property-aliases-ecmascript/index.js
+/opt/theia/node_modules/update-browserslist-db/cli.js
+/opt/theia/node_modules/uri-js/dist/es5/uri.all.js
+/opt/theia/node_modules/uri-js/dist/es5/uri.all.js.map
+/opt/theia/node_modules/uri-js/dist/es5/uri.all.min.js
+/opt/theia/node_modules/uri-js/dist/es5/uri.all.min.js.map
+/opt/theia/node_modules/uri-js/dist/esnext/index.js
+/opt/theia/node_modules/uri-js/dist/esnext/index.js.map
+/opt/theia/node_modules/uri-js/dist/esnext/regexps-iri.js
+/opt/theia/node_modules/uri-js/dist/esnext/regexps-iri.js.map
+/opt/theia/node_modules/uri-js/dist/esnext/regexps-uri.js
+/opt/theia/node_modules/uri-js/dist/esnext/regexps-uri.js.map
+/opt/theia/node_modules/uri-js/dist/esnext/schemes/http.js
+/opt/theia/node_modules/uri-js/dist/esnext/schemes/http.js.map
+/opt/theia/node_modules/uri-js/dist/esnext/schemes/https.js
+/opt/theia/node_modules/uri-js/dist/esnext/schemes/https.js.map
+/opt/theia/node_modules/uri-js/dist/esnext/schemes/mailto.js
+/opt/theia/node_modules/uri-js/dist/esnext/schemes/mailto.js.map
+/opt/theia/node_modules/uri-js/dist/esnext/schemes/urn-uuid.js
+/opt/theia/node_modules/uri-js/dist/esnext/schemes/urn-uuid.js.map
+/opt/theia/node_modules/uri-js/dist/esnext/schemes/urn.js
+/opt/theia/node_modules/uri-js/dist/esnext/schemes/urn.js.map
+/opt/theia/node_modules/uri-js/dist/esnext/schemes/ws.js
+/opt/theia/node_modules/uri-js/dist/esnext/schemes/ws.js.map
+/opt/theia/node_modules/uri-js/dist/esnext/schemes/wss.js
+/opt/theia/node_modules/uri-js/dist/esnext/schemes/wss.js.map
+/opt/theia/node_modules/uri-js/dist/esnext/uri.js
+/opt/theia/node_modules/uri-js/dist/esnext/uri.js.map
+/opt/theia/node_modules/uri-js/dist/esnext/util.js
+/opt/theia/node_modules/uri-js/dist/esnext/util.js.map
+/opt/theia/node_modules/uri-js/yarn.lock
+/opt/theia/node_modules/url-join/bin/changelog
+/opt/theia/node_modules/uuid/dist/bin/uuid
+/opt/theia/node_modules/webpack-cli/bin/cli.js
+/opt/theia/node_modules/webpack/bin/webpack.js
+/opt/theia/node_modules/which/bin/node-which
+/opt/theia/node_modules/wide-align/align.js
+/opt/theia/node_modules/wrap-ansi-cjs/index.js
+/opt/theia/node_modules/wrap-ansi/index.js
+/opt/theia/node_modules/write-pkg/node_modules/semver/bin/semver
+/opt/theia/node_modules/yaml/bin.mjs
+/opt/theia/packages/core/node_modules/uuid/dist/bin/uuid
 /opt/theia/packages/git/src/electron-node/askpass/askpass-empty.sh
-/opt/theia/packages/vsx-registry/node_modules/semver/bin/semver
-/opt/theia/packages/task/test-resources/task-osx
+/opt/theia/packages/git/src/electron-node/askpass/askpass.sh
+/opt/theia/packages/plugin-ext/node_modules/mime/cli.js
+/opt/theia/packages/task/test-resources/task
 /opt/theia/packages/task/test-resources/task-long-running
 /opt/theia/packages/task/test-resources/task-long-running-osx
-/opt/theia/packages/task/test-resources/task
-/opt/theia/packages/plugin-ext/node_modules/semver/bin/semver
-/opt/theia/packages/plugin-ext/node_modules/mime/cli.js
-/opt/theia/.browser_modules/native-keymap/build/Release/keymapping.node
-/opt/theia/.browser_modules/native-keymap/build/Release/obj.target/keymapping.node
-/opt/theia/.browser_modules/drivelist/build/Release/drivelist.node
-/opt/theia/.browser_modules/drivelist/build/Release/obj.target/drivelist.node
-/opt/theia/.browser_modules/node-pty/build/Release/spawn-helper
-/opt/theia/.browser_modules/node-pty/build/Release/pty.node
-/opt/theia/.browser_modules/find-git-repositories/build/Release/findGitRepos.node
-/opt/theia/.browser_modules/find-git-repositories/build/Release/obj.target/findGitRepos.node
-/opt/theia/.browser_modules/nsfw/node_modules/node-addon-api/tools/conversion.js
-/opt/theia/.browser_modules/nsfw/build/Release/nsfw.node
-/opt/theia/.browser_modules/nsfw/build/Release/obj.target/nsfw.node
-/opt/theia/scripts/prepare-initial.js
+/opt/theia/packages/task/test-resources/task-osx
 /opt/theia/scripts/check_git_status.sh
-/opt/theia/scripts/deps/arch.sh
-/opt/theia/scripts/deps/rhel.sh
-/opt/theia/scripts/deps/freebsd.sh
 /opt/theia/scripts/deps/alpine.sh
+/opt/theia/scripts/deps/arch.sh
 /opt/theia/scripts/deps/debian.sh
+/opt/theia/scripts/deps/freebsd.sh
+/opt/theia/scripts/deps/rhel.sh
+/opt/theia/scripts/prepare-initial.js
 "
 
 inherit desktop electron-app python-r1 yarn
@@ -528,6 +520,7 @@ https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.23.8.tgz -> yarnpkg-@bab
 https://registry.yarnpkg.com/@babel/template/-/template-7.22.15.tgz -> yarnpkg-@babel-template-7.22.15.tgz
 https://registry.yarnpkg.com/@babel/traverse/-/traverse-7.23.7.tgz -> yarnpkg-@babel-traverse-7.23.7.tgz
 https://registry.yarnpkg.com/@babel/types/-/types-7.23.6.tgz -> yarnpkg-@babel-types-7.23.6.tgz
+https://registry.yarnpkg.com/@balena/dockerignore/-/dockerignore-1.0.2.tgz -> yarnpkg-@balena-dockerignore-1.0.2.tgz
 https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz -> yarnpkg-@discoveryjs-json-ext-0.5.7.tgz
 https://registry.yarnpkg.com/@electron/get/-/get-2.0.3.tgz -> yarnpkg-@electron-get-2.0.3.tgz
 https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.4.3.tgz -> yarnpkg-@eslint-eslintrc-0.4.3.tgz
@@ -645,6 +638,8 @@ https://registry.yarnpkg.com/@types/cookie/-/cookie-0.4.1.tgz -> yarnpkg-@types-
 https://registry.yarnpkg.com/@types/cors/-/cors-2.8.17.tgz -> yarnpkg-@types-cors-2.8.17.tgz
 https://registry.yarnpkg.com/@types/decompress/-/decompress-4.2.7.tgz -> yarnpkg-@types-decompress-4.2.7.tgz
 https://registry.yarnpkg.com/@types/diff/-/diff-3.5.8.tgz -> yarnpkg-@types-diff-3.5.8.tgz
+https://registry.yarnpkg.com/@types/docker-modem/-/docker-modem-3.0.6.tgz -> yarnpkg-@types-docker-modem-3.0.6.tgz
+https://registry.yarnpkg.com/@types/dockerode/-/dockerode-3.3.23.tgz -> yarnpkg-@types-dockerode-3.3.23.tgz
 https://registry.yarnpkg.com/@types/dompurify/-/dompurify-2.4.0.tgz -> yarnpkg-@types-dompurify-2.4.0.tgz
 https://registry.yarnpkg.com/@types/escape-html/-/escape-html-0.0.20.tgz -> yarnpkg-@types-escape-html-0.0.20.tgz
 https://registry.yarnpkg.com/@types/eslint-scope/-/eslint-scope-3.7.7.tgz -> yarnpkg-@types-eslint-scope-3.7.7.tgz
@@ -1050,6 +1045,8 @@ https://registry.yarnpkg.com/diff/-/diff-4.0.2.tgz -> yarnpkg-diff-4.0.2.tgz
 https://registry.yarnpkg.com/diff/-/diff-5.1.0.tgz -> yarnpkg-diff-5.1.0.tgz
 https://registry.yarnpkg.com/dir-glob/-/dir-glob-2.2.2.tgz -> yarnpkg-dir-glob-2.2.2.tgz
 https://registry.yarnpkg.com/dir-glob/-/dir-glob-3.0.1.tgz -> yarnpkg-dir-glob-3.0.1.tgz
+https://registry.yarnpkg.com/docker-modem/-/docker-modem-5.0.3.tgz -> yarnpkg-docker-modem-5.0.3.tgz
+https://registry.yarnpkg.com/dockerode/-/dockerode-4.0.2.tgz -> yarnpkg-dockerode-4.0.2.tgz
 https://registry.yarnpkg.com/doctrine/-/doctrine-2.1.0.tgz -> yarnpkg-doctrine-2.1.0.tgz
 https://registry.yarnpkg.com/doctrine/-/doctrine-3.0.0.tgz -> yarnpkg-doctrine-3.0.0.tgz
 https://registry.yarnpkg.com/dom-serializer/-/dom-serializer-2.0.0.tgz -> yarnpkg-dom-serializer-2.0.0.tgz
@@ -1171,6 +1168,7 @@ https://registry.yarnpkg.com/find-up/-/find-up-5.0.0.tgz -> yarnpkg-find-up-5.0.
 https://registry.yarnpkg.com/find-up/-/find-up-2.1.0.tgz -> yarnpkg-find-up-2.1.0.tgz
 https://registry.yarnpkg.com/find-up/-/find-up-3.0.0.tgz -> yarnpkg-find-up-3.0.0.tgz
 https://registry.yarnpkg.com/find-up/-/find-up-4.1.0.tgz -> yarnpkg-find-up-4.1.0.tgz
+https://registry.yarnpkg.com/find-yarn-workspace-root/-/find-yarn-workspace-root-2.0.0.tgz -> yarnpkg-find-yarn-workspace-root-2.0.0.tgz
 https://registry.yarnpkg.com/fix-path/-/fix-path-3.0.0.tgz -> yarnpkg-fix-path-3.0.0.tgz
 https://registry.yarnpkg.com/flat-cache/-/flat-cache-3.2.0.tgz -> yarnpkg-flat-cache-3.2.0.tgz
 https://registry.yarnpkg.com/flat/-/flat-5.0.2.tgz -> yarnpkg-flat-5.0.2.tgz
@@ -1391,6 +1389,7 @@ https://registry.yarnpkg.com/json-schema-traverse/-/json-schema-traverse-0.4.1.t
 https://registry.yarnpkg.com/json-schema-traverse/-/json-schema-traverse-1.0.0.tgz -> yarnpkg-json-schema-traverse-1.0.0.tgz
 https://registry.yarnpkg.com/json-schema-typed/-/json-schema-typed-7.0.3.tgz -> yarnpkg-json-schema-typed-7.0.3.tgz
 https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz -> yarnpkg-json-stable-stringify-without-jsonify-1.0.1.tgz
+https://registry.yarnpkg.com/json-stable-stringify/-/json-stable-stringify-1.1.1.tgz -> yarnpkg-json-stable-stringify-1.1.1.tgz
 https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz -> yarnpkg-json-stringify-safe-5.0.1.tgz
 https://registry.yarnpkg.com/json5/-/json5-1.0.2.tgz -> yarnpkg-json5-1.0.2.tgz
 https://registry.yarnpkg.com/json5/-/json5-2.2.3.tgz -> yarnpkg-json5-2.2.3.tgz
@@ -1399,6 +1398,7 @@ https://registry.yarnpkg.com/jsonc-parser/-/jsonc-parser-2.3.1.tgz -> yarnpkg-js
 https://registry.yarnpkg.com/jsonc-parser/-/jsonc-parser-3.2.1.tgz -> yarnpkg-jsonc-parser-3.2.1.tgz
 https://registry.yarnpkg.com/jsonfile/-/jsonfile-4.0.0.tgz -> yarnpkg-jsonfile-4.0.0.tgz
 https://registry.yarnpkg.com/jsonfile/-/jsonfile-6.1.0.tgz -> yarnpkg-jsonfile-6.1.0.tgz
+https://registry.yarnpkg.com/jsonify/-/jsonify-0.0.1.tgz -> yarnpkg-jsonify-0.0.1.tgz
 https://registry.yarnpkg.com/jsonparse/-/jsonparse-1.3.1.tgz -> yarnpkg-jsonparse-1.3.1.tgz
 https://registry.yarnpkg.com/jsx-ast-utils/-/jsx-ast-utils-3.3.5.tgz -> yarnpkg-jsx-ast-utils-3.3.5.tgz
 https://registry.yarnpkg.com/just-extend/-/just-extend-6.2.0.tgz -> yarnpkg-just-extend-6.2.0.tgz
@@ -1407,6 +1407,7 @@ https://registry.yarnpkg.com/keytar/-/keytar-7.2.0.tgz -> yarnpkg-keytar-7.2.0.t
 https://registry.yarnpkg.com/keytar/-/keytar-7.9.0.tgz -> yarnpkg-keytar-7.9.0.tgz
 https://registry.yarnpkg.com/keyv/-/keyv-4.5.4.tgz -> yarnpkg-keyv-4.5.4.tgz
 https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz -> yarnpkg-kind-of-6.0.3.tgz
+https://registry.yarnpkg.com/klaw-sync/-/klaw-sync-6.0.0.tgz -> yarnpkg-klaw-sync-6.0.0.tgz
 https://registry.yarnpkg.com/lazystream/-/lazystream-1.0.1.tgz -> yarnpkg-lazystream-1.0.1.tgz
 https://registry.yarnpkg.com/lerna/-/lerna-7.4.2.tgz -> yarnpkg-lerna-7.4.2.tgz
 https://registry.yarnpkg.com/less/-/less-3.13.1.tgz -> yarnpkg-less-3.13.1.tgz
@@ -1603,6 +1604,7 @@ https://registry.yarnpkg.com/octicons/-/octicons-7.4.0.tgz -> yarnpkg-octicons-7
 https://registry.yarnpkg.com/on-finished/-/on-finished-2.4.1.tgz -> yarnpkg-on-finished-2.4.1.tgz
 https://registry.yarnpkg.com/once/-/once-1.4.0.tgz -> yarnpkg-once-1.4.0.tgz
 https://registry.yarnpkg.com/onetime/-/onetime-5.1.2.tgz -> yarnpkg-onetime-5.1.2.tgz
+https://registry.yarnpkg.com/open/-/open-7.4.2.tgz -> yarnpkg-open-7.4.2.tgz
 https://registry.yarnpkg.com/open/-/open-8.4.2.tgz -> yarnpkg-open-8.4.2.tgz
 https://registry.yarnpkg.com/opener/-/opener-1.5.2.tgz -> yarnpkg-opener-1.5.2.tgz
 https://registry.yarnpkg.com/optionator/-/optionator-0.9.3.tgz -> yarnpkg-optionator-0.9.3.tgz
@@ -1643,6 +1645,7 @@ https://registry.yarnpkg.com/parse-url/-/parse-url-8.1.0.tgz -> yarnpkg-parse-ur
 https://registry.yarnpkg.com/parse5-htmlparser2-tree-adapter/-/parse5-htmlparser2-tree-adapter-7.0.0.tgz -> yarnpkg-parse5-htmlparser2-tree-adapter-7.0.0.tgz
 https://registry.yarnpkg.com/parse5/-/parse5-7.1.2.tgz -> yarnpkg-parse5-7.1.2.tgz
 https://registry.yarnpkg.com/parseurl/-/parseurl-1.3.3.tgz -> yarnpkg-parseurl-1.3.3.tgz
+https://registry.yarnpkg.com/patch-package/-/patch-package-8.0.0.tgz -> yarnpkg-patch-package-8.0.0.tgz
 https://registry.yarnpkg.com/path-browserify/-/path-browserify-1.0.1.tgz -> yarnpkg-path-browserify-1.0.1.tgz
 https://registry.yarnpkg.com/path-exists/-/path-exists-3.0.0.tgz -> yarnpkg-path-exists-3.0.0.tgz
 https://registry.yarnpkg.com/path-exists/-/path-exists-4.0.0.tgz -> yarnpkg-path-exists-4.0.0.tgz
@@ -1834,6 +1837,7 @@ https://registry.yarnpkg.com/simple-get/-/simple-get-4.0.1.tgz -> yarnpkg-simple
 https://registry.yarnpkg.com/sinon/-/sinon-12.0.1.tgz -> yarnpkg-sinon-12.0.1.tgz
 https://registry.yarnpkg.com/slash/-/slash-3.0.0.tgz -> yarnpkg-slash-3.0.0.tgz
 https://registry.yarnpkg.com/slash/-/slash-1.0.0.tgz -> yarnpkg-slash-1.0.0.tgz
+https://registry.yarnpkg.com/slash/-/slash-2.0.0.tgz -> yarnpkg-slash-2.0.0.tgz
 https://registry.yarnpkg.com/slice-ansi/-/slice-ansi-4.0.0.tgz -> yarnpkg-slice-ansi-4.0.0.tgz
 https://registry.yarnpkg.com/smart-buffer/-/smart-buffer-4.2.0.tgz -> yarnpkg-smart-buffer-4.2.0.tgz
 https://registry.yarnpkg.com/socket.io-adapter/-/socket.io-adapter-2.5.2.tgz -> yarnpkg-socket.io-adapter-2.5.2.tgz
@@ -1856,6 +1860,7 @@ https://registry.yarnpkg.com/spdx-correct/-/spdx-correct-3.2.0.tgz -> yarnpkg-sp
 https://registry.yarnpkg.com/spdx-exceptions/-/spdx-exceptions-2.4.0.tgz -> yarnpkg-spdx-exceptions-2.4.0.tgz
 https://registry.yarnpkg.com/spdx-expression-parse/-/spdx-expression-parse-3.0.1.tgz -> yarnpkg-spdx-expression-parse-3.0.1.tgz
 https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-3.0.16.tgz -> yarnpkg-spdx-license-ids-3.0.16.tgz
+https://registry.yarnpkg.com/split-ca/-/split-ca-1.0.1.tgz -> yarnpkg-split-ca-1.0.1.tgz
 https://registry.yarnpkg.com/split2/-/split2-3.2.2.tgz -> yarnpkg-split2-3.2.2.tgz
 https://registry.yarnpkg.com/split/-/split-0.3.3.tgz -> yarnpkg-split-0.3.3.tgz
 https://registry.yarnpkg.com/split/-/split-1.0.1.tgz -> yarnpkg-split-1.0.1.tgz
@@ -1870,7 +1875,6 @@ https://registry.yarnpkg.com/statuses/-/statuses-2.0.1.tgz -> yarnpkg-statuses-2
 https://registry.yarnpkg.com/stream-combiner/-/stream-combiner-0.0.4.tgz -> yarnpkg-stream-combiner-0.0.4.tgz
 https://registry.yarnpkg.com/streamsearch/-/streamsearch-1.1.0.tgz -> yarnpkg-streamsearch-1.1.0.tgz
 https://registry.yarnpkg.com/string-argv/-/string-argv-0.1.2.tgz -> yarnpkg-string-argv-0.1.2.tgz
-https://registry.yarnpkg.com/string-replace-loader/-/string-replace-loader-3.1.0.tgz -> yarnpkg-string-replace-loader-3.1.0.tgz
 https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz -> yarnpkg-string-width-4.2.3.tgz
 https://registry.yarnpkg.com/string-width/-/string-width-1.0.2.tgz -> yarnpkg-string-width-1.0.2.tgz
 https://registry.yarnpkg.com/string-width/-/string-width-5.1.2.tgz -> yarnpkg-string-width-5.1.2.tgz
@@ -1905,6 +1909,7 @@ https://registry.yarnpkg.com/table/-/table-6.8.1.tgz -> yarnpkg-table-6.8.1.tgz
 https://registry.yarnpkg.com/tapable/-/tapable-2.2.1.tgz -> yarnpkg-tapable-2.2.1.tgz
 https://registry.yarnpkg.com/tar-fs/-/tar-fs-2.1.1.tgz -> yarnpkg-tar-fs-2.1.1.tgz
 https://registry.yarnpkg.com/tar-fs/-/tar-fs-1.16.3.tgz -> yarnpkg-tar-fs-1.16.3.tgz
+https://registry.yarnpkg.com/tar-fs/-/tar-fs-2.0.1.tgz -> yarnpkg-tar-fs-2.0.1.tgz
 https://registry.yarnpkg.com/tar-stream/-/tar-stream-1.6.2.tgz -> yarnpkg-tar-stream-1.6.2.tgz
 https://registry.yarnpkg.com/tar-stream/-/tar-stream-2.2.0.tgz -> yarnpkg-tar-stream-2.2.0.tgz
 https://registry.yarnpkg.com/tar/-/tar-6.1.11.tgz -> yarnpkg-tar-6.1.11.tgz
@@ -2077,6 +2082,7 @@ https://registry.yarnpkg.com/y18n/-/y18n-5.0.8.tgz -> yarnpkg-y18n-5.0.8.tgz
 https://registry.yarnpkg.com/yallist/-/yallist-2.1.2.tgz -> yarnpkg-yallist-2.1.2.tgz
 https://registry.yarnpkg.com/yallist/-/yallist-3.1.1.tgz -> yarnpkg-yallist-3.1.1.tgz
 https://registry.yarnpkg.com/yallist/-/yallist-4.0.0.tgz -> yarnpkg-yallist-4.0.0.tgz
+https://registry.yarnpkg.com/yaml/-/yaml-2.4.1.tgz -> yarnpkg-yaml-2.4.1.tgz
 https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-20.2.4.tgz -> yarnpkg-yargs-parser-20.2.4.tgz
 https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-21.1.1.tgz -> yarnpkg-yargs-parser-21.1.1.tgz
 https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-18.1.3.tgz -> yarnpkg-yargs-parser-18.1.3.tgz
@@ -2463,6 +2469,14 @@ get_plugins() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
 	eyarn download:plugins
+}
+
+yarn_unpack_install_pre() {
+einfo "Called yarn_unpack_install_pre()"
+	sed -i \
+		-e "/node-gyp install/d" \
+		"${S}/package.json" \
+		|| die
 }
 
 src_unpack() {

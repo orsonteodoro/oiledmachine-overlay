@@ -316,7 +316,7 @@ _yarn_src_unpack_default_ebuild() {
 		fi
 		rm -rf "${S}/.yarnrc" || die
 		if [[ "${YARN_SLOT}" == "1" ]] ; then
-			yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
+			yarn config set yarn-offline-mirror "${WORKDIR}/npm-packages-offline-cache" || die
 			mv "${HOME}/.yarnrc" "${WORKDIR}" || die
 		fi
 		if [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" && -n "${YARN_ROOT}" ]] ; then
@@ -373,7 +373,7 @@ _yarn_src_unpack_default_upstream() {
 		fi
 		rm -rf "${S}/.yarnrc" || die
 		if [[ "${YARN_SLOT}" == "1" ]] ; then
-			yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
+			yarn config set yarn-offline-mirror "${WORKDIR}/npm-packages-offline-cache" || die
 			mv "${HOME}/.yarnrc" "${WORKDIR}" || die
 		fi
 	fi
