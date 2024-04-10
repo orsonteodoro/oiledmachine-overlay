@@ -7,9 +7,14 @@ EAPI=8
 # TODO:  complete bazel offline install.
 # All builds require npm/node.
 
+# For constants without links, the versions are obtained by console inspection.
 ANT_PV="1.10.11"								# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L21
 ARGS4J_PV="2.33"								# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L9
-AUTO_VALUE_ANNOTATIONS_PV="1.7.4"
+ASM_PV="9.0"
+AUTO_COMMON_PV="1.2.2"
+AUTO_SERVICE_PV="1.1.1"
+AUTO_VALUE_1_7_PV="1.7.4"
+AUTO_VALUE_1_10_PV="1.10.4"
 BAZELISK_PV="1.18.0" # From CI (Build Compiler)
 BAZELISK_ABIS="
 	amd64
@@ -26,7 +31,8 @@ EGIT_BAZEL_JAR_JAR_COMMIT="171f268569384c57c19474b04aebe574d85fde0d"		# https://
 EGIT_RULES_CC_COMMIT="b7fe9697c0c76ab2fd431a891dbb9a6a32ed7c3e"			# # ?
 EGIT_RULES_PROTO_COMMIT="7e4afce6fe62dbff0a4a03450143146f9f2d7488"		# ; 2 tarballs needed from this project
 EGIT_RULES_JVM_EXTERNAL_COMMIT="77c3538b33cf195879b337fd48c480b77815b9a0"	# https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L18
-ERROR_PRONE_ANNOTATIONS_2_15_PV="2.15.0"						# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L11
+ERROR_PRONE_ANNOTATIONS_2_15_PV="2.15.0"					# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L11
+ERROR_PRONE_ANNOTATIONS_2_18_PV="2.18.0"
 FAILUREACCESS_PV="1.0.1"							# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L12
 FN_DEST="${PN}-${PV}.tar.gz"
 FN_DEST2="${PN%-*}-${PV}.tar.gz"
@@ -35,39 +41,39 @@ GRAALVM_PV="22.3.2"								# https://github.com/google/closure-compiler-npm/blob
 GSON_PV="2.9.1"									# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L10
 GUAVA26_PV="26.0"
 GUAVA32_PV="32.1.2"								# https://github.com/google/closure-compiler/blob/v20240317/license_check/maven_artifacts.bzl#L8
+GUAVA33_PV="33.0.0"
+GUAVA_BETA_CHECKER_PV="1.0"
+HAMCREST_PV="1.3"
+J2OBJC_ANNOTATIONS_PV="2.8"
 JAVA_SLOT="17"									# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml#L26
 JAVA_DIFF_UTILS_PV="4.12"							# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L20
 JAVA_TOOLS_PV="11.11"								# https://github.com/bazelbuild/rules_java/blob/5.4.1/java/repositories.bzl#L28
 JIMFS_PV="1.2"									# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L15
 JQ_PV="1.6"
 JSPECIFY_PV="0.2.0"								# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L22
-MY_PN="closure-compiler"
-NODE_ENV="development"
-NODE_VERSION=18 # Upstream uses 14 on linux but others 16, 18
-PROTOBUF_BOM_PV="3.21.12"
-PROTOBUF_JAVA_PV="3.21.12"							# https://github.com/google/closure-compiler/blob/v20240317/license_check/maven_artifacts.bzl#L11
-PROTOBUF_PARENT_PV="3.21.12"
-RE2J_PV="1.3"									# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L17
-RULES_JAVA_PV="5.4.1"								# https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L8
-RULES_PROTO_PV="4.0.0"								# https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L35     ; 2 tarballs needed from this project
-TRUTH_LITEPROTO_EXTENSION_PV="1.4.0"						# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L18
-TRUTH_PROTO_EXTENSION_PV="1.1"							# https://github.com/google/closure-compiler/blob/v20240317/license_check/maven_artifacts.bzl#L14
-ZULU17_PV="17.32.13-ca-jdk17.0.2"						# https://github.com/bazelbuild/rules_java/blob/5.4.1/java/repositories.bzl#L434
-ZULU11_PV="11.56.19-ca-jdk11.0.15"						# https://github.com/bazelbuild/rules_java/blob/5.4.1/java/repositories.bzl#L172
-
-ASM_PV="9.0"
-AUTO_VALUE_PV="1.7.4"
-HAMCREST_PV="1.3"
-ERROR_PRONE_ANNOTATIONS_2_18_PV="2.18.0"
-J2OBJC_ANNOTATIONS_PV="2.8"
+JSR256_PV="1.0"
 JSR305_PV="3.0.2"
 JUNIT_PV="4.13.2"
 LISTENABLEFUTURE_PV="9999.0"
+MY_PN="closure-compiler"
+NODE_ENV="development"
+NODE_VERSION=18 # Upstream uses 14 on linux but others 16, 18
 OSS7_PV="7"
 OSS9_PV="9"
 OW2_PV="1.5"
 POM_PV="14"
-TRUTH_PV="1.1"
+PROTOBUF_JAVA_3_17_PV="3.17.0"
+PROTOBUF_JAVA_3_21_PV="3.21.12"							# https://github.com/google/closure-compiler/blob/v20240317/license_check/maven_artifacts.bzl#L11
+PROTOBUF_PV="3.17.0"
+PROTOC_PV="3.17.0"
+RE2J_PV="1.3"									# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L17
+RULES_JAVA_PV="5.4.1"								# https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L8
+RULES_PROTO_PV="4.0.0"								# https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L35     ; 2 tarballs needed from this project
+TRUTH_LITEPROTO_EXTENSION_PV="1.4.0"						# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L18
+TRUTH_PV="1.1"									# https://github.com/google/closure-compiler/blob/v20240317/license_check/maven_artifacts.bzl#L14
+ZULU17_PV="17.32.13-ca-jdk17.0.2"						# https://github.com/bazelbuild/rules_java/blob/5.4.1/java/repositories.bzl#L434
+ZULU11_PV="11.56.19-ca-jdk11.0.15"						# https://github.com/bazelbuild/rules_java/blob/5.4.1/java/repositories.bzl#L172
+
 
 inherit bazel check-reqs java-pkg-opt-2 graalvm npm
 
@@ -502,19 +508,31 @@ https://github.com/johnynek/bazel_jar_jar/archive/${EGIT_BAZEL_JAR_JAR_COMMIT}.z
 https://github.com/stedolan/jq/releases/download/jq-${JQ_PV}/jq-linux64 -> jq-${JQ_PV}-linux64
 https://github.com/stedolan/jq/releases/download/jq-${JQ_PV}/jq-osx-amd64 -> jq-${JQ_PV}-osx-amd64
 https://github.com/stedolan/jq/releases/download/jq-${JQ_PV}/jq-win64.exe -> jq-${JQ_PV}-win64-amd64
+https://mirror.bazel.build/github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.tar.gz -> protobuf-v${PROTOBUF_PV}.tar.gz
+https://mirror.bazel.build/github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_PV}/protoc-${PROTOC_PV}-linux-x86_64.zip
 https://repo1.maven.org/maven2/args4j/args4j-site/${ARGS4J_PV}/args4j-site-${ARGS4J_PV}.pom
 https://repo1.maven.org/maven2/args4j/args4j-site/${ARGS4J_PV}/args4j-site-${ARGS4J_PV}.pom.md5
 https://repo1.maven.org/maven2/args4j/args4j-site/${ARGS4J_PV}/args4j-site-${ARGS4J_PV}.pom.sha1
 https://repo1.maven.org/maven2/args4j/args4j/${ARGS4J_PV}/args4j-${ARGS4J_PV}.jar
+https://repo1.maven.org/maven2/args4j/args4j/${ARGS4J_PV}/args4j-${ARGS4J_PV}.jar.md5
+https://repo1.maven.org/maven2/args4j/args4j/${ARGS4J_PV}/args4j-${ARGS4J_PV}.jar.sha1
 https://repo1.maven.org/maven2/args4j/args4j/${ARGS4J_PV}/args4j-${ARGS4J_PV}.pom
 https://repo1.maven.org/maven2/args4j/args4j/${ARGS4J_PV}/args4j-${ARGS4J_PV}.pom.md5
 https://repo1.maven.org/maven2/args4j/args4j/${ARGS4J_PV}/args4j-${ARGS4J_PV}.pom.sha1
-https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations/${AUTO_VALUE_ANNOTATIONS_PV}/auto-value-annotations-${AUTO_VALUE_ANNOTATIONS_PV}.pom
-https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations/${AUTO_VALUE_ANNOTATIONS_PV}/auto-value-annotations-${AUTO_VALUE_ANNOTATIONS_PV}.pom.md5
-https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations/${AUTO_VALUE_ANNOTATIONS_PV}/auto-value-annotations-${AUTO_VALUE_ANNOTATIONS_PV}.pom.sha1
-https://repo1.maven.org/maven2/com/google/auto/value/auto-value-parent/${AUTO_VALUE_PV}/auto-value-parent-${AUTO_VALUE_PV}.pom
-https://repo1.maven.org/maven2/com/google/auto/value/auto-value-parent/${AUTO_VALUE_PV}/auto-value-parent-${AUTO_VALUE_PV}.pom.md5
-https://repo1.maven.org/maven2/com/google/auto/value/auto-value-parent/${AUTO_VALUE_PV}/auto-value-parent-${AUTO_VALUE_PV}.pom.sha1
+https://repo1.maven.org/maven2/com/google/auto/auto-common/${AUTO_COMMON_PV}/auto-common-${AUTO_COMMON_PV}.jar
+https://repo1.maven.org/maven2/com/google/auto/service/auto-service/${AUTO_SERVICE_PV}/auto-service-${AUTO_SERVICE_PV}.jar
+https://repo1.maven.org/maven2/com/google/auto/service/auto-service-annotations/${AUTO_SERVICE_PV}/auto-service-annotations-${AUTO_SERVICE_PV}.jar
+https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations/${AUTO_VALUE_1_7_PV}/auto-value-annotations-${AUTO_VALUE_1_7_PV}.pom
+https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations/${AUTO_VALUE_1_7_PV}/auto-value-annotations-${AUTO_VALUE_1_7_PV}.pom.md5
+https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations/${AUTO_VALUE_1_7_PV}/auto-value-annotations-${AUTO_VALUE_1_7_PV}.pom.sha1
+https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations/${AUTO_VALUE_1_10_PV}/auto-value-annotations-${AUTO_VALUE_1_10_PV}.jar
+https://repo1.maven.org/maven2/com/google/auto/value/auto-value-parent/${AUTO_VALUE_1_7_PV}/auto-value-parent-${AUTO_VALUE_1_7_PV}.pom
+https://repo1.maven.org/maven2/com/google/auto/value/auto-value-parent/${AUTO_VALUE_1_7_PV}/auto-value-parent-${AUTO_VALUE_1_7_PV}.pom.md5
+https://repo1.maven.org/maven2/com/google/auto/value/auto-value-parent/${AUTO_VALUE_1_7_PV}/auto-value-parent-${AUTO_VALUE_1_7_PV}.pom.sha1
+https://repo1.maven.org/maven2/com/google/auto/value/auto-value/${AUTO_VALUE_1_10_PV}/auto-value-${AUTO_VALUE_1_10_PV}.jar
+https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/${JSR305_PV}/jsr305-${JSR305_PV}.jar
+https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/${JSR305_PV}/jsr305-${JSR305_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/${JSR305_PV}/jsr305-${JSR305_PV}.jar.sha1
 https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/${JSR305_PV}/jsr305-${JSR305_PV}.pom
 https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/${JSR305_PV}/jsr305-${JSR305_PV}.pom.md5
 https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/${JSR305_PV}/jsr305-${JSR305_PV}.pom.sha1
@@ -522,10 +540,14 @@ https://repo1.maven.org/maven2/com/google/code/gson/gson-parent/${GSON_PV}/gson-
 https://repo1.maven.org/maven2/com/google/code/gson/gson-parent/${GSON_PV}/gson-parent-${GSON_PV}.pom.md5
 https://repo1.maven.org/maven2/com/google/code/gson/gson-parent/${GSON_PV}/gson-parent-${GSON_PV}.pom.sha1
 https://repo1.maven.org/maven2/com/google/code/gson/gson/${GSON_PV}/gson-${GSON_PV}.jar
+https://repo1.maven.org/maven2/com/google/code/gson/gson/${GSON_PV}/gson-${GSON_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/code/gson/gson/${GSON_PV}/gson-${GSON_PV}.jar.sha1
 https://repo1.maven.org/maven2/com/google/code/gson/gson/${GSON_PV}/gson-${GSON_PV}.pom
 https://repo1.maven.org/maven2/com/google/code/gson/gson/${GSON_PV}/gson-${GSON_PV}.pom.md5
 https://repo1.maven.org/maven2/com/google/code/gson/gson/${GSON_PV}/gson-${GSON_PV}.pom.sha1
 https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/${ERROR_PRONE_ANNOTATIONS_2_15_PV}/error_prone_annotations-${ERROR_PRONE_ANNOTATIONS_2_15_PV}.jar
+https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/${ERROR_PRONE_ANNOTATIONS_2_15_PV}/error_prone_annotations-${ERROR_PRONE_ANNOTATIONS_2_15_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/${ERROR_PRONE_ANNOTATIONS_2_15_PV}/error_prone_annotations-${ERROR_PRONE_ANNOTATIONS_2_15_PV}.jar.sha1
 https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/${ERROR_PRONE_ANNOTATIONS_2_15_PV}/error_prone_annotations-${ERROR_PRONE_ANNOTATIONS_2_15_PV}.pom
 https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/${ERROR_PRONE_ANNOTATIONS_2_15_PV}/error_prone_annotations-${ERROR_PRONE_ANNOTATIONS_2_15_PV}.pom.md5
 https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/${ERROR_PRONE_ANNOTATIONS_2_15_PV}/error_prone_annotations-${ERROR_PRONE_ANNOTATIONS_2_15_PV}.pom.sha1
@@ -539,13 +561,19 @@ https://repo1.maven.org/maven2/com/google/errorprone/error_prone_parent/${ERROR_
 https://repo1.maven.org/maven2/com/google/errorprone/error_prone_parent/${ERROR_PRONE_ANNOTATIONS_2_18_PV}/error_prone_parent-${ERROR_PRONE_ANNOTATIONS_2_18_PV}.pom.md5
 https://repo1.maven.org/maven2/com/google/errorprone/error_prone_parent/${ERROR_PRONE_ANNOTATIONS_2_18_PV}/error_prone_parent-${ERROR_PRONE_ANNOTATIONS_2_18_PV}.pom.sha1
 https://repo1.maven.org/maven2/com/google/guava/failureaccess/${FAILUREACCESS_PV}/failureaccess-${FAILUREACCESS_PV}.jar
+https://repo1.maven.org/maven2/com/google/guava/failureaccess/${FAILUREACCESS_PV}/failureaccess-${FAILUREACCESS_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/guava/failureaccess/${FAILUREACCESS_PV}/failureaccess-${FAILUREACCESS_PV}.jar.sha1
 https://repo1.maven.org/maven2/com/google/guava/failureaccess/${FAILUREACCESS_PV}/failureaccess-${FAILUREACCESS_PV}.pom
 https://repo1.maven.org/maven2/com/google/guava/failureaccess/${FAILUREACCESS_PV}/failureaccess-${FAILUREACCESS_PV}.pom.md5
 https://repo1.maven.org/maven2/com/google/guava/failureaccess/${FAILUREACCESS_PV}/failureaccess-${FAILUREACCESS_PV}.pom.sha1
 https://repo1.maven.org/maven2/com/google/guava/guava/${GUAVA32_PV}-jre/guava-${GUAVA32_PV}-jre.jar
+https://repo1.maven.org/maven2/com/google/guava/guava/${GUAVA32_PV}-jre/guava-${GUAVA32_PV}-jre.jar.md5
+https://repo1.maven.org/maven2/com/google/guava/guava/${GUAVA32_PV}-jre/guava-${GUAVA32_PV}-jre.jar.sha1
 https://repo1.maven.org/maven2/com/google/guava/guava/${GUAVA32_PV}-jre/guava-${GUAVA32_PV}-jre.pom
 https://repo1.maven.org/maven2/com/google/guava/guava/${GUAVA32_PV}-jre/guava-${GUAVA32_PV}-jre.pom.md5
 https://repo1.maven.org/maven2/com/google/guava/guava/${GUAVA32_PV}-jre/guava-${GUAVA32_PV}-jre.pom.sha1
+https://repo1.maven.org/maven2/com/google/guava/guava/${GUAVA33_PV}-jre/guava-${GUAVA33_PV}-jre.jar
+https://repo1.maven.org/maven2/com/google/guava/guava-beta-checker/${GUAVA_BETA_CHECKER_PV}/guava-beta-checker-${GUAVA_BETA_CHECKER_PV}.jar
 https://repo1.maven.org/maven2/com/google/guava/guava-parent/${GUAVA26_PV}-android/guava-parent-${GUAVA26_PV}-android.pom
 https://repo1.maven.org/maven2/com/google/guava/guava-parent/${GUAVA26_PV}-android/guava-parent-${GUAVA26_PV}-android.pom.md5
 https://repo1.maven.org/maven2/com/google/guava/guava-parent/${GUAVA26_PV}-android/guava-parent-${GUAVA26_PV}-android.pom.sha1
@@ -556,12 +584,17 @@ https://repo1.maven.org/maven2/com/google/guava/guava-parent/${GUAVA32_PV}-jre/g
 https://repo1.maven.org/maven2/com/google/guava/guava-parent/${GUAVA32_PV}-jre/guava-parent-${GUAVA32_PV}-jre.pom.md5
 https://repo1.maven.org/maven2/com/google/guava/guava-parent/${GUAVA32_PV}-jre/guava-parent-${GUAVA32_PV}-jre.pom.sha1
 https://repo1.maven.org/maven2/com/google/guava/guava-testlib/${GUAVA32_PV}-jre/guava-testlib-${GUAVA32_PV}-jre.jar
+https://repo1.maven.org/maven2/com/google/guava/guava-testlib/${GUAVA32_PV}-jre/guava-testlib-${GUAVA32_PV}-jre.jar.md5
+https://repo1.maven.org/maven2/com/google/guava/guava-testlib/${GUAVA32_PV}-jre/guava-testlib-${GUAVA32_PV}-jre.jar.sha1
 https://repo1.maven.org/maven2/com/google/guava/guava-testlib/${GUAVA32_PV}-jre/guava-testlib-${GUAVA32_PV}-jre.pom
 https://repo1.maven.org/maven2/com/google/guava/guava-testlib/${GUAVA32_PV}-jre/guava-testlib-${GUAVA32_PV}-jre.pom.md5
 https://repo1.maven.org/maven2/com/google/guava/guava-testlib/${GUAVA32_PV}-jre/guava-testlib-${GUAVA32_PV}-jre.pom.sha1
 https://repo1.maven.org/maven2/com/google/guava/listenablefuture/${LISTENABLEFUTURE_PV}-empty-to-avoid-conflict-with-guava/listenablefuture-${LISTENABLEFUTURE_PV}-empty-to-avoid-conflict-with-guava.pom
 https://repo1.maven.org/maven2/com/google/guava/listenablefuture/${LISTENABLEFUTURE_PV}-empty-to-avoid-conflict-with-guava/listenablefuture-${LISTENABLEFUTURE_PV}-empty-to-avoid-conflict-with-guava.pom.md5
 https://repo1.maven.org/maven2/com/google/guava/listenablefuture/${LISTENABLEFUTURE_PV}-empty-to-avoid-conflict-with-guava/listenablefuture-${LISTENABLEFUTURE_PV}-empty-to-avoid-conflict-with-guava.pom.sha1
+https://repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/${J2OBJC_ANNOTATIONS_PV}/j2objc-annotations-${J2OBJC_ANNOTATIONS_PV}.jar
+https://repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/${J2OBJC_ANNOTATIONS_PV}/j2objc-annotations-${J2OBJC_ANNOTATIONS_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/${J2OBJC_ANNOTATIONS_PV}/j2objc-annotations-${J2OBJC_ANNOTATIONS_PV}.jar.sha1
 https://repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/${J2OBJC_ANNOTATIONS_PV}/j2objc-annotations-${J2OBJC_ANNOTATIONS_PV}.pom
 https://repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/${J2OBJC_ANNOTATIONS_PV}/j2objc-annotations-${J2OBJC_ANNOTATIONS_PV}.pom.md5
 https://repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/${J2OBJC_ANNOTATIONS_PV}/j2objc-annotations-${J2OBJC_ANNOTATIONS_PV}.pom.sha1
@@ -569,39 +602,52 @@ https://repo1.maven.org/maven2/com/google/jimfs/jimfs-parent/${JIMFS_PV}/jimfs-p
 https://repo1.maven.org/maven2/com/google/jimfs/jimfs-parent/${JIMFS_PV}/jimfs-parent-${JIMFS_PV}.pom.md5
 https://repo1.maven.org/maven2/com/google/jimfs/jimfs-parent/${JIMFS_PV}/jimfs-parent-${JIMFS_PV}.pom.sha1
 https://repo1.maven.org/maven2/com/google/jimfs/jimfs/${JIMFS_PV}/jimfs-${JIMFS_PV}.jar
+https://repo1.maven.org/maven2/com/google/jimfs/jimfs/${JIMFS_PV}/jimfs-${JIMFS_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/jimfs/jimfs/${JIMFS_PV}/jimfs-${JIMFS_PV}.jar.sha1
 https://repo1.maven.org/maven2/com/google/jimfs/jimfs/${JIMFS_PV}/jimfs-${JIMFS_PV}.pom
 https://repo1.maven.org/maven2/com/google/jimfs/jimfs/${JIMFS_PV}/jimfs-${JIMFS_PV}.pom.md5
 https://repo1.maven.org/maven2/com/google/jimfs/jimfs/${JIMFS_PV}/jimfs-${JIMFS_PV}.pom.sha1
-https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_PV}/protobuf-java-${PROTOBUF_JAVA_PV}.pom
-https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_PV}/protobuf-java-${PROTOBUF_JAVA_PV}.pom.md5
-https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_PV}/protobuf-java-${PROTOBUF_JAVA_PV}.pom.sha1
-https://repo1.maven.org/maven2/com/google/protobuf/protobuf-parent/${PROTOBUF_PARENT_PV}/protobuf-parent-${PROTOBUF_PARENT_PV}.pom
-https://repo1.maven.org/maven2/com/google/protobuf/protobuf-parent/${PROTOBUF_PARENT_PV}/protobuf-parent-${PROTOBUF_PARENT_PV}.pom.md5
-https://repo1.maven.org/maven2/com/google/protobuf/protobuf-parent/${PROTOBUF_PARENT_PV}/protobuf-parent-${PROTOBUF_PARENT_PV}.pom.sha1
-https://repo1.maven.org/maven2/com/google/protobuf/protobuf-bom/${PROTOBUF_BOM_PV}/protobuf-bom-${PROTOBUF_BOM_PV}.pom
-https://repo1.maven.org/maven2/com/google/protobuf/protobuf-bom/${PROTOBUF_BOM_PV}/protobuf-bom-${PROTOBUF_BOM_PV}.pom.md5
-https://repo1.maven.org/maven2/com/google/protobuf/protobuf-bom/${PROTOBUF_BOM_PV}/protobuf-bom-${PROTOBUF_BOM_PV}.pom.sha1
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-bom/${PROTOBUF_JAVA_3_21_PV}/protobuf-bom-${PROTOBUF_JAVA_3_21_PV}.pom
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-bom/${PROTOBUF_JAVA_3_21_PV}/protobuf-bom-${PROTOBUF_JAVA_3_21_PV}.pom.md5
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-bom/${PROTOBUF_JAVA_3_21_PV}/protobuf-bom-${PROTOBUF_JAVA_3_21_PV}.pom.sha1
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_3_17_PV}/protobuf-java-${PROTOBUF_JAVA_3_17_PV}.jar
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_3_21_PV}/protobuf-java-${PROTOBUF_JAVA_3_21_PV}.jar
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_3_21_PV}/protobuf-java-${PROTOBUF_JAVA_3_21_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_3_21_PV}/protobuf-java-${PROTOBUF_JAVA_3_21_PV}.jar.sha1
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_3_21_PV}/protobuf-java-${PROTOBUF_JAVA_3_21_PV}.pom
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_3_21_PV}/protobuf-java-${PROTOBUF_JAVA_3_21_PV}.pom.md5
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_3_21_PV}/protobuf-java-${PROTOBUF_JAVA_3_21_PV}.pom.sha1
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_3_17_PV}/protobuf-java-${PROTOBUF_JAVA_3_17_PV}-sources.jar
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-parent/${PROTOBUF_JAVA_3_21_PV}/protobuf-parent-${PROTOBUF_JAVA_3_21_PV}.pom
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-parent/${PROTOBUF_JAVA_3_21_PV}/protobuf-parent-${PROTOBUF_JAVA_3_21_PV}.pom.md5
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-parent/${PROTOBUF_JAVA_3_21_PV}/protobuf-parent-${PROTOBUF_JAVA_3_21_PV}.pom.sha1
 https://repo1.maven.org/maven2/com/google/re2j/re2j/${RE2J_PV}/re2j-${RE2J_PV}.jar
+https://repo1.maven.org/maven2/com/google/re2j/re2j/${RE2J_PV}/re2j-${RE2J_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/re2j/re2j/${RE2J_PV}/re2j-${RE2J_PV}.jar.sha1
 https://repo1.maven.org/maven2/com/google/re2j/re2j/${RE2J_PV}/re2j-${RE2J_PV}.pom
 https://repo1.maven.org/maven2/com/google/re2j/re2j/${RE2J_PV}/re2j-${RE2J_PV}.pom.md5
 https://repo1.maven.org/maven2/com/google/re2j/re2j/${RE2J_PV}/re2j-${RE2J_PV}.pom.sha1
-https://repo1.maven.org/maven2/com/google/truth/extensions/truth-extensions-parent/${TRUTH_PROTO_EXTENSION_PV}/truth-extensions-parent-${TRUTH_PROTO_EXTENSION_PV}.pom
-https://repo1.maven.org/maven2/com/google/truth/extensions/truth-extensions-parent/${TRUTH_PROTO_EXTENSION_PV}/truth-extensions-parent-${TRUTH_PROTO_EXTENSION_PV}.pom.md5
-https://repo1.maven.org/maven2/com/google/truth/extensions/truth-extensions-parent/${TRUTH_PROTO_EXTENSION_PV}/truth-extensions-parent-${TRUTH_PROTO_EXTENSION_PV}.pom.sha1
-https://repo1.maven.org/maven2/com/google/truth/extensions/truth-liteproto-extension/${TRUTH_PROTO_EXTENSION_PV}/truth-liteproto-extension-${TRUTH_PROTO_EXTENSION_PV}.pom
-https://repo1.maven.org/maven2/com/google/truth/extensions/truth-liteproto-extension/${TRUTH_PROTO_EXTENSION_PV}/truth-liteproto-extension-${TRUTH_PROTO_EXTENSION_PV}.pom.md5
-https://repo1.maven.org/maven2/com/google/truth/extensions/truth-liteproto-extension/${TRUTH_PROTO_EXTENSION_PV}/truth-liteproto-extension-${TRUTH_PROTO_EXTENSION_PV}.pom.sha1
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-extensions-parent/${TRUTH_PV}/truth-extensions-parent-${TRUTH_PV}.pom
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-extensions-parent/${TRUTH_PV}/truth-extensions-parent-${TRUTH_PV}.pom.md5
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-extensions-parent/${TRUTH_PV}/truth-extensions-parent-${TRUTH_PV}.pom.sha1
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-liteproto-extension/${TRUTH_PV}/truth-liteproto-extension-${TRUTH_PV}.pom
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-liteproto-extension/${TRUTH_PV}/truth-liteproto-extension-${TRUTH_PV}.pom.md5
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-liteproto-extension/${TRUTH_PV}/truth-liteproto-extension-${TRUTH_PV}.pom.sha1
 https://repo1.maven.org/maven2/com/google/truth/extensions/truth-liteproto-extension/${TRUTH_LITEPROTO_EXTENSION_PV}/truth-liteproto-extension-${TRUTH_LITEPROTO_EXTENSION_PV}.jar
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-liteproto-extension/${TRUTH_LITEPROTO_EXTENSION_PV}/truth-liteproto-extension-${TRUTH_LITEPROTO_EXTENSION_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-liteproto-extension/${TRUTH_LITEPROTO_EXTENSION_PV}/truth-liteproto-extension-${TRUTH_LITEPROTO_EXTENSION_PV}.jar.sha1
 https://repo1.maven.org/maven2/com/google/truth/extensions/truth-liteproto-extension/${TRUTH_LITEPROTO_EXTENSION_PV}/truth-liteproto-extension-${TRUTH_LITEPROTO_EXTENSION_PV}.pom
 https://repo1.maven.org/maven2/com/google/truth/extensions/truth-liteproto-extension/${TRUTH_LITEPROTO_EXTENSION_PV}/truth-liteproto-extension-${TRUTH_LITEPROTO_EXTENSION_PV}.pom.md5
 https://repo1.maven.org/maven2/com/google/truth/extensions/truth-liteproto-extension/${TRUTH_LITEPROTO_EXTENSION_PV}/truth-liteproto-extension-${TRUTH_LITEPROTO_EXTENSION_PV}.pom.sha1
-https://repo1.maven.org/maven2/com/google/truth/extensions/truth-proto-extension/${TRUTH_PROTO_EXTENSION_PV}/truth-proto-extension-${TRUTH_PROTO_EXTENSION_PV}.jar
-https://repo1.maven.org/maven2/com/google/truth/extensions/truth-proto-extension/${TRUTH_PROTO_EXTENSION_PV}/truth-proto-extension-${TRUTH_PROTO_EXTENSION_PV}.pom
-https://repo1.maven.org/maven2/com/google/truth/extensions/truth-proto-extension/${TRUTH_PROTO_EXTENSION_PV}/truth-proto-extension-${TRUTH_PROTO_EXTENSION_PV}.pom.md5
-https://repo1.maven.org/maven2/com/google/truth/extensions/truth-proto-extension/${TRUTH_PROTO_EXTENSION_PV}/truth-proto-extension-${TRUTH_PROTO_EXTENSION_PV}.pom.sha1
-https://repo1.maven.org/maven2/com/google/truth/truth-parent/${TRUTH_PROTO_EXTENSION_PV}/truth-parent-${TRUTH_PROTO_EXTENSION_PV}.pom
-https://repo1.maven.org/maven2/com/google/truth/truth-parent/${TRUTH_PROTO_EXTENSION_PV}/truth-parent-${TRUTH_PROTO_EXTENSION_PV}.pom.md5
-https://repo1.maven.org/maven2/com/google/truth/truth-parent/${TRUTH_PROTO_EXTENSION_PV}/truth-parent-${TRUTH_PROTO_EXTENSION_PV}.pom.sha1
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-proto-extension/${TRUTH_PV}/truth-proto-extension-${TRUTH_PV}.jar
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-proto-extension/${TRUTH_PV}/truth-proto-extension-${TRUTH_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-proto-extension/${TRUTH_PV}/truth-proto-extension-${TRUTH_PV}.jar.sha1
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-proto-extension/${TRUTH_PV}/truth-proto-extension-${TRUTH_PV}.pom
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-proto-extension/${TRUTH_PV}/truth-proto-extension-${TRUTH_PV}.pom.md5
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-proto-extension/${TRUTH_PV}/truth-proto-extension-${TRUTH_PV}.pom.sha1
+https://repo1.maven.org/maven2/com/google/truth/truth-parent/${TRUTH_PV}/truth-parent-${TRUTH_PV}.pom
+https://repo1.maven.org/maven2/com/google/truth/truth-parent/${TRUTH_PV}/truth-parent-${TRUTH_PV}.pom.md5
+https://repo1.maven.org/maven2/com/google/truth/truth-parent/${TRUTH_PV}/truth-parent-${TRUTH_PV}.pom.sha1
 https://repo1.maven.org/maven2/com/google/truth/truth/${TRUTH_PV}/truth-${TRUTH_PV}.pom
 https://repo1.maven.org/maven2/com/google/truth/truth/${TRUTH_PV}/truth-${TRUTH_PV}.pom.md5
 https://repo1.maven.org/maven2/com/google/truth/truth/${TRUTH_PV}/truth-${TRUTH_PV}.pom.sha1
@@ -609,13 +655,18 @@ https://repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils-parent/
 https://repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils-parent/${JAVA_DIFF_UTILS_PV}/java-diff-utils-parent-${JAVA_DIFF_UTILS_PV}.pom.md5
 https://repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils-parent/${JAVA_DIFF_UTILS_PV}/java-diff-utils-parent-${JAVA_DIFF_UTILS_PV}.pom.sha1
 https://repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils/${JAVA_DIFF_UTILS_PV}/java-diff-utils-${JAVA_DIFF_UTILS_PV}.jar
+https://repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils/${JAVA_DIFF_UTILS_PV}/java-diff-utils-${JAVA_DIFF_UTILS_PV}.jar.md5
+https://repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils/${JAVA_DIFF_UTILS_PV}/java-diff-utils-${JAVA_DIFF_UTILS_PV}.jar.sha1
 https://repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils/${JAVA_DIFF_UTILS_PV}/java-diff-utils-${JAVA_DIFF_UTILS_PV}.pom
 https://repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils/${JAVA_DIFF_UTILS_PV}/java-diff-utils-${JAVA_DIFF_UTILS_PV}.pom.md5
 https://repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils/${JAVA_DIFF_UTILS_PV}/java-diff-utils-${JAVA_DIFF_UTILS_PV}.pom.sha1
+https://repo1.maven.org/maven2/javax/annotation/jsr250-api/${JSR256_PV}/jsr250-api-${JSR256_PV}.jar
 https://repo1.maven.org/maven2/junit/junit/${JUNIT_PV}/junit-${JUNIT_PV}.pom
 https://repo1.maven.org/maven2/junit/junit/${JUNIT_PV}/junit-${JUNIT_PV}.pom.md5
 https://repo1.maven.org/maven2/junit/junit/${JUNIT_PV}/junit-${JUNIT_PV}.pom.sha1
 https://repo1.maven.org/maven2/org/apache/ant/ant/${ANT_PV}/ant-${ANT_PV}.jar
+https://repo1.maven.org/maven2/org/apache/ant/ant/${ANT_PV}/ant-${ANT_PV}.jar.md5
+https://repo1.maven.org/maven2/org/apache/ant/ant/${ANT_PV}/ant-${ANT_PV}.jar.sha1
 https://repo1.maven.org/maven2/org/apache/ant/ant/${ANT_PV}/ant-${ANT_PV}.pom
 https://repo1.maven.org/maven2/org/apache/ant/ant/${ANT_PV}/ant-${ANT_PV}.pom.md5
 https://repo1.maven.org/maven2/org/apache/ant/ant/${ANT_PV}/ant-${ANT_PV}.pom.sha1
@@ -628,6 +679,9 @@ https://repo1.maven.org/maven2/org/apache/ant/ant-parent/${ANT_PV}/ant-parent-${
 https://repo1.maven.org/maven2/org/checkerframework/checker-qual/${CHECKER_QUAL_PV}/checker-qual-${CHECKER_QUAL_PV}.pom
 https://repo1.maven.org/maven2/org/checkerframework/checker-qual/${CHECKER_QUAL_PV}/checker-qual-${CHECKER_QUAL_PV}.pom.md5
 https://repo1.maven.org/maven2/org/checkerframework/checker-qual/${CHECKER_QUAL_PV}/checker-qual-${CHECKER_QUAL_PV}.pom.sha1
+https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/${HAMCREST_PV}/hamcrest-core-${HAMCREST_PV}.jar
+https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/${HAMCREST_PV}/hamcrest-core-${HAMCREST_PV}.jar.md5
+https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/${HAMCREST_PV}/hamcrest-core-${HAMCREST_PV}.jar.sha1
 https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/${HAMCREST_PV}/hamcrest-core-${HAMCREST_PV}.pom
 https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/${HAMCREST_PV}/hamcrest-core-${HAMCREST_PV}.pom.md5
 https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/${HAMCREST_PV}/hamcrest-core-${HAMCREST_PV}.pom.sha1
@@ -635,6 +689,8 @@ https://repo1.maven.org/maven2/org/hamcrest/hamcrest-parent/${HAMCREST_PV}/hamcr
 https://repo1.maven.org/maven2/org/hamcrest/hamcrest-parent/${HAMCREST_PV}/hamcrest-parent-${HAMCREST_PV}.pom.md5
 https://repo1.maven.org/maven2/org/hamcrest/hamcrest-parent/${HAMCREST_PV}/hamcrest-parent-${HAMCREST_PV}.pom.sha1
 https://repo1.maven.org/maven2/org/jspecify/jspecify/${JSPECIFY_PV}/jspecify-${JSPECIFY_PV}.jar
+https://repo1.maven.org/maven2/org/jspecify/jspecify/${JSPECIFY_PV}/jspecify-${JSPECIFY_PV}.jar.md5
+https://repo1.maven.org/maven2/org/jspecify/jspecify/${JSPECIFY_PV}/jspecify-${JSPECIFY_PV}.jar.sha1
 https://repo1.maven.org/maven2/org/jspecify/jspecify/${JSPECIFY_PV}/jspecify-${JSPECIFY_PV}.pom
 https://repo1.maven.org/maven2/org/jspecify/jspecify/${JSPECIFY_PV}/jspecify-${JSPECIFY_PV}.pom.md5
 https://repo1.maven.org/maven2/org/jspecify/jspecify/${JSPECIFY_PV}/jspecify-${JSPECIFY_PV}.pom.sha1
@@ -992,33 +1048,54 @@ src_prepare() {
 	java-pkg-opt-2_src_prepare
 }
 
-_link_pom() {
+_copy_jar() {
 	local pom_dir="${1}"
 	local pom_bn="${2}"
+	local jar_bn=$(echo "${pom_bn}" | sed -e "s|\.pom$|.jar|g")
 	mkdir -p "${HOME}/.m2/repository/${pom_dir}" || die
-	ln -s \
+	cat \
 		"${DISTDIR}/${pom_bn}" \
+		> \
 		"${HOME}/.m2/repository/${pom_dir}/${pom_bn}" \
 		|| die
-	ln -s \
+	cat \
 		"${DISTDIR}/${pom_bn}.md5" \
+		> \
 		"${HOME}/.m2/repository/${pom_dir}/${pom_bn}.md5" \
 		|| die
-	ln -s \
+	cat \
 		"${DISTDIR}/${pom_bn}.sha1" \
+		> \
 		"${HOME}/.m2/repository/${pom_dir}/${pom_bn}.sha1" \
 		|| die
+	if [[ -e "${DISTDIR}/${jar_bn}" ]] ; then
+		cat \
+			"${DISTDIR}/${jar_bn}" \
+			> \
+			"${HOME}/.m2/repository/${pom_dir}/${jar_bn}" \
+			|| die
+		cat \
+			"${DISTDIR}/${jar_bn}.md5" \
+			> \
+			"${HOME}/.m2/repository/${pom_dir}/${jar_bn}.md5" \
+			|| die
+		cat \
+			"${DISTDIR}/${jar_bn}.sha1" \
+			> \
+			"${HOME}/.m2/repository/${pom_dir}/${jar_bn}.sha1" \
+			|| die
+	fi
 }
 
-autolink_poms() {
+_copy_jars() {
 	local uri
 	for uri in ${bazel_external_uris} ; do
 		if [[ "${uri}" =~ ".pom"$ ]] ; then
 			local bn="${uri##*/}"
 			local dir=$(echo "${uri}" | sed -e "s|https://repo1.maven.org/maven2/||g")
 			local dir=$(dirname "${dir}")
-einfo "calling _link_pom \"${dir}\" \"${bn}\""
-			_link_pom "${dir}" "${bn}"
+einfo "Running:  _copy_jar \"${dir}\" \"${bn}\""
+			_copy_jar "${dir}" "${bn}"
 		fi
 	done
 }
@@ -1027,18 +1104,11 @@ _configure_java() {
 	if use closure_compiler_native || use closure_compiler_java ; then
 		export RJE_UNSAFE_CACHE="1"
 
-		#
-		# FIXME:  the below line should fix:
-		#
-		#   not found: /var/lib/portage/home/.m2/repository
-		#
-		# but causes another error:
-		#
-		#   Exception in thread "main" java.lang.IllegalArgumentException: File does not exist or is not a file: /var/tmp/portage/dev-util/closure-compiler-npm-20230411.0.0/homedir/.cache/bazel/_bazel_portage/77b6c006c5b59afb65f3d06a9e18e74d/external/maven
-		#
+		# Fix for:
+		# not found: /var/lib/portage/home/.m2/repository
 		export _JAVA_OPTIONS="${_JAVA_OPTIONS} -Duser.home=${HOME}"
 
-		autolink_poms
+		_copy_jars
 	fi
 }
 
@@ -1065,7 +1135,7 @@ src_compile() {
 	elif [[ "${npm_offline}" == "1" ]] ; then
 		extra_args=( "--prefer-offline" )
 	fi
-einfo "running:  node ./build-scripts/build_compiler.js"
+einfo "Running:  node ./build-scripts/build_compiler.js"
 	node ./build-scripts/build_compiler.js || die
 	enpm run build \
 		${extra_args[@]}
