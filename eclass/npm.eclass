@@ -406,6 +406,11 @@ einfo "Skipping audit fix."
 		return
 	fi
 
+	local network_sandbox=0
+	if has network-sandbox $FEATURES ; then
+		network_sandbox=1
+	fi
+
 	local tries
 	tries=0
 	while (( ${tries} < ${NPM_TRIES} )) ; do
@@ -413,6 +418,12 @@ einfo "Tries:\t${tries}"
 einfo "Running:\tnpm ${cmd[@]}"
 		npm "${cmd[@]}" || die
 		if ! grep -q -E -r -e "(EAI_AGAIN|ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
+			break
+		fi
+		if grep -q -r -F -e "audit error" "${HOME}/.npm/_logs" && [[ "${NPM_OFFLINE}" == "2" || "${network_sandbox}" == "1" ]] ; then
+	# Audit needs network.  Prevent trying to contact the remote server
+	# during offline install.
+			rm -rf "${HOME}/.npm/_logs"
 			break
 		fi
 		_npm_auto_remove_node_modules
