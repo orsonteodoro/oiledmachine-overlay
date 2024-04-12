@@ -247,7 +247,7 @@ echo
 		if [[ "${t1}" != "${t2}" ]] ; then
 echo
 echo "Detected dropped packets in 1 second interval which is too fast."
-echo "It could be a hardware issue such a aged/damaged wires, WiFi antenna, router."
+echo "Consult the packet loss troubleshoot guides resolve the issue."
 echo
 		fi
 	fi
