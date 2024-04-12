@@ -246,8 +246,8 @@ echo
 			| cut -f 1 -d " ")
 		if [[ "${t1}" != "${t2}" ]] ; then
 echo
-echo "Detected dropped packets in 1 second interval.  Consider switching to"
-echo "hybla, veno, or westwood or replacing parts."
+echo "Detected dropped packets in 1 second interval which is too fast."
+echo "It could be a hardware issue such a aged/damaged wires, WiFi antenna, router."
 echo
 		fi
 	fi
