@@ -231,18 +231,19 @@ echo "Available kernel modules:"
 		echo -e "\t"$(ls tcp_*.ko* | sed -e "s|.ko.*$||g")
 	popd >/dev/null 2>&1
 echo
-	if which ifconfig >/dev/null 2>&1 ; then
-		local n1=$(ifconfig \
-			| grep -o -E "dropped [0-9]+" \
+	local n=$(cat /sys/class/net/*/statistics/*dropped* | wc -l)
+	if [[ -e "/sys/class/net" && ${n} -ge 1 ]] ; then
+		local n1=$(cat /sys/class/net/*/statistics/*dropped* \
 			| sort \
 			| tail -n 1 \
 			| cut -f 2 -d " ")
 		sleep 1
-		local n2=$(ifconfig \
-			| grep -o -E "dropped [0-9]+" \
+		local n2=$(cat /sys/class/net/*/statistics/*dropped* \
 			| sort \
 			| tail -n 1 \
 			| cut -f 2 -d " ")
+		[[ -z "${n1}" ]] && n1=0
+		[[ -z "${n2}" ]] && n2=0
 		local nf=$((${n2} - ${n1}))
 echo "Dropped packets per second:  ${nf}"
 		if (( ${nf} == 1 )) ; then
