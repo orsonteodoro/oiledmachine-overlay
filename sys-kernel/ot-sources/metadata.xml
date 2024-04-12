@@ -3010,7 +3010,7 @@ unset OT_KERNEL_PRIVATE_KEY
       dctcp     | High throughput and low cap data center low-latency
                 | High latency for KiB RPC payloads
       deepcc    | Throughput, optimized BBR, Cubic, Illinois, Westwood
-                | Tensorflow [heavy dependency], high memory footprint
+                | TensorFlow [heavy dependency], high memory footprint
       cubic     | Throughput, ubiquitous (de facto standard)
       hstcp     | Throughput
       htcp      | Throughput and internal fairness for LFNs (Large Fat Networks) [ADSL2+, cable, or larger]; in packet loss scenarios, marginally better throughput versus cubic 
@@ -3020,7 +3020,7 @@ unset OT_KERNEL_PRIVATE_KEY
                 | May studder sound
       nv        | RPC goodput and low latency for KiB payloads
       orca      | Low CPU usage, consistent high performance in different networks
-                | Tensorflow [heavy dependency], high memory footprint
+                | TensorFlow [heavy dependency], high memory footprint
       pcc       | Send throughput, low requirements, better stability over time
                 | Higher CPU usage
       reno      | New Reno fallback algorithm
