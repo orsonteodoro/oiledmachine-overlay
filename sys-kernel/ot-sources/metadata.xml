@@ -2998,7 +2998,7 @@ unset OT_KERNEL_PRIVATE_KEY
       Algorithm | Benefit (first row) / Cost (second row)
       ==========+===================================================================================================================
       bic       | RPC goodput for MiB+ payloads, default in earlier 2.6
-      bbr       | Latency, streaming, production code quality
+      bbr       | Latency, streaming, production code quality, energy efficient
                 | Greedy, deprecated, high latency for small RPC payloads
       bbr2      | Latency, fair, ECN support
                 | Alpha code quality, experimental, deprecated, energy inefficient
@@ -3013,7 +3013,7 @@ unset OT_KERNEL_PRIVATE_KEY
                 | Tensorflow [heavy dependency], high memory footprint
       cubic     | Throughput, ubiquitous (de facto standard)
       hstcp     | Throughput
-      htcp      | Throughput and internal fairness for LFNs (Large Fat Networks) [ADSL2+, cable, or larger]
+      htcp      | Throughput and internal fairness for LFNs (Large Fat Networks) [ADSL2+, cable, or larger]; in packet loss scenarios, marginally better throughput versus cubic 
       hybla     | Throughput over satellite
       illinois  | Throughput between inter data centers
       lp        | Full bandwidth utilization
