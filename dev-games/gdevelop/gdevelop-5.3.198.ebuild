@@ -1777,7 +1777,7 @@ https://registry.npmjs.org/dotenv/-/dotenv-8.2.0.tgz -> npmpkg-dotenv-8.2.0.tgz
 https://registry.npmjs.org/dotenv-expand/-/dotenv-expand-5.1.0.tgz -> npmpkg-dotenv-expand-5.1.0.tgz
 https://registry.npmjs.org/duplexer3/-/duplexer3-0.1.4.tgz -> npmpkg-duplexer3-0.1.4.tgz
 https://registry.npmjs.org/eastasianwidth/-/eastasianwidth-0.2.0.tgz -> npmpkg-eastasianwidth-0.2.0.tgz
-https://registry.npmjs.org/ejs/-/ejs-3.1.9.tgz -> npmpkg-ejs-3.1.9.tgz
+https://registry.npmjs.org/ejs/-/ejs-3.1.10.tgz -> npmpkg-ejs-3.1.10.tgz
 https://registry.npmjs.org/electron/-/electron-18.2.2.tgz -> npmpkg-electron-18.2.2.tgz
 https://registry.npmjs.org/electron-builder/-/electron-builder-24.13.3.tgz -> npmpkg-electron-builder-24.13.3.tgz
 https://registry.npmjs.org/electron-builder-squirrel-windows/-/electron-builder-squirrel-windows-24.13.3.tgz -> npmpkg-electron-builder-squirrel-windows-24.13.3.tgz
@@ -2106,7 +2106,7 @@ https://registry.npmjs.org/dotenv/-/dotenv-8.2.0.tgz -> npmpkg-dotenv-8.2.0.tgz
 https://registry.npmjs.org/dotenv-expand/-/dotenv-expand-5.1.0.tgz -> npmpkg-dotenv-expand-5.1.0.tgz
 https://registry.npmjs.org/duplexer3/-/duplexer3-0.1.4.tgz -> npmpkg-duplexer3-0.1.4.tgz
 https://registry.npmjs.org/eastasianwidth/-/eastasianwidth-0.2.0.tgz -> npmpkg-eastasianwidth-0.2.0.tgz
-https://registry.npmjs.org/ejs/-/ejs-3.1.9.tgz -> npmpkg-ejs-3.1.9.tgz
+https://registry.npmjs.org/ejs/-/ejs-3.1.10.tgz -> npmpkg-ejs-3.1.10.tgz
 https://registry.npmjs.org/electron/-/electron-18.2.2.tgz -> npmpkg-electron-18.2.2.tgz
 https://registry.npmjs.org/electron-builder/-/electron-builder-24.13.3.tgz -> npmpkg-electron-builder-24.13.3.tgz
 https://registry.npmjs.org/fs-extra/-/fs-extra-10.1.0.tgz -> npmpkg-fs-extra-10.1.0.tgz
@@ -3157,7 +3157,7 @@ https://registry.npmjs.org/recast/-/recast-0.23.4.tgz -> npmpkg-recast-0.23.4.tg
 https://registry.npmjs.org/ast-types/-/ast-types-0.16.1.tgz -> npmpkg-ast-types-0.16.1.tgz
 https://registry.npmjs.org/source-map/-/source-map-0.6.1.tgz -> npmpkg-source-map-0.6.1.tgz
 https://registry.npmjs.org/tslib/-/tslib-2.6.2.tgz -> npmpkg-tslib-2.6.2.tgz
-https://registry.npmjs.org/recharts/-/recharts-2.12.4.tgz -> npmpkg-recharts-2.12.4.tgz
+https://registry.npmjs.org/recharts/-/recharts-2.12.5.tgz -> npmpkg-recharts-2.12.5.tgz
 https://registry.npmjs.org/clsx/-/clsx-2.1.0.tgz -> npmpkg-clsx-2.1.0.tgz
 https://registry.npmjs.org/recursive-readdir/-/recursive-readdir-2.2.3.tgz -> npmpkg-recursive-readdir-2.2.3.tgz
 https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz -> npmpkg-minimatch-3.1.2.tgz
@@ -4819,43 +4819,8 @@ evar_dump "NPM_PROJECT_ROOT" "${NPM_PROJECT_ROOT}"
 __npm_src_unpack() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		if [[ ${PV} =~ 9999 ]] ; then
-			:;
-		elif [[ -n "${NPM_TARBALL}" ]] ; then
-			unpack ${NPM_TARBALL}
-		else
-			unpack ${P}.tar.gz
-		fi
-		cd "${S}" || die
-		rm -f package-lock.json
-
-		if declare -f \
-			npm_update_lock_install_pre > /dev/null ; then
-			npm_update_lock_install_pre
-		fi
-		enpm install \
-			${NPM_INSTALL_ARGS[@]}
-		if declare -f \
-			npm_update_lock_install_post > /dev/null ; then
-			npm_update_lock_install_post
-		fi
-		if declare -f \
-			npm_update_lock_audit_pre > /dev/null ; then
-			npm_update_lock_audit_pre
-		fi
-
-		# Audit fix is broken because of
-		# npm ERR! Invalid Version:
-		# in newIDE/app/package*.json
-		enpm audit fix \
-			${NPM_AUDIT_FIX_ARGS[@]}
-		if declare -f \
-			npm_update_lock_audit_post > /dev/null ; then
-			npm_update_lock_audit_post
-		fi
-		_npm_check_errors
-einfo "Finished lockfile update."
-		exit 0
+eerror "Entered deadcode code path."
+		die
 	else
 		export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
 		export ELECTRON_CACHE="${HOME}/.cache/electron"
@@ -4976,9 +4941,6 @@ einfo "Building ${MY_PN}.js"
 
 		mkdir -p "${WORKDIR}/lockfile-image" || die
 
-# Reduce version constriants caused by lockfiles.
-		rm -vf ${lockfiles[@]}
-
 		local lockfiles=(
 			"GDevelop.js/package-lock.json"			# Required step #1
 			"newIDE/app/package-lock.json"			# Required step #2
@@ -4994,6 +4956,11 @@ einfo "Running \`npm install ${NPM_INSTALL_ARGS[@]}\` per each lockfile"
 		for lockfile in ${lockfiles[@]} ; do
 			local d="$(dirname ${lockfile})"
 			pushd "${S}/${d}" >/dev/null 2>&1 || die
+	# Ideally we want to remove all lockfiles before entering this loop to
+	# simulate new a project workflow but not possible.
+	#
+	# Removed lockfile one by one to unbreak build.
+				rm -vf ${lockfile}
 				enpm install \
 					${NPM_INSTALL_ARGS[@]}
 			popd >/dev/null 2>&1 || die
