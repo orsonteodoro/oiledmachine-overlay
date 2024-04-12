@@ -2269,10 +2269,10 @@ pkg_setup() {
 	export GENERATE_SOURCEMAP=false
 }
 
-# @FUNCTION: __npm_src_unpack_default
+# @FUNCTION: __src_unpack_one_lockfile
 # @DESCRIPTION:
-# Unpacks a npm application.
-__npm_src_unpack_default() {
+# Unpacks a single lockfile.
+__src_unpack_one_lockfile() {
 evar_dump "NPM_PROJECT_ROOT" "${NPM_PROJECT_ROOT}"
 	local offline="${NPM_OFFLINE:-1}"
 	local args=()
@@ -2296,55 +2296,50 @@ evar_dump "NPM_PROJECT_ROOT" "${NPM_PROJECT_ROOT}"
 	# Audit fix already done with NPM_UPDATE_LOCK=1
 }
 
-# @FUNCTION: __npm_src_unpack
+# @FUNCTION: __src_unpack_all_production
 # @DESCRIPTION:
 # Unpacks a npm application.
-__npm_src_unpack() {
+__src_unpack_all_production() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
-	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-eerror "Entered deadcode code path."
-		die
+	export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
+	export ELECTRON_CACHE="${HOME}/.cache/electron"
+
+	if [[ ${PV} =~ 9999 ]] ; then
+		:;
+	elif [[ -n "${NPM_TARBALL}" ]] ; then
+		unpack ${NPM_TARBALL}
 	else
-		export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
-		export ELECTRON_CACHE="${HOME}/.cache/electron"
-
-		if [[ ${PV} =~ 9999 ]] ; then
-			:;
-		elif [[ -n "${NPM_TARBALL}" ]] ; then
-			unpack ${NPM_TARBALL}
-		else
-			unpack ${P}.tar.gz
-		fi
-
-		local offline="${NPM_OFFLINE:-1}"
-		if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
-			export ELECTRON_SKIP_BINARY_DOWNLOAD=1
-			_npm_cp_tarballs
-
-			if [[ -e "${FILESDIR}/${PV}" ]] ; then
-				cp -aT "${FILESDIR}/${PV}" "${S}" || die
-			fi
-		fi
-
-		local lockfiles=(
-			"newIDE/app/package-lock.json"			# Required step #2
-			"GDevelop.js/package-lock.json"			# Required step #1
-			"GDJS/package-lock.json"			# Required step #2a
-			"newIDE/electron-app/package-lock.json"		# Required step #3
-			"newIDE/electron-app/app/package-lock.json"	# Required step #3a
-#			"newIDE/web-app/package-lock.json"
-#			"GDJS/tests/package-lock.json"
-		)
-
-		local lockfile
-		for lockfile in ${lockfiles[@]} ; do
-			local dirpath=$(dirname "${S}/${lockfile}")
-			NPM_PROJECT_ROOT="${dirpath}"
-			pushd "${NPM_PROJECT_ROOT}" >/dev/null 2>&1 || die
-				__npm_src_unpack_default
-			popd >/dev/null 2>&1 || die
-		done
+		unpack ${P}.tar.gz
 	fi
+
+	local offline="${NPM_OFFLINE:-1}"
+	if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
+		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+		_npm_cp_tarballs
+
+		if [[ -e "${FILESDIR}/${PV}" ]] ; then
+			cp -aT "${FILESDIR}/${PV}" "${S}" || die
+		fi
+	fi
+
+	local lockfiles=(
+		"newIDE/app/package-lock.json"			# Required step #2
+		"GDevelop.js/package-lock.json"			# Required step #1
+		"GDJS/package-lock.json"			# Required step #2a
+		"newIDE/electron-app/package-lock.json"		# Required step #3
+		"newIDE/electron-app/app/package-lock.json"	# Required step #3a
+#		"newIDE/web-app/package-lock.json"
+#		"GDJS/tests/package-lock.json"
+	)
+
+	local lockfile
+	for lockfile in ${lockfiles[@]} ; do
+		local dirpath=$(dirname "${S}/${lockfile}")
+		NPM_PROJECT_ROOT="${dirpath}"
+		pushd "${NPM_PROJECT_ROOT}" >/dev/null 2>&1 || die
+			__src_unpack_one_lockfile
+		popd >/dev/null 2>&1 || die
+	done
 }
 
 src_unpack() {
@@ -2480,7 +2475,7 @@ einfo "Copying ${d}/package-lock.json -> ${dest}"
 einfo "Finished updating lockfiles."
 		exit 0
 	else
-		__npm_src_unpack
+		__src_unpack_all_production
 	fi
 	grep -e "Error while copying @electron/remote" "${T}/build.log" && die
 }
