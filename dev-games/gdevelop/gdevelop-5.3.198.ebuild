@@ -46,9 +46,12 @@ NPM_MULTI_LOCKFILE=1
 NPM_OFFLINE=1 # Completely offline (2) is broken.
 # If missing tarball, the misdiagnosed error gets produced:
 # tarball data for ... seems to be corrupted. Trying again.
-NPM_AUDIT_FIX=1
+NPM_AUDIT_FIX=0 # 1 -> 0 After we generate the lockfiles, we do a audit fix without --force.  Then, we ship out the fixed lockfiles.
 NPM_AUDIT_FIX_ARGS=(
-	"--force"
+# There is a tradeoff:
+# With --force, completely broken, less reported vulerabilities, longer install time.
+# Without --force, less bugs and more reported vulnerabilies, resonably shorter install time.
+	#"--force"
 )
 PYTHON_COMPAT=( python3_{10,11} ) # CI uses 3.8, 3.9
 UDEV_PV="245.4"
@@ -58,7 +61,6 @@ inherit python-r1 toolchain-funcs xdg
 
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
-
 "
 # UPDATER_END_NPM_EXTERNAL_URIS
 SRC_URI="
@@ -315,13 +317,7 @@ evar_dump "NPM_PROJECT_ROOT" "${NPM_PROJECT_ROOT}"
 		npm_unpack_install_post
 	fi
 
-	# Audit fix is broken because of
-	# npm ERR! Invalid Version:
-	# in newIDE/app/package*.json
-	if [[ "${offline}" == "0" ]] ; then
-		enpm audit fix \
-			${NPM_AUDIT_FIX_ARGS[@]}
-	fi
+	# Audit fix already done with NPM_UPDATE_LOCK=1
 }
 
 # @FUNCTION: __npm_src_unpack
@@ -487,15 +483,8 @@ einfo "Building ${MY_PN}.js"
 
 		mkdir -p "${WORKDIR}/lockfile-image" || die
 
-#einfo "Scanning for package-lock.jsons"
-#		pushd "${S}" >/dev/null 2>&1 || die
-#		local lockfiles=(
-#			$(find . -name "package-lock.json")
-#		)
-#		popd >/dev/null 2>&1 || die
-
-einfo "Running \`rm -f ${lockfiles[@]}\`"
-		rm -f ${lockfiles[@]}
+# Reduce version constriants caused by lockfiles.
+		rm -vf ${lockfiles[@]}
 
 		local lockfiles=(
 			"GDevelop.js/package-lock.json"			# Required step #1
@@ -626,16 +615,16 @@ einfo "Compiling ${MY_PN}.js"
 		enpm install \
 			"@lingui/core@2.7.3" \
 			${NPM_INSTALL_ARGS[@]}
-		enpm audit fix \
-			${NPM_AUDIT_FIX_ARGS[@]}
+
+		# Audit fix already done with NPM_UPDATE_LOCK=1
 	popd || die
 # In https://github.com/4ian/GDevelop/blob/v5.3.195/GDevelop.js/Gruntfile.js#L88
 	pushd "${WORKDIR}/${MY_PN}-${MY_PV}/${MY_PN}.js" >/dev/null 2>&1 || die
 		pushd "node_modules/webidl-tools" >/dev/null 2>&1 || die
 			enpm install \
 				${NPM_INSTALL_ARGS[@]}
-			enpm audit fix \
-				${NPM_AUDIT_FIX_ARGS[@]}
+
+			# Audit fix already done with NPM_UPDATE_LOCK=1
 		popd || die
 		enpm run build -- --force --dev
 	popd >/dev/null 2>&1 || die
