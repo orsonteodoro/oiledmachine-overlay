@@ -246,8 +246,8 @@ echo
 			| cut -f 1 -d " ")
 		if [[ "${t1}" != "${t2}" ]] ; then
 echo
-echo "Detected dropped packets in 1 second interval which is too fast."
-echo "Consult the packet loss troubleshoot guides resolve the issue."
+echo "Detected dropped packets in 1 second interval which is fast and unusual."
+echo "Consult the packet loss troubleshoot guides to resolve the issue."
 echo
 		fi
 	fi
