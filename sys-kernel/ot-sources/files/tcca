@@ -252,7 +252,7 @@ echo "Consult the packet loss troubleshoot guides to resolve the issue."
 echo
 		elif (( ${nf} < 10 )) ; then
 echo
-echo "Detected <10 dropped packets per second which is unusual indicative of throughput issues."
+echo "Detected <10 dropped packets per second which is unusual and indicative of throughput issues."
 echo "Consult the packet loss troubleshoot guides to resolve the issue."
 echo
 		elif (( ${nf} >= 10 )) ; then
