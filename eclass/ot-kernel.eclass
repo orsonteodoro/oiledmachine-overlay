@@ -12861,16 +12861,19 @@ ot-kernel_install_tcca() {
 			else
 				tcc="${default_tcca}"
 			fi
+			echo "${tcc}"
 		}
 
 		local tcca_green=$(_tcc_green)
 
 		_tcc_bgdl() {
+			local tcc
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "lp" ]] ; then
 				tcc="lp"
 			else
 				tcc="${default_tcca}"
 			fi
+			echo "${tcc}"
 		}
 		local tcca_bgdl=$(_tcc_bgdl)
 

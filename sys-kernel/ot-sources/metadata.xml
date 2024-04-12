@@ -2997,7 +2997,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
       Algorithm | Benefit (first row) / Cost (second row)
       ==========+===================================================================================================================
-      bic       | RPC goodput for MiB+ payloads
+      bic       | RPC goodput for MiB+ payloads, default in earlier 2.6
       bbr       | Latency, streaming, production code quality
                 | Greedy, deprecated, high latency for small RPC payloads
       bbr2      | Latency, fair, ECN support
@@ -3023,7 +3023,7 @@ unset OT_KERNEL_PRIVATE_KEY
                 | Tensorflow [heavy dependency], high memory footprint
       pcc       | Send throughput, low requirements, better stability over time
                 | Higher CPU usage
-      reno      | Fallback algorithm
+      reno      | New Reno fallback algorithm
                 | Old algorithm
       scalable  | Throughput
                 | High packet loss
