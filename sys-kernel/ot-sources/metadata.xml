@@ -2986,8 +2986,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
     OT_KERNEL_TCP_CONGESTION_CONTROLS - Select TCP congestion controls to
-    add.  A space separated list may be used.  The first option
-    is the fallback default.  (EXPERIMENTAL)
+    add.  A space separated list may be used.  The first option is the default.
+    (EXPERIMENTAL)
 
     The goal of TCP congestion control (TCC) is to avoid the penalties
     associated with bad quality of service (longer delays or increased packet
