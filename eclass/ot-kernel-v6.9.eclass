@@ -254,7 +254,6 @@ symlink tresor tresor_prompt tresor_sysfs zen-sauce
 
 REQUIRED_USE+="
 	!genpatches
-	!rt
 	!zen-sauce
 	bbrv2? (
 		!bbrv3

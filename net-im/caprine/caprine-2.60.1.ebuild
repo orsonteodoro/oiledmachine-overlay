@@ -1220,10 +1220,12 @@ src_unpack() {
 		npm_hydrate
 		unpack ${P}.tar.gz
 		cd "${S}" || die
-		rm package-lock.json
 
-		enpm install
-		enpm audit fix
+		rm -vf package-lock.json
+		enpm install \
+			${NPM_INSTALL_ARGS[@]}
+		enpm audit fix \
+			${NPM_AUDIT_FIX_ARGS[@]}
 
 	# Fix breakage
 

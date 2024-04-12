@@ -1051,7 +1051,9 @@ src_compile() {
 	pushd "${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" || die
 einfo "PWD: $(pwd)"
 		S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" \
-		enpm install
+		enpm install \
+			${NPM_INSTALL_ARGS[@]}
+	# Audit fix already done with NPM_UPDATE_LOCK=1
 		S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" \
 		enpm run build
 	popd

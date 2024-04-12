@@ -43,6 +43,11 @@ else
 	"
 fi
 
+# @ECLASS_VARIABLE: PNPM_INSTALL_ARGS
+# @DESCRIPTION:
+# This variable is an array.
+# Global arguments to append to `pnpm install`
+
 # @FUNCTION: pnpm_check_network_sandbox
 # @DESCRIPTION:
 # Check the network sandbox.
@@ -167,7 +172,8 @@ eerror
 pnpm_src_unpack() {
 	pnpm_hydrate
 	export PATH="${S}/node_modules/.bin:${PATH}"
-	epnpm install
+	epnpm install \
+		${PNPM_INSTALL_ARGS[@]}
 }
 
 # @FUNCTION: pnpm_src_compile

@@ -11,8 +11,12 @@ ELECTRON_APP_REACT_PV="18.2.0"
 NODE_ENV="development"
 NODE_VERSION=16 # Upstream uses in CI
 NPM_AUDIT_FIX=0
-NPM_INSTALL_UNPACK_ARGS="--legacy-peer-deps"
-NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS="--legacy-peer-deps"
+NPM_INSTALL_ARGS=(
+	"--legacy-peer-deps"
+)
+NPM_AUDIT_FIX_ARGS=(
+	"--legacy-peer-deps"
+)
 PYTHON_COMPAT=( python3_{8..11} )
 YARN_ELECTRON_OFFLINE=1
 YARN_INSTALL_PATH="/opt/${PN}"
@@ -404,7 +408,7 @@ SLOT="0/monthly"
 if [[ "${SLOT}" =~ "community" ]] ; then
 	SUFFIX="-community"
 fi
-# Initially generated from:  grep "resolved" /var/tmp/portage/dev-util/theia-1.36.0/work/theia-1.36.0/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
+# Initially generated from:  grep "resolved" /var/tmp/portage/dev-util/theia-1.48.3/work/theia-1.48.3/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
 # For the generator script, see typescript/transform-uris.sh ebuild-package.
 # UPDATER_START_YARN_EXTERNAL_URIS
 YARN_EXTERNAL_URIS="

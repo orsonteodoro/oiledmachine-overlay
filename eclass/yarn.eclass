@@ -92,9 +92,10 @@ unset -f _yarn_set_globals
 # @DESCRIPTION:
 # The destination install path relative to EROOT.
 
-# @ECLASS_VARIABLE: YARN_INSTALL_UNPACK_ARGS
+# @ECLASS_VARIABLE: YARN_INSTALL_ARGS
 # @DESCRIPTION:
-# Arguments to append to `yarn install ` during yarn.lock generation.
+# This variable is an array.
+# Global arguments to append to `yarn install`
 
 # @ECLASS_VARIABLE: YARN_LOCKFILE_SOURCE
 # @DESCRIPTION:
@@ -143,13 +144,15 @@ unset -f _yarn_set_globals
 # @DESCRIPTION:
 # The number of reconnect tries for npm.
 
-# @ECLASS_VARIABLE: NPM_INSTALL_UNPACK_ARGS
+# @ECLASS_VARIABLE: NPM_INSTALL_ARGS
 # @DESCRIPTION:
-# Arguments to append to `npm install ` contexts during package-lock.json generation.
+# This variable is an array.
+# Global arguments to append to `npm install`
 
-# @ECLASS_VARIABLE: NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS
+# @ECLASS_VARIABLE: NPM_AUDIT_FIX_ARGS
 # @DESCRIPTION:
-# Arguments to append to `npm audit fix ` contexts during package-lock.json generation.
+# This variable is an array.
+# Global arguments to append to `npm audit fix`
 
 # @FUNCTION: yarn_check_network_sandbox
 # @DESCRIPTION:
@@ -347,7 +350,7 @@ _yarn_src_unpack_default_ebuild() {
 		--prefer-offline \
 		--pure-lockfile \
 		--verbose \
-		${YARN_INSTALL_UNPACK_ARGS}
+		${YARN_INSTALL_ARGS[@]}
 	if declare -f yarn_unpack_install_post > /dev/null ; then
 		yarn_unpack_install_post
 	fi
@@ -389,7 +392,7 @@ _yarn_src_unpack_default_upstream() {
 		--prefer-offline \
 		--pure-lockfile \
 		--verbose \
-		${YARN_INSTALL_UNPACK_ARGS}
+		${YARN_INSTALL_ARGS[@]}
 	if declare -f yarn_unpack_install_post > /dev/null ; then
 		yarn_unpack_install_post
 	fi
@@ -519,7 +522,8 @@ einfo "Updating lockfile"
 			yarn_update_lock_install_pre > /dev/null ; then
 			yarn_update_lock_install_pre
 		fi
-		enpm install ${NPM_INSTALL_UNPACK_ARGS}
+		enpm install \
+			${NPM_INSTALL_ARGS[@]}
 		if declare -f \
 			yarn_update_lock_install_post > /dev/null ; then
 			yarn_update_lock_install_post
@@ -528,7 +532,8 @@ einfo "Updating lockfile"
 			yarn_update_lock_audit_pre > /dev/null ; then
 			yarn_update_lock_audit_pre
 		fi
-		enpm audit fix ${NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS}
+		enpm audit fix \
+			${NPM_AUDIT_FIX_ARGS[@]}
 		if declare -f \
 			yarn_update_lock_audit_post > /dev/null ; then
 			yarn_update_lock_audit_post

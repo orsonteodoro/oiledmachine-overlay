@@ -230,10 +230,27 @@ echo
 echo
 echo "Available kernel modules:"
 echo
-	pushd /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/ 2>/dev/null 1>/dev/null
+	pushd /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/ >/dev/null 2>&1
 		echo -e "\t"$(ls tcp_*.ko* | sed -e "s|.ko.*$||g")
-	popd 2>/dev/null 1>/dev/null
+	popd >/dev/null 2>&1
 echo
+	if which ifconfig >/dev/null 2>&1 ; then
+		local t1==$(ifconfig \
+			| grep -o -E "dropped [0-9]+" \
+			| md5sum \
+			| cut -f 1 -d " ")
+		sleep 1
+		local t2==$(ifconfig \
+			| grep -o -E "dropped [0-9]+" \
+			| md5sum \
+			| cut -f 1 -d " ")
+		if [[ "${t1}" != "${t2}" ]] ; then
+echo
+echo "Detected dropped packets in 1 second interval.  Consider switching to"
+echo "hybla, veno, or westwood or replacing parts."
+echo
+		fi
+	fi
 }
 
 process_options() {
@@ -259,7 +276,7 @@ process_options() {
 }
 
 check_dependencies() {
-	if [[ -n "${DISPLAY}" ]] && ! which pkexec 2>/dev/null 1>/dev/null ; then
+	if [[ -n "${DISPLAY}" ]] && ! which pkexec >/dev/null 2>&1 ; then
 		echo "You must install polkit"
 		exit 1
 	fi
@@ -274,7 +291,7 @@ check_dependencies() {
 _set_tcca_polkit() {
 	local alg="${1}"
 	echo -e "TCP_CONGESTION_CONTROL_ALG:\t${alg}"
-	if ls /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/tcp_${alg}.ko* 2>/dev/null 1>/dev/null ; then
+	if ls /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/tcp_${alg}.ko* >/dev/null 2>&1 ; then
 echo
 echo "Loading kernel module for ${alg}"
 echo
@@ -293,7 +310,7 @@ echo
 _set_tcca_sudo() {
 	local alg="${1}"
 	echo -e "TCP_CONGESTION_CONTROL_ALG:\t${alg}"
-	if ls /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/tcp_${alg}.ko* 2>/dev/null 1>/dev/null ; then
+	if ls /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/tcp_${alg}.ko* >/dev/null 2>&1 ; then
 echo
 echo "Loading kernel module for ${alg}"
 echo
@@ -312,7 +329,7 @@ echo
 _set_tcca_root() {
 	local alg="${1}"
 	echo -e "TCP_CONGESTION_CONTROL_ALG:\t${alg}"
-	if ls /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/tcp_${alg}.ko* 2>/dev/null 1>/dev/null ; then
+	if ls /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/tcp_${alg}.ko* >/dev/null 2>&1 ; then
 echo
 echo "Loading kernel module for ${alg}"
 echo

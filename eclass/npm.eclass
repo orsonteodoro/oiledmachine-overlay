@@ -69,13 +69,15 @@ unset -f _npm_set_globals
 # @DESCRIPTION:
 # The destination install path relative to EROOT.
 
-# @ECLASS_VARIABLE: NPM_INSTALL_UNPACK_ARGS
+# @ECLASS_VARIABLE: NPM_INSTALL_ARGS
 # @DESCRIPTION:
-# Arguments to append to `npm install ` during package-lock.json generation.
+# This variable is an array.
+# Global arguments to append to `npm install`
 
-# @ECLASS_VARIABLE: NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS
+# @ECLASS_VARIABLE: NPM_AUDIT_FIX_ARGS
 # @DESCRIPTION:
-# Arguments to append to `npm audit fix ` during package-lock.json generation.
+# This variable is an array.
+# Global arguments to append to `npm audit fix`
 
 # @ECLASS_VARIABLE: NPM_LOCKFILE_SOURCE
 # @DESCRIPTION:
@@ -323,7 +325,7 @@ einfo "Missing package-lock.json"
 	fi
 	enpm install \
 		${extra_args[@]} \
-		${NPM_INSTALL_UNPACK_ARGS}
+		${NPM_INSTALL_ARGS[@]}
 	if declare -f npm_unpack_install_post > /dev/null ; then
 		npm_unpack_install_post
 	fi
@@ -357,7 +359,7 @@ _npm_src_unpack_default_upstream() {
 	fi
 	enpm install \
 		${extra_args[@]} \
-		${NPM_INSTALL_UNPACK_ARGS}
+		${NPM_INSTALL_ARGS[@]}
 	if declare -f npm_unpack_install_post > /dev/null ; then
 		npm_unpack_install_post
 	fi
@@ -537,23 +539,25 @@ npm_src_unpack() {
 		cd "${S}" || die
 		rm -f package-lock.json
 
-		if declare -f \
-			npm_update_lock_install_pre > /dev/null ; then
+		if declare -f npm_update_lock_install_pre > /dev/null ; then
 			npm_update_lock_install_pre
 		fi
-		enpm install ${NPM_INSTALL_UNPACK_ARGS}
-		if declare -f \
-			npm_update_lock_install_post > /dev/null ; then
+		enpm install \
+			${NPM_INSTALL_ARGS[@]}
+		if declare -f npm_update_lock_install_post > /dev/null ; then
 			npm_update_lock_install_post
 		fi
-		if declare -f \
-			npm_update_lock_audit_pre > /dev/null ; then
+		if declare -f npm_update_lock_audit_pre > /dev/null ; then
 			npm_update_lock_audit_pre
 		fi
-		enpm audit fix ${NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS}
-		if declare -f \
-			npm_update_lock_audit_post > /dev/null ; then
+		enpm audit fix \
+			${NPM_AUDIT_FIX_ARGS[@]}
+		if declare -f npm_update_lock_audit_post > /dev/null ; then
 			npm_update_lock_audit_post
+		fi
+
+		if declare -f npm_save_lockfiles > /dev/null ; then
+			npm_save_lockfiles
 		fi
 
 		_npm_check_errors

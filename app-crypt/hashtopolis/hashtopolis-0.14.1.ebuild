@@ -1445,30 +1445,51 @@ src_unpack() {
 		npm_hydrate
 		cd "${S_WEBUI}" || die
 		if [[ -n "${NPM_UPDATE_LOCK}" ]] ; then
-einfo "Updating lockfiles"
 			mkdir -p "${WORKDIR}/lockfile-image" || die
 			local lockfile
 			local lockfiles=(
-				"package.json"
 				"package-lock.json"
 			)
+# Reduce version constraints caused by lockfiles.
+			rm -vf ${lockfiles[@]}
+
+einfo "Running \`npm install ${NPM_INSTALL_ARGS[@]}\` per package-lock.json"
 			for lockfile in ${lockfiles[@]} ; do
-einfo "Processing ${lockfile}"
 				local d="$(dirname ${lockfile})"
 				pushd "${S_WEBUI}/${d}" || die
 					if [[ "${NPM_AUDIT_FIX}" == "1" ]] ; then
-						rm -f package-lock.json
-						enpm install
-						enpm audit fix
+						enpm install \
+							${NPM_INSTALL_ARGS[@]}
 					fi
-					local dest="${WORKDIR}/lockfile-image/${d}"
-					mkdir -p "${dest}"
-einfo "package.json -> ${dest}"
-					cp -a package.json "${dest}"
-einfo "package-lock.json -> ${dest}"
-					cp -a package-lock.json "${dest}"
 				popd
 			done
+
+einfo "Running \`npm audit fix ${NPM_AUDIT_FIX_ARGS[@]}\` per package-lock.json"
+			if [[ "${NPM_AUDIT_FIX}" == "1" ]] ; then
+				for lockfile in ${lockfiles[@]} ; do
+					local d="$(dirname ${lockfile})"
+					pushd "${S_WEBUI}/${d}" || die
+						enpm audit fix \
+							${NPM_AUDIT_FIX_ARGS[@]}
+					popd
+				done
+			fi
+
+einfo "Copying lockfiles"
+			lockfiles_disabled=(
+	# Disabled to prevent too many args for wget in relation to SRC_URI.
+				$(find . -name "package-lock.json")
+			)
+			for lockfile in ${lockfiles[@]} ; do
+				local d="$(dirname ${lockfile})"
+				local dest="${WORKDIR}/lockfile-image/${d}"
+				mkdir -p "${dest}"
+einfo "${d}/package.json -> ${dest}"
+				cp -a "${d}/package.json" "${dest}"
+einfo "${d}/package-lock.json -> ${dest}"
+				cp -a "${d}/package-lock.json" "${dest}"
+			done
+
 einfo "Lockfile update done"
 			exit 0
 		else
@@ -1477,8 +1498,20 @@ einfo "Lockfile update done"
 				cp -aT "${FILESDIR}/${PV}" "${S_WEBUI}" || die
 			fi
 			npm_hydrate
-#			enpm install --prefer-offline
-			enpm install --offline
+			local offline=${NPM_OFFLINE:-2}
+			if [[ "${offline}" == "1" ]] ; then
+				enpm install \
+					--offline \
+					${NPM_INSTALL_ARGS[@]}
+			elif [[ "${offline}" == "1" ]] ; then
+				enpm install \
+					--prefer-offline \
+					${NPM_INSTALL_ARGS[@]}
+			else
+				enpm install \
+					${NPM_INSTALL_ARGS[@]}
+			fi
+			# Audit fix already done in NPM_UPDATE_LOCK=1
 		fi
 	fi
 }
