@@ -419,6 +419,9 @@ gen_required_use_rocm_targets() {
 REQUIRED_USE="
 	$(gen_required_use_cuda_targets)
 	$(gen_required_use_rocm_targets)
+	!system-llvm? (
+		rocm
+	)
 	?? (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
