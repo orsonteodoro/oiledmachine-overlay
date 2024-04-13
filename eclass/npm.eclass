@@ -93,6 +93,10 @@ unset -f _npm_set_globals
 # @DESCRIPTION:
 # The project root containing the package-lock.json file.
 
+# @ECLASS_VARIABLE: NPM_SKIP_TARBALL_UNPACK
+# @DESCRIPTION:
+# Skip unpacking of ${A} or ${NPM_TARBALL}
+
 # @ECLASS_VARIABLE: NPM_SLOT
 # @DESCRIPTION:
 # The version of the lockfile.  (Default:  3)
@@ -280,7 +284,9 @@ _npm_src_unpack_default_ebuild() {
 	elif [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
 		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 	fi
-	if [[ "${PV}" =~ "9999" ]] ; then
+	if [[ "${NPM_SKIP_TARBALL_UNPACK}" == "1" ]] ; then
+		:
+	elif [[ "${PV}" =~ "9999" ]] ; then
 		:
 	elif [[ -n "${NPM_TARBALL}" ]] ; then
 		unpack "${NPM_TARBALL}"
@@ -319,9 +325,15 @@ einfo "Missing package-lock.json"
 	fi
 	local extra_args=()
 	if [[ "${offline}" == "2" ]] ; then
-		extra_args+=( "--offline" )
+		extra_args+=(
+			"--no-audit"
+			"--offline"
+		)
 	elif [[ "${offline}" == "1" ]] ; then
-		extra_args+=( "--prefer-offline" )
+		extra_args+=(
+			"--no-audit"
+			"--prefer-offline"
+		)
 	fi
 	enpm install \
 		${extra_args[@]} \
@@ -353,9 +365,15 @@ _npm_src_unpack_default_upstream() {
 	fi
 	local extra_args=()
 	if [[ "${offline}" == "2" ]] ; then
-		extra_args+=( "--offline" )
+		extra_args+=(
+			"--no-audit"
+			"--offline"
+		)
 	elif [[ "${offline}" == "1" ]] ; then
-		extra_args+=( "--prefer-offline" )
+		extra_args+=(
+			"--no-audit"
+			"--prefer-offline"
+		)
 	fi
 	enpm install \
 		${extra_args[@]} \

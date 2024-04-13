@@ -110,6 +110,10 @@ unset -f _yarn_set_globals
 # @DESCRIPTION:
 # The project root containing the yarn.lock file.
 
+# @ECLASS_VARIABLE: YARN_SKIP_TARBALL_UNPACK
+# @DESCRIPTION:
+# Skip unpacking of ${A} or ${NPM_TARBALL}
+
 # @ECLASS_VARIABLE: YARN_TARBALL
 # @DESCRIPTION:
 # The main package tarball.
@@ -303,7 +307,9 @@ _yarn_src_unpack_default_ebuild() {
 	elif [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
 		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 	fi
-	if [[ "${PV}" =~ "9999" ]] ; then
+	if [[ "${YARN_SKIP_TARBALL_UNPACK}" == "1" ]] ; then
+		:
+	elif [[ "${PV}" =~ "9999" ]] ; then
 		:
 	elif [[ -n "${YARN_TARBALL}" ]] ; then
 		unpack "${YARN_TARBALL}"
