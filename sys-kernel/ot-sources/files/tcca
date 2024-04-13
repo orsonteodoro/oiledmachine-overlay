@@ -248,13 +248,20 @@ echo
 			| sort \
 			| tail -n 1 \
 			| cut -f 2 -d " ")
+		sleep 1
+		local n3=$(cat /sys/class/net/*/statistics/*dropped* \
+			| sort \
+			| tail -n 1 \
+			| cut -f 2 -d " ")
 
 		[[ -z "${n0}" ]] && n0=0
 		[[ -z "${n1}" ]] && n1=0
 		[[ -z "${n2}" ]] && n2=0
+		[[ -z "${n3}" ]] && n3=0
 		local d0=$((${n1} - ${n0}))
 		local d1=$((${n2} - ${n1}))
-echo "Dropped packets per second:  ${d0} (t=1), ${d1} (t=2)"
+		local d2=$((${n3} - ${n2}))
+echo "Dropped packets per second:  ${d0} (t=1), ${d1} (t=2), ${d2} (t=3)"
 		if (( ${d0} == 1 || ${d1} == 1 )) ; then
 echo
 echo "Detected 1 dropped packet per second which concerning and indicative of possible thoughput issues."
@@ -271,9 +278,9 @@ echo "Detected >=10 dropped packets per second which is indicative of serious th
 echo "Consult the packet loss troubleshoot guides to resolve the issue."
 echo
 		fi
-		if (( ${d0} >= 1 && ${d1} >= 1 )) ; then
+		if (( ${d0} >= 1 && ${d1} >= 1 && ${d2} >= 1 )) ; then
 echo
-echo "Detected consecutive dropped packets in 2 seconds which is unusual."
+echo "Detected consecutive dropped packets in 3 seconds which is unusual."
 echo "Consult the packet loss troubleshoot guides to resolve the issue and ensure the router is not compromised."
 echo
 		fi
