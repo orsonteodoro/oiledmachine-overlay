@@ -91,7 +91,7 @@ gen_wrappers() {
 exeinto "usr/bin"
 newexe - xsnow <<-EOF
 #/usr/bin/env bash
-if ! pgrep "xcompmgr" ; then
+if ! pgrep "xcompmgr" && [[ -n "\${DISPLAY}" ]] ; then
 	xcompmgr 2>/dev/null &
 	sleep 0.1
 	"${EPREFIX}/usr/bin/xsnow-bin" "\$@"
