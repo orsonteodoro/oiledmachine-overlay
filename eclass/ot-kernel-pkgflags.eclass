@@ -3398,6 +3398,8 @@ ot-kernel-pkgflags_dracut() { # DONE
 # Applies kernel config flags for the dropwatch package
 ot-kernel-pkgflags_dropwatch() { # DONE
 	if ot-kernel_has_version_pkgflags "dev-util/dropwatch" ; then
+		ot-kernel_y_configopt "CONFIG_INET"
+		ot-kernel_y_configopt "CONFIG_TRACEPOINTS"
 		ot-kernel_y_configopt "CONFIG_NET_DROP_MONITOR"
 	fi
 }
