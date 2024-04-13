@@ -2190,14 +2190,21 @@ __src_unpack_all_production() {
 
 # Currently broken
 _gen_lockfiles() {
+	rm -vf ${lockfiles[@]}
 einfo "Running \`npm install ${NPM_INSTALL_ARGS[@]}\` per each lockfile"
 	local lockfile
 	for lockfile in ${lockfiles[@]} ; do
 		local d="$(dirname ${lockfile})"
 		pushd "${S}/${d}" >/dev/null 2>&1 || die
-			rm -vf ${lockfile}
 			enpm install \
 				${NPM_INSTALL_ARGS[@]}
+		popd >/dev/null 2>&1 || die
+	done
+einfo "Running \`npm install ${NPM_INSTALL_ARGS[@]}\` per each lockfile"
+	local lockfile
+	for lockfile in ${lockfiles[@]} ; do
+		local d="$(dirname ${lockfile})"
+		pushd "${S}/${d}" >/dev/null 2>&1 || die
 			enpm audit fix \
 				${NPM_AUDIT_FIX_ARGS[@]}
 		popd >/dev/null 2>&1 || die
@@ -2400,7 +2407,7 @@ einfo "Compiling ${MY_PN}.js"
 			${NPM_INSTALL_ARGS[@]}
 
 		# Audit fix already done with NPM_UPDATE_LOCK=1
-	popd || die
+	popd >/dev/null 2>&1 || die
 # In https://github.com/4ian/GDevelop/blob/v5.3.195/GDevelop.js/Gruntfile.js#L88
 	pushd "${WORKDIR}/${MY_PN}-${MY_PV}/${MY_PN}.js" >/dev/null 2>&1 || die
 		pushd "node_modules/webidl-tools" >/dev/null 2>&1 || die
@@ -2408,7 +2415,7 @@ einfo "Compiling ${MY_PN}.js"
 				${NPM_INSTALL_ARGS[@]}
 
 			# Audit fix already done with NPM_UPDATE_LOCK=1
-		popd || die
+		popd >/dev/null 2>&1 || die
 		enpm run build -- --force --dev
 	popd >/dev/null 2>&1 || die
 	if [[ ! -f "${S_BAK}/Binaries/embuild/${MY_PN}.js/libGD.wasm" ]]
