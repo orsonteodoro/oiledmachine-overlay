@@ -1821,6 +1821,8 @@ ewarn
 		P_GENPATCHES_BLACKLIST+=" 1500" # fail to patch
 	fi
 
+	P_GENPATCHES_BLACKLIST+=" 1800" # Already applied upstream
+
 	pushd "${d}" >/dev/null 2>&1 || die
 		local f
 		for f in $(ls -1) ; do
