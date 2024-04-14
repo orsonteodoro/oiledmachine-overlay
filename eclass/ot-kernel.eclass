@@ -11174,6 +11174,7 @@ einfo
 	ot-kernel_set_kconfig_set_net_qos_classifiers
 	ot-kernel_set_kconfig_set_net_qos_actions
 	# See also ot-kernel-pkgflags.eclass: _ot-kernel_set_netfilter()
+	_OT_KERNEL_FORCE_SWAP_OFF=0 # Place before ot-kernel_set_kconfig_work_profile, ot-kernel_set_kconfig_swap, ot-kernel_set_kconfig_uksm, ot-kernel_set_kconfig_zswap, ot-kernel_optimize_realtime
 	ot-kernel_set_kconfig_work_profile # Sets PREEMPT*
 	ot-kernel_set_kconfig_pcie_mps
 	ot-kernel_set_kconfig_usb_autosuspend
@@ -11192,7 +11193,6 @@ einfo
 	ot-kernel_set_webcam
 	ot-kernel_set_mobile_camera
 
-	_OT_KERNEL_FORCE_SWAP_OFF=0
 
 	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
 	ot-kernel-pkgflags_apply # Sets PREEMPT*, uses hardening_level
