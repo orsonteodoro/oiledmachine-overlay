@@ -50,7 +50,6 @@ NPM_AUDIT_FIX=0 # Audit fix is broken
 NPM_AUDIT_FIX_ARGS=(
 )
 PYTHON_COMPAT=( python3_{10,11} ) # CI uses 3.8, 3.9
-UDEV_PV="245.4"
 
 inherit check-reqs desktop electron-app evar_dump flag-o-matic llvm-r1 npm
 inherit python-r1 toolchain-funcs xdg
@@ -1996,22 +1995,13 @@ DEPEND_NOT_USED_IN_CI="
 	>=virtual/jpeg-80
 	>=x11-apps/xrandr-1.5.2
 	virtual/opengl
-	virtual/udev
 	x11-misc/xdg-utils
-"
-DEPEND_UDEV_NOT_USED_IN_CI="
-	>=sys-fs/eudev-3.1.5
-	>=sys-fs/udev-${UDEV_PV}
 "
 RDEPEND+="
 	${PYTHON_DEPS}
 	${DEPEND_NOT_USED_IN_CI}
 	>=app-arch/p7zip-16.02
 	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:${GDEVELOP_JS_NODEJS_PV%%.*}
-	|| (
-		${DEPEND_UDEV_NOT_USED_IN_CI}
-		>=sys-apps/systemd-${UDEV_PV}
-	)
 "
 DEPEND+="
 	${DEPEND}
