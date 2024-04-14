@@ -9539,6 +9539,9 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
+		if [[ "${work_profile}" == "laptop" ]] ; then
+			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
+		fi
 	elif [[ \
 		   "${work_profile}" == "casual-gaming-laptop" \
 		|| "${work_profile}" == "gpu-gaming-laptop" \
@@ -9677,10 +9680,12 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 			ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering, reduce skippy input
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
+			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		elif [[ "${work_profile}" == "workstation" ]] ; then
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 			ot-kernel_set_kconfig_set_video_timer_hz # For video production
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
+			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -9710,6 +9715,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_set_kconfig_set_default_timer_hz
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		fi
+		OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-1}
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
@@ -9852,6 +9858,13 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		#else
 		#	Allow to use more browswer tabs with swap.
 		fi
+		if [[ \
+			   "${work_profile}" == "pi-web-browser" \
+			|| "${work_profile}" == "mainstream-desktop"
+		]] ; then
+	# Allow to open more browser tabs
+			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
+		fi
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
@@ -9921,6 +9934,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
+
 		if [[ "${work_profile}" == "green-hpc" ]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
 			ot-kernel_set_kconfig_no_hz_full
@@ -9932,6 +9946,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_y_configopt "CONFIG_PM"
 			ot-kernel_set_rcu_powersave
 			ot-kernel_iosched_lowest_power
+			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-1}
 		elif [[ "${work_profile}" == "greenest-hpc" ]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
 			ot-kernel_set_kconfig_no_hz_full
@@ -9943,6 +9958,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_y_configopt "CONFIG_PM"
 			ot-kernel_set_rcu_powersave
 			ot-kernel_iosched_lowest_power
+			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-1}
 		elif [[ \
 			   "${work_profile}" == "hpc" \
 			|| "${work_profile}" == "throughput-hpc" \
@@ -9956,6 +9972,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 			fi
 			ot-kernel_iosched_max_throughput
+			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-1}
 		elif [[ "${work_profile}" == "realtime-hpc" ]] ; then
 			ot-kernel_set_kconfig_set_highest_timer_hz # Minimize jitter
 			ot-kernel_set_kconfig_no_hz_full
@@ -9970,6 +9987,8 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 			fi
 			ot-kernel_iosched_max_throughput
+			_OT_KERNEL_FORCE_SWAP_OFF="1"
+			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-0}
 		fi
 	elif [[ \
 		"${work_profile}" == "distributed-computing-client" \
@@ -10010,6 +10029,8 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_streaming
 	fi
+
+	OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"0"}
 
 	local sata_lpm_max="${OT_KERNEL_SATA_LPM_MAX:-1}"
 	local sata_lpm_mid="${OT_KERNEL_SATA_LPM_MID:-0}"

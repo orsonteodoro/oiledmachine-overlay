@@ -2936,7 +2936,8 @@ unset OT_KERNEL_PRIVATE_KEY
       0, 1, y, n, manual, unset
 
     0 means disable and 1 means enable.  Unset is the same as manual.  
-    Swap is forced disabled for the following scenarios:
+
+    Swap is forced disabled for the following work-profiles:
 
       casual-gaming
       casual-gaming-laptop
@@ -2956,6 +2957,7 @@ unset OT_KERNEL_PRIVATE_KEY
       pi-video-player
       presentation
       pro-gaming
+      realtime-hpc
       ros
       sdr
       smartphone
@@ -2966,6 +2968,24 @@ unset OT_KERNEL_PRIVATE_KEY
       tablet
       video-conferencing
       voip
+
+    Swap is default off except for the following work-profiles where it is
+    default on:
+
+      builder-dedicated
+      builder-interactive
+      gamedev
+      green-hpc
+      greenest-hpc
+      laptop
+      hpc
+      mainstream-desktop
+      pi-web-browser
+      throughput-hpc
+      workstation
+
+    If you would like to increase the number of browser tabs, then swap should
+    be enabled.  1.2 GiB for video tabs, 170 MiB per social media tabs.
 
     Memory intensive scenarios should always enable swap.  If you need swap use
     any work profile not mentioned in OT_KERNEL_WORK_PROFILE with
