@@ -7,9 +7,20 @@ EAPI=8
 # For optix requirements, see
 #   https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.12.0/src/cmake/externalpackages.cmake
 
+CPU_FEATURES=(
+	${X86_CPU_FEATURES[@]/#/cpu_flags_x86_}
+)
 CUDA_TARGETS_COMPAT=(
 	sm_60
 )
+LLVM_COMPAT=( {15..13} )
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+OPENEXR_V2_PV="2.5.8 2.5.7"
+OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
+PYTHON_COMPAT=( python3_{10..11} )
+QT5_MIN="5.6"
+QT6_MIN="6"
+TEST_MODE="distro" # Can be upstream or distro
 X86_CPU_FEATURES=(
 	avx:avx
 	avx2:avx2
@@ -21,29 +32,28 @@ X86_CPU_FEATURES=(
 	sse4_2:sse4.2
 	ssse3:ssse3
 )
-CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
-LLVM_COMPAT=( {15..13} )
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-PYTHON_COMPAT=( python3_{10..11} )
-OPENEXR_V2_PV="2.5.8 2.5.7"
-OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
-QT5_MIN="5.6"
-QT6_MIN="6"
-TEST_MODE="distro" # Can be upstream or distro
 
 inherit cmake flag-o-matic llvm multilib-minimal python-single-r1 toolchain-funcs
+
+KEYWORDS="amd64 ~x86"
+S="${WORKDIR}/OpenShadingLanguage-${PV}"
+SRC_URI="
+https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Advanced shading language for production GI renderers"
 HOMEPAGE="http://opensource.imageworks.com/?p=osl"
 LICENSE="BSD"
+# Restricting tests as Makefile handles them differently \
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="amd64 ~x86"
 IUSE+="
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FEATURES[@]%:*}
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cuda doc optix partio python qt5 qt6 static-libs test wayland X
-r3
+ebuild-revision-3
 "
 REQUIRED_USE+="
 	^^ (
@@ -203,6 +213,10 @@ DEPEND+="
 "
 BDEPEND+="
 	$(gen_llvm_depend)
+	>=dev-build/cmake-3.12
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	>=sys-devel/bison-2.7
+	>=sys-devel/flex-2.5.35[${MULTILIB_USEDEP}]
 	test? (
 		$(python_gen_cond_dep '
 			media-libs/openimageio[truetype]
@@ -211,10 +225,6 @@ BDEPEND+="
 			>=dev-util/nvidia-cuda-toolkit-10:=
 		)
 	)
-	>=dev-build/cmake-3.12
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=sys-devel/bison-2.7
-	>=sys-devel/flex-2.5.35[${MULTILIB_USEDEP}]
 	|| (
 		$(gen_llvm_bdepend)
 		(
@@ -226,13 +236,6 @@ BDEPEND+="
 		)
 	)
 "
-SRC_URI="
-https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-# Restricting tests as Makefile handles them differently
-RESTRICT="mirror"
-S="${WORKDIR}/OpenShadingLanguage-${PV}"
 
 llvm_check_deps() {
 	has_version -r "sys-devel/clang:${LLVM_SLOT}"
