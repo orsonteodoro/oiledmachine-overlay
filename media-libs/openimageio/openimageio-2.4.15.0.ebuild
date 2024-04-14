@@ -83,9 +83,6 @@ gen_llvm_required_use() {
 REQUIRED_USE="
 	$(gen_abi_compat_required_use)
 	$(gen_llvm_required_use)
-	^^ (
-		${LLVM_COMPAT[@]/#/llvm_slot_}
-	)
 	aom? (
 		avif
 	)
@@ -96,7 +93,7 @@ REQUIRED_USE="
 		)
 	)
 	clang? (
-		|| (
+		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)
