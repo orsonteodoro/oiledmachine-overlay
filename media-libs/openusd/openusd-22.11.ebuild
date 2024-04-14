@@ -3,18 +3,34 @@
 
 EAPI=8
 
-CMAKE_BUILD_TYPE=Release
+# For dependencies, see
+# https://github.com/PixarAnimationStudios/USD/blob/v22.11/VERSIONS.md
+# https://github.com/PixarAnimationStudios/USD/blob/v22.11/build_scripts/build_usd.py#L2019
+# TBB 2021 not ready yet.  tbb::task, tbb::empty_task references are the major hurdles
+
+BOOST_PV="1.70.0"
+CMAKE_BUILD_TYPE="Release"
+LEGACY_TBB_SLOT="2"
+ONETBB_SLOT="0"
+OPENEXR_V2_PV="2.5.8 2.5.7"
+OPENEXR_V3_PV="3.1.9 3.1.8 3.1.7 3.1.5"
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit cmake python-single-r1 flag-o-matic
+
+KEYWORDS="~amd64"
+S="${WORKDIR}/USD-${PV}"
+SRC_URI="
+https://github.com/PixarAnimationStudios/USD/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Universal Scene Description"
 HOMEPAGE="http://www.openusd.org"
 LICENSE="
-	OpenUSD-22.11
-	custom
 	(
-		custom
 		Apache-2.0
+		custom
 	)
 	(
 		all-rights-reserved
@@ -27,14 +43,15 @@ LICENSE="
 	Apache-2.0
 	BSD
 	BSD-2
+	custom
 	JSON
 	MIT
+	OpenUSD-22.11
 "
 # custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/v22.11/pxr/usdImaging/usdImaging/apiSchemaAdapter.cpp#L9
 # custom - search "In consideration of your agreement"
 # MIT - the distro MIT license template does not have all rights reserved.
 SLOT="0"
-KEYWORDS="~amd64"
 # test USE flag is enabled upstream
 IUSE+="
 -alembic -doc +draco -embree +examples -experimental +hdf5 +imaging +jemalloc
@@ -81,15 +98,6 @@ REQUIRED_USE+="
 	)
 "
 
-# For dependencies, see
-# https://github.com/PixarAnimationStudios/USD/blob/v22.11/VERSIONS.md
-# https://github.com/PixarAnimationStudios/USD/blob/v22.11/build_scripts/build_usd.py#L2019
-# TBB 2021 not ready yet.  tbb::task, tbb::empty_task references are the major hurdles
-LEGACY_TBB_SLOT="2"
-ONETBB_SLOT="0"
-OPENEXR_V2_PV="2.5.8 2.5.7"
-OPENEXR_V3_PV="3.1.9 3.1.8 3.1.7 3.1.5"
-
 gen_openexr_pairs() {
 	local pv
 	for pv in ${OPENEXR_V3_PV} ; do
@@ -111,15 +119,15 @@ gen_openexr_pairs() {
 }
 
 RDEPEND+="
+	>=sys-libs/zlib-1.2.11
 	!experimental? (
 		!<dev-cpp/tbb-2021:0=
 		<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 		>=dev-cpp/tbb-2018.6:${LEGACY_TBB_SLOT}=
 	)
 	!python? (
-		>=dev-libs/boost-1.70.0
+		>=dev-libs/boost-${BOOST_PV}:=
 	)
-	>=sys-libs/zlib-1.2.11
 	alembic? (
 		>=media-gfx/alembic-1.7.10[hdf5?]
 	)
@@ -175,7 +183,7 @@ RDEPEND+="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			>=dev-libs/boost-1.70.0:=[python,${PYTHON_USEDEP}]
+			>=dev-libs/boost-'"${BOOST_PV}"':=[python,${PYTHON_USEDEP}]
 			usdview? (
 				(
 					>=dev-python/pyside2-2.0.0[${PYTHON_USEDEP},quickcontrols2(+),script,scripttools]
@@ -217,10 +225,6 @@ BDEPEND+="
 		<sys-devel/clang-12
 	)
 "
-SRC_URI="
-https://github.com/PixarAnimationStudios/USD/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
 PATCHES=(
 	"${FILESDIR}/algorithm.patch"
 	"${FILESDIR}/openusd-21.11-gcc-11-numeric_limits.patch"
@@ -228,7 +232,6 @@ PATCHES=(
 #	"${FILESDIR}/openusd-21.11-clang-14-compat.patch"
 	"${FILESDIR}/openusd-21.11-use-whole-archive-for-lld.patch"
 )
-S="${WORKDIR}/USD-${PV}"
 DOCS=( CHANGELOG.md README.md )
 
 pkg_setup() {
