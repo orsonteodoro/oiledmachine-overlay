@@ -10030,7 +10030,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_iosched_streaming
 	fi
 
-	OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"0"}
+	export OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"0"}
 
 	local sata_lpm_max="${OT_KERNEL_SATA_LPM_MAX:-1}"
 	local sata_lpm_mid="${OT_KERNEL_SATA_LPM_MID:-0}"
