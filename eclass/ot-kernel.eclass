@@ -3347,6 +3347,8 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_BOOT_DECOMPRESSOR
 	unset OT_KERNEL_BOOT_KOPTIONS
 	unset OT_KERNEL_BOOT_KOPTIONS_APPEND
+	unset OT_KERNEL_BOOT_SUBSYSTEMS
+	unset OT_KERNEL_BOOT_SUBSYSTEMS_APPEND
 	unset OT_KERNEL_BUILD
 	unset OT_KERNEL_BUILD_ALL_MODULES_AS
 	unset OT_KERNEL_BUILD_CHECK_MOUNTED
@@ -3434,11 +3436,10 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_SIGN_KERNEL
 	unset OT_KERNEL_SIGN_MODULES
 	unset OT_KERNEL_SSD
-	unset OT_KERNEL_BOOT_SUBSYSTEMS
-	unset OT_KERNEL_BOOT_SUBSYSTEMS_APPEND
+	unset OT_KERNEL_SWAP
 	unset OT_KERNEL_SWAP_COMPRESSION
-	unset OT_KERNEL_USE_LSM_UPSTREAM_ORDER
 	unset OT_KERNEL_TARGET_TRIPLE
+	unset OT_KERNEL_USE_LSM_UPSTREAM_ORDER
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BGDL
@@ -8316,7 +8317,9 @@ einfo "Using ${x}"
 # @DESCRIPTION:
 # Sets the kernel config for swap file support
 ot-kernel_set_kconfig_swap() {
-	[[ "${_OT_KERNEL_FORCE_SWAP_OFF}" == "1" ]] && OT_KERNEL_SWAP="0"
+	if [[ "${_OT_KERNEL_FORCE_SWAP_OFF}" == "1" ]] ; then
+		OT_KERNEL_SWAP="0"
+	fi
 	if [[ "${OT_KERNEL_SWAP}" == "1" || "${OT_KERNEL_SWAP^^}" == "Y" ]] ; then
 einfo "Swap enabled"
 		ot-kernel_y_configopt "CONFIG_SWAP"
@@ -8403,7 +8406,9 @@ einfo "Disabling boot output for TRESOR early prompt."
 # @DESCRIPTION:
 # Sets the kernel config for UKSM
 ot-kernel_set_kconfig_uksm() {
-	[[ "${_OT_KERNEL_FORCE_SWAP_OFF}" == "1" ]] && OT_KERNEL_SWAP=0
+	if [[ "${_OT_KERNEL_FORCE_SWAP_OFF}" == "1" ]] ; then
+		OT_KERNEL_SWAP="0"
+	fi
 	if [[ "${OT_KERNEL_SWAP}" == "0" || "${OT_KERNEL_SWAP^^}" == "N" ]] ; then
 einfo "Disabling UKSM"
 		ot-kernel_unset_configopt "CONFIG_KSM"
@@ -9717,7 +9722,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_set_kconfig_set_default_timer_hz
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		fi
-		OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-1}
+		OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
@@ -9948,7 +9953,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_y_configopt "CONFIG_PM"
 			ot-kernel_set_rcu_powersave
 			ot-kernel_iosched_lowest_power
-			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-1}
+			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		elif [[ "${work_profile}" == "greenest-hpc" ]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
 			ot-kernel_set_kconfig_no_hz_full
@@ -9960,7 +9965,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_y_configopt "CONFIG_PM"
 			ot-kernel_set_rcu_powersave
 			ot-kernel_iosched_lowest_power
-			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-1}
+			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		elif [[ \
 			   "${work_profile}" == "hpc" \
 			|| "${work_profile}" == "throughput-hpc" \
@@ -9974,7 +9979,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 			fi
 			ot-kernel_iosched_max_throughput
-			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-1}
+			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		elif [[ "${work_profile}" == "realtime-hpc" ]] ; then
 			ot-kernel_set_kconfig_set_highest_timer_hz # Minimize jitter
 			ot-kernel_set_kconfig_no_hz_full
