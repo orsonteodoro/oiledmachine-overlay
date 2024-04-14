@@ -24,7 +24,7 @@ DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
 LICENSE="LGPL-2.1+"
 KEYWORDS="~amd64 ~x86"
-SLOT="1/${SO_MAJOR}"
+SLOT="0/${SO_MAJOR}"
 # Auto defaults based on CI, but distro assumes auto means disabled.
 # Going with the CI tested interpretation.
 # CI disables deprecated but enabled by default in meson_options.txt
@@ -36,6 +36,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 +lcms +libde265 +matio -minimal -nifti +openexr +openslide +orc +pangocairo +png
 +poppler +python -rav1e +ppm -spng +svg test +tiff +vala +webp +x265
 +zlib
+ebuild-revision-1
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
