@@ -5293,12 +5293,12 @@ einfo "Changed .config to use CFS without autogroup"
 # @DESCRIPTION:
 # Unset all cpu freq default gov
 ot-kernel_unset_all_cpu_freq_default_gov() {
-	ot-kernel_unset_configopt "CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
-	ot-kernel_unset_configopt "CPU_FREQ_DEFAULT_GOV_ONDEMAND"
-	ot-kernel_unset_configopt "CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
-	ot-kernel_unset_configopt "CPU_FREQ_DEFAULT_GOV_POWERSAVE"
-	ot-kernel_unset_configopt "CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
-	ot-kernel_unset_configopt "CPU_FREQ_DEFAULT_GOV_USERSPACE"
+	ot-kernel_unset_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
+	ot-kernel_unset_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
+	ot-kernel_unset_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+	ot-kernel_unset_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE"
+	ot-kernel_unset_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+	ot-kernel_unset_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE"
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_cpu_scheduler_post
