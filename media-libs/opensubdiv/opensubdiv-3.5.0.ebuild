@@ -6,35 +6,42 @@
 EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR=emake
+CUDA_TARGETS_COMPAT=(
+	sm_35
+	sm_50
+)
+LEGACY_TBB_SLOT="2"
+MY_PV="$(ver_rs "1-3" '_')"
+ONETBB_SLOT="0"
 PYTHON_COMPAT=( python3_{8..11} )
 
 inherit cmake cuda flag-o-matic python-utils-r1 toolchain-funcs
 
-MY_PV="$(ver_rs "1-3" '_')"
-DESCRIPTION="An Open-Source subdivision surface library"
-HOMEPAGE="https://graphics.pixar.com/opensubdiv/docs/intro.html"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+S="${WORKDIR}/OpenSubdiv-${MY_PV}"
 SRC_URI="
 https://github.com/PixarAnimationStudios/OpenSubdiv/archive/v${MY_PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
+DESCRIPTION="An Open-Source subdivision surface library"
+HOMEPAGE="https://graphics.pixar.com/opensubdiv/docs/intro.html"
 # Modfied Apache-2.0 license, where section 6 has been replaced.
 # See for example CMakeLists.txt for details.
 LICENSE="Apache-2.0"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 # cuda is default on upstream
 # test is default on upstream
-CUDA_TARGETS_COMPAT=(
-	sm_35
-	sm_50
-)
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +doc +examples -glew +glfw +opencl +openmp +opengl +ptex +tbb test
 +tutorials +X
 "
-
 gen_required_use_cuda_targets() {
 	local x
 	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
@@ -45,7 +52,6 @@ gen_required_use_cuda_targets() {
 		"
 	done
 }
-
 REQUIRED_USE="
 	$(gen_required_use_cuda_targets)
 	cuda? (
@@ -57,19 +63,18 @@ REQUIRED_USE="
 		glfw
 	)
 "
-
-ONETBB_SLOT="0"
-LEGACY_TBB_SLOT="2"
 RDEPEND="
 	${PYTHON_DEPS}
 	cuda_targets_sm_35? (
-		=dev-util/nvidia-cuda-toolkit-11*:=
+		=dev-util/nvidia-cuda-toolkit-11*
+		dev-util/nvidia-cuda-toolkit:=
 	)
 	cuda_targets_sm_50? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*
+			=dev-util/nvidia-cuda-toolkit-12*
 		)
+		dev-util/nvidia-cuda-toolkit:=
 	)
 	glew? (
 		media-libs/glew:=
@@ -110,18 +115,14 @@ BDEPEND="
 		>=dev-python/docutils-0.9
 	)
 	cuda? (
-		<sys-devel/gcc-12[cxx]
+		=sys-devel/gcc-11*[cxx]
 	)
 "
-S="${WORKDIR}/OpenSubdiv-${MY_PV}"
-
 PATCHES_=(
 	"${FILESDIR}/${PN}-3.3.0-use-gnuinstalldirs.patch"
 	"${FILESDIR}/${PN}-3.4.3-install-tutorials-into-bin.patch"
 	"${FILESDIR}/${PN}-3.4.4-add-CUDA11-compatibility.patch"
 )
-
-RESTRICT="!test? ( test )"
 
 src_prepare() {
 	eapply ${PATCHES_[@]}
@@ -137,6 +138,12 @@ src_configure() {
 	# The tc-check-openmp does not print slot information.
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP="${CXX} -E"
+	if use cuda ; then
+		export CC="${CHOST}-gcc-11"
+		export CXX="${CHOST}-gcc-11"
+		export CPP="${CXX} -E"
+	fi
 einfo "CC:\t\t${CC}"
 einfo "CXX:\t\t${CXX}"
 	${CC} --version
@@ -163,18 +170,27 @@ einfo "CXX:\t\t${CXX}"
 		-DNO_TUTORIALS=$(usex !tutorials)
 	)
 
+	local cc_bin
+	if use cuda ; then
+		cc_bin="-ccbin "$(realpath "${ESYSROOT}/usr/bin/${CHOST}-gcc-11")
+	fi
+
 	if ! use cuda ; then
-		:;
+		:
 	elif [[ -n "${OSD_CUDA_NVCC_FLAGS}" ]] ; then
 		# See
 		# https://github.com/PixarAnimationStudios/OpenSubdiv/issues/1299#issuecomment-1490813096
 		# https://github.com/PixarAnimationStudios/OpenSubdiv/issues/965#issuecomment-380939742
 		mycmakeargs+=(
-			-DOSD_CUDA_NVCC_FLAGS="${OSD_CUDA_NVCC_FLAGS}"
+			-DOSD_CUDA_NVCC_FLAGS="${cc_bin} ${OSD_CUDA_NVCC_FLAGS}"
 		)
 	elif has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
 		mycmakeargs+=(
-			-DOSD_CUDA_NVCC_FLAGS="--gpu-architecture compute_50"
+			-DOSD_CUDA_NVCC_FLAGS="${cc_bin} --gpu-architecture compute_50"
+		)
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
+		mycmakeargs+=(
+			-DOSD_CUDA_NVCC_FLAGS="${cc_bin}"
 		)
 	fi
 
@@ -218,7 +234,7 @@ src_test() {
 src_install() {
 	cmake_src_install
 	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		:;
+		:
 	elif use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			test -L "${f}" && continue
