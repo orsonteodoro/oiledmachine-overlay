@@ -3234,7 +3234,9 @@ unset OT_KERNEL_PRIVATE_KEY
         5. emerge -fvuDN @world
 
         Benefits:  skipless/uninterrupted video playback with maximum bandwidth
-        utilization for background downloads.
+        utilization for background downloads with met downstream bandwidth
+        requirements for video and audio.  [If 8k video and small bandwidth, it
+        will skip.]
 
 
         Low latency web browsing (simple):
