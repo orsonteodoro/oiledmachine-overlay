@@ -3417,6 +3417,8 @@ ot-kernel-pkgflags_dropwatch() { # DONE
 
 		ot-kernel_y_configopt "CONFIG_TRACEPOINTS"
 		ot-kernel_y_configopt "CONFIG_NET_DROP_MONITOR"
+
+		ot-kernel_y_configopt "CONFIG_NET_DEVLINK"
 	fi
 }
 
