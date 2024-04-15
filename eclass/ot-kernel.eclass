@@ -11285,9 +11285,11 @@ einfo "Disabling all debug and shortening logging buffers"
 		fi
 	fi
 
+die "DEBUG:   omt"
 einfo "Updating the .config for defaults for the newly enabled options."
 einfo "Running:  make olddefconfig ${args[@]}"
 	make olddefconfig "${args[@]}" || die
+die "DEBUG:   omt"
 	ot-kernel_menuconfig "post" # Uses llvm_slot
 }
 

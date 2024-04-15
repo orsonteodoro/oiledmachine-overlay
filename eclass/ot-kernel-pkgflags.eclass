@@ -1308,8 +1308,9 @@ ot-kernel-pkgflags_bluez() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the bpftool package
 ot-kernel-pkgflags_bpftool() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-util/bpftool" ; then
-		ban_disable_debug "dev-util/bpftool"
+	local pkg="dev-util/bpftool"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"
 	fi
 }
@@ -3397,7 +3398,8 @@ ot-kernel-pkgflags_dracut() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the dropwatch package
 ot-kernel-pkgflags_dropwatch() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-util/dropwatch" ; then
+	local pkg="dev-util/dropwatch"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_INET"
 		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_TRACEPOINTS"
@@ -4079,7 +4081,8 @@ ot-kernel-pkgflags_firehol() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the firewalld package
 ot-kernel-pkgflags_firewalld() { # DONE
-	if ot-kernel_has_version_pkgflags "net-firewall/firewalld" ; then
+	local pkg="net-firewall/firewalld"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_CONNTRACK"
 		ot-kernel_y_configopt "CONFIG_NETFILTER"
@@ -4146,7 +4149,7 @@ ot-kernel-pkgflags_firewalld() { # DONE
 		ot-kernel_y_configopt "CONFIG_NFT_FIB_IPV6"
 		ot-kernel_y_configopt "CONFIG_NFT_HASH"
 		ot-kernel_y_configopt "CONFIG_NFT_LIMIT"
-		ban_disable_debug "net-firewall/firewalld" "NETFILTER"
+		ban_disable_debug "${pkg}" "NETFILTER"
 		ot-kernel_y_configopt "CONFIG_NFT_LOG"
 		ot-kernel_y_configopt "CONFIG_NFT_MASQ"
 		ot-kernel_y_configopt "CONFIG_NFT_NAT"
@@ -5624,8 +5627,9 @@ ot-kernel-pkgflags_libnetfilter_cttimeout() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libnetfilter_log package
 ot-kernel-pkgflags_libnetfilter_log() { # DONE
-	if ot-kernel_has_version_pkgflags "net-libs/libnetfilter_log" ; then
-		ban_disable_debug "net-libs/libnetfilter_log" "NETFILTER"
+	local pkg="net-libs/libnetfilter_log"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ban_disable_debug "${pkg}" "NETFILTER"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_LOG"
 	fi
 }
@@ -6534,8 +6538,9 @@ ot-kernel-pkgflags_mysql() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the nbfc package
 ot-kernel-pkgflags_nbfc() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-power/nbfc-linux" ; then
-		ban_disable_debug "sys-power/nbfc-linux"
+	local pkg="sys-power/nbfc-linux"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_ACPI_EC_DEBUGFS"
 		ot-kernel_y_configopt "CONFIG_HWMON"
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
@@ -8206,8 +8211,9 @@ ot-kernel-pkgflags_r8168() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the rasdaemon package
 ot-kernel-pkgflags_rasdaemon() { # DONE
-	if ot-kernel_has_version_pkgflags "app-admin/rasdaemon" ; then
-		ban_disable_debug "app-admin/rasdaemon"
+	local pkg="app-admin/rasdaemon"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_ACPI_EXTLOG"
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 	fi
@@ -8495,7 +8501,8 @@ ewarn "Re-emerge ${pkg}[usb] and ${PN} for USB scanner support."
 # @DESCRIPTION:
 # Applies kernel config flags for the sanewall package
 ot-kernel-pkgflags_sanewall() { # DONE
-	if ot-kernel_has_version_pkgflags "net-firewall/sanewall" ; then
+	local pkg="net-firewall/sanewall"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_IPV4"
 		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_MARK"
 		ot-kernel_y_configopt "CONFIG_NF_NAT"
@@ -8504,7 +8511,7 @@ ot-kernel-pkgflags_sanewall() { # DONE
 		ot-kernel_y_configopt "CONFIG_IP_NF_IPTABLES"
 		ot-kernel_y_configopt "CONFIG_IP_NF_FILTER"
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_REJECT"
-		ban_disable_debug "net-firewall/sanewall" "NETFILTER"
+		ban_disable_debug "${pkg}" "NETFILTER"
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_LOG"
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_ULOG"
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_MASQUERADE"
@@ -8977,8 +8984,9 @@ ot-kernel-pkgflags_suricata() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the sysdig-kmod package
 ot-kernel-pkgflags_sysdig_kmod() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-util/sysdig-kmod" ; then
-		ban_disable_debug "dev-util/sysdig-kmod"
+	local pkg="dev-util/sysdig-kmod"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_HAVE_SYSCALL_TRACEPOINTS"
 		ot-kernel_y_configopt "CONFIG_TRACEPOINTS"
 	fi
@@ -9064,9 +9072,10 @@ ot-kernel-pkgflags_systemd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the systemd-bootchart package
 ot-kernel-pkgflags_systemd_bootchart() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-apps/systemd-bootchart" ; then
+	local pkg="sys-apps/systemd-bootchart"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_SCHEDSTATS"
-		ban_disable_debug "sys-apps/systemd-bootchart"
+		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_SCHED_DEBUG"
 	fi
 }
@@ -9945,12 +9954,13 @@ ot-kernel-pkgflags_wireless_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the wireplumber package
 ot-kernel-pkgflags_wireplumber() { # DONE
-	if ot-kernel_has_version_pkgflags "media-video/wireplumber" ; then
+	local pkg="media-video/wireplumber"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_SOUND"
 		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_unset_configopt "CONFIG_UML"
 		ot-kernel_y_configopt "CONFIG_SND_PROC_FS"
-		ban_disable_debug "media-video/wireplumber"
+		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_SND_VERBOSE_PROCFS"
 	fi
 }
