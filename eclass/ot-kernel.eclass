@@ -1104,9 +1104,6 @@ einfo "instr_prof_raw_ver=${instr_prof_raw_ver}"
 			found_patched_version=1
 		fi
 	done
-einfo "DEBUG:  instr_prof_raw_ver=${instr_prof_raw_ver}"
-einfo "DEBUG:  IPD_RAW_VER_MIN=${IPD_RAW_VER_MIN}"
-einfo "DEBUG:  IPD_RAW_VER_MAX=${IPD_RAW_VER_MAX}"
 	if (( ${found_upstream_version} != 1 )) ; then
 eerror
 eerror "No installed LLVM versions are with compatible."
@@ -11285,11 +11282,9 @@ einfo "Disabling all debug and shortening logging buffers"
 		fi
 	fi
 
-die "DEBUG:   omt"
 einfo "Updating the .config for defaults for the newly enabled options."
 einfo "Running:  make olddefconfig ${args[@]}"
 	make olddefconfig "${args[@]}" || die
-die "DEBUG:   omt"
 	ot-kernel_menuconfig "post" # Uses llvm_slot
 }
 
@@ -11938,7 +11933,6 @@ ot-kernel_build_kernel() {
 einfo "Building PGI"
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_dpath}" ]] ; then
 einfo "Merging PGT profiles"
-einfo "DEBUG:  clang-major-version=$(clang-major-version)"
 				PATH="/usr/lib/llvm/$(clang-major-version)/bin:${PATH}" \
 				which llvm-profdata >/dev/null 2>&1 || die "Cannot find llvm-profdata"
 				local actual_profraw_ver=$(od -An -j 8 -N 1 -t d1 "${profraw_dpath}" | grep -E -o -e "[0-9]+")
