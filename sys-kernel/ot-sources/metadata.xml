@@ -3233,8 +3233,8 @@ unset OT_KERNEL_PRIVATE_KEY
         4. tcca --use=lp
         5. emerge -fvuDN @world
 
-        Benefits:  smooth video playback with maximum bandwidth utilization for
-        background downloads.
+        Benefits:  skipless/uninterrupted video playback with maximum bandwidth
+        utilization for background downloads.
 
 
         Low latency web browsing (simple):
