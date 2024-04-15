@@ -3400,8 +3400,20 @@ ot-kernel-pkgflags_dracut() { # DONE
 ot-kernel-pkgflags_dropwatch() { # DONE
 	local pkg="dev-util/dropwatch"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
 		ban_disable_debug "${pkg}"
+		ot-kernel_y_configopt "CONFIG_FTRACE"
+
+	# One of CONFIG_KPROBE_EVENTS or CONFIG_UPROBE_EVENTS required to make
+	# the CONFIG_NET_DROP_MONITOR option visible.
+		ot-kernel_y_configopt "CONFIG_KPROBES"
+		ot-kernel_y_configopt "CONFIG_KPROBE_EVENTS"
+
+		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
+		ot-kernel_y_configopt "CONFIG_MMU"
+		ot-kernel_y_configopt "CONFIG_UPROBE_EVENTS"
+
 		ot-kernel_y_configopt "CONFIG_TRACEPOINTS"
 		ot-kernel_y_configopt "CONFIG_NET_DROP_MONITOR"
 	fi
