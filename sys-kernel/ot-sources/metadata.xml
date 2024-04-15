@@ -3217,11 +3217,38 @@ unset OT_KERNEL_PRIVATE_KEY
       - Fair means distribution of bandwidth equally.
       - Realtime can be used in place of low latency.
       - Throughput means preserves maximum throughput property.
-      - Background downloads require less attention but by design allow the
-        primary flow to continue smoothly uninterrupted.  An example would be a
-        music video in the foreground without studder or FPS drop and the
-        background a large emerge file being downloaded.
+      - tcca use examples:
 
+        Video while downloading in the background (Simple):
+        1. close web browser
+        2. tcca streaming
+        3. play video on the web browser
+        4. tcca bgdl
+        5. emerge -f @world
+
+        Video while downloading in the background (Advanced):
+        1. close web browser
+        2. tcca --use=bbr
+        3. play video on the web browser
+        4. tcca --use=lp
+        5. emerge -fvuDN @world
+
+        Low latency web browsing (simple):
+        1. close web browser
+        2. tcca www
+
+        Low latency web browsing (advanced):
+        1. close web browser
+        2. tcca --use=vegas
+
+        Single player browser games (simple)
+        1. close web browser
+        2. tcca wireless
+
+        Single player browser games (advanced)
+        1. close web browser
+        2. tcca --use=cubic
+        
 
 
     OT_KERNEL_USB_AUTOSUSPEND - Set to -1 to disable, or set to a whole number
