@@ -70,6 +70,7 @@ MAKEOPTS="-j1"
 
 _pkg_setup_one() {
 	local k="${1}"
+	[[ -z "${k}" ]] && die "Missing kernel sources for linux-${pat}"
 	KERNEL_DIR="/usr/src/linux-${k}"
 	[[ -e "${KERNEL_DIR}" ]] || die "Missing kernel sources for linux-${pat}"
 	[[ -e "${KERNEL_DIR}/.config" ]] || die "Missing .config for ${k}"
