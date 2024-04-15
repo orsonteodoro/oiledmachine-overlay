@@ -3403,6 +3403,7 @@ ot-kernel-pkgflags_dropwatch() { # DONE
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
 		ban_disable_debug "${pkg}"
+		ot-kernel_y_configopt "CONFIG_TRACING_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_FTRACE"
 
 	# One of CONFIG_KPROBE_EVENTS or CONFIG_UPROBE_EVENTS required to make
@@ -8159,6 +8160,7 @@ ot-kernel-pkgflags_powertop() { # DONE
 		ot-kernel_y_configopt "CONFIG_PM_ADVANCED_DEBUG"
 
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
+		ot-kernel_y_configopt "CONFIG_TRACING_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_FTRACE"
 		ot-kernel_y_configopt "CONFIG_SYSFS"
 		ot-kernel_y_configopt "CONFIG_BLOCK"
@@ -9254,6 +9256,7 @@ ot-kernel-pkgflags_trace_cmd() { # DONE
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_TRACING"
+		ot-kernel_y_configopt "CONFIG_TRACING_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_FTRACE"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_IO_TRACE"
 	fi
@@ -9644,6 +9647,7 @@ ot-kernel-pkgflags_vendor_reset() { # DONE
 	local pkg="app-emulation/vendor-reset"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ban_disable_debug "${pkg}"
+		ot-kernel_y_configopt "CONFIG_TRACING_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_FTRACE"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
 		ot-kernel_y_configopt "CONFIG_PCI_QUIRKS"
