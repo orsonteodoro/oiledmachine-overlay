@@ -5289,6 +5289,18 @@ einfo "Changed .config to use CFS without autogroup"
 	fi
 }
 
+# @FUNCTION: ot-kernel_unset_all_cpu_freq_default_gov
+# @DESCRIPTION:
+# Unset all cpu freq default gov
+ot-kernel_unset_all_cpu_freq_default_gov() {
+	ot-kernel_unset_configopt "CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
+	ot-kernel_unset_configopt "CPU_FREQ_DEFAULT_GOV_ONDEMAND"
+	ot-kernel_unset_configopt "CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+	ot-kernel_unset_configopt "CPU_FREQ_DEFAULT_GOV_POWERSAVE"
+	ot-kernel_unset_configopt "CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+	ot-kernel_unset_configopt "CPU_FREQ_DEFAULT_GOV_USERSPACE"
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_cpu_scheduler_post
 # @DESCRIPTION:
 # Unbreak build for incompatible flags
@@ -5314,6 +5326,7 @@ ewarn "Dropping CONFIG_PROC_PID_CPUSET for muqss.  If you do not like this, swit
 einfo "Optimizing Nest with OT_KERNEL_NEST_FREQ_GOV=schedutil"
 			ot-kernel_y_configopt "CONFIG_SMP"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_unset_all_cpu_freq_default_gov
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
@@ -5321,6 +5334,7 @@ einfo "Optimizing Nest with OT_KERNEL_NEST_FREQ_GOV=schedutil"
 einfo "Optimizing Nest with OT_KERNEL_NEST_FREQ_GOV=performance"
 			ot-kernel_y_configopt "CONFIG_SMP"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_unset_all_cpu_freq_default_gov
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
@@ -8772,18 +8786,7 @@ ot-kernel_set_kconfig_work_profile_init() {
 		ot-kernel_unset_configopt "CONFIG_${timer}"
 	done
 
-	local CPU_FREQ_GOV_DEFAULTS=(
-		PERFORMANCE
-		POWERSAVE
-		USERSPACE
-		ONDEMAND
-		CONSERVATIVE
-		GOV_SCHEDUTIL
-	)
-	local s
-	for s in ${CPU_FREQ_GOV_DEFAULTS[@]} ; do
-		ot-kernel_unset_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_${s}"
-	done
+	ot-kernel_unset_all_cpu_freq_default_gov
 
 	local PCI_ASPM=(
 		DEFAULT
@@ -9478,6 +9481,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_unset_all_cpu_freq_default_gov
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
@@ -9505,9 +9509,11 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_y_configopt "CONFIG_HIBERNATION"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		if [[ "${work_profile}" == "touchscreen-laptop" ]] ; then
+			ot-kernel_unset_all_cpu_freq_default_gov
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
 		else
+			ot-kernel_unset_all_cpu_freq_default_gov
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
 		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
@@ -9560,12 +9566,14 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 	# 3D allowed, intense worse case
 			ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+			ot-kernel_unset_all_cpu_freq_default_gov
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		else
 	# 2D mostly, less intense
 	# Avoid leg burn on long use
 			ot-kernel_set_kconfig_set_video_timer_hz # For power savings
 			ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Lower temperature and fan noise
+			ot-kernel_unset_all_cpu_freq_default_gov
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
 		fi
 		_OT_KERNEL_FORCE_SWAP_OFF="1"
@@ -9602,6 +9610,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Lower temperature and fan noise
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_unset_all_cpu_freq_default_gov
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
 		ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
@@ -9632,9 +9641,11 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		if [[ "${work_profile}" == "game-server" ]] ; then
+			ot-kernel_unset_all_cpu_freq_default_gov
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
 		else
+			ot-kernel_unset_all_cpu_freq_default_gov
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		fi
@@ -9692,6 +9703,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_unset_all_cpu_freq_default_gov
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
@@ -9722,6 +9734,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_unset_all_cpu_freq_default_gov
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
@@ -9739,6 +9752,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 	]] ; then
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_unset_all_cpu_freq_default_gov
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
@@ -9776,6 +9790,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		fi
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_unset_all_cpu_freq_default_gov
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
@@ -9801,6 +9816,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_set_kconfig_set_video_timer_hz
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_unset_all_cpu_freq_default_gov
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
@@ -9871,6 +9887,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		fi
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_unset_all_cpu_freq_default_gov
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
@@ -9893,6 +9910,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_set_kconfig_set_lowest_timer_hz # For energy and throughput
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_unset_all_cpu_freq_default_gov
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_USERSPACE"
@@ -9912,6 +9930,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_unset_all_cpu_freq_default_gov
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
@@ -9942,6 +9961,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		if [[ "${work_profile}" == "green-hpc" ]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
 			ot-kernel_set_kconfig_no_hz_full
+			ot-kernel_unset_all_cpu_freq_default_gov
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
@@ -9954,6 +9974,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		elif [[ "${work_profile}" == "greenest-hpc" ]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
 			ot-kernel_set_kconfig_no_hz_full
+			ot-kernel_unset_all_cpu_freq_default_gov
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
@@ -9970,6 +9991,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Shorter runtimes
 			ot-kernel_set_kconfig_slab_allocator "slub"
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+			ot-kernel_unset_all_cpu_freq_default_gov
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
@@ -9981,6 +10003,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_set_kconfig_set_highest_timer_hz # Minimize jitter
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_rt_rcu
+			ot-kernel_unset_all_cpu_freq_default_gov
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 			if   ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
@@ -10001,6 +10024,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_unset_all_cpu_freq_default_gov
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
@@ -10028,6 +10052,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_unset_all_cpu_freq_default_gov
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
