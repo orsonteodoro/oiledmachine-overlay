@@ -3206,7 +3206,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Notes:
 
-      - The wrapper will be found in /usr/bin/tcca
+      - The trapper will be found in /usr/bin/tcca
       - The wrapper configuration may be changed in /etc/tcca-${PV}-${EXTRAVERSION}-${ARCH}.conf
       - The wrapper script requires sys-auth/polkit.  Use the gnome or kde USE
         flag to present GUI dialog.
@@ -3217,14 +3217,14 @@ unset OT_KERNEL_PRIVATE_KEY
       - Fair means distribution of bandwidth equally.
       - Realtime can be used in place of low latency.
       - Throughput means preserves maximum throughput property.
-      - tcca use examples:
+      - tcca usage examples:
 
         Video while downloading in the background (Simple):
         1. close web browser
         2. tcca streaming
         3. play video on the web browser
         4. tcca bgdl
-        5. emerge -f @world
+        5. emerge -fvuDN @world
 
         Video while downloading in the background (Advanced):
         1. close web browser
@@ -3232,6 +3232,10 @@ unset OT_KERNEL_PRIVATE_KEY
         3. play video on the web browser
         4. tcca --use=lp
         5. emerge -fvuDN @world
+
+        Benefits:  smooth video playback with maximum bandwidth utilization for
+        background downloads.
+
 
         Low latency web browsing (simple):
         1. close web browser
@@ -3241,6 +3245,10 @@ unset OT_KERNEL_PRIVATE_KEY
         1. close web browser
         2. tcca --use=vegas
 
+        Benefits:  images load faster in parallel and faster navigation through
+        wikis.
+
+
         Single player browser games (simple)
         1. close web browser
         2. tcca wireless
@@ -3248,7 +3256,11 @@ unset OT_KERNEL_PRIVATE_KEY
         Single player browser games (advanced)
         1. close web browser
         2. tcca --use=cubic
-        
+
+        Benefits:  high throughput for downloading the game and shorter wait
+        time to play.
+
+     - You can verify the TCP congestion control use per socket via `ss -i`.
 
 
     OT_KERNEL_USB_AUTOSUSPEND - Set to -1 to disable, or set to a whole number
