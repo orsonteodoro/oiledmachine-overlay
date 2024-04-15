@@ -928,6 +928,10 @@ EOF
 
 dkms_build() {
 	local kernel_source_path="/usr/src/linux-${k}"
+	if [[ -z "${k}" || ! -e "${kernel_source_path}" ]] ; then
+eerror "Missing kernel sources for linux-${pat}"
+		die
+	fi
 	local kernel_release=$(cat "${kernel_source_path}/include/config/kernel.release") # ${PV}-${EXTRAVERSION}-${ARCH}
 	if [[ -z "${kernel_release}" ]] ; then
 eerror
@@ -1078,7 +1082,8 @@ pkg_postinst() {
 		for k in ${ROCK_DKMS_KERNELS_5_3} ; do
 			if [[ "${k}" =~ "*" ]] ; then
 				# Pick all point releases:  6.1.*-zen
-				local V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" \
+				local pat="${k}"
+				local V=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" \
 					| sort --version-sort -r \
 					| sed -e "s|.*/linux-||")
 				local v
