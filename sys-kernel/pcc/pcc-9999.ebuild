@@ -71,7 +71,8 @@ MAKEOPTS="-j1"
 _pkg_setup_one() {
 	local k="${1}"
 	KERNEL_DIR="/usr/src/linux-${k}"
-	[[ "${KERNEL_DIR}/.config" ]] || die "Missing .config for ${k}"
+	[[ -e "${KERNEL_DIR}" ]] || die "Missing kernel sources for linux-${pat}"
+	[[ -e "${KERNEL_DIR}/.config" ]] || die "Missing .config for ${k}"
 	if ! realpath /boot/vmlinuz-${k}* 2>/dev/null 1>/dev/null ; then
 		die "The kernel needs to be built first for ${k}."
 	fi
@@ -101,7 +102,8 @@ eerror
 	for k in ${PCC_KERNELS} ; do
 		if [[ "${k}" =~ "*" ]] ; then
 			# Pick all point releases:  6.1.*-zen
-			local V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" \
+			local pat="${k}"
+			local V=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" \
 				| sort --version-sort -r \
 				| sed -e "s|.*/linux-||")
 			local v
