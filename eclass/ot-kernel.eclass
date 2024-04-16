@@ -188,6 +188,9 @@ ${EBUILD_REV}
 GCC_PKG="sys-devel/gcc"
 NEEDS_DEBUGFS=0
 PYTHON_COMPAT=( python3_{10..11} ) # Slots based on dev-python/selenium
+_OT_KERNEL_FORCE_SWAP_OFF=0 # Variable not const
+_OT_KERNEL_FORCE_STABILITY=0 # Variable not const
+
 inherit check-reqs flag-o-matic python-r1 ot-kernel-pkgflags
 inherit ot-kernel-kutils security-scan toolchain-funcs
 
@@ -3396,6 +3399,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_LOGO_PREPROCESS_SHA512
 	unset OT_KERNEL_LOGO_PREPROCESS_BLAKE2B
 	unset OT_KERNEL_LSMS
+	unset OT_KERNEL_MAX_UPTIME
 	unset OT_KERNEL_MENUCONFIG_COLORS
 	unset OT_KERNEL_MENUCONFIG_RUN_AT
 	unset OT_KERNEL_MENUCONFIG_UI
@@ -9666,6 +9670,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		elif [[ "${work_profile}" == "gaming-tournament" ]] ; then
 			ot-kernel_optimize_gaming "gaming-tournament"
 		fi
+		_OT_KERNEL_FORCE_STABILITY=1
 	elif [[ \
 		   "${work_profile}" == "digital-audio-workstation" \
 		|| "${work_profile}" == "gamedev" \
@@ -9720,6 +9725,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		else
 			ot-kernel_iosched_interactive
 		fi
+		_OT_KERNEL_FORCE_STABILITY=1
 	elif [[ \
 		   "${work_profile}" == "builder-dedicated" \
 		|| "${work_profile}" == "builder-interactive" \
@@ -10973,10 +10979,18 @@ einfo "Disabling overdrive on the amdgpu driver."
 ot-kernel_optimize_gaming_oflag() {
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 	[[ "${work_profile}" == "pro-gaming" ]] || return
-	filter-flags '-O*'
-	append-flags '-O3' # This is in testing
-	if ! ot-kernel_use zen-sauce ; then
+	if [[ \
+		   "${OT_KERNEL_MAX_UPTIME}" == "1" \
+		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
+	]] ; then
+		filter-flags '-O*'
+		append-flags '-O2'
+	else
+		filter-flags '-O*'
+		append-flags '-O3' # This is in testing
+		if ! ot-kernel_use zen-sauce ; then
 ewarn "-O3 requires zen-sauce in both OT_KERNEL_USE and USE."
+		fi
 	fi
 }
 
@@ -10986,18 +11000,83 @@ ewarn "-O3 requires zen-sauce in both OT_KERNEL_USE and USE."
 ot-kernel_optimize_gaming_tornament_oflag() {
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 	[[ "${work_profile}" == "gaming-tournament" ]] || return
-	filter-flags '-O*'
-	# Stability is more important that FPS.
-	append-flags '-O3' # This is in testing.
-	if ! ot-kernel_use zen-sauce ; then
+	if [[ \
+		   "${OT_KERNEL_MAX_UPTIME}" == "1" \
+		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
+	]] ; then
+		# Stability is more important that FPS.
+		filter-flags '-O*'
+		append-flags '-O2'
+	else
+		filter-flags '-O*'
+		append-flags '-O3' # This is in testing.
+		if ! ot-kernel_use zen-sauce ; then
 ewarn "-O3 requires zen-sauce in both OT_KERNEL_USE and USE."
+		fi
 	fi
 }
 
-# @FUNCTION: ot-kernel_optimize_gaming
+# @FUNCTION: ot-kernel_optimize_gaming_hardcore
 # @DESCRIPTION:
-# Optimize the kernel for gaming performance for the top 1%.
-ot-kernel_optimize_gaming() {
+# Optimize the kernel for hardcore mode (irreversable death).
+ot-kernel_optimize_gaming_hardcore() {
+	local work_profile="${1}"
+ewarn
+ewarn "OT_KERNEL_WORK_PROFILE=\"${work_profile}\" is still in development."
+ewarn
+	if ot-kernel_use uksm ; then
+# Remove the unintended consequences of applying the patch.
+# UKSM also thrashes a lot so lets get rid of that.
+eerror
+eerror "Please remove uksm from OT_KERNEL_USE in"
+eerror "OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
+eerror
+		die
+	fi
+	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		if ! tc-is-cross-compiler ; then
+			local tpc=$(lscpu \
+				| grep  -e "Thread(s) per core:.*" \
+				| head -n 1 \
+				| grep -E -o "[0-9]+")
+			if (( ${tpc} > 1 )) && ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
+				# Already set in ot-kernel_set_kconfig_processor_class
+				# ot-kernel_y_configopt "CONFIG_SMP"
+				# ot-kernel_y_configopt "CONFIG_SCHED_MC"
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+					ot-kernel_y_configopt "CONFIG_SCHED_MC_PRIO"
+				else
+					ot-kernel_unset_configopt "CONFIG_SCHED_MC_PRIO"
+				fi
+			fi
+		fi
+	fi
+
+# Avoid huge latency spike or trashing.
+	if has_version "sys-apps/systemd-utils" ; then
+		if has_version "sys-apps/systemd-utils[tmpfiles]" ; then
+			if tc-is-cross-compiler ; then
+ewarn
+ewarn "You need to disable the tmpfiles USE flag in sys-apps/systemd-utils to"
+ewarn "avoid middle of the game lag spike or match/game loss."
+ewarn
+			else
+eerror
+eerror "You need to disable the tmpfiles USE flag in sys-apps/systemd-utils to"
+eerror "avoid middle of the game lag spike or match/game loss."
+eerror
+				die
+			fi
+		fi
+	fi
+	ot-kernel_unset_configopt "CONFIG_SLUB_CPU_PARTIAL"
+}
+
+
+# @FUNCTION: ot-kernel_optimize_gaming_fps
+# @DESCRIPTION:
+# Optimize the kernel for gaming performance for max fps
+ot-kernel_optimize_gaming_fps() {
 	local work_profile="${1}"
 ewarn
 ewarn "OT_KERNEL_WORK_PROFILE=\"${work_profile}\" is still in development."
@@ -11065,6 +11144,22 @@ eerror
 		fi
 	fi
 	ot-kernel_unset_configopt "CONFIG_SLUB_CPU_PARTIAL"
+}
+
+# @FUNCTION: ot-kernel_optimize_gaming
+# @DESCRIPTION:
+# Optimize the kernel for gaming performance for the top 1%.
+ot-kernel_optimize_gaming() {
+	local work_profile="${1}"
+
+	if [[ \
+		   "${_OT_KERNEL_FORCE_STABILITY}" == "1"
+		|| "${OT_KERNEL_MAX_UPTIME}"       == "1"
+	]] ; then
+		ot-kernel_optimize_gaming_hardcore "${work_profile}"
+	else
+		ot-kernel_optimize_gaming_fps "${work_profile}"
+	fi
 }
 
 # @FUNCTION: ot-kernel_optimize_realtime
@@ -11146,8 +11241,6 @@ eerror
 	ot-kernel_unset_configopt "CONFIG_SLUB_CPU_PARTIAL"
 }
 
-_OT_KERNEL_FORCE_SWAP_OFF=0
-
 # @FUNCTION: ot-kernel_print_thp_status
 # @DESCRIPTION:
 # Prints the transparent huge page status for this config.
@@ -11200,6 +11293,22 @@ einfo
 
 	local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
 
+	if [[ \
+		   "${OT_KERNEL_MAX_UPTIME}"       == "1" \
+		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
+	]] ; then
+einfo "Forcing the default hardening level for stability"
+	# Place before ot-kernel-pkgflags_apply, \
+	#	ot-kernel_set_kconfig_hardening_level, \
+	#	ot-kernel_set_kconfig_cfi, \
+	#	ot-kernel_set_kconfig_kcfi, \
+	#	ot-kernel_set_kconfig_cpu_scheduler, \
+	#	ot-kernel_set_kconfig_scs, \
+	#	ot-kernel_optimize_gaming, \
+	#	ot-kernel_optimize_realtime \
+		hardening_level="default"
+	fi
+
 	local llvm_slot=$(get_llvm_slot)
 	local gcc_slot=$(get_gcc_slot)
 	ot-kernel_set_kconfig_compiler_toolchain # Inits llvm_slot, gcc_slot
@@ -11219,12 +11328,25 @@ einfo
 	ot-kernel_set_kconfig_cpu_scheduler
 	ot-kernel_set_kconfig_multigen_lru
 	ot-kernel_set_kconfig_compressors
-	ot-kernel_set_kconfig_set_tcp_congestion_controls # Place before ot-kernel_set_kconfig_work_profile
+
+	# Place before ot-kernel_set_kconfig_work_profile \
+	ot-kernel_set_kconfig_set_tcp_congestion_controls
+
 	ot-kernel_set_kconfig_set_net_qos_schedulers
 	ot-kernel_set_kconfig_set_net_qos_classifiers
 	ot-kernel_set_kconfig_set_net_qos_actions
 	# See also ot-kernel-pkgflags.eclass: _ot-kernel_set_netfilter()
-	_OT_KERNEL_FORCE_SWAP_OFF=0 # Place before ot-kernel_set_kconfig_work_profile, ot-kernel_set_kconfig_swap, ot-kernel_set_kconfig_uksm, ot-kernel_set_kconfig_zswap, ot-kernel_optimize_realtime
+
+	# Place before ot-kernel_set_kconfig_work_profile, \
+	#	ot-kernel_set_kconfig_swap, \
+	#	ot-kernel_set_kconfig_uksm, \
+	#	ot-kernel_set_kconfig_zswap, \
+	#	ot-kernel_optimize_realtime \
+	_OT_KERNEL_FORCE_SWAP_OFF=0
+
+	# Place before ot-kernel_set_kconfig_work_profile \
+	_OT_KERNEL_FORCE_STABILITY=0
+
 	ot-kernel_set_kconfig_work_profile # Sets PREEMPT*
 	ot-kernel_set_kconfig_pcie_mps
 	ot-kernel_set_kconfig_usb_autosuspend
@@ -11242,7 +11364,6 @@ einfo
 	ot-kernel_set_mobo_audio
 	ot-kernel_set_webcam
 	ot-kernel_set_mobile_camera
-
 
 	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
 	ot-kernel-pkgflags_apply # Sets PREEMPT*, uses hardening_level

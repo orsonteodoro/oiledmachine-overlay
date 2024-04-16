@@ -2327,6 +2327,25 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
 
 
 
+    OT_KERNEL_MAX_UPTIME - Optimize the kernel to maximize uptime.  This setting
+    is to mitigate against irreversable losses (hardcore mode, lost work) or
+    embrassing crashes.  (EXPERIMENTAL, WIP)
+
+    Acceptable values:  1 - max uptime, 0 - unstable (default)
+
+    The following work profiles maximize uptime unconditionally:
+    
+    digital-audio-workstation
+    gamedev
+    game-server
+    gaming-tournament
+    musical-live-performance
+    presentation
+    pro-gaming
+    workstation
+
+
+
     OT_KERNEL_MESSAGE - Print a message near the end of the kernel init.
 
     Examples:
@@ -3341,6 +3360,7 @@ unset OT_KERNEL_PRIVATE_KEY
       live-video-reporting
       mainstream-desktop
       manual
+      max-uptime
       media-player
       media-server
       musical-live-performance
@@ -3400,6 +3420,7 @@ unset OT_KERNEL_PRIVATE_KEY
     See also:
 
       OT_KERNEL_HARDENING_LEVEL
+      OT_KERNEL_MAX_UPTIME
       OT_KERNEL_PAGE_SIZE
 
 
