@@ -30,19 +30,8 @@
 #	https://github.com/torvalds/linux/compare/v5.15...samitolvanen:cfi-5.15
 # Clear Linux patches:
 #       https://github.com/clearlinux-pkgs/linux
-# PGO (clang) support:
-#	Upstream acquaintances used 5.13.0_rc2
-#       https://patchwork.kernel.org/project/linux-kbuild/patch/20210407211704.367039-1-morbo@google.com/mbox/			# Earlier Clang PGO v9.
-#       https://patchwork.kernel.org/project/linux-kbuild/patch/20210407211704.367039-1-morbo@google.com/#24246189		# Context of above patch
-#	https://lore.kernel.org/all/20210621231822.2848305-1-ndesaulniers@google.com/T/#u					# Add __no_profile
-#       https://github.com/ClangBuiltLinux/linux/issues/1405
-# PGO (gcc) support:
-#	https://wiki.gentoo.org/wiki/Kernel/Optimization#GCC_PGO
-#       http://coolypf.com/kpgo.htm
 # DeepCC:
 #	https://github.com/Soheil-ab/DeepCC.v1.0
-# KCFI:
-#	https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
 # genpatches:
 #	https://gitweb.gentoo.org/proj/linux-patches.git/
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=4.19
@@ -52,15 +41,17 @@
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.1
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.6
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.8
+# KCFI:
+#	https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
 # kernel_compiler_patch:
 #	https://github.com/graysky2/kernel_compiler_patch
+# Multigenerational LRU:
+#	https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/lru
+#	https://github.com/torvalds/linux/compare/v6.0...zen-kernel:6.0/mglru
 # MUQSS CPU Scheduler (official, EOL 5.12):
 #	https://github.com/torvalds/linux/compare/v4.19...ckolivas:4.19-ck
 #	https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
 #	https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
-# Multigenerational LRU:
-#	https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/lru
-#	https://github.com/torvalds/linux/compare/v6.0...zen-kernel:6.0/mglru
 # Nest:
 #       https://gitlab.inria.fr/nest-public/nest-artifact
 #       https://gitlab.inria.fr/nest-public/nest-artifact/-/tree/main/extras
@@ -77,6 +68,15 @@
 # PDS CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/PDS
 #	https://gitlab.com/alfredchen/PDS-mq/-/tree/master
+# PGO (clang) support:
+#	Upstream acquaintances used 5.13.0_rc2
+#       https://patchwork.kernel.org/project/linux-kbuild/patch/20210407211704.367039-1-morbo@google.com/mbox/			# Earlier Clang PGO v9.
+#       https://patchwork.kernel.org/project/linux-kbuild/patch/20210407211704.367039-1-morbo@google.com/#24246189		# Context of above patch
+#	https://lore.kernel.org/all/20210621231822.2848305-1-ndesaulniers@google.com/T/#u					# Add __no_profile
+#       https://github.com/ClangBuiltLinux/linux/issues/1405
+# PGO (gcc) support:
+#	https://wiki.gentoo.org/wiki/Kernel/Optimization#GCC_PGO
+#       http://coolypf.com/kpgo.htm
 # PREEMPT_RT:
 #	https://wiki.linuxfoundation.org/realtime/start
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/
