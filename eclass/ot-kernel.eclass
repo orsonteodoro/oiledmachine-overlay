@@ -7085,8 +7085,21 @@ ot-kernel_set_kconfig_oflag() {
 		| tail -n 1)
 	replace-flags '-O*' "${O_last}"
 
-	ot-kernel_optimize_pro_gaming_oflag
-	ot-kernel_optimize_gaming_tornament_oflag
+	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
+	if [[ "${work_profile}" == "gaming-tournament" ]] ; then
+		replace-flags '-O*' "-O3"
+	elif [[ "${work_profile}" == "pro-gaming" ]] ; then
+		replace-flags '-O*' "-O3"
+	fi
+
+	if [[ \
+		   "${OT_KERNEL_MAX_UPTIME}" == "1" \
+		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
+	]] ; then
+	# Prevent crashes from bad code generation.
+		replace-flags '-O*' '-O2'
+	fi
+
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
@@ -11028,39 +11041,6 @@ einfo "Disabling overdrive on the amdgpu driver."
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.ppfeaturemask=[x0-9]+"
 			ot-kernel_set_kconfig_kernel_cmdline "${result}"
 		fi
-	fi
-}
-
-# @FUNCTION: ot-kernel_optimize_pro_gaming_oflag
-# @DESCRIPTION:
-# Set gaming optimizations before main set.
-ot-kernel_optimize_pro_gaming_oflag() {
-	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
-	[[ "${work_profile}" == "pro-gaming" ]] || return
-	if [[ \
-		   "${OT_KERNEL_MAX_UPTIME}" == "1" \
-		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
-	]] ; then
-		replace-flags '-O*' '-O2'
-	else
-		replace-flags '-O*' '-O3'
-	fi
-}
-
-# @FUNCTION: ot-kernel_optimize_gaming_tournament_oflag
-# @DESCRIPTION:
-# Set game-tournament optimizations before main set
-ot-kernel_optimize_gaming_tornament_oflag() {
-	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
-	[[ "${work_profile}" == "gaming-tournament" ]] || return
-	if [[ \
-		   "${OT_KERNEL_MAX_UPTIME}" == "1" \
-		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
-	]] ; then
-	# Stability is more important that FPS.
-		replace-flags '-O*' '-O2'
-	else
-		replace-flags '-O*' '-O3'
 	fi
 }
 
