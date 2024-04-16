@@ -7090,7 +7090,12 @@ ot-kernel_set_kconfig_oflag() {
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
-	if [[ "${CFLAGS}" =~ "O4" && -n "${_OT_KERNEL_O3_PROVIDER[${KV_MAJOR_MINOR}-${extraversion}]}" ]] ; then
+	if [[ "${CFLAGS}" =~ "Ofast" && -n "${_OT_KERNEL_O3_PROVIDER[${KV_MAJOR_MINOR}-${extraversion}]}" ]] ; then
+ewarn "Downgrading to -Ofast -> -O3"
+einfo "Setting .config with -O3 from CFLAGS"
+		replace-flags '-O*' '-O3'
+		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
+	elif [[ "${CFLAGS}" =~ "O4" && -n "${_OT_KERNEL_O3_PROVIDER[${KV_MAJOR_MINOR}-${extraversion}]}" ]] ; then
 ewarn "Downgrading to -O4 -> -O3"
 einfo "Setting .config with -O3 from CFLAGS"
 		replace-flags '-O*' '-O3'
@@ -7109,6 +7114,17 @@ einfo "Setting .config with -Os from CFLAGS"
 	elif [[ "${CFLAGS}" =~ "Os" ]] ; then
 einfo "Setting .config with -Os from CFLAGS"
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
+	elif [[ "${CFLAGS}" =~ "Ofast" && -z "${_OT_KERNEL_O3_PROVIDER[${KV_MAJOR_MINOR}-${extraversion}]}" ]] ; then
+ewarn
+ewarn "-O3 requires at least one of the following:"
+ewarn
+ewarn "1. zen-sauce in both OT_KERNEL_USE and USE."
+ewarn "2. clear in both OT_KERNEL_USE and USE"
+ewarn
+ewarn "Downgrading to -Ofast -> -O2"
+einfo "Setting .config with -O2 from CFLAGS"
+		replace-flags '-O*' '-O2'
+		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
 	elif [[ "${CFLAGS}" =~ "O4" && -z "${_OT_KERNEL_O3_PROVIDER[${KV_MAJOR_MINOR}-${extraversion}]}" ]] ; then
 ewarn
 ewarn "-O3 requires at least one of the following:"
