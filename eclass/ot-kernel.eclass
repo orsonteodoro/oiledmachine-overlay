@@ -11345,7 +11345,7 @@ einfo
 		   "${OT_KERNEL_MAX_UPTIME}"       == "1" \
 		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
 	]] ; then
-einfo "Forcing the default hardening level for stability"
+einfo "Forcing the default hardening level for maximum uptime"
 	# Place before ot-kernel-pkgflags_apply, \
 	#	ot-kernel_set_kconfig_hardening_level, \
 	#	ot-kernel_set_kconfig_cfi, \
