@@ -21,22 +21,16 @@ esac
 # For *DEPENDs, see
 # https://github.com/torvalds/linux/blob/v5.4/Documentation/process/changes.rst
 
+# To update the array sections you can
+# wget -O - https://github.com/torvalds/linux/compare/A..D.patch \
+#	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
+# from A to D, where a is ancestor and d is descendant.
+# When using that commit list generator, it *may miss* some commits, so verify all
+# the commits in order.
+
 # PV is for 9999 (live) context check
 MY_PV="${PV}" # ver_test context
 KERNEL_RELEASE_DATE="20191124" # of first stable release
-CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.4/tools/build/feature/Makefile#L318
-GCC_COMPAT=( {13..4} )
-GCC_MAX_SLOT=${GCC_COMPAT[0]}
-GCC_MIN_SLOT=${GCC_COMPAT[-1]}
-LLVM_COMPAT=( {18..10} )
-LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
-LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
-GCC_SLOT_NOT_KCP=( ${GCC_COMPAT[@]} ) # Without kernel-compiler-patch
-GCC_SLOT_KCP="${GCC_COMPAT[0]}" # With kernel-compiler-patch
-DISABLE_DEBUG_PV="1.4.1"
-EXTRAVERSION="-ot"
-GENPATCHES_BLACKLIST=" 2400"
-GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KV_MAJOR=$(ver_cut 1 "${MY_PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
 if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
@@ -45,25 +39,18 @@ if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
 else
 	UPSTREAM_PV="${MY_PV/_/-}" # file context
 fi
-MUQSS_VER="0.196"
-# To update some of these sections you can
-# wget -O - https://github.com/torvalds/linux/compare/A^..D.patch \
-#	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
-# from A to D, where a is ancestor and d is descendant.
-# When using that commit list generator, it *may miss* some commits, so verify all
-# the commits in order.
 
-PATCH_ALLOW_O3_COMMIT="4edc8050a41d333e156d2ae1ed3ab91d0db92c7e" # from zen repo
-PATCH_KCP_COMMIT="cbf238bae1a5132b8b35392f3f3769267b2acaf5" # from zen repo
-PATCH_TRESOR_VER="3.18.5"
-
-C2TCP_MAJOR_VER="2"
-C2TCP_VER="2.2"
+C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
 C2TCP_EXTRA="0521"
 C2TCP_KV="4.13.1"
-C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
+C2TCP_MAJOR_VER="2"
+C2TCP_VER="2.2"
 
-CK_KV="5.4.0"
+CK_COMMITS_BLACKLISTED_COMMITS=(
+# Avoid merge conflict or duplicates with already upstreamed.
+5b6cd7cfe6cf6e1263b0a5d2ee461c8058b76213 # -ck1 extraversion
+)
+
 CK_COMMITS=(
 # From https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
 #
@@ -87,13 +74,33 @@ aa88bb077c4091cc11481585b6579919c2b01210
 1b7439521c9c12fbae47b827f51970b65e3357f1
 5b6cd7cfe6cf6e1263b0a5d2ee461c8058b76213
 )
+CK_KV="5.4.0"
 
-# Avoid merge conflict.
-CK_COMMITS_BL=(
-5b6cd7cfe6cf6e1263b0a5d2ee461c8058b76213 # -ck1 extraversion
+CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.4/tools/build/feature/Makefile#L318
+DISABLE_DEBUG_PV="1.4.1"
+EXTRAVERSION="-ot"
+GENPATCHES_BLACKLIST=" 2400"
+GENPATCHES_VER="${GENPATCHES_VER:?1}"
+GCC_COMPAT=( {13..4} )
+GCC_MAX_SLOT=${GCC_COMPAT[0]}
+GCC_MIN_SLOT=${GCC_COMPAT[-1]}
+GCC_SLOT_NOT_KCP=( ${GCC_COMPAT[@]} ) # Without kernel-compiler-patch
+GCC_SLOT_KCP="${GCC_COMPAT[0]}" # With kernel-compiler-patch
+LLVM_COMPAT=( {18..10} )
+LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
+LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
+MUQSS_VER="0.196"
+
+PATCH_ALLOW_O3_COMMIT="4edc8050a41d333e156d2ae1ed3ab91d0db92c7e" # from zen repo
+PATCH_KCP_COMMIT="cbf238bae1a5132b8b35392f3f3769267b2acaf5" # from zen repo
+PATCH_TRESOR_VER="3.18.5"
+PATCH_ZEN_SAUCE_BRANDING="1baa02fbd7a419fdd0e484ba31ba82c90c7036cf"
+
+PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS=(
+	${PATCH_ZEN_SAUCE_BRANDING}
+	56f6f4315aedbbcbef8ad61f187347c20a270e49 # ZEN: Add a choice of boot logos [permissions issue and conflicts with logo patch]
 )
 
-ZEN_KV="5.4.0"
 PATCH_ZEN_SAUCE_COMMITS=(
 # From https://github.com/torvalds/linux/compare/v5.4...zen-kernel:zen-kernel:5.4/zen-sauce
 #
@@ -125,11 +132,6 @@ a7c2e93c81a96375414db26fdd18cb9fae8421b9
 376d7ed3c04b5576fe753c0dbe588a423c8be9c3
 )
 
-# Avoid merge conflict.
-PATCH_ZEN_SAUCE_BRANDING="
-1baa02fbd7a419fdd0e484ba31ba82c90c7036cf
-"
-
 # top is oldest, bottom is newest
 # TODO: Split patch like in newer versions
 PATCH_ZEN_TUNE_COMMITS=(
@@ -148,14 +150,8 @@ c9a8f36311f14311a3202501c88009f758683c0f:3e05ad861b9b2b61a1cbfd0d98951579eb3c85e
 # ZEN: Add CONFIG to rename the mq-deadline scheduler (c9a8f36) requires \
 # ZEN: Implement zen-tune v5.4 (3e05ad8)
 
-# BL = Blacklisted to avoid merge conflict
-PATCH_ZEN_SAUCE_BL=(
-	${PATCH_ZEN_SAUCE_BRANDING}
-	56f6f4315aedbbcbef8ad61f187347c20a270e49 # ZEN: Add a choice of boot logos [permissions issue and conflicts with logo patch]
-)
-
 # For 5.4
-ZEN_MUQSS_COMMITS=(
+PATCH_ZEN_MUQSS_COMMITS=(
 # From https://github.com/torvalds/linux/compare/v5.4...zen-kernel:zen-kernel:5.4/muqss
 #
 # Generated from:
@@ -183,8 +179,9 @@ dce8f01fd3d28121e3bf215255c5eded3855e417
 d1bebeb959a56324fe436443ea2f21a8391632d9
 45589d24eea4cdfe59e87a65389fd72d91f43bf0
 )
-ZEN_MUQSS_EXCLUDED_COMMITS=(
+PATCH_ZEN_MUQSS_EXCLUDED_COMMITS=(
 )
+ZEN_KV="5.4.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
@@ -202,7 +199,6 @@ REQUIRED_USE+="
 	)
 "
 
-K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="\
 A customizable kernel package with \

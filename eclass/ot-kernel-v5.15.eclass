@@ -21,20 +21,16 @@ esac
 # For *DEPENDs, see
 # https://github.com/torvalds/linux/blob/v5.15/Documentation/process/changes.rst
 
+# To update the array sections you can
+# wget -O - https://github.com/torvalds/linux/compare/A..D.patch \
+#	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
+# from A to D, where a is ancestor and d is descendant.
+# When using that commit list generator, it *may miss* some commits, so verify all
+# the commits in order.
+
 # PV is for 9999 (live) context check
 MY_PV="${PV}" # ver_test context
 KERNEL_RELEASE_DATE="20211031" # of first stable release
-CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.15/tools/build/feature/Makefile#L318
-GCC_COMPAT=( {13..5} )
-GCC_MAX_SLOT=${GCC_COMPAT[0]}
-GCC_MIN_SLOT=${GCC_COMPAT[-1]}
-LLVM_COMPAT=( {18..10} )
-LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
-LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
-CLANG_PGO_SUPPORTED=1
-DISABLE_DEBUG_PV="1.4.1"
-EXTRAVERSION="-ot"
-GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KV_MAJOR=$(ver_cut 1 "${MY_PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
 if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
@@ -43,136 +39,6 @@ if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
 else
 	UPSTREAM_PV="${MY_PV/_/-}" # file context
 fi
-PATCH_ALLOW_O3_COMMIT="b67c5033547771052515687e96adf98858ea0de6" # from zen repo
-PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
-PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor ~ oldest
-PATCH_BBRV2_COMMIT_D="a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361" # descendant ~ newest
-PATCH_KCP_COMMIT="ff1381103099207c61c0e8426e82eabbb2808b04" # from zen repo
-PATCH_MULTIGEN_LRU_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
-PATCH_MULTIGEN_LRU_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor ~ oldest
-PATCH_MULTIGEN_LRU_COMMIT_D="87542b28c81281bd1a54969df035ccf5ce1853da" # descendant ~ newest
-PATCH_OPENRGB_COMMIT="aa864eded832387e4ace9652ca2edbeb8155d703" # apply from zen repo
-PATCH_ZEN_MULTIGEN_LRU_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
-PATCH_ZEN_MULTIGEN_LRU_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor ~ oldest
-PATCH_ZEN_MULTIGEN_LRU_COMMIT_D="f16e06ddde0e38b172d8da03d4fd39c3296b0564" # descendant ~ newest
-PATCH_TRESOR_VER="3.18.5"
-# To update some of these sections you can
-# wget -O - https://github.com/torvalds/linux/compare/A^..D.patch \
-#	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
-# from A to D, where a is ancestor and d is descendant.
-# When using that commit list generator, it *may miss* some commits, so verify all
-# the commits in order.
-
-C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
-C2TCP_VER="2.2"
-C2TCP_EXTRA="0521"
-C2TCP_KV="4.13.1"
-C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
-
-ZEN_KV="5.15.0"
-PATCH_ZEN_SAUCE_COMMITS=(
-# From https://github.com/torvalds/linux/compare/v5.15...zen-kernel:zen-kernel:5.15/zen-sauce
-#
-# Generated from:
-# wget -q -O - https://github.com/torvalds/linux/compare/7607cbe5890545c3d4a2c5598cfb0eb9255ab46a^..2f3fee79abe0a75597d511cb0ccfb12db1688b69.patch \
-#        | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
-7607cbe5890545c3d4a2c5598cfb0eb9255ab46a
-dcc1c5d635f155c7a9458cd93827899211224486
-aa864eded832387e4ace9652ca2edbeb8155d703
-ff1381103099207c61c0e8426e82eabbb2808b04
-b67c5033547771052515687e96adf98858ea0de6
-e5a3bbcb4908996f6034817704297979cbf2dc07
-4398d18270d5391b13d108a79b8ec235e0ffa10a
-fb7fb66f2c1f923dc039d99125ed94d54435bb9f
-05447263701b202e0086bb2cae098cf6d46c158e
-10a037e3ae47516141287fb489fb7ea0ae18fc0a
-f1030c5bd8cd8f67cef664c0b6b9841afbc49363
-e6e6ceba3e07be085b0249d7fc03e795d58dc577
-bd79567171b5faa0394ebdfcf46394864b60479f
-0d865e68797b90a0de0123adcbe8c77c4ea4ae22
-57a46dc390017363b2db52e70f4b07c9a71f76c6
-00e58bccf05365ce65f6e9694e1ca3b9ad30f345
-de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac
-3045edebf785deb5d687abd9898ac9702be5325c
-7bfc78d87614496288ad4e90f7d749a942a83718
-be5ba234ca0a5aabe74bfc7e1f636f085bd3823c
-09955b8fd454ae284590fc4c9f47e7c96f3bad51
-16b72839cb862810bbf976e223f85ff4d1959ebd
-96c43bfad5c8dcb116ab2088e46228707aaeca9f
-ce769e35208203536d176326e72560548848b5ff
-35b5b825073000f04477651683c4aa11b98d12c8
-c793cc79debeafd0d1cee613dfc99d64c2cbcc94
-4218499052f1010e8b466db363b0ce4857756299
-81ba2917231b206b7b6b9b160e456c5452c4f62e
-e350f22a04b707a15d6af29d6d5a97e86445eacc
-776bded2cf3b004f783d7dc52d9d74aeab966cd3
-66ebd054e5444851a69974541525e0f651202aea
-6c274a0c3cd6e014d388022c54f2bf0dbe6a12a3
-05429691ac69cfe6704530bfed1d5911efb828bb
-2f3fee79abe0a75597d511cb0ccfb12db1688b69
-)
-
-# Avoid merge conflict.
-PATCH_ZEN_SAUCE_BRANDING="
-7607cbe5890545c3d4a2c5598cfb0eb9255ab46a
-"
-
-# This is a list containing elements of LEFT_ZEN_COMMIT:RIGHT_ZEN_COMMIT.  Each
-# element means that the left commit requires right commit which can be
-# resolved by adding the right commit to ZEN_SAUCE_WHITELIST.
-# commits [oldest] a b c d e... [newest]
-# b:a
-PATCH_ZEN_TUNE_COMMITS_DEPS_ZEN_SAUCE=(
-de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac:05447263701b202e0086bb2cae098cf6d46c158e
-) # \
-# ZEN: INTERACTIVE: Use BFQ as our elevator (de75df0) requires \
-# ZEN: Add CONFIG to rename the mq-deadline scheduler (0544726)
-
-# Message marked with INTERACTIVE:
-PATCH_ZEN_TUNE_COMMITS=(
-00e58bccf05365ce65f6e9694e1ca3b9ad30f345
-de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac
-3045edebf785deb5d687abd9898ac9702be5325c
-7bfc78d87614496288ad4e90f7d749a942a83718
-be5ba234ca0a5aabe74bfc7e1f636f085bd3823c
-09955b8fd454ae284590fc4c9f47e7c96f3bad51
-16b72839cb862810bbf976e223f85ff4d1959ebd
-96c43bfad5c8dcb116ab2088e46228707aaeca9f
-)
-PATCH_BFQ_DEFAULT="de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac"
-PATCH_ZEN_SAUCE_BL=(
-	${PATCH_ZEN_SAUCE_BRANDING}
-)
-
-# --
-
-# Disabled 7d443dabec118b2c869461d8740e010bca976931 : ZEN: INTERACTIVE: Use BFQ as our elevator
-# Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
-
-# Have to pull and apply one-by-one because of already applied commits
-# Corresponding to [5.15, cfi-5.15]
-CFI_KV="5.15.0"
-CFI_COMMITS=(
-8dfd451f45dbb26f049083248bf80463a71bc5fd
-f5bff50472d56909b1cce5463d120a996a34b004
-ceb2e9c1636efe86ce835a78fd6783ab89e8f976
-bd6966b9d8eedce598371b3bfdbe0e03cee497a7
-4ae0924a08505cb9edd119d9eaadd03a80b65590
-8eda1c26606e71618cc99a6efa1680d287dfc4f7
-d879decba121257f1a120d10f277d8a382f96995
-3cb32c428616aa260553eb4c68b2a4f87971ae92
-e921a2782b9bb64b29516e186a9d841319f2a71c
-ca65ed990fe39aa0aa92ec3262208a41e6c1edf9
-227509670d08484176020753d998581e56ee496c
-5eef9c1387806fd8672d002432ef2a7fbde3c332
-c982d8b1bbcebb610f664841764cb1dbaed6c938
-6e7d1b0c4b9134f065ddad6db8325b4eeeae319b
-a09066b2a6f436ea4b8acc25dce279d5ecd3811d
-aa4fb87a71a95bef81d9742a772d1dc8eb4fceea
-)
-
-CFI_EXCLUDE_COMMITS=(
-)
 
 BBRV2_KV="5.13.12"
 BBRV2_VERSION="v2alpha-2022-08-28"
@@ -215,6 +81,154 @@ cf9b1dacabb1ef62481a452f7f169e1679e2da49
 a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 ) # newest
 
+C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
+C2TCP_EXTRA="0521"
+C2TCP_KV="4.13.1"
+C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
+C2TCP_VER="2.2"
+
+# Have to pull and apply one-by-one because of already applied commits
+# Corresponding to [5.15, cfi-5.15]
+CFI_KV="5.15.0"
+CFI_COMMITS=(
+8dfd451f45dbb26f049083248bf80463a71bc5fd
+f5bff50472d56909b1cce5463d120a996a34b004
+ceb2e9c1636efe86ce835a78fd6783ab89e8f976
+bd6966b9d8eedce598371b3bfdbe0e03cee497a7
+4ae0924a08505cb9edd119d9eaadd03a80b65590
+8eda1c26606e71618cc99a6efa1680d287dfc4f7
+d879decba121257f1a120d10f277d8a382f96995
+3cb32c428616aa260553eb4c68b2a4f87971ae92
+e921a2782b9bb64b29516e186a9d841319f2a71c
+ca65ed990fe39aa0aa92ec3262208a41e6c1edf9
+227509670d08484176020753d998581e56ee496c
+5eef9c1387806fd8672d002432ef2a7fbde3c332
+c982d8b1bbcebb610f664841764cb1dbaed6c938
+6e7d1b0c4b9134f065ddad6db8325b4eeeae319b
+a09066b2a6f436ea4b8acc25dce279d5ecd3811d
+aa4fb87a71a95bef81d9742a772d1dc8eb4fceea
+)
+
+CFI_EXCLUDE_COMMITS=(
+)
+
+CLANG_PGO_SUPPORTED=1
+CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.15/tools/build/feature/Makefile#L318
+DISABLE_DEBUG_PV="1.4.1"
+EXCLUDE_SCS=(
+	alpha
+	amd64
+	arm
+	hppa
+	ia64
+	mips
+	ppc
+	ppc64
+	riscv
+	s390
+	sparc
+	x86
+)
+EXTRAVERSION="-ot"
+GCC_COMPAT=( {13..5} )
+GCC_MAX_SLOT=${GCC_COMPAT[0]}
+GCC_MIN_SLOT=${GCC_COMPAT[-1]}
+GENPATCHES_VER="${GENPATCHES_VER:?1}"
+LLVM_COMPAT=( {18..10} )
+LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
+LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
+PATCH_ALLOW_O3_COMMIT="b67c5033547771052515687e96adf98858ea0de6" # from zen repo
+PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
+PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor ~ oldest
+PATCH_BBRV2_COMMIT_D="a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361" # descendant ~ newest
+PATCH_BFQ_DEFAULT="de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac"
+PATCH_KCP_COMMIT="ff1381103099207c61c0e8426e82eabbb2808b04" # from zen repo
+PATCH_MULTIGEN_LRU_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
+PATCH_MULTIGEN_LRU_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor ~ oldest
+PATCH_MULTIGEN_LRU_COMMIT_D="87542b28c81281bd1a54969df035ccf5ce1853da" # descendant ~ newest
+PATCH_OPENRGB_COMMIT="aa864eded832387e4ace9652ca2edbeb8155d703" # apply from zen repo
+PATCH_TRESOR_VER="3.18.5"
+PATCH_ZEN_MULTIGEN_LRU_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
+PATCH_ZEN_MULTIGEN_LRU_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor ~ oldest
+PATCH_ZEN_MULTIGEN_LRU_COMMIT_D="f16e06ddde0e38b172d8da03d4fd39c3296b0564" # descendant ~ newest
+
+PATCH_ZEN_SAUCE_BRANDING="
+7607cbe5890545c3d4a2c5598cfb0eb9255ab46a
+"
+
+PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS=(
+# Avoid merge conflict or duplicates with already upstreamed.
+	${PATCH_ZEN_SAUCE_BRANDING}
+# Disabled ZEN: INTERACTIVE: Use BFQ as our elevator
+# Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
+)
+
+PATCH_ZEN_SAUCE_COMMITS=(
+# From https://github.com/torvalds/linux/compare/v5.15...zen-kernel:zen-kernel:5.15/zen-sauce
+#
+# Generated from:
+# wget -q -O - https://github.com/torvalds/linux/compare/7607cbe5890545c3d4a2c5598cfb0eb9255ab46a^..2f3fee79abe0a75597d511cb0ccfb12db1688b69.patch \
+#        | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
+7607cbe5890545c3d4a2c5598cfb0eb9255ab46a
+dcc1c5d635f155c7a9458cd93827899211224486
+aa864eded832387e4ace9652ca2edbeb8155d703
+ff1381103099207c61c0e8426e82eabbb2808b04
+b67c5033547771052515687e96adf98858ea0de6
+e5a3bbcb4908996f6034817704297979cbf2dc07
+4398d18270d5391b13d108a79b8ec235e0ffa10a
+fb7fb66f2c1f923dc039d99125ed94d54435bb9f
+05447263701b202e0086bb2cae098cf6d46c158e
+10a037e3ae47516141287fb489fb7ea0ae18fc0a
+f1030c5bd8cd8f67cef664c0b6b9841afbc49363
+e6e6ceba3e07be085b0249d7fc03e795d58dc577
+bd79567171b5faa0394ebdfcf46394864b60479f
+0d865e68797b90a0de0123adcbe8c77c4ea4ae22
+57a46dc390017363b2db52e70f4b07c9a71f76c6
+00e58bccf05365ce65f6e9694e1ca3b9ad30f345
+de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac
+3045edebf785deb5d687abd9898ac9702be5325c
+7bfc78d87614496288ad4e90f7d749a942a83718
+be5ba234ca0a5aabe74bfc7e1f636f085bd3823c
+09955b8fd454ae284590fc4c9f47e7c96f3bad51
+16b72839cb862810bbf976e223f85ff4d1959ebd
+96c43bfad5c8dcb116ab2088e46228707aaeca9f
+ce769e35208203536d176326e72560548848b5ff
+35b5b825073000f04477651683c4aa11b98d12c8
+c793cc79debeafd0d1cee613dfc99d64c2cbcc94
+4218499052f1010e8b466db363b0ce4857756299
+81ba2917231b206b7b6b9b160e456c5452c4f62e
+e350f22a04b707a15d6af29d6d5a97e86445eacc
+776bded2cf3b004f783d7dc52d9d74aeab966cd3
+66ebd054e5444851a69974541525e0f651202aea
+6c274a0c3cd6e014d388022c54f2bf0dbe6a12a3
+05429691ac69cfe6704530bfed1d5911efb828bb
+2f3fee79abe0a75597d511cb0ccfb12db1688b69
+)
+
+# This is a list containing elements of LEFT_ZEN_COMMIT:RIGHT_ZEN_COMMIT.  Each
+# element means that the left commit requires right commit which can be
+# resolved by adding the right commit to ZEN_SAUCE_WHITELIST.
+# commits [oldest] a b c d e... [newest]
+# b:a
+PATCH_ZEN_TUNE_COMMITS_DEPS_ZEN_SAUCE=(
+de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac:05447263701b202e0086bb2cae098cf6d46c158e
+) # \
+# ZEN: INTERACTIVE: Use BFQ as our elevator (de75df0) requires \
+# ZEN: Add CONFIG to rename the mq-deadline scheduler (0544726)
+
+# Message marked with INTERACTIVE:
+PATCH_ZEN_TUNE_COMMITS=(
+00e58bccf05365ce65f6e9694e1ca3b9ad30f345
+de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac
+3045edebf785deb5d687abd9898ac9702be5325c
+7bfc78d87614496288ad4e90f7d749a942a83718
+be5ba234ca0a5aabe74bfc7e1f636f085bd3823c
+09955b8fd454ae284590fc4c9f47e7c96f3bad51
+16b72839cb862810bbf976e223f85ff4d1959ebd
+96c43bfad5c8dcb116ab2088e46228707aaeca9f
+)
+ZEN_KV="5.15.0"
+
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
 bbrv2 build c2tcp cfi +cfs clang deepcc disable_debug -exfat +genpatches
@@ -243,20 +257,6 @@ REQUIRED_USE+="
 	)
 "
 
-EXCLUDE_SCS=(
-	alpha
-	amd64
-	arm
-	hppa
-	ia64
-	mips
-	ppc
-	ppc64
-	riscv
-	s390
-	sparc
-	x86
-)
 gen_scs_exclusion() {
 	local a
         for a in ${EXCLUDE_SCS[@]} ; do
@@ -270,7 +270,6 @@ if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 	"
 fi
 
-K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="\
 A customizable kernel package with \

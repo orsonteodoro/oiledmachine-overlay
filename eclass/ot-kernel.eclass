@@ -109,54 +109,395 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-# I did a grep -i -r -e "SPDX" ./ | cut -f 3 -d ":" | sort | uniq
-# and looked it up through github.com or my copy to confirm the license on the file.
 
-# Solo licenses detected by:
-#	`grep -E -r -e "SPDX.*GPL-2" ./ | grep -i -v "GPL"`
-# Replace GPL-2 with SPDX identifier
+# For firmware security update availability, see
+# https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/blob/main/releasenote.md
+# SEV firmware mitigations needs to be bumped also.
+# Search "SEV FW" version and "μcode" for patch number to bump versions below.
 
-# For kernel license templates see:
-# https://github.com/torvalds/linux/tree/master/LICENSES
-# See also https://github.com/torvalds/linux/blob/master/Documentation/process/license-rules.rst
-LICENSE+=" GPL-2 Linux-syscall-note" #  Applies to whole source  \
-	# that are GPL-2 compatible.  See paragraph 3 of the above link for details.
+_OT_KERNEL_DMA_ATTACK_MITIGATIONS_ENABLED=0 # Variable not const
+_OT_KERNEL_FORCE_STABILITY=0 # Variable not const
+_OT_KERNEL_FORCE_SWAP_OFF=0 # Variable not const
+_OT_KERNEL_IOSCHED_CONFIG_INSTALL=0 # Variable not const
+_OT_KERNEL_NEEDS_DEBUGFS=0 # Variable not const
+_OT_KERNEL_PRINK_DISABLED=0 # Variable not const
+_OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=0 # Variable not const
+BBRV2_BASE_URI="https://github.com/google/bbr/commit/"
+BBRV3_BASE_URI="https://github.com/google/bbr/commit/"
+BMQ_FN="${BMQ_FN:-v${KV_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
+BMQ_BASE_URI="https://gitlab.com/alfredchen/bmq/raw/master/${KV_MAJOR_MINOR}/"
+BMQ_SRC_URI="${BMQ_BASE_URI}${BMQ_FN}"
+CFI_BASE_URI="https://github.com/torvalds/linux/commit/"
+CK_BASE_URI="https://github.com/torvalds/linux/commit/"
+CLANG_PGO_FN="clang-pgo-v9.patch"
+CLEAR_LINUX_PATCHES_FN="clear-linux-patches-${CLEAR_LINUX_PATCHES_VER}.tar.gz"
+CLEAR_LINUX_PATCHES_URI="https://github.com/clearlinux-pkgs/linux/archive/refs/tags/${CLEAR_LINUX_PATCHES_VER}.tar.gz -> ${CLEAR_LINUX_PATCHES_FN}"
 
-# The following licenses applies to individual files:
+if [[ -n "${C2TCP_VER}" ]] ; then
+	C2TCP_FN="linux-${C2TCP_KV//./-}-orca-c2tcp-${C2TCP_EXTRA}.patch"
+	C2TCP_BASE_URI="https://raw.githubusercontent.com/Soheil-ab/c2tcp/${C2TCP_COMMIT}/linux-patch"
+	C2TCP_URIS="
+		${C2TCP_BASE_URI}/${C2TCP_FN}
+		https://raw.githubusercontent.com/Soheil-ab/c2tcp/master/copyright
+			-> copyright.c2tcp.${C2TCP_COMMIT:0:7}
+	"
+fi
 
-# The distro BSD license template does have all rights reserved and implied.
-# The distro GPL licenses templates do not have all rights reserved but it's
-# found in the headers.
-# The distro MIT license template does not have all rights reserved.
-LICENSE+=" ( GPL-2 all-rights-reserved )" # See mm/list_lru.c
-LICENSE+=" ( GPL-2+ all-rights-reserved )" # See drivers/gpu/drm/meson/meson_plane.c
-LICENSE+=" ( all-rights-reserved BSD || ( GPL-2 BSD ) )" # See lib/zstd/compress.c
-LICENSE+=" ( all-rights-reserved MIT || ( GPL-2 MIT ) )" # See drivers/gpu/drm/ttm/ttm_execbuf_util.c
-LICENSE+=" ( custom GPL-2+ )" # See drivers/scsi/esas2r/esas2r_main.c, ... ; # \
-	# Samples warranty/liability paragraphs from maybe EPL-2.0
-LICENSE+=" 0BSD" # See lib/math/cordic.c
+EXTRAVERSION=${EXTRAVERSION:-"ot"}
+INTEL_MICROCODE_PV="20240312_p20240312"
+GCC_PKG="sys-devel/gcc"
+GENPATCHES_URI_BASE_URI="https://gitweb.gentoo.org/proj/linux-patches.git/snapshot/"
+GENPATCHES_MAJOR_MINOR_REVISION="${KV_MAJOR_MINOR}-${GENPATCHES_VER}"
+GENPATCHES_FN="linux-patches-${GENPATCHES_MAJOR_MINOR_REVISION}.tar.bz2"
+GENPATCHES_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_FN}"
+KCP_COMMIT_SNAPSHOT="c409515574bd4d69af45ad74d4e7ba7151010516" # 20240221
+KCP_CORTEX_A72_BN="build-with-mcpu-for-cortex-a72"
+KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
+KERNEL_SERIES_TARBALL_FN="linux-${KV_MAJOR_MINOR}.tar.xz"
+KERNEL_INC_BASE_URI=\
+"https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/incr/"
+KERNEL_PATCH_0_TO_1_URI=\
+"https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/patch-${KV_MAJOR_MINOR}.1.xz"
 
-# It is missing SPDX: compared to the other all-rights-reserved files.
-LICENSE+=" all-rights-reserved" # See lib/dynamic_debug.c
+if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
+	KCP_9_1_BN="more-uarches-for-kernel-6.8-rc4%2B"
+elif ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+	KCP_9_1_BN="more-uarches-for-kernel-6.1.79-6.8-rc3"
+elif ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
+	KCP_9_1_BN="more-uarches-for-kernel-5.17%2B"
+elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+	KCP_9_1_BN="more-uarches-for-kernel-5.15-5.16"
+elif ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
+	KCP_9_1_BN="more-uarches-for-kernel-5.8-5.14"
+elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+	KCP_9_1_BN="more-uarches-for-kernel-4.19-5.4"
+elif ver_test "${KV_MAJOR_MINOR}" -ge "4.13" ; then
+	KCP_8_1_BN="enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
+	KCP_4_9_BN="enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
+fi
+KCP_URI_BASE=\
+"https://raw.githubusercontent.com/graysky2/kernel_compiler_patch/${KCP_COMMIT_SNAPSHOT}/"
+if [[ -n "${KCP_4_9_BN}" ]] ; then
+	KCP_SRC_4_9_URI="
+		${KCP_URI_BASE}/outdated_versions/${KCP_4_9_BN}.patch
+			-> ${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch
+	"
+fi
+if [[ -n "${KCP_8_1_BN}" ]] ; then
+	KCP_SRC_8_1_URI="
+		${KCP_URI_BASE}/outdated_versions/${KCP_8_1_BN}.patch
+			-> ${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch
+	"
+fi
+if [[ -n "${KCP_9_1_BN}" ]] ; then
+	KCP_SRC_9_1_URI="
+		${KCP_URI_BASE}${KCP_9_1_BN}.patch
+			-> ${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch
+	"
+fi
+KCP_SRC_CORTEX_A72_URI="
+	${KCP_URI_BASE}${KCP_CORTEX_A72_BN}.patch
+		-> ${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch
+"
 
-LICENSE+=" BSD" # See include/linux/packing.h, ...
-LICENSE+=" BSD-2" # See include/linux/firmware/broadcom/tee_bnxt_fw.h
-LICENSE+=" Clear-BSD" # See drivers/net/wireless/ath/ath11k/core.h, ...
-LICENSE+=" custom" # See crypto/cts.c
-LICENSE+=" ISC" # See linux/drivers/net/wireless/ath/wil6210/trace.c, \
-	# linux/drivers/net/wireless/ath/ath5k/Makefile, ...
-LICENSE+=" LGPL-2.1" # See fs/ext4/migrate.c, ...
-LICENSE+=" LGPL-2+ Linux-syscall-note" # See arch/x86/include/uapi/asm/mtrr.h
-LICENSE+=" MIT" # See drivers/gpu/drm/drm_dsc.c
-LICENSE+=" Prior-BSD-License" # See drivers/net/slip/slhc.c
-LICENSE+=" unicode" # See fs/nls/mac-croatian.c ; 3 clause data files
-LICENSE+=" Unlicense" # See tools/usb/ffs-aio-example/multibuff/device_app/aio_multibuff.c
-LICENSE+=" ZLIB" # See lib/zlib_dfltcc/dfltcc.c, ...
+if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
+	KERNEL_NO_POINT_RELEASE="1"
+elif ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}.1" ; then
+	KERNEL_0_TO_1_ONLY="1"
+fi
 
-LICENSE+=" || ( BSD GPL-2 )" # See lib/test_parman.c
-LICENSE+=" || ( GPL-2 Apache-2.0 )" # See drivers/net/wireless/silabs/wfx/hif_api_cmd.h
-LICENSE+=" || ( GPL-2 MIT )" # See lib/crypto/poly1305-donna32.c
-LICENSE+=" || ( GPL-2 BSD-2 )" # See arch/x86/crypto/sha512-ssse3-asm.S
+# @FUNCTION: gen_kernel_seq
+# @DESCRIPTION:
+# Generates a sequence for point releases
+# @CODE
+# Parameters:
+# $1 - x >= 2
+# @CODE
+gen_kernel_seq()
+{
+	# 1-2 2-3 3-4, $1 >= 2
+	local s=""
+	local to
+	for ((to=2 ; to <= $1 ; to+=1)) ; do
+		s=" ${s} $((${to}-1))-${to}"
+	done
+	echo $s
+}
+
+if [[ \
+	-n "${KERNEL_NO_POINT_RELEASE}" \
+	&& "${KERNEL_NO_POINT_RELEASE}" == "1" \
+]] ; then
+	KERNEL_PATCH_URIS=()
+elif [[ \
+	-n "${KERNEL_0_TO_1_ONLY}" \
+	&& "${KERNEL_0_TO_1_ONLY}" == "1" \
+]] ; then
+	KERNEL_PATCH_URIS=(
+		${KERNEL_PATCH_0_TO_1_URI}
+	)
+	KERNEL_PATCH_FNS_EXT=(
+		patch-${KV_MAJOR_MINOR}.1.xz
+	)
+	KERNEL_PATCH_FNS_NOEXT=(
+		patch-${KV_MAJOR_MINOR}.1
+	)
+else
+	KERNEL_PATCH_TO_FROM=(
+		$(gen_kernel_seq $(ver_cut 3 ${MY_PV}))
+	)
+	KERNEL_PATCH_FNS_EXT=(
+		${KERNEL_PATCH_TO_FROM[@]/%/.xz}
+	)
+	KERNEL_PATCH_FNS_EXT=(
+		${KERNEL_PATCH_FNS_EXT[@]/#/patch-${KV_MAJOR_MINOR}.}
+	)
+	KERNEL_PATCH_FNS_NOEXT=(
+		${KERNEL_PATCH_TO_FROM[@]/#/patch-${KV_MAJOR_MINOR}.}
+	)
+	KERNEL_PATCH_URIS=(
+		${KERNEL_PATCH_0_TO_1_URI}
+		${KERNEL_PATCH_FNS_EXT[@]/#/${KERNEL_INC_BASE_URI}}
+	)
+
+	# Do not change the order
+	KERNEL_PATCH_FNS_EXT=(
+		patch-${KV_MAJOR_MINOR}.1.xz
+		${KERNEL_PATCH_FNS_EXT[@]}
+	)
+
+	# Do not change the order
+	KERNEL_PATCH_FNS_NOEXT=(
+		patch-${KV_MAJOR_MINOR}.1
+		${KERNEL_PATCH_TO_FROM[@]/#/patch-${KV_MAJOR_MINOR}.}
+	)
+fi
+
+# IPD_RAW_VER* is the same as INSTR_PROF_RAW_VERSION.
+IPD_RAW_VER=5 # < llvm-13 Dec 28, 2020
+IPD_RAW_VER_MIN=6
+IPD_RAW_VER_MAX=9
+
+LINUX_FIRMWARE_PV="20230809" # Based on latest available patch level cross referenced to the μcode column.
+LINUX_FIRMWARE_TIMESTAMP="2023-08-09 07:59:05 -0400" # Same as above from the git log.
+LINUX_REPO_URI=\
+"https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
+
+MULTIGEN_LRU_BASE_URI=\
+"https://github.com/torvalds/linux/compare/${MULTIGEN_LRU_COMMITS}"
+MULTIGEN_LRU_COMMITS=\
+"${PATCH_MULTIGEN_LRU_COMMIT_A}^..${PATCH_MULTIGEN_LRU_COMMIT_D}" # [oldest,newest] [top,bottom]
+MULTIGEN_LRU_COMMITS_SHORT=\
+"${PATCH_MULTIGEN_LRU_COMMIT_A:0:7}-${PATCH_MULTIGEN_LRU_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
+if [[ -n "${ZEN_KV}" ]] ; then
+	MULTIGEN_LRU_FN="multigen_lru-${ZEN_KV}-${MULTIGEN_LRU_COMMITS_SHORT}.patch"
+	MULTIGEN_LRU_SRC_URI="
+${MULTIGEN_LRU_BASE_URI}.patch -> ${MULTIGEN_LRU_FN}
+	"
+fi
+
+if ver_test "${KV_MAJOR_MINOR}" -ge "6.7" ; then
+	NEST_FN="nest_patch_with_spinning_6.7" # Similar to 6.6 behavior
+	NEST_FN_ALT="nest_patch_nospin_6.7" # New change
+	NEST_URI="
+https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/nest_patch_with_spinning_6.7?inline=false
+	-> ${NEST_FN}
+https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/nest_patch_nospin_6.7?inline=false
+	-> ${NEST_FN_ALT}
+	"
+elif ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+	NEST_FN="Nest_v6.6.patch"
+	NEST_URI="
+https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/Nest_v6.6.patch?inline=false
+	-> ${NEST_FN}
+	"
+elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+	NEST_FN="Nest_v5.15.patch"
+	NEST_URI="
+https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/Nest_v5.15_patch?inline=false
+	-> ${NEST_FN}
+	"
+fi
+
+NO_INSTR_FIX_COMMIT="193e41c987127aad86d0380df83e67a85266f1f1"
+NO_INSTR_FIX_TIMESTAMP="1624048424" # Fri Jun 18 08:33:44 PM UTC 2021
+NO_INSTRUMENT_FUNCTION="a63d4f6cbab133b0f1ce9afb562546fcc5bb2680"
+NO_INSTRUMENT_FUNCTION_TIMESTAMP="1624300463" # Mon Jun 21 06:34:23 PM UTC 2021
+
+O3_ALLOW_FN="O3-allow-unrestricted-${PATCH_ALLOW_O3_COMMIT:0:7}.patch"
+O3_ALLOW_SRC_URI="${O3_SRC_URI}${PATCH_ALLOW_O3_COMMIT}.patch -> ${O3_ALLOW_FN}"
+O3_SRC_URI="https://github.com/torvalds/linux/commit/"
+O3_CO_FN="O3-config-option-${PATCH_O3_CO_COMMIT:0:7}.patch"
+O3_CO_SRC_FN="${PATCH_O3_CO_COMMIT}.patch"
+O3_RO_FN="O3-fix-readoverflow-${PATCH_O3_RO_COMMIT:0:7}.patch"
+O3_RO_SRC_FN="${PATCH_O3_RO_COMMIT}.patch"
+O3_CO_SRC_URI="${O3_SRC_URI}${O3_CO_SRC_FN} -> ${O3_CO_FN}"
+O3_RO_SRC_URI="${O3_SRC_URI}${O3_RO_SRC_FN} -> ${O3_RO_FN}"
+
+OT_KERNEL_PGO_DATA_DIR=${OT_KERNEL_PGO_DATA_DIR:-"/var/lib/ot-sources/${MY_PV}"}
+
+# Keep the sources clean upon install. \
+PATCH_OPTS="--no-backup-if-mismatch -r - -p1"
+
+PGT_CRYPTO_DEPEND="
+	sys-fs/cryptsetup
+"
+
+PDS_FN="v${KV_MAJOR_MINOR}_pds${PATCH_PDS_VER}.patch"
+PDS_URI_BASE=\
+"https://gitlab.com/alfredchen/PDS-mq/raw/master/${KV_MAJOR_MINOR}/"
+PDS_SRC_URI="${PDS_URI_BASE}${PDS_FN}"
+
+PRJC_URI_BASE=\
+"https://gitlab.com/alfredchen/projectc/-/raw/master/${KV_MAJOR_MINOR}${PRJC_LTS}/"
+PRJC_FN="prjc_v${PATCH_PROJC_VER}.patch"
+PRJC_SRC_URI="${PRJC_URI_BASE}${PRJC_FN}"
+
+PGO_LLVM_SUPPORTED_VERSIONS=(
+# Bump also IPD_RAW_VER_MAX when profraw version bumped
+# Search for INSTR_PROF_RAW_VERSION in
+#	"19.0.0.9999" # profraw v9
+	"18.1.0" # profraw v9
+	"17.0.6" # profraw v8
+	"17.0.5"
+	"17.0.4"
+	"17.0.3"
+	"17.0.2"
+	"17.0.1"
+	"17.0.0"
+	"16.0.6" # profraw v8
+	"16.0.5"
+	"16.0.4"
+	"16.0.3"
+	"16.0.2"
+	"16.0.1"
+	"16.0.0"
+	"15.0.7" # profraw v8
+	"15.0.6"
+	"15.0.5"
+	"15.0.4"
+	"15.0.3"
+	"15.0.2"
+	"15.0.1"
+	"15.0.0"
+	"14.0.6" # profraw v8
+	"14.0.5"
+	"14.0.4"
+	"14.0.3"
+	"14.0.2"
+	"14.0.1"
+	"14.0.0"
+	"13.0.1" # profraw v7
+	"13.0.0"
+)
+
+# Constant enums
+# For Profile Guided Optimization (PGO) or Profile Directed Optimization (PDO)
+PGO_PHASE_UNK="UNK" # Unset
+PGO_PHASE_PGI="PGI" # Instrumentation step
+PGO_PHASE_PGT="PGT" # Training step
+PGO_PHASE_PGO="PGO" # Optimization step
+PGO_PHASE_PG0="PG0" # No PGO
+PGO_PHASE_DONE="DONE" # DONE
+
+PGT_TRAINERS=(
+	2d
+	3d
+	crypto_chn
+	crypto_common
+	crypto_deprecated
+	crypto_kor
+	crypto_less_common
+	crypto_rus
+	crypto_std
+	custom
+	emerge1
+	emerge2
+	filesystem
+	memory
+	network
+	p2p
+	webcam
+	yt
+)
+PYTHON_COMPAT=( python3_{10..11} ) # Slots based on dev-python/selenium
+
+RT_ALT_FN="patches-${PATCH_RT_VER}.tar.gz"
+RT_BASE_DOMAIN_URI=${RT_BASE_DOMAIN_URI:-"cdn.kernel.org"}
+RT_BASE_URI=\
+"http://${RT_BASE_DOMAIN_URI}/pub/linux/kernel/projects/rt/${KV_MAJOR_MINOR}/"
+RT_FN="patches-${PATCH_RT_VER}.tar.xz"
+RT_SRC_URI="${RT_BASE_URI}${RT_FN}"
+RT_SRC_ALT_URI="${RT_BASE_URI}${RT_ALT_FN}"
+
+TRESOR_AESNI_FN="tresor-patch-${PATCH_TRESOR_VER}_aesni"
+TRESOR_DOMAIN_URI=${TRESOR_DOMAIN_URI:-"www1.informatik.uni-erlangen.de"}
+TRESOR_I686_FN="tresor-patch-${PATCH_TRESOR_VER}_i686"
+TRESOR_SYSFS_FN="tresor_sysfs.c"
+TRESOR_PDF_FN="tresor.pdf"
+TRESOR_README_FN="tresor-readme.html"
+TRESOR_BASE_URI="https://${TRESOR_DOMAIN_URI}/filepool/projects/tresor/"
+TRESOR_README_SRC_URI="https://${TRESOR_DOMAIN_URI}/tresor?q=content/readme"
+TRESOR_AESNI_SRC_URI="${TRESOR_BASE_URI}${TRESOR_AESNI_FN}"
+TRESOR_I686_SRC_URI="${TRESOR_BASE_URI}${TRESOR_I686_FN}"
+TRESOR_RESEARCH_PDF_SRC_URI="${TRESOR_BASE_URI}${TRESOR_PDF_FN}"
+TRESOR_README_SRC_URI="${TRESOR_README_SRC_URI} -> ${TRESOR_README_FN}"
+TRESOR_SYSFS_SRC_URI="${TRESOR_BASE_URI}${TRESOR_SYSFS_FN}"
+
+UKSM_BASE_URI=\
+"https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR}.x/"
+UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
+UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
+
+ZEN_MULTIGEN_LRU_BASE_URI=\
+"https://github.com/torvalds/linux/compare/${ZEN_MULTIGEN_LRU_COMMITS}"
+ZEN_MULTIGEN_LRU_COMMITS=\
+"${PATCH_ZEN_MULTIGEN_LRU_COMMIT_A}^..${PATCH_ZEN_MULTIGEN_LRU_COMMIT_D}" # [oldest,newest] [top,bottom]
+ZEN_MULTIGEN_LRU_COMMITS_SHORT=\
+"${PATCH_ZEN_MULTIGEN_LRU_COMMIT_A:0:7}-${PATCH_ZEN_MULTIGEN_LRU_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
+if [[ -n "${ZEN_KV}" ]] ; then
+	ZEN_MULTIGEN_LRU_FN="zen-multigen_lru-${ZEN_KV}-${ZEN_MULTIGEN_LRU_COMMITS_SHORT}.patch"
+	ZEN_MULTIGEN_LRU_SRC_URI="
+		${ZEN_MULTIGEN_LRU_BASE_URI}.patch -> ${ZEN_MULTIGEN_LRU_FN}
+	"
+fi
+
+ZEN_MUQSS_BASE_URI="https://github.com/torvalds/linux/commit/"
+ZEN_SAUCE_BASE_URI="https://github.com/torvalds/linux/commit/"
+
+inherit check-reqs flag-o-matic python-r1 ot-kernel-kutils ot-kernel-pkgflags
+inherit security-scan toolchain-funcs
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	inherit git-r3
+	IUSE+=" fallback-commit"
+fi
+
+# @FUNCTION: gen_zen_sauce_uris
+# @DESCRIPTION:
+# Generates zen secret sauce URIs
+gen_zen_sauce_uris()
+{
+	local commits=(${@})
+	local len="${#commits[@]}"
+	local s=""
+	local c
+	for (( c=0 ; c < ${len} ; c+=1 )) ; do
+		local id="${commits[c]}"
+		s="
+			${s}
+			${ZEN_SAUCE_BASE_URI}${id}.patch
+				-> zen-sauce-${ZEN_KV}-${id:0:7}.patch
+		"
+	done
+	echo "$s"
+}
+
+if [[ -n "${ZEN_KV}" ]] ; then
+	ZEN_SAUCE_URIS=$(gen_zen_sauce_uris "${PATCH_ZEN_SAUCE_COMMITS[@]}")
+fi
+
+S="${WORKDIR}/linux-${UPSTREAM_PV}-${EXTRAVERSION}"
 
 HOMEPAGE+="
 https://algo.ing.unimo.it/people/paolo/disk_sched/
@@ -172,112 +513,60 @@ https://wiki.linuxfoundation.org/realtime/start
 https://www1.informatik.uni-erlangen.de/tresor
 "
 
-OT_KERNEL_SLOT_STYLE=${OT_KERNEL_SLOT_STYLE:-"MAJOR_MINOR"}
+# I did a grep -i -r -e "SPDX" ./ | cut -f 3 -d ":" | sort | uniq
+# and looked it up through github.com or my copy to confirm the license on the file.
+
+# Solo licenses detected by:
+#	`grep -E -r -e "SPDX.*GPL-2" ./ | grep -i -v "GPL"`
+# Replace GPL-2 with SPDX identifier
+
+# For kernel license templates see:
+# https://github.com/torvalds/linux/tree/master/LICENSES
+# See also https://github.com/torvalds/linux/blob/master/Documentation/process/license-rules.rst
+LICENSE+=" GPL-2 Linux-syscall-note" #  Applies to whole source  \
+	# that are GPL-2 compatible.  See paragraph 3 of the above link for details.
+LICENSE+=" ( GPL-2 all-rights-reserved )" # See mm/list_lru.c
+LICENSE+=" ( GPL-2+ all-rights-reserved )" # See drivers/gpu/drm/meson/meson_plane.c
+LICENSE+=" ( all-rights-reserved BSD || ( GPL-2 BSD ) )" # See lib/zstd/compress.c
+LICENSE+=" ( all-rights-reserved MIT || ( GPL-2 MIT ) )" # See drivers/gpu/drm/ttm/ttm_execbuf_util.c
+LICENSE+=" ( custom GPL-2+ )" # See drivers/scsi/esas2r/esas2r_main.c, ... ; # \
+	# Samples warranty/liability paragraphs from maybe EPL-2.0
+LICENSE+=" 0BSD" # See lib/math/cordic.c
+# It is missing SPDX: compared to the other all-rights-reserved files. \
+LICENSE+=" all-rights-reserved" # See lib/dynamic_debug.c
+LICENSE+=" BSD" # See include/linux/packing.h, ...
+LICENSE+=" BSD-2" # See include/linux/firmware/broadcom/tee_bnxt_fw.h
+LICENSE+=" Clear-BSD" # See drivers/net/wireless/ath/ath11k/core.h, ...
+LICENSE+=" custom" # See crypto/cts.c
+LICENSE+=" ISC" # See linux/drivers/net/wireless/ath/wil6210/trace.c, \
+	# linux/drivers/net/wireless/ath/ath5k/Makefile, ...
+LICENSE+=" LGPL-2.1" # See fs/ext4/migrate.c, ...
+LICENSE+=" LGPL-2+ Linux-syscall-note" # See arch/x86/include/uapi/asm/mtrr.h
+LICENSE+=" MIT" # See drivers/gpu/drm/drm_dsc.c
+LICENSE+=" Prior-BSD-License" # See drivers/net/slip/slhc.c
+LICENSE+=" unicode" # See fs/nls/mac-croatian.c ; 3 clause data files
+LICENSE+=" Unlicense" # See tools/usb/ffs-aio-example/multibuff/device_app/aio_multibuff.c
+LICENSE+=" ZLIB" # See lib/zlib_dfltcc/dfltcc.c, ...
+LICENSE+=" || ( BSD GPL-2 )" # See lib/test_parman.c
+LICENSE+=" || ( GPL-2 Apache-2.0 )" # See drivers/net/wireless/silabs/wfx/hif_api_cmd.h
+LICENSE+=" || ( GPL-2 MIT )" # See lib/crypto/poly1305-donna32.c
+LICENSE+=" || ( GPL-2 BSD-2 )" # See arch/x86/crypto/sha512-ssse3-asm.S
+# The following licenses applies to individual files:
+# The distro BSD license template does have all rights reserved and implied.
+# The distro GPL licenses templates do not have all rights reserved but it's
+# found in the headers.
+# The distro MIT license template does not have all rights reserved.
+
 SLOT=${SLOT:-${PV}}
-K_EXTRAVERSION="ot"
-S="${WORKDIR}/linux-${UPSTREAM_PV}-${K_EXTRAVERSION}"
-#PROPERTIES="interactive" # The menuconfig is broken because of emerge or sandbox.  All things were disabled but still doesn't work.
-OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${MY_PV}"
 
 # Upstream keeps reiserfs
 IUSE+="
+${EBUILD_REV}
+${PGT_TRAINERS[@]/#/ot_kernel_pgt_}
 bzip2 cpu_flags_arm_thumb graphicsmagick gtk gzip imagemagick intel-microcode
 linux-firmware lz4 lzma lzo +ncurses openssl pcc +reiserfs qt5 xz zstd
-${EBUILD_REV}
-"
-GCC_PKG="sys-devel/gcc"
-NEEDS_DEBUGFS=0
-PYTHON_COMPAT=( python3_{10..11} ) # Slots based on dev-python/selenium
-_OT_KERNEL_FORCE_SWAP_OFF=0 # Variable not const
-_OT_KERNEL_FORCE_STABILITY=0 # Variable not const
-
-inherit check-reqs flag-o-matic python-r1 ot-kernel-pkgflags
-inherit ot-kernel-kutils security-scan toolchain-funcs
-
-if [[ "${PV}" =~ "9999" ]] ; then
-	inherit git-r3
-	IUSE+=" fallback-commit"
-fi
-
-# For firmware security update availability, see
-# https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/blob/main/releasenote.md
-# SEV firmware mitigations needs to be bumped also.
-# Search "SEV FW" version and "μcode" for patch number to bump versions below.
-LINUX_FIRMWARE_PV="20230809" # Based on latest available patch level cross referenced to the μcode column.
-LINUX_FIRMWARE_TIMESTAMP="2023-08-09 07:59:05 -0400" # Same as above from the git log.
-INTEL_MICROCODE_PV="20240312_p20240312"
-RDEPEND+="
-	intel-microcode? (
-		>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
-	)
-	linux-firmware? (
-		>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
-	)
 "
 
-DEPEND+="
-	intel-microcode? (
-		>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
-	)
-	linux-firmware? (
-		>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
-	)
-"
-# lscpu needs sys-apps/util-linux
-BDEPEND+="
-	dev-util/patchutils
-	sys-apps/findutils
-	sys-apps/util-linux
-	imagemagick? (
-		media-gfx/imagemagick
-		app-crypt/rhash
-	)
-	intel-microcode? (
-		>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
-	)
-	graphicsmagick? (
-		media-gfx/graphicsmagick[imagemagick]
-		app-crypt/rhash
-	)
-"
-
-if [[ -n "${C2TCP_VER}" ]] ; then
-	PDEPEND+="
-		deepcc? (
-			sys-apps/deepcc
-		)
-		orca? (
-			sys-apps/orca
-		)
-	"
-fi
-
-PGT_CRYPTO_DEPEND="
-	sys-fs/cryptsetup
-"
-PGT_TRAINERS=(
-	2d
-	3d
-	crypto_std
-	crypto_kor
-	crypto_chn
-	crypto_rus
-	crypto_common
-	crypto_less_common
-	crypto_deprecated
-	custom
-	emerge1
-	emerge2
-	filesystem
-	memory
-	network
-	p2p
-	webcam
-	yt
-)
-IUSE+="
-	${PGT_TRAINERS[@]/#/ot_kernel_pgt_}
-"
 REQUIRED_USE+="
 	ot_kernel_pgt_2d? (
 		pgo
@@ -334,6 +623,53 @@ REQUIRED_USE+="
 		pgo
 	)
 "
+
+RDEPEND+="
+	intel-microcode? (
+		>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
+	)
+	linux-firmware? (
+		>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
+	)
+"
+
+DEPEND+="
+	intel-microcode? (
+		>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
+	)
+	linux-firmware? (
+		>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
+	)
+"
+# lscpu needs sys-apps/util-linux
+BDEPEND+="
+	dev-util/patchutils
+	sys-apps/findutils
+	sys-apps/util-linux
+	imagemagick? (
+		media-gfx/imagemagick
+		app-crypt/rhash
+	)
+	intel-microcode? (
+		>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
+	)
+	graphicsmagick? (
+		media-gfx/graphicsmagick[imagemagick]
+		app-crypt/rhash
+	)
+"
+
+if [[ -n "${C2TCP_VER}" ]] ; then
+	PDEPEND+="
+		deepcc? (
+			sys-apps/deepcc
+		)
+		orca? (
+			sys-apps/orca
+		)
+	"
+fi
+
 PDEPEND+="
 	sys-apps/coreutils
 	sys-apps/grep[pcre]
@@ -415,62 +751,6 @@ PDEPEND+="
 	)
 "
 
-EXPORT_FUNCTIONS \
-	pkg_pretend \
-	pkg_setup \
-	src_unpack \
-	src_prepare \
-	src_configure \
-	src_compile \
-	src_install \
-	pkg_postinst
-
-# @FUNCTION: gen_kernel_seq
-# @DESCRIPTION:
-# Generates a sequence for point releases
-# @CODE
-# Parameters:
-# $1 - x >= 2
-# @CODE
-gen_kernel_seq()
-{
-	# 1-2 2-3 3-4, $1 >= 2
-	local s=""
-	local to
-	for ((to=2 ; to <= $1 ; to+=1)) ; do
-		s=" ${s} $((${to}-1))-${to}"
-	done
-	echo $s
-}
-
-# @FUNCTION: gen_zen_sauce_uris
-# @DESCRIPTION:
-# Generates zen secret sauce URIs
-ZEN_SAUCE_BASE_URI="https://github.com/torvalds/linux/commit/"
-gen_zen_sauce_uris()
-{
-	local commits=(${@})
-	local len="${#commits[@]}"
-	local s=""
-	local c
-	for (( c=0 ; c < ${len} ; c+=1 )) ; do
-		local id="${commits[c]}"
-		s="
-			${s}
-			${ZEN_SAUCE_BASE_URI}${id}.patch
-				-> zen-sauce-${ZEN_KV}-${id:0:7}.patch
-		"
-	done
-	echo "$s"
-}
-
-BMQ_FN="${BMQ_FN:-v${KV_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
-BMQ_BASE_URI="https://gitlab.com/alfredchen/bmq/raw/master/${KV_MAJOR_MINOR}/"
-BMQ_SRC_URI="${BMQ_BASE_URI}${BMQ_FN}"
-
-CLANG_PGO_FN="clang-pgo-v9.patch"
-
-BBRV2_BASE_URI="https://github.com/google/bbr/commit/"
 gen_bbrv2_uris() {
 	local s=""
 	local c
@@ -483,7 +763,6 @@ if [[ -n "${BBRV2_KV}" ]] ; then
 	BBRV2_SRC_URIS=" "$(gen_bbrv2_uris)
 fi
 
-BBRV3_BASE_URI="https://github.com/google/bbr/commit/"
 gen_bbrv3_uris() {
 	local s=""
 	local c
@@ -496,107 +775,10 @@ if [[ -n "${BBRV3_KV}" ]] ; then
 	BBRV3_SRC_URIS=" "$(gen_bbrv3_uris)
 fi
 
-if [[ -n "${C2TCP_VER}" ]] ; then
-	C2TCP_FN="linux-${C2TCP_KV//./-}-orca-c2tcp-${C2TCP_EXTRA}.patch"
-	C2TCP_BASE_URI="https://raw.githubusercontent.com/Soheil-ab/c2tcp/${C2TCP_COMMIT}/linux-patch"
-	C2TCP_URIS="
-		${C2TCP_BASE_URI}/${C2TCP_FN}
-		https://raw.githubusercontent.com/Soheil-ab/c2tcp/master/copyright
-			-> copyright.c2tcp.${C2TCP_COMMIT:0:7}
-	"
-fi
-
-CLEAR_LINUX_PATCHES_FN="clear-linux-patches-${CLEAR_LINUX_PATCHES_VER}.tar.gz"
-CLEAR_LINUX_PATCHES_URI="https://github.com/clearlinux-pkgs/linux/archive/refs/tags/${CLEAR_LINUX_PATCHES_VER}.tar.gz -> ${CLEAR_LINUX_PATCHES_FN}"
-
-GENPATCHES_URI_BASE_URI="https://gitweb.gentoo.org/proj/linux-patches.git/snapshot/"
-GENPATCHES_MAJOR_MINOR_REVISION="${KV_MAJOR_MINOR}-${GENPATCHES_VER}"
-GENPATCHES_FN="linux-patches-${GENPATCHES_MAJOR_MINOR_REVISION}.tar.bz2"
-GENPATCHES_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_FN}"
-
-KCP_COMMIT_SNAPSHOT="c409515574bd4d69af45ad74d4e7ba7151010516" # 20240221
-
-KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
-KERNEL_SERIES_TARBALL_FN="linux-${KV_MAJOR_MINOR}.tar.xz"
-KERNEL_INC_BASE_URI=\
-"https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/incr/"
-KERNEL_PATCH_0_TO_1_URI=\
-"https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/patch-${KV_MAJOR_MINOR}.1.xz"
-
-KCP_CORTEX_A72_BN=\
-"build-with-mcpu-for-cortex-a72"
-
-if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
-	KCP_9_1_BN="more-uarches-for-kernel-6.8-rc4%2B"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
-	KCP_9_1_BN="more-uarches-for-kernel-6.1.79-6.8-rc3"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
-	KCP_9_1_BN="more-uarches-for-kernel-5.17%2B"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
-	KCP_9_1_BN="more-uarches-for-kernel-5.15-5.16"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
-	KCP_9_1_BN="more-uarches-for-kernel-5.8-5.14"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
-	KCP_9_1_BN="more-uarches-for-kernel-4.19-5.4"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "4.13" ; then
-	KCP_8_1_BN="enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
-	KCP_4_9_BN="enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
-fi
-KCP_URI_BASE=\
-"https://raw.githubusercontent.com/graysky2/kernel_compiler_patch/${KCP_COMMIT_SNAPSHOT}/"
-if [[ -n "${KCP_4_9_BN}" ]] ; then
-	KCP_SRC_4_9_URI="
-		${KCP_URI_BASE}/outdated_versions/${KCP_4_9_BN}.patch
-			-> ${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch
-	"
-fi
-if [[ -n "${KCP_8_1_BN}" ]] ; then
-	KCP_SRC_8_1_URI="
-		${KCP_URI_BASE}/outdated_versions/${KCP_8_1_BN}.patch
-			-> ${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch
-	"
-fi
-if [[ -n "${KCP_9_1_BN}" ]] ; then
-	KCP_SRC_9_1_URI="
-		${KCP_URI_BASE}${KCP_9_1_BN}.patch
-			-> ${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch
-	"
-fi
-KCP_SRC_CORTEX_A72_URI="${KCP_URI_BASE}${KCP_CORTEX_A72_BN}.patch -> ${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
-
-MULTIGEN_LRU_COMMITS=\
-"${PATCH_MULTIGEN_LRU_COMMIT_A}^..${PATCH_MULTIGEN_LRU_COMMIT_D}" # [oldest,newest] [top,bottom]
-MULTIGEN_LRU_COMMITS_SHORT=\
-"${PATCH_MULTIGEN_LRU_COMMIT_A:0:7}-${PATCH_MULTIGEN_LRU_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
-MULTIGEN_LRU_BASE_URI=\
-"https://github.com/torvalds/linux/compare/${MULTIGEN_LRU_COMMITS}"
-if [[ -n "${ZEN_KV}" ]] ; then
-	MULTIGEN_LRU_FN="multigen_lru-${ZEN_KV}-${MULTIGEN_LRU_COMMITS_SHORT}.patch"
-	MULTIGEN_LRU_SRC_URI="
-		${MULTIGEN_LRU_BASE_URI}.patch -> ${MULTIGEN_LRU_FN}
-	"
-fi
-
-ZEN_MULTIGEN_LRU_COMMITS=\
-"${PATCH_ZEN_MULTIGEN_LRU_COMMIT_A}^..${PATCH_ZEN_MULTIGEN_LRU_COMMIT_D}" # [oldest,newest] [top,bottom]
-ZEN_MULTIGEN_LRU_COMMITS_SHORT=\
-"${PATCH_ZEN_MULTIGEN_LRU_COMMIT_A:0:7}-${PATCH_ZEN_MULTIGEN_LRU_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
-ZEN_MULTIGEN_LRU_BASE_URI=\
-"https://github.com/torvalds/linux/compare/${ZEN_MULTIGEN_LRU_COMMITS}"
-if [[ -n "${ZEN_KV}" ]] ; then
-	ZEN_MULTIGEN_LRU_FN="zen-multigen_lru-${ZEN_KV}-${ZEN_MULTIGEN_LRU_COMMITS_SHORT}.patch"
-	ZEN_MULTIGEN_LRU_SRC_URI="
-		${ZEN_MULTIGEN_LRU_BASE_URI}.patch -> ${ZEN_MULTIGEN_LRU_FN}
-	"
-fi
-
-ZEN_MUQSS_BASE_URI=\
-"https://github.com/torvalds/linux/commit/"
-
 is_zen_muquss_excluded() {
 	local wanted_commit="${1}"
 	local bad_commit
-	for bad_commit in ${ZEN_MUQSS_EXCLUDED_COMMITS[@]} ; do
+	for bad_commit in ${PATCH_ZEN_MUQSS_EXCLUDED_COMMITS[@]} ; do
 		[[ "${bad_commit}" == "${wanted_commit}" ]] && return 0
 	done
 	return 1
@@ -605,7 +787,7 @@ is_zen_muquss_excluded() {
 gen_zen_muqss_uris() {
 	local s=""
 	local c
-	for c in ${ZEN_MUQSS_COMMITS[@]} ; do
+	for c in ${PATCH_ZEN_MUQSS_COMMITS[@]} ; do
 		s+=" ${ZEN_MUQSS_BASE_URI}${c}.patch -> zen-muqss-${ZEN_KV}-${c:0:7}.patch"
 	done
 	echo "${s}"
@@ -614,8 +796,6 @@ if [[ -n "${ZEN_KV}" ]] ; then
 	ZEN_MUQSS_SRC_URIS=" "$(gen_zen_muqss_uris)
 fi
 
-CK_BASE_URI=\
-"https://github.com/torvalds/linux/commit/"
 gen_ck_uris() {
 	local s=""
 	local c
@@ -628,8 +808,6 @@ if [[ -n "${CK_KV}" ]] ; then
 	CK_SRC_URIS=" "$(gen_ck_uris)
 fi
 
-CFI_BASE_URI=\
-"https://github.com/torvalds/linux/commit/"
 gen_cfi_uris() {
 	local s=""
 	local c
@@ -654,128 +832,6 @@ if [[ -n "${KCFI_KV}" ]] ; then
 	KCFI_SRC_URIS=" "$(gen_kcfi_uris)
 fi
 
-LINUX_REPO_URI=\
-"https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
-
-if ver_test "${KV_MAJOR_MINOR}" -ge "6.7" ; then
-NEST_FN="nest_patch_with_spinning_6.7" # Similar to 6.6 behavior
-NEST_FN_ALT="nest_patch_nospin_6.7" # New change
-NEST_URI="
-https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/nest_patch_with_spinning_6.7?inline=false -> ${NEST_FN}
-https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/nest_patch_nospin_6.7?inline=false -> ${NEST_FN_ALT}
-"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
-NEST_FN="Nest_v6.6.patch"
-NEST_URI="https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/Nest_v6.6.patch?inline=false -> ${NEST_FN}"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
-NEST_FN="Nest_v5.15.patch"
-NEST_URI="https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/Nest_v5.15_patch?inline=false -> ${NEST_FN}"
-fi
-
-O3_SRC_URI="https://github.com/torvalds/linux/commit/"
-O3_ALLOW_FN="O3-allow-unrestricted-${PATCH_ALLOW_O3_COMMIT:0:7}.patch"
-O3_ALLOW_SRC_URI="${O3_SRC_URI}${PATCH_ALLOW_O3_COMMIT}.patch -> ${O3_ALLOW_FN}"
-O3_CO_FN="O3-config-option-${PATCH_O3_CO_COMMIT:0:7}.patch"
-O3_RO_FN="O3-fix-readoverflow-${PATCH_O3_RO_COMMIT:0:7}.patch"
-O3_CO_SRC_FN="${PATCH_O3_CO_COMMIT}.patch"
-O3_RO_SRC_FN="${PATCH_O3_RO_COMMIT}.patch"
-O3_CO_SRC_URI="${O3_SRC_URI}${O3_CO_SRC_FN} -> ${O3_CO_FN}"
-O3_RO_SRC_URI="${O3_SRC_URI}${O3_RO_SRC_FN} -> ${O3_RO_FN}"
-
-PDS_URI_BASE=\
-"https://gitlab.com/alfredchen/PDS-mq/raw/master/${KV_MAJOR_MINOR}/"
-PDS_FN="v${KV_MAJOR_MINOR}_pds${PATCH_PDS_VER}.patch"
-PDS_SRC_URI="${PDS_URI_BASE}${PDS_FN}"
-
-PRJC_URI_BASE=\
-"https://gitlab.com/alfredchen/projectc/-/raw/master/${KV_MAJOR_MINOR}${PRJC_LTS}/"
-PRJC_FN="prjc_v${PATCH_PROJC_VER}.patch"
-PRJC_SRC_URI="${PRJC_URI_BASE}${PRJC_FN}"
-
-RT_BASE_URI=\
-"http://cdn.kernel.org/pub/linux/kernel/projects/rt/${KV_MAJOR_MINOR}/"
-RT_FN="patches-${PATCH_RT_VER}.tar.xz"
-RT_SRC_URI="${RT_BASE_URI}${RT_FN}"
-RT_ALT_FN="patches-${PATCH_RT_VER}.tar.gz"
-RT_SRC_ALT_URI="${RT_BASE_URI}${RT_ALT_FN}"
-
-TRESOR_AESNI_FN="tresor-patch-${PATCH_TRESOR_VER}_aesni"
-TRESOR_I686_FN="tresor-patch-${PATCH_TRESOR_VER}_i686"
-TRESOR_SYSFS_FN="tresor_sysfs.c"
-TRESOR_README_FN="tresor-readme.html"
-TRESOR_PDF_FN="tresor.pdf"
-TRESOR_DOMAIN_URI="www1.informatik.uni-erlangen.de"
-TRESOR_BASE_URI=\
-"https://${TRESOR_DOMAIN_URI}/filepool/projects/tresor/"
-TRESOR_AESNI_SRC_URI="${TRESOR_BASE_URI}${TRESOR_AESNI_FN}"
-TRESOR_I686_SRC_URI="${TRESOR_BASE_URI}${TRESOR_I686_FN}"
-TRESOR_SYSFS_SRC_URI="${TRESOR_BASE_URI}${TRESOR_SYSFS_FN}"
-TRESOR_README_SRC_URI=\
-"https://${TRESOR_DOMAIN_URI}/tresor?q=content/readme"
-TRESOR_RESEARCH_PDF_SRC_URI=\
-"${TRESOR_BASE_URI}${TRESOR_PDF_FN}"
-TRESOR_README_SRC_URI="${TRESOR_README_SRC_URI} -> ${TRESOR_README_FN}"
-
-UKSM_BASE_URI=\
-"https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR}.x/"
-UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
-UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
-
-if [[ -n "${ZEN_KV}" ]] ; then
-	ZEN_SAUCE_URIS=$(gen_zen_sauce_uris "${PATCH_ZEN_SAUCE_COMMITS[@]}")
-fi
-
-if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
-	KERNEL_NO_POINT_RELEASE="1"
-elif ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}.1" ; then
-	KERNEL_0_TO_1_ONLY="1"
-fi
-
-if [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
-	KERNEL_PATCH_URIS=()
-elif [[ -n "${KERNEL_0_TO_1_ONLY}" && "${KERNEL_0_TO_1_ONLY}" == "1" ]] ; then
-	KERNEL_PATCH_URIS=(
-		${KERNEL_PATCH_0_TO_1_URI}
-	)
-	KERNEL_PATCH_FNS_EXT=(
-		patch-${KV_MAJOR_MINOR}.1.xz
-	)
-	KERNEL_PATCH_FNS_NOEXT=(
-		patch-${KV_MAJOR_MINOR}.1
-	)
-else
-	KERNEL_PATCH_TO_FROM=(
-		$(gen_kernel_seq $(ver_cut 3 ${MY_PV}))
-	)
-	KERNEL_PATCH_FNS_EXT=(
-		${KERNEL_PATCH_TO_FROM[@]/%/.xz}
-	)
-	KERNEL_PATCH_FNS_EXT=(
-		${KERNEL_PATCH_FNS_EXT[@]/#/patch-${KV_MAJOR_MINOR}.}
-	)
-	KERNEL_PATCH_FNS_NOEXT=(
-		${KERNEL_PATCH_TO_FROM[@]/#/patch-${KV_MAJOR_MINOR}.}
-	)
-	KERNEL_PATCH_URIS=(
-		${KERNEL_PATCH_0_TO_1_URI}
-		${KERNEL_PATCH_FNS_EXT[@]/#/${KERNEL_INC_BASE_URI}}
-	)
-
-	# Do not change the order
-	KERNEL_PATCH_FNS_EXT=(
-		patch-${KV_MAJOR_MINOR}.1.xz
-		${KERNEL_PATCH_FNS_EXT[@]}
-	)
-
-	# Do not change the order
-	KERNEL_PATCH_FNS_NOEXT=(
-		patch-${KV_MAJOR_MINOR}.1
-		${KERNEL_PATCH_TO_FROM[@]/#/patch-${KV_MAJOR_MINOR}.}
-	)
-fi
-
-# Keep the sources clean upon install.
-PATCH_OPTS="--no-backup-if-mismatch -r - -p1"
 
 RESTRICT="mirror strip" # See ot-kernel_src_install() for reasons why stripping is not allowed.
 
@@ -1029,54 +1085,6 @@ eerror
 	fi
 }
 
-NO_INSTR_FIX_COMMIT="193e41c987127aad86d0380df83e67a85266f1f1"
-NO_INSTR_FIX_TIMESTAMP="1624048424" # Fri Jun 18 08:33:44 PM UTC 2021
-
-NO_INSTRUMENT_FUNCTION="a63d4f6cbab133b0f1ce9afb562546fcc5bb2680"
-NO_INSTRUMENT_FUNCTION_TIMESTAMP="1624300463" # Mon Jun 21 06:34:23 PM UTC 2021
-
-PGO_LLVM_SUPPORTED_VERSIONS=(
-# Bump also IPD_RAW_VER_MAX when profraw version bumped
-# Search for INSTR_PROF_RAW_VERSION in
-#	"19.0.0.9999" # profraw v9
-	"18.1.0" # profraw v9
-	"17.0.6" # profraw v8
-	"17.0.5"
-	"17.0.4"
-	"17.0.3"
-	"17.0.2"
-	"17.0.1"
-	"17.0.0"
-	"16.0.6" # profraw v8
-	"16.0.5"
-	"16.0.4"
-	"16.0.3"
-	"16.0.2"
-	"16.0.1"
-	"16.0.0"
-	"15.0.7" # profraw v8
-	"15.0.6"
-	"15.0.5"
-	"15.0.4"
-	"15.0.3"
-	"15.0.2"
-	"15.0.1"
-	"15.0.0"
-	"14.0.6" # profraw v8
-	"14.0.5"
-	"14.0.4"
-	"14.0.3"
-	"14.0.2"
-	"14.0.1"
-	"14.0.0"
-	"13.0.1" # profraw v7
-	"13.0.0"
-)
-
-# IPD_RAW_VER* is the same as INSTR_PROF_RAW_VERSION.
-IPD_RAW_VER=5 # < llvm-13 Dec 28, 2020
-IPD_RAW_VER_MIN=6
-IPD_RAW_VER_MAX=9
 verify_profraw_compatibility() {
 einfo "Verifying profraw version compatibility"
 	# The profiling data format is very version sensitive.
@@ -1604,7 +1612,7 @@ apply_zen_sauce() {
 		fi
 	fi
 
-	local use_blacklisted+=" ${PATCH_ZEN_SAUCE_BL[@]}"
+	local use_blacklisted+=" ${PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS[@]}"
 
 	whitelisted=$(echo "${whitelisted}" \
 		| tr " " "\n" \
@@ -1885,7 +1893,7 @@ apply_ck() {
 	for c in ${CK_COMMITS[@]} ; do
 		local blacklisted=0
 		local b
-		for b in ${CK_COMMITS_BL[@]} ; do
+		for b in ${CK_COMMITS_BLACKLISTED_COMMITS[@]} ; do
 			if [[ "${c}" == "${b}" ]] ; then
 				blacklisted=1
 				break
@@ -2080,7 +2088,7 @@ eerror
 apply_zen_muqss() {
 einfo "Applying some of the zen-kernel MuQSS patches"
 	local x
-	for x in ${ZEN_MUQSS_COMMITS[@]} ; do
+	for x in ${PATCH_ZEN_MUQSS_COMMITS[@]} ; do
 		local id="${x:0:7}"
 		is_zen_muquss_excluded "${x}" && continue
 		_fpatch "${EDISTDIR}/zen-muqss-${ZEN_KV}-${id}.patch"
@@ -2286,7 +2294,7 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 ot-kernel_src_unpack() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 
-	export BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${K_EXTRAVERSION}"
+	export BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${EXTRAVERSION}"
 	if [[ "${PV}" =~ "9999" ]] ; then
 		ot-kernel_unpack_live
 	else
@@ -2799,8 +2807,8 @@ einfo "Canceling Reiser4"
 # Patch the kernel a bit
 ot-kernel_src_prepare() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export BUILD_DIR_MASTER="${WORKDIR}/linux-${UPSTREAM_PV}-${K_EXTRAVERSION}"
-	export BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${K_EXTRAVERSION}"
+	export BUILD_DIR_MASTER="${WORKDIR}/linux-${UPSTREAM_PV}-${EXTRAVERSION}"
+	export BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${EXTRAVERSION}"
 
 	cd "${BUILD_DIR}" || die
 
@@ -2899,7 +2907,7 @@ ot-kernel_src_prepare() {
 		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 		if (( ${moved} == 0 )) ; then
 einfo "Renaming for -${extraversion}"
-			if [[ "${extraversion}" == "${K_EXTRAVERSION}" ]] ; then
+			if [[ "${extraversion}" == "${EXTRAVERSION}" ]] ; then
 				: # Avoid copy into self error
 			else
 				mv "${BUILD_DIR_MASTER}" "${BUILD_DIR}" || die
@@ -3043,15 +3051,6 @@ ewarn "Securely wiping private keys for ${extraversion}"
 	done
 	sync
 }
-
-# Constant enums
-# For Profile Guided Optimization (PGO) or Profile Directed Optimization (PDO)
-PGO_PHASE_UNK="UNK" # Unset
-PGO_PHASE_PGI="PGI" # Instrumentation step
-PGO_PHASE_PGT="PGT" # Training step
-PGO_PHASE_PGO="PGO" # Optimization step
-PGO_PHASE_PG0="PG0" # No PGO
-PGO_PHASE_DONE="DONE" # DONE
 
 # @FUNCTION: is_clang_ready
 # @DESCRIPTION:
@@ -4541,12 +4540,10 @@ einfo "Disabling REISUB"
 # @FUNCTION: ot-kernel_set_kconfig_dma_attack_mitigation
 # @DESCRIPTION:
 # Sets the kernel config to mitigate against DMA attacks.
-OT_KERNEL_DMA_ATTACK_MITIGATIONS_ENABLED=0
-OT_KERNEL_SHOWED_KEXEC_MITIGATION_WARNING=0
 ot-kernel_set_kconfig_dma_attack_mitigation() {
 	local ot_kernel_dma_attack_mitigations=${OT_KERNEL_DMA_ATTACK_MITIGATIONS:-1}
 	if (( "${ot_kernel_dma_attack_mitigations}" >= 1 )) ; then
-		export OT_KERNEL_DMA_ATTACK_MITIGATIONS_ENABLED=1
+		export _OT_KERNEL_DMA_ATTACK_MITIGATIONS_ENABLED=1
 einfo "Mitigating against DMA attacks (EXPERIMENTAL / WORK IN PROGRESS)"
 
 		if grep -q -E -e "(CONFIG_IOMMU_DEFAULT_DMA_STRICT=y|CONFIG_IOMMU_DEFAULT_DMA_LAZY=y)" "${path_config}" ; then
@@ -5437,7 +5434,6 @@ einfo "Changed .config to use CFS (Completely Fair Scheduler)"
 # @FUNCTION: ot-kernel_set_kconfig_dmesg
 # @DESCRIPTION:
 # Shows or hides early printk or dmesg
-_OT_KERNEL_PRINK_DISABLED=0
 ot-kernel_set_kconfig_dmesg() {
 	local dmesg
 	local override="${1}"
@@ -7729,7 +7725,7 @@ ot-kernel_set_kconfig_pcie_mps() {
 # @DESCRIPTION:
 # Disable clang -fprofile-generate
 _ot-kernel_disable_clang_pgi() {
-	if [[ "${NEEDS_DEBUGFS}" == "1" ]] ; then
+	if [[ "${_OT_KERNEL_NEEDS_DEBUGFS}" == "1" ]] ; then
 ewarn "debugfs disabled failed.  Unfortunately, a package still requires it."
 	else
 einfo "debugfs disabled success"
@@ -10063,6 +10059,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_streaming
+		_OT_KERNEL_FORCE_STABILITY=1
 	fi
 
 	export OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"0"}
@@ -12440,14 +12437,13 @@ einfo "Wiping keys securely"
 # @FUNCTION: ot-kernel_gen_iosched_config
 # @DESCRIPTION:
 # Generates an init script config for iosched
-OT_KERNEL_IOSCHED_CONFIG_INSTALL=0
 ot-kernel_gen_iosched_config() {
 	[[ \
 		   "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" \
 		|| "${OT_KERNEL_IOSCHED_SYSTEMD:-1}" == "1" \
 	]] \
 	|| return
-	OT_KERNEL_IOSCHED_CONFIG_INSTALL=1
+	_OT_KERNEL_IOSCHED_CONFIG_INSTALL=1
 	if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] \
 		&& ot-kernel_has_version "sys-apps/openrc" \
 		&& ! ot-kernel_has_version "sys-apps/openrc[bash]" ; then
@@ -13106,7 +13102,7 @@ EOF
 		sed -i -e "s|__ARCH__|${arch}|" "${T}/tcca" || die
 		insinto /etc
 		newins "${T}/tcca.conf" "tcca-${UPSTREAM_PV}-${extraversion}-${arch}.conf"
-		OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=1
+		_OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=1
 	fi
 
 	if         has c2tcp ${IUSE_EFFECTIVE} \
@@ -13469,7 +13465,6 @@ ot-kernel_install_pgo_state() {
 # @FUNCTION: ot-kernel_src_install
 # @DESCRIPTION:
 # Removes patch cruft.
-OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=0
 ot-kernel_src_install() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export STRIP="/bin/true" # See https://github.com/torvalds/linux/blob/v5.16/init/Kconfig#L2169
@@ -13709,7 +13704,7 @@ einfo
 # @DESCRIPTION:
 # Send user messages about network modules
 ot-kernel_postinst_network() {
-	if (( ${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL} == 1 )) ; then
+	if (( ${_OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL} == 1 )) ; then
 einfo "Installing tcca"
 		cat "${FILESDIR}/tcca" \
 			> "${EROOT}/usr/bin/tcca"
@@ -14101,7 +14096,7 @@ einfo
 einfo "To optimize IMA hashing add iversion to fstab mount option for / (aka root)."
 einfo
 	fi
-	if [[ "${OT_KERNEL_DMA_ATTACK_MITIGATIONS_ENABLED}" == "1" ]] ; then
+	if [[ "${_OT_KERNEL_DMA_ATTACK_MITIGATIONS_ENABLED}" == "1" ]] ; then
 	# For possible impractical passthough (pt) DMA attack, see
 	# https://link.springer.com/article/10.1186/s13173-017-0066-7#Fn1
 ewarn
@@ -14262,3 +14257,13 @@ einfo "Removing ot-kernel-iosched"
 		rm "${EROOT}/etc/init.d/ot-kernel-iosched" 2>/dev/null
 	fi
 }
+
+EXPORT_FUNCTIONS \
+	pkg_pretend \
+	pkg_setup \
+	src_unpack \
+	src_prepare \
+	src_configure \
+	src_compile \
+	src_install \
+	pkg_postinst

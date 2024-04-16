@@ -21,19 +21,16 @@ esac
 # For *DEPENDs, see
 # https://github.com/torvalds/linux/blob/v4.19/Documentation/process/changes.rst
 
+# To update the array sections you can
+# wget -O - https://github.com/torvalds/linux/compare/A..D.patch \
+#	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
+# from A to D, where a is ancestor and d is descendant.
+# When using that commit list generator, it *may miss* some commits, so verify all
+# the commits in order.
+
 # PV is for 9999 (live) context check
 MY_PV="${PV}" # ver_test context
 KERNEL_RELEASE_DATE="20220731" # of first stable release
-CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v5.19/tools/build/feature/Makefile#L318
-GCC_COMPAT=( {13..4} )
-GCC_MAX_SLOT=${GCC_COMPAT[0]}
-GCC_MIN_SLOT=${GCC_COMPAT[-1]}
-LLVM_COMPAT=( {18..10} )
-LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
-LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
-DISABLE_DEBUG_PV="1.4.1"
-EXTRAVERSION="-ot"
-GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KV_MAJOR=$(ver_cut 1 "${MY_PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
 if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
@@ -42,25 +39,21 @@ if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
 else
 	UPSTREAM_PV="${MY_PV/_/-}" # file context
 fi
-MUQSS_VER="0.180"
-PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # O3 config option
-PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow fix
-PATCH_PDS_VER="${PATCH_PDS_VER:-099h}"
-PATCH_TRESOR_VER="3.18.5"
-# To update some of these sections you can
-# wget -O - https://github.com/torvalds/linux/compare/A..D.patch \
-#	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
-# from A to D, where a is ancestor and d is descendant.
-# When using that commit list generator, it *may miss* some commits, so verify all
-# the commits in order.
 
-C2TCP_MAJOR_VER="2"
-C2TCP_VER="2.2"
+C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
 C2TCP_EXTRA="0521"
 C2TCP_KV="4.13.1"
-C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
+C2TCP_MAJOR_VER="2"
+C2TCP_VER="2.2"
 
-CK_KV="4.19.0"
+# ck notes: \
+# 811cb39 -> a79d648 is about the same as 24da54e \
+# a17a37f, 8faec5c -> 721f586 is about the same as 78f8617
+
+CK_COMMITS_BLACKLISTED_COMMITS=(
+# Avoid merge conflicts or duplicates with already upstreamed.
+da178919d63ecfec2738877abae02cd2ce8aa29c # -ck1 extraversion
+)
 CK_COMMITS=(
 # From https://github.com/torvalds/linux/compare/v4.19...ckolivas:4.19-ck
 #
@@ -84,14 +77,28 @@ ace3d66508ad4e17da3f579eaf04c5582b8256a2
 d8f6f203f5bdabdf1a5ddb6bdc9e13fae2b640b9
 da178919d63ecfec2738877abae02cd2ce8aa29c
 )
+CK_KV="4.19.0"
 
-# Avoid merge conflicts or already upstreamed.
-# BL = Blacklisted to avoid merge conflict
-CK_COMMITS_BL=(
-da178919d63ecfec2738877abae02cd2ce8aa29c # -ck1 extraversion
-)
+CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v5.19/tools/build/feature/Makefile#L318
+DISABLE_DEBUG_PV="1.4.1"
+EXTRAVERSION="-ot"
+GCC_COMPAT=( {13..4} )
+GCC_MAX_SLOT=${GCC_COMPAT[0]}
+GCC_MIN_SLOT=${GCC_COMPAT[-1]}
+GENPATCHES_VER="${GENPATCHES_VER:?1}"
+LLVM_COMPAT=( {18..10} )
+LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
+LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
+MUQSS_VER="0.180"
+PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # O3 config option
+PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow fix
+PATCH_PDS_VER="${PATCH_PDS_VER:-099h}"
+PATCH_TRESOR_VER="3.18.5"
 
-ZEN_KV="4.19.0"
+PATCH_ZEN_SAUCE_BRANDING="
+c340c84b774aee3eda9a818fc4c0dc6a46a2c83d
+"
+
 PATCH_ZEN_SAUCE_COMMITS=(
 # From https://github.com/torvalds/linux/compare/v4.19...zen-kernel:zen-kernel:4.19/misc
 #
@@ -120,10 +127,14 @@ e3cac2b4fbe70c670966818b67f4b6fbdb6e66f5
 face163a2ef728af8ed4d4923b56711ff882b350
 )
 
-# Avoid merge conflict.
-PATCH_ZEN_SAUCE_BRANDING="
-c340c84b774aee3eda9a818fc4c0dc6a46a2c83d
-"
+# Avoid merge conflicts.
+# BFQ is not made default
+# BL = Blacklisted
+PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS=(
+	${PATCH_ZEN_SAUCE_BRANDING}
+	# ZEN: Add a choice of boot logos [permissions issue and conflicts with logo patch] \
+	bec5c50bb387f4c4956fc4553d2c6491363b1489
+)
 
 # This is a list containing elements of LEFT_ZEN_COMMIT:RIGHT_ZEN_COMMIT.  Each
 # element means that the left commit requires right commit which can be
@@ -156,15 +167,7 @@ f468511a824c557ced1be2fed1b4ba923a067bcc
 78fb15ac04bff56dfeb0b6fe692fb6e0ccf4e56b
 )
 
-# BFQ is not made default
-# BL = Blacklisted
-PATCH_ZEN_SAUCE_BL=(
-	${PATCH_ZEN_SAUCE_BRANDING}
-	bec5c50bb387f4c4956fc4553d2c6491363b1489 # ZEN: Add a choice of boot logos [permissions issue and conflicts with logo patch]
-)
-
-# 811cb39 -> a79d648 is about the same as 24da54e
-# a17a37f, 8faec5c -> 721f586 is about the same as 78f8617
+ZEN_KV="4.19.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
@@ -183,7 +186,6 @@ REQUIRED_USE+="
 	)
 "
 
-K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="\
 A customizable kernel package with \

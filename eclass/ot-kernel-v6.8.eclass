@@ -23,6 +23,16 @@ esac
 # For compiler versions, see
 # https://github.com/torvalds/linux/blob/v6.8/scripts/min-tool-version.sh#L26
 
+# To update the array sections you can
+# wget -O - https://github.com/torvalds/linux/compare/A..D.patch \
+#	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
+# from A to D, where a is ancestor and d is descendant.
+# When using that commit list generator, it *may miss* some commits, so verify all
+# the commits in order.
+
+# TODO:  Update patchsets
+# TODO:  Update versions
+
 #GENPATCHES_FALLBACK_COMMIT="acbfddfa35863bb536010294d1284ee857b9e13b" # 2023-10-08 10:56:26 -0400
 #LINUX_SOURCES_FALLBACK_COMMIT="8bc9e6515183935fa0cccaf67455c439afe4982b" # 2023-10-31 18:50:13 -1000
 # PV is for 9999 (live) context check
@@ -39,18 +49,6 @@ else
 	MY_PV="${PV}" # ver_test context
 fi
 KERNEL_RELEASE_DATE="99999999" # of first stable release
-CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.8/tools/build/feature/Makefile#L331
-GCC_COMPAT=( {13..5} )
-GCC_MAX_SLOT=${GCC_COMPAT[0]}
-GCC_MIN_SLOT=${GCC_COMPAT[-1]}
-# llvm slot originally 16, testing 18
-LLVM_COMPAT=( {18..10} )
-LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
-LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
-CLANG_PGO_SUPPORTED=1
-DISABLE_DEBUG_PV="1.4.1"
-EXTRAVERSION="-ot"
-GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KV_MAJOR=$(ver_cut 1 "${MY_PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
 if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
@@ -59,30 +57,129 @@ if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
 else
 	UPSTREAM_PV="${MY_PV/_/-}" # file context
 fi
+
+BBRV2_COMMITS=( # oldest
+1ca5498fa4c6d4d8d634b1245d41f1427482824f
+#46ddceed8f8dad02a97e79c40893c385b859d1c8 # already applied
+#94af063d5a381af0e2063cfd97dcce9783ed25c6 # already applied
+2bab755134b19856f11a2f693f4bc40f864b00f2
+50b614c0a65125d5c22fca6605fdcf88e0a9258a
+41ceaf5611bf5b9384e3f2aec5b591d5734126f9
+0511a3cf52a609f30c1f3f4ebb5924ddce7daca1
+16ac0c6cb9ecb89e4815cfedf15d7bfd456f5ae4
+7636a4ccf0f51e69a1e37bff97851dff0d344919
+e46c8a0354f91d6e0d5c20f812212ddc39f0a550
+1e924b1343bfa67d78ab3293c63e6cff8062dc48
+73f8adbd5afbe316ed091b073c5ec2efea8b8b36
+602b949a1c191599c6243a7bef62e5f6dcbc7553
+3ff0ac8e14d8b260ba04a980fc62fabbf61db1aa
+5ab6f739f03ff9bd533c43e7c7e0fa904b84236f
+c6ef88ba01cc47ac4c6a2cfe51e15eaa4d833476
+51b6837ecb1ab7d4dacdcc0be92e56ba7b99fbb8
+f1097cdeb6d4b2413bbd4cf6fb824993c0808e5a
+a20075fb0483240680164d7117bb48eb14c4d221
+cf413174f0934b09b6537a7bec41690c4ee3a52d
+6f7df9135aed2181681cc57c4dd167efed4052be
+e707a7fbb949daa7214c597ebdb56dbb89466853
+e77879755ff930875d0747fa5c7d94923d248a22
+41b842efcd2a6b70b94068d106c1cff19f88a416
+0e156e93538efa4c03b60f763ceb23bdbd6e52bc
+d29d596279f9ce7a33c7cc68277886e49381ea05
+1a45fd4faf30229a3d3116de7bfe9d2f933d3562
+cf9b1dacabb1ef62481a452f7f169e1679e2da49
+a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
+) # newest
+BBRV2_KV="5.13.12"
+BBRV2_VERSION="v2alpha-2022-08-28"
+
+BBRV3_COMMITS=( # oldest
+# wget -q -O - https://github.com/google/bbr/compare/ba2274dcfda859b8a27193e68ad37bfe4da28ddc^..7542cc7c41c0492a0cdbeb77e295cbfdcd9f5e11.patch \
+#	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
+#ba2274dcfda859b8a27193e68ad37bfe4da28ddc # Already applied
+f601c9f8eee1585892530f6e4d847c6801b3bd2d
+9cb2d74a55ce4d621666a93c59f8635a91c03975
+767930979dacb584aa07b9f492f521d1f06a9bc3
+4e589c6069b75bf559f59e09fa19871fd92fb44d
+ade2a0e3f26b45f0de9fe9b368c9bef6609a2c8f
+1f4015e7004cea97a458feb4bb847a78a3367607
+f82a3d3f940c5220b37a2e0884ef399fc8b952c2
+bfa26db027f29177f05a9772094ed16c8c88c488
+0fa4869b2177bafeadc4a15a5d9c37dad13b147b
+c20e56d9661031647ddc99c47ae8971d0a7b99b7
+a5cc0063dc64f3d43c82390567ec9ddf16f4727c
+4fef7ac2a9ccc4402d8d079002c65e42e9187068
+dc4a1f8de1f074d505b3f539df47635af22621f9
+9f5cbd8717f7c95c7def5af51972316ea92cbf7b
+40f1ce936f1a1732add87dd3518fdd6e5fa0982c
+aa27c22a2ebe5696b5b42002337425e2a53b2f79
+5ad789ec25187629f09d7636ebd05ae1391fe916
+a1d32ad82d426f29c71dd837393b3d7ea8501b5e
+#a7743a2757fae9b06613c201cce6416a95d5f345 # Don't need kernel config
+04ed1b49454dd2ce5d19a877b34612039a069a69
+7ce213b7ed213c55a5f71b1b85bbdbb6d664f4b4
+d0d8043bc8e63e445224ac29085b694b01980fff
+#fea8e5afef8fee4ec491a8841b08854d8e87e503 # Don't need kernel config
+c27c87b3b097705828db63a23c79a8e83f39c809
+#ca7f11ebc4d4a99ccfd44be8555d505b26996c12 # Comment junk
+cc97916dc4f073730d747c9a5fdfc081460ca7e1
+#537b1b761e1d0036923adba7a80d3655cfff095d # Comment junk
+a59d131c35ce04e7be84c3cf3fe3a7c7a4cf8457
+#107339d7f48c95ae8a7461150e143fc53b08fea9 # Comment junk
+7542cc7c41c0492a0cdbeb77e295cbfdcd9f5e11
+)
+BBRV3_KV="6.4.0" # According to Makefile, but the net folder has tagged net-6.5-rc1 commit
+BBRV3_VERSION="7542cc7" # Latest commit in the branch
+
+C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
+C2TCP_EXTRA="0521"
+C2TCP_KV="4.13.1"
+C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
+C2TCP_VER="2.2"
+# For CFI users, KCFI merged in 6.1
+CLANG_PGO_SUPPORTED=1
+CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.8/tools/build/feature/Makefile#L331
+DISABLE_DEBUG_PV="1.4.1"
+EXCLUDE_SCS=(
+	alpha
+	amd64
+	arm
+	hppa
+	ia64
+	mips
+	ppc
+	ppc64
+	riscv
+	s390
+	sparc
+	x86
+)
+EXTRAVERSION="-ot"
+GCC_COMPAT=( {13..5} )
+GCC_MAX_SLOT=${GCC_COMPAT[0]}
+GCC_MIN_SLOT=${GCC_COMPAT[-1]}
+GENPATCHES_VER="${GENPATCHES_VER:?1}"
+# llvm slot originally 16, testing 18
+LLVM_COMPAT=( {18..10} )
+LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
+LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
 PATCH_ALLOW_O3_COMMIT="8487801039c6ac602794b6bde1716b3a947bd034" # from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor ~ oldest
 PATCH_BBRV2_COMMIT_D="a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361" # descendant ~ newest
+PATCH_BFQ_DEFAULT="3f8c3ff6d8b2c0b94972ee8a019009ae7fe37c36" # Single Queue
 PATCH_KCP_COMMIT="54b1cf4aa81a528599e39faa2fc801002e0207f1" # from zen repo
+PATCH_KYBER_DEFAULT="65a6cc703701ece5c283e21288865a026624221d" # Multi Queue
 PATCH_OPENRGB_COMMIT="764c84f850557c8fd90b5929f3ce3df59c51c8a5" # apply from zen repo
 PATCH_TRESOR_VER="3.18.5"
-# To update some of these sections you can
-# wget -O - https://github.com/torvalds/linux/compare/A^..D.patch \
-#	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
-# from A to D, where a is ancestor and d is descendant.
-# When using that commit list generator, it may miss some commits, so verify all
-# the commits in order.
+PATCH_ZEN_SAUCE_BRANDING="1bccd8a7399be4df94df3ab1e7d121681d6dba2e"
 
-# TODO:  Update patchsets
-# TODO:  Update versions
+PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS=(
+# Avoid merge conflict or duplicates with already upstreamed.
+	${PATCH_ZEN_SAUCE_BRANDING}
+# Disabled ZEN: INTERACTIVE: Use BFQ as our elevator
+# Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
+)
 
-C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
-C2TCP_VER="2.2"
-C2TCP_EXTRA="0521"
-C2TCP_KV="4.13.1"
-C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
-
-ZEN_KV="6.8.0"
 PATCH_ZEN_SAUCE_COMMITS=(
 # From https://github.com/torvalds/linux/compare/v6.6...zen-kernel:zen-kernel:6.6/zen-sauce
 #
@@ -123,11 +220,6 @@ c9cd00979901c0e29c62e270eaa8d6f6edf55c73
 8998bb7099a9ba101fe3eaf722cc4082f49c5446
 )
 
-# Avoid merge conflict.
-PATCH_ZEN_SAUCE_BRANDING="
-1bccd8a7399be4df94df3ab1e7d121681d6dba2e
-"
-
 # FIXME:
 # This is a list containing elements of LEFT_ZEN_COMMIT:RIGHT_ZEN_COMMIT.  Each
 # element means that the left commit requires right commit which can be
@@ -157,91 +249,10 @@ c25d91d178583c69d770b70d3670a50c0bfa6702
 2cacc7d4212ce68c670b5586067a1ce863b2c995
 70456389ce5a54d0cf83fd519bd9d29ad368115c
 )
-PATCH_BFQ_DEFAULT="3f8c3ff6d8b2c0b94972ee8a019009ae7fe37c36" # Single Queue
-PATCH_KYBER_DEFAULT="65a6cc703701ece5c283e21288865a026624221d" # Multi Queue
-PATCH_ZEN_SAUCE_BL=(
-	${PATCH_ZEN_SAUCE_BRANDING}
-)
 
-# --
-
-# Disabled 7d443dabec118b2c869461d8740e010bca976931 : ZEN: INTERACTIVE: Use BFQ as our elevator
-# Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
-
-# KCFI merged in 6.1
-
-BBRV2_KV="5.13.12"
-BBRV2_VERSION="v2alpha-2022-08-28"
-BBRV2_COMMITS=( # oldest
-1ca5498fa4c6d4d8d634b1245d41f1427482824f
-#46ddceed8f8dad02a97e79c40893c385b859d1c8 # already applied
-#94af063d5a381af0e2063cfd97dcce9783ed25c6 # already applied
-2bab755134b19856f11a2f693f4bc40f864b00f2
-50b614c0a65125d5c22fca6605fdcf88e0a9258a
-41ceaf5611bf5b9384e3f2aec5b591d5734126f9
-0511a3cf52a609f30c1f3f4ebb5924ddce7daca1
-16ac0c6cb9ecb89e4815cfedf15d7bfd456f5ae4
-7636a4ccf0f51e69a1e37bff97851dff0d344919
-e46c8a0354f91d6e0d5c20f812212ddc39f0a550
-1e924b1343bfa67d78ab3293c63e6cff8062dc48
-73f8adbd5afbe316ed091b073c5ec2efea8b8b36
-602b949a1c191599c6243a7bef62e5f6dcbc7553
-3ff0ac8e14d8b260ba04a980fc62fabbf61db1aa
-5ab6f739f03ff9bd533c43e7c7e0fa904b84236f
-c6ef88ba01cc47ac4c6a2cfe51e15eaa4d833476
-51b6837ecb1ab7d4dacdcc0be92e56ba7b99fbb8
-f1097cdeb6d4b2413bbd4cf6fb824993c0808e5a
-a20075fb0483240680164d7117bb48eb14c4d221
-cf413174f0934b09b6537a7bec41690c4ee3a52d
-6f7df9135aed2181681cc57c4dd167efed4052be
-e707a7fbb949daa7214c597ebdb56dbb89466853
-e77879755ff930875d0747fa5c7d94923d248a22
-41b842efcd2a6b70b94068d106c1cff19f88a416
-0e156e93538efa4c03b60f763ceb23bdbd6e52bc
-d29d596279f9ce7a33c7cc68277886e49381ea05
-1a45fd4faf30229a3d3116de7bfe9d2f933d3562
-cf9b1dacabb1ef62481a452f7f169e1679e2da49
-a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
-) # newest
 RUST_PV="1.74.1"
 
-BBRV3_KV="6.4.0" # According to Makefile, but the net folder has tagged net-6.5-rc1 commit
-BBRV3_VERSION="7542cc7" # Latest commit in the branch
-BBRV3_COMMITS=( # oldest
-# wget -q -O - https://github.com/google/bbr/compare/ba2274dcfda859b8a27193e68ad37bfe4da28ddc^..7542cc7c41c0492a0cdbeb77e295cbfdcd9f5e11.patch \
-#	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
-#ba2274dcfda859b8a27193e68ad37bfe4da28ddc # Already applied
-f601c9f8eee1585892530f6e4d847c6801b3bd2d
-9cb2d74a55ce4d621666a93c59f8635a91c03975
-767930979dacb584aa07b9f492f521d1f06a9bc3
-4e589c6069b75bf559f59e09fa19871fd92fb44d
-ade2a0e3f26b45f0de9fe9b368c9bef6609a2c8f
-1f4015e7004cea97a458feb4bb847a78a3367607
-f82a3d3f940c5220b37a2e0884ef399fc8b952c2
-bfa26db027f29177f05a9772094ed16c8c88c488
-0fa4869b2177bafeadc4a15a5d9c37dad13b147b
-c20e56d9661031647ddc99c47ae8971d0a7b99b7
-a5cc0063dc64f3d43c82390567ec9ddf16f4727c
-4fef7ac2a9ccc4402d8d079002c65e42e9187068
-dc4a1f8de1f074d505b3f539df47635af22621f9
-9f5cbd8717f7c95c7def5af51972316ea92cbf7b
-40f1ce936f1a1732add87dd3518fdd6e5fa0982c
-aa27c22a2ebe5696b5b42002337425e2a53b2f79
-5ad789ec25187629f09d7636ebd05ae1391fe916
-a1d32ad82d426f29c71dd837393b3d7ea8501b5e
-#a7743a2757fae9b06613c201cce6416a95d5f345 # Don't need kernel config
-04ed1b49454dd2ce5d19a877b34612039a069a69
-7ce213b7ed213c55a5f71b1b85bbdbb6d664f4b4
-d0d8043bc8e63e445224ac29085b694b01980fff
-#fea8e5afef8fee4ec491a8841b08854d8e87e503 # Don't need kernel config
-c27c87b3b097705828db63a23c79a8e83f39c809
-#ca7f11ebc4d4a99ccfd44be8555d505b26996c12 # Comment junk
-cc97916dc4f073730d747c9a5fdfc081460ca7e1
-#537b1b761e1d0036923adba7a80d3655cfff095d # Comment junk
-a59d131c35ce04e7be84c3cf3fe3a7c7a4cf8457
-#107339d7f48c95ae8a7461150e143fc53b08fea9 # Comment junk
-7542cc7c41c0492a0cdbeb77e295cbfdcd9f5e11
-)
+ZEN_KV="6.8.0"
 
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
@@ -270,20 +281,6 @@ REQUIRED_USE+="
 	)
 "
 
-EXCLUDE_SCS=(
-	alpha
-	amd64
-	arm
-	hppa
-	ia64
-	mips
-	ppc
-	ppc64
-	riscv
-	s390
-	sparc
-	x86
-)
 gen_scs_exclusion() {
 	local a
         for a in ${EXCLUDE_SCS[@]} ; do
@@ -296,8 +293,6 @@ if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 	REQUIRED_USE+="
 	"
 fi
-
-K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="\
 A customizable kernel package with \

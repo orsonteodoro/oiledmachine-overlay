@@ -82,7 +82,7 @@ ewarn "To remove this warning disable the relevant USE flag or add ${pkgid}"
 ewarn "to OT_KERNEL_PKGFLAGS_REJECT.  In addition, edit the CONFIG_DEBUG_FS"
 ewarn "to unset or use the disable_debug USE flag."
 ewarn
-	export NEED_DEBUGFS=1
+	export _OT_KERNEL_NEEDS_DEBUGFS=1
 }
 
 # @FUNCTION: warn_lowered_security
