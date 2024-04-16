@@ -58,11 +58,11 @@ ROCM_SLOTS2=( $(gen_rocm_slots) )
 inherit cmake cuda flag-o-matic llvm rocm python-single-r1
 
 KEYWORDS="~amd64"
+S="${WORKDIR}/${MYP}"
 SRC_URI="
 https://github.com/pytorch/${MYPN}/archive/refs/tags/v${PV}.tar.gz
 	-> ${MYP}.tar.gz
 "
-S="${WORKDIR}/${MYP}"
 
 DESCRIPTION="A deep learning framework"
 HOMEPAGE="https://pytorch.org/"
@@ -315,12 +315,12 @@ ewarn "source /etc/profile"
 ewarn
 	if use rocm_5_2 ; then
 		LLVM_SLOT="14"
-		LLVM_SLOT="${LLVM_SLOT}"
+		LLVM_MAX_SLOT="${LLVM_SLOT}"
 		ROCM_SLOT="5.2"
 		rocm_pkg_setup
 	#elif use rocm_5_1 ; then
 	#	LLVM_SLOT="14"
-	#	LLVM_SLOT="${LLVM_SLOT}"
+	#	LLVM_MAX_SLOT="${LLVM_SLOT}"
 	#	ROCM_SLOT="5.1"
 	#	rocm_pkg_setup
 	else
@@ -346,14 +346,14 @@ src_prepare() {
 	if use rocm ; then
 		eapply "${FILESDIR}/extra-patches/${PN}-2.0.1-hip-cmake.patch"
 	fi
-	pushd torch/csrc/jit/serialization || die
+	pushd torch/csrc/jit/serialization >/dev/null 2>&1 || die
 		flatc \
 			--cpp \
 			--gen-mutable \
 			--scoped-enums \
 			mobile_bytecode.fbs \
 			|| die
-	popd
+	popd >/dev/null 2>&1 || die
 	sed \
 		-i \
 		-e "s|lib/cmake|$(get_libdir)/cmake|g" \

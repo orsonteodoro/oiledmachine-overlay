@@ -42,8 +42,9 @@ MYP="${MYPN}-${PV}"
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
 inherit hip-versions
 ROCM_SLOTS=(
-# See https://github.com/pytorch/pytorch/blob/v2.0.1/.ci/docker/build.sh#L190
+# See https://github.com/pytorch/pytorch/blob/v2.2.2/.ci/docker/build.sh#L190
 	"${HIP_5_7_VERSION}"
+	"${HIP_5_6_VERSION}"
 )
 gen_rocm_slots() {
 	local s
@@ -58,11 +59,11 @@ ROCM_SLOTS2=( $(gen_rocm_slots) )
 inherit cmake cuda flag-o-matic llvm rocm python-single-r1
 
 KEYWORDS="~amd64"
+S="${WORKDIR}/${MYP}"
 SRC_URI="
 https://github.com/pytorch/${MYPN}/archive/refs/tags/v${PV}.tar.gz
 	-> ${MYP}.tar.gz
 "
-S="${WORKDIR}/${MYP}"
 
 DESCRIPTION="A deep learning framework"
 HOMEPAGE="https://pytorch.org/"
@@ -129,6 +130,9 @@ REQUIRED_USE="
 	)
 	rocm_5_7? (
 		llvm_slot_17
+	)
+	rocm_5_6? (
+		llvm_slot_16
 	)
 "
 gen_rocm_depends() {
@@ -317,8 +321,13 @@ PATCHES=(
 pkg_setup() {
 	if use rocm_5_7 ; then
 		LLVM_SLOT="17"
-		LLVM_SLOT="${LLVM_SLOT}"
+		LLVM_MAX_SLOT="${LLVM_SLOT}"
 		ROCM_SLOT="5.7"
+		rocm_pkg_setup
+	elif use rocm_5_6 ; then
+		LLVM_SLOT="16"
+		LLVM_MAX_SLOT="${LLVM_SLOT}"
+		ROCM_SLOT="5.6"
 		rocm_pkg_setup
 	else
 		local s
@@ -343,14 +352,14 @@ src_prepare() {
 	if use rocm ; then
 		eapply "${FILESDIR}/extra-patches/${PN}-2.0.1-hip-cmake.patch"
 	fi
-	pushd torch/csrc/jit/serialization || die
+	pushd torch/csrc/jit/serialization >/dev/null 2>&1 || die
 		flatc \
 			--cpp \
 			--gen-mutable \
 			--scoped-enums \
 			mobile_bytecode.fbs \
 			|| die
-	popd
+	popd >/dev/null 2>&1 || die
 	sed \
 		-i \
 		-e "s|lib/cmake|$(get_libdir)/cmake|g" \
