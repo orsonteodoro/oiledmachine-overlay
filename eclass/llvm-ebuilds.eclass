@@ -16,7 +16,7 @@ esac
 
 # For deterministic builds and working patches.
 # Commits with green checkmarks used.
-LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT="ed0aa344a8aaab4d8eedbe800750b8dcd36b0bcd" # Mar 1, 2024 (53 / 53 green checkmarks)
+LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT="dd4b40ffe3bd9da2e3d998b674305ae1f612ad51" # Apr 14, 2024 (55 / 55 green checkmarks)
 LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT="2b033a32ea1b45c773158f67b48623ceffbb153d" # Feb 14, 2024 (42 / 43 green checkmarks)
 LLVM_EBUILDS_LLVM19_BRANCH="main"
 LLVM_EBUILDS_LLVM18_BRANCH="release/18.x"
