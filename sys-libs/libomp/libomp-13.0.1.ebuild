@@ -43,7 +43,7 @@ ROCM_SLOTS=(
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-any-r1 rocm
 
 KEYWORDS="
-amd64 arm arm64 ~ppc ppc64 ~riscv x86 ~amd64-linux ~x64-macos
+amd64 arm arm64 ppc64 ~riscv x86 ~amd64-linux ~x64-macos
 "
 
 DESCRIPTION="OpenMP runtime library for LLVM/clang compiler"

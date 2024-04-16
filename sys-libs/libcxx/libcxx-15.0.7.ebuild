@@ -68,6 +68,7 @@ PATCHES=(
 	"${FILESDIR}/libcxx-16.0.6-find_package-pstl.patch"
 	"${FILESDIR}/libcxx-16.0.6-not_fn-header-move.patch"
 )
+LLVM_PATCHSET="${PV}-r1"
 llvm.org_set_globals
 
 python_check_deps() {

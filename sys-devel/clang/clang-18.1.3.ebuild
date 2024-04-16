@@ -152,6 +152,9 @@ BDEPEND="
 			dev-python/sphinx[${PYTHON_USEDEP}]
 		')
 	)
+	test? (
+		~sys-devel/lld-${PV}
+	)
 	xml? (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	)

@@ -36,7 +36,7 @@ LICENSE="
 "
 SLOT="0"
 IUSE+="
-bootstrap-prefix default-compiler-rt default-libcxx default-lld llvm-libunwind hardened
+bootstrap-prefix cet default-compiler-rt default-libcxx default-lld llvm-libunwind hardened
 ${LLVM_EBUILDS_LLVM18_REVISION}
 "
 PDEPEND="
@@ -115,6 +115,11 @@ _doclang_cfg() {
 			@gentoo-common.cfg
 			@gentoo-common-ld.cfg
 		EOF
+		if [[ ${triple} == x86_64* ]]; then
+			cat >> "${ED}/etc/clang/${tool}.cfg" <<-EOF || die
+				@gentoo-cet.cfg
+			EOF
+		fi
 	done
 
 	if use kernel_Darwin ; then
@@ -127,6 +132,11 @@ _doclang_cfg() {
 		# This configuration file is used by the ${triple}-clang-cpp driver.
 		@gentoo-common.cfg
 	EOF
+	if [[ ${triple} == x86_64* ]]; then
+		cat >> "${ED}/etc/clang/${triple}-clang-cpp.cfg" <<-EOF || die
+			@gentoo-cet.cfg
+		EOF
+	fi
 
 	# Install symlinks for triples with other vendor strings since some
 	# programs insist on mangling the triple.
@@ -216,6 +226,9 @@ src_install() {
 		-fPIE
 		-include "${EPREFIX}/usr/include/gentoo/fortify.h"
 	EOF
+	newins - gentoo-cet.cfg <<-EOF
+		-Xarch_host -fcf-protection=$(usex cet full none)
+	EOF
 
 	if use kernel_Darwin; then
 		newins - gentoo-hardened-ld.cfg <<-EOF
@@ -227,6 +240,7 @@ src_install() {
 			# Some of these options are added unconditionally, regardless of
 			# USE=hardened, for parity with sys-devel/gcc.
 			-Wl,-z,relro
+			-Wl,-z,now
 		EOF
 	fi
 

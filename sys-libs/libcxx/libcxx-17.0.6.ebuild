@@ -34,7 +34,7 @@ PYTHON_COMPAT=( python3_{10..12} )
 
 inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 
-KEYWORDS="amd64 ~arm arm64 ~loong ~riscv ~sparc x86 ~arm64-macos ~x64-macos"
+KEYWORDS="amd64 arm arm64 ~loong ~riscv sparc x86 ~arm64-macos ~x64-macos"
 SRC_URI+="
 https://github.com/llvm/llvm-project/commit/ef843c8271027b89419d07ffc2aaa3abf91438ef.patch
 	-> libcxx-commit-ef843c8.patch

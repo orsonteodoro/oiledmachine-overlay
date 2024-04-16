@@ -572,6 +572,19 @@ _src_configure() {
 	uopts_src_configure
 	mkdir -p "${BUILD_DIR}" || die # strange?
 	cd "${BUILD_DIR}" || die
+
+	if use ppc && tc-is-gcc && [[ $(gcc-major-version) -lt "14" ]]; then
+		# Workaround for bug #880677
+		append-flags $(test-flags-CXX -fno-ipa-sra)
+		append-flags $(test-flags-CXX -fno-ipa-modref)
+		append-flags $(test-flags-CXX -fno-ipa-icf)
+	fi
+
+	# ODR violations (bug #917536, bug #926529). Just do it for GCC for now
+	# to avoid people grumbling. GCC is, anecdotally, more likely to miscompile
+	# LLVM with LTO anyway (which is not necessarily its fault).
+	tc-is-gcc && filter-lto
+
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
 		ffi_cflags=$($(tc-getPKG_CONFIG) --cflags-only-I libffi)
@@ -664,12 +677,14 @@ einfo
 		-DOCAMLFIND=NO
 	)
 
-	# On the MacOS prefix, the distro doesn't split sys-libs/ncurses to
+	# On the macos prefix, this distro doesn't split sys-libs/ncurses to
 	# libtinfo and libncurses, but llvm tries to use libtinfo before
 	# libncurses, and ends up using libtinfo (actually, libncurses.dylib)
 	# from system instead of prefix.
 	use kernel_Darwin && mycmakeargs+=(
-		-DTerminfo_LIBRARIES=-lncurses
+		# Use our libtool instead of looking it up with xcrun \
+		-DCMAKE_LIBTOOL="${EPREFIX}/usr/bin/${CHOST}-libtool"
+		-DTerminfo_LIBRARIES="-lncurses"
 	)
 
 	local suffix=

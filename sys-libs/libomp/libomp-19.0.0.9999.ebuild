@@ -81,7 +81,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 	fi
 else
 	KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
+~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
 	"
 fi
 
@@ -389,8 +389,6 @@ multilib_src_configure() {
 		-DLIBOMP_OMPD_GDB_SUPPORT=$(multilib_native_usex gdb-plugin)
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt)
 		-DLIBOMP_USE_HWLOC=$(usex hwloc)
-	# Prevent trying to access the GPU. \
-		-DLIBOMPTARGET_AMDGPU_ARCH=LIBOMPTARGET_AMDGPU_ARCH-NOTFOUND
 		-DLLVM_VERSION_MAJOR="${PV%%.*}"
 		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
 
@@ -401,6 +399,11 @@ multilib_src_configure() {
 		mycmakeargs+=(
 			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
+
+	# Prevent trying to access the GPU
+			-DLIBOMPTARGET_AMDGPU_ARCH=LIBOMPTARGET_AMDGPU_ARCH-NOTFOUND
+			-DLIBOMPTARGET_NVPTX_ARCH=LIBOMPTARGET_NVPTX_ARCH-NOTFOUND
+
 			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 		)
 		if use llvm_targets_AMDGPU ; then

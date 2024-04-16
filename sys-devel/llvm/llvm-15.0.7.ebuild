@@ -183,7 +183,7 @@ LLVM_COMPONENTS=(
 	"third-party"
 )
 LLVM_MANPAGES=1
-LLVM_PATCHSET="${PV/_/-}"
+LLVM_PATCHSET="${PV/_/-}-r3"
 LLVM_USE_TARGETS="provide"
 llvm.org_set_globals
 SRC_URI+="
@@ -561,6 +561,19 @@ _src_configure() {
 	uopts_src_configure
 	mkdir -p "${BUILD_DIR}" || die # strange?
 	cd "${BUILD_DIR}" || die
+
+	if use ppc && tc-is-gcc && [[ $(gcc-major-version) -lt "14" ]]; then
+		# Workaround for bug #880677
+		append-flags $(test-flags-CXX -fno-ipa-sra)
+		append-flags $(test-flags-CXX -fno-ipa-modref)
+		append-flags $(test-flags-CXX -fno-ipa-icf)
+	fi
+
+	# ODR violations (bug #917536, bug #926529). Just do it for GCC for now
+	# to avoid people grumbling. GCC is, anecdotally, more likely to miscompile
+	# LLVM with LTO anyway (which is not necessarily its fault).
+	tc-is-gcc && filter-lto
+
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
 		ffi_cflags=$($(tc-getPKG_CONFIG) --cflags-only-I libffi)

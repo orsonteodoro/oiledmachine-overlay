@@ -158,12 +158,6 @@ BDEPEND="
 	>=dev-build/cmake-3.16
 	dev-lang/perl
 	sys-devel/gnuconfig
-	doc? (
-		$(python_gen_any_dep '
-			dev-python/myst-parser[${PYTHON_USEDEP}]
-			dev-python/sphinx[${PYTHON_USEDEP}]
-		')
-	)
 	kernel_Darwin? (
 		<sys-libs/libcxx-${LLVM_VERSION}.9999
 		>=sys-devel/binutils-apple-5.1
@@ -202,6 +196,15 @@ LLVM_COMPONENTS=(
 LLVM_MANPAGES=1
 LLVM_USE_TARGETS="provide"
 llvm.org_set_globals
+
+[[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" doc? ( "
+BDEPEND+="
+	$(python_gen_any_dep '
+		dev-python/myst-parser[${PYTHON_USEDEP}]
+		dev-python/sphinx[${PYTHON_USEDEP}]
+	')
+"
+[[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" ) "
 
 pkg_setup() {
 	python_setup
@@ -255,7 +258,7 @@ einfo
 }
 
 python_check_deps() {
-	use doc || return 0
+	llvm_are_manpages_built || return 0
 
 	python_has_version -b "dev-python/myst-parser[${PYTHON_USEDEP}]" &&
 	python_has_version -b "dev-python/sphinx[${PYTHON_USEDEP}]"
@@ -574,6 +577,19 @@ _src_configure() {
 	uopts_src_configure
 	mkdir -p "${BUILD_DIR}" || die # strange?
 	cd "${BUILD_DIR}" || die
+
+	if use ppc && tc-is-gcc && [[ $(gcc-major-version) -lt "14" ]]; then
+		# Workaround for bug #880677
+		append-flags $(test-flags-CXX -fno-ipa-sra)
+		append-flags $(test-flags-CXX -fno-ipa-modref)
+		append-flags $(test-flags-CXX -fno-ipa-icf)
+	fi
+
+	# ODR violations (bug #917536, bug #926529). Just do it for GCC for now
+	# to avoid people grumbling. GCC is, anecdotally, more likely to miscompile
+	# LLVM with LTO anyway (which is not necessarily its fault).
+	tc-is-gcc && filter-lto
+
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
 		ffi_cflags=$($(tc-getPKG_CONFIG) --cflags-only-I libffi)
@@ -663,11 +679,14 @@ einfo
 		-DOCAMLFIND=NO
 	)
 
-	# On Macos prefix, Gentoo doesn't split sys-libs/ncurses to libtinfo and
-	# libncurses, but llvm tries to use libtinfo before libncurses, and ends up
-	# using libtinfo (actually, libncurses.dylib) from system instead of prefix
+	# On the macos prefix, this distro doesn't split sys-libs/ncurses to
+	# libtinfo and libncurses, but llvm tries to use libtinfo before
+	# libncurses, and ends up using libtinfo (actually, libncurses.dylib)
+	# from system instead of prefix.
 	use kernel_Darwin && mycmakeargs+=(
-		-DTerminfo_LIBRARIES=-lncurses
+		# Use our libtool instead of looking it up with xcrun \
+		-DCMAKE_LIBTOOL="${EPREFIX}/usr/bin/${CHOST}-libtool"
+		-DTerminfo_LIBRARIES="-lncurses"
 	)
 
 	local suffix=

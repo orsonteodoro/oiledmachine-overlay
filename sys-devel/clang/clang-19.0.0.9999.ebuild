@@ -144,11 +144,8 @@ DEPEND="
 BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-build/cmake-3.16
-	doc? (
-		$(python_gen_cond_dep '
-			dev-python/myst-parser[${PYTHON_USEDEP}]
-			dev-python/sphinx[${PYTHON_USEDEP}]
-		')
+	test? (
+		~sys-devel/lld-${PV}
 	)
 	xml? (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -175,6 +172,15 @@ LLVM_TEST_COMPONENTS=(
 )
 LLVM_USE_TARGETS="llvm"
 llvm.org_set_globals
+[[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" doc? ( "
+BDEPEND+="
+	$(python_gen_cond_dep '
+		dev-python/myst-parser[${PYTHON_USEDEP}]
+		dev-python/sphinx[${PYTHON_USEDEP}]
+	')
+"
+[[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" ) "
+
 SRC_URI+="
 https://github.com/llvm/llvm-project/commit/71a9b8833231a285b4d8d5587c699ed45881624b.patch
 	-> ${PN}-71a9b88.patch
