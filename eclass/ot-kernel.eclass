@@ -7085,7 +7085,7 @@ ot-kernel_set_kconfig_oflag() {
 		| tail -n 1)
 	replace-flags '-O*' "${O_last}"
 
-	ot-kernel_optimize_gaming_oflag
+	ot-kernel_optimize_pro_gaming_oflag
 	ot-kernel_optimize_gaming_tornament_oflag
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
@@ -11031,10 +11031,10 @@ einfo "Disabling overdrive on the amdgpu driver."
 	fi
 }
 
-# @FUNCTION: ot-kernel_optimize_gaming_oflag
+# @FUNCTION: ot-kernel_optimize_pro_gaming_oflag
 # @DESCRIPTION:
 # Set gaming optimizations before main set.
-ot-kernel_optimize_gaming_oflag() {
+ot-kernel_optimize_pro_gaming_oflag() {
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 	[[ "${work_profile}" == "pro-gaming" ]] || return
 	if [[ \
