@@ -7078,32 +7078,62 @@ einfo "Changed .config to use Multi-Gen LRU"
 # @DESCRIPTION:
 # Sets the kernel config for the compiler flag based on CFLAGS.
 ot-kernel_set_kconfig_oflag() {
+	# Normalize
+	local O_last=$(echo "${CFLAGS}" \
+		| grep -o -E -e "-O(0|g|1|z|s|2|3|4|fast)" \
+		| tr " " "\n" \
+		| tail -n 1)
+	replace-flags '-O*' "${O_last}"
+
 	ot-kernel_optimize_gaming_oflag
 	ot-kernel_optimize_gaming_tornament_oflag
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
-	if [[ "${CFLAGS}" =~ "O3" && -n "${_OT_KERNEL_O3_PROVIDER[${KV_MAJOR_MINOR}-${extraversion}]}" ]] ; then
+	if [[ "${CFLAGS}" =~ "O4" && -n "${_OT_KERNEL_O3_PROVIDER[${KV_MAJOR_MINOR}-${extraversion}]}" ]] ; then
+ewarn "Downgrading to -O4 -> -O3"
+einfo "Setting .config with -O3 from CFLAGS"
+		replace-flags '-O*' '-O3'
+		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
+	elif [[ "${CFLAGS}" =~ "O3" && -n "${_OT_KERNEL_O3_PROVIDER[${KV_MAJOR_MINOR}-${extraversion}]}" ]] ; then
 einfo "Setting .config with -O3 from CFLAGS"
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
 	elif [[ "${CFLAGS}" =~ "O2" ]] ; then
 einfo "Setting .config with -O2 from CFLAGS"
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
+	elif [[ "${CFLAGS}" =~ "Oz" ]] ; then
+ewarn "Changing to -Oz -> -Os"
+einfo "Setting .config with -Os from CFLAGS"
+		replace-flags '-O*' '-Os'
+		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
 	elif [[ "${CFLAGS}" =~ "Os" ]] ; then
 einfo "Setting .config with -Os from CFLAGS"
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
-	elif [[ "${CFLAGS}" =~ "O3" && -z "${_OT_KERNEL_O3_PROVIDER[${KV_MAJOR_MINOR}-${extraversion}]}" ]] ; then
-ewarn
-ewarn "Downgrading to -O2"
+	elif [[ "${CFLAGS}" =~ "O4" && -z "${_OT_KERNEL_O3_PROVIDER[${KV_MAJOR_MINOR}-${extraversion}]}" ]] ; then
 ewarn
 ewarn "-O3 requires at least one of the following:"
 ewarn
 ewarn "1. zen-sauce in both OT_KERNEL_USE and USE."
 ewarn "2. clear in both OT_KERNEL_USE and USE"
 ewarn
+ewarn "Downgrading to -O4 -> -O2"
+einfo "Setting .config with -O2 from CFLAGS"
+		replace-flags '-O*' '-O2'
+		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
+	elif [[ "${CFLAGS}" =~ "O3" && -z "${_OT_KERNEL_O3_PROVIDER[${KV_MAJOR_MINOR}-${extraversion}]}" ]] ; then
+ewarn
+ewarn "-O3 requires at least one of the following:"
+ewarn
+ewarn "1. zen-sauce in both OT_KERNEL_USE and USE."
+ewarn "2. clear in both OT_KERNEL_USE and USE"
+ewarn
+ewarn "Downgrading to -O3 -> -O2"
+einfo "Setting .config with -O2 from CFLAGS"
+		replace-flags '-O*' '-O2'
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
 	else
 einfo "Setting .config with -O2 from CFLAGS"
+		replace-flags '-O*' '-O2'
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
 	fi
 }
@@ -10995,11 +11025,9 @@ ot-kernel_optimize_gaming_oflag() {
 		   "${OT_KERNEL_MAX_UPTIME}" == "1" \
 		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
 	]] ; then
-		filter-flags '-O*'
-		append-flags '-O2'
+		replace-flags '-O*' '-O2'
 	else
-		filter-flags '-O*'
-		append-flags '-O3' # This is in testing
+		replace-flags '-O*' '-O3'
 	fi
 }
 
@@ -11014,11 +11042,9 @@ ot-kernel_optimize_gaming_tornament_oflag() {
 		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
 	]] ; then
 	# Stability is more important that FPS.
-		filter-flags '-O*'
-		append-flags '-O2'
+		replace-flags '-O*' '-O2'
 	else
-		filter-flags '-O*'
-		append-flags '-O3' # This is in testing
+		replace-flags '-O*' '-O3'
 	fi
 }
 
