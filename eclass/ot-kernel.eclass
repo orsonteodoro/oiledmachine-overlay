@@ -120,6 +120,8 @@ _OT_KERNEL_FORCE_STABILITY=0 # Variable not const
 _OT_KERNEL_FORCE_SWAP_OFF=0 # Variable not const
 _OT_KERNEL_IOSCHED_CONFIG_INSTALL=0 # Variable not const
 _OT_KERNEL_NEEDS_DEBUGFS=0 # Variable not const
+unset _OT_KERNEL_O3_PROVIDER
+declare -A _OT_KERNEL_O3_PROVIDER=()
 _OT_KERNEL_PRINK_DISABLED=0 # Variable not const
 _OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=0 # Variable not const
 BBRV2_BASE_URI="https://github.com/google/bbr/commit/"
@@ -1539,6 +1541,7 @@ apply_zen_sauce() {
 	done
 
 	if [[ "${CFLAGS}" =~ "-O3" ]] ; then
+		_OT_KERNEL_O3_PROVIDER["${KV_MAJOR_MINOR}-${extraversion}"]="zen-sauce"
 		if ver_test "${KV_MAJOR_MINOR}" -eq "4.19" ; then
 			whitelisted+=" ${PATCH_O3_CO_COMMIT:0:7}"
 			whitelisted+=" ${PATCH_O3_RO_COMMIT:0:7}"
@@ -1961,6 +1964,7 @@ einfo "Applying the genpatches"
 apply_o3() {
 	cd "${BUILD_DIR}" || die
 	if ver_test "${KV_MAJOR_MINOR}" -eq "4.14" ; then
+		_OT_KERNEL_O3_PROVIDER["${KV_MAJOR_MINOR}-${extraversion}"]="zen-sauce-4.14"
 		# fix patch
 		sed -e 's|-1028,6 +1028,13|-1076,6 +1076,13|' \
 			"${EDISTDIR}/${O3_CO_FN}" \
@@ -2415,6 +2419,7 @@ ewarn "Removing -march=westmere from Clear Linux patch.  Set CFLAGS with -march=
 
 		if [[ "${CFLAGS}" =~ "-O3" ]] ; then
 einfo "Keeping -O3 from Clear Linux patch."
+			_OT_KERNEL_O3_PROVIDER["${KV_MAJOR_MINOR}-${extraversion}"]="clear"
 		else
 ewarn "Removing -O3 from Clear Linux patch.  Set CFLAGS with -O3 to keep it."
 			sed -i -e "s|-O3||g" "arch/x86/Makefile" || die
@@ -7078,7 +7083,7 @@ ot-kernel_set_kconfig_oflag() {
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
-	if [[ "${CFLAGS}" =~ "O3" ]] ; then
+	if [[ "${CFLAGS}" =~ "O3" && -n "${_OT_KERNEL_O3_PROVIDER[${KV_MAJOR_MINOR}-${extraversion}]}" ]] ; then
 einfo "Setting .config with -O3 from CFLAGS"
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
 	elif [[ "${CFLAGS}" =~ "O2" ]] ; then
@@ -7087,6 +7092,16 @@ einfo "Setting .config with -O2 from CFLAGS"
 	elif [[ "${CFLAGS}" =~ "Os" ]] ; then
 einfo "Setting .config with -Os from CFLAGS"
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
+	elif [[ "${CFLAGS}" =~ "O3" && -z "${_OT_KERNEL_O3_PROVIDER[${KV_MAJOR_MINOR}-${extraversion}]}" ]] ; then
+ewarn
+ewarn "Downgrading to -O2"
+ewarn
+ewarn "-O3 requires at least one of the following:"
+ewarn
+ewarn "1. zen-sauce in both OT_KERNEL_USE and USE."
+ewarn "2. clear in both OT_KERNEL_USE and USE"
+ewarn
+		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
 	else
 einfo "Setting .config with -O2 from CFLAGS"
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
@@ -10985,9 +11000,6 @@ ot-kernel_optimize_gaming_oflag() {
 	else
 		filter-flags '-O*'
 		append-flags '-O3' # This is in testing
-		if ! ot-kernel_use zen-sauce ; then
-ewarn "-O3 requires zen-sauce in both OT_KERNEL_USE and USE."
-		fi
 	fi
 }
 
@@ -11001,15 +11013,12 @@ ot-kernel_optimize_gaming_tornament_oflag() {
 		   "${OT_KERNEL_MAX_UPTIME}" == "1" \
 		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
 	]] ; then
-		# Stability is more important that FPS.
+	# Stability is more important that FPS.
 		filter-flags '-O*'
 		append-flags '-O2'
 	else
 		filter-flags '-O*'
-		append-flags '-O3' # This is in testing.
-		if ! ot-kernel_use zen-sauce ; then
-ewarn "-O3 requires zen-sauce in both OT_KERNEL_USE and USE."
-		fi
+		append-flags '-O3' # This is in testing
 	fi
 }
 
