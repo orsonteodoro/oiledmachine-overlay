@@ -2339,6 +2339,8 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     gamedev
     game-server
     gaming-tournament
+    http-server-busy
+    http-server-relaxed
     musical-live-performance
     pi-deep-learning
     pi-music-production

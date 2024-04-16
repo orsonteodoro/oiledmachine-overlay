@@ -9859,6 +9859,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			|| "${work_profile}" == "http-server-relaxed" \
 		]] ; then
 			ot-kernel_set_kconfig_set_keypress_hz
+			_OT_KERNEL_FORCE_STABILITY=1
 		elif [[ "${work_profile}" == "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz
 		else
