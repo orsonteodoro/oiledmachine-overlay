@@ -3344,6 +3344,7 @@ unset OT_KERNEL_PRIVATE_KEY
       distributed-computing-server
       distributed-computing-client
       desktop-guest-vm
+      dss
       dvr
       file-server
       game-server

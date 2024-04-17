@@ -306,6 +306,16 @@ ot-kernel-pkgflags_apply() {
 	[[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && return
 	[[ "${arch}" =~ "arm" ]] && _ot-kernel-pkgflags_neon
 
+	# Verify that the proper packages are installed first so the proper
+	# kernel config flags can be applied.
+	_ot-kernel_checkpoint_dss_acl_requirement # 1, 7
+	_ot-kernel_checkpoint_dss_anti_malware_requirement # 5
+	_ot-kernel_checkpoint_dss_audit_logs_requirement # 10
+	_ot-kernel_checkpoint_dss_firewall_requirement # 1
+	_ot-kernel_checkpoint_dss_lsm_requirement # 7
+	_ot-kernel_checkpoint_dss_multiuser_requirement # 6
+	_ot-kernel_checkpoint_dss_ntp_requirement # 10
+
 	# Hint below packages whenever possible
 	ot-kernel-pkgflags_iucode
 	ot-kernel-pkgflags_linux_firmware
@@ -802,6 +812,7 @@ ot-kernel-pkgflags_apply() {
 	_ot-kernel_set_multiuser
 	_ot-kernel_realtime_packages
 	_ot-kernel_set_init
+	_ot-kernel_set_acl
 
 	# Out of source modules
 }
@@ -11373,6 +11384,7 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["distributed-computing-client"]="throughput-interactive"
         ["distributed-computing-server"]="sleepy-server"
         ["desktop-guest-vm"]="video"
+        ["dss"]="input"
         ["dvr"]="video"
         ["file-server"]="sleepy-server"
         ["gaming-tournament"]="input"
@@ -11536,7 +11548,6 @@ ewarn
 				   "${preempt_option}" == "CONFIG_PREEMPT_RT" \
 				|| "${preempt_option}" == "CONFIG_PREEMPT_AUTOMAGIC" \
 			]] ; then
-				local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 				local key="${WORK_PROFILE_LATENCY_BIAS_KEY[work_profile]}"
 				if [[ \
 					   "${work_profile}" == "custom" \
@@ -11639,7 +11650,6 @@ _ot-kernel_y_thp() {
 		is_rt=1
 	fi
 
-	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 	if [[ \
 		   "${work_profile}" == "http-server-busy" \
 		|| "${work_profile}" == "http-server-relaxed" \
@@ -11699,7 +11709,6 @@ _ot-kernel_realtime_packages() {
 	# This is how realtime/preemption is changed.
 	# * On demand if OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
 	# * Blanket policy if OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=0
-	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 	ot-kernel_unset_configopt "CONFIG_RT_PACKAGE_FOUND"
 
 	# TODO:  hard realtime packages.
@@ -11925,6 +11934,336 @@ _ot-kernel_realtime_packages() {
 	# _ot-kernel_realtime_pkg "net-p2p/cpuminer-opt" "SCHED_RR"
 	# _ot-kernel_realtime_pkg "sys-apps/openrc" "SCHED_FIFO|SCHED_RR"
 	# _ot-kernel_realtime_pkg "sys-apps/systemd" "SCHED_FIFO|SCHED_RR"
+}
+
+# @FUNCTION: _ot-kernel_checkpoint_dss_anti_malware_requirement
+# @DESCRIPTION:
+# Check for the anti-malware requirements.
+_ot-kernel_checkpoint_dss_anti_malware_requirement() {
+	if [[ "${work_profile}" == "dss" ]] ; then
+		if ot-kernel_has_version "app-antivirus/clamav" ; then
+			:
+		else
+# List only production quality for now
+eerror
+eerror "Please install an antivirus."
+eerror
+eerror "Acceptable packages:"
+eerror
+eerror "app-antivirus/clamav"
+eerror
+			die
+		fi
+# Integrity checks
+		if ot-kernel_has_version "app-forensics/aide" ; then
+ewarn "app-forensics/aide should be added for integrity verification for dss work profile."
+		fi
+	fi
+}
+
+# @FUNCTION: _ot-kernel_checkpoint_dss_audit_logs_requirement
+# @DESCRIPTION:
+# Check for audit logs support.
+_ot-kernel_checkpoint_dss_audit_logs_requirement() {
+	if [[ "${work_profile}" == "dss" ]] ; then
+		if ot-kernel_use disable_debug ; then
+eerror
+eerror "The disable_debug USE flag should be disabled for the dss work profile"
+eerror "to enable logging."
+eerror
+			die
+		fi
+		if ot-kernel_has_version "virtual/logger" ; then
+			:
+		else
+eerror
+eerror "A logger from virtual/logger is required for the dss work profile."
+eerror
+			die
+		fi
+	fi
+}
+
+# @FUNCTION: _ot-kernel_checkpoint_dss_firewall_requirement
+# @DESCRIPTION:
+# Check for the firewall requirement.
+_ot-kernel_checkpoint_dss_firewall_requirement() {
+	if [[ "${work_profile}" == "dss" ]] ; then
+# This is optional because a hardware firewall may be used instead.
+		if [[ "${DSS_FIREWALL_TYPE}" == "waf" ]] ; then
+			:
+		elif ot-kernel_has_version "net-firewall/iptables" ; then
+			:
+		elif ot-kernel_has_version "net-firewall/nftables" ; then
+			:
+		elif ot-kernel_has_version "net-firewall/shorewall" ; then
+			:
+		else
+# List only well known for now
+ewarn
+ewarn "Please install a firewall for the dss work profile."
+ewarn
+ewarn "Choose either one of firewall:"
+ewarn
+ewarn "net-firewall/iptables"
+ewarn "net-firewall/nftables"
+ewarn "net-firewall/shorewall"
+ewarn
+ewarn "or"
+ewarn
+ewarn "A Web Application Firewall (WAF) with DSS_FIREWALL_TYPE=\"waf\" environment variable"
+ewarn
+		fi
+	fi
+}
+
+# @FUNCTION: __ot-kernel_set_acl_one_package
+# @DESCRIPTION:
+# Enable access control list (ACL) support for one package.
+__ot-kernel_set_acl_one_package() {
+	if grep -q -E -e "^CONFIG_BTRFS_FS=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_BTRFS_FS_POSIX_ACL"
+	fi
+	if grep -q -E -e "^CONFIG_CEPH_FS=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_CEPH_FS_POSIX_ACL"
+		ot-kernel_y_configopt "CONFIG_CEPH_FS_SECURITY_LABEL"
+	fi
+	if grep -q -E -e "^CONFIG_CIFS=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_CIFS_XATTR"
+		ot-kernel_y_configopt "CONFIG_CIFS_POSIX"
+	fi
+	if grep -q -E -e "^CONFIG_EXT2_FS=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_EXT2_FS_XATTR"
+	fi
+	if grep -q -E -e "^CONFIG_EXT3_FS=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_EXT3_FS_POSIX_ACL"
+		ot-kernel_y_configopt "CONFIG_EXT3_FS_SECURITY"
+	fi
+	if grep -q -E -e "^CONFIG_EXT4_FS=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_EXT4_FS_POSIX_ACL"
+		ot-kernel_y_configopt "CONFIG_EXT4_FS_SECURITY"
+	fi
+	if grep -q -E -e "^CONFIG_JFS_FS=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_JFS_POSIX_ACL"
+		ot-kernel_y_configopt "CONFIG_JFS_SECURITY"
+		fi
+	if grep -q -E -e "^CONFIG_XFS_FS=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_XFS_POSIX_ACL"
+	fi
+	if grep -q -E -e "^CONFIG_F2FS_FS=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_F2FS_FS_XATTR"
+			ot-kernel_y_configopt "CONFIG_F2FS_FS_POSIX_ACL"
+		ot-kernel_y_configopt "CONFIG_F2FS_FS_SECURITY"
+	fi
+	if grep -q -E -e "^CONFIG_EROFS_FS=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_EROFS_FS_XATTR"
+		ot-kernel_y_configopt "CONFIG_EROFS_FS_POSIX_ACL"
+		ot-kernel_y_configopt "CONFIG_EROFS_FS_SECURITY"
+	fi
+	if grep -q -E -e "^CONFIG_NFS_FS=(y|m)" "${path_config}" ; then
+		if grep -q -E -e "^CONFIG_NFS_V3=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_NFS_V3_ACL"
+		fi
+	fi
+	if grep -q -E -e "^CONFIG_NFSD=(y|m)" "${path_config}" ; then
+		if grep -q -E -e "^CONFIG_NFSD_V2=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_NFSD_V2_ACL"
+		fi
+		ot-kernel_y_configopt "CONFIG_NFSD_V3_ACL"
+		if grep -q -E -e "^CONFIG_NFSD_V4=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_NFSD_V4_SECURITY_LABEL"
+			ot-kernel_y_configopt "CONFIG_PROC_FS"
+		fi
+	fi
+	if grep -q -E -e "^CONFIG_REISERFS_FS=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_REISERFS_FS_XATTR"
+		ot-kernel_y_configopt "CONFIG_REISERFS_FS_POSIX_ACL"
+	fi
+}
+
+# @FUNCTION: _ot-kernel_set_acl
+# @DESCRIPTION:
+# Enable access control list (ACL) support typically because the acl USE flag was enabled.
+_ot-kernel_set_acl() {
+	local PKGS=(
+# Manually inspect for false-positives or wrong USE flag.
+#
+# Generated from:
+#
+# grep -r -E -l --exclude-dir=.git "IUSE.*acl" $(find /usr/portage -name "*.ebuild") | cut -f 4-5 -d "/" | sort | uniq
+# grep -r -E -l --exclude-dir=.git "IUSE.*acl" $(find /var/db/repos/ -name "*.ebuild") | cut -f 6-7 -d "/" | sort | uniq
+#
+app-admin/logrotate
+app-arch/rpm
+app-arch/tar
+app-backup/bacula
+app-backup/bareos
+app-backup/burp
+app-backup/tarsnap
+app-backup/tsm
+app-cdr/cdrtools
+app-editors/emacs
+app-editors/gvim
+app-editors/vim
+app-editors/vim-core
+app-editors/zile
+app-forensics/aide
+app-forensics/openscap
+dev-db/tora
+dev-lang/php
+dev-libs/libisoburn
+dev-libs/libisofs
+dev-util/diffoscope
+games-util/game-device-udev-rules
+kde-frameworks/kio
+net-analyzer/check_mk_agent
+net-fs/cifs-utils
+net-fs/netatalk
+net-fs/samba
+net-ftp/proftpd
+net-misc/rsync
+net-print/cups
+net-proxy/privoxy
+sci-geosciences/qgis
+sys-apps/bfs
+sys-apps/coreutils
+sys-apps/fakeroot
+sys-apps/sed
+sys-apps/shadow
+sys-apps/systemd
+sys-apps/systemd-utils
+sys-auth/elogind
+sys-auth/sssd
+sys-cluster/pacemaker
+sys-devel/gettext
+sys-fs/btrfs-progs
+sys-fs/mtd-utils
+sys-fs/ntfs3g
+sys-fs/udisks
+virtual/acl
+www-apps/tt-rss
+	)
+
+	local pkg
+	# Conditional USE flag
+	for pkg in ${PKGS[@]} ; do
+		  if [[ "${pkg}" == "sys-fs/btrfs-progs" ]] && ot-kernel_has_version "${pkg}[convert]" ; then
+			__ot-kernel_set_acl_one_package
+		elif [[ "${pkg}" == "sys-fs/mtd-utils" ]]   && ot-kernel_has_version "${pkg}[xattr]" ; then
+			__ot-kernel_set_acl_one_package
+		elif [[ "${pkg}" == "virtual/acl" ]]        && ot-kernel_has_version "${pkg}[linux_kernel]" ; then
+			__ot-kernel_set_acl_one_package
+		elif ot-kernel_has_version "${pkg}[acl]" ; then
+			__ot-kernel_set_acl_one_package
+		fi
+	done
+
+PKGS=(
+# Manually inspect for false-positives.
+#
+# Generated from:
+#
+# grep -r -E -l --exclude-dir=.git "sys-apps/acl" $(find /usr/portage -name "*.ebuild")
+# grep -r -E -l --exclude-dir=.git "sys-apps/acl" $(find /var/db/repos/ -name "*.ebuild")
+app-backup/snapper
+app-crypt/tpm2-tss
+app-editors/vis
+app-misc/clifm
+dev-python/pylibacl
+gnome-extra/eiciel
+kde-misc/krusader
+sys-apps/apply-default-acl
+)
+
+	# Unconditional enable
+	for pkg in ${PKGS[@]} ; do
+		if ot-kernel_has_version "${pkg}" ; then
+			__ot-kernel_set_acl_one_package
+		fi
+	done
+
+}
+
+# @FUNCTION: _ot-kernel_checkpoint_dss_acl_requirement
+# @DESCRIPTION:
+# Check for OS systems level ACL for firewall
+_ot-kernel_checkpoint_dss_acl_requirement() {
+	if [[ "${work_profile}" == "dss" ]] ; then
+		__ot-kernel_set_acl_one_package
+	fi
+}
+
+# @FUNCTION: _ot-kernel_checkpoint_dss_lsm_requirement
+# @DESCRIPTION:
+# Check for LSM (Linux Security Modules) support.
+_ot-kernel_checkpoint_dss_lsm_requirement() {
+	if [[ "${work_profile}" == "dss" ]] ; then
+		if ot-kernel_has_version "sys-apps/apparmor" ; then
+			:
+		elif ot-kernel_has_version "sec-policy/selinux-base" ; then
+			:
+		else
+ewarn
+ewarn "You are missing an access control model implementation for the dss work"
+ewarn "profile.  Choose one of the following to silence this error:"
+ewarn
+ewarn "sys-apps/apparmor"
+ewarn "sec-policy/selinux-base"
+ewarn
+		fi
+		if [[ -z "${OT_KERNEL_LSMS}" ]] ; then
+			: # Auto
+		elif [[ "${OT_KERNEL_LSMS}" =~ ("apparmor"|"auto"|"default"|"selinux") ]] ; then
+			:
+		else
+ewarn
+ewarn "Your access control model implementation in OT_KERNEL_LSMS for the dss"
+ewarn "work profile is weak while the specification hinted strong.  Set"
+ewarn "OT_KERNEL_LSMS of the following rows to silence this error:"
+ewarn
+ewarn "OT_KERNEL_LSMS=\"auto\""
+ewarn "OT_KERNEL_LSMS=\"default\""
+ewarn "OT_KERNEL_LSMS=\"integrity,selinux,bpf\""
+ewarn "OT_KERNEL_LSMS=\"integrity,apparmor,bpf\""
+ewarn
+		fi
+	fi
+}
+
+# @FUNCTION: _ot-kernel_checkpoint_dss_multiuser_requirement
+# @DESCRIPTION:
+# Check for limited user support
+_ot-kernel_checkpoint_dss_multiuser_requirement() {
+	if [[ "${work_profile}" == "dss" ]] ; then
+einfo "Enabling multiuser / multigroup support for the dss work profile"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+	fi
+}
+
+# @FUNCTION: _ot-kernel_checkpoint_dss_ntp_requirement
+# @DESCRIPTION:
+# Check for secure ntp support.
+_ot-kernel_checkpoint_dss_ntp_requirement() {
+	if [[ "${work_profile}" == "dss" ]] ; then
+		if ot-kernel_has_version "net-misc/chrony" ; then
+			:
+		elif ot-kernel_has_version "net-misc/ntpsec" ; then
+			:
+		else
+# Listed only only secured or reviewed versions
+eerror
+eerror "A secure ntp implementation with proper security USE flags connected to"
+eerror "a secured ntp server is required for the dss work profile."
+eerror
+eerror "Acceptable packages:"
+eerror
+eerror "net-misc/chrony"
+eerror "net-misc/ntpsec"
+eerror
+			die
+		fi
+	fi
 }
 
 # CONFIG_ADVISE_SYSCALLS search keywords:  madvise, fadvise

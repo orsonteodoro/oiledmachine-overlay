@@ -3511,6 +3511,7 @@ ot-kernel_clear_env() {
 	unset CRYPTSETUP_HASHES
 	unset CRYPTSETUP_MODES
 	unset CRYPTSETUP_TCRYPT
+	unset DSS_FIREWALL_TYPE
 	unset EMU_16BIT
 	unset HPLIP_PARPORT
 	unset HPLIP_USB
@@ -3716,7 +3717,6 @@ ot-kernel_get_tcp_congestion_controls_default() {
 _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 	local v
 
-	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 	if [[ \
 		   "${work_profile}" == "custom" \
 		|| "${work_profile}" == "manual" \
@@ -5013,7 +5013,6 @@ einfo "Changed .config to use MuQSS"
 		ot-kernel_set_kconfig_kernel_cmdline "rqshare=smt"
 	}
 
-	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 	local processor_class="${OT_KERNEL_PROCESSOR_CLASS,,}"
 
 	local multicore=0
@@ -7085,7 +7084,6 @@ ot-kernel_set_kconfig_oflag() {
 		| tail -n 1)
 	replace-flags '-O*' "${O_last}"
 
-	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 	if [[ "${work_profile}" == "gaming-tournament" ]] ; then
 		replace-flags '-O*' "-O3"
 	elif [[ "${work_profile}" == "pro-gaming" ]] ; then
@@ -9454,7 +9452,6 @@ ot-kernel_set_rt_rcu() {
 # @DESCRIPTION:
 # Configures the default power policies and latencies for the kernel.
 ot-kernel_set_kconfig_work_profile() {
-	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 	FALLBACK_PREEMPT=""
 	FALLBACK_PREEMPT_IS_RT_WORK_PROFILE=0
 einfo "Using the ${work_profile} work profile"
@@ -9537,6 +9534,10 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"web-server\" is deprecated.  Use either distribu
 	elif [[ "${work_profile}" == "http-server" ]] ; then
 ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-server-busy, http-server-relaxed instead."
 		die
+	fi
+
+	if [[ "${work_profile}" == "dss" ]] ; then
+ewarn "The dss profile is experimental."
 	fi
 
 	if [[ \
@@ -9736,9 +9737,9 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
 		if [[ "${work_profile}" == "pro-gaming" ]] ; then
-			ot-kernel_optimize_gaming "pro-gaming"
+			ot-kernel_optimize_gaming
 		elif [[ "${work_profile}" == "gaming-tournament" ]] ; then
-			ot-kernel_optimize_gaming "gaming-tournament"
+			ot-kernel_optimize_gaming
 		fi
 		_OT_KERNEL_FORCE_STABILITY=1
 	elif [[ \
@@ -11049,10 +11050,6 @@ einfo "Disabling overdrive on the amdgpu driver."
 # @DESCRIPTION:
 # Optimize the kernel for hardcore mode (irreversable death).
 ot-kernel_optimize_gaming_hardcore() {
-	local work_profile="${1}"
-ewarn
-ewarn "OT_KERNEL_WORK_PROFILE=\"${work_profile}\" is still in development."
-ewarn
 	if ot-kernel_use uksm ; then
 # Remove the unintended consequences of applying the patch.
 # UKSM also thrashes a lot so lets get rid of that.
@@ -11106,10 +11103,6 @@ eerror
 # @DESCRIPTION:
 # Optimize the kernel for gaming performance for max fps
 ot-kernel_optimize_gaming_fps() {
-	local work_profile="${1}"
-ewarn
-ewarn "OT_KERNEL_WORK_PROFILE=\"${work_profile}\" is still in development."
-ewarn
 	if [[ "${hardening_level}" =~ ("default"|"practical"|"secure"|"secure-af"|"secure-as-fuck") ]] ; then
 eerror
 eerror "Please change to OT_KERNEL_HARDENING_LEVEL=\"performance\" and remove"
@@ -11179,15 +11172,13 @@ eerror
 # @DESCRIPTION:
 # Optimize the kernel for gaming performance for the top 1%.
 ot-kernel_optimize_gaming() {
-	local work_profile="${1}"
-
 	if [[ \
 		   "${_OT_KERNEL_FORCE_STABILITY}" == "1"
 		|| "${OT_KERNEL_MAX_UPTIME}"       == "1"
 	]] ; then
-		ot-kernel_optimize_gaming_hardcore "${work_profile}"
+		ot-kernel_optimize_gaming_hardcore
 	else
-		ot-kernel_optimize_gaming_fps "${work_profile}"
+		ot-kernel_optimize_gaming_fps
 	fi
 }
 
@@ -11336,6 +11327,11 @@ einfo "Forcing the default hardening level for maximum uptime"
 	#	ot-kernel_optimize_gaming, \
 	#	ot-kernel_optimize_realtime \
 		hardening_level="default"
+	fi
+
+	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
+	if [[ "${work_profile}" == "dss" ]] ; then
+		hardening_level="secure-af"
 	fi
 
 	local llvm_slot=$(get_llvm_slot)
@@ -13528,6 +13524,7 @@ ot-kernel_src_install() {
 			fi
 		fi
 		local arch="${OT_KERNEL_ARCH}" # ARCH in raw form.
+		local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 
