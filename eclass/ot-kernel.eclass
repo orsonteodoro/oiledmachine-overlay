@@ -9862,7 +9862,7 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_set_kconfig_set_keypress_hz
 	# We will manually set -O2 and max hardening.
 		if [[ \
-			|| "${work_profile}" == "http-server-busy" \
+			   "${work_profile}" == "http-server-busy" \
 			|| "${work_profile}" == "http-server-relaxed" \
 		]] ; then
 			ot-kernel_set_kconfig_set_keypress_hz
