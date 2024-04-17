@@ -7084,7 +7084,9 @@ ot-kernel_set_kconfig_oflag() {
 		| tail -n 1)
 	replace-flags '-O*' "${O_last}"
 
-	if [[ "${work_profile}" == "gaming-tournament" ]] ; then
+	if [[ "${work_profile}" == "dss" ]] ; then
+		replace-flags '-O*' "-O2"
+	elif [[ "${work_profile}" == "gaming-tournament" ]] ; then
 		replace-flags '-O*' "-O3"
 	elif [[ "${work_profile}" == "pro-gaming" ]] ; then
 		replace-flags '-O*' "-O3"
@@ -9537,7 +9539,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 	fi
 
 	if [[ "${work_profile}" == "dss" ]] ; then
-ewarn "The dss profile is experimental and in development."
+ewarn "The dss work profile is experimental and in development."
 	fi
 
 	if [[ \
@@ -9850,13 +9852,17 @@ ewarn "The dss profile is experimental and in development."
 		fi
 	elif [[ \
 		   "${work_profile}" == "distributed-computing-server" \
+		|| "${work_profile}" == "dss" \
 		|| "${work_profile}" == "file-server" \
 		|| "${work_profile}" == "http-server-busy" \
 		|| "${work_profile}" == "http-server-relaxed" \
 		|| "${work_profile}" == "media-server" \
 	]] ; then
+		if [[ "${work_profile}" == "dss" ]] ; then
+			ot-kernel_set_kconfig_set_keypress_hz
+	# We will manually set -O2 and max hardening.
 		if [[ \
-			   "${work_profile}" == "http-server-busy" \
+			|| "${work_profile}" == "http-server-busy" \
 			|| "${work_profile}" == "http-server-relaxed" \
 		]] ; then
 			ot-kernel_set_kconfig_set_keypress_hz

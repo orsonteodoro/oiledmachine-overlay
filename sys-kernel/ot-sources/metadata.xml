@@ -2336,6 +2336,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     The following work profiles maximize uptime unconditionally:
     
     digital-audio-workstation
+    dss
     gamedev
     game-server
     gaming-tournament
