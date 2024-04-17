@@ -296,6 +296,7 @@ echo
 echo
 echo "Detected consecutive dropped packets in 5 seconds which is unusual."
 echo "Consult the packet loss troubleshoot guides to resolve the issue and ensure the router is not compromised."
+echo "Switching from net-misc/networkmanager to net-misc/netifrc may fix the problem."
 echo
 		fi
 	fi
