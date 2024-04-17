@@ -9537,7 +9537,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 	fi
 
 	if [[ "${work_profile}" == "dss" ]] ; then
-ewarn "The dss profile is experimental."
+ewarn "The dss profile is experimental and in development."
 	fi
 
 	if [[ \
