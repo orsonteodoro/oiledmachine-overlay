@@ -31,23 +31,28 @@ llvm_ebuilds_message() {
 	local slot="${1}"
 	local fn="${2}"
 	if [[ "${PV}" =~ "9999" && "${fn}" == "_llvm_set_globals" ]]  ; then
+# bbr1 fail
+# cubic fail
+# htcp fail
+# hybla fail
+# pcc tested working
+# new reno fail
+# vegas fail
+# westwood fail
 einfo "Using fallback commit"
 ewarn
 ewarn "Do the following to increase download chances of live ebuilds:"
 ewarn
 ewarn "1. Emerge net-misc/curl[-http2]"
 ewarn "2. Turn off all programs except emerge."
-ewarn "3. Fix all dropped packet issues.  If networkmanager causes dropped packets, use netifrc instead.  This may help unmask other sources of dropped packets."
-ewarn "4. Move the move the wireless closer or orient it to achieve lowest ping with the router."
-# bbr1 fail
-# cubic fail
-# htcp fail
-# hybla fail
-# pcc tested working
-# reno fail
-# vegas fail
-# westwood fail
-ewarn "5. Switch the TCP Congestion Control to one with the highest average throughput (e.g. pcc).  For lossy poor quality connections, avoid cubic and illinois."
+ewarn "3. Fix all dropped packet issues.  If networkmanager causes dropped"
+ewarn "   packets, use netifrc instead.  This may help unmask other sources of"
+ewarn "   dropped packets."
+ewarn "4. Move the move the wireless closer or orient it to achieve the lowest"
+ewarn "   ping with the wireless router."
+ewarn "5. Switch the TCP Congestion Control to one with the highest average"
+ewarn "   throughput (e.g. pcc).  For lossy poor quality connections, avoid"
+ewarn "   cubic and illinois."
 ewarn
 	fi
 }
