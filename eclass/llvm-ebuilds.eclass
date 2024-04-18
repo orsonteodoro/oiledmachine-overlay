@@ -38,7 +38,7 @@ ewarn
 ewarn "1. Emerge net-misc/curl[-http2]"
 ewarn "2. Turn off all programs except emerge."
 ewarn "3. Move the move the wireless closer or orient it to achieve lower ping with the router."
-ewarn "4. Switch the TCP Congestion Control to one with higher average throughput."
+ewarn "4. Switch the TCP Congestion Control to one with highest average throughput."
 ewarn
 	fi
 }
