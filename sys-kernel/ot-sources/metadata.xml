@@ -3057,17 +3057,19 @@ unset OT_KERNEL_PRIVATE_KEY
       deepcc    | Throughput, optimized BBR, Cubic, Illinois, Westwood
                 | TensorFlow [heavy dependency], high memory footprint
       cubic     | Throughput, ubiquitous (de facto standard)
+                | May suffer ingest (or +50% link under-utilization) at 0.5% packet loss or more
       hstcp     | Throughput
       htcp      | Throughput and internal fairness for LFNs (Large Fat Networks) [ADSL2+, cable, or larger]; in packet loss scenarios, marginally better throughput versus cubic 
       hybla     | Throughput over satellite
       illinois  | Throughput between inter data centers
+                | May suffer ingest (or +50% link under-utilization) at 0.5% packet loss or more
       lp        | Full bandwidth utilization
                 | May studder sound
       nv        | RPC goodput and low latency for KiB payloads
       orca      | Low CPU usage, consistent high performance in different networks
                 | TensorFlow [heavy dependency], high memory footprint
       pcc       | Send throughput, low requirements, better stability over time
-                | Higher CPU usage
+                | Higher CPU usage, may suffer ingest (or +50% link under-utilization) at 2.5% packet loss or more
       reno      | New Reno fallback algorithm
                 | Old algorithm
       scalable  | Throughput
@@ -3115,21 +3117,26 @@ unset OT_KERNEL_PRIVATE_KEY
       Gaming without VoIP:  vegas
       Live broadcasting:  c2tcp, bbr
       On demand upload:  pcc, any delay based TCC
-      Single player casual games:  cubic
+      Single player casual games:  See recommended default choice section below excluding vegas
       Social games:  vegas
       Web browsing:  vegas
 
     Recommened as default choice (sorted by high to low throughput)
 
-      Inter data center:  illinois
+      Inter data center:  ppc, illinois
       Intra data center:  dctcp, bbr
-      High BDP:  htcp, bic, cubic
-      Satellite:  hybla
-      Wireless:  westwood, veno, vegas
+      High BDP:  pcc, htcp, bic, cubic
+      LTE:  bbr, pcc
+      Satellite:  pcc, hybla
+      Wireless:  pcc, westwood, veno, vegas
 
       * The left most value in OT_KERNEL_TCP_CONGESTION_CONTROLS makes it the default.
       * bbr means any version.
       * Use the tcca script to change these.
+      * For frequent packet loss, it recommended to avoid cubic.
+      * Wireless means stationary home/office network.
+      * LTE means road trip or rapidly changing networks.
+      * pcc means PCC Vivace.
 
     Further reading:
 
