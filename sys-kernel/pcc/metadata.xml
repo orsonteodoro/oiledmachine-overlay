@@ -10,64 +10,75 @@
 
     oiledmachine-overlay notes:
 
-    Performance-oriented Congestion Control (PCC) is a congestion
-    control algorithm.  Both PCC Allegro and PCC Vivace are TCP variations
-    available as a kernel module, while PCC Proteus is the QUIC version
-    and userspace only.
+    Performance-oriented Congestion Control (PCC) is a congestion control
+    algorithm.  This ebuild only offers the kernel module version for TCP/IP.
 
-    It combines empiricalism, decision theory, and game theory.
-    Empiricalism will do send rate tests to gather observed statistics -
-    throughput, latency, etc.
+    PCC uses the following ideas:
 
-    It feeds the observed data to utility functions (aka Simple Additive
-    Weighing [SAW] or Weighted Linear Combo [WLC]).  PCC does send rate changes
-    instead of the problematic additive increase multiplicative decrease (AIMD)
-    on the control window (cwmd) used in TCP Tahoe inspired variations, changing
-    assumptions.  It penalizes multiple problematic characterisics through a
-    utility function and rewards based on rate increase.
+    * Empiricalism - performing send rate tests in real time with A/B testing
+      and collecting and measuring of RTT (latency), dropped packet rate,
+      throughput.
+    * Utility function - a scoring function.
+    * Gradent ascent - finding the instantaneous maxima which is the reward (aka
+      the utility value) which can be done in a simple comparison of two utility
+      values (which is the same as comparing two rewards corresponding to the
+      two send rates tested).
+    * Online learning - means converging at the sending rate equilibrium while
+      avoiding the incast (severe link throughput collapse).  This is in
+      contrast to the "hardwired mapping" approach by previous TCP CC designers.
+      The project claims that wrong assumptions in complex conditionas lead to
+      harmful actions. [This is not the best reason from the course/fine grain
+      perspective of the Orca project.]
+    * Self-clocking - The rates of sending rate and receiving rates are the
+      same.  [This is not discussed in their paper or presentation.  They often
+      mention "sending rate".  The utility function is supposed to
+      model/replicate it.]
 
-    Then, it compares the utility functions score.  These utility functions are
-    associated with possible Nash equilibriums.  It selects the corresponding
-    send rate with the highest utility score.
+      - PCC Allegro:
+        * It uses a sigmoid function.
+          (The sigmoid function behaves similarly to a horizontal tangent but
+           capped typically at 0 and 1, but in this implementation it is scaled
+           up to sender's throughput sampled at an interval.  It's used for
+           maybe for normalization or saturation [aka value cap].  [Like in the
+           online learning above, the wrong assumption by them led to the next
+           iteration.])
+        * u_i = f(T_i, r_i, L_i)
+          * It has three variable inputs -- throughput, send rate, packet loss rate
+          * The reward is the send rate.
+          * The punishments are packet loss.
+          * The output is just an artibrary utility value.
+        * This version has a design flaw or less intelligent that it ignores
+          latency.  They claim that latency is associated with bufferbloat.
+        * Bigger internal latency in LTE (rapidly changing networks in
+          smartphone Internet).
+        * Single or double digit throughput benefits compared to cubic, hybla,
+          illinois.
+        * Increasing packet loss with larger buffers.
+      - PCC Vivace:
+        * It uses a concave function, for modeling rapid change to take in
+          consideration the LTE scenario and to improve that sitation.
+        * u_i = f(r_i, d(RTT_i)/d(T), L_i)
+          * Three variable inputs -- send rate, packet loss rate,
+            the RTT gradient d(RTT_i)/d(T).
+          * The reward is send rate.
+          * The punishments are packet loss, RTT latency.
+          * The output is just an arbitary utility value.
+        * Small buffers now have 90% utilization, addressing bufferbloat on
+          that scale in particular LTE scenario.
+        * Lower internal latencies in LTE (rapidly changing networks in
+          smartphone Internet).  This is important for reducing jitter in
+          VoIP or live streaming.
+        * Each sender (or socket listed in `ss -i`) will get their own
+          independent utility function.
+        * The throughput is similar to PCC Allegro.
 
-    Both variants have low bufferbloat.
-
-    PCC Vivace has a slow start similar to TCP Cubic.  PCC Vivace has low
-    consistent RTT, and throughput is very steady with fewest dips.
-
-    Packet loss rate is about 4-11% for ~20 multiple flows and 5% or less at
-    ~5 coexisting flows.  PCC has about 5-10% less packet loss than BBR
-    according to upstream graphs.
-
-    PCC Allegro is more greedy with multiple flows of different congestion
-    control disciplines (e.g. cubic) but less greedy than BBR.
-
-    PCC Vivace is more fair with multiple flows of different congestion control
-    disciplines (e.g. cubic) so less throughput.  [Throughput and fairness
-    are often tradeoffs.]
-
-    PCC Vivace has lower latency than PCC Allegro.
-
-    It may shave off hours (or an order of magnitude of time) when sending data
-    compared to TCP Cubic.
-
-        Algorithm       Mathematical model       Inputs to utility function
-         Allegro         SAW with sigmoid        send rate, loss rate
-         Vivace      SAW with gradient ascent    send rate, loss rate, RTT [gradient]
-        Proteus-P    SAW with gradient ascent    send rate, loss rate, [non-negative] RTT [gradient]
-        Proteus-S    SAW with gradient ascent    same as Proteus-P but with added competitive flow congestion [std dev RTT_mi(i) of the ith monitor interval] term
-        Proteus-H           multiple             send rate is less than threshold piecewise function to either Proteus-P or -H utility functions
-                                                 (The threshold send rate is set by application for reasons such as video streaming.)
-
-    * The send rate doubles per RTT as it moves up the gradient during slow start.
-    * the loss rate does depend on packet loss in the source code.
-    * RTT gradient is a linear regression of RTT and time of first and last
-      packets during monitor interval.
-
-    The improved PCC variant, PCC Proteus is currently not packaged on the
-    overlay due to modularity issues.  It is better used as an internal
-    dependency.
-
+    [Using Computer Science AI, the utility function is the analog to the
+     threshold function and the utility value is the analog to threshold value.
+     The ultimate goal is to maximize utility value (aka benefit).  The
+     threshold function is typically a linear combo; but in this TCP CC, they
+     used non-linear functions and their reasons are discussed above and their
+     paper.  The range of the threshold/utility function is arbitrary but
+     should fit in the variable's range without overflowing/underflowing.]
 
     Pre-merge configuration
 
