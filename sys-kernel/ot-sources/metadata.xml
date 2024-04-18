@@ -3100,12 +3100,13 @@ unset OT_KERNEL_PRIVATE_KEY
            that frequently drops connections.]
         2. Ensure that the antennas are not damaged.  Screw or replace the
            antenna.
-        3. Ensure that the wireless router is positioned visibly in the
-           open area or room.
-        4. Move the wireless closer and remove metallic obstacles to increase
-           signal strength.  If the site in question has thick walls
-           (aka reinforced concrete), switch to wired or place the router
-           visibly in the line of sight of the WiFi receiver.
+        3. Ensure that the wireless router is positioned visibly in the open
+           area or room.  If the site in question has thick walls (aka
+           reinforced concrete), switch to wired or place the router visibly in
+           the line of sight of the WiFi receiver.  Remove metallic obstacles
+           in the line of sight to increase strength.
+        4. Move the wireless closer to increase signal strength to gain access
+           to the faster 5G mode.
         5. Fix all dropped packet issues.  If networkmanager causes dropped
            packets, use netifrc instead.  This may help unmask other sources of
            dropped packets or possibly router issues such as overheating,
