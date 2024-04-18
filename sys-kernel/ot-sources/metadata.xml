@@ -3094,7 +3094,7 @@ unset OT_KERNEL_PRIVATE_KEY
            cut, loosening, or stretching are observed; the wire needs to be
            replaced.
       * Tips to improve WiFi throughput:
-        1. Turn off all programs except emerge or affected app.
+        1. Turn off all programs except emerge or the affected app.
            [This step is necessary only if the protocol or action does not
            support resume (e.g. git clone) or an improperly configured server
            that frequently drops connections.]
