@@ -3091,7 +3091,7 @@ unset OT_KERNEL_PRIVATE_KEY
         of these Contestion Control Algorithms (CCAs).
       * Tips to improve wired throughput:
         1. Inspect the wire both on the ends and in the middle.  If any
-           cut, loosed, or stretching are observed; the wire needs to be
+           cut, loosening, or stretching are observed; the wire needs to be
            replaced.
       * Tips to improve WiFi throughput:
         1. Turn off all programs except emerge or affected app.
