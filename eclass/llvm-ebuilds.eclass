@@ -47,7 +47,7 @@ ewarn "4. Move the move the wireless closer or orient it to achieve lowest ping 
 # reno fail
 # vegas fail
 # westwood fail
-ewarn "5. Switch the TCP Congestion Control to one with highest average throughput (e.g. pcc).  For lossy poor quality connections, avoid cubic and illinois."
+ewarn "5. Switch the TCP Congestion Control to one with the highest average throughput (e.g. pcc).  For lossy poor quality connections, avoid cubic and illinois."
 ewarn
 	fi
 }
