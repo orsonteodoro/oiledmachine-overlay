@@ -39,8 +39,15 @@ ewarn "1. Emerge net-misc/curl[-http2]"
 ewarn "2. Turn off all programs except emerge."
 ewarn "3. Fix all dropped packet issues.  If networkmanager causes dropped packets, use netifrc instead.  This may help unmask other sources of dropped packets."
 ewarn "4. Move the move the wireless closer or orient it to achieve lowest ping with the router."
-# hybla fail, cubic fail, htcp fail, vegas fail, reno fail, pcc tested working.
-ewarn "5. Switch the TCP Congestion Control to one with highest average throughput (e.g. pcc)."
+# bbr1 fail
+# cubic fail
+# htcp fail
+# hybla fail
+# pcc tested working
+# reno fail
+# vegas fail
+# westwood fail
+ewarn "5. Switch the TCP Congestion Control to one with highest average throughput (e.g. pcc).  For lossy poor quality connections, avoid cubic and illinois."
 ewarn
 	fi
 }
