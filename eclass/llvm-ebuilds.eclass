@@ -35,22 +35,30 @@ llvm_ebuilds_message() {
 # cubic fail
 # htcp fail
 # hybla fail
+# lp fail
 # pcc tested working
 # new reno fail
 # vegas fail
 # westwood fail
+#
+# Fixes:
+# fetch-pack: unexpected disconnect while reading sideband packet
+# fatal: early EOF
+#
 einfo "Using fallback commit"
 ewarn
 ewarn "Do the following to increase download chances of live ebuilds:"
 ewarn
 ewarn "1. Emerge net-misc/curl[-http2]"
 ewarn "2. Turn off all programs except emerge."
-ewarn "3. Fix all dropped packet issues.  If networkmanager causes dropped"
+ewarn "3. Move the wireless closer and remove metallic obstacles to increase"
+ewarn "   signal strength."
+ewarn "4. Fix all dropped packet issues.  If networkmanager causes dropped"
 ewarn "   packets, use netifrc instead.  This may help unmask other sources of"
 ewarn "   dropped packets."
-ewarn "4. Move the move the wireless closer or orient it to achieve the lowest"
-ewarn "   ping with the wireless router."
-ewarn "5. Switch the TCP Congestion Control to one with the highest average"
+ewarn "5  Orient the antenna to achieve the lowest ping consistently with the"
+ewarn "   wireless router."
+ewarn "6. Switch the TCP Congestion Control to one with the highest average"
 ewarn "   throughput (e.g. pcc).  For lossy poor quality connections, avoid"
 ewarn "   cubic and illinois."
 ewarn
