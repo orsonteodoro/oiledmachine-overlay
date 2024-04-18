@@ -3057,19 +3057,19 @@ unset OT_KERNEL_PRIVATE_KEY
       deepcc    | Throughput, optimized BBR, Cubic, Illinois, Westwood
                 | TensorFlow [heavy dependency], high memory footprint
       cubic     | Throughput, ubiquitous (de facto standard)
-                | May suffer ingest (or +50% link under-utilization) at 0.5% packet loss or more
+                | May suffer incast (or +50% link under-utilization) at 0.5% packet loss or more
       hstcp     | Throughput
       htcp      | Throughput and internal fairness for LFNs (Large Fat Networks) [ADSL2+, cable, or larger]; in packet loss scenarios, marginally better throughput versus cubic 
       hybla     | Throughput over satellite
       illinois  | Throughput between inter data centers
-                | May suffer ingest (or +50% link under-utilization) at 0.5% packet loss or more
+                | May suffer incast (or +50% link under-utilization) at 0.5% packet loss or more
       lp        | Full bandwidth utilization
                 | May studder sound
       nv        | RPC goodput and low latency for KiB payloads
       orca      | Low CPU usage, consistent high performance in different networks
                 | TensorFlow [heavy dependency], high memory footprint
       pcc       | Send throughput, low requirements, better stability over time
-                | Higher CPU usage, may suffer ingest (or +50% link under-utilization) at 2.5% packet loss or more
+                | Higher CPU usage, may suffer incast (or +50% link under-utilization) at 2.5% packet loss or more
       reno      | New Reno fallback algorithm
                 | Old algorithm
       scalable  | Throughput
