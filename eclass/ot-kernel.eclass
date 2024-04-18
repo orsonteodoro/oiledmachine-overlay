@@ -12700,7 +12700,9 @@ ot-kernel_install_tcca() {
 		local tcca_intra_dc=$(_tcc_intra_dc)
 
 		_tcc_inter_dc() {
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
+				tcc="pcc"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
 				tcc="illinois"
 			else
 				tcc="${default_tcca}"
@@ -12710,7 +12712,9 @@ ot-kernel_install_tcca() {
 		local tcca_inter_dc=$(_tcc_inter_dc)
 
 		_tcc_satellite() {
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
+				tcc="pcc"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
 				tcc="hybla"
 			else
 				tcc="${default_tcca}"
@@ -12720,7 +12724,9 @@ ot-kernel_install_tcca() {
 		local tcca_satellite=$(_tcc_satellite)
 
 		_tcc_wireless() {
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
+				tcc="pcc"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
 				tcc="westwood"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
 				tcc="veno"
@@ -12734,7 +12740,9 @@ ot-kernel_install_tcca() {
 		local tcca_wireless=$(_tcc_wireless)
 
 		_tcc_high_bdp() {
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
+				tcc="pcc"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
 				tcc="htcp"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
 				tcc="cubic"
@@ -12805,7 +12813,9 @@ ot-kernel_install_tcca() {
 
 		_tcc_hs_throughput() {
 			local tcc
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
+				tcc="pcc"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
 				tcc="westwood"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
 				tcc="hstcp"
