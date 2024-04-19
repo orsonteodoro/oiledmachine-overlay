@@ -844,30 +844,6 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 			sys-libs/libomp:13
 		)
 	)
-	llvm_slot_14? (
-		|| (
-			~media-libs/mesa-22.0.5[X?]
-			~media-libs/mesa-22.1.0[X?]
-			~media-libs/mesa-22.1.1[X?]
-			~media-libs/mesa-22.1.2[X?]
-			~media-libs/mesa-22.1.3[X?]
-			~media-libs/mesa-22.1.5[X?]
-			~media-libs/mesa-22.1.6[X?]
-			~media-libs/mesa-22.1.7[X?]
-			~media-libs/mesa-22.2.0[X?]
-			~media-libs/mesa-22.2.1[X?]
-			~media-libs/mesa-22.2.2[X?]
-			~media-libs/mesa-22.2.3[X?]
-			~media-libs/mesa-22.2.5[X?]
-			~media-libs/mesa-22.3.1[X?]
-			~media-libs/mesa-22.3.2[X?]
-			~media-libs/mesa-22.3.3[X?]
-			 ~media-libs/mesa-22.3.7[X?]
-		)
-		system-llvm? (
-			sys-libs/libomp:14
-		)
-	)
 	ndof? (
 		>=dev-libs/libspnav-0.2.3
 		app-misc/spacenavd
