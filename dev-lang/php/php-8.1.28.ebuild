@@ -31,8 +31,8 @@ WANT_AUTOMAKE="none"
 inherit autotools flag-o-matic llvm multilib systemd uopts
 
 KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
-~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
+~alpha ~amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc
+~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
 "
 SRC_URI="
 	https://www.php.net/distributions/${P}.tar.xz
@@ -458,6 +458,7 @@ PATCHES=(
 	"${FILESDIR}/php-capstone-optional.patch"
 	"${FILESDIR}/php-8.1.27-gcc14-libxml.patch"
 	"${FILESDIR}/php-8.1.27-implicit-decls.patch"
+	"${FILESDIR}/fix-musl-llvm.patch"
 )
 
 php_install_ini() {
@@ -600,8 +601,8 @@ src_prepare() {
 		ext/curl/tests/bug76675.phpt
 		ext/curl/tests/bug77535.phpt
 		ext/curl/tests/curl_error_basic.phpt
+		ext/fileinfo/tests/bug78987.phpt
 		ext/session/tests/bug74514.phpt
-		ext/session/tests/bug74936.phpt
 		tests/output/stream_isatty_err.phpt
 		tests/output/stream_isatty_out-err.phpt
 		tests/output/stream_isatty_out.phpt

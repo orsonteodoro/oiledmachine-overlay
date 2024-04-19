@@ -31,8 +31,8 @@ WANT_AUTOMAKE="none"
 inherit autotools flag-o-matic llvm multilib systemd uopts
 
 KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
-~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
+~alpha ~amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc
+~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
 "
 SRC_URI="
 	https://www.php.net/distributions/${P}.tar.xz
@@ -461,7 +461,7 @@ PATCHES=(
 	"${FILESDIR}/php-iodbc-header-location.patch"
 	"${FILESDIR}/php-capstone-optional.patch"
 	"${FILESDIR}/php-8.2.8-openssl-tests.patch"
-	"${FILESDIR}/php-8.1.27-implicit-decls.patch"
+	"${FILESDIR}/fix-musl-llvm.patch"
 )
 
 php_install_ini() {
@@ -678,6 +678,12 @@ src_prepare() {
 		ext/pcre/tests/gh11374.phpt
 	)
 	rm -v ${deleted_files[@]} || die
+
+	# This is a memory usage test with hard-coded limits. Whenever the
+	# limits are surpassed... they get increased... but in the meantime,
+	# the tests fail. This is not really a test that end users should
+	# be running pre-install, in my opinion. Bug 927461.
+	rm ext/fileinfo/tests/bug78987.phpt || die
 
 	for sapi in ${SAPIS} ; do
 		cp -a "${S}" "${S}_${sapi}" || die

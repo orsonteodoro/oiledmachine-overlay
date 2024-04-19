@@ -82,7 +82,7 @@ ${SAPIS_DEFAULTS}
 -cjk +ctype -curl debug -enchant -exif -ffi +fileinfo +filter -firebird
 +flatfile -ftp -gd -gdbm +gmp +iconv imap -inifile -intl -iodbc -ipv6 +jit
 -kerberos -ldap -ldap-sasl -libedit -lmdb -mhash -mssql -mysql -mysqli -nls
--oci8-instant-client -odbc +opcache -pcntl +pdo +phar +posix -postgres -qdbm
+-odbc +opcache -pcntl +pdo +phar +posix -postgres -qdbm
 -readline selinux +session session-mm -sharedmem +simplexml -snmp -soap -sockets
 -sodium -spell +sqlite -ssl -sysvipc -systemd test -tidy threads +tokenizer
 -tokyocabinet -truetype -unicode valgrind -webp +xml +xmlreader +xmlwriter -xpm
@@ -103,7 +103,6 @@ trainer-ext-standard
 trainer-zend
 "
 # Without USE=readline or libedit, the interactive "php -a" CLI will hang.
-# The Oracle instant client provides its own incompatible ldap library.
 REQUIRED_USE_BENCHMARK_SYMFONY_DEMO="
 	(
 		ctype
@@ -171,9 +170,6 @@ REQUIRED_USE="
 			mysqli
 			pdo
 		)
-	)
-	oci8-instant-client? (
-		!ldap
 	)
 	pgo? (
 		cli
@@ -372,9 +368,6 @@ COMMON_DEPEND="
 	nls? (
 		sys-devel/gettext
 	)
-	oci8-instant-client? (
-		dev-db/oracle-instantclient[sdk]
-	)
 	odbc? (
 		!iodbc? (
 			dev-db/unixODBC
@@ -505,6 +498,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/php-iodbc-header-location.patch"
 	"${FILESDIR}/php-8.3.3-benchmark-local.patch"
+	"${FILESDIR}/fix-musl-llvm.patch"
 )
 
 php_install_ini() {
@@ -755,14 +749,6 @@ src_prepare() {
 		sapi/cli/tests/bug74600.phpt
 		sapi/cli/tests/bug78323.phpt
 
-	# Most Oracle tests are borked,
-	#
-	#  * https://github.com/php/php-src/issues/11804
-	#  * https://github.com/php/php-src/pull/11820
-	#  * https://github.com/php/php-src/issues/11819
-	#
-		ext/oci8/tests/*.phpt
-
 	# https://github.com/php/php-src/issues/12801
 		ext/pcre/tests/gh11374.phpt
 
@@ -774,6 +760,12 @@ src_prepare() {
 		ext/dom/tests/DOMNode_isEqualNode.phpt
 	)
 	rm -v ${deleted_files[@]} || die
+
+	# This is a memory usage test with hard-coded limits. Whenever the
+	# limits are surpassed... they get increased... but in the meantime,
+	# the tests fail. This is not really a test that end users should
+	# be running pre-install, in my opinion. Bug 927461.
+	rm ext/fileinfo/tests/bug78987.phpt || die
 
 	for sapi in ${SAPIS} ; do
 		cp -a "${S}" "${S}_${sapi}" || die
@@ -1016,13 +1008,9 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 		)
 	fi
 
-	# Oracle support
-	our_conf+=( $(use_with oci8-instant-client oci8) )
-
 	# PDO support
 	if use pdo ; then
 		our_conf+=(
-			$(use_with firebird pdo-firebird "${EPREFIX}/usr")
 			$(use_with mssql pdo-dblib "${EPREFIX}/usr")
 			$(use_with mysql pdo-mysql "mysqlnd")
 			$(use_with oci8-instant-client pdo-oci)
@@ -1139,18 +1127,6 @@ _src_compile() {
 	# snmp seems to run during src_compile, too (bug #324739)
 	addpredict /usr/share/snmp/mibs/.index #nowarn
 	addpredict /var/lib/net-snmp/mib_indexes #nowarn
-
-	if use oci8-instant-client && use kerberos && use imap && use phar ; then
-		# A conspiracy takes place when the first three of these flags
-		# are set together, causing the newly-built "php" to open
-		# /dev/urandom with mode rw when it starts. That's not actually
-		# a problem... unless you also have USE=phar, which runs that
-		# "php" to build some phar thingy in src_compile(). Later in
-		# src_test(), portage (at least) sets "addpredict /" so the
-		# problem does not repeat.
-		addpredict /dev/urandom #nowarn
-	fi
-
 	emake -C "${WORKDIR}/sapis-build/${sapi}"
 }
 
