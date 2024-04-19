@@ -3,7 +3,9 @@
 
 EAPI="8"
 
-LLVM_COMPAT=( {17..15} )
+# 115.9.1 -> 115.10.0
+
+LLVM_COMPAT=( 17 ) # Limited by virtual/rust
 
 MY_MAJOR=$(ver_cut 1)
 MY_PN="mozjs"
@@ -33,8 +35,8 @@ if [[ "${PV}" == *"_rc"* ]] ; then
 fi
 
 # Patch version
-FIREFOX_PATCHSET="firefox-115esr-patches-09.tar.xz"
-SPIDERMONKEY_PATCHSET="spidermonkey-115-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-10.tar.xz"
+SPIDERMONKEY_PATCHSET="spidermonkey-${PV%%.*}-patches-01.tar.xz"
 PATCH_URIS=(
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${FIREFOX_PATCHSET}
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${SPIDERMONKEY_PATCHSET}
@@ -95,10 +97,10 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
+	virtual/pkgconfig
 	!clang? (
 		virtual/rust
 	)
-	virtual/pkgconfig
 	test? (
 		$(python_gen_any_dep '
 			dev-python/six[${PYTHON_USEDEP}]
@@ -269,6 +271,11 @@ src_prepare() {
 		rm -v "${WORKDIR}/firefox-patches/"*"ppc64"*".patch" || die
 	fi
 
+	# Workaround for bgo #915651, 915651, 929013 on musl.
+	if use elibc_glibc ; then
+		rm -v "${WORKDIR}/firefox-patches/"*"bgo-748849-RUST_TARGET_override.patch" || die
+	fi
+
 	eapply "${WORKDIR}/firefox-patches"
 	eapply "${WORKDIR}/spidermonkey-patches"
 
@@ -276,6 +283,21 @@ src_prepare() {
 
 	# Make cargo respect MAKEOPTS
 	export CARGO_BUILD_JOBS="$(makeopts_jobs)"
+
+	# Workaround for bgo #915651, 915651, 929013 on musl.
+	if ! use elibc_glibc ; then
+		if use amd64 ; then
+			export RUST_TARGET="x86_64-unknown-linux-musl"
+		elif use x86 ; then
+			export RUST_TARGET="i686-unknown-linux-musl"
+		else
+eerror
+eerror "Unknown musl chost, please post your rustc -vV along with"
+eerror "\`emerge --info\` on Gentoo's bug #915651"
+eerror
+			die
+		fi
+	fi
 
 	# sed-in toolchain prefix
 	sed -i \
