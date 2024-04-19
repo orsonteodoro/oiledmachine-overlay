@@ -213,7 +213,7 @@ einfo "Wiping old PGO pofile from staging dir."
 eerror
 eerror "You need to emerge"
 eerror
-eerror "~sys-libs/compiler-rt-sanitizers-${clang_pv}[$use_arg}profile]"
+eerror "~sys-libs/compiler-rt-sanitizers-${clang_pv}[${use_arg}profile]"
 eerror
 eerror "  or"
 eerror
