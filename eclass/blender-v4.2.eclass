@@ -1,8 +1,8 @@
-# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: blender-v3.6.eclass
+# @ECLASS: blender-v4.2.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
 # @BLURB: blender implementation
@@ -18,9 +18,12 @@
 # The ebuild uses the same matching LLVM version used with Mesa to prevent
 # the multiple LLVM bug.
 
+# For versioning see:
+# https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/source/blender/blenkernel/BKE_blender_version.h
+
 case ${EAPI:-0} in
 	[78]) ;;
-	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} is not supported." ;;
 esac
 
 ARM_CPU_FLAGS_3_3=(
@@ -34,17 +37,17 @@ CPU_FLAGS_3_3=(
 CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v4.0.2/build_files/build_environment/install_linux_packages.py
+# https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/build_files/build_environment/install_linux_packages.py
 FFMPEG_IUSE+="
 	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
 "
 
-LLVM_COMPAT=( {16..11} )
+LLVM_COMPAT=( {17..15} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-LLVM_MAX_UPSTREAM=15 # (inclusive)
+LLVM_MAX_UPSTREAM=17 # (inclusive)
 
 # Platform defaults based on CMakeList.txt
-OPENVDB_ABIS_MAJOR_VERS=10
+OPENVDB_ABIS_MAJOR_VERS=11
 OPENVDB_ABIS=(
 	${OPENVDB_ABIS_MAJOR_VERS/#/abi}
 )
@@ -53,13 +56,13 @@ OPENVDB_ABIS=(
 )
 
 # For the max exclusive Python supported (and others), see \
-# https://github.com/blender/blender/blob/v4.0.2/build_files/build_environment/install_linux_packages.py#L693 \
-PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11.
+# https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/build_files/build_environment/install_linux_packages.py#L693 \
+PYTHON_COMPAT=( python3_{11,12} ) # <= 3.12.
 
-BOOST_PV="1.80"
+BOOST_PV="1.82"
 CLANG_MIN="8.0"
 FREETYPE_PV="2.13.0"
-GCC_MIN="9.3"
+GCC_MIN="11.2"
 LEGACY_TBB_SLOT="2"
 LIBOGG_PV="1.3.5"
 LIBSNDFILE_PV="1.2.2"
@@ -68,16 +71,8 @@ OPENEXR_V3_PV=(
 	"3.2.4"
 	"3.2.3"
 	"3.2.1"
-	"3.2.0"
-	"3.1.13"
-	"3.1.12"
-	"3.1.11"
-	"3.1.10"
-	"3.1.9"
-	"3.1.8"
-	"3.1.7"
 )
-OSL_PV="1.11"
+OSL_PV="1.13.7"
 PUGIXML_PV="1.10"
 THEORA_PV="1.1.1"
 
@@ -113,6 +108,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 ROCM_SLOTS=(
+	rocm_5_7
 	rocm_5_5
 )
 
@@ -180,9 +176,6 @@ REQUIRED_USE+="
 		!nls
 		!openvdb
 	)
-	!rocm? (
-		!llvm_slot_16
-	)
 	!tbb? (
 		!cycles
 		!elbeem
@@ -224,10 +217,6 @@ REQUIRED_USE+="
 	)
 	hydra? (
 		usd
-	)
-	materialx? (
-		!python_single_target_python3_10
-		python_single_target_python3_11
 	)
 	mp3? (
 		ffmpeg
@@ -326,6 +315,10 @@ REQUIRED_USE+="
 			${ROCM_SLOTS[@]}
 		)
 	)
+	rocm_5_7? (
+		llvm_slot_17
+		rocm
+	)
 	rocm_5_5? (
 		llvm_slot_16
 		rocm
@@ -358,18 +351,18 @@ REQUIRED_USE+="
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # no need to look past those dates.
 
-# Last change was Sep 21, 2023 for:
-# https://github.com/blender/blender/blob/v4.0.2/build_files/build_environment/install_linux_packages.py
+# Last change was Feb 23, 2024 for:
+# https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/build_files/build_environment/install_linux_packages.py
 
-# Last change was Oct 10, 2023 for:
-# https://github.com/blender/blender/commits/v4.0.2/build_files/cmake/config/blender_release.cmake
+# Last change was Feb 20, 2024 for:
+# https://github.com/blender/blender/commits/509de56830f859989e2f65bdacef461419ff29cb/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
-# Last change was Oct 16, 2023 for:
-# https://github.com/blender/blender/commits/v4.0.2/build_files/build_environment/cmake/versions.cmake
+# Last change was Feb 19, 2024 for:
+# https://github.com/blender/blender/commits/509de56830f859989e2f65bdacef461419ff29cb/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
-# HIP:  https://github.com/blender/blender/blob/v4.0.2/intern/cycles/cmake/external_libs.cmake#L47
+# HIP:  https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/intern/cycles/cmake/external_libs.cmake#L47
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
@@ -416,8 +409,8 @@ gen_oidn_depends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 		llvm_slot_${s}? (
-			<media-libs/oidn-1.5[llvm_slot_${s}]
-			>=media-libs/oidn-1.4.3[llvm_slot_${s}]
+			<media-libs/oidn-3[llvm_slot_${s}]
+			>=media-libs/oidn-2.2.2[llvm_slot_${s}]
 		)
 		"
 	done
@@ -428,8 +421,8 @@ gen_oiio_depends() {
 	for s in ${OPENVDB_ABIS[@]} ; do
 		echo "
 			${s}? (
-				<media-libs/openimageio-2.5[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
-				>=media-libs/openimageio-2.4.15.0[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
+				<media-libs/openimageio-2.6[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
+				>=media-libs/openimageio-2.5.6.0[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 				>=dev-cpp/robin-map-0.6.2
 				>=dev-libs/libfmt-9.1.0
 			)
@@ -496,7 +489,7 @@ CODECS="
 		>=media-libs/libvorbis-1.3.7
 	)
 	vpx? (
-		>=media-libs/libvpx-1.11
+		>=media-libs/libvpx-1.14
 	)
 	x264? (
 		>=media-libs/x264-0.0.20220221
@@ -513,7 +506,7 @@ RDEPEND+="
 		>=dev-python/certifi-2021.10.8[${PYTHON_USEDEP}]
 		>=dev-python/charset-normalizer-2.0.6[${PYTHON_USEDEP}]
 		>=dev-python/idna-3.2[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.23.5[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.24.3[${PYTHON_USEDEP}]
 		>=dev-python/pybind11-2.10.1[${PYTHON_USEDEP}]
 		>=dev-python/zstandard-0.16.0[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.26.0[${PYTHON_USEDEP}]
@@ -522,12 +515,12 @@ RDEPEND+="
 	${CODECS}
 	${PYTHON_DEPS}
 	>=dev-cpp/pystring-1.1.3
-	>=dev-lang/python-3.10.13
+	>=dev-lang/python-3.11.7
 	>=dev-libs/fribidi-1.0.12
 	>=media-libs/freetype-${FREETYPE_PV}
 	>=media-libs/libpng-1.6.37:0=
 	>=media-libs/shaderc-2022.3
-	>=media-libs/vulkan-loader-1.2.198
+	>=media-libs/vulkan-loader-1.3.270
 	>=sys-libs/minizip-ng-3.0.7
 	>=sys-libs/zlib-1.2.13
 	dev-libs/lzo:2
@@ -549,7 +542,7 @@ RDEPEND+="
 	)
 	color-management? (
 		>=dev-libs/expat-2.5.0
-		>=media-libs/opencolorio-2.2.0[cpu_flags_x86_sse2?,python]
+		>=media-libs/opencolorio-2.3.2[cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
 		cuda_targets_sm_30? (
@@ -654,8 +647,8 @@ RDEPEND+="
 	cycles? (
 		cycles-path-guiding? (
 			(
-				<media-libs/openpgl-0.6[tbb?]
-				>=media-libs/openpgl-0.5[tbb?]
+				<media-libs/openpgl-0.7[tbb?]
+				>=media-libs/openpgl-0.6[tbb?]
 			)
 		)
 		osl? (
@@ -664,7 +657,7 @@ RDEPEND+="
 	)
 	cycles-device-oneapi? (
 		<dev-libs/level-zero-2
-		>=dev-libs/level-zero-1.8.8
+		>=dev-libs/level-zero-1.15.8
 	)
 	dbus? (
 		sys-apps/dbus
@@ -682,7 +675,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
 			media-video/ffmpeg:0/57.59.59\
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
-			media-video/ffmpeg:0/58.60.60\
+			>=media-video/ffmpeg-6.1.1:0/58.60.60\
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
 		)
 		media-video/ffmpeg:=
@@ -708,106 +701,6 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 	llvm? (
 		$(gen_llvm_depends)
 	)
-	llvm_slot_12? (
-		|| (
-			~media-libs/mesa-21.1.0[X?]
-			~media-libs/mesa-21.1.1[X?]
-			~media-libs/mesa-21.1.2[X?]
-			~media-libs/mesa-21.1.3[X?]
-			~media-libs/mesa-21.1.4[X?]
-			~media-libs/mesa-21.1.5[X?]
-			~media-libs/mesa-21.1.6[X?]
-			~media-libs/mesa-21.1.7[X?]
-			~media-libs/mesa-21.1.8[X?]
-			~media-libs/mesa-21.2.0[X?]
-			~media-libs/mesa-21.2.1[X?]
-			~media-libs/mesa-21.2.2[X?]
-			~media-libs/mesa-21.2.5[X?]
-			~media-libs/mesa-21.2.6[X?]
-			~media-libs/mesa-21.3.0[X?]
-			~media-libs/mesa-21.3.1[X?]
-			~media-libs/mesa-21.3.2[X?]
-			~media-libs/mesa-21.3.3[X?]
-			~media-libs/mesa-21.3.4[X?]
-			~media-libs/mesa-21.3.5[X?]
-			~media-libs/mesa-21.3.6[X?]
-			~media-libs/mesa-21.3.7[X?]
-			~media-libs/mesa-21.3.8[X?]
-			~media-libs/mesa-22.0.0[X?]
-			~media-libs/mesa-22.0.2[X?]
-			~media-libs/mesa-22.0.3[X?]
-			~media-libs/mesa-22.0.4[X?]
-			~media-libs/mesa-22.0.5[X?]
-			~media-libs/mesa-22.1.0[X?]
-			~media-libs/mesa-22.1.1[X?]
-			~media-libs/mesa-22.1.2[X?]
-			~media-libs/mesa-22.1.3[X?]
-		)
-		system-llvm? (
-			sys-libs/libomp:12
-		)
-	)
-	llvm_slot_13? (
-		|| (
-			~media-libs/mesa-21.2.5[X?]
-			~media-libs/mesa-21.2.6[X?]
-			~media-libs/mesa-21.3.0[X?]
-			~media-libs/mesa-21.3.1[X?]
-			~media-libs/mesa-21.3.2[X?]
-			~media-libs/mesa-21.3.3[X?]
-			~media-libs/mesa-21.3.4[X?]
-			~media-libs/mesa-21.3.5[X?]
-			~media-libs/mesa-21.3.6[X?]
-			~media-libs/mesa-21.3.7[X?]
-			~media-libs/mesa-21.3.8[X?]
-			~media-libs/mesa-22.0.0[X?]
-			~media-libs/mesa-22.0.2[X?]
-			~media-libs/mesa-22.0.3[X?]
-			~media-libs/mesa-22.0.4[X?]
-			~media-libs/mesa-22.0.5[X?]
-			~media-libs/mesa-22.1.0[X?]
-			~media-libs/mesa-22.1.1[X?]
-			~media-libs/mesa-22.1.2[X?]
-			~media-libs/mesa-22.1.5[X?]
-			~media-libs/mesa-22.1.6[X?]
-			~media-libs/mesa-22.1.7[X?]
-			~media-libs/mesa-22.2.0[X?]
-			~media-libs/mesa-22.2.1[X?]
-			~media-libs/mesa-22.2.2[X?]
-			~media-libs/mesa-22.2.3[X?]
-			~media-libs/mesa-22.2.5[X?]
-			~media-libs/mesa-22.3.1[X?]
-			~media-libs/mesa-22.3.2[X?]
-			~media-libs/mesa-22.3.3[X?]
-			 ~media-libs/mesa-22.3.7[X?]
-		)
-		system-llvm? (
-			sys-libs/libomp:13
-		)
-	)
-	llvm_slot_14? (
-		|| (
-			~media-libs/mesa-22.0.5[X?]
-			~media-libs/mesa-22.1.0[X?]
-			~media-libs/mesa-22.1.1[X?]
-			~media-libs/mesa-22.1.2[X?]
-			~media-libs/mesa-22.1.5[X?]
-			~media-libs/mesa-22.1.6[X?]
-			~media-libs/mesa-22.1.7[X?]
-			~media-libs/mesa-22.2.0[X?]
-			~media-libs/mesa-22.2.1[X?]
-			~media-libs/mesa-22.2.2[X?]
-			~media-libs/mesa-22.2.3[X?]
-			~media-libs/mesa-22.2.5[X?]
-			~media-libs/mesa-22.3.1[X?]
-			~media-libs/mesa-22.3.2[X?]
-			~media-libs/mesa-22.3.3[X?]
-			 ~media-libs/mesa-22.3.7[X?]
-		)
-		system-llvm? (
-			sys-libs/libomp:14
-		)
-	)
 	llvm_slot_15? (
 		|| (
 			~media-libs/mesa-22.2.0[X?]
@@ -821,7 +714,6 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 			~media-libs/mesa-22.3.6[X?]
 			~media-libs/mesa-22.3.5[X?]
 			 ~media-libs/mesa-22.3.7[X?]
-			=media-libs/mesa-23.0*[X?]
 			=media-libs/mesa-23.1.0[X?]
 			=media-libs/mesa-23.1.1[X?]
 			=media-libs/mesa-23.1.2[X?]
@@ -858,8 +750,15 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 			=media-libs/mesa-9999[X?]
 		)
 	)
+	llvm_slot_17? (
+		|| (
+			=media-libs/mesa-23.3*[X?]
+			=media-libs/mesa-24.0*[X?]
+			=media-libs/mesa-9999[X?]
+		)
+	)
 	materialx? (
-		media-libs/materialx[${PYTHON_SINGLE_USEDEP},python]
+		>=media-libs/materialx-1.38.8[${PYTHON_SINGLE_USEDEP},python]
 	)
 	ndof? (
 		>=dev-libs/libspnav-1.1
@@ -875,7 +774,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		!pulseaudio? (
 			>=media-libs/openal-1.21.1[alsa]
 		)
-		>=media-libs/openal-1.21.1[pulseaudio?]
+		>=media-libs/openal-1.23.1[pulseaudio?]
 	)
 	opencl? (
 		virtual/opencl
@@ -894,7 +793,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		)
 	)
 	opensubdiv? (
-		>=media-libs/opensubdiv-3.5.0:=[cuda=,opencl=,opengl(+),tbb?]
+		>=media-libs/opensubdiv-3.6.0:=[cuda=,opencl=,opengl(+),tbb?]
 	)
 	openvdb? (
 		$(gen_openvdb_depends)
@@ -926,6 +825,13 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		media-libs/harfbuzz[truetype]
 	)
 	rocm? (
+		rocm_5_7? (
+			~dev-util/hip-${HIP_5_7_VERSION}:5.7[rocm,system-llvm=]
+			!system-llvm? (
+				~dev-libs/rocm-opencl-runtime-${HIP_5_7_VERSION}:5.7
+				~sys-libs/llvm-roc-libomp-${HIP_5_7_VERSION}:5.7
+			)
+		)
 		rocm_5_5? (
 			~dev-util/hip-${HIP_5_5_VERSION}:5.5[rocm,system-llvm=]
 			!system-llvm? (
@@ -962,14 +868,14 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 	)
 	usd? (
 		<media-libs/openusd-24[imaging,monolithic,opengl,openvdb,openimageio,python]
-		>=media-libs/openusd-23.05[imaging,monolithic,opengl,openvdb,openimageio,python]
+		>=media-libs/openusd-23.11[imaging,monolithic,opengl,openvdb,openimageio,python]
 	)
 	valgrind? (
 		dev-util/valgrind
 	)
 	wayland? (
 		>=dev-libs/wayland-1.22.0
-		>=dev-libs/wayland-protocols-1.31
+		>=dev-libs/wayland-protocols-1.32
 		>=gui-libs/libdecor-0.1.0
 	)
 	webp? (
@@ -1004,7 +910,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.10
 	>=dev-cpp/yaml-cpp-0.7.0
 	>=dev-util/meson-0.63.0
-	>=dev-util/vulkan-headers-1.2.198
+	>=dev-util/vulkan-headers-1.3.270
 	dev-util/patchelf
 	virtual/pkgconfig
 	asan? (
@@ -1036,6 +942,9 @@ BDEPEND+="
 	nls? (
 		sys-devel/gettext
 	)
+	test? (
+		>=dev-libs/weston-12.0.92
+	)
 	|| (
 		>=sys-devel/gcc-${GCC_MIN}
 		>=sys-devel/clang-${CLANG_MIN}
@@ -1044,7 +953,7 @@ BDEPEND+="
 
 PATCHES=(
 	"${FILESDIR}/${PN}-4.0.2-install-paths-change.patch"
-	"${FILESDIR}/${PN}-3.5.1-openusd-21.11-python.patch"
+	"${FILESDIR}/${PN}-4.1.0-openusd-21.11-python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-openusd-21-ConnectToSource.patch"
 #	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lightapi.patch"
 	"${FILESDIR}/${PN}-2.93.7-build-draco.patch"
@@ -1130,14 +1039,11 @@ _blender_pkg_setup() {
 	# TODO: ldd oiio for webp and warn user if missing
 	# Needs OpenCL 1.2 (GCN 2)
 	check_multiple_llvm_versions_in_native_libs
-ewarn
-ewarn "This version is not a Long Term Support (LTS) version."
-ewarn "Consider using 2.93.x or 3.3.x series instead."
-ewarn
+	print_release_description
 
 	local found=0
 	for s in ${LLVM_COMPAT[@]} ; do
-		if (( "${s}" > ${LLVM_MAX_UPSTREAM} )) ; then
+		if (( ${s} > ${LLVM_MAX_UPSTREAM} )) ; then
 			use "llvm_slot_${s}" && found=${s}
 		fi
 	done
@@ -1164,7 +1070,11 @@ ewarn
 	if use rocm ; then
 # It is assumed that the referenced versions are tested upstream.
 # Unlisted versions are assumed to break.
-		if use rocm_5_5 ; then
+		if use rocm_5_7 ; then
+			export LLVM_SLOT=17
+			export ROCM_SLOT="5.7"
+			export ROCM_VERSION="${HIP_5_7_VERSION}"
+		elif use rocm_5_5 ; then
 			export LLVM_SLOT=16
 			export ROCM_SLOT="5.5"
 			export ROCM_VERSION="${HIP_5_5_VERSION}"
@@ -1178,6 +1088,7 @@ eerror
 eerror
 eerror "No matching llvm/hip pair."
 eerror
+eerror "llvm-17 can only pair with hip ${HIP_5_7_VERSION}"
 eerror "llvm-16 can only pair with hip ${HIP_5_5_VERSION}"
 eerror
 			die
@@ -1240,7 +1151,9 @@ ewarn
 			|| die
 
 		local rocm_version=""
-		if use rocm_5_5 ; then
+		if use rocm_5_7 ; then
+			rocm_version="${HIP_5_7_VERSION}"
+		elif use rocm_5_5 ; then
 			rocm_version="${HIP_5_5_VERSION}"
 		fi
 
@@ -1418,9 +1331,9 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 	if use openmp && tc-is-gcc ; then
 		local gcc_slot="$(gcc-major-version)"
 		local gomp_abspath
-		if [[ "${ABI}" =~ (amd64) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so" ]] ; then
+		if [[ "${ABI}" =~ ("amd64") && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so" ]] ; then
 			gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so"
-		elif [[ "${ABI}" =~ (x86) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so" ]] ; then
+		elif [[ "${ABI}" =~ ("x86") && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so" ]] ; then
 			gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so"
 		elif [[ -e "${GOMP_LIB64_ABSPATH}" ]] ; then
 			gomp_abspath="${GOMP_LIB64_ABSPATH}"
@@ -1482,7 +1395,7 @@ eerror
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v4.0.2/build_files/cmake/config
+# https://github.com/blender/blender/tree/509de56830f859989e2f65bdacef461419ff29cb/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(

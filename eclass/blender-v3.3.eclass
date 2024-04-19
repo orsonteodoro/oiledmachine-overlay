@@ -18,7 +18,7 @@
 
 case ${EAPI:-0} in
 	[78]) ;;
-	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} is not supported." ;;
 esac
 
 ARM_CPU_FLAGS_3_3=(
@@ -32,7 +32,7 @@ CPU_FLAGS_3_3=(
 CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v3.3.17/build_files/build_environment/install_deps.sh#L488
+# https://github.com/blender/blender/blob/v3.3.18/build_files/build_environment/install_deps.sh#L488
 FFMPEG_IUSE+="
 	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
 "
@@ -43,7 +43,7 @@ LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 LLVM_MAX_UPSTREAM=13 # (inclusive)
 
 # For the max exclusive Python supported (and others), see \
-# https://github.com/blender/blender/blob/v3.3.17/build_files/build_environment/install_deps.sh#L382
+# https://github.com/blender/blender/blob/v3.3.18/build_files/build_environment/install_deps.sh#L382
 PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11.
 
 OPENVDB_ABIS_MAJOR_VERS=9
@@ -397,17 +397,17 @@ REQUIRED_USE+="
 # no need to look past those dates.
 
 # Last change was Feb 22, 2022 for:
-# https://github.com/blender/blender/commits/v3.3.17/build_files/build_environment/install_deps.sh
+# https://github.com/blender/blender/commits/v3.3.18/build_files/build_environment/install_deps.sh
 
 # Last change was Aug 24, 2021 for:
-# https://github.com/blender/blender/commits/v3.3.17/build_files/cmake/config/blender_release.cmake
+# https://github.com/blender/blender/commits/v3.3.18/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
 # Last change was Oct 16, 2023 for:
-# https://github.com/blender/blender/commits/v3.3.17/build_files/build_environment/cmake/versions.cmake
+# https://github.com/blender/blender/commits/v3.3.18/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
-# HIP:  https://github.com/blender/blender/blob/v3.3.17/intern/cycles/cmake/external_libs.cmake#L47
+# HIP:  https://github.com/blender/blender/blob/v3.3.18/intern/cycles/cmake/external_libs.cmake#L47
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
@@ -1168,13 +1168,11 @@ _blender_pkg_setup() {
 	# TODO: ldd oiio for webp and warn user if missing
 	# Needs OpenCL 1.2 (GCN 2)
 	check_multiple_llvm_versions_in_native_libs
-einfo
-einfo "This version a Long Term Support (LTS) version till Sep 2024."
-einfo
+	print_release_description
 
 	local found=0
 	for s in ${LLVM_COMPAT[@]} ; do
-		if (( "${s}" > ${LLVM_MAX_UPSTREAM} )) ; then
+		if (( ${s} > ${LLVM_MAX_UPSTREAM} )) ; then
 			use "llvm_slot_${s}" && found=${s}
 		fi
 	done
@@ -1465,9 +1463,9 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 	if use openmp && tc-is-gcc ; then
 		local gcc_slot="$(gcc-major-version)"
 		local gomp_abspath
-		if [[ "${ABI}" =~ (amd64) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so" ]] ; then
+		if [[ "${ABI}" =~ ("amd64") && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so" ]] ; then
 			gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so"
-		elif [[ "${ABI}" =~ (x86) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so" ]] ; then
+		elif [[ "${ABI}" =~ ("x86") && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so" ]] ; then
 			gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so"
 		elif [[ -e "${GOMP_LIB64_ABSPATH}" ]] ; then
 			gomp_abspath="${GOMP_LIB64_ABSPATH}"
@@ -1523,7 +1521,7 @@ eerror
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v3.3.17/build_files/cmake/config
+# https://github.com/blender/blender/tree/v3.3.18/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(

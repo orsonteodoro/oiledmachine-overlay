@@ -1,11 +1,17 @@
-# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2022-2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
+RELEASE_TYPE="release"
+VARIANT="stable"
+
 inherit blender-v4.1
 
-# For current version, see https://download.blender.org/source/
+# For current version, see
+# https://download.blender.org/source/
+# https://builder.blender.org/download/daily/
 
 # See eclass below for implementation:
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender.eclass

@@ -12,9 +12,17 @@
 
 case ${EAPI:-0} in
 	[78]) ;;
-	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} is not supported" ;;
 esac
 
+LTS_VERSIONS=(
+	"3.3"
+	"3.6"
+)
+IMPLS=(
+	"build_creator"
+	"build_headless"
+)
 UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_TPGO=0
@@ -35,12 +43,6 @@ HOMEPAGE="https://www.blender.org"
 KEYWORDS=${KEYWORDS:-"~amd64 ~x86"}
 
 LICENSE="
-	all-rights-reserved
-	|| (
-		GPL-2
-		BL
-	)
-
 	(
 		(
 			0BSD
@@ -48,11 +50,12 @@ LICENSE="
 		)
 		PSF-2.4
 	)
+	all-rights-reserved
 	LGPL-2.1+
 	MPL-2.0
 	build_creator? (
-		Apache-2.0
 		AFL-3.0
+		Apache-2.0
 		BitstreamVera
 		CC-BY-SA-3.0
 		GPL-2
@@ -68,8 +71,8 @@ LICENSE="
 		)
 	)
 	build_headless? (
-		Apache-2.0
 		AFL-3.0
+		Apache-2.0
 		BitstreamVera
 		CC-BY-SA-3.0
 		GPL-2
@@ -90,6 +93,10 @@ LICENSE="
 		BSD
 		MIT
 	)
+	|| (
+		BL
+		GPL-2
+	)
 "
 
 # intern/mikktspace contains ZLIB
@@ -100,18 +107,25 @@ LICENSE="
 SLOT_MAJ=${SLOT%/*}
 SLOT="${PV}"
 RESTRICT="
+	mirror
 	!test? (
 		test
 	)
-	mirror
 "
 
 # If you use git tarballs, you need to download the submodules listed in
 # .gitmodules.  The download.blender.org tarball is preferred because they
 # bundle all the dependencies.
-if [[ "${PV}" == "2.83" ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_REPO_URI="https://projects.blender.org/blender/blender.git"
+	EGIT_BRANCH="main"
+	EGIT_MIN_CLONE_TYPE="single"
+	inherit git-r3
+	SRC_URI=""
+	IUSE+=" fallback-commit"
+elif [[ "${PV}" == "2.83" ]] ; then
 	SRC_URI="https://download.blender.org/source/blender-${PV}.0.tar.xz"
-elif ver_test $(ver_cut 1-2 ${PV}) -ge 2.81 ; then
+elif ver_test $(ver_cut 1-2 "${PV}") -ge "2.81" ; then
 	SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
 else
 	SRC_URI="https://download.blender.org/source/${P}.tar.gz"
@@ -139,10 +153,12 @@ X86_CPU_FLAGS=(
 CPU_FLAGS=(
 	${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 )
-IUSE+=" ${CPU_FLAGS[@]%:*}"
-IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
-IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
-IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
+IUSE+="
+${CPU_FLAGS[@]%:*}
+${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}
+${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }
+${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}
+"
 # Assets categories are listed in https://www.blender.org/download/demo-files/
 
 # At the source code level, they mix the sse2 intrinsics functions up with the
@@ -246,17 +262,6 @@ REQUIRED_USE+="
 	${REQUIRED_USE_MINIMAL_CPU_FLAGS}
 "
 
-EXPORT_FUNCTIONS \
-	pkg_pretend \
-	pkg_setup \
-	src_prepare \
-	src_configure \
-	src_compile \
-	src_install \
-	src_test \
-	pkg_postinst \
-	pkg_postrm
-
 get_dest() {
 	if [[ "${impl}" == "build_portable" ]] ; then
 		echo "/usr/share/${PN}/${SLOT_MAJ}/${impl#*_}"
@@ -357,14 +362,14 @@ eerror "Switch to a c++${CXXABI_VER} compatible compiler."
 eerror
 	fi
 	if tc-is-gcc ; then
-		if ver_test $(gcc-fullversion) -lt ${GCC_MIN} ; then
+		if ver_test $(gcc-fullversion) -lt "${GCC_MIN}" ; then
 eerror
 eerror "${PN} requires GCC >= ${GCC_MIN}"
 eerror
 			die
 		fi
 	elif tc-is-clang ; then
-		if ver_test $(clang-version) -lt ${CLANG_MIN} ; then
+		if ver_test $(clang-version) -lt "${CLANG_MIN}" ; then
 eerror
 eerror "${PN} requires Clang >= ${CLANG_MIN}"
 eerror
@@ -655,8 +660,8 @@ check_optimal_compiler_for_cycles_x86() {
 			export CC="${BLENDER_CC_ALT}"
 			export CXX="${BLENDER_CXX_ALT}"
 		elif [[ -n "${CC}" && -n "${CXX}" ]] \
-			&& [[ ! ( "${CC}" =~ (^|-)"gcc" ) ]] \
-			&& [[ ! ( "${CXX}" =~ (^|-)"g++" ) ]] ; then
+			&& [[ ! ( "${CC}" =~ (^|"-")"gcc" ) ]] \
+			&& [[ ! ( "${CXX}" =~ (^|"-")"g++" ) ]] ; then
 			# Defined by user from per-package environmental variables.
 			export CC
 			export CXX
@@ -677,16 +682,49 @@ einfo "CXX:\t\t${CXX}"
 einfo
 }
 
-IMPLS=(
-	build_creator
-	build_headless
-)
-IUSE+=" ${IMPLS[@]} "
-REQUIRED_USE+=" || ( ${IMPLS[@]} ) "
+IUSE+="
+	${IMPLS[@]}
+"
+REQUIRED_USE+="
+	|| (
+		${IMPLS[@]}
+	)
+"
 
 _get_impls() {
 	use build_creator && echo "build_creator"
 	use build_headless && echo "build_headless"
+}
+
+print_release_description() {
+	local lts_versions=$(echo "${LTS_VERSIONS[@]/%/,}" | sed -e "s|,$||g")
+	if [[ "${RELEASE_TYPE}" == "lts" ]] ; then
+einfo
+einfo "This version is a Long Term Support (LTS) version till ${EOL_DATE}."
+einfo
+	elif [[ "${RELEASE_TYPE}" == "release" ]] ; then
+einfo
+einfo "This version is a point release for this series."
+einfo "Consider using one of ${lts_versions} Long Term Support (LTS) series instead."
+einfo
+	elif [[ "${RELEASE_TYPE}" == "daily" ]] ; then
+ewarn
+ewarn "This version is a ${VARIANT} daily build."
+ewarn "Consider using one of ${lts_versions} Long Term Support (LTS) series instead."
+ewarn
+	else
+		:
+	fi
+}
+
+blender_src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 blender_src_prepare() {
@@ -731,12 +769,12 @@ einfo
 
 blender_configure_eigen() {
 	if use cpu_flags_x86_avx512f ; then
-		if [[ "${CXXFLAGS}" =~ march=(\
+		if [[ "${CXXFLAGS}" =~ "march="(\
 native|\
 \
 knl|knm|skylake-avx512|cannonlake|icelake-client|icelake-server|cascadelake|\
 cooperlake|tigerlake|sapphirerapids|rocketlake) ]] \
-		|| [[ "${CXXFLAGS}" =~ mavx512f( |$) ]] ; then
+		|| [[ "${CXXFLAGS}" =~ "mavx512f"( |$) ]] ; then
 			# Already added
 			:;
 		else
@@ -747,12 +785,12 @@ cooperlake|tigerlake|sapphirerapids|rocketlake) ]] \
 	fi
 
 	if use cpu_flags_x86_avx512dq ; then
-		if [[ "${CXXFLAGS}" =~ march=(\
+		if [[ "${CXXFLAGS}" =~ "march="(\
 native|\
 \
 skylake-avx512|cannonlake|icelake-client|icelake-server|cascadelake|cooperlake|\
 tigerlake|sapphirerapids|rocketlake) ]] \
-		|| [[ "${CXXFLAGS}" =~ mavx512dq( |$) ]] ; then
+		|| [[ "${CXXFLAGS}" =~ "mavx512dq"( |$) ]] ; then
 			# Already added
 			:;
 		else
@@ -763,11 +801,11 @@ tigerlake|sapphirerapids|rocketlake) ]] \
 	fi
 
 	if use cpu_flags_x86_avx512er ; then
-		if [[ "${CXXFLAGS}" =~ march=(\
+		if [[ "${CXXFLAGS}" =~ "march="(\
 native|\
 \
 knl|knm) ]] \
-		|| [[ "${CXXFLAGS}" =~ mavx512er( |$) ]] ; then
+		|| [[ "${CXXFLAGS}" =~ "mavx512er"( |$) ]] ; then
 			# Already added
 			:;
 		else
@@ -832,7 +870,7 @@ einfo "Adding tbb:${LEGACY_TBB_SLOT} to rpath for OpenVDB (libopenvdb.so)"
 }
 
 blender_configure_simd_cycles() {
-	if ver_test $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
+	if ver_test $(ver_cut 1-2 "${PV}") -ge "2.80" ; then
 		if [[ -e "${ESYSROOT}/usr/$(get_libdir)/libembree_avx512.a" ]] ; then
 			# Avoid missing symbols
 			sed -i -e "/embree_avx2$/a    embree_avx512" \
@@ -935,7 +973,7 @@ blender_configure_simd_cycles() {
 		if ! use cpudetection && use cycles && ! use cpu_flags_x86_avx2 ; then
 			if use cpu_flags_x86_bmi ; then
 				# bmi1 only, tzcnt
-				if [[ "${CXXFLAGS}" =~ march=(\
+				if [[ "${CXXFLAGS}" =~ "march="(\
 native|\
 \
 haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|icelake-client|\
@@ -943,7 +981,7 @@ icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|alderlake|\
 rocketlake|\
 \
 bdver2|bdver3|bdver4|znver1|znver2|btver2) ]] \
-				|| [[ "${CXXFLAGS}" =~ mbmi( |$) ]] ; then
+				|| [[ "${CXXFLAGS}" =~ "mbmi"( |$) ]] ; then
 					# Already added
 					:;
 				else
@@ -955,7 +993,7 @@ bdver2|bdver3|bdver4|znver1|znver2|btver2) ]] \
 			if use cpu_flags_x86_lzcnt ; then
 				# intel puts lzcnt in bmi1
 				# amd puts lzcnt in abm
-				if [[ "${CXXFLAGS}" =~ march=(\
+				if [[ "${CXXFLAGS}" =~ "march="(\
 native|\
 \
 haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|icelake-client|\
@@ -963,7 +1001,7 @@ icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|alderlake|\
 rocketlake|\
 \
 amdfam10|barcelona|bdver1|bdver2|bdver3|bdver4|znver1|znver2|btver1|btver2) ]] \
-				|| [[ "${CXXFLAGS}" =~ mlzcnt ]] ; then
+				|| [[ "${CXXFLAGS}" =~ "mlzcnt" ]] ; then
 					# Already added
 					:;
 				else
@@ -975,7 +1013,7 @@ amdfam10|barcelona|bdver1|bdver2|bdver3|bdver4|znver1|znver2|btver1|btver2) ]] \
 		fi
 
 		if use cpu_flags_x86_f16c ; then
-			if [[ "${CXXFLAGS}" =~ march=(\
+			if [[ "${CXXFLAGS}" =~ "march="(\
 native|\
 \
 ivybridge|haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|\
@@ -983,7 +1021,7 @@ icelake-client|icelake-server|cascadelake|copperlake|tigerlake|sapphirerapids|\
 alderlake|rocketlake|\
 \
 bdver2|bdver3|bdver4|znver1|znver2|btver2) ]] \
-			|| [[ "${CXXFLAGS}" =~ mf16c ]] ; then
+			|| [[ "${CXXFLAGS}" =~ "mf16c" ]] ; then
 				# Already added
 				:;
 			else
@@ -995,7 +1033,7 @@ bdver2|bdver3|bdver4|znver1|znver2|btver2) ]] \
 
 		if use cpu_flags_x86_fma ; then
 			# for eigen and cycles
-			if [[ "${CXXFLAGS}" =~ march=(\
+			if [[ "${CXXFLAGS}" =~ "march="(\
 native|\
 \
 haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|icelake-client|\
@@ -1003,7 +1041,7 @@ icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|alderlake|\
 rocketlake|\
 \
 bdver2|bdver3|bdver4|znver1|znver2) ]] \
-			|| [[ "${CXXFLAGS}" =~ mfma ]] ; then
+			|| [[ "${CXXFLAGS}" =~ "mfma" ]] ; then
 				# Already added
 				:;
 			else
@@ -1190,7 +1228,7 @@ install_licenses() {
 		else
 			d=$(echo "${f}" | sed -e "s|^${BUILD_DIR}||")
 		fi
-		if ver_test $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
+		if ver_test $(ver_cut 1-2 "${PV}") -ge "2.80" ; then
 			docinto "licenses/${d}"
 			dodoc -r "${f}"
 		else
@@ -1214,7 +1252,7 @@ install_readmes() {
 		else
 			d=$(echo "${f}" | sed -e "s|^${BUILD_DIR}||")
 		fi
-		if ver_test $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
+		if ver_test $(ver_cut 1-2 "${PV}") -ge "2.80" ; then
 			docinto "readmes/${d}"
 			dodoc -r "${f}"
 		else
@@ -1346,24 +1384,32 @@ blender_src_install() {
 	local ed_icon_hc="${ED}/usr/share/icons/hicolor"
 	local ed_icon_scale="${ed_icon_hc}/scalable"
 	local ed_icon_sym="${ed_icon_hc}/symbolic"
-	if ver_test $(ver_cut 1-2 ${PV}) -lt 2.80 ; then
-		for size in 16x16 22x22 24x24 256x256 32x32 48x48 ; do
+	local sizes=(
+		"16x16"
+		"22x22"
+		"24x24"
+		"32x32"
+		"48x48"
+		"256x256"
+	)
+	if ver_test $(ver_cut 1-2 "${PV}") -lt "2.80" ; then
+		for size in ${sizes[@]} ; do
 			if [[ -e "${ed_icon_hc}/${size}/apps/blender.png" ]] ; then
-				mv "${ed_icon_hc}/${size}/apps/blender"{,-${SLOT_MAJ}}".png" || die
+				mv "${ed_icon_hc}/${size}/apps/blender"{"","-${SLOT_MAJ}"}".png" || die
 			fi
 		done
 	fi
 	if [[ -e "${ed_icon_scale}/apps/blender.svg" ]] ; then
-		mv "${ed_icon_scale}/apps/blender"{,-${SLOT_MAJ}}".svg" || die
-		if ver_test $(ver_cut 1-2) -ge 2.80 ; then
-			mv "${ed_icon_sym}/apps/blender-symbolic"{,-${SLOT_MAJ}}".svg"
+		mv "${ed_icon_scale}/apps/blender"{"","-${SLOT_MAJ}"}".svg" || die
+		if ver_test $(ver_cut 1-2) -ge "2.80" ; then
+			mv "${ed_icon_sym}/apps/blender-symbolic"{"","-${SLOT_MAJ}"}".svg"
 		fi
 	fi
 	rm -rf "${ED}/usr/share/applications/blender.desktop" || die
 	if [[ -d "${ED}/usr/share/doc/blender" ]] ; then
-		mv "${ED}/usr/share/doc/blender"{,-${SLOT_MAJ}} || die
+		mv "${ED}/usr/share/doc/blender"{"","-${SLOT_MAJ}"} || die
 	fi
-	mv "${ED}/usr/share/man/man1/blender"{,-${SLOT_MAJ}}".1" || die
+	mv "${ED}/usr/share/man/man1/blender"{"","-${SLOT_MAJ}"}".1" || die
 	if use rocm ; then
 		rocm_fix_rpath
 	fi
@@ -1396,7 +1442,7 @@ ewarn
 			$(dirname \
 				$(dirname \
 					$(ls \
-						"${d_src}"/*/creator/.lts \
+						"${d_src}/"*"/creator/.lts" \
 						| sort -V \
 						| tail -n 1 \
 					) \
@@ -1410,7 +1456,7 @@ ewarn
 			| sort -V \
 			| tail -n 1 \
 		)
-	elif [[ "${BLENDER_MAIN_SYMLINK_MODE}" =~ ^custom-[0-9]\.[0-9]+$ ]] ; then
+	elif [[ "${BLENDER_MAIN_SYMLINK_MODE}" =~ ^"custom-"[0-9]"."[0-9]+$ ]] ; then
 		# A custom pv
 		pv=$(echo "${BLENDER_MAIN_SYMLINK_MODE}" \
 			| cut -f 2 -d "-")
@@ -1473,5 +1519,17 @@ ewarn
 		fi
 	fi
 }
+
+EXPORT_FUNCTIONS \
+	pkg_pretend \
+	pkg_setup \
+	src_unpack \
+	src_prepare \
+	src_configure \
+	src_compile \
+	src_install \
+	src_test \
+	pkg_postinst \
+	pkg_postrm
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
