@@ -575,6 +575,7 @@ REQUIRED_USE+="
 			X
 		)
 	)
+	!system-toolchain
 	^^ (
 		${IUSE_LIBCXX[@]}
 	)
