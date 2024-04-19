@@ -113,30 +113,30 @@ BDEPEND="
 
 llvm_check_deps() {
 	if ! has_version -b "sys-devel/llvm:${LLVM_SLOT}" ; then
-		einfo "sys-devel/llvm:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+einfo "sys-devel/llvm:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 		return 1
 	fi
 
 	if use clang ; then
 		if ! has_version -b "sys-devel/clang:${LLVM_SLOT}" ; then
-			einfo "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+einfo "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
 		fi
 
 		if ! has_version -b "virtual/rust:0/llvm-${LLVM_SLOT}" ; then
-			einfo "virtual/rust:0/llvm-${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+einfo "virtual/rust:0/llvm-${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
 		fi
 
 		if ! tc-ld-is-mold ; then
 			if ! has_version -b "sys-devel/lld:${LLVM_SLOT}" ; then
-				einfo "sys-devel/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+einfo "sys-devel/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 				return 1
 			fi
 		fi
 	fi
 
-	einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
+einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 }
 
 python_check_deps() {
