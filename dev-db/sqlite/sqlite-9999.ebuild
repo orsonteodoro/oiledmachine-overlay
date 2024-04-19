@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Last update:  2024-03-21
+
 # EPGO (custom pgo training) disabled for simplification reasons.
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_EBOLT=0
