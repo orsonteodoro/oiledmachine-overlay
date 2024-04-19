@@ -246,7 +246,7 @@ _src_configure_compiler() {
 	local wants_llvm=0
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
-		if use llvm-${s} ; then
+		if use "llvm_slot_${s}" ; then
 			wants_llvm=1
 			break
 		fi
