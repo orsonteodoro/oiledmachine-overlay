@@ -28,7 +28,7 @@ LICENSE="LGPL-3+"
 HOMEPAGE="https://github.com/yarosla/nxjson"
 # Live ebuilds do not get keyworded
 SLOT="0/${EXPECTED_FINGERPRINT:0:7}"
-IUSE="debug static-libs test"
+IUSE+=" debug static-libs test"
 RDEPEND+="
 	virtual/libc
 "
