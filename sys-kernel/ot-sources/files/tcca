@@ -33,6 +33,7 @@ fi
 CCA=(
 	bbr
 	bbr2
+	bbr3
 	bic
 	cdg
 	cubic
@@ -57,7 +58,7 @@ CCA=(
 TCCA_BGDL="${TCCA_BGDL:-lp}"
 TCCA_BROADCAST="${TCCA_BROADCAST:-bbr}"
 TCCA_DISTCC="${TCCA_DISTCC:-vegas}"
-TCCA_FTP="${TCCA_FTP:-cubic}"
+TCCA_FILE="${TCCA_FILE:-cubic}"
 TCCA_GAMING="${TCCA_GAMING:-vegas}"
 TCCA_GREEN="${TCCA_GREEN:-bbr}"
 TCCA_MUSIC="${TCCA_MUSIC:-bbr}"
@@ -95,6 +96,7 @@ TCCA_UCDC_THROUGHPUT="${TCCA_HCDC_THROUGHPUT:-dctcp}"
 TCCA_HIGH_BDP="${TCCA_HIGH_BDP:-cubic}"
 TCCA_INTER_DC="${TCCA_INTER_DC:-illinois}"
 TCCA_INTRA_DC="${TCCA_INTRA_DC:-dctcp}"
+TCCA_LTE="${TCCA_LTE:-bbr}"
 TCCA_SATELLITE="${TCCA_SATELLITE:-hybla}"
 TCCA_WIRELESS="${TCCA_WIRELESS:-westwood}"
 
@@ -143,7 +145,7 @@ echo
 echo "  bgdl - For background downloads"
 echo "  broadcast - For live broadcasting"
 echo "  distcc - For at home compile farm"
-echo "  ftp - For file downloads"
+echo "  file - For downloading large files one at a time with the shortest completion time"
 echo "  gaming - For gaming clients"
 echo "  green - For the lowest energy consumption"
 echo "  music - For music service"
@@ -184,6 +186,7 @@ echo
 echo "  high-bdp - For high BDP networks"
 echo "  inter-dc - For between datacenters"
 echo "  intra-dc - For inside datacenters"
+echo "  lte - For smartphone connections"
 echo "  satellite - For satellite connections"
 echo "  wireless - For wireless connections"
 echo
@@ -224,7 +227,7 @@ declare -A TCCA_MAP=(
 	["bgdl"]="${TCCA_BGDL}"
 	["broadcast"]="${TCCA_BROADCAST}"
 	["distcc"]="${TCCA_DISTCC}"
-	["ftp"]="${TCCA_FTP}"
+	["file"]="${TCCA_FILE}"
 	["gaming"]="${TCCA_GAMING}"
 	["green"]="${TCCA_GREEN}"
 	["music"]="${TCCA_MUSIC}"

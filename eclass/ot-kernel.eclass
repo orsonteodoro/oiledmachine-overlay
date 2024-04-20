@@ -3292,6 +3292,9 @@ eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_SEND has been removed."
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HOME_SERVER_FAIR.  Please rename to continue."
 	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FTP}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FTP has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FILE.  Please rename to continue."
+	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_CLIENT}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_CLIENT has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMES.  Please rename to continue."
 	fi
@@ -3450,7 +3453,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BGDL
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GREEN
-	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FTP
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FILE
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MUSIC
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_P2P
@@ -12690,40 +12693,44 @@ ot-kernel_install_tcca() {
 		local default_tcca=$(ot-kernel_get_tcp_congestion_controls_default)
 
 		_tcc_intra_dc() {
+	# Max throughput sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
 				tcc="dctcp"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
 		local tcca_intra_dc=$(_tcc_intra_dc)
 
 		_tcc_inter_dc() {
+	# Max throughput sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
 				tcc="pcc"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
 				tcc="illinois"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
 		local tcca_inter_dc=$(_tcc_inter_dc)
 
 		_tcc_satellite() {
+	# Max throughput sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
 				tcc="pcc"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
 				tcc="hybla"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
 		local tcca_satellite=$(_tcc_satellite)
 
 		_tcc_wireless() {
+	# Max throughput sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
 				tcc="pcc"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
@@ -12733,13 +12740,14 @@ ot-kernel_install_tcca() {
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
 				tcc="vegas"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
 		local tcca_wireless=$(_tcc_wireless)
 
 		_tcc_high_bdp() {
+	# Max throughput sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
 				tcc="pcc"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
@@ -12749,20 +12757,20 @@ ot-kernel_install_tcca() {
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
 				tcc="bic"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
 		local tcca_high_bdp=$(_tcc_high_bdp)
 
 
-
-		_tcc_hs_fair() {
+		_tcc_hs_fair() { # Home server
 			local tcc
+	# Max Jain sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
 				tcc="vegas"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
-				tcc="hstcp"
+				tcc="highspeed"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
 				tcc="htcp"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
@@ -12788,14 +12796,31 @@ ot-kernel_install_tcca() {
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcc="bbr"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
 		local tcca_hs_fair=$(_tcc_hs_fair)
 
-		_tcc_hs_realtime() {
+		_tcc_lte() { # Smartphone
 			local tcc
+	# Throughput sorted
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcc="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcc="bbr2"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+				tcc="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "ct2cp" ]] ; then
+				tcc="c2tcp"
+			fi
+			echo "${tcc}"
+		}
+		local tcca_lte=$(_tcc_lte)
+
+		_tcc_hs_realtime() { # Home server
+			local tcc
+	# Low latency sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
 				tcc="bbr3"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
@@ -12805,20 +12830,21 @@ ot-kernel_install_tcca() {
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
 				tcc="cubic"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
 		local tcca_hs_realtime=$(_tcc_hs_realtime)
 
-		_tcc_hs_throughput() {
+		_tcc_hs_throughput() { # Home server
 			local tcc
+	# Max throughput sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
 				tcc="pcc"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
 				tcc="westwood"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
-				tcc="hstcp"
+				tcc="highspeed"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
 				tcc="illinois"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
@@ -12844,7 +12870,7 @@ ot-kernel_install_tcca() {
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
 				tcc="vegas"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
@@ -12858,6 +12884,7 @@ ot-kernel_install_tcca() {
 
 		_tcc_lcdc_fair() {
 			local tcc
+	# Max Jain sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
 				tcc="dctcp"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
@@ -12865,13 +12892,14 @@ ot-kernel_install_tcca() {
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
 				tcc="bbr2"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
 
 		_tcc_lcdc_realtime() {
 			local tcc
+	# Low latency sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
 				tcc="bbr3"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
@@ -12879,13 +12907,14 @@ ot-kernel_install_tcca() {
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
 				tcc="dctcp"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
 
 		_tcc_lcdc_throughput() {
 			local tcc
+	# Max throughput sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
 				tcc="dctcp"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
@@ -12895,7 +12924,7 @@ ot-kernel_install_tcca() {
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
 				tcc="bbr2"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
@@ -12903,6 +12932,7 @@ ot-kernel_install_tcca() {
 
 		_tcc_mcdc_fair() {
 			local tcc
+	# Max Jain sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
 				tcc="bbr3"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
@@ -12910,13 +12940,14 @@ ot-kernel_install_tcca() {
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
 				tcc="dctcp"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
 
 		_tcc_mcdc_realtime() {
 			local tcc
+	# Low latency sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
 				tcc="bbr3"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
@@ -12924,13 +12955,14 @@ ot-kernel_install_tcca() {
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
 				tcc="dctcp"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
 
 		_tcc_mcdc_throughput() {
 			local tcc
+	# Max throughput sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
 				tcc="dctcp"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
@@ -12940,7 +12972,7 @@ ot-kernel_install_tcca() {
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
 				tcc="bbr2"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
@@ -12963,34 +12995,83 @@ ot-kernel_install_tcca() {
 
 		_tcc_streaming() {
 			local tcc
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-				tcc="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-				tcc="bbr3"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
-				tcc="bbr2"
-			else
-				tcc="${default_tcca}"
-			fi
-			echo "${tcc}"
-		}
-		local tcca_streaming=$(_tcc_streaming)
-
-		# It should not be loss based.
-		_tcc_low_latency() {
-			local tcc
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "c2tcp" ]] ; then
-				tcc="c2tcp"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+	# Low latency sorted
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
 				tcc="bbr3"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
 				tcc="bbr2"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcc="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+			else
+				tcc="${default_tcca}" # Fallback to unbreak
+			fi
+			echo "${tcc}"
+		}
+		local tcca_streaming=$(_tcc_streaming)
+
+	# Minimized RTT variation
+	# Jitter is about under the average RTT/2.  If the average RTT is > 60, it is not suitable.
+	# We prune the edge cases that vacillate at average RTT 60 for a deterministic outcome.
+	# Properties sought:
+	# < 1% packet loss
+	# > 70% throughput for higher video bitrate access
+	# < 60ms avg RTTs
+		_tcc_low_jitter() {
+			local tcc
+	# Max throughput sorted
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "c2tcp" ]] ; then # Only when target delay is <= 60
+				tcc="c2tcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then # 97
+				tcc="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cdg" ]] ; then # 79
+				tcc="cdg"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then # 77
+				tcc="pcc"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "nv" ]] ; then # 44, for audio only
+				tcc="nv"
+			else
+				tcc="${default_tcca}" # Fallback to unbreak
+			fi
+			echo "${tcc}"
+		}
+
+		# It should not be loss based.
+		_tcc_low_latency() {
+			local tcc
+	# Lowest latency sorted
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then # 21.09
+				tcc="pcc"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "nv" ]] ; then # 21.18
+				tcc="nv"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "nv" ]] ; then # 21.18
+				tcc="nv"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cdg" ]] ; then # 25
+				tcc="nv"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcc="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcc="bbr2"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then # 50
+				tcc="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then # 60
+				tcc="yeah"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then # 84
 				tcc="vegas"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
+			fi
+			echo "${tcc}"
+		}
+
+		_tcc_packet_loss_resilient() {
+	# Minimal loss rate sorted
+			local tcc
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then # 21.09
+				tcc="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then # 21.09
+				tcc="pcc"
+			else
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
@@ -12999,22 +13080,23 @@ ot-kernel_install_tcca() {
 		local tcca_podcast=$(_tcc_streaming)
 		local tcca_streaming=$(_tcc_streaming)
 
-		local tcca_broadcast=$(_tcc_low_latency)
+		local tcca_broadcast=$(_tcc_low_jitter)
 		local tcca_gaming=$(_tcc_low_latency)
 		local tcca_social_games=$(_tcc_low_latency)
-		local tcca_video_chat=$(_tcc_low_latency)
-		local tcca_voip=$(_tcc_low_latency)
+		local tcca_video_chat=$(_tcc_low_jitter)
+		local tcca_voip=$(_tcc_low_jitter)
 
 		# sendrate ~ avg throughput based on self clocking.
 		# Sorted by completion time, then avg send rate
 		_tcc_send_rate() {
 			local tcc
+	# Send max throughput sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
 				tcc="pcc"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
 				tcc="westwood"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
-				tcc="hstcp"
+				tcc="highspeed"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
 				tcc="illinois"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
@@ -13040,11 +13122,11 @@ ot-kernel_install_tcca() {
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
 				tcc="vegas"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
-		local tcca_ftp=$(_tcc_send_rate)
+		local tcca_file=$(_tcc_send_rate)
 		local tcca_p2p=$(_tcc_send_rate)
 		local tcca_podcast_upload=$(_tcc_send_rate)
 		local tcca_torrent=$(_tcc_send_rate)
@@ -13052,12 +13134,13 @@ ot-kernel_install_tcca() {
 
 		_tcc_green() {
 			local tcc
+	# Minimal joule sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcc="bbr"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
 				tcc="westwood"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
-				tcc="hstcp"
+				tcc="highspeed"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "scalable" ]] ; then
 				tcc="scalable"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
@@ -13069,7 +13152,7 @@ ot-kernel_install_tcca() {
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
 				tcc="cubic"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
@@ -13081,7 +13164,7 @@ ot-kernel_install_tcca() {
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "lp" ]] ; then
 				tcc="lp"
 			else
-				tcc="${default_tcca}"
+				tcc="${default_tcca}" # Fallback to unbreak
 			fi
 			echo "${tcc}"
 		}
@@ -13098,7 +13181,7 @@ ot-kernel_install_tcca() {
 # Client
 TCCA_BGDL="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BGDL:-${tcca_bgdl}}"
 TCCA_BROADCAST="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST:-${tcca_broadcast}}"
-TCCA_FTP="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FTP:-${tcca_ftp}}"
+TCCA_FILE="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FILE:-${tcca_file}}"
 TCCA_GAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING:-${tcca_gaming}}"
 TCCA_GREEN="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GREEN:-${tcca_green}}"
 TCCA_MUSIC="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MUSIC:-${tcca_music}}"
@@ -13136,6 +13219,7 @@ TCCA_UCDC_THROUGHPUT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_THROUGHPUT
 TCCA_HIGH_BDP="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HIGH_BDP:-${tcca_high_bdp}}"
 TCCA_INTER_DC="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTER_DC:-${tcca_inter_dc}}"
 TCCA_INTRA_DC="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTRA_DC:-${tcca_intra_dc}}"
+TCCA_LTE="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LTE:-${tcca_lte}}"
 TCCA_SATELLITE="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SATELLITE:-${tcca_satellite}}"
 TCCA_WIRELESS="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WIRELESS:-${tcca_wireless}}"
 TCCA_ELEVATE_PRIV="${tcca_elevate_priv}"

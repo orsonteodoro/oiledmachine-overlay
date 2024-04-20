@@ -3260,6 +3260,7 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HIGH_BDP - For high BDP networks.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTRA_DC - For inside data centers.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTER_DC - For between data centers.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LTE - For smartphone networks.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SATELLITE - For satellite networks.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WIRELESS - For wireless networks.
 
@@ -3296,9 +3297,9 @@ unset OT_KERNEL_PRIVATE_KEY
 
         Video while downloading in the background (Advanced):
         1. close web browser
-        2. tcca --use=bbr
+        2. tcca bbr
         3. play video on the web browser
-        4. tcca --use=lp
+        4. tcca lp
         5. emerge -fvuDN @world
 
         Benefits:  skipless/uninterrupted video playback with maximum bandwidth
@@ -3313,7 +3314,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
         Low latency web browsing (advanced):
         1. close web browser
-        2. tcca --use=vegas
+        2. tcca vegas
 
         Benefits:  images load faster in parallel and faster navigation through
         wikis.
@@ -3321,11 +3322,11 @@ unset OT_KERNEL_PRIVATE_KEY
 
         Single player browser games (simple)
         1. close web browser
-        2. tcca wireless
+        2. tcca file
 
         Single player browser games (advanced)
         1. close web browser
-        2. tcca --use=cubic
+        2. tcca cubic
 
         Benefits:  high throughput for downloading the game and shorter wait
         time to play.
