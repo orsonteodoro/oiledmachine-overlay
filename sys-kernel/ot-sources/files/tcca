@@ -182,13 +182,6 @@ echo "  fair - equal bandwidth"
 echo "  realtime - low jitter, implies low latency"
 echo "  throughput - maximizes link utilization"
 echo
-echo "Menu item"
-echo
-echo "  --help - Print this help"
-echo "  --status - For printing TCP Congestion Control details"
-echo "  --use=<alg> - For using the algorithm directly"
-echo "  --set=<alg> - For using the algorithm directly"
-echo
 echo "Congestion Control Algorithms (CCAs):"
 echo
 	pushd /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/ >/dev/null 2>&1
@@ -201,8 +194,15 @@ echo
 	if [[ "${TCCA_ELEVATE_PRIV}" =~ ("pkexec"|"polkit"|"sudo") ]] ; then
 echo "[cmd]    - program to run (optional)"
 echo "[args]   - list of arguments to pass to the program (optional)"
-echo
 	fi
+echo
+echo "Menu item"
+echo
+echo "  --help - Print this help"
+echo "  --status - For printing TCP Congestion Control details"
+echo "  --use=<alg> - For using the algorithm directly (DEPRECATED)"
+echo "  --set=<alg> - For using the algorithm directly (DEPRECATED)"
+echo
 }
 
 unset TCCA_MAP
