@@ -93,12 +93,12 @@ REQUIRED_USE+="
 #
 # Additional *DEPENDs versioning info:
 #
-# https://github.com/chromium/chromium/blob/124.0.6367.60/third_party/fontconfig/include/config.h#L290
 # https://github.com/chromium/chromium/blob/124.0.6367.60/third_party/libpng/png.h#L288
 # https://github.com/chromium/chromium/blob/124.0.6367.60/third_party/zlib/zlib.h#L40
 # https://github.com/chromium/chromium/blob/124.0.6367.60/tools/clang/scripts/update.py#L42
 #
 
+# /var/tmp/portage/www-client/chromium-124.0.6367.60/work/chromium-124.0.6367.60/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-124.0.6367.60/work/chromium-124.0.6367.60/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-124.0.6367.60/work/chromium-124.0.6367.60/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-124.0.6367.60/work/chromium-124.0.6367.60/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
@@ -159,7 +159,7 @@ CHROMIUM_RDEPEND="
 	>=dev-libs/libpcre2-10.36
 	>=dev-libs/nspr-4.29
 	>=dev-libs/wayland-1.18.0
-	>=media-libs/fontconfig-2.14.2
+	>=media-libs/fontconfig-2.15.0
 	>=media-libs/freetype-2.13.2
 	>=media-libs/libpng-1.6.37
 	>=sys-devel/gcc-${GCC_PV}[cxx(+)]
