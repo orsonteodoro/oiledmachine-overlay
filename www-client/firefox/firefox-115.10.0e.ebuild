@@ -167,6 +167,7 @@ MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 MOZILLA_FIVE_HOME="" # Global variable
 NABIS=0 # Global variable
 NASM_PV="2.14.02"
+NODE_VERSION=16
 OFLAG="" # Global variable
 PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -819,6 +820,7 @@ BDEPEND+="
 	$(gen_llvm_bdepend)
 	${PYTHON_DEPS}
 	${GAMEPAD_BDEPEND}
+	=net-libs/nodejs-${NODE_VERSION}*
 	>=dev-lang/perl-5.006
 	>=dev-util/cbindgen-0.24.3
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
@@ -826,6 +828,7 @@ BDEPEND+="
 	app-alternatives/awk
 	app-arch/unzip
 	app-arch/zip
+	app-eselect/eselect-nodejs
 	!elibc_glibc? (
 		|| (
 			dev-lang/rust
@@ -852,10 +855,6 @@ BDEPEND+="
 	)
 	x86? (
 		>=dev-lang/nasm-${NASM_PV}
-	)
-	|| (
-		=net-libs/nodejs-12*
-		=net-libs/nodejs-16*
 	)
 "
 
@@ -1177,6 +1176,61 @@ ewarn
 	fi
 }
 
+# @FUNCTION: node_pkg_setup
+# @DESCRIPTION:
+# Checks node slot required for building
+node_pkg_setup() {
+	local found=0
+	local slot
+	local node_pv=$(node --version \
+		| sed -e "s|v||g")
+	if [[ -n "${NODE_SLOTS}" ]] ; then
+		for slot in ${NODE_SLOTS} ; do
+			if has_version "=net-libs/nodejs-${slot}*" \
+				&& (( ${node_pv%%.*} == ${slot} )) ; then
+				export NODE_VERSION=${slot}
+				found=1
+				break
+			fi
+		done
+		if (( ${found} == 0 )) ; then
+eerror
+eerror "Did not find the preferred nodejs slot."
+eerror "Expected node versions:  ${NODE_SLOTS}"
+eerror
+eerror "Try one of the following:"
+eerror
+			local s
+			for s in ${NODE_SLOTS} ; do
+eerror "  eselect nodejs set node${s}"
+			done
+
+eerror
+eerror "See eselect nodejs for more details."
+eerror
+			die
+		fi
+	elif [[ -n "${NODE_VERSION}" ]] ; then
+		if has_version "=net-libs/nodejs-${NODE_VERSION}*" \
+			&& (( ${node_pv%%.*} == ${NODE_VERSION} )) ; then
+			found=1
+		fi
+		if (( ${found} == 0 )) ; then
+eerror
+eerror "Did not find the preferred nodejs slot."
+eerror "Expected node version:  ${NODE_VERSION}"
+eerror
+eerror "Try the following:"
+eerror
+eerror "  eselect nodejs set node$(ver_cut 1 ${NODE_VERSION})"
+eerror
+eerror "See eselect nodejs for more details."
+eerror
+			die
+		fi
+	fi
+}
+
 pkg_setup() {
 einfo "Release type:  ESR (Extended Service Release)"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
@@ -1408,6 +1462,7 @@ ewarn
 ewarn "Speech recognition (USE=webspeech) has not been confirmed working."
 	fi
 	verify_codecs
+	node_pkg_setup
 }
 
 src_unpack() {
