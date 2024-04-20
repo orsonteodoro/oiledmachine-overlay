@@ -3063,7 +3063,7 @@ unset OT_KERNEL_PRIVATE_KEY
       htcp      | Throughput and internal fairness for LFNs (Large Fat Networks) [ADSL2+, cable, or larger]; in packet loss scenarios, marginally better throughput versus cubic 
       hybla     | Throughput over satellite
       illinois  | Throughput between inter data centers
-                | Incast at ~0.005% packet loss
+                | Incast at ~0.0025% packet loss
       lp        | Full bandwidth utilization
                 | May studder sound
       nv        | RPC goodput and low latency for KiB payloads
