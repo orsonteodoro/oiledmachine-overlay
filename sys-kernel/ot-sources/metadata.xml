@@ -3043,8 +3043,9 @@ unset OT_KERNEL_PRIVATE_KEY
       Algorithm | Benefit (first row) / Cost (second row)
       ==========+===================================================================================================================
       bic       | RPC goodput for MiB+ payloads, default in earlier 2.6
+                | Incast at ~0.06% packet loss
       bbr       | Latency, streaming, production code quality, energy efficient
-                | Greedy, deprecated, high latency for small RPC payloads
+                | Greedy, deprecated, high latency for small RPC payloads, incast at ~15% packet loss
       bbr2      | Latency, fair, ECN support
                 | Alpha code quality, experimental, deprecated, energy inefficient
       bbr3      | BBR v1 upgraded with latency improvement with higher throughput, streaming, fair, ECN support, actively maintained
@@ -3057,23 +3058,23 @@ unset OT_KERNEL_PRIVATE_KEY
       deepcc    | Throughput, optimized BBR, Cubic, Illinois, Westwood
                 | TensorFlow [heavy dependency], high memory footprint
       cubic     | Throughput, ubiquitous (de facto standard)
-                | May suffer incast (or +50% link under-utilization) at 0.5% packet loss or more
+                | Incast at ~0.01% packet loss
       hstcp     | Throughput
       htcp      | Throughput and internal fairness for LFNs (Large Fat Networks) [ADSL2+, cable, or larger]; in packet loss scenarios, marginally better throughput versus cubic 
       hybla     | Throughput over satellite
       illinois  | Throughput between inter data centers
-                | May suffer incast (or +50% link under-utilization) at 0.5% packet loss or more
+                | Incast at ~0.5% packet loss
       lp        | Full bandwidth utilization
                 | May studder sound
       nv        | RPC goodput and low latency for KiB payloads
       orca      | Low CPU usage, consistent high performance in different networks
                 | TensorFlow [heavy dependency], high memory footprint
       pcc       | Send throughput, low requirements, better stability over time
-                | Higher CPU usage, may suffer incast (or +50% link under-utilization) at 2.5% packet loss or more
+                | Higher CPU usage, incast at ~4% packet loss
       reno      | New Reno fallback algorithm
-                | Old algorithm
+                | Old algorithm, incast at ~0.002% packet loss
       scalable  | Throughput
-                | High packet loss
+                | High packet loss, incast at ~0.02% packet loss
       veno      | Throughput with wireless
       yeah      | Throughput, high network utilization and internal fairness for high BDP/RTT
       vegas     | Lower latency, lower packet loss
@@ -3085,6 +3086,7 @@ unset OT_KERNEL_PRIVATE_KEY
       * c2tcp, deep, orca has not been tested in this overlay yet.
       * Throughput alone implies high throughput.
       * Latency alone implies low latency.
+      * Incast is more than half drop in throughput
 
       * It is recommended to fix physical layer and application layers issues
         as best as possible because they can impact the effectiveness/benefits
