@@ -26,18 +26,18 @@ EAPI=8
 #
 # Additional DEPENDS versioning info:
 #
-# https://github.com/chromium/chromium/blob/124.0.6367.60/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists u
-# https://github.com/chromium/chromium/blob/124.0.6367.60/third_party/fontconfig/include/config.h#L290                                 ; newer than generated_package_lists *missing  ;  fixme
-# https://github.com/chromium/chromium/blob/124.0.6367.60/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists u
+# https://github.com/chromium/chromium/blob/124.0.6367.60/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/124.0.6367.60/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists
 # https://github.com/chromium/chromium/blob/124.0.6367.60/third_party/libpng/png.h#L288							; older than generated_package_lists
-# https://github.com/chromium/chromium/blob/124.0.6367.60/third_party/libxml/linux/config.h#L160					; older than generated_package_lists *recheck
+# https://github.com/chromium/chromium/blob/124.0.6367.60/third_party/libxml/linux/config.h#L160					; older than generated_package_lists
 # https://github.com/chromium/chromium/blob/124.0.6367.60/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists
 # https://github.com/chromium/chromium/blob/124.0.6367.60/third_party/node/update_node_binaries#L18
 # https://github.com/chromium/chromium/blob/124.0.6367.60/third_party/re2/README.chromium#L4						; newer than generated_package_lists, (live) [rounded in ebuild]
 # https://github.com/chromium/chromium/blob/124.0.6367.60/third_party/zlib/zlib.h#L40
-# https://github.com/chromium/chromium/blob/124.0.6367.60/tools/rust/update_rust.py#L35						; commit
+# https://github.com/chromium/chromium/blob/124.0.6367.60/tools/rust/update_rust.py#L35							; commit
 #   https://github.com/rust-lang/rust/blob/7168c13579a550f2c47f7eea22f5e226a436cd00/src/version						; live version
 # /var/tmp/portage/www-client/chromium-124.0.6367.60/work/chromium-124.0.6367.60/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-124.0.6367.60/work/chromium-124.0.6367.60/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-124.0.6367.60/work/chromium-124.0.6367.60/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-124.0.6367.60/work/chromium-124.0.6367.60/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-124.0.6367.60/work/chromium-124.0.6367.60/third_party/icu/source/configure		L585	; newer than generated_package_lists
@@ -107,6 +107,8 @@ CR_CLANG_USED_UNIX_TIMESTAMP="1707930042" # Cached.  Use below to obtain this. \
 # TIMESTAMP=$(wget -q -O - https://github.com/llvm/llvm-project/commit/${CR_CLANG_USED}.patch \
 #	| grep -F -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
 # Change also LLVM_OFFICIAL_SLOT
+CURRENT_PROFDATA_VERSION= # Global variable
+CURRENT_PROFDATA_LLVM_VERSION= # Global variable
 DISABLE_AUTOFORMATTING="yes"
 # See also
 # third_party/ffmpeg/libavutil/version.h
@@ -122,18 +124,20 @@ GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-a8bca0c91e154395fca8b3b5b9b8fb2470c72d1d5bd26298b76e9135cd57fb2f\
-47e096d29c0e2bc9d3ded79a2c630e7f5e0aaf040d96ae65830f5ab0950afbe5\
+4969e827f916d34a54bf1b7fef5810f7709ca41399e91eb6f9a0b68da19c9b12\
+eedadd981ad3b76e6318ca0ced7f9bf2e72949db428ab1f84ec112c44bdd0dff\
 "
 LLVM_COMPAT=( {19..18} ) # [inclusive, inclusive] high to low
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is the same slot listed in https://github.com/chromium/chromium/blob/124.0.6367.60/tools/clang/scripts/update.py#L42
 LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}" # Min is the pregenerated PGO profile needs INSTR_PROF_INDEX_VERSION version 11 for profdata file format.
 LLVM_OFFICIAL_SLOT="${LLVM_MAX_SLOT}" # Cr official slot
-LLVM_SLOT="" # variable not const
-LTO_TYPE="" # variable not const
+LLVM_SLOT="" # Global variable
+LTO_TYPE="" # Global variable
 MESA_PV="20.3.5"
 MITIGATION_DATE="Apr 16, 2024"
 MITIGATION_URI="https://chromereleases.googleblog.com/2024/04/stable-channel-update-for-desktop_16.html"
+NABIS=0 # Global variable
+NODE_VERSION=20
 PGO_LLVM_SUPPORTED_VERSIONS=(
 	"${LLVM_OFFICIAL_SLOT}.0.0.9999"
 	"${LLVM_OFFICIAL_SLOT}.0.0"
@@ -478,7 +482,7 @@ proprietary-codecs-disable-nc-user +pulseaudio qt5 qt6 +screencast selinux
 -system-dav1d +system-ffmpeg -system-flac -system-fontconfig -system-freetype
 -system-harfbuzz -system-icu -system-libaom -system-libdrm
 -system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
--system-libxslt -system-openh264 -system-opus -system-re2 +system-toolchain
+-system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
 -system-zlib +system-zstd +thinlto-opt +vaapi +wayland -widevine +X
 "
 
@@ -790,7 +794,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=media-libs/dav1d-1.4.0:=[${MULTILIB_USEDEP},8bit]
 	)
 	system-fontconfig? (
-		>=media-libs/fontconfig-2.14.2:=[${MULTILIB_USEDEP}]
+		>=media-libs/fontconfig-2.15.0:=[${MULTILIB_USEDEP}]
 	)
 	system-freetype? (
 		>=media-libs/freetype-2.13.2:=[${MULTILIB_USEDEP}]
@@ -1008,6 +1012,7 @@ BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=net-libs/nodejs-20.11.0:20[inspector]
 	>=sys-devel/bison-2.4.3
+	app-eselect/eselect-nodejs
 	dev-lang/perl
 	dev-vcs/git
 	app-alternatives/lex
@@ -1473,9 +1478,61 @@ is_using_clang() {
 	return 1
 }
 
-CURRENT_PROFDATA_VERSION=
-CURRENT_PROFDATA_LLVM_VERSION=
-NABIS=0
+# @FUNCTION: node_pkg_setup
+# @DESCRIPTION:
+# Checks node slot required for building
+node_pkg_setup() {
+	local found=0
+	local slot
+	local node_pv=$(node --version \
+		| sed -e "s|v||g")
+	if [[ -n "${NODE_SLOTS}" ]] ; then
+		for slot in ${NODE_SLOTS} ; do
+			if has_version "=net-libs/nodejs-${slot}*" \
+				&& (( ${node_pv%%.*} == ${slot} )) ; then
+				export NODE_VERSION=${slot}
+				found=1
+				break
+			fi
+		done
+		if (( ${found} == 0 )) ; then
+eerror
+eerror "Did not find the preferred nodejs slot."
+eerror "Expected node versions:  ${NODE_SLOTS}"
+eerror
+eerror "Try one of the following:"
+eerror
+			local s
+			for s in ${NODE_SLOTS} ; do
+eerror "  eselect nodejs set node${s}"
+			done
+
+eerror
+eerror "See eselect nodejs for more details."
+eerror
+			die
+		fi
+	elif [[ -n "${NODE_VERSION}" ]] ; then
+		if has_version "=net-libs/nodejs-${NODE_VERSION}*" \
+			&& (( ${node_pv%%.*} == ${NODE_VERSION} )) ; then
+			found=1
+		fi
+		if (( ${found} == 0 )) ; then
+eerror
+eerror "Did not find the preferred nodejs slot."
+eerror "Expected node version:  ${NODE_VERSION}"
+eerror
+eerror "Try the following:"
+eerror
+eerror "  eselect nodejs set node$(ver_cut 1 ${NODE_VERSION})"
+eerror
+eerror "See eselect nodejs for more details."
+eerror
+			die
+		fi
+	fi
+}
+
 pkg_setup() {
 einfo "Release channel:  ${SLOT#*/}"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
@@ -1599,6 +1656,7 @@ einfo
 	done
 
 	( use system-dav1d || use system-libaom ) && cflags-depends_check
+	node_pkg_setup
 }
 
 src_unpack() {
@@ -1643,37 +1701,7 @@ apply_distro_patchset() {
 			"/if (is_clang && toolchain_has_rust) {/,+2d" \
 			"build/config/compiler/BUILD.gn" \
 			|| die "Failed to disable bundled compiler builtins"
-	else
-		mkdir -p \
-			"third_party/llvm-build/Release+Asserts" \
-			|| die "Failed to bundle llvm"
-		ln -s \
-			"${WORKDIR}/bin" \
-			"third_party/llvm-build/Release+Asserts/bin" \
-			|| die "Failed to symlink llvm bin"
-		ln -s \
-			"${WORKDIR}/lib" \
-			"third_party/llvm-build/Release+Asserts/lib" \
-			|| die "Failed to symlink llvm lib"
-		echo \
-			"${GOOGLE_CLANG_VER}" \
-			> \
-			"third_party/llvm-build/Release+Asserts/cr_build_revision" \
-			|| die "Failed to set clang version"
-		ln -s \
-			"${WORKDIR}/rust-toolchain third_party/rust-toolchain" \
-			|| die "Failed to bundle rust"
-		cp \
-			"${WORKDIR}/rust-toolchain/VERSION" \
-			"${WORKDIR}/rust-toolchain/INSTALLED_VERSION" \
-			|| die "Failed to set rust version"
 	fi
-
-	# Disable global media controls.  It crashes with libstdc++.
-	sed -i -e \
-		"/\"GlobalMediaControlsCastStartStop\",/{n;s/ENABLED/DISABLED/;}" \
-		"third_party/blink/common/features.cc" \
-		|| die
 
         if use ppc64 ; then
 		local p
@@ -1714,13 +1742,40 @@ ewarn "Applying the distro patchset."
 ewarn "Disabling the distro patchset."
 	fi
 
+	if ! use system-toolchain ; then
+		mkdir -p \
+			"third_party/llvm-build/Release+Asserts" \
+			|| die "Failed to bundle llvm"
+		ln -s \
+			"${WORKDIR}/bin" \
+			"third_party/llvm-build/Release+Asserts/bin" \
+			|| die "Failed to symlink llvm bin"
+		ln -s \
+			"${WORKDIR}/lib" \
+			"third_party/llvm-build/Release+Asserts/lib" \
+			|| die "Failed to symlink llvm lib"
+		echo \
+			"${VENDORED_CLANG_VER}" \
+			> \
+			"third_party/llvm-build/Release+Asserts/cr_build_revision" \
+			|| die "Failed to set clang version"
+		ln -s \
+			"${WORKDIR}/rust-toolchain" \
+			"third_party/rust-toolchain" \
+			|| die "Failed to bundle rust"
+		cp \
+			"${WORKDIR}/rust-toolchain/VERSION" \
+			"${WORKDIR}/rust-toolchain/INSTALLED_VERSION" \
+			|| die "Failed to set rust version"
+	fi
+
 	if use epgo ; then
 		PATCHES+=(
 			"${FILESDIR}/extra-patches/chromium-104.0.5112.79-gcc-pgo-link-gcov.patch"
 		)
 	fi
 
-	if tc-is-clang ; then
+	if use system-toolchain && tc-is-clang ; then
 	# Using gcc with these patches results in this error:
 	# Two or more targets generate the same output:
 	#   lib.unstripped/libEGL.so
@@ -2453,8 +2508,23 @@ _src_configure_compiler() {
 	if use system-toolchain ; then
 		_set_system_cc
 	else
-		export CC=$(tc-getCC)
-		export CXX=$(tc-getCXX)
+		export PATH="${WORKDIR}/bin:${PATH}"
+		export PATH="${WORKDIR}/rust-toolchain/bin:${PATH}"
+		export CC="clang"
+		export CXX="clang++"
+		export CPP="${CXX} -E"
+		export AR="llvm-ar"
+		export NM="llvm-nm"
+		export OBJCOPY="llvm-objcopy"
+		export OBJDUMP="llvm-objdump"
+		export READELF="llvm-readelf"
+		export STRIP="llvm-strip"
+		strip-unsupported-flags
+		if use official ; then
+			filter-flags '-march=*'
+			filter-flags '-O*'
+			strip-flags
+		fi
 	fi
 }
 
