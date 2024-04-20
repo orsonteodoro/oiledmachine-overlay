@@ -30,6 +30,28 @@ if [[ -e /etc/tcca-${PV}-${EXTRAVERSION}-${ARCH}.conf ]] ; then
 	source /etc/tcca-${PV}-${EXTRAVERSION}-${ARCH}.conf
 fi
 
+CCA=(
+	bbr
+	bbr2
+	bic
+	cdg
+	cubic
+	dctcp
+	highspeed
+	htcp
+	hybla
+	illinois
+	lp
+	nv
+	pcc
+	reno
+	scalable
+	vegas
+	vino
+	westwood
+	yeah
+)
+
 # TCCA - TCP Congestion Control Algorithm
 # Client
 TCCA_BGDL="${TCCA_BGDL:-lp}"
@@ -96,9 +118,9 @@ echo "${MY_NAME} - Helper script to setup the TCP Congestion Control Algorithm"
 echo "for new connections for the kernel"
 echo
 	if [[ "${TCCA_ELEVATE_PRIV}" =~ ("pkexec"|"polkit"|"sudo") ]] ; then
-echo "${MY_NAME} [use-case|menu-item] [cmd] [args]"
+echo "${MY_NAME} [cca|use-case|menu-item] [cmd] [args]"
 	else
-echo "${MY_NAME} [use-case|menu-item]"
+echo "${MY_NAME} [cca|use-case|menu-item]"
 	fi
 echo
 echo "Client"
@@ -305,22 +327,29 @@ echo
 process_options() {
 	local x
 	for x in ${ARGV[@]} ; do
-		case ${x} in
-			--help)
-				print_help
-				exit 0
-				;;
-			--status)
-				print_status
-				exit 0
-				;;
-			--use=*|--set=*)
-				set_tcca $(echo "${x}" | cut -f 2 -d "=" | sed -e "s|^tcp_||g")
-				exit 0
-				;;
-			*)
-				;;
-		esac
+		if [[ "${x}" == "--help" ]] ; then
+			print_help
+			exit 0
+		elif [[ "${x}" == "--status" ]] ; then
+			print_status
+			exit 0
+		elif [[ "${x}" =~ ^"--use=" ]] ; then
+			set_tcca $(echo "${x}" | cut -f 2 -d "=" | sed -e "s|^tcp_||g")
+			exit 0
+		elif [[ "${x}" =~ ^"--set=" ]] ; then
+			set_tcca $(echo "${x}" | cut -f 2 -d "=" | sed -e "s|^tcp_||g")
+			exit 0
+		else
+			local cca
+			for cca in ${CCA[@]} ; do
+				if [[ "${x}" == "${cca}" ]] ; then
+					set_tcca "${x}"
+					exit 0
+				fi
+			done
+			print_help
+			exit 1
+		fi
 	done
 }
 
