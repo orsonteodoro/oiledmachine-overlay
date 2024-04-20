@@ -112,6 +112,21 @@ PN="${1}"
 shift
 PN_ARGS=( $@ )
 
+get_ccas() {
+	local L=(
+		$(cat /proc/sys/net/ipv*/tcp_allowed_congestion_control)
+	)
+	local cca
+	pushd /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/ >/dev/null 2>&1
+		local ccas=$(ls tcp_*.ko* | sed -e "s|.ko.*$||g" -e "s|tcp_||g")
+		for cca in ${ccas[@]} ; do
+			L+=( ${cca} )
+		done
+	popd >/dev/null 2>&1
+	L=( $(echo "${L[@]}" | tr " " "\n" | sort | uniq) )
+	echo ${L[@]}
+}
+
 print_help() {
 echo
 echo "${MY_NAME} - Helper script to setup the TCP Congestion Control Algorithm"
@@ -184,12 +199,11 @@ echo "  throughput - maximizes link utilization"
 echo
 echo "Congestion Control Algorithms (CCAs):"
 echo
-	pushd /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/ >/dev/null 2>&1
-		local ccas=$(ls tcp_*.ko* | sed -e "s|.ko.*$||g" -e "s|tcp_||g")
-		for cca in ${ccas[@]} ; do
+
+	for cca in $(get_ccas) ; do
 echo "  ${cca}"
-		done
-	popd >/dev/null 2>&1
+	done
+
 echo
 	if [[ "${TCCA_ELEVATE_PRIV}" =~ ("pkexec"|"polkit"|"sudo") ]] ; then
 echo "[cmd]    - program to run (optional)"
