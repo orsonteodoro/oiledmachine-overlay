@@ -2524,12 +2524,12 @@ _src_configure_compiler() {
 		export OBJDUMP="llvm-objdump"
 		export READELF="llvm-readelf"
 		export STRIP="llvm-strip"
-		strip-unsupported-flags
-		if use official ; then
-			filter-flags '-march=*'
-			filter-flags '-O*'
-			strip-flags
-		fi
+	fi
+	strip-unsupported-flags
+	if use official ; then
+		filter-flags '-march=*'
+		filter-flags '-O*'
+		strip-flags
 	fi
 }
 
