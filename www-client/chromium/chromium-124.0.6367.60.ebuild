@@ -1806,7 +1806,8 @@ ewarn "Disabling the distro patchset."
 		)
 	fi
 
-	# Slot 16 selected but spits out 17
+	if use system-toolchain ; then
+		# Slot 16 is selected but it spits out 17.
 #
 # Fixes:
 #
@@ -1815,22 +1816,22 @@ ewarn "Disabling the distro patchset."
 # The expected clang version is llvmorg-17-init-4759-g547e3456-1 but the actual version is
 # Did you run "gclient sync"?
 #
+		sed -i \
+			-e "/verify-version/d" \
+			"build/config/compiler/BUILD.gn" \
+			|| die
 
-	sed -i \
-		-e "/verify-version/d" \
-		"build/config/compiler/BUILD.gn" \
-		|| die
-
-	PATCHES+=(
+		PATCHES+=(
 #
 # Fixes:
 #
 # The expected Rust version is 17c11672167827b0dd92c88ef69f24346d1286dd-1-llvmorg-17-init-8029-g27f27d15-3 (or fallback 17c11672167827b0dd92c88ef69f24346d1286dd-1-llvmorg-17-init-8029-g27f27d15-1 but the actual version is None
 # Did you run "gclient sync"?
-		"${FILESDIR}/extra-patches/chromium-117.0.5938.92-skip-rust-check.patch"
+			"${FILESDIR}/extra-patches/chromium-117.0.5938.92-skip-rust-check.patch"
 
-		"${FILESDIR}/extra-patches/chromium-118.0.5993.117-clang-paths.patch"
-	)
+			"${FILESDIR}/extra-patches/chromium-118.0.5993.117-clang-paths.patch"
+		)
+	fi
 
 	default
 
