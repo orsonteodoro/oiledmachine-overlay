@@ -680,6 +680,9 @@ REQUIRED_USE+="
 	system-libstdcxx? (
 		!cfi
 	)
+	system-toolchain? (
+		bundled-libcxx
+	)
 	vaapi-hevc? (
 		vaapi
 	)
