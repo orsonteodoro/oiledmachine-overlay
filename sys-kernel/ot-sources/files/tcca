@@ -189,6 +189,15 @@ echo "  --status - For printing TCP Congestion Control details"
 echo "  --use=<alg> - For using the algorithm directly"
 echo "  --set=<alg> - For using the algorithm directly"
 echo
+echo "Congestion Control Algorithms (CCAs):"
+echo
+	pushd /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/ >/dev/null 2>&1
+		local ccas=$(ls tcp_*.ko* | sed -e "s|.ko.*$||g" -e "s|tcp_||g")
+		for cca in ${ccas[@]} ; do
+echo "  ${cca}"
+		done
+	popd >/dev/null 2>&1
+echo
 	if [[ "${TCCA_ELEVATE_PRIV}" =~ ("pkexec"|"polkit"|"sudo") ]] ; then
 echo "[cmd]    - program to run (optional)"
 echo "[args]   - list of arguments to pass to the program (optional)"
@@ -244,14 +253,6 @@ print_status() {
 echo
 echo "The Current TCP Congestion Control algorithm for new connections:"
 	echo -e "\t"$(cat /proc/sys/net/ipv4/tcp_congestion_control)
-echo
-echo "Allowed algorithms:"
-	echo -e "\t"$(cat /proc/sys/net/ipv4/tcp_available_congestion_control)
-echo
-echo "Available kernel modules:"
-	pushd /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/ >/dev/null 2>&1
-		echo -e "\t"$(ls tcp_*.ko* | sed -e "s|.ko.*$||g")
-	popd >/dev/null 2>&1
 echo
 	local n=$(cat /sys/class/net/*/statistics/*dropped* | wc -l)
 	if [[ -e "/sys/class/net" && ${n} -ge 1 ]] ; then
