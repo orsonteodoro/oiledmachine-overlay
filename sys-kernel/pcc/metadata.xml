@@ -24,11 +24,11 @@
       values (which is the same as comparing two rewards corresponding to the
       two send rates tested).
     * Online learning - means converging at the sending rate equilibrium while
-      avoiding the incast (severe link throughput collapse).  This is in
-      contrast to the "hardwired mapping" approach by previous TCP CC designers.
-      The project claims that wrong assumptions in complex conditionas lead to
-      harmful actions. [This is not the best reason from the course/fine grain
-      perspective of the Orca project.]
+      avoiding the incast (or half or more throughput lost because of packet
+      loss).  This is in contrast to the "hardwired mapping" approach by
+      previous TCP CC designers.  The project claims that wrong assumptions in
+      complex conditions lead to harmful actions. [This is not the best reason
+      from the course/fine grain perspective of the Orca project.]
     * Self-clocking - The rates of sending rate and receiving rates are the
       same.  [This is not discussed in their paper or presentation.  They often
       mention "sending rate".  The utility function is supposed to
