@@ -571,6 +571,7 @@ DISTRO_REQUIRE_USE="
 	system-zlib
 "
 
+# We cannot use the system-toolchain because virtual/rust highest is llvm-17.
 REQUIRED_USE+="
 	${DISABLED_NON_FREE_USE_FLAGS}
 	!headless (
