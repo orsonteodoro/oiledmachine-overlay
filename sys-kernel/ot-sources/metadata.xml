@@ -3086,7 +3086,7 @@ unset OT_KERNEL_PRIVATE_KEY
       * c2tcp, deep, orca has not been tested in this overlay yet.
       * Throughput alone implies high throughput.
       * Latency alone implies low latency.
-      * Incast is more than half drop in throughput
+      * Incast is more than half drop in throughput but may change based on RTT
 
       * It is recommended to fix physical layer and application layers issues
         as best as possible because they can impact the effectiveness/benefits
