@@ -526,7 +526,10 @@ RDEPEND+="
 			net-misc/sshpass
 		)
 		|| (
-			dev-python/paramiko[${PYTHON_USEDEP}]
+			(
+				dev-python/bcrypt[${PYTHON_USEDEP}]
+				dev-python/paramiko[${PYTHON_USEDEP}]
+			)
 			virtual/ssh
 		)
 	)
@@ -784,6 +787,7 @@ eerror
 
 	local DISTUTILS_ARGS=(
 		$(use_with audio)
+		$(use_with audio gstreamer_audio)
 		$(use_with avif)
 		$(use_with brotli)
 		$(use_with client)
@@ -832,6 +836,7 @@ eerror
 		$(use_with v4l2)
 		$(use_with webcam)
 		$(use_with webp)
+		$(use_with X argb)
 		$(use_with X x11)
 		$(use_with x264 enc_x264)
 		$(use_with x265 enc_x265)
