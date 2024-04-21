@@ -522,7 +522,8 @@ echo "A ping above 300 is considered unplayable for gaming."
 echo "A ping above 160 which is considered laggy for gaming."
 	fi
 	if (( ${avg_ping%.*} > 60 )) ; then
-echo "A ping above 60 may cause distortion during VoIP calls."
+echo "A ping above 60 ms may cause distortion during VoIP calls."
+echo "A ping above 60 ms may affect teamplay success in gaming."
 	fi
 }
 
