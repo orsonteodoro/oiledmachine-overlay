@@ -3048,7 +3048,7 @@ unset OT_KERNEL_PRIVATE_KEY
                 | Greedy, deprecated, high latency for small RPC payloads, incast at ~15% packet loss
       bbr2      | Latency, fair, ECN support
                 | Alpha code quality, experimental, deprecated, energy inefficient
-      bbr3      | BBR v1 upgraded with latency improvement with higher throughput, streaming, fair, ECN support, actively maintained, incast at 1% packet loss
+      bbr3      | BBR v1 upgraded with latency improvement with higher throughput, streaming, fair, ECN support, actively maintained, incast at ~1% packet loss
                 | Not mainlined
       c2tcp     | Lowest latencies and lowest jitter
       cdg       | Throughput with latency improvement
