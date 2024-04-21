@@ -516,13 +516,13 @@ echo "Data:  ${pings}"
 echo "Percentile:  ${PERCENTILE}"
 echo "Sample size:  ${SAMPLE_SIZE}"
 echo "Average ping:  ${avg_ping}"
-	if (( ${avg_ping} > 300 )) ; then
+	if (( ${avg_ping%.*} > 300 )) ; then
 echo "A ping above 300 is considered unplayable for gaming."
-	elif (( ${avg_ping} > 160 )) ; then
+	elif (( ${avg_ping%.*} > 160 )) ; then
 echo "A ping above 160 which is considered laggy for gaming."
 	fi
-	if (( ${avg_ping} > 60 )) ; then
-echo "A ping above 60 may cause lag spikes during VoIP calls."
+	if (( ${avg_ping%.*} > 60 )) ; then
+echo "A ping above 60 may cause distortion during VoIP calls."
 	fi
 }
 
