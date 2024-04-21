@@ -4,7 +4,7 @@
 EAPI=8
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/3.1.56/tools/config_template.py
+# https://github.com/emscripten-core/emscripten/blob/3.1.57/tools/config_template.py
 
 # TC = toolchain
 BINARYEN_SLOT=117 # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
@@ -14,9 +14,9 @@ LLVM_MAX_SLOT=${LLVM_SLOT}
 NODEJS_SLOT="16"
 PYTHON_COMPAT=( python3_{8..11} ) # emsdk lists 3.9, 3.7.
 # See also
-# https://github.com/emscripten-core/emsdk/blob/3.1.56/emsdk#L11
-# https://github.com/emscripten-core/emsdk/blob/3.1.56/.circleci/config.yml#L24
-# https://github.com/emscripten-core/emscripten/blob/3.1.56/requirements-dev.txt
+# https://github.com/emscripten-core/emsdk/blob/3.1.57/emsdk#L11
+# https://github.com/emscripten-core/emsdk/blob/3.1.57/.circleci/config.yml#L24
+# https://github.com/emscripten-core/emscripten/blob/3.1.57/requirements-dev.txt
 # flake8 (3.7.8) - <= 3.7
 # flake8 (5.0.4) - <= 3.10
 # websockify (0.10.0) - <= 3.9
@@ -154,13 +154,13 @@ REQUIRED_USE+="
 "
 # For DEPENDs:
 # See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/3.1.56/site/source/docs/building_from_source/toolchain_what_is_needed.rst
-# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/3.1.56/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
-# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.56/package.json
+# See also https://github.com/emscripten-core/emscripten/blob/3.1.57/site/source/docs/building_from_source/toolchain_what_is_needed.rst
+# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/3.1.57/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
+# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.57/package.json
 # For the required closure-compiler-nodejs node version, see https://github.com/google/closure-compiler-npm/blob/v20230802.0.0/packages/google-closure-compiler/package.json
 # For the required Java, See https://github.com/google/closure-compiler/blob/v20230802/.github/workflows/ci.yaml#L43
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.56/tools/shared.py#L50
-# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.56/tools/shared.py#L43
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.57/tools/shared.py#L50
+# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.57/tools/shared.py#L43
 RDEPEND+="
 	${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
