@@ -520,6 +520,18 @@ echo "Average ping:  ${avg_ping}"
 echo "A ping above 300 is considered unplayable for gaming."
 	elif (( ${avg_ping%.*} > 160 )) ; then
 echo "A ping above 160 which is considered laggy for gaming."
+	elif (( ${avg_ping%.*} >= 100 )) ; then
+# 3 digit ping is the budget gamer 1990s aesthetic.
+echo "A ping above 100 meets casual gaming standards."
+	elif (( ${avg_ping%.*} > 60 && ${avg_ping%.*} < 100 )) ; then
+# 2 digit ping is 2000s, 2010s, 2020s gaming aesthetic.
+echo "Your ping is considered acceptable for high end content gaming."
+	elif (( ${avg_ping%.*} >= 10 ${avg_ping%.*} <= 60 )) ; then
+# 2 digit ping, but never distorts in live gamer streams
+echo "Your ping meets the current standard as a live gamer streamer celeb."
+	elif (( ${avg_ping%.*} < 10 )) ; then
+# 1 digit ping or less is the future gaming aesthetic
+echo "Your ping exceeds the current gaming aesthetic."
 	fi
 	if (( ${avg_ping%.*} > 60 )) ; then
 echo "A ping above 60 ms may cause voice distortion during VoIP calls or live streaming."
