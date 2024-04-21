@@ -140,11 +140,7 @@ echo
 echo "${MY_NAME} - Helper script to setup the TCP Congestion Control Algorithm"
 echo "for new connections for the kernel"
 echo
-	if [[ "${TCCA_ELEVATE_PRIV}" =~ ("pkexec"|"polkit"|"sudo") ]] ; then
-echo "${MY_NAME} [cca|info|use-case] [cmd] [args]"
-	else
 echo "${MY_NAME} [cca|info|use-case]"
-	fi
 echo
 echo "Client"
 echo
@@ -214,11 +210,6 @@ echo
 echo "  ${cca}"
 	done
 
-echo
-	if [[ "${TCCA_ELEVATE_PRIV}" =~ ("pkexec"|"polkit"|"sudo") ]] ; then
-echo "[cmd]    - program to run (optional)"
-echo "[args]   - list of arguments to pass to the program (optional)"
-	fi
 echo
 echo "Info"
 echo
