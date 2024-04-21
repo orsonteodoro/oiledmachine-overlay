@@ -13064,11 +13064,13 @@ ot-kernel_install_tcca() {
 		}
 
 		_tcc_packet_loss_resilient() {
-	# Minimal loss rate sorted
+	# Sorted by incast avoidance relative to packet loss
 			local tcc
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then # 21.09
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
+	# Avoids incast at ~15% loss
 				tcc="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then # 21.09
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
+	# Avoids incast at ~4% loss
 				tcc="pcc"
 			else
 				tcc="${default_tcca}" # Fallback to unbreak
