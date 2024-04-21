@@ -30,6 +30,11 @@ if [[ -e /etc/tcca-${PV}-${EXTRAVERSION}-${ARCH}.conf ]] ; then
 	source /etc/tcca-${PV}-${EXTRAVERSION}-${ARCH}.conf
 fi
 
+INTERNAL_PING_IP_ADDR=${INTERNAL_PING_IP_ADDR:-"192.168.1.254"}
+EXTERNAL_PING_IP_ADDR=${EXTERNAL_PING_IP_ADDR:-"kernel.org"}
+SAMPLE_SIZE="30" # Standard
+PERCENTILE="68" # This is within 1 standard deviation, pruning outliers or junk results.
+
 CCA=(
 	bbr
 	bbr2
@@ -136,9 +141,9 @@ echo "${MY_NAME} - Helper script to setup the TCP Congestion Control Algorithm"
 echo "for new connections for the kernel"
 echo
 	if [[ "${TCCA_ELEVATE_PRIV}" =~ ("pkexec"|"polkit"|"sudo") ]] ; then
-echo "${MY_NAME} [cca|use-case|menu-item] [cmd] [args]"
+echo "${MY_NAME} [cca|info|use-case] [cmd] [args]"
 	else
-echo "${MY_NAME} [cca|use-case|menu-item]"
+echo "${MY_NAME} [cca|info|use-case]"
 	fi
 echo
 echo "Client"
@@ -215,13 +220,108 @@ echo "[cmd]    - program to run (optional)"
 echo "[args]   - list of arguments to pass to the program (optional)"
 	fi
 echo
-echo "Menu item"
+echo "Info"
 echo
-echo "  --help - Print this help"
-echo "  --status - For printing TCP Congestion Control details"
-echo "  --use=<alg> - For using the algorithm directly (DEPRECATED)"
-echo "  --set=<alg> - For using the algorithm directly (DEPRECATED)"
+echo "  help, --help - Print this help"
+echo "  cca, status, --status - For the current TCP Congestion Control affecting newer connections"
+echo "  internal-latency, --check-internal-latency - For internal ping report"
+echo "  external-latency, --check-external-latency - For external ping report"
+echo "  packet-loss, --check-packet-loss - For packet loss report"
+echo "  tips, --tips - Print ways to improve hardware layer or application layer performance."
+echo "  usage, --usage - Print usage instructions."
 echo
+}
+
+print_tips() {
+# Keep in sync with metadata.xml
+echo -e "
+      * It is recommended to fix physical layer and application layers issues
+        as best as possible because they can impact the effectiveness/benefits
+        of these Contestion Control Algorithms (CCAs).
+
+      * Tips to improve wired throughput:
+        1. Inspect the wire both on the ends and in the middle.  If any
+           cuts, dents, loosening, or stretching are observed; the wire needs to
+           be replaced.
+
+      * Tips to improve WiFi throughput:
+        1. Turn off all programs except emerge or the affected app.
+           [This step is necessary only if the protocol or action does not
+           support resume (e.g. git clone) or an improperly configured server
+           that frequently drops connections.]
+        2. Ensure that the antennas are not damaged.  Screw or replace the
+           antenna.
+        3. Ensure that the wireless router is positioned visibly in the open
+           area or room.  If the site in question has thick walls (aka
+           reinforced concrete), switch to wired or place the router visibly in
+           the line of sight of the WiFi receiver.  Remove metallic obstacles
+           in the line of sight to increase strength.
+        4. Move the wireless closer to increase signal strength to gain access
+           to the faster 5G mode.
+        5. Fix all dropped packet issues.  If networkmanager causes dropped
+           packets, use netifrc instead.  This may help unmask other sources of
+           dropped packets or possibly router issues such as overheating,
+           antenna damage, compromised firmware, an active DDOS attack.
+           As mentioned in the table above a tiny percentage of dropped
+           packets may cause a severe performance impact.
+        6. Orient the antenna to achieve the lowest ping consistently with the
+           wireless router.
+        7. Switch the TCP Congestion Control to one with the highest average
+           throughput (e.g. pcc).  For lossy poor quality connections, avoid
+           cubic and illinois. [This step is only necessary for protocols
+           or actions not supporting resume (e.g. git clone) or an improperly
+           configured server that frequently drops connections.]
+"
+}
+
+print_usage() {
+# Keep in sync with metadata.xml
+echo -e "
+        Video while downloading in the background (Simple):
+        1. close web browser
+        2. tcca streaming
+        3. play video on the web browser
+        4. tcca bgdl
+        5. emerge -fvuDN @world
+
+        Video while downloading in the background (Advanced):
+        1. close web browser
+        2. tcca bbr
+        3. play video on the web browser
+        4. tcca lp
+        5. emerge -fvuDN @world
+
+        Benefits:  skipless/uninterrupted video playback with maximum bandwidth
+        utilization for background downloads with met downstream bandwidth
+        requirements for video and audio.  [If 8k video and small bandwidth, it
+        will skip.]
+
+
+        Low latency web browsing (simple):
+        1. close web browser
+        2. tcca www
+
+        Low latency web browsing (advanced):
+        1. close web browser
+        2. tcca vegas
+
+        Benefits:  images load faster in parallel and faster navigation through
+        wikis.
+
+
+        Single player browser games (simple)
+        1. close web browser
+        2. tcca file
+
+        Single player browser games (advanced)
+        1. close web browser
+        2. tcca cubic
+
+        Benefits:  high throughput for downloading the game and shorter wait
+        time to play.
+
+     - You can verify the TCP congestion control use per socket via \`ss -i\`.
+"
 }
 
 unset TCCA_MAP
@@ -268,11 +368,175 @@ declare -A TCCA_MAP=(
 	["wireless"]="${TCCA_WIRELESS}"
 )
 
-print_status() {
+_check_numpy() {
+	if ! which python >/dev/null 2>&1 ; then
+echo "Install the python package."
+		exit 1
+	fi
+	local script=$(cat <<EOF
+import sys
+import traceback
+try:
+  import numpy as np
+  print(np.__version__)
+except Exception:
+  traceback.print_exc()
+  sys.exit(1)
+sys.exit(0)
+EOF
+)
+	python -c "${script}" >/dev/null 2>&1
+	if (( $? != 0 )) ; then
+		local python_version=$(python --version | cut -f 2 -d " ")
+echo "Missing dependency.  You must install the dev-python/numpy package for Python ${python_version}."
+		exit 1
+	fi
+}
+
+# Primarily to check if production possibilities is maximized in the latency side.
+check_internal_ping() {
+echo "Checking internal ping:"
+	if ! which ping >/dev/null 2>&1 ; then
+echo "Install ping from the net-misc/iputils package."
+		exit 1
+	fi
+	_check_numpy
+
+	local ping_output=$(ping -c ${SAMPLE_SIZE} ${INTERNAL_PING_IP_ADDR} 2>&1)
+	if [[ -z "${ping_output}" ]] ; then
+echo "Cannot ping.  Check if your connection is online or set INTERNAL_PING_IP_ADDR."
+		exit 1
+	fi
+echo -e "${ping_output}"
+	local pings=$(echo -e "${ping_output}" \
+		| grep -E -o -e "time=[0-9.]+" \
+		| cut -f 2 -d "=" \
+		| tr " " "\n" \
+		| sort -g \
+		| tr "\n" " " \
+		| sed -e "s| |,|g" \
+		| sed -e "s|,$||g")
+	local script=$(cat <<EOF
+import numpy as np
+a = np.array([${pings}])
+p = np.percentile(a, ${PERCENTILE})
+print(p)
+EOF
+)
+	local avg_ping=$(python -c "${script}")
+echo "Address:  ${INTERNAL_PING_IP_ADDR}"
+echo "Data:  ${pings}"
+echo "Percentile:  ${PERCENTILE}"
+echo "Sample size:  ${SAMPLE_SIZE}"
+echo "Average ping:  ${avg_ping}"
 echo
-echo "The Current TCP Congestion Control algorithm for new connections:"
-	echo -e "\t"$(cat /proc/sys/net/ipv4/tcp_congestion_control)
+echo "Idealistically, the ping data elements should be in the same order of"
+echo "magitude to minimize jitter."
 echo
+	local has_jitter=0
+	local ping
+	for ping in $(echo ${pings} | tr "," " ") ; do
+		local jitter=$(python -c "print(${ping} - ${avg_ping})")
+		if (( "${jitter%.*}" > 60 )) ; then
+echo "ping - ${ping} ms, jitter - ${jitter} ms"
+			has_jitter=1
+		fi
+	done
+
+	if (( ${has_jitter} == 1 )) ; then
+# Jitter is approximately RTT/2 > 30ms.
+echo
+echo "Detected jitter > 60 ms.  Your viewers may experience jitter or audio"
+echo "distortion.  Switching to a low latency congestion control may mitigate"
+echo "against jitter."
+echo
+	fi
+
+# Check if in the same order of magnitude or reasonable range
+	local is_unstable=0
+	local digits_avg=$(python -c "print(len(str(${avg_ping%.*})))")
+	for ping in $(echo ${pings} | tr "," " ") ; do
+		local digits_ping=$(python -c "print(len(str(${ping%.*})))")
+		if (( ${digits_avg} != ${digits_ping} )) ; then
+			if (( ${avg_ping%.*} >= 400 )) ; then
+# Poor quality connection
+echo "ping - ${ping} ms, digits = ${digits_ping}"
+				is_unstable=1
+			elif (( ${digits_avg} >= 4 )) ; then
+echo "ping - ${ping} ms, digits = ${digits_ping}"
+				is_unstable=1
+			elif (( ${digits_avg} == 3 && ${ping%.*} >= 1000 )) ; then
+echo "ping - ${ping} ms, digits = ${digits_ping}"
+				is_unstable=1
+			elif (( ${digits_avg} == 2 && ${ping%.*} >= 100 )) ; then
+echo "ping - ${ping} ms, digits = ${digits_ping}"
+				is_unstable=1
+			elif (( ${digits_avg} == 1 && ${ping%.*} >= 100 )) ; then
+echo "ping - ${ping} ms, digits = ${digits_ping}"
+				is_unstable=1
+			fi
+		fi
+	done
+	if (( ${is_unstable} == 1 )) ; then
+echo
+echo "Detected unstable connection."
+echo
+echo "Average ping:  ${avg_ping}"
+echo "Average ping digits:  ${digits_avg}"
+echo
+	fi
+echo
+echo "Closing all background downloading apps may improve the results."
+echo
+}
+
+# Primarily to check if gaming conneciton performance meets gaming community standards.
+check_external_ping() {
+echo "Checking external ping:"
+	if ! which ping >/dev/null 2>&1 ; then
+echo "Install ping from the net-misc/iputils package."
+		exit 1
+	fi
+	_check_numpy
+	local ping_output=$(ping -c ${SAMPLE_SIZE} ${EXTERNAL_PING_IP_ADDR} 2>&1)
+	if [[ -z "${ping_output}" ]] ; then
+echo "Cannot ping.  Check if your connection is online or set EXTERNAL_PING_IP_ADDR."
+		exit 1
+	fi
+echo -e "${ping_output}"
+	local pings=$(echo -e "${ping_output}" \
+		| grep -E -o -e "time=[0-9.]+" \
+		| cut -f 2 -d "=" \
+		| tr " " "\n" \
+		| sort -g \
+		| tr "\n" " " \
+		| sed -e "s| |,|g" \
+		| sed -e "s|,$||g")
+	local script=$(cat <<EOF
+import numpy as np
+a = np.array([${pings}])
+p = np.percentile(a, ${PERCENTILE})
+print(p)
+EOF
+)
+	local avg_ping=$(python -c "${script}")
+echo "Address:  ${EXTERNAL_PING_IP_ADDR}"
+echo "Data:  ${pings}"
+echo "Percentile:  ${PERCENTILE}"
+echo "Sample size:  ${SAMPLE_SIZE}"
+echo "Average ping:  ${avg_ping}"
+	if (( ${avg_ping} > 300 )) ; then
+echo "A ping above 300 is considered unplayable for gaming."
+	elif (( ${avg_ping} > 160 )) ; then
+echo "A ping above 160 which is considered laggy for gaming."
+	fi
+	if (( ${avg_ping} > 60 )) ; then
+echo "A ping above 60 may cause lag spikes during VoIP calls."
+	fi
+}
+
+check_packet_loss() {
+	echo "Gathering for packet loss report..."
 	local n=$(cat /sys/class/net/*/statistics/*dropped* | wc -l)
 	if [[ -e "/sys/class/net" && ${n} -ge 1 ]] ; then
 		local n0=$(cat /sys/class/net/*/statistics/*dropped* \
@@ -318,23 +582,49 @@ echo
 		local d3=$((${n4} - ${n3}))
 		local d4=$((${n5} - ${n4}))
 echo "Dropped packets per second:  ${d0} (t=1), ${d1} (t=2), ${d2} (t=3), ${d3} (t=4), ${d4} (t=5)"
-		if (( ${d0} == 1 || ${d1} == 1 )) ; then
+		if (( \
+			   ${d0} == 1 \
+			|| ${d1} == 1 \
+			|| ${d2} == 1 \
+			|| ${d3} == 1 \
+			|| ${d4} == 1 \
+		)) ; then
 echo
 echo "Detected 1 dropped packet per second which concerning and indicative of possible thoughput issues."
 echo "Consult the packet loss troubleshoot guides to resolve the issue."
 echo
-		elif (( ( ${d0} > 1 && ${d0} < 10 ) || ( ${d1} > 1 && ${d1} < 10 ) )) ; then
+		elif (( \
+			   ( ${d0} > 1 && ${d0} < 10 ) \
+			|| ( ${d1} > 1 && ${d1} < 10 ) \
+			|| ( ${d2} > 1 && ${d2} < 10 ) \
+			|| ( ${d3} > 1 && ${d3} < 10 ) \
+			|| ( ${d4} > 1 && ${d4} < 10 ) \
+		)) ; then
 echo
 echo "Detected <10 dropped packets per second which is unusual and indicative of throughput issues."
 echo "Consult the packet loss troubleshoot guides to resolve the issue."
 echo
-		elif (( ${d0} >= 10 || ${d1} >= 10 )) ; then
+		elif (( \
+			   ${d0} >= 10 \
+			|| ${d1} >= 10 \
+			|| ${d2} >= 10 \
+			|| ${d3} >= 10 \
+			|| ${d4} >= 10 \
+		)) ; then
 echo
 echo "Detected >=10 dropped packets per second which is indicative of serious throughput issues."
 echo "Consult the packet loss troubleshoot guides to resolve the issue."
 echo
+		else
+echo "No packet loss experienced."
 		fi
-		if (( ${d0} >= 1 && ${d1} >= 1 && ${d2} >= 1 && ${d3} >= 1 && ${d4} >= 1 )) ; then
+		if (( \
+			   ${d0} >= 1 \
+			&& ${d1} >= 1 \
+			&& ${d2} >= 1 \
+			&& ${d3} >= 1 \
+			&& ${d4} >= 1 \
+		)) ; then
 echo
 echo "Detected consecutive dropped packets in 5 seconds which is unusual."
 echo "Consult the packet loss troubleshoot guides to resolve the issue and ensure the router is not compromised."
@@ -344,20 +634,33 @@ echo
 	fi
 }
 
+print_status() {
+	echo -e $(cat /proc/sys/net/ipv4/tcp_congestion_control)
+}
+
 process_options() {
 	local x
 	for x in ${ARGV[@]} ; do
-		if [[ "${x}" == "--help" ]] ; then
+		if [[ "${x}" == "--help" || "${x}" == "help" ]] ; then
 			print_help
 			exit 0
-		elif [[ "${x}" == "--status" ]] ; then
+		elif [[ "${x}" == "--tips" || "${x}" == "tips" ]] ; then
+			print_tips
+			exit 0
+		elif [[ "${x}" == "--usage" || "${x}" == "usage" || "${x}" == "--instructions" || "${x}" == "instructions" ]] ; then
+			print_usage
+			exit 0
+		elif [[ "${x}" == "--status" || "${x}" == "status" || "${x}" == "cca" ]] ; then
 			print_status
 			exit 0
-		elif [[ "${x}" =~ ^"--use=" ]] ; then
-			set_tcca $(echo "${x}" | cut -f 2 -d "=" | sed -e "s|^tcp_||g")
+		elif [[ "${x}" == "--check-packet-loss" || "${x}" == "packet-loss" ]] ; then
+			check_packet_loss
 			exit 0
-		elif [[ "${x}" =~ ^"--set=" ]] ; then
-			set_tcca $(echo "${x}" | cut -f 2 -d "=" | sed -e "s|^tcp_||g")
+		elif [[ "${x}" == "--check-internal-latency" || "${x}" == "internal-latency" ]] ; then
+			check_internal_ping
+			exit 0
+		elif [[ "${x}" == "--check-external-latency" || "${x}" == "external-latency" ]] ; then
+			check_external_ping
 			exit 0
 		else
 			local cca
