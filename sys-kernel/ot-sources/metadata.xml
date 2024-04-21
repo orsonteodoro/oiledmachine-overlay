@@ -3072,7 +3072,7 @@ unset OT_KERNEL_PRIVATE_KEY
       pcc       | Send throughput, low requirements, better stability over time
                 | Higher CPU usage, incast at ~4% packet loss
       reno      | New Reno fallback algorithm
-                | Old algorithm, incast at ~0.002% packet loss
+                | Old algorithm, incast at ~0.0015% packet loss
       scalable  | Throughput
                 | High packet loss, incast at ~0.02% packet loss
       veno      | Throughput with wireless
@@ -3226,6 +3226,7 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_P2P - For decentralized distribution.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST - For downloading podcasts.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST_UPLOAD - For uploading podcasts.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RESIL - For incast mitigation.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING - For playing streaming audio or video.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_TORRENT - For decentralized distribution.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VIDEO_UPLOAD - For uploading videos.

@@ -13063,8 +13063,11 @@ ot-kernel_install_tcca() {
 			echo "${tcc}"
 		}
 
-		_tcc_packet_loss_resilient() {
-	# Sorted by incast avoidance relative to packet loss
+		_tcc_resil() {
+	# The idea is to maintain close to link capacity before ingest.
+	# Sought properties:
+	# Near link capacity at 5% loss or more
+	# Sorted by incast avoidance relative to packet loss.
 			local tcc
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
 	# Avoids incast at ~15% loss
@@ -13083,10 +13086,13 @@ ot-kernel_install_tcca() {
 		local tcca_streaming=$(_tcc_streaming)
 
 		local tcca_broadcast=$(_tcc_low_jitter)
-		local tcca_gaming=$(_tcc_low_latency)
-		local tcca_social_games=$(_tcc_low_latency)
 		local tcca_video_chat=$(_tcc_low_jitter)
 		local tcca_voip=$(_tcc_low_jitter)
+
+		local tcca_gaming=$(_tcc_low_latency)
+		local tcca_social_games=$(_tcc_low_latency)
+
+		local tcca_resil=$(_tcc_resil)
 
 		# sendrate ~ avg throughput based on self clocking.
 		# Sorted by completion time, then avg send rate
@@ -13190,6 +13196,7 @@ TCCA_MUSIC="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MUSIC:-${tcca_music}}"
 TCCA_P2P="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_P2P:-${tcca_p2p}}"
 TCCA_PODCAST="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST:-${tcca_podcast}}"
 TCCA_PODCAST_UPLOAD="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST_UPLOAD:-${tcca_podcast_upload}}"
+TCCA_RESIL="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RESIL:-${tcca_resil}}"
 TCCA_SOCIAL_GAMES="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SOCIAL_GAMES:-${tcca_social_games}}"
 TCCA_STREAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING:-${tcca_streaming}}"
 TCCA_TORRENT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_TORRENT:-${tcca_torrent}}"
