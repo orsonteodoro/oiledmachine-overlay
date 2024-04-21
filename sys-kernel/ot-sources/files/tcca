@@ -379,7 +379,8 @@ echo "You must install polkit"
 		exit 1
 	fi
 	if [[ -z "${USE_CASE}" ]] ; then
-echo "You must choose a use case.  See ${MY_NAME} --help."
+echo "You must choose a use case."
+		print_help
 		exit 1
 	else
 echo -e "USE_CASE:\t\t\t${USE_CASE}"
