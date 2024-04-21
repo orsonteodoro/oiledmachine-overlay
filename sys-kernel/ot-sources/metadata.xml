@@ -3051,7 +3051,7 @@ unset OT_KERNEL_PRIVATE_KEY
       bbr3      | BBR v1 upgraded with latency improvement with higher throughput, streaming, fair, ECN support, actively maintained, incast at ~1% packet loss
                 | Not mainlined
       c2tcp     | Lowest latencies and lowest jitter
-      cdg       | Throughput with latency improvement
+      cdg       | Latency
       clear     | Do not add any (Ebuild only)
       dctcp     | High throughput and low cap data center low-latency
                 | High latency for KiB RPC payloads
