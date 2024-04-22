@@ -485,6 +485,9 @@ echo "Average ping:  ${avg_ping}"
 echo "Average ping digits:  ${digits_avg}"
 echo
 	fi
+	if (( ${avg_ping%.*} >= 100 )) ; then
+echo "An average ping of 100+ ms is unsual for a LAN."
+	fi
 echo
 echo "Closing all background downloading apps may improve the results."
 echo
