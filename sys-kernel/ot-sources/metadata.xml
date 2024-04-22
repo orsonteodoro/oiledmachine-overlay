@@ -3165,7 +3165,7 @@ unset OT_KERNEL_PRIVATE_KEY
       Inter data center:  ppc, illinois
       Intra data center:  dctcp, bbr
       High BDP:  pcc, htcp, bic, cubic
-      LTE:  bbr, pcc
+      Mobile:  bbr
       Satellite:  pcc, hybla
       Wireless:  pcc, westwood, veno, vegas
 
@@ -3173,8 +3173,8 @@ unset OT_KERNEL_PRIVATE_KEY
       * bbr means any version.
       * Use the tcca script to change these.
       * For frequent packet loss, it recommended to avoid cubic.
+      * Mobile means road trip or rapidly changing networks.
       * Wireless means stationary home/office network.
-      * LTE means road trip or rapidly changing networks.
       * pcc means PCC Vivace.
 
     Further reading:
