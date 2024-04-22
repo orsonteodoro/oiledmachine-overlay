@@ -13044,7 +13044,7 @@ ot-kernel_install_tcca() {
 			echo "${tcc}"
 		}
 
-		_tcc_low_jitter_road() { # LTE
+		_tcc_low_jitter_mobile() { # LTE
 			local tcc
 	# Max throughput sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
@@ -13106,7 +13106,7 @@ ot-kernel_install_tcca() {
 		local tcca_streaming=$(_tcc_streaming)
 
 		local tcca_broadcast_home=$(_tcc_low_jitter_home)
-		local tcca_broadcast_road=$(_tcc_low_jitter_road)
+		local tcca_broadcast_mobile=$(_tcc_low_jitter_mobile)
 		local tcca_video_chat=$(_tcc_low_jitter)
 		local tcca_voip=$(_tcc_low_jitter)
 
