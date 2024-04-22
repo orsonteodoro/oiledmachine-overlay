@@ -3218,7 +3218,8 @@ unset OT_KERNEL_PRIVATE_KEY
     Clients:
 
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BGDL - For background downloads.
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST - For broadcasting content producers.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST_HOME - For broadcasting content producers from a home network.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST_MOBILE - For broadcasting content producers from a mobile network.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_DEFAULT - For general use.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_CLIENT - Full screen games while streaming music or VoIPing.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GREEN - For the lowest energy consumption.
@@ -3264,7 +3265,7 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HIGH_BDP - For high BDP networks.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTRA_DC - For inside data centers.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTER_DC - For between data centers.
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LTE - For smartphone networks.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MOBILE - For mobile networks.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SATELLITE - For satellite networks.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WIRELESS - For wireless networks.
 

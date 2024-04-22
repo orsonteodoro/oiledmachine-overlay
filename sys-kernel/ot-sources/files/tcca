@@ -61,7 +61,8 @@ CCA=(
 # TCCA - TCP Congestion Control Algorithm
 # Client
 TCCA_BGDL="${TCCA_BGDL:-lp}"
-TCCA_BROADCAST="${TCCA_BROADCAST:-bbr}"
+TCCA_BROADCAST_HOME="${TCCA_BROADCAST_HOME:-bbr}"
+TCCA_BROADCAST_MOBILE="${TCCA_BROADCAST_MOBILE:-bbr}"
 TCCA_DISTCC="${TCCA_DISTCC:-vegas}"
 TCCA_FILE="${TCCA_FILE:-cubic}"
 TCCA_GAMING="${TCCA_GAMING:-vegas}"
@@ -102,7 +103,7 @@ TCCA_UCDC_THROUGHPUT="${TCCA_HCDC_THROUGHPUT:-dctcp}"
 TCCA_HIGH_BDP="${TCCA_HIGH_BDP:-cubic}"
 TCCA_INTER_DC="${TCCA_INTER_DC:-illinois}"
 TCCA_INTRA_DC="${TCCA_INTRA_DC:-dctcp}"
-TCCA_LTE="${TCCA_LTE:-bbr}"
+TCCA_MOBILE="${TCCA_MOBILE:-bbr}"
 TCCA_SATELLITE="${TCCA_SATELLITE:-hybla}"
 TCCA_WIRELESS="${TCCA_WIRELESS:-westwood}"
 
@@ -145,7 +146,8 @@ echo
 echo "Client"
 echo
 echo "  bgdl - For background downloads"
-echo "  broadcast - For live broadcasting"
+echo "  broadcast-home - For live broadcasting from a home network"
+echo "  broadcast-mobile - For live broadcasting from a mobile network"
 echo "  distcc - For at home compile farm"
 echo "  file - For downloading large files one at a time with the shortest completion time"
 echo "  gaming - For gaming clients"
@@ -220,6 +222,11 @@ echo "  external-latency, --check-external-latency - For external ping report"
 echo "  packet-loss, --check-packet-loss - For packet loss report"
 echo "  tips, --tips - Print ways to improve hardware layer or application layer performance."
 echo "  usage, --usage - Print usage instructions."
+echo
+echo "Environment variables"
+echo
+echo "INTERNAL_PING_IP_ADDR - Home router IP address for internal-latency test"
+echo "EXTERNAL_PING_IP_ADDR - Any address on the Internet for external-latency test"
 echo
 }
 
@@ -318,7 +325,9 @@ echo -e "
 unset TCCA_MAP
 declare -A TCCA_MAP=(
 	["bgdl"]="${TCCA_BGDL}"
-	["broadcast"]="${TCCA_BROADCAST}"
+	["broadcast"]="${TCCA_BROADCAST_HOME}"
+	["broadcast-home"]="${TCCA_BROADCAST_HOME}"
+	["broadcast-mobile"]="${TCCA_BROADCAST_MOBILE}"
 	["distcc"]="${TCCA_DISTCC}"
 	["file"]="${TCCA_FILE}"
 	["gaming"]="${TCCA_GAMING}"

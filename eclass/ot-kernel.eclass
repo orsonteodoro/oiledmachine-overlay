@@ -3283,6 +3283,9 @@ eerror
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD has been removed."
 	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST_HOME.  Please rename to continue."
+	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_FG}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_FG has been removed."
 	fi
@@ -3300,6 +3303,9 @@ eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_CLIENT has been renamed 
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMES}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMES has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING.  Please rename to continue."
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LTE}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LTE has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MOBILE.  Please rename to continue."
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_BG}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_BG has been removed."
@@ -3452,10 +3458,13 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BGDL
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST_MOBILE
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST_HOME
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GREEN
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FILE
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MUSIC
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MOBILE
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_P2P
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST_UPLOAD
@@ -12802,7 +12811,7 @@ ot-kernel_install_tcca() {
 		}
 		local tcca_hs_fair=$(_tcc_hs_fair)
 
-		_tcc_lte() { # Smartphone
+		_tcc_mobile() { # Smartphone, road or subway
 			local tcc
 	# Throughput sorted
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
@@ -12816,7 +12825,7 @@ ot-kernel_install_tcca() {
 			fi
 			echo "${tcc}"
 		}
-		local tcca_lte=$(_tcc_lte)
+		local tcca_mobile=$(_tcc_mobile)
 
 		_tcc_hs_realtime() { # Home server
 			local tcc
@@ -13016,19 +13025,30 @@ ot-kernel_install_tcca() {
 	# < 1% packet loss
 	# > 70% throughput for higher video bitrate access
 	# < 60ms avg RTTs
-		_tcc_low_jitter() {
+		_tcc_low_jitter_home() { # Wired / WiFi
 			local tcc
 	# Max throughput sorted
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "c2tcp" ]] ; then # Only when target delay is <= 60
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "c2tcp" ]] ; then # Only when target delay is <= 60 ms
 				tcc="c2tcp"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then # 97
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
 				tcc="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cdg" ]] ; then # 79
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cdg" ]] ; then
 				tcc="cdg"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then # 77
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
 				tcc="pcc"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "nv" ]] ; then # 44, for audio only
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "nv" ]] ; then # For audio only
 				tcc="nv"
+			else
+				tcc="${default_tcca}" # Fallback to unbreak
+			fi
+			echo "${tcc}"
+		}
+
+		_tcc_low_jitter_road() { # LTE
+			local tcc
+	# Max throughput sorted
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
+				tcc="bbr"
 			else
 				tcc="${default_tcca}" # Fallback to unbreak
 			fi
@@ -13085,7 +13105,8 @@ ot-kernel_install_tcca() {
 		local tcca_podcast=$(_tcc_streaming)
 		local tcca_streaming=$(_tcc_streaming)
 
-		local tcca_broadcast=$(_tcc_low_jitter)
+		local tcca_broadcast_home=$(_tcc_low_jitter_home)
+		local tcca_broadcast_road=$(_tcc_low_jitter_road)
 		local tcca_video_chat=$(_tcc_low_jitter)
 		local tcca_voip=$(_tcc_low_jitter)
 
@@ -13188,7 +13209,8 @@ ot-kernel_install_tcca() {
 		cat <<EOF > "${T}/tcca.conf" || die
 # Client
 TCCA_BGDL="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BGDL:-${tcca_bgdl}}"
-TCCA_BROADCAST="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST:-${tcca_broadcast}}"
+TCCA_BROADCAST_MOBILE="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST_MOBILE:-${tcca_broadcast_mobile}}"
+TCCA_BROADCAST_HOME="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST_HOME:-${tcca_broadcast_home}}"
 TCCA_FILE="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FILE:-${tcca_file}}"
 TCCA_GAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING:-${tcca_gaming}}"
 TCCA_GREEN="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GREEN:-${tcca_green}}"
@@ -13228,7 +13250,7 @@ TCCA_UCDC_THROUGHPUT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_THROUGHPUT
 TCCA_HIGH_BDP="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HIGH_BDP:-${tcca_high_bdp}}"
 TCCA_INTER_DC="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTER_DC:-${tcca_inter_dc}}"
 TCCA_INTRA_DC="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTRA_DC:-${tcca_intra_dc}}"
-TCCA_LTE="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LTE:-${tcca_lte}}"
+TCCA_MOBILE="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MOBILE:-${tcca_mobile}}"
 TCCA_SATELLITE="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SATELLITE:-${tcca_satellite}}"
 TCCA_WIRELESS="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WIRELESS:-${tcca_wireless}}"
 TCCA_ELEVATE_PRIV="${tcca_elevate_priv}"
