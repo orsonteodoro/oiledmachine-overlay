@@ -1,5 +1,9 @@
 # oiledmachine-overlay
 
+## Important special note
+
+Work on this repo may cease or be infrequent.  Please see issue request.
+
 ## About
 
 This portage overlay contains various ebuilds for the Gentoo Linux
