@@ -528,7 +528,7 @@ echo "Average ping:  ${avg_ping}"
 	if (( ${avg_ping%.*} > 300 )) ; then
 echo "A ping above 300 is considered unplayable for gaming."
 	elif (( ${avg_ping%.*} > 160 )) ; then
-echo "A ping above 160 which is considered laggy for gaming."
+echo "A ping above 160 is considered laggy for gaming."
 	elif (( ${avg_ping%.*} >= 100 )) ; then
 # 3 digit ping is the budget gamer 1990s aesthetic.
 echo "A ping above 100 meets casual gaming standards."
