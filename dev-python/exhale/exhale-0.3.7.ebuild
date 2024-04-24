@@ -4,7 +4,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_10 ) # Upstream tests up to 3.10 for this release
+PYTHON_COMPAT=( python3_{10..12} ) # Upstream tests up to 3.10 for this release
 inherit distutils-r1
 
 DESCRIPTION="Automatic C++ library api documentation generation: breathe \
@@ -23,10 +23,9 @@ REQUIRED_USE="
 RDEPEND+="
 	(
 		<dev-python/sphinx-5[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-4.3.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-4.3.2[${PYTHON_USEDEP}]
 	)
-	>=dev-python/breathe-4.32[${PYTHON_USEDEP}]
-	>=dev-python/docutils-0.12[${PYTHON_USEDEP}]
+	>=dev-python/breathe-4.33.1[${PYTHON_USEDEP}]
         >=dev-python/lxml-4.6.4[${PYTHON_USEDEP}]
 	dev-python/beautifulsoup4[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
@@ -37,7 +36,7 @@ DEPEND+="
 BDEPEND+="
 	doc? (
 		<dev-python/jinja-3.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-4.3.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-4.3.2[${PYTHON_USEDEP}]
 		>=dev-python/sphinx_rtd_theme-1[${PYTHON_USEDEP}]
 		dev-python/sphinx-issues[${PYTHON_USEDEP}]
 	)
