@@ -235,7 +235,7 @@ RDEPEND="
 		)
 	)
 	distributed? (
-		sci-libs/tensorpipe[cuda?]
+		>=sci-libs/tensorpipe-2021.12.27[cuda?]
 	)
 	fbgemm? (
 		>=dev-libs/FBGEMM-2023.12.01
@@ -260,7 +260,7 @@ RDEPEND="
 		virtual/mpi
 	)
 	nnpack? (
-		sci-libs/NNPACK
+		>=sci-libs/NNPACK-2020.12.21
 	)
 	numpy? (
 		$(python_gen_cond_dep '
@@ -280,7 +280,7 @@ RDEPEND="
 		media-libs/opencv:=
 	)
 	qnnpack? (
-		sci-libs/QNNPACK
+		>=sci-libs/QNNPACK-2019.08.28
 	)
 	rocm? (
 		|| (
