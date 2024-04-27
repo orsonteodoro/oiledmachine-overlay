@@ -5,6 +5,10 @@ EAPI=8
 
 # This package is a misnomer.  This is the non-python portions of pytorch.
 
+# For requirements, see
+# https://github.com/pytorch/pytorch/blob/v2.0.1/RELEASE.md?plain=1#L45
+# https://github.com/pytorch/pytorch/tree/v1.13.1/third_party
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906
@@ -230,7 +234,7 @@ RDEPEND="
 		=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*[profiler]
 	)
 	fbgemm? (
-		dev-libs/FBGEMM
+		>=dev-libs/FBGEMM-2022.09.28
 	)
 	ffmpeg? (
 		$(gen_ffmpeg_depends)
@@ -274,7 +278,7 @@ RDEPEND="
 		sci-libs/tensorpipe
 	)
 	xnnpack? (
-		sci-libs/XNNPACK
+		>=sci-libs/XNNPACK-2022.02.17
 	)
 "
 DEPEND="
@@ -284,12 +288,12 @@ DEPEND="
 	')
 	${RDEPEND}
 	>=dev-cpp/eigen-3.4
+	>=sci-libs/kineto-0.4.0_p20220619
 	dev-libs/psimd
 	dev-libs/FP16
 	dev-libs/FXdiv
 	dev-libs/pocketfft
 	dev-libs/flatbuffers
-	sci-libs/kineto
 	cuda? (
 		dev-libs/cutlass
 	)

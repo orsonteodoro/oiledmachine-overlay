@@ -1,0 +1,103 @@
+# Copyright 2022-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+CommitId="4fe1655300fcd963c9cd69307b02974549ee1f4f" # committer-date:<2024-03-01
+
+# Requirements:
+# https://github.com/google/XNNPACK/blob/4fe1655300fcd963c9cd69307b02974549ee1f4f/cmake/DownloadCpuinfo.cmake
+# https://github.com/google/XNNPACK/blob/4fe1655300fcd963c9cd69307b02974549ee1f4f/cmake/DownloadPThreadPool.cmake
+# https://github.com/google/XNNPACK/blob/4fe1655300fcd963c9cd69307b02974549ee1f4f/cmake/DownloadFP16.cmake
+# https://github.com/google/XNNPACK/blob/4fe1655300fcd963c9cd69307b02974549ee1f4f/cmake/DownloadFXdiv.cmake
+# https://github.com/google/XNNPACK/blob/4fe1655300fcd963c9cd69307b02974549ee1f4f/cmake/DownloadGoogleTest.cmake
+
+
+inherit cmake
+
+S="${WORKDIR}/${PN}-${CommitId}"
+SRC_URI="
+https://github.com/google/${PN}/archive/${CommitId}.tar.gz
+	-> ${P}.tar.gz
+"
+
+DESCRIPTION="library of floating-point neural network inference operators"
+HOMEPAGE="https://github.com/google/XNNPACK/"
+LICENSE="MIT"
+SLOT="0"
+KEYWORDS="~amd64"
+IUSE="+assembly jit +memopt +sparse static-libs test"
+RDEPEND="
+	>=dev-libs/cpuinfo-2023.08.16
+	>=dev-libs/pthreadpool-2023.08.28
+"
+DEPEND="
+	${RDEPEND}
+	>=dev-libs/FP16-2021.03.21
+	>=dev-libs/FXdiv-2020.04.17
+"
+BDEPEND="
+	test? (
+		>=dev-cpp/gtest-1.12.1
+	)
+"
+RESTRICT="
+	!test? (
+		test
+	)
+"
+REQUIRED_USE="
+	test? (
+		static-libs
+	)
+"
+PATCHES=(
+	"${FILESDIR}/${PN}-2022.02.17-gentoo.patch"
+)
+
+src_prepare() {
+	sed -i \
+		-e "/PRIVATE fp16)/d" \
+		-e "/PRIVATE fxdiv)/d" \
+		-e "/PRIVATE clog)/d" \
+		-e "/TARGET_LINK_LIBRARIES/s: fp16::" \
+		CMakeLists.txt \
+		|| die
+	dropTest=(
+		"add-nd-test"
+		"subtract-nd-test"
+		"f32-velu-test"
+		"qc8-dwconv-minmax-fp32-test"
+		"qs8-dwconv-minmax-fp32-test"
+		"qs8-vadd-minmax-test"
+		"qs8-vaddc-minmax-test"
+		"qu8-dwconv-minmax-fp32-test"
+		"qu8-vadd-minmax-test"
+		"qu8-vaddc-minmax-test"
+	)
+	local id
+	for id in ${dropTest[@]}
+	do
+		sed -i \
+			-e "/ADD_TEST(${id}/d" \
+			CMakeLists.txt \
+			|| die
+	done
+	cmake_src_prepare
+}
+
+src_configure() {
+	local mycmakeargs=(
+		-DXNNPACK_BUILD_BENCHMARKS=OFF
+		-DXNNPACK_USE_SYSTEM_LIBS=ON
+		-DXNNPACK_BUILD_TESTS=$(usex test ON OFF)
+		-DXNNPACK_LIBRARY_TYPE=$(usex static-libs static shared)
+		-DXNNPACK_ENABLE_ASSEMBLY=$(usex assembly ON OFF)
+		-DXNNPACK_ENABLE_JIT=$(usex jit ON OFF)
+		-DXNNPACK_ENABLE_MEMOPT=$(usex memopt ON OFF)
+		-DXNNPACK_ENABLE_SPARSE=$(usex sparse ON OFF)
+		-DCMAKE_POSITION_INDEPENDENT_CODE=ON
+	)
+	cmake_src_configure
+	cd "${BUILD_DIR}" || die
+}

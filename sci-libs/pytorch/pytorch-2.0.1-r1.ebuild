@@ -5,6 +5,9 @@ EAPI=8
 
 # This is the python portion of the package.
 
+# For requirements, see
+# https://github.com/pytorch/pytorch/blob/v2.0.1/RELEASE.md?plain=1#L44
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906
@@ -30,6 +33,7 @@ AMDGPU_TARGETS_USEDEP=("${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}")
 AMDGPU_TARGETS_USEDEP=("${AMDGPU_TARGETS_USEDEP[@]/%/?}")
 AMDGPU_TARGETS_USEDEP="${AMDGPU_TARGETS_USEDEP[@]}"
 AMDGPU_TARGETS_USEDEP="${AMDGPU_TARGETS_USEDEP// /,}"
+CUDA_PV="11.8" # 11.7 minimum required
 CUDA_TARGETS_USEDEP=("${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}")
 CUDA_TARGETS_USEDEP=("${CUDA_TARGETS_USEDEP[@]/%/?}")
 CUDA_TARGETS_USEDEP="${CUDA_TARGETS_USEDEP[@]}"
@@ -139,7 +143,6 @@ gen_rocm_depends() {
 		"
 	done
 }
-CUDA_PV="11.8" # 11.7 minimum required
 RDEPEND="
 	$(python_gen_cond_dep '
 		dev-python/sympy[${PYTHON_USEDEP}]

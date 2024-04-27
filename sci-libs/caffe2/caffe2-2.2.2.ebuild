@@ -5,6 +5,10 @@ EAPI=8
 
 # This package is a misnomer.  This is the non-python portions of pytorch.
 
+# For requirements, see
+# https://github.com/pytorch/pytorch/blob/v2.2.2/RELEASE.md?plain=1#L49
+# https://github.com/pytorch/pytorch/tree/v2.2.2/third_party
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906
@@ -187,7 +191,7 @@ RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-cpp/glog-0.5.0
 	>=dev-libs/protobuf-3.13.1:0/3.21
-	>=sci-libs/onnx-1.12.0
+	>=sci-libs/onnx-1.15.0_rc2
 	dev-cpp/gflags:=
 	dev-libs/cpuinfo
 	dev-libs/libfmt
@@ -300,7 +304,7 @@ DEPEND="
 	dev-libs/pocketfft
 	dev-libs/flatbuffers
 	cuda? (
-		>=dev-libs/cutlass-3.1.0
+		>=dev-libs/cutlass-3.2.2
 	)
 	onednn? (
 		sci-libs/ideep

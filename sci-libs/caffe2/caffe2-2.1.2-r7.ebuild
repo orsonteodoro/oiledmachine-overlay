@@ -5,6 +5,10 @@ EAPI=8
 
 # This package is a misnomer.  This is the non-python portions of pytorch.
 
+# For requirements, see
+# https://github.com/pytorch/pytorch/blob/v2.1.2/RELEASE.md?plain=1#L49
+# https://github.com/pytorch/pytorch/tree/v2.1.2/third_party
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906
