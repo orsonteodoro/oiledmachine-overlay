@@ -3,14 +3,14 @@
 
 EAPI=8
 
-CommitId="4fe1655300fcd963c9cd69307b02974549ee1f4f" # committer-date:<2024-03-01
+CommitId="86e00162c213f56a4e70abd3d8f2488bb0ae2eed" # committer-date:2024-03-01
 
 # Requirements:
-# https://github.com/google/XNNPACK/blob/4fe1655300fcd963c9cd69307b02974549ee1f4f/cmake/DownloadCpuinfo.cmake
-# https://github.com/google/XNNPACK/blob/4fe1655300fcd963c9cd69307b02974549ee1f4f/cmake/DownloadPThreadPool.cmake
-# https://github.com/google/XNNPACK/blob/4fe1655300fcd963c9cd69307b02974549ee1f4f/cmake/DownloadFP16.cmake
-# https://github.com/google/XNNPACK/blob/4fe1655300fcd963c9cd69307b02974549ee1f4f/cmake/DownloadFXdiv.cmake
-# https://github.com/google/XNNPACK/blob/4fe1655300fcd963c9cd69307b02974549ee1f4f/cmake/DownloadGoogleTest.cmake
+# https://github.com/google/XNNPACK/blob/86e00162c213f56a4e70abd3d8f2488bb0ae2eed/cmake/DownloadCpuinfo.cmake
+# https://github.com/google/XNNPACK/blob/86e00162c213f56a4e70abd3d8f2488bb0ae2eed/cmake/DownloadPThreadPool.cmake
+# https://github.com/google/XNNPACK/blob/86e00162c213f56a4e70abd3d8f2488bb0ae2eed/cmake/DownloadFP16.cmake
+# https://github.com/google/XNNPACK/blob/86e00162c213f56a4e70abd3d8f2488bb0ae2eed/cmake/DownloadFXdiv.cmake
+# https://github.com/google/XNNPACK/blob/86e00162c213f56a4e70abd3d8f2488bb0ae2eed/cmake/DownloadGoogleTest.cmake
 
 
 inherit cmake
@@ -26,14 +26,14 @@ HOMEPAGE="https://github.com/google/XNNPACK/"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="+assembly jit +memopt +sparse static-libs test"
+IUSE="+assembly jit +memopt +sparse static-libs test ebuild-revision-1"
 RDEPEND="
-	>=dev-libs/cpuinfo-2023.08.16
+	>=dev-libs/cpuinfo-2023.11.03
 	>=dev-libs/pthreadpool-2023.08.28
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-libs/FP16-2021.03.21
+	>=dev-libs/FP16-2021.03.20
 	>=dev-libs/FXdiv-2020.04.17
 "
 BDEPEND="
