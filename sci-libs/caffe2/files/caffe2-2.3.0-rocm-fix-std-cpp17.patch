@@ -1,0 +1,63 @@
+diff -urp pytorch-2.3.0.orig/c10/hip/CMakeLists.txt pytorch-2.3.0/c10/hip/CMakeLists.txt
+--- pytorch-2.3.0.orig/c10/hip/CMakeLists.txt	2024-04-27 18:42:26.888958683 -0700
++++ pytorch-2.3.0/c10/hip/CMakeLists.txt	2024-04-27 19:14:41.444461648 -0700
+@@ -30,6 +30,7 @@ hip_add_library(c10_hip ${C10_HIP_SRCS}
+ 
+ # Propagate HIP_CXX_FLAGS that were set from Dependencies.cmake
+ target_compile_options(c10_hip PRIVATE ${HIP_CXX_FLAGS})
++set_target_properties(c10_hip PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
+ 
+ # caffe2_hip adds a bunch of dependencies like rocsparse, but c10/hip is supposed to be
+ # minimal.  I'm not sure if we need hip_hcc or not; for now leave it out
+diff -urp pytorch-2.3.0.orig/caffe2/CMakeLists.txt pytorch-2.3.0/caffe2/CMakeLists.txt
+--- pytorch-2.3.0.orig/caffe2/CMakeLists.txt	2024-04-27 18:42:26.956958104 -0700
++++ pytorch-2.3.0/caffe2/CMakeLists.txt	2024-04-27 19:14:41.444461648 -0700
+@@ -1712,6 +1712,7 @@ if(USE_ROCM)
+ 
+   # Since PyTorch files contain HIP headers, these flags are required for the necessary definitions to be added.
+   target_compile_options(torch_hip PUBLIC ${HIP_CXX_FLAGS})  # experiment
++  set_target_properties(torch_hip PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
+   target_link_libraries(torch_hip PUBLIC c10_hip)
+ 
+   if(NOT INTERN_BUILD_MOBILE)
+@@ -1908,6 +1909,7 @@ if(BUILD_TEST)
+       target_include_directories(${test_name} PRIVATE $<INSTALL_INTERFACE:include>)
+       target_include_directories(${test_name} PRIVATE ${Caffe2_CPU_INCLUDE} ${Caffe2_HIP_INCLUDE})
+       target_compile_options(${test_name} PRIVATE ${HIP_CXX_FLAGS})
++      set_target_properties(${test_name} PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
+       add_test(NAME ${test_name} COMMAND $<TARGET_FILE:${test_name}>)
+       if(INSTALL_TEST)
+         install(TARGETS ${test_name} DESTINATION test)
+@@ -2092,6 +2094,7 @@ if(BUILD_PYTHON)
+     endif()
+     if(NOT MSVC)
+       target_compile_options(caffe2_pybind11_state_hip PRIVATE ${HIP_CXX_FLAGS} -fvisibility=hidden)
++      set_target_properties(caffe2_pybind11_state_hip PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
+     endif()
+     set_target_properties(caffe2_pybind11_state_hip PROPERTIES PREFIX "")
+     set_target_properties(caffe2_pybind11_state_hip PROPERTIES SUFFIX ${PY_EXT_SUFFIX})
+Only in pytorch-2.3.0/caffe2: CMakeLists.txt.orig
+Only in pytorch-2.3.0/cmake: Dependencies.cmake.orig
+Only in pytorch-2.3.0/cmake: Dependencies.cmake.rej
+diff -urp pytorch-2.3.0.orig/cmake/public/utils.cmake pytorch-2.3.0/cmake/public/utils.cmake
+--- pytorch-2.3.0.orig/cmake/public/utils.cmake	2024-04-27 18:42:26.868958853 -0700
++++ pytorch-2.3.0/cmake/public/utils.cmake	2024-04-27 19:14:41.444461648 -0700
+@@ -335,6 +335,7 @@ function(caffe2_hip_binary_target target
+   caffe2_binary_target(${target_name_or_src})
+ 
+   target_compile_options(${__target} PRIVATE ${HIP_CXX_FLAGS})
++  set_target_properties(${__target} PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
+   target_include_directories(${__target} PRIVATE ${Caffe2_HIP_INCLUDE})
+ endfunction()
+ 
+diff -urp pytorch-2.3.0.orig/modules/detectron/CMakeLists.txt pytorch-2.3.0/modules/detectron/CMakeLists.txt
+--- pytorch-2.3.0.orig/modules/detectron/CMakeLists.txt	2024-04-27 18:42:26.892958649 -0700
++++ pytorch-2.3.0/modules/detectron/CMakeLists.txt	2024-04-27 19:14:41.448461613 -0700
+@@ -31,6 +31,7 @@ if(BUILD_CAFFE2_OPS)
+         ${Detectron_CPU_SRCS}
+         ${Detectron_HIP_SRCS})
+     target_compile_options(caffe2_detectron_ops_hip PRIVATE ${HIP_CXX_FLAGS})
++    set_target_properties(caffe2_detectron_ops_hip PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS OFF)
+     if(USE_MKLDNN)
+       target_link_libraries(caffe2_detectron_ops_hip PRIVATE caffe2::mkldnn)
+     endif()

@@ -62,7 +62,7 @@ ROCM_SLOTS2=( $(gen_rocm_slots) )
 
 inherit cmake cuda flag-o-matic llvm rocm python-single-r1
 
-#KEYWORDS="~amd64"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${MYP}"
 SRC_URI="
 https://github.com/pytorch/${MYPN}/archive/refs/tags/v${PV}.tar.gz
@@ -315,11 +315,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.13.0-install-dirs.patch"
 	"${FILESDIR}/${PN}-1.12.0-glog-0.6.0.patch"
 	"${FILESDIR}/${PN}-1.13.1-tensorpipe.patch"
-	"${FILESDIR}/${PN}-2.0.0-gcc13.patch"
-	"${FILESDIR}/${PN}-2.0.0-cudnn_include_fix.patch"
+	"${FILESDIR}/${PN}-2.3.0-cudnn_include_fix.patch"
 	"${FILESDIR}/${PN}-2.1.2-fix-rpath.patch"
 	"${FILESDIR}/${PN}-2.1.2-fix-openmp-link.patch"
-	"${FILESDIR}/${PN}-2.1.2-rocm-fix-std-cpp17.patch"
+	"${FILESDIR}/${PN}-2.3.0-rocm-fix-std-cpp17.patch"
 )
 
 pkg_setup() {
