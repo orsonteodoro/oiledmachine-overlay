@@ -4,22 +4,22 @@
 EAPI=8
 
 # For dependencies, see
-# https://github.com/PixarAnimationStudios/USD/blob/v21.11/VERSIONS.md
-# https://github.com/PixarAnimationStudios/USD/blob/v21.11/build_scripts/build_usd.py#L2019
+# https://github.com/PixarAnimationStudios/USD/blob/v23.11/VERSIONS.md
+# https://github.com/PixarAnimationStudios/USD/blob/v23.11/build_scripts/build_usd.py#L2019
 # TBB 2021 not ready yet.  tbb::task, tbb::empty_task references are the major hurdles
 
-BOOST_PV="1.70.0"
+BOOST_PV="1.76.0"
 CMAKE_BUILD_TYPE="Release"
 LEGACY_TBB_SLOT="2"
 ONETBB_SLOT="0"
 OPENEXR_V2_PV="2.5.10 2.5.11 2.5.10 2.5.9 2.5.8 2.5.7"
 OPENEXR_V3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{9..11} )
 
 inherit cmake python-single-r1 flag-o-matic
 
 KEYWORDS="~amd64"
-S="${WORKDIR}/USD-${PV}"
+S="${WORKDIR}/OpenUSD-${PV}"
 SRC_URI="
 https://github.com/PixarAnimationStudios/USD/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -46,9 +46,9 @@ LICENSE="
 	custom
 	JSON
 	MIT
-	OpenUSD-21.11
+	OpenUSD-23.11
 "
-# custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/v21.11/pxr/usdImaging/usdImaging/cameraAdapter.cpp#L9
+# custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/v23.11/pxr/usdImaging/usdImaging/drawModeStandin.cpp#L9
 # custom - search "In consideration of your agreement"
 # MIT - the distro MIT license template does not have all rights reserved.
 SLOT="0"
@@ -56,7 +56,7 @@ SLOT="0"
 IUSE+="
 -alembic -doc +draco -embree +examples -experimental +hdf5 +imaging +jemalloc
 -materialx -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
-+ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
+-ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
 -vulkan r3
 "
 REQUIRED_USE+="
@@ -129,7 +129,7 @@ RDEPEND+="
 		>=dev-libs/boost-${BOOST_PV}:=
 	)
 	alembic? (
-		>=media-gfx/alembic-1.7.10[hdf5?]
+		>=media-gfx/alembic-1.8.5[hdf5?]
 	)
 	draco? (
 		>=media-libs/draco-1.4.3
@@ -144,17 +144,17 @@ RDEPEND+="
 		>=sci-libs/hdf5-1.10[cxx,hl]
 	)
 	imaging? (
-		>=media-libs/opensubdiv-3.4.3
+		>=media-libs/opensubdiv-3.5.1
 		x11-libs/libX11
 	)
 	jemalloc? (
 		dev-libs/jemalloc-usd
 	)
 	materialx? (
-		>=media-libs/materialx-1.38.0
+		>=media-libs/materialx-1.38.7
 	)
 	opencolorio? (
-		>=media-libs/opencolorio-1.0.9
+		>=media-libs/opencolorio-2.1.3
 	)
 	openexr? (
 		|| (
@@ -166,19 +166,19 @@ RDEPEND+="
 	)
 	openimageio? (
 		>=media-libs/libpng-1.6.29
-		>=media-libs/openimageio-2.1.16.0:=
+		>=media-libs/openimageio-2.3.21.0:=
 		>=media-libs/tiff-4.0.7
 		virtual/jpeg
 	)
 	openvdb? (
 		>=dev-libs/c-blosc-1.17
-		>=media-gfx/openvdb-6.1.0
+		>=media-gfx/openvdb-9.1.0
 	)
 	osl? (
-		>=media-libs/osl-1.8.12
+		>=media-libs/osl-1.10.9
 	)
 	ptex? (
-		>=media-libs/ptex-2.1.33
+		>=media-libs/ptex-2.4.2
 	)
 	python? (
 		${PYTHON_DEPS}
@@ -186,7 +186,7 @@ RDEPEND+="
 			>=dev-libs/boost-'"${BOOST_PV}"':=[python,${PYTHON_USEDEP}]
 			usdview? (
 				(
-					>=dev-python/pyside2-2.0.0[${PYTHON_USEDEP},quickcontrols2(+),script,scripttools]
+					>=dev-python/pyside2-5.15.2.1[${PYTHON_USEDEP},quickcontrols2(+),script,scripttools]
 					dev-qt/qtquickcontrols2:5
 				)
 				dev-python/pyside2-tools[${PYTHON_USEDEP},tools(+)]
@@ -208,29 +208,28 @@ BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/jinja-2[${PYTHON_USEDEP}]
 	')
-	>=dev-build/cmake-3.14.6
+	>=dev-build/cmake-3.17.5
 	>=sys-devel/bison-2.4.1
 	>=sys-devel/flex-2.5.39
 	dev-cpp/argparse
 	dev-util/patchelf
 	virtual/pkgconfig
 	doc? (
-		>=app-text/doxygen-1.8.14[dot]
+		>=app-text/doxygen-1.9.6[dot]
 	)
 	|| (
 		(
 			<sys-devel/gcc-11
-			>=sys-devel/gcc-6.3.1
+			>=sys-devel/gcc-9.3.1
 		)
 		<sys-devel/clang-12
 	)
 "
 PATCHES=(
 	"${FILESDIR}/algorithm.patch"
-	"${FILESDIR}/openusd-21.11-gcc-11-size_t.patch"
 	"${FILESDIR}/openusd-21.11-gcc-11-numeric_limits.patch"
-	"${FILESDIR}/openusd-21.11-glibc-2.34.patch"
-	"${FILESDIR}/openusd-21.11-clang-14-compat.patch"
+#	"${FILESDIR}/openusd-21.11-glibc-2.34.patch"
+#	"${FILESDIR}/openusd-21.11-clang-14-compat.patch"
 	"${FILESDIR}/openusd-21.11-use-whole-archive-for-lld.patch"
 )
 DOCS=( CHANGELOG.md README.md )
@@ -292,7 +291,7 @@ ewarn
 			-DDRACO_ATTRIBUTE_VALUES_DEDUPLICATION_SUPPORTED=ON \
 			-DTBB_SUPPRESS_DEPRECATED_MESSAGES=1
 	fi
-        # See https://github.com/PixarAnimationStudios/USD/blob/v21.11/cmake/defaults/Options.cmake
+        # See https://github.com/PixarAnimationStudios/USD/blob/v23.11/cmake/defaults/Options.cmake
 	local mycmakeargs+=(
 		$(usex experimental "
 			-DTBB_INCLUDE_DIR=${ESYSROOT}/usr/include
