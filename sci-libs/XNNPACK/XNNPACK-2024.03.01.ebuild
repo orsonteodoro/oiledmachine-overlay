@@ -12,7 +12,6 @@ CommitId="86e00162c213f56a4e70abd3d8f2488bb0ae2eed" # committer-date:2024-03-01
 # https://github.com/google/XNNPACK/blob/86e00162c213f56a4e70abd3d8f2488bb0ae2eed/cmake/DownloadFXdiv.cmake
 # https://github.com/google/XNNPACK/blob/86e00162c213f56a4e70abd3d8f2488bb0ae2eed/cmake/DownloadGoogleTest.cmake
 
-
 inherit cmake
 
 S="${WORKDIR}/${PN}-${CommitId}"
@@ -52,7 +51,7 @@ REQUIRED_USE="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2022.02.17-gentoo.patch"
+	"${FILESDIR}/${PN}-2024.03.01-gentoo.patch"
 )
 
 src_prepare() {
@@ -63,7 +62,7 @@ src_prepare() {
 		-e "/TARGET_LINK_LIBRARIES/s: fp16::" \
 		CMakeLists.txt \
 		|| die
-	dropTest=(
+	local dropTest=(
 		"add-nd-test"
 		"subtract-nd-test"
 		"f32-velu-test"

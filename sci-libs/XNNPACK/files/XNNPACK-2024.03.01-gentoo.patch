@@ -1,0 +1,12 @@
+--- a/CMakeLists.txt.orig	2024-04-27 20:12:00.794644390 -0700
++++ b/CMakeLists.txt	2024-04-27 20:15:39.696680178 -0700
+@@ -1060,9 +1060,6 @@ IF(XNNPACK_BUILD_TESTS)
+       FIND_PACKAGE(GTest REQUIRED)
+     ELSE()
+       SET(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+-      ADD_SUBDIRECTORY(
+-        "${GOOGLETEST_SOURCE_DIR}"
+-        "${CMAKE_BINARY_DIR}/googletest")
+     ENDIF()
+   ENDIF()
+ 

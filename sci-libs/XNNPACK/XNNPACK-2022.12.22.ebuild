@@ -55,7 +55,7 @@ src_prepare() {
 		-e "/TARGET_LINK_LIBRARIES/s: fp16::" \
 		CMakeLists.txt \
 		|| die
-	dropTest=(
+	local dropTest=(
 		"add-nd-test"
 		"subtract-nd-test"
 		"f32-velu-test"
