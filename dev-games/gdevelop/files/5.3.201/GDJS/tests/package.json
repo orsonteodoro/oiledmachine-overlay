@@ -1,0 +1,39 @@
+{
+  "name": "GDJS-tests",
+  "version": "0.0.0",
+  "description": "Tests for the HTML5 engine of GDevelop",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "karma start --browsers ChromeHeadless --single-run",
+    "test:watch": "karma start --browsers ChromeHeadless",
+    "test-benchmark": "karma start --browsers ChromeHeadless --single-run --enableBenchmarks",
+    "test-benchmark:watch": "karma start --browsers ChromeHeadless --enableBenchmarks",
+    "test:firefox": "karma start --browsers Firefox --single-run",
+    "test:firefox:watch": "karma start --browsers Firefox",
+    "test:edge": "karma start --browsers EdgeHeadless --single-run",
+    "test:edge:watch": "karma start --browsers EdgeHeadless"
+  },
+  "keywords": [
+    "HTML5",
+    "games",
+    "engine",
+    "Game",
+    "Develop"
+  ],
+  "author": "Florian Rival",
+  "license": "MIT",
+  "dependencies": {
+    "expect.js": "^0.3.1",
+    "mocha": "^1.21.4"
+  },
+  "devDependencies": {
+    "@chiragrupani/karma-chromium-edge-launcher": "2.1.1",
+    "karma": "^1.7.1",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-firefox-launcher": "^1.1.0",
+    "karma-mocha": "^1.3.0",
+    "karma-sinon": "^1.0.5",
+    "sinon": "^15.0.1"
+  }
+}
