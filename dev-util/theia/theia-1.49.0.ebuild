@@ -2360,9 +2360,9 @@ THIRD_PARTY_LICENSES="
 		Apache-2.0
 	)
 	(
-		custom
 		Apache-2.0
 		all-rights-reserved
+		custom
 	)
 	(
 		all-rights-reserved
@@ -2393,7 +2393,6 @@ THIRD_PARTY_LICENSES="
 			AFL-2.0
 			Apache-2.0
 			BSD
-			BSD-2
 			BSD-2
 			CC-BY-3.0
 			ISC
@@ -2440,10 +2439,9 @@ THIRD_PARTY_LICENSES="
 			)
 		)
 		(
-			Boost-1.0
-			Unlicense
 			Apache-2.0
 			Artist
+			Boost-1.0
 			BSD
 			BSD-2
 			CC-BY-3.0
@@ -2452,6 +2450,7 @@ THIRD_PARTY_LICENSES="
 			MIT
 			MPL-2.0
 			OFL-1.1
+			Unlicense
 			ZLIB
 			|| (
 				AFL-2.0
@@ -2485,10 +2484,10 @@ THIRD_PARTY_LICENSES="
 			public-domain
 		)
 		Apache-2.0
-		MIT
 		EPL-1.0
 		ISC
 		LGPL-2.1+
+		MIT
 		W3C
 		|| (
 			EPL-2.0
@@ -2540,11 +2539,11 @@ THIRD_PARTY_LICENSES="
 	)
 "
 LICENSE="
-	EPL-2.0
-	GPL-2-with-classpath-exception
-	electron-23.3.13-chromium.html
 	${ELECTRON_APP_LICENSES}
 	${THIRD_PARTY_LICENSES}
+	electron-23.3.13-chromium.html
+	EPL-2.0
+	GPL-2-with-classpath-exception
 "
 
 # For ELECTRON_APP_LICENSES, see
