@@ -76,6 +76,7 @@
     "lint": "lerna run lint",
     "lint:clean": "rimraf .eslintcache",
     "lint:oneshot": "node --max-old-space-size=4096 node_modules/eslint/bin/eslint.js --cache=true \"{dev-packages,packages,examples}/**/*.{ts,tsx}\"",
+    "preinstall": "node-gyp install",
     "postinstall": "theia-patch",
     "prepare": "yarn -s compile:references && lerna run prepare && yarn -s compile",
     "publish:latest": "lerna publish --exact --yes --no-push",
@@ -118,6 +119,7 @@
     "ms-vscode.references-view"
   ],
   "dependencies": {
-    "keytar": "^7.9.0"
+    "keytar": "^7.9.0",
+    "npx": "^10.2.2"
   }
 }
