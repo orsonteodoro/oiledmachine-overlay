@@ -24,7 +24,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 else
 # Initially generated from:
-#   grep "resolved" /var/tmp/portage/media-gfx/upscayl-2.10.9/work/upscayl-2.10.9/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
+#   grep "resolved" /var/tmp/portage/media-gfx/upscayl-2.11.0/work/upscayl-2.11.0/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
 # For the generator script, see the typescript/transform-uris.sh ebuild-package.
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
@@ -862,6 +862,9 @@ src_install() {
 		libGLESv2.so
 		libvk_swiftshader.so
 		libvulkan.so.1
+		resources/app.asar.unpacked/node_modules/sharp/build/Release/sharp-linux-x64.node
+		resources/app.asar.unpacked/node_modules/sharp/node_modules/node-addon-api/tools/conversion.js
+		resources/app.asar.unpacked/node_modules/sharp/node_modules/semver/bin/semver.js
 		resources/bin/upscayl-bin
 		upscayl
 	)
