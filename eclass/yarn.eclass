@@ -349,7 +349,7 @@ _yarn_src_unpack_default_ebuild() {
 		fi
 	fi
 	local args=()
-	if declare -f yarn_unpack_install_pre > /dev/null ; then
+	if declare -f yarn_unpack_install_pre > /dev/null 2>&1 ; then
 		yarn_unpack_install_pre
 	fi
 	eyarn install \
@@ -357,7 +357,7 @@ _yarn_src_unpack_default_ebuild() {
 		--pure-lockfile \
 		--verbose \
 		${YARN_INSTALL_ARGS[@]}
-	if declare -f yarn_unpack_install_post > /dev/null ; then
+	if declare -f yarn_unpack_install_post > /dev/null 2>&1 ; then
 		yarn_unpack_install_post
 	fi
 }
@@ -388,7 +388,7 @@ _yarn_src_unpack_default_upstream() {
 		fi
 	fi
 	local args=()
-	if declare -f yarn_unpack_install_pre > /dev/null ; then
+	if declare -f yarn_unpack_install_pre > /dev/null 2>&1 ; then
 		yarn_unpack_install_pre
 	fi
 
@@ -399,7 +399,7 @@ _yarn_src_unpack_default_upstream() {
 		--pure-lockfile \
 		--verbose \
 		${YARN_INSTALL_ARGS[@]}
-	if declare -f yarn_unpack_install_post > /dev/null ; then
+	if declare -f yarn_unpack_install_post > /dev/null 2>&1 ; then
 		yarn_unpack_install_post
 	fi
 }
@@ -525,33 +525,33 @@ einfo "Updating lockfile"
 		rm -f yarn.lock
 
 		if declare -f \
-			yarn_update_lock_install_pre > /dev/null ; then
+			yarn_update_lock_install_pre > /dev/null 2>&1 ; then
 			yarn_update_lock_install_pre
 		fi
 		enpm install \
 			${NPM_INSTALL_ARGS[@]}
 		if declare -f \
-			yarn_update_lock_install_post > /dev/null ; then
+			yarn_update_lock_install_post > /dev/null 2>&1 ; then
 			yarn_update_lock_install_post
 		fi
 		if declare -f \
-			yarn_update_lock_audit_pre > /dev/null ; then
+			yarn_update_lock_audit_pre > /dev/null 2>&1 ; then
 			yarn_update_lock_audit_pre
 		fi
 		enpm audit fix \
 			${NPM_AUDIT_FIX_ARGS[@]}
 		if declare -f \
-			yarn_update_lock_audit_post > /dev/null ; then
+			yarn_update_lock_audit_post > /dev/null 2>&1 ; then
 			yarn_update_lock_audit_post
 		fi
 
 		if declare -f \
-			yarn_update_lock_yarn_import_pre > /dev/null ; then
+			yarn_update_lock_yarn_import_pre > /dev/null 2>&1 ; then
 			yarn_update_lock_yarn_import_pre
 		fi
 		yarn import || die
 		if declare -f \
-			yarn_update_lock_yarn_import_post > /dev/null ; then
+			yarn_update_lock_yarn_import_post > /dev/null 2>&1 ; then
 			yarn_update_lock_yarn_import_post
 		fi
 
@@ -700,6 +700,9 @@ einfo "Called yarn_src_unpack"
 			_yarn_src_unpack_update_upstream
 		fi
 		_yarn_check_errors
+		if declare -f yarn_unpack_install_pre > /dev/null 2>&1 ; then
+			yarn_unpack_install_pre
+		fi
 einfo "Finished updating lockfiles."
 		exit 0
 	else

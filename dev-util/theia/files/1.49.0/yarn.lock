@@ -7425,7 +7425,7 @@ keytar@7.2.0:
     node-addon-api "^3.0.0"
     prebuild-install "^6.0.0"
 
-keytar@^7.7.0:
+keytar@^7.7.0, keytar@^7.9.0:
   version "7.9.0"
   resolved "https://registry.yarnpkg.com/keytar/-/keytar-7.9.0.tgz#4c6225708f51b50cbf77c5aae81721964c2918cb"
   integrity sha512-VPD8mtVtm5JNtA2AErl6Chp06JBfy7diFQ7TQQhdpWOl6MrCRB+eRbvAZUsbGQS9kiMq0coJsy0W0vHpDCkWsQ==

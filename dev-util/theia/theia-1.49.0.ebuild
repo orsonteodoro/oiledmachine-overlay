@@ -403,7 +403,7 @@ YARN_EXE_LIST="
 
 inherit desktop electron-app python-r1 yarn
 
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64" # Fails at runtime
 SLOT="0/monthly"
 if [[ "${SLOT}" =~ "community" ]] ; then
 	SUFFIX="-community"
@@ -2428,7 +2428,7 @@ LICENSE="
 # || ( Apache-2.0 MPL-2.0 ) - node_modules/dompurify/LICENSE
 
 RESTRICT="mirror"
-IUSE+=" git plugins r2"
+IUSE+=" git plugins ebuild-revision-2"
 # Upstream uses U 22.04.1
 RDEPEND+="
 	>=app-crypt/libsecret-0.20.5
@@ -2481,6 +2481,11 @@ einfo "Called yarn_unpack_install_pre()"
 		-e "/node-gyp install/d" \
 		"${S}/package.json" \
 		|| die
+	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
+einfo "Adding dependencies"
+		eyarn add npx --ignore-workspace-root-check
+		eyarn add keytar --ignore-workspace-root-check
+	fi
 }
 
 src_unpack() {

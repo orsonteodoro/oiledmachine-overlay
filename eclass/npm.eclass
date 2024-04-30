@@ -320,7 +320,7 @@ einfo "Missing package-lock.json"
 		fi
 	fi
 	local args=()
-	if declare -f npm_unpack_install_pre > /dev/null ; then
+	if declare -f npm_unpack_install_pre > /dev/null 2>&1 ; then
 		npm_unpack_install_pre
 	fi
 	local extra_args=()
@@ -338,7 +338,7 @@ einfo "Missing package-lock.json"
 	enpm install \
 		${extra_args[@]} \
 		${NPM_INSTALL_ARGS[@]}
-	if declare -f npm_unpack_install_post > /dev/null ; then
+	if declare -f npm_unpack_install_post > /dev/null 2>&1 ; then
 		npm_unpack_install_post
 	fi
 }
@@ -360,7 +360,7 @@ _npm_src_unpack_default_upstream() {
 	fi
 	cd "${S}" || die
 	local args=()
-	if declare -f npm_unpack_install_pre > /dev/null ; then
+	if declare -f npm_unpack_install_pre > /dev/null 2>&1 ; then
 		npm_unpack_install_pre
 	fi
 	local extra_args=()
@@ -378,7 +378,7 @@ _npm_src_unpack_default_upstream() {
 	enpm install \
 		${extra_args[@]} \
 		${NPM_INSTALL_ARGS[@]}
-	if declare -f npm_unpack_install_post > /dev/null ; then
+	if declare -f npm_unpack_install_post > /dev/null 2>&1 ; then
 		npm_unpack_install_post
 	fi
 }
@@ -557,24 +557,24 @@ npm_src_unpack() {
 		cd "${S}" || die
 		rm -f package-lock.json
 
-		if declare -f npm_update_lock_install_pre > /dev/null ; then
+		if declare -f npm_update_lock_install_pre > /dev/null 2>&1 ; then
 			npm_update_lock_install_pre
 		fi
 		enpm install \
 			${NPM_INSTALL_ARGS[@]}
-		if declare -f npm_update_lock_install_post > /dev/null ; then
+		if declare -f npm_update_lock_install_post > /dev/null 2>&1 ; then
 			npm_update_lock_install_post
 		fi
-		if declare -f npm_update_lock_audit_pre > /dev/null ; then
+		if declare -f npm_update_lock_audit_pre > /dev/null 2>&1 ; then
 			npm_update_lock_audit_pre
 		fi
 		enpm audit fix \
 			${NPM_AUDIT_FIX_ARGS[@]}
-		if declare -f npm_update_lock_audit_post > /dev/null ; then
+		if declare -f npm_update_lock_audit_post > /dev/null 2>&1 ; then
 			npm_update_lock_audit_post
 		fi
 
-		if declare -f npm_save_lockfiles > /dev/null ; then
+		if declare -f npm_save_lockfiles > /dev/null 2>&1 ; then
 			npm_save_lockfiles
 		fi
 
