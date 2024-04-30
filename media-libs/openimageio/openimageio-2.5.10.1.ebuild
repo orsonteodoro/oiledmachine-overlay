@@ -1,26 +1,27 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 # Requirements:
-# https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v2.3.21.0/INSTALL.md
+# https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v2.5.10.1/INSTALL.md
 
 CXX_STD_MIN="14"
 FONT_PN="OpenImageIO"
 LEGACY_TBB_SLOT="2"
-LLVM_COMPAT=( {15..13} )
+LLVM_COMPAT=( {17..13} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 ONETBB_SLOT="0"
 OPENEXR_V2_PV="2.5.9 2.5.8"
-OPENEXR_V3_PV="3.1.13 3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4"
-OPENVDB_APIS=( {9..5} )
+OPENEXR_V3_PV="3.2.4 3.2.3 3.2.2 3.2.1 3.2.0 3.1.13 3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4"
+OPENVDB_APIS=( {10..5} )
 OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
 OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
-PYTHON_COMPAT=( python3_10 )
+PYTHON_COMPAT=( python3_{10..11} )
 QT5_PV="5.15"
-TEST_OEXR_IMAGE_COMMIT="f17e353fbfcde3406fe02675f4d92aeae422a560" # committer-date:<=2022-10-31
-TEST_OIIO_IMAGE_COMMIT="aae37a54e31c0e719edcec852994d052ecf6541e" # committer-date:<=2022-10-31
+QT6_PV="6.6"
+TEST_OEXR_IMAGE_COMMIT="df16e765fee28a947244657cae3251959ae63c00" # committer-date:<=2024-04-01
+TEST_OIIO_IMAGE_COMMIT="aae37a54e31c0e719edcec852994d052ecf6541e" # committer-date:<=2024-04-01
 X86_CPU_FEATURES=(
 	avx:avx
 	avx2:avx2
@@ -37,15 +38,32 @@ CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} ) # Place after X86_CPU_F
 inherit cmake flag-o-matic font llvm python-single-r1 virtualx
 
 KEYWORDS="~amd64 ~ppc64 ~x86"
-S="${WORKDIR}/oiio-${PV}"
+S="${WORKDIR}/OpenImageIO-${PV}"
 SRC_URI="
 https://github.com/OpenImageIO/oiio/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 test? (
 	https://github.com/AcademySoftwareFoundation/openexr-images/archive/${TEST_OEXR_IMAGE_COMMIT}.tar.gz
 		-> ${PN}-oexr-test-image-${TEST_OEXR_IMAGE_COMMIT}.tar.gz
-	https://github.com/OpenImageIO/oiio-images/archive/${TEST_OIIO_IMAGE_COMMIT}.tar.gz
+	https://github.com/AcademySoftwareFoundation/OpenImageIO-images/archive/${TEST_OIIO_IMAGE_COMMIT}.tar.gz
 		-> ${PN}-oiio-test-image-${TEST_OIIO_IMAGE_COMMIT}.tar.gz
+	fits? (
+		https://www.cv.nrao.edu/fits/data/tests/ftt4b/file001.fits
+		https://www.cv.nrao.edu/fits/data/tests/ftt4b/file002.fits
+		https://www.cv.nrao.edu/fits/data/tests/ftt4b/file003.fits
+		https://www.cv.nrao.edu/fits/data/tests/ftt4b/file009.fits
+		https://www.cv.nrao.edu/fits/data/tests/ftt4b/file012.fits
+		https://www.cv.nrao.edu/fits/data/tests/pg93/tst0001.fits
+		https://www.cv.nrao.edu/fits/data/tests/pg93/tst0003.fits
+		https://www.cv.nrao.edu/fits/data/tests/pg93/tst0005.fits
+		https://www.cv.nrao.edu/fits/data/tests/pg93/tst0006.fits
+		https://www.cv.nrao.edu/fits/data/tests/pg93/tst0007.fits
+		https://www.cv.nrao.edu/fits/data/tests/pg93/tst0008.fits
+		https://www.cv.nrao.edu/fits/data/tests/pg93/tst0013.fits
+	)
+	jpeg2k? (
+		https://www.itu.int/wftp3/Public/t/testsignal/SpeImage/T803/v2002_11/J2KP4files.zip
+	)
 )
 "
 
@@ -55,7 +73,12 @@ https://sites.google.com/site/openimageio/
 https://github.com/OpenImageIO
 "
 LICENSE="BSD"
-RESTRICT="test" # Untested
+
+# test is not quite working yet
+RESTRICT="
+	test
+"
+
 RESTRICT+=" mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # font install is enabled upstream
@@ -65,8 +88,8 @@ ${CPU_FEATURES[@]%:*}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_APIS_[@]}
 aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d fits gif gui
-heif icc jpeg2k opencv opengl openvdb png ptex +python +qt5 raw rav1e tbb tools
-+truetype wayland webp X
+heif icc jpeg2k opencv opengl openvdb png ptex +python qt5 +qt6 raw rav1e tbb
+tools +truetype wayland webp X
 
 ebuild-revision-5
 "
@@ -107,6 +130,12 @@ REQUIRED_USE="
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)
+	opengl? (
+		|| (
+			qt5
+			qt6
+		)
+	)
 	openvdb? (
 		^^ (
 			${OPENVDB_APIS_[@]}
@@ -115,6 +144,12 @@ REQUIRED_USE="
 	)
 	python? (
 		${PYTHON_REQUIRED_USE}
+	)
+	qt5? (
+		opengl
+	)
+	qt6? (
+		opengl
 	)
 	rav1e? (
 		avif
@@ -154,11 +189,11 @@ gen_openexr_pairs() {
 	done
 }
 
-# Depends Oct 23, 2022
+# Depends Mar 16, 2024
 RDEPEND+="
 	>=dev-cpp/robin-map-0.6.2
 	>=dev-libs/boost-1.53:=
-	>=dev-libs/libfmt-8.0.0:=
+	>=dev-libs/libfmt-9.0.0:=
 	>=dev-libs/pugixml-1.8:=
 	>=media-libs/tiff-3.9:0=
 	sys-libs/zlib:=
@@ -177,6 +212,7 @@ RDEPEND+="
 			media-video/ffmpeg:0/55.57.57
 			media-video/ffmpeg:0/56.58.58
 			media-video/ffmpeg:0/57.59.59
+			media-video/ffmpeg:0/58.60.60
 		)
 		media-video/ffmpeg:=
 	)
@@ -250,17 +286,24 @@ RDEPEND+="
 			>=dev-qt/qtwayland-${QT5_PV}:5
 		)
 	)
+	qt6? (
+		>=dev-qt/qtbase-${QT6_PV}:6[gui,opengl?,wayland?,widgets,X?]
+		wayland? (
+			>=dev-qt/qtdeclarative-${QT6_PV}:6[opengl]
+			>=dev-qt/qtwayland-${QT6_PV}:6
+		)
+	)
 	raw? (
 		!cxx17? (
 			<media-libs/libraw-0.20:=
-			>=media-libs/libraw-0.15:=
+			>=media-libs/libraw-0.18:=
 		)
 		cxx17? (
 			>=media-libs/libraw-0.20:=
 		)
 	)
 	truetype? (
-		media-libs/freetype:2=
+		>=media-libs/freetype-2.8:2=
 	)
 	webp? (
 		>=media-libs/libwebp-0.6.1:=
@@ -291,7 +334,7 @@ BDEPEND_ICC="
 	>=sys-devel/icc-13
 "
 BDEPEND+="
-	>=dev-build/cmake-3.12
+	>=dev-build/cmake-3.15
 	clang? (
 		${BDEPEND_CLANG}
 	)
@@ -316,6 +359,11 @@ BDEPEND+="
 	)
 "
 DOCS=( CHANGES.md CREDITS.md README.md )
+PATCHES=(
+	"${FILESDIR}/${PN}-2.5.8.0-fits.patch"
+	"${FILESDIR}/${PN}-2.5.8.0-fix-unit_simd.patch"
+	"${FILESDIR}/${PN}-2.5.8.0-fix-tests.patch"
+)
 
 _oiio_use() {
 	local value=$(usex "${1}")
@@ -358,6 +406,22 @@ src_prepare() {
 	fi
 	cmake_src_prepare
 	cmake_comment_add_subdirectory src/fonts
+	if use test ; then
+		mv -v \
+			"${WORKDIR}/OpenImageIO-images-${TEST_OIIO_IMAGE_COMMIT}" \
+			"${WORKDIR}/oiio-images" \
+			|| die
+		mv -v \
+			"${WORKDIR}/openexr-images-${TEST_OEXR_IMAGE_COMMIT}" \
+			"${WORKDIR}/openexr-images" \
+			|| die
+		if use jpeg2k; then
+			mv -v \
+				"${WORKDIR}/J2KP4files" \
+				"${WORKDIR}/j2kp4files_v1_5" \
+				|| die
+		fi
+	fi
 }
 
 get_tbb_slot() {
@@ -381,6 +445,9 @@ src_configure() {
 		use "${cpufeature%:*}" && mysimd+=("${cpufeature#*:}")
 	done
 
+	# If no CPU SIMDs were used, completely disable them
+	[[ -z ${mysimd} ]] && mysimd=("0")
+
 	#
 	# This is currently needed on arm64 to get the NEON SIMD wrapper to
 	# compile the code successfully.
@@ -390,28 +457,32 @@ src_configure() {
 	#
 	use arm64 && append-flags -flax-vector-conversions
 
-	# If no CPU SIMDs were used, completely disable them
-	[[ -z ${mysimd} ]] && mysimd=("0")
+	local has_qt="OFF"
+	if use qt5 || use qt6 ; then
+		has_qt="ON"
+	fi
 
 	local mycmakeargs=(
 		-DBUILD_DOCS=$(usex doc)
+		-DCMAKE_UNITY_BUILD_MODE="BATCH"
 		-DINSTALL_DOCS=$(usex doc)
 		-DINSTALL_FONTS="OFF"
 		-DOIIO_BUILD_TESTS="OFF" # as they are RESTRICTed
 		-DOIIO_BUILD_TOOLS=$(usex tools)
+		-DOIIO_DOWNLOAD_MISSING_TESTDATA="OFF"
+		-DUNITY_SMALL_BATCH_SIZE="$(nproc)"
 		-DUSE_CCACHE="OFF"
 		-DUSE_EXTERNAL_PUGIXML="ON"
 		-DUSE_PYTHON=$(usex python)
 		-DUSE_SIMD=$(local IFS=','; echo "${mysimd[*]}")
-		-DUSE_QT=$(usex qt5)
+		-DUSE_QT=${has_qt}
 
-	# Config update Jan 2, 2022
-	# See https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v2.3.21.0/src/cmake/externalpackages.cmake
+	# Config update Mar 16, 2024
+	# See https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v2.5.10.1/src/cmake/externalpackages.cmake
 
 	# You must use ENABLE_ for oiio_add_tests in testing.cmake.
 
 		$(_oiio_use gif GIF GIF)
-		$(_oiio_use fits FITS FITS)
 		$(_oiio_use heif LIBHEIF Libheif)
 		$(_oiio_use raw LIBRAW LIBRAW)
 		$(_oiio_use openvdb OPENVDB OpenVDB)
@@ -431,7 +502,6 @@ src_configure() {
 		-DUSE_OPENCV=$(usex opencv)
 		-DUSE_OPENGL=$(usex opengl)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
-		-DUSE_PTEX=$(usex ptex)
 		-DUSE_PYTHON=$(usex python)
 		-DUSE_TBB=$(usex tbb)
 
@@ -478,11 +548,13 @@ src_configure() {
 				einfo "Using abi${s}-compat and added CMAKE_CXX_STANDARD=17"
 				mycmakeargs+=(
 					-DCMAKE_CXX_STANDARD=17
+					-DDOWNSTREAM_CXX_STANDARD=17
 				)
 			elif use "abi${s}-compat" ; then
 				einfo "Using abi${s}-compat and added CMAKE_CXX_STANDARD=14"
 				mycmakeargs+=(
 					-DCMAKE_CXX_STANDARD=14
+					-DDOWNSTREAM_CXX_STANDARD=14
 				)
 			fi
 		else
@@ -517,45 +589,39 @@ src_configure() {
 }
 
 src_test() {
-	# TODO: investigate failures
-	DISABLED_TESTS=(
-		"openexr-damaged"
-		"openvdb-broken"
-		"psd"
-		"ptex-broken"
-		"raw-broken"
-		"rla"
-		"targa"
-		"texture-texture3d-broken"
-		"texture-texture3d-broken.batch"
-		"tiff-depths"
-		"unit_simd"
-		"zfile"
+	# A lot of tests needs to have access to the installed data files.
+	# So install them into the image directory now.
+	DESTDIR="${T}" cmake_build install
+
+	CMAKE_SKIP_TESTS=(
+		"-broken$"
 	)
-	local list=$(echo ${DISABLED_TESTS[@]} \
-		| tr " " "\n" \
-		| sort \
-		| tr "\n" "|" \
-		| sed -e "s|\|$||g")
-	local myctestargs=(
-		-E "("$(echo ${list})")"
-	)
-	cmake_src_test
+
+	sed \
+		-i \
+		-e "s#../../../testsuite#../../../OpenImageIO-${PV}/testsuite#g" \
+		"${CMAKE_USE_DIR}/testsuite/python-imagebufalgo/ref/out.txt" \
+		|| die
+
+	local -x CI CMAKE_PREFIX_PATH LD_LIBRARY_PATH OPENIMAGEIO_FONTS PYTHONPATH
+	CI=true
+	CMAKE_PREFIX_PATH="${T}/usr"
+	LD_LIBRARY_PATH="${T}/usr/$(get_libdir)"
+	OPENIMAGEIO_FONTS="${CMAKE_USE_DIR}/src/fonts"
+
+	if use python; then
+		PYTHONPATH="${T}$(python_get_sitedir)"
+	fi
+
+	virtx cmake_src_test
+
+	# Clean up the image directory for src_install
+	rm -fr "${T:?}"/usr || die
 }
 
 src_install() {
+	font_src_install
 	cmake_src_install
-	# can't use font_src_install
-	# it does directory hierarchy recreation
-	FONT_S=(
-		"${S}/src/fonts/Droid_Sans"
-		"${S}/src/fonts/Droid_Sans_Mono"
-		"${S}/src/fonts/Droid_Serif"
-	)
-	insinto ${FONTDIR}
-	for dir in "${FONT_S[@]}"; do
-		doins "${dir}"/*.ttf
-	done
 
 	local use_tbb=$(get_tbb_slot)
 	if [[ "${use_tbb}" == "${LEGACY_TBB_SLOT}" ]] ; then

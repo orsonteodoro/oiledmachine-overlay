@@ -1,7 +1,10 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
+# Requirements:
+# https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v2.4.17.0/INSTALL.md
 
 CXX_STD_MIN="14"
 FONT_PN="OpenImageIO"
@@ -9,9 +12,16 @@ LEGACY_TBB_SLOT="2"
 LLVM_COMPAT=( {16..13} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 ONETBB_SLOT="0"
-OPENEXR_V2_PV="2.5.8"
-OPENEXR_V3_PV="3.1.7 3.1.6 3.1.5 3.1.4"
+OPENEXR_V2_PV="2.5.9 2.5.8"
+OPENEXR_V3_PV="3.2.4 3.2.3 3.2.2 3.2.1 3.2.0 3.1.13 3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4"
+OPENVDB_APIS=( {10..5} )
+OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
+OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
 PYTHON_COMPAT=( python3_{10..11} )
+QT5_PV="5.15"
+QT6_PV="6.4"
+TEST_OEXR_IMAGE_COMMIT="df16e765fee28a947244657cae3251959ae63c00" # committer-date:<=2023-11-01
+TEST_OIIO_IMAGE_COMMIT="aae37a54e31c0e719edcec852994d052ecf6541e" # committer-date:<=2023-11-01
 X86_CPU_FEATURES=(
 	avx:avx
 	avx2:avx2
@@ -23,21 +33,22 @@ X86_CPU_FEATURES=(
 	sse4_2:sse4.2
 	ssse3:ssse3
 )
-CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
-OPENVDB_APIS=( {10..5} )
-OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
-OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
-QT5_PV="5.6"
-QT6_PV="6"
+CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} ) # Place after X86_CPU_FEATURES
 
-inherit cmake font llvm python-single-r1
+inherit cmake flag-o-matic font llvm python-single-r1 virtualx
 
+KEYWORDS="~amd64 ~ppc64 ~x86"
+S="${WORKDIR}/OpenImageIO-${PV}"
 SRC_URI="
 https://github.com/OpenImageIO/oiio/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
+test? (
+	https://github.com/AcademySoftwareFoundation/openexr-images/archive/${TEST_OEXR_IMAGE_COMMIT}.tar.gz
+		-> ${PN}-oexr-test-image-${TEST_OEXR_IMAGE_COMMIT}.tar.gz
+	https://github.com/OpenImageIO/oiio-images/archive/${TEST_OIIO_IMAGE_COMMIT}.tar.gz
+		-> ${PN}-oiio-test-image-${TEST_OIIO_IMAGE_COMMIT}.tar.gz
+)
 "
-S="${WORKDIR}/oiio-${PV}"
-KEYWORDS="~amd64 ~ppc64 ~x86"
 
 DESCRIPTION="A library for reading and writing images"
 HOMEPAGE="
@@ -45,7 +56,12 @@ https://sites.google.com/site/openimageio/
 https://github.com/OpenImageIO
 "
 LICENSE="BSD"
-RESTRICT="test" # bug 431412
+
+# test is not quite working yet
+RESTRICT="
+	test
+"
+
 RESTRICT+=" mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # font install is enabled upstream
@@ -54,11 +70,11 @@ IUSE+="
 ${CPU_FEATURES[@]%:*}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_APIS_[@]}
-aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc
-jpeg2k opencv opengl openvdb png ptex +python qt5 +qt6 raw rav1e tbb +truetype
-wayland webp X
+aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d fits gif gui
+heif icc jpeg2k opencv opengl openvdb png ptex +python qt5 +qt6 raw rav1e tbb
+tools +truetype wayland webp X
 
-r4
+ebuild-revision-5
 "
 gen_abi_compat_required_use() {
 	local s
@@ -125,7 +141,6 @@ REQUIRED_USE="
 		openvdb
 	)
 "
-# See https://github.com/OpenImageIO/oiio/blob/v2.4.12.0/INSTALL.md
 gen_openvdb_depends() {
 	local s
 	for s in ${OPENVDB_APIS[@]} ; do
@@ -157,11 +172,11 @@ gen_openexr_pairs() {
 	done
 }
 
-# Depends May 15, 2023
+# Depends Nov 1, 2023
 RDEPEND+="
 	>=dev-cpp/robin-map-0.6.2
 	>=dev-libs/boost-1.53:=
-	>=dev-libs/libfmt-8.0.0:=
+	>=dev-libs/libfmt-9.0.0:=
 	>=dev-libs/pugixml-1.8:=
 	>=media-libs/tiff-3.9:0=
 	sys-libs/zlib:=
@@ -185,6 +200,9 @@ RDEPEND+="
 	)
 	field3d? (
 		>=media-libs/Field3D-1.7.3:=
+	)
+	fits? (
+		sci-libs/cfitsio:=
 	)
 	gif? (
 		>=media-libs/giflib-4.1:0=
@@ -267,7 +285,7 @@ RDEPEND+="
 		)
 	)
 	truetype? (
-		media-libs/freetype:2=
+		>=media-libs/freetype-2.8:2=
 	)
 	webp? (
 		>=media-libs/libwebp-0.6.1:=
@@ -313,6 +331,9 @@ BDEPEND+="
 	icc? (
 		${BDEPEND_ICC}
 	)
+	jpeg2k? (
+		app-arch/unzip
+	)
 	|| (
 		${BDEPEND_CLANG}
 		${BDEPEND_ICC}
@@ -320,6 +341,16 @@ BDEPEND+="
 	)
 "
 DOCS=( CHANGES.md CREDITS.md README.md )
+
+_oiio_use() {
+	local value=$(usex "${1}")
+	local prod_name="${2}"
+	local test_name="${3}"
+	if use test ; then
+		echo -DENABLE_${test_name}="${value}"
+	fi
+	echo -DUSE_${prod_name}="${value}"
+}
 
 pkg_setup() {
 	if use clang && [[ -z "${CC}" || -z "${CXX}" ]] ; then
@@ -345,6 +376,11 @@ pkg_setup() {
 }
 
 src_prepare() {
+	if ! use dicom; then
+		rm -r \
+			"${S}/src/dicom.imageio/" \
+			|| die
+	fi
 	cmake_src_prepare
 	cmake_comment_add_subdirectory src/fonts
 }
@@ -364,7 +400,6 @@ get_tbb_slot() {
 }
 
 src_configure() {
-	# Build with SIMD support
 	local cpufeature
 	local mysimd=()
 	for cpufeature in "${CPU_FEATURES[@]}"; do
@@ -374,6 +409,15 @@ src_configure() {
 	# If no CPU SIMDs were used, completely disable them
 	[[ -z ${mysimd} ]] && mysimd=("0")
 
+	#
+	# This is currently needed on arm64 to get the NEON SIMD wrapper to
+	# compile the code successfully.
+	#
+	# Even if there are no SIMD features selected, it seems like the code
+	# will turn on NEON support if it is available.
+	#
+	use arm64 && append-flags -flax-vector-conversions
+
 	local has_qt="OFF"
 	if use qt5 || use qt6 ; then
 		has_qt="ON"
@@ -381,40 +425,74 @@ src_configure() {
 
 	local mycmakeargs=(
 		-DBUILD_DOCS=$(usex doc)
-		-DVERBOSE=ON
-		-DENABLE_FIELD3D=$(usex field3d)
+		-DCMAKE_UNITY_BUILD_MODE="BATCH"
 		-DINSTALL_DOCS=$(usex doc)
-		-DINSTALL_FONTS=OFF
-		-DOIIO_BUILD_TESTS=OFF # as they are RESTRICTed
-		-DSTOP_ON_WARNING=OFF
-		-DUSE_CCACHE=OFF
-		-DUSE_EXTERNAL_PUGIXML=ON
+		-DINSTALL_FONTS="OFF"
+		-DOIIO_BUILD_TESTS="OFF" # as they are RESTRICTed
+		-DOIIO_BUILD_TOOLS=$(usex tools)
+		-DUNITY_SMALL_BATCH_SIZE="$(nproc)"
+		-DUSE_CCACHE="OFF"
+		-DUSE_EXTERNAL_PUGIXML="ON"
 		-DUSE_PYTHON=$(usex python)
 		-DUSE_SIMD=$(local IFS=','; echo "${mysimd[*]}")
 		-DUSE_QT=${has_qt}
 
-		# No option() but uses custom enablement.
+	# Config update Oct 20, 2023
+	# See https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v2.5.10.1/src/cmake/externalpackages.cmake
+
+	# You must use ENABLE_ for oiio_add_tests in testing.cmake.
+
+		$(_oiio_use gif GIF GIF)
+		$(_oiio_use heif LIBHEIF Libheif)
+		$(_oiio_use raw LIBRAW LIBRAW)
+		$(_oiio_use openvdb OPENVDB OpenVDB)
+		$(_oiio_use png PNG PNG)
+		$(_oiio_use ptex PTEX PTEX)
+		$(_oiio_use webp WEBP WEBP)
+
 		-DUSE_DCMTK=$(usex dicom)
-		-DUSE_JPEGTURBO=ON
 		-DUSE_FIELD3D=$(usex field3d)
 		-DUSE_FFMPEG=$(usex ffmpeg)
 		-DUSE_FREETYPE=$(usex truetype)
-		-DUSE_GIF=$(usex gif)
-		-DUSE_LIBRAW=$(usex raw)
+		-DUSE_JPEGTURBO="ON"
 		-DUSE_LIBSQUISH=$(usex dds)
-		-DUSE_NUKE=OFF # not in Gentoo
+		-DUSE_NUKE="OFF" # Ebuild not in distro ebuild ecosystem
 		-DUSE_OCIO=$(usex color-management)
 		-DUSE_OPENCOLORIO=$(usex color-management)
 		-DUSE_OPENCV=$(usex opencv)
 		-DUSE_OPENGL=$(usex opengl)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
-		-DUSE_OPENVDB=$(usex openvdb)
-		-DUSE_PNG=$(usex png)
-		-DUSE_PTEX=$(usex ptex)
 		-DUSE_PYTHON=$(usex python)
 		-DUSE_TBB=$(usex tbb)
-		-DUSE_WEBP=$(usex webp)
+
+		-DSTOP_ON_WARNING="OFF"
+		-DVERBOSE="ON"
 	)
+
+	if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then
+		mycmakeargs+=(
+			-DUSE_FAST_MATH="ON"
+		)
+	fi
+
+	if use gui ; then
+		mycmakeargs+=(
+			-DUSE_IV="ON"
+			-DUSE_OPENGL="ON"
+			-DUSE_QT="ON"
+		)
+	else
+		mycmakeargs+=(
+			-DUSE_QT="OFF"
+		)
+	fi
+
+	if use python ; then
+		mycmakeargs+=(
+			-DPYTHON_VERSION="${EPYTHON#python}"
+			-DPYTHON_SITE_DIR="$(python_get_sitedir)"
+		)
+	fi
 
 	local set_cxx17=0
 
@@ -425,11 +503,13 @@ src_configure() {
 				einfo "Using abi${s}-compat and added CMAKE_CXX_STANDARD=17"
 				mycmakeargs+=(
 					-DCMAKE_CXX_STANDARD=17
+					-DDOWNSTREAM_CXX_STANDARD=17
 				)
 			elif use "abi${s}-compat" ; then
 				einfo "Using abi${s}-compat and added CMAKE_CXX_STANDARD=14"
 				mycmakeargs+=(
 					-DCMAKE_CXX_STANDARD=14
+					-DDOWNSTREAM_CXX_STANDARD=14
 				)
 			fi
 		else
@@ -461,6 +541,72 @@ src_configure() {
 	fi
 
 	cmake_src_configure
+}
+
+src_test() {
+	# TODO: investigate failures
+	DISABLED_TESTS=(
+		"cineon"
+		"cmake-consumer"
+		"dds"
+		"jpeg2000-broken"
+		"maketx"
+		"oiiotool"
+		"oiiotool-maketx"
+		"openexr-damaged"
+		"openvdb-broken"
+		"openvdb.batch-broken"
+		"psd"
+		"ptex-broken"
+		"raw-broken"
+		"targa"
+		"texture-crop"
+		"texture-crop.batch"
+		"texture-half"
+		"texture-half.batch"
+		"texture-interp-bilinear"
+		"texture-interp-bilinear.batch"
+		"texture-interp-closest"
+		"texture-interp-closest.batch"
+		"texture-levels-stochaniso"
+		"texture-levels-stochaniso.batch"
+		"texture-levels-stochmip"
+		"texture-levels-stochmip.batch"
+		"texture-mip-onelevel"
+		"texture-mip-onelevel.batch"
+		"texture-mip-stochastictrilinear"
+		"texture-mip-stochastictrilinear.batch"
+		"texture-mip-stochasticaniso"
+		"texture-mip-stochasticaniso.batch"
+		"texture-uint8"
+		"texture-uint8.batch"
+		"texture-skinny"
+		"texture-skinny.batch"
+		"texture-icwrite"
+		"texture-icwrite.batch"
+		"texture-texture3d-broken"
+		"texture-texture3d-broken.batch"
+		"texture-texture3d.batch-broken"
+		"texture-udim"
+		"texture-udim2"
+		"texture-udim.batch"
+		"texture-udim2.batch"
+		"texture-uint16"
+		"texture-uint16.batch"
+		"tiff-depths"
+		"unit_simd"
+		"zfile"
+	)
+	local list=$(echo ${DISABLED_TESTS[@]} \
+		| tr " " "\n" \
+		| sort \
+		| tr "\n" "|" \
+		| sed -e "s|\|$||g")
+	local myctestargs=(
+		-E "("$(echo ${list})")"
+	)
+
+	cmake_src_test
 }
 
 src_install() {
