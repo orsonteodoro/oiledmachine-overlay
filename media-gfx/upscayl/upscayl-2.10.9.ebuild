@@ -786,7 +786,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild-revision-4"
+IUSE+=" ebuild-revision-5"
 # Upstream uses U 18.04.6 for CI
 RDEPEND+="
 	>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[cxx,lcms,jpeg,png,webp]
@@ -884,6 +884,8 @@ ewarn "You need vulkan drivers to use ${PN}."
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.9.1 (20231107)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.9.5 (20231209) load test, switch color theme test, digital filter test
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.9.8 (20230203) load test, switch color theme test, digital filter test
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.10.9 (20230203) load test only
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.11.0 (20230203) load test only
 # USE="X unpacked wayland -r2"
 # X:  passed
 # wayland:  passed
