@@ -31,7 +31,6 @@ RESTRICT="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="samples static-libs test"
 RDEPEND="
-	dev-libs/boost:=[${MULTILIB_USEDEP}]
 	sys-libs/zlib[${MULTILIB_USEDEP},minizip]
 	samples? (
 		media-libs/freeglut[${MULTILIB_USEDEP}]
