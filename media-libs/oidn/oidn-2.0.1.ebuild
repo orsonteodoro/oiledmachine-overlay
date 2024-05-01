@@ -322,16 +322,11 @@ get_cuda_targets() {
 	echo "${targets}"
 }
 
-cuda_cc_check() {
+cuda_host_cc_check() {
 	local required_gcc_slot="${1}"
         local gcc_current_profile=$(gcc-config -c)
         local gcc_current_profile_slot=${gcc_current_profile##*-}
-        local libstdcxx_ver=$(strings "/usr/lib/gcc/${CHOST}/${gcc_current_profile_slot}/libstdc++.so" \
-                | grep -E "GLIBCXX_[0-9]\.[0-9]\.[0-9]+" \
-                | sort -V \
-                | tail -n 1 \
-                | cut -f 2 -d "_")
-        if ver_test "${libstdcxx_ver}" -ne "${required_gcc_slot}" ; then
+        if ver_test "${gcc_current_profile_slot}" -ne "${required_gcc_slot}" ; then
 eerror
 eerror "You must switch to =sys-devel/gcc-${required_gcc_slot}.  Do"
 eerror
@@ -356,19 +351,19 @@ src_configure() {
 	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-13*" ; then
 		export CC="${CHOST}-gcc-13"
 		export CXX="${CHOST}-g++-13"
-		cuda_cc_check 13
+		cuda_host_cc_check 13
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-12*" ; then
 		export CC="${CHOST}-gcc-12"
 		export CXX="${CHOST}-g++-12"
-		cuda_cc_check 12
+		cuda_host_cc_check 12
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-11*" ; then
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
-		cuda_cc_check 11
+		cuda_host_cc_check 11
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/gcc-11*" ; then
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
-		cuda_cc_check 11
+		cuda_host_cc_check 11
 	elif use cuda ; then
 eerror
 eerror "If using"
