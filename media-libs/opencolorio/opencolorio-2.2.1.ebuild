@@ -3,52 +3,24 @@
 
 EAPI=8
 
+# TODO package:
+# expandvars
+# openfx
+# prettymethods - delete references?
+# sphinx-press-theme
+
+# For requirements, see
+# https://github.com/AcademySoftwareFoundation/OpenColorIO/blob/v2.2.1/docs/quick_start/installation.rst#building-from-source
+
+# Works with older OIIO but need to force a version w/ OpenEXR 3
+
+CMAKE_BUILD_TYPE="RelWithDebInfo"
+OPENEXR_V3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4"
 PYTHON_COMPAT=( python3_{8..11} )
 
 inherit cmake flag-o-matic python-single-r1
 
-DESCRIPTION="A color management framework for visual effects and animation"
-HOMEPAGE="
-https://opencolorio.org
-https://github.com/AcademySoftwareFoundation/OpenColorIO
-"
-SRC_URI="
-https://github.com/AcademySoftwareFoundation/OpenColorIO/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/OpenColorIO-${PV}"
-
-LICENSE="BSD"
-# TODO: drop .1 on next SONAME bump (2.1 -> 2.2?) as we needed to nudge it
-# to force rebuild of consumers due to changing to openexr 3 changing API.
-SLOT="0/$(ver_cut 1-2).1"
-KEYWORDS="amd64 ~arm ~arm64 ~ppc64 ~riscv x86"
-IUSE="cpu_flags_x86_sse2 doc opengl python static-libs test r1"
-REQUIRED_USE="
-	doc? (
-		python
-	)
-	python? (
-		${PYTHON_REQUIRED_USE}
-	)
-"
-
-# Works with older OIIO but need to force a version w/ OpenEXR 3
-
-OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
-
-gen_half_pairs() {
-	for pv in ${OPENEXR_V3_PV} ; do
-		echo "
-			(
-				~media-libs/openexr-${pv}:=
-				~dev-libs/imath-${pv}:=
-			)
-		"
-	done
-}
-
-gen_imath() {
+gen_half_pairs_rdepend() {
 	local pv
 	for pv in ${OPENEXR_V3_PV} ; do
 		echo "
@@ -60,11 +32,50 @@ gen_imath() {
 	done
 }
 
-# See https://github.com/AcademySoftwareFoundation/OpenColorIO/blob/v2.2.1/docs/quick_start/installation.rst#building-from-source
+gen_imath_bdepend() {
+	local pv
+	for pv in ${OPENEXR_V3_PV} ; do
+		echo "
+			(
+				~media-libs/openexr-${pv}:=
+				~dev-libs/imath-${pv}:=
+			)
+		"
+	done
+}
+
+KEYWORDS="amd64 ~arm ~arm64 ~ppc64 ~riscv x86"
+S="${WORKDIR}/OpenColorIO-${PV}"
+SRC_URI="
+https://github.com/AcademySoftwareFoundation/OpenColorIO/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+
+DESCRIPTION="A color management framework for visual effects and animation"
+HOMEPAGE="
+https://opencolorio.org
+https://github.com/AcademySoftwareFoundation/OpenColorIO
+"
+LICENSE="BSD"
+# Restricting tests, bugs #439790 and #447908
+RESTRICT="
+	test
+"
+SLOT="0/$(ver_cut 1-2)"
+IUSE="cpu_flags_x86_sse2 doc opengl python static-libs test ebuild-revision-1"
+REQUIRED_USE="
+	doc? (
+		python
+	)
+	python? (
+		${PYTHON_REQUIRED_USE}
+	)
+"
+# Depends update Jan 5, 2023
 RDEPEND="
 	~dev-cpp/yaml-cpp-0.7.0:=
-	>=dev-libs/expat-2.4.1
 	>=dev-cpp/pystring-1.1.3
+	>=dev-libs/expat-2.4.1
 	>=sys-libs/minizip-ng-3.0.7
 	>=sys-libs/zlib-1.2.13
 	dev-libs/tinyxml
@@ -83,17 +94,12 @@ RDEPEND="
 		')
 	)
 	|| (
-		$(gen_half_pairs)
+		$(gen_half_pairs_rdepend)
 	)
 "
 DEPEND="
 	${RDEPEND}
 "
-# TODO package:
-# expandvars
-# openfx
-# prettymethods - delete references?
-# sphinx-press-theme
 BDEPEND="
 	>=dev-build/cmake-3.13
 	virtual/pkgconfig
@@ -114,18 +120,15 @@ BDEPEND="
 		')
 	)
 	test? (
+		$(python_gen_cond_dep '
+			dev-python/numpy[${PYTHON_USEDEP}]
+		')
 		>=media-libs/osl-1.11
 		|| (
-			$(gen_imath)
+			$(gen_imath_bdepend)
 		)
 	)
 "
-
-# Restricting tests, bugs #439790 and #447908
-RESTRICT="test"
-
-CMAKE_BUILD_TYPE=RelWithDebInfo
-
 PATCHES=(
 	"${FILESDIR}/${PN}-2.2.1-adjust-python-installation.patch"
 )
