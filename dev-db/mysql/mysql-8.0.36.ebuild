@@ -4,9 +4,12 @@
 
 EAPI=8
 
+# https://bugs.gentoo.org/623962
+# Tests set TZ for tests leading to failures on musl if sys-libs/timezone-data isnt installed.
+
 MY_PV="${PV//_pre*}"
 MY_P="${PN}-${MY_PV}"
-PATCHSET_VER="8.0.34:01"
+PATCHSET_VER="8.0.36:01"
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
@@ -26,7 +29,7 @@ SRC_URI="
 https://cdn.mysql.com/Downloads/MySQL-$(ver_cut 1-2)/mysql-boost-${MY_PV}.tar.gz
 https://cdn.mysql.com/archives/mysql-$(ver_cut 1-2)/mysql-boost-${MY_PV}.tar.gz
 https://downloads.mysql.com/archives/MySQL-$(ver_cut 1-2)/${PN}-boost-${MY_PV}.tar.gz
-https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${PN}-${PATCHSET_VER%:*}-patches-${PATCHSET_VER#*:}.tar.xz
+https://github.com/parona-source/mysql-server/releases/download/mysql-${PATCHSET_VER%:*}-patches-${PATCHSET_VER#*:}/mysql-${PATCHSET_VER%:*}-patches-${PATCHSET_VER#*:}.tar.xz
 ${PATCH_SET[@]}
 "
 
@@ -88,7 +91,7 @@ COMMON_DEPEND="
 		)
 		kernel_linux? (
 			dev-libs/libaio:=
-			sys-process/procps:=
+			sys-process/procps
 		)
 		numa? (
 			sys-process/numactl
@@ -109,6 +112,7 @@ DEPEND="
 		acct-user/mysql
 		dev-perl/Expect
 		dev-perl/JSON
+		sys-libs/timezone-data
 	)
 "
 RDEPEND="
@@ -135,7 +139,9 @@ PDEPEND="
 	)
 "
 PATCHES=(
-	"${WORKDIR}"/mysql-patches
+	"${WORKDIR}/mysql-patches"
+	# Patch needed due to bundled boost-1.77.  This fix is included in boost-1.81.
+	"${FILESDIR}/mysql-8.0.36-boost-clang-fix.patch"
 )
 
 mysql_init_vars() {
@@ -156,7 +162,12 @@ pkg_pretend() {
 			CHECKREQS_DISK_BUILD="3G"
 
 			if has test ${FEATURES} ; then
-				CHECKREQS_DISK_BUILD="9G"
+				CHECKREQS_DISK_BUILD="10G"
+
+				if use elibc_musl; then
+					# <parona@protonmail.com> i've seen it take 17GB on musl with FEATURES="test" USE="perl server"
+					CHECKREQS_DISK_BUILD="18G"
+				fi
 			fi
 
 			check-reqs_pkg_pretend
@@ -169,7 +180,12 @@ pkg_setup() {
 		CHECKREQS_DISK_BUILD="3G"
 
 		if has test ${FEATURES} ; then
-			CHECKREQS_DISK_BUILD="9G"
+			CHECKREQS_DISK_BUILD="10G"
+
+			if use elibc_musl; then
+				# <parona@protonmail.com> i've seen it take 17GB on musl with FEATURES="test" USE="perl server"
+				CHECKREQS_DISK_BUILD="18G"
+			fi
 
 			# Bug #213475 - MySQL _will_ object strenuously if your machine is named
 			# localhost. Also causes weird failures.
@@ -249,24 +265,13 @@ _src_configure() {
 	# Code is now requiring C++17 due to https://github.com/mysql/mysql-server/commit/236ab55bedd8c9eacd80766d85edde2a8afacd08
 	append-cxxflags -std=c++17
 
-	# Broken with FORTIFY_SOURCE=3
-	# Our toolchain sets F_S=2 by default w/ >= -O2, so we need
-	# to unset F_S first, then explicitly set 2, to negate any default
-	# and anything set by the user if they're choosing 3 (or if they've
-	# modified GCC to set 3).
-	#
-	# bug #891259
-	if tc-enables-fortify-source ; then
-		filter-flags -D_FORTIFY_SOURCE=3
-		append-cppflags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
-	fi
-
 	if has sandbox ${FEATURES} ; then
 		# bug #823656
 		append-cppflags -DGTEST_NO_DEATH_TEST=1
 	fi
 
 	local mycmakeargs=(
+		-Wno-dev # less noise
 		-DCMAKE_POSITION_INDEPENDENT_CODE=ON
 		-DCOMPILATION_COMMENT="Gentoo Linux ${PF}"
 		-DENABLED_LOCAL_INFILE=1
@@ -297,6 +302,12 @@ _src_configure() {
 		-DWITH_SSL=system
 		-DWITH_UNIT_TESTS=$(usex test ON OFF)
 		-DWITH_ZLIB=system
+
+		# Enables -Werror
+		-DMYSQL_MAINTAINER_MODE=OFF
+
+		# Causes issues on musl bug #922808
+		-DWITH_BUILD_ID=OFF
 	)
 
 	if use debug; then
@@ -455,6 +466,22 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 	# Disable unit tests, run them separately with eclass defaults
 	local -x MTR_UNIT_TESTS=0
 
+	# Increase test timeouts
+	# bug #923649
+	# https://github.com/gentoo/gentoo/pull/35002#issuecomment-1926101030
+	local -x MTR_SUITE_TIMEOUT=$(( 60 * 40 )) # minutes
+	local -x MTR_TESTCASE_TIMEOUT=60 # minutes
+
+	# Include config for tests, this is for scenarios where mysql wasn't installed previously or if the
+	# configuration was from an older version.
+	sed \
+		-e "s/@GENTOO_PORTAGE_EPREFIX@/${EPREFIX}/" \
+		-e "s/@DATADIR@/${MY_DATADIR}/" \
+		"${FILESDIR}"/my.cnf-8.0.distro-client \
+		"${FILESDIR}"/my.cnf-8.0.distro-server \
+			> "${T}"/my.cnf || die
+	local -X PATH_CONFIG_FILE="${T}/my.cnf"
+
 	# Create directories because mysqladmin might run out of order
 	mkdir -p "${T}"/var-tests{,/log} || die
 
@@ -509,6 +536,8 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 
 		"x.connection;0;Known failure - no upstream bug yet"
 		"main.slow_log;0;Known failure - no upstream bug yet"
+
+		"sys_vars.build_id_basic;0;Requires -DWITH_BUILD_ID=ON"
 	)
 
 	if ! hash zip 1>/dev/null 2>&1 ; then
@@ -516,6 +545,20 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 		disabled_tests+=(
 			"innodb.discarded_partition_create;0;Requires app-arch/zip"
 			"innodb.partition_upgrade_create;0;Requires app-arch/zip"
+		)
+	fi
+
+	if has_version ">=dev-libs/openssl-3.2" ; then
+		# https://bugs.mysql.com/bug.php?id=113258
+		disabled_tests+=(
+			"rpl.rpl_tlsv13;0;CCM8 ciphers have a lower security level with OpenSSL 3.2"
+			"auth_sec.wl15800_ciphers_tlsv13;0;CCM8 ciphers have a lower security level with OpenSSL 3.2"
+		)
+	fi
+
+	if use debug; then
+		disabled_tests+=(
+			"innodb.dblwr_unencrypt;0;Known test failure -- no upstream bug yet"
 		)
 	fi
 
@@ -550,14 +593,18 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 		"routertest_integration_routing_sharing_constrained_pools"
 		"routertest_integration_routing_sharing_restart"
 
-		# FIXME: suffers from broken DEATH_TESTS's
-		"routertest_router_certificate_generator"
-
 		# TODO: ???
 		"pfs_host-oom"
 		"pfs_user-oom"
 		"pfs"
 	)
+
+	if use debug ; then
+		CMAKE_SKIP_TESTS+=(
+			# binary_log::transaction::compression::Payload_event_buffer_istream::~Payload_event_buffer_istream(): Assertion `!m_outstanding_error' failed.
+			"payload_event_buffer_istream"
+		)
+	fi
 
 	# Try to increase file limits to increase test coverage
 	if ! ulimit -n 16500 1>/dev/null 2>&1 ; then
@@ -594,7 +641,8 @@ einfo "Testing best coverage with open file limit of 16500."
 		--tmpdir="${T}/tmp-tests" \
 		--skip-test=tokudb \
 		--skip-test-list="${T}/disabled.def" \
-		--retry-failure=0
+		--retry-failure=0 \
+		--max-test-fail=0
 	retstatus_tests=$?
 
 	popd &>/dev/null || die
