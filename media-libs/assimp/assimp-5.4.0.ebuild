@@ -44,14 +44,13 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-build/cmake-3.14
+	>=dev-build/cmake-3.22
 	test? (
 		dev-cpp/gtest
 	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.2.2-disable-failing-tests.patch"
-	"${FILESDIR}/${PN}-5.3.1-fix-version.patch"
 )
 DOCS=( CodeConventions.md Readme.md )
 
@@ -72,6 +71,7 @@ src_configure() {
 		-DASSIMP_BUILD_TESTS=$(usex test)
 		-DASSIMP_BUILD_ZLIB=OFF
 		-DASSIMP_DOUBLE_PRECISION=OFF
+		-DASSIMP_HUNTER_ENABLED=OFF
 		-DASSIMP_INJECT_DEBUG_POSTFIX=OFF
 		-DASSIMP_IGNORE_GIT_HASH=ON
 		-DASSIMP_UBSAN=OFF
