@@ -421,6 +421,16 @@ src_configure() {
 				-DVEC_REPORT="ON"
 			)
 
+			if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then
+				mycmakeargs=(
+					-DUSE_FAST_MATH="ON"
+				)
+			else
+				mycmakeargs=(
+					-DUSE_FAST_MATH="OFF"
+				)
+			fi
+
 			if use cuda ; then
 				mycmakeargs+=(
 					-DCUDA_TOOLKIT_ROOT_DIR="${ESYSROOT}/opt/cuda"
