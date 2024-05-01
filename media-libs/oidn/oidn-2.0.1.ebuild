@@ -91,7 +91,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
-r1
+ebuild-revision-2
 "
 
 gen_required_use_cuda_targets() {
@@ -200,6 +200,7 @@ RDEPEND+="
 "
 DEPEND+="
 	${RDEPEND}
+	media-libs/openimageio[cuda?]
 "
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -207,6 +208,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.15
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-11.8
+		sys-devel/binutils[gold,plugins]
 	)
 	rocm? (
 		$(gen_hip_depends)
@@ -268,6 +270,9 @@ pkg_setup() {
 	# This needs to be placed here to avoid this error:
 	# python: no python-exec wrapped executable found in /usr/lib64/rocm/5.5/lib/python-exec.
 	python-single-r1_pkg_setup
+	if use cuda ; then
+		cuda_add_sandbox
+	fi
 }
 
 src_unpack() {
@@ -303,7 +308,10 @@ src_prepare() {
 	pushd "${S}/external/composable_kernel" || die
 		eapply "${FILESDIR}/composable_kernel-1.0.0_p9999-fix-missing-libstdcxx-expf.patch"
 	popd
-	use cuda && cuda_src_prepare
+	if use cuda ; then
+		cuda_src_prepare
+		addpredict "/proc/self/task/"
+	fi
 	if use rocm ; then
 		rocm_src_prepare
 	fi
@@ -340,12 +348,18 @@ eerror
 src_configure() {
 	mycmakeargs=()
 
+	append-ldflags -fuse-ld=gold
+
 	if use sycl ; then
 		local LLVM_INTEL_DIR="/usr/lib/llvm/intel"
 		PATH="${EPREFIX}${LLVM_INTEL_DIR}/bin"
 		ROOTPATH="${EPREFIX}${LLVM_INTEL_DIR}/bin"
 		MANPATH="${EPREFIX}${LLVM_INTEL_DIR}/share/man"
 		LDPATH="${EPREFIX}${LLVM_INTEL_DIR}/lib:${EPREFIX}${LLVM_INTEL_DIR}/lib64"
+	fi
+
+	if use cuda && use openimageio ; then
+ewarn "media-libs/openimageio must be built with the same gcc for cuda support."
 	fi
 
 	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-13*" ; then

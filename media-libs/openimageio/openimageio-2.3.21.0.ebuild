@@ -64,11 +64,11 @@ IUSE+="
 ${CPU_FEATURES[@]%:*}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_APIS_[@]}
-aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d fits gif gui
-heif icc jpeg2k opencv opengl openvdb png ptex +python +qt5 raw rav1e tbb tools
-+truetype wayland webp X
+aom avif clang color-management cuda cxx17 dds dicom +doc ffmpeg field3d fits
+gif gui heif icc jpeg2k opencv opengl openvdb png ptex +python +qt5 raw rav1e
+tbb tools +truetype wayland webp X
 
-ebuild-revision-6
+ebuild-revision-7
 "
 gen_abi_compat_required_use() {
 	local s
@@ -374,7 +374,49 @@ get_tbb_slot() {
 	fi
 }
 
+cuda_host_cc_check() {
+	local required_gcc_slot="${1}"
+        local gcc_current_profile=$(gcc-config -c)
+        local gcc_current_profile_slot=${gcc_current_profile##*-}
+        if ver_test "${gcc_current_profile_slot}" -ne "${required_gcc_slot}" ; then
+eerror
+eerror "You must switch to =sys-devel/gcc-${required_gcc_slot}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${required_gcc_slot}"
+eerror "  source /etc/profile"
+eerror
+                die
+        fi
+}
+
 src_configure() {
+	# Avoid missing symbol in oidn
+	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-13*" ; then
+		export CC="${CHOST}-gcc-13"
+		export CXX="${CHOST}-g++-13"
+		cuda_host_cc_check 13
+	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-12*" ; then
+		export CC="${CHOST}-gcc-12"
+		export CXX="${CHOST}-g++-12"
+		cuda_host_cc_check 12
+	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-11*" ; then
+		export CC="${CHOST}-gcc-11"
+		export CXX="${CHOST}-g++-11"
+		cuda_host_cc_check 11
+	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/gcc-11*" ; then
+		export CC="${CHOST}-gcc-11"
+		export CXX="${CHOST}-g++-11"
+		cuda_host_cc_check 11
+	elif use cuda ; then
+eerror
+eerror "If using"
+eerror
+eerror "CUDA 12 - install and switch via eselect gcc to either gcc 11, 12, 13"
+eerror "CUDA 11 - install and switch via eselect gcc to either gcc 11"
+eerror
+		die
+	fi
+
 	local cpufeature
 	local mysimd=()
 	for cpufeature in "${CPU_FEATURES[@]}"; do

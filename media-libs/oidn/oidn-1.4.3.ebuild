@@ -151,6 +151,8 @@ src_unpack() {
 src_configure() {
 	mycmakeargs=()
 
+	append-ldflags -fuse-ld=gold
+
 	if use gcc ; then
 		export CC="${CHOST}-gcc"
 		export CXX="${CHOST}-g++"
