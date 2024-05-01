@@ -8,6 +8,9 @@ EAPI=8
 # Clang is more smoother multitask-wise.
 
 AMDGPU_TARGETS_COMPAT=(
+	gfx902
+	gfx909
+	gfx90c
 	gfx1030
 	gfx1031
 	gfx1032
