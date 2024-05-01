@@ -508,9 +508,9 @@ RDEPEND+="
 		>=dev-python/idna-3.2[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.24.3[${PYTHON_USEDEP}]
 		>=dev-python/pybind11-2.10.1[${PYTHON_USEDEP}]
-		>=dev-python/zstandard-0.16.0[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.26.0[${PYTHON_USEDEP}]
 		>=dev-python/urllib3-1.26.7[${PYTHON_USEDEP}]
+		>=dev-python/zstandard-0.16.0[${PYTHON_USEDEP}]
 	')
 	${CODECS}
 	${PYTHON_DEPS}
