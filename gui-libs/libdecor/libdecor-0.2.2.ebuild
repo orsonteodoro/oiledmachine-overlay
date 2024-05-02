@@ -1,4 +1,4 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -6,7 +6,7 @@ EAPI=8
 WAYLAND_PV="1.20.0"
 WAYLAND_PROTOCOLS_PV="1.32"
 
-inherit meson
+inherit meson-multilib
 
 if [[ "${PV}" == "9999" ]]; then
 	inherit git-r3
@@ -53,7 +53,7 @@ BDEPEND="
 	)
 "
 
-src_configure() {
+multilib_src_configure() {
 	local emesonargs=(
 		$(meson_feature dbus)
 		$(meson_feature gtk)
