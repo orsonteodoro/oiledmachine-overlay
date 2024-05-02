@@ -93,6 +93,10 @@ ARM_CPU_FLAGS=(
 	cpu_flags_arm_v6
 	cpu_flags_arm_v7
 )
+LOONG_CPU_FLAGS=(
+	cpu_flags_loong_lsx
+	cpu_flags_loong_lasx
+)
 PPC_CPU_FLAGS=(
 	cpu_flags_ppc_altivec
 )
@@ -110,12 +114,13 @@ VIDEO_CARDS_FLAGS=(
 # oss is enabled by default upstream
 IUSE="
 ${ARM_CPU_FLAGS[@]}
+${LOONG_CPU_FLAGS[@]}
 ${PPC_CPU_FLAGS[@]}
 ${VIDEO_CARDS_FLAGS[@]}
 ${X86_CPU_FLAGS[@]}
 +alsa aqua custom-cflags +dbus doc fcitx4 +gles1 +gles2 +haptic +hidapi
 +hidapi-joystick -hidapi-libusb +ibus +jack +joystick +kms +libdecor
-+libsamplerate -lsx -lasx +nas +nls +opengl +openurl oss +pipewire +pulseaudio
++libsamplerate +nas +nls +opengl +openurl oss +pipewire +pulseaudio
 +sndio +sound +static-libs test +threads +udev +video +vulkan +wayland +X
 +xscreensaver
 "
@@ -461,8 +466,8 @@ multilib_src_configure() {
 
 	if use loong ; then
 		myeconfargs+=(
-			-DSDL_LSX=$(usex lsx)
-			-DSDL_LASX=$(usex lasx)
+			-DSDL_LSX=$(usex cpu_flags_loong_lsx)
+			-DSDL_LASX=$(usex cpu_flags_loong_lasx)
 		)
 	else
 		myeconfargs+=(

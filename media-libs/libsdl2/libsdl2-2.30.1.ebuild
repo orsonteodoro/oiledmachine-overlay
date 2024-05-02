@@ -96,6 +96,10 @@ ARM_CPU_FLAGS=(
 	cpu_flags_arm_v6
 	cpu_flags_arm_v7
 )
+LOONG_CPU_FLAGS=(
+	cpu_flags_loong_lsx
+	cpu_flags_loong_lasx
+)
 PPC_CPU_FLAGS=(
 	cpu_flags_ppc_altivec
 )
@@ -107,10 +111,11 @@ X86_CPU_FLAGS=(
 )
 IUSE="
 ${ARM_CPU_FLAGS[@]}
+${LOONG_CPU_FLAGS[@]}
 ${PPC_CPU_FLAGS[@]}
 ${X86_CPU_FLAGS[@]}
 alsa aqua custom-cflags dbus doc fcitx4 gles1 gles2 haptic +hidapi-hidraw
--hidapi-libusb ibus jack +joystick kms -libdecor libsamplerate +lsx nas +nls
+-hidapi-libusb ibus jack +joystick kms -libdecor libsamplerate nas +nls
 opengl +openurl oss pipewire pulseaudio sndio +sound static-libs test +threads
 udev +video video_cards_vc4 vulkan wayland X xscreensaver
 "
@@ -464,11 +469,13 @@ multilib_src_configure() {
 
 	if use loong ; then
 		myeconfargs+=(
-			$(use_enable lsx)
+			$(use_enable cpu_flags_loong_lsx lsx)
+			$(use_enable cpu_flags_loong_lasx lasx)
 		)
 	else
 		myeconfargs+=(
 			--disable-lsx
+			--disable-lasx
 		)
 	fi
 
