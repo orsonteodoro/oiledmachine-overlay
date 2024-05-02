@@ -69,6 +69,9 @@
       Enable HID wireless joystick or console gamepad support for PS4, PS5,
       Switch, Xbox 360, Xbox One, GameCube
     </flag>
+    <flag name="hidapi-joystick">
+      Enable joysticks through HIDAPI
+    </flag>
     <flag name="hidapi-libusb">
       Enable HID USB joystick support
     </flag>

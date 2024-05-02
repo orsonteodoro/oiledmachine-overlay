@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# U20, U22
+
 MY_P="SDL2-${PV/_pre}"
 
 inherit autotools flag-o-matic linux-info toolchain-funcs multilib-minimal
@@ -185,10 +187,10 @@ CDEPEND="
 		>=app-i18n/fcitx-4.2.9.8:4
 	)
 	gles1? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles1]
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles1(+)]
 	)
 	gles2? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles2]
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles2(+)]
 	)
 	hidapi-libusb? (
 		>=dev-libs/libusb-1.0.25
@@ -234,7 +236,7 @@ CDEPEND="
 	)
 	wayland? (
 		>=dev-libs/wayland-1.20.0[${MULTILIB_USEDEP}]
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+),gles2,wayland]
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+),gles2(+),wayland]
 		>=x11-libs/libxkbcommon-1.4.0[${MULTILIB_USEDEP}]
 	)
 	X? (
@@ -524,20 +526,20 @@ multilib_src_install_all() {
 	find "${ED}" -type f -name "*.la" -delete || die
 
 	dodoc \
-		{BUGS,CREDITS,README-SDL,TODO,WhatsNew}.txt \
-		README.md \
-		docs/README*.md
-	use doc && dodoc -r docs/output/html/
+		{"BUGS","CREDITS","README-SDL","TODO","WhatsNew"}".txt" \
+		"README.md" \
+		"docs/README"*".md"
+	use doc && dodoc -r "docs/output/html/"
 
-	docinto licenses
-	dodoc LICENSE.txt
+	docinto "licenses"
+	dodoc "LICENSE.txt"
 
 	head -n 10 \
 		"src/libm/e_atan2.c" \
 		> \
 		"${T}/libm.LICENSE" \
 		|| die
-	docinto licenses/src/libm
+	docinto "licenses/src/libm"
 	dodoc "${T}/libm.LICENSE"
 
 	if use video ; then
@@ -548,7 +550,7 @@ multilib_src_install_all() {
 				> \
 				"${T}/pixman-arm-asm.LICENSE" \
 				|| die
-			docinto licenses/src/video/arm/pixman-arm
+			docinto "licenses/src/video/arm/pixman-arm"
 			dodoc "${T}/pixman-arm-asm.LICENSE"
 		fi
 
@@ -558,7 +560,7 @@ multilib_src_install_all() {
 				> \
 				"${T}/pixman-arm-simd-asm.LICENSE" \
 				|| die
-			docinto licenses/src/video/arm/pixman-arm
+			docinto "licenses/src/video/arm/pixman-arm"
 			dodoc "${T}/pixman-arm-simd-asm.LICENSE"
 		fi
 
@@ -568,19 +570,19 @@ multilib_src_install_all() {
 				> \
 				"${T}/pixman-arm-neon-asm.LICENSE" \
 				|| die
-			docinto licenses/src/video/arm/pixman-arm
+			docinto "licenses/src/video/arm/pixman-arm"
 			dodoc "${T}/pixman-arm-neon-asm.LICENSE"
 		fi
 
-		docinto licenses/src/video/yuv2rgb
-		dodoc src/video/yuv2rgb/LICENSE
+		docinto "licenses/src/video/yuv2rgb"
+		dodoc "src/video/yuv2rgb/LICENSE"
 
 		tail -n 142 \
 			"debian/copyright" \
 			| head -n 58 \
 			> "${T}/SDL_yuv_sw.c.LICENSE" \
 			|| die
-		docinto licenses/src/render
+		docinto "licenses/src/render"
 		dodoc "${T}/SDL_yuv_sw.c.LICENSE"
 
 		if use X ; then
@@ -589,21 +591,21 @@ multilib_src_install_all() {
 				> \
 				"${T}/imKStoUCS.c.LICENSE" \
 				|| die
-			docinto licenses/src/video/x11
+			docinto "licenses/src/video/x11"
 			dodoc "${T}/imKStoUCS.c.LICENSE"
 			head -n 28 \
 				"src/events/imKStoUCS.h" \
 				> \
 				"${T}/imKStoUCS.h.LICENSE" \
 				|| die
-			docinto licenses/src/video/x11
+			docinto "licenses/src/video/x11"
 			dodoc "${T}/imKStoUCS.h.LICENSE"
 		fi
 
 		# Additional copyright, The first already covered in the
 		# default for this module.  Copied again for containers or
 		# redist.
-		docinto licenses/include
+		docinto "licenses/include"
 		head -n 65 \
 			"include/SDL_opengl.h" \
 			| tail -n 24 \
@@ -614,11 +616,11 @@ multilib_src_install_all() {
 	fi
 
 	if use hidapi-hidraw || use hidapi-libusb ; then
-		docinto licenses/src/hidapi
-		dodoc src/hidapi/LICENSE.txt
-		dodoc src/hidapi/LICENSE-orig.txt
-		dodoc src/hidapi/LICENSE-gpl3.txt
-		dodoc src/hidapi/LICENSE-bsd.txt
+		docinto "licenses/src/hidapi"
+		dodoc "src/hidapi/LICENSE.txt"
+		dodoc "src/hidapi/LICENSE-orig.txt"
+		dodoc "src/hidapi/LICENSE-gpl3.txt"
+		dodoc "src/hidapi/LICENSE-bsd.txt"
 	fi
 
 	#if use test ; then
@@ -627,7 +629,7 @@ multilib_src_install_all() {
 			> \
 			"${T}/SDL_test_md5.c.LICENSE" \
 			|| die
-		docinto licenses/src/test
+		docinto "licenses/src/test"
 		dodoc "${T}/SDL_test_md5.c.LICENSE"
 	#fi
 }

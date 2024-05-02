@@ -7,7 +7,7 @@ EAPI=8
 
 MY_P="SDL2-${PV/_pre}"
 
-inherit autotools flag-o-matic linux-info toolchain-funcs multilib-minimal
+inherit cmake flag-o-matic linux-info toolchain-funcs multilib-minimal
 
 SRC_URI="https://www.libsdl.org/release/${MY_P}.tar.gz"
 S="${WORKDIR}/${MY_P}"
@@ -22,7 +22,6 @@ LICENSE_HIDAPI="
 	)
 "
 LICENSE="
-	ZLIB
 	all-rights-reserved
 	BSD
 	BrownUn_UnCalifornia_ErikCorry
@@ -31,6 +30,7 @@ LICENSE="
 	MIT
 	RSA_Data_Security
 	SunPro
+	ZLIB
 	armv6-simd? (
 		pixman-arm-asm.h
 		ZLIB
@@ -40,10 +40,7 @@ LICENSE="
 		pixman-arm-asm.h
 		ZLIB
 	)
-	hidapi-hidraw? (
-		${LICENSE_HIDAPI}
-	)
-	hidapi-libusb? (
+	hidapi? (
 		${LICENSE_HIDAPI}
 	)
 	video? (
@@ -82,7 +79,7 @@ LICENSE="
 #   contain all rights reserved without mentioned terms or corresponding license
 #   and are transported with the tarball.
 
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~sparc"
 RESTRICT="
 	!test? (
 		test
@@ -104,22 +101,24 @@ X86_CPU_FLAGS=(
 	cpu_flags_x86_mmx
 	cpu_flags_x86_sse
 	cpu_flags_x86_sse2
+	cpu_flags_x86_sse3
+)
+VIDEO_CARDS_FLAGS=(
+	video_cards_vc4
+	video_cards_vivante
 )
 IUSE="
 ${ARM_CPU_FLAGS[@]}
 ${PPC_CPU_FLAGS[@]}
+${VIDEO_CARDS_FLAGS[@]}
 ${X86_CPU_FLAGS[@]}
-alsa aqua custom-cflags dbus doc fcitx4 gles1 gles2 haptic +hidapi-hidraw
--hidapi-libusb ibus jack +joystick kms -libdecor libsamplerate +lsx nas +nls
+alsa aqua custom-cflags dbus doc fcitx4 gles1 gles2 haptic hidapi hidapi-joystick
+-hidapi-libusb ibus jack +joystick kms -libdecor libsamplerate +lsx nas
 opengl +openurl oss pipewire pulseaudio sndio +sound static-libs test +threads
-udev +video video_cards_vc4 vulkan wayland X xscreensaver
+udev +video vulkan wayland X xscreensaver
 "
 # libdecor is not in main repo but in community repos
 REQUIRED_USE="
-	|| (
-		joystick
-		udev
-	)
 	alsa? (
 		sound
 	)
@@ -132,11 +131,12 @@ REQUIRED_USE="
 	gles2? (
 		video
 	)
-	hidapi-hidraw? (
+	hidapi-joystick? (
+		hidapi
 		joystick
-		udev
 	)
 	hidapi-libusb? (
+		hidapi
 		joystick
 	)
 	haptic? (
@@ -160,6 +160,9 @@ REQUIRED_USE="
 	sndio? (
 		sound
 	)
+	test? (
+		static-libs
+	)
 	vulkan? (
 		video
 	)
@@ -169,10 +172,14 @@ REQUIRED_USE="
 	xscreensaver? (
 		X
 	)
+	|| (
+		joystick
+		udev
+	)
 "
-# See https://github.com/libsdl-org/SDL/blob/release-2.28.0/.github/workflows/main.yml#L38
-# https://github.com/libsdl-org/SDL/blob/release-2.28.0/docs/README-linux.md
-# U 22.04 ; CI tag release-2.28.x
+# See https://github.com/libsdl-org/SDL/blob/release-2.30.0/.github/workflows/main.yml#L47
+# https://github.com/libsdl-org/SDL/blob/release-2.30.0/docs/README-linux.md
+# U 22.04 ; CI tag release-2.30.x
 # libudev version relaxed
 MESA_PV="22.2.5"
 CDEPEND="
@@ -182,15 +189,6 @@ CDEPEND="
 	)
 	dbus? (
 		>=sys-apps/dbus-1.12.20[${MULTILIB_USEDEP}]
-	)
-	fcitx4? (
-		>=app-i18n/fcitx-4.2.9.8:4
-	)
-	gles1? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles1(+)]
-	)
-	gles2? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles2(+)]
 	)
 	hidapi-libusb? (
 		>=dev-libs/libusb-1.0.25
@@ -238,6 +236,7 @@ CDEPEND="
 		>=dev-libs/wayland-1.20.0[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+),gles2(+),wayland]
 		>=x11-libs/libxkbcommon-1.4.0[${MULTILIB_USEDEP}]
+		gui-libs/libdecor[${MULTILIB_USEDEP}]
 	)
 	X? (
 		>=x11-libs/libX11-1.7.5[${MULTILIB_USEDEP}]
@@ -253,12 +252,27 @@ CDEPEND="
 "
 RDEPEND="
 	${CDEPEND}
+	fcitx4? (
+		>=app-i18n/fcitx-4.2.9.8:4
+	)
+	gles1? (
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles1(+)]
+	)
+	gles2? (
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles2(+)]
+	)
 	vulkan? (
 		media-libs/vulkan-loader
 	)
 "
 DEPEND="
 	${CDEPEND}
+	gles1? (
+		media-libs/libglvnd
+	)
+	gles2? (
+		media-libs/libglvnd
+	)
 	ibus? (
 		>=dev-libs/glib-2.72.1:2[${MULTILIB_USEDEP}]
 	)
@@ -290,7 +304,6 @@ MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/SDL2/SDL_platform.h
 )
 PATCHES=(
-	"${FILESDIR}/${PN}-2.0.16-static-libs.patch"
 )
 
 pkg_setup() {
@@ -309,30 +322,12 @@ joystick or console gamepad support."
 }
 
 src_prepare() {
-	default
+	cmake_src_prepare
 
 	# Unbundle some headers.
 	rm -r src/video/khronos || die
 	ln -s "${ESYSROOT}/usr/include" src/video/khronos || die
 
-	if ! use vulkan ; then
-		sed -i \
-			'/testvulkan$(EXE) \\/d' \
-			"test/Makefile.in" \
-			|| die
-	fi
-
-	# SDL seems to customize SDL_config.h.in to remove macros like
-	# PACKAGE_NAME. Add AT_NOEAUTOHEADER="yes" to prevent those macros from
-	# being reintroduced.
-	# https://bugs.gentoo.org/764959
-	AT_NOEAUTOHEADER="yes" AT_M4DIR="/usr/share/aclocal acinclude" \
-		eautoreconf
-	if use test ; then
-		pushd test || die
-			eautoreconf
-		popd
-	fi
 	prepare_abi() {
 		cp -a "${S}" "${S}-${MULTIBUILD_VARIANT}" || die
 	}
@@ -342,178 +337,168 @@ src_prepare() {
 multilib_src_configure() {
 	use custom-cflags || strip-flags
 
-	if use ibus; then
-		local -x IBUS_CFLAGS="\
--I${ESYSROOT}/usr/include/glib-2.0 \
--I${ESYSROOT}/usr/include/ibus-1.0 \
--I${ESYSROOT}/usr/$(get_libdir)/glib-2.0/include \
-"
-	fi
-
-	local myeconfargs=(
-		$(use_enable alsa)
-		$(use_enable aqua video-cocoa)
-		$(use_enable cpu_flags_ppc_altivec altivec)
-		$(use_enable cpu_flags_x86_3dnow 3dnow)
-		$(use_enable cpu_flags_x86_mmx mmx)
-		$(use_enable cpu_flags_x86_sse ssemath)
-		$(use_enable cpu_flags_x86_sse sse)
-		$(use_enable cpu_flags_x86_sse2 sse2)
-		$(use_enable dbus)
-		$(use_enable fcitx4 fcitx)
-		$(use_enable gles1 video-opengles1)
-		$(use_enable gles2 video-opengles2)
-		$(use_enable haptic)
-		$(use_enable ibus)
-		$(use_enable jack)
-		$(use_enable joystick)
-		$(use_enable kms video-kmsdrm)
-		$(use_enable libdecor)
-		$(use_enable libsamplerate)
-		$(use_enable nas)
-		$(use_enable nls locale)
-		$(use_enable opengl video-opengl)
-		$(use_enable openurl misc)
-		$(use_enable oss)
-		$(use_enable pipewire)
-		$(use_enable pulseaudio)
-		$(use_enable sndio)
-		$(use_enable sound audio)
-		$(use_enable sound diskaudio)
-		$(use_enable sound dummyaudio)
-		$(use_enable static-libs static)
-		$(use_enable threads pthreads)
-		$(use_enable udev libudev)
-		$(use_enable video)
-		$(use_enable video video-dummy)
-		$(use_enable video_cards_vc4 video-rpi)
-		$(use_enable vulkan video-vulkan)
-		$(use_enable wayland video-wayland)
-		$(use_enable X video-x11)
-		$(use_enable X video-x11-xcursor)
-		$(use_enable X video-x11-xdbe)
-		$(use_enable X video-x11-xfixes)
-		$(use_enable X video-x11-xinput)
-		$(use_enable X video-x11-xrandr)
-		$(use_enable X video-x11-xshape)
-		$(use_enable xscreensaver video-x11-scrnsaver)
-		$(use_with X x)
-		--disable-alsa-shared
-		--disable-arts
-		--disable-directx
-		--disable-esd
-		--disable-fusionsound
-		--disable-fusionsound-shared
-		--disable-jack-shared
-		--disable-kmsdrm-shared
-		--disable-libsamplerate-shared
-		--disable-nas-shared
-		--disable-pipewire-shared
-		--disable-pulseaudio-shared
-		--disable-render-d3d
-		--disable-rpath
-		--disable-sndio-shared
-		--disable-video-directfb
-		--disable-wayland-shared
-		--disable-werror
-		--disable-x11-shared
-		--enable-assembly
-		--enable-atomic
-		--enable-cpuinfo
-		--enable-events
-		--enable-file
-		--enable-filesystem
-		--enable-loadso
-		--enable-power
-		--enable-render
-		--enable-system-iconv
-		--enable-timers
-		ac_cv_header_libunwind_h=no
+	local mycmakeargs=(
+		-DSDL_3DNOW=$(usex cpu_flags_x86_3dnow)
+		-DSDL_ALSA=$(usex alsa)
+		-DSDL_ALSA_SHARED="OFF"
+		-DSDL_ALTIVEC=$(usex cpu_flags_ppc_altivec)
+		-DSDL_ARTS="OFF"
+		-DSDL_ASSEMBLY="ON"
+		-DSDL_AUDIO=$(usex sound)
+		-DSDL_COCOA=$(usex aqua)
+		-DSDL_CPUINFO="ON"
+		-DSDL_DBUS=$(usex dbus)
+		-DSDL_DIRECTFB="OFF"
+		-DSDL_DIRECTX="OFF"
+		-DSDL_DISKAUDIO=$(usex sound)
+		-DSDL_DUMMYAUDIO=$(usex sound)
+		-DSDL_DUMMYVIDEO=$(usex video)
+		-DSDL_GCC_ATOMICS="ON"
+		-DSDL_ESD="OFF"
+		-DSDL_EVENTS="ON"
+		-DSDL_FILE="ON"
+		-DSDL_FILESYSTEM="ON"
+		-DSDL_FUSIONSOUND="OFF"
+		-DSDL_FUSIONSOUND_SHARED="OFF"
+		-DSDL_HAPTIC=$(usex haptic)
+		-DSDL_HIDAPI=$(usex hidapi)
+		-DSDL_IBUS=$(usex ibus)
+		-DSDL_JACK=$(usex jack)
+		-DSDL_JACK_SHARED="OFF"
+		-DSDL_JOYSTICK=$(usex joystick)
+		-DSDL_KMSDRM=$(usex kms)
+		-DSDL_KMSDRM_SHARED="OFF"
+		-DSDL_LIBSAMPLERATE=$(usex libsamplerate)
+		-DSDL_LIBSAMPLERATE_SHARED="OFF"
+		-DSDL_LIBUDEV=$(usex udev)
+		-DSDL_LOADSO="ON"
+		-DSDL_LOCALE=$(usex nls)
+		-DSDL_MMX=$(usex cpu_flags_x86_mmx)
+		-DSDL_MISC=$(usex openurl)
+		-DSDL_NAS=$(usex nas)
+		-DSDL_NAS_SHARED="OFF"
+		-DSDL_OPENGL=$(usex opengl)
+		-DSDL_OSS=$(usex oss)
+		-DSDL_RENDER_D3D="OFF"
+		-DSDL_PIPEWIRE=$(usex pipewire)
+		-DSDL_PIPEWIRE_SHARED="OFF"
+		-DSDL_POWER="ON"
+		-DSDL_PTHREADS=$(usex threads)
+		-DSDL_PULSEAUDIO=$(usex pulseaudio)
+		-DSDL_PULSEAUDIO_SHARED="OFF"
+		-DSDL_RENDER="ON"
+		-DSDL_RPATH="OFF"
+		-DSDL_RPI=$(usex video_cards_vc4)
+		-DSDL_SNDIO=$(usex sndio)
+		-DSDL_SNDIO_SHARED="OFF"
+		-DSDL_SSE=$(usex cpu_flags_x86_sse)
+		-DSDL_SSE2=$(usex cpu_flags_x86_sse2)
+		-DSDL_SSE3=$(usex cpu_flags_x86_sse3)
+		-DSDL_SSEMATH=$(usex cpu_flags_x86_sse)
+		-DSDL_STATIC=$(usex static-libs)
+		-DSDL_SYSTEM_ICONV="ON"
+		-DSDL_TESTS=$(usex test)
+		-DSDL_TIMERS="ON"
+		-DSDL_VIDEO=$(usex video)
+		-DSDL_VIDEO_RENDER_D3D="OFF"
+		-DSDL_VIVANTE=$(usex video_cards_vivante)
+		-DSDL_VULKAN=$(usex vulkan)
+		-DSDL_WAYLAND=$(usex wayland)
+		-DSDL_WAYLAND_LIBDECOR=$(usex wayland)
+		-DSDL_WAYLAND_LIBDECOR_SHARED="OFF"
+		-DSDL_WAYLAND_SHARED="OFF"
+		-DSDL_WERROR="OFF"
+		-DSDL_X11=$(usex X)
+		-DSDL_X11_SHARED="OFF"
+		-DSDL_X11_XCURSOR=$(usex X)
+		-DSDL_X11_XDBE=$(usex X)
+		-DSDL_X11_XINPUT=$(usex X)
+		-DSDL_X11_XFIXES=$(usex X)
+		-DSDL_X11_XRANDR=$(usex X)
+		-DSDL_X11_XSCRNSAVER=$(usex xscreensaver)
+		-DSDL_X11_XSHAPE=$(usex X)
 	)
 
-	if use armv6-simd && use cpu_flags_arm_v6 ; then
-		myeconfargs+=(
-			--enable-arm-simd
+	if use gles1 || use gles2 ; then
+		mycmakeargs+=(
+			-DSDL_OPENGLES="ON"
 		)
 	else
-		myeconfargs+=(
-			--disable-arm-simd
+		mycmakeargs+=(
+			-DSDL_OPENGLES="OFF"
+		)
+	fi
+
+	if use hidapi-joystick || use hidapi-libusb ; then
+		mycmakeargs+=(
+			-DSDL_HIDAPI="ON"
+		)
+	else
+		mycmakeargs+=(
+			-DSDL_HIDAPI="OFF"
+			-DSDL_HIDAPI_JOYSTICK="OFF"
+			-DSDL_HIDAPI_LIBUSB="OFF"
+		)
+	fi
+
+	if use hidapi-joystick ; then
+		mycmakeargs+=(
+			-DSDL_HIDAPI_JOYSTICK="ON"
+		)
+	fi
+	if use hidapi-libusb ; then
+		mycmakeargs+=(
+			-DSDL_HIDAPI_LIBUSB="ON"
+		)
+	fi
+
+	if use armv6-simd && use cpu_flags_arm_v6 ; then
+		mycmakeargs+=(
+			-DSDL_ARMSIMD="ON"
+		)
+	else
+		mycmakeargs+=(
+			-DSDL_ARMSIMD="OFF"
 		)
 	fi
 
 	if use cpu_flags_arm_v7 && use cpu_flags_arm_neon ; then
-		myeconfargs+=(
-			--enable-arm-neon
+		mycmakeargs+=(
+			-DSDL_ARMNEON="ON"
 		)
 	else
-		myeconfargs+=(
-			--disable-arm-neon
-		)
-	fi
-
-	if use hidapi-hidraw || use hidapi-libusb ; then
-		myeconfargs+=(
-			$(use_enable hidapi-libusb)
-			--enable-hidapi
-		)
-	else
-		myeconfargs+=(
-			--disable-hidapi
+		mycmakeargs+=(
+			-DSDL_ARMNEON="OFF"
 		)
 	fi
 
 	if use loong ; then
 		myeconfargs+=(
-			$(use_enable lsx)
+			-DSDL_LSX=$(usex lsx)
 		)
 	else
 		myeconfargs+=(
-			--disable-lsx
+			-DSDL_LSX="OFF"
 		)
 	fi
 
-	ECONF_SOURCE="${S}" \
-	econf "${myeconfargs[@]}"
-
-	if use test; then
-		# Most of these workarounds courtesy Debian
-		# https://salsa.debian.org/sdl-team/libsdl2/-/blob/debian/latest/debian/rules
-		local mytestargs=(
-			--x-includes="/usr/include"
-			--x-libraries="/usr/$(get_libdir)"
-			SDL_CFLAGS="-I${S}/include"
-			SDL_LIBS="-L${BUILD_DIR}/build/.libs -lSDL2"
-			ac_cv_lib_SDL2_ttf_TTF_Init=no
-			CFLAGS="${CPPFLAGS} ${CFLAGS} ${LDFLAGS}"
-		)
-
-		mkdir "${BUILD_DIR}/test" || die
-		cd "${BUILD_DIR}/test" || die
-		ECONF_SOURCE="${S}/test" \
-		econf "${mytestargs[@]}"
-	fi
-}
-
-multilib_src_compile() {
-	emake all V=1
-	if use test ; then
-		emake -C test all V=1
-	fi
+	cmake_src_configure
 }
 
 src_compile() {
 	multilib-minimal_src_compile
+
 	if use doc; then
 		cd docs || die
 		doxygen || die
 	fi
 }
 
+# TODO PGO
 multilib_src_test() {
-	if use test ; then
-		LD_LIBRARY_PATH="${BUILD_DIR}/build/.libs" \
-		emake -C test check V=1
-	fi
+	unset SDL_GAMECONTROLLERCONFIG
+	unset SDL_GAMECONTROLLER_USE_BUTTON_LABELS
+	cmake_src_test
 }
 
 multilib_src_install() {
@@ -521,10 +506,6 @@ multilib_src_install() {
 }
 
 multilib_src_install_all() {
-	# Do not delete the static .a libraries here as some are
-	# mandatory. They may be needed even when linking dynamically.
-	find "${ED}" -type f -name "*.la" -delete || die
-
 	dodoc \
 		{"BUGS","CREDITS","README-SDL","TODO","WhatsNew"}".txt" \
 		"README.md" \
