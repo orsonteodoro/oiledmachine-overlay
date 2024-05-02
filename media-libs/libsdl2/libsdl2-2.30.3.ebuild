@@ -262,16 +262,16 @@ RDEPEND="
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles2(+)]
 	)
 	vulkan? (
-		media-libs/vulkan-loader
+		media-libs/vulkan-loader[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
 	${CDEPEND}
 	gles1? (
-		media-libs/libglvnd
+		media-libs/libglvnd[${MULTILIB_USEDEP}]
 	)
 	gles2? (
-		media-libs/libglvnd
+		media-libs/libglvnd[${MULTILIB_USEDEP}]
 	)
 	ibus? (
 		>=dev-libs/glib-2.72.1:2[${MULTILIB_USEDEP}]
