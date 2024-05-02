@@ -107,15 +107,17 @@ VIDEO_CARDS_FLAGS=(
 	video_cards_vc4
 	video_cards_vivante
 )
+# oss is enabled by default upstream
 IUSE="
 ${ARM_CPU_FLAGS[@]}
 ${PPC_CPU_FLAGS[@]}
 ${VIDEO_CARDS_FLAGS[@]}
 ${X86_CPU_FLAGS[@]}
-alsa aqua custom-cflags dbus doc fcitx4 gles1 gles2 haptic hidapi hidapi-joystick
--hidapi-libusb ibus jack +joystick kms -libdecor libsamplerate +lsx nas
-opengl +openurl oss pipewire pulseaudio sndio +sound static-libs test +threads
-udev +video vulkan wayland X xscreensaver
++alsa aqua custom-cflags +dbus doc fcitx4 +gles1 +gles2 +haptic +hidapi
++hidapi-joystick -hidapi-libusb +ibus +jack +joystick +kms +libdecor
++libsamplerate -lsx -lasx +nas +nls +opengl +openurl oss +pipewire +pulseaudio
++sndio +sound +static-libs test +threads +udev +video +vulkan +wayland +X
++xscreensaver
 "
 # libdecor is not in main repo but in community repos
 REQUIRED_USE="
@@ -460,10 +462,12 @@ multilib_src_configure() {
 	if use loong ; then
 		myeconfargs+=(
 			-DSDL_LSX=$(usex lsx)
+			-DSDL_LASX=$(usex lasx)
 		)
 	else
 		myeconfargs+=(
 			-DSDL_LSX="OFF"
+			-DSDL_LASX="OFF"
 		)
 	fi
 
