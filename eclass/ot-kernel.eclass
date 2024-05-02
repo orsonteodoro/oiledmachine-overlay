@@ -359,6 +359,10 @@ PGO_LLVM_SUPPORTED_VERSIONS=(
 # Bump also IPD_RAW_VER_MAX when profraw version bumped
 # Search for INSTR_PROF_RAW_VERSION in
 #	"19.0.0.9999" # profraw v9
+	"18.1.5"
+	"18.1.4"
+	"18.1.3"
+	"18.1.2"
 	"18.1.0" # profraw v9
 	"17.0.6" # profraw v8
 	"17.0.5"
