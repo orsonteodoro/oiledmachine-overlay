@@ -92,6 +92,9 @@
     <flag name="cython">
       Compile python code as native running possibly 1-2 orders of magnitude faster.
     </flag>
+    <flag name="cythonize-more">
+      Cythonize more code as native that would benefit.
+    </flag>
     <flag name="dbus">
       Checks and enables support for DBus.
     </flag>
@@ -177,6 +180,9 @@
     </flag>
     <flag name="notifications">
       Enables support for system notifications.
+    </flag>
+    <flag name="nvdec">
+      Enables support for the NVDEC hardware decoder.
     </flag>
     <flag name="nvenc">
       Enables support for the NVENC hardware encoder.

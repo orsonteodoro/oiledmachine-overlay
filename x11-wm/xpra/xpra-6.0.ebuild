@@ -8,10 +8,9 @@ EAPI=8
 
 MY_PV="$(ver_cut 1-4)"
 
-DISTUTILS_USE_PEP517="setuptools"
+unset DISTUTILS_USE_PEP517
 DISTUTILS_EXT=1
-FFMPEG_SLOT="0/56.58.58"
-PYTHON_COMPAT=( python3_10 ) # Upstream only tests with 3.10
+PYTHON_COMPAT=( python3_{10..12} )
 
 inherit cuda distutils-r1 flag-o-matic linux-info prefix tmpfiles udev
 inherit user-info xdg
@@ -65,15 +64,15 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${GSTREAMER_IUSE}
 
 aes appindicator +audio +avahi avif brotli +client +clipboard cpu-percent
-+csc_cython csc_libyuv cuda +cuda_rebuild +cups cups-forwarding +cython +dbus
-+doc -drm ffmpeg evdi firejail gnome-shell +gtk3 gssapi html5-client html5_gzip
-html5_brotli +http ibus jpeg kerberos +keyboard-layout keycloak ldap ldap3 +lz4
-lzo +mdns mysql +netdev +notifications nvdec nvenc nvfbc nvjpeg +opengl +openh264
-openrc osmesa +pam pinentry png proc +proxy pyinotify qrencode +quic -rencode
-+rencodeplus +rfb sd_listen selinux +server +socks sound-forwarding spng sqlite
-+ssh sshpass +ssl systemd +tcp-wrappers test tiff u2f -uinput +v4l2 vaapi vpx
-vsock -wayland +webcam webcam-forwarding webp +websockets +X x264 +xdg
-+xinput yaml zeroconf zlib
++csc_cython csc_libyuv cuda +cuda_rebuild +cups cups-forwarding +cython
+-cythonize-more +dbus +doc -drm evdi firejail gnome-shell +gtk3 gssapi
+html5-client html5_gzip html5_brotli +http ibus jpeg kerberos +keyboard-layout
+keycloak ldap ldap3 +lz4 lzo +mdns mysql +netdev +notifications -nvdec nvenc nvfbc
+nvjpeg +opengl +openh264 openrc osmesa +pam pinentry png proc +proxy pyinotify
+qrencode +quic -rencode +rencodeplus +rfb sd_listen selinux +server +socks
+sound-forwarding spng sqlite +ssh sshpass +ssl systemd +tcp-wrappers test tiff
+u2f -uinput +v4l2 vaapi vpx vsock -wayland +webcam webcam-forwarding webp
++websockets +X x264 +xdg +xinput yaml zeroconf zlib
 
 ebuild-revision-1
 "
@@ -82,9 +81,6 @@ ebuild-revision-1
 
 # See https://github.com/Xpra-org/xpra/blob/v5.0.4/docs/Build/Dependencies.md
 CLIENT_OPTIONS="
-	ffmpeg? (
-		client
-	)
 	opengl? (
 		client
 	)
@@ -265,14 +261,8 @@ REQUIRED_USE+="
 		aes
 		rencode
 	)
-	vpx? (
-		ffmpeg
-	)
 	X? (
 		gtk3
-	)
-	x264? (
-		ffmpeg
 	)
 	zeroconf? (
 		mdns
@@ -295,7 +285,7 @@ PILLOW_DEPEND="
 
 # The media-video/nvidia-video-codec-sdk is a placeholder.  You need to package
 # it yourself locally.  See also
-# https://github.com/Xpra-org/xpra/blob/v5.0.8/docs/Usage/NVENC.md?plain=1
+# https://github.com/Xpra-org/xpra/blob/v6.0/docs/Usage/NVENC.md?plain=1
 # https://developer.nvidia.com/nvidia-video-codec-sdk/download
 # https://developer.nvidia.com/video-codec-sdk-archive
 RDEPEND+="
@@ -396,9 +386,6 @@ RDEPEND+="
 	)
 	evdi? (
 		>=x11-drivers/evdi-1.9
-	)
-	ffmpeg? (
-		media-video/ffmpeg:${FFMPEG_SLOT}[vpx?,x264?]
 	)
 	gnome-shell? (
 		gnome-extra/gnome-shell-extension-appindicator
@@ -558,11 +545,10 @@ RDEPEND+="
 	)
 	vaapi? (
 		>=media-libs/libva-2.1.0[drm(+),X?,wayland?]
-		media-video/ffmpeg:${FFMPEG_SLOT}[vaapi]
 		media-libs/vaapi-drivers
 	)
 	vpx? (
-		>=media-libs/libvpx-1.4
+		>=media-libs/libvpx-1.7
 	)
 	vsock? (
 		sys-kernel/linux-headers
@@ -643,7 +629,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.3-openrc-init-fix-v3.patch"
 	"${FILESDIR}/${PN}-4.1.3-change-init-config-path.patch"
 	"${FILESDIR}/${PN}-5.0.4-udev-path.patch"
-	"${FILESDIR}/${PN}-5.0.4-translate-flags.patch"
+	"${FILESDIR}/${PN}-6.0-translate-flags.patch"
 	"${FILESDIR}/${PN}-6.0-pkgconfig-warn.patch"
 )
 
@@ -736,6 +722,7 @@ src_prepare() {
 	fi
 	if use firejail ; then
 		eapply "${FILESDIR}/${PN}-4.1.3-envar-sound-override-on-start.patch"
+		:
 	fi
 	if use pam ; then
 		if ! use selinux ; then
@@ -777,12 +764,10 @@ python_prepare_all() {
 			"fs/etc/xpra/conf.d/40_client.conf.in" \
 			|| die
 	else
-		sed -i \
-			-e "s|#opengl = no|opengl = no|g" \
+		sed -i -e "s|#opengl = no|opengl = no|g" \
 			"fs/etc/xpra/conf.d/40_client.conf.in" \
 			|| die
-		sed -i \
-			-e 's|"+extension", "GLX"|"-extension", "GLX"|g' \
+		sed -i -e 's|"+extension", "GLX"|"-extension", "GLX"|g' \
 			"xpra/scripts/config.py" \
 			|| die
 	fi
@@ -828,9 +813,6 @@ eerror
 		$(use_with cups printing)
 		$(use_with dbus)
 		$(use_with evdi)
-		$(use_with ffmpeg csc_swscale)
-		$(use_with ffmpeg dec_avcodec2)
-		$(use_with ffmpeg enc_ffmpeg)
 		$(use_with jpeg jpeg_decoder)
 		$(use_with jpeg jpeg_encoder)
 		$(use_with keyboard-layout keyboard)
@@ -873,6 +855,12 @@ eerror
 		--without-Xdummy
 	)
 
+	if use cythonize-more ; then
+		DISTUTILS_ARGS+=(
+			--with-cythonize_more
+		)
+	fi
+
 	if use jpeg || use png || use tiff || use webp || use test ; then
 		DISTUTILS_ARGS+=(
 			--with-pillow
@@ -908,10 +896,6 @@ eerror
 
 python_install_all() {
 	distutils-r1_python_install_all
-	mv \
-		"${ED}/usr/etc" \
-		"${ED}/etc" \
-		|| die
 	mv \
 		"${ED}/usr/share/doc/xpra" \
 		"${ED}/usr/share/doc/${PN}-${PVR}" \

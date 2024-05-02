@@ -28,9 +28,9 @@ HOMEPAGE="
 	https://github.com/Xpra-org/xpra
 "
 LICENSE="
-	GPL-2+
 	BSD-2
 	CC-BY-SA-3.0
+	GPL-2+
 	LGPL-3+
 	MIT
 "
@@ -75,7 +75,7 @@ systemd +tcp-wrappers test tiff u2f -uinput +v4l2 vaapi vpx vsock -wayland
 +webcam webcam-forwarding webp +websockets +X x264 -x265 +xdg +xinput yaml
 zeroconf zlib
 
-r1
+ebuild-revision-1
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
@@ -149,6 +149,8 @@ gen_required_use_cuda_targets() {
 # LIMD # ATM, GEN 5-12
 # LID # C2M, GEN 5-9
 REQUIRED_USE+="
+	avif
+
 	$(gen_required_use_cuda_targets)
 	${CLIENT_OPTIONS}
 	${SERVER_OPTIONS}
@@ -294,6 +296,11 @@ PILLOW_DEPEND="
 	dev-python/pillow[${PYTHON_USEDEP},jpeg?,tiff?,webp?,zlib?]
 "
 
+# The media-video/nvidia-video-codec-sdk is a placeholder.  You need to package
+# it yourself locally.  See also
+# https://github.com/Xpra-org/xpra/blob/v4.4.6/docs/Usage/NVENC.md?plain=1
+# https://developer.nvidia.com/nvidia-video-codec-sdk/download
+# https://developer.nvidia.com/video-codec-sdk-archive
 RDEPEND+="
 	acct-group/xpra
 	app-admin/sudo
@@ -423,9 +430,9 @@ RDEPEND+="
 	nvenc? (
 		>=dev-python/pycuda-${PYCUDA_PV}[${PYTHON_USEDEP}]
 		>=dev-util/nvidia-cuda-toolkit-5:=
+		>=media-video/nvidia-video-codec-sdk-10
 		dev-python/pynvml[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
-		media-video/nvidia-video-codec
 	)
 	nvfbc? (
 		>=dev-python/pycuda-${PYCUDA_PV}[${PYTHON_USEDEP}]
@@ -720,18 +727,20 @@ src_prepare() {
 		cuda_src_prepare
 	fi
 	if use firejail ; then
-		eapply "${FILESDIR}"/${PN}-4.1.3-envar-sound-override-on-start.patch
+		eapply "${FILESDIR}/${PN}-4.1.3-envar-sound-override-on-start.patch"
 	fi
 	if use pam ; then
 		if ! use selinux ; then
-			sed -r -i -e \
-		"s|^session(.*)pam_selinux.so|#session\1pam_selinux.so|g" \
-				fs/etc/pam.d/xpra || die
+			sed -r -i \
+		-e "s|^session(.*)pam_selinux.so|#session\1pam_selinux.so|g" \
+				"fs/etc/pam.d/xpra" \
+				|| die
 		fi
 		if ! use systemd ; then
-			sed -r -i -e \
-		"s|^session(.*)pam_systemd.so|#session\1pam_systemd.so|g" \
-				fs/etc/pam.d/xpra || die
+			sed -r -i \
+		-e "s|^session(.*)pam_systemd.so|#session\1pam_systemd.so|g" \
+				"fs/etc/pam.d/xpra" \
+				|| die
 		fi
 	fi
 }
@@ -739,28 +748,41 @@ src_prepare() {
 python_prepare_all() {
 	hprefixify -w '/os.path/' setup.py
 	hprefixify \
-		tmpfiles.d/xpra.conf xpra/server/server_util.py \
-		xpra/platform{/xposix,}/paths.py xpra/scripts/server.py
+		"tmpfiles.d/xpra.conf" \
+		"xpra/server/server_util.py" \
+		"xpra/platform"{"/xposix",""}"/paths.py" \
+		"xpra/scripts/server.py"
 
-	sed -r -e "/\bdoc_dir =/s:/${PN}\":/${PF}/html\":" \
-		-i setup.py || die
+	sed -r \
+		-i \
+		-e "/\bdoc_dir =/s:/${PN}\":/${PF}/html\":" \
+		"setup.py" \
+		|| die
 
 	sed -i -e "s|^opengl =|#opengl =|g" \
-		fs/etc/xpra/conf.d/40_client.conf.in || die
+		"fs/etc/xpra/conf.d/40_client.conf.in" \
+		|| die
 	if use opengl ; then
-		sed -i -e "s|#opengl = yes|opengl = yes|g" \
-			fs/etc/xpra/conf.d/40_client.conf.in || die
+		sed -i \
+			-e "s|#opengl = yes|opengl = yes|g" \
+			"fs/etc/xpra/conf.d/40_client.conf.in" \
+			|| die
 	else
-		sed -i -e "s|#opengl = no|opengl = no|g" \
-			fs/etc/xpra/conf.d/40_client.conf.in || die
-		sed -i -e 's|"+extension", "GLX"|"-extension", "GLX"|g' \
-			xpra/scripts/config.py || die
+		sed -i \
+			-e "s|#opengl = no|opengl = no|g" \
+			"fs/etc/xpra/conf.d/40_client.conf.in" \
+			|| die
+		sed -i \
+			-e 's|"+extension", "GLX"|"-extension", "GLX"|g' \
+			"xpra/scripts/config.py" \
+			|| die
 	fi
 
 	distutils-r1_python_prepare_all
 }
 
 python_configure_all() {
+	filter-flags
 	use cython && check_cython
 	if use evdi && [[ ! -e "${ESYSROOT}/usr/$(get_libdir)/pkgconfig/evdi.pc" ]] ; then
 eerror
@@ -772,10 +794,11 @@ eerror
 	fi
 
 	sed -i \
-	-e "/'pulseaudio'/s:DEFAULT_PULSEAUDIO:$(usex pulseaudio True False):" \
-		setup.py || die
+		-e "/'pulseaudio'/s:DEFAULT_PULSEAUDIO:$(usex pulseaudio True False):" \
+		"setup.py" \
+		|| die
 
-	local DISTUTILS_ARGS=(
+	DISTUTILS_ARGS=(
 		$(use_with avif)
 		$(use_with brotli)
 		$(use_with client)
@@ -829,9 +852,9 @@ eerror
 		$(use_with x265 enc_x265)
 		$(use_with xdg xdg_open)
 		$(use_with xinput)
-		--with-strict
+#		--with-strict
 		--with-verbose
-		--with-warn
+		--without-warn
 		--without-debug
 		--without-example
 		--without-PIC
@@ -863,10 +886,12 @@ eerror
 	# See
 	# https://www.xpra.org/trac/ticket/1080
 	# http://trac.cython.org/ticket/395
-	append-cflags -fno-strict-aliasing
+#	append-cflags -fno-strict-aliasing
 
 	export XPRA_SOCKET_DIRS="${EPREFIX}/run/xpra"
 	export UDEVDIR=$(get_udevdir)
+	export DISTUTILS_ARGS
+	einfo "DISTUTILS_ARGS:  ${DISTUTILS_ARGS[@]}"
 }
 
 python_install_all() {
@@ -880,29 +905,35 @@ python_install_all() {
 		"${ED}/usr/share/doc/${PN}-${PVR}" \
 		|| die
 	if use openrc ; then
-		fperms 0750 /etc/init.d/xpra
+		fperms 0750 "/etc/init.d/xpra"
 	fi
 	if use X && has_version "x11-base/xorg-drivers[video_cards_dummy]" ; then
-		dodir /etc/X11
+		dodir "/etc/X11"
 		cp \
 			"${ED}/etc/xpra/xorg.conf" \
 			"${ED}/etc/X11/xorg.dummy.conf" \
 			|| die
 	fi
 	if ! use openrc ; then
-		[[ -e "${ED}/etc/init.d/${PN}" ]] \
-			&& rm "${ED}/etc/init.d/${PN}"
+		if [[ -e "${ED}/etc/init.d/${PN}" ]] ; then
+			rm "${ED}/etc/init.d/${PN}" \
+				|| die
+		fi
 	fi
 	if ! use systemd ; then
-		[[ -e "${ED}/lib/systemd/system/xpra.service" ]] \
-			&& rm "${ED}/lib/systemd/system/xpra.service"
-		[[ -e "${ED}/lib/systemd/system/xpra-nosocketactivation.service" ]] \
-			&& rm "${ED}/lib/systemd/system/xpra-nosocketactivation.service"
+		if [[ -e "${ED}/lib/systemd/system/xpra.service" ]] ; then
+			rm "${ED}/lib/systemd/system/xpra.service" \
+				|| die
+		fi
+		if [[ -e "${ED}/lib/systemd/system/xpra-nosocketactivation.service" ]] ; then
+			rm "${ED}/lib/systemd/system/xpra-nosocketactivation.service" \
+				|| die
+		fi
 	fi
 }
 
 pkg_postinst() {
-	tmpfiles_process /usr/lib/tmpfiles.d/xpra.conf
+	tmpfiles_process "/usr/lib/tmpfiles.d/xpra.conf"
 	xdg_pkg_postinst
 einfo
 einfo "You need to add yourself to the xpra, tty, dialout groups."
@@ -910,7 +941,7 @@ einfo
 elog
 elog "You need to enable the xpra service for this to work."
 elog
-	if which rc-update 2>/dev/null 1>/dev/null ; then
+	if which rc-update >/dev/null 2>&1 ; then
 elog
 elog "For OpenRC, do:"
 elog
@@ -918,7 +949,7 @@ elog "  rc-update add xpra"
 elog "  /etc/init.d/xpra restart"
 elog
 	fi
-	if which systemctl 2>/dev/null 1>/dev/null ; then
+	if which systemctl >/dev/null 2>&1 ; then
 elog
 elog "For systemd, do:"
 elog

@@ -1,0 +1,11 @@
+--- a/setup.py.orig	2024-05-01 21:22:09.133284241 -0700
++++ b/setup.py	2024-05-01 21:26:54.251123079 -0700
+@@ -986,7 +986,7 @@ def exec_pkgconfig(*pkgs_options, **ekw)
+                 print(f"{pkg_config_cmd=}")
+             r, pkg_config_out, err = get_status_output(pkg_config_cmd)
+             if r!=0:
+-                sys.exit("ERROR: call to '%s' failed (err=%s)" % (" ".join(pkg_config_cmd), err))
++                print("ERROR: call to '%s' failed (err=%s)" % (" ".join(pkg_config_cmd), err))
+             if verbose_ENABLED:
+                 print(f"pkg-config output: {pkg_config_out}")
+             add_tokens(pkg_config_out, add_to)
