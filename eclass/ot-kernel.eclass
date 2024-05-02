@@ -54,7 +54,7 @@
 #	https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
 # Nest:
 #       https://gitlab.inria.fr/nest-public/nest-artifact
-#       https://gitlab.inria.fr/nest-public/nest-artifact/-/tree/main/extras
+#       https://gitlab.inria.fr/nest-public/nest-artifact/-/tree/main/extras			# URI contains patch
 #       https://gitlab.inria.fr/nest-public/nest-artifact/-/tree/main/image_creation
 # O3 (Allow O3):
 #	https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e	# 5.4
@@ -152,7 +152,7 @@ GENPATCHES_URI_BASE_URI="https://gitweb.gentoo.org/proj/linux-patches.git/snapsh
 GENPATCHES_MAJOR_MINOR_REVISION="${KV_MAJOR_MINOR}-${GENPATCHES_VER}"
 GENPATCHES_FN="linux-patches-${GENPATCHES_MAJOR_MINOR_REVISION}.tar.bz2"
 GENPATCHES_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_FN}"
-KCP_COMMIT_SNAPSHOT="c409515574bd4d69af45ad74d4e7ba7151010516" # 20240221
+KCP_COMMIT_SNAPSHOT="30db2170d3ddefa13a3dcffd05db66efff2fea7d" # 20240430
 KCP_CORTEX_A72_BN="build-with-mcpu-for-cortex-a72"
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 KERNEL_SERIES_TARBALL_FN="linux-${KV_MAJOR_MINOR}.tar.xz"
@@ -1774,10 +1774,12 @@ apply_zen_multigen_lru() {
 ot-kernel_get_kcp_provider() {
 	local kcp_provider
 	if [[ "${PV}" =~ "9999" ]] ; then
-		kcp_provider="${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-zen-sauce}"
+	# KERNEL_KERNEL is not a mistake.
+		kcp_provider="${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-none}"
 	else
 		kcp_provider="${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}"
 	fi
+	echo "${kcp_provider}"
 }
 
 # @FUNCTION: _filter_genpatches
@@ -2201,7 +2203,7 @@ ot-kernel_apply_kcp() {
 	local wants_kcp=0
 	local wants_kcp_rpi=0
 
-	if [[ "${CFLAGS}" =~ ("-march") ]] ; then
+	if [[ "${CFLAGS}" =~ "-march" ]] ; then
 		wants_kcp=1
 	fi
 	if [[ -n "${X86_MICROARCH_OVERRIDE}" ]] ; then
@@ -2212,6 +2214,7 @@ ot-kernel_apply_kcp() {
 	fi
 
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
+einfo "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:  ${kcp_provider}"
 	if ! [[ "${kcp_provider}" =~ "graysky2" ]] ; then
 		wants_kcp=0
 		wants_kcp_rpi=0
@@ -3631,15 +3634,14 @@ eerror
 	fi
 
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
-
-	if [[ "${kcp_provider}" =~ ("graysky2") ]] && [[ "${PV}" =~ "9999" ]] ; then
+	if [[ "${kcp_provider}" =~ ("graysky2"|"zen-sauce") ]] && [[ "${PV}" =~ "9999" ]] ; then
+# Actually for live sources no provider supports live.
 eerror
 eerror "The current value of OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER is not"
-eerror "acceptable for live sources.  In addition the corresponding USE flag"
-eerror "(for either genpatches or zen-sauce) must be enabled."
+eerror "acceptable for live sources."
 eerror
-eerror "Allowed values:  disable, none, zen-sauce"
-eerror "Actual value:  ${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}"
+eerror "Allowed values:  disable, none"
+eerror "Actual value:  ${kcp_provider}"
 eerror
 		die
 	fi

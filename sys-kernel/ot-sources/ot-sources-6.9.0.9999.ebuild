@@ -3,8 +3,8 @@
 
 EAPI=8
 
-GENPATCHES_FALLBACK_COMMIT="8c47d4e09a8d4127e428ed961b17408e56d0f7ab" # 2024-03-15 17:58:25 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="d03d4188908883e1705987795a09aeed31424f66" # 2024-04-29 14:36:53 -0700
+GENPATCHES_FALLBACK_COMMIT="67dfbbcc400e4d21a8ef52f2571fead99f76ceb0" # 2024-04-28 18:14:36 -0400
+LINUX_SOURCES_FALLBACK_COMMIT="49a73b1652c58ef2a81776a12ad9ac0795f38de0" # 2024-05-02 09:05:21 -0700
 RC_PV="rc6" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
@@ -14,7 +14,7 @@ RC_PV="rc6" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux
 EBUILD_REV="r6"
 GENPATCHES_VER="live"
 PATCH_PROJC_VER="6.8-r1"
-PATCH_RT_VER="6.9-rc2-rt1"
+PATCH_RT_VER="6.9-rc6-rt3"
 
 inherit ot-kernel-v6.9
 

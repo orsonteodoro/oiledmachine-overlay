@@ -171,17 +171,17 @@
 
     6.9 (Live / Master / Stable)			A
 		    -rt	(RT_PREEMPT)			D
-		    Clang PGO				D
+		    Clang PGO				E
 		    Clear Linux patchset		D
 		    genpatches				D
 		    kernel_compiler_patch		D
-		    Nest				D
+		    Nest				E
 		    Project C				D
-		    TCP BBR v2 [5]			D
-		    TCP BBR v3 [5]			D
-		    TRESOR (AES-NI) [5]			D
-		    TRESOR (x86) [5]			D
-		    TRESOR (x86-64) [5]			D
+		    TCP BBR v2 [5]			E
+		    TCP BBR v3 [5]			E
+		    TRESOR (AES-NI) [5]			E
+		    TRESOR (x86) [5]			E
+		    TRESOR (x86-64) [5]			E
 		    zen-sauce				D
 
     [1] Kernel LTS provides security updates and bugfixes, but doesn't extend to
@@ -2080,9 +2080,9 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     Acceptable values:
 
       graysky2   - (default in lts/stable) Use the kernel_compiler_patch directly from the creator of the patchset.
-      zen-sauce  - (default in live)       Use the zen-sauce version of kernel_compiler_patch
+      zen-sauce  - Use the zen-sauce version of kernel_compiler_patch
       genpatches - Use the genpatches version of kernel_compiler_patch
-      none       - Disables kernel_compiler_patch
+      none       - (default for live) Disables kernel_compiler_patch
       disable    - Disables kernel_compiler_patch
 
 

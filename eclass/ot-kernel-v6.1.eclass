@@ -540,6 +540,7 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${KCP_SRC_8_1_URI}
 		${KCP_SRC_9_1_URI}
 		${KCP_SRC_CORTEX_A72_URI}
+		${NEST_URI}
 		${PRJC_SRC_URI}
 		${RT_SRC_ALT_URI}
 		${TRESOR_AESNI_SRC_URI}

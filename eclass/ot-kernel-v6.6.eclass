@@ -610,9 +610,15 @@ NOT_READY_YET="
 
 if [[ "${PV}" =~ "9999" && "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 	SRC_URI+="
+		${BBRV2_SRC_URIS}
+		${BBRV3_SRC_URIS}
+		${NEST_URI}
 		${RT_SRC_ALT_URI}
-		${ZEN_SAUCE_URIS}
-		${ZEN_SAUCE_URIS}
+		${TRESOR_AESNI_SRC_URI}
+		${TRESOR_I686_SRC_URI}
+		${TRESOR_README_SRC_URI}
+		${TRESOR_RESEARCH_PDF_SRC_URI}
+		${TRESOR_SYSFS_SRC_URI}
 	"
 elif [[ "${PV}" =~ "9999" ]] ; then
 	SRC_URI+="
@@ -622,11 +628,18 @@ elif [[ "${PV}" =~ "9999" ]] ; then
 		bbrv3? (
 			${BBRV3_SRC_URIS}
 		)
+		nest? (
+			${NEST_URI}
+		)
 		rt? (
 			${RT_SRC_ALT_URI}
 		)
-		zen-sauce? (
-			${ZEN_SAUCE_URIS}
+		tresor? (
+			${TRESOR_AESNI_SRC_URI}
+			${TRESOR_I686_SRC_URI}
+			${TRESOR_README_SRC_URI}
+			${TRESOR_RESEARCH_PDF_SRC_URI}
+			${TRESOR_SYSFS_SRC_URI}
 		)
 	"
 elif [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
@@ -634,11 +647,13 @@ elif [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${BBRV2_SRC_URIS}
 		${BBRV3_SRC_URIS}
 		${C2TCP_URIS}
+		${CLEAR_LINUX_PATCHES_URI}
 		${GENPATCHES_URI}
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
 		${KCP_SRC_9_1_URI}
 		${KCP_SRC_CORTEX_A72_URI}
+		${NEST_URI}
 		${PRJC_SRC_URI}
 		${RT_SRC_ALT_URI}
 		${TRESOR_AESNI_SRC_URI}
