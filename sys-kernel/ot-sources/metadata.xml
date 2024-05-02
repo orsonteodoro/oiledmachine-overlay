@@ -173,7 +173,7 @@
 		    -rt	(RT_PREEMPT)			D
 		    Clang PGO				E
 		    Clear Linux patchset		D
-		    genpatches				D
+		    genpatches				A
 		    kernel_compiler_patch		D
 		    Nest				E
 		    Project C				D
