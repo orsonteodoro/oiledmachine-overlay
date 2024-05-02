@@ -306,21 +306,6 @@ MULTILIB_WRAPPED_HEADERS=(
 PATCHES=(
 )
 
-pkg_setup() {
-	if use hidapi-hidraw ; then
-		linux-info_pkg_setup
-		if ! linux_config_src_exists ; then
-			ewarn \
-"Missing kernel .config file.  Do \`make menuconfig\` and save it to fix this."
-		fi
-		if ! linux_chkconfig_present HIDRAW ; then
-			ewarn \
-"You must have CONFIG_HIDRAW enabled in the kernel for hidraw \
-joystick or console gamepad support."
-		fi
-	fi
-}
-
 src_prepare() {
 	cmake_src_prepare
 
@@ -596,7 +581,7 @@ multilib_src_install_all() {
 		dodoc "${T}/SDL_opengl.h.LICENSE"
 	fi
 
-	if use hidapi-hidraw || use hidapi-libusb ; then
+	if use hidapi-libusb ; then
 		docinto "licenses/src/hidapi"
 		dodoc "src/hidapi/LICENSE.txt"
 		dodoc "src/hidapi/LICENSE-orig.txt"
