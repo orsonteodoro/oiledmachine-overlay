@@ -193,7 +193,7 @@ CDEPEND="
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles2(+)]
 	)
 	hidapi-libusb? (
-		>=dev-libs/libusb-1.0.25
+		>=dev-libs/libusb-1.0.25[${MULTILIB_USEDEP}]
 	)
 	ibus? (
 		>=app-i18n/ibus-1.5.26
@@ -206,7 +206,7 @@ CDEPEND="
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gbm(+)]
 	)
 	libdecor? (
-		>=gui-libs/libdecor-0.1.0
+		>=gui-libs/libdecor-0.1.0[${MULTILIB_USEDEP}]
 	)
 	libsamplerate? (
 		>=media-libs/libsamplerate-0.2.2[${MULTILIB_USEDEP}]
@@ -254,7 +254,7 @@ CDEPEND="
 RDEPEND="
 	${CDEPEND}
 	vulkan? (
-		media-libs/vulkan-loader
+		media-libs/vulkan-loader[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
