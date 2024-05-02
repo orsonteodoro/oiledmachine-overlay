@@ -479,8 +479,8 @@ multilib_src_configure() {
 	cmake_src_configure
 }
 
-src_compile() {
-	multilib-minimal_src_compile
+multilib_src_compile() {
+	cmake_src_compile
 
 	if use doc; then
 		cd docs || die
@@ -496,7 +496,7 @@ multilib_src_test() {
 }
 
 multilib_src_install() {
-	emake DESTDIR="${D}" install
+	cmake_src_install
 }
 
 multilib_src_install_all() {
