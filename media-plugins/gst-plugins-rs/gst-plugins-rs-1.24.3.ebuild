@@ -18,13 +18,13 @@ _gst_plugins_rs_globals
 unset -f _gst_plugins_rs_globals
 
 MY_PV="${PV}"
-GOBJECT_INTROSPECTION_PV="1.74.0"
-GST_PV="${PV}" # Based on gstreamer1.0-plugins-good
 # FIXME:
 EXPECTED_BUILD_FILES_FINGERPRINT="\
 de3226d4e1a5184c51040e9eb13848756b4daed0978cf8786bc351c7a04e5f83\
 ecbbc78d55f3ef65324330035ceb38eec9143accd158d63007a5760c3afc6c99\
 "
+GOBJECT_INTROSPECTION_PV="1.74.0"
+GST_PV="${PV}" # Based on gstreamer1.0-plugins-good
 LLVM_COMPAT=( 17 16 ) # For clang-sys ; slot based on virtual/rust subslot
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MODULES=(
