@@ -14,10 +14,10 @@ NODE_GYP_PV="10.1.0" # Same as CI
 NODE_ENV="development"
 NODE_VERSION=18 # Upstream uses in CI 16-20 but 18 is used in release
 NPM_AUDIT_FIX=0
-NPM_INSTALL_ARGS=(
+NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
-NPM_AUDIT_FIX_ARGS=(
+NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 PYTHON_COMPAT=( python3_{8..11} )
