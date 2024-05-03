@@ -772,10 +772,13 @@ gen_llvm_bdepend() {
 	done
 }
 gen_virtual_rust_bdepend() {
-	local s
-	for s in ${!virtual_rust_pv_to_llvm_slot[@]} ; do
+	local virtual_rust_pv
+	for virtual_rust_pv in ${!virtual_rust_pv_to_llvm_slot[@]} ; do
+		local llvm_slot="${virtual_rust_pv_to_llvm_slot[${virtual_rust_pv}]}"
 		echo "
-			=virtual/rust-${s}*[${MULTILIB_USEDEP}]
+			llvm_slot_${llvm_slot}? (
+				=virtual/rust-${virtual_rust_pv}*[${MULTILIB_USEDEP}]
+			)
 		"
 	done
 }
