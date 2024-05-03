@@ -9,7 +9,6 @@ inherit gstreamer-meson
 
 DESCRIPTION="FluidSynth plugin for GStreamer"
 KEYWORDS="~amd64 ~x86"
-
 # See ext/fluidsynth/meson.build
 RDEPEND="
 	>=media-sound/fluidsynth-2.1:=[${MULTILIB_USEDEP}]
