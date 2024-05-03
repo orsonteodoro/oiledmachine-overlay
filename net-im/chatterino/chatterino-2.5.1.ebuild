@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# D12, U20, U22
+# U20, U22
 
 CHECKREQS_DISK_BUILD="483M"
 CHECKREQS_DISK_USR="33M"
@@ -54,7 +54,8 @@ KEYWORDS="~amd64 ~x86"
 # -system-pajlada-settings is not packaged on this distro
 IUSE+="
 -benchmarks -coverage -crashpad -lto -plugins -system-libcommuni
--system-qtkeychain -test +qt5 -qt6 +qtkeychain wayland X
+-system-miniaudio -system-qtkeychain -test +qt5 -qt6 +qtkeychain +update-check
+wayland X
 
 ebuild-revision-4
 "
@@ -92,6 +93,9 @@ RDEPEND="
 	>=dev-libs/openssl-1.1.1f:=
 	benchmarks? (
 		>=dev-cpp/benchmark-1.5.0
+	)
+	system-miniaudio? (
+		>=dev-libs/miniaudio-0.11.21
 	)
 	qt5? (
 		>=dev-qt/qtconcurrent-${QT5_PV}:5
@@ -270,6 +274,7 @@ src_configure() {
 		-DCHATTERINO_LTO=$(usex lto "ON" "OFF")
 		-DCHATTERINO_GENERATE_COVERAGE=$(usex coverage "ON" "OFF")
 		-DCHATTERINO_PLUGINS=$(usex plugins "ON" "OFF")
+		-DCHATTERINO_UPDATER=$(usex update-check "ON" "OFF")
 		-DBUILD_BENCHMARKS=$(usex benchmarks "ON" "OFF")
 		-DBUILD_TESTS=$(usex test "ON" "OFF")
 		-DBUILD_TRANSLATIONS=OFF # A design choice by project to always turn it off for qtkeychain.
@@ -277,6 +282,7 @@ src_configure() {
 		-DBUILD_WITH_QT6=$(usex qt6 "ON" "OFF")
 		-DBUILD_WITH_QTKEYCHAIN=$(usex qtkeychain "ON" "OFF")
 		-DUSE_SYSTEM_LIBCOMMUNI=$(usex system-libcommuni "ON" "OFF")
+		-DUSE_SYSTEM_MINIAUDIO=$(usex system-miniaudio "ON" "OFF")
 		-DUSE_SYSTEM_PAJLADA_SETTINGS=OFF
 		-DUSE_SYSTEM_QTKEYCHAIN=$(usex system-qtkeychain "ON" "OFF")
 	)
