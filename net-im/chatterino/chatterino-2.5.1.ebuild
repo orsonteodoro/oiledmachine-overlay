@@ -199,7 +199,7 @@ eerror
 		fi
 	done
 	pkg_name="qtimageformats"
-	QTPKG_PV=$(best_version "dev-qt/qtimageformats:5" \
+	QTPKG_PV=$(best_version "dev-qt/qtimageformats:${QT_SLOT}" \
 		| sed -e "s|dev-qt/qtimageformats-||g")
 	QTPKG_PV=$(ver_cut 1-3 ${QTPKG_PV})
 	if ver_test ${QTCORE_PV} -ne ${QTPKG_PV} ; then
