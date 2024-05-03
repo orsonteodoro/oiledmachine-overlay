@@ -788,8 +788,8 @@ CARGO_BINDINGS_DEPENDS_PANGO="
 CARGO_BINDINGS_DEPENDS_GTK4="
 	${CARGO_BINDINGS_DEPENDS_CAIRO}
 	${CARGO_BINDINGS_DEPENDS_PANGO}
-	>=media-libs/graphene-1.10[introspection]
 	>=gui-libs/gtk-4.8.3:4[introspection,gstreamer]
+	>=media-libs/graphene-1.10[introspection]
 	>=x11-libs/gdk-pixbuf-2.36.8[introspection]
 "
 
@@ -859,8 +859,8 @@ gen_virtual_rust_bdepend() {
 }
 BDEPEND+="
 	$(gen_llvm_bdepend)
-	>=dev-util/cargo-c-0.9.22
 	>=dev-build/meson-1.1.1
+	>=dev-util/cargo-c-0.9.22
 	>=dev-util/pkgconf-1.8.1[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/binutils-2.40
 	>=sys-devel/gcc-12.2.0
