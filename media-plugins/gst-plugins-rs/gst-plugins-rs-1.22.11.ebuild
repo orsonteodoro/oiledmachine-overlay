@@ -6,7 +6,7 @@
 
 EAPI=8
 
-# D12
+# CI uses D11-slim
 
 _gst_plugins_rs_globals() {
 	GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
@@ -25,7 +25,7 @@ ecbbc78d55f3ef65324330035ceb38eec9143accd158d63007a5760c3afc6c99\
 "
 GOBJECT_INTROSPECTION_PV="1.74.0"
 GST_PV="${PV}" # Based on gstreamer1.0-plugins-good
-LLVM_COMPAT=( 17 16 ) # For clang-sys ; slot based on virtual/rust subslot
+LLVM_COMPAT=( 17 16 15 ) # For clang-sys ; slot based on virtual/rust subslot
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MODULES=(
 	audiofx
@@ -74,12 +74,20 @@ MODULES=(
 )
 PYTHON_COMPAT=( python3_{8..11} )
 declare -A VIRTUAL_RUST_PV_TO_LLVM_SLOT=(
-	["1.77"]=17
+# See https://github.com/rust-lang/rust/blob/1.78.0/src/doc/rustc/src/linker-plugin-lto.md?plain=1#L203
+	["1.77"]=17 # Build to be tested, max supported by distro
 	["1.76"]=17
 	["1.75"]=17
 	["1.74"]=17
 	["1.73"]=17
+	["1.72"]=16
 	["1.71"]=16
+	["1.70"]=16
+	["1.69"]=15
+	["1.69"]=15
+	["1.68"]=15
+	["1.67"]=15
+	["1.66"]=15 # Rust inclusion based "meson static" on CI for issue
 )
 
 if [[ "${MY_PV}" =~ "9999" ]] ; then
@@ -796,8 +804,8 @@ BDEPEND+="
 	>=dev-build/meson-1.1.1
 	>=dev-util/cargo-c-0.9.22
 	>=dev-util/pkgconf-1.8.1[${MULTILIB_USEDEP},pkg-config(+)]
-	>=sys-devel/binutils-2.40
-	>=sys-devel/gcc-12.2.0
+	>=sys-devel/binutils-2.35.2
+	>=sys-devel/gcc-10.2.1
 	doc? (
 		dev-python/hotdoc
 	)

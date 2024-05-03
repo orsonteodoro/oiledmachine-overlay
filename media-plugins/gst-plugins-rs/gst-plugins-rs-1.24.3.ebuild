@@ -76,12 +76,15 @@ MODULES=(
 )
 PYTHON_COMPAT=( python3_{8..11} )
 declare -A VIRTUAL_RUST_PV_TO_LLVM_SLOT=(
-	["1.77"]=17
+# See https://github.com/rust-lang/rust/blob/1.78.0/src/doc/rustc/src/linker-plugin-lto.md?plain=1#L203
+	["1.77"]=17 # Rust inclusion based "check commits" on CI for tag
 	["1.76"]=17
 	["1.75"]=17
 	["1.74"]=17
 	["1.73"]=17
+	["1.72"]=16
 	["1.71"]=16
+	["1.70"]=16 # Rust inclusion based on Cargo.toml
 )
 
 if [[ "${MY_PV}" =~ "9999" ]] ; then
