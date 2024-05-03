@@ -699,6 +699,7 @@ MODULES=(
 	gtk4
 	hlssink3
 	hsv
+	inter
 	json
 	lewton
 	livesync

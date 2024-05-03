@@ -647,7 +647,6 @@ MODULES=(
 	regex
 	reqwest
 	rtp
-	rtsp
 	spotify
 	sodium
 #	test
