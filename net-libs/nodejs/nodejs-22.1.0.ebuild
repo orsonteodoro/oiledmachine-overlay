@@ -51,11 +51,11 @@ TRAINER_TYPES=(
 	zlib
 )
 CONFIG_CHECK="~ADVISE_SYSCALLS"
-COREPACK_PV="0.25.2"
+COREPACK_PV="0.28.0"
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
 NGHTTP2_PV="1.61.0"
-NPM_PV="10.5.1" # See https://github.com/nodejs/node/blob/v22.0.0/deps/npm/package.json
+NPM_PV="10.7.0" # See https://github.com/nodejs/node/blob/v22.1.0/deps/npm/package.json
 PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -152,7 +152,7 @@ RDEPEND+="
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3
 	system-icu? (
-		>=dev-libs/icu-74.2:=
+		>=dev-libs/icu-75.1:=
 	)
 	system-ssl? (
 		>=dev-libs/openssl-3.0.13:0=
