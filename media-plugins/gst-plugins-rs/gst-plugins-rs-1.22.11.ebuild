@@ -672,7 +672,7 @@ MODULES=(
 IUSE+="
 ${MODULES[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-doc system-libsodium r1
+doc system-libsodium ebuild-revision-1
 "
 REQUIRED_USE+="
 	|| (
