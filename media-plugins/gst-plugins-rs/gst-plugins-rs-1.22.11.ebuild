@@ -6,7 +6,9 @@
 
 EAPI=8
 
-# CI uses D11-slim
+# D11-slim
+# The versioning is based on the tag with the gstreamer- prefix.
+# The project version is 0.9.13.
 
 _gst_plugins_rs_globals() {
 	GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
@@ -83,7 +85,6 @@ declare -A VIRTUAL_RUST_PV_TO_LLVM_SLOT=(
 	["1.72"]=16
 	["1.71"]=16
 	["1.70"]=16
-	["1.69"]=15
 	["1.69"]=15
 	["1.68"]=15
 	["1.67"]=15

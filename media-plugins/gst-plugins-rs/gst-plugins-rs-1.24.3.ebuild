@@ -6,7 +6,9 @@
 
 EAPI=8
 
-# D12
+# D12-slim
+# The versioning is based on the tag with the gstreamer- prefix.
+# The project version is 0.12.5.
 
 _gst_plugins_rs_globals() {
 	GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
