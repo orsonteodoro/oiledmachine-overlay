@@ -6,6 +6,15 @@
 
 EAPI=8
 
+_gst_plugins_rs_globals() {
+	GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
+	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
+einfo "Generating lockfile"
+	fi
+}
+_gst_plugins_rs_globals
+unset -f _gst_plugins_rs_globals
+
 MY_PV="${PV}"
 
 if [[ "${MY_PV}" =~ "9999" ]] ; then
@@ -22,73 +31,75 @@ else
 https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/gstreamer-${MY_PV}/gst-plugins-rs-gstreamer-${MY_PV}.tar.bz2
 	"
 	S="${WORKDIR}/gst-plugins-rs-gstreamer-${MY_PV}"
-	KEYWORDS="~amd64"
+	#KEYWORDS="~amd64" # No 1.24 on distro yet
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
-		:;
+		:
 	else
 declare -A GIT_CRATES=(
-[cairo-rs]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/cairo" # 0.19.3
-[cairo-sys-rs]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/cairo/sys" # 0.19.3
+[cairo-rs]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/cairo" # 0.19.5
+[cairo-sys-rs]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/cairo/sys" # 0.19.5
 [ffv1]="https://github.com/rust-av/ffv1;2afb025a327173ce891954c052e804d0f880368a;ffv1-%commit%" # 0.0.0
 [flavors]="https://github.com/rust-av/flavors;833508af656d298c269f2397c8541a084264d992;flavors-%commit%" # 0.2.0
-[gdk4]="https://github.com/gtk-rs/gtk4-rs;05d26f6a97a0ccf856b565b4fd796cdf57059084;gtk4-rs-%commit%/gdk4" # 0.8.1
-[gdk4-sys]="https://github.com/gtk-rs/gtk4-rs;05d26f6a97a0ccf856b565b4fd796cdf57059084;gtk4-rs-%commit%/gdk4/sys" # 0.8.1
-[gdk4-wayland]="https://github.com/gtk-rs/gtk4-rs;05d26f6a97a0ccf856b565b4fd796cdf57059084;gtk4-rs-%commit%/gdk4-wayland" # 0.8.1
-[gdk4-wayland-sys]="https://github.com/gtk-rs/gtk4-rs;05d26f6a97a0ccf856b565b4fd796cdf57059084;gtk4-rs-%commit%/gdk4-wayland/sys" # 0.8.1
-[gdk4-win32]="https://github.com/gtk-rs/gtk4-rs;05d26f6a97a0ccf856b565b4fd796cdf57059084;gtk4-rs-%commit%/gdk4-win32" # 0.8.1
-[gdk4-win32-sys]="https://github.com/gtk-rs/gtk4-rs;05d26f6a97a0ccf856b565b4fd796cdf57059084;gtk4-rs-%commit%/gdk4-win32/sys" # 0.8.1
-[gdk4-x11]="https://github.com/gtk-rs/gtk4-rs;05d26f6a97a0ccf856b565b4fd796cdf57059084;gtk4-rs-%commit%/gdk4-x11" # 0.8.1
-[gdk4-x11-sys]="https://github.com/gtk-rs/gtk4-rs;05d26f6a97a0ccf856b565b4fd796cdf57059084;gtk4-rs-%commit%/gdk4-x11/sys" # 0.8.1
-[gdk-pixbuf]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/gdk-pixbuf" # 0.19.3
-[gdk-pixbuf-sys]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/gdk-pixbuf/sys" # 0.19.3
-[gio]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/gio" # 0.19.3
-[gio-sys]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/gio/sys" # 0.19.3
-[glib]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/glib" # 0.19.3
-[glib-macros]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/glib-macros" # 0.19.3
-[glib-sys]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/glib/sys" # 0.19.3
-[gobject-sys]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/glib/gobject-sys" # 0.19.3
-[graphene-rs]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/graphene" # 0.19.3
-[graphene-sys]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/graphene/sys" # 0.19.3
-[gsk4]="https://github.com/gtk-rs/gtk4-rs;05d26f6a97a0ccf856b565b4fd796cdf57059084;gtk4-rs-%commit%/gsk4" # 0.8.1
-[gsk4-sys]="https://github.com/gtk-rs/gtk4-rs;05d26f6a97a0ccf856b565b4fd796cdf57059084;gtk4-rs-%commit%/gsk4/sys" # 0.8.1
-[gstreamer-app]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-app" # 0.22.4
-[gstreamer-app-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-app/sys" # 0.22.4
-[gstreamer-audio]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-audio" # 0.22.4
-[gstreamer-audio-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-audio/sys" # 0.22.4
-[gstreamer-base]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-base" # 0.22.4
-[gstreamer-base-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-base/sys" # 0.22.4
-[gstreamer-check]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-check" # 0.22.4
-[gstreamer-check-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-check/sys" # 0.22.4
-[gstreamer-gl-egl]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-gl/egl" # 0.22.4
-[gstreamer-gl-egl-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-gl/egl/sys" # 0.22.4
-[gstreamer-gl]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-gl" # 0.22.4
-[gstreamer-gl-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-gl/sys" # 0.22.4
-[gstreamer-gl-wayland]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-gl/wayland" # 0.22.4
-[gstreamer-gl-wayland-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-gl/wayland/sys" # 0.22.4
-[gstreamer-gl-x11]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-gl/x11" # 0.22.4
-[gstreamer-gl-x11-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-gl/x11/sys" # 0.22.4
-[gstreamer]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer" # 0.22.4
-[gstreamer-net]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-net" # 0.22.4
-[gstreamer-net-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-net/sys" # 0.22.4
-[gstreamer-pbutils]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-pbutils" # 0.22.4
-[gstreamer-pbutils-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-pbutils/sys" # 0.22.4
-[gstreamer-rtp]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-rtp" # 0.22.4
-[gstreamer-rtp-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-rtp/sys" # 0.22.4
-[gstreamer-sdp]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-sdp" # 0.22.4
-[gstreamer-sdp-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-sdp/sys" # 0.22.4
-[gstreamer-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer/sys" # 0.22.4
-[gstreamer-utils]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-utils" # 0.22.4
-[gstreamer-video]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-video" # 0.22.4
-[gstreamer-video-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-video/sys" # 0.22.4
-[gstreamer-webrtc]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-webrtc" # 0.22.4
-[gstreamer-webrtc-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;f2d3128bf9d0170288ce479bea021f0886617fac;gstreamer-rs-%commit%/gstreamer-webrtc/sys" # 0.22.4
-[gtk4]="https://github.com/gtk-rs/gtk4-rs;05d26f6a97a0ccf856b565b4fd796cdf57059084;gtk4-rs-%commit%/gtk4" # 0.8.1
-[gtk4-macros]="https://github.com/gtk-rs/gtk4-rs;05d26f6a97a0ccf856b565b4fd796cdf57059084;gtk4-rs-%commit%/gtk4-macros" # 0.8.1
-[gtk4-sys]="https://github.com/gtk-rs/gtk4-rs;05d26f6a97a0ccf856b565b4fd796cdf57059084;gtk4-rs-%commit%/gtk4/sys" # 0.8.1
-[pangocairo]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/pangocairo" # 0.19.3
-[pangocairo-sys]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/pangocairo/sys" # 0.19.3
-[pango]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/pango" # 0.19.3
-[pango-sys]="https://github.com/gtk-rs/gtk-rs-core;5e944f2eff8b344591666754f7ea3b359943ee8c;gtk-rs-core-%commit%/pango/sys" # 0.19.3
+[gdk4]="https://github.com/gtk-rs/gtk4-rs;cf84b5cd36fc1aa31175bc24ff45e8ceb0710dec;gtk4-rs-%commit%/gdk4" # 0.8.2
+[gdk4-sys]="https://github.com/gtk-rs/gtk4-rs;cf84b5cd36fc1aa31175bc24ff45e8ceb0710dec;gtk4-rs-%commit%/gdk4/sys" # 0.8.2
+[gdk4-wayland]="https://github.com/gtk-rs/gtk4-rs;cf84b5cd36fc1aa31175bc24ff45e8ceb0710dec;gtk4-rs-%commit%/gdk4-wayland" # 0.8.2
+[gdk4-wayland-sys]="https://github.com/gtk-rs/gtk4-rs;cf84b5cd36fc1aa31175bc24ff45e8ceb0710dec;gtk4-rs-%commit%/gdk4-wayland/sys" # 0.8.2
+[gdk4-win32]="https://github.com/gtk-rs/gtk4-rs;cf84b5cd36fc1aa31175bc24ff45e8ceb0710dec;gtk4-rs-%commit%/gdk4-win32" # 0.8.2
+[gdk4-win32-sys]="https://github.com/gtk-rs/gtk4-rs;cf84b5cd36fc1aa31175bc24ff45e8ceb0710dec;gtk4-rs-%commit%/gdk4-win32/sys" # 0.8.2
+[gdk4-x11]="https://github.com/gtk-rs/gtk4-rs;cf84b5cd36fc1aa31175bc24ff45e8ceb0710dec;gtk4-rs-%commit%/gdk4-x11" # 0.8.2
+[gdk4-x11-sys]="https://github.com/gtk-rs/gtk4-rs;cf84b5cd36fc1aa31175bc24ff45e8ceb0710dec;gtk4-rs-%commit%/gdk4-x11/sys" # 0.8.2
+[gdk-pixbuf]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/gdk-pixbuf" # 0.19.5
+[gdk-pixbuf-sys]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/gdk-pixbuf/sys" # 0.19.5
+[gio]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/gio" # 0.19.5
+[gio-sys]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/gio/sys" # 0.19.5
+[glib]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/glib" # 0.19.5
+[glib-macros]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/glib-macros" # 0.19.5
+[glib-sys]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/glib/sys" # 0.19.5
+[gobject-sys]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/glib/gobject-sys" # 0.19.5
+[graphene-rs]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/graphene" # 0.19.5
+[graphene-sys]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/graphene/sys" # 0.19.5
+[gsk4]="https://github.com/gtk-rs/gtk4-rs;cf84b5cd36fc1aa31175bc24ff45e8ceb0710dec;gtk4-rs-%commit%/gsk4" # 0.8.2
+[gsk4-sys]="https://github.com/gtk-rs/gtk4-rs;cf84b5cd36fc1aa31175bc24ff45e8ceb0710dec;gtk4-rs-%commit%/gsk4/sys" # 0.8.2
+[gstreamer-allocators]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;" # 0.22.4
+[gstreamer-allocators-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;" # 0.22.4
+[gstreamer-app]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-app" # 0.22.4
+[gstreamer-app-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-app/sys" # 0.22.4
+[gstreamer-audio]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-audio" # 0.22.4
+[gstreamer-audio-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-audio/sys" # 0.22.4
+[gstreamer-base]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-base" # 0.22.4
+[gstreamer-base-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-base/sys" # 0.22.4
+[gstreamer-check]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-check" # 0.22.4
+[gstreamer-check-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-check/sys" # 0.22.4
+[gstreamer-gl-egl]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-gl/egl" # 0.22.4
+[gstreamer-gl-egl-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-gl/egl/sys" # 0.22.4
+[gstreamer-gl]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-gl" # 0.22.4
+[gstreamer-gl-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-gl/sys" # 0.22.4
+[gstreamer-gl-wayland]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-gl/wayland" # 0.22.4
+[gstreamer-gl-wayland-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-gl/wayland/sys" # 0.22.4
+[gstreamer-gl-x11]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-gl/x11" # 0.22.4
+[gstreamer-gl-x11-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-gl/x11/sys" # 0.22.4
+[gstreamer]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer" # 0.22.4
+[gstreamer-net]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-net" # 0.22.4
+[gstreamer-net-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-net/sys" # 0.22.4
+[gstreamer-pbutils]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-pbutils" # 0.22.4
+[gstreamer-pbutils-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-pbutils/sys" # 0.22.4
+[gstreamer-rtp]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-rtp" # 0.22.4
+[gstreamer-rtp-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-rtp/sys" # 0.22.4
+[gstreamer-sdp]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-sdp" # 0.22.4
+[gstreamer-sdp-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-sdp/sys" # 0.22.4
+[gstreamer-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer/sys" # 0.22.4
+[gstreamer-utils]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-utils" # 0.22.4
+[gstreamer-video]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-video" # 0.22.4
+[gstreamer-video-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-video/sys" # 0.22.4
+[gstreamer-webrtc]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-webrtc" # 0.22.4
+[gstreamer-webrtc-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;a0a23c6f453ee206a20943b508a086a8fc35cb28;gstreamer-rs-%commit%/gstreamer-webrtc/sys" # 0.22.4
+[gtk4]="https://github.com/gtk-rs/gtk4-rs;cf84b5cd36fc1aa31175bc24ff45e8ceb0710dec;gtk4-rs-%commit%/gtk4" # 0.8.2
+[gtk4-macros]="https://github.com/gtk-rs/gtk4-rs;cf84b5cd36fc1aa31175bc24ff45e8ceb0710dec;gtk4-rs-%commit%/gtk4-macros" # 0.8.2
+[gtk4-sys]="https://github.com/gtk-rs/gtk4-rs;cf84b5cd36fc1aa31175bc24ff45e8ceb0710dec;gtk4-rs-%commit%/gtk4/sys" # 0.8.2
+[pangocairo]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/pangocairo" # 0.19.5
+[pangocairo-sys]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/pangocairo/sys" # 0.19.5
+[pango]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/pango" # 0.19.5
+[pango-sys]="https://github.com/gtk-rs/gtk-rs-core;a7c5a9b6850f864cb3d30f679a827492b86247f1;gtk-rs-core-%commit%/pango/sys" # 0.19.5
 )
 
 CRATES="
@@ -101,7 +112,7 @@ aes-soft-0.6.4
 ahash-0.8.11
 aho-corasick-1.1.3
 aligned-vec-0.5.0
-allocator-api2-0.2.16
+allocator-api2-0.2.18
 android_system_properties-0.1.5
 android-tzdata-0.1.1
 anstream-0.6.13
@@ -109,17 +120,17 @@ anstyle-1.0.6
 anstyle-parse-0.2.3
 anstyle-query-1.0.2
 anstyle-wincon-3.0.2
-anyhow-1.0.81
+anyhow-1.0.82
 arbitrary-1.3.2
 arg_enum_proc_macro-0.3.4
 arrayvec-0.7.4
-async-channel-2.2.0
-async-compression-0.4.8
-async-recursion-1.1.0
+async-channel-2.2.1
+async-compression-0.4.9
+async-recursion-1.1.1
 async-stream-0.3.5
 async-stream-impl-0.3.5
-async-task-4.7.0
-async-trait-0.1.79
+async-task-4.7.1
+async-trait-0.1.80
 async-tungstenite-0.25.1
 atomic_refcell-0.1.13
 atty-0.2.14
@@ -165,20 +176,20 @@ block-buffer-0.10.4
 block-buffer-0.9.0
 bstr-1.9.1
 build_const-0.2.2
-built-0.7.1
-bumpalo-3.15.4
+built-0.7.2
+bumpalo-3.16.0
 bytemuck-1.15.0
 byteorder-1.5.0
 bytes-1.6.0
 byte-slice-cast-1.2.2
 bytes-utils-0.1.4
-cc-1.0.91
+cc-1.0.95
 cdg-0.1.0
 cdg_renderer-0.7.1
-cea708-types-0.3.1
-cfg-expr-0.15.7
+cea708-types-0.3.2
+cfg-expr-0.15.8
 cfg-if-1.0.0
-chrono-0.4.37
+chrono-0.4.38
 cipher-0.2.5
 clap-4.4.18
 clap_builder-4.4.18
@@ -189,7 +200,7 @@ colorchoice-1.0.0
 color-name-1.1.0
 color_quant-1.1.0
 color-thief-0.2.2
-concurrent-queue-2.4.0
+concurrent-queue-2.5.0
 const-oid-0.9.6
 cookie-0.17.0
 cookie-factory-0.3.3
@@ -214,11 +225,10 @@ ctr-0.6.0
 darling-0.20.8
 darling_core-0.20.8
 darling_macro-0.20.8
-dashmap-5.5.3
-dash-mpd-0.16.0
+dash-mpd-0.16.1
 dasp_frame-0.11.0
 dasp_sample-0.11.0
-data-encoding-2.5.0
+data-encoding-2.6.0
 dav1d-0.9.6
 dav1d-sys-0.7.3
 der-0.6.1
@@ -226,26 +236,26 @@ deranged-0.3.11
 diff-0.1.13
 digest-0.10.7
 digest-0.9.0
-dssim-core-3.2.8
+dssim-core-3.2.9
 ebur128-0.1.8
 ecdsa-0.14.8
 ed25519-1.5.3
-either-1.10.0
+either-1.11.0
 elliptic-curve-0.12.3
-encoding_rs-0.8.33
+encoding_rs-0.8.34
 env_logger-0.10.2
 env_logger-0.9.3
 equivalent-1.0.1
 errno-0.3.8
 event-listener-5.3.0
-event-listener-strategy-0.5.1
+event-listener-strategy-0.5.2
 fallible-iterator-0.3.0
-fastrand-2.0.2
+fastrand-2.1.0
 fdeflate-0.3.4
 ff-0.12.1
 field-offset-0.3.6
 fixedbitset-0.4.2
-flate2-1.0.28
+flate2-1.0.29
 flume-0.11.0
 fnv-1.0.7
 foreign-types-0.3.2
@@ -272,7 +282,7 @@ group-0.12.1
 h2-0.3.26
 h2-0.4.4
 hashbrown-0.12.3
-hashbrown-0.14.3
+hashbrown-0.14.5
 headers-0.3.9
 headers-0.4.0
 headers-core-0.2.0
@@ -296,7 +306,7 @@ httpdate-1.0.3
 human_bytes-0.4.3
 humantime-2.1.0
 hyper-0.14.28
-hyper-1.2.0
+hyper-1.3.1
 hyper-proxy-0.9.1
 hyper-rustls-0.24.2
 hyper-tls-0.5.0
@@ -322,7 +332,7 @@ is-terminal-0.4.12
 itertools-0.11.0
 itertools-0.12.1
 itoa-1.0.11
-jobserver-0.1.28
+jobserver-0.1.31
 jsonwebtoken-9.2.0
 js-sys-0.3.69
 khronos-egl-6.0.0
@@ -346,7 +356,7 @@ libwebp-sys2-0.1.9
 linux-raw-sys-0.4.13
 livekit-api-0.3.2
 livekit-protocol-0.3.2
-lock_api-0.4.11
+lock_api-0.4.12
 log-0.4.21
 lru-0.12.3
 m3u8-rs-5.0.5
@@ -397,8 +407,8 @@ outref-0.5.1
 overload-0.1.1
 p256-0.11.1
 parking-2.2.0
-parking_lot-0.12.1
-parking_lot_core-0.9.9
+parking_lot-0.12.2
+parking_lot_core-0.9.10
 parse_link_header-0.3.3
 paste-1.0.14
 pbjson-0.6.0
@@ -415,14 +425,14 @@ pkcs8-0.9.0
 pkg-config-0.3.30
 png-0.17.13
 pocket-resources-0.3.2
-polling-3.6.0
+polling-3.7.0
 powerfmt-0.2.0
 ppv-lite86-0.2.17
 pretty_assertions-1.4.0
 prettyplease-0.2.17
 primal-check-0.3.3
 priority-queue-1.4.0
-proc-macro2-1.0.79
+proc-macro2-1.0.81
 proc-macro-crate-3.1.0
 proc-macro-error-1.0.4
 proc-macro-error-attr-1.0.4
@@ -438,7 +448,7 @@ protobuf-codegen-pure-2.28.0
 psl-types-2.0.11
 publicsuffix-2.2.3
 quick-xml-0.31.0
-quote-1.0.35
+quote-1.0.36
 rand-0.8.5
 rand_chacha-0.3.1
 rand_core-0.6.4
@@ -448,7 +458,7 @@ rav1e-0.7.1
 rayon-1.10.0
 rayon-core-1.12.1
 realfft-3.3.0
-redox_syscall-0.4.1
+redox_syscall-0.5.1
 regex-1.10.4
 regex-automata-0.1.10
 regex-automata-0.4.6
@@ -456,7 +466,7 @@ regex-lite-0.1.5
 regex-syntax-0.6.29
 regex-syntax-0.8.3
 reqwest-0.11.27
-reqwest-0.12.3
+reqwest-0.12.4
 rfc6979-0.3.1
 rgb-0.8.37
 ring-0.17.8
@@ -467,35 +477,37 @@ rustc-demangle-0.1.23
 rustc_version-0.4.0
 rustdct-0.7.1
 rustfft-6.2.0
-rustix-0.38.32
-rustls-0.21.10
+rustix-0.38.34
+rustls-0.21.12
 rustls-native-certs-0.6.3
 rustls-pemfile-1.0.4
 rustls-pemfile-2.1.2
-rustls-pki-types-1.4.1
+rustls-pki-types-1.5.0
 rustls-webpki-0.101.7
 ryu-1.0.17
 same-file-1.0.6
+scc-2.1.0
 schannel-0.1.23
 scoped-tls-1.0.1
 scopeguard-1.2.0
 sct-0.7.1
+sdd-0.2.0
 sdp-types-0.1.6
 sec1-0.3.0
 security-framework-2.10.0
 security-framework-sys-2.10.0
 semver-1.0.22
-serde-1.0.197
+serde-1.0.199
 serde_bytes-0.11.14
-serde_derive-1.0.197
-serde_json-1.0.115
+serde_derive-1.0.199
+serde_json-1.0.116
 serde_path_to_error-0.1.16
 serde_spanned-0.6.5
 serde_urlencoded-0.7.1
-serde_with-3.7.0
-serde_with_macros-3.7.0
-serial_test-3.0.0
-serial_test_derive-3.0.0
+serde_with-3.8.1
+serde_with_macros-3.8.1
+serial_test-3.1.1
+serial_test_derive-3.1.1
 sha1-0.10.6
 sha-1-0.9.8
 sha2-0.10.8
@@ -503,7 +515,7 @@ shannon-0.2.0
 sharded-slab-0.1.7
 shell-words-1.1.0
 signal-hook-0.3.17
-signal-hook-registry-1.4.1
+signal-hook-registry-1.4.2
 signature-1.6.4
 simd-adler32-0.3.7
 simd_helpers-0.1.0
@@ -520,7 +532,7 @@ strength_reduce-0.2.4
 strsim-0.10.0
 subtle-2.5.0
 syn-1.0.109
-syn-2.0.58
+syn-2.0.60
 sync_wrapper-0.1.2
 system-configuration-0.5.1
 system-configuration-sys-0.5.0
@@ -532,13 +544,13 @@ test-log-0.2.14
 test-log-macros-0.2.14
 test-with-0.12.6
 textwrap-0.16.1
-thiserror-1.0.58
-thiserror-impl-1.0.58
+thiserror-1.0.59
+thiserror-impl-1.0.59
 thread-id-4.2.1
 thread_local-1.1.8
-time-0.3.34
+time-0.3.36
 time-core-0.1.2
-time-macros-0.2.17
+time-macros-0.2.18
 tinyvec-1.6.0
 tinyvec_macros-0.1.1
 tokio-1.37.0
@@ -552,7 +564,7 @@ tokio-util-0.7.10
 toml-0.8.12
 toml_datetime-0.6.5
 toml_edit-0.21.1
-toml_edit-0.22.9
+toml_edit-0.22.12
 tower-0.4.13
 tower-layer-0.3.2
 tower-service-0.3.2
@@ -571,7 +583,7 @@ unicode-bidi-0.3.15
 unicode-ident-1.0.12
 unicode-linebreak-0.1.5
 unicode-normalization-0.1.23
-unicode-width-0.1.11
+unicode-width-0.1.12
 untrusted-0.9.0
 url-2.5.0
 urlencoding-2.1.3
@@ -602,29 +614,30 @@ web-sys-0.3.69
 weezl-0.1.8
 winapi-0.3.9
 winapi-i686-pc-windows-gnu-0.4.0
-winapi-util-0.1.6
+winapi-util-0.1.8
 winapi-x86_64-pc-windows-gnu-0.4.0
 windows_aarch64_gnullvm-0.48.5
-windows_aarch64_gnullvm-0.52.4
+windows_aarch64_gnullvm-0.52.5
 windows_aarch64_msvc-0.48.5
-windows_aarch64_msvc-0.52.4
+windows_aarch64_msvc-0.52.5
 windows-core-0.52.0
 windows_i686_gnu-0.48.5
-windows_i686_gnu-0.52.4
+windows_i686_gnu-0.52.5
+windows_i686_gnullvm-0.52.5
 windows_i686_msvc-0.48.5
-windows_i686_msvc-0.52.4
+windows_i686_msvc-0.52.5
 windows-sys-0.48.0
 windows-sys-0.52.0
 windows-targets-0.48.5
-windows-targets-0.52.4
+windows-targets-0.52.5
 windows_x86_64_gnu-0.48.5
-windows_x86_64_gnu-0.52.4
+windows_x86_64_gnu-0.52.5
 windows_x86_64_gnullvm-0.48.5
-windows_x86_64_gnullvm-0.52.4
+windows_x86_64_gnullvm-0.52.5
 windows_x86_64_msvc-0.48.5
-windows_x86_64_msvc-0.52.4
+windows_x86_64_msvc-0.52.5
 winnow-0.5.40
-winnow-0.6.5
+winnow-0.6.7
 winreg-0.50.0
 winreg-0.52.0
 xattr-1.3.1
@@ -729,7 +742,7 @@ REQUIRED_USE+="
 # Assumes D 12
 # Depends same as stage: test and name: meson shared CI job
 GOBJECT_INTROSPECTION_PV="1.74.0"
-GST_PV="1.22.3" # Based on gstreamer1.0-plugins-good ; downgraded for distro.  Upstream uses ~1.23.90
+GST_PV="${PV}" # Based on gstreamer1.0-plugins-good
 RUST_PV="1.76.0" # Required by bindings
 CARGO_PV="1.76.0"
 # grep -e "requires_private" "${WORKDIR}" for external dependencies
