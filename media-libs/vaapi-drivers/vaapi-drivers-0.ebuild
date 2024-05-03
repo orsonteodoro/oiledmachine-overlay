@@ -30,7 +30,9 @@ custom
 
 REQUIRED_USE+="
 	!custom? (
-		|| ( ${IUSE_VAAPI} )
+		|| (
+			${IUSE_VAAPI}
+		)
 	)
 "
 
