@@ -96,69 +96,6 @@ https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/gstreamer-${MY
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		:
 	else
-declare -A GIT_CRATES=(
-[cairo-rs]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/cairo" # 0.16.9
-[cairo-sys-rs]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/cairo/sys" # 0.16.9
-[ffv1]="https://github.com/rust-av/ffv1;2afb025a327173ce891954c052e804d0f880368a;ffv1-%commit%" # 0.0.0
-[flavors]="https://github.com/rust-av/flavors;833508af656d298c269f2397c8541a084264d992;flavors-%commit%" # 0.2.0
-[gdk4]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gdk4" # 0.5.6
-[gdk4-sys]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gdk4/sys" # 0.5.6
-[gdk4-wayland]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gdk4-wayland" # 0.5.6
-[gdk4-wayland-sys]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gdk4-wayland/sys" # 0.5.6
-[gdk4-x11]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gdk4-x11" # 0.5.6
-[gdk4-x11-sys]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gdk4-x11/sys" # 0.5.6
-[gdk-pixbuf]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/gdk-pixbuf" # 0.16.9
-[gdk-pixbuf-sys]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/gdk-pixbuf/sys" # 0.16.9
-[gio]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/gio" # 0.16.9
-[gio-sys]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/gio/sys" # 0.16.9
-[glib]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/glib" # 0.16.9
-[glib-macros]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/glib-macros" # 0.16.9
-[glib-sys]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/glib/sys" # 0.16.9
-[gobject-sys]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/glib/gobject-sys" # 0.16.9
-[graphene-rs]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/graphene" # 0.16.9
-[graphene-sys]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/graphene/sys" # 0.16.9
-[gsk4]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gsk4" # 0.5.6
-[gsk4-sys]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gsk4/sys" # 0.5.6
-[gstreamer-app]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-app" # 0.19.8
-[gstreamer-app-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-app/sys" # 0.19.8
-[gstreamer-audio]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-audio" # 0.19.8
-[gstreamer-audio-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-audio/sys" # 0.19.8
-[gstreamer-base]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-base" # 0.19.8
-[gstreamer-base-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-base/sys" # 0.19.8
-[gstreamer-check]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-check" # 0.19.8
-[gstreamer-check-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-check/sys" # 0.19.8
-[gstreamer-gl-egl]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl/egl" # 0.19.8
-[gstreamer-gl-egl-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl/egl/sys" # 0.19.8
-[gstreamer-gl]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl" # 0.19.8
-[gstreamer-gl-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl/sys" # 0.19.8
-[gstreamer-gl-wayland]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl/wayland" # 0.19.8
-[gstreamer-gl-wayland-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl/wayland/sys" # 0.19.8
-[gstreamer-gl-x11]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl/x11" # 0.19.8
-[gstreamer-gl-x11-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl/x11/sys" # 0.19.8
-[gstreamer]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer" # 0.19.8
-[gstreamer-net]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-net" # 0.19.8
-[gstreamer-net-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-net/sys" # 0.19.8
-[gstreamer-pbutils]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-pbutils" # 0.19.8
-[gstreamer-pbutils-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-pbutils/sys" # 0.19.8
-[gstreamer-rtp]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-rtp" # 0.19.8
-[gstreamer-rtp-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-rtp/sys" # 0.19.8
-[gstreamer-sdp]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-sdp" # 0.19.8
-[gstreamer-sdp-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-sdp/sys" # 0.19.8
-[gstreamer-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer/sys" # 0.19.8
-[gstreamer-utils]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-utils" # 0.19.8
-[gstreamer-video]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-video" # 0.19.8
-[gstreamer-video-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-video/sys" # 0.19.8
-[gstreamer-webrtc]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-webrtc" # 0.19.8
-[gstreamer-webrtc-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-webrtc/sys" # 0.19.8
-[gtk4]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gtk4" # 0.5.6
-[gtk4-macros]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gtk4-macros" # 0.5.6
-[gtk4-sys]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gtk4/sys" # 0.5.6
-[pangocairo]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/pangocairo" # 0.16.9
-[pangocairo-sys]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/pangocairo/sys" # 0.16.9
-[pango]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/pango" # 0.16.9
-[pango-sys]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/pango/sys" # 0.16.9
-)
-
 CRATES="
 addr2line-0.20.0
 adler-1.0.2
@@ -648,7 +585,68 @@ zerocopy-0.6.6
 zerocopy-derive-0.6.6
 zeroize-1.7.0
 "
-
+declare -A GIT_CRATES=(
+[cairo-rs]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/cairo" # 0.16.9
+[cairo-sys-rs]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/cairo/sys" # 0.16.9
+[ffv1]="https://github.com/rust-av/ffv1;2afb025a327173ce891954c052e804d0f880368a;ffv1-%commit%" # 0.0.0
+[flavors]="https://github.com/rust-av/flavors;833508af656d298c269f2397c8541a084264d992;flavors-%commit%" # 0.2.0
+[gdk4]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gdk4" # 0.5.6
+[gdk4-sys]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gdk4/sys" # 0.5.6
+[gdk4-wayland]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gdk4-wayland" # 0.5.6
+[gdk4-wayland-sys]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gdk4-wayland/sys" # 0.5.6
+[gdk4-x11]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gdk4-x11" # 0.5.6
+[gdk4-x11-sys]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gdk4-x11/sys" # 0.5.6
+[gdk-pixbuf]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/gdk-pixbuf" # 0.16.9
+[gdk-pixbuf-sys]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/gdk-pixbuf/sys" # 0.16.9
+[gio]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/gio" # 0.16.9
+[gio-sys]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/gio/sys" # 0.16.9
+[glib]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/glib" # 0.16.9
+[glib-macros]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/glib-macros" # 0.16.9
+[glib-sys]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/glib/sys" # 0.16.9
+[gobject-sys]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/glib/gobject-sys" # 0.16.9
+[graphene-rs]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/graphene" # 0.16.9
+[graphene-sys]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/graphene/sys" # 0.16.9
+[gsk4]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gsk4" # 0.5.6
+[gsk4-sys]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gsk4/sys" # 0.5.6
+[gstreamer-app]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-app" # 0.19.8
+[gstreamer-app-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-app/sys" # 0.19.8
+[gstreamer-audio]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-audio" # 0.19.8
+[gstreamer-audio-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-audio/sys" # 0.19.8
+[gstreamer-base]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-base" # 0.19.8
+[gstreamer-base-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-base/sys" # 0.19.8
+[gstreamer-check]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-check" # 0.19.8
+[gstreamer-check-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-check/sys" # 0.19.8
+[gstreamer-gl-egl]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl/egl" # 0.19.8
+[gstreamer-gl-egl-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl/egl/sys" # 0.19.8
+[gstreamer-gl]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl" # 0.19.8
+[gstreamer-gl-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl/sys" # 0.19.8
+[gstreamer-gl-wayland]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl/wayland" # 0.19.8
+[gstreamer-gl-wayland-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl/wayland/sys" # 0.19.8
+[gstreamer-gl-x11]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl/x11" # 0.19.8
+[gstreamer-gl-x11-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-gl/x11/sys" # 0.19.8
+[gstreamer]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer" # 0.19.8
+[gstreamer-net]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-net" # 0.19.8
+[gstreamer-net-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-net/sys" # 0.19.8
+[gstreamer-pbutils]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-pbutils" # 0.19.8
+[gstreamer-pbutils-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-pbutils/sys" # 0.19.8
+[gstreamer-rtp]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-rtp" # 0.19.8
+[gstreamer-rtp-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-rtp/sys" # 0.19.8
+[gstreamer-sdp]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-sdp" # 0.19.8
+[gstreamer-sdp-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-sdp/sys" # 0.19.8
+[gstreamer-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer/sys" # 0.19.8
+[gstreamer-utils]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-utils" # 0.19.8
+[gstreamer-video]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-video" # 0.19.8
+[gstreamer-video-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-video/sys" # 0.19.8
+[gstreamer-webrtc]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-webrtc" # 0.19.8
+[gstreamer-webrtc-sys]="https://gitlab.freedesktop.org/gstreamer/gstreamer-rs;b9307ca2582706519abf487175c3c0ddbf2e4654;gstreamer-rs-%commit%/gstreamer-webrtc/sys" # 0.19.8
+[gtk4]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gtk4" # 0.5.6
+[gtk4-macros]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gtk4-macros" # 0.5.6
+[gtk4-sys]="https://github.com/gtk-rs/gtk4-rs;79a1b60ab4c585dcb9a2529d76a0c874e52175da;gtk4-rs-%commit%/gtk4/sys" # 0.5.6
+[pangocairo]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/pangocairo" # 0.16.9
+[pangocairo-sys]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/pangocairo/sys" # 0.16.9
+[pango]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/pango" # 0.16.9
+[pango-sys]="https://github.com/gtk-rs/gtk-rs-core;63753d183f76f6603aaf239ffffbb98a089c4c1b;gtk-rs-core-%commit%/pango/sys" # 0.16.9
+)
 		inherit cargo
 		SRC_URI+="$(cargo_crate_uris)"
 	fi
