@@ -16,6 +16,14 @@ _gst_plugins_rs_globals
 unset -f _gst_plugins_rs_globals
 
 MY_PV="${PV}"
+declare -A virtual_rust_pv_to_llvm_slot=(
+	["1.77"]=17
+	["1.76"]=17
+	["1.75"]=17
+	["1.74"]=17
+	["1.73"]=17
+	["1.71"]=16
+)
 
 if [[ "${MY_PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -593,7 +601,7 @@ zeroize-1.7.0
 	fi
 fi
 
-LLVM_COMPAT=( 17 ) # For clang-sys ; slot based on virtual/rust subslot
+LLVM_COMPAT=( 17 16 ) # For clang-sys ; slot based on virtual/rust subslot
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( python3_{8..11} )
 
@@ -678,8 +686,6 @@ REQUIRED_USE+="
 # Depends same as stage: test and name: meson shared CI job
 GOBJECT_INTROSPECTION_PV="1.74.0"
 GST_PV="${PV}" # Based on gstreamer1.0-plugins-good
-RUST_PV="1.76.0" # Required by bindings
-CARGO_PV="1.76.0"
 # grep -e "requires_private" "${WORKDIR}" for external dependencies
 # See "Run-time dependency" in CI
 # openssl requirement relaxed CI uses 3.0.8
@@ -765,6 +771,14 @@ gen_llvm_bdepend() {
 		"
 	done
 }
+gen_virtual_rust_bdepend() {
+	local s
+	for s in ${!virtual_rust_pv_to_llvm_slot[@]} ; do
+		echo "
+			=virtual/rust-${s}*[${MULTILIB_USEDEP}]
+		"
+	done
+}
 BDEPEND+="
 	$(gen_llvm_bdepend)
 	>=dev-util/cargo-c-0.9.22
@@ -772,9 +786,11 @@ BDEPEND+="
 	>=dev-util/pkgconf-1.8.1[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/binutils-2.40
 	>=sys-devel/gcc-12.2.0
-	>=virtual/rust-${RUST_PV}[${MULTILIB_USEDEP}]
 	doc? (
 		dev-python/hotdoc
+	)
+	|| (
+		$(gen_virtual_rust_bdepend)
 	)
 "
 RESTRICT="mirror test"
@@ -811,29 +827,18 @@ ewarn
 	if [[ "${MY_PV}" =~ "9999" ]] ; then
 		check_network_sandbox
 	fi
-
-	# The file name version does not match the --version.
-	local x_cargo_pv=$(cargo --version | cut -f 2 -d " ")
-	if ver_test ${x_cargo_pv} -lt ${CARGO_PV} ; then
-eerror
-eerror "Cargo version requirements are not met."
-eerror
-eerror "Current cargo version:\t${x_cargo_pv}"
-eerror "Expected cargo version:\t${CARGO_PV}"
-eerror
-		die
-	else
-einfo "cargo version: ${x_cargo_pv}"
-	fi
 }
 
 multilib_src_configure() {
 	local found=0
-	local s
-	for s in ${LLVM_COMPAT[@]} ; do
+	local virtual_rust_slot
+	for virtual_rust_slot in ${!virtual_rust_pv_to_llvm_slot[@]} ; do
+		local llvm_slot=${virtual_rust_pv_to_llvm_slot[${virtual_rust_slot}]}
+		[[ -z "${llvm_slot}" ]] && continue
 		if \
-			   has_version "sys-devel/clang:${s}" \
-			&& has_version "sys-devel/llvm:${s}" \
+			   has_version "=virtual/rust-${virtual_rust_slot}*" \
+			&& has_version "sys-devel/clang:${llvm_slot}" \
+			&& has_version "sys-devel/llvm:${llvm_slot}" \
 		; then
 			found=1
 			break
@@ -843,13 +848,33 @@ multilib_src_configure() {
 		LLVM_MAX_SLOT=${s}
 		llvm_pkg_setup
 	else
+		local virtual_rust_pv=$(best_version "virtual/rust" \
+			| sed -e "s|virtual/rust-||g")
+		local virtual_rust_pv_slot=${virtual_rust_pv%.*}
+		local has_clang_slot="no"
+		local has_llvm_slot="no"
+		if has_version "sys-devel/clang:${virtual_rust_pv_to_llvm_slot[${virtual_rust_pv_slot}]}" ; then
+			has_clang_slot="yes"
+		else
+			has_clang_slot="no"
+		fi
+		if has_version "sys-devel/llvm:${virtual_rust_pv_to_llvm_slot[${virtual_rust_pv_slot}]}" ; then
+			has_llvm_slot="yes"
+		else
+			has_llvm_slot="no"
+		fi
 eerror
-eerror "The LLVM/clang version is not supported.  Send a issue request to"
-eerror "update the ebuild maintainer."
+eerror "The LLVM/clang version is not supported or the dependencies are not"
+eerror "completely installed.  Emerge clang and llvm to match subslot slot of"
+eerror "virtual/rust."
+eerror
+eerror "Current virtual/rust version:  ${virtual_rust_pv}"
+eerror "Has installed sys-devel/clang:${virtual_rust_pv_to_llvm_slot[${virtual_rust_pv_slot}]} slot:  ${has_clang_slot}"
+eerror "Has installed sys-devel/llvm:${virtual_rust_pv_to_llvm_slot[${virtual_rust_pv_slot}]} slot:  ${has_llvm_slot}"
 eerror
 		die
 	fi
-einfo "LLVM=${LLVM_MAX_SLOT}"
+einfo "LLVM SLOT:  ${LLVM_MAX_SLOT}"
 
 	export CSOUND_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)"
 
