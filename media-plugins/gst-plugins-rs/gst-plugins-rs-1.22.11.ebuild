@@ -6,6 +6,8 @@
 
 EAPI=8
 
+# D12
+
 _gst_plugins_rs_globals() {
 	GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
@@ -16,6 +18,8 @@ _gst_plugins_rs_globals
 unset -f _gst_plugins_rs_globals
 
 MY_PV="${PV}"
+GOBJECT_INTROSPECTION_PV="1.74.0"
+GST_PV="${PV}" # Based on gstreamer1.0-plugins-good
 # FIXME:
 EXPECTED_BUILD_FILES_FINGERPRINT="\
 de3226d4e1a5184c51040e9eb13848756b4daed0978cf8786bc351c7a04e5f83\
@@ -688,10 +692,7 @@ REQUIRED_USE+="
 		${MODULES[@]}
 	)
 "
-# Assumes D 12
-# Depends same as stage: test and name: meson shared CI job
-GOBJECT_INTROSPECTION_PV="1.74.0"
-GST_PV="${PV}" # Based on gstreamer1.0-plugins-good
+# Depends is the same as stage: test and name: meson shared CI job
 # grep -e "requires_private" "${WORKDIR}" for external dependencies
 # See "Run-time dependency" in CI
 # openssl requirement relaxed CI uses 3.0.8
@@ -763,7 +764,9 @@ RDEPEND+="
 		>=media-plugins/gst-plugins-webrtc-${GST_PV}[${MULTILIB_USEDEP}]
 	)
 "
-DEPEND+=" ${RDEPEND}"
+DEPEND+="
+	${RDEPEND}
+"
 # Update while keeping track of versions of virtual/rust.
 # Expanded here because the virtual system is broken for multilib.
 gen_llvm_bdepend() {
