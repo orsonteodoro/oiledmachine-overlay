@@ -741,11 +741,14 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 doc system-libsodium ebuild-revision-1
 "
 REQUIRED_USE+="
-	|| (
-		${MODULES[@]}
+	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 	webrtchttp? (
 		reqwest
+	)
+	|| (
+		${MODULES[@]}
 	)
 "
 # Assumes D 12
