@@ -16,7 +16,57 @@ _gst_plugins_rs_globals
 unset -f _gst_plugins_rs_globals
 
 MY_PV="${PV}"
-declare -A virtual_rust_pv_to_llvm_slot=(
+# FIXME:
+EXPECTED_BUILD_FILES_FINGERPRINT="\
+de3226d4e1a5184c51040e9eb13848756b4daed0978cf8786bc351c7a04e5f83\
+ecbbc78d55f3ef65324330035ceb38eec9143accd158d63007a5760c3afc6c99\
+"
+MODULES=(
+	audiofx
+	aws
+	cdg
+	claxon
+	closedcaption
+	csound
+	dav1d
+	doc
+	examples
+	fallbackswitch
+	ffv1
+	file
+	flavors
+	fmp4
+	gif
+	gtk4
+	hlssink3
+	hsv
+	json
+	lewton
+	livesync
+	mp4
+	ndi
+	onvif
+	png
+	raptorq
+	rav1e
+	regex
+	reqwest
+	rtp
+	spotify
+	sodium
+#	test
+	textahead
+	textwrap
+	threadshare
+	togglerecord
+	tracers
+	uriplaylistbin
+	videofx
+	webp
+	webrtc
+	webrtchttp
+)
+declare -A VIRTUAL_RUST_PV_TO_LLVM_SLOT=(
 	["1.77"]=17
 	["1.76"]=17
 	["1.75"]=17
@@ -623,52 +673,8 @@ LICENSE="
 "
 # Unicode-DFS-2016 ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/unicode-ident-1.0.5/LICENSE-UNICODE
 
+RESTRICT="mirror test"
 SLOT="1.0/$(ver_cut 1-2 ${MY_PV})" # 1.0 is same as media-libs/gstreamer
-MODULES=(
-	audiofx
-	aws
-	cdg
-	claxon
-	closedcaption
-	csound
-	dav1d
-	doc
-	examples
-	fallbackswitch
-	ffv1
-	file
-	flavors
-	fmp4
-	gif
-	gtk4
-	hlssink3
-	hsv
-	json
-	lewton
-	livesync
-	mp4
-	ndi
-	onvif
-	png
-	raptorq
-	rav1e
-	regex
-	reqwest
-	rtp
-	spotify
-	sodium
-#	test
-	textahead
-	textwrap
-	threadshare
-	togglerecord
-	tracers
-	uriplaylistbin
-	videofx
-	webp
-	webrtc
-	webrtchttp
-)
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${MODULES[@]}
@@ -776,8 +782,8 @@ gen_llvm_bdepend() {
 }
 gen_virtual_rust_bdepend() {
 	local virtual_rust_pv
-	for virtual_rust_pv in ${!virtual_rust_pv_to_llvm_slot[@]} ; do
-		local llvm_slot="${virtual_rust_pv_to_llvm_slot[${virtual_rust_pv}]}"
+	for virtual_rust_pv in ${!VIRTUAL_RUST_PV_TO_LLVM_SLOT[@]} ; do
+		local llvm_slot="${VIRTUAL_RUST_PV_TO_LLVM_SLOT[${virtual_rust_pv}]}"
 		echo "
 			llvm_slot_${llvm_slot}? (
 				=virtual/rust-${virtual_rust_pv}*[${MULTILIB_USEDEP}]
@@ -799,14 +805,8 @@ BDEPEND+="
 		$(gen_virtual_rust_bdepend)
 	)
 "
-RESTRICT="mirror test"
 PATCHES=(
 )
-# FIXME:
-EXPECTED_BUILD_FILES_FINGERPRINT="\
-de3226d4e1a5184c51040e9eb13848756b4daed0978cf8786bc351c7a04e5f83\
-ecbbc78d55f3ef65324330035ceb38eec9143accd158d63007a5760c3afc6c99\
-"
 
 check_network_sandbox() {
 	if has network-sandbox $FEATURES ; then
@@ -838,8 +838,8 @@ ewarn
 multilib_src_configure() {
 	local found=0
 	local virtual_rust_slot
-	for virtual_rust_slot in ${!virtual_rust_pv_to_llvm_slot[@]} ; do
-		local llvm_slot=${virtual_rust_pv_to_llvm_slot[${virtual_rust_slot}]}
+	for virtual_rust_slot in ${!VIRTUAL_RUST_PV_TO_LLVM_SLOT[@]} ; do
+		local llvm_slot=${VIRTUAL_RUST_PV_TO_LLVM_SLOT[${virtual_rust_slot}]}
 		[[ -z "${llvm_slot}" ]] && continue
 		if \
 			   has_version "=virtual/rust-${virtual_rust_slot}*" \
@@ -859,12 +859,12 @@ multilib_src_configure() {
 		local virtual_rust_pv_slot=${virtual_rust_pv%.*}
 		local has_clang_slot="no"
 		local has_llvm_slot="no"
-		if has_version "sys-devel/clang:${virtual_rust_pv_to_llvm_slot[${virtual_rust_pv_slot}]}" ; then
+		if has_version "sys-devel/clang:${VIRTUAL_RUST_PV_TO_LLVM_SLOT[${virtual_rust_pv_slot}]}" ; then
 			has_clang_slot="yes"
 		else
 			has_clang_slot="no"
 		fi
-		if has_version "sys-devel/llvm:${virtual_rust_pv_to_llvm_slot[${virtual_rust_pv_slot}]}" ; then
+		if has_version "sys-devel/llvm:${VIRTUAL_RUST_PV_TO_LLVM_SLOT[${virtual_rust_pv_slot}]}" ; then
 			has_llvm_slot="yes"
 		else
 			has_llvm_slot="no"
@@ -875,8 +875,8 @@ eerror "completely installed.  Emerge clang and llvm to match subslot slot of"
 eerror "virtual/rust."
 eerror
 eerror "Current virtual/rust version:  ${virtual_rust_pv}"
-eerror "Has installed sys-devel/clang:${virtual_rust_pv_to_llvm_slot[${virtual_rust_pv_slot}]} slot:  ${has_clang_slot}"
-eerror "Has installed sys-devel/llvm:${virtual_rust_pv_to_llvm_slot[${virtual_rust_pv_slot}]} slot:  ${has_llvm_slot}"
+eerror "Has installed sys-devel/clang:${VIRTUAL_RUST_PV_TO_LLVM_SLOT[${virtual_rust_pv_slot}]} slot:  ${has_clang_slot}"
+eerror "Has installed sys-devel/llvm:${VIRTUAL_RUST_PV_TO_LLVM_SLOT[${virtual_rust_pv_slot}]} slot:  ${has_llvm_slot}"
 eerror
 		die
 	fi
