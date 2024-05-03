@@ -4,28 +4,28 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..12} )
-
-inherit distutils-r1 multiprocessing prefix
-
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 "${PV}")
 PROTOBUF_PV="24.3"
+PROTOBUF_SLOT="0/4.24"
+PYTHON_COMPAT=( python3_{10..12} )
+
+inherit distutils-r1 multiprocessing prefix
+
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+S="${WORKDIR}/${GRPC_P}/tools/distrib/python/grpcio_tools"
 SRC_URI+="
 https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
 	-> ${GRPC_P}.tar.gz
 https://github.com/protocolbuffers/protobuf/archive/refs/tags/v${PROTOBUF_PV}.tar.gz
 	-> protobuf-${PROTOBUF_PV}.tar.gz
 "
-S="${WORKDIR}/${GRPC_P}/tools/distrib/python/grpcio_tools"
 
 DESCRIPTION="Protobuf code generator for gRPC"
 HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
-PROTOBUF_SLOT="0/4.24"
 # See https://github.com/grpc/grpc/blob/v1.59.4/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.59.4/third_party
 RDEPEND="

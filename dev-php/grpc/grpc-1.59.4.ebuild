@@ -3,12 +3,21 @@
 
 EAPI=8
 
+GRPC_PN="grpc"
+GRPC_P="${GRPC_PN}-${PV}"
+
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
+S="${WORKDIR}/${GRPC_P}/src/php"
+SRC_URI+="
+https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
+	-> ${GRPC_P}.tar.gz
+"
+
 DESCRIPTION="High-performance RPC framework (PHP libraries)"
 HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
-SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
 RESTRICT="mirror"
+SLOT="0"
 RDEPEND+="
 	>=dev-lang/php-7
 	dev-php/composer
@@ -20,13 +29,6 @@ DEPEND+="
 "
 BDEPEND+="
 "
-GRPC_PN="grpc"
-GRPC_P="${GRPC_PN}-${PV}"
-SRC_URI+="
-https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
-	-> ${GRPC_P}.tar.gz
-"
-S="${WORKDIR}/${GRPC_P}/src/php"
 
 src_compile() {
 	local grpc_root="${WORKDIR}/${GRPC_P}"

@@ -7,18 +7,20 @@ EAPI=8
 # https://github.com/grpc/grpc/blob/master/doc/g_stands_for.md
 # https://grpc.io/docs/what-is-grpc/faq/#how-long-are-grpc-releases-supported-for
 
-inherit cmake multilib-minimal
-
 MY_PV="${PV//_pre/-pre}"
 OPENCENSUS_PROTO_PV="0.3.0"
+
+inherit cmake multilib-minimal
+
+KEYWORDS="~amd64 ~ppc64 ~x86"
+S="${WORKDIR}/${PN}-${MY_PV}"
+S_OPENCENSUS_PROTO="${WORKDIR}/opencensus-proto-${OPENCENSUS_PROTO_PV}"
 SRC_URI="
 https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz
 	-> ${P}.tar.gz
 https://github.com/census-instrumentation/opencensus-proto/archive/v${OPENCENSUS_PROTO_PV}.tar.gz
 	-> opencensus-proto-${OPENCENSUS_PROTO_PV}.tar.gz
 "
-S_OPENCENSUS_PROTO="${WORKDIR}/opencensus-proto-${OPENCENSUS_PROTO_PV}"
-S="${WORKDIR}/${PN}-${MY_PV}"
 
 DESCRIPTION="Modern open source high performance RPC framework"
 HOMEPAGE="https://www.grpc.io"
@@ -38,16 +40,26 @@ LICENSE="
 # BSD-2 GPL-2 third_party/xxhash/LICENSE
 # MIT third_party/upb/third_party/lunit/LICENSE
 # Unlicense third_party/upb/third_party/wyhash/LICENSE
-KEYWORDS="~amd64 ~ppc64 ~x86"
 # LSRT - language specific runtime
-LSRT_IUSE=( csharp cxx csharpext java nodejs objc php python ruby ) # Upstream enables all
+# Upstream enables all LSRT
+LSRT_IUSE=(
+	csharp
+	csharpext
+	cxx
+	java
+	nodejs
+	objc
+	php
+	python
+	ruby
+)
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
-cxx
-doc examples test
+cxx doc examples test
 
-r3
+ebuild-revision-3
 "
+RESTRICT="test"
 SLOT_MAJ="0"
 SLOT="${SLOT_MAJ}/30.152" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
 # third_party last update: 20230214
@@ -92,7 +104,6 @@ PDEPEND+="
 		~dev-ruby/grpc-${PV}
 	)
 "
-RESTRICT="test"
 DOCS=( AUTHORS CONCEPTS.md README.md TROUBLESHOOTING.md doc/. )
 
 soversion_check() {
