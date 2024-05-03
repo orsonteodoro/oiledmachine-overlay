@@ -94,11 +94,11 @@ if [[ "${MY_PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${PN}-${MY_PV}"
 else
+	#KEYWORDS="~amd64" # No 1.24 on distro yet
+	S="${WORKDIR}/gst-plugins-rs-gstreamer-${MY_PV}"
 	SRC_URI+="
 https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/gstreamer-${MY_PV}/gst-plugins-rs-gstreamer-${MY_PV}.tar.bz2
 	"
-	S="${WORKDIR}/gst-plugins-rs-gstreamer-${MY_PV}"
-	#KEYWORDS="~amd64" # No 1.24 on distro yet
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		:
 	else
