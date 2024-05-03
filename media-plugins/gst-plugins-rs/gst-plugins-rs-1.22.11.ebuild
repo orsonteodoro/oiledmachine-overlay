@@ -21,6 +21,8 @@ EXPECTED_BUILD_FILES_FINGERPRINT="\
 de3226d4e1a5184c51040e9eb13848756b4daed0978cf8786bc351c7a04e5f83\
 ecbbc78d55f3ef65324330035ceb38eec9143accd158d63007a5760c3afc6c99\
 "
+LLVM_COMPAT=( 17 16 ) # For clang-sys ; slot based on virtual/rust subslot
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MODULES=(
 	audiofx
 	aws
@@ -66,6 +68,7 @@ MODULES=(
 	webrtc
 	webrtchttp
 )
+PYTHON_COMPAT=( python3_{8..11} )
 declare -A VIRTUAL_RUST_PV_TO_LLVM_SLOT=(
 	["1.77"]=17
 	["1.76"]=17
@@ -650,10 +653,6 @@ zeroize-1.7.0
 		SRC_URI+="$(cargo_crate_uris)"
 	fi
 fi
-
-LLVM_COMPAT=( 17 16 ) # For clang-sys ; slot based on virtual/rust subslot
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-PYTHON_COMPAT=( python3_{8..11} )
 
 inherit flag-o-matic lcnr llvm meson multilib-minimal
 
