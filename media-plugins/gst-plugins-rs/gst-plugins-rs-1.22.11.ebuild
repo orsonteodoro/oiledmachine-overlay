@@ -751,7 +751,9 @@ RDEPEND+="
 		>=media-sound/csound-6.18.1[${MULTILIB_USEDEP}]
 	)
 	dav1d? (
-		>=media-libs/dav1d-1.1.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-1.0.0[${MULTILIB_USEDEP}]
+		<media-libs/dav1d-1.2.2[${MULTILIB_USEDEP}]
+		media-libs/dav1d:=[${MULTILIB_USEDEP}]
 	)
 	gtk4? (
 		${CARGO_BINDINGS_DEPENDS_GTK4}
