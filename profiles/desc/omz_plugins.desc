@@ -80,6 +80,7 @@ emoji-clock - Installs the emoji-clock plugin.
 emotty - Installs the emotty plugin.
 encode64 - Installs the encode64 plugin.
 extract - Installs the extract plugin.
+eza - Installs the eza plugin.
 fabric - Installs the fabric plugin.
 fancy-ctrl-z - Installs the fancy-ctrl-z plugin.
 fasd - Installs the fasd plugin.
@@ -182,6 +183,7 @@ mercurial - Installs the mercurial plugin.
 meteor - Installs the meteor plugin.
 microk8s - Installs the microk8s plugin.
 minikube - Installs the minikube plugin.
+mise - Installs the mise plugin.
 mix - Installs the mix plugin.
 mix-fast - Installs the mix-fast plugin.
 mongo-atlas - Installs the mongo-atlas plugin.
@@ -269,9 +271,11 @@ skaffold - Installs the skaffold plugin.
 snap - Installs the snap plugin.
 spring - Installs the spring plugin.
 sprunge - Installs the sprunge plugin.
+ssh - Installs the ssh plugin.
 ssh-agent - Installs the ssh-agent plugin.
 stack - Installs the stack plugin.
 starship - Installs the starship plugin.
+stripe - Installs the stripe plugin.
 sublime - Installs the sublime plugin.
 sublime-merge - Installs the sublime-merge plugin.
 sudo - Installs the sudo plugin.
@@ -333,3 +337,4 @@ zeus - Installs the zeus plugin.
 zoxide - Installs the zoxide plugin.
 zsh-interactive-cd - Installs the zsh-interactive-cd plugin.
 zsh-navigation-tools - Installs the zsh-navigation-tools plugin.
+
