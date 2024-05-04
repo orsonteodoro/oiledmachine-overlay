@@ -1,0 +1,37 @@
+diff -urp coreboot-24.02.01.orig/util/intelmetool/Makefile coreboot-24.02.01/util/intelmetool/Makefile
+--- coreboot-24.02.01.orig/util/intelmetool/Makefile	2024-02-29 10:39:25.000000000 -0800
++++ coreboot-24.02.01/util/intelmetool/Makefile	2024-05-03 22:26:51.996192903 -0700
+@@ -6,7 +6,7 @@ TOP     ?= $(abspath ../..)
+ CC      ?= gcc
+ INSTALL ?= /usr/bin/env install
+ PREFIX  ?= /usr/local
+-CFLAGS  ?= -O0 -g -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unused-function \
++CFLAGS  += -O0 -g -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-unused-function \
+            -I $(TOP)/src/commonlib/bsd/include
+ LDFLAGS += -lpci -lz
+ 
+diff -urp coreboot-24.02.01.orig/util/nvramtool/Makefile coreboot-24.02.01/util/nvramtool/Makefile
+--- coreboot-24.02.01.orig/util/nvramtool/Makefile	2024-02-29 10:39:25.000000000 -0800
++++ coreboot-24.02.01/util/nvramtool/Makefile	2024-05-03 22:26:52.000192868 -0700
+@@ -11,7 +11,7 @@ PROGRAM = nvramtool
+ CC     ?= gcc
+ INSTALL = /usr/bin/env install
+ PREFIX  = /usr/local
+-CFLAGS  = -O2 -g -Wall -Wextra -Wmissing-prototypes -I. -DCMOS_HAL=1
++CFLAGS  += -O2 -g -Wall -Wextra -Wmissing-prototypes -I. -DCMOS_HAL=1
+ #CFLAGS  = -Os -Wall
+ 
+ CLI_OBJS = cli/nvramtool.o cli/opts.o
+diff -urp coreboot-24.02.01.orig/util/pmh7tool/Makefile coreboot-24.02.01/util/pmh7tool/Makefile
+--- coreboot-24.02.01.orig/util/pmh7tool/Makefile	2024-02-29 10:39:25.000000000 -0800
++++ coreboot-24.02.01/util/pmh7tool/Makefile	2024-05-03 22:26:52.000192868 -0700
+@@ -1,7 +1,7 @@
+ ## SPDX-License-Identifier: GPL-2.0-only
+ 
+-CC = gcc
+-CFLAGS = -O2 -Wall -Wextra -Werror
++CC ?= gcc
++CFLAGS ?= -O2 -Wall -Wextra -Werror
+ PROGRAM = pmh7tool
+ INSTALL = /usr/bin/env install
+ PREFIX	= /usr/local

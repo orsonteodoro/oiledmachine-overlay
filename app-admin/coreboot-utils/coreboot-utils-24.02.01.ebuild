@@ -23,7 +23,7 @@ RDEPEND="
 BDEPEND="
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-4.22.01-flags.patch"
+	"${FILESDIR}/${PN}-24.02.01-flags.patch"
 	"${FILESDIR}/${PN}-4.22.01-drop-inline-cpuid_ext.patch"
 )
 
@@ -49,7 +49,7 @@ src_prepare() {
 		sed \
 			-i \
 			-e 's/\( \|=\)'"${e}"'\( \|$\)/\1/g' \
-			util/*/Makefile{.inc,} \
+			util/*/Makefile{.mk,} \
 			|| die
 	done
 }
