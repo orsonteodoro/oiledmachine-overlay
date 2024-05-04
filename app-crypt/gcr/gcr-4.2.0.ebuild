@@ -3,10 +3,10 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( python3_{10..12} )
 VALA_USE_DEPEND="vapigen"
 
-inherit gnome.org gnome2-utils meson python-any-r1 vala xdg
+inherit flag-o-matic gnome.org gnome2-utils meson python-any-r1 vala xdg
 inherit multilib-minimal
 
 KEYWORDS="
@@ -77,6 +77,7 @@ src_prepare() {
 }
 
 src_configure() {
+	filter-lto # https://gitlab.gnome.org/GNOME/gcr/-/issues/43
 	configure_abi() {
 		cd "${BUILD_DIR}" || die
 		local emesonargs=(
