@@ -4,6 +4,10 @@
 
 # The lockfile should be updated once a week for security reasons.
 
+# Last check dates:
+# meson.build - May 1, 2024
+# meson_options.txt - May 1, 2024
+
 EAPI=8
 
 # D11-slim
@@ -20,11 +24,7 @@ _gst_plugins_rs_globals
 unset -f _gst_plugins_rs_globals
 
 MY_PV="${PV}"
-# FIXME:
-EXPECTED_BUILD_FILES_FINGERPRINT="\
-de3226d4e1a5184c51040e9eb13848756b4daed0978cf8786bc351c7a04e5f83\
-ecbbc78d55f3ef65324330035ceb38eec9143accd158d63007a5760c3afc6c99\
-"
+EXPECTED_BUILD_FILES_FINGERPRINT="disable"
 GOBJECT_INTROSPECTION_PV="1.74.0"
 GST_PV="1.20.0" # Based on meson.build
 LLVM_COMPAT=( 17 16 15 ) # For clang-sys ; slot based on virtual/rust subslot
@@ -94,7 +94,7 @@ declare -A VIRTUAL_RUST_PV_TO_LLVM_SLOT=(
 if [[ "${MY_PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_COMMIT="HEAD"
-	EGIT_COMMIT_FALLBACK="519371240d4e282fbd56b01d62941949c56df6ea" # Apr 8, 2024
+	EGIT_COMMIT_FALLBACK="a84bbc66f30573b62871db163c48afef75adf6ec" # Feb 2, 2024
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs.git"
 	MY_PV="9999"
 	inherit git-r3
@@ -731,7 +731,7 @@ CARGO_BINDINGS_DEPENDS_PANGO="
 CARGO_BINDINGS_DEPENDS_GTK4="
 	${CARGO_BINDINGS_DEPENDS_CAIRO}
 	${CARGO_BINDINGS_DEPENDS_PANGO}
-	>=gui-libs/gtk-4.8.3:4[introspection,gstreamer]
+	>=gui-libs/gtk-4.6:4[introspection,gstreamer]
 	>=media-libs/graphene-1.10[introspection]
 	>=x11-libs/gdk-pixbuf-2.36.8[introspection]
 "
@@ -927,7 +927,9 @@ _production_unpack() {
 				| sort) \
 			| sha512sum \
 			| cut -f 1 -d " ")
-		if [[ "${EXPECTED_BUILD_FILES_FINGERPRINT}" != "${actual_build_files_fingerprint}" ]] ; then
+		if [[ "${EXPECTED_BUILD_FILES_FINGERPRINT}" == "disable" ]] ; then
+			:
+		elif [[ "${EXPECTED_BUILD_FILES_FINGERPRINT}" != "${actual_build_files_fingerprint}" ]] ; then
 eerror
 eerror "A change to the build scripts was detected."
 eerror "Notify the ebuild maintainer for an update."

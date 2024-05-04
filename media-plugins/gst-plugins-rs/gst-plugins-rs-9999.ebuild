@@ -20,7 +20,10 @@ _gst_plugins_rs_globals
 unset -f _gst_plugins_rs_globals
 
 MY_PV="${PV}"
-EXPECTED_BUILD_FILES_FINGERPRINT="disable"
+EXPECTED_BUILD_FILES_FINGERPRINT="\
+de4c864456b9b8d70431d7bf8004df768bd3b732205af4dfeb6f6c0f1625b834\
+a62a593764b6df74837908ff04e40584b940c7d66bd8462c7a63a9fa4d2b5a0b\
+"
 GOBJECT_INTROSPECTION_PV="1.74.0"
 GST_PV="1.20.0" # Based on meson.build
 LLVM_COMPAT=( 17 16 ) # For clang-sys ; slot based on virtual/rust subslot
@@ -41,6 +44,7 @@ MODULES=(
 	flavors
 	fmp4
 	gif
+	gopbuffer
 	gtk4
 	hlssink3
 	hsv
@@ -51,7 +55,9 @@ MODULES=(
 	mp4
 	ndi
 	onvif
+	originalbuffer
 	png
+	quinn
 	raptorq
 	rav1e
 	regex
@@ -88,7 +94,7 @@ declare -A VIRTUAL_RUST_PV_TO_LLVM_SLOT=(
 if [[ "${MY_PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_COMMIT="HEAD"
-	EGIT_COMMIT_FALLBACK="d51226dce5c133837c1c70df3f87bb6a437a0775" # Apr 29, 2024
+	EGIT_COMMIT_FALLBACK="2bfb6ee01673f673c12dac6b97b36d11dc0f87e7" # May 2, 2024
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs.git"
 	MY_PV="9999"
 	inherit git-r3
@@ -809,8 +815,7 @@ RDEPEND+="
 		>=media-sound/csound-6.18.1[${MULTILIB_USEDEP}]
 	)
 	dav1d? (
-		>=media-libs/dav1d-1.0.0[${MULTILIB_USEDEP}]
-		<media-libs/dav1d-1.3[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-1.3.0[${MULTILIB_USEDEP}]
 		media-libs/dav1d:=[${MULTILIB_USEDEP}]
 	)
 	gtk4? (
@@ -819,6 +824,9 @@ RDEPEND+="
 	onvif? (
 		${CARGO_BINDINGS_DEPENDS_CAIRO}
 		${CARGO_BINDINGS_DEPENDS_PANGO}
+	)
+	uriplaylistbin? (
+		>=media-plugins/gst-plugins-meta-1.23.90:1.0[${MULTILIB_USEDEP}]
 	)
 	system-libsodium? (
 		>=dev-libs/libsodium-1.0.18[${MULTILIB_USEDEP}]
