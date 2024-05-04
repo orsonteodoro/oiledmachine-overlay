@@ -4,65 +4,39 @@
 
 EAPI=7
 
-DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
-
-inherit distutils-r1 user-info
-
-SRC_URI="
-https://github.com/jketterl/openwebrx/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
-
-DESCRIPTION="Open source, multi-user SDR receiver software with a web interface"
-HOMEPAGE="https://www.openwebrx.de/"
-LICENSE="AGPL-3"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
-RESTRICT="mirror"
-SLOT="0"
 DEVICES=(
+	airspy
+	airspyhf
+	fcdpp
+	fifi_sdr
+	hackrf
+	hpsdr
+	lime_sdr
+	perseussdr
+	pluto_sdr
+	radioberry
 	rtl_sdr
 	rtl_sdr_soapy
 	rtl_tcp
-	sdrplay
-	hackrf
-	perseussdr
-	airspy
-	airspyhf
-	lime_sdr
-	fifi_sdr
-	pluto_sdr
-	soapy_remote
-	uhd
-	radioberry
-	fcdpp
-	sddc
-	hpsdr
 	runds
+	sdrplay
+	soapy_remote
+	sddc
+	uhd
 )
+DISTUTILS_USE_PEP517="setuptools"
 OPTIONAL_FEATURES=(
 	dream
 	digital_voice_digiham
 	digital_voice_freedv
 	digital_voice_m17
-	wsjtx
+	drm
+	js8
 	packet
 	pocsag
-	js8
-	drm
+	wsjtx
 )
-IUSE+="
-${DEVICES[@]/#/openwebrx_sdr_}
-${OPTIONAL_FEATURES[@]}
-openrc systemd
-"
-REQUIRED_USE+="
-	|| (
-		openrc
-		systemd
-	)
-"
+PYTHON_COMPAT=( python3_{8..11} )
 SOAPY_DEVICES=(
 	airspy
 	airspyhf
@@ -76,6 +50,32 @@ SOAPY_DEVICES=(
 	soapy_remote
 	uhd
 )
+
+inherit distutils-r1 user-info
+
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
+SRC_URI="
+https://github.com/jketterl/openwebrx/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+
+DESCRIPTION="Open source, multi-user SDR receiver software with a web interface"
+HOMEPAGE="https://www.openwebrx.de/"
+LICENSE="AGPL-3"
+RESTRICT="mirror"
+SLOT="0"
+IUSE+="
+${DEVICES[@]/#/openwebrx_sdr_}
+${OPTIONAL_FEATURES[@]}
+openrc systemd
+"
+REQUIRED_USE+="
+	|| (
+		openrc
+		systemd
+	)
+"
 DIGIHAM_DEPEND="
 	(
 		>=dev-python/pydigiham-0.6.2[${PYTHON_USEDEP}]
