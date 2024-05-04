@@ -3,22 +3,16 @@
 
 EAPI=8
 
-MY_PN="oneTBB"
 PV1="$(ver_cut 1)"
 PV2="$(ver_cut 2)"
+MY_PN="oneTBB"
 MY_PV="${PV1}_U${PV2}"
-
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake flag-o-matic multilib-minimal python-r1 toolchain-funcs
-
-DESCRIPTION="oneAPI Threading Building Blocks (oneTBB)"
-HOMEPAGE="https://www.threadingbuildingblocks.org"
-LICENSE="Apache-2.0"
-KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86 ~amd64-linux
-~x86-linux
-"
-
+SLOT_MAJOR="0" # It should be 12 but kept 0 to maintain compatibility with distro repo ebuilds.
+SOVER_MINOR="."$(ver_cut 2 ${PV}) # The distro messes up on this component and never updated since 2021.5.0.
+SOVER_TBB="12" # See https://github.com/oneapi-src/oneTBB/blob/v2021.11.0/include/oneapi/tbb/version.h#L51
+SOVER_TBBMALLOC="2" # See https://github.com/oneapi-src/oneTBB/blob/v2021.11.0/CMakeLists.txt#L54
+SOVER_TBBBIND="3" # See https://github.com/oneapi-src/oneTBB/blob/v2021.11.0/CMakeLists.txt#L55
 #
 # Distinct archive filenames are required prevent wrong hashing.
 #
@@ -34,6 +28,22 @@ VER_SCH="semver" # valid values (left column):
 # https://github.com/oneapi-src/oneTBB/issues/143
 #
 
+inherit cmake flag-o-matic multilib-minimal python-r1 toolchain-funcs
+
+KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86 ~amd64-linux
+~x86-linux
+"
+if [[ "${VER_SCH}" == "marketing" ]] ; then
+	S="${WORKDIR}/${MY_PN}-${MY_PV}"
+	S_BAK="${WORKDIR}/${MY_PN}-${MY_PV}"
+elif [[ "${VER_SCH}" == "semver" ]] ; then
+	S="${WORKDIR}/${MY_PN}-${PV}"
+	S_BAK="${WORKDIR}/${MY_PN}-${PV}"
+elif [[ "${VER_SCH}" == "live-snapshot" ]] ; then
+	S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
+	S_BAK="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
+fi
 if [[ "${VER_SCH}" == "marketing" ]] ; then
 	SRC_URI="
 https://github.com/oneapi-src/${MY_PN}/archive/refs/tags/${MY_PV}.tar.gz
@@ -51,11 +61,10 @@ https://github.com/oneapi-src/${MY_PN}/archive/refs/heads/${EGIT_COMMIT}.tar.gz
 	"
 fi
 
-SLOT_MAJOR="0" # It should be 12 but kept 0 to maintain compatibility with distro repo ebuilds.
-SOVER_MINOR="."$(ver_cut 2 ${PV}) # The distro messes up on this component and never updated since 2021.5.0.
-SOVER_TBB="12" # See https://github.com/oneapi-src/oneTBB/blob/v2021.11.0/include/oneapi/tbb/version.h#L51
-SOVER_TBBMALLOC="2" # See https://github.com/oneapi-src/oneTBB/blob/v2021.11.0/CMakeLists.txt#L54
-SOVER_TBBBIND="3" # See https://github.com/oneapi-src/oneTBB/blob/v2021.11.0/CMakeLists.txt#L55
+DESCRIPTION="oneAPI Threading Building Blocks (oneTBB)"
+HOMEPAGE="https://www.threadingbuildingblocks.org"
+LICENSE="Apache-2.0"
+RESTRICT="mirror"
 SLOT="${SLOT_MAJOR}/${SOVER_TBB}-${SOVER_TBBMALLOC}-${SOVER_TBBBIND}"
 # Upstream enables tests by default.
 IUSE+=" -X debug doc -examples -python +tbbmalloc -test"
@@ -91,19 +100,6 @@ BDEPEND+="
 		${PYTHON_DEPS}
 	)
 "
-
-if [[ "${VER_SCH}" == "marketing" ]] ; then
-	S="${WORKDIR}/${MY_PN}-${MY_PV}"
-	S_BAK="${WORKDIR}/${MY_PN}-${MY_PV}"
-elif [[ "${VER_SCH}" == "semver" ]] ; then
-	S="${WORKDIR}/${MY_PN}-${PV}"
-	S_BAK="${WORKDIR}/${MY_PN}-${PV}"
-elif [[ "${VER_SCH}" == "live-snapshot" ]] ; then
-	S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
-	S_BAK="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
-fi
-
-RESTRICT="mirror"
 DOCS=( README.md )
 PATCHES=(
 	"${FILESDIR}/${PN}-2021.8.0-gcc-13.patch"
@@ -442,7 +438,6 @@ _install_docs() {
 }
 
 _src_install() {
-
 	cmake_src_install
 	src_install_pkgconfig
 	if multilib_is_native_abi ; then

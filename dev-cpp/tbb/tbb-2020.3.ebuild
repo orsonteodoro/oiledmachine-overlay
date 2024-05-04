@@ -3,26 +3,32 @@
 
 EAPI=8
 
-inherit flag-o-matic multilib-minimal multilib toolchain-funcs
-
 PV1="$(ver_cut 1)"
 PV2="$(ver_cut 2)"
 MY_PV="${PV1}_U${PV2}"
-
-DESCRIPTION="High level abstract threading library"
-HOMEPAGE="https://www.threadingbuildingblocks.org"
-LICENSE="Apache-2.0"
-KEYWORDS="
-~alpha amd64 arm arm64 ~hppa ~ia64 ppc ppc64 ~riscv ~sparc x86 ~amd64-linux
-~x86-linux
-"
 SLOT_MAJOR="2" # Same as SONAME_SUFFIX, See https://github.com/oneapi-src/oneTBB/blob/v2020.3/include/tbb/tbb_stddef.h#L30
 SOVER_MINOR="."$(ver_cut 2 ${PV}) # The distro messes up on this component.
 SOVER_TBB="2" # See https://github.com/oneapi-src/oneTBB/blob/v2020.3/build/linux.inc#L114
 SOVER_TBBMALLOC="2" # See https://github.com/oneapi-src/oneTBB/blob/v2020.3/build/linux.inc#L126
 SOVER_TBBBIND="2" # See https://github.com/oneapi-src/oneTBB/blob/v2020.3/build/linux.inc#L119
+
+inherit flag-o-matic multilib-minimal multilib toolchain-funcs
+
+KEYWORDS="
+~alpha amd64 arm arm64 ~hppa ~ia64 ppc ppc64 ~riscv ~sparc x86 ~amd64-linux
+~x86-linux
+"
+S="${WORKDIR}/oneTBB-${MY_PV}"
+SRC_URI="
+https://github.com/intel/${PN}/archive/${MY_PV}.tar.gz
+	-> ${P}.tar.gz
+"
+
+DESCRIPTION="High level abstract threading library"
+HOMEPAGE="https://www.threadingbuildingblocks.org"
+LICENSE="Apache-2.0"
 SLOT="${SLOT_MAJOR}/${SOVER_TBB}-${SOVER_TBBMALLOC}-${SOVER_TBBBIND}"
-IUSE+=" debug examples numa rml"
+IUSE+=" debug examples numa rml ebuild-revision-7"
 DEPEND+="
 	!<dev-cpp/tbb-2021:0
 "
@@ -32,14 +38,13 @@ RDEPEND+="
 		sys-apps/hwloc:=
 	)
 "
-SRC_URI="
-https://github.com/intel/${PN}/archive/${MY_PV}.tar.gz
-	-> ${P}.tar.gz
+BDEPEND+="
+	dev-build/cmake
 "
-S="${WORKDIR}/oneTBB-${MY_PV}"
 DOCS=( CHANGES README README.md doc/Release_Notes.txt )
 PATCHES=(
 	"${FILESDIR}/${PN}-2020.1-makefile-debug.patch"
+	"${FILESDIR}/${PN}-2020.3-fix-cmake-config.patch"
 )
 
 src_prepare() {
@@ -174,12 +179,17 @@ multilib_src_install() {
 	cd "${BUILD_DIR}" || die
 	insinto /usr/$(get_libdir)/pkgconfig
 	doins *.pc
+
+	pushd "${S}" >/dev/null 2>&1 || die
+		insinto /usr/include/${PN}/${SLOT_MAJOR}
+		doins -r include/*
+
+		export LIBDIR=$(get_libdir)
+		cmake -DTBB_ROOT="${ED}/usr" -DTBB_OS="Linux" -P "cmake/tbb_config_generator.cmake" || die
+	popd >/dev/null 2>&1 || die
 }
 
 multilib_src_install_all() {
-	insinto /usr/include/${PN}/${SLOT_MAJOR}
-	doins -r include/*
-
 	einstalldocs
 
 	if use examples ; then

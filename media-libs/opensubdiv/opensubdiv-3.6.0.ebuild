@@ -1,4 +1,4 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # Some parts synced with opensubdiv-3.4.4-r2.
@@ -10,8 +10,8 @@ CUDA_TARGETS_COMPAT=(
 	sm_35
 	sm_50
 )
-LEGACY_TBB_SLOT="2"
-MY_PV="$(ver_rs "1-3" '_')"
+LEGACY_TBB_SLOT="2" # For TBB 2020
+MY_PV=$(ver_rs "1-3" '_')
 ONETBB_SLOT="0"
 PYTHON_COMPAT=( python3_{8..11} )
 
@@ -119,17 +119,13 @@ BDEPEND="
 	)
 "
 PATCHES_=(
-	"${FILESDIR}/${PN}-3.3.0-use-gnuinstalldirs.patch"
-	"${FILESDIR}/${PN}-3.4.3-install-tutorials-into-bin.patch"
-	"${FILESDIR}/${PN}-3.4.4-add-CUDA11-compatibility.patch"
+	"${FILESDIR}/${PN}-3.6.0-use-gnuinstalldirs.patch"
+	"${FILESDIR}/${PN}-3.6.0-cudaflags.patch"
+	"${FILESDIR}/${PN}-3.6.0-tbb-slot-select.patch"
 )
 
 src_prepare() {
 	eapply ${PATCHES_[@]}
-	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		eapply "${FILESDIR}/${PN}-3.4.3-findtbb-onetbb-changes.patch"
-		eapply "${FILESDIR}/${PN}-3.4.3-use-task-arena.patch"
-	fi
 	cmake_src_prepare
 	use cuda && cuda_src_prepare
 }
@@ -147,7 +143,7 @@ src_configure() {
 einfo "CC:\t\t${CC}"
 einfo "CXX:\t\t${CXX}"
 	${CC} --version
-	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
+	[[ "${MERGE_TYPE}" != "binary" ]] && use openmp && tc-check-openmp
 
 	# GLTESTS are disabled as portage is unable to open a display during test phase
 	local mycmakeargs=(
@@ -196,16 +192,16 @@ einfo "CXX:\t\t${CXX}"
 
 	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR="/usr/include"
-			-DTBB_LIBRARY_PATH="/usr/$(get_libdir)"
+			-DUSE_ONETBB=ON
 		)
 		append-cxxflags -DUSE_ONETBB
 	elif use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR="/usr/include/tbb/${LEGACY_TBB_SLOT}"
-			-DTBB_LIBRARY_PATH="/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
+			-DUSE_ONETBB=OFF
 		)
 	fi
+
+	export LIBDIR=$(get_libdir)
 
 	# fails with building cuda kernels when using multiple jobs
 	export MAKEOPTS="-j1"
