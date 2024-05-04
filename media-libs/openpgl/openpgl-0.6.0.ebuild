@@ -25,7 +25,7 @@ CPU_FLAGS=(
 
 inherit cmake flag-o-matic python-any-r1 toolchain-funcs
 
-KEYWORDS="-* amd64 ~arm64"
+KEYWORDS="-* ~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PV/_/-}"
 SRC_URI="
 https://github.com/OpenPathGuidingLibrary/openpgl/archive/refs/tags/v${PV/_/-}.tar.gz
@@ -95,8 +95,8 @@ src_configure() {
 	# -Werror=strict-aliasing
 	# https://bugs.gentoo.org/926890
 	#
-	# Do not trust with LTO either.
-	append-flags -fno-strict-aliasing
+	# Upstream "solved" this by setting -fno-strict-aliasing themselves.
+	# Do not trust with LTO.
 	filter-lto
 
 	local has_sse4="OFF"
