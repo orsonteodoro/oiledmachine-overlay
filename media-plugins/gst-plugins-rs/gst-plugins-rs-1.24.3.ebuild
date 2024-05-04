@@ -26,7 +26,7 @@ de3226d4e1a5184c51040e9eb13848756b4daed0978cf8786bc351c7a04e5f83\
 ecbbc78d55f3ef65324330035ceb38eec9143accd158d63007a5760c3afc6c99\
 "
 GOBJECT_INTROSPECTION_PV="1.74.0"
-GST_PV="${PV}" # Based on gstreamer1.0-plugins-good
+GST_PV="1.20.0" # Based on meson.build
 LLVM_COMPAT=( 17 16 ) # For clang-sys ; slot based on virtual/rust subslot
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MODULES=(
@@ -99,7 +99,7 @@ if [[ "${MY_PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${PN}-${MY_PV}"
 else
-	#KEYWORDS="~amd64" # Missing gstreamer 1.24 on distro repo
+	KEYWORDS="~amd64" # Missing gstreamer 1.24 on distro repo
 	S="${WORKDIR}/gst-plugins-rs-gstreamer-${MY_PV}"
 	SRC_URI+="
 https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/gstreamer-${MY_PV}/gst-plugins-rs-gstreamer-${MY_PV}.tar.bz2
