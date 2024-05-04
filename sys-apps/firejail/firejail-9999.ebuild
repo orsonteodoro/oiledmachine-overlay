@@ -6,6 +6,34 @@ EAPI=8
 
 # U 22.04
 
+DOTTED_FILENAMES=(
+blender-2.8
+blender-3.6
+blink-common-hardened.inc
+chromium-common-hardened.inc
+com.github.bleakgrey.tootle
+com.github.dahenson.agenda
+com.github.johnfactotum.Foliate
+com.github.phase1geo.minder
+com.github.tchx84.Flatseal
+com.gitlab.newsflash
+display-im6.q16
+electron-common-hardened.inc
+feh-network.inc
+gimp-2.10
+gimp-2.8
+idea.sh
+io.github.lainsce.Notejot
+mpg123.bin
+openoffice.org
+org.gnome.NautilusPreviewer
+ping-hardened.inc
+runenpass.sh
+start-tor-browser.desktop
+studio.sh
+ts3client_runscript.sh
+electron-hardened.inc
+)
 # This is done for modular install.
 FIREJAIL_MAX_ENVS=${FIREJAIL_MAX_ENVS:-512}
 FIREJAIL_PROFILES=(
@@ -14,26 +42,26 @@ Discord DiscordCanary DiscordPTB Documents FBReader FossaMail Fritzing Gitter
 JDownloader Logs Maelstrom Maps Mathematica Natron PCSX2 PPSSPPQt PPSSPPSDL
 Postman QMediathekView QOwnNotes Screenshot Telegram Thunar Viber VirtualBox
 XMind Xephyr Xvfb ZeGrapher abiword abrowser acat adiff agetpkg akonadi_control
-akregator alacarte alienarena alienarena-wrapper alpine alpinef als amarok
-amule amuled android-studio ani-cli anki anydesk aosp apack apktool apostrophe
-ar arch-audit archaudit-report archiver-common ardour4 ardour5 arduino arepack
-aria2c ark arm artha assogiate asunder atom atom-beta atool atril
-atril-previewer atril-thumbnailer audacious audacity audio-recorder aunpack
-authenticator authenticator-rs autokey-common autokey-gtk autokey-qt
+akregator alacarte alienarena alienarena-wrapper alienblaster alpine alpinef
+als amarok amule amuled android-studio ani-cli anki anydesk aosp apack apktool
+apostrophe ar arch-audit archaudit-report archiver-common ardour4 ardour5
+arduino arepack aria2c ark arm artha assogiate asunder atom atom-beta atool
+atril atril-previewer atril-thumbnailer audacious audacity audio-recorder
+aunpack authenticator authenticator-rs autokey-common autokey-gtk autokey-qt
 autokey-run autokey-shell avidemux avidemux3_cli avidemux3_jobs_qt5
-avidemux3_qt5 aweather awesome b2sum ballbuster ballbuster-wrapper baloo_file
-baloo_filemetadata_temp_extractor balsa baobab barrier basilisk bcompare beaker
-bibletime bibtex bijiben bitcoin-qt bitlbee bitwarden blackbox bleachbit
-blender blender-2.8 blender-3.6 bless blink-common blink-common-hardened.inc
-blobby blobwars bluefish bnox bpftop brackets brasero brave brave-browser
-brave-browser-beta brave-browser-dev brave-browser-nightly brave-browser-stable
-brz bsdcat bsdcpio bsdtar build-systems-common bundle bunzip2 bzcat bzflag
-bzip2 bzr cachy-browser caja calibre calligra calligraauthor calligraconverter
-calligraflow calligragemini calligraplan calligraplanwork calligrasheets
-calligrastage calligrawords cameramonitor cantata cargo catfish cawbird
-celluloid chafa chatterino checkbashisms cheese cherrytree chromium
-chromium-browser chromium-browser-privacy chromium-common
-chromium-common-hardened.inc chromium-freeworld cin cinelerra cinelerra-gg
+avidemux3_qt5 aweather awesome axel b2sum ballbuster ballbuster-wrapper
+baloo_file baloo_filemetadata_temp_extractor balsa baobab barrier basilisk
+bcompare beaker bibletime bibtex bijiben bitcoin-qt bitlbee bitwarden blackbox
+bleachbit blender blender-2_8 blender-3_6 bless blink-common
+blink-common-hardened_inc blobby blobwars bluefish bnox bpftop brackets brasero
+brave brave-browser brave-browser-beta brave-browser-dev brave-browser-nightly
+brave-browser-stable brz bsdcat bsdcpio bsdtar build-systems-common bundle
+bunzip2 bzcat bzflag bzip2 bzr cachy-browser caja calibre calligra
+calligraauthor calligraconverter calligraflow calligragemini calligraplan
+calligraplanwork calligrasheets calligrastage calligrawords cameramonitor
+cantata cargo catfish cawbird celluloid chafa chatterino checkbashisms cheese
+cherrytree chromium chromium-browser chromium-browser-privacy chromium-common
+chromium-common-hardened_inc chromium-freeworld cin cinelerra cinelerra-gg
 cksum clac clamav clamdscan clamdtop clamscan clamtk claws-mail clawsker
 clementine clion clion-eap clipgrab clipit cliqz clocks cloneit cmake cmus code
 code-oss codium cointop cola colorful colorful-wrapper
@@ -41,18 +69,18 @@ com_github_bleakgrey_tootle com_github_dahenson_agenda
 com_github_johnfactotum_Foliate com_github_phase1geo_minder
 com_github_tchx84_Flatseal com_gitlab_newsflash conkeror conky conplay corebird
 cower coyim cpio crawl crawl-tiles crow cryptocat curl cvlc cyberfox d-feet
-daisy darktable dbus-send dconf dconf-editor ddgr ddgtk deadbeef deadlink
+d-spy daisy darktable dbus-send dconf dconf-editor ddgr ddgtk deadbeef deadlink
 default deluge desktopeditors devhelp devilspie devilspie2 dex2jar dexios dia
 dig digikam dillo dino dino-im discord discord-canary discord-common
 discord-ptb display display-im6_q16 dnox dnscrypt-proxy dnsmasq dolphin
 dolphin-emu dooble dooble-qt4 dosbox dragon drawio drill dropbox easystroke
 ebook-convert ebook-edit ebook-meta ebook-polish ebook-viewer editorconfiger
-electron-cash electron-common electron-common-hardened.inc electron-mail
+electron-cash electron-common electron-common-hardened_inc electron-mail
 electrum element-desktop elinks emacs email-common empathy enchant enchant-2
 enchant-lsmod enchant-lsmod-2 engrampa enox enpass eo-common eog eom ephemeral
 epiphany equalx erd et etr etr-wrapper evince evince-previewer
 evince-thumbnailer evolution exfalso exiftool falkon fbreader fdns feedreader
-feh feh-network.inc ferdi fetchmail ffmpeg ffmpegthumbnailer ffplay ffprobe
+feh feh-network_inc ferdi fetchmail ffmpeg ffmpegthumbnailer ffplay ffprobe
 file file-manager-common file-roller filezilla firedragon firefox firefox-beta
 firefox-common firefox-common-addons firefox-developer-edition firefox-esr
 firefox-nightly firefox-wayland firefox-x11 five-or-more fix-qdf flacsplt
@@ -63,9 +91,9 @@ freeoffice-presentations freeoffice-textmaker freetube freshclam frogatto
 frozen-bubble ftp funnyboat gajim gajim-history-manager galculator gallery-dl
 gapplication gcalccmd gcloud gconf gconf-editor gconf-merge-schema
 gconf-merge-tree gconfpkg gconftool-2 gdu geany geary gedit geekbench geeqie
-gfeeds gget ghb ghostwriter gimp gimp-2_10 gimp-2_8 gist gist-paste git
-git-cola gitg github-desktop gitter gjs gl-117 gl-117-wrapper glaxium
-glaxium-wrapper globaltime gmpc gnome-2048 gnome-books gnome-boxes
+geki2 geki3 gfeeds gget gh ghb ghostwriter gimp gimp-2_10 gimp-2_8 gist
+gist-paste git git-cola gitg github-desktop gitter gjs gl-117 gl-117-wrapper
+glaxium glaxium-wrapper globaltime gmpc gnome-2048 gnome-books gnome-boxes
 gnome-builder gnome-calculator gnome-calendar gnome-character-map
 gnome-characters gnome-chess gnome-clocks gnome-contacts gnome-documents
 gnome-font-viewer gnome-hexgl gnome-keyring gnome-keyring-3
@@ -93,47 +121,47 @@ karbon kate kazam kcalc kdeinit4 kdenlive kdiff3 keepass keepass2 keepassx
 keepassx2 keepassxc keepassxc-cli keepassxc-proxy kfind kget kid3 kid3-cli
 kid3-qt kino kiwix-desktop klatexformula klatexformula_cmdl klavaro kmail
 kmplayer knotes kodi konversation kopete koreader krita krunner ktorrent ktouch
-kube kwin_x11 kwrite latex latex-common lbry-viewer lbry-viewer-gtk lbunzip2
-lbzcat lbzip2 leafpad ledger-live-desktop less lettura librecad libreoffice
-librewolf librewolf-nightly lifeograph liferea lightsoff lincity-ng links
-links-common links2 linphone linuxqq lmms lobase lobster localc localsend_app
-lodraw loffice lofromtemplate loimpress lollypop lomath loweb lowriter lrunzip
-lrz lrzcat lrzip lrztar lrzuntar lsar lugaru luminance-hdr lutris lximage-qt
-lxmusic lynx lyriek lyx lz4 lz4c lz4cat lzcat lzcmp lzdiff lzegrep lzfgrep
-lzgrep lzip lzless lzma lzmadec lzmainfo lzmore lzop macrofusion magicor make
-makedeb makepkg man manaplus marker masterpdfeditor masterpdfeditor4
-masterpdfeditor5 mate-calc mate-calculator mate-color-select mate-dictionary
-mathematica matrix-mirage mattermost-desktop mcabber mcomix md5sum mdr
-mediainfo mediathekview megaglest megaglest_editor meld mencoder
-mendeleydesktop menulibre meson metadata-cleaner meteo-qt microsoft-edge
-microsoft-edge-beta microsoft-edge-dev microsoft-edge-stable midori mimetype
-min mindless minecraft-launcher minetest minitube mirage mirrormagic mocp
-mousepad mov-cli mp3splt mp3splt-gtk mp3wrap mpDris2 mpd mpg123 mpg123-alsa
-mpg123-id3dump mpg123-jack mpg123-nas mpg123-openal mpg123-oss mpg123-portaudio
-mpg123-pulse mpg123-strip mpg123_bin mplayer mpsyt mpv mrrescue ms-excel
-ms-office ms-onenote ms-outlook ms-powerpoint ms-skype ms-word mtpaint
-mullvad-browser multimc multimc5 mumble mupdf mupdf-gl mupdf-x11 mupdf-x11-curl
-mupen64plus muraster musescore musictube musixmatch mutool mutt mypaint
-mypaint-ora-thumbnailer nano natron nautilus ncdu ncdu2 nemo neochat neomutt
-netactview nethack nethack-vultures netsurf neverball neverball-wrapper
-neverputt neverputt-wrapper newsbeuter newsboat newsflash nextcloud
-nextcloud-desktop nheko nicotine nitroshare nitroshare-cli nitroshare-nmh
-nitroshare-send nitroshare-ui node node-gyp nodejs-common nomacs noprofile
-notable notify-send npm npx nslookup nuclear nvim nylas nyx obs ocenaudio
-odt2txt oggsplt okular onboard onionshare onionshare-cli onionshare-gui ooffice
-ooviewdoc open-invaders openarena openarena_ded openbox opencity openclonk
-openmw openmw-launcher openoffice_org openshot openshot-qt openstego openttd
-opera opera-beta opera-developer orage org_gnome_NautilusPreviewer
-ostrichriders otter-browser out123 p7zip palemoon pandoc parole parsecd patch
-pavucontrol pavucontrol-qt pcmanfm pcsxr pdfchain pdflatex pdfmod pdfsam
-pdftotext peek penguin-command photoflare picard pidgin pinball pinball-wrapper
-ping ping-hardened.inc pingus pinta pioneer pip pipe-viewer pipe-viewer-gtk
-pithos pitivi pix pkglog planmaker18 planmaker18free playonlinux pluma plv
-pngquant pnpm pnpx polari postman ppsspp pragha presentations18
-presentations18free profanity psi psi-plus pybitmessage pycharm-community
-pycharm-professional pzstd qbittorrent qcomicbook qemu-launcher
-qemu-system-x86_64 qgis qlipper qmmp qnapi qpdf qpdfview qq qrencode
-qt-faststart qt5ct qt6ct qtox quadrapassel quassel quaternion quiterss
+kube kwin_x11 kwrite latex latex-common lbreakouthd lbry-viewer lbry-viewer-gtk
+lbunzip2 lbzcat lbzip2 leafpad ledger-live-desktop less lettura librecad
+libreoffice librewolf librewolf-nightly lifeograph liferea lightsoff lincity-ng
+links links-common links2 linphone linuxqq lmms lobase lobster localc
+localsend_app lodraw loffice lofromtemplate loimpress lollypop lomath loupe
+loweb lowriter lrunzip lrz lrzcat lrzip lrztar lrzuntar lsar lugaru
+luminance-hdr lutris lximage-qt lxmusic lynx lyriek lyx lz4 lz4c lz4cat lzcat
+lzcmp lzdiff lzegrep lzfgrep lzgrep lzip lzless lzma lzmadec lzmainfo lzmore
+lzop macrofusion magicor make makedeb makepkg man manaplus marker
+masterpdfeditor masterpdfeditor4 masterpdfeditor5 mate-calc mate-calculator
+mate-color-select mate-dictionary mathematica matrix-mirage mattermost-desktop
+mcabber mcomix md5sum mdr mediainfo mediathekview megaglest megaglest_editor
+meld mencoder mendeleydesktop menulibre meson metadata-cleaner meteo-qt
+microsoft-edge microsoft-edge-beta microsoft-edge-dev microsoft-edge-stable
+midori mimetype min mindless minecraft-launcher minetest minitube mirage
+mirrormagic mocp mousepad mov-cli mp3splt mp3splt-gtk mp3wrap mpDris2 mpd
+mpg123 mpg123-alsa mpg123-id3dump mpg123-jack mpg123-nas mpg123-openal
+mpg123-oss mpg123-portaudio mpg123-pulse mpg123-strip mpg123_bin mplayer mpsyt
+mpv mrrescue ms-excel ms-office ms-onenote ms-outlook ms-powerpoint ms-skype
+ms-word mtpaint mullvad-browser multimc multimc5 mumble mupdf mupdf-gl
+mupdf-x11 mupdf-x11-curl mupen64plus muraster musescore musictube musixmatch
+mutool mutt mypaint mypaint-ora-thumbnailer nano natron nautilus ncdu ncdu2
+nemo neochat neomutt netactview nethack nethack-vultures netsurf neverball
+neverball-wrapper neverputt neverputt-wrapper newsbeuter newsboat newsflash
+nextcloud nextcloud-desktop nheko nicotine nitroshare nitroshare-cli
+nitroshare-nmh nitroshare-send nitroshare-ui node node-gyp nodejs-common nomacs
+noprofile notable notify-send npm npx nslookup nuclear nvim nylas nyx obs
+ocenaudio odt2txt oggsplt okular onboard onionshare onionshare-cli
+onionshare-gui ooffice ooviewdoc open-invaders openarena openarena_ded openbox
+opencity openclonk openmw openmw-launcher openoffice_org openshot openshot-qt
+openstego openttd opera opera-beta opera-developer orage
+org_gnome_NautilusPreviewer ostrichriders otter-browser out123 p7zip palemoon
+pandoc parole parsecd patch pavucontrol pavucontrol-qt pcmanfm pcsxr pdfchain
+pdflatex pdfmod pdfsam pdftotext peek penguin-command photoflare picard pidgin
+pinball pinball-wrapper ping ping-hardened_inc pingus pinta pioneer pip
+pipe-viewer pipe-viewer-gtk pithos pitivi pix pkglog planmaker18
+planmaker18free playonlinux pluma plv pngquant pnpm pnpx polari postman ppsspp
+pragha presentations18 presentations18free profanity psi psi-plus pybitmessage
+pycharm-community pycharm-professional pzstd qbittorrent qcomicbook qemu-common
+qemu-launcher qemu-system-x86_64 qgis qlipper qmmp qnapi qpdf qpdfview qq
+qrencode qt-faststart qt5ct qt6ct qtox quadrapassel quassel quaternion quiterss
 quodlibet qupzilla qutebrowser raincat rambox ranger rawtherapee reader
 redeclipse rednotebook redshift regextester remmina retroarch rhythmbox
 rhythmbox-client ricochet riot-desktop riot-web ripperx ristretto rnano
@@ -170,32 +198,33 @@ tor-browser_he tor-browser_hu tor-browser_id tor-browser_is tor-browser_it
 tor-browser_ja tor-browser_ka tor-browser_ko tor-browser_nb tor-browser_nl
 tor-browser_pl tor-browser_pt-BR tor-browser_ru tor-browser_sv-SE
 tor-browser_tr tor-browser_vi tor-browser_zh-CN tor-browser_zh-TW torbrowser
-torbrowser-launcher torcs totem tracker transgui transmission-cli
+torbrowser-launcher torcs totem tqemu tracker transgui transmission-cli
 transmission-common transmission-create transmission-daemon transmission-edit
 transmission-gtk transmission-qt transmission-remote transmission-remote-cli
 transmission-remote-gtk transmission-show tremulous trojita truecraft
-ts3client_runscript_sh tshark tuir tutanota-desktop tuxguitar tvbrowser tvnamer
-twitch udiskie uefitool uget-gtk unar unbound uncompress unf unknown-horizons
-unlz4 unlzma unrar unxz unzip unzstd url-eater utox uudeview uzbl-browser
-viewnior viking vim vimcat vimdiff vimpager vimtutor virt-manager virtualbox
-vivaldi vivaldi-beta vivaldi-snapshot vivaldi-stable vlc vmplayer vmware
-vmware-player vmware-view vmware-workstation vscodium vulturesclaw vultureseye
-vym w3m warmux warsow warzone2100 waterfox waterfox-classic waterfox-current
-webstorm webui-aria2 weechat weechat-curses wesnoth wget wget2 whalebird whois
-widelands wine wire-desktop wireshark wireshark-gtk wireshark-qt wordwarvi wpp
-wps wpspdf x-terminal-emulator x2goclient xbill xcalc xchat xed xfburn
-xfce4-dict xfce4-mixer xfce4-notes xfce4-screenshooter xiphos xlinks xlinks2
-xmms xmr-stak xonotic xonotic-glx xonotic-sdl xonotic-sdl-wrapper xournal
-xournalpp xpdf xplayer xplayer-audio-preview xplayer-video-thumbnailer xpra
-xreader xreader-previewer xreader-thumbnailer xviewer xxd xz xzcat xzcmp xzdec
-xzdiff xzegrep xzfgrep xzgrep xzless xzmore yandex-browser yarn yelp youtube
-youtube-dl youtube-dl-gui youtube-viewer youtube-viewer-gtk
-youtube-viewers-common youtubemusic-nativefier yt-dlp ytmdesktop zaproxy zart
-zathura zcat zcmp zdiff zeal zegrep zfgrep zforce zgrep zim zless zlib-flate
-zmore znew zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt zulip
+ts3client_runscript_sh tshark tuir tutanota-desktop tuxguitar tuxtype tvbrowser
+tvnamer twitch typespeed udiskie uefitool uget-gtk unar unbound uncompress unf
+unknown-horizons unlz4 unlzma unrar unxz unzip unzstd url-eater utox uudeview
+uzbl-browser viewnior viking vim vimcat vimdiff vimpager vimtutor virt-manager
+virtualbox vivaldi vivaldi-beta vivaldi-snapshot vivaldi-stable vlc vmplayer
+vmware vmware-player vmware-view vmware-workstation vscodium vulturesclaw
+vultureseye vym w3m warmux warsow warzone2100 waterfox waterfox-classic
+waterfox-current webstorm webui-aria2 weechat weechat-curses wesnoth wget wget2
+whalebird whois widelands wine wire-desktop wireshark wireshark-gtk
+wireshark-qt wordwarvi wpp wps wpspdf x-terminal-emulator x2goclient xbill
+xcalc xchat xed xfburn xfce4-dict xfce4-mixer xfce4-notes xfce4-screenshooter
+xiphos xlinks xlinks2 xmms xmr-stak xonotic xonotic-glx xonotic-sdl
+xonotic-sdl-wrapper xournal xournalpp xpdf xplayer xplayer-audio-preview
+xplayer-video-thumbnailer xpra xreader xreader-previewer xreader-thumbnailer
+xviewer xxd xz xzcat xzcmp xzdec xzdiff xzegrep xzfgrep xzgrep xzless xzmore
+yandex-browser yarn yelp youtube youtube-dl youtube-dl-gui youtube-viewer
+youtube-viewer-gtk youtube-viewers-common youtubemusic-nativefier yt-dlp
+ytmdesktop zaproxy zart zathura zcat zcmp zdiff zeal zegrep zfgrep zforce zgrep
+zim zless zlib-flate zmore znew zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt
+zulip
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
-#GEN_EBUILD=1 # Uncomment to regen ebuild parts
+# GEN_EBUILD=1 # Uncomment to regen ebuild parts
 LLVM_COMPAT=( 14 )
 PYTHON_COMPAT=( python3_{9..11} )
 TEST_SET="distro" # distro or full
@@ -214,15 +243,15 @@ gen_clang_bdepend() {
 	done
 }
 
-if [[ "${PV}" != "9999" ]]; then
+if [[ "${PV}" =~ "9999" ]]; then
+	inherit git-r3
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/netblue30/firejail.git"
+	FALLBACK_COMMIT="550f15d0e062b0a6ac0efb642637ffb395edc5d6" # May 1, 2024
+	IUSE+=" fallback-commit"
+else
 	KEYWORDS="amd64 ~arm ~arm64 ~x86"
 	SRC_URI="https://github.com/netblue30/${PN}/releases/download/${PV}/${P}.tar.xz"
-else
-	inherit git-r3
-	EGIT_REPO_URI="https://github.com/netblue30/firejail.git"
-	EGIT_BRANCH="master"
-	FALLBACK_COMMIT="3f4d6df0410f2b6e7ea295b7a3d7a0293f478fa9"
-	IUSE+=" fallback-commit"
 fi
 
 DESCRIPTION="Security sandbox for any type of processes"
@@ -469,6 +498,7 @@ REQUIRED_USE+="
 	firejail_profiles_gconf-merge-tree? ( firejail_profiles_gconf )
 	firejail_profiles_gconfpkg? ( firejail_profiles_gconf )
 	firejail_profiles_gconftool-2? ( firejail_profiles_gconf )
+	firejail_profiles_gh? ( firejail_profiles_git )
 	firejail_profiles_ghb? ( firejail_profiles_handbrake )
 	firejail_profiles_gist-paste? ( firejail_profiles_gist )
 	firejail_profiles_github-desktop? ( firejail_profiles_electron-common )
@@ -682,6 +712,8 @@ firejail_profiles_pipe-viewer )
 	firejail_profiles_presentations18free? ( firejail_profiles_softmaker-common )
 	firejail_profiles_pycharm-professional? ( firejail_profiles_pycharm-community )
 	firejail_profiles_pzstd? ( firejail_profiles_zstd )
+	firejail_profiles_qemu-launcher? ( firejail_profiles_qemu-common )
+	firejail_profiles_qemu-system-x86_64? ( firejail_profiles_qemu-common )
 	firejail_profiles_qq? ( firejail_profiles_linuxqq )
 	firejail_profiles_qt-faststart? ( firejail_profiles_ffmpeg )
 	firejail_profiles_quadrapassel? ( firejail_profiles_gnome_games-common )
@@ -803,6 +835,7 @@ firejail_profiles_pipe-viewer )
 	firejail_profiles_tor-browser_zh-CN? ( firejail_profiles_torbrowser-launcher )
 	firejail_profiles_tor-browser_zh-TW? ( firejail_profiles_torbrowser-launcher )
 	firejail_profiles_torbrowser? ( firejail_profiles_firefox-common )
+	firejail_profiles_tqemu? ( firejail_profiles_qemu-common )
 	firejail_profiles_transmission-cli? ( firejail_profiles_transmission-common )
 	firejail_profiles_transmission-create? ( firejail_profiles_transmission-common )
 	firejail_profiles_transmission-daemon? ( firejail_profiles_transmission-common )
@@ -939,9 +972,9 @@ einfo "Replace REQUIRED_USE with the following:"
 	local f
 	for f in $(find "${etc_folder}/"{profile-a-l,profile-m-z} -name "*.profile") ; do
 		local n=$(basename "${f}" \
-			| sed -e "s|.profile||g" \
+			| sed -e "s|\.profile||g" \
 			| sed -e "s|\.|_|g")
-		nodes+=(${n})
+		nodes+=( "${n}" )
 	done
 
 	unset g
@@ -951,13 +984,13 @@ einfo "Replace REQUIRED_USE with the following:"
 
 	local p
 	for p in $(echo "${nodes[@]}" | tr " " "\n" | sort) ; do
-		ls "${etc_folder}/"*/${p}.profile \
-			2>/dev/null \
-			1>/dev/null \
+		ls "${etc_folder}/"*"/${p}.profile" \
+			>/dev/null \
+			2>&1 \
 			|| continue
 		local profiles=$(grep -E \
 			-e "include .*.profile" \
-			$(ls "${etc_folder}/"*/${p}.profile) \
+			$(ls "${etc_folder}/"*"/${p}.profile") \
 				| sed -e "/^#/d")
 		local childs=$(echo "${profiles}" \
 			| sed -e "s|\.profile||" \
@@ -986,8 +1019,11 @@ pkg_setup() {
 	CONFIG_CHECK="~SQUASHFS"
 	local WARNING_SQUASHFS="CONFIG_SQUASHFS: required for firejail --appimage mode"
 
+	linux-info_pkg_setup
 	local config_path=$(linux_config_path)
-	local lsm_list=$(grep -e "CONFIG_LSM" "${config_path}" | cut -f 2 -d '"')
+einfo "config_path:  ${config_path}"
+	local lsm_list=$(grep -e "CONFIG_LSM" "${config_path}" \
+		| cut -f 2 -d '"')
 	if use apparmor ; then
 		CONFIG_CHECK+=" ~SECURITY ~NET ~SECURITY_APPARMOR"
 		if ! [[ "${lsm_list}" =~ "apparmor" ]] ; then
@@ -1105,16 +1141,17 @@ src_prepare() {
 		-E \
 		-l \
 		-r '/usr/share/doc/firejail([^-]|$)' \
-		RELNOTES \
-		src/man/ \
-		etc/profile*/ \
-		test/ \
+		"RELNOTES" \
+		"src/man/" \
+		"etc/profile"*"/" \
+		"test/" \
 		|| die)
 	local file
 	for file in ${files[@]} ; do
 		sed -i -r \
 			-e "s:/usr/share/doc/firejail([^-]|\$):/usr/share/doc/${PF}\1:" \
-			"${file}" || die
+			"${file}" \
+			|| die
 	done
 
 	# Remove compression of man pages
@@ -1125,14 +1162,18 @@ src_prepare() {
 		Makefile || die
 
 	if use contrib; then
-		python_fix_shebang -f contrib/*.py
+		python_fix_shebang -f "contrib/"*".py"
 	fi
 
 	# Profile fixes:
-	sed -i -e "s|#private-lib|private-lib|g" \
-		etc/profile-a-l/file.profile || die
-	sed -i -e "s|#private-lib|private|g" \
-		etc/profile-m-z/tar.profile || die
+	sed -i \
+		-e "s|#private-lib|private-lib|g" \
+		"etc/profile-a-l/file.profile" \
+		|| die
+	sed -i \
+		-e "s|#private-lib|private|g" \
+		"etc/profile-m-z/tar.profile" \
+		|| die
 
 	if use test ; then
 		if [[ "${TEST_SET}" == "full" ]] ; then
@@ -1147,9 +1188,13 @@ src_prepare() {
 }
 
 _src_configure_test_full() {
-#	sed -i -e "s|MAX_ENVS 256|MAX_ENVS ${FIREJAIL_MAX_ENVS}|g" \
-#		"src/firejail/firejail.h" || die
-#	grep -q -r -e "MAX_ENVS ${FIREJAIL_MAX_ENVS}" "src/firejail/firejail.h" \
+#	sed -i \
+#		-e "s|MAX_ENVS 256|MAX_ENVS ${FIREJAIL_MAX_ENVS}|g" \
+#		"src/firejail/firejail.h" \
+#		|| die
+#	grep -q -r \
+#		-e "MAX_ENVS ${FIREJAIL_MAX_ENVS}" \
+#		"src/firejail/firejail.h" \
 #		|| die
 #ewarn
 #ewarn "Max envvars lifted to ${FIREJAIL_MAX_ENVS} for test build."
@@ -1158,12 +1203,17 @@ _src_configure_test_full() {
 #einfo "Current envvar count: "$(env | wc -l)
 
 	# firejail deprecated --profile-dir= so must be hardwired this way
-	sed -i -e "s|\$(sysconfdir)|${ED}/etc|g" "src/common.mk.in" || die
+	sed -i \
+		-e "s|\$(sysconfdir)|${ED}/etc|g" \
+		"src/common.mk.in" \
+		|| die
 #	test_opts+=(--prefix="${ED}/usr")
 einfo "Editing ${BUILD_DIR}/test/filters/memwrexe.exp:  ./memwrexe -> ${BUILD_DIR}/test/filters/memwrexe"
-	sed -i -e "s|\./memwrexe|${BUILD_DIR}/test/filters/memwrexe|g" \
-		"${BUILD_DIR}/test/filters/memwrexe.exp" || die
-#	:;
+	sed -i \
+		-e "s|\./memwrexe|${BUILD_DIR}/test/filters/memwrexe|g" \
+		"${BUILD_DIR}/test/filters/memwrexe.exp" \
+		|| die
+#	:
 }
 
 _src_configure() {
@@ -1287,7 +1337,9 @@ restore_env()
 	while IFS= read -r -d $'\0' l
 	do
 		local allow=1
-		k=$(echo "${l}" | cut -f 1 -d "=" | cut -f 1 -d "=")
+		k=$(echo "${l}" \
+			| cut -f 1 -d "=" \
+			| cut -f 1 -d "=")
 		[[ "${k}" =~ "PORTAGE_REPOSITORIES" ]] && k="PORTAGE_REPOSITORIES"
 		[[ "${k}" =~ "PORTAGE_COLORMAP" ]] && k="PORTAGE_COLORMAP"
 		for w in ${WHITELIST_READONLY[@]} ; do
@@ -1335,10 +1387,11 @@ wipe_env()
 		[[ "${n}" =~ "PORTAGE_REPOSITORIES" ]] && n="PORTAGE_REPOSITORIES"
 		[[ "${n}" =~ "PORTAGE_COLORMAP" ]] && n="PORTAGE_COLORMAP"
 		local allow=1
+		local w
 		for w in ${whitelist[@]} ${WHITELIST_READONLY[@]} ; do
 			[[ "${n}" == "${w}" ]] && allow=0
 		done
-		(( ${allow} == 1 )) && envs+=(${n})
+		(( ${allow} == 1 )) && envs+=( "${n}" )
 	done < "${T}/env-dump.txt"
 	export IFS=$' \t\n'
 
@@ -1357,24 +1410,24 @@ einfo "LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\""
 
 	export SANDBOX_ON=0
 
-	if [[ -f /proc/sys/kernel/grsecurity ]] ; then
-		export USE_GRSECURITY="1"
-		export DIE_ON_GRSECURITY_ERROR="0"
+	if [[ -f "/proc/sys/kernel/grsecurity" ]] ; then
+		export USE_GRSECURITY=1
+		export DIE_ON_GRSECURITY_ERROR=0
 	else
-		export USE_GRSECURITY="0"
+		export USE_GRSECURITY=0
 	fi
 	if grep -q -e "^Seccomp" "/proc/self/status" ; then
-		export USE_SECCOMP="1"
-		export DIE_ON_SECCOMP_ERROR="0"
+		export USE_SECCOMP=1
+		export DIE_ON_SECCOMP_ERROR=0
 	else
-		export USE_SECCOMP="0"
+		export USE_SECCOMP=0
 	fi
-	if [[ -f /sys/kernel/security/apparmor/profiles ]] ; then
-		:;
+	if [[ -f "/sys/kernel/security/apparmor/profiles" ]] ; then
+		:
 	fi
-	export USE_CAPS="1"
-	export DIE_ON_CAPS_ERROR="0"
-	export DIE_ON_PROGRAM_LOAD_FAILURE="1"
+	export USE_CAPS=1
+	export DIE_ON_CAPS_ERROR=0
+	export DIE_ON_PROGRAM_LOAD_FAILURE=1
 
 	# Upstream uses `make test-github` for CI
 	local x11_tests=()
@@ -1396,18 +1449,30 @@ einfo "LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\""
 	touch "${ED}/etc/firejail/globals.local" || die
 
 	# Sandboxed $HOME for HOME tests
-#	echo "whitelist $(realpath ~/)" \
-#		>> "${ED}/etc/firejail/globals.local" || die
-#	echo "whitelist $(realpath ~/)/_firejail_test_file1" \
-#		>> "${ED}/etc/firejail/globals.local" || die
+#	echo \
+#		"whitelist $(realpath ~/)" \
+#		>> \
+#		"${ED}/etc/firejail/globals.local" \
+#		|| die
+#	echo \
+#		"whitelist $(realpath ~/)/_firejail_test_file1" \
+#		>> \
+#		"${ED}/etc/firejail/globals.local" \
+#		|| die
 
 	# Add globals for ricers
-	echo "private-lib gcc/*/*/libgomp.so.*" \
-		>> "${ED}/etc/firejail/globals.local" || die
+	echo \
+		"private-lib gcc/*/*/libgomp.so.*" \
+		>> \
+		"${ED}/etc/firejail/globals.local" \
+		|| die
 
 	# Temporary enable list
-	echo "include file.profile #REMOVE_ME: temporary test addition" \
-		>> "${ED}/etc/firejail/server.profile" || die
+	echo \
+		"include file.profile #REMOVE_ME: temporary test addition" \
+		>> \
+		"${ED}/etc/firejail/server.profile" \
+		|| die
 
 	# It's safe to ignore these kinds of fldd warnings:
 	#Warning fldd: cannot find libstdc++.so.6, skipping...
@@ -1446,10 +1511,16 @@ fi
 
 	if use test-x11 ; then
 		# For memwrexe.exp tests
-#		echo "keep-var-tmp" \
-#			>> "${ED}/etc/firejail/globals.local" || die
-#		echo "whitelist ${WORKDIR}/${PN}-${PV}*/test/filters/memwrexe*" \
-#			>> "${ED}/etc/firejail/globals.local" || die
+#		echo \
+#			"keep-var-tmp" \
+#			>> \
+#			"${ED}/etc/firejail/globals.local" \
+#			|| die
+#		echo \
+#			"whitelist ${WORKDIR}/${PN}-${PV}*/test/filters/memwrexe*" \
+#			>> \
+#			"${ED}/etc/firejail/globals.local" \
+#			|| die
 
 		x11_tests+=(
 			test-apps
@@ -1460,7 +1531,7 @@ fi
 		for x in ${x11_tests[@]} ; do
 			cd "${BUILD_DIR}" || die
 einfo "Testing ${x}"
-			cat <<EOF > "${BUILD_DIR}/run.sh"
+cat <<EOF > "${BUILD_DIR}/run.sh"
 #!/bin/bash
 cat /dev/null > "${T}/test-retcode.log"
 make ${x} 2>&1 >"${T}/test.log"
@@ -1491,11 +1562,17 @@ eerror "${T}/test.log"
 eerror
 				die
 			fi
-			cat "${T}/test.log" >> "${T}/test-all.log" || die
+			cat \
+				"${T}/test.log" \
+				>> \
+				"${T}/test-all.log" \
+				|| die
 		done
 
-#		sed -i -e "\|#REMOVE_ME|d" \
-#			"${ED}/etc/firejail/globals.local" || die
+#		sed -i \
+#			-e "\|#REMOVE_ME|d" \
+#			"${ED}/etc/firejail/globals.local" \
+#			|| die
 
 	fi
 	export SANDBOX_ON=1
@@ -1507,10 +1584,14 @@ einfo "FIXME:  Error results:"
 		| sort \
 		| uniq -c
 
-	rm "${ED}/etc/firejail/globals.local" || die
+	rm \
+		"${ED}/etc/firejail/globals.local" \
+		|| die
 
-	sed -i -e "\|#REMOVE_ME|d" \
-		"${ED}/etc/firejail/server.profile" || die
+	sed -i \
+		-e "\|#REMOVE_ME|d" \
+		"${ED}/etc/firejail/server.profile" \
+		|| die
 }
 
 _src_test_distro() {
@@ -1530,31 +1611,6 @@ src_test() {
 	done
 }
 
-DOTTED_FILENAMES=(
-blender-2.8
-chromium-common-hardened.inc
-com.github.bleakgrey.tootle
-com.github.dahenson.agenda
-com.github.johnfactotum.Foliate
-com.github.phase1geo.minder
-com.github.tchx84.Flatseal
-com.gitlab.newsflash
-display-im6.q16
-feh-network.inc
-gimp-2.10
-gimp-2.8
-idea.sh
-io.github.lainsce.Notejot
-mpg123.bin
-openoffice.org
-org.gnome.NautilusPreviewer
-ping-hardened.inc
-runenpass.sh
-start-tor-browser.desktop
-studio.sh
-ts3client_runscript.sh
-electron-hardened.inc
-)
 is_use_dotted() {
 	local u="${1}"
 	local fn
@@ -1579,11 +1635,11 @@ get_dotted_fn() {
 _src_install() {
 	default
 
-	if use contrib; then
-		python_scriptinto /usr/$(get_libdir)/firejail
-		python_doscript contrib/*.py
-		insinto /usr/$(get_libdir)/firejail
-		dobin contrib/*.sh
+	if use contrib ; then
+		python_scriptinto "/usr/$(get_libdir)/firejail"
+		python_doscript "contrib/"*".py"
+		insinto "/usr/$(get_libdir)/firejail"
+		dobin "contrib/"*".sh"
 	fi
 
 	mkdir -p "${T}/profiles" || die
@@ -1592,15 +1648,18 @@ _src_install() {
 
 	mkdir -p "${T}/profiles_processed" || die
 
+	local pf
 	for pf in ${FIREJAIL_PROFILES_IUSE} ; do
 		local u="${pf/firejail_profiles_/}"
 		local src
 		local dest
 		if is_use_dotted "${u}" ; then
-			src=$(find "${T}/profiles" -name $(get_dotted_fn "${u}")".profile" | sed -r -e "s|[ ]+||g")
+			src=$(find "${T}/profiles" -name $(get_dotted_fn "${u}")".profile" \
+				| sed -r -e "s|[ ]+||g")
 			dest="${ED}/etc/firejail/"$(get_dotted_fn "${u}")".profile"
 		else
-			src=$(find "${T}/profiles" -name "${u}.profile" | sed -r -e "s|[ ]+||g")
+			src=$(find "${T}/profiles" -name "${u}.profile" \
+				| sed -r -e "s|[ ]+||g")
 			dest="${ED}/etc/firejail/${u}.profile"
 		fi
 		if [[ ! -e "${src}" ]] ; then
@@ -1609,7 +1668,7 @@ eerror "u=${u}"
 eerror "${src} is missing"
 eerror
 eerror "QA:  Try converting u value underscores (_) to a period (.) before"
-eerror "addding to DOTTED_FILENAMES."
+eerror "adding to DOTTED_FILENAMES."
 eerror
 			die
 		fi
@@ -1663,9 +1722,9 @@ src_install() {
 
 	if ! use vanilla ; then
 		# Gentoo-specific profile customizations
-		insinto /etc/${PN}
+		insinto "/etc/${PN}"
 		local profile_local
-		for profile_local in "${FILESDIR}"/profile_*local ; do
+		for profile_local in "${FILESDIR}/profile_"*"local" ; do
 			newins "${profile_local}" "${profile_local/\/*profile_/}"
 		done
 	fi
@@ -1674,7 +1733,7 @@ src_install() {
 cat > "${T}/99firejail" <<-EOF || die
 SANDBOX_WRITE="/run/firejail"
 EOF
-	insinto /etc/sandbox.d
+	insinto "/etc/sandbox.d"
 	doins "${T}/99firejail"
 }
 

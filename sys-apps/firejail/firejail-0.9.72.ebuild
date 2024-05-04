@@ -6,6 +6,31 @@ EAPI=8
 
 # U 22.04
 
+DOTTED_FILENAMES=(
+blender-2.8
+chromium-common-hardened.inc
+com.github.bleakgrey.tootle
+com.github.dahenson.agenda
+com.github.johnfactotum.Foliate
+com.github.phase1geo.minder
+com.github.tchx84.Flatseal
+com.gitlab.newsflash
+display-im6.q16
+feh-network.inc
+gimp-2.10
+gimp-2.8
+idea.sh
+io.github.lainsce.Notejot
+mpg123.bin
+openoffice.org
+org.gnome.NautilusPreviewer
+ping-hardened.inc
+runenpass.sh
+start-tor-browser.desktop
+studio.sh
+ts3client_runscript.sh
+electron-hardened.inc
+)
 # This is done for modular install.
 FIREJAIL_MAX_ENVS=${FIREJAIL_MAX_ENVS:-512}
 FIREJAIL_PROFILES=(
@@ -184,7 +209,7 @@ zmore znew zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt zulip
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
 # GEN_EBUILD=1 # Uncomment to regen ebuild parts
-LLVM_COMPAT=(14)
+LLVM_COMPAT=( 14 )
 PYTHON_COMPAT=( python3_{9..11} )
 TEST_SET="distro" # distro or full
 
@@ -202,14 +227,14 @@ gen_clang_bdepend() {
 	done
 }
 
-if [[ "${PV}" != "9999" ]]; then
+if [[ "${PV}" =~ "9999" ]]; then
+	inherit git-r3
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/netblue30/firejail.git"
+	IUSE+=" fallback-commit"
+else
 	KEYWORDS="amd64 ~arm ~arm64 ~x86"
 	SRC_URI="https://github.com/netblue30/${PN}/releases/download/${PV}/${P}.tar.xz"
-else
-	inherit git-r3
-	EGIT_REPO_URI="https://github.com/netblue30/firejail.git"
-	EGIT_BRANCH="master"
-	IUSE+=" fallback-commit"
 fi
 
 DESCRIPTION="Security sandbox for any type of processes"
@@ -880,9 +905,9 @@ einfo "Replace REQUIRED_USE with the following:"
 	local f
 	for f in $(find "${etc_folder}/"{profile-a-l,profile-m-z} -name "*.profile") ; do
 		local n=$(basename "${f}" \
-			| sed -e "s|.profile||g" \
+			| sed -e "s|\.profile||g" \
 			| sed -e "s|\.|_|g")
-		nodes+=(${n})
+		nodes+=( "${n}" )
 	done
 
 	unset g
@@ -892,13 +917,13 @@ einfo "Replace REQUIRED_USE with the following:"
 
 	local p
 	for p in $(echo "${nodes[@]}" | tr " " "\n" | sort) ; do
-		ls "${etc_folder}/"*/${p}.profile \
-			2>/dev/null \
-			1>/dev/null \
+		ls "${etc_folder}/"*"/${p}.profile" \
+			>/dev/null \
+			2>&1 \
 			|| continue
 		local profiles=$(grep -E \
 			-e "include .*.profile" \
-			$(ls "${etc_folder}/"*/${p}.profile) \
+			$(ls "${etc_folder}/"*"/${p}.profile") \
 				| sed -e "/^#/d")
 		local childs=$(echo "${profiles}" \
 			| sed -e "s|\.profile||" \
@@ -927,8 +952,11 @@ pkg_setup() {
 	CONFIG_CHECK="~SQUASHFS"
 	local WARNING_SQUASHFS="CONFIG_SQUASHFS: required for firejail --appimage mode"
 
+	linux-info_pkg_setup
 	local config_path=$(linux_config_path)
-	local lsm_list=$(grep -e "CONFIG_LSM" "${config_path}" | cut -f 2 -d '"')
+einfo "config_path:  ${config_path}"
+	local lsm_list=$(grep -e "CONFIG_LSM" "${config_path}" \
+		| cut -f 2 -d '"')
 	if use apparmor ; then
 		CONFIG_CHECK+=" ~SECURITY ~NET ~SECURITY_APPARMOR"
 		if ! [[ "${lsm_list}" =~ "apparmor" ]] ; then
@@ -1025,16 +1053,17 @@ src_prepare() {
 		-E \
 		-l \
 		-r '/usr/share/doc/firejail([^-]|$)' \
-		RELNOTES \
-		src/man/ \
-		etc/profile*/ \
-		test/ \
+		"RELNOTES" \
+		"src/man/" \
+		"etc/profile"*"/" \
+		"test/" \
 		|| die)
 	local file
 	for file in ${files[@]} ; do
 		sed -i -r \
 			-e "s:/usr/share/doc/firejail([^-]|\$):/usr/share/doc/${PF}\1:" \
-			"${file}" || die
+			"${file}" \
+			|| die
 	done
 
 	# Remove compression of man pages
@@ -1045,14 +1074,18 @@ src_prepare() {
 		Makefile || die
 
 	if use contrib; then
-		python_fix_shebang -f contrib/*.py
+		python_fix_shebang -f "contrib/"*".py"
 	fi
 
 	# Profile fixes:
-	sed -i -e "s|#private-lib|private-lib|g" \
-		etc/profile-a-l/file.profile || die
-	sed -i -e "s|#private-lib|private|g" \
-		etc/profile-m-z/tar.profile || die
+	sed -i \
+		-e "s|#private-lib|private-lib|g" \
+		"etc/profile-a-l/file.profile" \
+		|| die
+	sed -i \
+		-e "s|#private-lib|private|g" \
+		"etc/profile-m-z/tar.profile" \
+		|| die
 
 	if use test ; then
 		if [[ "${TEST_SET}" == "full" ]] ; then
@@ -1067,9 +1100,13 @@ src_prepare() {
 }
 
 _src_configure_test_full() {
-#	sed -i -e "s|MAX_ENVS 256|MAX_ENVS ${FIREJAIL_MAX_ENVS}|g" \
-#		"src/firejail/firejail.h" || die
-#	grep -q -r -e "MAX_ENVS ${FIREJAIL_MAX_ENVS}" "src/firejail/firejail.h" \
+#	sed -i \
+#		-e "s|MAX_ENVS 256|MAX_ENVS ${FIREJAIL_MAX_ENVS}|g" \
+#		"src/firejail/firejail.h" \
+#		|| die
+#	grep -q -r \
+#		-e "MAX_ENVS ${FIREJAIL_MAX_ENVS}" \
+#		"src/firejail/firejail.h" \
 #		|| die
 #ewarn
 #ewarn "Max envvars lifted to ${FIREJAIL_MAX_ENVS} for test build."
@@ -1078,12 +1115,17 @@ _src_configure_test_full() {
 #einfo "Current envvar count: "$(env | wc -l)
 
 	# firejail deprecated --profile-dir= so must be hardwired this way
-	sed -i -e "s|\$(sysconfdir)|${ED}/etc|g" "src/common.mk.in" || die
+	sed -i \
+		-e "s|\$(sysconfdir)|${ED}/etc|g" \
+		"src/common.mk.in" \
+		|| die
 #	test_opts+=(--prefix="${ED}/usr")
 einfo "Editing ${BUILD_DIR}/test/filters/memwrexe.exp:  ./memwrexe -> ${BUILD_DIR}/test/filters/memwrexe"
-	sed -i -e "s|\./memwrexe|${BUILD_DIR}/test/filters/memwrexe|g" \
-		"${BUILD_DIR}/test/filters/memwrexe.exp" || die
-#	:;
+	sed -i \
+		-e "s|\./memwrexe|${BUILD_DIR}/test/filters/memwrexe|g" \
+		"${BUILD_DIR}/test/filters/memwrexe.exp" \
+		|| die
+#	:
 }
 
 _src_configure() {
@@ -1095,8 +1137,6 @@ _src_configure() {
 	fi
 
 	local myconf=(
-		--disable-firetunnel
-		--disable-lts
 		$(use_enable apparmor)
 		$(use_enable chroot)
 		$(use_enable dbusproxy)
@@ -1109,6 +1149,8 @@ _src_configure() {
 		$(use_enable userns)
 		$(use_enable X x11)
 		${test_opts[@]}
+		--disable-firetunnel
+		--disable-lts
 	)
 
 	econf ${myconf[@]}
@@ -1208,7 +1250,9 @@ restore_env()
 	while IFS= read -r -d $'\0' l
 	do
 		local allow=1
-		k=$(echo "${l}" | cut -f 1 -d "=" | cut -f 1 -d "=")
+		k=$(echo "${l}" \
+			| cut -f 1 -d "=" \
+			| cut -f 1 -d "=")
 		[[ "${k}" =~ "PORTAGE_REPOSITORIES" ]] && k="PORTAGE_REPOSITORIES"
 		[[ "${k}" =~ "PORTAGE_COLORMAP" ]] && k="PORTAGE_COLORMAP"
 		for w in ${WHITELIST_READONLY[@]} ; do
@@ -1256,10 +1300,11 @@ wipe_env()
 		[[ "${n}" =~ "PORTAGE_REPOSITORIES" ]] && n="PORTAGE_REPOSITORIES"
 		[[ "${n}" =~ "PORTAGE_COLORMAP" ]] && n="PORTAGE_COLORMAP"
 		local allow=1
+		local w
 		for w in ${whitelist[@]} ${WHITELIST_READONLY[@]} ; do
 			[[ "${n}" == "${w}" ]] && allow=0
 		done
-		(( ${allow} == 1 )) && envs+=(${n})
+		(( ${allow} == 1 )) && envs+=( "${n}" )
 	done < "${T}/env-dump.txt"
 	export IFS=$' \t\n'
 
@@ -1278,24 +1323,24 @@ einfo "LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\""
 
 	export SANDBOX_ON=0
 
-	if [[ -f /proc/sys/kernel/grsecurity ]] ; then
-		export USE_GRSECURITY="1"
-		export DIE_ON_GRSECURITY_ERROR="0"
+	if [[ -f "/proc/sys/kernel/grsecurity" ]] ; then
+		export USE_GRSECURITY=1
+		export DIE_ON_GRSECURITY_ERROR=0
 	else
-		export USE_GRSECURITY="0"
+		export USE_GRSECURITY=0
 	fi
 	if grep -q -e "^Seccomp" "/proc/self/status" ; then
-		export USE_SECCOMP="1"
-		export DIE_ON_SECCOMP_ERROR="0"
+		export USE_SECCOMP=1
+		export DIE_ON_SECCOMP_ERROR=0
 	else
-		export USE_SECCOMP="0"
+		export USE_SECCOMP=0
 	fi
-	if [[ -f /sys/kernel/security/apparmor/profiles ]] ; then
-		:;
+	if [[ -f "/sys/kernel/security/apparmor/profiles" ]] ; then
+		:
 	fi
-	export USE_CAPS="1"
-	export DIE_ON_CAPS_ERROR="0"
-	export DIE_ON_PROGRAM_LOAD_FAILURE="1"
+	export USE_CAPS=1
+	export DIE_ON_CAPS_ERROR=0
+	export DIE_ON_PROGRAM_LOAD_FAILURE=1
 
 	# Upstream uses `make test-github` for CI
 	local x11_tests=()
@@ -1317,18 +1362,30 @@ einfo "LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\""
 	touch "${ED}/etc/firejail/globals.local" || die
 
 	# Sandboxed $HOME for HOME tests
-#	echo "whitelist $(realpath ~/)" \
-#		>> "${ED}/etc/firejail/globals.local" || die
-#	echo "whitelist $(realpath ~/)/_firejail_test_file1" \
-#		>> "${ED}/etc/firejail/globals.local" || die
+#	echo \
+#		"whitelist $(realpath ~/)" \
+#		>> \
+#		"${ED}/etc/firejail/globals.local" \
+#		|| die
+#	echo \
+#		"whitelist $(realpath ~/)/_firejail_test_file1" \
+#		>> \
+#		"${ED}/etc/firejail/globals.local" \
+#		|| die
 
 	# Add globals for ricers
-	echo "private-lib gcc/*/*/libgomp.so.*" \
-		>> "${ED}/etc/firejail/globals.local" || die
+	echo \
+		"private-lib gcc/*/*/libgomp.so.*" \
+		>> \
+		"${ED}/etc/firejail/globals.local" \
+		|| die
 
 	# Temporary enable list
-	echo "include file.profile #REMOVE_ME: temporary test addition" \
-		>> "${ED}/etc/firejail/server.profile" || die
+	echo \
+		"include file.profile #REMOVE_ME: temporary test addition" \
+		>> \
+		"${ED}/etc/firejail/server.profile" \
+		|| die
 
 	# It's safe to ignore these kinds of fldd warnings:
 	#Warning fldd: cannot find libstdc++.so.6, skipping...
@@ -1367,10 +1424,16 @@ fi
 
 	if use test-x11 ; then
 		# For memwrexe.exp tests
-#		echo "keep-var-tmp" \
-#			>> "${ED}/etc/firejail/globals.local" || die
-#		echo "whitelist ${WORKDIR}/${PN}-${PV}*/test/filters/memwrexe*" \
-#			>> "${ED}/etc/firejail/globals.local" || die
+#		echo \
+#			"keep-var-tmp" \
+#			>> \
+#			"${ED}/etc/firejail/globals.local" \
+#			|| die
+#		echo \
+#			"whitelist ${WORKDIR}/${PN}-${PV}*/test/filters/memwrexe*" \
+#			>> \
+#			"${ED}/etc/firejail/globals.local" \
+#			|| die
 
 		x11_tests+=(
 			test-apps
@@ -1381,7 +1444,7 @@ fi
 		for x in ${x11_tests[@]} ; do
 			cd "${BUILD_DIR}" || die
 einfo "Testing ${x}"
-			cat <<EOF > "${BUILD_DIR}/run.sh"
+cat <<EOF > "${BUILD_DIR}/run.sh"
 #!/bin/bash
 cat /dev/null > "${T}/test-retcode.log"
 make ${x} 2>&1 >"${T}/test.log"
@@ -1412,11 +1475,17 @@ eerror "${T}/test.log"
 eerror
 				die
 			fi
-			cat "${T}/test.log" >> "${T}/test-all.log" || die
+			cat \
+				"${T}/test.log" \
+				>> \
+				"${T}/test-all.log" \
+				|| die
 		done
 
-#		sed -i -e "\|#REMOVE_ME|d" \
-#			"${ED}/etc/firejail/globals.local" || die
+#		sed -i \
+#			-e "\|#REMOVE_ME|d" \
+#			"${ED}/etc/firejail/globals.local" \
+#			|| die
 
 	fi
 	export SANDBOX_ON=1
@@ -1428,10 +1497,14 @@ einfo "FIXME:  Error results:"
 		| sort \
 		| uniq -c
 
-	rm "${ED}/etc/firejail/globals.local" || die
+	rm \
+		"${ED}/etc/firejail/globals.local" \
+		|| die
 
-	sed -i -e "\|#REMOVE_ME|d" \
-		"${ED}/etc/firejail/server.profile" || die
+	sed -i \
+		-e "\|#REMOVE_ME|d" \
+		"${ED}/etc/firejail/server.profile" \
+		|| die
 }
 
 _src_test_distro() {
@@ -1451,31 +1524,6 @@ src_test() {
 	done
 }
 
-DOTTED_FILENAMES=(
-blender-2.8
-chromium-common-hardened.inc
-com.github.bleakgrey.tootle
-com.github.dahenson.agenda
-com.github.johnfactotum.Foliate
-com.github.phase1geo.minder
-com.github.tchx84.Flatseal
-com.gitlab.newsflash
-display-im6.q16
-feh-network.inc
-gimp-2.10
-gimp-2.8
-idea.sh
-io.github.lainsce.Notejot
-mpg123.bin
-openoffice.org
-org.gnome.NautilusPreviewer
-ping-hardened.inc
-runenpass.sh
-start-tor-browser.desktop
-studio.sh
-ts3client_runscript.sh
-electron-hardened.inc
-)
 is_use_dotted() {
 	local u="${1}"
 	local fn
@@ -1500,11 +1548,11 @@ get_dotted_fn() {
 _src_install() {
 	default
 
-	if use contrib; then
-		python_scriptinto /usr/$(get_libdir)/firejail
-		python_doscript contrib/*.py
-		insinto /usr/$(get_libdir)/firejail
-		dobin contrib/*.sh
+	if use contrib ; then
+		python_scriptinto "/usr/$(get_libdir)/firejail"
+		python_doscript "contrib/"*".py"
+		insinto "/usr/$(get_libdir)/firejail"
+		dobin "contrib/"*".sh"
 	fi
 
 	mkdir -p "${T}/profiles" || die
@@ -1513,15 +1561,18 @@ _src_install() {
 
 	mkdir -p "${T}/profiles_processed" || die
 
+	local pf
 	for pf in ${FIREJAIL_PROFILES_IUSE} ; do
 		local u="${pf/firejail_profiles_/}"
 		local src
 		local dest
 		if is_use_dotted "${u}" ; then
-			src=$(find "${T}/profiles" -name $(get_dotted_fn "${u}")".profile" | sed -r -e "s|[ ]+||g")
+			src=$(find "${T}/profiles" -name $(get_dotted_fn "${u}")".profile" \
+				| sed -r -e "s|[ ]+||g")
 			dest="${ED}/etc/firejail/"$(get_dotted_fn "${u}")".profile"
 		else
-			src=$(find "${T}/profiles" -name "${u}.profile" | sed -r -e "s|[ ]+||g")
+			src=$(find "${T}/profiles" -name "${u}.profile" \
+				| sed -r -e "s|[ ]+||g")
 			dest="${ED}/etc/firejail/${u}.profile"
 		fi
 		if [[ ! -e "${src}" ]] ; then
@@ -1530,7 +1581,7 @@ eerror "u=${u}"
 eerror "${src} is missing"
 eerror
 eerror "QA:  Try converting u value underscores (_) to a period (.) before"
-eerror "addding to DOTTED_FILENAMES."
+eerror "adding to DOTTED_FILENAMES."
 eerror
 			die
 		fi
@@ -1584,9 +1635,9 @@ src_install() {
 
 	if ! use vanilla ; then
 		# Gentoo-specific profile customizations
-		insinto /etc/${PN}
+		insinto "/etc/${PN}"
 		local profile_local
-		for profile_local in "${FILESDIR}"/profile_*local ; do
+		for profile_local in "${FILESDIR}/profile_"*"local" ; do
 			newins "${profile_local}" "${profile_local/\/*profile_/}"
 		done
 	fi
@@ -1595,7 +1646,7 @@ src_install() {
 cat > "${T}/99firejail" <<-EOF || die
 SANDBOX_WRITE="/run/firejail"
 EOF
-	insinto /etc/sandbox.d
+	insinto "/etc/sandbox.d"
 	doins "${T}/99firejail"
 }
 
