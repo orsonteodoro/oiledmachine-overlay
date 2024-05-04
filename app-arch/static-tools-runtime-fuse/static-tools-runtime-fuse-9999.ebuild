@@ -4,15 +4,17 @@
 
 EAPI=7
 
+EGIT_BRANCH="master"
+EGIT_REPO_URI="https://github.com/probonopd/static-tools.git"
+FALLBACK_COMMIT="f0f6e679a001c4ad0e393f829a2396bf41f59cfe" # Apr 14, 2024
+
 inherit git-r3
 
-EGIT_REPO_URI="https://github.com/probonopd/static-tools.git"
-EGIT_BRANCH="master"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 SRC_URI=""
 
 # You can build this in a musl container to get strictly musl libs.
 
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 DESCRIPTION="runtime-fuse for static-tools"
 HOMEPAGE="https://github.com/probonopd/static-tools"
 LICENSE="
@@ -22,6 +24,7 @@ LICENSE="
 IUSE="fallback-commit fuse3"
 REQUIRED_USE+="
 "
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
 	app-arch/static-tools-squashfuse:=[fuse3=]
@@ -31,14 +34,13 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-debug/strace
-	sys-apps/file
-	sys-apps/util-linux
 	dev-build/autoconf
 	dev-build/automake
 	dev-build/libtool
+	dev-debug/strace
+	sys-apps/file
+	sys-apps/util-linux
 "
-RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/static-tools-runtime-fuse2-9999-9bf80ec-flags.patch"
 	"${FILESDIR}/static-tools-runtime-fuse2-9999-9bf80ec-link-to-lzma.patch" # Required by squashfuse
@@ -46,7 +48,7 @@ PATCHES=(
 
 src_unpack() {
 	if use fallback-commit ; then
-		EGIT_COMMIT="9bf80ec81e5a8e4a6556c3422001ec48b040b68d"
+		EGIT_COMMIT="${FALLBACK_COMMIT}"
 	fi
 	git-r3_fetch
 	git-r3_checkout

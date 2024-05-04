@@ -7,14 +7,14 @@ EAPI=7
 # You can build this in a musl container to get strictly musl libs.
 COMMIT="56d220dd679c7c3a8f995a41a27a7d6f3df49dea"
 COMMIT2="28ea239c53a2d5d8800c472bc2452eaa16e37af2"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+S="${WORKDIR}/desktop-file-utils-${COMMIT}"
 SRC_URI="
 	https://gitlab.freedesktop.org/xdg/desktop-file-utils/-/archive/${COMMIT}/desktop-file-utils-${COMMIT}.tar.gz
-	http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=${COMMIT2} -> desktop-file-utils-${COMMIT2:0:5}-config.guess
-	http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=${COMMIT2} -> desktop-file-utils-${COMMIT2:0:5}-config.sub
+	https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=${COMMIT2} -> desktop-file-utils-${COMMIT2:0:5}-config.guess
+	https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=${COMMIT2} -> desktop-file-utils-${COMMIT2:0:5}-config.sub
 "
-S="${WORKDIR}/desktop-file-utils-${COMMIT}"
 
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 DESCRIPTION="desktop-file-utils for static-tools"
 HOMEPAGE="
 	https://github.com/probonopd/static-tools
@@ -27,6 +27,7 @@ LICENSE="
 IUSE=""
 REQUIRED_USE+="
 "
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
 	dev-libs/glib:=[static-libs]
@@ -45,7 +46,6 @@ BDEPEND+="
 	dev-build/automake
 	dev-build/libtool
 "
-RESTRICT="mirror"
 PATCHES=(
 )
 

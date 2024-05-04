@@ -6,12 +6,12 @@ EAPI=7
 
 # You can build this in a musl container to get strictly musl libs.
 
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+S="${WORKDIR}/zsync-${PV}"
 SRC_URI="
 	http://zsync.moria.org.uk/download/zsync-${PV}.tar.bz2
 "
-S="${WORKDIR}/zsync-${PV}"
 
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 DESCRIPTION="zsyncmake for static-tools"
 HOMEPAGE="
 	https://github.com/probonopd/static-tools
@@ -26,6 +26,7 @@ LICENSE="
 IUSE=""
 REQUIRED_USE+="
 "
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
 	dev-libs/glib:=[static-libs]
@@ -41,7 +42,6 @@ BDEPEND+="
 	dev-build/automake
 	dev-build/libtool
 "
-RESTRICT="mirror"
 PATCHES=(
 )
 

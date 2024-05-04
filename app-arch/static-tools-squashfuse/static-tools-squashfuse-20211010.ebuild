@@ -5,14 +5,14 @@
 EAPI=7
 
 COMMIT="e51978cd6bb5c4d16fae9eee43d0b258f570bb0f"
-SRC_URI="
-https://github.com/vasi/squashfuse/archive/e51978c.tar.gz -> squashfuse-${COMMIT:0:7}.tar.gz
-"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 S="${WORKDIR}/squashfuse-${COMMIT}"
+SRC_URI="
+https://github.com/vasi/squashfuse/archive/${COMMIT:0:7}.tar.gz -> squashfuse-${COMMIT:0:7}.tar.gz
+"
 
 # You can build this in a musl container to get strictly musl libs.
 
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 DESCRIPTION="squashfuse for static-tools"
 HOMEPAGE="
 	https://github.com/probonopd/static-tools
@@ -24,6 +24,7 @@ LICENSE="
 IUSE="-fuse3"
 REQUIRED_USE+="
 "
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # A uses fuse-2.9.9, U supports only fuse-2.9.9
 RDEPEND+="
@@ -47,7 +48,6 @@ BDEPEND+="
 	dev-build/automake
 	dev-build/libtool
 "
-RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/static-tools-squashfuse-20211010-fuse3-enablement.patch"
 )

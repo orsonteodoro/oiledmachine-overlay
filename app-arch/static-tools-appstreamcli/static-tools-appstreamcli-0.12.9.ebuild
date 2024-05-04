@@ -7,14 +7,15 @@ EAPI=7
 # You can build this in a musl container to get strictly musl libs.
 
 LMDB_PV="0.9.29"
+S_LMDB="${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb"
+
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+S="${WORKDIR}/appstream-${PV}"
 SRC_URI="
 	https://git.openldap.org/openldap/openldap/-/archive/LMDB_${LMDB_PV}/openldap-LMDB_${LMDB_PV}.tar.gz
 	https://github.com/ximion/appstream/archive/v${PV}.tar.gz -> appstream-${PV}.tar.gz
 "
-S_LMDB="${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb"
-S="${WORKDIR}/appstream-${PV}"
 
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 DESCRIPTION="appstreamcli for static-tools"
 HOMEPAGE="
 	https://github.com/probonopd/static-tools
@@ -27,14 +28,15 @@ LICENSE="
 IUSE="-libcxx"
 REQUIRED_USE+="
 "
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
 	dev-libs/glib:=[static-libs]
 	dev-libs/icu:=[static-libs]
 	dev-libs/libffi:=[static-libs]
 	dev-libs/libxml2
-	dev-util/gperf
 	dev-python/pyyaml
+	dev-util/gperf
 	sys-apps/util-linux:=[static-libs]
 "
 # pyyaml should be static
@@ -42,15 +44,14 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-build/meson
 	dev-debug/strace
-	sys-apps/file
-	sys-apps/util-linux
 	dev-build/autoconf
 	dev-build/automake
 	dev-build/libtool
+	dev-build/meson
+	sys-apps/file
+	sys-apps/util-linux
 "
-RESTRICT="mirror"
 PATCHES=(
 )
 

@@ -6,12 +6,12 @@ EAPI=7
 
 # You can build this in a musl container to get strictly musl libs.
 
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+S="${WORKDIR}/libarchive-${PV}"
 SRC_URI="
 	https://www.libarchive.org/downloads/libarchive-${PV}.tar.gz
 "
-S="${WORKDIR}/libarchive-${PV}"
 
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 DESCRIPTION="bsdtar for static-tools"
 HOMEPAGE="
 	https://github.com/probonopd/static-tools
@@ -26,6 +26,7 @@ LICENSE="
 IUSE="libcxx"
 REQUIRED_USE+="
 "
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
 	app-arch/bzip2:=[static-libs]
@@ -44,7 +45,6 @@ BDEPEND+="
 	dev-build/automake
 	dev-build/libtool
 "
-RESTRICT="mirror"
 PATCHES=(
 )
 

@@ -6,18 +6,19 @@ EAPI=7
 
 # You can build this in a musl container to get strictly musl libs.
 
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 SRC_URI=" "
 
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 DESCRIPTION="Building static binaries of some tools using an Alpine chroot with musl"
 HOMEPAGE="https://github.com/probonopd/static-tools"
 LICENSE="
 	all-rights-reserved
 	MIT
 "
-IUSE="fallback-commit fuse3"
+IUSE="fuse3"
 REQUIRED_USE+="
 "
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
 	>=app-arch/static-tools-appstreamcli-0.12.9:=
@@ -34,6 +35,5 @@ DEPEND+="
 "
 BDEPEND+="
 "
-RESTRICT="mirror"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

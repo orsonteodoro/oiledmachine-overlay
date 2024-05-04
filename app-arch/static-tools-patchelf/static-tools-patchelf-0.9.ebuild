@@ -6,12 +6,12 @@ EAPI=7
 
 # You can build this in a musl container to get strictly musl libs.
 
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+S="${WORKDIR}/patchelf-${PV}"
 SRC_URI="
 	https://github.com/NixOS/patchelf/archive/${PV}.tar.gz -> patchelf-${PV}.tar.gz
 "
-S="${WORKDIR}/patchelf-${PV}"
 
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 DESCRIPTION="patchelf for static-tools"
 HOMEPAGE="
 	https://github.com/probonopd/static-tools
@@ -23,6 +23,7 @@ LICENSE="
 IUSE=""
 REQUIRED_USE+="
 "
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
 "
@@ -37,7 +38,6 @@ BDEPEND+="
 	dev-build/automake
 	dev-build/libtool
 "
-RESTRICT="mirror"
 PATCHES=(
 )
 

@@ -4,14 +4,14 @@
 
 EAPI=7
 
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+S="${WORKDIR}/squashfs-tools-${PV}/squashfs-tools"
 SRC_URI="
 https://github.com/plougher/squashfs-tools/archive/refs/tags/${PV}.tar.gz -> squashfs-tools-${PV}.tar.gz
 "
-S="${WORKDIR}/squashfs-tools-${PV}/squashfs-tools"
 
 # You can build this in a musl container to get strictly musl libs.
 
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 DESCRIPTION="squashfuse for static-tools"
 HOMEPAGE="
 	https://github.com/probonopd/static-tools
@@ -23,6 +23,7 @@ LICENSE="
 IUSE=""
 REQUIRED_USE+="
 "
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
 	sys-libs/zlib:=[static-libs]
@@ -38,7 +39,6 @@ BDEPEND+="
 	dev-build/automake
 	dev-build/libtool
 "
-RESTRICT="mirror"
 PATCHES=(
 )
 
