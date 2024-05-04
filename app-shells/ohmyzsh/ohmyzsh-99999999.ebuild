@@ -1102,7 +1102,7 @@ PLUGINS_RDEPEND="
 		app-shells/starship
 	)
 	omz_plugins_stripe? (
-		dev-util/stripe-cli 
+		dev-util/stripe-cli
 	)
 	omz_plugins_sublime? (
 		app-editors/sublime-text
