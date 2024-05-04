@@ -866,8 +866,8 @@ gen_virtual_rust_bdepend() {
 }
 BDEPEND+="
 	$(gen_llvm_bdepend)
-	>=dev-build/meson-1.1.1
-	>=dev-util/cargo-c-0.9.22
+	>=dev-build/meson-1.1
+	>=dev-util/cargo-c-0.9.21
 	>=dev-util/pkgconf-1.8.1[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/binutils-2.40
 	>=sys-devel/gcc-12.2.0
