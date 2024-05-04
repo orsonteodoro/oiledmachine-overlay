@@ -11,14 +11,25 @@ EAPI=8
 # https://github.com/Cisco-Talos/clamav/issues/581
 # This does not impact the ability of the package to build with llvm/clang otherwise.
 
-LLVM_MAX_SLOT=14
-PYTHON_COMPAT=( python3_{10..12} ) # CI uses 3.8
+# Require acct-{user,group}/clamav at build time so that we can set
+# the permissions on /var/lib/clamav in src_install rather than in
+# pkg_postinst; calling "chown" on the live filesystem scares me.
+
+# See CI for details.
+# CI uses U 22.04
+# OpenSSL-3 required for license compatibility
+# The dev-libs/libmspack version has been lowered in this ebuild.
+
+# rust-bin < 1.71 has an executable stack
+# which is not supported on selinux #911589
+
+MY_P="${P//_/-}"
 
 # LLVM 14 support is complete.
 # LLVM 15 support is a Work In Progress (WIP)
 # LLVM 16 support is a Work In Progress (WIP)
 
-# From "./convert-cargo-lock.sh 1.2.2 1.2.2"
+# From "./convert-cargo-lock.sh 1.2.3 1.2.3"
 CRATES="
 adler-1.0.2
 aho-corasick-1.0.5
@@ -52,7 +63,7 @@ errno-0.3.3
 errno-dragonfly-0.1.2
 exr-1.7.0
 fastrand-2.0.0
-fdeflate-0.3.0
+fdeflate-0.3.4
 flate2-1.0.27
 flume-0.10.14
 futures-core-0.3.28
@@ -95,7 +106,7 @@ once_cell-1.18.0
 peeking_take_while-0.1.2
 pin-project-1.1.3
 pin-project-internal-1.1.3
-png-0.17.10
+png-0.17.13
 prettyplease-0.2.15
 primal-check-0.3.3
 proc-macro2-1.0.66
@@ -118,7 +129,7 @@ serde_derive-1.0.188
 serde_json-1.0.105
 sha1-0.10.5
 sha2-0.10.7
-shlex-1.2.0
+shlex-1.3.0
 simd-adler32-0.3.7
 smallvec-1.11.0
 spin-0.9.8
@@ -130,7 +141,7 @@ thiserror-1.0.48
 thiserror-impl-1.0.48
 tiff-0.9.0
 toml-0.5.11
-transpose-0.2.2
+transpose-0.2.3
 typenum-1.16.0
 unicode-ident-1.0.11
 unicode-segmentation-1.10.1
@@ -157,19 +168,24 @@ windows_x86_64_gnullvm-0.48.5
 windows_x86_64_msvc-0.48.5
 zune-inflate-0.2.54
 "
+CURL_PV="7.68.0"
+LLVM_MAX_SLOT=14
+PYTEST_PV="7.2.0"
+PYTHON_COMPAT=( python3_{10..12} ) # CI uses 3.8
 
 inherit cargo cmake flag-o-matic lcnr llvm python-any-r1 systemd tmpfiles
 
-MY_P=${P//_/-}
-
-DESCRIPTION="Clam Anti-Virus Scanner"
-HOMEPAGE="https://www.clamav.net/"
+if ! [[ "${PV}" =~ "_rc" ]] ; then
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos"
+fi
+S="${WORKDIR}/clamav-${MY_P}"
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
 https://github.com/Cisco-Talos/clamav/archive/refs/tags/${MY_P}.tar.gz
 "
-S="${WORKDIR}/clamav-${MY_P}"
 
+DESCRIPTION="Clam Anti-Virus Scanner"
+HOMEPAGE="https://www.clamav.net/"
 THIRD_PARTY_LICENSES+="
 	0BSD
 	Apache-2.0
@@ -193,7 +209,6 @@ THIRD_PARTY_LICENSES+="
 	|| ( Unlicense MIT )
 	|| ( MIT Apache-2.0 )
 "
-
 LICENSE="
 	${THIRD_PARTY_LICENSES}
 	GPL-2
@@ -223,10 +238,8 @@ LICENSE="
 # || ( Unlicense MIT ) - cargo_home/gentoo/byteorder-1.4.3/COPYING
 # || ( MIT Apache-2.0 ) - cargo_home/gentoo/half-2.1.0/LICENSE
 
+#RESTRICT="!test? ( test )"
 SLOT="0/sts"
-if [[ ${PV} != *_rc* ]] ; then
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos"
-fi
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind r1
@@ -249,18 +262,6 @@ REQUIRED_USE="
 	)
 "
 
-#RESTRICT="!test? ( test )"
-
-# Require acct-{user,group}/clamav at build time so that we can set
-# the permissions on /var/lib/clamav in src_install rather than in
-# pkg_postinst; calling "chown" on the live filesystem scares me.
-
-# See CI for details.
-# CI uses U 22.04
-# OpenSSL-3 required for license compatibility
-CURL_PV="7.68.0"
-PYTEST_PV="7.2.0"
-# The dev-libs/libmspack version has been lowered in this ebuild.
 CDEPEND="
 	!libclamav-only? (
 		>=net-misc/curl-${CURL_PV}
@@ -303,9 +304,6 @@ CDEPEND="
 		$(python_gen_any_dep ">=dev-python/pytest-${PYTEST_PV}"'[${PYTHON_USEDEP}]')
 	)
 "
-
-# rust-bin < 1.71 has an executable stack
-# which is not supported on selinux #911589
 BDEPEND="
 	>=virtual/rust-1.71.0
 	virtual/pkgconfig
@@ -405,12 +403,12 @@ src_unpack() {
 
 src_prepare() {
 	cmake_src_prepare
-	if ver_test ${LLVM_SLOT} -ge 16 ; then
+	if ver_test "${LLVM_SLOT}" -ge "16" ; then
 einfo "LLVM_SLOT:\t${LLVM_SLOT}"
 		eapply "${FILESDIR}/${PN}-1.0.0-llvm16.patch"
 		ewarn "JIT is still broken for LLVM 16"
 	fi
-	if ver_test ${LLVM_SLOT} -ge 15 ; then
+	if ver_test "${LLVM_SLOT}" -ge "15" ; then
 einfo "LLVM_SLOT:\t${LLVM_SLOT}"
 		ewarn "JIT is still broken for LLVM 15"
 	fi

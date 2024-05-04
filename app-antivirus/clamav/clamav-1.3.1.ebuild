@@ -11,18 +11,25 @@ EAPI=8
 # https://github.com/Cisco-Talos/clamav/issues/581
 # This does not impact the ability of the package to build with llvm/clang otherwise.
 
-LLVM_MAX_SLOT=14
-PYTHON_COMPAT=( python3_{10..12} ) # CI uses 3.8
-
 # LLVM 14 support is complete.
 # LLVM 15 support is a Work In Progress (WIP)
 # LLVM 16 support is a Work In Progress (WIP)
 
-declare -A GIT_CRATES=(
-[onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;8b450447e58143004b68dd21c11b710fdb79be92;onenote.rs-%commit%" # 0.3.1
-)
+# Require acct-{user,group}/clamav at build time so that we can set
+# the permissions on /var/lib/clamav in src_install rather than in
+# pkg_postinst; calling "chown" on the live filesystem scares me.
 
-# From "./convert-cargo-lock.sh 1.3.0 1.3.0"
+# See CI for details.
+# CI uses U 22.04
+# OpenSSL-3 required for license compatibility
+# The dev-libs/libmspack version has been lowered in this ebuild.
+
+# rust-bin < 1.71 has an executable stack
+# which is not supported on selinux #911589
+
+MY_P="${P//_/-}"
+
+# From "./convert-cargo-lock.sh 1.3.1 1.3.1"
 CRATES="
 adler-1.0.2
 aho-corasick-1.1.2
@@ -55,7 +62,7 @@ enum-primitive-derive-0.2.2
 errno-0.3.8
 exr-1.71.0
 fastrand-2.0.1
-fdeflate-0.3.1
+fdeflate-0.3.4
 flate2-1.0.28
 flume-0.11.0
 generic-array-0.14.7
@@ -92,7 +99,7 @@ num-traits-0.2.17
 once_cell-1.19.0
 paste-1.0.14
 peeking_take_while-0.1.2
-png-0.17.10
+png-0.17.13
 prettyplease-0.2.15
 primal-check-0.3.3
 proc-macro2-1.0.70
@@ -127,7 +134,7 @@ thiserror-1.0.50
 thiserror-impl-1.0.50
 tiff-0.9.0
 toml-0.5.11
-transpose-0.2.2
+transpose-0.2.3
 typenum-1.17.0
 unicode-ident-1.0.12
 unicode-segmentation-1.10.1
@@ -159,19 +166,27 @@ windows_x86_64_msvc-0.48.5
 windows_x86_64_msvc-0.52.0
 zune-inflate-0.2.54
 "
+declare -A GIT_CRATES=(
+[onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;8b450447e58143004b68dd21c11b710fdb79be92;onenote.rs-%commit%" # 0.3.1
+)
+CURL_PV="7.68.0"
+LLVM_MAX_SLOT=14
+PYTEST_PV="7.2.0"
+PYTHON_COMPAT=( python3_{10..12} ) # CI uses 3.8
 
 inherit cargo cmake flag-o-matic lcnr llvm python-any-r1 systemd tmpfiles
 
-MY_P=${P//_/-}
-
-DESCRIPTION="Clam Anti-Virus Scanner"
-HOMEPAGE="https://www.clamav.net/"
+if ! [[ "${PV}" =~ "_rc" ]] ; then
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos"
+fi
+S="${WORKDIR}/clamav-${MY_P}"
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
 https://github.com/Cisco-Talos/clamav/archive/refs/tags/${MY_P}.tar.gz
 "
-S="${WORKDIR}/clamav-${MY_P}"
 
+DESCRIPTION="Clam Anti-Virus Scanner"
+HOMEPAGE="https://www.clamav.net/"
 THIRD_PARTY_LICENSES+="
 	0BSD
 	Apache-2.0
@@ -195,13 +210,11 @@ THIRD_PARTY_LICENSES+="
 	|| ( Unlicense MIT )
 	|| ( MIT Apache-2.0 )
 "
-
 LICENSE="
 	${THIRD_PARTY_LICENSES}
 	GPL-2
 	LGPL-2.1
 "
-
 # 0BSD - cargo_home/gentoo/adler-1.0.2/LICENSE-0BSD
 # Apache-2.0 - cargo_home/gentoo/glob-0.3.0/LICENSE-APACHE
 # Boost-1.0 - cargo_home/gentoo/ryu-1.0.11/LICENSE-BOOST
@@ -225,15 +238,12 @@ LICENSE="
 # || ( Unlicense MIT ) - cargo_home/gentoo/byteorder-1.4.3/COPYING
 # || ( MIT Apache-2.0 ) - cargo_home/gentoo/half-2.1.0/LICENSE
 
+#RESTRICT="!test? ( test )"
 SLOT="0/sts"
-if [[ ${PV} != *_rc* ]] ; then
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos"
-fi
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind r1
 "
-
 REQUIRED_USE="
 	clamonacc? (
 		clamapp
@@ -250,19 +260,6 @@ REQUIRED_USE="
 		!libclamav-only
 	)
 "
-
-#RESTRICT="!test? ( test )"
-
-# Require acct-{user,group}/clamav at build time so that we can set
-# the permissions on /var/lib/clamav in src_install rather than in
-# pkg_postinst; calling "chown" on the live filesystem scares me.
-
-# See CI for details.
-# CI uses U 22.04
-# OpenSSL-3 required for license compatibility
-CURL_PV="7.68.0"
-PYTEST_PV="7.2.0"
-# The dev-libs/libmspack version has been lowered in this ebuild.
 CDEPEND="
 	!libclamav-only? (
 		>=net-misc/curl-${CURL_PV}
@@ -305,9 +302,6 @@ CDEPEND="
 		$(python_gen_any_dep ">=dev-python/pytest-${PYTEST_PV}"'[${PYTHON_USEDEP}]')
 	)
 "
-
-# rust-bin < 1.71 has an executable stack
-# which is not supported on selinux #911589
 BDEPEND="
 	>=virtual/rust-1.71.0
 	virtual/pkgconfig
@@ -322,7 +316,6 @@ BDEPEND="
 		)
 	)
 "
-
 DEPEND="
 	${CDEPEND}
 	test? (
@@ -407,12 +400,12 @@ src_unpack() {
 
 src_prepare() {
 	cmake_src_prepare
-	if ver_test ${LLVM_SLOT} -ge 16 ; then
+	if ver_test "${LLVM_SLOT}" -ge "16" ; then
 einfo "LLVM_SLOT:\t${LLVM_SLOT}"
 		eapply "${FILESDIR}/${PN}-1.0.0-llvm16.patch"
 		ewarn "JIT is still broken for LLVM 16"
 	fi
-	if ver_test ${LLVM_SLOT} -ge 15 ; then
+	if ver_test "${LLVM_SLOT}" -ge "15" ; then
 einfo "LLVM_SLOT:\t${LLVM_SLOT}"
 		ewarn "JIT is still broken for LLVM 15"
 	fi
