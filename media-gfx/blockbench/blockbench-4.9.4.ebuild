@@ -11,8 +11,8 @@ export NPM_INSTALL_PATH="/opt/${PN}"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}_${PV}.AppImage"
 ELECTRON_APP_ELECTRON_PV="26.6.10"
 ELECTRON_APP_MODE="npm"
-NODE_VERSION=18
 NODE_ENV="development"
+NODE_VERSION=18
 
 inherit desktop electron-app lcnr npm
 
