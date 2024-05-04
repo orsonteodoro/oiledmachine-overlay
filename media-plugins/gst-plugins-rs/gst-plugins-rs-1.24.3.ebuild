@@ -906,9 +906,10 @@ ewarn
 
 multilib_src_configure() {
 	local found=0
+	local llvm_slot
 	local virtual_rust_slot
 	for virtual_rust_slot in ${!VIRTUAL_RUST_PV_TO_LLVM_SLOT[@]} ; do
-		local llvm_slot=${VIRTUAL_RUST_PV_TO_LLVM_SLOT[${virtual_rust_slot}]}
+		llvm_slot=${VIRTUAL_RUST_PV_TO_LLVM_SLOT[${virtual_rust_slot}]}
 		[[ -z "${llvm_slot}" ]] && continue
 		if \
 			   has_version "=virtual/rust-${virtual_rust_slot}*" \
@@ -920,7 +921,7 @@ multilib_src_configure() {
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		LLVM_MAX_SLOT=${s}
+		LLVM_MAX_SLOT=${llvm_slot}
 		llvm_pkg_setup
 	else
 		local virtual_rust_pv=$(best_version "virtual/rust" \
