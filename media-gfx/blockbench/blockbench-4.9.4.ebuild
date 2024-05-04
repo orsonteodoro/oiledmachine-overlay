@@ -37,12 +37,12 @@ THIRD_PARTY_LICENSES="
 " # ^^ (mutual exclusion) is not supported. \
 # || assumes that user chooses outside of computer.
 LICENSE="
+	${THIRD_PARTY_LICENSES}
 	(
 		${ELECTRON_APP_LICENSES}
 		Artistic-2
 		electron-26.6.10-chromium.html
 	)
-	${THIRD_PARTY_LICENSES}
 	GPL-3+
 "
 
