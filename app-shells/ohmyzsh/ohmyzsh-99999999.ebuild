@@ -1629,7 +1629,7 @@ pkg_postinst() {
 	einfo "to your ~/.zshrc."
 	einfo
 
-	if (( "${#MISSING_DEPENDS[@]}" > 0 )) ; then
+	if (( ${#MISSING_DEPENDS[@]} > 0 )) ; then
 		# Too many too add and inspect =(
 ewarn
 ewarn "The following have not yet had their dependencies added to the ebuild"
