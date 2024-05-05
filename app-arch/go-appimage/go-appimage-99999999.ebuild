@@ -768,8 +768,13 @@ src_install() {
 	doexe "${BUILD_DIR}/${mkappimage_fn}"
 	dosym ../../../usr/bin/${mkappimage_fn} /usr/bin/mkappimage
 	gen_wrapper
-	LCNR_SOURCE="${BUILD_DIR}"
-	lcnr_install_files
+	if [[ "${PV}" =~ "9999" ]] ; then
+		LCNR_SOURCE="${WORKDIR}/go_build/pkg/mod"
+		lcnr_install_files
+	else
+		LCNR_SOURCE="${WORKDIR}/go_build/src"
+		lcnr_install_files
+	fi
 	docinto readme
 	dodoc "${S}/README.md"
 	cp \
