@@ -72,7 +72,7 @@ is an open source cross-platform game development environment."
 HOMEPAGE="http://enigma-dev.org"
 LICENSE="GPL-3+"
 RESTRICT="mirror"
-SLOT="0/radialgm-${EGIT_COMMIT:0:7}" # Required because of the grpc/protobuf.
+SLOT="0/radialgm-${EGIT_COMMIT:0:7}" # Required because of grpc/protobuf.
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 android box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
