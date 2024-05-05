@@ -31,6 +31,7 @@ RESTRICT="
 INTERNAL_VERSION="4.25.3" # From CMakeLists.txt L82
 SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # version : slot
+# 26 : 5.26 From CMakeLists.txt's protobuf_VERSION_STRING
 # 25 : 4.25 From CMakeLists.txt's protobuf_VERSION_STRING
 # 24 : 4.24 From CMakeLists.txt's protobuf_VERSION_STRING
 # 23 : 4.23 From CMakeLists.txt's protobuf_VERSION_STRING
