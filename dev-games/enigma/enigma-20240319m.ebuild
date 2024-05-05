@@ -4,7 +4,7 @@
 
 EAPI=7
 
-# This ebuild corresponds to HEAD (aka latest commit).
+# This ebuild corresponds to latest tagged master.
 
 # U 20.04
 
@@ -56,11 +56,15 @@ ZLIB_PV="1.3"
 
 inherit desktop flag-o-matic git-r3 multilib-minimal toolchain-funcs
 
-if [[ "${PV}" =~ "9999" ]] ; then
+if [[ "${PV}" =~ "m" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/enigma-dev/enigma-dev.git"
-	FALLBACK_COMMIT="3918af3dc40734465b355a7d52cb9f9f93f5a8d6" # Oct 10, 2023
-	IUSE+=" fallback-commit"
+	if [[ "${PV}" =~ "9999" ]] ; then
+		FALLBACK_COMMIT=""
+		IUSE+=" fallback-commit"
+	else
+		EGIT_COMMIT="3590b681f20174ccf24156769d2bbb94b10673e3" # May 19, 2024
+	fi
 else
 	SRC_URI=""
 	die "FIXME"
@@ -72,7 +76,7 @@ is an open source cross-platform game development environment."
 HOMEPAGE="http://enigma-dev.org"
 LICENSE="GPL-3+"
 RESTRICT="mirror"
-SLOT="0/9999" # Required because of grpc/protobuf.
+SLOT="0/mainline-${EGIT_COMMIT:0:7}" # Required because of grpc/protobuf.
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 android box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
@@ -647,7 +651,9 @@ src_prepare() {
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && export EGIT_COMMIT="${FALLBACK_COMMIT}"
+		if has fallback-commit $IUSE_EFFECTIVE && use fallback-commit ; then
+			export EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
 		git-r3_fetch
 		git-r3_checkout
 	else
