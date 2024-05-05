@@ -12,3 +12,6 @@ dev-libs/libappimage system-boost
 
 # Broken?
 #www-client/chromium system-toolchain
+
+# Required
+app-arch/go-appimage systemd
