@@ -23,7 +23,12 @@ HOMEPAGE="
 	https://github.com/protocolbuffers/protobuf
 "
 LICENSE="BSD"
-INTERNAL_VERSION="3.21.12"
+RESTRICT="
+	!test? (
+		test
+	)
+"
+INTERNAL_VERSION="3.21.12" # From configure.ac L20
 SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # version : slot
 # 25 : 4.25 From CMakeLists.txt's protobuf_VERSION_STRING
@@ -39,11 +44,6 @@ SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # 16.2 : 3.16 From AC_INIT
 
 IUSE="emacs examples static-libs test zlib r1"
-RESTRICT="
-	!test? (
-		test
-	)
-"
 RDEPEND="
 	zlib? (
 		>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]

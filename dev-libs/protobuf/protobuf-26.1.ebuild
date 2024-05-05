@@ -23,7 +23,12 @@ HOMEPAGE="
 	https://github.com/protocolbuffers/protobuf
 "
 LICENSE="BSD"
-INTERNAL_VERSION="4.25.1"
+RESTRICT="
+	!test? (
+		test
+	)
+"
+INTERNAL_VERSION="5.26.1" # From CMakeLists.txt L82
 SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # version : slot
 # 25 : 4.25 From CMakeLists.txt's protobuf_VERSION_STRING
@@ -38,14 +43,14 @@ SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # 18.3 : 3.18 From AC_INIT
 # 16.2 : 3.16 From AC_INIT
 
-IUSE="emacs examples static-libs test zlib r1"
-RESTRICT="
-	!test? (
+IUSE="emacs examples -jsoncpp static-libs test zlib r1"
+REQUIRED_USE="
+	jsoncpp? (
 		test
 	)
 "
 RDEPEND="
-	>=dev-cpp/abseil-cpp-20230802.1:0/20230802[${MULTILIB_USEDEP},test-helpers(-)]
+	>=dev-cpp/abseil-cpp-20240116.0:0/20240116[${MULTILIB_USEDEP},test-helpers(-)]
 	dev-libs/utf8_range[${MULTILIB_USEDEP}]
 	zlib? (
 		>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
@@ -55,6 +60,9 @@ DEPEND="
 	${RDEPEND}
 	test? (
 		>=dev-cpp/gtest-1.12.1[${MULTILIB_USEDEP}]
+		jsoncpp? (
+			>=dev-libs/jsoncpp-1.9.4
+		)
 	)
 "
 RDEPEND+="
@@ -138,6 +146,7 @@ src_configure() {
 		local mycmakeargs=(
 			-DUTF8_RANGE_MODULE_PATH="${ESYSROOT}/usr/$(get_libdir)/cmake/utf8_range"
 			-DBUILD_SHARED_LIBS=${with_static_libs}
+			-DJSONCPP_WITH_TESTS=$(usex jsoncpp)
 			-Dprotobuf_USE_EXTERNAL_GTEST=ON
 			-Dprotobuf_BUILD_TESTS=$(usex test)
 			-Dprotobuf_WITH_ZLIB=$(usex zlib)

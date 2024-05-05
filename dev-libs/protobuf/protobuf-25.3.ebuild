@@ -28,7 +28,7 @@ RESTRICT="
 		test
 	)
 "
-INTERNAL_VERSION="4.23.4" # From CMakeLists.txt L96
+INTERNAL_VERSION="4.25.3" # From CMakeLists.txt L82
 SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # version : slot
 # 25 : 4.25 From CMakeLists.txt's protobuf_VERSION_STRING
@@ -50,7 +50,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-cpp/abseil-cpp-20230125.3:0/20230125[${MULTILIB_USEDEP},test-helpers(-)]
+	>=dev-cpp/abseil-cpp-20230802.1:0/20230802[${MULTILIB_USEDEP},test-helpers(-)]
 	dev-libs/utf8_range[${MULTILIB_USEDEP}]
 	zlib? (
 		>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
