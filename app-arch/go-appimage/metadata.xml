@@ -61,7 +61,6 @@
 
       Simple as that.
 
-
     Porting:
 
       If you plan to port your AppImage to glibc/musl platforms, you should port

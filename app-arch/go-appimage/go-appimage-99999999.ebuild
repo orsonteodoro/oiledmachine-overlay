@@ -4,9 +4,11 @@
 
 EAPI=7
 
+# This ebuild tracks only continuous or latest commit.
+
 inherit git-r3 lcnr linux-info
 
-# GEN_EBUILD=1 # Uncomment to generate ebuild for live snapshot.
+#GEN_EBUILD=1 # Uncomment to generate ebuild for live snapshot.
 
 gen_go_dl_gh_url()
 {
@@ -64,22 +66,24 @@ https://ziglang.org/download/0.10.0/zig-linux-${zigarch}-${ZIG_LINUX_PV}.tar.xz
 	"
 }
 
-if [[ ${PV} =~ 9999 ]] ; then
-	KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+if [[ "${PV}" =~ "9999" ]] ; then
+	# Live ebuilds do not get KEYWORDS.  Distro policy.
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${PN}-9999"
 else
-	# Live ebuilds do not get KEYWORDS.  Distro policy.
+	#KEYWORDS="~amd64 ~arm ~arm64 ~x86" # The continuous tag is still considered live.
 	export OFFLINE="1"
 
-	# See also
-	# https://pkg.go.dev/github.com/probonopd/go-appimage?tab=versions
-	export EGIT_COMMIT="bb5081a46c15ebb828b5cb0bb0445e1e2f6484ad" # Dec 17, 2022 # Same as the 8 char hash below
+	export EGIT_COMMIT="abc5a41a4953694c4e215e678aa911bcce1f690e" # Timestamp same as EGIT_COMMIT_TIMESTAMP
 
 # These must be inspected and updated on every ebuild update since
 # they are live upstream.  No known way to reference them statically.
 # The continuous git tag below in gen_binary_uris() changes.
-	EGIT_COMMIT_STATIC_TOOLS="6e1f76764d334490ddedeb1075a8cd66c270e8e2" # Oct 15, 2022
+
+# The id below are based on the continuous tag on the static-tools repo.
+	EGIT_COMMIT_STATIC_TOOLS="f0f6e679a001c4ad0e393f829a2396bf41f59cfe" # Apr 14, 2024
+
+# The id below is based on master branch's tip.
 	EGIT_COMMIT_UPLOADTOOL="58f20d2b86197faddd7ffb531a2fab0dad28dedd" # Jul 23, 2022
 
 	# From:
@@ -88,13 +92,19 @@ else
 	#	| grep "^Date:" \
 	#	| head -n 1 \
 	#	| cut -f 2- -d " "
-	export EGIT_COMMIT_TIMESTAMP="Sat, 17 Dec 2022 13:18:55 +0100"
+	export EGIT_COMMIT_TIMESTAMP="Sun, 14 Apr 2024 17:58:28 +0200"
 
-	TIMESTAMP_YYMMDD="20221217"
-	TIMESTAMP_HHMMSS="121855" # UTC
-	MY_PV="v0.0.0-${TIMESTAMP_YYMMDD}${TIMESTAMP_HHMMSS}-${EGIT_COMMIT:0:12}"
+	# From:  date -d "${EGIT_COMMIT_TIMESTAMP}" -u
+	TIMESTAMP_YYMMDD="20240414"
+	TIMESTAMP_HHMMSS="035828" # In UTC without :
+
+	# Version template obtained from https://pkg.go.dev/github.com/probonopd/go-appimage?tab=versions
+	MY_PV="v0.0.0-${TIMESTAMP_YYMMDD}${TIMESTAMP_HHMMSS}-${EGIT_COMMIT:0:12}" # Keep below TIMESTAMP_*
+
+	# From https://github.com/probonopd/go-appimage/blob/master/scripts/build.sh#L250
 	ZIG_LINUX_PV="0.10.0" # Oct 31, 2022 ; musl 1.2.3 (Apr 7, 2022) from zig programming language project
 
+	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 	if [[ "${GEN_EBUILD}" != "1" ]] ; then
 		SRC_URI+="
 # PLACE GENERATED LIST HERE
@@ -103,9 +113,7 @@ https://raw.githubusercontent.com/probonopd/uploadtool/${EGIT_COMMIT_UPLOADTOOL}
 	-> uploadtool-upload.sh-${EGIT_COMMIT_UPLOADTOOL:0:7}
 		"
 	fi
-	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 fi
-
 
 DESCRIPTION="Purely experimental playground for Go implementation of AppImage \
 tools"
@@ -262,7 +270,7 @@ LICENSE+=" MIT" # upload tool
 # -system-static-tools is upstream default.
 # +musl is upstream default.
 IUSE+="
-firejail -fuse3 gnome kde -musl +system-static-tools
+firejail -fuse3 gnome kde -musl +system-static-tools systemd
 "
 REQUIRED_USE+="
 	fuse3? (
@@ -287,14 +295,10 @@ RDEPEND+="
 	!app-arch/AppImageKit
 	>=dev-libs/openssl-${OPENSSL_PV}
 	>=sys-apps/dbus-1.12.16
-	>=sys-apps/systemd-245.4
 	>=sys-fs/squashfs-tools-4.4:=
 	>=sys-fs/udisks-2.8.4[daemon]
 	>=sys-process/procps-3.3.16
 	app-alternatives/sh
-	system-static-tools? (
-		app-arch/static-tools:=[fuse3=]
-	)
 	firejail? (
 		>=sys-apps/firejail-0.9.62
 	)
@@ -303,6 +307,12 @@ RDEPEND+="
 	)
 	kde? (
 		>=kde-frameworks/solid-5.68.0
+	)
+	system-static-tools? (
+		app-arch/static-tools:=[fuse3=]
+	)
+	systemd? (
+		>=sys-apps/systemd-245.4
 	)
 "
 DEPEND+="
@@ -348,7 +358,7 @@ get_zig_arch() {
 }
 
 pkg_setup() {
-	if [[ ${PV} =~ 9999 ]] && has network-sandbox $FEATURES ; then
+	if [[ "${PV}" =~ "9999" ]] && has network-sandbox $FEATURES ; then
 eerror
 eerror "${PN} requires network-sandbox to be disabled in FEATURES in order to"
 eerror "download micropackages."
@@ -447,14 +457,18 @@ unpack_go_pkg()
 	local dest_name="${pkg_name//\//-}-${tag//\//-}"
 einfo "Unpacking ${dest_name}.tar.gz"
 	mkdir -p "${dest}" || die
-	tar --strip-components=1 -x -C "${dest}" \
-		-f "${DISTDIR}/${dest_name}.tar.gz" || die
+	tar \
+		--strip-components=1 \
+		-x \
+		-C "${dest}" \
+		-f "${DISTDIR}/${dest_name}.tar.gz" \
+		|| die
 }
 
 unpack_go()
 {
 # PLACE GENERATED LIST HERE
-	:;
+	:
 }
 
 get_col3() {
@@ -498,6 +512,7 @@ eerror "Missing get_col2_unpack() entry for ${uri}"
 }
 
 generate_ebuild_snapshot() {
+einfo "DEBUG:  EGIT_COMMIT - ${EGIT_COMMIT}"
 	wget -q \
 		-O "${T}/go.mod" \
 		"https://raw.githubusercontent.com/probonopd/${PN}/${EGIT_COMMIT}/go.mod" \
@@ -567,7 +582,7 @@ src_unpack() {
 
 	[[ "${GEN_EBUILD}" == "1" ]] && generate_ebuild_snapshot
 
-	if [[ ${PV} =~ 9999 ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 		if use fallback-commit ; then
 			export EGIT_COMMIT="09fd0186774aefa2351c42b4bb22f92ce0c4f235"
 
@@ -707,7 +722,7 @@ src_compile() {
 	export EGIT_COMMIT_STATIC_TOOLS
 	export EGIT_COMMIT_UPLOADTOOL
 	local args=()
-	if ! [[ ${PV} =~ 9999 ]] ; then
+	if ! [[ "${PV}" =~ "9999" ]] ; then
 		args+=(
 			-o "${WORKDIR}/go_build/src"
 		)
@@ -729,7 +744,7 @@ EOF
 src_install() {
 	local ai_arch=$(get_appimage_arch)
 	exeinto /usr/bin
-	if [[ ${PV} =~ 9999 ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 		BUILD_DIR="${S_GO}/build"
 	else
 		BUILD_DIR="${S_GO}/src"
@@ -805,6 +820,13 @@ einfo
 	optfeature "wlroots desktop notifications" gui-apps/fnott
 	optfeature "xfce desktop notifications" xfce-extra/xfce4-notifyd
 einfo
+	if ! use systemd ; then
+ewarn
+ewarn "You are installing with the systemd USE flag disabled."
+ewarn "This behavior is for ebuild maintainers only for shallow testing."
+ewarn "For production, enable the systemd USE flag."
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
