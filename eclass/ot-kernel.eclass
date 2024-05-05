@@ -115,6 +115,8 @@ esac
 # SEV firmware mitigations needs to be bumped also.
 # Search "SEV FW" version and "μcode" for patch number to bump versions below.
 
+EXTRAVERSION=${EXTRAVERSION:-"ot"}
+
 _OT_KERNEL_DMA_ATTACK_MITIGATIONS_ENABLED=0 # Variable not const
 _OT_KERNEL_FORCE_STABILITY=0 # Variable not const
 _OT_KERNEL_FORCE_SWAP_OFF=0 # Variable not const
@@ -145,13 +147,16 @@ if [[ -n "${C2TCP_VER}" ]] ; then
 	"
 fi
 
-EXTRAVERSION=${EXTRAVERSION:-"ot"}
-INTEL_MICROCODE_PV="20240312_p20240312"
 GCC_PKG="sys-devel/gcc"
 GENPATCHES_URI_BASE_URI="https://gitweb.gentoo.org/proj/linux-patches.git/snapshot/"
 GENPATCHES_MAJOR_MINOR_REVISION="${KV_MAJOR_MINOR}-${GENPATCHES_VER}"
 GENPATCHES_FN="linux-patches-${GENPATCHES_MAJOR_MINOR_REVISION}.tar.bz2"
 GENPATCHES_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_FN}"
+INTEL_MICROCODE_PV="20240312_p20240312"
+# IPD_RAW_VER* is the same as INSTR_PROF_RAW_VERSION (aka profraw version).
+IPD_RAW_VER=5 # < llvm-13 Dec 28, 2020
+IPD_RAW_VER_MIN=6
+IPD_RAW_VER_MAX=9
 KCP_COMMIT_SNAPSHOT="30db2170d3ddefa13a3dcffd05db66efff2fea7d" # 20240430
 KCP_CORTEX_A72_BN="build-with-mcpu-for-cortex-a72"
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
@@ -274,11 +279,6 @@ else
 		${KERNEL_PATCH_TO_FROM[@]/#/patch-${KV_MAJOR_MINOR}.}
 	)
 fi
-
-# IPD_RAW_VER* is the same as INSTR_PROF_RAW_VERSION.
-IPD_RAW_VER=5 # < llvm-13 Dec 28, 2020
-IPD_RAW_VER_MIN=6
-IPD_RAW_VER_MAX=9
 
 LINUX_FIRMWARE_PV="20230809" # Based on latest available patch level cross referenced to the μcode column.
 LINUX_FIRMWARE_TIMESTAMP="2023-08-09 07:59:05 -0400" # Same as above from the git log.
