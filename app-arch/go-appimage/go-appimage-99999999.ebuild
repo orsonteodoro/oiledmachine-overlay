@@ -8,7 +8,12 @@ EAPI=7
 
 inherit git-r3 lcnr linux-info
 
-#GEN_EBUILD=1 # Uncomment to generate ebuild for live snapshot.
+if [[ "${PV}" =~ "9999" ]] ; then
+	: # Live does not support GEN_EBUILD.
+else
+	:
+	#GEN_EBUILD=1 # Uncomment to generate ebuild for live snapshot.
+fi
 
 gen_go_dl_gh_url()
 {
@@ -745,7 +750,7 @@ src_install() {
 	local ai_arch=$(get_appimage_arch)
 	exeinto /usr/bin
 	if [[ "${PV}" =~ "9999" ]] ; then
-		BUILD_DIR="${S_GO}/build"
+		BUILD_DIR="${S_GO}/src/github.com/probonopd/go-appimage/build"
 	else
 		BUILD_DIR="${S_GO}/src"
 	fi
