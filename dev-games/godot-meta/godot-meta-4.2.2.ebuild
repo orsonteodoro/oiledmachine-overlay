@@ -14,11 +14,9 @@ mingw32 mingw64 prebuilt-export-templates
 "
 IUSE=" ${IUSE_EXPORT_TEMPLATES} +demos -export-templates"
 REQUIRED_USE="
-	!demos
 	!headless-server
 	!ios-plugins
 "
-#		dev-games/godot-demo-projects:${PV%%.*}/$(ver_cut 1-2 ${PV})
 RDEPEND="
 	!dev-games/godot
 	dev-games/godot-editor:${SLOT}
@@ -26,7 +24,7 @@ RDEPEND="
 		dev-games/godot-export-templates-android:${SLOT}
 	)
 	demos? (
-		=dev-games/godot-demo-projects-9999
+		dev-games/godot-demo-projects:${PV%%.*}/$(ver_cut 1-2 ${PV})
 	)
 	headless-server? (
 		dev-games/godot-headless-server:${SLOT}

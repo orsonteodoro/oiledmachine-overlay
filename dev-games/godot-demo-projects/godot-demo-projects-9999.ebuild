@@ -7,17 +7,21 @@ EAPI=8
 STATUS="stable"
 
 if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="master"
+	EGIT_COMMIT="HEAD"
+	EGIT_REPO_URI="https://github.com/godotengine/godot-demo-projects.git"
 	inherit git-r3
 	S="${WORKDIR}/${P}"
 else
 	# The latest release
 	EGIT_COMMIT_DEMOS_STABLE=""
 	FN_DEST="${PN}-${EGIT_COMMIT_DEMOS_STABLE:0:7}.tar.gz"
+	KEYWORDS="~amd64 ~riscv ~x86"
+	S="${WORKDIR}/${PN}-${EGIT_COMMIT_DEMOS_STABLE}"
 	SRC_URI="
 https://github.com/godotengine/${PN}/archive/refs/tags/$(ver_cut 1-2 ${PV})-${EGIT_COMMIT_DEMOS_STABLE:0:7}.tar.gz
 		-> ${FN_DEST}
 	"
-	S="${WORKDIR}/${PN}-${EGIT_COMMIT_DEMOS_STABLE}"
 fi
 
 DESCRIPTION="Demonstration and Template Projects"
@@ -26,7 +30,6 @@ http://godotengine.org
 https://github.com/godotengine/godot-demo-projects
 "
 LICENSE="MIT"
-KEYWORDS="~amd64 ~riscv ~x86"
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 RDEPEND="
@@ -41,9 +44,6 @@ ewarn
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		EGIT_REPO_URI="https://github.com/godotengine/godot-demo-projects.git"
-		EGIT_BRANCH="master"
-		EGIT_COMMIT="HEAD"
 		git-r3_fetch
 		git-r3_checkout
 	else

@@ -7,14 +7,14 @@ EAPI=8
 STATUS="stable"
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	EGIT_BRANCH="4.0"
+	EGIT_BRANCH="4.2"
 	EGIT_COMMIT="HEAD"
 	EGIT_REPO_URI="https://github.com/godotengine/godot-demo-projects.git"
 	inherit git-r3
 	S="${WORKDIR}/${P}"
 else
 	# The latest release
-	EGIT_COMMIT_DEMOS_STABLE=""
+	EGIT_COMMIT_DEMOS_STABLE="31d1c0c1122717b3ad74aeb94255bc38def52747"
 	FN_DEST="${PN}-${EGIT_COMMIT_DEMOS_STABLE:0:7}.tar.gz"
 	KEYWORDS="~amd64 ~riscv ~x86"
 	S="${WORKDIR}/${PN}-${EGIT_COMMIT_DEMOS_STABLE}"

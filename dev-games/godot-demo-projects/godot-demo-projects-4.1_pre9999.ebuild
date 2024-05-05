@@ -7,7 +7,7 @@ EAPI=8
 STATUS="stable"
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	EGIT_BRANCH="4.0"
+	EGIT_BRANCH="4.1"
 	EGIT_COMMIT="HEAD"
 	EGIT_REPO_URI="https://github.com/godotengine/godot-demo-projects.git"
 	inherit git-r3
