@@ -19,11 +19,11 @@ EAPI=7
 # Fallback U 22.04.3
 ALURE_PV="1.2" # missing in CI
 BOX2D_PV_EMAX="2.4" # missing in CI
-CLANG_PV="16.0.6"
-CXX_STANDARD="-std=c++17"
 BOOST_PV="1.83.0"
 BULLET_PV="3.06" # missing in CI
+CLANG_PV="16.0.6"
 CURL_PV="8.3.0"
+CXX_STANDARD="-std=c++17"
 FLAC_PV="1.4.3"
 FREETYPE_PV="2.13.2"
 GCC_PV="13.2.1" # Upstream uses 12.1.0 for Linux.  This has been relaxed in this ebuild.

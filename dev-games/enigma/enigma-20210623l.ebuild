@@ -19,9 +19,9 @@ EAPI=7
 # Fallback U 20.04.3
 ALURE_PV="1.2" # missing in CI
 BOX2D_PV_EMAX="2.4" # missing in CI
-CLANG_PV="12.0.1"
 BOOST_PV="1.76.0"
 BULLET_PV="2.88" # missing in CI
+CLANG_PV="12.0.1"
 CURL_PV="7.79.0"
 CXX_STANDARD="-std=c++17"
 FLAC_PV="1.3.3"
