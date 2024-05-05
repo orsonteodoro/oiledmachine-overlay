@@ -4,6 +4,9 @@
 
 EAPI=8
 
+INTERNAL_VERSION="4.23.4" # From CMakeLists.txt L96
+JSONCPP_COMMIT="9059f5cad030ba11d37818847443a53918c327b1"
+
 inherit cmake-multilib elisp-common flag-o-matic multilib-minimal toolchain-funcs
 
 if [[ "${PV}" == *9999 ]]; then
@@ -13,6 +16,9 @@ if [[ "${PV}" == *9999 ]]; then
 else
 	SRC_URI="
 https://github.com/protocolbuffers/protobuf/archive/v${PV}.tar.gz -> ${P}.tar.gz
+	jsoncpp? (
+https://github.com/open-source-parsers/jsoncpp/archive/${JSONCPP_COMMIT}.tar.gz -> jsoncpp-${JSONCPP_COMMIT}.tar.gz
+	)
 	"
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-macos"
 fi
@@ -28,7 +34,6 @@ RESTRICT="
 		test
 	)
 "
-INTERNAL_VERSION="4.23.4" # From CMakeLists.txt L96
 SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # version : slot
 # 26 : 5.26 From CMakeLists.txt's protobuf_VERSION_STRING
@@ -85,6 +90,13 @@ DOCS=( CONTRIBUTORS.txt README.md )
 
 src_unpack() {
 	unpack ${A}
+	if use jsoncpp ; then
+		rm -rf third_party/jsoncpp || die
+		mv \
+			"${WORKDIR}/jsoncpp-${JSONCPP_COMMIT}" \
+			"${S}/third_party/jsoncpp" \
+			|| die
+	fi
 }
 
 patch_32bit() {

@@ -4,6 +4,8 @@
 
 EAPI=8
 
+INTERNAL_VERSION="3.21.12" # From configure.ac L20
+
 inherit cmake-multilib elisp-common flag-o-matic multilib-minimal toolchain-funcs
 
 if [[ "${PV}" == *9999 ]]; then
@@ -28,7 +30,6 @@ RESTRICT="
 		test
 	)
 "
-INTERNAL_VERSION="3.21.12" # From configure.ac L20
 SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # version : slot
 # 26 : 5.26 From CMakeLists.txt's protobuf_VERSION_STRING

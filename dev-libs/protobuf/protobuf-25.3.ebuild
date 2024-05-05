@@ -4,6 +4,8 @@
 
 EAPI=8
 
+INTERNAL_VERSION="4.25.3" # From CMakeLists.txt L82
+
 inherit cmake-multilib elisp-common flag-o-matic multilib-minimal toolchain-funcs
 
 if [[ "${PV}" == *9999 ]]; then
@@ -28,7 +30,6 @@ RESTRICT="
 		test
 	)
 "
-INTERNAL_VERSION="4.25.3" # From CMakeLists.txt L82
 SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # version : slot
 # 26 : 5.26 From CMakeLists.txt's protobuf_VERSION_STRING
@@ -153,6 +154,7 @@ src_configure() {
 			-Dprotobuf_WITH_ZLIB=$(usex zlib)
 			-Dprotobuf_ALLOW_CCACHE=${with_ccache}
 			-Dprotobuf_ABSL_PROVIDER=package
+			-Dprotobuf_JSONCPP_PROVIDER=package
 			-Dprotobuf_UTF8_RANGE_PROVIDER=package
 		)
 		if tc-is-cross-compiler; then
