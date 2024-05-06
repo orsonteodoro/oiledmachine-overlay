@@ -1,7 +1,8 @@
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# Based on openvdb-7.1.0-r1.ebuild from the gentoo overlay
+# Based on openvdb-7.1.0-r1.ebuild from the distro overlay
+# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v11.0.0/CMakeLists.txt#L256
 # For deps versioning, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.1.0/doc/dependencies.txt
 
 EAPI=8
@@ -45,7 +46,6 @@ VDB_UTILS="
 	vdb_render
 	vdb_view
 "
-# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v11.0.0/CMakeLists.txt#L256
 REQUIRED_USE+="
 	^^ (
 		${OPENVDB_ABIS_[@]}
@@ -73,11 +73,6 @@ REQUIRED_USE+="
 		${PYTHON_REQUIRED_USE}
 	)
 "
-
-# See
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v11.0.0/doc/dependencies.txt
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v11.0.0/ci/install.sh
-
 gen_openexr_pairs() {
 	local pv
 	for pv in ${OPENEXR_V2_PV} ; do
@@ -105,7 +100,6 @@ gen_openexr_pairs() {
 		"
 	done
 }
-
 gen_ax_depend() {
 	local s
 	for s in ${LLVM_COMPAT_AX[@]} ; do
@@ -117,7 +111,6 @@ gen_ax_depend() {
 		"
 	done
 }
-
 RDEPEND+="
 	>=dev-libs/boost-1.73:=
 	>=sys-libs/zlib-1.2.7:=
