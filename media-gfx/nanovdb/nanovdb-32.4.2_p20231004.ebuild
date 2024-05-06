@@ -3,23 +3,46 @@
 
 EAPI=8
 
-# This version corresponds to OpenVDB 10.0.1.
+# This version corresponds to OpenVDB 10.1.0.
+
+# For versioning, see
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.1.0/nanovdb/nanovdb/NanoVDB.h#L104
+# For dependencies, see
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.1.0/doc/dependencies.txt
+CMAKE_BUILD_TYPE="Release"
+CUDA_TARGETS_COMPAT=(
+	sm_75
+)
+EGIT_COMMIT="04644d4a38ce3e5282fe6573ae7631efc33729a9"
+GH_ORG_URI="https://github.com/AcademySoftwareFoundation"
+GTEST_PV="1.11.0"
+LEGACY_TBB_SLOT="2"
+OGT_COMMIT="e1743d37cf7a8128568769cf71cf598166c2cd30"
+OGT_DFN="ogt-${OGT_COMMIT:0:7}.tar.gz"
+ONETBB_SLOT="0"
+OPENEXR_V2_PV="2.5.11 2.5.10 2.5.9 2.5.8 2.5.7 2.5.6 2.5.5 2.5.4 2.5.3 2.5.2 2.5.0 2.4.3 2.4.2 2.4.1 2.4.0"
+OPENEXR_V3_PV="3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4 3.1.3 3.1.2 3.1.0"
 
 inherit cmake cuda flag-o-matic
+
+# Live ebuilds do not get keyworded.
+S_OGT="${WORKDIR}/ogt-${OGT_COMMIT}"
+S="${WORKDIR}/openvdb-${EGIT_COMMIT}/${PN}/${PN}"
+SRC_URI="
+${GH_ORG_URI}/openvdb/archive/${EGIT_COMMIT}.tar.gz
+	-> ${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz
+https://github.com/jpaver/opengametools/archive/${OGT_COMMIT}.tar.gz
+	-> ${OGT_DFN}
+"
 
 DESCRIPTION="A lightweight GPU friendly version of VDB initially targeting \
 rendering applications."
 HOMEPAGE="https://github.com/AcademySoftwareFoundation/openvdb/tree/feature/nanovdb/nanovdb"
 LICENSE="MPL-2.0"
-# For versioning, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.0.1/nanovdb/nanovdb/NanoVDB.h#L104
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-# Live ebuilds do not get keyworded.
 # cuda, optix, allow-fetchcontent are enabled upstream by default but
 # are disabled
-CUDA_TARGETS_COMPAT=(
-	sm_75
-)
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 +benchmark +blosc cuda -doc +examples +interactive-renderer -log4cplus
@@ -65,18 +88,6 @@ REQUIRED_USE+="
 		test
 	)
 "
-# For dependencies, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.0.1/doc/dependencies.txt
-EGIT_COMMIT="0ed0f19ea4fbb0d8bf64d3dca07abab3c7429803"
-GH_ORG_URI="https://github.com/AcademySoftwareFoundation"
-GTEST_PV="1.11.0"
-LEGACY_TBB_SLOT="2"
-OGT_COMMIT="e1743d37cf7a8128568769cf71cf598166c2cd30"
-ONETBB_SLOT="0"
-OPENEXR_V2_PV="2.5.8 2.5.7"
-
-OGT_DFN="ogt-${OGT_COMMIT:0:7}.tar.gz"
-
 gen_openexr_pairs() {
 	local pv
 	for pv in ${OPENEXR_V2_PV} ; do
@@ -89,12 +100,20 @@ gen_openexr_pairs() {
 			)
 		"
 	done
+	for pv in ${OPENEXR_V3_PV} ; do
+		echo "
+			(
+				openexr? (
+					~media-libs/openexr-${pv}:=[blosc?,log4cplus?,openexr?]
+				)
+				~dev-libs/imath-${pv}:=
+			)
+		"
+	done
 }
-
 DEPEND_GTEST="
 	>=dev-cpp/gtest-${GTEST_PV}
 "
-
 DEPEND+="
 	benchmark? (
 		${DEPEND_GTEST}
@@ -169,22 +188,12 @@ BDEPEND+="
 		>=dev-lang/icc-17
 	)
 "
-SRC_URI="
-${GH_ORG_URI}/openvdb/archive/${EGIT_COMMIT}.tar.gz
-	-> ${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz
-https://github.com/jpaver/opengametools/archive/${OGT_COMMIT}.tar.gz
-	-> ${OGT_DFN}
-"
-RESTRICT="mirror"
 PATCHES_=(
 	"${FILESDIR}/${PN}-32.3.3_p20211029-cmake-use-tarballs.patch"
 #	"${FILESDIR}/${PN}-25.0.0_pre20200924-opencl-version-120.patch"
 #	"${FILESDIR}/${PN}-25.0.0_pre20200924-change-examples-destdir.patch"
 #	"${FILESDIR}/${PN}-25.0.0_pre20200924-change-header-destdir.patch"
 )
-S="${WORKDIR}/openvdb-${EGIT_COMMIT}/${PN}/${PN}"
-S_OGT="${WORKDIR}/ogt-${OGT_COMMIT}"
-CMAKE_BUILD_TYPE="Release"
 
 is_crosscompile() {
 	[[ ${CHOST} != ${CTARGET} ]]

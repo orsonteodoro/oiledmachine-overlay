@@ -3,17 +3,17 @@
 
 EAPI=8
 
-# This version corresponds to OpenVDB 9.0.0.
+# This version corresponds to OpenVDB 11.0.0.
 
 # For versioning, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/nanovdb/nanovdb/NanoVDB.h#L104
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v11.0.0/nanovdb/nanovdb/NanoVDB.h#L104
 # For dependencies, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/doc/dependencies.txt
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v11.0.0/doc/dependencies.txt
 CMAKE_BUILD_TYPE="Release"
 CUDA_TARGETS_COMPAT=(
 	sm_75
 )
-EGIT_COMMIT="0ed0f19ea4fbb0d8bf64d3dca07abab3c7429803"
+EGIT_COMMIT="77f28d16114949dfbe2937aa2dae1379f6d2b653"
 GH_ORG_URI="https://github.com/AcademySoftwareFoundation"
 GTEST_PV="1.11.0"
 LEGACY_TBB_SLOT="2"
@@ -135,7 +135,7 @@ DEPEND+="
 	)
 	openvdb? (
 		>=dev-libs/boost-1.68
-		>=media-gfx/openvdb-9
+		>=media-gfx/openvdb-10
 		|| (
 			$(gen_openexr_pairs)
 		)
