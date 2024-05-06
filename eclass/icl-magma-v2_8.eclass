@@ -24,6 +24,9 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx908
 	gfx909
 	gfx90c
+	gfx940
+	gfx941
+	gfx942
 	gfx1010
 	gfx1011
 	gfx1012
@@ -206,6 +209,7 @@ if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 			local slot="0/${pv%.*}"
 			echo "
 				(
+					~dev-libs/rocm-core-${pv}:${slot}
 					~dev-util/hip-${pv}:${slot}[system-llvm=]
 					~sci-libs/hipBLAS-${pv}:${slot}
 					~sci-libs/hipSPARSE-${pv}:${slot}
@@ -285,13 +289,13 @@ RESTRICT="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2.7.1-path-changes.patch"
-	"${FILESDIR}/${PN}-2.7.1-make-inc.patch"
+	"${FILESDIR}/${PN}-2.8.0-path-changes.patch"
+	"${FILESDIR}/${PN}-2.8.0-make-inc.patch"
 	"${FILESDIR}/${PN}-2.7.1-mkl.patch"
 )
 S="${WORKDIR}/${PN}-${MY_PV}"
 
-icl-magma-v2_7_pkg_setup() {
+icl-magma-v2_8_pkg_setup() {
 	fortran-2_pkg_setup
 	python-any-r1_pkg_setup
 	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
@@ -520,7 +524,7 @@ eerror
 	emake generate
 }
 
-icl-magma-v2_7_src_prepare() {
+icl-magma-v2_8_src_prepare() {
 	# Let build script handle it.
 	unset CC
 	unset CXX
@@ -563,7 +567,7 @@ get_cuda_flags() {
 	echo "${list}"
 }
 
-icl-magma-v2_7_src_configure() {
+icl-magma-v2_8_src_configure() {
 	replace-flags '-O0' '-O1'
 
 	local mycmakeargs=(
@@ -695,11 +699,11 @@ ewarn
 	cmake_src_configure
 }
 
-icl-magma-v2_7_src_compile() {
+icl-magma-v2_8_src_compile() {
 	cmake_src_compile
 }
 
-icl-magma-v2_7_src_install() {
+icl-magma-v2_8_src_install() {
 	cmake_src_install
 	if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 		insinto "/usr/include/${PN}"

@@ -1,16 +1,16 @@
-diff -urp magma-2.7.2.orig/CMakeLists.txt magma-2.7.2/CMakeLists.txt
---- magma-2.7.2.orig/CMakeLists.txt	2023-08-25 06:15:37.000000000 -0700
-+++ magma-2.7.2/CMakeLists.txt	2023-09-03 08:45:59.933004440 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/CMakeLists.txt magma-2.8.0/CMakeLists.txt
+--- magma-2.8.0.orig/CMakeLists.txt	2024-03-28 05:23:41.000000000 -0700
++++ magma-2.8.0/CMakeLists.txt	2024-05-06 14:05:59.506081245 -0700
 @@ -323,7 +323,7 @@ endif()
  
  if (MAGMA_ENABLE_HIP)
    set( GPU_TARGET "gfx900" CACHE STRING "HIP architectures to compile for" )
--  list(APPEND CMAKE_PREFIX_PATH /opt/rocm /opt/rocm/hip)
-+  list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/hip)
+-  list(APPEND CMAKE_PREFIX_PATH /opt/rocm /opt/rocm/lib/cmake/hip)
++  list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip)
    find_package( HIP )
    if (HIP_FOUND)
      message( STATUS "Found HIP ${HIP_VERSION}" )
-@@ -451,7 +449,9 @@ if (LAPACK_LIBRARIES MATCHES mkl_core)
+@@ -456,7 +456,9 @@ if (LAPACK_LIBRARIES MATCHES mkl_core)
          if (NOT EXISTS ${MKLROOT})
              message( FATAL_ERROR "MKLROOT ${MKLROOT} directory does not exist." )
          endif()
@@ -20,7 +20,7 @@ diff -urp magma-2.7.2.orig/CMakeLists.txt magma-2.7.2/CMakeLists.txt
          add_definitions( -DMAGMA_WITH_MKL )
          message( STATUS "Define -DMAGMA_WITH_MKL" )
      endif()
-@@ -459,9 +459,9 @@ endif()
+@@ -464,9 +466,9 @@ endif()
  
  
  # ----------------------------------------
@@ -33,7 +33,7 @@ diff -urp magma-2.7.2.orig/CMakeLists.txt magma-2.7.2/CMakeLists.txt
  
  
  # ----------------------------------------
-@@ -711,7 +711,7 @@ add_custom_target( sparse-lib DEPENDS ma
+@@ -716,7 +718,7 @@ add_custom_target( sparse-lib DEPENDS ma
  # compile each tester
  
  # save testers to testing/
@@ -42,7 +42,7 @@ diff -urp magma-2.7.2.orig/CMakeLists.txt magma-2.7.2/CMakeLists.txt
  set( CMAKE_RUNTIME_OUTPUT_DIRECTORY testing )
  set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY testing_lib )
  set( CMAKE_LIBRARY_OUTPUT_DIRECTORY testing_lib )
-@@ -760,8 +760,8 @@ add_custom_target( sparse-testing DEPEND
+@@ -765,8 +767,8 @@ add_custom_target( sparse-testing DEPEND
  # what to install
  install( TARGETS magma magma_sparse ${blas_fix}
           RUNTIME DESTINATION bin
@@ -53,7 +53,7 @@ diff -urp magma-2.7.2.orig/CMakeLists.txt magma-2.7.2/CMakeLists.txt
  if (MAGMA_ENABLE_CUDA)
    file( GLOB headers include/*.h sparse/include/*.h "${CMAKE_BINARY_DIR}/include/*.h" )
  else()
-@@ -781,8 +781,10 @@ foreach(dir ${MAGMA_INCLUDE})
+@@ -786,8 +788,10 @@ foreach(dir ${MAGMA_INCLUDE})
      string(APPEND INCLUDE_COMPILER_STRING "-I${dir} ")
  endforeach()
  set( MAGMA_INCLUDE "${INCLUDE_COMPILER_STRING}" )
@@ -66,7 +66,7 @@ diff -urp magma-2.7.2.orig/CMakeLists.txt magma-2.7.2/CMakeLists.txt
  set( INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}" )
  set( CFLAGS "${CMAKE_C_FLAGS}" )
  set( CXXFLAGS "${CMAKE_CXX_FLAGS}" )
-@@ -797,9 +799,9 @@ else()
+@@ -802,9 +806,9 @@ else()
  #    "${blas_fix_lib} ${LAPACK_LIBS} hip::device roc::hipblas roc::hipsparse" )
  endif()
  set( MAGMA_REQUIRED "" )
@@ -79,9 +79,9 @@ diff -urp magma-2.7.2.orig/CMakeLists.txt magma-2.7.2/CMakeLists.txt
  
  # ----------------------------------------
  get_directory_property( compile_definitions COMPILE_DEFINITIONS )
-diff -urp magma-2.7.2.orig/docs/documentation.txt magma-2.7.2/docs/documentation.txt
---- magma-2.7.2.orig/docs/documentation.txt	2023-08-25 06:15:30.000000000 -0700
-+++ magma-2.7.2/docs/documentation.txt	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/docs/documentation.txt magma-2.8.0/docs/documentation.txt
+--- magma-2.8.0.orig/docs/documentation.txt	2024-03-28 05:23:39.000000000 -0700
++++ magma-2.8.0/docs/documentation.txt	2024-05-06 13:59:32.069271750 -0700
 @@ -78,7 +78,7 @@ For bash (sh), put in `~/.bashrc` (with
  
  For csh/tcsh, put in `~/.cshrc`:
@@ -155,9 +155,9 @@ diff -urp magma-2.7.2.orig/docs/documentation.txt magma-2.7.2/docs/documentation
  
  
  Tuning
-diff -urp magma-2.7.2.orig/example/Makefile magma-2.7.2/example/Makefile
---- magma-2.7.2.orig/example/Makefile	2023-08-25 06:15:31.000000000 -0700
-+++ magma-2.7.2/example/Makefile	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/example/Makefile magma-2.8.0/example/Makefile
+--- magma-2.8.0.orig/example/Makefile	2024-03-28 05:23:44.000000000 -0700
++++ magma-2.8.0/example/Makefile	2024-05-06 13:59:32.073271718 -0700
 @@ -7,8 +7,8 @@
  # MAGMADIR can be .. to test without installing.
  #MAGMADIR     ?= ..
@@ -184,9 +184,9 @@ diff -urp magma-2.7.2.orig/example/Makefile magma-2.7.2/example/Makefile
  
  
  # ----------------------------------------
-diff -urp magma-2.7.2.orig/example/README.txt magma-2.7.2/example/README.txt
---- magma-2.7.2.orig/example/README.txt	2023-08-25 06:15:31.000000000 -0700
-+++ magma-2.7.2/example/README.txt	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/example/README.txt magma-2.8.0/example/README.txt
+--- magma-2.8.0.orig/example/README.txt	2024-03-28 05:23:43.000000000 -0700
++++ magma-2.8.0/example/README.txt	2024-05-06 13:59:32.073271718 -0700
 @@ -39,7 +39,7 @@ make.inc for how Fortran functions are n
  common is ADD_, where Fortran adds an underscore after the function. Usually,
  you can tell the convention by using nm to examine your BLAS library:
@@ -245,9 +245,9 @@ diff -urp magma-2.7.2.orig/example/README.txt magma-2.7.2/example/README.txt
  
  then use 'pkg-config --cflags magma' and 'pkg-config --libs magma' as shown in
  the Makefile.
-diff -urp magma-2.7.2.orig/fortran/Makefile magma-2.7.2/fortran/Makefile
---- magma-2.7.2.orig/fortran/Makefile	2023-08-25 06:15:37.000000000 -0700
-+++ magma-2.7.2/fortran/Makefile	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/fortran/Makefile magma-2.8.0/fortran/Makefile
+--- magma-2.8.0.orig/fortran/Makefile	2024-03-28 05:23:40.000000000 -0700
++++ magma-2.8.0/fortran/Makefile	2024-05-06 13:59:32.073271718 -0700
 @@ -14,7 +14,7 @@ CFLAGS     = -Wall -I$(MAGMADIR)/include
  CXXFLAGS   = -Wall -I$(MAGMADIR)/include -I$(CUDADIR)/include
  FCFLAGS    = -Wall -Wno-unused-function
@@ -257,9 +257,9 @@ diff -urp magma-2.7.2.orig/fortran/Makefile magma-2.7.2/fortran/Makefile
  
  # BLAS and LAPACK libraries
  # framework Accelerate is for MacOS
-diff -urp magma-2.7.2.orig/include/magma_types.h magma-2.7.2/include/magma_types.h
---- magma-2.7.2.orig/include/magma_types.h	2023-08-25 06:15:30.000000000 -0700
-+++ magma-2.7.2/include/magma_types.h	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/include/magma_types.h magma-2.8.0/include/magma_types.h
+--- magma-2.8.0.orig/include/magma_types.h	2024-03-28 05:22:52.000000000 -0700
++++ magma-2.8.0/include/magma_types.h	2024-05-06 13:59:32.073271718 -0700
 @@ -176,7 +176,7 @@ typedef double real_Double_t;
       *
       * To generate a list of these, first remove all these macro definitions, run a `make clean`
@@ -269,9 +269,9 @@ diff -urp magma-2.7.2.orig/include/magma_types.h magma-2.7.2/include/magma_types
       *     | grep "use of undeclared identifier" \
       *     | awk '{gsub("'"'"'", "", $7) ; gsub(";", "", $7) ; print $7}'
       *
-diff -urp magma-2.7.2.orig/lib/pkgconfig/magma.pc.in magma-2.7.2/lib/pkgconfig/magma.pc.in
---- magma-2.7.2.orig/lib/pkgconfig/magma.pc.in	2023-08-25 06:15:44.000000000 -0700
-+++ magma-2.7.2/lib/pkgconfig/magma.pc.in	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/lib/pkgconfig/magma.pc.in magma-2.8.0/lib/pkgconfig/magma.pc.in
+--- magma-2.8.0.orig/lib/pkgconfig/magma.pc.in	2024-03-28 05:24:10.000000000 -0700
++++ magma-2.8.0/lib/pkgconfig/magma.pc.in	2024-05-06 13:59:32.073271718 -0700
 @@ -1,6 +1,6 @@
  prefix=@INSTALL_PREFIX@
  exec_prefix=${prefix}
@@ -280,9 +280,9 @@ diff -urp magma-2.7.2.orig/lib/pkgconfig/magma.pc.in magma-2.7.2/lib/pkgconfig/m
  includedir=${prefix}/include
  
  Name: magma
-diff -urp magma-2.7.2.orig/make.check-cuda magma-2.7.2/make.check-cuda
---- magma-2.7.2.orig/make.check-cuda	2023-08-25 06:15:44.000000000 -0700
-+++ magma-2.7.2/make.check-cuda	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.check-cuda magma-2.8.0/make.check-cuda
+--- magma-2.8.0.orig/make.check-cuda	2024-03-28 05:23:40.000000000 -0700
++++ magma-2.8.0/make.check-cuda	2024-05-06 13:59:32.073271718 -0700
 @@ -2,11 +2,11 @@
  ifeq ($(CUDADIR),)
      cuda := $(shell which nvcc | perl -pe 's|/bin/nvcc||')
@@ -297,28 +297,29 @@ diff -urp magma-2.7.2.orig/make.check-cuda magma-2.7.2/make.check-cuda
 -$(error $$CUDADIR=$(CUDADIR) does not exist. Please set $$CUDADIR to where CUDA is installed. (normally in /usr/local/cuda))
 +$(error $$CUDADIR=$(CUDADIR) does not exist. Please set $$CUDADIR to where CUDA is installed. (normally in /opt/cuda))
  endif
-diff -urp magma-2.7.2.orig/make.check-hip magma-2.7.2/make.check-hip
---- magma-2.7.2.orig/make.check-hip	2023-08-25 06:15:40.000000000 -0700
-+++ magma-2.7.2/make.check-hip	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.check-hip magma-2.8.0/make.check-hip
+--- magma-2.8.0.orig/make.check-hip	2024-03-28 05:24:03.000000000 -0700
++++ magma-2.8.0/make.check-hip	2024-05-06 14:05:13.342466339 -0700
 @@ -2,13 +2,13 @@
- ifeq ($(HIPDIR),)
-     hip := $(shell which hipcc | perl -pe 's|/bin/hipcc||')
-     ifeq ($(hip),)
--        hip := /opt/rocm/hip
-+        hip := @ESYSROOT_ROCM_PATH@
+ ifeq ($(ROCM_PATH),)
+     rocm := $(shell which hipcc | perl -pe 's|/bin/hipcc||')
+     ifeq ($(rocm),)
+-        rocm := /opt/rocm
++        rocm := @ESYSROOT_ROCM_PATH@
      endif
-     $(error Set $$HIPDIR, preferably in your environment, e.g., run "export HIPDIR=$(hip)" in ~/.bashrc, or "setenv HIPDIR $(hip)" in ~/.cshrc)
+-    $(error Set $$ROCM_PATH, preferably in your environment, e.g., run "export ROCM_PATH=/opt/rocm" in ~/.bashrc, or "setenv ROCM_PATH $(rocm)" in ~/.cshrc)
++    $(error Set $$ROCM_PATH, preferably in your environment, e.g., run "export ROCM_PATH=@ESYSROOT_ROCM_PATH@" in ~/.bashrc, or "setenv ROCM_PATH $(rocm)" in ~/.cshrc)
  endif
  
- ifeq ($(wildcard $(HIPDIR)),)
--$(error $$HIPDIR=$(HIPDIR) does not exist. Please set $$HIPDIR to where HIP is installed. (normally in /opt/rocm/hip))
-+$(error $$HIPDIR=$(HIPDIR) does not exist. Please set $$HIPDIR to where HIP is installed. (normally in @ESYSROOT_ROCM_PATH@))
+ ifeq ($(wildcard $(ROCM_PATH)),)
+-$(error $$ROCM_PATH=$(ROCM_PATH) does not exist. Please set $$ROCM_PATH to where ROCM is installed. (normally in /opt/rocm))
++$(error $$ROCM_PATH=$(ROCM_PATH) does not exist. Please set $$ROCM_PATH to where ROCM is installed. (normally in @ESYSROOT_ROCM_PATH@))
  endif
  
- # don't compile HIP platfo
-diff -urp magma-2.7.2.orig/make.check-openblas magma-2.7.2/make.check-openblas
---- magma-2.7.2.orig/make.check-openblas	2023-08-25 06:15:31.000000000 -0700
-+++ magma-2.7.2/make.check-openblas	2023-09-03 08:42:33.857007192 -0700
+ # don't compile ROCM platform on CUDA
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.check-openblas magma-2.8.0/make.check-openblas
+--- magma-2.8.0.orig/make.check-openblas	2024-03-28 05:23:40.000000000 -0700
++++ magma-2.8.0/make.check-openblas	2024-05-06 13:59:32.077271685 -0700
 @@ -3,7 +3,7 @@
  # this assumes LAPACK is part of OpenBLAS library.
  
@@ -328,17 +329,17 @@ diff -urp magma-2.7.2.orig/make.check-openblas magma-2.7.2/make.check-openblas
  endif
  
  ifeq ($(wildcard $(OPENBLASDIR)),)
-diff -urp magma-2.7.2.orig/Makefile magma-2.7.2/Makefile
---- magma-2.7.2.orig/Makefile	2023-08-25 06:20:12.000000000 -0700
-+++ magma-2.7.2/Makefile	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/Makefile magma-2.8.0/Makefile
+--- magma-2.8.0.orig/Makefile	2024-03-28 05:30:01.000000000 -0700
++++ magma-2.8.0/Makefile	2024-05-06 14:04:30.318820535 -0700
 @@ -21,8 +21,8 @@ include make.inc
  BACKEND     ?= cuda
  
  # set these to their real paths
 -CUDADIR     ?= /usr/local/cuda
--HIPDIR      ?= /opt/rocm/hip
+-ROCM_PATH   ?= /opt/rocm
 +CUDADIR     ?= /opt/cuda
-+HIPDIR      ?= @ESYSROOT_ROCM_PATH@
++ROCM_PATH   ?= @ESYSROOT_ROCM_PATH@
  
  # require either hip or cuda
  ifeq (,$(findstring $(BACKEND),"hip cuda"))
@@ -379,7 +380,7 @@ diff -urp magma-2.7.2.orig/Makefile magma-2.7.2/Makefile
  lib/clean: blas_fix/clean sparse/clean
  	-rm -f $(libmagma_a) $(libmagma_so) $(libmagma_obj)
  
-@@ -925,7 +925,7 @@ ifneq ($(have_fpic),)
+@@ -926,7 +926,7 @@ ifneq ($(have_fpic),)
  	@echo "===== shared library $@"
  	$(CXX) $(LDFLAGS) -shared -o $@ \
  		$^ \
@@ -388,7 +389,7 @@ diff -urp magma-2.7.2.orig/Makefile magma-2.7.2/Makefile
  	@echo
  
      # Can't add -Llib -lmagma to LIBS, because that would apply to libsparse_so's
-@@ -935,7 +935,7 @@ ifneq ($(have_fpic),)
+@@ -936,7 +936,7 @@ ifneq ($(have_fpic),)
  	@echo "===== shared library $@"
  	$(CXX) $(LDFLAGS) -shared -o $@ \
  		$^ \
@@ -397,7 +398,7 @@ diff -urp magma-2.7.2.orig/Makefile magma-2.7.2/Makefile
  	@echo
  else
      # missing -fPIC: "make shared" prints warning
-@@ -951,7 +951,7 @@ $(testers): %: %.$(o_ext)
+@@ -952,7 +952,7 @@ $(testers): %: %.$(o_ext)
  	$(CXX) $(LDFLAGS) $(RPATH) \
  	-o $@ $< \
  	-L./testing -ltest \
@@ -406,7 +407,7 @@ diff -urp magma-2.7.2.orig/Makefile magma-2.7.2/Makefile
  	-L./testing/lin -llapacktest \
  	$(LIBS)
  
-@@ -961,7 +961,7 @@ $(testers_f): %: %.$(o_ext)
+@@ -962,7 +962,7 @@ $(testers_f): %: %.$(o_ext)
  	-o $@ $< \
  	-L./testing -ltest \
  	-L./testing/lin -llapacktest \
@@ -415,7 +416,7 @@ diff -urp magma-2.7.2.orig/Makefile magma-2.7.2/Makefile
  	$(LIBS)
  
  # link sparse testing_foo from testing_foo.o
-@@ -969,7 +969,7 @@ $(sparse_testers): %: %.$(o_ext)
+@@ -970,7 +970,7 @@ $(sparse_testers): %: %.$(o_ext)
  	$(CXX) $(LDFLAGS) $(RPATH) \
  	-o $@ $< \
  	-L./testing -ltest \
@@ -424,9 +425,9 @@ diff -urp magma-2.7.2.orig/Makefile magma-2.7.2/Makefile
  	$(LIBS)
  
  
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.acml magma-2.7.2/make.inc-examples/make.inc.acml
---- magma-2.7.2.orig/make.inc-examples/make.inc.acml	2023-08-25 06:15:37.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.acml	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.acml magma-2.8.0/make.inc-examples/make.inc.acml
+--- magma-2.8.0.orig/make.inc-examples/make.inc.acml	2024-03-28 05:22:51.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.acml	2024-05-06 13:59:32.077271685 -0700
 @@ -74,12 +74,12 @@ LIB      += -lcublas -lcusparse -lcudart
  
  # define library directories preferably in your environment, or here.
@@ -443,9 +444,9 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.acml magma-2.7.2/make.inc-
  
  INC       = -I$(CUDADIR)/include \
              -I$(ACMLDIR)/gfortran64_mp/include
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.atlas magma-2.7.2/make.inc-examples/make.inc.atlas
---- magma-2.7.2.orig/make.inc-examples/make.inc.atlas	2023-08-25 06:15:37.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.atlas	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.atlas magma-2.8.0/make.inc-examples/make.inc.atlas
+--- magma-2.8.0.orig/make.inc-examples/make.inc.atlas	2024-03-28 05:22:50.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.atlas	2024-05-06 13:59:32.077271685 -0700
 @@ -75,12 +75,12 @@ LIB      += -lcublas -lcusparse -lcudart
  # define library directories preferably in your environment, or here.
  #LAPACKDIR ?= /opt/lapack
@@ -462,44 +463,34 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.atlas magma-2.7.2/make.inc
 +            -L$(ATLASDIR)/@LIBDIR@
  
  INC       = -I$(CUDADIR)/include
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-mkl magma-2.7.2/make.inc-examples/make.inc.hip-gcc-mkl
---- magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-mkl	2023-08-25 06:15:37.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.hip-gcc-mkl	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.hip-gcc-mkl magma-2.8.0/make.inc-examples/make.inc.hip-gcc-mkl
+--- magma-2.8.0.orig/make.inc-examples/make.inc.hip-gcc-mkl	2024-03-28 05:22:50.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.hip-gcc-mkl	2024-05-06 14:08:54.912581110 -0700
 @@ -33,8 +33,8 @@
  BACKEND      = hip
  
  # set these to their real paths
--HIPDIR  ?= /opt/rocm/hip
--CUDADIR ?= /usr/local/cuda
-+HIPDIR  ?= @ESYSROOT_ROCM_PATH@
-+CUDADIR ?= /opt/cuda
+-ROCM_PATH ?= /opt/rocm
+-CUDADIR   ?= /usr/local/cuda
++ROCM_PATH ?= @ESYSROOT_ROCM_PATH@
++CUDADIR   ?= /opt/cuda
  
  # require either hip or cuda
  ifeq (,$(findstring $(BACKEND),hip cuda))
-@@ -92,7 +92,7 @@ FPIC        = -fPIC
- #   the compiler sometimes, so we need to add -L here too if there are problems
- FOPENMP     = -fopenmp
- #FOPENMP     =
--#FOPENMP     = -fopenmp -L$(HIPDIR)/../aomp/lib -I$(HIPDIR)/../aomp/include
-+#FOPENMP     = -fopenmp -L/opt/aomp/@AOMP_SLOT@/@LIBDIR@ -I/opt/aomp/@AOMP_SLOT@/include
- 
- # now, generate our flags
- CFLAGS      = -O3 $(FPIC) $(FOPENMP) -DNDEBUG -DADD_ -Wall -std=c99
-@@ -141,10 +141,10 @@ endif
+@@ -144,10 +144,10 @@ endif
  #   folders
  ifeq ($(BACKEND),cuda)
      INC    += -I$(CUDADIR)/include
 -    LIBDIR += -L$(CUDADIR)/lib64 -L$(MKLROOT)/lib/intel64
 +    LIBDIR += -L$(CUDADIR)/@LIBDIR@ -L$(MKLROOT)/lib/intel64
  else ifeq ($(BACKEND),hip)
--    INC    += -I$(HIPDIR)/../include
--    LIBDIR += -L$(HIPDIR)/../aomp/lib -L$(HIPDIR)/../hipblas/lib -L$(HIPDIR)/../hipsparse/lib -L$(MKLROOT)/lib/intel64
-+    INC    += -I$(HIPDIR)/include
-+    LIBDIR += -L/opt/aomp/@AOMP_SLOT@/@LIBDIR@ -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -L$(MKLROOT)/lib/intel64
+     INC    += -I$(ROCM_PATH)/include
+-    LIBDIR += -L$(ROCM_PATH)/lib -L$(MKLROOT)/lib/intel64
++    LIBDIR += -L$(ROCM_PATH)/@LIBDIR@ -L$(MKLROOT)/lib/intel64
  endif
  
  
-@@ -153,8 +153,8 @@ endif
+@@ -156,8 +156,8 @@ endif
  
  # check for MKL
  # define library directories preferably in your environment, or here.
@@ -510,18 +501,18 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-mkl magma-2.7.2/ma
  -include make.check-mkl
  
  # checks for the specified backend
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-openblas magma-2.7.2/make.inc-examples/make.inc.hip-gcc-openblas
---- magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-openblas	2023-08-25 06:15:37.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.hip-gcc-openblas	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.hip-gcc-openblas magma-2.8.0/make.inc-examples/make.inc.hip-gcc-openblas
+--- magma-2.8.0.orig/make.inc-examples/make.inc.hip-gcc-openblas	2024-03-28 05:22:50.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.hip-gcc-openblas	2024-05-06 14:10:58.155527071 -0700
 @@ -33,9 +33,9 @@
  BACKEND      = hip
  
  # set these to their real paths
 -OPENBLASDIR ?= /usr/local/openblas
--HIPDIR      ?= /opt/rocm/hip
+-ROCM_PATH   ?= /opt/rocm
 -CUDADIR     ?= /usr/local/cuda
 +OPENBLASDIR ?= /usr
-+HIPDIR      ?= @ESYSROOT_ROCM_PATH@
++ROCM_PATH   ?= @ESYSROOT_ROCM_PATH@
 +CUDADIR     ?= /opt/cuda
  
  # require either hip or cuda
@@ -530,12 +521,12 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-openblas magma-2.7
  #   the compiler sometimes, so we need to add -L here too if there are problems
  FOPENMP     = -fopenmp
  #FOPENMP     =
--#FOPENMP     = -fopenmp -L$(HIPDIR)/../aomp/lib -I$(HIPDIR)/../aomp/include
-+#FOPENMP     = -fopenmp -L/opt/aomp/@AOMP_SLOT@/@LIBDIR@ -I/opt/aomp/@AOMP_SLOT@/include
+-#FOPENMP     = -fopenmp -L$(ROCM_PATH)/lib -I$(ROCM_PATH)/include
++#FOPENMP     = -fopenmp -L$(ROCM_PATH)/@LIBDIR@ -I$(ROCM_PATH)/include
  
  # now, generate our flags
  CFLAGS      = -O3 $(FPIC) $(FOPENMP) -DNDEBUG -DADD_ -Wall -std=c99
-@@ -140,7 +140,7 @@ endif
+@@ -143,7 +143,7 @@ endif
  # directories
  
  # define library directories preferably in your environment, or here.
@@ -544,23 +535,22 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-openblas magma-2.7
  
  # include each's directories
  # note: we don't need to include the library directories, since nvcc or hipcc
-@@ -148,10 +148,10 @@ LIBDIR    += -L$(OPENBLASDIR)/lib
+@@ -151,10 +151,10 @@ LIBDIR    += -L$(OPENBLASDIR)/lib
  #   folders
  ifeq ($(BACKEND),cuda)
      INC    += -I$(CUDADIR)/include
 -    LIBDIR += -L$(CUDADIR)/lib64
 +    LIBDIR += -L$(CUDADIR)/@LIBDIR@
  else ifeq ($(BACKEND),hip)
--    INC    += -I$(HIPDIR)/../include
--    LIBDIR += -L$(HIPDIR)/../aomp/lib -L$(HIPDIR)/../hipblas/lib -L$(HIPDIR)/../hipsparse/lib
-+    INC    += -I$(HIPDIR)/include
-+    LIBDIR += -L/opt/aomp/@AOMP_SLOT@/@LIBDIR@ -L@ESYSROOT_ROCM_PATH@/@LIBDIR@
+     INC    += -I$(ROCM_PATH)/include
+-    LIBDIR += -L$(ROCM_PATH)/lib
++    LIBDIR += -L$(ROCM_PATH)/@LIBDIR@
  endif
  
  
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.macos magma-2.7.2/make.inc-examples/make.inc.macos
---- magma-2.7.2.orig/make.inc-examples/make.inc.macos	2023-08-25 06:15:37.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.macos	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.macos magma-2.8.0/make.inc-examples/make.inc.macos
+--- magma-2.8.0.orig/make.inc-examples/make.inc.macos	2024-03-28 05:22:51.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.macos	2024-05-06 13:59:32.077271685 -0700
 @@ -83,10 +83,10 @@ LIB      += -lcublas -lcusparse -lcudart
  # directories
  
@@ -574,9 +564,9 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.macos magma-2.7.2/make.inc
  
  INC       = -I$(CUDADIR)/include
  
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.macos-debug magma-2.7.2/make.inc-examples/make.inc.macos-debug
---- magma-2.7.2.orig/make.inc-examples/make.inc.macos-debug	2023-08-25 06:15:37.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.macos-debug	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.macos-debug magma-2.8.0/make.inc-examples/make.inc.macos-debug
+--- magma-2.8.0.orig/make.inc-examples/make.inc.macos-debug	2024-03-28 05:22:50.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.macos-debug	2024-05-06 13:59:32.077271685 -0700
 @@ -83,10 +83,10 @@ LIB      += -lcublas -lcusparse -lcudart
  # directories
  
@@ -590,9 +580,9 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.macos-debug magma-2.7.2/ma
  
  INC       = -I$(CUDADIR)/include
  
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.macos-mkl magma-2.7.2/make.inc-examples/make.inc.macos-mkl
---- magma-2.7.2.orig/make.inc-examples/make.inc.macos-mkl	2023-08-25 06:15:36.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.macos-mkl	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.macos-mkl magma-2.8.0/make.inc-examples/make.inc.macos-mkl
+--- magma-2.8.0.orig/make.inc-examples/make.inc.macos-mkl	2024-03-28 05:22:50.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.macos-mkl	2024-05-06 13:59:32.077271685 -0700
 @@ -75,10 +75,10 @@ LIB      += -lcublas -lcusparse -lcudart
  # directories
  
@@ -607,9 +597,9 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.macos-mkl magma-2.7.2/make
 +            -L$(MKLROOT)/@LIBDIR@
  
  INC       = -I$(CUDADIR)/include
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.macos-openmp magma-2.7.2/make.inc-examples/make.inc.macos-openmp
---- magma-2.7.2.orig/make.inc-examples/make.inc.macos-openmp	2023-08-25 06:15:36.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.macos-openmp	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.macos-openmp magma-2.8.0/make.inc-examples/make.inc.macos-openmp
+--- magma-2.8.0.orig/make.inc-examples/make.inc.macos-openmp	2024-03-28 05:22:51.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.macos-openmp	2024-05-06 13:59:32.081271652 -0700
 @@ -83,10 +83,10 @@ LIB      += -lcublas -lcusparse -lcudart
  # directories
  
@@ -623,9 +613,9 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.macos-openmp magma-2.7.2/m
  
  INC       = -I$(CUDADIR)/include
  
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc magma-2.7.2/make.inc-examples/make.inc.mkl-gcc
---- magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc	2023-08-25 06:15:37.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.mkl-gcc	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-gcc magma-2.8.0/make.inc-examples/make.inc.mkl-gcc
+--- magma-2.8.0.orig/make.inc-examples/make.inc.mkl-gcc	2024-03-28 05:22:51.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.mkl-gcc	2024-05-06 13:59:32.081271652 -0700
 @@ -71,13 +71,13 @@ LIB      += -lcublas -lcusparse -lcudart
  # directories
  
@@ -644,9 +634,9 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc magma-2.7.2/make.i
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc-debug magma-2.7.2/make.inc-examples/make.inc.mkl-gcc-debug
---- magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc-debug	2023-08-25 06:15:37.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.mkl-gcc-debug	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-gcc-debug magma-2.8.0/make.inc-examples/make.inc.mkl-gcc-debug
+--- magma-2.8.0.orig/make.inc-examples/make.inc.mkl-gcc-debug	2024-03-28 05:22:51.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.mkl-gcc-debug	2024-05-06 13:59:32.081271652 -0700
 @@ -71,13 +71,13 @@ LIB      += -lcublas -lcusparse -lcudart
  # directories
  
@@ -665,9 +655,9 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc-debug magma-2.7.2/
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc-ilp64 magma-2.7.2/make.inc-examples/make.inc.mkl-gcc-ilp64
---- magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc-ilp64	2023-08-25 06:15:36.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.mkl-gcc-ilp64	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-gcc-ilp64 magma-2.8.0/make.inc-examples/make.inc.mkl-gcc-ilp64
+--- magma-2.8.0.orig/make.inc-examples/make.inc.mkl-gcc-ilp64	2024-03-28 05:22:50.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.mkl-gcc-ilp64	2024-05-06 13:59:32.081271652 -0700
 @@ -87,13 +87,13 @@ LIB      += -lcublas -lcusparse -lcudart
  # directories
  
@@ -686,9 +676,9 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc-ilp64 magma-2.7.2/
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc-ilp64-debug magma-2.7.2/make.inc-examples/make.inc.mkl-gcc-ilp64-debug
---- magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc-ilp64-debug	2023-08-25 06:15:36.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.mkl-gcc-ilp64-debug	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-gcc-ilp64-debug magma-2.8.0/make.inc-examples/make.inc.mkl-gcc-ilp64-debug
+--- magma-2.8.0.orig/make.inc-examples/make.inc.mkl-gcc-ilp64-debug	2024-03-28 05:22:51.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.mkl-gcc-ilp64-debug	2024-05-06 13:59:32.081271652 -0700
 @@ -87,13 +87,13 @@ LIB      += -lcublas -lcusparse -lcudart
  # directories
  
@@ -707,9 +697,9 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc-ilp64-debug magma-
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc magma-2.7.2/make.inc-examples/make.inc.mkl-icc
---- magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc	2023-08-25 06:15:36.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.mkl-icc	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc magma-2.8.0/make.inc-examples/make.inc.mkl-icc
+--- magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc	2024-03-28 05:22:50.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.mkl-icc	2024-05-06 13:59:32.081271652 -0700
 @@ -66,13 +66,13 @@ LIB      += -lcublas -lcusparse -lcudart
  # directories
  
@@ -728,9 +718,9 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc magma-2.7.2/make.i
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc-debug magma-2.7.2/make.inc-examples/make.inc.mkl-icc-debug
---- magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc-debug	2023-08-25 06:15:37.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.mkl-icc-debug	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc-debug magma-2.8.0/make.inc-examples/make.inc.mkl-icc-debug
+--- magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc-debug	2024-03-28 05:22:50.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.mkl-icc-debug	2024-05-06 13:59:32.081271652 -0700
 @@ -66,13 +66,13 @@ LIB      += -lcublas -lcusparse -lcudart
  # directories
  
@@ -749,9 +739,9 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc-debug magma-2.7.2/
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc-ilp64 magma-2.7.2/make.inc-examples/make.inc.mkl-icc-ilp64
---- magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc-ilp64	2023-08-25 06:15:37.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.mkl-icc-ilp64	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc-ilp64 magma-2.8.0/make.inc-examples/make.inc.mkl-icc-ilp64
+--- magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc-ilp64	2024-03-28 05:22:51.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.mkl-icc-ilp64	2024-05-06 13:59:32.081271652 -0700
 @@ -82,13 +82,13 @@ LIB      += -lcublas -lcusparse -lcudart
  # directories
  
@@ -770,9 +760,9 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc-ilp64 magma-2.7.2/
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc-ilp64-debug magma-2.7.2/make.inc-examples/make.inc.mkl-icc-ilp64-debug
---- magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc-ilp64-debug	2023-08-25 06:15:37.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.mkl-icc-ilp64-debug	2023-09-03 08:42:33.857007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc-ilp64-debug magma-2.8.0/make.inc-examples/make.inc.mkl-icc-ilp64-debug
+--- magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc-ilp64-debug	2024-03-28 05:22:50.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.mkl-icc-ilp64-debug	2024-05-06 13:59:32.081271652 -0700
 @@ -82,13 +82,13 @@ LIB      += -lcublas -lcusparse -lcudart
  # directories
  
@@ -791,19 +781,19 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc-ilp64-debug magma-
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.openblas magma-2.7.2/make.inc-examples/make.inc.openblas
---- magma-2.7.2.orig/make.inc-examples/make.inc.openblas	2023-08-25 06:15:37.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.openblas	2023-09-03 08:42:33.861007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.openblas magma-2.8.0/make.inc-examples/make.inc.openblas
+--- magma-2.8.0.orig/make.inc-examples/make.inc.openblas	2024-03-28 05:22:51.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.openblas	2024-05-06 14:12:28.682752822 -0700
 @@ -16,9 +16,9 @@
  BACKEND     ?= cuda
  
  # set these to their real paths
 -OPENBLASDIR ?= /usr/local/openblas
 -CUDADIR     ?= /usr/local/cuda
--HIPDIR      ?= /opt/rocm/hip
+-ROCM_PATH   ?= /opt/rocm
 +OPENBLASDIR ?= /usr
 +CUDADIR     ?= /opt/cuda
-+HIPDIR      ?= @ESYSROOT_ROCM_PATH@
++ROCM_PATH   ?= @ESYSROOT_ROCM_PATH@
  
  # require either hip or cuda
  ifeq (,$(findstring $(BACKEND),hip cuda))
@@ -825,20 +815,18 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.openblas magma-2.7.2/make.
      LIB    += -lcublas -lcusparse -lcudart -lcudadevrt
  endif
  
-@@ -117,8 +117,8 @@ ifeq ($(BACKEND),hip)
- 
+@@ -118,7 +118,7 @@ ifeq ($(BACKEND),hip)
      DEVCCFLAGS += $(FPIC) -std=c++11
  
--    INC    += -I$(HIPDIR)/../include
--    LIBDIR += -L$(HIPDIR)/../aomp/lib -L$(HIPDIR)/../hipblas/lib -L$(HIPDIR)/../hipsparse/lib
-+    INC    += -I$(HIPDIR)/include
-+    LIBDIR += -L/opt/aomp/@AOMP_SLOT@/@LIBDIR@ -L@ESYSROOT_ROCM_PATH@/@LIBDIR@
+     INC    += -I$(ROCM_PATH)/include
+-    LIBDIR += -L$(ROCM_PATH)/lib
++    LIBDIR += -L$(ROCM_PATH)/@LIBDIR@
      LIB    += -lhipblas -lhipsparse
  endif
  
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.openblas-debug magma-2.7.2/make.inc-examples/make.inc.openblas-debug
---- magma-2.7.2.orig/make.inc-examples/make.inc.openblas-debug	2023-08-25 06:15:37.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.openblas-debug	2023-09-03 08:42:33.861007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.openblas-debug magma-2.8.0/make.inc-examples/make.inc.openblas-debug
+--- magma-2.8.0.orig/make.inc-examples/make.inc.openblas-debug	2024-03-28 05:22:51.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.openblas-debug	2024-05-06 13:59:32.081271652 -0700
 @@ -65,12 +65,12 @@ LIB      += -lcublas -lcusparse -lcudart
  # directories
  
@@ -856,9 +844,9 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.openblas-debug magma-2.7.2
 +            -L$(OPENBLASDIR)/@LIBDIR@
  
  INC       = -I$(CUDADIR)/include
-diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.power9-essl magma-2.7.2/make.inc-examples/make.inc.power9-essl
---- magma-2.7.2.orig/make.inc-examples/make.inc.power9-essl	2023-08-25 06:15:36.000000000 -0700
-+++ magma-2.7.2/make.inc-examples/make.inc.power9-essl	2023-09-03 08:42:33.861007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/make.inc-examples/make.inc.power9-essl magma-2.8.0/make.inc-examples/make.inc.power9-essl
+--- magma-2.8.0.orig/make.inc-examples/make.inc.power9-essl	2024-03-28 05:22:50.000000000 -0700
++++ magma-2.8.0/make.inc-examples/make.inc.power9-essl	2024-05-06 13:59:32.085271619 -0700
 @@ -65,12 +65,12 @@ LIB      += -lcublas -lcusparse -lcudart
  
  # define library directories preferably in your environment, or here.
@@ -875,24 +863,9 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.power9-essl magma-2.7.2/ma
  
  INC       = -I$(OLCF_CUDA_ROOT)/include \
              -I$(OLCF_ESSL_ROOT)/include -I$(OLCF_NETLIB_LAPACK_ROOT)/include
-diff -urp magma-2.7.2.orig/sparse_hip/include/magmasparse_types.h magma-2.7.2/sparse_hip/include/magmasparse_types.h
---- magma-2.7.2.orig/sparse_hip/include/magmasparse_types.h	2023-08-25 06:15:54.000000000 -0700
-+++ magma-2.7.2/sparse_hip/include/magmasparse_types.h	2023-09-03 08:42:33.861007192 -0700
-@@ -21,7 +21,11 @@
- #endif
- 
- // includes CUDA
-+#if HIP_VERSION >= 50200000
-+#include <hipsparse/hipsparse.h>
-+#else
- #include <hipsparse.h>
-+#endif
- 
- /* (author: Cade Brown <cbrow216@vols.utk.edu>
-  *
-diff -urp magma-2.7.2.orig/sparse_hip/testing/testing_zparilu.cpp magma-2.7.2/sparse_hip/testing/testing_zparilu.cpp
---- magma-2.7.2.orig/sparse_hip/testing/testing_zparilu.cpp	2023-08-25 06:15:53.000000000 -0700
-+++ magma-2.7.2/sparse_hip/testing/testing_zparilu.cpp	2023-09-03 08:42:33.861007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/sparse_hip/testing/testing_zparilu.cpp magma-2.8.0/sparse_hip/testing/testing_zparilu.cpp
+--- magma-2.8.0.orig/sparse_hip/testing/testing_zparilu.cpp	2024-03-28 05:24:24.000000000 -0700
++++ magma-2.8.0/sparse_hip/testing/testing_zparilu.cpp	2024-05-06 13:59:32.085271619 -0700
 @@ -17,8 +17,13 @@
  
  // includes CUDA
@@ -907,9 +880,9 @@ diff -urp magma-2.7.2.orig/sparse_hip/testing/testing_zparilu.cpp magma-2.7.2/sp
  #include <hip/hip_profile.h>
  
  // includes, project
-diff -urp magma-2.7.2.orig/sparse_hip/testing/testing_zparilu_weight.cpp magma-2.7.2/sparse_hip/testing/testing_zparilu_weight.cpp
---- magma-2.7.2.orig/sparse_hip/testing/testing_zparilu_weight.cpp	2023-08-25 06:15:54.000000000 -0700
-+++ magma-2.7.2/sparse_hip/testing/testing_zparilu_weight.cpp	2023-09-03 08:42:33.861007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/sparse_hip/testing/testing_zparilu_weight.cpp magma-2.8.0/sparse_hip/testing/testing_zparilu_weight.cpp
+--- magma-2.8.0.orig/sparse_hip/testing/testing_zparilu_weight.cpp	2024-03-28 05:24:24.000000000 -0700
++++ magma-2.8.0/sparse_hip/testing/testing_zparilu_weight.cpp	2024-05-06 13:59:32.085271619 -0700
 @@ -18,8 +18,13 @@
  
  // includes CUDA
@@ -924,9 +897,9 @@ diff -urp magma-2.7.2.orig/sparse_hip/testing/testing_zparilu_weight.cpp magma-2
  #include <hip/hip_profile.h>
  
  // includes, project
-diff -urp magma-2.7.2.orig/testing/lin/Makefile.src magma-2.7.2/testing/lin/Makefile.src
---- magma-2.7.2.orig/testing/lin/Makefile.src	2023-08-25 06:15:13.000000000 -0700
-+++ magma-2.7.2/testing/lin/Makefile.src	2023-09-03 08:42:33.861007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/testing/lin/Makefile.src magma-2.8.0/testing/lin/Makefile.src
+--- magma-2.8.0.orig/testing/lin/Makefile.src	2024-03-28 05:23:04.000000000 -0700
++++ magma-2.8.0/testing/lin/Makefile.src	2024-05-06 13:59:32.085271619 -0700
 @@ -277,28 +277,28 @@ xlintsts : $(ALINTST) $(SLINTST) $(SCLNT
  	$(FORT) $(ALINTST) $(SCLNTST) $(SLINTST) \
  	$(TMGLIB) -o xlintsts \
@@ -960,9 +933,9 @@ diff -urp magma-2.7.2.orig/testing/lin/Makefile.src magma-2.7.2/testing/lin/Make
  	$(LIBDIR) $(LIB)
   
  $(ALINTST): $(FRC)
-diff -urp magma-2.7.2.orig/testing/testing_veclib.cpp magma-2.7.2/testing/testing_veclib.cpp
---- magma-2.7.2.orig/testing/testing_veclib.cpp	2023-08-25 06:15:24.000000000 -0700
-+++ magma-2.7.2/testing/testing_veclib.cpp	2023-09-03 08:42:33.861007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/testing/testing_veclib.cpp magma-2.8.0/testing/testing_veclib.cpp
+--- magma-2.8.0.orig/testing/testing_veclib.cpp	2024-03-28 05:23:26.000000000 -0700
++++ magma-2.8.0/testing/testing_veclib.cpp	2024-05-06 13:59:32.085271619 -0700
 @@ -14,7 +14,7 @@
  // Oddly, with -m32 both return float and double for single precision functions works.
  // This is essentially a bug from an old f2c version of lapack (clapack).
@@ -972,9 +945,9 @@ diff -urp magma-2.7.2.orig/testing/testing_veclib.cpp magma-2.7.2/testing/testin
  // These correctly return float for the single precision functions that had issues.
  
  #include <stdio.h>
-diff -urp magma-2.7.2.orig/tools/build.sh magma-2.7.2/tools/build.sh
---- magma-2.7.2.orig/tools/build.sh	2023-08-25 06:15:44.000000000 -0700
-+++ magma-2.7.2/tools/build.sh	2023-09-03 08:42:33.861007192 -0700
+diff -x '*.rej' -x '*.orig' -urp magma-2.8.0.orig/tools/build.sh magma-2.8.0/tools/build.sh
+--- magma-2.8.0.orig/tools/build.sh	2024-03-28 05:23:41.000000000 -0700
++++ magma-2.8.0/tools/build.sh	2024-05-06 13:59:32.085271619 -0700
 @@ -155,14 +155,14 @@ for config in $@; do
          echo "SKIPPING SPARSE"
      fi

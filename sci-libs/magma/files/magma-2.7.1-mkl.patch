@@ -155,7 +155,7 @@ diff -urpN magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-mkl-ilp64 magma-2
 +    LIBDIR += -L$(CUDADIR)/@LIBDIR@ -L$(MKLROOT)/lib/intel64
 +else ifeq ($(BACKEND),hip)
 +    INC    += -I$(HIPDIR)/include
-+    LIBDIR += -L/opt/aomp/@AOMP_SLOT@/@LIBDIR@ -L/usr/@LIBDIR@ -L/usr/@LIBDIR@ -L$(MKLROOT)/lib/intel64
++    LIBDIR += -L/opt/aomp/@AOMP_SLOT@/@LIBDIR@ -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -L$(MKLROOT)/lib/intel64
 +endif
 +
 +
