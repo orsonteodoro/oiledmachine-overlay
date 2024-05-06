@@ -355,11 +355,11 @@ REQUIRED_USE+="
 # https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/build_files/build_environment/install_linux_packages.py
 
 # Last change was Feb 20, 2024 for:
-# https://github.com/blender/blender/commits/509de56830f859989e2f65bdacef461419ff29cb/build_files/cmake/config/blender_release.cmake
+# https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
 # Last change was Feb 19, 2024 for:
-# https://github.com/blender/blender/commits/509de56830f859989e2f65bdacef461419ff29cb/build_files/build_environment/cmake/versions.cmake
+# https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
 # HIP:  https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/intern/cycles/cmake/external_libs.cmake#L47

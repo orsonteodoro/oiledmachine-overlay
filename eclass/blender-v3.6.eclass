@@ -359,11 +359,11 @@ REQUIRED_USE+="
 # https://github.com/blender/blender/blob/v3.6.11/build_files/build_environment/install_linux_packages.py
 
 # Last change was May 15, 2023 for:
-# https://github.com/blender/blender/commits/v3.6.11/build_files/cmake/config/blender_release.cmake
+# https://github.com/blender/blender/blob/v3.6.11/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
 # Last change was Mar 12, 2024 for:
-# https://github.com/blender/blender/commits/v3.6.11/build_files/build_environment/cmake/versions.cmake
+# https://github.com/blender/blender/blob/v3.6.11/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
 # HIP:  https://github.com/blender/blender/blob/v3.6.11/intern/cycles/cmake/external_libs.cmake#L47

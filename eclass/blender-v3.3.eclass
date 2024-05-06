@@ -397,14 +397,14 @@ REQUIRED_USE+="
 # no need to look past those dates.
 
 # Last change was Feb 22, 2022 for:
-# https://github.com/blender/blender/commits/v3.3.18/build_files/build_environment/install_deps.sh
+# https://github.com/blender/blender/blob/v3.3.18/build_files/build_environment/install_deps.sh
 
 # Last change was Aug 24, 2021 for:
-# https://github.com/blender/blender/commits/v3.3.18/build_files/cmake/config/blender_release.cmake
+# https://github.com/blender/blender/blob/v3.3.18/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
 # Last change was Oct 16, 2023 for:
-# https://github.com/blender/blender/commits/v3.3.18/build_files/build_environment/cmake/versions.cmake
+# https://github.com/blender/blender/blob/v3.3.18/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
 # HIP:  https://github.com/blender/blender/blob/v3.3.18/intern/cycles/cmake/external_libs.cmake#L47
