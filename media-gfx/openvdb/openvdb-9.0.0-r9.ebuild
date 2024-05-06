@@ -347,6 +347,7 @@ src_configure() {
 		-DOPENVDB_TOOL_USE_JPG=$(usex jpeg)
 		-DOPENVDB_TOOL_USE_NANO=$(usex nanovdb)
 		-DOPENVDB_TOOL_USE_PNG=$(usex png)
+		-DOPENVDB_USE_DEPRECATED_ABI_${version}=ON
 		-DUSE_BLOSC=$(usex blosc)
 		-DUSE_CCACHE=OFF
 		-DUSE_COLORED_OUTPUT=ON
