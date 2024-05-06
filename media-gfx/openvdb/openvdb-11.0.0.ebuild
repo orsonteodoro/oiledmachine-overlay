@@ -13,7 +13,7 @@ LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 ONETBB_SLOT="0"
 OPENEXR_V2_PV="2.5.11 2.5.10 2.5.9 2.5.8 2.5.7 2.5.6 2.5.5 2.5.4 2.5.3 2.5.2 2.5.0 2.4.3 2.4.2 2.4.1 2.4.0"
 OPENEXR_V3_PV="3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4 3.1.3 3.1.2 3.1.0"
-OPENVDB_ABIS=( 10 9 8 7 6 )
+OPENVDB_ABIS=( 11 10 9 8 7 6 )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
 PYTHON_COMPAT=( python3_{8..11} )
@@ -322,7 +322,6 @@ src_configure() {
 		-DOPENVDB_CORE_SHARED=ON
 		-DOPENVDB_CORE_STATIC=$(usex static-libs)
 		-DOPENVDB_ENABLE_RPATH=OFF
-		-DOPENVDB_USE_DEPRECATED_ABI_${version}=ON
 		-DUSE_BLOSC=$(usex blosc)
 		-DUSE_CCACHE=OFF
 		-DUSE_COLORED_OUTPUT=ON
@@ -330,6 +329,12 @@ src_configure() {
 		-DUSE_IMATH_HALF=$(usex imath-half)
 		-DUSE_LOG4CPLUS=$(usex log4cplus)
 	)
+
+	if (( ${version} < ${PV%%.*} )) ; then
+		mycmakeargs+=(
+			-DOPENVDB_USE_DEPRECATED_ABI_${version}=ON
+		)
+	fi
 
 	if use ax; then
 		mycmakeargs+=(
