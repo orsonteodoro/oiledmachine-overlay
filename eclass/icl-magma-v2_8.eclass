@@ -367,73 +367,16 @@ replace_symbols() {
 		llvm_slot=-1
 	fi
 
-	# For GPU
-	# /opt/aomp/@AOMP_SLOT@/ for multislotted aomp
-	local aomp_slot # If 0, then unislot.
-	if has_version "=sys-devel/aomp-16*:16" && [[ "${ROCM_SLOT}" == "5.6" ]] ; then
-		aomp_slot=16
-	elif has_version "=sys-devel/aomp-16*:16" && [[ "${ROCM_SLOT}" == "5.5" ]] ; then
-		aomp_slot=16
-	elif has_version "=sys-devel/aomp-15*:15" && [[ "${ROCM_SLOT}" == "5.4" ]] ; then
-		aomp_slot=15
-	elif has_version "=sys-devel/aomp-15*:15" && [[ "${ROCM_SLOT}" == "5.3" ]] ; then
-		aomp_slot=15
-	elif has_version "=sys-devel/aomp-14*:14" && [[ "${ROCM_SLOT}" == "5.2" ]] ; then
-		aomp_slot=14
-	elif has_version "=sys-devel/aomp-14*:14" && [[ "${ROCM_SLOT}" == "5.1" ]] ; then
-		aomp_slot=14
-	elif has_version "=sys-devel/aomp-14*:14" && [[ "${ROCM_SLOT}" == "5.0" ]] ; then
-		aomp_slot=14
-	elif has_version "=sys-devel/aomp-16*:0" && [[ "${ROCM_SLOT}" == "5.7" ]] ; then
-		aomp_slot=0
-	elif has_version "=sys-devel/aomp-16*:0" && [[ "${ROCM_SLOT}" == "5.6" ]] ; then
-		aomp_slot=0
-	elif has_version "=sys-devel/aomp-16*:0" && [[ "${ROCM_SLOT}" == "5.5" ]] ; then
-		aomp_slot=0
-	elif has_version "=sys-devel/aomp-15*:0" && [[ "${ROCM_SLOT}" == "5.4" ]] ; then
-		aomp_slot=0
-	elif has_version "=sys-devel/aomp-15*:0" && [[ "${ROCM_SLOT}" == "5.3" ]] ; then
-		aomp_slot=0
-	elif has_version "=sys-devel/aomp-15*:0" && [[ "${ROCM_SLOT}" == "5.2" ]] ; then
-		aomp_slot=0
-	elif has_version "=sys-devel/aomp-14*:0" && [[ "${ROCM_SLOT}" == "5.1" ]] ; then
-		aomp_slot=0
-	elif has_version "=sys-devel/aomp-14*:0" && [[ "${ROCM_SLOT}" == "5.0" ]] ; then
-		aomp_slot=0
-	else
-		# Not installed or disable
-		aomp_slot=-1
-	fi
-
-	if (( ${aomp_slot} > 0 )) ; then
-einfo "Using AOMP (multislot)"
-		sed -i -e "s|@AOMP_SLOT@|${aomp_slot}|g" \
-			$(grep -r -l -e "@AOMP_SLOT@" "${WORKDIR}") \
-			|| true
-	elif (( ${aomp_slot} == 0 )) ; then
-einfo "Using AOMP (unislot)"
-		# Assumes install in @EPREFIX@/usr/lib/aomp
-		sed -i -e "s|-I/opt/aomp/@AOMP_SLOT@/include|-I/usr/aomp/include|g" \
-			$(grep -r -l -e "@AOMP_SLOT@/include" "${WORKDIR}") \
-			|| true
-		sed -i -e "s|-L/opt/aomp/@AOMP_SLOT@/@LIBDIR@|-L/usr/aomp/@LIBDIR@|g" \
-			$(grep -r -l -e "@AOMP_SLOT@/@LIBDIR@" "${WORKDIR}") \
-			|| true
-	elif (( ${llvm_slot} > 0 )) ; then
+	if (( ${llvm_slot} > 0 )) ; then
 einfo "Using LLVM proper"
-		sed -i -e "s|-I/opt/aomp/@AOMP_SLOT@/include|-I@ESYSROOT_LLVM_PATH@/include|g" \
-			$(grep -r -l -e "@AOMP_SLOT@/include" "${WORKDIR}") \
-			|| true
-		sed -i -e "s|-L/opt/aomp/@AOMP_SLOT@/@LIBDIR@|-L@ESYSROOT_LLVM_PATH@/@LIBDIR@|g" \
-			$(grep -r -l -e "@AOMP_SLOT@/@LIBDIR@" "${WORKDIR}") \
-			|| true
+		:
 	else
-einfo "Removing AOMP references"
-		sed -i -e "s|-I/opt/aomp/@AOMP_SLOT@/include||g" \
-			$(grep -r -l -e "@AOMP_SLOT@/include" "${WORKDIR}") \
+einfo "Removing LLVM references"
+		sed -i -e "s|-I@ESYSROOT_LLVM_PATH@/include||g" \
+			$(grep -r -l -e "@ESYSROOT_LLVM_PATH@/include" "${WORKDIR}") \
 			|| die
-		sed -i -e "s|-L/opt/aomp/@AOMP_SLOT@/@LIBDIR@||g" \
-			$(grep -r -l -e "@AOMP_SLOT@/@LIBDIR@" "${WORKDIR}") \
+		sed -i -e "s|-L@ESYSROOT_LLVM_PATH@/@LIBDIR@||g" \
+			$(grep -r -l -e "@ESYSROOT_LLVM_PATH@/@LIBDIR@" "${WORKDIR}") \
 			|| die
 	fi
 

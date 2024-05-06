@@ -1,6 +1,6 @@
-diff -urpN magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-mkl-ilp64 magma-2.7.2/make.inc-examples/make.inc.hip-gcc-mkl-ilp64
+diff -uNrp magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-mkl-ilp64 magma-2.7.2/make.inc-examples/make.inc.hip-gcc-mkl-ilp64
 --- magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-mkl-ilp64	1969-12-31 16:00:00.000000000 -0800
-+++ magma-2.7.2/make.inc-examples/make.inc.hip-gcc-mkl-ilp64	2023-09-03 10:45:45.316908488 -0700
++++ magma-2.7.2/make.inc-examples/make.inc.hip-gcc-mkl-ilp64	2024-05-06 15:34:32.330740654 -0700
 @@ -0,0 +1,174 @@
 +#//////////////////////////////////////////////////////////////////////////////
 +#   -- MAGMA (version 2.7.2) --
@@ -95,9 +95,9 @@ diff -urpN magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-mkl-ilp64 magma-2
 +# comment out to build without openmp support
 +# NOTE: For some reason, using `-fopenmp` is not enough to add linker flags to
 +#   the compiler sometimes, so we need to add -L here too if there are problems
-+FOPENMP     = -fopenmp
++#FOPENMP     = -fopenmp
 +#FOPENMP     =
-+#FOPENMP     = -fopenmp -L/opt/aomp/@AOMP_SLOT@/@LIBDIR@ -I/opt/aomp/@AOMP_SLOT@/include
++FOPENMP     = -fopenmp -L@ESYSROOT_LLVM_PATH@/@LIBDIR@ -I@ESYSROOT_LLVM_PATH@/include
 +
 +# now, generate our flags
 +CFLAGS      = -O3 $(FPIC) $(FOPENMP) -DNDEBUG -DADD_ -Wall -std=c99
@@ -155,7 +155,7 @@ diff -urpN magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-mkl-ilp64 magma-2
 +    LIBDIR += -L$(CUDADIR)/@LIBDIR@ -L$(MKLROOT)/lib/intel64
 +else ifeq ($(BACKEND),hip)
 +    INC    += -I$(HIPDIR)/include
-+    LIBDIR += -L/opt/aomp/@AOMP_SLOT@/@LIBDIR@ -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -L$(MKLROOT)/lib/intel64
++    LIBDIR += -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -L$(MKLROOT)/lib/intel64
 +endif
 +
 +
