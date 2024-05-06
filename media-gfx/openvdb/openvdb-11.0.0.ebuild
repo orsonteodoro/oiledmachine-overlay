@@ -217,7 +217,7 @@ BDEPEND+="
 "
 PDEPEND="
 	nanovdb? (
-		~media-gfx/nanovdb-32.4.2_p20221027[cuda?,openvdb]
+		~media-gfx/nanovdb-32.6.0_p20231027[cuda?,openvdb]
 	)
 "
 PATCHES=(
