@@ -15,7 +15,7 @@ CUDA_TARGETS_COMPAT=(
 )
 EGIT_COMMIT="0ed0f19ea4fbb0d8bf64d3dca07abab3c7429803"
 GH_ORG_URI="https://github.com/AcademySoftwareFoundation"
-GTEST_PV="1.11.0"
+GTEST_PV="1.10.0"
 LEGACY_TBB_SLOT="2"
 OGT_COMMIT="e1743d37cf7a8128568769cf71cf598166c2cd30"
 OGT_DFN="ogt-${OGT_COMMIT:0:7}.tar.gz"
@@ -134,8 +134,8 @@ DEPEND+="
 		virtual/opengl
 	)
 	openvdb? (
-		>=dev-libs/boost-1.68
-		>=media-gfx/openvdb-9
+		>=dev-libs/boost-1.66
+		>=media-gfx/openvdb-9.0.0
 		|| (
 			$(gen_openexr_pairs)
 		)
@@ -146,7 +146,7 @@ DEPEND+="
 	tbb? (
 		|| (
 			(
-				>=dev-cpp/tbb-2017.6:${LEGACY_TBB_SLOT}=
+				>=dev-cpp/tbb-2018.0:${LEGACY_TBB_SLOT}=
 				<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 				!<dev-cpp/tbb-2021:0=
 			)
@@ -172,7 +172,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	>=dev-build/cmake-3.15
+	>=dev-build/cmake-3.12
 	doc? (
 		>=app-text/doxygen-1.8.8
 	)
