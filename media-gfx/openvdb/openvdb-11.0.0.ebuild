@@ -2,13 +2,13 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # Based on openvdb-7.1.0-r1.ebuild from the gentoo overlay
-# For deps versioning, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/doc/dependencies.txt
+# For deps versioning, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.1.0/doc/dependencies.txt
 
 EAPI=8
 
 LEGACY_TBB_SLOT="2"
-LLVM_COMPAT=( {15..6} ) # Max limit for Blender
-LLVM_COMPAT_AX=( {14..6} )
+LLVM_COMPAT=( {15..10} ) # Max limit for Blender
+LLVM_COMPAT_AX=( {14..10} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 ONETBB_SLOT="0"
 OPENEXR_V2_PV="2.5.11 2.5.10 2.5.9 2.5.8 2.5.7 2.5.6 2.5.5 2.5.4 2.5.3 2.5.2 2.5.0 2.4.3 2.4.2 2.4.1 2.4.0"
@@ -35,9 +35,9 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS_[@]} +abi$(ver_cut 1 ${PV})-compat
 ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
-ax +blosc cuda doc -imath-half +jemalloc -log4cplus -numpy -python +static-libs
--tbbmalloc nanovdb -no-concurrent-malloc -openexr -png test -vdb_lod +vdb_print
--vdb_render -vdb_view
+-alembic ax +blosc cuda doc -imath-half +jemalloc -jpeg -log4cplus -numpy
+-python +static-libs -tbbmalloc nanovdb -no-concurrent-malloc -openexr -png test
+-vdb_lod +vdb_print -vdb_render -vdb_view
 "
 VDB_UTILS="
 	vdb_lod
@@ -45,7 +45,7 @@ VDB_UTILS="
 	vdb_render
 	vdb_view
 "
-# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/CMakeLists.txt#L256
+# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v11.0.0/CMakeLists.txt#L256
 REQUIRED_USE+="
 	^^ (
 		${OPENVDB_ABIS_[@]}
@@ -75,8 +75,8 @@ REQUIRED_USE+="
 "
 
 # See
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/doc/dependencies.txt
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/ci/install.sh
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v11.0.0/doc/dependencies.txt
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v11.0.0/ci/install.sh
 
 gen_openexr_pairs() {
 	local pv
@@ -109,27 +109,17 @@ gen_openexr_pairs() {
 gen_ax_depend() {
 	local s
 	for s in ${LLVM_COMPAT_AX[@]} ; do
-		if [[ "${s}" == "3" ]] ; then
-			echo "
-				llvm_slot_${s}? (
-					=sys-devel/clang-${s}*
-					=sys-devel/llvm-${s}*
-					>=sys-devel/clang-3.8
-				)
-			"
-		else
-			echo "
-				llvm_slot_${s}? (
-					=sys-devel/clang-${s}*
-					=sys-devel/llvm-${s}*
-				)
-			"
-		fi
+		echo "
+			llvm_slot_${s}? (
+				=sys-devel/clang-${s}*
+				=sys-devel/llvm-${s}*
+			)
+		"
 	done
 }
 
 RDEPEND+="
-	>=dev-libs/boost-1.66:=
+	>=dev-libs/boost-1.73:=
 	>=sys-libs/zlib-1.2.7:=
 	ax? (
 		$(gen_ax_depend)
@@ -146,9 +136,9 @@ RDEPEND+="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			>=dev-libs/boost-1.68:=[numpy?,python?,${PYTHON_USEDEP}]
+			>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
 			numpy? (
-				>=dev-python/numpy-1.14[${PYTHON_USEDEP}]
+				>=dev-python/numpy-1.20.0[${PYTHON_USEDEP}]
 			)
 		')
 	)
@@ -180,7 +170,7 @@ RDEPEND+="
 		(
 			!<dev-cpp/tbb-2021:0=
 			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
-			>=dev-cpp/tbb-2018.0:${LEGACY_TBB_SLOT}=
+			>=dev-cpp/tbb-2020.2:${LEGACY_TBB_SLOT}=
 		)
 		(
 			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
@@ -193,26 +183,16 @@ DEPEND+="
 gen_llvm_bdepend() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
-		if [[ "${s}" == "3" ]] ; then
-			echo "
-				llvm_slot_${s}? (
-					=sys-devel/clang-${s}*
-					=sys-devel/llvm-${s}*
-					>=sys-devel/clang-3.8
-				)
-			"
-		else
-			echo "
-				llvm_slot_${s}? (
-					=sys-devel/clang-${s}*
-					=sys-devel/llvm-${s}*
-				)
-			"
-		fi
+		echo "
+			llvm_slot_${s}? (
+				=sys-devel/clang-${s}*
+				=sys-devel/llvm-${s}*
+			)
+		"
 	done
 }
 BDEPEND+="
-	>=dev-build/cmake-3.12
+	>=dev-build/cmake-3.18
 	>=sys-devel/bison-3.0.0
 	>=sys-devel/flex-2.6.0
 	dev-util/patchelf
@@ -231,20 +211,21 @@ BDEPEND+="
 	)
 	|| (
 		$(gen_llvm_bdepend)
-		>=sys-devel/gcc-6.3.1
-		>=dev-lang/icc-17
+		>=sys-devel/gcc-9.3.1
+		>=dev-lang/icc-19
 	)
 "
 PDEPEND="
 	nanovdb? (
-		~media-gfx/nanovdb-32.3.3_p20211029[cuda?,openvdb]
+		~media-gfx/nanovdb-32.4.2_p20221027[cuda?,openvdb]
 	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-8.1.0-glfw-libdir.patch"
 	"${FILESDIR}/${PN}-9.0.0-fix-atomic.patch"
-	"${FILESDIR}/${PN}-9.0.0-numpy.patch"
-	"${FILESDIR}/${PN}-9.0.0-unconditionally-search-Python-interpreter.patch"
+	"${FILESDIR}/${PN}-10.0.1-fix-linking-of-vdb_tool-with-OpenEXR.patch"
+	"${FILESDIR}/${PN}-10.0.1-drop-failing-tests.patch"
+	"${FILESDIR}/${PN}-10.0.1-log4cplus-version.patch"
 )
 RESTRICT="
 	!test? (
@@ -278,8 +259,8 @@ src_prepare() {
 	sed -i -e "s|lib/cmake|$(get_libdir)/cmake|g" \
 		cmake/OpenVDBGLFW3Setup.cmake || die
 #	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		eapply "${FILESDIR}/extra-patches/${PN}-8.1.0-findtbb-more-debug-messages.patch"
-		eapply "${FILESDIR}/extra-patches/${PN}-8.1.0-prioritize-onetbb.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-11.0.0-findtbb-more-debug-messages.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-10.0.1-prioritize-onetbb.patch"
 #	fi
 }
 
@@ -341,12 +322,6 @@ src_configure() {
 		-DOPENVDB_CORE_SHARED=ON
 		-DOPENVDB_CORE_STATIC=$(usex static-libs)
 		-DOPENVDB_ENABLE_RPATH=OFF
-		-DOPENVDB_TOOL_NANO_USE_BLOSC=$(usex blosc)
-		-DOPENVDB_TOOL_USE_ABC=$(usex alembic)
-		-DOPENVDB_TOOL_USE_EXR=$(usex openexr)
-		-DOPENVDB_TOOL_USE_JPG=$(usex jpeg)
-		-DOPENVDB_TOOL_USE_NANO=$(usex nanovdb)
-		-DOPENVDB_TOOL_USE_PNG=$(usex png)
 		-DUSE_BLOSC=$(usex blosc)
 		-DUSE_CCACHE=OFF
 		-DUSE_COLORED_OUTPUT=ON
@@ -361,6 +336,8 @@ src_configure() {
 
 	# FIXME: log4cplus init and other errors
 			-DOPENVDB_BUILD_AX_UNITTESTS=OFF
+
+			-DOPENVDB_BUILD_VDB_AX=$(usex utils)
 		)
 	fi
 

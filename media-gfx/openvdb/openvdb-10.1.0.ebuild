@@ -2,16 +2,17 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # Based on openvdb-7.1.0-r1.ebuild from the gentoo overlay
+# For deps versioning, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.1.0/doc/dependencies.txt
 
 EAPI=8
 
 LEGACY_TBB_SLOT="2"
-LLVM_COMPAT=( {15..5} ) # Max limit for Blender
-LLVM_COMPAT_AX=( {14..5} )
+LLVM_COMPAT=( {15..10} ) # Max limit for Blender
+LLVM_COMPAT_AX=( {14..10} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 ONETBB_SLOT="0"
-OPENEXR_V2_PV="2.5.8 2.5.7"
-OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
+OPENEXR_V2_PV="2.5.11 2.5.10 2.5.9 2.5.8 2.5.7 2.5.6 2.5.5 2.5.4 2.5.3 2.5.2 2.5.0 2.4.3 2.4.2 2.4.1 2.4.0"
+OPENEXR_V3_PV="3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4 3.1.3 3.1.2 3.1.0"
 OPENVDB_ABIS=( 10 9 8 7 6 )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
@@ -34,9 +35,9 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS_[@]} +abi$(ver_cut 1 ${PV})-compat
 ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
-ax +blosc cuda doc -imath-half +jemalloc -log4cplus -numpy -python +static-libs
--tbbmalloc nanovdb -no-concurrent-malloc -openexr test -vdb_lod +vdb_print
--vdb_render -vdb_view
+-alembic ax +blosc cuda doc -imath-half +jemalloc -jpeg -log4cplus -numpy
+-python +static-libs -tbbmalloc nanovdb -no-concurrent-malloc -openexr -png test
+-vdb_lod +vdb_print -vdb_render -vdb_view
 "
 VDB_UTILS="
 	vdb_lod
@@ -44,7 +45,7 @@ VDB_UTILS="
 	vdb_render
 	vdb_view
 "
-# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.0.1/CMakeLists.txt#L256
+# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.1.0/CMakeLists.txt#L256
 REQUIRED_USE+="
 	^^ (
 		${OPENVDB_ABIS_[@]}
@@ -74,8 +75,8 @@ REQUIRED_USE+="
 "
 
 # See
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.0.1/doc/dependencies.txt
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.0.1/ci/install.sh
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.1.0/doc/dependencies.txt
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.1.0/ci/install.sh
 
 gen_openexr_pairs() {
 	local pv
@@ -118,13 +119,13 @@ gen_ax_depend() {
 }
 
 RDEPEND+="
-	>=dev-libs/boost-1.66:=
+	>=dev-libs/boost-1.73:=
 	>=sys-libs/zlib-1.2.7:=
 	ax? (
 		$(gen_ax_depend)
 	)
 	blosc? (
-		>=dev-libs/c-blosc-1.17:=
+		>=dev-libs/c-blosc-1.17.0:=
 	)
 	jemalloc? (
 		dev-libs/jemalloc:=
@@ -135,9 +136,9 @@ RDEPEND+="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			>=dev-libs/boost-1.68:=[numpy?,python?,${PYTHON_USEDEP}]
+			>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
 			numpy? (
-				>=dev-python/numpy-1.14[${PYTHON_USEDEP}]
+				>=dev-python/numpy-1.19.0[${PYTHON_USEDEP}]
 			)
 		')
 	)
@@ -153,6 +154,9 @@ RDEPEND+="
 		x11-libs/libXinerama
 		x11-libs/libXrandr
 		x11-libs/libXxf86vm
+		png? (
+			media-libs/libpng
+		)
 	)
 	|| (
                 $(gen_openexr_pairs)
@@ -166,7 +170,7 @@ RDEPEND+="
 		(
 			!<dev-cpp/tbb-2021:0=
 			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
-			>=dev-cpp/tbb-2018.0:${LEGACY_TBB_SLOT}=
+			>=dev-cpp/tbb-2020.2:${LEGACY_TBB_SLOT}=
 		)
 		(
 			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
@@ -188,9 +192,9 @@ gen_llvm_bdepend() {
 	done
 }
 BDEPEND+="
-	>=dev-build/cmake-3.16.2-r1
-	>=sys-devel/bison-3
-	>=sys-devel/flex-2.6
+	>=dev-build/cmake-3.18
+	>=sys-devel/bison-3.0.0
+	>=sys-devel/flex-2.6.0
 	dev-util/patchelf
 	virtual/pkgconfig
 	doc? (
@@ -207,8 +211,8 @@ BDEPEND+="
 	)
 	|| (
 		$(gen_llvm_bdepend)
-		>=sys-devel/gcc-6.3.1
-		>=dev-lang/icc-17
+		>=sys-devel/gcc-9.3.1
+		>=dev-lang/icc-19
 	)
 "
 PDEPEND="
@@ -255,7 +259,7 @@ src_prepare() {
 	sed -i -e "s|lib/cmake|$(get_libdir)/cmake|g" \
 		cmake/OpenVDBGLFW3Setup.cmake || die
 #	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		eapply "${FILESDIR}/extra-patches/${PN}-8.1.0-findtbb-more-debug-messages.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-10.1.0-findtbb-more-debug-messages.patch"
 		eapply "${FILESDIR}/extra-patches/${PN}-10.0.1-prioritize-onetbb.patch"
 #	fi
 }

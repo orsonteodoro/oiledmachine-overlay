@@ -33,5 +33,3 @@ diff -urp openvdb-8.0.1.orig/cmake/FindTBB.cmake openvdb-8.0.1/cmake/FindTBB.cma
  endforeach()
  
  # Reset library suffix
-Only in openvdb-8.0.1/cmake: FindTBB.cmake.orig
-Only in openvdb-8.0.1/cmake: FindTBB.cmake.rej
