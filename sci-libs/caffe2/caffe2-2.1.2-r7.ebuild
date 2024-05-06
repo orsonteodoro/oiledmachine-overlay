@@ -166,7 +166,7 @@ gen_rocm_depends() {
 				~sci-libs/rocPRIM-${pv}:${s}[rocm]
 				~sci-libs/rocThrust-${pv}:${s}
 				magma? (
-					sci-libs/magma:${s}
+					>=sci-libs/magma-2.7.0:${s}
 				)
 			)
 		"
