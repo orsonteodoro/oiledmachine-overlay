@@ -18,10 +18,17 @@ OPENVDB_ABIS=( 10 9 8 7 6 )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
 PYTHON_COMPAT=( python3_{8..11} )
+VDB_UTILS="
+	vdb_lod
+	vdb_print
+	vdb_render
+	vdb_view
+"
 X86_CPU_FLAGS=( avx sse4_2 )
 
 inherit cmake flag-o-matic llvm python-single-r1 toolchain-funcs
 
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 SRC_URI="
 https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -30,7 +37,11 @@ https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
 LICENSE="MPL-2.0"
 HOMEPAGE="https://www.openvdb.org"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -39,12 +50,6 @@ ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 -alembic ax +blosc cuda doc -imath-half +jemalloc -jpeg -log4cplus -numpy
 -python +static-libs -tbbmalloc nanovdb -no-concurrent-malloc -openexr -png test
 -vdb_lod +vdb_print -vdb_render -vdb_view
-"
-VDB_UTILS="
-	vdb_lod
-	vdb_print
-	vdb_render
-	vdb_view
 "
 REQUIRED_USE+="
 	^^ (
@@ -220,11 +225,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-10.0.1-drop-failing-tests.patch"
 	"${FILESDIR}/${PN}-10.0.1-log4cplus-version.patch"
 )
-RESTRICT="
-	!test? (
-		test
-	)
-"
 
 is_crosscompile() {
 	[[ ${CHOST} != ${CTARGET} ]]
