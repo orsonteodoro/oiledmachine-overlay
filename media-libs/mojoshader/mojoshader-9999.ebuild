@@ -8,35 +8,38 @@ EXPECTED_FINGERPRINT="\
 5f8072cbe37f8e80d1f49942d984537caf369734bd97f307f98f25842ef1e1ee\
 234e75cee7e731ef2ab9433f190fa732d74b45aef12e7d1c499d0e981a7644aa\
 "
+# profile_metal support is default ON upstream
+PROFILES_IUSE="
++profile_arb1 +profile_arb1_nv +profile_bytecode +profile_d3d +profile_glsl120
++profile_glsl +profile_glsles +profile_hlsl -profile_metal +profile_spirv
++profile_glspirv
+"
+PROFILES_REQUIRED_USE="${PROFILES_IUSE//-/}"
+PROFILES_REQUIRED_USE="${PROFILES_REQUIRED_USE//+/}"
 
 inherit cmake git-r3
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/icculus/mojoshader.git"
 	EGIT_COMMIT="HEAD"
-	FALLBACK_COMMIT="dbc721c1436657b1c5e8e7e7fd17e6a0b99bf28f"
+	FALLBACK_COMMIT="7b7e5fd6f3cc99afd12a9d2a0e62d2c408c96e33" # Apr 26, 2024 
 	IUSE+=" fallback-commit"
+	# No KEYWORDS for LIVE ebuilds (or LIVE snapshots)
 	S="${WORKDIR}/${P}"
+	SLOT="0/9999"
 else
-	SRC_URI=""
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${P}"
+	SLOT="0/$(ver_cut 1-2 ${PV})"
+	SRC_URI=""
 	die "FIXME"
 fi
 
 DESCRIPTION="Use Direct3D shaders with other 3D rendering APIs."
 HOMEPAGE="https://icculus.org/mojoshader/"
 LICENSE="ZLIB"
-# No KEYWORDS for LIVE ebuilds (or LIVE snapshots)
-# profile_metal support is default ON upstream
-PROFILES="
-+profile_arb1 +profile_arb1_nv +profile_bytecode +profile_d3d +profile_glsl120
-+profile_glsl +profile_glsles +profile_hlsl -profile_metal +profile_spirv
-+profile_glspirv
-"
-_PROFILES="${PROFILES//-/}"
-_PROFILES="${_PROFILES//+/}"
 IUSE+="
-${PROFILES}
+${PROFILES_IUSE}
 +compiler-support debug -depth-clipping +profile-glspirv +effect-support
 -flip-viewport static-libs sdl2-stdlib -xna-vertextexture
 "
@@ -48,11 +51,12 @@ REQUIRED_USE="
 		kernel_Darwin
 	)
 	|| (
-		${_PROFILES}
+		${PROFILES_REQUIRED_USE}
 	)
 "
-#SLOT="0/$(ver_cut 1-2 ${PV})"
-SLOT="0/9999"
+RESTRICT="
+	mirror
+"
 RDEPEND+="
 	>=dev-util/re2c-1.2.1
 	media-libs/libsdl2
@@ -66,7 +70,6 @@ RDEPEND+="
 BDEPEND+="
 	>=dev-build/cmake-2.6
 "
-RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/${PN}-dbc721c-1310-cmake-fixes.patch"
 	"${FILESDIR}/${PN}-1240-cmake-build-both-static-and-shared.patch"
