@@ -53,7 +53,12 @@ fi
 
 DESCRIPTION="Advanced shading language for production GI renderers"
 HOMEPAGE="http://opensource.imageworks.com/?p=osl"
-LICENSE="BSD"
+LICENSE="
+	BSD
+	doc? (
+		CC-BY-4.0
+	)
+"
 # Restricting untested tests. \
 RESTRICT="
 	mirror
