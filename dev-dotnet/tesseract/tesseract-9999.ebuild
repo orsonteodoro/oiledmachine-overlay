@@ -5,48 +5,63 @@
 EAPI=8
 
 DOTNET_PV="6.0"
-TARGET_FRAMEWORK="netstandard20"
-inherit git-r3 lcnr
-
-DESCRIPTION="A .Net wrapper for tesseract-ocr"
-HOMEPAGE="https://github.com/charlesw/tesseract"
-LICENSE="Apache-2.0"
-KEYWORDS="~amd64 ~x86"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="
-${TARGET_FRAMEWORK} developer mono
-
-fallback-commit
-"
-REQUIRED_USE=" || ( ${TARGET_FRAMEWORK} )"
-EXPECTED_LEPTONICA_PV="1.82.0"
-EXPECTED_TESSERACT_PV="5.2.0"
-RDEPEND="
-	mono? (
-		>=dev-lang/mono-5.4
-	)
-	=app-text/tesseract-$(ver_cut 1-2 ${EXPECTED_TESSERACT_PV})*
-	~media-libs/leptonica-${EXPECTED_LEPTONICA_PV}
-"
-DEPEND="${RDEPEND}"
-BDEPEND="
-	>=dev-dotnet/dotnet-sdk-bin-${DOTNET_PV}:${DOTNET_PV}
-"
-SRC_URI=""
-S="${WORKDIR}/${PN}-${PV}"
-RESTRICT="mirror"
-EGIT_REPO_URI="https://github.com/charlesw/tesseract.git"
-EGIT_BRANCH="master"
-EGIT_COMMIT="HEAD"
-MY_PV="${EXPECTED_TESSERACT_PV}"
-
 # The dotnet-sdk-bin supports only 1 ABI at a time.
 DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-${DOTNET_PV}" )
-
+LEPTONICA_PV="1.82.0"
+TESSERACT_PV="5.2.0"
 unset M
 declare -A M=(
 	[netstandard20]="netstandard2.0"
 )
+MY_PV="${TESSERACT_PV}"
+TARGET_FRAMEWORK="netstandard20"
+
+inherit git-r3 lcnr
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_REPO_URI="https://github.com/charlesw/tesseract.git"
+	EGIT_BRANCH="master"
+	EGIT_COMMIT="HEAD"
+	FALLBACK_COMMIT="fca81a189eeab5aaf582ed2c3803dd2c458d2e30" # Apr 11, 2024
+	KEYWORDS="~amd64 ~x86"
+	S="${WORKDIR}/${PN}-${PV}"
+	SRC_URI=""
+	IUSE+=" fallback-commit"
+else
+	EGIT_COMMIT="fca81a189eeab5aaf582ed2c3803dd2c458d2e30"
+	SRC_URI="
+https://github.com/charlesw/tesseract/archive/${EGIT_COMMIT}.tar.gz -> charlesw-tesseract-${EGIT_COMMIT:0:7}.tar.gz
+	"
+	die "FIXME"
+fi
+
+DESCRIPTION="A .Net wrapper for tesseract-ocr"
+HOMEPAGE="https://github.com/charlesw/tesseract"
+LICENSE="Apache-2.0"
+RESTRICT="mirror"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE="
+${TARGET_FRAMEWORK}
+developer mono
+"
+REQUIRED_USE="
+	|| (
+		${TARGET_FRAMEWORK}
+	)
+"
+RDEPEND="
+	=app-text/tesseract-$(ver_cut 1-2 ${TESSERACT_PV})*
+	~media-libs/leptonica-${LEPTONICA_PV}
+	mono? (
+		>=dev-lang/mono-5.4
+	)
+"
+DEPEND="
+	${RDEPEND}
+"
+BDEPEND="
+	>=dev-dotnet/dotnet-sdk-bin-${DOTNET_PV}:${DOTNET_PV}
+"
 
 pkg_setup() {
 	if has network-sandbox ${FEATURES} ; then
@@ -78,36 +93,44 @@ eerror
 }
 
 src_unpack() {
-	use fallback-commit && export EGIT_COMMIT="b6a69bfbb1c61aba63f3c6c201d6ff784557960b" # Nov 30, 2022
-	git-r3_fetch
-	git-r3_checkout
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && export EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 	cd "${S}" || die
 	[[ -e "docs/Compling_tesseract_and_leptonica.md" ]] || die "File moved?"
-	local actual_leptonica_pv=$(grep "git checkout -b" "docs/Compling_tesseract_and_leptonica.md" \
+	local actual_leptonica_pv=$(\
+		  grep "git checkout -b" "docs/Compling_tesseract_and_leptonica.md" \
 		| head -n 1 \
 		| grep -E -o  -e "[0-9]+\.[0-9]+\.[0-9]+" \
 		| tail -n 1)
-	local actual_tesseract_pv=$(grep "git checkout -b" "docs/Compling_tesseract_and_leptonica.md" \
+	local actual_tesseract_pv=$(\
+		  grep "git checkout -b" "docs/Compling_tesseract_and_leptonica.md" \
 		| tail -n 1 \
 		| grep -E -o  -e "[0-9]+\.[0-9]+\.[0-9]+" \
 		| tail -n 1)
 	einfo "Inspecting tesseract version change"
-	if ver_test "${actual_tesseract_pv}" -ne "${EXPECTED_TESSERACT_PV}" ; then
+	local expected_tesseract_pv="${TESSERACT_PV}"
+	local expected_leptonica_pv="${LEPTONICA_PV}"
+	if ver_test "${actual_tesseract_pv}" -ne "${expected_tesseract_pv}" ; then
 eerror
 eerror "Version change detected for tesseract dependency"
 eerror
-eerror "Actual pv:\t${actual_tesseract_pv}"
-eerror "Expected pv:\t${EXPECTED_TESSERACT_PV}"
+eerror "Actual PV:    ${actual_tesseract_pv}"
+eerror "Expected PV:  ${expected_tesseract_pv}"
 eerror
 		die
 	fi
 	einfo "Inspecting leptonica version change"
-	if ver_test "${actual_leptonica_pv}" -ne "${EXPECTED_LEPTONICA_PV}" ; then
+	if ver_test "${actual_leptonica_pv}" -ne "${expected_leptonica_pv}" ; then
 eerror
 eerror "Version change detected for leptonica dependency"
 eerror
-eerror "Actual pv:\t${actual_leptonica_pv}"
-eerror "Expected pv:\t${EXPECTED_LEPTONICA_PV}"
+eerror "Actual PV:    ${actual_leptonica_pv}"
+eerror "Expected PV:  ${expected_leptonica_pv}"
 eerror
 		die
 	fi
@@ -135,10 +158,13 @@ copy_next_to_file() {
 	local bn_attachment=$(basename "${attachment}")
 	local permissions="${3}"
 	local owner="${4}"
-	local fingerprint=$(sha256sum "${source}" | cut -f 1 -d " ")
+	local fingerprint=$(sha256sum "${source}" \
+		| cut -f 1 -d " ")
+	local x
 	for x in $(find "${ED}" -type f) ; do
 		[[ -L "${x}" ]] && continue
-		x_fingerprint=$(sha256sum "${x}" | cut -f 1 -d " ")
+		x_fingerprint=$(sha256sum "${x}" \
+			| cut -f 1 -d " ")
 		if [[ "${fingerprint}" == "${x_fingerprint}" ]] ; then
 			local destdir=$(dirname "${x}")
 			cp -a "${attachment}" "${destdir}" || die
@@ -222,27 +248,32 @@ _install_mono() {
 	local mtfm="4.5"
 	insinto "/usr/lib/mono/${mtfm}"
 	exeinto "/usr/lib/mono/${mtfm}"
-	dodir /usr/lib/mono/${mtfm}
-	dosym /opt/${SDK}/shared/Tesseract/${MY_PV}/${tfm}/Tesseract.dll \
-		/usr/lib/mono/${mtfm}/Tesseract.dll
-	dosym /opt/${SDK}/shared/Tesseract.Drawing/${MY_PV}/${tfm}/Tesseract.Drawing.dll \
-		/usr/lib/mono/${mtfm}/Tesseract.Drawing.dll
+	dodir "/usr/lib/mono/${mtfm}"
+	dosym \
+		"/opt/${SDK}/shared/Tesseract/${MY_PV}/${tfm}/Tesseract.dll" \
+		"/usr/lib/mono/${mtfm}/Tesseract.dll"
+	dosym \
+		"/opt/${SDK}/shared/Tesseract.Drawing/${MY_PV}/${tfm}/Tesseract.Drawing.dll" \
+		"/usr/lib/mono/${mtfm}/Tesseract.Drawing.dll"
 
-	dosym /opt/${SDK}/shared/Tesseract/${MY_PV}/${tfm}/Tesseract.dll \
-		/usr/lib/mono/${mtfm}/Tesseract.dll
+	dosym \
+		"/opt/${SDK}/shared/Tesseract/${MY_PV}/${tfm}/Tesseract.dll" \
+		"/usr/lib/mono/${mtfm}/Tesseract.dll"
 
 	local narch=$(get_march "${CHOST}")
 	local v
-	v="${EXPECTED_LEPTONICA_PV}"
+	v="${expected_leptonica_pv}"
 	if [[ ! -e "${ESYSROOT}/usr/lib/mono/${mtfm}/leptonica-${v}.dll" ]] ; then
-		dosym /opt/${SDK}/shared/Tesseract/${MY_PV}/${tfm}/${narch}/leptonica-${v}.dll \
-			/usr/lib/mono/${mtfm}/leptonica-${v}.dll
+		dosym \
+			"/opt/${SDK}/shared/Tesseract/${MY_PV}/${tfm}/${narch}/leptonica-${v}.dll" \
+			"/usr/lib/mono/${mtfm}/leptonica-${v}.dll"
 	fi
-	v=$(ver_cut 1-2 "${EXPECTED_TESSERACT_PV}")
+	v=$(ver_cut 1-2 "${expected_tesseract_pv}")
 	v="${v/.}"
 	if [[ ! -e "${ESYSROOT}/usr/lib/mono/${mtfm}/tesseract${v}.dll" ]] ; then
-		dosym /opt/${SDK}/shared/Tesseract/${MY_PV}/${tfm}/${narch}/tesseract${v}.dll \
-			/usr/lib/mono/${mtfm}/tesseract${v}.dll
+		dosym \
+			"/opt/${SDK}/shared/Tesseract/${MY_PV}/${tfm}/${narch}/tesseract${v}.dll" \
+			"/usr/lib/mono/${mtfm}/tesseract${v}.dll"
 	fi
 }
 
@@ -276,7 +307,8 @@ einfo "Restoring file permissions"
 einfo
 	local x
 	for x in $(find "${ED}") ; do
-		local path=$(echo "${x}" | sed -e "s|${ED}||g")
+		local path=$(echo "${x}" \
+			| sed -e "s|${ED}||g")
 		if file "${x}" | grep -q "executable" ; then
 			fperms 0775 "${path}"
 		elif file "${x}" | grep -q "shared object" ; then
@@ -286,7 +318,13 @@ einfo
 		fi
 	done
 	if ! use developer ; then
-		find "${ED}" \( -name "*.pdb" -o -name "*.xml" \) -delete
+		find \
+			"${ED}" \
+			\( \
+				   -name "*.pdb" \
+				-o -name "*.xml" \
+			\) \
+			-delete
 	fi
 
 	if [[ -e "${HOME}/.nuget" ]] ; then
