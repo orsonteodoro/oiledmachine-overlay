@@ -406,17 +406,17 @@ eerror
 
 generate_precisions() {
 	local inc_file
-	if has cuda ${IUSE} && use cuda && use mkl && use ilp64 ; then
+	if has cuda ${IUSE_EFFECTIVE} && use cuda && use mkl && use ilp64 ; then
 		inc_file="make.inc.mkl-gcc-ilp64"
-	elif has cuda ${IUSE} && use cuda && use mkl ; then
+	elif has cuda ${IUSE_EFFECTIVE} && use cuda && use mkl ; then
 		inc_file="make.inc.mkl-gcc"
-	elif has cuda ${IUSE} && use cuda && use openblas ; then
+	elif has cuda ${IUSE_EFFECTIVE} && use cuda && use openblas ; then
 		inc_file="make.inc.openblas"
-	elif has rocm ${IUSE} && use rocm && use mkl && use ilp64 ; then
+	elif has rocm ${IUSE_EFFECTIVE} && use rocm && use mkl && use ilp64 ; then
 		inc_file="make.inc.hip-gcc-mkl-ilp64"
-	elif has rocm ${IUSE} && use rocm && use mkl ; then
+	elif has rocm ${IUSE_EFFECTIVE} && use rocm && use mkl ; then
 		inc_file="make.inc.hip-gcc-mkl"
-	elif has rocm ${IUSE} && use rocm && use openblas ; then
+	elif has rocm ${IUSE_EFFECTIVE} && use rocm && use openblas ; then
 		inc_file="make.inc.hip-gcc-openblas"
 	else
 		local gpu_targets
@@ -446,31 +446,31 @@ eerror
 		export OPENBLASDIR="/usr"
 	fi
 
-	if has cuda ${IUSE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-13*" ; then
+	if has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-13*" ; then
 		export CUDADIR="/opt/cuda"
 		export gpu="$(get_cuda_flags)"
 		export CC="${CHOST}-gcc-13"
 		export CXX="${CHOST}-g++-13"
 		cuda_host_cc_check 13
-	elif has cuda ${IUSE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-12*" ; then
+	elif has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-12*" ; then
 		export CUDADIR="/opt/cuda"
 		export gpu="$(get_cuda_flags)"
 		export CC="${CHOST}-gcc-12"
 		export CXX="${CHOST}-g++-12"
 		cuda_host_cc_check 12
-	elif has cuda ${IUSE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-11*" ; then
+	elif has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-11*" ; then
 		export CUDADIR="/opt/cuda"
 		export gpu="$(get_cuda_flags)"
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
 		cuda_host_cc_check 11
-	elif has cuda ${IUSE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/gcc-11*" ; then
+	elif has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/gcc-11*" ; then
 		export CUDADIR="/opt/cuda"
 		export gpu="$(get_cuda_flags)"
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
 		cuda_host_cc_check 11
-	elif has cuda ${IUSE} && use cuda ; then
+	elif has cuda ${IUSE_EFFECTIVE} && use cuda ; then
 eerror
 eerror "If using"
 eerror
@@ -478,7 +478,7 @@ eerror "CUDA 12 - install and switch via eselect gcc to either gcc 11, 12, 13"
 eerror "CUDA 11 - install and switch via eselect gcc to either gcc 11"
 eerror
 		die
-	elif has rocm ${IUSE} && use rocm ; then
+	elif has rocm ${IUSE_EFFECTIVE} && use rocm ; then
 		export gpu="$(get_amdgpu_flags)"
 	fi
 	sed -i \
@@ -545,7 +545,7 @@ icl-magma-v2_7_src_configure() {
 		-DBUILD_SHARED_LIBS=ON
 		-DUSE_FORTRAN=ON
 	)
-	if has cuda ${IUSE} ; then
+	if has cuda ${IUSE_EFFECTIVE} ; then
 		mycmakeargs+=(
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 			-DMAGMA_ENABLE_CUDA=$(usex cuda ON OFF)
@@ -556,7 +556,7 @@ icl-magma-v2_7_src_configure() {
 		)
 	fi
 
-	if has rocm ${IUSE} ; then
+	if has rocm ${IUSE_EFFECTIVE} ; then
 		mycmakeargs+=(
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 			-DMAGMA_ENABLE_HIP=$(usex rocm ON OFF)
@@ -582,7 +582,7 @@ ewarn "Support or install location may change for ilp64 in the future."
 		mkl_data_model="lp64"
 	fi
 
-	if has cuda ${IUSE} && use cuda && use mkl ; then
+	if has cuda ${IUSE_EFFECTIVE} && use cuda && use mkl ; then
 		if use tbb ; then
 			mycmakeargs+=(
 				-DBLA_VENDOR="${mkl_data_model_vendor}"
@@ -606,7 +606,7 @@ ewarn
 				-DLAPACK_CXXFLAGS:STRING="$(pkg-config --cflags mkl-dynamic-${mkl_data_model}-seq)"
 			)
 		fi
-	elif has rocm ${IUSE} && use rocm && use mkl ; then
+	elif has rocm ${IUSE_EFFECTIVE} && use rocm && use mkl ; then
 		if use tbb ; then
 			mycmakeargs+=(
 				-DBLA_VENDOR="${mkl_data_model_vendor}"
@@ -634,12 +634,12 @@ ewarn
 		)
 	fi
 
-	if has cuda ${IUSE} && use cuda ; then
+	if has cuda ${IUSE_EFFECTIVE} && use cuda ; then
 		mycmakeargs+=(
 			-DGPU_TARGET="$(get_cuda_flags)"
 		)
 	fi
-	if has rocm ${IUSE} && use rocm ; then
+	if has rocm ${IUSE_EFFECTIVE} && use rocm ; then
 		local a
 		local b
 		local c
