@@ -22,7 +22,7 @@ inherit cmake git-r3
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/icculus/mojoshader.git"
 	EGIT_COMMIT="HEAD"
-	FALLBACK_COMMIT="7b7e5fd6f3cc99afd12a9d2a0e62d2c408c96e33" # Apr 26, 2024 
+	FALLBACK_COMMIT="7b7e5fd6f3cc99afd12a9d2a0e62d2c408c96e33" # Apr 26, 2024
 	IUSE+=" fallback-commit"
 	# No KEYWORDS for LIVE ebuilds (or LIVE snapshots)
 	S="${WORKDIR}/${P}"
@@ -80,11 +80,17 @@ unpack_live() {
 	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
 	git-r3_checkout
+	local build_files=(
+		$(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake" \
+			| sort)
+	)
 	local actual_fingerprint=$(cat \
-		$(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake" | sort) \
+		${build_files[@]} \
 		| sha512sum \
 		| cut -f 1 -d " ")
-	if [[ "${actual_fingerprint}" != "${EXPECTED_FINGERPRINT}" ]] ; then
+	if [[ "${EXPECTED_FINGERPRINT}" == "disable" ]] ; then
+		:
+	elif [[ "${actual_fingerprint}" != "${EXPECTED_FINGERPRINT}" ]] ; then
 eerror
 eerror "Change in build files detected"
 eerror
