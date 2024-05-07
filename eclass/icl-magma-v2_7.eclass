@@ -446,27 +446,25 @@ eerror
 		export OPENBLASDIR="/usr"
 	fi
 
-	if has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-13*" ; then
+	if has cuda ${IUSE_EFFECTIVE} && use cuda ; then
+		addpredict "/proc/self/task/"
 		export CUDADIR="/opt/cuda"
 		export gpu="$(get_cuda_flags)"
+	fi
+
+	if has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-13*" ; then
 		export CC="${CHOST}-gcc-13"
 		export CXX="${CHOST}-g++-13"
 		cuda_host_cc_check 13
 	elif has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-12*" ; then
-		export CUDADIR="/opt/cuda"
-		export gpu="$(get_cuda_flags)"
 		export CC="${CHOST}-gcc-12"
 		export CXX="${CHOST}-g++-12"
 		cuda_host_cc_check 12
 	elif has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-11*" ; then
-		export CUDADIR="/opt/cuda"
-		export gpu="$(get_cuda_flags)"
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
 		cuda_host_cc_check 11
 	elif has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/gcc-11*" ; then
-		export CUDADIR="/opt/cuda"
-		export gpu="$(get_cuda_flags)"
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
 		cuda_host_cc_check 11
