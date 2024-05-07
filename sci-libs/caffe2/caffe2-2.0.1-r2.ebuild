@@ -8,6 +8,7 @@ EAPI=8
 # For requirements, see
 # https://github.com/pytorch/pytorch/blob/v2.0.1/RELEASE.md?plain=1#L44
 # https://github.com/pytorch/pytorch/tree/v2.0.1/third_party
+# https://github.com/pytorch/pytorch/blob/v2.0.1/.ci/docker/common/install_rocm_magma.sh#L9 for magma
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx900
