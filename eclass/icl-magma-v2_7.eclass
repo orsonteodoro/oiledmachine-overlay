@@ -389,6 +389,21 @@ einfo "Removing LLVM references"
 	IFS=$' \t\n'
 }
 
+cuda_host_cc_check() {
+	local required_gcc_slot="${1}"
+        local gcc_current_profile=$(gcc-config -c)
+        local gcc_current_profile_slot=${gcc_current_profile##*-}
+        if ver_test "${gcc_current_profile_slot}" -ne "${required_gcc_slot}" ; then
+eerror
+eerror "You must switch to =sys-devel/gcc-${required_gcc_slot}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${required_gcc_slot}"
+eerror "  source /etc/profile"
+eerror
+                die
+        fi
+}
+
 generate_precisions() {
 	local inc_file
 	if has cuda ${IUSE} && use cuda && use mkl && use ilp64 ; then
@@ -431,21 +446,38 @@ eerror
 		export OPENBLASDIR="/usr"
 	fi
 
-	if has cuda ${IUSE} && use cuda ; then
+	if has cuda ${IUSE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-13*" ; then
 		export CUDADIR="/opt/cuda"
 		export gpu="$(get_cuda_flags)"
-		local gcc_slot=11
-		local gcc_current_profile=$(gcc-config -c)
-		local gcc_current_profile_slot=${gcc_current_profile##*-}
-		if [[ "${gcc_current_profile_slot}" -ne "${gcc_slot}" ]] ; then
+		export CC="${CHOST}-gcc-13"
+		export CXX="${CHOST}-g++-13"
+		cuda_host_cc_check 13
+	elif has cuda ${IUSE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-12*" ; then
+		export CUDADIR="/opt/cuda"
+		export gpu="$(get_cuda_flags)"
+		export CC="${CHOST}-gcc-12"
+		export CXX="${CHOST}-g++-12"
+		cuda_host_cc_check 12
+	elif has cuda ${IUSE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-11*" ; then
+		export CUDADIR="/opt/cuda"
+		export gpu="$(get_cuda_flags)"
+		export CC="${CHOST}-gcc-11"
+		export CXX="${CHOST}-g++-11"
+		cuda_host_cc_check 11
+	elif has cuda ${IUSE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/gcc-11*" ; then
+		export CUDADIR="/opt/cuda"
+		export gpu="$(get_cuda_flags)"
+		export CC="${CHOST}-gcc-11"
+		export CXX="${CHOST}-g++-11"
+		cuda_host_cc_check 11
+	elif has cuda ${IUSE} && use cuda ; then
 eerror
-eerror "You must switch to == GCC ${gcc_slot}.  Do"
+eerror "If using"
 eerror
-eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
-eerror "  source /etc/profile"
+eerror "CUDA 12 - install and switch via eselect gcc to either gcc 11, 12, 13"
+eerror "CUDA 11 - install and switch via eselect gcc to either gcc 11"
 eerror
-			die
-		fi
+		die
 	elif has rocm ${IUSE} && use rocm ; then
 		export gpu="$(get_amdgpu_flags)"
 	fi
