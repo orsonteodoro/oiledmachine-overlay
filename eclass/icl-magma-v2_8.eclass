@@ -519,6 +519,10 @@ icl-magma-v2_8_src_prepare() {
 		sed -i -e "s|@EPREFIX_ROCM_PATH@|/opt/rocm|g" \
 			$(grep -r -l -e "@EPREFIX_ROCM_PATH@" "${WORKDIR}") \
 			|| true
+einfo "LLVM_SLOT (placeholder):  ${LLVM_SLOT}"
+		sed -i -e "s|@ESYSROOT_LLVM_PATH@|/usr/lib/llvm/${LLVM_SLOT}|g" \
+			$(grep -r -l -e "@ESYSROOT_LLVM_PATH@" "${WORKDIR}") \
+			|| true
 	fi
 
 	gen_pc_file
