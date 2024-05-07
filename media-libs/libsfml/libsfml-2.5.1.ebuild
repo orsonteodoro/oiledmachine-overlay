@@ -1,35 +1,41 @@
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# TODO delete exlibs and replace with external libraries
-
 EAPI=8
 
+# TODO delete exlibs and replace with external libraries
 # DO NOT DELETE.  Required by CSFML.
 
 NV_DRIVER_VERSION_VULKAN="390.132"
+VULKAN_LINUX_DRIVERS=(
+	amdgpu
+	intel
+	nvidia
+	radeonsi
+)
 
 inherit cmake-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	export EGIT_BRANCH="2.5.x"
-	export EGIT_REPO_URI="https://github.com/SFML/SFML.git"
+	EGIT_BRANCH="2.5.x"
+	EGIT_REPO_URI="https://github.com/SFML/SFML.git"
+	FALLBACK_COMMIT="2f11710abc5aa478503a7ff3f9e654bd2078ebab" # 20181015
 	inherit git-r3
-	SRC_URI=""
-	S="${WORKDIR}/${P}"
 	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
+	SRC_URI=""
 else
+	KEYWORDS="~arm ~arm64 ~amd64 ~x86" # Live ebuilds don't get KEYWORDed
+	S="${WORKDIR}/SFML-${PV}"
 	SRC_URI="
 https://github.com/SFML/SFML/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
-	S="${WORKDIR}/SFML-${PV}"
 fi
 
 DESCRIPTION="Simple and Fast Multimedia Library (SFML)"
 HOMEPAGE="https://www.sfml-dev.org/ https://github.com/SFML/SFML"
 LICENSE="
-	ZLIB
 	(
 		all-rights-reserved
 		Boost-1.0
@@ -38,6 +44,7 @@ LICENSE="
 	CC0-1.0
 	FTL
 	LGPL-2
+	ZLIB
 "
 # The extra licenses are due to the prebuilt libraries in extlibs
 # See https://github.com/SFML/SFML/blob/2.6.x/license.md#external-libraries-used-by-sfml
@@ -45,18 +52,11 @@ LICENSE="
 # all-rights-reserved Boost-1.0 - extlibs/headers/catch.hpp
 # The Boost-1.0 license template doesn't contain all rights reserved
 
-#KEYWORDS="~arm ~arm64 ~amd64 ~x86" # Live ebuilds don't get KEYWORDed
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 audio X debug doc examples flac graphics ios network test udev window
 vulkan
 "
-VULKAN_LINUX_DRIVERS=(
-	amdgpu
-	intel
-	nvidia
-	radeonsi
-)
 IUSE+=" ${VULKAN_LINUX_DRIVERS[@]/#/video_cards_} "
 REQUIRED_USE+="
 	graphics? (
@@ -168,7 +168,7 @@ PATCHES=(
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="2f11710abc5aa478503a7ff3f9e654bd2078ebab" # 20181015
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 	else

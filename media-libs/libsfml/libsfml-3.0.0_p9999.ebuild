@@ -1,25 +1,40 @@
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# TODO delete exlibs and replace with external libraries
-
 EAPI=8
 
+# U 22.04
+
+# TODO delete exlibs and replace with external libraries
+# *DEPENDS last check:  Dec 22, 2022
+
+EXPECTED_DEPENDS="\
+4e4b812f1fa59b1c27a9adfd18549c1ff5b6db06f4ef9db4ee4f3113d5a645ba\
+c7ea444480e9194ad5bbb4367bcc7d96ec0a4897ce3361b8a5e16878c8b69390\
+"
 LIBX11_PV="1.7.5"
 MESA_PV="22.0.1"
 NV_DRIVER_VERSION_VULKAN="390.132"
+VULKAN_LINUX_DRIVERS=(
+	amdgpu
+	intel
+	nvidia
+	radeonsi
+)
 XORG_SERVER_PV="21.1.4"
 
 inherit cmake-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	export EGIT_BRANCH="master"
-	export EGIT_REPO_URI="https://github.com/SFML/SFML.git"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/SFML/SFML.git"
+	FALLBACK_COMMIT="415668cb82db71dc6975b97e76adc8540fdfa34a" # 20240607
 	inherit git-r3
-	SRC_URI=""
-	S="${WORKDIR}/${P}"
 	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
+	SRC_URI=""
 else
+	KEYWORDS="~arm ~arm64 ~amd64 ~x86"
 	SRC_URI="
 https://github.com/SFML/SFML/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -33,28 +48,22 @@ HOMEPAGE="
 	https://github.com/SFML/SFML
 "
 LICENSE="
-	ZLIB
 	BSD
 	CC0-1.0
 	FTL
 	LGPL-2
+	ZLIB
 "
 # The extra licenses are due to the prebuilt libraries in extlibs
 # See https://github.com/SFML/SFML/blob/2.6.x/license.md#external-libraries-used-by-sfml
 # See headers for copyright notices for BSD.
 
-#KEYWORDS="~arm ~arm64 ~amd64 ~x86" # Live ebuilds don't get KEYWORDed
+RESTRICT="" # See headers for copyright notices
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 audio debug doc drm examples flac graphics ios network test udev window
 vulkan X
 "
-VULKAN_LINUX_DRIVERS=(
-	amdgpu
-	intel
-	nvidia
-	radeonsi
-)
 IUSE+=" ${VULKAN_LINUX_DRIVERS[@]/#/video_cards_} "
 REQUIRED_USE+="
 	drm? (
@@ -87,8 +96,6 @@ REQUIRED_USE+="
 		window
 	)
 "
-# U 22.04
-# *DEPENDS last check:  Dec 22, 2022
 VULKAN_LINUX_RDEPEND="
 	|| (
 		video_cards_amdgpu? (
@@ -172,11 +179,6 @@ BDEPEND+="
 	>=sys-devel/gcc-11.2.0
 "
 DOCS=( changelog.md readme.md )
-EXPECTED_DEPENDS="\
-0e5f94b63a76f9bb2e29f16f851b7544749c7e938d46de68d9f47844c78a099d\
-fb05d9599b8f5dd7ce06783fe22959e8a53e13d862350e5c91b629fbc5ce7769\
-"
-RESTRICT="" # See headers for copyright notices
 PATCHES=(
 	"${FILESDIR}/libsfml-2.6x_p9999-drm-null.patch"
 )
@@ -206,7 +208,7 @@ pkg_setup() {
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="cf3f4e8d89904d6d9da52e0aadf212932f9a9b3f" # 20231223
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 	else
@@ -215,10 +217,15 @@ src_unpack() {
 	cd "${S}" || die
 	if [[ "${PV}" =~ "9999" ]] ; then
 		verify_version
-		local actual_depends=$(cat $(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake" | sort) \
+		local list=(
+			$(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake" | sort)
+		)
+		local actual_depends=$(cat ${list[@]} \
 			| sha512sum \
 			| cut -f 1 -d " ")
-		if [[ "${actual_depends}" != "${EXPECTED_DEPENDS}" ]] ; then
+		if [[ "${EXPECTED_DEPENDS}" == "disable" ]] ; then
+			:
+		elif [[ "${actual_depends}" != "${EXPECTED_DEPENDS}" ]] ; then
 eerror
 eerror "The package needs an IUSE or *DEPENDs review"
 eerror

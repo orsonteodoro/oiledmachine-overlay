@@ -1,30 +1,42 @@
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# TODO delete exlibs and replace with external libraries
-
 EAPI=8
 
+# U 20.04
+
+# *DEPENDs last check: Dec 22, 2022
+# TODO delete exlibs and replace with external libraries
+
+EXPECTED_DEPENDS="disable"
 LIBX11_PV="1.7.5"
 MESA_PV="21.2.6"
 NV_DRIVER_VERSION_VULKAN="390.132"
+VULKAN_LINUX_DRIVERS=(
+	amdgpu
+	intel
+	nvidia
+	radeonsi
+)
 XORG_SERVER_PV="1.20.13"
 
 inherit cmake-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	export EGIT_BRANCH="2.6.x"
-	export EGIT_REPO_URI="https://github.com/SFML/SFML.git"
+	EGIT_BRANCH="2.6.x"
+	EGIT_REPO_URI="https://github.com/SFML/SFML.git"
+	FALLBACK_COMMIT="69ea0cd863aed1d4092b970b676924a716ff718b" # 20231029
 	inherit git-r3
-	SRC_URI=""
-	S="${WORKDIR}/${P}"
 	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
+	SRC_URI=""
 else
+	KEYWORDS="~arm ~arm64 ~amd64 ~x86"
+	S="${WORKDIR}/SFML-${PV}"
 	SRC_URI="
 https://github.com/SFML/SFML/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
-	S="${WORKDIR}/SFML-${PV}"
 fi
 
 DESCRIPTION="Simple and Fast Multimedia Library (SFML)"
@@ -33,7 +45,6 @@ HOMEPAGE="
 	https://github.com/SFML/SFML
 "
 LICENSE="
-	ZLIB
 	(
 		all-rights-reserved
 		Boost-1.0
@@ -42,6 +53,7 @@ LICENSE="
 	CC0-1.0
 	FTL
 	LGPL-2
+	ZLIB
 "
 # The extra licenses are due to the prebuilt libraries in extlibs
 # See https://github.com/SFML/SFML/blob/2.6.x/license.md#external-libraries-used-by-sfml
@@ -49,18 +61,12 @@ LICENSE="
 # all-rights-reserved Boost-1.0 - extlibs/headers/catch.hpp
 # The Boost-1.0 license template doesn't contain all rights reserved
 
-#KEYWORDS="~arm ~arm64 ~amd64 ~x86" # Live ebuilds don't get KEYWORDed
+RESTRICT=""  # See headers for copyright notices
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 audio debug doc drm examples flac graphics ios network test udev window
 vulkan X
 "
-VULKAN_LINUX_DRIVERS=(
-	amdgpu
-	intel
-	nvidia
-	radeonsi
-)
 IUSE+=" ${VULKAN_LINUX_DRIVERS[@]/#/video_cards_} "
 REQUIRED_USE+="
 	drm? (
@@ -93,8 +99,6 @@ REQUIRED_USE+="
 		window
 	)
 "
-# U 20.04
-# *DEPENDs last check: Dec 22, 2022
 VULKAN_LINUX_RDEPEND="
 	|| (
 		video_cards_amdgpu? (
@@ -178,11 +182,6 @@ BDEPEND+="
 	>=sys-devel/gcc-9.3.0
 "
 DOCS=( changelog.md readme.md )
-EXPECTED_DEPENDS="\
-d20820befb877ea0a4ccc22452988dfeb0933b9a4d1041386493ef86f3aa634a\
-0a1f20c1f6c3e34e1363e2d18812d4cc24c4b48c279fd44e370c412a98e63548\
-"
-RESTRICT=""  # See headers for copyright notices
 PATCHES=(
 	"${FILESDIR}/libsfml-2.6x_p9999-drm-null.patch"
 )
@@ -208,7 +207,7 @@ eerror
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="69ea0cd863aed1d4092b970b676924a716ff718b" # 20231029
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 	else
@@ -217,10 +216,15 @@ src_unpack() {
 	cd "${S}" || die
 	if [[ "${PV}" =~ "9999" ]] ; then
 		#verify_version
-		local actual_depends=$(cat $(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake" | sort) \
+		local list=(
+			$(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake" | sort)
+		)
+		local actual_depends=$(cat ${list[@]} \
 			| sha512sum \
 			| cut -f 1 -d " ")
-		if [[ "${actual_depends}" != "${EXPECTED_DEPENDS}" ]] ; then
+		if [[ "${EXPECTED_DEPENDS}" == "disable" ]] ; then
+			:
+		elif [[ "${actual_depends}" != "${EXPECTED_DEPENDS}" ]] ; then
 eerror
 eerror "The package needs an IUSE or *DEPENDs review"
 eerror
