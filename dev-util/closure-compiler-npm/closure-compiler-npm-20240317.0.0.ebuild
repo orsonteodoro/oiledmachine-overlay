@@ -16,7 +16,7 @@ AUTO_COMMON_PV="1.2.2"								# https://github.com/google/bazel-common/blob/65f2
 AUTO_SERVICE_PV="1.1.1"								# https://github.com/google/bazel-common/blob/65f295afec03cce3807df5b06ef42bf8e46df4e4/workspace_defs.bzl#L170
 AUTO_VALUE_1_7_PV="1.7.4"							# https://github.com/google/truth/blob/release_1_1/pom.xml#L26
 AUTO_VALUE_1_10_PV="1.10.4"							# https://github.com/google/bazel-common/blob/65f295afec03cce3807df5b06ef42bf8e46df4e4/workspace_defs.bzl#L187 https://github.com/google/truth/blob/v1.4.0/pom.xml#L17
-BAZELISK_PV="1.18.0" # From CI logs for "Build Compiler"
+BAZELISK_PV="1.19.0" # From CI logs for "Build Compiler"
 BAZELISK_ABIS="
 	amd64
 	arm64
@@ -488,9 +488,9 @@ https://registry.npmjs.org/yargs/-/yargs-16.2.0.tgz -> npmpkg-yargs-16.2.0.tgz
 https://registry.npmjs.org/yargs/-/yargs-7.1.0.tgz -> npmpkg-yargs-7.1.0.tgz
 https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz -> npmpkg-yocto-queue-0.1.0.tgz
 "
-#https://github.com/bazelbuild/rules_proto/archive/refs/tags/${EGIT_RULES_PROTO_COMMIT}.tar.gz -> rules_proto-${EGIT_RULES_PROTO_COMMIT}.tar.gz
 # UPDATER_END_NPM_EXTERNAL_URIS
 bazel_external_uris="
+https://github.com/bazelbuild/rules_proto/archive/refs/tags/${EGIT_RULES_PROTO_COMMIT}.tar.gz -> rules_proto-${EGIT_RULES_PROTO_COMMIT}.tar.gz
 https://cdn.azul.com/zulu/bin/zulu${ZULU17_PV}-linux_x64.tar.gz
 https://cdn.azul.com/zulu/bin/zulu${ZULU11_PV}-linux_x64.tar.gz
 https://github.com/bazelbuild/rules_jvm_external/archive/${EGIT_RULES_JVM_EXTERNAL_COMMIT}.zip -> rules_jvm_external-${EGIT_RULES_JVM_EXTERNAL_COMMIT}.zip
@@ -718,7 +718,7 @@ https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_PV}/bazelis
 	done
 }
 
-KEYWORDS="~amd64 ~arm64"
+#KEYWORDS="~amd64 ~arm64" # Build problem
 S="${WORKDIR}/${PN}-${PV}"
 S_CLOSURE_COMPILER="${WORKDIR}/closure-compiler-${CLOSURE_COMPILER_MAJOR_VER}"
 SRC_URI="
@@ -799,6 +799,7 @@ BDEPEND+="
 	=dev-build/bazel-${BAZEL_SLOT}*
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
+	>=sys-devel/gcc-9.4.0
 	dev-java/maven-bin
 	dev-vcs/git
 	virtual/jdk:${JAVA_SLOT}
@@ -885,6 +886,7 @@ eerror
 
 	java-pkg-opt-2_pkg_setup
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
+	javac --version || die
 
 	# Bug
 	unset ANDROID_HOME
