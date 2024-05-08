@@ -1,0 +1,130 @@
+diff -urp _deps/SdfLib-1927bee6bb8225258a39c8cbf14e18a4d50409ae.orig/libs/CMakeLists.txt _deps/SdfLib-1927bee6bb8225258a39c8cbf14e18a4d50409ae/libs/CMakeLists.txt
+--- _deps/SdfLib-1927bee6bb8225258a39c8cbf14e18a4d50409ae.orig/libs/CMakeLists.txt	2023-11-02 10:17:29.000000000 -0700
++++ _deps/SdfLib-1927bee6bb8225258a39c8cbf14e18a4d50409ae/libs/CMakeLists.txt	2024-05-07 23:02:00.708861044 -0700
+@@ -1,16 +1,49 @@
+ include(FetchContent)
+ set(CMAKE_POLICY_DEFAULT_CMP0048 NEW)
+ 
++# oteodoro:  changes for use local tarballs
++option(USE_LOCAL_TARBALL "Use the local tarballs instead of remote repo" ON)
++
++set(MUJOCO_DEP_VERSION_glm_lib
++	89e52e327d7a3ae61eb402850ba36ac4dd111987
++	CACHE STRING "Version of `glm` to be fetched."
++)
++set(MUJOCO_DEP_VERSION_spdlog_lib
++	eb3220622e73a4889eee355ffa37972b3cac3df5
++	CACHE STRING "Version of `spdlog` to be fetched."
++)
++set(MUJOCO_DEP_VERSION_cereal_lib
++	ebef1e929807629befafbb2918ea1a08c7194554
++	CACHE STRING "Version of `cereal` to be fetched."
++)
++
+ # glm
+ if(NOT SDFLIB_USE_SYSTEM_GLM)
+-	FetchContent_Declare(glm_lib
+-	  GIT_REPOSITORY https://github.com/g-truc/glm.git
+-	  GIT_TAG 89e52e327d7a3ae61eb402850ba36ac4dd111987 # 0.9.8
+-	)
++	if(USE_LOCAL_TARBALL)
++		FetchContent_Declare(glm_lib
++			DOWNLOAD_NO_EXTRACT FALSE
++			URL $ENV{DISTDIR}/glm_lib-${MUJOCO_DEP_VERSION_glm_lib}.tar.gz
++		)
++		file(ARCHIVE_EXTRACT
++			INPUT $ENV{DISTDIR}/glm_lib-${MUJOCO_DEP_VERSION_glm_lib}.tar.gz
++			DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/_deps
++		)
++	else()
++		FetchContent_Declare(glm_lib
++			GIT_REPOSITORY https://github.com/g-truc/glm.git
++			GIT_TAG ${MUJOCO_DEP_VERSION_glm_lib} # 0.9.8
++		)
++	endif()
+ 
+ 	FetchContent_GetProperties(glm_lib)
++	if(USE_LOCAL_TARBALL)
++		set(glm_lib_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/glm_lib-${MUJOCO_DEP_VERSION_glm_lib})
++	endif()
+ 	if(NOT glm_lib_POPULATED)
+ 		FetchContent_Populate(glm_lib)
++		if(USE_LOCAL_TARBALL)
++			set(glm_lib_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/glm_lib-${MUJOCO_DEP_VERSION_glm_lib})
++		endif()
+ 		add_subdirectory(${glm_lib_SOURCE_DIR} ${glm_lib_BINARY_DIR})
+ 	endif()
+ 	set(SDFLIB_GLM_TARGET glm PARENT_SCOPE)
+@@ -57,28 +90,62 @@ if(SDFLIB_BUILD_APPS OR SDFLIB_BUILD_DEB
+ 
+ # spdlog
+ if(NOT SDFLIB_USE_SYSTEM_SPDLOG)
+-	FetchContent_Declare(spdlog_lib
+-	  GIT_REPOSITORY https://github.com/gabime/spdlog.git
+-	  GIT_TAG eb3220622e73a4889eee355ffa37972b3cac3df5 # 1.9.2
+-	)
++	if(USE_LOCAL_TARBALL)
++		FetchContent_Declare(spdlog_lib
++			INPUT $ENV{DISTDIR}/spdlog_lib-${MUJOCO_DEP_VERSION_spdlog_lib}.tar.gz
++			DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/_deps
++		)
++		file(ARCHIVE_EXTRACT
++			INPUT $ENV{DISTDIR}/spdlog_lib-${MUJOCO_DEP_VERSION_spdlog_lib}.tar.gz
++			DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/_deps
++		)
++	else()
++		FetchContent_Declare(spdlog_lib
++			GIT_REPOSITORY https://github.com/gabime/spdlog.git
++			GIT_TAG ${MUJOCO_DEP_VERSION_spdlog_lib} # 1.9.2
++		)
++	endif()
+ 
+ 	FetchContent_GetProperties(spdlog_lib)
++	if(USE_LOCAL_TARBALL)
++		set(spdlog_lib_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/spdlog_lib-${MUJOCO_DEP_VERSION_spdlog_lib})
++	endif()
+ 	if(NOT spdlog_lib_POPULATED)
+-	   FetchContent_Populate(spdlog_lib)
+-	   add_subdirectory(${spdlog_lib_SOURCE_DIR} ${spdlog_lib_BINARY_DIR})
++		FetchContent_Populate(spdlog_lib)
++		if(USE_LOCAL_TARBALL)
++			set(spdlog_lib_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/spdlog_lib-${MUJOCO_DEP_VERSION_spdlog_lib})
++		endif()
++		add_subdirectory(${spdlog_lib_SOURCE_DIR} ${spdlog_lib_BINARY_DIR})
+ 	endif()
+ endif()
+ 
+ # cereal
+ if(NOT SDFLIB_USE_SYSTEM_CEREAL)
+-	FetchContent_Declare(cereal_lib
+-	  GIT_REPOSITORY https://github.com/USCiLab/cereal.git
+-	  GIT_TAG ebef1e929807629befafbb2918ea1a08c7194554 # 1.3.2
+-	)
++	if(USE_LOCAL_TARBALL)
++		FetchContent_Declare(cereal_lib
++			INPUT $ENV{DISTDIR}/cereal_lib-${MUJOCO_DEP_VERSION_cereal_lib}.tar.gz
++			DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/_deps
++		)
++		file(ARCHIVE_EXTRACT
++			INPUT $ENV{DISTDIR}/cereal_lib-${MUJOCO_DEP_VERSION_cereal_lib}.tar.gz
++			DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/_deps
++		)
++	else()
++		FetchContent_Declare(cereal_lib
++			GIT_REPOSITORY https://github.com/USCiLab/cereal.git
++			GIT_TAG ${MUJOCO_DEP_VERSION_cereal_lib} # 1.3.2
++		)
++	endif()
+ 
+ 	FetchContent_GetProperties(cereal_lib)
++	if(USE_LOCAL_TARBALL)
++		set(cereal_lib_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/cereal_lib-${MUJOCO_DEP_VERSION_cereal_lib})
++	endif()
+ 	if(NOT cereal_lib_POPULATED)
+ 		FetchContent_Populate(cereal_lib)
++		if(USE_LOCAL_TARBALL)
++			set(cereal_lib_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/cereal_lib-${MUJOCO_DEP_VERSION_cereal_lib})
++		endif()
+ 		set(BUILD_DOC OFF)
+ 		set(BUILD_SANDBOX  OFF)
+ 		set(BUILD_TESTS OFF)

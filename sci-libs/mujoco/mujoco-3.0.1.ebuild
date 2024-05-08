@@ -20,9 +20,11 @@ EGIT_EIGEN3_COMMIT="e8515f78ac098329ab9f8cab21c87caede090a3f"
 EGIT_GLFW_COMMIT="7482de6071d21db77a7236155da44c172a7f6c9e"
 EGIT_GOOGLETEST_COMMIT="f8d7d77c06936315286eb55f8de22cd23c188571"
 EGIT_LODEPNG_COMMIT="b4ed2cd7ecf61d29076169b49199371456d4f90b"
+EGIT_MARCHINGCUBECPP_COMMIT="5b79e5d6bded086a0abe276a4b5a69fc17ae9bf1"
 EGIT_MUJOCO_COMMIT="8d5966eec9c8ee17cee6bb5638577c1f6a47968c"
 EGIT_PYBIND11_COMMIT="8a099e44b3d5f85b20f05828d919d2332a8de841"
 EGIT_QHULL_COMMIT="0c8fc90d2037588024d9964515c1e684f6007ecc"
+EGIT_SDFLIB_COMMIT="7c49cfba9bbec763b5d0f7b90b26555f3dde8088"
 EGIT_TINYOBJLOADER_COMMIT="1421a10d6ed9742f5b2c1766d22faa6cfbc56248"
 EGIT_TINYXML2_COMMIT="9a89766acc42ddfa9e7133c7d81a5bda108a0ade"
 PYTHON_COMPAT=( python3_11 )
@@ -62,6 +64,10 @@ https://github.com/qhull/qhull/archive/${EGIT_QHULL_COMMIT}.tar.gz
 	-> qhull-${EGIT_QHULL_COMMIT}.tar.gz
 https://github.com/tinyobjloader/tinyobjloader/archive/${EGIT_TINYOBJLOADER_COMMIT}.tar.gz
 	-> tinyobjloader-${EGIT_TINYOBJLOADER_COMMIT}.tar.gz
+https://github.com/aparis69/MarchingCubeCpp/archive/${EGIT_MARCHINGCUBECPP_COMMIT}.tar.gz
+	-> marchingcubecpp-${EGIT_MARCHINGCUBECPP_COMMIT}.tar.gz
+https://github.com/UPC-ViRVIG/SdfLib/archive/${EGIT_SDFLIB_COMMIT}.tar.gz
+	-> sdflib-${EGIT_SDFLIB_COMMIT}.tar.gz
 "
 
 DESCRIPTION="Multi-Joint dynamics with Contact. A general purpose physics \
