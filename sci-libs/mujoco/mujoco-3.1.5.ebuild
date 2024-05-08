@@ -7,18 +7,12 @@ EAPI=8
 # The dev-python/mujoco is for python bindings
 # The sci-libs/mujoco is for native bindings
 
-DISTUTILS_USE_PEP517="standalone"
-PYTHON_COMPAT=( python3_11 )
-X86_CPU_FLAGS=(
-	avx
-)
-
-inherit cmake python-r1
-
 # For commits, see
 # https://github.com/google-deepmind/mujoco/blob/3.1.5/cmake/MujocoDependencies.cmake
 # https://github.com/google-deepmind/mujoco/blob/3.1.5/python/mujoco/CMakeLists.txt#L194
 # https://github.com/google-deepmind/mujoco/blob/3.1.5/sample/cmake/SampleDependencies.cmake#L33
+
+DISTUTILS_USE_PEP517="standalone"
 EGIT_ABSEIL_CPP_COMMIT="d7aaad83b488fd62bd51c81ecf16cd938532cc0a"
 EGIT_BENCHMARK_COMMIT="e45585a4b8e75c28479fa4107182c28172799640"
 EGIT_CCD_COMMIT="7931e764a19ef6b21b443376c699bbc9c6d4fba8"
@@ -31,6 +25,15 @@ EGIT_PYBIND11_COMMIT="3e9dfa2866941655c56877882565e7577de6fc7b"
 EGIT_QHULL_COMMIT="0c8fc90d2037588024d9964515c1e684f6007ecc"
 EGIT_TINYOBJLOADER_COMMIT="1421a10d6ed9742f5b2c1766d22faa6cfbc56248"
 EGIT_TINYXML2_COMMIT="9a89766acc42ddfa9e7133c7d81a5bda108a0ade"
+PYTHON_COMPAT=( python3_11 )
+X86_CPU_FLAGS=(
+	avx
+)
+
+inherit cmake python-r1
+
+# KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # It still needs unpack testing
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/deepmind/mujoco/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -121,7 +124,7 @@ LICENSE="
 # ZLIB - lodepng
 # ZLIB - GLFW
 # ZLIB - tinyxml2
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
@@ -167,8 +170,6 @@ BDEPEND+="
 		>=dev-python/wheel-0.40.0[${PYTHON_USEDEP}]
 	)
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror test"
 PATCHES=(
 	"${FILESDIR}/${PN}-3.1.5-use-local-tarballs.patch"
 )

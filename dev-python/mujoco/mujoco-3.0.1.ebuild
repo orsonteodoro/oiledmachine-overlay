@@ -8,10 +8,6 @@
 EAPI=8
 
 DISTUTILS_USE_SETUPTOOLS="bdepend"
-PYTHON_COMPAT=( python3_11 ) # Upstream only tests with 3.11 for this version.
-
-inherit distutils-r1
-
 EGIT_ABSEIL_CPP_COMMIT="fb3621f4f897824c0dbe0615fa94543df6192f30"
 EGIT_BENCHMARK_COMMIT="344117638c8ff7e239044fd0fa7085839fc03021"
 EGIT_CCD_COMMIT="7931e764a19ef6b21b443376c699bbc9c6d4fba8"
@@ -24,6 +20,13 @@ EGIT_PYBIND11_COMMIT="8a099e44b3d5f85b20f05828d919d2332a8de841"
 EGIT_QHULL_COMMIT="0c8fc90d2037588024d9964515c1e684f6007ecc"
 EGIT_TINYOBJLOADER_COMMIT="1421a10d6ed9742f5b2c1766d22faa6cfbc56248"
 EGIT_TINYXML2_COMMIT="9a89766acc42ddfa9e7133c7d81a5bda108a0ade"
+PYTHON_COMPAT=( python3_11 ) # Upstream only tests with 3.11 for this version.
+
+inherit distutils-r1
+
+#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # It still needs unpack testing
+S_PROJ="${WORKDIR}/${P}"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/deepmind/mujoco/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -113,7 +116,10 @@ LICENSE="
 # ZLIB - lodepng
 # ZLIB - GLFW
 # ZLIB - tinyxml2
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="
+	mirror
+	test
+"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc +test r1"
 REQUIRED_USE+="
@@ -156,9 +162,6 @@ BDEPEND+="
 		>=dev-python/wheel-0.40.0[${PYTHON_USEDEP}]
 	)
 "
-S_PROJ="${WORKDIR}/${P}"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror test"
 
 #distutils_enable_sphinx "doc"
 
