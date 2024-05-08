@@ -8,7 +8,7 @@ EAPI=8
 # The sci-libs/mujoco is for native bindings
 
 DISTUTILS_USE_PEP517="standalone"
-PYTHON_COMPAT=( python3_10 )
+PYTHON_COMPAT=( python3_11 )
 X86_CPU_FLAGS=(
 	avx
 )
@@ -16,22 +16,21 @@ X86_CPU_FLAGS=(
 inherit cmake python-r1
 
 # For commits, see
-# https://github.com/google-deepmind/mujoco/blob/2.2.2/cmake/MujocoDependencies.cmake
-# https://github.com/google-deepmind/mujoco/blob/2.2.2/python/mujoco/CMakeLists.txt#L194
-# https://github.com/google-deepmind/mujoco/blob/2.2.2/sample/cmake/SampleDependencies.cmake#L33
-EGIT_ABSEIL_CPP_COMMIT="8c0b94e793a66495e0b1f34a5eb26bd7dc672db0"
-EGIT_BENCHMARK_COMMIT="d845b7b3a27d54ad96280a29d61fa8988d4fddcf"
+# https://github.com/google-deepmind/mujoco/blob/3.1.5/cmake/MujocoDependencies.cmake
+# https://github.com/google-deepmind/mujoco/blob/3.1.5/python/mujoco/CMakeLists.txt#L194
+# https://github.com/google-deepmind/mujoco/blob/3.1.5/sample/cmake/SampleDependencies.cmake#L33
+EGIT_ABSEIL_CPP_COMMIT="d7aaad83b488fd62bd51c81ecf16cd938532cc0a"
+EGIT_BENCHMARK_COMMIT="e45585a4b8e75c28479fa4107182c28172799640"
 EGIT_CCD_COMMIT="7931e764a19ef6b21b443376c699bbc9c6d4fba8"
-EGIT_EIGEN_COMMIT="34780d8bd13d0af0cf17a22789ef286e8512594d"  # cmake/MujocoDependencies.cmake
-EGIT_EIGEN_PY_COMMIT="b02c384ef4e8eba7b8bdef16f9dc6f8f4d6a6b2b" # python/mujoco/CMakeLists.txt
-EGIT_GLFW_COMMIT="7d5a16ce714f0b5f4efa3262de22e4d948851525"
-EGIT_GOOGLETEST_COMMIT="58d77fa8070e8cec2dc1ed015d66b454c8d78850"
+EGIT_EIGEN3_COMMIT="2a9055b50ed22101da7d77e999b90ed50956fe0b"
+EGIT_GLFW_COMMIT="7482de6071d21db77a7236155da44c172a7f6c9e"
+EGIT_GOOGLETEST_COMMIT="f8d7d77c06936315286eb55f8de22cd23c188571"
 EGIT_LODEPNG_COMMIT="b4ed2cd7ecf61d29076169b49199371456d4f90b"
-EGIT_MUJOCO_COMMIT="9b694103e66a60ba602630cba528c50058328117"
-EGIT_PYBIND11_COMMIT="6df86934c258d8cd99acf192f6d3f4d1289b5d68"
-EGIT_QHULL_COMMIT="3df027b91202cf179f3fba3c46eebe65bbac3790"
+EGIT_MUJOCO_COMMIT="e001975f083e769898811763c4c887afb52523c2"
+EGIT_PYBIND11_COMMIT="3e9dfa2866941655c56877882565e7577de6fc7b"
+EGIT_QHULL_COMMIT="0c8fc90d2037588024d9964515c1e684f6007ecc"
 EGIT_TINYOBJLOADER_COMMIT="1421a10d6ed9742f5b2c1766d22faa6cfbc56248"
-EGIT_TINYXML2_COMMIT="1dee28e51f9175a31955b9791c74c430fe13dc82"
+EGIT_TINYXML2_COMMIT="9a89766acc42ddfa9e7133c7d81a5bda108a0ade"
 SRC_URI="
 https://github.com/deepmind/mujoco/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -42,10 +41,8 @@ https://github.com/danfis/libccd/archive/${EGIT_CCD_COMMIT}.tar.gz
 	-> libccd-${EGIT_CCD_COMMIT}.tar.gz
 https://github.com/deepmind/mujoco/archive/${EGIT_MUJOCO_COMMIT}.tar.gz
 	-> mujoco-${EGIT_MUJOCO_COMMIT}.tar.gz
-https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN_COMMIT}/eigen-${EGIT_EIGEN_COMMIT}.tar.gz
-	-> eigen-${EGIT_EIGEN_COMMIT}.tar.gz
-https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN_PY_COMMIT}/eigen-${EGIT_EIGEN_PY_COMMIT}.tar.gz
-	-> eigen-${EGIT_EIGEN_PY_COMMIT}.tar.gz
+https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN3_COMMIT}/eigen-${EGIT_EIGEN3_COMMIT}.tar.gz
+	-> eigen-${EGIT_EIGEN3_COMMIT}.tar.gz
 https://github.com/glfw/glfw/archive/${EGIT_GLFW_COMMIT}.tar.gz
 	-> glfw-${EGIT_GLFW_COMMIT}.tar.gz
 https://github.com/google/benchmark/archive/${EGIT_BENCHMARK_COMMIT}.tar.gz
@@ -70,6 +67,7 @@ HOMEPAGE="
 https://mujoco.org/
 https://github.com/deepmind/mujoco
 "
+
 LICENSE_THIRD_PARTY="
 	(
 		Apache-2.0
@@ -133,43 +131,46 @@ REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
 # U 22.04
+# Some versions are from CI
 DEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/numpy-1.21.5[${PYTHON_USEDEP}]
-	dev-python/absl-py[${PYTHON_USEDEP}]
+	>=dev-python/absl-py-1.4.0[${PYTHON_USEDEP}]
+	>=dev-python/numpy-1.25.1[${PYTHON_USEDEP}]
+	>=dev-python/pyopengl-3.1.7[${PYTHON_USEDEP}]
 	dev-python/pyglfw[${PYTHON_USEDEP}]
-	dev-python/pyopengl[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${DEPEND}
 "
 # TODO: package:
-# dev-python/pandoc
-# sphinxcontrib-katex
-# sphinxcontrib-youtube
-# sphinx-reredirects
+# sphinx_reredirects
+# sphinx-favicon
+# sphinx-toolbox
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-build/cmake-3.15
+	>=dev-build/cmake-3.16
 	doc? (
+		>=dev-python/furo-2022.9.29[${PYTHON_USEDEP}]
 		>=dev-python/jinja-2.11.3[${PYTHON_USEDEP}]
-		>=dev-python/jq-1.2.2[${PYTHON_USEDEP}]
+		>=dev-python/jq-1.4.1[${PYTHON_USEDEP}]
 		>=dev-python/markupsafe-2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/nbsphinx-0.8.0[${PYTHON_USEDEP}]
-		>=dev-python/pandoc-1.0.2[${PYTHON_USEDEP}]
-		>=dev-python/pygments-2.7.4[${PYTHON_USEDEP}]
+		>=dev-python/nbsphinx-0.9.1[${PYTHON_USEDEP}]
+		>=dev-python/pandoc-1.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pygments-2.15.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-reredirects-0.0.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx_rtd_theme-1.0.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-katex-0.8.6[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-youtube-1.1.0[${PYTHON_USEDEP}]
-		>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-copybutton-0.5.2[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-favicon-1.0.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-toolbox-3.4.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-katex-0.9.4[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-youtube-1.2.0[${PYTHON_USEDEP}]
+		>=dev-python/wheel-0.40.0[${PYTHON_USEDEP}]
 	)
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror test"
 PATCHES=(
-	"${FILESDIR}/${PN}-2.2.2-use-local-tarballs.patch"
+	"${FILESDIR}/${PN}-3.1.5-use-local-tarballs.patch"
 )
 
 #distutils_enable_sphinx "doc"
@@ -183,8 +184,6 @@ src_unpack() {
 }
 
 src_configure() {
-einfo "DISTDIR:  ${DISTDIR}"
-	export _DISTDIR="${DISTDIR}"
 	local mycmakeargs=(
 		-DMUJOCO_BUILD_EXAMPLES=$(usex examples "ON" "OFF")
 		-DMUJOCO_BUILD_SIMULATE=$(usex simulate "ON" "OFF")
@@ -215,6 +214,8 @@ einfo "DISTDIR:  ${DISTDIR}"
 
 src_install() {
 	cmake_src_install
+	exeinto "/usr/$(get_libdir)/mujoco_plugin"
+	doexe "${BUILD_DIR}/$(get_libdir)/libelasticity.so"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

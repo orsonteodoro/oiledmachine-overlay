@@ -9,9 +9,16 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="standalone"
 PYTHON_COMPAT=( python3_11 )
+X86_CPU_FLAGS=(
+	avx
+)
 
 inherit cmake python-r1
 
+# For commits, see
+# https://github.com/google-deepmind/mujoco/blob/2.3.7/cmake/MujocoDependencies.cmake
+# https://github.com/google-deepmind/mujoco/blob/2.3.7/python/mujoco/CMakeLists.txt#L194
+# https://github.com/google-deepmind/mujoco/blob/2.3.7/sample/cmake/SampleDependencies.cmake#L33
 EGIT_ABSEIL_CPP_COMMIT="c2435f8342c2d0ed8101cb43adfd605fdc52dca2"
 EGIT_BENCHMARK_COMMIT="2dd015dfef425c866d9a43f2c67d8b52d709acb6"
 EGIT_CCD_COMMIT="7931e764a19ef6b21b443376c699bbc9c6d4fba8"
@@ -19,7 +26,7 @@ EGIT_EIGEN3_COMMIT="211c5dfc6741a5570ad007983c113ef4d144f9f3"
 EGIT_GLFW_COMMIT="7482de6071d21db77a7236155da44c172a7f6c9e"
 EGIT_GOOGLETEST_COMMIT="b796f7d44681514f58a683a3a71ff17c94edb0c1"
 EGIT_LODEPNG_COMMIT="b4ed2cd7ecf61d29076169b49199371456d4f90b"
-EGIT_MUJOCO_COMMIT="95a07e85ccaf31a7daabfb2f34f376e75534881d"
+EGIT_MUJOCO_COMMIT="c9246e1f5006379d599e0bcddf159a8616d31441"
 EGIT_PYBIND11_COMMIT="8a099e44b3d5f85b20f05828d919d2332a8de841"
 EGIT_QHULL_COMMIT="0c8fc90d2037588024d9964515c1e684f6007ecc"
 EGIT_TINYOBJLOADER_COMMIT="1421a10d6ed9742f5b2c1766d22faa6cfbc56248"
@@ -116,7 +123,10 @@ LICENSE="
 # ZLIB - tinyxml2
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc +examples hardened python +simulate +test"
+IUSE+="
+${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
++asm doc +examples hardened python +simulate +test
+"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -169,11 +179,17 @@ pkg_setup() {
 	python_setup
 }
 
+src_unpack() {
+	unpack ${P}.tar.gz
+}
+
 src_configure() {
 	local mycmakeargs=(
 		-DMUJOCO_BUILD_EXAMPLES=$(usex examples "ON" "OFF")
 		-DMUJOCO_BUILD_SIMULATE=$(usex simulate "ON" "OFF")
 		-DMUJOCO_BUILD_TESTS=$(usex test "ON" "OFF")
+		-DMUJOCO_ENABLE_AVX=$(usex cpu_flags_x86_avx "ON" "OFF")
+		-DMUJOCO_ENABLE_AVX_INTRINSICS=$(usex asm $(usex cpu_flags_x86_avx ON OFF) OFF)
 		-DMUJOCO_TEST_PYTHON_UTIL=$(usex test "ON" "OFF")
 	)
 
@@ -198,8 +214,6 @@ src_configure() {
 
 src_install() {
 	cmake_src_install
-	exeinto "/usr/$(get_libdir)/mujoco_plugin"
-	doexe "${BUILD_DIR}/$(get_libdir)/libelasticity.so"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
