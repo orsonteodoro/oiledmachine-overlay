@@ -11,20 +11,25 @@ DISTUTILS_USE_SETUPTOOLS="bdepend"
 EGIT_ABSEIL_CPP_COMMIT="d7aaad83b488fd62bd51c81ecf16cd938532cc0a"
 EGIT_BENCHMARK_COMMIT="e45585a4b8e75c28479fa4107182c28172799640"
 EGIT_CCD_COMMIT="7931e764a19ef6b21b443376c699bbc9c6d4fba8"
+EGIT_CEREALLIB_COMMIT="ebef1e929807629befafbb2918ea1a08c7194554"
 EGIT_EIGEN3_COMMIT="2a9055b50ed22101da7d77e999b90ed50956fe0b"
 EGIT_GLFW_COMMIT="7482de6071d21db77a7236155da44c172a7f6c9e"
+EGIT_GLMLIB_COMMIT="89e52e327d7a3ae61eb402850ba36ac4dd111987"
 EGIT_GOOGLETEST_COMMIT="f8d7d77c06936315286eb55f8de22cd23c188571"
 EGIT_LODEPNG_COMMIT="b4ed2cd7ecf61d29076169b49199371456d4f90b"
+EGIT_MARCHINGCUBECPP_COMMIT="f03a1b3ec29b1d7d865691ca8aea4f1eb2c2873d"
 EGIT_MUJOCO_COMMIT="e001975f083e769898811763c4c887afb52523c2"
 EGIT_PYBIND11_COMMIT="3e9dfa2866941655c56877882565e7577de6fc7b"
 EGIT_QHULL_COMMIT="0c8fc90d2037588024d9964515c1e684f6007ecc"
+EGIT_SDFLIB_COMMIT="1927bee6bb8225258a39c8cbf14e18a4d50409ae"
+EGIT_SPDLOGLIB_COMMIT="eb3220622e73a4889eee355ffa37972b3cac3df5"
 EGIT_TINYOBJLOADER_COMMIT="1421a10d6ed9742f5b2c1766d22faa6cfbc56248"
 EGIT_TINYXML2_COMMIT="9a89766acc42ddfa9e7133c7d81a5bda108a0ade"
 PYTHON_COMPAT=( python3_11 ) # Upstream only tests with 3.11 for this version.
 
 inherit distutils-r1
 
-#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # It still needs unpack testing
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 S_PROJ="${WORKDIR}/${P}"
 S="${WORKDIR}/${P}"
 SRC_URI="
@@ -55,6 +60,16 @@ https://github.com/qhull/qhull/archive/${EGIT_QHULL_COMMIT}.tar.gz
 	-> qhull-${EGIT_QHULL_COMMIT}.tar.gz
 https://github.com/tinyobjloader/tinyobjloader/archive/${EGIT_TINYOBJLOADER_COMMIT}.tar.gz
 	-> tinyobjloader-${EGIT_TINYOBJLOADER_COMMIT}.tar.gz
+https://github.com/aparis69/MarchingCubeCpp/archive/${EGIT_MARCHINGCUBECPP_COMMIT}.tar.gz
+	-> marchingcubecpp-${EGIT_MARCHINGCUBECPP_COMMIT}.tar.gz
+https://github.com/UPC-ViRVIG/SdfLib/archive/${EGIT_SDFLIB_COMMIT}.tar.gz
+	-> sdflib-${EGIT_SDFLIB_COMMIT}.tar.gz
+https://github.com/g-truc/glm/archive/${EGIT_GLMLIB_COMMIT}.tar.gz
+	-> glm_lib-${EGIT_GLMLIB_COMMIT}.tar.gz
+https://github.com/gabime/spdlog/archive/${EGIT_SPDLOGLIB_COMMIT}.tar.gz
+	-> spdlog_lib-${EGIT_SPDLOGLIB_COMMIT}.tar.gz
+https://github.com/USCiLab/cereal/archive/${EGIT_CEREALLIB_COMMIT}.tar.gz
+	-> cereal_lib-${EGIT_CEREALLIB_COMMIT}.tar.gz
 "
 
 DESCRIPTION="Multi-Joint dynamics with Contact. A general purpose physics \

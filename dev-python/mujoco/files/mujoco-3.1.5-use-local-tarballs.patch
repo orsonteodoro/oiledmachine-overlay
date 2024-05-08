@@ -1,6 +1,6 @@
 diff -urp mujoco-3.1.5.orig/cmake/FindOrFetch.cmake mujoco-3.1.5/cmake/FindOrFetch.cmake
 --- mujoco-3.1.5.orig/cmake/FindOrFetch.cmake	2024-05-07 11:47:15.000000000 -0700
-+++ mujoco-3.1.5/cmake/FindOrFetch.cmake	2024-05-08 00:39:53.463128227 -0700
++++ mujoco-3.1.5/cmake/FindOrFetch.cmake	2024-05-08 01:32:12.453046037 -0700
 @@ -23,6 +23,7 @@
  #               [LIBRARY_NAME [name]]
  #               [GIT_REPO [repo]]
@@ -26,7 +26,7 @@ diff -urp mujoco-3.1.5.orig/cmake/FindOrFetch.cmake mujoco-3.1.5/cmake/FindOrFet
    )
    set(multi_value_args PATCH_COMMAND TARGETS)
    cmake_parse_arguments(
-@@ -112,18 +116,45 @@ macro(FindOrFetch)
+@@ -112,18 +116,61 @@ macro(FindOrFetch)
        message(CHECK_START
                "mujoco::FindOrFetch: Using FetchContent to retrieve `${_ARGS_LIBRARY_NAME}`"
        )
@@ -50,6 +50,22 @@ diff -urp mujoco-3.1.5.orig/cmake/FindOrFetch.cmake mujoco-3.1.5/cmake/FindOrFet
 +          INPUT $ENV{DISTDIR}/${TARBALL_NAME}
 +          DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/_deps
 +        )
++        if("${_ARGS_PATCH_COMMAND}" STREQUAL "")
++        else()
++          string(REPLACE "-" "_" __ARGS_LIBRARY_NAME ${_ARGS_LIBRARY_NAME})
++          if("${_ARGS_LIBRARY_NAME}" STREQUAL "ccd")
++            set(___ARGS_LIBRARY_NAME "libccd")
++          elseif("${_ARGS_LIBRARY_NAME}" STREQUAL "sdflib")
++            set(___ARGS_LIBRARY_NAME "SdfLib")
++          elseif("${_ARGS_LIBRARY_NAME}" STREQUAL "marchingcubecpp")
++            set(___ARGS_LIBRARY_NAME "MarchingCubeCpp")
++          else()
++            set(___ARGS_LIBRARY_NAME "${_ARGS_LIBRARY_NAME}")
++          endif()
++          execute_process(COMMAND ${_ARGS_PATCH_COMMAND}
++            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/_deps/${___ARGS_LIBRARY_NAME}-${MUJOCO_DEP_VERSION_${__ARGS_LIBRARY_NAME}}
++          )
++        endif()
 +      else()
 +        FetchContent_Declare(
 +          ${_ARGS_LIBRARY_NAME}
@@ -82,7 +98,7 @@ diff -urp mujoco-3.1.5.orig/cmake/FindOrFetch.cmake mujoco-3.1.5/cmake/FindOrFet
              EXCLUDE_FROM_ALL
 diff -urp mujoco-3.1.5.orig/cmake/MujocoDependencies.cmake mujoco-3.1.5/cmake/MujocoDependencies.cmake
 --- mujoco-3.1.5.orig/cmake/MujocoDependencies.cmake	2024-05-07 11:47:15.000000000 -0700
-+++ mujoco-3.1.5/cmake/MujocoDependencies.cmake	2024-05-08 00:39:41.719234922 -0700
++++ mujoco-3.1.5/cmake/MujocoDependencies.cmake	2024-05-08 01:26:46.119590019 -0700
 @@ -14,6 +14,10 @@
  
  # Build configuration for third party libraries used in MuJoCo.
@@ -236,7 +252,7 @@ diff -urp mujoco-3.1.5.orig/cmake/MujocoDependencies.cmake mujoco-3.1.5/cmake/Mu
    TARGETS
    tinyobjloader
    EXCLUDE_FROM_ALL
-@@ -198,6 +240,8 @@ findorfetch(
+@@ -198,9 +240,16 @@ findorfetch(
    https://github.com/UPC-ViRVIG/SdfLib.git
    GIT_TAG
    ${MUJOCO_DEP_VERSION_sdflib}
@@ -245,7 +261,15 @@ diff -urp mujoco-3.1.5.orig/cmake/MujocoDependencies.cmake mujoco-3.1.5/cmake/Mu
    TARGETS
    SdfLib
    EXCLUDE_FROM_ALL
-@@ -218,6 +262,8 @@ findorfetch(
++  PATCH_COMMAND
++  "patch"
++  "-p1"
++  "-i"
++  "$ENV{FILESDIR}/sdflib-1927bee-deps.patch"
+ )
+ target_compile_options(SdfLib PRIVATE ${MUJOCO_MACOS_COMPILE_OPTIONS})
+ target_link_options(SdfLib PRIVATE ${MUJOCO_MACOS_LINK_OPTIONS})
+@@ -218,6 +267,8 @@ findorfetch(
    https://github.com/danfis/libccd.git
    GIT_TAG
    ${MUJOCO_DEP_VERSION_ccd}
@@ -254,7 +278,7 @@ diff -urp mujoco-3.1.5.orig/cmake/MujocoDependencies.cmake mujoco-3.1.5/cmake/Mu
    TARGETS
    ccd
    EXCLUDE_FROM_ALL
-@@ -258,6 +304,8 @@ if(MUJOCO_BUILD_TESTS)
+@@ -258,6 +309,8 @@ if(MUJOCO_BUILD_TESTS)
      https://github.com/abseil/abseil-cpp.git
      GIT_TAG
      ${MUJOCO_DEP_VERSION_abseil}
@@ -263,7 +287,7 @@ diff -urp mujoco-3.1.5.orig/cmake/MujocoDependencies.cmake mujoco-3.1.5/cmake/Mu
      TARGETS
      absl::core_headers
      EXCLUDE_FROM_ALL
-@@ -285,6 +333,8 @@ if(MUJOCO_BUILD_TESTS)
+@@ -285,6 +338,8 @@ if(MUJOCO_BUILD_TESTS)
      https://github.com/google/googletest.git
      GIT_TAG
      ${MUJOCO_DEP_VERSION_gtest}
@@ -272,7 +296,7 @@ diff -urp mujoco-3.1.5.orig/cmake/MujocoDependencies.cmake mujoco-3.1.5/cmake/Mu
      TARGETS
      gtest
      gmock
-@@ -319,6 +369,8 @@ if(MUJOCO_BUILD_TESTS)
+@@ -319,6 +374,8 @@ if(MUJOCO_BUILD_TESTS)
      https://github.com/google/benchmark.git
      GIT_TAG
      ${MUJOCO_DEP_VERSION_benchmark}
@@ -281,7 +305,7 @@ diff -urp mujoco-3.1.5.orig/cmake/MujocoDependencies.cmake mujoco-3.1.5/cmake/Mu
      TARGETS
      benchmark::benchmark
      benchmark::benchmark_main
-@@ -333,15 +385,33 @@ if(MUJOCO_TEST_PYTHON_UTIL)
+@@ -333,15 +390,33 @@ if(MUJOCO_TEST_PYTHON_UTIL)
      # Support new IN_LIST if() operator.
      set(CMAKE_POLICY_DEFAULT_CMP0057 NEW)
  
@@ -322,7 +346,7 @@ diff -urp mujoco-3.1.5.orig/cmake/MujocoDependencies.cmake mujoco-3.1.5/cmake/Mu
        add_library(Eigen3::Eigen INTERFACE IMPORTED)
 diff -urp mujoco-3.1.5.orig/python/mujoco/CMakeLists.txt mujoco-3.1.5/python/mujoco/CMakeLists.txt
 --- mujoco-3.1.5.orig/python/mujoco/CMakeLists.txt	2024-05-07 11:47:15.000000000 -0700
-+++ mujoco-3.1.5/python/mujoco/CMakeLists.txt	2024-05-08 00:33:31.358597124 -0700
++++ mujoco-3.1.5/python/mujoco/CMakeLists.txt	2024-05-08 01:22:44.589454868 -0700
 @@ -12,6 +12,23 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
@@ -382,7 +406,7 @@ diff -urp mujoco-3.1.5.orig/python/mujoco/CMakeLists.txt mujoco-3.1.5/python/muj
    EXCLUDE_FROM_ALL
 diff -urp mujoco-3.1.5.orig/sample/cmake/FindOrFetch.cmake mujoco-3.1.5/sample/cmake/FindOrFetch.cmake
 --- mujoco-3.1.5.orig/sample/cmake/FindOrFetch.cmake	2024-05-07 11:47:15.000000000 -0700
-+++ mujoco-3.1.5/sample/cmake/FindOrFetch.cmake	2024-05-08 00:35:56.189282929 -0700
++++ mujoco-3.1.5/sample/cmake/FindOrFetch.cmake	2024-05-08 01:32:03.861113360 -0700
 @@ -23,6 +23,7 @@
  #               [LIBRARY_NAME [name]]
  #               [GIT_REPO [repo]]
@@ -408,7 +432,7 @@ diff -urp mujoco-3.1.5.orig/sample/cmake/FindOrFetch.cmake mujoco-3.1.5/sample/c
    )
    set(multi_value_args PATCH_COMMAND TARGETS)
    cmake_parse_arguments(
-@@ -112,18 +116,58 @@ macro(FindOrFetch)
+@@ -112,18 +116,74 @@ macro(FindOrFetch)
        message(CHECK_START
                "mujoco::FindOrFetch: Using FetchContent to retrieve `${_ARGS_LIBRARY_NAME}`"
        )
@@ -432,6 +456,22 @@ diff -urp mujoco-3.1.5.orig/sample/cmake/FindOrFetch.cmake mujoco-3.1.5/sample/c
 +          INPUT $ENV{DISTDIR}/${TARBALL_NAME}
 +          DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/_deps
 +        )
++        if("${_ARGS_PATCH_COMMAND}" STREQUAL "")
++        else()
++          string(REPLACE "-" "_" __ARGS_LIBRARY_NAME ${_ARGS_LIBRARY_NAME})
++          if("${_ARGS_LIBRARY_NAME}" STREQUAL "ccd")
++            set(___ARGS_LIBRARY_NAME "libccd")
++          elseif("${_ARGS_LIBRARY_NAME}" STREQUAL "sdflib")
++            set(___ARGS_LIBRARY_NAME "SdfLib")
++          elseif("${_ARGS_LIBRARY_NAME}" STREQUAL "marchingcubecpp")
++            set(___ARGS_LIBRARY_NAME "MarchingCubeCpp")
++          else()
++            set(___ARGS_LIBRARY_NAME "${_ARGS_LIBRARY_NAME}")
++          endif()
++          execute_process(COMMAND ${_ARGS_PATCH_COMMAND}
++            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/_deps/${___ARGS_LIBRARY_NAME}-${MUJOCO_DEP_VERSION_${__ARGS_LIBRARY_NAME}}
++          )
++        endif()
 +      else()
 +        FetchContent_Declare(
 +          ${_ARGS_LIBRARY_NAME}
@@ -477,7 +517,7 @@ diff -urp mujoco-3.1.5.orig/sample/cmake/FindOrFetch.cmake mujoco-3.1.5/sample/c
              EXCLUDE_FROM_ALL
 diff -urp mujoco-3.1.5.orig/sample/cmake/SampleDependencies.cmake mujoco-3.1.5/sample/cmake/SampleDependencies.cmake
 --- mujoco-3.1.5.orig/sample/cmake/SampleDependencies.cmake	2024-05-07 11:47:15.000000000 -0700
-+++ mujoco-3.1.5/sample/cmake/SampleDependencies.cmake	2024-05-08 00:33:31.358597124 -0700
++++ mujoco-3.1.5/sample/cmake/SampleDependencies.cmake	2024-05-08 01:22:44.589454868 -0700
 @@ -12,8 +12,12 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
@@ -524,7 +564,7 @@ diff -urp mujoco-3.1.5.orig/sample/cmake/SampleDependencies.cmake mujoco-3.1.5/s
    EXCLUDE_FROM_ALL
 diff -urp mujoco-3.1.5.orig/simulate/cmake/SimulateDependencies.cmake mujoco-3.1.5/simulate/cmake/SimulateDependencies.cmake
 --- mujoco-3.1.5.orig/simulate/cmake/SimulateDependencies.cmake	2024-05-07 11:47:15.000000000 -0700
-+++ mujoco-3.1.5/simulate/cmake/SimulateDependencies.cmake	2024-05-08 00:33:31.358597124 -0700
++++ mujoco-3.1.5/simulate/cmake/SimulateDependencies.cmake	2024-05-08 01:22:44.589454868 -0700
 @@ -12,8 +12,12 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
@@ -571,7 +611,7 @@ diff -urp mujoco-3.1.5.orig/simulate/cmake/SimulateDependencies.cmake mujoco-3.1
    EXCLUDE_FROM_ALL
 diff -urp mujoco-3.1.5.orig/simulate/CMakeLists.txt mujoco-3.1.5/simulate/CMakeLists.txt
 --- mujoco-3.1.5.orig/simulate/CMakeLists.txt	2024-05-07 11:47:15.000000000 -0700
-+++ mujoco-3.1.5/simulate/CMakeLists.txt	2024-05-08 00:33:31.358597124 -0700
++++ mujoco-3.1.5/simulate/CMakeLists.txt	2024-05-08 01:22:44.593454837 -0700
 @@ -14,6 +14,8 @@
  
  cmake_minimum_required(VERSION 3.16)
