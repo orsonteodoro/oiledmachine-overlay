@@ -1236,7 +1236,7 @@ src_install() {
 pkg_postinst() {
 	if use closure_compiler_nodejs || use closure_compiler_java; then
 ewarn
-ewarn "You need to switch user/system java-vm to >= 11 before using ${PN}"
+ewarn "You need to switch user/system java-vm to >= ${JAVA_SLOT} before using ${PN}"
 ewarn
 	fi
 }
