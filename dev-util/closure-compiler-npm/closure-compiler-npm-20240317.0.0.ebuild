@@ -4,8 +4,16 @@
 
 EAPI=8
 
+# U 22.04
+
 # TODO:  complete bazel offline install.
 # All builds require npm/node.
+
+# For the node version, see
+# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/packages/google-closure-compiler/package.json#L67
+# For dependencies, see
+# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml
+# The virtual/jdk not virtual/jre must be in DEPENDs for the eclass not to be stupid.
 
 # For constants without links, the versions are obtained by console inspection.
 # https://github.com/google/closure-templates/blob/master/maven_install.json may expose the pom/jar dependency tree.
@@ -774,12 +782,6 @@ REQUIRED_USE+="
 		closure_compiler_nodejs
 	)
 "
-# For the node version, see
-# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/packages/google-closure-compiler/package.json#L67
-# For dependencies, see
-# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml
-# The virtual/jdk not virtual/jre must be in DEPENDs for the eclass not to be stupid.
-# U 22.04
 RDEPEND+="
 	!dev-lang/closure-compiler-bin
 	closure_compiler_java? (
