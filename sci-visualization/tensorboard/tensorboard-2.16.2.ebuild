@@ -99,8 +99,10 @@ BDEPEND="
 		)
 	')
 	|| (
-		dev-build/bazel:6
-		dev-build/bazel:5
+		dev-build/bazel:6.5
+		dev-build/bazel:6.1
+		dev-build/bazel:5.4
+		dev-build/bazel:5.3
 	)
 	app-arch/unzip
 	dev-java/java-config
@@ -206,10 +208,14 @@ src_unpack() {
 
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
-	if has_version "dev-build/bazel:6" ; then
-		ln -s "/usr/bin/bazel-6" "${WORKDIR}/bin/bazel" || die
-	elif has_version "dev-build/bazel:5" ; then
-		ln -s "/usr/bin/bazel-5" "${WORKDIR}/bin/bazel" || die
+	if has_version "dev-build/bazel:6.5" ; then
+		ln -s "/usr/bin/bazel-6.5" "${WORKDIR}/bin/bazel" || die
+	elif has_version "dev-build/bazel:6.1" ; then
+		ln -s "/usr/bin/bazel-6.1" "${WORKDIR}/bin/bazel" || die
+	elif has_version "dev-build/bazel:5.4" ; then
+		ln -s "/usr/bin/bazel-5.4" "${WORKDIR}/bin/bazel" || die
+	elif has_version "dev-build/bazel:5.3" ; then
+		ln -s "/usr/bin/bazel-5.3" "${WORKDIR}/bin/bazel" || die
 	fi
 
 	unpack ${P}.tar.gz

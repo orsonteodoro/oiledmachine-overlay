@@ -8,14 +8,23 @@ JAVA_SLOT=11
 inherit bash-completion-r1 bazel java-pkg-2 multiprocessing
 
 KEYWORDS="~amd64"
-SRC_URI="https://github.com/bazelbuild/bazel/releases/download/${PV}/${P}-dist.zip"
 S="${WORKDIR}"
+SRC_URI="https://github.com/bazelbuild/bazel/releases/download/${PV}/${P}-dist.zip"
 
 DESCRIPTION="Fast and correct automated build system"
 HOMEPAGE="https://bazel.build/"
 LICENSE="Apache-2.0"
-SLOT="${PV%%.*}/$(ver_cut 1-2 ${PV})"
-IUSE="bash-completion examples tools r4 zsh-completion"
+# strip corrupts the bazel binary
+# test fails with network-sandbox: An error occurred during the fetch of repository 'io_bazel_skydoc' (bug 690794)
+RESTRICT="
+	strip
+	test
+"
+SLOT="$(ver_cut 1-2 ${PV})"
+IUSE="
+bash-completion examples tools zsh-completion
+ebuild-revision-5
+"
 RDEPEND="
 	!dev-build/bazel:0
 	>=virtual/jre-${JAVA_SLOT}:${JAVA_SLOT}
@@ -30,13 +39,10 @@ DEPEND="
 BDEPEND="
 	!dev-build/bazel:0
 "
-# strip corrupts the bazel binary
-# test fails with network-sandbox: An error occurred during the fetch of repository 'io_bazel_skydoc' (bug 690794)
-RESTRICT="strip test"
 
 pkg_setup() {
 	if has ccache ${FEATURES}; then
-		ewarn "${PN} usually fails to compile with ccache, you have been warned"
+ewarn "${PN} usually fails to compile with ccache, you have been warned"
 	fi
 	java-pkg-2_pkg_setup
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
@@ -86,7 +92,7 @@ src_test() {
 }
 
 src_install() {
-	newbin output/bazel bazel-${PV%%.*}
+	newbin output/bazel bazel-$(ver_cut 1-2 ${PV})
 	if use bash-completion ; then
 		newbashcomp bazel-complete.bash ${PN}
 		bashcomp_alias ${PN} ibazel

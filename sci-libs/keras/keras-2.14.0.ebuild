@@ -65,7 +65,7 @@ DEPEND="
 # TODO package:
 # dev-python/portpicker
 BDEPEND="
-	>=dev-build/bazel-5.4.0:5
+	>=dev-build/bazel-5.4.0:5.4
 	app-arch/unzip
 	dev-java/java-config
 	dev-libs/protobuf:${PROTOBUF_SLOT}
@@ -86,7 +86,7 @@ PATCHES=(
 src_unpack() {
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
-	ln -s "/usr/bin/bazel-5" "${WORKDIR}/bin/bazel" || die
+	ln -s "/usr/bin/bazel-5.4" "${WORKDIR}/bin/bazel" || die
 	unpack "${P}.tar.gz"
 	bazel_load_distfiles "${bazel_external_uris}"
 }

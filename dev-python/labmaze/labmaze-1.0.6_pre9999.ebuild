@@ -54,7 +54,7 @@ DEPEND+="
 	${JDK_DEPEND}
 "
 BDEPEND+="
-	dev-build/bazel
+	dev-build/bazel:5.1
 "
 
 S="${WORKDIR}/${P}"
@@ -155,6 +155,10 @@ eerror "Use the fallback-commit USE flag to continue."
 eerror
 		die
 	fi
+
+	mkdir -p "${WORKDIR}/bin" || die
+	export PATH="${WORKDIR}/bin:${PATH}"
+	ln -s "/usr/bin/bazel-5.1" "${WORKDIR}/bin/bazel" || die
 }
 
 src_prepare() {

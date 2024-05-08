@@ -38,7 +38,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-build/bazel-6.1.0:6
+	>=dev-build/bazel-6.1.0:6.1
 	app-arch/unzip
 	dev-java/java-config
 "
@@ -50,7 +50,7 @@ DOCS=( CONTRIBUTING.md README.md )
 src_unpack() {
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
-	ln -s "/usr/bin/bazel-6" "${WORKDIR}/bin/bazel" || die
+	ln -s "/usr/bin/bazel-6.1" "${WORKDIR}/bin/bazel" || die
 	unpack "${P}.tar.gz"
 	bazel_load_distfiles "${bazel_external_uris}"
 }

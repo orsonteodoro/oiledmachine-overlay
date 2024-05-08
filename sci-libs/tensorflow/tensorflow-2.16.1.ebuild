@@ -738,7 +738,7 @@ gen_gcc_bdepend() {
 # GCC:11 - Based on archlinux
 # gcc-11.3.1_p20221209-p3 does not build
 BDEPEND="
-	>=dev-build/bazel-6.5.0:6
+	>=dev-build/bazel-6.5.0:6.5
 	app-arch/pigz
 	app-arch/unzip
 	dev-java/java-config
@@ -1129,7 +1129,7 @@ src_unpack() {
 	unpack "${P}.tar.gz"
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
-	ln -s "/usr/bin/bazel-6" "${WORKDIR}/bin/bazel" || die
+	ln -s "/usr/bin/bazel-6.5" "${WORKDIR}/bin/bazel" || die
 	bazel_load_distfiles "${bazel_external_uris}"
 }
 

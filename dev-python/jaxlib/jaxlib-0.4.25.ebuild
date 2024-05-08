@@ -346,7 +346,7 @@ gen_llvm_bdepend() {
 	done
 }
 BDEPEND+="
-	>=dev-build/bazel-6.1.2:6
+	>=dev-build/bazel-6.1.2:6.1
 	clang? (
 		$(gen_llvm_bdepend)
 	)
@@ -696,7 +696,7 @@ eerror
 src_unpack() {
         mkdir -p "${WORKDIR}/bin" || die
         export PATH="${WORKDIR}/bin:${PATH}"
-        ln -s "/usr/bin/bazel-6" "${WORKDIR}/bin/bazel" || die
+        ln -s "/usr/bin/bazel-6.1" "${WORKDIR}/bin/bazel" || die
 
 	unpack "${MY_PN}-${PV}.tar.gz"
 	unpack "openxla-xla-${EGIT_XLA_COMMIT}.zip"

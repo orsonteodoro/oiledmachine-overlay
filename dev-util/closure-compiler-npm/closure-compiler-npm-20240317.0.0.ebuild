@@ -30,7 +30,7 @@ BAZELISK_ABIS="
 	arm64
 "
 BAZEL_PV="5.3.0"								# https://github.com/google/closure-compiler/blob/v20240317/.bazelversion
-BAZEL_SLOT="${BAZEL_PV%%.*}"
+BAZEL_SLOT=$(ver_cut 1-2 ${BAZEL_PV})
 BAZEL_SKYLIB_PV="1.4.2"								# https://github.com/bazelbuild/rules_jvm_external/blob/77c3538b33cf195879b337fd48c480b77815b9a0/repositories.bzl#L17
 CHECKER_QUAL_PV="3.33.0"							# https://github.com/google/guava/blob/v32.1.2/pom.xml#L304
 CLOSURE_COMPILER_MAJOR_VER=$(ver_cut 1 ${PV})
@@ -798,7 +798,7 @@ DEPEND+="
 	virtual/jdk:${JAVA_SLOT}
 "
 BDEPEND+="
-	=dev-build/bazel-${BAZEL_SLOT}*
+	>=dev-build/bazel-${BAZEL_SLOT}:5.3
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
 	>=sys-devel/gcc-9.4.0
@@ -895,7 +895,7 @@ eerror
 	unset ANDROID_NDK_HOME
 	unset ANDROID_SDK_HOME
 
-einfo "JAVA_HOME:\t${JAVA_HOME}"
+einfo "JAVA_HOME:\t${JAVA_HOME} [from pkg_setup]"
 einfo "PATH:\t${PATH}"
 
 	if ver_test ${X_JAVA_SLOT} -lt ${JAVA_SLOT} ; then

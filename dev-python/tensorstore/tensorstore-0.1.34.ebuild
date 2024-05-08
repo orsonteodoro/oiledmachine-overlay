@@ -104,7 +104,7 @@ gen_llvm_depends() {
 # dev-python/sphinx-immaterial
 # Bazel needs --host_per_file_copt in 7.0.0*
 BDEPEND+="
-	>=dev-build/bazel-6.1.0
+	>=dev-build/bazel-6.1.0:6.1
 	>=dev-build/cmake-3.24
 	dev-python/setuptools-scm[${PYTHON_USEDEP}]
 	dev-util/patchutils
@@ -332,7 +332,10 @@ src_unpack() {
 }
 
 python_configure() {
-	export TENSORSTORE_BAZELISK="/usr/bin/bazel"
+	mkdir -p "${WORKDIR}/bin" || die
+	export PATH="${WORKDIR}/bin:${PATH}"
+	ln -s "/usr/bin/bazel-6.1" "${WORKDIR}/bin/bazel" || die
+	export TENSORSTORE_BAZELISK="${WORKDIR}/bin/bazel"
 
 	local TS_SYS_LIBS=(
 		"jpeg"

@@ -37,7 +37,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	>=dev-build/bazel-6.1.0:6
+	>=dev-build/bazel-6.1.0:6.1
 "
 DOCS=( README.md RELEASE.md )
 HTML_DOCS=( docs )
@@ -45,7 +45,7 @@ HTML_DOCS=( docs )
 src_unpack() {
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
-	ln -s "/usr/bin/bazel-6" "${WORKDIR}/bin/bazel" || die
+	ln -s "/usr/bin/bazel-6.1" "${WORKDIR}/bin/bazel" || die
 	unpack ${A}
 }
 
