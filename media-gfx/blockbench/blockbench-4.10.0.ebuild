@@ -9,7 +9,7 @@ MY_PN="${PN^}"
 export NPM_INSTALL_PATH="/opt/${PN}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}_${PV}.AppImage"
-ELECTRON_APP_ELECTRON_PV="26.6.10"
+ELECTRON_APP_ELECTRON_PV="30.0.3"
 ELECTRON_APP_MODE="npm"
 NODE_ENV="development"
 NODE_VERSION=18
@@ -747,7 +747,7 @@ LICENSE="
 	(
 		${ELECTRON_APP_LICENSES}
 		Artistic-2
-		electron-26.6.10-chromium.html
+		electron-30.0.3-chromium.html
 	)
 	GPL-3+
 "
