@@ -258,9 +258,9 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
 IUSE+="
-bbrv2 bbrv3 build c2tcp cet +cfs clang deepcc disable_debug -exfat +genpatches
--genpatches_1510 kcfi kpgo-utils lto nest orca pgo prjc rt -rust shadowcallstack
-symlink tresor tresor_prompt tresor_sysfs zen-sauce
+bbrv2 bbrv3 build c2tcp cet +cfs clang clear deepcc disable_debug -exfat
++genpatches -genpatches_1510 kcfi kpgo-utils lto nest orca pgo prjc rt -rust
+shadowcallstack symlink tresor tresor_prompt tresor_sysfs zen-sauce
 "
 
 REQUIRED_USE+="
