@@ -11,7 +11,7 @@ RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.8
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-CLEAR_LINUX_PATCHES_VER="6.8.8-1430"
+CLEAR_LINUX_PATCHES_VER="6.8.9-1432"
 EBUILD_REV="r8"
 GENPATCHES_VER="12"
 PATCH_PROJC_VER="6.8-r4"
