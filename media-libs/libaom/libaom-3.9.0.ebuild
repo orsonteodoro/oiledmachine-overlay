@@ -7,12 +7,15 @@ EAPI=8
 
 AOCC_COMPAT=( 14 16 )
 CMAKE_ECLASS="cmake"
+GCC_MIN_SLOT=6
+CLANG_MIN_SLOT=7
 N_SAMPLES=1
 PYTHON_COMPAT=( python3_{8..12} )
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
+YASM_PV="2.14"
 
 inherit aocc cmake-multilib flag-o-matic flag-o-matic-om multiprocessing python-any-r1
 inherit toolchain-funcs uopts
@@ -36,6 +39,8 @@ else
 	#     cd .. && tar cvaf libaom-3.7.1-testdata.tar.xz libaom-3.7.1-testdata
 	SRC_URI="
 https://storage.googleapis.com/aom-releases/${P}.tar.gz
+	"
+	__DISABLED_SRC_URI="
 		test? (
 https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${P}-testdata.tar.xz
 		)
@@ -47,9 +52,7 @@ HOMEPAGE="https://aomedia.org"
 LICENSE="BSD-2"
 # Don't strip CFI \
 RESTRICT="
-	!test? (
-		test
-	)
+	test
 	strip
 "
 SLOT="0/3"
@@ -120,13 +123,13 @@ REQUIRED_USE="
 BDEPEND+="
 	>=dev-build/cmake-3.7
 	abi_x86_32? (
-		dev-lang/yasm
+		>=dev-lang/yasm-${YASM_PV}
 	)
 	abi_x86_64? (
-		dev-lang/yasm
+		>=dev-lang/yasm-${YASM_PV}
 	)
 	abi_x86_x32? (
-		dev-lang/yasm
+		>=dev-lang/yasm-${YASM_PV}
 	)
 	chromium? (
 		>=dev-lang/nasm-2.14
@@ -138,6 +141,10 @@ BDEPEND+="
 PDEPEND="
 	pgo? (
 		media-video/ffmpeg[${MULTILIB_USEDEP},encode,libaom]
+	)
+	|| (
+		>=sys-devel/gcc-${GCC_MIN_SLOT}
+		>=sys-devel/clang-${CLANG_MIN_SLOT}
 	)
 "
 PATCHES=(
@@ -247,7 +254,10 @@ pkg_setup() {
 	fi
 	check_video
 
-	if ( has bolt ${IUSE_EFFECTIVE} && use bolt ) || ( has ebolt ${IUSE_EFFECTIVE} && use ebolt ) ; then
+	if \
+		   ( has bolt ${IUSE_EFFECTIVE} && use bolt ) \
+		|| ( has ebolt ${IUSE_EFFECTIVE} && use ebolt ) \
+	; then
 		# For the basic block reorder branch-predictor summary,
 		# see https://github.com/llvm/llvm-project/blob/main/bolt/include/bolt/Passes/BinaryPasses.h#L139
 		export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=branch-predictor -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats"}
@@ -263,6 +273,20 @@ ewarn
 ewarn
 ewarn "USE=-asm may result in unsmooth decoding."
 ewarn
+	fi
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	export CPP="${CXX} -E"
+	if tc-is-gcc ; then
+		if ver_test $(gcc-major-version) -lt "${GCC_MIN_SLOT}" ; then
+eerror "CC/CXX must must be >=sys-devel/gcc-${GCC_MIN_SLOT}"
+			die
+		fi
+	elif tc-is-clang ; then
+		if ver_test $(clang-major-version) -lt "${CLANG_MIN_SLOT}" ; then
+eerror "CC/CXX must must be >=sys-devel/clang-${CLANG_MIN_SLOT}"
+			die
+		fi
 	fi
 }
 
