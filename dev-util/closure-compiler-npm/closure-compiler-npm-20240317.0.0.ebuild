@@ -65,7 +65,8 @@ JUNIT_PV="4.13.2"								# https://github.com/google/bazel-common/blob/65f295afe
 LISTENABLEFUTURE_PV="9999.0"							# https://github.com/google/guava/blob/v32.1.3/guava/module.json#L40
 MY_PN="closure-compiler"
 NODE_ENV="development"
-NODE_VERSION=18 # Upstream uses 14 on linux but others 16, 18
+NODE_VERSION=14 # Upstream uses 14 on linux but others 16, 18
+OPENJDK_PV="17.0.10"
 OSS7_PV="7"									# https://github.com/google/guava-beta-checker/blob/v1.0/pom.xml#L24
 OSS9_PV="9"									# https://github.com/google/guava/blob/v33.0.0/guava-bom/pom.xml#L17
 OW2_PV="1.5"									# Exposed in asm-9.0.pom L78
@@ -782,29 +783,42 @@ REQUIRED_USE+="
 		closure_compiler_nodejs
 	)
 "
+VIRTUAL_JDK="
+	|| (
+		>=dev-java/openjdk-bin-${OPENJDK_PV}:${JAVA_SLOT}[gentoo-vm(+)]
+		>=dev-java/openjdk-${OPENJDK_PV}:${JAVA_SLOT}[gentoo-vm(+)]
+	)
+"
+VIRTUAL_JRE="
+	|| (
+		>=dev-java/openjdk-bin-${OPENJDK_PV}:${JAVA_SLOT}[gentoo-vm(+)]
+		>=dev-java/openjdk-${OPENJDK_PV}:${JAVA_SLOT}[gentoo-vm(+)]
+		>=dev-java/openjdk-jre-bin-${OPENJDK_PV}:${JAVA_SLOT}[gentoo-vm(+)]
+	)
+"
 RDEPEND+="
 	!dev-lang/closure-compiler-bin
 	closure_compiler_java? (
-		virtual/jre:${JAVA_SLOT}
+		${VIRTUAL_JRE}
 	)
 	closure_compiler_nodejs? (
+		${VIRTUAL_JRE}
 		>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 		>=net-libs/nodejs-${NODE_VERSION}[npm]
-		virtual/jre:${JAVA_SLOT}
 	)
 "
 DEPEND+="
 	${RDEPEND}
-	virtual/jdk:${JAVA_SLOT}
+	${VIRTUAL_JDK}
 "
 BDEPEND+="
+	${VIRTUAL_JDK}
 	>=dev-build/bazel-${BAZEL_SLOT}:5.3
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
 	>=sys-devel/gcc-9.4.0
 	dev-java/maven-bin
 	dev-vcs/git
-	virtual/jdk:${JAVA_SLOT}
 	closure_compiler_native? (
 		${GRAALVM_CE_DEPENDS}
 	)
@@ -845,7 +859,7 @@ cat <<EOF > "${dest}/bazel"
 #!/bin/bash
 "${bazel_path}" "$@"
 EOF
-	export PATH="${dest}:${PATH}"
+#	export PATH="${dest}:${PATH}"
 einfo "BAZELISK_VERIFY_SHA256: ${BAZELISK_VERIFY_SHA256}"
 einfo "USE_BAZEL_VERSION: ${USE_BAZEL_VERSION}"
 
@@ -889,6 +903,10 @@ eerror
 	java-pkg-opt-2_pkg_setup
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 	javac --version || die
+	# JAVA_HOME_17_X64 should be the OpenJDK base path not GraalVM.
+	# JAVA_HOME should be the GraalVM base path.
+	export JAVA_HOME_11_X64="$(java-config -g JAVA_HOME)"
+einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64}"
 
 	# Bug
 	unset ANDROID_HOME
@@ -896,6 +914,7 @@ eerror
 	unset ANDROID_SDK_HOME
 
 einfo "JAVA_HOME:\t${JAVA_HOME} [from pkg_setup]"
+einfo "JAVA_HOME_11_X64:\t${JAVA_HOME_11_X64} [from pkg_setup]"
 einfo "PATH:\t${PATH}"
 
 	if ver_test ${X_JAVA_SLOT} -lt ${JAVA_SLOT} ; then
@@ -1123,12 +1142,14 @@ src_configure() {
 }
 
 src_compile() {
+	bazel --version || die
+	einfo "PATH:${PATH} (DEBUG)"
         einfo "USER:\t\t\t${USER}"
         einfo "HOME:\t\t\t${HOME}"
         export USER_HOME="${HOME}"
 	npm_hydrate
 	local extra_args=()
-	local npm_offline="${NPM_OFFLINE:-1}"
+	local npm_offline="${NPM_OFFLINE:-0}"
 	if [[ "${npm_offline}" == "2" ]] ; then
 		extra_args=( "--offline" )
 	elif [[ "${npm_offline}" == "1" ]] ; then

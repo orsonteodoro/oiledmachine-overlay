@@ -31,12 +31,14 @@ unset -f _graalvm_set_globals
 # All licenses associated with this project.
 # Concatenate with the package license.
 GRAAL_VM_CE_LICENSES="
+	(
+		all-rights-reserved
+		MIT
+	)
 	GraalVM_CE_22.3_LICENSE
 	GraalVM_CE_22.3_LICENSE_NATIVEIMAGE
 	GraalVM_CE_22.3_THIRD_PARTY_LICENSE
-	UPL-1.0
 	GPL-2-with-classpath-exception
-	( MIT all-rights-reserved )
 	Apache-2.0
 	BSD
 	BSD-2
@@ -53,14 +55,22 @@ GRAAL_VM_CE_LICENSES="
 	LGPL-2.1+
 	MIT
 	NAIST-IPADIC
+	UPL-1.0
 	unicode
 	Unicode-DFS-2016
 	W3C
 	W3C-Software-Notice-and-License
 	W3C-Software-and-Document-Notice-and-License
 	W3C-Software-and-Document-Notice-and-License-20021231
-	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
-	|| ( Apache-2.0 GPL-2+-with-classpath-exception )
+	|| (
+		GPL-2+
+		LGPL-2.1+
+		MPL-1.1
+	)
+	|| (
+		Apache-2.0
+		GPL-2+-with-classpath-exception
+	)
 " # It includes third party licenses.
 
 # @ECLASS_VARIABLE: GRAALVM_CE_DEPENDS
@@ -308,7 +318,11 @@ graalvm_attach_graalvm() {
 einfo "GRAALVM_HOME:\t${GRAALVM_HOME}"
 einfo "PATH:\t${PATH}"
 einfo "JAVA_HOME:\t${JAVA_HOME}"
+	# JAVA_HOME_17_X86 environment variable will contain the OpenJDK base path.
+einfo "DEBUG:  testing graalvm"
+	java -version
 	java -version 2>&1 | grep -q "GraalVM.*${GRAALVM_PV}" || die
+einfo "DEBUG:  testing graalvm done"
 	if [[ "${GRAALVM_MODE}" == "live" ]] ; then
 		gu install native-image || die
 	else

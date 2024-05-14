@@ -5,7 +5,7 @@ EAPI=8
 
 JAVA_SLOT=11
 
-inherit bash-completion-r1 bazel java-pkg-2 multiprocessing
+inherit bash-completion-r1 bazel flag-o-matic java-pkg-2 multiprocessing
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
@@ -67,6 +67,7 @@ src_prepare() {
 }
 
 src_compile() {
+	replace-flags '-O0' '-O1' # Package uses _FORTIFY_SOURCE
 ewarn
 ewarn "If it fails to build, switch to gcc 12."
 ewarn
@@ -74,6 +75,7 @@ ewarn "eselect gcc set ${CHOST}-12"
 ewarn "source /etc/profile"
 ewarn
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
+einfo "JAVA_HOME:  ${JAVA_HOME}"
 	export EXTRA_BAZEL_ARGS="--jobs=$(makeopts_jobs) $(bazel_get_flags)
 		--java_runtime_version=local_jdk
 		--tool_java_runtime_version=local_jdk"
