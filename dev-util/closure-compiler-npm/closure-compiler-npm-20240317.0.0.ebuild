@@ -57,7 +57,7 @@ GUAVA33_PV="33.0.0"								# https://github.com/google/closure-compiler/blob/v20
 GUAVA_BETA_CHECKER_PV="1.0"							# https://github.com/google/bazel-common/blob/65f295afec03cce3807df5b06ef42bf8e46df4e4/workspace_defs.bzl#L133 https://github.com/google/jimfs/blob/v1.2/pom.xml#L229
 HAMCREST_PV="1.3"								# https://github.com/google/bazel-common/blob/65f295afec03cce3807df5b06ef42bf8e46df4e4/workspace_defs.bzl#L273 https://github.com/junit-team/junit4/blob/r4.13.2/pom.xml#L98
 J2OBJC_PV="2.8"									# https://github.com/google/guava/blob/v32.1.2/pom.xml#L314
-JAVA_SLOT="17"									# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml#L26
+JAVA_SLOT="11"									# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml#L26
 JAVA_DIFF_UTILS_PV="4.12"							# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L20
 JAVA_TOOLS_PV="11.11"								# https://github.com/bazelbuild/rules_java/blob/5.4.1/java/repositories.bzl#L28
 JIMFS_PV="1.2"									# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L15
@@ -868,6 +868,7 @@ eerror
 	fi
 	local dest="${S}/tools"
 	local bazel_path="/usr/bin/bazel-${BAZEL_SLOT}"
+einfo "bazel_path:  ${bazel_path}"
 	# For this weird workaround to prevent download,
 	# see https://github.com/bazelbuild/bazelisk/issues/560
 	export USE_BAZEL_VERSION="${bazel_path}"
@@ -879,7 +880,7 @@ cat <<EOF > "${dest}/bazel"
 #!/bin/bash
 "${bazel_path}" "$@"
 EOF
-#	export PATH="${dest}:${PATH}"
+	export PATH="${dest}:${PATH}"
 einfo "BAZELISK_VERIFY_SHA256: ${BAZELISK_VERIFY_SHA256}"
 einfo "USE_BAZEL_VERSION: ${USE_BAZEL_VERSION}"
 
@@ -1164,7 +1165,19 @@ src_configure() {
 }
 
 src_compile() {
-	bazel --version || die
+# Fixes:
+# FATAL: bazel crashed due to an internal error. Printing stack trace:
+# java.lang.NoClassDefFoundError: Could not initialize class com.google.devtools.build.lib.unsafe.StringUnsafe
+# ...
+# Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.reflect.InaccessibleObjectException: Unable to make java.lang.String(byte[],byte) accessible: module java.base does not "opens java.lang" to unnamed module @76552cb [in thread "skyframe-evaluator 2"]
+# ...
+einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64}"
+	echo \
+		"startup --server_javabase=${JAVA_HOME_11_X64}" \
+		>> \
+		"compiler/.bazelrc" \
+		|| die
+
 	einfo "PATH:${PATH} (DEBUG)"
         einfo "USER:\t\t\t${USER}"
         einfo "HOME:\t\t\t${HOME}"
