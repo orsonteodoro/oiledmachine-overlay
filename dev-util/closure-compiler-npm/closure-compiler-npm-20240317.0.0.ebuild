@@ -15,6 +15,9 @@ EAPI=8
 # https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml
 # The virtual/jdk not virtual/jre must be in DEPENDs for the eclass not to be stupid.
 
+export COMPILER_NIGHTLY="false"
+export FORCE_COLOR=1
+
 # For constants without links, the versions are obtained by console inspection.
 # https://github.com/google/closure-templates/blob/master/maven_install.json may expose the pom/jar dependency tree.
 ANT_PV="1.10.11"								# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L21
@@ -78,9 +81,8 @@ RULES_JAVA_PV="5.4.1"								# https://github.com/google/closure-compiler/blob/v
 RULES_PROTO_PV="4.0.0"								# https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L35     ; 2 tarballs needed from this project
 TRUTH_LITEPROTO_EXTENSION_PV="1.4.0"						# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L18
 TRUTH_PV="1.1"									# https://github.com/google/closure-compiler/blob/v20240317/license_check/maven_artifacts.bzl#L14
-ZULU17_PV="17.32.13-ca-jdk17.0.2"						# https://github.com/bazelbuild/rules_java/blob/5.4.1/java/repositories.bzl#L434
 ZULU11_PV="11.56.19-ca-jdk11.0.15"						# https://github.com/bazelbuild/rules_java/blob/5.4.1/java/repositories.bzl#L172
-
+ZULU17_PV="17.32.13-ca-jdk17.0.2"						# https://github.com/bazelbuild/rules_java/blob/5.4.1/java/repositories.bzl#L434
 
 inherit bazel check-reqs java-pkg-opt-2 graalvm npm
 
@@ -524,16 +526,26 @@ https://repo1.maven.org/maven2/args4j/args4j/${ARGS4J_PV}/args4j-${ARGS4J_PV}.po
 https://repo1.maven.org/maven2/args4j/args4j/${ARGS4J_PV}/args4j-${ARGS4J_PV}.pom.md5
 https://repo1.maven.org/maven2/args4j/args4j/${ARGS4J_PV}/args4j-${ARGS4J_PV}.pom.sha1
 https://repo1.maven.org/maven2/com/google/auto/auto-common/${AUTO_COMMON_PV}/auto-common-${AUTO_COMMON_PV}.jar
+https://repo1.maven.org/maven2/com/google/auto/auto-common/${AUTO_COMMON_PV}/auto-common-${AUTO_COMMON_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/auto/auto-common/${AUTO_COMMON_PV}/auto-common-${AUTO_COMMON_PV}.jar.sha1
 https://repo1.maven.org/maven2/com/google/auto/service/auto-service/${AUTO_SERVICE_PV}/auto-service-${AUTO_SERVICE_PV}.jar
+https://repo1.maven.org/maven2/com/google/auto/service/auto-service/${AUTO_SERVICE_PV}/auto-service-${AUTO_SERVICE_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/auto/service/auto-service/${AUTO_SERVICE_PV}/auto-service-${AUTO_SERVICE_PV}.jar.sha1
 https://repo1.maven.org/maven2/com/google/auto/service/auto-service-annotations/${AUTO_SERVICE_PV}/auto-service-annotations-${AUTO_SERVICE_PV}.jar
+https://repo1.maven.org/maven2/com/google/auto/service/auto-service-annotations/${AUTO_SERVICE_PV}/auto-service-annotations-${AUTO_SERVICE_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/auto/service/auto-service-annotations/${AUTO_SERVICE_PV}/auto-service-annotations-${AUTO_SERVICE_PV}.jar.sha1
 https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations/${AUTO_VALUE_1_7_PV}/auto-value-annotations-${AUTO_VALUE_1_7_PV}.pom
 https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations/${AUTO_VALUE_1_7_PV}/auto-value-annotations-${AUTO_VALUE_1_7_PV}.pom.md5
 https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations/${AUTO_VALUE_1_7_PV}/auto-value-annotations-${AUTO_VALUE_1_7_PV}.pom.sha1
 https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations/${AUTO_VALUE_1_10_PV}/auto-value-annotations-${AUTO_VALUE_1_10_PV}.jar
+https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations/${AUTO_VALUE_1_10_PV}/auto-value-annotations-${AUTO_VALUE_1_10_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations/${AUTO_VALUE_1_10_PV}/auto-value-annotations-${AUTO_VALUE_1_10_PV}.jar.sha1
 https://repo1.maven.org/maven2/com/google/auto/value/auto-value-parent/${AUTO_VALUE_1_7_PV}/auto-value-parent-${AUTO_VALUE_1_7_PV}.pom
 https://repo1.maven.org/maven2/com/google/auto/value/auto-value-parent/${AUTO_VALUE_1_7_PV}/auto-value-parent-${AUTO_VALUE_1_7_PV}.pom.md5
 https://repo1.maven.org/maven2/com/google/auto/value/auto-value-parent/${AUTO_VALUE_1_7_PV}/auto-value-parent-${AUTO_VALUE_1_7_PV}.pom.sha1
 https://repo1.maven.org/maven2/com/google/auto/value/auto-value/${AUTO_VALUE_1_10_PV}/auto-value-${AUTO_VALUE_1_10_PV}.jar
+https://repo1.maven.org/maven2/com/google/auto/value/auto-value/${AUTO_VALUE_1_10_PV}/auto-value-${AUTO_VALUE_1_10_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/auto/value/auto-value/${AUTO_VALUE_1_10_PV}/auto-value-${AUTO_VALUE_1_10_PV}.jar.sha1
 https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/${JSR305_PV}/jsr305-${JSR305_PV}.jar
 https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/${JSR305_PV}/jsr305-${JSR305_PV}.jar.md5
 https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/${JSR305_PV}/jsr305-${JSR305_PV}.jar.sha1
@@ -577,7 +589,11 @@ https://repo1.maven.org/maven2/com/google/guava/guava/${GUAVA32_PV}-jre/guava-${
 https://repo1.maven.org/maven2/com/google/guava/guava/${GUAVA32_PV}-jre/guava-${GUAVA32_PV}-jre.pom.md5
 https://repo1.maven.org/maven2/com/google/guava/guava/${GUAVA32_PV}-jre/guava-${GUAVA32_PV}-jre.pom.sha1
 https://repo1.maven.org/maven2/com/google/guava/guava/${GUAVA33_PV}-jre/guava-${GUAVA33_PV}-jre.jar
+https://repo1.maven.org/maven2/com/google/guava/guava/${GUAVA33_PV}-jre/guava-${GUAVA33_PV}-jre.jar.md5
+https://repo1.maven.org/maven2/com/google/guava/guava/${GUAVA33_PV}-jre/guava-${GUAVA33_PV}-jre.jar.sha1
 https://repo1.maven.org/maven2/com/google/guava/guava-beta-checker/${GUAVA_BETA_CHECKER_PV}/guava-beta-checker-${GUAVA_BETA_CHECKER_PV}.jar
+https://repo1.maven.org/maven2/com/google/guava/guava-beta-checker/${GUAVA_BETA_CHECKER_PV}/guava-beta-checker-${GUAVA_BETA_CHECKER_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/guava/guava-beta-checker/${GUAVA_BETA_CHECKER_PV}/guava-beta-checker-${GUAVA_BETA_CHECKER_PV}.jar.sha1
 https://repo1.maven.org/maven2/com/google/guava/guava-parent/${GUAVA26_PV}-android/guava-parent-${GUAVA26_PV}-android.pom
 https://repo1.maven.org/maven2/com/google/guava/guava-parent/${GUAVA26_PV}-android/guava-parent-${GUAVA26_PV}-android.pom.md5
 https://repo1.maven.org/maven2/com/google/guava/guava-parent/${GUAVA26_PV}-android/guava-parent-${GUAVA26_PV}-android.pom.sha1
@@ -615,6 +631,8 @@ https://repo1.maven.org/maven2/com/google/protobuf/protobuf-bom/${PROTOBUF_JAVA_
 https://repo1.maven.org/maven2/com/google/protobuf/protobuf-bom/${PROTOBUF_JAVA_3_21_PV}/protobuf-bom-${PROTOBUF_JAVA_3_21_PV}.pom.md5
 https://repo1.maven.org/maven2/com/google/protobuf/protobuf-bom/${PROTOBUF_JAVA_3_21_PV}/protobuf-bom-${PROTOBUF_JAVA_3_21_PV}.pom.sha1
 https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_3_17_PV}/protobuf-java-${PROTOBUF_JAVA_3_17_PV}.jar
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_3_17_PV}/protobuf-java-${PROTOBUF_JAVA_3_17_PV}.jar.md5
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_3_17_PV}/protobuf-java-${PROTOBUF_JAVA_3_17_PV}.jar.sha1
 https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_3_17_PV}/protobuf-java-${PROTOBUF_JAVA_3_17_PV}-sources.jar
 https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_3_21_PV}/protobuf-java-${PROTOBUF_JAVA_3_21_PV}.jar
 https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_3_21_PV}/protobuf-java-${PROTOBUF_JAVA_3_21_PV}.jar.md5
@@ -665,6 +683,8 @@ https://repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils/${JAVA_
 https://repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils/${JAVA_DIFF_UTILS_PV}/java-diff-utils-${JAVA_DIFF_UTILS_PV}.pom.md5
 https://repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils/${JAVA_DIFF_UTILS_PV}/java-diff-utils-${JAVA_DIFF_UTILS_PV}.pom.sha1
 https://repo1.maven.org/maven2/javax/annotation/jsr250-api/${JSR256_PV}/jsr250-api-${JSR256_PV}.jar
+https://repo1.maven.org/maven2/javax/annotation/jsr250-api/${JSR256_PV}/jsr250-api-${JSR256_PV}.jar.md5
+https://repo1.maven.org/maven2/javax/annotation/jsr250-api/${JSR256_PV}/jsr250-api-${JSR256_PV}.jar.sha1
 https://repo1.maven.org/maven2/junit/junit/${JUNIT_PV}/junit-${JUNIT_PV}.pom
 https://repo1.maven.org/maven2/junit/junit/${JUNIT_PV}/junit-${JUNIT_PV}.pom.md5
 https://repo1.maven.org/maven2/junit/junit/${JUNIT_PV}/junit-${JUNIT_PV}.pom.sha1
@@ -913,6 +933,8 @@ einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64}"
 	unset ANDROID_NDK_HOME
 	unset ANDROID_SDK_HOME
 
+einfo "COMPILER_NIGHTLY:\t${COMPILER_NIGHTLY}"
+einfo "FORCE_COLOR:\t${FORCE_COLOR}"
 einfo "JAVA_HOME:\t${JAVA_HOME} [from pkg_setup]"
 einfo "JAVA_HOME_11_X64:\t${JAVA_HOME_11_X64} [from pkg_setup]"
 einfo "PATH:\t${PATH}"
