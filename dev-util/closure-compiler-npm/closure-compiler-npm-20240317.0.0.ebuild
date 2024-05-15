@@ -28,15 +28,15 @@ AUTO_SERVICE_PV="1.1.1"								# https://github.com/google/bazel-common/blob/65f
 AUTO_VALUE_1_7_PV="1.7.4"							# https://github.com/google/truth/blob/release_1_1/pom.xml#L26
 AUTO_VALUE_1_10_PV="1.10.4"							# https://github.com/google/bazel-common/blob/65f295afec03cce3807df5b06ef42bf8e46df4e4/workspace_defs.bzl#L187 https://github.com/google/truth/blob/v1.4.0/pom.xml#L17
 BAZELISK_PV="1.19.0" # From CI logs for "Build Compiler"
-BAZELISK_ABIS="
-	amd64
-	arm64
-"
+BAZELISK_ABIS=(
+	"amd64"
+	"arm64"
+)
 BAZEL_PV="5.3.0"								# https://github.com/google/closure-compiler/blob/v20240317/.bazelversion
-BAZEL_SLOT=$(ver_cut 1-2 ${BAZEL_PV})
+BAZEL_SLOT=$(ver_cut 1-2 "${BAZEL_PV}")
 BAZEL_SKYLIB_PV="1.4.2"								# https://github.com/bazelbuild/rules_jvm_external/blob/77c3538b33cf195879b337fd48c480b77815b9a0/repositories.bzl#L17
 CHECKER_QUAL_PV="3.33.0"							# https://github.com/google/guava/blob/v32.1.2/pom.xml#L304
-CLOSURE_COMPILER_MAJOR_VER=$(ver_cut 1 ${PV})
+CLOSURE_COMPILER_MAJOR_VER=$(ver_cut 1 "${PV}")
 COURSIER_PV="2.1.8"								# https://github.com/bazelbuild/rules_jvm_external/blob/77c3538b33cf195879b337fd48c480b77815b9a0/MODULE.bazel#L68
 EGIT_BAZEL_COMMON_COMMIT="65f295afec03cce3807df5b06ef42bf8e46df4e4"		# https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L57
 EGIT_BAZEL_JAR_JAR_COMMIT="171f268569384c57c19474b04aebe574d85fde0d"		# https://github.com/google/closure-compiler/blob/v20240317/WORKSPACE.bazel#L74
@@ -48,7 +48,7 @@ ERROR_PRONE_2_18_PV="2.18.0"							# https://github.com/google/guava/blob/v32.1.
 FAILUREACCESS_PV="1.0.1"							# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L12
 FN_DEST="${PN}-${PV}.tar.gz"
 FN_DEST2="${PN%-*}-${PV}.tar.gz"
-GRAALVM_JAVA_PV=17								# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml#L96
+GRAALVM_JAVA_PV="17"								# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml#L96
 GRAALVM_PV="22.3.2"								# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml#L95
 GSON_PV="2.9.1"									# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L10
 GUAVA26_PV="26.0"								# https://github.com/google/guava/blob/v32.1.2/futures/failureaccess/pom.xml#L8
@@ -737,7 +737,7 @@ https://repo1.maven.org/maven2/org/sonatype/oss/oss-parent/${OSS9_PV}/oss-parent
 
 gen_bazelisk_src_uris() {
 	local abi
-	for abi in ${BAZELISK_ABIS} ; do
+	for abi in ${BAZELISK_ABIS[@]} ; do
 		echo "
 	${abi}? (
 https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_PV}/bazelisk-linux-${abi}
@@ -1016,9 +1016,9 @@ einfo "Removing unsupported platforms"
 	cd "${S}" || die
 
 	local abi
-	for abi in ${BAZELISK_ABIS} ; do
+	for abi in ${BAZELISK_ABIS[@]} ; do
 		mkdir -p "${WORKDIR}/bazelisk" || die
-		if use ${abi} ; then
+		if use "${abi}" ; then
 			cp $(realpath \
 				"${DISTDIR}/bazelisk-linux-${abi}-${BAZELISK_PV}") \
 				"${WORKDIR}/bazelisk/bazelisk" \
@@ -1037,7 +1037,7 @@ einfo "Adding .git folder"
 	git config user.name "John Doe" || die
 	git add dummy || die
 	git commit -m "Dummy" || die
-	git tag v${PV} || die
+	git tag "v${PV}" || die
 
 	if grep -e "Read timed out" "${T}/build.log" ; then
 eerror
