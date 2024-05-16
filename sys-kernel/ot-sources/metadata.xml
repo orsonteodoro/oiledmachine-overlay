@@ -182,7 +182,7 @@
 		    TRESOR (AES-NI) [5]			E
 		    TRESOR (x86) [5]			E
 		    TRESOR (x86-64) [5]			E
-		    zen-sauce				D
+		    zen-sauce				A
 
     [1] Kernel LTS provides security updates and bugfixes, but doesn't extend to
         third party patchsets

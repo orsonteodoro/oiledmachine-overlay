@@ -181,7 +181,7 @@ PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS=(
 )
 
 PATCH_ZEN_SAUCE_COMMITS=(
-# From https://github.com/torvalds/linux/compare/v6.6...zen-kernel:zen-kernel:6.6/zen-sauce
+# From https://github.com/torvalds/linux/compare/v6.8...zen-kernel:zen-kernel:6.8/zen-sauce
 #
 # Generated from:
 # wget -q -O - https://github.com/torvalds/linux/compare/1bccd8a7399be4df94df3ab1e7d121681d6dba2e^..c9cd00979901c0e29c62e270eaa8d6f6edf55c73.patch \
