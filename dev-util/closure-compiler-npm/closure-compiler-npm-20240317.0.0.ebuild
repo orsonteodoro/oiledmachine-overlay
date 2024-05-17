@@ -17,7 +17,9 @@ EAPI=8
 
 # You need two slotted OpenJDKs to build this.
 # You need OpenJDK == 11 for running bazel.
-# You need OpenJDK == 17 to build closure-compiler.
+# You need OpenJDK == 11 to build closure-compiler.
+
+# The closure-compiler-npm/compiler/BUILD.bazel indicates 11 but the CI uses 17.  Using 11 seems to work.
 
 export COMPILER_NIGHTLY="false"
 export FORCE_COLOR=1
@@ -968,7 +970,7 @@ eerror
 	java-pkg-opt-2_pkg_setup
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT_CLOSURE_COMPILER}
 	javac --version || die
-	# JAVA_HOME_17_X64 should be the OpenJDK base path not GraalVM.
+	# JAVA_HOME_11_X64 should be the OpenJDK base path not GraalVM.
 	# JAVA_HOME should be the GraalVM base path.
 
 	# Use only Hotspot at this time.
@@ -987,8 +989,8 @@ eerror
 		local jdk_path=$(realpath "/usr/$(get_libdir)/openjdk-17")
 		export JAVA_HOME_17_X64="${jdk_path}"
 	fi
-einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64}" # For running bazel
-einfo "JAVA_HOME_17_X64:  ${JAVA_HOME_17_X64}" # For building closure-compiler
+einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64}" # For running bazel and building closure-compiler
+einfo "JAVA_HOME_17_X64:  ${JAVA_HOME_17_X64}" #
 
 	# Bug
 	unset ANDROID_HOME
@@ -1284,7 +1286,7 @@ einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64}"
 		"compiler/.bazelrc" \
 		|| die
 
-	export JAVA_HOME="${JAVA_HOME_17_X64}"
+	export JAVA_HOME="${JAVA_HOME_11_X64}"
         export USER_HOME="${HOME}"
 	einfo "JAVA_HOME:  ${JAVA_HOME}"
         einfo "HOME:  ${HOME}"
