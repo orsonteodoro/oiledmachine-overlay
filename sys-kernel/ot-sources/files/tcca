@@ -680,6 +680,13 @@ process_options() {
 			exit 0
 		else
 			local cca
+			for cca in ${!TCCA_MAP[@]} ; do
+				if [[ "${x}" == "${cca}" ]] ; then
+					set_tcca "${TCCA_MAP[${x}]}"
+					exit 0
+				fi
+			done
+			local cca
 			for cca in ${CCA[@]} ; do
 				if [[ "${x}" == "${cca}" ]] ; then
 					set_tcca "${x}"
