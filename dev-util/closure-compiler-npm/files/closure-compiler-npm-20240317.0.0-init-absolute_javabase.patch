@@ -1,0 +1,23 @@
+--- a/compiler/BUILD.bazel.orig	2024-03-14 16:02:42.000000000 -0700
++++ b/compiler/BUILD.bazel	2024-05-15 18:44:46.138402148 -0700
+@@ -28,6 +28,20 @@ exports_files([
+     "LICENSE",
+ ])
+ 
++config_setting(
++    name = "use_absolute_javabase",
++    values = {"define": "USE_ABSOLUTE_JAVABASE=true"},
++)
++
++java_runtime(
++    name = "absolute_javabase",
++    java_home = select({
++        ":use_absolute_javabase": "$(ABSOLUTE_JAVABASE)",
++        "//conditions:default": "",
++    }),
++    visibility = ["//visibility:public"],
++)
++
+ filegroup(
+     name = "sonatype_bundles",
+     srcs = [

@@ -15,6 +15,10 @@ EAPI=8
 # https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml
 # The virtual/jdk not virtual/jre must be in DEPENDs for the eclass not to be stupid.
 
+# You need two slotted OpenJDKs to build this.
+# You need OpenJDK == 11 for running bazel.
+# You need OpenJDK == 17 to build closure-compiler.
+
 export COMPILER_NIGHTLY="false"
 export FORCE_COLOR=1
 
@@ -57,7 +61,8 @@ GUAVA33_PV="33.0.0"								# https://github.com/google/closure-compiler/blob/v20
 GUAVA_BETA_CHECKER_PV="1.0"							# https://github.com/google/bazel-common/blob/65f295afec03cce3807df5b06ef42bf8e46df4e4/workspace_defs.bzl#L133 https://github.com/google/jimfs/blob/v1.2/pom.xml#L229
 HAMCREST_PV="1.3"								# https://github.com/google/bazel-common/blob/65f295afec03cce3807df5b06ef42bf8e46df4e4/workspace_defs.bzl#L273 https://github.com/junit-team/junit4/blob/r4.13.2/pom.xml#L98
 J2OBJC_PV="2.8"									# https://github.com/google/guava/blob/v32.1.2/pom.xml#L314
-JAVA_SLOT="11"									# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml#L26
+JAVA_SLOT_BAZEL="11"								# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml#L26
+JAVA_SLOT_CLOSURE_COMPILER="11"							# https://github.com/google/closure-compiler-npm/blob/v20240317.0.0/.github/workflows/build.yml#L26
 JAVA_DIFF_UTILS_PV="4.12"							# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L20
 JAVA_TOOLS_PV="11.11"								# https://github.com/bazelbuild/rules_java/blob/5.4.1/java/repositories.bzl#L28
 JIMFS_PV="1.2"									# https://github.com/google/closure-compiler/blob/v20240317/maven_artifacts.bzl#L15
@@ -67,9 +72,29 @@ JSR305_PV="3.0.2"								# https://github.com/google/guava/blob/v32.1.2/pom.xml#
 JUNIT_PV="4.13.2"								# https://github.com/google/bazel-common/blob/65f295afec03cce3807df5b06ef42bf8e46df4e4/workspace_defs.bzl#L232 https://github.com/google/guava/blob/v33.0.0/guava-testlib/pom.xml#L42 https://github.com/google/truth/blob/v1.4.0/pom.xml#L81
 LISTENABLEFUTURE_PV="9999.0"							# https://github.com/google/guava/blob/v32.1.3/guava/module.json#L40
 MY_PN="closure-compiler"
+MAVEN_TARBALLS=(
+"${HOME}/.m2/repository/args4j/args4j/2.33/args4j-2.33.jar"
+"${HOME}/.m2/repository/io/github/java-diff-utils/java-diff-utils/4.12/java-diff-utils-4.12.jar"
+"${HOME}/.m2/repository/org/apache/ant/ant/1.10.11/ant-1.10.11.jar"
+"${HOME}/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"
+"${HOME}/.m2/repository/org/jspecify/jspecify/0.2.0/jspecify-0.2.0.jar"
+"${HOME}/.m2/repository/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar"
+"${HOME}/.m2/repository/com/google/guava/guava-testlib/32.1.2-jre/guava-testlib-32.1.2-jre.j"ar
+"${HOME}/.m2/repository/com/google/guava/guava/32.1.2-jre/guava-32.1.2-jre.jar"
+"${HOME}/.m2/repository/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar"
+"${HOME}/.m2/repository/com/google/code/gson/gson/2.9.1/gson-2.9.1.jar"
+"${HOME}/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar"
+"${HOME}/.m2/repository/com/google/protobuf/protobuf-java/3.21.12/protobuf-java-3.21.12.jar"
+"${HOME}/.m2/repository/com/google/re2j/re2j/1.3/re2j-1.3.jar"
+"${HOME}/.m2/repository/com/google/jimfs/jimfs/1.2/jimfs-1.2.jar"
+"${HOME}/.m2/repository/com/google/errorprone/error_prone_annotations/2.15.0/error_prone_annotations-2.15.0.jar"
+"${HOME}/.m2/repository/com/google/truth/extensions/truth-proto-extension/1.1/truth-proto-extension-1.1.jar"
+"${HOME}/.m2/repository/com/google/truth/extensions/truth-liteproto-extension/1.4.0/truth-liteproto-extension-1.4.0.jar"
+)
 NODE_ENV="development"
 NODE_VERSION=14 # Upstream uses 14 on linux but others 16, 18
-OPENJDK_PV="17.0.10"
+#OPENJDK_PV="17.0.10"
+OPENJDK_PV="11"
 OSS7_PV="7"									# https://github.com/google/guava-beta-checker/blob/v1.0/pom.xml#L24
 OSS9_PV="9"									# https://github.com/google/guava/blob/v33.0.0/guava-bom/pom.xml#L17
 OW2_PV="1.5"									# Exposed in asm-9.0.pom L78
@@ -803,36 +828,54 @@ REQUIRED_USE+="
 		closure_compiler_nodejs
 	)
 "
-VIRTUAL_JDK="
+VIRTUAL_JDK_BAZEL="
 	|| (
-		>=dev-java/openjdk-bin-${OPENJDK_PV}:${JAVA_SLOT}[gentoo-vm(+)]
-		>=dev-java/openjdk-${OPENJDK_PV}:${JAVA_SLOT}[gentoo-vm(+)]
+		>=dev-java/openjdk-bin-${OPENJDK_PV}:${JAVA_SLOT_BAZEL}[gentoo-vm(+)]
+		>=dev-java/openjdk-${OPENJDK_PV}:${JAVA_SLOT_BAZEL}[gentoo-vm(+)]
 	)
 "
-VIRTUAL_JRE="
+VIRTUAL_JDK_CLOSURE_COMPILER="
 	|| (
-		>=dev-java/openjdk-bin-${OPENJDK_PV}:${JAVA_SLOT}[gentoo-vm(+)]
-		>=dev-java/openjdk-${OPENJDK_PV}:${JAVA_SLOT}[gentoo-vm(+)]
-		>=dev-java/openjdk-jre-bin-${OPENJDK_PV}:${JAVA_SLOT}[gentoo-vm(+)]
+		>=dev-java/openjdk-bin-${OPENJDK_PV}:${JAVA_SLOT_CLOSURE_COMPILER}[gentoo-vm(+)]
+		>=dev-java/openjdk-${OPENJDK_PV}:${JAVA_SLOT_CLOSURE_COMPILER}[gentoo-vm(+)]
+	)
+"
+VIRTUAL_JRE_BAZEL="
+	|| (
+		>=dev-java/openjdk-bin-${OPENJDK_PV}:${JAVA_SLOT_BAZEL}[gentoo-vm(+)]
+		>=dev-java/openjdk-${OPENJDK_PV}:${JAVA_SLOT_BAZEL}[gentoo-vm(+)]
+	)
+"
+VIRTUAL_JRE_CLOSURE_COMPILER="
+	|| (
+		>=dev-java/openjdk-bin-${OPENJDK_PV}:${JAVA_SLOT_CLOSURE_COMPILER}[gentoo-vm(+)]
+		>=dev-java/openjdk-${OPENJDK_PV}:${JAVA_SLOT_CLOSURE_COMPILER}[gentoo-vm(+)]
 	)
 "
 RDEPEND+="
+	${VIRTUAL_JRE_BAZEL}
 	!dev-lang/closure-compiler-bin
 	closure_compiler_java? (
-		${VIRTUAL_JRE}
+		${VIRTUAL_JRE_CLOSURE_COMPILER}
 	)
 	closure_compiler_nodejs? (
-		${VIRTUAL_JRE}
+		${VIRTUAL_JRE_CLOSURE_COMPILER}
 		>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 		>=net-libs/nodejs-${NODE_VERSION}[npm]
 	)
 "
 DEPEND+="
 	${RDEPEND}
-	${VIRTUAL_JDK}
+	${VIRTUAL_JDK_BAZEL}
+	closure_compiler_java? (
+		${VIRTUAL_JDK_CLOSURE_COMPILER}
+	)
+	closure_compiler_nodejs? (
+		${VIRTUAL_JDK_CLOSURE_COMPILER}
+	)
 "
 BDEPEND+="
-	${VIRTUAL_JDK}
+	${VIRTUAL_JDK_BAZEL}
 	>=dev-build/bazel-${BAZEL_SLOT}:5.3
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
@@ -844,7 +887,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/closure-compiler-npm-20230228.0.0-maven_install-m2Local.patch"
+	"${FILESDIR}/closure-compiler-npm-20240317.0.0-init-absolute_javabase.patch"
 )
 
 _configure_bazel() {
@@ -890,6 +933,7 @@ einfo "Configuring bazel"
 
 	# There is a bug that keeps popping up when building java packages:
 	# /var/lib/portage/home/ should be /var/tmp/portage/dev-util/closure-compiler-npm-20240317.0.0/homedir/
+	export MAVEN_REPO="file://$HOME/.m2/repository"
 	#echo "bazel run --define \"maven_repo=file://$HOME/.m2/repository\"" >> "${T}/bazelrc" || die # Does not fix
 
 	cat "${T}/bazelrc" >> "${S}/compiler/.bazelrc" || die
@@ -922,30 +966,40 @@ eerror
 	fi
 
 	java-pkg-opt-2_pkg_setup
-	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
+	java-pkg_ensure-vm-version-eq ${JAVA_SLOT_CLOSURE_COMPILER}
 	javac --version || die
 	# JAVA_HOME_17_X64 should be the OpenJDK base path not GraalVM.
 	# JAVA_HOME should be the GraalVM base path.
-	export JAVA_HOME_11_X64="$(java-config -g JAVA_HOME)"
-einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64}"
+
+	# Use only Hotspot at this time.
+	if has_version "dev-java/openjdk-bin:11" ; then
+		local jdk_path=$(realpath "/opt/openjdk-bin-11")
+		export JAVA_HOME_11_X64="${jdk_path}"
+	elif has_version "dev-java/openjdk:17" ; then
+		local jdk_path=$(realpath "/usr/$(get_libdir)/openjdk-11")
+		export JAVA_HOME_11_X64="${jdk_path}"
+	fi
+
+	if has_version "dev-java/openjdk-bin:17" ; then
+		local jdk_path=$(realpath "/opt/openjdk-bin-17")
+		export JAVA_HOME_17_X64="${jdk_path}"
+	elif has_version "dev-java/openjdk:17" ; then
+		local jdk_path=$(realpath "/usr/$(get_libdir)/openjdk-17")
+		export JAVA_HOME_17_X64="${jdk_path}"
+	fi
+einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64}" # For running bazel
+einfo "JAVA_HOME_17_X64:  ${JAVA_HOME_17_X64}" # For building closure-compiler
 
 	# Bug
 	unset ANDROID_HOME
 	unset ANDROID_NDK_HOME
 	unset ANDROID_SDK_HOME
 
-einfo "COMPILER_NIGHTLY:\t${COMPILER_NIGHTLY}"
-einfo "FORCE_COLOR:\t${FORCE_COLOR}"
-einfo "JAVA_HOME:\t${JAVA_HOME} [from pkg_setup]"
-einfo "JAVA_HOME_11_X64:\t${JAVA_HOME_11_X64} [from pkg_setup]"
-einfo "PATH:\t${PATH}"
-
-	if ver_test ${X_JAVA_SLOT} -lt ${JAVA_SLOT} ; then
-eerror
-eerror "You must have OpenJDK >= ${JAVA_SLOT}.  Best is ${X_JAVA_SLOT}."
-eerror
-		die
-	fi
+einfo "COMPILER_NIGHTLY:  ${COMPILER_NIGHTLY}"
+einfo "FORCE_COLOR:  ${FORCE_COLOR}"
+einfo "JAVA_HOME:  ${JAVA_HOME} [from pkg_setup]"
+einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64} [from pkg_setup]"
+einfo "PATH:  ${PATH}"
 
 	if ! which mvn 2>/dev/null 1>/dev/null ; then
 eerror
@@ -995,8 +1049,8 @@ src_unpack() {
 	fi
 
 	# Do not make this section conditional.
-	npm_src_unpack
-
+einfo "Building compiler jar (1/2)"
+	npm_src_unpack # Part 1/2 of _build_compiler_jar
 
 	if ! use closure_compiler_java ; then
 einfo "Removing Java support"
@@ -1087,6 +1141,11 @@ eerror
 src_prepare() {
 	default
 	java-pkg-opt-2_src_prepare
+
+	local x
+	for x in ${MAVEN_TARBALLS[@]} ; do
+		sed -i -e "89a\"file://${x}\"," "compiler/WORKSPACE.bazel" || die
+	done
 }
 
 _copy_jar() {
@@ -1164,37 +1223,25 @@ src_configure() {
 		|| die
 }
 
-src_compile() {
-# Fixes:
-# FATAL: bazel crashed due to an internal error. Printing stack trace:
-# java.lang.NoClassDefFoundError: Could not initialize class com.google.devtools.build.lib.unsafe.StringUnsafe
-# ...
-# Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.reflect.InaccessibleObjectException: Unable to make java.lang.String(byte[],byte) accessible: module java.base does not "opens java.lang" to unnamed module @76552cb [in thread "skyframe-evaluator 2"]
-# ...
-einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64}"
-	echo \
-		"startup --server_javabase=${JAVA_HOME_11_X64}" \
-		>> \
-		"compiler/.bazelrc" \
-		|| die
-
-	einfo "PATH:${PATH} (DEBUG)"
-        einfo "USER:\t\t\t${USER}"
-        einfo "HOME:\t\t\t${HOME}"
-        export USER_HOME="${HOME}"
-	npm_hydrate
-	local extra_args=()
-	local npm_offline="${NPM_OFFLINE:-0}"
-	if [[ "${npm_offline}" == "2" ]] ; then
-		extra_args=( "--offline" )
-	elif [[ "${npm_offline}" == "1" ]] ; then
-		extra_args=( "--prefer-offline" )
-	fi
+_build_compiler_jar() {
+einfo "Building compiler jar (2/2)"
 einfo "Running:  node ./build-scripts/build_compiler.js"
-	node ./build-scripts/build_compiler.js || die
+	node ./build-scripts/build_compiler.js || die # Part 2/2 of _build_compiler_jar
+
+	if grep -q -F -e "ERROR:" "${T}/build.log" ; then
+eerror
+eerror "Failure detected.  Re-emerge."
+eerror
+		die
+	fi
+}
+
+_build_native_image() {
+einfo "Building native image"
 	enpm run build \
 		${extra_args[@]}
 	_npm_check_errors
+
 
 	if grep -q -F -e "Error while fetching artifact" "${T}/build.log" ; then
 eerror
@@ -1214,6 +1261,47 @@ eerror "Failure detected.  Re-emerge."
 eerror
 		die
 	fi
+}
+
+src_compile() {
+# Fixes:
+# FATAL: bazel crashed due to an internal error. Printing stack trace:
+# java.lang.NoClassDefFoundError: Could not initialize class com.google.devtools.build.lib.unsafe.StringUnsafe
+# ...
+# Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.reflect.InaccessibleObjectException: Unable to make java.lang.String(byte[],byte) accessible: module java.base does not "opens java.lang" to unnamed module @76552cb [in thread "skyframe-evaluator 2"]
+# ...
+einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64}"
+	echo \
+		"startup --server_javabase=${JAVA_HOME_11_X64}" \
+		>> \
+		"compiler/.bazelrc" \
+		|| die
+
+	# You have to define the build with a java_path with a custom label.
+	echo \
+		"build --javabase=:absolute_javabase --define=ABSOLUTE_JAVABASE=${JAVA_HOME_11_X64} --define=USE_ABSOLUTE_JAVABASE=true --javacopt='--system ${JAVA_HOME_11_X64} -source 11 -target 11'" \
+		>> \
+		"compiler/.bazelrc" \
+		|| die
+
+	export JAVA_HOME="${JAVA_HOME_17_X64}"
+        export USER_HOME="${HOME}"
+	einfo "JAVA_HOME:  ${JAVA_HOME}"
+        einfo "HOME:  ${HOME}"
+	einfo "PATH:  ${PATH} (DEBUG)"
+        einfo "USER:  ${USER}"
+        einfo "USER_HOME:  ${USER_HOME}"
+	npm_hydrate
+	local extra_args=()
+	local npm_offline="${NPM_OFFLINE:-1}"
+	if [[ "${npm_offline}" == "2" ]] ; then
+		extra_args=( "--offline" )
+	elif [[ "${npm_offline}" == "1" ]] ; then
+		extra_args=( "--prefer-offline" )
+	fi
+
+	_build_compiler_jar
+	_build_native_image # This call depends on _build_compiler_jar.
 }
 
 src_install() {
@@ -1292,7 +1380,7 @@ src_install() {
 pkg_postinst() {
 	if use closure_compiler_nodejs || use closure_compiler_java; then
 ewarn
-ewarn "You need to switch user/system java-vm to >= ${JAVA_SLOT} before using ${PN}"
+ewarn "You need to switch user/system java-vm to == ${JAVA_SLOT_CLOSURE_COMPILER} before using ${PN}"
 ewarn
 	fi
 }
