@@ -111,7 +111,7 @@ TRUTH_PV="1.1"									# https://github.com/google/closure-compiler/blob/v202403
 ZULU11_PV="11.56.19-ca-jdk11.0.15"						# https://github.com/bazelbuild/rules_java/blob/5.4.1/java/repositories.bzl#L172
 ZULU17_PV="17.32.13-ca-jdk17.0.2"						# https://github.com/bazelbuild/rules_java/blob/5.4.1/java/repositories.bzl#L434
 
-inherit bazel check-reqs java-pkg-opt-2 graalvm npm
+inherit bazel check-reqs java-pkg-opt-2 graalvm npm yarn
 
 # Initially generated from:
 #   grep "resolved" /var/tmp/portage/dev-util/closure-compiler-npm-20240317.0.0/work/closure-compiler-npm-20240317.0.0/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
@@ -774,7 +774,7 @@ https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_PV}/bazelis
 	done
 }
 
-#KEYWORDS="~amd64 ~arm64" # Build problem
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PV}"
 S_CLOSURE_COMPILER="${WORKDIR}/closure-compiler-${CLOSURE_COMPILER_MAJOR_VER}"
 SRC_URI="
@@ -884,12 +884,14 @@ BDEPEND+="
 	>=sys-devel/gcc-9.4.0
 	dev-java/maven-bin
 	dev-vcs/git
+	sys-apps/yarn:1
 	closure_compiler_native? (
 		${GRAALVM_CE_DEPENDS}
 	)
 "
 PATCHES=(
 	"${FILESDIR}/closure-compiler-npm-20240317.0.0-init-absolute_javabase.patch"
+	"${FILESDIR}/closure-compiler-npm-20240317.0.0-no-loop.patch"
 )
 
 _configure_bazel() {
@@ -1020,6 +1022,7 @@ eerror
 
 	# Do not make conditional.
 	npm_pkg_setup
+	yarn_pkg_setup
 
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
@@ -1219,10 +1222,6 @@ src_configure() {
 	if use closure_compiler_native || use closure_compiler_java ; then
 		_configure_java
 	fi
-	sed -i \
-		-e "s|yarn workspaces run|npm run|g" \
-		"${S}/build-scripts/build.sh" \
-		|| die
 }
 
 _build_compiler_jar() {
@@ -1239,11 +1238,17 @@ eerror
 }
 
 _build_native_image() {
-einfo "Building native image"
-	enpm run build \
-		${extra_args[@]}
+einfo "Building native image (1/2)"
+	enpm run build ${extra_args[@]}
 	_npm_check_errors
 
+	export PATH="${WORKDIR}/graalvm-${GRAALVM_EDITION}-java${GRAALVM_JAVA_PV}-${GRAALVM_PV}/bin:${PATH}"
+	java -version 2>&1 | grep -q "GraalVM.*${GRAALVM_PV}" || die
+
+einfo "Building native image (2/2)"
+	eyarn workspaces run build
+	_npm_check_errors
+	_yarn_check_errors
 
 	if grep -q -F -e "Error while fetching artifact" "${T}/build.log" ; then
 eerror
@@ -1281,7 +1286,7 @@ einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64}"
 
 	# You have to define the build with a java_path with a custom label.
 	echo \
-		"build --javabase=:absolute_javabase --define=ABSOLUTE_JAVABASE=${JAVA_HOME_11_X64} --define=USE_ABSOLUTE_JAVABASE=true --javacopt='--system ${JAVA_HOME_11_X64} -source 11 -target 11'" \
+		"build --javabase=:absolute_javabase --define=ABSOLUTE_JAVABASE=${JAVA_HOME_11_X64} --define=USE_ABSOLUTE_JAVABASE=true" \
 		>> \
 		"compiler/.bazelrc" \
 		|| die
@@ -1294,6 +1299,7 @@ einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64}"
         einfo "USER:  ${USER}"
         einfo "USER_HOME:  ${USER_HOME}"
 	npm_hydrate
+	yarn_hydrate
 	local extra_args=()
 	local npm_offline="${NPM_OFFLINE:-1}"
 	if [[ "${npm_offline}" == "2" ]] ; then
@@ -1307,21 +1313,21 @@ einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64}"
 }
 
 src_install() {
-	pushd packages || die
+	pushd "packages" || die
 
 	if use closure_compiler_java ; then
 		local d_src="google-${MY_PN}-java"
 		cp -a \
 			"${d_src}/compiler.jar" \
 			"${T}/${MY_PN}.jar" || die
-		insinto /usr/share/${MY_PN}/lib
+		insinto "/usr/share/${MY_PN}/lib"
 		doins "${T}/${MY_PN}.jar"
-		exeinto /usr/bin
+		exeinto "/usr/bin"
 		doexe "${FILESDIR}/${MY_PN}-java"
 		cp -f \
 			"${d_src}/readme.md" \
 			"${T}/native-readme.md" || die
-		docinto readmes
+		docinto "readmes"
 		dodoc "${T}/native-readme.md"
 	fi
 
@@ -1329,14 +1335,14 @@ src_install() {
 		export NPM_INSTALL_PATH="/opt/${MY_PN}"
 		insinto "${NPM_INSTALL_PATH}"
 		pushd ../ || die
-		doins -r node_modules package.json yarn.lock
+		doins -r "node_modules" "package.json" "yarn.lock"
 		popd
 		insinto "${NPM_INSTALL_PATH}/packages"
 		local d_prefix="google-${MY_PN}"
 		doins -r "${d_prefix}"
 		doins -r "${d_prefix}-java"
 		fperms 0755 "${NPM_INSTALL_PATH}/packages/${d_prefix}/cli.js"
-		exeinto /usr/bin
+		exeinto "/usr/bin"
 		cp -f \
 			"${FILESDIR}/${MY_PN}-node" \
 			"${T}/${MY_PN}-node" \
@@ -1362,21 +1368,21 @@ src_install() {
 	fi
 
 	if use closure_compiler_native ; then
-		exeinto /usr/bin
+		exeinto "/usr/bin"
 		local d_src="google-${MY_PN}-linux"
-		mv "${d_src}"/{compiler,${MY_PN}}
+		mv "${d_src}"/{"compiler","${MY_PN}"}
 		doexe "${d_src}/${MY_PN}"
 		cp -f \
 			"${d_src}/readme.md" \
 			"${T}/native-readme.md" || die
-		docinto readmes
+		docinto "readmes"
 		dodoc "${T}/native-readme.md"
 	fi
 	popd
-	docinto licenses
-	dodoc LICENSE
-	docinto readmes
-	dodoc README.md
+	docinto "licenses"
+	dodoc "LICENSE"
+	docinto "readmes"
+	dodoc "README.md"
 }
 
 pkg_postinst() {

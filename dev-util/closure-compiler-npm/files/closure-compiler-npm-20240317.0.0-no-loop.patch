@@ -1,0 +1,7 @@
+--- a/build-scripts/build.sh.orig	2024-03-18 20:07:19.000000000 -0700
++++ b/build-scripts/build.sh	2024-05-18 14:35:18.559230361 -0700
+@@ -1,3 +1,3 @@
+ #!/usr/bin/env bash
+ # Run the build commands and fail the script if any of them failed
+-./build-scripts/build_compiler.js "$@" && yarn workspaces run build "$@"
++./build-scripts/build_compiler.js "$@"

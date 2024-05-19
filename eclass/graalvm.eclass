@@ -313,19 +313,21 @@ graalvm_get_native_image_tarball_name() {
 # Attach the GraalVM to the environment.
 graalvm_attach_graalvm() {
 	export GRAALVM_HOME="${WORKDIR}/graalvm-${GRAALVM_EDITION}-java${GRAALVM_JAVA_PV}-${GRAALVM_PV}"
+	PATH_ORIG="${PATH}"
 	export PATH="${WORKDIR}/graalvm-${GRAALVM_EDITION}-java${GRAALVM_JAVA_PV}-${GRAALVM_PV}/bin:${PATH}"
 	export JAVA_HOME="${WORKDIR}/graalvm-${GRAALVM_EDITION}-java${GRAALVM_JAVA_PV}-${GRAALVM_PV}"
 einfo "GRAALVM_HOME:\t${GRAALVM_HOME}"
 einfo "PATH:\t${PATH}"
 einfo "JAVA_HOME:\t${JAVA_HOME}"
 	# JAVA_HOME_17_X86 environment variable will contain the OpenJDK base path.
-einfo "DEBUG:  testing graalvm"
 	java -version
 	java -version 2>&1 | grep -q "GraalVM.*${GRAALVM_PV}" || die
-einfo "DEBUG:  testing graalvm done"
 	if [[ "${GRAALVM_MODE}" == "live" ]] ; then
 		gu install native-image || die
 	else
 		gu -L install "${DISTDIR}/$(graalvm_get_native_image_tarball_name)" || die
 	fi
+	export PATH="${PATH_ORIG}"
+# We do not auto attach to path because some packages use multiple java slots.
+ewarn "Developer QA: you are responsible to manually setting the PATH variable to GraalVM in the ebuild level."
 }
