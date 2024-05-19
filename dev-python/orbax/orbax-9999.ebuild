@@ -8,7 +8,6 @@ EAPI=8
 
 # TODO package:
 # google-cloud-logging
-# jaxtyping
 # myst-nb
 # sphinx-book-theme
 
