@@ -129,16 +129,6 @@ DOCS=( CHANGELOG.md README.md )
 
 distutils_enable_tests "pytest"
 
-pkg_setup() {
-	if use python_target_python3_10 ; then
-eerror
-eerror "python_target_python3_10 is a dummy placeholder"
-eerror "Please remove it.  Upstream only supports up to 3.9."
-eerror
-		die
-	fi
-}
-
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		if has "fallback-commit" ${IUSE_EFFECTIVE} ; then
