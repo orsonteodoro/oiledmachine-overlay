@@ -72,6 +72,7 @@ RULES_CC_PV="0.0.2"
 RULES_JAVA_PV="5.5.1"
 RULES_PKG_PV="0.7.1"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace3.bzl#L34
 RULES_PYTHON_PV="0.0.1"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L510
+RULES_PYTHON_PV2="0.22.1"	# From https://github.com/bazelbuild/bazel/blob/7.1.1/src/MODULE.tools
 RULES_SWIFT_PV="1.0.0"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L526
 TRITON_TAG="cl623533461"	# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/triton/workspace.bzl
 
@@ -706,6 +707,7 @@ src_unpack() {
         mkdir -p "${WORKDIR}/bin" || die
         export PATH="${WORKDIR}/bin:${PATH}"
         ln -s "/usr/bin/bazel-${BAZEL_PV%.*}" "${WORKDIR}/bin/bazel" || die
+	bazel --version | grep -q "bazel ${BAZEL_PV%.*}" || die "=dev-build/bazel:${BAZEL_PV%.*} not installed"
 
 	unpack "${MY_PN}-${PV}.tar.gz"
 	unpack "openxla-xla-${EGIT_XLA_COMMIT}.zip"
@@ -1106,6 +1108,7 @@ einfo "Adding build --sandbox_writable_path=\"${ccache_dir}\" to .bazelrc.user"
 		echo "build --host_action_env=CCACHE_DIR=\"${ccache_dir}\"" >> ".bazelrc.user" || die
 		echo "build --sandbox_writable_path=${ccache_dir}" >> ".bazelrc.user" || die
 	fi
+	sed -i -e "/nodistinct_host_configuration/d" ".bazelrc.user" || die
 
 	if use cuda ; then
 		sed -i \
