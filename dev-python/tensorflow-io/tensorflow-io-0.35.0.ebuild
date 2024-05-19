@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="io"
 
+BAZEL_PV="6.1.0"
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} )
 
@@ -37,7 +38,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	>=dev-build/bazel-6.1.0:6.1
+	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 "
 DOCS=( README.md RELEASE.md )
 HTML_DOCS=( docs )
@@ -45,7 +46,8 @@ HTML_DOCS=( docs )
 src_unpack() {
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
-	ln -s "/usr/bin/bazel-6.1" "${WORKDIR}/bin/bazel" || die
+	ln -s "/usr/bin/bazel-${BAZEL_PV%.*}" "${WORKDIR}/bin/bazel" || die
+	bazel --version | grep -q "bazel ${BAZEL_PV%.*}" "dev-build/bazel:${BAZEL_PV%.*} is not installed"
 	unpack ${A}
 }
 

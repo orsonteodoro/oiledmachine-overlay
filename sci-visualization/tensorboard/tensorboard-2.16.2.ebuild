@@ -228,7 +228,7 @@ eerror
 		die
 	fi
 	ln -s "/usr/bin/bazel-${BAZEL_SLOT}" "${WORKDIR}/bin/bazel" || die
-	bazel --version | grep -q "bazel ${BAZEL_SLOT}" || die "dev-build/bazel:${BAZEL_SLOT} not installed"
+	bazel --version | grep -q "bazel ${BAZEL_SLOT}" || die "dev-build/bazel:${BAZEL_SLOT} is not installed"
 
 	unpack ${P}.tar.gz
 	bazel_load_distfiles "${bazel_external_uris}"
