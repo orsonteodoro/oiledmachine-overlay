@@ -4,27 +4,30 @@
 
 EAPI=8
 
-BAZEL_PV="6.1.0"
-DISTUTILS_USE_PEP517="setuptools"
-GCC_COMPAT=( {12..9} ) # Verified working
-LLVM_COMPAT=( {14..10} ) # Upstream supports starting from 8
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Based on CI distro
-PYTHON_COMPAT=( python3_{8..11} )
-
-inherit distutils-r1 flag-o-matic llvm toolchain-funcs
-
 # All versioning is first found in the console output and confirmed via links below.
 # The links below are shown for faster future updates.
 
+# TODO create package:
+# dev-python/sphinx-immaterial
+# Bazel needs --host_per_file_copt in 7.0.0*
+
+BAZEL_PV="6.1.0"
+DISTUTILS_USE_PEP517="setuptools"
+GCC_COMPAT=( {12..9} )							# Verified working
 JAVA_SLOT="11"
-LIBJPEG_TURBO_PV="2.1.4"	# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/jpeg/workspace.bzl
-LIBPNG_PV="1.6.37"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/png/workspace.bzl
+LIBJPEG_TURBO_PV="2.1.4"						# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/jpeg/workspace.bzl
+LIBPNG_PV="1.6.37"							# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/png/workspace.bzl
+LLVM_COMPAT=( {14..10} )						# Upstream supports starting from 8
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"					# Based on CI distro
 EGIT_AOM_COMMIT="d730cef03ac754f2b6a233e926cd925d8ce8de81"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/org_aomedia_aom/workspace.bzl
 EGIT_BLAKE3_COMMIT="64747d48ffe9d1fbf4b71e94cabeb8a211461081"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/blake3/workspace.bzl
 EGIT_BORINGSSL_COMMIT="098695591f3a2665fccef83a3732ecfc99acdcdd"	# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/com_google_boringssl/workspace.bzl
 EGIT_BROTLI_COMMIT="6d03dfbedda1615c4cba1211f8d81735575209c8"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/com_google_brotli/workspace.bzl
-# Different zlib lib
+# Different zlib lib \
 EGIT_CR_ZLIB_COMMIT="2d44c51ada6d325b85b53427b02dabf44648bca4"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/net_zlib/workspace.bzl
+PYTHON_COMPAT=( python3_{8..11} )
+
+inherit distutils-r1 flag-o-matic llvm toolchain-funcs
 
 # We may need to prefix with gh so that the fingerprints do not conflict between releases and snapshots.
 bazel_external_uris="
@@ -37,12 +40,12 @@ https://storage.googleapis.com/tensorstore-bazel-mirror/chromium.googlesource.co
 #https://github.com/glennrp/libpng/archive/v${LIBPNG_PV}.tar.gz -> libpng-${LIBPNG_PV}.tar.gz
 #https://github.com/libjpeg-turbo/libjpeg-turbo/archive/${LIBJPEG_TURBO_PV}.tar.gz -> libjpeg-turbo-2.1.4.tar.gz
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
 SRC_URI="
-	${bazel_external_uris}
+${bazel_external_uris}
 https://github.com/google/tensorstore/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${P}"
 
 DESCRIPTION="Library for reading and writing large multi-dimensional arrays"
 HOMEPAGE="
@@ -101,9 +104,6 @@ gen_llvm_depends() {
 		"
 	done
 }
-# TODO create package:
-# dev-python/sphinx-immaterial
-# Bazel needs --host_per_file_copt in 7.0.0*
 BDEPEND+="
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 	>=dev-build/cmake-3.24
