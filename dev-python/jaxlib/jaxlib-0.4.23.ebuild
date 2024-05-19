@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# CUDA version:  https://github.com/google/jax/blob/jaxlib-v0.4.23/docs/installation.md?plain=1#L118
+# ROCm version:  https://github.com/google/jax/blob/jaxlib-v0.4.23/build/rocm/ci_build.sh#L52
+
 MAINTAINER_MODE=0
 MY_PN="jax"
 
@@ -15,6 +18,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a
 	gfx1030
 )
+BAZEL_PV="6.1.2"
 CUDA_TARGETS_COMPAT=(
 # See https://github.com/google/jax/blob/jaxlib-v0.4.23/.bazelrc#L68
 	sm_50
@@ -42,6 +46,10 @@ inherit llvm-r1 rocm toolchain-funcs
 # Do not use GH urls if .gitmodules exists in that project
 # All hashes and URIs obtained with MAINTAINER_MODE=1 and from console logs with
 # FEATURES=-network-sandbox.
+
+# To update:
+# Search and replace old PV with new PV
+# Search and replace old EGIT_XLA_COMMIT with new EGIT_XLA_COMMIT
 
 APPLE_SUPPORT_PV="1.1.0"	# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace2.bzl#L569
 BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace3.bzl#L26
@@ -155,7 +163,6 @@ LICENSE="
 "
 #KEYWORDS="~amd64 ~arm64" # Needs install test
 SLOT="0/$(ver_cut 1-2 ${PV})"
-# ROCm version:  https://github.com/google/jax/blob/jaxlib-v0.4.23/build/rocm/ci_build.sh#L52
 IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -311,7 +318,7 @@ RDEPEND+="
 	virtual/jre:${JAVA_SLOT}
 	cuda? (
 		=dev-util/nvidia-cuda-toolkit-11.8*:=
-		=dev-libs/cudnn-8*
+		=dev-libs/cudnn-8.6*
 	)
 	rocm? (
 		$(gen_rocm_depends)
@@ -344,7 +351,7 @@ gen_llvm_bdepend() {
 	done
 }
 BDEPEND+="
-	>=dev-build/bazel-6.1.2:6.1
+	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 	clang? (
 		$(gen_llvm_bdepend)
 	)
@@ -694,7 +701,7 @@ eerror
 src_unpack() {
         mkdir -p "${WORKDIR}/bin" || die
         export PATH="${WORKDIR}/bin:${PATH}"
-        ln -s "/usr/bin/bazel-6.1" "${WORKDIR}/bin/bazel" || die
+        ln -s "/usr/bin/bazel-${BAZEL_PV%.*}" "${WORKDIR}/bin/bazel" || die
 
 	unpack "${MY_PN}-${PV}.tar.gz"
 	unpack "openxla-xla-${EGIT_XLA_COMMIT}.zip"

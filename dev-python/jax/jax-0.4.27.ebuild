@@ -7,7 +7,7 @@ EAPI=8
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( python3_{10..12} )
 # Limited by flax
 
 inherit distutils-r1
@@ -53,8 +53,8 @@ DEPEND+="
 		dev-libs/protobuf:0/3.21
 	)
 	cuda? (
-		=dev-libs/cudnn-8.6*
-		=dev-util/nvidia-cuda-toolkit-11.8*
+		=dev-libs/cudnn-8.8*
+		=dev-util/nvidia-cuda-toolkit-12*
 	)
 	experimental? (
 		dev-python/tensorstore[${PYTHON_USEDEP}]
