@@ -4,11 +4,20 @@
 
 EAPI=8
 
+# TODO ebuild-package needs to be created:
+# celshast
+# pytest-markdown-docs
+
 DISTUTILS_USE_PEP517="setuptools"
+PYGAME_PV="2.3.0"
+PYMUNK_PV="6.2.0"
 PYTHON_COMPAT=( python3_{10..11} )
 VIRTUALX_REQUIRED="test"
+
 inherit distutils-r1 virtualx
 
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/Farama-Foundation/PettingZoo/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -23,11 +32,9 @@ LICENSE="
 	MIT
 	Apache-2.0
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" atari butterfly classic doc mpe other sisl test"
-PYGAME_PV="2.3.0"
-PYMUNK_PV="6.2.0"
 DEPEND+="
 	>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
 	>=dev-python/gymnasium-0.28.0[${PYTHON_USEDEP}]
@@ -73,19 +80,17 @@ BDEPEND+="
 	)
 	test? (
 		$(python_gen_any_dep '
-			dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
+			>=dev-vcs/pre-commit-3.5.0[${PYTHON_SINGLE_USEDEP}]
 		')
-		dev-python/autorom[${PYTHON_USEDEP}]
+		>=dev-python/autorom-0.6.1[${PYTHON_USEDEP}]
+		>=dev-python/pynput-1.7.6[${PYTHON_USEDEP}]
+		>=dev-python/pytest-8.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-markdown-docs-0.5.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-xdist-3.5.0[${PYTHON_USEDEP}]
 		dev-python/black[${PYTHON_USEDEP}]
-		dev-python/pynput[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-cov[${PYTHON_USEDEP}]
 	)
 "
-# TODO ebuild-package needs to be created:
-# celshast
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 distutils_enable_sphinx "docs"
 distutils_enable_tests "pytest"
