@@ -6,6 +6,7 @@ EAPI=8
 
 BAZEL_SLOT="5.1"
 DISTUTILS_USE_PEP517="setuptools"
+JAVA_SLOT="11"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1 git-r3 java-utils-2
 
@@ -14,24 +15,26 @@ bazel_external_uris="
 "
 if [[ ${PV} =~ 9999 ]] ; then
 	inherit git-r3
+	FALLBACK_COMMIT="6d7e8f058428025cd4253f1ef6a1ed6618d9b0ea" # Nov 3, 2022
 	IUSE+=" fallback-commit"
 else
+	# KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Live ebuilds do not get keyworded
 	SRC_URI="
 ${bazel_external_uris}
 https://github.com/deepmind/labmaze/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="A standalone release of DeepMind Lab's maze generator with Python bindings."
 HOMEPAGE="https://github.com/deepmind/labmaze"
 LICENSE="
 	Apache-2.0
 "
-# KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Live ebuilds do not get keyworded
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
-JAVA_SLOT="11"
 JDK_DEPEND="
 	|| (
 		dev-java/openjdk-bin:${JAVA_SLOT}
@@ -57,9 +60,6 @@ DEPEND+="
 BDEPEND+="
 	dev-build/bazel:${BAZEL_SLOT}
 "
-
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 PATCHES=(
 )
 
@@ -135,7 +135,7 @@ src_unpack() {
 		EGIT_REPO_URI="https://github.com/deepmind/labmaze.git"
 		EGIT_BRANCH="master"
 		EGIT_COMMIT="HEAD"
-		use fallback-commit && EGIT_COMMIT="6d7e8f058428025cd4253f1ef6a1ed6618d9b0ea"
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 	else
@@ -176,8 +176,8 @@ einfo "Editing ${path}"
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc AUTHORS LICENSE
+	docinto "licenses"
+	dodoc "AUTHORS" "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
