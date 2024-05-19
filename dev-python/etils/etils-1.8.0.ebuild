@@ -37,7 +37,10 @@ LICENSE="
 "
 RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" array-types doc eapp ecolab edc enp epath epath-gcs epath-s3 epy etqdm etree etree-dm etree-jax etree-tf lazy-imports test"
+IUSE+="
+array-types doc eapp ecolab edc enp epath epath-gcs epath-s3 epy etqdm etree
+etree-dm etree-jax etree-tf lazy-imports test
+"
 REQUIRED_USE+="
 	array-types? (
 		enp
