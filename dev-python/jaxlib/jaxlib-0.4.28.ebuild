@@ -38,7 +38,7 @@ GCC_COMPAT=( {12..9} )
 JAVA_SLOT="11"
 LLVM_COMPAT=( 17 ) # From .bazelrc
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-PYTHON_COMPAT=( python3_{10..11} ) # Limited by Flax CI
+PYTHON_COMPAT=( python3_{10..12} ) # Limited by Flax CI
 
 inherit bazel cuda distutils-r1 flag-o-matic git-r3 hip-versions java-pkg-opt-2
 inherit llvm-r1 rocm toolchain-funcs
