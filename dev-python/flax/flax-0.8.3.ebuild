@@ -4,6 +4,25 @@
 
 EAPI=8
 
+# TODO package:
+# atari-py
+# clu
+# codediff
+# einops
+# flax_module
+# jraph
+# ml-collections
+# myst_nb
+# nbstripout
+# orbax-checkpoint
+# penzai
+# pytest-custom_exit_code
+# pytype
+# sentencepiece
+# sphinx_design
+# tensorflow_datasets
+# tensorflow_text
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream lists only up to 3.11 in classifiers section.  CI only tests up to 3.11.
 
@@ -27,24 +46,6 @@ LICENSE="
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
-# TODO: package
-# atari-py
-# clu
-# codediff
-# einops
-# flax_module
-# jraph
-# ml-collections
-# myst_nb
-# nbstripout
-# orbax-checkpoint
-# penzai
-# pytest-custom_exit_code
-# pytype
-# sentencepiece
-# sphinx_design
-# tensorflow_datasets
-# tensorflow_text
 DEPEND+="
 	>=dev-python/jax-0.4.19[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
