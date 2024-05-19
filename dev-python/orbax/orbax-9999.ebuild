@@ -12,6 +12,7 @@ EAPI=8
 # sphinx-book-theme
 
 DISTUTILS_USE_PEP517="flit"
+PROTOBUF_PV="5.26.1"
 PYTHON_COMPAT=( python3_{10,11} ) # Upstream only tests up to 3.11.
 
 inherit distutils-r1
@@ -49,7 +50,7 @@ REQUIRED_USE="
 	)
 "
 CHECKPOINT_DEPEND="
-	>=dev-libs/protobuf-5.26.1:5.26
+	>=dev-libs/protobuf-${PROTOBUF_PV}:${PROTOBUF_PV%.*}
 	>=dev-python/jax-0.4.9[${PYTHON_USEDEP}]
 	>=dev-python/tensorstore-0.1.51[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
@@ -59,7 +60,7 @@ CHECKPOINT_DEPEND="
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/nest-asyncio[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/protobuf-python:5.26[${PYTHON_USEDEP}]
+	dev-python/protobuf-python:${PROTOBUF_PV%.*}[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
 "
