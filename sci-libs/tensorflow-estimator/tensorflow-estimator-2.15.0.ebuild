@@ -3,23 +3,26 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..11} ) # Upstream only lists up to 3.10
+BAZEL_PV="6.1.0"
+EGIT_RULES_JAVA_PV="5.5.1"
 MY_PN="estimator"
 MY_PV="${PV}"
 MY_P="${MY_PN}-${MY_PV}"
-TF_PV=$(ver_cut 1-2 ${PV})
+PYTHON_COMPAT=( python3_{10..11} ) # Upstream only lists up to 3.10
+RULES_CC_PV="0.0.2"
+TF_PV=$(ver_cut 1-2 "${PV}")
 
 inherit bazel distutils-r1
 
 # Version and commits obtained from console and temporary removal of items below.
-RULES_CC_PV="0.0.2"
-EGIT_RULES_JAVA_PV="5.5.1"
+KEYWORDS="~amd64"
 bazel_external_uris="
 https://github.com/bazelbuild/rules_cc/releases/download/${RULES_CC_PV}/rules_cc-${RULES_CC_PV}.tar.gz
 https://github.com/bazelbuild/rules_java/releases/download/${EGIT_RULES_JAVA_PV}/rules_java-${EGIT_RULES_JAVA_PV}.tar.gz -> bazelbuild-rules_java-${EGIT_RULES_JAVA_PV}.zip
 "
+S="${WORKDIR}/${MY_P}"
 SRC_URI="
-	${bazel_external_uris}
+${bazel_external_uris}
 https://github.com/tensorflow/${MY_PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz
 "
 
@@ -27,7 +30,6 @@ DESCRIPTION="A high-level TensorFlow API that greatly simplifies machine learnin
 HOMEPAGE="https://www.tensorflow.org/"
 LICENSE="Apache-2.0"
 SLOT="0"
-KEYWORDS="~amd64"
 IUSE=""
 # https://github.com/tensorflow/tensorflow/blob/v2.12.0/.bazelversion
 RDEPEND="
@@ -38,11 +40,10 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-build/bazel-6.1.0:6.1
+	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 	app-arch/unzip
 	dev-java/java-config
 "
-S="${WORKDIR}/${MY_P}"
 PATCHES=(
 )
 DOCS=( CONTRIBUTING.md README.md )
@@ -50,7 +51,8 @@ DOCS=( CONTRIBUTING.md README.md )
 src_unpack() {
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
-	ln -s "/usr/bin/bazel-6.1" "${WORKDIR}/bin/bazel" || die
+	ln -s "/usr/bin/bazel-${BAZEL_PV%.*}" "${WORKDIR}/bin/bazel" || die
+	bazel --version | grep -q "bazel ${BAZEL_PV%.*}" || die "dev-build/bazel:${BAZEL_PV%.*} is not installed"
 	unpack "${P}.tar.gz"
 	bazel_load_distfiles "${bazel_external_uris}"
 }
