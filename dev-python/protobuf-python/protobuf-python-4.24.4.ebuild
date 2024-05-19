@@ -12,20 +12,21 @@ PARENT_PN="${PN/-python/}"
 PARENT_PV="$(ver_cut 2-)"
 PARENT_P="${PARENT_PN}-${PARENT_PV}"
 
-if [[ "${PV}" == *9999 ]]; then
+if [[ "${PV}" =~ "9999" ]]; then
 	inherit git-r3
 
 	EGIT_REPO_URI="https://github.com/protocolbuffers/protobuf.git"
 	EGIT_SUBMODULES=()
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${PARENT_P}"
+	S="${WORKDIR}/${PARENT_P}/python"
 else
-	SRC_URI="
-		https://github.com/protocolbuffers/protobuf/archive/v${PARENT_PV}.tar.gz
-			-> ${PARENT_P}.tar.gz
-	"
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-macos"
+	S="${WORKDIR}/protobuf-${PV}"
+	SRC_URI="
+		mirror://pypi/${PN:0:1}/protobuf/protobuf-${PV}.tar.gz
+			-> pypi-protobuf-${PV}.tar.gz
+	"
 fi
-S="${WORKDIR}/${PARENT_P}/python"
 
 DESCRIPTION="Google's Protocol Buffers - Python bindings"
 HOMEPAGE="
@@ -58,15 +59,11 @@ PATCHES=(
 )
 
 python_prepare_all() {
-	pushd "${WORKDIR}/${PARENT_P}" > /dev/null || die
+	pushd "${WORKDIR}/protobuf-${PV}" >/dev/null 2>&1 || die
 		[[ -n "${PARENT_PATCHES[@]}" ]] && eapply "${PARENT_PATCHES[@]}"
 		eapply_user
-	popd > /dev/null || die
+	popd >/dev/null 2>&1 || die
 	distutils-r1_python_prepare_all
-}
-
-src_configure() {
-	DISTUTILS_ARGS=( --cpp_implementation )
 }
 
 python_compile() {
