@@ -221,14 +221,26 @@ src_unpack() {
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
 	if has_version "dev-build/bazel:6.5" ; then
-		ln -s "/usr/bin/bazel-6.5" "${WORKDIR}/bin/bazel" || die
+		BAZEL_SLOT="6.5"
 	elif has_version "dev-build/bazel:6.1" ; then
-		ln -s "/usr/bin/bazel-6.1" "${WORKDIR}/bin/bazel" || die
+		BAZEL_SLOT="6.1"
 	elif has_version "dev-build/bazel:5.4" ; then
-		ln -s "/usr/bin/bazel-5.4" "${WORKDIR}/bin/bazel" || die
+		BAZEL_SLOT="5.4"
 	elif has_version "dev-build/bazel:5.3" ; then
-		ln -s "/usr/bin/bazel-5.3" "${WORKDIR}/bin/bazel" || die
+		BAZEL_SLOT="5.3"
+	else
+eerror
+eerror "You must install either one of the following:"
+eerror
+eerror "dev-build/bazel:6.5"
+eerror "dev-build/bazel:6.1"
+eerror "dev-build/bazel:5.4"
+eerror "dev-build/bazel:5.3"
+eerror
+		die
 	fi
+	ln -s "/usr/bin/bazel-${BAZEL_SLOT}" "${WORKDIR}/bin/bazel" || die
+	bazel --version | grep -q "bazel ${BAZEL_SLOT}" || die "dev-build/bazel:${BAZEL_SLOT} not installed"
 
 	unpack ${P}.tar.gz
 	bazel_load_distfiles "${bazel_external_uris}"
