@@ -52,7 +52,6 @@ REQUIRED_USE="
 CHECKPOINT_DEPEND="
 	>=dev-python/jax-0.4.9[${PYTHON_USEDEP}]
 	>=dev-python/tensorstore-0.1.51[${PYTHON_USEDEP}]
-	dev-libs/protobuf[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP}]
 	dev-python/jaxlib[${PYTHON_USEDEP}]
@@ -60,6 +59,7 @@ CHECKPOINT_DEPEND="
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/nest-asyncio[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/protobuf-python[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
 "
