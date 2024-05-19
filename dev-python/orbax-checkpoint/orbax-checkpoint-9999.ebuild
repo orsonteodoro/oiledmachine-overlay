@@ -9,6 +9,7 @@ EAPI=8
 # TODO package:
 # google-cloud-logging
 # myst-nb
+# dev-python/orbax-checkpoint
 # sphinx-book-theme
 
 DISTUTILS_USE_PEP517="flit"
@@ -25,14 +26,14 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-	S="${WORKDIR}/${P}"
+	S="${WORKDIR}/${P}/checkpoint"
 	SRC_URI="
 https://github.com/google/orbax/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
 
-DESCRIPTION="Orbax is a library providing common utilities for JAX users."
+DESCRIPTION="Orbax Checkpoint"
 HOMEPAGE="
 https://github.com/google/orbax
 "
@@ -42,25 +43,27 @@ LICENSE="
 RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-doc tensorflow test
+tensorflow test
 "
 REQUIRED_USE="
-	doc? (
-		tensorflow
-	)
 "
-ORBAX_EXPORT_DEPEND="
+CHECKPOINT_DEPEND="
+	>=dev-libs/protobuf-${PROTOBUF_PV}:${PROTOBUF_PV%.*}
+	>=dev-python/jax-0.4.9[${PYTHON_USEDEP}]
+	>=dev-python/tensorstore-0.1.51[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/dataclasses-json[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP}]
-	dev-python/jax[${PYTHON_USEDEP}]
 	dev-python/jaxlib[${PYTHON_USEDEP}]
 	dev-python/jaxtyping[${PYTHON_USEDEP}]
+	dev-python/msgpack[${PYTHON_USEDEP}]
+	dev-python/nest-asyncio[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/orbax-checkpoint[${PYTHON_USEDEP}]
+	dev-python/protobuf-python:${PROTOBUF_PV%.*}[${PYTHON_USEDEP}]
+	dev-python/pyyaml[${PYTHON_USEDEP}]
+	dev-python/typing-extensions[${PYTHON_USEDEP}]
 "
 DEPEND+="
-	${ORBAX_EXPORT_DEPEND}
+	${CHECKPOINT_DEPEND}
 "
 RDEPEND+="
 	${DEPEND}
@@ -70,29 +73,12 @@ BDEPEND+="
 		<dev-python/flit_core-4[${PYTHON_USEDEP}]
 		>=dev-python/flit_core-3.5[${PYTHON_USEDEP}]
 	)
-	doc? (
-		>=dev-python/docutils-0.18.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-6.2.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-autodoc-typehints-1.11.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-applehelp-1.0.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-bibtex-2.4.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-devhelp-1.0.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-htmlhelp-2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-katex-0.9.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-serializinghtml-1.1.5[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-qthelp-1.0.3[${PYTHON_USEDEP}]
-		dev-python/sphinx-design[${PYTHON_USEDEP}]
-
-		>=dev-python/ipython-7.23.1[${PYTHON_USEDEP}]
-		>=dev-python/ipykernel-6.5.0[${PYTHON_USEDEP}]
-		dev-python/cached-property[${PYTHON_USEDEP}]
-		dev-python/importlib-resources[${PYTHON_USEDEP}]
-		dev-python/myst-nb[${PYTHON_USEDEP}]
-	)
 	test? (
+		dev-python/flax[${PYTHON_USEDEP}]
+		dev-python/google-cloud-logging[${PYTHON_USEDEP}]
+		dev-python/mock[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
-		dev-python/requests[${PYTHON_USEDEP}]
 	)
 "
 # Avoid circular depends with tensorflow \
@@ -101,7 +87,7 @@ PDEPEND+="
 		>=sci-libs/tensorflow-2.15.0[${PYTHON_USEDEP}]
 	)
 "
-DOCS=( CHANGELOG.md README.md )
+DOCS=( "CHANGELOG.md" "README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
