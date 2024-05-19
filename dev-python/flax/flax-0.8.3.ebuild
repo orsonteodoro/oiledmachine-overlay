@@ -29,6 +29,8 @@ PYTHON_COMPAT=( python3_{10..11} ) # Upstream lists only up to 3.11 in classifie
 # Limited by orbax
 inherit distutils-r1
 
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/google/flax/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -43,10 +45,16 @@ https://github.com/google/flax
 LICENSE="
 	Apache-2.0
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 DEPEND+="
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
+	' python3_11)
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
+	' python3_12)
 	>=dev-python/jax-0.4.19[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.2[${PYTHON_USEDEP}]
@@ -58,12 +66,6 @@ DEPEND+="
 	dev-python/orbax[${PYTHON_USEDEP}]
 	dev-python/orbax-checkpoint[${PYTHON_USEDEP}]
 	dev-python/tensorstore[${PYTHON_USEDEP}]
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
-	' python3_11)
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
-	' python3_12)
 "
 RDEPEND+="
 	${DEPEND}
@@ -115,17 +117,17 @@ BDEPEND+="
 		sci-libs/tensorflow[${PYTHON_USEDEP},python]
 	)
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror test"
-DOCS=( CHANGELOG.md README.md )
+DOCS=( "CHANGELOG.md" "README.md" )
 
 distutils_enable_sphinx "docs"
 distutils_enable_tests "pytest"
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc AUTHORS LICENSE
+	docinto "licenses"
+	dodoc \
+		"AUTHORS" \
+		"LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
