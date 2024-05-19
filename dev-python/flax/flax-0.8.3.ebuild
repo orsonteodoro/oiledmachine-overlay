@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..11} ) # Upstream lists only up to 3.11 in classifiers section
+PYTHON_COMPAT=( python3_{10..11} ) # Upstream lists only up to 3.11 in classifiers section.  CI only tests up to 3.11.
 
 # Limited by orbax
 inherit distutils-r1
