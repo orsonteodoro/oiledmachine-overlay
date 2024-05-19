@@ -4,6 +4,7 @@
 
 EAPI=8
 
+BAZEL_PV="6.1.0"
 DISTUTILS_USE_PEP517="setuptools"
 GCC_COMPAT=( {12..9} ) # Verified working
 LLVM_COMPAT=( {14..10} ) # Upstream supports starting from 8
@@ -104,7 +105,7 @@ gen_llvm_depends() {
 # dev-python/sphinx-immaterial
 # Bazel needs --host_per_file_copt in 7.0.0*
 BDEPEND+="
-	>=dev-build/bazel-6.1.0:6.1
+	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 	>=dev-build/cmake-3.24
 	dev-python/setuptools-scm[${PYTHON_USEDEP}]
 	dev-util/patchutils
@@ -334,7 +335,8 @@ src_unpack() {
 python_configure() {
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
-	ln -s "/usr/bin/bazel-6.1" "${WORKDIR}/bin/bazel" || die
+	ln -s "/usr/bin/bazel-${BAZEL_PV%.*}" "${WORKDIR}/bin/bazel" || die
+	bazel --version | grep -q "bazel ${BAZEL_PV%.*}" || die "dev-build/bazel:${BAZEL_PV%.*} is not installed"
 	export TENSORSTORE_BAZELISK="${WORKDIR}/bin/bazel"
 
 	local TS_SYS_LIBS=(
