@@ -9,6 +9,7 @@ EAPI=8
 # TODO package:
 # google-cloud-logging
 # myst-nb
+# dev-python/orbax-checkpoint
 # sphinx-book-theme
 
 DISTUTILS_USE_PEP517="flit"
@@ -65,8 +66,6 @@ CHECKPOINT_DEPEND="
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
 "
 ORBAX_EXPORT_DEPEND="
-	>=dev-python/jax-0.4.6[${PYTHON_USEDEP}]
-	>=dev-python/tensorstore-0.1.20[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/dataclasses-json[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP}]
