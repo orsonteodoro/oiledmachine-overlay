@@ -29,6 +29,7 @@ fi
 DESCRIPTION="Orbax is a library providing common utilities for JAX users."
 HOMEPAGE="
 https://github.com/google/orbax
+https://pypi.org/project/orbax
 "
 LICENSE="
 	Apache-2.0

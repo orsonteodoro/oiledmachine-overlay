@@ -35,7 +35,8 @@ fi
 
 DESCRIPTION="Orbax Checkpoint"
 HOMEPAGE="
-https://github.com/google/orbax
+https://github.com/google/orbax/tree/main/checkpoint
+https://pypi.org/project/orbax-checkpoint
 "
 LICENSE="
 	Apache-2.0
