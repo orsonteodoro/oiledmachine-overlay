@@ -9,6 +9,7 @@ inherit bazel distutils-r1
 
 # Versions and hashes are obtained by console and removing items below.
 # They do not appear in the tarball.
+BAZEL_PV="5.4.0"
 RULES_CC_COMMIT="b1c40e1de81913a3c40e5948f78719c28152486d"
 EGIT_RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"
 bazel_external_uris="
@@ -65,7 +66,7 @@ DEPEND="
 # TODO package:
 # dev-python/portpicker
 BDEPEND="
-	>=dev-build/bazel-5.4.0:5.4
+	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 	app-arch/unzip
 	dev-java/java-config
 	dev-libs/protobuf:${PROTOBUF_SLOT}
@@ -86,7 +87,8 @@ PATCHES=(
 src_unpack() {
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
-	ln -s "/usr/bin/bazel-5.4" "${WORKDIR}/bin/bazel" || die
+	ln -s "/usr/bin/bazel-${BAZEL_PV}" "${WORKDIR}/bin/bazel" || die
+	bazel --version | grep -q "bazel ${BAZEL_PV}" || die "dev-build/bazel:${BAZEL_PV%.*} is not installed"
 	unpack "${P}.tar.gz"
 	bazel_load_distfiles "${bazel_external_uris}"
 }
