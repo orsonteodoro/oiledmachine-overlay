@@ -21,8 +21,8 @@ PYTHON_COMPAT=( python3_11 ) # Upstream only tests 3.11
 # Limited by jax
 inherit distutils-r1
 
-S="${WORKDIR}/${P}"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/google/etils/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -35,6 +35,7 @@ https://github.com/google/etils
 LICENSE="
 	Apache-2.0
 "
+RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" array-types doc eapp ecolab edc enp epath epath-gcs epath-s3 epy etqdm etree etree-dm etree-jax etree-tf lazy-imports test"
 REQUIRED_USE+="
@@ -169,7 +170,6 @@ BDEPEND+="
 		sci-libs/pytorch[${PYTHON_USEDEP}]
 	)
 "
-RESTRICT="mirror test"
 DOCS=( "CHANGELOG.md" "README.md" )
 
 src_install() {
