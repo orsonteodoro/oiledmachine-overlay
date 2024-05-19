@@ -4,6 +4,7 @@
 
 EAPI=8
 
+BAZEL_SLOT="5.1"
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1 git-r3 java-utils-2
@@ -54,7 +55,7 @@ DEPEND+="
 	${JDK_DEPEND}
 "
 BDEPEND+="
-	dev-build/bazel:5.1
+	dev-build/bazel:${BAZEL_SLOT}
 "
 
 S="${WORKDIR}/${P}"
@@ -158,7 +159,8 @@ eerror
 
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
-	ln -s "/usr/bin/bazel-5.1" "${WORKDIR}/bin/bazel" || die
+	ln -s "/usr/bin/bazel-${BAZEL_SLOT}" "${WORKDIR}/bin/bazel" || die
+	bazel --version || grep -q "bazel ${BAZEL_SLOT}" || die "dev-build/bazel:${BAZEL_SLOT} is not installed"
 }
 
 src_prepare() {
