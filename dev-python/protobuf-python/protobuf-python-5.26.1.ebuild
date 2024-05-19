@@ -4,7 +4,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..12} ) # Upstream listed up to 3.10 but patch already applied for 3.11
+PYTHON_COMPAT=( python3_{10..12} )
 
 inherit distutils-r1
 
