@@ -24,6 +24,7 @@ AMDGPU_TARGETS_COMPAT=(
         gfx1030
         gfx1100
 )
+BAZEL_PV="6.5.0"
 DISTUTILS_OPTIONAL=1
 CHECKREQS_DISK_BUILD="19G"
 CHECKREQS_DISK_USR="5G"
@@ -738,7 +739,7 @@ gen_gcc_bdepend() {
 # GCC:11 - Based on archlinux
 # gcc-11.3.1_p20221209-p3 does not build
 BDEPEND="
-	>=dev-build/bazel-6.5.0:6.5
+	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 	app-arch/pigz
 	app-arch/unzip
 	dev-java/java-config
@@ -1129,7 +1130,8 @@ src_unpack() {
 	unpack "${P}.tar.gz"
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
-	ln -s "/usr/bin/bazel-6.5" "${WORKDIR}/bin/bazel" || die
+	ln -s "/usr/bin/bazel-${BAZEL_PV%.*}" "${WORKDIR}/bin/bazel" || die
+	bazel --version | grep -q "bazel ${BAZEL_PV%.*}" || die "=dev-build/bazel:${BAZEL_PV%.*} not installed"
 	bazel_load_distfiles "${bazel_external_uris}"
 }
 
