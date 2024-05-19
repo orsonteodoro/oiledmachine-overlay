@@ -8,7 +8,7 @@ GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 "${PV}")
 PROTOBUF_PV="24.3"
-PROTOBUF_SLOT="0/4.25"
+PROTOBUF_SLOT="0/5.26"
 PYTHON_COMPAT=( python3_{10..12} )
 
 inherit distutils-r1 multiprocessing prefix
@@ -26,8 +26,8 @@ DESCRIPTION="Protobuf code generator for gRPC"
 HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 SLOT="0"
-# See https://github.com/grpc/grpc/blob/v1.62.2/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.62.2/third_party
+# See https://github.com/grpc/grpc/blob/v1.64.0/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.64.0/third_party
 RDEPEND="
 	>=dev-python/cython-0.29.35:0[${PYTHON_USEDEP}]
 	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
