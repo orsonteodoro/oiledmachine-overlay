@@ -1,0 +1,165 @@
+# Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+# See https://github.com/google/orbax/blob/main/.github/workflows/build.yml for supported python
+
+# TODO package:
+# google-cloud-logging
+# jaxtyping
+# myst-nb
+# sphinx-book-theme
+
+DISTUTILS_USE_PEP517="flit"
+PYTHON_COMPAT=( python3_{10,11} ) # Upstream only tests up to 3.11.
+
+inherit distutils-r1
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	inherit git-r3
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://github.com/google/orbax.git"
+	FALLBACK_COMMIT="33a814de0a1df3b46ad174d2373a85a5afa0151b" # May 17, 2024
+	IUSE+=" fallback-commit"
+else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	S="${WORKDIR}/${P}"
+	SRC_URI="
+https://github.com/google/orbax/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
+fi
+
+DESCRIPTION="Orbax is a library providing common utilities for JAX users."
+HOMEPAGE="
+https://github.com/google/orbax
+"
+LICENSE="
+	Apache-2.0
+"
+RESTRICT="mirror"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+="
+doc tensorflow test
+"
+REQUIRED_USE="
+	doc? (
+		tensorflow
+	)
+"
+CHECKPOINT_DEPEND="
+	>=dev-python/jax-0.4.9[${PYTHON_USEDEP}]
+	>=dev-python/tensorstore-0.1.51[${PYTHON_USEDEP}]
+	dev-libs/protobuf[${PYTHON_USEDEP}]
+	dev-python/absl-py[${PYTHON_USEDEP}]
+	dev-python/etils[${PYTHON_USEDEP}]
+	dev-python/jaxlib[${PYTHON_USEDEP}]
+	dev-python/jaxtyping[${PYTHON_USEDEP}]
+	dev-python/msgpack[${PYTHON_USEDEP}]
+	dev-python/nest-asyncio[${PYTHON_USEDEP}]
+	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/pyyaml[${PYTHON_USEDEP}]
+	dev-python/typing-extensions[${PYTHON_USEDEP}]
+"
+ORBAX_EXPORT_DEPEND="
+	>=dev-python/jax-0.4.6[${PYTHON_USEDEP}]
+	>=dev-python/tensorstore-0.1.20[${PYTHON_USEDEP}]
+	dev-python/absl-py[${PYTHON_USEDEP}]
+	dev-python/dataclasses-json[${PYTHON_USEDEP}]
+	dev-python/etils[${PYTHON_USEDEP}]
+	dev-python/jax[${PYTHON_USEDEP}]
+	dev-python/jaxlib[${PYTHON_USEDEP}]
+	dev-python/jaxtyping[${PYTHON_USEDEP}]
+	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/orbax-checkpoint[${PYTHON_USEDEP}]
+"
+DEPEND+="
+	${CHECKPOINT_DEPEND}
+	${ORBAX_EXPORT_DEPEND}
+"
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
+	(
+		<dev-python/flit_core-4[${PYTHON_USEDEP}]
+		>=dev-python/flit_core-3.5[${PYTHON_USEDEP}]
+	)
+	doc? (
+		>=dev-python/docutils-0.18.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-6.2.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-autodoc-typehints-1.11.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-applehelp-1.0.3[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-bibtex-2.4.2[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-devhelp-1.0.2[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-htmlhelp-2.0.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-katex-0.9.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-serializinghtml-1.1.5[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-qthelp-1.0.3[${PYTHON_USEDEP}]
+		dev-python/sphinx-design[${PYTHON_USEDEP}]
+
+		>=dev-python/ipython-7.23.1[${PYTHON_USEDEP}]
+		>=dev-python/ipykernel-6.5.0[${PYTHON_USEDEP}]
+		dev-python/cached-property[${PYTHON_USEDEP}]
+		dev-python/importlib-resources[${PYTHON_USEDEP}]
+		dev-python/myst-nb[${PYTHON_USEDEP}]
+	)
+	test? (
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/pytest-xdist[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+	)
+	test? (
+		dev-python/flax[${PYTHON_USEDEP}]
+		dev-python/google-cloud-logging[${PYTHON_USEDEP}]
+		dev-python/mock[${PYTHON_USEDEP}]
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/pytest-xdist[${PYTHON_USEDEP}]
+	)
+"
+# Avoid circular depends with tensorflow \
+PDEPEND+="
+	tensorflow? (
+		>=sci-libs/tensorflow-2.15.0[${PYTHON_USEDEP}]
+	)
+"
+DOCS=( CHANGELOG.md README.md )
+
+distutils_enable_tests "pytest"
+
+pkg_setup() {
+	if use python_target_python3_10 ; then
+eerror
+eerror "python_target_python3_10 is a dummy placeholder"
+eerror "Please remove it.  Upstream only supports up to 3.9."
+eerror
+		die
+	fi
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		if has "fallback-commit" ${IUSE_EFFECTIVE} ; then
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
+src_install() {
+	distutils-r1_src_install
+	docinto licenses
+	dodoc LICENSE
+	docinto docs
+	dodoc docs/*.md
+}
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-TEST:  UNTESTED
