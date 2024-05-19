@@ -9,9 +9,11 @@ PYTHON_COMPAT=( python3_{10..11} ) # Upstream listed only up to 3.11
 
 inherit distutils-r1
 
-if [[ ${PV} =~ 9999 ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/Zulko/moviepy.git"
 	EGIT_BRANCH="master"
+	EGIT_COMMIT="HEAD"
+	FALLBACK_COMMIT="bc8d1a831d2d1f61abfdf1779e8df95d523947a5" # Jul 11, 2023
 	inherit git-r3
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
@@ -47,7 +49,7 @@ RDEPEND+="
 	)
 	>=dev-python/imageio-ffmpeg-0.2.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.17.3[${PYTHON_USEDEP}]
-	<=dev-python/proglog-1.0[${PYTHON_USEDEP}]
+	<dev-python/proglog-1.0.1[${PYTHON_USEDEP}]
 	matplotlib? (
 		dev-python/matplotlib[${PYTHON_USEDEP}]
 	)
@@ -108,7 +110,7 @@ BDEPEND+="
 			<dev-python/pytest-cov-3[${PYTHON_USEDEP}]
 			>=dev-python/pytest-cov-2.5.1[${PYTHON_USEDEP}]
 		)
-		dev-python/python-dotenv[${PYTHON_USEDEP}]
+		>=dev-python/python-dotenv-0.10[${PYTHON_USEDEP}]
 	)
 "
 S="${WORKDIR}/${P}"
@@ -119,9 +121,7 @@ distutils_enable_tests "pytest"
 
 unpack_live() {
 	if use fallback-commit ; then
-		EGIT_COMMIT="99a9657ea411c81cdc88b9e9ef9bf8e4047a32d2"
-	else
-		EGIT_COMMIT="HEAD"
+		EGIT_COMMIT="${FALLBACK_COMMIT}"
 	fi
 	git-r3_fetch
 	git-r3_checkout
