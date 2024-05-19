@@ -4,10 +4,29 @@
 
 EAPI=8
 
+# TODO package:
+# dataclass-array
+# chex
+# fsspec
+# gcsfs
+# mediapy
+# optree
+# pyink
+# simple_parsing
+# sphinx-apitree (missing for doc)
+
 DISTUTILS_USE_PEP517="flit"
-PYTHON_COMPAT=( python3_10 ) # Upstream only tests 3.9
+PYTHON_COMPAT=( python3_11 ) # Upstream only tests 3.11
+
 # Limited by jax
 inherit distutils-r1
+
+S="${WORKDIR}/${P}"
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+SRC_URI="
+https://github.com/google/etils/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Collection of eclectic utils for python."
 HOMEPAGE="
@@ -16,9 +35,8 @@ https://github.com/google/etils
 LICENSE="
 	Apache-2.0
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" array-types doc eapp ecolab edc enp epath epy etqdm etree etree-dm etree-jax etree-tf lazy-imports test"
+IUSE+=" array-types doc eapp ecolab edc enp epath epath-gcs epath-s3 epy etqdm etree etree-dm etree-jax etree-tf lazy-imports test"
 REQUIRED_USE+="
 	array-types? (
 		enp
@@ -29,6 +47,7 @@ REQUIRED_USE+="
 	ecolab? (
 		enp
 		epy
+		etree
 	)
 	doc? (
 		array-types
@@ -37,6 +56,8 @@ REQUIRED_USE+="
 		edc
 		enp
 		epath
+		epath-gcs
+		epath-s3
 		epy
 		etqdm
 		etree
@@ -53,6 +74,12 @@ REQUIRED_USE+="
 	)
 	epath? (
 		epy
+	)
+	epath-gcs? (
+		epath
+	)
+	epath-s3? (
+		epath
 	)
 	etqdm? (
 		epy
@@ -76,8 +103,6 @@ REQUIRED_USE+="
 		ecolab
 	)
 "
-# TODO:  package
-# mediapy
 DEPEND+="
 	eapp? (
 		dev-python/absl-py[${PYTHON_USEDEP}]
@@ -86,14 +111,23 @@ DEPEND+="
 	ecolab? (
 		dev-python/jupyter[${PYTHON_USEDEP}]
 		dev-python/mediapy[${PYTHON_USEDEP}]
+		dev-python/packaging[${PYTHON_USEDEP}]
+		dev-python/python-protobuf[${PYTHON_USEDEP}]
 	)
 	enp? (
 		dev-python/numpy[${PYTHON_USEDEP}]
 	)
 	epath? (
+		dev-python/fsspec[${PYTHON_USEDEP}]
 		dev-python/importlib-resources[${PYTHON_USEDEP}]
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 		dev-python/zipp[${PYTHON_USEDEP}]
+	)
+	epath-gcs? (
+		dev-python/gcsfs[${PYTHON_USEDEP}]
+	)
+	epath-s3? (
+		dev-python/s3[${PYTHON_USEDEP}]
 	)
 	epy? (
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
@@ -115,17 +149,13 @@ DEPEND+="
 RDEPEND+="
 	${DEPEND}
 "
-# TODO: new packages:
-# dataclass-array
-# chex
-# optree
-# pyink
-# simple_parsing
-# sphinx-apitree (missing for doc)
 BDEPEND+="
 	(
 		<dev-python/flit_core-4[${PYTHON_USEDEP}]
 		>=dev-python/flit_core-3.8[${PYTHON_USEDEP}]
+	)
+	doc? (
+		dev-python/sphinx-apitree[${PYTHON_USEDEP}]
 	)
 	test? (
 		>=dev-python/pylint-2.6.0[${PYTHON_USEDEP}]
@@ -139,18 +169,13 @@ BDEPEND+="
 		sci-libs/pytorch[${PYTHON_USEDEP}]
 	)
 "
-SRC_URI="
-https://github.com/google/etils/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
-DOCS=( CHANGELOG.md README.md )
+RESTRICT="mirror test"
+DOCS=( "CHANGELOG.md" "README.md" )
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 distutils_enable_tests "pytest"
