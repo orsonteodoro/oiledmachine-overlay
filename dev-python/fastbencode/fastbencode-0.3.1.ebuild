@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..12} )
 
 inherit distutils-r1
 
@@ -35,7 +35,9 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
 	>=dev-python/cython-0.29[${PYTHON_USEDEP}]
-	dev-python/packaging[${PYTHON_USEDEP}]
+	test? (
+		>=dev-util/ruff-0.4.3
+	)
 "
 
 src_test() {
