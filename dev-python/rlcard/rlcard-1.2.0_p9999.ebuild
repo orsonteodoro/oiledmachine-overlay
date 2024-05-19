@@ -6,18 +6,21 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit distutils-r1
 
 if [[ ${PV} =~ 9999 ]] ; then
 	inherit git-r3
-	FALLBACK_COMMIT="7fc56edebe9a2e39c94f872edd8dbe325c61b806"
+	FALLBACK_COMMIT="7fc56edebe9a2e39c94f872edd8dbe325c61b806" # Jul 11, 2023
 	IUSE+=" fallback-commit"
 else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	SRC_URI="
 https://github.com/datamllab/rlcard/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="Reinforcement Learning / AI Bots in Card (Poker) Games - Blackjack, Leduc, Texas, DouDizhu, Mahjong, UNO."
 HOMEPAGE="
@@ -27,7 +30,7 @@ HOMEPAGE="
 LICENSE="
 	MIT
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" docs test torch"
 REQUIRED_USE="
@@ -55,9 +58,7 @@ DEPEND+="
 RDEPEND+="
 	${DEPEND}
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
-DOCS=( README.md )
+DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.1.0-fix-exclude-tests.patch"
 )
