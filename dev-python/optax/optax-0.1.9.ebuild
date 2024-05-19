@@ -4,8 +4,16 @@
 
 EAPI=8
 
+# TODO package:
+# myst_nb
+# sphinx-collections
+# sphinxcontrib-katex
+# tensorflow-datasets
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} )
+TENSORFLOW_PV="2.4.0"
+TENSORFLOW_DATASETS_PV="4.2.0"
 # Limited by jax/flax
 
 inherit distutils-r1
@@ -37,45 +45,43 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	>=dev-python/absl-py-0.7.1[${PYTHON_USEDEP}]
-	>=dev-python/chex-0.1.8[${PYTHON_USEDEP}]
-	>=dev-python/jax-0.4.13[${PYTHON_USEDEP}]
+	>=dev-python/chex-0.1.7[${PYTHON_USEDEP}]
+	>=dev-python/jax-0.1.55[${PYTHON_USEDEP}]
 	>=dev-python/jaxlib-0.1.37[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.25.0[${PYTHON_USEDEP}]
-	>=dev-python/typing-extensions-3.10.0[${PYTHON_USEDEP}]
+	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
+	dp-accounting? (
+		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
+	)
 	examples? (
 		>=dev-python/dm-haiku-0.0.3[${PYTHON_USEDEP}]
-		>=dev-python/tensorflow-datasets-4.2.0[${PYTHON_USEDEP}]
-		>=sci-libs/tensorflow-2.4.0[${PYTHON_USEDEP}]
+		>=dev-python/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_USEDEP}]
+		>=sci-libs/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
-# TODO: package
-# dp-accounting
-# myst_nb
-# sphinxcontrib-katex
 BDEPEND+="
+	(
+		>=dev-python/flit-core-3.2[${PYTHON_USEDEP}]
+		<dev-python/flit-core-4[${PYTHON_USEDEP}]
+	)
 	app-arch/zip
 	doc? (
-		>=dev-python/dm-haiku-0.0.8[${PYTHON_USEDEP}]
-		>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
-		>=dev-python/ipython-7.16.3[${PYTHON_USEDEP}]
-		>=dev-python/ipykernel-5.3.4[${PYTHON_USEDEP}]
+		>=dev-python/dm-haiku-0.0.11[${PYTHON_USEDEP}]
+		>=dev-python/ipython-8.8.0[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.5.0[${PYTHON_USEDEP}]
-		>=dev-python/myst_nb-0.13.1[${PYTHON_USEDEP}]
-		>=dev-python/pandoc-1.0.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-autodoc-typehints-1.11.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-book-theme-0.3.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-bibtex-2.4.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-katex-0.9.0[${PYTHON_USEDEP}]
-
+		>=dev-python/myst_nb-1.0.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-6.0.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-book-theme-1.0.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-collections-0.0.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-gallery-0.14.0[${PYTHON_USEDEP}]
+		dev-python/sphinx-autodoc-typehints[${PYTHON_USEDEP}]
+		dev-python/sphinxcontrib-katex[${PYTHON_USEDEP}]
 	)
 	dp-accounting? (
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/attrs-21.4.0[${PYTHON_USEDEP}]
-		>=dev-python/dp-accounting-0.1.1[${PYTHON_USEDEP}]
 		>=dev-python/mpmath-1.2.1[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.21.4[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.7.1[${PYTHON_USEDEP}]
@@ -85,14 +91,20 @@ BDEPEND+="
 		>=dev-python/dm-tree-0.1.7[${PYTHON_USEDEP}]
 	)
 "
+# Avoid circular depends with flax \
+# Avoid circular depends with tensorflow \
 PDEPEND+="
+	doc? (
+		>=dev-python/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_USEDEP}]
+		>=sci-libs/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP}]
+	)
 	test? (
 		>=dev-python/flax-0.5.3
 	)
-" # Avoid circular depends with flax
+"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-DOCS=( README.md )
+DOCS=( "README.md" )
 
 distutils_enable_sphinx "docs"
 
@@ -109,7 +121,7 @@ einfo "Running test for ${EPYTHON}"
 
 src_install() {
 	if use examples ; then
-		insinto /usr/share/${PN}
+		insinto "/usr/share/${PN}"
 		doins -r "examples"
 	fi
 
@@ -119,8 +131,8 @@ src_install() {
 	python_foreach_impl rm_examples
 
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
