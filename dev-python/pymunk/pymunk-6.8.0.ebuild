@@ -6,13 +6,20 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit distutils-r1
-if [[ ${PV} =~ 9999 ]] ; then
+
+if [[ ${PV} =~ "9999" ]] ; then
 	inherit git-r3
 	IUSE+=" fallback-commit"
+	EGIT_BRANCH="master"
+	EGIT_COMMIT="HEAD"
 	EGIT_OVERRIDE_REPO_GIT_GITHUB_COM_VIBLO_CHIPMUNK2D="https://github.com/viblo/Chipmunk2D.git"
+	EGIT_REPO_URI="https://github.com/viblo/pymunk.git"
+	FALLBACK_COMMIT="ffdf84c124a77e1cc3226b4da4ab742505171b0d" # May 10, 2024
 else
-	CHIPMUNK2D_COMMIT="0593976ef47fcb3957166bd342f6b2bafe4d0e44"
+	CHIPMUNK2D_COMMIT="7a29dcfa49931f26632f3019582f289ba811a2b9" # May 9, 2024
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	SRC_URI="
 https://github.com/viblo/pymunk/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -20,6 +27,7 @@ https://github.com/viblo/Chipmunk2D/archive/${CHIPMUNK2D_COMMIT}.tar.gz
 	-> Chipmunk2D-${CHIPMUNK2D_COMMIT:0:7}.tar.gz
 	"
 fi
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="Pymunk is a easy-to-use pythonic 2d physics library that can be \
 used whenever you need 2d rigid body physics from Python"
@@ -30,9 +38,14 @@ https://github.com/viblo/pymunk
 LICENSE="
 	MIT
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
+REQUIRED_USE+="
+	test? (
+		doc
+	)
+"
 DEPEND+="
 	>=dev-python/cffi-1.15.0[${PYTHON_USEDEP}]
 "
@@ -40,35 +53,36 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
+	>=dev-build/cmake-3.7
 	dev-python/isort[${PYTHON_USEDEP}]
 	dev-python/mypy[${PYTHON_USEDEP}]
-	dev-build/cmake
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
+		>=dev-python/sphinx-3.0[${PYTHON_USEDEP}]
 		dev-python/aafigure[${PYTHON_USEDEP}]
 		dev-python/alabaster[${PYTHON_USEDEP}]
-		dev-python/sphinx[${PYTHON_USEDEP}]
+		dev-python/reportlab[${PYTHON_USEDEP}]
 	)
 	test? (
 		<dev-python/pyglet-2.0.0[${PYTHON_USEDEP}]
-		dev-python/pygame[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/pygame[${PYTHON_USEDEP}]
 	)
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
-DOCS=( CHANGELOG.rst CITATION.cff THANKS.txt README.rst )
+DOCS=( "CHANGELOG.rst" "CITATION.cff" "THANKS.txt" "README.rst" )
 
 src_unpack() {
-	if [[ ${PV} =~ 9999 ]] ; then
-		EGIT_REPO_URI="https://github.com/viblo/pymunk.git"
-		EGIT_BRANCH="master"
-		EGIT_COMMIT="HEAD"
-		use fallback-commit && EGIT_COMMIT="ec7bf669729d72a81e8dd0333966d8328c4c4ca0"
+	if [[ ${PV} =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 	else
 		unpack ${A}
-		rm -rf "${S}/Chipmunk2D" || die
+		rm -rf \
+			"${S}/Chipmunk2D" \
+			|| die
 		mv \
 			"${WORKDIR}/Chipmunk2D-${CHIPMUNK2D_COMMIT}" \
 			"${S}/Chipmunk2D" \
@@ -79,7 +93,7 @@ src_unpack() {
 src_test() {
 	run_test() {
 		pushd "${S}-${EPYTHON/./_}/install/usr/lib/${EPYTHON}/site-packages" || die
-einfo "${LD_LIBRARY_PATH}"
+einfo "LD_LIBRARY_PATH:  ${LD_LIBRARY_PATH}"
 einfo "Running test for ${EPYTHON}"
 			${EPYTHON} -m pymunk.tests || die
 		popd
@@ -89,8 +103,8 @@ einfo "Running test for ${EPYTHON}"
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE.txt
+	docinto "licenses"
+	dodoc "LICENSE.txt"
 }
 
 distutils_enable_sphinx "docs"
