@@ -5,8 +5,21 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
+GAVIOTA_TABLEBASES_COMMIT="981472cc83e3a8b6e996191e564295609ea4ce30" # Dec 12, 2012 obtained from GitHub search:  committer-date:<=2023-07-27
 PYTHON_COMPAT=( python3_{10..11} )
+
 inherit distutils-r1
+
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
+SRC_URI="
+https://github.com/niklasf/python-chess/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+	test? (
+https://github.com/michiguel/Gaviota-Tablebases/archive/${GAVIOTA_TABLEBASES_COMMIT}.tar.gz
+	-> Gaviota-Tablebases-${GAVIOTA_TABLEBASES_COMMIT:0:7}.tar.gz
+	)
+"
 
 DESCRIPTION="A chess library for Python, with move generation and validation, \
 PGN parsing and writing, Polyglot opening book reading, Gaviota tablebase \
@@ -22,7 +35,7 @@ LICENSE="
 		ZLIB
 	)
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc stockfish test"
 REQUIRED_USE+="
@@ -52,18 +65,7 @@ PDEPEND+="
 		games-board/stockfish
 	)
 "
-GAVIOTA_TABLEBASES_COMMIT="981472cc83e3a8b6e996191e564295609ea4ce30"
-SRC_URI="
-https://github.com/niklasf/python-chess/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-	test? (
-https://github.com/michiguel/Gaviota-Tablebases/archive/${GAVIOTA_TABLEBASES_COMMIT}.tar.gz
-	-> Gaviota-Tablebases-${GAVIOTA_TABLEBASES_COMMIT:0:7}.tar.gz
-	)
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
-DOCS=( CHANGELOG-OLD.rst CHANGELOG.rst README.rst )
+DOCS=( "CHANGELOG-OLD.rst" "CHANGELOG.rst" "README.rst" )
 
 distutils_enable_sphinx "docs"
 
