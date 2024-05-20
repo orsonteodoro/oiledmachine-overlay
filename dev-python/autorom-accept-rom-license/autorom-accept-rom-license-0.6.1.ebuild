@@ -221,13 +221,13 @@ einfo
 
 python_prepare_all() {
 	S="${WORKDIR}/AutoROM-${PV}"
-	pushd "${S}" || die
+	pushd "${S}" >/dev/null 2>&1 || die
 		eapply ${_PATCHES[@]}
-	popd || die
+	popd >/dev/null 2>&1 || die
 	S="${WORKDIR}/AutoROM-${PV}/packages/AutoROM.accept-rom-license"
-	pushd "${S}" || die
+	pushd "${S}" >/dev/null 2>&1 || die
 		distutils-r1_python_prepare_all
-	popd || die
+	popd >/dev/null 2>&1 || die
 }
 
 python_install_all() {
