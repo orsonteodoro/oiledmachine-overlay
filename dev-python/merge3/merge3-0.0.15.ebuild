@@ -5,13 +5,30 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
-inherit distutils-r1 git-r3
+PYTHON_COMPAT=( python3_{8..12} pypy )
 
-DESCRIPTION="Python merge3 package"
+inherit distutils-r1
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	inherit git-r3
+	EGIT_BRANCH="master"
+	EGIT_COMMIT="HEAD"
+	EGIT_REPO_URI="https://github.com/breezy-team/merge3.git"
+	FALLBACK_COMMIT="deea4acaacb3c4a53cab286490550c32d5d0c2b4" # May 5, 2024
+	SRC_URI=""
+else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	SRC_URI="
+https://github.com/breezy-team/merge3/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
+fi
+S="${WORKDIR}/${P}"
+
+DESCRIPTION="Python implementation of 3-way merge"
 HOMEPAGE="https://github.com/breezy-team/merge3"
 LICENSE="GPL-2+"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" fallback-commit test"
 RDEPEND+="
@@ -21,22 +38,27 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
+	dev-python/wheel
+	test? (
+		dev-util/ruff[${PYTHON_USEDEP}]
+	)
 "
-SRC_URI=""
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 DOCS=( AUTHORS COPYING README.rst )
 
-src_unpack() {
-	EGIT_REPO_URI="https://github.com/breezy-team/merge3.git"
-	EGIT_BRANCH="master"
+unpack_live() {
 	if use fallback-commit ; then
-		EGIT_COMMIT="f5125c948faee69b1d16e63abc66c56d7743eeb2"
-	else
-		EGIT_COMMIT="HEAD"
+		EGIT_COMMIT="${FALLBACK_COMMIT}"
 	fi
 	git-r3_fetch
 	git-r3_checkout
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		unpack_live
+	else
+		unpack ${A}
+	fi
 }
 
 src_test() {
