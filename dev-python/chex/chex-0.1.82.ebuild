@@ -42,14 +42,14 @@ RDEPEND+="
 # TODO: create packages:
 # sphinxcontrib-katex
 # pandoc
-# myst_nb
+# myst-nb
 BDEPEND+="
 	docs? (
 		>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
 		>=dev-python/ipython-7.16.3[${PYTHON_USEDEP}]
 		>=dev-python/ipykernel-5.3.4[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.5.0[${PYTHON_USEDEP}]
-		>=dev-python/myst_nb-0.13.1[${PYTHON_USEDEP}]
+		>=dev-python/myst-nb-0.13.1[${PYTHON_USEDEP}]
 		>=dev-python/pandoc-1.0.2[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinx_rtd_theme-1.0.0[${PYTHON_USEDEP}]

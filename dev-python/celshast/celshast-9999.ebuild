@@ -22,7 +22,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	dev-python/myst_parser[${PYTHON_USEDEP}]
+	dev-python/myst-parser[${PYTHON_USEDEP}]
 	dev-python/sphinx[${PYTHON_USEDEP}]
 	dev-python/sphinx_design[${PYTHON_USEDEP}]
 	dev-python/sphinx-inline-tabs[${PYTHON_USEDEP}]

@@ -12,7 +12,7 @@ EAPI=8
 # flax_module
 # jraph
 # ml-collections
-# myst_nb
+# myst-nb
 # nbstripout
 # orbax-checkpoint
 # pytest-custom_exit_code
@@ -83,7 +83,7 @@ BDEPEND+="
 		dev-python/jaxlib[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
 		dev-python/ml-collections[${PYTHON_USEDEP}]
-		dev-python/myst_nb[${PYTHON_USEDEP}]
+		dev-python/myst-nb[${PYTHON_USEDEP}]
 		dev-python/recommonmark[${PYTHON_USEDEP}]
 		dev-python/scikit-learn[${PYTHON_USEDEP}]
 		dev-python/sphinx_design[${PYTHON_USEDEP}]

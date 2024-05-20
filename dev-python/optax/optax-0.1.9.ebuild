@@ -5,7 +5,7 @@
 EAPI=8
 
 # TODO package:
-# myst_nb
+# myst-nb
 # sphinx-collections
 # sphinxcontrib-katex
 # tensorflow-datasets
@@ -71,7 +71,7 @@ BDEPEND+="
 		>=dev-python/dm-haiku-0.0.11[${PYTHON_USEDEP}]
 		>=dev-python/ipython-8.8.0[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.5.0[${PYTHON_USEDEP}]
-		>=dev-python/myst_nb-1.0.0[${PYTHON_USEDEP}]
+		>=dev-python/myst-nb-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-6.0.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-book-theme-1.0.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-collections-0.0.1[${PYTHON_USEDEP}]
