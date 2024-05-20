@@ -4,10 +4,12 @@
 
 EAPI=8
 
+# U 22.04
+
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( python3_{10..12} )
 
 inherit distutils-r1
 
@@ -16,7 +18,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/jax-ml/ml_dtypes.git"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_PN}-${PV}"
-	FALLBACK_COMMIT="5b9fc9ad978757654843f4a8d899715dbea30e88" # Jun 6, 2023
+	FALLBACK_COMMIT="9fc7e6773acb66fa496ed8d476a008a489a4da49" # Apr 1, 2024
 	IUSE+=" fallback-commit"
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
@@ -46,12 +48,15 @@ DEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.23.3[${PYTHON_USEDEP}]
 	' python3_11)
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
+	' python3_12)
 "
 RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	>=dev-python/setuptools-67.6.0[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-68.1.0[${PYTHON_USEDEP}]
 	>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/pylint-2.6.0[${PYTHON_USEDEP}]

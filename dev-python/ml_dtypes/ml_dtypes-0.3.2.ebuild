@@ -9,7 +9,7 @@ EAPI=8
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10,11} )
+PYTHON_COMPAT=( python3_{10..12} )
 
 inherit distutils-r1
 
@@ -21,13 +21,15 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="d5fdadcbb7c8fb95dcd6f8bad41fc198d4e21b73" # Jan 3, 2024
 	IUSE+=" fallback-commit"
 else
-	EGIT_EIGEN_COMMIT="7bf2968fed5f246c0589e1111004cb420fcd7c71"
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	EGIT_EIGEN_COMMIT="7bf2968fed5f246c0589e1111004cb420fcd7c71" # Mar 7, 2023
 	SRC_URI="
 https://github.com/jax-ml/ml_dtypes/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN_COMMIT}/eigen-${EGIT_EIGEN_COMMIT}.tar.bz2
 	"
 fi
+S="${WORKDIR}/${MY_PN}-${PV}"
 
 DESCRIPTION="A stand-alone implementation of several NumPy dtype extensions \
 used in machine learning."
@@ -36,7 +38,7 @@ LICENSE="
 	Apache-2.0
 	MPL-2.0
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 DEPEND+="
@@ -64,9 +66,7 @@ BDEPEND+="
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 	)
 "
-S="${WORKDIR}/${MY_PN}-${PV}"
-RESTRICT="mirror"
-DOCS=( CHANGELOG.md README.md )
+DOCS=( "CHANGELOG.md" "README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
