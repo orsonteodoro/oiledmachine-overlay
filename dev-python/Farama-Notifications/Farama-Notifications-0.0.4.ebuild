@@ -9,23 +9,26 @@ PYTHON_COMPAT=( python3_10 ) # Based on CI distro
 
 inherit distutils-r1
 
-if [[ "${PV}" =~ 9999 ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/Farama-Foundation/Farama-Notifications.git"
 	EGIT_BRANCH="main"
+	FALLBACK_COMMIT="9596114567580db30c4d1735f540e84da480199a"
 	inherit git-r3
 else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	SRC_URI="
 https://github.com/Farama-Foundation/Farama-Notifications/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="Gymnasium Notices"
 HOMEPAGE="
 https://github.com/Farama-Foundation/gymnasium-notices
 "
 LICENSE="MIT"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" fallback-commit"
 RDEPEND+="
@@ -37,12 +40,10 @@ BDEPEND+="
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 unpack_live() {
 	if use fallback-commit ; then
-		EGIT_COMMIT="9596114567580db30c4d1735f540e84da480199a"
+		EGIT_COMMIT="${FALLBACK_COMMIT}"
 	fi
 	git-r3_fetch
 	git-r3_checkout
@@ -63,7 +64,7 @@ eerror
 }
 
 src_unpack() {
-	if [[ "${PV}" =~ 9999 ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 		unpack_live
 	else
 		unpack ${A}
