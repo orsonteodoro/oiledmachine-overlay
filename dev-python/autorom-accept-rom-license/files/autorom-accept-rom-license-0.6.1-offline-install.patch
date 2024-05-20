@@ -1,0 +1,35 @@
+--- a/src/AutoROM.py.orig	2023-04-06 08:27:26.000000000 -0700
++++ b/src/AutoROM.py	2024-05-20 08:39:00.798460147 -0700
+@@ -8,6 +8,7 @@ import sys
+ import tarfile
+ import warnings
+ from collections import namedtuple
++from pathlib import Path
+ from typing import Dict
+ 
+ import click
+@@ -142,12 +143,20 @@ status_meaning = {
+ 
+ 
+ def download_tar():
+-    # use requests to download the base64 file
+-    url = "https://gist.githubusercontent.com/jjshoots/61b22aefce4456920ba99f2c36906eda/raw/00046ac3403768bfe45857610a3d333b8e35e026/Roms.tar.gz.b64"
+-    r = requests.get(url, allow_redirects=False)
++    download_method = os.environ.get("AUTOROM_DOWNLOAD_METHOD")
++    if download_method == None:
++        download_method = "online"
++    if download_method == "online":
++        # use requests to download the base64 file
++        url = "https://gist.githubusercontent.com/jjshoots/61b22aefce4456920ba99f2c36906eda/raw/00046ac3403768bfe45857610a3d333b8e35e026/Roms.tar.gz.b64"
++        r = requests.get(url, allow_redirects=False)
++        file_content = r.content
++    else:
++        rom_path = os.environ.get("DISTDIR") + '/' + os.environ.get("AUTOROM_FILE_NAME")
++        file_content = Path(rom_path).read_text()
+ 
+     # decode the b64 into the tar.gz
+-    tar_gz = base64.b64decode(r.content)
++    tar_gz = base64.b64decode(file_content)
+ 
+     # save the tar.gz
+     save_path = os.path.dirname(__file__)

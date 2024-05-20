@@ -4,15 +4,21 @@
 
 EAPI=8
 
+export AUTOROM_DOWNLOAD_METHOD="offline"
+ID1="61b22aefce4456920ba99f2c36906eda"
+ID2="00046ac3403768bfe45857610a3d333b8e35e026"
+export AUTOROM_FILE_NAME="${PN}-roms-${ID1:0:7}-${ID2:0:7}.tar.gz.b64"
 PYTHON_COMPAT=( python3_10 ) # Upstream tested up to 3.10
 
 inherit distutils-r1
 
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-S="${WORKDIR}/AutoROM-${PV}/packages/AutoROM"
+S="${WORKDIR}/AutoROM-${PV}/packages/AutoROM.accept-rom-license"
 SRC_URI="
 https://github.com/Farama-Foundation/AutoROM/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
+https://gist.githubusercontent.com/jjshoots/${ID1}/raw/${ID2}/Roms.tar.gz.b64
+	-> ${PN}-roms-${ID1:0:7}-${ID2:0:7}.tar.gz.b64
 "
 
 DESCRIPTION="A tool to automate installing Atari ROMs for the Arcade Learning \
@@ -23,12 +29,13 @@ https://github.com/Farama-Foundation/AutoROM
 LICENSE="MIT"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" accept-rom-license test"
+IUSE+=" test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
 RDEPEND+="
 	${PYTHON_DEPS}
+	>=dev-python/autorom-${PV}:${SLOT}[${PYTHON_USEDEP}]
 	dev-python/click[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 "
@@ -48,15 +55,24 @@ BDEPEND+="
 		dev-python/multi-agent-ale-py[${PYTHON_USEDEP}]
 	)
 "
-PDEPEND+="
-	accept-rom-license? (
-		>=dev-python/autorom-accept-rom-license-${PV}:${SLOT}
-	)
-"
+_PATCHES=(
+	"${FILESDIR}/autorom-accept-rom-license-0.6.1-offline-install.patch"
+)
 
 python_install_all() {
 	distutils-r1_python_install_all
 	rm -rf $(find "${ED}" -name "__pycache__")
+}
+
+python_prepare_all() {
+	S="${WORKDIR}/AutoROM-${PV}"
+	pushd "${S}" || die
+		eapply ${_PATCHES[@]}
+	popd || die
+	S="${WORKDIR}/AutoROM-${PV}/packages/AutoROM.accept-rom-license"
+	pushd "${S}" || die
+		distutils-r1_python_prepare_all
+	popd || die
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
