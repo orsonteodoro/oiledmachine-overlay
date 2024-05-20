@@ -279,7 +279,6 @@ ewarn
 python_install_all() {
 	if use skip-roms ; then
 		export AUTOROM_SKIP_ROMS="yes"
-		unset AUTOROM_FILE_NAME
 	else
 		export AUTOROM_SKIP_ROMS="no"
 	fi
