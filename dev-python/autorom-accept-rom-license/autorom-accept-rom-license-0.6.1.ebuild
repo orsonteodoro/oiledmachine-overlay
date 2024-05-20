@@ -216,6 +216,16 @@ einfo
 	fi
 }
 
+python_prepare_all() {
+	S="${WORKDIR}/AutoROM-${PV}"
+	pushd "${S}" || die
+		eapply ${_PATCHES[@]}
+	popd || die
+	S="${WORKDIR}/AutoROM-${PV}/packages/AutoROM.accept-rom-license"
+	pushd "${S}" || die
+		distutils-r1_python_prepare_all
+	popd || die
+}
 
 python_install_all() {
 	if use skip-roms ; then
@@ -240,17 +250,6 @@ einfo "Removing ${name}.bin"
 			find "${ED}" -name "${name}.bin" -delete
 		fi
 	done
-}
-
-python_prepare_all() {
-	S="${WORKDIR}/AutoROM-${PV}"
-	pushd "${S}" || die
-		eapply ${_PATCHES[@]}
-	popd || die
-	S="${WORKDIR}/AutoROM-${PV}/packages/AutoROM.accept-rom-license"
-	pushd "${S}" || die
-		distutils-r1_python_prepare_all
-	popd || die
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
