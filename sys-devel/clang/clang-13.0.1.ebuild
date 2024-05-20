@@ -138,7 +138,12 @@ DEPEND="
 BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-build/cmake-3.16
-	doc? ( dev-python/sphinx )
+	doc? (
+		$(python_gen_cond_dep '
+			dev-python/recommonmark[${PYTHON_USEDEP}]
+			dev-python/sphinx[${PYTHON_USEDEP}]
+		')
+	)
 	xml? (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	)
