@@ -1,5 +1,5 @@
 --- a/src/AutoROM.py.orig	2023-04-06 08:27:26.000000000 -0700
-+++ b/src/AutoROM.py	2024-05-20 09:45:29.407951837 -0700
++++ b/src/AutoROM.py	2024-05-20 10:43:37.019033330 -0700
 @@ -8,6 +8,7 @@ import sys
  import tarfile
  import warnings
@@ -33,7 +33,7 @@
  
      # save the tar.gz
      save_path = os.path.dirname(__file__)
-@@ -293,6 +302,13 @@ def main(accept_license, source_file, in
+@@ -293,6 +302,15 @@ def main(accept_license, source_file, in
          if not click.confirm(license_msg, default=True):
              return
  
@@ -43,6 +43,8 @@
 +
 +    if skip_roms == "yes":
 +        return
++
++    print("skip_roms = " + skip_roms)
 +
      # Make sure directories exist
      for package in packages:

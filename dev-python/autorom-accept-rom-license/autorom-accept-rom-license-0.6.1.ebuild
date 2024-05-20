@@ -129,7 +129,7 @@ https://github.com/Farama-Foundation/AutoROM/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	!skip-roms? (
 https://gist.githubusercontent.com/jjshoots/${ID1}/raw/${ID2}/Roms.tar.gz.b64
-	-> ${PN}-roms-${ID1:0:7}-${ID2:0:7}.tar.gz.b64
+	-> ${AUTOROM_FILE_NAME}
 	)
 "
 
@@ -167,7 +167,37 @@ IUSE+="
 $(gen_rom_iuse)
 skip-roms test
 "
+gen_rom_required_use1() {
+	local f
+	for f in ${ROM_LIST[@]} ; do
+		local name="${f/.bin}"
+		echo "
+			autorom_rom_${name}? (
+				!skip-roms
+			)
+		"
+	done
+}
+gen_rom_required_use2() {
+	echo "
+		!skip-roms? (
+			|| (
+	"
+	local f
+	for f in ${ROM_LIST[@]} ; do
+		local name="${f/.bin}"
+		echo "
+				autorom_rom_${name}
+		"
+	done
+	echo "
+			)
+		)
+	"
+}
 REQUIRED_USE+="
+	$(gen_rom_required_use1)
+	$(gen_rom_required_use2)
 	${PYTHON_REQUIRED_USE}
 "
 RDEPEND+="
@@ -230,18 +260,29 @@ python_prepare_all() {
 	popd >/dev/null 2>&1 || die
 }
 
+python_install() {
+	if use skip-roms ; then
+		export AUTOROM_SKIP_ROMS="yes"
+ewarn
+ewarn "You must manually add the ROM(s) in .bin format to:"
+ewarn
+ewarn "  /usr/lib/${EPYTHON}/site-packages/AutoROM/roms"
+ewarn
+	else
+		export AUTOROM_SKIP_ROMS="no"
+	fi
+	distutils-r1_python_install
+}
+
 python_install_all() {
 	if use skip-roms ; then
 		export AUTOROM_SKIP_ROMS="yes"
+		unset AUTOROM_FILE_NAME
 	else
 		export AUTOROM_SKIP_ROMS="no"
 	fi
 	distutils-r1_python_install_all
 	rm -rf $(find "${ED}" -name "__pycache__")
-
-	if use skip-roms ; then
-		return
-	fi
 
 	local f
 	for f in ${ROM_LIST[@]} ; do
