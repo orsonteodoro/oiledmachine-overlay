@@ -57,6 +57,9 @@ PDEPEND+="
 python_install_all() {
 	distutils-r1_python_install_all
 	rm -rf $(find "${ED}" -name "__pycache__")
+	cd "${WORKDIR}/AutoROM-${PV}" || die
+	dodoc "LICENSE.txt"
+	dodoc "README.md"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
