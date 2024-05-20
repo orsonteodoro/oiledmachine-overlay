@@ -9,16 +9,17 @@ PYTHON_COMPAT=( python3_{8..11} )
 
 inherit distutils-r1
 
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/jketterl/js8py/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${P}"
 
 DESCRIPTION="Python module for parsing messages from the 'js8' command line decoder"
 HOMEPAGE="https://github.com/jketterl/js8py"
 LICENSE="GPL-3"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 RDEPEND+="
@@ -28,8 +29,7 @@ DEPEND+="
 "
 BDEPEND+="
 "
-RESTRICT="mirror"
-DOCS=( LICENSE README.md )
+DOCS=( "LICENSE" "README.md" )
 
 src_test() {
 	run_test() {
