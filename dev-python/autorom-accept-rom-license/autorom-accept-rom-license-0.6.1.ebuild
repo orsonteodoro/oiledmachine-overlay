@@ -21,8 +21,7 @@ https://gist.githubusercontent.com/jjshoots/${ID1}/raw/${ID2}/Roms.tar.gz.b64
 	-> ${PN}-roms-${ID1:0:7}-${ID2:0:7}.tar.gz.b64
 "
 
-DESCRIPTION="A tool to automate installing Atari ROMs for the Arcade Learning \
-Environment"
+DESCRIPTION="AutoROM ROMs"
 HOMEPAGE="
 https://github.com/Farama-Foundation/AutoROM
 "
