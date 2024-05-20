@@ -18,26 +18,27 @@ PYTHON_COMPAT=( python3_{10..11} )
 
 inherit distutils-r1
 
-if [[ ${PV} =~ 9999 ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/Farama-Foundation/Multi-Agent-ALE.git"
 	EGIT_BRANCH="master"
+	FALLBACK_COMMIT="668c9b8f5690b478a738646fee5d68e2536fe7a8" # Dec 11, 2022
 	IUSE+=" fallback-commit"
 else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	SRC_URI="
 https://github.com/Farama-Foundation/Multi-Agent-ALE/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
+S="${WORKDIR}/${MY_PN}-${PV}"
 
 DESCRIPTION="The Arcade Learning Environment (ALE) -- a platform for AI research."
 HOMEPAGE="https://github.com/Farama-Foundation/Multi-Agent-ALE"
 LICENSE="
 	GPL-2
-	Apache-2.0
 "
-# Apache-2.0 - doc/examples/RLGlueAgent.c
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc examples test"
 DEPEND+="
@@ -48,30 +49,36 @@ RDEPEND+="
 BDEPEND+="
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
 	>=dev-build/cmake-3.14
-	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-build/ninja
+	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 "
-S="${WORKDIR}/${MY_PN}-${PV}"
-RESTRICT="mirror"
-DOCS=( ChangeLog README.md doc/manual/manual.pdf )
+DOCS=( "ChangeLog" "README.md" "doc/manual/manual.pdf" )
 
 src_unpack() {
-	use fallback-commit && EGIT_COMMIT="668c9b8f5690b478a738646fee5d68e2536fe7a8" # Dec 11, 2022
-	git-r3_fetch
-	git-r3_checkout
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_install() {
 	distutils-r1_src_install
 	docinto licenses
-	doins Copyright.txt License.txt README-SDL.txt
+	doins \
+		"Copyright.txt" \
+		"License.txt" \
+		"README-SDL.txt"
 	docinto readmes
 	if use doc ; then
 		einstalldocs
 	fi
 	if use examples ; then
-		insinto /usr/share/${PN}/examples
-		doins -r doc/examples/*
+		insinto "/usr/share/${PN}/examples"
+		doins -r "doc/examples/"*
 	fi
 }
 
