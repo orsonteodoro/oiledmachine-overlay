@@ -150,6 +150,9 @@ gen_rom_license() {
 }
 LICENSE="
 	$(gen_rom_license)
+	!skip-roms? (
+		all-rights-reserved
+	)
 	MIT
 "
 RESTRICT="fetch mirror"
