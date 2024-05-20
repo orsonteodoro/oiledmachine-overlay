@@ -17,5 +17,8 @@
     <flag name="mujoco-py">
       Use the older MuJoCo version of the physics engine.
     </flag>
+    <flag name="other">
+      Install other optional dependencies.
+    </flag>
   </use>
 </pkgmetadata>

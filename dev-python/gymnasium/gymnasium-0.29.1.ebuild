@@ -10,6 +10,8 @@ PYTHON_COMPAT=( python3_{10..11} )
 
 inherit distutils-r1
 
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/Farama-Foundation/Gymnasium/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -23,9 +25,9 @@ https://gymnasium.farama.org/
 https://github.com/Farama-Foundation/Gymnasium
 "
 LICENSE="MIT"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" atari accept-rom-license box2d classic-control jax mujoco mujoco-py pygame test toy-text"
+IUSE+=" atari accept-rom-license box2d classic-control jax mujoco mujoco-py other pygame test toy-text"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	box2d? (
@@ -45,14 +47,6 @@ RDEPEND+="
 	>=dev-python/jumpy-0.2.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.3.0[${PYTHON_USEDEP}]
-
-	$(python_gen_any_dep '
-		>=sci-libs/pytorch-1.0.0[${PYTHON_SINGLE_USEDEP}]
-	')
-	>=dev-python/lz4-3.1.0[${PYTHON_USEDEP}]
-	>=dev-python/matplotlib-3.0[${PYTHON_USEDEP}]
-	>=dev-python/moviepy-1.0.0[${PYTHON_USEDEP}]
-	>=media-libs/opencv-3.0[${PYTHON_USEDEP}]
 
 	atari? (
 		<dev-python/shimmy-1.0[${PYTHON_USEDEP}]
@@ -80,6 +74,15 @@ RDEPEND+="
 		<dev-python/mujoco-py-2.2[${PYTHON_USEDEP}]
 		>=dev-python/mujoco-py-2.1[${PYTHON_USEDEP}]
 	)
+	other? (
+		$(python_gen_any_dep '
+			>=sci-libs/pytorch-1.0.0[${PYTHON_SINGLE_USEDEP}]
+		')
+		>=dev-python/lz4-3.1.0[${PYTHON_USEDEP}]
+		>=dev-python/matplotlib-3.0[${PYTHON_USEDEP}]
+		>=dev-python/moviepy-1.0.0[${PYTHON_USEDEP}]
+		>=media-libs/opencv-3.0[${PYTHON_USEDEP}]
+	)
 	pygame? (
 		>=dev-python/pygame-2.1.3[${PYTHON_USEDEP}]
 	)
@@ -98,8 +101,6 @@ BDEPEND+="
 		dev-python/pyright[${PYTHON_USEDEP}]
 	)
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 distutils_enable_tests "pytest"
 

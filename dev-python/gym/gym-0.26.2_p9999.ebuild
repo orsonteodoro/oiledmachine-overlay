@@ -9,18 +9,20 @@ PYTHON_COMPAT=( python3_10 )
 
 inherit distutils-r1
 
-if [[ "${PV}" =~ 9999 ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/openai/gym.git"
 	EGIT_BRANCH="master"
+	FALLBACK_COMMIT="dcd185843a62953e27c2d54dc8c2d647d604b635" # Jan 30, 2023
 	IUSE+=" fallback-commit"
 else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	SRC_URI="
 https://github.com/openai/gym/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
-
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="A toolkit for developing and comparing reinforcement learning \
 algorithms."
@@ -29,7 +31,7 @@ https://www.gymlibrary.dev/
 https://github.com/openai/gym
 "
 LICENSE="MIT"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" atari accept-rom-license box2d classic-control mujoco mujoco-py pygame toy_text test"
 REQUIRED_USE+="
@@ -101,13 +103,11 @@ BDEPEND+="
 		>=media-libs/opencv-3.0[${PYTHON_USEDEP},python]
 	)
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 distutils_enable_tests "pytest"
 
 unpack_live() {
-	use fallback-commit && EGIT_COMMIT="dcd185843a62953e27c2d54dc8c2d647d604b635"
+	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
 	git-r3_checkout
 	grep -E \
@@ -117,7 +117,7 @@ unpack_live() {
 }
 
 src_unpack() {
-	if [[ "${PV}" =~ 9999 ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 		unpack_live
 	else
 		unpack ${A}

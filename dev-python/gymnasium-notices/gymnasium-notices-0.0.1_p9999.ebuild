@@ -9,9 +9,10 @@ PYTHON_COMPAT=( python3_{8..11} )
 
 inherit distutils-r1
 
-if [[ "${PV}" =~ 9999 ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/Farama-Foundation/gymnasium-notices.git"
 	EGIT_BRANCH="main"
+	FALLBACK_COMMIT="77cf9f6a40dc10e81d3df32ba92f3554a4d5a24d" # Jan 22, 2023
 	inherit git-r3
 fi
 
@@ -39,7 +40,7 @@ RESTRICT="mirror"
 
 unpack_live() {
 	if use fallback-commit ; then
-		EGIT_COMMIT="77cf9f6a40dc10e81d3df32ba92f3554a4d5a24d"
+		EGIT_COMMIT="${FALLBACK_COMMIT}"
 	fi
 	git-r3_fetch
 	git-r3_checkout

@@ -9,24 +9,27 @@ PYTHON_COMPAT=( python3_10 ) # Based on CI distro
 
 inherit distutils-r1
 
-if [[ "${PV}" =~ 9999 ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/Farama-Foundation/gym-notices.git"
 	EGIT_BRANCH="main"
+	FALLBACK_COMMIT="cce76d2982209020d437f384b5f8421f5418e3a4" # Jan 6, 2023
 	inherit git-r3
 	IUSE+=" fallback-commit"
 else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	SRC_URI="
 https://github.com/Farama-Foundation/gym-notices/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="Gym Notices"
 HOMEPAGE="
 https://github.com/Farama-Foundation/gym-notices
 "
 LICENSE="MIT"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
@@ -38,11 +41,9 @@ BDEPEND+="
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 unpack_live() {
-	use fallback-commit && EGIT_COMMIT="cce76d2982209020d437f384b5f8421f5418e3a4"
+	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
 	git-r3_checkout
 	grep -e "version=\"$(ver_cut 1-3 ${PV})\"" "${S}/setup.py" \
@@ -50,7 +51,7 @@ unpack_live() {
 }
 
 src_unpack() {
-	if [[ "${PV}" =~ 9999 ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 		unpack_live
 	else
 		unpack ${A}
