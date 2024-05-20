@@ -62,7 +62,7 @@ DEPEND+="
 		>=dev-python/ale-py-0.8.0[${PYTHON_USEDEP}]
 	)
 	accept-rom-license? (
-		>=dev-python/autorom-0.4.2[${PYTHON_USEDEP}]
+		>=dev-python/autorom-accept-rom-license-0.4.2[${PYTHON_USEDEP}]
 	)
 	box2d? (
 		>=dev-lang/swig-4
