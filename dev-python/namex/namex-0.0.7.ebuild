@@ -11,12 +11,12 @@ PYTHON_COMPAT=( python3_{10..12} )
 
 inherit distutils-r1 pypi
 
-if [[ "${PV}" =~ 9999 ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
-	EGIT_REPO_URI="https://github.com/fchollet/namex.git"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_PN}-${PV}"
-	FALLBACK_COMMIT="4a8f74cb950b99bb108485c6f08adf1eb6dc4fa2"
+	FALLBACK_COMMIT="4a8f74cb950b99bb108485c6f08adf1eb6dc4fa2" # Feb 27, 2023
+	EGIT_REPO_URI="https://github.com/fchollet/namex.git"
 	IUSE+=" fallback-commit"
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
@@ -28,8 +28,8 @@ S="${WORKDIR}/${MY_PN}-${PV}"
 
 DESCRIPTION="Clean up the public namespace of your package!"
 HOMEPAGE="
-	https://pypi.org/project/namex
 	https://github.com/fchollet/namex
+	https://pypi.org/project/namex
 "
 LICENSE="
 	Apache-2.0
@@ -48,7 +48,7 @@ BDEPEND+="
 DOCS=( README.md )
 
 src_unpack() {
-	if [[ "${PV}" =~ 9999 ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
@@ -61,8 +61,8 @@ src_unpack() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
