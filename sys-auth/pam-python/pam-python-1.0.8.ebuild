@@ -7,17 +7,22 @@ EAPI=8
 # Verified working with Python 3.10
 # Verified working with Python 3.11
 
+# Still needs testing.  Not confirmed working.
+# It requires manual setup which has not been documented.
+
 PYTHON_COMPAT=( python3_{8..11} ) # Originally for 2.7
+
 inherit flag-o-matic python-single-r1 toolchain-funcs
+
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${PN}-${PV}"
+SRC_URI=" mirror://sourceforge/${PN}/${P}.tar.gz"
 
 DESCRIPTION="Enables PAM modules to be written in Python"
 HOMEPAGE="http://pam-python.sourceforge.net/"
 LICENSE="AGPL-3+"
 
-# Still needs testing.  Not confirmed working.
-# It requires manual setup which has not been documented.
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 REQUIRED_USE+="
@@ -27,25 +32,30 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	sys-libs/pam
 "
-DEPEND+=" ${RDEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}
-	dev-python/future
-	$(python_gen_cond_dep 'dev-python/setuptools[${PYTHON_USEDEP}]')
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	${PYTHON_DEPS}
+	$(python_gen_cond_dep '
+		dev-python/future[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
+	')
 	doc? (
-		$(python_gen_cond_dep 'dev-python/sphinx[${PYTHON_USEDEP}]')
+		$(python_gen_cond_dep '
+			dev-python/sphinx[${PYTHON_USEDEP}]
+		')
 	)
 	test? (
-		$(python_gen_cond_dep 'dev-python/pypam[${PYTHON_USEDEP}]')
+		$(python_gen_cond_dep '
+			dev-python/pypam[${PYTHON_USEDEP}]
+		')
 		dev-build/cmake
 		sys-devel/gcc
 	)
 "
 # The test modifies ${BROOT}/etc/pam.d.
-SRC_URI=" mirror://sourceforge/${PN}/${P}.tar.gz"
-S="${WORKDIR}/${PN}-${PV}"
-RESTRICT="mirror"
 DOCS=( agpl-3.0.txt ChangeLog.txt README.txt )
-
 PATCHES=(
 	"${FILESDIR}/${PN}-1.0.8-no-sudo.patch"
 	"${FILESDIR}/${PN}-1.0.8-compiler-agnostic.patch"

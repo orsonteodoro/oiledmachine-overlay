@@ -29,6 +29,9 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
+	$(python_gen_any_dep '
+		dev-python/future[${PYTHON_USEDEP}]
+	')
 	${CDEPEND}
 	>=dev-libs/elfutils-0.176[static-libs,${MULTILIB_USEDEP}]
 	>=dev-build/cmake-3.3
@@ -37,7 +40,6 @@ BDEPEND+="
 	>=sys-devel/m4-1.4.18
 	>=dev-build/make-4.2.1
 	>=virtual/libelf-3
-	dev-python/future
 "
 SRC_URI=""
 S="${WORKDIR}/${P}"

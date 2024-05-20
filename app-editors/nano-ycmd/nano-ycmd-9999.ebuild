@@ -84,14 +84,16 @@ gen_ycmd_rdepend() {
 	for s in ${YCMD_SLOTS[@]} ; do
 		echo "
 			ycmd-${s}? (
-				$(python_gen_cond_dep "dev-util/ycmd:${s}[\${PYTHON_USEDEP}]")
+				$(python_gen_cond_dep '
+					dev-util/ycmd:'${s}'[${PYTHON_USEDEP}]
+				')
 			)
 		"
 	done
 }
 RDEPEND+="
-	${PYTHON_DEPS}
 	$(gen_ycmd_rdepend)
+	${PYTHON_DEPS}
 	!static? (
 		${LIB_DEPEND//\[static-libs(+)]}
 	)
@@ -118,7 +120,9 @@ RDEPEND+="
 		>=dev-libs/openssl-3
 	)
 	ycm-generator? (
-		$(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]')
+		$(python_gen_cond_dep '
+			dev-util/ycm-generator[${PYTHON_USEDEP}]
+		')
 	)
 "
 DEPEND+="

@@ -99,7 +99,7 @@ PDEPEND+="
 		>=sci-libs/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP}]
 	)
 	test? (
-		>=dev-python/flax-0.5.3
+		>=dev-python/flax-0.5.3[${PYTHON_USEDEP}]
 	)
 "
 S="${WORKDIR}/${P}"

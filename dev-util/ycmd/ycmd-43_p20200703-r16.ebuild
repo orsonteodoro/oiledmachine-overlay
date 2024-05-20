@@ -443,7 +443,7 @@ DEPEND+="
 		>=dev-python/regex-2019.06.08[${PYTHON_USEDEP}]
 	)
 	system-pathtools? (
-		>=dev-python/pathtools-0.1.1_pre20161006
+		>=dev-python/pathtools-0.1.1_pre20161006[${PYTHON_USEDEP}]
 	)
 	system-requests? (
 		>=dev-python/requests-${REQUESTS_PV}[${PYTHON_USEDEP}]
@@ -461,7 +461,7 @@ DEPEND+="
 		>=dev-python/waitress-${WAITRESS_PV}[${PYTHON_USEDEP}]
 	)
 	system-watchdog? (
-		>=dev-python/watchdog-${WATCHDOG_PV}
+		>=dev-python/watchdog-${WATCHDOG_PV}[${PYTHON_USEDEP}]
 	)
 	typescript? (
 		${RDEPEND_NODEJS}

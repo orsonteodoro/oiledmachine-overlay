@@ -154,8 +154,8 @@ DEPEND="
 	>=dev-python/merge3-0.0.8[${PYTHON_USEDEP}]
 	>=dev-python/patiencediff-0.2.13[${PYTHON_USEDEP}]
 	>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]
-	>=dev-python/urllib3-1.24.1
-	>=dev-python/tzlocal-2.1
+	>=dev-python/urllib3-1.24.1[${PYTHON_USEDEP}]
+	>=dev-python/tzlocal-2.1[${PYTHON_USEDEP}]
 	fastimport? (
 		>=dev-python/fastimport-0.9.14[${PYTHON_USEDEP}]
 	)

@@ -16,14 +16,14 @@ HOMEPAGE="https://github.com/maxbachmann/Levenshtein"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc"
-DEPEND+="
+RDEPEND+="
 	(
-		<dev-python/RapidFuzz-4
-		>=dev-python/RapidFuzz-3.1.0
+		<dev-python/RapidFuzz-4[${PYTHON_USEDEP}]
+		>=dev-python/RapidFuzz-3.1.0[${PYTHON_USEDEP}]
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 # See CI
 BDEPEND+="

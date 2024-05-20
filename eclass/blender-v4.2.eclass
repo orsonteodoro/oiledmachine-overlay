@@ -511,7 +511,7 @@ RDEPEND+="
 		>=dev-python/requests-2.26.0[${PYTHON_USEDEP}]
 		>=dev-python/urllib3-1.26.7[${PYTHON_USEDEP}]
 		>=dev-python/zstandard-0.16.0[${PYTHON_USEDEP}]
-	')
+	' 'python*')
 	${CODECS}
 	${PYTHON_DEPS}
 	>=dev-cpp/pystring-1.1.3
@@ -906,7 +906,7 @@ BDEPEND+="
 		>=dev-python/cython-0.29.30[${PYTHON_USEDEP}]
 		>=dev-python/autopep8-1.6.0[${PYTHON_USEDEP}]
 		>=dev-python/pycodestyle-2.8.0[${PYTHON_USEDEP}]
-	')
+	' 'python*')
 	>=dev-build/cmake-3.10
 	>=dev-cpp/yaml-cpp-0.7.0
 	>=dev-util/meson-0.63.0
@@ -930,8 +930,10 @@ BDEPEND+="
 		)
 	)
 	doc? (
-		>=dev-python/sphinx-3.3.1[latex]
-		>=dev-python/sphinx_rtd_theme-0.5.0
+		$(python_gen_cond_dep '
+			>=dev-python/sphinx-3.3.1[${PYTHON_USEDEP},latex]
+			>=dev-python/sphinx_rtd_theme-0.5.0[${PYTHON_USEDEP}]
+		' 'python*')
 		app-text/doxygen[dot]
 		dev-texlive/texlive-bibtexextra
 		dev-texlive/texlive-fontsextra

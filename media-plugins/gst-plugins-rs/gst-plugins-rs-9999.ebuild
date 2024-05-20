@@ -729,7 +729,7 @@ declare -A GIT_CRATES=(
 	fi
 fi
 
-inherit flag-o-matic lcnr llvm meson multilib-minimal
+inherit flag-o-matic lcnr llvm meson multilib-minimal python-any-r1
 
 DESCRIPTION="Various GStreamer plugins written in Rust"
 HOMEPAGE="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs"
@@ -876,7 +876,9 @@ BDEPEND+="
 	>=sys-devel/binutils-2.40
 	>=sys-devel/gcc-12.2.0
 	doc? (
-		dev-python/hotdoc
+		$(python_gen_any_dep '
+			dev-python/hotdoc[${PYTHON_USEDEP}]
+		')
 	)
 	|| (
 		$(gen_virtual_rust_bdepend)
@@ -910,6 +912,7 @@ ewarn
 	if [[ "${MY_PV}" =~ "9999" ]] ; then
 		check_network_sandbox
 	fi
+	python-any-r1_pkg_setup
 }
 
 multilib_src_configure() {

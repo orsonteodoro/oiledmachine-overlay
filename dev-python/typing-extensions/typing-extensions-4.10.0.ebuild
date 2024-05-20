@@ -29,8 +29,8 @@ LICENSE="PSF-2"
 SLOT="0"
 IUSE+=" doc"
 BDEPEND="
-	>=dev-python/flit-core-3.4
-	<dev-python/flit-core-4
+	>=dev-python/flit-core-3.4[${PYTHON_USEDEP}]
+	<dev-python/flit-core-4[${PYTHON_USEDEP}]
 	doc? (
 		dev-python/alabaster[${PYTHON_USEDEP}]
 		dev-python/sphinx[${PYTHON_USEDEP}]

@@ -46,8 +46,10 @@ REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 RDEPEND="
+	$(python_gen_any_dep '
+		dev-python/barectf[${PYTHON_USEDEP}]
+	')
 	!dev-util/rocprofiler:0
-	dev-python/barectf
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}

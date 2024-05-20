@@ -27,9 +27,9 @@ KEYWORDS="
 IUSE="doc"
 BDEPEND="
 	>=dev-python/setuptools-38.3.0[${PYTHON_USEDEP}]
-	dev-python/wheel
+	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
-		dev-python/sphinx-rtd-theme
+		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
 	)
 "
 

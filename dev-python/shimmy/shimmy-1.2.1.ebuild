@@ -4,9 +4,22 @@
 
 EAPI=8
 
+# TODO:  package
+# sphinx-autobuild
+# sphinx_github_changelog
+
 DISTUTILS_USE_PEP517="setuptools"
+PETTINGZOO_PV="1.23"
 PYTHON_COMPAT=( python3_{10..11} )
+
 inherit distutils-r1
+
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
+SRC_URI="
+https://github.com/Farama-Foundation/Shimmy/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="An API conversion tool for popular external reinforcement \
 learning environments"
@@ -14,10 +27,9 @@ HOMEPAGE="
 https://github.com/Farama-Foundation/Shimmy
 "
 LICENSE="MIT"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" atari bsuite dm-control dm-control-multi-agent doc gym meltingpot openspiel test"
-PETTINGZOO_PV="1.23"
 RDEPEND+="
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 	>=dev-python/gymnasium-0.27.0[${PYTHON_USEDEP}]
@@ -52,10 +64,6 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
-# TODO:  package
-# sphinx-autobuild
-# sphinx_github_changelog
-
 BDEPEND+="
 	doc? (
 		>=dev-python/pygame-2.3.0[${PYTHON_USEDEP}]
@@ -73,12 +81,6 @@ BDEPEND+="
 		>=dev-python/pytest-7.1.3[${PYTHON_USEDEP}]
 	)
 "
-SRC_URI="
-https://github.com/Farama-Foundation/Shimmy/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 distutils_enable_sphinx "docs"
 distutils_enable_tests "pytest"

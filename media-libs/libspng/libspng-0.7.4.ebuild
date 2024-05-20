@@ -4,14 +4,17 @@
 
 EAPI=8
 
+# U22
+
 # GitHub is bugged?  The ZIP does not have a image so download manually
 BENCHMARK_IMAGES_COMMIT="2478ec174d74d66343449f850d22e0eabb0f01b0"
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
+PYTHON_COMPAT=( python3_{10..12} ) # Limited by distro for dev-python/mkdocs-material
 
-inherit flag-o-matic meson multilib-build toolchain-funcs uopts
+inherit flag-o-matic meson multilib-build python-any-r1 toolchain-funcs uopts
 
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
 S="${WORKDIR}/${P}"
@@ -65,8 +68,10 @@ BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	dev-build/meson-format-array
 	doc? (
-		dev-python/mkdocs
-		dev-python/mkdocs-material
+		$(python_gen_any_dep '
+			dev-python/mkdocs[${PYTHON_USEDEP}]
+			dev-python/mkdocs-material[${PYTHON_USEDEP}]
+		')
 	)
 "
 PATCHES=(
@@ -77,6 +82,7 @@ HTML_DOCS=( "${S}/site" )
 
 pkg_setup() {
 	uopts_setup
+	python-any-r1_pkg_setup
 }
 
 src_unpack() {

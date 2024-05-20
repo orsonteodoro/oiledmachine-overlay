@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..12} pypy )
+PYTHON_COMPAT=( python3_{8..12} pypy3 )
 
 inherit distutils-r1
 
@@ -38,7 +38,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
-	dev-python/wheel
+	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
 		dev-util/ruff[${PYTHON_USEDEP}]
 	)

@@ -27,9 +27,9 @@ sparc x86 ~amd64-linux ~x86-linux ~x64-macos
 IUSE="doc +native-extensions"
 BDEPEND="
 	>=dev-python/setuptools-38.3.0[${PYTHON_USEDEP}]
-	dev-python/wheel
+	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
-		dev-python/sphinx-rtd-theme
+		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
 	)
 "
 

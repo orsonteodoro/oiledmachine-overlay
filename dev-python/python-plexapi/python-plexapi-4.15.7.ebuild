@@ -24,7 +24,7 @@ IUSE+=" alert doc test"
 RDEPEND+="
 	>=dev-python/requests-2.28.2[${PYTHON_USEDEP}]
 	alert? (
-		>=dev-python/websocket-client-1.3.3
+		>=dev-python/websocket-client-1.3.3[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="

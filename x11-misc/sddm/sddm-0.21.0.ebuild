@@ -4,10 +4,11 @@
 
 EAPI=8
 
+PYTHON_COMPAT=( python3_{10,13} pypy3 ) # Limited by dev-python/docutils
 QT5_PV="5.15.3"
 QT6_PV="6.4.2"
 
-inherit cmake linux-info optfeature systemd tmpfiles
+inherit cmake linux-info optfeature python-any-r1 systemd tmpfiles
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
@@ -115,9 +116,11 @@ RDEPEND="
 	>=x11-base/xorg-server-21.1.4
 "
 BDEPEND="
+	$(python_gen_any_dep '
+		>=dev-python/docutils-0.17.1[${PYTHON_USEDEP}]
+	')
 	>=dev-build/cmake-3.4
 	>=kde-frameworks/extra-cmake-modules-5.92.0:5
-	>=dev-python/docutils-0.17.1
 	virtual/pkgconfig
 	qt5? (
 		>=dev-qt/linguist-tools-${QT5_PV}:5
@@ -145,6 +148,7 @@ PATCHES=(
 pkg_setup() {
 	local CONFIG_CHECK="~DRM"
 	use kernel_linux && linux-info_pkg_setup
+	python-any-r1_pkg_setup
 }
 
 gen_config() {

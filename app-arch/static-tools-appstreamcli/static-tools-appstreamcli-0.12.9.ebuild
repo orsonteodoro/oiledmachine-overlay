@@ -7,7 +7,10 @@ EAPI=7
 # You can build this in a musl container to get strictly musl libs.
 
 LMDB_PV="0.9.29"
+PYTHON_COMPAT=( python3_{10..13} pypy3 )
 S_LMDB="${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb"
+
+inherit python-r1
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 S="${WORKDIR}/appstream-${PV}"
@@ -35,7 +38,7 @@ RDEPEND+="
 	dev-libs/icu:=[static-libs]
 	dev-libs/libffi:=[static-libs]
 	dev-libs/libxml2
-	dev-python/pyyaml
+	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-util/gperf
 	sys-apps/util-linux:=[static-libs]
 "
@@ -44,11 +47,11 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-debug/strace
 	dev-build/autoconf
 	dev-build/automake
 	dev-build/libtool
 	dev-build/meson
+	dev-debug/strace
 	sys-apps/file
 	sys-apps/util-linux
 "
@@ -65,6 +68,10 @@ get_arch() {
 	elif use x86 ; then
 		echo "i686"
 	fi
+}
+
+pkg_setup() {
+	python_setup
 }
 
 src_compile() {

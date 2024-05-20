@@ -70,7 +70,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	>=dev-python/setuptools-61.0.0
+	>=dev-python/setuptools-61.0.0[${PYTHON_USEDEP}]
 	doc? (
 		dev-python/sphinx[${PYTHON_USEDEP}]
 		dev-python/sphinx-autobuild[${PYTHON_USEDEP}]

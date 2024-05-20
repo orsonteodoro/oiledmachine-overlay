@@ -46,7 +46,7 @@ DEPEND+="
 		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.11.1[${PYTHON_USEDEP}]
 	' python3_12)
-	>=dev-python/jaxlib-${PV}[cuda?]
+	>=dev-python/jaxlib-${PV}[${PYTHON_USEDEP},cuda?]
 	>=dev-python/ml_dtypes-0.2.0[${PYTHON_USEDEP}]
 	dev-python/opt-einsum[${PYTHON_USEDEP}]
 	australis? (

@@ -41,9 +41,11 @@ RDEPEND="
 	)
 	hashcatnode? (
 		>=app-crypt/hashcat-3[brain?]
-		dev-python/flask
-		dev-python/Flask-HTTPAuth
-		dev-python/peewee
+		$(python_gen_cond_dep '
+			dev-python/flask[${PYTHON_USEDEP}]
+			dev-python/Flask-HTTPAuth[${PYTHON_USEDEP}]
+			dev-python/peewee[${PYTHON_USEDEP}]
+		')
 	)
 	web-interface? (
 		>=app-crypt/hashcat-3[brain?]

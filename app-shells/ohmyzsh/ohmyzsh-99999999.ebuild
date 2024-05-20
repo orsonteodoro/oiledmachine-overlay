@@ -662,7 +662,40 @@ if [[ -z "${OMZ_MEDIA_PLAYER}" ]] ; then
 	)
 fi
 
-#	omz_plugins_django? ( dev-python/django )
+#	omz_plugins_django? (
+#		$(python_gen_any_dep '
+#			dev-python/django[${PYTHON_USEDEP}]
+#		')
+#)
+ruby_add_rdepend "
+	omz_plugins_bundler? (
+		dev-ruby/bundler
+	)
+	omz_plugins_capistrano? (
+		dev-ruby/capistrano
+	)
+	omz_plugins_chruby? (
+		dev-ruby/chruby
+	)
+	omz_plugins_gem? (
+		virtual/rubygems
+	)
+	omz_plugins_rake? (
+		dev-ruby/rake
+	)
+	omz_plugins_rake-fast? (
+		dev-ruby/rake
+	)
+	omz_plugins_rbenv? (
+		dev-ruby/rbenv
+	)
+	omz_plugins_rvm? (
+		dev-ruby/rvm
+	)
+	omz_plugins_thor? (
+		dev-ruby/thor
+	)
+"
 PLUGINS_RDEPEND="
 	omz_plugins_1password? (
 		>=app-misc/1password-cli-2
@@ -689,10 +722,14 @@ PLUGINS_RDEPEND="
 		app-shells/autojump
 	)
 	omz_plugins_autopep8? (
-		dev-python/autopep8
+		$(python_gen_any_dep '
+			dev-python/autopep8[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_aws? (
-		dev-python/awscli
+		$(python_gen_any_dep '
+			dev-python/awscli[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_azure? (
 		app-misc/jq
@@ -718,14 +755,8 @@ PLUGINS_RDEPEND="
 	omz_plugins_bower? (
 		dev-nodejs/bower
 	)
-	omz_plugins_bundler? (
-		dev-ruby/bundler
-	)
 	omz_plugins_cabal? (
 		dev-haskell/cabal
-	)
-	omz_plugins_capistrano? (
-		dev-ruby/capistrano
 	)
 	omz_plugins_cask? (
 		app-emacs/cask
@@ -734,16 +765,17 @@ PLUGINS_RDEPEND="
 		media-gfx/imagemagick[png]
 	)
 	omz_plugins_celery? (
-		dev-python/celery
-	)
-	omz_plugins_chruby? (
-		dev-ruby/chruby
+		$(python_gen_any_dep '
+			dev-python/celery[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_chucknorris? (
 		games-misc/fortune-mod
 	)
 	omz_plugins_colorize? (
-		dev-python/pygments
+		$(python_gen_any_dep '
+			dev-python/pygments[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_colored-man-pages? (
 		sys-apps/groff
@@ -751,7 +783,9 @@ PLUGINS_RDEPEND="
 	omz_plugins_common-aliases? (
 		${RDEPEND_COMMON_ALIASES[@]}
 		sys-process/procps
-		dev-python/pygments
+		$(python_gen_any_dep '
+			dev-python/pygments[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_composer? (
 		dev-php/composer
@@ -801,7 +835,9 @@ PLUGINS_RDEPEND="
 		app-misc/fasd
 	)
 	omz_plugins_fabric? (
-		dev-python/fabric
+		$(python_gen_any_dep '
+			dev-python/fabric[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_fbterm? (
 		app-i18n/fbterm
@@ -829,9 +865,6 @@ PLUGINS_RDEPEND="
 	)
 	omz_plugins_geeknote? (
 		app-misc/geeknote
-	)
-	omz_plugins_gem? (
-		virtual/rubygems
 	)
 	omz_plugins_github? (
 		dev-vcs/hub
@@ -877,13 +910,17 @@ PLUGINS_RDEPEND="
 		net-misc/httpie
 	)
 	omz_plugins_invoke? (
-		dev-python/invoke
+		$(python_gen_any_dep '
+			dev-python/invoke[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_ipfs? (
 		net-p2p/go-ipfs
 	)
 	omz_plugins_jira? (
-		dev-python/jira
+		$(python_gen_any_dep '
+			dev-python/jira[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_jfrog? (
 		dev-util/jfrog-cli
@@ -968,13 +1005,17 @@ PLUGINS_RDEPEND="
 		app-admin/pass
 	)
 	omz_plugins_paver? (
-		dev-python/paver
+		$(python_gen_any_dep '
+			dev-python/paver[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_percol? (
 		app-shells/percol
 	)
 	omz_plugins_pep8? (
-		dev-python/pep8
+		$(python_gen_any_dep '
+			dev-python/pep8[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_perl? (
 		dev-lang/perl
@@ -987,10 +1028,14 @@ PLUGINS_RDEPEND="
 		dev-php/phing
 	)
 	omz_plugins_pip? (
-		dev-python/pip
+		$(python_gen_any_dep '
+			dev-python/pip[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_pipenv? (
-		dev-python/pipenv
+		$(python_gen_any_dep '
+			dev-python/pipenv[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_pm2? (
 		sys-process/pm2
@@ -999,7 +1044,9 @@ PLUGINS_RDEPEND="
 		app-containers/podman
 	)
 	omz_plugins_poetry? (
-		dev-python/poetry
+		$(python_gen_any_dep '
+			dev-python/poetry[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_postgres? (
 		dev-db/postgresql
@@ -1011,26 +1058,19 @@ PLUGINS_RDEPEND="
 		dev-vcs/pre-commit
 	)
 	omz_plugins_pylint? (
-		dev-python/pylint
+		$(python_gen_any_dep '
+			dev-python/pylint[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_rails? (
 		|| (
 			dev-lang/ruby
-			dev-ruby/rails
-			dev-ruby/rake
+			dev-ruby/rails[ruby_targets_ruby31?,ruby_targets_ruby32?]
+			dev-ruby/rake[ruby_targets_ruby31?,ruby_targets_ruby32?]
 		)
-	)
-	omz_plugins_rake? (
-		dev-ruby/rake
-	)
-	omz_plugins_rake-fast? (
-		dev-ruby/rake
 	)
 	omz_plugins_rand-quote? (
 		net-misc/curl
-	)
-	omz_plugins_rbenv? (
-		dev-ruby/rbenv
 	)
 	omz_plugins_rbw? (
 		app-admin/rbw
@@ -1055,9 +1095,8 @@ PLUGINS_RDEPEND="
 	)
 	omz_plugins_ruby? (
 		dev-lang/ruby
-		dev-ruby/rubygems
+		dev-ruby/rubygems[ruby_targets_ruby31?,ruby_targets_ruby32?]
 	)
-	omz_plugins_rvm? ( dev-ruby/rvm )
 	omz_plugins_salt? (
 		app-admin/salt
 		dev-lang/python
@@ -1120,10 +1159,10 @@ PLUGINS_RDEPEND="
 		>=dev-vcs/subversion-1.6
 	)
 	omz_plugins_systemadmin? (
+		app-alternatives/awk
 		net-analyzer/tcpdump
 		sys-apps/net-tools
 		sys-process/procps
-		virtual/awk
 		|| (
 			sys-apps/iproute2
 			sys-apps/net-tools
@@ -1146,9 +1185,6 @@ PLUGINS_RDEPEND="
 	)
 	omz_plugins_thefuck? (
 		app-shells/thefuck
-	)
-	omz_plugins_thor? (
-		dev-ruby/thor
 	)
 	omz_plugins_tig? (
 		dev-vcs/tig
@@ -1175,7 +1211,9 @@ PLUGINS_RDEPEND="
 		app-editors/gvim
 	)
 	omz_plugins_virtualenvwrapper? (
-		dev-python/virtualenvwrapper
+		$(python_gen_any_dep '
+			dev-python/virtualenvwrapper[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_vscode? (
 		|| (
@@ -1192,7 +1230,9 @@ PLUGINS_RDEPEND="
 		net-misc/wakeonlan
 	)
 	omz_plugins_watson? (
-		dev-python/td-watson
+		$(python_gen_any_dep '
+			dev-python/td-watson[${PYTHON_USEDEP}]
+		')
 	)
 	omz_plugins_wp-cli? (
 		app-admin/wp-cli
@@ -1218,8 +1258,8 @@ RDEPEND+="
 	${PLUGINS_RDEPEND}
 	${PYTHON_DEPS}
 	${THEMES_RDEPEND}
+	app-alternatives/awk
 	sys-apps/grep
-	virtual/awk
 	x11-misc/xdg-utils
 	7zip? (
 		app-arch/p7zip

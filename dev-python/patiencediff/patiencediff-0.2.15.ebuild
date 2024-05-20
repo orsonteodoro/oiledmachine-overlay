@@ -7,7 +7,7 @@ EAPI=8
 # U 22.04
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..12} pypy )
+PYTHON_COMPAT=( python3_{10..12} pypy3 )
 
 inherit distutils-r1
 

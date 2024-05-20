@@ -439,7 +439,7 @@ DEPEND+="
 		>=dev-lang/typescript-4.7
 	)
 	system-watchdog? (
-		>=dev-python/watchdog-${WATCHDOG_PV}
+		>=dev-python/watchdog-${WATCHDOG_PV}[${PYTHON_USEDEP}]
 	)
 	typescript? (
 		${RDEPEND_NODEJS}

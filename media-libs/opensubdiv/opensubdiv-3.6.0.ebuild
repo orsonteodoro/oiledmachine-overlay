@@ -15,7 +15,7 @@ MY_PV=$(ver_rs "1-3" '_')
 ONETBB_SLOT="0"
 PYTHON_COMPAT=( python3_{8..11} )
 
-inherit cmake cuda flag-o-matic python-utils-r1 toolchain-funcs
+inherit cmake cuda flag-o-matic python-any-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 S="${WORKDIR}/OpenSubdiv-${MY_PV}"
@@ -111,8 +111,10 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.12
 	doc? (
+		$(python_gen_any_dep '
+			>=dev-python/docutils-0.9[${PYTHON_USEDEP}]
+		')
 		>=app-text/doxygen-1.8.4
-		>=dev-python/docutils-0.9
 	)
 	cuda? (
 		=sys-devel/gcc-11*[cxx]
@@ -123,6 +125,10 @@ PATCHES_=(
 	"${FILESDIR}/${PN}-3.6.0-cudaflags.patch"
 	"${FILESDIR}/${PN}-3.6.0-tbb-slot-select.patch"
 )
+
+pkg_setup() {
+	python-any-r1_pkg_setup
+}
 
 src_prepare() {
 	eapply ${PATCHES_[@]}

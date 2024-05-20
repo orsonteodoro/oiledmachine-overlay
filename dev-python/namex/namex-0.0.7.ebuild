@@ -43,7 +43,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools
+	dev-python/setuptools[${PYTHON_USEDEP}]
 "
 DOCS=( README.md )
 

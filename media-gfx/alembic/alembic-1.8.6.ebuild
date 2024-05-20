@@ -83,7 +83,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.13
 	python? (
 		$(python_gen_cond_dep '
-			dev-python/setuptools
+			dev-python/setuptools[${PYTHON_USEDEP}]
 		')
 	)
 "

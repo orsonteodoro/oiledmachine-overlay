@@ -19,8 +19,8 @@ IUSE+=" cpp doc numpy test"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 DEPEND+="
 	(
-		<dev-python/JaroWinkler-2.0.0
-		>=dev-python/JaroWinkler-1.1.0
+		<dev-python/JaroWinkler-2.0.0[${PYTHON_USEDEP}]
+		>=dev-python/JaroWinkler-1.1.0[${PYTHON_USEDEP}]
 	)
 	numpy? (
 		dev-python/numpy[${PYTHON_USEDEP}]

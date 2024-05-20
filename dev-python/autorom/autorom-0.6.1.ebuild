@@ -50,7 +50,7 @@ BDEPEND+="
 "
 PDEPEND+="
 	accept-rom-license? (
-		>=dev-python/autorom-accept-rom-license-${PV}:${SLOT}
+		>=dev-python/autorom-accept-rom-license-${PV}:${SLOT}[${PYTHON_USEDEP}]
 	)
 "
 

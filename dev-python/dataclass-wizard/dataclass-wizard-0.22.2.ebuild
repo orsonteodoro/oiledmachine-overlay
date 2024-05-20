@@ -37,10 +37,10 @@ DEPEND+="
 	>=dev-python/dm-tree-0.1.6[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.22.0[${PYTHON_USEDEP}]
 	timedelta? (
-		>=dev-python/pytimeparse-1.1.7
+		>=dev-python/pytimeparse-1.1.7[${PYTHON_USEDEP}]
 	)
 	yaml? (
-		>=dev-python/pyyaml-5.3
+		>=dev-python/pyyaml-5.3[${PYTHON_USEDEP}]
 	)
 "
 RDEPEND+="
