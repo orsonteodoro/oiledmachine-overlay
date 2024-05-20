@@ -242,7 +242,7 @@ einfo "Destination:   ${distdir}/${AUTOROM_FILE_NAME}"
 einfo
 einfo "You may download the tarball if it applies:"
 einfo
-einfo "I own a license to these Atari 2600 ROMs."
+einfo "I own a license to these Atari® 2600 ROMs."
 einfo "I agree to not distribute these ROMs and wish to proceed."
 einfo
 einfo "You may skip downloading by using the skip-roms USE flag."
