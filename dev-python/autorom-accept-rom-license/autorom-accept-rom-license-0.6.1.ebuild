@@ -285,6 +285,10 @@ python_install_all() {
 	distutils-r1_python_install_all
 	rm -rf $(find "${ED}" -name "__pycache__")
 
+	if use skip-roms ; then
+		return
+	fi
+
 	local f
 	for f in ${ROM_LIST[@]} ; do
 		local name="${f/.bin}"
