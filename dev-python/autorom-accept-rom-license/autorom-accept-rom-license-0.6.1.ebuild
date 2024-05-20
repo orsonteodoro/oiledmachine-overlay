@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# For download IDs/URI, see
+# https://github.com/Farama-Foundation/AutoROM/blob/v0.6.1/src/AutoROM.py#L146
+
 export AUTOROM_DOWNLOAD_METHOD="offline"
 ID1="61b22aefce4456920ba99f2c36906eda"
 ID2="00046ac3403768bfe45857610a3d333b8e35e026"
@@ -237,7 +240,7 @@ pkg_nofetch() {
 einfo
 einfo "You must download, rename, and move the file to:"
 einfo
-einfo "Donwload URI:  https://gist.githubusercontent.com/jjshoots/${ID1}/raw/${ID2}/Roms.tar.gz.b64"
+einfo "Download URI:  https://gist.githubusercontent.com/jjshoots/${ID1}/raw/${ID2}/Roms.tar.gz.b64"
 einfo "Destination:   ${distdir}/${AUTOROM_FILE_NAME}"
 einfo
 einfo "You may download the tarball if it applies:"
