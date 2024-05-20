@@ -163,9 +163,10 @@ gen_rom_iuse() {
 		echo "autorom_rom_${f/.bin}"
 	done
 }
+# We do not auto opt-in to downloading ROMs in this ebuild.
 IUSE+="
 $(gen_rom_iuse)
-skip-roms test
++skip-roms test
 "
 gen_rom_required_use1() {
 	local f
@@ -268,6 +269,7 @@ ewarn "You must manually add the ROM(s) in .bin format to:"
 ewarn
 ewarn "  /usr/lib/${EPYTHON}/site-packages/AutoROM/roms"
 ewarn
+		keepdir "/usr/lib/${EPYTHON}/site-packages/AutoROM/roms"
 	else
 		export AUTOROM_SKIP_ROMS="no"
 	fi

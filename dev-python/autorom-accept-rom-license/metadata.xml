@@ -10,4 +10,9 @@
     <remote-id type="github">Farama-Foundation/AutoROM</remote-id>
     <bugs-to>https://github.com/Farama-Foundation/AutoROM</bugs-to>
   </upstream>
+  <use>
+    <flag name="skip-roms">
+      Disable downloading and installing ROM tarball.
+    </flag>
+  </use>
 </pkgmetadata>
