@@ -10,6 +10,7 @@ EAPI=8
 export AUTOROM_DOWNLOAD_METHOD="offline"
 ID1="61b22aefce4456920ba99f2c36906eda"
 ID2="00046ac3403768bfe45857610a3d333b8e35e026"
+TARBALL_SHA1SUM="f31ebce83a2e17d845edb5a585722479c361811a"
 export AUTOROM_FILE_NAME="${PN}-roms-${ID1:0:7}-${ID2:0:7}.tar.gz.b64"
 PYTHON_COMPAT=( python3_10 ) # Upstream tested up to 3.10
 ROM_LIST=(
@@ -242,6 +243,14 @@ einfo "You must download, rename, and move the file to:"
 einfo
 einfo "Download URI:  https://gist.githubusercontent.com/jjshoots/${ID1}/raw/${ID2}/Roms.tar.gz.b64"
 einfo "Destination:   ${distdir}/${AUTOROM_FILE_NAME}"
+einfo "File sha1sum:  ${TARBALL_SHA1SUM}"
+einfo
+einfo "Files contained in Roms.tar.gz.b64:"
+einfo
+	local file_name
+	for file_name in ${ROM_LIST[@]} ; do
+einfo "${file_name}"
+	done
 einfo
 einfo "You may download the tarball if it applies:"
 einfo
