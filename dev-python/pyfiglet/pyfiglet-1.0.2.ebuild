@@ -11,7 +11,7 @@ EAPI=8
 MY_PV="1.0.2"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} pypy3 )
+PYTHON_COMPAT=( "python3_"{8..11} "pypy3" )
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
