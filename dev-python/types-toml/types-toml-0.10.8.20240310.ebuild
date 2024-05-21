@@ -5,15 +5,25 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
+
 inherit distutils-r1
 
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
+SRC_URI="
+mirror://pypi/${PN:0:1}/${PN}/${PN}-${PV}.tar.gz
+"
+
 DESCRIPTION="Typing stubs for toml"
-HOMEPAGE="https://github.com/python/typeshed"
+HOMEPAGE="
+	https://github.com/python/typeshed
+	https://pypi.org/project/types-toml/
+"
 LICENSE="
 	Apache-2.0
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 DEPEND+="
@@ -21,11 +31,9 @@ DEPEND+="
 RDEPEND+="
 	${DEPEND}
 "
-SRC_URI="
-mirror://pypi/${PN:0:1}/${PN}/${PN}-${PV}.tar.gz
+BDEPEND+="
+	dev-python/setuptools
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
-DOCS=( CHANGELOG.md )
+DOCS=( "CHANGELOG.md" )
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
