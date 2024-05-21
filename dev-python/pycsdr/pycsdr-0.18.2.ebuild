@@ -7,7 +7,7 @@ EAPI=8
 # D10
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} ) # D10 uses 3.7
 
 inherit distutils-r1
 
@@ -20,7 +20,7 @@ https://github.com/jketterl/pycsdr/archive/refs/tags/${PV}.tar.gz
 
 DESCRIPTION="Python bindings for the csdr library"
 HOMEPAGE="https://github.com/jketterl/pycsdr"
-LICENSE="GPL-3"
+LICENSE="GPL-3+"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
