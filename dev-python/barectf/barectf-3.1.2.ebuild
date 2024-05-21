@@ -50,6 +50,7 @@ BDEPEND+="
 	>=dev-python/pylint-2.13[${PYTHON_USEDEP}]
 	dev-python/flake8[${PYTHON_USEDEP}]
 	dev-python/mypy[${PYTHON_USEDEP}]
+	dev-python/poetry-core[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/pytest-6[${PYTHON_USEDEP}]
