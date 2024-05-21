@@ -4,43 +4,69 @@
 
 EAPI=8
 
+# TODO package:
+# sphinx-theme-builder
+# sphinx-design
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
-inherit distutils-r1 git-r3
+
+inherit distutils-r1
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+=" fallback-commit"
+	EGIT_BRANCH="main"
+	EGIT_COMMIT="HEAD"
+	EGIT_REPO_URI="https://github.com/Farama-Foundation/Celshast.git"
+	FALLBACK_COMMIT="c5909e4cd31057120d2955e67e7414a9a51e9601" # Dec 14, 2023
+	inherit git-r3
+else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	SRC_URI="FIXME"
+fi
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="A Sphinx documentation theme based on the Furo template"
 HOMEPAGE="https://github.com/Farama-Foundation/Celshast"
 LICENSE="
 	MIT
 "
-#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild is not tested.
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" fallback-commit test"
-DEPEND+="
-"
+IUSE+=" test"
 RDEPEND+="
-	${DEPEND}
+	(
+		>=dev-python/sphinx-6.0[${PYTHON_USEDEP}]
+		<dev-python/sphinx-8[${PYTHON_USEDEP}]
+	)
+	dev-python/beautifulsoup4[${PYTHON_USEDEP}]
+	dev-python/sphinx-basic-ng[${PYTHON_USEDEP}]
+	dev-python/pygments[${PYTHON_USEDEP}]
+	dev-python/matplotlib[${PYTHON_USEDEP}]
+"
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/myst-parser[${PYTHON_USEDEP}]
-	dev-python/sphinx[${PYTHON_USEDEP}]
-	dev-python/sphinx_design[${PYTHON_USEDEP}]
-	dev-python/sphinx-inline-tabs[${PYTHON_USEDEP}]
-	dev-python/furo[${PYTHON_USEDEP}]
+	>=dev-python/sphinx-theme-builder-0.2.0_alpha10[${PYTHON_USEDEP}]
+	doc? (
+		dev-python/furo[${PYTHON_USEDEP}]
+		dev-python/myst-parser[${PYTHON_USEDEP}]
+		dev-python/sphinx-design[${PYTHON_USEDEP}]
+		dev-python/sphinx-inline-tabs[${PYTHON_USEDEP}]
+		dev-python/sphinx-tabs[${PYTHON_USEDEP}]
+	)
 "
-SRC_URI="
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
-DOCS=( CHANGELOG.md docs/index.md README.md )
+DOCS=( "CHANGELOG.md" "docs/index.md" "README.md" )
 
 src_unpack() {
-	EGIT_REPO_URI="https://github.com/Farama-Foundation/Celshast.git"
-	EGIT_BRANCH="main"
-	EGIT_COMMIT="HEAD"
-	use fallback-commit && EGIT_COMMIT="d103808d9d864dd1d9f2eab7b99d12a79248f8b9"
-	git-r3_fetch
-	git-r3_checkout
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 distutils_enable_sphinx "docs"
