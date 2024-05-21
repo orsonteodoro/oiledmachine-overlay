@@ -2,13 +2,13 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Only for this ebuild on the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">maxbachmann/RapidFuzz</remote-id>
     <bugs-to>https://github.com/maxbachmann/RapidFuzz/issues</bugs-to>
+    <remote-id type="github">maxbachmann/RapidFuzz</remote-id>
   </upstream>
   <use>
     <flag name="cpp">Build as optimized</flag>
