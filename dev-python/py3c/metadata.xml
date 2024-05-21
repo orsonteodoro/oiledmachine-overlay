@@ -7,8 +7,9 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
+    <bugs-to>https://github.com/encukou/py3c/issues</bugs-to>
+    <changelog>https://github.com/encukou/py3c/blob/v1.4/doc/source/changelog.rst</changelog>
     <doc lang="en">https://py3c.readthedocs.io/en/latest/</doc>
     <remote-id type="github">encukou/py3c</remote-id>
-    <bugs-to>https://github.com/encukou/py3c/issues</bugs-to>
   </upstream>
 </pkgmetadata>

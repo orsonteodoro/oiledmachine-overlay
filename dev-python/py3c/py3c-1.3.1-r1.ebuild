@@ -5,16 +5,26 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} ) # Upstream tests up to 3.10
+
 inherit distutils-r1
+
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
+SRC_URI="
+https://github.com/encukou/py3c/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="A Python 2/3 compatibility layer for C extensions"
 HOMEPAGE="https://github.com/encukou/py3c"
 LICENSE="
 	MIT
-	doc? ( CC-BY-SA-3.0 )
+	doc? (
+		CC-BY-SA-3.0
+	)
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 DEPEND+="
@@ -24,6 +34,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	>=dev-python/setuptools-42.2[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
 		dev-python/sphinx[${PYTHON_USEDEP},latex]
 		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
@@ -32,12 +43,6 @@ BDEPEND+="
 		dev-python/tox[${PYTHON_USEDEP}]
 	)
 "
-SRC_URI="
-https://github.com/encukou/py3c/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 distutils_enable_sphinx "doc"
 
