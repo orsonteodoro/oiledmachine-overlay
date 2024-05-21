@@ -18,7 +18,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_PN}-${PV}"
 	EGIT_REPO_URI="https://github.com/aiortc/aioquic.git"
-	FALLBACK_COMMIT="0c383217db10e6168dc8d4c295d8a504aad5cde1" # Jan 6, 2024
+	FALLBACK_COMMIT="072eb4b61ec5713661fadb345ce93dcb2a507213" # Mar 12, 2024
 	inherit git-r3
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
