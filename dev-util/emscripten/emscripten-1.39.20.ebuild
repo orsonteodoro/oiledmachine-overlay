@@ -12,10 +12,11 @@ JAVA_SLOT=1.8
 LLVM_SLOT=14 # Upstream requires 12 for wasm and 6 for asmjs.
 LLVM_MAX_SLOT=${LLVM_SLOT}
 NODEJS_SLOT="4"
-PYTHON_COMPAT=( python3_{8..11} ) # emsdk lists 3.
+PYTHON_COMPAT=( "python3_"{8..11} ) # emsdk lists 3.7
 # See also
-# https://github.com/emscripten-core/emsdk/blob/1.39.20/emsdk#L11
 # https://github.com/emscripten-core/emsdk/blob/1.39.20/.circleci/config.yml#L24
+# https://github.com/emscripten-core/emsdk/blob/1.39.20/emsdk#L11
+# https://github.com/emscripten-core/emsdk/blob/1.39.20/scripts/update_python.py#L34
 # https://github.com/emscripten-core/emscripten/blob/1.39.20/third_party/websockify/setup.py
 # flake8 (3.7.8) - <= 3.7
 # websockify (0.8.0) - <= 3.4
@@ -128,7 +129,7 @@ IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs java test
 
-r32
+ebuild-revision-32
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}

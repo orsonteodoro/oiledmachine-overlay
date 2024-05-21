@@ -12,10 +12,11 @@ JAVA_SLOT=11
 LLVM_SLOT=16
 LLVM_MAX_SLOT=${LLVM_SLOT}
 NODEJS_SLOT="4"
-PYTHON_COMPAT=( python3_{8..11} ) # emsdk lists 3.9, 3.7.
+PYTHON_COMPAT=( "python3_"{8..11} ) # emsdk lists 3.9
 # See also
-# https://github.com/emscripten-core/emsdk/blob/3.1.30/emsdk#L11
 # https://github.com/emscripten-core/emsdk/blob/3.1.30/.circleci/config.yml#L24
+# https://github.com/emscripten-core/emsdk/blob/3.1.30/emsdk#L11
+# https://github.com/emscripten-core/emsdk/blob/3.1.30/scripts/update_python.py#L34
 # https://github.com/emscripten-core/emscripten/blob/3.1.30/requirements-dev.txt
 # flake8 (3.7.8) - <= 3.7
 # flake8 (5.0.4) - <= 3.10
@@ -129,7 +130,7 @@ IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs java test
 
-r3
+ebuild-revision-3
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
