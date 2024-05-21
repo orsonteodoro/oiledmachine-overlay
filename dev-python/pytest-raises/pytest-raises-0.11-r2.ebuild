@@ -4,33 +4,38 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTEST_PV="3.2.2"
+PYTHON_COMPAT=( "python3_"{8..11} )
+
 inherit distutils-r1
+
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
+SRC_URI="
+https://github.com/Lemmons/pytest-raises/archive/${PV}.tar.gz
+	-> ${P}.tar.gz"
 
 DESCRIPTION="An implementation of pytest.raises as a pytest.mark fixture "
 HOMEPAGE="https://github.com/Lemmons/pytest-raises"
 LICENSE="MIT"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 DEPEND+="
-	>=dev-python/pytest-3.2.2[${PYTHON_USEDEP}]
+	>=dev-python/pytest-${PYTEST_PV}[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	dev-python/pylint[${PYTHON_USEDEP}]
+	dev-python/setuptools[${PYTHON_USEDEP}]
 	test? (
-		dev-python/pytest[${PYTHON_USEDEP}]
+		>=dev-python/pytest-${PYTEST_PV}[${PYTHON_USEDEP}]
+		dev-python/codecov[${PYTHON_USEDEP}]
+		dev-python/pylint[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 	)
 "
-SRC_URI="
-https://github.com/Lemmons/pytest-raises/archive/${PV}.tar.gz
-	-> ${P}.tar.gz"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 distutils_enable_tests "pytest"
 

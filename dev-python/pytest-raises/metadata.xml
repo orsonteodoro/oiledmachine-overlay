@@ -7,9 +7,9 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
+    <bugs-to>https://github.com/Lemmons/pytest-raises/issues</bugs-to>
     <remote-id type="github">Lemmons/pytest-raises</remote-id>
     <remote-id type="pypi">pytest-raises</remote-id>
-    <bugs-to>https://github.com/Lemmons/pytest-raises/issues</bugs-to>
   </upstream>
 </pkgmetadata>
 
