@@ -33,12 +33,13 @@ RDEPEND+="
 "
 BDEPEND+="
 	>=dev-python/poetry-core-1.0[${PYTHON_USEDEP}]
-	>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
 	test? (
+		>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
+		>=dev-python/flake8-3.0[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 	)
 "
-DOCS=( README.md )
+DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.0-fix-install.patch"
 )
