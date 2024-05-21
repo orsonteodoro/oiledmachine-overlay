@@ -10,7 +10,7 @@ EAPI=8
 MY_P="google-auth-library-python-oauthlib-${PV}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1
 
@@ -53,9 +53,8 @@ BDEPEND="
 		)
 	)
 	test? (
-		>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
-		>=dev-python/flake8-6.1.0[${PYTHON_USEDEP}]
-		>=dev-python/isort-5.10.1[${PYTHON_USEDEP}]
+		>=dev-python/black-23.7.0[${PYTHON_USEDEP}]
+		>=dev-python/isort-5.11.0[${PYTHON_USEDEP}]
 		dev-python/asyncmock[${PYTHON_USEDEP}]
 		dev-python/click[${PYTHON_USEDEP}]
 		dev-python/coverage[${PYTHON_USEDEP}]
