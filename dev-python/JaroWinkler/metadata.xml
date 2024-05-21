@@ -7,8 +7,8 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">maxbachmann/JaroWinkler</remote-id>
     <bugs-to>https://github.com/maxbachmann/JaroWinkler/issues</bugs-to>
+    <remote-id type="github">maxbachmann/JaroWinkler</remote-id>
   </upstream>
   <use>
     <flag name="cpp">Build as optimized</flag>
