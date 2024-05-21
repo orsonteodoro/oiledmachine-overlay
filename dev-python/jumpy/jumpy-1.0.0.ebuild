@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="hatchling"
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 # Limited by jax
 
 inherit distutils-r1
@@ -19,6 +19,7 @@ https://github.com/Farama-Foundation/Jumpy/archive/refs/tags/${PV}.tar.gz
 
 DESCRIPTION="On-the-fly conversions between Jax and NumPy tensors"
 HOMEPAGE="
+https://farama.org/
 https://github.com/Farama-Foundation/Jumpy
 "
 LICENSE="Apache-2.0"
@@ -30,15 +31,15 @@ REQUIRED_USE="
 		jax
 	)
 "
-DEPEND+="
+RDEPEND+="
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 	jax? (
 		>=dev-python/jax-0.3.24[${PYTHON_USEDEP}]
 		>=dev-python/jaxlib-0.3.24[${PYTHON_USEDEP}]
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-python/hatchling-1.4.0[${PYTHON_USEDEP}]
