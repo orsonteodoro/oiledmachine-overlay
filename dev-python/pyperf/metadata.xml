@@ -7,8 +7,8 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">psf/pyperf</remote-id>
     <bugs-to>https://github.com/psf/pyperf/issues</bugs-to>
+    <remote-id type="github">psf/pyperf</remote-id>
   </upstream>
   <use>
     <flag name="psutil">

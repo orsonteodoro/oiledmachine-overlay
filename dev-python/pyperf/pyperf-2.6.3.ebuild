@@ -7,16 +7,16 @@ EAPI=8
 # U22
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit distutils-r1
 
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/psf/pyperf/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${P}"
 
 DESCRIPTION=""
 HOMEPAGE="
@@ -29,13 +29,13 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc psutil test"
-DEPEND+="
+RDEPEND+="
 	psutil? (
 		dev-python/psutil[${PYTHON_USEDEP}]
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-python/setuptools-61[${PYTHON_USEDEP}]
@@ -48,7 +48,7 @@ BDEPEND+="
 		dev-python/tox[${PYTHON_USEDEP}]
 	)
 "
-DOCS=( README.rst )
+DOCS=( "README.rst" )
 
 distutils_enable_sphinx "docs"
 
@@ -63,8 +63,8 @@ einfo "Running test for ${EPYTHON}"
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc COPYING
+	docinto "licenses"
+	dodoc "COPYING"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
