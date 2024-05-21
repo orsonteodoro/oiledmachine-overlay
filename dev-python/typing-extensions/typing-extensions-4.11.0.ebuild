@@ -3,8 +3,9 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517="flit"
 MY_P="${P/-/_}"
+
+DISTUTILS_USE_PEP517="flit"
 PYTHON_COMPAT=( python3_{10..12} )
 
 inherit distutils-r1
@@ -29,8 +30,10 @@ LICENSE="PSF-2"
 SLOT="0"
 IUSE+=" doc"
 BDEPEND="
-	>=dev-python/flit-core-3.4[${PYTHON_USEDEP}]
-	<dev-python/flit-core-4[${PYTHON_USEDEP}]
+	(
+		>=dev-python/flit-core-3.4[${PYTHON_USEDEP}]
+		<dev-python/flit-core-4[${PYTHON_USEDEP}]
+	)
 	doc? (
 		dev-python/alabaster[${PYTHON_USEDEP}]
 		dev-python/sphinx[${PYTHON_USEDEP}]
