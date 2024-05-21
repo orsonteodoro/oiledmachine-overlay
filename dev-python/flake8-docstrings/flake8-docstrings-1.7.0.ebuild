@@ -5,41 +5,50 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+FLAKE8_PV="3"
+PYTHON_COMPAT=( python3_{8..11} ) # CI only tests up to 3.10
+
 inherit distutils-r1
+
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
+SRC_URI="
+https://github.com/PyCQA/flake8-docstrings/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Integration of pydocstyle and flake8 for combined linting and reporting"
 HOMEPAGE="https://github.com/pycqa/flake8-docstrings"
 LICENSE="
 	MIT
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
-DEPEND+="
-	>=dev-python/flake8-3[${PYTHON_USEDEP}]
+IUSE+=" test"
+RDEPEND+="
+	>=dev-python/flake8-${FLAKE8_PV}[${PYTHON_USEDEP}]
 	>=dev-python/pydocstyle-2.1[${PYTHON_USEDEP}]
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
-	$(python_gen_any_dep 'dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]')
-	dev-python/tox[${PYTHON_USEDEP}]
+	$(python_gen_any_dep '
+		dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
+	')
+	>=dev-python/tox-1.6[${PYTHON_USEDEP}]
 	dev-python/twine[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
+	test? (
+		>=dev-python/flake8-${FLAKE8_PV}[${PYTHON_USEDEP}]
+	)
 "
-SRC_URI="
-https://github.com/PyCQA/flake8-docstrings/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
-DOCS=( HISTORY.rst README.rst )
+DOCS=( "HISTORY.rst" "README.rst" )
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
