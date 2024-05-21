@@ -9,18 +9,21 @@ PYTHON_COMPAT=( python3_{10..12} )
 
 inherit distutils-r1
 
-if [[ "${PV}" =~ 9999 ]] ; then
-	inherit git-r3
-	EGIT_REPO_URI="https://github.com/efficios/barectf.git"
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+=" fallback-commit"
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
-	IUSE+=" fallback-commit"
+	EGIT_REPO_URI="https://github.com/efficios/barectf.git"
+	FALLBACK_COMMIT="a3ccab79d8fc99c90403adcc33aa2e6ba4878b84" # May 16, 2023
+	inherit git-r3
 else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	SRC_URI="
 https://github.com/efficios/barectf/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="Generator of ANSI C tracers which output CTF data streams"
 HOMEPAGE="
@@ -30,7 +33,7 @@ https://github.com/efficios/barectf
 LICENSE="
 	MIT
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 DEPEND+="
@@ -47,18 +50,19 @@ BDEPEND+="
 	>=dev-python/pylint-2.13[${PYTHON_USEDEP}]
 	dev-python/flake8[${PYTHON_USEDEP}]
 	dev-python/mypy[${PYTHON_USEDEP}]
+	dev-python/setuptools[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/pytest-6[${PYTHON_USEDEP}]
 		>=dev-python/pytest-xdist-2[${PYTHON_USEDEP}]
 	)
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
-DOCS=( README.adoc )
+DOCS=( "README.adoc" )
+
+distutils_enable_tests "pytest"
 
 src_unpack() {
-	if [[ "${PV}" =~ 9999 ]] ; then
-		use fallback-commit && EGIT_COMMIT="a3ccab79d8fc99c90403adcc33aa2e6ba4878b84"
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 		grep -q -e "version = '${PV}'" "${S}/pyproject.toml" \
@@ -70,10 +74,8 @@ src_unpack() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
-
-distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
