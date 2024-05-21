@@ -10,9 +10,10 @@ MY_PV="${PV/_beta/b}"
 MY_PV="${PV/_rc/rc}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..12} pypy3 )
+PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
 PYTHON_REQ_USE="threads(+)"
 SITEFILE="50cython-gentoo.el"
+SLOT_MAJOR="${PV%%.*}"
 
 inherit distutils-r1 toolchain-funcs elisp-common
 
@@ -39,7 +40,6 @@ RESTRICT="
 		test
 	)
 "
-SLOT_MAJOR="$(ver_cut 1)"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 IUSE="emacs test"
 RDEPEND="
@@ -247,7 +247,12 @@ python_test() {
 }
 
 python_install_all() {
-	local DOCS=( "CHANGES.rst" "README.rst" "ToDo.txt" "USAGE.txt" )
+	local DOCS=(
+		"CHANGES.rst"
+		"README.rst"
+		"ToDo.txt"
+		"USAGE.txt"
+	)
 	distutils-r1_python_install_all
 
 	if use emacs; then

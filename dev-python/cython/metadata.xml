@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer>
-    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -25,8 +25,10 @@
 
   -->
   <upstream>
-    <remote-id type="pypi">Cython</remote-id>
+    <bugs-to>https://github.com/cython/cython/issues</bugs-to>
+    <changelog>https://github.com/cython/cython/blob/master/CHANGES.rst</changelog>
     <remote-id type="github">cython/cython</remote-id>
+    <remote-id type="pypi">Cython</remote-id>
   </upstream>
   <slots>
     <slot name="0">

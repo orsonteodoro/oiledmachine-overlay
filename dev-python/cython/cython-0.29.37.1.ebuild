@@ -7,9 +7,10 @@ EAPI=8
 # U 20.04
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..11} pypy3 )
+PYTHON_COMPAT=( "python3_"{10..11} "pypy3" )
 PYTHON_REQ_USE="threads(+)"
 SITEFILE="50cython-gentoo.el"
+SLOT_MAJOR="${PV%%.*}"
 
 inherit distutils-r1 toolchain-funcs elisp-common
 
@@ -35,7 +36,6 @@ RESTRICT="
 		test
 	)
 "
-SLOT_MAJOR="$(ver_cut 1)"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 IUSE="emacs test"
 RDEPEND="
@@ -53,9 +53,9 @@ BDEPEND="
 		dev-python/wheel[${PYTHON_USEDEP}]
 	' python3_{10..11})
 	doc? (
+		>=dev-python/jinja-3.0.3[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-issues-3.0.1[${PYTHON_USEDEP}]
-		>=dev-python/jinja-3.0.3[${PYTHON_USEDEP}]
 	)
 	test? (
 		$(python_gen_any_dep '
@@ -110,7 +110,12 @@ python_test() {
 }
 
 python_install_all() {
-	local DOCS=( "CHANGES.rst" "README.rst" "ToDo.txt" "USAGE.txt" )
+	local DOCS=(
+		"CHANGES.rst"
+		"README.rst"
+		"ToDo.txt"
+		"USAGE.txt"
+	)
 	distutils-r1_python_install_all
 
 	if use emacs; then
