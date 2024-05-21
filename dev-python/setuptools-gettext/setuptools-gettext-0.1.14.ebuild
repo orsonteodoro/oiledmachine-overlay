@@ -4,40 +4,46 @@
 
 EAPI=8
 
+# U22
+
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..12} )
+
 inherit distutils-r1
 
-DESCRIPTION=""
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
+SRC_URI="
+https://github.com/breezy-team/setuptools-gettext/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+
+DESCRIPTION="setuptools plugin for building mo files"
 HOMEPAGE="https://github.com/breezy-team/setuptools-gettext"
 LICENSE="
 	GPL-2+
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 # U 22.04
 RDEPEND+="
+	$(python_gen_cond_dep '
+		>=dev-python/tomli-1.2.1[${PYTHON_USEDEP}]
+	' python3_10)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-python/setuptools-61.0[${PYTHON_USEDEP}]
-	$(python_gen_cond_dep '
-		>=dev-python/tomli-1.2.1[${PYTHON_USEDEP}]
-	' python3_10)
 	test? (
 		>=dev-python/mypy-0.942[${PYTHON_USEDEP}]
+		dev-python/mypy[${PYTHON_USEDEP}]
 		dev-python/types-setuptools[${PYTHON_USEDEP}]
+		dev-util/ruff
 	)
 "
-SRC_URI="
-https://github.com/breezy-team/setuptools-gettext/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-TAGS:  orphaned
