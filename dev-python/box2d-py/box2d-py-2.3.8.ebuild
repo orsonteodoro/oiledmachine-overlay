@@ -9,6 +9,8 @@ PYTHON_COMPAT=( python3_10 ) # Upstream tested up to 3.7 for this release
 
 inherit distutils-r1
 
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/openai/box2d-py/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -19,7 +21,7 @@ HOMEPAGE="
 https://github.com/openai/box2d-py
 "
 LICENSE="ZLIB"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" examples test"
 DEPEND+="
@@ -39,8 +41,6 @@ DEPEND+="
 RDEPEND+="
 	${DEPEND}
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 src_test() {
 	run_test() {
@@ -53,9 +53,9 @@ einfo "Running test for ${EPYTHON}"
 src_install() {
 	distutils-r1_src_install
 	cd "${S}" || die
-	insinto /usr/share/${PN}/examples
-	doins -r examples/*
-	doins LICENSE
+	insinto "/usr/share/${PN}/examples"
+	doins -r "examples/"*
+	doins "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
