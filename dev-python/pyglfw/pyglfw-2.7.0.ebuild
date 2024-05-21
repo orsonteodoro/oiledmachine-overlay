@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# For native glfw version requirement, see
+# https://github.com/FlorianRhiem/pyGLFW/blob/v2.7.0/.gitlab-ci.yml#L2
+
 MY_PN="pyGLFW"
 
 DISTUTILS_USE_PEP517="setuptools"
