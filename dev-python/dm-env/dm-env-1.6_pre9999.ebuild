@@ -12,24 +12,27 @@ PYTHON_COMPAT=( python3_10 )
 inherit distutils-r1
 
 if [[ "${PV}" =~ 9999 ]] ; then
-	inherit git-r3
+	IUSE+=" fallback-commit"
 	EGIT_REPO_URI="https://github.com/deepmind/dm_env.git"
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_PN}-${PV}"
-	IUSE+=" fallback-commit"
+	FALLBACK_COMMIT="91b46797fea731f80eab8cd2c8352a0674141d89" # Dec 22, 2022
+	inherit git-r3
 else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	SRC_URI="
 https://github.com/deepmind/dm_env/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
+S="${WORKDIR}/${MY_PN}-${PV}"
 
 DESCRIPTION="A Python interface for reinforcement learning environments"
 HOMEPAGE="https://github.com/deepmind/dm_env"
 LICENSE="
 	Apache-2.0
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 DEPEND+="
@@ -45,13 +48,11 @@ BDEPEND+="
 		>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]
 	)
 "
-S="${WORKDIR}/${MY_PN}-${PV}"
-RESTRICT="mirror"
-DOCS=( CHANGELOG.md docs/index.md README.md )
+DOCS=( "CHANGELOG.md" "docs/index.md" "README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ 9999 ]] ; then
-		use fallback-commit && EGIT_COMMIT="91b46797fea731f80eab8cd2c8352a0674141d89"
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 		grep -q -e "__version__ = '1.6'" "${S}/dm_env/_metadata.py" \
