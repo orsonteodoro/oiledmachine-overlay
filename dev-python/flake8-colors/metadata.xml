@@ -7,7 +7,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">and3rson/flake8-colors</remote-id>
     <bugs-to>https://github.com/and3rson/flake8-colors/issues</bugs-to>
+    <remote-id type="github">and3rson/flake8-colors</remote-id>
   </upstream>
 </pkgmetadata>
