@@ -6,16 +6,27 @@ EAPI=8
 
 MY_PN="tree"
 
+ABSEIL_CPP_PV="20210324.2"
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit distutils-r1
+
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${MY_PN}-${PV}"
+SRC_URI="
+https://github.com/deepmind/tree/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/abseil/abseil-cpp/archive/refs/tags/${ABSEIL_CPP_PV}.tar.gz
+	-> abseil-cpp-${ABSEIL_CPP_PV}.tar.gz
+"
 
 DESCRIPTION="tree is a library for working with nested data structures"
 HOMEPAGE="https://github.com/deepmind/tree"
 LICENSE="
 	Apache-2.0
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 DEPEND+="
@@ -36,19 +47,12 @@ BDEPEND+="
 		>=dev-python/wrapt-1.11.2[${PYTHON_USEDEP}]
 	)
 "
-ABSEIL_CPP_PV="20210324.2"
-SRC_URI="
-https://github.com/deepmind/tree/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
-https://github.com/abseil/abseil-cpp/archive/refs/tags/${ABSEIL_CPP_PV}.tar.gz
-	-> abseil-cpp-${ABSEIL_CPP_PV}.tar.gz
-"
-S="${WORKDIR}/${MY_PN}-${PV}"
-RESTRICT="mirror"
-DOCS=( README.md )
+DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-0.1.8-no-download.patch"
 )
+
+distutils_enable_sphinx "docs"
 
 src_unpack() {
 	export MAKEOPTS="-j1"
@@ -60,7 +64,5 @@ src_install() {
 	docinto licenses
 	dodoc LICENSE
 }
-
-distutils_enable_sphinx "docs"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
