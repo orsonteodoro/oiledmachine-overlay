@@ -5,38 +5,47 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..12} pypy3 )
+
 inherit distutils-r1
 
-DESCRIPTION="Naming Convention checker for Python"
-HOMEPAGE="
-http://pypi.python.org/pypi/pep8-naming
-https://github.com/PyCQA/pep8-naming
-"
-LICENSE="
-	MIT
-"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test"
-DEPEND+="
-	dev-python/flake8[${PYTHON_USEDEP}]
-"
-RDEPEND+="
-	${DEPEND}
-"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/PyCQA/pep8-naming/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${P}"
+
+DESCRIPTION="Naming Convention checker for Python"
+HOMEPAGE="
+https://github.com/PyCQA/pep8-naming
+https://pypi.python.org/pypi/pep8-naming
+"
+LICENSE="
+	MIT
+"
 RESTRICT="mirror"
-DOCS=( CHANGELOG.rst README.rst )
+SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+=" test"
+RDEPEND+="
+	>=dev-python/flake8-5.0.0[${PYTHON_USEDEP}]
+"
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
+	test? (
+		>=dev-python/twine-1.4.0[${PYTHON_USEDEP}]
+	)
+"
+DOCS=( "CHANGELOG.rst" "README.rst" )
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 src_test() {
