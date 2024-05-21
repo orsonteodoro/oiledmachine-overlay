@@ -9,20 +9,20 @@ EAPI=8
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	inherit git-r3
+	IUSE+=" fallback-commit"
 	EGIT_REPO_URI="https://github.com/jax-ml/ml_dtypes.git"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_PN}-${PV}"
 	FALLBACK_COMMIT="d5fdadcbb7c8fb95dcd6f8bad41fc198d4e21b73" # Jan 3, 2024
-	IUSE+=" fallback-commit"
+	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	EGIT_EIGEN_COMMIT="7bf2968fed5f246c0589e1111004cb420fcd7c71" # Mar 7, 2023
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	SRC_URI="
 https://github.com/jax-ml/ml_dtypes/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -56,8 +56,8 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	>=dev-python/setuptools-68.1.0[${PYTHON_USEDEP}]
 	>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-68.1.0[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/pylint-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]
@@ -79,10 +79,12 @@ src_unpack() {
 		unpack ${A}
 		rm -rf "${S}/eigen"
 		rm -rf "${S}/third_party/eigen"
-		ln -s "${WORKDIR}/eigen-${EGIT_EIGEN_COMMIT}" \
+		ln -s \
+			"${WORKDIR}/eigen-${EGIT_EIGEN_COMMIT}" \
 			"${S}/eigen" \
 			|| die
-		ln -s "${WORKDIR}/eigen-${EGIT_EIGEN_COMMIT}" \
+		ln -s \
+			"${WORKDIR}/eigen-${EGIT_EIGEN_COMMIT}" \
 			"${S}/third_party/eigen" \
 			|| die
 		cd "${WORKDIR}/eigen-${EGIT_EIGEN_COMMIT}" || die
@@ -92,8 +94,8 @@ src_unpack() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE LICENSE.eigen
+	docinto "licenses"
+	dodoc "LICENSE" "LICENSE.eigen"
 }
 
 distutils_enable_tests "pytest"
