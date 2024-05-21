@@ -7,10 +7,22 @@ EAPI=8
 # https://github.com/grpc/grpc/blob/master/doc/g_stands_for.md
 # https://grpc.io/docs/what-is-grpc/faq/#how-long-are-grpc-releases-supported-for
 
+# For supported java versions, see
+# https://github.com/grpc/grpc-java/blob/v1.62.2/.github/workflows/testing.yml#L20
+
+# For supported python versions, see
+# https://github.com/grpc/grpc/blob/v1.62.2/setup.py#L100
+
+# For supported ruby versions, see
+# https://github.com/grpc/grpc/blob/v1.62.2/Rakefile#L147
+
 MY_PV="${PV//_pre/-pre}"
 OPENCENSUS_PROTO_PV="0.3.0"
+PYTHON_COMPAT=( python3_{10..12} )
+RUBY_OPTIONAL="yes"
+USE_RUBY="ruby31 ruby32 ruby33"
 
-inherit cmake multilib-minimal
+inherit cmake multilib-minimal python-r1 ruby-ng
 
 KEYWORDS="~amd64 ~ppc64 ~x86"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -59,6 +71,11 @@ cxx doc examples test
 
 ebuild-revision-3
 "
+REQUIRED_USE+="
+	python? (
+		${PYTHON_REQUIRED_USE}
+	)
+"
 RESTRICT="test"
 SLOT_MAJ="0"
 SLOT="${SLOT_MAJ}/39.162" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
@@ -92,16 +109,36 @@ PDEPEND_DISABLE="
 PDEPEND+="
 	java? (
 		~dev-java/grpc-java-${PV}
+		|| (
+			(
+				virtual/jdk:11
+				virtual/jre:11
+			)
+			(
+				virtual/jdk:1.8
+				virtual/jre:1.8
+			)
+		)
 	)
 	php? (
 		~dev-php/grpc-${PV}
 	)
 	python? (
-		~dev-python/grpcio-${PV}
+		~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
 	)
 	ruby? (
-		>=dev-lang/ruby-2
-		~dev-ruby/grpc-${PV}
+		ruby_targets_ruby31? (
+			dev-lang/ruby:3.1
+			~dev-ruby/grpc-${PV}[ruby_targets_ruby31?]
+		)
+		ruby_targets_ruby32? (
+			dev-lang/ruby:3.2
+			~dev-ruby/grpc-${PV}[ruby_targets_ruby32?]
+		)
+		ruby_targets_ruby33? (
+			dev-lang/ruby:3.3
+			~dev-ruby/grpc-${PV}[ruby_targets_ruby33?]
+		)
 	)
 "
 DOCS=( AUTHORS CONCEPTS.md README.md TROUBLESHOOTING.md doc/. )
