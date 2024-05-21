@@ -7,14 +7,21 @@ EAPI=8
 # U 22.04
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..12} pypy3 )
+PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
 
 inherit distutils-r1
+
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
+SRC_URI="
+https://github.com/breezy-team/patiencediff/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Patiencediff implementation"
 HOMEPAGE="https://github.com/breezy-team/patiencediff"
 LICENSE="GPL-2+"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 RDEPEND+="
@@ -30,12 +37,6 @@ BDEPEND+="
 		>=dev-util/ruff-0.4.3
 	)
 "
-SRC_URI="
-https://github.com/breezy-team/patiencediff/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 src_test() {
 	run_test() {
