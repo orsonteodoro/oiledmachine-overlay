@@ -7,7 +7,8 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">python/typeshed</remote-id>
     <bugs-to>https://github.com/python/typeshed/issues</bugs-to>
+    <changelog>https://github.com/typeshed-internal/stub_uploader/blob/main/data/changelogs/aiofiles.md</changelog>
+    <remote-id type="github">python/typeshed</remote-id>
   </upstream>
 </pkgmetadata>
