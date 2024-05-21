@@ -7,12 +7,17 @@ EAPI=8
 # https://github.com/emscripten-core/emscripten/blob/1.39.20/tools/settings_template.py
 
 # TC = toolchain
-BINARYEN_SLOT=93 # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
-JAVA_SLOT=1.8
-LLVM_SLOT=14 # Upstream requires 12 for wasm and 6 for asmjs.
-LLVM_MAX_SLOT=${LLVM_SLOT}
+BINARYEN_SLOT="93" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
+CLOSURE_COMPILER_SLOT="0"
+DEST_FILENAME="${P}.tar.gz"
+EMSCRIPTEN_CONFIG_VER="2.0.26"
+INSTALL_PATH="/usr/share/"
+JAVA_SLOT="1.8"
+LLVM_SLOT="14" # Upstream requires 12 for wasm and 6 for asmjs.
+LLVM_MAX_SLOT="${LLVM_SLOT}"
 NODEJS_SLOT="4"
 PYTHON_COMPAT=( "python3_"{8..11} ) # emsdk lists 3.7
+TEST_PATH="${WORKDIR}/test/"
 # See also
 # https://github.com/emscripten-core/emsdk/blob/1.39.20/.circleci/config.yml#L24
 # https://github.com/emscripten-core/emsdk/blob/1.39.20/emsdk#L11
@@ -22,6 +27,9 @@ PYTHON_COMPAT=( "python3_"{8..11} ) # emsdk lists 3.7
 # websockify (0.8.0) - <= 3.4
 
 inherit flag-o-matic java-pkg-opt-2 llvm python-single-r1 toolchain-funcs
+
+KEYWORDS="~amd64 ~x86"
+SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${DEST_FILENAME}"
 
 DESCRIPTION="LLVM-to-JavaScript Compiler"
 HOMEPAGE="http://emscripten.org/"
@@ -122,9 +130,8 @@ LICENSE="
 #   system/include/GL/gl.h -- all-rights-reserved MIT
 #   system/lib/libcxx/src/ryu/f2s.cpp -- Apache-2.0-with-LLVM-exceptions, Boost-1.0
 #
-KEYWORDS="~amd64 ~x86"
+RESTRICT="mirror"
 SLOT="${LLVM_SLOT}-$(ver_cut 1-2 ${PV})"
-CLOSURE_COMPILER_SLOT="0"
 IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs java test
@@ -198,16 +205,10 @@ BDEPEND+="
 	virtual/jdk:${JAVA_SLOT}
 	>=dev-build/cmake-3.4.3
 "
-FN_DEST="${P}.tar.gz"
-SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
-RESTRICT="mirror"
-DEST="/usr/share/"
-TEST="${WORKDIR}/test/"
 _PATCHES=(
 	"${FILESDIR}/${PN}-1.39.20-set-wrappers-path.patch"
 	"${FILESDIR}/${PN}-1.40.1-78a5618.patch"
 )
-EMSCRIPTEN_CONFIG_V="2.0.26"
 
 pkg_setup() {
 	java-pkg-opt-2_pkg_setup
@@ -220,7 +221,7 @@ eerror
 			die
 		fi
 	fi
-	use java && java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
+	use java && java-pkg_ensure-vm-version-eq "${JAVA_SLOT}"
 	python-single-r1_pkg_setup
 	llvm_pkg_setup
 	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
@@ -279,19 +280,19 @@ src_prepare() {
 }
 
 src_configure() {
-	:;
+	:
 }
 
 src_compile() {
-	:;
+	:
 }
 
 gen_files() {
-	mkdir "${TEST}" || die "Could not create test directory!"
-	prepare_file "${t}" "${TEST}" "99emscripten"
-	prepare_file "${t}" "${TEST}" "emscripten.config.${EMSCRIPTEN_CONFIG_V}"
-	mv "${TEST}/emscripten.config"{.${EMSCRIPTEN_CONFIG_V},} || die
-	source "${TEST}/99emscripten"
+	mkdir "${TEST_PATH}" || die "Could not create test directory!"
+	prepare_file "${t}" "${TEST_PATH}" "99emscripten"
+	prepare_file "${t}" "${TEST_PATH}" "emscripten.config.${EMSCRIPTEN_CONFIG_VER}"
+	mv "${TEST_PATH}/emscripten.config"{.${EMSCRIPTEN_CONFIG_VER},} || die
+	source "${TEST_PATH}/99emscripten"
 }
 
 src_test() {
@@ -302,12 +303,12 @@ src_test() {
 		die "EMCC_WASM_BACKEND should be 1 with wasm"
 	fi
 	if use test ; then
-		cp "${FILESDIR}/hello_world.cpp" "${TEST}" \
+		cp "${FILESDIR}/hello_world.cpp" "${TEST_PATH}" \
 			|| die "Could not copy example file"
 		sed -i -e "/^EMSCRIPTEN_ROOT/s|/usr/share/|${S}|" \
-			"${TEST}/emscripten.config" \
+			"${TEST_PATH}/emscripten.config" \
 			|| die "Could not adjust path for testing"
-		export EM_CONFIG="${TEST}/emscripten.config" \
+		export EM_CONFIG="${TEST_PATH}/emscripten.config" \
 			|| die "Could not export variable"
 		local cc_cmd
 		if use closure_compiler_java ; then
@@ -322,19 +323,19 @@ src_test() {
 		BINARYEN="${BROOT}/usr/$(get_libdir)/binaryen/${BINARYEN_SLOT}" \
 		CLOSURE_COMPILER="${cc_cmd}" \
 		LLVM_ROOT="${EMSDK_LLVM_ROOT}" \
-		../"${P}/emcc" "${TEST}/hello_world.cpp" \
-			-o "${TEST}/hello_world.js" || \
+		../"${P}/emcc" "${TEST_PATH}/hello_world.cpp" \
+			-o "${TEST_PATH}/hello_world.js" || \
 			die "Error during executing emcc!"
-		test -f "${TEST}/hello_world.js" \
-			|| die "Could not find '${TEST}/hello_world.js'"
-		OUT=$("${BROOT}/usr/bin/node" "${TEST}/hello_world.js") || \
+		test -f "${TEST_PATH}/hello_world.js" \
+			|| die "Could not find '${TEST_PATH}/hello_world.js'"
+		OUT=$("${BROOT}/usr/bin/node" "${TEST_PATH}/hello_world.js") || \
 			die "Could not execute /usr/bin/node"
 		EXP=$(echo -e -n 'Hello World!\n') \
 			|| die "Could not create expected string"
 		if [ "${OUT}" != "${EXP}" ]; then
 			die "Expected '${EXP}' but got '${OUT}'!"
 		fi
-		rm -r "${TEST}" || die "Could not clean-up '${TEST}'"
+		rm -r "${TEST_PATH}" || die "Could not clean-up '${TEST_PATH}'"
 		rm -r "${HOME}/.emscripten_cache" \
 			|| die "Could not clean up \${HOME}/.emscripten_cache"
 	fi
@@ -342,7 +343,7 @@ src_test() {
 
 # For eselect-emscripten
 gen_metadata() {
-cat <<EOF > "${ED}/${DEST}/${P}/eselect.metadata" || die
+cat <<EOF > "${ED}/${INSTALL_PATH}/${P}/eselect.metadata" || die
 PV=${PV}
 BINARYEN_SLOT=${BINARYEN_SLOT}
 LLVM_SLOT=${LLVM_SLOT}
@@ -352,7 +353,7 @@ EOF
 }
 
 src_install() {
-	dodir "${DEST}/${P}"
+	dodir "${INSTALL_PATH}/${P}"
 	# See tools/install.py
 	find "${S}" \
 	\( \
@@ -363,12 +364,15 @@ src_install() {
 		-o -name "cache" \
 		-o -name "cache.lock" \
 		-o -name "*.pyc" \
-		-o \( -name ".*" -not -name ".bin" \) \
+		-o \( \
+			     -name ".*" \
+			-not -name ".bin" \
+		   \) \
 		-o -name "__pycache__" \
 	\) \
 		-exec rm -vrf "{}" \;
 	#	-o -name "node_modules" was included but removed for closure-compiler
-	cp -R "${S}/" "${D}/${DEST}" || die "Could not install files"
+	cp -R "${S}/" "${D}/${INSTALL_PATH}" || die "Could not install files"
 	gen_metadata
 }
 
