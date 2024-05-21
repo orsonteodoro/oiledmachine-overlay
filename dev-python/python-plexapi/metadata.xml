@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -15,7 +15,7 @@
     Unofficial Python bindings for the Plex API.
   </longdescription>
   <upstream>
-    <remote-id type="github">pkkid/python-plexapi</remote-id>
     <bugs-to>https://github.com/pkkid/python-plexapi/issues</bugs-to>
+    <remote-id type="github">pkkid/python-plexapi</remote-id>
   </upstream>
 </pkgmetadata>

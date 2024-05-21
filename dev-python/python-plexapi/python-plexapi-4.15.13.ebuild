@@ -3,21 +3,23 @@
 
 EAPI=8
 
+# U22
+
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..11} ) # CI only tests 3.8
 
 inherit distutils-r1
 
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/pkkid/python-plexapi/archive/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${P}"
 
 DESCRIPTION="Python bindings for the Plex API."
 HOMEPAGE="https://github.com/pkkid/python-plexapi"
 LICENSE="BSD"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" alert doc test"
@@ -40,17 +42,18 @@ BDEPEND+="
 	)
 	test? (
 		<dev-python/pytest-mock-3.12.0[${PYTHON_USEDEP}]
-		>=dev-python/coveralls-3.3.1[${PYTHON_USEDEP}]
-		>=dev-python/flake8-6.1.0[${PYTHON_USEDEP}]
-		>=dev-python/pillow-10.1.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-7.4.3[${PYTHON_USEDEP}]
+		>=dev-python/coveralls-4.0.1[${PYTHON_USEDEP}]
+		>=dev-python/flake8-7.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pillow-10.3.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-8.2.3[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cache-1.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-cov-5.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-mock-3.14.0[${PYTHON_USEDEP}]
 		>=dev-python/recommonmark-0.7.1[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
-		>=dev-python/requests-mock-1.11.0[${PYTHON_USEDEP}]
-		>=dev-python/tqdm-4.66.1[${PYTHON_USEDEP}]
-		>=dev-python/websocket-client-1.7.0[${PYTHON_USEDEP}]
+		>=dev-python/requests-mock-1.12.1[${PYTHON_USEDEP}]
+		>=dev-python/tqdm-4.66.4[${PYTHON_USEDEP}]
+		>=dev-python/websocket-client-1.8.0[${PYTHON_USEDEP}]
 	)
 "
 
