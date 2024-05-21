@@ -11,12 +11,15 @@ PYTHON_COMPAT=( python3_{10..12} )
 
 inherit distutils-r1
 
-if [[ "${PV}" =~ 9999 || 1 ]] ; then
-	inherit git-r3
+PROPERTIES="live"
+if [[ "${PV}" =~ "9999" || 1 ]] ; then
+# Enter always because
+# git metadata is always required.
 	EGIT_REPO_URI="https://github.com/aiortc/pylsqpack.git"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_PN}-${PV}"
-#	IUSE+=" fallback-commit"
+	EGIT_COMMIT="8d6acefcfdd1d4feebc2c0653f51407ecc577263"
+	inherit git-r3
 else
 	SRC_URI="
 https://github.com/aiortc/pylsqpack/archive/refs/tags/${PV}.tar.gz
@@ -51,13 +54,11 @@ BDEPEND+="
 "
 S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
-DOCS=( docs/index.rst README.rst )
+DOCS=( "docs/index.rst" "README.rst" )
 
 src_unpack() {
-# git metadata required I think.
-	if [[ "${PV}" =~ 9999 || 1 ]] ; then
-#		use fallback-commit && EGIT_COMMIT="8d6acefcfdd1d4feebc2c0653f51407ecc577263"
-		EGIT_COMMIT="8d6acefcfdd1d4feebc2c0653f51407ecc577263"
+	if [[ "${PV}" =~ "9999" || 1 ]] ; then
+# git metadata is always required.
 		git-r3_fetch
 		git-r3_checkout
 		grep -q -e "__version__ = \"${PV}\"" "${S}/src/pylsqpack/__init__.py" \
@@ -69,8 +70,8 @@ src_unpack() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 distutils_enable_tests "unittest"
