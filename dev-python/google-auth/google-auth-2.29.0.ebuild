@@ -3,9 +3,17 @@
 
 EAPI=8
 
+# U22
+
+# TODO package:
+# sphinx-docstring-typing
+
+# See also
+# https://github.com/googleapis/google-auth-library-python/blob/v2.29.0/.kokoro/requirements.txt
+
 DISTUTILS_USE_PEP517="setuptools"
 PYPI_NO_NORMALIZE=1
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
 
@@ -18,29 +26,28 @@ LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE+="
-aiohttp enterprise_cert pyopenssl reauth requests
+aiohttp doc enterprise_cert pyopenssl reauth requests
 "
 RDEPEND="
 	!dev-python/namespace-google
 	(
-		<dev-python/cachetools-6.0.0[${PYTHON_USEDEP}]
 		>=dev-python/cachetools-2.0.0[${PYTHON_USEDEP}]
+		<dev-python/cachetools-6.0.0[${PYTHON_USEDEP}]
 	)
 	(
-		<dev-python/rsa-5[${PYTHON_USEDEP}]
 		>=dev-python/rsa-3.1.4[${PYTHON_USEDEP}]
+		<dev-python/rsa-5[${PYTHON_USEDEP}]
 	)
-	>=dev-python/pyasn1-0.4.8[${PYTHON_USEDEP}]
+	>=dev-python/pyasn1-0.5.0[${PYTHON_USEDEP}]
 	>=dev-python/pyasn1-modules-0.2.1[${PYTHON_USEDEP}]
-	>=dev-python/six-1.9.0[${PYTHON_USEDEP}]
 	aiohttp? (
 		(
-			<dev-python/aiohttp-4_pre[${PYTHON_USEDEP}]
 			>=dev-python/aiohttp-3.6.2[${PYTHON_USEDEP}]
+			<dev-python/aiohttp-4.0.0_pre[${PYTHON_USEDEP}]
 		)
 		(
-			<dev-python/requests-3.0.0_pre[${PYTHON_USEDEP}]
 			>=dev-python/requests-2.20.0[${PYTHON_USEDEP}]
+			<dev-python/requests-3.0.0_pre[${PYTHON_USEDEP}]
 		)
 	)
 	enterprise_cert? (
@@ -55,22 +62,41 @@ RDEPEND="
 		>=dev-python/pyu2f-0.1.5[${PYTHON_USEDEP}]
 	)
 	requests? (
-		<dev-python/requests-3.0.0_pre[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.20.0[${PYTHON_USEDEP}]
+		<dev-python/requests-3.0.0_pre[${PYTHON_USEDEP}]
 	)
 "
 DEPEND="
 	${RDEPEND}
 "
-# Uses PROTOBUF_SLOT=0/3.20
+# Uses PROTOBUF_SLOT=0/3.20 ; 3.20.3
 BDEPEND="
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
+	doc? (
+		dev-python/alabaster[${PYTHON_USEDEP}]
+		dev-python/cryptography[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+		dev-python/requests-oauthlib[${PYTHON_USEDEP}]
+		dev-python/sphinx-docstring-typing[${PYTHON_USEDEP}]
+		dev-python/urllib3[${PYTHON_USEDEP}]
+	)
 	test? (
-		<dev-python/cryptography-39[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			<dev-python/urllib3-2.0.0[${PYTHON_USEDEP}]
+		' python3_10)
+		$(python_gen_cond_dep '
+			>dev-python/urllib3-2.0.0[${PYTHON_USEDEP}]
+		' python3_11)
+		$(python_gen_cond_dep '
+			>dev-python/urllib3-2.0.0[${PYTHON_USEDEP}]
+		' python3_12)
+		<dev-python/cryptography-39.0.0[${PYTHON_USEDEP}]
 		dev-python/flask[${PYTHON_USEDEP}]
 		dev-python/freezegun[${PYTHON_USEDEP}]
-		dev-python/grpcio:=[${PYTHON_USEDEP}]
 		dev-python/mock[${PYTHON_USEDEP}]
 		dev-python/moto[${PYTHON_USEDEP}]
+		dev-python/mypy[${PYTHON_USEDEP}]
 		dev-python/oauth2client[${PYTHON_USEDEP}]
 		dev-python/aiohttp[${PYTHON_USEDEP}]
 		dev-python/aioresponses[${PYTHON_USEDEP}]
@@ -84,6 +110,14 @@ BDEPEND="
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/responses[${PYTHON_USEDEP}]
 		dev-python/urllib3[${PYTHON_USEDEP}]
+
+		|| (
+			=dev-python/grpcio-1.54*[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.53*[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.52*[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.49*[${PYTHON_USEDEP}]
+		)
+		dev-python/grpcio:=[${PYTHON_USEDEP}]
 	)
 "
 
