@@ -13,7 +13,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH=""
 	EGIT_COMMIT="HEAD"
 	EGIT_REPO_URI=""
-	FALLBACK_COMMIT="5a144438cc89bfc0ec94db960718ccf1f76468c1" # Oct 24, 2018
+	FALLBACK_COMMIT="e7970b63feafc8941c325111c5ce3706698a18b5" # Nov 21, 2022
 	inherit git-r3
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
@@ -36,13 +36,12 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
-#		>=dev-python/distribute-0.7.3[${PYTHON_USEDEP}] # Removed in HEAD
 BDEPEND+="
 	test? (
 		>=dev-python/coverage-3.7.1[${PYTHON_USEDEP}]
 		>=dev-python/mock-1.0.1[${PYTHON_USEDEP}]
 		>=dev-python/nose-1.3.0[${PYTHON_USEDEP}]
-		>=dev-python/requests-2.1.0[${PYTHON_USEDEP}]
+		>=dev-python/requests-2.20.0[${PYTHON_USEDEP}]
 	)
 "
 
