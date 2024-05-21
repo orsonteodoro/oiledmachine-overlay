@@ -7,7 +7,8 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">executablebooks/MyST-Parser</remote-id>
     <bugs-to>https://github.com/executablebooks/MyST-Parser/issues</bugs-to>
+    <changelog>https://github.com/executablebooks/MyST-Parser/blob/master/CHANGELOG.md</changelog>
+    <remote-id type="github">executablebooks/MyST-Parser</remote-id>
   </upstream>
 </pkgmetadata>

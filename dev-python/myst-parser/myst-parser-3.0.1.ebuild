@@ -14,7 +14,7 @@ EAPI=8
 # sphinxext-rediraffe
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{8..10} )
+PYTHON_COMPAT=( "python3_"{8..12} )
 
 inherit distutils-r1
 
@@ -44,19 +44,18 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	(
-		>=dev-python/docutils-0.15[${PYTHON_USEDEP}]
-		<dev-python/docutils-0.20[${PYTHON_USEDEP}]
+		>=dev-python/docutils-0.18[${PYTHON_USEDEP}]
+		<dev-python/docutils-0.22[${PYTHON_USEDEP}]
 	)
 	(
-		>=dev-python/markdown-it-py-1.0.0[${PYTHON_USEDEP}]
-		<dev-python/markdown-it-py-3.0.0[${PYTHON_USEDEP}]
+		>=dev-python/markdown-it-py-3.0[${PYTHON_USEDEP}]
 	)
 	(
-		>=dev-python/sphinx-5[${PYTHON_USEDEP}]
-		<dev-python/sphinx-7[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-6[${PYTHON_USEDEP}]
+		<dev-python/sphinx-8[${PYTHON_USEDEP}]
 	)
 	>=dev-python/jinja-2[${PYTHON_USEDEP}]
-	>=dev-python/mdit-py-plugins-0.3.4[${PYTHON_USEDEP}]
+	>=dev-python/mdit-py-plugins-0.4[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 
 "
@@ -74,45 +73,44 @@ BDEPEND+="
 		')
 	)
 	linkify? (
-		>=dev-python/linkify-it-py-1.0[${PYTHON_USEDEP}]
+		>=dev-python/linkify-it-py-2.0[${PYTHON_USEDEP}]
 	)
 	rtd? (
-		>=dev-python/pydata-sphinx-theme-0.13.0_rc4[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-book-theme-1.0.0_rc2[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-tippy-0.3.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-autodoc2-0.4.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinxext-opengraph-0.7.5[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-7[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-book-theme-1.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-tippy-0.4.3[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-autodoc2-0.5.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinxext-opengraph-0.9.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinxext-rediraffe-0.2.7[${PYTHON_USEDEP}]
 		dev-python/ipython[${PYTHON_USEDEP}]
 		dev-python/sphinx-copybutton[${PYTHON_USEDEP}]
-		dev-python/sphinx-design2[${PYTHON_USEDEP}]
+		dev-python/sphinx-design[${PYTHON_USEDEP}]
 		dev-python/sphinx-pyscript[${PYTHON_USEDEP}]
 		dev-python/sphinx-togglebutton[${PYTHON_USEDEP}]
 	)
 	test? (
 		(
-			>=dev-python/pytest-7[${PYTHON_USEDEP}]
-			<dev-python/pytest-8[${PYTHON_USEDEP}]
+			>=dev-python/pytest-8[${PYTHON_USEDEP}]
+			<dev-python/pytest-9[${PYTHON_USEDEP}]
 		)
-		>=dev-python/pytest-param-files-0.3.4[${PYTHON_USEDEP}]
+		>=dev-python/pytest-param-files-0.6.0[${PYTHON_USEDEP}]
 		dev-python/tox[${PYTHON_USEDEP}]
 		dev-python/beautifulsoup4[${PYTHON_USEDEP}]
 		dev-python/coverage[${PYTHON_USEDEP}]
+		dev-python/defusedxml[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 		dev-python/pytest-regressions[${PYTHON_USEDEP}]
 		dev-python/sphinx-pytest[${PYTHON_USEDEP}]
 
-		dev-python/black[${PYTHON_USEDEP}]
-		dev-python/isort[${PYTHON_USEDEP}]
 		dev-python/mypy[${PYTHON_USEDEP}]
 		dev-util/ruff
 	)
 	test-docutils? (
 		(
-			>=dev-python/pytest-7[${PYTHON_USEDEP}]
-			<dev-python/pytest-8[${PYTHON_USEDEP}]
+			>=dev-python/pytest-8[${PYTHON_USEDEP}]
+			<dev-python/pytest-9[${PYTHON_USEDEP}]
 		)
-		>=dev-python/pytest-param-files-0.3.4[${PYTHON_USEDEP}]
+		>=dev-python/pytest-param-files-0.6.0[${PYTHON_USEDEP}]
 		dev-python/pygments[${PYTHON_USEDEP}]
 	)
 "
