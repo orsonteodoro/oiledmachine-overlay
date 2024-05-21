@@ -4,16 +4,25 @@
 
 EAPI=8
 
+EGIT_COMMIT="78e82a8a75e6c7ffba9cf5df86931770eacb9d13"
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit distutils-r1
+
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+SRC_URI="
+https://github.com/barneygale/elevate/archive/${EGIT_COMMIT}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Python library for requesting root privileges"
 HOMEPAGE="https://github.com/barneygale/elevate"
 LICENSE="MIT"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" policykit sudo"
-IUSE+=" enlightenment gnome kde lxde lxqt mate xfce"
+IUSE+="
+enlightenment gnome kde lxde lxqt mate policykit sudo xfce
+"
 REQUIRED_USE+="
 	policykit? (
 		|| (
@@ -63,14 +72,8 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
-EGIT_COMMIT="78e82a8a75e6c7ffba9cf5df86931770eacb9d13"
-SRC_URI="
-https://github.com/barneygale/elevate/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
-DOCS=( COPYING.txt README.rst )
+DOCS=( "COPYING.txt" "README.rst" )
 
 pkg_postinst() {
 einfo
