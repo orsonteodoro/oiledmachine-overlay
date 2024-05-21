@@ -36,6 +36,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
 		dev-python/coverage[${PYTHON_USEDEP}]
 	)
