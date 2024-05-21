@@ -6,7 +6,21 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
-inherit distutils-r1 git-r3
+
+inherit distutils-r1
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+=" fallback-commit"
+	EGIT_REPO_URI="https://github.com/deepmind/hanabi-learning-environment.git"
+	EGIT_BRANCH="master"
+	EGIT_COMMIT="HEAD"
+	FALLBACK_COMMIT="54e79594f4b6fb40ebb3004289c6db0e34a8b5fb" # Aug 25, 2021
+	inherit git-r3
+else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	SRC_URI="FIXME"
+fi
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="hanabi_learning_environment is a research platform for Hanabi experiments."
 HOMEPAGE="
@@ -15,9 +29,9 @@ https://github.com/deepmind/hanabi-learning-environment
 LICENSE="
 	Apache-2.0
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" examples fallback-commit"
+IUSE+=" examples"
 DEPEND+="
 	dev-python/cffi[${PYTHON_USEDEP}]
 "
@@ -25,19 +39,16 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	dev-python/scikit-build[${PYTHON_USEDEP}]
-	dev-build/cmake
+	>=dev-build/cmake-2.8.11
 	dev-build/ninja
+	dev-python/scikit-build[${PYTHON_USEDEP}]
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
-DOCS=( README.md )
+DOCS=( "README.md" )
 
-src_unpack() {
-	EGIT_REPO_URI="https://github.com/deepmind/hanabi-learning-environment.git"
-	EGIT_BRANCH="master"
-	EGIT_COMMIT="HEAD"
-	use fallback-commit && EGIT_COMMIT="54e79594f4b6fb40ebb3004289c6db0e34a8b5fb"
+unpack_live() {
+	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
 	git-r3_checkout
 	local actual_pv=$(grep -r -e "version=" "${S}/setup.py" \
@@ -56,16 +67,22 @@ eerror
 	fi
 }
 
-src_install() {
-	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
-	if use examples ; then
-		insinto /usr/share/${PN}/examples
-		doins -r examples/*
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		unpack_live
+	else
+		unpack ${A}
 	fi
 }
 
-distutils_enable_tests "nose"
+src_install() {
+	distutils-r1_src_install
+	docinto "licenses"
+	dodoc "LICENSE"
+	if use examples ; then
+		insinto "/usr/share/${PN}/examples"
+		doins -r "examples/"*
+	fi
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
