@@ -8,13 +8,16 @@ MY_PN="${PN,,}"
 
 DISTUTILS_USE_SETUPTOOLS="bdepend"
 PYTHON_COMPAT=( python3_{8..10} )
+
 inherit distutils-r1 pypi
+
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 
 DESCRIPTION="Python library for fast approximate string matching using Jaro and \
 Jaro-Winkler similarity"
-LICENSE=""
+LICENSE="MIT"
 HOMEPAGE="https://github.com/maxbachmann/JaroWinkler"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" cpp"
 DEPEND+="
@@ -35,7 +38,6 @@ BDEPEND+="
 		dev-build/ninja
 	)
 "
-RESTRICT="mirror"
 
 src_configure() {
 	local actual_cython_pv=$(cython --version 2>&1 \
