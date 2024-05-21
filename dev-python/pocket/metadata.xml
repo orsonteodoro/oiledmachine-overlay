@@ -7,7 +7,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">tapanpandita/pocket</remote-id>
     <bugs-to>https://github.com/tapanpandita/pocket/issues</bugs-to>
+    <remote-id type="github">tapanpandita/pocket</remote-id>
   </upstream>
 </pkgmetadata>
