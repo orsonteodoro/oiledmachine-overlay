@@ -7,7 +7,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">Shimmy/issues</remote-id>
     <bugs-to>https://github.com/Farama-Foundation/Shimmy/issues</bugs-to>
+    <remote-id type="github">Shimmy/issues</remote-id>
   </upstream>
 </pkgmetadata>
