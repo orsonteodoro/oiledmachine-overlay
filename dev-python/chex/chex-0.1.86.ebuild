@@ -4,12 +4,19 @@
 
 EAPI=8
 
+# TODO package:
+# myst-nb
+# pandoc
+# sphinxcontrib-katex
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} ) # See https://github.com/deepmind/chex/blob/v0.1.82/.github/workflows/ci.yml
 # Limited by jax
 
 inherit distutils-r1
 
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/deepmind/chex/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -23,27 +30,22 @@ https://github.com/deepmind/chex
 LICENSE="
 	Apache-2.0
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" docs test"
 DEPEND+="
-	$(python_gen_cond_dep '
-		>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
-	' python3_{8..10})
 	>=dev-python/absl-py-0.9.0[${PYTHON_USEDEP}]
-	>=dev-python/jax-0.4.6[${PYTHON_USEDEP}]
+	>=dev-python/jax-0.4.16[${PYTHON_USEDEP}]
 	>=dev-python/jaxlib-0.1.37[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.25.0[${PYTHON_USEDEP}]
+	>=dev-python/numpy-1.24.1[${PYTHON_USEDEP}]
 	>=dev-python/toolz-0.9.0[${PYTHON_USEDEP}]
+	>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${DEPEND}
 "
-# TODO: create packages:
-# sphinxcontrib-katex
-# pandoc
-# myst-nb
 BDEPEND+="
+	dev-python/setuptools[${PYTHON_USEDEP}]
 	docs? (
 		>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
 		>=dev-python/ipython-7.16.3[${PYTHON_USEDEP}]
@@ -61,8 +63,6 @@ BDEPEND+="
 		>=dev-python/dm-tree-0.1.5[${PYTHON_USEDEP}]
 	)
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 distutils_enable_sphinx "docs"
 

@@ -7,7 +7,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">deepmind/chex</remote-id>
     <bugs-to>https://github.com/deepmind/chex/issues</bugs-to>
+    <remote-id type="github">deepmind/chex</remote-id>
   </upstream>
 </pkgmetadata>
