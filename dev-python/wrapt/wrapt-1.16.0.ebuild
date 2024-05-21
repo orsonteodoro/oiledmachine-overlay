@@ -24,12 +24,17 @@ KEYWORDS="
 ~alpha amd64 arm arm64 hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
 sparc x86 ~amd64-linux ~x86-linux ~x64-macos
 "
-IUSE="doc +native-extensions"
+IUSE="doc +native-extensions test"
 BDEPEND="
 	>=dev-python/setuptools-38.3.0[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
+		dev-python/sphinx[${PYTHON_USEDEP}]
 		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
+	)
+	test? (
+		dev-python/coverage[${PYTHON_USEDEP}]
+		dev-python/pytest[${PYTHON_USEDEP}]
 	)
 "
 
@@ -37,7 +42,7 @@ distutils_enable_tests "pytest"
 distutils_enable_sphinx "docs" "dev-python/sphinx-rtd-theme"
 
 python_compile() {
-	local -x WRAPT_INSTALL_EXTENSIONS=$(usex native-extensions true false)
+	local -x WRAPT_INSTALL_EXTENSIONS=$(usex native-extensions "true" "false")
 	distutils-r1_python_compile
 }
 
