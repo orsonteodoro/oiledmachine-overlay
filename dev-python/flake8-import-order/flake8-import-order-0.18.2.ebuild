@@ -6,7 +6,15 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit distutils-r1
+
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
+SRC_URI="
+https://github.com/PyCQA/flake8-import-order/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Flake8 plugin that checks import order against various Python \
 Style Guides"
@@ -14,7 +22,7 @@ HOMEPAGE="https://github.com/PyCQA/flake8-import-order"
 LICENSE="
 	LGPL-3
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 DEPEND+="
@@ -24,26 +32,24 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
+		dev-python/build[${PYTHON_USEDEP}]
 		dev-python/docutils[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/pep8-naming[${PYTHON_USEDEP}]
 		dev-python/pycodestyle[${PYTHON_USEDEP}]
+		dev-python/pyflakes[${PYTHON_USEDEP}]
 		dev-python/pygments[${PYTHON_USEDEP}]
+		dev-python/pylama[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
-		dev-python/pylama[${PYTHON_USEDEP}]
 		dev-python/tox[${PYTHON_USEDEP}]
 		dev-python/twine[${PYTHON_USEDEP}]
 	)
 "
-SRC_URI="
-https://github.com/PyCQA/flake8-import-order/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
-DOCS=( CHANGELOG.rst README.rst )
+DOCS=( "CHANGELOG.rst" "README.rst" )
 
 distutils_enable_tests "pytest"
 

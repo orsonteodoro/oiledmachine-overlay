@@ -7,7 +7,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">flake8-import-order/issues</remote-id>
     <bugs-to>https://github.com/PyCQA/flake8-import-order/issues</bugs-to>
+    <remote-id type="github">flake8-import-order/issues</remote-id>
   </upstream>
 </pkgmetadata>
