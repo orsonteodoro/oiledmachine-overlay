@@ -8,7 +8,7 @@ EAPI=8
 # For font licensing, see
 # https://github.com/pwaller/pyfiglet/issues/89
 
-MY_PV="0.8.post1"
+MY_PV="1.0.2"
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} pypy3 )
