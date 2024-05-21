@@ -4,39 +4,42 @@
 
 EAPI=8
 
-PYPI_NO_NORMALIZE=1
+# ASSET_COMMIT is in the repo but not in the pypi tarball.
+ASSET_COMMIT="9c9a1f6d61abf3f5072ca0934963fcd75ed24c08" # Nov 4, 2021 from  committer-date:<=2021-11-04  GitHub search
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
+PYPI_NO_NORMALIZE=1
+
 inherit distutils-r1 pypi
+
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${PYPI_PN}-$(pypi_translate_version "${PV}")"
+SRC_URI="
+	$(pypi_sdist_url --no-normalize)
+	test? (
+https://github.com/VingtCinq/python-resize-image/raw/${ASSET_COMMIT}/tests/test-image.jpeg
+	-> ${PN}-test-image.jpeg.${ASSET_COMMIT:0:7}
+	)
+"
 
 DESCRIPTION="A Small python package to easily resize images"
 HOMEPAGE="https://github.com/VingtCinq/python-resize-image"
 LICENSE="MIT"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
-DEPEND+="
+RDEPEND+="
 	>=dev-python/pillow-5.1.0[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.19.1[${PYTHON_USEDEP}]
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	test? (
 		dev-python/coverage[${PYTHON_USEDEP}]
 	)
 "
-ASSET_COMMIT="fb3e82d0da2c108e05499f57cdf5c02210b482f7" # In the repo but not in the pypi tarball.
-SRC_URI="
-	test? (
-https://github.com/VingtCinq/python-resize-image/raw/${ASSET_COMMIT}/tests/test-image.jpeg
-	-> ${PN}-test-image.jpeg.${ASSET_COMMIT:0:7}
-	)
-"
-RESTRICT="mirror"
-SRC_URI="$(pypi_sdist_url --no-normalize)"
-S="${WORKDIR}/${PYPI_PN}-$(pypi_translate_version "${PV}")"
 PATCHES=(
 	"${FILESDIR}/${PN}-1.1.20-use-rgb-convert.patch"
 )
@@ -45,7 +48,8 @@ src_unpack() {
 	unpack ${A}
 	cp -a \
 		$(realpath "${DISTDIR}/${PN}-test-image.jpeg.${ASSET_COMMIT:0:7}") \
-		"${S}/tests/test-image.jpeg"
+		"${S}/tests/test-image.jpeg" \
+		|| die
 }
 
 src_test() {
