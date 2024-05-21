@@ -14,12 +14,12 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} pypy3 )
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	inherit git-r3
 	IUSE+=" fallback-commit"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/pwaller/pyfiglet.git"
 	FALLBACK_COMMIT="be130d640d520d4a9db2b4f8a86f9d838534f8d0" # Sep 13, 2023
 	SRC_URI=""
+	inherit git-r3
 else
 	KEYWORDS="~amd64 ~x86"
 	SRC_URI="
@@ -32,7 +32,10 @@ inherit distutils-r1
 
 DESCRIPTION="An implementation of figlet written in Python"
 HOMEPAGE="https://github.com/pwaller/pyfiglet"
-LICENSE="MIT BSD"
+LICENSE="
+	BSD
+	MIT
+"
 RESTRICT="mirror test" # test requires subprocess32 which is EOL
 SLOT="0"
 IUSE+=" minimal"
