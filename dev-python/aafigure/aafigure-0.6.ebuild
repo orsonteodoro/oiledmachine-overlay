@@ -4,9 +4,18 @@
 
 EAPI=8
 
+# The zlib requirement is pillow packager's fault
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit distutils-r1
+
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
+SRC_URI="
+mirror://pypi/${PN:0:1}/${PN}/${PN}-${PV}.tar.gz
+"
 
 DESCRIPTION="ASCII art to image converter"
 HOMEPAGE="
@@ -15,35 +24,30 @@ https://launchpad.net/aafigure
 LICENSE="
 	BSD
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
-DEPEND+="
-"
-# The zlib requirement is pillow packager's fault
 RDEPEND+="
-	${DEPEND}
 	dev-python/pillow[${PYTHON_USEDEP},zlib]
 	dev-python/reportlab[${PYTHON_USEDEP}]
 "
+DEPEND+="
+	${RDEPEND}
+"
 BDEPEND+="
+	dev-python/setuptools[${PYTHON_USEDEP}]
 	doc? (
 		dev-python/sphinx[${PYTHON_USEDEP}]
 	)
 "
-SRC_URI="
-mirror://pypi/${PN:0:1}/${PN}/${PN}-${PV}.tar.gz
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
-DOCS=( CHANGES.txt README.rst )
+DOCS=( "CHANGES.txt" "README.rst" )
 
 distutils_enable_sphinx "documentation"
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE.txt
+	docinto "licenses"
+	dodoc "LICENSE.txt"
 }
 
 src_test() {
