@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <upstream>
-    <remote-id type="github">lucjon/py-stackexchange</remote-id>
     <bugs-to>https://github.com/lucjon/Py-StackExchange/issues</bugs-to>
+    <remote-id type="github">lucjon/py-stackexchange</remote-id>
   </upstream>
 </pkgmetadata>
