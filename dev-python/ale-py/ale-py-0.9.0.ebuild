@@ -7,7 +7,7 @@ EAPI=8
 # U22
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..11} ) # Upstream tests up to 3.11
+PYTHON_COMPAT=( python3_{10..12} ) # Upstream tests up to 3.12
 
 inherit distutils-r1
 
@@ -31,7 +31,6 @@ DEPEND+="
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 	' python3_10 )
 	>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
-	dev-python/importlib-resources[${PYTHON_USEDEP}]
 	media-libs/libsdl2
 	sys-libs/zlib
 "
@@ -44,12 +43,11 @@ BDEPEND+="
 	>=dev-python/setuptools-61[${PYTHON_USEDEP}]
 	>=dev-build/cmake-3.22
 	dev-build/ninja
-	dev-python/wheel[${PYTHON_USEDEP}]
 	cibuildwheel? (
 		dev-python/cibuildwheel[${PYTHON_USEDEP}]
 	)
 	test? (
-		>=dev-python/gym-0.23[${PYTHON_USEDEP}]
+		>=dev-python/gymnasium-1.0.0_alpha1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.0[${PYTHON_USEDEP}]
 	)
 "
