@@ -54,7 +54,7 @@ OPENVDB_ABIS=(
 
 # For the max exclusive Python supported (and others), see \
 # https://github.com/blender/blender/blob/v3.6.11/build_files/build_environment/install_linux_packages.py#L693 \
-PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11.
+PYTHON_COMPAT=( "python3_"{10,11} ) # <= 3.11.
 
 BOOST_PV="1.80"
 CLANG_MIN="8.0"
@@ -413,8 +413,8 @@ gen_oidn_depends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 		llvm_slot_${s}? (
-			<media-libs/oidn-1.5[llvm_slot_${s}]
 			>=media-libs/oidn-1.4.3[llvm_slot_${s}]
+			<media-libs/oidn-1.5[llvm_slot_${s}]
 		)
 		"
 	done
@@ -425,10 +425,10 @@ gen_oiio_depends() {
 	for s in ${OPENVDB_ABIS[@]} ; do
 		echo "
 			${s}? (
-				<media-libs/openimageio-2.5[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
-				>=media-libs/openimageio-2.4.15.0[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 				>=dev-cpp/robin-map-0.6.2
 				>=dev-libs/libfmt-9.1.0
+				>=media-libs/openimageio-2.4.15.0[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
+				<media-libs/openimageio-2.5[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 			)
 		"
 	done
@@ -461,8 +461,8 @@ gen_osl_depends()
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				<media-libs/osl-2:=[llvm_slot_${s},static-libs]
 				>=media-libs/osl-${OSL_PV}:=[llvm_slot_${s},static-libs]
+				<media-libs/osl-2:=[llvm_slot_${s},static-libs]
 			)
 		"
 	done
@@ -651,8 +651,8 @@ RDEPEND+="
 	cycles? (
 		cycles-path-guiding? (
 			(
-				<media-libs/openpgl-0.6[tbb?]
 				>=media-libs/openpgl-0.5[tbb?]
+				<media-libs/openpgl-0.6[tbb?]
 			)
 		)
 		osl? (
@@ -660,8 +660,8 @@ RDEPEND+="
 		)
 	)
 	cycles-device-oneapi? (
-		<dev-libs/level-zero-2
 		>=dev-libs/level-zero-1.8.8
+		<dev-libs/level-zero-2
 	)
 	dbus? (
 		sys-apps/dbus
@@ -958,8 +958,8 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		>=media-libs/tiff-4.5.1:0[jpeg,zlib]
 	)
 	usd? (
-		<media-libs/openusd-24[imaging,monolithic,opengl,openvdb,openimageio,python]
 		>=media-libs/openusd-23.05[imaging,monolithic,opengl,openvdb,openimageio,python]
+		<media-libs/openusd-24[imaging,monolithic,opengl,openvdb,openimageio,python]
 	)
 	valgrind? (
 		dev-util/valgrind

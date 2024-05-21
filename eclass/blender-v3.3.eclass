@@ -44,7 +44,7 @@ LLVM_MAX_UPSTREAM=13 # (inclusive)
 
 # For the max exclusive Python supported (and others), see \
 # https://github.com/blender/blender/blob/v3.3.18/build_files/build_environment/install_deps.sh#L382
-PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11.
+PYTHON_COMPAT=( "python3_"{10,11} ) # <= 3.11.
 
 OPENVDB_ABIS_MAJOR_VERS=9
 OPENVDB_ABIS=(
@@ -454,8 +454,8 @@ gen_oidn_depends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 		llvm_slot_${s}? (
-			<media-libs/oidn-1.5[llvm_slot_${s}]
 			>=media-libs/oidn-1.4.3[llvm_slot_${s}]
+			<media-libs/oidn-1.5[llvm_slot_${s}]
 		)
 		"
 	done
@@ -466,10 +466,10 @@ gen_oiio_depends() {
 	for s in ${OPENVDB_ABIS[@]} ; do
 		echo "
 			${s}? (
-				<media-libs/openimageio-2.4[${s}(+),color-management?,jpeg2k?,png,webp?]
 				>=dev-cpp/robin-map-0.6.2
 				>=dev-libs/libfmt-8
 				>=media-libs/openimageio-2.3.20.0[${s}(+),color-management?,jpeg2k?,png,webp?]
+				<media-libs/openimageio-2.4[${s}(+),color-management?,jpeg2k?,png,webp?]
 			)
 		"
 	done
@@ -502,8 +502,8 @@ gen_osl_depends()
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				<media-libs/osl-2:=[llvm_slot_${s},static-libs]
 				>=media-libs/osl-${OSL_PV}:=[llvm_slot_${s},static-libs]
+				<media-libs/osl-2:=[llvm_slot_${s},static-libs]
 			)
 		"
 	done
@@ -676,8 +676,8 @@ RDEPEND+="
 		)
 	)
 	cycles-device-oneapi? (
-		<dev-libs/level-zero-2
 		>=dev-libs/level-zero-1.7.15
+		<dev-libs/level-zero-2
 	)
 	embree? (
 		>=media-libs/embree-3.13.4:=\
@@ -1006,8 +1006,8 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		>=media-libs/tiff-4.5.1:0[jpeg,zlib]
 	)
 	usd? (
-		<media-libs/openusd-23[imaging,monolithic]
 		>=media-libs/openusd-22.03[imaging,monolithic]
+		<media-libs/openusd-23[imaging,monolithic]
 	)
 	valgrind? (
 		dev-util/valgrind
