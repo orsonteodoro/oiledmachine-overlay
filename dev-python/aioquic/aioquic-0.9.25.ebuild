@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# U 22.04
+
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
@@ -11,29 +13,30 @@ PYTHON_COMPAT=( python3_{10..12} )
 
 inherit distutils-r1
 
-if [[ "${PV}" =~ 9999 ]] ; then
-	inherit git-r3
-	EGIT_REPO_URI="https://github.com/aiortc/aioquic.git"
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+=" fallback-commit"
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_PN}-${PV}"
-	IUSE+=" fallback-commit"
+	EGIT_REPO_URI="https://github.com/aiortc/aioquic.git"
+	FALLBACK_COMMIT="0c383217db10e6168dc8d4c295d8a504aad5cde1" # Jan 6, 2024
+	inherit git-r3
 else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	SRC_URI="
 https://github.com/aiortc/aioquic/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
+S="${WORKDIR}/${MY_PN}-${PV}"
 
 DESCRIPTION="QUIC and HTTP/3 implementation in Python"
 HOMEPAGE="https://github.com/aiortc/aioquic"
 LICENSE="
 	BSD
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror test" # Not tested yet
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
-RESTRICT="test" # Not tested yet
-# U 22.04
 RDEPEND+="
 	(
 		>=dev-python/pylsqpack-0.3.3[${PYTHON_USEDEP}]
@@ -63,15 +66,13 @@ BDEPEND+="
 		dev-util/ruff
 	)
 "
-S="${WORKDIR}/${MY_PN}-${PV}"
-RESTRICT="mirror"
-DOCS=( docs/index.rst README.rst )
+DOCS=( "docs/index.rst" "README.rst" )
 
 distutils_enable_tests "unittest"
 
 src_unpack() {
-	if [[ "${PV}" =~ 9999 ]] ; then
-		use fallback-commit && EGIT_COMMIT="041de7169fd5ea67762c89007e43de09a3acd7c5"
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 		grep -q -e "__version__ = '${PV}'" "${S}/src/aioquic/__init__.py" \
@@ -83,8 +84,8 @@ src_unpack() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
