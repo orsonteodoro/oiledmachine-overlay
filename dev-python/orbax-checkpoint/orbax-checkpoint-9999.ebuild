@@ -4,26 +4,27 @@
 
 EAPI=8
 
+# U22
+
 # See https://github.com/google/orbax/blob/main/.github/workflows/build.yml for supported python
 
 # TODO package:
 # google-cloud-logging
 # myst-nb
-# dev-python/orbax-checkpoint
 # sphinx-book-theme
 
 DISTUTILS_USE_PEP517="flit"
 PROTOBUF_PV="5.26.1"
-PYTHON_COMPAT=( python3_{10,11} ) # Upstream only tests up to 3.11.
+PYTHON_COMPAT=( "python3_"{10,11} ) # Upstream only tests up to 3.11.
 
 inherit distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	inherit git-r3
+	IUSE+=" fallback-commit"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/google/orbax.git"
 	FALLBACK_COMMIT="33a814de0a1df3b46ad174d2373a85a5afa0151b" # May 17, 2024
-	IUSE+=" fallback-commit"
+	inherit git-r3
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	S="${WORKDIR}/${P}/checkpoint"
@@ -71,8 +72,8 @@ RDEPEND+="
 "
 BDEPEND+="
 	(
-		<dev-python/flit_core-4[${PYTHON_USEDEP}]
 		>=dev-python/flit_core-3.5[${PYTHON_USEDEP}]
+		<dev-python/flit_core-4[${PYTHON_USEDEP}]
 	)
 	test? (
 		dev-python/flax[${PYTHON_USEDEP}]
@@ -104,10 +105,10 @@ src_unpack() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
-	docinto docs
-	dodoc docs/*.md
+	docinto "licenses"
+	dodoc "LICENSE"
+	docinto "docs"
+	dodoc "docs/"*".md"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
