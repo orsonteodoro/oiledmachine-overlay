@@ -9,7 +9,7 @@ EAPI=8
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 SMMAP_COMMIT="256c5a21de2d14aca02c9689d7d63f78c4e0ef61" # Sep 17, 2023
 
 inherit distutils-r1
@@ -39,20 +39,21 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 RDEPEND+="
 	(
-		<dev-python/smmap-6[${PYTHON_USEDEP}]
 		>=dev-python/smmap-3.0.1[${PYTHON_USEDEP}]
+		<dev-python/smmap-6[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools
+	dev-python/setuptools[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/sphinx-4.3.2[${PYTHON_USEDEP}]
 	)
 	test? (
 		>=dev-python/pytest-7.4.2[${PYTHON_USEDEP}]
+		dev-python/flake8[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.rst" )
