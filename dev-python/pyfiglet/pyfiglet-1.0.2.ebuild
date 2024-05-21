@@ -3,15 +3,25 @@
 
 EAPI=8
 
+# U 22.04
+
+# For font licensing, see
+# https://github.com/pwaller/pyfiglet/issues/89
+
+MY_PV="0.8.post1"
+
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..11} pypy3 )
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
+	IUSE+=" fallback-commit"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/pwaller/pyfiglet.git"
+	FALLBACK_COMMIT="be130d640d520d4a9db2b4f8a86f9d838534f8d0" # Sep 13, 2023
 	SRC_URI=""
 else
+	KEYWORDS="~amd64 ~x86"
 	SRC_URI="
 https://github.com/pwaller/pyfiglet/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -23,8 +33,7 @@ inherit distutils-r1
 DESCRIPTION="An implementation of figlet written in Python"
 HOMEPAGE="https://github.com/pwaller/pyfiglet"
 LICENSE="MIT BSD"
-# For font licensing, see https://github.com/pwaller/pyfiglet/issues/89
-KEYWORDS="~amd64 ~x86"
+RESTRICT="mirror test" # test requires subprocess32 which is EOL
 SLOT="0"
 IUSE+=" minimal"
 RDEPEND+="
@@ -32,23 +41,20 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
-# U 22.04
 BDEPEND+="
-	dev-python/build[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-68.0.0[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
+	dev-python/build[${PYTHON_USEDEP}]
 	test? (
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/subprocess32[${PYTHON_USEDEP}]
 	)
 "
-PROPERTIES="live"
-RESTRICT="mirror test" # test requires subprocess32 which is EOL
-MY_PV="0.8.post1"
 
 distutils_enable_tests "pytest"
 
 live_unpack() {
+	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
 	git-r3_checkout
 	if ! grep -E -o -e "${MY_PV}" "${S}/pyfiglet/version.py" ; then

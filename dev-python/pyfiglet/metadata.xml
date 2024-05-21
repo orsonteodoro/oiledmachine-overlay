@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -20,8 +20,8 @@
     A python port to convert text into ASCII art text.
   </longdescription>
   <upstream>
-    <remote-id type="github">pwaller/pyfiglet</remote-id>
     <bugs-to>https://github.com/pwaller/pyfiglet/issues</bugs-to>
+    <remote-id type="github">pwaller/pyfiglet</remote-id>
   </upstream>
   <use>
     <flag name="minimal">
