@@ -4,7 +4,7 @@
 
 EAPI=8
 
-MY_PN="io"
+MY_PN="io" # TensorFlow I/O
 
 BAZEL_PV="6.1.0"
 DISTUTILS_USE_PEP517="setuptools"
@@ -40,8 +40,8 @@ RDEPEND+="
 BDEPEND+="
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 "
-DOCS=( README.md RELEASE.md )
-HTML_DOCS=( docs )
+DOCS=( "README.md" "RELEASE.md" )
+HTML_DOCS=( "docs" )
 
 src_unpack() {
 	mkdir -p "${WORKDIR}/bin" || die
@@ -70,8 +70,8 @@ python_compile() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

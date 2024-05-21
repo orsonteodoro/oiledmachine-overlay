@@ -4,18 +4,20 @@
 
 EAPI=8
 
-MY_PN="io"
+MY_PN="io" # TensorFlow I/O
 
-BAZEL_PV="6.1.0"
+BAZEL_PV="6.5.0"
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} )
+
 inherit distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+=" fallback-commit"
 	EGIT_REPO_URI="https://github.com/tensorflow/io.git"
 	EGIT_BRANCH="master"
+	FALLBACK_COMMIT="9b82afb442d69f9bd14b079be109082967afaf09" # Apr 23, 2024
 	inherit git-r3
-	FALLBACK_COMMIT="4d70341df05ddce09c257d4ecaaaba1873594105"
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	SRC_URI="
@@ -46,8 +48,8 @@ RDEPEND+="
 BDEPEND+="
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 "
-DOCS=( README.md RELEASE.md )
-HTML_DOCS=( docs )
+DOCS=( "README.md" "RELEASE.md" )
+HTML_DOCS=( "docs" )
 
 src_unpack() {
 	mkdir -p "${WORKDIR}/bin" || die
@@ -83,8 +85,8 @@ python_compile() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

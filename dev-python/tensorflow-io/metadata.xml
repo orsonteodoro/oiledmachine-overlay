@@ -7,7 +7,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">tensorflow/io</remote-id>
     <bugs-to>https://github.com/tensorflow/io/issues</bugs-to>
+    <remote-id type="github">tensorflow/io</remote-id>
   </upstream>
 </pkgmetadata>

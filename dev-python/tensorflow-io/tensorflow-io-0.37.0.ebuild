@@ -6,7 +6,7 @@ EAPI=8
 
 MY_PN="io" # TensorFlow I/O
 
-BAZEL_PV="6.1.0"
+BAZEL_PV="6.5.0"
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} )
 
@@ -30,9 +30,9 @@ LICENSE="
 RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc tensorflow-io-gcs-filesystem test"
-# See https://github.com/tensorflow/io/blob/v0.36.0/README.md#tensorflow-version-compatibility
+# See https://github.com/tensorflow/io/blob/v0.37.0/README.md#tensorflow-version-compatibility
 DEPEND+="
-	=sci-libs/tensorflow-2.15*[${PYTHON_USEDEP}]
+	=sci-libs/tensorflow-2.16*[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${DEPEND}
