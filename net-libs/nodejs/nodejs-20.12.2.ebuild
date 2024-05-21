@@ -1,10 +1,15 @@
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+EAPI=8
+
 # IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
 # For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V18.md
 
-EAPI=8
+# Keep versions in sync with deps folder
+# nodejs uses Chromium's zlib not vanilla zlib
+
+# Last deps commit date:  Apr 2, 2024
 
 ACORN_PV="8.11.3"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
@@ -55,8 +60,8 @@ COREPACK_PV="0.25.0"
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
 NGHTTP2_PV="1.60.0"
-NPM_PV="10.5.0" # See https://github.com/nodejs/node/blob/v20.12.1/deps/npm/package.json
-PYTHON_COMPAT=( python3_{8..11} )
+NPM_PV="10.5.0" # See https://github.com/nodejs/node/blob/v20.12.2/deps/npm/package.json
+PYTHON_COMPAT=( "python3_"{8..12} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
 UOPTS_SUPPORT_EBOLT=0
@@ -139,9 +144,6 @@ REQUIRED_USE+="
 		ssl
 	)
 "
-# Keep versions in sync with deps folder
-# nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Apr 2, 2024
 RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.1.0

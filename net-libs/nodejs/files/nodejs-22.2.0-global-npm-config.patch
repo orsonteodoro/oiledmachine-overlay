@@ -1,0 +1,11 @@
+--- a/deps/npm/node_modules/@npmcli/config/lib/index.js.orig	2024-05-21 15:13:51.786969055 -0700
++++ b/deps/npm/node_modules/@npmcli/config/lib/index.js	2024-05-21 15:17:08.005323625 -0700
+@@ -290,7 +290,7 @@ class Config {
+     // define a custom getter, but turn into a normal prop
+     // if we set it.  otherwise it can't be set on child objects
+     Object.defineProperty(data, 'globalconfig', {
+-      get: () => resolve(this.#get('prefix'), 'etc/npmrc'),
++      get: () => resolve('/etc', 'npmrc'),
+       set (value) {
+         Object.defineProperty(data, 'globalconfig', {
+           value,

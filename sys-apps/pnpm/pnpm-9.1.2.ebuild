@@ -21,7 +21,7 @@ SLOT_MAJOR="${PV%%.*}"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 IUSE+=" ebuild-revision-2"
 CDEPEND+="
-	>=net-libs/nodejs-18.14[corepack,ssl]
+	>=net-libs/nodejs-18.19[corepack,ssl]
 "
 DEPEND+="
 	${CDEPEND}
