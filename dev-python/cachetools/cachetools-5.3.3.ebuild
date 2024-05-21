@@ -3,6 +3,13 @@
 
 EAPI=8
 
+# U20
+
+# TODO package:
+# flake8-black
+# flake8-bugbear
+# flake8-import-order
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..12} pypy3 )
 
@@ -17,24 +24,22 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="amd64 arm arm64 hppa ~ia64 ppc ppc64 ~riscv ~s390 sparc x86"
 IUSE="doc test"
-# TODO:  package
-# flake8-black
-# dev-python/flake8-bugbear
-# dev-python/flake8-import-order
 BDEPEND="
-	>=dev-python/setuptools-68.2.2[${PYTHON_USEDEP}]
-	>=dev-python/wheel-0.41.2[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-46.4.0[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
-		>=dev-python/sphinx-7.2.6[${PYTHON_USEDEP}]
+		dev-python/sphinx[${PYTHON_USEDEP}]
 	)
 	test? (
 		>=dev-python/black-22.12.0[${PYTHON_USEDEP}]
-		>=dev-python/flake8-6.1.0[${PYTHON_USEDEP}]
-		>=dev-python/flake8-black-0.3.6[${PYTHON_USEDEP}]
-		>=dev-python/flake8-bugbear-23.9.16[${PYTHON_USEDEP}]
-		>=dev-python/flake8-import-order-0.18.2[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.4.2[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
+		dev-python/coverage[${PYTHON_USEDEP}]
+		dev-python/flake8[${PYTHON_USEDEP}]
+		dev-python/flake8-black[${PYTHON_USEDEP}]
+		dev-python/flake8-bugbear[${PYTHON_USEDEP}]
+		dev-python/flake8-import-order[${PYTHON_USEDEP}]
+		dev-python/tox[${PYTHON_USEDEP}]
 	)
 "
 RESTRICT="test"
