@@ -5,15 +5,23 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..11} ) # Upstream lists up to 3.10
+
 inherit distutils-r1
+
+#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Test failure
+S="${WORKDIR}/${P}"
+SRC_URI="
+https://github.com/xZise/flake8-future-import/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Flake8 extension to check imports"
 HOMEPAGE="https://github.com/xZise/flake8-future-import"
 LICENSE="
 	MIT
 "
-#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Test failure
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 DEPEND+="
@@ -22,19 +30,14 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	>=dev-python/setuptools-61[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-61.0[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
 		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/six[${PYTHON_USEDEP}]
 	)
 "
-SRC_URI="
-https://github.com/xZise/flake8-future-import/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
-DOCS=( README.rst )
+DOCS=( "README.rst" )
 
 src_test() {
 	run_test() {
