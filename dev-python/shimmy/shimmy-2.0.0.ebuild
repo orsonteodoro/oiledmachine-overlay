@@ -4,13 +4,15 @@
 
 EAPI=8
 
-# TODO:  package
+# TODO PACKAGE:
+# dev-python/dm-meltingpot
+# dev-python/bsuite
 # sphinx-autobuild
 # sphinx_github_changelog
 
 DISTUTILS_USE_PEP517="setuptools"
 PETTINGZOO_PV="1.23"
-PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1
 
@@ -29,13 +31,10 @@ https://github.com/Farama-Foundation/Shimmy
 LICENSE="MIT"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" atari bsuite dm-control dm-control-multi-agent doc gym meltingpot openspiel test"
+IUSE+=" bsuite dm-control dm-control-multi-agent doc gym meltingpot openspiel test"
 RDEPEND+="
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
-	>=dev-python/gymnasium-0.27.0[${PYTHON_USEDEP}]
-	atari? (
-		>=dev-python/ale-py-0.8.1[${PYTHON_USEDEP}]
-	)
+	>=dev-python/gymnasium-1.0.0_alpha1[${PYTHON_USEDEP}]
 	bsuite? (
 		>=dev-python/bsuite-0.3.5[${PYTHON_USEDEP}]
 	)
@@ -44,6 +43,9 @@ RDEPEND+="
 	)
 	meltingpot? (
 		>=dev-python/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			>=dev-python/dm-meltingpot-2.2.2[${PYTHON_USEDEP}]
+		' python3_11)
 	)
 	dm-control? (
 		>=dev-python/dm-control-1.0.10[${PYTHON_USEDEP}]
@@ -64,6 +66,7 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+
 BDEPEND+="
 	doc? (
 		>=dev-python/pygame-2.3.0[${PYTHON_USEDEP}]
@@ -76,7 +79,6 @@ BDEPEND+="
 		dev-python/sphinxext-opengraph[${PYTHON_USEDEP}]
 	)
 	test? (
-		>=dev-python/autorom-0.6.0[${PYTHON_USEDEP}]
 		>=dev-python/pillow-9.3.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.1.3[${PYTHON_USEDEP}]
 	)

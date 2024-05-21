@@ -12,7 +12,7 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PETTINGZOO_PV="1.23"
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit distutils-r1
 
@@ -46,7 +46,9 @@ RDEPEND+="
 	)
 	meltingpot? (
 		>=dev-python/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
-		>=dev-python/dm-meltingpot-2.2.0[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			>=dev-python/dm-meltingpot-2.2.0[${PYTHON_USEDEP}]
+		' python3_10 python3_11)
 	)
 	dm-control? (
 		>=dev-python/dm-control-1.0.10[${PYTHON_USEDEP}]
