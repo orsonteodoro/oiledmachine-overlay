@@ -57,7 +57,7 @@ BDEPEND+="
 	dev-python/flit_core[${PYTHON_USEDEP}]
 	dev-python/isort[${PYTHON_USEDEP}]
 	dev-python/mypy[${PYTHON_USEDEP}]
-	dev-util/ruff[${PYTHON_USEDEP}]
+	dev-util/ruff
 	codestyle? (
 		$(python_gen_any_dep '>=dev-vcs/pre-commit-3[${PYTHON_SINGLE_USEDEP}]')
 	)

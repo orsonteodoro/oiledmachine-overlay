@@ -46,7 +46,7 @@ BDEPEND+="
 	)
 	test? (
 		dev-python/black[${PYTHON_USEDEP}]
-		dev-util/ruff[${PYTHON_USEDEP}]
+		dev-util/ruff
 	)
 "
 S="${WORKDIR}/${MY_PN}-${PV}"

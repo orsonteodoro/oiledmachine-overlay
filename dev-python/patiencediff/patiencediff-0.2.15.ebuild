@@ -27,7 +27,7 @@ BDEPEND+="
 	>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
 	test? (
-		>=dev-util/ruff-0.4.3[${PYTHON_USEDEP}]
+		>=dev-util/ruff-0.4.3
 	)
 "
 SRC_URI="

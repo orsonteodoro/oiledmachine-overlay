@@ -60,7 +60,7 @@ BDEPEND+="
 		>=dev-python/coverage-7.2.2[${PYTHON_USEDEP}]
 		dev-python/black[${PYTHON_USEDEP}]
 		dev-python/mypy[${PYTHON_USEDEP}]
-		dev-util/ruff[${PYTHON_USEDEP}]
+		dev-util/ruff
 	)
 "
 S="${WORKDIR}/${MY_PN}-${PV}"

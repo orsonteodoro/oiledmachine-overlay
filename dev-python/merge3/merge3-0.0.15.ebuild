@@ -40,7 +40,7 @@ BDEPEND+="
 	>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
-		dev-util/ruff[${PYTHON_USEDEP}]
+		dev-util/ruff
 	)
 "
 DOCS=( AUTHORS COPYING README.rst )
