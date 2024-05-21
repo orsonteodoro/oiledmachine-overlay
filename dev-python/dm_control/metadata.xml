@@ -7,7 +7,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">deepmind/dm_control</remote-id>
     <bugs-to>https://github.com/deepmind/dm_control/issues</bugs-to>
+    <remote-id type="github">deepmind/dm_control</remote-id>
   </upstream>
 </pkgmetadata>
