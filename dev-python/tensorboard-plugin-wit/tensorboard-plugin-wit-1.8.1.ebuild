@@ -7,7 +7,7 @@ EAPI=8
 MY_PN="${PN//-/_}"
 
 DISTUTILS_USE_PEP517="standalone"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit distutils-r1
 
@@ -20,6 +20,7 @@ https://files.pythonhosted.org/packages/py3/${MY_PN::1}/${MY_PN}/${MY_PN}-${PV}-
 DESCRIPTION="What-If Tool TensorBoard plugin"
 HOMEPAGE="
 https://github.com/PAIR-code/what-if-tool/tree/master/tensorboard_plugin_wit
+https://pypi.org/project/tensorboard-plugin-wit/
 "
 LICENSE="
 	Apache-2.0
