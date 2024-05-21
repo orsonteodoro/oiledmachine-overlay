@@ -3,28 +3,36 @@
 
 EAPI=8
 
+CFFI_PV="1.0.0"
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..12} )
+PYTHON_COMPAT=( "python3_"{8..12} "pypy3" )
+
 inherit distutils-r1
+
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
+SRC_URI="
+https://github.com/libvips/pyvips/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="python binding for libvips using cffi"
 HOMEPAGE="https://github.com/libvips/pyvips"
 LICENSE="MIT"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
-CDEPEND="
+RDEPEND+="
 	>=dev-python/cffi-1.0.0[${PYTHON_USEDEP}]
 "
 DEPEND+="
-	${CDEPEND}
-"
-RDEPEND+="
-	${DEPEND}
+	${RDEPEND}
 "
 BDEPEND+="
-	${CDEPEND}
+	>=dev-python/cffi-1.0.0[${PYTHON_USEDEP}]
+	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/pkgconfig[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
 		dev-python/sphinx[${PYTHON_USEDEP}]
 		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
@@ -42,12 +50,6 @@ PDEPEND+="
 		media-libs/vips[jpeg,png]
 	)
 "
-SRC_URI="
-https://github.com/libvips/pyvips/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 distutils_enable_sphinx "doc"
 distutils_enable_tests "pytest"
