@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# contextlib2
-
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
