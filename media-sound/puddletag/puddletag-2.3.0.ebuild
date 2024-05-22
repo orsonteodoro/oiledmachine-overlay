@@ -10,14 +10,18 @@ inherit distutils-r1 xdg
 DESCRIPTION="Audio tag editor"
 HOMEPAGE="http://docs.puddletag.net/"
 LICENSE="
+	BSD
 	GPL-2
 	GPL-3
 	GPL-3+
+	MIT
 "
 # GPL-2 - puddlestuff/functions.py
 # GPL-2 - translations/puddletag_ru_RU.ts
 # GPL-3 - translations/puddletag_es_ES.ts
 # GPL-3+ - setup.py
+# MIT - docs/_static/jquery-1.11.1.js
+# BSD - docs/_static/websupport.js
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="0"
 # Version string contained in puddletag/source/puddlestuff/__init__.py
@@ -39,17 +43,18 @@ REQUIRED_USE+="
 	)
 "
 RDEPEND+="
-	>=dev-python/configobj-5.0.6[${PYTHON_USEDEP}]
-	>=dev-python/PyQt5-5.15.7[${PYTHON_USEDEP},svg,gui,widgets]
-	>=dev-python/PyQt5-sip-12.11.0[${PYTHON_USEDEP}]
+	>=dev-python/configobj-5.0.8[${PYTHON_USEDEP}]
+	>=dev-python/PyQt5-5.15.10[${PYTHON_USEDEP},svg,gui,widgets]
+	>=dev-python/PyQt5-sip-12.13.0[${PYTHON_USEDEP}]
 	>=dev-python/PyRSS2Gen-1.1[${PYTHON_USEDEP}]
-	>=dev-python/pyparsing-3.0.9[${PYTHON_USEDEP}]
-	>=media-libs/mutagen-1.45.1[${PYTHON_USEDEP}]
+	>=dev-python/pyparsing-3.1.1[${PYTHON_USEDEP}]
+	>=dev-python/unidecode-1.3.8[${PYTHON_USEDEP}]
+	>=media-libs/mutagen-1.47.0[${PYTHON_USEDEP}]
 	amg? (
-		>=dev-python/lxml-4.9.1[${PYTHON_USEDEP}]
+		>=dev-python/lxml-5.1.0[${PYTHON_USEDEP}]
 	)
 	audioread? (
-		>=dev-python/audioread-2.1.9[${PYTHON_USEDEP},gstreamer]
+		>=dev-python/audioread-3.0.1[${PYTHON_USEDEP},gstreamer]
 		>=media-libs/chromaprint-0.5
 		dev-python/gst-python:1.0[${PYTHON_USEDEP}]
 		media-libs/gst-plugins-bad:1.0
@@ -62,11 +67,11 @@ RDEPEND+="
 		>=media-libs/chromaprint-0.5[tools]
 	)
 	fuzz-matching? (
-		>=dev-python/Levenshtein-0.18.0[${PYTHON_USEDEP}]
-		>=dev-python/RapidFuzz-2.0.2[${PYTHON_USEDEP}]
+		>=dev-python/Levenshtein-0.25.0[${PYTHON_USEDEP}]
+		>=dev-python/RapidFuzz-3.4.0[${PYTHON_USEDEP}]
 	)
 	pyacoustid? (
-		>=dev-python/pyacoustid-1.2.2[${PYTHON_USEDEP}]
+		>=dev-python/pyacoustid-1.3.0[${PYTHON_USEDEP}]
 	)
 	quodlibet? (
 		>=media-sound/quodlibet-2.5[${PYTHON_USEDEP}]
