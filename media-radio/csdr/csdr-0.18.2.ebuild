@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# D11, U22
+
 CMAKE_MAKEFILE_GENERATOR="emake"
 
 inherit cmake
