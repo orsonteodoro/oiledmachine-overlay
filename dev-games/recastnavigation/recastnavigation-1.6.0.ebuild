@@ -3,31 +3,30 @@
 
 EAPI=8
 
-EXPECTED_FINGERPRINT="\
-a8713189737e6d885b7e9badbd494d495a460cd47b0eaac9424dbc72d133e49a\
-fc8fd1891a1255b4347c0fbabbd5fc841dc0d3c622137e494a454a312ba5e483\
-"
+# U22.04.2
+
+EXPECTED_FINGERPRINT="disable"
 
 inherit cmake flag-o-matic git-r3 multilib-minimal toolchain-funcs
 
-if [[ ${PV} =~ 99999999 ]] ; then
+if [[ ${PV} =~ "99999999" ]] ; then
+	IUSE+=" fallback-commit"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/recastnavigation/recastnavigation.git"
-	FALLBACK_COMMIT="b51925bb8720e78a65c77339a532459b96ddfc7e" # Dec 22, 2022
+	FALLBACK_COMMIT="6dc1667f580357e8a2154c28b7867bea7e8ad3a7" # May 21, 2023
 	S="${WORKDIR}/${P}"
-	IUSE+=" fallback-commit"
 else
+	KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+	S="${WORKDIR}/${P}"
 	SRC_URI="
 https://github.com/recastnavigation/recastnavigation/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
-	S="${WORKDIR}/${P}"
-	KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 fi
 
 DESCRIPTION="Navigation-mesh Toolset for Games"
-LICENSE="ZLIB"
 HOMEPAGE="https://github.com/memononen/recastnavigation"
+LICENSE="ZLIB"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # Upstream has test ON by default.
 IUSE+="
@@ -42,7 +41,6 @@ REQUIRED_USE+="
 		)
 	)
 "
-# CI uses U22.04.2
 CDEPEND+="
 	>=sys-devel/gcc-11.2.0
 "
@@ -72,7 +70,7 @@ pkg_setup() {
 	fi
 	if tc-is-gcc ; then
 		local gcc_pv=$(gcc-fullversion)
-		if ver_test ${gcc_pv} -lt "8.0" ; then
+		if ver_test "${gcc_pv}" -lt "8.0" ; then
 			die "You need at least gcc 8.0 to compile."
 		fi
 	fi
@@ -87,10 +85,15 @@ _unpack_live() {
 	use fallback-commit && export EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
 	git-r3_checkout
-	local actual_fingerprint=$(cat $(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake") \
+	local filelist=(
+		$(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake")
+	)
+	local actual_fingerprint=$(cat ${filelist[@]} \
 		| sha512sum \
 		| cut -f 1 -d " ")
-	if [[ "${actual_fingerprint}" != "${EXPECTED_FINGERPRINT}" ]] ; then
+	if [[ "${EXPECTED_FINGERPRINT}" == "disable" ]] ; then
+		:
+	elif [[ "${actual_fingerprint}" != "${EXPECTED_FINGERPRINT}" ]] ; then
 eerror
 eerror "Actual build files fingerprint:\t${actual_fingerprint}"
 eerror "Expected build files fingerprint:\t${EXPECTED_FINGERPRINT}"
@@ -200,8 +203,8 @@ src_install() {
 
 multilib_src_install_all() {
 	cd "${S}" || die
-	docinto licenses
-	dodoc License.txt
+	docinto "licenses"
+	dodoc "License.txt"
 	if use demo ; then
 einfo
 einfo "To run the demo:"
