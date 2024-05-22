@@ -18,7 +18,7 @@ if [[ "${PV}" =~ "99999999" ]] ; then
 	FALLBACK_COMMIT="09fd0186774aefa2351c42b4bb22f92ce0c4f235"
 	FALLBACK_COMMIT_DATE="Wed, 20 Dec 2023 22:55:40 +0100"
 	S="${WORKDIR}/${PN}-9999"
-	: # Live does not support GEN_EBUILD.
+	# Live does not support GEN_EBUILD.
 else
 	export OFFLINE="1"
 

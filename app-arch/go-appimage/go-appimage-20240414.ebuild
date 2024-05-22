@@ -19,7 +19,7 @@ inherit git-r3 lcnr linux-info
 if [[ "${PV}" =~ "99999999" ]] ; then
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${PN}-9999"
-	: # Live does not support GEN_EBUILD.
+	# Live does not support GEN_EBUILD.
 else
 	export OFFLINE="1"
 
