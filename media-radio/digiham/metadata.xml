@@ -7,7 +7,8 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">jketterl/digiham</remote-id>
     <bugs-to>https://github.com/jketterl/digiham</bugs-to>
+    <changelog>https://github.com/jketterl/digiham/blob/develop/debian/changelog</changelog>
+    <remote-id type="github">jketterl/digiham</remote-id>
   </upstream>
 </pkgmetadata>
