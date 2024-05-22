@@ -287,6 +287,7 @@ LICENSE+=" MIT" # upload tool
 # +musl is upstream default.
 IUSE+="
 firejail -fuse3 gnome kde -musl +system-static-tools systemd
+ebuild-revision-1
 "
 REQUIRED_USE+="
 	fuse3? (
