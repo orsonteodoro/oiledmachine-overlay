@@ -5,7 +5,7 @@
 EAPI=8
 
 # TODO package:
-# sphinx-theme-builder
+# sphinx-theme-builder (uses nodeenv with node18)
 # sphinx-design
 
 DISTUTILS_USE_PEP517="setuptools"
