@@ -4,7 +4,7 @@
 
 EAPI=7
 
-# D10, D11-slim
+# D11, U22
 
 inherit cmake user-info
 
