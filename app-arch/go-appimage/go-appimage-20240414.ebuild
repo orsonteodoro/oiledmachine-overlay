@@ -9,13 +9,57 @@ EAPI=7
 # The project maintainer keeps deleting tags.
 # We use the date for versioning stability reasons.
 
+EXPECTED_FINGERPRINT="\
+4f042a42e57b632d4ca72a6bf435813f4601f24d1a3f971eae6d30f9313b63e0\
+403d847e7b0381033dd2f60d30329979a363a91ac99f0fd78085328c8dcaaaa6\
+"
+
 inherit git-r3 lcnr linux-info
 
-if [[ "${PV}" =~ "9999" ]] ; then
+if [[ "${PV}" =~ "99999999" ]] ; then
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${PN}-9999"
 	: # Live does not support GEN_EBUILD.
 else
-	:
+	export OFFLINE="1"
+
+	# For continuous tag, see also
+	# https://pkg.go.dev/github.com/probonopd/go-appimage?tab=versions
+	export EGIT_COMMIT="6866993bd2a1b8b182a5f27d9f913dbd5c7aec45" # Timestamp same as EGIT_COMMIT_TIMESTAMP
+
+# These must be inspected and updated on every ebuild update since
+# they are live upstream.  No known way to reference them statically.
+# The continuous git tag below in gen_binary_uris() changes.
+
+# The id below are based on the continuous tag on the static-tools repo.
+	EGIT_COMMIT_STATIC_TOOLS="f0f6e679a001c4ad0e393f829a2396bf41f59cfe" # Apr 14, 2024
+
+# The id below is based on master branch's tip.
+	EGIT_COMMIT_UPLOADTOOL="58f20d2b86197faddd7ffb531a2fab0dad28dedd" # Jul 23, 2022
+
+	# From:
+	# wget -q -O - \
+	#	https://github.com/probonopd/go-appimage/commit/${EGIT_COMMIT}.patch \
+	#	| grep "^Date:" \
+	#	| head -n 1 \
+	#	| cut -f 2- -d " "
+	export EGIT_COMMIT_TIMESTAMP="Mon, 29 Apr 2024 18:43:21 +0200"
+
 	#GEN_EBUILD=1 # Uncomment to generate ebuild for live snapshot.
+
+	KEYWORDS="~amd64 ~arm ~arm64 ~x86" # This is a tagged release.
+
+	# From:  date -d "${EGIT_COMMIT_TIMESTAMP}" -u
+	TIMESTAMP_YYMMDD="20240429"
+	TIMESTAMP_HHMMSS="044321" # In UTC without :
+
+	# Version template obtained from https://pkg.go.dev/github.com/probonopd/go-appimage?tab=versions
+	MY_PV="v0.0.0-${TIMESTAMP_YYMMDD}${TIMESTAMP_HHMMSS}-${EGIT_COMMIT:0:12}" # Keep below TIMESTAMP_*
+
+	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+
+	# From https://github.com/probonopd/go-appimage/blob/832/scripts/build.sh
+	ZIG_LINUX_PV="0.10.0" # Oct 31, 2022 ; musl 1.2.3 (Apr 7, 2022) from zig programming language project
 fi
 
 gen_go_dl_gh_url()
@@ -74,47 +118,9 @@ https://ziglang.org/download/0.10.0/zig-linux-${zigarch}-${ZIG_LINUX_PV}.tar.xz
 	"
 }
 
-if [[ "${PV}" =~ "9999" ]] ; then
-	# Live ebuilds do not get KEYWORDS.  Distro policy.
-	IUSE+=" fallback-commit"
-	S="${WORKDIR}/${PN}-9999"
+if [[ "${PV}" =~ "99999999" ]] ; then
+	:
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~x86" # This is a tagged release.
-	export OFFLINE="1"
-
-	# For continuous tag, see also
-	# https://pkg.go.dev/github.com/probonopd/go-appimage?tab=versions
-	export EGIT_COMMIT="6866993bd2a1b8b182a5f27d9f913dbd5c7aec45" # Timestamp same as EGIT_COMMIT_TIMESTAMP
-
-# These must be inspected and updated on every ebuild update since
-# they are live upstream.  No known way to reference them statically.
-# The continuous git tag below in gen_binary_uris() changes.
-
-# The id below are based on the continuous tag on the static-tools repo.
-	EGIT_COMMIT_STATIC_TOOLS="f0f6e679a001c4ad0e393f829a2396bf41f59cfe" # Apr 14, 2024
-
-# The id below is based on master branch's tip.
-	EGIT_COMMIT_UPLOADTOOL="58f20d2b86197faddd7ffb531a2fab0dad28dedd" # Jul 23, 2022
-
-	# From:
-	# wget -q -O - \
-	#	https://github.com/probonopd/go-appimage/commit/${EGIT_COMMIT}.patch \
-	#	| grep "^Date:" \
-	#	| head -n 1 \
-	#	| cut -f 2- -d " "
-	export EGIT_COMMIT_TIMESTAMP="Mon, 29 Apr 2024 18:43:21 +0200"
-
-	# From:  date -d "${EGIT_COMMIT_TIMESTAMP}" -u
-	TIMESTAMP_YYMMDD="20240429"
-	TIMESTAMP_HHMMSS="044321" # In UTC without :
-
-	# Version template obtained from https://pkg.go.dev/github.com/probonopd/go-appimage?tab=versions
-	MY_PV="v0.0.0-${TIMESTAMP_YYMMDD}${TIMESTAMP_HHMMSS}-${EGIT_COMMIT:0:12}" # Keep below TIMESTAMP_*
-
-	# From https://github.com/probonopd/go-appimage/blob/832/scripts/build.sh
-	ZIG_LINUX_PV="0.10.0" # Oct 31, 2022 ; musl 1.2.3 (Apr 7, 2022) from zig programming language project
-
-	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 	if [[ "${GEN_EBUILD}" != "1" ]] ; then
 		SRC_URI+="
 $(gen_go_dl_gh_url github.com/probonopd/go-appimage probonopd/go-appimage ${MY_PV})
@@ -186,7 +192,6 @@ https://raw.githubusercontent.com/probonopd/uploadtool/${EGIT_COMMIT_UPLOADTOOL}
 		"
 	fi
 fi
-
 
 DESCRIPTION="Purely experimental playground for Go implementation of AppImage \
 tools"
@@ -431,7 +436,7 @@ get_zig_arch() {
 }
 
 pkg_setup() {
-	if [[ "${PV}" =~ "9999" ]] && has network-sandbox $FEATURES ; then
+	if [[ "${PV}" =~ "99999999" ]] && has network-sandbox $FEATURES ; then
 eerror
 eerror "${PN} requires network-sandbox to be disabled in FEATURES in order to"
 eerror "download micropackages."
@@ -690,10 +695,7 @@ verify_build_files() {
 		| cut -f 1 -d " " \
 		| sha512sum \
 		| cut -f 1 -d " ")
-	local expected_build_files_fingerprint="\
-4f042a42e57b632d4ca72a6bf435813f4601f24d1a3f971eae6d30f9313b63e0\
-403d847e7b0381033dd2f60d30329979a363a91ac99f0fd78085328c8dcaaaa6\
-"
+	local expected_build_files_fingerprint="${EXPECTED_FINGERPRINT}"
 	if [[ "${actual_build_files_fingerprint}" != "${expected_build_files_fingerprint}" ]] ; then
 eerror
 eerror "A change in the build files has been detected."
@@ -714,7 +716,7 @@ src_unpack() {
 
 	[[ "${GEN_EBUILD}" == "1" ]] && generate_ebuild_snapshot
 
-	if [[ "${PV}" =~ "9999" ]] ; then
+	if [[ "${PV}" =~ "99999999" ]] ; then
 		if use fallback-commit ; then
 			export EGIT_COMMIT="09fd0186774aefa2351c42b4bb22f92ce0c4f235"
 
@@ -854,7 +856,7 @@ src_compile() {
 	export EGIT_COMMIT_STATIC_TOOLS
 	export EGIT_COMMIT_UPLOADTOOL
 	local args=()
-	if ! [[ "${PV}" =~ "9999" ]] ; then
+	if ! [[ "${PV}" =~ "99999999" ]] ; then
 		args+=(
 			-o "${WORKDIR}/go_build/src"
 		)
@@ -870,13 +872,13 @@ cat <<EOF > "${ED}/usr/bin/appimaged"
 ln -sf "/usr/bin/${appimaged_fn}" "\${HOME}/appimaged"
 "/usr/bin/${appimaged_fn}" "\$@"
 EOF
-	fperms 0755 /usr/bin/appimaged
+	fperms 0755 "/usr/bin/appimaged"
 }
 
 src_install() {
 	local ai_arch=$(get_appimage_arch)
 	exeinto /usr/bin
-	if [[ "${PV}" =~ "9999" ]] ; then
+	if [[ "${PV}" =~ "99999999" ]] ; then
 		BUILD_DIR="${S_GO}/src/github.com/probonopd/go-appimage/build"
 	else
 		BUILD_DIR="${S_GO}/src"
@@ -889,13 +891,13 @@ src_install() {
 	local appimagetool_fn="appimagetool-${timestamp}-${ai_arch}.AppImage"
 	local mkappimage_fn="mkappimage-${timestamp}-${ai_arch}.AppImage"
 	doexe "${BUILD_DIR}/${appimaged_fn}"
-	#dosym ../../../usr/bin/${appimaged_fn} /usr/bin/appimaged
+	#dosym "../../../usr/bin/${appimaged_fn}" "/usr/bin/appimaged"
 	doexe "${BUILD_DIR}/${appimagetool_fn}"
-	dosym ../../../usr/bin/${appimagetool_fn} /usr/bin/appimagetool
+	dosym "../../../usr/bin/${appimagetool_fn}" "/usr/bin/appimagetool"
 	doexe "${BUILD_DIR}/${mkappimage_fn}"
-	dosym ../../../usr/bin/${mkappimage_fn} /usr/bin/mkappimage
+	dosym "../../../usr/bin/${mkappimage_fn}" "/usr/bin/mkappimage"
 	gen_wrapper
-	if [[ "${PV}" =~ "9999" ]] ; then
+	if [[ "${PV}" =~ "99999999" ]] ; then
 		LCNR_SOURCE="${WORKDIR}/go_build/pkg/mod"
 		lcnr_install_files
 	else
@@ -947,15 +949,15 @@ einfo
 einfo
 einfo "The following may be required to show status information:"
 einfo
-	optfeature "gnome desktop notifications" x11-misc/notification-daemon
-	optfeature "lightweight desktop notifications" x11-misc/dunst
-	optfeature "lxqt desktop notifications" lxqt-base/lxqt-notificationd
-	optfeature "mate desktop notifications" x11-misc/mate-notification-daemon
-	optfeature "sway desktop notifications" gui-apps/swaync
-	optfeature "unity desktop notifications" x11-misc/notify-osd
-	optfeature "wayland desktop notifications" gui-apps/mako
-	optfeature "wlroots desktop notifications" gui-apps/fnott
-	optfeature "xfce desktop notifications" xfce-extra/xfce4-notifyd
+	optfeature "gnome desktop notifications" "x11-misc/notification-daemon"
+	optfeature "lightweight desktop notifications" "x11-misc/dunst"
+	optfeature "lxqt desktop notifications" "lxqt-base/lxqt-notificationd"
+	optfeature "mate desktop notifications" "x11-misc/mate-notification-daemon"
+	optfeature "sway desktop notifications" "gui-apps/swaync"
+	optfeature "unity desktop notifications" "x11-misc/notify-osd"
+	optfeature "wayland desktop notifications" "gui-apps/mako"
+	optfeature "wlroots desktop notifications" "gui-apps/fnott"
+	optfeature "xfce desktop notifications" "xfce-extra/xfce4-notifyd"
 einfo
 	if ! use systemd ; then
 ewarn
