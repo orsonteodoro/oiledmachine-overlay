@@ -88,7 +88,6 @@ https://github.com/${uri_frag}/archive/refs/tags/${tag//+incompatible}.tar.gz
 	-> ${dest_name}.tar.gz
 		"
 	fi
-
 }
 
 gen_binary_uris()
