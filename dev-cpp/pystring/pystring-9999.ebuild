@@ -3,15 +3,25 @@
 
 EAPI=8
 
-EGIT_BRANCH="master"
-EGIT_REPO_URI="https://github.com/imageworks/pystring.git"
-inherit flag-o-matic git-r3
+inherit flag-o-matic
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+=" fallback-commit"
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/imageworks/pystring.git"
+	FALLBACK_COMMIT="76a2024e132bcc83bec1ecfebeacd5d20d490bfe" # Jul 22, 2023
+	inherit git-r3
+else
+	SRC_URI="FIXME"
+fi
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="C++ functions matching the interface and behavior of python string \
 methods"
+HOMEPAGE="https://github.com/imageworks/pystring"
 LICENSE="BSD"
 # Live ebuild snapshots do not get keyworded
-HOMEPAGE="https://github.com/imageworks/pystring"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" custom-cflags doc test"
 RDEPEND+="
@@ -20,23 +30,23 @@ RDEPEND+="
 		sys-libs/libcxx
 	)
 "
-DEPEND+=" ${RDEPEND}"
+DEPEND+="
+	${RDEPEND}
+"
 BDEPEND+="
+	dev-build/libtool
+	sys-apps/grep
 	|| (
 		sys-devel/gcc[cxx]
 		sys-devel/clang
 	)
-	sys-apps/grep
-	dev-build/libtool
 "
-RESTRICT="mirror"
-S="${WORKDIR}/${P}"
-DOCS=( README )
+DOCS=( "README" )
 
 pkg_setup() {
 	if use test ; then
-		if [[ ${FEATURES} =~ test ]] ; then
-			:;
+		if [[ "${FEATURES}" =~ "test" ]] ; then
+			:
 		else
 eerror
 eerror "You need to add FEATURES=test before running emerge/ebuild to run"
@@ -66,16 +76,33 @@ eerror
 	fi
 }
 
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
 src_prepare() {
 	default
-	sed -i -e '/.\/test/d' Makefile || die
+	sed -i \
+		-e '/.\/test/d' "Makefile" \
+		|| die
 }
 
 src_configure() {
-	sed -i -e "s|/usr/lib|${ESYSROOT}/usr/$(get_libdir)|g" Makefile || die
+	sed -i \
+		-e "s|/usr/lib|${ESYSROOT}/usr/$(get_libdir)|g" \
+		"Makefile" \
+		|| die
 	if use custom-cflags ; then
-		sed -i -e "s|-O3|${CXXFLAGS}|g" \
-		-e "s|CXXFLAGS =|CXXFLAGS = ${CXXFLAGS}|g" Makefile || die
+		sed -i \
+			-e "s|-O3|${CXXFLAGS}|g" \
+			-e "s|CXXFLAGS =|CXXFLAGS = ${CXXFLAGS}|g" "Makefile" \
+			|| die
 	else
 		strip-flags
 		filter-flags -O*
@@ -96,9 +123,9 @@ src_test() {
 }
 
 src_install() {
-	dolib.so "${S}/libpystring.so"{,.0{,.0.0}}
+	dolib.so "${S}/libpystring.so"{"",".0"{"",".0.0"}}
 	doheader -r "${S}/pystring"
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 	use doc && einstalldocs
 }
