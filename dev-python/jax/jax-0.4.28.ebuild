@@ -7,7 +7,7 @@ EAPI=8
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 # Limited by flax
 
 inherit distutils-r1
@@ -29,7 +29,7 @@ KEYWORDS="~amd64 ~arm64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 australis cuda doc experimental test
-r2
+ebuild-revision-2
 "
 # flax and tensorstore are missing in setup.py *_require sections but referenced
 # in experimental but not in tests folder.
@@ -77,14 +77,16 @@ PDEPEND+="
 " # Avoid circular
 S="${WORKDIR}/jax-jax-v${PV}"
 RESTRICT="mirror"
-DOCS=( CHANGELOG.md CITATION.bib README.md )
+DOCS=( "CHANGELOG.md" "CITATION.bib" "README.md" )
 
 distutils_enable_tests "pytest"
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc AUTHORS LICENSE
+	docinto "licenses"
+	dodoc \
+		"AUTHORS" \
+		"LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
