@@ -12,21 +12,20 @@ cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce\
 inherit cmake git-r3 multilib-minimal toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+=" fallback-commit"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/yarosla/nxjson.git"
-	FALLBACK_COMMIT="d2c6fba9d5b0d445722105dd2a64062c1309ac86"
+	FALLBACK_COMMIT="d2c6fba9d5b0d445722105dd2a64062c1309ac86" # Sep 27, 2020
 	S="${WORKDIR}/${P}"
-	IUSE+=" fallback-commit"
 else
-	SRC_URI=""
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${P}"
-	die "FIXME"
+	SRC_URI="FIXME"
 fi
 
 DESCRIPTION="Very small JSON parser written in C."
 LICENSE="LGPL-3+"
 HOMEPAGE="https://github.com/yarosla/nxjson"
-# Live ebuilds do not get keyworded
 SLOT="0/${EXPECTED_FINGERPRINT:0:7}"
 IUSE+=" debug static-libs test"
 RDEPEND+="
