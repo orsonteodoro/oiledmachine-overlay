@@ -4,18 +4,20 @@
 
 EAPI=8
 
+EGIT_COMMIT="kalman-v1.0"
+
 inherit cmake
 
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/mobilinkd/m17-cxx-demod/archive/refs/tags/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${P}"
 
 DESCRIPTION="M17 Demodulator in C++"
 HOMEPAGE="https://github.com/mobilinkd/m17-cxx-demod"
 LICENSE="GPL-3"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 DEPEND+="
@@ -32,8 +34,7 @@ BDEPEND+="
 		dev-cpp/gtest
 	)
 "
-EGIT_COMMIT="kalman-v1.0"
 RESTRICT="mirror"
-DOCS=( LICENSE README.md )
+DOCS=( "LICENSE" "README.md" )
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
