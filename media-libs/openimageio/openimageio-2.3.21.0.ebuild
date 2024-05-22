@@ -17,7 +17,7 @@ OPENEXR_V3_PV="3.1.13 3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4"
 OPENVDB_APIS=( {9..5} )
 OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
 OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
-PYTHON_COMPAT=( python3_10 )
+PYTHON_COMPAT=( "python3_10" )
 QT5_PV="5.15"
 TEST_OEXR_IMAGE_COMMIT="f17e353fbfcde3406fe02675f4d92aeae422a560" # committer-date:<=2022-10-31
 TEST_OIIO_IMAGE_COMMIT="aae37a54e31c0e719edcec852994d052ecf6541e" # committer-date:<=2022-10-31
@@ -315,7 +315,7 @@ BDEPEND+="
 		>=sys-devel/gcc-8.5
 	)
 "
-DOCS=( CHANGES.md CREDITS.md README.md )
+DOCS=( "CHANGES.md" "CREDITS.md" "README.md" )
 
 _oiio_use() {
 	local value=$(usex "${1}")
@@ -333,7 +333,7 @@ pkg_setup() {
 		export CXX="${CHOST}-clang++"
 		strip-unsupported-flags
 	fi
-	if test-flags-CXX -std=c++${CXX_STD_MIN} 2>/dev/null 1>/dev/null ; then
+	if test-flags-CXX -std=c++${CXX_STD_MIN} >/dev/null 2>&1 ; then
 		:;
 	else
 		die "Found unsupported -std=c++${CXX_STD_MIN}"
@@ -341,7 +341,7 @@ pkg_setup() {
 	use python && python-single-r1_pkg_setup
 
 	if use icc ; then
-		which icc 2>/dev/null 1>/dev/null || die "You must set the PATH to icc as a per-package envvar"
+		which icc >/dev/null 2>&1 || die "You must set the PATH to icc as a per-package envvar"
 	fi
 
 	if use clang ; then
@@ -600,7 +600,7 @@ src_install() {
 	)
 	insinto ${FONTDIR}
 	for dir in "${FONT_S[@]}"; do
-		doins "${dir}"/*.ttf
+		doins "${dir}/"*".ttf"
 	done
 
 	local use_tbb=$(get_tbb_slot)

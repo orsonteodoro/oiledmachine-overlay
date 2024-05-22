@@ -9,7 +9,7 @@ EAPI=8
 CXX_STD_MIN="14"
 FONT_PN="OpenImageIO"
 LEGACY_TBB_SLOT="2"
-LLVM_COMPAT=( {17..13} )
+LLVM_COMPAT=( {18..13} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 ONETBB_SLOT="0"
 OPENEXR_V2_PV="2.5.9 2.5.8"
@@ -17,11 +17,11 @@ OPENEXR_V3_PV="3.2.4 3.2.3 3.2.2 3.2.1 3.2.0 3.1.13 3.1.12 3.1.11 3.1.10 3.1.9 3
 OPENVDB_APIS=( {10..5} )
 OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
 OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 QT5_PV="5.15"
 QT6_PV="6.6"
-TEST_OEXR_IMAGE_COMMIT="df16e765fee28a947244657cae3251959ae63c00" # committer-date:<=2024-04-01
-TEST_OIIO_IMAGE_COMMIT="aae37a54e31c0e719edcec852994d052ecf6541e" # committer-date:<=2024-04-01
+TEST_OEXR_IMAGE_COMMIT="df16e765fee28a947244657cae3251959ae63c00" # committer-date:<=2024-05-01
+TEST_OIIO_IMAGE_COMMIT="aae37a54e31c0e719edcec852994d052ecf6541e" # committer-date:<=2024-05-01
 X86_CPU_FEATURES=(
 	avx:avx
 	avx2:avx2
@@ -358,7 +358,7 @@ BDEPEND+="
 		>=sys-devel/gcc-8.5
 	)
 "
-DOCS=( CHANGES.md CREDITS.md README.md )
+DOCS=( "CHANGES.md" "CREDITS.md" "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-2.5.8.0-fits.patch"
 	"${FILESDIR}/${PN}-2.5.8.0-fix-unit_simd.patch"
@@ -381,7 +381,7 @@ pkg_setup() {
 		export CXX="${CHOST}-clang++"
 		strip-unsupported-flags
 	fi
-	if test-flags-CXX -std=c++${CXX_STD_MIN} 2>/dev/null 1>/dev/null ; then
+	if test-flags-CXX -std=c++${CXX_STD_MIN} >/dev/null 2>&1 ; then
 		:;
 	else
 		die "Found unsupported -std=c++${CXX_STD_MIN}"
@@ -389,7 +389,7 @@ pkg_setup() {
 	use python && python-single-r1_pkg_setup
 
 	if use icc ; then
-		which icc 2>/dev/null 1>/dev/null || die "You must set the PATH to icc as a per-package envvar"
+		which icc >/dev/null 2>&1 || die "You must set the PATH to icc as a per-package envvar"
 	fi
 
 	if use clang ; then
@@ -662,7 +662,7 @@ src_test() {
 	virtx cmake_src_test
 
 	# Clean up the image directory for src_install
-	rm -fr "${T:?}"/usr || die
+	rm -fr "${T:?}/usr" || die
 }
 
 src_install() {
