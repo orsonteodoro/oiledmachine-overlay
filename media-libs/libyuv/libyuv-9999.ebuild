@@ -9,29 +9,34 @@ STABLE_EXPECTED_FINGERPRINT="\
 d598ee724bf56ae04ed475987d4e8780e302be56a5e98dd284225069bb54caf9\
 c4abf7602876c86bf9b75f6b8e2f663dc71c1438e4fa3d0ced829781d395e294\
 "
-STABLE_FALLBACK_COMMIT="eb6e7bb63738e29efd82ea3cf2a115238a89fa51" # Wed Apr 28 15:32:14 2021
+STABLE_FALLBACK_COMMIT="eb6e7bb63738e29efd82ea3cf2a115238a89fa51" # Wed Apr 28 15:34:12 2021
 
 MAIN_EXPECTED_FINGERPRINT="\
-8632b4fd615d2ea818cd100afbd6f05428dccc4a63a869a626bbc31e827e4a30\
-68217c5e8e8819294c5b9709a13adb858865f8c88636bd6ea9388e58872550cc\
+1fc5a055711f8a10f8cee3dff1c574bad289fbcdd7aee15681c95ce1a55d2620\
+c86dc4c94f7dc3d64b7ee5667a31823dffae04937ce8902c2f3eb0bfcb1db4fe\
 "
-MAIN_FALLBACK_COMMIT="a6a2ec654b1be1166b376476a7555c89eca0c275" # Mon Feb 12 19:11:06 2024
+MAIN_FALLBACK_COMMIT="8e18fc93c8c07d2ba6f9671281d6f35c8c47b2f4" # Tue May 21 15:55:24 2024
 
-inherit cmake git-r3 multilib-minimal
+inherit cmake multilib-minimal
 
-EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
-SRC_URI=""
-S="${WORKDIR}/${P}"
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+=" fallback-commit"
+	EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
+	S="${WORKDIR}/${P}"
+	inherit git-r3
+else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
+	SRC_URI="FIXME"
+fi
 
 DESCRIPTION="libyuv is an open source project that includes YUV scaling and \
 conversion functionality."
 HOMEPAGE="https://chromium.googlesource.com/libyuv/libyuv/"
 LICENSE="BSD"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${GIT_BRANCHES}
-fallback-commit +main stable static system-gflags test
++main stable static system-gflags test
 "
 REQUIRED_USE+="
 	^^ (
@@ -40,7 +45,6 @@ REQUIRED_USE+="
 	)
 "
 RDEPEND+="
-	virtual/jpeg[${MULTILIB_USEDEP}]
 	virtual/libc
 "
 DEPEND+="
@@ -48,16 +52,17 @@ DEPEND+="
 	test? (
 		dev-cpp/gflags[${MULTILIB_USEDEP}]
 		dev-cpp/gtest[${MULTILIB_USEDEP}]
+		virtual/jpeg[${MULTILIB_USEDEP}]
 	)
 "
 BDEPEND+="
+	sys-apps/grep[pcre]
 	!stable? (
 		>=dev-build/cmake-2.8.12
 	)
 	stable? (
 		>=dev-build/cmake-2.8
 	)
-	sys-apps/grep[pcre]
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-1741-cmake-libdir.patch"
@@ -74,7 +79,7 @@ get_hash() {
 		| cut -f 1 -d " "
 }
 
-src_unpack() {
+unpack_live() {
 	# clone uses main
 	local expected_fingerprint
 	if use stable ; then
@@ -86,10 +91,13 @@ src_unpack() {
 		expected_fingerprint="${MAIN_EXPECTED_FINGERPRINT}"
 		use fallback-commit && export EGIT_COMMIT="${MAIN_FALLBACK_COMMIT}"
 	fi
+einfo "Using ${EGIT_BRANCH} branch"
 	git-r3_fetch
 	git-r3_checkout
 	actual_fingerprint=$(get_hash)
-	if [[ "${expected_fingerprint}" != "${actual_fingerprint}" ]] ; then
+	if [[ "${expected_fingerprint}" == "disable" ]] ; then
+		:
+	elif [[ "${expected_fingerprint}" != "${actual_fingerprint}" ]] ; then
 eerror
 eerror "The build files has changed.  This means that either a change in"
 eerror "dependencies, supported arches, ABI, config options, etc."
@@ -101,6 +109,14 @@ eerror "Expected build files fingerprint:\t${expected_fingerprint}"
 eerror "Actual build files fingerprint:\t${actual_fingerprint}"
 eerror
 		die
+	fi
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		unpack_live
+	else
+		unpack ${A}
 	fi
 }
 
@@ -124,7 +140,8 @@ multilib_src_install() {
 		-e "s|@exec_prefix@|\${prefix}|" \
 		-e "s|@libdir@|/usr/$(get_libdir)|" \
 		-e "s|@includedir@|\${prefix}/include|" \
-		-e "s|@version@|${PV}|" > "${T}/${PN}.pc" \
+		-e "s|@version@|${PV}|" \
+		> "${T}/${PN}.pc" \
 		|| die
 	doins "${T}/${PN}.pc"
 	cd "${S}" || die

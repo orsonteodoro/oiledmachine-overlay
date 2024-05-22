@@ -10,11 +10,11 @@
     libyuv performs YUV scaling and conversion.
   </longdescription>
   <use>
-    <flag name="test">
-      Performs testing
-    </flag>
     <flag name="fallback-commit">
       Rewinds commit to the last working for patches.
+    </flag>
+    <flag name="test">
+      Performs testing
     </flag>
   </use>
 </pkgmetadata>
