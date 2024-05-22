@@ -11,13 +11,14 @@ EAPI=8
 # distrax
 # ecos
 # flax
+# ml-collections
+# nashpy
 # rlax
 # tensorflow-datasets
 # tensorflow-probability
-# nashpy
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only tests up to 3.11
 
 # Limited by jax
 inherit distutils-r1
@@ -35,9 +36,9 @@ HOMEPAGE="
 https://github.com/deepmind/open_spiel
 "
 LICENSE="Apache-2.0"
-RESTRICT="mirror"
+RESTRICT="mirror test" # Not tested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc -eigen -go -jax -julia -libnop -python-misc -pytorch -rust -tensorflow"
+IUSE+=" doc -eigen -go -jax -julia -libnop -python-misc -pytorch -rust -tensorflow test"
 DEPEND+="
 	>=dev-python/attrs-19.3.0[${PYTHON_USEDEP}]
 	>=dev-python/absl-py-0.10.0[${PYTHON_USEDEP}]
@@ -106,6 +107,9 @@ BDEPEND+="
 		>=dev-python/sphinx-5.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-markdown-tables-0.0.17[${PYTHON_USEDEP}]
 		>=dev-python/sphinx_rtd_theme-1.3.0[${PYTHON_USEDEP}]
+	)
+	test? (
+		dev-python/nox[${PYTHON_USEDEP}]
 	)
 "
 
