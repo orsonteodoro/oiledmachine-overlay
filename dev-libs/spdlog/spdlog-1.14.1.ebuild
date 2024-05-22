@@ -5,7 +5,8 @@ EAPI=8
 
 inherit cmake-multilib
 
-if [[ ${PV} =~ "9999" ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="v1.x"
 	EGIT_REPO_URI="https://github.com/gabime/${PN}"
 	inherit git-r3
 else
