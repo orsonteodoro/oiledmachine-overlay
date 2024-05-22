@@ -3,21 +3,23 @@
 
 EAPI=8
 
+# U 22.04
+
 CMAKE_BUILD_TYPE="Release"
 MESA_PV="22.0.1"
 MY_PN="OpenXR-SDK-Source"
 NV_DRIVER_VERSION_VULKAN="390.132"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 XORG_SERVER_PV="21.1.4"
 
 inherit cmake flag-o-matic python-any-r1 toolchain-funcs
 
 KEYWORDS="~amd64"
+S="${WORKDIR}/${MY_PN}-release-${PV}"
 SRC_URI="
 https://github.com/KhronosGroup/${MY_PN}/archive/release-${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${MY_PN}-release-${PV}"
 
 DESCRIPTION="Generated headers and sources for OpenXR loader."
 LICENSE="
@@ -47,7 +49,6 @@ REQUIRED_USE+="
 		video_cards_radeonsi
 	)
 "
-# U 22.04
 DEPEND+="
 	${PYTHON_DEPS}
 	media-libs/mesa[egl(+),gles2?,libglvnd(+)]
@@ -93,10 +94,10 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	${PYTHON_DEPS}
 	$(python_gen_any_dep '
 		>=dev-python/jinja-3.0.3[${PYTHON_USEDEP}]
 	')
+	${PYTHON_DEPS}
 	>=dev-build/cmake-3.22.1
 	virtual/pkgconfig
 	|| (
@@ -132,14 +133,20 @@ src_install() {
 	dodoc .reuse/dep5
 	dodoc LICENSES/*
 	dodoc COPYING.adoc
-	mv "${ED}/usr/share/doc/${PN}/LICENSE" \
-		"${ED}/usr/share/doc/${PN}-${PVR}/licenses" || die
-	rm -rf "${ED}/usr/share/doc/${PN}" || die
+	mv \
+		"${ED}/usr/share/doc/${PN}/LICENSE" \
+		"${ED}/usr/share/doc/${PN}-${PVR}/licenses" \
+		|| die
+	rm -rf \
+		"${ED}/usr/share/doc/${PN}" \
+		|| die
 	if use doc ; then
 		docinto readmes
 		dodoc CHANGELOG.SDK.md
-		mv "${ED}/usr/share/doc/${P}/README.md" \
-			"${ED}/usr/share/doc/${P}/readmes" || die
+		mv \
+			"${ED}/usr/share/doc/${P}/README.md" \
+			"${ED}/usr/share/doc/${P}/readmes" \
+			|| die
 	else
 		rm -rf "${ED}/usr/share/doc/${P}/README.md"
 	fi
