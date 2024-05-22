@@ -153,6 +153,7 @@ RDEPEND+="
 		>=dev-python/pycsdr-0.18.2[${PYTHON_USEDEP}]
 		>=media-radio/csdr-0.18.2
 	)
+	dev-python/setuptools[${PYTHON_USEDEP}]
 	digital_voice_digiham? (
 		${DIGIHAM_DEPEND}
 		>=media-radio/codecserver-0.2
