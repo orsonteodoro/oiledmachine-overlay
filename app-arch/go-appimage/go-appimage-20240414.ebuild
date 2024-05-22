@@ -13,6 +13,7 @@ EXPECTED_FINGERPRINT="\
 4f042a42e57b632d4ca72a6bf435813f4601f24d1a3f971eae6d30f9313b63e0\
 403d847e7b0381033dd2f60d30329979a363a91ac99f0fd78085328c8dcaaaa6\
 "
+export S_GO="${WORKDIR}/go_build"
 
 inherit git-r3 lcnr linux-info
 
@@ -21,8 +22,8 @@ if [[ "${PV}" =~ "99999999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${S_GO}/src/github.com/probonopd/${PN}"
 	EGIT_REPO_URI="https://github.com/probonopd/${PN}.git"
-	FALLBACK_COMMIT="09fd0186774aefa2351c42b4bb22f92ce0c4f235"
-	FALLBACK_COMMIT_DATE="Wed, 20 Dec 2023 22:55:40 +0100"
+	FALLBACK_COMMIT="abc5a41a4953694c4e215e678aa911bcce1f690e"
+	FALLBACK_COMMIT_DATE="Sun, 14 Apr 2024 17:58:28 +0200"
 	S="${WORKDIR}/${PN}-9999"
 	# Live does not support GEN_EBUILD.
 else
@@ -30,17 +31,17 @@ else
 
 	# For continuous tag, see also
 	# https://pkg.go.dev/github.com/probonopd/go-appimage?tab=versions
-	export EGIT_COMMIT="6866993bd2a1b8b182a5f27d9f913dbd5c7aec45" # Timestamp same as EGIT_COMMIT_TIMESTAMP
+	export EGIT_COMMIT="abc5a41a4953694c4e215e678aa911bcce1f690e" # Timestamp same as EGIT_COMMIT_TIMESTAMP
 
 # These must be inspected and updated on every ebuild update since
 # they are live upstream.  No known way to reference them statically.
 # The continuous git tag below in gen_binary_uris() changes.
 
 # The id below are based on the continuous tag on the static-tools repo.
-	EGIT_COMMIT_STATIC_TOOLS="f0f6e679a001c4ad0e393f829a2396bf41f59cfe" # Apr 14, 2024
+	EGIT_COMMIT_STATIC_TOOLS="f0f6e679a001c4ad0e393f829a2396bf41f59cfe" # Apr 14, 2024 from manual inspection of HEAD timestamp <= 2024-05-19
 
 # The id below is based on master branch's tip.
-	EGIT_COMMIT_UPLOADTOOL="58f20d2b86197faddd7ffb531a2fab0dad28dedd" # Jul 23, 2022
+	EGIT_COMMIT_UPLOADTOOL="58f20d2b86197faddd7ffb531a2fab0dad28dedd" # Jul 23, 2022 from GitHub committer-date:<=2024-04-14 search
 
 	# From:
 	# wget -q -O - \
@@ -48,15 +49,15 @@ else
 	#	| grep "^Date:" \
 	#	| head -n 1 \
 	#	| cut -f 2- -d " "
-	export EGIT_COMMIT_TIMESTAMP="Mon, 29 Apr 2024 18:43:21 +0200"
+	export EGIT_COMMIT_TIMESTAMP="Sun, 14 Apr 2024 17:58:28 +0200"
 
 	#GEN_EBUILD=1 # Uncomment to generate ebuild for live snapshot.
 
 	KEYWORDS="~amd64 ~arm ~arm64 ~x86" # This is a tagged release.
 
 	# From:  date -d "${EGIT_COMMIT_TIMESTAMP}" -u
-	TIMESTAMP_YYMMDD="20240429"
-	TIMESTAMP_HHMMSS="044321" # In UTC without :
+	TIMESTAMP_YYMMDD="20240414"
+	TIMESTAMP_HHMMSS="155828" # In UTC without :
 
 	# Version template obtained from https://pkg.go.dev/github.com/probonopd/go-appimage?tab=versions
 	MY_PV="v0.0.0-${TIMESTAMP_YYMMDD}${TIMESTAMP_HHMMSS}-${EGIT_COMMIT:0:12}" # Keep below TIMESTAMP_*
@@ -525,7 +526,6 @@ ewarn "It is recommended to enable the system-static-tools USE flag if"
 ewarn "downloading is a problem."
 ewarn
 	fi
-	export S_GO="${WORKDIR}/go_build"
 }
 
 unpack_go_pkg()
