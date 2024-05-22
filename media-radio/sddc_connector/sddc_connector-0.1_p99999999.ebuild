@@ -4,22 +4,24 @@
 
 EAPI=8
 
-inherit cmake
-
 GCC_SLOT="11"
 
+inherit cmake
+
 if [[ "${PV}" =~ "99999999" ]] ; then
-	inherit git-r3
 	IUSE+=" fallback-commit"
+	EGIT_REPO_URI="https://github.com/jketterl/sddc_connector.git"
+	EGIT_BRANCH="master"
+	FALLBACK_COMMIT="c39c26103c5412dbae27d8ce91c861cd6e1a3911" # Jul 4, 2023
+	inherit git-r3
 else
-	EGIT_COMMIT="057e7c3ec0c027ca51d6113fc1bf326de2e107e1"
+	EGIT_COMMIT="c39c26103c5412dbae27d8ce91c861cd6e1a3911" # Jul 4, 2023
 	SRC_URI="
 	https://github.com/jketterl/sddc_connector/archive/${EGIT_COMMIT}.tar.gz
 		-> ${P}-${EGIT_COMMIT:0:7}.tar.gz
 	"
 	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 fi
-
 
 DESCRIPTION="Implementation of an OpenWebRX connector for BBRF103 / RX666 / RX888 devices based on llibsddc"
 HOMEPAGE="https://github.com/jketterl/sddc_connector"
@@ -57,17 +59,16 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	virtual/pkgconfig
+	>=dev-build/cmake-0.19
 	sys-devel/gcc:${GCC_SLOT}
+	virtual/pkgconfig
 "
 DOCS=( LICENSE )
 
 src_unpack() {
 	if [[ "${PV}" =~ "99999999" ]] ; then
-		EGIT_REPO_URI="https://github.com/jketterl/sddc_connector.git"
-		EGIT_BRANCH="master"
 		if use fallback-commit ; then
-			EGIT_COMMIT="c39c26103c5412dbae27d8ce91c861cd6e1a3911" # Jul 4, 2023
+			EGIT_COMMIT="${FALLBACK_COMMIT}"
 		fi
 		git-r3_fetch
 		git-r3_checkout
