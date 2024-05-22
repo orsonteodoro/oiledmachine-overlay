@@ -16,11 +16,11 @@ if [[ "${PV}" =~ "99999999" ]] ; then
 	inherit git-r3
 else
 	EGIT_COMMIT="c39c26103c5412dbae27d8ce91c861cd6e1a3911" # Jul 4, 2023
+	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 	SRC_URI="
 	https://github.com/jketterl/sddc_connector/archive/${EGIT_COMMIT}.tar.gz
 		-> ${P}-${EGIT_COMMIT:0:7}.tar.gz
 	"
-	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 fi
 
 DESCRIPTION="Implementation of an OpenWebRX connector for BBRF103 / RX666 / RX888 devices based on llibsddc"
