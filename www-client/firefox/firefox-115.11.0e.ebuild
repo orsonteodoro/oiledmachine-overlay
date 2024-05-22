@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# 115.9.1e -> 115.10.0
+# 115.10.0 -> 115.11.0
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
@@ -23,27 +23,27 @@ EAPI=8
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
 # https://www.mozilla.org/en-US/firefox/117.0.1/system-requirements/
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/moz.configure
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/build/moz.configure/nss.configure L12
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/gfx/harfbuzz/configure.ac L3
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/media/libaom/config/aom_version.h L7
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/media/libwebp/moz.yaml L16
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/modules/freetype2/include/freetype/freetype.h L4943
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/taskcluster/ci/fetch/toolchains.yml
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/moz.configure
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/build/moz.configure/nss.configure L12
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/gfx/harfbuzz/configure.ac L3
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/media/libaom/config/aom_version.h L7
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/media/libwebp/moz.yaml L16
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/modules/freetype2/include/freetype/freetype.h L4943
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/taskcluster/ci/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, pkgconf-, rust-
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/taskcluster/ci/packages/
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/taskcluster/ci/packages/
 #   Keyword search:  gtk
-# /var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0/taskcluster/ci/toolchain/
+# /var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0/taskcluster/ci/toolchain/
 #   Keyword search:  nasm, nodejs, zlib
 
 # Due to versioning conflicts and ebuild assumptions, you cannot have stable and esr be the same version
@@ -62,7 +62,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="115.10.0"
+PV="115.11.0"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}esr/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -79,7 +79,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-115.10.0e/work/firefox-115.10.0"
+SRC="/var/tmp/portage/www-client/firefox-115.11.0e/work/firefox-115.11.0"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -136,8 +136,8 @@ e6ce73d176e405d1dab64151a7787bc3190692df5ba72f552039a61883d0e273\
 LLVM_COMPAT=( 16 ) # Limited based on virtual/rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MITIGATION_DATE="Apr 16, 2024"
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-19/"
+MITIGATION_DATE="May 14, 2024"
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-22/"
 MOZ_ESR="yes"
 MOZ_LANGS=(
 ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
@@ -183,10 +183,10 @@ VIRTUALX_REQUIRED="manual"
 
 inherit autotools cflags-depends check-linker check-reqs desktop flag-o-matic
 inherit gnome2-utils lcnr linux-info llvm multilib-minimal multiprocessing
-inherit pax-utils python-any-r1 rust-toolchain toolchain-funcs uopts virtualx
-inherit xdg
+inherit pax-utils python-any-r1 readme.gentoo-r1 rust-toolchain toolchain-funcs
+inherit uopts virtualx xdg
 
-KEYWORDS="amd64 ~arm64 ~ppc64 ~riscv x86"
+KEYWORDS="amd64 arm64 ~ppc64 ~riscv x86"
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 if [[ ${PV} == *_rc* ]] ; then
 	MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/candidates/${MOZ_PV}-candidates/build${PV##*e}"
@@ -2819,6 +2819,7 @@ einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
 		|| die
 	_install_licenses
 	uopts_src_install
+	readme.gentoo_create_doc
 }
 
 src_install() {
@@ -2993,15 +2994,28 @@ ewarn
 ewarn "If a bug has been observed with -Ofast, you may also downgrade to -O3."
 ewarn
 	fi
+
+	readme.gentoo_print_elog
+
+	optfeature_header "Optional programs for extra features:"
+	optfeature "desktop notifications" "x11-libs/libnotify"
+	optfeature "fallback mouse cursor theme e.g. on WMs" "gnome-base/gsettings-desktop-schemas"
+	if use hwaccel && has_version "x11-drivers/nvidia-drivers" ; then
+		optfeature "hardware acceleration with NVIDIA cards" "media-libs/nvidia-vaapi-driver"
+	fi
+
 	if ! has_version "sys-libs/glibc" ; then
 ewarn
 ewarn "glibc not found! You won't be able to play DRM content."
-#ewarn "See Gentoo bug #910309 or upstream bug #1843683."
+ewarn "See Gentoo bug #910309 or upstream bug #1843683."
 ewarn
 	fi
 
-	optfeature_header "Optional programs for extra features:"
-	optfeature "fallback mouse cursor theme e.g. on WMs" "gnome-base/gsettings-desktop-schemas"
+	if use geckodriver ; then
+		ewarn "You have enabled the 'geckodriver' USE flag. Geckodriver is now"
+		ewarn "packaged separately as net-misc/geckodriver and the use flag will be"
+		ewarn "dropped from main Firefox package by Firefox 128.0 release."
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

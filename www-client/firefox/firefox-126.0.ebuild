@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# 124.0.1 -> 125.0.1
+# 125.0.1 -> 126.0
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
@@ -20,27 +20,27 @@ EAPI=8
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
 # https://www.mozilla.org/en-US/firefox/117.0.1/system-requirements/
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/moz.configure
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/build/moz.configure/nss.configure L12
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/gfx/harfbuzz/configure.ac L3
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/media/libaom/config/aom_version.h L7
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/media/libwebp/moz.yaml L16
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/modules/freetype2/include/freetype/freetype.h L5223
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/taskcluster/ci/fetch/toolchains.yml
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/moz.configure
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/build/moz.configure/nss.configure L12
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/gfx/harfbuzz/configure.ac L3
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/media/libaom/config/aom_version.h L7
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/media/libwebp/moz.yaml L16
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/modules/freetype2/include/freetype/freetype.h L5223
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/taskcluster/ci/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, pkgconf-, rust-
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/taskcluster/ci/packages/
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/taskcluster/ci/packages/
 #   Keyword search:  gtk
-# /var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1/taskcluster/ci/toolchain/
+# /var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0/taskcluster/ci/toolchain/
 #   Keyword search:  nasm, nodejs, zlib
 
 # Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
@@ -62,7 +62,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="125.0.1"
+PV="126.0"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -79,7 +79,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-125.0.1/work/firefox-125.0.1"
+SRC="/var/tmp/portage/www-client/firefox-126.0/work/firefox-126.0"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -129,14 +129,14 @@ GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
 LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES.html"
 LICENSE_FINGERPRINT="\
-56b2e9c90dadb92088b94a7ca8be776c1fab34e03bbc0242e5608474b173886c\
-bb03a7ac8fcebb560d333e1e0faad106608d6a85ae66df92f62ba1c53afd6304\
+f9b664423ff9cc435294aaf2d987119ba433e57bd60c2572e0f678b9a22b048b\
+03d06647ffa4cd48449f5d87312541ad20282ebcb265e12f2906575f15d1caf3\
 " # SHA512
-LLVM_COMPAT=( 17 ) # Limited based on virtual/rust
+LLVM_COMPAT=( 18 17 ) # Limited based on virtual/rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MITIGATION_DATE="Apr 16, 2024"
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-18/"
+MITIGATION_DATE="May 14, 2024"
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-21/"
 MOZ_ESR=
 MOZ_LANGS=(
 ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
@@ -171,7 +171,7 @@ NODE_VERSION=18
 OFLAG="" # Global variable
 PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_PV="1.76.0"
+RUST_PV="1.77.2"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
 UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_EPGO=0 # Recheck if allowed
@@ -183,8 +183,8 @@ VIRTUALX_REQUIRED="pgo"
 
 inherit autotools cflags-depends check-linker check-reqs desktop flag-o-matic
 inherit gnome2-utils lcnr linux-info llvm multilib-minimal multiprocessing
-inherit pax-utils python-any-r1 rust-toolchain toolchain-funcs uopts virtualx
-inherit xdg
+inherit pax-utils python-any-r1 readme.gentoo-r1 rust-toolchain toolchain-funcs
+inherit uopts virtualx xdg
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
@@ -400,8 +400,8 @@ alsa cpu_flags_arm_neon cups +dbus debug eme-free +ffvpx +hardened -hwaccel jack
 +pgo +pulseaudio proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user sndio
 selinux speech +system-av1 +system-ffmpeg +system-harfbuzz +system-icu
-+system-jpeg +system-libevent +system-libvpx system-png system-python-libs
-+system-webp -telemetry +vaapi -valgrind +wayland +webrtc wifi webspeech
++system-jpeg +system-libevent +system-libvpx system-png +system-webp -telemetry
++vaapi -valgrind +wayland +webrtc wifi webspeech
 "
 # telemetry disabled for crypto/security reasons
 
@@ -669,12 +669,12 @@ CDEPEND="
 		>=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}]
 	)
 	system-av1? (
-		>=media-libs/dav1d-1.4.0:=[${MULTILIB_USEDEP},8bit]
+		>=media-libs/dav1d-1.4.1:=[${MULTILIB_USEDEP},8bit]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
 		>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
-		>=media-libs/harfbuzz-8.3.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-8.3.1:0=[${MULTILIB_USEDEP}]
 	)
 	system-icu? (
 		>=dev-libs/icu-73.1:=[${MULTILIB_USEDEP}]
@@ -1501,9 +1501,6 @@ src_prepare() {
 	if is-flagq '-flto*' ; then
 		rm -fv "${WORKDIR}/firefox-patches/"*"-LTO-Only-enable-LTO-"*".patch"
 	fi
-	if ! use ppc64 && ! use riscv ; then
-		rm -v "${WORKDIR}/firefox-patches/"*"ppc64"*".patch" || die
-	fi
 
 	# Workaround for bgo#917599
 	if has_version ">=dev-libs/icu-74.1" && use system-icu ; then
@@ -1554,6 +1551,8 @@ src_prepare() {
 			export RUST_TARGET="x86_64-unknown-linux-musl"
 		elif use x86 ; then
 			export RUST_TARGET="x86-unknown-linux-musl"
+		elif use arm64 ; then
+			export RUST_TARGET="aarch64-unknown-linux-musl"
 		else
 			die "Unknown musl chost, please post your rustc -vV along with emerge --info on Gentoo's bug #915651"
 		fi
@@ -2391,16 +2390,14 @@ einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${oflag_safe}"
 	fi
 
 	# elf-hack
+	# Filter "-z,pack-relative-relocs" and let the build system handle it instead.
 	if use amd64 || use x86 ; then
+		filter-flags "-z,pack-relative-relocs"
 		if tc-ld-is-mold ; then
 			# relr-elf-hack is currently broken with mold, bgo#916259
 			mozconfig_add_options_ac 'disable elf-hack with mold linker' --disable-elf-hack
 		else
-			if tc-is-clang ; then
-				mozconfig_add_options_ac 'relr elf-hack with clang' --enable-elf-hack=relr
-			else
-				mozconfig_add_options_ac 'legacy elf-hack with gcc' --enable-elf-hack=legacy
-			fi
+			mozconfig_add_options_ac 'relr elf-hack with clang' --enable-elf-hack=relr
 		fi
 	elif use ppc64 || use riscv ; then
 		# '--disable-elf-hack' is not recognized on ppc64/riscv.
@@ -2450,11 +2447,7 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 	# Use system's Python environment
 	export PIP_NETWORK_INSTALL_RESTRICTED_VIRTUALENVS="mach"
 
-	if use system-python-libs; then
-		export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="system"
-	else
-		export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="none"
-	fi
+	export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="none"
 
 	if ! use telemetry; then
 		mozconfig_add_options_mk '-telemetry setting' "MOZ_CRASHREPORTER=0"
@@ -2829,6 +2822,7 @@ einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
 		|| die
 	_install_licenses
 	uopts_src_install
+	readme.gentoo_create_doc
 }
 
 src_install() {
@@ -3026,6 +3020,16 @@ ewarn "If a bug has been observed with -Ofast, you may also downgrade to -O3."
 ewarn
 	fi
 
+	readme.gentoo_print_elog
+
+	optfeature_header "Optional programs for extra features:"
+	optfeature "desktop notifications" "x11-libs/libnotify"
+	optfeature "fallback mouse cursor theme e.g. on WMs" "gnome-base/gsettings-desktop-schemas"
+	optfeature "screencasting with pipewire" "sys-apps/xdg-desktop-portal"
+	if use hwaccel && has_version "x11-drivers/nvidia-drivers" ; then
+		optfeature "hardware acceleration with NVIDIA cards" "media-libs/nvidia-vaapi-driver"
+	fi
+
 	if ! has_version "sys-libs/glibc"; then
 ewarn
 ewarn "glibc not found! You won't be able to play DRM content."
@@ -3033,9 +3037,13 @@ ewarn "See Gentoo bug #910309 or upstream bug #1843683."
 ewarn
 	fi
 
-	optfeature_header "Optional programs for extra features:"
-	optfeature "fallback mouse cursor theme e.g. on WMs" "gnome-base/gsettings-desktop-schemas"
-	optfeature "hardware acceleration with NVIDIA cards" "media-libs/nvidia-vaapi-driver"
+	if use geckodriver ; then
+ewarn
+ewarn "You have enabled the 'geckodriver' USE flag. Geckodriver is now packaged"
+ewarn "separately as net-misc/geckodriver and the use flag will be dropped from"
+ewarn "the main Firefox package by the Firefox 128.0 release."
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
