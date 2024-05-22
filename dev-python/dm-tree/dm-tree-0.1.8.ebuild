@@ -8,7 +8,7 @@ MY_PN="tree"
 
 ABSEIL_CPP_PV="20210324.2"
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit distutils-r1
 
@@ -61,8 +61,8 @@ src_unpack() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
