@@ -10,8 +10,6 @@ EAPI=8
 
 # TODO package:
 # google-cloud-logging
-# myst-nb
-# sphinx-book-theme
 
 DISTUTILS_USE_PEP517="flit"
 PROTOBUF_PV="5.26.1"
