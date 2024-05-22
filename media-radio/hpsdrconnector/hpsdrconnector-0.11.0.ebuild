@@ -6,12 +6,14 @@ EAPI=7
 
 inherit golang-build go-module
 
-HPSDR_PV="0.6.0"
+HPSDR_PV="0.12.0"
 LOGUTILS_PV="1.0.0"
 EGO_PN="github.com/jancona/hpsdrconnector"
 EGO_SUM=(
 	"github.com/hashicorp/logutils v${LOGUTILS_PV}"
+	"github.com/hashicorp/logutils v${LOGUTILS_PV}/go.mod"
 	"github.com/jancona/hpsdr v${HPSDR_PV}"
+	"github.com/jancona/hpsdr v${HPSDR_PV}/go.mod"
 )
 go-module_set_globals
 
@@ -23,14 +25,14 @@ https://github.com/jancona/hpsdrconnector/archive/refs/tags/v${PV}.tar.gz
 
 DESCRIPTION="An OpenWebRX connector for HPSDR radios"
 HOMEPAGE="https://github.com/jancona/hpsdrconnector"
-LICENSE="GPL-3"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+LICENSE="Apache-2.0"
+KEYWORDS="~amd64 ~arm ~arm64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 BDEPEND="
 	>=dev-lang/go-1.20
 "
 RESTRICT="mirror"
-DOCS=( LICENSE NOTICE README.md )
+DOCS=( "LICENSE" "NOTICE" "README.md" )
 S="${WORKDIR}/${P}"
 
 src_unpack() {
@@ -57,7 +59,7 @@ src_compile() {
 	export GO111MODULE=auto
 	rm "go.mod" || die
 	export GOPATH="${S}:${GOMODCACHE}"
-	go build -v -o ${PN} || die
+	go build -v -o "${PN}" || die
 }
 
 src_install() {

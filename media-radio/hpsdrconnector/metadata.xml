@@ -2,12 +2,12 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Ebuild only from the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">jancona/hpsdrconnector</remote-id>
     <bugs-to>https://github.com/jancona/hpsdrconnector/issues</bugs-to>
+    <remote-id type="github">jancona/hpsdrconnector</remote-id>
   </upstream>
 </pkgmetadata>
