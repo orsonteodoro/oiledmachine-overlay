@@ -13,7 +13,7 @@ EAPI=8
 # nose-xunitmp
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} ) # CI tests with 3.10
+PYTHON_COMPAT=( "python3_"{8..11} ) # CI tests with 3.10
 
 inherit distutils-r1
 
