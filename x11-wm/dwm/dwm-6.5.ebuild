@@ -169,12 +169,31 @@ src_install() {
 }
 
 pkg_postinst() {
+einfo
+einfo "Hotkeys cheat sheet"
+einfo
+einfo "Alt t        - tiled mode (aka split screen)"
+einfo "Alt m        - monocle mode (aka full screen)"
+einfo "Alt j        - focus clockwise"
+einfo "Alt k        - focus counter clockwise"
+einfo "Alt p        - run program [requires dmenu be installed]"
+einfo "Ctrl shift q - quit dwm"
+einfo "Alt 1        - switch to view 1"
+einfo "Alt 2        - switch to view 2"
+einfo "...          - ..."
+einfo "Alt 9        - switch to view 9"
+einfo "Alt 1        - switch to view 1"
+einfo "Alt shift 1  - move window to view 1"
+einfo "Alt shift 2  - move window to view 2"
+einfo "...          - ..."
+einfo "Alt shift 9  - move window to view 9"
+einfo
 	if use mod_fibonacci ; then
 einfo
 einfo "Fibonacci hotkeys:"
 einfo
-einfo "Alt r       - use the fibonacci shell tiling with the center near the middle of the screen"
-einfo "Alt shift r - use the fibonacci shell tiling with the center near the lower right of the screen"
+einfo "Alt r        - use the fibonacci shell tiling with the center near the middle of the screen"
+einfo "Alt shift r  - use the fibonacci shell tiling with the center near the lower right of the screen"
 einfo
 	fi
 	if use mod_rotatestack ; then
@@ -183,8 +202,8 @@ einfo "mod_rotatestack requires tilling mode, fibonacci mode to be on."
 einfo
 einfo "Rotatestack hotkeys:"
 einfo
-einfo "Alt shift j - rotate clockwise or rotate inward"
-einfo "Alt shift k - rotate counter-clockwise or rotate outward"
+einfo "Alt shift j  - rotate clockwise or rotate inward"
+einfo "Alt shift k  - rotate counter-clockwise or rotate outward"
 einfo
 	fi
 }
