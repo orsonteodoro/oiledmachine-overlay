@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# D10
+# D11, U22
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{8..11} ) # D10 uses 3.7
