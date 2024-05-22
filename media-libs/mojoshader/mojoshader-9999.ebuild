@@ -20,24 +20,24 @@ PROFILES_REQUIRED_USE="${PROFILES_REQUIRED_USE//+/}"
 inherit cmake git-r3
 
 if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+=" fallback-commit"
 	EGIT_REPO_URI="https://github.com/icculus/mojoshader.git"
 	EGIT_COMMIT="HEAD"
-	FALLBACK_COMMIT="7b7e5fd6f3cc99afd12a9d2a0e62d2c408c96e33" # Apr 26, 2024
-	IUSE+=" fallback-commit"
-	# No KEYWORDS for LIVE ebuilds (or LIVE snapshots)
+	FALLBACK_COMMIT="72895d05c9219e04960ebc7862aae2b017aed954" # May 21, 2024
 	S="${WORKDIR}/${P}"
-	SLOT="0/9999"
 else
 	KEYWORDS="~amd64"
 	S="${WORKDIR}/${P}"
-	SLOT="0/$(ver_cut 1-2 ${PV})"
-	SRC_URI=""
-	die "FIXME"
+	SRC_URI="FIXME"
 fi
 
 DESCRIPTION="Use Direct3D shaders with other 3D rendering APIs."
 HOMEPAGE="https://icculus.org/mojoshader/"
 LICENSE="ZLIB"
+RESTRICT="
+	mirror
+"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${PROFILES_IUSE}
 +compiler-support debug -depth-clipping +profile-glspirv +effect-support
@@ -53,9 +53,6 @@ REQUIRED_USE="
 	|| (
 		${PROFILES_REQUIRED_USE}
 	)
-"
-RESTRICT="
-	mirror
 "
 RDEPEND+="
 	>=dev-util/re2c-1.2.1
