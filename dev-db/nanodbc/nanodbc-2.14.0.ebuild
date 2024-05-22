@@ -151,9 +151,13 @@ src_configure() {
 				-DUNIX=1
 		        )
 			if [[ "${lib_type}" == "shared" ]] ; then
-				mycmakeargs+=( -DBUILD_SHARED_LIBS=ON )
+				mycmakeargs+=(
+					-DBUILD_SHARED_LIBS=ON
+				)
 			else
-				mycmakeargs+=( -DBUILD_SHARED_LIBS=OFF )
+				mycmakeargs+=(
+					-DBUILD_SHARED_LIBS=OFF
+				)
 			fi
 			cmake_src_configure
 		done
@@ -166,19 +170,21 @@ src_compile_docs() {
 	cd doc || die
 	if use doxygen ; then
 		einfo "Building doxygen documentation"
-		mkdir -p ../docs/doxygen
-		pushd ../docs/doxygen || die
-			doxygen -g doxygen.conf
-			sed -i -e "s|My Project|${PN}|g" \
-				-e "s|GENERATE_XML           = NO|GENERATE_XML           = YES|g" \
-				-e "s|GENERATE_LATEX         = YES|GENERATE_LATEX         = NO|g" \
-				-e "s|INPUT                  =|INPUT                  = ${BUILD_DIR}/nanodbc|g" \
-				-e "s|JAVADOC_AUTOBRIEF      = NO|JAVADOC_AUTOBRIEF      = YES|g" \
-				-e "s|AUTOLINK_SUPPORT       = YES|AUTOLINK_SUPPORT       = NO|g" \
-				-e "s|XML_OUTPUT             = xml|XML_OUTPUT             = doxyxml|g" \
-				-e "s|MACRO_EXPANSION        = NO|MACRO_EXPANSION        = YES|g" \
-				-e "s|PREDEFINED             =|PREDEFINED             = DOXYGEN=1|g" \
-				doxygen.conf
+		mkdir -p "../docs/doxygen" || die
+		pushd "../docs/doxygen" || die
+			doxygen -g doxygen.conf || die
+			sed -i \
+				-e "s|My Project|${PN}|g"							\
+				-e "s|GENERATE_XML           = NO|GENERATE_XML           = YES|g"		\
+				-e "s|GENERATE_LATEX         = YES|GENERATE_LATEX         = NO|g"		\
+				-e "s|INPUT                  =|INPUT                  = ${BUILD_DIR}/nanodbc|g"	\
+				-e "s|JAVADOC_AUTOBRIEF      = NO|JAVADOC_AUTOBRIEF      = YES|g"		\
+				-e "s|AUTOLINK_SUPPORT       = YES|AUTOLINK_SUPPORT       = NO|g"		\
+				-e "s|XML_OUTPUT             = xml|XML_OUTPUT             = doxyxml|g"		\
+				-e "s|MACRO_EXPANSION        = NO|MACRO_EXPANSION        = YES|g"		\
+				-e "s|PREDEFINED             =|PREDEFINED             = DOXYGEN=1|g"		\
+				"doxygen.conf" \
+				|| die
 		popd
 		emake doxygen
 	fi

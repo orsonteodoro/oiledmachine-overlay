@@ -7,8 +7,8 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
+    <bugs-to>https://github.com/nanodbc/nanodbc/issues</bugs-to>
     <changelog>https://github.com/nanodbc/nanodbc/blob/main/CHANGELOG.md</changelog>
     <remote-id type="github">nanodbc/nanodbc</remote-id>
-    <bugs-to>https://github.com/nanodbc/nanodbc/issues</bugs-to>
   </upstream>
 </pkgmetadata>
