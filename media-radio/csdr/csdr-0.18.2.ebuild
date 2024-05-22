@@ -4,8 +4,11 @@
 
 EAPI=8
 
-inherit autotools cmake
+CMAKE_MAKEFILE_GENERATOR="emake"
 
+inherit cmake
+
+KEYWORDS="~amd64 ~arm ~arm64"
 SRC_URI="
 https://github.com/jketterl/csdr/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -13,12 +16,15 @@ https://github.com/jketterl/csdr/archive/refs/tags/${PV}.tar.gz
 
 DESCRIPTION="A simple DSP library and command-line tool for Software Defined Radio."
 HOMEPAGE="https://github.com/jketterl/csdr"
-LICENSE="BSD GPL-3+"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+LICENSE="
+	BSD
+	GPL-3+
+"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
-	>=sci-libs/fftw-3.3:=
 	>=media-libs/libsamplerate-0.1.8
+	>=sci-libs/fftw-3.3:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -26,7 +32,6 @@ DEPEND+="
 BDEPEND+="
 	>=dev-build/cmake-3.0
 "
-RESTRICT="mirror"
-DOCS=( README.md )
+DOCS=( "README.md" )
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
