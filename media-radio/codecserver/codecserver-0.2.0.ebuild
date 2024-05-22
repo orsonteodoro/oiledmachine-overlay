@@ -18,6 +18,7 @@ https://github.com/jketterl/codecserver/archive/refs/tags/${PV}.tar.gz
 DESCRIPTION="Modular audio codec server"
 HOMEPAGE="https://github.com/jketterl/codecserver"
 LICENSE="GPL-3+"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 openrc systemd
@@ -47,7 +48,6 @@ BDEPEND+="
 	>=dev-build/cmake-3.6
 	>=dev-libs/protobuf-3.12.4:0/3.21
 "
-RESTRICT="mirror"
 DOCS=( "LICENSE" "README.md" )
 
 src_configure() {
