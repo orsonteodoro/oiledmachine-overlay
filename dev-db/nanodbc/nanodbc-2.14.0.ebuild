@@ -3,22 +3,22 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+# U20
+
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit cmake flag-o-matic multilib-build python-any-r1 toolchain-funcs
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/${P}"
 SRC_URI="
-https://github.com/nanodbc/${PN}/archive/refs/tags/v${PV}.tar.gz
+https://github.com/nanodbc/nanodbc/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${P}"
 
 DESCRIPTION="A small C++ wrapper for the native C ODBC API"
 HOMEPAGE="https://nanodbc.github.io/nanodbc/"
 LICENSE="MIT"
-
-# Live ebuilds/snapshots won't get KEYWORed.
-
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
@@ -226,32 +226,32 @@ src_compile() {
 src_install_docs()
 {
 	if use doxygen ; then
-		insinto /usr/share/${P}/docs/doxygen
-		doins -r html
-		doins -r doc/build/breathe/doxygen/nanodbc/xml
+		insinto "/usr/share/${P}/docs/doxygen"
+		doins -r "html"
+		doins -r "doc/build/breathe/doxygen/nanodbc/xml"
 	fi
 
 	if use html ; then
-		insinto /usr/share/${P}/docs
-		doins -r doc/build/html
+		insinto "/usr/share/${P}/docs"
+		doins -r "doc/build/html"
 	fi
 
 	if use man ; then
-		doman doc/build/man/nanodbc.1
+		doman "doc/build/man/nanodbc.1"
 	fi
 
 	if use pdf ; then
-		insinto /usr/share/${P}/docs
-		doins -r doc/build/latex/nanodbc.pdf
+		insinto "/usr/share/${P}/docs"
+		doins -r "doc/build/latex/nanodbc.pdf"
 	fi
 
 	if use singlehtml ; then
-		insinto /usr/share/${P}/docs
-		doins -r doc/build/singlehtml
+		insinto "/usr/share/${P}/docs"
+		doins -r "doc/build/singlehtml"
 	fi
 
 	if use texinfo ; then
-		doinfo doc/build/texinfo/nanodbc.texi
+		doinfo "doc/build/texinfo/nanodbc.texi"
 	fi
 }
 
