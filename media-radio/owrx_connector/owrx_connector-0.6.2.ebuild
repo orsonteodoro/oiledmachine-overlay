@@ -4,19 +4,24 @@
 
 EAPI=8
 
+# D11, U22
+
 inherit cmake
 
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/jketterl/owrx_connector/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${P}"
 
 DESCRIPTION="Direct conection layer for openwebrx"
 HOMEPAGE="https://github.com/jketterl/owrx_connector"
-LICENSE="GPL-3 LGPL-3+"
+LICENSE="
+	LGPL-3+
+	GPL-3+
+"
 # LGPL-3 only applies to a build file
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 DEPEND+="
 	>=media-radio/csdr-0.18
@@ -31,6 +36,6 @@ BDEPEND+="
 	virtual/pkgconfig
 "
 RESTRICT="mirror"
-DOCS=( LICENSE README.md )
+DOCS=( "LICENSE" "README.md" )
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
