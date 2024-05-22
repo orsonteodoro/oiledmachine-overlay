@@ -187,6 +187,7 @@ einfo "Alt shift 1  - move window to view 1"
 einfo "Alt shift 2  - move window to view 2"
 einfo "...          - ..."
 einfo "Alt shift 9  - move window to view 9"
+einfo "Alt shift c  - close window"
 einfo
 	if use mod_fibonacci ; then
 einfo
