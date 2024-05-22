@@ -5,14 +5,14 @@ EAPI=8
 
 inherit cmake-multilib
 
-if [[ ${PV} == *9999 ]]; then
-	inherit git-r3
+if [[ ${PV} =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/gabime/${PN}"
+	inherit git-r3
 else
+	KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
 	SRC_URI="
 https://github.com/gabime/spdlog/archive/v${PV}.tar.gz -> ${P}.tar.gz
 	"
-	KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
 fi
 
 DESCRIPTION="Very fast, header only, C++ logging library"
