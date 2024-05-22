@@ -91,7 +91,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-build/cmake-3.1
+	>=dev-build/cmake-3.5
 	dev-util/patchelf
 	doc? (
 		app-text/doxygen[dot]
@@ -100,9 +100,8 @@ BDEPEND+="
 		${PYTHON_DEPS}
 	)
 "
-DOCS=( README.md )
+DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-2021.8.0-gcc-13.patch"
 )
 
 pkg_setup()
@@ -129,7 +128,7 @@ ewarn
 src_prepare()
 {
 	cd "${S}" || die
-	eapply "${FILESDIR}/tbb-2021.2.0-fix-missing-header-cholesky.patch"
+	eapply "${FILESDIR}/tbb-2021.12.0-fix-missing-header-cholesky.patch"
 
 	export CMAKE_USE_DIR="${S}"
 	cd "${CMAKE_USE_DIR}" || die

@@ -41,7 +41,7 @@ RDEPEND+="
 BDEPEND+="
 	dev-build/cmake
 "
-DOCS=( CHANGES README README.md doc/Release_Notes.txt )
+DOCS=( "CHANGES" "README" "README.md" "doc/Release_Notes.txt" )
 PATCHES=(
 	"${FILESDIR}/${PN}-2020.1-makefile-debug.patch"
 	"${FILESDIR}/${PN}-2020.3-fix-cmake-config.patch"
