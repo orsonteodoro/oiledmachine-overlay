@@ -125,7 +125,7 @@ FFMPEG_SLOT="0/58.60.60" # libavutil_sover_maj,libavcodec_sover_maj,libformat_so
 GCC_COMPAT=( {14..10} )
 GCC_PV="10.2.1" # Minimum
 GCC_SLOT="" # Global variable
-GN_PV="0.2154"
+GN_PV="0.2165"
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
@@ -177,20 +177,20 @@ ZLIB_PV="1.3"
 
 inherit cflags-depends check-linker check-reqs chromium-2 desktop flag-o-matic
 inherit flag-o-matic-om lcnr llvm multilib-minimal ninja-utils pax-utils
-inherit python-any-r1 qmake-utils readme.gentoo-r1 toolchain-funcs uopts
+inherit python-any-r1 qmake-utils readme.gentoo-r1 systemd toolchain-funcs uopts
 inherit xdg-utils
 
-PATCHSET_PPC64="124.0.6367.78-1raptor0~deb12u1"
+PATCHSET_PPC64="123.0.6312.105-1raptor0~deb12u1"
 PATCH_REVISION=""
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 
-#KEYWORDS="~amd64 arm64 ~ppc64"
+#KEYWORDS="~amd64 arm64"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	!system-toolchain? (
 		https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-${VENDORED_CLANG_VER}.tar.xz
 			-> chromium-${PV%%\.*}-clang.tar.xz
-		https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%???}.tar.xz
+		https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%??}.tar.xz
 			-> chromium-${PV%%\.*}-rust.tar.xz
 	)
 	system-toolchain? (
@@ -1697,11 +1697,11 @@ apply_distro_patchset() {
 
 	local PATCHES=(
 		"${FILESDIR}/chromium-cross-compile.patch"
-		"${FILESDIR}/chromium-use-oauth2-client-switches-as-default.patch"
 		$(use system-zlib && echo "${FILESDIR}/chromium-109-system-zlib.patch")
 		"${FILESDIR}/chromium-111-InkDropHost-crash.patch"
-		"${FILESDIR}/chromium-117-system-zstd.patch"
 		"${FILESDIR}/chromium-124-libwebp-shim-sharpyuv.patch"
+		"${FILESDIR}/chromium-125-oauth2-client-switches.patch"
+		"${FILESDIR}/chromium-125-system-zstd.patch"
 		"${FILESDIR}/chromium-125-ninja-1-12.patch"
 	)
 
@@ -1979,6 +1979,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/jsoncpp
 		third_party/jstemplate
 		third_party/khronos
+		third_party/lens_server_proto
 		third_party/leveldatabase
 		third_party/libaddressinput
 		third_party/libavif
@@ -2067,6 +2068,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/tflite/src/third_party/eigen3
 		third_party/tflite/src/third_party/fft2d
 		third_party/tflite/src/third_party/xla/third_party/tsl
+		third_party/tflite/src/third_party/xla/xla/tsl/util
 		third_party/ruy
 		third_party/six
 		third_party/ukey2
@@ -2566,6 +2568,16 @@ einfo "Using the system toolchain"
 	if tc-is-clang ; then
 		myconf_gn+=" is_clang=true"
 		myconf_gn+=" clang_use_chrome_plugins=false"
+		# Workaround for build failure with clang-18 and -march=native without
+		# avx512. Does not affect e.g. -march=skylake, only native (bug #931623).
+		if use amd64 \
+			&& is-flagq -march=native \
+			&& [[ $(clang-major-version) -eq 18 ]] \
+			&& [[ $(clang-micro-version) -lt 6 ]] \
+			&& tc-cpp-is-true "!defined(__AVX512F__)" ${CXXFLAGS} \
+		; then
+			append-flags -mevex512
+		fi
 	else
 		myconf_gn+=" is_clang=false"
 	fi
@@ -3747,6 +3759,16 @@ einfo
 einfo "See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"
 einfo "for proper building with PGO+BOLT"
 einfo
+
+	if systemd_is_booted && ! [[ -f "/etc/machine-id" ]] ; then
+ewarn
+ewarn "The lack of an '/etc/machine-id' file on this system booted with systemd"
+ewarn "indicates that the Gentoo handbook was not followed to completion."
+ewarn
+ewarn "Chromium is known to behave unpredictably with this system configuration;"
+ewarn "please complete the configuration of this system before logging any bugs."
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
