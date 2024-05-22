@@ -23,13 +23,12 @@ XORG_SERVER_PV="1.20.13"
 inherit cmake-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+=" fallback-commit"
 	EGIT_BRANCH="2.6.x"
 	EGIT_REPO_URI="https://github.com/SFML/SFML.git"
 	FALLBACK_COMMIT="69ea0cd863aed1d4092b970b676924a716ff718b" # 20231029
 	inherit git-r3
-	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
-	SRC_URI=""
 else
 	KEYWORDS="~arm ~arm64 ~amd64 ~x86"
 	S="${WORKDIR}/SFML-${PV}"
@@ -181,7 +180,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.7.2
 	>=sys-devel/gcc-9.3.0
 "
-DOCS=( changelog.md readme.md )
+DOCS=( "changelog.md" "readme.md" )
 PATCHES=(
 	"${FILESDIR}/libsfml-2.6x_p9999-drm-null.patch"
 )
@@ -277,14 +276,22 @@ src_configure() {
 			&& use ios \
 		) \
 	; then
-		mycmakeargs+=( -DSFML_OPENGL_ES=TRUE )
+		mycmakeargs+=(
+			-DSFML_OPENGL_ES=TRUE
+		)
 	else
-		mycmakeargs+=( -DSFML_OPENGL_ES=FALSE )
+		mycmakeargs+=(
+			-DSFML_OPENGL_ES=FALSE
+		)
 	fi
 	if use drm ; then
-		mycmakeargs+=( -DSFML_USE_DRM=TRUE )
+		mycmakeargs+=(
+			-DSFML_USE_DRM=TRUE
+		)
 	elif use X ; then
-		mycmakeargs+=( -DSFML_USE_DRM=FALSE )
+		mycmakeargs+=(
+			-DSFML_USE_DRM=FALSE
+		)
 	fi
 	cmake-multilib_src_configure
 }

@@ -17,13 +17,12 @@ VULKAN_LINUX_DRIVERS=(
 inherit cmake-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+=" fallback-commit"
 	EGIT_BRANCH="2.5.x"
 	EGIT_REPO_URI="https://github.com/SFML/SFML.git"
 	FALLBACK_COMMIT="2f11710abc5aa478503a7ff3f9e654bd2078ebab" # 20181015
 	inherit git-r3
-	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
-	SRC_URI=""
 else
 	KEYWORDS="~arm ~arm64 ~amd64 ~x86" # Live ebuilds don't get KEYWORDed
 	S="${WORKDIR}/SFML-${PV}"
@@ -160,7 +159,7 @@ DEPEND="
 BDEPEND+="
 	sys-devel/gcc
 "
-DOCS=( changelog.md readme.md )
+DOCS=( "changelog.md" "readme.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-2.5.1-musl-1.2.3-nullptr.patch"
 	"${FILESDIR}/${PN}-2.5.1-header-xvisualinfo.patch"
@@ -218,9 +217,13 @@ src_configure() {
 			&& use ios \
 		) \
 	; then
-		mycmakeargs+=( -DSFML_OPENGL_ES=TRUE )
+		mycmakeargs+=(
+			-DSFML_OPENGL_ES=TRUE
+		)
 	else
-		mycmakeargs+=( -DSFML_OPENGL_ES=FALSE )
+		mycmakeargs+=(
+			-DSFML_OPENGL_ES=FALSE
+		)
 	fi
 	cmake-multilib_src_configure
 }

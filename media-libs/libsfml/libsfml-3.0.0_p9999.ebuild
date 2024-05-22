@@ -5,12 +5,12 @@ EAPI=8
 
 # U 22.04
 
+# *DEPENDs last check:  Dec 22, 2022
 # TODO delete exlibs and replace with external libraries
-# *DEPENDS last check:  Dec 22, 2022
 
 EXPECTED_DEPENDS="\
-4e4b812f1fa59b1c27a9adfd18549c1ff5b6db06f4ef9db4ee4f3113d5a645ba\
-c7ea444480e9194ad5bbb4367bcc7d96ec0a4897ce3361b8a5e16878c8b69390\
+f852313eb9df9c2ec3ca6a0c0471956a0826281cba8779ccfa06bd4862c21afb\
+329f9c3afeb266680b961f8e9d654d9767bff1f309f8c5e16044acf156e7ac62\
 "
 LIBX11_PV="1.7.5"
 MESA_PV="22.0.1"
@@ -26,20 +26,19 @@ XORG_SERVER_PV="21.1.4"
 inherit cmake-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+=" fallback-commit"
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/SFML/SFML.git"
-	FALLBACK_COMMIT="415668cb82db71dc6975b97e76adc8540fdfa34a" # 20240607
+	FALLBACK_COMMIT="53ade4baf18d8880e6dec97abf4e6f9d8bd8f2b3" # May 21, 2024
 	inherit git-r3
-	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
-	SRC_URI=""
 else
 	KEYWORDS="~arm ~arm64 ~amd64 ~x86"
+	S="${WORKDIR}/SFML-${PV}"
 	SRC_URI="
 https://github.com/SFML/SFML/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
-	S="${WORKDIR}/SFML-${PV}"
 fi
 
 DESCRIPTION="Simple and Fast Multimedia Library (SFML)"
@@ -178,7 +177,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.24
 	>=sys-devel/gcc-11.2.0
 "
-DOCS=( changelog.md readme.md )
+DOCS=( "changelog.md" "readme.md" )
 PATCHES=(
 	"${FILESDIR}/libsfml-2.6x_p9999-drm-null.patch"
 )
@@ -266,14 +265,22 @@ src_configure() {
 			&& use ios \
 		) \
 	; then
-		mycmakeargs+=( -DSFML_OPENGL_ES=TRUE )
+		mycmakeargs+=(
+			-DSFML_OPENGL_ES=TRUE
+		)
 	else
-		mycmakeargs+=( -DSFML_OPENGL_ES=FALSE )
+		mycmakeargs+=(
+			-DSFML_OPENGL_ES=FALSE
+		)
 	fi
 	if use drm ; then
-		mycmakeargs+=( -DSFML_USE_DRM=TRUE )
+		mycmakeargs+=(
+			-DSFML_USE_DRM=TRUE
+		)
 	elif use X ; then
-		mycmakeargs+=( -DSFML_USE_DRM=FALSE )
+		mycmakeargs+=(
+			-DSFML_USE_DRM=FALSE
+		)
 	fi
 	cmake-multilib_src_configure
 }
