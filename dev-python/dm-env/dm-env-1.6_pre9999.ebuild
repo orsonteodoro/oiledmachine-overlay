@@ -7,11 +7,11 @@ EAPI=8
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_10 )
+PYTHON_COMPAT=( "python3_10" )
 
 inherit distutils-r1
 
-if [[ "${PV}" =~ 9999 ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 	EGIT_REPO_URI="https://github.com/deepmind/dm_env.git"
 	EGIT_BRANCH="master"
@@ -51,11 +51,11 @@ BDEPEND+="
 DOCS=( "CHANGELOG.md" "docs/index.md" "README.md" )
 
 src_unpack() {
-	if [[ "${PV}" =~ 9999 ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
-		grep -q -e "__version__ = '1.6'" "${S}/dm_env/_metadata.py" \
+		grep -q -e "__version__ = '${PV%_*}'" "${S}/dm_env/_metadata.py" \
 			|| die "QA:  Bump version"
 	else
 		unpack ${A}
@@ -64,8 +64,8 @@ src_unpack() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 distutils_enable_tests "pytest"
