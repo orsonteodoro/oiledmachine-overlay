@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# D10
+
 inherit cmake
 
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
@@ -20,7 +22,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
 	>=media-radio/codecserver-0.1.0
 	>=media-radio/csdr-0.18
-	>=dev-libs/icu-57
+	>=dev-libs/icu-57.0
 "
 DEPEND+="
 	${RDEPEND}
