@@ -7,6 +7,10 @@ EAPI=8
 # U22.04
 # 15.0.1 -xCOMMON-AVX512
 
+ARM_CPU_FLAGS=(
+	neon:neon
+	neon2x:neon2x
+)
 CMAKE_BUILD_TYPE="Release"
 CXXABI_V=11
 IMAGEMAGICK_PV="6.9.11.60"
@@ -17,13 +21,29 @@ MIN_GCC_PV="4.8.1" # for c++11
 MIN_GCC_PV_AVX512SKX="5.1.0" # for -mavx512vl
 ONETBB_SLOT="0"
 PANDOC_PV="2.9.2.1"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
+SLOT_MAJ="3"
 TRAIN_USE_X=1
 TRAIN_TEST_DURATION=120
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
+X86_CPU_FLAGS=(
+	avx:avx
+	avx2:avx2
+	avx512f:avx512f
+	avx512vl:avx512vl
+	avx512bw:avx512bw
+	avx512dq:avx512dq
+	avx512cd:avx512cd
+	sse2:sse2
+	sse4_2:sse4_2
+)
+CPU_FLAGS=(
+	${ARM_CPU_FLAGS[@]/#/cpu_flags_arm_}
+	${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
+)
 
 inherit cmake flag-o-matic linux-info python-r1 toolchain-funcs uopts
 
@@ -48,27 +68,7 @@ LICENSE="
 	)
 "
 KEYWORDS="~amd64 ~arm64 ~x86"
-SLOT_MAJ="3"
 SLOT="${SLOT_MAJ}/${PV}"
-X86_CPU_FLAGS=(
-	avx:avx
-	avx2:avx2
-	avx512f:avx512f
-	avx512vl:avx512vl
-	avx512bw:avx512bw
-	avx512dq:avx512dq
-	avx512cd:avx512cd
-	sse2:sse2
-	sse4_2:sse4_2
-)
-ARM_CPU_FLAGS=(
-	neon:neon
-	neon2x:neon2x
-)
-CPU_FLAGS=(
-	${ARM_CPU_FLAGS[@]/#/cpu_flags_arm_}
-	${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
-)
 IUSE+="
 ${CPU_FLAGS[@]%:*}
 -allow-auto-vectorization -allow-strict-aliasing backface-culling clang
@@ -201,7 +201,7 @@ BDEPEND+="
 		>=dev-cpp/benchmark-1.6.1
 	)
 "
-DOCS=( CHANGELOG.md README.md readme.pdf )
+DOCS=( "CHANGELOG.md" "README.md" "readme.pdf" )
 PATCHES=(
 	"${FILESDIR}/${PN}-3.13.0-findtbb-more-debug-messages.patch"
 	"${FILESDIR}/${PN}-3.13.0-findtbb-alt-lib-path.patch"

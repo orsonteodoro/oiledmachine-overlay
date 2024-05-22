@@ -17,7 +17,8 @@ MIN_GCC_PV="4.8.1" # for c++11
 MIN_GCC_PV_AVX512SKX="5.1.0" # for -mavx512vl
 ONETBB_SLOT="0"
 PANDOC_PV="2.5"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
+SLOT_MAJ="3"
 TRAIN_USE_X=1
 TRAIN_TEST_DURATION=120
 UOPTS_SUPPORT_EBOLT=0
@@ -48,7 +49,6 @@ LICENSE="
 	)
 "
 KEYWORDS="~amd64 ~arm64 ~x86"
-SLOT_MAJ="3"
 SLOT="${SLOT_MAJ}/${PV}"
 X86_CPU_FLAGS=(
 	avx:avx
@@ -196,7 +196,7 @@ BDEPEND+="
 		>=dev-cpp/benchmark-1.5.0
 	)
 "
-DOCS=( CHANGELOG.md README.md readme.pdf )
+DOCS=( "CHANGELOG.md" "README.md" "readme.pdf" )
 PATCHES=(
 	"${FILESDIR}/${PN}-3.13.0-findtbb-more-debug-messages.patch"
 	"${FILESDIR}/${PN}-3.13.0-findtbb-alt-lib-path.patch"
