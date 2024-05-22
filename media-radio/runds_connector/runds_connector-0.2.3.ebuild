@@ -4,30 +4,32 @@
 
 EAPI=8
 
+# D11, U22
+
 inherit cmake
 
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/jketterl/runds_connector/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${P}"
 
 DESCRIPTION="OpenWebRX connector implementation for R&S EB200 or Ammos protocol based receivers"
 HOMEPAGE="https://github.com/jketterl/runds_connector"
-LICENSE="GPL-3"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+LICENSE="GPL-3+"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-DEPEND+="
+RDEPEND+="
 	media-radio/owrx_connector
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-build/cmake-3.0
 	virtual/pkgconfig
 "
 RESTRICT="mirror"
-DOCS=( LICENSE )
+DOCS=( "LICENSE" )
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
