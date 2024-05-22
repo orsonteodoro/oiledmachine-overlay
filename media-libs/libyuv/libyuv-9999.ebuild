@@ -32,7 +32,10 @@ fi
 DESCRIPTION="libyuv is an open source project that includes YUV scaling and \
 conversion functionality."
 HOMEPAGE="https://chromium.googlesource.com/libyuv/libyuv/"
-LICENSE="BSD"
+LICENSE="
+	BSD
+	libyuv-PATENTS
+"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${GIT_BRANCHES}
