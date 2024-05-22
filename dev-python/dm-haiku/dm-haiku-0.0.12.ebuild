@@ -7,7 +7,7 @@ EAPI=8
 MY_PN="dm-haiku"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..11} ) # Upstream only tests up to 3.11
+PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only tests up to 3.11
 
 inherit distutils-r1
 
@@ -66,7 +66,7 @@ BDEPEND+="
 		dev-python/virtualenv[${PYTHON_USEDEP}]
 	)
 "
-DOCS=( README.md )
+DOCS=( "README.md" )
 PATCHES=(
 )
 
@@ -79,8 +79,8 @@ src_unpack() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
