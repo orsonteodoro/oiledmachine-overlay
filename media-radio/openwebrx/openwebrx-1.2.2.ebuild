@@ -4,6 +4,9 @@
 
 EAPI=7
 
+# Items in the RDEPEND_UNPACKAGED list should be packaged by yourself.
+# Upstream uses codec2 with deprecated code, but the distro uses the recent one.
+
 DEVICES=(
 	airspy
 	airspyhf
@@ -142,11 +145,10 @@ RDEPEND_UNPACKAGED+="
 	openwebrx_sdr_fifi_sdr? (
 		net-wireless/rockprog
 	)
-" # Package it yourself
-# Upstream uses codec2 with deprecade code, but the distro uses the recent one.
+"
 RDEPEND+="
-	${RDEPEND_UNPACKAGED}
 	$(gen_soapy_depends)
+	${RDEPEND_UNPACKAGED}
 	(
 		>=dev-python/pycsdr-0.18.2[${PYTHON_USEDEP}]
 		>=media-radio/csdr-0.18.2
@@ -222,14 +224,14 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
-DOCS=( CHANGELOG.md LICENSE.txt README.md )
+DOCS=( "CHANGELOG.md" "LICENSE.txt" "README.md" )
 
 pkg_setup() {
 	ewarn "This ebuild is in development"
 }
 
 src_configure() {
-	if ! egetent group ${PN} ; then
+	if ! egetent group "${PN}" ; then
 eerror
 eerror "You must add the ${PN} group to the system."
 eerror
@@ -237,7 +239,7 @@ eerror "  groupadd ${PN}"
 eerror
 		die
 	fi
-	if ! egetent passwd ${PN} ; then
+	if ! egetent passwd "${PN}" ; then
 eerror
 eerror "You must add the ${PN} user to the system."
 eerror
@@ -262,56 +264,62 @@ python_install() {
 		einfo "Changing permissions for ${f}"
 		fperms 0644 "${f}"
 	done
-	sed -i -e "4 a sys.path.insert(1, \"/usr/share/${PN}\")"\
-		"${ED}/usr/lib/python-exec/${EPYTHON}/openwebrx" || die
+	sed -i \
+		-e "4 a sys.path.insert(1, \"/usr/share/${PN}\")"\
+		"${ED}/usr/lib/python-exec/${EPYTHON}/openwebrx" \
+		|| die
 }
 
 src_install() {
 	distutils-r1_src_install
 	cd "${S}" || die
-	insinto /etc/${PN}
-	doins bands.json ${PN}.conf
+	insinto "/etc/${PN}"
+	doins \
+		"bands.json" \
+		"${PN}.conf"
 	if use systemd ; then
-		insinto /lib/systemd/system
-		doins systemd/${PN}.service
+		insinto "/lib/systemd/system"
+		doins "systemd/${PN}.service"
 	fi
 
 	if use openrc ; then
-		exeinto /etc/init.d
+		exeinto "/etc/init.d"
 		doexe "${FILESDIR}/init.d/${PN}"
 	fi
 
-	insinto /var/lib/${PN}
+	insinto "/var/lib/${PN}"
 
 	echo "[]" > "${T}/users.json"
 	doins "${T}/users.json"
-	fowners ${PN} /var/lib/${PN}/users.json
-	fperms 0600 /var/lib/${PN}/users.json
+	fowners "${PN}" "/var/lib/${PN}/users.json"
+	fperms 0600 "/var/lib/${PN}/users.json"
 
 	echo "{}" > "${T}/settings.json"
 	doins "${T}/settings.json"
-	fowners ${PN} /var/lib/${PN}/settings.json
+	fowners "${PN}" "/var/lib/${PN}/settings.json"
 
 	touch "${T}/bookmarks.json"
 	doins "${T}/bookmarks.json"
-	fowners ${PN} /var/lib/${PN}/bookmarks.json
+	fowners "${PN}" "/var/lib/${PN}/bookmarks.json"
 
-	fowners ${PN}:${PN} /var/lib/${PN}
+	fowners "${PN}:${PN}" "/var/lib/${PN}"
 
 	einstalldocs
 }
 
 pkg_postinst() {
-	if ! ${PN} admin --silent hasuser admin; then
-		einfo "Admin user created but the default password should be changed"
+	# It may seems awkward to do this admin check.  This is from:
+	# https://github.com/jketterl/openwebrx/blob/1.2.2/debian/openwebrx.postinst#L42
+	if ! ${PN} admin --silent hasuser admin ; then
+einfo "Admin user created but the default password should be changed"
 		${PN} admin --noninteractive adduser admin
 	fi
-	einfo
-	einfo "The init script must be started before accessing the web based interface."
-	einfo "To access the web based interface put http://localhost:8073"
-	einfo "To access the web admin panel put http://localhost:8073/settings"
-	einfo "To change the password do:  openwebrx admin resetpassword admin"
-	einfo
+einfo
+einfo "The init script must be started before accessing the web based interface."
+einfo "To access the web based interface put http://localhost:8073"
+einfo "To access the web admin panel put http://localhost:8073/settings"
+einfo "To change the password do:  openwebrx admin resetpassword admin"
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

@@ -22,7 +22,10 @@
   -->
   <upstream>
     <bugs-to>https://github.com/jketterl/openwebrx/issues</bugs-to>
-    <changelog lang="en">https://www.openwebrx.de/news.php</changelog>
+    <changelog lang="en">
+      https://github.com/jketterl/openwebrx/blob/1.2.2/debian/changelog
+      https://www.openwebrx.de/news.php
+    </changelog>
     <doc lang="en">https://github.com/jketterl/openwebrx/wiki</doc>
     <remote-id type="github">jketterl/openwebrx</remote-id>
   </upstream>
