@@ -3,10 +3,21 @@
 
 EAPI=8
 
+# Assumed U 22.04.1
+# For deps, see
+# https://github.com/libvips/libvips/blob/v8.14.5/.github/workflows/ci.yml
+
+# See CI logs for deps versioning.
+
+# Auto defaults based on CI, but distro assumes auto means disabled.
+# Going with the CI tested interpretation.
+# CI disables deprecated but enabled by default in meson_options.txt
+
+GCC_PV="11.3.0"
 LIBJPEG_TURBO_V="2.1.2"
 LLVM_COMPAT=( 14 ) # CI uses 14
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 SO_C=58
 SO_R=3
 SO_A=16
@@ -15,19 +26,17 @@ SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 inherit flag-o-matic llvm meson-multilib multilib-minimal vala
 inherit python-r1 toolchain-funcs
 
+KEYWORDS="~amd64 ~x86"
+S="${WORKDIR}/libvips-${PV}"
 SRC_URI="
 https://github.com/libvips/libvips/archive/v${PV}.tar.gz -> ${P}.tar.gz
 "
-S="${WORKDIR}/libvips-${PV}"
 
 DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
 LICENSE="LGPL-2.1+"
-KEYWORDS="~amd64 ~x86"
+RESTRICT="mirror"
 SLOT="0/${SO_MAJOR}"
-# Auto defaults based on CI, but distro assumes auto means disabled.
-# Going with the CI tested interpretation.
-# CI disables deprecated but enabled by default in meson_options.txt
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +analyze +aom +cairo +cgif +cxx debug +deprecated -doxygen +examples +exif +fftw
@@ -63,9 +72,6 @@ REQUIRED_USE="
 		)
 	)
 "
-# Assumed U 22.04.1
-# See also https://github.com/libvips/libvips/blob/v8.14.5/.github/workflows/ci.yml
-# See CI for versioning
 RDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_any_dep '
@@ -213,7 +219,6 @@ gen_llvm_test_bdepend()
 	done
 }
 
-GCC_PV="11.3.0"
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-build/gtk-doc-am-1.32
@@ -253,8 +258,7 @@ PDEPEND+="
 		dev-python/pyvips[${PYTHON_USEDEP}]
 	)
 "
-RESTRICT="mirror"
-DOCS=( ChangeLog README.md )
+DOCS=( "ChangeLog" "README.md" )
 
 pkg_setup() {
 	use test && python_setup
@@ -702,8 +706,8 @@ multilib_src_install_all() {
 	cd "${S}" || die
 	einstalldocs
 	find "${ED}" -name '*.la' -delete || die
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 	if use examples ; then
 		insinto "/usr/share/${PN}"
 		doins -r "${S}/examples"
