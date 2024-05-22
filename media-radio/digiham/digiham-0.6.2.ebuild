@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# D10
+# D11, U22
 
 inherit cmake
 
@@ -18,6 +18,7 @@ https://github.com/jketterl/digiham/archive/refs/tags/${PV}.tar.gz
 DESCRIPTION="Tools for decoding digital ham communication"
 HOMEPAGE="https://github.com/jketterl/digiham"
 LICENSE="GPL-3"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
 	>=media-radio/codecserver-0.1.0
@@ -30,7 +31,6 @@ DEPEND+="
 BDEPEND+="
 	>=dev-build/cmake-3.0
 "
-RESTRICT="mirror"
 DOCS=( "LICENSE" "README.md" )
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
