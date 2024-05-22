@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_10" ) # Upstream supports up to 3.10
+PYTHON_COMPAT=( "python3_10" "pypy3" ) # Upstream supports up to 3.10.  See README.rst.
 
 inherit distutils-r1
 
