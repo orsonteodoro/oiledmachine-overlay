@@ -4,13 +4,13 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..10} ) # Upstream removes 3.11 from CI
 
 inherit distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
-	EGIT_BRANCH=""
+	EGIT_BRANCH="master"
 	EGIT_COMMIT="HEAD"
 	EGIT_REPO_URI=""
 	FALLBACK_COMMIT="e7970b63feafc8941c325111c5ce3706698a18b5" # Nov 21, 2022
