@@ -18,6 +18,11 @@ inherit git-r3 lcnr linux-info
 
 if [[ "${PV}" =~ "99999999" ]] ; then
 	IUSE+=" fallback-commit"
+	EGIT_BRANCH="master"
+	EGIT_CHECKOUT_DIR="${S_GO}/src/github.com/probonopd/${PN}"
+	EGIT_REPO_URI="https://github.com/probonopd/${PN}.git"
+	FALLBACK_COMMIT="09fd0186774aefa2351c42b4bb22f92ce0c4f235"
+	FALLBACK_COMMIT_DATE="Wed, 20 Dec 2023 22:55:40 +0100"
 	S="${WORKDIR}/${PN}-9999"
 	# Live does not support GEN_EBUILD.
 else
@@ -718,14 +723,11 @@ src_unpack() {
 
 	if [[ "${PV}" =~ "99999999" ]] ; then
 		if use fallback-commit ; then
-			export EGIT_COMMIT="09fd0186774aefa2351c42b4bb22f92ce0c4f235"
+			export EGIT_COMMIT="${FALLBACK_COMMIT}"
 
 	 # See the header Date: field for obtaining this.
-			export EGIT_COMMIT_TIMESTAMP="Wed, 20 Dec 2023 22:55:40 +0100"
+			export EGIT_COMMIT_TIMESTAMP="${FALLBACK_COMMIT_DATE}"
 		fi
-		EGIT_REPO_URI="https://github.com/probonopd/${PN}.git"
-		EGIT_BRANCH="master"
-		EGIT_CHECKOUT_DIR="${S_GO}/src/github.com/probonopd/${PN}"
 		git-r3_fetch
 		git-r3_checkout
 		if ! use fallback-commit ; then
