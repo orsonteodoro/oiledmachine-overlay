@@ -4,26 +4,29 @@
 
 EAPI=7
 
+# D10, D11-slim
+
 inherit cmake user-info
 
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/jketterl/codecserver/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${P}"
 
 DESCRIPTION="Modular audio codec server"
 HOMEPAGE="https://github.com/jketterl/codecserver"
-LICENSE="GPL-3"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+LICENSE="GPL-3+"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 openrc systemd
-r1
+ebuild-revision-1
 "
 REQUIRED_USE="
 	|| (
-		openrc systemd
+		openrc
+		systemd
 	)
 "
 DEPEND+="
@@ -45,7 +48,7 @@ BDEPEND+="
 	>=dev-libs/protobuf-3.12.4:0/3.21
 "
 RESTRICT="mirror"
-DOCS=( LICENSE README.md )
+DOCS=( "LICENSE" "README.md" )
 
 src_configure() {
 	if ! egetent group ${PN} ; then
@@ -77,21 +80,23 @@ eerror
 
 src_install() {
 	cmake_src_install
-	insinto /etc/codecserver
-	doins conf/codecserver.conf
+	insinto "/etc/codecserver"
+	doins "conf/codecserver.conf"
 	if use openrc ; then
-		exeinto /etc/init.d
+		exeinto "/etc/init.d"
 		doexe "${FILESDIR}/init.d/${PN}"
 	fi
 	if ! use systemd ; then
-		rm -rf "${ED}/lib/systemd" || die
+		rm -rf \
+			"${ED}/lib/systemd" \
+			|| die
 	fi
 }
 
 pkg_postinst() {
-	einfo
-	einfo "The init script still needs to be started."
-	einfo
+einfo
+einfo "The init script still needs to be started."
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
