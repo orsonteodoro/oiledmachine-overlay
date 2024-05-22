@@ -3,37 +3,42 @@
 
 EAPI=8
 
+MY_PN="${PN/b/B}"
+
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit cmake python-any-r1
+
+KEYWORDS="~amd64 ~x86"
+S="${WORKDIR}/${MY_PN}-${PV}"
+SRC_URI="
+https://github.com/rizsotto/Bear/archive/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Bear is a tool that generates a compilation database for clang \
 tooling."
 HOMEPAGE="https://github.com/rizsotto/Bear"
 LICENSE="GPL-3+"
-KEYWORDS="~amd64 ~x86"
-MY_PN="${PN/b/B}"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" bash-completion test"
-DEPEND+="
+RDEPEND+="
 	${PYTHON_DEPS}
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-build/cmake-2.8
 	virtual/pkgconfig
 	test? (
-		$(python_gen_any_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '
+			>=dev-python/lit-0.7[${PYTHON_USEDEP}]
+		')
 	)
 "
-SRC_URI="
-https://github.com/rizsotto/Bear/archive/${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${MY_PN}-${PV}"
-RESTRICT="mirror"
 
 src_configure() {
 	local mycmakeargs=(
