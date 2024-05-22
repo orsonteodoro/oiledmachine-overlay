@@ -6,12 +6,14 @@ EAPI=8
 
 inherit cmake flag-o-matic
 
-SRC_URI="https://bitbucket.org/blaze-lib/blaze/downloads/blaze-${PV}.tar.gz"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
+SRC_URI="https://bitbucket.org/blaze-lib/blaze/downloads/blaze-${PV}.tar.gz"
 
 DESCRIPTION="A high performance C++ math library"
 LICENSE="BSD"
 HOMEPAGE="https://bitbucket.org/blaze-lib/blaze"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" boost cxx11threads hpx +lapack +openmp"
 RDEPEND+="
@@ -45,7 +47,6 @@ BDEPEND+="
 		sys-devel/gcc[cxx]
 	)
 "
-RESTRICT="mirror"
 
 src_configure() {
 	local mycmakeargs=(
@@ -53,7 +54,7 @@ src_configure() {
 	)
 	if use boost || use cxx11threads || use hpx || use openmp ; then
 		mycmakeargs+=(
-			-DBLAZE_SHARED_MEMORY_PARALLELIZATION=ON
+			-DBLAZE_SHARED_MEMORY_PARALLELIZATION="ON"
 		)
 		if use openmp ; then
 			mycmakeargs+=(
@@ -74,7 +75,7 @@ src_configure() {
 		fi
 	else
 		mycmakeargs+=(
-			-DBLAZE_SHARED_MEMORY_PARALLELIZATION=OFF
+			-DBLAZE_SHARED_MEMORY_PARALLELIZATION="OFF"
 		)
 	fi
 	cmake_src_configure
