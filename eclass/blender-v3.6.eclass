@@ -18,6 +18,37 @@
 # The ebuild uses the same matching LLVM version used with Mesa to prevent
 # the multiple LLVM bug.
 
+# Keep dates and links updated to speed up releases and decrease maintenance time cost.
+# no need to look past those dates.
+
+# Last change was Feb 23, 2023 for:
+# https://github.com/blender/blender/blob/v3.6.12/build_files/build_environment/install_linux_packages.py
+
+# Last change was May 15, 2023 for:
+# https://github.com/blender/blender/blob/v3.6.12/build_files/cmake/config/blender_release.cmake
+# used for REQUIRED_USE section.
+
+# Last change was Mar 12, 2024 for:
+# https://github.com/blender/blender/blob/v3.6.12/build_files/build_environment/cmake/versions.cmake
+# used for *DEPENDs.
+
+# HIP:  https://github.com/blender/blender/blob/v3.6.12/intern/cycles/cmake/external_libs.cmake#L47
+
+# dependency version requirements see
+# build_files/build_environment/cmake/versions.cmake
+# doc/python_api/requirements.txt
+# extern/Eigen3/eigen-update.sh
+# Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
+# Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
+#
+# Mentioned in versions.cmake but missing in (R)DEPENDS freeglut,
+# glfw, clew, cuew, webp, xml2, tinyxml, yaml, flexbison,
+# bzip2, libffi, lzma, openssl, sqlite, nasm, ispc for oidn,
+# faad (added in 0.6 ffmpeg but removed in 0.7+)
+#
+# The LLVM linked to Blender should match mesa's linked llvm version to avoid
+# multiple version problem if using system's mesa.
+
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} is not supported." ;;
@@ -351,37 +382,6 @@ REQUIRED_USE+="
 		ffmpeg
 	)
 "
-
-# Keep dates and links updated to speed up releases and decrease maintenance time cost.
-# no need to look past those dates.
-
-# Last change was Feb 23, 2023 for:
-# https://github.com/blender/blender/blob/v3.6.12/build_files/build_environment/install_linux_packages.py
-
-# Last change was May 15, 2023 for:
-# https://github.com/blender/blender/blob/v3.6.12/build_files/cmake/config/blender_release.cmake
-# used for REQUIRED_USE section.
-
-# Last change was Mar 12, 2024 for:
-# https://github.com/blender/blender/blob/v3.6.12/build_files/build_environment/cmake/versions.cmake
-# used for *DEPENDs.
-
-# HIP:  https://github.com/blender/blender/blob/v3.6.12/intern/cycles/cmake/external_libs.cmake#L47
-
-# dependency version requirements see
-# build_files/build_environment/cmake/versions.cmake
-# doc/python_api/requirements.txt
-# extern/Eigen3/eigen-update.sh
-# Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
-# Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
-#
-# Mentioned in versions.cmake but missing in (R)DEPENDS freeglut,
-# glfw, clew, cuew, webp, xml2, tinyxml, yaml, flexbison,
-# bzip2, libffi, lzma, openssl, sqlite, nasm, ispc for oidn,
-# faad (added in 0.6 ffmpeg but removed in 0.7+)
-#
-# The LLVM linked to Blender should match mesa's linked llvm version to avoid
-# multiple version problem if using system's mesa.
 
 gen_asan_bdepend() {
 	local s
