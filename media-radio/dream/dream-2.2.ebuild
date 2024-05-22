@@ -4,17 +4,19 @@
 
 EAPI=8
 
+QT_PV="5"
+
 inherit flag-o-matic qmake-utils toolchain-funcs
 
-SRC_URI="mirror://sourceforge/drm/${PN}_${PV}.orig.tar.gz"
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 S="${WORKDIR}/${PN}-${PV}"
+SRC_URI="mirror://sourceforge/drm/${PN}_${PV}.orig.tar.gz"
 
 DESCRIPTION="A software radio for AM and Digital Radio Mondiale (DRM)"
 HOMEPAGE="https://sourceforge.net/projects/drm/"
 LICENSE="GPL-2+"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-QT_PV="5"
 IUSE+="
 alsa -faad -faac -fdk gps gui hamlib jack +opus portaudio pulseaudio qt${QT_PV}
 qtmultimedia sound sndfile speexdsp webengine
@@ -99,7 +101,6 @@ BDEPEND+="
 	sys-devel/gcc
 	dev-build/make
 "
-RESTRICT="mirror"
 DOCS=(
 	AUTHORS
 	ChangeLog

@@ -7,8 +7,8 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="sourceforge">drm</remote-id>
     <bugs-to>https://sourceforge.net/p/drm/tickets/</bugs-to>
+    <remote-id type="sourceforge">drm</remote-id>
   </upstream>
   <use>
     <flag name="alsa">
