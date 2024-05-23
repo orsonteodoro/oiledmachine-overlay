@@ -256,6 +256,13 @@ ZEN_KV="6.8.0"
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
+if [[ "${PV}" =~ "9999" ]] ; then
+	:
+else
+IUSE+="
+clear
+"
+fi
 IUSE+="
 bbrv2 bbrv3 build c2tcp cet +cfs clang deepcc disable_debug -exfat +genpatches
 -genpatches_1510 kcfi kpgo-utils lto nest orca pgo prjc rt -rust shadowcallstack
@@ -651,6 +658,7 @@ elif [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${BBRV2_SRC_URIS}
 		${BBRV3_SRC_URIS}
 		${C2TCP_URIS}
+		${CLEAR_LINUX_PATCHES_URI}
 		${GENPATCHES_URI}
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
@@ -680,6 +688,9 @@ else
 		)
 		c2tcp? (
 			${C2TCP_URIS}
+		)
+		clear? (
+			${CLEAR_LINUX_PATCHES_URI}
 		)
 		deepcc? (
 			${C2TCP_URIS}

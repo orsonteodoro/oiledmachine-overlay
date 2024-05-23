@@ -169,10 +169,10 @@
 		    TRESOR (x86-64) [5]			E
 		    zen-sauce				D
 
-    6.9 (Live / Master)					A
+    6.9 (Live / Master / Stable)			A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				E
-		    Clear Linux patchset		D
+		    Clear Linux patchset		A (point releases only, not live)
 		    genpatches				A
 		    kernel_compiler_patch		D
 		    Nest				E
