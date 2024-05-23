@@ -197,13 +197,13 @@ gcc_symlink_ver() {
 
 	if ver_test ${pv} -lt 10 ; then
 		ncomponents=3
-	elif [[ ${slot} -eq 10 ]] && ver_test ${pv} -ge 10.4.1_p20220929 ; then
+	elif [[ ${slot} -eq 10 ]] && ver_test "${pv}" -ge "10.4.1_p20220929" ; then
 		ncomponents=1
-	elif [[ ${slot} -eq 11 ]] && ver_test ${pv} -ge 11.3.1_p20220930 ; then
+	elif [[ ${slot} -eq 11 ]] && ver_test "${pv}" -ge "11.3.1_p20220930" ; then
 		ncomponents=1
-	elif [[ ${slot} -eq 12 ]] && ver_test ${pv} -ge 12.2.1_p20221001 ; then
+	elif [[ ${slot} -eq 12 ]] && ver_test "${pv}" -ge "12.2.1_p20221001" ; then
 		ncomponents=1
-	elif [[ ${slot} -eq 13 ]] && ver_test ${pv} -ge 13.0.0_pre20221002 ; then
+	elif [[ ${slot} -eq 13 ]] && ver_test "${pv}" -ge "13.0.0_pre20221002" ; then
 		ncomponents=1
 	elif [[ ${slot} -gt 13 ]] ; then
 		ncomponents=1
