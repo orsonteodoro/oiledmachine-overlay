@@ -54,6 +54,7 @@ DEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
 	' python3_12)
+	<dev-python/orbax-checkpoint-0.4.5[${PYTHON_USEDEP}]
 	>=dev-python/jax-0.4.19[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.12[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.2[${PYTHON_USEDEP}]
@@ -63,7 +64,6 @@ DEPEND+="
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/optax[${PYTHON_USEDEP}]
 	dev-python/orbax[${PYTHON_USEDEP}]
-	dev-python/orbax-checkpoint[${PYTHON_USEDEP}]
 	dev-python/tensorstore[${PYTHON_USEDEP}]
 "
 RDEPEND+="
