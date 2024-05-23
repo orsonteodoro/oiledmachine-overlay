@@ -56,9 +56,6 @@ DEPEND+="
 		=dev-libs/cudnn-8.8*
 		=dev-util/nvidia-cuda-toolkit-12*
 	)
-	experimental? (
-		dev-python/tensorstore[${PYTHON_USEDEP}]
-	)
 "
 RDEPEND+="
 	${DEPEND}
