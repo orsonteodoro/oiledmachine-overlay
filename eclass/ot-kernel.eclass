@@ -357,8 +357,11 @@ PRJC_SRC_URI="${PRJC_URI_BASE}${PRJC_FN}"
 
 PGO_LLVM_SUPPORTED_VERSIONS=(
 # Bump also IPD_RAW_VER_MAX when profraw version bumped
-# Search for INSTR_PROF_RAW_VERSION in
+# Search for INSTR_PROF_RAW_VERSION in either
+# /usr/lib/llvm/${LLVM_SLOT}/include/llvm/ProfileData/InstrProfData.inc
+# https://github.com/llvm/llvm-project/blob/main/compiler-rt/include/profile/InstrProfData.inc ; change from main to tagged version
 #	"19.0.0.9999" # profraw v9
+	"18.1.6"
 	"18.1.5"
 	"18.1.4"
 	"18.1.3"
