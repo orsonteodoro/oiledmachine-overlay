@@ -4,6 +4,11 @@
 
 EAPI=8
 
+# FIXME:
+#ERROR: /var/tmp/portage/dev-python/jaxlib-0.4.28/work/jax-jaxlib-v0.4.28-python3_11-bazel-base/external/llvm-project/llvm/BUILD.bazel:656:10: Compiling llvm/utils/TableGen/Attributes.cpp [for tool] failed: undeclared inclusion(s) in rule '@llvm-project//llvm:llvm-min-tblgen':
+#this rule is missing dependency declarations for the following files included by 'llvm/utils/TableGen/Attributes.cpp':
+#  'bazel-out/k8-opt-exec-50AE0418/bin/external/llvm-project/llvm/Demangle.cppmap'
+
 # CUDA version:  https://github.com/google/jax/blob/jaxlib-v0.4.28/docs/installation.md?plain=1#L116
 # ROCm version:  https://github.com/google/jax/blob/jaxlib-v0.4.28/build/rocm/ci_build.sh#L52
 
@@ -165,7 +170,7 @@ LICENSE="
 		BSD-2
 	)
 "
-#KEYWORDS="~amd64 ~arm64" # Needs install test
+#KEYWORDS="~amd64 ~arm64" # Build failure
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${ROCM_IUSE}
