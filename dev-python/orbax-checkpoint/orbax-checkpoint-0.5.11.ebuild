@@ -57,7 +57,7 @@ CHECKPOINT_DEPEND="
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/nest-asyncio[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/protobuf-python:${PROTOBUF_PV%.*}[${PYTHON_USEDEP}]
+	dev-python/protobuf-python:0/${PROTOBUF_PV%.*}[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
 "
