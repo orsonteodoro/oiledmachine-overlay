@@ -111,6 +111,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.24
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/setuptools-scm[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	dev-util/patchutils
 	dev-lang/nasm
 	dev-lang/perl
