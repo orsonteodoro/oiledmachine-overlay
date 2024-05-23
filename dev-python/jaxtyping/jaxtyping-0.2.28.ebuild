@@ -8,7 +8,7 @@ EAPI=8
 # mknotebooks
 # pytkdocs_tweaks
 
-DISTUTILS_USE_PEP517="setuptools"
+DISTUTILS_USE_PEP517="hatchling"
 PYTHON_COMPAT=( python3_11 ) # CI only tests 3.11
 
 inherit distutils-r1
