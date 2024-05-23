@@ -4,6 +4,10 @@
 
 EAPI=8
 
+# TODO:
+# update DEPENDs for examples
+# verify/fix examples install
+
 # TODO package:
 # atari-py
 # clu
@@ -46,7 +50,13 @@ LICENSE="
 "
 RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc test"
+IUSE+=" cuda doc examples test"
+REQUIRED_USE="
+	examples? (
+		cuda
+	)
+"
+# Some examples require cuda11+cudnn
 DEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
@@ -55,7 +65,16 @@ DEPEND+="
 		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
 	' python3_12)
 	<dev-python/orbax-checkpoint-0.4.5[${PYTHON_USEDEP}]
-	>=dev-python/jax-0.4.19[${PYTHON_USEDEP}]
+	(
+		!examples? (
+			>=dev-python/jax-0.4.19[${PYTHON_USEDEP}]
+			<dev-python/jax-0.4.26[${PYTHON_USEDEP}]
+		)
+		examples? (
+			>=dev-python/jax-0.4.19[${PYTHON_USEDEP},cuda?]
+			<dev-python/jax-0.4.26[${PYTHON_USEDEP},cuda?]
+		)
+	)
 	>=dev-python/numpy-1.12[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.2[${PYTHON_USEDEP}]
 	>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]

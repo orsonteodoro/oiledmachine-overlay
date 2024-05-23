@@ -166,7 +166,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-clang -custom-optimization-level cpu cuda +hardened rocm system-llvm r1
+clang cpu cuda -custom-optimization-level +hardened rocm system-llvm r1
 
 rocm_5_6
 "
@@ -1042,6 +1042,7 @@ ewarn
 			--cudnn_path="${ESYSROOT}/opt/cuda"
 			--cuda_version="$(cuda_toolkit_version)"
 			--cudnn_version="$(cuda_cudnn_version)"
+			--gpu_plugin_cuda_version=11
 		)
 	fi
 	if use rocm ; then

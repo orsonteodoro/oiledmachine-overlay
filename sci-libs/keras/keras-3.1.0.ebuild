@@ -90,6 +90,7 @@ BDEPEND="
 	)
 "
 # Possible circular depends:
+# Upstream uses jax-0.4.23 for cuda but we corrected for >=jax-0.4.26 for cuda12
 PDEPEND="
 	cpu? (
 		jax? (
@@ -107,7 +108,7 @@ PDEPEND="
 	)
 	cuda? (
 		jax? (
-			>=dev-python/jax-0.4.23[${PYTHON_USEDEP},cuda]
+			>=dev-python/jax-0.4.26[${PYTHON_USEDEP},cuda]
 			test? (
 				$(python_gen_any_dep '
 					>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]

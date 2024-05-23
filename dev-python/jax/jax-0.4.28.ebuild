@@ -28,7 +28,7 @@ LICENSE="
 KEYWORDS="~amd64 ~arm64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-australis cuda doc experimental test
+australis cpu cuda doc experimental rocm test
 ebuild-revision-2
 "
 # flax and tensorstore are missing in setup.py *_require sections but referenced
@@ -46,7 +46,7 @@ DEPEND+="
 		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.11.1[${PYTHON_USEDEP}]
 	' python3_12)
-	>=dev-python/jaxlib-${PV}[${PYTHON_USEDEP},cuda?]
+	>=dev-python/jaxlib-${PV}[${PYTHON_USEDEP},cpu=,cuda=,rocm=]
 	>=dev-python/ml_dtypes-0.2.0[${PYTHON_USEDEP}]
 	dev-python/opt-einsum[${PYTHON_USEDEP}]
 	australis? (
