@@ -28,7 +28,7 @@ EGIT_BROTLI_COMMIT="6d03dfbedda1615c4cba1211f8d81735575209c8"		# Found in https:
 # Different zlib lib \
 EGIT_CR_ZLIB_COMMIT="2d44c51ada6d325b85b53427b02dabf44648bca4"		# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/net_zlib/workspace.bzl
 PROTOBUF_PV="3.21.11"							# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/com_google_protobuf/workspace.bzl#L27C96-L27C100
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} ) # CI uses 3.9
 
 inherit distutils-r1 flag-o-matic llvm toolchain-funcs
 
@@ -230,7 +230,7 @@ einfo "PATH:\t${PATH}"
 		export CC=${CHOST}-gcc-${symlink_ver}
 		export CXX=${CHOST}-g++-${symlink_ver}
 		export CPP="${CHOST}-g++-${symlink_ver} -E"
-		if ${CC} --version 2>/dev/null 1>/dev/null ; then
+		if ${CC} --version >/dev/null 2>&1 ; then
 einfo "Switched to gcc:${s}"
 			found=1
 			break
@@ -268,7 +268,7 @@ einfo "FORCE_LLVM_SLOT may be specified."
 		export CC="${CHOST}-clang-${s}"
 		export CXX="${CHOST}-clang++-${s}"
 		export CPP="${CHOST}-clang++-${s} -E"
-		if ${CC} --version 2>/dev/null 1>/dev/null ; then
+		if ${CC} --version >/dev/null 2>&1 ; then
 einfo "Switched to clang:${s}"
 			found=1
 			break
@@ -370,8 +370,10 @@ einfo "Adding build --sandbox_writable_path=\"${ccache_dir}\" to ${S}/.bazelrc"
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc AUTHORS LICENSE
+	docinto "licenses"
+	dodoc \
+		"AUTHORS" \
+		"LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
