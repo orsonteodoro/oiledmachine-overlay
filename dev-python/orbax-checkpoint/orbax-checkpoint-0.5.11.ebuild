@@ -21,15 +21,12 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/google/orbax.git"
-	FALLBACK_COMMIT="33a814de0a1df3b46ad174d2373a85a5afa0151b" # May 17, 2024
+	FALLBACK_COMMIT="87a30af2dc06a7f0a48f1bcebc787bf05b0e41a0" # May 10, 2024
 	inherit git-r3
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	S="${WORKDIR}/${P}/checkpoint"
-	SRC_URI="
-https://github.com/google/orbax/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-	"
+	inherit pypi
 fi
 
 DESCRIPTION="Orbax Checkpoint"
@@ -48,9 +45,11 @@ tensorflow test
 REQUIRED_USE="
 "
 CHECKPOINT_DEPEND="
+	(
+		>=dev-python/tensorstore-0.1.51[${PYTHON_USEDEP}]
+	)
 	>=dev-libs/protobuf-${PROTOBUF_PV}:${PROTOBUF_PV%.*}
 	>=dev-python/jax-0.4.9[${PYTHON_USEDEP}]
-	>=dev-python/tensorstore-0.1.51[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP}]
 	dev-python/jaxlib[${PYTHON_USEDEP}]
