@@ -62,6 +62,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	dev-libs/protobuf:0/3.21
+	dev-python/build[${PYTHON_USEDEP}]
 	dev-python/flake8[${PYTHON_USEDEP}]
 	test? (
 		dev-python/pytest[${PYTHON_USEDEP}]

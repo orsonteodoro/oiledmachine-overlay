@@ -354,6 +354,7 @@ gen_llvm_bdepend() {
 }
 BDEPEND+="
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
+	dev-python/build[${PYTHON_USEDEP}]
 	clang? (
 		$(gen_llvm_bdepend)
 	)
