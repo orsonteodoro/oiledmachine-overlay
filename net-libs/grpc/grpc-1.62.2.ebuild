@@ -18,7 +18,7 @@ EAPI=8
 
 MY_PV="${PV//_pre/-pre}"
 OPENCENSUS_PROTO_PV="0.3.0"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby31 ruby32 ruby33"
 
@@ -153,6 +153,13 @@ soversion_check() {
 		&& die "Ebuild QA: Update to SLOT=\"\${SLOT_MAJ}/${f1}.${f2}\""
 }
 
+pkg_setup() {
+	python_setup
+	if use ruby ; then
+		ruby-ng_pkg_setup
+	fi
+}
+
 src_unpack() {
 	unpack ${A}
 	mv "${S_OPENCENSUS_PROTO}" "${S}/third_party/opencensus-proto/src" || die
@@ -245,8 +252,10 @@ src_install() {
 
 multilib_src_install_all() {
 	cd "${S}" || die
-	docinto licenses
-	dodoc LICENSE NOTICE.txt
+	docinto "licenses"
+	dodoc \
+		"LICENSE" \
+		"NOTICE.txt"
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi

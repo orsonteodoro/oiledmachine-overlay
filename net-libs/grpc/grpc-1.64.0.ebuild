@@ -15,7 +15,7 @@ EAPI=8
 
 MY_PV="${PV//_pre/-pre}"
 OPENCENSUS_PROTO_PV="0.3.0"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby31 ruby32 ruby33"
 
@@ -78,7 +78,7 @@ REQUIRED_USE+="
 "
 RESTRICT="test"
 SLOT_MAJ="0"
-SLOT="${SLOT_MAJ}/39.162" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
+SLOT="${SLOT_MAJ}/41.164" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
 # third_party last update: 20240412
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-20240116.0:0/20240116[${MULTILIB_USEDEP},cxx17(+)]
@@ -155,6 +155,13 @@ soversion_check() {
 	local new_slot="${SLOT_MAJ}/${f1}.${f2}"
 	[[ "${SLOT}" != "${new_slot}" ]] \
 		&& die "Ebuild QA: Update to SLOT=\"\${SLOT_MAJ}/${f1}.${f2}\""
+}
+
+pkg_setup() {
+	python_setup
+	if use ruby ; then
+		ruby-ng_pkg_setup
+	fi
 }
 
 src_unpack() {
@@ -249,8 +256,10 @@ src_install() {
 
 multilib_src_install_all() {
 	cd "${S}" || die
-	docinto licenses
-	dodoc LICENSE NOTICE.txt
+	docinto "licenses"
+	dodoc \
+		"LICENSE" \
+		"NOTICE.txt"
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi
