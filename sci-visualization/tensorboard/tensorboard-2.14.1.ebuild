@@ -84,8 +84,14 @@ RDEPEND="
 		dev-python/protobuf-python:'${PROTOBUF_SLOT}'[${PYTHON_USEDEP}]
 		dev-python/six[${PYTHON_USEDEP}]
 		|| (
-			=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
+			(
+				=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.54*:=[${PYTHON_USEDEP},python]
+			)
+			(
+				=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.53*:=[${PYTHON_USEDEP},python]
+			)
 		)
 	')
 	=sci-visualization/tensorboard-data-server-0.7*[${PYTHON_SINGLE_USEDEP}]
@@ -106,8 +112,8 @@ BDEPEND="
 			>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
 			>=dev-python/pandas-1.0[${PYTHON_USEDEP}]
 			|| (
-				=dev-python/grpcio-testing-1.53*:=[${PYTHON_USEDEP}]
 				=dev-python/grpcio-testing-1.54*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.53*:=[${PYTHON_USEDEP}]
 			)
 		)
 	')
