@@ -1,14 +1,14 @@
 # Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-inherit strip-linguas xdg
+inherit optfeature strip-linguas xdg
 
 LANGS="
 ar ast be bg ca cs de el en_GB es et eu fa fi fr gl he hi hu id it ja kk ko ku
-lb lt mn nl nn pl pt pt_BR ro ru sk sl sr sv tr uk vi zh_CN ZH_TW
+lb lt mn nl nn pl pt pt_BR ro ru si sk sl sr sv tr uk vi zh_CN ZH_TW
 "
 NOSHORTLANGS="en_GB zh_CN zh_TW"
 
@@ -30,7 +30,7 @@ SLOT="0"
 IUSE="+vte r2"
 RDEPEND="
 	>=dev-libs/glib-2.32:2
-	>=x11-libs/gtk+-3.0:3
+	>=x11-libs/gtk+-3.24:3
 	vte? (
 		x11-libs/vte:2.91
 	)
@@ -44,7 +44,7 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-1.38-autocomplete-engine-prefs.patch"	# Added by oiledmachine-overlay
+	"${FILESDIR}/${PN}-2.0-autocomplete-engine-prefs.patch"	# Added by oiledmachine-overlay
 )
 
 pkg_setup() {
@@ -61,7 +61,7 @@ src_prepare() {
 		"data/filetype_extensions.conf" \
 		|| die
 
-	if [[ "${PV}" =~ "_pre" ]] || [[ "${PV}" =~ "9999" ]] ; then
+	if [[ "${PV}" =~ _pre ]] || [[ "${PV}" =~ "9999" ]] ; then
 		eautoreconf
 	fi
 }
@@ -93,6 +93,8 @@ pkg_preinst() {
 
 pkg_postinst() {
 	xdg_pkg_postinst
+
+	optfeature "editing files outside the local filesystem" "gnome-base/gvfs"
 }
 
 pkg_postrm() {
