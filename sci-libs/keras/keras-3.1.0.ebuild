@@ -91,6 +91,24 @@ BDEPEND="
 "
 # Possible circular depends:
 # Upstream uses jax-0.4.23 for cuda but we corrected for >=jax-0.4.26 for cuda12
+# =dev-util/nvidia-cuda-toolkit-12* required for some USE flags.
+
+PDEPEND_WITH_CUDA="
+	cuda? (
+		pytorch? (
+			$(python_gen_any_dep '
+				>=sci-libs/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP},cuda?]
+			')
+			>=sci-libs/pytorch-2.2.1[${PYTHON_USEDEP},cuda]
+			test? (
+				>=sci-libs/tensorflow-${TENSORFLOW_PV}
+				dev-python/jax[${PYTHON_USEDEP}]
+			)
+		)
+	)
+"
+
+# temp removed cuda from cuda? ( pytorch? (...) ) due to lack of >=cuda-12.3 support-release in project
 PDEPEND="
 	cpu? (
 		jax? (
@@ -129,9 +147,9 @@ PDEPEND="
 		)
 		pytorch? (
 			$(python_gen_any_dep '
-				>=sci-libs/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP},cuda?]
+				>=sci-libs/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP}]
 			')
-			>=sci-libs/pytorch-2.2.1[${PYTHON_USEDEP},cuda]
+			>=sci-libs/pytorch-2.2.1[${PYTHON_USEDEP}]
 			test? (
 				>=sci-libs/tensorflow-${TENSORFLOW_PV}
 				dev-python/jax[${PYTHON_USEDEP}]
