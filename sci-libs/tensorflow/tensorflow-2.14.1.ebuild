@@ -550,10 +550,12 @@ RDEPEND_GRPCIO_LITTLE_ENDIAN_PROTOBUF_3_21="
 			(
 				=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
 				=dev-python/grpcio-tools-1.53*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
 			)
 			(
 				=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
 				=dev-python/grpcio-tools-1.54*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
 			)
 		)
 	' python3_{10..11})
