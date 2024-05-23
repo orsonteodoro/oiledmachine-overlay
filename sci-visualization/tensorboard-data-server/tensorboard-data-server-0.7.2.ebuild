@@ -307,32 +307,35 @@ RDEPEND="
 		>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
 		>dev-python/six-1.9[${PYTHON_USEDEP}]
 		dev-python/protobuf-python:'${PROTOBUF_SLOT}'[${PYTHON_USEDEP}]
+
 		|| (
 			(
-				=dev-python/grpcio-1.49*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.49*:=[${PYTHON_USEDEP},python]
+				=dev-python/grpcio-1.49*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
 			)
 			(
-				=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.50*:=[${PYTHON_USEDEP},python]
+				=dev-python/grpcio-1.50*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.50*[${PYTHON_USEDEP},python]
 			)
 			(
-				=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.51*:=[${PYTHON_USEDEP},python]
+				=dev-python/grpcio-1.51*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.51*[${PYTHON_USEDEP},python]
 			)
 			(
-				=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.52*:=[${PYTHON_USEDEP},python]
+				=dev-python/grpcio-1.52*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.52*[${PYTHON_USEDEP},python]
 			)
 			(
-				=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.53*:=[${PYTHON_USEDEP},python]
+				=dev-python/grpcio-1.53*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
 			)
 			(
-				=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.54*:=[${PYTHON_USEDEP},python]
+				=dev-python/grpcio-1.54*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
 			)
 		)
+		dev-python/grpcio:=[${PYTHON_USEDEP}]
+		net-libs/grpc:=[${PYTHON_USEDEP},python]
 	')
 "
 BDEPEND="
@@ -349,14 +352,16 @@ BDEPEND="
 			>=dev-python/fsspec-2021.06.0[${PYTHON_USEDEP}]
 			>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
 			>=dev-python/pandas-1.0[${PYTHON_USEDEP}]
+
 			|| (
-				=dev-python/grpcio-testing-1.49*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.50*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.51*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.52*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.53*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.54*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.49*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.50*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.51*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.52*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.53*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.54*[${PYTHON_USEDEP}]
 			)
+			dev-python/grpcio-testing:=[${PYTHON_USEDEP}]
 		)
 	')
 	>=virtual/rust-${RUST_PV}

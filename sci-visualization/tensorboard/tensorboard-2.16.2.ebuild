@@ -71,16 +71,19 @@ RDEPEND="
 		dev-python/bleach[${PYTHON_USEDEP}]
 		dev-python/html5lib[${PYTHON_USEDEP}]
 		dev-python/protobuf-python:'${PROTOBUF_SLOT}'[${PYTHON_USEDEP}]
+
 		|| (
 			(
-				=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.54*:=[${PYTHON_USEDEP},python]
+				=dev-python/grpcio-1.54*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
 			)
 			(
-				=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.53*:=[${PYTHON_USEDEP},python]
+				=dev-python/grpcio-1.53*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
 			)
 		)
+		dev-python/grpcio:=
+		net-libs/grpc:=
 	')
 	=sci-visualization/tensorboard-data-server-0.7*[${PYTHON_SINGLE_USEDEP}]
 "
@@ -98,10 +101,12 @@ BDEPEND="
 			>=dev-python/fsspec-2021.06.0[${PYTHON_USEDEP}]
 			>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
 			>=dev-python/pandas-1.0[${PYTHON_USEDEP}]
+
 			|| (
-				=dev-python/grpcio-testing-1.54*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.53*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.54*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.53*[${PYTHON_USEDEP}]
 			)
+			dev-python/grpcio-testing:=[${PYTHON_USEDEP}]
 		)
 	')
 	|| (

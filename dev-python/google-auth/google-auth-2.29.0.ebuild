@@ -139,10 +139,8 @@ BDEPEND="
 				=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
 			)
 		)
-		(
-			dev-python/grpcio:=[${PYTHON_USEDEP}]
-			net-libs/grpc:=[${PYTHON_USEDEP},python]
-		)
+		dev-python/grpcio:=[${PYTHON_USEDEP}]
+		net-libs/grpc:=[${PYTHON_USEDEP},python]
 
 		dev-python/black[${PYTHON_USEDEP}]
 		dev-python/click[${PYTHON_USEDEP}]
