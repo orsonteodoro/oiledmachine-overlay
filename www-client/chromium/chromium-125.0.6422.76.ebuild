@@ -101,10 +101,10 @@ te th tr uk ur vi zh-CN zh-TW
 # https://github.com/llvm/llvm-project/blob/0c545a44/llvm/CMakeLists.txt#L14
 
 # LLVM 19
-CR_CLANG_USED="a0b3dbaf" # Obtained from \
+CR_CLANG_USED="ab037c4ff3452a680efb758ccacb6ee210ce333b" # Obtained from \
 # https://github.com/chromium/chromium/blob/125.0.6422.76/tools/clang/scripts/update.py#L42 \
 # https://github.com/llvm/llvm-project/commit/a0b3dbaf
-CR_CLANG_USED_UNIX_TIMESTAMP="1707930042" # Cached.  Use below to obtain this. \
+CR_CLANG_USED_UNIX_TIMESTAMP="1712923494" # Cached.  Use below to obtain this. \
 # TIMESTAMP=$(wget -q -O - https://github.com/llvm/llvm-project/commit/${CR_CLANG_USED}.patch \
 #	| grep -F -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
 # Change also LLVM_OFFICIAL_SLOT
