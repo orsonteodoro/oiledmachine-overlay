@@ -4,31 +4,31 @@
 
 EAPI=8
 
-# TODO package:
-# sphinx-immaterial
-
 # All versioning is first found in the console output and confirmed via links below.
 # The links below are shown for faster future updates.
 
+# TODO create package:
+# dev-python/sphinx-immaterial
 # Bazel needs --host_per_file_copt in 7.0.0*
 
-ABSEIL_CPP_PV="20240116.2"						# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/com_google_absl/workspace.bzl#L26, https://github.com/abseil/abseil-cpp/blob/20240116.2/absl/base/config.h#L120
-BAZEL_PV="6.4.0"
+ABSEIL_CPP_PV="master-2023-03-03"					# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/com_google_absl/workspace.bzl#L29, https://github.com/abseil/abseil-cpp/blob/807763a7f57dcf0ba4af7c3b218013e8f525e811/absl/base/config.h#L120
+BAZEL_PV="6.1.0"
 DISTUTILS_USE_PEP517="setuptools"
 GCC_COMPAT=( {12..9} )							# Verified working
+GRPC_PV="1.52.0"							# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/com_github_grpc_grpc/workspace.bzl#L31C51-L31C91, https://github.com/grpc/grpc/blob/a02cc7d88ae45abf7ccb742c7c61345f7ef6d0d2/CMakeLists.txt#L28
 JAVA_SLOT="11"
-LIBJPEG_TURBO_PV="2.1.5.1"						# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/jpeg/workspace.bzl
-LIBPNG_PV="1.6.42"							# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/png/workspace.bzl
+LIBJPEG_TURBO_PV="2.1.4"						# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/jpeg/workspace.bzl
+LIBPNG_PV="1.6.37"							# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/png/workspace.bzl
 LLVM_COMPAT=( {14..10} )						# Upstream supports starting from 8
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"					# Based on U22
-EGIT_AOM_COMMIT="d730cef03ac754f2b6a233e926cd925d8ce8de81"		# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/org_aomedia_aom/workspace.bzl
-EGIT_BLAKE3_COMMIT="0816badf3ada3ec48e712dd4f4cbc2cd60828278"		# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/blake3/workspace.bzl
-EGIT_BORINGSSL_COMMIT="098695591f3a2665fccef83a3732ecfc99acdcdd"	# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/com_google_boringssl/workspace.bzl
-EGIT_BROTLI_COMMIT="d01a4caaa80c0072fe1b6bf073814b9400667fcc"		# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/com_google_brotli/workspace.bzl
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"					# Based on CI distro
+EGIT_AOM_COMMIT="d730cef03ac754f2b6a233e926cd925d8ce8de81"		# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/org_aomedia_aom/workspace.bzl
+EGIT_BLAKE3_COMMIT="64747d48ffe9d1fbf4b71e94cabeb8a211461081"		# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/blake3/workspace.bzl
+EGIT_BORINGSSL_COMMIT="098695591f3a2665fccef83a3732ecfc99acdcdd"	# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/com_google_boringssl/workspace.bzl
+EGIT_BROTLI_COMMIT="6d03dfbedda1615c4cba1211f8d81735575209c8"		# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/com_google_brotli/workspace.bzl
 # Different zlib lib \
-EGIT_CR_ZLIB_COMMIT="3787595bbbd3a374613713164db935e8331f5825"		# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/net_zlib/workspace.bzl
-PROTOBUF_PV="26.1"							# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/com_google_protobuf/workspace.bzl#L27C96-L27C100
-PYTHON_COMPAT=( python3_{8..11} ) # CI uses 3.9
+EGIT_CR_ZLIB_COMMIT="2d44c51ada6d325b85b53427b02dabf44648bca4"		# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/net_zlib/workspace.bzl
+PROTOBUF_PV="3.21.11"							# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/com_google_protobuf/workspace.bzl#L27C96-L27C100
+PYTHON_COMPAT=( python3_{8..11} )
 
 inherit distutils-r1 flag-o-matic llvm toolchain-funcs
 
@@ -88,8 +88,7 @@ JRE_DEPEND="
 "
 RDEPEND+="
 	${JRE_DEPEND}
-	>=dev-libs/protobuf-${PROTOBUF_PV}:0/5.26
-	>=dev-python/ml_dtypes-0.3.1[${PYTHON_USEDEP}]
+	>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
 	>=dev-python/numpy-1.16.0[${PYTHON_USEDEP}]
 	>=media-libs/libjpeg-turbo-2.1.4
 	>=media-libs/libpng-1.6.37
@@ -112,9 +111,7 @@ gen_llvm_depends() {
 BDEPEND+="
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 	>=dev-build/cmake-3.24
-	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/setuptools-scm[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
 	dev-util/patchutils
 	dev-lang/nasm
 	dev-lang/perl
@@ -132,7 +129,7 @@ BDEPEND+="
 "
 DOCS=( README.md )
 PATCHES=(
-	"${FILESDIR}/${PN}-0.1.59-invoke-bazel-directly.patch"
+	"${FILESDIR}/${PN}-0.1.34-invoke-bazel-directly.patch"
 )
 
 distutils_enable_sphinx "docs"
