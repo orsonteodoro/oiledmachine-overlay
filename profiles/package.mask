@@ -127,3 +127,6 @@ www-misc/rainbowstream
 # Ebuild with bolt/pgo changes in testing
 dev-db/mysql
 dev-db/mariadb
+
+# Prevent multiple instances of protobuf merged
+>dev-python/tensorstore-0.1.37
