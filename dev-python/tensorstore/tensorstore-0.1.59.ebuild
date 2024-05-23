@@ -16,17 +16,17 @@ BAZEL_PV="6.4.0"
 DISTUTILS_USE_PEP517="setuptools"
 GCC_COMPAT=( {12..9} )							# Verified working
 JAVA_SLOT="11"
-LIBJPEG_TURBO_PV="2.1.4"						# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/jpeg/workspace.bzl
-LIBPNG_PV="1.6.37"							# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/png/workspace.bzl
+LIBJPEG_TURBO_PV="2.1.5.1"						# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/jpeg/workspace.bzl
+LIBPNG_PV="1.6.42"							# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/png/workspace.bzl
 LLVM_COMPAT=( {14..10} )						# Upstream supports starting from 8
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"					# Based on U22
-EGIT_AOM_COMMIT="d730cef03ac754f2b6a233e926cd925d8ce8de81"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/org_aomedia_aom/workspace.bzl
-EGIT_BLAKE3_COMMIT="64747d48ffe9d1fbf4b71e94cabeb8a211461081"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/blake3/workspace.bzl
-EGIT_BORINGSSL_COMMIT="098695591f3a2665fccef83a3732ecfc99acdcdd"	# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/com_google_boringssl/workspace.bzl
-EGIT_BROTLI_COMMIT="6d03dfbedda1615c4cba1211f8d81735575209c8"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/com_google_brotli/workspace.bzl
+EGIT_AOM_COMMIT="d730cef03ac754f2b6a233e926cd925d8ce8de81"		# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/org_aomedia_aom/workspace.bzl
+EGIT_BLAKE3_COMMIT="0816badf3ada3ec48e712dd4f4cbc2cd60828278"		# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/blake3/workspace.bzl
+EGIT_BORINGSSL_COMMIT="098695591f3a2665fccef83a3732ecfc99acdcdd"	# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/com_google_boringssl/workspace.bzl
+EGIT_BROTLI_COMMIT="d01a4caaa80c0072fe1b6bf073814b9400667fcc"		# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/com_google_brotli/workspace.bzl
 # Different zlib lib \
-EGIT_CR_ZLIB_COMMIT="2d44c51ada6d325b85b53427b02dabf44648bca4"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/net_zlib/workspace.bzl
-PYTHON_COMPAT=( python3_{8..11} )
+EGIT_CR_ZLIB_COMMIT="3787595bbbd3a374613713164db935e8331f5825"		# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/net_zlib/workspace.bzl
+PYTHON_COMPAT=( python3_{8..11} ) # CI uses 3.9
 
 inherit distutils-r1 flag-o-matic llvm toolchain-funcs
 
