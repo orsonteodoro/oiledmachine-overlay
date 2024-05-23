@@ -525,13 +525,17 @@ gen_rocm_rdepend() {
 RDEPEND_PROTOBUF_3_21="
 	|| (
 		(
-			=net-libs/grpc-1.53*
+			!big-endian? (
+				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
+			)
 			big-endian? (
 				=net-libs/grpc-1.53*[-python]
 			)
 		)
 		(
-			=net-libs/grpc-1.54*
+			!big-endian? (
+				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
+			)
 			big-endian? (
 				=net-libs/grpc-1.54*[-python]
 			)
