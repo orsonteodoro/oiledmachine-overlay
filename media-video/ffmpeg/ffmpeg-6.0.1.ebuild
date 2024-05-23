@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# Subslot: libavutil major.libavcodec major.libavformat major
+# Subslot: libavutil_major.libavcodec_major.libavformat_major
 # Since FFmpeg ships several libraries, subslot is kind of limited here.
 # Most consumers will use those three libraries, if a "less used" library
 # changes its soname, consumers will have to be rebuilt the old way
