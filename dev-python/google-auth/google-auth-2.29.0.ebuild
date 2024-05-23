@@ -123,25 +123,25 @@ BDEPEND="
 
 		|| (
 			(
-				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
 				=dev-python/grpcio-1.54*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
 			)
 			(
-				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
 				=dev-python/grpcio-1.53*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
 			)
 			(
-				=net-libs/grpc-1.52*[${PYTHON_USEDEP},python]
 				=dev-python/grpcio-1.52*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.52*[${PYTHON_USEDEP},python]
 			)
 			(
-				=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
 				=dev-python/grpcio-1.49*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
 			)
 		)
 		(
-			net-libs/grpc:=[${PYTHON_USEDEP},python]
 			dev-python/grpcio:=[${PYTHON_USEDEP}]
+			net-libs/grpc:=[${PYTHON_USEDEP},python]
 		)
 
 		dev-python/black[${PYTHON_USEDEP}]
