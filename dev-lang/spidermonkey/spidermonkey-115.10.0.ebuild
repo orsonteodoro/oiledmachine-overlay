@@ -3,6 +3,8 @@
 
 EAPI="8"
 
+# SECURITY:  If firefox esr gets bumped, this package should be bumped with the same latest esr version.
+
 # 115.9.1 -> 115.10.0
 
 LLVM_COMPAT=( 17 ) # Limited by virtual/rust
