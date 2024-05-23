@@ -64,8 +64,8 @@ DEPEND+="
 "
 BDEPEND+="
 	(
-		>=dev-python/flit_core-3.4[${PYTHON_USEDEP}]
-		<dev-python/flit_core-4[${PYTHON_USEDEP}]
+		>=dev-python/flit-core-3.4[${PYTHON_USEDEP}]
+		<dev-python/flit-core-4[${PYTHON_USEDEP}]
 	)
 	codestyle? (
 		$(python_gen_any_dep '

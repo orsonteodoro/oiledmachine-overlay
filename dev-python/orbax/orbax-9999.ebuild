@@ -68,8 +68,8 @@ RDEPEND+="
 "
 BDEPEND+="
 	(
-		<dev-python/flit_core-4[${PYTHON_USEDEP}]
-		>=dev-python/flit_core-3.5[${PYTHON_USEDEP}]
+		<dev-python/flit-core-4[${PYTHON_USEDEP}]
+		>=dev-python/flit-core-3.5[${PYTHON_USEDEP}]
 	)
 	doc? (
 		>=dev-python/docutils-0.18.1[${PYTHON_USEDEP}]

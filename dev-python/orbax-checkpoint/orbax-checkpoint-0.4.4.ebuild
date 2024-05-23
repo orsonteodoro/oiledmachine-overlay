@@ -70,8 +70,8 @@ RDEPEND+="
 "
 BDEPEND+="
 	(
-		>=dev-python/flit_core-3.5[${PYTHON_USEDEP}]
-		<dev-python/flit_core-4[${PYTHON_USEDEP}]
+		>=dev-python/flit-core-3.5[${PYTHON_USEDEP}]
+		<dev-python/flit-core-4[${PYTHON_USEDEP}]
 	)
 	test? (
 		dev-python/flax[${PYTHON_USEDEP}]
