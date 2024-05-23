@@ -230,8 +230,8 @@ einfo "PATH:\t${PATH}"
 	local s
 	for s in ${GCC_COMPAT[@]} ; do
 		symlink_ver=$(gcc_symlink_ver ${s})
-		export CC=${CHOST}-gcc-${symlink_ver}
-		export CXX=${CHOST}-g++-${symlink_ver}
+		export CC="${CHOST}-gcc-${symlink_ver}"
+		export CXX="${CHOST}-g++-${symlink_ver}"
 		export CPP="${CHOST}-g++-${symlink_ver} -E"
 		if ${CC} --version >/dev/null 2>&1 ; then
 einfo "Switched to gcc:${s}"
