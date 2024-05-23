@@ -129,7 +129,7 @@ dev-db/mysql
 dev-db/mariadb
 
 # Prevent multiple instances of protobuf/abseil merged
-# jax,tensorflow has higher importance over major/minor eager bumps of dependencies
+# jax,tensorflow has a higher importance over eager bumps of dependencies
 >=dev-python/tensorstore-0.1.38
 >=dev-libs/protobuf-22
 >=net-libs/grpc-1.55
