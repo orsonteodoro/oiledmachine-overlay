@@ -49,7 +49,7 @@ EAPI=8
 # /var/tmp/portage/www-client/chromium-125.0.6422.76/work/chromium-125.0.6422.76/third_party/opus/README.chromium		L3	; newer than generated_package_lists, live
 #   https://gitlab.xiph.org/xiph/opus/-/commit/8cf872a1											; see tag
 # /var/tmp/portage/www-client/chromium-125.0.6422.76/work/chromium-125.0.6422.76/third_party/zstd/README.chromium			; live version
-#   https://github.com/facebook/zstd/commit/621a263fb2e6c2175fbd489e5d77ee8038baa2b2							; no tag
+#   https://github.com/facebook/zstd/commit/621a263fb2e6c2175fbd489e5d77ee8038baa2b2							; check if commit part of tag
 #   https://github.com/facebook/zstd/blob/621a263fb2e6c2175fbd489e5d77ee8038baa2b2/lib/zstd.h#L107					; version
 #
 
@@ -131,8 +131,8 @@ GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-4969e827f916d34a54bf1b7fef5810f7709ca41399e91eb6f9a0b68da19c9b12\
-eedadd981ad3b76e6318ca0ced7f9bf2e72949db428ab1f84ec112c44bdd0dff\
+8dd9482bf43921d91c771f29b0fe4109b03e84b5a24950aadcc5c0068af8ca8a\
+1921c1734f0d83b991d6c36d7899bafef6442ef6eb7bbaa5286929cc70fbeb31\
 "
 LLVM_COMPAT=( {19..18} ) # [inclusive, inclusive] high to low
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is the same slot listed in https://github.com/chromium/chromium/blob/125.0.6422.76/tools/clang/scripts/update.py#L42
@@ -169,10 +169,14 @@ UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 # https://github.com/chromium/chromium/blob/125.0.6422.76/tools/clang/scripts/update.py#L38C41-L38C49 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
-VENDORED_CLANG_VER="llvmorg-19-init-8091-gab037c4f-1"
+LLVM_COMMIT="ab037c4ff3452a680efb758ccacb6ee210ce333b"
+LLVM_SUB_REV="1"
+VENDORED_CLANG_VER="llvmorg-19-init-8091-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
 # https://github.com/chromium/chromium/blob/125.0.6422.76/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-VENDORED_RUST_VER="ab71ee7a9214c2793108a41efb065aa77aeb7326-1"
+RUST_COMMIT="ab71ee7a9214c2793108a41efb065aa77aeb7326"
+RUST_SUB_REV="1"
+VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 ZLIB_PV="1.3"
 
 inherit cflags-depends check-linker check-reqs chromium-2 desktop flag-o-matic
@@ -189,9 +193,9 @@ SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	!system-toolchain? (
 		https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-${VENDORED_CLANG_VER}.tar.xz
-			-> chromium-${PV%%\.*}-clang.tar.xz
+			-> chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang.tar.xz
 		https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%??}.tar.xz
-			-> chromium-${PV%%\.*}-rust.tar.xz
+			-> chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust.tar.xz
 	)
 	system-toolchain? (
 		https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
@@ -817,7 +821,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=media-libs/harfbuzz-8.3.0:0=[${MULTILIB_USEDEP},icu(-)]
 	)
 	system-icu? (
-		>=dev-libs/icu-73.1:=[${MULTILIB_USEDEP}]
+		>=dev-libs/icu-74.2:=[${MULTILIB_USEDEP}]
 	)
 	system-libaom? (
 		>=media-libs/libaom-3.8.2:=[${MULTILIB_USEDEP}]
@@ -1808,7 +1812,7 @@ ewarn "Disabling the distro patchset."
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/chromium-123.0.6312.58-zlib-selective-simd.patch"
-		"${FILESDIR}/extra-patches/chromium-115.0.5790.40-qt6-split.patch"
+		"${FILESDIR}/extra-patches/chromium-125.0.6422.76-qt6-split.patch"
 	)
 
 	if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then
