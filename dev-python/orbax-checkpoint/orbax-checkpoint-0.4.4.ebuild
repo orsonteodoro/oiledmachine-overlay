@@ -49,7 +49,7 @@ CHECKPOINT_DEPEND="
 		>=dev-python/tensorstore-0.1.35[${PYTHON_USEDEP}]
 		<dev-python/tensorstore-0.1.38[${PYTHON_USEDEP}]
 	)
-	>=dev-libs/protobuf-${PROTOBUF_PV}:${PROTOBUF_PV%.*}
+	>=dev-libs/protobuf-${PROTOBUF_PV}:0/${PROTOBUF_PV%.*}
 	>=dev-python/jax-0.4.9[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP}]
