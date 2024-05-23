@@ -28,7 +28,7 @@ DESCRIPTION="Fast UTF-8 validation with Range algorithm (NEON+SSE4+AVX2)"
 HOMEPAGE="https://github.com/protocolbuffers/protobuf/tree/main/third_party/utf8_range"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm64"
-SLOT="0/4.22" # Subslot is protobuf slot.
+SLOT="0/4.24" # Subslot is protobuf slot.
 IUSE+=" fallback-commit test"
 # See https://github.com/protocolbuffers/utf8_range/blob/main/.github/workflows/cmake_tests.yml#L14
 RDEPEND+="
