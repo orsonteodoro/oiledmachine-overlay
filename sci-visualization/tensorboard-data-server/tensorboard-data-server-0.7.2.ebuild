@@ -308,12 +308,30 @@ RDEPEND="
 		>dev-python/six-1.9[${PYTHON_USEDEP}]
 		dev-python/protobuf-python:'${PROTOBUF_SLOT}'[${PYTHON_USEDEP}]
 		|| (
-			=dev-python/grpcio-1.49*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
+			(
+				=dev-python/grpcio-1.49*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.49*:=[${PYTHON_USEDEP},python]
+			)
+			(
+				=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.50*:=[${PYTHON_USEDEP},python]
+			)
+			(
+				=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.51*:=[${PYTHON_USEDEP},python]
+			)
+			(
+				=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.52*:=[${PYTHON_USEDEP},python]
+			)
+			(
+				=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.53*:=[${PYTHON_USEDEP},python]
+			)
+			(
+				=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.54*:=[${PYTHON_USEDEP},python]
+			)
 		)
 	')
 "
