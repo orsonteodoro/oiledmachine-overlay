@@ -121,7 +121,7 @@ DISK_BUILD["fallback"]=$((${DISK_BASE} + 1))
 # third_party/ffmpeg/libavutil/version.h
 # third_party/ffmpeg/libavcodec/version*.h
 # third_party/ffmpeg/libavformat/version*.h
-FFMPEG_SLOT="0/58.60.60" # libavutil_sover_maj,libavcodec_sover_maj,libformat_sover_maj
+FFMPEG_SLOT="0/59.61.61" # Same as ffmpeg 7.0 ; 0/libavutil_sover_maj.libavcodec_sover_maj.libformat_sover_maj
 GCC_COMPAT=( {14..10} )
 GCC_PV="10.2.1" # Minimum
 GCC_SLOT="" # Global variable
