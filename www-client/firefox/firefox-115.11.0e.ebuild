@@ -6,7 +6,7 @@ EAPI=8
 
 # 115.10.0 -> 115.11.0
 
-# SECURITY:  If this gets bumped, then dev-lang/spidermonkey should be bumped too with the same version.
+# SECURITY:  If this gets bumped, then dev-lang/spidermonkey should be bumped too with the same ESR version.
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.

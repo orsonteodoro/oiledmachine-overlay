@@ -3,11 +3,11 @@
 
 EAPI="8"
 
-# SECURITY:  If firefox esr gets bumped, this package should be bumped with the same latest esr version.
+# SECURITY:  If firefox ESR gets bumped, this package should be bumped with the same latest ESR version.
 
-# 115.9.1 -> 115.10.0
+# 115.10.0 -> 115.11.0
 
-LLVM_COMPAT=( 17 ) # Limited by virtual/rust
+LLVM_COMPAT=( 16 ) # Limited by virtual/rust
 
 MY_MAJOR=$(ver_cut 1)
 MY_PN="mozjs"
