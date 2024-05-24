@@ -129,6 +129,79 @@
     The DEV release is supposed to fix a design issue with plain dm-crypt
     mounting to maintain the plausable deniable property.
 
+    How do I apply Clang PGO patches:
+
+      Patches are in the reference section below.
+
+      Apply the patches in this order for the 5.15.x series:
+      (From https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v5.15.eclass#L910)
+
+        clang-pgo-v9.patch
+        clang-pgo-v9-fix-for-5.15.148.patch
+        clang-pgo-__no_profile-for-6.5.patch
+        clang-pgo-kconfig-depends-not-ARCH_WANTS_NO_INSTR-or-CC_HAS_NO_PROFILE_FN_ATTR.patch
+        clang-pgo-support-profraw-v6-to-v8.patch
+        clang-pgo-support-profraw-v9.patch
+
+      Apply the patches in this order for the 6.1.x series:
+      (From https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.1.eclass#L911)
+
+        clang-pgo-v9.patch
+        clang-pgo-v9-fix-for-6.1.77.patch
+        clang-pgo-__no_profile-for-6.5.patch
+        clang-pgo-kconfig-depends-not-ARCH_WANTS_NO_INSTR-or-CC_HAS_NO_PROFILE_FN_ATTR.patch
+        clang-pgo-support-profraw-v6-to-v8.patch
+        clang-pgo-support-profraw-v9.patch
+
+      Apply the patches in this order for the 6.6.x series:
+      (From https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.6.eclass#L1002)
+
+        clang-pgo-v9.patch
+        clang-pgo-v9-fix-for-6.6.16.patch
+        clang-pgo-__no_profile-for-6.5.patch
+        clang-pgo-kconfig-depends-not-ARCH_WANTS_NO_INSTR-or-CC_HAS_NO_PROFILE_FN_ATTR.patch
+        clang-pgo-support-profraw-v6-to-v8.patch
+        clang-pgo-support-profraw-v9.patch
+
+
+      Apply the patches in this order for the 6.8.x series:
+      (From https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.8.eclass#L1018)
+
+        clang-pgo-v9.patch
+        clang-pgo-v9-fixes-for-6.8.1.patch
+        clang-pgo-__no_profile-for-6.5.patch
+        clang-pgo-kconfig-depends-not-ARCH_WANTS_NO_INSTR-or-CC_HAS_NO_PROFILE_FN_ATTR.patch
+        clang-pgo-support-profraw-v6-to-v8.patch
+        clang-pgo-support-profraw-v9.patch
+
+      Apply the patches in this order for the 6.9.x series:
+      (From https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.9.eclass#L1024)
+
+        clang-pgo-v9.patch
+        clang-pgo-v9-fixes-for-6.8.1.patch
+        clang-pgo-__no_profile-for-6.5.patch
+        clang-pgo-kconfig-depends-not-ARCH_WANTS_NO_INSTR-or-CC_HAS_NO_PROFILE_FN_ATTR.patch
+        clang-pgo-support-profraw-v6-to-v8.patch
+        clang-pgo-support-profraw-v9.patch
+
+      How do I know what profraw version I use?
+
+      Locate INSTR_PROF_RAW_VERSION in
+      /usr/lib/llvm/${LLVM_VERSION}/include/llvm/ProfileData/InstrProfData.inc  # replacing ${LLVM_VERSION}
+
+      How do I set the profraw version in the kernel?
+
+      Use menuconfig.
+
+      Is Clang PGO End of Life?
+
+      Yes.  The original developers decided to go with AutoFDO instead.
+
+      Does GCC PGO work?
+
+      I haven't tested and verified it to work with genkernel.  You need to use
+      -fprofile-arcs instead of -fprofile-generate.
+
 
     References:
 
