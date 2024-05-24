@@ -122,7 +122,7 @@
 
     4.0.10  - STABLE             -- For working muslx32 support or non-plausable dm-crypt plain.
     4.3.15s - STABLE             -- For working non-plausable plain dm-crypt.
-    4.3.15e - DEV / EXPERIMENTAL -- For developing plausable deniable plain dm-crypt.
+    4.3.15e - DEV / EXPERIMENTAL -- For developing plausable deniable plain dm-crypt or improved rubberhose attack avoidance.
 
     The vanilla or distro version is more for non-plausable LUKS2.
 
