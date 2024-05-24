@@ -3,6 +3,11 @@
 
 EAPI=8
 
+# U22
+
+# TODO package:
+# zemberek
+
 inherit multilib-minimal
 
 SRC_URI="
@@ -10,7 +15,10 @@ https://github.com/AbiWord/enchant/releases/download/v${PV}/${P}.tar.gz
 "
 
 DESCRIPTION="Generic spell checking library"
-HOMEPAGE="https://abiword.github.io/enchant/"
+HOMEPAGE="
+	https://abiword.github.io/enchant/
+	https://github.com/AbiWord/enchant
+"
 LICENSE="LGPL-2.1+"
 SLOT="2/${PV}"
 KEYWORDS="
@@ -20,37 +28,43 @@ KEYWORDS="
 # Default enabled is based on CI.
 # test is enabled in CI.
 IUSE+="
-+aspell +hunspell +nuspell test +voikko
++aspell +hunspell +nuspell test +voikko -zemberek
 "
 REQUIRED_USE="
 	|| (
 		aspell
 		hunspell
 		nuspell
+		zemberek
 	)
 "
 # CI uses U 22.04.2
 RDEPEND+="
 	!<app-text/enchant-1.6.1-r2:0
-	>=dev-libs/glib-2.72.4:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.6:2[${MULTILIB_USEDEP}]
 	aspell? (
 		>=app-text/aspell-0.60.8[${MULTILIB_USEDEP}]
 	)
 	hunspell? (
 		>=app-text/hunspell-1.7.0:0=[${MULTILIB_USEDEP}]
+		>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
 	)
 	nuspell? (
 		>=app-text/nuspell-5.1.0:0=
 	)
 	voikko? (
-		>=dev-libs/libvoikko-2.4
+		>=dev-libs/libvoikko-4.3.1
+	)
+	zemberek? (
+		>=app-text/zemberek-2.1.1
+		>=dev-libs/dbus-glib-0.62[${MULTILIB_USEDEP}]
 	)
 "
 # nuspell needs multilib ?
 DEPEND+="
 	${RDEPEND}
 	test? (
-		>=dev-libs/unittest++-2.0.0-r2[${MULTILIB_USEDEP}]
+		>=dev-libs/unittest++-1.6[${MULTILIB_USEDEP}]
 	)
 "
 BDEPEND+="
