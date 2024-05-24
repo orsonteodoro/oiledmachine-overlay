@@ -7,6 +7,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
+    <remote-id type="github">breezy-team/breezy</remote-id>
     <remote-id type="launchpad">brz</remote-id>
   </upstream>
   <use>
@@ -32,7 +33,7 @@
       Use pynotify to track changes for performance benefits when dealing with
       large trees with small changes
     </flag>
-    <flag name="rN">
+    <flag name="ebuild-revision-N">
       Ebuild internal revision
     </flag>
   </use>
