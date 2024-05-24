@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# For dependencies see:  gcr-4.3.0/meson.build
+# Upstream says GPG is optional to avoid circular dependency
+
 PYTHON_COMPAT=( "python3_"{10..12} )
 VALA_USE_DEPEND="vapigen"
 
@@ -15,8 +18,11 @@ KEYWORDS="
 "
 
 DESCRIPTION="Libraries for cryptographic UIs and accessing PKCS#11 modules"
-LICENSE="GPL-2+ LGPL-2+"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/gcr"
+LICENSE="
+	LGPL-2+
+	GPL-2+
+"
 SLOT="4/gcr-4.4-gck-2.2" # subslot = soname and soversion of libgcr and libgck
 IUSE+=" +gcrypt -gnutls +gtk gtk-doc +introspection +ssh systemd +vala"
 REQUIRED_USE+="
@@ -28,8 +34,6 @@ REQUIRED_USE+="
 		introspection
 	)
 "
-# For dependencies see:  gcr-4.3.0/meson.build
-# Upstream says GPG is optional to avoid circular dependency
 DEPEND+="
 	!<app-crypt/gcr-3.41.1-r1
 	>=app-crypt/gnupg-2.3.6

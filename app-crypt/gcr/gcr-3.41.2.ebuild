@@ -3,19 +3,26 @@
 
 EAPI=8
 
+# For dependencies see:  gcr-3.41.2/meson.build
+# Upstream says GPG is optional to avoid circular dependency
+
 PYTHON_COMPAT=( "python3_"{10..11} )
 VALA_USE_DEPEND="vapigen"
 
 inherit gnome.org gnome2-utils meson python-any-r1 vala xdg
 inherit multilib-minimal
 
-DESCRIPTION="Libraries for cryptographic UIs and accessing PKCS#11 modules"
-LICENSE="GPL-2+ LGPL-2+"
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86
 ~amd64-linux ~x86-linux ~sparc-solaris ~x86-solaris
 "
+
+DESCRIPTION="Libraries for cryptographic UIs and accessing PKCS#11 modules"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/gcr"
+LICENSE="
+	LGPL-2+
+	GPL-2+
+"
 SLOT="0/1" # subslot = suffix of libgcr-base-3 and co
 IUSE+=" +gtk gtk-doc +introspection +ssh systemd +vala"
 REQUIRED_USE+="
@@ -23,8 +30,6 @@ REQUIRED_USE+="
 		introspection
 	)
 "
-# For dependencies see:  gcr-3.41.2/meson.build
-# Upstream says GPG is optional to avoid circular dependency
 DEPEND+="
 	>=app-crypt/gnupg-2.3.6
 	>=app-crypt/p11-kit-0.19.0[${MULTILIB_USEDEP}]
@@ -68,7 +73,6 @@ BDEPEND+="
 		$(vala_depend)
 	)
 "
-
 PATCHES=(
 	"${FILESDIR}/3.38.0-optional-vapi.patch"
 	"${FILESDIR}/3.41.1-implicit-func-decl.patch"
