@@ -4,18 +4,29 @@
 
 EAPI=8
 
+# All available language app-dicts/aspell-* packages.
+LANGUAGES=(
+af am ar ast az be bg bn br ca cs csb cy da de de-1901 el en eo es et fa fi fo
+fr fy ga gd gl grc gu gv he hi hil hr hsb hu hus hy ia id is it kn ku ky la lt
+lv mg mi mk ml mn mr ms mt nb nds nl nn no ny or pa pl pt-PT pt-BR qu ro ru rw
+sc sk sl sr sv sw ta te tet tk tl tn tr uk uz vi wa yi zu
+)
 MY_P="${P/_/-}"
 TEST_TARBALL="aspell6-en-2018.04.16-0.tar.bz2"
 
 inherit autotools flag-o-matic libtool multilib-minimal toolchain-funcs
 
+KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
+~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
+"
+S="${WORKDIR}/${MY_P}"
 SRC_URI="
 mirror://gnu/aspell/${MY_P}.tar.gz
 test? (
 	ftp://ftp.gnu.org/gnu/aspell/dict/en/${TEST_TARBALL}
 )
 "
-S="${WORKDIR}/${MY_P}"
 
 DESCRIPTION="Free and Open Source spell checker designed to replace Ispell"
 HOMEPAGE="
@@ -48,18 +59,7 @@ LICENSE="
 # myspell-en_CA-KevinAtkinson - common/lsort.hpp
 #			      - common/clone_ptr-t.hpp
 SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
-~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
-"
 IUSE+=" nls regex test unicode"
-# All available language app-dicts/aspell-* packages.
-LANGUAGES=(
-af am ar ast az be bg bn br ca cs csb cy da de de-1901 el en eo es et fa fi fo
-fr fy ga gd gl grc gu gv he hi hil hr hsb hu hus hy ia id is it kn ku ky la lt
-lv mg mi mk ml mn mr ms mt nb nds nl nn no ny or pa pl pt-PT pt-BR qu ro ru rw
-sc sk sl sr sv sw ta te tet tk tl tn tr uk uz vi wa yi zu
-)
 for LANG in ${LANGUAGES[@]}; do
 	IUSE+="
 		l10n_${LANG}
@@ -109,8 +109,8 @@ get_build_type() {
 src_prepare() {
 	default
 	rm \
-		m4/lt* \
-		m4/libtool.m4 \
+		"m4/lt"* \
+		"m4/libtool.m4" \
 		|| die
 	eautoreconf
 	elibtoolize --reverse-deps
@@ -119,28 +119,35 @@ src_prepare() {
 	# This has to be after automake has run so that we don't clobber
 	# the default target that automake creates for us.
 	echo 'install-filterLTLIBRARIES: install-libLTLIBRARIES' \
-		>> Makefile.in \
+		>> "Makefile.in" \
 		|| die
 	# The unicode patch breaks on Darwin as NCURSES_WIDECHAR won't get set
 	# any more.
 	if \
-		   [[ ${CHOST} == *-darwin* ]] \
-		|| [[ ${CHOST} == *-musl* ]] \
+		   [[ ${CHOST} == *"-darwin"* ]] \
+		|| [[ ${CHOST} == *"-musl"* ]] \
 		&& use unicode
 	then
 		append-cppflags -DNCURSES_WIDECHAR=1
 	fi
 	if use test ; then
-		sed -i -e "s|curl|true|g" \
-			test/Makefile || die
-		cat "${DISTDIR}/${TEST_TARBALL}" \
-			> "test/${TEST_TARBALL}" \
+		sed -i \
+			-e "s|curl|true|g" \
+			"test/Makefile" \
+			|| die
+		cat \
+			"${DISTDIR}/${TEST_TARBALL}" \
+			> \
+			"test/${TEST_TARBALL}" \
 			|| die
 	fi
 	prepare_abi() {
 		local build_type
 		for build_type in $(get_build_type) ; do
-			cp -a "${S}" "${S}-${MULTIBUILD_VARIANT}_${build_type}" || die
+			cp -a \
+				"${S}" \
+				"${S}-${MULTIBUILD_VARIANT}_${build_type}" \
+				|| die
 		done
 	}
 	multilib_foreach_abi prepare_abi
@@ -185,7 +192,7 @@ src_test() {
 			[[ "${build_type}" == "production" ]] && continue
 			cd "${S}-${MULTIBUILD_VARIANT}_${build_type}" || die
 			emake -C test
-			rm test/build/Makefile || die
+			rm "test/build/Makefile" || die
 			emake SLOPPY=1 -C test
 			local actual_result=$(sha1sum test/test-res | cut -f 1 -d " ")
 			local expected_results=(
@@ -219,11 +226,15 @@ src_install() {
 			[[ "${build_type}" == "test" ]] && continue
 			cd "${S}-${MULTIBUILD_VARIANT}_${build_type}" || die
 			default
-			docinto examples
-			dodoc "${S}"/examples/*.c
+			docinto "examples"
+			dodoc "${S}/examples/"*".c"
 			# Install Aspell/Ispell compatibility scripts.
-			newbin scripts/ispell ispell-aspell
-			newbin scripts/spell spell-aspell
+			newbin \
+				"scripts/ispell" \
+				"ispell-aspell"
+			newbin \
+				"scripts/spell" \
+				"spell-aspell"
 			# As static build has been disabled,
 			# all .la files can be deleted unconditionally.
 			find "${ED}" -type f -name '*.la' -delete || die
@@ -236,7 +247,9 @@ src_install() {
 
 multilib_src_install_all() {
 	cd "${S}" || die
-	HTML_DOCS=( manual/aspell{,-dev}.html )
+	HTML_DOCS=(
+		"manual/aspell"{"","-dev"}".html"
+	)
 	einstalldocs
 }
 
