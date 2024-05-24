@@ -45,6 +45,9 @@
     <flag name="cuda">
       Used for improved face detection in various angles.
     </flag>
+    <flag name="ebuild-revision-N">
+      The ebuild revision
+    </flag>
     <flag name="fallback-commit">
       Rewind commit to the last tested commit compatible with patches.
     </flag>
@@ -57,10 +60,6 @@
     </flag>
     <flag name="pyv4l2">
       Uses pyv4l2 as a capture source.
-    </flag>
-
-    <flag name="rN">
-      Ebuild revision
     </flag>
   </use>
 </pkgmetadata>
