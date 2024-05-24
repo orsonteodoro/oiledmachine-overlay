@@ -6,9 +6,9 @@ EAPI=8
 # U22.04
 
 MRUBY_COMMIT="32279e4128527bab4c961854b9cce727a060abea"
-MUNIT_COMMIT="ad886b646ec31de46566c3748f3ac301d9776e15"
+MUNIT_COMMIT="7f53fea8901089d46233302b3af35bf8be93cfc5"
 NEVERBLEED_COMMIT="929e470260d460dacc20a10601c2d3c7a9f386b2"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 USE_RUBY="ruby31 ruby32 ruby33"
 
 inherit cmake multilib-minimal python-r1 ruby-single toolchain-funcs
@@ -81,7 +81,7 @@ REQUIRED_USE="
 "
 SSL_DEPEND="
 	>=dev-libs/libevent-2.0.8[${MULTILIB_USEDEP},ssl]
-	>=net-libs/ngtcp2-1.4.0[${MULTILIB_USEDEP},openssl]
+	>=net-libs/ngtcp2-1.5.0[${MULTILIB_USEDEP},openssl]
 	|| (
 		(
 			>=dev-libs/openssl-1.1.1w:0[${MULTILIB_USEDEP},-bindist(-)]
@@ -101,7 +101,7 @@ RDEPEND="
 		>=dev-libs/jansson-2.5:=
 	)
 	http3? (
-		>=net-libs/nghttp3-1.2.0[${MULTILIB_USEDEP}]
+		>=net-libs/nghttp3-1.3.0[${MULTILIB_USEDEP}]
 	)
 	jemalloc? (
 		dev-libs/jemalloc:=[${MULTILIB_USEDEP}]
@@ -110,7 +110,7 @@ RDEPEND="
 		${SSL_DEPEND}
 		>=app-arch/brotli-1.0.9[${MULTILIB_USEDEP}]
 		>=dev-libs/libev-4.11[${MULTILIB_USEDEP}]
-		>=net-dns/c-ares-1.7.5:=[${MULTILIB_USEDEP}]
+		>=net-dns/c-ares-1.16.0:=[${MULTILIB_USEDEP}]
 		>=sys-libs/zlib-1.2.3[${MULTILIB_USEDEP}]
 	)
 	systemd? (
