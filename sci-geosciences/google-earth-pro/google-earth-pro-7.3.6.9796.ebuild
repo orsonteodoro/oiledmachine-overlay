@@ -416,54 +416,60 @@ eerror
 	unpack_deb ${FN}
 	if use system-expat ; then
 einfo "Removing bundled expat"
-		pushd opt/google/earth/pro || die
-		rm -v libexpat.so.1 || die
+		pushd "opt/google/earth/pro" || die
+		rm -v "libexpat.so.1" || die
 		popd || die
 	fi
 	if use system-gdal ; then
 einfo "Removing bundled gdal"
-		pushd opt/google/earth/pro || die
-		rm -v libgdal.so.1 || die
+		pushd "opt/google/earth/pro" || die
+		rm -v "libgdal.so.1" || die
 		popd || die
 	fi
 	if use system-icu ; then
 einfo "Removing bundled icu"
-		pushd opt/google/earth/pro || die
-		rm -v libicudata.so.54 libicuuc.so.54 libicui18n.so.54 || die
+		pushd "opt/google/earth/pro" || die
+		local list=(
+			"libicudata.so.54"
+			"libicuuc.so.54"
+			"libicui18n.so.54"
+		)
+		rm -v ${list[@]} || die
 		popd || die
 	fi
 	if use system-spnav ; then
 einfo "Removing bundled spnav"
-		pushd opt/google/earth/pro || die
-		rm -v libspnav.so || die
+		pushd "opt/google/earth/pro" || die
+		rm -v "libspnav.so" || die
 		popd || die
 	fi
 	if use system-qt5 ; then
 einfo "Removing bundled qt5"
-		pushd opt/google/earth/pro || die
-		rm -v \
-		      libQt5Core.so.5 \
-		      libQt5DBus.so.5 \
-		      libQt5Gui.so.5 \
-		      libQt5Multimedia.so.5 \
-		      libQt5MultimediaWidgets.so.5 \
-		      libQt5Network.so.5 \
-		      libQt5OpenGL.so.5 \
-                      libQt5Positioning.so.5 \
-		      libQt5PrintSupport.so.5 \
-		      libQt5Qml.so.5 \
-                      libQt5Quick.so.5 \
-		      libQt5Script.so.5 \
-		      libQt5ScriptTools.so.5 \
-                      libQt5Sensors.so.5 \
-		      libQt5Sql.so.5 \
-		      libQt5WebChannel.so.5 \
-                      libQt5WebKit.so.5 \
-		      libQt5WebKitWidgets.so.5 \
-		      libQt5Widgets.so.5 \
-                      libQt5X11Extras.so.5 \
-		      libQt5XcbQpa.so.5 \
-		      || die
+		pushd "opt/google/earth/pro" || die
+		local list=(
+			"libQt5Core.so.5"
+			"libQt5DBus.so.5"
+			"libQt5Gui.so.5"
+			"libQt5Multimedia.so.5"
+			"libQt5MultimediaWidgets.so.5"
+			"libQt5Network.so.5"
+			"libQt5OpenGL.so.5"
+			"libQt5Positioning.so.5"
+			"libQt5PrintSupport.so.5"
+			"libQt5Qml.so.5"
+			"libQt5Quick.so.5"
+			"libQt5Script.so.5"
+			"libQt5ScriptTools.so.5"
+			"libQt5Sensors.so.5"
+			"libQt5Sql.so.5"
+			"libQt5WebChannel.so.5"
+			"libQt5WebKit.so.5"
+			"libQt5WebKitWidgets.so.5"
+			"libQt5Widgets.so.5"
+			"libQt5X11Extras.so.5"
+			"libQt5XcbQpa.so.5"
+		)
+		rm -v ${list[@]} || die
 		popd || die
 		# TODO
 		# rm -rfv plugins/imageformats || die
@@ -516,7 +522,6 @@ src_install() {
 	insinto "/usr/share/mime/packages"
 	doins "${FILESDIR}/${PN}-mimetypes.xml" || die
 	cd "${WORKDIR}/opt/google/earth/pro" || die
-	local size
 	local sizes=(
 		16
 		22
@@ -527,8 +532,12 @@ src_install() {
 		128
 		256
 	)
+	local size
 	for size in ${sizes[@]} ; do
-		newicon -s ${size} "product_logo_${size}.png" "${PN}.png"
+		newicon \
+			-s ${size} \
+			"product_logo_${size}.png" \
+			"${PN}.png"
 	done
 	rm -rf "product_logo_"* || die
 	cd "${WORKDIR}" || die
