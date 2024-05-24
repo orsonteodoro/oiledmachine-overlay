@@ -1,13 +1,13 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-QT5_PV="5.2.0"
-QT6_PV="6.6.1"
 VIRTUALX_REQUIRED="manual"
-
 inherit cmake flag-o-matic virtualx xdg
+
+QT6_PV="6.6.1"
+QT5_PV="5.2.0"
 
 # Time to convert to Qt6
 # patch start time:  1705819601 (Sat Jan 20 10:46:41 PM PST 2024)
@@ -20,24 +20,18 @@ inherit cmake flag-o-matic virtualx xdg
 
 # Status (for qt6 support):  Unfinished / In-development
 
-
-if [[ "${PV}" =~ "9999" ]] ; then
-	EGIT_BRANCH="develop"
-	EGIT_REPO_URI="https://github.com/keepassxreboot/${PN}"
-	inherit git-r3
-else
-	KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
+if [[ "${PV}" != *9999 ]] ; then
 	if [[ "${PV}" == *_beta* ]] ; then
+		SRC_URI="https://github.com/keepassxreboot/${PN}/archive/${PV/_/-}.tar.gz -> ${P}.tar.gz"
 		S="${WORKDIR}/${P/_/-}"
-		SRC_URI="
-https://github.com/keepassxreboot/${PN}/archive/${PV/_/-}.tar.gz
-	-> ${P}.tar.gz
-		"
 	else
-		SRC_URI="
-https://github.com/keepassxreboot/${PN}/releases/download/${PV}/${P}-src.tar.xz
-		"
+		SRC_URI="https://github.com/keepassxreboot/${PN}/releases/download/${PV}/${P}-src.tar.xz"
+#		KEYWORDS="amd64 ~arm64 ~ppc64 ~riscv x86"
 	fi
+else
+	inherit git-r3
+	EGIT_REPO_URI="https://github.com/keepassxreboot/${PN}"
+	[[ "${PV}" != 9999 ]] && EGIT_BRANCH="master"
 fi
 
 DESCRIPTION="KeePassXC - KeePass Cross-platform Community Edition"
@@ -50,24 +44,22 @@ LICENSE="
 	GPL-2
 	GPL-3
 "
+SLOT="0"
+IUSE="X autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland yubikey"
 RESTRICT="
 	!test? (
 		test
 	)
 "
-SLOT="0"
-IUSE="
-X autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland yubikey
-"
 REQUIRED_USE="
-	^^ (
-		qt5
-		qt6
-	)
 	autotype? (
 		X
 	)
 	qt5compat? (
+		qt6
+	)
+	^^ (
+		qt5
 		qt6
 	)
 	|| (
@@ -80,10 +72,13 @@ RDEPEND="
 	dev-libs/botan:3=
 	media-gfx/qrencode:=
 	sys-libs/readline:0=
-	sys-libs/zlib:=[minizip]
+	sys-libs/zlib:=
 	autotype? (
 		x11-libs/libX11
 		x11-libs/libXtst
+	)
+	keeshare? (
+		sys-libs/zlib:=[minizip]
 	)
 	qt5? (
 		>=dev-qt/qtconcurrent-${QT5_PV}:5
@@ -154,7 +149,7 @@ BDEPEND="
 
 PATCHES=(
 	"${FILESDIR}/${PN}-2.7.4-tests.patch"
-	"${FILESDIR}/${PN}-2.7.8-qt6-support-v2.patch"
+	"${FILESDIR}/${PN}-2.7.6-qt6-support.patch"
 )
 
 verify_qt_consistency() {
@@ -250,7 +245,7 @@ src_configure() {
 	replace-flags '-O*' '-O2'
 	export MAKEOPTS="-j1"
 
-	local -a mycmakeargs=(
+	local mycmakeargs=(
 		# Gentoo users enable ccache via e.g. FEATURES=ccache or
 		# other means. We don't want the build system to enable it for us.
 		-DWITH_CCACHE=OFF
@@ -262,7 +257,6 @@ src_configure() {
 		-DWITH_XC_AUTOTYPE="$(usex autotype)"
 		-DWITH_XC_DOCS="$(usex doc)"
 		-DWITH_XC_BROWSER="$(usex browser)"
-		-DWITH_XC_BROWSER_PASSKEYS="$(usex browser)"
 		-DWITH_XC_BOTAN3=ON
 		-DWITH_XC_FDOSECRETS=ON
 		-DWITH_XC_KEESHARE="$(usex keeshare)"
@@ -274,7 +268,7 @@ src_configure() {
 	)
 	if use qt6 ; then
 		mycmakeargs+=(
-			-DCMAKE_CXX_COMPILER="clazy"
+			-DCMAKE_CXX_COMPILER=clazy
 		)
 	fi
 	if [[ "${PV}" == *_beta* ]] ; then
@@ -329,99 +323,89 @@ src_test() {
 # Test results for USE="X* autotype* browser* keeshare* network* qt5compat qt6 test* yubikey* -doc (-qt5) -wayland*"
 # Note the TestKeePass1Reader::testCP1252Password() was disabled since cp-1252 is not supported on pure qt6 build on linux.
 __TEST_RESULTS="
- * Starting Xvfb ...
- * Xvfb started on DISPLAY=:1
-Test project /var/tmp/portage/app-admin/keepassxc-2.7.8/work/keepassxc-2.7.8_build
+ctest -j 1 --test-load 4
+Test project /var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6_build
       Start  1: testgroup
- 1/41 Test  #1: testgroup ........................   Passed    2.03 sec
+ 1/39 Test  #1: testgroup ........................   Passed    0.05 sec
       Start  2: testkdbx2
- 2/41 Test  #2: testkdbx2 ........................   Passed    0.54 sec
+ 2/39 Test  #2: testkdbx2 ........................   Passed    0.31 sec
       Start  3: testkdbx3
- 3/41 Test  #3: testkdbx3 ........................   Passed   58.76 sec
+ 3/39 Test  #3: testkdbx3 ........................   Passed   65.43 sec
       Start  4: testkdbx4
- 4/41 Test  #4: testkdbx4 ........................   Passed  152.37 sec
+ 4/39 Test  #4: testkdbx4 ........................   Passed  176.09 sec
       Start  5: testkeys
- 5/41 Test  #5: testkeys .........................   Passed   94.11 sec
+ 5/39 Test  #5: testkeys .........................   Passed  104.13 sec
       Start  6: testgroupmodel
- 6/41 Test  #6: testgroupmodel ...................   Passed    0.21 sec
+ 6/39 Test  #6: testgroupmodel ...................   Passed    0.03 sec
       Start  7: testentrymodel
- 7/41 Test  #7: testentrymodel ...................   Passed    0.45 sec
+ 7/39 Test  #7: testentrymodel ...................   Passed    0.06 sec
       Start  8: testcryptohash
- 8/41 Test  #8: testcryptohash ...................   Passed    0.06 sec
+ 8/39 Test  #8: testcryptohash ...................   Passed    0.01 sec
       Start  9: testsymmetriccipher
- 9/41 Test  #9: testsymmetriccipher ..............   Passed    0.54 sec
+ 9/39 Test  #9: testsymmetriccipher ..............   Passed    0.25 sec
       Start 10: testhashedblockstream
-10/41 Test #10: testhashedblockstream ............   Passed    0.20 sec
+10/39 Test #10: testhashedblockstream ............   Passed    0.03 sec
       Start 11: testkeepass2randomstream
-11/41 Test #11: testkeepass2randomstream .........   Passed    0.02 sec
+11/39 Test #11: testkeepass2randomstream .........   Passed    0.02 sec
       Start 12: testmodified
-12/41 Test #12: testmodified .....................   Passed   16.99 sec
+12/39 Test #12: testmodified .....................   Passed   17.84 sec
       Start 13: testdeletedobjects
-13/41 Test #13: testdeletedobjects ...............   Passed    0.05 sec
+13/39 Test #13: testdeletedobjects ...............   Passed    0.05 sec
       Start 14: testkeepass1reader
-14/41 Test #14: testkeepass1reader ...............   Passed    4.69 sec
-      Start 15: testimports
-15/41 Test #15: testimports ......................   Passed    5.35 sec
+14/39 Test #14: testkeepass1reader ...............   Passed    5.30 sec
+      Start 15: testopvaultreader
+15/39 Test #15: testopvaultreader ................   Passed    5.29 sec
       Start 16: testupdatecheck
-16/41 Test #16: testupdatecheck ..................   Passed    0.03 sec
+16/39 Test #16: testupdatecheck ..................   Passed    0.03 sec
       Start 17: testicondownloader
-17/41 Test #17: testicondownloader ...............   Passed    0.15 sec
+17/39 Test #17: testicondownloader ...............   Passed    0.04 sec
       Start 18: testautotype
-18/41 Test #18: testautotype .....................   Passed   13.63 sec
+18/39 Test #18: testautotype .....................   Passed   12.31 sec
       Start 19: testopensshkey
-19/41 Test #19: testopensshkey ...................   Passed    9.17 sec
+19/39 Test #19: testopensshkey ...................   Passed   10.35 sec
       Start 20: testsshagent
-20/41 Test #20: testsshagent .....................   Passed    1.48 sec
+20/39 Test #20: testsshagent .....................   Passed    1.84 sec
       Start 21: testentry
-21/41 Test #21: testentry ........................   Passed    0.04 sec
+21/39 Test #21: testentry ........................   Passed    0.05 sec
       Start 22: testmerge
-22/41 Test #22: testmerge ........................   Passed    0.29 sec
+22/39 Test #22: testmerge ........................   Passed    0.32 sec
       Start 23: testpasswordgenerator
-23/41 Test #23: testpasswordgenerator ............   Passed    0.06 sec
+23/39 Test #23: testpasswordgenerator ............   Passed    0.06 sec
       Start 24: testpasswordhealth
-24/41 Test #24: testpasswordhealth ...............   Passed    0.03 sec
+24/39 Test #24: testpasswordhealth ...............   Passed    0.03 sec
       Start 25: testpassphrasegenerator
-25/41 Test #25: testpassphrasegenerator ..........   Passed    0.14 sec
+25/39 Test #25: testpassphrasegenerator ..........   Passed    0.05 sec
       Start 26: testhibp
-26/41 Test #26: testhibp .........................   Passed    0.03 sec
+26/39 Test #26: testhibp .........................   Passed    0.04 sec
       Start 27: testtotp
-27/41 Test #27: testtotp .........................   Passed    0.04 sec
+27/39 Test #27: testtotp .........................   Passed    0.03 sec
       Start 28: testbase32
-28/41 Test #28: testbase32 .......................   Passed    0.02 sec
+28/39 Test #28: testbase32 .......................   Passed    0.02 sec
       Start 29: testcsvparser
-29/41 Test #29: testcsvparser ....................   Passed    0.02 sec
+29/39 Test #29: testcsvparser ....................   Passed    0.02 sec
       Start 30: testrandomgenerator
-30/41 Test #30: testrandomgenerator ..............   Passed    0.01 sec
+30/39 Test #30: testrandomgenerator ..............   Passed    0.02 sec
       Start 31: testentrysearcher
-31/41 Test #31: testentrysearcher ................   Passed    0.03 sec
+31/39 Test #31: testentrysearcher ................   Passed    0.03 sec
       Start 32: testcsvexporter
-32/41 Test #32: testcsvexporter ..................   Passed    0.03 sec
+32/39 Test #32: testcsvexporter ..................   Passed    0.03 sec
       Start 33: testykchallengeresponsekey
-33/41 Test #33: testykchallengeresponsekey .......   Passed    0.11 sec
+33/39 Test #33: testykchallengeresponsekey .......   Passed    0.09 sec
       Start 34: testsharing
-34/41 Test #34: testsharing ......................   Passed    1.85 sec
+34/39 Test #34: testsharing ......................   Passed    1.10 sec
       Start 35: testdatabase
-35/41 Test #35: testdatabase .....................   Passed    5.05 sec
+35/39 Test #35: testdatabase .....................   Passed    5.48 sec
       Start 36: testtools
-36/41 Test #36: testtools ........................   Passed    0.03 sec
+36/39 Test #36: testtools ........................   Passed    0.02 sec
       Start 37: testconfig
-37/41 Test #37: testconfig .......................   Passed    0.12 sec
+37/39 Test #37: testconfig .......................   Passed    0.06 sec
       Start 38: testfdosecrets
-38/41 Test #38: testfdosecrets ...................   Passed    0.05 sec
+38/39 Test #38: testfdosecrets ...................   Passed    0.05 sec
       Start 39: testbrowser
-39/41 Test #39: testbrowser ......................   Passed    0.15 sec
-      Start 40: testpasskeys
-40/41 Test #40: testpasskeys .....................***Failed    0.20 sec
-      Start 41: testurltools
-41/41 Test #41: testurltools .....................   Passed    0.03 sec
+39/39 Test #39: testbrowser ......................   Passed    0.12 sec
 
-98% tests passed, 1 tests failed out of 41
+100% tests passed, 0 tests failed out of 39
 
-Total Test time (real) = 417.30 sec
-
-The following tests FAILED:
-	 40 - testpasskeys (Failed)
-Errors while running CTest
-Output from these tests are in: /var/tmp/portage/app-admin/keepassxc-2.7.8/work/keepassxc-2.7.8_build/Testing/Temporary/LastTest.log
-Use \"--rerun-failed --output-on-failure\" to re-run the failed cases verbosely.
+Total Test time (real) = 420.13 sec
+ * Tests succeeded.
 "
