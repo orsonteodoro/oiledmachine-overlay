@@ -3,15 +3,20 @@
 
 EAPI=8
 
+# FIXME:  multilib support
+
 inherit flag-o-matic multilib-minimal toolchain-funcs
+
+KEYWORDS="~amd64 ~arm ~x86"
+S="${WORKDIR}/${P/_/-}"
+SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
 
 DESCRIPTION="Graphical User Interface for PDF Toolkit (PDFtk)"
 HOMEPAGE="http://pdfchain.sourceforge.net/"
-KEYWORDS="~amd64 ~arm ~x86"
 LICENSE="GPL-3"
+RESTRICT="mirror"
 SLOT="0"
-# FIXME:  multilib support
-DEPEND="
+RDEPEND="
 	>=app-text/pdftk-2.0
 	>=dev-cpp/atkmm-1.6[${MULTILIB_USEDEP}]
 	>=dev-cpp/glibmm-2.4[${MULTILIB_USEDEP}]
@@ -20,11 +25,10 @@ DEPEND="
 	sys-devel/gcc
 	virtual/libc
 "
-RDEPEND="${DEPEND}"
-DOCS=( AUTHORS ChangeLog NEWS README )
-RESTRICT="mirror"
-SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
-S="${WORKDIR}/${P/_/-}"
+DEPEND="
+	${RDEPEND}
+"
+DOCS=( "AUTHORS" "ChangeLog" "NEWS" "README" )
 
 src_prepare() {
 	default
