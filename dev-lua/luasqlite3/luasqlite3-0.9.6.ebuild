@@ -3,30 +3,35 @@
 
 EAPI=8
 
-LUA_COMPAT=( lua5-{1..4} )
+MY_PN="lsqlite3_v096"
+
+LUA_COMPAT=( "lua5-"{1..4} )
+
 inherit lua toolchain-funcs
+
+KEYWORDS="~amd64 ~ppc ~x86"
+S="${WORKDIR}/${MY_PN}"
+SRC_URI="http://lua.sqlite.org/index.cgi/zip/${MY_PN}.zip"
 
 DESCRIPTION="LuaSQLite3"
 HOMEPAGE="http://lua.sqlite.org"
 LICENSE="all-rights-reserved MIT"
 # The vanilla MIT license template does not include all rights reserved.
-KEYWORDS="~amd64 ~ppc ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc static-libs"
-REQUIRED_USE="${LUA_REQUIRED_USE}"
+REQUIRED_USE="
+	${LUA_REQUIRED_USE}
+"
 RDEPEND="
-	${DEPEND}
 	${LUA_DEPS}
+	${DEPEND}
 	dev-db/sqlite:3[static-libs?]
 	dev-lang/lua:*
 "
 DEPEND="
 	${RDEPEND}
 "
-MY_PN="lsqlite3_v096"
-S="${WORKDIR}/${MY_PN}"
-SRC_URI="http://lua.sqlite.org/index.cgi/zip/${MY_PN}.zip"
-DOCS=( HISTORY README )
+DOCS=( "HISTORY" "README" )
 
 get_lib_types() {
 	use static-libs && echo "static"
@@ -38,14 +43,17 @@ src_prepare() {
 	local lib_type
 	for lib_type in $(get_lib_types) ; do
 		lua_src_prepare() {
-			cp -a "${S}" "${S}_${lib_type}_${ELUA}" || die
+			cp -a \
+				"${S}" \
+				"${S}_${lib_type}_${ELUA}" \
+				|| die
 		}
 		lua_foreach_impl lua_src_prepare
 	done
 }
 
 src_configure() {
-	:;
+	:
 }
 
 lua_src_compile()
@@ -56,43 +64,49 @@ lua_src_compile()
 	mkdir -p "shared" || die
 einfo "ELUA:\t${ELUA}"
 einfo "Building shared-lib"
-	${CC} -I$(lua_get_include_dir) \
+	${CC} \
+		-I$(lua_get_include_dir) \
 		-DLSQLITE_VERSION=\"${PV}\" \
 		-fPIC \
 		-Wall \
-		-c lsqlite3.c \
-		-o shared/lsqlite3.o \
+		-c "lsqlite3.c" \
+		-o "shared/lsqlite3.o" \
 		|| die
 einfo "Linking shared-lib"
-	${CC} -shared -Wl,-soname,lsqlite3.so.0 \
-		-o shared/lsqlite3.so \
-		shared/lsqlite3.o \
+	${CC} \
+		-shared \
+		-Wl,-soname,lsqlite3.so.0 \
+		-o "shared/lsqlite3.so" \
+		"shared/lsqlite3.o" \
 		-lsqlite3 \
 		|| die
 	if use static-libs ; then
 einfo "Building static-lib"
 		mkdir -p "static" || die
-		${CC} -I$(lua_get_include_dir) \
+		${CC} \
+			-I$(lua_get_include_dir) \
 			-DLSQLITE_VERSION=\"${PV}\" \
 			-Dluaopen_lsqlite3=luaopen_lsqlite3complete \
 			-fPIC \
 			-Wall \
-			-c sqlite3.c \
-			-o static/sqlite3.o \
+			-c "sqlite3.c" \
+			-o "static/sqlite3.o" \
 			|| die
-		${CC} -I$(lua_get_include_dir) \
+		${CC} \
+			-I$(lua_get_include_dir) \
 			-DLSQLITE_VERSION=\"${PV}\" \
 			-Dluaopen_lsqlite3=luaopen_lsqlite3complete \
 			-fPIC \
 			-Wall \
-			-c lsqlite3.c \
-			-o static/lsqlite3.o \
+			-c "lsqlite3.c" \
+			-o "static/lsqlite3.o" \
 			|| die
 einfo "Linking static-lib"
 		ar rcs \
-			static/lsqlite3complete.a \
-			static/lsqlite3.o \
-			static/sqlite3.o || die
+			"static/lsqlite3complete.a" \
+			"static/lsqlite3.o" \
+			"static/sqlite3.o" \
+			|| die
 	fi
 }
 
@@ -111,14 +125,14 @@ src_install() {
 			export BUILD_DIR="${S}_${lib_type}_${ELUA}"
 			cd "${BUILD_DIR}" || die
 			exeinto $(lua_get_cmod_dir)
-			doexe shared/lsqlite3.so
+			doexe "shared/lsqlite3.so"
 			if use static-libs ; then
 				insinto $(lua_get_cmod_dir)
-				doins static/lsqlite3complete.a
+				doins "static/lsqlite3complete.a"
 			fi
 		}
 		lua_foreach_impl lua_src_install
-		dodoc doc/lsqlite3.wiki
+		dodoc "doc/lsqlite3.wiki"
 	done
 }
 
