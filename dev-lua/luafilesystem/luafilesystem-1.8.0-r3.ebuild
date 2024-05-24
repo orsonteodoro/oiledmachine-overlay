@@ -3,17 +3,34 @@
 
 EAPI=8
 
-LUA_COMPAT=( lua5-{1..4} )
+# See doc/us/index.html for current versions of lua supported
+
+MY_PV="${PV//./_}"
+
+LUA_COMPAT=( "lua5-"{1..4} )
+
 inherit lua toolchain-funcs
 
-DESCRIPTION="File System Library for the Lua Programming Language"
-HOMEPAGE="https://keplerproject.github.io/luafilesystem/"
-LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~mips ~ppc ~ppc64 ~sparc ~x86"
+S="${WORKDIR}/${PN}-${MY_PV}"
+SRC_URI="
+https://github.com/lunarmodules/luafilesystem/archive/refs/tags/v${MY_PV}.tar.gz
+	-> ${P}.tar.gz
+"
+
+DESCRIPTION="File System Library for the Lua Programming Language"
+HOMEPAGE="
+	https://lunarmodules.github.io/luafilesystem/
+	https://github.com/lunarmodules/luafilesystem
+"
+LICENSE="MIT"
 SLOT="0"
 IUSE+=" doc luajit test"
-RESTRICT="!test? ( test )"
-# See doc/us/index.html for current versions of lua supported
+RESTRICT="
+	!test? (
+		test
+	)
+"
 RDEPEND+="
 	${LUA_DEPS}
 	dev-lang/lua:*
@@ -30,17 +47,14 @@ BDEPEND+="
 		${RDEPEND}
 	)
 "
-MY_PV=${PV//./_}
-SRC_URI="
-https://github.com/keplerproject/${PN}/archive/v${MY_PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${PN}-${MY_PV}"
 
 src_prepare() {
 	default
 	lua_src_prepare() {
-		cp -a "${S}" "${S}_${ELUA}" || die
+		cp -a \
+			"${S}" \
+			"${S}_${ELUA}" \
+			|| die
 	}
 	lua_foreach_impl lua_src_prepare
 }
@@ -72,8 +86,9 @@ lua_src_configure()
 	cd "${BUILD_DIR}" || die
 	local _pkgconfig="${CHOST}-pkg-config"
 einfo "pkgconfig:\t${CHOST}-pkg-config"
-	local lua_v=$(ver_cut 1-2 $(lua_get_version))
-	local pkgcfgpath="${ESYSROOT}/usr/$(get_libdir)/pkgconfig/$(usex luajit luajit lua${lua_v}).pc"
+	local lua_slot=$(ver_cut 1-2 $(lua_get_version))
+	local lua_impl=$(usex luajit "luajit" "lua${lua_slot}")
+	local pkgcfgpath="${ESYSROOT}/usr/$(get_libdir)/pkgconfig/${lua_impl}.pc"
 	if [[ ! -e "${pkgcfgpath}" ]] ; then
 eerror
 eerror "You are missing ${pkgcfgpath}.  You must manually symlink."
@@ -82,7 +97,7 @@ eerror
 	fi
 	LUA_INC=(
 		-I"$(pwd)/src"
-		-I$(${CHOST}-pkg-config --variable includedir ${pkgcfgpath})
+		-I$("${CHOST}-pkg-config" --variable includedir "${pkgcfgpath}")
 	)
 	_gen_config
 }
@@ -105,8 +120,9 @@ src_test() {
 	lua_src_test() {
 		export BUILD_DIR="${S}_${ELUA}"
 		cd "${BUILD_DIR}" || die
-		LUA_CPATH=./src/?.so $(usex luajit 'luajit' 'lua') \
-			tests/test.lua || die
+		LUA_CPATH=./src/?.so \
+		$(usex luajit "luajit" "lua") "tests/test.lua" \
+			|| die
 	}
 	lua_foreach_impl lua_src_test
 }
@@ -120,10 +136,10 @@ src_install() {
 	lua_foreach_impl lua_src_install
 
 	cd "${S}" || die
-	use doc && local HTML_DOCS=( doc/us/. )
+	use doc && local HTML_DOCS=( "doc/us/." )
 	einstalldocs
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:
