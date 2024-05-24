@@ -541,7 +541,7 @@ src_install() {
 	done
 	rm -rf "product_logo_"* || die
 	cd "${WORKDIR}" || die
-	insinto /
+	insinto "/"
 	doins -r *
 	fperms +x \
 		"/opt/google/earth/pro/${MY_PN}"{"","-bin"} \
@@ -550,7 +550,10 @@ src_install() {
 	find . -type f -name "*.so*" -exec chmod +x '{}' + || die
 	pax-mark -m "${ED%/}/google/earth/pro/${MY_PN}-bin"
 	mkdir -p "${T}/langs" || die
-	mv "${ED}/opt/google/earth/pro/lang/"* "${T}/langs" || die
+	mv \
+		"${ED}/opt/google/earth/pro/lang/"* \
+		"${T}/langs" \
+		|| die
 	insinto "/opt/google/earth/pro/lang"
 	local l
 	for l in ${L10N} ; do
