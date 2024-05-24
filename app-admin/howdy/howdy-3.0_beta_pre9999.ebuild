@@ -18,12 +18,16 @@ PYTHON_COMPAT=( python3_{8..11} )
 
 inherit git-r3 meson python-single-r1
 
-EGIT_COMMIT_DLIB_MODELS="daf943f7819a3dda8aec4276754ef918dc26491f"
 DLIB_MODELS_DATE="20210412"
-if [[ ${PV} =~ 9999 ]] ; then
+EGIT_COMMIT_DLIB_MODELS="daf943f7819a3dda8aec4276754ef918dc26491f"
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="beta"
+	EGIT_REPO_URI="https://github.com/boltgolt/howdy.git"
+	FALLBACK_COMMIT="aa75c7666c040c6a7c83cd92b9b81a6fea4ce97c" # May 4, 2024
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${PN}-${PV}"
 else
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI+="
 https://github.com/boltgolt/howdy/archive/refs/tags/v${PV}.tar.gz
@@ -44,16 +48,14 @@ HOMEPAGE="https://github.com/boltgolt/howdy"
 LICENSE="MIT BSD CC0-1.0"
 # CC0-1.0 - dlib-models
 # BSD - howdy/src/recorders/v4l2.py
-
-# Live ebuilds do not get KEYWORDS.  Distro policy.
-
+RESTRICT="mirror"
 SLOT="0"
 CUDA_TARGETS_COMPAT=(
 	sm_50
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda -ffmpeg +gtk -pyv4l2 r13
++bash-completion cuda -ffmpeg +gtk -pyv4l2 ebuild-revision-13
 "
 REQUIRED_USE+="
 	!ffmpeg
@@ -78,6 +80,7 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-libs/inih-52
 	app-admin/sudo
+	dev-libs/libevdev
 	sys-libs/pam
 	cuda_targets_sm_50? (
 		$(python_gen_cond_dep '
@@ -116,13 +119,13 @@ DEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	dev-build/meson
+	>=dev-build/meson-0.64
+	dev-build/ninja
 	|| (
 		>=sys-devel/gcc-5
 		>=sys-devel/clang-3.4
 	)
 "
-RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/howdy-3.0_beta_pre9999-howdy-gtk-fix-camera-id.patch"
 )
@@ -139,10 +142,8 @@ ewarn
 }
 
 src_unpack() {
-	if [[ ${PV} =~ 9999 ]] ; then
-		use fallback-commit && EGIT_COMMIT="c5b17665d5e27c92abaad988e1b229c8d558220b" # Sep 24, 2023
-		EGIT_BRANCH="beta"
-		EGIT_REPO_URI="https://github.com/boltgolt/howdy.git"
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 	fi

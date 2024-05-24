@@ -18,13 +18,14 @@ PYTHON_COMPAT=( python3_{8..11} )
 
 inherit python-single-r1
 
-EGIT_COMMIT_DLIB_MODELS="daf943f7819a3dda8aec4276754ef918dc26491f"
 DLIB_MODELS_DATE="20210412"
+EGIT_COMMIT_DLIB_MODELS="daf943f7819a3dda8aec4276754ef918dc26491f"
+KEYWORDS="~amd64"
+S="${WORKDIR}/${PN}-${PV}"
 SRC_URI+="
 https://github.com/boltgolt/howdy/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${PN}-${PV}"
 SRC_URI+="
 https://github.com/davisking/dlib-models/raw/master/dlib_face_recognition_resnet_model_v1.dat.bz2
 	-> dlib_face_recognition_resnet_model_v1-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat.bz2
@@ -39,14 +40,14 @@ HOMEPAGE="https://github.com/boltgolt/howdy"
 LICENSE="MIT BSD CC0-1.0"
 # CC0-1.0 - dlib-models
 # BSD - howdy/src/recorders/v4l2.py
-KEYWORDS="~amd64"
+RESTRICT="mirror"
 SLOT="0"
 CUDA_TARGETS_COMPAT=(
 	sm_50
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda -ffmpeg -pyv4l2 r13
++bash-completion cuda -ffmpeg -pyv4l2 ebuild-revision-13
 "
 REQUIRED_USE+="
 	!ffmpeg
@@ -102,7 +103,6 @@ BDEPEND+="
 		>=sys-devel/clang-3.4
 	)
 "
-RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/${PN}-2.6.1-use-py3-pythonparser.patch"
 )
