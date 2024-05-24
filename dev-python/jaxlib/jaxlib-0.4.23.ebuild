@@ -1099,6 +1099,19 @@ einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 	echo "build --action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> ".bazelrc.user" || die
 	echo "build --host_action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> ".bazelrc.user" || die
 
+	if has_version "dev-java/openjdk-bin:11" ; then
+		local jdk_path=$(realpath "/opt/openjdk-bin-11")
+		export JAVA_HOME_11="${jdk_path}"
+	elif has_version "dev-java/openjdk:11" ; then
+		local jdk_path=$(realpath "/usr/$(get_libdir)/openjdk-11")
+		export JAVA_HOME_11="${jdk_path}"
+	else
+eerror "Emerge dev-java/openjdk-bin:11 to continue."
+		die
+	fi
+
+        echo "startup --server_javabase=${JAVA_HOME_11}" >> ".bazelrc.user" || die
+
 	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 		local ccache_dir=$(ccache -sv \
 			| grep "Cache directory" \

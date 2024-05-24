@@ -69,7 +69,6 @@ ROBIN_MAP_PV="1.2.1"		# From https://github.com/openxla/xla/blob/873d09720f83cbb
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L518
 RULES_APPLE_PV="1.0.1"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L526
 RULES_CC_PV="0.0.2"
-#RULES_JAVA_PV="5.5.1"
 RULES_PKG_PV="0.7.1"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace3.bzl#L34
 RULES_PYTHON_PV="0.0.1"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L510
 RULES_PYTHON_PV2="0.22.1"	# From https://github.com/bazelbuild/bazel/blob/7.1.1/src/MODULE.tools
@@ -1100,6 +1099,19 @@ einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 
 	echo "build --action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> ".bazelrc.user" || die
 	echo "build --host_action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> ".bazelrc.user" || die
+
+	if has_version "dev-java/openjdk-bin:11" ; then
+		local jdk_path=$(realpath "/opt/openjdk-bin-11")
+		export JAVA_HOME_11="${jdk_path}"
+	elif has_version "dev-java/openjdk:11" ; then
+		local jdk_path=$(realpath "/usr/$(get_libdir)/openjdk-11")
+		export JAVA_HOME_11="${jdk_path}"
+	else
+eerror "Emerge dev-java/openjdk-bin:11 to continue."
+		die
+	fi
+
+        echo "startup --server_javabase=${JAVA_HOME_11}" >> ".bazelrc.user" || die
 
 	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 		local ccache_dir=$(ccache -sv \

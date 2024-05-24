@@ -69,7 +69,6 @@ ROBIN_MAP_PV="1.2.1"		# From https://github.com/google/jax/blob/jaxlib-v0.4.25/t
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/openxla/xla/blob/4ccfe33c71665ddcbca5b127fefe8baa3ed632d4/third_party/tsl/workspace2.bzl#L524
 RULES_APPLE_PV="1.0.1"		# From https://github.com/openxla/xla/blob/4ccfe33c71665ddcbca5b127fefe8baa3ed632d4/third_party/tsl/workspace2.bzl#L532
 RULES_CC_PV="0.0.2"
-RULES_JAVA_PV="5.5.1"
 RULES_PKG_PV="0.7.1"		# From https://github.com/openxla/xla/blob/4ccfe33c71665ddcbca5b127fefe8baa3ed632d4/third_party/tsl/workspace3.bzl#L34
 RULES_PYTHON_PV="0.0.1"		# From https://github.com/openxla/xla/blob/4ccfe33c71665ddcbca5b127fefe8baa3ed632d4/third_party/tsl/workspace2.bzl#L517
 RULES_SWIFT_PV="1.0.0"		# From https://github.com/openxla/xla/blob/4ccfe33c71665ddcbca5b127fefe8baa3ed632d4/third_party/tsl/workspace2.bzl#L539
@@ -89,6 +88,7 @@ EGIT_PYBIND11_ABSEIL_COMMIT="2c4932ed6f6204f1656e245838f4f5eae69d2e29"		# From h
 EGIT_PYBIND11_BAZEL_COMMIT="72cbbf1fbc830e487e3012862b7b720001b70672"		# From https://github.com/openxla/xla/blob/4ccfe33c71665ddcbca5b127fefe8baa3ed632d4/third_party/tsl/third_party/pybind11_bazel/workspace.bzl
 EGIT_RE2_COMMIT="03da4fc0857c285e3a26782f6bc8931c4c950df4"			# From https://github.com/openxla/xla/blob/4ccfe33c71665ddcbca5b127fefe8baa3ed632d4/third_party/tsl/workspace2.bzl#L233
 EGIT_RULES_CLOSURE_COMMIT="308b05b2419edb5c8ee0471b67a40403df940149"
+EGIT_RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"
 EGIT_RULES_PROTO_COMMIT="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"
 EGIT_SNAPPY_COMMIT="984b191f0fefdeb17050b42a90b7625999c13b8d"			# From https://github.com/openxla/xla/blob/4ccfe33c71665ddcbca5b127fefe8baa3ed632d4/third_party/tsl/workspace2.bzl#L399
 EGIT_STABLEHLO_COMMIT="e708c82502982697540886738a307f72f9e9a7ff"		# From https://github.com/openxla/xla/blob/4ccfe33c71665ddcbca5b127fefe8baa3ed632d4/third_party/stablehlo/workspace.bzl#L7
@@ -106,7 +106,7 @@ https://github.com/bazelbuild/rules_android/archive/v${RULES_ANDROID_PV}.zip -> 
 https://github.com/bazelbuild/rules_apple/releases/download/${RULES_APPLE_PV}/rules_apple.${RULES_APPLE_PV}.tar.gz -> rules_apple-${RULES_APPLE_PV}.tar.gz
 https://github.com/bazelbuild/rules_cc/releases/download/${RULES_CC_PV}/rules_cc-${RULES_CC_PV}.tar.gz -> rules_cc-${RULES_CC_PV}.tar.gz
 https://github.com/bazelbuild/rules_closure/archive/${EGIT_RULES_CLOSURE_COMMIT}.tar.gz -> rules_closure-${EGIT_RULES_CLOSURE_COMMIT}.tar.gz
-https://github.com/bazelbuild/rules_java/releases/download/5.5.1/rules_java-${RULES_JAVA_PV}.tar.gz -> rules_java-${RULES_JAVA_PV}.tar.gz
+https://github.com/bazelbuild/rules_java/archive/${EGIT_RULES_JAVA_COMMIT}.zip -> rules-java-${EGIT_RULES_JAVA_COMMIT}.zip
 https://github.com/bazelbuild/rules_pkg/releases/download/${RULES_PKG_PV}/rules_pkg-${RULES_PKG_PV}.tar.gz
 https://github.com/bazelbuild/rules_proto/archive/${EGIT_RULES_PROTO_COMMIT}.tar.gz -> rules_proto-${EGIT_RULES_PROTO_COMMIT}.tar.gz
 https://github.com/bazelbuild/rules_python/releases/download/${RULES_PYTHON_PV}/rules_python-0.0.1.tar.gz -> rules_python-${RULES_PYTHON_PV}.tar.gz
@@ -1095,6 +1095,19 @@ einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 
 	echo "build --action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> ".bazelrc.user" || die
 	echo "build --host_action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> ".bazelrc.user" || die
+
+	if has_version "dev-java/openjdk-bin:11" ; then
+		local jdk_path=$(realpath "/opt/openjdk-bin-11")
+		export JAVA_HOME_11="${jdk_path}"
+	elif has_version "dev-java/openjdk:11" ; then
+		local jdk_path=$(realpath "/usr/$(get_libdir)/openjdk-11")
+		export JAVA_HOME_11="${jdk_path}"
+	else
+eerror "Emerge dev-java/openjdk-bin:11 to continue."
+		die
+	fi
+
+        echo "startup --server_javabase=${JAVA_HOME_11}" >> ".bazelrc.user" || die
 
 	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 		local ccache_dir=$(ccache -sv \
