@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# For list of direct links, see
+# https://support.google.com/earth/answer/168344?hl=en
+
 # To find the version use:
 # dpkg -I 'google-earth-pro-stable_7.3.3_amd64.deb'
 
@@ -11,34 +14,36 @@ MY_PN="${MY_PN//-/}"
 MY_PN="${MY_PN//pro/}"
 MY_PV=$(ver_cut 1-3 ${PV})
 
-EXPAT_PV="2.2.1"
-# See https://support.google.com/earth/answer/168344?hl=en for list of direct links \
+# EXPECTED_SHA512 must go before DEST_FN_AMD64 \
 EXPECTED_SHA512="\
 8dd6677e12bd5fbc5ed8d90e53989437f55e15bff178bb3eb24649947a1f3179\
 4ee90c226cbe9323177aa3bb31afc39aaa99b0ab8622949af53755dbccf29483\
 "
 DEST_FN_AMD64="${PN}-stable_${MY_PV}_${EXPECTED_SHA512:0:7}_amd64.deb"
-LIBPNG_PV="1.2.56"
-LIBTIFF_PV="4.0.10"
-GDAL_PV="2.4.4" # approximate
+EXPAT_PV="2.2.1"
 FFMPEG_PV="4.4.2"
 FFMPEG_SLOT="56.58.58"
+GDAL_PV="2.4.4" # approximate
 ICU_PV="54.1"
 LANGS=(
 ar bg ca cs da de el en es-419 es fa fil fi fr he hi hr hu id it ja ko lt lv nl
 no pl pt-PT pt ro ru sk sl sr sv th tr uk vi zh-Hans zh-Hant-HK zh-Hant
 )
+LIBPNG_PV="1.2.56"
+LIBTIFF_PV="4.0.10"
 OPENSSL_PV="1.0.2u"
+POSTGIS_PV="5.2.0"
 QA_PREBUILT="*"
 QT_CATEGORY="dev-qt"
 QT_SLOT="5"
 QT_VERSION="5.5.1" # The version distributed with ${PN}
-POSTGIS_PV="5.2.0"
 SRC_FN_AMD64="${PN}-stable_${MY_PV}_amd64.deb"
 ZLIB_PV="1.2.3"
 
 inherit desktop pax-utils unpacker xdg
 
+KEYWORDS="~amd64"
+S="${WORKDIR}"
 SRC_URI="
 	amd64? (
 		${DEST_FN_AMD64}
@@ -108,15 +113,13 @@ LICENSE="
 # WebKit BSD-2, BSD (ANGLE), LGPL-2.1 (for WebCore), plus possibly some
 #   custom code
 # More custom licenses and copyright notices are located in google-earth-pro-7.3.4
-SLOT="0"
-KEYWORDS="~amd64"
 RESTRICT="fetch strip" # fetch for more control and determinism
+SLOT="0"
 IUSE="
 ${LANGS[@]/#/l10n_}
 +l10n_en system-expat system-ffmpeg system-icu system-gdal system-gpsbabel
 system-openssl system-qt5 system-spnav
 "
-LANGS+=( en )
 
 # TODO: find a way to unbundle libQt
 
@@ -146,24 +149,24 @@ LANGS+=( en )
 # seperate SLOT depending on the choice.
 #
 DPKG_RDEPEND="
+	>=dev-libs/glib-2.56.1:2
+	>=dev-libs/libxml2-2.9.4
 	>=media-libs/alsa-lib-1.1.3
 	>=media-libs/fontconfig-2.12.6
 	>=media-libs/freetype-2.8.1
-	>=media-libs/mesa-9.0.0
-	>=net-libs/libproxy-0.4.15
-	>=net-print/cups-2.2.7
-	>=sys-libs/glibc-2.27
-	>=sys-apps/dbus-1.12.2
-	>=sys-devel/gcc-8[cxx]
-	>=dev-libs/glib-2.56.1:2
 	>=media-libs/gstreamer-1.14.0:1.0
 	>=media-libs/gst-plugins-base-1.14.0:1.0
+	>=media-libs/mesa-9.0.0
 	>=media-plugins/gst-plugins-meta-1.14.0:1.0
+	>=net-libs/libproxy-0.4.15
+	>=net-print/cups-2.2.7
+	>=sys-apps/dbus-1.12.2
+	>=sys-devel/gcc-8[cxx]
+	>=sys-libs/glibc-2.27
 	>=x11-libs/libSM-1.2.2
 	>=x11-libs/libX11-1.6.4
 	>=x11-libs/libxcb-1.13
 	>=x11-libs/libXext-1.3.3
-	>=dev-libs/libxml2-2.9.4
 	>=x11-libs/libXrender-0.9.10
 	>=x11-libs/libXtst-1.2.3
 "
@@ -223,7 +226,6 @@ RDEPEND="
 	${INTERNAL_DEPS}
 	virtual/ttf-fonts
 "
-S="${WORKDIR}"
 
 pkg_setup() {
 	if use system-expat ; then
@@ -471,14 +473,27 @@ einfo "Removing bundled qt5"
 src_prepare() {
 	default
 	cd "${WORKDIR}" || die
-	rm -rf "etc" "usr/share/menu" || die
+	rm -rf \
+		"etc" \
+		"usr/share/menu" \
+		|| die
 	cd "${WORKDIR}/opt/google/earth/pro" || die
-	rm -rf xdg-mime xdg-settings || die
-	mv ${PN}.desktop "${WORKDIR}/usr/share/applications" || die
+	rm -rf \
+		"xdg-mime" \
+		"xdg-settings" \
+		|| die
+	mv \
+		"${PN}.desktop" \
+		"${WORKDIR}/usr/share/applications" \
+		|| die
 	if use system-gpsbabel ; then
 einfo "Switching to the system's GPSBabel"
-		sed -i -e "s|# if |if |" googleearth || die
-		rm gpsbabel || die
+		sed -i \
+			-e "s|# if |if |" "googleearth" \
+			|| die
+		rm \
+			"gpsbabel" \
+			|| die
 	fi
 	#
 	# QA validation fixes:
@@ -489,31 +504,46 @@ einfo "Switching to the system's GPSBabel"
 	# warning: value "Application;Network" for key "Categories" in group
 	#   "Desktop Entry" contains a deprecated value "Application"
 	#
-	sed -i -e "s|^MultipleArgs=|X-MultipleArgs=|" \
+	sed -i \
+		-e "s|^MultipleArgs=|X-MultipleArgs=|" \
 		-e "s|Categories=Application;|Categories=|" \
 		-e "s|^Name=Google Earth$|Name=Google Earth Pro|" \
-		"${WORKDIR}/usr/share/applications/google-earth-pro.desktop" || die
+		"${WORKDIR}/usr/share/applications/google-earth-pro.desktop" \
+		|| die
 }
 
 src_install() {
-	insinto /usr/share/mime/packages
+	insinto "/usr/share/mime/packages"
 	doins "${FILESDIR}/${PN}-mimetypes.xml" || die
 	cd "${WORKDIR}/opt/google/earth/pro" || die
-	for size in 16 22 24 32 48 64 128 256 ; do
-		newicon -s ${size} product_logo_${size}.png ${PN}.png
+	local size
+	local sizes=(
+		16
+		22
+		24
+		32
+		48
+		64
+		128
+		256
+	)
+	for size in ${sizes[@]} ; do
+		newicon -s ${size} "product_logo_${size}.png" "${PN}.png"
 	done
-	rm -rf product_logo_* || die
+	rm -rf "product_logo_"* || die
 	cd "${WORKDIR}" || die
 	insinto /
 	doins -r *
-	fperms +x /opt/google/earth/pro/${MY_PN}{,-bin} \
-		/opt/google/earth/pro/{gpsbabel,repair_tool}
+	fperms +x \
+		"/opt/google/earth/pro/${MY_PN}"{"","-bin"} \
+		"/opt/google/earth/pro/"{"gpsbabel","repair_tool"}
 	cd "${ED}" || die
 	find . -type f -name "*.so*" -exec chmod +x '{}' + || die
-	pax-mark -m "${ED%/}"/google/earth/pro/${MY_PN}-bin
+	pax-mark -m "${ED%/}/google/earth/pro/${MY_PN}-bin"
 	mkdir -p "${T}/langs" || die
 	mv "${ED}/opt/google/earth/pro/lang/"* "${T}/langs" || die
-	insinto /opt/google/earth/pro/lang
+	insinto "/opt/google/earth/pro/lang"
+	local l
 	for l in ${L10N} ; do
 einfo "Installing language ${l}"
 		doins "${T}/langs/${l}.qm"
