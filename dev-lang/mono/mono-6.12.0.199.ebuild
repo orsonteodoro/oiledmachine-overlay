@@ -81,7 +81,6 @@ HOMEPAGE="
 # external modules.  Also, additional licenses for additional files through git
 # not found in the tarball.
 LICENSE="
-	MIT
 	(
 		MIT
 		UoI-NCSA
@@ -110,6 +109,7 @@ LICENSE="
 	ISC
 	LGPL-2.1
 	LGPL-2.1-with-linking-exception
+	MIT
 	Mono-gc_allocator.h
 	Mono-patents
 	MPL-1.1
