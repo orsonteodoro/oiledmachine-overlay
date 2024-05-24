@@ -9,8 +9,14 @@ EAPI=7
 
 # Internal is required because of function prefix to allow both system alloc and
 # Jemalloc to coexist.
+
 # SECURITY:  Bump jemalloc every time a vulnerability fix is announced.
+
 # See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=jemalloc&search_type=all
+
+# There may be a delay in the ebuild bump because we use the
+# download.mono-project.com tarball.  The GitHub tarball typically does not
+# include the gitmodules (vendored internal dependencies).
 
 BENCHMARKDOTNET_COMMIT="96ed005c57605cb8f005b6941c4d83453912eb75"
 CHECKREQS_DISK_BUILD="4500M"
@@ -19,6 +25,14 @@ FLAMEGRAPH_COMMIT="f857ebc94bfe2a9bfdc4f1536ebacfb7466f69ba"
 JEMALLOC_PV="5.3.0" # 5.0.1 (circa 2018) was the upstream selected.
 MONO_CORECLR_COMMIT="90f7060935732bb624e1f325d23f63072433725f"
 NABIS=0 # Global variable not constant
+PGO_TRAINERS="
+	acceptance-tests-coreclr-trainer
+	acceptance-tests-microbench-trainer
+	mono-benchmark-trainer
+	mono-managed-trainer
+	mono-native-trainer
+	mcs-trainer
+"
 TRAIN_TEST_DURATION=1800 # 30 min
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
@@ -28,7 +42,6 @@ XMRNBENCHMARKER_COMMIT="97f618cd585af549dd861b7c142656c496f6a89b"
 
 inherit autotools check-reqs linux-info mono-env pax-utils multilib-minimal
 inherit lcnr toolchain-funcs uopts
-# inherit git-r3
 
 KEYWORDS="amd64 ~arm ~arm64 ~ppc ~ppc64 -riscv x86 ~amd64-linux"
 SRC_URI="
@@ -60,7 +73,10 @@ gen_pgo_trainers_required_use() {
 }
 
 DESCRIPTION="Mono runtime and class libraries, a C# compiler/interpreter"
-HOMEPAGE="https://mono-project.com"
+HOMEPAGE="
+	https://github.com/mono/mono
+	https://mono-project.com
+"
 # Extra licenses are listed because it is in source code form and third party
 # external modules.  Also, additional licenses for additional files through git
 # not found in the tarball.
@@ -180,20 +196,12 @@ LICENSE="
 
 
 SLOT="0"
-PGO_TRAINERS="
-	acceptance-tests-coreclr-trainer
-	acceptance-tests-microbench-trainer
-	mono-benchmark-trainer
-	mono-managed-trainer
-	mono-native-trainer
-	mcs-trainer
-"
 IUSE+="
 ${PGO_TRAINERS[@]}
 doc jemalloc jemalloc-assert jemalloc-custom-cflags jemalloc-default minimal nls
 pax-kernel xen
 
-r2
+ebuild-revision-2
 "
 REQUIRED_USE+="
 	jemalloc-assert? (
@@ -211,7 +219,9 @@ REQUIRED_USE+="
 		)
 	)
 "
-REQUIRED_USE+=" "$(gen_pgo_trainers_required_use)
+REQUIRED_USE+="
+	$(gen_pgo_trainers_required_use)
+"
 DEPEND+="
 	app-crypt/mit-krb5[${MULTILIB_USEDEP}]
 	sys-libs/zlib[${MULTILIB_USEDEP}]
@@ -232,11 +242,11 @@ RDEPEND+="
 BDEPEND+="
 	dev-util/yacc
 	sys-devel/bc
-	pax-kernel? (
-		sys-apps/elfix
-	)
 	mono-benchmark-trainer? (
 		sys-process/time
+	)
+	pax-kernel? (
+		sys-apps/elfix
 	)
 "
 PATCHES=(
@@ -264,12 +274,16 @@ pkg_pretend() {
 
 	if use kernel_linux ; then
 		if linux_config_exists ; then
-			linux_chkconfig_builtin SYSVIPC || die "SYSVIPC not enabled in the kernel"
+			linux_chkconfig_builtin SYSVIPC \
+				|| die "SYSVIPC not enabled in the kernel"
 		else
-			# https://github.com/gentoo/gentoo/blob/f200e625bda8de696a28338318c9005b69e34710/eclass/linux-info.eclass#L686
-			ewarn "kernel config not found"
-			ewarn "If CONFIG_SYSVIPC is not set in your kernel .config, mono will hang while compiling."
-			ewarn "See https://bugs.gentoo.org/261869 for more info."
+# https://github.com/gentoo/gentoo/blob/f200e625bda8de696a28338318c9005b69e34710/eclass/linux-info.eclass#L686
+ewarn
+ewarn "The kernel config is not found."
+ewarn
+ewarn "If CONFIG_SYSVIPC is not set in your kernel .config, mono will hang"
+ewarn "while compiling.  See https://bugs.gentoo.org/261869 for more info."
+ewarn
 		fi
 	fi
 
@@ -283,11 +297,13 @@ pkg_setup() {
 	uopts_setup
 
 	if \
-	( \
-		   use acceptance-tests-coreclr-trainer \
-		|| use acceptance-tests-microbench-trainer \
-	) && \
-	has network-sandbox ${FEATURES} ; then
+		( \
+			   use acceptance-tests-coreclr-trainer \
+			|| use acceptance-tests-microbench-trainer \
+		) \
+		&& \
+		has network-sandbox ${FEATURES} \
+	; then
 eerror
 eerror "Building with acceptance-tests requires network-sandbox to be disabled"
 eerror "in FEATURES on a per-package level."
@@ -308,17 +324,22 @@ ewarn
 }
 
 src_unpack() {
-	unpack ${P}.tar.xz
+	unpack "${P}.tar.xz"
 	if use jemalloc ; then
-		unpack jemalloc-${JEMALLOC_PV}.tar.gz
-		mv "${WORKDIR}/jemalloc-${JEMALLOC_PV}" \
-			"${S}/mono/utils/jemalloc/jemalloc" || die
+		unpack "jemalloc-${JEMALLOC_PV}.tar.gz"
+		mv \
+			"${WORKDIR}/jemalloc-${JEMALLOC_PV}" \
+			"${S}/mono/utils/jemalloc/jemalloc" \
+			|| die
 	fi
 
 	mkdir -p "${S}/acceptance-tests/external"
 	if use acceptance-tests-coreclr-trainer ; then
 		unpack mono-coreclr-${MONO_CORECLR_COMMIT:0:7}.tar.gz
-		mv "${WORKDIR}/coreclr-${MONO_CORECLR_COMMIT}" "${S}/acceptance-tests/external/coreclr" || die
+		mv \
+			"${WORKDIR}/coreclr-${MONO_CORECLR_COMMIT}" \
+			"${S}/acceptance-tests/external/coreclr" \
+			|| die
 
 #		EGIT_REPO_URI="https://github.com/mono/coreclr.git"
 #		EGIT_BRANCH="mono"
@@ -328,13 +349,22 @@ src_unpack() {
 #		git-r3_checkout
 	fi
 	if use acceptance-tests-microbench-trainer ; then
-		unpack DebianShootoutMono-${DEBIANSHOOTOUTMONO_COMMIT:0:7}.tar.gz
-		unpack BenchmarkDotNet-${BENCHMARKDOTNET_COMMIT:0:7}.tar.gz
-		unpack FlameGraph-${FLAMEGRAPH_COMMIT:0:7}.tar.gz
-		mv "${WORKDIR}/DebianShootoutMono-${DEBIANSHOOTOUTMONO_COMMIT}" "${S}/acceptance-tests/external/DebianShootoutMono" || die
+		unpack "DebianShootoutMono-${DEBIANSHOOTOUTMONO_COMMIT:0:7}.tar.gz"
+		unpack "BenchmarkDotNet-${BENCHMARKDOTNET_COMMIT:0:7}.tar.gz"
+		unpack "FlameGraph-${FLAMEGRAPH_COMMIT:0:7}.tar.gz"
+		mv \
+			"${WORKDIR}/DebianShootoutMono-${DEBIANSHOOTOUTMONO_COMMIT}" \
+			"${S}/acceptance-tests/external/DebianShootoutMono" \
+			|| die
 		mkdir -p "${S}/acceptance-tests/external/DebianShootoutMono/external" || die
-		mv "${WORKDIR}/BenchmarkDotNet-${BENCHMARKDOTNET_COMMIT}" "${S}/acceptance-tests/external/DebianShootoutMono/external/BenchmarkDotNet" || die
-		mv "${WORKDIR}/FlameGraph-${FLAMEGRAPH_COMMIT}" "${S}/acceptance-tests/external/DebianShootoutMono/external/FlameGraph" || die
+		mv \
+			"${WORKDIR}/BenchmarkDotNet-${BENCHMARKDOTNET_COMMIT}" \
+			"${S}/acceptance-tests/external/DebianShootoutMono/external/BenchmarkDotNet" \
+			|| die
+		mv \
+			"${WORKDIR}/FlameGraph-${FLAMEGRAPH_COMMIT}" \
+			"${S}/acceptance-tests/external/DebianShootoutMono/external/FlameGraph" \
+			|| die
 
 #		EGIT_REPO_URI="https://github.com/alexanderkyte/DebianShootoutMono.git"
 #		EGIT_BRANCH="release_11_15_2018"
@@ -359,8 +389,9 @@ src_prepare() {
 		ewarn "We are disabling MPROTECT on the mono binary."
 
 		# issue 9 : https://github.com/Heather/gentoo-dotnet/issues/9
-		sed '/exec "/ i\paxmark.sh -mr "$r/@mono_runtime@"' \
-			-i "${S}"/runtime/mono-wrapper.in \
+		sed -i \
+			'/exec "/ i\paxmark.sh -mr "$r/@mono_runtime@"' \
+			"${S}/runtime/mono-wrapper.in" \
 			|| die "Failed to sed mono-wrapper.in"
 	fi
 
@@ -372,8 +403,10 @@ src_prepare() {
 				eapply "${FILESDIR}/jemalloc-5.3.0-gentoo-fixups.patch"
 			popd
 			if ! use jemalloc-assert ; then
-				sed -i -e "/-g3/d" \
-					"${S}/mono/utils/jemalloc/jemalloc/configure.ac" || die
+				sed -i \
+					-e "/-g3/d" \
+					"${S}/mono/utils/jemalloc/jemalloc/configure.ac" \
+					|| die
 			fi
 		fi
 	fi
@@ -390,7 +423,9 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
-src_configure() { :; }
+src_configure() {
+	:
+}
 
 _src_configure_compiler() {
 	export CC=$(tc-getCC)
@@ -419,9 +454,13 @@ _src_configure() {
 	# Workaround(?) for bug #779025
 	# May be able to do a real fix by adjusting path used?
 	if multilib_is_native_abi ; then
-		myeconfargs+=( --enable-system-aot )
+		myeconfargs+=(
+			--enable-system-aot
+		)
 	else
-		myeconfargs+=( --disable-system-aot )
+		myeconfargs+=(
+			--disable-system-aot
+		)
 	fi
 
 	econf "${myeconfargs[@]}"
@@ -452,7 +491,7 @@ _pre_trainer_acceptance_tests_coreclr() {
 	local use_id="acceptance-tests-coreclr-trainer"
 	local d=$(_get_s)
 cat <<EOF > "${d}/${use_id}" || die
-#!${EPREFIX}/bin/bash
+#!/bin/bash
 cd "${d}/acceptance-tests"
 make check-coreclr || true
 EOF
@@ -463,7 +502,7 @@ _pre_trainer_acceptance_tests_microbench() {
 	local use_id="acceptance-tests-microbench-trainer"
 	local d=$(_get_s)
 cat <<EOF > "${d}/${use_id}" || die
-#!${EPREFIX}/bin/bash
+#!/bin/bash
 cd "${d}/acceptance-tests"
 make check-microbench || true
 EOF
@@ -474,7 +513,7 @@ _pre_trainer_mono_benchmark() {
 	local use_id="mono-benchmark-trainer"
 	local d=$(_get_s)
 cat <<EOF > "${d}/${use_id}" || die
-#!${EPREFIX}/bin/bash
+#!/bin/bash
 cd "${d}/mono/benchmark"
 make run-test || true
 EOF
@@ -485,7 +524,7 @@ _pre_trainer_mono_managed() {
 	local use_id="mono-managed-trainer"
 	local d=$(_get_s)
 cat <<EOF > "${d}/${use_id}" || die
-#!${EPREFIX}/bin/bash
+#!/bin/bash
 cd "${d}/mono/tests"
 make check || true
 EOF
@@ -496,7 +535,7 @@ _pre_trainer_mono_native() {
 	local use_id="mono-native-trainer"
 	local d=$(_get_s)
 cat <<EOF > "${d}/${use_id}" || die
-#!${EPREFIX}/bin/bash
+#!/bin/bash
 cd "${d}/mono/unit-tests"
 make check || true
 EOF
@@ -507,7 +546,7 @@ _pre_trainer_mcs() {
 	local use_id="mcs-trainer"
 	local d=$(_get_s)
 cat <<EOF > "${d}/${use_id}" || die
-#!${EPREFIX}/bin/bash
+#!/bin/bash
 cd "${d}/mcs/tests"
 make run-test || true
 EOF
@@ -568,12 +607,12 @@ train_override_duration() {
 
 multilib_src_test() {
 	cd $(_get_build_dir) || die
-	cd mcs/tests || die
+	cd "mcs/tests" || die
 	emake check
 }
 
 gen_mono_keystore_updater() {
-	dodir /etc/ca-certificates/update.d
+	dodir "/etc/ca-certificates/update.d"
 cat <<EOF > "${ED}/etc/ca-certificates/update.d/mono-keystore"
 #!/bin/bash
 echo "Updating mono keystore"
@@ -592,8 +631,9 @@ src_install() {
 # http://www.mail-archive.com/mono-devel-list@lists.ximian.com/msg24870.html
 # for reference.
 #
-		rm -f "${ED}"/usr/lib/mono/{2.0,4.5}/mscorlib.dll.so || die
-		rm -f "${ED}"/usr/lib/mono/{2.0,4.5}/mcs.exe.so || die
+		rm -f \
+			"${ED}/usr/lib/mono/"{"2.0","4.5"}"/mscorlib.dll.so" \
+			"${ED}/usr/lib/mono/"{"2.0","4.5"}"/mcs.exe.so" \
 
 		uopts_src_install
 		multilib_check_headers

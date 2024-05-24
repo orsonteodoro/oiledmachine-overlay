@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -18,14 +18,18 @@
     for details on PGO support and custom PGO training.
   -->
   <upstream>
+    <changelog>https://www.mono-project.com/docs/about-mono/releases/</changelog>
     <remote-id type="cpe">cpe:/a:mono:mono</remote-id>
     <remote-id type="github">mono/mono</remote-id>
-    <changelog>https://www.mono-project.com/docs/about-mono/releases/</changelog>
   </upstream>
   <use>
-    <flag name="pax-kernel">
-      Enable if the user plans to run the package under a pax enabled hardened
-      kernel
+    <flag name="acceptance-test-coreclr-trainer">
+      PGO train the Mono runtime using CoreCLR tests suite not with the CoreCLR
+      library.  Time to build this test can be hours.
+    </flag>
+    <flag name="acceptance-tests-microbench-trainer">
+      PGO train the Mono runtime using a third-party microbenchmark test suite
+      based on the Debian shootout, used in comparing language performance.
     </flag>
     <flag name="epgo">
       Perform 1 step PGO optimization (TESTING/EXPERIMENTAL)
@@ -35,25 +39,14 @@
       the Mono runtime.  You may choose to set MONO_USE_JEMALLOC environment
       variable to enable jemalloc conditionally on demand.
     </flag>
+    <flag name="jemalloc-assert">
+      Enable runtime checks for memory correctness.
+    </flag>
     <flag name="jemalloc-custom-cflags">
       Allow to override upstream optimization and debug flags.
     </flag>
     <flag name="jemalloc-default">
       Makes Jemalloc as the default memory allocator for the Mono runtime.
-    </flag>
-    <flag name="jemalloc-assert">
-      Enable runtime checks for memory correctness.
-    </flag>
-    <flag name="tpgo">
-      Perform 3 step PGO optimization (TESTING)
-    </flag>
-    <flag name="acceptance-test-coreclr-trainer">
-      PGO train the Mono runtime using CoreCLR tests suite not with the CoreCLR
-      library.  Time to build this test can be hours.
-    </flag>
-    <flag name="acceptance-tests-microbench-trainer">
-      PGO train the Mono runtime using a third-party microbenchmark test suite
-      based on the Debian shootout, used in comparing language performance.
     </flag>
     <flag name="mono-benchmark-trainer">
       PGO train the Mono runtime using benchmarks.
@@ -67,13 +60,20 @@
     <flag name="mcs-trainer">
       PGO Train the MCS (aka Mono C# compiler).
     </flag>
+    <flag name="pax-kernel">
+      Enable if the user plans to run the package under a pax enabled hardened
+      kernel
+    </flag>
+    <flag name="tpgo">
+      Perform 3 step PGO optimization (TESTING)
+    </flag>
     <flag name="xen">
       Make mono generate code that is considerably faster on xen VMs but
       slightly slower on for normal systems.
     </flag>
 
-    <flag name="rN">
-      Ebuild revision
+    <flag name="ebuild-revision-N">
+      The ebuild revision
     </flag>
   </use>
 </pkgmetadata>
