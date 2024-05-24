@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <maintainer type="person" proxied="yes">
-    <!-- Ebuild fork from the oiledmachine-machine -->
-    <email>waebbl-gentoo@posteo.net</email>
-    <name>Bernd Waibel</name>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-machine -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
   </maintainer>
   <maintainer type="person" proxied="yes">
     <!-- Ebuild originators -->
@@ -18,10 +18,19 @@
   </maintainer>
   <longdescription>
     Alembic is an open computer graphics interchange framework. 
+  </longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
 
     This ebuild fork is provided to resolve dependency issue between ilmbase
     and imath.
-  </longdescription>
+
+  -->
+  <upstream>
+    <bugs-to>https://github.com/alembic/alembic/issues</bugs-to>
+    <remote-id type="github">alembic/alembic</remote-id>
+  </upstream>
   <use>
     <flag name="hdf5">
       Add support <pkg>sci-libs/hdf5</pkg>
@@ -30,8 +39,4 @@
       Build and run the test-suite
     </flag>
   </use>
-  <upstream>
-    <bugs-to>https://github.com/alembic/alembic/issues</bugs-to>
-    <remote-id type="github">alembic/alembic</remote-id>
-  </upstream>
 </pkgmetadata>

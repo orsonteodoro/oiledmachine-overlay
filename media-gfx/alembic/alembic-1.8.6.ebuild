@@ -3,19 +3,32 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+OPENEXR_V2_PV="2.5.10 2.5.9 2.5.8 2.5.7 2.5.6 2.5.5 2.5.4"
+OPENEXR_V3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4"
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit cmake python-single-r1
 
-SRC_URI="https://github.com/alembic/alembic/archive/${PV}.tar.gz -> ${P}.tar.gz"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+SRC_URI="
+https://github.com/alembic/alembic/archive/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
-HOMEPAGE="https://www.alembic.io/"
 DESCRIPTION="Alembic is an open framework for storing and sharing scene data \
 that includes a C++ library, a file format, and client plugins and \
 applications."
-LICENSE="BSD"
+HOMEPAGE="
+	https://www.alembic.io/
+	https://github.com/alembic/alembic
+"
+LICENSE="
+	Boost-1.0
+	BSD
+	custom
+"
+# custom - search "TO THE FULLEST EXTENT PERMITTED UNDER APPLICABLE LAW"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="examples hdf5 python test"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -25,8 +38,6 @@ RESTRICT="
 		test
 	)
 "
-OPENEXR_V2_PV="2.5.8 2.5.4"
-OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
 gen_openexr_pairs() {
 	local pv
 	for pv in ${OPENEXR_V3_PV} ; do
@@ -65,8 +76,8 @@ RDEPEND+="
 	)
 	python? (
 		$(python_gen_cond_dep '
+			>=dev-libs/boost-1.53.0[${PYTHON_USEDEP},python]
 			dev-python/numpy[${PYTHON_USEDEP}]
-			dev-libs/boost[${PYTHON_USEDEP},python]
 		')
 		|| (
 			$(gen_openexr_py_pairs)
@@ -87,8 +98,10 @@ BDEPEND+="
 		')
 	)
 "
-PATCHES=( "${FILESDIR}/${PN}-1.8.5-set-correct-libdir.patch" )
-DOCS=( ACKNOWLEDGEMENTS.txt FEEDBACK.txt NEWS.txt README.txt )
+PATCHES=(
+	"${FILESDIR}/${PN}-1.8.5-set-correct-libdir.patch"
+)
+DOCS=( "ACKNOWLEDGEMENTS.txt" "FEEDBACK.txt" "NEWS.txt" "README.txt" )
 
 src_configure() {
 	local mycmakeargs=(
