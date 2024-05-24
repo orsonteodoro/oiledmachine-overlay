@@ -3,9 +3,14 @@
 
 EAPI=8
 
+# U 20.04
+
+QT5_PV="5.12.8"
+QT6_PV="6.2.0"
+
 inherit cmake-multilib flag-o-matic toolchain-funcs xdg-utils
 
-if [[ ${PV} == *9999* ]] ; then
+if [[ "${PV}" == *"9999"* ]] ; then
 	inherit git-r3
 	EGIT_REPO_URI="https://anongit.freedesktop.org/git/poppler/poppler.git"
 	SLOT="0/9999"
@@ -39,8 +44,7 @@ LICENSE="GPL-2"
 IUSE="
 +boost cairo cjk gtk +curl +cxx debug -doc +gpgme +introspection +jpeg +jpeg2k
 +lcms +nss png +qt5 +qt6 test +tiff +utils
-
-r2
+ebuild-revision-2
 "
 REQUIRED_USE+="
 	gtk? (
@@ -57,9 +61,6 @@ REQUIRED_USE+="
 	)
 "
 
-# CI uses U 20.04
-QT5_PV="5.12.8"
-QT6_PV="6.2.0"
 CDEPEND="
 	>=media-libs/fontconfig-2.13.1[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.10.1[${MULTILIB_USEDEP}]
@@ -140,7 +141,7 @@ BDEPEND="
 	)
 "
 
-if [[ ${PV} != *9999* ]] ; then
+if [[ "${PV}" != *"9999"* ]] ; then
 	BDEPEND+="
 		verify-sig? (
 			>=sec-keys/openpgp-keys-aacid-20230907
@@ -148,7 +149,7 @@ if [[ ${PV} != *9999* ]] ; then
 	"
 fi
 
-DOCS=( AUTHORS NEWS README.md README-XPDF )
+DOCS=( "AUTHORS" "NEWS" "README.md" "README-XPDF" )
 
 PATCHES=(
 	"${FILESDIR}/${PN}-23.10.0-qt-deps.patch"
@@ -185,15 +186,17 @@ src_prepare() {
 	# Clang doesn't grok this flag, the configure nicely tests that, but
 	# cmake just uses it, so remove it if we use clang
 	if tc-is-clang ; then
-		sed \
+		sed -i \
 			-e 's/-fno-check-new//' \
-			-i cmake/modules/PopplerMacros.cmake \
+			"cmake/modules/PopplerMacros.cmake" \
 			|| die
 	fi
 
-	if ! grep -Fq 'cmake_policy(SET CMP0002 OLD)' CMakeLists.txt ; then
-		sed -e '/^cmake_minimum_required/acmake_policy(SET CMP0002 OLD)' \
-			-i CMakeLists.txt || die
+	if ! grep -Fq 'cmake_policy(SET CMP0002 OLD)' "CMakeLists.txt" ; then
+		sed -i \
+			-e '/^cmake_minimum_required/acmake_policy(SET CMP0002 OLD)' \
+			"CMakeLists.txt" \
+			|| die
 	else
 		einfo "policy(SET CMP0002 OLD) - workaround can be removed"
 	fi
@@ -247,9 +250,9 @@ src_configure() {
 src_install() {
 	cmake-multilib_src_install
 	# The live version doesn't provide html documentation.
-	if use cairo && use doc && [[ ${PV} != *9999* ]]; then
+	if use cairo && use doc && [[ "${PV}" != *"9999"* ]]; then
 		# For now install gtk-doc there
-		insinto /usr/share/gtk-doc/html/poppler
+		insinto "/usr/share/gtk-doc/html/poppler"
 		doins -r "${S}/glib/reference/html/"*
 	fi
 }
