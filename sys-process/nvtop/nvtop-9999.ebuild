@@ -3,29 +3,39 @@
 
 EAPI=8
 
-inherit cmake linux-info xdg
+# *DEPENDS based on U 20
 
-if [[ "${PV}" == "9999" ]] ; then
-	EGIT_REPO_URI="https://github.com/Syllo/${PN}.git"
-	inherit git-r3
-	IUSE="
-		fallback-commit
-	"
-else
-	SRC_URI="https://github.com/Syllo/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="~amd64 ~x86"
-fi
-
-DESCRIPTION="NVIDIA GPUs htop like monitoring tool"
-HOMEPAGE="https://github.com/Syllo/nvtop"
-LICENSE="GPL-3+"
-SLOT="0"
+LINUX_KERNEL_AMDGPU_FDINFO_KV="5.14"
+LINUX_KERNEL_INTEL_FDINFO_KV="5.19"
+LINUX_KERNEL_MSM_FDINFO_KV="6.0"
 VIDEO_CARDS=(
 	amdgpu
 	freedreno
 	intel
 	nvidia
 )
+
+inherit cmake linux-info xdg
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE="
+		fallback-commit
+	"
+	EGIT_REPO_URI="https://github.com/Syllo/${PN}.git"
+	FALLBACK_COMMIT="0316ce19581c3d8543cf6aa312d1569c56ca754f" # Feb 26, 2024
+	inherit git-r3
+else
+	KEYWORDS="~amd64 ~x86"
+	SRC_URI="
+https://github.com/Syllo/${PN}/archive/${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
+fi
+
+DESCRIPTION="GPU & Accelerator process monitoring"
+HOMEPAGE="https://github.com/Syllo/nvtop"
+LICENSE="GPL-3+"
+SLOT="0"
 IUSE+="
 	${VIDEO_CARDS[@]/#/video_cards_}
 	custom-kernel systemd udev unicode
@@ -64,12 +74,8 @@ gen_kernel_repend() {
 		>=sys-kernel/vanilla-kernel-${kv}
 	"
 }
-LINUX_KERNEL_AMDGPU_FDINFO_KV="5.14"
-LINUX_KERNEL_INTEL_FDINFO_KV="5.19"
-LINUX_KERNEL_MSM_FDINFO_KV="6.0"
-# *DEPENDS based on U 18.04
 RDEPEND="
-	>=sys-libs/ncurses-6.1:0=
+	>=sys-libs/ncurses-0.7.14:0=
 	udev? (
 		!systemd? (
 			!sys-fs/eudev
@@ -77,7 +83,7 @@ RDEPEND="
 		)
 	)
 	systemd? (
-		>=sys-apps/systemd-237
+		>=sys-apps/systemd-245.4
 	)
 	video_cards_amdgpu? (
 		!custom-kernel? (
@@ -91,7 +97,7 @@ RDEPEND="
 				)
 			)
 		)
-		>=x11-libs/libdrm-2.4.99[video_cards_amdgpu]
+		>=x11-libs/libdrm-2.4.101[video_cards_amdgpu]
 	)
 	video_cards_freedreno?  (
 		!custom-kernel? (
@@ -99,7 +105,7 @@ RDEPEND="
 				$(gen_kernel_repend ${LINUX_KERNEL_MSM_FDINFO_KV})
 			)
 		)
-		>=x11-libs/libdrm-2.4.99[video_cards_freedreno]
+		>=x11-libs/libdrm-2.4.101[video_cards_freedreno]
 	)
 	video_cards_intel?  (
 		!custom-kernel? (
@@ -116,8 +122,8 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-build/cmake-3.18
-	>=sys-devel/gcc-7.4.0
+	>=dev-build/cmake-3.16.3
+	>=sys-devel/gcc-9.3.0
 	virtual/pkgconfig
 "
 
@@ -175,8 +181,8 @@ ewarn
 }
 
 src_unpack() {
-	if [[ "${PV}" == "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="be47f8c560487efc6e6a419d59c69bfbdb819324" # Jul 28, 2023
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 	else
