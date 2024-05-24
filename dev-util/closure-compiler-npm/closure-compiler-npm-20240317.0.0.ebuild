@@ -973,27 +973,27 @@ eerror
 	java-pkg-opt-2_pkg_setup
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT_CLOSURE_COMPILER}
 	javac --version || die
-	# JAVA_HOME_11_X64 should be the OpenJDK base path not GraalVM.
+	# JAVA_HOME_11 should be the OpenJDK base path not GraalVM.
 	# JAVA_HOME should be the GraalVM base path.
 
 	# Use only Hotspot at this time.
 	if has_version "dev-java/openjdk-bin:11" ; then
 		local jdk_path=$(realpath "/opt/openjdk-bin-11")
-		export JAVA_HOME_11_X64="${jdk_path}"
-	elif has_version "dev-java/openjdk:17" ; then
+		export JAVA_HOME_11="${jdk_path}"
+	elif has_version "dev-java/openjdk:11" ; then
 		local jdk_path=$(realpath "/usr/$(get_libdir)/openjdk-11")
-		export JAVA_HOME_11_X64="${jdk_path}"
+		export JAVA_HOME_11="${jdk_path}"
 	fi
 
 	if has_version "dev-java/openjdk-bin:17" ; then
 		local jdk_path=$(realpath "/opt/openjdk-bin-17")
-		export JAVA_HOME_17_X64="${jdk_path}"
+		export JAVA_HOME_17="${jdk_path}"
 	elif has_version "dev-java/openjdk:17" ; then
 		local jdk_path=$(realpath "/usr/$(get_libdir)/openjdk-17")
-		export JAVA_HOME_17_X64="${jdk_path}"
+		export JAVA_HOME_17="${jdk_path}"
 	fi
-einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64}" # For running bazel and building closure-compiler
-einfo "JAVA_HOME_17_X64:  ${JAVA_HOME_17_X64}" #
+einfo "JAVA_HOME_11:  ${JAVA_HOME_11}" # For running bazel and building closure-compiler
+einfo "JAVA_HOME_17:  ${JAVA_HOME_17}" #
 
 	# Bug
 	unset ANDROID_HOME
@@ -1003,7 +1003,7 @@ einfo "JAVA_HOME_17_X64:  ${JAVA_HOME_17_X64}" #
 einfo "COMPILER_NIGHTLY:  ${COMPILER_NIGHTLY}"
 einfo "FORCE_COLOR:  ${FORCE_COLOR}"
 einfo "JAVA_HOME:  ${JAVA_HOME} [from pkg_setup]"
-einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64} [from pkg_setup]"
+einfo "JAVA_HOME_11:  ${JAVA_HOME_11} [from pkg_setup]"
 einfo "PATH:  ${PATH}"
 
 	if ! which mvn 2>/dev/null 1>/dev/null ; then
@@ -1278,21 +1278,21 @@ src_compile() {
 # ...
 # Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.reflect.InaccessibleObjectException: Unable to make java.lang.String(byte[],byte) accessible: module java.base does not "opens java.lang" to unnamed module @76552cb [in thread "skyframe-evaluator 2"]
 # ...
-einfo "JAVA_HOME_11_X64:  ${JAVA_HOME_11_X64}"
+einfo "JAVA_HOME_11:  ${JAVA_HOME_11}"
 	echo \
-		"startup --server_javabase=${JAVA_HOME_11_X64}" \
+		"startup --server_javabase=${JAVA_HOME_11}" \
 		>> \
 		"compiler/.bazelrc" \
 		|| die
 
 	# You have to define the build with a java_path with a custom label.
 	echo \
-		"build --javabase=:absolute_javabase --define=ABSOLUTE_JAVABASE=${JAVA_HOME_11_X64} --define=USE_ABSOLUTE_JAVABASE=true" \
+		"build --javabase=:absolute_javabase --define=ABSOLUTE_JAVABASE=${JAVA_HOME_11} --define=USE_ABSOLUTE_JAVABASE=true" \
 		>> \
 		"compiler/.bazelrc" \
 		|| die
 
-	export JAVA_HOME="${JAVA_HOME_11_X64}"
+	export JAVA_HOME="${JAVA_HOME_11}"
         export USER_HOME="${HOME}"
 	einfo "JAVA_HOME:  ${JAVA_HOME}"
         einfo "HOME:  ${HOME}"
