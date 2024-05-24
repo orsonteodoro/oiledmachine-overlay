@@ -8,8 +8,23 @@ EAPI=8
 # TODO package:
 # zemberek
 
+# USE flags default enabled are based on CI.
+# test USE flag is enabled in CI.
+
+# nuspell in *DEPENDs needs multilib?
+
+QA_CONFIG_IMPL_DECL_SKIP=(
+	alignof
+	static_assert
+	unreachable
+)
+
 inherit multilib-minimal
 
+KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
+~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos
+"
 SRC_URI="
 https://github.com/AbiWord/enchant/releases/download/v${PV}/${P}.tar.gz
 "
@@ -21,12 +36,6 @@ HOMEPAGE="
 "
 LICENSE="LGPL-2.1+"
 SLOT="2/${PV}"
-KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
-~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos
-"
-# Default enabled is based on CI.
-# test is enabled in CI.
 IUSE+="
 +aspell +hunspell +nuspell test +voikko -zemberek
 "
@@ -38,7 +47,6 @@ REQUIRED_USE="
 		zemberek
 	)
 "
-# CI uses U 22.04.2
 RDEPEND+="
 	!<app-text/enchant-1.6.1-r2:0
 	>=dev-libs/glib-2.6:2[${MULTILIB_USEDEP}]
@@ -60,7 +68,6 @@ RDEPEND+="
 		>=dev-libs/dbus-glib-0.62[${MULTILIB_USEDEP}]
 	)
 "
-# nuspell needs multilib ?
 DEPEND+="
 	${RDEPEND}
 	test? (
@@ -70,11 +77,6 @@ DEPEND+="
 BDEPEND+="
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
 "
-QA_CONFIG_IMPL_DECL_SKIP=(
-	alignof
-	static_assert
-	unreachable
-)
 
 src_prepare() {
 	default
@@ -89,7 +91,7 @@ multilib_src_configure() {
 		$(use_with aspell)
 		$(use_with hunspell)
 		--disable-static
-		--with-hunspell-dir="${EPREFIX}"/usr/share/hunspell/
+		--with-hunspell-dir="${EPREFIX}/usr/share/hunspell/"
 		--without-applespell
 		--without-hspell
 		--without-zemberek
