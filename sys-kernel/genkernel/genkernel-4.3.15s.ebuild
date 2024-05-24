@@ -1,6 +1,8 @@
 # Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
 
 # STABLE VERSION (RECOMMENDED)
 
@@ -10,8 +12,8 @@
 # and the stable series -rX, but this one will be frozen until it
 # is at least in working state.
 
-# 4.2.6-rX (highest revision) is stable patches
-# 4.2.6-r1 is with Work in Progress (WIP) entry changes and experimental patches.
+# 4.3.15s is the stable oiledmachine-overlay patches
+# 4.3.15e is the experimental oiledmachine-overlay patches.
 
 # Changes to the 4.2.x PGO will be backported to genkernel 4.0.x later.
 
@@ -22,52 +24,72 @@
 # modified with subdir_mount, crypt_root_plain, llvm, pgo changes.  Revision
 # bumps may change on the oiledmachine-overlay.
 
-EAPI=8
+MY_PV=$(ver_cut 1-3 "${PV}")
+MY_P="${PN}-${MY_PV}"
 
-LLVM_COMPAT=( 11 12 13 14 )
-LLVM_LTO_SLOTS=( 11 12 13 14 )
-LLVM_CFI_ARM64_SLOTS=( 12 13 14 )
-LLVM_CFI_X86_SLOTS=( 13 14 )
-LLVM_PGO_SLOTS=( 13 14 )
-PYTHON_COMPAT=( python3_{10..11} )
+EXCLUDE_SCS=(
+	alpha
+	amd64
+	arm
+	hppa
+	ia64
+	mips
+	ppc
+	ppc64
+	riscv
+	s390
+	sparc
+	x86
+)
+LLVM_COMPAT=( {18..11} )
+LLVM_LTO_SLOTS=( {18..11} )
+LLVM_CFI_ARM64_SLOTS=( {18..12} )
+LLVM_CFI_X86_SLOTS=( {18..13} )
+LLVM_PGO_SLOTS=( {18..13} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit bash-completion-r1 python-single-r1
 
 # Whenever you bump a GKPKG, check if you have to move
 # or add new patches!
-VERSION_BCACHE_TOOLS="1.0.8_p20141204"
+VERSION_BCACHE_TOOLS="1.1_p20230217"
+# boost-1.84.0 needs dev-build/b2 packaged
 VERSION_BOOST="1.79.0"
-VERSION_BTRFS_PROGS="6.3.2"
-VERSION_BUSYBOX="1.34.1"
-VERSION_COREUTILS="9.3"
-VERSION_CRYPTSETUP="2.4.1"
+VERSION_BTRFS_PROGS="6.7.1"
+VERSION_BUSYBOX="1.36.1"
+VERSION_COREUTILS="9.4"
+VERSION_CRYPTSETUP="2.6.1"
 VERSION_DMRAID="1.0.0.rc16-3"
 VERSION_DROPBEAR="2022.83"
 VERSION_EUDEV="3.2.10"
 VERSION_EXPAT="2.5.0"
-VERSION_E2FSPROGS="1.46.4"
+VERSION_E2FSPROGS="1.47.0"
 VERSION_FUSE="2.9.9"
+# gnupg-2.x needs several new deps packaged
 VERSION_GPG="1.4.23"
 VERSION_HWIDS="20210613"
+# open-iscsi-2.1.9 static build not working yet
 VERSION_ISCSI="2.1.8"
+# json-c-0.17 needs gkbuild ported to meson
 VERSION_JSON_C="0.13.1"
-VERSION_KMOD="30"
+VERSION_KMOD="31"
 VERSION_LIBAIO="0.3.113"
-VERSION_LIBGCRYPT="1.9.4"
-VERSION_LIBGPGERROR="1.43"
+VERSION_LIBGCRYPT="1.10.3"
+VERSION_LIBGPGERROR="1.47"
 VERSION_LIBXCRYPT="4.4.36"
-VERSION_LVM="2.02.188"
+VERSION_LVM="2.03.22"
 VERSION_LZO="2.10"
-VERSION_MDADM="4.1"
-VERSION_POPT="1.18"
-VERSION_STRACE="6.4"
+VERSION_MDADM="4.2"
+VERSION_POPT="1.19"
+VERSION_STRACE="6.7"
 VERSION_THIN_PROVISIONING_TOOLS="0.9.0"
+# unionfs-fuse-3.4 needs fuse:3
 VERSION_UNIONFS_FUSE="2.0"
 VERSION_USERSPACE_RCU="0.14.0"
-VERSION_UTIL_LINUX="2.38.1"
-VERSION_XFSPROGS="6.3.0"
-VERSION_XZ="5.4.3"
-VERSION_ZLIB="1.2.13"
+VERSION_UTIL_LINUX="2.39.3"
+VERSION_XFSPROGS="6.4.0"
+VERSION_XZ="5.4.2"
+VERSION_ZLIB="1.3.1"
 VERSION_ZSTD="1.5.5"
 VERSION_KEYUTILS="1.6.3"
 
@@ -78,7 +100,7 @@ VERSION_MHASH="0.9.9.9"
 VERSION_STEGHIDE="0.5.1"
 
 COMMON_URI="
-	https://github.com/g2p/bcache-tools/archive/399021549984ad27bf4a13ae85e458833fe003d7.tar.gz -> bcache-tools-${VERSION_BCACHE_TOOLS}.tar.gz
+	https://git.kernel.org/pub/scm/linux/kernel/git/colyli/bcache-tools.git/snapshot/a5e3753516bd39c431def86c8dfec8a9cea1ddd4.tar.gz -> bcache-tools-${VERSION_BCACHE_TOOLS}.tar.gz
 	https://boostorg.jfrog.io/artifactory/main/release/${VERSION_BOOST}/source/boost_${VERSION_BOOST//./_}.tar.bz2
 	https://www.kernel.org/pub/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v${VERSION_BTRFS_PROGS}.tar.xz
 	https://www.busybox.net/downloads/busybox-${VERSION_BUSYBOX}.tar.bz2
@@ -118,25 +140,30 @@ COMMON_URI="
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://anongit.gentoo.org/git/proj/${PN}.git"
 	inherit git-r3
-	S="${WORKDIR}/${P}"
-	SRC_URI="${COMMON_URI}"
+	SRC_URI="
+		${COMMON_URI}
+	"
 else
-	SRC_URI="https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${P}.tar.xz
-		${COMMON_URI}"
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
+	SRC_URI="
+		${COMMON_URI}
+		https://dev.gentoo.org/~bkohler/dist/${MY_P}.tar.xz
+	"
 fi
+S="${WORKDIR}/${MY_P}"
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
 HOMEPAGE="https://wiki.gentoo.org/wiki/Genkernel https://gitweb.gentoo.org/proj/genkernel.git/"
 LICENSE="
 	GPL-2
 "
-SLOT="0"
 RESTRICT=""
+SLOT="0/stable"
 IUSE+=" ibm +firmware"
 IUSE+=" crypt_root_plain"			# Added by oteodoro.
 IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
 IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
+# Added by the oiledmachine-overlay. \
 IUSE+="
 	clang-pgo
 	sudo
@@ -149,25 +176,9 @@ IUSE+="
 	pgo_trainer_xscreensaver_2d
 	pgo_trainer_xscreensaver_3d
 	pgo_trainer_yt
-" # Added by the oiledmachine-overlay.
+"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
-"
-EXCLUDE_SCS=(
-	alpha
-	amd64
-	arm
-	hppa
-	ia64
-	mips
-	ppc
-	ppc64
-	riscv
-	s390
-	sparc
-	x86
-)
-REQUIRED_USE+="
 	cfi? (
 		llvm
 		lto
@@ -225,7 +236,9 @@ gen_scs_exclusion() {
 		"
 	done
 }
-REQUIRED_USE+=" "$(gen_scs_exclusion)
+REQUIRED_USE+="
+	$(gen_scs_exclusion)
+"
 
 gen_clang_pgo_rdepends() {
 	for s in ${LLVM_PGO_SLOTS[@]} ; do
@@ -297,10 +310,13 @@ gen_cfi_x86_rdepends() {
 # because genkernel will usually build things like LVM2, cryptsetup,
 # mdadm... during initramfs generation which will require these
 # things.
-DEPEND=""
+DEPEND="
+	app-text/asciidoc
+"
 RDEPEND+="
 	${PYTHON_DEPS}
 	>=app-misc/pax-utils-1.2.2
+	app-alternatives/cpio
 	app-portage/elt-patches
 	app-portage/portage-utils
 	dev-util/gperf
@@ -308,9 +324,9 @@ RDEPEND+="
 	dev-build/autoconf
 	dev-build/autoconf-archive
 	dev-build/automake
-	sys-devel/bc
-	sys-devel/bison
-	sys-devel/flex
+	app-alternatives/bc
+	app-alternatives/yacc
+	app-alternatives/lex
 	dev-build/libtool
 	virtual/pkgconfig
 	elibc_glibc? (
@@ -404,16 +420,12 @@ RDEPEND+="
 		x11-misc/xscreensaver[X,opengl]
 	)
 "
-
-if [[ ${PV} == 9999* ]]; then
-	DEPEND="${DEPEND} app-text/asciidoc"
-fi
-
 PATCHES=(
+	"${FILESDIR}/${MY_P}-fix-srcdir-for-new-bcache-tools.patch"
 )
 
 src_unpack() {
-	if [[ ${PV} == 9999* ]]; then
+	if [[ "${PV}" =~ "9999" ]]; then
 		git-r3_src_unpack
 	else
 		local gk_src_file
@@ -428,55 +440,15 @@ src_unpack() {
 src_prepare() {
 	default
 
-	if [[ ${PV} == 9999* ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 		einfo "Updating version tag"
 		GK_V="$(git describe --tags | sed 's:^v::')-git"
-		sed "/^GK_V/s,=.*,='${GK_V}',g" -i "${S}"/genkernel
+		sed "/^GK_V/s,=.*,='${GK_V}',g" -i "${S}/genkernel"
 		einfo "Producing ChangeLog from Git history..."
-		pushd "${S}/.git" >/dev/null || die
-		git log > "${S}"/ChangeLog || die
-		popd >/dev/null || die
+		pushd "${S}/.git" >/dev/null 2>&1 || die
+			git log > "${S}/ChangeLog" || die
+		popd >/dev/null 2>&1 || die
 	fi
-
-	# Update software.sh
-	sed -i \
-		-e "s:VERSION_BCACHE_TOOLS:${VERSION_BCACHE_TOOLS}:"\
-		-e "s:VERSION_BOOST:${VERSION_BOOST}:"\
-		-e "s:VERSION_BTRFS_PROGS:${VERSION_BTRFS_PROGS}:"\
-		-e "s:VERSION_BUSYBOX:${VERSION_BUSYBOX}:"\
-		-e "s:VERSION_COREUTILS:${VERSION_COREUTILS}:"\
-		-e "s:VERSION_CRYPTSETUP:${VERSION_CRYPTSETUP}:"\
-		-e "s:VERSION_DMRAID:${VERSION_DMRAID}:"\
-		-e "s:VERSION_DROPBEAR:${VERSION_DROPBEAR}:"\
-		-e "s:VERSION_EUDEV:${VERSION_EUDEV}:"\
-		-e "s:VERSION_EXPAT:${VERSION_EXPAT}:"\
-		-e "s:VERSION_E2FSPROGS:${VERSION_E2FSPROGS}:"\
-		-e "s:VERSION_FUSE:${VERSION_FUSE}:"\
-		-e "s:VERSION_GPG:${VERSION_GPG}:"\
-		-e "s:VERSION_HWIDS:${VERSION_HWIDS}:"\
-		-e "s:VERSION_ISCSI:${VERSION_ISCSI}:"\
-		-e "s:VERSION_JSON_C:${VERSION_JSON_C}:"\
-		-e "s:VERSION_KMOD:${VERSION_KMOD}:"\
-		-e "s:VERSION_LIBAIO:${VERSION_LIBAIO}:"\
-		-e "s:VERSION_LIBGCRYPT:${VERSION_LIBGCRYPT}:"\
-		-e "s:VERSION_LIBGPGERROR:${VERSION_LIBGPGERROR}:"\
-		-e "s:VERSION_LIBXCRYPT:${VERSION_LIBXCRYPT}:"\
-		-e "s:VERSION_LVM:${VERSION_LVM}:"\
-		-e "s:VERSION_LZO:${VERSION_LZO}:"\
-		-e "s:VERSION_MDADM:${VERSION_MDADM}:"\
-		-e "s:VERSION_MULTIPATH_TOOLS:${VERSION_MULTIPATH_TOOLS}:"\
-		-e "s:VERSION_POPT:${VERSION_POPT}:"\
-		-e "s:VERSION_STRACE:${VERSION_STRACE}:"\
-		-e "s:VERSION_THIN_PROVISIONING_TOOLS:${VERSION_THIN_PROVISIONING_TOOLS}:"\
-		-e "s:VERSION_UNIONFS_FUSE:${VERSION_UNIONFS_FUSE}:"\
-		-e "s:VERSION_USERSPACE_RCU:${VERSION_USERSPACE_RCU}:"\
-		-e "s:VERSION_UTIL_LINUX:${VERSION_UTIL_LINUX}:"\
-		-e "s:VERSION_XFSPROGS:${VERSION_XFSPROGS}:"\
-		-e "s:VERSION_XZ:${VERSION_XZ}:"\
-		-e "s:VERSION_ZLIB:${VERSION_ZLIB}:"\
-		-e "s:VERSION_ZSTD:${VERSION_ZSTD}:"\
-		"${S}"/defaults/software.sh \
-		|| die "Could not adjust versions"
 
 	eapply "${FILESDIR}/${PN}-4.2.3-compiler-noise.patch" # oiledmachine-overlay patch
 
@@ -498,207 +470,221 @@ src_prepare() {
 	fi
 
 	cp -aT "${FILESDIR}/genkernel-4.2.x" "${S}/patches" || die
+
+	# Export all the versions that may be used by genkernel build.
+	local v
+	for v in $(set |awk -F= '/^VERSION_/{print $1}') ; do
+		export ${v}
+	done
+
+	if use ibm ; then
+		cp "${S}/arch/ppc64/kernel-2.6"{"-pSeries",""} || die
+	else
+		cp "${S}/arch/ppc64/kernel-2.6"{".g5",""} || die
+	fi
+
+	use elibc_musl && eapply "${FILESDIR}/genkernel-4.3.15-mdadm-musl-fix.patch"
 }
 
 src_compile() {
-	if [[ ${PV} == 9999* ]] ; then
-		emake
-	fi
+	emake PREFIX="/usr"
 }
 
 src_install() {
+	emake DESTDIR="${D}" PREFIX="/usr" install
+	dodoc "AUTHORS" "ChangeLog" "README" "TODO"
+
+	python_fix_shebang "${ED}/usr/share/genkernel/path_expander.py"
+
+	newbashcomp "${FILESDIR}/genkernel-4.bash" "${PN}"
 	insinto /etc
-	doins "${S}"/genkernel.conf
-
-	doman genkernel.8
-	dodoc AUTHORS ChangeLog README TODO
-	dobin genkernel
-	rm -f genkernel genkernel.8 AUTHORS ChangeLog README TODO genkernel.conf
-
-	if use ibm ; then
-		cp "${S}"/arch/ppc64/kernel-2.6{-pSeries,} || die
-	else
-		cp "${S}"/arch/ppc64/kernel-2.6{.g5,} || die
-	fi
-
-	insinto /usr/share/genkernel
-	doins -r "${S}"/*
-
-	fperms +x /usr/share/genkernel/gen_worker.sh
-	fperms +x /usr/share/genkernel/path_expander.py
-
-	python_fix_shebang "${ED}"/usr/share/genkernel/path_expander.py
-
-	newbashcomp "${FILESDIR}"/genkernel-4.bash "${PN}"
-	insinto /etc
-	doins "${FILESDIR}"/initramfs.mounts
+	doins "${FILESDIR}/initramfs.mounts"
 
 	pushd "${DISTDIR}" &>/dev/null || die
-	insinto /usr/share/genkernel/distfiles
-	doins ${A/${P}.tar.xz/}
+		insinto "/usr/share/genkernel/distfiles"
+		doins ${A/${MY_P}.tar.xz/}
 	popd &>/dev/null || die
 }
 
 pkg_postinst() {
-	# Wiki is out of date
-	#echo
-	#elog 'Documentation is available in the genkernel manual page'
-	#elog 'as well as the following URL:'
-	#echo
-	#elog 'https://wiki.gentoo.org/wiki/Genkernel'
-	#echo
+# Wiki is out of date
+#elog
+#elog 'Documentation is available in the genkernel manual page as well as the'
+#elog 'following URL:'
+#elog
+#elog 'https://wiki.gentoo.org/wiki/Genkernel'
+#elog
 
 	local replacing_version
 	for replacing_version in ${REPLACING_VERSIONS} ; do
-		if ver_test "${replacing_version}" -lt 4 ; then
+		if ver_test "${replacing_version}" -lt "4" ; then
 			# This is an upgrade which requires user review
 
-			ewarn ""
-			ewarn "Genkernel v4.x is a new major release which touches"
-			ewarn "nearly everything. Be careful, read updated manpage"
-			ewarn "and pay special attention to program output regarding"
-			ewarn "changed kernel command-line parameters!"
+ewarn
+ewarn "Genkernel v4.x is a new major release which touches nearly everything."
+ewarn "Be careful, read updated manpage and pay special attention to program"
+ewarn "output regarding changed kernel command-line parameters!"
+ewarn
 
 			# Show this elog only once
 			break
 		fi
 	done
 
-	if [[ $(find /boot -name 'kernel-genkernel-*' 2>/dev/null | wc -l) -gt 0 ]] ; then
-		ewarn ''
-		ewarn 'Default kernel filename was changed from "kernel-genkernel-<ARCH>-<KV>"'
-		ewarn 'to "vmlinuz-<KV>". Please be aware that due to lexical ordering the'
-		ewarn '*default* boot entry in your boot manager could still point to last kernel'
-		ewarn 'built with genkernel before that name change, resulting in booting old'
-		ewarn 'kernel when not paying attention on boot.'
+	local n_kernels=$(find "/boot" -name 'kernel-genkernel-*' 2>/dev/null \
+		| wc -l)
+	if (( ${n_kernels} > 0 )) ; then
+ewarn
+ewarn 'The default kernel filename was changed from'
+ewarn
+ewarn '  "kernel-genkernel-<ARCH>-<KV>"'
+ewarn
+ewarn 'to'
+ewarn
+ewarn '  "vmlinuz-<KV>".'
+ewarn
+ewarn 'Please be aware that due to lexical ordering the *default* boot entry in'
+ewarn 'your boot manager could still point to last kernel built with genkernel'
+ewarn 'before that name change, resulting in booting old kernel when not paying'
+ewarn 'attention on boot.'
+ewarn
 	fi
 
 	# Show special warning for users depending on remote unlock capabilities
 	local gk_config="${EROOT}/etc/genkernel.conf"
 	if [[ -f "${gk_config}" ]] ; then
 		if grep -q -E "^SSH=[\"\']?yes" "${gk_config}" 2>/dev/null ; then
-			if ! grep -q dosshd /proc/cmdline 2>/dev/null ; then
-				ewarn ""
-				ewarn "IMPORTANT: SSH is currently enabled in your genkernel config"
-				ewarn "file (${gk_config}). However, 'dosshd' is missing from current"
-				ewarn "kernel command-line. You MUST add 'dosshd' to keep sshd enabled"
-				ewarn "in genkernel v4+ initramfs!"
+			if ! grep -q "dosshd" "/proc/cmdline" 2>/dev/null ; then
+ewarn
+ewarn "IMPORTANT:"
+ewarn
+ewarn "SSH is currently enabled in your genkernel config file (${gk_config})."
+ewarn "However, 'dosshd' is missing from current kernel command-line.  You MUST"
+ewarn "add 'dosshd' to keep sshd enabled in genkernel v4+ initramfs!"
+ewarn
 			fi
 		fi
 
 		if grep -q -E "^CMD_CALLBACK=.*emerge.*@module-rebuild" "${gk_config}" 2>/dev/null ; then
-			elog ""
-			elog "Please remove 'emerge @module-rebuild' from genkernel config"
-			elog "file (${gk_config}) and make use of new MODULEREBUILD option"
-			elog "instead."
+elog ""
+elog "Please remove 'emerge @module-rebuild' from genkernel config file"
+elog "(${gk_config}) and make use of new MODULEREBUILD option instead."
+elog ""
 		fi
 	fi
 
-	local n_root_args=$(grep -o -- '\<root=' /proc/cmdline 2>/dev/null | wc -l)
+	local n_root_args=$(grep -o -- '\<root=' "/proc/cmdline" 2>/dev/null \
+		| wc -l)
 	if [[ ${n_root_args} -gt 1 ]] ; then
-		ewarn "WARNING: Multiple root arguments (root=) on kernel command-line detected!"
-		ewarn "If you are appending non-persistent device names to kernel command-line,"
-		ewarn "next reboot could fail in case running system and initramfs do not agree"
-		ewarn "on detected root device name!"
+ewarn
+ewarn "WARNING:"
+ewarn
+ewarn "Multiple root arguments (root=) on kernel command-line detected!  If you"
+ewarn "are appending non-persistent device names to kernel command-line, the"
+ewarn "next reboot could fail in case running system and initramfs do not agree"
+ewarn "on detected root device name!"
+ewarn
 	fi
 
-	if [[ -d /run ]] ; then
+	if [[ -d "/run" ]] ; then
 		local permission_run_expected="drwxr-xr-x"
-		local permission_run=$(stat -c "%A" /run)
+		local permission_run=$(stat -c "%A" "/run")
 		if [[ "${permission_run}" != "${permission_run_expected}" ]] ; then
-			ewarn "Found the following problematic permissions:"
-			ewarn ""
-			ewarn "    ${permission_run} /run"
-			ewarn ""
-			ewarn "Expected:"
-			ewarn ""
-			ewarn "    ${permission_run_expected} /run"
-			ewarn ""
-			ewarn "This is known to be causing problems for any UDEV-enabled service."
+ewarn
+ewarn "Found the following problematic permissions:"
+ewarn
+ewarn "    ${permission_run} /run"
+ewarn
+ewarn "Expected:"
+ewarn
+ewarn "    ${permission_run_expected} /run"
+ewarn
+ewarn "This is known to be causing problems for any UDEV-enabled service."
+ewarn
 		fi
 	fi
 
-	elog
-	elog "The 4.x Genkernel patches for subdir_mount are"
-	elog "experimental and untested."
-	elog
-	elog "To activate the USE flag do:"
-	elog "mkdir -p /etc/portage/profile"
-	elog "echo \"sys-kernel/genkernel -subdir_mount\" >> /etc/portage/profile/package.use.mask"
-	elog
-	elog "Use 3.x Genkernel series for tested reliable patch for subdir_mount."
-	elog
-	elog "Genkernel 4.x users should keep a backup of your old initramfs produced"
-	elog "by Genkernel 3.x just in case things go wrong."
+elog
+elog "The 4.x Genkernel patches for subdir_mount are"
+elog "experimental and untested."
+elog
+elog "To activate the USE flag do:"
+elog "mkdir -p /etc/portage/profile"
+elog "echo \"sys-kernel/genkernel -subdir_mount\" >> /etc/portage/profile/package.use.mask"
+elog
+elog "Use 3.x Genkernel series for tested reliable patch for subdir_mount."
+elog
+elog "Genkernel 4.x users should keep a backup of your old initramfs produced"
+elog "by Genkernel 3.x just in case things go wrong."
 
-	ewarn
-	ewarn "You must load all modules by adding \"gk.hw.use-modules_load=1\" from"
-	ewarn "the kernel parameter list for grub or have the drivers built in to use"
-	ewarn " the kernel with the crypt_root_plain USE flag."
-	ewarn
+ewarn
+ewarn "You must load all modules by adding \"gk.hw.use-modules_load=1\" from"
+ewarn "the kernel parameter list for grub or have the drivers built in to use"
+ewarn " the kernel with the crypt_root_plain USE flag."
+ewarn
 
-	ewarn
-	ewarn "The identifiers in /dev/disk/by-id/ have changed between older versions"
-	ewarn "of genkernel and this version.  Please update the kernel parameters"
-	ewarn "provided to for grub when switching between the two versions.  Go to"
-	ewarn "shell mode and \`ls /dev/disk/by-id\`.  Then, take a photo of the"
-	ewarn "changes and manually edit grub."
-	ewarn
+ewarn
+ewarn "The identifiers in /dev/disk/by-id/ have changed between older versions"
+ewarn "of genkernel and this version.  Please update the kernel parameters"
+ewarn "provided to for grub when switching between the two versions.  Go to"
+ewarn "shell mode and \`ls /dev/disk/by-id\`.  Then, take a photo of the"
+ewarn "changes and manually edit grub."
+ewarn
 
 	# LVM2 has commits in newer to avoid free after use
-	ewarn
-	ewarn "The dependencies may have vulnerabilities or have vulnerability"
-	ewarn "avoidance upstream."
-	ewarn
+ewarn
+ewarn "The dependencies may have vulnerabilities or have vulnerability"
+ewarn "avoidance upstream."
+ewarn
 
-	ewarn
-	ewarn "The --clang and --llvm have been replaced with --clang-kernel and"
-	ewarn "--llvm-kernel.  The former command line options may be removed."
-	ewarn
+ewarn
+ewarn "The --clang and --llvm have been replaced with --clang-kernel and"
+ewarn "--llvm-kernel.  The former command line options may be removed."
+ewarn
 
-	ewarn
-	ewarn "The --clang-utils or --llvm-utils options are experimental.  Only basic"
-	ewarn "initramfs modules were tested.  If runtime or buildtime failure occurs"
-	ewarn "with clang, you may need to switch to gcc for that package.  Details"
-	ewarn "can be found in genkernel-4.2.3-llvm-support-v2.patch.  Either fork the"
-	ewarn "ebuild, supply a user patch, or send the option as an issue request for"
-	ewarn "review."
-	ewarn
+ewarn
+ewarn "The --clang-utils or --llvm-utils options are experimental.  Only basic"
+ewarn "initramfs modules were tested.  If runtime or buildtime failure occurs"
+ewarn "with clang, you may need to switch to gcc for that package.  Details"
+ewarn "can be found in genkernel-4.2.3-llvm-support-v2.patch.  Either fork the"
+ewarn "ebuild, supply a user patch, or send the option as an issue request for"
+ewarn "review."
+ewarn
 
-	einfo
-	einfo "The --clang, --llvm, --clang-kernel, ---llvm-kernel do not imply"
-	einfo "--lto.  You must add --lto if you want to automatically"
-	einfo "configure and build with the lto and llvm."
-	einfo
+einfo
+einfo "The --clang, --llvm, --clang-kernel, ---llvm-kernel do not imply --lto."
+einfo "You must add --lto if you want to automatically configure and build with"
+einfo "the lto and llvm."
+einfo
 
 	if use clang-pgo ; then
-	ewarn
-	ewarn "See the metadata.xml next to this ebuild for additional environment"
-	ewarn "variables for PGO training."
-	ewarn
-	ewarn "You still need to manually set the profraw version in the kernel config."
-	ewarn
+ewarn
+ewarn "See the metadata.xml next to this ebuild for additional environment"
+ewarn "variables for PGO training."
+ewarn
+ewarn "You still need to manually set the profraw version in the kernel config."
+ewarn
 	fi
 
-	ewarn
-	ewarn "The current crypt_root_plain will be deprecated for security reasons."
-	ewarn "It will be announced later when the replacement is ready and require"
-	ewarn "upgrading."
-	ewarn
+ewarn
+ewarn "The current crypt_root_plain will be deprecated for security reasons."
+ewarn "It will be announced later when the replacement is ready and require"
+ewarn "upgrading."
+ewarn
 
-	ewarn
-	ewarn "This version with oiledmachine-overlay PGO patches are still being"
-	ewarn "tested, but booting is working."
-	ewarn
+ewarn
+ewarn "This version with oiledmachine-overlay PGO patches are still being"
+ewarn "tested, but booting is working."
+ewarn
 
-	ewarn
-	ewarn "For proper eudev and /dev/disk/{by-id,by-uuid,...} support the"
-	ewarn "following changes should be made so that it is built-in the"
-	ewarn "kernel and not as a module in the kernel config:"
-	ewarn
-	ewarn "  CONFIG_NET=y"
-	ewarn "  CONFIG_UNIX=y"
-	ewarn
+ewarn
+ewarn "For proper eudev and /dev/disk/{by-id,by-uuid,...} support the following"
+ewarn "changes should be made so that it is built-in the kernel and not as a"
+ewarn "module in the kernel config:"
+ewarn
+ewarn "  CONFIG_NET=y"
+ewarn "  CONFIG_UNIX=y"
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
