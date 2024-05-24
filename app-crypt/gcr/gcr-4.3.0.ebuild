@@ -3,10 +3,10 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 VALA_USE_DEPEND="vapigen"
 
-inherit gnome.org gnome2-utils meson python-any-r1 vala xdg
+inherit flag-o-matic gnome.org gnome2-utils meson python-any-r1 vala xdg
 inherit multilib-minimal
 
 KEYWORDS="
@@ -18,22 +18,31 @@ DESCRIPTION="Libraries for cryptographic UIs and accessing PKCS#11 modules"
 LICENSE="GPL-2+ LGPL-2+"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/gcr"
 SLOT="4/gcr-4.4-gck-2.2" # subslot = soname and soversion of libgcr and libgck
-IUSE+=" +gtk gtk-doc +introspection +ssh systemd +vala"
+IUSE+=" +gcrypt -gnutls +gtk gtk-doc +introspection +ssh systemd +vala"
 REQUIRED_USE+="
+	^^ (
+		gcrypt
+		gnutls
+	)
 	vala? (
 		introspection
 	)
 "
-# For dependencies see:  gcr-4.1.0/meson.build
+# For dependencies see:  gcr-4.3.0/meson.build
 # Upstream says GPG is optional to avoid circular dependency
 DEPEND+="
 	!<app-crypt/gcr-3.41.1-r1
 	>=app-crypt/gnupg-2.3.6
 	>=app-crypt/p11-kit-0.19.0[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.68.0:2[${MULTILIB_USEDEP}]
-	>=dev-libs/libgcrypt-1.2.2:0[${MULTILIB_USEDEP}]
 	>=sys-apps/dbus-1[${MULTILIB_USEDEP}]
-	dev-libs/libgcrypt:=[${MULTILIB_USEDEP}]
+	gcrypt? (
+		>=dev-libs/libgcrypt-1.2.2:0[${MULTILIB_USEDEP}]
+		dev-libs/libgcrypt:=
+	)
+	gnutls? (
+		>=net-libs/gnutls-3.8.5[${MULTILIB_USEDEP}]
+	)
 	gtk? (
 		gui-libs/gtk:4[introspection?]
 	)
@@ -82,6 +91,7 @@ src_prepare() {
 }
 
 src_configure() {
+	filter-lto # https://gitlab.gnome.org/GNOME/gcr/-/issues/43
 	configure_abi() {
 		cd "${BUILD_DIR}" || die
 		local emesonargs=(
