@@ -3,26 +3,89 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
 MY_PN="MonoGame"
 MY_PV="3.8.1_HOTFIX"
 MY_P="${PN}-${MY_PV}"
 
-inherit git-r3 lcnr
+# The dotnet-sdk-bin supports only 1 ABI at a time.
+DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-6.0" )
 
-# Multiple frameworks actually but highest is required
-DOTNET_V="6.0"
+# Multiple frameworks are used but the highest is required.
+DOTNET_VER="6.0"
 UAP_VERSION_MIN="10.0"
+
+# Some arches are disabled because of internal assemblies are prebuilt.
+
+# For dotnet runtimes, see https://github.com/dotnet/runtime/blob/main/src/libraries/Microsoft.NETCore.Platforms/src/runtime.json
+# For CI and supported platforms, see https://github.com/MonoGame/MonoGame/blob/v3.8.1_HOTFIX/build.cake
+#arm here is armv7
+# ANDROID_MARCH=( arm arm64 x64 x86 ) # dotnet runtimes available
+ANDROID_MARCH=( arm arm64 x64 x86 ) # Based on CI
+#   arm=armv7
+ANDROID_ERIDS="${ANDROID_MARCH[@]/#/dotnet_android_}"
+
+# IOS_MARCH_=( arm arm64 x64 x86 ) # dotnet runtimes available
+IOS_MARCH=( arm arm64 ) # Based on CI
+IOS_ERIDS="${IOS_MARCH[@]/#/dotnet_ios_}"
+# OS >= 11.2
+
+# IOSSIMULATOR_MARCH_=( arm64 x64 x86 ) # dotnet runtimes available
+IOSSIMULATOR_MARCH=( arm64 x64 x86 ) # Based on CI
+IOSSIMULATOR_ERIDS="${IOSSIMULATOR_MARCH[@]/#/dotnet_iossimulator_}"
+
+# arm here is armv7*hf only; armel is armv7*s*
+# LINUX_MARCH=( arm arm64 armel armv6 loongarch64 ppc64le mips64 s390x x64 x86 ) # dotnet runtimes available
+LINUX_MARCH=( x64 ) # Based on CI
+LINUX_ERIDS="${LINUX_MARCH[@]/#/dotnet_linux_}"
+
+# arm here is armv7 or armv6; armel is armv7*s*
+# LINUX_MUSL_MARCH=( arm arm64 armel ppc64le s390x x64 x86 ) # dotnet runtimes available
+LINUX_MUSL_MARCH=( ) # Based on CI
+LINUX_MUSL_ERIDS="${LINUX_MUSL_MARCH[@]/#/dotnet_linux_musl_}"
+
+# OSX_MARCH=( arm64 x64 ) # dotnet runtimes available
+OSX_MARCH=( x64 ) # Based on CI
+OSX_ERIDS="${OSX_MARCH[@]/#/dotnet_osx_}"
+
+# Not supported by ebuild because of dotnet workload install uwp missing
+# UWP_MARCH=( arm arm64 x64 x86 ) # Based on Wikipedia
+UWP_MARCH=( x64 ) # Guess
+UWP_ERIDS="${UWP_MARCH[@]/#/dotnet_uwp_}"
+
+# WIN_MARCH=( arm arm64 x64 x86 ) # dotnet runtimes available
+WIN_MARCH=( x64 ) # Based on CI
+WIN_ERIDS="${WIN_MARCH[@]/#/dotnet_win_}"
+
+ERIDS=(
+	${ANDROID_ERIDS[@]}
+	${IOS_ERIDS[@]}
+	${LINUX_ERIDS[@]}
+	${OSX_ERIDS[@]}
+	${UWP_ERIDS[@]}
+	${WIN_ERIDS[@]}
+)
+
+inherit lcnr
+
+EGIT_COMMIT="v${MY_PV}"
+EGIT_BRANCH="master"
+EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_P}"
+EGIT_REPO_URI="https://github.com/MonoGame/MonoGame.git"
+inherit git-r3
+KEYWORDS=" ~amd64 ~arm64-macos"
+S="${WORKDIR}/${MY_P}"
 
 DESCRIPTION="One framework for creating powerful cross-platform games."
 HOMEPAGE="http://www.monogame.net"
 LICENSE="
-	Ms-PL
-	MIT
 	Apache-2.0
+	BSD
 	GamepadConfig
 	FIPL-1.0
 	FTL
-	BSD MIT
+	MIT
+	Ms-PL
 	GPL-2
 	GPL-2+
 	GPL-3
@@ -67,61 +130,13 @@ LICENSE="
 # ZLIB - ThirdParty/SDL_GameControllerDB/LICENSE
 # ZLIB - ThirdParty/Dependencies/Tests/nunit_LICENSE.txt
 
-KEYWORDS=" ~amd64 ~arm64-macos"
 
-# Some arches are disabled because of internal assemblies are prebuilt.
-
-# For dotnet runtimes, see https://github.com/dotnet/runtime/blob/main/src/libraries/Microsoft.NETCore.Platforms/src/runtime.json
-# For CI and supported platforms, see https://github.com/MonoGame/MonoGame/blob/v3.8.1_HOTFIX/build.cake
-#arm here is armv7
-# ANDROID_MARCH=( arm arm64 x64 x86 ) # dotnet runtimes available
-ANDROID_MARCH=( arm arm64 x64 x86 ) # Based on CI
-#   arm=armv7
-ANDROID_ERIDS="${ANDROID_MARCH[@]/#/dotnet_android_}"
-
-# IOS_MARCH_=( arm arm64 x64 x86 ) # dotnet runtimes available
-IOS_MARCH=( arm arm64 ) # Based on CI
-IOS_ERIDS="${IOS_MARCH[@]/#/dotnet_ios_}"
-# OS >= 11.2
-
-# IOSSIMULATOR_MARCH_=( arm64 x64 x86 ) # dotnet runtimes available
-IOSSIMULATOR_MARCH=( arm64 x64 x86 ) # Based on CI
-IOSSIMULATOR_ERIDS="${IOSSIMULATOR_MARCH[@]/#/dotnet_iossimulator_}"
-
-# arm here is armv7*hf only; armel is armv7*s*
-# LINUX_MARCH=( arm arm64 armel armv6 loongarch64 ppc64le mips64 s390x x64 x86 ) # dotnet runtimes available
-LINUX_MARCH=( x64 ) # Based on CI
-LINUX_ERIDS="${LINUX_MARCH[@]/#/dotnet_linux_}"
-
-# arm here is armv7 or armv6; armel is armv7*s*
-# LINUX_MUSL_MARCH=( arm arm64 armel ppc64le s390x x64 x86 ) # dotnet runtimes available
-LINUX_MUSL_MARCH=( ) # Based on CI
-LINUX_MUSL_ERIDS="${LINUX_MUSL_MARCH[@]/#/dotnet_linux_musl_}"
-
-# OSX_MARCH=( arm64 x64 ) # dotnet runtimes available
-OSX_MARCH=( x64 ) # Based on CI
-OSX_ERIDS="${OSX_MARCH[@]/#/dotnet_osx_}"
-
-# Not supported by ebuild because of dotnet workload install uwp missing
-# UWP_MARCH=( arm arm64 x64 x86 ) # Based on Wikipedia
-UWP_MARCH=( x64 ) # Guess
-UWP_ERIDS="${UWP_MARCH[@]/#/dotnet_uwp_}"
-
-# WIN_MARCH=( arm arm64 x64 x86 ) # dotnet runtimes available
-WIN_MARCH=( x64 ) # Based on CI
-WIN_ERIDS="${WIN_MARCH[@]/#/dotnet_win_}"
+RESTRICT="mirror"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 
 # emerge RIDs
 #	${LINUX_MUSL_ERIDS[@]}
 #	${IOSSIMULATOR_ERIDS[@]}
-ERIDS=(
-	${ANDROID_ERIDS[@]}
-	${IOS_ERIDS[@]}
-	${LINUX_ERIDS[@]}
-	${OSX_ERIDS[@]}
-	${UWP_ERIDS[@]}
-	${WIN_ERIDS[@]}
-)
 
 IUSE+=" ${ERIDS[@]}"
 REQUIRED_USE+="
@@ -146,11 +161,13 @@ gen_linux_required_use() {
 		"
 	done
 }
-REQUIRED_USE+=" "$(gen_linux_required_use)
+REQUIRED_USE+="
+	$(gen_linux_required_use)
+"
 
 # The dev-dotnet/dotnet-sdk-bin ebuild supports only one march
 RDEPEND+="
-	>=dev-dotnet/dotnet-sdk-bin-${DOTNET_V}:${DOTNET_V}
+	>=dev-dotnet/dotnet-sdk-bin-${DOTNET_VER}:${DOTNET_VER}
 	media-libs/libpng
 	sys-devel/gcc[openmp]
 	sys-libs/zlib[minizip]
@@ -160,7 +177,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-dotnet/dotnet-sdk-bin-${DOTNET_V}:${DOTNET_V}
+	>=dev-dotnet/dotnet-sdk-bin-${DOTNET_VER}:${DOTNET_VER}
 "
 
 IUSE+="
@@ -168,14 +185,6 @@ IUSE+="
 	developer
 	nupkg
 "
-
-SRC_URI=""
-SLOT="0/$(ver_cut 1-2 ${PV})"
-S="${WORKDIR}/${MY_P}"
-RESTRICT="mirror"
-
-# The dotnet-sdk-bin supports only 1 ABI at a time.
-DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-6.0" )
 
 get_crid_platform() {
 	local hrid="${1}"
@@ -253,10 +262,6 @@ eerror
 src_unpack() {
 	# For .gitmodules
 	local my_pv="${PV}"
-	EGIT_COMMIT="v${MY_PV}"
-	EGIT_BRANCH="master"
-	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_P}"
-	EGIT_REPO_URI="https://github.com/MonoGame/MonoGame.git"
 	git-r3_fetch
 	git-r3_checkout
 }
@@ -495,13 +500,13 @@ src_compile() {
 				tfm="uap${UAP_VERSION_MIN}"
 				tfm2="v6.0"
 			elif [[ "${hplatform}" =~ ("iossimulator") ]] ; then
-				tfm="net${DOTNET_V}-ios"
+				tfm="net${DOTNET_VER}-ios"
 				tfm2="v6.0"
 			elif [[ "${hplatform}" =~ ("android"|"ios"|"windows") ]] ; then
-				tfm="net${DOTNET_V}-${hplatform}"
+				tfm="net${DOTNET_VER}-${hplatform}"
 				tfm2="v6.0"
 			else
-				tfm="net${DOTNET_V}"
+				tfm="net${DOTNET_VER}"
 				tfm2="v6.0"
 			fi
 
@@ -652,15 +657,15 @@ _install() {
 	for ns in ${NS[@]} ; do
 		local tfm=""
 		if [[ "${ns}" =~ "MonoGame.".*"Android" ]] ; then
-			tfm="net${DOTNET_V}-macos"
+			tfm="net${DOTNET_VER}-macos"
 		elif [[ "${ns}" =~ "MonoGame.".*"iOS" ]] ; then
-			tfm="net${DOTNET_V}-ios"
+			tfm="net${DOTNET_VER}-ios"
 		elif [[ "${ns}" =~ "MonoGame.".*"Mac" ]] ; then
-			tfm="net${DOTNET_V}-macos"
+			tfm="net${DOTNET_VER}-macos"
 		elif [[ "${ns}" =~ "MonoGame.".*"WindowsUniversal" ]] ; then
 			tfm="uap${UAP_VERSION_MIN}"
 		elif [[ "${ns}" =~ "MonoGame.".*"Windows" ]] ; then
-			tfm="net${DOTNET_V}-windows"
+			tfm="net${DOTNET_VER}-windows"
 		elif [[ "${ns}" =~ "MonoGame.Packaging.Flatpak" ]] ; then
 			tfm="netstandard2.0"
 		elif [[ "${ns}" =~ "MonoGame.Templates.CSharp" ]] ; then
@@ -668,7 +673,7 @@ _install() {
 		elif [[ "${ns}" =~ "MonoGame.Templates.VSExtension" ]] ; then
 			tfm="net472"
 		else
-			tfm="net${DOTNET_V}"
+			tfm="net${DOTNET_VER}"
 		fi
 		insinto "/opt/${SDK}/shared/${ns}.${hrid}/${MY_PV}/${tfm}"
 		add_ns "${ns}"
