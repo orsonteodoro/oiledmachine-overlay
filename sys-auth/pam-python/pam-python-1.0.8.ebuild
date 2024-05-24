@@ -10,7 +10,7 @@ EAPI=8
 # Still needs testing.  Not confirmed working.
 # It requires manual setup which has not been documented.
 
-PYTHON_COMPAT=( python3_{8..11} ) # Originally for 2.7
+PYTHON_COMPAT=( "python3_"{8..11} ) # Originally for 2.7
 
 inherit flag-o-matic python-single-r1 toolchain-funcs
 
@@ -21,7 +21,6 @@ SRC_URI=" mirror://sourceforge/${PN}/${P}.tar.gz"
 DESCRIPTION="Enables PAM modules to be written in Python"
 HOMEPAGE="http://pam-python.sourceforge.net/"
 LICENSE="AGPL-3+"
-
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
@@ -55,7 +54,7 @@ BDEPEND+="
 	)
 "
 # The test modifies ${BROOT}/etc/pam.d.
-DOCS=( agpl-3.0.txt ChangeLog.txt README.txt )
+DOCS=( "agpl-3.0.txt" "ChangeLog.txt" "README.txt" )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.0.8-no-sudo.patch"
 	"${FILESDIR}/${PN}-1.0.8-compiler-agnostic.patch"
@@ -72,10 +71,10 @@ PATCHES=(
 )
 
 pkg_setup() {
-	addwrite /etc/pam.d
+	addwrite "/etc/pam.d"
 	python-single-r1_pkg_setup
 	if use test ; then
-		if [[ "${FEATURES}" =~ (^| |"user")"sandbox" ]] ; then
+		if [[ "${FEATURES}" =~ (^|" "|"user")"sandbox" ]] ; then
 eerror "FEATURES require per-package -sandbox and -usersandbox for testing"
 eerror "FEATURES:  ${FEATURES}"
 			die
