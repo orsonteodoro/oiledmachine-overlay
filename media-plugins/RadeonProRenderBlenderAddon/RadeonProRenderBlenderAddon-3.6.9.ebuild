@@ -7,7 +7,7 @@ LLVM_COMPAT=( {13..11} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 # LLVM versions supported:
 # =media-gfx/blender-9999 (4.2.0 alpha) :: 17 16 15 ( not supported in this series )
-# =media-gfx/blender-3.6* :: 16 15 14 13 12 11 ( not supported in this series )
+# =media-gfx/blender-3.6* :: 16 15 14 13 12 11      ( not supported in this series )
 # =media-gfx/blender-3.5* :: 13 12 11
 # =media-gfx/blender-3.4* :: 13 12 11
 # =media-gfx/blender-3.3* :: 13 12 11
