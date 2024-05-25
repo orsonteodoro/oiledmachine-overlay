@@ -3,23 +3,41 @@
 
 EAPI=8
 
+# CMakeLists.txt lists versions
+# See https://github.com/civetweb/civetweb/tree/v1.15/src/third_party
+LUA_5_1_MIN="5.1.5"
+LUA_5_2_MIN="5.2.4"
+LUA_5_3_MIN="5.3.6"
+LUA_5_4_MIN="5.4.3"
 # Building with 5.1 is broken.
 LUA_COMPAT=( lua5-{1..4} )
+# CI uses U 14.04
+LUA_IMPLS=(
+	5.1
+	5.2
+	5.3
+	5.4
+)
+LUA_PV_SUPPORTED=(
+	5.1.5
+	5.2.4
+	5.3.5
+	5.4.0
+) # Upstream supported specifically
 
 inherit cmake flag-o-matic lua multilib-minimal
 
+KEYWORDS="~amd64 ~ppc ~x86"
+S="${WORKDIR}/civetweb-${PV}"
 SRC_URI="
 https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/civetweb-${PV}"
 
 DESCRIPTION="CivetWeb is an embedded C++ web server"
 HOMEPAGE="https://github.com/civetweb/civetweb"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="~amd64 ~ppc ~x86"
-# For some reason, the lua eclass looks broken.
 IUSE+="
 ${LUA_COMPAT[@]/#/lua_targets_}
 +asan +c11 c89 c99 cxx98 cxx11 +cxx14 +cgi gnu17 -cxx +caching debug doc
@@ -55,25 +73,6 @@ REQUIRED_USE+="
 		cxx98
 	)
 "
-# CMakeLists.txt lists versions
-# See https://github.com/civetweb/civetweb/tree/v1.15/src/third_party
-LUA_5_1_MIN="5.1.5"
-LUA_5_2_MIN="5.2.4"
-LUA_5_3_MIN="5.3.6"
-LUA_5_4_MIN="5.4.3"
-# CI uses U 14.04
-LUA_IMPLS=(
-	5.1
-	5.2
-	5.3
-	5.4
-)
-LUA_PV_SUPPORTED=(
-	5.1.5
-	5.2.4
-	5.3.5
-	5.4.0
-) # Upstream supported specifically
 gen_lua_targets() {
 	for x in ${LUA_IMPLS[@]} ; do
 		local v="LUA_${x/./_}_MIN"
@@ -111,11 +110,11 @@ BDEPEND+="
 	virtual/pkgconfig
 "
 DOCS=(
-	docs/Embedding.md
-	docs/OpenSSL.md
-	docs/UserManual.md
-	README.md
-	RELEASE_NOTES.md
+	"docs/Embedding.md"
+	"docs/OpenSSL.md"
+	"docs/UserManual.md"
+	"README.md"
+	"RELEASE_NOTES.md"
 )
 PATCHES=(
 	"${FILESDIR}/civetweb-1.13-disable-pedantic-errors.patch"
@@ -142,22 +141,24 @@ eerror
 		fi
 	fi
 
-	local s
-	for s in ${LUA_PV_SUPPORTED[@]} ; do
-		if has_version "dev-lang/lua:$(ver_cut 1-2 ${s})" ; then
-			local best_v
-			best_v=$(best_version "dev-lang/lua:$(ver_cut 1-2 ${s})")
-			best_v=$(echo "${best_v}" | cut -f 3- -d '-')
-			best_v=$(ver_cut 1-3 ${best_v})
-			if ver_test ${best_v} -ne ${s} ; then
+	if use lua ; then
+		local s
+		for s in ${LUA_PV_SUPPORTED[@]} ; do
+			if has_version "dev-lang/lua:$(ver_cut 1-2 ${s})" ; then
+				local best_v
+				best_v=$(best_version "dev-lang/lua:$(ver_cut 1-2 ${s})")
+				best_v=$(echo "${best_v}" | cut -f 3- -d '-')
+				best_v=$(ver_cut 1-3 ${best_v})
+				if ver_test ${best_v} -ne ${s} ; then
 eerror
 eerror "The system's Lua is not ${s}.  Disable the lua dep or emerge with same"
 eerror "point release."
 eerror
-				die
+					die
+				fi
 			fi
-		fi
-	done
+		done
+	fi
 
 	if [[ -e "${ESYSROOT}/usr/include/lua.h" ]] ; then
 eerror
@@ -195,11 +196,17 @@ src_prepare() {
 		for lib_type in $(get_lib_types) ; do
 			if use lua ; then
 				prepare_lua() {
-					cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}" || die
+					cp -a \
+						"${S}" \
+						"${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}" \
+						|| die
 				}
 				lua_foreach_impl prepare_lua
 			else
-				cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
+				cp -a \
+					"${S}" \
+					"${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" \
+					|| die
 			fi
 		done
 	}
