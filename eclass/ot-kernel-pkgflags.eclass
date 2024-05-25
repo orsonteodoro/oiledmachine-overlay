@@ -311,7 +311,6 @@ ot-kernel-pkgflags_apply() {
 	_ot-kernel_checkpoint_dss_acl_requirement # 1, 7
 	_ot-kernel_checkpoint_dss_anti_malware_requirement # 5
 	_ot-kernel_checkpoint_dss_audit_logs_requirement # 10
-	_ot-kernel_checkpoint_dss_hmac_encryption_requirement # 3
 	_ot-kernel_checkpoint_dss_disk_encryption_requirement # 3
 	_ot-kernel_checkpoint_dss_firewall_requirement # 1
 	_ot-kernel_checkpoint_dss_lsm_requirement # 7
@@ -3075,10 +3074,18 @@ ewarn "Do not use ECB for disk encryption."
 		ot-kernel_y_configopt "CONFIG_CRYPTO_OFB"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_XTS"
 
-		# Ciphers changed unconditionally at the end of
-		# ot-kernel_src_configure_assisted
+	# Ciphers changed unconditionally at the end of
+	# ot-kernel_src_configure_assisted in the _ot-kernel-pkgflags_dss_*
+	# section.
 
 	elif ot-kernel_has_version_pkgflags "sys-fs/cryptsetup" ; then
+		if [[ "${work_profile}" == "dss" ]] ; then
+# The specs require all weak ciphers disabled.
+eerror
+eerror "DSS_DISK_ENCRYPTION=\"cryptsetup\" must be explictly used."
+eerror
+			die
+		fi
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_y_configopt "CONFIG_MD"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
@@ -12293,6 +12300,10 @@ ewarn
 # Check for disk encryption support.
 _ot-kernel_checkpoint_dss_disk_encryption_requirement() {
 	if [[ "${work_profile}" == "dss" ]] ; then
+ewarn
+ewarn "The passwords for the encrypted partitions or disk must have no"
+ewarn "associated connection with accounts being protected."
+ewarn
 		if [[ "${DSS_DISK_ENCRYPTION}" == "ext4-encryption" ]] ; then
 			ot-kernel_y_configopt "CONFIG_EXT4_FS"
 			ot-kernel_y_configopt "CONFIG_EXT4_ENCRYPTION"
@@ -12306,10 +12317,7 @@ _ot-kernel_checkpoint_dss_disk_encryption_requirement() {
 		elif grep -q -E -e "^CONFIG_FS_ENCRYPTION=y" "${path_config}" ; then
 			:
 		elif ot-kernel_has_version "sys-fs/cryptsetup" ; then
-ewarn
-ewarn "The passwords for the encrypted partitions or disk must have no"
-ewarn "associated connection with accounts being protected."
-ewarn
+			:
 		else
 eerror
 eerror "One of the following must be chosen for storage in non database"
