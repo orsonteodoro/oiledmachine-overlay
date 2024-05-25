@@ -3533,6 +3533,7 @@ ot-kernel_clear_env() {
 	unset CRYPTSETUP_HASHES
 	unset CRYPTSETUP_MODES
 	unset CRYPTSETUP_TCRYPT
+	unset DSS_DISK_ENCRYPTION
 	unset DSS_FIREWALL_TYPE
 	unset EMU_16BIT
 	unset HPLIP_PARPORT
@@ -11467,7 +11468,11 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_set_rust
 	ot-kernel_set_kconfig_cpu_scheduler_post
 
-	ot-kernel_set_kconfig_from_envvar_array
+	_ot-kernel-pkgflags_dss_setup_hmacs # 3
+	_ot-kernel-pkgflags_dss_disable_remaining_block_ciphers # 3
+	_ot-kernel-pkgflags_dss_disable_remaining_hash_algs # 3
+
+	ot-kernel_set_kconfig_from_envvar_array # Final user override
 	ot-kernel_print_thp_status
 
 	if [[ -e "${BUILD_DIR}/.config" ]] ; then

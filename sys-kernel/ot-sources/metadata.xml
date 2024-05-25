@@ -3695,6 +3695,14 @@ unset OT_KERNEL_PRIVATE_KEY
     CRYPTSETUP_TCRYPT - Add support for tcrypt.
     Valid values:  0, 1 (default).
 
+    DSS_DISK_ENCRYPTION - Set the preferred way to protect in non database contexts.
+    Valid values:  ext4-encryption, fs-encryption, cryptsetup, unset (autodetect)
+
+    DSS_FIREWALL_TYPE - Set the preferred firewall.
+    Valid values:  waf, unset (autodetect)
+    Notes:  waf means to select Web Application Firewall.  If waf is not selected,
+    it will check for an installed sofware based firewall package.
+
     DVD - Support for DVD, DVD-R, DVD-RW, DVD+R, DVD+RW, Blu-Ray
     Valid values:  0, 1 (default)
     See also:  CDROM

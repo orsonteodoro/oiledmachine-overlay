@@ -311,6 +311,8 @@ ot-kernel-pkgflags_apply() {
 	_ot-kernel_checkpoint_dss_acl_requirement # 1, 7
 	_ot-kernel_checkpoint_dss_anti_malware_requirement # 5
 	_ot-kernel_checkpoint_dss_audit_logs_requirement # 10
+	_ot-kernel_checkpoint_dss_hmac_encryption_requirement # 3
+	_ot-kernel_checkpoint_dss_disk_encryption_requirement # 3
 	_ot-kernel_checkpoint_dss_firewall_requirement # 1
 	_ot-kernel_checkpoint_dss_lsm_requirement # 7
 	_ot-kernel_checkpoint_dss_multiuser_requirement # 6
@@ -3022,7 +3024,61 @@ _ot-kernel-pkgflags_poly1305() {
 # @DESCRIPTION:
 # Applies kernel config flags for the cryptsetup package
 ot-kernel-pkgflags_cryptsetup() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-fs/cryptsetup" ; then
+	if [[ "${DSS_DISK_ENCRYPTION}" == "cryptsetup" ]] ; then
+ewarn "Detected DSS_DISK_ENCRYPTION=\"cryptsetup\".  Using default settings and industry standard ciphers only."
+		ot-kernel_y_configopt "CONFIG_MODULES"
+		ot-kernel_y_configopt "CONFIG_MD"
+		ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
+		ot-kernel_y_configopt "CONFIG_DM_CRYPT"
+		ot-kernel_y_configopt "CONFIG_CRYPTO"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_HASH"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_SKCIPHER"
+		ot-kernel_y_configopt "CONFIG_BLK_DEV_INITRD"
+
+		# It is assume that the secure system is always encrypted so plausable deniable does not apply.
+		# We assume LUKS2
+
+		local cryptsetup_ciphers="aes"
+		# aes is default for plain
+		# aes is default for luks1
+
+		local cryptsetup_hashes="sha256"
+		# rmd160 is default for plain, but requires sha256 for essiv defaults
+		# sha256 is default for luks1
+
+		local cryptsetup_integrities=""
+
+		local cryptsetup_ivs="plain64"
+		# essiv:sha256 is default for plain
+		# plain64 is default for luks2
+
+		local cryptsetup_modes="cbc xts"
+		# cbc is default for plain
+		# xts is default for luks
+
+		_ot-kernel-pkgflags_aes ${cryptsetup_modes}
+
+		# 2001, American (NSA), Hash Function
+		_ot-kernel-pkgflags_sha256
+
+		# 2001, American (NSA), Hash Function
+		_ot-kernel-pkgflags_sha512
+
+		# 2006, Belgian
+		_ot-kernel-pkgflags_sha3
+
+ewarn "Do not use ECB for disk encryption."
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"	# From ebuild
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CFB"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CTR"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CTS"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_OFB"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_XTS"
+
+		# Ciphers changed unconditionally at the end of
+		# ot-kernel_src_configure_assisted
+
+	elif ot-kernel_has_version_pkgflags "sys-fs/cryptsetup" ; then
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_y_configopt "CONFIG_MD"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
@@ -3090,8 +3146,10 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 		[[ "${cryptsetup_hashes}" =~ "sha3" ]] && _ot-kernel-pkgflags_sha3
 		[[ "${cryptsetup_hashes}" =~ "wp512" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_WP512"
 
+ewarn "ESSIV is deprecated, do not use for newer deployments."
 		[[ "${cryptsetup_ivs}" =~ "essiv" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_ESSIV"	# For compatibility, do not use for newer deployments
 
+ewarn "Do not use ECB for disk encryption."
 		[[ "${cryptsetup_modes}" =~ "cbc" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"	# From ebuild
 		[[ "${cryptsetup_modes}" =~ "cfb" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CFB"
 		[[ "${cryptsetup_modes}" =~ "ctr" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CTR"
@@ -12205,7 +12263,7 @@ _ot-kernel_checkpoint_dss_lsm_requirement() {
 		else
 ewarn
 ewarn "You are missing an access control model implementation for the dss work"
-ewarn "profile.  Choose one of the following to silence this error:"
+ewarn "profile.  Install one of the following to silence this error:"
 ewarn
 ewarn "sys-apps/apparmor"
 ewarn "sec-policy/selinux-base"
@@ -12226,6 +12284,46 @@ ewarn "OT_KERNEL_LSMS=\"default\""
 ewarn "OT_KERNEL_LSMS=\"integrity,selinux,bpf\""
 ewarn "OT_KERNEL_LSMS=\"integrity,apparmor,bpf\""
 ewarn
+		fi
+	fi
+}
+
+# @FUNCTION: _ot-kernel_checkpoint_dss_disk_encryption_requirement
+# @DESCRIPTION:
+# Check for disk encryption support.
+_ot-kernel_checkpoint_dss_disk_encryption_requirement() {
+	if [[ "${work_profile}" == "dss" ]] ; then
+		if [[ "${DSS_DISK_ENCRYPTION}" == "ext4-encryption" ]] ; then
+			ot-kernel_y_configopt "CONFIG_EXT4_FS"
+			ot-kernel_y_configopt "CONFIG_EXT4_ENCRYPTION"
+		elif [[ "${DSS_DISK_ENCRYPTION}" == "fs-encryption" ]] ; then
+			ot-kernel_y_configopt "CONFIG_EXT4_FS"
+			ot-kernel_y_configopt "CONFIG_FS_ENCRYPTION"
+		elif [[ "${DSS_DISK_ENCRYPTION}" == "cryptsetup" ]] ; then
+			:
+		elif grep -q -E -e "^CONFIG_EXT4_ENCRYPTION=y" "${path_config}" ; then
+			:
+		elif grep -q -E -e "^CONFIG_FS_ENCRYPTION=y" "${path_config}" ; then
+			:
+		elif ot-kernel_has_version "sys-fs/cryptsetup" ; then
+ewarn
+ewarn "The passwords for the encrypted partitions or disk must have no"
+ewarn "associated connection with accounts being protected."
+ewarn
+		else
+eerror
+eerror "One of the following must be chosen for storage in non database"
+eerror "contexts:"
+eerror
+eerror "CONFIG_EXT4_ENCRYPTION  (For 4.19 only)"
+eerror "CONFIG_FS_ENCRYPTION    (For Ext4, F2FS, UBIFS only)"
+eerror "sys-fs/cryptsetup"
+eerror
+eerror "  or"
+eerror
+eerror "Set DSS_DISK_ENCRYPTION to either ext4-encryption, fs-encryption, cryptsetup."
+eerror
+			die
 		fi
 	fi
 }
@@ -12256,13 +12354,174 @@ eerror
 eerror "A secure ntp implementation with proper security USE flags connected to"
 eerror "a secured ntp server is required for the dss work profile."
 eerror
-eerror "Acceptable packages:"
+eerror "Install one of the following packages to continue:"
 eerror
 eerror "net-misc/chrony"
 eerror "net-misc/ntpsec"
 eerror
 			die
 		fi
+	fi
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_dss_setup_hmacs
+# @DESCRIPTION:
+# Setup required Keyed Cryptographic Hash Algorithms.
+_ot-kernel-pkgflags_dss_setup_hmacs() {
+	if [[ "${work_profile}" == "dss" ]] ; then
+		# Must be >= 128 Bit
+		ot-kernel_y_configopt "CONFIG_CRYPTO"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CMAC"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH" # GMAC
+
+		# Disable other MACs
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_MICHAEL_MIC"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_VMAC"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_XCBC"
+	fi
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_dss_disable_remaining_hash_algs
+# @DESCRIPTION:
+# Disable all unused ciphers for the dss work profile.
+_ot-kernel-pkgflags_dss_disable_remaining_hash_algs() {
+	if [[ "${work_profile}" == "dss" ]] ; then
+ewarn
+ewarn "Using the dss work profile may mess up the WiFI kernel config.  Use the"
+ewarn "OT_KERNEL_KCONFIG override to fix this."
+ewarn
+		# Only strong ciphers allowed
+		# Disabled alternative hash algorithms
+
+		# 2012, American et.al., Hash Function
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_BLAKE2B_NEON"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_BLAKE2B"
+
+		# 2010, Chinese, Hash Function
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SM3_GENERIC"
+
+		# 2000-2003, Belgian-Brazilian, Hash Function
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_WP512"
+
+		# 1988, 64 Bit Block Size, 64 Bit Keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_FCRYPT"
+
+
+		# Disabled weak hashes
+		# For hash cryptoanalysis, see
+		# https://en.wikipedia.org/wiki/Hash_function_security_summary
+
+		# 1992, American (NSA), Hash Function
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_ARM"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_ARM_NEON"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_ARM64_CE"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_OCTEON"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_PPC_SPE"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_S390"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_SSSE3"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1"
+
+		# 1992, American, Hash Function
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_MD5_OCTEON"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_MD5_PPC"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_MD5_SPARC64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_MD5"
+
+		# 1990, American, Hash Function
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_MD4"
+
+		# 2012, Russian (FSB), Hash Function
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_STREEBOG"
+
+		# 1992, German-Belgian, Hash Function
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_RMD160"
+
+		# 2012, Hash Function (non cryptographic)
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_XXHASH"
+	fi
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_dss_disable_remaining_block_ciphers
+# @DESCRIPTION:
+# Disable all unused ciphers for the dss work profile.
+_ot-kernel-pkgflags_dss_disable_remaining_block_ciphers() {
+	if [[ "${work_profile}" == "dss" ]] ; then
+ewarn
+ewarn "Using the dss work profile may mess up the WiFI kernel config.  Use the"
+ewarn "OT_KERNEL_KCONFIG override to fix this."
+ewarn
+		# Only strong ciphers allowed
+		# Disable alternative block ciphers
+
+		# 2000, Belgian-Brazillian, 128 Bit Block Cipher, 128-256 Bit Keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_ANUBIS"
+
+		# 2003, South Korean, 128 Bit Block Cipher, 128-256 Bit Keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_ARIA"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_ARIA_GFNI_AVX512_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX2_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX_X86_64"
+
+		# 2000, Japanese, 128 Bit Block Cipher, 128-256 Bit Keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX2_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_SPARC64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA"
+
+		# 1996, Canadian, 64 Bit Block Cipher, 40-128 Bit Keys
+		ot-kernel_unset_configopt "CRYPTO_CAST5"
+
+		# 1998, Canadaian, 128 Bit Block Cipher, 128-256 Bit Keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAST6_AVX_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAST6"
+
+		# 2000, Brazilian, 64 Bit Block Cipher, 128 Bit Keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_KHAZAD"
+
+		# 1998, Korean (KISA), 128 Bit Block Cipher, 128 Bit Keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SEED"
+
+		# 1998, British-Israeli-Danish, 128 Bit Block Cipher, 128-256 Bit Keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SERPENT_AVX2_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SERPENT_AVX_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SERPENT_SSE2_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SERPENT_SSE2_586"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SERPENT"
+
+		# 2006, Chinese, 128 Bit Block Cipher, 128 Bit Keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX2_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
+		ot-kernel_unset_configopt "CRYPTO_SM4_GENERIC"
+
+		# [TEA] 1994, British, 64 Bit Block Cipher, 128 Bit Keys
+		# [XTEA] 1997, British, 64 Bit Block Cipher, 128 Bit Keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_TEA"
+
+		# 1998, American, 128 Bit Block Cipher, 128-256 Bit Keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_TWOFISH_AVX_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_TWOFISH_X86_64_3WAY"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_TWOFISH_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_TWOFISH"
+
+
+		# Disabled weak ciphers
+		# For cipher cryptoanalysis, see
+		# https://en.wikipedia.org/wiki/Cipher_security_summary
+
+		# 1993, American, 64 Bit Block Cipher, 32-448 Bit keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_BLOWFISH"
+
+		# 1975, American, 64 Bit Block Size, 56 Bit Key Size
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DES_S390"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DES_SPARC64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DES"
+
+		# 1981, American, 64 Bit Block Size, 112-168 Bit Key Size
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DES3_EDE_X86_64"
 	fi
 }
 
