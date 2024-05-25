@@ -3072,10 +3072,10 @@ ewarn
 
 ewarn "Do not use ECB for disk encryption."
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"	# From ebuild
-		ot-kernel_y_configopt "CONFIG_CRYPTO_CFB"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_CFB"	# Not tested upstream?
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CTR"
-		ot-kernel_y_configopt "CONFIG_CRYPTO_CTS"
-		ot-kernel_y_configopt "CONFIG_CRYPTO_OFB"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_CTS"	# Not tested upstream?
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_OFB"	# Not tested upstream?
 		ot-kernel_y_configopt "CONFIG_CRYPTO_XTS"
 
 	# Ciphers changed unconditionally at the end of
@@ -3162,10 +3162,10 @@ ewarn "ESSIV is deprecated, do not use for newer deployments."
 
 ewarn "Do not use ECB for disk encryption."
 		[[ "${cryptsetup_modes}" =~ "cbc" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"	# From ebuild
-		[[ "${cryptsetup_modes}" =~ "cfb" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CFB"
+		#[[ "${cryptsetup_modes}" =~ "cfb" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CFB"	# Not tested upstream?
 		[[ "${cryptsetup_modes}" =~ "ctr" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CTR"
-		[[ "${cryptsetup_modes}" =~ "cts" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CTS"
-		[[ "${cryptsetup_modes}" =~ "ofb" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_OFB"
+		#[[ "${cryptsetup_modes}" =~ "cts" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CTS"	# Not tested upstream?
+		#[[ "${cryptsetup_modes}" =~ "ofb" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_OFB"	# Not tested upstream?
 		[[ "${cryptsetup_modes}" =~ "xts" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_XTS"
 
 		#[[ "${cryptsetup_integrities}" =~ "aead" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_AEAD"	# use only with aes-gcm-random
@@ -12428,14 +12428,17 @@ ewarn
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_BLAKE2B_NEON"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_BLAKE2B"
 
+		# 1988, 64 Bit Block Size, 64 Bit Keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_FCRYPT"
+
+		# 1992, German-Belgian, Hash Function
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_RMD160"
+
 		# 2010, Chinese, Hash Function
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_SM3_GENERIC"
 
 		# 2000-2003, Belgian-Brazilian, Hash Function
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_WP512"
-
-		# 1988, 64 Bit Block Size, 64 Bit Keys
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_FCRYPT"
 
 
 		# Disabled weak hashes
@@ -12463,9 +12466,6 @@ ewarn
 
 		# 2012, Russian (FSB), Hash Function
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_STREEBOG"
-
-		# 1992, German-Belgian, Hash Function
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_RMD160"
 
 		# 2012, Hash Function (non cryptographic)
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_XXHASH"
