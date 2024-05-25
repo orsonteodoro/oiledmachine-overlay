@@ -354,8 +354,10 @@ RDEPEND+="
 BDEPEND+="
 	${CDEPEND_NOT_LISTED}
 	${PYTHON_DEPS}
-	$(python_gen_cond_dep 'dev-python/pip[${PYTHON_USEDEP}]')
-	$(python_gen_cond_dep '>=dev-python/pytest-3[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep '
+		>=dev-python/pytest-3[${PYTHON_USEDEP}]
+		dev-python/pip[${PYTHON_USEDEP}]
+	')
 	>=dev-build/cmake-3.11
 	app-arch/makeself
 	app-arch/unzip
