@@ -4,10 +4,9 @@
 
 EAPI=8
 
+# With clang-17 as host compiler:
 # FIXME:
-#ERROR: /var/tmp/portage/dev-python/jaxlib-0.4.28/work/jax-jaxlib-v0.4.28-python3_11-bazel-base/external/llvm-project/llvm/BUILD.bazel:656:10: Compiling llvm/utils/TableGen/Attributes.cpp [for tool] failed: undeclared inclusion(s) in rule '@llvm-project//llvm:llvm-min-tblgen':
-#this rule is missing dependency declarations for the following files included by 'llvm/utils/TableGen/Attributes.cpp':
-#  'bazel-out/k8-opt-exec-50AE0418/bin/external/llvm-project/llvm/Demangle.cppmap'
+# external/boringssl/BUILD:133:11: Compiling src/crypto/x509v3/v3_utl.c failed: (Exit 1): clang-17 failed: error executing command (from target @boringssl//:crypto)
 
 # CUDA version:  https://github.com/google/jax/blob/jaxlib-v0.4.28/docs/installation.md?plain=1#L116
 # ROCm version:  https://github.com/google/jax/blob/jaxlib-v0.4.28/build/rocm/ci_build.sh#L52
