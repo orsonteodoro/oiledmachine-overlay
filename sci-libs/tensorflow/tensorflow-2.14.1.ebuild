@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# U20, U18
+
 # SECURITY:  Bump every minor version.  Check if CVE announced:
 # https://github.com/tensorflow/tensorflow/releases/tag/v2.14.1
 
