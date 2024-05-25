@@ -12398,6 +12398,7 @@ _ot-kernel-pkgflags_dss_setup_hmacs() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CMAC"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_GCM"   # GMAC
 		ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH" # GMAC
 
 		# Disable other MACs
