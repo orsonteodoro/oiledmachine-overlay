@@ -3071,7 +3071,8 @@ ewarn
 		_ot-kernel-pkgflags_sha3
 
 ewarn "Do not use ECB for disk encryption."
-		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"	# From ebuild
+ewarn "Do not use CBC for disk encryption."
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_CBC"	# Disabled to prevent integrity attack.  See https://en.wikipedia.org/wiki/Disk_encryption_theory#Malleability_attack
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_CFB"	# Not tested upstream?
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CTR"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_CTS"	# Not tested upstream?
