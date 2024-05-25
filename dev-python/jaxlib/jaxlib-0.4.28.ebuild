@@ -46,7 +46,7 @@ LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( python3_{10..12} ) # Limited by Flax CI
 
 inherit bazel cuda distutils-r1 flag-o-matic git-r3 hip-versions java-pkg-opt-2
-inherit llvm-r1 rocm toolchain-funcs
+inherit llvm rocm toolchain-funcs
 
 # DO NOT HARD WRAP
 # DO NOT CHANGE TARBALL FILE EXT
@@ -170,11 +170,12 @@ LICENSE="
 		BSD-2
 	)
 "
-#KEYWORDS="~amd64 ~arm64" # Build failure
+#KEYWORDS="~amd64 ~arm64" # Needs install test
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda -custom-optimization-level +hardened rocm system-llvm r1
 
 rocm_6_0
@@ -1084,6 +1085,13 @@ einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 			--enable_rocm
 			--rocm_amdgpu_targets="${TF_ROCM_AMDGPU_TARGETS}"
 			--rocm_path="${ESYSROOT}/usr"
+		)
+	fi
+
+	if tc-is-clang ; then
+		args+=(
+			--use_clang=True
+			--clang_path="/usr/lib/llvm/${LLVM_SLOT}/bin/clang"
 		)
 	fi
 

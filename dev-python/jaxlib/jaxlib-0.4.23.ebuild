@@ -39,7 +39,7 @@ LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( python3_{10..11} ) # Limited by Flax CI
 
 inherit bazel cuda distutils-r1 flag-o-matic git-r3 hip-versions java-pkg-opt-2
-inherit llvm-r1 rocm toolchain-funcs
+inherit llvm rocm toolchain-funcs
 
 # DO NOT HARD WRAP
 # DO NOT CHANGE TARBALL FILE EXT
@@ -166,6 +166,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda -custom-optimization-level +hardened rocm system-llvm r1
 
 rocm_5_6
@@ -1081,6 +1082,10 @@ einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 			--rocm_amdgpu_targets="${TF_ROCM_AMDGPU_TARGETS}"
 			--rocm_path="${ESYSROOT}/usr"
 		)
+	fi
+
+	if tc-is-clang ; then
+ewarn "Disabling the clang USE flag and using gcc may unbreak build."
 	fi
 
 	# Generate to fix python version in .jax_configure.bazelrc
