@@ -12305,6 +12305,23 @@ ewarn "The passwords for the encrypted partitions or disk must have no"
 ewarn "associated connection with accounts being protected."
 ewarn
 		if [[ "${DSS_DISK_ENCRYPTION}" == "ext4-encryption" ]] ; then
+			if ver_test "${KV_MAJOR_MINOR}" -eq "4.19" ; then
+				:
+			else
+eerror
+eerror "DSS_DISK_ENCRYPTION=\"ext4-encryption\" is only allowed for the"
+eerror "4.8 - 4.20, 5.0 series."
+eerror
+eerror "For the ${KV_MAJOR_MINOR} series, instead use"
+eerror
+eerror "  DSS_DISK_ENCRYPTION=\"fs-encryption\""
+eerror
+eerror "or"
+eerror
+eerror "  DSS_DISK_ENCRYPTION=\"cryptsetup\""
+eerror
+				die
+			fi
 			ot-kernel_y_configopt "CONFIG_EXT4_FS"
 			ot-kernel_y_configopt "CONFIG_EXT4_ENCRYPTION"
 		elif [[ "${DSS_DISK_ENCRYPTION}" == "fs-encryption" ]] ; then
