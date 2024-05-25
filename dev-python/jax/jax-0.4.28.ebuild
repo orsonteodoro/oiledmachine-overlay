@@ -70,11 +70,12 @@ BDEPEND+="
 		dev-python/pytest[${PYTHON_USEDEP}]
 	)
 "
+# Avoid circular depends \
 PDEPEND+="
 	experimental? (
 		dev-python/flax[${PYTHON_USEDEP}]
 	)
-" # Avoid circular
+"
 DOCS=( "CHANGELOG.md" "CITATION.bib" "README.md" )
 
 distutils_enable_tests "pytest"
