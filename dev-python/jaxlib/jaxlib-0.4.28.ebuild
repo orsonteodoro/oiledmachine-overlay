@@ -39,6 +39,7 @@ CUDA_TARGETS_COMPAT=(
 	compute_90
 )
 DISTUTILS_USE_PEP517="standalone"
+EGIT_COMMIT="9e62994bce7c7fcbb2f6a50c9ef89526cd2c2be6"
 EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
 GCC_COMPAT=( {11..9} ) # Based on U22, U20
 JAVA_SLOT="11"
@@ -1096,6 +1097,10 @@ einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 			--clang_path="/usr/lib/llvm/${LLVM_SLOT}/bin/clang"
 		)
 	fi
+
+	args+=(
+		--jaxlib_git_hash=${EGIT_COMMIT}
+	)
 
 	# Generate to fix python version in .jax_configure.bazelrc
 	${EPYTHON} build/build.py \
