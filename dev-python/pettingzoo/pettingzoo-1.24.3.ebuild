@@ -26,7 +26,8 @@ https://github.com/Farama-Foundation/PettingZoo/archive/refs/tags/${PV}.tar.gz
 DESCRIPTION="A standard API for multi-agent reinforcement learning \
 environments, with popular reference environments and related utilities"
 HOMEPAGE="
-https://pettingzoo.farama.org/
+	https://pettingzoo.farama.org/
+	https://github.com/Farama-Foundation/PettingZoo
 "
 LICENSE="
 	MIT
