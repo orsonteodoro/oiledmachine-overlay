@@ -3034,8 +3034,12 @@ ewarn "Detected DSS_DISK_ENCRYPTION=\"cryptsetup\".  Using default settings and 
 		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_SKCIPHER"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_INITRD"
 
-		# It is assume that the secure system is always encrypted so plausable deniable does not apply.
-		# We assume LUKS2
+	# It is assume that the secure system is always encrypted so plausable
+	# deniability does not apply.
+ewarn
+ewarn "The defaults for plain dm-crypt are dropped in the dss work profile."
+ewarn "It is assumed LUKS2 will be used instead with cryptsetup."
+ewarn
 
 		local cryptsetup_ciphers="aes"
 		# aes is default for plain
