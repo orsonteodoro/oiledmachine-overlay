@@ -4,7 +4,19 @@
 
 EAPI=8
 
-inherit desktop git-r3 xdg
+inherit desktop xdg
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="84bf836a4d9e130045c962c47ac4206395d4393b" # Jul 18, 2022
+	EGIT_BRANCH="master"
+	EGIT_COMMIT="HEAD"
+	EGIT_REPO_URI="https://github.com/sobotka/filmic-blender.git"
+	inherit git-r3
+else
+	KEYWORDS="amd64 ~x86"
+	SRC_URI="FIXME"
+fi
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="Film Emulsion-Like Camera Rendering Transforms for Blender"
 HOMEPAGE="https://sobotka.github.io/filmic-blender/"
@@ -12,38 +24,45 @@ HOMEPAGE="https://sobotka.github.io/filmic-blender/"
 # For commentary from the author about licensing numbers, see:
 # https://github.com/sobotka/filmic-blender/pull/29#issuecomment-502137400
 LICENSE="all-rights-reserved"
-KEYWORDS="amd64 ~x86"
-SLOT="0/$(ver_cut 1-2 ${PV})" # 0/${PV} for latest
-RDEPEND+=" media-gfx/blender:=[color-management]" # reinstall if new blender
-IUSE+=" fallback-commit"
-SRC_URI=""
-S="${WORKDIR}/${P}"
 RESTRICT="fetch mirror"
+SLOT="0/$(ver_cut 1-2 ${PV})" # 0/${PV} for latest
+IUSE+=" fallback-commit"
+# Reinstall if new blender
+RDEPEND+="
+	media-gfx/blender:=[color-management]
+"
 
 src_unpack() {
-	EGIT_REPO_URI="https://github.com/sobotka/filmic-blender.git"
-	EGIT_BRANCH="master"
-	EGIT_COMMIT="HEAD"
-	use fallback-commit && EGIT_COMMIT="84bf836a4d9e130045c962c47ac4206395d4393b"
-	git-r3_fetch
-	git-r3_checkout
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_install() {
 	cd "${S}" || die
-	for p in $(find \
+	local package_names=(
+		$(find \
 			"${EROOT}/var/db/pkg/media-gfx/" \
 			-maxdepth 1 \
-			-name "blender*") ; do
+			-name "blender*") \
+	)
+	local p
+	for p in ${package_names[@]} ; do
 		local blender_slot=
-		local ebuild_path=$(realpath ${p}/*ebuild)
+		local ebuild_path=$(realpath "${p}/"*".ebuild")
 		local entry_name=
 		local exe_path=
 		local share_slot=
 		local slot=
 		local icon_name=
+		local s
 
-		pv=$(cat "${p}/PF" | cut -f 2 -d "-")
+		local pv=$(cat "${p}/PF" \
+			| cut -f 2 -d "-")
 
 		slot=$(cat "${p}/SLOT")
 		slot_maj=${slot%/*}
@@ -62,11 +81,13 @@ src_install() {
 			entry_name="Blender"
 			icon_name="blender"
 			blender_slot="${slot_maj}"
-			share_slot=$(ver_cut 1-2 $(cat "${p}/PF" | cut -f 2 -d "-"))
+			local _version_frag=$(cat "${p}/PF" \
+				| cut -f 2 -d "-")
+			share_slot=$(ver_cut 1-2 "${_version_frag}")
 			exe_path="/usr/bin/blender"
 		fi
 
-		insinto /usr/share/blender/${share_slot}/datafiles/colormanagement_filmic
+		insinto "/usr/share/blender/${share_slot}/datafiles/colormanagement_filmic"
 		doins -r *
 
 		make_desktop_entry \
@@ -76,17 +97,26 @@ src_install() {
 			"Graphics;3DGraphics;"
 
 		# Avoid file conflict
-		cp "${ED}/usr/share/applications/env-filmic-blender"{,-${pv}}".desktop" || die
+		cp -a \
+			"${ED}/usr/share/applications/env-filmic-blender"{"","-${pv}"}".desktop" \
+			|| die
 
-		exeinto /usr/bin
-		newexe "${FILESDIR}/blender-filmic" \
+		exeinto "/usr/bin"
+		newexe \
+			"${FILESDIR}/blender-filmic" \
 			"blender-${blender_slot}-filmic"
-		sed -i -e "s|___BLENDER_CREATOR_PATH___|${exe_path}|g" \
-			"${ED}/usr/bin/blender-${blender_slot}-filmic" || die
-		sed -i -e "s|\${SLOT}|${blender_slot}|g" \
-			"${ED}/usr/bin/blender-${blender_slot}-filmic" || die
+		sed -i \
+			-e "s|___BLENDER_CREATOR_PATH___|${exe_path}|g" \
+			"${ED}/usr/bin/blender-${blender_slot}-filmic" \
+			|| die
+		sed -i \
+			-e "s|\${SLOT}|${blender_slot}|g" \
+			"${ED}/usr/bin/blender-${blender_slot}-filmic" \
+			|| die
 	done
-	rm "${ED}/usr/share/applications/env-filmic-blender.desktop" || die
+	rm \
+		"${ED}/usr/share/applications/env-filmic-blender.desktop" \
+		|| die
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

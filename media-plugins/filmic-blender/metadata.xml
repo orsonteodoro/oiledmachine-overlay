@@ -12,8 +12,11 @@
     rendering.
   </longdescription>
   <!--
-    Launch wrappers for the desktop menu and command line have been
-    provided to conveniently switch to Filmic Blender.
+
+    oiledmachine-overlay notes:
+
+    The launch wrappers for the desktop menu and command line have been provided
+    to conveniently switch to Filmic Blender.
 
     Adjustments can be found under the "Color Management" section.
 
@@ -22,6 +25,7 @@
 
     For 3.x see:
       https://docs.blender.org/manual/en/2.83/render/color_management.html?highlight=color%20management#settings
+
   -->
   <upstream>
     <bugs-to>https://github.com/sobotka/filmic-blender/issues</bugs-to>
