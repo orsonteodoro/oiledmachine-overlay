@@ -1172,7 +1172,7 @@ einfo "Building wheel for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 		"//jaxlib/tools:build_wheel" \
 		-- \
 		--output_path="${PWD}/dist" \
-		--cpu=$(get_host) \
+		--cpu=$(get_host)
 	_ebazel shutdown
 
 	local python_pv="${EPYTHON}"

@@ -1090,10 +1090,6 @@ einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 		)
 	fi
 
-	args+=(
-		--jaxlib_git_hash=${EGIT_COMMIT}
-	)
-
 	# Generate to fix python version in .jax_configure.bazelrc
 	${EPYTHON} build/build.py \
 		--configure_only \
@@ -1174,6 +1170,7 @@ einfo "Building wheel for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 		-- \
 		--output_path="${PWD}/dist" \
 		--cpu=$(get_host) \
+		--jaxlib_git_hash=${EGIT_COMMIT}
 	_ebazel shutdown
 
 	local python_pv="${EPYTHON}"
