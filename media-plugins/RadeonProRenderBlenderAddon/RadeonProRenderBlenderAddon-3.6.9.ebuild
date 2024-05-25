@@ -3,43 +3,58 @@
 
 EAPI=8
 
-LLVM_COMPAT=( {15..11} )
+LLVM_COMPAT=( {13..11} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-# =media-gfx/blender-9999 (4.0.1) :: 15 14 13 12 11
-# =media-gfx/blender-3.4* :: 15 14 13 12 11
-# =media-gfx/blender-3.6* :: 15 14 13 12 11
+# LLVM versions supported:
+# =media-gfx/blender-9999 (4.2.0 alpha) :: 17 16 15 ( not supported in this series )
+# =media-gfx/blender-3.6* :: 16 15 14 13 12 11 ( not supported in this series )
 # =media-gfx/blender-3.5* :: 13 12 11
 # =media-gfx/blender-3.4* :: 13 12 11
 # =media-gfx/blender-3.3* :: 13 12 11
 
-# Commits based on left side.  The commit associated with the message (right) differs
-# with the commit associated with the folder (left) on the GitHub website.
-HIPBIN_COMMIT="ff60e3beadd870bbc0870ef6344193976d9ba17c"
-RPIPSDK_COMMIT="31b926e462a097e54efd653f2ed8ba5a4fad2d8c"
-RPRSC_COMMIT="6608117fcddd783e81b2aedc2c1abdf0b449d465"
-RPRSDK_COMMIT="440580074009d48b18019da1331d2494a253a96d"
-HIPBIN_DF="RadeonProRenderSDKKernels-${HIPBIN_COMMIT:0:7}.tar.gz"
-RPIPSDK_DF="RadeonImageFilter-${RPIPSDK_COMMIT:0:7}.tar.gz"
-RPRSC_DF="RadeonProRenderSharedComponents-${RPRSC_COMMIT:0:7}.tar.gz"
-RPRSDK_DF="RadeonProRenderSDK-${RPRSDK_COMMIT:0:7}.tar.gz"
-
-# It supports Python 3.7 to 3.10, but they are deprecated in this distro in
-# python-utils-r1.eclass.
-PYTHON_COMPAT=( python3_11 )
-
-PLUGIN_NAME="rprblender"
+BLENDER_SLOTS="
+	blender-3_3 # python3_11 .. python3_10
+	blender-3_4 # python3_11 .. python3_10
+	blender-3_5 # python3_11 .. python3_10
+"
 CONFIGURATION="weekly"
 # Ceiling values based on python compatibility matching the particular Blender
 # version
-MIN_BLENDER_PV="2.93"
 MAX_BLENDER_PV="3.6" # Exclusive
+MIN_BLENDER_PV="2.93"
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
 NV_DRIVER_VERSION_VULKAN="390.132"
-BLENDER_SLOTS="
-	blender-3_3
-	blender-3_4
-	blender-3_5
-"
+PLUGIN_NAME="rprblender"
+# It supports Python 3.7 to 3.10, but they are deprecated in this distro in
+# python-utils-r1.eclass.
+PYTHON_COMPAT=( "python3_11" )
+# Commits are based on left side.  The commit associated with the message
+# (right) differs with the commit associated with the folder (left) on the
+# GitHub website.
+HIPBIN_COMMIT="ff60e3beadd870bbc0870ef6344193976d9ba17c"
+HIPBIN_DF="RadeonProRenderSDKKernels-${HIPBIN_COMMIT:0:7}.tar.gz"
+ROCM_SLOTS=(
+#	rocm_5_4 # Disabled to avoid multiple LLVMs loaded bug
+#	rocm_5_3 # Disabled to avoid multiple LLVMs loaded bug
+#	rocm_5_2 # Disabled to avoid multiple LLVMs loaded bug
+#	rocm_5_1 # Disabled to avoid multiple LLVMs loaded bug
+	rocm_4_5
+	rocm_4_3
+)
+declare -A ROCM_TO_LLVM_SLOT=(
+#	["rocm_5_4"]="15" # Disabled to avoid multiple LLVMs loaded bug
+#	["rocm_5_3"]="15" # Disabled to avoid multiple LLVMs loaded bug
+#	["rocm_5_2"]="14" # Disabled to avoid multiple LLVMs loaded bug
+#	["rocm_5_1"]="14" # Disabled to avoid multiple LLVMs loaded bug
+	["rocm_4_5"]="13"
+	["rocm_4_3"]="13"
+)
+RPIPSDK_COMMIT="31b926e462a097e54efd653f2ed8ba5a4fad2d8c"
+RPIPSDK_DF="RadeonImageFilter-${RPIPSDK_COMMIT:0:7}.tar.gz"
+RPRSC_COMMIT="6608117fcddd783e81b2aedc2c1abdf0b449d465"
+RPRSC_DF="RadeonProRenderSharedComponents-${RPRSC_COMMIT:0:7}.tar.gz"
+RPRSDK_COMMIT="440580074009d48b18019da1331d2494a253a96d"
+RPRSDK_DF="RadeonProRenderSDK-${RPRSDK_COMMIT:0:7}.tar.gz"
 VIDEO_CARDS="
 	video_cards_amdgpu
 	video_cards_intel
@@ -55,6 +70,11 @@ KEYWORDS="~amd64"
 #https://github.com/GPUOpen-LibrariesAndSDKs/RadeonImageFilter/archive/${RPIPSDK_COMMIT}.tar.gz
 #	-> ${RPIPSDK_DF}
 
+S="${WORKDIR}/${P}"
+S_HIPBIN="${WORKDIR}/RadeonProRenderSDKKernels-${HIPBIN_COMMIT}"
+S_RPIPSDK="${WORKDIR}/${P}/RadeonProImageProcessingSDK"
+S_RPRSDK="${WORKDIR}/RadeonProRenderSDK-${RPRSDK_COMMIT}"
+S_RPRSC="${WORKDIR}/RadeonProRenderSharedComponents-${RPRSC_COMMIT}"
 SRC_URI="
 https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -65,11 +85,6 @@ https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSharedComponents/arch
 https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSDKKernels/archive/${HIPBIN_COMMIT}.tar.gz
 	-> ${HIPBIN_DF}
 "
-S="${WORKDIR}/${P}"
-S_HIPBIN="${WORKDIR}/RadeonProRenderSDKKernels-${HIPBIN_COMMIT}"
-S_RPIPSDK="${WORKDIR}/${P}/RadeonProImageProcessingSDK"
-S_RPRSDK="${WORKDIR}/RadeonProRenderSDK-${RPRSDK_COMMIT}"
-S_RPRSC="${WORKDIR}/RadeonProRenderSharedComponents-${RPRSC_COMMIT}"
 
 DESCRIPTION="This hardware-agnostic rendering plug-in for Blender uses \
 accurate ray-tracing technology to produce images and animations of your \
@@ -115,12 +130,6 @@ LICENSE="
 "
 RESTRICT="mirror strip"
 SLOT="0/${CONFIGURATION}"
-ROCM_SLOTS=(
-	rocm_5_4
-	rocm_5_3
-	rocm_5_2
-	rocm_5_1
-)
 IUSE+="
 ${BLENDER_SLOTS}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -128,12 +137,6 @@ ${ROCM_SLOTS[@]}
 ${VIDEO_CARDS}
 denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca system-llvm -systemwide +vulkan
 "
-declare -A ROCM_TO_LLVM_SLOT=(
-	["rocm_5_4"]="15"
-	["rocm_5_3"]="15"
-	["rocm_5_2"]="14"
-	["rocm_5_1"]="14"
-)
 gen_rocm_required_use() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
@@ -278,6 +281,28 @@ BLENDER_RDEPEND="
 	)
 "
 
+ # Disabled to avoid multiple LLVMs loaded bug
+RDEPEND_DISABLED="
+				opencl_rocr? (
+					rocm_5_4? (
+						dev-libs/rocm-opencl-runtime:5.4
+						sys-libs/llvm-roc-libomp:5.4
+					)
+					rocm_5_3? (
+						dev-libs/rocm-opencl-runtime:5.3
+						sys-libs/llvm-roc-libomp:5.3
+					)
+					rocm_5_2? (
+						dev-libs/rocm-opencl-runtime:5.2
+						sys-libs/llvm-roc-libomp:5.2
+					)
+					rocm_5_1? (
+						dev-libs/rocm-opencl-runtime:5.1
+						sys-libs/llvm-roc-libomp:5.1
+					)
+				)
+"
+
 RDEPEND+="
 	${BLENDER_RDEPEND}
 	${CDEPEND_NOT_LISTED}
@@ -298,21 +323,13 @@ RDEPEND+="
 					dev-libs/amdgpu-pro-opencl
 				)
 				opencl_rocr? (
-					rocm_5_4? (
-						dev-libs/rocm-opencl-runtime:5.4
-						sys-libs/llvm-roc-libomp:5.4
+					rocm_4_5? (
+						dev-libs/rocm-opencl-runtime:4.5
+						sys-libs/llvm-roc-libomp:4.5
 					)
-					rocm_5_3? (
-						dev-libs/rocm-opencl-runtime:5.3
-						sys-libs/llvm-roc-libomp:5.3
-					)
-					rocm_5_2? (
-						dev-libs/rocm-opencl-runtime:5.2
-						sys-libs/llvm-roc-libomp:5.2
-					)
-					rocm_5_1? (
-						dev-libs/rocm-opencl-runtime:5.1
-						sys-libs/llvm-roc-libomp:5.1
+					rocm_4_3? (
+						dev-libs/rocm-opencl-runtime:4.3
+						sys-libs/llvm-roc-libomp:4.3
 					)
 				)
 			)
@@ -447,10 +464,10 @@ ewarn
 }
 
 get_rpipsdk() {
-	EGIT_MIN_CLONE_TYPE="single"
-	EGIT_COMMIT="${RPIPSDK_COMMIT}"
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${S}/RadeonProImageProcessingSDK"
+	EGIT_COMMIT="${RPIPSDK_COMMIT}"
+	EGIT_MIN_CLONE_TYPE="single"
 	EGIT_REPO_URI="https://github.com/GPUOpen-LibrariesAndSDKs/RadeonImageFilter.git"
 	git-r3_fetch
 	git-r3_checkout
@@ -460,9 +477,9 @@ src_unpack() {
 	unpack ${A}
 	cd "${S}" || die
 	rm -rf \
-		RadeonProImageProcessingSDK \
-		RadeonProRenderSDK \
-		RadeonProRenderSharedComponents \
+		"RadeonProImageProcessingSDK" \
+		"RadeonProRenderSDK" \
+		"RadeonProRenderSharedComponents" \
 		|| die
 #	ln -s "${S_RPIPSDK}" "RadeonProImageProcessingSDK" || die
 	ln -s "${S_RPRSDK}" "RadeonProRenderSDK" || die
