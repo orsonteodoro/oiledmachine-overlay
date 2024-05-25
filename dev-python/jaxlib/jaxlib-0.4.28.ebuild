@@ -40,7 +40,7 @@ CUDA_TARGETS_COMPAT=(
 )
 DISTUTILS_USE_PEP517="standalone"
 EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
-GCC_COMPAT=( {12..9} )
+GCC_COMPAT=( {11..9} ) # Based on U22, U20
 JAVA_SLOT="11"
 LLVM_COMPAT=( 17 ) # From .bazelrc
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
@@ -643,7 +643,7 @@ eerror
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
 	LLVM_SLOT=${s}
-	llvm-r1_pkg_setup
+	llvm_pkg_setup
 	${CC} --version || die
 	strip-unsupported-flags
 }

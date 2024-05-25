@@ -86,3 +86,6 @@ app-crypt/hashtopolis angular
 
 # Missing libmruby package
 net-libs/nghttp2 mruby
+
+# Build time failure
+dev-python/jaxlib clang
