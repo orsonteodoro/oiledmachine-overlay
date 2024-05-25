@@ -1085,7 +1085,11 @@ einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 	fi
 
 	if tc-is-clang ; then
-ewarn "Disabling the clang USE flag and using gcc may unbreak build."
+ewarn
+ewarn "Disabling the clang USE flag and using gcc may unbreak build.  The"
+ewarn "alternative is to try jax/jaxlib >=0.4.25 to fix this problem if you"
+ewarn "require clang."
+ewarn
 	fi
 
 	# Generate to fix python version in .jax_configure.bazelrc
