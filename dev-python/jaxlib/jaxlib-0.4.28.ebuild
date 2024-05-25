@@ -6,7 +6,9 @@ EAPI=8
 
 # With clang-17 as host compiler:
 # FIXME:
-# external/boringssl/BUILD:133:11: Compiling src/crypto/x509v3/v3_utl.c failed: (Exit 1): clang-17 failed: error executing command (from target @boringssl//:crypto)
+#external/boringssl/src/crypto/refcount_c11.c:37:23: error: address argument to atomic operation must be a pointer to a trivially-copyable type ('_Atomic(CRYPTO_refcount_t) *' invalid)
+#   37 |   uint32_t expected = atomic_load(count);
+#      |                       ^~~~~~~~~~~~~~~~~~
 
 # CUDA version:  https://github.com/google/jax/blob/jaxlib-v0.4.28/docs/installation.md?plain=1#L116
 # ROCm version:  https://github.com/google/jax/blob/jaxlib-v0.4.28/build/rocm/ci_build.sh#L52
@@ -759,10 +761,11 @@ einfo "Preventing stall.  Removing -Os."
 		BUILD_CFLAGS+=" -fno-stack-protector"
 		BUILD_CXXFLAGS+=" -fno-stack-protector"
 
+# Required since -Werror is appended by build script
 	# FORTIFY_SOURCE is buffer overflow checks for string/*alloc functions
 	# -FORTIFY_SOURCE=2 is <1% penalty
-		append-cppflags -D_FORTIFY_SOURCE=0
-		BUILD_CPPFLAGS+=" -D_FORTIFY_SOURCE=0"
+#		append-cppflags -D_FORTIFY_SOURCE=0
+#		BUILD_CPPFLAGS+=" -D_FORTIFY_SOURCE=0"
 
 	# Full RELRO is GOT protection
 	# Full RELRO is <1% penalty ; <1 ms difference
