@@ -3697,8 +3697,10 @@ unset OT_KERNEL_PRIVATE_KEY
     CRYPTSETUP_TCRYPT - Add support for tcrypt.
     Valid values:  0, 1 (default).
 
-    DSS_DISK_ENCRYPTION - Set the preferred way to protect in non database contexts.
-    Valid values:  ext4-encryption, fs-encryption, cryptsetup, unset (autodetect)
+    DSS_DISK_ENCRYPTION - Set the preferred way to protect sensitive data in non
+    database contexts.
+    Valid values:  ext4-encryption, fs-encryption, cryptsetup,
+    unset (autodetect)
     Note:  You may select multiple values separated by space or comma.
 
     Examples:
@@ -3707,8 +3709,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
     DSS_FIREWALL_TYPE - Set the preferred firewall.
     Valid values:  waf, unset (autodetect)
-    Notes:  waf means to select Web Application Firewall.  If waf is not selected,
-    it will check for an installed sofware based firewall package.
+    Notes:  waf means to select Web Application Firewall.  If waf is not
+    selected, it will check for an installed sofware based firewall package.
 
     DSS_REGION - Set the region for crypto standards
     Valid values:  cn, eu, jp, kr, ru, us, west (default)
@@ -3761,7 +3763,6 @@ unset OT_KERNEL_PRIVATE_KEY
     Notes:  Multiple options can be specified with spaces.  It only affects non
     dss work profiles.
     See also:  DSS_REGION
-    
 
     KVM_ADD_IGNORE_MSRS_EQ_1 - Adds the kvm.ignore_msrs=1 to the kernel command
     line to fix virtual machine crashes as a result of accessing unsupported
