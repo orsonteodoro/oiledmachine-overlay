@@ -105,7 +105,7 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 	docinto "docs"
-	dodoc "docs/"*".md"
+	dodoc *".md"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
