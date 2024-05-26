@@ -7423,6 +7423,37 @@ ot-kernel-pkgflags_opensnitch_ebpf_module() { # DONE
 	fi
 }
 
+# @FUNCTION: _ot-kernel_ktls_support
+# @DESCRIPTION:
+# Enables KTLS support
+_ot-kernel_ktls_support() {
+	ot-kernel_y_configopt "CONFIG_TLS"
+	ot-kernel_y_configopt "CONFIG_TLS_DEVICE"
+
+	# See also
+	# https://github.com/torvalds/linux/blob/v6.9/net/tls/tls_main.c#L102
+	if [[ "${work_profile}" =~ "dss" ]] ; then
+	# Set in _ot-kernel_checkpoint_dss_tls_requirement
+		:
+	else
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_GCM"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20POLY1305"
+
+		local ktls_region="${KTLS_REGION:-west}"
+		if [[ "${ktls_region}" =~ ("west"|"eu"|"us") ]] ; then
+			_ot-kernel-pkgflags_aes
+		fi
+		if [[ "${ktls_region}" =~ ("kr") ]] ; then
+			_ot-kernel-pkgflags_aria
+		fi
+		if [[ "${ktls_region}" =~ ("cn") ]] ; then
+			_ot-kernel-pkgflags_sm4
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_openssl
 # @DESCRIPTION:
 # Applies kernel config flags for the openssl package
@@ -7434,32 +7465,9 @@ ot-kernel-pkgflags_openssl() { # DONE
 				&& \
 			ver_test "${KV_MAJOR_MINOR}" -ge "4.18" \
 		; then
-			ot-kernel_y_configopt "CONFIG_TLS"
-			ot-kernel_y_configopt "CONFIG_TLS_DEVICE"
+			_ot-kernel_ktls_support
 			if ot-kernel_has_version "${pkg}[test]" ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_SKCIPHER"
-			fi
-
-	# See also
-	# https://github.com/torvalds/linux/blob/v6.9/net/tls/tls_main.c#L102
-			if [[ "${work_profile}" =~ "dss" ]] ; then
-	# Set in _ot-kernel_checkpoint_dss_tls_requirement
-				:
-			else
-				ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
-				ot-kernel_y_configopt "CONFIG_CRYPTO_GCM"
-				ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH"
-
-				local ktls_region="${KTLS_REGION:-west}"
-				if [[ "${ktls_region}" =~ ("west"|"eu"|"us") ]] ; then
-					_ot-kernel-pkgflags_aes
-				fi
-				if [[ "${ktls_region}" =~ ("kr") ]] ; then
-					_ot-kernel-pkgflags_aria
-				fi
-				if [[ "${ktls_region}" =~ ("cn") ]] ; then
-					_ot-kernel-pkgflags_sm4
-				fi
 			fi
 		fi
 	fi
@@ -12697,6 +12705,9 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 		elif [[ "${dss_region}" =~ "kr" ]] ; then
 			_ot-kernel-pkgflags_aria
 		fi
+
+		# Unlisted in spec
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20POLY1305"
 	fi
 }
 
