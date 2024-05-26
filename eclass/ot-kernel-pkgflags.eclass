@@ -12451,6 +12451,9 @@ ewarn
 		# 2000-2003, Belgian-Brazilian, Hash Function
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_WP512"
 
+		# 2012, Russian (FSB), Hash Function
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_STREEBOG"
+
 
 		# Disabled weak hashes
 		# For hash cryptoanalysis, see
@@ -12477,9 +12480,6 @@ ewarn
 
 		# 1990, American, Hash Function
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_MD4"
-
-		# 2012, Russian (FSB), Hash Function
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_STREEBOG"
 
 		# 2012, Hash Function (non cryptographic)
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_XXHASH"
