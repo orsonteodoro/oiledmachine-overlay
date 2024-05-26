@@ -3710,6 +3710,9 @@ unset OT_KERNEL_PRIVATE_KEY
     Notes:  waf means to select Web Application Firewall.  If waf is not selected,
     it will check for an installed sofware based firewall package.
 
+    DSS_REGION - Set the region for crypto standards
+    Valid values:  cn, eu, jp, kr, ru, us, west
+
     DVD - Support for DVD, DVD-R, DVD-RW, DVD+R, DVD+RW, Blu-Ray
     Valid values:  0, 1 (default)
     See also:  CDROM

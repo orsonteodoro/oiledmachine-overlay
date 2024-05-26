@@ -316,6 +316,7 @@ ot-kernel-pkgflags_apply() {
 	_ot-kernel_checkpoint_dss_lsm_requirement # 7
 	_ot-kernel_checkpoint_dss_multiuser_requirement # 6
 	_ot-kernel_checkpoint_dss_ntp_requirement # 10
+	_ot-kernel_checkpoint_dss_tls_requirement # 2
 
 	# Hint below packages whenever possible
 	ot-kernel-pkgflags_iucode
@@ -3059,16 +3060,29 @@ ewarn
 		# cbc is default for plain
 		# xts is default for luks
 
-		_ot-kernel-pkgflags_aes ${cryptsetup_modes}
+		local dss_region="${DSS_REGION:-west}"
+		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+			_ot-kernel-pkgflags_aes ${cryptsetup_modes}
 
-		# 2001, American (NSA), Hash Function
-		_ot-kernel-pkgflags_sha256
+			# 2001, American (NSA), Hash Function
+			_ot-kernel-pkgflags_sha256
 
-		# 2001, American (NSA), Hash Function
-		_ot-kernel-pkgflags_sha512
+			# 2001, American (NSA), Hash Function
+			_ot-kernel-pkgflags_sha512
 
-		# 2006, Belgian
-		_ot-kernel-pkgflags_sha3
+			# 2006, Belgian
+			_ot-kernel-pkgflags_sha3
+		elif [[ "${dss_region}" =~ "cn" ]] ; then
+			_ot-kernel-pkgflags_sm4 ${cryptsetup_modes}
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SM3_GENERIC"
+		elif [[ "${dss_region}" =~ "jp" ]] ; then
+			_ot-kernel-pkgflags_camellia ${cryptsetup_modes}
+		elif [[ "${dss_region}" =~ "kr" ]] ; then
+			_ot-kernel-pkgflags_aria ${cryptsetup_modes}
+		elif [[ "${dss_region}" =~ "ru" ]] ; then
+		# FIXME:  Enable block cipher
+			ot-kernel_y_configopt "CONFIG_CRYPTO_STREEBOG"
+		fi
 
 ewarn "Do not use ECB for disk encryption."
 ewarn "Do not use CBC for disk encryption."
@@ -12412,14 +12426,15 @@ eerror
 # Setup required Keyed Cryptographic Hash Algorithms.
 _ot-kernel-pkgflags_dss_setup_hmacs() {
 	if [[ "${work_profile}" == "dss" ]] ; then
-		# Must be >= 128 Bit
+		local dss_region="${DSS_REGION:-west}"
+	# It must be >= 128 Bit
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CMAC"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_GCM"   # GMAC
 		ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH" # GMAC
 
-		# Disable other MACs
+	# Disable other MACs
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_MICHAEL_MIC"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_VMAC"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_XCBC"
@@ -12431,39 +12446,68 @@ _ot-kernel-pkgflags_dss_setup_hmacs() {
 # Disable all unused ciphers for the dss work profile.
 _ot-kernel-pkgflags_dss_disable_remaining_hash_algs() {
 	if [[ "${work_profile}" == "dss" ]] ; then
+		local dss_region="${DSS_REGION:-west}"
 ewarn
 ewarn "Using the dss work profile may mess up the WiFI kernel config.  Use the"
 ewarn "OT_KERNEL_KCONFIG override to fix this."
 ewarn
-		# Only strong ciphers allowed
-		# Disabled alternative hash algorithms
+	# Only strong ciphers allowed
+	# Disabled alternative hash algorithms
 
-		# 2012, American et.al., Hash Function
+		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+			:
+		else
+	# 2001, American (NSA), Hash Function
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA256"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA256_ARM"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA256_ARM64"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA256_OCTEON"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA256_PPC_SPE"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA256_S390"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA256_SPARC64"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA256_SSSE3"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA2_ARM_CE"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA2_ARM64_CE"
+
+	# 2016, Belgian et.al. Design, An American NIST Standard; Hash Function
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA3"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA3_256_S390"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA3_512_S390"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA3_ARM64"
+		fi
+
+	# 2012, American et.al., Hash Function
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_BLAKE2B_NEON"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_BLAKE2B"
 
-		# 1992, German-Belgian, Hash Function
+	# 1992, German-Belgian, Hash Function
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_RMD160"
 
-		# 2010, Chinese, Hash Function
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_SM3_GENERIC"
+		if [[ "${dss_region}" =~ "cn" ]] ; then
+			:
+		else
+	# 2010, Chinese, Hash Function
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SM3_GENERIC"
+		fi
 
-		# 2000-2003, Belgian-Brazilian, Hash Function
+	# 2000-2003, Belgian-Brazilian, Hash Function
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_WP512"
 
-		# 2012, Russian (FSB), Hash Function
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_STREEBOG"
+		if [[ "${dss_region}" =~ "ru" ]] ; then
+			:
+		else
+	# 2012, Russian (FSB), Hash Function
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_STREEBOG"
+		fi
 
 
-		# Disabled weak hashes
-		# For hash cryptoanalysis, see
-		# https://en.wikipedia.org/wiki/Hash_function_security_summary
-		# https://en.wikipedia.org/wiki/Security_level#Meaning_of_%22broken%22
+	# Disabled weak hashes
+	# For hash cryptoanalysis, see
+	# https://en.wikipedia.org/wiki/Hash_function_security_summary
+	# https://en.wikipedia.org/wiki/Security_level#Meaning_of_%22broken%22
 
-		# 1988, 64 Bit Block Size, 64 Bit Keys
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_FCRYPT"
-
-		# 1992, American (NSA), Hash Function
+	# 1992, American (NSA), Hash Function
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_ARM"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_ARM_NEON"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_ARM64_CE"
@@ -12471,18 +12515,17 @@ ewarn
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_PPC_SPE"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_S390"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_SSSE3"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1"
 
-		# 1992, American, Hash Function
+	# 1992, American, Hash Function
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_MD5"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_MD5_OCTEON"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_MD5_PPC"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_MD5_SPARC64"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_MD5"
 
-		# 1990, American, Hash Function
+	# 1990, American, Hash Function
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_MD4"
 
-		# 2012, Hash Function (non cryptographic)
+	# 2012, Hash Function (non cryptographic)
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_XXHASH"
 	fi
 }
@@ -12492,6 +12535,8 @@ ewarn
 # Disable all unused ciphers for the dss work profile.
 _ot-kernel-pkgflags_dss_disable_remaining_block_ciphers() {
 	if [[ "${work_profile}" == "dss" ]] ; then
+		local dss_region="${DSS_REGION:-west}"
+einfo "DSS_REGION:  ${dss_region}"
 ewarn
 ewarn "Using the dss work profile may mess up the WiFI kernel config.  Use the"
 ewarn "OT_KERNEL_KCONFIG override to fix this."
@@ -12499,75 +12544,166 @@ ewarn
 		# Only strong ciphers allowed
 		# Disable alternative block ciphers
 
-		# 2000, Belgian-Brazillian, 128 Bit Block Cipher, 128-256 Bit Keys
+	# 2000, Belgian-Brazilian, 128 Bit Block Cipher, 128-256 Bit Keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_ANUBIS"
 
-		# 2003, South Korean, 128 Bit Block Cipher, 128-256 Bit Keys
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_ARIA"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_ARIA_GFNI_AVX512_X86_64"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX2_X86_64"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX_X86_64"
+		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+			:
+		else
+	# 1998, Belgian, 128 Bit Block Size, 128-256 Bit Keys
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_AES"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_AES_ARM_BS"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_AES_ARM_CE"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_AES_ARM64_CE"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_AES_ARM64_CE_BLK"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_AES_ARM64_BS"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_AES_ARM64_NEON_BLK"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_AES_ARM64_CE_CCM"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_AES_NI_INTEL"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_AES_PPC_SPE"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_AES_S390"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_AES_SPARC64"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_AES_TI"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_AES_X86_64"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_PAES_S390"
+		fi
 
-		# 2000, Japanese, 128 Bit Block Cipher, 128-256 Bit Keys
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX2_X86_64"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_X86_64"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_SPARC64"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA"
+		if [[ "${dss_region}" =~ "kr" ]] ; then
+			:
+		else
+	# 2003, South Korean, 128 Bit Block Cipher, 128-256 Bit Keys
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_ARIA"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX2_X86_64"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX_X86_64"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_ARIA_GFNI_AVX512_X86_64"
+		fi
 
-		# 1996, Canadian, 64 Bit Block Cipher, 40-128 Bit Keys
+		if [[ "${dss_region}" =~ "jp" ]] ; then
+			:
+		else
+	# 2000, Japanese, 128 Bit Block Cipher, 128-256 Bit Keys
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX2_X86_64"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_SPARC64"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_X86_64"
+		fi
+
+	# 1996, Canadian, 64 Bit Block Cipher, 40-128 Bit Keys
 		ot-kernel_unset_configopt "CRYPTO_CAST5"
 
-		# 1998, Canadian, 128 Bit Block Cipher, 128-256 Bit Keys
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAST6_AVX_X86_64"
+	# 1998, Canadian, 128 Bit Block Cipher, 128-256 Bit Keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAST6"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAST6_AVX_X86_64"
 
-		# 2000, Brazilian, 64 Bit Block Cipher, 128 Bit Keys
+	# 2000, Brazilian, 64 Bit Block Cipher, 128 Bit Keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_KHAZAD"
 
-		# 1998, Korean (KISA), 128 Bit Block Cipher, 128 Bit Keys
+	# 1998, Korean (KISA), 128 Bit Block Cipher, 128 Bit Keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_SEED"
 
-		# 1998, British-Israeli-Danish, 128 Bit Block Cipher, 128-256 Bit Keys
+	# 1998, British-Israeli-Danish, 128 Bit Block Cipher, 128-256 Bit Keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_SERPENT"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_SERPENT_AVX2_X86_64"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_SERPENT_AVX_X86_64"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_SERPENT_SSE2_X86_64"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_SERPENT_SSE2_586"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_SERPENT"
 
-		# 2006, Chinese, 128 Bit Block Cipher, 128 Bit Keys
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX2_X86_64"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
-		ot-kernel_unset_configopt "CRYPTO_SM4_GENERIC"
+		if [[ "${dss_region}" =~ "cn" ]] ; then
+			:
+		else
+	# 2006, Chinese, 128 Bit Block Cipher, 128 Bit Keys
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX2_X86_64"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
+			ot-kernel_unset_configopt "CRYPTO_SM4_GENERIC"
+		fi
 
-		# [TEA] 1994, British, 64 Bit Block Cipher, 128 Bit Keys
-		# [XTEA] 1997, British, 64 Bit Block Cipher, 128 Bit Keys
+	# [TEA] 1994, British, 64 Bit Block Cipher, 128 Bit Keys
+	# [XTEA] 1997, British, 64 Bit Block Cipher, 128 Bit Keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_TEA"
 
-		# 1998, American, 128 Bit Block Cipher, 128-256 Bit Keys
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_TWOFISH_AVX_X86_64"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_TWOFISH_X86_64_3WAY"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_TWOFISH_X86_64"
+	# 1998, American, 128 Bit Block Cipher, 128-256 Bit Keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_TWOFISH"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_TWOFISH_AVX_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_TWOFISH_X86_64"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_TWOFISH_X86_64_3WAY"
 
 
-		# Disabled weak ciphers
-		# For cipher cryptoanalysis, see
-		# https://en.wikipedia.org/wiki/Cipher_security_summary
-		# https://en.wikipedia.org/wiki/Security_level#Meaning_of_%22broken%22
+	# Disabled weak ciphers
+	# For cipher cryptoanalysis, see
+	# https://en.wikipedia.org/wiki/Cipher_security_summary
+	# https://en.wikipedia.org/wiki/Security_level#Meaning_of_%22broken%22
 
-		# 1993, American, 64 Bit Block Cipher, 32-448 Bit keys
+	# 1988, 64 Bit Block Size, 64 Bit Keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_FCRYPT"
+
+	# 1993, American, 64 Bit Block Cipher, 32-448 Bit keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_BLOWFISH"
 
-		# 1975, American, 64 Bit Block Size, 56 Bit Key Size
+	# 1975, American, 64 Bit Block Size, 56 Bit Key Size
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DES"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_DES_S390"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_DES_SPARC64"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_DES"
 
-		# 1981, American, 64 Bit Block Size, 112-168 Bit Key Size
+	# 1981, American, 64 Bit Block Size, 112-168 Bit Key Size
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_DES3_EDE_X86_64"
+	fi
+}
+
+# @FUNCTION: _ot-kernel_checkpoint_dss_tls_requirement
+# @DESCRIPTION:
+# Check for TLS enablement
+_ot-kernel_checkpoint_dss_tls_requirement() {
+	if [[ "${work_profile}" == "dss" ]] ; then
+	# TLS 1.3, See https://en.wikipedia.org/wiki/Transport_Layer_Security#TLS_1.3
+		local dss_region="${DSS_REGION:-west}"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_INET"
+		ot-kernel_y_configopt "CONFIG_TLS"
+		ot-kernel_y_configopt "CONFIG_CRYPTO"
+	# See also
+	# https://github.com/torvalds/linux/blob/v6.9/net/tls/tls_main.c#L102
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_GCM"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH"
+		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+			_ot-kernel-pkgflags_aes
+		elif [[ "${dss_region}" =~ "cn" ]] ; then
+			_ot-kernel-pkgflags_sm4
+		elif [[ "${dss_region}" =~ "kr" ]] ; then
+			_ot-kernel-pkgflags_aria
+		fi
+	fi
+}
+
+_ot-kernel-pkgflags_dss_disable_hw_crypto() {
+	if [[ "${work_profile}" == "dss" ]] ; then
+	# The software implementation is preferred for review.
+	# This can be improved later with better environment variable selection.
+ewarn
+ewarn "All hardware crypto devices will be disabled in the dss work profile as a precaution."
+ewarn "Use the OT_KERNEL_KCONFIG override to re-enable them."
+ewarn
+ewarn "See _ot-kernel-pkgflags_dss_disable_hw_crypto in ot-kernel-pkgflags.eclass for details."
+ewarn
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_AMLOGIC_GXL"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_ATMEL_ECC"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_ATMEL_SHA204A"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_CCP"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_CCREE"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_NITROX_CNN55XX"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_PADLOCK"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_QAT_4XXX"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_QAT_C3XXX"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_QAT_C3XXXVF"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_QAT_C62X"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_QAT_C62XVF"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_QAT_DH895xCC"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_QAT_DH895xCCVF"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_SAFEXCEL"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_HW"
 	fi
 }
 
