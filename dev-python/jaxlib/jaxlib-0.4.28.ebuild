@@ -1189,12 +1189,13 @@ einfo "Building wheel for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 	python_pv="${python_pv/./}"
 	IFS=$'\n'
 	local wheel_paths=$(
-		find "build/dist" -name "*.whl"
+		find "${S}/dist" -name "*.whl"
 	)
 	local wheel_path
 	for wheel_path in ${wheel_paths[@]} ; do
 einfo "Installing ${wheel_path}"
-		distutils_wheel_install "${BUILD_DIR}/install" \
+		distutils_wheel_install \
+			"${BUILD_DIR}/install" \
 			"${wheel_path}"
 	done
 	IFS=$' \t\n'
@@ -1203,8 +1204,8 @@ einfo "Installing ${wheel_path}"
 src_install() {
 	load_env
 	distutils-r1_src_install
-	docinto licenses
-	dodoc AUTHORS LICENSE
+	docinto "licenses"
+	dodoc "AUTHORS" "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
