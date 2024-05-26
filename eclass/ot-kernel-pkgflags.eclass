@@ -12442,9 +12442,6 @@ ewarn
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_BLAKE2B_NEON"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_BLAKE2B"
 
-		# 1988, 64 Bit Block Size, 64 Bit Keys
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_FCRYPT"
-
 		# 1992, German-Belgian, Hash Function
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_RMD160"
 
@@ -12458,6 +12455,9 @@ ewarn
 		# Disabled weak hashes
 		# For hash cryptoanalysis, see
 		# https://en.wikipedia.org/wiki/Hash_function_security_summary
+
+		# 1988, 64 Bit Block Size, 64 Bit Keys
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_FCRYPT"
 
 		# 1992, American (NSA), Hash Function
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_ARM"
@@ -12518,7 +12518,7 @@ ewarn
 		# 1996, Canadian, 64 Bit Block Cipher, 40-128 Bit Keys
 		ot-kernel_unset_configopt "CRYPTO_CAST5"
 
-		# 1998, Canadaian, 128 Bit Block Cipher, 128-256 Bit Keys
+		# 1998, Canadian, 128 Bit Block Cipher, 128-256 Bit Keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAST6_AVX_X86_64"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAST6"
 
