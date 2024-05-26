@@ -1607,8 +1607,8 @@ ot-kernel-pkgflags_cipher_optional() {
 		_ot-kernel-pkgflags_sha1
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_BCACHEFS_FS" ; then
-		_ot-kernel-pkgflags_sha256
 		_ot-kernel-pkgflags_chacha20_poly1305
+		_ot-kernel-pkgflags_sha256
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_BT" ; then
 		_ot-kernel-pkgflags_aes ECB
@@ -7512,8 +7512,8 @@ _ot-kernel_ktls_support() {
 	else
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
-		_ot-kernel-pkgflags_gcm
 		_ot-kernel-pkgflags_chacha20_poly1305
+		_ot-kernel-pkgflags_gcm
 
 		local ktls_region="${KTLS_REGION:-west}"
 		if [[ "${ktls_region}" =~ ("west"|"eu"|"us") ]] ; then
