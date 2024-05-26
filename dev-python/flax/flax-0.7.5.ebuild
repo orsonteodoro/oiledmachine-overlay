@@ -68,7 +68,6 @@ DEPEND+="
 	(
 		!examples? (
 			>=dev-python/jax-0.4.19[${PYTHON_USEDEP}]
-			<dev-python/jax-0.4.26[${PYTHON_USEDEP}]
 		)
 		examples? (
 			>=dev-python/jax-0.4.19[${PYTHON_USEDEP},cuda?]
