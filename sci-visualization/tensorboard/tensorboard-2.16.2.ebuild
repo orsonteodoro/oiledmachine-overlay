@@ -361,11 +361,6 @@ ewarn
 }
 
 add_sandbox_rules() {
-einfo "PYTHON: ${PYTHON}"
-einfo "PATH: ${PATH}"
-	which python3
-	python3 --version || die
-eerror "EPYTHON:  ${EPYTHON}"
 	local exceptions=(
 		"/usr/lib/${EPYTHON}/site-packages/Cython/Distutils/__pycache__"
 		"/usr/lib/${EPYTHON}/site-packages/Cython.0/Distutils/__pycache__"
@@ -406,12 +401,6 @@ einfo "Wiping incomplete yarn download."
 		//tensorboard/...
 	mkdir -p "${T}/pip_package"
 	_ebazel run //tensorboard/pip_package:build_pip_package -- "${T}/pip_package"
-
-einfo "PYTHON: ${PYTHON}"
-einfo "PATH: ${PATH}"
-	which python3
-	python3 --version || die
-eerror "EPYTHON:  ${EPYTHON}"
 
 	local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
 	local wheel_path=$(realpath "${T}/pip_package/"*".whl")
