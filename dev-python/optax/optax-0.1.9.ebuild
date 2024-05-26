@@ -10,8 +10,8 @@ EAPI=8
 # sphinxcontrib-katex
 # tensorflow-datasets
 
-DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..11} )
+DISTUTILS_USE_PEP517="flit"
+PYTHON_COMPAT=( "python3_"{10..11} )
 TENSORFLOW_PV="2.4.0"
 TENSORFLOW_DATASETS_PV="4.2.0"
 # Limited by jax/flax
@@ -109,8 +109,8 @@ DOCS=( "README.md" )
 distutils_enable_sphinx "docs"
 
 src_test() {
-	sed -i -e "s|^pip |#pip |g" test.sh || die
-	sed -i -e "s|^wget |#wget |g" test.sh || die
+	sed -i -e "s|^pip |#pip |g" "test.sh" || die
+	sed -i -e "s|^wget |#wget |g" "test.sh" || die
 ewarn "src_test() is not tested"
 	run_test() {
 einfo "Running test for ${EPYTHON}"
