@@ -3711,7 +3711,9 @@ unset OT_KERNEL_PRIVATE_KEY
     it will check for an installed sofware based firewall package.
 
     DSS_REGION - Set the region for crypto standards
-    Valid values:  cn, eu, jp, kr, ru, us, west
+    Valid values:  cn, eu, jp, kr, ru, us, west (default)
+    Note:  Only one region can be selected.
+    See also:  KTLS_REGION
 
     DVD - Support for DVD, DVD-R, DVD-RW, DVD+R, DVD+RW, Blu-Ray
     Valid values:  0, 1 (default)
@@ -3752,6 +3754,14 @@ unset OT_KERNEL_PRIVATE_KEY
 
     IPTABLES_ROUTER - Add support for iptables router.
     Valid values:  0 (default), 1.
+
+    KTLS_REGION - A regional hint to enable the proper kernel config for TLS
+    offload for improved throughput.
+    Valid values:  cn, eu, kr us, west (default)
+    Notes:  Multiple options can be specified with spaces.  It only affects non
+    dss work profiles.
+    See also:  DSS_REGION
+    
 
     KVM_ADD_IGNORE_MSRS_EQ_1 - Adds the kvm.ignore_msrs=1 to the kernel command
     line to fix virtual machine crashes as a result of accessing unsupported
