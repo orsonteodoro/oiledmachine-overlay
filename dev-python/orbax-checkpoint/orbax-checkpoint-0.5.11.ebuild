@@ -86,7 +86,7 @@ PDEPEND+="
 		>=sci-libs/tensorflow-2.15.0[${PYTHON_USEDEP}]
 	)
 "
-DOCS=( "CHANGELOG.md" "README.md" )
+DOCS=( "README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
