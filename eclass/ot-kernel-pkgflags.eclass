@@ -12309,7 +12309,8 @@ ewarn
 ewarn "The passwords for the encrypted partitions or disk must have no"
 ewarn "associated connection with accounts being protected."
 ewarn
-		if [[ "${DSS_DISK_ENCRYPTION}" == "ext4-encryption" ]] ; then
+		local found=0
+		if [[ "${DSS_DISK_ENCRYPTION}" =~ "ext4-encryption" ]] ; then
 			if ver_test "${KV_MAJOR_MINOR}" -eq "4.19" ; then
 				:
 			else
@@ -12327,20 +12328,32 @@ eerror "  DSS_DISK_ENCRYPTION=\"cryptsetup\""
 eerror
 				die
 			fi
+einfo "Using ext4-encryption for dss"
 			ot-kernel_y_configopt "CONFIG_EXT4_FS"
 			ot-kernel_y_configopt "CONFIG_EXT4_ENCRYPTION"
-		elif [[ "${DSS_DISK_ENCRYPTION}" == "fs-encryption" ]] ; then
+			found=1
+		elif grep -q -E -e "^CONFIG_EXT4_ENCRYPTION=y" "${path_config}" ; then
+einfo "Using ext4-encryption for dss"
+			found=1
+		fi
+		if [[ "${DSS_DISK_ENCRYPTION}" =~ "fs-encryption" ]] ; then
+einfo "Using fs-encryption for dss"
 			ot-kernel_y_configopt "CONFIG_EXT4_FS"
 			ot-kernel_y_configopt "CONFIG_FS_ENCRYPTION"
-		elif [[ "${DSS_DISK_ENCRYPTION}" == "cryptsetup" ]] ; then
-			:
-		elif grep -q -E -e "^CONFIG_EXT4_ENCRYPTION=y" "${path_config}" ; then
-			:
+			found=1
 		elif grep -q -E -e "^CONFIG_FS_ENCRYPTION=y" "${path_config}" ; then
-			:
+einfo "Using fs-encryption for dss"
+			found=1
+		fi
+		if [[ "${DSS_DISK_ENCRYPTION}" =~ "cryptsetup" ]] ; then
+einfo "Using cryptsetup for dss"
+			found=1
 		elif ot-kernel_has_version "sys-fs/cryptsetup" ; then
-			:
-		else
+einfo "Using cryptsetup for dss"
+			found=1
+		fi
+
+		if (( ${found} == 0 )) ; then
 eerror
 eerror "One of the following must be chosen for storage in non database"
 eerror "contexts:"

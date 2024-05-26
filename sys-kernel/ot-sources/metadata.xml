@@ -3697,6 +3697,11 @@ unset OT_KERNEL_PRIVATE_KEY
 
     DSS_DISK_ENCRYPTION - Set the preferred way to protect in non database contexts.
     Valid values:  ext4-encryption, fs-encryption, cryptsetup, unset (autodetect)
+    Note:  You may select multiple values separated by space or comma.
+
+    Examples:
+
+      DSS_DISK_ENCRYPTION="fs-encryption cryptsetup"
 
     DSS_FIREWALL_TYPE - Set the preferred firewall.
     Valid values:  waf, unset (autodetect)
