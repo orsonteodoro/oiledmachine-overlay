@@ -3685,8 +3685,10 @@ unset OT_KERNEL_PRIVATE_KEY
     Valid values:  essiv, random, plain64.  If unset, it adds essiv, plain64.
 
     CRYPTSETUP_MODES - Space separated list for cipher modes of operation.
-    Valid values:  adiantum, cbc, cfb, ctr, cts, ofb, xts.  If unset, it adds
+    Valid values:  adiantum, cbc, ctr, cts, xts.  If unset, it adds
     adiantum, cbc, xts.
+    Notes:  For the dss work profile, only ctr and xts cryptsetup are available
+    on the kernel side.  Do not use ECB or CBC.
 
     CRYPTSETUP_HASHES - Space separated list for password pseudorandomness.
     Valid values:  blake2b, blake2s, rmd160, sha256, sha512, sha3, wp512.
