@@ -7,7 +7,7 @@ EAPI=8
 # See https://github.com/google/orbax/blob/v0.1.7/.github/workflows/build.yml for supported python
 
 DISTUTILS_USE_PEP517="flit"
-PYTHON_COMPAT=( python3_10 ) # Upstream only tests up to 3.9.  3.10 is an untested ebuild modificiation and may break.
+PYTHON_COMPAT=( "python3_10" ) # Upstream only tests up to 3.9.  3.10 is an untested ebuild modificiation and may break.
 
 inherit distutils-r1
 
@@ -69,7 +69,10 @@ BDEPEND+="
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 	)
 "
-DOCS=( CHANGELOG.md README.md )
+DOCS=( "CHANGELOG.md" "README.md" )
+
+distutils_enable_sphinx "docs"
+distutils_enable_tests "pytest"
 
 pkg_setup() {
 	if use python_target_python3_10 ; then
@@ -95,13 +98,9 @@ src_unpack() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
-	docinto docs
-	dodoc docs/*.md
+	docinto "licenses"
+	dodoc "LICENSE"
 }
-
-distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

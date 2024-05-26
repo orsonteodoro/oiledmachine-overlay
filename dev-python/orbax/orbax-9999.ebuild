@@ -13,7 +13,7 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="flit"
 PROTOBUF_PV="5.26.1"
-PYTHON_COMPAT=( python3_{10,11} ) # Upstream only tests up to 3.11.
+PYTHON_COMPAT=( "python3_"{10,11} ) # Upstream only tests up to 3.11.
 
 inherit distutils-r1
 
@@ -25,12 +25,12 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-	S="${WORKDIR}/${P}"
 	SRC_URI="
 https://github.com/google/orbax/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
+S="${WORKDIR}/${P}/export"
 
 DESCRIPTION="Orbax is a library providing common utilities for JAX users."
 HOMEPAGE="
@@ -102,7 +102,9 @@ PDEPEND+="
 		>=sci-libs/tensorflow-2.15.0[${PYTHON_USEDEP}]
 	)
 "
-DOCS=( CHANGELOG.md README.md )
+DOCS=( "CHANGELOG.md" "README.md" )
+
+distutils_enable_sphinx "docs"
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -118,10 +120,8 @@ src_unpack() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
-	docinto docs
-	dodoc docs/*.md
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
