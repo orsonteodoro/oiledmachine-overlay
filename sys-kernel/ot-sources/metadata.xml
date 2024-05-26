@@ -4170,6 +4170,15 @@ unset OT_KERNEL_PRIVATE_KEY
 
       This patchset is only applied when the versions are exactly the same.
     </flag>
+    <flag name="cpu_flags_x86_clmul_ni">
+      Add support for CLMUL-NI for faster hashing.
+    </flag>
+    <flag name="cpu_flags_x86_gfni">
+      Enables support for GFNI support for the ARIA block cipher.
+    </flag>
+    <flag name="cpu_flags_x86_tpause">
+      Check dependencies for support for the TPAUSE instruction.
+    </flag>
     <flag name="deepcc">
       (WORK IN PROGRESS / DRAFT)
       DeepCC uses Deep Reinforced Learning (DRL) AI to improve existing
@@ -4190,12 +4199,6 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="disable_debug">
       Installs scripts to disable debugging, tracing, verbose output or related
       code paths.
-    </flag>
-    <flag name="cpu_flags_x86_gfni">
-      Enables support for GFNI support for the ARIA cipher.
-    </flag>
-    <flag name="cpu_flags_x86_tpause">
-      Check dependencies for support for the TPAUSE instruction.
     </flag>
     <flag name="exfat">
       Enables or removes exFAT

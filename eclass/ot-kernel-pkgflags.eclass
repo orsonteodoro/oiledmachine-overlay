@@ -48,6 +48,7 @@ X86_FLAGS=(
 	avx
 	avx2
 	avx512vl
+	clmul_ni
 	gfni
 	sha
 	sse2
@@ -1605,6 +1606,10 @@ ot-kernel-pkgflags_cipher_optional() {
 	if ot-kernel-pkgflags_has_kflag "CONFIG_ASYMMETRIC_TPM_KEY_SUBTYPE" ; then
 		_ot-kernel-pkgflags_sha1
 	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_BCACHEFS_FS" ; then
+		_ot-kernel-pkgflags_sha256
+		_ot-kernel-pkgflags_chacha20_poly1305
+	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_BT" ; then
 		_ot-kernel-pkgflags_aes ECB
 		_ot-kernel-pkgflags_sha256
@@ -2394,6 +2399,7 @@ _ot-kernel-pkgflags_aes() {
 		# with network algorithms overriding the generic version.
 		ot-kernel_set_configopt "CONFIG_CRYPTO_AES_TI" "m"
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_AES"
 }
 
@@ -2431,6 +2437,7 @@ _ot-kernel-pkgflags_aria() {
 			fi
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA"
 }
 
@@ -2439,6 +2446,7 @@ _ot-kernel-pkgflags_aria() {
 # Wrapper for the anubis option.
 _ot-kernel-pkgflags_anubis() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_ANUBIS}" == "1" ]] && continue
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_ENABLE_OBSOLETE"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_ANUBIS"
 }
@@ -2453,6 +2461,7 @@ _ot-kernel-pkgflags_blake2b() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_BLAKE2B_NEON"
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_BLAKE2B"
 }
 
@@ -2469,6 +2478,7 @@ _ot-kernel-pkgflags_blake2s() {
 		# Can use avx512vl
 		ot-kernel_y_configopt "CONFIG_CRYPTO_BLAKE2S_X86"
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_BLAKE2S"
 }
 
@@ -2496,6 +2506,7 @@ _ot-kernel-pkgflags_camellia() {
 			fi
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA"
 }
 
@@ -2513,6 +2524,7 @@ _ot-kernel-pkgflags_cast6() {
 			fi
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_CAST6"
 }
 
@@ -2548,7 +2560,52 @@ _ot-kernel-pkgflags_chacha20() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20_X86_64"
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20"
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_poly1305
+# @DESCRIPTION:
+# Wrapper for the poly1305 option.  Adds the simd but implied the generic as well.
+_ot-kernel-pkgflags_poly1305() {
+	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_POLY1305}" == "1" ]] && continue
+	if [[ "${arch}" == "arm" ]] ; then
+		ot-kernel_y_configopt "CRYPTO_POLY1305_ARM"
+	fi
+	if [[ "${arch}" == "arm64" ]] ; then
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_KERNEL_MODE_NEON"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305_NEON"
+		fi
+	fi
+	if [[ "${arch}" == "mips" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305_MIPS"
+	fi
+	if [[ "${arch}" == "powerpc" ]] ; then
+		if \
+			   grep -q -E -e "^CONFIG_PPC64=y" "${path_config}" \
+			|| grep -q -E -e "^CONFIG_CPU_LITTLE_ENDIAN=y" "${path_config}" \
+			|| grep -q -E -e "^CONFIG_VSX=y" "${path_config}" \
+		; then
+	# Power10 or later AND little-endian and 64-bit
+			ot-kernel_y_configopt "CRYPTO_POLY1305_P10"
+		fi
+	fi
+	if [[ "${arch}" == "x86_64" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305_X86_64"
+	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
+	ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305"
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_chacha20_poly1305
+# @DESCRIPTION:
+# Wrapper for the chacha20-poly1305 option.  Adds the simd but implied the generic as well.
+_ot-kernel-pkgflags_chacha20_poly1305() {
+	_ot-kernel-pkgflags_chacha20
+	_ot-kernel-pkgflags_poly1305
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
+	ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20POLY1305"
 }
 
 # @FUNCTION: _ot-kernel-pkgflags_crc32
@@ -2575,6 +2632,7 @@ _ot-kernel-pkgflags_crc32() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32_PCLMUL"
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32"
 }
 
@@ -2614,6 +2672,7 @@ _ot-kernel-pkgflags_crc32c() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32C_INTEL"
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32C"
 }
 
@@ -2634,6 +2693,8 @@ _ot-kernel-pkgflags_curve25519() {
 	if [[ "${arch}" == "x86_64" ]] ; then
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519_X86"
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
+	ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519"
 }
 
 # @FUNCTION: _ot-kernel-pkgflags_des
@@ -2655,6 +2716,7 @@ _ot-kernel-pkgflags_des() {
 			fi
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_DES"
 }
 
@@ -2682,6 +2744,8 @@ _ot-kernel-pkgflags_des3_ede() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_DES3_EDE_X86_64"
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
+	ot-kernel_y_configopt "CONFIG_CRYPTO_DES"
 }
 
 # @FUNCTION: _ot-kernel-pkgflags_gcm
@@ -2703,10 +2767,11 @@ _ot-kernel-pkgflags_gcm() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH_S390"
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_aes ; then
+		if ot-kernel_use cpu_flags_x86_aes || ot-kernel_use cpu_flags_x86_clmul_ni ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH_CLMUL_NI_INTEL"
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_GCM"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH"
 }
@@ -2729,6 +2794,7 @@ _ot-kernel-pkgflags_md5() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_MD5_SPARC64"
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_MD5"
 }
 
@@ -2781,6 +2847,7 @@ _ot-kernel-pkgflags_sha1() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_SSSE3"
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1"
 }
 
@@ -2833,6 +2900,7 @@ _ot-kernel-pkgflags_sha256() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_SSSE3"
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256"
 }
 
@@ -2851,6 +2919,7 @@ _ot-kernel-pkgflags_sha3() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA3_256_S390"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA3_512_S390"
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_SHA3"
 }
 
@@ -2894,6 +2963,7 @@ _ot-kernel-pkgflags_sha512() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_SSSE3"
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512"
 }
 
@@ -2919,6 +2989,7 @@ _ot-kernel-pkgflags_serpent() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT_SSE2_586"
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT"
 }
 
@@ -2939,6 +3010,7 @@ _ot-kernel-pkgflags_sm4() {
 			fi
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CRYPTO_SM4_GENERIC"
 }
 
@@ -2964,6 +3036,7 @@ _ot-kernel-pkgflags_twofish() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH_X86_64"
 		fi
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH"
 }
 
@@ -3016,6 +3089,7 @@ _ot-kernel-pkgflags_poly1305() {
 	if [[ "${arch}" == "x86_64" ]] ; then
 		ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305_X86_64"
 	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_LIB_POLY1305_GENERIC"
 }
@@ -3155,6 +3229,7 @@ eerror
 			cryptsetup_modes="${CRYPTSETUP_MODES,,}"
 		fi
 
+		# We do not include weak ciphers which may expose keys during swap out.
 		[[ "${cryptsetup_ciphers}" =~ "aes" ]] && _ot-kernel-pkgflags_aes ${cryptsetup_modes}
 		[[ "${cryptsetup_ciphers}" =~ "aria" ]] && _ot-kernel-pkgflags_aria ${cryptsetup_modes}
 		[[ "${cryptsetup_ciphers}" =~ "anubis" ]] && _ot-kernel-pkgflags_anubis ${cryptsetup_modes}
@@ -3749,9 +3824,8 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_BRIDGE_VLAN_FILTERING"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_AEAD"
-		ot-kernel_y_configopt "CONFIG_CRYPTO_GCM"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_SEQIV"
-		ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH"
+		_ot-kernel-pkgflags_gcm
 		ot-kernel_y_configopt "CONFIG_XFRM"
 		ot-kernel_y_configopt "CONFIG_XFRM_USER"
 		ot-kernel_y_configopt "CONFIG_XFRM_ALGO"
@@ -7436,10 +7510,10 @@ _ot-kernel_ktls_support() {
 	# Set in _ot-kernel_checkpoint_dss_tls_requirement
 		:
 	else
+		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
-		ot-kernel_y_configopt "CONFIG_CRYPTO_GCM"
-		ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH"
-		ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20POLY1305"
+		_ot-kernel-pkgflags_gcm
+		_ot-kernel-pkgflags_chacha20_poly1305
 
 		local ktls_region="${KTLS_REGION:-west}"
 		if [[ "${ktls_region}" =~ ("west"|"eu"|"us") ]] ; then
@@ -12461,8 +12535,7 @@ _ot-kernel-pkgflags_dss_setup_hmacs() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CMAC"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
-		ot-kernel_y_configopt "CONFIG_CRYPTO_GCM"   # GMAC
-		ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH" # GMAC
+		_ot-kernel-pkgflags_gcm # GMAC
 
 	# Disable other MACs
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_MICHAEL_MIC"
@@ -12519,6 +12592,17 @@ ewarn
 	# 2010, Chinese, Hash Function
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SM3_GENERIC"
 		fi
+
+	# Hash function for Adiantum
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_LIB_POLY1305_GENERIC"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_NHPOLY1305"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_NHPOLY1305_NEON"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_NHPOLY1305_AVX2"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_NHPOLY1305_SSE2"
+
+	# Hash function for HCTR2
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_POLYVAL"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_POLYVAL_CLMUL_N"
 
 	# 2000-2003, Belgian-Brazilian, Hash Function
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_WP512"
@@ -12671,6 +12755,7 @@ ewarn
 
 	# 1993, American, 64 Bit Block Cipher, 32-448 Bit keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_BLOWFISH"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_BLOWFISH_X86_64"
 
 	# 1975, American, 64 Bit Block Size, 56 Bit Key Size
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_DES"
@@ -12695,9 +12780,10 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 	# See also
 	# https://github.com/torvalds/linux/blob/v6.9/net/tls/tls_main.c#L102
+		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
-		ot-kernel_y_configopt "CONFIG_CRYPTO_GCM"
-		ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH"
+		_ot-kernel-pkgflags_gcm
+
 		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
 			_ot-kernel-pkgflags_aes
 		elif [[ "${dss_region}" =~ "cn" ]] ; then
