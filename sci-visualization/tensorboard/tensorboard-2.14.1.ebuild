@@ -376,7 +376,9 @@ ewarn
 add_sandbox_rules() {
 	local exceptions=(
 		"/usr/lib/${EPYTHON}/site-packages/Cython/Distutils/__pycache__"
+		"/usr/lib/${EPYTHON}/site-packages/Cython.0/Distutils/__pycache__"
 		"/usr/lib/${EPYTHON}/site-packages/Cython.3/Distutils/__pycache__"
+		"/usr/lib/${EPYTHON}/site-packages/__pycache__"
 	)
 einfo "Adding sandbox rules"
 	local path
