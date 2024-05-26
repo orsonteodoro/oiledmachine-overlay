@@ -389,7 +389,13 @@ einfo "addpredict ${path}"
 }
 
 src_compile() {
-	add_sandbox_rules
+	# There is a determinism problem.
+	# It will try to use cython with python 3.10 but it should use cython
+	# with python 3.11 if python 3.11 selected.
+	local i
+	for i in "${_PYTHON_ALL_IMPLS[@]}"; do
+		EPYTHON="${i/_/.}" add_sandbox_rules
+	done
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 # Repeated fails when fetch is incomplete or not completely atomic.
 	if [[ ! -e "${distdir}/${PN}/${PV}/.finished" ]] ; then

@@ -361,6 +361,11 @@ ewarn
 }
 
 add_sandbox_rules() {
+einfo "PYTHON: ${PYTHON}"
+einfo "PATH: ${PATH}"
+	which python3
+	python3 --version || die
+eerror "EPYTHON:  ${EPYTHON}"
 	local exceptions=(
 		"/usr/lib/${EPYTHON}/site-packages/Cython/Distutils/__pycache__"
 		"/usr/lib/${EPYTHON}/site-packages/Cython.0/Distutils/__pycache__"
@@ -376,7 +381,13 @@ einfo "addpredict ${path}"
 }
 
 src_compile() {
-	add_sandbox_rules
+	# There is a determinism problem.
+	# It will try to use cython with python 3.10 but it should use cython
+	# with python 3.11 if python 3.11 selected.
+	local i
+	for i in "${_PYTHON_ALL_IMPLS[@]}"; do
+		EPYTHON="${i/_/.}" add_sandbox_rules
+	done
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 # Repeated fails when fetch is incomplete or not completely atomic.
 	if [[ ! -e "${distdir}/${PN}/${PV}/.finished" ]] ; then
@@ -395,6 +406,12 @@ einfo "Wiping incomplete yarn download."
 		//tensorboard/...
 	mkdir -p "${T}/pip_package"
 	_ebazel run //tensorboard/pip_package:build_pip_package -- "${T}/pip_package"
+
+einfo "PYTHON: ${PYTHON}"
+einfo "PATH: ${PATH}"
+	which python3
+	python3 --version || die
+eerror "EPYTHON:  ${EPYTHON}"
 
 	local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
 	local wheel_path=$(realpath "${T}/pip_package/"*".whl")
