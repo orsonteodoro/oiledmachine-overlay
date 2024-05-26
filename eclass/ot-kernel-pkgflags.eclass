@@ -12458,6 +12458,7 @@ ewarn
 		# Disabled weak hashes
 		# For hash cryptoanalysis, see
 		# https://en.wikipedia.org/wiki/Hash_function_security_summary
+		# https://en.wikipedia.org/wiki/Security_level#Meaning_of_%22broken%22
 
 		# 1988, 64 Bit Block Size, 64 Bit Keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_FCRYPT"
@@ -12555,6 +12556,7 @@ ewarn
 		# Disabled weak ciphers
 		# For cipher cryptoanalysis, see
 		# https://en.wikipedia.org/wiki/Cipher_security_summary
+		# https://en.wikipedia.org/wiki/Security_level#Meaning_of_%22broken%22
 
 		# 1993, American, 64 Bit Block Cipher, 32-448 Bit keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_BLOWFISH"
