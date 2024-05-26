@@ -172,7 +172,7 @@ LICENSE="
 		BSD-2
 	)
 "
-#KEYWORDS="~amd64 ~arm64" # Needs install test
+KEYWORDS="~amd64 ~arm64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${ROCM_IUSE}
