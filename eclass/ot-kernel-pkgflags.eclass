@@ -2768,6 +2768,8 @@ _ot-kernel-pkgflags_gcm() {
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
 		if ot-kernel_use cpu_flags_x86_aes || ot-kernel_use cpu_flags_x86_clmul_ni ; then
+# There is an edge case or processor affected can verified at.
+# https://gist.github.com/mmcloughlin/66488e42a8fdbd9ab39c3f6438bb8ed7#file-cpuids-txt-L188
 			ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH_CLMUL_NI_INTEL"
 		fi
 	fi
@@ -3286,19 +3288,14 @@ ewarn "AEAD cryptsetup support is experimental"
 			_ot-kernel-pkgflags_twofish ${cryptsetup_modes}
 		fi
 		if [[ "${cryptsetup_modes}" =~ "adiantum" ]] ; then
-			_ot-kernel-pkgflags_chacha20 # Uses actually XChaCha12 for stream cipher
-			_ot-kernel-pkgflags_nhpoly1305 # A hash function from this module
+			# The wrappers below add the hardware accelerated versions if any.
+			_ot-kernel-pkgflags_chacha20   # Uses actually XChaCha12 for stream cipher
+			_ot-kernel-pkgflags_nhpoly1305 # A hash function from this module.
+
 			# AES already added above.
 			# AES is as the block cipher is used upstream, but any 16 byte block size with 256 bit key
-			# Possibly compatible blockciphers:
-			#   aes (belgian)
-			#   anubis (belgian - brazilian)
-			#   cast6 (canadian)
-			#   serpent (canadian - israeli - danish)
-			#   sm4 (chinese)
-			#   twofish (american)
 			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER"
-			ot-kernel_y_configopt "CONFIG_CRYPTO_ADIANTUM"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ADIANTUM" # Adds the generic versions of chacha20 and nhpoly1305.
 		fi
 	fi
 }
@@ -12593,16 +12590,16 @@ ewarn
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SM3_GENERIC"
 		fi
 
-	# Hash function for Adiantum
+	# Hash function for Adiantum (mode of operation)
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_LIB_POLY1305_GENERIC"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_NHPOLY1305"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_NHPOLY1305_NEON"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_NHPOLY1305_AVX2"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_NHPOLY1305_SSE2"
 
-	# Hash function for HCTR2
+	# Hash function for HCTR2 (mode of operation)
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_POLYVAL"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_POLYVAL_CLMUL_N"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_POLYVAL_CLMUL_NI"
 
 	# 2000-2003, Belgian-Brazilian, Hash Function
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_WP512"
