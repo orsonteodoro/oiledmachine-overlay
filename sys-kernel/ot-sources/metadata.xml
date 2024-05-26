@@ -3757,7 +3757,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     KTLS_REGION - A regional hint to enable the proper kernel config for TLS
     offload for improved throughput.
-    Valid values:  cn, eu, kr us, west (default)
+    Valid values:  cn, eu, kr, us, west (default)
     Notes:  Multiple options can be specified with spaces.  It only affects non
     dss work profiles.
     See also:  DSS_REGION
