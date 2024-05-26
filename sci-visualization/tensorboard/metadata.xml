@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Jason Zaman</name>
   </maintainer>
@@ -18,9 +18,4 @@
   <upstream>
     <remote-id type="github">tensorflow/tensorboard</remote-id>
   </upstream>
-  <use>
-    <flag name="testing-tensorflow">
-      Used to avoid emerge issues
-    </flag>
-  </use>
 </pkgmetadata>
