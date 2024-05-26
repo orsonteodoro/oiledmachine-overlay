@@ -3075,7 +3075,7 @@ ewarn "Do not use CBC for disk encryption."
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_CBC"	# Disabled to prevent integrity attack.  See https://en.wikipedia.org/wiki/Disk_encryption_theory#Malleability_attack
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_CFB"	# Not tested upstream?
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CTR"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_CTS"	# Not tested upstream?
+		#ot-kernel_y_configopt "CONFIG_CRYPTO_CTS"	# Used in CONFIG_FS_ENCRYPTION
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_OFB"	# Not tested upstream?
 		ot-kernel_y_configopt "CONFIG_CRYPTO_XTS"
 
@@ -3165,7 +3165,7 @@ ewarn "Do not use ECB for disk encryption."
 		[[ "${cryptsetup_modes}" =~ "cbc" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"	# From ebuild
 		#[[ "${cryptsetup_modes}" =~ "cfb" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CFB"	# Not tested upstream?
 		[[ "${cryptsetup_modes}" =~ "ctr" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CTR"
-		#[[ "${cryptsetup_modes}" =~ "cts" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CTS"	# Not tested upstream?
+		#[[ "${cryptsetup_modes}" =~ "cts" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CTS"	# Used in CONFIG_FS_ENCRYPTION
 		#[[ "${cryptsetup_modes}" =~ "ofb" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_OFB"	# Not tested upstream?
 		[[ "${cryptsetup_modes}" =~ "xts" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_XTS"
 
