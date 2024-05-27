@@ -13,6 +13,7 @@ EAPI=8
 
 ABSEIL_CPP_PV="master-2023-03-03"					# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/com_google_absl/workspace.bzl#L29, https://github.com/abseil/abseil-cpp/blob/807763a7f57dcf0ba4af7c3b218013e8f525e811/absl/base/config.h#L120
 BAZEL_PV="6.1.0"
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GCC_COMPAT=( {12..9} )							# Verified working
 GRPC_PV="1.52.0"							# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/com_github_grpc_grpc/workspace.bzl#L31C51-L31C91, https://github.com/grpc/grpc/blob/a02cc7d88ae45abf7ccb742c7c61345f7ef6d0d2/CMakeLists.txt#L28
@@ -63,6 +64,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang doc
+ebuild-revision-1
 "
 REQUIRED_USE+="
 	^^ (

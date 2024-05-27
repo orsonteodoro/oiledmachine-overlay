@@ -14,6 +14,7 @@ EAPI=8
 
 ABSEIL_CPP_PV="20240116.2"						# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/com_google_absl/workspace.bzl#L26, https://github.com/abseil/abseil-cpp/blob/20240116.2/absl/base/config.h#L120
 BAZEL_PV="6.4.0"
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GCC_COMPAT=( {12..9} )							# Verified working
 JAVA_SLOT="11"
@@ -63,6 +64,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang doc
+ebuild-revision-1
 "
 REQUIRED_USE+="
 	^^ (
