@@ -12898,6 +12898,7 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 	# https://en.wikipedia.org/wiki/Transport_Layer_Security#TLS_1.3
 	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
 	# https://github.com/torvalds/linux/blob/v6.9/net/tls/tls_main.c#L102
+		local tls="${TLS:-1}"
 		local dss_region="${DSS_REGION:-west}"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
