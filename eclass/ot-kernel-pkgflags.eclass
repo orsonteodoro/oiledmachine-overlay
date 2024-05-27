@@ -7522,12 +7522,12 @@ _ot-kernel_tls_support() {
 		local tls_region="${TLS_REGION:-west}"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
-		if [[ "${tls}" != "1" ]] ; then
+		if [[ "${tls_region}" =~ ("cn") && "${tls}" == "1" ]] ; then
+	# TLS 1.2, TLS 1.3 on a few websites.
+			ot-kernel_y_configopt "CONFIG_TLS"
+			ot-kernel_y_configopt "CONFIG_TLS_DEVICE"
+		elif [[ "${tls}" != "1" ]] ; then
 	# CONFIG_TLS adds AES.
-			ot-kernel_unset_configopt "CONFIG_TLS"
-			ot-kernel_unset_configopt "CONFIG_TLS_DEVICE"
-		elif [[ "${tls_region}" =~ ("cn") ]] ; then
-	# TLS 1.3 does not work here.
 			ot-kernel_unset_configopt "CONFIG_TLS"
 			ot-kernel_unset_configopt "CONFIG_TLS_DEVICE"
 		else
@@ -7546,9 +7546,12 @@ _ot-kernel_tls_support() {
 		if [[ "${tls}" == "1" || "${tls_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
 	# Required for TLS.
 	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
-			_ot-kernel-pkgflags_aes
-			_ot-kernel-pkgflags_sha256
-			_ot-kernel-pkgflags_sha512 # Includes sha384
+			_ot-kernel-pkgflags_aes    # Observed for .cn, .hk, .jp, .com (us)
+			if [[ "${tls_region}" =~ "jp" ]] ; then
+				_ot-kernel-pkgflags_sha1 # Observed for .jp, TLS 1.2
+			fi
+			_ot-kernel-pkgflags_sha256 # Observed for .cn, .hk, .jp, .com (us)
+			_ot-kernel-pkgflags_sha512 # Observed for .cn, .hk. .jp.  Includes sha384
 		fi
 		if [[ "${tls_region}" =~ "cn" ]] ; then
 			_ot-kernel-pkgflags_sm4
@@ -7563,12 +7566,12 @@ _ot-kernel_tls_support() {
 		fi
 
 	# Key Agreement (TLS Handshaking)
-		if [[ "${tls_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
+		if [[ "${tls}" == "1" || "${tls_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
 	# See also
 	# https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-8
-			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"         # Observed
-			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDH"        # Observed
-			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"       # Observed
+			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"         # Observed for .cn, .hk, .jp, .com (us)
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDH"        # Observed for .jp
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"       # Observed for .cn, .hk, .jp
 			#ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519" # Not used in most TLS
 		fi
 		if [[ "${tls_region}" =~ "cn" ]] ; then
@@ -12698,15 +12701,20 @@ ewarn
 	# https://en.wikipedia.org/wiki/Hash_function_security_summary
 	# https://en.wikipedia.org/wiki/Security_level#Meaning_of_%22broken%22
 
+		if [[ "${dss_region}" =~ "jp" ]] ; then
+	# It is present for EV root CA
+			:
+		else
 	# 1992, American (NSA), Hash Function
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_ARM"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_ARM_NEON"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_ARM64_CE"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_OCTEON"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_PPC_SPE"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_S390"
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_SSSE3"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_ARM"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_ARM_NEON"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_ARM64_CE"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_OCTEON"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_PPC_SPE"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_S390"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA1_SSSE3"
+		fi
 
 	# 1992, American, Hash Function
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_MD5"
@@ -12936,12 +12944,12 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 		local dss_region="${DSS_REGION:-west}"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
-		if [[ "${tls}" != "1" ]] ; then
+		if [[ "${dss_region}" =~ ("cn") && "${tls}" == "1" ]] ; then
+	# TLS 1.2, TLS 1.3 on a few websites.
+			ot-kernel_y_configopt "CONFIG_TLS"
+			ot-kernel_y_configopt "CONFIG_TLS_DEVICE"
+		elif [[ "${tls}" != "1" ]] ; then
 	# CONFIG_TLS adds AES.
-			ot-kernel_unset_configopt "CONFIG_TLS"
-			ot-kernel_unset_configopt "CONFIG_TLS_DEVICE"
-		elif [[ "${dss_region}" =~ ("cn") ]] ; then
-	# TLS 1.3 does not work here.
 			ot-kernel_unset_configopt "CONFIG_TLS"
 			ot-kernel_unset_configopt "CONFIG_TLS_DEVICE"
 		else
@@ -12963,16 +12971,22 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 			_ot-kernel-pkgflags_aes
 			_ot-kernel-pkgflags_sha256
 			_ot-kernel-pkgflags_sha512 # Includes sha384
-		elif [[ "${dss_region}" =~ "cn" ]] ; then
+		elif [[ "${dss_region}" == "cn" ]] ; then
+			if [[ "${tls}" == "1" ]] ; then
+				_ot-kernel-pkgflags_aes                   # Observed for .cn, .hk, .jp, .com (us)
+				_ot-kernel-pkgflags_sha256                # Observed for .cn, .hk, .com (us)
+				_ot-kernel-pkgflags_sha512                # Observed for .cn, .hk.  Includes sha384
+			fi
 			_ot-kernel-pkgflags_sm4
-		elif [[ "${dss_region}" =~ "jp" ]] ; then
+		elif [[ "${dss_region}" == "jp" ]] ; then
 			_ot-kernel-pkgflags_aes
+			_ot-kernel-pkgflags_sha1   # Observed for .jp, TLS 1.2
 			_ot-kernel-pkgflags_sha256
 			_ot-kernel-pkgflags_sha512 # Includes sha384
 
 	# TLS 1.2
 			_ot-kernel-pkgflags_camellia
-		elif [[ "${dss_region}" =~ "kr" ]] ; then
+		elif [[ "${dss_region}" == "kr" ]] ; then
 			_ot-kernel-pkgflags_aes
 			_ot-kernel-pkgflags_sha256
 			_ot-kernel-pkgflags_sha512 # Includes sha384
@@ -12982,16 +12996,20 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 		fi
 
 	# Key Agreement (TLS handshake)
-		if [[ "${dss_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
+		if [[ "${dss_region}" == "cn" && "${tls}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"         # Observed for .cn, .hk, .jp, .com (us)
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"       # Observed for .cn, .hk, .jp
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SM2"
+		elif [[ "${dss_region}" == "cn" ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SM2"
+		elif [[ "${dss_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
 	# See also
 	# https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-8
-			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"         # Observed
-			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDH"        # Observed
-			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"       # Observed
+			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"         # Observed for .cn, .hk, .jp, .com (us)
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDH"        # Observed for .jp
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"       # Observed for .cn, .hk, .jp
 			#ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519" # Not used
-		elif [[ "${dss_region}" =~ "cn" ]] ; then
-			ot-kernel_y_configopt "CONFIG_CRYPTO_SM2"
-		elif [[ "${dss_region}" =~ "ru" ]] ; then
+		elif [[ "${dss_region}" == "ru" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ECRDSA"
 		fi
 	fi
