@@ -7497,6 +7497,15 @@ ot-kernel-pkgflags_opensnitch_ebpf_module() { # DONE
 # @FUNCTION: _ot-kernel_tls_support
 # @DESCRIPTION:
 # Enables KTLS/TLS support
+#
+# Both _ot-kernel_tls_support and _ot-kernel_checkpoint_dss_tls_requirement
+# look similar but there are differences.
+#
+# _ot-kernel_tls_support assumes traveler or brick-and-mortar customer context
+# so open ended.
+# _ot-kernel_checkpoint_dss_tls_requirement assumes the possibilities of
+# business or goverment contractor so restrictive.
+#
 _ot-kernel_tls_support() {
 	# See also
 	# https://github.com/torvalds/linux/blob/v6.9/net/tls/tls_main.c#L102
@@ -12863,6 +12872,15 @@ _ot-kernel-pkgflags_dss_disable_remaining_ecc_algs() {
 # @FUNCTION: _ot-kernel_checkpoint_dss_tls_requirement
 # @DESCRIPTION:
 # Check for TLS enablement
+#
+# Both _ot-kernel_tls_support and _ot-kernel_checkpoint_dss_tls_requirement
+# look similar but there are differences.
+#
+# _ot-kernel_tls_support assumes traveler or brick-and-mortar customer context
+# so open ended.
+# _ot-kernel_checkpoint_dss_tls_requirement assumes the possibilities of
+# business or goverment contractor so restrictive.
+#
 _ot-kernel_checkpoint_dss_tls_requirement() {
 	if [[ "${work_profile}" == "dss" ]] ; then
 	# TLS 1.3, See
@@ -12893,8 +12911,11 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
 		_ot-kernel-pkgflags_gcm
 
-		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+		if [[ "${tls}" != "1" || "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+	# Required for TLS.
+	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
 			_ot-kernel-pkgflags_aes
+			_ot-kernel-pkgflags_sha256
 		elif [[ "${dss_region}" =~ "cn" ]] ; then
 			_ot-kernel-pkgflags_sm4
 		elif [[ "${dss_region}" =~ "kr" ]] ; then
