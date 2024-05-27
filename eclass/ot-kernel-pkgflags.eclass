@@ -12820,6 +12820,8 @@ ewarn
 # @DESCRIPTION:
 # Disable unused ECC algs
 _ot-kernel-pkgflags_dss_disable_remaining_ecc_algs() {
+# FIXME:  Disable kernel config options that force crypto ciphers/algorithms.
+# Examples: CONFIG_CFG80211_REQUIRE_SIGNED_REGDB forces CONFIG_CRYPTO_RSA.
 	if [[ "${work_profile}" == "dss" ]] ; then
 		local dss_region="${DSS_REGION:-west}"
 		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
