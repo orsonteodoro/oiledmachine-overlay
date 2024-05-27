@@ -12968,7 +12968,7 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 			_ot-kernel-pkgflags_sha512 # Includes sha384
 
 	# TLS 1.2
-				_ot-kernel-pkgflags_camellia
+			_ot-kernel-pkgflags_camellia
 		elif [[ "${dss_region}" =~ "kr" ]] ; then
 			_ot-kernel-pkgflags_aes
 			_ot-kernel-pkgflags_sha256
