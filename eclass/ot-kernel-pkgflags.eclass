@@ -7504,6 +7504,7 @@ _ot-kernel_ktls_support() {
 	# Set in _ot-kernel_checkpoint_dss_tls_requirement
 		:
 	else
+		local ktls_compat="${KTLS_COMPAT:-1}"
 		local ktls_region="${KTLS_REGION:-west}"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
@@ -7523,8 +7524,11 @@ _ot-kernel_ktls_support() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
 		_ot-kernel-pkgflags_gcm
 
-		if [[ "${ktls_region}" =~ ("west"|"eu"|"us") ]] ; then
+		if [[ "${ktls_compat}" == "1" || "${ktls_region}" =~ ("west"|"eu"|"us") ]] ; then
+	# Required for TLS.
+	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
 			_ot-kernel-pkgflags_aes
+			_ot-kernel-pkgflags_sha256
 		fi
 		if [[ "${ktls_region}" =~ ("kr") ]] ; then
 			_ot-kernel-pkgflags_aria
@@ -12556,6 +12560,7 @@ _ot-kernel-pkgflags_dss_setup_hmacs() {
 # Disable all unused ciphers for the dss work profile.
 _ot-kernel-pkgflags_dss_disable_remaining_hash_algs() {
 	if [[ "${work_profile}" == "dss" ]] ; then
+		local dss_compat="${DSS_COMPAT:-1}"
 		local dss_region="${DSS_REGION:-west}"
 ewarn
 ewarn "Using the dss work profile may mess up the WiFI kernel config.  Use the"
@@ -12563,7 +12568,7 @@ ewarn "OT_KERNEL_KCONFIG override to fix this."
 ewarn
 	# Disabled alternative hash algorithms
 
-		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+		if [[ "${dss_compat}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
 			:
 		else
 	# 2001, American (NSA), Hash Function
@@ -12577,7 +12582,11 @@ ewarn
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA256_SSSE3"
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA2_ARM_CE"
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA2_ARM64_CE"
+		fi
 
+		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+			:
+		else
 	# 2016, Belgian et.al. Design, An American NIST Standard; Hash Function
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA3"
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA3_256_S390"
@@ -12655,6 +12664,7 @@ ewarn
 # Disable all unused ciphers for the dss work profile.
 _ot-kernel-pkgflags_dss_disable_remaining_block_ciphers() {
 	if [[ "${work_profile}" == "dss" ]] ; then
+		local dss_compat="${DSS_COMPAT:-1}"
 		local dss_region="${DSS_REGION:-west}"
 einfo "DSS_REGION:  ${dss_region}"
 ewarn
@@ -12668,7 +12678,7 @@ ewarn
 	# 2000, Belgian-Brazilian, 128 Bit Block Cipher, 128-256 Bit Keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_ANUBIS"
 
-		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+		if [[ "${dss_compat}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
 			:
 		else
 	# 1998, Belgian, 128 Bit Block Size, 128-256 Bit Keys
@@ -12821,7 +12831,9 @@ _ot-kernel-pkgflags_dss_disable_remaining_ecc_algs() {
 # Check for TLS enablement
 _ot-kernel_checkpoint_dss_tls_requirement() {
 	if [[ "${work_profile}" == "dss" ]] ; then
-	# TLS 1.3, See https://en.wikipedia.org/wiki/Transport_Layer_Security#TLS_1.3
+	# TLS 1.3, See
+	# https://en.wikipedia.org/wiki/Transport_Layer_Security#TLS_1.3
+	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
 		local dss_region="${DSS_REGION:-west}"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
