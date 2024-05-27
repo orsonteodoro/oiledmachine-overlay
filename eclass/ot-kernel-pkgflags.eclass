@@ -2570,7 +2570,7 @@ _ot-kernel-pkgflags_chacha20() {
 _ot-kernel-pkgflags_poly1305() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_POLY1305}" == "1" ]] && continue
 	if [[ "${arch}" == "arm" ]] ; then
-		ot-kernel_y_configopt "CRYPTO_POLY1305_ARM"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305_ARM"
 	fi
 	if [[ "${arch}" == "arm64" ]] ; then
 		if ot-kernel_use cpu_flags_arm_neon ; then
@@ -2588,7 +2588,7 @@ _ot-kernel-pkgflags_poly1305() {
 			|| grep -q -E -e "^CONFIG_VSX=y" "${path_config}" \
 		; then
 	# Power10 or later AND little-endian and 64-bit
-			ot-kernel_y_configopt "CRYPTO_POLY1305_P10"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305_P10"
 		fi
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
@@ -7508,18 +7508,23 @@ _ot-kernel_ktls_support() {
 		local ktls_region="${KTLS_REGION:-west}"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
-		if [[ "${ktls_region}" =~ ("cn") ]] ; then
-		# TLS 1.3 does not work here.
+		if [[ "${ktls_compat}" != "1" ]] ; then
+	# CONFIG_TLS adds AES.
+			ot-kernel_unset_configopt "CONFIG_TLS"
+			ot-kernel_unset_configopt "CONFIG_TLS_DEVICE"
+		elif [[ "${ktls_region}" =~ ("cn") ]] ; then
+	# TLS 1.3 does not work here.
 			ot-kernel_unset_configopt "CONFIG_TLS"
 			ot-kernel_unset_configopt "CONFIG_TLS_DEVICE"
 		else
 			ot-kernel_y_configopt "CONFIG_TLS"
 			ot-kernel_y_configopt "CONFIG_TLS_DEVICE"
 
-		# Optional in spec
+	# Optional in spec
 			_ot-kernel-pkgflags_chacha20_poly1305
 		fi
 
+	# Authenticated Encryption (AE) set with confidentiality and authenticity guarantees.
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
 		_ot-kernel-pkgflags_gcm
@@ -12536,10 +12541,10 @@ eerror
 	fi
 }
 
-# @FUNCTION: _ot-kernel-pkgflags_dss_setup_hmacs
+# @FUNCTION: _ot-kernel-pkgflags_dss_enable_hmacs
 # @DESCRIPTION:
 # Setup required Keyed Cryptographic Hash Algorithms.
-_ot-kernel-pkgflags_dss_setup_hmacs() {
+_ot-kernel-pkgflags_dss_enable_hmacs() {
 	if [[ "${work_profile}" == "dss" ]] ; then
 		local dss_region="${DSS_REGION:-west}"
 	# It must be >= 128 Bit
@@ -12547,7 +12552,14 @@ _ot-kernel-pkgflags_dss_setup_hmacs() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CMAC"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
 		_ot-kernel-pkgflags_gcm # GMAC
+	fi
+}
 
+# @FUNCTION: _ot-kernel-pkgflags_dss_disable_remaining_mac_algs
+# @DESCRIPTION:
+# Disable all unused Message Authentication Code (MAC) algorithms for the dss work profile.
+_ot-kernel-pkgflags_dss_disable_remaining_mac_algs() {
+	if [[ "${work_profile}" == "dss" ]] ; then
 	# Disable other MACs
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_MICHAEL_MIC"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_VMAC"
@@ -12656,6 +12668,26 @@ ewarn
 
 	# 2012, Hash Function (non cryptographic)
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_XXHASH"
+
+		if [[ "${dss_compat}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+			:
+		else
+	# 2013, AEAD ChaCha20-Poly1305
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_CHACHA20POLY1305"
+	# 2008, American, Stream Cipher
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_CHACHA20"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_CHACHA20POLY1305"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_CHACHA20_NEON"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_CHACHA20_X86_64"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_CHACHA_MIPS"
+	# 2005, American, MAC
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_POLY1305"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_POLY1305_ARM"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_POLY1305_NEON"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_POLY1305_MIPS"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_POLY1305_P10"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_POLY1305_X86_64"
+		fi
 	fi
 }
 
@@ -12834,10 +12866,15 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 	# TLS 1.3, See
 	# https://en.wikipedia.org/wiki/Transport_Layer_Security#TLS_1.3
 	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
+	# https://github.com/torvalds/linux/blob/v6.9/net/tls/tls_main.c#L102
 		local dss_region="${DSS_REGION:-west}"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
-		if [[ "${dss_region}" =~ ("cn") ]] ; then
+		if [[ "${dss_compat}" != "1" ]] ; then
+	# CONFIG_TLS adds AES.
+			ot-kernel_unset_configopt "CONFIG_TLS"
+			ot-kernel_unset_configopt "CONFIG_TLS_DEVICE"
+		elif [[ "${dss_region}" =~ ("cn") ]] ; then
 	# TLS 1.3 does not work here.
 			ot-kernel_unset_configopt "CONFIG_TLS"
 			ot-kernel_unset_configopt "CONFIG_TLS_DEVICE"
@@ -12848,8 +12885,8 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 	# Optional in spec
 			_ot-kernel-pkgflags_chacha20_poly1305
 		fi
-	# See also
-	# https://github.com/torvalds/linux/blob/v6.9/net/tls/tls_main.c#L102
+
+	# Authenticated Encryption (AE) set with confidentiality and authenticity guarantees.
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
 		_ot-kernel-pkgflags_gcm
