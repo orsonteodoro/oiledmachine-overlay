@@ -7550,12 +7550,12 @@ _ot-kernel_tls_support() {
 		if [[ "${tls}" == "1" || "${tls_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
 	# Required for TLS.
 	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
-			_ot-kernel-pkgflags_aes    # Observed for .cn, .hk, .jp, .ru, .com (us)
+			_ot-kernel-pkgflags_aes					# Observed for .cn, .hk, .jp, .ru, .com (us)
 			if [[ "${tls_region}" =~ "jp" ]] ; then
-				_ot-kernel-pkgflags_sha1 # Observed for .jp, TLS 1.2
+				_ot-kernel-pkgflags_sha1			# Observed for .jp, TLS 1.2
 			fi
-			_ot-kernel-pkgflags_sha256 # Observed for .cn, .hk, .jp, .ru, .com (us)
-			_ot-kernel-pkgflags_sha512 # Observed for .cn, .hk. .jp, .ru.  Includes sha384
+			_ot-kernel-pkgflags_sha256				# Observed for .cn, .hk, .jp, .ru, .com (us)
+			_ot-kernel-pkgflags_sha512				# Observed for .cn, .hk. .jp, .ru.  Includes sha384
 		fi
 		if [[ "${tls_region}" =~ "cn" ]] ; then
 			_ot-kernel-pkgflags_sm4
@@ -7573,10 +7573,10 @@ _ot-kernel_tls_support() {
 		if [[ "${tls}" == "1" || "${tls_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
 	# See also
 	# https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-8
-			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"         # Observed for .cn, .hk, .jp, .ru, .com (us)
-			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDH"        # Observed for .jp
-			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"       # Observed for .cn, .hk, .jp, .ru
-			#ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519" # Not used in most TLS
+			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"		# Observed for .cn, .hk, .jp, .ru, .com (us)
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDH"		# Observed for .jp
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"		# Observed for .cn, .hk, .jp, .ru
+			#ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519"	# Not used in most TLS
 		fi
 		if [[ "${tls_region}" =~ "cn" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SM2"
@@ -12978,26 +12978,26 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
 			_ot-kernel-pkgflags_aes
 			_ot-kernel-pkgflags_sha256
-			_ot-kernel-pkgflags_sha512 # Includes sha384
+			_ot-kernel-pkgflags_sha512		# Includes sha384
 		elif [[ "${dss_region}" == "cn" ]] ; then
 			if [[ "${tls}" == "1" ]] ; then
-				_ot-kernel-pkgflags_aes                   # Observed for .cn, .hk, .ru, .jp, .com (us)
-				_ot-kernel-pkgflags_sha256                # Observed for .cn, .hk, .ru, .com (us)
-				_ot-kernel-pkgflags_sha512                # Observed for .cn, .hk, .ru.  Includes sha384
+				_ot-kernel-pkgflags_aes		# Observed for .cn, .hk, .ru, .jp, .com (us)
+				_ot-kernel-pkgflags_sha256	# Observed for .cn, .hk, .ru, .com (us)
+				_ot-kernel-pkgflags_sha512	# Observed for .cn, .hk, .ru.
 			fi
 			_ot-kernel-pkgflags_sm4
 		elif [[ "${dss_region}" == "jp" ]] ; then
 			_ot-kernel-pkgflags_aes
-			_ot-kernel-pkgflags_sha1   # Observed for .jp, TLS 1.2
+			_ot-kernel-pkgflags_sha1		# Observed for .jp, TLS 1.2
 			_ot-kernel-pkgflags_sha256
-			_ot-kernel-pkgflags_sha512 # Includes sha384
+			_ot-kernel-pkgflags_sha512
 
 	# TLS 1.2
 			_ot-kernel-pkgflags_camellia
 		elif [[ "${dss_region}" == "kr" ]] ; then
 			_ot-kernel-pkgflags_aes
 			_ot-kernel-pkgflags_sha256
-			_ot-kernel-pkgflags_sha512 # Includes sha384
+			_ot-kernel-pkgflags_sha512
 
 	# TLS 1.2
 			_ot-kernel-pkgflags_aria
