@@ -7498,21 +7498,31 @@ ot-kernel-pkgflags_opensnitch_ebpf_module() { # DONE
 # @DESCRIPTION:
 # Enables KTLS support
 _ot-kernel_ktls_support() {
-	ot-kernel_y_configopt "CONFIG_TLS"
-	ot-kernel_y_configopt "CONFIG_TLS_DEVICE"
-
 	# See also
 	# https://github.com/torvalds/linux/blob/v6.9/net/tls/tls_main.c#L102
 	if [[ "${work_profile}" =~ "dss" ]] ; then
 	# Set in _ot-kernel_checkpoint_dss_tls_requirement
 		:
 	else
+		local ktls_region="${KTLS_REGION:-west}"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_INET"
+		if [[ "${ktls_region}" =~ ("cn") ]] ; then
+		# TLS 1.3 does not work here.
+			ot-kernel_unset_configopt "CONFIG_TLS"
+			ot-kernel_unset_configopt "CONFIG_TLS_DEVICE"
+		else
+			ot-kernel_y_configopt "CONFIG_TLS"
+			ot-kernel_y_configopt "CONFIG_TLS_DEVICE"
+
+		# Optional in spec
+			_ot-kernel-pkgflags_chacha20_poly1305
+		fi
+
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
-		_ot-kernel-pkgflags_chacha20_poly1305
 		_ot-kernel-pkgflags_gcm
 
-		local ktls_region="${KTLS_REGION:-west}"
 		if [[ "${ktls_region}" =~ ("west"|"eu"|"us") ]] ; then
 			_ot-kernel-pkgflags_aes
 		fi
@@ -12551,7 +12561,6 @@ ewarn
 ewarn "Using the dss work profile may mess up the WiFI kernel config.  Use the"
 ewarn "OT_KERNEL_KCONFIG override to fix this."
 ewarn
-	# Only strong ciphers allowed
 	# Disabled alternative hash algorithms
 
 		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
@@ -12652,8 +12661,9 @@ ewarn
 ewarn "Using the dss work profile may mess up the WiFI kernel config.  Use the"
 ewarn "OT_KERNEL_KCONFIG override to fix this."
 ewarn
-		# Only strong ciphers allowed
-		# Disable alternative block ciphers
+	# Only strong ciphers allowed in the USA.
+	# Strong encryption may be banned in other countries.
+	# Disable alternative block ciphers
 
 	# 2000, Belgian-Brazilian, 128 Bit Block Cipher, 128-256 Bit Keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_ANUBIS"
@@ -12764,6 +12774,48 @@ ewarn
 	fi
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_dss_disable_remaining_ecc_algs
+# @DESCRIPTION:
+# Disable unused ECC algs
+_ot-kernel-pkgflags_dss_disable_remaining_ecc_algs() {
+	if [[ "${work_profile}" == "dss" ]] ; then
+		local dss_region="${DSS_REGION:-west}"
+		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+			:
+		else
+	# 1977, American-Israeli, 2048-4096 Key Size
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_RSA"
+
+	# 1976 original, American; 1999 RFC2631
+			ot-kernel_unset_configopt "CRYPTO_DH"
+
+	# 2016
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_DH_RFC7919_GROUPS"
+
+	# 1985-1987 DH over ECC
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_ECDH"
+
+	# 1992, 1998-2000 standardized; Canadian
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_ECDSA"
+
+	# 2005, American
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_CURVE25519"
+		fi
+		if [[ "${dss_region}" =~ "cn" ]] ; then
+			:
+		else
+	# 2010, Chinese
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SM2"
+		fi
+		if [[ "${dss_region}" =~ "ru" ]] ; then
+			:
+		else
+	# 2012, Russian
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_ECRDSA"
+		fi
+	fi
+}
+
 # @FUNCTION: _ot-kernel_checkpoint_dss_tls_requirement
 # @DESCRIPTION:
 # Check for TLS enablement
@@ -12773,8 +12825,17 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 		local dss_region="${DSS_REGION:-west}"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
-		ot-kernel_y_configopt "CONFIG_TLS"
-		ot-kernel_y_configopt "CONFIG_CRYPTO"
+		if [[ "${dss_region}" =~ ("cn") ]] ; then
+	# TLS 1.3 does not work here.
+			ot-kernel_unset_configopt "CONFIG_TLS"
+			ot-kernel_unset_configopt "CONFIG_TLS_DEVICE"
+		else
+			ot-kernel_y_configopt "CONFIG_TLS"
+			ot-kernel_y_configopt "CONFIG_TLS_DEVICE"
+
+	# Optional in spec
+			_ot-kernel-pkgflags_chacha20_poly1305
+		fi
 	# See also
 	# https://github.com/torvalds/linux/blob/v6.9/net/tls/tls_main.c#L102
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
@@ -12789,9 +12850,16 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 			_ot-kernel-pkgflags_aria
 		fi
 
-		# Unlisted in spec
-		ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20POLY1305"
+	# For ECC handshakes, see
+	_ot-kernel_checkpoint_dss_ecc_requirement
 	fi
+}
+
+# @FUNCTION: _ot-kernel_checkpoint_dss_ecc_requirement
+# @DESCRIPTION:
+# Check for ECC support
+_ot-kernel_checkpoint_dss_ecc_requirement() {
+	:
 }
 
 _ot-kernel-pkgflags_dss_disable_hw_crypto() {
