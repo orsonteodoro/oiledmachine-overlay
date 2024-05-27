@@ -12613,6 +12613,17 @@ ewarn
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA3_256_S390"
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA3_512_S390"
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA3_ARM64"
+
+	# 2001, American (NSA), Hash Function
+	# Used in FSCRYPT
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA512"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA512_ARM"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA512_ARM64"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA512_ARM64_CE"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA512_OCTEON"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA512_S390"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA512_SPARC64"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA512_SSSE3"
 		fi
 
 	# 2012, American et.al., Hash Function
