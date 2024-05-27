@@ -12859,7 +12859,21 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 # @DESCRIPTION:
 # Check for ECC support
 _ot-kernel_checkpoint_dss_ecc_requirement() {
-	:
+	if [[ "${work_profile}" == "dss" ]] ; then
+		local dss_region="${DSS_REGION:-west}"
+		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+	# See also
+	# https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-8
+			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDH"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519"
+		elif [[ "${dss_region}" =~ "cn" ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SM2"
+		elif [[ "${dss_region}" =~ "ru" ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ECRDSA"
+		fi
+	fi
 }
 
 _ot-kernel-pkgflags_dss_disable_hw_crypto() {
