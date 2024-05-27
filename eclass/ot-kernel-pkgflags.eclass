@@ -12888,27 +12888,30 @@ _ot-kernel-pkgflags_dss_disable_remaining_ecc_algs() {
 # Examples: CONFIG_CFG80211_REQUIRE_SIGNED_REGDB forces CONFIG_CRYPTO_RSA.
 	if [[ "${work_profile}" == "dss" ]] ; then
 		local dss_region="${DSS_REGION:-west}"
+		local tls="${TLS:-1}"
 		if [[ "${dss_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
 			:
 		else
+			if [[ "${tls}" != "1" ]] ; then
 	# 1977, American-Israeli, 2048-4096 Key Size
-			ot-kernel_unset_configopt "CONFIG_CRYPTO_RSA"
-
-	# 2016
-			ot-kernel_unset_configopt "CONFIG_CRYPTO_DH_RFC7919_GROUPS"
+				ot-kernel_unset_configopt "CONFIG_CRYPTO_RSA"
 
 	# 1985-1987 DH over ECC
-			ot-kernel_unset_configopt "CONFIG_CRYPTO_ECDH"
+				ot-kernel_unset_configopt "CONFIG_CRYPTO_ECDH"
 
 	# 1992, 1998-2000 standardized; Canadian
-			ot-kernel_unset_configopt "CONFIG_CRYPTO_ECDSA"
+				ot-kernel_unset_configopt "CONFIG_CRYPTO_ECDSA"
+			fi
 		fi
 
+	# 2016
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DH_RFC7919_GROUPS"	# Never used?
+
 	# 1976 original, American; 1999 RFC2631
-		ot-kernel_unset_configopt "CRYPTO_DH"			# Never used?
+		ot-kernel_unset_configopt "CRYPTO_DH"				# Never used?
 
 	# 2005, American
-		ot-kernel_unset_configopt "CONFIG_CRYPTO_CURVE25519"	# Never used?
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_CURVE25519"		# Never used?
 
 		if [[ "${dss_region}" =~ "cn" ]] ; then
 			:
