@@ -12661,7 +12661,7 @@ ewarn
 ewarn "Using the dss work profile may mess up the WiFI kernel config.  Use the"
 ewarn "OT_KERNEL_KCONFIG override to fix this."
 ewarn
-	# Only strong ciphers allowed in the USA.
+	# Strong ciphers are allowed in the USA.
 	# Strong encryption may be banned in other countries.
 	# Disable alternative block ciphers
 
