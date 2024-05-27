@@ -3348,6 +3348,16 @@ eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER has been rena
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW.  Please rename to continue."
 	fi
 
+	if [[ -n "${DSS_COMPAT}" ]] ; then
+eerror "DSS_COMPAT has been renamed to TLS.  Please rename to continue."
+	fi
+	if [[ -n "${KTLS_COMPAT}" ]] ; then
+eerror "KTLS_COMPAT has been renamed to TLS.  Please rename to continue."
+	fi
+	if [[ -n "${KTLS_REGION}" ]] ; then
+eerror "KTLS_REGION has been renamed to TLS_REGION.  Please rename to continue."
+	fi
+
 ewarn
 ewarn "The interpretation of the OT_KERNEL_HARDENING_LEVEL values has changed."
 ewarn "See metadata.xml (or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for"
@@ -3533,7 +3543,6 @@ ot-kernel_clear_env() {
 	unset CRYPTSETUP_HASHES
 	unset CRYPTSETUP_MODES
 	unset CRYPTSETUP_TCRYPT
-	unset DSS_COMPAT
 	unset DSS_DISK_ENCRYPTION
 	unset DSS_FIREWALL_TYPE
 	unset DSS_REGION
@@ -3543,8 +3552,8 @@ ot-kernel_clear_env() {
 	unset I915_GEN9_HWACCEL_LOW_POWER_VIDEO_ENCODING
 	unset IPTABLES_CLIENT
 	unset IPTABLES_ROUTER
-	unset KTLS_COMPAT
-	unset KTLS_REGION
+	unset TLS
+	unset TLS_REGION
 	unset KVM_GUEST_MEM_HOTPLUG
 	unset KVM_GUEST_PCI_HOTPLUG
 	unset KVM_GUEST_VIRTIO_BALLOON

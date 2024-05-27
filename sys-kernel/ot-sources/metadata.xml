@@ -3697,11 +3697,6 @@ unset OT_KERNEL_PRIVATE_KEY
     CRYPTSETUP_TCRYPT - Add support for tcrypt.
     Valid values:  0, 1 (default).
 
-    DSS_COMPAT - Allow TLS (AES & SHA1) with dss work profile.
-    Valid values:  0, 1 (default)
-    See also:  KTLS_COMPAT
-    Note:  Setting to 0 chooses regional crypto systems instead.
-
     DSS_DISK_ENCRYPTION - Set the preferred way to protect sensitive data in non
     database contexts.
     Valid values:  ext4-encryption, fs-encryption, cryptsetup,
@@ -3720,7 +3715,7 @@ unset OT_KERNEL_PRIVATE_KEY
     DSS_REGION - Set the region for crypto standards
     Valid values:  cn, eu, jp, kr, ru, us, west (default)
     Note:  Only one region can be selected.
-    See also:  KTLS_REGION
+    See also:  TLS_REGION
 
     DVD - Support for DVD, DVD-R, DVD-RW, DVD+R, DVD+RW, Blu-Ray
     Valid values:  0, 1 (default)
@@ -3762,12 +3757,12 @@ unset OT_KERNEL_PRIVATE_KEY
     IPTABLES_ROUTER - Add support for iptables router.
     Valid values:  0 (default), 1.
 
-    KTLS_COMPAT - Allow AES and SHA256 to be installed.
+    TLS - Allow AES and SHA256 to be installed.
     Valid values:  0, 1 (default)
-    See also:  DSS_COMPAT
-    Note:  Setting to 0 chooses regional crypto systems instead.
+    Note:  Setting to 0 chooses regional crypto systems instead and to disable
+    TLS to prevent installing unwanted ciphers.
 
-    KTLS_REGION - A regional hint to enable the proper kernel config for TLS
+    TLS_REGION - A regional hint to enable the proper kernel config for TLS
     offload for improved throughput.
     Valid values:  cn, eu, kr, us, west (default)
     Notes:  Multiple options can be specified with spaces.  It only affects non

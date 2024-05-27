@@ -7494,25 +7494,25 @@ ot-kernel-pkgflags_opensnitch_ebpf_module() { # DONE
 	fi
 }
 
-# @FUNCTION: _ot-kernel_ktls_support
+# @FUNCTION: _ot-kernel_tls_support
 # @DESCRIPTION:
-# Enables KTLS support
-_ot-kernel_ktls_support() {
+# Enables KTLS/TLS support
+_ot-kernel_tls_support() {
 	# See also
 	# https://github.com/torvalds/linux/blob/v6.9/net/tls/tls_main.c#L102
 	if [[ "${work_profile}" =~ "dss" ]] ; then
 	# Set in _ot-kernel_checkpoint_dss_tls_requirement
 		:
 	else
-		local ktls_compat="${KTLS_COMPAT:-1}"
-		local ktls_region="${KTLS_REGION:-west}"
+		local tls="${TLS:-1}"
+		local tls_region="${TLS_REGION:-west}"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
-		if [[ "${ktls_compat}" != "1" ]] ; then
+		if [[ "${tls}" != "1" ]] ; then
 	# CONFIG_TLS adds AES.
 			ot-kernel_unset_configopt "CONFIG_TLS"
 			ot-kernel_unset_configopt "CONFIG_TLS_DEVICE"
-		elif [[ "${ktls_region}" =~ ("cn") ]] ; then
+		elif [[ "${tls_region}" =~ ("cn") ]] ; then
 	# TLS 1.3 does not work here.
 			ot-kernel_unset_configopt "CONFIG_TLS"
 			ot-kernel_unset_configopt "CONFIG_TLS_DEVICE"
@@ -7529,16 +7529,16 @@ _ot-kernel_ktls_support() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
 		_ot-kernel-pkgflags_gcm
 
-		if [[ "${ktls_compat}" == "1" || "${ktls_region}" =~ ("west"|"eu"|"us") ]] ; then
+		if [[ "${tls}" == "1" || "${tls_region}" =~ ("west"|"eu"|"us") ]] ; then
 	# Required for TLS.
 	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
 			_ot-kernel-pkgflags_aes
 			_ot-kernel-pkgflags_sha256
 		fi
-		if [[ "${ktls_region}" =~ ("kr") ]] ; then
+		if [[ "${tls_region}" =~ ("kr") ]] ; then
 			_ot-kernel-pkgflags_aria
 		fi
-		if [[ "${ktls_region}" =~ ("cn") ]] ; then
+		if [[ "${tls_region}" =~ ("cn") ]] ; then
 			_ot-kernel-pkgflags_sm4
 		fi
 	fi
@@ -7555,7 +7555,7 @@ ot-kernel-pkgflags_openssl() { # DONE
 				&& \
 			ver_test "${KV_MAJOR_MINOR}" -ge "4.18" \
 		; then
-			_ot-kernel_ktls_support
+			_ot-kernel_tls_support
 			if ot-kernel_has_version "${pkg}[test]" ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_SKCIPHER"
 			fi
@@ -12572,7 +12572,7 @@ _ot-kernel-pkgflags_dss_disable_remaining_mac_algs() {
 # Disable all unused ciphers for the dss work profile.
 _ot-kernel-pkgflags_dss_disable_remaining_hash_algs() {
 	if [[ "${work_profile}" == "dss" ]] ; then
-		local dss_compat="${DSS_COMPAT:-1}"
+		local tls="${TLS:-1}"
 		local dss_region="${DSS_REGION:-west}"
 ewarn
 ewarn "Using the dss work profile may mess up the WiFI kernel config.  Use the"
@@ -12580,7 +12580,7 @@ ewarn "OT_KERNEL_KCONFIG override to fix this."
 ewarn
 	# Disabled alternative hash algorithms
 
-		if [[ "${dss_compat}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+		if [[ "${tls}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
 			:
 		else
 	# 2001, American (NSA), Hash Function
@@ -12669,7 +12669,7 @@ ewarn
 	# 2012, Hash Function (non cryptographic)
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_XXHASH"
 
-		if [[ "${dss_compat}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+		if [[ "${tls}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
 			:
 		else
 	# 2013, AEAD ChaCha20-Poly1305
@@ -12696,7 +12696,7 @@ ewarn
 # Disable all unused ciphers for the dss work profile.
 _ot-kernel-pkgflags_dss_disable_remaining_block_ciphers() {
 	if [[ "${work_profile}" == "dss" ]] ; then
-		local dss_compat="${DSS_COMPAT:-1}"
+		local tls="${TLS:-1}"
 		local dss_region="${DSS_REGION:-west}"
 einfo "DSS_REGION:  ${dss_region}"
 ewarn
@@ -12710,7 +12710,7 @@ ewarn
 	# 2000, Belgian-Brazilian, 128 Bit Block Cipher, 128-256 Bit Keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_ANUBIS"
 
-		if [[ "${dss_compat}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+		if [[ "${tls}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
 			:
 		else
 	# 1998, Belgian, 128 Bit Block Size, 128-256 Bit Keys
@@ -12870,7 +12870,7 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 		local dss_region="${DSS_REGION:-west}"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
-		if [[ "${dss_compat}" != "1" ]] ; then
+		if [[ "${tls}" != "1" ]] ; then
 	# CONFIG_TLS adds AES.
 			ot-kernel_unset_configopt "CONFIG_TLS"
 			ot-kernel_unset_configopt "CONFIG_TLS_DEVICE"
