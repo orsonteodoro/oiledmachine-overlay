@@ -2619,6 +2619,9 @@ _ot-kernel-pkgflags_crc32() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32_ARM_CE"
 		fi
 	fi
+	if [[ "${arch}" == "loongarch" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32_LOONGARCH"
+	fi
 	if [[ "${arch}" == "mips" ]] ; then
 		if grep -q -E -e "^CONFIG_MIPS_CRC_SUPPORT=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32_MIPS"
