@@ -7504,7 +7504,7 @@ ot-kernel-pkgflags_opensnitch_ebpf_module() { # DONE
 # _ot-kernel_tls_support assumes traveler or brick-and-mortar customer context
 # so open ended.
 # _ot-kernel_checkpoint_dss_tls_requirement assumes the possibilities of
-# business or goverment contractor so restrictive.
+# business or government contractor so restrictive.
 #
 _ot-kernel_tls_support() {
 	# See also
@@ -12879,7 +12879,7 @@ _ot-kernel-pkgflags_dss_disable_remaining_ecc_algs() {
 # _ot-kernel_tls_support assumes traveler or brick-and-mortar customer context
 # so open ended.
 # _ot-kernel_checkpoint_dss_tls_requirement assumes the possibilities of
-# business or goverment contractor so restrictive.
+# business or government contractor so restrictive.
 #
 _ot-kernel_checkpoint_dss_tls_requirement() {
 	if [[ "${work_profile}" == "dss" ]] ; then
