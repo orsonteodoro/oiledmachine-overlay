@@ -7508,6 +7508,8 @@ ot-kernel-pkgflags_opensnitch_ebpf_module() { # DONE
 #
 _ot-kernel_tls_support() {
 	# See also
+	# https://en.wikipedia.org/wiki/Transport_Layer_Security#TLS_1.3
+	# https://en.wikipedia.org/wiki/Transport_Layer_Security#Cipher
 	# https://github.com/torvalds/linux/blob/v6.9/net/tls/tls_main.c#L102
 	if [[ "${work_profile}" =~ "dss" ]] ; then
 	# Set in _ot-kernel_checkpoint_dss_tls_requirement
@@ -7538,17 +7540,39 @@ _ot-kernel_tls_support() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
 		_ot-kernel-pkgflags_gcm
 
-		if [[ "${tls}" == "1" || "${tls_region}" =~ ("west"|"eu"|"us") ]] ; then
+		if [[ "${tls}" == "1" || "${tls_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
 	# Required for TLS.
 	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
 			_ot-kernel-pkgflags_aes
 			_ot-kernel-pkgflags_sha256
+			_ot-kernel-pkgflags_sha512 # Includes sha384
 		fi
-		if [[ "${tls_region}" =~ ("kr") ]] ; then
+		if [[ "${tls_region}" =~ "cn" ]] ; then
+			_ot-kernel-pkgflags_sm4
+		fi
+		if [[ "${tls_region}" =~ "jp" ]] ; then
+	# TLS 1.2
+			_ot-kernel-pkgflags_camellia
+		fi
+		if [[ "${tls_region}" =~ "kr" ]] ; then
+	# TLS 1.2, but .kr websites use TLS 1.3 with AES-GCM
 			_ot-kernel-pkgflags_aria
 		fi
-		if [[ "${tls_region}" =~ ("cn") ]] ; then
-			_ot-kernel-pkgflags_sm4
+
+	# Key Agreement (TLS Handshaking)
+		if [[ "${tls_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
+	# See also
+	# https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-8
+			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"         # Observed
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDH"        # Observed
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"       # Observed
+			#ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519" # Not used in most TLS
+		fi
+		if [[ "${tls_region}" =~ "cn" ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SM2"
+		fi
+		if [[ "${tls_region}" =~ "ru" ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ECRDSA"
 		fi
 	fi
 }
@@ -12589,7 +12613,7 @@ ewarn "OT_KERNEL_KCONFIG override to fix this."
 ewarn
 	# Disabled alternative hash algorithms
 
-		if [[ "${tls}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+		if [[ "${tls}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us"|"jp") ]] ; then
 			:
 		else
 	# 2001, American (NSA), Hash Function
@@ -12613,7 +12637,11 @@ ewarn
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA3_256_S390"
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA3_512_S390"
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA3_ARM64"
+		fi
 
+		if [[ "${dss_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
+			:
+		else
 	# 2001, American (NSA), Hash Function
 	# Used in FSCRYPT
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SHA512"
@@ -12689,7 +12717,7 @@ ewarn
 	# 2012, Hash Function (non cryptographic)
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_XXHASH"
 
-		if [[ "${tls}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+		if [[ "${tls}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us"|"jp") ]] ; then
 			:
 		else
 	# 2013, AEAD ChaCha20-Poly1305
@@ -12730,7 +12758,7 @@ ewarn
 	# 2000, Belgian-Brazilian, 128 Bit Block Cipher, 128-256 Bit Keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_ANUBIS"
 
-		if [[ "${tls}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+		if [[ "${tls}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
 			:
 		else
 	# 1998, Belgian, 128 Bit Block Size, 128-256 Bit Keys
@@ -12765,6 +12793,7 @@ ewarn
 			:
 		else
 	# 2000, Japanese, 128 Bit Block Cipher, 128-256 Bit Keys
+	# Can be used in TLS 1.2
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA"
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX2_X86_64"
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64"
@@ -12844,14 +12873,11 @@ _ot-kernel-pkgflags_dss_disable_remaining_ecc_algs() {
 # Examples: CONFIG_CFG80211_REQUIRE_SIGNED_REGDB forces CONFIG_CRYPTO_RSA.
 	if [[ "${work_profile}" == "dss" ]] ; then
 		local dss_region="${DSS_REGION:-west}"
-		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+		if [[ "${dss_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
 			:
 		else
 	# 1977, American-Israeli, 2048-4096 Key Size
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_RSA"
-
-	# 1976 original, American; 1999 RFC2631
-			ot-kernel_unset_configopt "CRYPTO_DH"
 
 	# 2016
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_DH_RFC7919_GROUPS"
@@ -12861,10 +12887,14 @@ _ot-kernel-pkgflags_dss_disable_remaining_ecc_algs() {
 
 	# 1992, 1998-2000 standardized; Canadian
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_ECDSA"
+		fi
+
+	# 1976 original, American; 1999 RFC2631
+		ot-kernel_unset_configopt "CRYPTO_DH"			# Never used?
 
 	# 2005, American
-			ot-kernel_unset_configopt "CONFIG_CRYPTO_CURVE25519"
-		fi
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_CURVE25519"	# Never used?
+
 		if [[ "${dss_region}" =~ "cn" ]] ; then
 			:
 		else
@@ -12896,6 +12926,7 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 	if [[ "${work_profile}" == "dss" ]] ; then
 	# TLS 1.3, See
 	# https://en.wikipedia.org/wiki/Transport_Layer_Security#TLS_1.3
+	# https://en.wikipedia.org/wiki/Transport_Layer_Security#Cipher
 	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
 	# https://github.com/torvalds/linux/blob/v6.9/net/tls/tls_main.c#L102
 		local tls="${TLS:-1}"
@@ -12928,30 +12959,33 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
 			_ot-kernel-pkgflags_aes
 			_ot-kernel-pkgflags_sha256
+			_ot-kernel-pkgflags_sha512 # Includes sha384
 		elif [[ "${dss_region}" =~ "cn" ]] ; then
 			_ot-kernel-pkgflags_sm4
+		elif [[ "${dss_region}" =~ "jp" ]] ; then
+			_ot-kernel-pkgflags_aes
+			_ot-kernel-pkgflags_sha256
+			_ot-kernel-pkgflags_sha512 # Includes sha384
+
+	# TLS 1.2
+				_ot-kernel-pkgflags_camellia
 		elif [[ "${dss_region}" =~ "kr" ]] ; then
+			_ot-kernel-pkgflags_aes
+			_ot-kernel-pkgflags_sha256
+			_ot-kernel-pkgflags_sha512 # Includes sha384
+
+	# TLS 1.2
 			_ot-kernel-pkgflags_aria
 		fi
 
-	# For ECC handshakes, see
-	_ot-kernel_checkpoint_dss_ecc_requirement
-	fi
-}
-
-# @FUNCTION: _ot-kernel_checkpoint_dss_ecc_requirement
-# @DESCRIPTION:
-# Check for ECC support
-_ot-kernel_checkpoint_dss_ecc_requirement() {
-	if [[ "${work_profile}" == "dss" ]] ; then
-		local dss_region="${DSS_REGION:-west}"
-		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+	# Key Agreement (TLS handshake)
+		if [[ "${dss_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
 	# See also
 	# https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-8
-			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"
-			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDH"
-			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"
-			ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"         # Observed
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDH"        # Observed
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"       # Observed
+			#ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519" # Not used
 		elif [[ "${dss_region}" =~ "cn" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SM2"
 		elif [[ "${dss_region}" =~ "ru" ]] ; then
