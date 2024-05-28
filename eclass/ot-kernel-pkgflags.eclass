@@ -7300,6 +7300,7 @@ sys-kernel/compat-drivers
 sys-kernel/cryptodev
 sys-kernel/fragattacks-drivers58
 sys-kernel/ft60x_driver
+sys-kernel/gostcrypt-linux-crypto
 sys-kernel/kpatch
 sys-kernel/pcc
 sys-kernel/pf_ring-kmod
@@ -7346,6 +7347,21 @@ einfo "Detected external kernel module"
 	elif grep -q -E -e "^CONFIG_MODULES=y" "${path_config}" ; then
 		# Upstream claims that this improves LTO
 		ot-kernel_y_configopt "CONFIG_TRIM_UNUSED_KSYMS"
+	fi
+
+	if [[ "${work_profile}" == "dss" ]] ; then
+		if grep -q -E -e "^CONFIG_MODULES=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_MODULE_SIG"
+		fi
+	fi
+
+	if [[ \
+		   "${hardening_level}" == "secure-af" \
+		|| "${hardening_level}" == "secure-as-fuck" \
+	]] ; then
+		if grep -q -E -e "^CONFIG_MODULES=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_MODULE_SIG"
+		fi
 	fi
 }
 
