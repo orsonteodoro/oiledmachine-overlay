@@ -2564,6 +2564,14 @@ _ot-kernel-pkgflags_chacha20() {
 	ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20"
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_kuznyechik
+# @DESCRIPTION:
+# Wrapper for the kuznyechik option.
+_ot-kernel-pkgflags_kuznyechik() {
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
+	ot-kernel_y_configopt "CONFIG_CRYPTO_CTR" # For TLS
+}
+
 # @FUNCTION: _ot-kernel-pkgflags_poly1305
 # @DESCRIPTION:
 # Wrapper for the poly1305 option.  Adds the simd but implied the generic as well.
@@ -3268,6 +3276,7 @@ eerror
 		[[ "${cryptsetup_ciphers}" =~ "anubis" ]] && _ot-kernel-pkgflags_anubis ${cryptsetup_modes}
 		[[ "${cryptsetup_ciphers}" =~ "camellia" ]] && _ot-kernel-pkgflags_camellia ${cryptsetup_modes}
 		[[ "${cryptsetup_ciphers}" =~ "cast6" ]] && _ot-kernel-pkgflags_cast6 ${cryptsetup_modes}
+		[[ "${cryptsetup_ciphers}" =~ "kuznyechik" ]] && _ot-kernel-pkgflags_kuznyechik ${cryptsetup_modes}
 		[[ "${cryptsetup_ciphers}" =~ "serpent" ]] && _ot-kernel-pkgflags_serpent ${cryptsetup_modes}
 		[[ "${cryptsetup_ciphers}" =~ "sm4" ]] && _ot-kernel-pkgflags_sm4 ${cryptsetup_modes}
 		[[ "${cryptsetup_ciphers}" =~ "twofish" ]] && _ot-kernel-pkgflags_twofish ${cryptsetup_modes}

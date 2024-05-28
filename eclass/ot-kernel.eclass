@@ -572,8 +572,9 @@ SLOT=${SLOT:-${PV}}
 IUSE+="
 ${EBUILD_REV}
 ${PGT_TRAINERS[@]/#/ot_kernel_pgt_}
-bzip2 cpu_flags_arm_thumb graphicsmagick gtk gzip imagemagick intel-microcode
-linux-firmware lz4 lzma lzo +ncurses openssl pcc +reiserfs qt5 xz zstd
+bzip2 cpu_flags_arm_thumb gost graphicsmagick gtk gzip imagemagick
+intel-microcode linux-firmware lz4 lzma lzo +ncurses openssl pcc +reiserfs qt5
+xz zstd
 "
 
 REQUIRED_USE+="
@@ -682,6 +683,9 @@ fi
 PDEPEND+="
 	sys-apps/coreutils
 	sys-apps/grep[pcre]
+	gost? (
+		sys-kernel/gostcrypt-linux-crypto
+	)
 	ot_kernel_pgt_2d? (
 		sys-apps/findutils
 		sys-process/procps

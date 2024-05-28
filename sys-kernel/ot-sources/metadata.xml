@@ -3649,7 +3649,7 @@ unset OT_KERNEL_PRIVATE_KEY
     See also:  DVD
 
     CRYPTSETUP_CIPHERS - Space separated list block ciphers.
-    Valid values:  aes, anubis, camellia, cast6, serpent, twofish.
+    Valid values:  aes, anubis, camellia, cast6, kuznyechik, serpent, twofish.
 
     If unset, it adds aes.
 
@@ -4211,6 +4211,9 @@ unset OT_KERNEL_PRIVATE_KEY
     </flag>
     <flag name="fallback-commit">
       Rewind the commit backwards for live ebuilds to when patches were working.
+    </flag>
+    <flag name="gost">
+      Add support for GOST (Kuznyechik block cipher)
     </flag>
     <flag name="genpatches">
       Applies the genkernel patch set.
