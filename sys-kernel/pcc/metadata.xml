@@ -104,8 +104,7 @@
       Loss rate based.  2015 edition.
     </flag>
     <flag name="custom-kernel">
-      Enabling ignores RDEPENDs requirements.  Disabling allows for rebuilds
-      of this package when subslot changes for the predefined list.
+      Allow to build for a different kernel without vendor lock-in.
     </flag>
     <flag name="vivace">
       Loss rate and latency based with RTT probing.  2018 edition.
