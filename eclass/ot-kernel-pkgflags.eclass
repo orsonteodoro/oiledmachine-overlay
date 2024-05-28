@@ -3195,8 +3195,12 @@ ewarn
 		elif [[ "${dss_region}" =~ "kr" ]] ; then
 			_ot-kernel-pkgflags_aria ${cryptsetup_modes}
 		elif [[ "${dss_region}" =~ "ru" ]] ; then
-		# FIXME:  Enable block cipher
-			ot-kernel_y_configopt "CONFIG_CRYPTO_STREEBOG"
+			if ot-kernel_use gost ; then
+	# Already provided in sys-kernel/gostcrypt-linux-crypto
+				ot-kernel_unset_configopt "CONFIG_CRYPTO_STREEBOG"
+			else
+				ot-kernel_y_configopt "CONFIG_CRYPTO_STREEBOG"
+			fi
 		fi
 
 ewarn "Do not use ECB for disk encryption."
