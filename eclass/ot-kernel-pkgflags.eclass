@@ -13122,6 +13122,10 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 
 	# TLS 1.2
 			_ot-kernel-pkgflags_kuznyechik
+		elif [[ "${tls}" == "1" ]] ; then
+			_ot-kernel-pkgflags_aes
+			_ot-kernel-pkgflags_sha256
+			_ot-kernel-pkgflags_sha512
 		fi
 
 	# Key Agreement (TLS handshake)
