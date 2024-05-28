@@ -5889,6 +5889,7 @@ eerror
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+			ot-kernel_unset_configopt "CONFIG_SPECULATION_MITIGATIONS"
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_X86_KERNEL_IBT"
 			fi
@@ -5926,18 +5927,32 @@ eerror
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
+			ot-kernel_unset_configopt "CONFIG_CPU_MITIGATIONS"
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_MITIGATION_PAGE_TABLE_ISOLATION"
+				ot-kernel_unset_configopt "CONFIG_MITIGATION_RETPOLINE"
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_SLS"
+				ot-kernel_unset_configopt "CONFIG_MITIGATION_RETHUNK"
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
 					ot-kernel_unset_configopt "CONFIG_MITIGATION_SRSO"
+					ot-kernel_unset_configopt "CONFIG_MITIGATION_UNRET_ENTRY"
+					ot-kernel_unset_configopt "CONFIG_MITIGATION_IBPB_ENTRY"
+				fi
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+					ot-kernel_unset_configopt "CONFIG_MITIGATION_CALL_DEPTH_TRACKING"
+					ot-kernel_unset_configopt "CONFIG_MITIGATION_IBRS_ENTRY"
+					if ot-kernel_has_version "sys-firmware/intel-microcode" ; then
+						ot-kernel_unset_configopt "CONFIG_CONFIG_MITIGATION_GDS_FORCE"
+					elif ot-kernel_use cpu_flags_x86_avx ; then
+						ot-kernel_y_configopt "CONFIG_CONFIG_MITIGATION_GDS_FORCE"
+					fi
 				fi
 			fi
-		else
 		fi
 	elif [[ \
 		   "${hardening_level}" == "default" \
@@ -6097,6 +6112,7 @@ eerror
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+			ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				_y_cet_ibt
 			fi
@@ -6133,15 +6149,30 @@ eerror
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
+			ot-kernel_y_configopt "CONFIG_CPU_MITIGATIONS"
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_y_configopt "CONFIG_MITIGATION_PAGE_TABLE_ISOLATION"
+				ot-kernel_y_configopt "CONFIG_MITIGATION_RETPOLINE"
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_SLS"
+				ot-kernel_y_configopt "CONFIG_MITIGATION_RETHUNK"
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
 					ot-kernel_y_configopt "CONFIG_MITIGATION_SRSO"
+					ot-kernel_y_configopt "CONFIG_MITIGATION_UNRET_ENTRY"
+					ot-kernel_y_configopt "CONFIG_MITIGATION_IBPB_ENTRY"
+				fi
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+					ot-kernel_y_configopt "CONFIG_MITIGATION_CALL_DEPTH_TRACKING"
+					ot-kernel_y_configopt "CONFIG_MITIGATION_IBRS_ENTRY"
+					if ot-kernel_has_version "sys-firmware/intel-microcode" ; then
+						ot-kernel_unset_configopt "CONFIG_CONFIG_MITIGATION_GDS_FORCE"
+					elif ot-kernel_use cpu_flags_x86_avx ; then
+						ot-kernel_y_configopt "CONFIG_CONFIG_MITIGATION_GDS_FORCE"
+					fi
 				fi
 			fi
 		fi
@@ -6414,6 +6445,7 @@ eerror
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+			ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				_y_cet_ibt
 			fi
@@ -6454,15 +6486,30 @@ eerror
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
+			ot-kernel_y_configopt "CONFIG_CPU_MITIGATIONS"
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_y_configopt "CONFIG_MITIGATION_PAGE_TABLE_ISOLATION"
+				ot-kernel_y_configopt "CONFIG_MITIGATION_RETPOLINE"
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SLS"
+				ot-kernel_y_configopt "CONFIG_MITIGATION_RETHUNK"
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
 					ot-kernel_y_configopt "CONFIG_MITIGATION_SRSO"
+					ot-kernel_y_configopt "CONFIG_MITIGATION_UNRET_ENTRY"
+					ot-kernel_y_configopt "CONFIG_MITIGATION_IBPB_ENTRY"
+				fi
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+					ot-kernel_y_configopt "CONFIG_MITIGATION_CALL_DEPTH_TRACKING"
+					ot-kernel_y_configopt "CONFIG_MITIGATION_IBRS_ENTRY"
+					if ot-kernel_has_version "sys-firmware/intel-microcode" ; then
+						ot-kernel_unset_configopt "CONFIG_CONFIG_MITIGATION_GDS_FORCE"
+					elif ot-kernel_use cpu_flags_x86_avx ; then
+						ot-kernel_y_configopt "CONFIG_CONFIG_MITIGATION_GDS_FORCE"
+					fi
 				fi
 			fi
 		fi
