@@ -5,8 +5,19 @@
 EAPI=8
 
 MAINTAINER_MODE=0
-PYTHON_COMPAT=( python3_{8..11} )
-inherit git-r3 linux-info linux-mod-r1
+PYTHON_COMPAT=( "python3_"{8..11} )
+
+inherit linux-info linux-mod-r1
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+=" fallback-commit"
+	EGIT_REPO_URI="https://github.com/PCCproject/PCC-Kernel.git"
+	EGIT_COMMIT="HEAD"
+	FALLBACK_COMMIT="2eeadf0907baea693ee949add800f4ed32f38a88" # Jul 13, 2018
+	inherit git-r3
+else
+	SRC_URI="FIXME"
+fi
 
 DESCRIPTION="Performance-oriented Congestion Control"
 HOMEPAGE="
@@ -15,15 +26,17 @@ https://github.com/PCCproject/PCC-Kernel
 "
 LICENSE="
 	allegro? (
-		BSD GPL-2
+		BSD
+		GPL-2
 	)
 	vivace? (
-		BSD GPL-2
+		BSD
+		GPL-2
 	)
 "
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" allegro custom-kernel doc +vivace r1"
+IUSE+=" allegro custom-kernel doc +vivace ebuild-revision-1"
 REQUIRED_USE="
 	^^ (
 		allegro
@@ -74,7 +87,7 @@ _pkg_setup_one() {
 	KERNEL_DIR="/usr/src/linux-${k}"
 	[[ -e "${KERNEL_DIR}" ]] || die "Missing kernel sources for linux-${pat}"
 	[[ -e "${KERNEL_DIR}/.config" ]] || die "Missing .config for ${k}"
-	if ! realpath /boot/vmlinuz-${k}* 2>/dev/null 1>/dev/null ; then
+	if ! realpath "/boot/vmlinuz-${k}"* 2>/dev/null 1>/dev/null ; then
 		die "The kernel needs to be built first for ${k}."
 	fi
 }
@@ -104,7 +117,7 @@ eerror
 		if [[ "${k}" =~ "*" ]] ; then
 			# Pick all point releases:  6.1.*-zen
 			local pat="${k}"
-			local V=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" \
+			local V=$(find "/usr/src/" -maxdepth 1 -name "linux-${pat}" \
 				| sort --version-sort -r \
 				| sed -e "s|.*/linux-||")
 			local v
@@ -115,7 +128,7 @@ eerror
 		elif [[ "${k}" =~ "^" ]] ; then
 			# Pick the highest version:  6.1.^-zen
 			local pat="${k/^/*}"
-			k=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" \
+			k=$(find "/usr/src/" -maxdepth 1 -name "linux-${pat}" \
 				| sort --version-sort -r \
 				| head -n 1 \
 				| sed -e "s|.*/linux-||")
@@ -128,17 +141,15 @@ eerror
 
 src_unpack() {
 	if use allegro ; then
-		EGIT_REPO_URI="https://github.com/PCCproject/PCC-Kernel.git"
-		EGIT_COMMIT="HEAD"
 		EGIT_BRANCH="master"
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		EGIT_CHECKOUT_DIR="${WORKDIR}/allegro"
 		git-r3_fetch
 		git-r3_checkout
 	fi
 	if use vivace ; then
-		EGIT_REPO_URI="https://github.com/PCCproject/PCC-Kernel.git"
-		EGIT_COMMIT="HEAD"
 		EGIT_BRANCH="vivace"
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		EGIT_CHECKOUT_DIR="${WORKDIR}/vivace"
 		git-r3_fetch
 		git-r3_checkout
@@ -148,10 +159,16 @@ src_unpack() {
 _src_prepare_one() {
 	local k="${1}"
 	if use allegro ; then
-		cp -av "${WORKDIR}/allegro" "${WORKDIR}/allegro-${k}"
+		cp -av \
+			"${WORKDIR}/allegro" \
+			"${WORKDIR}/allegro-${k}" \
+			|| die
 	fi
 	if use vivace ; then
-		cp -av "${WORKDIR}/vivace" "${WORKDIR}/vivace-${k}"
+		cp -av \
+			"${WORKDIR}/vivace" \
+			"${WORKDIR}/vivace-${k}" \
+			|| die
 	fi
 }
 
@@ -161,7 +178,7 @@ src_prepare() {
 	for k in ${PCC_KERNELS} ; do
 		if [[ "${k}" =~ "*" ]] ; then
 			# Pick all point releases:  6.1.*-zen
-			local V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" \
+			local V=$(find "/usr/src/" -maxdepth 1 -name "linux-${k}" \
 				| sort --version-sort -r \
 				| sed -e "s|.*/linux-||")
 			local v
@@ -172,7 +189,7 @@ src_prepare() {
 		elif [[ "${k}" =~ "^" ]] ; then
 			# Pick the highest version:  6.1.^-zen
 			local pat="${k/^/*}"
-			k=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" \
+			k=$(find "/usr/src/" -maxdepth 1 -name "linux-${pat}" \
 				| sort --version-sort -r \
 				| head -n 1 \
 				| sed -e "s|.*/linux-||")
@@ -187,16 +204,22 @@ _src_compile_one() {
 	local k="${1}"
 	local modlist=()
 	if use allegro ; then
-		modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/allegro-${k}/src:${WORKDIR}/allegro-${k}/src:default" )
+		modlist=(
+			tcp_pcc="kernel/net/ipv4:${WORKDIR}/allegro-${k}/src:${WORKDIR}/allegro-${k}/src:default"
+		)
 		d="${WORKDIR}/allegro-${k}"
 	fi
 	if use vivace ; then
-		modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/vivace-${k}/src:${WORKDIR}/vivace-${k}/src:default" )
+		modlist=(
+			tcp_pcc="kernel/net/ipv4:${WORKDIR}/vivace-${k}/src:${WORKDIR}/vivace-${k}/src:default"
+		)
 		d="${WORKDIR}/vivace-${k}"
 	fi
 	cd "${d}" || die
 	KERNEL_DIR="/usr/src/linux-${k}"
-	local modargs=( NIH_SOURCE="${KERNEL_DIR}" )
+	local modargs=(
+		NIH_SOURCE="${KERNEL_DIR}"
+	)
 	KV_FULL=$(cat "${KERNEL_DIR}/include/config/kernel.release")
 	MODULES_MAKEARGS=(
 		V=1
@@ -215,7 +238,7 @@ src_compile() {
 	for k in ${PCC_KERNELS} ; do
 		if [[ "${k}" =~ "*" ]] ; then
 			# Pick all point releases:  6.1.*-zen
-			local V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" \
+			local V=$(find "/usr/src/" -maxdepth 1 -name "linux-${k}" \
 				| sort --version-sort -r \
 				| sed -e "s|.*/linux-||")
 			local v
@@ -226,7 +249,7 @@ src_compile() {
 		elif [[ "${k}" =~ "^" ]] ; then
 			# Pick the highest version:  6.1.^-zen
 			local pat="${k/^/*}"
-			k=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" \
+			k=$(find "/usr/src/" -maxdepth 1 -name "linux-${pat}" \
 				| sort --version-sort -r \
 				| head -n 1 \
 				| sed -e "s|.*/linux-||")
@@ -241,11 +264,15 @@ _src_install_one() {
 	local k="${1}"
 	local modlist=()
 	if use allegro ; then
-		modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/allegro-${k}/src:${WORKDIR}/allegro-${k}/src:default" )
+		modlist=(
+			tcp_pcc="kernel/net/ipv4:${WORKDIR}/allegro-${k}/src:${WORKDIR}/allegro-${k}/src:default"
+		)
 		d="${WORKDIR}/allegro-${k}"
 	fi
 	if use vivace ; then
-		modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/vivace-${k}/src:${WORKDIR}/vivace-${k}/src:default" )
+		modlist=(
+			tcp_pcc="kernel/net/ipv4:${WORKDIR}/vivace-${k}/src:${WORKDIR}/vivace-${k}/src:default"
+		)
 		d="${WORKDIR}/vivace-${k}"
 	fi
 	cd "${d}" || die
@@ -272,7 +299,7 @@ src_install() {
 	for k in ${PCC_KERNELS} ; do
 		if [[ "${k}" =~ "*" ]] ; then
 			# Pick all point releases:  6.1.*-zen
-			local V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" \
+			local V=$(find "/usr/src/" -maxdepth 1 -name "linux-${k}" \
 				| sort --version-sort -r \
 				| sed -e "s|.*/linux-||" \
 				| sed -e "/^$/d")
@@ -284,7 +311,7 @@ src_install() {
 		elif [[ "${k}" =~ "^" ]] ; then
 			# Pick the highest version:  6.1.^-zen
 			local pat="${k/^/*}"
-			k=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" \
+			k=$(find "/usr/src/" -maxdepth 1 -name "linux-${pat}" \
 				| sort --version-sort -r \
 				| head -n 1 \
 				| sed -e "s|.*/linux-||" \
@@ -323,7 +350,7 @@ pkg_postinst() {
 	for k in ${PCC_KERNELS} ; do
 		if [[ "${k}" =~ "*" ]] ; then
 			# Pick all point releases:  6.1.*-zen
-			local V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" \
+			local V=$(find "/usr/src/" -maxdepth 1 -name "linux-${k}" \
 				| sort --version-sort -r \
 				| sed -e "s|.*/linux-||" \
 				| sed -e "/^$/d")
@@ -335,7 +362,7 @@ pkg_postinst() {
 		elif [[ "${k}" =~ "^" ]] ; then
 			# Pick the highest version:  6.1.^-zen
 			local pat="${k/^/*}"
-			k=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" \
+			k=$(find "/usr/src/" -maxdepth 1 -name "linux-${pat}" \
 				| sort --version-sort -r \
 				| head -n 1 \
 				| sed -e "s|.*/linux-||" \
