@@ -67,7 +67,7 @@ _pkg_setup_one() {
 	KERNEL_DIR="/usr/src/linux-${k}"
 	[[ -e "${KERNEL_DIR}" ]] || die "Missing kernel sources for linux-${pat}"
 	[[ -e "${KERNEL_DIR}/.config" ]] || die "Missing .config for ${k}"
-	if ! realpath /boot/vmlinuz-${k}* 2>/dev/null 1>/dev/null ; then
+	if ! realpath "/boot/vmlinuz-${k}"* 2>/dev/null 1>/dev/null ; then
 		die "The kernel needs to be built first for ${k}."
 	fi
 }
