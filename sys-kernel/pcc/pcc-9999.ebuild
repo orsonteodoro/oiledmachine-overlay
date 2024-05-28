@@ -18,6 +18,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 else
 	SRC_URI="FIXME"
 fi
+S="${WORKDIR}"
 
 DESCRIPTION="Performance-oriented Congestion Control"
 HOMEPAGE="
@@ -35,8 +36,9 @@ LICENSE="
 	)
 "
 KEYWORDS="~amd64 ~x86"
+RESTRICT="mirror strip" # No strip required by CONFIG_MODULE_SIG
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" allegro custom-kernel doc +vivace ebuild-revision-1"
+IUSE+=" allegro custom-kernel doc +vivace ebuild-revision-2"
 REQUIRED_USE="
 	^^ (
 		allegro
@@ -77,8 +79,6 @@ BDEPEND+="
 		sys-devel/clang
 	)
 "
-S="${WORKDIR}"
-RESTRICT="mirror"
 MAKEOPTS="-j1"
 
 _pkg_setup_one() {

@@ -20,9 +20,9 @@ LICENSE="
 	GPL-2
 "
 KEYWORDS="~amd64 ~x86"
-RESTRICT="mirror"
+RESTRICT="mirror strip" # No strip required by CONFIG_MODULE_SIG
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" custom-kernel doc"
+IUSE+=" custom-kernel doc ebuild-revision-1"
 REQUIRED_USE="
 "
 # If you have a custom kernel, it is recommended to maintain a local copy to add
