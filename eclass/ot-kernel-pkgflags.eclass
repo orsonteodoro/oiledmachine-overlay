@@ -12914,6 +12914,17 @@ ewarn
 
 	# 1981, American, 64 Bit Block Size, 112-168 Bit Key Size
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_DES3_EDE_X86_64"
+
+		if [[ "${dss_region}" =~ "ru" ]] ; then
+			:
+		else
+			if has_version "sys-kernel/gostcrypt-linux-crypto" ; then
+eerror
+eerror "sys-kernel/gostcrypt-linux-crypto must be unemerged to continue."
+eerror
+				die
+			fi
+		fi
 	fi
 }
 
