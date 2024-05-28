@@ -80,7 +80,7 @@ da178919d63ecfec2738877abae02cd2ce8aa29c
 CK_KV="4.19.0"
 
 CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v5.19/tools/build/feature/Makefile#L318
-DISABLE_DEBUG_PV="1.4.1"
+DISABLE_DEBUG_PV="1.4.2"
 EXTRAVERSION="-ot"
 GCC_COMPAT=( {13..4} )
 GCC_MAX_SLOT=${GCC_COMPAT[0]}

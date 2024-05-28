@@ -90,7 +90,7 @@ C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
 C2TCP_VER="2.2"
 CLANG_PGO_SUPPORTED=1
 CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.1/tools/build/feature/Makefile#L318
-DISABLE_DEBUG_PV="1.4.1"
+DISABLE_DEBUG_PV="1.4.2"
 EXCLUDE_SCS=(
 	alpha
 	amd64
