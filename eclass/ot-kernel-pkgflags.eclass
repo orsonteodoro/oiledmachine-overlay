@@ -2569,7 +2569,10 @@ _ot-kernel-pkgflags_chacha20() {
 # Wrapper for the kuznyechik option.
 _ot-kernel-pkgflags_kuznyechik() {
 	ot-kernel_y_configopt "CONFIG_CRYPTO"
-	ot-kernel_y_configopt "CONFIG_CRYPTO_CTR" # For TLS
+	local tls="${TLS:-1}"
+	if [[ "${tls}" == "1" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CTR"
+	fi
 }
 
 # @FUNCTION: _ot-kernel-pkgflags_poly1305
@@ -3175,6 +3178,8 @@ ewarn
 		# cbc is default for plain
 		# xts is default for luks
 
+		# This section is for secure storage.  For network transmission see
+		# _ot-kernel_checkpoint_dss_tls_requirement
 		local dss_region="${DSS_REGION:-west}"
 		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
 			_ot-kernel-pkgflags_aes ${cryptsetup_modes}
@@ -3195,6 +3200,7 @@ ewarn
 		elif [[ "${dss_region}" =~ "kr" ]] ; then
 			_ot-kernel-pkgflags_aria ${cryptsetup_modes}
 		elif [[ "${dss_region}" =~ "ru" ]] ; then
+			_ot-kernel-pkgflags_kuznyechik ${cryptsetup_modes}
 			if ot-kernel_use gost ; then
 	# Already provided in sys-kernel/gostcrypt-linux-crypto
 				ot-kernel_unset_configopt "CONFIG_CRYPTO_STREEBOG"
@@ -7349,18 +7355,49 @@ einfo "Detected external kernel module"
 		ot-kernel_y_configopt "CONFIG_TRIM_UNUSED_KSYMS"
 	fi
 
-	if [[ "${work_profile}" == "dss" ]] ; then
-		if grep -q -E -e "^CONFIG_MODULES=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_MODULE_SIG"
-		fi
-	fi
-
-	if [[ \
+	if \
+	[[ \
+		"${work_profile}" == "dss" \
+	]] \
+		||
+	[[ \
 		   "${hardening_level}" == "secure-af" \
 		|| "${hardening_level}" == "secure-as-fuck" \
 	]] ; then
 		if grep -q -E -e "^CONFIG_MODULES=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_MODULE_SIG"
+
+			if [[ "${OT_KERNEL_LSMS}" =~ "lockdown" ]] ; then
+	# Already configured
+				:
+			else
+	# Prevent loading of unsigned/spoofed kernel modules.
+				local lsms
+				lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
+einfo "LSMS:  ${lsm}"
+				if [[ "${lsms}" =~ "lockdown" ]] ; then
+					:
+				else
+					if [[ -z "${lsms}" ]] ; then
+	# EX:  "" -> "lockdown"
+						lsms="lockdown"
+					elif [[ "${lsms}" =~ "landlock," ]] ; then
+	# EX:  "landlock,bpf" -> "landlock,lockdown,bpf"
+						lsms=$(echo "${lsms}" | sed -e "s|landlock,|landlock,lockdown,|")
+					elif [[ "${lsms}" =~ "landlock" ]] ; then
+	# EX:  "landlock" -> "landlock,lockdown"
+						lsms=$(echo "${lsms}" | sed -e "s|landlock|landlock,lockdown|")
+					else
+	# EX:  "bpf" -> "lockdown,bpf"
+						lsms="lockdown,${lsms}"
+					fi
+				fi
+				lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
+einfo "LSMS:  ${lsm}"
+				ot-kernel_set_configopt "CONFIG_LSM" "\"${lsms}\""
+				ot-kernel_y_configopt "CONFIG_SECURITY"
+				ot-kernel_y_configopt "CONFIG_SECURITY_LOCKDOWN_LSM"
+			fi
 		fi
 	fi
 }
@@ -7624,6 +7661,10 @@ _ot-kernel_tls_support() {
 		if [[ "${tls_region}" =~ "kr" ]] ; then
 	# TLS 1.2, but .kr websites use TLS 1.3 with AES-GCM
 			_ot-kernel-pkgflags_aria
+		fi
+		if [[ "${tls_region}" =~ "ru" ]] ; then
+	# TLS 1.2
+			_ot-kernel-pkgflags_kuznyechik
 		fi
 
 	# Key Agreement (TLS Handshaking)
@@ -13044,7 +13085,7 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
 		_ot-kernel-pkgflags_gcm
 
-		if [[ "${tls}" != "1" || "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
 	# Required for TLS.
 	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
 			_ot-kernel-pkgflags_aes
@@ -13072,6 +13113,15 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 
 	# TLS 1.2
 			_ot-kernel-pkgflags_aria
+		elif [[ "${dss_region}" =~ "ru" ]] ; then
+			if [[ "${tls}" == "1" ]] ; then
+				_ot-kernel-pkgflags_aes
+				_ot-kernel-pkgflags_sha256
+				_ot-kernel-pkgflags_sha512
+			fi
+
+	# TLS 1.2
+			_ot-kernel-pkgflags_kuznyechik
 		fi
 
 	# Key Agreement (TLS handshake)
