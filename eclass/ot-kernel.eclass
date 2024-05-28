@@ -5925,6 +5925,11 @@ eerror
 				ot-kernel_unset_configopt "CONFIG_X86_USER_SHADOW_STACK"
 			fi
 		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
+			fi
+		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_SLS"
@@ -6125,6 +6130,11 @@ eerror
 				ot-kernel_unset_configopt "CONFIG_X86_CET"
 				_y_cet_ibt  # Forward-edge CFI
 				_y_cet_ss   # Backward-edge CFI
+			fi
+		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
@@ -6441,6 +6451,11 @@ eerror
 				ot-kernel_unset_configopt "CONFIG_X86_CET"
 				_y_cet_ibt  # Forward-edge CFI
 				_y_cet_ss   # Backward-edge CFI
+			fi
+		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
