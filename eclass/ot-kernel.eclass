@@ -5644,6 +5644,8 @@ einfo "Using ${hardening_level} hardening level"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "spectre_v2=(on|off|auto)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "spectre_v2=(retpoline|retpoline,generic|retpoline,lfence|retpoline,amd|eibrs|eibrs,retpoline|eibrs,lfence|ibrs)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "spectre_v2_user=(on|off|prctl|prctl,ibpb|seccomp|seccomp,ibpb|auto)"
+#		ot-kernel_unset_pat_kconfig_kernel_cmdline "spec_rstack_overflow=(off|microcode|safe-ret|ibpb|ibpb-vmexit)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "spectre_bhi=(on|off)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "ssbd=(force-on|force-off|kernel)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "tsx=(on|off|auto)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "tsx_async_abort=(full|full,nosmt|off)"
@@ -5651,7 +5653,11 @@ einfo "Using ${hardening_level} hardening level"
 	fi
 
 	_y_retpoline() {
-		ot-kernel_y_configopt "CONFIG_RETPOLINE"
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+			ot-kernel_y_configopt "CONFIG_MITIGATION_RETPOLINE"
+		else
+			ot-kernel_y_configopt "CONFIG_RETPOLINE"
+		fi
 		local ready=0
 		if tc-is-gcc && ver_test $(gcc-version) -ge "8.1" ; then
 			ready=1
@@ -5786,11 +5792,6 @@ eerror
 			ot-kernel_y_configopt "CONFIG_RANDSTRUCT_NONE"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_FULL"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
-			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
-				ot-kernel_unset_configopt "CONFIG_PAGE_TABLE_ISOLATION"
-			elif [[ "${arch}" == "x86_64" ]] ; then
-				ot-kernel_unset_configopt "CONFIG_PAGE_TABLE_ISOLATION"
-			fi
 		fi
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_unset_configopt "CONFIG_MODIFY_LDT_SYSCALL"
@@ -5804,6 +5805,10 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_EXPOLINE_ON"
 		elif [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_unset_configopt "CONFIG_RANDOMIZE_MEMORY"
+		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+			ot-kernel_unset_configopt "CONFIG_MITIGATION_RETPOLINE"
+		else
 			ot-kernel_unset_configopt "CONFIG_RETPOLINE"
 		fi
 		ot-kernel_y_configopt "CONFIG_SHUFFLE_PAGE_ALLOCATOR"
@@ -5817,6 +5822,9 @@ eerror
 		fi
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
+			fi
 			if [[ "${arch}" == "arm64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "kpti=0"
 				ot-kernel_set_kconfig_kernel_cmdline "nospectre_v2"
@@ -5853,7 +5861,6 @@ eerror
 					ot-kernel_unset_configopt "CONFIG_X86_INTEL_TSX_MODE_OFF"
 					ot-kernel_y_configopt "CONFIG_X86_INTEL_TSX_MODE_ON"
 					ot-kernel_unset_configopt "CONFIG_X86_INTEL_TSX_MODE_AUTO"
-					ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
 					ot-kernel_set_kconfig_kernel_cmdline "gather_data_sampling=off"
 					ot-kernel_set_kconfig_kernel_cmdline "mds=off"
 					ot-kernel_set_kconfig_kernel_cmdline "mmio_stale_data=off"
@@ -5867,9 +5874,20 @@ eerror
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+			ot-kernel_unset_configopt "CONFIG_CPU_MITIGATIONS"
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_MITIGATION_RFDS"
+			fi
+			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
+				ot-kernel_unset_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+			fi
 			if [[ "${arch}" == "x86_64" ]] ; then
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+					ot-kernel_unset_configopt "CONFIG_CPU_SRSO"
+				fi
 				ot-kernel_unset_configopt "CONFIG_SPECULATION_MITIGATIONS"
 				ot-kernel_unset_configopt "CONFIG_CPU_UNRET_ENTRY"
+				ot-kernel_unset_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 				ot-kernel_unset_configopt "CONFIG_SLS"
 			fi
 			ot-kernel_unset_configopt "CONFIG_RETHUNK"
@@ -5880,8 +5898,18 @@ eerror
 			ot-kernel_set_kconfig_l1tf_mitigations "0"
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
+			fi
+			if [[ "${arch}" == "powerpc" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "spec_store_bypass_disable=off"
+			fi
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=off"
+			fi
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "spectre_bhi=off"
+				ot-kernel_set_kconfig_kernel_cmdline "spec_store_bypass_disable=off" # Matches mitigations=off list
 			fi
 		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
@@ -5927,15 +5955,17 @@ eerror
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
-			ot-kernel_unset_configopt "CONFIG_CPU_MITIGATIONS"
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
 			fi
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "spectre_bhi=off"
+			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+			ot-kernel_unset_configopt "CONFIG_MITIGATION_RETPOLINE"
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_PAGE_TABLE_ISOLATION"
-				ot-kernel_unset_configopt "CONFIG_MITIGATION_RETPOLINE"
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_SLS"
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_RETHUNK"
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
@@ -6020,11 +6050,6 @@ eerror
 			ot-kernel_y_configopt "CONFIG_RANDSTRUCT_NONE"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_FULL"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
-			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
-			elif [[ "${arch}" == "x86_64" ]] ; then
-				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
-			fi
 		fi
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_MODIFY_LDT_SYSCALL"
@@ -6038,8 +6063,8 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_EXPOLINE_ON"
 		elif [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_y_configopt "CONFIG_RANDOMIZE_MEMORY"
-			_y_retpoline
 		fi
+		_y_retpoline
 		ot-kernel_unset_configopt "CONFIG_SHUFFLE_PAGE_ALLOCATOR"
 		ot-kernel_unset_configopt "CONFIG_SLAB_FREELIST_HARDENED"
 		ot-kernel_unset_configopt "CONFIG_SLAB_FREELIST_RANDOM"
@@ -6051,6 +6076,10 @@ eerror
 		fi
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+	# GDS:  Rely on automagic
+				ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
+			fi
 			if [[ "${arch}" == "arm64" ]] ; then
 	# KPTI:  This assumes unforced default
 	# SSBD:  Rely on automagic
@@ -6077,8 +6106,6 @@ eerror
 					ot-kernel_y_configopt "CONFIG_X86_INTEL_TSX_MODE_OFF"
 					ot-kernel_unset_configopt "CONFIG_X86_INTEL_TSX_MODE_ON"
 					ot-kernel_unset_configopt "CONFIG_X86_INTEL_TSX_MODE_AUTO"
-	# GDS:  Rely on automagic
-					ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
 					ot-kernel_set_kconfig_kernel_cmdline "mds=full"
 					ot-kernel_set_kconfig_kernel_cmdline "mmio_stale_data=full"
 					ot-kernel_set_kconfig_kernel_cmdline "tsx=off"
@@ -6090,8 +6117,19 @@ eerror
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+			ot-kernel_y_configopt "CONFIG_CPU_MITIGATIONS"
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
+			fi
+			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+			fi
 			if [[ "${arch}" == "x86_64" ]] ; then
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+					ot-kernel_y_configopt "CONFIG_CPU_SRSO"
+				fi
 				ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
+				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 				ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 				ot-kernel_unset_configopt "CONFIG_SLS"
 			fi
@@ -6103,8 +6141,18 @@ eerror
 			ot-kernel_set_kconfig_l1tf_mitigations "0.5"
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
+			fi
+			if [[ "${arch}" == "powerpc" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "spec_store_bypass_disable=auto"
+			fi
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
+			fi
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "spectre_bhi=on"
+				ot-kernel_set_kconfig_kernel_cmdline "spec_store_bypass_disable=auto"
 			fi
 		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
@@ -6149,15 +6197,16 @@ eerror
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
-			ot-kernel_y_configopt "CONFIG_CPU_MITIGATIONS"
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
+			fi
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "spectre_bhi=on"
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_PAGE_TABLE_ISOLATION"
-				ot-kernel_y_configopt "CONFIG_MITIGATION_RETPOLINE"
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_SLS"
 				ot-kernel_y_configopt "CONFIG_MITIGATION_RETHUNK"
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
@@ -6298,11 +6347,6 @@ eerror
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_FULL"
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
 			fi
-			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
-			elif [[ "${arch}" == "x86_64" ]] ; then
-				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
-			fi
 		fi
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_unset_configopt "CONFIG_MODIFY_LDT_SYSCALL"
@@ -6316,8 +6360,8 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_EXPOLINE_ON"
 		elif [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_y_configopt "CONFIG_RANDOMIZE_MEMORY"
-			_y_retpoline
 		fi
+		_y_retpoline
 
 		if grep -q -E -e "^CONFIG_SLUB=y" "${path_config}" \
 			&& grep -q -E -e "^CONFIG_SLUB_TINY=y" "${path_config}" ; then
@@ -6362,6 +6406,13 @@ ewarn
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				if ot-kernel_has_version "sys-firmware/intel-microcode" ; then
+					ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
+				elif ot-kernel_use cpu_flags_x86_avx ; then
+					ot-kernel_y_configopt "CONFIG_GDS_FORCE_MITIGATION"
+				fi
+			fi
 			if [[ "${arch}" == "arm64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "kpti=1"
 				ot-kernel_set_kconfig_kernel_cmdline "ssbd=force-on"
@@ -6388,11 +6439,6 @@ ewarn
 					ot-kernel_set_kconfig_kernel_cmdline "kvm.nx_huge_pages=auto"
 				fi
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
-					if ot-kernel_has_version "sys-firmware/intel-microcode" ; then
-						ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
-					elif ot-kernel_use cpu_flags_x86_avx ; then
-						ot-kernel_y_configopt "CONFIG_GDS_FORCE_MITIGATION"
-					fi
 					ot-kernel_set_kconfig_kernel_cmdline "mds=full"
 					ot-kernel_set_kconfig_kernel_cmdline "mmio_stale_data=full,nosmt"
 					ot-kernel_set_kconfig_kernel_cmdline "tsx_async_abort=full,nosmt"
@@ -6403,8 +6449,19 @@ ewarn
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+			ot-kernel_y_configopt "CONFIG_CPU_MITIGATIONS"
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
+			fi
+			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+			fi
 			if [[ "${arch}" == "x86_64" ]] ; then
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+					ot-kernel_y_configopt "CONFIG_CPU_SRSO"
+				fi
 				ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
+				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 				ot-kernel_y_configopt "CONFIG_SLS"
 			fi
 			ot-kernel_y_configopt "CONFIG_RETHUNK"
@@ -6436,8 +6493,18 @@ eerror
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 			ot-kernel_set_kconfig_kernel_cmdline "l1d_flush=on"
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
+			fi
+			if [[ "${arch}" == "powerpc" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "spec_store_bypass_disable=auto"
+			fi
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
+			fi
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "spectre_bhi=on"
+				ot-kernel_set_kconfig_kernel_cmdline "spec_store_bypass_disable=auto"
 			fi
 		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
@@ -6486,15 +6553,16 @@ eerror
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
-			ot-kernel_y_configopt "CONFIG_CPU_MITIGATIONS"
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SPECTRE_BHI"
+			fi
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "spectre_bhi=on"
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_PAGE_TABLE_ISOLATION"
-				ot-kernel_y_configopt "CONFIG_MITIGATION_RETPOLINE"
 				ot-kernel_y_configopt "CONFIG_MITIGATION_SLS"
 				ot-kernel_y_configopt "CONFIG_MITIGATION_RETHUNK"
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
