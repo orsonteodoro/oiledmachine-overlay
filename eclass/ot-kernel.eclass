@@ -5873,7 +5873,11 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_RETHUNK"
 			ot-kernel_unset_configopt "CONFIG_CPU_IBPB_ENTRY"
 			ot-kernel_unset_configopt "CONFIG_CPU_IBRS_ENTRY"
-			ot-kernel_unset_configopt "CONFIG_SLS"
+			if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+				ot-kernel_unset_configopt "CONFIG_MITIGATION_SLS"
+			else
+				ot-kernel_unset_configopt "CONFIG_SLS"
+			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.14" ; then
 			ot-kernel_set_kconfig_l1tf_mitigations "0"
@@ -6062,7 +6066,11 @@ eerror
 			ot-kernel_y_configopt "CONFIG_RETHUNK"
 			ot-kernel_y_configopt "CONFIG_CPU_IBPB_ENTRY"
 			ot-kernel_y_configopt "CONFIG_CPU_IBRS_ENTRY"
-			ot-kernel_unset_configopt "CONFIG_SLS"
+			if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+				ot-kernel_unset_configopt "CONFIG_MITIGATION_SLS"
+			else
+				ot-kernel_unset_configopt "CONFIG_SLS"
+			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.14" ; then
 			ot-kernel_set_kconfig_l1tf_mitigations "0.5"
@@ -6360,7 +6368,11 @@ eerror
 				ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
 			fi
 			if [[ "${arch}" == "x86_64" ]] ; then
-				ot-kernel_y_configopt "CONFIG_SLS"
+				if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+					ot-kernel_y_configopt "CONFIG_MITIGATION_SLS"
+				else
+					ot-kernel_y_configopt "CONFIG_SLS"
+				fi
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.14" ; then
