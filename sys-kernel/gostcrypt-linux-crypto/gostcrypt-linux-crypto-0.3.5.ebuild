@@ -125,7 +125,10 @@ src_unpack() {
 
 _src_prepare_one() {
 	local k="${1}"
-	cp -av "${WORKDIR}/linux-crypto-${PV}" "${WORKDIR}/linux-crypto-${k}"
+	cp -av \
+		"${WORKDIR}/linux-crypto-${PV}" \
+		"${WORKDIR}/linux-crypto-${k}" \
+		|| die
 }
 
 src_prepare() {
