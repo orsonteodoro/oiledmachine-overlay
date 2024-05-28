@@ -13010,14 +13010,14 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 			_ot-kernel-pkgflags_aes
 			_ot-kernel-pkgflags_sha256
 			_ot-kernel-pkgflags_sha512		# Includes sha384
-		elif [[ "${dss_region}" == "cn" ]] ; then
+		elif [[ "${dss_region}" =~ "cn" ]] ; then
 			if [[ "${tls}" == "1" ]] ; then
 				_ot-kernel-pkgflags_aes		# Observed for .cn, .hk, .ru, .jp, .com (us)
 				_ot-kernel-pkgflags_sha256	# Observed for .cn, .hk, .ru, .com (us)
 				_ot-kernel-pkgflags_sha512	# Observed for .cn, .hk, .ru.
 			fi
 			_ot-kernel-pkgflags_sm4
-		elif [[ "${dss_region}" == "jp" ]] ; then
+		elif [[ "${dss_region}" =~ "jp" ]] ; then
 			_ot-kernel-pkgflags_aes
 			_ot-kernel-pkgflags_sha1		# Observed for .jp, TLS 1.2
 			_ot-kernel-pkgflags_sha256
@@ -13025,7 +13025,7 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 
 	# TLS 1.2
 			_ot-kernel-pkgflags_camellia
-		elif [[ "${dss_region}" == "kr" ]] ; then
+		elif [[ "${dss_region}" =~ "kr" ]] ; then
 			_ot-kernel-pkgflags_aes
 			_ot-kernel-pkgflags_sha256
 			_ot-kernel-pkgflags_sha512
@@ -13035,11 +13035,11 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 		fi
 
 	# Key Agreement (TLS handshake)
-		if [[ "${dss_region}" == "cn" && "${tls}" == "1" ]] ; then
+		if [[ "${dss_region}" =~ "cn" && "${tls}" == "1" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SM2"
-		elif [[ "${dss_region}" == "cn" ]] ; then
+		elif [[ "${dss_region}" =~ "cn" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SM2"
 		elif [[ "${dss_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
 	# See also
@@ -13048,11 +13048,11 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDH"        # Observed for .jp
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"       # Observed for .cn, .hk, .jp, .ru
 			#ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519" # Not used
-		elif [[ "${dss_region}" == "ru" && "${tls}" == "1" ]] ; then
+		elif [[ "${dss_region}" =~ "ru" && "${tls}" == "1" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ECRDSA"
-		elif [[ "${dss_region}" == "ru" ]] ; then
+		elif [[ "${dss_region}" =~ "ru" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ECRDSA"
 		fi
 	fi

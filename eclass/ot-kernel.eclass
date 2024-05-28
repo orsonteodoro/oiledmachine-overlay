@@ -11313,6 +11313,28 @@ einfo "Transparent Huge Pages (THP):  OFF"
 	fi
 }
 
+# @FUNCTION: _ot-kernel_toggle_fips_mode
+# @DESCRIPTION:
+# Add a kernel command line switch to start the kernel in FIPS mode for FIPS 200
+# certification.
+_ot-kernel_toggle_fips_mode() {
+	local region=""
+	local dss_region="${DSS_REGION:-west}"
+	if [[ "${work_profile}" == "dss" ]] ; then
+		region="${dss_region}"
+	fi
+	if [[ "${region}" =~ ("usa") ]] ; then
+		if grep -q -e "^CONFIG_MODULES=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_MODULE_SIG"
+		fi
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_MANAGER_DISABLE_TESTS"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_DRBG"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_FIPS"
+	else
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_FIPS"
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -11489,6 +11511,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	_ot-kernel-pkgflags_dss_disable_hw_crypto
 
 	_ot-kernel-pkgflags_csprng
+	_ot-kernel_toggle_fips_mode
 
 	ot-kernel_set_kconfig_from_envvar_array # Final user override
 	ot-kernel_print_thp_status

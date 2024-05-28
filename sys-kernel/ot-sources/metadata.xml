@@ -3713,8 +3713,9 @@ unset OT_KERNEL_PRIVATE_KEY
     selected, it will check for an installed sofware based firewall package.
 
     DSS_REGION - Set the region for crypto standards
-    Valid values:  cn, eu, jp, kr, ru, us, west (default)
-    Note:  Only one region can be selected.
+    Valid values:  cn, eu, jp, kr, ru, us, usa, west (default)
+    Note:  Only one region can be selected.  usa enables additional federal
+    settings.
     See also:  TLS_REGION
 
     DVD - Support for DVD, DVD-R, DVD-RW, DVD+R, DVD+RW, Blu-Ray
