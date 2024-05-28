@@ -5614,6 +5614,7 @@ einfo "Using ${hardening_level} hardening level"
 	]] ; then
 		:
 	else
+	# See also https://github.com/torvalds/linux/blob/master/Documentation/admin-guide/kernel-parameters.txt
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "mitigations=(off|auto|auto,nosmt)" # no mitigations=full?
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "gather_data_sampling=(force|off)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "kpti=(1|0)"
@@ -5869,15 +5870,11 @@ eerror
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_SPECULATION_MITIGATIONS"
 				ot-kernel_unset_configopt "CONFIG_CPU_UNRET_ENTRY"
+				ot-kernel_unset_configopt "CONFIG_SLS"
 			fi
 			ot-kernel_unset_configopt "CONFIG_RETHUNK"
 			ot-kernel_unset_configopt "CONFIG_CPU_IBPB_ENTRY"
 			ot-kernel_unset_configopt "CONFIG_CPU_IBRS_ENTRY"
-			if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
-				ot-kernel_unset_configopt "CONFIG_MITIGATION_SLS"
-			else
-				ot-kernel_unset_configopt "CONFIG_SLS"
-			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.14" ; then
 			ot-kernel_set_kconfig_l1tf_mitigations "0"
@@ -5904,6 +5901,11 @@ eerror
 			if [[ "${arch}" == "arm64" ]] ; then
 				ot-kernel_unset_configopt "nospectre_bhb"
 			fi
+			if [[ "${arch}" == "x86_64" ]] ; then
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+					ot-kernel_unset_configopt "CONFIG_SRSO"
+				fi
+			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.2" ; then
 			ot-kernel_unset_configopt "CONFIG_CALL_DEPTH_TRACKING"
@@ -5922,6 +5924,15 @@ eerror
 				ot-kernel_unset_configopt "CONFIG_X86_KERNEL_IBT"
 				ot-kernel_unset_configopt "CONFIG_X86_USER_SHADOW_STACK"
 			fi
+		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_MITIGATION_SLS"
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+					ot-kernel_unset_configopt "CONFIG_MITIGATION_SRSO"
+				fi
+			fi
+		else
 		fi
 	elif [[ \
 		   "${hardening_level}" == "default" \
@@ -6060,17 +6071,13 @@ eerror
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
-				ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 				ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
+				ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
+				ot-kernel_unset_configopt "CONFIG_SLS"
 			fi
 			ot-kernel_y_configopt "CONFIG_RETHUNK"
 			ot-kernel_y_configopt "CONFIG_CPU_IBPB_ENTRY"
 			ot-kernel_y_configopt "CONFIG_CPU_IBRS_ENTRY"
-			if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
-				ot-kernel_unset_configopt "CONFIG_MITIGATION_SLS"
-			else
-				ot-kernel_unset_configopt "CONFIG_SLS"
-			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.14" ; then
 			ot-kernel_set_kconfig_l1tf_mitigations "0.5"
@@ -6089,12 +6096,18 @@ eerror
 				_y_cet_ibt
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" \
-			&& [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] \
-			&& [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] \
-		; then
-			ot-kernel_set_kconfig_kernel_cmdline "reg_file_data_sampling=on"
-			ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+					ot-kernel_set_kconfig_kernel_cmdline "reg_file_data_sampling=on"
+					ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
+				fi
+			fi
+			if [[ "${arch}" == "x86_64" ]] ; then
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+					ot-kernel_y_configopt "CONFIG_SRSO"
+				fi
+			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.2" ; then
 			ot-kernel_y_configopt "CONFIG_CALL_DEPTH_TRACKING"
@@ -6112,6 +6125,14 @@ eerror
 				ot-kernel_unset_configopt "CONFIG_X86_CET"
 				_y_cet_ibt  # Forward-edge CFI
 				_y_cet_ss   # Backward-edge CFI
+			fi
+		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_MITIGATION_SLS"
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+					ot-kernel_y_configopt "CONFIG_MITIGATION_SRSO"
+				fi
 			fi
 		fi
 	elif [[ \
@@ -6343,6 +6364,7 @@ ewarn
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
+				ot-kernel_y_configopt "CONFIG_SLS"
 			fi
 			ot-kernel_y_configopt "CONFIG_RETHUNK"
 			if ! test-flags "-mfunction-return=thunk-extern" >/dev/null 2>&1 ; then
@@ -6367,13 +6389,6 @@ eerror
 			elif [[ $(ot-kernel_get_cpu_mfg_id) == "hygon" ]] ; then
 				ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
 			fi
-			if [[ "${arch}" == "x86_64" ]] ; then
-				if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
-					ot-kernel_y_configopt "CONFIG_MITIGATION_SLS"
-				else
-					ot-kernel_y_configopt "CONFIG_SLS"
-				fi
-			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.14" ; then
 			ot-kernel_set_kconfig_l1tf_mitigations "1"
@@ -6393,12 +6408,18 @@ eerror
 				_y_cet_ibt
 			fi
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" \
-			&& [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] \
-			&& [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] \
-		; then
-			ot-kernel_set_kconfig_kernel_cmdline "reg_file_data_sampling=on"
-			ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+					ot-kernel_set_kconfig_kernel_cmdline "reg_file_data_sampling=on"
+					ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
+				fi
+			fi
+			if [[ "${arch}" == "x86_64" ]] ; then
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+					ot-kernel_y_configopt "CONFIG_SRSO"
+				fi
+			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.2" ; then
 			ot-kernel_y_configopt "CONFIG_CALL_DEPTH_TRACKING"
@@ -6420,6 +6441,14 @@ eerror
 				ot-kernel_unset_configopt "CONFIG_X86_CET"
 				_y_cet_ibt  # Forward-edge CFI
 				_y_cet_ss   # Backward-edge CFI
+			fi
+		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_y_configopt "CONFIG_MITIGATION_SLS"
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+					ot-kernel_y_configopt "CONFIG_MITIGATION_SRSO"
+				fi
 			fi
 		fi
 	# See https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks
