@@ -2751,6 +2751,34 @@ _ot-kernel-pkgflags_des3_ede() {
 	ot-kernel_y_configopt "CONFIG_CRYPTO_DES"
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_csprng
+# @DESCRIPTION:
+# Wrapper for cryptographically secure pseudorandom random number generators.
+_ot-kernel-pkgflags_csprng() {
+	local region
+	local dss_region="${DSS_REGION:-west}"
+	local tls_region="${TLS_REGION:-west}"
+	if [[ "${work_profile}" == "dss" ]] ; then
+		region="${dss_region}"
+	else
+		region="${tls_region}"
+	fi
+	if [[ "${region}" =~ ("us") ]] ; then
+		_ot-kernel-pkgflags_aes CTR
+		_ot-kernel-pkgflags_sha256
+		_ot-kernel-pkgflags_sha512
+		ot-kernel_y_configopt "CONFIG_CRYPTO"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_DRBG_MENU"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_DRBG_HASH" # with SHA256 to SHA512
+		ot-kernel_y_configopt "CONFIG_CRYPTO_DRBG_CTR"  # with AES
+		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
+	else
+		# The Fallback is TRNG
+		# ANSI X9.31 (aka ANSI PRNG) was deprecated in 2011 and removed from FIPS in 2016.
+		:
+	fi
+}
+
 # @FUNCTION: _ot-kernel-pkgflags_gcm
 # @DESCRIPTION:
 # Wrapper for the gcm option.  Adds the simd but implied the generic as well.
@@ -13030,6 +13058,10 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 	fi
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_dss_disable_hw_crypto
+# @DESCRIPTION:
+# Disable hardware crypto devices.
+# Note:  This may change to enable/select crypto devices.
 _ot-kernel-pkgflags_dss_disable_hw_crypto() {
 	if [[ "${work_profile}" == "dss" ]] ; then
 	# The software implementation is preferred for review.
