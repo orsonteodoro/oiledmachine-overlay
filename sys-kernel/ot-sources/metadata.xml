@@ -169,10 +169,10 @@
 		    TRESOR (x86-64) [5]			E
 		    zen-sauce				D
 
-    6.9 (Live / Master / Stable)			A
+    6.9 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				E
-		    Clear Linux patchset		A (point releases only, not live)
+		    Clear Linux patchset		A
 		    genpatches				A
 		    kernel_compiler_patch		D
 		    Nest				E
@@ -183,6 +183,21 @@
 		    TRESOR (x86) [5]			E
 		    TRESOR (x86-64) [5]			E
 		    zen-sauce				A
+
+    6.10 (Live / Master)				A
+		    -rt	(RT_PREEMPT)			A
+		    Clang PGO				D
+		    Clear Linux patchset		D (point releases only, not live)
+		    genpatches				D
+		    kernel_compiler_patch		D
+		    Nest				D
+		    Project C				D
+		    TCP BBR v2 [5]			D
+		    TCP BBR v3 [5]			D
+		    TRESOR (AES-NI) [5]			D
+		    TRESOR (x86) [5]			D
+		    TRESOR (x86-64) [5]			D
+		    zen-sauce				D
 
     [1] Kernel LTS provides security updates and bugfixes, but doesn't extend to
         third party patchsets

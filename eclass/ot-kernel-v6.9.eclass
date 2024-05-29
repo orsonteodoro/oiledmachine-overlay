@@ -1099,7 +1099,7 @@ einfo "Already applied ${path} upstream"
 ot-kernel_check_versions() {
 	_ot-kernel_check_versions "app-admin/mcelog" "0.6" ""
 	_ot-kernel_check_versions "app-arch/tar" "1.28" ""
-	_ot-kernel_check_versions "dev-util/global" "6.6.5" ""
+	_ot-kernel_check_versions "dev-util/global" "6.6.5" "" # gtags
 	_ot-kernel_check_versions "dev-util/pahole" "1.16" "CONFIG_DEBUG_INFO_BTF"
 	_ot-kernel_check_versions "net-dialup/ppp" "2.4.0" "CONFIG_PPP"
 	_ot-kernel_check_versions "net-firewall/iptables" "1.4.2" "CONFIG_NETFILTER"
