@@ -12723,7 +12723,7 @@ ewarn "OT_KERNEL_KCONFIG override to fix this."
 ewarn
 	# Disabled alternative hash algorithms
 
-		if [[ "${tls}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us"|"jp") ]] ; then
+		if [[ "${tls}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
 			:
 		else
 	# 2001, American (NSA), Hash Function
@@ -12832,7 +12832,7 @@ ewarn
 	# 2012, Hash Function (non cryptographic)
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_XXHASH"
 
-		if [[ "${tls}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us"|"jp") ]] ; then
+		if [[ "${tls}" == "1" || "${dss_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
 			:
 		else
 	# 2013, AEAD ChaCha20-Poly1305
