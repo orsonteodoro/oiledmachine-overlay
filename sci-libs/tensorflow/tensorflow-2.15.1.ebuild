@@ -165,7 +165,7 @@ CPYTHON_PV_PART_1="3.10.13"	# By console inspection
 CPYTHON_PV_PART_2="20231002"	# By console inspection
 CUB_PV="1.9.9"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl
 CUDNN_FRONTEND_PV="0.9"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl
-FLATBUFFERS_PV="23.5.6"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/flatbuffers/workspace.bzl
+FLATBUFFERS_PV="23.5.26"	# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/flatbuffers/workspace.bzl
 GRPC_PV="1.53.0"		# Based on the oldest grpc supporting abseil 20230125
 GRPCIO_PV="1.24.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/tools/pip_package/setup.py#L84
 GRPCIO_PV_MAX="1.53"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/tools/pip_package/setup.py#L84 ; < (Exclusive) ; Upstream is wrong
@@ -193,17 +193,17 @@ EGIT_COMMIT_ABSEIL_CPP="b971ac5250ea8de900eae9f95e06548d14cd95fe"		# From https:
 EGIT_COMMIT_ARM_NEON_2_X86_SSE="a15b489e1222b2087007546b4912e21293ea86ff"	# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl
 EGIT_COMMIT_BENCHMARK="f7547e29ccaed7b64ef4f7495ecfff1c9f6f3d03"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/benchmark/workspace.bzl
 EGIT_COMMIT_BAZEL_TOOLCHAINS="8c717f8258cd5f6c7a45b97d974292755852b658"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace1.bzl
-EGIT_COMMIT_BROTLI="3914999fcc1fda92e750ef9190aa6db9bf7bdb07"			# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl#L888
+EGIT_COMMIT_BROTLI="3914999fcc1fda92e750ef9190aa6db9bf7bdb07"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl#L875
 EGIT_COMMIT_CPUINFO="959002f82d7962a473d8bf301845f2af720e0aa4"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl
 EGIT_COMMIT_DLPACK="9351cf542ab478499294864ff3acfdab5c8c5f3d"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/dlpack/workspace.bzl
-EGIT_COMMIT_DUCC="3d28aadfd8bb0219e3df188613dbbcdfffccc3cd"			# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/ducc/workspace.bzl#L6
+EGIT_COMMIT_DUCC="3d28aadfd8bb0219e3df188613dbbcdfffccc3cd"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/ducc/workspace.bzl#L6
 EGIT_COMMIT_FARMHASH="0d859a811870d10f53a594927d0d0b97573ad06d"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/farmhash/workspace.bzl
 EGIT_COMMIT_FP16="4dfe081cf6bcd15db339cf2680b9281b8451eeb3"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/FP16/workspace.bzl
 EGIT_COMMIT_FXDIV="63058eff77e11aa15bf531df5dd34395ec3017c8"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl
 EGIT_COMMIT_GEMMLOWP="e844ffd17118c1e17d94e1ba4354c075a4577b88"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/gemmlowp/workspace.bzl
 EGIT_COMMIT_GOOGLEAPIS="6b3fdcea8bc5398be4e7e9930c693f0ea09316a0"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl#L305
 EGIT_COMMIT_HIGHWAYHASH="c13d28517a4db259d738ea4886b1f00352a3cc33"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/highwayhash/workspace.bzl
-EGIT_COMMIT_IMPLIB_SO="5fb84c2a750434b9df1da67d67b749eb929598f1"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/implib_so/workspace.bzl#L9
+EGIT_COMMIT_IMPLIB_SO="5fb84c2a750434b9df1da67d67b749eb929598f1"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/implib_so/workspace.bzl#L9
 EGIT_COMMIT_LIBEIGEN="66e8f38891841bf88ee976a316c0c78a52f0cee5"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/eigen3/workspace.bzl
 EGIT_COMMIT_LLVM="49cb1595c1b3ae1de3684fea6148363c15bae12a"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/llvm/workspace.bzl
 EGIT_COMMIT_ML_DTYPES="2ca30a2b3c0744625ae3d6988f5596740080bbd0"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/py/ml_dtypes/workspace.bzl#L10
@@ -212,7 +212,7 @@ EGIT_COMMIT_PYBIND11_ABSEIL="2c4932ed6f6204f1656e245838f4f5eae69d2e29"		# From h
 EGIT_COMMIT_PYBIND11_BAZEL="72cbbf1fbc830e487e3012862b7b720001b70672"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/pybind11_bazel/workspace.bzl
 EGIT_COMMIT_PYBIND11_PROTOBUF="80f3440cd8fee124e077e2e47a8a17b78b451363"	# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl#L778
 EGIT_COMMIT_RE2="03da4fc0857c285e3a26782f6bc8931c4c950df4"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl ; Round up to the first day of cur_month + 1
-EGIT_COMMIT_RIEGELI="264ef7b4a1314d97265b37544b27cd3923ea72d2"			# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl#L872
+EGIT_COMMIT_RIEGELI="264ef7b4a1314d97265b37544b27cd3923ea72d2"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl#L870
 EGIT_COMMIT_RULES_CC="081771d4a0e9d7d3aa0eed2ef389fa4700dfb23e"			# From https://github.com/tensorflow/runtime/blob/70637966e2ec9afccc2cf4d51ed2391172b1b9c5/third_party/rules_cuda/cuda/dependencies.bzl#L41  ## needs review
 EGIT_COMMIT_RULES_CLOSURE="308b05b2419edb5c8ee0471b67a40403df940149"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace3.bzl
 EGIT_COMMIT_RULES_PROTO="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace0.bzl
@@ -268,6 +268,7 @@ https://github.com/pybind/pybind11_bazel/archive/${EGIT_COMMIT_PYBIND11_BAZEL}.t
 https://github.com/pybind/pybind11_protobuf/archive/${EGIT_COMMIT_PYBIND11_PROTOBUF}.zip -> pybind11_protobuf-${EGIT_COMMIT_PYBIND11_PROTOBUF}.zip
 https://github.com/pytorch/cpuinfo/archive/${EGIT_COMMIT_CPUINFO}.zip -> pytorch-cpuinfo-${EGIT_COMMIT_CPUINFO}.zip
 https://github.com/tensorflow/runtime/archive/${EGIT_COMMIT_TF_RUNTIME}.tar.gz -> tensorflow-runtime-${EGIT_COMMIT_TF_RUNTIME}.tar.gz
+https://github.com/google/flatbuffers/archive/v${FLATBUFFERS_PV}.tar.gz -> flatbuffers-v${FLATBUFFERS_PV}.tar.gz
 https://github.com/google/XNNPACK/archive/${EGIT_COMMIT_XNNPACK}.zip -> XNNPACK-${EGIT_COMMIT_XNNPACK}.zip
 https://github.com/Maratyszcza/pthreadpool/archive/${EGIT_COMMIT_PTHREADPOOL}.zip -> pthreadpool-${EGIT_COMMIT_PTHREADPOOL}.zip
 https://github.com/Maratyszcza/FP16/archive/${EGIT_COMMIT_FP16}.zip -> FP16-${EGIT_COMMIT_FP16}.zip
