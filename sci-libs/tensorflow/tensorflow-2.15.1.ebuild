@@ -643,6 +643,7 @@ RDEPEND="
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]
 		>=dev-python/clang-python-13.0.0[${PYTHON_USEDEP}]
+		>=dev-python/flatbuffers-${FLATBUFFERS_PV}[${PYTHON_USEDEP}]
 		>=dev-python/gast-0.5.3[${PYTHON_USEDEP}]
 		>=dev-python/google-pasta-0.1.1[${PYTHON_USEDEP}]
 		>=dev-python/h5py-2.9.0[${PYTHON_USEDEP}]
@@ -661,7 +662,6 @@ RDEPEND="
 		>=dev-python/tblib-1.7.0[${PYTHON_USEDEP}]
 		system-flatbuffers? (
 			~dev-libs/flatbuffers-${FLATBUFFERS_PV}
-			~dev-python/flatbuffers-${FLATBUFFERS_PV}[${PYTHON_USEDEP}]
 		)
 		|| (
 			=net-libs/google-cloud-cpp-2.10*
