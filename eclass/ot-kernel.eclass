@@ -5881,12 +5881,13 @@ eerror
 			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
 				ot-kernel_unset_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 			fi
-			if [[ "${arch}" == "x86_64" ]] ; then
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
 					ot-kernel_unset_configopt "CONFIG_CPU_SRSO"
+					ot-kernel_unset_configopt "CONFIG_CPU_UNRET_ENTRY"
+					ot-kernel_set_kconfig_kernel_cmdline "spec_rstack_overflow=off"
 				fi
 				ot-kernel_unset_configopt "CONFIG_SPECULATION_MITIGATIONS"
-				ot-kernel_unset_configopt "CONFIG_CPU_UNRET_ENTRY"
 				ot-kernel_unset_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 				ot-kernel_unset_configopt "CONFIG_SLS"
 			fi
@@ -6124,11 +6125,12 @@ eerror
 			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
 				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 			fi
-			if [[ "${arch}" == "x86_64" ]] ; then
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
 					ot-kernel_y_configopt "CONFIG_CPU_SRSO"
+					ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
+					ot-kernel_set_kconfig_kernel_cmdline "spec_rstack_overflow=safe-ret"
 				fi
-				ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
 				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 				ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 				ot-kernel_unset_configopt "CONFIG_SLS"
@@ -6456,9 +6458,11 @@ ewarn
 			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
 				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 			fi
-			if [[ "${arch}" == "x86_64" ]] ; then
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
 					ot-kernel_y_configopt "CONFIG_CPU_SRSO"
+					ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
+					ot-kernel_set_kconfig_kernel_cmdline "spec_rstack_overflow=safe-ret"
 				fi
 				ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
@@ -6479,9 +6483,6 @@ eerror
 			fi
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
 				ot-kernel_y_configopt "CONFIG_CPU_IBPB_ENTRY"
-				if [[ "${arch}" == "x86_64" ]] ; then
-					ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
-				fi
 			elif [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_CPU_IBRS_ENTRY"
 			elif [[ $(ot-kernel_get_cpu_mfg_id) == "hygon" ]] ; then
