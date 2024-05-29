@@ -1311,8 +1311,8 @@ ot-kernel-pkgflags_bluez() { # DONE
 			ot-kernel_y_configopt "CONFIG_CRYPTO_AEAD"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CMAC"
 
-			ot-kernel_y_configopt "CONFIG_CRYPTO_MD5"
-			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1"
+			_ot-kernel-pkgflags_md5
+			_ot-kernel-pkgflags_sha1
 			ot-kernel_y_configopt "CONFIG_KEY_DH_OPERATIONS"
 		fi
 	fi
@@ -2550,6 +2550,9 @@ _ot-kernel-pkgflags_chacha20() {
 			ot-kernel_y_configopt "CONFIG_CPU_MIPS32_R2"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA_MIPS"
 		fi
+	fi
+	if [[ "${arch}" == "s390" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA_S390"
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
 		if ot-kernel_use cpu_flags_x86_avx512vl ; then
@@ -7226,7 +7229,7 @@ ot-kernel-pkgflags_ovpn_dco() { # DONE
 		ot-kernel_y_configopt "CONFIG_DST_CACHE"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		_ot-kernel-pkgflags_aes CCM
-		ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20POLY1305"
+		_ot-kernel-pkgflags_chacha20_poly1305
 	fi
 }
 
@@ -7633,10 +7636,12 @@ _ot-kernel_tls_support() {
 			ot-kernel_y_configopt "CONFIG_TLS_DEVICE"
 
 	# Optional in spec
+	# AEAD Stream Cipher
 			_ot-kernel-pkgflags_chacha20_poly1305
 		fi
 
-	# Authenticated Encryption (AE) set with confidentiality and authenticity guarantees.
+	# Authenticated Encryption with Associated Data (AEAD) set with
+	# confidentiality and authenticity guarantees.
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
 		_ot-kernel-pkgflags_gcm
@@ -10305,9 +10310,6 @@ ot-kernel-pkgflags_wireguard_tools() { # DONE
 			_ot-kernel-pkgflags_chacha20
 			_ot-kernel-pkgflags_poly1305
 			_ot-kernel-pkgflags_blake2s
-			if grep -q -E -e "^CONFIG_CPU_MIPS32_R2=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA_MIPS"
-			fi
 		fi
 	fi
 }
@@ -12841,6 +12843,7 @@ ewarn
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_CHACHA20_NEON"
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_CHACHA20_X86_64"
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_CHACHA_MIPS"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_CHACHA_S390"
 	# 2005, American, MAC
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_POLY1305"
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_POLY1305_ARM"
@@ -13077,10 +13080,12 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 			ot-kernel_y_configopt "CONFIG_TLS_DEVICE"
 
 	# Optional in spec
+	# AEAD Stream cipher
 			_ot-kernel-pkgflags_chacha20_poly1305
 		fi
 
-	# Authenticated Encryption (AE) set with confidentiality and authenticity guarantees.
+	# Authenticated Encryption with Associated Data (AEAD) set with
+	# confidentiality and authenticity guarantees.
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
 		_ot-kernel-pkgflags_gcm
