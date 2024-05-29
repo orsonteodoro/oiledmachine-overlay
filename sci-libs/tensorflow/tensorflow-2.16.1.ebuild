@@ -84,7 +84,7 @@ declare -A LLD_SLOT=(
 
 # See "deps versioning" section above for details.
 LLVM_COMPAT=( {17..15} ) # See https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/tools/toolchains/remote_config/configs.bzl
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 # Limited by jax/flax
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
 
@@ -414,8 +414,8 @@ IUSE="
 ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${HIP_SLOTS2[@]}
-alt-ssl -big-endian +clang cuda +hardened -mpi +python rocm system-llvm test
-+xla
+alt-ssl -big-endian +clang cuda +hardened models -mpi +python rocm system-llvm
+test +xla
 ebuild-revision-1
 "
 gen_required_use_cuda_targets() {
@@ -698,6 +698,9 @@ DEPEND="
 	)
 "
 PDEPEND="
+	models? (
+		dev-python/tf-models-official:0/${PV%.*}[${PYTHON_USEDEP}]
+	)
 	python? (
 		$(python_gen_cond_dep '
 			|| (
@@ -1584,10 +1587,10 @@ einfo
 			icu
 			jsoncpp_git
 			libjpeg_turbo
-#			lmdb
+			#lmdb
 			nasm
 			nsync
-#			opt_einsum_archive
+			#opt_einsum_archive
 			org_sqlite
 			pasta
 			png
@@ -1608,15 +1611,15 @@ einfo
 
 		if [[ -n "${BAZEL_LOCAL_RAM_RESOURCES}" ]] ; then
 			# See https://www.tensorflow.org/install/source#bazel_build_options
-			echo "build --local_ram_resources=${BAZEL_LOCAL_RAM_RESOURCES:-2048}" >> .bazelrc || die
+			echo "build --local_ram_resources=${BAZEL_LOCAL_RAM_RESOURCES:-2048}" >> ".bazelrc" || die
 		fi
 
-		echo 'build --noshow_progress' >> .bazelrc || die # Disable high CPU usage on xfce4-terminal
-		echo 'build --subcommands' >> .bazelrc || die # Increase verbosity
-		echo 'build --config=noaws --config=nohdfs --config=nonccl' >> .bazelrc || die
-		echo 'build --define tensorflow_mkldnn_contraction_kernel=0' >> .bazelrc || die
-		echo "build --action_env=KERAS_HOME=\"${T}/.keras\"" >> .bazelrc || die
-		echo "build --host_action_env=KERAS_HOME=\"${T}/.keras\"" >> .bazelrc || die
+		echo 'build --noshow_progress' >> ".bazelrc" || die # Disable high CPU usage on xfce4-terminal
+		echo 'build --subcommands' >> ".bazelrc" || die # Increase verbosity
+		echo 'build --config=noaws --config=nohdfs --config=nonccl' >> ".bazelrc" || die
+		echo 'build --define tensorflow_mkldnn_contraction_kernel=0' >> ".bazelrc" || die
+		echo "build --action_env=KERAS_HOME=\"${T}/.keras\"" >> ".bazelrc" || die
+		echo "build --host_action_env=KERAS_HOME=\"${T}/.keras\"" >> ".bazelrc" || die
 		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 			local ccache_dir=$(ccache -sv \
 				| grep "Cache directory" \
@@ -1624,17 +1627,17 @@ einfo
 				| sed -r -e "s|^[ ]+||g")
 			echo "${ccache_dir}" > "${WORKDIR}/.ccache_dir_val" || die
 einfo "Adding build --sandbox_writable_path=\"${ccache_dir}\" to .bazelrc"
-			echo "build --action_env=CCACHE_DIR=\"${ccache_dir}\"" >> .bazelrc || die
-			echo "build --host_action_env=CCACHE_DIR=\"${ccache_dir}\"" >> .bazelrc || die
-			echo "build --sandbox_writable_path=${ccache_dir}" >> .bazelrc || die
+			echo "build --action_env=CCACHE_DIR=\"${ccache_dir}\"" >> ".bazelrc" || die
+			echo "build --host_action_env=CCACHE_DIR=\"${ccache_dir}\"" >> ".bazelrc" || die
+			echo "build --sandbox_writable_path=${ccache_dir}" >> ".bazelrc" || die
 			export CCACHE_DIR="${ccache_dir}"
 einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 		fi
 
 		for cflag in $($(tc-getPKG_CONFIG) jsoncpp --cflags)
 		do
-			echo "build --copt=\"${cflag}\"" >> .bazelrc || die
-			echo "build --host_copt=\"${cflag}\"" >> .bazelrc || die
+			echo "build --copt=\"${cflag}\"" >> ".bazelrc" || die
+			echo "build --host_copt=\"${cflag}\"" >> ".bazelrc" || die
 		done
 	}
 	if use python; then
@@ -1772,8 +1775,9 @@ einfo "Installing ${EPYTHON} files"
 		python_foreach_impl run_in_build_dir do_install
 
 		# Symlink to python-exec scripts
-		for i in "${ED}"/usr/lib/python-exec/*/*; do
-			n="${i##*/}"
+		local i
+		for i in "${ED}/usr/lib/python-exec/"*"/"* ; do
+			local n="${i##*/}"
 			if ! [[ -e "${ED}/usr/bin/${n}" ]] ; then
 				dosym \
 					"../lib/python-exec/python-exec2" \
@@ -1787,8 +1791,8 @@ einfo "Installing ${EPYTHON} files"
 	fi
 
 einfo "Installing headers"
-	insinto /usr/include/${PN}/
-	doins -r bazel-bin/tensorflow/include/*
+	insinto "/usr/include/${PN}/"
+	doins -r "bazel-bin/tensorflow/include/"*
 
 einfo "Installing libs"
 	# Generate a pkg-config file.
@@ -1796,8 +1800,8 @@ einfo "Installing libs"
 		--prefix="${EPREFIX}"/usr \
 		--libdir=$(get_libdir) \
 		--version=${MY_PV} || die
-	insinto /usr/$(get_libdir)/pkgconfig
-	doins ${PN}.pc ${PN}_cc.pc
+	insinto "/usr/$(get_libdir)/pkgconfig"
+	doins "${PN}.pc" "${PN}_cc.pc"
 
 	local l
 	for l in libtensorflow{,_framework,_cc}.so; do

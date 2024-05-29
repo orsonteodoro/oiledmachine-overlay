@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <!-- Ebuild on the oildmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="pypi">tf-models-official</remote-id>
+    <remote-id type="github">tensorflow/models</remote-id>
+  </upstream>
+  <use>
+    <flag name="nlp">
+      Install dependencies for nlp (Natural Language Processing)
+    </flag>
+  </use>
+</pkgmetadata>
