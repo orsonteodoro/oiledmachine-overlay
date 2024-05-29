@@ -1693,7 +1693,7 @@ ot-kernel-pkgflags_cipher_optional() {
 		:
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_IMA_DEFAULT_HASH_SM3" ; then
-		:
+		_ot-kernel-pkgflags_sm3
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_IP_SCTP" ; then
 		_ot-kernel-pkgflags_sha1
@@ -2337,7 +2337,7 @@ _ot-kernel-pkgflags_aes() {
 			if [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM_CE"
 			fi
-			if [[ "${modes}" =~ "GCM" ]] ; then
+			if [[ "${modes}" =~ ("GCM") ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH_ARM_CE"
 			fi
 		fi
@@ -2354,10 +2354,10 @@ _ot-kernel-pkgflags_aes() {
 				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_BS"
 				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_NEON_BLK"
 			fi
-			if [[ "${modes}" =~ "GCM" ]] ; then
+			if [[ "${modes}" =~ ("GCM") ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH_ARM64_CE"
 			fi
-			if [[ "${modes}" =~ "CCM" ]] ; then
+			if [[ "${modes}" =~ ("CCM") ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_CE_CCM"
 			fi
 		fi
@@ -2367,6 +2367,19 @@ _ot-kernel-pkgflags_aes() {
 			ot-kernel_y_configopt "CONFIG_SPE"
 			if [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_PPC_SPE"
+			fi
+		fi
+		if grep -q -E -e "^CONFIG_PPC64=y" "${path_config}" ; then
+			if grep -q -E -e "^CONFIG_CPU_LITTLE_ENDIAN=y" "${path_config}" ; then
+				if grep -q -E -e "^VSX=y" "${path_config}" ; then
+					if [[ "${modes}" =~ ("GCM") ]] ; then
+						ot-kernel_y_configopt "CONFIG_CRYPTO_AES_GCM_P10"
+					fi
+				fi
+			fi
+			if grep -q -E -e "^VSX=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_DEV_VMX"
+				ot-kernel_y_configopt "CONFIG_CRYPTO_DEV_VMX_ENCRYPT"
 			fi
 		fi
 	fi
@@ -2551,6 +2564,15 @@ _ot-kernel-pkgflags_chacha20() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA_MIPS"
 		fi
 	fi
+	if [[ "${arch}" == "powerpc" ]] ; then
+		if grep -q -E -e "^CONFIG_PPC64=y" "${path_config}" ; then
+			if grep -q -E -e "^CONFIG_CPU_LITTLE_ENDIAN=y" "${path_config}" ; then
+				if grep -q -E -e "^CONFIG_VSX=y" "${path_config}" ; then
+					ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20_P10"
+				fi
+			fi
+		fi
+	fi
 	if [[ "${arch}" == "s390" ]] ; then
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA_S390"
 	fi
@@ -2571,6 +2593,7 @@ _ot-kernel-pkgflags_chacha20() {
 # @DESCRIPTION:
 # Wrapper for the kuznyechik option.
 _ot-kernel-pkgflags_kuznyechik() {
+	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_KUZNYECHIK}" == "1" ]] && continue
 	ot-kernel_y_configopt "CONFIG_CRYPTO"
 	local tls="${TLS:-1}"
 	if [[ "${tls}" == "1" ]] ; then
@@ -2598,8 +2621,8 @@ _ot-kernel-pkgflags_poly1305() {
 	if [[ "${arch}" == "powerpc" ]] ; then
 		if \
 			   grep -q -E -e "^CONFIG_PPC64=y" "${path_config}" \
-			|| grep -q -E -e "^CONFIG_CPU_LITTLE_ENDIAN=y" "${path_config}" \
-			|| grep -q -E -e "^CONFIG_VSX=y" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_CPU_LITTLE_ENDIAN=y" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_VSX=y" "${path_config}" \
 		; then
 	# Power10 or later AND little-endian and 64-bit
 			ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305_P10"
@@ -3014,6 +3037,21 @@ _ot-kernel-pkgflags_sha512() {
 	ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512"
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_sm3
+# @DESCRIPTION:
+# Wrapper for the sm3 option.  Adds the simd but implied the generic as well.
+_ot-kernel-pkgflags_sm3() {
+	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_SM3}" == "1" ]] && continue
+	if [[ "${arch}" == "x86_64" ]] ; then
+		if ot-kernel_use cpu_flags_x86_avx ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SM3_AVX_X86_64"
+		fi
+	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO"
+	ot-kernel_y_configopt "CONFIG_CRYPTO_SM3"
+	ot-kernel_y_configopt "CONFIG_CRYPTO_SM3_GENERIC"
+}
+
 # @FUNCTION: _ot-kernel-pkgflags_serpent
 # @DESCRIPTION:
 # Wrapper for the serpent option.  Adds the simd but implied the generic as well.
@@ -3107,7 +3145,7 @@ _ot-kernel-pkgflags_nhpoly1305() {
 	if [[ "${arch}" == "x86_64" ]] ; then
 		if ot-kernel_use cpu_flags_x86_avx2 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_NHPOLY1305_AVX2"
-		else
+		elif ot-kernel_use cpu_flags_x86_sse2 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_NHPOLY1305_SSE2"
 		fi
 	fi
@@ -3197,7 +3235,7 @@ ewarn
 			_ot-kernel-pkgflags_sha3
 		elif [[ "${dss_region}" =~ "cn" ]] ; then
 			_ot-kernel-pkgflags_sm4 ${cryptsetup_modes}
-			ot-kernel_y_configopt "CONFIG_CRYPTO_SM3_GENERIC"
+			_ot-kernel-pkgflags_sm3
 		elif [[ "${dss_region}" =~ "jp" ]] ; then
 			_ot-kernel-pkgflags_camellia ${cryptsetup_modes}
 		elif [[ "${dss_region}" =~ "kr" ]] ; then
@@ -7636,7 +7674,8 @@ _ot-kernel_tls_support() {
 			ot-kernel_y_configopt "CONFIG_TLS_DEVICE"
 
 	# Optional in spec
-	# AEAD Stream Cipher
+	# AEAD stream cipher
+	# Stream ciphers have lower latency but lowered security guarantees.
 			_ot-kernel-pkgflags_chacha20_poly1305
 		fi
 
@@ -7649,7 +7688,7 @@ _ot-kernel_tls_support() {
 		if [[ "${tls}" == "1" || "${tls_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
 	# Required for TLS.
 	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
-			_ot-kernel-pkgflags_aes					# Observed for .cn, .hk, .jp, .ru, .com (us)
+			_ot-kernel-pkgflags_aes	CCM GCM				# Observed for .cn, .hk, .jp, .ru, .com (us)
 			if [[ "${tls_region}" =~ "jp" ]] ; then
 				_ot-kernel-pkgflags_sha1			# Observed for .jp, TLS 1.2
 			fi
@@ -7679,7 +7718,6 @@ _ot-kernel_tls_support() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"		# Observed for .cn, .hk, .jp, .ru, .com (us)
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDH"		# Observed for .jp
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"		# Observed for .cn, .hk, .jp, .ru
-			#ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519"	# Not used in most TLS
 		fi
 		if [[ "${tls_region}" =~ "cn" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SM2"
@@ -13080,7 +13118,8 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 			ot-kernel_y_configopt "CONFIG_TLS_DEVICE"
 
 	# Optional in spec
-	# AEAD Stream cipher
+	# AEAD stream cipher
+	# Stream ciphers have lower latency but lowered security guarantees.
 			_ot-kernel-pkgflags_chacha20_poly1305
 		fi
 
@@ -13093,7 +13132,7 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
 	# Required for TLS.
 	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
-			_ot-kernel-pkgflags_aes
+			_ot-kernel-pkgflags_aes CCM GCM
 			_ot-kernel-pkgflags_sha256
 			_ot-kernel-pkgflags_sha512		# Includes sha384
 		elif [[ "${dss_region}" =~ "cn" ]] ; then
@@ -13146,7 +13185,6 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"         # Observed for .cn, .hk, .jp, .com (us)
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDH"        # Observed for .jp
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"       # Observed for .cn, .hk, .jp, .ru
-			#ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519" # Not used
 		elif [[ "${dss_region}" =~ "ru" && "${tls}" == "1" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ECDSA"
