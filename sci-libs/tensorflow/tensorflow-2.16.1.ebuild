@@ -1573,7 +1573,6 @@ einfo
 	# See https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/systemlibs/syslibs_configure.bzl
 		local SYSLIBS=(
 			#absl_py		# Breaks during unpack
-			absl_synchronization
 			astor_archive
 			astunparse_archive
 			boringssl
