@@ -409,9 +409,8 @@ IUSE="
 ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${HIP_SLOTS2[@]}
-alt-ssl -big-endian clang cuda -custom-optimization-level +hardened -mpi +python
-rocm system-llvm test +xla
-r1
+alt-ssl -big-endian clang cuda +hardened -mpi +python rocm system-llvm test +xla
+ebuild-revision-1
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -1316,18 +1315,10 @@ ewarn
 
 	setup_linker
 
-	if ! use custom-optimization-level ; then
 	# Upstream uses a mix of -O3 and -O2.
 	# In some contexts -Os causes a stall.
-		filter-flags '-O*'
-	fi
-	if is-flagq '-Os' ; then
-einfo "Preventing stall.  Removing -Os."
-		filter-flags '-Os'
-	fi
-
-# Make _FORTIFY_SOURCE=1 work
-# Prevent warning as error with _FORTIFY_SOURCE
+	# Make _FORTIFY_SOURCE=1 work
+	# Prevent warning as error with _FORTIFY_SOURCE
 	replace-flags '-O*' '-O2' # Prevent possible -O3 breakage with llvm parts.
 
 	if ! use hardened ; then
