@@ -9,6 +9,12 @@ EAPI=8
 # SECURITY:  Bump every minor version.  Check if CVE announced:
 # https://github.com/tensorflow/tensorflow/releases/tag/v2.16.1
 
+# FIXME:
+#bazel-out/k8-opt/bin/external/local_tsl/tsl/protobuf/_objs/coordination_service_cc_grpc_proto/coordination_service.grpc.pb.pic.o:coordination_service.grpc.pb.cc:function grpc::CompletionQueue::~CompletionQueue(): error: undefined reference to 'absl::lts_20230125::Mutex::~Mutex()'
+#bazel-out/k8-opt/bin/external/local_tsl/tsl/protobuf/_objs/coordination_service_cc_grpc_proto/coordination_service.grpc.pb.pic.o:coordination_service.grpc.pb.cc:function grpc::CompletionQueue::~CompletionQueue(): error: undefined reference to 'absl::lts_20230125::Mutex::~Mutex()'
+#bazel-out/k8-opt/bin/external/local_tsl/tsl/protobuf/_objs/coordination_service_cc_grpc_proto/coordination_service.grpc.pb.pic.o:coordination_service.grpc.pb.cc:function grpc::internal::BlockingUnaryCallImpl<google::protobuf::MessageLite, google::protobuf::MessageLite>::BlockingUnaryCallImpl(grpc::ChannelInterface*, grpc::internal::RpcMethod const&, grpc::ClientContext*, google::protobuf::MessageLite const&, google::protobuf::MessageLite*): error: undefined reference to 'absl::lts_20230125::Mutex::~Mutex()'
+
+
 MY_PV="${PV/_rc/-rc}"
 MY_P="${PN}-${MY_PV}"
 DEP_VER="$(ver_cut 1-2)"
@@ -1367,7 +1373,8 @@ einfo "Preventing stall.  Removing -Os."
 
 # Make _FORTIFY_SOURCE=1 work
 # Prevent warning as error with _FORTIFY_SOURCE
-	replace-flags '-O0' '-O1'
+	replace-flags '-O0' '-O2'
+	replace-flags '-O1' '-O2'
 
 	if ! use hardened ; then
 	# It has to be done this way, because the tarballs are not unpacked at
@@ -1546,7 +1553,7 @@ einfo
 			export HIP_PATH="${ROCM_PATH}"
 			export ROCM_PATH="${ROCM_PATH}"
 
-# See https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/.bazelrc#L296
+	# See https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/.bazelrc#L296
 			local gcc_slot=$(gcc-major-version)
 			export CLANG_COMPILER_PATH="/usr/lib/llvm/${LLVM_SLOT}/bin/clang"
 			export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${gcc_slot}"
@@ -1568,9 +1575,9 @@ einfo "TF_ROCM_LLVM_SLOT:  ${TF_ROCM_LLVM_SLOT}"
 einfo
 		fi
 
-# com_googlesource_code_re2 weird branch using absl, doesnt work with released
-# re2
-		# com_google_protobuf is disabled due to https://github.com/tensorflow/tensorflow/issues/61593
+	# com_googlesource_code_re2 weird branch using absl, doesnt work with released re2
+	# com_google_protobuf is disabled due to https://github.com/tensorflow/tensorflow/issues/61593
+	# See https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/systemlibs/syslibs_configure.bzl
 		local SYSLIBS=(
 			#absl_py		# Breaks during unpack
 			astor_archive

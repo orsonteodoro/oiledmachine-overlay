@@ -1313,7 +1313,8 @@ einfo "Preventing stall.  Removing -Os."
 
 # Make _FORTIFY_SOURCE=1 work
 # Prevent warning as error with _FORTIFY_SOURCE
-	replace-flags '-O0' '-O1'
+	replace-flags '-O0' '-O2'
+	replace-flags '-O1' '-O2'
 
 	if ! use hardened ; then
 	# It has to be done this way, because the tarballs are not unpacked at
@@ -1480,7 +1481,7 @@ einfo
 			export HIP_PATH="${ROCM_PATH}"
 			export ROCM_PATH="${ROCM_PATH}"
 
-# See https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/.bazelrc#L296
+	# See https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/.bazelrc#L296
 			local gcc_slot=$(gcc-major-version)
 			export CLANG_COMPILER_PATH="/usr/lib/llvm/${LLVM_SLOT}/bin/clang"
 			export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${gcc_slot}"
@@ -1502,9 +1503,9 @@ einfo "TF_ROCM_LLVM_SLOT:  ${TF_ROCM_LLVM_SLOT}"
 einfo
 		fi
 
-# com_googlesource_code_re2 weird branch using absl, doesnt work with released
-# re2
-		# com_google_protobuf is disabled due to https://github.com/tensorflow/tensorflow/issues/61593
+	# com_googlesource_code_re2 weird branch using absl, doesnt work with released re2
+	# com_google_protobuf is disabled due to https://github.com/tensorflow/tensorflow/issues/61593
+	# See https://github.com/tensorflow/tensorflow/blob/v2.14.1/third_party/systemlibs/syslibs_configure.bzl
 		local SYSLIBS=(
 			#absl_py		# Breaks during unpack
 			astor_archive
