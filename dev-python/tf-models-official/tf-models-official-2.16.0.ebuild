@@ -10,7 +10,8 @@ EAPI=8
 # sentencepiece
 # tensorflow-hub
 # tensorflow-datasets
-# tf-kernas
+# tensorflow-text
+# tf-keras
 # tf_slim
 
 DISTUTILS_USE_PEP517="setuptools"
