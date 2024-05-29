@@ -3,17 +3,19 @@
 
 EAPI=8
 
+# D10, U18, U20, U22, U24
+
 #
 # For download details see:
 #
 # https://www.spotify.com/us/download/linux/
 # https://community.spotify.com/t5/Desktop-Linux/Linux-Spotify-client-1-x-now-in-stable/m-p/1300404
 #
-# CEF_DEPENDS_VERSION="121.0.6167.139"
-# CEF_DEPENDS_VERSION_A="121"
+# CEF_DEPENDS_VERSION="122.0.6261.130"
+# CEF_DEPENDS_VERSION_A="122"
 # CEF_DEPENDS_VERSION_B="0"
-# CEF_DEPENDS_VERSION_C="6167"
-# CEF_DEPENDS_VERSION_D="139"
+# CEF_DEPENDS_VERSION_C="6261"
+# CEF_DEPENDS_VERSION_D="130"
 #
 # Third party licenses:
 #
@@ -36,33 +38,31 @@ EAPI=8
 # http://repository.spotify.com/dists/stable/Release
 # http://repository.spotify.com/dists/testing/Release
 #
-# Requirements:
+# Current version and Requirements:
 #
 # http://repository.spotify.com/dists/stable/non-free/binary-amd64/Packages
 # http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
 #
 # For Chromium *DEPENDs and versioning see:
 #
-# https://github.com/chromium/chromium/tree/121.0.6167.139/build/linux/sysroot_scripts/generated_package_lists
-# https://github.com/chromium/chromium/blob/121.0.6167.139/build/install-build-deps.py
-# https://github.com/chromium/chromium/blob/121.0.6167.139/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/tree/122.0.6261.130/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/122.0.6261.130/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/122.0.6261.130/tools/clang/scripts/update.py#L42
 #
 # For vendored Chromium third party *DEPENDs versioning see:
 #
-# https://github.com/chromium/chromium/blob/121.0.6167.139/third_party/fontconfig/include/config.h#L290
-# https://github.com/chromium/chromium/blob/121.0.6167.139/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/122.0.6261.130/third_party/fontconfig/include/config.h#L290
+# https://github.com/chromium/chromium/blob/122.0.6261.130/third_party/zlib/zlib.h#L40
 #
 # Versions only obtainable through tarball:
 #
-# /var/tmp/portage/www-client/chromium-121.0.6167.139/work/chromium-121.0.6167.139/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-121.0.6167.139/work/chromium-121.0.6167.139/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-121.0.6167.139/work/chromium-121.0.6167.139/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-121.0.6167.139/work/chromium-121.0.6167.139/third_party/ffmpeg/libavutil/version.h               ; do not use
-# /var/tmp/portage/www-client/chromium-121.0.6167.139/work/chromium-121.0.6167.139/third_party/ffmpeg/libavcodec/version*.h             ; do not use
-# /var/tmp/portage/www-client/chromium-121.0.6167.139/work/chromium-121.0.6167.139/third_party/ffmpeg/libavformat/version*.h            ; do not use
+# /var/tmp/portage/www-client/chromium-122.0.6261.130/work/chromium-122.0.6261.130/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-122.0.6261.130/work/chromium-122.0.6261.130/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-122.0.6261.130/work/chromium-122.0.6261.130/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-122.0.6261.130/work/chromium-122.0.6261.130/third_party/ffmpeg/libavutil/version.h               ; do not use
+# /var/tmp/portage/www-client/chromium-122.0.6261.130/work/chromium-122.0.6261.130/third_party/ffmpeg/libavcodec/version*.h             ; do not use
+# /var/tmp/portage/www-client/chromium-122.0.6261.130/work/chromium-122.0.6261.130/third_party/ffmpeg/libavformat/version*.h            ; do not use
 #
-
-# Support based on D 11 with U 18.04 LTS as the fallback.
 
 # Dropped pax-kernel USE flag because of the license plus the CEF version used
 # is already EOL.  Use the web version instead for the secure version.
@@ -73,7 +73,7 @@ EAPI=8
 # For ffmpeg:0/x.y.z, y must be <= 59.
 ALSA_LIB="1.2.4"
 ATK_PV="2.38.0"
-BUILD_ID_AMD64="g4d59ad7c" # Change this after every bump
+BUILD_ID_AMD64="ge66eb7bc" # Change this after every bump
 CAIRO_PV="1.16.0"
 CLANG_PV="17"
 DEFAULT_CONFIGURATION="stable"
@@ -265,7 +265,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 # *DEPENDs based on install-build-deps.sh's common_lib_list and lib_list variables.
 
 # For details see:
-# https://github.com/chromium/chromium/blob/121.0.6167.139/build/install-build-deps.sh#L237
+# https://github.com/chromium/chromium/blob/122.0.6261.130/build/install-build-deps.py#L329
 
 # The version is obtained in src_prepare
 
