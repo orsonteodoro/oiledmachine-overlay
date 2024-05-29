@@ -170,9 +170,7 @@ IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-clang cpu cuda -custom-optimization-level +hardened rocm system-llvm r1
-
-rocm_6_0
+clang cpu cuda +hardened rocm rocm_6_0 system-llvm r1
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
@@ -730,20 +728,11 @@ prepare_jaxlib() {
 	load_env
 	setup_linker
 
-	if ! use custom-optimization-level ; then
 	# Upstream uses a mix of -O3 and -O2.
 	# In some contexts -Os causes a stall.
-		filter-flags '-O*'
-	fi
-
-	if is-flagq '-Os' ; then
-einfo "Preventing stall.  Removing -Os."
-		filter-flags '-Os'
-	fi
-
-# Make _FORTIFY_SOURCE work.
-# Prevent warning as error
-	replace-flags '-O*' '-O2' # Prevent possible breakage with llvm parts.
+	# Make _FORTIFY_SOURCE work.
+	# Prevent warning as error
+	replace-flags '-O*' '-O2' # Prevent possible runtime breakage with llvm parts.
 
 	if ! use hardened ; then
 	# At this point the bazel tarballs have not been unpack.
