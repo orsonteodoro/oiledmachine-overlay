@@ -465,12 +465,12 @@ src_configure() {
 		done
 		append-ldflags -fuse-ld=lld
 		unset LD
-		replace-flags "-O0" "-O1" # Promote to fix _FORTIFY_SOURCE=2
+		replace-flags "-O0" "-O2" # Promote to fix _FORTIFY_SOURCE=2
 		mycmakeargs+=(
 			-DEXTRA_SECURITY_FLAGS="sanitize"
 		)
 	elif use hardened ; then
-		replace-flags "-O0" "-O1" # Promote to fix _FORTIFY_SOURCE=2
+		replace-flags "-O0" "-O2" # Promote to fix _FORTIFY_SOURCE=2
 		mycmakeargs+=(
 			-DEXTRA_SECURITY_FLAGS="default"
 		)
@@ -488,6 +488,9 @@ src_configure() {
 		export CXX="clang++"
 	fi
 	strip-unsupported-flags
+
+	# Prevent runtime failures with llvm parts.
+	replace-flags '-O*' '-O2'
 
 	# Extracted from buildbot/configure.py
 	mycmakeargs+=(

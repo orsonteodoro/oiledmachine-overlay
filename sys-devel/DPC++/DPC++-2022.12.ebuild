@@ -59,7 +59,7 @@ UR_COMMIT="fd711c920acc4434cb52ff18b078c082d9d7f44d" # \
 LLVM_COMPAT=( 16 13 12 ) # Upstream tested versions
 PYTHON_COMPAT=( python3_{10..12} )
 
-inherit cmake python-any-r1 rocm toolchain-funcs
+inherit cmake flag-o-matic python-any-r1 rocm toolchain-funcs
 
 DOCS_BUILDER="doxygen"
 DOCS_DIR="build/docs"
@@ -323,6 +323,9 @@ src_configure() {
 		export CXX="clang++"
 	fi
 	strip-unsupported-flags
+
+	# Prevent runtime failures with llvm parts.
+	replace-flags '-O*' '-O2'
 
 	# Extracted from buildbot/configure.py
 	local mycmakeargs=(
