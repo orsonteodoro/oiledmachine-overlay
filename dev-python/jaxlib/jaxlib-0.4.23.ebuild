@@ -740,7 +740,7 @@ einfo "Preventing stall.  Removing -Os."
 
 # Make _FORTIFY_SOURCE work.
 # Prevent warning as error
-	replace-flags '-O0' '-O1'
+	replace-flags '-O*' '-O2' # Prevent possible breakage with llvm parts.
 
 	if ! use hardened ; then
 	# At this point the bazel tarballs have not been unpack.

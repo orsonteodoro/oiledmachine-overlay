@@ -5,7 +5,7 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
 
-inherit cmake-multilib python-any-r1
+inherit cmake-multilib flag-o-matic python-any-r1
 
 SRC_URI="
 https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz

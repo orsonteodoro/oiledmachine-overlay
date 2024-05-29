@@ -5,7 +5,7 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
 
-inherit cmake-multilib python-any-r1
+inherit cmake-multilib flag-o-matic python-any-r1
 
 SRC_URI="
 https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
@@ -47,9 +47,9 @@ src_prepare() {
 		-e '/"-msse4.1",/d' \
 		-e '/"-mfpu=neon"/d' \
 		-e '/"-march=armv8-a+crypto"/d' \
-		absl/copts/copts.py || die
+		"absl/copts/copts.py" || die
 	# Now generate cmake files
-	python_fix_shebang absl/copts/generate_copts.py
+	python_fix_shebang "absl/copts/generate_copts.py"
 	absl/copts/generate_copts.py || die
 }
 

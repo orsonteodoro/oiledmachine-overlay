@@ -1328,8 +1328,7 @@ einfo "Preventing stall.  Removing -Os."
 
 # Make _FORTIFY_SOURCE=1 work
 # Prevent warning as error with _FORTIFY_SOURCE
-	replace-flags '-O0' '-O2'
-	replace-flags '-O1' '-O2'
+	replace-flags '-O*' '-O2' # Prevent possible -O3 breakage with llvm parts.
 
 	if ! use hardened ; then
 	# It has to be done this way, because the tarballs are not unpacked at
@@ -1654,9 +1653,16 @@ src_compile() {
 	local args=()
 
 	if has_version ">=dev-build/bazel-6" ; then
-		# See https://github.com/tensorflow/tensorflow/issues/58825
-		args+=( --incompatible_fix_package_group_reporoot_syntax=false )
+	# See https://github.com/tensorflow/tensorflow/issues/58825
+		args+=(
+			--incompatible_fix_package_group_reporoot_syntax=false
+		)
 	fi
+
+	args+=(
+		"--linkopt=-labsl_synchronization"
+		"--host_linkopt=-labsl_synchronization"
+	)
 
 einfo "src_compile():  Step 1"
 	if use python; then
