@@ -1304,7 +1304,7 @@ ewarn
 	# In some contexts -Os causes a stall.
 	# Make _FORTIFY_SOURCE=1 work
 	# Prevent warning as error with _FORTIFY_SOURCE
-	replace-flags '-O*' '-O2' # Prevent possible -O3 breakage with llvm parts.
+	replace-flags '-O*' '-O2' # Prevent possible runtime breakage with llvm parts.
 
 	if ! use hardened ; then
 	# It has to be done this way, because the tarballs are not unpacked at
