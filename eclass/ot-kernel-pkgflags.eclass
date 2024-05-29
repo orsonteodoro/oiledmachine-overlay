@@ -3096,7 +3096,7 @@ _ot-kernel-pkgflags_sm4() {
 		fi
 	fi
 	ot-kernel_y_configopt "CONFIG_CRYPTO"
-	ot-kernel_y_configopt "CRYPTO_SM4_GENERIC"
+	ot-kernel_y_configopt "CONFIG_CRYPTO_SM4_GENERIC"
 }
 
 # @FUNCTION: _ot-kernel-pkgflags_twofish
@@ -12957,7 +12957,7 @@ ewarn
 		fi
 
 	# 1996, Canadian, 64 Bit Block Cipher, 40-128 Bit Keys
-		ot-kernel_unset_configopt "CRYPTO_CAST5"
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAST5"
 
 	# 1998, Canadian, 128 Bit Block Cipher, 128-256 Bit Keys
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_CAST6"
@@ -12983,7 +12983,7 @@ ewarn
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX2_X86_64"
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
 			ot-kernel_unset_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
-			ot-kernel_unset_configopt "CRYPTO_SM4_GENERIC"
+			ot-kernel_unset_configopt "CONFIG_CRYPTO_SM4_GENERIC"
 		fi
 
 	# [TEA] 1994, British, 64 Bit Block Cipher, 128 Bit Keys
@@ -13058,7 +13058,7 @@ _ot-kernel-pkgflags_dss_disable_remaining_ecc_algs() {
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_DH_RFC7919_GROUPS"	# Never used?
 
 	# 1976 original, American; 1999 RFC2631
-		ot-kernel_unset_configopt "CRYPTO_DH"				# Never used?
+		ot-kernel_unset_configopt "CONFIG_CRYPTO_DH"			# Never used?
 
 	# 2005, American
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_CURVE25519"		# Never used?
