@@ -2332,6 +2332,8 @@ _ot-kernel-pkgflags_aes() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM"
 		if ot-kernel_use cpu_flags_arm_neon ; then
 			if [[ "${modes}" =~ ("CBC"|"CTR"|"CTS"|"ECB"|"XTS") ]] ; then
+# FIXME:  Update modes conditonals with CCM GCM to be more open-ended to add the
+# hardware accelerated cipher without AEAD.
 				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM_BS"
 			fi
 			if [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
@@ -7686,8 +7688,14 @@ _ot-kernel_tls_support() {
 		_ot-kernel-pkgflags_gcm
 
 		if [[ "${tls}" == "1" || "${tls_region}" =~ ("west"|"eu"|"us"|"jp"|"kr") ]] ; then
+	#
 	# Required for TLS.
 	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
+	#
+	# We use CBC as a workaround for _ot-kernel-pkgflags_aes to add the
+	# accelerated AES cipher because the wrapper is kind of broken.  Most
+	# connections observed use GCM.
+	#
 			_ot-kernel-pkgflags_aes	CCM GCM				# Observed for .cn, .hk, .jp, .ru, .com (us)
 			if [[ "${tls_region}" =~ "jp" ]] ; then
 				_ot-kernel-pkgflags_sha1			# Observed for .jp, TLS 1.2
@@ -13130,20 +13138,26 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 		_ot-kernel-pkgflags_gcm
 
 		if [[ "${dss_region}" =~ ("west"|"eu"|"us") ]] ; then
+	#
 	# Required for TLS.
 	# https://datatracker.ietf.org/doc/html/rfc8446#section-9.1
-			_ot-kernel-pkgflags_aes CCM GCM
+	#
+	# We use CBC as a workaround for _ot-kernel-pkgflags_aes to add the
+	# accelerated AES cipher because the wrapper is kind of broken.  Most
+	# connections observed use GCM.
+	#
+			_ot-kernel-pkgflags_aes CBC GCM
 			_ot-kernel-pkgflags_sha256
 			_ot-kernel-pkgflags_sha512		# Includes sha384
 		elif [[ "${dss_region}" =~ "cn" ]] ; then
 			if [[ "${tls}" == "1" ]] ; then
-				_ot-kernel-pkgflags_aes		# Observed for .cn, .hk, .ru, .jp, .com (us)
+				_ot-kernel-pkgflags_aes CBC GCM	# Observed for .cn, .hk, .ru, .jp, .com (us)
 				_ot-kernel-pkgflags_sha256	# Observed for .cn, .hk, .ru, .com (us)
 				_ot-kernel-pkgflags_sha512	# Observed for .cn, .hk, .ru.
 			fi
 			_ot-kernel-pkgflags_sm4
 		elif [[ "${dss_region}" =~ "jp" ]] ; then
-			_ot-kernel-pkgflags_aes
+			_ot-kernel-pkgflags_aes CBC GCM
 			_ot-kernel-pkgflags_sha1		# Observed for .jp, TLS 1.2
 			_ot-kernel-pkgflags_sha256
 			_ot-kernel-pkgflags_sha512
@@ -13151,7 +13165,7 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 	# TLS 1.2
 			_ot-kernel-pkgflags_camellia
 		elif [[ "${dss_region}" =~ "kr" ]] ; then
-			_ot-kernel-pkgflags_aes
+			_ot-kernel-pkgflags_aes CBC GCM
 			_ot-kernel-pkgflags_sha256
 			_ot-kernel-pkgflags_sha512
 
@@ -13159,7 +13173,7 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 			_ot-kernel-pkgflags_aria
 		elif [[ "${dss_region}" =~ "ru" ]] ; then
 			if [[ "${tls}" == "1" ]] ; then
-				_ot-kernel-pkgflags_aes
+				_ot-kernel-pkgflags_aes CBC GCM
 				_ot-kernel-pkgflags_sha256
 				_ot-kernel-pkgflags_sha512
 			fi
@@ -13167,7 +13181,7 @@ _ot-kernel_checkpoint_dss_tls_requirement() {
 	# TLS 1.2
 			_ot-kernel-pkgflags_kuznyechik
 		elif [[ "${tls}" == "1" ]] ; then
-			_ot-kernel-pkgflags_aes
+			_ot-kernel-pkgflags_aes CBC GCM
 			_ot-kernel-pkgflags_sha256
 			_ot-kernel-pkgflags_sha512
 		fi
