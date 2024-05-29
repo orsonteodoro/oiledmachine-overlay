@@ -58,6 +58,10 @@
     <flag name="rocm">
       Enable support for AMD GPUs
     </flag>
+    <flag name="system-flatbuffers">
+      Use the system's flatbuffers package instead of the internal vendored
+      version.
+    </flag>
     <flag name="system-llvm">
       Use the system clang/llvm packages instead of the ROCm forks at the
       expense of minor version availability in HIP/ROCm contexts.

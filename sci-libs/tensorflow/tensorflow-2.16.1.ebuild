@@ -143,7 +143,7 @@ inherit prefix rocm toolchain-funcs
 
 # https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl#L542			# openmp
 # https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/absl/workspace.bzl			# abseil-cpp ; provides commit
-# https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/flatbuffers/workspace.bzl
+# https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/flatbuffers/workspace.bzl		# See also https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/lite/schema/schema_generated.h
 # https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/gemmlowp/workspace.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/gpus/rocm_configure.bzl#L191        # llvms supported for rocm
 # https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/hwloc/workspace.bzl
@@ -170,6 +170,7 @@ CUDA_PV="12.3"			# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/te
 BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace3.bzl
 CUB_PV="1.9.9"			# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl
 CUDNN_FRONTEND_PV="1.0.0"	# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl
+FLATBUFFERS_PV="23.5.6"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/flatbuffers/workspace.bzl
 GRPC_PV="1.53.0"		# Based on the oldest grpc supporting abseil 20230125
 GRPCIO_PV="1.24.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/tools/pip_package/setup.py#L84
 GRPCIO_PV_MAX="1.53"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/tools/pip_package/setup.py#L84 ; < (Exclusive) ; Upstream is wrong
@@ -414,8 +415,8 @@ IUSE="
 ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${HIP_SLOTS2[@]}
-alt-ssl -big-endian +clang cuda +hardened models -mpi +python rocm system-llvm
-test +xla
+alt-ssl -big-endian +clang cuda +hardened models -mpi +python rocm
+system-flatbuffers system-llvm test +xla
 ebuild-revision-1
 "
 gen_required_use_cuda_targets() {
@@ -654,11 +655,9 @@ RDEPEND="
 		(
 			>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
 		)
-		>=dev-libs/flatbuffers-23.1.21:=
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]
 		>=dev-python/clang-python-13.0.0[${PYTHON_USEDEP}]
-		>=dev-python/flatbuffers-23.1.21[${PYTHON_USEDEP}]
 		>=dev-python/gast-0.5.3[${PYTHON_USEDEP}]
 		>=dev-python/google-pasta-0.2.0[${PYTHON_USEDEP}]
 		>=dev-python/h5py-3.10.0[${PYTHON_USEDEP}]
@@ -676,6 +675,10 @@ RDEPEND="
 		>=dev-python/dill-0.3.7[${PYTHON_USEDEP}]
 		>=dev-python/pybind11-2.10.4[${PYTHON_USEDEP}]
 		>=dev-python/tblib-2.0.0[${PYTHON_USEDEP}]
+		system-flatbuffers? (
+			~dev-libs/flatbuffers-${FLATBUFFERS_PV}
+			~dev-python/flatbuffers-${FLATBUFFERS_PV}[${PYTHON_USEDEP}]
+		)
 		|| (
 			=net-libs/google-cloud-cpp-2.10*
 			=net-libs/google-cloud-cpp-2.9*
@@ -1579,7 +1582,7 @@ einfo
 			cython
 			dill_archive
 			double_conversion
-			flatbuffers
+			$(usex system-flatbuffers "flatbuffers" "")
 			functools32_archive
 			gast_archive
 			gif
