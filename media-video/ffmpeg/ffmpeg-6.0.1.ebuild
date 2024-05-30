@@ -209,7 +209,6 @@ FFMPEG_FLAG_MAP=(
 	truetype:libfreetype
 	vidstab:libvidstab
 	rubberband:librubberband
-	tensorflow:libtensorflow
 	zeromq:libzmq
 	zimg:libzimg
 
@@ -406,7 +405,7 @@ alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
 jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo pic pipewire
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+re-codecs sndio sr static-libs test v4l wayland r15
++re-codecs sndio sr static-libs tensorflow test v4l wayland r15
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -2105,6 +2104,17 @@ eerror
 	for i in "${ffuse[@]#+}" ; do
 		myconf+=( $(use_enable ${i%:*} ${i#*:}) )
 	done
+
+	if use tensorflow && multilib_is_native_abi ; then
+		myconf+=(
+			--extra-cflags="-I/usr/include/tensorflow"
+			$(use_enable tensorflow libtensorflow)
+		)
+	else
+		myconf+=(
+			--disable-libtensorflow
+		)
+	fi
 
 	if use cuda-filters ; then
 		myconf+=(
