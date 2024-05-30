@@ -1258,7 +1258,7 @@ RDEPEND+="
 		>=net-libs/srt-1.3.0:=[${MULTILIB_USEDEP}]
 	)
 	ssh? (
-		>=net-libs/libssh-0.5.5:=[sftp,${MULTILIB_USEDEP}]
+		>=net-libs/libssh-0.5.5:=[${MULTILIB_USEDEP},sftp]
 	)
 	svg? (
 		gnome-base/librsvg:2=[${MULTILIB_USEDEP}]

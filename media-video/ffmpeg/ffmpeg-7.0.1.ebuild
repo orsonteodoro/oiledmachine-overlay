@@ -1302,7 +1302,7 @@ RDEPEND+="
 		<media-libs/libsdl2-3[${MULTILIB_USEDEP},sound,threads,video,wayland?,X?]
 	)
 	shaderc? (
-		media-libs/shaderc[${MULTILIB_USEDEP}]
+		>=media-libs/shaderc-2019.1[${MULTILIB_USEDEP}]
 	)
 	sndio? (
 		media-sound/sndio:=[${MULTILIB_USEDEP}]
@@ -1314,7 +1314,7 @@ RDEPEND+="
 		>=net-libs/srt-1.3.0:=[${MULTILIB_USEDEP}]
 	)
 	ssh? (
-		>=net-libs/libssh-0.6.0:=[sftp,${MULTILIB_USEDEP}]
+		>=net-libs/libssh-0.6.0:=[${MULTILIB_USEDEP},sftp]
 	)
 	svg? (
 		gnome-base/librsvg:2=[${MULTILIB_USEDEP}]
