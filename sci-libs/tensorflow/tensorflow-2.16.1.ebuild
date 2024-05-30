@@ -9,6 +9,10 @@ EAPI=8
 # GPU (rocm) - testing/in-development
 # GPU (cuda) - testing/in-development
 
+# FIXME:  fix packaging with CPU only for example
+# https://www.tensorflow.org/tutorials/keras/classification
+# ModuleNotFoundError: No module named 'keras._tf_keras'
+
 # U20, U18
 
 # SECURITY:  Bump every minor version.  Check if CVE announced:
@@ -1839,3 +1843,6 @@ einfo "Installing libs"
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  80 chars, dedupe literals, *DEPENDs changes, increase [third party] LICENSE transparency, preserve copyright notices, fix ccache
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-TEST:  fail (20240530)
+# hello world - pass
+# tf-keras - fail
