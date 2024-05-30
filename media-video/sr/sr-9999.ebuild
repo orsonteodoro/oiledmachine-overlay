@@ -4,8 +4,69 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_10 ) # Limited by tensorflow
+# See https://github.com/HighVoltageRocknRoll/sr/issues/8
+ALGS=(
+	"espcn"
+	"srcnn"
+	"vespcn"
+	"vespcn-mc"
+	"vsrnet"
+)
+FFMPEG_PV="5.1.2"
+FORMATS=(
+	"native"
+	"tensorflow"
+)
+PYTHON_COMPAT=( "python3_"{10..12} ) # Limited by tensorflow
+
 inherit git-r3 python-r1 security-scan
+
+KEYWORDS="~amd64 ~x86"
+# Save outside sandbox to avoid redownloads
+SRC_URI="
+	!pretrained? (
+		convert? (
+https://raw.githubusercontent.com/FFmpeg/FFmpeg/n${FFMPEG_PV}/tools/python/convert.py
+	-> convert.py.${FFMPEG_PV}
+https://raw.githubusercontent.com/FFmpeg/FFmpeg/n${FFMPEG_PV}/tools/python/convert_from_tensorflow.py
+	-> convert_from_tensorflow.py.${FFMPEG_PV}
+https://raw.githubusercontent.com/FFmpeg/FFmpeg/n${FFMPEG_PV}/tools/python/convert_header.py
+	-> convert_header.py.${FFMPEG_PV}
+https://raw.githubusercontent.com/FFmpeg/FFmpeg/n${FFMPEG_PV}/tools/python/tf_sess_config.py
+	-> tf_sess_config.py.${FFMPEG_PV}
+		)
+		div2k? (
+http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_LR_bicubic_X2.zip
+http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_HR.zip
+			espcn? (
+http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_LR_bicubic_X2.zip
+http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_HR.zip
+			)
+			srcnn? (
+http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_LR_bicubic_X2.zip
+http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_HR.zip
+			)
+		)
+		harmonic? (
+https://harmonicinc.box.com/shared/static/wrlzswfdvyprz10hegws74d4wzh7270o.mp4
+https://harmonicinc.box.com/shared/static/58pxpuh1dsieye19pkj182hgv6fg4gof.mp4
+https://harmonicinc.box.com/shared/static/6uws3kg4ldxtkeg5k5jwubueaolkqsr0.mp4
+https://harmonicinc.box.com/shared/static/51ma04aviaeunhzelpw455sodv7judiu.mp4
+https://harmonicinc.box.com/shared/static/uaj2o8ku7qhwwzviga9znzviwqg14x1g.mp4
+https://harmonicinc.box.com/shared/static/e425git3jtnugqh8llzlgvr0r2j4j351.mp4
+https://harmonicinc.box.com/shared/static/29b0z4w9lj4p54q2hf7il9jz6codx36v.mp4
+https://harmonicinc.box.com/shared/static/n8x168w6vhpv240hggw7wtj8mszg7wnb.mp4
+https://harmonicinc.box.com/shared/static/6inss29is5b7jzxv1qkuf2p9qeaomi04.mp4
+https://harmonicinc.box.com/shared/static/v21fqn77ib1r8zlrbnl6fsyzt6rrjj0v.mp4
+https://harmonicinc.box.com/shared/static/tmzm8y7bfzpote9obs7le3olh5j87iir.mp4
+		)
+	)
+	pretrained? (
+https://github.com/HighVoltageRocknRoll/sr/files/6957728/dnn_models.tar.gz
+	-> ${PN}-dnn_models-ac3e1b2.tar.gz
+	)
+"
+# dnn_models.tar.gz:  sha256 ac3e1b20bb942a3156042a07b7e68ed2aec66f49d92b48f5a4dfbf6cb5283417
 
 DESCRIPTION="Image and video super resolution"
 HOMEPAGE="https://github.com/HighVoltageRocknRoll/sr"
@@ -49,19 +110,8 @@ LICENSE="
 # Extract quality, resolutions, duration from assets.
 # Modify source code with custom asset support to make licensing more free.
 
-KEYWORDS="~amd64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-ALGS=(
-	"espcn"
-	"srcnn"
-	"vespcn"
-	"vespcn-mc"
-	"vsrnet"
-)
-FORMATS=(
-	"native"
-	"tensorflow"
-)
 IUSE+="
 ${ALGS[@]}
 ${FORMATS[@]}
@@ -120,59 +170,6 @@ BDEPEND+="
 		)
 	)
 "
-# See https://github.com/HighVoltageRocknRoll/sr/issues/8
-FFMPEG_PV="5.1.2"
-
-# Save outside sandbox to avoid redownloads
-# Still needs rehash.  About 3-4 GiB each
-DISABLED_SRC_URI="
-"
-
-SRC_URI="
-	!pretrained? (
-		convert? (
-https://raw.githubusercontent.com/FFmpeg/FFmpeg/n${FFMPEG_PV}/tools/python/convert.py
-	-> convert.py.${FFMPEG_PV}
-https://raw.githubusercontent.com/FFmpeg/FFmpeg/n${FFMPEG_PV}/tools/python/convert_from_tensorflow.py
-	-> convert_from_tensorflow.py.${FFMPEG_PV}
-https://raw.githubusercontent.com/FFmpeg/FFmpeg/n${FFMPEG_PV}/tools/python/convert_header.py
-	-> convert_header.py.${FFMPEG_PV}
-https://raw.githubusercontent.com/FFmpeg/FFmpeg/n${FFMPEG_PV}/tools/python/tf_sess_config.py
-	-> tf_sess_config.py.${FFMPEG_PV}
-		)
-		div2k? (
-http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_LR_bicubic_X2.zip
-http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_HR.zip
-			espcn? (
-http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_LR_bicubic_X2.zip
-http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_HR.zip
-			)
-			srcnn? (
-http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_LR_bicubic_X2.zip
-http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_HR.zip
-			)
-		)
-		harmonic? (
-https://harmonicinc.box.com/shared/static/wrlzswfdvyprz10hegws74d4wzh7270o.mp4
-https://harmonicinc.box.com/shared/static/58pxpuh1dsieye19pkj182hgv6fg4gof.mp4
-https://harmonicinc.box.com/shared/static/6uws3kg4ldxtkeg5k5jwubueaolkqsr0.mp4
-https://harmonicinc.box.com/shared/static/51ma04aviaeunhzelpw455sodv7judiu.mp4
-https://harmonicinc.box.com/shared/static/uaj2o8ku7qhwwzviga9znzviwqg14x1g.mp4
-https://harmonicinc.box.com/shared/static/e425git3jtnugqh8llzlgvr0r2j4j351.mp4
-https://harmonicinc.box.com/shared/static/29b0z4w9lj4p54q2hf7il9jz6codx36v.mp4
-https://harmonicinc.box.com/shared/static/n8x168w6vhpv240hggw7wtj8mszg7wnb.mp4
-https://harmonicinc.box.com/shared/static/6inss29is5b7jzxv1qkuf2p9qeaomi04.mp4
-https://harmonicinc.box.com/shared/static/v21fqn77ib1r8zlrbnl6fsyzt6rrjj0v.mp4
-https://harmonicinc.box.com/shared/static/tmzm8y7bfzpote9obs7le3olh5j87iir.mp4
-		)
-	)
-	pretrained? (
-https://github.com/HighVoltageRocknRoll/sr/files/6957728/dnn_models.tar.gz
-	-> ${PN}-dnn_models-ac3e1b2.tar.gz
-	)
-"
-# dnn_models.tar.gz:  sha256 ac3e1b20bb942a3156042a07b7e68ed2aec66f49d92b48f5a4dfbf6cb5283417
-RESTRICT="mirror"
 
 request_sandbox_permissions() {
 	if has network-sandbox $FEATURES ; then
@@ -282,7 +279,7 @@ verify_integrity() {
 		&& "${eblake2b}" == "${ablake2b}" \
 		&& "${esha512}" == "${asha512}" \
 	]] ; then
-		:;
+		:
 	else
 eerror
 eerror "Asset integrity failure detected"
@@ -456,7 +453,7 @@ src_prepare() {
 
 		sed -i -e "1aset -e" "${S}/generate_datasets.sh" || die
 		if use espcn || use srcnn ; then
-			:;
+			:
 		else
 			sed -i -e "/test/d" "${S}/generate_datasets.sh" || die
 		fi
@@ -467,7 +464,7 @@ src_prepare() {
 }
 
 src_configure() {
-	:;
+	:
 }
 
 get_algs() {
@@ -504,7 +501,7 @@ einfo "Converting .pb to .model"
 		${EPYTHON} "${S}/python/convert.py" \
 			--infmt tensorflow \
 			--outdir . \
-			${alg}.pb \
+			"${alg}.pb" \
 			|| die
 	# The above produces ./${alg}.model
 	done
@@ -523,12 +520,12 @@ src_compile() {
 src_install() {
 	local alg
 	for alg in $(get_algs) ; do
-		insinto /usr/share/${PN}/models
+		insinto "/usr/share/${PN}/models"
 		if use native ; then
-			doins ${alg}.model
+			doins "${alg}.model"
 		fi
 		if use tensorflow ; then
-			doins ${alg}.pb
+			doins "${alg}.pb"
 		fi
 	done
 }
