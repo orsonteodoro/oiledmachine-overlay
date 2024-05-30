@@ -531,7 +531,6 @@
   <flag name="dav1d">
     Enables AV1 decoding via <pkg>media-libs/dav1d</pkg>.
   </flag>
-libdvdnav
   <flag name="debug">
     Add debugging symbols
   </flag>
