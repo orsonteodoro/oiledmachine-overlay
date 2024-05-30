@@ -1415,6 +1415,7 @@ get_av_device_ids() {
 	)
 	local t
 	for t in ${types[@]} ; do
+		local i
 		for i in $(seq 0 ${FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE}) ; do
 			echo "FFMPEG_TRAINING_${t}_${i}"
 		done
@@ -1432,6 +1433,7 @@ get_video_sample_ids() {
 	)
 	local t
 	for t in ${types[@]} ; do
+		local i
 		for i in $(seq 0 ${FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE}) ; do
 			echo "FFMPEG_TRAINING_${t}_${i}"
 		done
@@ -1447,6 +1449,7 @@ get_audio_sample_ids() {
 	)
 	local t
 	for t in ${types[@]} ; do
+		local i
 		for i in $(seq 0 ${FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE}) ; do
 			echo "FFMPEG_TRAINING_AUDIO_${t}_${i}"
 		done
@@ -1970,8 +1973,9 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
-	local myconf=()
+	local i
 	local extra_libs=()
+	local myconf=()
 
 einfo "Configuring ${lib_type} with PGO_PHASE=${PGO_PHASE}"
 
@@ -2269,7 +2273,7 @@ eerror
 
 	# Disabling LTO is a security risk.  It disables Clang CFI.
 	# LTO support, bug #566282, bug #754654, bug #772854
-	#if [[ ${ABI} != x86 ]] && tc-is-lto ; then
+	#if [[ "${ABI}" != "x86" ]] && tc-is-lto ; then
 	#	myconf+=(
 	#		"--enable-lto"
 	#	)
@@ -2742,6 +2746,7 @@ einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
 		-of csv="p=0" \
 		| cut -f 1 -d ".")
 	(( len < 0 )) && len=0
+	local i
 	for i in $(seq 1 ${N_SAMPLES}) ; do
 		local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 eprintf "Seek" "${i} / ${N_SAMPLES}"
@@ -2999,6 +3004,7 @@ einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
 		-of csv="p=0" \
 		| cut -f 1 -d ".")
 	(( len < 0 )) && len=0
+	local i
 	for i in $(seq 1 ${N_SAMPLES}) ; do
 		local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 eprintf "Seek" "${i} / ${N_SAMPLES}"
@@ -3126,6 +3132,7 @@ einfo "Encoding for lossless audio"
 				-of csv="p=0" \
 				| cut -f 1 -d ".")
 			(( len < 0 )) && len=0
+			local i
 			for i in $(seq 1 ${N_SAMPLES}) ; do
 				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 eprintf "Seek" "${i} / ${N_SAMPLES}"
@@ -3191,6 +3198,7 @@ einfo "Encoding for lossless video"
 				-of csv="p=0" \
 				| cut -f 1 -d ".")
 			(( len < 0 )) && len=0
+			local i
 			for i in $(seq 1 ${N_SAMPLES}) ; do
 				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 eprintf "Seek" "${i} / ${N_SAMPLES}"
@@ -3872,6 +3880,7 @@ einfo "Encoding as CBR for 3 sec, ${bitrate} kbps for ${audio_sample_path}"
 				-of csv="p=0" \
 				| cut -f 1 -d ".")
 			(( len < 0 )) && len=0
+			local i
 			for i in $(seq 1 ${N_SAMPLES}) ; do
 				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 eprintf "Seek" "${i} / ${N_SAMPLES}"
@@ -3964,6 +3973,7 @@ einfo "Encoding as VBR for 3 sec with ${setting} setting for ${audio_sample_path
 				-of csv="p=0" \
 				| cut -f 1 -d ".")
 			(( len < 0 )) && len=0
+			local i
 			for i in $(seq 1 ${N_SAMPLES}) ; do
 				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 eprintf "Seek" "${i} / ${N_SAMPLES}"
@@ -4127,6 +4137,7 @@ _src_compile() {
 	emake V=1
 
 	if multilib_is_native_abi; then
+		local i
 		for i in "${FFTOOLS[@]}" ; do
 			if use fftools_${i} ; then
 				emake V=1 tools/${i}$(get_exeext)
@@ -4224,24 +4235,25 @@ _install() {
 	# Prevent clobbering so that we can pgo optimize external codecs in different ABIs
 	local btype="${lib_type/-*}"
 	if ! multilib_is_native_abi ; then
-		mv "${ED}/usr/bin/ffmpeg"{,-${btype}-${ABI}} || die
-		mv "${ED}/usr/bin/ffprobe"{,-${btype}-${ABI}} || die
+		mv "${ED}/usr/bin/ffmpeg"{"","-${btype}-${ABI}"} || die
+		mv "${ED}/usr/bin/ffprobe"{"","-${btype}-${ABI}"} || die
 		if [[ -e "${ED}/usr/bin/ffplay" ]] ; then
-			mv "${ED}/usr/bin/ffplay"{,-${btype}-${ABI}} || die
+			mv "${ED}/usr/bin/ffplay"{"","-${btype}-${ABI}"} || die
 		fi
 	else
-		mv "${ED}/usr/bin/ffmpeg"{,-${btype}} || die
-		mv "${ED}/usr/bin/ffprobe"{,-${btype}} || die
-		dosym "/usr/bin/ffmpeg-${btype}" /usr/bin/ffmpeg
-		dosym "/usr/bin/ffprobe-${btype}" /usr/bin/ffprobe
+		mv "${ED}/usr/bin/ffmpeg"{"","-${btype}"} || die
+		mv "${ED}/usr/bin/ffprobe"{"","-${btype}"} || die
+		dosym "/usr/bin/ffmpeg-${btype}" "/usr/bin/ffmpeg"
+		dosym "/usr/bin/ffprobe-${btype}" "/usr/bin/ffprobe"
 		if [[ -e "${ED}/usr/bin/ffplay" ]] ; then
-			mv "${ED}/usr/bin/ffplay"{,-${btype}} || die
-			dosym "/usr/bin/ffplay-${btype}" /usr/bin/ffplay
+			mv "${ED}/usr/bin/ffplay"{"","-${btype}"} || die
+			dosym "/usr/bin/ffplay-${btype}" "/usr/bin/ffplay"
 		fi
 	fi
 
 	if multilib_is_native_abi; then
 		exeinto /usr/bin
+		local i
 		for i in "${FFTOOLS[@]}" ; do
 			if use fftools_${i} ; then
 einfo "Running dobin tools/${i}$(get_exeext)"
