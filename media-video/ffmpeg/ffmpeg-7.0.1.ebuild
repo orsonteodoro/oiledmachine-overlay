@@ -1051,6 +1051,7 @@ gen_pytorch_rdepend() {
 	for ver in ${PYTORCH_VERSIONS[@]} ; do
 		echo "
 			(
+				sys-devel/gcc[cxx]
 				~sci-libs/pytorch-${ver}
 				~sci-libs/caffe2-${ver}
 			)
