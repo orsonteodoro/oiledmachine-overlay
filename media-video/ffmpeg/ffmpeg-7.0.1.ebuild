@@ -15,8 +15,15 @@ EAPI=8
 # doing so since such a case is unlikely.
 
 FFMPEG_REVISION="${PV#*_p}"
-FFMPEG_SUBSLOT="58.60.60"
+FFMPEG_SUBSLOT="59.61.61"
 N_SAMPLES=1
+PYTORCH_VERSIONS=(
+	"2.3.0"
+	"2.2.2"
+	"2.1.2"
+	"2.0.1"
+	"1.13.1"
+)
 SCM=""
 TRAIN_SANDBOX_EXCEPTION_VAAPI=1
 UOPTS_SUPPORT_EBOLT=1
@@ -132,6 +139,8 @@ FFMPEG_FLAG_MAP=(
 	gmp
 	hardcoded-tables
 	+iconv
+	libdvdnav
+	libdvdread
 	libxml2
 	lzma
 	+network opencl
@@ -207,6 +216,7 @@ FFMPEG_FLAG_MAP=(
 	lcms:lcms2
 	libass
 	libplacebo
+	libquirc
 	libtesseract
 	lv2
 	truetype:libfreetype
@@ -409,10 +419,10 @@ ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
-jack-audio-connection-kit jack2 liblensfun mold opencl-icd-loader oss pgo +pic
-pipewire proprietary-codecs proprietary-codecs-disable
+jack-audio-connection-kit jack2 liblensfun libqrencode mold opencl-icd-loader
+oss pgo +pic pipewire proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+re-codecs sndio sr static-libs tensorflow test v4l wayland r15
++re-codecs sndio sr static-libs tensorflow test torch v4l wayland r15
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -569,6 +579,8 @@ gen_relicense() {
 
 # The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].
 # The distro has libcdio as GPL-3 only but the source is GPL-3+, LGPL-2.1+.
+# The distro has libdvdnav as GPL-2 but the source is LGPL-2.1+, GPL-2+.
+# The distro has libdvdread GPL-2 GPL-3 but the source is GPL-2+ except for nav_print.c which is GPL-2.
 # The distro has rtmpdump as LGPL-2.1 tools? ( GPL-2 ) but the source is LGPL-2.1+ tools? ( GPL-2+ ).
 # The distro has rubberband as GPL-2 only but the source is GPL-2+.
 # The distro has samba as GPL-3 only but the source is GPL-3+.
@@ -576,6 +588,8 @@ gen_relicense() {
 # The distro has x264 as GPL-2 only but the source is GPL-2+.
 # The distro has x265 as GPL-2 only but the source is GPL-2+.
 # The distro has xvid as GPL-2 only but the source is GPL-2+.
+
+# configure puts libdvdnav and libdvdread both under GPL-2
 
 # dav1d is BSD-2
 # MPL-2.0 is indirect compatible with the GPL-2, LGPL-2.1 -- with exceptions.  \
@@ -715,6 +729,13 @@ LICENSE_REQUIRED_USE="
 	libcaca? (
 		gpl2
 		$(gen_relicense lgpl2_1)
+	)
+	libdvdnav? (
+		$(gen_relicense gpl2x)
+		$(gen_relicense lgpl2_1x)
+	)
+	libdvdread? (
+		gpl2
 	)
 	liblensfun? (
 		${REQUIRED_USE_VERSION3}
@@ -1029,6 +1050,18 @@ LICENSE_RDEPEND="
 	)
 "
 
+gen_pytorch_rdepend() {
+	local ver
+	for ver in ${PYTORCH_VERSIONS[@]} ; do
+		echo "
+			(
+				~sci-libs/pytorch-${ver}
+				~sci-libs/caffe2-${ver}
+			)
+		"
+	done
+}
+
 # Only vaapi_x11 and vaapi_drm checks.  No vaapi_wayland checks in configure.
 # Update both !openssl and openssl USE flags.
 NV_CODEC_HEADERS_PV="9.1.23.1"
@@ -1091,7 +1124,7 @@ RDEPEND+="
 			>=media-sound/lame-3.99.5-r1[${MULTILIB_USEDEP}]
 		)
 		openh264? (
-			>=media-libs/openh264-1.4.0-r1:=[${MULTILIB_USEDEP}]
+			>=media-libs/openh264-1.3.0:=[${MULTILIB_USEDEP}]
 		)
 		rav1e? (
 			>=media-video/rav1e-0.5:=[capi]
@@ -1188,6 +1221,12 @@ RDEPEND+="
 	libdrm? (
 		x11-libs/libdrm[${MULTILIB_USEDEP}]
 	)
+	libdvdnav? (
+		>=media-libs/libdvdnav-6.1.1[${MULTILIB_USEDEP}]
+	)
+	libdvdread? (
+		>=media-libs/libdvdread-6.1.2[${MULTILIB_USEDEP}]
+	)
 	libilbc? (
 		>=media-libs/libilbc-2[${MULTILIB_USEDEP}]
 	)
@@ -1196,6 +1235,12 @@ RDEPEND+="
 	)
 	libplacebo? (
 		>=media-libs/libplacebo-4.192.0[$MULTILIB_USEDEP]
+	)
+	libquirc? (
+		media-libs/quirc[${MULTILIB_USEDEP}]
+	)
+	libqrencode? (
+		media-gfx/qrencode
 	)
 	librtmp? (
 		>=media-video/rtmpdump-2.4_p20131018[${MULTILIB_USEDEP}]
@@ -1289,6 +1334,11 @@ RDEPEND+="
 	tensorflow? (
 		sci-libs/tensorflow
 	)
+	torch? (
+		|| (
+			$(gen_pytorch_rdepend)
+		)
+	)
 	truetype? (
 		>=media-libs/freetype-2.5.0.1:2[${MULTILIB_USEDEP}]
 		media-libs/harfbuzz:=[${MULTILIB_USEDEP}]
@@ -1314,7 +1364,7 @@ RDEPEND+="
 		>=media-libs/libvpx-1.4.0:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
-		>=media-libs/vulkan-loader-1.3.255:=[${MULTILIB_USEDEP}]
+		>=media-libs/vulkan-loader-1.3.277:=[${MULTILIB_USEDEP}]
 	)
 	X? (
 		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
@@ -1409,8 +1459,8 @@ RESTRICT="
 
 PATCHES=(
 	"${FILESDIR}/chromium-r2.patch"
-	"${FILESDIR}/${PN}-6.1-wint-conversion.patch"
-	"${FILESDIR}/${PN}-6.0-fix-lto-type-mismatch.patch"
+#	"${FILESDIR}/${PN}-6.1-wint-conversion.patch"
+#	"${FILESDIR}/${PN}-6.0-fix-lto-type-mismatch.patch"
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"			# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
@@ -2191,6 +2241,16 @@ eerror
 		)
 	fi
 
+	if use libqrencode && multilib_is_native_abi ; then
+		myconf+=(
+			$(use_enable libqrencode libqrencode)
+		)
+	else
+		myconf+=(
+			--disable-libqrencode
+		)
+	fi
+
 	if use proprietary-codecs-disable ; then
 		myconf+=(
 			--non-free-patented-codecs=deny
@@ -2229,6 +2289,16 @@ eerror
 	else
 		myconf+=(
 			--disable-libtensorflow
+		)
+	fi
+
+	if use torch && multilib_is_native_abi ; then
+		myconf+=(
+			$(use_enable torch libtorch)
+		)
+	else
+		myconf+=(
+			--disable-libtorch
 		)
 	fi
 

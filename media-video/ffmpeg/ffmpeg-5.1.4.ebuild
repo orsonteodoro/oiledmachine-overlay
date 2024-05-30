@@ -16,6 +16,7 @@ EAPI=8
 
 FFMPEG_REVISION="${PV#*_p}"
 FFMPEG_SUBSLOT="57.59.59"
+N_SAMPLES=1
 SCM=""
 TRAIN_SANDBOX_EXCEPTION_VAAPI=1
 UOPTS_SUPPORT_EBOLT=1
@@ -27,6 +28,12 @@ WANT_LTO=0 # Global variable not const
 inherit cuda flag-o-matic multilib multilib-minimal toolchain-funcs ${SCM}
 inherit flag-o-matic-om llvm uopts
 
+if [[ "${PV#9999}" == "${PV}" ]] ; then
+	KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
+~x86 ~amd64-linux ~x86-linux ~x64-macos
+	"
+fi
 if [[ "${PV#9999}" != "${PV}" ]] ; then
 	SCM="git-r3"
 	EGIT_MIN_CLONE_TYPE="single"
@@ -51,6 +58,8 @@ else # Release
 		)
 	"
 fi
+S="${WORKDIR}/${P/_/-}"
+S_orig="${WORKDIR}/${P/_/-}"
 
 DESCRIPTION="Complete solution to record/convert/stream audio and video. Includes libavcodec"
 HOMEPAGE="https://ffmpeg.org/"
@@ -110,12 +119,6 @@ LICENSE="
 	)
 " # This package is actually LGPL-2.1+, but certain dependencies are LGPL-2.1
 # The extra licenses are for static-libs.
-if [ "${PV#9999}" = "${PV}" ] ; then
-	KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
-~x86 ~amd64-linux ~x86-linux ~x64-macos
-	"
-fi
 
 # Options to use as use_enable in the foo[:bar] form.
 # This will feed configure with $(use_enable foo bar)
@@ -404,8 +407,8 @@ ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
-jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo +pic pipewire
-proprietary-codecs proprietary-codecs-disable
+jack-audio-connection-kit jack2 liblensfun mold opencl-icd-loader oss pgo +pic
+pipewire proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 +re-codecs sndio sr static-libs tensorflow test v4l wayland r15
 
@@ -710,6 +713,10 @@ LICENSE_REQUIRED_USE="
 	libcaca? (
 		gpl2
 		$(gen_relicense lgpl2_1)
+	)
+	liblensfun? (
+		${REQUIRED_USE_VERSION3}
+		$(gen_relicense lgpl3)
 	)
 	librtmp? (
 		$(gen_relicense gpl2x)
@@ -1179,6 +1186,9 @@ RDEPEND+="
 	libilbc? (
 		>=media-libs/libilbc-2[${MULTILIB_USEDEP}]
 	)
+	liblensfun? (
+		media-libs/lensfun
+	)
 	libplacebo? (
 		>=media-libs/libplacebo-4.192.0[$MULTILIB_USEDEP]
 	)
@@ -1384,10 +1394,6 @@ RESTRICT="
 		bindist
 	)
 "
-
-S="${WORKDIR}/${P/_/-}"
-S_orig="${WORKDIR}/${P/_/-}"
-N_SAMPLES=1
 
 PATCHES=(
 	"${FILESDIR}/chromium-r1.patch"
@@ -1970,8 +1976,8 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
-	local myconf=( )
-	local extra_libs=( )
+	local myconf=()
+	local extra_libs=()
 
 einfo "Configuring ${lib_type} with PGO_PHASE=${PGO_PHASE}"
 
@@ -2074,9 +2080,21 @@ eerror
 
 	# Licensing of external packages
 	# See https://github.com/FFmpeg/FFmpeg/blob/n4.4/configure#L1735
-	use nonfree && myconf+=( --enable-nonfree )
-	_is_gpl && myconf+=( --enable-gpl )
-	_is_version3 && myconf+=( --enable-version3 )
+	if use nonfree ; then
+		myconf+=(
+			--enable-nonfree
+		)
+	fi
+	if _is_gpl ; then
+		myconf+=(
+			--enable-gpl
+		)
+	fi
+	if _is_version3 ; then
+		myconf+=(
+			--enable-version3
+		)
+	fi
 
 	# bug 842201
 	use ia64 && tc-is-gcc && append-flags \
@@ -2097,40 +2115,50 @@ eerror
 		)
 	fi
 
-	local ffuse=( "${FFMPEG_FLAG_MAP[@]}" )
+	local ffuse=(
+		"${FFMPEG_FLAG_MAP[@]}"
+	)
 
 	# Encoders
 	if use encode ; then
-		ffuse+=( "${FFMPEG_ENCODER_FLAG_MAP[@]}" )
+		ffuse+=(
+			"${FFMPEG_ENCODER_FLAG_MAP[@]}"
+		)
 	else
-		myconf+=( --disable-encoders )
+		myconf+=(
+			--disable-encoders
+		)
 	fi
 
 	# Indevs
-	use v4l || myconf+=( --disable-indev=v4l2 --disable-outdev=v4l2 )
+	if ! use v4l ; then
+		myconf+=(
+			--disable-indev=v4l2
+			--disable-outdev=v4l2
+		)
+	fi
 	for i in alsa oss jack sndio ; do
-		use ${i} || myconf+=( --disable-indev=${i} )
+		if ! use ${i} ; then
+			myconf+=(
+				--disable-indev=${i}
+			)
+		fi
 	done
 
 	# Outdevs
 	for i in alsa oss sndio ; do
-		use ${i} || myconf+=( --disable-outdev=${i} )
+		if ! use ${i} ; then
+			myconf+=(
+				--disable-outdev=${i}
+			)
+		fi
 	done
 
 	for i in "${ffuse[@]#+}" ; do
-		myconf+=( $(use_enable ${i%:*} ${i#*:}) )
+		myconf+=(
+			$(use_enable ${i%:*} ${i#*:})
+		)
 	done
-
-	if use tensorflow && multilib_is_native_abi ; then
-		myconf+=(
-			--extra-cflags="-I/usr/include/tensorflow"
-			$(use_enable tensorflow libtensorflow)
-		)
-	else
-		myconf+=(
-			--disable-libtensorflow
-		)
-	fi
 
 	if use cuda-filters ; then
 		myconf+=(
@@ -2141,6 +2169,16 @@ eerror
 			--enable-filter=scale_cuda
 			--enable-filter=thumbnail_cuda
 			--enable-filter=yadif_cuda
+		)
+	fi
+
+	if use liblensfun && multilib_is_native_abi ; then
+		myconf+=(
+			$(use_enable liblensfun liblensfun)
+		)
+	else
+		myconf+=(
+			--disable-liblensfun
 		)
 	fi
 
@@ -2169,28 +2207,58 @@ eerror
 	fi
 
 	if use openssl ; then
-		myconf+=( --disable-gnutls )
+		myconf+=(
+			--disable-gnutls
+		)
+	fi
+
+	if use tensorflow && multilib_is_native_abi ; then
+		myconf+=(
+			--extra-cflags="-I/usr/include/tensorflow"
+			$(use_enable tensorflow libtensorflow)
+		)
+	else
+		myconf+=(
+			--disable-libtensorflow
+		)
 	fi
 
 	# (temporarily) disable non-multilib deps
 	if ! multilib_is_native_abi; then
 		for i in librav1e libmfx libzmq ; do
-			myconf+=( --disable-${i} )
+			myconf+=(
+				--disable-${i}
+			)
 		done
 	fi
 
 	# CPU features
 	for i in "${CPU_FEATURES_MAP[@]}" ; do
-		use ${i%:*} || myconf+=( --disable-${i#*:} )
+		if ! use ${i%:*} ; then
+			myconf+=(
+				--disable-${i#*:}
+			)
+		fi
 	done
 
 	if use pic ; then
-		myconf+=( --enable-pic )
-		# disable asm code if PIC is required
-		# as the provided asm decidedly is not PIC for x86.
-		[[ ${ABI} == x86 ]] && myconf+=( --disable-asm )
+		myconf+=(
+			--enable-pic
+		)
+	# Disable the asm code if PIC is required as the provided asm decidedly
+	# is not PIC for x86.
+		if [[ "${ABI}" == "x86" ]] ; then
+			myconf+=(
+				--disable-asm
+			)
+		fi
 	fi
-	[[ ${ABI} == x32 ]] && myconf+=( --disable-asm ) #427004
+	if [[ "${ABI}" == "x32" ]] ; then
+	# Bug #427004
+		myconf+=(
+			--disable-asm
+		)
+	fi
 
 	# Try to get cpu type based on CFLAGS.
 	# Bug #172723
@@ -2199,28 +2267,35 @@ eerror
 	# will just ignore it.
 	for i in $(get-flag mcpu) $(get-flag march) ; do
 		[[ ${i} = native ]] && i="host" # bug #273421
-		myconf+=( --cpu=${i} )
+		myconf+=(
+			--cpu=${i}
+		)
 		break
 	done
 
 	# Disabling LTO is a security risk.  It disables Clang CFI.
 	# LTO support, bug #566282, bug #754654, bug #772854
-	#[[ ${ABI} != x86 ]] && tc-is-lto && myconf+=( "--enable-lto" )
+	#if [[ ${ABI} != x86 ]] && tc-is-lto ; then
+	#	myconf+=(
+	#		"--enable-lto"
+	#	)
+	#fi
 	#filter-lto
 
 	# Mandatory configuration
 	myconf=(
 		--enable-avfilter
 		--disable-stripping
-		# This is only for hardcoded cflags; those are used in configure checks that may
-		# interfere with proper detections, bug #671746 and bug #645778
-		# We use optflags, so that overrides them anyway.
+	# This is only for hardcoded cflags; those are used in configure checks that may
+	# interfere with proper detections, bug #671746 and bug #645778
+	# We use optflags, so that overrides them anyway.
 		--disable-optimizations
-		--disable-libcelt # bug #664158
+	# bug #664158 \
+		--disable-libcelt
 		"${myconf[@]}"
 	)
 
-	# cross compile support
+	# Cross compile support
 	if tc-is-cross-compiler ; then
 		myconf+=(
 			--enable-cross-compile
@@ -2230,18 +2305,24 @@ eerror
 		)
 		case ${CHOST} in
 			*freebsd*)
-				myconf+=( --target-os=freebsd )
+				myconf+=(
+					--target-os=freebsd
+				)
 				;;
 			*mingw32*)
-				myconf+=( --target-os=mingw32 )
+				myconf+=(
+					--target-os=mingw32
+				)
 				;;
 			*linux*)
-				myconf+=( --target-os=linux )
+				myconf+=(
+					--target-os=linux
+				)
 				;;
 		esac
 	fi
 
-	# doc
+	# Doc
 	myconf+=(
 		$(multilib_native_use_enable doc)
 		$(multilib_native_use_enable doc htmlpages)
@@ -2252,14 +2333,22 @@ eerror
 	if use arm || use ppc || use mips || [[ ${CHOST} == *i486* ]] ; then
 		# bug #782811
 		# bug #790590
-		extra_libs+=( --extra-libs="$(test-flags-CCLD -latomic)" )
+		extra_libs+=(
+			--extra-libs="$(test-flags-CCLD -latomic)"
+		)
 	fi
 
 	local static_args=()
 	if [[ "${lib_type}" == "static" ]] ; then
-		static_args=( --enable-static --disable-shared )
+		static_args=(
+			--enable-static
+			--disable-shared
+		)
 	else
-		static_args=( --disable-static --enable-shared )
+		static_args=(
+			--disable-static
+			--enable-shared
+		)
 	fi
 
 	if ! use mold && is-flagq '-fuse-ld=mold' ; then
@@ -2290,7 +2379,9 @@ eprintf "LDFLAGS" "${LDFLAGS}"
 einfo
 
 	if tc-is-gcc && ( use pgo || use epgo ) ; then
-		extra_libs+=( --extra-libs="-lgcov" )
+		extra_libs+=(
+			--extra-libs="-lgcov"
+		)
 	fi
 
 	set -- "${S}/configure" \
