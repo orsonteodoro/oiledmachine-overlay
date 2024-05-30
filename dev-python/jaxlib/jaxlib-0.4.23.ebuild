@@ -968,6 +968,7 @@ ewarn
 		)
 	fi
 
+# See https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/third_party/systemlibs/syslibs_configure.bzl#L11
 	local SYSLIBS=(
 #		absl_py
 #		astor_archive
