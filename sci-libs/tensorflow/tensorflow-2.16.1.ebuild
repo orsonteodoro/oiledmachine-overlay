@@ -802,7 +802,7 @@ BDEPEND="
 		$(gen_llvm_bdepend)
 	)
 "
-DOCS=( AUTHORS CONTRIBUTING.md ISSUE_TEMPLATE.md README.md RELEASE.md )
+DOCS=( "AUTHORS" "README.md" "RELEASE.md" )
 PATCHES=(
 	"${FILESDIR}/2.16.1/tensorflow-2.15.0-0001-WORKSPACE-add-rules-docker-http_archive-bazel-toolch.patch"
 	"${FILESDIR}/2.16.1/tensorflow-2.15.0-0002-systemlib-Latest-absl-LTS-has-split-cord-libs.patch"
