@@ -139,8 +139,6 @@ FFMPEG_FLAG_MAP=(
 	gmp
 	hardcoded-tables
 	+iconv
-	libdvdnav
-	libdvdread
 	libxml2
 	lzma
 	+network opencl
@@ -418,7 +416,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
-alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
+alsa chromium -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
 jack-audio-connection-kit jack2 liblensfun libqrencode mold opencl-icd-loader
 oss pgo +pic pipewire proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
@@ -589,7 +587,7 @@ gen_relicense() {
 # The distro has x265 as GPL-2 only but the source is GPL-2+.
 # The distro has xvid as GPL-2 only but the source is GPL-2+.
 
-# configure puts libdvdnav and libdvdread both under GPL-2
+# configure puts libdvdnav and libdvdread both under GPL-2.
 
 # dav1d is BSD-2
 # MPL-2.0 is indirect compatible with the GPL-2, LGPL-2.1 -- with exceptions.  \
@@ -628,6 +626,11 @@ LICENSE_REQUIRED_USE="
 	)
 	cuda-nvcc? (
 		nonfree
+	)
+	dvdvideo? (
+		gpl2
+		$(gen_relicense gpl2x)
+		$(gen_relicense lgpl2_1x)
 	)
 	encode? (
 		amrenc? (
@@ -729,13 +732,6 @@ LICENSE_REQUIRED_USE="
 	libcaca? (
 		gpl2
 		$(gen_relicense lgpl2_1)
-	)
-	libdvdnav? (
-		$(gen_relicense gpl2x)
-		$(gen_relicense lgpl2_1x)
-	)
-	libdvdread? (
-		gpl2
 	)
 	liblensfun? (
 		${REQUIRED_USE_VERSION3}
@@ -1113,6 +1109,10 @@ RDEPEND+="
 	dav1d? (
 		>=media-libs/dav1d-0.5.0:0=[${MULTILIB_USEDEP}]
 	)
+	dvdvideo? (
+		>=media-libs/libdvdnav-6.1.1[${MULTILIB_USEDEP}]
+		>=media-libs/libdvdread-6.1.2[${MULTILIB_USEDEP}]
+	)
 	encode? (
 		amrenc? (
 			>=media-libs/vo-amrwbenc-0.1.2-r1[${MULTILIB_USEDEP}]
@@ -1220,12 +1220,6 @@ RDEPEND+="
 	)
 	libdrm? (
 		x11-libs/libdrm[${MULTILIB_USEDEP}]
-	)
-	libdvdnav? (
-		>=media-libs/libdvdnav-6.1.1[${MULTILIB_USEDEP}]
-	)
-	libdvdread? (
-		>=media-libs/libdvdread-6.1.2[${MULTILIB_USEDEP}]
 	)
 	libilbc? (
 		>=media-libs/libilbc-2[${MULTILIB_USEDEP}]
@@ -2228,6 +2222,18 @@ eerror
 			--enable-filter=scale_cuda
 			--enable-filter=thumbnail_cuda
 			--enable-filter=yadif_cuda
+		)
+	fi
+
+	if use dvdvideo ; then
+		myconf+=(
+			--enable-libdvdnav
+			--enable-libdvdread
+		)
+	else
+		myconf+=(
+			--disable-libdvdnav
+			--disable-libdvdread
 		)
 	fi
 

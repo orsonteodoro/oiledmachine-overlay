@@ -528,17 +528,15 @@
   <flag name="cuda-nvcc">
     Use nvcc to build CUDA filters.
   </flag>
+  <flag name="dvdvideo">
+    Add support for DVD navigation menus and structure parsing via the dvdvideo
+    demuxer.
+  </flag>
   <flag name="dav1d">
     Enables AV1 decoding via <pkg>media-libs/dav1d</pkg>.
   </flag>
   <flag name="debug">
     Add debugging symbols
-  </flag>
-  <flag name="libdvdnav">
-    Add support for DVD navigation menus.
-  </flag>
-  <flag name="libdvdread">
-    Add support for DVD structure parsing.
   </flag>
   <flag name="fallback-commit">
     Rewind the commits backwards to when when the all the patches worked and the
