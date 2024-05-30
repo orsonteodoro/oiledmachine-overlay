@@ -9,6 +9,10 @@ EAPI=8
 # GPU (rocm) - testing/in-development
 # GPU (cuda) - testing/in-development
 
+# FIXME:  fix floating point exception for CPU only for examples
+# https://en.wikipedia.org/wiki/Google_JAX#grad
+# https://jax.readthedocs.io/en/latest/quickstart.html#jax-as-numpy
+
 # With clang-17 as host compiler:
 # FIXME:
 #external/boringssl/src/crypto/refcount_c11.c:37:23: error: address argument to atomic operation must be a pointer to a trivially-copyable type ('_Atomic(CRYPTO_refcount_t) *' invalid)
