@@ -1831,6 +1831,9 @@ einfo "Installing libs"
 
 	# Workaround for https://bugs.gentoo.org/831927
 	export MAKEOPTS="-j1"
+
+	# Prevent merge conflict
+	rm -rf "${ED}/usr/bin/tensorboard"
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  80 chars, dedupe literals, *DEPENDs changes, increase [third party] LICENSE transparency, preserve copyright notices, fix ccache
