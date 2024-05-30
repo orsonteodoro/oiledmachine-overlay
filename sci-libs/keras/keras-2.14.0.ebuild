@@ -87,7 +87,7 @@ PATCHES=(
 src_unpack() {
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
-	ln -s "/usr/bin/bazel-${BAZEL_PV}" "${WORKDIR}/bin/bazel" || die
+	ln -s "/usr/bin/bazel-${BAZEL_PV%.*}"* "${WORKDIR}/bin/bazel" || die
 	bazel --version | grep -q "bazel ${BAZEL_PV%.*}" || die "dev-build/bazel:${BAZEL_PV%.*} is not installed"
 	unpack "${P}.tar.gz"
 	bazel_load_distfiles "${bazel_external_uris}"
@@ -100,23 +100,22 @@ src_prepare() {
 }
 
 python_compile() {
-	pushd "${BUILD_DIR}" >/dev/null || die
+	export JAVA_HOME=$(java-config --jre-home)
+	pushd "${WORKDIR}/${P}-${EPYTHON/./_}/keras/tools/pip_package" >/dev/null 2>&1 || die
+		distutils-r1_python_compile
 		ebazel build //keras/tools/pip_package:build_pip_package
 		ebazel shutdown
 		local srcdir="${T}/src-${EPYTHON/./_}"
 		mkdir -p "${srcdir}" || die
-		bazel-bin/keras/tools/pip_package/build_pip_package --src "${srcdir}" || die
-	popd || die
-}
-
-src_compile() {
-	export JAVA_HOME=$(java-config --jre-home)
-	distutils-r1_src_compile
+		pushd "${WORKDIR}/${P}-${EPYTHON/./_}" >/dev/null 2>&1 || die
+			"${WORKDIR}/${P}-${EPYTHON/./_}-bazel-base/execroot/org_keras/bazel-out/k8-opt/bin/keras/tools/pip_package/build_pip_package" --src "${srcdir}" || die
+		popd >/dev/null 2>&1 || die
+	popd >/dev/null 2>&1 || die
 }
 
 python_install() {
-	pushd "${T}/src-${EPYTHON/./_}" >/dev/null || die
+	pushd "${T}/src-${EPYTHON/./_}" >/dev/null 2>&1 || die
 		esetup.py install
 		python_optimize
-	popd || die
+	popd >/dev/null 2>&1 || die
 }

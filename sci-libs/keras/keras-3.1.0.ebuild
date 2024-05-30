@@ -172,14 +172,14 @@ src_prepare() {
 	python_copy_sources
 }
 
-src_compile() {
+python_compile() {
 	export JAVA_HOME=$(java-config --jre-home)
-	distutils-r1_src_compile
+	distutils-r1_python_compile
 }
 
 python_install() {
-	pushd "${T}/src-${EPYTHON/./_}" >/dev/null || die
+	pushd "${WORKDIR}/${P}-${EPYTHON/./_}" >/dev/null 2>&1 || die
 		esetup.py install
 		python_optimize
-	popd || die
+	popd >/dev/null 2>&1 || die
 }
