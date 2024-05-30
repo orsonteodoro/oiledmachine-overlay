@@ -4,6 +4,11 @@
 
 EAPI=8
 
+# Build/install only progress for 2.16.1:
+# CPU - testing
+# GPU (rocm) - testing/in-development
+# GPU (cuda) - testing/in-development
+
 # U20, U18
 
 # SECURITY:  Bump every minor version.  Check if CVE announced:

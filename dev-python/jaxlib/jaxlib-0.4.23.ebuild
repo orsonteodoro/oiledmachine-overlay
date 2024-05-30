@@ -4,6 +4,11 @@
 
 EAPI=8
 
+# Build/install only progress for 0.4.23:
+# CPU - testing
+# GPU (rocm) - testing/in-development
+# GPU (cuda) - testing/in-development
+
 # CUDA version:  https://github.com/google/jax/blob/jaxlib-v0.4.23/docs/installation.md?plain=1#L118
 # ROCm version:  https://github.com/google/jax/blob/jaxlib-v0.4.23/build/rocm/ci_build.sh#L52
 

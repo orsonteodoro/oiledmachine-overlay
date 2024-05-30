@@ -4,9 +4,10 @@
 
 EAPI=8
 
-# CPU build - pass
-# GPU (rocm) build - testing/development
-# GPU (cuda) build - testing/development
+# Build/install only progress for 0.4.28:
+# CPU - pass
+# GPU (rocm) - testing/in-development
+# GPU (cuda) - testing/in-development
 
 # With clang-17 as host compiler:
 # FIXME:
