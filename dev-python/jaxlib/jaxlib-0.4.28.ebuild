@@ -4,11 +4,16 @@
 
 EAPI=8
 
+# CPU build - pass
+# GPU (rocm) build - testing/development
+# GPU (cuda) build - testing/development
+
 # With clang-17 as host compiler:
 # FIXME:
 #external/boringssl/src/crypto/refcount_c11.c:37:23: error: address argument to atomic operation must be a pointer to a trivially-copyable type ('_Atomic(CRYPTO_refcount_t) *' invalid)
 #   37 |   uint32_t expected = atomic_load(count);
 #      |                       ^~~~~~~~~~~~~~~~~~
+# The current workaround for this is to use gcc and disable the clang USE flag.
 
 # CUDA version:  https://github.com/google/jax/blob/jaxlib-v0.4.28/docs/installation.md?plain=1#L116
 # ROCm version:  https://github.com/google/jax/blob/jaxlib-v0.4.28/build/rocm/ci_build.sh#L52
