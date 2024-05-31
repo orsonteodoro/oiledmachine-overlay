@@ -144,6 +144,7 @@ FFMPEG_FLAG_MAP=(
 	+network opencl
 	openssl
 	+postproc
+	rist:librist
 	samba:libsmbclient
 	sdl:ffplay
 	sdl:sdl2
@@ -1291,6 +1292,9 @@ RDEPEND+="
 	)
 	qsv? (
 		media-libs/oneVPL[${MULTILIB_USEDEP}]
+	)
+	rist? (
+		>=net-libs/librist-0.2.7[${MULTILIB_USEDEP}]
 	)
 	rubberband? (
 		>=media-libs/rubberband-1.8.1-r1[${MULTILIB_USEDEP}]

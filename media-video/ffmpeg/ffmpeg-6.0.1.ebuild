@@ -138,6 +138,7 @@ FFMPEG_FLAG_MAP=(
 	+network opencl
 	openssl
 	+postproc
+	rist:librist
 	samba:libsmbclient
 	sdl:ffplay
 	sdl:sdl2
@@ -202,6 +203,7 @@ FFMPEG_FLAG_MAP=(
 	frei0r
 	vmaf:libvmaf
 	fribidi:libfribidi
+	glslang:libglslang
 	fontconfig
 	ladspa
 	lcms:lcms2
@@ -212,6 +214,7 @@ FFMPEG_FLAG_MAP=(
 	truetype:libfreetype
 	vidstab:libvidstab
 	rubberband:librubberband
+	shaderc:libshaderc
 	zeromq:libzmq
 	zimg:libzimg
 
@@ -885,6 +888,14 @@ REQUIRED_USE+="
 	fftools_cws2fws? (
 		zlib
 	)
+	glslang? (
+		!shaderc
+		vulkan
+	)
+	shaderc? (
+		!glslang
+		vulkan
+	)
 	mold? (
 		!nonfree
 		!re-codecs
@@ -1122,6 +1133,9 @@ RDEPEND+="
 	gcrypt? (
 		>=dev-libs/libgcrypt-1.6:0=[${MULTILIB_USEDEP}]
 	)
+	glslang? (
+		dev-util/glslang:=[${MULTILIB_USEDEP}]
+	)
 	gme? (
 		>=media-libs/game-music-emu-0.6.0[${MULTILIB_USEDEP}]
 	)
@@ -1234,6 +1248,9 @@ RDEPEND+="
 	qsv? (
 		media-libs/oneVPL[${MULTILIB_USEDEP}]
 	)
+	rist? (
+		>=net-libs/librist-0.2.7[${MULTILIB_USEDEP}]
+	)
 	rubberband? (
 		>=media-libs/rubberband-1.8.1-r1[${MULTILIB_USEDEP}]
 	)
@@ -1242,6 +1259,9 @@ RDEPEND+="
 	)
 	sdl? (
 		<media-libs/libsdl2-3[${MULTILIB_USEDEP},sound,threads,video,wayland?,X?]
+	)
+	shaderc? (
+		>=media-libs/shaderc-2019.1[${MULTILIB_USEDEP}]
 	)
 	sndio? (
 		media-sound/sndio:=[${MULTILIB_USEDEP}]

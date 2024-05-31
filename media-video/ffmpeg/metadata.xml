@@ -758,6 +758,9 @@
   <flag name="re-codecs">
     Allow/deny less likely patented reversed-engineered codecs or closed codecs.
   </flag>
+  <flag name="rist">
+    Add support for the RIST protocol for video streaming.
+  </flag>
   <flag name="rubberband">
     Adds time-stretching and pitch-shifting audio filter based on
     <pkg>media-libs/rubberband</pkg>.
