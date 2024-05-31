@@ -951,27 +951,23 @@ python_compile() {
 		args+=(
 			--target_cpu_features=native
 		)
-	elif use cpu_flags_x86_avx ; then
-# Package default
-		args+=(
-			--target_cpu_features=release
-		)
 	elif is-flagq '-march=generic' ; then
 # Compiler defaults
 		args+=(
 			--target_cpu_features=default
 		)
-	elif ! [[ "${CFLAGS}" =~ "-march=" ]] ; then
-# Compiler defaults
+	elif [[ "${CFLAGS}" =~ "-march=" ]] ; then
+# Autodetect
 		args+=(
-			--target_cpu_features=default
+			--target_cpu_features=native
+		)
+	elif use cpu_flags_x86_avx ; then
+# Package default
+		args+=(
+			--target_cpu_features=release
 		)
 	else
 # Compiler defaults
-ewarn
-ewarn "Downgrading -march=* to generic."
-ewarn "Use -march=native to optimize."
-ewarn
 		args+=(
 			--target_cpu_features=default
 		)
