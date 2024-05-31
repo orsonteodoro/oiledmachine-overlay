@@ -24,6 +24,9 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1030
 )
 BAZEL_PV="6.1.2"
+CPU_FLAGS_X86_64=(
+	cpu_flags_x86_avx
+)
 CUDA_TARGETS_COMPAT=(
 # See https://github.com/google/jax/blob/jaxlib-v0.4.23/.bazelrc#L68
 	sm_50
@@ -32,6 +35,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_80
 	compute_90
 )
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="standalone"
 EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
 GCC_COMPAT=( {11..9} ) # Based on U22, U20
@@ -171,8 +175,9 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-clang cpu cpu_flags_x86_avx cuda +hardened rocm rocm_5_6 system-llvm
+clang cpu cuda +hardened rocm rocm_5_6 system-llvm
 ebuild-revision-1
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
