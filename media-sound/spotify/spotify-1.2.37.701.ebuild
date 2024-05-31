@@ -38,7 +38,7 @@ EAPI=8
 # http://repository.spotify.com/dists/stable/Release
 # http://repository.spotify.com/dists/testing/Release
 #
-# Current version and Requirements:
+# Current version and requirements:
 #
 # http://repository.spotify.com/dists/stable/non-free/binary-amd64/Packages
 # http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
