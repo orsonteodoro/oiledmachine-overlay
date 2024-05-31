@@ -172,7 +172,7 @@ IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-clang cpu cpu_flags_x86_avx cuda +hardened rocm rocm_5_6 system-llvm
+bindist clang cpu cpu_flags_x86_avx cuda +hardened rocm rocm_5_6 system-llvm
 ebuild-revision-1
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
@@ -946,30 +946,34 @@ python_compile() {
 
 	bazel_setup_bazelrc
 
-	if is-flagq '-march=native' ; then
+	if [[ "${CFLAGS}" =~ "-march=" ]] && use bindist ; then
+# Build for portability
+		args+=(
+			--target_cpu_features=default
+		)
+	elif is-flagq '-march=native' ; then
 # Autodetect
 		args+=(
 			--target_cpu_features=native
 		)
 	elif is-flagq '-march=generic' ; then
-# Compiler defaults
-# It doesn't write anything.
+# Strips -march=*
 		args+=(
 			--target_cpu_features=default
 		)
-	elif [[ "${CFLAGS}" =~ "-march=" ]] ; then
-# It doesn't write anything.
+	elif [[ "${CFLAGS}" =~ "-march=" ]] && ! use bindist ; then
+# Autodetect
 		args+=(
-			--target_cpu_features=default
+			--target_cpu_features=native
 		)
 	elif use cpu_flags_x86_avx ; then
 # Package default
+# Adds -mavx without -march=
 		args+=(
 			--target_cpu_features=release
 		)
 	else
-# Compiler defaults
-# It doesn't write anything.
+# Strips -march=*
 		args+=(
 			--target_cpu_features=default
 		)

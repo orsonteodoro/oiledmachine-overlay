@@ -23,6 +23,9 @@
 
   -->
   <use>
+    <flag name="bindist">
+      Hint to build for portability.
+    </flag>
     <flag name="cpu">
       Add dependencies for CPU support
     </flag>
