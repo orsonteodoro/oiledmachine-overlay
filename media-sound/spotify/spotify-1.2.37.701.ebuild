@@ -313,7 +313,7 @@ UNLISTED_RDEPEND="
 	>=media-libs/libglvnd-1.3.2
 "
 # For harfbuzz use vendored list for versioning
-# 
+#
 
 # Not listed as either direct or Nth level library
 # Also the feature may not be present or reachable.
