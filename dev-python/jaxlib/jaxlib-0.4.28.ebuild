@@ -193,7 +193,7 @@ ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-clang cpu cuda +hardened rocm rocm_6_0 system-llvm
+clang cpu cuda debug +hardened rocm rocm_6_0 system-llvm
 ebuild-revision-1
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
@@ -1107,6 +1107,11 @@ einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 			--use_clang=True
 			--clang_path="/usr/lib/llvm/${LLVM_SLOT}/bin/clang"
 		)
+	fi
+
+	if use debug ; then
+# For showing gdb function names
+		echo 'build --config=debug_symbols' >> ".bazelrc.user" || die
 	fi
 
 	# Generate to fix python version in .jax_configure.bazelrc

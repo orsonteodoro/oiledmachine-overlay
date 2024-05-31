@@ -177,7 +177,7 @@ ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-clang cpu cuda +hardened rocm rocm_5_6 system-llvm
+clang cpu cuda debug +hardened rocm rocm_5_6 system-llvm
 ebuild-revision-1
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
@@ -1097,6 +1097,11 @@ ewarn "Disabling the clang USE flag and using gcc may unbreak build.  The"
 ewarn "alternative is to try jax/jaxlib >=0.4.25 to fix this problem if you"
 ewarn "require clang."
 ewarn
+	fi
+
+	if use debug ; then
+# For showing function names in gdb
+		echo 'build --config=debug_symbols' >> ".bazelrc.user" || die
 	fi
 
 	# Generate to fix python version in .jax_configure.bazelrc
