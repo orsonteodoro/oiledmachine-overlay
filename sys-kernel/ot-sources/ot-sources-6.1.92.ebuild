@@ -6,7 +6,7 @@ EAPI=8
 EBUILD_REV=""
 GENPATCHES_VER="101"
 PATCH_PROJC_VER="6.1-r4"
-PATCH_RT_VER="6.1.91-rt31"
+PATCH_RT_VER="6.1.92-rt32"
 
 inherit ot-kernel-v6.1
 

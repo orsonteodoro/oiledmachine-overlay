@@ -13,7 +13,7 @@ RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
 
 CLEAR_LINUX_PATCHES_VER="6.8.10-1434"
 EBUILD_REV="r8"
-GENPATCHES_VER="14"
+GENPATCHES_VER="15"
 PATCH_PROJC_VER="6.8-r6"
 PATCH_RT_VER="6.8.2-rt11"
 
