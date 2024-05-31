@@ -4,150 +4,55 @@
 
 EAPI=8
 
+#
 # Subslot: libavutil_major.libavcodec_major.libavformat_major
-# Since FFmpeg ships several libraries, subslot is kind of limited here.
-# Most consumers will use those three libraries, if a "less used" library
-# changes its soname, consumers will have to be rebuilt the old way
-# (preserve-libs).
+#
+# Since FFmpeg ships several libraries, subslot is kind of limited here.  Most
+# consumers will use those three libraries, if a "less used" library changes its
+# soname, consumers will have to be rebuilt the old way (preserve-libs).
+#
 # If, for example, a package does not link to libavformat and only libavformat
 # changes its ABI then this package will be rebuilt needlessly. Hence, such a
 # package is free _not_ to := depend on FFmpeg but I would strongly encourage
 # doing so since such a case is unlikely.
+#
 
-FFMPEG_REVISION="${PV#*_p}"
-FFMPEG_SUBSLOT="58.60.60"
-MULTILIB_WRAPPED_HEADERS=(
-	"/usr/include/libavutil/avconfig.h"
+CUDA_TARGETS_COMPAT=(
+	sm_30
+	sm_60
 )
-N_SAMPLES=1
-SCM=""
-SOC_PATCH="ffmpeg-rpi-6.1-r3.patch"
-TRAIN_SANDBOX_EXCEPTION_VAAPI=1
-UOPTS_SUPPORT_EBOLT=1
-UOPTS_SUPPORT_EPGO=1
-UOPTS_SUPPORT_TBOLT=1
-UOPTS_SUPPORT_TPGO=1
-WANT_LTO=0 # Global variable not const
-
-inherit cuda flag-o-matic multilib multilib-minimal toolchain-funcs ${SCM}
-inherit flag-o-matic-om llvm uopts
-
-if [[ "${PV#9999}" == "${PV}" ]] ; then
-	KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
-~x86 ~amd64-linux ~x86-linux ~x64-macos
-	"
-fi
-if [[ "${PV#9999}" != "${PV}" ]] ; then
-	SCM="git-r3"
-	EGIT_MIN_CLONE_TYPE="single"
-	EGIT_REPO_URI="https://git.ffmpeg.org/ffmpeg.git"
-fi
-if [[ "${PV#9999}" != "${PV}" ]] ; then
-	SRC_URI=""
-elif [[ "${PV%_p*}" != "${PV}" ]] ; then # Snapshot
-	SRC_URI="mirror://gentoo/${P}.tar.xz"
-else # Release
-	VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}/usr/share/openpgp-keys/ffmpeg.asc"
-	inherit verify-sig
-	SRC_URI="
-		https://ffmpeg.org/releases/${P/_/-}.tar.xz
-		soc? (
-			https://dev.gentoo.org/~chewi/distfiles/${SOC_PATCH}.asc
-		)
-		verify-sig? (
-			https://ffmpeg.org/releases/${P/_/-}.tar.xz.asc
-		)
-	"
-	BDEPEND+="
-		soc? (
-			sec-keys/openpgp-keys-gentoo-developers
-		)
-		verify-sig? (
-			sec-keys/openpgp-keys-ffmpeg
-		)
-	"
-
-	src_unpack() {
-		if use verify-sig; then
-			verify-sig_verify_detached \
-				"${DISTDIR}/${P/_/-}.tar.xz"{"",".asc"} \
-				"/usr/share/openpgp-keys/ffmpeg.asc"
-			if use soc ; then
-				verify-sig_verify_detached \
-					"${DISTDIR}/${SOC_PATCH}"{"",".asc"} \
-					"/usr/share/openpgp-keys/gentoo-developers.asc"
-			fi
-		fi
-		default
-	}
-fi
-SRC_URI+="
-	soc? (
-		https://dev.gentoo.org/~chewi/distfiles/${SOC_PATCH}
-	)
-"
-S="${WORKDIR}/${P/_/-}"
-S_orig="${WORKDIR}/${P/_/-}"
-
-DESCRIPTION="Complete solution to record/convert/stream audio and video. Includes libavcodec"
-HOMEPAGE="https://ffmpeg.org/"
-SLOT="0/${FFMPEG_SUBSLOT}"
-# The project license is LGPL-2.1+
-# BSD - libavcodec/ilbcdec.c
-LICENSE="
-	BSD
-	gpl2? (
-		GPL-2
-	)
-	gpl2x? (
-		GPL-2+
-	)
-	gpl3? (
-		GPL-3
-	)
-	gpl3x? (
-		GPL-3+
-	)
-	lgpl2? (
-		LGPL-2
-	)
-	lgpl2_1? (
-		LGPL-2.1
-	)
-	lgpl2_1? (
-		LGPL-2.1
-	)
-	lgpl2_1x? (
-		LGPL-2.1+
-	)
-	lgpl2x? (
-		LGPL-2+
-	)
-	lgpl3? (
-		LGPL-3
-	)
-	lgpl3x? (
-		LGPL-3+
-	)
-	static-libs? (
-		BSD
-		BSD-2
-		MIT
-		ZLIB
-		libcaca? (
-			GPL-2
-			ISC
-			LGPL-2.1
-			WTFPL-2
-		)
-		zimg? (
-			WTFPL-2
-		)
-	)
-" # This package is actually LGPL-2.1+, but certain dependencies are LGPL-2.1
-# The extra licenses are for static-libs.
-
+FFTOOLS=(
+	"aviocat"
+	"cws2fws"
+	"ffescape"
+	"ffeval"
+	"ffhash"
+	"fourcc2pixfmt"
+	"graph2dot"
+	"ismindex"
+	"pktdumper"
+	"qt-faststart"
+	"sidxindex"
+	"trasher"
+)
+# Same as FFMPEG_FLAG_MAP but for encoders, i.e. they do something only with USE=encode.
+FFMPEG_ENCODER_FLAG_MAP=(
+	amf
+	amrenc:libvo-amrwbenc
+	kvazaar:libkvazaar
+	libaom
+	mp3:libmp3lame
+	openh264:libopenh264
+	rav1e:librav1e
+	snappy:libsnappy
+	svt-av1:libsvtav1
+	theora:libtheora
+	twolame:libtwolame
+	webp:libwebp
+	x264:libx264
+	x265:libx265
+	xvid:libxvid
+)
 # Options to use as use_enable in the foo[:bar] form.
 # This will feed configure with $(use_enable foo bar)
 # or $(use_enable foo foo) if no :bar is set.
@@ -254,25 +159,33 @@ FFMPEG_FLAG_MAP=(
 	# We only support pthread for now but FFmpeg supports more.
 	+threads:pthreads
 )
-
-# Same as above but for encoders, i.e. they do something only with USE=encode.
-FFMPEG_ENCODER_FLAG_MAP=(
-	amf
-	amrenc:libvo-amrwbenc
-	kvazaar:libkvazaar
-	libaom
-	mp3:libmp3lame
-	openh264:libopenh264
-	rav1e:librav1e
-	snappy:libsnappy
-	svt-av1:libsvtav1
-	theora:libtheora
-	twolame:libtwolame
-	webp:libwebp
-	x264:libx264
-	x265:libx265
-	xvid:libxvid
+FFMPEG_REVISION="${PV#*_p}"
+FFMPEG_SUBSLOT="58.60.60"
+MULTILIB_WRAPPED_HEADERS=(
+	"/usr/include/libavutil/avconfig.h"
 )
+N_SAMPLES=1
+NV_CODEC_HEADERS_PV="9.1.23.1"
+SCM=""
+SOC_PATCH="ffmpeg-rpi-6.1-r3.patch"
+TRAINERS=(
+	"trainer-audio-cbr"
+	"trainer-audio-lossless"
+	"trainer-audio-vbr"
+	"trainer-av-streaming"
+	"trainer-video-2-pass-constrained-quality"
+	"trainer-video-2-pass-constrained-quality-quick"
+	"trainer-video-constrained-quality"
+	"trainer-video-constrained-quality-quick"
+	"trainer-video-lossless"
+	"trainer-video-lossless-quick"
+)
+TRAIN_SANDBOX_EXCEPTION_VAAPI=1
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_EPGO=1
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
+WANT_LTO=0 # Global variable not const
 
 # Strings for CPU features in the useflag[:configure_option] form
 # if :configure_option isn't set, it will use 'useflag' as configure option
@@ -402,21 +315,11 @@ CPU_FEATURES_MAP=(
 	${PPC_CPU_FEATURES[@]}
 	${X86_CPU_FEATURES[@]}
 )
-
-FFTOOLS=(
-	aviocat
-	cws2fws
-	ffescape
-	ffeval
-	ffhash
-	fourcc2pixfmt
-	graph2dot
-	ismindex
-	pktdumper
-	qt-faststart
-	sidxindex
-	trasher
-)
+CPU_REQUIRED_USE="
+	${ARM_CPU_REQUIRED_USE}
+	${PPC_CPU_REQUIRED_USE}
+	${X86_CPU_REQUIRED_USE}
+"
 
 # The LICENSE_REQUIRED_USE may be incomplete because of the dependency of the
 #   dependency problem.  This is why portage should do license dependency tree
@@ -427,10 +330,166 @@ FFTOOLS=(
 
 # +re-codecs is based on unpatched behavior to prevent breaking changes.
 
-CUDA_TARGETS_COMPAT=(
-	sm_30
-	sm_60
+LICENSE_USE=(
+	"apache2_0"
+	"+gpl"
+	"gpl2"
+	"+gpl2x"
+	"gpl2x_to_gpl3"
+	"gpl3"
+	"gpl3x"
+	"lgpl2_1"
+	"lgpl2_1_to_gpl2"
+	"lgpl2_1_to_gpl2x"
+	"lgpl2_1_to_gpl3"
+	"lgpl2_1x"
+	"lgpl2_1x_to_gpl2"
+	"lgpl2_1x_to_gpl2x"
+	"lgpl2_1x_to_gpl3"
+	"lgpl2_1x_to_lgpl3"
+	"lgpl2_1x_to_lgpl3x"
+	"lgpl2"
+	"lgpl2x"
+	"lgpl2x_to_gpl2"
+	"lgpl2x_to_gpl3"
+	"lgpl2x_to_lgpl3x"
+	"lgpl3"
+	"lgpl3_to_gpl3"
+	"lgpl3x"
+	"lgpl3x_to_gpl3"
+	"mpl2_0"
+	"nonfree"
 )
+
+inherit cuda flag-o-matic multilib multilib-minimal toolchain-funcs ${SCM}
+inherit flag-o-matic-om llvm uopts
+
+if [[ "${PV#9999}" == "${PV}" ]] ; then
+	KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
+~x86 ~amd64-linux ~x86-linux ~x64-macos
+	"
+fi
+if [[ "${PV#9999}" != "${PV}" ]] ; then
+	SCM="git-r3"
+	EGIT_MIN_CLONE_TYPE="single"
+	EGIT_REPO_URI="https://git.ffmpeg.org/ffmpeg.git"
+fi
+if [[ "${PV#9999}" != "${PV}" ]] ; then
+	SRC_URI=""
+elif [[ "${PV%_p*}" != "${PV}" ]] ; then # Snapshot
+	SRC_URI="mirror://gentoo/${P}.tar.xz"
+else # Release
+	VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}/usr/share/openpgp-keys/ffmpeg.asc"
+	inherit verify-sig
+	SRC_URI="
+		https://ffmpeg.org/releases/${P/_/-}.tar.xz
+		soc? (
+			https://dev.gentoo.org/~chewi/distfiles/${SOC_PATCH}.asc
+		)
+		verify-sig? (
+			https://ffmpeg.org/releases/${P/_/-}.tar.xz.asc
+		)
+	"
+	BDEPEND+="
+		soc? (
+			sec-keys/openpgp-keys-gentoo-developers
+		)
+		verify-sig? (
+			sec-keys/openpgp-keys-ffmpeg
+		)
+	"
+
+	src_unpack() {
+		if use verify-sig; then
+			verify-sig_verify_detached \
+				"${DISTDIR}/${P/_/-}.tar.xz"{"",".asc"} \
+				"/usr/share/openpgp-keys/ffmpeg.asc"
+			if use soc ; then
+				verify-sig_verify_detached \
+					"${DISTDIR}/${SOC_PATCH}"{"",".asc"} \
+					"/usr/share/openpgp-keys/gentoo-developers.asc"
+			fi
+		fi
+		default
+	}
+fi
+SRC_URI+="
+	soc? (
+		https://dev.gentoo.org/~chewi/distfiles/${SOC_PATCH}
+	)
+"
+S="${WORKDIR}/${P/_/-}"
+S_orig="${WORKDIR}/${P/_/-}"
+
+DESCRIPTION="Complete solution to record/convert/stream audio and video. Includes libavcodec"
+HOMEPAGE="https://ffmpeg.org/"
+RESTRICT="
+	!test? (
+		test
+	)
+	fdk? (
+		bindist
+	)
+	openssl? (
+		bindist
+	)
+"
+SLOT="0/${FFMPEG_SUBSLOT}"
+# The project license is LGPL-2.1+
+# BSD - libavcodec/ilbcdec.c
+LICENSE="
+	BSD
+	gpl2? (
+		GPL-2
+	)
+	gpl2x? (
+		GPL-2+
+	)
+	gpl3? (
+		GPL-3
+	)
+	gpl3x? (
+		GPL-3+
+	)
+	lgpl2? (
+		LGPL-2
+	)
+	lgpl2_1? (
+		LGPL-2.1
+	)
+	lgpl2_1? (
+		LGPL-2.1
+	)
+	lgpl2_1x? (
+		LGPL-2.1+
+	)
+	lgpl2x? (
+		LGPL-2+
+	)
+	lgpl3? (
+		LGPL-3
+	)
+	lgpl3x? (
+		LGPL-3+
+	)
+	static-libs? (
+		BSD
+		BSD-2
+		MIT
+		ZLIB
+		libcaca? (
+			GPL-2
+			ISC
+			LGPL-2.1
+			WTFPL-2
+		)
+		zimg? (
+			WTFPL-2
+		)
+	)
+" # This package is actually LGPL-2.1+, but certain dependencies are LGPL-2.1
+# The extra licenses are for static-libs.
 
 IUSE+="
 ${CPU_FEATURES_MAP[@]%:*}
@@ -438,6 +497,8 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
+${LICENSE_USE[@]}
+${TRAINERS[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
 jack-audio-connection-kit jack2 liblensfun mold opencl-icd-loader oss pgo +pic
 pipewire proprietary-codecs proprietary-codecs-disable
@@ -445,46 +506,6 @@ proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 +re-codecs sndio soc sr static-libs tensorflow test v4l wayland
 
 ebuild-revision-16
-
-trainer-audio-cbr
-trainer-audio-lossless
-trainer-audio-vbr
-trainer-av-streaming
-trainer-video-2-pass-constrained-quality
-trainer-video-2-pass-constrained-quality-quick
-trainer-video-constrained-quality
-trainer-video-constrained-quality-quick
-trainer-video-lossless
-trainer-video-lossless-quick
-
-apache2_0
-+gpl
-gpl2
-+gpl2x
-gpl2x_to_gpl3
-gpl3
-gpl3x
-lgpl2_1
-lgpl2_1_to_gpl2
-lgpl2_1_to_gpl2x
-lgpl2_1_to_gpl3
-lgpl2_1x
-lgpl2_1x_to_gpl2
-lgpl2_1x_to_gpl2x
-lgpl2_1x_to_gpl3
-lgpl2_1x_to_lgpl3
-lgpl2_1x_to_lgpl3x
-lgpl2
-lgpl2x
-lgpl2x_to_gpl2
-lgpl2x_to_gpl3
-lgpl2x_to_lgpl3x
-lgpl3
-lgpl3_to_gpl3
-lgpl3x
-lgpl3x_to_gpl3
-mpl2_0
-nonfree
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.
@@ -852,13 +873,6 @@ LICENSE_REQUIRED_USE="
 		gpl2
 	)
 "
-
-CPU_REQUIRED_USE="
-	${ARM_CPU_REQUIRED_USE}
-	${PPC_CPU_REQUIRED_USE}
-	${X86_CPU_REQUIRED_USE}
-"
-
 # GPL_REQUIRED_USE moved to LICENSE_REQUIRED_USE
 # FIXME: fix missing symbols with -re-codecs
 REQUIRED_USE+="
@@ -1049,7 +1063,6 @@ REQUIRED_USE+="
 		pgo
 	)
 "
-
 # License incompatibility
 LICENSE_RDEPEND="
 	gpl2? (
@@ -1063,10 +1076,8 @@ LICENSE_RDEPEND="
 		)
 	)
 "
-
 # Only vaapi_x11 and vaapi_drm checks.  No vaapi_wayland checks in configure.
 # Update both !openssl and openssl USE flags.
-NV_CODEC_HEADERS_PV="9.1.23.1"
 RDEPEND+="
 	${LICENSE_RDEPEND}
 	!openssl? (
@@ -1379,7 +1390,6 @@ RDEPEND+="
 		>=media-libs/zvbi-0.2.35[${MULTILIB_USEDEP}]
 	)
 "
-
 DEPEND+="
 	amf? (
 		media-libs/amf-headers
@@ -1394,7 +1404,6 @@ DEPEND+="
 		>=dev-util/vulkan-headers-1.3.255
 	)
 "
-
 # += for verify-sig above
 BDEPEND+="
 	>=dev-build/make-3.81
@@ -1426,7 +1435,6 @@ BDEPEND+="
 		)
 	)
 "
-
 PDEPEND+="
 	pgo? (
 		media-video/ffmpeg[encode,${MULTILIB_USEDEP}]
@@ -1435,19 +1443,6 @@ PDEPEND+="
 		media-video/sr
 	)
 "
-
-RESTRICT="
-	!test? (
-		test
-	)
-	fdk? (
-		bindist
-	)
-	openssl? (
-		bindist
-	)
-"
-
 PATCHES=(
 	"${FILESDIR}/chromium-r2.patch"
 	"${FILESDIR}/${PN}-6.1-wint-conversion.patch"
