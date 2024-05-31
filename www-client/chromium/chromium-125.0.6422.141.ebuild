@@ -184,11 +184,11 @@ inherit flag-o-matic-om lcnr llvm multilib-minimal ninja-utils pax-utils
 inherit python-any-r1 qmake-utils readme.gentoo-r1 systemd toolchain-funcs uopts
 inherit xdg-utils
 
-PATCHSET_PPC64="123.0.6312.105-1raptor0~deb12u1"
+PATCHSET_PPC64="125.0.6422.112-1raptor0~deb12u1"
 PATCH_REVISION=""
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 
-#KEYWORDS="~amd64 arm64"
+#KEYWORDS="~amd64 ~arm64 ~ppc64"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	!system-toolchain? (
@@ -2572,16 +2572,6 @@ einfo "Using the system toolchain"
 	if tc-is-clang ; then
 		myconf_gn+=" is_clang=true"
 		myconf_gn+=" clang_use_chrome_plugins=false"
-		# Workaround for build failure with clang-18 and -march=native without
-		# avx512. Does not affect e.g. -march=skylake, only native (bug #931623).
-		if use amd64 \
-			&& is-flagq -march=native \
-			&& [[ $(clang-major-version) -eq 18 ]] \
-			&& [[ $(clang-micro-version) -lt 6 ]] \
-			&& tc-cpp-is-true "!defined(__AVX512F__)" ${CXXFLAGS} \
-		; then
-			append-flags -mevex512
-		fi
 	else
 		myconf_gn+=" is_clang=false"
 	fi
