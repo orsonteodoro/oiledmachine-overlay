@@ -188,7 +188,7 @@ IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-clang cpu cuda +hardened rocm rocm_6_0 system-llvm r1
+clang cpu cpu_flags_x86_avx cuda +hardened rocm rocm_6_0 system-llvm ebuild-revision-1
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
@@ -956,20 +956,28 @@ python_compile() {
 
 	bazel_setup_bazelrc
 
-	# The default is release which forces avx by default.
-	if is-flagq '-march=native' ; then
+	if use cpu_flags_x86_avx ; then
+# Package default
+		args+=(
+			--target_cpu_features=release
+		)
+	elif is-flagq '-march=native' ; then
+# Autodetect
 		args+=(
 			--target_cpu_features=native
 		)
 	elif is-flagq '-march=generic' ; then
+# Compiler defaults
 		args+=(
 			--target_cpu_features=default
 		)
 	elif ! [[ "${CFLAGS}" =~ "-march=" ]] ; then
+# Compiler defaults
 		args+=(
 			--target_cpu_features=default
 		)
 	else
+# Compiler defaults
 ewarn
 ewarn "Downgrading -march=* to generic."
 ewarn "Use -march=native to optimize."
