@@ -188,7 +188,7 @@ IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-bindist clang cpu cpu_flags_x86_avx cuda +hardened rocm rocm_6_0 system-llvm
+clang cpu cpu_flags_x86_avx cuda +hardened rocm rocm_6_0 system-llvm
 ebuild-revision-1
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
@@ -957,12 +957,7 @@ python_compile() {
 
 	bazel_setup_bazelrc
 
-	if [[ "${CFLAGS}" =~ "-march=" ]] && use bindist ; then
-# Build for portability
-		args+=(
-			--target_cpu_features=default
-		)
-	elif is-flagq '-march=native' ; then
+	if is-flagq '-march=native' ; then
 # Autodetect
 		args+=(
 			--target_cpu_features=native
@@ -972,7 +967,7 @@ python_compile() {
 		args+=(
 			--target_cpu_features=default
 		)
-	elif [[ "${CFLAGS}" =~ "-march=" ]] && ! use bindist ; then
+	elif [[ "${CFLAGS}" =~ "-march=" ]] ; then
 # Autodetect
 		args+=(
 			--target_cpu_features=native
