@@ -230,23 +230,23 @@ LICENSE="
 	APSL-2
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
+	base64
 	Boost-1.0
 	BSD
 	BSD-2
 	BSD-4
-	base64
-	CC0-1.0
 	CC-BY-3.0
 	CC-BY-4.0
 	CC-BY-ND-2.5
+	CC0-1.0
 	chromium-$(ver_cut 1-3 ${PV}).x.html
 	custom
+	fft2d
 	FLEX
 	FTL
-	fft2d
-	GPL-2+
 	g711
 	g722
+	GPL-2+
 	HPND
 	icu
 	IJG
