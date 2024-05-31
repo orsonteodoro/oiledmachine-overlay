@@ -1187,18 +1187,17 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.22.982 (20230712) ; Sorting playlists by creator is broken.
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.25.1011 (20231123) ; Sorting playlists by creator is broken.
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.26.1187 (20231221) ; Sorting playlists by creator is broken.
-# OILEDMACHINE-OVERLAY-TEST:  ? [USA] / ? [UK] (interactive) 1.2.37.701 (20240531) with openrc
+# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.37.701 (20240531) with openrc
 # X:  pass
-# wayland:  pass
+# wayland:  pass with older ebuilds
 # audio podcasts:  pass
 # emoji render:  pass
-# UK audio podcast(s):  pass with ffmpeg 4.4.x with 1.2.8.923, 1.2.13.661
-# video podcasts:  fail
+# UK audio podcast(s):  pass with ffmpeg 4.4.x with 1.2.8.923, 1.2.13.661, 1.2.37.701
+# video podcasts:  pass
 # typical songs:  pass
-# openrc:  fail ; blank window on start, socket warnings.  elogind sets wrong owner for /var/run/user/$(id -u)
-# rinit:  fail ; same as above
-# systemd:  pass
 # openrc:  pass with 1.2.37.701
+# rinit:  fail with older ebuilds but may pass with latest ebuild ; needs retest
+# systemd:  pass with older ebuilds
 
 # Warnings that should errors:
 # They do not appear in the systemd environment.
