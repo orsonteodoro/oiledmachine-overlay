@@ -22,7 +22,7 @@ PYTHON_COMPAT=( "python3_"{10..11} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby31 ruby32"
 
-inherit cmake multilib-minimal python-r1 ruby-ng
+inherit cmake flag-o-matic multilib-minimal python-r1 ruby-ng
 
 KEYWORDS="~amd64 ~ppc64 ~x86"
 S="${WORKDIR}/${PN}-${MY_PV}"
