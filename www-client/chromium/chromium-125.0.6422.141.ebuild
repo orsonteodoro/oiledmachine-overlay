@@ -269,9 +269,9 @@ LICENSE="
 	QU-fft
 	Unlicense
 	UoI-NCSA
-	unRAR
 	unicode
 	Unicode-DFS-2016
+	unRAR
 	SGI-B-2.0
 	sigslot
 	SunPro
