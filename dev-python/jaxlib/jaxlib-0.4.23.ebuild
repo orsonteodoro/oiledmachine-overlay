@@ -953,13 +953,14 @@ python_compile() {
 		)
 	elif is-flagq '-march=generic' ; then
 # Compiler defaults
+# It doesn't write anything.
 		args+=(
 			--target_cpu_features=default
 		)
 	elif [[ "${CFLAGS}" =~ "-march=" ]] ; then
-# Autodetect
+# It doesn't write anything.
 		args+=(
-			--target_cpu_features=native
+			--target_cpu_features=default
 		)
 	elif use cpu_flags_x86_avx ; then
 # Package default
@@ -968,6 +969,7 @@ python_compile() {
 		)
 	else
 # Compiler defaults
+# It doesn't write anything.
 		args+=(
 			--target_cpu_features=default
 		)
@@ -1094,6 +1096,7 @@ ewarn
 	fi
 
 	# Generate to fix python version in .jax_configure.bazelrc
+einfo "Running:  ${EPYTHON} build/build.py --configure_only ${args[@]}"
 	${EPYTHON} build/build.py \
 		--configure_only \
 		${args[@]} \
