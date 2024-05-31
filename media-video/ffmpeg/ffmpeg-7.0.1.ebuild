@@ -16,6 +16,9 @@ EAPI=8
 
 FFMPEG_REVISION="${PV#*_p}"
 FFMPEG_SUBSLOT="59.61.61"
+MULTILIB_WRAPPED_HEADERS=(
+	"/usr/include/libavutil/avconfig.h"
+)
 N_SAMPLES=1
 PYTORCH_VERSIONS=(
 	"2.3.0"
@@ -25,6 +28,7 @@ PYTORCH_VERSIONS=(
 	"1.13.1"
 )
 SCM=""
+SOC_PATCH="ffmpeg-rpi-6.1-r3.patch"
 TRAIN_SANDBOX_EXCEPTION_VAAPI=1
 UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_EPGO=1
@@ -55,16 +59,41 @@ else # Release
 	inherit verify-sig
 	SRC_URI="
 		https://ffmpeg.org/releases/${P/_/-}.tar.xz
+		soc? (
+			https://dev.gentoo.org/~chewi/distfiles/${SOC_PATCH}.asc
+		)
 		verify-sig? (
 			https://ffmpeg.org/releases/${P/_/-}.tar.xz.asc
 		)
 	"
 	BDEPEND+="
+		soc? (
+			sec-keys/openpgp-keys-gentoo-developers
+		)
 		verify-sig? (
 			sec-keys/openpgp-keys-ffmpeg
 		)
 	"
+
+	src_unpack() {
+		if use verify-sig; then
+			verify-sig_verify_detached \
+				"${DISTDIR}/${P/_/-}.tar.xz"{"",".asc"} \
+				"/usr/share/openpgp-keys/ffmpeg.asc"
+			if use soc ; then
+				verify-sig_verify_detached \
+					"${DISTDIR}/${SOC_PATCH}"{"",".asc"} \
+					"/usr/share/openpgp-keys/gentoo-developers.asc"
+			fi
+		fi
+		default
+	}
 fi
+SRC_URI+="
+	soc? (
+		https://dev.gentoo.org/~chewi/distfiles/${SOC_PATCH}
+	)
+"
 S="${WORKDIR}/${P/_/-}"
 S_orig="${WORKDIR}/${P/_/-}"
 
@@ -421,7 +450,9 @@ alsa chromium -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
 jack-audio-connection-kit jack2 liblensfun libqrencode mold opencl-icd-loader
 oss pgo +pic pipewire proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+re-codecs sndio sr static-libs tensorflow test torch v4l wayland r15
++re-codecs sndio soc sr static-libs tensorflow test torch v4l wayland
+
+ebuild-revision-16
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -848,6 +879,7 @@ CPU_REQUIRED_USE="
 # GPL_REQUIRED_USE moved to LICENSE_REQUIRED_USE
 # FIXME: fix missing symbols with -re-codecs
 REQUIRED_USE+="
+	!soc
 	${CPU_REQUIRED_USE}
 	!gpl? (
 		${LICENSE_REQUIRED_USE}
@@ -983,6 +1015,9 @@ REQUIRED_USE+="
 		openssl? (
 			apache2_0
 		)
+	)
+	soc? (
+		libdrm
 	)
 	test? (
 		encode
@@ -1311,6 +1346,9 @@ RDEPEND+="
 	sndio? (
 		media-sound/sndio:=[${MULTILIB_USEDEP}]
 	)
+	soc? (
+		virtual/libudev:=[${MULTILIB_USEDEP}]
+	)
 	speex? (
 		>=media-libs/speex-1.2_rc1-r1[${MULTILIB_USEDEP}]
 	)
@@ -1460,13 +1498,14 @@ PATCHES=(
 	"${FILESDIR}/chromium-r2.patch"
 #	"${FILESDIR}/${PN}-6.1-wint-conversion.patch"
 #	"${FILESDIR}/${PN}-6.0-fix-lto-type-mismatch.patch"
+	"${FILESDIR}/${PN}-6.1-opencl-parallel-gmake-fix.patch"
+	"${FILESDIR}/${PN}-6.1-gcc-14.patch"
+#	"${FILESDIR}/${PN}-6.0.1-alignment.patch"
+#	"${FILESDIR}/${PN}-6.1.1-vulkan-rename.patch"
+#	"${FILESDIR}/${PN}-6.1.1-memory-leak.patch"
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"			# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
-)
-
-MULTILIB_WRAPPED_HEADERS=(
-	/usr/include/libavutil/avconfig.h
 )
 
 get_av_device_ids() {
@@ -1877,6 +1916,10 @@ src_prepare() {
 		export revision=git-N-${FFMPEG_REVISION}
 	fi
 
+	if use soc ; then
+		eapply "${DISTDIR}/${SOC_PATCH}"
+	fi
+
 	default
 
 	use cuda && cuda_src_prepare
@@ -2042,6 +2085,15 @@ _src_configure() {
 	local myconf=()
 
 einfo "Configuring ${lib_type} with PGO_PHASE=${PGO_PHASE}"
+
+	# Conditional patch options
+	if use soc ; then
+		myconf+=(
+			--enable-v4l2-request
+			--enable-libudev
+			--enable-sand
+		)
+	fi
 
 	if use clear-config-first ; then
 # The clear-config-pre and clear-config-post are the same.

@@ -16,6 +16,9 @@ EAPI=8
 
 FFMPEG_REVISION="${PV#*_p}"
 FFMPEG_SUBSLOT="57.59.59"
+MULTILIB_WRAPPED_HEADERS=(
+	"/usr/include/libavutil/avconfig.h"
+)
 N_SAMPLES=1
 SCM=""
 TRAIN_SANDBOX_EXCEPTION_VAAPI=1
@@ -411,7 +414,9 @@ alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
 jack-audio-connection-kit jack2 liblensfun mold opencl-icd-loader oss pgo +pic
 pipewire proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+re-codecs sndio sr static-libs tensorflow test v4l wayland r15
++re-codecs sndio sr static-libs tensorflow test v4l wayland
+
+ebuild-revision-16
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -1403,13 +1408,11 @@ PATCHES=(
 	"${FILESDIR}/chromium-r1.patch"
 	"${FILESDIR}/${PN}-5.1.2-get_cabac_inline_x86-32-bit.patch"
 	"${FILESDIR}/${PN}-6.0-libplacebo-remove-deprecated-field.patch"
+	"${FILESDIR}/${PN}-6.0-fix-lto-type-mismatch.patch"
+	"${FILESDIR}/${PN}-4.4.4-opencl-parallel-gmake-fix.patch"
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"			# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
-)
-
-MULTILIB_WRAPPED_HEADERS=(
-	/usr/include/libavutil/avconfig.h
 )
 
 build_separate_libffmpeg() {

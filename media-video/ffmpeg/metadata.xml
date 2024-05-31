@@ -771,6 +771,10 @@
   <flag name="sndio">
     Enable support for the <pkg>media-sound/sndio</pkg> backend
   </flag>
+  <flag name="soc">
+    Apply additional patches for efficient playback on some SoCs (e.g. ARM,
+    RISC-V).
+  </flag>
   <flag name="sr">
     Generate sr (super-resolution) training models.
   </flag>
@@ -987,7 +991,7 @@
     Relicense or use as GPL-3
   </flag>
 
-  <flag name="rN">
+  <flag name="ebuild-revision-N">
     (FOR INTERNAL USE ONLY) Ebuild fork revision.
   </flag>
 </use>
