@@ -29,13 +29,13 @@ EAPI=8
 #
 # https://github.com/chromium/chromium/blob/125.0.6422.141/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists
 # https://github.com/chromium/chromium/blob/125.0.6422.141/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/125.0.6422.141/third_party/libpng/png.h#L288							; older than generated_package_lists
+# https://github.com/chromium/chromium/blob/125.0.6422.141/third_party/libpng/png.h#L288						; older than generated_package_lists
 # https://github.com/chromium/chromium/blob/125.0.6422.141/third_party/libxml/linux/config.h#L160					; older than generated_package_lists
 # https://github.com/chromium/chromium/blob/125.0.6422.141/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists
 # https://github.com/chromium/chromium/blob/125.0.6422.141/third_party/node/update_node_binaries#L18
 # https://github.com/chromium/chromium/blob/125.0.6422.141/third_party/re2/README.chromium#L4						; newer than generated_package_lists, (live) [rounded in ebuild]
 # https://github.com/chromium/chromium/blob/125.0.6422.141/third_party/zlib/zlib.h#L40
-# https://github.com/chromium/chromium/blob/125.0.6422.141/tools/rust/update_rust.py#L35							; commit
+# https://github.com/chromium/chromium/blob/125.0.6422.141/tools/rust/update_rust.py#L35						; commit
 #   https://github.com/rust-lang/rust/blob/ab71ee7a9214c2793108a41efb065aa77aeb7326/src/version						; live version
 # /var/tmp/portage/www-client/chromium-125.0.6422.141/work/chromium-125.0.6422.141/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-125.0.6422.141/work/chromium-125.0.6422.141/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
