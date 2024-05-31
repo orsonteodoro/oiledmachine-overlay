@@ -185,8 +185,11 @@ fi
 
 DESCRIPTION="A social music platform"
 HOMEPAGE="https://www.spotify.com"
-LICENSE="Spotify BSD"
-RESTRICT="mirror strip binchecks"
+LICENSE="
+	Spotify
+	BSD
+"
+RESTRICT="binchecks mirror strip"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
 emoji ffmpeg libnotify pulseaudio vaapi wayland zenity +X
