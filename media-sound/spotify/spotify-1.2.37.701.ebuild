@@ -190,6 +190,7 @@ RESTRICT="mirror strip binchecks"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
 emoji ffmpeg libnotify pulseaudio vaapi wayland zenity +X
+ebuild-revision
 "
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -277,6 +278,7 @@ CHROMIUM_CDEPEND="
 	>=dev-libs/nss-${NSS_PV}
 	>=media-libs/alsa-lib-${ALSA_LIB}
 	>=media-libs/mesa-${MESA_PV}[gbm(+),wayland?,X?]
+	>=sys-apps/dbus-1.12.24
 	>=sys-apps/pciutils-3.7.0
 	>=sys-apps/util-linux-2.36.1
 	>=sys-libs/glibc-${GLIBC_PV}
@@ -389,7 +391,6 @@ RDEPEND+="
 RDEPEND+="
 	${OPTIONAL_RDEPENDS_LISTED}
 	${OPTIONAL_RDEPENDS_UNLISTED}
-	>=sys-apps/systemd-252.5
 	>=dev-libs/atk-${ATK_PV}
 	>=dev-libs/glib-${GLIB_PV}:2
 	>=dev-libs/libayatana-appindicator-0.5.3
@@ -1045,13 +1046,18 @@ src_compile() {
 }
 
 gen_wrapper() {
+# FIXES:
+# libayatana-appindicator-WARNING **: 13:43:34.668: Unable to get the session bus: Unknown or unsupported transport “disabled” for address “disabled:”
+# LIBDBUSMENU-GLIB-WARNING **: 13:43:34.668: Unable to get session bus: Unknown or unsupported transport “disabled” for address “disabled:”
+# dbus-launch required for openrc, but not required for systemd.
 cat <<-EOF >"${D}/usr/bin/${PN}" || die
-#!/bin/sh
+#!/bin/bash
+INIT_SYSTEM="${init_system}"
 if test -n "\${DISPLAY}" ; then
-	exec "${DEST}/${PN}" "\$@"
+	dbus-launch "${DEST}/${PN}" "\$@"
 else
 	LD_PRELOAD=/usr/$(get_libdir)/${PN}-xstub.so \
-	exec "${DEST}/${PN}" \
+	dbus-launch "${DEST}/${PN}" \
 		--enable-features=UseOzonePlatform \
 		--ozone-platform=wayland \
 		"\$@"
@@ -1178,6 +1184,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.22.982 (20230712) ; Sorting playlists by creator is broken.
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.25.1011 (20231123) ; Sorting playlists by creator is broken.
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.26.1187 (20231221) ; Sorting playlists by creator is broken.
+# OILEDMACHINE-OVERLAY-TEST:  ? [USA] / ? [UK] (interactive) 1.2.37.701 (20240531) with openrc
 # X:  pass
 # wayland:  pass
 # audio podcasts:  pass
@@ -1188,6 +1195,7 @@ pkg_postrm() {
 # openrc:  fail ; blank window on start, socket warnings.  elogind sets wrong owner for /var/run/user/$(id -u)
 # rinit:  fail ; same as above
 # systemd:  pass
+# openrc:  pass with 1.2.37.701
 
 # Warnings that should errors:
 # They do not appear in the systemd environment.
