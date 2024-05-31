@@ -948,15 +948,15 @@ python_compile() {
 
 	bazel_setup_bazelrc
 
-	if use cpu_flags_x86_avx ; then
-# Package default
-		args+=(
-			--target_cpu_features=release
-		)
-	elif is-flagq '-march=native' ; then
+	if is-flagq '-march=native' ; then
 # Autodetect
 		args+=(
 			--target_cpu_features=native
+		)
+	elif use cpu_flags_x86_avx ; then
+# Package default
+		args+=(
+			--target_cpu_features=release
 		)
 	elif is-flagq '-march=generic' ; then
 # Compiler defaults
