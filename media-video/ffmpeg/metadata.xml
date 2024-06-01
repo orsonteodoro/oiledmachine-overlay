@@ -388,6 +388,9 @@
   You can use the clear-config-first USE flag to disable all flags first
   before whitelisting.
 
+  Some CONFIG_ options have dependencies which manifest as missing symbols.
+  You must manually enable the CONFIG_ dependency chain.
+
   You may encounter visibility, naming inconsistencies, or config dependency
   isssues.  Check if the option is inside the file.  Also, see the association
   between the missing symbol, the .o file, and the CONFIG_* option to ultimately
@@ -406,6 +409,8 @@
            -CONFIG_OPUS_ENCODER
            CONFIG_OPUS_MUXER
            CONFIG_OPUS_PARSER
+           CONFIG_POSTPROC
+           CONFIG_PP
        "
        FFMPEG_CUSTOM_OPTIONS="
            -libvpx_vp8_decoder
@@ -416,7 +421,13 @@
            -opus_encoder
            opus_muxer
            opus_parser
+           postproc
+           pp
        "
+
+
+  For the pp filter used for deringing artifacts.  In this example, pp depends
+  on postproc and CONFIG_GPL, enabled by the USE flag.
 
   After you have built your package, it would be a good idea to test it first
   to find missing symbols that may prevent the parent app from functioning.
@@ -424,9 +435,9 @@
   `ffmpeg -codecs | grep -E -e "(D\.|\.E|DE)[V][I.][L.][S.] .*"` commands.
   Also test with actual scenario also.
 
-  FFMPEG_CLEAR_CONFIG_SETS - space delimited list to of component types to disable.
-  This can be used to find problematic sets of options.  Only valid when
-  clear-config-first USE flag is enabled.
+  FFMPEG_CLEAR_CONFIG_SETS - space delimited list to of component types to
+  disable.  This can be used to find problematic sets of options.  Only valid
+  when the clear-config-first USE flag is enabled.
 
   Examples:
 
