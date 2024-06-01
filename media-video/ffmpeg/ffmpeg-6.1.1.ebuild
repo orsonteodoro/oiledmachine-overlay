@@ -2034,6 +2034,7 @@ _src_configure() {
 	local myconf=()
 
 einfo "Configuring ${lib_type} with PGO_PHASE=${PGO_PHASE}"
+ewarn "The tensorflow USE flag requires ffmpeg 4.x.x."
 
 	# Conditional patch options
 	if use soc ; then
