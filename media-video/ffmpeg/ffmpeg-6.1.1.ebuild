@@ -505,7 +505,7 @@ pipewire proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 +re-codecs sndio soc sr static-libs tensorflow test v4l wayland
 
-ebuild-revision-16
+ebuild-revision-17
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.
@@ -1339,7 +1339,7 @@ RDEPEND+="
 		>=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}]
 	)
 	tensorflow? (
-		sci-libs/tensorflow
+		>=sci-libs/tensorflow-2
 	)
 	truetype? (
 		>=media-libs/freetype-2.5.0.1:2[${MULTILIB_USEDEP}]
@@ -4363,6 +4363,18 @@ src_install() {
 	multilib_foreach_abi install_abi
 	multilib_install_wrappers
 	multilib_src_install_all
+	if use tensorflow ; then
+		cd "${S}/tools/python" || die
+		insinto "/usr/$(get_libdir)/${PN}/scripts"
+		local L=(
+			"tf_sess_config.py"
+		)
+		doins ${L[@]}
+		local f
+		for f in ${L[@]} ; do
+			fperms 0775 "/usr/$(get_libdir)/${PN}/scripts/${f}"
+		done
+	fi
 }
 
 multilib_src_install_all() {

@@ -480,7 +480,7 @@ pipewire proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 +re-codecs sndio sr static-libs tensorflow test v4l wayland
 
-ebuild-revision-16
+ebuild-revision-17
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.
@@ -1288,7 +1288,7 @@ RDEPEND+="
 		>=media-libs/svt-av1-0.8.4[${MULTILIB_USEDEP}]
 	)
 	tensorflow? (
-		sci-libs/tensorflow
+		>=sci-libs/tensorflow-2
 	)
 	truetype? (
 		>=media-libs/freetype-2.5.0.1:2[${MULTILIB_USEDEP}]
@@ -1402,7 +1402,7 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"				# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"		# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
-
+	"${FILESDIR}/extra-patches/${PN}-6.0.1-convert_from_tensorflow-tensorflow2-compat.patch"
 )
 
 build_separate_libffmpeg() {
@@ -4303,6 +4303,20 @@ src_install() {
 	multilib_foreach_abi install_abi
 	multilib_install_wrappers
 	multilib_src_install_all
+	if use tensorflow ; then
+		cd "${S}/tools/python" || die
+		insinto "/usr/$(get_libdir)/${PN}/scripts"
+		local L=(
+			"convert.py"
+			"convert_from_tensorflow.py"
+			"convert_header.py"
+		)
+		doins ${L[@]}
+		local f
+		for f in ${L[@]} ; do
+			fperms 0775 "/usr/$(get_libdir)/${PN}/scripts/${f}"
+		done
+	fi
 }
 
 multilib_src_install_all() {

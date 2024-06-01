@@ -1,0 +1,11 @@
+--- a/tools/python/convert_from_tensorflow.py.orig	2023-11-09 15:38:51.000000000 -0800
++++ b/tools/python/convert_from_tensorflow.py	2024-06-01 10:17:08.160243332 -0700
+@@ -599,7 +599,7 @@ class TFConverter:
+ def convert_from_tensorflow(infile, outfile, dump4tb):
+     with open(infile, 'rb') as f:
+         # read the file in .proto format
+-        graph_def = tf.GraphDef()
++        graph_def = tf.compat.v1.GraphDef()
+         graph_def.ParseFromString(f.read())
+         nodes = graph_def.node
+ 

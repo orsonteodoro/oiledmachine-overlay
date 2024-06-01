@@ -12,29 +12,18 @@ ALGS=(
 	"vespcn-mc"
 	"vsrnet"
 )
-FFMPEG_PV="5.1.2"
 FORMATS=(
 	"native"
 	"tensorflow"
 )
 PYTHON_COMPAT=( "python3_"{10..12} ) # Limited by tensorflow
 
-inherit git-r3 python-r1 security-scan
+inherit edo git-r3 python-r1 security-scan
 
 KEYWORDS="~amd64 ~x86"
 # Save outside sandbox to avoid redownloads
 SRC_URI="
 	!pretrained? (
-		convert? (
-https://raw.githubusercontent.com/FFmpeg/FFmpeg/n${FFMPEG_PV}/tools/python/convert.py
-	-> convert.py.${FFMPEG_PV}
-https://raw.githubusercontent.com/FFmpeg/FFmpeg/n${FFMPEG_PV}/tools/python/convert_from_tensorflow.py
-	-> convert_from_tensorflow.py.${FFMPEG_PV}
-https://raw.githubusercontent.com/FFmpeg/FFmpeg/n${FFMPEG_PV}/tools/python/convert_header.py
-	-> convert_header.py.${FFMPEG_PV}
-https://raw.githubusercontent.com/FFmpeg/FFmpeg/n${FFMPEG_PV}/tools/python/tf_sess_config.py
-	-> tf_sess_config.py.${FFMPEG_PV}
-		)
 		div2k? (
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_LR_bicubic_X2.zip
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_HR.zip
@@ -73,9 +62,6 @@ HOMEPAGE="https://github.com/HighVoltageRocknRoll/sr"
 LICENSE="
 	MIT
 	!pretrained? (
-		convert? (
-			LGPL-2.1
-		)
 		div2k? (
 			custom
 		)
@@ -115,8 +101,9 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${ALGS[@]}
 ${FORMATS[@]}
-convert div2k fallback-commit ffmpeg gstreamer harmonic nvdec +pretrained
-vaapi vdpau vpx
+div2k fallback-commit ffmpeg gstreamer harmonic nvdec +pretrained vaapi vdpau
+vpx
+ebuild-revision-1
 "
 # See formats see, https://ffmpeg.org/ffmpeg-filters.html#sr-1
 # We use the tensorflow .pb because it is multicore.
@@ -137,9 +124,6 @@ REQUIRED_USE="
 			gstreamer
 		)
 	)
-	convert? (
-		!pretrained
-	)
 	|| (
 		${FORMATS[@]}
 	)
@@ -156,6 +140,7 @@ DEPEND+="
 	)
 "
 BDEPEND+="
+	>=media-video/ffmpeg-4[tensorflow?]
 	!pretrained? (
 		${PYTHON_DEPS}
 		>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
@@ -205,24 +190,6 @@ unpack_live() {
 	use fallback-commit && EGIT_COMMIT="11b1d6fa38e5f1842d6b60d0b00db8b6cb7f63ec"
 	git-r3_fetch
 	git-r3_checkout
-}
-
-copy_converters() {
-	mkdir -p "python" || die
-	local L=(
-		"convert.py"
-		"convert_from_tensorflow.py"
-		"convert_header.py"
-		"tf_sess_config.py"
-	)
-
-	local name
-	for name in ${L[@]} ; do
-		cp -a \
-			"${EDISTDIR}/${name}.${FFMPEG_PV}" \
-			"${S}/python/${name}" \
-			|| die
-	done
 }
 
 copy_div2k_assets() {
@@ -439,7 +406,6 @@ src_unpack() {
 ewarn "Expect training to last hours"
 		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 		unpack_live
-		use convert && copy_converters
 		copy_assets
 	fi
 }
@@ -515,23 +481,49 @@ train() {
 
 src_compile() {
 	use pretrained || train
+	if use tensorflow ; then
+		local alg
+		for alg in $(get_algs) ; do
+			rm -f "${alg}.model"
+			[[ "${alg}" == "vespcn-mc" ]] && continue # Conversion broken
+	# The prebuilt .models are missing the FFMPEGDNNNATIVE header.
+			if [[ -e "/usr/$(get_libdir)/ffmpeg/scripts/convert.py" ]] ; then
+				edo ${EPYTHON} "/usr/$(get_libdir)/ffmpeg/scripts/convert.py" "${alg}.pb"
+			fi
+		done
+		if [[ -e "/usr/$(get_libdir)/ffmpeg/scripts/tf_sess_config.py" ]] ; then
+			edo ${EPYTHON} "/usr/$(get_libdir)/ffmpeg/scripts/tf_sess_config.py" | sed -e "/a serialized protobuf string/d" > "sess_config"
+		fi
+	fi
 }
 
 src_install() {
 	local alg
 	for alg in $(get_algs) ; do
 		insinto "/usr/share/${PN}/models"
-		if use native ; then
+		if use native && [[ -e "${alg}.model" ]] ; then
 			doins "${alg}.model"
 		fi
 		if use tensorflow ; then
 			doins "${alg}.pb"
 		fi
+		if [[ -e "sess_config" ]] ; then
+			doins "sess_config"
+		fi
 	done
 }
 
 pkg_postinst() {
-ewarn "The models can only work with ffmpeg 4.x.x series"
+	if [[ -e "/usr/share/${PN}/models/sess_config" ]] ; then
+einfo
+einfo "The session config to dnn_processing for the machine can be passed as"
+einfo "follows:"
+einfo
+einfo "  dnn_processing=sess_config=$(cat /usr/share/${PN}/models/sess_config)"
+einfo
+einfo "The value can be obtained by running \`cat /usr/share/${PN}/models/sess_config\`"
+einfo
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES but only pretrained

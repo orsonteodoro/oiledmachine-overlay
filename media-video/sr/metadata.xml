@@ -113,9 +113,6 @@
     <doc lang="en">https://github.com/HighVoltageRocknRoll/sr</doc>
   </upstream>
   <use>
-    <flag name="convert">
-      Convert tensorflow models to native models.
-    </flag>    
     <flag name="div2k">
       Download and train with DIV2K still images.
       License restricted for academics only.
