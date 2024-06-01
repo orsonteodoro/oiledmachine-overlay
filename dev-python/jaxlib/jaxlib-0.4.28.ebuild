@@ -13,6 +13,18 @@ EAPI=8
 # https://en.wikipedia.org/wiki/Google_JAX#grad
 # https://jax.readthedocs.io/en/latest/quickstart.html#jax-as-numpy
 
+# Error of the above problem with https://en.wikipedia.org/wiki/Google_JAX#grad
+#Thread 1 "python3.11" received signal SIGFPE, Arithmetic exception.
+#0x00007fffebfcc15b in Xbyak::util::Cpu::setCacheHierarchy() () from /usr/lib/python3.11/site-packages/jaxlib/xla_extension.so
+#(gdb) bt
+#0  0x00007fffebfcc15b in Xbyak::util::Cpu::setCacheHierarchy() () from /usr/lib/python3.11/site-packages/jaxlib/xla_extension.so
+#1  0x00007fffec31be7f in dnnl::impl::cpu::platform::get_max_threads_to_use() () from /usr/lib/python3.11/site-packages/jaxlib/xla_extension.so
+#2  0x00007fffebfb0f2d in dnnl::impl::threadpool_utils::get_threadlocal_max_concurrency() () from /usr/lib/python3.11/site-packages/jaxlib/xla_extension.so
+#3  0x00007fffebf84ed0 in dnnl_threadpool_interop_set_max_concurrency () from /usr/lib/python3.11/site-packages/jaxlib/xla_extension.so
+#4  0x00007fffeb395321 in xla::cpu::OneDnnMatMulRewriter::Run(xla::HloModule*, absl::lts_20230802::flat_hash_set<std::basic_string_view<char, std::char_traits<char> >, absl::lts_20230802::container_internal::StringHash, absl::lts_20230802::container_internal::StringEq, std::allocator<std::basic_string_view<char, std::char_traits<char> > > > const&) () from /usr/lib/python3.11/site-packages/jaxlib/xla_extension.so
+#5  0x00007fffeb5b3979 in absl::lts_20230802::StatusOr<bool> xla::HloPassPipeline::RunPassesInternal<xla::HloModule>(xla::HloModule*, xla::DebugOptions const&, absl::lts_20230802::flat_hash_set<std::basic_string_view<char, std::char_traits<char> >, absl::lts_20230802::container_internal::StringHash, absl::lts_20230802::container_internal::StringEq, std::allocator<std::basic_string_view<char, std::char_traits<char> > > > const&) () from /usr/lib/python3.11/site-packages/jaxlib/xla_extension.so
+
+
 # With clang-17 as host compiler:
 # FIXME:
 #external/boringssl/src/crypto/refcount_c11.c:37:23: error: address argument to atomic operation must be a pointer to a trivially-copyable type ('_Atomic(CRYPTO_refcount_t) *' invalid)
