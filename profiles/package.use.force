@@ -16,3 +16,5 @@ dev-libs/libappimage system-boost
 # Required
 app-arch/go-appimage systemd
 
+# Untrained untested
+media-video/sr pretrained

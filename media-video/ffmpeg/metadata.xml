@@ -798,6 +798,8 @@
     Enabling it will prefer the optimized multicore + GPU version.
     Disabling it will prefer the single threaded native version.
 
+    Requires 4.4.x series.
+
     See also
     https://ffmpeg.org/ffmpeg-filters.html#sr-1
     https://ffmpeg.org/ffmpeg-filters.html#dnn_005fprocessing-1

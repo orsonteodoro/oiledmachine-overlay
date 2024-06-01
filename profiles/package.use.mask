@@ -88,3 +88,6 @@ net-libs/nghttp2 mruby
 
 # Build time failure
 dev-python/jaxlib clang
+
+# Runtime segmentation fault.  Use 4.4.4
+>=media-video/ffmpeg-5 tensorflow

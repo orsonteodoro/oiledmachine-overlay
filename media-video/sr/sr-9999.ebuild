@@ -529,4 +529,9 @@ src_install() {
 		fi
 	done
 }
+
+pkg_postinst() {
+ewarn "The models can only work with ffmpeg 4.x.x series"
+}
+
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES but only pretrained
