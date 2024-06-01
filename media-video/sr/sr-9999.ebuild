@@ -101,8 +101,8 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${ALGS[@]}
 ${FORMATS[@]}
-div2k fallback-commit ffmpeg gstreamer harmonic nvdec +pretrained vaapi vdpau
-vpx
+div2k fallback-commit ffmpeg gstreamer harmonic -hvrr nvdec +pretrained vaapi
+vdpau vpx
 ebuild-revision-1
 "
 # See formats see, https://ffmpeg.org/ffmpeg-filters.html#sr-1
@@ -169,25 +169,38 @@ eerror
 pkg_setup()
 {
 	if use pretrained ; then
+einfo
+einfo "Using the pretrained version."
+einfo
+	else
 eerror
 eerror "The trained version is still a Work In Progress (WIP)."
 eerror "Use the pretrained USE flag instead."
 eerror
-	else
-einfo
-einfo "Using the pretrained version."
-einfo
 	fi
 	export SR_QUICK_TEST=${SR_QUICK_TEST:-0}
 	python_setup
 	use pretrained || request_sandbox_permissions
+
+	if use hvrr ; then
+		export EGIT_REPO_PROVIDER="HighVoltageRocknRoll"
+	else
+		export EGIT_REPO_PROVIDER="XueweiMeng"
+	fi
 }
 
 unpack_live() {
-	EGIT_REPO_URI="https://github.com/HighVoltageRocknRoll/sr.git"
-	EGIT_BRANCH="master"
+	if [[ "${EGIT_REPO_PROVIDER}" == "HighVoltageRocknRoll" ]] ; then
+		EGIT_REPO_URI="https://github.com/HighVoltageRocknRoll/sr.git" # old
+		EGIT_BRANCH="master"
+		use fallback-commit && EGIT_COMMIT="11b1d6fa38e5f1842d6b60d0b00db8b6cb7f63ec" # May 24, 2019
+	else
+		# More compatible format
+		EGIT_REPO_URI="https://github.com/XueweiMeng/sr.git"
+		EGIT_BRANCH="sr_dnn_native"
+		use fallback-commit && EGIT_COMMIT="59ba04394885f79b442f007c07e21169cd81a001" # May 22, 2019
+	fi
 	EGIT_COMMIT="HEAD"
-	use fallback-commit && EGIT_COMMIT="11b1d6fa38e5f1842d6b60d0b00db8b6cb7f63ec"
 	git-r3_fetch
 	git-r3_checkout
 }

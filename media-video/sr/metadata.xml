@@ -138,6 +138,10 @@
 
       See metadata.xml for adding custom assets for training.
     </flag>
+    <flag name="hvrr">
+      Use the original repo as the source.  Otherwise, use the new repo.
+      The new repo may be more compatible.
+    </flag>
     <flag name="native">
       Build/install binary *.models for single threaded native use.
     </flag>
