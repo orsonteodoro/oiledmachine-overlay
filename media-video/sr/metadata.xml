@@ -83,13 +83,13 @@
       FFmpeg - https://github.com/opencv/opencv/blob/4.7.0/modules/videoio/src/cap_ffmpeg_impl.hpp#L1343
       gstreamer - https://github.com/opencv/opencv/blob/4.7.0/samples/cpp/videocapture_gstreamer_pipeline.cpp#L37
 
-  FFmpeg compatibility:
-
-          SCRNN:  y
-          ESPCN:  y
-         VSRNet:  n
-         VESPCN:  n
-    VESPCN (mc):  n
+                  FFmpeg compatibility   | .pb (tensorflow) works on ffmpeg? | .model (native) works on ffmpeg?
+                                         |                                   |
+          SCRNN:           y             |            y with 4.4.4           |               broken
+          ESPCN:           y             |            y with 4.4.4           |               broken
+         VSRNet:           n             |                 ?                 |                  ?
+         VESPCN:           n             |                 ?                 |                  ?
+    VESPCN (mc):           n             |                 ?                 |                  ?
 
     VESPCN/VSRNet known issue
 
