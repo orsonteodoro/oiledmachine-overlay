@@ -20,6 +20,9 @@ ALGS=(
 	"vespcn-mc"
 	"vsrnet"
 )
+FFMPEG_SUBSLOTS=(
+	"56.58.58" # 4.x
+)
 FORMATS=(
 	"native"
 	"tensorflow"
@@ -150,8 +153,23 @@ DEPEND+="
 		${PYTHON_DEPS}
 	)
 "
+gen_ffmpeg_bdepend1() {
+	local s
+	for s in ${FFMPEG_SUBSLOTS} ; do
+		echo "
+			media-video/ffmpeg:0/${s}[tensorflow?]
+		"
+	done
+}
+gen_ffmpeg_bdepend2() {
+	local s
+	for s in ${FFMPEG_SUBSLOTS} ; do
+		echo "
+			media-video/ffmpeg:0/${s}[nvdec?,vaapi?,vdpau?,vpx?]
+		"
+	done
+}
 BDEPEND+="
-	>=media-video/ffmpeg-4[tensorflow?]
 	!pretrained? (
 		${PYTHON_DEPS}
 		>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
@@ -159,12 +177,18 @@ BDEPEND+="
 		dev-python/pillow[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP},ffmpeg?,gstreamer?,python]
 		ffmpeg? (
-			>=media-video/ffmpeg-4[nvdec?,vaapi?,vdpau?,vpx?]
+			|| (
+				$(gen_ffmpeg_bdepend2)
+			)
 		)
 		gstreamer? (
 			media-plugins/gst-plugins-meta[ffmpeg?]
 		)
 	)
+	|| (
+		$(gen_ffmpeg_bdepend1)
+	)
+	media-video/ffmpeg:=
 "
 
 request_sandbox_permissions() {
