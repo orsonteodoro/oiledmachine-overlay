@@ -95,6 +95,8 @@
 
       https://github.com/HighVoltageRocknRoll/sr/issues/7
 
+    DNN native (.model) support was removed in ffmpeg 6.1 and later.
+
   Further reading:
 
     PSNRs:  https://github.com/HighVoltageRocknRoll/sr#benchmark-results
