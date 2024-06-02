@@ -4,6 +4,14 @@
 
 EAPI=8
 
+# If you encounter:
+# !!! Multiple package instances within a single package slot have been pulled
+# !!! into the dependency graph, resulting in a slot conflict:
+# media-video/ffmpeg:0
+#  (media-video/ffmpeg-6.0.1:0/58.60.60::oiledmachine-overlay, ebuild scheduled for merge) ...
+#  (media-video/ffmpeg-4.4.4:0/56.58.58::oiledmachine-overlay, ebuild scheduled for merge) ...
+# Fix:  emerge with --ignore-built-slot-operator-deps=y if `emerge -vuDN sr`
+
 # See https://github.com/HighVoltageRocknRoll/sr/issues/8
 ALGS=(
 	"espcn"
