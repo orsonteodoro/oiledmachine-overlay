@@ -141,6 +141,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=media-video/ffmpeg-4[tensorflow?]
+	media-video/ffmpeg:=
 	!pretrained? (
 		${PYTHON_DEPS}
 		>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
