@@ -132,6 +132,9 @@ REQUIRED_USE="
 			gstreamer
 		)
 	)
+	native? (
+		tensorflow
+	)
 	|| (
 		${FORMATS[@]}
 	)
