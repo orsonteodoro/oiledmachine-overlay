@@ -489,19 +489,17 @@ train() {
 
 src_compile() {
 	use pretrained || train
-	if use tensorflow ; then
+	if [[ -e "/usr/$(get_libdir)/ffmpeg/scripts/convert.py" ]] ; then
 		local alg
 		for alg in $(get_algs) ; do
 			rm -f "${alg}.model"
 			[[ "${alg}" == "vespcn-mc" ]] && continue # Conversion broken
 	# The prebuilt .models are missing the FFMPEGDNNNATIVE header.
-			if [[ -e "/usr/$(get_libdir)/ffmpeg/scripts/convert.py" ]] ; then
-				edo ${EPYTHON} "/usr/$(get_libdir)/ffmpeg/scripts/convert.py" "${alg}.pb"
-			fi
+			edo ${EPYTHON} "/usr/$(get_libdir)/ffmpeg/scripts/convert.py" "${alg}.pb"
 		done
-		if [[ -e "/usr/$(get_libdir)/ffmpeg/scripts/tf_sess_config.py" ]] ; then
-			edo ${EPYTHON} "/usr/$(get_libdir)/ffmpeg/scripts/tf_sess_config.py" | sed -e "/a serialized protobuf string/d" > "sess_config"
-		fi
+	fi
+	if [[ -e "/usr/$(get_libdir)/ffmpeg/scripts/tf_sess_config.py" ]] ; then
+		edo ${EPYTHON} "/usr/$(get_libdir)/ffmpeg/scripts/tf_sess_config.py" | sed -e "/a serialized protobuf string/d" > "sess_config"
 	fi
 }
 
