@@ -482,23 +482,9 @@ einfo "CWD:\t"$(pwd)
 	done
 }
 
-convert_all_pb_to_model() {
-einfo "Converting .pb to .model"
-	local alg
-	for alg in $(get_algs) ; do
-		${EPYTHON} "${S}/python/convert.py" \
-			--infmt tensorflow \
-			--outdir . \
-			"${alg}.pb" \
-			|| die
-	# The above produces ./${alg}.model
-	done
-}
-
 train() {
 	generate_datasets
 	train_algs
-	use convert && convert_all_pb_to_model
 }
 
 src_compile() {
