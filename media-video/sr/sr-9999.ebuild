@@ -141,7 +141,6 @@ DEPEND+="
 "
 BDEPEND+="
 	>=media-video/ffmpeg-4[tensorflow?]
-	media-video/ffmpeg:=
 	!pretrained? (
 		${PYTHON_DEPS}
 		>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
@@ -430,6 +429,7 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-9999-skip-unpack.patch"
 		eapply "${FILESDIR}/${PN}-9999-tensorflow2-compat.patch"
 		eapply "${FILESDIR}/${PN}-9999-use-pillow-resize.patch"
+		eapply "${FILESDIR}/${PN}-9999-remove-scene-changes-arg.patch"
 
 		sed -i -e "1aset -e" "${S}/generate_datasets.sh" || die
 		if use espcn || use srcnn ; then
