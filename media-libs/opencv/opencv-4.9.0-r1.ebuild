@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# U20, U22
+
 _MULTILIB_WRAPPED_HEADERS=( # {{{
 	# [opencv4]
 	"/usr/include/opencv4/opencv2/cvconfig.h"
@@ -169,7 +171,11 @@ CPU_FEATURES_MAP=(
 	"cpu_flags_x86_sse4_2:SSE4_2"
 	"cpu_flags_x86_ssse3:SSSE3"
 )
+GSTREAMER_PV="1.16.2"
 PYTHON_COMPAT=( "python3_"{10..12} )
+OPENEXR2_PV="2.5.7 2.3.0"
+QT5_PV="5.12.8"
+QT6_PV="6.2.4"
 
 inherit cuda java-pkg-opt-2 java-ant-2 cmake-multilib flag-o-matic python-r1
 inherit toolchain-funcs virtualx
@@ -376,67 +382,109 @@ REQUIRED_USE+="
 		!tbb
 	)
 "
+gen_openexr_rdepend() {
+	local ver
+	for ver in ${OPENEXR2_PV[@]} ; do
+		echo "
+			(
+				~dev-libs/imath-${ver}
+				~media-libs/openexr-${ver}
+			)
+		"
+	done
+}
+CUDA_DEPEND="
+		|| (
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
+		dev-util/nvidia-cuda-toolkit:=
+"
 RDEPEND="
-	app-arch/bzip2[${MULTILIB_USEDEP}]
-	dev-libs/protobuf:=[${MULTILIB_USEDEP}]
-	sys-libs/zlib[${MULTILIB_USEDEP}]
+	(
+		|| (
+			>=dev-libs/protobuf-3.19.1:0/3.21[${MULTILIB_USEDEP}]
+		)
+		dev-libs/protobuf:=[${MULTILIB_USEDEP}]
+	)
+	>=app-arch/bzip2-1.0.8[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.3.0[${MULTILIB_USEDEP}]
 	cuda? (
-		<dev-util/nvidia-cuda-toolkit-12.4:0=
+		${CUDA_DEPEND}
 	)
 	cudnn? (
+		=dev-libs/cudnn-8.6*:0/8
 		dev-libs/cudnn:=
 	)
 	contribdnn? (
+		>=dev-libs/flatbuffers-23.5.9:0
 		dev-libs/flatbuffers:=
 	)
 	contribhdf? (
+		>=sci-libs/hdf5-1.10.4:0
 		sci-libs/hdf5:=
 	)
 	contribfreetype? (
-		media-libs/freetype:2[${MULTILIB_USEDEP}]
-		media-libs/harfbuzz:=[${MULTILIB_USEDEP}]
+		(
+			>=media-libs/harfbuzz-2.6.4:0[${MULTILIB_USEDEP}]
+			media-libs/harfbuzz:=[${MULTILIB_USEDEP}]
+		)
+		>=media-libs/freetype-2.10.1:2[${MULTILIB_USEDEP}]
 	)
 	contribovis? (
-		>=dev-games/ogre-1.12:=
+		>=dev-games/ogre-1.12:0
+		dev-games/ogre:=
 	)
 	ffmpeg? (
-		media-video/ffmpeg:0=[${MULTILIB_USEDEP}]
+		|| (
+			media-video/ffmpeg:0/56.58.58[${MULTILIB_USEDEP}]
+		)
+		media-video/ffmpeg:=[${MULTILIB_USEDEP}]
 	)
 	gdal? (
+		>=sci-libs/gdal-3.0.4:0
 		sci-libs/gdal:=
 	)
 	gflags? (
+		>=dev-cpp/gflags-2.2.2:0[${MULTILIB_USEDEP}]
 		dev-cpp/gflags:=[${MULTILIB_USEDEP}]
 	)
 	glog? (
+		>=dev-cpp/glog-0.4.0:0[${MULTILIB_USEDEP}]
 		dev-cpp/glog:=[${MULTILIB_USEDEP}]
 	)
 	gphoto2? (
+		>=media-libs/libgphoto2-2.5.24:0[${MULTILIB_USEDEP}]
 		media-libs/libgphoto2:=[${MULTILIB_USEDEP}]
 	)
 	gstreamer? (
-		media-libs/gstreamer:1.0[${MULTILIB_USEDEP}]
-		media-libs/gst-plugins-base:1.0[${MULTILIB_USEDEP}]
+		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	gtk3? (
-		dev-libs/glib:2[${MULTILIB_USEDEP}]
-		x11-libs/gtk+:3[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-2.64.6:2[${MULTILIB_USEDEP}]
+		>=x11-libs/gtk+-3.24.18:3[${MULTILIB_USEDEP}]
 	)
 	ieee1394? (
-		media-libs/libdc1394:=[${MULTILIB_USEDEP}]
-		sys-libs/libraw1394[${MULTILIB_USEDEP}]
+		(
+			>=media-libs/libdc1394-2.2.6:2[${MULTILIB_USEDEP}]
+			media-libs/libdc1394:=[${MULTILIB_USEDEP}]
+		)
+		>=sys-libs/libraw1394-2.1.2:0[${MULTILIB_USEDEP}]
 	)
 	java? (
 		>=virtual/jre-1.8:*
 	)
 	jpeg? (
+		>=media-libs/libjpeg-turbo-2.1.3:0[${MULTILIB_USEDEP}]
 		media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
 		!jasper? (
-			media-libs/openjpeg:2=[${MULTILIB_USEDEP}]
+			>=media-libs/openjpeg-2.5.0:2[${MULTILIB_USEDEP}]
+			media-libs/openjpeg:=[${MULTILIB_USEDEP}]
 		)
 		jasper? (
+			>=media-libs/jasper-1.900.1:0
 			media-libs/jasper:=
 		)
 	)
@@ -449,10 +497,10 @@ RDEPEND="
 			)
 		)
 		atlas? (
-			sci-libs/atlas
+			>=sci-libs/atlas-3.10.3
 		)
 		mkl? (
-			sci-libs/mkl
+			>=sci-libs/mkl-2020.0.166
 		)
 	)
 	opencl? (
@@ -460,6 +508,9 @@ RDEPEND="
 		dev-util/opencl-headers
 	)
 	openexr? (
+		|| (
+			$(gen_openexr_rdepend)
+		)
 		dev-libs/imath:=
 		media-libs/openexr:=
 	)
@@ -468,50 +519,58 @@ RDEPEND="
 		virtual/glu[${MULTILIB_USEDEP}]
 	)
 	png? (
-		media-libs/libpng:0=[${MULTILIB_USEDEP}]
+		>=media-libs/libpng-1.6.37:0[${MULTILIB_USEDEP}]
+		media-libs/libpng:=[${MULTILIB_USEDEP}]
 	)
 	python? (
 		${PYTHON_DEPS}
+		>=dev-python/numpy-1.16.5:0[${PYTHON_USEDEP}]
 		dev-python/numpy:=[${PYTHON_USEDEP}]
 	)
 	qt5? (
-		dev-qt/qtgui:5
-		dev-qt/qtwidgets:5
-		dev-qt/qttest:5
-		dev-qt/qtconcurrent:5
-		opengl? ( dev-qt/qtopengl:5 )
+		>=dev-qt/qtgui-${QT5_PV}:5
+		>=dev-qt/qtwidgets-${QT5_PV}:5
+		>=dev-qt/qttest-${QT5_PV}:5
+		>=dev-qt/qtconcurrent-${QT5_PV}:5
+		opengl? (
+			>=dev-qt/qtopengl-${QT5_PV}:5
+		)
 	)
 	!qt5? (
 		qt6? (
-			dev-qt/qtbase:6[gui,widgets,concurrent,opengl?]
+			>=dev-qt/qtbase-${QT6_PV}:6[gui,widgets,concurrent,opengl?]
 		)
 	)
 	quirc? (
-		media-libs/quirc
+		>=media-libs/quirc-1.1:0
 	)
 	tesseract? (
-		app-text/tesseract[opencl=,${MULTILIB_USEDEP}]
+		>=app-text/tesseract-4.1.1:0[opencl=,${MULTILIB_USEDEP}]
 	)
 	tbb? (
+		>=dev-cpp/tbb-2020.2[${MULTILIB_USEDEP}]
 		dev-cpp/tbb:=[${MULTILIB_USEDEP}]
 	)
 	tiff? (
+		>=media-libs/tiff-4.2.0:0[${MULTILIB_USEDEP}]
 		media-libs/tiff:=[${MULTILIB_USEDEP}]
 	)
 	v4l? (
-		>=media-libs/libv4l-0.8.3[${MULTILIB_USEDEP}]
+		>=media-libs/libv4l-0.8.3:0[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
-		media-libs/libva[${MULTILIB_USEDEP}]
+		>=media-libs/libva-2.7.0:0[${MULTILIB_USEDEP}]
 	)
 	vtk? (
-		sci-libs/vtk:=[rendering,cuda=]
+		>=sci-libs/vtk-7.1.1:0[rendering,cuda=]
+		sci-libs/vtk:=
 	)
 	webp? (
+		>=media-libs/libwebp-1.3.2:0[${MULTILIB_USEDEP}]
 		media-libs/libwebp:=[${MULTILIB_USEDEP}]
 	)
 	xine? (
-		media-libs/xine-lib
+		>=media-libs/xine-lib-1.2.9:1
 	)
 "
 DEPEND="
@@ -527,19 +586,19 @@ DEPEND="
 DEPEND+="
 	test? (
 		gstreamer? (
-			media-plugins/gst-plugins-jpeg[${MULTILIB_USEDEP}]
-			media-plugins/gst-plugins-x264[${MULTILIB_USEDEP}]
+			>=media-plugins/gst-plugins-jpeg-${GSTREAMER_PV}[${MULTILIB_USEDEP}]
+			>=media-plugins/gst-plugins-x264-${GSTREAMER_PV}[${MULTILIB_USEDEP}]
 		)
 	)
 "
 BDEPEND="
-	dev-util/patchelf
+	>=dev-util/patchelf-0.10
 	virtual/pkgconfig
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:0=
+		${CUDA_DEPEND}
 	)
 	doc? (
-		app-text/doxygen[dot]
+		>=app-text/doxygen-1.8.17[dot]
 		python? (
 			dev-python/beautifulsoup4[${PYTHON_USEDEP}]
 		)
