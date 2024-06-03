@@ -153,6 +153,7 @@ _MULTILIB_WRAPPED_HEADERS=( # {{{
 	"/usr/include/opencv4/opencv2/wechat_qrcode.hpp"
 ) # }}}
 # TODO make this only relevant for binhost
+CMAKE_PV="3.26"
 CPU_FEATURES_MAP=(
 	"cpu_flags_arm_neon:NEON"
 	"cpu_flags_arm_vfpv3:VFPV3"
@@ -601,7 +602,7 @@ DEPEND+="
 	)
 "
 BDEPEND="
-	>=dev-build/cmake-3.15
+	>=dev-build/cmake-${CMAKE_PV}
 	>=dev-util/patchelf-0.10
 	virtual/pkgconfig
 	cuda? (
@@ -886,7 +887,7 @@ multilib_src_configure() {
 	# opencv uses both ${CMAKE_INSTALL_LIBDIR} and ${LIB_SUFFIX} to set	\
 	# its destination libdir						\
 		-DLIB_SUFFIX=
-		-DMIN_VER_CMAKE="3.26"
+		-DMIN_VER_CMAKE="${CMAKE_PV}"
 		-DOPENCV_DOC_INSTALL_PATH="share/doc/${P}"
 		-DOPENCV_DOWNLOAD_TRIES_LIST="0"
 		-DOPENCV_ENABLE_MEMORY_SANITIZER=$(usex debug)

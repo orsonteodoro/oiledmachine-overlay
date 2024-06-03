@@ -154,6 +154,7 @@ _MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/opencv4/opencv2/wechat_qrcode.hpp"
 )
 ADE_PV="0.1.2a" # branch master
+CMAKE_PV="3.26"
 DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f" # branch dnn_samples_face_detector_20170830
 FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12" # branch contrib_face_alignment_20170818
 GSTREAMER_PV="1.16.2"
@@ -533,7 +534,7 @@ DEPEND="
 	)
 "
 BDEPEND="
-	>=dev-build/cmake-3.15
+	>=dev-build/cmake-${CMAKE_PV}
 	>=dev-util/patchelf-0.10
 	virtual/pkgconfig
 "
@@ -769,7 +770,7 @@ multilib_src_configure() {
 	# opencv uses both ${CMAKE_INSTALL_LIBDIR} and ${LIB_SUFFIX} to set its \
 	# destination libdir							\
 		-DLIB_SUFFIX=
-		-DMIN_VER_CMAKE="3.26"
+		-DMIN_VER_CMAKE="${CMAKE_PV}"
 		-DOPENCV_DOC_INSTALL_PATH=
 		-DOPENCV_ENABLE_MEMORY_SANITIZER=$(usex debug)
 		-DOPENCV_ENABLE_NONFREE=$(usex non-free)
