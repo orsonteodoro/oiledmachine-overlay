@@ -108,7 +108,8 @@
       Enable qrcode decoding via <pkg>media-libs/quirc</pkg>
     </flag>
     <flag name="tbb">
-      Enable multithreading with the Intel Threads Building Block (<pkg>dev-cpp/tbb</pkg>)
+      Enable multithreading with the Intel® Threading Building Blocks
+      (<pkg>dev-cpp/tbb</pkg>)
     </flag>
     <flag name="tesseract">
       Use Google's OCR Engine
