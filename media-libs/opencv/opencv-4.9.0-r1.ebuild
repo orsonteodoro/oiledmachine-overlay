@@ -263,7 +263,7 @@ IUSE+="
 "
 # image
 IUSE+="
-	gdal jasper jpeg jpeg2k openexr png quirc tesseract tiff webp
+	gdal jasper jpeg jpeg2k openexr png quirc spng tesseract tiff webp
 "
 # gui
 IUSE+="
@@ -828,158 +828,159 @@ multilib_src_configure() {
 	filter-lto
 
 	local mycmakeargs=(
-		-DBUILD_ANDROID_EXAMPLES="no"
-		#-DBUILD_ANDROID_SERVICE="no"
-		-DBUILD_CUDA_STUBS="$(multilib_native_usex cuda)"
-		-DBUILD_DOCS="$(usex doc)"						# It doesn't install anyways.
-		-DBUILD_EXAMPLES="$(multilib_native_usex examples)"
-		-DBUILD_FAT_JAVA_LIB="no"
-		-DBUILD_IPP_IW="no"
-		-DBUILD_ITT="no"
-		-DBUILD_JAVA="$(multilib_native_usex java)"				# Ant needed, no compile flag
-		-DBUILD_opencv_apps="$(usex opencvapps)"
-		-DBUILD_opencv_cudalegacy="no"
-		-DBUILD_opencv_features2d="$(usex features2d)"
-		-DBUILD_opencv_gapi=$(usex ffmpeg yes "$(usex gstreamer)")
-		-DBUILD_opencv_java_bindings_generator="$(usex java)"
-		-DBUILD_opencv_js="no"
-		-DBUILD_opencv_js_bindings_generator="no"
-		-DBUILD_opencv_objc_bindings_generator="no"
-		-DBUILD_opencv_python2="no"
-		-DBUILD_opencv_ts="$(usex test)"
-		-DBUILD_opencv_video=$(usex ffmpeg yes "$(usex gstreamer)")
-		-DBUILD_opencv_videoio=$(usex ffmpeg yes "$(usex gstreamer)")
-		#-DBUILD_opencv_world="yes"
-		-DBUILD_PACKAGE="no"
-		-DBUILD_PERF_TESTS="no"
-		-DBUILD_PROTOBUF="no"
-		-DBUILD_SHARED_LIBS="yes"
-		-DBUILD_TESTS="$(multilib_native_usex test)"
+		-DBUILD_ANDROID_EXAMPLES=OFF
+		#-DBUILD_ANDROID_SERVICE=OFF
+		-DBUILD_CUDA_STUBS=$(multilib_native_usex cuda)
+		-DBUILD_DOCS=$(usex doc)"						# It doesn't install anyways.
+		-DBUILD_EXAMPLES="$(multilib_native_usex examples)
+		-DBUILD_FAT_JAVA_LIB=OFF
+		-DBUILD_IPP_IW=OFF
+		-DBUILD_ITT=OFF
+		-DBUILD_JAVA=$(multilib_native_usex java)				# Ant needed, no compile flag
+		-DBUILD_opencv_apps=$(usex opencvapps)
+		-DBUILD_opencv_cudalegacy=OFF
+		-DBUILD_opencv_features2d=$(usex features2d)
+		-DBUILD_opencv_gapi=$(usex ffmpeg ON $(usex gstreamer))
+		-DBUILD_opencv_java_bindings_generator=$(usex java)
+		-DBUILD_opencv_js=OFF
+		-DBUILD_opencv_js_bindings_generator=OFF
+		-DBUILD_opencv_objc_bindings_generator=OFF
+		-DBUILD_opencv_python2=OFF
+		-DBUILD_opencv_ts=$(usex test)
+		-DBUILD_opencv_video=$(usex ffmpeg ON $(usex gstreamer))
+		-DBUILD_opencv_videoio=$(usex ffmpeg ON $(usex gstreamer))
+		#-DBUILD_opencv_world=ON
+		-DBUILD_PACKAGE=OFF
+		-DBUILD_PERF_TESTS=OFF
+		-DBUILD_PROTOBUF=OFF
+		-DBUILD_SHARED_LIBS=ON
+		-DBUILD_TESTS=$(multilib_native_usex test)
 	# bug 733796, but PCH is a risky game in CMake anyway \
-		-DBUILD_USE_SYMLINKS="yes"
-		-DBUILD_WITH_DEBUG_INFO="$(usex debug)"
-		-DBUILD_WITH_DYNAMIC_IPP="no"
-		#-DBUILD_WITH_STATIC_CRT="no"
+		-DBUILD_USE_SYMLINKS=ON
+		-DBUILD_WITH_DEBUG_INFO=$(usex debug)
+		-DBUILD_WITH_DYNAMIC_IPP=OFF
+		#-DBUILD_WITH_STATIC_CRT=OFF
 		-DCMAKE_CXX_STANDARD=17							# For protobuf
 		-DCMAKE_POLICY_DEFAULT_CMP0148="OLD"					# FindPythonInterp
 		-DCUDA_NPP_LIBRARY_ROOT_DIR=$(usex cuda "${EPREFIX}/opt/cuda" "")
 		-DCV_TRACE="$(usex debug)"
 		-DDNN_PLUGIN_LIST="all"
-		#-DENABLE_CCACHE="no"
-		-DENABLE_COVERAGE="no"
+		#-DENABLE_CCACHE=OFF
+		-DENABLE_COVERAGE=OFF
 		-DENABLE_DOWNLOAD=yes
-		-DENABLE_IMPL_COLLECTION="no"
-		-DENABLE_INSTRUMENTATION="no"
-		-DENABLE_NOISY_WARNINGS="$(usex debug)"
-		-DENABLE_PRECOMPILED_HEADERS="no"
-		-DENABLE_PROFILING="no"
-		-DENABLE_SOLUTION_FOLDERS="no"
-		-DGENERATE_ABI_DESCRIPTOR="no"
-		-DHAVE_opencv_java="$(multilib_native_usex java)"
+		-DENABLE_IMPL_COLLECTION=OFF
+		-DENABLE_INSTRUMENTATION=OFF
+		-DENABLE_NOISY_WARNINGS=$(usex debug)
+		-DENABLE_PRECOMPILED_HEADERS=OFF
+		-DENABLE_PROFILING=OFF
+		-DENABLE_SOLUTION_FOLDERS=OFF
+		-DGENERATE_ABI_DESCRIPTOR=OFF
+		-DHAVE_opencv_java=$(multilib_native_usex java)
 		-DHIGHGUI_PLUGIN_LIST="all"
-		#-DINSTALL_ANDROID_EXAMPLES="no"
-		-DINSTALL_BIN_EXAMPLES="$(multilib_native_usex examples)"
-		-DINSTALL_CREATE_DISTRIB="no"
-		-DINSTALL_C_EXAMPLES="$(multilib_native_usex examples)"
-		-DINSTALL_TESTS="$(multilib_native_usex testprograms)"
-		-DINSTALL_TO_MANGLED_PATHS="no"
+		#-DINSTALL_ANDROID_EXAMPLES=OFF
+		-DINSTALL_BIN_EXAMPLES=$(multilib_native_usex examples)
+		-DINSTALL_CREATE_DISTRIB=OFF
+		-DINSTALL_C_EXAMPLES=$(multilib_native_usex examples)
+		-DINSTALL_TESTS=$(multilib_native_usex testprograms)
+		-DINSTALL_TO_MANGLED_PATHS=OFF
 	# opencv uses both ${CMAKE_INSTALL_LIBDIR} and ${LIB_SUFFIX} to set	\
 	# its destination libdir						\
 		-DLIB_SUFFIX=
 		-DMIN_VER_CMAKE="3.26"
 		-DOPENCV_DOC_INSTALL_PATH="share/doc/${P}"
 		-DOPENCV_DOWNLOAD_TRIES_LIST="0"
-		-DOPENCV_ENABLE_MEMORY_SANITIZER="$(usex debug)"
-		-DOPENCV_ENABLE_NONFREE="$(usex non-free)"
+		-DOPENCV_ENABLE_MEMORY_SANITIZER=$(usex debug)
+		-DOPENCV_ENABLE_NONFREE=$(usex non-free)
 		-DOPENCV_EXTRA_MODULES_PATH=$(usex contrib "${WORKDIR}/${PN}_contrib-${PV}/modules" "")
-		-DOPENCV_GENERATE_PKGCONFIG="yes"
+		-DOPENCV_GENERATE_PKGCONFIG=ON
 		-DOPENCV_SAMPLES_BIN_INSTALL_PATH="libexec/${PN}/bin/samples"
 	# NOTE do this so testprograms do not fail TODO adjust path in code \
 		-DOPENCV_TEST_DATA_INSTALL_PATH="share/${PN}$(ver_cut 1)/testdata"
 		-DOPENCV_TEST_INSTALL_PATH="libexec/${PN}/bin/test"
-		-DOPENCV_WARNINGS_ARE_ERRORS="no"
+		-DOPENCV_WARNINGS_ARE_ERRORS=OFF
 		-DOpenGL_GL_PREFERENCE="GLVND"
-		-DProtobuf_MODULE_COMPATIBLE="yes"
-		-DPROTOBUF_UPDATE_FILES="yes"
+		-DProtobuf_MODULE_COMPATIBLE=ON
+		-DPROTOBUF_UPDATE_FILES=ON
 		-DVIDEOIO_PLUGIN_LIST="all"
-		-DWITH_1394="$(usex ieee1394)"
-		-DWITH_ARAVIS="no"
-		#-DWITH_AVFOUNDATION="no"						# IOS
-		-DWITH_CLP="no"
-		-DWITH_CUDA="$(multilib_native_usex cuda)"
-		-DWITH_CUBLAS="$(multilib_native_usex cuda)"
-		-DWITH_CUDNN="$(multilib_native_usex cudnn)"
-		-DWITH_CUFFT="$(multilib_native_usex cuda)"
-		-DWITH_DIRECTX="no"
-		#-DWITH_DSHOW="yes"							# Direct show supp
-		-DWITH_EIGEN="$(usex eigen)"
-		-DWITH_FFMPEG="$(usex ffmpeg)"
-		-DWITH_FLATBUFFERS="$(multilib_native_usex contribdnn)"
-		-DWITH_GDAL="$(multilib_native_usex gdal)"
-		-DWITH_GDCM="no"
-		-DWITH_GIGEAPI="no"
-		-DWITH_GPHOTO2="$(usex gphoto2)"
-		-DWITH_GSTREAMER="$(usex gstreamer)"
+		-DWITH_1394=$(usex ieee1394)
+		-DWITH_ARAVIS=OFF
+		#-DWITH_AVFOUNDATION=OFF						# IOS
+		-DWITH_CLP=OFF
+		-DWITH_CUDA=$(multilib_native_usex cuda)
+		-DWITH_CUBLAS=$(multilib_native_usex cuda)
+		-DWITH_CUDNN=$(multilib_native_usex cudnn)
+		-DWITH_CUFFT=$(multilib_native_usex cuda)
+		-DWITH_DIRECTX=OFF
+		#-DWITH_DSHOW=ON							# Direct show supp
+		-DWITH_EIGEN=$(usex eigen)
+		-DWITH_FFMPEG=$(usex ffmpeg)
+		-DWITH_FLATBUFFERS=$(multilib_native_usex contribdnn)
+		-DWITH_GDAL=$(multilib_native_usex gdal)
+		-DWITH_GDCM=OFF
+		-DWITH_GIGEAPI=OFF
+		-DWITH_GPHOTO2=$(usex gphoto2)
+		-DWITH_GSTREAMER=$(usex gstreamer)
 		-DWITH_GTK="$(usex gtk3)"
-		-DWITH_GTK_2_X="no"							# We only want GTK3 nowadays
-		-DWITH_INTELPERC="no"
-		-DWITH_IPP="no"
-		-DWITH_IPP_A="no"
-		-DWITH_ITT="no"								# 3dparty libs itt_notify
-		-DWITH_JASPER="$(multilib_native_usex jasper)"
-		-DWITH_JPEG="$(usex jpeg)"
-		-DWITH_LAPACK="$(multilib_native_usex lapack)"
-		-DWITH_LIBV4L="$(usex v4l)"
-		-DWITH_MATLAB="no"
-		-DWITH_MSMF="no"
-		-DWITH_NVCUVENC="no"							# TODO needs NVIDIA Video Codec SDK
+		-DWITH_GTK_2_X=OFF							# We only want GTK3 nowadays
+		-DWITH_INTELPERC=OFF
+		-DWITH_IPP=OFF
+		-DWITH_IPP_A=OFF
+		-DWITH_ITT=OFF								# 3dparty libs itt_notify
+		-DWITH_JASPER=$(multilib_native_usex jasper)
+		-DWITH_JPEG=$(usex jpeg)
+		-DWITH_LAPACK=$(multilib_native_usex lapack)
+		-DWITH_LIBV4L=$(usex v4l)
+		-DWITH_MATLAB=OFF
+		-DWITH_MSMF=OFF
+		-DWITH_NVCUVENC=OFF							# TODO needs NVIDIA Video Codec SDK
 	# NOTE set this via MYCMAKEARGS if needed \
-		-DWITH_NVCUVID="no"							# TODO needs NVIDIA Video Codec SDK
-		-DWITH_OPENCL="$(usex opencl)"
-		-DWITH_OPENCL_SVM="no" # "$(usex opencl)"
-		-DWITH_OPENEXR="$(multilib_native_usex openexr)"
-		-DWITH_OPENGL="$(usex opengl)"
-		-DWITH_OPENJPEG="$(usex jpeg2k)"
-		-DWITH_OPENMP=$(usex !tbb "$(usex openmp)")
-		-DWITH_OPENNI="no"							# Not packaged
-		-DWITH_OPENNI2="no"							# Not packaged
-		-DWITH_OPENVX="no"
-		-DWITH_PNG="$(usex png)"
-		-DWITH_PROTOBUF="yes"
-		-DWITH_PTHREADS_PF="yes"
-		-DWITH_PVAPI="no"
-		#-DWITH_QTKIT="no"
-		#-DWITH_QUICKTIME="no"
-		-DWITH_QUIRC="$(usex quirc)"
-		-DWITH_TBB="$(usex tbb)"
-		-DWITH_TIFF="$(usex tiff)"
-		-DWITH_UNICAP="no"							# Not packaged
-		-DWITH_V4L="$(usex v4l)"
-		-DWITH_VA="$(usex vaapi)"
+		-DWITH_NVCUVID=OFF							# TODO needs NVIDIA Video Codec SDK
+		-DWITH_OPENCL=$(usex opencl)
+		-DWITH_OPENCL_SVM=OFF # "$(usex opencl)"
+		-DWITH_OPENEXR=$(multilib_native_usex openexr)
+		-DWITH_OPENGL=$(usex opengl)
+		-DWITH_OPENJPEG=$(usex jpeg2k)
+		-DWITH_OPENMP=$(usex !tbb $(usex openmp))
+		-DWITH_OPENNI=OFF							# Not packaged
+		-DWITH_OPENNI2=OFF							# Not packaged
+		-DWITH_OPENVX=OFF
+		-DWITH_PNG=$(usex png)
+		-DWITH_PROTOBUF=ON
+		-DWITH_PTHREADS_PF=ON
+		-DWITH_PVAPI=OFF
+		#-DWITH_QTKIT=OFF
+		#-DWITH_QUICKTIME=OFF
+		-DWITH_QUIRC=$(usex quirc)
+		-DWITH_SPNG=$(usex spng)
+		-DWITH_TBB=$(usex tbb)
+		-DWITH_TIFF=$(usex tiff)
+		-DWITH_UNICAP=OFF							# Not packaged
+		-DWITH_V4L=$(usex v4l)
+		-DWITH_VA=$(usex vaapi)
 		-DWITH_VA_INTEL=$(usex vaapi "$(usex video_cards_intel)")
-		-DWITH_VFW="no"								# Video windows support
-		-DWITH_VTK="$(multilib_native_usex vtk)"
-		-DWITH_WEBP="$(usex webp)"
-		-DWITH_WIN32UI="no"							# Windows only
-		-DWITH_XIMEA="no"							# Windows only
-		-DWITH_XINE="$(multilib_native_usex xine)"
+		-DWITH_VFW=OFF								# Video windows support
+		-DWITH_VTK=$(multilib_native_usex vtk)
+		-DWITH_WEBP=$(usex webp)
+		-DWITH_WIN32UI=OFF							# Windows only
+		-DWITH_XIMEA=OFF							# Windows only
+		-DWITH_XINE=$(multilib_native_usex xine)
 	)
 
 	if use qt5 ; then
 		mycmakeargs+=(
-			-DCMAKE_DISABLE_FIND_PACKAGE_Qt6="yes"
+			-DCMAKE_DISABLE_FIND_PACKAGE_Qt6=ON
 			-DWITH_QT="$(multilib_native_usex qt5)"
 		)
 	elif use qt6 ; then
 		mycmakeargs+=(
-			-DCMAKE_DISABLE_FIND_PACKAGE_Qt5="yes"
+			-DCMAKE_DISABLE_FIND_PACKAGE_Qt5=ON
 			-DWITH_QT="$(multilib_native_usex qt6)"
 		)
 	else
 		mycmakeargs+=(
-			-DCMAKE_DISABLE_FIND_PACKAGE_Qt5="yes"
-			-DCMAKE_DISABLE_FIND_PACKAGE_Qt6="yes"
-			-DWITH_QT="no"
+			-DCMAKE_DISABLE_FIND_PACKAGE_Qt5=ON
+			-DCMAKE_DISABLE_FIND_PACKAGE_Qt6=ON
+			-DWITH_QT=OFF
 		)
 	fi
 
@@ -1002,7 +1003,7 @@ multilib_src_configure() {
 	if [[ "${MERGE_TYPE}" != "buildonly" ]] ; then
 		mycmakeargs+=(
 			-DCPU_DISPATCH=
-			-DOPENCV_CPU_OPT_IMPLIES_IGNORE="yes"
+			-DOPENCV_CPU_OPT_IMPLIES_IGNORE=ON
 		)
 	fi
 
@@ -1019,7 +1020,7 @@ multilib_src_configure() {
 
 		if multilib_is_native_abi && use !tesseract ; then
 			mycmakeargs+=(
-				-DCMAKE_DISABLE_FIND_PACKAGE_Tesseract="yes"
+				-DCMAKE_DISABLE_FIND_PACKAGE_Tesseract=ON
 			)
 		fi
 	fi
@@ -1035,13 +1036,13 @@ multilib_src_configure() {
 		export CUDAHOSTCXX
 		export CUDAARCHS
 		mycmakeargs+=(
-			-DENABLE_CUDA_FIRST_CLASS_LANGUAGE="yes"
+			-DENABLE_CUDA_FIRST_CLASS_LANGUAGE=ON
 		)
 	fi
 
 	if use ffmpeg ; then
 		mycmakeargs+=(
-			-DOPENCV_GAPI_GSTREAMER="no"
+			-DOPENCV_GAPI_GSTREAMER=OFF
 		)
 	fi
 
@@ -1057,26 +1058,26 @@ multilib_src_configure() {
 	if use opencl ; then
 		if has_version "sci-libs/clfft" ; then
 			mycmakeargs+=(
-				-DWITH_OPENCLAMDFFT="yes"
+				-DWITH_OPENCLAMDFFT=ON
 			)
 		else
 			mycmakeargs+=(
-				-DWITH_OPENCLAMDFFT="no"
+				-DWITH_OPENCLAMDFFT=OFF
 			)
 		fi
 		if has_version "sci-libs/clblas" ; then
 			mycmakeargs+=(
-				-DWITH_OPENCLAMDBLAS="yes"
+				-DWITH_OPENCLAMDBLAS=ON
 			)
 		else
 			mycmakeargs+=(
-				-DWITH_OPENCLAMDBLAS="no"
+				-DWITH_OPENCLAMDBLAS=OFF
 			)
 		fi
 	else
 		mycmakeargs+=(
-			-DWITH_OPENCLAMDBLAS="no"
-			-DWITH_OPENCLAMDFFT="no"
+			-DWITH_OPENCLAMDBLAS=OFF
+			-DWITH_OPENCLAMDFFT=OFF
 		)
 	fi
 
@@ -1098,8 +1099,8 @@ multilib_src_configure() {
 	# Set all python variables to load the correct distro paths.
 			local mycmakeargs=(
 				"${mycmakeargs[@]}"
-				-DBUILD_opencv_python3="yes"
-				-DBUILD_opencv_python_bindings_generator="yes"
+				-DBUILD_opencv_python3=ON
+				-DBUILD_opencv_python_bindings_generator=ON
 				-DBUILD_opencv_python_tests="$(usex test)"
 				-DINSTALL_PYTHON_EXAMPLES="$(usex examples)"
 	# python_setup alters PATH and sets this as wrapper to the correct	\
@@ -1112,11 +1113,11 @@ multilib_src_configure() {
 		python_foreach_impl python_configure
 	else
 		mycmakeargs+=(
-			-DBUILD_opencv_python3="no"
-			-DBUILD_opencv_python_bindings_generator="no"
-			-DBUILD_opencv_python_tests="no"
-			-DINSTALL_PYTHON_EXAMPLES="no"
-			-DPYTHON_EXECUTABLE="no"
+			-DBUILD_opencv_python3=OFF
+			-DBUILD_opencv_python_bindings_generator=OFF
+			-DBUILD_opencv_python_tests=OFF
+			-DINSTALL_PYTHON_EXAMPLES=OFF
+			-DPYTHON_EXECUTABLE=OFF
 		)
 		cmake_src_configure
 	fi

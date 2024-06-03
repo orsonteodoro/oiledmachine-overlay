@@ -245,7 +245,7 @@ ${CPU_FEATURES_MAP[@]%:*}
 contrib contribcvv contribdnn contribfreetype contribhdf contribovis contribsfm
 contribxfeatures2d cuda cudnn debug dnnsamples +eigen examples +features2d
 ffmpeg gdal gflags glog gphoto2 gstreamer gtk3 ieee1394 jpeg jpeg2k lapack
-non-free opencl openexr opengl openmp opencvapps png +python qt5 qt6 tesseract
+non-free opencl openexr opengl openmp opencvapps png +python qt5 qt6 spng tesseract
 testprograms tbb tiff vaapi v4l vtk webp xine video_cards_intel
 ebuild-revision-3
 "
@@ -759,7 +759,7 @@ multilib_src_configure() {
 		-DENABLE_PROFILING=OFF
 		-DENABLE_SOLUTION_FOLDERS=OFF
 		-DGENERATE_ABI_DESCRIPTOR=OFF
-		-DHAVE_opencv_java=$(multilib_native_usex java YES NO)
+		-DHAVE_opencv_java=$(multilib_native_usex java ON OFF)
 		#-DINSTALL_ANDROID_EXAMPLES=OFF
 		-DINSTALL_CREATE_DISTRIB=OFF
 		-DINSTALL_PYTHON_EXAMPLES=$(multilib_native_usex examples)
@@ -811,7 +811,7 @@ multilib_src_configure() {
 		-DWITH_LIBV4L=$(usex v4l)
 		-DWITH_MATLAB=OFF
 		-DWITH_MSMF=OFF
-		-DWITH_NVCUVID="no"
+		-DWITH_NVCUVID=OFF
 		-DWITH_OPENCL=$(usex opencl)
 		-DWITH_OPENCL_SVM=OFF
 		-DWITH_OPENCLAMDBLAS=$(usex opencl)
@@ -830,6 +830,7 @@ multilib_src_configure() {
 		#-DWITH_QUICKTIME=OFF
 		-DWITH_QUIRC=OFF					# We do not have dependencies
 		#-DWITH_QTKIT=OFF
+		-DWITH_SPNG=$(usex spng)
 		-DWITH_TBB=$(usex tbb)
 		-DWITH_TIFF=$(usex tiff)
 		-DWITH_UNICAP=OFF					# Not packaged
