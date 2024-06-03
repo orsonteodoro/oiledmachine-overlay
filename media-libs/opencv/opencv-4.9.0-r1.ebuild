@@ -171,7 +171,7 @@ CPU_FEATURES_MAP=(
 )
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit cuda cmake-multilib flag-o-matic java-pkg-opt-2 java-ant-2 python-r1
+inherit cuda java-pkg-opt-2 java-ant-2 cmake-multilib flag-o-matic python-r1
 inherit toolchain-funcs virtualx
 
 if [[ ${PV} = *9999* ]] ; then
@@ -239,6 +239,7 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 IUSE="
 	debug doc +eigen gflags glog java non-free opencvapps +python test
 	testprograms
+	ebuild-revision-1
 "
 # modules
 IUSE+="
@@ -1171,7 +1172,7 @@ multilib_src_install() {
 			if ldd "${ED}/usr/$(get_libdir)/${l}" | grep -F -q "libtbb.so.2" ; then
 	# TBB legacy
 einfo "Fixing rpath for ${ED}/usr/$(get_libdir)/${l}"
-				patchelf --add-rpath "/usr/$(get_libdir)/tbb/2/libtbb.so" "${ED}/usr/$(get_libdir)/${l}" || die
+				patchelf --add-rpath "/usr/$(get_libdir)/tbb/2" "${ED}/usr/$(get_libdir)/${l}" || die
 			elif ldd "${ED}/usr/$(get_libdir)/${l}" | grep -F -q "libtbb.so.12" ; then
 	# oneTBB
 				:

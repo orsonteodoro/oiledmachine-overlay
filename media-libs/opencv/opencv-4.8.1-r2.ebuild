@@ -191,7 +191,7 @@ CPU_FEATURES_MAP=(
 	${X86_CPU_FEATURES[@]}
 )
 
-inherit cuda cmake-multilib flag-o-matic java-pkg-opt-2 java-ant-2 python-r1
+inherit cuda java-pkg-opt-2 java-ant-2 cmake-multilib flag-o-matic python-r1
 inherit toolchain-funcs
 
 KEYWORDS="amd64 ~arm arm64 ~loong ~ppc ~ppc64 ~riscv x86"
@@ -237,6 +237,7 @@ contribxfeatures2d cuda cudnn debug dnnsamples +eigen examples +features2d
 ffmpeg gdal gflags glog gphoto2 gstreamer gtk3 ieee1394 jpeg jpeg2k lapack
 non-free opencl openexr opengl openmp opencvapps png +python qt5 qt6 tesseract
 testprograms tbb tiff vaapi v4l vtk webp xine video_cards_intel
+ebuild-revision-1
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
 # will silently disable it without the user knowing, which defeats the
@@ -928,7 +929,7 @@ multilib_src_install() {
 			if ldd "${ED}/usr/$(get_libdir)/${l}" | grep -F -q "libtbb.so.2" ; then
 	# TBB legacy
 einfo "Fixing rpath for ${ED}/usr/$(get_libdir)/${l}"
-				patchelf --add-rpath "/usr/$(get_libdir)/tbb/2/libtbb.so" "${ED}/usr/$(get_libdir)/${l}" || die
+				patchelf --add-rpath "/usr/$(get_libdir)/tbb/2" "${ED}/usr/$(get_libdir)/${l}" || die
 			elif ldd "${ED}/usr/$(get_libdir)/${l}" | grep -F -q "libtbb.so.12" ; then
 	# oneTBB
 				:
