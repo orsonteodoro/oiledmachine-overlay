@@ -165,9 +165,9 @@ CPU_FEATURES_MAP=(
 	"cpu_flags_x86_sse:SSE"   # (always available on 64-bit CPUs)
 	"cpu_flags_x86_sse2:SSE2" # (always available on 64-bit CPUs)
 	"cpu_flags_x86_sse3:SSE3"
-	"cpu_flags_x86_ssse3:SSSE3"
 	"cpu_flags_x86_sse4_1:SSE4_1"
 	"cpu_flags_x86_sse4_2:SSE4_2"
+	"cpu_flags_x86_ssse3:SSSE3"
 )
 PYTHON_COMPAT=( "python3_"{10..12} )
 

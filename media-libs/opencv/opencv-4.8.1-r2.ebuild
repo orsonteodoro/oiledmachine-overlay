@@ -178,9 +178,9 @@ X86_CPU_FEATURES_RAW=(
 	"sse:SSE"
 	"sse2:SSE2"
 	"sse3:SSE3"
-	"ssse3:SSSE3"
 	"sse4_1:SSE4_1"
 	"sse4_2:SSE4_2"
+	"ssse3:SSSE3"
 )
 X86_CPU_FEATURES=(
 	${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_}
