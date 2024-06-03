@@ -173,7 +173,8 @@ CPU_FEATURES_MAP=(
 )
 GSTREAMER_PV="1.16.2"
 PYTHON_COMPAT=( "python3_"{10..12} )
-OPENEXR2_PV="2.5.7 2.3.0"
+OPENEXR2_PV="2.5.10 2.5.9 2.5.8 2.5.7 2.4.3 2.4.2 2.4.1 2.4.0 2.3.0"
+OPENEXR3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4 3.1.3 3.0.5 3.0.4 3.0.3 3.0.2 3.0.1"
 QT5_PV="5.12.8"
 QT6_PV="6.2.4"
 
@@ -385,6 +386,14 @@ REQUIRED_USE+="
 gen_openexr_rdepend() {
 	local ver
 	for ver in ${OPENEXR2_PV[@]} ; do
+		echo "
+			(
+				~dev-libs/imath-${ver}
+				~media-libs/openexr-${ver}
+			)
+		"
+	done
+	for ver in ${OPENEXR3_PV[@]} ; do
 		echo "
 			(
 				~dev-libs/imath-${ver}

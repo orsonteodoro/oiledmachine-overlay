@@ -5,7 +5,6 @@ EAPI=8
 
 # U20
 # CI does not test U22 *DEPENDs for this release.
-# DEPENDs that r
 
 _MULTILIB_WRAPPED_HEADERS=(
 	# [opencv4]
@@ -159,7 +158,8 @@ DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f" # br
 FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12" # branch contrib_face_alignment_20170818
 GSTREAMER_PV="1.16.2"
 NVIDIA_OPTICAL_FLOW_COMMIT="edb50da3cf849840d680249aa6dbef248ebce2ca" # branch nvof_2_0_bsd
-OPENEXR2_PV="2.5.7 2.3.0"
+OPENEXR2_PV="2.5.10 2.5.9 2.5.8 2.5.7 2.4.3 2.4.2 2.4.1 2.4.0 2.3.0"
+OPENEXR3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4 3.1.3 3.0.5 3.0.4 3.0.3 3.0.2 3.0.1"
 PYTHON_COMPAT=( "python3_"{10..12} )
 QRCODE_COMMIT="a8b69ccc738421293254aec5ddb38bd523503252" # branch wechat_qrcode_20210119
 QT5_PV="5.12.8"
@@ -349,6 +349,14 @@ REQUIRED_USE="
 gen_openexr_rdepend() {
 	local ver
 	for ver in ${OPENEXR2_PV[@]} ; do
+		echo "
+			(
+				~dev-libs/imath-${ver}
+				~media-libs/openexr-${ver}
+			)
+		"
+	done
+	for ver in ${OPENEXR3_PV[@]} ; do
 		echo "
 			(
 				~dev-libs/imath-${ver}
