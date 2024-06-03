@@ -791,7 +791,7 @@ multilib_src_configure() {
 		-DBUILD_WITH_DEBUG_INFO="$(usex debug)"
 		-DBUILD_WITH_DYNAMIC_IPP="no"
 		#-DBUILD_WITH_STATIC_CRT="no"
-		-DCMAKE_CXX_STANDARD=17 # For protobuf
+		-DCMAKE_CXX_STANDARD=17							# For protobuf
 		-DCMAKE_POLICY_DEFAULT_CMP0148="OLD"					# FindPythonInterp
 		-DCUDA_NPP_LIBRARY_ROOT_DIR=$(usex cuda "${EPREFIX}/opt/cuda" "")
 		-DCV_TRACE="$(usex debug)"
