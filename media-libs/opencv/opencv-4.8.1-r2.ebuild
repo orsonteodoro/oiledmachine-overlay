@@ -247,7 +247,7 @@ contribxfeatures2d cuda cudnn debug dnnsamples +eigen examples +features2d
 ffmpeg gdal gflags glog gphoto2 gstreamer gtk3 ieee1394 jpeg jpeg2k lapack
 non-free opencl openexr opengl openmp opencvapps png +python qt5 qt6 tesseract
 testprograms tbb tiff vaapi v4l vtk webp xine video_cards_intel
-ebuild-revision-2
+ebuild-revision-3
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
 # will silently disable it without the user knowing, which defeats the
@@ -525,7 +525,6 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-util/patchelf-0.10
 	eigen? (
 		>=dev-cpp/eigen-3.3.8-r1:3
 	)
@@ -534,6 +533,8 @@ DEPEND="
 	)
 "
 BDEPEND="
+	>=dev-build/cmake-3.15
+	>=dev-util/patchelf-0.10
 	virtual/pkgconfig
 "
 PATCHES=(

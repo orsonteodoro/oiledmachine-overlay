@@ -246,7 +246,7 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 IUSE="
 	debug doc +eigen gflags glog java non-free opencvapps +python test
 	testprograms
-	ebuild-revision-2
+	ebuild-revision-3
 "
 # modules
 IUSE+="
@@ -601,6 +601,7 @@ DEPEND+="
 	)
 "
 BDEPEND="
+	>=dev-build/cmake-3.15
 	>=dev-util/patchelf-0.10
 	virtual/pkgconfig
 	cuda? (
@@ -609,7 +610,7 @@ BDEPEND="
 	doc? (
 		>=app-text/doxygen-1.8.17[dot]
 		python? (
-			dev-python/beautifulsoup4[${PYTHON_USEDEP}]
+			>=dev-python/beautifulsoup4-4.8.2[${PYTHON_USEDEP}]
 		)
 	)
 "
