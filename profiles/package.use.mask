@@ -58,9 +58,6 @@ net-libs/webkit-gtk libbacktrace
 www-client/chromium qt6
 sys-kernel/ot-sources c2tcp deepcc orca
 
-# The training version is still WIP
-media-video/sr -pretrained
-
 # No rocr-runtime, llvm-roc version correspondance
 =sys-libs/libomp-18* llvm_targets_AMDGPU
 =sys-libs/libomp-13* llvm_targets_AMDGPU

@@ -1,6 +1,6 @@
 # This list can be used to force ON USE flags.
-# Copy the lines you need below to your /etc/portage/profile/package.use.mask
-# It will not work from the overlay directory.
+# Copy the - unmask lines you need below to your /etc/portage/profile/package.use.mask
+# - unmasking will not work from the overlay directory.
 
 # Allows to disable the 64 ABI
 www-client/firefox -abi_x86_64 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
@@ -17,4 +17,6 @@ dev-libs/libappimage system-boost
 app-arch/go-appimage systemd
 
 # Untrained untested
-media-video/sr pretrained
+#media-video/sr pretrained
+
+dev-python/cython -python_targets_pypy3
