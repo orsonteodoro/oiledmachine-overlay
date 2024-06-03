@@ -142,7 +142,7 @@ _MULTILIB_WRAPPED_HEADERS=( # {{{
 	"/usr/include/opencv4/opencv2/text/swt_text_detection.hpp"
 	"/usr/include/opencv4/opencv2/text/textDetector.hpp"
 
-			# [qt5,qt6]
+	# [qt5,qt6]
 	"/usr/include/opencv4/opencv2/viz.hpp"
 	"/usr/include/opencv4/opencv2/viz/types.hpp"
 	"/usr/include/opencv4/opencv2/viz/viz3d.hpp"
