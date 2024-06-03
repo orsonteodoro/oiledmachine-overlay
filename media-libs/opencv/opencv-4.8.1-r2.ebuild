@@ -229,6 +229,8 @@ SRC_URI="
 DESCRIPTION="A collection of algorithms and sample code for various computer vision problems"
 HOMEPAGE="https://opencv.org"
 LICENSE="Apache-2.0"
+RESTRICT="
+"
 SLOT="0/${PV}" # subslot = libopencv* soname version
 IUSE="
 ${CPU_FEATURES_MAP[@]%:*}
@@ -237,7 +239,7 @@ contribxfeatures2d cuda cudnn debug dnnsamples +eigen examples +features2d
 ffmpeg gdal gflags glog gphoto2 gstreamer gtk3 ieee1394 jpeg jpeg2k lapack
 non-free opencl openexr opengl openmp opencvapps png +python qt5 qt6 tesseract
 testprograms tbb tiff vaapi v4l vtk webp xine video_cards_intel
-ebuild-revision-1
+ebuild-revision-2
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
 # will silently disable it without the user knowing, which defeats the
@@ -920,17 +922,19 @@ multilib_src_install() {
 
 	# Fix TBB linking
 	if use tbb ; then
-		local L=(
+		local LIBPATHS=(
 			$(find "${ED}/usr/$(get_libdir)" -name "*.so*")
 		)
-		local l
-		for l in ${L[@]} ; do
-			[[ -L "${ED}/usr/$(get_libdir)/${l}" ]] && continue
-			if ldd "${ED}/usr/$(get_libdir)/${l}" | grep -F -q "libtbb.so.2" ; then
-	# TBB legacy
-einfo "Fixing rpath for ${ED}/usr/$(get_libdir)/${l}"
-				patchelf --add-rpath "/usr/$(get_libdir)/tbb/2" "${ED}/usr/$(get_libdir)/${l}" || die
-			elif ldd "${ED}/usr/$(get_libdir)/${l}" | grep -F -q "libtbb.so.12" ; then
+		local path
+		for path in ${LIBPATHS[@]} ; do
+			[[ -L "${path}" ]] && continue
+			if ldd "${path}" | grep -F -q "libtbb.so.2" ; then
+				if [[ -e "/usr/$(get_libdir)/tbb/2/libtbb.so.2" ]] ; then
+	# TBB legacy (oiledmachine-overlay ebuild fork)
+einfo "Fixing rpath for ${path}"
+					patchelf --add-rpath "/usr/$(get_libdir)/tbb/2" "${path}" || die
+				fi
+			elif ldd "${path}" | grep -F -q "libtbb.so.12" ; then
 	# oneTBB
 				:
 			fi

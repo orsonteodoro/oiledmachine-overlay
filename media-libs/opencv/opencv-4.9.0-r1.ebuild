@@ -239,7 +239,7 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 IUSE="
 	debug doc +eigen gflags glog java non-free opencvapps +python test
 	testprograms
-	ebuild-revision-1
+	ebuild-revision-2
 "
 # modules
 IUSE+="
@@ -1163,17 +1163,19 @@ multilib_src_install() {
 
 	# Fix TBB linking
 	if use tbb ; then
-		local L=(
+		local LIBPATHS=(
 			$(find "${ED}/usr/$(get_libdir)" -name "*.so*")
 		)
-		local l
-		for l in ${L[@]} ; do
-			[[ -L "${ED}/usr/$(get_libdir)/${l}" ]] && continue
-			if ldd "${ED}/usr/$(get_libdir)/${l}" | grep -F -q "libtbb.so.2" ; then
-	# TBB legacy
-einfo "Fixing rpath for ${ED}/usr/$(get_libdir)/${l}"
-				patchelf --add-rpath "/usr/$(get_libdir)/tbb/2" "${ED}/usr/$(get_libdir)/${l}" || die
-			elif ldd "${ED}/usr/$(get_libdir)/${l}" | grep -F -q "libtbb.so.12" ; then
+		local path
+		for path in ${LIBPATHS[@]} ; do
+			[[ -L "${path}" ]] && continue
+			if ldd "${path}" | grep -F -q "libtbb.so.2" ; then
+				if [[ -e "/usr/$(get_libdir)/tbb/2/libtbb.so.2" ]] ; then
+	# TBB legacy (oiledmachine-overlay ebuild fork)
+einfo "Fixing rpath for ${path}"
+					patchelf --add-rpath "/usr/$(get_libdir)/tbb/2" "${path}" || die
+				fi
+			elif ldd "${path}" | grep -F -q "libtbb.so.12" ; then
 	# oneTBB
 				:
 			fi
