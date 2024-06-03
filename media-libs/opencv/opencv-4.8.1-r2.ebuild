@@ -191,7 +191,7 @@ CPU_FEATURES_MAP=(
 	${X86_CPU_FEATURES[@]}
 )
 
-inherit cuda java-pkg-opt-2 java-ant-2 cmake-multilib flag-o-matic python-r1
+inherit cuda cmake-multilib flag-o-matic java-pkg-opt-2 java-ant-2 python-r1
 inherit toolchain-funcs
 
 KEYWORDS="amd64 ~arm arm64 ~loong ~ppc ~ppc64 ~riscv x86"

@@ -171,7 +171,7 @@ CPU_FEATURES_MAP=(
 )
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit cuda java-pkg-opt-2 java-ant-2 cmake-multilib flag-o-matic python-r1
+inherit cuda cmake-multilib flag-o-matic java-pkg-opt-2 java-ant-2 python-r1
 inherit toolchain-funcs virtualx
 
 if [[ ${PV} = *9999* ]] ; then
