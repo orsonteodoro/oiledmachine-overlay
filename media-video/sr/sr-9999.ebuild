@@ -29,7 +29,7 @@ FORMATS=(
 )
 PYTHON_COMPAT=( "python3_"{10..12} ) # Limited by tensorflow
 
-inherit edo git-r3 python-r1 security-scan
+inherit edo git-r3 python-single-r1 security-scan
 
 KEYWORDS="~amd64 ~x86"
 # Save outside sandbox to avoid redownloads
@@ -151,6 +151,14 @@ DEPEND+="
 	${RDEPEND}
 	!pretrained? (
 		${PYTHON_DEPS}
+		$(python_gen_cond_dep '
+			>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
+			dev-python/numpy[${PYTHON_USEDEP}]
+			dev-python/pillow[${PYTHON_USEDEP}]
+			dev-python/requests[${PYTHON_USEDEP}]
+			dev-python/tqdm[${PYTHON_USEDEP}]
+			media-libs/opencv[${PYTHON_USEDEP},ffmpeg?,gstreamer?,python]
+		')
 	)
 "
 gen_ffmpeg_bdepend1() {
@@ -172,10 +180,7 @@ gen_ffmpeg_bdepend2() {
 BDEPEND+="
 	!pretrained? (
 		${PYTHON_DEPS}
-		>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
 		app-crypt/rhash
-		dev-python/pillow[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},ffmpeg?,gstreamer?,python]
 		ffmpeg? (
 			|| (
 				$(gen_ffmpeg_bdepend2)
