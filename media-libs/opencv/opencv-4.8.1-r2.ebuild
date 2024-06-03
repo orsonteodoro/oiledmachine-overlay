@@ -779,19 +779,19 @@ multilib_src_configure() {
 
 	if use qt5 ; then
 		mycmakeargs+=(
-			-DWITH_QT=$(multilib_native_usex qt5 ON OFF)
 			-DCMAKE_DISABLE_FIND_PACKAGE_Qt6=ON
+			-DWITH_QT=$(multilib_native_usex qt5 ON OFF)
 		)
 	elif use qt6 ; then
 		mycmakeargs+=(
-			-DWITH_QT=$(multilib_native_usex qt6 ON OFF)
 			-DCMAKE_DISABLE_FIND_PACKAGE_Qt5=ON
+			-DWITH_QT=$(multilib_native_usex qt6 ON OFF)
 		)
 	else
 		mycmakeargs+=(
-			-DWITH_QT=OFF
 			-DCMAKE_DISABLE_FIND_PACKAGE_Qt5=ON
 			-DCMAKE_DISABLE_FIND_PACKAGE_Qt6=ON
+			-DWITH_QT=OFF
 		)
 	fi
 
@@ -859,8 +859,8 @@ multilib_src_configure() {
 
 		local NVCCFLAGS_OpenCV="${NVCCFLAGS// /\;}"
 		mycmakeargs+=(
-			-DOPENCV_CUDA_DETECTION_NVCC_FLAGS="-ccbin=$(cuda_gccdir)"
 			-DCUDA_NVCC_FLAGS="-forward-unknown-opts;${NVCCFLAGS_OpenCV//\"/}"
+			-DOPENCV_CUDA_DETECTION_NVCC_FLAGS="-ccbin=$(cuda_gccdir)"
 		)
 
 		use vtk && mycmakeargs+=(

@@ -898,19 +898,19 @@ multilib_src_configure() {
 
 	if use qt5 ; then
 		mycmakeargs+=(
-			-DWITH_QT="$(multilib_native_usex qt5)"
 			-DCMAKE_DISABLE_FIND_PACKAGE_Qt6="yes"
+			-DWITH_QT="$(multilib_native_usex qt5)"
 		)
 	elif use qt6 ; then
 		mycmakeargs+=(
-			-DWITH_QT="$(multilib_native_usex qt6)"
 			-DCMAKE_DISABLE_FIND_PACKAGE_Qt5="yes"
+			-DWITH_QT="$(multilib_native_usex qt6)"
 		)
 	else
 		mycmakeargs+=(
-			-DWITH_QT="no"
 			-DCMAKE_DISABLE_FIND_PACKAGE_Qt5="yes"
 			-DCMAKE_DISABLE_FIND_PACKAGE_Qt6="yes"
+			-DWITH_QT="no"
 		)
 	fi
 
