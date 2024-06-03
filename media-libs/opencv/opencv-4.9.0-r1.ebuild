@@ -1181,19 +1181,16 @@ multilib_src_test() {
 
 	if multilib_is_native_abi && use cuda ; then
 		cuda_add_sandbox -w
-		export OPENCV_PARALLEL_BACKEND="threads"
 		export DNN_BACKEND_OPENCV="cuda"
+		export OPENCV_PARALLEL_BACKEND="threads"
 	fi
 
 	opencv_test() {
+		export LIBGL_ALWAYS_SOFTWARE=true # A workaround for zink warnings
 		export OPENCV_CORE_PLUGIN_PATH="${BUILD_DIR}/lib"
 		export OPENCV_DNN_PLUGIN_PATH="${BUILD_DIR}/lib"
-		export OPENCV_VIDEOIO_PLUGIN_PATH="${BUILD_DIR}/lib"
-
 		export OPENCV_TEST_DATA_PATH="${WORKDIR}/${PN}_extra-${PV}/testdata"
-
-		# Work around zink warnings
-		export LIBGL_ALWAYS_SOFTWARE=true
+		export OPENCV_VIDEOIO_PLUGIN_PATH="${BUILD_DIR}/lib"
 		results=()
 		for test in "${BUILD_DIR}/bin/opencv_test_"* ; do
 			echo "${test}"
