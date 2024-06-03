@@ -152,8 +152,8 @@ _MULTILIB_WRAPPED_HEADERS=( # {{{
 
 	"/usr/include/opencv4/opencv2/wechat_qrcode.hpp"
 ) # }}}
-# TODO make this only relevant for binhost
 CMAKE_PV="3.26"
+# TODO make this only relevant for binhost \
 CPU_FEATURES_MAP=(
 	"cpu_flags_arm_neon:NEON"
 	"cpu_flags_arm_vfpv3:VFPV3"
