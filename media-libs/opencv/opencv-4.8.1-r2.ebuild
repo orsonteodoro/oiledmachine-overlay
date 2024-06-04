@@ -283,7 +283,7 @@ avif carotene contrib contribcvv contribdnn contribfreetype contribhdf
 contribovis contribsfm contribxfeatures2d cuda cudnn debug dnnsamples +eigen
 examples +features2d ffmpeg gdal gflags glog gphoto2 gstreamer gtk3 ieee1394
 jpeg jpeg2k lapack libaom non-free opencl openexr opengl openmp opencvapps
-openh264 openvx png +python qt5 qt6 rocm spng system-llvm tesseract
+openh264 openvx png +python qt5 qt6 rocm spng tesseract
 testprograms tbb tiff vaapi v4l vpx vtk wayland webp xine video_cards_intel
 ebuild-revision-3
 "
@@ -303,9 +303,6 @@ gen_rocm_required_use() {
 }
 REQUIRED_USE="
 	$(gen_rocm_required_use)
-	!system-llvm? (
-		rocm
-	)
 	?? (
 		carotene
 		openvx

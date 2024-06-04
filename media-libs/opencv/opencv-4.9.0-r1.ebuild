@@ -274,7 +274,7 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 # general options
 IUSE="
 	debug doc +eigen gflags glog java non-free opencvapps +python
-	system-llvm test testprograms
+	test testprograms
 	ebuild-revision-3
 "
 # hal for acceleration
@@ -328,9 +328,6 @@ gen_rocm_required_use() {
 }
 REQUIRED_USE="
 	$(gen_rocm_required_use)
-	!system-llvm? (
-		rocm
-	)
 	?? (
 		carotene
 		openvx
