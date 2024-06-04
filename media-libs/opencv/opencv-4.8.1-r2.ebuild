@@ -280,16 +280,20 @@ LICENSE="Apache-2.0"
 RESTRICT="
 "
 SLOT="0/${PV}" # subslot = libopencv* soname version
+# We assume not cross-compiling options enabled.
+# CI tests with +atlas -openblas for some jobs.
+# mkl not observed in CI.
 IUSE="
 ${CPU_FEATURES_MAP[@]%:*}
 ${ROCM_SLOTS[@]}
-avif carotene contrib contribcvv contribdnn contribfreetype contribhdf
-contribovis contribsfm contribxfeatures2d cuda cudnn debug dnnsamples +eigen
-examples +features2d ffmpeg gdal gflags glog gphoto2 gstreamer gtk3 ieee1394
-jpeg jpeg2k lapack libaom non-free opencl openexr opengl openmp opencvapps
-openh264 openvx png +python qt5 qt6 rocm spng system-flatbuffers tesseract
-testprograms tbb tiff vaapi v4l vpx vtk wayland webp xine video_cards_intel
-ebuild-revision-4
++atlas -avif +carotene contrib contribcvv contribdnn contribfreetype contribhdf
+contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
+-examples +features2d +ffmpeg -gdal gflags glog -gphoto2 +gstreamer +gtk3
++ieee1394 +java +jpeg +jpeg2k +lapack +libaom -mkl -non-free -openblas +opencl
++openexr -opengl -openmp +opencvapps +openh264 -openvx +png +python +quirc -qt5
+-qt6 rocm -spng -system-flatbuffers tesseract -testprograms -tbb +tiff +vaapi
++v4l +vpx +vtk -wayland +webp -xine video_cards_intel
+ebuild-revision-5
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
 # will silently disable it without the user knowing, which defeats the
@@ -441,6 +445,8 @@ gen_openexr_rdepend() {
 }
 # For ffmpeg version, see \
 # https://github.com/opencv/opencv_3rdparty/blob/7da61f0695eabf8972a2c302bf1632a3d99fb0d5/ffmpeg/download_src.sh#L24
+# For the commit above, see
+# https://github.com/opencv/opencv/blob/4.8.1/3rdparty/ffmpeg/ffmpeg.cmake#L3
 gen_rocm_rdepend() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
@@ -550,9 +556,22 @@ RDEPEND="
 		media-libs/openjpeg:=[${MULTILIB_USEDEP}]
 	)
 	lapack? (
-		>=virtual/lapack-3.10
-		virtual/cblas
-		virtual/lapacke
+		!atlas? (
+			!mkl? (
+				>=virtual/lapack-3.9.0
+				virtual/cblas
+				virtual/lapacke
+			)
+		)
+		atlas? (
+			>=sci-libs/atlas-3.10.3
+		)
+		mkl? (
+			>=sci-libs/mkl-2020.0.166
+		)
+		openblas? (
+			>=sci-libs/openblas-0.3.8
+		)
 	)
 	opencl? (
 		virtual/opencl[${MULTILIB_USEDEP}]
@@ -586,6 +605,9 @@ RDEPEND="
 		opengl? (
 			>=dev-qt/qtopengl-${QT5_PV}:5
 		)
+	)
+	quirc? (
+		>=media-libs/quirc-1.1:0
 	)
 	rocm? (
 		|| (
@@ -938,7 +960,7 @@ multilib_src_configure() {
 		-DWITH_PTHREADS_PF=ON
 		-DWITH_PVAPI=OFF
 		#-DWITH_QUICKTIME=OFF
-		-DWITH_QUIRC=OFF					# We do not have dependencies
+		-DWITH_QUIRC=$(usex quirc)
 		#-DWITH_QTKIT=OFF
 		-DWITH_SPNG=$(usex spng)
 		-DWITH_TBB=$(usex tbb)
@@ -946,7 +968,7 @@ multilib_src_configure() {
 		-DWITH_UNICAP=OFF					# Not packaged
 		-DWITH_V4L=$(usex v4l)
 		-DWITH_VA=$(usex vaapi)
-		-DWITH_VA_INTEL=$(usex vaapi $(usex video_cards_intel))
+		-DWITH_VA_INTEL=$(usex vaapi $(usex video_cards_intel))	# Default ON upstream
 		-DWITH_VFW=OFF						# Video windows support
 		-DWITH_VTK=$(multilib_native_usex vtk)
 		-DWITH_WAYLAND=$(usex wayland)
@@ -1036,7 +1058,7 @@ multilib_src_configure() {
 	# CPU flags should solve bug #633900
 	local CPU_BASELINE=""
 	local i
-	for i in "${CPU_FEATURES_MAP[@]}" ; do
+	for i in ${CPU_FEATURES_MAP[@]} ; do
 		local use_flag="${i%:*}"
 		local baseline_flag="${i#*:}"
 		if [[ "${ABI}" == "arm" ]] ; then
@@ -1082,6 +1104,14 @@ multilib_src_configure() {
 
 	# Workaround for bug 413429
 	tc-export CC CXX
+
+	if use mkl ; then
+		mycmakeargs+=(
+			-DLAPACK_IMPL="MKL"
+			-DMKL_WITH_OPENMP=$(usex !tbb $(usex openmp))
+			-DMKL_WITH_TBB=$(usex tbb)
+		)
+	fi
 
 	if multilib_is_native_abi && use cuda ; then
 		cuda_add_sandbox -w

@@ -275,45 +275,50 @@ RESTRICT="
 	)
 "
 SLOT="0/${PV}" # subslot = libopencv* soname version
+# We assume not cross-compiling options enabled.
 # general options
 IUSE="
-	debug doc +eigen gflags glog java non-free opencvapps +python
-	system-flatbuffers test testprograms
-	ebuild-revision-4
+	debug doc +eigen gflags glog +java -non-free +opencvapps +python
+	-system-flatbuffers test -testprograms
+	ebuild-revision-5
 "
 # hal for acceleration
 IUSE+="
-	carotene openvx
+	+carotene -openvx
 "
 # modules
 IUSE+="
 	contrib contribcvv contribdnn contribfreetype contribhdf contribovis
-	contribsfm contribxfeatures2d dnnsamples examples +features2d
+	contribsfm contribxfeatures2d dnnsamples -examples +features2d
 "
 # hardware
 IUSE+="
 	${ROCM_SLOTS[@]}
-	opencl cuda cudnn rocm video_cards_intel
+	+opencl -cuda -cudnn rocm video_cards_intel
 "
 # video
 IUSE+="
-	+ffmpeg gstreamer xine vaapi v4l gphoto2 ieee1394 libaom openh264 vpx
+	+ffmpeg +gstreamer -xine +vaapi +v4l -gphoto2 +ieee1394 +libaom
+	+openh264 +vpx
 "
 # image
 IUSE+="
-	avif gdal jasper jpeg jpeg2k openexr png quirc spng tesseract tiff webp
+	-avif -gdal +jasper +jpeg +jpeg2k +openexr +png -quirc -spng tesseract
+	+tiff +webp
 "
 # gui
 IUSE+="
-	gtk3 qt5 qt6 opengl vtk wayland
+	+gtk3 -qt5 -qt6 -opengl +vtk -wayland
 "
 # parallel
 IUSE+="
-	openmp tbb
+	-openmp -tbb
 "
 # lapack options
+# CI tests with +atlas -openblas for some jobs.
+# mkl not observed in CI.
 IUSE+="
-	atlas lapack mkl
+	+atlas +lapack -mkl -openblas
 "
 IUSE+="
 	${CPU_FEATURES_MAP[*]%:*}
@@ -480,6 +485,8 @@ CUDA_DEPEND="
 "
 # For ffmpeg version, see \
 # https://github.com/opencv/opencv_3rdparty/blob/fbac408a47977ee4265f39e7659d33f1dfef5216/ffmpeg/download_src.sh#L24
+# For the commit above, see
+# https://github.com/opencv/opencv/blob/4.9.0/3rdparty/ffmpeg/ffmpeg.cmake#L3
 gen_rocm_rdepend() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
@@ -589,8 +596,8 @@ RDEPEND="
 	lapack? (
 		!atlas? (
 			!mkl? (
+				>=virtual/lapack-3.9.0
 				virtual/cblas
-				>=virtual/lapack-3.10
 				virtual/lapacke
 			)
 		)
@@ -599,6 +606,9 @@ RDEPEND="
 		)
 		mkl? (
 			>=sci-libs/mkl-2020.0.166
+		)
+		openblas? (
+			>=sci-libs/openblas-0.3.8
 		)
 	)
 	opencl? (
@@ -938,8 +948,8 @@ multilib_src_configure() {
 		-DBUILD_ANDROID_EXAMPLES=OFF
 		#-DBUILD_ANDROID_SERVICE=OFF
 		-DBUILD_CUDA_STUBS=$(multilib_native_usex cuda)
-		-DBUILD_DOCS=$(usex doc)"						# It doesn't install anyways.
-		-DBUILD_EXAMPLES="$(multilib_native_usex examples)
+		-DBUILD_DOCS=$(usex doc)						# It doesn't install anyways.
+		-DBUILD_EXAMPLES=$(multilib_native_usex examples)
 		-DBUILD_FAT_JAVA_LIB=OFF
 		-DBUILD_IPP_IW=OFF
 		-DBUILD_ITT=OFF
@@ -970,7 +980,7 @@ multilib_src_configure() {
 		-DCMAKE_CXX_STANDARD=17							# For protobuf
 		-DCMAKE_POLICY_DEFAULT_CMP0148="OLD"					# FindPythonInterp
 		-DCUDA_NPP_LIBRARY_ROOT_DIR=$(usex cuda "${EPREFIX}/opt/cuda" "")
-		-DCV_TRACE="$(usex debug)"
+		-DCV_TRACE=$(usex debug)
 		-DDNN_PLUGIN_LIST="all"
 		#-DENABLE_CCACHE=OFF
 		-DENABLE_COVERAGE=OFF
@@ -1028,7 +1038,7 @@ multilib_src_configure() {
 		-DWITH_GIGEAPI=OFF
 		-DWITH_GPHOTO2=$(usex gphoto2)
 		-DWITH_GSTREAMER=$(usex gstreamer)
-		-DWITH_GTK="$(usex gtk3)"
+		-DWITH_GTK=$(usex gtk3)
 		-DWITH_GTK_2_X=OFF							# We only want GTK3 nowadays
 		-DWITH_INTELPERC=OFF
 		-DWITH_IPP=OFF
@@ -1044,7 +1054,7 @@ multilib_src_configure() {
 	# NOTE set this via MYCMAKEARGS if needed \
 		-DWITH_NVCUVID=OFF							# TODO needs NVIDIA Video Codec SDK
 		-DWITH_OPENCL=$(usex opencl)
-		-DWITH_OPENCL_SVM=OFF # "$(usex opencl)"
+		-DWITH_OPENCL_SVM=OFF # $(usex opencl)
 		-DWITH_OPENEXR=$(multilib_native_usex openexr)
 		-DWITH_OPENGL=$(usex opengl)
 		-DWITH_OPENJPEG=$(usex jpeg2k)
@@ -1064,7 +1074,7 @@ multilib_src_configure() {
 		-DWITH_UNICAP=OFF							# Not packaged
 		-DWITH_V4L=$(usex v4l)
 		-DWITH_VA=$(usex vaapi)
-		-DWITH_VA_INTEL=$(usex vaapi "$(usex video_cards_intel)")
+		-DWITH_VA_INTEL=$(usex vaapi $(usex video_cards_intel))			# Default ON upstream
 		-DWITH_VFW=OFF								# Video windows support
 		-DWITH_VTK=$(multilib_native_usex vtk)
 		-DWITH_WAYLAND=$(usex wayland)
@@ -1157,7 +1167,7 @@ multilib_src_configure() {
 
 	local CPU_BASELINE=""
 	local i
-	for i in "${CPU_FEATURES_MAP[@]}" ; do
+	for i in ${CPU_FEATURES_MAP[@]} ; do
 		local use_flag="${i%:*}"
 		local baseline_flag="${i#*:}"
 		if [[ "${ABI}" == "arm" ]] ; then
@@ -1266,7 +1276,7 @@ multilib_src_configure() {
 		)
 		if use vtk ; then
 			mycmakeargs+=(
-				-DVTK_MPI_NUMPROCS="$(nproc)" # TODO
+				-DVTK_MPI_NUMPROCS=$(nproc) # TODO
 			)
 		fi
 	fi
@@ -1372,7 +1382,9 @@ multilib_src_test() {
 			echo "${test}"
 			if ! "${test}" --gtest_color=yes --gtest_filter="-$(IFS=: ; echo "${CMAKE_SKIP_TESTS[*]}")" ; then
 
-				results+=( "$(basename ${test})" )
+				results+=(
+					"$(basename ${test})"
+				)
 
 				if [[ -z "${OPENCV_TEST_CONTINUE_ON_FAIL}" ]] ; then
 					eerror "${results[*]} failed"
