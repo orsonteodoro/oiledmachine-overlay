@@ -39,8 +39,8 @@
       Use <pkg>sci-libs/atlas</pkg> for blas, lapack and sparse blas routines
     </flag>
     <flag name="carotene">
-      Use the vendored carotene accelerator library for computer version on
-      arm/arm64.
+      Use the vendored carotene accelerator library for computer vision on
+      arm/arm64 with Tegra.
     </flag>
     <flag name="contrib">
       Install user contributed scripts from opencv_contrib (Experimental!)
@@ -118,14 +118,26 @@
     <flag name="jasper">
       Use <pkg>media-libs/jasper</pkg> for jpeg2k support
     </flag>
+    <flag name="kleidicv">
+      Enable optimized algorithms for ARMv8, ARMv9 CPUs.
+    </flag>
     <flag name="mkl">
       Use <pkg>sci-libs/mkl</pkg> for blas, lapack and sparse blas routines
     </flag>
     <flag name="non-free">
       Enable non-free components
     </flag>
+    <flag name="ndsrvp">
+      Enable optimized algorithms for RISC-V processors with P-extension (RVP).
+      (IN DEVELOPMENT UPSTREAM)
+
+      For progress, see https://github.com/opencv/opencv/pull/25167
+    </flag>
     <flag name="opencvapps">
       Enable compilation with opencvapps
+    </flag>
+    <flag name="openvx">
+      Enable hardware acceleration of computer vision via OpenVX.
     </flag>
     <flag name="quirc">
       Enable qrcode decoding via <pkg>media-libs/quirc</pkg>

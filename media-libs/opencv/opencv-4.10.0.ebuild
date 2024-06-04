@@ -195,6 +195,7 @@ CPU_FEATURES_MAP=(
 	"cpu_flags_x86_ssse3:SSSE3"
 )
 GSTREAMER_PV="1.16.2"
+KLEIDICV_PV="0.1.0"								# See https://github.com/opencv/opencv/blob/4.10.0/3rdparty/kleidicv/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{10..12} )
 OPENEXR2_PV="2.5.10 2.5.9 2.5.8 2.5.7 2.4.3 2.4.2 2.4.1 2.4.0 2.3.0"
 OPENEXR3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4 3.1.3 3.0.5 3.0.4 3.0.3 3.0.2 3.0.1"
@@ -243,6 +244,9 @@ else
 				https://github.com/${PN}/${PN}_3rdparty/archive/${DNN_SAMPLES_FACE_DETECTOR_COMMIT}.tar.gz
 					-> ${PN}_3rdparty-${DNN_SAMPLES_FACE_DETECTOR_COMMIT}.tar.gz
 			)
+			kleidicv? (
+				https://gitlab.arm.com/kleidi/kleidicv/-/archive/${KLEIDICV_PV}/kleidicv-${KLEIDICV_PV}.tar.gz
+			)
 		)
 		test? (
 			https://github.com/${PN}/${PN}_extra/archive/refs/tags/${PV}.tar.gz -> ${PN}_extra-${PV}.tar.gz
@@ -261,9 +265,13 @@ RESTRICT="
 SLOT="0/${PV}" # subslot = libopencv* soname version
 # general options
 IUSE="
-	debug doc carotene +eigen gflags glog java non-free opencvapps +python
+	debug doc +eigen gflags glog java non-free opencvapps +python
 	test testprograms zlib-ng
 	ebuild-revision-3
+"
+# hal for acceleration
+IUSE+="
+	carotene kleidicv ndsrvp openvx
 "
 # modules
 IUSE+="
@@ -300,6 +308,12 @@ IUSE+="
 unset ARM_CPU_FEATURES PPC_CPU_FEATURES X86_CPU_FEATURES_RAW X86_CPU_FEATURES
 
 REQUIRED_USE="
+	?? (
+		carotene
+		kleidicv
+		ndsrvp
+		openvx
+	)
 	?? (
 		gtk3
 		|| (
@@ -862,6 +876,13 @@ src_prepare() {
 		# set encoding so even this cmake build will pick it up.
 		export ANT_OPTS+=" -Dfile.encoding=iso-8859-1"
 	fi
+
+	if use kleidicv ; then
+eerror "The kleidicv USE flag is still Work In Progress (WIP)"
+		die
+		# FIXME:
+		#"${WORKDIR}/kleidicv-${KLEIDICV_PV}" -> ""
+	fi
 }
 
 multilib_src_configure() {
@@ -985,7 +1006,6 @@ multilib_src_configure() {
 		-DWITH_OPENMP=$(usex !tbb $(usex openmp))
 		-DWITH_OPENNI=OFF							# Not packaged
 		-DWITH_OPENNI2=OFF							# Not packaged
-		-DWITH_OPENVX=OFF
 		-DWITH_PNG=$(usex png)
 		-DWITH_PROTOBUF=ON
 		-DWITH_PTHREADS_PF=ON
@@ -1020,15 +1040,52 @@ multilib_src_configure() {
 		)
 	fi
 
+	if [[ "${ARCH}" == "arm64" ]] ; then
+		mycmakeargs+=(
+			-DWITH_KLEIDICV=$(multilib_native_usex kleidicv)
+		)
+	else
+		mycmakeargs+=(
+			-DWITH_KLEIDICV=OFF
+		)
+	fi
+
+	if [[ "${ARCH}" == "riscv" ]] ; then
+		mycmakeargs+=(
+			-DWITH_NDSRVP=$(usex ndsrvp)
+		)
+	else
+		mycmakeargs+=(
+			-DWITH_NDSRVP=OFF
+		)
+	fi
+
+
+	has_openvx_support() {
+		has_version "sci-libs/MIVisionX" && return 0
+		#has_version "dev-util/openvino" && return 0 # TODO package
+		return 1
+	}
+
+	if use openvx && has_openvx_support ; then
+		mycmakeargs+=(
+			-DWITH_OPENVX=ON
+		)
+	else
+		mycmakeargs+=(
+			-DWITH_OPENVX=OFF
+		)
+	fi
+
 	if use qt5 ; then
 		mycmakeargs+=(
 			-DCMAKE_DISABLE_FIND_PACKAGE_Qt6=ON
-			-DWITH_QT="$(multilib_native_usex qt5)"
+			-DWITH_QT=$(multilib_native_usex qt5)
 		)
 	elif use qt6 ; then
 		mycmakeargs+=(
 			-DCMAKE_DISABLE_FIND_PACKAGE_Qt5=ON
-			-DWITH_QT="$(multilib_native_usex qt6)"
+			-DWITH_QT=$(multilib_native_usex qt6)
 		)
 	else
 		mycmakeargs+=(
@@ -1064,13 +1121,13 @@ multilib_src_configure() {
 
 	if use contrib ; then
 		mycmakeargs+=(
-			-DBUILD_opencv_cvv="$(usex contribcvv)"
-			-DBUILD_opencv_dnn="$(usex contribdnn)"
-			-DBUILD_opencv_freetype="$(usex contribfreetype)"
-			-DBUILD_opencv_hdf="$(multilib_native_usex contribhdf)"
-			-DBUILD_opencv_ovis="$(usex contribovis)"
-			-DBUILD_opencv_sfm="$(usex contribsfm)"
-			-DBUILD_opencv_xfeatures2d="$(usex contribxfeatures2d)"
+			-DBUILD_opencv_cvv=$(usex contribcvv)
+			-DBUILD_opencv_dnn=$(usex contribdnn)
+			-DBUILD_opencv_freetype=$(usex contribfreetype)
+			-DBUILD_opencv_hdf=$(multilib_native_usex contribhdf)
+			-DBUILD_opencv_ovis=$(usex contribovis)
+			-DBUILD_opencv_sfm=$(usex contribsfm)
+			-DBUILD_opencv_xfeatures2d=$(usex contribxfeatures2d)
 		)
 
 		if multilib_is_native_abi && use !tesseract ; then
@@ -1104,8 +1161,8 @@ multilib_src_configure() {
 	if use mkl ; then
 		mycmakeargs+=(
 			-DLAPACK_IMPL="MKL"
-			-DMKL_WITH_OPENMP="$(usex !tbb "$(usex openmp)")"
-			-DMKL_WITH_TBB="$(usex tbb)"
+			-DMKL_WITH_OPENMP=$(usex !tbb $(usex openmp))
+			-DMKL_WITH_TBB=$(usex tbb)
 		)
 	fi
 
@@ -1156,8 +1213,8 @@ multilib_src_configure() {
 				"${mycmakeargs[@]}"
 				-DBUILD_opencv_python3=ON
 				-DBUILD_opencv_python_bindings_generator=ON
-				-DBUILD_opencv_python_tests="$(usex test)"
-				-DINSTALL_PYTHON_EXAMPLES="$(usex examples)"
+				-DBUILD_opencv_python_tests=$(usex test)
+				-DINSTALL_PYTHON_EXAMPLES=$(usex examples)
 	# python_setup alters PATH and sets this as wrapper to the correct	\
 	# interpreter we are building for					\
 				-DPYTHON_DEFAULT_EXECUTABLE="${EPYTHON}"

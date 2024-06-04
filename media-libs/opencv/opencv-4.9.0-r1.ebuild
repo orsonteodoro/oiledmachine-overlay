@@ -261,9 +261,13 @@ RESTRICT="
 SLOT="0/${PV}" # subslot = libopencv* soname version
 # general options
 IUSE="
-	carotene debug doc +eigen gflags glog java non-free opencvapps +python
-	test testprograms
+	debug doc +eigen gflags glog java non-free opencvapps +python test
+	testprograms
 	ebuild-revision-3
+"
+# hal for acceleration
+IUSE+="
+	carotene openvx
 "
 # modules
 IUSE+="
@@ -300,6 +304,10 @@ IUSE+="
 unset ARM_CPU_FEATURES PPC_CPU_FEATURES X86_CPU_FEATURES_RAW X86_CPU_FEATURES
 
 REQUIRED_USE="
+	?? (
+		carotene
+		openvx
+	)
 	?? (
 		gtk3
 		|| (
@@ -985,7 +993,6 @@ multilib_src_configure() {
 		-DWITH_OPENMP=$(usex !tbb $(usex openmp))
 		-DWITH_OPENNI=OFF							# Not packaged
 		-DWITH_OPENNI2=OFF							# Not packaged
-		-DWITH_OPENVX=OFF
 		-DWITH_PNG=$(usex png)
 		-DWITH_PROTOBUF=ON
 		-DWITH_PTHREADS_PF=ON
@@ -1019,15 +1026,31 @@ multilib_src_configure() {
 		)
 	fi
 
+	has_openvx_support() {
+		has_version "sci-libs/MIVisionX" && return 0
+		#has_version "dev-util/openvino" && return 0 # TODO package
+		return 1
+	}
+
+	if use openvx && has_openvx_support ; then
+		mycmakeargs+=(
+			-DWITH_OPENVX=ON
+		)
+	else
+		mycmakeargs+=(
+			-DWITH_OPENVX=OFF
+		)
+	fi
+
 	if use qt5 ; then
 		mycmakeargs+=(
 			-DCMAKE_DISABLE_FIND_PACKAGE_Qt6=ON
-			-DWITH_QT="$(multilib_native_usex qt5)"
+			-DWITH_QT=$(multilib_native_usex qt5)
 		)
 	elif use qt6 ; then
 		mycmakeargs+=(
 			-DCMAKE_DISABLE_FIND_PACKAGE_Qt5=ON
-			-DWITH_QT="$(multilib_native_usex qt6)"
+			-DWITH_QT=$(multilib_native_usex qt6)
 		)
 	else
 		mycmakeargs+=(
@@ -1063,13 +1086,13 @@ multilib_src_configure() {
 
 	if use contrib ; then
 		mycmakeargs+=(
-			-DBUILD_opencv_cvv="$(usex contribcvv)"
-			-DBUILD_opencv_dnn="$(usex contribdnn)"
-			-DBUILD_opencv_freetype="$(usex contribfreetype)"
-			-DBUILD_opencv_hdf="$(multilib_native_usex contribhdf)"
-			-DBUILD_opencv_ovis="$(usex contribovis)"
-			-DBUILD_opencv_sfm="$(usex contribsfm)"
-			-DBUILD_opencv_xfeatures2d="$(usex contribxfeatures2d)"
+			-DBUILD_opencv_cvv=$(usex contribcvv)
+			-DBUILD_opencv_dnn=$(usex contribdnn)
+			-DBUILD_opencv_freetype=$(usex contribfreetype)
+			-DBUILD_opencv_hdf=$(multilib_native_usex contribhdf)
+			-DBUILD_opencv_ovis=$(usex contribovis)
+			-DBUILD_opencv_sfm=$(usex contribsfm)
+			-DBUILD_opencv_xfeatures2d=$(usex contribxfeatures2d)
 		)
 
 		if multilib_is_native_abi && use !tesseract ; then
@@ -1103,8 +1126,8 @@ multilib_src_configure() {
 	if use mkl ; then
 		mycmakeargs+=(
 			-DLAPACK_IMPL="MKL"
-			-DMKL_WITH_OPENMP="$(usex !tbb "$(usex openmp)")"
-			-DMKL_WITH_TBB="$(usex tbb)"
+			-DMKL_WITH_OPENMP=$(usex !tbb $(usex openmp))
+			-DMKL_WITH_TBB=$(usex tbb)
 		)
 	fi
 
@@ -1155,8 +1178,8 @@ multilib_src_configure() {
 				"${mycmakeargs[@]}"
 				-DBUILD_opencv_python3=ON
 				-DBUILD_opencv_python_bindings_generator=ON
-				-DBUILD_opencv_python_tests="$(usex test)"
-				-DINSTALL_PYTHON_EXAMPLES="$(usex examples)"
+				-DBUILD_opencv_python_tests=$(usex test)
+				-DINSTALL_PYTHON_EXAMPLES=$(usex examples)
 	# python_setup alters PATH and sets this as wrapper to the correct	\
 	# interpreter we are building for					\
 				-DPYTHON_DEFAULT_EXECUTABLE="${EPYTHON}"

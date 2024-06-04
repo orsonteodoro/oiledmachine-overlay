@@ -270,8 +270,8 @@ avif carotene contrib contribcvv contribdnn contribfreetype contribhdf
 contribovis contribsfm contribxfeatures2d cuda cudnn debug dnnsamples +eigen
 examples +features2d ffmpeg gdal gflags glog gphoto2 gstreamer gtk3 ieee1394
 jpeg jpeg2k lapack libaom non-free opencl openexr opengl openmp opencvapps
-openh264 png +python qt5 qt6 spng tesseract testprograms tbb tiff vaapi v4l vpx
-vtk wayland webp xine video_cards_intel
+openh264 openvx png +python qt5 qt6 spng tesseract testprograms tbb tiff vaapi
+v4l vpx vtk wayland webp xine video_cards_intel
 ebuild-revision-3
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
@@ -279,6 +279,10 @@ ebuild-revision-3
 # purpose of the opengl use flag.
 # cuda needs contrib, bug #701712
 REQUIRED_USE="
+	?? (
+		carotene
+		openvx
+	)
 	?? (
 		gtk3
 		|| (
@@ -871,7 +875,6 @@ multilib_src_configure() {
 		-DWITH_OPENMP=$(usex !tbb $(usex openmp))
 		-DWITH_OPENNI=OFF					# Not packaged
 		-DWITH_OPENNI2=OFF					# Not packaged
-		-DWITH_OPENVX=OFF
 		-DWITH_PNG=$(usex png)
 		-DWITH_PROTOBUF=ON
 		-DWITH_PTHREADS_PF=ON
@@ -902,6 +905,22 @@ multilib_src_configure() {
 	else
 		mycmakeargs+=(
 			-DWITH_CAROTENE=OFF
+		)
+	fi
+
+	has_openvx_support() {
+		has_version "sci-libs/MIVisionX" && return 0
+		#has_version "dev-util/openvino" && return 0 # TODO package
+		return 1
+	}
+
+	if use openvx && has_openvx_support ; then
+		mycmakeargs+=(
+			-DWITH_OPENVX=ON
+		)
+	else
+		mycmakeargs+=(
+			-DWITH_OPENVX=OFF
 		)
 	fi
 
@@ -1002,7 +1021,7 @@ multilib_src_configure() {
 	# Set all python variables to load the correct distro paths.
 			local mycmakeargs=(
 				"${mycmakeargs[@]}"
-				-DINSTALL_PYTHON_EXAMPLES="$(usex examples)"
+				-DINSTALL_PYTHON_EXAMPLES=$(usex examples)
 	# python_setup alters PATH and sets this as wrapper to the correct	\
 	# interpreter we are building for					\
 				-DPYTHON_DEFAULT_EXECUTABLE="${EPYTHON}"
