@@ -235,12 +235,6 @@ SRC_URI="
 	contrib? (
 		https://github.com/${PN}/${PN}_contrib/archive/${PV}.tar.gz
 			-> ${P}_contrib.tar.gz
-		dnnsamples? (
-			https://github.com/${PN}/${PN}_3rdparty/archive/${QRCODE_COMMIT}.tar.gz
-				-> ${PN}_3rdparty-${QRCODE_COMMIT}.tar.gz
-			https://github.com/${PN}/${PN}_3rdparty/archive/${DNN_SAMPLES_FACE_DETECTOR_COMMIT}.tar.gz
-				-> ${PN}_3rdparty-${DNN_SAMPLES_FACE_DETECTOR_COMMIT}.tar.gz
-		)
 		contribdnn? (
 			https://github.com/${PN}/${PN}_3rdparty/archive/${FACE_ALIGNMENT_COMMIT}.tar.gz
 				-> ${PN}_3rdparty-${FACE_ALIGNMENT_COMMIT}.tar.gz
@@ -254,6 +248,12 @@ SRC_URI="
 		cuda? (
 			https://github.com/NVIDIA/NVIDIAOpticalFlowSDK/archive/${NVIDIA_OPTICAL_FLOW_COMMIT}.tar.gz
 				-> NVIDIAOpticalFlowSDK-${NVIDIA_OPTICAL_FLOW_COMMIT}.tar.gz
+		)
+		dnnsamples? (
+			https://github.com/${PN}/${PN}_3rdparty/archive/${QRCODE_COMMIT}.tar.gz
+				-> ${PN}_3rdparty-${QRCODE_COMMIT}.tar.gz
+			https://github.com/${PN}/${PN}_3rdparty/archive/${DNN_SAMPLES_FACE_DETECTOR_COMMIT}.tar.gz
+				-> ${PN}_3rdparty-${DNN_SAMPLES_FACE_DETECTOR_COMMIT}.tar.gz
 		)
 	)
 "
