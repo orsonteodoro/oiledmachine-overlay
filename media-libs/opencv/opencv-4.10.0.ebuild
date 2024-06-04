@@ -5,6 +5,9 @@ EAPI=8
 
 # U20, U22, U24
 
+# TODO package:
+# openvino
+
 _MULTILIB_WRAPPED_HEADERS=( # {{{
 	# [opencv4]
 	"/usr/include/opencv4/opencv2/cvconfig.h"
