@@ -39,7 +39,7 @@
       Use <pkg>sci-libs/atlas</pkg> for blas, lapack and sparse blas routines
     </flag>
     <flag name="carotene">
-      Use the vendored carotene computer vision accelerator library for the
+      Use the vendored carotene computer vision accelerator library for
       arm/arm64 with NVIDIA® Tegra®.
     </flag>
     <flag name="contrib">
@@ -77,13 +77,13 @@
       Support neon (arm32 only)
     </flag>
     <flag name="cpu_flags_arm_neon_bf16">
-      Support bf16 (arm64 only)
+      Support bf16 with neon (arm64 only)
     </flag>
     <flag name="cpu_flags_arm_neon_fp16">
-      Support fp16 (arm64 only)
+      Support fp16 with neon (arm64 only)
     </flag>
     <flag name="cpu_flags_arm_neon_dotprod">
-      Support dotprod (arm64 only)
+      Support dotprod with neon (arm64 only)
     </flag>
     <flag name="cpu_flags_arm_vfpv3">
       Support vfpv3 (arm32 only)
@@ -128,10 +128,12 @@
       Enable non-free components
     </flag>
     <flag name="ndsrvp">
-      Enable optimized algorithms for RISC-V processors with P-extension (RVP).
+      Enable optimized algorithms for RISC-V processors with P-extension (RVP)
+      using Andes (nds) compiler intrinsics.
       (IN DEVELOPMENT UPSTREAM)
 
       For progress, see https://github.com/opencv/opencv/pull/25167
+      For toolchain setup, see https://github.com/opencv/opencv/pull/25167#issuecomment-1981196359
     </flag>
     <flag name="opencvapps">
       Enable compilation with opencvapps

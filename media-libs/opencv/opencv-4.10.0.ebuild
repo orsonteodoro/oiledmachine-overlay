@@ -1098,9 +1098,9 @@ multilib_src_configure() {
 		)
 	fi
 
-	if [[ "${ARCH}" == "riscv" ]] ; then
+	if [[ "${ARCH}" == "riscv" && "${ABI}" =~ "lp64d" ]] ; then
 		mycmakeargs+=(
-			-DWITH_NDSRVP=$(usex ndsrvp)
+			-DWITH_NDSRVP=$(multilib_native_usex ndsrvp)
 		)
 	else
 		mycmakeargs+=(
