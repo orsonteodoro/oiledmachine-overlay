@@ -129,7 +129,7 @@
     </flag>
     <flag name="ndsrvp">
       Enable optimized algorithms for RISC-V processors with P-extension (RVP)
-      using Andes (nds) compiler intrinsics.
+      using Andes (nds) compiler intrinsics for lp64d ABI.
       (IN DEVELOPMENT UPSTREAM)
 
       For progress, see https://github.com/opencv/opencv/pull/25167
