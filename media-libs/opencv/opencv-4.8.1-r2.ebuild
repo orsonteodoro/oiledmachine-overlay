@@ -153,50 +153,73 @@ _MULTILIB_WRAPPED_HEADERS=(
 
 	"/usr/include/opencv4/opencv2/wechat_qrcode.hpp"
 )
-ADE_PV="0.1.2a" # branch master
+# From ocv_download()
+ADE_PV="0.1.2a"									# See https://github.com/opencv/opencv/blob/4.8.1/modules/gapi/cmake/DownloadADE.cmake#L2
 CMAKE_PV="3.26"
-DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f" # branch dnn_samples_face_detector_20170830
-FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12" # branch contrib_face_alignment_20170818
+DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f"	# See https://github.com/opencv/opencv_extra/blob/4.8.1/testdata/dnn/download_models.py#L311
+FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12"		# See https://github.com/opencv/opencv_contrib/blob/4.8.1/modules/face/CMakeLists.txt#L11
 GSTREAMER_PV="1.16.2"
-NVIDIA_OPTICAL_FLOW_COMMIT="edb50da3cf849840d680249aa6dbef248ebce2ca" # branch nvof_2_0_bsd
+NVIDIA_OPTICAL_FLOW_COMMIT="edb50da3cf849840d680249aa6dbef248ebce2ca"		# See https://github.com/opencv/opencv_contrib/blob/4.8.1/modules/cudaoptflow/CMakeLists.txt#L12
 OPENEXR2_PV="2.5.10 2.5.9 2.5.8 2.5.7 2.4.3 2.4.2 2.4.1 2.4.0 2.3.0"
 OPENEXR3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4 3.1.3 3.0.5 3.0.4 3.0.3 3.0.2 3.0.1"
 PYTHON_COMPAT=( "python3_"{10..12} )
-QRCODE_COMMIT="a8b69ccc738421293254aec5ddb38bd523503252" # branch wechat_qrcode_20210119
+QRCODE_COMMIT="a8b69ccc738421293254aec5ddb38bd523503252"			# See https://github.com/opencv/opencv_contrib/blob/4.8.1/modules/wechat_qrcode/CMakeLists.txt#L15
 QT5_PV="5.12.8"
 QT6_PV="6.2.4" # For U22 Only
-XFEATURES2D_BOOSTDESC_COMMIT="34e4206aef44d50e6bbcd0ab06354b52e7466d26" # branch contrib_xfeatures2d_boostdesc_20161012
-XFEATURES2D_VGG_COMMIT="fccf7cd6a4b12079f73bbfb21745f9babcd4eb1d" # branch contrib_xfeatures2d_vgg_20160317
+XFEATURES2D_BOOSTDESC_COMMIT="34e4206aef44d50e6bbcd0ab06354b52e7466d26"		# See https://github.com/opencv/opencv_contrib/blob/4.8.1/modules/xfeatures2d/cmake/download_boostdesc.cmake#L2
+XFEATURES2D_VGG_COMMIT="fccf7cd6a4b12079f73bbfb21745f9babcd4eb1d"		# See https://github.com/opencv/opencv_contrib/blob/4.8.1/modules/xfeatures2d/cmake/download_vgg.cmake#L2
 
 # The following lines are shamelessly stolen from ffmpeg-9999.ebuild with modifications
 ARM_CPU_FEATURES=(
+	"cpu_flags_arm_fp16:FP16"
 	"cpu_flags_arm_neon:NEON"
+	"cpu_flags_arm_neon_dotprod:NEON_DOTPROD"
 	"cpu_flags_arm_vfpv3:VFPV3"
 )
 PPC_CPU_FEATURES=(
 	"cpu_flags_ppc_vsx:VSX"
 	"cpu_flags_ppc_vsx3:VSX3"
 )
-X86_CPU_FEATURES_RAW=(
-	"avx:AVX"
-	"avx2:AVX2"
-	"avx512f:AVX_512F"
-	"f16c:FP16"
-	"fma3:FMA3"
-	"popcnt:POPCNT"
-	"sse:SSE"
-	"sse2:SSE2"
-	"sse3:SSE3"
-	"sse4_1:SSE4_1"
-	"sse4_2:SSE4_2"
-	"ssse3:SSSE3"
+RISCV_CPU_FEATURES=(
+	"cpu_flags_riscv_rvv:RVV"
+)
+LOONG_CPU_FEATURES=(
+	"cpu_flags_loong_lsx:LSX"
+	"cpu_flags_loong_lasx:LASX"
 )
 X86_CPU_FEATURES=(
-	${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_}
+	"cpu_flags_x86_avx:AVX"
+	"cpu_flags_x86_avx2:AVX2"
+	"cpu_flags_x86_avx512bw:AVX_512BW"
+	"cpu_flags_x86_avx512cd:AVX_512CD"
+	"cpu_flags_x86_avx512dq:AVX_512DQ"
+	"cpu_flags_x86_avx512er:AVX512_KNL_EXTRA"
+	"cpu_flags_x86_avx512pf:AVX512_KNL_EXTRA"
+	"cpu_flags_x86_avx512f:AVX_512F"
+	"cpu_flags_x86_avx512ifma:AVX_512IFMA"
+	"cpu_flags_x86_avx512vl:AVX_512VL"
+	"cpu_flags_x86_avx512_bitalg:AVX_512BITALG"
+	"cpu_flags_x86_avx512_4fmaps:AVX512_KNM_EXTRA"
+	"cpu_flags_x86_avx512_4vnniw:AVX512_KNM_EXTRA"
+	"cpu_flags_x86_avx512_vbmi:AVX_512VBMI"
+	"cpu_flags_x86_avx512_vbmi2:AVX_512VBMI2"
+	"cpu_flags_x86_avx512_vnni:AVX_512VNNI"
+	"cpu_flags_x86_avx512_vpopcntdq:AVX_512VPOPCNTDQ"
+	"cpu_flags_x86_f16c:FP16"
+	"cpu_flags_x86_fma3:FMA3"
+	"cpu_flags_x86_popcnt:POPCNT"
+	"cpu_flags_x86_sse:SSE"
+	"cpu_flags_x86_sse2:SSE2"
+	"cpu_flags_x86_sse3:SSE3"
+	"cpu_flags_x86_sse4_1:SSE4_1"
+	"cpu_flags_x86_sse4_2:SSE4_2"
+	"cpu_flags_x86_ssse3:SSSE3"
 )
 CPU_FEATURES_MAP=(
 	${ARM_CPU_FEATURES[@]}
+	${LOONG_CPU_FEATURES[@]}
 	${PPC_CPU_FEATURES[@]}
+	${RISCV_CPU_FEATURES[@]}
 	${X86_CPU_FEATURES[@]}
 )
 
@@ -246,8 +269,9 @@ ${CPU_FEATURES_MAP[@]%:*}
 contrib contribcvv contribdnn contribfreetype contribhdf contribovis contribsfm
 contribxfeatures2d cuda cudnn debug dnnsamples +eigen examples +features2d
 ffmpeg gdal gflags glog gphoto2 gstreamer gtk3 ieee1394 jpeg jpeg2k lapack
-non-free opencl openexr opengl openmp opencvapps png +python qt5 qt6 spng tesseract
-testprograms tbb tiff vaapi v4l vtk webp xine video_cards_intel
+libaom non-free opencl openexr opengl openmp opencvapps openh264 png +python qt5
+qt6 spng tesseract testprograms tbb tiff vaapi v4l vpx vtk wayland webp xine
+video_cards_intel
 ebuild-revision-3
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
@@ -276,6 +300,18 @@ REQUIRED_USE="
 	)
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_avx512er? (
+		cpu_flags_x86_avx512pf
+	)
+	cpu_flags_x86_avx512pf? (
+		cpu_flags_x86_avx512er
+	)
+	cpu_flags_x86_avx512_4fmaps? (
+		cpu_flags_x86_avx512_4vnniw
+	)
+	cpu_flags_x86_avx512_4vnniw? (
+		cpu_flags_x86_avx512_4fmaps
 	)
 	cpu_flags_x86_f16c? (
 		cpu_flags_x86_avx
@@ -366,6 +402,8 @@ gen_openexr_rdepend() {
 		"
 	done
 }
+# For ffmpeg version, see \
+# https://github.com/opencv/opencv_3rdparty/blob/7da61f0695eabf8972a2c302bf1632a3d99fb0d5/ffmpeg/download_src.sh#L24
 RDEPEND="
 	(
 		|| (
@@ -411,7 +449,7 @@ RDEPEND="
 	)
 	ffmpeg? (
 		|| (
-			media-video/ffmpeg:0/56.58.58[${MULTILIB_USEDEP}]
+			media-video/ffmpeg:0/56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,vpx?]
 		)
 		media-video/ffmpeg:=[${MULTILIB_USEDEP}]
 	)
@@ -495,6 +533,9 @@ RDEPEND="
 			>=dev-qt/qtopengl-${QT5_PV}:5
 		)
 	)
+	spng? (
+		>=media-libs/libspng-0.7.3[${MULTILIB_USEDEP}]
+	)
 	tesseract? (
 		>=app-text/tesseract-4.1.1:0[opencl=,${MULTILIB_USEDEP}]
 	)
@@ -515,6 +556,11 @@ RDEPEND="
 	vtk? (
 		>=sci-libs/vtk-7.1.1:0[rendering,cuda=]
 		sci-libs/vtk:=
+	)
+	wayland? (
+		>=dev-libs/wayland-protocols-1.13
+		>=dev-libs/wayland-1.18.0[${MULTILIB_USEDEP}]
+		>=x11-libs/libxkbcommon-0.10.0[${MULTILIB_USEDEP}]
 	)
 	webp? (
 		>=media-libs/libwebp-1.3.2:0[${MULTILIB_USEDEP}]
@@ -840,6 +886,7 @@ multilib_src_configure() {
 		-DWITH_VA_INTEL=$(usex vaapi $(usex video_cards_intel))
 		-DWITH_VFW=OFF						# Video windows support
 		-DWITH_VTK=$(multilib_native_usex vtk)
+		-DWITH_WAYLAND=$(usex wayland)
 		-DWITH_WEBP=$(usex webp)
 		-DWITH_WIN32UI=OFF					# Windows only
 		-DWITH_XIMEA=OFF					# Windows only

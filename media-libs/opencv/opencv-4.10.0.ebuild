@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# U20, U22
+# U20, U22, U24
 
 _MULTILIB_WRAPPED_HEADERS=( # {{{
 	# [opencv4]
@@ -207,15 +207,15 @@ if [[ ${PV} = *9999* ]] ; then
 	EGIT_REPO_URI="https://github.com/${PN}/${PN}.git"
 else
 	# From ocv_download()
-	ADE_PV="0.1.2d"									# See https://github.com/opencv/opencv/blob/4.9.0/modules/gapi/cmake/DownloadADE.cmake#L2
-	DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f"	# See https://github.com/opencv/opencv_extra/blob/4.9.0/testdata/dnn/download_models.py#L384
-	FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12"		# See https://github.com/opencv/opencv_contrib/blob/4.9.0/modules/face/CMakeLists.txt
-	NVIDIA_OPTICAL_FLOW_COMMIT="edb50da3cf849840d680249aa6dbef248ebce2ca"		# See https://github.com/opencv/opencv_contrib/blob/4.9.0/modules/cudaoptflow/CMakeLists.txt#L12
-	QRCODE_COMMIT="a8b69ccc738421293254aec5ddb38bd523503252"			# See https://github.com/opencv/opencv_contrib/blob/4.9.0/modules/wechat_qrcode/CMakeLists.txt#L15
-	XFEATURES2D_BOOSTDESC_COMMIT="34e4206aef44d50e6bbcd0ab06354b52e7466d26"		# See https://github.com/opencv/opencv_contrib/blob/4.9.0/modules/xfeatures2d/cmake/download_boostdesc.cmake#L2
-	XFEATURES2D_VGG_COMMIT="fccf7cd6a4b12079f73bbfb21745f9babcd4eb1d"		# See https://github.com/opencv/opencv_contrib/blob/4.9.0/modules/xfeatures2d/cmake/download_vgg.cmake#L2
+	ADE_PV="0.1.2d"									# See https://github.com/opencv/opencv/blob/4.10.0/modules/gapi/cmake/DownloadADE.cmake#L2
+	DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f"	# See https://github.com/opencv/opencv_extra/blob/4.10.0/testdata/dnn/download_models.py#L389
+	FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12"		# See https://github.com/opencv/opencv_contrib/blob/4.10.0/modules/face/CMakeLists.txt#L11
+	NVIDIA_OPTICAL_FLOW_COMMIT="edb50da3cf849840d680249aa6dbef248ebce2ca"		# See https://github.com/opencv/opencv_contrib/blob/4.10.0/modules/cudaoptflow/CMakeLists.txt#L12
+	QRCODE_COMMIT="a8b69ccc738421293254aec5ddb38bd523503252"			# See https://github.com/opencv/opencv_contrib/blob/4.10.0/modules/wechat_qrcode/CMakeLists.txt#L15
+	XFEATURES2D_BOOSTDESC_COMMIT="34e4206aef44d50e6bbcd0ab06354b52e7466d26"		# See https://github.com/opencv/opencv_contrib/blob/4.10.0/modules/xfeatures2d/cmake/download_boostdesc.cmake#L2
+	XFEATURES2D_VGG_COMMIT="fccf7cd6a4b12079f73bbfb21745f9babcd4eb1d"		# See https://github.com/opencv/opencv_contrib/blob/4.10.0/modules/xfeatures2d/cmake/download_vgg.cmake#L2
 
-	KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
+	#KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86" # Not install tested yet
 	SRC_URI="
 		https://github.com/${PN}/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz
 		https://github.com/opencv/ade/archive/v${ADE_PV}.tar.gz -> ade-${ADE_PV}.tar.gz
@@ -260,7 +260,7 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 # general options
 IUSE="
 	debug doc +eigen gflags glog java non-free opencvapps +python test
-	testprograms
+	testprograms zlib-ng
 	ebuild-revision-3
 "
 # modules
@@ -436,7 +436,7 @@ CUDA_DEPEND="
 		dev-util/nvidia-cuda-toolkit:=
 "
 # For ffmpeg version, see \
-# https://github.com/opencv/opencv_3rdparty/blob/fbac408a47977ee4265f39e7659d33f1dfef5216/ffmpeg/download_src.sh#L24
+# https://github.com/opencv/opencv_3rdparty/blob/394dca6ceb3085c979415e6385996b6570e94153/ffmpeg/download_src.sh#L24
 RDEPEND="
 	(
 		|| (
@@ -513,12 +513,12 @@ RDEPEND="
 		>=virtual/jre-1.8:*
 	)
 	jpeg? (
-		>=media-libs/libjpeg-turbo-2.1.3:0[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-3.0.3:0[${MULTILIB_USEDEP}]
 		media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
 		!jasper? (
-			>=media-libs/openjpeg-2.5.0:2[${MULTILIB_USEDEP}]
+			>=media-libs/openjpeg-2.5.2:2[${MULTILIB_USEDEP}]
 			media-libs/openjpeg:=[${MULTILIB_USEDEP}]
 		)
 		jasper? (
@@ -557,7 +557,7 @@ RDEPEND="
 		virtual/glu[${MULTILIB_USEDEP}]
 	)
 	png? (
-		>=media-libs/libpng-1.6.37:0[${MULTILIB_USEDEP}]
+		>=media-libs/libpng-1.6.43:0[${MULTILIB_USEDEP}]
 		media-libs/libpng:=[${MULTILIB_USEDEP}]
 	)
 	python? (
@@ -589,11 +589,11 @@ RDEPEND="
 		>=app-text/tesseract-4.1.1:0[opencl=,${MULTILIB_USEDEP}]
 	)
 	tbb? (
-		>=dev-cpp/tbb-2020.2[${MULTILIB_USEDEP}]
+		>=dev-cpp/tbb-2021.11.0[${MULTILIB_USEDEP}]
 		dev-cpp/tbb:=[${MULTILIB_USEDEP}]
 	)
 	tiff? (
-		>=media-libs/tiff-4.2.0:0[${MULTILIB_USEDEP}]
+		>=media-libs/tiff-4.6.0:0[${MULTILIB_USEDEP}]
 		media-libs/tiff:=[${MULTILIB_USEDEP}]
 	)
 	v4l? (
@@ -612,11 +612,14 @@ RDEPEND="
 		>=x11-libs/libxkbcommon-0.10.0[${MULTILIB_USEDEP}]
 	)
 	webp? (
-		>=media-libs/libwebp-1.3.2:0[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-1.4.0:0[${MULTILIB_USEDEP}]
 		media-libs/libwebp:=[${MULTILIB_USEDEP}]
 	)
 	xine? (
 		>=media-libs/xine-lib-1.2.9:1
+	)
+	zlib-ng? (
+		>=sys-libs/zlib-ng-2.1.6[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
@@ -645,7 +648,7 @@ BDEPEND="
 		${CUDA_DEPEND}
 	)
 	doc? (
-		>=app-text/doxygen-1.8.17[dot]
+		>=app-text/doxygen-1.9.8[dot]
 		python? (
 			>=dev-python/beautifulsoup4-4.8.2[${PYTHON_USEDEP}]
 		)
@@ -1002,6 +1005,7 @@ multilib_src_configure() {
 		-DWITH_WIN32UI=OFF							# Windows only
 		-DWITH_XIMEA=OFF							# Windows only
 		-DWITH_XINE=$(multilib_native_usex xine)
+		-DWITH_ZLIB_NG=$(usex zlib-ng)
 	)
 
 	if use qt5 ; then
