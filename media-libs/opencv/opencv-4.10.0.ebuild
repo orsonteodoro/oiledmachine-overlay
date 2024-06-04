@@ -1090,7 +1090,7 @@ multilib_src_configure() {
 
 	if [[ "${ARCH}" == "arm64" ]] ; then
 		mycmakeargs+=(
-			-DWITH_KLEIDICV=$(multilib_native_usex kleidicv)
+			-DWITH_KLEIDICV=$(use kleidicv)
 		)
 	else
 		mycmakeargs+=(
