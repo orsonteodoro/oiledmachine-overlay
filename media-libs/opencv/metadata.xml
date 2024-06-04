@@ -39,8 +39,8 @@
       Use <pkg>sci-libs/atlas</pkg> for blas, lapack and sparse blas routines
     </flag>
     <flag name="carotene">
-      Use the vendored carotene computer vision accelerator library for
-      arm/arm64 with NVIDIA® Tegra®.
+      Enable the Hardware Acceleration Layer (HAL) using the vendored carotene
+      computer vision accelerator library for arm/arm64 with NVIDIA® Tegra®.
     </flag>
     <flag name="contrib">
       Install user contributed scripts from opencv_contrib (Experimental!)
@@ -119,7 +119,7 @@
       Use <pkg>media-libs/jasper</pkg> for jpeg2k support
     </flag>
     <flag name="kleidicv">
-      Enable optimized algorithms for ARMv8, ARMv9 CPUs.
+      Enable the Hardware Acceleration Layer (HAL) for ARMv8, ARMv9 CPUs.
     </flag>
     <flag name="mkl">
       Use <pkg>sci-libs/mkl</pkg> for blas, lapack and sparse blas routines
@@ -128,8 +128,8 @@
       Enable non-free components
     </flag>
     <flag name="ndsrvp">
-      Enable optimized algorithms for RISC-V processors with P-extension (RVP)
-      using Andes (nds) compiler intrinsics for lp64d ABI.
+      Enable the Hardware Acceleration Layer (HAL) for RISC-V processors with
+      P-extension (RVP) using Andes (nds) compiler intrinsics for the lp64d ABI.
       (IN DEVELOPMENT UPSTREAM)
 
       For progress, see https://github.com/opencv/opencv/pull/25167
@@ -139,7 +139,8 @@
       Enable compilation with opencvapps
     </flag>
     <flag name="openvx">
-      Enable hardware acceleration of computer vision via OpenVX™.
+      Enable the Hardware Acceleration Layer (HAL) for image processing via
+      OpenVX™.
     </flag>
     <flag name="quirc">
       Enable qrcode decoding via <pkg>media-libs/quirc</pkg>
