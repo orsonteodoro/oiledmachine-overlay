@@ -9,7 +9,7 @@ EAPI=8
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Apr 2, 2024
+# Last deps commit date:  May 23, 2024
 
 ACORN_PV="8.11.3"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
@@ -56,11 +56,11 @@ TRAINER_TYPES=(
 	zlib
 )
 CONFIG_CHECK="~ADVISE_SYSCALLS"
-COREPACK_PV="0.25.0"
+COREPACK_PV="0.28.1"
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
 NGHTTP2_PV="1.60.0"
-NPM_PV="10.5.0" # See https://github.com/nodejs/node/blob/v20.12.2/deps/npm/package.json
+NPM_PV="10.7.0" # See https://github.com/nodejs/node/blob/v20.14.0/deps/npm/package.json
 PYTHON_COMPAT=( "python3_"{8..12} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -149,11 +149,11 @@ RDEPEND+="
 	>=app-arch/brotli-1.1.0
 	>=app-eselect/eselect-nodejs-20230521
 	>=dev-libs/libuv-1.47.0:=
-	>=net-dns/c-ares-1.27.0
+	>=net-dns/c-ares-1.28.1
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3
 	system-icu? (
-		>=dev-libs/icu-74.2:=
+		>=dev-libs/icu-75.1:=
 	)
 	system-ssl? (
 		>=dev-libs/openssl-3.0.13:0=
@@ -190,7 +190,7 @@ PDEPEND+="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-12.22.5-shared_c-ares_nameser_h.patch"
-	"${FILESDIR}/${PN}-20.2.0-global-npm-config.patch"
+	"${FILESDIR}/${PN}-22.2.0-global-npm-config.patch"
 	"${FILESDIR}/${PN}-16.13.2-lto-update.patch"
 	"${FILESDIR}/${PN}-20.1.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
