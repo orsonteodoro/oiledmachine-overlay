@@ -643,10 +643,10 @@ DEPEND+="
 BDEPEND="
 	>=dev-build/cmake-${CMAKE_PV}
 	>=dev-util/patchelf-0.10
-	sys-apps/grep[pcre]
 	virtual/pkgconfig
 	cuda? (
 		${CUDA_DEPEND}
+		sys-apps/grep[pcre]
 	)
 	doc? (
 		>=app-text/doxygen-1.8.17[dot]
