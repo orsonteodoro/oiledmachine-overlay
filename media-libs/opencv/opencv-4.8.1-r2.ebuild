@@ -1028,8 +1028,16 @@ multilib_src_configure() {
 	local i
 	for i in "${CPU_FEATURES_MAP[@]}" ; do
 		local flag="${i%:*}"
-		if [[ "${ABI}" != "x86" || "${flag}" != "cpu_flags_x86_avx2" ]] ; then # Workaround for Bug 747163
-			use "${flag}" && CPU_BASELINE="${CPU_BASELINE}${i#*:};"
+		if [[ "${ABI}" == "arm" ]] ; then
+			if [[ "${config_flag}" == "FP16" || "${config_flag}" == "NEON" || "${config_flag}" == "VFPV3" ]] ; then
+				use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${config_flag};"
+			fi
+		elif [[ "${ABI}" == "arm64" ]] ; then
+			if [[ "${config_flag}" =~ ("NEON_DOTPROD") ]] ; then
+				use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${config_flag};"
+			fi
+		elif [[ "${ABI}" != "x86" || "${use_flag}" != "cpu_flags_x86_avx2" ]] ; then # Workaround for Bug 747163
+			use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${config_flag};"
 		fi
 	done
 
