@@ -39,8 +39,8 @@
       Use <pkg>sci-libs/atlas</pkg> for blas, lapack and sparse blas routines
     </flag>
     <flag name="carotene">
-      Use the vendored carotene accelerator library for computer vision on
-      arm/arm64 with Tegra.
+      Use the vendored carotene computer vision accelerator library for the
+      arm/arm64 with NVIDIA® Tegra®.
     </flag>
     <flag name="contrib">
       Install user contributed scripts from opencv_contrib (Experimental!)
