@@ -259,8 +259,8 @@ RESTRICT="
 SLOT="0/${PV}" # subslot = libopencv* soname version
 # general options
 IUSE="
-	debug doc +eigen gflags glog java non-free opencvapps +python test
-	testprograms
+	carotene debug doc +eigen gflags glog java non-free opencvapps +python
+	test testprograms
 	ebuild-revision-3
 "
 # modules
@@ -278,7 +278,7 @@ IUSE+="
 "
 # image
 IUSE+="
-	gdal jasper jpeg jpeg2k openexr png quirc spng tesseract tiff webp
+	avif gdal jasper jpeg jpeg2k openexr png quirc spng tesseract tiff webp
 "
 # gui
 IUSE+="
@@ -446,6 +446,9 @@ RDEPEND="
 	)
 	>=app-arch/bzip2-1.0.8[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.0[${MULTILIB_USEDEP}]
+	avif? (
+		>=media-libs/libavif-0.9.3[${MULTILIB_USEDEP}]
+	)
 	cuda? (
 		${CUDA_DEPEND}
 	)
@@ -942,6 +945,7 @@ multilib_src_configure() {
 		-DWITH_1394=$(usex ieee1394)
 		-DWITH_ARAVIS=OFF
 		#-DWITH_AVFOUNDATION=OFF						# IOS
+		-DWITH_AVIF=$(usex avif)
 		-DWITH_CLP=OFF
 		-DWITH_CUDA=$(multilib_native_usex cuda)
 		-DWITH_CUBLAS=$(multilib_native_usex cuda)
@@ -1003,6 +1007,16 @@ multilib_src_configure() {
 		-DWITH_XIMEA=OFF							# Windows only
 		-DWITH_XINE=$(multilib_native_usex xine)
 	)
+
+	if [[ "${ARCH}" == "arm" || "${ARCH}" == "arm64" ]] ; then
+		mycmakeargs+=(
+			-DWITH_CAROTENE=$(usex carotene)
+		)
+	else
+		mycmakeargs+=(
+			-DWITH_CAROTENE=OFF
+		)
+	fi
 
 	if use qt5 ; then
 		mycmakeargs+=(

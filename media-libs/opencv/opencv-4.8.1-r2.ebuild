@@ -266,12 +266,12 @@ RESTRICT="
 SLOT="0/${PV}" # subslot = libopencv* soname version
 IUSE="
 ${CPU_FEATURES_MAP[@]%:*}
-contrib contribcvv contribdnn contribfreetype contribhdf contribovis contribsfm
-contribxfeatures2d cuda cudnn debug dnnsamples +eigen examples +features2d
-ffmpeg gdal gflags glog gphoto2 gstreamer gtk3 ieee1394 jpeg jpeg2k lapack
-libaom non-free opencl openexr opengl openmp opencvapps openh264 png +python qt5
-qt6 spng tesseract testprograms tbb tiff vaapi v4l vpx vtk wayland webp xine
-video_cards_intel
+avif carotene contrib contribcvv contribdnn contribfreetype contribhdf
+contribovis contribsfm contribxfeatures2d cuda cudnn debug dnnsamples +eigen
+examples +features2d ffmpeg gdal gflags glog gphoto2 gstreamer gtk3 ieee1394
+jpeg jpeg2k lapack libaom non-free opencl openexr opengl openmp opencvapps
+openh264 png +python qt5 qt6 spng tesseract testprograms tbb tiff vaapi v4l vpx
+vtk wayland webp xine video_cards_intel
 ebuild-revision-3
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
@@ -417,6 +417,9 @@ RDEPEND="
 		qt6? (
 			>=dev-qt/qtbase-${QT6_PV}:6[gui,widgets,concurrent,opengl?]
 		)
+	)
+	avif? (
+		>=media-libs/libavif-0.9.3[${MULTILIB_USEDEP}]
 	)
 	cuda? (
 		|| (
@@ -829,6 +832,7 @@ multilib_src_configure() {
 		-DWITH_1394=$(usex ieee1394)
 		-DWITH_ARAVIS=OFF
 		#-DWITH_AVFOUNDATION=OFF				# IOS
+		-DWITH_AVIF=$(usex avif)
 		-DWITH_CLP=OFF
 		-DWITH_CSTRIPES=OFF
 		-DWITH_CUBLAS=$(multilib_native_usex cuda)
@@ -892,6 +896,16 @@ multilib_src_configure() {
 		-DWITH_XIMEA=OFF					# Windows only
 		-DWITH_XINE=$(multilib_native_usex xine)
 	)
+
+	if [[ "${ARCH}" == "arm" || "${ARCH}" == "arm64" ]] ; then
+		mycmakeargs+=(
+			-DWITH_CAROTENE=$(usex carotene)
+		)
+	else
+		mycmakeargs+=(
+			-DWITH_CAROTENE=OFF
+		)
+	fi
 
 	if use qt5 ; then
 		mycmakeargs+=(
