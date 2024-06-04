@@ -15,7 +15,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/"
 	inherit git-r3
 else
-#	KEYWORDS="~amd64"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-rocm-${PV}"
 	S_RAPIDJSON="${WORKDIR}/rapidjson-${RAPIDJSON_COMMIT}"
 	SRC_URI="

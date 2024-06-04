@@ -26,7 +26,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/"
 	inherit git-r3
 else
-#	KEYWORDS="~amd64"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-rocm-${PV}"
 	S_RAPIDJSON="${WORKDIR}/rapidjson-${RAPIDJSON_COMMIT}"
 	SRC_URI="
@@ -47,9 +47,9 @@ HOMEPAGE="https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-cpu +debug +enhanced-message ffmpeg -fp16 +loom +migraphx +neural-net opencl
+cpu +enhanced-message ffmpeg -fp16 +loom +migraphx +neural-net opencl
 opencv +rocal +rocal-python +rocm +rpp system-llvm system-rapidjson
-ebuild-revision-9
+ebuild-revision-10
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -190,7 +190,7 @@ src_configure() {
 	cd "${S}" || die
 	local mycmakeargs=(
 		-DAMD_FP16_SUPPORT=$(usex fp16 ON OFF)
-		-DBUILD_DEV=$(usex debug ON OFF)
+		-DBUILD_DEV=ON # Install vx.h (OpenVX dev support)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DENHANCED_MESSAGE=$(usex enhanced-message ON OFF)
 		-DGPU_SUPPORT=$(usex cpu OFF ON)
