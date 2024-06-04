@@ -956,7 +956,6 @@ multilib_src_configure() {
 		)
 	fi
 
-	# TODO:  patch libs path in cmake/FindOpenVX.cmake
 	if use openvx && use rocm_5_7 ; then
 		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.7"
 		mycmakeargs+=(
