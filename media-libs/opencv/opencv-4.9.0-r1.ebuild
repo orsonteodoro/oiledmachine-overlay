@@ -201,6 +201,15 @@ GSTREAMER_PV="1.16.2"
 PYTHON_COMPAT=( "python3_"{10..12} )
 OPENEXR2_PV="2.5.10 2.5.9 2.5.8 2.5.7 2.4.3 2.4.2 2.4.1 2.4.0 2.3.0"
 OPENEXR3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4 3.1.3 3.0.5 3.0.4 3.0.3 3.0.2 3.0.1"
+ROCM_SLOTS=(
+	"rocm_5_7"
+	"rocm_5_6"
+	"rocm_5_5"
+	"rocm_5_4"
+	"rocm_5_3"
+	"rocm_5_2"
+	"rocm_5_1"
+)
 QT5_PV="5.12.8"
 QT6_PV="6.2.4"
 
@@ -264,8 +273,8 @@ RESTRICT="
 SLOT="0/${PV}" # subslot = libopencv* soname version
 # general options
 IUSE="
-	debug doc +eigen gflags glog java non-free opencvapps +python test
-	testprograms
+	debug doc +eigen gflags glog java non-free opencvapps +python
+	system-llvm test testprograms
 	ebuild-revision-3
 "
 # hal for acceleration
@@ -279,7 +288,8 @@ IUSE+="
 "
 # hardware
 IUSE+="
-	opencl cuda cudnn video_cards_intel
+	${ROCM_SLOTS[@]}
+	opencl cuda cudnn rocm video_cards_intel
 "
 # video
 IUSE+="
@@ -306,7 +316,21 @@ IUSE+="
 "
 unset ARM_CPU_FEATURES PPC_CPU_FEATURES X86_CPU_FEATURES_RAW X86_CPU_FEATURES
 
+gen_rocm_required_use() {
+	local s
+	for s in ${ROCM_SLOTS[@]} ; do
+		echo "
+			${s}? (
+				rocm
+			)
+		"
+	done
+}
 REQUIRED_USE="
+	$(gen_rocm_required_use)
+	!system-llvm? (
+		rocm
+	)
 	?? (
 		carotene
 		openvx
@@ -401,6 +425,11 @@ REQUIRED_USE="
 	python? (
 		${PYTHON_REQUIRED_USE}
 	)
+	rocm? (
+		^^ (
+			${ROCM_SLOTS[@]}
+		)
+	)
 	tesseract? (
 		contrib
 	)
@@ -450,6 +479,18 @@ CUDA_DEPEND="
 "
 # For ffmpeg version, see \
 # https://github.com/opencv/opencv_3rdparty/blob/fbac408a47977ee4265f39e7659d33f1dfef5216/ffmpeg/download_src.sh#L24
+gen_rocm_rdepend() {
+	local s
+	for s in ${ROCM_SLOTS[@]} ; do
+		local slot="${s/rocm_}"
+		slot="${slot/_/.}"
+		echo "
+			${s}? (
+				sci-libs/MIVisionX:${slot}
+			)
+		"
+	done
+}
 RDEPEND="
 	(
 		|| (
@@ -597,6 +638,11 @@ RDEPEND="
 	)
 	quirc? (
 		>=media-libs/quirc-1.1:0
+	)
+	rocm? (
+		|| (
+			$(gen_rocm_rdepend)
+		)
 	)
 	spng? (
 		>=media-libs/libspng-0.7.4[${MULTILIB_USEDEP}]
@@ -1029,14 +1075,40 @@ multilib_src_configure() {
 		)
 	fi
 
-	has_openvx_support() {
-		has_version "sci-libs/MIVisionX" && return 0
-		#has_version "dev-util/openvino" && return 0 # TODO package
-		return 1
-	}
-
-	if use openvx && has_openvx_support ; then
+	# TODO:  patch libs path in cmake/FindOpenVX.cmake
+	if use openvx && use rocm_5_7 ; then
 		mycmakeargs+=(
+			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.7"
+			-DWITH_OPENVX=ON
+		)
+	elif use openvx && use rocm_5_6 ; then
+		mycmakeargs+=(
+			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.6"
+			-DWITH_OPENVX=ON
+		)
+	elif use openvx && use rocm_5_5 ; then
+		mycmakeargs+=(
+			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.5"
+			-DWITH_OPENVX=ON
+		)
+	elif use openvx && use rocm_5_4 ; then
+		mycmakeargs+=(
+			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.4"
+			-DWITH_OPENVX=ON
+		)
+	elif use openvx && use rocm_5_3 ; then
+		mycmakeargs+=(
+			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.3"
+			-DWITH_OPENVX=ON
+		)
+	elif use openvx && use rocm_5_2 ; then
+		mycmakeargs+=(
+			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.2"
+			-DWITH_OPENVX=ON
+		)
+	elif use openvx && use rocm_5_1 ; then
+		mycmakeargs+=(
+			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.1"
 			-DWITH_OPENVX=ON
 		)
 	else
