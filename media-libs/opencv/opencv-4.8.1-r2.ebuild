@@ -929,8 +929,9 @@ multilib_src_configure() {
 	local CPU_BASELINE=""
 	local i
 	for i in "${CPU_FEATURES_MAP[@]}" ; do
-		if [[ ${ABI} != x86 || ${i%:*} != "cpu_flags_x86_avx2" ]] ; then # Workaround for Bug 747163
-			use ${i%:*} && CPU_BASELINE="${CPU_BASELINE}${i#*:};"
+		local flag="${i%:*}"
+		if [[ "${ABI}" != "x86" || "${flag}" != "cpu_flags_x86_avx2" ]] ; then # Workaround for Bug 747163
+			use "${flag}" && CPU_BASELINE="${CPU_BASELINE}${i#*:};"
 		fi
 	done
 

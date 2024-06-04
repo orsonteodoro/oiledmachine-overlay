@@ -646,6 +646,7 @@ DEPEND+="
 BDEPEND="
 	>=dev-build/cmake-${CMAKE_PV}
 	>=dev-util/patchelf-0.10
+	sys-apps/grep[pcre]
 	virtual/pkgconfig
 	cuda? (
 		${CUDA_DEPEND}
@@ -691,13 +692,11 @@ cuda_get_cuda_compiler() {
 			fi
 			break
 		fi
-		CUDAHOSTCXX_test="$(
-			dirname "$(
-				realpath "$(
-					which "${compiler}-$(echo "${version}" | grep -oP "(?<=${package}-)[0-9]*")"
-				)"
-			)"
-		)"
+		local exe_name="${compiler}-"$(echo "${version}" | grep -oP "(?<=${package}-)[0-9]*")
+		exe_name=$(which "${exe_name}")
+		exe_name=$(realpath "${exe_name}")
+		exe_name=$(dirname "${exe_name}")
+		CUDAHOSTCXX_test="${exe_name}"
 		version="<${version}"
 	do ! echo "int main(){}" | nvcc "-ccbin ${CUDAHOSTCXX_test}" - -x cu &>/dev/null ; done
 
@@ -1047,8 +1046,9 @@ multilib_src_configure() {
 	local CPU_BASELINE=""
 	local i
 	for i in "${CPU_FEATURES_MAP[@]}" ; do
-		if [[ ${ABI} != x86 || ${i%:*} != "cpu_flags_x86_avx2" ]] ; then # Workaround for Bug 747163
-			use "${i%:*}" && CPU_BASELINE="${CPU_BASELINE}${i#*:};"
+		local flag="${i%:*}"
+		if [[ "${ABI}" != "x86" || "${flag}" != "cpu_flags_x86_avx2" ]] ; then # Workaround for Bug 747163
+			use "${flag}" && CPU_BASELINE="${CPU_BASELINE}${i#*:};"
 		fi
 	done
 	unset CPU_FEATURES_MAP
