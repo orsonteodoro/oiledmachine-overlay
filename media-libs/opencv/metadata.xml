@@ -127,5 +127,9 @@
     <flag name="vtk">
       Build new 3D visualization module viz based on <pkg>sci-libs/vtk</pkg>
     </flag>
+    <flag name="zlib-ng">
+      Build the vendored copy of zlib-ng to speed up decode/encode of compressed
+      images using zlib compression.
+    </flag>
   </use>
 </pkgmetadata>

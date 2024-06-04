@@ -621,9 +621,6 @@ RDEPEND="
 	xine? (
 		>=media-libs/xine-lib-1.2.9:1
 	)
-	zlib-ng? (
-		>=sys-libs/zlib-ng-2.1.6[${MULTILIB_USEDEP}]
-	)
 "
 DEPEND="
 	${RDEPEND}
