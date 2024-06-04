@@ -1028,6 +1028,7 @@ multilib_src_configure() {
 	local i
 	for i in "${CPU_FEATURES_MAP[@]}" ; do
 		local flag="${i%:*}"
+		local config_flag="${i#*:}"
 		if [[ "${ABI}" == "arm" ]] ; then
 			if [[ "${config_flag}" == "FP16" || "${config_flag}" == "NEON" || "${config_flag}" == "VFPV3" ]] ; then
 				use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${config_flag};"
