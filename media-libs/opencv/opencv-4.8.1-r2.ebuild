@@ -9,6 +9,10 @@ EAPI=8
 # TODO package:
 # openvino
 
+# For the flatbuffers version restriction, see
+# https://github.com/opencv/opencv/blob/4.8.1/modules/dnn/misc/tflite/schema_generated.h#L11
+# (The patch will allow for newer revisions.)
+
 _MULTILIB_WRAPPED_HEADERS=(
 	# [opencv4]
 	"/usr/include/opencv4/opencv2/cvconfig.h"
