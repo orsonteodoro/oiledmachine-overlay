@@ -27,6 +27,7 @@
 
   -->
   <upstream>
+    <changelog>https://github.com/opencv/opencv/wiki/ChangeLog</changelog>
     <remote-id type="cpe">cpe:/a:opencv:opencv</remote-id>
     <remote-id type="github">opencv/opencv</remote-id>
     <remote-id type="github">opencv/opencv_contrib</remote-id>
