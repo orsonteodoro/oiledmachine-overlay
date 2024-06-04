@@ -657,6 +657,7 @@ PATCHES=(
 	# TODO applied in src_prepare
 	# "${FILESDIR}/${PN}_contrib-${PV}-rgbd.patch"
 	# "${FILESDIR}/${PN}_contrib-4.8.1-NVIDIAOpticalFlowSDK-2.0.tar.gz.patch"
+	"${FILESDIR}/${PN}-4.9.0-openvx-paths.patch" # oiledmachine-overlay change
 )
 
 pkg_pretend() {
@@ -822,6 +823,7 @@ multilib_src_configure() {
 	# Jasper was removed from tree because of security problems.  Upstream
 	# were/are making progress. We use openjpeg instead.
 
+	export LIBDIR=$(get_libdir)
 	local mycmakeargs=(
 		-DBUILD_ANDROID_EXAMPLES=OFF
 		#-DBUILD_ANDROID_SERVICE=OFF
@@ -956,41 +958,49 @@ multilib_src_configure() {
 
 	# TODO:  patch libs path in cmake/FindOpenVX.cmake
 	if use openvx && use rocm_5_7 ; then
+		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.7"
 		mycmakeargs+=(
 			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.7"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_6 ; then
+		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.6"
 		mycmakeargs+=(
 			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.6"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_5 ; then
+		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.5"
 		mycmakeargs+=(
 			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.5"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_4 ; then
+		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.4"
 		mycmakeargs+=(
 			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.4"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_3 ; then
+		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.3"
 		mycmakeargs+=(
 			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.3"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_2 ; then
+		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.2"
 		mycmakeargs+=(
 			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.2"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_1 ; then
+		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.1"
 		mycmakeargs+=(
 			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.1"
 			-DWITH_OPENVX=ON
 		)
 	else
+		export ROCM_PATH=""
 		mycmakeargs+=(
 			-DWITH_OPENVX=OFF
 		)

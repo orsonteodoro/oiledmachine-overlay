@@ -1,0 +1,21 @@
+diff -urp opencv-4.9.0.orig/cmake/FindOpenVX.cmake opencv-4.9.0/cmake/FindOpenVX.cmake
+--- opencv-4.9.0.orig/cmake/FindOpenVX.cmake	2023-12-27 08:46:55.000000000 -0800
++++ opencv-4.9.0/cmake/FindOpenVX.cmake	2024-06-04 00:34:17.440274166 -0700
+@@ -5,7 +5,7 @@ set(OPENVX_LIB_CANDIDATES "openvx;vxu" C
+ 
+ function(find_openvx_libs _found)
+   foreach(one ${OPENVX_LIB_CANDIDATES})
+-    find_library(OPENVX_${one}_LIBRARY ${one} PATHS "${OPENVX_ROOT}/lib" "${OPENVX_ROOT}/bin")
++    find_library(OPENVX_${one}_LIBRARY ${one} PATHS "${OPENVX_ROOT}/$ENV{LIBDIR}" "${ROCM_PATH}/$ENV{LIBDIR}" "${OPENVX_ROOT}/bin")
+     if(OPENVX_${one}_LIBRARY)
+       list(APPEND _list ${OPENVX_${one}_LIBRARY})
+     endif()
+@@ -14,7 +14,7 @@ function(find_openvx_libs _found)
+ endfunction()
+ 
+ if(OPENVX_ROOT)
+-  find_path(OPENVX_INCLUDE_DIR "VX/vx.h" PATHS "${OPENVX_ROOT}/include" DOC "OpenVX include path")
++  find_path(OPENVX_INCLUDE_DIR "VX/vx.h" PATHS "${OPENVX_ROOT}/include" "${ROCM_PATH}/include/mivisionx" DOC "OpenVX include path")
+   if(NOT DEFINED OPENVX_LIBRARIES)
+     find_openvx_libs(found)
+     if(found)
