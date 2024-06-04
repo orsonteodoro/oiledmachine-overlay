@@ -285,7 +285,7 @@ examples +features2d ffmpeg gdal gflags glog gphoto2 gstreamer gtk3 ieee1394
 jpeg jpeg2k lapack libaom non-free opencl openexr opengl openmp opencvapps
 openh264 openvx png +python qt5 qt6 rocm spng tesseract
 testprograms tbb tiff vaapi v4l vpx vtk wayland webp xine video_cards_intel
-ebuild-revision-3
+ebuild-revision-4
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
 # will silently disable it without the user knowing, which defeats the
@@ -1027,18 +1027,18 @@ multilib_src_configure() {
 	local CPU_BASELINE=""
 	local i
 	for i in "${CPU_FEATURES_MAP[@]}" ; do
-		local flag="${i%:*}"
-		local config_flag="${i#*:}"
+		local use_flag="${i%:*}"
+		local baseline_flag="${i#*:}"
 		if [[ "${ABI}" == "arm" ]] ; then
-			if [[ "${config_flag}" == "FP16" || "${config_flag}" == "NEON" || "${config_flag}" == "VFPV3" ]] ; then
-				use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${config_flag};"
+			if [[ "${baseline_flag}" == "FP16" || "${baseline_flag}" == "NEON" || "${baseline_flag}" == "VFPV3" ]] ; then
+				use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${baseline_flag};"
 			fi
 		elif [[ "${ABI}" == "arm64" ]] ; then
-			if [[ "${config_flag}" =~ ("NEON_DOTPROD") ]] ; then
-				use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${config_flag};"
+			if [[ "${baseline_flag}" =~ ("NEON_DOTPROD") ]] ; then
+				use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${baseline_flag};"
 			fi
 		elif [[ "${ABI}" != "x86" || "${use_flag}" != "cpu_flags_x86_avx2" ]] ; then # Workaround for Bug 747163
-			use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${config_flag};"
+			use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${baseline_flag};"
 		fi
 	done
 

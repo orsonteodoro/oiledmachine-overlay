@@ -275,7 +275,7 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 IUSE="
 	debug doc +eigen gflags glog java non-free opencvapps +python
 	test testprograms
-	ebuild-revision-3
+	ebuild-revision-4
 "
 # hal for acceleration
 IUSE+="
@@ -1148,18 +1148,18 @@ multilib_src_configure() {
 	local CPU_BASELINE=""
 	local i
 	for i in "${CPU_FEATURES_MAP[@]}" ; do
-		local flag="${i%:*}"
-		local config_flag="${i#*:}"
+		local use_flag="${i%:*}"
+		local baseline_flag="${i#*:}"
 		if [[ "${ABI}" == "arm" ]] ; then
-			if [[ "${config_flag}" == "FP16" || "${config_flag}" == "NEON" || "${config_flag}" == "VFPV3" ]] ; then
-				use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${config_flag};"
+			if [[ "${baseline_flag}" == "FP16" || "${baseline_flag}" == "NEON" || "${baseline_flag}" == "VFPV3" ]] ; then
+				use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${baseline_flag};"
 			fi
 		elif [[ "${ABI}" == "arm64" ]] ; then
-			if [[ "${config_flag}" =~ ("NEON_BF16"|"NEON_FP16"|"NEON_DOTPROD") ]] ; then
-				use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${config_flag};"
+			if [[ "${baseline_flag}" =~ ("NEON_BF16"|"NEON_FP16"|"NEON_DOTPROD") ]] ; then
+				use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${baseline_flag};"
 			fi
 		elif [[ "${ABI}" != "x86" || "${use_flag}" != "cpu_flags_x86_avx2" ]] ; then # Workaround for Bug 747163
-			use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${config_flag};"
+			use "${use_flag}" && CPU_BASELINE="${CPU_BASELINE}${baseline_flag};"
 		fi
 	done
 	unset CPU_FEATURES_MAP
