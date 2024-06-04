@@ -10,7 +10,10 @@
     <!-- Ebuild originator -->
     <email>jer@gentoo.org</email>
   </maintainer>
-  <longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
+
     This is an ebuild fork for Node.js with SLOT support.
 
     LTS will allow casual developers and non rolling release cycle packages a
@@ -95,7 +98,14 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     When selecting a nodejs_pgo_trainers_*, only select those that reflect
     typical use.  Choosing trainers that do not reflect typical use may increase
     unwanted binary size or may cause degraded performance.
-  </longdescription>
+  -->
+  <upstream>
+    <changelog>
+      https://github.com/nodejs/node/blob/main/CHANGELOG.md
+    <changelog>
+    <remote-id type="github">nodejs/node</remote-id>
+    <remote-id type="cpe">cpe:/a:nodejs:nodejs</remote-id>
+  </upstream>
   <use>
     <flag name="acorn">
       Install the acorn JavaScript parser.
