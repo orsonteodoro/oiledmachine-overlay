@@ -130,9 +130,7 @@
     <flag name="ndsrvp">
       Enable the Hardware Acceleration Layer (HAL) for RISC-V processors with
       P-extension (RVP) using Andes (nds) compiler intrinsics for the lp64d ABI.
-      (IN DEVELOPMENT UPSTREAM)
 
-      For progress, see https://github.com/opencv/opencv/pull/25167
       For toolchain setup, see https://github.com/opencv/opencv/pull/25167#issuecomment-1981196359
     </flag>
     <flag name="opencvapps">
