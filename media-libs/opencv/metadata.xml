@@ -143,6 +143,10 @@
     <flag name="quirc">
       Enable qrcode decoding via <pkg>media-libs/quirc</pkg>
     </flag>
+    <flag name="system-flatbuffers">
+      Build with the system flatbuffers package if it meets major-minor version
+      requirements.
+    </flag>
     <flag name="tbb">
       Enable multithreading with the Intel® Threading Building Blocks
       (<pkg>dev-cpp/tbb</pkg>)

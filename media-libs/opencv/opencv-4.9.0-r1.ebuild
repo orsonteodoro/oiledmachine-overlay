@@ -274,7 +274,7 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 # general options
 IUSE="
 	debug doc +eigen gflags glog java non-free opencvapps +python
-	test testprograms
+	system-flatbuffers test testprograms
 	ebuild-revision-4
 "
 # hal for acceleration
@@ -508,8 +508,10 @@ RDEPEND="
 		dev-libs/cudnn:=
 	)
 	contribdnn? (
-		>=dev-libs/flatbuffers-23.5.9:0
-		dev-libs/flatbuffers:=
+		system-flatbuffers? (
+			=dev-libs/flatbuffers-23.5*:0
+			dev-libs/flatbuffers:=
+		)
 	)
 	contribhdf? (
 		>=sci-libs/hdf5-1.10.4:0
@@ -717,7 +719,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.1.2-opencl-license.patch"
 	"${FILESDIR}/${PN}-4.4.0-disable-native-cpuflag-detect.patch"
 	"${FILESDIR}/${PN}-4.5.0-link-with-cblas-for-lapack.patch"
-	"${FILESDIR}/${PN}-4.8.1-use-system-flatbuffers.patch"
+#	"${FILESDIR}/${PN}-4.8.1-use-system-flatbuffers.patch"
 	"${FILESDIR}/${PN}-4.8.1-use-system-opencl.patch"
 	"${FILESDIR}/${PN}-4.9.0-drop-python2-detection.patch"
 	"${FILESDIR}/${PN}-4.9.0-ade-0.1.2d.tar.gz.patch"
@@ -800,6 +802,10 @@ pkg_setup() {
 src_prepare() {
 	local file
 	cmake_src_prepare
+
+	if use contribdnn && use system-flatbuffers ; then
+		eapply "${FILESDIR}/${PN}-4.8.1-use-system-flatbuffers.patch"
+	fi
 
 	# Remove bundled stuff
 	rm -r "3rdparty" || die "Removing 3rd party components failed"

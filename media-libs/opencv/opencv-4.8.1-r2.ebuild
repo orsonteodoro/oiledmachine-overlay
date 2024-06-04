@@ -283,7 +283,7 @@ avif carotene contrib contribcvv contribdnn contribfreetype contribhdf
 contribovis contribsfm contribxfeatures2d cuda cudnn debug dnnsamples +eigen
 examples +features2d ffmpeg gdal gflags glog gphoto2 gstreamer gtk3 ieee1394
 jpeg jpeg2k lapack libaom non-free opencl openexr opengl openmp opencvapps
-openh264 openvx png +python qt5 qt6 rocm spng tesseract
+openh264 openvx png +python qt5 qt6 rocm spng system-flatbuffers tesseract
 testprograms tbb tiff vaapi v4l vpx vtk wayland webp xine video_cards_intel
 ebuild-revision-4
 "
@@ -477,8 +477,10 @@ RDEPEND="
 		dev-libs/cudnn:=
 	)
 	contribdnn? (
-		>=dev-libs/flatbuffers-23.5.9:0
-		dev-libs/flatbuffers:=
+		system-flatbuffers? (
+			=dev-libs/flatbuffers-23.5*:0
+			dev-libs/flatbuffers:=
+		)
 	)
 	contribhdf? (
 		>=sci-libs/hdf5-1.10.4:0
@@ -645,7 +647,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.5.0-link-with-cblas-for-lapack.patch"
 	"${FILESDIR}/${PN}-4.8.0-arm64-fp16.patch"
 	"${FILESDIR}/${PN}-4.8.0-fix-cuda-12.2.0.patch"
-	"${FILESDIR}/${PN}-4.8.1-use-system-flatbuffers.patch"
+#	"${FILESDIR}/${PN}-4.8.1-use-system-flatbuffers.patch"
 	"${FILESDIR}/${PN}-4.8.1-eliminate-lto-compiler-warnings.patch"
 	"${FILESDIR}/${PN}-4.8.1-python3_12-support.patch"
 	"${FILESDIR}/${PN}-4.8.1-use-system-opencl.patch"
@@ -703,6 +705,10 @@ src_prepare() {
 	fi
 
 	cmake_src_prepare
+
+	if use contribdnn && use system-flatbuffers ; then
+		eapply "${FILESDIR}/${PN}-4.8.1-use-system-flatbuffers.patch"
+	fi
 
 	# Remove bundled stuff
 	rm -r "3rdparty" || die "Removing 3rd party components failed"
