@@ -171,10 +171,10 @@ XFEATURES2D_VGG_COMMIT="fccf7cd6a4b12079f73bbfb21745f9babcd4eb1d"		# See https:/
 
 # The following lines are shamelessly stolen from ffmpeg-9999.ebuild with modifications
 ARM_CPU_FEATURES=(
-	"cpu_flags_arm_fp16:FP16"
-	"cpu_flags_arm_neon:NEON"
-	"cpu_flags_arm_neon_dotprod:NEON_DOTPROD"
-	"cpu_flags_arm_vfpv3:VFPV3"
+	"cpu_flags_arm_fp16:FP16"			# arm only
+	"cpu_flags_arm_neon:NEON"			# arm only
+	"cpu_flags_arm_neon_dotprod:NEON_DOTPROD"	# arm64 only
+	"cpu_flags_arm_vfpv3:VFPV3"			# arm only
 )
 PPC_CPU_FEATURES=(
 	"cpu_flags_ppc_vsx:VSX"

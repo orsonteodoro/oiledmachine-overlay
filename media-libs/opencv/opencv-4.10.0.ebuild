@@ -155,10 +155,12 @@ _MULTILIB_WRAPPED_HEADERS=( # {{{
 CMAKE_PV="3.26"
 # TODO make this only relevant for binhost \
 CPU_FEATURES_MAP=(
-	"cpu_flags_arm_fp16:FP16"
-	"cpu_flags_arm_neon:NEON"
-	"cpu_flags_arm_neon_dotprod:NEON_DOTPROD"
-	"cpu_flags_arm_vfpv3:VFPV3"
+	"cpu_flags_arm_fp16:FP16"			# arm only
+	"cpu_flags_arm_neon:NEON"			# arm only
+	"cpu_flags_arm_neon_bf16:NEON_BF16"		# arm64 only
+	"cpu_flags_arm_neon_fp16:NEON_FP16"		# arm64 only
+	"cpu_flags_arm_neon_dotprod:NEON_DOTPROD"	# arm64 only
+	"cpu_flags_arm_vfpv3:VFPV3"			# arm only
 	"cpu_flags_loong_lsx:LSX"
 	"cpu_flags_loong_lasx:LASX"
 	"cpu_flags_mips_msa:MSA"

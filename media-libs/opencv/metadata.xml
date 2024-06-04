@@ -70,6 +70,24 @@
     <flag name="contribxfeatures2d" restrict="&lt;=media-libs/opencv-4.8.1">
       Enables xfeatures2d and autodownload of samples in contrib
     </flag>
+    <flag name="cpu_flags_arm_fp16">
+      Support fp16 (arm32 only)
+    </flag>
+    <flag name="cpu_flags_arm_neon">
+      Support neon (arm32 only)
+    </flag>
+    <flag name="cpu_flags_arm_neon_bf16">
+      Support bf16 (arm64 only)
+    </flag>
+    <flag name="cpu_flags_arm_neon_fp16">
+      Support fp16 (arm64 only)
+    </flag>
+    <flag name="cpu_flags_arm_neon_dotprod">
+      Support dotprod (arm64 only)
+    </flag>
+    <flag name="cpu_flags_arm_vfpv3">
+      Support vfpv3 (arm32 only)
+    </flag>
     <flag name="cuda">
       Enable NVIDIA® CUDA® computations support (Experimental!)
     </flag>
