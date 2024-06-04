@@ -139,7 +139,7 @@
       Enable compilation with opencvapps
     </flag>
     <flag name="openvx">
-      Enable hardware acceleration of computer vision via OpenVX.
+      Enable hardware acceleration of computer vision via OpenVX™.
     </flag>
     <flag name="quirc">
       Enable qrcode decoding via <pkg>media-libs/quirc</pkg>
