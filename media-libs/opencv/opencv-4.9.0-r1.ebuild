@@ -164,8 +164,8 @@ CPU_FEATURES_MAP=(
 	"cpu_flags_loong_lsx:LSX"
 	"cpu_flags_loong_lasx:LASX"
 	"cpu_flags_mips_msa:MSA"
-	"cpu_flags_ppc_vsx:VSX"					# (always available on Power8)
-	"cpu_flags_ppc_vsx3:VSX3"				# (always available on Power9)
+	"cpu_flags_ppc_vsx:VSX"					# Always available on Power8
+	"cpu_flags_ppc_vsx3:VSX3"				# Always available on Power9
 	"cpu_flags_riscv_rvv:RVV"
 	"cpu_flags_x86_avx:AVX"
 	"cpu_flags_x86_avx2:AVX2"
@@ -187,8 +187,8 @@ CPU_FEATURES_MAP=(
 	"cpu_flags_x86_f16c:FP16"
 	"cpu_flags_x86_fma3:FMA3"
 	"cpu_flags_x86_popcnt:POPCNT"
-	"cpu_flags_x86_sse:SSE"					# (always available on 64-bit CPUs)
-	"cpu_flags_x86_sse2:SSE2"				# (always available on 64-bit CPUs)
+	"cpu_flags_x86_sse:SSE"					# Always available on 64-bit CPUs
+	"cpu_flags_x86_sse2:SSE2"				# Always available on 64-bit CPUs
 	"cpu_flags_x86_sse3:SSE3"
 	"cpu_flags_x86_sse4_1:SSE4_1"
 	"cpu_flags_x86_sse4_2:SSE4_2"

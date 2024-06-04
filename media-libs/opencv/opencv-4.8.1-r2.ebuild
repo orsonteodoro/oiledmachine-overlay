@@ -171,14 +171,14 @@ XFEATURES2D_VGG_COMMIT="fccf7cd6a4b12079f73bbfb21745f9babcd4eb1d"		# See https:/
 
 # The following lines are shamelessly stolen from ffmpeg-9999.ebuild with modifications
 ARM_CPU_FEATURES=(
-	"cpu_flags_arm_fp16:FP16"			# arm only
-	"cpu_flags_arm_neon:NEON"			# arm only
-	"cpu_flags_arm_neon_dotprod:NEON_DOTPROD"	# arm64 only
-	"cpu_flags_arm_vfpv3:VFPV3"			# arm only
+	"cpu_flags_arm_fp16:FP16"				# arm only
+	"cpu_flags_arm_neon:NEON"				# arm only
+	"cpu_flags_arm_neon_dotprod:NEON_DOTPROD"		# arm64 only
+	"cpu_flags_arm_vfpv3:VFPV3"				# arm only
 )
 PPC_CPU_FEATURES=(
-	"cpu_flags_ppc_vsx:VSX"
-	"cpu_flags_ppc_vsx3:VSX3"
+	"cpu_flags_ppc_vsx:VSX"					# Always available on Power8
+	"cpu_flags_ppc_vsx3:VSX3"				# Always available on Power9
 )
 RISCV_CPU_FEATURES=(
 	"cpu_flags_riscv_rvv:RVV"
@@ -208,8 +208,8 @@ X86_CPU_FEATURES=(
 	"cpu_flags_x86_f16c:FP16"
 	"cpu_flags_x86_fma3:FMA3"
 	"cpu_flags_x86_popcnt:POPCNT"
-	"cpu_flags_x86_sse:SSE"
-	"cpu_flags_x86_sse2:SSE2"
+	"cpu_flags_x86_sse:SSE"					# Always available on 64-bit CPUs
+	"cpu_flags_x86_sse2:SSE2"				# Always available on 64-bit CPUs
 	"cpu_flags_x86_sse3:SSE3"
 	"cpu_flags_x86_sse4_1:SSE4_1"
 	"cpu_flags_x86_sse4_2:SSE4_2"
