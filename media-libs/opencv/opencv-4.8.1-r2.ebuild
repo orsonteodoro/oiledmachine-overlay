@@ -746,10 +746,8 @@ src_prepare() {
 
 	if use cuda ; then
 		mkdir -p "${S}/.cache/nvidia_optical_flow"
-		local s2=$( \
-			md5sum "${DISTDIR}/NVIDIAOpticalFlowSDK-${NVIDIA_OPTICAL_FLOW_COMMIT}.tar.gz" \
-			| cut -f 1 -d " " \
-		)
+		local s2=$(md5sum "${DISTDIR}/NVIDIAOpticalFlowSDK-${NVIDIA_OPTICAL_FLOW_COMMIT}.tar.gz" \
+			| cut -f 1 -d " ")
 		cp \
 			"${DISTDIR}/NVIDIAOpticalFlowSDK-${NVIDIA_OPTICAL_FLOW_COMMIT}.tar.gz" \
 			"${S}/.cache/nvidia_optical_flow/${s2}-${NVIDIA_OPTICAL_FLOW_COMMIT}.tar.gz" \
