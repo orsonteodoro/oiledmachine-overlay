@@ -136,12 +136,18 @@
     <flag name="opencvapps">
       Enable compilation with opencvapps
     </flag>
+    <flag name="openvino">
+      Use OpenVINO™ for OpenVX™ support.
+    </flag>
     <flag name="openvx">
       Enable the Hardware Acceleration Layer (HAL) for image processing via
-      OpenVX™.
+      OpenVX™.  (EXPERIMENTAL)
     </flag>
     <flag name="quirc">
       Enable qrcode decoding via <pkg>media-libs/quirc</pkg>
+    </flag>
+    <flag name="rocm">
+      Use MIVisionX for OpenVX™ support.  (EXPERIMENTAL)
     </flag>
     <flag name="system-flatbuffers">
       Build with the system flatbuffers package if it meets major-minor version

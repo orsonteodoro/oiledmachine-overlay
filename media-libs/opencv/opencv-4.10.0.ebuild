@@ -5,9 +5,6 @@ EAPI=8
 
 # U20, U22, U24
 
-# TODO package:
-# openvino
-
 # For the flatbuffers version restriction, see
 # https://github.com/opencv/opencv/blob/4.10.0/modules/dnn/misc/tflite/schema_generated.h#L11
 # (The patch will allow for newer revisions.)
@@ -288,7 +285,7 @@ IUSE="
 "
 # hal for acceleration
 IUSE+="
-	+carotene -kleidicv +ndsrvp -openvx
+	+carotene -kleidicv +ndsrvp openvino -openvx
 "
 # modules
 IUSE+="
@@ -432,6 +429,12 @@ REQUIRED_USE="
 				qt5
 				qt6
 			)
+		)
+	)
+	openvx? (
+		|| (
+			rocm
+			openvino
 		)
 	)
 	python? (
@@ -631,6 +634,9 @@ RDEPEND="
 	opengl? (
 		virtual/opengl[${MULTILIB_USEDEP}]
 		virtual/glu[${MULTILIB_USEDEP}]
+	)
+	openvino? (
+		dev-util/openvino
 	)
 	png? (
 		>=media-libs/libpng-1.6.43:0[${MULTILIB_USEDEP}]
@@ -1128,7 +1134,11 @@ multilib_src_configure() {
 		)
 	fi
 
-	if use openvx && use rocm_5_7 ; then
+	if use openvx && use openvino ; then
+		mycmakeargs+=(
+			-DWITH_OPENVX=ON
+		)
+	elif use openvx && use rocm_5_7 ; then
 		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.7"
 		mycmakeargs+=(
 			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.7"
