@@ -28,14 +28,36 @@ PYTHON_COMPAT=( "python3_10" ) # 3.6 (U18), 3.8 (U20)
 
 inherit cmake python-any-r1
 
-# Too many deep dependencies
-EGIT_BRANCH="master"
-EGIT_COMMIT="${PV}"
-EGIT_REPO_URI="https://github.com/openvinotoolkit/openvino.git"
-inherit git-r3
+_gen_gh_uri() {
+	local org="${1}"
+	local project_name="${2}"
+	local commit="${3}"
+	local alt_name="${4}"
+	if [[ -n "${alt_name}" ]] ; then
+		echo "
+https://github.com/${org}/${project_name}/archive/${commit}.tar.gz -> ${org}-${alt_name}-${commit:0:7}.tar.gz
+		"
+	else
+		echo "
+https://github.com/${org}/${project_name}/archive/${commit}.tar.gz -> ${org}-${project_name}-${commit:0:7}.tar.gz
+		"
+	fi
+}
+
 
 #KEYWORDS="~amd64 ~arm64 ~x86"
 S="${WORKDIR}/${P}"
+# gflags has .gitmodules gitflags-doc (971)
+SRC_URI="
+https://github.com/openvinotoolkit/openvino/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz
+$(_gen_gh_uri herumi xbyak 8d1e41b650890080fb77548372b6236bbd4079f9)
+$(_gen_gh_uri madler zlib cacf7f1d4e3d44d871b605da3b647f07d718623f)
+$(_gen_gh_uri opencv ade 58b2595a1a95cc807be8bf6222f266a9a1f393a9)
+$(_gen_gh_uri openvinotoolkit oneDNN 60f41b3a9988ce7b1bc85c4f1ce7f9443bc91c9d)
+$(_gen_gh_uri openvinotoolkit googletest 9bd163b993459b2ca6ba2dc508577bbc8774c851)
+$(_gen_gh_uri gflags gflags 46f73f88b18aee341538c0dfc22b1710a6abedef)
+$(_gen_gh_uri gflags gflags 971dd2a4fadac9cdab174c523c22df79efd63aa5 gflags-doc)
+"
 
 DESCRIPTION="OpenVINO™ is an open-source toolkit for optimizing and deploying AI inference"
 HOMEPAGE="https://github.com/openvinotoolkit/openvino"
@@ -156,17 +178,55 @@ pkg_setup() {
 	python_setup
 }
 
+_unpack_gh() {
+	local dest="${1}"
+	local org="${2}"
+	local project_name="${3}"
+	local commit="${4}"
+	local alt_name="${5}"
+	rm -rf "${dest}"
+	mkdir -p "${dest}"
+	if [[ -n "${alt_name}" ]] ; then
+		cp -aT \
+			"${WORKDIR}/${alt_name}-${commit}" \
+			"${S}/${dest}" \
+			|| die
+	else
+		cp -aT \
+			"${WORKDIR}/${project_name}-${commit}" \
+			"${S}/${dest}" \
+			|| die
+	fi
+}
+
+_unpack_gh_dupe() {
+	local dupe_path="${1}"
+	local dest="${2}"
+	rm -rf "${dest}"
+	mkdir -p "${dest}"
+	cp -aT \
+		"${dupe_path}" \
+		"${S}/${dest}" \
+		|| die
+}
+
 src_unpack() {
-	git-r3_fetch
-	git-r3_checkout
+	unpack ${A}
+	_unpack_gh "thirdparty/xbyak" herumi xbyak 8d1e41b650890080fb77548372b6236bbd4079f9
+	_unpack_gh "thirdparty/zlib/zlib" madler zlib cacf7f1d4e3d44d871b605da3b647f07d718623f
+	_unpack_gh "inference-engine/thirdparty/ade" opencv ade 58b2595a1a95cc807be8bf6222f266a9a1f393a9
+	_unpack_gh "inference-engine/thirdparty/mkl-dnn" openvinotoolkit oneDNN 60f41b3a9988ce7b1bc85c4f1ce7f9443bc91c9d
+	_unpack_gh "inference-engine/tests/ie_test_utils/common_test_utils/gtest" openvinotoolkit googletest 9bd163b993459b2ca6ba2dc508577bbc8774c851
+	_unpack_gh "inference-engine/samples/thirdparty/gflags" gflags gflags 46f73f88b18aee341538c0dfc22b1710a6abedef
+	_unpack_gh "inference-engine/samples/thirdparty/gflags/doc" gflags gflags 971dd2a4fadac9cdab174c523c22df79efd63aa5
 }
 
 src_configure() {
 	local mycmakelists=(
 		-DBUILD_SHARED_LIBS=ON
 		-DCI_BUILD_NUMBER="custom__"
-		-DENABLE_AVX2=$(usex cpu_flax_x86_avx2)
-		-DENABLE_AVX512F=$(usex cpu_flax_x86_avx512f)
+		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2)
+		-DENABLE_AVX512F=$(usex cpu_flags_x86_avx512f)
 		-DENABLE_BEH_TESTS=OFF
 		-DENABLE_CLANG_FORMAT=OFF
 		-DENABLE_CLDNN=ON
@@ -198,7 +258,7 @@ src_configure() {
 		-DENABLE_SAMPLES=ON
 		-DENABLE_SANITIZER=OFF
 		-DENABLE_SPEECH_DEMO=ON
-		-DENABLE_SSE42=$(usex cpu_flax_x86_sse4_2)
+		-DENABLE_SSE42=$(usex cpu_flags_x86_sse4_2)
 		-DENABLE_STRICT_DEPENDENCIES=ON
 		-DENABLE_TBB_RELEASE_ONLY=ON
 		-DENABLE_TEMPLATE_PLUGIN=OFF
