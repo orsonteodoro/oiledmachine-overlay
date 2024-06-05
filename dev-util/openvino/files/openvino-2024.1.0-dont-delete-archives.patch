@@ -1,0 +1,50 @@
+--- a/cmake/developer_package/download/download_and_extract.cmake.orig	2024-06-05 08:13:54.438451696 -0700
++++ b/cmake/developer_package/download/download_and_extract.cmake	2024-06-05 08:34:07.724491046 -0700
+@@ -80,12 +80,12 @@ function (DownloadAndExtractInternal URL
+   if ("${result1}" STREQUAL "ARCHIVE_DOWNLOAD_FAIL")
+     #check alternative url as well
+     set (status "OFF")
+-    file(REMOVE_RECURSE "${archive_path}")
++    #file(REMOVE_RECURSE "${archive_path}")
+   endif()
+ 
+   if ("${result1}" STREQUAL "CHECKSUM_DOWNLOAD_FAIL" OR "${result1}" STREQUAL "HASH_MISMATCH")
+     set(status FALSE)
+-    file(REMOVE_RECURSE "${archive_path}")
++    #file(REMOVE_RECURSE "${archive_path}")
+   endif()
+ 
+   message(STATUS "result1:  ${result1}")
+@@ -102,12 +102,12 @@ function (ExtractWithVersion URL archive
+   debug_message("ExtractWithVersion : ${archive_path} : ${unpacked_path} : ${folder} : ${files_to_extract}")
+   extract(${archive_path} ${unpacked_path} ${folder} ${files_to_extract} status)
+   #dont need archive actually after unpacking
+-  file(REMOVE_RECURSE "${archive_path}")
++  #file(REMOVE_RECURSE "${archive_path}")
+   if (${status})
+     set (version_file ${unpacked_path}/ie_dependency.info)
+     file(WRITE ${version_file} ${URL})
+   else()
+-    file(REMOVE_RECURSE "${unpacked_path}")
++    #file(REMOVE_RECURSE "${unpacked_path}")
+     message(FATAL_ERROR "Failed to extract the archive from ${URL}, archive ${archive_path} to folder ${unpacked_path}")
+   endif()
+   set (${result} ${status} PARENT_SCOPE)
+@@ -135,7 +135,7 @@ function (DownloadOrExtractInternal URL
+       endif()
+     else()
+       debug_message("archive found on FS : ${archive_path}, however we cannot check it's checksum and think that it is invalid")
+-      file(REMOVE_RECURSE "${archive_path}")
++      #file(REMOVE_RECURSE "${archive_path}")
+       DownloadAndExtractInternal(${URL} ${archive_path} ${unpacked_path} ${folder} ${fattal} result ${sha256} ${files_to_extract})
+       if (${result})
+         set (downloadStatus "OK")
+@@ -212,7 +212,7 @@ function (CheckOrDownloadAndExtract comp
+ 
+       else()
+         debug_message("dependency updated: download it again")
+-        file(REMOVE_RECURSE "${unpacked_path}")
++        #file(REMOVE_RECURSE "${unpacked_path}")
+         DownloadOrExtractInternal(${URL} ${archive_path} ${unpacked_path} ${folder} ${fattal} status ${sha256} ${files_to_extract})
+       endif()
+     endif ()

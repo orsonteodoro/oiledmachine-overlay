@@ -18,12 +18,13 @@ EAPI=8
 
 #MKL_DNN_PV="1.6.0"
 
-DISTUTILS_USE_PEP517="setuptools"
+CMAKE_MAKEFILE_GENERATOR="emake"
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx2"
 	"cpu_flags_x86_avx512f"
 	"cpu_flags_x86_sse4_2"
 )
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_10" ) # 3.6 (U18), 3.8 (U20)
 
 inherit cmake python-any-r1
@@ -45,7 +46,7 @@ https://github.com/${org}/${project_name}/archive/${commit}.tar.gz -> ${org}-${p
 }
 
 
-#KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~x86"
 S="${WORKDIR}/${P}"
 # gflags has .gitmodules gitflags-doc (971)
 SRC_URI="
@@ -57,7 +58,25 @@ $(_gen_gh_uri openvinotoolkit oneDNN 60f41b3a9988ce7b1bc85c4f1ce7f9443bc91c9d)
 $(_gen_gh_uri openvinotoolkit googletest 9bd163b993459b2ca6ba2dc508577bbc8774c851)
 $(_gen_gh_uri gflags gflags 46f73f88b18aee341538c0dfc22b1710a6abedef)
 $(_gen_gh_uri gflags gflags 971dd2a4fadac9cdab174c523c22df79efd63aa5 gflags-doc)
+https://download.01.org/opencv/master/openvinotoolkit/thirdparty/unified/VPU/usb-ma2x8x/firmware_usb-ma2x8x_1875.zip
+https://download.01.org/opencv/master/openvinotoolkit/thirdparty/unified/VPU/pcie-ma2x8x/firmware_pcie-ma2x8x_1875.zip
+https://download.01.org/opencv/master/openvinotoolkit/thirdparty/linux/tbb2020_20200415_lin_strip.tgz
+https://download.01.org/opencv/master/openvinotoolkit/thirdparty/linux/tbbbind_2_4_static_lin_v2.tgz
+https://download.01.org/opencv/master/openvinotoolkit/thirdparty/linux/opencv/opencv_4.5.2-076_ubuntu20.txz
+gna1? (
+	https://download.01.org/opencv/master/openvinotoolkit/thirdparty/unified/GNA/gna_20181120.zip
+)
+gna1_1401? (
+	https://download.01.org/opencv/master/openvinotoolkit/thirdparty/unified/GNA/GNA_01.00.00.1401.zip
+)
+gna2? (
+	https://download.01.org/opencv/master/openvinotoolkit/thirdparty/unified/GNA/GNA_03.00.00.1377.zip
+)
 "
+# For downloads, grep also RESOLVE_DEPENDENCY in
+# cmake/dependencies.cmake
+# inference-engine/cmake/vpu_dependencies.cmake
+# inference-engine/cmake/dependencies.cmake
 
 DESCRIPTION="OpenVINO™ is an open-source toolkit for optimizing and deploying AI inference"
 HOMEPAGE="https://github.com/openvinotoolkit/openvino"
@@ -68,13 +87,20 @@ RESTRICT="mirror test" # Missing test dependencies
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 	${CPU_FLAGS_X86[@]}
-	doc gna -lto +mkl-dnn -openmp test +tbb
-	video_cards_intel
+	doc gna gna1 gna1_1401 gna2 -lto +mkl-dnn -openmp system-pugixml test
+	+tbb video_cards_intel
 "
 REQUIRED_USE="
 	?? (
 		tbb
 		openmp
+	)
+	gna? (
+		^^ (
+			gna1
+			gna1_1401
+			gna2
+		)
 	)
 "
 RDEPEND+="
@@ -170,6 +196,9 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
+	"${FILESDIR}/${PN}-2024.1.0-offline-install.patch"
+	"${FILESDIR}/${PN}-2024.1.0-dont-delete-archives.patch"
+	"${FILESDIR}/${PN}-2021.4.2-allow-opencv-download-on-gentoo.patch"
 )
 
 #distutils_enable_sphinx "docs"
@@ -210,6 +239,18 @@ _unpack_gh_dupe() {
 		|| die
 }
 
+precache_resolved_dep() {
+	local dest="${1}"
+	local filename="${2}"
+	local new_name="${3}"
+	mkdir -p "${S}/${dest}"
+	if [[ -n "${new_name}" ]] ; then
+		cp -a $(realpath "${DISTDIR}/${filename}") "${S}/${dest}" || die
+	else
+		cp -a $(realpath "${DISTDIR}/${filename}") "${S}/${dest}" || die
+	fi
+}
+
 src_unpack() {
 	unpack ${A}
 	_unpack_gh "thirdparty/xbyak" herumi xbyak 8d1e41b650890080fb77548372b6236bbd4079f9
@@ -219,12 +260,26 @@ src_unpack() {
 	_unpack_gh "inference-engine/tests/ie_test_utils/common_test_utils/gtest" openvinotoolkit googletest 9bd163b993459b2ca6ba2dc508577bbc8774c851
 	_unpack_gh "inference-engine/samples/thirdparty/gflags" gflags gflags 46f73f88b18aee341538c0dfc22b1710a6abedef
 	_unpack_gh "inference-engine/samples/thirdparty/gflags/doc" gflags gflags 971dd2a4fadac9cdab174c523c22df79efd63aa5
+
+	precache_resolved_dep "inference-engine/temp/download/VPU/usb-ma2x8x" "firmware_usb-ma2x8x_1875.zip"
+	precache_resolved_dep "inference-engine/temp/download/VPU/pcie-ma2x8x" "firmware_pcie-ma2x8x_1875.zip"
+	precache_resolved_dep "inference-engine/temp/download" "tbb2020_20200415_lin_strip.tgz"
+	precache_resolved_dep "inference-engine/temp/download" "tbbbind_2_4_static_lin_v2.tgz"
+	precache_resolved_dep "inference-engine/temp/download/opencv" "opencv_4.5.2-076_ubuntu20.txz"
+	if use gna1 ; then
+		precache_resolved_dep "inference-engine/temp/download/GNA" "gna_20181120.zip"
+	elif use gna1_1401 ; then
+		precache_resolved_dep "inference-engine/temp/download/GNA" "GNA_01.00.00.1401.zip"
+	elif use gna2 ; then
+		precache_resolved_dep "inference-engine/temp/download/GNA" "GNA_03.00.00.1377.zip"
+	fi
 }
 
 src_configure() {
-	local mycmakelists=(
+	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
 		-DCI_BUILD_NUMBER="custom__"
+		-DCMAKE_VERBOSE_MAKEFILE=ON
 		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2)
 		-DENABLE_AVX512F=$(usex cpu_flags_x86_avx512f)
 		-DENABLE_BEH_TESTS=OFF
@@ -242,7 +297,7 @@ src_configure() {
 		-DENABLE_FUNCTIONAL_TESTS=OFF
 		-DENABLE_FUZZING=OFF
 		-DENABLE_GAPI_TESTS=OFF
-		-DENABLE_GNA=ON
+		-DENABLE_GNA=$(usex gna)
 		-DENABLE_INTEGRITYCHECK=OFF
 		-DENABLE_LTO=$(usex lto)
 		-DENABLE_MKL_DNN=$(usex mkl-dnn)
@@ -268,22 +323,36 @@ src_configure() {
 		-DENABLE_V7_SERIALIZE=OFF
 		-DENABLE_VPU=ON
 		-DGAPI_TEST_PERF=OFF
-		-DGNA_LIBRARY_VERSION=GNA2
+		-DOFFLINE_INSTALL=ON
 		-DOS_FOLDER=OFF
 		-DSELECTIVE_BUILD=OFF
 		-DTREAT_WARNING_AS_ERROR=ON
 		-DUSE_BUILD_TYPE_SUBFOLDER=ON
-		-DUSE_SYSTEM_PUGIXML=ON
-		-DVERBOSE_BUILD=OFF
+		-DUSE_SYSTEM_PUGIXML=$(usex system-pugixml)
+		-DVERBOSE_BUILD=ON
 	)
 
 	if [[ "${ARCH}" == "x86" || "${ARCH}" == "arm" ]] ; then
-		mycmakelists=(
+		mycmakeargs+=(
 			-DTHREADING="SEQ"
 		)
 	else
-		mycmakelists=(
+		mycmakeargs+=(
 			-DTHREADING=$(usex tbb "TBB" $(usex openmp "OMP" "SEQ"))
+		)
+	fi
+
+	if use gna1 ; then
+		mycmakeargs+=(
+			-DGNA_LIBRARY_VERSION="GNA1"
+		)
+	elif use gna1_1401 ; then
+		mycmakeargs+=(
+			-DGNA_LIBRARY_VERSION="GNA1_1401"
+		)
+	elif use gna2 ; then
+		mycmakeargs+=(
+			-DGNA_LIBRARY_VERSION="GNA2"
 		)
 	fi
 

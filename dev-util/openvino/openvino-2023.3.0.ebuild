@@ -14,12 +14,13 @@ EAPI=8
 # pytest-html
 # test-generator
 
-DISTUTILS_USE_PEP517="setuptools"
+CMAKE_MAKEFILE_GENERATOR="emake"
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx2"
 	"cpu_flags_x86_avx512f"
 	"cpu_flags_x86_sse4_2"
 )
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} ) # Based on https://github.com/openvinotoolkit/openvino/blob/2023.3.0/docs/dev/build_linux.md#software-requirements
 
 inherit cmake python-any-r1
@@ -40,7 +41,7 @@ https://github.com/${org}/${project_name}/archive/${commit}.tar.gz -> ${org}-${p
 	fi
 }
 
-#KEYWORDS="~amd64 ~arm64 ~riscv ~x86"
+KEYWORDS="~amd64 ~arm64 ~riscv ~x86"
 S="${WORKDIR}/${P}"
 # snappy has .gitmodules benchmark (bf5), googletest (18f)
 # protobuf has .gitmodules benchmark (5b7), googletest (5ec)
@@ -55,38 +56,75 @@ https://github.com/openvinotoolkit/openvino/archive/refs/tags/${PV}.tar.gz -> ${
 $(_gen_gh_uri opencv ade 0e8a2ccdd34f29dba55894f5f3c5179809888b9e)
 $(_gen_gh_uri herumi xbyak 740dff2e866f3ae1a70dd42d6e8836847ed95cc2)
 $(_gen_gh_uri openvinotoolkit open_model_zoo e8fb4cd86a516ce5765290e9665f8afe87b79b2e)
-$(_gen_gh_uri zeux pugixml 2e357d19a3228c0a301727aac6bea6fecd982d21)
-$(_gen_gh_uri google snappy dc05e026488865bc69313a68bcc03ef2e4ea8e83)
+!system-pugixml? (
+	$(_gen_gh_uri zeux pugixml 2e357d19a3228c0a301727aac6bea6fecd982d21)
+)
+!system-snappy? (
+	$(_gen_gh_uri google snappy dc05e026488865bc69313a68bcc03ef2e4ea8e83)
+	$(_gen_gh_uri google benchmark bf585a2789e30585b4e3ce6baf11ef2750b54677)
+	$(_gen_gh_uri google googletest 18f8200e3079b0e54fa00cb7ac55d4c39dcf6da6)
+)
 $(_gen_gh_uri openvinotoolkit telemetry 58e16c257a512ec7f451c9fccf9ff455065b285b)
 $(_gen_gh_uri herumi xbyak 740dff2e866f3ae1a70dd42d6e8836847ed95cc2)
 $(_gen_gh_uri ARM-software ComputeLibrary 874e0c7b3fe93a6764ecb2d8cfad924af19a9d25)
 $(_gen_gh_uri openvinotoolkit mlas 7a35e48a723944972088627be1a8b60841e8f6a5)
 $(_gen_gh_uri openvinotoolkit oneDNN cb3060bbf4694e46a1359a3d4dfe70500818f72d)
 $(_gen_gh_uri madler zlib 04f42ceca40f73e2978b50e93806c2a18c1281fc)
-$(_gen_gh_uri protocolbuffers protobuf fe271ab76f2ad2b2b28c10443865d2af21e27e0e)
+!system-protobuf? (
+	$(_gen_gh_uri protocolbuffers protobuf fe271ab76f2ad2b2b28c10443865d2af21e27e0e)
+	$(_gen_gh_uri google benchmark 5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8)
+	$(_gen_gh_uri google googletest 5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081)
+)
 $(_gen_gh_uri onnx onnx b86cc54efce19530fb953e4b21f57e6b3888534c)
-$(_gen_gh_uri KhronosGroup OpenCL-Headers 4c82e9cfaaad18c340f48af3cf5d09ff33e8c1b7)
-$(_gen_gh_uri KhronosGroup OpenCL-CLHPP 4a1157466afe72a87e8abc59537ef577534ccadf)
-$(_gen_gh_uri KhronosGroup OpenCL-ICD-Loader 2cde5d09953a041786d1cfdcb1c08704a82cb904)
+!system-opencl? (
+	$(_gen_gh_uri KhronosGroup OpenCL-Headers 4c82e9cfaaad18c340f48af3cf5d09ff33e8c1b7)
+	$(_gen_gh_uri KhronosGroup OpenCL-CLHPP 4a1157466afe72a87e8abc59537ef577534ccadf)
+	$(_gen_gh_uri KhronosGroup OpenCL-ICD-Loader 2cde5d09953a041786d1cfdcb1c08704a82cb904)
+	$(_gen_gh_uri ThrowTheSwitch CMock 7cc41ddfdd07dc5eb8359d278f439f14031d64ad)
+	$(_gen_gh_uri ThrowTheSwitch Unity 7d2bf62b7e6afaf38153041a9d53c21aeeca9a25)
+	$(_gen_gh_uri throwtheswitch cexception dce9e8b26f2179439002e02d691429e81a32b6c0)
+	$(_gen_gh_uri throwtheswitch unity 2c7629a0ae90ffe991b5fd08e4db8672f72ed64c)
+	$(_gen_gh_uri throwtheswitch unity 031f3bbe45f8adf504ca3d13e6f093869920b091)
+)
 $(_gen_gh_uri nlohmann json 9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03)
 $(_gen_gh_uri intel ittapi 69dd04030d3a2cf4c32e649ac1f2a628d5af6b46)
 $(_gen_gh_uri openvinotoolkit googletest d269d902e4c3cd02f3e731e1e2ff8307352817a4)
 $(_gen_gh_uri gflags gflags e171aa2d15ed9eb17054558e0b3a6a413bb01067)
 $(_gen_gh_uri gflags gflags 8411df715cf522606e3b1aca386ddfc0b63d34b4 gflags-doc)
-$(_gen_gh_uri google flatbuffers 01834de25e4bf3975a9a00e816292b1ad0fe184b)
+!system-flatbuffers? (
+	$(_gen_gh_uri google flatbuffers 01834de25e4bf3975a9a00e816292b1ad0fe184b)
+)
 $(_gen_gh_uri pybind pybind11 2965fa8de3cf9e82c789f906a525a76197b186c1)
 $(_gen_gh_uri nithinn ncc 63e59ed312ba7a946779596e86124c1633f67607)
 $(_gen_gh_uri oneapi-src oneDNN cb77937ffcf5e83b5d1cf2940c94e8b508d8f7b4)
-$(_gen_gh_uri google benchmark bf585a2789e30585b4e3ce6baf11ef2750b54677)
-$(_gen_gh_uri google googletest 18f8200e3079b0e54fa00cb7ac55d4c39dcf6da6)
 $(_gen_gh_uri google benchmark 5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8)
-$(_gen_gh_uri google googletest 5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081)
-$(_gen_gh_uri ThrowTheSwitch CMock 7cc41ddfdd07dc5eb8359d278f439f14031d64ad)
-$(_gen_gh_uri ThrowTheSwitch Unity 7d2bf62b7e6afaf38153041a9d53c21aeeca9a25)
-$(_gen_gh_uri throwtheswitch cexception dce9e8b26f2179439002e02d691429e81a32b6c0)
-$(_gen_gh_uri throwtheswitch unity 2c7629a0ae90ffe991b5fd08e4db8672f72ed64c)
-$(_gen_gh_uri throwtheswitch unity 031f3bbe45f8adf504ca3d13e6f093869920b091)
+$(_gen_gh_uri google googletest 18f8200e3079b0e54fa00cb7ac55d4c39dcf6da6)
+gna? (
+	https://storage.openvinotoolkit.org/dependencies/gna/gna_03.05.00.2116.zip
+)
+kernel_linux? (
+	amd64? (
+		https://storage.openvinotoolkit.org/dependencies/thirdparty/linux/tbbbind_2_5_static_lin_v4.tgz
+	)
+)
+openmp? (
+	amd64? (
+		https://storage.openvinotoolkit.org/dependencies/thirdparty/linux/iomp.tgz -> iomp-x86-64-7832b16.tgz
+	)
+)
+tbb? (
+	system-tbb? (
+		amd64? (
+			https://storage.openvinotoolkit.org/dependencies/thirdparty/linux/oneapi-tbb-2021.2.4-lin.tgz
+		)
+		arm64? (
+			https://storage.openvinotoolkit.org/dependencies/thirdparty/linux/oneapi-tbb-2021.2.1-lin-arm64-20231012.tgz
+		)
+	)
+)
 "
+# The version difference for tbb is not a mistake.
+# For downloads, grep also RESOLVE_DEPENDENCY in cmake/dependencies.cmake
 
 DESCRIPTION="OpenVINO™ is an open-source toolkit for optimizing and deploying AI inference"
 HOMEPAGE="https://github.com/openvinotoolkit/openvino"
@@ -97,7 +135,8 @@ RESTRICT="mirror test" # Missing test dependencies
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 	${CPU_FLAGS_X86[@]}
-	doc gna -lto +mlas -openmp -system-flatbuffers test +tbb
+	doc gna -lto +mlas -openmp -system-flatbuffers system-opencl
+	system-protobuf system-pugixml system-snappy system-tbb test +tbb
 	video_cards_intel
 "
 REQUIRED_USE="
@@ -105,17 +144,31 @@ REQUIRED_USE="
 		tbb
 		openmp
 	)
+	system-tbb? (
+		tbb
+	)
 "
 RDEPEND+="
-	>=app-arch/snappy-1.1.10
-	>=dev-libs/pugixml-1.14
-	>=dev-libs/protobuf-3.20.3:0/3.21
 	dev-cpp/tbb
 	mlas? (
 		>=sci-libs/mlas-20231105
 	)
 	system-flatbuffers? (
 		>=dev-libs/flatbuffers-23.3.3
+	)
+	system-opencl? (
+		dev-cpp/clhpp
+		dev-libs/opencl-icd-loader
+		dev-util/opencl-headers
+	)
+	system-protobuf? (
+		>=dev-libs/protobuf-3.20.3:0/3.21
+	)
+	system-pugixml? (
+		>=dev-libs/pugixml-1.14
+	)
+	system-snappy? (
+		>=app-arch/snappy-1.1.10
 	)
 	video_cards_intel? (
 		>=dev-libs/intel-compute-runtime-21.38.21026
@@ -420,6 +473,8 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
+	"${FILESDIR}/${PN}-2024.1.0-offline-install.patch"
+	"${FILESDIR}/${PN}-2024.1.0-dont-delete-archives.patch"
 )
 
 #distutils_enable_sphinx "docs"
@@ -460,23 +515,52 @@ _unpack_gh_dupe() {
 		|| die
 }
 
+precache_resolved_dep() {
+	local dest="${1}"
+	local filename="${2}"
+	local new_name="${3}"
+	mkdir -p "${S}/${dest}"
+	if [[ -n "${new_name}" ]] ; then
+		cp -a $(realpath "${DISTDIR}/${filename}") "${S}/${dest}" || die
+	else
+		cp -a $(realpath "${DISTDIR}/${filename}") "${S}/${dest}" || die
+	fi
+}
+
 src_unpack() {
 	unpack ${A}
 	_unpack_gh "thirdparty/ade" opencv ade 0e8a2ccdd34f29dba55894f5f3c5179809888b9e
 	_unpack_gh "thirdparty/xbyak" herumi xbyak 740dff2e866f3ae1a70dd42d6e8836847ed95cc2
 	_unpack_gh "thirdparty/open_model_zoo" openvinotoolkit open_model_zoo e8fb4cd86a516ce5765290e9665f8afe87b79b2e
-	_unpack_gh "thirdparty/pugixml" zeux pugixml 2e357d19a3228c0a301727aac6bea6fecd982d21
-	_unpack_gh "thirdparty/snappy" google snappy dc05e026488865bc69313a68bcc03ef2e4ea8e83
+	if ! use system-pugixml ; then
+		_unpack_gh "thirdparty/pugixml" zeux pugixml 2e357d19a3228c0a301727aac6bea6fecd982d21
+	fi
+	if ! use system-snappy ; then
+		_unpack_gh "thirdparty/snappy" google snappy dc05e026488865bc69313a68bcc03ef2e4ea8e83
+		_unpack_gh "thirdparty/snappy/third_party/benchmark" google benchmark bf585a2789e30585b4e3ce6baf11ef2750b54677
+		_unpack_gh "thirdparty/snappy/third_party/googletest" google googletest 18f8200e3079b0e54fa00cb7ac55d4c39dcf6da6
+	fi
 	_unpack_gh "thirdparty/telemetry" openvinotoolkit telemetry 58e16c257a512ec7f451c9fccf9ff455065b285b
 	_unpack_gh "src/plugins/intel_cpu/thirdparty/ComputeLibrary" ARM-software ComputeLibrary 874e0c7b3fe93a6764ecb2d8cfad924af19a9d25
 	_unpack_gh "src/plugins/intel_cpu/thirdparty/mlas" openvinotoolkit mlas 7a35e48a723944972088627be1a8b60841e8f6a5
 	_unpack_gh "src/plugins/intel_cpu/thirdparty/onednn" openvinotoolkit oneDNN cb3060bbf4694e46a1359a3d4dfe70500818f72d
 	_unpack_gh "thirdparty/zlib/zlib" madler zlib 04f42ceca40f73e2978b50e93806c2a18c1281fc
-	_unpack_gh "thirdparty/protobuf/protobuf" protocolbuffers protobuf fe271ab76f2ad2b2b28c10443865d2af21e27e0e
+	if ! use system-protobuf ; then
+		_unpack_gh "thirdparty/protobuf/protobuf" protocolbuffers protobuf fe271ab76f2ad2b2b28c10443865d2af21e27e0e
+		_unpack_gh "thirdparty/protobuf/protobuf/third_party/benchmark" google benchmark 5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8
+		_unpack_gh "thirdparty/protobuf/protobuf/third_party/googletest" google googletest 5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081
+	fi
 	_unpack_gh "thirdparty/onnx/onnx" onnx onnx b86cc54efce19530fb953e4b21f57e6b3888534c
-	_unpack_gh "thirdparty/ocl/cl_headers" KhronosGroup OpenCL-Headers 4c82e9cfaaad18c340f48af3cf5d09ff33e8c1b7
-	_unpack_gh "thirdparty/ocl/clhpp_headers" KhronosGroup OpenCL-CLHPP 4a1157466afe72a87e8abc59537ef577534ccadf
-	_unpack_gh "thirdparty/ocl/icd_loader" KhronosGroup OpenCL-ICD-Loader 2cde5d09953a041786d1cfdcb1c08704a82cb904
+	if ! use system-opencl ; then
+		_unpack_gh "thirdparty/ocl/cl_headers" KhronosGroup OpenCL-Headers 4c82e9cfaaad18c340f48af3cf5d09ff33e8c1b7
+		_unpack_gh "thirdparty/ocl/clhpp_headers" KhronosGroup OpenCL-CLHPP 4a1157466afe72a87e8abc59537ef577534ccadf
+		_unpack_gh "thirdparty/ocl/icd_loader" KhronosGroup OpenCL-ICD-Loader 2cde5d09953a041786d1cfdcb1c08704a82cb904
+		_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock" ThrowTheSwitch CMock 7cc41ddfdd07dc5eb8359d278f439f14031d64ad
+		_unpack_gh "thirdparty/ocl/clhpp_headers/external/Unity" ThrowTheSwitch Unity 7d2bf62b7e6afaf38153041a9d53c21aeeca9a25 Unity
+		_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock/vendor/c_exception" throwtheswitch cexception dce9e8b26f2179439002e02d691429e81a32b6c0 CException
+		_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock/vendor/c_exception/vendor/unity" throwtheswitch unity 2c7629a0ae90ffe991b5fd08e4db8672f72ed64c Unity
+		_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock/vendor/unity" throwtheswitch unity 031f3bbe45f8adf504ca3d13e6f093869920b091 Unity
+	fi
 	_unpack_gh "thirdparty/json/nlohmann_json" nlohmann json 9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03
 	_unpack_gh "thirdparty/ittapi/ittapi" intel ittapi 69dd04030d3a2cf4c32e649ac1f2a628d5af6b46
 	_unpack_gh "thirdparty/gtest/gtest" openvinotoolkit googletest d269d902e4c3cd02f3e731e1e2ff8307352817a4
@@ -484,26 +568,39 @@ src_unpack() {
 	_unpack_gh_dupe "${WORKDIR}/gflags-8411df715cf522606e3b1aca386ddfc0b63d34b4" "thirdparty/gflags/gflags/doc"
 	_unpack_gh "thirdparty/open_model_zoo/demos/thirdparty/gflags" gflags gflags e171aa2d15ed9eb17054558e0b3a6a413bb01067
 	_unpack_gh "thirdparty/open_model_zoo/demos/thirdparty/gflags/doc" gflags gflags 8411df715cf522606e3b1aca386ddfc0b63d34b4
-	_unpack_gh "thirdparty/flatbuffers/flatbuffers" google flatbuffers 01834de25e4bf3975a9a00e816292b1ad0fe184b
+	if ! use system-flatbuffers ; then
+		_unpack_gh "thirdparty/flatbuffers/flatbuffers" google flatbuffers 01834de25e4bf3975a9a00e816292b1ad0fe184b
+	fi
 	_unpack_gh "src/bindings/python/thirdparty/pybind11" pybind pybind11 2965fa8de3cf9e82c789f906a525a76197b186c1
 	_unpack_gh "cmake/developer_package/ncc_naming_style/ncc" nithinn ncc 63e59ed312ba7a946779596e86124c1633f67607
 	_unpack_gh "src/plugins/intel_gpu/thirdparty/onednn_gpu" oneapi-src oneDNN cb77937ffcf5e83b5d1cf2940c94e8b508d8f7b4
-	_unpack_gh "thirdparty/snappy/third_party/benchmark" google benchmark bf585a2789e30585b4e3ce6baf11ef2750b54677
-	_unpack_gh "thirdparty/snappy/third_party/googletest" google googletest 18f8200e3079b0e54fa00cb7ac55d4c39dcf6da6
-	_unpack_gh "thirdparty/protobuf/protobuf/third_party/benchmark" google benchmark 5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8
-	_unpack_gh "thirdparty/protobuf/protobuf/third_party/googletest" google googletest 5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081
-	_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock" ThrowTheSwitch CMock 7cc41ddfdd07dc5eb8359d278f439f14031d64ad
-	_unpack_gh "thirdparty/ocl/clhpp_headers/external/Unity" ThrowTheSwitch Unity 7d2bf62b7e6afaf38153041a9d53c21aeeca9a25 Unity
-	_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock/vendor/c_exception" throwtheswitch cexception dce9e8b26f2179439002e02d691429e81a32b6c0 CException
-	_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock/vendor/c_exception/vendor/unity" throwtheswitch unity 2c7629a0ae90ffe991b5fd08e4db8672f72ed64c Unity
-	_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock/vendor/unity" throwtheswitch unity 031f3bbe45f8adf504ca3d13e6f093869920b091 Unity
+
+	if use kernel_linux && [[ "${ABI}" == "amd64" ]] ; then
+		precache_resolved_dep "temp/download" "tbbbind_2_5_static_lin_v4.tgz" # prebuilt
+	fi
+	if use gna ; then
+		precache_resolved_dep "temp/download" "gna_03.05.00.2116.zip"
+	fi
+	if use openmp ; then
+		if [[ "${ABI}" == "amd64" ]] ; then
+			precache_resolved_dep "temp/download" "iomp-x86-64-7832b16.tgz" "iomp.tgz"
+		fi
+	fi
+	if use tbb && use system-tbb ; then
+		if [[ "${ABI}" == "amd64" ]] ; then
+			precache_resolved_dep "temp/download" "oneapi-tbb-2021.2.4-lin.tgz"
+		elif [[ "${ABI}" == "arm64" ]] ; then
+			precache_resolved_dep "temp/download" "oneapi-tbb-2021.2.1-lin-arm64-20231012.tgz"
+		fi
+	fi
 }
 
 src_configure() {
-	local mycmakelists=(
+	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
 		-DCI_BUILD_NUMBER="2023.3.0-000--"
 		-DCMAKE_COMPILE_WARNING_AS_ERROR=OFF
+		-DCMAKE_VERBOSE_MAKEFILE=ON
 		-DCPACK_GENERATOR=TGZ
 		-DENABLE_ARM_COMPUTE_CMAKE=OFF
 		-DENABLE_AUTO=ON
@@ -525,7 +622,7 @@ src_configure() {
 		-DENABLE_HETERO=ON
 		-DENABLE_INTEGRITYCHECK=OFF
 		-DENABLE_INTEL_CPU=ON
-		-DENABLE_INTEL_GNA=ON
+		-DENABLE_INTEL_GNA=$(usex gna)
 		-DENABLE_INTEL_GNA_DEBUG=OFF
 		-DENABLE_INTEL_GPU=$(usex video_cards_intel)
 		-DENABLE_IR_V7_READER=OFF
@@ -557,11 +654,11 @@ src_configure() {
 		-DENABLE_SSE42=$(usex cpu_flags_x86_sse4_2)
 		-DENABLE_STRICT_DEPENDENCIES=OFF
 		-DENABLE_SYSTEM_FLATBUFFERS=$(usex system-flatbuffers)
-		-DENABLE_SYSTEM_OPENCL=ON
-		-DENABLE_SYSTEM_PROTOBUF=ON
-		-DENABLE_SYSTEM_PUGIXML=ON
-		-DENABLE_SYSTEM_SNAPPY=ON
-		-DENABLE_SYSTEM_TBB=ON
+		-DENABLE_SYSTEM_OPENCL=$(usex system-opencl)
+		-DENABLE_SYSTEM_PROTOBUF=$(usex system-protobuf)
+		-DENABLE_SYSTEM_PUGIXML=$(usex system-pugixml)
+		-DENABLE_SYSTEM_SNAPPY=$(usex system-snappy)
+		-DENABLE_SYSTEM_TBB=$(usex system-tbb)
 		-DENABLE_TBB_RELEASE_ONLY=ON
 		-DENABLE_TEMPLATE=ON
 		-DENABLE_TESTS=OFF
@@ -570,28 +667,29 @@ src_configure() {
 		-DENABLE_UNSAFE_LOCATIONS=OFF
 		-DENABLE_V7_SERIALIZE=OFF
 		-DGAPI_TEST_PERF=OFF
+		-DOFFLINE_INSTALL=ON
 		-DOS_FOLDER=OFF
 		-DSELECTIVE_BUILD=OFF
 		-DUSE_BUILD_TYPE_SUBFOLDER=ON
 	)
 
 	if [[ "${ARCH}" == "x86" || "${ARCH}" == "amd64" || "${ARCH}" == "arm64" ]] ; then
-		mycmakelists+=(
+		mycmakeargs+=(
 			-DENABLE_MLAS_FOR_CPU=$(usex mlas)
 		)
 	else
-		mycmakelists+=(
+		mycmakeargs+=(
 			-DENABLE_MLAS_FOR_CPU=OFF
 		)
 	fi
 
 	if [[ "${ARCH}" == "riscv" ]] ; then
-		mycmakelists=(
+		mycmakeargs+=(
 			-DENABLE_TBBBIND_2_5=OFF
 			-DTHREADING="SEQ"
 		)
 	else
-		mycmakelists=(
+		mycmakeargs+=(
 			-DENABLE_TBBBIND_2_5=$(usex tbb)
 			-DTHREADING=$(usex tbb "TBB" $(usex openmp "OMP" "SEQ"))
 		)

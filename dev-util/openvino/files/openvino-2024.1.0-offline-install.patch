@@ -1,0 +1,28 @@
+--- a/cmake/developer_package/download/download_and_check.cmake.orig	2024-04-22 02:30:34.000000000 -0700
++++ b/cmake/developer_package/download/download_and_check.cmake	2024-06-05 08:06:15.782254206 -0700
+@@ -3,6 +3,7 @@
+ #
+ 
+ find_package(Wget QUIET)
++option(OFFLINE_INSTALL "Offline install?" ON)
+ 
+ function (DownloadAndCheck from to fatal result sha256)
+   set(status_res "ON")
+@@ -13,6 +14,9 @@ function (DownloadAndCheck from to fatal
+     file(MAKE_DIRECTORY ${download_dir})
+   endif()
+ 
++  message(STATUS "download_dir:  ${download_dir}")
++  message(STATUS "${from} -> ${to}")
++  if(NOT OFFLINE_INSTALL)
+   if(NOT EXISTS "${to}")
+     if (${from} MATCHES "(http:)|(https:)|(ftp:)")
+       message(STATUS "Downloading from ${from} to ${to} ...")
+@@ -65,6 +69,7 @@ function (DownloadAndCheck from to fatal
+       file(COPY ${from} DESTINATION ${download_dir})
+     endif()
+   endif()
++  endif()
+ 
+   file(REMOVE ${to}.md5)
+   set(${result} "${status_res}" PARENT_SCOPE)

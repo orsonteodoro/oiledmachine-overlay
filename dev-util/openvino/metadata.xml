@@ -18,7 +18,7 @@
 
   2024.1.0 - latest version
   2023.3.0 - previous version
-  2021.4.2 - OpenVINO™ 1.0 API (EOL)
+  2021.4.2 - OpenVINO™ 1.0 API (End Of Life [EOL])
   
   -->
   <use>
@@ -26,11 +26,20 @@
       Support Intel® Gaussian & Neural Accelerator (Intel® GNA).
       [Discontinued in 2024.0]
     </flag>
+    <flag name="gna1">
+      Support gna1
+    </flag>
+    <flag name="gna1_1401">
+      Support gna1_1401
+    </flag>
+    <flag name="gna2">
+      Support gna2
+    </flag>
     <flag name="mkl-dnn">
       Enable CPU acceleration of Deep Learning (DL) with the MKL-DNN library.
     </flag>
     <flag name="mlas">
-      Use CPU optimized GEMM kernels
+      Use the CPU optimized GEMM (General Matrix Multiplication) kernels
     </flag>
     <flag name="npu">
       Support NPU (Neural Processing Units).
@@ -45,6 +54,30 @@
     </flag>
     <flag name="system-flatbuffers">
       Use the system flatbuffers package over the internal vendored version.
+
+      [If disabled, it will only use the flat compiler.]
+    </flag>
+    <flag name="system-opencl">
+      Use the system OpenCL™ packages.
+    </flag>
+    <flag name="system-protobuf">
+      Use the system protobuf package.
+
+      [If disabled, it will be statically linked with lto, fPIC]
+    </flag>
+    <flag name="system-pugixml">
+      Use the system pugixml package.
+    </flag>
+    <flag name="system-snappy">
+      Use the system snappy package.
+
+      [If disabled, it will be statically linked instead.]
+    </flag>
+    <flag name="system-tbb">
+      Use the system TBB package.
+
+      [If disabled, it will used a prebuilt version.  It is claimed that the
+      vendored/bundled version is faster.]
     </flag>
     <flag name="video_cards_intel">
       Enable the GPU plugin
