@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# U18, U20, U22
+# D9, U18, U20, U22
 
 # TODO package:
 # kornia
@@ -41,7 +41,7 @@ https://github.com/${org}/${project_name}/archive/${commit}.tar.gz -> ${org}-${p
 	fi
 }
 
-KEYWORDS="~amd64 ~arm64 ~riscv ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~riscv"
 S="${WORKDIR}/${P}"
 # snappy has .gitmodules benchmark (bf5), googletest (18f)
 # protobuf has .gitmodules benchmark (5b7), googletest (5ec)
@@ -102,18 +102,18 @@ $(_gen_gh_uri google googletest 18f8200e3079b0e54fa00cb7ac55d4c39dcf6da6)
 gna? (
 	https://storage.openvinotoolkit.org/dependencies/gna/gna_03.05.00.2116.zip
 )
-kernel_linux? (
-	amd64? (
-		https://storage.openvinotoolkit.org/dependencies/thirdparty/linux/tbbbind_2_5_static_lin_v4.tgz
-	)
-)
 openmp? (
 	amd64? (
 		https://storage.openvinotoolkit.org/dependencies/thirdparty/linux/iomp.tgz -> iomp-x86-64-7832b16.tgz
 	)
 )
 tbb? (
-	system-tbb? (
+	kernel_linux? (
+		amd64? (
+			https://storage.openvinotoolkit.org/dependencies/thirdparty/linux/tbbbind_2_5_static_lin_v4.tgz
+		)
+	)
+	!system-tbb? (
 		amd64? (
 			https://storage.openvinotoolkit.org/dependencies/thirdparty/linux/oneapi-tbb-2021.2.4-lin.tgz
 		)
@@ -575,8 +575,10 @@ src_unpack() {
 	_unpack_gh "cmake/developer_package/ncc_naming_style/ncc" nithinn ncc 63e59ed312ba7a946779596e86124c1633f67607
 	_unpack_gh "src/plugins/intel_gpu/thirdparty/onednn_gpu" oneapi-src oneDNN cb77937ffcf5e83b5d1cf2940c94e8b508d8f7b4
 
-	if use kernel_linux && [[ "${ABI}" == "amd64" ]] ; then
-		precache_resolved_dep "temp/download" "tbbbind_2_5_static_lin_v4.tgz" # prebuilt
+	if use tbb ; then
+		if use kernel_linux && [[ "${ABI}" == "amd64" ]] ; then
+			precache_resolved_dep "temp/download" "tbbbind_2_5_static_lin_v4.tgz" # prebuilt
+		fi
 	fi
 	if use gna ; then
 		precache_resolved_dep "temp/download" "gna_03.05.00.2116.zip"
@@ -673,6 +675,17 @@ src_configure() {
 		-DUSE_BUILD_TYPE_SUBFOLDER=ON
 	)
 
+	if use tbb && use system-tbb && has_version "<dev-cpp/tbb-2021" ; then
+		mycmakeargs+=(
+			-DENABLE_TBBBIND_2_5=ON
+		)
+	else
+	# Uses >= tbb 2021
+		mycmakeargs+=(
+			-DENABLE_TBBBIND_2_5=OFF
+		)
+	fi
+
 	if [[ "${ARCH}" == "x86" || "${ARCH}" == "amd64" || "${ARCH}" == "arm64" ]] ; then
 		mycmakeargs+=(
 			-DENABLE_MLAS_FOR_CPU=$(usex mlas)
@@ -687,6 +700,11 @@ src_configure() {
 		mycmakeargs+=(
 			-DENABLE_TBBBIND_2_5=OFF
 			-DTHREADING="SEQ"
+		)
+	elif [[ "${ARCH}" == "arm" || "${ARCH}" == "x86" ]] ; then
+		mycmakeargs+=(
+			-DENABLE_TBBBIND_2_5=OFF
+			-DTHREADING=$(usex openmp "OMP" "SEQ")
 		)
 	else
 		mycmakeargs+=(

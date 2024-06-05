@@ -46,7 +46,7 @@ https://github.com/${org}/${project_name}/archive/${commit}.tar.gz -> ${org}-${p
 }
 
 
-KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="~amd64 ~arm ~arm64"
 S="${WORKDIR}/${P}"
 # gflags has .gitmodules gitflags-doc (971)
 SRC_URI="
@@ -60,17 +60,25 @@ $(_gen_gh_uri gflags gflags 46f73f88b18aee341538c0dfc22b1710a6abedef)
 $(_gen_gh_uri gflags gflags 971dd2a4fadac9cdab174c523c22df79efd63aa5 gflags-doc)
 https://download.01.org/opencv/master/openvinotoolkit/thirdparty/unified/VPU/usb-ma2x8x/firmware_usb-ma2x8x_1875.zip
 https://download.01.org/opencv/master/openvinotoolkit/thirdparty/unified/VPU/pcie-ma2x8x/firmware_pcie-ma2x8x_1875.zip
-https://download.01.org/opencv/master/openvinotoolkit/thirdparty/linux/tbb2020_20200415_lin_strip.tgz
-https://download.01.org/opencv/master/openvinotoolkit/thirdparty/linux/tbbbind_2_4_static_lin_v2.tgz
+tbb? (
+	kernel_linux? (
+		amd64? (
+			https://download.01.org/opencv/master/openvinotoolkit/thirdparty/linux/tbb2020_20200415_lin_strip.tgz
+			https://download.01.org/opencv/master/openvinotoolkit/thirdparty/linux/tbbbind_2_4_static_lin_v2.tgz
+		)
+	)
+)
 https://download.01.org/opencv/master/openvinotoolkit/thirdparty/linux/opencv/opencv_4.5.2-076_ubuntu20.txz
-gna1? (
-	https://download.01.org/opencv/master/openvinotoolkit/thirdparty/unified/GNA/gna_20181120.zip
-)
-gna1_1401? (
-	https://download.01.org/opencv/master/openvinotoolkit/thirdparty/unified/GNA/GNA_01.00.00.1401.zip
-)
-gna2? (
-	https://download.01.org/opencv/master/openvinotoolkit/thirdparty/unified/GNA/GNA_03.00.00.1377.zip
+gna? (
+	gna1? (
+		https://download.01.org/opencv/master/openvinotoolkit/thirdparty/unified/GNA/gna_20181120.zip
+	)
+	gna1_1401? (
+		https://download.01.org/opencv/master/openvinotoolkit/thirdparty/unified/GNA/GNA_01.00.00.1401.zip
+	)
+	gna2? (
+		https://download.01.org/opencv/master/openvinotoolkit/thirdparty/unified/GNA/GNA_03.00.00.1377.zip
+	)
 )
 "
 # For downloads, grep also RESOLVE_DEPENDENCY in
@@ -263,15 +271,19 @@ src_unpack() {
 
 	precache_resolved_dep "inference-engine/temp/download/VPU/usb-ma2x8x" "firmware_usb-ma2x8x_1875.zip"
 	precache_resolved_dep "inference-engine/temp/download/VPU/pcie-ma2x8x" "firmware_pcie-ma2x8x_1875.zip"
-	precache_resolved_dep "inference-engine/temp/download" "tbb2020_20200415_lin_strip.tgz"
-	precache_resolved_dep "inference-engine/temp/download" "tbbbind_2_4_static_lin_v2.tgz"
+	if [[ "${ABI}" == "amd64" ]] ; then
+		precache_resolved_dep "inference-engine/temp/download" "tbb2020_20200415_lin_strip.tgz"
+		precache_resolved_dep "inference-engine/temp/download" "tbbbind_2_4_static_lin_v2.tgz"
+	fi
 	precache_resolved_dep "inference-engine/temp/download/opencv" "opencv_4.5.2-076_ubuntu20.txz"
-	if use gna1 ; then
-		precache_resolved_dep "inference-engine/temp/download/GNA" "gna_20181120.zip"
-	elif use gna1_1401 ; then
-		precache_resolved_dep "inference-engine/temp/download/GNA" "GNA_01.00.00.1401.zip"
-	elif use gna2 ; then
-		precache_resolved_dep "inference-engine/temp/download/GNA" "GNA_03.00.00.1377.zip"
+	if use gna ; then
+		if use gna1 ; then
+			precache_resolved_dep "inference-engine/temp/download/GNA" "gna_20181120.zip"
+		elif use gna1_1401 ; then
+			precache_resolved_dep "inference-engine/temp/download/GNA" "GNA_01.00.00.1401.zip"
+		elif use gna2 ; then
+			precache_resolved_dep "inference-engine/temp/download/GNA" "GNA_03.00.00.1377.zip"
+		fi
 	fi
 }
 
@@ -335,6 +347,11 @@ src_configure() {
 	if [[ "${ARCH}" == "x86" || "${ARCH}" == "arm" ]] ; then
 		mycmakeargs+=(
 			-DTHREADING="SEQ"
+		)
+	elif [[ "${ARCH}" == "arm64" ]] ; then
+		mycmakeargs+=(
+			-DENABLE_TBBBIND_2_5=OFF
+			-DTHREADING=$(usex openmp "OMP" "SEQ")
 		)
 	else
 		mycmakeargs+=(
