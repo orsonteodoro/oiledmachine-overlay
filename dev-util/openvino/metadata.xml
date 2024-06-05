@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/openvinotoolkit/openvino/issues</bugs-to>
+    <remote-id type="github">openvinotoolkit/openvino</remote-id>
+  </upstream>
+  <!--
+
+  oiledmachine-overlay:
+
+  Maintained versions:
+
+  2024.1.0 - latest version
+  2023.3.0 - previous version
+  2021.4.2 - OpenVINO™ 1.0 API
+  
+  -->
+  <use>
+    <flag name="gna">
+      Support Intel® Gaussian & Neural Accelerator (Intel® GNA).
+      [Discontinued in 2024.0]
+    </flag>
+    <flag name="mkl-dnn">
+      Enable CPU acceleration of Deep Learning (DL) with the MKL-DNN library.
+    </flag>
+    <flag name="mlas">
+      Use CPU optimized GEMM kernels
+    </flag>
+    <flag name="npu">
+      Support NPU (Neural Processing Units).
+
+      See https://github.com/openvinotoolkit/openvino/blob/2024.1.0/src/plugins/intel_npu/README.md?plain=1#L14
+    </flag>
+    <flag name="openmp">
+      Use OpenMP for threading.
+    </flag>
+    <flag name="tbb">
+      Use TBB for threading.
+    </flag>
+    <flag name="system-flatbuffers">
+      Use the system flatbuffers package over the internal vendored version.
+    </flag>
+    <flag name="video_cards_intel">
+      Enable the GPU plugin
+
+      For requirements, see
+      https://github.com/openvinotoolkit/openvino/tree/2024.1.0/src/plugins/intel_gpu#system-requirements
+    </flag>
+  </use>
+</pkgmetadata>
