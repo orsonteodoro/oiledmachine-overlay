@@ -18,7 +18,6 @@ EAPI=8
 
 #MKL_DNN_PV="1.6.0"
 
-CMAKE_MAKEFILE_GENERATOR="emake"
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx2"
 	"cpu_flags_x86_avx512f"
@@ -27,7 +26,7 @@ CPU_FLAGS_X86=(
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_10" ) # 3.6 (U18), 3.8 (U20)
 
-inherit cmake python-any-r1
+inherit cmake python-r1
 
 _gen_gh_uri() {
 	local org="${1}"
@@ -124,7 +123,7 @@ DEPEND+="
 "
 # tests/stress_tests/scripts/requirements.txt \
 BDEPEND_STRESS_TESTS="
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		<dev-python/h5py-3.0.0[${PYTHON_USEDEP}]
 		dev-python/pymongo[${PYTHON_USEDEP}]
 		dev-python/jinja[${PYTHON_USEDEP}]
@@ -133,13 +132,13 @@ BDEPEND_STRESS_TESTS="
 "
 # tests/time_tests/scripts/requirements.txt \
 BDEPEND_TIME_TESTS_SCRIPTS="
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]
 	')
 "
 # tests/time_tests/test_runner/requirements.txt \
 BDEPEND_TIME_TESTS_TEST_RUNNER="
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		>=dev-python/pytest-4.0.1[${PYTHON_USEDEP}]
 		>=dev-python/attrs-19.1.0[${PYTHON_USEDEP}]
 		>=dev-python/PyYAML-5.4.1[${PYTHON_USEDEP}]
@@ -152,7 +151,7 @@ BDEPEND_TIME_TESTS_TEST_RUNNER="
 "
 # tests/conditional_compilation/requirements.txt \
 BDEPEND_CONDITIONAL_COMPILATION="
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		>=dev-python/pytest-dependency-0.5.1
 	')
 "
@@ -161,7 +160,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.13
 	>=sys-devel/gcc-7.5
 	doc? (
-		$(python_gen_any_dep '
+		$(python_gen_cond_dep '
 			dev-python/alabaster[${PYTHON_USEDEP}]
 			dev-python/Babel[${PYTHON_USEDEP}]
 			dev-python/beautifulsoup4[${PYTHON_USEDEP}]
@@ -288,7 +287,8 @@ src_unpack() {
 }
 
 src_configure() {
-	local mycmakeargs=(
+	local mycmakeargs
+	local _mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
 		-DCI_BUILD_NUMBER="custom__"
 		-DCMAKE_VERBOSE_MAKEFILE=ON
@@ -320,7 +320,6 @@ src_configure() {
 		-DENABLE_PROFILING_FILTER=ALL
 		-DENABLE_PROFILING_FIRST_INFERENCE=ON
 		-DENABLE_PROFILING_ITT=OFF
-		-DENABLE_PYTHON=OFF
 		-DENABLE_SAME_BRANCH_FOR_MODELS=OFF
 		-DENABLE_SAMPLES=ON
 		-DENABLE_SANITIZER=OFF
@@ -345,39 +344,73 @@ src_configure() {
 	)
 
 	if [[ "${ARCH}" == "x86" || "${ARCH}" == "arm" ]] ; then
-		mycmakeargs+=(
+		_mycmakeargs+=(
 			-DTHREADING="SEQ"
 		)
 	elif [[ "${ARCH}" == "arm64" ]] ; then
-		mycmakeargs+=(
+		_mycmakeargs+=(
 			-DENABLE_TBBBIND_2_5=OFF
 			-DTHREADING=$(usex openmp "OMP" "SEQ")
 		)
 	else
-		mycmakeargs+=(
+		_mycmakeargs+=(
 			-DTHREADING=$(usex tbb "TBB" $(usex openmp "OMP" "SEQ"))
 		)
 	fi
 
 	if use gna1 ; then
-		mycmakeargs+=(
+		_mycmakeargs+=(
 			-DGNA_LIBRARY_VERSION="GNA1"
 		)
 	elif use gna1_1401 ; then
-		mycmakeargs+=(
+		_mycmakeargs+=(
 			-DGNA_LIBRARY_VERSION="GNA1_1401"
 		)
 	elif use gna2 ; then
-		mycmakeargs+=(
+		_mycmakeargs+=(
 			-DGNA_LIBRARY_VERSION="GNA2"
 		)
 	fi
 
+	# Native
+	mycmakeargs=(
+		${_mycmakeargs[@]}
+		-DCMAKE_INSTALL_PREFIX="/usr"
+		-DENABLE_PYTHON=OFF
+	)
+einfo "Configuring native support"
 	cmake_src_configure
+
+	configure_python_impl() {
+einfo "PYTHON_SITEDIR:  $(python_get_sitedir)"
+		mycmakeargs=(
+			${_mycmakeargs[@]}
+			-DCMAKE_INSTALL_PREFIX="$(python_get_sitedir)"
+			-DENABLE_PYTHON=ON
+			-DENABLE_TESTS=OFF
+			-DPython3_EXECUTABLE="${PYTHON}"
+		)
+einfo "Configuring ${EPYTHON} support"
+		cmake_src_configure
+	}
+	python_foreach_impl configure_python_impl
+}
+
+src_compile() {
+	cmake_src_compile
+	compile_python_impl() {
+		cmake_src_compile
+	}
+	python_foreach_impl compile_python_impl
 }
 
 src_install() {
 	cmake_src_install
+	install_python_impl() {
+		cmake_src_install \
+			-DCOMPONENT="python_wheels"
+	}
+	python_foreach_impl install_python_impl
 	docinto "licenses"
 	dodoc "LICENSE"
 }

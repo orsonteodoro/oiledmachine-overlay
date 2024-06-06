@@ -14,7 +14,6 @@ EAPI=8
 # pytest-html
 # test-generator
 
-CMAKE_MAKEFILE_GENERATOR="emake"
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx2"
 	"cpu_flags_x86_avx512f"
@@ -23,7 +22,7 @@ CPU_FLAGS_X86=(
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} ) # Based on https://github.com/openvinotoolkit/openvino/blob/2024.1.0/docs/dev/build_linux.md#software-requirements
 
-inherit cmake python-any-r1
+inherit cmake python-r1
 
 _gen_gh_uri() {
 	local org="${1}"
@@ -169,7 +168,7 @@ DEPEND+="
 "
 # tests/constraints.txt \
 BDEPEND_TEST_CONSTRAINTS="
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		(
 			>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
 			<dev-python/numpy-1.27[${PYTHON_USEDEP}]
@@ -215,7 +214,7 @@ BDEPEND_TEST_CONSTRAINTS="
 # tests/stress_tests/scripts/requirements.txt \
 BDEPEND_STRESS_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		dev-python/pymongo[${PYTHON_USEDEP}]
 		dev-python/jinja[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
@@ -228,7 +227,7 @@ BDEPEND_STRESS_TESTS="
 "
 # tests/e2e_tests/requirements.txt \
 BDEPEND_E2E_TESTS="
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		>=dev-python/py-cpuinfo-7.0.0[${PYTHON_USEDEP}]
 		(
 			>=dev-python/scipy-1.5.4[${PYTHON_USEDEP}]
@@ -271,7 +270,7 @@ BDEPEND_E2E_TESTS="
 # model_hub_tests/tensorflow/requirements.txt \
 BDEPEND_MODEL_HUB_TENSORFLOW_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-html[${PYTHON_USEDEP}]
@@ -285,7 +284,7 @@ BDEPEND_MODEL_HUB_TENSORFLOW_TESTS="
 # tests/model_hub_tests/performance_tests/requirements.txt \
 BDEPEND_MODEL_HUB_TESTS_PERFORMANCE_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-html[${PYTHON_USEDEP}]
@@ -296,7 +295,7 @@ BDEPEND_MODEL_HUB_TESTS_PERFORMANCE_TESTS="
 # tests/model_hub_tests/pytorch/requirements.txt \
 BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 	${BDEPEND_TEST_CONSTRAINTS}
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		>=dev-python/auto-gptq-0.5.1[${PYTHON_USEDEP}]
 		dev-python/av[${PYTHON_USEDEP}]
 		dev-python/basicsr[${PYTHON_USEDEP}]
@@ -331,7 +330,7 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH_SECONDARY="
 # tests/layer_tests/requirements.txt \
 BDEPEND_LAYER_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/onnxruntime[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
@@ -349,21 +348,21 @@ BDEPEND_LAYER_TESTS="
 			)
 		)
 	')
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		dev-python/tensorflow-addons[${PYTHON_USEDEP}]
 	' python3_10)
 "
 # tests/time_tests/scripts/requirements.txt \
 BDEPEND_TIME_TESTS_SCRIPTS="
 	${BDEPEND_TEST_CONSTRAINTS}
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 	')
 "
 # tests/time_tests/test_runner/requirements.txt \
 BDEPEND_TIME_TESTS_TEST_RUNNER="
 	${BDEPEND_TEST_CONSTRAINTS}
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/py[${PYTHON_USEDEP}]
@@ -379,7 +378,7 @@ BDEPEND_TIME_TESTS_TEST_RUNNER="
 # tests/memory_tests/test_runner/requirements.txt \
 BDEPEND_MEMORY_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/py[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
@@ -394,7 +393,7 @@ BDEPEND_MEMORY_TESTS="
 # tests/conditional_compilation/requirements.txt \
 BDEPEND_CONDITIONAL_COMPILATION="
 	${BDEPEND_TEST_CONSTRAINTS}
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/protobuf-python[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
@@ -406,7 +405,7 @@ BDEPEND_CONDITIONAL_COMPILATION="
 "
 # tests/samples_tests/smoke_tests/requirements.txt \
 BDEPEND_SAMPLES_TESTS_SMOKE_TESTS="
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/opencv-python-headless[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
@@ -419,7 +418,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.13
 	>=sys-devel/gcc-7.5
 	doc? (
-		$(python_gen_any_dep '
+		$(python_gen_cond_dep '
 			>=dev-python/alabaster-0.7.12[${PYTHON_USEDEP}]
 			>=dev-python/atomicwrites-1.4.0[${PYTHON_USEDEP}]
 			>=dev-python/attrs-22.1.0[${PYTHON_USEDEP}]
@@ -608,7 +607,8 @@ src_unpack() {
 }
 
 src_configure() {
-	local mycmakeargs=(
+	local mycmakeargs
+	local _mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
 		-DCI_BUILD_NUMBER="2024.1.0-000--"
 		-DCMAKE_COMPILE_WARNING_AS_ERROR=OFF
@@ -635,7 +635,7 @@ src_configure() {
 		-DENABLE_INTEL_CPU=ON
 		-DENABLE_INTEL_GPU=$(usex video_cards_intel)
 		-DENABLE_INTEL_NPU=$(usex npu)
-		-DENABLE_JS=ON
+		-DENABLE_JS=OFF
 		-DENABLE_LIBRARY_VERSIONING=ON
 		-DENABLE_LTO=$(usex lto)
 		-DENABLE_MULTI=ON
@@ -683,48 +683,82 @@ src_configure() {
 	)
 
 	if use tbb && use system-tbb && has_version "<dev-cpp/tbb-2021" ; then
-		mycmakeargs+=(
+		_mycmakeargs+=(
 			-DENABLE_TBBBIND_2_5=ON
 		)
 	else
 	# Uses >= tbb 2021
-		mycmakeargs+=(
+		_mycmakeargs+=(
 			-DENABLE_TBBBIND_2_5=OFF
 		)
 	fi
 
 	if [[ "${ARCH}" == "x86" || "${ARCH}" == "amd64" || "${ARCH}" == "arm64" ]] ; then
-		mycmakeargs+=(
+		_mycmakeargs+=(
 			-DENABLE_MLAS_FOR_CPU=$(usex mlas)
 		)
 	else
-		mycmakeargs+=(
+		_mycmakeargs+=(
 			-DENABLE_MLAS_FOR_CPU=OFF
 		)
 	fi
 
 	if [[ "${ARCH}" == "riscv" ]] ; then
-		mycmakeargs+=(
+		_mycmakeargs+=(
 			-DENABLE_TBBBIND_2_5=OFF
 			-DTHREADING="SEQ"
 		)
 	elif [[ "${ARCH}" == "arm" || "${ARCH}" == "x86" ]] ; then
-		mycmakeargs+=(
+		_mycmakeargs+=(
 			-DENABLE_TBBBIND_2_5=OFF
 			-DTHREADING=$(usex openmp "OMP" "SEQ")
 		)
 	else
-		mycmakeargs+=(
+		_mycmakeargs+=(
 			-DENABLE_TBBBIND_2_5=$(usex tbb)
 			-DTHREADING=$(usex tbb "TBB" $(usex openmp "OMP" "SEQ"))
 		)
 	fi
 
+	# Native
+	mycmakeargs=(
+		${_mycmakeargs[@]}
+		-DCMAKE_INSTALL_PREFIX="/usr"
+		-DENABLE_PYTHON=OFF
+	)
+einfo "Configuring native support"
 	cmake_src_configure
+
+	configure_python_impl() {
+einfo "PYTHON_SITEDIR:  $(python_get_sitedir)"
+		mycmakeargs=(
+			${_mycmakeargs[@]}
+			-DCMAKE_INSTALL_PREFIX="$(python_get_sitedir)"
+			-DENABLE_PYTHON=ON
+			-DENABLE_TESTS=OFF
+			-DPython3_EXECUTABLE="${PYTHON}"
+		)
+einfo "Configuring ${EPYTHON} support"
+		cmake_src_configure
+	}
+	python_foreach_impl configure_python_impl
+}
+
+src_compile() {
+	cmake_src_compile
+	compile_python_impl() {
+		cmake_src_compile
+	}
+	python_foreach_impl compile_python_impl
 }
 
 src_install() {
 	cmake_src_install
+	install_python_impl() {
+		cmake_src_install \
+			-DCOMPONENT="python_wheels"
+	}
+	python_foreach_impl install_python_impl
 	docinto "licenses"
 	dodoc "LICENSE"
 }
