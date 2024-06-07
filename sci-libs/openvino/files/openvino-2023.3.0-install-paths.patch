@@ -16,16 +16,16 @@
 -    set(OV_CPACK_DEVREQDIR tools)
 -    set(OV_CPACK_PYTHONDIR python)
 +    if(ENABLE_PYTHON)
-+        set(OV_CPACK_INCLUDEDIR openvino/thirdparty/include)
-+        set(OV_CPACK_IE_CMAKEDIR openvino/thirdparty/$ENV{LIBDIR}/cmake)
-+        set(OV_CPACK_NGRAPH_CMAKEDIR openvino/thirdparty/$ENV{LIBDIR}/cmake)
-+        set(OV_CPACK_OPENVINO_CMAKEDIR openvino/thirdparty/$ENV{LIBDIR}/cmake)
-+        set(OV_CPACK_DOCDIR openvino/thirdparty/share/openvino/docs)
-+        set(OV_CPACK_LICENSESDIR openvino/thirdparty/share/openvino/licenses)
-+        set(OV_CPACK_SAMPLESDIR openvino/thirdparty/share/openvino/samples)
-+        set(OV_CPACK_WHEELSDIR openvino/thirdparty/$ENV{LIBDIR}/openvino/tools)
-+        set(OV_CPACK_TOOLSDIR openvino/thirdparty/$ENV{LIBDIR}/openvino/tools)
-+        set(OV_CPACK_DEVREQDIR openvino/thirdparty/$ENV{LIBDIR}/openvino/tools)
++        set(OV_CPACK_INCLUDEDIR openvino/deps/include)
++        set(OV_CPACK_IE_CMAKEDIR openvino/deps/$ENV{LIBDIR}/cmake)
++        set(OV_CPACK_NGRAPH_CMAKEDIR openvino/deps/$ENV{LIBDIR}/cmake)
++        set(OV_CPACK_OPENVINO_CMAKEDIR openvino/deps/$ENV{LIBDIR}/cmake)
++        set(OV_CPACK_DOCDIR openvino/deps/share/openvino/docs)
++        set(OV_CPACK_LICENSESDIR openvino/deps/share/openvino/licenses)
++        set(OV_CPACK_SAMPLESDIR openvino/deps/share/openvino/samples)
++        set(OV_CPACK_WHEELSDIR openvino/deps/$ENV{LIBDIR}/openvino/tools)
++        set(OV_CPACK_TOOLSDIR openvino/deps/$ENV{LIBDIR}/openvino/tools)
++        set(OV_CPACK_DEVREQDIR openvino/deps/$ENV{LIBDIR}/openvino/tools)
 +        set(OV_CPACK_PYTHONDIR .)
 +    else()
 +        set(OV_CPACK_INCLUDEDIR include)
@@ -51,9 +51,9 @@
 -        set(OV_CPACK_RUNTIMEDIR runtime/lib/${ARCH_FOLDER})
 -        set(OV_CPACK_ARCHIVEDIR runtime/lib/${ARCH_FOLDER})
 +        if(ENABLE_PYTHON)
-+            set(OV_CPACK_LIBRARYDIR openvino/thirdparty/$ENV{LIBDIR})
-+            set(OV_CPACK_RUNTIMEDIR openvino/thirdparty/$ENV{LIBDIR})
-+            set(OV_CPACK_ARCHIVEDIR openvino/thirdparty/$ENV{LIBDIR})
++            set(OV_CPACK_LIBRARYDIR openvino/deps/$ENV{LIBDIR})
++            set(OV_CPACK_RUNTIMEDIR openvino/deps/$ENV{LIBDIR})
++            set(OV_CPACK_ARCHIVEDIR openvino/deps/$ENV{LIBDIR})
 +        else()
 +            set(OV_CPACK_LIBRARYDIR $ENV{LIBDIR})
 +            set(OV_CPACK_RUNTIMEDIR $ENV{LIBDIR})
@@ -72,7 +72,7 @@
 -        DESTINATION .
 +if(ENABLE_PYTHON)
 +    install(PROGRAMS "${_setupvars_file_full_path}"
-+        DESTINATION openvino/thirdparty/$ENV{LIBDIR}/openvino/bin/
++        DESTINATION openvino/deps/$ENV{LIBDIR}/openvino/bin/
          COMPONENT ${OV_CPACK_COMP_SETUPVARS}
          ${OV_CPACK_COMP_SETUPVARS_EXCLUDE_ALL})
 +else()
@@ -91,7 +91,7 @@
 -            DESTINATION install_dependencies/
 +    if(ENABLE_PYTHON)
 +        install(PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/install_dependencies/install_openvino_dependencies.sh"
-+            DESTINATION openvino/thirdparty/$ENV{LIBDIR}/openvino/bin/
++            DESTINATION openvino/deps/$ENV{LIBDIR}/openvino/bin/
              COMPONENT ${OV_CPACK_COMP_INSTALL_DEPENDENCIES}
              ${OV_CPACK_COMP_INSTALL_DEPENDENCIES_EXCLUDE_ALL})
 +    else()

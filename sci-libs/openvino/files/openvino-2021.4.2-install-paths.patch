@@ -9,7 +9,7 @@
 +    set(IE_CPACK_IE_DIR       deployment_tools/inference_engine)
 +else()
 +    if(ENABLE_PYTHON)
-+        set(IE_CPACK_IE_DIR       openvino/thirdparty)
++        set(IE_CPACK_IE_DIR       openvino/deps)
 +    else()
 +        set(IE_CPACK_IE_DIR       .)
 +    endif()

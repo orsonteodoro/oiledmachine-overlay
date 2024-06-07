@@ -101,6 +101,7 @@ IUSE+="
 	${CPU_FLAGS_X86[@]}
 	development-tools doc gna gna1 gna1_1401 gna2 -lto +mkl-dnn -openmp
 	runtime +samples system-pugixml test +tbb video_cards_intel
+	ebuild-revision-1
 "
 REQUIRED_USE="
 	?? (
