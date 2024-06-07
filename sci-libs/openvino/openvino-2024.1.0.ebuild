@@ -40,7 +40,7 @@ https://github.com/${org}/${project_name}/archive/${commit}.tar.gz -> ${org}-${p
 	fi
 }
 
-KEYWORDS="~amd64 ~arm ~arm64 ~riscv"
+#KEYWORDS="~amd64 ~arm ~arm64 ~riscv" # telemetry needs review
 S="${WORKDIR}/${P}"
 # snappy has .gitmodules benchmark (bf5), googletest (18f)
 # protobuf has .gitmodules benchmark (5b7), googletest (5ec)
