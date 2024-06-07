@@ -1,0 +1,226 @@
+--- a/ngraph/cmake/external_onnx.cmake.orig	2021-11-16 09:55:28.000000000 -0800
++++ b/ngraph/cmake/external_onnx.cmake	2024-06-07 09:58:30.053223315 -0700
+@@ -4,6 +4,8 @@
+ 
+ include(FetchContent)
+ 
++option(USE_LOCAL_TARBALL "Offline install?" ON)
++
+ #------------------------------------------------------------------------------
+ # ONNX.proto definition version
+ #------------------------------------------------------------------------------
+@@ -19,14 +21,30 @@ set(ONNX_GIT_BRANCH rel-${ONNX_VERSION})
+ set(NGRAPH_ONNX_NAMESPACE ngraph_onnx)
+ set(ONNX_PATCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/cmake/patches/onnx_patch.diff")
+ 
+-FetchContent_Declare(
+-    ext_onnx
+-    GIT_REPOSITORY ${ONNX_GIT_REPO_URL}
+-    GIT_TAG ${ONNX_GIT_BRANCH}
+-    GIT_SHALLOW TRUE
++if(USE_LOCAL_TARBALL)
++    FetchContent_Declare(
++        ext_onnx
++        DOWNLOAD_NO_EXTRACT FALSE
++        GIT_URI "$ENV{DISTDIR}/onnx-v${ONNX_VERSION}.tar.gz"
++    )
++    file(ARCHIVE_EXTRACT
++      INPUT "$ENV{DISTDIR}/onnx-v${ONNX_VERSION}.tar.gz"
++      DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/_deps
++    )
+     # apply patch to fix problems with symbols visibility for MSVC
+-    PATCH_COMMAND git reset --hard HEAD && git apply --ignore-space-change --ignore-whitespace --verbose ${ONNX_PATCH_FILE}
+-)
++    execute_process(COMMAND git apply --ignore-space-change --ignore-whitespace --verbose ${ONNX_PATCH_FILE}
++        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/_deps/ext_onnx-v${ONNX_VERSION}
++    )
++else()
++    FetchContent_Declare(
++        ext_onnx
++        GIT_REPOSITORY ${ONNX_GIT_REPO_URL}
++        GIT_TAG ${ONNX_GIT_BRANCH}
++        GIT_SHALLOW TRUE
++        # apply patch to fix problems with symbols visibility for MSVC
++        PATCH_COMMAND git reset --hard HEAD && git apply --ignore-space-change --ignore-whitespace --verbose ${ONNX_PATCH_FILE}
++    )
++endif()
+ 
+ macro(onnx_set_target_properties)
+     target_include_directories(onnx SYSTEM PRIVATE "${Protobuf_INCLUDE_DIRS}")
+@@ -58,8 +76,14 @@ macro(onnx_set_target_properties)
+ endmacro()
+ 
+ FetchContent_GetProperties(ext_onnx)
++if(USE_LOCAL_TARBALL)
++    set(ext_onnx_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/onnx-${ONNX_VERSION})
++endif()
+ if(NOT ext_onnx_POPULATED)
+     FetchContent_Populate(ext_onnx)
++    if(USE_LOCAL_TARBALL)
++        set(ext_onnx_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/onnx-${ONNX_VERSION})
++    endif()
+     set(ONNX_USE_PROTOBUF_SHARED_LIBS ${BUILD_SHARED_LIBS} CACHE BOOL "Use dynamic protobuf by ONNX library")
+     set(ONNX_NAMESPACE ${NGRAPH_ONNX_NAMESPACE})
+     set(ONNX_USE_LITE_PROTO ${NGRAPH_USE_PROTOBUF_LITE} CACHE BOOL "Use protobuf lite for ONNX library")
+--- a/ngraph/cmake/external_protobuf.cmake.orig	2021-11-16 09:55:28.000000000 -0800
++++ b/ngraph/cmake/external_protobuf.cmake	2024-06-07 09:59:23.748766934 -0700
+@@ -4,6 +4,8 @@
+ 
+ include(FetchContent)
+ 
++option(USE_LOCAL_TARBALL "Offline install?" ON)
++
+ #------------------------------------------------------------------------------
+ # Download and install Google Protobuf ...
+ #------------------------------------------------------------------------------
+@@ -51,7 +53,6 @@ else()
+     set(PROTOC_VERSION "3.7.1")
+ endif()
+ 
+-set(NGRAPH_PROTOBUF_GIT_TAG "v${PROTOC_VERSION}")
+ 
+ 
+ if (CMAKE_GENERATOR STREQUAL "Ninja")
+@@ -64,16 +65,34 @@ if(PROTOC_VERSION VERSION_LESS "3.9" AND
+     message(FATAL_ERROR "Minimum supported version of protobuf-lite library is 3.9.0")
+ else()
+     if(PROTOC_VERSION VERSION_GREATER_EQUAL "3.0")
+-        FetchContent_Declare(
+-            ext_protobuf
+-            GIT_REPOSITORY ${NGRAPH_PROTOBUF_GIT_REPO_URL}
+-            GIT_TAG ${NGRAPH_PROTOBUF_GIT_TAG}
+-            GIT_SHALLOW TRUE
+-        )
++        if(USE_LOCAL_TARBALL)
++            FetchContent_Declare(
++                ext_protobuf
++                DOWNLOAD_NO_EXTRACT FALSE
++                GET_URL "$ENV{DISTDIR}/protobuf-v${PROTOC_VERSION}.tar.gz"
++            )
++            file(ARCHIVE_EXTRACT
++                INPUT "$ENV{DISTDIR}/protobuf-v${PROTOC_VERSION}.tar.gz"
++                DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/_deps
++            )
++        else()
++            FetchContent_Declare(
++                ext_protobuf
++                GIT_REPOSITORY ${NGRAPH_PROTOBUF_GIT_REPO_URL}
++                GIT_TAG v${PROTOC_VERSION}
++                GIT_SHALLOW TRUE
++            )
++        endif()
+ 
+         FetchContent_GetProperties(ext_protobuf)
++        if(USE_LOCAL_TARBALL)
++            set(ext_protobuf_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/protobuf-${PROTOC_VERSION})
++        endif()
+         if(NOT ext_protobuf_POPULATED)
+             FetchContent_Populate(ext_protobuf)
++            if(USE_LOCAL_TARBALL)
++                set(ext_protobuf_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/protobuf-${PROTOC_VERSION})
++            endif()
+             set(protobuf_BUILD_TESTS OFF CACHE BOOL "Build tests")
+             set(protobuf_WITH_ZLIB OFF CACHE BOOL "Build with zlib support")
+             add_subdirectory(${ext_protobuf_SOURCE_DIR}/cmake ${ext_protobuf_BINARY_DIR} EXCLUDE_FROM_ALL)
+--- a/ngraph/python/CMakeLists.txt.orig	2021-11-16 09:55:28.000000000 -0800
++++ b/ngraph/python/CMakeLists.txt	2024-06-07 09:57:20.393815065 -0700
+@@ -6,6 +6,8 @@ cmake_minimum_required (VERSION 3.13)
+ 
+ project (pyngraph)
+ 
++option(USE_LOCAL_TARBALL "Offline install?" ON)
++
+ if(NOT DEFINED OpenVINO_MAIN_SOURCE_DIR)
+     find_package(InferenceEngineDeveloperPackage QUIET)
+     find_package(ngraph REQUIRED)
+@@ -17,15 +19,34 @@ endif()
+ 
+ include(FetchContent)
+ 
+-FetchContent_Declare(
+-    pybind11
+-    GIT_REPOSITORY "https://github.com/pybind/pybind11.git"
+-    GIT_TAG        "v2.5.0"
+-)
++set(PYBIND11_VERSION 2.5.0)
++if(USE_LOCAL_TARBALL)
++    FetchContent_Declare(
++        pybind11
++        DOWNLOAD_NO_EXTRACT FALSE
++        GIT_URI "$ENV{DISTDIR}/pybind11-v${PYBIND11_VERSION}.tar.gz"
++    )
++    file(ARCHIVE_EXTRACT
++        INPUT "$ENV{DISTDIR}/pybind11-v${PYBIND11_VERSION}.tar.gz"
++        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/_deps
++    )
++else()
++    FetchContent_Declare(
++        pybind11
++        GIT_REPOSITORY "https://github.com/pybind/pybind11.git"
++        GIT_TAG        "v${PYBIND11_VERSION}"
++    )
++endif()
+ 
+ FetchContent_GetProperties(pybind11)
++if(USE_LOCAL_TARBALL)
++    set(pybind11_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/pybind11-${PYBIND11_VERSION})
++endif()
+ if(NOT pybind11_POPULATED)
+     FetchContent_Populate(pybind11)
++    if(USE_LOCAL_TARBALL)
++        set(pybind11_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/pybind11-${PYBIND11_VERSION})
++    endif()
+     add_subdirectory(${pybind11_SOURCE_DIR} ${pybind11_BINARY_DIR})
+ endif()
+ 
+--- a/thirdparty/ittapi/CMakeLists.txt.orig	2021-11-16 09:55:28.000000000 -0800
++++ b/thirdparty/ittapi/CMakeLists.txt	2024-06-07 09:56:35.894192896 -0700
+@@ -2,6 +2,8 @@
+ # SPDX-License-Identifier: Apache-2.0
+ #
+ 
++option(USE_LOCAL_TARBALL "Offline install?" ON)
++
+ if(ENABLE_PROFILING_ITT)
+     if(DEFINED INTEL_VTUNE_DIR OR DEFINED ENV{INTEL_VTUNE_DIR})
+         find_package(ITT
+@@ -12,15 +14,34 @@ if(ENABLE_PROFILING_ITT)
+         endif()
+     else()
+         include(FetchContent)
+-        FetchContent_Declare(
+-            ext_ittapi
+-            GIT_REPOSITORY https://github.com/intel/ittapi.git
+-            GIT_TAG v3.18.6
+-        )
++        set(ITTAPI_VERSION 3.18.6)
++        if(USE_LOCAL_TARBALL)
++            FetchContent_Declare(
++                ext_ittapi
++                DOWNLOAD_NO_EXTRACT FALSE
++                GIT_URI "$ENV{DISTDIR}/ittapi-v${ITTAPI_VERSION}.tar.gz"
++            )
++            file(ARCHIVE_EXTRACT
++                INPUT "$ENV{DISTDIR}/ittapi-v${ITTAPI_VERSION}.tar.gz"
++                DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/_deps
++            )
++        else()
++            FetchContent_Declare(
++                ext_ittapi
++                GIT_REPOSITORY https://github.com/intel/ittapi.git
++                GIT_TAG v${ITTAPI_VERSION}
++            )
++        endif()
+ 
+         FetchContent_GetProperties(ext_ittapi)
++        if(USE_LOCAL_TARBALL)
++            set(ext_ittapi_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/ittapi-${ITTAPI_VERSION})
++        endif()
+         if(NOT ext_ittapi_POPULATED)
+             FetchContent_Populate(ext_ittapi)
++            if(USE_LOCAL_TARBALL)
++                set(ext_ittapi_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/_deps/ittapi-${ITTAPI_VERSION})
++            endif()
+             add_subdirectory(${ext_ittapi_SOURCE_DIR} ${ext_ittapi_BINARY_DIR})
+         endif()
+ 

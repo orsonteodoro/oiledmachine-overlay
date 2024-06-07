@@ -24,6 +24,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
 )
 DISTUTILS_USE_PEP517="setuptools"
+GCC_COMPAT=( {12..7} )
 PYTHON_COMPAT=( "python3_10" ) # 3.6 (U18), 3.8 (U20)
 
 inherit cmake distutils-r1
@@ -68,6 +69,10 @@ tbb? (
 	)
 )
 https://download.01.org/opencv/master/openvinotoolkit/thirdparty/linux/opencv/opencv_4.5.2-076_ubuntu20.txz
+https://github.com/onnx/onnx/archive/refs/tags/v1.8.1.tar.gz -> onnx-v1.8.1.tar.gz
+https://github.com/protocolbuffers/protobuf/archive/refs/tags/v3.7.1.tar.gz -> protobuf-v3.7.1.tar.gz
+https://github.com/pybind/pybind11/archive/refs/tags/v2.5.0.tar.gz -> pybind11-v2.5.0.tar.gz
+https://github.com/intel/ittapi/archive/refs/tags/v3.18.6.tar.gz -> ittapi-v3.18.6.tar.gz
 gna? (
 	gna1? (
 		https://download.01.org/opencv/master/openvinotoolkit/thirdparty/unified/GNA/gna_20181120.zip
@@ -160,6 +165,15 @@ BDEPEND_CONDITIONAL_COMPILATION="
 	')
 "
 
+gen_gcc_bdepend() {
+	local s
+	for s in ${GCC_COMPAT[@]} ; do
+		echo "
+			sys-devel/gcc:${s}
+		"
+	done
+}
+
 BDEPEND+="
 	>=dev-build/cmake-3.13
 	>=sys-devel/gcc-7.5
@@ -204,14 +218,18 @@ BDEPEND+="
 		${BDEPEND_TIME_TESTS_TEST_RUNNER}
 		${BDEPEND_CONDITIONAL_COMPILATION}
 	)
+	|| (
+		$(gen_gcc_bdepend)
+	)
 "
 DOCS=( "README.md" )
 _PATCHES=(
 	"${FILESDIR}/${PN}-2024.1.0-offline-install.patch"
 	"${FILESDIR}/${PN}-2024.1.0-dont-delete-archives.patch"
 	"${FILESDIR}/${PN}-2021.4.2-allow-opencv-download-on-gentoo.patch"
-	"${FILESDIR}/${PN}-2024.1.0-install-paths.patch"
-	"${FILESDIR}/${PN}-2024.1.0-set-python-tag.patch"
+#	"A${FILESDIR}/${PN}-2024.1.0-install-paths.patch"
+#	"${FILESDIR}/${PN}-2024.1.0-set-python-tag.patch"
+	"${FILESDIR}/${PN}-2021.4.2-local-tarball.patch"
 )
 
 #distutils_enable_sphinx "docs"
@@ -301,6 +319,17 @@ python_prepare_all() {
 }
 
 src_configure() {
+	local s
+	for s in ${GCC_COMPAT[@]} ; do
+		if which "${CHOST}-gcc-${s}" ; then
+			export CC="${CHOST}-gcc-${s}"
+			export CXX="${CHOST}-g++-${s}"
+			export CPP="${CPP} -E"
+			break
+		fi
+	done
+	gcc --version || die
+	strip-unsupported-flags
 	local mycmakeargs
 	local _mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
@@ -352,6 +381,7 @@ src_configure() {
 		-DSELECTIVE_BUILD=OFF
 		-DTREAT_WARNING_AS_ERROR=ON
 		-DUSE_BUILD_TYPE_SUBFOLDER=ON
+		-DUSE_LOCAL_TARBALL=ON
 		-DUSE_SYSTEM_PUGIXML=$(usex system-pugixml)
 		-DVERBOSE_BUILD=ON
 	)
