@@ -787,7 +787,7 @@ src_install() {
 		local wheel_path
 		local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
 
-		local wheel_dir="${WORKDIR}/${PN}-${PV}_build-${EPYTHON}/wheels"
+		local wheel_dir="${WORKDIR}/${PN}-${PV}_build-${EPYTHON/./_}/wheels"
 		wheel_path=$(realpath "${wheel_dir}/openvino-${PV}-"*".whl")
 		distutils_wheel_install "${d}" \
 	                "${wheel_path}"
