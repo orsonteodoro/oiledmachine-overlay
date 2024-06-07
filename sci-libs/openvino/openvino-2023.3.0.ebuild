@@ -134,9 +134,9 @@ RESTRICT="mirror test" # Missing test dependencies
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 	${CPU_FLAGS_X86[@]}
-	doc gna -lto +mlas -openmp +samples -system-flatbuffers system-opencl
-	system-protobuf system-pugixml system-snappy system-tbb test +tbb
-	video_cards_intel
+	development-tools doc gna -lto +mlas -openmp runtime +samples
+	-system-flatbuffers system-opencl system-protobuf system-pugixml
+	system-snappy system-tbb test +tbb video_cards_intel
 "
 REQUIRED_USE="
 	?? (
@@ -145,6 +145,10 @@ REQUIRED_USE="
 	)
 	system-tbb? (
 		tbb
+	)
+	^^ (
+		runtime
+		development-tools
 	)
 "
 RDEPEND+="
@@ -474,7 +478,7 @@ DOCS=( "README.md" )
 _PATCHES=(
 	"${FILESDIR}/${PN}-2024.1.0-offline-install.patch"
 	"${FILESDIR}/${PN}-2024.1.0-dont-delete-archives.patch"
-	"${FILESDIR}/${PN}-2024.1.0-install-paths.patch"
+	"${FILESDIR}/${PN}-2023.3.0-install-paths.patch"
 	"${FILESDIR}/${PN}-2024.1.0-set-python-tag.patch"
 )
 
@@ -776,19 +780,22 @@ src_install() {
 		export PYTHON_TAG="${python_tag}"
 		cmake_src_install
 		local sitedir="$(python_get_sitedir)"
-		rm -rf "${ED}${sitedir}"/{"include","${LIBDIR}","share","requirements.txt"}
 
 		local wheel_path
 		local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
 
 		local wheel_dir="${WORKDIR}/${PN}-${PV}_build-${EPYTHON/./_}/wheels"
-		wheel_path=$(realpath "${wheel_dir}/openvino-${PV}-"*".whl")
-		distutils_wheel_install "${d}" \
-	                "${wheel_path}"
+		if use runtime ; then
+			wheel_path=$(realpath "${wheel_dir}/openvino-${PV}-"*".whl")
+			distutils_wheel_install "${d}" \
+				"${wheel_path}"
+		fi
 
-		wheel_path=$(realpath "${wheel_dir}/openvino_dev-${PV}-"*".whl")
-		distutils_wheel_install "${d}" \
-	                "${wheel_path}"
+		if use development-tools ; then
+			wheel_path=$(realpath "${wheel_dir}/openvino_dev-${PV}-"*".whl")
+			distutils_wheel_install "${d}" \
+				"${wheel_path}"
+		fi
 
 		multibuild_merge_root "${d}" "${D%/}"
 	}

@@ -49,6 +49,16 @@
     <flag name="openmp">
       Use OpenMP for threading.
     </flag>
+    <flag name="runtime">
+      Install the Python openvino package.
+
+      For details, see https://pypi.org/project/openvino/
+    </flag>
+    <flag name="development-tools">
+      Install the Python openvino-dev package.
+
+      For details, see https://pypi.org/project/openvino-dev/
+    </flag>
     <flag name="tbb">
       Use TBB for threading.
     </flag>
