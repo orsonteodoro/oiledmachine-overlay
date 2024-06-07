@@ -479,7 +479,7 @@ DOCS=( "README.md" )
 _PATCHES=(
 	"${FILESDIR}/${PN}-2024.1.0-offline-install.patch"
 	"${FILESDIR}/${PN}-2024.1.0-dont-delete-archives.patch"
-	"A${FILESDIR}/${PN}-2023.3.0-install-paths.patch"
+	"${FILESDIR}/${PN}-2023.3.0-install-paths.patch"
 	"${FILESDIR}/${PN}-2024.1.0-set-python-tag.patch"
 )
 
