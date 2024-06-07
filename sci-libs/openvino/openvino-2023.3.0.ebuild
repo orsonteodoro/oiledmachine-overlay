@@ -137,6 +137,7 @@ IUSE+="
 	development-tools doc gna -lto +mlas -openmp runtime +samples
 	-system-flatbuffers system-opencl system-protobuf system-pugixml
 	system-snappy system-tbb test +tbb video_cards_intel
+	ebuild-revision-1
 "
 REQUIRED_USE="
 	?? (
