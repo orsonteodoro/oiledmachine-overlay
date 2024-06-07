@@ -636,7 +636,7 @@ RDEPEND="
 		virtual/glu[${MULTILIB_USEDEP}]
 	)
 	openvino? (
-		dev-util/openvino
+		sci-libs/openvino
 	)
 	png? (
 		>=media-libs/libpng-1.6.43:0[${MULTILIB_USEDEP}]
