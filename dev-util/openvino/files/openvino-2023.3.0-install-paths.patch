@@ -1,0 +1,64 @@
+--- a/cmake/developer_package/packaging/archive.cmake.orig	2024-01-08 04:42:05.000000000 -0800
++++ b/cmake/developer_package/packaging/archive.cmake	2024-06-06 11:47:39.561659991 -0700
+@@ -21,17 +21,17 @@ endif()
+ macro(ov_archive_cpack_set_dirs)
+     # common "archive" package locations
+     # TODO: move current variables to OpenVINO specific locations
+-    set(OV_CPACK_INCLUDEDIR runtime/include)
+-    set(OV_CPACK_IE_CMAKEDIR runtime/cmake)
+-    set(OV_CPACK_NGRAPH_CMAKEDIR runtime/cmake)
+-    set(OV_CPACK_OPENVINO_CMAKEDIR runtime/cmake)
+-    set(OV_CPACK_DOCDIR docs)
+-    set(OV_CPACK_LICENSESDIR licenses)
+-    set(OV_CPACK_SAMPLESDIR samples)
+-    set(OV_CPACK_WHEELSDIR tools)
+-    set(OV_CPACK_TOOLSDIR tools)
+-    set(OV_CPACK_DEVREQDIR tools)
+-    set(OV_CPACK_PYTHONDIR python)
++    set(OV_CPACK_INCLUDEDIR include)
++    set(OV_CPACK_IE_CMAKEDIR $ENV{LIBDIR}/cmake)
++    set(OV_CPACK_NGRAPH_CMAKEDIR $ENV{LIBDIR}/cmake)
++    set(OV_CPACK_OPENVINO_CMAKEDIR $ENV{LIBDIR}/cmake)
++    set(OV_CPACK_DOCDIR share/openvino/docs)
++    set(OV_CPACK_LICENSESDIR share/openvino/licenses)
++    set(OV_CPACK_SAMPLESDIR share/openvino/samples)
++    set(OV_CPACK_WHEELSDIR $ENV{LIBDIR}/openvino/tools)
++    set(OV_CPACK_TOOLSDIR $ENV{LIBDIR}/openvino/tools)
++    set(OV_CPACK_DEVREQDIR $ENV{LIBDIR}/openvino/tools)
++    set(OV_CPACK_PYTHONDIR .)
+ 
+     if(USE_BUILD_TYPE_SUBFOLDER)
+         set(build_type ${CMAKE_BUILD_TYPE})
+@@ -48,9 +48,9 @@ macro(ov_archive_cpack_set_dirs)
+         set(OV_CPACK_RUNTIMEDIR runtime/lib/${ARCH_FOLDER}/${build_type})
+         set(OV_CPACK_ARCHIVEDIR runtime/lib/${ARCH_FOLDER}/${build_type})
+     else()
+-        set(OV_CPACK_LIBRARYDIR runtime/lib/${ARCH_FOLDER})
+-        set(OV_CPACK_RUNTIMEDIR runtime/lib/${ARCH_FOLDER})
+-        set(OV_CPACK_ARCHIVEDIR runtime/lib/${ARCH_FOLDER})
++        set(OV_CPACK_LIBRARYDIR $ENV{LIBDIR}/${ARCH_FOLDER})
++        set(OV_CPACK_RUNTIMEDIR $ENV{LIBDIR}/${ARCH_FOLDER})
++        set(OV_CPACK_ARCHIVEDIR $ENV{LIBDIR}/${ARCH_FOLDER})
+     endif()
+     set(OV_CPACK_PLUGINSDIR ${OV_CPACK_RUNTIMEDIR})
+ endmacro()
+--- a/scripts/CMakeLists.txt.orig	2024-01-08 04:42:05.000000000 -0800
++++ b/scripts/CMakeLists.txt	2024-06-06 11:48:18.237365323 -0700
+@@ -44,7 +44,7 @@ elseif(WIN32)
+ endif()
+ 
+ install(PROGRAMS "${_setupvars_file_full_path}"
+-        DESTINATION .
++        DESTINATION $ENV{LIBDIR}/openvino/bin/
+         COMPONENT ${OV_CPACK_COMP_SETUPVARS}
+         ${OV_CPACK_COMP_SETUPVARS_EXCLUDE_ALL})
+ 
+@@ -54,7 +54,7 @@ if(LINUX)
+     ov_cpack_add_component(${OV_CPACK_COMP_INSTALL_DEPENDENCIES} HIDDEN)
+ 
+     install(PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/install_dependencies/install_openvino_dependencies.sh"
+-            DESTINATION install_dependencies/
++            DESTINATION $ENV{LIBDIR}/openvino/bin/
+             COMPONENT ${OV_CPACK_COMP_INSTALL_DEPENDENCIES}
+             ${OV_CPACK_COMP_INSTALL_DEPENDENCIES_EXCLUDE_ALL})
+ endif()

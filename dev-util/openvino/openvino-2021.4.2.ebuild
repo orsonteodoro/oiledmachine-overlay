@@ -26,7 +26,7 @@ CPU_FLAGS_X86=(
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_10" ) # 3.6 (U18), 3.8 (U20)
 
-inherit cmake python-r1
+inherit cmake distutils-r1
 
 _gen_gh_uri() {
 	local org="${1}"
@@ -94,7 +94,7 @@ RESTRICT="mirror test" # Missing test dependencies
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 	${CPU_FLAGS_X86[@]}
-	doc gna gna1 gna1_1401 gna2 -lto +mkl-dnn -openmp system-pugixml test
+	doc gna gna1 gna1_1401 gna2 -lto +mkl-dnn -openmp +samples system-pugixml test
 	+tbb video_cards_intel
 "
 REQUIRED_USE="
@@ -202,10 +202,12 @@ BDEPEND+="
 	)
 "
 DOCS=( "README.md" )
-PATCHES=(
+_PATCHES=(
 	"${FILESDIR}/${PN}-2024.1.0-offline-install.patch"
 	"${FILESDIR}/${PN}-2024.1.0-dont-delete-archives.patch"
 	"${FILESDIR}/${PN}-2021.4.2-allow-opencv-download-on-gentoo.patch"
+	"${FILESDIR}/${PN}-2024.1.0-install-paths.patch"
+	"${FILESDIR}/${PN}-2024.1.0-set-python-tag.patch"
 )
 
 #distutils_enable_sphinx "docs"
@@ -270,9 +272,11 @@ src_unpack() {
 
 	precache_resolved_dep "inference-engine/temp/download/VPU/usb-ma2x8x" "firmware_usb-ma2x8x_1875.zip"
 	precache_resolved_dep "inference-engine/temp/download/VPU/pcie-ma2x8x" "firmware_pcie-ma2x8x_1875.zip"
-	if [[ "${ABI}" == "amd64" ]] ; then
-		precache_resolved_dep "inference-engine/temp/download" "tbb2020_20200415_lin_strip.tgz"
-		precache_resolved_dep "inference-engine/temp/download" "tbbbind_2_4_static_lin_v2.tgz"
+	if use tbb ; then
+		if use kernel_linux && [[ "${ABI}" == "amd64" ]] ; then
+			precache_resolved_dep "inference-engine/temp/download" "tbb2020_20200415_lin_strip.tgz"
+			precache_resolved_dep "inference-engine/temp/download" "tbbbind_2_4_static_lin_v2.tgz"
+		fi
 	fi
 	precache_resolved_dep "inference-engine/temp/download/opencv" "opencv_4.5.2-076_ubuntu20.txz"
 	if use gna ; then
@@ -286,11 +290,17 @@ src_unpack() {
 	fi
 }
 
+python_prepare_all() {
+	eapply ${_PATCHES[@]}
+	cmake_src_prepare
+	distutils-r1_python_prepare_all
+}
+
 src_configure() {
 	local mycmakeargs
 	local _mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
-		-DCI_BUILD_NUMBER="custom__"
+#		-DCI_BUILD_NUMBER="custom__"
 		-DCMAKE_VERBOSE_MAKEFILE=ON
 		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2)
 		-DENABLE_AVX512F=$(usex cpu_flags_x86_avx512f)
@@ -321,7 +331,6 @@ src_configure() {
 		-DENABLE_PROFILING_FIRST_INFERENCE=ON
 		-DENABLE_PROFILING_ITT=OFF
 		-DENABLE_SAME_BRANCH_FOR_MODELS=OFF
-		-DENABLE_SAMPLES=ON
 		-DENABLE_SANITIZER=OFF
 		-DENABLE_SPEECH_DEMO=ON
 		-DENABLE_SSE42=$(usex cpu_flags_x86_sse4_2)
@@ -372,24 +381,38 @@ src_configure() {
 		)
 	fi
 
+	export LIBDIR=$(get_libdir)
 	# Native
 	mycmakeargs=(
 		${_mycmakeargs[@]}
 		-DCMAKE_INSTALL_PREFIX="/usr"
+		-DENABLE_CPP_API=ON
+		-DENABLE_PYTHON_API=OFF
 		-DENABLE_PYTHON=OFF
+		-DENABLE_SAMPLES=$(usex samples)
+		-DENABLE_WHEEL=OFF
 	)
+
 einfo "Configuring native support"
 	cmake_src_configure
 
 	configure_python_impl() {
 einfo "PYTHON_SITEDIR:  $(python_get_sitedir)"
+		local python_tag="${EPYTHON/python/}"
+		python_tag="cp${python_tag/./}"
+		export PYTHON_TAG="${python_tag}"
 		mycmakeargs=(
 			${_mycmakeargs[@]}
 			-DCMAKE_INSTALL_PREFIX="$(python_get_sitedir)"
+			-DENABLE_CPP_API=OFF
+			-DENABLE_PYTHON_API=ON
 			-DENABLE_PYTHON=ON
+			-DENABLE_SAMPLES=OFF
 			-DENABLE_TESTS=OFF
+			-DENABLE_WHEEL=ON
 			-DPython3_EXECUTABLE="${PYTHON}"
 		)
+
 einfo "Configuring ${EPYTHON} support"
 		cmake_src_configure
 	}
@@ -405,10 +428,29 @@ src_compile() {
 }
 
 src_install() {
+	export LIBDIR=$(get_libdir)
 	cmake_src_install
 	install_python_impl() {
-		cmake_src_install \
-			-DCOMPONENT="python_wheels"
+		local python_tag="${EPYTHON/python/}"
+		python_tag="cp${python_tag/./}"
+		export PYTHON_TAG="${python_tag}"
+		cmake_src_install
+		local sitedir="$(python_get_sitedir)"
+		rm -rf "${ED}${sitedir}"/{"include","${LIBDIR}","share","requirements.txt"}
+
+		local wheel_path
+		local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
+
+		local wheel_dir="${WORKDIR}/${PN}-${PV}_build-${EPYTHON}/wheels"
+		wheel_path=$(realpath "${wheel_dir}/openvino-${PV}-"*".whl")
+		distutils_wheel_install "${d}" \
+	                "${wheel_path}"
+
+		wheel_path=$(realpath "${wheel_dir}/openvino_dev-${PV}-"*".whl")
+		distutils_wheel_install "${d}" \
+	                "${wheel_path}"
+
+		multibuild_merge_root "${d}" "${D%/}"
 	}
 	python_foreach_impl install_python_impl
 	docinto "licenses"
