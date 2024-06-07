@@ -1,0 +1,32 @@
+--- a/cmake/developer_package/packaging.cmake.orig	2021-11-16 09:55:28.000000000 -0800
++++ b/cmake/developer_package/packaging.cmake	2024-06-07 12:46:19.458347144 -0700
+@@ -5,7 +5,15 @@
+ include(CPackComponent)
+ unset(IE_CPACK_COMPONENTS_ALL CACHE)
+ 
+-set(IE_CPACK_IE_DIR       deployment_tools/inference_engine)
++if(WIN32)
++    set(IE_CPACK_IE_DIR       deployment_tools/inference_engine)
++else()
++    if(ENABLE_PYTHON)
++        set(IE_CPACK_IE_DIR       openvino/thirdparty)
++    else()
++        set(IE_CPACK_IE_DIR       .)
++    endif()
++endif()
+ 
+ #
+ # ie_cpack_set_library_dir()
+@@ -18,9 +26,9 @@ function(ie_cpack_set_library_dir)
+         set(IE_CPACK_RUNTIME_PATH ${IE_CPACK_IE_DIR}/bin/${ARCH_FOLDER}/${CMAKE_BUILD_TYPE} PARENT_SCOPE)
+         set(IE_CPACK_ARCHIVE_PATH ${IE_CPACK_IE_DIR}/lib/${ARCH_FOLDER}/${CMAKE_BUILD_TYPE} PARENT_SCOPE)
+     else()
+-        set(IE_CPACK_LIBRARY_PATH ${IE_CPACK_IE_DIR}/lib/${ARCH_FOLDER} PARENT_SCOPE)
+-        set(IE_CPACK_RUNTIME_PATH ${IE_CPACK_IE_DIR}/lib/${ARCH_FOLDER} PARENT_SCOPE)
+-        set(IE_CPACK_ARCHIVE_PATH ${IE_CPACK_IE_DIR}/lib/${ARCH_FOLDER} PARENT_SCOPE)
++        set(IE_CPACK_LIBRARY_PATH ${IE_CPACK_IE_DIR}/$ENV{LIBDIR} PARENT_SCOPE)
++        set(IE_CPACK_RUNTIME_PATH ${IE_CPACK_IE_DIR}/$ENV{LIBDIR} PARENT_SCOPE)
++        set(IE_CPACK_ARCHIVE_PATH ${IE_CPACK_IE_DIR}/$ENV{LIBDIR} PARENT_SCOPE)
+     endif()
+ endfunction()
+ 

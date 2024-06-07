@@ -227,7 +227,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2024.1.0-offline-install.patch"
 	"${FILESDIR}/${PN}-2024.1.0-dont-delete-archives.patch"
 	"${FILESDIR}/${PN}-2021.4.2-allow-opencv-download-on-gentoo.patch"
-#	"A${FILESDIR}/${PN}-2024.1.0-install-paths.patch"
+	"${FILESDIR}/${PN}-2021.4.2-install-paths.patch"
 #	"${FILESDIR}/${PN}-2024.1.0-set-python-tag.patch"
 	"${FILESDIR}/${PN}-2021.4.2-local-tarball.patch"
 )
