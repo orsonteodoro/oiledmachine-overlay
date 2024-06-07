@@ -330,6 +330,7 @@ src_configure() {
 	done
 	gcc --version || die
 	strip-unsupported-flags
+
 	local mycmakeargs
 	local _mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
@@ -339,7 +340,7 @@ src_configure() {
 		-DENABLE_AVX512F=$(usex cpu_flags_x86_avx512f)
 		-DENABLE_BEH_TESTS=OFF
 		-DENABLE_CLANG_FORMAT=OFF
-		-DENABLE_CLDNN=ON
+		-DENABLE_CLDNN=OFF # inference-engine/thirdparty/clDNN/src/gpu/configuration.cpp:29:24: error: 'cldnn::custom' has not been declared
 		-DENABLE_CLDNN_TESTS=OFF
 		-DENABLE_COVERAGE=OFF
 		-DENABLE_CPPLINT=ON
@@ -379,7 +380,7 @@ src_configure() {
 		-DOFFLINE_INSTALL=ON
 		-DOS_FOLDER=OFF
 		-DSELECTIVE_BUILD=OFF
-		-DTREAT_WARNING_AS_ERROR=ON
+		-DTREAT_WARNING_AS_ERROR=OFF 
 		-DUSE_BUILD_TYPE_SUBFOLDER=ON
 		-DUSE_LOCAL_TARBALL=ON
 		-DUSE_SYSTEM_PUGIXML=$(usex system-pugixml)
