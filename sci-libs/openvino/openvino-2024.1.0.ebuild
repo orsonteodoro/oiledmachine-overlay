@@ -126,7 +126,7 @@ IUSE+="
 	development-tools doc -lto +mlas +npu -openmp runtime +samples
 	-system-flatbuffers system-opencl system-protobuf system-pugixml
 	system-snappy system-tbb test +tbb video_cards_intel
-	ebuild-revision-1
+	ebuild-revision-2
 "
 REQUIRED_USE="
 	?? (
@@ -495,7 +495,7 @@ DOCS=( "README.md" )
 _PATCHES=(
 	"${FILESDIR}/${PN}-2024.1.0-offline-install.patch"
 	"${FILESDIR}/${PN}-2024.1.0-dont-delete-archives.patch"
-	"${FILESDIR}/${PN}-2024.1.0-install-paths.patch"
+	"A${FILESDIR}/${PN}-2024.1.0-install-paths.patch"
 	"${FILESDIR}/${PN}-2024.1.0-set-python-tag.patch"
 )
 
@@ -550,7 +550,7 @@ precache_resolved_dep() {
 }
 
 src_unpack() {
-	die "This ebuild is undergoing review.  Use the older ebuilds instead."
+#	die "This ebuild is undergoing review.  Use the older ebuilds instead."
 	unpack ${A}
 	_unpack_gh "thirdparty/xbyak" herumi xbyak 740dff2e866f3ae1a70dd42d6e8836847ed95cc2
 	_unpack_gh "thirdparty/open_model_zoo" openvinotoolkit open_model_zoo cf5141dad2a4f24e1c5d5b9d43219ed804c48bbf

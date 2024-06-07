@@ -137,7 +137,7 @@ IUSE+="
 	development-tools doc gna -lto +mlas -openmp runtime +samples
 	-system-flatbuffers system-opencl system-protobuf system-pugixml
 	system-snappy system-tbb test +tbb video_cards_intel
-	ebuild-revision-1
+	ebuild-revision-2
 "
 REQUIRED_USE="
 	?? (
@@ -479,7 +479,7 @@ DOCS=( "README.md" )
 _PATCHES=(
 	"${FILESDIR}/${PN}-2024.1.0-offline-install.patch"
 	"${FILESDIR}/${PN}-2024.1.0-dont-delete-archives.patch"
-	"${FILESDIR}/${PN}-2023.3.0-install-paths.patch"
+	"A${FILESDIR}/${PN}-2023.3.0-install-paths.patch"
 	"${FILESDIR}/${PN}-2024.1.0-set-python-tag.patch"
 )
 
