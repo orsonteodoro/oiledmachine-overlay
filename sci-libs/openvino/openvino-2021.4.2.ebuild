@@ -178,6 +178,10 @@ gen_gcc_bdepend() {
 BDEPEND+="
 	>=dev-build/cmake-3.13
 	>=sys-devel/gcc-7.5
+	$(python_gen_cond_dep '
+		<dev-python/cython-3[${PYTHON_USEDEP}]
+		dev-python/decouple[${PYTHON_USEDEP}]
+	')
 	doc? (
 		$(python_gen_cond_dep '
 			dev-python/alabaster[${PYTHON_USEDEP}]
@@ -319,7 +323,33 @@ python_prepare_all() {
 	distutils-r1_python_prepare_all
 }
 
+check_cython() {
+	local actual_cython_pv=$(cython --version 2>&1 \
+		| cut -f 3 -d " " \
+		| sed -e "s|a|_alpha|g" \
+		| sed -e "s|b|_beta|g" \
+		| sed -e "s|rc|_rc|g")
+	if [[ "${actual_cython_pv}" == "python-exec" ]] ; then
+eerror
+eerror "Fix your \`eselect cython\` settings."
+eerror
+		die
+	fi
+	local expected_cython_pv="3.0.0"
+	local required_cython_major=$(ver_cut 1 ${expected_cython_pv})
+	if ver_test ${actual_cython_pv} -ge ${required_cython_major} ; then
+eerror
+eerror "Switch cython to < ${expected_cython_pv} via eselect-cython"
+eerror
+eerror "Actual cython version:\t${actual_cython_pv}"
+eerror "Expected cython version\t${expected_cython_pv}"
+eerror
+		die
+	fi
+}
+
 src_configure() {
+	check_cython
 	local s
 	for s in ${GCC_COMPAT[@]} ; do
 		if which "${CHOST}-gcc-${s}" ; then
