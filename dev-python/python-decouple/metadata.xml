@@ -7,7 +7,8 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <bugs-to>https://github.com/andrey-avdeev/decouple/issues</bugs-to>
-    <remote-id type="github">andrey-avdeev/decouple</remote-id>
+    <changelog>https://github.com/HBNetwork/python-decouple/blob/master/CHANGELOG.md</changelog>
+    <bugs-to>https://github.com/HBNetwork/python-decouple/issues</bugs-to>
+    <remote-id type="github">HBNetwork/python-decouple</remote-id>
   </upstream>
 </pkgmetadata>
