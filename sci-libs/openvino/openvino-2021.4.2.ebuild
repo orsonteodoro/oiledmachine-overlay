@@ -180,7 +180,9 @@ BDEPEND+="
 	>=sys-devel/gcc-7.5
 	$(python_gen_cond_dep '
 		<dev-python/cython-3[${PYTHON_USEDEP}]
-		dev-python/decouple[${PYTHON_USEDEP}]
+		>=dev-python/python-decouple-3.4[${PYTHON_USEDEP}]
+		>=dev-python/setuptools-53.0.0[${PYTHON_USEDEP}]
+		>=dev-python/wheel-0.36.2[${PYTHON_USEDEP}]
 	')
 	doc? (
 		$(python_gen_cond_dep '
