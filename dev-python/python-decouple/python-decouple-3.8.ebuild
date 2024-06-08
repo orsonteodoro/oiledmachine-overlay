@@ -54,7 +54,7 @@ BDEPEND+="
 		>=dev-python/tox-2.7.0[${PYTHON_USEDEP}]
 	)
 "
-DOCS=( "CHANGELOG.md" "README.md" )
+DOCS=( "CHANGELOG.md" "README.rst" )
 PATCHES=(
 )
 
