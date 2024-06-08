@@ -121,6 +121,10 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
+	(
+		>=dev-python/numpy-1.16.6
+		<dev-python/numpy-1.20
+	)
 	>=app-arch/snappy-1.1.10
 	>=dev-libs/pugixml-1.7
 	<dev-cpp/tbb-2021
@@ -179,10 +183,48 @@ BDEPEND+="
 	>=dev-build/cmake-3.13
 	>=sys-devel/gcc-7.5
 	$(python_gen_cond_dep '
-		<dev-python/cython-3[${PYTHON_USEDEP}]
-		>=dev-python/python-decouple-3.4[${PYTHON_USEDEP}]
-		>=dev-python/setuptools-53.0.0[${PYTHON_USEDEP}]
-		>=dev-python/wheel-0.36.2[${PYTHON_USEDEP}]
+		(
+			>=dev-python/python-decouple-3.4[${PYTHON_USEDEP}]
+			>=dev-python/setuptools-53.0.0[${PYTHON_USEDEP}]
+			>=dev-python/wheel-0.36.2[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/cython-0.29.22[${PYTHON_USEDEP}]
+			<dev-python/cython-3[${PYTHON_USEDEP}]
+		)
+		test? (
+			>=dev-python/attrs-19.1.0[${PYTHON_USEDEP}]
+			>=dev-python/pytest-4.0.1[${PYTHON_USEDEP}]
+			>=dev-python/pytest-html-1.19.0[${PYTHON_USEDEP}]
+		)
+		test? (
+			dev-python/bandit[${PYTHON_USEDEP}]
+			dev-python/black[${PYTHON_USEDEP}]
+			dev-python/flake8[${PYTHON_USEDEP}]
+			dev-python/flake8-annotations-complexity[${PYTHON_USEDEP}]
+			dev-python/flake8-broken-line[${PYTHON_USEDEP}]
+			dev-python/flake8-bugbear[${PYTHON_USEDEP}]
+			dev-python/flake8-class-attributes-order[${PYTHON_USEDEP}]
+			dev-python/flake8-comprehensions[${PYTHON_USEDEP}]
+			dev-python/flake8-debugger[${PYTHON_USEDEP}]
+			dev-python/flake8-eradicate[${PYTHON_USEDEP}]
+			dev-python/flake8-executable[${PYTHON_USEDEP}]
+			dev-python/flake8-expression-complexity[${PYTHON_USEDEP}]
+			dev-python/flake8-print[${PYTHON_USEDEP}]
+			dev-python/flake8-pytest-style[${PYTHON_USEDEP}]
+			dev-python/flake8-rst-docstrings[${PYTHON_USEDEP}]
+			dev-python/flake8-string-format[${PYTHON_USEDEP}]
+			dev-python/flake8-variables-names[${PYTHON_USEDEP}]
+			dev-python/flake8_builtins[${PYTHON_USEDEP}]
+			dev-python/flake8_coding[${PYTHON_USEDEP}]
+			dev-python/flake8_commas[${PYTHON_USEDEP}]
+			dev-python/flake8_pep3101[${PYTHON_USEDEP}]
+			dev-python/flake8_quotes[${PYTHON_USEDEP}]
+			dev-python/import-order[${PYTHON_USEDEP}]
+			dev-python/mypy[${PYTHON_USEDEP}]
+			dev-python/pep8-naming[${PYTHON_USEDEP}]
+			dev-python/radon[${PYTHON_USEDEP}]
+		)
 	')
 	doc? (
 		$(python_gen_cond_dep '
@@ -227,6 +269,11 @@ BDEPEND+="
 	)
 	|| (
 		$(gen_gcc_bdepend)
+	)
+"
+PDEPEND+="
+	test? (
+		>=media-libs/opencv-3.4.4.19[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
@@ -413,7 +460,7 @@ src_configure() {
 		-DOFFLINE_INSTALL=ON
 		-DOS_FOLDER=OFF
 		-DSELECTIVE_BUILD=OFF
-		-DTREAT_WARNING_AS_ERROR=OFF 
+		-DTREAT_WARNING_AS_ERROR=OFF
 		-DUSE_BUILD_TYPE_SUBFOLDER=ON
 		-DUSE_LOCAL_TARBALL=ON
 		-DUSE_SYSTEM_PUGIXML=$(usex system-pugixml)
