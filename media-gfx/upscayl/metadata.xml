@@ -13,6 +13,9 @@
     <remote-id type="github">upscayl/upscayl</remote-id>
   </upstream>
   <use>
+    <flag name="custom-models">
+      Install the custom-models package.
+    </flag>
     <flag name="system-vips">
       Use the system's version instead of the vendored for image processing.
 

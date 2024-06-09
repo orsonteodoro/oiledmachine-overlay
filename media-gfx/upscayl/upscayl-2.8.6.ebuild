@@ -658,11 +658,17 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild-revision-4"
+IUSE+="
+	custom-models
+	ebuild-revision-4
+"
 # Upstream uses U 18.04.6 for CI
 RDEPEND+="
 	>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[cxx,lcms,jpeg,png,webp]
 	media-libs/vulkan-loader
+	custom-models? (
+		media-gfx/upscayl-custom-models
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -727,18 +733,18 @@ src_install() {
 	# Generated from:
 	# find "${S}/dist" -executable -type f | cut -f 11- -d "/" | sort
 	local L=(
-		chrome_crashpad_handler
-		chrome-sandbox
-		libEGL.so
-		libffmpeg.so
-		libGLESv2.so
-		libvk_swiftshader.so
-		libvulkan.so.1
-		resources/app.asar.unpacked/node_modules/sharp/build/Release/sharp-linux-x64.node
-		resources/app.asar.unpacked/node_modules/sharp/node_modules/node-addon-api/tools/conversion.js
-		resources/app.asar.unpacked/node_modules/sharp/node_modules/semver/bin/semver.js
-		resources/bin/upscayl-realesrgan
-		upscayl
+		"chrome_crashpad_handler"
+		"chrome-sandbox"
+		"libEGL.so"
+		"libffmpeg.so"
+		"libGLESv2.so"
+		"libvk_swiftshader.so"
+		"libvulkan.so.1"
+		"resources/app.asar.unpacked/node_modules/sharp/build/Release/sharp-linux-x64.node"
+		"resources/app.asar.unpacked/node_modules/sharp/node_modules/node-addon-api/tools/conversion.js"
+		"resources/app.asar.unpacked/node_modules/sharp/node_modules/semver/bin/semver.js"
+		"resources/bin/upscayl-realesrgan"
+		"upscayl"
 	)
 	for f in ${L[@]} ; do
 		fperms 0755 "${NPM_INSTALL_PATH}/${f}"

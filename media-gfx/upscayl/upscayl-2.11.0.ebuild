@@ -14,7 +14,7 @@ ELECTRON_APP_REACT_PV="18.3.1"
 ELECTRON_APP_SHARP_PV="0.32.6"
 ELECTRON_APP_VIPS_PV="8.14.5"
 NODE_ENV="development"
-NODE_VERSION="16"
+NODE_VERSION="18"
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -786,11 +786,17 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild-revision-5"
+IUSE+="
+	custom-models
+	ebuild-revision-5
+"
 # Upstream uses U 18.04.6 for CI
 RDEPEND+="
 	>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[cxx,lcms,jpeg,png,webp]
 	media-libs/vulkan-loader
+	custom-models? (
+		media-gfx/upscayl-custom-models
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -855,15 +861,15 @@ src_install() {
 	# Generated from:
 	# find "${S}/dist" -executable -type f | cut -f 11- -d "/" | sort
 	local L=(
-		chrome_crashpad_handler
-		chrome-sandbox
-		libEGL.so
-		libffmpeg.so
-		libGLESv2.so
-		libvk_swiftshader.so
-		libvulkan.so.1
-		resources/bin/upscayl-bin
-		upscayl
+		"chrome_crashpad_handler"
+		"chrome-sandbox"
+		"libEGL.so"
+		"libffmpeg.so"
+		"libGLESv2.so"
+		"libvk_swiftshader.so"
+		"libvulkan.so.1"
+		"resources/bin/upscayl-bin"
+		"upscayl"
 	)
 	for f in ${L[@]} ; do
 		fperms 0755 "${NPM_INSTALL_PATH}/${f}"
