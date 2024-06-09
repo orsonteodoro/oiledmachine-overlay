@@ -86,6 +86,9 @@ LICENSE="
 	RealESRGAN_General_x4_v3? (
 		BSD
 	)
+	uniscale_restore? (
+		CC-BY-NC-SA-4.0
+	)
 	unknown-2_0_1? (
 		AGPL-3
 	)
