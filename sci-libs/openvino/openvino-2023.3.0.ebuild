@@ -141,7 +141,7 @@ IUSE+="
 	development-tools doc gna -lto +mlas -openmp runtime +samples
 	-system-flatbuffers system-opencl system-protobuf system-pugixml
 	system-snappy system-tbb test +tbb video_cards_intel
-	ebuild-revision-3
+	ebuild-revision-4
 "
 REQUIRED_USE="
 	?? (
@@ -775,6 +775,49 @@ src_compile() {
 	python_foreach_impl compile_python_impl
 }
 
+get_arch() {
+	local arch
+	if [[ "${ABI}" == "amd64" ]] ; then
+		arch="intel64"
+	elif [[ "${ABI}" == "x86" ]] ; then
+		arch="ia32"
+	elif [[ "${ABI}" == "arm" ]] ; then
+		arch="arm"
+	elif [[ "${ABI}" == "arm64" ]] ; then
+		arch="arm64"
+	elif [[ "${ARCH}" == "riscv" ]] && [ "${ABI}" == "lp64d" || "${ABI}" == "lp64" ]] ; then
+		arch="riscv64"
+	else
+eerror "ABI=${ABI} is not supported"
+		die
+	fi
+	echo "${arch}"
+}
+
+gen_envd() {
+	local arch=$(get_arch)
+newenvd - "60${PN}" <<-_EOF_
+LDPATH="/usr/$(get_libdir)/openvino/runtime/lib/${arch}"
+_EOF_
+}
+
+fix_rpaths() {
+	local arch=$(get_arch)
+	# Fix runtime rpath
+	local x
+	for x in $(find "${ED}/usr/$(get_libdir)/openvino/runtime/lib/${arch}" -name "*.so") ; do
+		patchelf --add-rpath "/usr/$(get_libdir)/openvino/runtime/lib/${arch}" "${x}" || die
+	done
+
+	# Fix bindings rpath
+	fix_rpath_python_impl() {
+		for x in $(find "${ED}/usr/$(get_libdir)/openvino/python/${EPYTHON}" -name "*.so") ; do
+			patchelf --add-rpath "/usr/$(get_libdir)/openvino/python/${EPYTHON}/runtime/lib/${arch}" "${x}" || die
+		done
+	}
+	python_foreach_impl fix_rpath_python_impl
+}
+
 src_install() {
 	export LIBDIR=$(get_libdir)
 	cmake_src_install
@@ -801,10 +844,25 @@ src_install() {
 		fi
 
 		multibuild_merge_root "${d}" "${D%/}"
+
+		local suffix=$(${EPYTHON} -c "import distutils.sysconfig;print(distutils.sysconfig.get_config_var('EXT_SUFFIX'))")
+
+		dosym \
+			"/usr/$(get_libdir)/openvino/python/${EPYTHON}/python/_pyngraph${suffix}" \
+			"/usr/lib/${EPYTHON}/site-packages/"
+		dosym \
+			"/usr/$(get_libdir)/openvino/python/${EPYTHON}/python/ngraph" \
+			"/usr/lib/${EPYTHON}/site-packages/ngraph"
+		dosym \
+			"/usr/$(get_libdir)/openvino/python/${EPYTHON}/python/openvino" \
+			"/usr/lib/${EPYTHON}/site-packages/openvino"
 	}
 	python_foreach_impl install_python_impl
 	docinto "licenses"
 	dodoc "LICENSE"
+	rm -rf "${ED}/var"
+	gen_envd
+	fix_rpaths
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
