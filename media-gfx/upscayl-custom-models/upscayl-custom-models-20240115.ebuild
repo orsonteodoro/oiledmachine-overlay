@@ -145,6 +145,7 @@ src_install() {
 			"${DISTDIR}/Real-ESRGAN-LICENSE-5ca1078" \
 			"Real-ESRGAN-LICENSE"
 	fi
+	einstalldocs
 }
 
 pkg_postinst() {
