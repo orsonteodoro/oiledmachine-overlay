@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/upscayl/custom-models/issues</bugs-to>
+    <remote-id type="github">upscayl/custom-models</remote-id>
+  </upstream>
+  <use>
+    <flag name="4xHFA2k">
+     4x anime upscaler.  ESRGAN based.  Using the HFA2k dataset with OTF (on the
+     fly degradation) jpeg compression and blur.  
+    </flag>
+    <flag name="4xLSDIR">
+     A photo upscaler without degradation handling.  It uses a RRDBNet base
+     model.  Trained with the the LSDIR dataset.
+    </flag>
+    <flag name="4xLSDIRCompactC3">
+     A photo upscaler which handles a bit of jpeg compression.  It uses SRVGGNET
+     compact model for faster inference times.
+    </flag>
+    <flag name="4xLSDIRplusC">
+     A photo upscaler which handles a bit of jpeg compression.  It uses the
+     RRDBNet base model.  Trained with the LSDIR dataset.
+    </flag>
+    <flag name="4xNomos8kSC">
+     A 4k realistic photo upscaler handling jpeg compression.  It was trained
+     with the the HAT network (small and large model).   Trained with Nomos8k
+     dataset with OTF (on the fly degradation) jpeg compression and blur.
+    </flag>
+    <flag name="4x_NMKD-Siax_200k">
+      A 4X upscaler for JPEG 75 quality and better.
+    </flag>
+    <flag name="4x_NMKD-Superscale-SP_178000_G">
+      A 4X upscaler for artifact free real world images.
+    </flag>
+    <flag name="RealESRGAN_General_WDN_x4_v3">
+      Lightweight faster but slightly worst quality of of the default model
+      with a (WDN) Wide and Deep Network model.
+    </flag>
+    <flag name="RealESRGAN_General_x4_v3">
+      Lightweight faster but slightly worst quality of of the default model
+      without a (WDN) Wide and Deep Network model.
+    </flag>
+    <flag name="realesr-animevideov3-x2">
+      An optimized anime video model for X2 scale
+    </flag>
+    <flag name="realesr-animevideov3-x3">
+      An optimized anime video model for X3 scale
+    </flag>
+    <flag name="realesr-animevideov3-x4">
+      An optimized anime video model for X4 scale
+    </flag>
+    <flag name="uniscale_restore">
+    </flag>
+    <flag name="unknown-2_0_1">
+      An model accidently used for Ultrasharp in the 2.0.1 upscayl release.
+
+      For image comparison, see
+      https://github.com/upscayl/upscayl/issues/324
+    </flag>
+  </use>
+</pkgmetadata>
