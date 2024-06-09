@@ -121,7 +121,11 @@ tbb? (
 		)
 	)
 )
+https://github.com/openvinotoolkit/openvino/commit/0a8f1383826d949c497fe3d05fef9ad2b662fa7e.patch
+	-> openvino-commit-0a8f1383826d949c497fe3d05fef9ad2b662fa7e.patch
 "
+# 0a8f138 - [PATCH] [OV JS] Conditional enabling of JS API (#22139)
+
 # The version difference for tbb is not a mistake.
 # For downloads, grep also RESOLVE_DEPENDENCY in cmake/dependencies.cmake
 
@@ -480,6 +484,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2024.1.0-offline-install.patch"
 	"${FILESDIR}/${PN}-2024.1.0-dont-delete-archives.patch"
 	"${FILESDIR}/${PN}-2024.1.0-set-python-tag.patch"
+	"${DISTDIR}/openvino-commit-0a8f1383826d949c497fe3d05fef9ad2b662fa7e.patch"
 )
 
 #distutils_enable_sphinx "docs"
@@ -640,6 +645,7 @@ src_configure() {
 		-DENABLE_INTEL_GNA_DEBUG=OFF
 		-DENABLE_INTEL_GPU=$(usex video_cards_intel)
 		-DENABLE_IR_V7_READER=OFF
+		-DENABLE_JS=OFF
 		-DENABLE_LIBRARY_VERSIONING=ON
 		-DENABLE_LTO=$(usex lto)
 		-DENABLE_MULTI=ON

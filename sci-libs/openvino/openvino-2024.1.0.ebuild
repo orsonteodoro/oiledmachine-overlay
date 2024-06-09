@@ -651,7 +651,14 @@ src_configure() {
 		-DENABLE_INTEL_CPU=ON
 		-DENABLE_INTEL_GPU=$(usex video_cards_intel)
 		-DENABLE_INTEL_NPU=$(usex npu)
+
+# Fix for:
+# src/bindings/js/node/include/node_output.hpp:6:10: fatal error: napi.h: No such file or directory
+#    6 | #include <napi.h>
+#      |          ^~~~~~~~
+# compilation terminated.
 		-DENABLE_JS=OFF
+
 		-DENABLE_LIBRARY_VERSIONING=ON
 		-DENABLE_LTO=$(usex lto)
 		-DENABLE_MULTI=ON
