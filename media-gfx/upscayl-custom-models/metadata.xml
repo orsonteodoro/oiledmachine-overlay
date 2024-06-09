@@ -40,12 +40,12 @@
       A real world 4X upscaler for artifact free images using ESRGAN.
     </flag>
     <flag name="RealESRGAN_General_WDN_x4_v3">
-      Lightweight faster but slightly worst quality of of the default model
-      with a (WDN) Wide and Deep Network model.
+      The denoising version designed for general restoration that works on
+      general scenes.  Trained with pure synthetic data.
     </flag>
     <flag name="RealESRGAN_General_x4_v3">
-      Lightweight faster but slightly worst quality of the default model
-      without a (WDN) Wide and Deep Network model.
+      A general restoration model that works on general scenes.  Trained with
+      pure synthetic data.
     </flag>
     <flag name="realesr-animevideov3-x2">
       An optimized anime video model for X2 scaling
