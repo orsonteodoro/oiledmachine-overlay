@@ -57,7 +57,7 @@
       An optimized anime video model for X4 scaling
     </flag>
     <flag name="uniscale_restore">
-      This model is desiged to restore heavily compressed or noisy images.
+      This model is designed to restore heavily compressed or noisy images.
       Trained with video game screenshots at 4k.
     </flag>
     <flag name="unknown-2_0_1">
