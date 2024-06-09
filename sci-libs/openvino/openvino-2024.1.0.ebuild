@@ -40,7 +40,7 @@ https://github.com/${org}/${project_name}/archive/${commit}.tar.gz -> ${org}-${p
 	fi
 }
 
-#KEYWORDS="~amd64 ~arm ~arm64 ~riscv" # telemetry needs review
+KEYWORDS="~amd64 ~arm ~arm64 ~riscv"
 S="${WORKDIR}/${P}"
 # snappy has .gitmodules benchmark (bf5), googletest (18f)
 # protobuf has .gitmodules benchmark (5b7), googletest (5ec)
@@ -125,7 +125,7 @@ IUSE+="
 	${CPU_FLAGS_X86[@]}
 	development-tools doc -lto +mlas +npu -openmp runtime +samples
 	-system-flatbuffers system-opencl system-protobuf system-pugixml
-	system-snappy system-tbb test +tbb video_cards_intel
+	system-snappy system-tbb -telemetry test +tbb video_cards_intel
 	ebuild-revision-3
 "
 REQUIRED_USE="
@@ -495,7 +495,6 @@ DOCS=( "README.md" )
 _PATCHES=(
 	"${FILESDIR}/${PN}-2024.1.0-offline-install.patch"
 	"${FILESDIR}/${PN}-2024.1.0-dont-delete-archives.patch"
-	"${FILESDIR}/${PN}-2024.1.0-install-paths.patch"
 	"${FILESDIR}/${PN}-2024.1.0-set-python-tag.patch"
 )
 
@@ -616,6 +615,9 @@ src_unpack() {
 
 python_prepare_all() {
 	eapply ${_PATCHES[@]}
+	if ! use telemetry ; then
+		eapply "openvino-2024.1.0-hard-disable-telemetry.patch"
+	fi
 	cmake_src_prepare
 	distutils-r1_python_prepare_all
 }
@@ -733,10 +735,9 @@ src_configure() {
 	fi
 
 	export LIBDIR=$(get_libdir)
-	# Native
 	mycmakeargs=(
 		${_mycmakeargs[@]}
-		-DCMAKE_INSTALL_PREFIX="/usr"
+		-DCMAKE_INSTALL_PREFIX="/usr/$(get_libdir)/openvino"
 		-DENABLE_CPP_API=ON
 		-DENABLE_PYTHON_API=OFF
 		-DENABLE_PYTHON=OFF
@@ -744,17 +745,18 @@ src_configure() {
 		-DENABLE_WHEEL=OFF
 	)
 
-einfo "Configuring native support"
+einfo "Configuring runtime"
 	cmake_src_configure
 
 	configure_python_impl() {
-einfo "PYTHON_SITEDIR:  $(python_get_sitedir)"
+		local sitedir=$(python_get_sitedir)
+einfo "PYTHON_SITEDIR:  ${sitedir}"
 		local python_tag="${EPYTHON/python/}"
 		python_tag="cp${python_tag/./}"
 		export PYTHON_TAG="${python_tag}"
 		mycmakeargs=(
 			${_mycmakeargs[@]}
-			-DCMAKE_INSTALL_PREFIX="$(python_get_sitedir)"
+			-DCMAKE_INSTALL_PREFIX="/usr/$(get_libdir)/openvino/python/${EPYTHON}"
 			-DENABLE_CPP_API=OFF
 			-DENABLE_PYTHON_API=ON
 			-DENABLE_PYTHON=ON
@@ -786,7 +788,6 @@ src_install() {
 		python_tag="cp${python_tag/./}"
 		export PYTHON_TAG="${python_tag}"
 		cmake_src_install
-		local sitedir="$(python_get_sitedir)"
 
 		local wheel_path
 		local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"

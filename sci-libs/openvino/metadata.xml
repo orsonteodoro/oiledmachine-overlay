@@ -62,6 +62,13 @@
     <flag name="tbb">
       Use TBB for threading.
     </flag>
+    <flag name="telemetry">
+      Allow anonymous data collection information to both developers and to
+      Google Analytics (GA).  Data is retained on GA for maximum of
+      14 months.
+
+      Disabling the USE flag will hard disable sending to GA.
+    </flag>
     <flag name="system-flatbuffers">
       Use the system flatbuffers package over the internal vendored version.
 

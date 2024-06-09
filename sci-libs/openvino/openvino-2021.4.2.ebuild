@@ -99,9 +99,9 @@ RESTRICT="mirror test" # Missing test dependencies
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 	${CPU_FLAGS_X86[@]}
-	development-tools doc gna gna1 gna1_1401 gna2 -lto +mkl-dnn -openmp
-	runtime +samples system-pugixml test +tbb video_cards_intel
-	ebuild-revision-1
+	doc gna gna1 gna1_1401 gna2 -lto +mkl-dnn -openmp
+	+samples system-pugixml test +tbb video_cards_intel
+	ebuild-revision-2
 "
 REQUIRED_USE="
 	?? (
@@ -114,10 +114,6 @@ REQUIRED_USE="
 			gna1_1401
 			gna2
 		)
-	)
-	^^ (
-		runtime
-		development-tools
 	)
 "
 RDEPEND+="
@@ -182,6 +178,7 @@ gen_gcc_bdepend() {
 BDEPEND+="
 	>=dev-build/cmake-3.13
 	>=sys-devel/gcc-7.5
+	dev-util/patchelf
 	$(python_gen_cond_dep '
 		(
 			>=dev-python/python-decouple-3.4[${PYTHON_USEDEP}]
@@ -281,9 +278,9 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2024.1.0-offline-install.patch"
 	"${FILESDIR}/${PN}-2024.1.0-dont-delete-archives.patch"
 	"${FILESDIR}/${PN}-2021.4.2-allow-opencv-download-on-gentoo.patch"
-	"${FILESDIR}/${PN}-2021.4.2-install-paths.patch"
-#	"${FILESDIR}/${PN}-2024.1.0-set-python-tag.patch"
 	"${FILESDIR}/${PN}-2021.4.2-local-tarball.patch"
+	"${FILESDIR}/${PN}-2021.4.2-fix-wheel.patch"
+	"${FILESDIR}/${PN}-2021.4.2-fix-wheel-setup.patch"
 )
 
 #distutils_enable_sphinx "docs"
@@ -497,10 +494,9 @@ src_configure() {
 	fi
 
 	export LIBDIR=$(get_libdir)
-	# Native
 	mycmakeargs=(
 		${_mycmakeargs[@]}
-		-DCMAKE_INSTALL_PREFIX="/usr"
+		-DCMAKE_INSTALL_PREFIX="/usr/$(get_libdir)/openvino"
 		-DENABLE_CPP_API=ON
 		-DENABLE_PYTHON_API=OFF
 		-DENABLE_PYTHON=OFF
@@ -508,17 +504,18 @@ src_configure() {
 		-DENABLE_WHEEL=OFF
 	)
 
-einfo "Configuring native support"
+einfo "Configuring runtime"
 	cmake_src_configure
 
 	configure_python_impl() {
-einfo "PYTHON_SITEDIR:  $(python_get_sitedir)"
+		local sitedir=$(python_get_sitedir)
+einfo "PYTHON_SITEDIR:  ${sitedir}"
 		local python_tag="${EPYTHON/python/}"
 		python_tag="cp${python_tag/./}"
 		export PYTHON_TAG="${python_tag}"
 		mycmakeargs=(
 			${_mycmakeargs[@]}
-			-DCMAKE_INSTALL_PREFIX="$(python_get_sitedir)"
+			-DCMAKE_INSTALL_PREFIX="/usr/$(get_libdir)/openvino/python/${EPYTHON}"
 			-DENABLE_CPP_API=OFF
 			-DENABLE_PYTHON_API=ON
 			-DENABLE_PYTHON=ON
@@ -542,6 +539,47 @@ src_compile() {
 	python_foreach_impl compile_python_impl
 }
 
+get_arch() {
+	local arch
+	if [[ "${ABI}" == "amd64" ]] ; then
+		arch="intel64"
+	elif [[ "${ABI}" == "x86" ]] ; then
+		arch="ia32"
+	elif [[ "${ABI}" == "arm" ]] ; then
+		arch="arm"
+	elif [[ "${ABI}" == "arm64" ]] ; then
+		arch="arm64"
+	else
+eerror "ABI=${ABI} is not supported"
+		die
+	fi
+	echo "${arch}"
+}
+
+gen_envd() {
+	local arch=$(get_arch)
+newenvd - "60${PN}" <<-_EOF_
+LDPATH="/usr/$(get_libdir)/openvino/deployment_tools/inference_engine/lib/${arch}"
+_EOF_
+}
+
+fix_rpaths() {
+	local arch=$(get_arch)
+	# Fix runtime rpath
+	local x
+	for x in $(find "${ED}/usr/$(get_libdir)/openvino/deployment_tools" -name "*.so") ; do
+		patchelf --add-rpath "/usr/$(get_libdir)/openvino/deployment_tools/ngraph/$(get_libdir)" "${x}" || die
+	done
+
+	# Fix bindings rpath
+	fix_rpath_python_impl() {
+		for x in $(find "${ED}/usr/$(get_libdir)/openvino/python/${EPYTHON}" -name "*.so") ; do
+			patchelf --add-rpath "/usr/$(get_libdir)/openvino/python/${EPYTHON}/deployment_tools/ngraph/$(get_libdir)" "${x}" || die
+		done
+	}
+	python_foreach_impl fix_rpath_python_impl
+}
+
 src_install() {
 	export LIBDIR=$(get_libdir)
 	cmake_src_install
@@ -550,29 +588,36 @@ src_install() {
 		python_tag="cp${python_tag/./}"
 		export PYTHON_TAG="${python_tag}"
 		cmake_src_install
-		local sitedir="$(python_get_sitedir)"
 
 		local wheel_path
 		local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
 
+	# It contains just metadata
 		local wheel_dir="${WORKDIR}/${PN}-${PV}_build-${EPYTHON/./_}/wheels"
-		if use runtime ; then
-			wheel_path=$(realpath "${wheel_dir}/openvino-${PV}-"*".whl")
-			distutils_wheel_install "${d}" \
-				"${wheel_path}"
-		fi
-
-		if use development-tools ; then
-			wheel_path=$(realpath "${wheel_dir}/openvino_dev-${PV}-"*".whl")
-			distutils_wheel_install "${d}" \
-				"${wheel_path}"
-		fi
+		wheel_path=$(realpath "${wheel_dir}/openvino-"*".whl")
+		distutils_wheel_install "${d}" \
+			"${wheel_path}"
 
 		multibuild_merge_root "${d}" "${D%/}"
+
+		local suffix=$(${EPYTHON} -c "import distutils.sysconfig;print(distutils.sysconfig.get_config_var('EXT_SUFFIX'))")
+
+		dosym \
+			"/usr/$(get_libdir)/openvino/python/${EPYTHON}/python/${EPYTHON}/_pyngraph${suffix}" \
+			"/usr/lib/${EPYTHON}/site-packages/_pyngraph${suffix}"
+		dosym \
+			"/usr/$(get_libdir)/openvino/python/${EPYTHON}/python/${EPYTHON}/ngraph" \
+			"/usr/lib/${EPYTHON}/site-packages/ngraph"
+		dosym \
+			"/usr/$(get_libdir)/openvino/python/${EPYTHON}/python/${EPYTHON}/openvino" \
+			"/usr/lib/${EPYTHON}/site-packages/openvino"
 	}
 	python_foreach_impl install_python_impl
 	docinto "licenses"
 	dodoc "LICENSE"
+	rm -rf "${ED}/var"
+	gen_envd
+	fix_rpaths
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

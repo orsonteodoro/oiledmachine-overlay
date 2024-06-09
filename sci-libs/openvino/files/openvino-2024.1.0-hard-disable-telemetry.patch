@@ -1,0 +1,38 @@
+--- a/thirdparty/telemetry/src/backend/backend_ga.py.orig	2023-12-06 00:29:46.000000000 -0800
++++ b/thirdparty/telemetry/src/backend/backend_ga.py	2024-06-08 18:20:22.282053269 -0700
+@@ -11,7 +11,7 @@ from ..utils.message import Message, Mes
+ 
+ 
+ class GABackend(TelemetryBackend):
+-    backend_url = 'https://www.google-analytics.com/collect'
++    backend_url = ''
+     id = 'ga'
+     cid_filename = 'openvino_ga_cid'
+ 
+@@ -30,6 +30,7 @@ class GABackend(TelemetryBackend):
+         }
+ 
+     def send(self, message: Message):
++        return
+         if self.cid is None:
+             message.attrs['cid'] = str(uuid.uuid4())
+         try:
+--- a/thirdparty/telemetry/src/backend/backend_ga4.py.orig	2023-12-06 00:29:46.000000000 -0800
++++ b/thirdparty/telemetry/src/backend/backend_ga4.py	2024-06-08 18:20:19.642076440 -0700
+@@ -23,14 +23,14 @@ class GA4Backend(TelemetryBackend):
+         self.app_version = app_version
+         self.session_id = None
+         self.cid = None
+-        self.backend_url = "https://www.google-analytics.com/mp/collect?measurement_id={}&api_secret={}".format(
+-            self.measurement_id, telemetry_params["api_key"])
++        self.backend_url = ''
+         self.default_message_attrs = {
+             'app_name': self.app_name,
+             'app_version': self.app_version,
+         }
+ 
+     def send(self, message: dict):
++        return
+         if message is None:
+             return
+         try:

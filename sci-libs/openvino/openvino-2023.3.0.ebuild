@@ -479,7 +479,6 @@ DOCS=( "README.md" )
 _PATCHES=(
 	"${FILESDIR}/${PN}-2024.1.0-offline-install.patch"
 	"${FILESDIR}/${PN}-2024.1.0-dont-delete-archives.patch"
-	"${FILESDIR}/${PN}-2023.3.0-install-paths.patch"
 	"${FILESDIR}/${PN}-2024.1.0-set-python-tag.patch"
 )
 
@@ -615,7 +614,6 @@ src_configure() {
 		-DBUILD_SHARED_LIBS=ON
 #		-DCI_BUILD_NUMBER="2023.3.0-000--"
 		-DCMAKE_COMPILE_WARNING_AS_ERROR=OFF
-		-DCMAKE_INSTALL_PREFIX="${PYTHON_SITEDIR}"
 		-DCMAKE_VERBOSE_MAKEFILE=ON
 		-DCPACK_GENERATOR=TGZ
 		-DENABLE_ARM_COMPUTE_CMAKE=OFF
@@ -726,10 +724,9 @@ src_configure() {
 	fi
 
 	export LIBDIR=$(get_libdir)
-	# Native
 	mycmakeargs=(
 		${_mycmakeargs[@]}
-		-DCMAKE_INSTALL_PREFIX="/usr"
+		-DCMAKE_INSTALL_PREFIX="/usr/$(get_libdir)/openvino"
 		-DENABLE_CPP_API=ON
 		-DENABLE_PYTHON_API=OFF
 		-DENABLE_PYTHON=OFF
@@ -737,17 +734,18 @@ src_configure() {
 		-DENABLE_WHEEL=OFF
 	)
 
-einfo "Configuring native support"
+einfo "Configuring runtime"
 	cmake_src_configure
 
 	configure_python_impl() {
-einfo "PYTHON_SITEDIR:  $(python_get_sitedir)"
+		local sitedir=$(python_get_sitedir)
+einfo "PYTHON_SITEDIR:  ${sitedir}"
 		local python_tag="${EPYTHON/python/}"
 		python_tag="cp${python_tag/./}"
 		export PYTHON_TAG="${python_tag}"
 		mycmakeargs=(
 			${_mycmakeargs[@]}
-			-DCMAKE_INSTALL_PREFIX="$(python_get_sitedir)"
+			-DCMAKE_INSTALL_PREFIX="/usr/$(get_libdir)/openvino/python/${EPYTHON}"
 			-DENABLE_CPP_API=OFF
 			-DENABLE_PYTHON_API=ON
 			-DENABLE_PYTHON=ON
@@ -779,7 +777,6 @@ src_install() {
 		python_tag="cp${python_tag/./}"
 		export PYTHON_TAG="${python_tag}"
 		cmake_src_install
-		local sitedir="$(python_get_sitedir)"
 
 		local wheel_path
 		local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"

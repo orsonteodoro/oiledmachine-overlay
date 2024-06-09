@@ -1,0 +1,21 @@
+--- a/inference-engine/ie_bridges/python/wheel/setup.py.orig	2021-11-16 09:55:28.000000000 -0800
++++ b/inference-engine/ie_bridges/python/wheel/setup.py	2024-06-08 01:06:00.244587462 -0700
+@@ -26,6 +26,7 @@ WHEEL_LIBS_PACKAGE = 'openvino.libs'
+ PYTHON_VERSION = f'python{sys.version_info.major}.{sys.version_info.minor}'
+ 
+ # The following variables can be defined in environment or .env file
++SCRIPT_DIR = Path(__file__).resolve().parents[0]
+ CMAKE_BUILD_DIR = config('CMAKE_BUILD_DIR', '.')
+ CORE_LIBS_DIR = config('CORE_LIBS_DIR', '')
+ PLUGINS_LIBS_DIR = config('PLUGINS_LIBS_DIR', '')
+@@ -376,8 +377,8 @@ setup(
+     license=config('WHEEL_LICENCE_TYPE', 'OSI Approved :: Apache Software License'),
+     author=config('WHEEL_AUTHOR', 'Intel Corporation'),
+     description=config('WHEEL_DESC', 'Inference Engine Python* API'),
+-    install_requires=get_dependencies(config('WHEEL_REQUIREMENTS', 'requirements.txt')),
+-    long_description=get_description(config('WHEEL_OVERVIEW', 'pypi_overview.md')),
++    install_requires=get_dependencies(config('WHEEL_REQUIREMENTS', os.path.join(SCRIPT_DIR, 'meta', 'openvino.requirements.txt'))),
++    long_description=get_description(config('WHEEL_OVERVIEW', os.path.join(SCRIPT_DIR, 'meta', 'pypi_overview.md'))),
+     long_description_content_type='text/markdown',
+     download_url=config('WHEEL_DOWNLOAD_URL', 'https://github.com/openvinotoolkit/openvino/tags'),
+     url=config('WHEEL_URL', 'https://docs.openvinotoolkit.org/latest/index.html'),
