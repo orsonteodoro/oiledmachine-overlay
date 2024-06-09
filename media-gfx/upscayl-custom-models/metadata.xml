@@ -43,7 +43,7 @@
       with a (WDN) Wide and Deep Network model.
     </flag>
     <flag name="RealESRGAN_General_x4_v3">
-      Lightweight faster but slightly worst quality of of the default model
+      Lightweight faster but slightly worst quality of the default model
       without a (WDN) Wide and Deep Network model.
     </flag>
     <flag name="realesr-animevideov3-x2">
