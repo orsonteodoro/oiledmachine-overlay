@@ -135,7 +135,6 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-python/setuptools-56.0.0
-	
 "
 DOCS=( "README.md" )
 
