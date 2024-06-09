@@ -405,3 +405,15 @@ Resolutions:
 2040x948
 2040x960
 2040x972
+
+ffprobe /var/tmp/portage/media-video/sr-9999/work/sr-9999/datasets/loaded_div2k/train/hr/0001.png
+Stream #0:0: Video: png, rgb24(pc), 2040x1404, 25 fps, 25 tbr, 25 tbn, 25 tbc
+
+ffprobe /var/tmp/portage/media-video/sr-9999/work/sr-9999/datasets/loaded_div2k/train/lr/X2/0001x2.png
+Stream #0:0: Video: png, rgb24(pc), 1020x702, 25 fps, 25 tbr, 25 tbn, 25 tbc
+
+ffprobe /var/tmp/portage/media-video/sr-9999/work/sr-9999/datasets/loaded_div2k/test/hr/0801.png
+Stream #0:0: Video: png, rgb24(pc), 2040x1356, 25 fps, 25 tbr, 25 tbn, 25 tbc
+
+ffprobe /var/tmp/portage/media-video/sr-9999/work/sr-9999/datasets/loaded_div2k/test/lr/X2/0801x2.png
+Stream #0:0: Video: png, rgb24(pc), 1020x678, 25 fps, 25 tbr, 25 tbn, 25 tbc

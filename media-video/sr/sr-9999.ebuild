@@ -4,6 +4,15 @@
 
 EAPI=8
 
+# FIXME:
+#  File "/var/tmp/portage/media-video/sr-9999/work/sr-9999/models/model_espcn.py", line 32, in load_model
+#    net = tf.layers.conv2d(lr_batch, 64, 5, activation=tf.nn.tanh, padding='valid', name='conv1',
+#          ^^^^^^^^^^^^^^^^
+#  File "/usr/lib/python3.11/site-packages/tensorflow/python/util/lazy_loader.py", line 207, in __getattr__
+#    raise AttributeError(
+#AttributeError: `conv2d` is not available with Keras 3.
+
+
 # If you encounter:
 # !!! Multiple package instances within a single package slot have been pulled
 # !!! into the dependency graph, resulting in a slot conflict:
@@ -28,6 +37,7 @@ FORMATS=(
 	"tensorflow"
 )
 PYTHON_COMPAT=( "python3_"{10..12} ) # Limited by tensorflow
+QUICK_TEST_VIDEO_ASSET="29b0z4w9lj4p54q2hf7il9jz6codx36v"
 
 inherit edo git-r3 python-single-r1 security-scan
 
@@ -35,19 +45,20 @@ KEYWORDS="~amd64 ~x86"
 # Save outside sandbox to avoid redownloads
 SRC_URI="
 	!pretrained? (
-		div2k? (
+		!quick-test? (
+			div2k? (
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_LR_bicubic_X2.zip
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_HR.zip
-			espcn? (
+				espcn? (
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_LR_bicubic_X2.zip
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_HR.zip
-			)
-			srcnn? (
+				)
+				srcnn? (
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_LR_bicubic_X2.zip
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_HR.zip
+				)
 			)
-		)
-		harmonic? (
+			harmonic? (
 https://harmonicinc.box.com/shared/static/wrlzswfdvyprz10hegws74d4wzh7270o.mp4
 https://harmonicinc.box.com/shared/static/58pxpuh1dsieye19pkj182hgv6fg4gof.mp4
 https://harmonicinc.box.com/shared/static/6uws3kg4ldxtkeg5k5jwubueaolkqsr0.mp4
@@ -59,6 +70,14 @@ https://harmonicinc.box.com/shared/static/n8x168w6vhpv240hggw7wtj8mszg7wnb.mp4
 https://harmonicinc.box.com/shared/static/6inss29is5b7jzxv1qkuf2p9qeaomi04.mp4
 https://harmonicinc.box.com/shared/static/v21fqn77ib1r8zlrbnl6fsyzt6rrjj0v.mp4
 https://harmonicinc.box.com/shared/static/tmzm8y7bfzpote9obs7le3olh5j87iir.mp4
+			)
+		)
+		quick-test? (
+https://harmonicinc.box.com/shared/static/${QUICK_TEST_VIDEO_ASSET}.mp4
+http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_LR_bicubic_X2.zip
+http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_HR.zip
+http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_LR_bicubic_X2.zip
+http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_HR.zip
 		)
 	)
 	pretrained? (
@@ -112,8 +131,8 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${ALGS[@]}
 ${FORMATS[@]}
-div2k fallback-commit ffmpeg gstreamer harmonic -hvrr nvdec +pretrained vaapi
-vdpau vpx
+div2k fallback-commit ffmpeg gstreamer harmonic -hvrr nvdec +pretrained
+quick-test vaapi vdpau vpx
 ebuild-revision-1
 "
 # See formats see, https://ffmpeg.org/ffmpeg-filters.html#sr-1
@@ -137,6 +156,11 @@ REQUIRED_USE="
 	)
 	native? (
 		tensorflow
+	)
+	quick-test? (
+		!pretrained
+		harmonic
+		div2k
 	)
 	|| (
 		${FORMATS[@]}
@@ -218,7 +242,11 @@ eerror "The trained version is still a Work In Progress (WIP)."
 eerror "Use the pretrained USE flag instead."
 eerror
 	fi
-	export SR_QUICK_TEST=${SR_QUICK_TEST:-0}
+	if use quick-test ; then
+einfo "Quick test:  enabled"
+	else
+einfo "Quick test:  disabled"
+	fi
 	python_setup
 	use pretrained || request_sandbox_permissions
 
@@ -249,14 +277,14 @@ copy_div2k_assets() {
 	if [[ "${name}" =~ "DIV2K_train_LR" ]] ; then
 		unpack "${name}"
 		mv \
-			"${WORKDIR}/DIV2K_train_LR_bicubic/X2" \
-			"${S}/datasets/loaded_div2k/train/lr" \
+			"${WORKDIR}/DIV2K_train_LR_bicubic/X2/"* \
+			"${S}/datasets/loaded_div2k/train/lr/X2" \
 			|| die
 	fi
 	if [[ "${name}" =~ "DIV2K_train_HR" ]] ; then
 		unpack "${name}"
 		mv \
-			"${WORKDIR}/DIV2K_train_HR" \
+			"${WORKDIR}/DIV2K_train_HR/"* \
 			"${S}/datasets/loaded_div2k/train/hr" \
 			|| die
 	fi
@@ -264,14 +292,14 @@ copy_div2k_assets() {
 		if [[ "${name}" =~ "DIV2K_valid_LR" ]] ; then
 			unpack "${name}"
 			mv \
-				"${WORKDIR}/DIV2K_valid_LR_bicubic/X2" \
-				"${S}/datasets/loaded_div2k/test/lr" \
+				"${WORKDIR}/DIV2K_valid_LR_bicubic/X2/"* \
+				"${S}/datasets/loaded_div2k/test/lr/X2" \
 				|| die
 		fi
 		if [[ "${name}" =~ "DIV2K_valid_HR" ]] ; then
 			unpack "${name}"
 			mv \
-				"${WORKDIR}/DIV2K_valid_HR" \
+				"${WORKDIR}/DIV2K_valid_HR/"* \
 				"${S}/datasets/loaded_div2k/test/hr" \
 				|| die
 		fi
@@ -352,7 +380,7 @@ einfo "Adding lowres still image test assets"
 			verify_integrity
 			cp -v -a \
 				"${path}" \
-				"${S}/datasets/loaded_div2k/test/lr" \
+				"${S}/datasets/loaded_div2k/test/lr/X2" \
 				|| die
 		done
 	fi
@@ -364,7 +392,7 @@ einfo "Adding lowres still image training assets"
 			verify_integrity
 			cp -v -a \
 				"${path}" \
-				"${S}/datasets/loaded_div2k/train/lr" \
+				"${S}/datasets/loaded_div2k/train/lr/X2" \
 				|| die
 		done
 	fi
@@ -385,17 +413,11 @@ einfo "Adding video assets"
 	fi
 }
 
-keep_one_asset() {
-	local path="${1}"
-	rm $(find "${path}" -type f \
-		| tr " " "\n" \
-		| sort \
-		| tail -n +2)
-}
-
 copy_assets() {
-	mkdir -p "${S}/datasets/loaded_div2k/train" || die
-	mkdir -p "${S}/datasets/loaded_div2k/test" || die
+	mkdir -p "${S}/datasets/loaded_div2k/train/hr" || die
+	mkdir -p "${S}/datasets/loaded_div2k/test/hr" || die
+	mkdir -p "${S}/datasets/loaded_div2k/train/lr/X2" || die
+	mkdir -p "${S}/datasets/loaded_div2k/test/lr/X2" || die
 	mkdir -p "${S}/datasets/loaded_harmonic" || die
 einfo "Custom assets may be used.  See metadata.xml for details."
 	local name
@@ -407,30 +429,37 @@ einfo "Custom assets may be used.  See metadata.xml for details."
 	done
 
 	# For testing ebuild correctness
-	if [[ "${SR_QUICK_TEST}" == "1" ]] ; then
-einfo "Removing extra still image assets"
+	if use quick-test ; then
+einfo "Removing extra still image assets for quick test"
 	# For debug, save just one of each
-		keep_one_asset "${S}/datasets/loaded_div2k/train/hr"
-		keep_one_asset "${S}/datasets/loaded_div2k/train/lr"
+		rm -v $(find "${S}/datasets/loaded_div2k/train/hr" | sort | tail -n +3)
+		rm -v $(find "${S}/datasets/loaded_div2k/train/lr/X2" | sort | tail -n +3)
 		if use espcn || use srcnn ; then
-			keep_one_asset "${S}/datasets/loaded_div2k/test/hr"
-			keep_one_asset "${S}/datasets/loaded_div2k/test/lr"
+			rm -v $(find "${S}/datasets/loaded_div2k/test/hr" | sort | tail -n +3)
+			rm -v $(find "${S}/datasets/loaded_div2k/test/lr/X2" | sort | tail -n +3)
 		fi
 
-einfo "Removing extra movie assets"
+einfo "Removing extra movie assets for quick test"
 	# For debug, save just one
-		keep_one_asset "${S}/datasets/loaded_harmonic"
+	# Save the one with the fewest frames.
+		rm -v $(find "${S}/datasets/loaded_harmonic" | sort | sed -e "/${QUICK_TEST_VIDEO_ASSET}/d")
+
+	# Copy a few second(s) only
+		pushd "${S}/datasets/loaded_harmonic" || die
+			ffmpeg -i "${QUICK_TEST_VIDEO_ASSET}.mp4" -ss 0 -t 3 -c copy ${QUICK_TEST_VIDEO_ASSET}.t.mp4
+			mv ${QUICK_TEST_VIDEO_ASSET}.t.mp4 ${QUICK_TEST_VIDEO_ASSET}.mp4
+		popd || die
 	fi
 
 	local L=(
 		"${S}/datasets/loaded_div2k/train/hr"
-		"${S}/datasets/loaded_div2k/train/lr"
+		"${S}/datasets/loaded_div2k/train/lr/X2"
 		"${S}/datasets/loaded_harmonic"
 	)
 	if use espcn || use srcnn ; then
 		L+=(
 			"${S}/datasets/loaded_div2k/test/hr"
-			"${S}/datasets/loaded_div2k/test/lr"
+			"${S}/datasets/loaded_div2k/test/lr/X2"
 		)
 	fi
 
@@ -470,6 +499,7 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-9999-tensorflow2-compat.patch"
 		eapply "${FILESDIR}/${PN}-9999-use-pillow-resize.patch"
 		eapply "${FILESDIR}/${PN}-9999-remove-scene-changes-arg.patch"
+		eapply "${FILESDIR}/${PN}-9999-numpy-array-for-cvtColor.patch"
 
 		sed -i -e "1aset -e" "${S}/generate_datasets.sh" || die
 		if use espcn || use srcnn ; then

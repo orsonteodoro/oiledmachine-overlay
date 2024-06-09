@@ -110,6 +110,17 @@
     PSNR difference may have significantly different quality results.  Wikipedia
     also noted that validity of PSNR is correct only for same codec and same
     image.
+
+    if datasets/loaded_div2k/train/hr/0001.png exists then a file with name
+    datasets/loaded_div2k/train/lr/X2/0001x2.png must exist, meaning the suffix
+    x2 is required.
+
+    if datasets/loaded_div2k/test/hr/0801.png exists then a file with name
+    datasets/loaded_div2k/test/lr/X2/0801x2.png must exist, meaning the suffix
+    x2 is required.
+
+    The lr photos must be half resolution of hr photos.
+
   -->
   <upstream>
     <doc lang="en">https://github.com/HighVoltageRocknRoll/sr</doc>
@@ -158,6 +169,10 @@
       If disabled, the training process may take hours to accomplish.
 
       (Compatible with FFmpeg)
+    </flag>
+    <flag name="quick-test">
+      (Ebuild maintainer only)  Perform a short test to test script
+      compatiblity, dependency changes, or API changes.
     </flag>
     <flag name="srcnn">
       Generate/build/install SRCNN trained models
