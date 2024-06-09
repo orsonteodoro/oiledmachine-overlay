@@ -34,10 +34,10 @@
       dataset with OTF (on the fly degradation) jpeg compression and blur.
     </flag>
     <flag name="4x_NMKD-Siax_200k">
-      A real world 4X upscaler for JPEG 75 quality and better.
+      A real world 4X upscaler for JPEG 75 quality and better using ESRGAN.
     </flag>
     <flag name="4x_NMKD-Superscale-SP_178000_G">
-      A real world 4X upscaler for artifact free images.
+      A real world 4X upscaler for artifact free images using ESRGAN.
     </flag>
     <flag name="RealESRGAN_General_WDN_x4_v3">
       Lightweight faster but slightly worst quality of of the default model
