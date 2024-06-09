@@ -102,12 +102,14 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	>=media-gfx/upscayl-2.5
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+"
+PDEPEND+="
+	>=media-gfx/upscayl-2.5
 "
 DOCS=( "README.md" )
 
@@ -128,7 +130,7 @@ src_install() {
 		if [[ "${m}" == "unknown-2_0_1" ]] ; then
 			m="unknown-2.0.1"
 		fi
-		doins "${WORKDIR}/${m}"{".bin",".parm"}
+		doins "models/${m}"{".bin",".param"}
 	done
 	insinto "/usr/share/doc/${P}"
 
@@ -140,7 +142,7 @@ src_install() {
 		|| use RealESRGAN_General_x4_v3 \
 	; then
 		newins \
-			"Real-ESRGAN-LICENSE-5ca1078" \
+			"${DISTDIR}/Real-ESRGAN-LICENSE-5ca1078" \
 			"Real-ESRGAN-LICENSE"
 	fi
 }
