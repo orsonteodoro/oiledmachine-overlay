@@ -812,4 +812,14 @@ src_install() {
 	dodoc "LICENSE"
 }
 
+pkg_postinst() {
+	if use telemetry ; then
+elog
+elog "You have enabled telemetry.  To opt-out and to see the data retention policy, see"
+elog
+elog "https://github.com/openvinotoolkit/openvino/blob/2024.1.0/docs/articles_en/about-openvino/additional-resources/telemetry.rst"
+elog
+	fi
+}
+
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
