@@ -287,7 +287,7 @@ ${ROCM_SLOTS[@]}
 contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
 -examples +features2d +ffmpeg -gdal gflags glog -gphoto2 +gstreamer +gtk3
 +ieee1394 +java +jpeg +jpeg2k +lapack +libaom -mkl -non-free -openblas +opencl
-+openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png +python
++openexr -opengl -openmp +opencvapps +openh264 -openvx +png +python
 +quirc -qt5 -qt6 rocm -spng -system-flatbuffers tesseract -testprograms -tbb
 +tiff +vaapi +v4l +vpx +vtk -wayland +webp -xine video_cards_intel
 ebuild-revision-5
@@ -407,7 +407,6 @@ REQUIRED_USE="
 	openvx? (
 		|| (
 			rocm
-			openvino
 		)
 	)
 	python? (
@@ -590,9 +589,6 @@ RDEPEND="
 	opengl? (
 		virtual/opengl[${MULTILIB_USEDEP}]
 		virtual/glu[${MULTILIB_USEDEP}]
-	)
-	openvino? (
-		sci-libs/openvino
 	)
 	png? (
 		>=media-libs/libpng-1.6.37:0[${MULTILIB_USEDEP}]
@@ -994,11 +990,7 @@ multilib_src_configure() {
 		)
 	fi
 
-	if use openvx && use openvino ; then
-		mycmakeargs+=(
-			-DWITH_OPENVX=ON
-		)
-	elif use openvx && use rocm_5_7 ; then
+	if use openvx && use rocm_5_7 ; then
 		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.7"
 		mycmakeargs+=(
 			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.7"
