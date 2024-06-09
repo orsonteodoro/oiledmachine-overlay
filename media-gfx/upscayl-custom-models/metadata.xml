@@ -12,25 +12,26 @@
   </upstream>
   <use>
     <flag name="4xHFA2k">
-     4x anime upscaler.  ESRGAN based.  Using the HFA2k dataset with OTF (on the
-     fly degradation) jpeg compression and blur.  
+      4x anime upscaler.  ESRGAN based.  Using the HFA2k dataset with OTF (on
+      the fly degradation) jpeg compression and blur.  
     </flag>
     <flag name="4xLSDIR">
-     A photo upscaler without degradation handling.  It uses a RRDBNet base
-     model.  Trained with the the LSDIR dataset.
+      A photo upscaler without degradation handling.  It uses a RRDBNet base
+      model.  Trained with the the LSDIR dataset.
     </flag>
     <flag name="4xLSDIRCompactC3">
-     A photo upscaler which handles a bit of jpeg compression.  It uses SRVGGNET
-     compact model for faster inference times.  Trained with the LSDIR dataset.
+      A photo upscaler which handles a bit of jpeg compression.  It uses
+      SRVGGNET compact model for faster inference times.  Trained with the LSDIR
+      dataset.
     </flag>
     <flag name="4xLSDIRplusC">
-     A photo upscaler which handles a bit of jpeg compression and blur.  It uses
-     the RRDBNet base model.  Trained with the LSDIR dataset.
+      A photo upscaler which handles a bit of jpeg compression and blur.  It
+      uses the RRDBNet base model.  Trained with the LSDIR dataset.
     </flag>
     <flag name="4xNomos8kSC">
-     A 4k realistic photo upscaler handling jpeg compression.  It was trained
-     with the the HAT network (small and large model).   Trained with Nomos8k
-     dataset with OTF (on the fly degradation) jpeg compression and blur.
+      A 4k realistic photo upscaler handling jpeg compression.  It was trained
+      with the the HAT network (small and large model).   Trained with Nomos8k
+      dataset with OTF (on the fly degradation) jpeg compression and blur.
     </flag>
     <flag name="4x_NMKD-Siax_200k">
       A real world 4X upscaler for JPEG 75 quality and better.
