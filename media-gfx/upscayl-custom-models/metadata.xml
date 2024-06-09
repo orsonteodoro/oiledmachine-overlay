@@ -21,11 +21,11 @@
     </flag>
     <flag name="4xLSDIRCompactC3">
      A photo upscaler which handles a bit of jpeg compression.  It uses SRVGGNET
-     compact model for faster inference times.
+     compact model for faster inference times.  Trained with the LSDIR dataset.
     </flag>
     <flag name="4xLSDIRplusC">
-     A photo upscaler which handles a bit of jpeg compression.  It uses the
-     RRDBNet base model.  Trained with the LSDIR dataset.
+     A photo upscaler which handles a bit of jpeg compression and blur.  It uses
+     the RRDBNet base model.  Trained with the LSDIR dataset.
     </flag>
     <flag name="4xNomos8kSC">
      A 4k realistic photo upscaler handling jpeg compression.  It was trained
@@ -33,10 +33,10 @@
      dataset with OTF (on the fly degradation) jpeg compression and blur.
     </flag>
     <flag name="4x_NMKD-Siax_200k">
-      A 4X upscaler for JPEG 75 quality and better.
+      A real world 4X upscaler for JPEG 75 quality and better.
     </flag>
     <flag name="4x_NMKD-Superscale-SP_178000_G">
-      A 4X upscaler for artifact free real world images.
+      A real world 4X upscaler for artifact free images.
     </flag>
     <flag name="RealESRGAN_General_WDN_x4_v3">
       Lightweight faster but slightly worst quality of of the default model
