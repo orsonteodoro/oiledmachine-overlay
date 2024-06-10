@@ -125,6 +125,7 @@ RDEPEND+="
 	dev-python/scipy[${PYTHON_USEDEP}]
 	dev-python/typing[${PYTHON_USEDEP}]
 	media-libs/opencv[${PYTHON_USEDEP}]
+	media-gfx/gimp:0/3
 	net-misc/gdown[${PYTHON_USEDEP}]
 	sci-libs/transformers[${PYTHON_USEDEP}]
 	sci-libs/openvino[${PYTHON_USEDEP}]
