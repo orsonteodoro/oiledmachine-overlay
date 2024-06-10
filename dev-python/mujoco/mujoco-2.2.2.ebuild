@@ -140,10 +140,10 @@ REQUIRED_USE+="
 RDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/numpy-1.21.5[${PYTHON_USEDEP}]
+	>=sci-physics/mujoco-${PV}:${SLOT}
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/pyglfw[${PYTHON_USEDEP}]
 	dev-python/pyopengl[${PYTHON_USEDEP}]
-	~sci-physics/mujoco-${PV}
 "
 DEPEND+="
 	${RDEPEND}

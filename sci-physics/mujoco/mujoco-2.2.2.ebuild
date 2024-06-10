@@ -4,8 +4,16 @@
 
 EAPI=8
 
+# U 22.04
+
+# TODO: package:
+# dev-python/pandoc
+# sphinxcontrib-katex
+# sphinxcontrib-youtube
+# sphinx-reredirects
+
 # The dev-python/mujoco is for python bindings
-# The sci-libs/mujoco is for native bindings
+# The sci-physics/mujoco is for native bindings
 
 # For commits, see
 # https://github.com/google-deepmind/mujoco/blob/2.2.2/cmake/MujocoDependencies.cmake
@@ -135,22 +143,16 @@ ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
-# U 22.04
-DEPEND+="
+RDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/numpy-1.21.5[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/pyglfw[${PYTHON_USEDEP}]
 	dev-python/pyopengl[${PYTHON_USEDEP}]
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
-# TODO: package:
-# dev-python/pandoc
-# sphinxcontrib-katex
-# sphinxcontrib-youtube
-# sphinx-reredirects
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-build/cmake-3.15
@@ -167,6 +169,11 @@ BDEPEND+="
 		>=dev-python/sphinxcontrib-katex-0.8.6[${PYTHON_USEDEP}]
 		>=dev-python/sphinxcontrib-youtube-1.1.0[${PYTHON_USEDEP}]
 		>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
+	)
+"
+PDEPEND+="
+	python? (
+		>=dev-python/mujoco-${PV}:${SLOT}
 	)
 "
 PATCHES=(
