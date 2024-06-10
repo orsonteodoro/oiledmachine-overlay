@@ -6,7 +6,6 @@ EAPI=8
 # A snapshot of the TensorFlow Model Garden
 
 # TODO package:
-# sentencepiece
 # tensorflow-hub
 # tensorflow-datasets
 # tensorflow-text
@@ -87,7 +86,7 @@ RDEPEND+="
 	nlp? (
 		dev-python/tensorflow-text:0/${PV%.*}[${PYTHON_USEDEP}]
 		dev-python/sacrebleu[${PYTHON_USEDEP}]
-		dev-python/sentencepiece[${PYTHON_USEDEP}]
+		sci-libs/sentencepiece[${PYTHON_USEDEP},python]
 		sci-libs/seqeval[${PYTHON_USEDEP}]
 	)
 "

@@ -22,7 +22,6 @@ EAPI=8
 # penzai
 # pytest-custom_exit_code
 # pytype
-# sentencepiece
 # sphinx_design
 # tensorflow_datasets
 # tensorflow_text
@@ -129,9 +128,9 @@ BDEPEND+="
 		dev-python/pytest-custom_exit_code[${PYTHON_USEDEP}]
 		dev-python/pytorch[${PYTHON_USEDEP}]
 		dev-python/pytype[${PYTHON_USEDEP}]
-		dev-python/sentencepiece[${PYTHON_USEDEP}]
 		dev-python/tensorflow_datasets[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP},python]
+		sci-libs/sentencepiece[${PYTHON_USEDEP},python]
 		sci-libs/tensorflow[${PYTHON_USEDEP},python]
 	)
 "

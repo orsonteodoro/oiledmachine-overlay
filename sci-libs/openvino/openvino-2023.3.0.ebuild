@@ -259,7 +259,6 @@ BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS="
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-html[${PYTHON_USEDEP}]
 		dev-python/sacremoses[${PYTHON_USEDEP}]
-		dev-python/sentencepiece[${PYTHON_USEDEP}]
 		dev-python/soundfile[${PYTHON_USEDEP}]
 		dev-python/super-image[${PYTHON_USEDEP}]
 		dev-python/timm[${PYTHON_USEDEP}]
@@ -268,6 +267,7 @@ BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS="
 		dev-python/torchvision[${PYTHON_USEDEP}]
 		dev-python/transformers[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
+		sci-libs/sentencepiece[${PYTHON_USEDEP},python]
 	')
 "
 # tests/model_hub_tests/torch_tests/requirements_secondary.txt \
