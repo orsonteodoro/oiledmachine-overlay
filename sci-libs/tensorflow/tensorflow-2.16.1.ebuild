@@ -715,7 +715,7 @@ DEPEND="
 "
 PDEPEND="
 	models? (
-		dev-python/tf-models-official:0/${PV%.*}[${PYTHON_USEDEP}]
+		sci-libs/tf-models-official:0/${PV%.*}[${PYTHON_USEDEP}]
 	)
 	python? (
 		$(python_gen_cond_dep '
