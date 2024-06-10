@@ -1,4 +1,4 @@
-# Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -33,12 +33,12 @@ IUSE+=" test"
 RDEPEND+="
 	>=x11-drivers/nvidia-drivers-450.80.02
 	|| (
-		=dev-util/nvidia-cuda-toolkit-12.5
-		=dev-util/nvidia-cuda-toolkit-12.4
-		=dev-util/nvidia-cuda-toolkit-12.3
-		=dev-util/nvidia-cuda-toolkit-12.2
-		=dev-util/nvidia-cuda-toolkit-12.1
-		=dev-util/nvidia-cuda-toolkit-12.0
+		=dev-util/nvidia-cuda-toolkit-12.5*
+		=dev-util/nvidia-cuda-toolkit-12.4*
+		=dev-util/nvidia-cuda-toolkit-12.3*
+		=dev-util/nvidia-cuda-toolkit-12.2*
+		=dev-util/nvidia-cuda-toolkit-12.1*
+		=dev-util/nvidia-cuda-toolkit-12.0*
 	)
 "
 DEPEND+="
