@@ -78,7 +78,7 @@ gen_clang_bdepend() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-			(
+			llvm_slot_${s}? (
 				sys-devel/clang:${s}
 				sys-devel/clang-runtime:${s}[openmp]
 				>=sys-libs/libomp-${s}
@@ -94,9 +94,7 @@ BDEPEND+="
 		sys-devel/gcc[openmp]
 	)
 	clang? (
-		|| (
-			$(gen_clang_bdepend)
-		)
+		$(gen_clang_bdepend)
 	)
 	doc? (
 		dev-python/numpydoc[${PYTHON_USEDEP}]
