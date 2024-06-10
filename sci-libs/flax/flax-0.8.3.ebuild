@@ -15,7 +15,6 @@ EAPI=8
 # einops
 # flax_module
 # jraph
-# ml-collections
 # myst-nb
 # nbstripout
 # orbax-checkpoint
@@ -99,7 +98,6 @@ BDEPEND+="
 		dev-python/ipykernel[${PYTHON_USEDEP}]
 		dev-python/ipython_genutils[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
-		dev-python/ml-collections[${PYTHON_USEDEP}]
 		dev-python/myst-nb[${PYTHON_USEDEP}]
 		dev-python/recommonmark[${PYTHON_USEDEP}]
 		dev-python/scikit-learn[${PYTHON_USEDEP}]
@@ -107,6 +105,7 @@ BDEPEND+="
 		dev-python/sphinx-book-theme[${PYTHON_USEDEP}]
 		dev-python/tensorflow_datasets[${PYTHON_USEDEP}]
 		sci-libs/jaxlib[${PYTHON_USEDEP}]
+		sci-libs/ml-collections[${PYTHON_USEDEP}]
 		sci-libs/tensorflow[${PYTHON_USEDEP}]
 		sci-libs/transformers[${PYTHON_USEDEP}]
 	)
@@ -119,7 +118,6 @@ BDEPEND+="
 		>=dev-python/tensorflow_text-2.11.0[${PYTHON_USEDEP}]
 		dev-python/clu[${PYTHON_USEDEP}]
 		dev-python/einops[${PYTHON_USEDEP}]
-		dev-python/ml-collections[${PYTHON_USEDEP}]
 		dev-python/mypy[${PYTHON_USEDEP}]
 		dev-python/nbstripout[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
@@ -130,6 +128,7 @@ BDEPEND+="
 		dev-python/tensorflow_datasets[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP},python]
 		sci-libs/jaxlib[${PYTHON_USEDEP}]
+		sci-libs/ml-collections[${PYTHON_USEDEP}]
 		sci-libs/sentencepiece[${PYTHON_USEDEP},python]
 		sci-libs/tensorflow[${PYTHON_USEDEP},python]
 	)

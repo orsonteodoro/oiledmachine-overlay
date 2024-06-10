@@ -59,7 +59,6 @@ RDEPEND="
 	dev-libs/protobuf:${PROTOBUF_SLOT}
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/h5py[${PYTHON_USEDEP}]
-	dev-python/ml_dtypes[${PYTHON_USEDEP}]
 	dev-python/namex[${PYTHON_USEDEP}]
 	dev-python/pandas[${PYTHON_USEDEP}]
 	dev-python/pillow[${PYTHON_USEDEP}]
@@ -69,6 +68,7 @@ RDEPEND="
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/rich[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
+	sci-libs/ml_dtypes[${PYTHON_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}

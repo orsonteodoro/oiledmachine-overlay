@@ -91,10 +91,10 @@ JRE_DEPEND="
 RDEPEND+="
 	${JRE_DEPEND}
 	>=dev-libs/protobuf-${PROTOBUF_PV}:0/5.26
-	>=dev-python/ml_dtypes-0.3.1[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.16.0[${PYTHON_USEDEP}]
 	>=media-libs/libjpeg-turbo-2.1.4
 	>=media-libs/libpng-1.6.37
+	>=sci-libs/ml_dtypes-0.3.1[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}

@@ -42,9 +42,9 @@ IUSE+=" doc -eigen -go -jax -julia -libnop -python-misc -pytorch -rust -tensorfl
 DEPEND+="
 	>=dev-python/attrs-19.3.0[${PYTHON_USEDEP}]
 	>=dev-python/absl-py-0.10.0[${PYTHON_USEDEP}]
-	>=dev-python/ml-collections-0.1.1[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.21.5[${PYTHON_USEDEP}]
 	>=dev-python/scipy-1.10.1[${PYTHON_USEDEP}]
+	>=sci-libs/ml-collections-0.1.1[${PYTHON_USEDEP}]
 	go? (
 		dev-lang/go
 	)

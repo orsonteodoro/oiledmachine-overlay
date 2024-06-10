@@ -675,7 +675,7 @@ RDEPEND="
 		>=dev-python/gast-0.5.3[${PYTHON_USEDEP}]
 		>=dev-python/google-pasta-0.2.0[${PYTHON_USEDEP}]
 		>=dev-python/h5py-3.10.0[${PYTHON_USEDEP}]
-		>=dev-python/ml_dtypes-0.3.1[${PYTHON_USEDEP}]
+		>=sci-libs/ml_dtypes-0.3.1[${PYTHON_USEDEP}]
 
 		>=dev-python/opt-einsum-2.3.2[${PYTHON_USEDEP}]
 		!big-endian? (
