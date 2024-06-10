@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/deepmind/dm_env/issues</bugs-to>
+    <changelog>https://nvidia.github.io/cuda-python/release.html</changelog>
+    <doc>https://nvidia.github.io/cuda-python/</doc>
+    <remote-id type="github">deepmind/dm_env</remote-id>
+  </upstream>
+</pkgmetadata>
