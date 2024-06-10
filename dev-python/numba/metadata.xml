@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/numba/numba/issues</bugs-to>
+    <changelog>
+      https://github.com/numba/numba/blob/master/docs/source/release-notes.rst
+      https://github.com/numba/numba/tree/master/docs/source/release
+    </changelog>
+    <remote-id type="github">numba/numba</remote-id>
+  </upstream>
+</pkgmetadata>

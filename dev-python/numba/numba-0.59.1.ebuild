@@ -1,0 +1,130 @@
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+DISTUTILS_USE_PEP517="setuptools"
+PYTHON_COMPAT=( "python3_"{10..12} )
+
+inherit distutils-r1 toolchain-funcs
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+=" fallback-commit"
+	EGIT_REPO_URI="https://github.com/numba/numba.git"
+	EGIT_BRANCH="master"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${PN}-${PV}"
+	FALLBACK_COMMIT="9ce83ef5c35d7f68a547bf2fd1266b9a88d3a00d" # Mar 18, 2024
+	inherit git-r3
+else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	SRC_URI="
+https://github.com/numba/numba/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
+fi
+S="${WORKDIR}/${PN}-${PV}"
+
+DESCRIPTION="NumPy aware dynamic Python compiler using LLVM"
+HOMEPAGE="
+	https://github.com/numba/numba
+	https://pypi.org/project/numba/
+"
+LICENSE="
+	BSD
+"
+RESTRICT="mirror"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+=" doc clang openmp tbb"
+REQUIRED_USE="
+	?? (
+		openmp
+		tbb
+	)
+"
+RDEPEND+="
+	(
+		>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
+		<dev-python/numpy-1.27[${PYTHON_USEDEP}]
+	)
+	(
+		>=dev-python/llvmlite-0.42.0_pre[${PYTHON_USEDEP}]
+		<dev-python/llvmlite-0.43[${PYTHON_USEDEP}]
+	)
+	tbb? (
+		>=dev-cpp/tbb-2021.1
+	)
+"
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/versioneer[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
+	!clang? (
+		sys-devel/gcc[openmp]
+	)
+	clang? (
+		sys-devel/clang
+		sys-devel/clang-runtime[openmp]
+		sys-libs/libomp
+	)
+	doc? (
+		dev-python/numpydoc[${PYTHON_USEDEP}]
+	)
+"
+DOCS=( "CHANGE_LOG" "README.rst" )
+PATCHES=(
+	"${FILESDIR}/${PN}-0.59.1-tbb-libdir.patch"
+)
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+		grep -q -e "__version__ = '${PV%_*}'" "${S}/dm_env/_metadata.py" \
+			|| die "QA:  Bump version"
+	else
+		unpack ${A}
+	fi
+}
+
+python_configure() {
+	if use tbb ; then
+		unset NUMBA_DISABLE_TBB
+		export TBBROOT="${ESYSROOT}/usr"
+	else
+		export NUMBA_DISABLE_TBB=1
+	fi
+	if use openmp ; then
+		unset NUMBA_DISABLE_OPENMP
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
+		if tc-is-gcc ; then
+			local s=$(gcc-major-version)
+			if ! has_version "=sys-devel/gcc-${s}*[openmp]" ; then
+eerror "You must enable =sys-devel/gcc-${s}[openmp] or disable the openmp USE flag."
+				die
+			fi
+		fi
+		if tc-is-clang ; then
+			local s=$(clang-major-version)
+			if ! has_version ">=sys-libs/libomp-${s}" ; then
+eerror "You must emerge >=sys-libs/libomp-${s} or disable the openmp USE flag."
+				die
+			fi
+		fi
+		tc-check-openmp
+	else
+		export NUMBA_DISABLE_OPENMP=1
+	fi
+}
+
+src_install() {
+	distutils-r1_src_install
+	docinto "licenses"
+	dodoc "LICENSE"
+	einstalldocs
+}
