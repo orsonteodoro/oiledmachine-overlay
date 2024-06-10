@@ -4,8 +4,12 @@
 
 EAPI=8
 
+# U22
+
 DISTUTILS_USE_PEP517="setuptools"
+DISTUTILS_EXT=1
 PYTHON_COMPAT=( "python3_"{10..12} )
+LLVM_COMPAT=( {15..14} )
 
 inherit distutils-r1 toolchain-funcs
 
@@ -35,8 +39,16 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc clang openmp tbb"
+IUSE+="
+	${LLVM_COMPAT[@]/#/llvm_slot_}
+	doc clang cuda openmp tbb
+"
 REQUIRED_USE="
+	clang? (
+		|| (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
+	)
 	?? (
 		openmp
 		tbb
@@ -51,6 +63,10 @@ RDEPEND+="
 		>=dev-python/llvmlite-0.42.0_pre[${PYTHON_USEDEP}]
 		<dev-python/llvmlite-0.43[${PYTHON_USEDEP}]
 	)
+	cuda? (
+		>=dev-util/nvidia-cuda-toolkit-11.2
+		dev-python/cuda-python[${PYTHON_USEDEP}]
+	)
 	tbb? (
 		>=dev-cpp/tbb-2021.1
 	)
@@ -58,6 +74,18 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+gen_clang_bdepend() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			(
+				sys-devel/clang:${s}
+				sys-devel/clang-runtime:${s}[openmp]
+				>=sys-libs/libomp-${s}
+			)
+		"
+	done
+}
 BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/versioneer[${PYTHON_USEDEP}]
@@ -66,9 +94,9 @@ BDEPEND+="
 		sys-devel/gcc[openmp]
 	)
 	clang? (
-		sys-devel/clang
-		sys-devel/clang-runtime[openmp]
-		sys-libs/libomp
+		|| (
+			$(gen_clang_bdepend)
+		)
 	)
 	doc? (
 		dev-python/numpydoc[${PYTHON_USEDEP}]
@@ -92,6 +120,26 @@ src_unpack() {
 }
 
 python_configure() {
+	if use clang ; then
+		local s
+		for s in ${LLVM_COMPAT[@]} ; do
+			export CC="${CHOST}-clang-${s}"
+			export CXX="${CHOST}-clang++-${s}"
+			export CPP="${CC} -E"
+			if \
+				   has_version "sys-devel/llvm:${s}" \
+				&& has_version "sys-devel/clang:${s}" \
+				&& clang --version \
+			; then
+				break
+			fi
+		done
+		strip-unsupported-flags
+	else
+		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
+		export CPP="${CC} -E"
+	fi
 	if use tbb ; then
 		unset NUMBA_DISABLE_TBB
 		export TBBROOT="${ESYSROOT}/usr"
@@ -100,8 +148,6 @@ python_configure() {
 	fi
 	if use openmp ; then
 		unset NUMBA_DISABLE_OPENMP
-		export CC=$(tc-getCC)
-		export CXX=$(tc-getCXX)
 		if tc-is-gcc ; then
 			local s=$(gcc-major-version)
 			if ! has_version "=sys-devel/gcc-${s}*[openmp]" ; then
@@ -120,6 +166,20 @@ eerror "You must emerge >=sys-libs/libomp-${s} or disable the openmp USE flag."
 	else
 		export NUMBA_DISABLE_OPENMP=1
 	fi
+	if use cuda ; then
+		export NUMBA_CUDA_USE_NVIDIA_BINDING=1
+		export CUDA_HOME="/opt/cuda"
+	else
+		export NUMBA_CUDA_USE_NVIDIA_BINDING=0
+	fi
+}
+
+gen_envd() {
+	local arch=$(get_arch)
+newenvd - "60${PN}" <<-_EOF_
+CUDA_HOME="/opt/cuda"
+NUMBA_CUDA_USE_NVIDIA_BINDING=1
+_EOF_
 }
 
 src_install() {
@@ -127,4 +187,5 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 	einstalldocs
+	gen_envd
 }
