@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# pyclibrary
-
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
