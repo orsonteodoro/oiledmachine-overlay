@@ -6,7 +6,6 @@ EAPI=8
 # Same as the TensorFlow Model Garden
 
 # TODO package:
-# kaggle
 # sentencepiece
 # tensorflow-hub
 # tensorflow-datasets

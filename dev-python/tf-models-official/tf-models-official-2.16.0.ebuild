@@ -6,13 +6,12 @@ EAPI=8
 # A snapshot of the TensorFlow Model Garden
 
 # TODO package:
-# kaggle
-# sentencepiece
-# tensorflow-hub
-# tensorflow-datasets
-# tensorflow-text
-# tf-keras
-# tf_slim
+# sentencepiece		rdep[nlp]
+# tensorflow-hub	rdep
+# tensorflow-datasets	rdep
+# tensorflow-text	rdep[nlp]
+# tf-keras		rdep
+# tf_slim		rdep
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
