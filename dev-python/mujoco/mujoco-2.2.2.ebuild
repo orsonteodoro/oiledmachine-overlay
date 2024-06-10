@@ -2,10 +2,18 @@
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# The dev-python/mujoco is for python bindings
-# The sci-libs/mujoco is for native bindings
-
 EAPI=8
+
+# U 22.04
+
+# TODO package:
+# dev-python/pandoc
+# sphinxcontrib-katex
+# sphinxcontrib-youtube
+# sphinx-reredirects
+
+# The dev-python/mujoco is for python bindings
+# The sci-physics/mujoco is for native bindings
 
 DISTUTILS_USE_SETUPTOOLS="bdepend"
 EGIT_ABSEIL_CPP_COMMIT="8c0b94e793a66495e0b1f34a5eb26bd7dc672db0"
@@ -21,13 +29,13 @@ EGIT_PYBIND11_COMMIT="6df86934c258d8cd99acf192f6d3f4d1289b5d68"
 EGIT_QHULL_COMMIT="3df027b91202cf179f3fba3c46eebe65bbac3790"
 EGIT_TINYOBJLOADER_COMMIT="1421a10d6ed9742f5b2c1766d22faa6cfbc56248"
 EGIT_TINYXML2_COMMIT="1dee28e51f9175a31955b9791c74c430fe13dc82"
-PYTHON_COMPAT=( python3_10 )  # Upstream only tests with 3.10 for this version.
+PYTHON_COMPAT=( "python3_10" )  # Upstream only tests with 3.10 for this version.
 
 inherit distutils-r1
 
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-S_PROJ="${WORKDIR}/${P}"
 S="${WORKDIR}/${P}"
+S_PROJ="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/deepmind/mujoco/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -129,22 +137,16 @@ IUSE+=" doc +test r1"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
-# U 22.04
-DEPEND+="
+RDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/numpy-1.21.5[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/pyglfw[${PYTHON_USEDEP}]
 	dev-python/pyopengl[${PYTHON_USEDEP}]
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
-# TODO: package:
-# dev-python/pandoc
-# sphinxcontrib-katex
-# sphinxcontrib-youtube
-# sphinx-reredirects
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-build/cmake-3.15
@@ -163,6 +165,10 @@ BDEPEND+="
 		>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
 	)
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-2.2.2-use-local-tarballs.patch"
+	"${FILESDIR}/${PN}-2.3.2-mkdir-dist.patch"
+)
 
 #distutils_enable_sphinx "doc"
 
@@ -171,9 +177,6 @@ src_unpack() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}/${PN}-2.2.2-use-local-tarballs.patch"
-	eapply "${FILESDIR}/${PN}-2.3.2-mkdir-dist.patch"
-	cp -a "${S}/cmake" "${S}/python" || die
 	S="${WORKDIR}/${P}/python"
 	distutils-r1_src_prepare
 }
