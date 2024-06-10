@@ -130,7 +130,7 @@ dev-db/mariadb
 
 # Prevent multiple instances of protobuf/abseil merged
 # jax,tensorflow has a higher importance over eager bumps of dependencies
->=dev-python/tensorstore-0.1.38
+>=dev-cpp/abseil-cpp-20230126
 >=dev-libs/protobuf-22
 >=net-libs/grpc-1.55
->=dev-cpp/abseil-cpp-20230126
+>=sci-libs/tensorstore-0.1.38

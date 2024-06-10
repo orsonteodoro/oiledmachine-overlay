@@ -302,7 +302,7 @@ BDEPEND_MODEL_HUB_TESTS_TF_HUB_TESTS="
 		dev-python/pytest-html[${PYTHON_USEDEP}]
 		dev-python/tensorflow[${PYTHON_USEDEP}]
 		dev-python/tensorflow-hub[${PYTHON_USEDEP}]
-		dev-python/tensorflow-text[${PYTHON_USEDEP}]
+		sci-libs/tensorflow-text[${PYTHON_USEDEP}]
 	')
 "
 # tests/model_hub_tests/performance_tests/requirements.txt \

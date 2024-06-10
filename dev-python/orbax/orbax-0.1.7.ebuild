@@ -42,8 +42,8 @@ doc test
 REQUIRED_USE="
 "
 DEPEND+="
-	>=dev-python/tensorstore-0.1.20[${PYTHON_USEDEP}]
 	>=sci-libs/jax-0.4.6[${PYTHON_USEDEP}]
+	>=sci-libs/tensorstore-0.1.20[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/cached-property[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP}]

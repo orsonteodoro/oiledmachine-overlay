@@ -82,7 +82,7 @@ DEPEND+="
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/optax[${PYTHON_USEDEP}]
 	dev-python/orbax[${PYTHON_USEDEP}]
-	dev-python/tensorstore[${PYTHON_USEDEP}]
+	sci-libs/tensorstore[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${DEPEND}

@@ -46,7 +46,7 @@ REQUIRED_USE="
 "
 CHECKPOINT_DEPEND="
 	(
-		>=dev-python/tensorstore-0.1.51[${PYTHON_USEDEP}]
+		>=sci-libs/tensorstore-0.1.51[${PYTHON_USEDEP}]
 	)
 	>=dev-libs/protobuf-${PROTOBUF_PV}:0/${PROTOBUF_PV%.*}
 	>=sci-libs/jax-0.4.9[${PYTHON_USEDEP}]
