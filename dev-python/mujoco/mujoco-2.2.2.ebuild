@@ -166,7 +166,7 @@ BDEPEND+="
 		>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
 	)
 "
-PATCHES=(
+_PATCHES=(
 	"${FILESDIR}/${PN}-2.2.2-use-local-tarballs.patch"
 	"${FILESDIR}/${PN}-2.3.2-mkdir-dist.patch"
 )
@@ -178,6 +178,7 @@ src_unpack() {
 }
 
 src_prepare() {
+	eapply ${_PATCHES[@]}
 	S="${WORKDIR}/${P}/python"
 	distutils-r1_src_prepare
 }

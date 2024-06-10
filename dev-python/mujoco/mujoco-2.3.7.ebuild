@@ -165,7 +165,7 @@ BDEPEND+="
 		>=dev-python/wheel-0.40.0[${PYTHON_USEDEP}]
 	)
 "
-PATCHES=(
+_PATCHES=(
 	"${FILESDIR}/${PN}-2.3.7-use-local-tarballs.patch"
 	"${FILESDIR}/${PN}-2.3.7-mkdir-dist.patch"
 )
@@ -177,6 +177,7 @@ src_unpack() {
 }
 
 src_prepare() {
+	eapply ${_PATCHES[@]}
 	cp -a "${S}/simulate" "${S}/python/mujoco" || die
 	S="${WORKDIR}/${P}/python"
 	distutils-r1_src_prepare

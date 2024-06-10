@@ -289,7 +289,7 @@ diff -urp mujoco-2.2.2.orig/python/mujoco/CMakeLists.txt mujoco-2.2.2/python/muj
    GIT_TAG
    8c0b94e793a66495e0b1f34a5eb26bd7dc672db0 # LTS 20220623.1
 +  TARBALL_PATH
-+  $ENV{DISTDIR}/abseil-${MUJOCO_DEP_VERSION_abseil_cpp}.tar.gz
++  $ENV{DISTDIR}/abseil-cpp-${MUJOCO_DEP_VERSION_abseil_cpp}.tar.gz
    TARGETS
    ${MUJOCO_PYTHON_ABSL_TARGETS}
    EXCLUDE_FROM_ALL

@@ -1,6 +1,6 @@
 diff -urp mujoco-3.1.5.orig/cmake/FindOrFetch.cmake mujoco-3.1.5/cmake/FindOrFetch.cmake
 --- mujoco-3.1.5.orig/cmake/FindOrFetch.cmake	2024-05-07 11:47:15.000000000 -0700
-+++ mujoco-3.1.5/cmake/FindOrFetch.cmake	2024-05-08 01:32:12.453046037 -0700
++++ mujoco-3.1.5/cmake/FindOrFetch.cmake	2024-06-10 11:20:50.040291813 -0700
 @@ -23,6 +23,7 @@
  #               [LIBRARY_NAME [name]]
  #               [GIT_REPO [repo]]
@@ -26,7 +26,7 @@ diff -urp mujoco-3.1.5.orig/cmake/FindOrFetch.cmake mujoco-3.1.5/cmake/FindOrFet
    )
    set(multi_value_args PATCH_COMMAND TARGETS)
    cmake_parse_arguments(
-@@ -112,18 +116,61 @@ macro(FindOrFetch)
+@@ -112,18 +116,65 @@ macro(FindOrFetch)
        message(CHECK_START
                "mujoco::FindOrFetch: Using FetchContent to retrieve `${_ARGS_LIBRARY_NAME}`"
        )
@@ -55,6 +55,8 @@ diff -urp mujoco-3.1.5.orig/cmake/FindOrFetch.cmake mujoco-3.1.5/cmake/FindOrFet
 +          string(REPLACE "-" "_" __ARGS_LIBRARY_NAME ${_ARGS_LIBRARY_NAME})
 +          if("${_ARGS_LIBRARY_NAME}" STREQUAL "ccd")
 +            set(___ARGS_LIBRARY_NAME "libccd")
++          elseif("${_ARGS_LIBRARY_NAME}" STREQUAL "glfw3")
++            set(___ARGS_LIBRARY_NAME "glfw")
 +          elseif("${_ARGS_LIBRARY_NAME}" STREQUAL "sdflib")
 +            set(___ARGS_LIBRARY_NAME "SdfLib")
 +          elseif("${_ARGS_LIBRARY_NAME}" STREQUAL "marchingcubecpp")
@@ -84,6 +86,8 @@ diff -urp mujoco-3.1.5.orig/cmake/FindOrFetch.cmake mujoco-3.1.5/cmake/FindOrFet
 +          if(USE_LOCAL_TARBALL)
 +            if("${_ARGS_LIBRARY_NAME}" STREQUAL "ccd")
 +              set(___ARGS_LIBRARY_NAME "libccd")
++            elseif("${_ARGS_LIBRARY_NAME}" STREQUAL "glfw3")
++              set(___ARGS_LIBRARY_NAME "glfw")
 +            elseif("${_ARGS_LIBRARY_NAME}" STREQUAL "sdflib")
 +              set(___ARGS_LIBRARY_NAME "SdfLib")
 +            elseif("${_ARGS_LIBRARY_NAME}" STREQUAL "marchingcubecpp")
@@ -98,7 +102,7 @@ diff -urp mujoco-3.1.5.orig/cmake/FindOrFetch.cmake mujoco-3.1.5/cmake/FindOrFet
              EXCLUDE_FROM_ALL
 diff -urp mujoco-3.1.5.orig/cmake/MujocoDependencies.cmake mujoco-3.1.5/cmake/MujocoDependencies.cmake
 --- mujoco-3.1.5.orig/cmake/MujocoDependencies.cmake	2024-05-07 11:47:15.000000000 -0700
-+++ mujoco-3.1.5/cmake/MujocoDependencies.cmake	2024-05-08 01:26:46.119590019 -0700
++++ mujoco-3.1.5/cmake/MujocoDependencies.cmake	2024-06-10 11:20:29.652450704 -0700
 @@ -14,6 +14,10 @@
  
  # Build configuration for third party libraries used in MuJoCo.
@@ -346,7 +350,7 @@ diff -urp mujoco-3.1.5.orig/cmake/MujocoDependencies.cmake mujoco-3.1.5/cmake/Mu
        add_library(Eigen3::Eigen INTERFACE IMPORTED)
 diff -urp mujoco-3.1.5.orig/python/mujoco/CMakeLists.txt mujoco-3.1.5/python/mujoco/CMakeLists.txt
 --- mujoco-3.1.5.orig/python/mujoco/CMakeLists.txt	2024-05-07 11:47:15.000000000 -0700
-+++ mujoco-3.1.5/python/mujoco/CMakeLists.txt	2024-05-08 01:22:44.589454868 -0700
++++ mujoco-3.1.5/python/mujoco/CMakeLists.txt	2024-06-10 11:20:29.652450704 -0700
 @@ -12,6 +12,23 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
@@ -378,7 +382,7 @@ diff -urp mujoco-3.1.5.orig/python/mujoco/CMakeLists.txt mujoco-3.1.5/python/muj
 -  d7aaad83b488fd62bd51c81ecf16cd938532cc0a # LTS 20240116.2
 +  ${MUJOCO_DEP_VERSION_abseil_cpp} # LTS 20240116.2
 +  TARBALL_PATH
-+  $ENV{DISTDIR}/abseil-${MUJOCO_DEP_VERSION_abseil_cpp}.tar.gz
++  $ENV{DISTDIR}/abseil-cpp-${MUJOCO_DEP_VERSION_abseil_cpp}.tar.gz
    TARGETS
    ${MUJOCO_PYTHON_ABSL_TARGETS}
    EXCLUDE_FROM_ALL
@@ -406,7 +410,7 @@ diff -urp mujoco-3.1.5.orig/python/mujoco/CMakeLists.txt mujoco-3.1.5/python/muj
    EXCLUDE_FROM_ALL
 diff -urp mujoco-3.1.5.orig/sample/cmake/FindOrFetch.cmake mujoco-3.1.5/sample/cmake/FindOrFetch.cmake
 --- mujoco-3.1.5.orig/sample/cmake/FindOrFetch.cmake	2024-05-07 11:47:15.000000000 -0700
-+++ mujoco-3.1.5/sample/cmake/FindOrFetch.cmake	2024-05-08 01:32:03.861113360 -0700
++++ mujoco-3.1.5/sample/cmake/FindOrFetch.cmake	2024-06-10 11:20:29.656450673 -0700
 @@ -23,6 +23,7 @@
  #               [LIBRARY_NAME [name]]
  #               [GIT_REPO [repo]]
@@ -517,7 +521,7 @@ diff -urp mujoco-3.1.5.orig/sample/cmake/FindOrFetch.cmake mujoco-3.1.5/sample/c
              EXCLUDE_FROM_ALL
 diff -urp mujoco-3.1.5.orig/sample/cmake/SampleDependencies.cmake mujoco-3.1.5/sample/cmake/SampleDependencies.cmake
 --- mujoco-3.1.5.orig/sample/cmake/SampleDependencies.cmake	2024-05-07 11:47:15.000000000 -0700
-+++ mujoco-3.1.5/sample/cmake/SampleDependencies.cmake	2024-05-08 01:22:44.589454868 -0700
++++ mujoco-3.1.5/sample/cmake/SampleDependencies.cmake	2024-06-10 11:20:29.656450673 -0700
 @@ -12,8 +12,12 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
@@ -558,60 +562,13 @@ diff -urp mujoco-3.1.5.orig/sample/cmake/SampleDependencies.cmake mujoco-3.1.5/s
    GIT_TAG
    ${MUJOCO_DEP_VERSION_glfw3}
 +  TARBALL_PATH
-+  $ENV{DISTDIR}/glfw-${MUJOCO_DEP_VERSION_glfw}.tar.gz
-   TARGETS
-   glfw
-   EXCLUDE_FROM_ALL
-diff -urp mujoco-3.1.5.orig/simulate/cmake/SimulateDependencies.cmake mujoco-3.1.5/simulate/cmake/SimulateDependencies.cmake
---- mujoco-3.1.5.orig/simulate/cmake/SimulateDependencies.cmake	2024-05-07 11:47:15.000000000 -0700
-+++ mujoco-3.1.5/simulate/cmake/SimulateDependencies.cmake	2024-05-08 01:22:44.589454868 -0700
-@@ -12,8 +12,12 @@
- # See the License for the specific language governing permissions and
- # limitations under the License.
- 
-+# oteodoro:  changes for prefetched local tarball to avoid sandbox wipe re-downloads.
-+
- include(FindOrFetch)
- 
-+option(USE_LOCAL_TARBALL "Use the local tarballs instead of remote repo" ON)
-+
- if(SIMULATE_STANDALONE)
-   # If standalone, by default look for MuJoCo binary version.
-   set(DEFAULT_USE_SYSTEM_MUJOCO ON)
-@@ -35,6 +39,12 @@ set(MUJOCO_DEP_VERSION_glfw3
- )
- mark_as_advanced(MUJOCO_DEP_VERSION_glfw3)
- 
-+set(MUJOCO_DEP_VERSION_mujoco
-+    e001975f083e769898811763c4c887afb52523c2 # 3.1.5
-+    CACHE STRING "Version of `mujoco` to be fetched."
-+)
-+mark_as_advanced(MUJOCO_DEP_VERSION_mujoco)
-+
- find_package(Threads REQUIRED)
- 
- set(MUJOCO_BUILD_EXAMPLES OFF)
-@@ -53,6 +63,8 @@ findorfetch(
-   https://github.com/google-deepmind/mujoco.git
-   GIT_TAG
-   main
-+  TARBALL_PATH
-+  $ENV{DISTDIR}/mujoco-${MUJOCO_DEP_VERSION_mujoco}.tar.gz
-   TARGETS
-   mujoco
-   EXCLUDE_FROM_ALL
-@@ -85,6 +97,8 @@ findorfetch(
-   https://github.com/glfw/glfw.git
-   GIT_TAG
-   ${MUJOCO_DEP_VERSION_glfw3}
-+  TARBALL_PATH
-+  $ENV{DISTDIR}/glfw-${MUJOCO_DEP_VERSION_glfw}.tar.gz
++  $ENV{DISTDIR}/glfw-${MUJOCO_DEP_VERSION_glfw3}.tar.gz
    TARGETS
    glfw
    EXCLUDE_FROM_ALL
 diff -urp mujoco-3.1.5.orig/simulate/CMakeLists.txt mujoco-3.1.5/simulate/CMakeLists.txt
 --- mujoco-3.1.5.orig/simulate/CMakeLists.txt	2024-05-07 11:47:15.000000000 -0700
-+++ mujoco-3.1.5/simulate/CMakeLists.txt	2024-05-08 01:22:44.593454837 -0700
++++ mujoco-3.1.5/simulate/CMakeLists.txt	2024-06-10 11:20:29.656450673 -0700
 @@ -14,6 +14,8 @@
  
  cmake_minimum_required(VERSION 3.16)
@@ -660,3 +617,50 @@ diff -urp mujoco-3.1.5.orig/simulate/CMakeLists.txt mujoco-3.1.5/simulate/CMakeL
      # This is not a CMake project.
      set(LODEPNG_SRCS ${lodepng_SOURCE_DIR}/lodepng.cpp)
      set(LODEPNG_HEADERS ${lodepng_SOURCE_DIR}/lodepng.h)
+diff -urp mujoco-3.1.5.orig/simulate/cmake/SimulateDependencies.cmake mujoco-3.1.5/simulate/cmake/SimulateDependencies.cmake
+--- mujoco-3.1.5.orig/simulate/cmake/SimulateDependencies.cmake	2024-05-07 11:47:15.000000000 -0700
++++ mujoco-3.1.5/simulate/cmake/SimulateDependencies.cmake	2024-06-10 11:20:29.656450673 -0700
+@@ -12,8 +12,12 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
++# oteodoro:  changes for prefetched local tarball to avoid sandbox wipe re-downloads.
++
+ include(FindOrFetch)
+ 
++option(USE_LOCAL_TARBALL "Use the local tarballs instead of remote repo" ON)
++
+ if(SIMULATE_STANDALONE)
+   # If standalone, by default look for MuJoCo binary version.
+   set(DEFAULT_USE_SYSTEM_MUJOCO ON)
+@@ -35,6 +39,12 @@ set(MUJOCO_DEP_VERSION_glfw3
+ )
+ mark_as_advanced(MUJOCO_DEP_VERSION_glfw3)
+ 
++set(MUJOCO_DEP_VERSION_mujoco
++    e001975f083e769898811763c4c887afb52523c2 # 3.1.5
++    CACHE STRING "Version of `mujoco` to be fetched."
++)
++mark_as_advanced(MUJOCO_DEP_VERSION_mujoco)
++
+ find_package(Threads REQUIRED)
+ 
+ set(MUJOCO_BUILD_EXAMPLES OFF)
+@@ -53,6 +63,8 @@ findorfetch(
+   https://github.com/google-deepmind/mujoco.git
+   GIT_TAG
+   main
++  TARBALL_PATH
++  $ENV{DISTDIR}/mujoco-${MUJOCO_DEP_VERSION_mujoco}.tar.gz
+   TARGETS
+   mujoco
+   EXCLUDE_FROM_ALL
+@@ -85,6 +97,8 @@ findorfetch(
+   https://github.com/glfw/glfw.git
+   GIT_TAG
+   ${MUJOCO_DEP_VERSION_glfw3}
++  TARBALL_PATH
++  $ENV{DISTDIR}/glfw-${MUJOCO_DEP_VERSION_glfw3}.tar.gz
+   TARGETS
+   glfw
+   EXCLUDE_FROM_ALL
