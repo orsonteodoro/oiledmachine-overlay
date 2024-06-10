@@ -33,7 +33,7 @@ https://github.com/openai/gym
 LICENSE="MIT"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" atari accept-rom-license box2d classic-control mujoco mujoco-py pygame toy_text test"
+IUSE+=" atari accept-rom-license box2d classic-control mujoco pygame toy_text test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	box2d? (
@@ -48,10 +48,10 @@ REQUIRED_USE+="
 "
 DEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/ale-py-0.8.0[${PYTHON_USEDEP}]
 	>=dev-python/cloudpickle-1.2.0[${PYTHON_USEDEP}]
-	>=dev-python/gym-notices-0.0.4[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
+	>=sci-libs/ale-py-0.8.0[${PYTHON_USEDEP}]
+	>=sci-libs/gym-notices-0.0.4[${PYTHON_USEDEP}]
 
 	>=dev-python/lz4-3.1.0[${PYTHON_USEDEP}]
 	>=dev-python/matplotlib-3.0[${PYTHON_USEDEP}]
@@ -59,25 +59,29 @@ DEPEND+="
 	>=media-libs/opencv-3.0[${PYTHON_USEDEP},python]
 
 	atari? (
-		>=dev-python/ale-py-0.8.0[${PYTHON_USEDEP}]
+		>=sci-libs/ale-py-0.8.0[${PYTHON_USEDEP}]
 	)
 	accept-rom-license? (
-		>=dev-python/autorom-accept-rom-license-0.4.2[${PYTHON_USEDEP}]
+		>=sci-libs/autorom-accept-rom-license-0.4.2[${PYTHON_USEDEP}]
 	)
 	box2d? (
 		>=dev-lang/swig-4
 		>=dev-python/box2d-py-2.3.5[${PYTHON_USEDEP}]
 	)
 	mujoco? (
-		(
-			<dev-python/mujoco-2.3.0[${PYTHON_USEDEP}]
-			>=dev-python/mujoco-2.2.0[${PYTHON_USEDEP}]
+		|| (
+			(
+				(
+					>=dev-python/mujoco-2.2.0[${PYTHON_USEDEP}]
+					<dev-python/mujoco-2.3.0[${PYTHON_USEDEP}]
+				)
+				>=dev-python/imageio-2.14.1[${PYTHON_USEDEP}]
+			)
+			(
+				>=dev-python/mujoco-py-2.1[${PYTHON_USEDEP}]
+				<dev-python/mujoco-py-2.2[${PYTHON_USEDEP}]
+			)
 		)
-		>=dev-python/imageio-2.14.1[${PYTHON_USEDEP}]
-	)
-	mujoco-py? (
-		<dev-python/mujoco-py-2.2[${PYTHON_USEDEP}]
-		>=dev-python/mujoco-py-2.1[${PYTHON_USEDEP}]
 	)
 	pygame? (
 		>=dev-python/pygame-2.1.0[${PYTHON_USEDEP}]
@@ -90,8 +94,8 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	test? (
 		(
-			<dev-python/mujoco-py-2.2[${PYTHON_USEDEP}]
 			>=dev-python/mujoco-py-2.1[${PYTHON_USEDEP}]
+			<dev-python/mujoco-py-2.2[${PYTHON_USEDEP}]
 		)
 		>=dev-python/box2d-py-2.3.5[${PYTHON_USEDEP}]
 		>=dev-python/imageio-2.14.1[${PYTHON_USEDEP}]

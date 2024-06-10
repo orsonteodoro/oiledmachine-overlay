@@ -4,9 +4,7 @@
 
 EAPI=8
 
-# TODO PACKAGE:
-# dev-python/dm-meltingpot
-# dev-python/bsuite
+# TODO:  package
 # sphinx-autobuild
 # sphinx_github_changelog
 
@@ -34,21 +32,18 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" atari bsuite dm-control dm-control-multi-agent doc gym meltingpot openspiel test"
 RDEPEND+="
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
-	>=dev-python/gymnasium-0.27.0[${PYTHON_USEDEP}]
+	>=sci-libs/gymnasium-0.27.0[${PYTHON_USEDEP}]
 	atari? (
-		>=dev-python/ale-py-0.8.1[${PYTHON_USEDEP}]
+		>=sci-libs/ale-py-0.8.1[${PYTHON_USEDEP}]
 	)
 	bsuite? (
 		>=dev-python/bsuite-0.3.5[${PYTHON_USEDEP}]
 	)
 	gym? (
-		>=dev-python/gym-0.26.2[${PYTHON_USEDEP}]
+		>=sci-libs/gym-0.26.2[${PYTHON_USEDEP}]
 	)
 	meltingpot? (
-		>=dev-python/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
-		$(python_gen_cond_dep '
-			>=dev-python/dm-meltingpot-2.2.0[${PYTHON_USEDEP}]
-		' python3_10 python3_11)
+		>=sci-libs/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
 	)
 	dm-control? (
 		>=dev-python/dm-control-1.0.10[${PYTHON_USEDEP}]
@@ -58,18 +53,17 @@ RDEPEND+="
 	dm-control-multi-agent? (
 		>=dev-python/dm-control-1.0.10[${PYTHON_USEDEP}]
 		>=dev-python/h5py-3.7.0[${PYTHON_USEDEP}]
-		>=dev-python/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
+		>=sci-libs/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
 		dev-python/imageio[${PYTHON_USEDEP}]
 	)
 	openspiel? (
-		>=dev-python/open_spiel-1.2[${PYTHON_USEDEP}]
-		>=dev-python/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
+		>=sci-libs/open_spiel-1.2[${PYTHON_USEDEP}]
+		>=sci-libs/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
-
 BDEPEND+="
 	doc? (
 		>=dev-python/pygame-2.3.0[${PYTHON_USEDEP}]
@@ -82,9 +76,9 @@ BDEPEND+="
 		dev-python/sphinxext-opengraph[${PYTHON_USEDEP}]
 	)
 	test? (
-		>=dev-python/autorom-0.6.0[${PYTHON_USEDEP}]
 		>=dev-python/pillow-9.3.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.1.3[${PYTHON_USEDEP}]
+		>=sci-libs/autorom-0.6.0[${PYTHON_USEDEP}]
 	)
 "
 

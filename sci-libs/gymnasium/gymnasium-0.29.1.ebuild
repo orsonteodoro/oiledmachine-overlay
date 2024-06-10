@@ -5,7 +5,6 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-MY_PV="1.0.0a1"
 PYTHON_COMPAT=( python3_{10..11} )
 # Limited by jax
 
@@ -14,7 +13,7 @@ inherit distutils-r1
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 S="${WORKDIR}/${P}"
 SRC_URI="
-https://github.com/Farama-Foundation/Gymnasium/archive/refs/tags/v${MY_PV}.tar.gz
+https://github.com/Farama-Foundation/Gymnasium/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
@@ -28,7 +27,7 @@ https://github.com/Farama-Foundation/Gymnasium
 LICENSE="MIT"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" atari accept-rom-license box2d classic-control jax mujoco mujoco-py other pygame test toy-text"
+IUSE+=" atari accept-rom-license box2d classic-control jax mujoco other pygame test toy-text"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	box2d? (
@@ -45,16 +44,16 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/cloudpickle-1.2.0[${PYTHON_USEDEP}]
 	>=dev-python/farama-notifications-0.0.1[${PYTHON_USEDEP}]
-	>=dev-python/jumpy-0.2.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.3.0[${PYTHON_USEDEP}]
+	>=sci-libs/jumpy-0.2.0[${PYTHON_USEDEP}]
 
 	atari? (
-		<dev-python/shimmy-1.0[${PYTHON_USEDEP}]
-		>=dev-python/shimmy-0.1.0[${PYTHON_USEDEP}]
+		>=sci-libs/shimmy-0.1.0[${PYTHON_USEDEP}]
+		<sci-libs/shimmy-1.0[${PYTHON_USEDEP}]
 	)
 	accept-rom-license? (
-		>=dev-python/autorom-accept-rom-license-0.4.2[${PYTHON_USEDEP}]
+		>=sci-libs/autorom-accept-rom-license-0.4.2[${PYTHON_USEDEP}]
 	)
 	box2d? (
 		>=dev-python/box2d-py-2.3.5[${PYTHON_USEDEP}]
@@ -65,15 +64,19 @@ RDEPEND+="
 		>=sci-libs/jaxlib-0.4.0[${PYTHON_USEDEP}]
 	)
 	mujoco? (
-		(
-			<dev-python/mujoco-3.1.1[${PYTHON_USEDEP}]
-			>=dev-python/mujoco-2.1.5[${PYTHON_USEDEP}]
+		|| (
+			(
+				(
+					>=dev-python/mujoco-2.3.3[${PYTHON_USEDEP}]
+					<dev-python/mujoco-2.4.0[${PYTHON_USEDEP}]
+				)
+				>=dev-python/imageio-2.14.1[${PYTHON_USEDEP}]
+			)
+			(
+				>=dev-python/mujoco-py-2.1[${PYTHON_USEDEP}]
+				<dev-python/mujoco-py-2.2[${PYTHON_USEDEP}]
+			)
 		)
-		>=dev-python/imageio-2.14.1[${PYTHON_USEDEP}]
-	)
-	mujoco-py? (
-		<dev-python/mujoco-py-2.2[${PYTHON_USEDEP}]
-		>=dev-python/mujoco-py-2.1[${PYTHON_USEDEP}]
 	)
 	other? (
 		$(python_gen_any_dep '
@@ -95,18 +98,11 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/setuptools-61.0.0[${PYTHON_USEDEP}]
 	test? (
-		>=dev-python/dill-0.3.7[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.1.3[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.7.3[${PYTHON_USEDEP}]
 		dev-python/black[${PYTHON_USEDEP}]
 		dev-python/isort[${PYTHON_USEDEP}]
 		dev-python/pyright[${PYTHON_USEDEP}]
-	)
-"
-# Prevent circular depends with tensorflow \
-PDEPEND+="
-	jax? (
-		>=sci-libs/flax-0.5.0[${PYTHON_USEDEP}]
 	)
 "
 

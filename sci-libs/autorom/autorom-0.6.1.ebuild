@@ -44,13 +44,13 @@ BDEPEND+="
 	dev-python/tqdm[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
-		dev-python/ale-py[${PYTHON_USEDEP}]
-		dev-python/multi-agent-ale-py[${PYTHON_USEDEP}]
+		sci-libs/ale-py[${PYTHON_USEDEP}]
+		sci-libs/multi-agent-ale-py[${PYTHON_USEDEP}]
 	)
 "
 PDEPEND+="
 	accept-rom-license? (
-		>=dev-python/autorom-accept-rom-license-${PV}:${SLOT}[${PYTHON_USEDEP}]
+		>=sci-libs/autorom-accept-rom-license-${PV}:${SLOT}[${PYTHON_USEDEP}]
 	)
 "
 

@@ -102,19 +102,19 @@ BDEPEND+="
 		dev-python/scikit-learn[${PYTHON_USEDEP}]
 		dev-python/sphinx_design[${PYTHON_USEDEP}]
 		dev-python/sphinx-book-theme[${PYTHON_USEDEP}]
-		dev-python/tensorflow_datasets[${PYTHON_USEDEP}]
 		sci-libs/jaxlib[${PYTHON_USEDEP}]
 		sci-libs/ml-collections[${PYTHON_USEDEP}]
 		sci-libs/tensorflow[${PYTHON_USEDEP}]
+		sci-libs/tensorflow_datasets[${PYTHON_USEDEP}]
 		sci-libs/transformers[${PYTHON_USEDEP}]
 	)
 	test? (
 		>=dev-python/black-23.7.0[${PYTHON_USEDEP}]
-		>=dev-python/gymnasium-0.18.3[${PYTHON_USEDEP},atari,accept-rom-license]
 		>=dev-python/jraph-0.0.6_pre0[${PYTHON_USEDEP}]
 		>=dev-python/pyink-23.5.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-xdist-1.34.0[${PYTHON_USEDEP}]
-		>=dev-python/tensorflow_text-2.11.0[${PYTHON_USEDEP}]
+		>=sci-libs/gymnasium-0.18.3[${PYTHON_USEDEP},atari,accept-rom-license]
+		>=sci-libs/tensorflow_text-2.11.0[${PYTHON_USEDEP}]
 		dev-python/clu[${PYTHON_USEDEP}]
 		dev-python/einops[${PYTHON_USEDEP}]
 		dev-python/mypy[${PYTHON_USEDEP}]
@@ -124,12 +124,12 @@ BDEPEND+="
 		dev-python/pytest-custom_exit_code[${PYTHON_USEDEP}]
 		dev-python/pytorch[${PYTHON_USEDEP}]
 		dev-python/pytype[${PYTHON_USEDEP}]
-		dev-python/tensorflow_datasets[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP},python]
 		sci-libs/jaxlib[${PYTHON_USEDEP}]
 		sci-libs/ml-collections[${PYTHON_USEDEP}]
 		sci-libs/sentencepiece[${PYTHON_USEDEP},python]
 		sci-libs/tensorflow[${PYTHON_USEDEP},python]
+		sci-libs/tensorflow_datasets[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )

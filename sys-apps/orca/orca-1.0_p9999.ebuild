@@ -35,7 +35,7 @@ DEPEND+="
 	sys-process/procps
 	sys-process/psmisc
 	build-models? (
-		dev-python/gym[${PYTHON_USEDEP}]
+		sci-libs/gym[${PYTHON_USEDEP}]
 		www-misc/mahimahi
 	)
 	cellular-traces? (

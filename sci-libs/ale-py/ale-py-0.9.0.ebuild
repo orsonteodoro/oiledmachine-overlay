@@ -47,8 +47,8 @@ BDEPEND+="
 		dev-python/cibuildwheel[${PYTHON_USEDEP}]
 	)
 	test? (
-		>=dev-python/gymnasium-1.0.0_alpha1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.0[${PYTHON_USEDEP}]
+		>=sci-libs/gymnasium-1.0.0_alpha1[${PYTHON_USEDEP}]
 	)
 "
 

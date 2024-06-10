@@ -18,7 +18,7 @@ Patch not applied to aarch64.
 +    if cpu in ["local"]:
 +        return [
 +            tool_path(name = "gcc", path = ctx.attr.host_compiler_path),
-+            tool_path(name = "ar", path = "/var/tmp/portage/dev-python/jaxlib-@JAXLIB_PV@/temp/gcc-ar.sh"),
++            tool_path(name = "ar", path = "/var/tmp/portage/sci-libs/jaxlib-@JAXLIB_PV@/temp/gcc-ar.sh"),
 +            tool_path(name = "compat-ld", path = "/usr/bin/ld"),
 +            tool_path(name = "cpp", path = ctx.attr.host_compiler_prefix + "/cpp"),
 +            tool_path(name = "dwp", path = "/usr/bin/dwp"),
@@ -41,7 +41,7 @@ Patch not applied to aarch64.
          tool_path(name = "gcc", path = ctx.attr.host_compiler_path),
 -        tool_path(name = "ar", path = ctx.attr.host_compiler_prefix + "/ar"),
 -        tool_path(name = "compat-ld", path = ctx.attr.host_compiler_prefix + "/ld"),
-+        tool_path(name = "ar", path = "/var/tmp/portage/dev-python/jaxlib-@JAXLIB_PV@/temp/gcc-ar.sh"),
++        tool_path(name = "ar", path = "/var/tmp/portage/sci-libs/jaxlib-@JAXLIB_PV@/temp/gcc-ar.sh"),
 +        tool_path(name = "compat-ld", path = "/usr/bin/ld"),
          tool_path(name = "cpp", path = ctx.attr.host_compiler_prefix + "/cpp"),
 -        tool_path(name = "dwp", path = ctx.attr.host_compiler_prefix + "/dwp"),

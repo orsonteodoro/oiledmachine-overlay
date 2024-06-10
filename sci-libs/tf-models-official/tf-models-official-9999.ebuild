@@ -47,16 +47,16 @@ IUSE+=" doc nlp research test"
 if [[ "${PV}" =~ "9999" ]] ; then
 	RDEPEND+="
 		>=dev-python/wrapt-1.15[${PYTHON_USEDEP}]
-		>=dev-python/tensorflow-hub-9999[${PYTHON_USEDEP}]
 		>=dev-python/tf-keras-9999[${PYTHON_USEDEP}]
+		>=sci-libs/tensorflow-hub-9999[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/opencv-python-headless[${PYTHON_USEDEP}]
 	"
 else
 	RDEPEND+="
 		>=dev-python/pyyaml-6.0.0[${PYTHON_USEDEP}]
-		>=dev-python/tensorflow-hub-0.6.0[${PYTHON_USEDEP}]
 		>=dev-python/tf-keras-2.16.0[${PYTHON_USEDEP}]
+		>=sci-libs/tensorflow-hub-0.6.0[${PYTHON_USEDEP}]
 		dev-python/opencv-python-headless[${PYTHON_USEDEP}]
 	"
 fi
@@ -68,8 +68,8 @@ RDEPEND+="
 	>=dev-python/psutil-5.4.3[${PYTHON_USEDEP}]
 	>=dev-python/py-cpuinfo-3.3.0[${PYTHON_USEDEP}]
 	>=dev-python/scipy-0.19.1[${PYTHON_USEDEP}]
-	>=dev-python/tensorflow-model-optimization-0.4.1[${PYTHON_USEDEP}]
 	>=dev-python/tf_slim-1.1.0[${PYTHON_USEDEP}]
+	>=sci-libs/tensorflow-model-optimization-0.4.1[${PYTHON_USEDEP}]
 	dev-python/cython[${PYTHON_USEDEP}]
 	dev-python/immutabledict[${PYTHON_USEDEP}]
 	dev-python/matplotlib[${PYTHON_USEDEP}]
@@ -77,7 +77,7 @@ RDEPEND+="
 	dev-python/pillow[${PYTHON_USEDEP}]
 	dev-python/pycocotools[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
-	dev-python/tensorflow-datasets[${PYTHON_USEDEP}]
+	sci-libs/tensorflow-datasets[${PYTHON_USEDEP}]
 	nlp? (
 		dev-python/sacrebleu[${PYTHON_USEDEP}]
 		sci-libs/sentencepiece[${PYTHON_USEDEP},python]

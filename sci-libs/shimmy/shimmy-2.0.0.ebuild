@@ -34,15 +34,15 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" bsuite dm-control dm-control-multi-agent doc gym meltingpot openspiel test"
 RDEPEND+="
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
-	>=dev-python/gymnasium-1.0.0_alpha1[${PYTHON_USEDEP}]
+	>=sci-libs/gymnasium-1.0.0_alpha1[${PYTHON_USEDEP}]
 	bsuite? (
 		>=dev-python/bsuite-0.3.5[${PYTHON_USEDEP}]
 	)
 	gym? (
-		>=dev-python/gym-0.26.2[${PYTHON_USEDEP}]
+		>=sci-libs/gym-0.26.2[${PYTHON_USEDEP}]
 	)
 	meltingpot? (
-		>=dev-python/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
+		>=sci-libs/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
 		$(python_gen_cond_dep '
 			>=dev-python/dm-meltingpot-2.2.2[${PYTHON_USEDEP}]
 		' python3_11)
@@ -55,12 +55,12 @@ RDEPEND+="
 	dm-control-multi-agent? (
 		>=dev-python/dm-control-1.0.10[${PYTHON_USEDEP}]
 		>=dev-python/h5py-3.7.0[${PYTHON_USEDEP}]
-		>=dev-python/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
+		>=sci-libs/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
 		dev-python/imageio[${PYTHON_USEDEP}]
 	)
 	openspiel? (
 		>=dev-python/open_spiel-1.2[${PYTHON_USEDEP}]
-		>=dev-python/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
+		>=sci-libs/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="

@@ -12,10 +12,7 @@
   </upstream>
   <use>
     <flag name="mujoco">
-      Use the current MuJoCo version of the physics engine.
-    </flag>
-    <flag name="mujoco-py">
-      Use the alternative deprecated fork of MuJoCo python bindings.
+      Use the MuJoCo physics engine.
     </flag>
   </use>
 </pkgmetadata>

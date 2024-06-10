@@ -318,7 +318,7 @@ gen_rocm_depends() {
 #	>=dev-cpp/abseil-cpp-20220623:0/20220623
 #	>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
 RDEPEND+="
-	!dev-python/jaxlib-bin
+	!sci-libs/jaxlib-bin
 	>=app-arch/snappy-1.1.10
 	>=dev-libs/double-conversion-3.2.0
 	>=dev-libs/nsync-1.25.0

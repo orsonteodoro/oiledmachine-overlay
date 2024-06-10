@@ -58,8 +58,8 @@ RDEPEND+="
 	examples? (
 		>=dev-python/dm-haiku-0.0.3[${PYTHON_USEDEP}]
 		>=dev-python/dp_accounting-0.4[${PYTHON_USEDEP}]
-		>=dev-python/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_USEDEP}]
 		>=sci-libs/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP}]
+		>=sci-libs/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
@@ -99,8 +99,8 @@ BDEPEND+="
 # Avoid circular depends with tensorflow \
 PDEPEND+="
 	doc? (
-		>=dev-python/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_USEDEP}]
 		>=sci-libs/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP}]
+		>=sci-libs/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_USEDEP}]
 	)
 	examples? (
 		>=sci-libs/flax-${FLAX_PV}[${PYTHON_USEDEP}]

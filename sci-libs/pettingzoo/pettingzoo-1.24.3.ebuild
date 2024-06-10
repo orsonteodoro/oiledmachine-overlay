@@ -38,30 +38,30 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" atari butterfly classic doc mpe other sisl test"
 DEPEND+="
 	>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
-	>=dev-python/gymnasium-0.28.0[${PYTHON_USEDEP}]
+	>=sci-libs/gymnasium-0.28.0[${PYTHON_USEDEP}]
 	atari? (
-		!=dev-python/multi-agent-ale-py-0.6*
-		>=dev-python/multi-agent-ale-py-0.1.11[${PYTHON_USEDEP}]
+		!=sci-libs/multi-agent-ale-py-0.6*
+		>=sci-libs/multi-agent-ale-py-0.1.11[${PYTHON_USEDEP}]
 		>=dev-python/pygame-${PYGAME_PV}[${PYTHON_USEDEP}]
 	)
 	butterfly? (
 		>=dev-python/pygame-${PYGAME_PV}[${PYTHON_USEDEP}]
-		>=dev-python/pymunk-${PYMUNK_PV}[${PYTHON_USEDEP}]
+		>=sci-libs/pymunk-${PYMUNK_PV}[${PYTHON_USEDEP}]
 	)
 	classic? (
 		>=dev-python/python-chess-1.9.4[${PYTHON_USEDEP}]
 		>=dev-python/pygame-${PYGAME_PV}[${PYTHON_USEDEP}]
-		>=dev-python/rlcard-1.0.5[${PYTHON_USEDEP}]
-		>=dev-python/shimmy-1.2.0[${PYTHON_USEDEP},openspiel]
+		>=sci-libs/rlcard-1.0.5[${PYTHON_USEDEP}]
+		>=sci-libs/shimmy-1.2.0[${PYTHON_USEDEP},openspiel]
 	)
 	mpe? (
 		>=dev-python/pygame-${PYGAME_PV}[${PYTHON_USEDEP}]
 	)
 	sisl? (
 		>=dev-python/pygame-${PYGAME_PV}[${PYTHON_USEDEP}]
-		>=dev-python/pymunk-${PYMUNK_PV}[${PYTHON_USEDEP}]
 		>=dev-python/box2d-py-2.3.5[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
+		>=sci-libs/pymunk-${PYMUNK_PV}[${PYTHON_USEDEP}]
 	)
 	other? (
 		>=dev-python/pillow-8.0.1[${PYTHON_USEDEP}]
@@ -83,12 +83,12 @@ BDEPEND+="
 		$(python_gen_any_dep '
 			>=dev-vcs/pre-commit-3.5.0[${PYTHON_SINGLE_USEDEP}]
 		')
-		>=dev-python/autorom-0.6.1[${PYTHON_USEDEP}]
 		>=dev-python/pynput-1.7.6[${PYTHON_USEDEP}]
 		>=dev-python/pytest-8.0.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-markdown-docs-0.5.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-xdist-3.5.0[${PYTHON_USEDEP}]
+		>=sci-libs/autorom-0.6.1[${PYTHON_USEDEP}]
 		dev-python/black[${PYTHON_USEDEP}]
 	)
 "
