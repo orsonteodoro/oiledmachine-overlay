@@ -52,7 +52,6 @@ CHECKPOINT_DEPEND="
 	>=sci-libs/jax-0.4.9[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP}]
-	dev-python/jaxtyping[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/nest-asyncio[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
@@ -60,6 +59,7 @@ CHECKPOINT_DEPEND="
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
 	sci-libs/jaxlib[${PYTHON_USEDEP}]
+	sci-libs/jaxtyping[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${CHECKPOINT_DEPEND}
