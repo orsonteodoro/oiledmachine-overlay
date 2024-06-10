@@ -4,38 +4,35 @@
 
 EAPI=8
 
+# U22
+
 # See https://github.com/google/orbax/blob/main/.github/workflows/build.yml for supported python
 
 # TODO package:
 # google-cloud-logging
-# myst-nb
-# sphinx-book-theme
 
 DISTUTILS_USE_PEP517="flit"
-PROTOBUF_PV="5.26.1"
+PROTOBUF_PV="3.21.11"
 PYTHON_COMPAT=( "python3_"{10,11} ) # Upstream only tests up to 3.11.
 
 inherit distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	inherit git-r3
+	IUSE+=" fallback-commit"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/google/orbax.git"
-	FALLBACK_COMMIT="33a814de0a1df3b46ad174d2373a85a5afa0151b" # May 17, 2024
-	IUSE+=" fallback-commit"
+	FALLBACK_COMMIT="93f635031c2120bc9390f6657ed3849329819efb" # Dec 1, 2023
+	inherit git-r3
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-	SRC_URI="
-https://github.com/google/orbax/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-	"
+	S="${WORKDIR}/${P}/checkpoint"
+	inherit pypi
 fi
-S="${WORKDIR}/${P}/export"
 
-DESCRIPTION="Orbax is a library providing common utilities for JAX users."
+DESCRIPTION="Orbax Checkpoint"
 HOMEPAGE="
-https://github.com/google/orbax
-https://pypi.org/project/orbax
+https://github.com/google/orbax/tree/main/checkpoint
+https://pypi.org/project/orbax-checkpoint
 "
 LICENSE="
 	Apache-2.0
@@ -43,57 +40,43 @@ LICENSE="
 RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-doc tensorflow test
+tensorflow test
 "
 REQUIRED_USE="
-	doc? (
-		tensorflow
-	)
 "
-ORBAX_EXPORT_DEPEND="
+CHECKPOINT_DEPEND="
+	(
+		>=sci-libs/tensorstore-0.1.35[${PYTHON_USEDEP}]
+		<sci-libs/tensorstore-0.1.38[${PYTHON_USEDEP}]
+	)
+	>=dev-libs/protobuf-${PROTOBUF_PV}:0/${PROTOBUF_PV%.*}
+	>=sci-libs/jax-0.4.9[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/dataclasses-json[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP}]
 	dev-python/jaxtyping[${PYTHON_USEDEP}]
+	dev-python/msgpack[${PYTHON_USEDEP}]
+	dev-python/nest-asyncio[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/orbax-checkpoint[${PYTHON_USEDEP}]
-	sci-libs/jax[${PYTHON_USEDEP}]
+	dev-python/protobuf-python:0/${PROTOBUF_PV%.*}[${PYTHON_USEDEP}]
+	dev-python/pyyaml[${PYTHON_USEDEP}]
+	dev-python/typing-extensions[${PYTHON_USEDEP}]
 	sci-libs/jaxlib[${PYTHON_USEDEP}]
 "
 DEPEND+="
-	${ORBAX_EXPORT_DEPEND}
+	${CHECKPOINT_DEPEND}
 "
 RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
 	(
-		<dev-python/flit-core-4[${PYTHON_USEDEP}]
 		>=dev-python/flit-core-3.5[${PYTHON_USEDEP}]
-	)
-	doc? (
-		>=dev-python/docutils-0.18.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-6.2.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-autodoc-typehints-1.11.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-applehelp-1.0.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-bibtex-2.4.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-devhelp-1.0.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-htmlhelp-2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-katex-0.9.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-serializinghtml-1.1.5[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-qthelp-1.0.3[${PYTHON_USEDEP}]
-		dev-python/sphinx-design[${PYTHON_USEDEP}]
-
-		>=dev-python/ipython-7.23.1[${PYTHON_USEDEP}]
-		>=dev-python/ipykernel-6.5.0[${PYTHON_USEDEP}]
-		dev-python/cached-property[${PYTHON_USEDEP}]
-		dev-python/importlib-resources[${PYTHON_USEDEP}]
-		dev-python/myst-nb[${PYTHON_USEDEP}]
+		<dev-python/flit-core-4[${PYTHON_USEDEP}]
 	)
 	test? (
+		sci-libs/flax[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
-		dev-python/requests[${PYTHON_USEDEP}]
 	)
 "
 # Avoid circular depends with tensorflow \
@@ -102,9 +85,7 @@ PDEPEND+="
 		>=sci-libs/tensorflow-2.15.0[${PYTHON_USEDEP}]
 	)
 "
-DOCS=( "CHANGELOG.md" "README.md" )
-
-distutils_enable_sphinx "docs"
+DOCS=( "README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -122,6 +103,8 @@ src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
+	docinto "docs"
+	dodoc *".md"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

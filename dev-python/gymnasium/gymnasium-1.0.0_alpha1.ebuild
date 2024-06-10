@@ -106,7 +106,7 @@ BDEPEND+="
 # Prevent circular depends with tensorflow \
 PDEPEND+="
 	jax? (
-		>=dev-python/flax-0.5.0[${PYTHON_USEDEP}]
+		>=sci-libs/flax-0.5.0[${PYTHON_USEDEP}]
 	)
 "
 

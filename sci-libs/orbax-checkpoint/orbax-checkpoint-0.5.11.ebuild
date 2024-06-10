@@ -4,85 +4,89 @@
 
 EAPI=8
 
-# See https://github.com/google/orbax/blob/v0.1.7/.github/workflows/build.yml for supported python
+# U22
+
+# See https://github.com/google/orbax/blob/main/.github/workflows/build.yml for supported python
+
+# TODO package:
+# google-cloud-logging
 
 DISTUTILS_USE_PEP517="flit"
-PYTHON_COMPAT=( "python3_10" ) # Upstream only tests up to 3.9.  3.10 is an untested ebuild modificiation and may break.
+PROTOBUF_PV="5.26.1"
+PYTHON_COMPAT=( "python3_"{10,11} ) # Upstream only tests up to 3.11.
 
 inherit distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	inherit git-r3
+	IUSE+=" fallback-commit"
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/google/orbax.git"
-	FALLBACK_COMMIT="cde8f95c466b889a0e0642e4474baea983b33134" # Mar 29, 2023
-	IUSE+=" fallback-commit"
+	FALLBACK_COMMIT="87a30af2dc06a7f0a48f1bcebc787bf05b0e41a0" # May 10, 2024
+	inherit git-r3
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-	S="${WORKDIR}/${P}"
-	SRC_URI="
-https://github.com/google/orbax/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-	"
+	S="${WORKDIR}/${P}/checkpoint"
+	inherit pypi
 fi
 
-DESCRIPTION="Orbax is a library providing common utilities for JAX users."
+DESCRIPTION="Orbax Checkpoint"
 HOMEPAGE="
-https://github.com/google/orbax
-https://pypi.org/project/orbax
+https://github.com/google/orbax/tree/main/checkpoint
+https://pypi.org/project/orbax-checkpoint
 "
 LICENSE="
 	Apache-2.0
 "
-RESTRICT="mirror"
+RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-doc test
+tensorflow test
 "
 REQUIRED_USE="
 "
-DEPEND+="
-	>=sci-libs/jax-0.4.6[${PYTHON_USEDEP}]
-	>=sci-libs/tensorstore-0.1.20[${PYTHON_USEDEP}]
+CHECKPOINT_DEPEND="
+	(
+		>=sci-libs/tensorstore-0.1.51[${PYTHON_USEDEP}]
+	)
+	>=dev-libs/protobuf-${PROTOBUF_PV}:0/${PROTOBUF_PV%.*}
+	>=sci-libs/jax-0.4.9[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/cached-property[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP}]
-	dev-python/importlib-resources[${PYTHON_USEDEP}]
+	dev-python/jaxtyping[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/nest-asyncio[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/protobuf-python:0/${PROTOBUF_PV%.*}[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
 	sci-libs/jaxlib[${PYTHON_USEDEP}]
+"
+DEPEND+="
+	${CHECKPOINT_DEPEND}
 "
 RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
 	(
-		<dev-python/flit-core-4[${PYTHON_USEDEP}]
 		>=dev-python/flit-core-3.5[${PYTHON_USEDEP}]
+		<dev-python/flit-core-4[${PYTHON_USEDEP}]
 	)
 	test? (
-		dev-python/flax[${PYTHON_USEDEP}]
+		sci-libs/flax[${PYTHON_USEDEP}]
+		dev-python/google-cloud-logging[${PYTHON_USEDEP}]
+		dev-python/mock[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 	)
 "
-DOCS=( "CHANGELOG.md" "README.md" )
-
-distutils_enable_sphinx "docs"
-distutils_enable_tests "pytest"
-
-pkg_setup() {
-	if use python_target_python3_10 ; then
-eerror
-eerror "python_target_python3_10 is a dummy placeholder"
-eerror "Please remove it.  Upstream only supports up to 3.9."
-eerror
-		die
-	fi
-}
+# Avoid circular depends with tensorflow \
+PDEPEND+="
+	tensorflow? (
+		>=sci-libs/tensorflow-2.15.0[${PYTHON_USEDEP}]
+	)
+"
+DOCS=( "README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -100,6 +104,8 @@ src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
+	docinto "docs"
+	dodoc *".md"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

@@ -4,12 +4,12 @@
 
 EAPI=8
 
-# U22
-
 # See https://github.com/google/orbax/blob/main/.github/workflows/build.yml for supported python
 
 # TODO package:
 # google-cloud-logging
+# myst-nb
+# sphinx-book-theme
 
 DISTUTILS_USE_PEP517="flit"
 PROTOBUF_PV="5.26.1"
@@ -18,21 +18,24 @@ PYTHON_COMPAT=( "python3_"{10,11} ) # Upstream only tests up to 3.11.
 inherit distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	IUSE+=" fallback-commit"
+	inherit git-r3
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/google/orbax.git"
-	FALLBACK_COMMIT="87a30af2dc06a7f0a48f1bcebc787bf05b0e41a0" # May 10, 2024
-	inherit git-r3
+	FALLBACK_COMMIT="33a814de0a1df3b46ad174d2373a85a5afa0151b" # May 17, 2024
+	IUSE+=" fallback-commit"
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-	S="${WORKDIR}/${P}/checkpoint"
-	inherit pypi
+	SRC_URI="
+https://github.com/google/orbax/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
 fi
+S="${WORKDIR}/${P}/export"
 
-DESCRIPTION="Orbax Checkpoint"
+DESCRIPTION="Orbax is a library providing common utilities for JAX users."
 HOMEPAGE="
-https://github.com/google/orbax/tree/main/checkpoint
-https://pypi.org/project/orbax-checkpoint
+https://github.com/google/orbax
+https://pypi.org/project/orbax
 "
 LICENSE="
 	Apache-2.0
@@ -40,44 +43,57 @@ LICENSE="
 RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-tensorflow test
+doc tensorflow test
 "
 REQUIRED_USE="
-"
-CHECKPOINT_DEPEND="
-	(
-		>=sci-libs/tensorstore-0.1.51[${PYTHON_USEDEP}]
+	doc? (
+		tensorflow
 	)
-	>=dev-libs/protobuf-${PROTOBUF_PV}:0/${PROTOBUF_PV%.*}
-	>=sci-libs/jax-0.4.9[${PYTHON_USEDEP}]
+"
+ORBAX_EXPORT_DEPEND="
 	dev-python/absl-py[${PYTHON_USEDEP}]
+	dev-python/dataclasses-json[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP}]
 	dev-python/jaxtyping[${PYTHON_USEDEP}]
-	dev-python/msgpack[${PYTHON_USEDEP}]
-	dev-python/nest-asyncio[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/protobuf-python:0/${PROTOBUF_PV%.*}[${PYTHON_USEDEP}]
-	dev-python/pyyaml[${PYTHON_USEDEP}]
-	dev-python/typing-extensions[${PYTHON_USEDEP}]
+	sci-libs/jax[${PYTHON_USEDEP}]
 	sci-libs/jaxlib[${PYTHON_USEDEP}]
+	sci-libs/orbax-checkpoint[${PYTHON_USEDEP}]
 "
 DEPEND+="
-	${CHECKPOINT_DEPEND}
+	${ORBAX_EXPORT_DEPEND}
 "
 RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
 	(
-		>=dev-python/flit-core-3.5[${PYTHON_USEDEP}]
 		<dev-python/flit-core-4[${PYTHON_USEDEP}]
+		>=dev-python/flit-core-3.5[${PYTHON_USEDEP}]
+	)
+	doc? (
+		>=dev-python/docutils-0.18.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-6.2.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-autodoc-typehints-1.11.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-applehelp-1.0.3[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-bibtex-2.4.2[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-devhelp-1.0.2[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-htmlhelp-2.0.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-katex-0.9.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-serializinghtml-1.1.5[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-qthelp-1.0.3[${PYTHON_USEDEP}]
+		dev-python/sphinx-design[${PYTHON_USEDEP}]
+
+		>=dev-python/ipython-7.23.1[${PYTHON_USEDEP}]
+		>=dev-python/ipykernel-6.5.0[${PYTHON_USEDEP}]
+		dev-python/cached-property[${PYTHON_USEDEP}]
+		dev-python/importlib-resources[${PYTHON_USEDEP}]
+		dev-python/myst-nb[${PYTHON_USEDEP}]
 	)
 	test? (
-		dev-python/flax[${PYTHON_USEDEP}]
-		dev-python/google-cloud-logging[${PYTHON_USEDEP}]
-		dev-python/mock[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
 	)
 "
 # Avoid circular depends with tensorflow \
@@ -86,7 +102,9 @@ PDEPEND+="
 		>=sci-libs/tensorflow-2.15.0[${PYTHON_USEDEP}]
 	)
 "
-DOCS=( "README.md" )
+DOCS=( "CHANGELOG.md" "README.md" )
+
+distutils_enable_sphinx "docs"
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -104,8 +122,6 @@ src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
-	docinto "docs"
-	dodoc *".md"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

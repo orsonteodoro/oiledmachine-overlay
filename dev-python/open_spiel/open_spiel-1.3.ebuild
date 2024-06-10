@@ -66,7 +66,6 @@ DEPEND+="
 		>=dev-python/cvxopt-1.3.1[${PYTHON_USEDEP}]
 		>=dev-python/cvxpy-1.2.0[${PYTHON_USEDEP}]
 		>=dev-python/ecos-2.0.10[${PYTHON_USEDEP}]
-		>=dev-python/flax-0.5.3[${PYTHON_USEDEP}]
 		>=dev-python/ipython-5.8.0[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.5.2[${PYTHON_USEDEP}]
 		>=dev-python/mock-4.0.2[${PYTHON_USEDEP}]
@@ -75,6 +74,7 @@ DEPEND+="
 		>=dev-python/osqp-python-0.6.2_p5[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.10.1[${PYTHON_USEDEP}]
 		>=dev-python/testresources-2.0.1[${PYTHON_USEDEP}]
+		>=sci-libs/flax-0.5.3[${PYTHON_USEDEP}]
 	)
 	pytorch? (
 		$(python_gen_any_dep '

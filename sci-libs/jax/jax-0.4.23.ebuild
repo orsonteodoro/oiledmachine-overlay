@@ -73,7 +73,7 @@ BDEPEND+="
 # Avoid circular depends \
 PDEPEND+="
 	experimental? (
-		dev-python/flax[${PYTHON_USEDEP}]
+		sci-libs/flax[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG.md" "CITATION.bib" "README.md" )

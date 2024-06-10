@@ -103,10 +103,10 @@ PDEPEND+="
 		>=sci-libs/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP}]
 	)
 	examples? (
-		>=dev-python/flax-${FLAX_PV}[${PYTHON_USEDEP}]
+		>=sci-libs/flax-${FLAX_PV}[${PYTHON_USEDEP}]
 	)
 	test? (
-		>=dev-python/flax-${FLAX_PV}[${PYTHON_USEDEP}]
+		>=sci-libs/flax-${FLAX_PV}[${PYTHON_USEDEP}]
 	)
 "
 S="${WORKDIR}/${P}"
