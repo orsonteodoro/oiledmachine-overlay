@@ -139,6 +139,7 @@ RDEPEND+="
 	>=dev-python/numpy-1.25.1[${PYTHON_USEDEP}]
 	>=dev-python/pyopengl-3.1.7[${PYTHON_USEDEP}]
 	dev-python/pyglfw[${PYTHON_USEDEP}]
+	~sci-physics/mujoco-${PV}
 "
 DEPEND+="
 	${RDEPEND}

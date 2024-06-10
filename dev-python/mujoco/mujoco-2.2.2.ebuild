@@ -143,6 +143,7 @@ RDEPEND+="
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/pyglfw[${PYTHON_USEDEP}]
 	dev-python/pyopengl[${PYTHON_USEDEP}]
+	~sci-physics/mujoco-${PV}
 "
 DEPEND+="
 	${RDEPEND}
