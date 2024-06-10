@@ -52,10 +52,10 @@ DEPEND+="
 		>=dev-python/chex-0.1.84[${PYTHON_USEDEP}]
 		>=dev-python/distrax-0.1.4[${PYTHON_USEDEP}]
 		>=dev-python/dm-haiku-0.0.10[${PYTHON_USEDEP}]
-		>=dev-python/optax-0.1.7[${PYTHON_USEDEP}]
 		>=dev-python/rlax-0.1.6[${PYTHON_USEDEP}]
 		>=sci-libs/jax-0.4.20[${PYTHON_USEDEP}]
 		>=sci-libs/jaxlib-0.4.20[${PYTHON_USEDEP}]
+		>=sci-libs/optax-0.1.7[${PYTHON_USEDEP}]
 	)
 	julia? (
 		dev-lang/julia

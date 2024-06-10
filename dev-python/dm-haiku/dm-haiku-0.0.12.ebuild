@@ -59,7 +59,7 @@ BDEPEND+="
 		>=dev-python/cloudpickle-1.2.2[${PYTHON_USEDEP}]
 		>=dev-python/mock-3.0.5[${PYTHON_USEDEP}]
 		>=dev-python/dm-tree-0.1.1[${PYTHON_USEDEP}]
-		>=dev-python/optax-0.0.1[${PYTHON_USEDEP}]
+		>=sci-libs/optax-0.0.1[${PYTHON_USEDEP}]
 		>=sci-libs/tensorflow-2.16.0[${PYTHON_USEDEP},python]
 		dev-python/dill[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]

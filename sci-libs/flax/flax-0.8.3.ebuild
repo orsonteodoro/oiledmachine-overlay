@@ -80,7 +80,7 @@ DEPEND+="
 	>=dev-python/rich-11.1[${PYTHON_USEDEP}]
 	dev-python/matplotlib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
-	dev-python/optax[${PYTHON_USEDEP}]
+	sci-libs/optax[${PYTHON_USEDEP}]
 	sci-libs/orbax[${PYTHON_USEDEP}]
 	sci-libs/tensorstore[${PYTHON_USEDEP}]
 "
