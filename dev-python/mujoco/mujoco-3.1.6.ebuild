@@ -144,7 +144,7 @@ RESTRICT="
 	test
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc +test r1"
+IUSE+=" doc +test ebuild-revision-1"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -218,15 +218,21 @@ python_compile() {
 }
 
 fix_permissions() {
+einfo "Fixing permissions"
 	local path
-	for path in $(find "${ED}" -type f) ; do
+	for path in $(find "${ED}" -type f -not -path "*/include/*") ; do
+		[[ -L "${path}" ]] && continue
 		local is_exe=0
-		if file "${path}" | grep -q -e "Python script" ; then
+		local out=$(file "${path}")
+		if [[ "${out}" =~ "Python script" ]] ; then
 			is_exe=1
-		elif file "${path}" | grep -q -E -e "ELF (32|64)-bit LSB shared object" ; then
+		elif [[ "${out}" =~ "ELF "("32"|"64")"-bit LSB shared object" ]] ; then
 			is_exe=1
 		fi
-		fperms 0755 $(echo "${path}" | sed -e "s|^${ED}||g")
+		if (( ${is_exe} == 1 )) ; then
+			local path=$(echo "${path}" | sed -e "s|^${ED}||g")
+			fperms 0755 "${path}"
+		fi
 	done
 }
 
