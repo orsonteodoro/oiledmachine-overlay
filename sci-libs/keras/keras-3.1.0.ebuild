@@ -102,7 +102,7 @@ PDEPEND_WITH_CUDA="
 			>=sci-libs/pytorch-2.2.1[${PYTHON_USEDEP},cuda]
 			test? (
 				>=sci-libs/tensorflow-${TENSORFLOW_PV}
-				dev-python/jax[${PYTHON_USEDEP}]
+				sci-libs/jax[${PYTHON_USEDEP}]
 			)
 		)
 	)
@@ -112,7 +112,7 @@ PDEPEND_WITH_CUDA="
 PDEPEND="
 	cpu? (
 		jax? (
-			dev-python/jax[${PYTHON_USEDEP}]
+			sci-libs/jax[${PYTHON_USEDEP}]
 		)
 		pytorch? (
 			$(python_gen_any_dep '
@@ -126,7 +126,7 @@ PDEPEND="
 	)
 	cuda? (
 		jax? (
-			>=dev-python/jax-0.4.26[${PYTHON_USEDEP},cuda]
+			>=sci-libs/jax-0.4.26[${PYTHON_USEDEP},cuda]
 			test? (
 				$(python_gen_any_dep '
 					>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
@@ -142,7 +142,7 @@ PDEPEND="
 					>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
 				')
 				>=sci-libs/pytorch-2.1.0[${PYTHON_USEDEP}]
-				dev-python/jax[${PYTHON_USEDEP}]
+				sci-libs/jax[${PYTHON_USEDEP}]
 			)
 		)
 		pytorch? (
@@ -152,7 +152,7 @@ PDEPEND="
 			>=sci-libs/pytorch-2.2.1[${PYTHON_USEDEP}]
 			test? (
 				>=sci-libs/tensorflow-${TENSORFLOW_PV}
-				dev-python/jax[${PYTHON_USEDEP}]
+				sci-libs/jax[${PYTHON_USEDEP}]
 			)
 		)
 	)

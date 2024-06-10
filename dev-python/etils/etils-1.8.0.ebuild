@@ -144,7 +144,7 @@ DEPEND+="
 		dev-python/dm-tree[${PYTHON_USEDEP}]
 	)
 	etree-jax? (
-		dev-python/jax[${PYTHON_USEDEP},cpu]
+		sci-libs/jax[${PYTHON_USEDEP},cpu]
 	)
 	etree-tf? (
 		sci-libs/tensorflow[${PYTHON_USEDEP}]

@@ -42,18 +42,18 @@ doc test
 REQUIRED_USE="
 "
 DEPEND+="
-	>=dev-python/jax-0.4.6[${PYTHON_USEDEP}]
 	>=dev-python/tensorstore-0.1.20[${PYTHON_USEDEP}]
+	>=sci-libs/jax-0.4.6[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/cached-property[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP}]
 	dev-python/importlib-resources[${PYTHON_USEDEP}]
-	dev-python/jaxlib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/nest-asyncio[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
+	sci-libs/jaxlib[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${DEPEND}

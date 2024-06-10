@@ -49,9 +49,9 @@ REQUIRED_USE+="
 RDEPEND+="
 	>=dev-python/absl-py-0.7.1[${PYTHON_USEDEP}]
 	>=dev-python/chex-0.1.86[${PYTHON_USEDEP}]
-	>=dev-python/jax-0.1.55[${PYTHON_USEDEP}]
-	>=dev-python/jaxlib-0.1.37[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
+	>=sci-libs/jax-0.1.55[${PYTHON_USEDEP}]
+	>=sci-libs/jaxlib-0.1.37[${PYTHON_USEDEP}]
 	dp-accounting? (
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 	)

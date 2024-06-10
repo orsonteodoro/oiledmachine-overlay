@@ -668,7 +668,7 @@ DEPEND="
 	python? (
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		test? (
-			>=dev-python/jax-0.4.7[${PYTHON_USEDEP}]
+			>=sci-libs/jax-0.4.7[${PYTHON_USEDEP}]
 			dev-python/mock[${PYTHON_USEDEP}]
 		)
 	)

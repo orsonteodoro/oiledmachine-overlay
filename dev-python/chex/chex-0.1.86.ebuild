@@ -35,11 +35,11 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" docs test"
 DEPEND+="
 	>=dev-python/absl-py-0.9.0[${PYTHON_USEDEP}]
-	>=dev-python/jax-0.4.16[${PYTHON_USEDEP}]
-	>=dev-python/jaxlib-0.1.37[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.24.1[${PYTHON_USEDEP}]
 	>=dev-python/toolz-0.9.0[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
+	>=sci-libs/jax-0.4.16[${PYTHON_USEDEP}]
+	>=sci-libs/jaxlib-0.1.37[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${DEPEND}

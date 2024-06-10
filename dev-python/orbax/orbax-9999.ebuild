@@ -54,11 +54,11 @@ ORBAX_EXPORT_DEPEND="
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/dataclasses-json[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP}]
-	dev-python/jax[${PYTHON_USEDEP}]
-	dev-python/jaxlib[${PYTHON_USEDEP}]
 	dev-python/jaxtyping[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/orbax-checkpoint[${PYTHON_USEDEP}]
+	sci-libs/jax[${PYTHON_USEDEP}]
+	sci-libs/jaxlib[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${ORBAX_EXPORT_DEPEND}

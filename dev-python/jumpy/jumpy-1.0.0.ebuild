@@ -34,8 +34,8 @@ REQUIRED_USE="
 RDEPEND+="
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 	jax? (
-		>=dev-python/jax-0.3.24[${PYTHON_USEDEP}]
-		>=dev-python/jaxlib-0.3.24[${PYTHON_USEDEP}]
+		>=sci-libs/jax-0.3.24[${PYTHON_USEDEP}]
+		>=sci-libs/jaxlib-0.3.24[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="

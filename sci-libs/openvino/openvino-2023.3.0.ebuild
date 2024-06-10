@@ -204,6 +204,8 @@ BDEPEND_CONSTRAINTS="
 			>=sci-libs/pytorch-1.13[${PYTHON_USEDEP}]
 			<sci-libs/pytorch-2.2[${PYTHON_USEDEP}]
 		)
+		<sci-libs/jax-0.4.15[${PYTHON_USEDEP}]
+		<sci-libs/jaxlib-0.4.15[${PYTHON_USEDEP}]
 		>=dev-python/attrs-23.1.0[${PYTHON_USEDEP}]
 		>=dev-python/distro-1.8.0[${PYTHON_USEDEP}]
 		>=dev-python/h5py-3.1.0[${PYTHON_USEDEP}]
@@ -224,8 +226,6 @@ BDEPEND_CONSTRAINTS="
 		>=dev-python/pytest-html-4.1.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
 		>=media-libs/opencv-4.5[${PYTHON_USEDEP},python]
-		<dev-python/jax-0.4.15[${PYTHON_USEDEP}]
-		<dev-python/jaxlib-0.4.15[${PYTHON_USEDEP}]
 	')
 "
 # tests/stress_tests/scripts/requirements.txt \
@@ -329,8 +329,8 @@ BDEPEND_LAYER_TESTS="
 		dev-python/pytest[${PYTHON_USEDEP}]
 		kernel_linux? (
 			amd64? (
-				dev-python/jax[${PYTHON_USEDEP}]
-				dev-python/jaxlib[${PYTHON_USEDEP}]
+				sci-libs/jax[${PYTHON_USEDEP}]
+				sci-libs/jaxlib[${PYTHON_USEDEP}]
 			)
 		)
 	')

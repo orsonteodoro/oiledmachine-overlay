@@ -60,8 +60,8 @@ RDEPEND+="
 		>=dev-lang/swig-4
 	)
 	jax? (
-		>=dev-python/jax-0.4.0[${PYTHON_USEDEP}]
-		>=dev-python/jaxlib-0.4.0[${PYTHON_USEDEP}]
+		>=sci-libs/jax-0.4.0[${PYTHON_USEDEP}]
+		>=sci-libs/jaxlib-0.4.0[${PYTHON_USEDEP}]
 	)
 	mujoco? (
 		(

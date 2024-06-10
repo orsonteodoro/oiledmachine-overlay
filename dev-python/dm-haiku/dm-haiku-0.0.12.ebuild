@@ -36,8 +36,8 @@ RDEPEND+="
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 	>=dev-python/tabulate-0.8.9[${PYTHON_USEDEP}]
 	jax? (
-		>=dev-python/jax-0.4.24[${PYTHON_USEDEP}]
-		>=dev-python/jaxlib-0.4.24[${PYTHON_USEDEP}]
+		>=sci-libs/jax-0.4.24[${PYTHON_USEDEP}]
+		>=sci-libs/jaxlib-0.4.24[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="

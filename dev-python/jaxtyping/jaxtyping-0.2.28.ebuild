@@ -51,7 +51,7 @@ BDEPEND+="
 		>=dev-python/pymdown-extensions-9.4[${PYTHON_USEDEP}]
 		>=dev-python/pytkdocs_tweaks-0.0.8[${PYTHON_USEDEP}]
 		>=dev-python/pygments-2.14.0[${PYTHON_USEDEP}]
-		dev-python/jax[${PYTHON_USEDEP}]
+		sci-libs/jax[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )

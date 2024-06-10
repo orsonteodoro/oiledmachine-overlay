@@ -50,10 +50,9 @@ CHECKPOINT_DEPEND="
 		<dev-python/tensorstore-0.1.38[${PYTHON_USEDEP}]
 	)
 	>=dev-libs/protobuf-${PROTOBUF_PV}:0/${PROTOBUF_PV%.*}
-	>=dev-python/jax-0.4.9[${PYTHON_USEDEP}]
+	>=sci-libs/jax-0.4.9[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP}]
-	dev-python/jaxlib[${PYTHON_USEDEP}]
 	dev-python/jaxtyping[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/nest-asyncio[${PYTHON_USEDEP}]
@@ -61,6 +60,7 @@ CHECKPOINT_DEPEND="
 	dev-python/protobuf-python:0/${PROTOBUF_PV%.*}[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
+	sci-libs/jaxlib[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${CHECKPOINT_DEPEND}
