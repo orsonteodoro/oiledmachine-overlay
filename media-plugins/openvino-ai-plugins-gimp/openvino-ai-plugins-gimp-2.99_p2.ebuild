@@ -10,7 +10,6 @@ EAPI=8
 # nncf
 # tensorflow-2.12 or lift version restriction
 # tensorflow-datasets
-# librosa (in forum https://forums.gentoo.org/viewtopic-p-8829272.html?sid=2fdb236700e0640ad62bf25c6e3376a2)
 # monai
 # paddlepaddle
 
