@@ -67,6 +67,7 @@ distutils_enable_sphinx "docs"
 
 pkg_setup() {
 	npm_pkg_setup
+	python_setup
 }
 
 src_unpack() {
