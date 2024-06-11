@@ -6,9 +6,6 @@ EAPI=8
 
 # U22
 
-# TODO packaging:
-# nose-xunitmp
-
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{8..11} ) # CI tests with 3.10
 
@@ -63,7 +60,7 @@ BDEPEND+="
 	test? (
 		>=dev-python/mock-5.1.0[${PYTHON_USEDEP}]
 		>=dev-python/nose-1.3.7[${PYTHON_USEDEP}]
-		>=dev-python/nose-xunitmp-0.4.1[${PYTHON_USEDEP}]
+		>=dev-python/nose_xunitmp-0.4.1[${PYTHON_USEDEP}]
 		>=dev-python/pillow-10.3.0[${PYTHON_USEDEP}]
 	)
 "
