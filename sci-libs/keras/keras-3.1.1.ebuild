@@ -3,9 +3,6 @@
 
 EAPI=8
 
-# TODO package:
-# tensorboard-plugin-profile
-
 PYTHON_COMPAT=( "python3_"{9..11} )
 TENSORFLOW_PV="2.16.1"
 

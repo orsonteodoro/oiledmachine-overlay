@@ -1,0 +1,92 @@
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+# TODO package:
+# gviz_api
+
+MY_PN="${PN/-/_}"
+
+DISTUTILS_USE_PEP517="setuptools"
+PYTHON_COMPAT=( "python3_"{10..12} )
+
+inherit distutils-r1 pypi
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+=" fallback-commit"
+	EGIT_BRANCH="master"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+	EGIT_REPO_URI="https://github.com/tensorflow/profiler.git"
+	FALLBACK_COMMIT="c9c8103cb1471fde513450567a29cee83c16bc82" # Oct 3, 2023
+	S="${WORKDIR}/${P}"
+	inherit git-r3
+else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	EGIT_COMMIT="c9c8103cb1471fde513450567a29cee83c16bc82"
+	S="${WORKDIR}/profiler-${EGIT_COMMIT}"
+	SRC_URI="
+https://github.com/tensorflow/profiler/archive/${EGIT_COMMIT}.tar.gz
+	-> tensorflow-profiler-${EGIT_COMMIT:0:7}.tar.gz
+	"
+fi
+
+DESCRIPTION="Clean up the public namespace of your package!"
+HOMEPAGE="
+	https://github.com/tensorflow/profiler
+	https://pypi.org/project/tensorboard-plugin-profile
+"
+LICENSE="
+	Apache-2.0
+"
+RESTRICT="mirror"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+=" "
+RDEPEND+="
+	>=sci-libs/tensorflow-${PV}:0/2.14[${PYTHON_USEDEP}]
+	>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
+	>=dev-python/gviz-api-1.9.0[${PYTHON_USEDEP}]
+	>=dev-python/protobuf-python-3.19.6:0/3.21[${PYTHON_USEDEP}]
+	>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
+	>=dev-python/werkzeug-0.11.15[${PYTHON_USEDEP}]
+"
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	>=dev-python/setuptools-41.0.0[${PYTHON_USEDEP}]
+"
+DOCS=( "${S}/README.md" )
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+		grep -q -e "__version__ = \"2.14.0\"" "${S}/plugin/tensorboard_plugin_profile/version.py" \
+			|| die "QA:  Bump version"
+	else
+		unpack ${A}
+	fi
+}
+
+src_prepare() {
+	cd "${S}/plugin" || die
+	distutils-r1_src_prepare
+}
+
+src_compile() {
+	cd "${S}/plugin" || die
+	distutils-r1_src_compile
+}
+
+src_install() {
+	cd "${S}/plugin" || die
+	distutils-r1_src_install
+	cd "${S}" || die
+	docinto "licenses"
+	dodoc "LICENSE"
+}
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
