@@ -85,7 +85,6 @@ BDEPEND="
 		>=dev-python/black-22[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/isort[${PYTHON_USEDEP}]
-		dev-python/portpicker[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 	)
