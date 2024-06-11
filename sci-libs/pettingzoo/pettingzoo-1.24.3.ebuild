@@ -5,7 +5,7 @@
 EAPI=8
 
 # TODO ebuild-package needs to be created:
-# pytest-markdown-docs
+# sphinx-github-changelog
 
 DISTUTILS_USE_PEP517="setuptools"
 PYGAME_PV="2.3.0"
