@@ -9,7 +9,7 @@ GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 "${PV}")
 PROTOBUF_PV="24.3"
 PROTOBUF_SLOT="0/5.26"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 multiprocessing prefix
 

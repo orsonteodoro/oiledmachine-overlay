@@ -48,9 +48,11 @@ RDEPEND="
 		>=app-editors/emacs-23.1:*
 	)
 "
+DEPEND="
+	${RDEPEND}
+"
 # <dev-python/setuptools-60[${PYTHON_USEDEP}] relaxed for python3_11
 BDEPEND="
-	${RDEPEND}
 	$(python_gen_cond_dep '
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		dev-python/pip[${PYTHON_USEDEP}]

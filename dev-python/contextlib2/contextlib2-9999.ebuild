@@ -12,8 +12,8 @@ inherit distutils-r1
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 	EGIT_BRANCH="master"
-	FALLBACK_COMMIT="892462960d7c7aeb372e975aed54c6cf5ea62095" # May 23, 2024
 	EGIT_REPO_URI="https://github.com/jazzband/contextlib2.git"
+	FALLBACK_COMMIT="892462960d7c7aeb372e975aed54c6cf5ea62095" # May 23, 2024
 	inherit git-r3
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"

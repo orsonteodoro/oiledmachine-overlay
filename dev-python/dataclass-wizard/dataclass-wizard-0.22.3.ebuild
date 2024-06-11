@@ -11,7 +11,7 @@ EAPI=8
 MY_PN="${PN}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1
 
@@ -39,7 +39,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test timedelta yaml"
-DEPEND+="
+RDEPEND+="
 	timedelta? (
 		>=dev-python/pytimeparse-1.1.8[${PYTHON_USEDEP}]
 	)
@@ -47,8 +47,8 @@ DEPEND+="
 		>=dev-python/pyyaml-5.3[${PYTHON_USEDEP}]
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-python/bump2version-1.0.1[${PYTHON_USEDEP}]
@@ -74,7 +74,7 @@ BDEPEND+="
 		>=dev-python/pytest-runner-5.3.1[${PYTHON_USEDEP}]
 	)
 "
-DOCS=( HISTORY.rst README.rst )
+DOCS=( "HISTORY.rst" "README.rst" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then

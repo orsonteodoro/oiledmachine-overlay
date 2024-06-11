@@ -26,11 +26,11 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 REQUIRED_USE+="
 "
-DEPEND+="
+RDEPEND+="
 	dev-python/tqdm[${PYTHON_USEDEP}]
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]

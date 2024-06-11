@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..12} )
+PYTHON_COMPAT=( "python3_"{8..12} )
 
 inherit distutils-r1
 
@@ -25,11 +25,11 @@ IUSE+=" test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
-DEPEND+="
+RDEPEND+="
 	${PYTHON_DEPS}
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	${PYTHON_DEPS}

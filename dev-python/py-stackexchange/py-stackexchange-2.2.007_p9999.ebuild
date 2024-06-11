@@ -6,7 +6,7 @@ EAPI=8
 MY_PN="Py-StackExchange"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} ) # Upstream listed 2.7 and 3
+PYTHON_COMPAT=( "python3_"{8..11} ) # Upstream listed 2.7 and 3
 
 inherit distutils-r1
 

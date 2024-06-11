@@ -15,7 +15,7 @@ EAPI=8
 # sphinx-apitree (missing for doc)
 
 DISTUTILS_USE_PEP517="flit"
-PYTHON_COMPAT=( python3_11 ) # Upstream only tests 3.11
+PYTHON_COMPAT=( "python3_11" ) # Upstream only tests 3.11
 
 # Limited by jax
 inherit distutils-r1
@@ -106,7 +106,7 @@ REQUIRED_USE+="
 		ecolab
 	)
 "
-DEPEND+="
+RDEPEND+="
 	eapp? (
 		dev-python/absl-py[${PYTHON_USEDEP}]
 		dev-python/simple_parsing[${PYTHON_USEDEP}]
@@ -149,8 +149,8 @@ DEPEND+="
 		sci-libs/tensorflow[${PYTHON_USEDEP}]
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	(

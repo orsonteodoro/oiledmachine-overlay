@@ -26,10 +26,10 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
-DEPEND+="
-"
 RDEPEND+="
-	${DEPEND}
+"
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	dev-python/setuptools

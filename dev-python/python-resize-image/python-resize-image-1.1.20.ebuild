@@ -7,7 +7,7 @@ EAPI=8
 # ASSET_COMMIT is in the repo but not in the pypi tarball.
 ASSET_COMMIT="9c9a1f6d61abf3f5072ca0934963fcd75ed24c08" # Nov 4, 2021 from  committer-date:<=2021-11-04  GitHub search
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 PYPI_NO_NORMALIZE=1
 
 inherit distutils-r1 pypi

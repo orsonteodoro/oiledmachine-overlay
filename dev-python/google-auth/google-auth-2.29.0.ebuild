@@ -17,6 +17,11 @@ EAPI=8
 # https://github.com/googleapis/google-auth-library-python/blob/v2.29.0/.kokoro/requirements.txt
 
 DISTUTILS_USE_PEP517="setuptools"
+EPYTEST_IGNORE=(
+	# these are compatibility tests with oauth2client
+	# disable them to unblock removal of that package
+	"tests/test__oauth2client.py"
+)
 PYPI_NO_NORMALIZE=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -159,12 +164,6 @@ BDEPEND="
 "
 
 distutils_enable_tests "pytest"
-
-EPYTEST_IGNORE=(
-	# these are compatibility tests with oauth2client
-	# disable them to unblock removal of that package
-	tests/test__oauth2client.py
-)
 
 python_compile() {
 	distutils-r1_python_compile

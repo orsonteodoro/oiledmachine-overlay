@@ -9,7 +9,7 @@ EAPI=8
 # sphinx-design
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit distutils-r1
 
@@ -59,6 +59,8 @@ BDEPEND+="
 "
 DOCS=( "CHANGELOG.md" "docs/index.md" "README.md" )
 
+distutils_enable_sphinx "docs"
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -68,8 +70,6 @@ src_unpack() {
 		unpack ${A}
 	fi
 }
-
-distutils_enable_sphinx "docs"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

@@ -6,7 +6,7 @@ EAPI=8
 
 PYPI_NO_NORMALIZE=1
 PYPI_PN="nvidia-ml-py"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 inherit distutils-r1 pypi
 
 MY_PN="nvidia-ml-py"

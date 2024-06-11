@@ -37,6 +37,9 @@ RDEPEND="
 		>=dev-python/click-6.0.0[${PYTHON_USEDEP}]
 	)
 "
+DEPEND="
+	${RDEPEND}
+"
 
 BDEPEND="
 	!=dev-python/grpcio-1.52.0_rc1

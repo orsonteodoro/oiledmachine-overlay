@@ -7,7 +7,7 @@ EAPI=8
 # The zlib requirement is pillow packager's fault
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit distutils-r1
 

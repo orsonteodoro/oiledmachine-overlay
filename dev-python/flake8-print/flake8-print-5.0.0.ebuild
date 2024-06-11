@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="poetry"
-PYTHON_COMPAT=( python3_{8..11} ) # Upstream tests up to 3.9
+PYTHON_COMPAT=( "python3_"{8..11} ) # Upstream tests up to 3.9
 
 inherit distutils-r1
 
@@ -24,12 +24,12 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
-DEPEND+="
+RDEPEND+="
 	dev-python/flake8[${PYTHON_USEDEP}]
 	dev-python/pycodestyle[${PYTHON_USEDEP}]
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-python/poetry-core-1.0[${PYTHON_USEDEP}]
@@ -44,13 +44,13 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.0.0-fix-install.patch"
 )
 
+distutils_enable_tests "pytest"
+
 src_install() {
 	distutils-r1_src_install
 	cd "${S}" || die
 	docinto "licenses"
 	dodoc "LICENCE"
 }
-
-distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

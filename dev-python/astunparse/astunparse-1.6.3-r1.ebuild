@@ -18,8 +18,22 @@ HOMEPAGE="
 LICENSE="BSD"
 SLOT="0"
 RDEPEND="
-	>=dev-python/six-1.6.1[${PYTHON_USEDEP}]
-	>=dev-python/wheel-0.23.0[${PYTHON_USEDEP}]
+	(
+		>=dev-python/six-1.6.1[${PYTHON_USEDEP}]
+		<dev-python/six-2[${PYTHON_USEDEP}]
+	)
+	(
+		>=dev-python/wheel-0.23.0[${PYTHON_USEDEP}]
+		<dev-python/wheel-1.0[${PYTHON_USEDEP}]
+	)
+"
+DEPEND="
+	${RDEPEND}
+"
+BDEPEND="
+	test? (
+		>=dev-python/coverage-3.7.1[${PYTHON_USEDEP}]
+	)
 "
 
 PATCHES=(

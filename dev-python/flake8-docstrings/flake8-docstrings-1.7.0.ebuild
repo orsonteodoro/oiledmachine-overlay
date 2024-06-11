@@ -6,7 +6,7 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 FLAKE8_PV="3"
-PYTHON_COMPAT=( python3_{8..11} ) # CI only tests up to 3.10
+PYTHON_COMPAT=( "python3_"{8..11} ) # CI only tests up to 3.10
 
 inherit distutils-r1
 

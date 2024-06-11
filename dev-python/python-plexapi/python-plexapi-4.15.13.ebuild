@@ -6,7 +6,7 @@ EAPI=8
 # U22
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} ) # CI only tests 3.8
+PYTHON_COMPAT=( "python3_"{8..11} ) # CI only tests 3.8
 
 inherit distutils-r1
 

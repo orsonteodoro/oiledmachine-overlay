@@ -8,7 +8,7 @@ EAPI=8
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_SETUPTOOLS="bdepend"
-PYTHON_COMPAT=( python3_{8..12} )
+PYTHON_COMPAT=( "python3_"{8..12} )
 
 inherit distutils-r1
 
@@ -53,6 +53,8 @@ BDEPEND+="
 	)
 "
 
+distutils_enable_sphinx "docs"
+
 src_configure() {
 	local actual_cython_pv=$(cython --version 2>&1 \
 		| cut -f 3 -d " " \
@@ -72,7 +74,5 @@ eerror
 	fi
 	distutils-r1_src_configure
 }
-
-distutils_enable_sphinx "docs"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} ) # Upstream lists up to 3.10
+PYTHON_COMPAT=( "python3_"{8..11} ) # Upstream lists up to 3.10
 
 inherit distutils-r1
 
@@ -24,10 +24,10 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
-DEPEND+="
-"
 RDEPEND+="
-	${DEPEND}
+"
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-python/setuptools-61.0[${PYTHON_USEDEP}]

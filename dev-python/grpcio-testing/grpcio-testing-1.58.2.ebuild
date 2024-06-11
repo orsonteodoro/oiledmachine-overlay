@@ -8,7 +8,7 @@ GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 "${PV}")
 PROTOBUF_SLOT="0/4.23"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit distutils-r1
 
@@ -31,5 +31,4 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	${RDEPEND}
 "

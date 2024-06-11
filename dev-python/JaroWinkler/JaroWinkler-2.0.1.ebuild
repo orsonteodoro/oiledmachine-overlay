@@ -9,7 +9,7 @@ EAPI=8
 MY_PN="${PN,,}"
 
 DISTUTILS_USE_SETUPTOOLS="bdepend"
-PYTHON_COMPAT=( python3_{8..12} )
+PYTHON_COMPAT=( "python3_"{8..12} )
 
 inherit distutils-r1 pypi
 
@@ -22,10 +22,10 @@ HOMEPAGE="https://github.com/maxbachmann/JaroWinkler"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
-DEPEND+="
-"
 RDEPEND+="
-	${DEPEND}
+"
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	(

@@ -5,17 +5,17 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10,11} )
+PYTHON_COMPAT=( "python3_"{10,11} )
 
 inherit distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	inherit git-r3
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${PN}-${PV}"
 	EGIT_REPO_URI="https://github.com/miguelgrinberg/Flask-HTTPAuth.git"
 	FALLBACK_COMMIT="4d01283dff804b6eb92961f3a5188031476861b2" # Apr 27, 2023
 	IUSE+=" fallback-commit"
+	inherit git-r3
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	SRC_URI="

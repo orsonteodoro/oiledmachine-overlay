@@ -21,11 +21,11 @@ LICENSE="MIT"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
-DEPEND+="
+RDEPEND+="
 	>=dev-python/pytest-${PYTEST_PV}[${PYTHON_USEDEP}]
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]

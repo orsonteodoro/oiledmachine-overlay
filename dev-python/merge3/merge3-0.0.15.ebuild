@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..12} pypy3 )
+PYTHON_COMPAT=( "python3_"{8..12} "pypy3" )
 
 inherit distutils-r1
 
@@ -43,7 +43,7 @@ BDEPEND+="
 		dev-util/ruff
 	)
 "
-DOCS=( AUTHORS COPYING README.rst )
+DOCS=( "AUTHORS" "COPYING" "README.rst" )
 
 unpack_live() {
 	if use fallback-commit ; then

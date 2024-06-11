@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="poetry"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1
 
@@ -36,15 +36,15 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
-DEPEND+="
+RDEPEND+="
 	>=dev-python/jinja-3.0[${PYTHON_USEDEP}]
 	>=dev-python/jsonschema-3.2[${PYTHON_USEDEP}]
 	>=dev-python/pyyaml-5.3[${PYTHON_USEDEP}]
 	>=dev-python/termcolor-1.1[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-python/pylint-2.13[${PYTHON_USEDEP}]

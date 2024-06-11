@@ -8,7 +8,7 @@ GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 ${PV})
 PROTOBUF_SLOT="0/4.25"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 flag-o-matic multiprocessing prefix
 
@@ -52,6 +52,8 @@ BDEPEND+="
 PATCHES=(
 )
 
+distutils_enable_sphinx "doc/python/sphinx"
+
 python_prepare_all() {
 	sed -i -e "s|-std=c++14|-std=c++17|g" setup.py || die
 	distutils-r1_python_prepare_all
@@ -92,5 +94,3 @@ python_configure_all() {
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_ENABLE_DOCUMENTATION_BUILD=$(usex doc "1" "0")
 }
-
-distutils_enable_sphinx "doc/python/sphinx"
