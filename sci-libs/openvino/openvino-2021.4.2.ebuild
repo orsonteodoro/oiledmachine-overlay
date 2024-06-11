@@ -618,7 +618,6 @@ src_install() {
 	rm -rf "${ED}/var"
 	gen_envd
 	fix_rpaths
-	einstalldocs
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
