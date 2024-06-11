@@ -5,11 +5,12 @@
 EAPI=8
 
 # TODO package:
-# sphinx-theme-builder (uses nodeenv with node18)
+# sphinx-theme-builder
 # sphinx-design
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{8..12} )
+NODE_VERSION="18"
 
 inherit distutils-r1
 
@@ -33,25 +34,28 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test"
+IUSE+=" doc test"
 RDEPEND+="
 	(
 		>=dev-python/sphinx-6.0[${PYTHON_USEDEP}]
 		<dev-python/sphinx-8[${PYTHON_USEDEP}]
 	)
+	>=dev-python/pygments-2.7[${PYTHON_USEDEP}]
 	dev-python/beautifulsoup4[${PYTHON_USEDEP}]
 	dev-python/sphinx-basic-ng[${PYTHON_USEDEP}]
-	dev-python/pygments[${PYTHON_USEDEP}]
 	dev-python/matplotlib[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/sphinx-theme-builder-0.2.0_alpha10[${PYTHON_USEDEP}]
+	(
+		>=dev-python/sphinx-theme-builder-0.2.0_alpha10[${PYTHON_USEDEP}]
+		=net-libs/nodejs-18*
+	)
 	doc? (
-		dev-python/furo[${PYTHON_USEDEP}]
 		dev-python/myst-parser[${PYTHON_USEDEP}]
+		dev-python/sphinx-copybutton[${PYTHON_USEDEP}]
 		dev-python/sphinx-design[${PYTHON_USEDEP}]
 		dev-python/sphinx-inline-tabs[${PYTHON_USEDEP}]
 		dev-python/sphinx-tabs[${PYTHON_USEDEP}]
@@ -60,6 +64,10 @@ BDEPEND+="
 DOCS=( "CHANGELOG.md" "docs/index.md" "README.md" )
 
 distutils_enable_sphinx "docs"
+
+pkg_setup() {
+	npm_pkg_setup
+}
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
