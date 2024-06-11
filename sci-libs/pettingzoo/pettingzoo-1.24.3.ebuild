@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO ebuild-package needs to be created:
-# celshast
 # pytest-markdown-docs
 
 DISTUTILS_USE_PEP517="setuptools"
