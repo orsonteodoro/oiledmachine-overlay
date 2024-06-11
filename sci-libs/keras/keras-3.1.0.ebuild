@@ -68,6 +68,7 @@ RDEPEND="
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/rich[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
+	sci-libs/dm-tree[${PYTHON_USEDEP}]
 	sci-libs/ml_dtypes[${PYTHON_USEDEP}]
 "
 DEPEND="
@@ -77,9 +78,7 @@ DEPEND="
 BDEPEND="
 	app-arch/unzip
 	dev-java/java-config
-	dev-libs/protobuf:${PROTOBUF_SLOT}
 	dev-python/build[${PYTHON_USEDEP}]
-	sci-libs/dm-tree[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/black-22[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]

@@ -67,7 +67,6 @@ BDEPEND="
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 	app-arch/unzip
 	dev-java/java-config
-	dev-libs/protobuf:${PROTOBUF_SLOT}
 	test? (
 		>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
 		>=dev-python/flake8-4.0.1[${PYTHON_USEDEP}]
