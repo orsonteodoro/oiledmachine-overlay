@@ -7,7 +7,7 @@ EAPI=8
 # U 22.04
 # Some versions are from CI
 
-# TODO: package:
+# TODO package:
 # sphinx_reredirects
 # sphinx-favicon
 # sphinx-toolbox

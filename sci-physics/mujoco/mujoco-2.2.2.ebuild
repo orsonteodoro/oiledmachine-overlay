@@ -6,7 +6,7 @@ EAPI=8
 
 # U 22.04
 
-# TODO: package:
+# TODO package:
 # dev-python/pandoc
 # sphinxcontrib-katex
 # sphinxcontrib-youtube
