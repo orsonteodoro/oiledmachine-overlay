@@ -11,7 +11,7 @@ inherit distutils-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
-	EGIT_BRANCH="main"
+	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/Ignas/nose_xunitmp.git"
 	FALLBACK_COMMIT="ecfe6d9a0664d7191d42c04f8a864c0fc21c10e2" # Jan 30, 2019
