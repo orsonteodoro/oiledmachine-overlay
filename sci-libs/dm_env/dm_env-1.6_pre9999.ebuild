@@ -4,8 +4,6 @@
 
 EAPI=8
 
-MY_PN="${PN/-/_}"
-
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_10" )
 
@@ -15,7 +13,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 	EGIT_REPO_URI="https://github.com/deepmind/dm_env.git"
 	EGIT_BRANCH="master"
-	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_PN}-${PV}"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${PN}-${PV}"
 	FALLBACK_COMMIT="91b46797fea731f80eab8cd2c8352a0674141d89" # Dec 22, 2022
 	inherit git-r3
 else
@@ -25,7 +23,7 @@ https://github.com/deepmind/dm_env/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
-S="${WORKDIR}/${MY_PN}-${PV}"
+S="${WORKDIR}/${PN}-${PV}"
 
 DESCRIPTION="A Python interface for reinforcement learning environments"
 HOMEPAGE="https://github.com/deepmind/dm_env"

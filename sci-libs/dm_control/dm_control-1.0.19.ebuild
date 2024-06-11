@@ -46,8 +46,8 @@ DEPEND+="
 	>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
 	>=dev-python/scipy-1.13.0[${PYTHON_USEDEP}]
 	>=dev-python/tqdm-4.66.4[${PYTHON_USEDEP}]
-	>=sci-libs/dm-env-1.6[${PYTHON_USEDEP}]
 	>=sci-libs/dm-tree-0.1.8[${PYTHON_USEDEP}]
+	>=sci-libs/dm_env-1.6[${PYTHON_USEDEP}]
 	>=sci-libs/labmaze-1.0.6[${PYTHON_USEDEP}]
 	hdf5? (
 		>=dev-python/h5py-3.11.0[${PYTHON_USEDEP}]
