@@ -5,18 +5,18 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit distutils-r1
 
 if [[ ${PV} =~ "9999" ]] ; then
-	inherit git-r3
 	IUSE+=" fallback-commit"
 	EGIT_BRANCH="master"
 	EGIT_COMMIT="HEAD"
 	EGIT_OVERRIDE_REPO_GIT_GITHUB_COM_VIBLO_CHIPMUNK2D="https://github.com/viblo/Chipmunk2D.git"
 	EGIT_REPO_URI="https://github.com/viblo/pymunk.git"
-	FALLBACK_COMMIT="ffdf84c124a77e1cc3226b4da4ab742505171b0d" # May 10, 2024
+	FALLBACK_COMMIT="b56e6de2130095b7596d30a0cf3d39db246bda57" # Jun 5, 2024
+	inherit git-r3
 else
 	CHIPMUNK2D_COMMIT="7a29dcfa49931f26632f3019582f289ba811a2b9" # May 9, 2024
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
@@ -73,6 +73,8 @@ BDEPEND+="
 "
 DOCS=( "CHANGELOG.rst" "CITATION.cff" "THANKS.txt" "README.rst" )
 
+distutils_enable_sphinx "docs"
+
 src_unpack() {
 	if [[ ${PV} =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -106,7 +108,5 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE.txt"
 }
-
-distutils_enable_sphinx "docs"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
