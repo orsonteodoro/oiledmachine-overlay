@@ -797,6 +797,9 @@ LICENSE_REQUIRED_USE="
 			apache2_0
 		)
 	)
+	openvino? (
+		apache2_0
+	)
 	postproc? (
 		$(gen_relicense gpl2x)
 		$(gen_relicense lgpl2_1x)
