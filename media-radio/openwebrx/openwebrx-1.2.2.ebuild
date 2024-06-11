@@ -81,8 +81,8 @@ REQUIRED_USE+="
 "
 DIGIHAM_DEPEND="
 	(
-		>=dev-python/pydigiham-0.6.2[${PYTHON_USEDEP}]
 		>=media-radio/digiham-0.6.2
+		>=media-radio/pydigiham-0.6.2[${PYTHON_USEDEP}]
 	)
 "
 OWRX_CONNECTOR_DEPEND="
@@ -150,8 +150,8 @@ RDEPEND+="
 	$(gen_soapy_depends)
 	${RDEPEND_UNPACKAGED}
 	(
-		>=dev-python/pycsdr-0.18.2[${PYTHON_USEDEP}]
 		>=media-radio/csdr-0.18.2
+		>=media-radio/pycsdr-0.18.2[${PYTHON_USEDEP}]
 	)
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	digital_voice_digiham? (

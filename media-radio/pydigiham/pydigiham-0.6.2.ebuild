@@ -29,8 +29,8 @@ RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 DEPEND+="
-	>=dev-python/pycsdr-0.18[${PYTHON_USEDEP}]
 	>=media-radio/digiham-0.6:${SLOT}
+	>=media-radio/pycsdr-0.18[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${DEPEND}
