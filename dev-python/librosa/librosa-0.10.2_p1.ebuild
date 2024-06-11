@@ -7,7 +7,6 @@ EAPI=8
 # TODO package:
 # mir_eval
 # presets
-# Python-SoXR
 # resampy
 # sphinxcontrib-svg2pdfconverter
 # types-decorator
