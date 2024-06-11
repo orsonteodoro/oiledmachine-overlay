@@ -9,7 +9,6 @@ EAPI=8
 # fsspec
 # gcsfs
 # mediapy
-# optree
 # pyink
 # simple_parsing
 # sphinx-apitree (missing for doc)
