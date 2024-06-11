@@ -66,13 +66,13 @@ else
 fi
 RDEPEND+="
 	>=dev-python/google-api-python-client-1.6.7[${PYTHON_USEDEP}]
-	>=dev-python/kaggle-1.3.9[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
 	>=dev-python/pandas-0.22.0[${PYTHON_USEDEP}]
 	>=dev-python/psutil-5.4.3[${PYTHON_USEDEP}]
 	>=dev-python/py-cpuinfo-3.3.0[${PYTHON_USEDEP}]
 	>=dev-python/scipy-0.19.1[${PYTHON_USEDEP}]
 	>=dev-python/tf_slim-1.1.0[${PYTHON_USEDEP}]
+	>=sci-libs/kaggle-1.3.9[${PYTHON_USEDEP}]
 	>=sci-libs/tensorflow-hub-0.6.0[${PYTHON_USEDEP}]
 	>=sci-libs/tensorflow-model-optimization-0.4.1[${PYTHON_USEDEP}]
 	dev-python/cython[${PYTHON_USEDEP}]
