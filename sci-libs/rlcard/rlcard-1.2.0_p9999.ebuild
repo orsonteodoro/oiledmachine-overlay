@@ -102,7 +102,6 @@ src_install() {
 	dodoc "LICENSE.md"
 	docinto docs
 	dodoc -r docs/*
-	einstalldocs
 }
 
 src_test() {
