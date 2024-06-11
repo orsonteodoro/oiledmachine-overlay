@@ -1,0 +1,175 @@
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+# TODO package:
+# optree
+# portpicker
+# tensorboard-plugin-profile
+
+PYTHON_COMPAT=( "python3_"{9..11} )
+TENSORFLOW_PV="2.16.1"
+
+inherit distutils-r1
+
+SRC_URI="
+https://github.com/keras-team/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
+"
+
+DESCRIPTION="Deep Learning for humans"
+HOMEPAGE="
+https://keras.io/
+https://github.com/keras-team/keras
+"
+LICENSE="Apache-2.0"
+# Bazel tests not pytest, also want GPU access
+RESTRICT=""
+SLOT="0"
+KEYWORDS="~amd64"
+IUSE=" cpu cuda jax pytorch tensorflow test r2"
+REQUIRED_USE="
+	cpu? (
+		jax
+		pytorch
+		tensorflow
+	)
+"
+# https://github.com/keras-team/keras/blob/v3.1.0/requirements.txt
+# https://github.com/keras-team/keras/blob/v3.1.0/WORKSPACE
+PROTOBUF_PV="3.21.9" # From WORKSPACE which differs from requirements.txt
+PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
+# TODO: Fix sci-libs/keras-applications, sci-libs/keras-preprocessing
+# These have moved in this package.
+#	>=sci-libs/keras-applications-1.0.8[${PYTHON_USEDEP}]
+#	>=sci-libs/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
+RDEPEND="
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/numpy-1.23.5[${PYTHON_USEDEP}]
+			<dev-python/numpy-2[${PYTHON_USEDEP}]
+		)
+	' python3_{10,11})
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
+			<dev-python/numpy-2[${PYTHON_USEDEP}]
+		)
+	' python3_12)
+	>=sci-libs/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP},python]
+	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
+	>=dev-python/namex-0.0.8[${PYTHON_USEDEP}]
+	>=sys-libs/zlib-1.2.13
+	dev-libs/protobuf:${PROTOBUF_SLOT}
+	dev-python/absl-py[${PYTHON_USEDEP}]
+	dev-python/h5py[${PYTHON_USEDEP}]
+	dev-python/pandas[${PYTHON_USEDEP}]
+	dev-python/pillow[${PYTHON_USEDEP}]
+	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	dev-python/pydot[${PYTHON_USEDEP}]
+	dev-python/pyyaml[${PYTHON_USEDEP}]
+	dev-python/requests[${PYTHON_USEDEP}]
+	dev-python/rich[${PYTHON_USEDEP}]
+	dev-python/scipy[${PYTHON_USEDEP}]
+	sci-libs/ml_dtypes[${PYTHON_USEDEP}]
+	sci-libs/optree[${PYTHON_USEDEP}]
+"
+DEPEND="
+	${RDEPEND}
+	dev-python/setuptools[${PYTHON_USEDEP}]
+"
+BDEPEND="
+	app-arch/unzip
+	dev-java/java-config
+	dev-python/build[${PYTHON_USEDEP}]
+	test? (
+		>=dev-python/black-22[${PYTHON_USEDEP}]
+		dev-python/flake8[${PYTHON_USEDEP}]
+		dev-python/isort[${PYTHON_USEDEP}]
+		dev-python/portpicker[${PYTHON_USEDEP}]
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/pytest-cov[${PYTHON_USEDEP}]
+	)
+"
+# Possible circular depends:
+# Upstream uses jax-0.4.23 for cuda but we corrected for >=jax-0.4.26 for cuda12
+# =dev-util/nvidia-cuda-toolkit-12* required for some USE flags.
+# temp removed cuda from cuda? ( pytorch? (...) ) due to lack of >=cuda-12.3 support-release in project
+PDEPEND="
+	cpu? (
+		jax? (
+			sci-libs/jax[${PYTHON_USEDEP}]
+		)
+		pytorch? (
+			$(python_gen_any_dep '
+				>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
+			')
+			>=sci-libs/pytorch-2.1.0[${PYTHON_USEDEP}]
+		)
+		tensorflow? (
+			>=sci-libs/tensorflow-${TENSORFLOW_PV}
+		)
+	)
+	cuda? (
+		jax? (
+			>=sci-libs/jax-0.4.26[${PYTHON_USEDEP},cuda]
+			test? (
+				$(python_gen_any_dep '
+					>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
+				')
+				(
+					>=sci-libs/pytorch-2.1.0[${PYTHON_USEDEP}]
+					<sci-libs/pytorch-2.3.0[${PYTHON_USEDEP}]
+				)
+				>=sci-libs/tensorflow-${TENSORFLOW_PV}
+			)
+		)
+		tensorflow? (
+			>=sci-libs/tensorflow-${TENSORFLOW_PV}[cuda]
+			test? (
+				$(python_gen_any_dep '
+					>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
+				')
+				(
+					>=sci-libs/pytorch-2.1.0[${PYTHON_USEDEP}]
+					<sci-libs/pytorch-2.3.0[${PYTHON_USEDEP}]
+				)
+				sci-libs/jax[${PYTHON_USEDEP},cpu]
+			)
+		)
+		pytorch? (
+			$(python_gen_any_dep '
+				>=sci-libs/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP}]
+			')
+			>=sci-libs/pytorch-2.2.1[${PYTHON_USEDEP}]
+			test? (
+				>=sci-libs/tensorflow-${TENSORFLOW_PV}
+				sci-libs/jax[${PYTHON_USEDEP},cpu]
+			)
+		)
+	)
+"
+DOCS=( "README.md" )
+PATCHES=(
+)
+
+src_unpack() {
+	unpack "${P}.tar.gz"
+}
+
+src_prepare() {
+	default
+	python_copy_sources
+}
+
+python_compile() {
+	export JAVA_HOME=$(java-config --jre-home)
+	distutils-r1_python_compile
+}
+
+python_install() {
+	pushd "${WORKDIR}/${P}-${EPYTHON/./_}" >/dev/null 2>&1 || die
+		esetup.py install
+		python_optimize
+	popd >/dev/null 2>&1 || die
+}

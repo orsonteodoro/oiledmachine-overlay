@@ -3,7 +3,10 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..11} )
+# TODO package:
+# portpicker
+
+PYTHON_COMPAT=( "python3_"{9..11} )
 
 inherit bazel distutils-r1
 
@@ -27,6 +30,8 @@ https://keras.io/
 https://github.com/keras-team/keras
 "
 LICENSE="Apache-2.0"
+# Bazel tests not pytest, also want GPU access
+RESTRICT=""
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=" test r2"
@@ -39,8 +44,6 @@ PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
 # These have moved in this package.
 #	>=sci-libs/keras-applications-1.0.8[${PYTHON_USEDEP}]
 #	>=sci-libs/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
-# TODO: package
-# portpicker
 RDEPEND="
 	(
 		>=dev-python/numpy-1.24.3[${PYTHON_USEDEP}]
@@ -74,9 +77,7 @@ BDEPEND="
 		dev-python/portpicker[${PYTHON_USEDEP}]
 	)
 "
-# Bazel tests not pytest, also want GPU access
-RESTRICT=""
-DOCS=( CONTRIBUTING.md README.md )
+DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/keras-2.12.0-0001-bazel-Use-system-protobuf.patch"
 )

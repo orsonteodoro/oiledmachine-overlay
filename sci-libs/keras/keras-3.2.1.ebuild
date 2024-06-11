@@ -3,7 +3,12 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..11} )
+# TODO package:
+# optree
+# portpicker
+# tensorboard-plugin-profile
+
+PYTHON_COMPAT=( "python3_"{9..11} )
 TENSORFLOW_PV="2.16.1"
 
 inherit distutils-r1
@@ -18,6 +23,8 @@ https://keras.io/
 https://github.com/keras-team/keras
 "
 LICENSE="Apache-2.0"
+# Bazel tests not pytest, also want GPU access
+RESTRICT=""
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=" cpu cuda jax pytorch tensorflow test r2"
@@ -36,10 +43,6 @@ PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
 # These have moved in this package.
 #	>=sci-libs/keras-applications-1.0.8[${PYTHON_USEDEP}]
 #	>=sci-libs/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
-# TODO: package
-# namex
-# portpicker
-# tensorboard-plugin-profile
 RDEPEND="
 	$(python_gen_cond_dep '
 		(
@@ -68,8 +71,8 @@ RDEPEND="
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/rich[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
-	sci-libs/dm-tree[${PYTHON_USEDEP}]
 	sci-libs/ml_dtypes[${PYTHON_USEDEP}]
+	sci-libs/optree[${PYTHON_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
@@ -91,22 +94,6 @@ BDEPEND="
 # Possible circular depends:
 # Upstream uses jax-0.4.23 for cuda but we corrected for >=jax-0.4.26 for cuda12
 # =dev-util/nvidia-cuda-toolkit-12* required for some USE flags.
-
-PDEPEND_WITH_CUDA="
-	cuda? (
-		pytorch? (
-			$(python_gen_any_dep '
-				>=sci-libs/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP},cuda?]
-			')
-			>=sci-libs/pytorch-2.2.1[${PYTHON_USEDEP},cuda]
-			test? (
-				>=sci-libs/tensorflow-${TENSORFLOW_PV}
-				sci-libs/jax[${PYTHON_USEDEP}]
-			)
-		)
-	)
-"
-
 # temp removed cuda from cuda? ( pytorch? (...) ) due to lack of >=cuda-12.3 support-release in project
 PDEPEND="
 	cpu? (
@@ -132,6 +119,7 @@ PDEPEND="
 				')
 				>=sci-libs/pytorch-2.1.0[${PYTHON_USEDEP}]
 				>=sci-libs/tensorflow-${TENSORFLOW_PV}
+				sci-libs/flax
 			)
 		)
 		tensorflow? (
@@ -141,7 +129,7 @@ PDEPEND="
 					>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
 				')
 				>=sci-libs/pytorch-2.1.0[${PYTHON_USEDEP}]
-				sci-libs/jax[${PYTHON_USEDEP}]
+				sci-libs/jax[${PYTHON_USEDEP},cpu]
 			)
 		)
 		pytorch? (
@@ -151,14 +139,12 @@ PDEPEND="
 			>=sci-libs/pytorch-2.2.1[${PYTHON_USEDEP}]
 			test? (
 				>=sci-libs/tensorflow-${TENSORFLOW_PV}
-				sci-libs/jax[${PYTHON_USEDEP}]
+				sci-libs/jax[${PYTHON_USEDEP},cpu]
 			)
 		)
 	)
 "
-# Bazel tests not pytest, also want GPU access
-RESTRICT=""
-DOCS=( CONTRIBUTING.md README.md )
+DOCS=( "README.md" )
 PATCHES=(
 )
 
