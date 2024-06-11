@@ -7,7 +7,6 @@ EAPI=8
 # U22
 
 # TODO packaging:
-# labmaze
 # nose-xunitmp
 
 DISTUTILS_USE_PEP517="setuptools"
@@ -37,7 +36,6 @@ ebuild-revision-1
 
 DEPEND+="
 	>=dev-python/absl-py-2.1.0[${PYTHON_USEDEP}]
-	>=dev-python/labmaze-1.0.6[${PYTHON_USEDEP}]
 	>=dev-python/lxml-5.2.1[${PYTHON_USEDEP}]
 	>=dev-python/mujoco-3.1.5[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
@@ -50,6 +48,7 @@ DEPEND+="
 	>=dev-python/tqdm-4.66.4[${PYTHON_USEDEP}]
 	>=sci-libs/dm-env-1.6[${PYTHON_USEDEP}]
 	>=sci-libs/dm-tree-0.1.8[${PYTHON_USEDEP}]
+	>=sci-libs/labmaze-1.0.6[${PYTHON_USEDEP}]
 	hdf5? (
 		>=dev-python/h5py-3.11.0[${PYTHON_USEDEP}]
 	)
