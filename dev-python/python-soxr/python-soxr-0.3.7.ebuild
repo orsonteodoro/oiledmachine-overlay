@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="Python-SoXR"
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -42,7 +43,10 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc system-soxr test"
+IUSE+="
+doc system-soxr test
+ebuild-revision-1
+"
 RDEPEND+="
 	dev-python/numpy[${PYTHON_USEDEP}]
 	system-soxr? (
