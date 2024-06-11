@@ -49,7 +49,7 @@ BDEPEND+="
         >=dev-python/wheel-0.32.0[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/sphinx-4.3.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinx_rtd_theme-1.0.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-rtd-theme-1.0.0[${PYTHON_USEDEP}]
 	)
 "
 

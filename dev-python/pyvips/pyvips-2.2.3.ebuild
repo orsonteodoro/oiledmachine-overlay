@@ -35,7 +35,7 @@ BDEPEND+="
 	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
 		dev-python/sphinx[${PYTHON_USEDEP}]
-		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
+		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
 	)
 	test? (
 		dev-python/pyperf[${PYTHON_USEDEP}]

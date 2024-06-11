@@ -54,7 +54,7 @@ BDEPEND+="
 		>=dev-python/myst-nb-0.13.1[${PYTHON_USEDEP}]
 		>=dev-python/pandoc-1.0.2[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinx_rtd_theme-1.0.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-rtd-theme-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinxcontrib-katex-0.8.6[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-autodoc-typehints-1.11.1[${PYTHON_USEDEP}]
 	)

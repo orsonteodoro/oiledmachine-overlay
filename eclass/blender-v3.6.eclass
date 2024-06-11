@@ -1023,7 +1023,7 @@ BDEPEND+="
 	doc? (
 		$(python_gen_cond_dep '
 			>=dev-python/sphinx-3.3.1[${PYTHON_USEDEP},latex]
-			>=dev-python/sphinx_rtd_theme-0.5.0[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-rtd-theme-0.5.0[${PYTHON_USEDEP}]
 		' 'python*')
 		app-text/doxygen[dot]
 		dev-texlive/texlive-bibtexextra

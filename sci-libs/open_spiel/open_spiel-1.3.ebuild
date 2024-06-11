@@ -104,7 +104,7 @@ BDEPEND+="
 		>=dev-python/sphinx-5.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-markdown-tables-0.0.17[${PYTHON_USEDEP}]
 		dev-python/recommonmark[${PYTHON_USEDEP}]
-		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
+		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
 	)
 	test? (
 		dev-python/nox[${PYTHON_USEDEP}]

@@ -38,7 +38,7 @@ BDEPEND+="
 	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/sphinx-7.1.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinx_rtd_theme-2.0.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-rtd-theme-2.0.0[${PYTHON_USEDEP}]
 	)
 	test? (
 		<dev-python/pytest-mock-3.12.0[${PYTHON_USEDEP}]

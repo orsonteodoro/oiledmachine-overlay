@@ -84,7 +84,7 @@ BDEPEND+="
 	doc? (
 		<dev-python/numpydoc-2[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-3.4.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinx_rtd_theme-0.5.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-rtd-theme-0.5.1[${PYTHON_USEDEP}]
 	)
 	lint? (
 		$(python_gen_any_dep '

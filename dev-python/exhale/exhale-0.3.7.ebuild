@@ -47,7 +47,7 @@ BDEPEND+="
 	dev-python/wheel
 	doc? (
 		>=dev-python/sphinx-${SPHINX_PV}[${PYTHON_USEDEP}]
-		>=dev-python/sphinx_rtd_theme-1.0.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-rtd-theme-1.0.0[${PYTHON_USEDEP}]
 		dev-python/sphinx-issues[${PYTHON_USEDEP}]
 	)
 	test? (

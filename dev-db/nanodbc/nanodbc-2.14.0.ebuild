@@ -43,7 +43,7 @@ DEPEND_SPHINX="
 		<dev-python/breathe-4.29.1[${PYTHON_USEDEP}]
 		dev-python/rstcheck[${PYTHON_USEDEP}]
 		dev-python/sphinx[${PYTHON_USEDEP}]
-		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
+		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
 	')
 "
 BDEPEND+="
