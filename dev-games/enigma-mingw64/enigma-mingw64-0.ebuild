@@ -61,7 +61,7 @@ RDEPEND="
 	>=sys-libs/zlib-${ZLIB_PV}
 	box2d? (
 		|| (
-			<dev-games/box2d-${BOX2D_PV_EMAX}:2.3
+			<games-engines/box2d-${BOX2D_PV_EMAX}:2.3
 			<games-engines/box2d-${BOX2D_PV_EMAX}:2.3.0
 		)
 	)
@@ -118,7 +118,6 @@ verify_libs_abi() {
 	arch="${arch%%-*}"
 	local packages=(
 		"dev-cpp/gtest"
-		"dev-games/box2d"
 		"dev-libs/libffi"
 		"games-engines/box2d"
 		"media-libs/alure"

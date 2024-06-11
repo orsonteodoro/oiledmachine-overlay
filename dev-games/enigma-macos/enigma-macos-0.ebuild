@@ -63,7 +63,7 @@ RDEPEND="
 	sys-devel/osxcross
 	box2d? (
 		|| (
-			<dev-games/box2d-${BOX2D_PV_EMAX}:2.3
+			<games-engines/box2d-${BOX2D_PV_EMAX}:2.3
 			<games-engines/box2d-${BOX2D_PV_EMAX}:2.3.0
 		)
 	)

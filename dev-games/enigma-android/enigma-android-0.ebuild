@@ -59,7 +59,7 @@ RDEPEND="
 	dev-util/android-ndk
 	box2d? (
 		|| (
-			<dev-games/box2d-${BOX2D_PV_EMAX}:2.3
+			<games-engines/box2d-${BOX2D_PV_EMAX}:2.3
 			<games-engines/box2d-${BOX2D_PV_EMAX}:2.3.0
 		)
 	)
@@ -120,7 +120,6 @@ verify_libs_abi() {
 
 	local packages=(
 		"dev-cpp/gtest"
-		"dev-games/box2d"
 		"games-engines/box2d"
 		"media-libs/flac"
 		"media-libs/freetype"

@@ -145,7 +145,7 @@ dependency's source code was deleted.
 Some of the ebuilds in this repo contain improved comprehensive information
 describing USE flags, developer API documentation info, or special per-package
 environmental variables that improve the build process that can be found in
-the metadata.xml, or obtainable through `epkginfo -x =dev-games/box2d-2.4.1-r2`
+the metadata.xml, or obtainable through `epkginfo -x =games-engines/box2d-2.4.1-r2`
 for example.  Some of that information is only obtained by inspecting the
 comments of that file.  See `epkginfo --help` for details.
 
@@ -321,12 +321,12 @@ in the metadata.xml.
 * dev-db/sqlite (pgo, bolt)
 * dev-db/mariadb (pgo?, bolt?)
 * dev-db/mysql (pgo, bolt)
-* dev-games/box2d (pgo, bolt)
 * dev-lang/ispc (pgo, bolt)
 * dev-lang/lua (pgo, bolt)
 * dev-lang/mono (pgo)
 * dev-lang/php (pgo, bolt)
 * dev-libs/jemalloc (pgo, bolt)
+* games-engines/box2d (pgo, bolt)
 * media-libs/embree (pgo, bolt?)
 * media-libs/libaom (pgo, bolt?)
 * media-libs/libjpeg-turbo (pgo, bolt)
@@ -684,7 +684,6 @@ should be a bash script.
 | dev-dotnet/tesseract | This is a C# binding to the Tesseract OCR (Optical Character Recognition) software which will allow your program to read material produced by typewriters and from books. |
 | dev-dotnet/tiledsharp | This library is a map loader in C# for the Tiled Map Editor. |
 | dev-dotnet/xwt | TBA |
-| dev-games/box2d | Box2D is used for realistic 2D game physics.  This contains multilib and static-libs support. |
 | dev-games/enigma | Enigma is a Game Development environment that is similar to GameMaker.  More information can be found in https://enigma-dev.org/docs/Wiki/ENIGMA .  Basically LateralGM is the Level Editor like GameMaker's and ENIGMA is a toolchain and collection of projects.  ENIGMA will compile scripting portion of EDL which is the counterpart to GML with C++.  LateralGM is written in Java and ENIGMA is written in C++.  ENIGMA is a plugin that plugs into LateralGM.  EDL is mostly backwards compatibile with GMK scripting language.  It is GPL-3 licensed. <br /><br /> Currently compiling by command line is broken.  You must use LateralGM to build your ENIGMA game.  I am currently trying to fix this. |
 | dev-games/radialgm | Another frontend for ENIGMA written in Qt/C++ providing for more native desktop feel but in development.  This is basically the level editor and action editor for drag-and-drop game AI programming. |
 | dev-games/gdevelop | This is a game development software using Electron or web browser as the IDE to produce HTML5 games. |
@@ -723,7 +722,7 @@ should be a bash script.
 | dev-util/ycm-generator | You need this if you want C, C++, ObjC, ObjC++ support with your ycmd client.  It is mandatory for those languages. |
 | dev-util/ycmd | This is a YouCompleteMe server.  Just add your ycmd client to your text editor then you have code completion support.  The 2014 ebuild is for older clients.  The 2017 ebuilds require clients use the new HMAC header calculation.  It supports C#, C, C++, Objective C, Objective C++, Rust, Go, JavaScript, TypeScript, Python.  If you use the `javascript` or `typescript` USE flag, then you need to add the jm-overlay to pull in the dev-nodejs packages. |
 | dev-vcs/breezy | This is a Bazaar client in Python v3. |
-| liri-base/liri-meta | This is the meta package for installing the Liri desktop environment. |
+| games-engines/box2d | Box2D is used for realistic 2D game physics.  This contains multilib and static-libs support. |
 | media-fonts/noto-color-emoji-bin | This one has been precompiled containing old or new emoji aesthetic as in round or jellybean style.  `emerge noto-color-emoji-config` to apply emojis as default. |
 | media-fonts/noto-color-emoji-config | This package will apply fontconfig fixes to firefox, google chrome, etc systemwide.  You can use Gentoo's noto-emoji package instead of the one on this overlay. |
 | media-gfx/blender | This ebuild was fork and was designed to be multislotted and comprehensive to match the feature enablement upstream.  Use the `virtual/blender-lts` or `virtual/blender-stable` to choose the update path. |

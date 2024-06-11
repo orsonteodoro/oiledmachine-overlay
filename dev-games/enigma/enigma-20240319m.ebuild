@@ -268,7 +268,7 @@ DEPEND+="
 	)
 	box2d? (
 		|| (
-			<dev-games/box2d-2.4:2.3[${MULTILIB_USEDEP}]
+			<games-engines/box2d-2.4:2.3[${MULTILIB_USEDEP}]
 			<games-engines/box2d-2.4:2.3.0[${MULTILIB_USEDEP}]
 		)
 	)

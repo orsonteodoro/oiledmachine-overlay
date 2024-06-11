@@ -1,11 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <maintainer type="person">
+  <maintainer>
+    <!-- only for this ebuild fork on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    This ebuild is to maintain compatibility with distro and community ebuilds.
+    This ebuild fork focuses on multilib and both dynamic and static library builds.
+
+    Only the latest of the major.minor will be tracked.
+
+
+    The following are required for PGO training:
+
+    1. PID sandbox off
+    2. xhost +local:root:
+    3. TRAIN_DISPLAY is set if not using :0 as GPU accelerated X server.
+    4. emerge in X.
+    5. When done,  xhost-local:root:
+
+
+    Environment variables:
+
+      TRAIN_DISPLAY - the X display to run the PGO/BOLT training.
+      It must have GPU accelerated OpenGL support.
+
+      BOX2D_TRAIN_WIDTH - screen width (default:  1920)
+
+      BOX2D_TRAIN_HEIGHT - screen height (default:  1080)
+
+
+    Details about customizing BOLT or PGO training can be found in
+
+      https://github.com/orsonteodoro/oiledmachine-overlay#pgo-packages
+
   </longdescription>
+  <upstream>
+    <doc lang="en">https://box2d.org/documentation</doc>
+    <remote-id type="github">erincatto/Box2D</remote-id>
+  </upstream>
+  <use>
+    <flag name="bolt">
+      3 step BOLT
+    </flag>
+    <flag name="doc">
+      Installs docx and image documentation.
+    </flag>
+    <flag name="ebolt">
+      1 step BOLT
+    </flag>
+    <flag name="epgo">
+      1 step PGO
+    </flag>
+    <flag name="examples">
+      Installs compiled testbed and hello world source code
+    </flag>
+    <flag name="pgo">
+      3 step PGO
+    </flag>
+    <flag name="test">
+      Runs unit tests or hello world example
+    </flag>
+    <flag name="rN">
+      Bumps the ebuild revision (INTERNAL USE ONLY)
+    </flag>
+  </use>
 </pkgmetadata>
