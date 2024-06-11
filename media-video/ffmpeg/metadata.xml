@@ -672,6 +672,14 @@
     Enables <pkg>dev-libs/openssl</pkg> support. Adds support for encrypted
     network protocols (TLS/HTTPS).
   </flag>
+  <flag name="openvino">
+    Support openvino with the dnn_processing filter.
+
+    Models must be provided in .xml format.
+
+    To convert models from TensorFlow (.pb) to OpenVINO™ (.xml), see
+    https://github.com/FFmpeg/FFmpeg/commit/9bcf2aa47756c253238903f3e5ef6c96d927cfe6
+  </flag>
   <flag name="pic">
     Force shared libraries to be built as PIC (this is slower)
   </flag>
@@ -787,7 +795,10 @@
     RISC-V).
   </flag>
   <flag name="sr">
-    Generate sr (super-resolution) training models.
+    Generate or use prebuilt sr (super-resolution) training models.
+
+    For the sr filter, SCRNN and ESPCN are only supported with .pb tensorflow
+    files.
   </flag>
   <flag name="srt">
     Enable support for Secure Reliable Transport (SRT) via <pkg>net-libs/srt</pkg>
@@ -799,17 +810,15 @@
     Build with stack smashing protection
   </flag>
   <flag name="tensorflow">
-    Enable use of AI based TensorFlow library for sr (super-resolution) AI
-    upscaling filter, but requires you to provide AI models.  Using SR will
-    improve the image quality of low resolution images/videos.  The models in
-    the examples are in .pb format.
+    Enable use of AI based TensorFlow library for sr (super-resolution) or
+    in dnn_processing filter.
 
-    It also allows to use it with the dnn_processing filter and derain filter.
+    Both sr and dnn_processing require you provide AI models in .pb format.
+    
+    Using the SR filter will improve the image quality of low resolution
+    images/videos.
 
-    Enabling it will prefer the optimized multicore + GPU version.
-    Disabling it will prefer the single threaded native version.
-
-    Requires 4.4.x series.
+    SR requires the 4.4.x series.
 
     See also
     https://ffmpeg.org/ffmpeg-filters.html#sr-1
@@ -818,6 +827,8 @@
   <flag name="torch">
     Use pytorch as a backend for dnn_processing filter for image processing for
     the derain filter.
+
+    You may use models in the .pt format.
 
     See also
     https://ffmpeg.org/ffmpeg-filters.html#dnn_005fprocessing-1

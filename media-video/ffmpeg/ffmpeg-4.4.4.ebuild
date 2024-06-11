@@ -475,8 +475,8 @@ ${FFTOOLS[@]/#/+fftools_}
 ${LICENSE_USE[@]}
 ${TRAINERS[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
-jack-audio-connection-kit jack2 liblensfun mold opencl-icd-loader oss pgo +pic
-pipewire proprietary-codecs proprietary-codecs-disable
+jack-audio-connection-kit jack2 liblensfun mold opencl-icd-loader openvino oss
+pgo +pic pipewire proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 +re-codecs sndio sr static-libs tensorflow test v4l wayland
 
@@ -1246,6 +1246,10 @@ RDEPEND+="
 		apache2_0? (
 			>=dev-libs/openssl-3.0.0_beta2:0=[${MULTILIB_USEDEP}]
 		)
+	)
+	openvino? (
+		>=sci-libs/openvino-2020.1
+		<sci-libs/openvino-2022
 	)
 	opus? (
 		>=media-libs/opus-1.0.2-r2[${MULTILIB_USEDEP}]
@@ -2208,6 +2212,28 @@ eerror
 	if use openssl ; then
 		myconf+=(
 			--disable-gnutls
+		)
+	fi
+
+	if use openvino && multilib_is_native_abi ; then
+		local arch
+		if [[ "${ABI}" == "amd64" ]] ; then
+			arch="intel64"
+		elif [[ "${ABI}" == "x86" ]] ; then
+			arch="ia32"
+		elif [[ "${ABI}" == "arm" ]] ; then
+			arch="arm"
+		elif [[ "${ABI}" == "arm64" ]] ; then
+			arch="arm64"
+		fi
+		myconf+=(
+			--extra-cflags="-I/usr/lib64/openvino/deployment_tools/inference_engine/include"
+			--extra-ldflags="-L/usr/$(get_libdir)/openvino/deployment_tools/inference_engine/lib/${arch}"
+			$(use_enable openvino libopenvino)
+		)
+	else
+		myconf+=(
+			--disable-libopenvino
 		)
 	fi
 

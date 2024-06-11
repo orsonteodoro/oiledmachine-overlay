@@ -88,3 +88,6 @@ sci-libs/jaxlib clang
 
 # Runtime segmentation fault.  Use 4.4.4
 >=media-video/ffmpeg-5 tensorflow
+
+# Build time failure.  Use an older ebuild.
+=media-video/ffmpeg-7* openvino
