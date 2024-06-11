@@ -29,10 +29,10 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
-DEPEND+="
-"
 RDEPEND+="
-	${DEPEND}
+"
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	dev-python/pybind11[${PYTHON_USEDEP}]

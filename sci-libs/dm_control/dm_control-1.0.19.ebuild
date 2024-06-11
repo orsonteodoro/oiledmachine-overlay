@@ -34,7 +34,7 @@ hdf5 test
 ebuild-revision-1
 "
 
-DEPEND+="
+RDEPEND+="
 	>=dev-python/absl-py-2.1.0[${PYTHON_USEDEP}]
 	>=dev-python/lxml-5.2.1[${PYTHON_USEDEP}]
 	>=dev-python/mujoco-3.1.5[${PYTHON_USEDEP}]
@@ -53,8 +53,8 @@ DEPEND+="
 		>=dev-python/h5py-3.11.0[${PYTHON_USEDEP}]
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-python/setuptools-69.0.2[${PYTHON_USEDEP}]
