@@ -391,7 +391,7 @@ DEPEND+="
 		>=app-arch/brotli-${BROTLI_PV}
 	)
 	system-clipper2? (
-		>=games-engine/clipper2-${CLIPPER2_PV}
+		>=games-engines/clipper2-${CLIPPER2_PV}
 	)
 	system-enet? (
 		>=net-libs/enet-${ENET_PV}
