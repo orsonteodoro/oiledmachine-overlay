@@ -6,7 +6,6 @@ EAPI=8
 
 # TODO package:
 # dataclass-array
-# chex
 # fsspec
 # gcsfs
 # mediapy
@@ -163,13 +162,13 @@ BDEPEND+="
 	)
 	test? (
 		>=dev-python/pylint-2.6.0[${PYTHON_USEDEP}]
-		dev-python/chex[${PYTHON_USEDEP}]
 		dev-python/dataclass-array[${PYTHON_USEDEP}]
 		dev-python/optree[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-subtests[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/pyink[${PYTHON_USEDEP}]
+		sci-libs/chex[${PYTHON_USEDEP}]
 		sci-libs/pytorch[${PYTHON_USEDEP}]
 	)
 "

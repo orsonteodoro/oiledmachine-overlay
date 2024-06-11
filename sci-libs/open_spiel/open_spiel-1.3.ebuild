@@ -47,9 +47,9 @@ DEPEND+="
 		dev-lang/go
 	)
 	jax? (
-		>=dev-python/chex-0.1.5[${PYTHON_USEDEP}]
 		>=dev-python/distrax-0.1.3[${PYTHON_USEDEP}]
 		>=dev-python/rlax-0.1.5[${PYTHON_USEDEP}]
+		>=sci-libs/chex-0.1.5[${PYTHON_USEDEP}]
 		>=sci-libs/dm-haiku-0.0.8[${PYTHON_USEDEP}]
 		>=sci-libs/jax-0.3.24[${PYTHON_USEDEP}]
 		>=sci-libs/jaxlib-0.3.24[${PYTHON_USEDEP}]

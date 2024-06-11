@@ -55,9 +55,9 @@ BDEPEND+="
 		>=dev-python/ipython-7.16.1[${PYTHON_USEDEP}]
 	)
 	test? (
-		>=dev-python/chex-0.0.4[${PYTHON_USEDEP}]
 		>=dev-python/cloudpickle-1.2.2[${PYTHON_USEDEP}]
 		>=dev-python/mock-3.0.5[${PYTHON_USEDEP}]
+		>=sci-libs/chex-0.0.4[${PYTHON_USEDEP}]
 		>=sci-libs/dm-tree-0.1.1[${PYTHON_USEDEP}]
 		>=sci-libs/optax-0.0.1[${PYTHON_USEDEP}]
 		>=sci-libs/tensorflow-2.16.0[${PYTHON_USEDEP},python]
