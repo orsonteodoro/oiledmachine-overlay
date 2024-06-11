@@ -4,6 +4,12 @@
 
 EAPI=8
 
+# TODO package:
+# flake8-absolute-import
+# flake8-docstrings
+# flake8-rst-docstrings
+# flake8-implicit-str-concat
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream listed only up to 3.11
 
@@ -34,18 +40,19 @@ https://github.com/Zulko/moviepy
 "
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 doc imagemagick lint matplotlib opencv pygame scipy scikit test youtube-dl
 "
 RDEPEND+="
 	(
-		<dev-python/decorator-6[${PYTHON_USEDEP}]
 		>=dev-python/decorator-4.0.2[${PYTHON_USEDEP}]
+		<dev-python/decorator-6[${PYTHON_USEDEP}]
 	)
 	(
-		<dev-python/imageio-3[${PYTHON_USEDEP}]
 		>=dev-python/imageio-2.5[${PYTHON_USEDEP}]
+		<dev-python/imageio-3[${PYTHON_USEDEP}]
 	)
 	>=dev-python/imageio-ffmpeg-0.2.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.17.3[${PYTHON_USEDEP}]
@@ -73,12 +80,6 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
-# TODO: create package:
-# flake8-absolute-import
-# flake8-docstrings
-# flake8-rst-docstrings
-# flake8-implicit-str-concat
-#
 BDEPEND+="
 	doc? (
 		<dev-python/numpydoc-2[${PYTHON_USEDEP}]
@@ -99,22 +100,20 @@ BDEPEND+="
 	)
 	test? (
 		(
-			<dev-python/coveralls-4[${PYTHON_USEDEP}]
 			>=dev-python/coveralls-3[${PYTHON_USEDEP}]
+			<dev-python/coveralls-4[${PYTHON_USEDEP}]
 		)
 		(
-			<dev-python/pytest-7[${PYTHON_USEDEP}]
 			>=dev-python/pytest-3[${PYTHON_USEDEP}]
+			<dev-python/pytest-7[${PYTHON_USEDEP}]
 		)
 		(
-			<dev-python/pytest-cov-3[${PYTHON_USEDEP}]
 			>=dev-python/pytest-cov-2.5.1[${PYTHON_USEDEP}]
+			<dev-python/pytest-cov-3[${PYTHON_USEDEP}]
 		)
 		>=dev-python/python-dotenv-0.10[${PYTHON_USEDEP}]
 	)
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 distutils_enable_sphinx "docs"
 distutils_enable_tests "pytest"
