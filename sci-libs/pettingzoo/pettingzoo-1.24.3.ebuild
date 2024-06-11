@@ -49,8 +49,8 @@ DEPEND+="
 		>=sci-libs/pymunk-${PYMUNK_PV}[${PYTHON_USEDEP}]
 	)
 	classic? (
-		>=dev-python/python-chess-1.9.4[${PYTHON_USEDEP}]
 		>=dev-python/pygame-${PYGAME_PV}[${PYTHON_USEDEP}]
+		>=games-board/python-chess-1.9.4[${PYTHON_USEDEP}]
 		>=sci-libs/rlcard-1.0.5[${PYTHON_USEDEP}]
 		>=sci-libs/shimmy-1.2.0[${PYTHON_USEDEP},openspiel]
 	)
