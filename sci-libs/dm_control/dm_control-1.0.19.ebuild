@@ -7,8 +7,6 @@ EAPI=8
 # U22
 
 # TODO packaging:
-# dm-env
-# dm-tree
 # labmaze
 # nose-xunitmp
 
@@ -18,7 +16,7 @@ PYTHON_COMPAT=( "python3_"{8..11} ) # CI tests with 3.10
 inherit distutils-r1
 
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-S="${WORKDIR}/${P}"
+S="${WORKDIR}/${PN}-${PV}"
 SRC_URI="
 https://github.com/deepmind/dm_control/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -39,8 +37,6 @@ ebuild-revision-1
 
 DEPEND+="
 	>=dev-python/absl-py-2.1.0[${PYTHON_USEDEP}]
-	>=dev-python/dm-env-1.6[${PYTHON_USEDEP}]
-	>=dev-python/dm-tree-0.1.8[${PYTHON_USEDEP}]
 	>=dev-python/labmaze-1.0.6[${PYTHON_USEDEP}]
 	>=dev-python/lxml-5.2.1[${PYTHON_USEDEP}]
 	>=dev-python/mujoco-3.1.5[${PYTHON_USEDEP}]
@@ -52,6 +48,8 @@ DEPEND+="
 	>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
 	>=dev-python/scipy-1.13.0[${PYTHON_USEDEP}]
 	>=dev-python/tqdm-4.66.4[${PYTHON_USEDEP}]
+	>=sci-libs/dm-env-1.6[${PYTHON_USEDEP}]
+	>=sci-libs/dm-tree-0.1.8[${PYTHON_USEDEP}]
 	hdf5? (
 		>=dev-python/h5py-3.11.0[${PYTHON_USEDEP}]
 	)

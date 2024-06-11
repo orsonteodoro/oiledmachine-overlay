@@ -60,7 +60,7 @@ BDEPEND+="
 	)
 	test? (
 		>=dev-python/cloudpickle-2.2.0[${PYTHON_USEDEP}]
-		>=dev-python/dm-tree-0.1.5[${PYTHON_USEDEP}]
+		>=sci-libs/dm-tree-0.1.5[${PYTHON_USEDEP}]
 	)
 "
 

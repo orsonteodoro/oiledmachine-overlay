@@ -217,11 +217,11 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	dev-python/click[${PYTHON_USEDEP}]
-	dev-python/Farama-Notifications[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/tqdm[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
+	sci-libs/Farama-Notifications[${PYTHON_USEDEP}]
 	test? (
 		sci-libs/ale-py[${PYTHON_USEDEP}]
 		sci-libs/multi-agent-ale-py[${PYTHON_USEDEP}]

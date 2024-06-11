@@ -78,8 +78,8 @@ BDEPEND="
 	app-arch/unzip
 	dev-java/java-config
 	dev-libs/protobuf:${PROTOBUF_SLOT}
-	dev-python/dm-tree[${PYTHON_USEDEP}]
 	dev-python/build[${PYTHON_USEDEP}]
+	sci-libs/dm-tree[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/black-22[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]

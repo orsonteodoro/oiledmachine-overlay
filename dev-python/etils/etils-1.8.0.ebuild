@@ -141,7 +141,7 @@ DEPEND+="
 		dev-python/tqdm[${PYTHON_USEDEP}]
 	)
 	etree-dm? (
-		dev-python/dm-tree[${PYTHON_USEDEP}]
+		sci-libs/dm-tree[${PYTHON_USEDEP}]
 	)
 	etree-jax? (
 		sci-libs/jax[${PYTHON_USEDEP},cpu]

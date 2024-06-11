@@ -48,13 +48,13 @@ RDEPEND+="
 		' python3_11)
 	)
 	dm-control? (
-		>=dev-python/dm-control-1.0.10[${PYTHON_USEDEP}]
 		>=dev-python/h5py-3.7.0[${PYTHON_USEDEP}]
+		>=sci-libs/dm_control-1.0.10[${PYTHON_USEDEP}]
 		dev-python/imageio[${PYTHON_USEDEP}]
 	)
 	dm-control-multi-agent? (
-		>=dev-python/dm-control-1.0.10[${PYTHON_USEDEP}]
 		>=dev-python/h5py-3.7.0[${PYTHON_USEDEP}]
+		>=sci-libs/dm_control-1.0.10[${PYTHON_USEDEP}]
 		>=sci-libs/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
 		dev-python/imageio[${PYTHON_USEDEP}]
 	)

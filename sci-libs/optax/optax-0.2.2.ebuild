@@ -56,8 +56,8 @@ RDEPEND+="
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 	)
 	examples? (
-		>=dev-python/dm-haiku-0.0.3[${PYTHON_USEDEP}]
 		>=dev-python/dp_accounting-0.4[${PYTHON_USEDEP}]
+		>=sci-libs/dm-haiku-0.0.3[${PYTHON_USEDEP}]
 		>=sci-libs/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP}]
 		>=sci-libs/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_USEDEP}]
 	)
@@ -72,7 +72,6 @@ BDEPEND+="
 	)
 	app-arch/zip
 	doc? (
-		>=dev-python/dm-haiku-0.0.11[${PYTHON_USEDEP}]
 		>=dev-python/ipython-8.8.0[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.5.0[${PYTHON_USEDEP}]
 		>=dev-python/myst-nb-1.0.0[${PYTHON_USEDEP}]
@@ -80,6 +79,7 @@ BDEPEND+="
 		>=dev-python/sphinx-book-theme-1.0.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-collections-0.0.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-gallery-0.14.0[${PYTHON_USEDEP}]
+		>=sci-libs/dm-haiku-0.0.11[${PYTHON_USEDEP}]
 		dev-python/sphinx-autodoc-typehints[${PYTHON_USEDEP}]
 		dev-python/sphinx_contributors[${PYTHON_USEDEP}]
 		dev-python/sphinxcontrib-katex[${PYTHON_USEDEP}]
@@ -92,7 +92,7 @@ BDEPEND+="
 		>=dev-python/scipy-1.7.1[${PYTHON_USEDEP}]
 	)
 	test? (
-		>=dev-python/dm-tree-0.1.7[${PYTHON_USEDEP}]
+		>=sci-libs/dm-tree-0.1.7[${PYTHON_USEDEP}]
 	)
 "
 # Avoid circular depends with flax \

@@ -51,8 +51,8 @@ DEPEND+="
 	jax? (
 		>=dev-python/chex-0.1.84[${PYTHON_USEDEP}]
 		>=dev-python/distrax-0.1.4[${PYTHON_USEDEP}]
-		>=dev-python/dm-haiku-0.0.10[${PYTHON_USEDEP}]
 		>=dev-python/rlax-0.1.6[${PYTHON_USEDEP}]
+		>=sci-libs/dm-haiku-0.0.10[${PYTHON_USEDEP}]
 		>=sci-libs/jax-0.4.20[${PYTHON_USEDEP}]
 		>=sci-libs/jaxlib-0.4.20[${PYTHON_USEDEP}]
 		>=sci-libs/optax-0.1.7[${PYTHON_USEDEP}]
@@ -87,11 +87,11 @@ DEPEND+="
 		virtual/rust
 	)
 	tensorflow? (
-		=dev-python/keras-2.14*[${PYTHON_USEDEP}]
+		=sci-libs/keras-2.14*[${PYTHON_USEDEP}]
 		=sci-libs/tensorflow-0.14*[${PYTHON_USEDEP},python]
 		>=dev-python/numpy-1.26.1[${PYTHON_USEDEP}]
-		>=dev-python/tensorflow-probability-0.22.1[${PYTHON_USEDEP}]
-		>=dev-python/tensorflow-datasets-4.9.2[${PYTHON_USEDEP}]
+		>=sci-libs/tensorflow-datasets-4.9.2[${PYTHON_USEDEP}]
+		>=sci-libs/tensorflow-probability-0.22.1[${PYTHON_USEDEP}]
 	)
 "
 RDEPEND+="

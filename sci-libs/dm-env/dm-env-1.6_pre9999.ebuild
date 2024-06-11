@@ -37,8 +37,8 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 DEPEND+="
 	>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
-	>=dev-python/dm-tree-0.1.6[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.22.0[${PYTHON_USEDEP}]
+	>=sci-libs/dm-tree-0.1.6[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${DEPEND}
