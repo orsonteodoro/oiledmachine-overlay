@@ -6,7 +6,6 @@ EAPI=8
 
 MY_PN="Python-SoXR"
 
-#DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
