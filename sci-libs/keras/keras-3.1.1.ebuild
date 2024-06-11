@@ -4,7 +4,6 @@
 EAPI=8
 
 # TODO package:
-# portpicker
 # tensorboard-plugin-profile
 
 PYTHON_COMPAT=( "python3_"{9..11} )

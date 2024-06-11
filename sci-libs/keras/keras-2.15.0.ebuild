@@ -3,9 +3,6 @@
 
 EAPI=8
 
-# TODO package:
-# portpicker
-
 PYTHON_COMPAT=( "python3_"{9..11} )
 
 inherit bazel distutils-r1

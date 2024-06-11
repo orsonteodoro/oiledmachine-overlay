@@ -3,9 +3,6 @@
 
 EAPI=8
 
-# TODO package:
-# portpicker
-
 PYTHON_COMPAT=( "python3_"{9..11} )
 
 inherit bazel distutils-r1
@@ -65,8 +62,6 @@ DEPEND="
 	${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "
-# TODO package:
-# dev-python/portpicker
 BDEPEND="
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 	app-arch/unzip
