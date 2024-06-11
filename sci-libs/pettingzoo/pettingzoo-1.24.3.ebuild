@@ -40,8 +40,7 @@ DEPEND+="
 	>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
 	>=sci-libs/gymnasium-0.28.0[${PYTHON_USEDEP}]
 	atari? (
-		!=sci-libs/multi-agent-ale-py-0.6*
-		>=sci-libs/multi-agent-ale-py-0.1.11[${PYTHON_USEDEP}]
+		>=sci-libs/multi-agent-ale-py-0.1.11:0/0.1[${PYTHON_USEDEP}]
 		>=dev-python/pygame-${PYGAME_PV}[${PYTHON_USEDEP}]
 	)
 	butterfly? (
