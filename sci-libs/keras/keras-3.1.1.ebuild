@@ -71,6 +71,7 @@ RDEPEND="
 	dev-python/rich[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
 	sci-libs/ml_dtypes[${PYTHON_USEDEP}]
+	sci-visualization/tensorboard-plugin-profile[${PYTHON_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
