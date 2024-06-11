@@ -59,8 +59,8 @@ DEPEND+="
 	)
 	sisl? (
 		>=dev-python/pygame-${PYGAME_PV}[${PYTHON_USEDEP}]
-		>=dev-python/box2d-py-2.3.5[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
+		>=games-engines/box2d-py-2.3.5[${PYTHON_USEDEP}]
 		>=sci-libs/pymunk-${PYMUNK_PV}[${PYTHON_USEDEP}]
 	)
 	other? (

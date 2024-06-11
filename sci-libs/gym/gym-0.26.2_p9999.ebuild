@@ -66,7 +66,7 @@ DEPEND+="
 	)
 	box2d? (
 		>=dev-lang/swig-4
-		>=dev-python/box2d-py-2.3.5[${PYTHON_USEDEP}]
+		>=games-engine/box2d-py-2.3.5[${PYTHON_USEDEP}]
 	)
 	mujoco? (
 		|| (
@@ -97,13 +97,13 @@ BDEPEND+="
 			>=dev-python/mujoco-py-2.1[${PYTHON_USEDEP}]
 			<dev-python/mujoco-py-2.2[${PYTHON_USEDEP}]
 		)
-		>=dev-python/box2d-py-2.3.5[${PYTHON_USEDEP}]
 		>=dev-python/imageio-2.14.1[${PYTHON_USEDEP}]
 		>=dev-python/lz4-3.1.0[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.0[${PYTHON_USEDEP}]
 		>=dev-python/mujoco-2.2.0[${PYTHON_USEDEP}]
 		>=dev-python/pygame-2.1.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.0.1[${PYTHON_USEDEP}]
+		>=games-engine/box2d-py-2.3.5[${PYTHON_USEDEP}]
 		>=media-libs/opencv-3.0[${PYTHON_USEDEP},python]
 	)
 "

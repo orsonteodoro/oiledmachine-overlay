@@ -57,8 +57,8 @@ RDEPEND+="
 		>=sci-libs/autorom-accept-rom-license-0.4.2[${PYTHON_USEDEP}]
 	)
 	box2d? (
-		>=dev-python/box2d-py-2.3.5[${PYTHON_USEDEP}]
 		>=dev-lang/swig-4
+		>=games-engines/box2d-py-2.3.5[${PYTHON_USEDEP}]
 	)
 	jax? (
 		>=sci-libs/jax-0.4.0[${PYTHON_USEDEP}]

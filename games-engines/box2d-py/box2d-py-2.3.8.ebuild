@@ -24,7 +24,7 @@ LICENSE="ZLIB"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" examples test"
-DEPEND+="
+RDEPEND+="
 	${PYTHON_DEPS}
 	!dev-python/pybox2d
 	>=dev-lang/swig-4
@@ -38,8 +38,8 @@ DEPEND+="
 		)
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 
 src_test() {
