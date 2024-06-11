@@ -810,15 +810,15 @@
     Build with stack smashing protection
   </flag>
   <flag name="tensorflow">
-    Enable use of AI based TensorFlow library for sr (super-resolution) or
-    in dnn_processing filter.
+    Enable use of AI based TensorFlow library for the sr (super-resolution)
+    filter, dnn_processing filter, derain filter.
 
     Both sr and dnn_processing require you provide AI models in .pb format.
     
     Using the SR filter will improve the image quality of low resolution
-    images/videos.
+    images/videos.  SR requires the 4.4.x series.
 
-    SR requires the 4.4.x series.
+    The derain filter requires a RESCAN model.
 
     See also
     https://ffmpeg.org/ffmpeg-filters.html#sr-1
