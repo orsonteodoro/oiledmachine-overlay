@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="Python-SoXR"
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -72,6 +73,9 @@ BDEPEND+="
 	)
 "
 DOCS=( "README.md" )
+PATCHES=(
+	"${FILESDIR}/${PN}-0.3.7-use-system-soxr-from-envvar.patch"
+)
 
 # For setuptools-scm
 init_repo() {
@@ -105,11 +109,8 @@ src_unpack() {
 	fi
 }
 
-python_compile() {
-	local myargs=(
-		$(usex system-soxr "--use-system-libsoxr" "")
-	)
-	distutils-r1_python_compile ${myargs[@]}
+python_configure() {
+	export USE_SYSTEM_LIBSOXR=$(usex system-soxr "1" "0")
 }
 
 src_install() {

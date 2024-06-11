@@ -1,0 +1,19 @@
+--- a/setup.py.orig	2023-10-04 18:48:37.000000000 -0700
++++ b/setup.py	2024-06-11 12:02:47.998978211 -0700
+@@ -6,6 +6,7 @@ Do not run setup.py directly for the bui
+ """
+ 
+ import logging
++import os
+ import subprocess
+ import sys
+ import sysconfig
+@@ -19,7 +20,6 @@ from wheel.bdist_wheel import bdist_whee
+ SYS_LIBSOXR = False
+ 
+ # python -m build -C--build-option=--use-system-libsoxr
+-if '--use-system-libsoxr' in sys.argv:
++if os.environ['USE_SYSTEM_LIBSOXR'] == "1":
+-    sys.argv.remove('--use-system-libsoxr')
+     SYS_LIBSOXR = True
+ 
