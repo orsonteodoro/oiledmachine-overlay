@@ -36,7 +36,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" atari butterfly classic doc mpe other sisl test"
-DEPEND+="
+RDEPEND+="
 	>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
 	>=sci-libs/gymnasium-0.28.0[${PYTHON_USEDEP}]
 	atari? (
@@ -66,8 +66,8 @@ DEPEND+="
 		>=dev-python/pillow-8.0.1[${PYTHON_USEDEP}]
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-python/setuptools-61.0.0[${PYTHON_USEDEP}]

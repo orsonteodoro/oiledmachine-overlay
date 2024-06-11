@@ -4,9 +4,9 @@
 
 EAPI=8
 
-# TODO PACKAGE:
-# dev-python/dm-meltingpot
-# dev-python/bsuite
+# TODO package:
+# bsuite
+# dm-meltingpot
 # sphinx-autobuild
 # sphinx_github_changelog
 

@@ -6,6 +6,9 @@ EAPI=8
 
 # U22
 
+# TODO package:
+# cibuildwheel
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream tests up to 3.11
 
@@ -26,7 +29,7 @@ LICENSE="GPL-2"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" cibuildwheel test"
-DEPEND+="
+RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 	' python3_10 )
@@ -35,11 +38,9 @@ DEPEND+="
 	media-libs/libsdl2
 	sys-libs/zlib
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
-# TODO:  Package
-# cibuildwheel
 BDEPEND+="
 	>=dev-python/setuptools-61[${PYTHON_USEDEP}]
 	>=dev-build/cmake-3.22

@@ -8,7 +8,7 @@ EGIT_RULES_JAVA_PV="5.5.1"
 MY_PN="estimator"
 MY_PV="${PV}"
 MY_P="${MY_PN}-${MY_PV}"
-PYTHON_COMPAT=( python3_{10..11} ) # Upstream only lists up to 3.10
+PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only lists up to 3.10
 RULES_CC_PV="0.0.2"
 TF_PV=$(ver_cut 1-2 "${PV}")
 
@@ -46,7 +46,7 @@ BDEPEND="
 "
 PATCHES=(
 )
-DOCS=( CONTRIBUTING.md README.md )
+DOCS=( "README.md" )
 
 src_unpack() {
 	mkdir -p "${WORKDIR}/bin" || die

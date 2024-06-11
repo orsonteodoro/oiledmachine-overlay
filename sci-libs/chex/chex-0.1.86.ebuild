@@ -10,7 +10,7 @@ EAPI=8
 # sphinxcontrib-katex
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..11} ) # See https://github.com/deepmind/chex/blob/v0.1.82/.github/workflows/ci.yml
+PYTHON_COMPAT=( "python3_"{10..11} ) # See https://github.com/deepmind/chex/blob/v0.1.82/.github/workflows/ci.yml
 # Limited by jax
 
 inherit distutils-r1
@@ -33,7 +33,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" docs test"
-DEPEND+="
+RDEPEND+="
 	>=dev-python/absl-py-0.9.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.24.1[${PYTHON_USEDEP}]
 	>=dev-python/toolz-0.9.0[${PYTHON_USEDEP}]
@@ -41,8 +41,8 @@ DEPEND+="
 	>=sci-libs/jax-0.4.16[${PYTHON_USEDEP}]
 	>=sci-libs/jaxlib-0.1.37[${PYTHON_USEDEP}]
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
@@ -79,8 +79,8 @@ einfo "Running test for ${EPYTHON}"
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

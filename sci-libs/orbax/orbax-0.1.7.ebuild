@@ -41,7 +41,7 @@ doc test
 "
 REQUIRED_USE="
 "
-DEPEND+="
+RDEPEND+="
 	>=sci-libs/jax-0.4.6[${PYTHON_USEDEP}]
 	>=sci-libs/tensorstore-0.1.20[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
@@ -55,8 +55,8 @@ DEPEND+="
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
 	sci-libs/jaxlib[${PYTHON_USEDEP}]
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	(

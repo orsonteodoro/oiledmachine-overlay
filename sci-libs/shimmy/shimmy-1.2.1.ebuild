@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# TODO:  package
+# TODO package:
 # sphinx-autobuild
 # sphinx_github_changelog
 

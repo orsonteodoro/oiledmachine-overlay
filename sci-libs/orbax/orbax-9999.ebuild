@@ -60,11 +60,11 @@ ORBAX_EXPORT_DEPEND="
 	sci-libs/jaxtyping[${PYTHON_USEDEP}]
 	sci-libs/orbax-checkpoint[${PYTHON_USEDEP}]
 "
-DEPEND+="
+RDEPEND+="
 	${ORBAX_EXPORT_DEPEND}
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	(

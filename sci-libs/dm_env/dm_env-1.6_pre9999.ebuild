@@ -48,6 +48,8 @@ BDEPEND+="
 "
 DOCS=( "CHANGELOG.md" "docs/index.md" "README.md" )
 
+distutils_enable_tests "pytest"
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -65,7 +67,5 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 }
-
-distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_10 )
+PYTHON_COMPAT=( "python3_10" )
 
 inherit distutils-r1
 
@@ -46,7 +46,7 @@ REQUIRED_USE+="
 		pygame
 	)
 "
-DEPEND+="
+RDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/cloudpickle-1.2.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
@@ -87,8 +87,8 @@ DEPEND+="
 		>=dev-python/pygame-2.1.0[${PYTHON_USEDEP}]
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	${PYTHON_DEPS}

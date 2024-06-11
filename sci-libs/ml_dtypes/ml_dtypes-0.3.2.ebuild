@@ -41,7 +41,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
-DEPEND+="
+RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.21.2[${PYTHON_USEDEP}]
 	' python3_10)
@@ -52,8 +52,8 @@ DEPEND+="
 		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
 	' python3_12)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]

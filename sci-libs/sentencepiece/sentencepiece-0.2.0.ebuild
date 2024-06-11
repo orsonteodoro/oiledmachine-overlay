@@ -86,7 +86,6 @@ src_install() {
 	cmake_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
-	einstalldocs
 
 	cd "${S}/python" || die
 	distutils-r1_src_install

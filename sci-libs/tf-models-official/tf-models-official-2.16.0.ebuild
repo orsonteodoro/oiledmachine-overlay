@@ -15,7 +15,6 @@ EAPI=8
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-#inherit python-r1
 inherit distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -126,5 +125,4 @@ python_install() {
 	rm -rf "${ED}/usr/lib/${EPYTHON}/site-packages/"{"pip_package","benchmark","colab","recommendation.ranking.data.preprocessing"}
 	dodoc \
 		"LICENSE"
-	einstalldocs
 }

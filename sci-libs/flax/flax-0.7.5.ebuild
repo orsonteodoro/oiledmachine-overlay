@@ -25,7 +25,7 @@ EAPI=8
 # tensorflow_text
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..11} ) # Upstream lists only up to 3.11 in classifiers section.  CI only tests up to 3.11.
+PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream lists only up to 3.11 in classifiers section.  CI only tests up to 3.11.
 
 # Limited by orbax
 inherit distutils-r1
@@ -55,7 +55,7 @@ REQUIRED_USE="
 	)
 "
 # Some examples require cuda11+cudnn
-DEPEND+="
+RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
 	' python3_11)
@@ -82,8 +82,8 @@ DEPEND+="
 	sci-libs/orbax[${PYTHON_USEDEP}]
 	sci-libs/tensorstore[${PYTHON_USEDEP}]
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	doc? (

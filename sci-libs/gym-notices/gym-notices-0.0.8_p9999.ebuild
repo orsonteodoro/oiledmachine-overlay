@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_10 ) # Based on CI distro
+PYTHON_COMPAT=( "python3_10" ) # Based on CI distro
 
 inherit distutils-r1
 

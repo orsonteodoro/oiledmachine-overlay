@@ -92,8 +92,8 @@ RDEPEND+="
 		>=sci-libs/tensorflow-probability-0.19.0[${PYTHON_USEDEP}]
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-python/pip-20.0.2[${PYTHON_USEDEP}]

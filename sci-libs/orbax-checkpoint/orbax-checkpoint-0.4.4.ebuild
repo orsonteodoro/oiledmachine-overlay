@@ -62,11 +62,11 @@ CHECKPOINT_DEPEND="
 	sci-libs/jaxlib[${PYTHON_USEDEP}]
 	sci-libs/jaxtyping[${PYTHON_USEDEP}]
 "
-DEPEND+="
+RDEPEND+="
 	${CHECKPOINT_DEPEND}
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	(

@@ -6,7 +6,7 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 MY_PV="1.0.0a1"
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 # Limited by jax
 
 inherit distutils-r1

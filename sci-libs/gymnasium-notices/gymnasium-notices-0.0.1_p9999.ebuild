@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit distutils-r1
 
@@ -14,14 +14,18 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	FALLBACK_COMMIT="77cf9f6a40dc10e81d3df32ba92f3554a4d5a24d" # Jan 22, 2023
 	inherit git-r3
+else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	SRC_URI="FIXME"
 fi
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="Gymnasium Notices"
 HOMEPAGE="
 https://github.com/Farama-Foundation/gymnasium-notices
 "
 LICENSE="MIT"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" fallback-commit"
 RDEPEND+="
@@ -35,8 +39,6 @@ BDEPEND+="
 "
 SRC_URI="
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 unpack_live() {
 	if use fallback-commit ; then

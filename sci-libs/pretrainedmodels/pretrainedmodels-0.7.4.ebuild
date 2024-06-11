@@ -38,7 +38,7 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
-DEPEND+="
+RDEPEND+="
 	$(python_gen_any_dep '
 		dev-python/munch[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
@@ -47,8 +47,8 @@ DEPEND+="
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 	')
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	$(python_gen_any_dep '

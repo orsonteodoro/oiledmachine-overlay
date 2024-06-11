@@ -31,11 +31,11 @@ RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc tensorflow-io-gcs-filesystem test"
 # See https://github.com/tensorflow/io/blob/v0.36.0/README.md#tensorflow-version-compatibility
-DEPEND+="
+RDEPEND+="
 	=sci-libs/tensorflow-2.15*[${PYTHON_USEDEP}]
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
