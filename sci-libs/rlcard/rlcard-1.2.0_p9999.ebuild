@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit distutils-r1
 
@@ -41,7 +41,7 @@ REQUIRED_USE="
 		torch
 	)
 "
-DEPEND+="
+RDEPEND+="
 	>=dev-python/numpy-1.16.3[${PYTHON_USEDEP}]
 	dev-python/termcolor[${PYTHON_USEDEP}]
 	test? (
@@ -58,8 +58,8 @@ DEPEND+="
 		dev-python/matplotlib[${PYTHON_USEDEP}]
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 DOCS=( "README.md" )
 PATCHES=(
@@ -98,10 +98,11 @@ src_unpack() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE.md
+	docinto "licenses"
+	dodoc "LICENSE.md"
 	docinto docs
 	dodoc -r docs/*
+	einstalldocs
 }
 
 src_test() {
