@@ -46,7 +46,7 @@ DEPEND+="
 	)
 	butterfly? (
 		>=dev-python/pygame-${PYGAME_PV}[${PYTHON_USEDEP}]
-		>=sci-libs/pymunk-${PYMUNK_PV}[${PYTHON_USEDEP}]
+		>=games-engines/pymunk-${PYMUNK_PV}[${PYTHON_USEDEP}]
 	)
 	classic? (
 		>=dev-python/pygame-${PYGAME_PV}[${PYTHON_USEDEP}]
@@ -61,7 +61,7 @@ DEPEND+="
 		>=dev-python/pygame-${PYGAME_PV}[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
 		>=games-engines/box2d-py-2.3.5[${PYTHON_USEDEP}]
-		>=sci-libs/pymunk-${PYMUNK_PV}[${PYTHON_USEDEP}]
+		>=games-engines/pymunk-${PYMUNK_PV}[${PYTHON_USEDEP}]
 	)
 	other? (
 		>=dev-python/pillow-8.0.1[${PYTHON_USEDEP}]
