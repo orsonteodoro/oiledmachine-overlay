@@ -44,7 +44,6 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
-	=sci-libs/tensorflow-${PV%.*}*[${PYTHON_USEDEP}]
 	>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 	>=dev-python/gviz-api-1.9.0[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-python-3.19.6:0/3.21[${PYTHON_USEDEP}]
