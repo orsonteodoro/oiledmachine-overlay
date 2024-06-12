@@ -10,7 +10,6 @@ EAPI=8
 # gcsfs
 # mediapy
 # pyink
-# simple_parsing
 # sphinx-apitree (missing for doc)
 
 DISTUTILS_USE_PEP517="flit"
@@ -108,7 +107,7 @@ REQUIRED_USE+="
 RDEPEND+="
 	eapp? (
 		dev-python/absl-py[${PYTHON_USEDEP}]
-		dev-python/simple_parsing[${PYTHON_USEDEP}]
+		dev-python/simple-parsing[${PYTHON_USEDEP}]
 	)
 	ecolab? (
 		dev-python/jupyter[${PYTHON_USEDEP}]

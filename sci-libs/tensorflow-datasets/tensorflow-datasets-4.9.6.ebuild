@@ -17,7 +17,6 @@ EAPI=8
 # pytest-shard
 # tensorflow-data-validation
 # toml				rdepend
-# simple_parsing		rdepend
 
 MY_PN="datasets"
 
@@ -103,7 +102,7 @@ HUGGINGFACE_RDEPEND="
 	dev-python/pydub[${PYTHON_USEDEP}]
 	dev-python/scikit-image[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
-	dev-python/simple_parsing[${PYTHON_USEDEP}]
+	dev-python/simple-parsing[${PYTHON_USEDEP}]
 	dev-python/tensorflow-metadata[${PYTHON_USEDEP}]
 	dev-python/termcolor[${PYTHON_USEDEP}]
 	dev-python/tifffile[${PYTHON_USEDEP}]
@@ -139,7 +138,7 @@ RDEPEND+="
 	dev-python/promise[${PYTHON_USEDEP}]
 	dev-python/psutil[${PYTHON_USEDEP}]
 	dev-python/pyarrow[${PYTHON_USEDEP}]
-	dev-python/simple_parsing[${PYTHON_USEDEP}]
+	dev-python/simple-parsing[${PYTHON_USEDEP}]
 	dev-python/tensorflow-metadata[${PYTHON_USEDEP}]
 	dev-python/termcolor[${PYTHON_USEDEP}]
 	dev-python/toml[${PYTHON_USEDEP}]
