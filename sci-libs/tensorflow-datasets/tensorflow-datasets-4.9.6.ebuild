@@ -16,7 +16,6 @@ EAPI=8
 # mwxml
 # pretty_midi
 # pytest-shard
-# tensorflow-metadata		rdepend
 # tensorflow-data-validation
 # toml				rdepend
 # simple_parsing		rdepend
