@@ -21,6 +21,8 @@ EAPI=8
 # toml				rdepend
 # simple_parsing		rdepend
 
+MY_PN="datasets"
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -29,7 +31,7 @@ inherit distutils-r1 pypi
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 	EGIT_BRANCH="main"
-	EGIT_CHECKOUT_DIR="${WORKDIR}/${PN}-${PV}"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_PN}-${PV}"
 	EGIT_REPO_URI="https://github.com/tensorflow/datasets.git"
 	FALLBACK_COMMIT="7eeb2004bca47b83fabb477019d081d67c4a3c06" # Jun 5, 2024
 	inherit git-r3
@@ -40,7 +42,7 @@ https://github.com/tensorflow/datasets/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${MY_PN}-${PV}"
 
 DESCRIPTION="TFDS is a collection of datasets ready to use with TensorFlow, Jax, ..."
 HOMEPAGE="
