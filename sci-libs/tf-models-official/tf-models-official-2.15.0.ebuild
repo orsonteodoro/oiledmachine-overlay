@@ -8,7 +8,6 @@ EAPI=8
 # TODO package:
 # tensorflow-hub
 # tensorflow-text
-# tf_slim
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} )

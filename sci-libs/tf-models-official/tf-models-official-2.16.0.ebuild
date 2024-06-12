@@ -9,7 +9,6 @@ EAPI=8
 # tensorflow-hub	rdep
 # tensorflow-text	rdep[nlp]
 # tf-keras		rdep
-# tf_slim		rdep
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
