@@ -55,8 +55,10 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	$(python_gen_any_dep '
+		dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
+	')
 	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-vcs/pre-commit[${PYTHON_USEDEP}]
 	test? (
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]

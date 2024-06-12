@@ -49,7 +49,9 @@ BDEPEND+="
 		dev-util/ruff
 		dev-python/mypy[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-vcs/pre-commit[${PYTHON_USEDEP}]
+		$(python_gen_any_dep '
+			dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
+		')
 	)
 "
 DOCS=( "README.md" )

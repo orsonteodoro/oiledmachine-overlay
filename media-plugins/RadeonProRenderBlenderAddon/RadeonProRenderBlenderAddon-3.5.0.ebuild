@@ -59,7 +59,7 @@ VIDEO_CARDS="
 	video_cards_radeonsi
 "
 
-inherit check-reqs git-r3 linux-info llvm python-r1 unpacker
+inherit check-reqs git-r3 linux-info llvm python-single-r1 unpacker
 
 KEYWORDS="~amd64"
 
@@ -148,10 +148,10 @@ REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	!systemwide
 	blender-3_3? (
-		python_targets_python3_11
+		python_single_target_python3_11
 	)
 	blender-3_4? (
-		python_targets_python3_11
+		python_single_target_python3_11
 	)
 	opencl_orca? (
 		system-llvm
@@ -256,14 +256,10 @@ RDEPEND_NOT_LISTED="
 
 BLENDER_RDEPEND="
 	blender-3_3? (
-		$(python_gen_any_dep "
-			=media-gfx/blender-3.3*["'${PYTHON_SINGLE_USEDEP}'"]
-		")
+		=media-gfx/blender-3.3*[${PYTHON_SINGLE_USEDEP}]
 	)
 	blender-3_4? (
-		$(python_gen_any_dep "
-			=media-gfx/blender-3.4*["'${PYTHON_SINGLE_USEDEP}'"]
-		")
+		=media-gfx/blender-3.4*[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 
@@ -352,12 +348,12 @@ RDEPEND+="
 	)
 "
 BDEPEND+="
-	${CDEPEND_NOT_LISTED}
-	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
 		>=dev-python/pytest-3[${PYTHON_USEDEP}]
 		dev-python/pip[${PYTHON_USEDEP}]
 	')
+	${CDEPEND_NOT_LISTED}
+	${PYTHON_DEPS}
 	>=dev-build/cmake-3.11
 	app-arch/makeself
 	app-arch/unzip

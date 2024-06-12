@@ -101,8 +101,9 @@ BDEPEND+="
 		dev-python/pyenchant[${PYTHON_USEDEP}]
 		dev-python/xdoctest[${PYTHON_USEDEP}]
 		dev-util/ruff
-		dev-vcs/pre-commit[${PYTHON_USEDEP}]
-
+		$(python_gen_any_dep '
+			dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
+		')
 	)
 "
 DOCS=( "README.md" )

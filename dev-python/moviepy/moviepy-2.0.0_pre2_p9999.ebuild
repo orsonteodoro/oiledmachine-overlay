@@ -11,7 +11,7 @@ EAPI=8
 # flake8-implicit-str-concat
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..11} ) # Upstream listed only up to 3.11
+PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream listed only up to 3.11
 
 inherit distutils-r1
 

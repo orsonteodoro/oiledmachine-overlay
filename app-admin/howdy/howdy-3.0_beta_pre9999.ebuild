@@ -96,9 +96,9 @@ RDEPEND+="
 	)
 	gtk? (
 		$(python_gen_cond_dep '
-			dev-libs/gobject-introspection[${PYTHON_SINGLE_USEDEP}]
 			dev-python/elevate[${PYTHON_USEDEP}]
 		')
+		dev-libs/gobject-introspection[${PYTHON_SINGLE_USEDEP}]
 		x11-libs/gtk+:3[introspection]
 		|| (
 			media-fonts/liberation-fonts

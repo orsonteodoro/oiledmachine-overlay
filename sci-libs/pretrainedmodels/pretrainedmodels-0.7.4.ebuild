@@ -40,20 +40,18 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 RDEPEND+="
 	$(python_gen_any_dep '
-		dev-python/munch[${PYTHON_USEDEP}]
-		dev-python/scipy[${PYTHON_USEDEP}]
-		dev-python/tqdm[${PYTHON_USEDEP}]
 		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 	')
+	dev-python/munch[${PYTHON_USEDEP}]
+	dev-python/scipy[${PYTHON_USEDEP}]
+	dev-python/tqdm[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	$(python_gen_any_dep '
-		dev-python/wheel[${PYTHON_USEDEP}]
-	')
+	dev-python/wheel[${PYTHON_USEDEP}]
 "
 DOCS=( "README.md" )
 

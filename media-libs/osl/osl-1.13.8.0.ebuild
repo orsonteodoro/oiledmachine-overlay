@@ -178,11 +178,11 @@ gen_openexr_pairs() {
 # >= python_single_target_python3_10 : openimageio-2.3.19.0
 
 RDEPEND+="
-	$(gen_llvm_depend)
-	$(python_gen_cond_dep '
+	(
 		>=media-libs/openimageio-2.4.12.0:=[${PYTHON_SINGLE_USEDEP}]
 		<media-libs/openimageio-2.5:=[${PYTHON_SINGLE_USEDEP}]
-	')
+	)
+	$(gen_llvm_depend)
 	>=dev-libs/boost-1.55:=[${MULTILIB_USEDEP}]
 	>=dev-libs/pugixml-1.8[${MULTILIB_USEDEP}]
 	dev-libs/libfmt[${MULTILIB_USEDEP}]
@@ -191,10 +191,10 @@ RDEPEND+="
 		>=dev-util/nvidia-cuda-toolkit-8:=
 	)
 	optix? (
-		$(python_gen_cond_dep '
-			>=media-libs/openimageio-'${OIIO_PV}'[${PYTHON_SINGLE_USEDEP}]
+		(
+			>=media-libs/openimageio-${OIIO_PV}[${PYTHON_SINGLE_USEDEP}]
 			media-libs/openimageio:=[${PYTHON_SINGLE_USEDEP}]
-		')
+		)
 		>=dev-libs/optix-5.1
 		|| (
 			$(gen_opx_llvm_rdepend)

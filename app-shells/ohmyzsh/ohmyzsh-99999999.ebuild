@@ -663,9 +663,7 @@ if [[ -z "${OMZ_MEDIA_PLAYER}" ]] ; then
 fi
 
 #	omz_plugins_django? (
-#		$(python_gen_any_dep '
-#			dev-python/django[${PYTHON_USEDEP}]
-#		')
+#		dev-python/django[${PYTHON_USEDEP}]
 #)
 ruby_add_rdepend "
 	omz_plugins_bundler? (
@@ -722,14 +720,10 @@ PLUGINS_RDEPEND="
 		app-shells/autojump
 	)
 	omz_plugins_autopep8? (
-		$(python_gen_any_dep '
-			dev-python/autopep8[${PYTHON_USEDEP}]
-		')
+		dev-python/autopep8[${PYTHON_USEDEP}]
 	)
 	omz_plugins_aws? (
-		$(python_gen_any_dep '
-			dev-python/awscli[${PYTHON_USEDEP}]
-		')
+		dev-python/awscli[${PYTHON_USEDEP}]
 	)
 	omz_plugins_azure? (
 		app-misc/jq
@@ -765,17 +759,13 @@ PLUGINS_RDEPEND="
 		media-gfx/imagemagick[png]
 	)
 	omz_plugins_celery? (
-		$(python_gen_any_dep '
-			dev-python/celery[${PYTHON_USEDEP}]
-		')
+		dev-python/celery[${PYTHON_USEDEP}]
 	)
 	omz_plugins_chucknorris? (
 		games-misc/fortune-mod
 	)
 	omz_plugins_colorize? (
-		$(python_gen_any_dep '
-			dev-python/pygments[${PYTHON_USEDEP}]
-		')
+		dev-python/pygments[${PYTHON_USEDEP}]
 	)
 	omz_plugins_colored-man-pages? (
 		sys-apps/groff
@@ -783,9 +773,7 @@ PLUGINS_RDEPEND="
 	omz_plugins_common-aliases? (
 		${RDEPEND_COMMON_ALIASES[@]}
 		sys-process/procps
-		$(python_gen_any_dep '
-			dev-python/pygments[${PYTHON_USEDEP}]
-		')
+		dev-python/pygments[${PYTHON_USEDEP}]
 	)
 	omz_plugins_composer? (
 		dev-php/composer
@@ -835,9 +823,7 @@ PLUGINS_RDEPEND="
 		app-misc/fasd
 	)
 	omz_plugins_fabric? (
-		$(python_gen_any_dep '
-			dev-python/fabric[${PYTHON_USEDEP}]
-		')
+		dev-python/fabric[${PYTHON_USEDEP}]
 	)
 	omz_plugins_fbterm? (
 		app-i18n/fbterm
@@ -910,17 +896,13 @@ PLUGINS_RDEPEND="
 		net-misc/httpie
 	)
 	omz_plugins_invoke? (
-		$(python_gen_any_dep '
-			dev-python/invoke[${PYTHON_USEDEP}]
-		')
+		dev-python/invoke[${PYTHON_USEDEP}]
 	)
 	omz_plugins_ipfs? (
 		net-p2p/go-ipfs
 	)
 	omz_plugins_jira? (
-		$(python_gen_any_dep '
-			dev-python/jira[${PYTHON_USEDEP}]
-		')
+		dev-python/jira[${PYTHON_USEDEP}]
 	)
 	omz_plugins_jfrog? (
 		dev-util/jfrog-cli
@@ -1005,17 +987,13 @@ PLUGINS_RDEPEND="
 		app-admin/pass
 	)
 	omz_plugins_paver? (
-		$(python_gen_any_dep '
-			dev-python/paver[${PYTHON_USEDEP}]
-		')
+		dev-python/paver[${PYTHON_USEDEP}]
 	)
 	omz_plugins_percol? (
 		app-shells/percol
 	)
 	omz_plugins_pep8? (
-		$(python_gen_any_dep '
-			dev-python/pep8[${PYTHON_USEDEP}]
-		')
+		dev-python/pep8[${PYTHON_USEDEP}]
 	)
 	omz_plugins_perl? (
 		dev-lang/perl
@@ -1028,14 +1006,10 @@ PLUGINS_RDEPEND="
 		dev-php/phing
 	)
 	omz_plugins_pip? (
-		$(python_gen_any_dep '
-			dev-python/pip[${PYTHON_USEDEP}]
-		')
+		dev-python/pip[${PYTHON_USEDEP}]
 	)
 	omz_plugins_pipenv? (
-		$(python_gen_any_dep '
-			dev-python/pipenv[${PYTHON_USEDEP}]
-		')
+		dev-python/pipenv[${PYTHON_USEDEP}]
 	)
 	omz_plugins_pm2? (
 		sys-process/pm2
@@ -1044,9 +1018,7 @@ PLUGINS_RDEPEND="
 		app-containers/podman
 	)
 	omz_plugins_poetry? (
-		$(python_gen_any_dep '
-			dev-python/poetry[${PYTHON_USEDEP}]
-		')
+		dev-python/poetry[${PYTHON_USEDEP}]
 	)
 	omz_plugins_postgres? (
 		dev-db/postgresql
@@ -1055,12 +1027,12 @@ PLUGINS_RDEPEND="
 		sys-process/lsof
 	)
 	omz_plugins_pre-commit? (
-		dev-vcs/pre-commit
+		$(python_gen_any_dep '
+			dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
+		')
 	)
 	omz_plugins_pylint? (
-		$(python_gen_any_dep '
-			dev-python/pylint[${PYTHON_USEDEP}]
-		')
+		dev-python/pylint[${PYTHON_USEDEP}]
 	)
 	omz_plugins_rails? (
 		|| (
@@ -1211,9 +1183,7 @@ PLUGINS_RDEPEND="
 		app-editors/gvim
 	)
 	omz_plugins_virtualenvwrapper? (
-		$(python_gen_any_dep '
-			dev-python/virtualenvwrapper[${PYTHON_USEDEP}]
-		')
+		dev-python/virtualenvwrapper[${PYTHON_USEDEP}]
 	)
 	omz_plugins_vscode? (
 		|| (
@@ -1230,9 +1200,7 @@ PLUGINS_RDEPEND="
 		net-misc/wakeonlan
 	)
 	omz_plugins_watson? (
-		$(python_gen_any_dep '
-			dev-python/td-watson[${PYTHON_USEDEP}]
-		')
+		dev-python/td-watson[${PYTHON_USEDEP}]
 	)
 	omz_plugins_wp-cli? (
 		app-admin/wp-cli

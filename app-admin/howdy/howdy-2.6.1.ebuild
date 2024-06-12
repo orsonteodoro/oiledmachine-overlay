@@ -64,7 +64,6 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		sys-auth/pam-python[${PYTHON_SINGLE_USEDEP}]
 		>=sci-libs/dlib-19.16[${PYTHON_USEDEP},python]
 		dev-libs/boost[${PYTHON_USEDEP},python]
 		dev-python/numpy[${PYTHON_USEDEP}]
@@ -73,6 +72,7 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-libs/inih-52
 	app-admin/sudo
+	sys-auth/pam-python[${PYTHON_SINGLE_USEDEP}]
 	sys-libs/pam
 	cuda_targets_sm_50? (
 		$(python_gen_cond_dep '
