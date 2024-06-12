@@ -6,7 +6,6 @@ EAPI=8
 
 # TODO package:
 # apache-beam
-# array_record			rdepend
 # conllu
 # crepe
 # envlogger
