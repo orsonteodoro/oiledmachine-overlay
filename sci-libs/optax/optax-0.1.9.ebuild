@@ -8,7 +8,6 @@ EAPI=8
 # myst-nb
 # sphinx-collections
 # sphinxcontrib-katex
-# tensorflow-datasets
 
 DISTUTILS_USE_PEP517="flit"
 PYTHON_COMPAT=( "python3_"{10..11} )

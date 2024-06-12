@@ -7,7 +7,6 @@ EAPI=8
 
 # TODO package:
 # tensorflow-hub
-# tensorflow-datasets
 # tensorflow-text
 # tf-keras
 # tf_slim

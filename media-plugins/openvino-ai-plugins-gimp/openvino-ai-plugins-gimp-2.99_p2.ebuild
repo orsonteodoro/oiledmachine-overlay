@@ -9,7 +9,6 @@ EAPI=8
 # diffusers
 # nncf
 # tensorflow-2.12 or lift version restriction
-# tensorflow-datasets
 # monai
 # paddlepaddle
 
@@ -52,7 +51,7 @@ MODEL_RDEPEND="
 	>=sci-libs/nncf-2.4.0[${PYTHON_USEDEP}]
 	>=sci-libs/onnx-1.13.0[${PYTHON_USEDEP}]
 	>=sci-libs/openvino-2022.2.0[${PYTHON_USEDEP}]
-	>=sci-libs/tensorflow-datasets-4.2.0
+	>=sci-libs/tensorflow-datasets-4.2.0[${PYTHON_USEDEP}]
 
 	(
 		>=dev-python/matplotlib-3.4[${PYTHON_USEDEP}]

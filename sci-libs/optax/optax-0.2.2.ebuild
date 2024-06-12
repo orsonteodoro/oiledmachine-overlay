@@ -10,7 +10,6 @@ EAPI=8
 # sphinx-collections
 # sphinx_contributors
 # sphinxcontrib-katex
-# tensorflow-datasets
 
 DISTUTILS_USE_PEP517="flit"
 FLAX_PV="0.5.3"

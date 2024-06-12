@@ -7,7 +7,6 @@ EAPI=8
 
 # TODO package:
 # tensorflow-hub	rdep
-# tensorflow-datasets	rdep
 # tensorflow-text	rdep[nlp]
 # tf-keras		rdep
 # tf_slim		rdep
