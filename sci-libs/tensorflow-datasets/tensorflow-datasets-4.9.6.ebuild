@@ -16,7 +16,6 @@ EAPI=8
 # pretty_midi
 # pytest-shard
 # tensorflow-data-validation
-# toml				rdepend
 
 MY_PN="datasets"
 
