@@ -9,5 +9,6 @@
   <upstream>
     <bugs-to>https://github.com/fchollet/namex/issues</bugs-to>
     <remote-id type="github">fchollet/namex</remote-id>
+    <remote-id type="pypi">namex</remote-id>
   </upstream>
 </pkgmetadata>
