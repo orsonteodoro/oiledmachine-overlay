@@ -13,20 +13,21 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 inherit distutils-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	IUSE+=" fallback-commit"
 	EGIT_BRANCH="main"
-	EGIT_CHECKOUT_DIR="${WORKDIR}/${PN}-${PV}"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/lebrice/SimpleParsing.git"
 	FALLBACK_COMMIT="8bec5025fcbd9e0fed67abfeb90db87d57c29a35" # Nov 27, 2023
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	S="${WORKDIR}/SimpleParsing-${PV}"
 	SRC_URI="
 https://github.com/lebrice/SimpleParsing/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
-S="${WORKDIR}/${PN}-${PV}"
 
 DESCRIPTION="A small utility for simplifying and cleaning up argument parsing scripts."
 HOMEPAGE="
