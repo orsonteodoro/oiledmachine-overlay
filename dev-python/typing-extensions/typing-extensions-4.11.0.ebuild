@@ -6,7 +6,7 @@ EAPI=8
 MY_P="${P/-/_}"
 
 DISTUTILS_USE_PEP517="flit"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1
 
