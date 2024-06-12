@@ -1,0 +1,18 @@
+diff -urp array_record-0.5.0.orig/WORKSPACE array_record-0.5.0/WORKSPACE
+--- array_record-0.5.0.orig/WORKSPACE	2024-06-11 21:36:30.560571899 -0700
++++ array_record-0.5.0/WORKSPACE	2024-06-11 21:37:27.712106380 -0700
+@@ -13,10 +13,11 @@ http_archive(
+     ],
+ )
+ # Version: pypi-v0.11.0, 2020/10/27
+-git_repository(
++http_archive(
+     name = "com_google_absl_py",
+-    remote = "https://github.com/abseil/abseil-py",
+-    commit = "127c98870edf5f03395ce9cf886266fa5f24455e",
++    sha256 = "7df178009ad28e34c5d36eec5ad02560c193660aaf06b6561ccbf0bed28337b1",
++    urls = ["https://github.com/abseil/abseil-py/archive/127c98870edf5f03395ce9cf886266fa5f24455e.zip"],
++    strip_prefix = "abseil-py-127c98870edf5f03395ce9cf886266fa5f24455e",
+ )
+ # Needed by com_google_riegeli
+ http_archive(
