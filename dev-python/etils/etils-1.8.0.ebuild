@@ -6,7 +6,6 @@ EAPI=8
 
 # TODO package:
 # dataclass-array
-# fsspec
 # gcsfs
 # mediapy
 # pyink
