@@ -8,11 +8,11 @@ EAPI=8
 
 # TODO package:
 # clu
-# distrax
+# distrax			jax
 # ecos
 # nashpy
-# rlax
-# tensorflow-probability
+# rlax				jax
+# tensorflow-probability	tf
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only tests up to 3.11
