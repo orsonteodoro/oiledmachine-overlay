@@ -1,4 +1,4 @@
-# Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -96,7 +96,7 @@ python_install() {
 		mv \
 			"${ED}/usr/lib/${EPYTHON}/site-packages/examples" \
 			"${ED}/usr/share/${PN}"
-		rm -rf "${ED}/usr/share/distrax/examples/__pycache__"
+		rm -rf "${ED}/usr/share/rlax/examples/__pycache__"
 	else
 		rm -rf "${ED}/usr/lib/${EPYTHON}/site-packages/examples"
 	fi
