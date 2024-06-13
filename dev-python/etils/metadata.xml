@@ -10,4 +10,52 @@
     <remote-id type="github">google/etils</remote-id>
     <bugs-to>https://github.com/google/etils/issues</bugs-to>
   </upstream>
+  <use>
+    <flag name="array-types">
+      Support Typing annotations for jax, numpy,... arrays feature.
+    </flag>
+    <flag name="eapp">
+      Support Absl flags/app utils feature.
+    </flag>
+    <flag name="ecolab">
+      Support Colab utils feature.
+    </flag>
+    <flag name="edc">
+      Support Dataclasses utils feature.
+    </flag>
+    <flag name="enp">
+      Support Numpy utils feature.
+    </flag>
+    <flag name="epath">
+      Support pathlib-like API feature.
+    </flag>
+    <flag name="epath-gcs">
+      Add support for GCS [Google Cloud Storage] (gs://).
+    </flag>
+    <flag name="epath-s3">
+      Add support for Amazon S3 (s3://).
+    </flag>
+    <flag name="epy">
+      Support a collection of generic python utils feature.
+    </flag>
+    <flag name="etqdm">
+      Support TQDM [progress bar] utils feature.
+    </flag>
+    <flag name="etree">
+      Support Tree utils feature.
+    </flag>
+    <flag name="etree-dm">
+      Add DeepMind (tree) support for etree.
+    </flag>
+    <flag name="etree-jax">
+      Add Jax (jax.tree_util) support for etree.
+    </flag>
+    <flag name="etree-tf">
+      Add TensorFlow (tf.nest) support for etree.
+    </flag>
+    <flag name="lazy-imports">
+      Support lazy module loading for optional dependencies or speed up import
+      time.
+    </flag>
+  </use>
 </pkgmetadata>

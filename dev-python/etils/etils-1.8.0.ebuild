@@ -10,6 +10,7 @@ EAPI=8
 # gcsfs
 # mediapy
 # pyink
+# s3
 # sphinx-apitree (missing for doc)
 
 DISTUTILS_USE_PEP517="flit"
