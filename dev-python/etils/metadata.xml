@@ -8,7 +8,7 @@
   </maintainer>
   <upstream>
     <bugs-to>https://github.com/google/etils/issues</bugs-to>
-    <doc>https://etils.readthedocs.io/en/latest/index.html</doc>
+    <doc lang="en">https://etils.readthedocs.io/en/stable/</doc>
     <remote-id type="github">google/etils</remote-id>
     <remote-id type="pypi">etils</remote-id>
   </upstream>
