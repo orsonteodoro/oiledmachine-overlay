@@ -12,7 +12,6 @@ EAPI=8
 # ecos
 # nashpy
 # rlax
-# tensorflow-probability
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only tests up to 3.11
