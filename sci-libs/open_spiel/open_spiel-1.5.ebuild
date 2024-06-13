@@ -6,7 +6,7 @@ EAPI=8
 
 # See also https://github.com/deepmind/open_spiel/blob/v1.3/open_spiel/scripts/python_extra_deps.sh
 
-# TODO:  package
+# TODO package:
 # clu
 # distrax
 # ecos
