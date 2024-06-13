@@ -10,10 +10,8 @@ EAPI=8
 # clu
 # distrax
 # ecos
-# flax
 # nashpy
 # rlax
-# tensorflow-datasets
 # tensorflow-probability
 
 DISTUTILS_USE_PEP517="setuptools"
