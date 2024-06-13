@@ -33,7 +33,7 @@ https://github.com/google/etils
 LICENSE="
 	Apache-2.0
 "
-RESTRICT="mirror test"
+RESTRICT="mirror test" # Not tested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 array-types doc eapp ecolab edc enp epath epath-gcs epath-s3 epy etqdm etree
@@ -153,8 +153,8 @@ DEPEND+="
 "
 BDEPEND+="
 	(
-		<dev-python/flit-core-4[${PYTHON_USEDEP}]
 		>=dev-python/flit-core-3.8[${PYTHON_USEDEP}]
+		<dev-python/flit-core-4[${PYTHON_USEDEP}]
 	)
 	doc? (
 		dev-python/sphinx-apitree[${PYTHON_USEDEP}]
@@ -163,10 +163,10 @@ BDEPEND+="
 		>=dev-python/pylint-2.6.0[${PYTHON_USEDEP}]
 		dev-python/dataclass-array[${PYTHON_USEDEP}]
 		dev-python/optree[${PYTHON_USEDEP}]
+		dev-python/pyink[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-subtests[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
-		dev-python/pyink[${PYTHON_USEDEP}]
 		sci-libs/chex[${PYTHON_USEDEP}]
 		sci-libs/pytorch[${PYTHON_USEDEP}]
 	)
