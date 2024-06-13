@@ -10,7 +10,7 @@ EAPI=8
 # mediapy
 # pyink
 # s3
-# sphinx-apitree (missing for doc)
+# sphinx-apitree
 
 DISTUTILS_USE_PEP517="flit"
 PYTHON_COMPAT=( "python3_11" ) # Upstream only tests 3.11
