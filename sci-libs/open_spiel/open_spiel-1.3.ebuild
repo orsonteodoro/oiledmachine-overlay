@@ -6,9 +6,6 @@ EAPI=8
 
 # See also https://github.com/deepmind/open_spiel/blob/v1.3/open_spiel/scripts/python_extra_deps.sh
 
-# TODO package:
-# ecos
-
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only tests up to 3.11
 
@@ -57,7 +54,6 @@ RDEPEND+="
 	python-misc? (
 		>=dev-python/cvxopt-1.3.1[${PYTHON_USEDEP}]
 		>=dev-python/cvxpy-1.2.0[${PYTHON_USEDEP}]
-		>=dev-python/ecos-2.0.10[${PYTHON_USEDEP}]
 		>=dev-python/ipython-5.8.0[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.5.2[${PYTHON_USEDEP}]
 		>=dev-python/mock-4.0.2[${PYTHON_USEDEP}]
@@ -66,6 +62,7 @@ RDEPEND+="
 		>=dev-python/osqp-python-0.6.2_p5[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.10.1[${PYTHON_USEDEP}]
 		>=dev-python/testresources-2.0.1[${PYTHON_USEDEP}]
+		>=sci-mathematics/ecos-python-2.0.10[${PYTHON_USEDEP}]
 		>=sci-libs/clu-0.0.6[${PYTHON_USEDEP}]
 		>=sci-libs/flax-0.5.3[${PYTHON_USEDEP}]
 	)
