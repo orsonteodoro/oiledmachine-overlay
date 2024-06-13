@@ -11,17 +11,13 @@ EAPI=8
 # TODO package:
 # atari-py
 # clu
-# codediff
 # einops
-# flax_module
 # jraph
 # myst-nb
 # nbstripout
-# orbax-checkpoint
 # pytest-custom_exit_code
 # pytype
 # sphinx_design
-# tensorflow_datasets
 # tensorflow_text
 
 DISTUTILS_USE_PEP517="setuptools"
@@ -105,7 +101,7 @@ BDEPEND+="
 		sci-libs/jaxlib[${PYTHON_USEDEP}]
 		sci-libs/ml-collections[${PYTHON_USEDEP}]
 		sci-libs/tensorflow[${PYTHON_USEDEP}]
-		sci-libs/tensorflow_datasets[${PYTHON_USEDEP}]
+		sci-libs/tensorflow-datasets[${PYTHON_USEDEP}]
 		sci-libs/transformers[${PYTHON_USEDEP}]
 	)
 	test? (
@@ -129,7 +125,7 @@ BDEPEND+="
 		sci-libs/ml-collections[${PYTHON_USEDEP}]
 		sci-libs/sentencepiece[${PYTHON_USEDEP},python]
 		sci-libs/tensorflow[${PYTHON_USEDEP},python]
-		sci-libs/tensorflow_datasets[${PYTHON_USEDEP}]
+		sci-libs/tensorflow-datasets[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
