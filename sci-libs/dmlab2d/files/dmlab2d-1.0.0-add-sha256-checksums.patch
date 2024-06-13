@@ -1,0 +1,18 @@
+--- a/WORKSPACE.orig	2024-06-13 12:29:10.841249115 -0700
++++ b/WORKSPACE	2024-06-13 12:28:34.509535456 -0700
+@@ -110,6 +110,7 @@ http_archive(
+     name = "luajit_archive",
+     build_file = "@//bazel:luajit.BUILD",
+     strip_prefix = "LuaJIT-2.1",
++    sha256 = "69e3878a7f2dd1993f1d0ea87c35dc0efd8a634557f96a03d5aed74be3fa843a",
+     urls = ["https://github.com/LuaJIT/LuaJIT/archive/v2.1.tar.gz"],
+ )
+ 
+@@ -117,6 +118,7 @@ http_archive(
+     name = "dm_env_archive",
+     build_file = "@//bazel:dm_env.BUILD",
+     strip_prefix = "dm_env-3c6844db2aa4ed5994b2c45dbfd9f31ad948fbb8",
++    sha256 = "64e62362f5b0f27edccc54b9d9a41f450436be59cf1844e8fe74f934eda35825",
+     urls = ["https://github.com/deepmind/dm_env/archive/3c6844db2aa4ed5994b2c45dbfd9f31ad948fbb8.zip"],
+ )
+ 

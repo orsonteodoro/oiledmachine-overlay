@@ -1,0 +1,90 @@
+--- a/WORKSPACE.orig	2023-07-20 09:46:40.000000000 -0700
++++ b/WORKSPACE	2024-06-13 12:18:53.294027570 -0700
+@@ -5,44 +5,51 @@ load("@//:python_system.bzl", "python_re
+ 
+ http_archive(
+     name = "com_google_googletest",
+-    strip_prefix = "googletest-main",
+-    urls = ["https://github.com/google/googletest/archive/main.zip"],
++    strip_prefix = "googletest-1ed6a8c67a0bd675149ece27bbec0ef1759854cf",
++    sha256 = "09e3f998102b39e1a7f7dff8550ac83ed60a7acc7648171a9bbfc57530ca04d7",
++    urls = ["https://github.com/google/googletest/archive/1ed6a8c67a0bd675149ece27bbec0ef1759854cf.zip"],
+ )
+ 
+ http_archive(
+     name = "com_google_benchmark",
+-    strip_prefix = "benchmark-main",
+-    urls = ["https://github.com/google/benchmark/archive/main.zip"],
++    strip_prefix = "benchmark-27d64a2351b98d48dd5b18c75ff536982a4ce26a",
++    sha256 = "885d2bae15469a8bbccfe871d25a14f62d37f0c6084f4eef571c605680089e28",
++    urls = ["https://github.com/google/benchmark/archive/27d64a2351b98d48dd5b18c75ff536982a4ce26a.zip"],
+ )
+ 
+ http_archive(
+     name = "rules_cc",
+-    strip_prefix = "rules_cc-main",
+-    urls = ["https://github.com/bazelbuild/rules_cc/archive/main.zip"],
++    strip_prefix = "rules_cc-22d91c627c81513d27d8ab0a90b01d08b8b76349",
++    sha256 = "1d268f2be6f7abdd90844e8d3748e8d2a923c8e4f58210cf7c0e8925f900d025",
++    urls = ["https://github.com/bazelbuild/rules_cc/archive/22d91c627c81513d27d8ab0a90b01d08b8b76349.zip"],
+ )
+ 
+ http_archive(
+     name = "rules_python",
+-    strip_prefix = "rules_python-main",
+-    url = "https://github.com/bazelbuild/rules_python/archive/main.zip",
++    strip_prefix = "rules_python-5c5ab5bd9577a284784d1c8b27bf58336de06010",
++    sha256 = "33415c6640da5c03630705b7ac57538021b27b52ab2c2890377864038453aeb6",
++    url = "https://github.com/bazelbuild/rules_python/archive/5c5ab5bd9577a284784d1c8b27bf58336de06010.zip",
+ )
+ 
+ http_archive(
+     name = "bazel_skylib",
+-    strip_prefix = "bazel-skylib-main",
+-    urls = ["https://github.com/bazelbuild/bazel-skylib/archive/main.zip"],
++    strip_prefix = "bazel-skylib-288731ef9f7f688932bd50e704a91a45ec185f9b",
++    sha256 = "08c0386f45821ce246bbbf77503c973246ed6ee5c3463e41efc197fa9bc3a7f4",
++    urls = ["https://github.com/bazelbuild/bazel-skylib/archive/288731ef9f7f688932bd50e704a91a45ec185f9b.zip"],
+ )
+ 
+ http_archive(
+     name = "com_google_absl",
+-    strip_prefix = "abseil-cpp-master",
+-    urls = ["https://github.com/abseil/abseil-cpp/archive/master.zip"],
++    strip_prefix = "abseil-cpp-9f1dcc70d64232e77964de9b90e209e23e0110db",
++    sha256 = "280f8a58d81c22ad621e463da013cf206b697166d3c3441c1cae3ccfb1247110",
++    urls = ["https://github.com/abseil/abseil-cpp/archive/9f1dcc70d64232e77964de9b90e209e23e0110db.zip"],
+ )
+ 
+ http_archive(
+     name = "com_google_absl_py",
+-    strip_prefix = "abseil-py-main",
+-    urls = ["https://github.com/abseil/abseil-py/archive/main.zip"],
++    strip_prefix = "abseil-py-9e543208a72300a4f8677fe725550fe8dc242bac",
++    sha256 = "3ae232ea671d785790887232da999ec136e8f1696d2b683669dc8685cec35167",
++    urls = ["https://github.com/abseil/abseil-py/archive/9e543208a72300a4f8677fe725550fe8dc242bac.zip"],
+ )
+ 
+ http_archive(
+@@ -116,15 +123,17 @@ http_archive(
+ http_archive(
+     name = "tree_archive",
+     build_file = "@//bazel:tree.BUILD",
+-    strip_prefix = "tree-master",
+-    urls = ["https://github.com/deepmind/tree/archive/master.zip"],
++    strip_prefix = "tree-df359fddcd8db21f6065a418ebf8873e2c9aedd5",
++    sha256 = "1d800949ad3bb9d33c1e6d63138ae0bf22da323579916c445fbc462aa17ee63e",
++    urls = ["https://github.com/google-deepmind/tree/archive/df359fddcd8db21f6065a418ebf8873e2c9aedd5.zip"],
+ )
+ 
+ http_archive(
+     name = "pybind11_archive",
+     build_file = "@//bazel:pybind11.BUILD",
+-    strip_prefix = "pybind11-master",
+-    urls = ["https://github.com/pybind/pybind11/archive/master.zip"],
++    strip_prefix = "pybind11-8d08dc64ca300342852ceaa7b1d65fe9f69dab06",
++    sha256 = "d06b1a46799242495bfcd3e87343040208c63760720ad8837368625880e5ddbb",
++    urls = ["https://github.com/pybind/pybind11/archive/8d08dc64ca300342852ceaa7b1d65fe9f69dab06.zip"],
+ )
+ 
+ http_archive(
