@@ -96,7 +96,7 @@ python_install() {
 		mv \
 			"${ED}/usr/lib/${EPYTHON}/site-packages/examples" \
 			"${ED}/usr/share/${PN}"
-		rm -rf "${ED}/usr/share/rlax/examples/__pycache__"
+		rm -rf "${ED}/usr/share/${PN}/examples/__pycache__"
 	else
 		rm -rf "${ED}/usr/lib/${EPYTHON}/site-packages/examples"
 	fi

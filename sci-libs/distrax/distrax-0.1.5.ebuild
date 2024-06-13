@@ -84,13 +84,13 @@ python_install() {
 		mv \
 			"${ED}/usr/lib/${EPYTHON}/site-packages/examples" \
 			"${ED}/usr/share/${PN}"
-		rm -rf "${ED}/usr/share/distrax/examples/__pycache__"
+		rm -rf "${ED}/usr/share/${PN}/examples/__pycache__"
 	else
 		rm -rf "${ED}/usr/lib/${EPYTHON}/site-packages/examples"
 	fi
 	mv \
 		"${ED}/usr/lib/${EPYTHON}/site-packages/requirements" \
-		"${ED}/usr/lib/${EPYTHON}/site-packages/distrax"
+		"${ED}/usr/lib/${EPYTHON}/site-packages/${PN}"
 }
 
 src_install() {
