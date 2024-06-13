@@ -96,9 +96,8 @@ RDEPEND="
 		)
 		dev-python/grpcio:=
 		net-libs/grpc:=
-
-		=sci-visualization/tensorboard-data-server-0.7*[${PYTHON_USEDEP}]
 	')
+	=sci-visualization/tensorboard-data-server-0.7*[${PYTHON_SINGLE_USEDEP}]
 "
 BDEPEND="
 	${PYTHON_DEPS}

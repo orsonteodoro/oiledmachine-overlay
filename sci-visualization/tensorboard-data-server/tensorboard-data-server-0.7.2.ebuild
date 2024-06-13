@@ -9,6 +9,7 @@ EAPI=8
 
 TENSORBOARD_TARBALL_PV="2.12.2"
 
+DISTUTILS_SINGLE_IMPL="1"
 DISTUTILS_USE_PEP517="standalone"
 PROTOBUF_SLOT="0/3.21"
 RUST_PV="1.65.0"
@@ -286,85 +287,89 @@ REQUIRED_USE="
 "
 RDEPEND="
 	${PYTHON_DEPS}
-	(
-		<dev-python/google-auth-3[${PYTHON_USEDEP}]
-		>=dev-python/google-auth-1.6.3[${PYTHON_USEDEP}]
-	)
-	(
-		<dev-python/google-auth-oauthlib-2[${PYTHON_USEDEP}]
-		>=dev-python/google-auth-oauthlib-0.5[${PYTHON_USEDEP}]
-	)
-	(
-		<dev-python/requests-3[${PYTHON_USEDEP}]
-		>=dev-python/requests-2.21.0[${PYTHON_USEDEP}]
-	)
-	>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
-	>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
-	>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
-	>=sci-visualization/tensorboard-plugin-wit-1.6.0[${PYTHON_USEDEP}]
-	>dev-python/six-1.9[${PYTHON_USEDEP}]
-	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		(
+			<dev-python/google-auth-3[${PYTHON_USEDEP}]
+			>=dev-python/google-auth-1.6.3[${PYTHON_USEDEP}]
+		)
+		(
+			<dev-python/google-auth-oauthlib-2[${PYTHON_USEDEP}]
+			>=dev-python/google-auth-oauthlib-0.5[${PYTHON_USEDEP}]
+		)
+		(
+			<dev-python/requests-3[${PYTHON_USEDEP}]
+			>=dev-python/requests-2.21.0[${PYTHON_USEDEP}]
+		)
+		>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
+		>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
+		>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
+		>=sci-visualization/tensorboard-plugin-wit-1.6.0[${PYTHON_USEDEP}]
+		>dev-python/six-1.9[${PYTHON_USEDEP}]
+		dev-python/protobuf-python:'${PROTOBUF_SLOT}'[${PYTHON_USEDEP}]
 
-	|| (
-		(
-			=dev-python/grpcio-1.49*[${PYTHON_USEDEP}]
-			=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
+		|| (
+			(
+				=dev-python/grpcio-1.49*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
+			)
+			(
+				=dev-python/grpcio-1.50*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.50*[${PYTHON_USEDEP},python]
+			)
+			(
+				=dev-python/grpcio-1.51*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.51*[${PYTHON_USEDEP},python]
+			)
+			(
+				=dev-python/grpcio-1.52*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.52*[${PYTHON_USEDEP},python]
+			)
+			(
+				=dev-python/grpcio-1.53*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
+			)
+			(
+				=dev-python/grpcio-1.54*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
+			)
 		)
-		(
-			=dev-python/grpcio-1.50*[${PYTHON_USEDEP}]
-			=net-libs/grpc-1.50*[${PYTHON_USEDEP},python]
-		)
-		(
-			=dev-python/grpcio-1.51*[${PYTHON_USEDEP}]
-			=net-libs/grpc-1.51*[${PYTHON_USEDEP},python]
-		)
-		(
-			=dev-python/grpcio-1.52*[${PYTHON_USEDEP}]
-			=net-libs/grpc-1.52*[${PYTHON_USEDEP},python]
-		)
-		(
-			=dev-python/grpcio-1.53*[${PYTHON_USEDEP}]
-			=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
-		)
-		(
-			=dev-python/grpcio-1.54*[${PYTHON_USEDEP}]
-			=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
-		)
-	)
-	dev-python/grpcio:=[${PYTHON_USEDEP}]
-	net-libs/grpc:=[${PYTHON_USEDEP},python]
+		dev-python/grpcio:=[${PYTHON_USEDEP}]
+		net-libs/grpc:=[${PYTHON_USEDEP},python]
+	')
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=dev-python/setuptools-41[${PYTHON_USEDEP}]
-	>=dev-python/wheel-0.26[${PYTHON_USEDEP}]
-	>=dev-python/black-22.6.0[${PYTHON_USEDEP}]
-	>=dev-python/flake8-3.7.8[${PYTHON_USEDEP}]
-	>=dev-python/virtualenv-20.0.31[${PYTHON_USEDEP}]
-	>=dev-util/yamllint-1.17.0[${PYTHON_USEDEP}]
-	test? (
-		>=dev-python/boto3-1.9.86[${PYTHON_USEDEP}]
-		>=dev-python/fsspec-2021.06.0[${PYTHON_USEDEP}]
-		>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
-		>=dev-python/pandas-1.0[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/setuptools-41[${PYTHON_USEDEP}]
+		>=dev-python/wheel-0.26[${PYTHON_USEDEP}]
+		>=dev-python/black-22.6.0[${PYTHON_USEDEP}]
+		>=dev-python/flake8-3.7.8[${PYTHON_USEDEP}]
+		>=dev-python/virtualenv-20.0.31[${PYTHON_USEDEP}]
+		>=dev-util/yamllint-1.17.0[${PYTHON_USEDEP}]
+		test? (
+			>=dev-python/boto3-1.9.86[${PYTHON_USEDEP}]
+			>=dev-python/fsspec-2021.06.0[${PYTHON_USEDEP}]
+			>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
+			>=dev-python/pandas-1.0[${PYTHON_USEDEP}]
 
-		|| (
-		=dev-python/grpcio-testing-1.49*[${PYTHON_USEDEP}]
-			=dev-python/grpcio-testing-1.50*[${PYTHON_USEDEP}]
-			=dev-python/grpcio-testing-1.51*[${PYTHON_USEDEP}]
-			=dev-python/grpcio-testing-1.52*[${PYTHON_USEDEP}]
-			=dev-python/grpcio-testing-1.53*[${PYTHON_USEDEP}]
-			=dev-python/grpcio-testing-1.54*[${PYTHON_USEDEP}]
+			|| (
+				=dev-python/grpcio-testing-1.49*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.50*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.51*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.52*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.53*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.54*[${PYTHON_USEDEP}]
+			)
+			dev-python/grpcio-testing:=[${PYTHON_USEDEP}]
 		)
-		dev-python/grpcio-testing:=[${PYTHON_USEDEP}]
-	)
-	>=virtual/rust-${RUST_PV}
-	app-arch/unzip
-	|| (
-		>=dev-lang/rust-bin-${RUST_PV}[rustfmt]
-		>=dev-lang/rust-${RUST_PV}[rustfmt]
-	)
+		>=virtual/rust-'${RUST_PV}'
+		app-arch/unzip
+		|| (
+			>=dev-lang/rust-bin-'${RUST_PV}'[rustfmt]
+			>=dev-lang/rust-'${RUST_PV}'[rustfmt]
+		)
+	')
 "
 DOCS=( )
 
