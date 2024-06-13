@@ -11,10 +11,10 @@ inherit distutils-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
-	EGIT_BRANCH="main"
+	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${PN}-${PV}"
-	EGIT_REPO_URI="https://github.com/fchollet/namex.git"
-	FALLBACK_COMMIT="4a8f74cb950b99bb108485c6f08adf1eb6dc4fa2" # Feb 27, 2023
+	EGIT_REPO_URI="https://github.com/google-deepmind/distrax.git"
+	FALLBACK_COMMIT="1c4c6aa0ff31b5ab04f951ece3a5438b2c506ea6" # Nov 21, 2023
 	inherit git-r3
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
