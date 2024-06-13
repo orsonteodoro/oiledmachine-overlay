@@ -4,13 +4,13 @@
 
 EAPI=8
 
-# TODO ebuild-package needs to be created:
+# TODO package:
 # sphinx-github-changelog
 
 DISTUTILS_USE_PEP517="setuptools"
 PYGAME_PV="2.3.0"
 PYMUNK_PV="6.2.0"
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 VIRTUALX_REQUIRED="test"
 
 inherit distutils-r1 virtualx
