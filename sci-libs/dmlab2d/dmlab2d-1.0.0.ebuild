@@ -135,7 +135,7 @@ python_compile() {
 	bazel build --lua_version=lua5_1 ... || die
 
 	local wheel_path
-	local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
+	local d="${WORKDIR}/lab2d-release_v${PV}-${EPYTHON/./_}/install"
 
 	local version="${EPYTHON/python}"
 	version="${version/./}"
