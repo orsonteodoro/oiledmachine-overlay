@@ -60,8 +60,8 @@ DEPEND+="
 "
 BDEPEND+="
 	(
-		<dev-python/flit-core-4[${PYTHON_USEDEP}]
 		>=dev-python/flit-core-3.5[${PYTHON_USEDEP}]
+		<dev-python/flit-core-4[${PYTHON_USEDEP}]
 	)
 	test? (
 		sci-libs/flax[${PYTHON_USEDEP}]
