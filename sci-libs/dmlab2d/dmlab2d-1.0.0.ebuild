@@ -96,6 +96,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	>=dev-build/bazel-${BAZEL_SLOT}:${BAZEL_SLOT}
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 "
