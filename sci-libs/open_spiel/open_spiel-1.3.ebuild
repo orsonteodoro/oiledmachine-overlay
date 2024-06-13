@@ -8,10 +8,8 @@ EAPI=8
 
 # TODO package:
 # clu
-# distrax
 # ecos
 # nashpy
-# rlax
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only tests up to 3.11
@@ -44,13 +42,13 @@ RDEPEND+="
 		dev-lang/go
 	)
 	jax? (
-		>=dev-python/distrax-0.1.3[${PYTHON_USEDEP}]
-		>=dev-python/rlax-0.1.5[${PYTHON_USEDEP}]
 		>=sci-libs/chex-0.1.5[${PYTHON_USEDEP}]
+		>=sci-libs/distrax-0.1.3[${PYTHON_USEDEP}]
 		>=sci-libs/dm-haiku-0.0.8[${PYTHON_USEDEP}]
 		>=sci-libs/jax-0.3.24[${PYTHON_USEDEP}]
 		>=sci-libs/jaxlib-0.3.24[${PYTHON_USEDEP}]
 		>=sci-libs/optax-0.1.3[${PYTHON_USEDEP}]
+		>=sci-libs/rlax-0.1.5[${PYTHON_USEDEP}]
 	)
 	julia? (
 		dev-lang/julia
