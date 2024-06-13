@@ -14,6 +14,7 @@ RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"
 RULES_LICENSE_PV="0.0.4"						# https://github.com/tensorflow/hub/blob/v0.16.1/WORKSPACE#L58
 RULES_PROTO_COMMIT="7e4afce6fe62dbff0a4a03450143146f9f2d7488"		# https://github.com/bazelbuild/buildtools/blob/v6.1.2/WORKSPACE
 RULES_PYTHON_COMMIT="70cce26432187a60b4e950118791385e6fb3c26f"		# https://github.com/tensorflow/hub/blob/v0.16.1/WORKSPACE#L24
+TENSORFLOW_PV="1.15.0"							# https://github.com/tensorflow/hub/blob/v0.16.1/tensorflow_hub/__init__.py#L73
 ZLIB_PV="1.2.13"							# https://github.com/tensorflow/hub/blob/v0.16.1/WORKSPACE#L49
 
 inherit bazel distutils-r1 pypi
@@ -62,6 +63,7 @@ RDEPEND+="
 	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-python-3.19.6[${PYTHON_USEDEP}]
 	>=sci-libs/tf-keras-2.14.1[${PYTHON_USEDEP}]
+	>=sci-libs/tensorflow-${TENSORFLOW_PV}
 "
 DEPEND+="
 	${RDEPEND}
