@@ -6,7 +6,6 @@ EAPI=8
 
 # TODO package:
 # bsuite
-# dm-meltingpot
 # sphinx-autobuild
 # sphinx_github_changelog
 
@@ -44,7 +43,7 @@ RDEPEND+="
 	meltingpot? (
 		>=sci-libs/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
 		$(python_gen_cond_dep '
-			>=dev-python/dm-meltingpot-2.2.2[${PYTHON_USEDEP}]
+			>=sci-libs/dm-meltingpot-2.2.2[${PYTHON_USEDEP}]
 		' python3_11)
 	)
 	dm-control? (
