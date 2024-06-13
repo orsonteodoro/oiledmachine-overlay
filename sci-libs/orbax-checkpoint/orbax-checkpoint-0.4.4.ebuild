@@ -73,7 +73,6 @@ ORBAX_EXPORT_RDEPEND="
 "
 RDEPEND+="
 	${CHECKPOINT_RDEPEND}
-	${ORBAX_EXPORT_RDEPEND}
 "
 DEPEND+="
 	${RDEPEND}
@@ -95,7 +94,6 @@ BDEPEND+="
 	)
 	test? (
 		${CHECKPOINT_TEST_BDEPEND}
-		${ORBAX_EXPORT_TEST_BDEPEND}
 	)
 "
 # Avoid circular depends with tensorflow \
