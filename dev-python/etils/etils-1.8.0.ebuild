@@ -28,6 +28,7 @@ https://github.com/google/etils/archive/refs/tags/v${PV}.tar.gz
 DESCRIPTION="Collection of eclectic utils for python."
 HOMEPAGE="
 https://github.com/google/etils
+https://pypi.org/project/etils/
 "
 LICENSE="
 	Apache-2.0
