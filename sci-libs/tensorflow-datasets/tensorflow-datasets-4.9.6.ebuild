@@ -113,9 +113,9 @@ HUGGINGFACE_RDEPEND="
 	media-libs/opencv[${PYTHON_USEDEP}]
 	sci-libs/dm-tree[${PYTHON_USEDEP}]
 	sci-libs/gcld3[${PYTHON_USEDEP}]
+	sci-libs/tensorflow[${PYTHON_USEDEP}]
 	sci-libs/tensorflow-data-validation[${PYTHON_USEDEP}]
 	sci-libs/tensorflow-io[${PYTHON_USEDEP}]
-	sci-libs/tensorflow[${PYTHON_USEDEP}]
 
 	sci-libs/datasets[${PYTHON_USEDEP}]
 "
@@ -177,9 +177,9 @@ RDEPEND+="
 		dev-python/scipy[${PYTHON_USEDEP}]
 	)
 	eurosat? (
+		dev-python/imagecodecs[${PYTHON_USEDEP}]
 		dev-python/scikit-image[${PYTHON_USEDEP}]
 		dev-python/tifffile[${PYTHON_USEDEP}]
-		dev-python/imagecodecs[${PYTHON_USEDEP}]
 	)
 	groove? (
 		dev-python/pretty_midi[${PYTHON_USEDEP}]
@@ -195,8 +195,8 @@ RDEPEND+="
 		dev-python/pydub[${PYTHON_USEDEP}]
 	)
 	imagenet2012_corrupted? (
-		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/scikit-image[${PYTHON_USEDEP}]
+		dev-python/scipy[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP}]
 	)
 	locomotion? (
@@ -216,8 +216,8 @@ RDEPEND+="
 		dev-python/librosa[${PYTHON_USEDEP}]
 	)
 	ogbg_molpcba? (
-		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/networkx[${PYTHON_USEDEP}]
+		dev-python/pandas[${PYTHON_USEDEP}]
 	)
 	pet_finder? (
 		dev-python/pandas[${PYTHON_USEDEP}]
