@@ -51,7 +51,7 @@ CHECKPOINT_DEPEND="
 	>=dev-libs/protobuf-${PROTOBUF_PV}:0/${PROTOBUF_PV%.*}
 	>=sci-libs/jax-0.4.9[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/etils[${PYTHON_USEDEP}]
+	dev-python/etils[${PYTHON_USEDEP},epath,epy]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/nest-asyncio[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
