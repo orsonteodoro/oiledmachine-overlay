@@ -7,11 +7,26 @@ EAPI=8
 # U18, U20
 
 # TODO package:
-# kornia
-# paddlepaddle
+# facexlib
+# flake8-annotations-complexity
+# flake8-broken-line
+# flake8-class-attributes-order
+# flake8-debugger
+# flake8-eradicate
+# flake8-executable
+# flake8-expression-complexity
+# flake8-print
+# flake8-pytest-style
+# flake8-rst-docstrings
+# flake8-string-format
+# flake8-variables-names
+# flake8_coding
+# flake8_pep3101
+# import-order
+# pep8-naming
 # pytest-dependency
 # pytest-html
-# test-generator
+# python-decouple
 
 # For install see
 # See https://github.com/openvinotoolkit/openvino/blob/2021.4.2/docs/install_guides/installing-openvino-linux.md#install-external-dependencies
@@ -149,14 +164,14 @@ BDEPEND_TIME_TESTS_SCRIPTS="
 # tests/time_tests/test_runner/requirements.txt \
 BDEPEND_TIME_TESTS_TEST_RUNNER="
 	$(python_gen_cond_dep '
-		>=dev-python/pytest-4.0.1[${PYTHON_USEDEP}]
 		>=dev-python/attrs-19.1.0[${PYTHON_USEDEP}]
-		>=dev-python/PyYAML-5.4.1[${PYTHON_USEDEP}]
 		>=dev-python/jsonschema-3.2.0[${PYTHON_USEDEP}]
 		>=dev-python/distro-1.5.0[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.18.5[${PYTHON_USEDEP}]
-		dev-python/pymongo[${PYTHON_USEDEP}]
+		>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]
+		>=dev-python/pytest-4.0.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-html-1.22.1[${PYTHON_USEDEP}]
+		dev-python/pymongo[${PYTHON_USEDEP}]
 	')
 "
 # tests/conditional_compilation/requirements.txt \
@@ -201,7 +216,9 @@ BDEPEND+="
 			dev-python/flake8-annotations-complexity[${PYTHON_USEDEP}]
 			dev-python/flake8-broken-line[${PYTHON_USEDEP}]
 			dev-python/flake8-bugbear[${PYTHON_USEDEP}]
+			dev-python/flake8-builtins[${PYTHON_USEDEP}]
 			dev-python/flake8-class-attributes-order[${PYTHON_USEDEP}]
+			dev-python/flake8-commas[${PYTHON_USEDEP}]
 			dev-python/flake8-comprehensions[${PYTHON_USEDEP}]
 			dev-python/flake8-debugger[${PYTHON_USEDEP}]
 			dev-python/flake8-eradicate[${PYTHON_USEDEP}]
@@ -209,14 +226,12 @@ BDEPEND+="
 			dev-python/flake8-expression-complexity[${PYTHON_USEDEP}]
 			dev-python/flake8-print[${PYTHON_USEDEP}]
 			dev-python/flake8-pytest-style[${PYTHON_USEDEP}]
+			dev-python/flake8-quotes[${PYTHON_USEDEP}]
 			dev-python/flake8-rst-docstrings[${PYTHON_USEDEP}]
 			dev-python/flake8-string-format[${PYTHON_USEDEP}]
 			dev-python/flake8-variables-names[${PYTHON_USEDEP}]
-			dev-python/flake8_builtins[${PYTHON_USEDEP}]
 			dev-python/flake8_coding[${PYTHON_USEDEP}]
-			dev-python/flake8_commas[${PYTHON_USEDEP}]
 			dev-python/flake8_pep3101[${PYTHON_USEDEP}]
-			dev-python/flake8_quotes[${PYTHON_USEDEP}]
 			dev-python/import-order[${PYTHON_USEDEP}]
 			dev-python/mypy[${PYTHON_USEDEP}]
 			dev-python/pep8-naming[${PYTHON_USEDEP}]
@@ -235,7 +250,7 @@ BDEPEND+="
 			dev-python/imagesize[${PYTHON_USEDEP}]
 			dev-python/jinja[${PYTHON_USEDEP}]
 			dev-python/lxml[${PYTHON_USEDEP}]
-			dev-python/MarkupSafe[${PYTHON_USEDEP}]
+			dev-python/markupsafe[${PYTHON_USEDEP}]
 			dev-python/mistune[${PYTHON_USEDEP}]
 			dev-python/packaging[${PYTHON_USEDEP}]
 			dev-python/pydata-sphinx-theme[${PYTHON_USEDEP}]
@@ -259,10 +274,10 @@ BDEPEND+="
 		')
 	)
 	test? (
+		${BDEPEND_CONDITIONAL_COMPILATION}
 		${BDEPEND_STRESS_TESTS}
 		${BDEPEND_TIME_TESTS_SCRIPTS}
 		${BDEPEND_TIME_TESTS_TEST_RUNNER}
-		${BDEPEND_CONDITIONAL_COMPILATION}
 	)
 	|| (
 		$(gen_gcc_bdepend)
