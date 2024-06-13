@@ -8,9 +8,6 @@ EAPI=8
 
 # See https://github.com/google/orbax/blob/main/.github/workflows/build.yml for supported python
 
-# TODO package:
-# google-cloud-logging
-
 DISTUTILS_USE_PEP517="flit"
 PROTOBUF_PV="5.26.1"
 PYTHON_COMPAT=( "python3_"{10,11} ) # Upstream only tests up to 3.11.
@@ -44,7 +41,7 @@ tensorflow test
 "
 REQUIRED_USE="
 "
-CHECKPOINT_DEPEND="
+CHECKPOINT_RDEPEND="
 	(
 		>=sci-libs/tensorstore-0.1.51[${PYTHON_USEDEP}]
 	)
@@ -61,11 +58,33 @@ CHECKPOINT_DEPEND="
 	sci-libs/jaxlib[${PYTHON_USEDEP}]
 	sci-libs/jaxtyping[${PYTHON_USEDEP}]
 "
+ORBAX_EXPORT_RDEPEND="
+	dev-python/absl-py[${PYTHON_USEDEP}]
+	dev-python/dataclasses-json[${PYTHON_USEDEP}]
+	dev-python/etils[${PYTHON_USEDEP}]
+	dev-python/numpy[${PYTHON_USEDEP}]
+	sci-libs/jax[${PYTHON_USEDEP}]
+	sci-libs/jaxlib[${PYTHON_USEDEP}]
+"
 RDEPEND+="
-	${CHECKPOINT_DEPEND}
+	${CHECKPOINT_RDEPEND}
+	${ORBAX_EXPORT_RDEPEND}
 "
 DEPEND+="
 	${RDEPEND}
+"
+CHECKPOINT_TEST_BDEPEND="
+	dev-libs/pytest[${PYTHON_USEDEP}]
+	dev-libs/pytest-xdist[${PYTHON_USEDEP}]
+	dev-python/google-cloud-logging[${PYTHON_USEDEP}]
+	dev-python/mock[${PYTHON_USEDEP}]
+	sci-libs/flax[${PYTHON_USEDEP}]
+"
+ORBAX_EXPORT_TEST_BDEPEND="
+	=sci-libs/tensorflow-9999[${PYTHON_USEDEP}]
+	dev-libs/pytest[${PYTHON_USEDEP}]
+	dev-libs/pytest-xdist[${PYTHON_USEDEP}]
+	dev-python/requests[${PYTHON_USEDEP}]
 "
 BDEPEND+="
 	(
@@ -73,11 +92,8 @@ BDEPEND+="
 		<dev-python/flit-core-4[${PYTHON_USEDEP}]
 	)
 	test? (
-		sci-libs/flax[${PYTHON_USEDEP}]
-		dev-python/google-cloud-logging[${PYTHON_USEDEP}]
-		dev-python/mock[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-xdist[${PYTHON_USEDEP}]
+		${CHECKPOINT_TEST_BDEPEND}
+		${ORBAX_EXPORT_TEST_BDEPEND}
 	)
 "
 # Avoid circular depends with tensorflow \
