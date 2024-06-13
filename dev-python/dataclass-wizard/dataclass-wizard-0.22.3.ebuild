@@ -38,7 +38,14 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc test timedelta yaml"
+IUSE+=" dev doc test timedelta yaml"
+REQUIRED_USE+="
+	dev? (
+		doc
+		timedelta
+		test
+	)
+"
 RDEPEND+="
 	timedelta? (
 		>=dev-python/pytimeparse-1.1.8[${PYTHON_USEDEP}]
@@ -51,14 +58,17 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/bump2version-1.0.1[${PYTHON_USEDEP}]
-	>=dev-python/coverage-6.2[${PYTHON_USEDEP}]
-	>=dev-python/flake8-3[${PYTHON_USEDEP}]
-	>=dev-python/pip-21.3.1[${PYTHON_USEDEP}]
-	>=dev-python/pytimeparse-1.1.8[${PYTHON_USEDEP}]
-	>=dev-python/tox-3.24.5[${PYTHON_USEDEP}]
-	>=dev-python/twine-3.8.0[${PYTHON_USEDEP}]
-	>=dev-python/wheel-0.42.0[${PYTHON_USEDEP}]
+	dev? (
+		>=dev-python/bump2version-1.0.1[${PYTHON_USEDEP}]
+		>=dev-python/coverage-6.2[${PYTHON_USEDEP}]
+		>=dev-python/flake8-3[${PYTHON_USEDEP}]
+		>=dev-python/pip-21.3.1[${PYTHON_USEDEP}]
+		>=dev-python/pytimeparse-1.1.8[${PYTHON_USEDEP}]
+		>=dev-python/tox-3.24.5[${PYTHON_USEDEP}]
+		>=dev-python/twine-3.8.0[${PYTHON_USEDEP}]
+		>=dev-python/watchdog-2.1.6[${PYTHON_USEDEP}]
+		>=dev-python/wheel-0.42.0[${PYTHON_USEDEP}]
+	)
 	doc? (
 		>=dev-python/sphinx-5.3.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-issues-4.0.0[${PYTHON_USEDEP}]
