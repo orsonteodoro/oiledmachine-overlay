@@ -70,7 +70,7 @@ src_unpack() {
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
-		grep -q -e "__version__ = \"0.1.5\"" "${S}/setup.py" \
+		grep -q -e "__version__ = \"0.1.5\"" "${S}/distrax/__init__.py" \
 			|| die "QA:  Bump version"
 	else
 		unpack ${A}
