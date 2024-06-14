@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO package:
-# gin-config
 # Keras-Preprocessing
 
 DISTUTILS_USE_PEP517="setuptools"
