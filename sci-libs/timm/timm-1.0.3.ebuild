@@ -31,7 +31,6 @@ SLOT="0"
 IUSE="doc modelindex"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=sci-libs/pytorch-1.7[${PYTHON_USEDEP}]
 		>=sci-libs/safetensors-0.2[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		sci-libs/huggingface_hub[${PYTHON_USEDEP}]
@@ -40,6 +39,7 @@ RDEPEND+="
 			>=dev-python/jinja-2.11.3[${PYTHON_USEDEP}]
 		)
 	')
+	>=sci-libs/pytorch-1.7[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/torchvision-0.5.0[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="

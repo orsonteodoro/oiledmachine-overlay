@@ -31,13 +31,13 @@ SLOT="0"
 IUSE="doc modelindex"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=sci-libs/pytorch-1.4.0[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		modelindex? (
 			>=dev-python/model-index-0.1.10[${PYTHON_USEDEP}]
 			>=dev-python/jinja-2.11.3[${PYTHON_USEDEP}]
 		)
 	')
+	>=sci-libs/pytorch-1.4.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/torchvision-0.5.0[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
