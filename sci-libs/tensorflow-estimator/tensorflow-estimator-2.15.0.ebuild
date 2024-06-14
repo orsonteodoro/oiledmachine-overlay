@@ -4,12 +4,12 @@
 EAPI=8
 
 BAZEL_PV="6.1.0"
-EGIT_RULES_JAVA_PV="5.5.1"
+EGIT_RULES_JAVA_PV="5.5.1"		# From console inspection
 MY_PN="estimator"
 MY_PV="${PV}"
 MY_P="${MY_PN}-${MY_PV}"
-PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only lists up to 3.10
-RULES_CC_PV="0.0.2"
+PYTHON_COMPAT=( "python3_"{10..11} )	# Upstream only lists up to 3.10
+RULES_CC_PV="0.0.2"			# https://github.com/bazelbuild/bazel/blob/6.1.2/src/MODULE.tools#L3
 TF_PV=$(ver_cut 1-2 "${PV}")
 
 inherit bazel distutils-r1
