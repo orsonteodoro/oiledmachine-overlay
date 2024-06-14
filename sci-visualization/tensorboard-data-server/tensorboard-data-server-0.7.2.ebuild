@@ -404,7 +404,7 @@ python_compile() {
 
 	# Unbreak die check
 	mkdir -p "${d}/usr/bin"
-	touch "${d}/usr/bin/"{"${EPYTHON}","python3","python","pyvenv.conf"}
+	touch "${d}/usr/bin/"{"${EPYTHON}","python3","python","pyvenv.cfg"}
 }
 
 src_compile() {
