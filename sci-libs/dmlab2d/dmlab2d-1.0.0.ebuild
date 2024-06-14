@@ -27,7 +27,7 @@ LUA_PV="5.1.5"								# https://github.com/google-deepmind/lab2d/blob/release_v1
 PYBIND11_COMMIT="8d08dc64ca300342852ceaa7b1d65fe9f69dab06"		# From patch
 PYTHON_COMPAT=( "python3_"{10..12} )
 RULES_CC_COMMIT="22d91c627c81513d27d8ab0a90b01d08b8b76349"		# From patch
-RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"
+RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"		# From console inspection
 RULES_LICENSE_PV="0.0.3"						# https://github.com/bazelbuild/bazel/blob/6.1.2/src/MODULE.tools#L5
 RULES_PYTHON_COMMIT="5c5ab5bd9577a284784d1c8b27bf58336de06010"		# From patch
 ZLIB_PV="1.2.11"							# https://github.com/google-deepmind/lab2d/blob/release_v1.0.0/WORKSPACE#L77
@@ -45,22 +45,22 @@ if [[ "${PV}" =~ "9999" ]] ; then
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	S="${WORKDIR}/lab2d-release_v${PV}"
-#https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT}.zip -> abseil-cpp-${ABSEIL_CPP_COMMIT}.zip
 bazel_external_uris="
-https://github.com/bazelbuild/apple_support/releases/download/${APPLE_SUPPORT_PV}/apple_support.${APPLE_SUPPORT_PV}.tar.gz
-https://github.com/bazelbuild/rules_license/releases/download/${RULES_LICENSE_PV}/rules_license-${RULES_LICENSE_PV}.tar.gz
-https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT}.zip -> googletest-${GOOGLETEST_COMMIT}.zip
-https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT}.zip -> benchmark-${BENCHMARK_COMMIT}.zip
-https://github.com/bazelbuild/rules_cc/archive/${RULES_CC_COMMIT}.zip -> rules_cc-${RULES_CC_COMMIT}.zip
-https://github.com/bazelbuild/rules_python/archive/${RULES_PYTHON_COMMIT}.zip -> rules_python-${RULES_PYTHON_COMMIT}.zip
-https://github.com/bazelbuild/bazel-skylib/archive/${BAZEL_SKYLIB_COMMIT}.zip -> bazel-skylib-${BAZEL_SKYLIB_COMMIT}.zip
+https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT}.zip -> abseil-cpp-${ABSEIL_CPP_COMMIT}.zip
 https://github.com/abseil/abseil-py/archive/${ABSEIL_PY_COMMIT}.zip -> abseil-py-${ABSEIL_PY_COMMIT}.zip
-https://github.com/deepmind/dm_env/archive/${DM_ENV_COMMIT}.zip -> dm_env-${DM_ENV_COMMIT}.zip
+https://github.com/bazelbuild/apple_support/releases/download/${APPLE_SUPPORT_PV}/apple_support.${APPLE_SUPPORT_PV}.tar.gz
+https://github.com/bazelbuild/bazel-skylib/archive/${BAZEL_SKYLIB_COMMIT}.zip -> bazel-skylib-${BAZEL_SKYLIB_COMMIT}.zip
+https://github.com/bazelbuild/rules_cc/archive/${RULES_CC_COMMIT}.zip -> rules_cc-${RULES_CC_COMMIT}.zip
 https://github.com/bazelbuild/rules_java/archive/${RULES_JAVA_COMMIT}.zip -> rules_java-${RULES_JAVA_COMMIT}.zip
-https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_COMMIT}/eigen-${EIGEN_COMMIT}.tar.gz
+https://github.com/bazelbuild/rules_license/releases/download/${RULES_LICENSE_PV}/rules_license-${RULES_LICENSE_PV}.tar.gz
+https://github.com/bazelbuild/rules_python/archive/${RULES_PYTHON_COMMIT}.zip -> rules_python-${RULES_PYTHON_COMMIT}.zip
+https://github.com/deepmind/dm_env/archive/${DM_ENV_COMMIT}.zip -> dm_env-${DM_ENV_COMMIT}.zip
+https://github.com/glennrp/libpng/archive/v${LIBPNG_PV}.zip -> libpng-${LIBPNG_PV}.zip
+https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT}.zip -> benchmark-${BENCHMARK_COMMIT}.zip
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT}.zip -> googletest-${GOOGLETEST_COMMIT}.zip
 https://github.com/google-deepmind/tree/archive/${DM_TREE_COMMIT}.zip -> dm-tree-${DM_TREE_COMMIT}.zip
 https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT}.zip -> pybind11-${PYBIND11_COMMIT}.zip
-https://github.com/glennrp/libpng/archive/v${LIBPNG_PV}.zip -> libpng-${LIBPNG_PV}.zip
+https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_COMMIT}/eigen-${EIGEN_COMMIT}.tar.gz
 https://zlib.net/zlib-${ZLIB_PV}.tar.gz -> zlib-${ZLIB_PV}.tar.gz
 !jit? (
 	https://www.lua.org/ftp/lua-${LUA_PV}.tar.gz -> lua-${LUA_PV}.tar.gz
