@@ -95,14 +95,14 @@ JSONCPP_PV="1.9.5"		# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d
 NANOBIND_PV="1.9.2"		# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/nanobind/workspace.bzl#L10
 NCCL_PV="2.19.3-1"		# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/workspace2.bzl#L408
 ONEDNN_PV="3.2"			# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/workspace2.bzl#L164
-PLATFORMS_PV="0.0.6"
+PLATFORMS_PV="0.0.6"		# Delete?
 PROTOBUF_PV="3.21.9"		# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/workspace2.bzl#L300
 PYBIND11_PV="2.10.0"		# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/workspace2.bzl#L575
 ROBIN_MAP_PV="1.2.1"		# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/robin_map/workspace.bzl
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/workspace2.bzl#L518
 RULES_APPLE_PV="1.0.1"		# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/workspace2.bzl#L526
-RULES_CC_PV="0.0.2"
-RULES_JAVA_PV="5.5.1"
+RULES_CC_PV="0.0.2"		# From https://github.com/bazelbuild/bazel/blob/6.1.2/distdir_deps.bzl#L57
+RULES_JAVA_PV="5.5.1"		# From https://github.com/bazelbuild/bazel/blob/6.5.0/distdir_deps.bzl#L69
 RULES_PKG_PV="0.7.1"		# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/workspace3.bzl#L34
 RULES_PYTHON_PV="0.0.1"		# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/workspace2.bzl#L511
 RULES_SWIFT_PV="1.0.0"		# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/workspace2.bzl#L533
@@ -122,13 +122,15 @@ EGIT_MPITRAMPOLINE_COMMIT="25efb0f7a4cd00ed82bafb8b1a6285fc50d297ed"		# From htt
 EGIT_PYBIND11_ABSEIL_COMMIT="2c4932ed6f6204f1656e245838f4f5eae69d2e29"		# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/third_party/pybind11_abseil/workspace.bzl
 EGIT_PYBIND11_BAZEL_COMMIT="72cbbf1fbc830e487e3012862b7b720001b70672"		# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/third_party/pybind11_bazel/workspace.bzl
 EGIT_RE2_COMMIT="03da4fc0857c285e3a26782f6bc8931c4c950df4"			# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/workspace2.bzl#L233
-EGIT_RULES_CLOSURE_COMMIT="308b05b2419edb5c8ee0471b67a40403df940149"
-EGIT_RULES_PROTO_COMMIT="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"
+EGIT_RULES_CLOSURE_COMMIT="308b05b2419edb5c8ee0471b67a40403df940149"		# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/workspace3.bzl#L14
+EGIT_RULES_PROTO_COMMIT="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"		# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/workspace0.bzl#L117
 EGIT_SNAPPY_COMMIT="984b191f0fefdeb17050b42a90b7625999c13b8d"			# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/workspace2.bzl#L393
 EGIT_STABLEHLO_COMMIT="8ba7728d3fdc3ea882e893ee7e53255c95ee0e5a"		# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/stablehlo/workspace.bzl#L7
 EGIT_TENSORFLOW_RUNTIME_COMMIT="7bdf48f1aac0b48ff85a4e0fb5ff7f98a703f8d6"	# From https://github.com/openxla/xla/blob/d60579f54a0b6c37d1caf11dc3eb34488cf6922a/third_party/tsl/third_party/tf_runtime/workspace.bzl#L9
 EGIT_XLA_COMMIT="d60579f54a0b6c37d1caf11dc3eb34488cf6922a"			# From https://github.com/google/jax/blob/jaxlib-v0.4.28/third_party/xla/workspace.bzl#L23
 
+#https://github.com/bazelbuild/rules_closure/archive/${EGIT_RULES_CLOSURE_COMMIT}.tar.gz -> rules_closure-${EGIT_RULES_CLOSURE_COMMIT}.tar.gz
+#https://github.com/bazelbuild/rules_proto/archive/${EGIT_RULES_PROTO_COMMIT}.tar.gz -> rules_proto-${EGIT_RULES_PROTO_COMMIT}.tar.gz
 bazel_external_uris="
 https://curl.haxx.se/download/curl-${CURL_PV}.tar.gz
 https://github.com/abseil/abseil-cpp/archive/${EGIT_ABSEIL_CPP_COMMIT}.tar.gz -> abseil-cpp-${EGIT_ABSEIL_CPP_COMMIT}.tar.gz
@@ -139,10 +141,8 @@ https://github.com/bazelbuild/platforms/releases/download/${PLATFORMS_PV}/platfo
 https://github.com/bazelbuild/rules_android/archive/v${RULES_ANDROID_PV}.zip -> rules_android-${RULES_ANDROID_PV}.zip
 https://github.com/bazelbuild/rules_apple/releases/download/${RULES_APPLE_PV}/rules_apple.${RULES_APPLE_PV}.tar.gz -> rules_apple-${RULES_APPLE_PV}.tar.gz
 https://github.com/bazelbuild/rules_cc/releases/download/${RULES_CC_PV}/rules_cc-${RULES_CC_PV}.tar.gz -> rules_cc-${RULES_CC_PV}.tar.gz
-https://github.com/bazelbuild/rules_closure/archive/${EGIT_RULES_CLOSURE_COMMIT}.tar.gz -> rules_closure-${EGIT_RULES_CLOSURE_COMMIT}.tar.gz
 https://github.com/bazelbuild/rules_java/releases/download/${RULES_JAVA_PV}/rules_java-${RULES_JAVA_PV}.tar.gz -> rules_java-${RULES_JAVA_PV}.tar.gz
 https://github.com/bazelbuild/rules_pkg/releases/download/${RULES_PKG_PV}/rules_pkg-${RULES_PKG_PV}.tar.gz
-https://github.com/bazelbuild/rules_proto/archive/${EGIT_RULES_PROTO_COMMIT}.tar.gz -> rules_proto-${EGIT_RULES_PROTO_COMMIT}.tar.gz
 https://github.com/bazelbuild/rules_python/releases/download/${RULES_PYTHON_PV}/rules_python-0.0.1.tar.gz -> rules_python-${RULES_PYTHON_PV}.tar.gz
 https://github.com/bazelbuild/rules_swift/releases/download/${RULES_SWIFT_PV}/rules_swift.${RULES_SWIFT_PV}.tar.gz -> rules_swift-${RULES_SWIFT_PV}.tar.gz
 https://github.com/dmlc/dlpack/archive/${EGIT_DLPACK_COMMIT}.tar.gz -> dlpack-${EGIT_DLPACK_COMMIT}.tar.gz
