@@ -185,7 +185,6 @@ PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl
 RULES_APPLE_PV="2.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl
 RULES_FOREIGN_CC_PV="0.7.1"	# From https://github.com/google/benchmark/blob/f7547e29ccaed7b64ef4f7495ecfff1c9f6f3d03/bazel/benchmark_deps.bzl#L22 with EGIT_COMMIT_BENCHMARK
-RULES_JAVA_PV="5.5.1"		# By console inspection
 RULES_JVM_PV="4.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace3.bzl
 RULES_PKG_PV="0.7.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace3.bzl
 RULES_PYTHON_PV="0.1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/WORKSPACE#L19
@@ -220,6 +219,7 @@ EGIT_COMMIT_RE2="03da4fc0857c285e3a26782f6bc8931c4c950df4"			# From https://gith
 EGIT_COMMIT_RIEGELI="264ef7b4a1314d97265b37544b27cd3923ea72d2"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl#L870
 EGIT_COMMIT_RULES_CC="081771d4a0e9d7d3aa0eed2ef389fa4700dfb23e"			# From https://github.com/tensorflow/runtime/blob/70637966e2ec9afccc2cf4d51ed2391172b1b9c5/third_party/rules_cuda/cuda/dependencies.bzl#L41  ## needs review
 EGIT_COMMIT_RULES_CLOSURE="308b05b2419edb5c8ee0471b67a40403df940149"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace3.bzl
+EGIT_COMMIT_RULES_JAVA="7cf3cefd652008d0a64a419c34c13bdca6c8f178"		# From https://github.com/bazelbuild/bazel/blob/6.1.2/distdir_deps.bzl#L69
 EGIT_COMMIT_RULES_PROTO="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"		# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace0.bzl
 EGIT_COMMIT_RUY="3286a34cc8de6149ac6844107dfdffac91531e72"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/ruy/workspace.bzl
 EGIT_COMMIT_SNAPPY="984b191f0fefdeb17050b42a90b7625999c13b8d"			# From https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl#L594
@@ -242,7 +242,7 @@ https://github.com/bazelbuild/rules_apple/releases/download/${RULES_APPLE_PV}/ru
 https://github.com/bazelbuild/rules_cc/archive/${EGIT_COMMIT_RULES_CC}.tar.gz -> bazelbuild-rules_cc-${EGIT_COMMIT_RULES_CC}.tar.gz
 https://github.com/bazelbuild/rules_closure/archive/${EGIT_COMMIT_RULES_CLOSURE}.tar.gz -> bazelbuild-rules_closure-${EGIT_COMMIT_RULES_CLOSURE}.tar.gz
 https://github.com/bazelbuild/rules_foreign_cc/archive/${RULES_FOREIGN_CC_PV}.tar.gz -> rules_foreign_cc-${RULES_FOREIGN_CC_PV}.tar.gz
-https://github.com/bazelbuild/rules_java/releases/download/${RULES_JAVA_PV}/rules_java-${RULES_JAVA_PV}.tar.gz
+https://github.com/bazelbuild/rules_java/archive/${EGIT_COMMIT_RULES_JAVA}.zip -> ${EGIT_COMMIT_RULES_JAVA}.zip
 https://github.com/bazelbuild/rules_jvm_external/archive/${RULES_JVM_PV}.zip -> rules_jvm-${RULES_JVM_PV}.zip
 https://github.com/bazelbuild/rules_pkg/releases/download/${RULES_PKG_PV}/rules_pkg-${RULES_PKG_PV}.tar.gz -> bazelbuild-rules_pkg-${RULES_PKG_PV}.tar.gz
 https://github.com/bazelbuild/rules_proto/archive/${EGIT_COMMIT_RULES_PROTO}.tar.gz -> bazelbuild-rules_proto-${EGIT_COMMIT_RULES_PROTO}.tar.gz
