@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# Keras-Preprocessing
-
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Up to 3.8 listed
 
@@ -41,7 +38,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" keras2"
+IUSE+=" +keras2"
 REQUIREMENTS_RDEPEND="
 	<dev-python/gym-0.25.3[${PYTHON_USEDEP},atari,accept-rom-license]
 	>=dev-python/absl-py-0.9.0[${PYTHON_USEDEP}]
