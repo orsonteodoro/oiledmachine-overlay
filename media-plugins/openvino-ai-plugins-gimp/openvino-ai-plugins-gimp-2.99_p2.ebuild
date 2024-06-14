@@ -5,8 +5,8 @@
 EAPI=8
 
 # TODO package:
-# controlnet-aux
-# diffusers
+# controlnet-aux				*
+# diffusers					*
 # nncf
 # tensorflow-2.12 or lift version restriction
 # monai
