@@ -96,6 +96,7 @@ REQUIREMENTS_RDEPEND="
 	sci-visualization/tensorboard[${PYTHON_USEDEP}]
 	sci-visualization/tensorboard-plugin-wit[${PYTHON_USEDEP}]
 	keras2? (
+		<sci-libs/tensorflow-2.16[${PYTHON_USEDEP}]
 		=sci-libs/keras-2*
 		>=sci-libs/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
 	)
