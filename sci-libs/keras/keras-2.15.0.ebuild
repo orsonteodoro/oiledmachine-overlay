@@ -3,6 +3,11 @@
 
 EAPI=8
 
+# For dep versions, see
+# https://github.com/keras-team/keras/blob/v2.15.0/requirements.txt
+# https://github.com/keras-team/keras/blob/v2.15.0/WORKSPACE
+# https://github.com/keras-team/keras/blob/v2.15.0/.bazelversion
+
 PYTHON_COMPAT=( "python3_"{9..11} )
 
 inherit bazel distutils-r1
@@ -32,15 +37,8 @@ RESTRICT=""
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=" test r2"
-# https://github.com/keras-team/keras/blob/v2.15.0/requirements.txt
-# https://github.com/keras-team/keras/blob/v2.15.0/WORKSPACE
-# https://github.com/keras-team/keras/blob/v2.15.0/.bazelversion
 PROTOBUF_PV="3.21.9" # From WORKSPACE which differs from requirements.txt
 PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
-# TODO: Fix sci-libs/keras-applications, sci-libs/keras-preprocessing
-# These have moved in this package.
-#	>=sci-libs/keras-applications-1.0.8[${PYTHON_USEDEP}]
-#	>=sci-libs/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
 RDEPEND="
 	(
 		>=dev-python/numpy-1.24.3[${PYTHON_USEDEP}]
@@ -49,6 +47,7 @@ RDEPEND="
 	=sci-libs/tensorflow-${PV%.*}*[${PYTHON_USEDEP},python]
 	>=dev-python/scipy-1.9.2[${PYTHON_USEDEP}]
 	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
+	>=sci-libs/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
 	>=sys-libs/zlib-1.2.13
 	dev-libs/protobuf:${PROTOBUF_SLOT}
 	dev-python/absl-py[${PYTHON_USEDEP}]
