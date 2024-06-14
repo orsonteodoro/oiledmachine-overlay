@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO package:
-# diffusers					*
 # nncf
 # tensorflow-2.12 or lift version restriction
 # monai
@@ -90,7 +89,7 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 	>=dev-python/seaborn-0.11.0[${PYTHON_USEDEP}]
 	>=dev-python/scikit-image-0.19.2[${PYTHON_USEDEP}]
 
-	>=dev-python/diffusers-0.9.0[${PYTHON_USEDEP}]
+	>=sci-libs/diffusers-0.9.0[${PYTHON_USEDEP}]
 	>=sci-libs/huggingface_hub-0.9.1[${PYTHON_USEDEP}]
 
 	>=dev-python/diffusers-0.23.0[${PYTHON_USEDEP}]
