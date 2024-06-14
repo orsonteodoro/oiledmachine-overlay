@@ -6,7 +6,6 @@ EAPI=8
 
 # TODO package:
 # baselines
-# dm-sonnet
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream only tests up to 3.7
