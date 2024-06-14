@@ -3,13 +3,14 @@
 
 EAPI=8
 
-BAZEL_PV="6.1.0"
-EGIT_RULES_JAVA_PV="5.5.1"		# From console inspection
 MY_PN="estimator"
 MY_PV="${PV}"
 MY_P="${MY_PN}-${MY_PV}"
-PYTHON_COMPAT=( "python3_"{10..11} )	# Upstream only lists up to 3.10
-RULES_CC_PV="0.0.2"			# https://github.com/bazelbuild/bazel/blob/6.1.2/src/MODULE.tools#L3
+
+BAZEL_PV="6.1.0"
+PYTHON_COMPAT=( "python3_"{10..11} )				# Upstream only lists up to 3.10
+RULES_CC_PV="0.0.2"						# https://github.com/bazelbuild/bazel/blob/6.1.2/distdir_deps.bzl#L57
+RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"	# https://github.com/bazelbuild/bazel/blob/6.1.2/distdir_deps.bzl#L69
 TF_PV=$(ver_cut 1-2 "${PV}")
 
 inherit bazel distutils-r1
@@ -18,7 +19,7 @@ inherit bazel distutils-r1
 KEYWORDS="~amd64"
 bazel_external_uris="
 https://github.com/bazelbuild/rules_cc/releases/download/${RULES_CC_PV}/rules_cc-${RULES_CC_PV}.tar.gz
-https://github.com/bazelbuild/rules_java/releases/download/${EGIT_RULES_JAVA_PV}/rules_java-${EGIT_RULES_JAVA_PV}.tar.gz -> bazelbuild-rules_java-${EGIT_RULES_JAVA_PV}.zip
+https://github.com/bazelbuild/rules_java/archive/${RULES_JAVA_COMMIT}.zip -> rules_java-${RULES_JAVA_COMMIT}.zip
 "
 S="${WORKDIR}/${MY_P}"
 SRC_URI="
