@@ -41,7 +41,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" keras2"
 REQUIREMENTS_RDEPEND="
 	<dev-python/gym-0.25.3[${PYTHON_USEDEP},atari,accept-rom-license]
 	>=dev-python/absl-py-0.9.0[${PYTHON_USEDEP}]
@@ -92,13 +92,16 @@ REQUIREMENTS_RDEPEND="
 	>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
 	>=dev-python/wrapt-1.12.1[${PYTHON_USEDEP}]
 	>=media-libs/opencv-4.3.0.36[${PYTHON_USEDEP}]
-	>=sci-libs/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
 	>=sci-libs/tensorflow-probability-0.13.0[${PYTHON_USEDEP}]
 	>=sci-libs/tf_slim-1.1.0[${PYTHON_USEDEP}]
 	sci-libs/tensorflow-estimator[${PYTHON_USEDEP}]
 	sci-libs/tensorflow[${PYTHON_USEDEP}]
 	sci-visualization/tensorboard[${PYTHON_USEDEP}]
 	sci-visualization/tensorboard-plugin-wit[${PYTHON_USEDEP}]
+	keras2? (
+		=sci-libs/keras-2*
+		>=sci-libs/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
+	)
 "
 RDEPEND+="
 	${REQUIREMENTS_RDEPEND}
