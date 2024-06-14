@@ -65,10 +65,10 @@ https://github.com/google/brotli/archive/${BROTLI_COMMIT}.zip -> brotli-${BROTLI
 https://github.com/google/highwayhash/archive/${HIGHWAYHASH_COMMIT}.zip -> highwayhash-${HIGHWAYHASH_COMMIT}.zip
 https://github.com/google/snappy/archive/${SNAPPY_PV}.zip -> snappy-${SNAPPY_PV}.zip
 https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_PV}/eigen-${EIGEN_PV}.tar.bz2 -> eigen-${EIGEN_PV}.tar.bz2
+https://mirror.bazel.build/bazel_coverage_output_generator/releases/coverage_output_generator-v${COVERAGE_OUTPUT_GENERATOR_PV}.zip -> coverage_output_generator-${COVERAGE_OUTPUT_GENERATOR_PV}.zip
 https://mirror.bazel.build/openjdk/azul-zulu${ZULU_VER}/zulu${ZULU_VER}-linux_x64.tar.gz -> zulu${ZULU_VER}-linux_x64.tar.gz
 http://zlib.net/fossils/zlib-${ZLIB_PV}.tar.gz -> zlib-${ZLIB_PV}.tar.gz
 "
-#https://mirror.bazel.build/bazel_coverage_output_generator/releases/coverage_output_generator-v${COVERAGE_OUTPUT_GENERATOR_PV}.zip -> coverage_output_generator-${COVERAGE_OUTPUT_GENERATOR_PV}.zip
 	SRC_URI="
 	${bazel_external_uris}
 https://github.com/google/array_record/archive/refs/tags/v${PV}.tar.gz
