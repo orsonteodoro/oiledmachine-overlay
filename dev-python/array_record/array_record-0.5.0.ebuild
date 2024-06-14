@@ -6,7 +6,7 @@ EAPI=8
 
 ABSEIL_PY_COMMIT="127c98870edf5f03395ce9cf886266fa5f24455e"			# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L19
 ABSEIL_CPP_PV="20230125.0"							# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L12
-BAZEL_SKYLIB_PV="1.0.2"								# https://github.com/protocolbuffers/protobuf/blob/v21.12/protobuf_deps.bzl#L79
+BAZEL_SKYLIB_PV="1.0.2"								# https://github.com/protocolbuffers/protobuf/blob/v21.12/protobuf_deps.bzl#L34
 BAZEL_SLOT="5.4"								# https://github.com/google/array_record/blob/v0.5.0/oss/build_whl.sh#L43C28-L43C33
 BROTLI_COMMIT="3914999fcc1fda92e750ef9190aa6db9bf7bdb07"			# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L26
 COVERAGE_OUTPUT_GENERATOR_PV="2.5"						# https://github.com/bazelbuild/bazel/blob/5.4.1/distdir_deps.bzl#L274
@@ -14,7 +14,7 @@ DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 EIGEN_PV="3.4.0"								# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L41
 GOOGLETEST_COMMIT="9bb354fa8325fa31faa1e12627b25ab445e6eed3"			# Based on committer-date:<=2023-10-20 gh search   https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L31
-HIGHWAYHASH_COMMIT="a7f68e2f95fac08b24327d74747521cf634d5aff"
+HIGHWAYHASH_COMMIT="a7f68e2f95fac08b24327d74747521cf634d5aff"			# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L136
 JAVA_TOOLS_PV="11.7.1"								# https://github.com/bazelbuild/bazel/blob/5.4.1/distdir_deps.bzl#L290
 PROTOBUF_PV="21.12"								# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L81
 PYBIND11_BAZEL_COMMIT="5f458fa53870223a0de7eeb60480dd278b442698"		# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L60
