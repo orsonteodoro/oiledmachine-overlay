@@ -8,7 +8,6 @@ EAPI=8
 # baselines
 # dm-sonnet
 # dopamine-rl
-# plotnine
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream only tests up to 3.7
