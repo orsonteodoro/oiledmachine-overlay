@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This is a ebuild fork to meet version requirements.
+
+  -->
+  <upstream>
+    <bugs-to>https://github.com/huggingface/pytorch-image-models/issues</bugs-to>
+    <remote-id type="github">huggingface/pytorch-image-models</remote-id>
+    <remote-id type="pypi">timm</remote-id>
+  </upstream>
+</pkgmetadata>

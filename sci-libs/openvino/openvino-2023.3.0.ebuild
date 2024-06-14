@@ -266,13 +266,13 @@ BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS="
 		dev-python/sacremoses[${PYTHON_USEDEP}]
 		dev-python/soundfile[${PYTHON_USEDEP}]
 		dev-python/super-image[${PYTHON_USEDEP}]
-		dev-python/timm[${PYTHON_USEDEP}]
 		dev-python/torch[${PYTHON_USEDEP}]
 		dev-python/torchaudio[${PYTHON_USEDEP}]
 		dev-python/torchvision[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
 		sci-libs/datasets[${PYTHON_USEDEP}]
 		sci-libs/sentencepiece[${PYTHON_USEDEP},python]
+		sci-libs/timm[${PYTHON_USEDEP}]
 		sci-libs/transformers[${PYTHON_USEDEP}]
 	')
 "

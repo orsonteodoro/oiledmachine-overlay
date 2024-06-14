@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# <dev-python/timm-0.6.8
-
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.9
 
@@ -41,7 +38,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
-	<dev-python/timm-0.6.8[${PYTHON_USEDEP}]
+	<sci-libs/timm-0.6.8[${PYTHON_USEDEP}]
 	dev-python/einops[${PYTHON_USEDEP}]
 	dev-python/filelock[${PYTHON_USEDEP}]
 	dev-python/pillow[${PYTHON_USEDEP}]
