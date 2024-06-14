@@ -42,7 +42,9 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" cuda pytorch tensorflow test"
 RDEPEND+="
 	pytorch? (
-		>=sci-libs/pytorch-1.3.0[${PYTHON_USEDEP}]
+		$(python_gen_any_dep '
+			>=sci-libs/pytorch-1.3.0[${PYTHON_SINGLE_USEDEP}]
+		')
 	)
 	tensorflow? (
 		>=sci-libs/tensorflow-1.13.0[${PYTHON_USEDEP},cuda?]

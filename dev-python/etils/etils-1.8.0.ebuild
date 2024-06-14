@@ -168,7 +168,9 @@ BDEPEND+="
 		dev-python/pytest-subtests[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		sci-libs/chex[${PYTHON_USEDEP}]
-		sci-libs/pytorch[${PYTHON_USEDEP}]
+		$(python_gen_any_dep '
+			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		')
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )

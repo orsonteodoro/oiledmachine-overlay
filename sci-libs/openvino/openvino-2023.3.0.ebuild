@@ -192,284 +192,262 @@ DEPEND+="
 	${RDEPEND}
 "
 # tests/constraints.txt \
-BDEPEND_CONSTRAINTS="
-	$(python_gen_cond_dep '
+BDEPEND_TEST_CONSTRAINTS="
+	$(python_gen_any_dep '
 		(
-			>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
-			<dev-python/numpy-1.27[${PYTHON_USEDEP}]
+			>=sci-libs/pytorch-1.13[${PYTHON_SINGLE_USEDEP}]
+			<sci-libs/pytorch-2.2[${PYTHON_SINGLE_USEDEP}]
 		)
-		(
-			>=sci-libs/tensorflow-2.5[${PYTHON_USEDEP}]
-			<sci-libs/tensorflow-2.15.0[${PYTHON_USEDEP}]
-		)
-		(
-			>=dev-python/pytest-5.0[${PYTHON_USEDEP}]
-			<dev-python/pytest-7.5[${PYTHON_USEDEP}]
-		)
-		(
-			>=sci-libs/pytorch-1.13[${PYTHON_USEDEP}]
-			<sci-libs/pytorch-2.2[${PYTHON_USEDEP}]
-		)
-		<sci-libs/jax-0.4.15[${PYTHON_USEDEP}]
-		<sci-libs/jaxlib-0.4.15[${PYTHON_USEDEP}]
-		>=dev-python/attrs-23.1.0[${PYTHON_USEDEP}]
-		>=dev-python/defusedxml-0.7.1[${PYTHON_USEDEP}]
-		>=dev-python/distro-1.8.0[${PYTHON_USEDEP}]
-		>=dev-python/h5py-3.1.0[${PYTHON_USEDEP}]
-		>=dev-python/fastjsonschema-2.17.1[${PYTHON_USEDEP}]
-		>=dev-python/jinja-2.11.2[${PYTHON_USEDEP}]
-		>=dev-python/pandas-1.3.5[${PYTHON_USEDEP}]
-		>=dev-python/pymongo-3.12.0[${PYTHON_USEDEP}]
-		>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]
-		>=dev-python/scipy-1.11.1[${PYTHON_USEDEP}]
-		>=dev-python/test-generator-0.1.2[${PYTHON_USEDEP}]
-		>=dev-python/paddlepaddle-2.5.0[${PYTHON_USEDEP}]
-		>=dev-python/protobuf-python-3.18.1:0/3.21[${PYTHON_USEDEP}]
-		>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-dependency-0.5.1[${PYTHON_USEDEP}]
-		>=dev-python/pytest-html-4.1.1[${PYTHON_USEDEP}]
-		>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
-		>=dev-python/requests-2.25.1[${PYTHON_USEDEP}]
-		>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
-		>=media-libs/opencv-4.5[${PYTHON_USEDEP},python]
 	')
+	(
+		>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
+		<dev-python/numpy-1.27[${PYTHON_USEDEP}]
+	)
+	(
+		>=sci-libs/tensorflow-2.5[${PYTHON_USEDEP}]
+		<sci-libs/tensorflow-2.15.0[${PYTHON_USEDEP}]
+	)
+	(
+		>=dev-python/pytest-5.0[${PYTHON_USEDEP}]
+		<dev-python/pytest-7.5[${PYTHON_USEDEP}]
+	)
+	<sci-libs/jax-0.4.15[${PYTHON_USEDEP}]
+	<sci-libs/jaxlib-0.4.15[${PYTHON_USEDEP}]
+	>=dev-python/attrs-23.1.0[${PYTHON_USEDEP}]
+	>=dev-python/defusedxml-0.7.1[${PYTHON_USEDEP}]
+	>=dev-python/distro-1.8.0[${PYTHON_USEDEP}]
+	>=dev-python/h5py-3.1.0[${PYTHON_USEDEP}]
+	>=dev-python/fastjsonschema-2.17.1[${PYTHON_USEDEP}]
+	>=dev-python/jinja-2.11.2[${PYTHON_USEDEP}]
+	>=dev-python/pandas-1.3.5[${PYTHON_USEDEP}]
+	>=dev-python/pymongo-3.12.0[${PYTHON_USEDEP}]
+	>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]
+	>=dev-python/scipy-1.11.1[${PYTHON_USEDEP}]
+	>=dev-python/test-generator-0.1.2[${PYTHON_USEDEP}]
+	>=dev-python/paddlepaddle-2.5.0[${PYTHON_USEDEP}]
+	>=dev-python/protobuf-python-3.18.1:0/3.21[${PYTHON_USEDEP}]
+	>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
+	>=dev-python/pytest-dependency-0.5.1[${PYTHON_USEDEP}]
+	>=dev-python/pytest-html-4.1.1[${PYTHON_USEDEP}]
+	>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
+	>=dev-python/requests-2.25.1[${PYTHON_USEDEP}]
+	>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
+	>=media-libs/opencv-4.5[${PYTHON_USEDEP},python]
 "
 # tests/stress_tests/scripts/requirements.txt \
 BDEPEND_STRESS_TESTS="
-	${BDEPEND_CONSTRAINTS}
-	$(python_gen_cond_dep '
-		dev-python/defusedxml[${PYTHON_USEDEP}]
-		dev-python/fastjsonschema[${PYTHON_USEDEP}]
-		dev-python/h5py[${PYTHON_USEDEP}]
-		dev-python/jinja[${PYTHON_USEDEP}]
-		dev-python/pandas[${PYTHON_USEDEP}]
-		dev-python/pymongo[${PYTHON_USEDEP}]
-		dev-python/pyyaml[${PYTHON_USEDEP}]
-		dev-python/scipy[${PYTHON_USEDEP}]
-	')
+	${BDEPEND_TEST_CONSTRAINTS}
+	dev-python/defusedxml[${PYTHON_USEDEP}]
+	dev-python/fastjsonschema[${PYTHON_USEDEP}]
+	dev-python/h5py[${PYTHON_USEDEP}]
+	dev-python/jinja[${PYTHON_USEDEP}]
+	dev-python/pandas[${PYTHON_USEDEP}]
+	dev-python/pymongo[${PYTHON_USEDEP}]
+	dev-python/pyyaml[${PYTHON_USEDEP}]
+	dev-python/scipy[${PYTHON_USEDEP}]
 "
 # tests/model_hub_tests/torch_tests/requirements.txt \
 BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS="
-	${BDEPEND_CONSTRAINTS}
-	$(python_gen_cond_dep '
-		>=dev-python/auto-gptq-0.5.1[${PYTHON_USEDEP}]
-		dev-python/av[${PYTHON_USEDEP}]
-		dev-python/basicsr[${PYTHON_USEDEP}]
-		dev-python/facexlib[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/optimum[${PYTHON_USEDEP}]
-		dev-python/pandas[${PYTHON_USEDEP}]
-		dev-python/protobuf-python[${PYTHON_USEDEP}]
-		dev-python/pyctcdecode[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-html[${PYTHON_USEDEP}]
-		dev-python/sacremoses[${PYTHON_USEDEP}]
-		dev-python/soundfile[${PYTHON_USEDEP}]
-		dev-python/super-image[${PYTHON_USEDEP}]
-		dev-python/torch[${PYTHON_USEDEP}]
-		dev-python/torchaudio[${PYTHON_USEDEP}]
-		dev-python/torchvision[${PYTHON_USEDEP}]
-		dev-python/wheel[${PYTHON_USEDEP}]
-		sci-libs/datasets[${PYTHON_USEDEP}]
-		sci-libs/sentencepiece[${PYTHON_USEDEP},python]
-		sci-libs/timm[${PYTHON_USEDEP}]
-		sci-libs/transformers[${PYTHON_USEDEP}]
+	${BDEPEND_TEST_CONSTRAINTS}
+	$(python_gen_any_dep '
+		sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
+		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 	')
+	>=dev-python/auto-gptq-0.5.1[${PYTHON_USEDEP}]
+	dev-python/av[${PYTHON_USEDEP}]
+	dev-python/basicsr[${PYTHON_USEDEP}]
+	dev-python/facexlib[${PYTHON_USEDEP}]
+	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/optimum[${PYTHON_USEDEP}]
+	dev-python/pandas[${PYTHON_USEDEP}]
+	dev-python/protobuf-python[${PYTHON_USEDEP}]
+	dev-python/pyctcdecode[${PYTHON_USEDEP}]
+	dev-python/pytest[${PYTHON_USEDEP}]
+	dev-python/pytest-html[${PYTHON_USEDEP}]
+	dev-python/sacremoses[${PYTHON_USEDEP}]
+	dev-python/soundfile[${PYTHON_USEDEP}]
+	dev-python/super-image[${PYTHON_USEDEP}]
+	dev-python/torch[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
+	sci-libs/datasets[${PYTHON_USEDEP}]
+	sci-libs/sentencepiece[${PYTHON_USEDEP},python]
+	sci-libs/timm[${PYTHON_USEDEP}]
+	sci-libs/transformers[${PYTHON_USEDEP}]
 "
 # tests/model_hub_tests/torch_tests/requirements_secondary.txt \
 BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS_SECONDARY="
-	${BDEPEND_CONSTRAINTS}
-	$(python_gen_cond_dep '
-		dev-python/natten[${PYTHON_USEDEP}]
-	')
+	${BDEPEND_TEST_CONSTRAINTS}
+	dev-python/natten[${PYTHON_USEDEP}]
 "
 # tests/time_tests/test_runner/requirements.txt \
 BDEPEND_TIME_TESTS_TEST_RUNNER="
-	${BDEPEND_CONSTRAINTS}
-	$(python_gen_cond_dep '
-		dev-python/attrs[${PYTHON_USEDEP}]
-		dev-python/distro[${PYTHON_USEDEP}]
-		dev-python/jsonschema[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/py[${PYTHON_USEDEP}]
-		dev-python/pymongo[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-html[${PYTHON_USEDEP}]
-		dev-python/pytest-timeout[${PYTHON_USEDEP}]
-		dev-python/pyyaml[${PYTHON_USEDEP}]
-	')
+	${BDEPEND_TEST_CONSTRAINTS}
+	dev-python/attrs[${PYTHON_USEDEP}]
+	dev-python/distro[${PYTHON_USEDEP}]
+	dev-python/jsonschema[${PYTHON_USEDEP}]
+	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/py[${PYTHON_USEDEP}]
+	dev-python/pymongo[${PYTHON_USEDEP}]
+	dev-python/pytest[${PYTHON_USEDEP}]
+	dev-python/pytest-html[${PYTHON_USEDEP}]
+	dev-python/pytest-timeout[${PYTHON_USEDEP}]
+	dev-python/pyyaml[${PYTHON_USEDEP}]
 "
 # tests/model_hub_tests/tf_hub_tests/requirements.txt \
 BDEPEND_MODEL_HUB_TESTS_TF_HUB_TESTS="
-	${BDEPEND_CONSTRAINTS}
-	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-html[${PYTHON_USEDEP}]
-		sci-libs/tensorflow[${PYTHON_USEDEP}]
-		sci-libs/tensorflow-hub[${PYTHON_USEDEP}]
-		sci-libs/tensorflow-text[${PYTHON_USEDEP}]
-	')
+	${BDEPEND_TEST_CONSTRAINTS}
+	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/pytest[${PYTHON_USEDEP}]
+	dev-python/pytest-html[${PYTHON_USEDEP}]
+	sci-libs/tensorflow[${PYTHON_USEDEP}]
+	sci-libs/tensorflow-hub[${PYTHON_USEDEP}]
+	sci-libs/tensorflow-text[${PYTHON_USEDEP}]
 "
 # tests/model_hub_tests/performance_tests/requirements.txt \
 BDEPEND_MODEL_HUB_TESTS_PERFORMANCE_TESTS="
-	${BDEPEND_CONSTRAINTS}
-	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/py[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-html[${PYTHON_USEDEP}]
-		sci-libs/tensorflow-hub[${PYTHON_USEDEP}]
-	')
+	${BDEPEND_TEST_CONSTRAINTS}
+	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/py[${PYTHON_USEDEP}]
+	dev-python/pytest[${PYTHON_USEDEP}]
+	dev-python/pytest-html[${PYTHON_USEDEP}]
+	sci-libs/tensorflow-hub[${PYTHON_USEDEP}]
 "
 # tests/layer_tests/requirements.txt \
 BDEPEND_LAYER_TESTS="
-	${BDEPEND_CONSTRAINTS}
-	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/onnxruntime[${PYTHON_USEDEP}]
-		dev-python/requests[${PYTHON_USEDEP}]
-		dev-python/torch[${PYTHON_USEDEP}]
-		dev-python/torchvision[${PYTHON_USEDEP}]
-		sci-libs/transformers[${PYTHON_USEDEP}]
-		kernel_linux? (
-			amd64? (
-				sci-libs/jax[${PYTHON_USEDEP}]
-				sci-libs/jaxlib[${PYTHON_USEDEP}]
-			)
-		)
+	${BDEPEND_TEST_CONSTRAINTS}
+	$(python_gen_any_dep '
+		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 	')
+	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/pytest[${PYTHON_USEDEP}]
+	dev-python/onnxruntime[${PYTHON_USEDEP}]
+	dev-python/requests[${PYTHON_USEDEP}]
+	dev-python/torch[${PYTHON_USEDEP}]
+	sci-libs/transformers[${PYTHON_USEDEP}]
+	kernel_linux? (
+		amd64? (
+			sci-libs/jax[${PYTHON_USEDEP}]
+			sci-libs/jaxlib[${PYTHON_USEDEP}]
+		)
+	)
 	$(python_gen_cond_dep '
 		sci-libs/tensorflow-addons[${PYTHON_USEDEP}]
 	' python3_10)
 "
 # tests/time_tests/scripts/requirements.txt \
 BDEPEND_TIME_TESTS_SCRIPTS="
-	${BDEPEND_CONSTRAINTS}
-	$(python_gen_cond_dep '
-		dev-python/pyyaml[${PYTHON_USEDEP}]
-	')
+	${BDEPEND_TEST_CONSTRAINTS}
+	dev-python/pyyaml[${PYTHON_USEDEP}]
 "
 # time_tests/test_runner/requirements.txt \
 BDEPEND_TIME_TESTS_TEST_RUNNER="
-	${BDEPEND_CONSTRAINTS}
-	$(python_gen_cond_dep '
-		dev-python/attrs[${PYTHON_USEDEP}]
-		dev-python/distro[${PYTHON_USEDEP}]
-		dev-python/jsonschema[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/py[${PYTHON_USEDEP}]
-		dev-python/pymongo[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-html[${PYTHON_USEDEP}]
-		dev-python/pytest-timeout[${PYTHON_USEDEP}]
-		dev-python/pyyaml[${PYTHON_USEDEP}]
-	')
+	${BDEPEND_TEST_CONSTRAINTS}
+	dev-python/attrs[${PYTHON_USEDEP}]
+	dev-python/distro[${PYTHON_USEDEP}]
+	dev-python/jsonschema[${PYTHON_USEDEP}]
+	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/py[${PYTHON_USEDEP}]
+	dev-python/pymongo[${PYTHON_USEDEP}]
+	dev-python/pytest[${PYTHON_USEDEP}]
+	dev-python/pytest-html[${PYTHON_USEDEP}]
+	dev-python/pytest-timeout[${PYTHON_USEDEP}]
+	dev-python/pyyaml[${PYTHON_USEDEP}]
 "
 # tests/memory_tests/test_runner/requirements.txt \
 BDEPEND_MEMORY_TESTS_TEST_RUNNER="
-	${BDEPEND_CONSTRAINTS}
-	$(python_gen_cond_dep '
-		dev-python/distro[${PYTHON_USEDEP}]
-		dev-python/jsonschema[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/py[${PYTHON_USEDEP}]
-		dev-python/pymongo[${PYTHON_USEDEP}]
-		dev-python/pytest
-		dev-python/pytest-html[${PYTHON_USEDEP}]
-		dev-python/pytest-timeout[${PYTHON_USEDEP}]
-		dev-python/pyyaml[${PYTHON_USEDEP}]
-	')
+	${BDEPEND_TEST_CONSTRAINTS}
+	dev-python/distro[${PYTHON_USEDEP}]
+	dev-python/jsonschema[${PYTHON_USEDEP}]
+	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/py[${PYTHON_USEDEP}]
+	dev-python/pymongo[${PYTHON_USEDEP}]
+	dev-python/pytest
+	dev-python/pytest-html[${PYTHON_USEDEP}]
+	dev-python/pytest-timeout[${PYTHON_USEDEP}]
+	dev-python/pyyaml[${PYTHON_USEDEP}]
 "
 # tests/conditional_compilation/requirements.txt \
 BDEPEND_CONDITIONAL_COMPILATION="
-	${BDEPEND_CONSTRAINTS}
-	$(python_gen_cond_dep '
-		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/protobuf-python[${PYTHON_USEDEP}]
-		dev-python/py[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-dependency[${PYTHON_USEDEP}]
-		dev-python/pytest-html[${PYTHON_USEDEP}]
-		dev-python/pyyaml[${PYTHON_USEDEP}]
-	')
+	${BDEPEND_TEST_CONSTRAINTS}
+	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/protobuf-python[${PYTHON_USEDEP}]
+	dev-python/py[${PYTHON_USEDEP}]
+	dev-python/pytest[${PYTHON_USEDEP}]
+	dev-python/pytest-dependency[${PYTHON_USEDEP}]
+	dev-python/pytest-html[${PYTHON_USEDEP}]
+	dev-python/pyyaml[${PYTHON_USEDEP}]
 "
 # tests/samples_tests/smoke_tests/requirements.txt \
 BDEPEND_SAMPLES_TESTS_SMOKE_TESTS="
-	${BDEPEND_CONSTRAINTS}
-	$(python_gen_cond_dep '
-		dev-python/pyyaml
-		dev-python/nibabel
-		dev-python/numpy
-		dev-python/opencv-python-headless
-		dev-python/progress
-		dev-python/py
-		dev-python/pytest
-		dev-python/requests
-		dev-python/scikit-build
-		dev-python/scipy
-		dev-python/test-generator
-		dev-python/wheel
-	')
+	${BDEPEND_TEST_CONSTRAINTS}
+	dev-python/pyyaml
+	dev-python/nibabel
+	dev-python/numpy
+	dev-python/opencv-python-headless
+	dev-python/progress
+	dev-python/py
+	dev-python/pytest
+	dev-python/requests
+	dev-python/scikit-build
+	dev-python/scipy
+	dev-python/test-generator
+	dev-python/wheel
 "
 
 BDEPEND+="
 	>=dev-build/cmake-3.13
 	>=sys-devel/gcc-7.5
 	doc? (
-		$(python_gen_cond_dep '
-			>=dev-python/alabaster-0.7.12[${PYTHON_USEDEP}]
-			>=dev-python/atomicwrites-1.4.0[${PYTHON_USEDEP}]
-			>=dev-python/attrs-22.1.0[${PYTHON_USEDEP}]
-			>=dev-python/Babel-2.11.0[${PYTHON_USEDEP}]
-			>=dev-python/beautifulsoup4-4.9.3[${PYTHON_USEDEP}]
-			>=dev-python/breathe-4.35.0[${PYTHON_USEDEP}]
-			>=dev-python/certifi-2023.7.22[${PYTHON_USEDEP}]
-			>=dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
-			>=dev-python/cython-0.29.33[${PYTHON_USEDEP}]
-			>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
-			>=dev-python/idna-3.4[${PYTHON_USEDEP}]
-			>=dev-python/imagesize-1.2.0[${PYTHON_USEDEP}]
-			>=dev-python/importlib-metadata-4.4.0[${PYTHON_USEDEP}]
-			>=dev-python/iniconfig-1.1.1[${PYTHON_USEDEP}]
-			>=dev-python/ipython-8.10.0[${PYTHON_USEDEP}]
-			>=dev-python/jinja-3.1.2[${PYTHON_USEDEP}]
-			>=dev-python/lxml-4.9.2[${PYTHON_USEDEP}]
-			>=dev-python/markupsafe-2.1.1[${PYTHON_USEDEP}]
-			>=dev-python/mistune-2.0.3[${PYTHON_USEDEP}]
-			>=dev-python/myst-parser-0.18.1[${PYTHON_USEDEP}]
-			>=dev-python/packaging-23.0[${PYTHON_USEDEP}]
-			>=dev-python/pluggy-0.13.1[${PYTHON_USEDEP}]
-			>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
-			>=dev-python/pydata-sphinx-theme-0.7.2[${PYTHON_USEDEP}]
-			>=dev-python/pygments-2.15.1[${PYTHON_USEDEP}]
-			>=dev-python/pyparsing-3.0.9[${PYTHON_USEDEP}]
-			>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]
-			>=dev-python/pytest-html-3.1.1[${PYTHON_USEDEP}]
-			>=dev-python/pytest-metadata-1.11.0[${PYTHON_USEDEP}]
-			>=dev-python/pytz-2022.7[${PYTHON_USEDEP}]
-			>=dev-python/pyyaml-6.0.1[${PYTHON_USEDEP}]
-			>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
-			>=dev-python/six-1.15.0[${PYTHON_USEDEP}]
-			>=dev-python/snowballstemmer-2.1.0[${PYTHON_USEDEP}]
-			>=dev-python/soupsieve-2.2.1[${PYTHON_USEDEP}]
-			>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
-			>=dev-python/sphinx-copybutton-0.5.1[${PYTHON_USEDEP}]
-			>=dev-python/sphinx-design-0.3.0[${PYTHON_USEDEP}]
-			>=dev-python/sphinx-inline-tabs-2021.8.17_beta10[${PYTHON_USEDEP}]
-			>=dev-python/sphinx-panels-0.6.0[${PYTHON_USEDEP}]
-			>=dev-python/sphinx-sitemap-2.2.0[${PYTHON_USEDEP}]
-			>=dev-python/sphinxcontrib-applehelp-1.0.2[${PYTHON_USEDEP}]
-			>=dev-python/sphinxcontrib-devhelp-1.0.2[${PYTHON_USEDEP}]
-			>=dev-python/sphinxcontrib-htmlhelp-2.0.0[${PYTHON_USEDEP}]
-			>=dev-python/sphinxcontrib-jsmath-1.0.1[${PYTHON_USEDEP}]
-			>=dev-python/sphinxcontrib-qthelp-1.0.3[${PYTHON_USEDEP}]
-			>=dev-python/sphinxcontrib-serializinghtml-1.1.5[${PYTHON_USEDEP}]
-			>=dev-python/toml-0.10.2[${PYTHON_USEDEP}]
-			>=dev-python/urllib3-1.26.18[${PYTHON_USEDEP}]
-			>=dev-python/zipp-3.4.1[${PYTHON_USEDEP}]
-		')
+		>=dev-python/alabaster-0.7.12[${PYTHON_USEDEP}]
+		>=dev-python/atomicwrites-1.4.0[${PYTHON_USEDEP}]
+		>=dev-python/attrs-22.1.0[${PYTHON_USEDEP}]
+		>=dev-python/Babel-2.11.0[${PYTHON_USEDEP}]
+		>=dev-python/beautifulsoup4-4.9.3[${PYTHON_USEDEP}]
+		>=dev-python/breathe-4.35.0[${PYTHON_USEDEP}]
+		>=dev-python/certifi-2023.7.22[${PYTHON_USEDEP}]
+		>=dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
+		>=dev-python/cython-0.29.33[${PYTHON_USEDEP}]
+		>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
+		>=dev-python/idna-3.4[${PYTHON_USEDEP}]
+		>=dev-python/imagesize-1.2.0[${PYTHON_USEDEP}]
+		>=dev-python/importlib-metadata-4.4.0[${PYTHON_USEDEP}]
+		>=dev-python/iniconfig-1.1.1[${PYTHON_USEDEP}]
+		>=dev-python/ipython-8.10.0[${PYTHON_USEDEP}]
+		>=dev-python/jinja-3.1.2[${PYTHON_USEDEP}]
+		>=dev-python/lxml-4.9.2[${PYTHON_USEDEP}]
+		>=dev-python/markupsafe-2.1.1[${PYTHON_USEDEP}]
+		>=dev-python/mistune-2.0.3[${PYTHON_USEDEP}]
+		>=dev-python/myst-parser-0.18.1[${PYTHON_USEDEP}]
+		>=dev-python/packaging-23.0[${PYTHON_USEDEP}]
+		>=dev-python/pluggy-0.13.1[${PYTHON_USEDEP}]
+		>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
+		>=dev-python/pydata-sphinx-theme-0.7.2[${PYTHON_USEDEP}]
+		>=dev-python/pygments-2.15.1[${PYTHON_USEDEP}]
+		>=dev-python/pyparsing-3.0.9[${PYTHON_USEDEP}]
+		>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]
+		>=dev-python/pytest-html-3.1.1[${PYTHON_USEDEP}]
+		>=dev-python/pytest-metadata-1.11.0[${PYTHON_USEDEP}]
+		>=dev-python/pytz-2022.7[${PYTHON_USEDEP}]
+		>=dev-python/pyyaml-6.0.1[${PYTHON_USEDEP}]
+		>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
+		>=dev-python/six-1.15.0[${PYTHON_USEDEP}]
+		>=dev-python/snowballstemmer-2.1.0[${PYTHON_USEDEP}]
+		>=dev-python/soupsieve-2.2.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-copybutton-0.5.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-design-0.3.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-inline-tabs-2021.8.17_beta10[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-panels-0.6.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-sitemap-2.2.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-applehelp-1.0.2[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-devhelp-1.0.2[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-htmlhelp-2.0.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-jsmath-1.0.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-qthelp-1.0.3[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-serializinghtml-1.1.5[${PYTHON_USEDEP}]
+		>=dev-python/toml-0.10.2[${PYTHON_USEDEP}]
+		>=dev-python/urllib3-1.26.18[${PYTHON_USEDEP}]
+		>=dev-python/zipp-3.4.1[${PYTHON_USEDEP}]
 	)
 	test? (
 		${BDEPEND_CONDITIONAL_COMPILATION}

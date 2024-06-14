@@ -36,7 +36,9 @@ RDEPEND+="
 		dev-python/numpy[${PYTHON_USEDEP}]
 	)
 	torch? (
-		sci-libs/pytorch[${PYTHON_USEDEP}]
+		$(python_gen_any_dep '
+			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		')
 	)
 "
 DEPEND+="
@@ -49,15 +51,15 @@ BDEPEND+="
 
 	benchmark? (
 		$(python_gen_any_dep '
+			(
+				>=sci-libs/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]
+				<sci-libs/pytorch-2.1.0_alpha0[${PYTHON_SINGLE_USEDEP}]
+			)
 			sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 		')
 		(
 			>=sci-libs/jax-0.4.6[${PYTHON_USEDEP},cpu]
 			<sci-libs/jax-0.5.0_alpha0[${PYTHON_USEDEP},cpu]
-		)
-		(
-			>=sci-libs/pytorch-2.0[${PYTHON_USEDEP}]
-			<sci-libs/pytorch-2.1.0_alpha0[${PYTHON_USEDEP}]
 		)
 		(
 			>=sci-libs/dm-tree-0.1[${PYTHON_USEDEP}]
@@ -78,7 +80,9 @@ BDEPEND+="
 		dev-python/sphinxcontrib-bibtex[${PYTHON_USEDEP}]
 		dev-python/docutils[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
-		sci-libs/pytorch[${PYTHON_USEDEP}]
+		$(python_gen_any_dep '
+			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		')
 	)
 	test? (
 		dev-python/pytest[${PYTHON_USEDEP}]

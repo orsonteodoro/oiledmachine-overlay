@@ -44,9 +44,15 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 STABLE_DIFFUSION_MODEL_RDEPEND="
+	$(python_gen_any_dep '
+		>=sci-libs/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
+		>=sci-libs/torchmetrics-0.11.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-libs/torchvision-0.14.1[${PYTHON_SINGLE_USEDEP}]
+		dev-python/pytorch-lightning[${PYTHON_SINGLE_USEDEP}]
+	')
 	(
-		>=sci-libs/tensorflow-2.5
-		<sci-libs/tensorflow-2.12
+		>=sci-libs/tensorflow-2.5[${PYTHON_USEDEP}]
+		<sci-libs/tensorflow-2.12[${PYTHON_USEDEP}]
 	)
 	>=sci-libs/nncf-2.4.0[${PYTHON_USEDEP}]
 	>=sci-libs/onnx-1.13.0[${PYTHON_USEDEP}]
@@ -67,10 +73,6 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 	media-libs/opencv[${PYTHON_USEDEP}]
 	net-misc/gdown[${PYTHON_USEDEP}]
 
-	>=dev-python/torchmetrics-0.11.0[${PYTHON_USEDEP}]
-	>=sci-libs/pytorch-1.13.1[${PYTHON_USEDEP}]
-	>=sci-libs/torchvision-0.14.1[${PYTHON_USEDEP}]
-	dev-python/pytorch-lightning[${PYTHON_USEDEP}]
 
 	>=sci-libs/paddlepaddle-2.4.0[${PYTHON_USEDEP}]
 	>=sci-libs/paddle2onnx-0.6[${PYTHON_USEDEP}]

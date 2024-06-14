@@ -148,37 +148,29 @@ DEPEND+="
 "
 # tests/stress_tests/scripts/requirements.txt \
 BDEPEND_STRESS_TESTS="
-	$(python_gen_cond_dep '
-		<dev-python/h5py-3.0.0[${PYTHON_USEDEP}]
-		dev-python/pymongo[${PYTHON_USEDEP}]
-		dev-python/jinja[${PYTHON_USEDEP}]
-		dev-python/pyyaml[${PYTHON_USEDEP}]
-	')
+	<dev-python/h5py-3.0.0[${PYTHON_USEDEP}]
+	dev-python/pymongo[${PYTHON_USEDEP}]
+	dev-python/jinja[${PYTHON_USEDEP}]
+	dev-python/pyyaml[${PYTHON_USEDEP}]
 "
 # tests/time_tests/scripts/requirements.txt \
 BDEPEND_TIME_TESTS_SCRIPTS="
-	$(python_gen_cond_dep '
-		>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]
-	')
+	>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]
 "
 # tests/time_tests/test_runner/requirements.txt \
 BDEPEND_TIME_TESTS_TEST_RUNNER="
-	$(python_gen_cond_dep '
-		>=dev-python/attrs-19.1.0[${PYTHON_USEDEP}]
-		>=dev-python/jsonschema-3.2.0[${PYTHON_USEDEP}]
-		>=dev-python/distro-1.5.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.18.5[${PYTHON_USEDEP}]
-		>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]
-		>=dev-python/pytest-4.0.1[${PYTHON_USEDEP}]
-		>=dev-python/pytest-html-1.22.1[${PYTHON_USEDEP}]
-		dev-python/pymongo[${PYTHON_USEDEP}]
-	')
+	>=dev-python/attrs-19.1.0[${PYTHON_USEDEP}]
+	>=dev-python/jsonschema-3.2.0[${PYTHON_USEDEP}]
+	>=dev-python/distro-1.5.0[${PYTHON_USEDEP}]
+	>=dev-python/numpy-1.18.5[${PYTHON_USEDEP}]
+	>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]
+	>=dev-python/pytest-4.0.1[${PYTHON_USEDEP}]
+	>=dev-python/pytest-html-1.22.1[${PYTHON_USEDEP}]
+	dev-python/pymongo[${PYTHON_USEDEP}]
 "
 # tests/conditional_compilation/requirements.txt \
 BDEPEND_CONDITIONAL_COMPILATION="
-	$(python_gen_cond_dep '
-		>=dev-python/pytest-dependency-0.5.1
-	')
+	>=dev-python/pytest-dependency-0.5.1
 "
 
 gen_gcc_bdepend() {
@@ -194,84 +186,80 @@ BDEPEND+="
 	>=dev-build/cmake-3.13
 	>=sys-devel/gcc-7.5
 	dev-util/patchelf
-	$(python_gen_cond_dep '
-		(
-			>=dev-python/python-decouple-3.4[${PYTHON_USEDEP}]
-			>=dev-python/setuptools-53.0.0[${PYTHON_USEDEP}]
-			>=dev-python/wheel-0.36.2[${PYTHON_USEDEP}]
-		)
-		(
-			>=dev-python/cython-0.29.22[${PYTHON_USEDEP}]
-			<dev-python/cython-3[${PYTHON_USEDEP}]
-		)
-		test? (
-			>=dev-python/attrs-19.1.0[${PYTHON_USEDEP}]
-			>=dev-python/pytest-4.0.1[${PYTHON_USEDEP}]
-			>=dev-python/pytest-html-1.19.0[${PYTHON_USEDEP}]
-		)
-		test? (
-			dev-python/bandit[${PYTHON_USEDEP}]
-			dev-python/black[${PYTHON_USEDEP}]
-			dev-python/flake8[${PYTHON_USEDEP}]
-			dev-python/flake8-annotations-complexity[${PYTHON_USEDEP}]
-			dev-python/flake8-broken-line[${PYTHON_USEDEP}]
-			dev-python/flake8-bugbear[${PYTHON_USEDEP}]
-			dev-python/flake8-builtins[${PYTHON_USEDEP}]
-			dev-python/flake8-class-attributes-order[${PYTHON_USEDEP}]
-			dev-python/flake8-commas[${PYTHON_USEDEP}]
-			dev-python/flake8-comprehensions[${PYTHON_USEDEP}]
-			dev-python/flake8-debugger[${PYTHON_USEDEP}]
-			dev-python/flake8-eradicate[${PYTHON_USEDEP}]
-			dev-python/flake8-executable[${PYTHON_USEDEP}]
-			dev-python/flake8-expression-complexity[${PYTHON_USEDEP}]
-			dev-python/flake8-print[${PYTHON_USEDEP}]
-			dev-python/flake8-pytest-style[${PYTHON_USEDEP}]
-			dev-python/flake8-quotes[${PYTHON_USEDEP}]
-			dev-python/flake8-rst-docstrings[${PYTHON_USEDEP}]
-			dev-python/flake8-string-format[${PYTHON_USEDEP}]
-			dev-python/flake8-variables-names[${PYTHON_USEDEP}]
-			dev-python/flake8_coding[${PYTHON_USEDEP}]
-			dev-python/flake8_pep3101[${PYTHON_USEDEP}]
-			dev-python/import-order[${PYTHON_USEDEP}]
-			dev-python/mypy[${PYTHON_USEDEP}]
-			dev-python/pep8-naming[${PYTHON_USEDEP}]
-			dev-python/radon[${PYTHON_USEDEP}]
-		)
-	')
+	(
+		>=dev-python/python-decouple-3.4[${PYTHON_USEDEP}]
+		>=dev-python/setuptools-53.0.0[${PYTHON_USEDEP}]
+		>=dev-python/wheel-0.36.2[${PYTHON_USEDEP}]
+	)
+	(
+		>=dev-python/cython-0.29.22[${PYTHON_USEDEP}]
+		<dev-python/cython-3[${PYTHON_USEDEP}]
+	)
+	test? (
+		>=dev-python/attrs-19.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-4.0.1[${PYTHON_USEDEP}]
+		>=dev-python/pytest-html-1.19.0[${PYTHON_USEDEP}]
+	)
+	test? (
+		dev-python/bandit[${PYTHON_USEDEP}]
+		dev-python/black[${PYTHON_USEDEP}]
+		dev-python/flake8[${PYTHON_USEDEP}]
+		dev-python/flake8-annotations-complexity[${PYTHON_USEDEP}]
+		dev-python/flake8-broken-line[${PYTHON_USEDEP}]
+		dev-python/flake8-bugbear[${PYTHON_USEDEP}]
+		dev-python/flake8-builtins[${PYTHON_USEDEP}]
+		dev-python/flake8-class-attributes-order[${PYTHON_USEDEP}]
+		dev-python/flake8-commas[${PYTHON_USEDEP}]
+		dev-python/flake8-comprehensions[${PYTHON_USEDEP}]
+		dev-python/flake8-debugger[${PYTHON_USEDEP}]
+		dev-python/flake8-eradicate[${PYTHON_USEDEP}]
+		dev-python/flake8-executable[${PYTHON_USEDEP}]
+		dev-python/flake8-expression-complexity[${PYTHON_USEDEP}]
+		dev-python/flake8-print[${PYTHON_USEDEP}]
+		dev-python/flake8-pytest-style[${PYTHON_USEDEP}]
+		dev-python/flake8-quotes[${PYTHON_USEDEP}]
+		dev-python/flake8-rst-docstrings[${PYTHON_USEDEP}]
+		dev-python/flake8-string-format[${PYTHON_USEDEP}]
+		dev-python/flake8-variables-names[${PYTHON_USEDEP}]
+		dev-python/flake8_coding[${PYTHON_USEDEP}]
+		dev-python/flake8_pep3101[${PYTHON_USEDEP}]
+		dev-python/import-order[${PYTHON_USEDEP}]
+		dev-python/mypy[${PYTHON_USEDEP}]
+		dev-python/pep8-naming[${PYTHON_USEDEP}]
+		dev-python/radon[${PYTHON_USEDEP}]
+	)
 	doc? (
-		$(python_gen_cond_dep '
-			dev-python/alabaster[${PYTHON_USEDEP}]
-			dev-python/Babel[${PYTHON_USEDEP}]
-			dev-python/beautifulsoup4[${PYTHON_USEDEP}]
-			dev-python/certifi[${PYTHON_USEDEP}]
-			dev-python/charset-normalizer[${PYTHON_USEDEP}]
-			dev-python/docutils[${PYTHON_USEDEP}]
-			dev-python/idna[${PYTHON_USEDEP}]
-			dev-python/imagesize[${PYTHON_USEDEP}]
-			dev-python/jinja[${PYTHON_USEDEP}]
-			dev-python/lxml[${PYTHON_USEDEP}]
-			dev-python/markupsafe[${PYTHON_USEDEP}]
-			dev-python/mistune[${PYTHON_USEDEP}]
-			dev-python/packaging[${PYTHON_USEDEP}]
-			dev-python/pydata-sphinx-theme[${PYTHON_USEDEP}]
-			dev-python/pygments[${PYTHON_USEDEP}]
-			dev-python/pyparsing[${PYTHON_USEDEP}]
-			dev-python/pytz[${PYTHON_USEDEP}]
-			dev-python/requests[${PYTHON_USEDEP}]
-			dev-python/snowballstemmer[${PYTHON_USEDEP}]
-			dev-python/soupsieve[${PYTHON_USEDEP}]
-			dev-python/sphinx[${PYTHON_USEDEP}]
-			dev-python/sphinx-copybutton[${PYTHON_USEDEP}]
-			dev-python/sphinx-inline-tabs[${PYTHON_USEDEP}]
-			dev-python/sphinxcontrib-applehelp[${PYTHON_USEDEP}]
-			dev-python/sphinxcontrib-devhelp[${PYTHON_USEDEP}]
-			dev-python/sphinxcontrib-htmlhelp[${PYTHON_USEDEP}]
-			dev-python/sphinxcontrib-jsmath[${PYTHON_USEDEP}]
-			dev-python/sphinxcontrib-qthelp[${PYTHON_USEDEP}]
-			dev-python/sphinxcontrib-serializinghtml[${PYTHON_USEDEP}]
-			dev-python/urllib3[${PYTHON_USEDEP}]
-			dev-python/sphinx-sitemap[${PYTHON_USEDEP}]
-		')
+		dev-python/alabaster[${PYTHON_USEDEP}]
+		dev-python/Babel[${PYTHON_USEDEP}]
+		dev-python/beautifulsoup4[${PYTHON_USEDEP}]
+		dev-python/certifi[${PYTHON_USEDEP}]
+		dev-python/charset-normalizer[${PYTHON_USEDEP}]
+		dev-python/docutils[${PYTHON_USEDEP}]
+		dev-python/idna[${PYTHON_USEDEP}]
+		dev-python/imagesize[${PYTHON_USEDEP}]
+		dev-python/jinja[${PYTHON_USEDEP}]
+		dev-python/lxml[${PYTHON_USEDEP}]
+		dev-python/markupsafe[${PYTHON_USEDEP}]
+		dev-python/mistune[${PYTHON_USEDEP}]
+		dev-python/packaging[${PYTHON_USEDEP}]
+		dev-python/pydata-sphinx-theme[${PYTHON_USEDEP}]
+		dev-python/pygments[${PYTHON_USEDEP}]
+		dev-python/pyparsing[${PYTHON_USEDEP}]
+		dev-python/pytz[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+		dev-python/snowballstemmer[${PYTHON_USEDEP}]
+		dev-python/soupsieve[${PYTHON_USEDEP}]
+		dev-python/sphinx[${PYTHON_USEDEP}]
+		dev-python/sphinx-copybutton[${PYTHON_USEDEP}]
+		dev-python/sphinx-inline-tabs[${PYTHON_USEDEP}]
+		dev-python/sphinxcontrib-applehelp[${PYTHON_USEDEP}]
+		dev-python/sphinxcontrib-devhelp[${PYTHON_USEDEP}]
+		dev-python/sphinxcontrib-htmlhelp[${PYTHON_USEDEP}]
+		dev-python/sphinxcontrib-jsmath[${PYTHON_USEDEP}]
+		dev-python/sphinxcontrib-qthelp[${PYTHON_USEDEP}]
+		dev-python/sphinxcontrib-serializinghtml[${PYTHON_USEDEP}]
+		dev-python/urllib3[${PYTHON_USEDEP}]
+		dev-python/sphinx-sitemap[${PYTHON_USEDEP}]
 	)
 	test? (
 		${BDEPEND_CONDITIONAL_COMPILATION}
