@@ -9,17 +9,17 @@ ABSEIL_CPP_PV="20230125.0"							# https://github.com/google/array_record/blob/v
 BAZEL_SKYLIB_PV="1.0.2"								# https://github.com/protocolbuffers/protobuf/blob/v21.12/protobuf_deps.bzl#L79
 BAZEL_SLOT="5.4"								# https://github.com/google/array_record/blob/v0.5.0/oss/build_whl.sh#L43C28-L43C33
 BROTLI_COMMIT="3914999fcc1fda92e750ef9190aa6db9bf7bdb07"			# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L26
-COVERAGE_OUTPUT_GENERATOR_PV="2.5"
+COVERAGE_OUTPUT_GENERATOR_PV="2.5"						# https://github.com/bazelbuild/bazel/blob/5.4.1/distdir_deps.bzl#L274
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 EIGEN_PV="3.4.0"								# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L41
 GOOGLETEST_COMMIT="9bb354fa8325fa31faa1e12627b25ab445e6eed3"			# Based on committer-date:<=2023-10-20 gh search   https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L31
 HIGHWAYHASH_COMMIT="a7f68e2f95fac08b24327d74747521cf634d5aff"
-JAVA_TOOLS_PV="11.7.1"
+JAVA_TOOLS_PV="11.7.1"								# https://github.com/bazelbuild/bazel/blob/5.4.1/distdir_deps.bzl#L290
 PROTOBUF_PV="21.12"								# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L81
 PYBIND11_BAZEL_COMMIT="5f458fa53870223a0de7eeb60480dd278b442698"		# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L60
 PYBIND11_PV="2.10.3"								# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L68
-PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream list only up to 3.11
+PYTHON_COMPAT=( "python3_"{10..11} )						# Upstream list only up to 3.11
 RIEGELI_COMMIT="40e3dc7969036966dd3bb1d499dc09845d00dc81"			# Based on committer-date:<=2023-10-20 gh search   https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L92
 RULES_CC_COMMIT="818289e5613731ae410efb54218a4077fb9dbb03"			# https://github.com/protocolbuffers/protobuf/blob/v21.12/protobuf_deps.bzl#L63
 RULES_JAVA_COMMIT="981f06c3d2bd10225e85209904090eb7b5fb26bd"			# https://github.com/protocolbuffers/protobuf/blob/v21.12/protobuf_deps.bzl#L71
@@ -30,7 +30,7 @@ SNAPPY_PV="1.1.8"								# https://github.com/google/array_record/blob/v0.5.0/WO
 TENSORFLOW_PV="2.12.1"								# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L144
 ZLIB_PV="1.2.11"								# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L129
 ZSTD_PV="1.4.5"									# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L101
-ZULU_VER="11.50.19-ca-jdk11.0.12"
+ZULU_VER="11.50.19-ca-jdk11.0.12"						# https://github.com/bazelbuild/bazel/blob/5.4.1/WORKSPACE.bzlmod#L79
 
 inherit bazel distutils-r1 flag-o-matic pypi
 
@@ -44,31 +44,31 @@ if [[ "${PV}" =~ "9999" ]] ; then
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 bazel_external_uris="
-https://github.com/pybind/pybind11_bazel/archive/${PYBIND11_BAZEL_COMMIT}.tar.gz -> pybind11_bazel-${PYBIND11_BAZEL_COMMIT}.tar.gz
-https://github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.tar.gz -> protobuf-${PROTOBUF_PV}.tar.gz
-https://github.com/tensorflow/tensorflow/archive/v${TENSORFLOW_PV}.zip -> tensorflow-${TENSORFLOW_PV}.zip
-https://github.com/bazelbuild/rules_pkg/releases/download/${RULES_PKG_PV}/rules_pkg-${RULES_PKG_PV}.tar.gz -> rules_pkg-${RULES_PKG_PV}.tar.gz
-https://github.com/bazelbuild/rules_cc/archive/${RULES_CC_COMMIT}.zip -> rules_cc-${RULES_CC_COMMIT}.zip
-https://github.com/bazelbuild/rules_python/archive/refs/tags/${RULES_PYTHON_PV}.tar.gz -> rules_python-${RULES_PYTHON_PV}.tar.gz
-https://github.com/bazelbuild/rules_java/archive/${RULES_JAVA_COMMIT}.zip -> rules_java-${RULES_JAVA_COMMIT}.zip
-https://github.com/bazelbuild/rules_proto/archive/${RULES_PROTO_COMMIT}.zip -> rules_proto-${RULES_PROTO_COMMIT}.zip
-https://github.com/bazelbuild/bazel-skylib/releases/download/${BAZEL_SKYLIB_PV}/bazel-skylib-${BAZEL_SKYLIB_PV}.tar.gz -> bazel-skyline-${BAZEL_SKYLIB_PV}.tar.gz
-https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT}.zip -> googletest-${GOOGLETEST_COMMIT}.zip
 https://github.com/abseil/abseil-cpp/archive/refs/tags/${ABSEIL_CPP_PV}.tar.gz -> abseil-cpp-${ABSEIL_CPP_PV}.tar.gz
-https://github.com/google/riegeli/archive/${RIEGELI_COMMIT}.zip -> riegeli-${RIEGELI_COMMIT}.zip
 https://github.com/abseil/abseil-py/archive/${ABSEIL_PY_COMMIT}.zip -> abseil-py-${ABSEIL_PY_COMMIT}.zip
-https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_PV}/eigen-${EIGEN_PV}.tar.bz2 -> eigen-${EIGEN_PV}.tar.bz2
-https://github.com/pybind/pybind11/archive/refs/tags/v${PYBIND11_PV}.zip -> pybind11-${PYBIND11_PV}.zip
+https://github.com/bazelbuild/bazel-skylib/releases/download/${BAZEL_SKYLIB_PV}/bazel-skylib-${BAZEL_SKYLIB_PV}.tar.gz -> bazel-skyline-${BAZEL_SKYLIB_PV}.tar.gz
+https://github.com/bazelbuild/java_tools/releases/download/java_v${JAVA_TOOLS_PV}/java_tools-v${JAVA_TOOLS_PV}.zip -> java_tools-${JAVA_TOOLS_PV}.zip
+https://github.com/bazelbuild/java_tools/releases/download/java_v${JAVA_TOOLS_PV}/java_tools_linux-v${JAVA_TOOLS_PV}.zip -> java_tools_linux-${JAVA_TOOLS_PV}.zip
+https://github.com/bazelbuild/rules_cc/archive/${RULES_CC_COMMIT}.zip -> rules_cc-${RULES_CC_COMMIT}.zip
+https://github.com/bazelbuild/rules_java/archive/${RULES_JAVA_COMMIT}.zip -> rules_java-${RULES_JAVA_COMMIT}.zip
+https://github.com/bazelbuild/rules_pkg/releases/download/${RULES_PKG_PV}/rules_pkg-${RULES_PKG_PV}.tar.gz -> rules_pkg-${RULES_PKG_PV}.tar.gz
+https://github.com/bazelbuild/rules_python/archive/refs/tags/${RULES_PYTHON_PV}.tar.gz -> rules_python-${RULES_PYTHON_PV}.tar.gz
+https://github.com/bazelbuild/rules_proto/archive/${RULES_PROTO_COMMIT}.zip -> rules_proto-${RULES_PROTO_COMMIT}.zip
 https://github.com/facebook/zstd/archive/v${ZSTD_PV}.zip -> zstd-${ZSTD_PV}.zip
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT}.zip -> googletest-${GOOGLETEST_COMMIT}.zip
+https://github.com/google/riegeli/archive/${RIEGELI_COMMIT}.zip -> riegeli-${RIEGELI_COMMIT}.zip
+https://github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.tar.gz -> protobuf-${PROTOBUF_PV}.tar.gz
+https://github.com/pybind/pybind11/archive/refs/tags/v${PYBIND11_PV}.zip -> pybind11-${PYBIND11_PV}.zip
+https://github.com/pybind/pybind11_bazel/archive/${PYBIND11_BAZEL_COMMIT}.tar.gz -> pybind11_bazel-${PYBIND11_BAZEL_COMMIT}.tar.gz
+https://github.com/tensorflow/tensorflow/archive/v${TENSORFLOW_PV}.zip -> tensorflow-${TENSORFLOW_PV}.zip
 https://github.com/google/brotli/archive/${BROTLI_COMMIT}.zip -> brotli-${BROTLI_COMMIT}.zip
 https://github.com/google/highwayhash/archive/${HIGHWAYHASH_COMMIT}.zip -> highwayhash-${HIGHWAYHASH_COMMIT}.zip
-http://zlib.net/fossils/zlib-${ZLIB_PV}.tar.gz -> zlib-${ZLIB_PV}.tar.gz
-https://mirror.bazel.build/bazel_coverage_output_generator/releases/coverage_output_generator-v${COVERAGE_OUTPUT_GENERATOR_PV}.zip -> coverage_output_generator-${COVERAGE_OUTPUT_GENERATOR_PV}.zip
 https://github.com/google/snappy/archive/${SNAPPY_PV}.zip -> snappy-${SNAPPY_PV}.zip
-https://github.com/bazelbuild/java_tools/releases/download/java_v${JAVA_TOOLS_PV}/java_tools-v${JAVA_TOOLS_PV}.zip -> java_tools-${JAVA_TOOLS_PV}.zip
+https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_PV}/eigen-${EIGEN_PV}.tar.bz2 -> eigen-${EIGEN_PV}.tar.bz2
 https://mirror.bazel.build/openjdk/azul-zulu${ZULU_VER}/zulu${ZULU_VER}-linux_x64.tar.gz -> zulu${ZULU_VER}-linux_x64.tar.gz
-https://github.com/bazelbuild/java_tools/releases/download/java_v${JAVA_TOOLS_PV}/java_tools_linux-v${JAVA_TOOLS_PV}.zip -> java_tools_linux-${JAVA_TOOLS_PV}.zip
+http://zlib.net/fossils/zlib-${ZLIB_PV}.tar.gz -> zlib-${ZLIB_PV}.tar.gz
 "
+#https://mirror.bazel.build/bazel_coverage_output_generator/releases/coverage_output_generator-v${COVERAGE_OUTPUT_GENERATOR_PV}.zip -> coverage_output_generator-${COVERAGE_OUTPUT_GENERATOR_PV}.zip
 	SRC_URI="
 	${bazel_external_uris}
 https://github.com/google/array_record/archive/refs/tags/v${PV}.tar.gz
