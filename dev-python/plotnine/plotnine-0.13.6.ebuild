@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO package:
-# mizani
 # quartodoc
 
 MY_PN="${PN/-/_}"
