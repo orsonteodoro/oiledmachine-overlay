@@ -160,7 +160,7 @@ eerror
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
 	ln -s "/usr/bin/bazel-${BAZEL_SLOT}" "${WORKDIR}/bin/bazel" || die
-	bazel --version || grep -q "bazel ${BAZEL_SLOT}" || die "dev-build/bazel:${BAZEL_SLOT} is not installed"
+	bazel --version | grep -q "bazel ${BAZEL_SLOT}" || die "dev-build/bazel:${BAZEL_SLOT} is not installed"
 }
 
 src_prepare() {

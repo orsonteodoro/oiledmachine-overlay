@@ -47,7 +47,7 @@ src_unpack() {
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
 	ln -s "/usr/bin/bazel-${BAZEL_PV%.*}" "${WORKDIR}/bin/bazel" || die
-	bazel --version | grep -q "bazel ${BAZEL_PV%.*}" "dev-build/bazel:${BAZEL_PV%.*} is not installed"
+	bazel --version | grep -q "bazel ${BAZEL_PV%.*}" || die "dev-build/bazel:${BAZEL_PV%.*} is not installed"
 	unpack ${A}
 }
 
