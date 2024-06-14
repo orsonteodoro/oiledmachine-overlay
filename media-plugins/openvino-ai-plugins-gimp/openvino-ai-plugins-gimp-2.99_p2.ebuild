@@ -114,7 +114,7 @@ PLUGIN_RDEPEND="
 RDEPEND+="
 	${PLUGIN_RDEPEND}
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_USEDEP}]
-	>=dev-python/timm-0.4.5[${PYTHON_USEDEP}]
+	>=sci-libs/timm-0.4.5[${PYTHON_USEDEP}]
 	dev-python/diffusers[${PYTHON_USEDEP}]
 	dev-python/matplotlib[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
