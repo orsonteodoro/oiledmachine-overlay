@@ -403,8 +403,8 @@ python_compile() {
 		"${wheel_path}"
 
 	# Unbreak die check
-	mkdir -p "${d}/bin"
-	touch "${d}/bin/"{"${EPYTHON}","python3","python","pyvenv.conf"}
+	mkdir -p "${d}/usr/bin"
+	touch "${d}/usr/bin/"{"${EPYTHON}","python3","python","pyvenv.conf"}
 }
 
 src_compile() {
