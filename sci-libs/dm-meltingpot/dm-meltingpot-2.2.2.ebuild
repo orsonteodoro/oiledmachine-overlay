@@ -46,7 +46,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
 RDEPEND+="
-	<dev-python/opencv-4.7[${PYTHON_USEDEP}]
+	<media-libs/opencv-4.7[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/immutabledict[${PYTHON_USEDEP}]
 	dev-python/networkx[${PYTHON_USEDEP}]

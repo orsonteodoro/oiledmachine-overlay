@@ -109,7 +109,6 @@ RDEPEND+="
 	>=dev-python/flax-0.2.0[${PYTHON_USEDEP}]
 	>=dev-python/jax-0.1.72[${PYTHON_USEDEP}]
 	>=dev-python/jaxlib-0.1.51[${PYTHON_USEDEP}]
-	>=dev-python/opencv-3.4.8.29[${PYTHON_USEDEP}]
 	>=dev-python/pillow-7.0.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.16.4[${PYTHON_USEDEP}]
 	>=dev-python/pandas-0.24.2[${PYTHON_USEDEP}]
@@ -118,6 +117,7 @@ RDEPEND+="
 	>=dev-python/tensorflow-probability-0.13.0[${PYTHON_USEDEP}]
 	>=dev-python/tf_slim-1.0[${PYTHON_USEDEP}]
 	>=dev-python/tqdm-4.64.1[${PYTHON_USEDEP}]
+	>=media-libs/opencv-3.4.8.29[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
