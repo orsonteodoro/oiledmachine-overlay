@@ -10,27 +10,27 @@ EAPI=8
 #ERROR: /var/tmp/portage/sci-libs/dmlab2d-1.0.0/homedir/.cache/bazel/_bazel_portage/e9835fc74ba2809dfc36f6dc41fecf6b/external/luajit_archive/BUILD.bazel:281:10: Middleman _middlemen/@luajit_Uarchive_S_S_Cbuildvm-BazelCppSemantics_build_arch_k8-opt-exec-2B5CBBC6 failed: 1 input file(s) do not exist
 #ERROR: /var/tmp/portage/sci-libs/dmlab2d-1.0.0/homedir/.cache/bazel/_bazel_portage/e9835fc74ba2809dfc36f6dc41fecf6b/external/luajit_archive/BUILD.bazel:281:10 Middleman _middlemen/@luajit_Uarchive_S_S_Cbuildvm-BazelCppSemantics_build_arch_k8-opt-exec-2B5CBBC6 failed: 1 input file(s) do not exist
 
-APPLE_SUPPORT_PV="1.6.0"
-ABSEIL_CPP_COMMIT="9f1dcc70d64232e77964de9b90e209e23e0110db"
-ABSEIL_PY_COMMIT="9e543208a72300a4f8677fe725550fe8dc242bac"
-BAZEL_SKYLIB_COMMIT="288731ef9f7f688932bd50e704a91a45ec185f9b"
+APPLE_SUPPORT_PV="1.6.0"						# https://github.com/google-deepmind/lab2d/blob/release_v1.0.0/WORKSPACE#L133
+ABSEIL_CPP_COMMIT="9f1dcc70d64232e77964de9b90e209e23e0110db"		# From patch
+ABSEIL_PY_COMMIT="9e543208a72300a4f8677fe725550fe8dc242bac"		# From patch
+BAZEL_SKYLIB_COMMIT="288731ef9f7f688932bd50e704a91a45ec185f9b"		# From patch
 BAZEL_SLOT="6.1"
-BENCHMARK_COMMIT="27d64a2351b98d48dd5b18c75ff536982a4ce26a"
+BENCHMARK_COMMIT="27d64a2351b98d48dd5b18c75ff536982a4ce26a"		# From patch
 DISTUTILS_USE_PEP517="setuptools"
-DM_ENV_COMMIT="3c6844db2aa4ed5994b2c45dbfd9f31ad948fbb8"
-DM_TREE_COMMIT="df359fddcd8db21f6065a418ebf8873e2c9aedd5"
-EIGEN_COMMIT="b02c384ef4e8eba7b8bdef16f9dc6f8f4d6a6b2b"
-GOOGLETEST_COMMIT="1ed6a8c67a0bd675149ece27bbec0ef1759854cf"
-LIBPNG_PV="1.6.37"
-LUAJIT_PV="2.1"
-LUA_PV="5.1.5"
-PYBIND11_COMMIT="8d08dc64ca300342852ceaa7b1d65fe9f69dab06"
+DM_ENV_COMMIT="3c6844db2aa4ed5994b2c45dbfd9f31ad948fbb8"		# https://github.com/google-deepmind/lab2d/blob/release_v1.0.0/WORKSPACE#L113
+DM_TREE_COMMIT="df359fddcd8db21f6065a418ebf8873e2c9aedd5"		# From patch
+EIGEN_COMMIT="b02c384ef4e8eba7b8bdef16f9dc6f8f4d6a6b2b"			# https://github.com/google-deepmind/lab2d/blob/release_v1.0.0/WORKSPACE#L54
+GOOGLETEST_COMMIT="1ed6a8c67a0bd675149ece27bbec0ef1759854cf"		# From patch
+LIBPNG_PV="1.6.37"							# https://github.com/google-deepmind/lab2d/blob/release_v1.0.0/WORKSPACE#L66
+LUAJIT_PV="2.1"								# https://github.com/google-deepmind/lab2d/blob/release_v1.0.0/WORKSPACE#L106
+LUA_PV="5.1.5"								# https://github.com/google-deepmind/lab2d/blob/release_v1.0.0/WORKSPACE#L88
+PYBIND11_COMMIT="8d08dc64ca300342852ceaa7b1d65fe9f69dab06"		# From patch
 PYTHON_COMPAT=( "python3_"{10..12} )
-RULES_CC_COMMIT="22d91c627c81513d27d8ab0a90b01d08b8b76349"
+RULES_CC_COMMIT="22d91c627c81513d27d8ab0a90b01d08b8b76349"		# From patch
 RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"
-RULES_LICENSE_PV="0.0.3"
-RULES_PYTHON_COMMIT="5c5ab5bd9577a284784d1c8b27bf58336de06010"
-ZLIB_PV="1.2.11"
+RULES_LICENSE_PV="0.0.3"						# https://github.com/bazelbuild/bazel/blob/6.1.2/src/MODULE.tools#L5
+RULES_PYTHON_COMMIT="5c5ab5bd9577a284784d1c8b27bf58336de06010"		# From patch
+ZLIB_PV="1.2.11"							# https://github.com/google-deepmind/lab2d/blob/release_v1.0.0/WORKSPACE#L77
 
 inherit bazel distutils-r1 flag-o-matic pypi
 
@@ -45,6 +45,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	S="${WORKDIR}/lab2d-release_v${PV}"
+#https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT}.zip -> abseil-cpp-${ABSEIL_CPP_COMMIT}.zip
 bazel_external_uris="
 https://github.com/bazelbuild/apple_support/releases/download/${APPLE_SUPPORT_PV}/apple_support.${APPLE_SUPPORT_PV}.tar.gz
 https://github.com/bazelbuild/rules_license/releases/download/${RULES_LICENSE_PV}/rules_license-${RULES_LICENSE_PV}.tar.gz
@@ -53,7 +54,6 @@ https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT}.zip -> benchmark
 https://github.com/bazelbuild/rules_cc/archive/${RULES_CC_COMMIT}.zip -> rules_cc-${RULES_CC_COMMIT}.zip
 https://github.com/bazelbuild/rules_python/archive/${RULES_PYTHON_COMMIT}.zip -> rules_python-${RULES_PYTHON_COMMIT}.zip
 https://github.com/bazelbuild/bazel-skylib/archive/${BAZEL_SKYLIB_COMMIT}.zip -> bazel-skylib-${BAZEL_SKYLIB_COMMIT}.zip
-https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT}.zip -> abseil-cpp-${ABSEIL_CPP_COMMIT}.zip
 https://github.com/abseil/abseil-py/archive/${ABSEIL_PY_COMMIT}.zip -> abseil-py-${ABSEIL_PY_COMMIT}.zip
 https://github.com/deepmind/dm_env/archive/${DM_ENV_COMMIT}.zip -> dm_env-${DM_ENV_COMMIT}.zip
 https://github.com/bazelbuild/rules_java/archive/${RULES_JAVA_COMMIT}.zip -> rules_java-${RULES_JAVA_COMMIT}.zip
@@ -139,7 +139,7 @@ python_compile() {
 
 	local version="${EPYTHON/python}"
 	version="${version/./}"
-	local wheel_dir="${HOME}/.cache/bazel/_bazel_portage/e9835fc74ba2809dfc36f6dc41fecf6b/execroot/org_deepmind_lab2d/bazel-out/k8-opt/bin/dmlab2d/"
+	local wheel_dir=$(realpath "${HOME}/.cache/bazel/_bazel_portage/"*"/execroot/org_deepmind_lab2d/bazel-out/k8-opt/bin/dmlab2d/")
 
 	wheel_path=$(realpath "${wheel_dir}/${PN}-${PV}-"*"cp${version}-"*".whl")
 	distutils_wheel_install "${d}" \
