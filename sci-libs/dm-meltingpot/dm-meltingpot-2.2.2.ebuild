@@ -9,6 +9,7 @@ EAPI=8
 # pyink
 # pytype
 
+MELTING_POT_ASSETS_PV="2.1.0"
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -28,6 +29,8 @@ else
 	SRC_URI="
 https://github.com/google-deepmind/meltingpot/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
+http://storage.googleapis.com/dm-meltingpot/meltingpot-assets-${MELTING_POT_ASSETS_PV}.tar.gz
+	-> meltingpot-assets-${MELTING_POT_ASSETS_PV}.tar.gz
 	"
 fi
 
@@ -87,6 +90,11 @@ src_unpack() {
 			|| die "QA:  Bump version"
 	else
 		unpack ${A}
+		mkdir -p "${S}/assets" || die
+		cp -L \
+			"${DISTDIR}/meltingpot-assets-${MELTING_POT_ASSETS_PV}.tar.gz" \
+			"${S}/assets" \
+			|| die
 	fi
 }
 
