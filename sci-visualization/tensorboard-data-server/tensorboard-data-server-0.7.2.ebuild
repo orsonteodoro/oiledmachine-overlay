@@ -398,7 +398,7 @@ python_compile() {
 		--out-dir "${T}/pip_package" \
 		|| die
 	local wheel_path=$(realpath "${T}/pip_package/"*".whl")
-	local d="${S_PROJ}-${EPYTHON}/install"
+	local d="${S_PROJ}_${EPYTHON}/install"
 	distutils_wheel_install "${d}" \
 		"${wheel_path}"
 
