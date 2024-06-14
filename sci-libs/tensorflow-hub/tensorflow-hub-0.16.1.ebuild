@@ -5,12 +5,12 @@
 EAPI=8
 
 BAZEL_SKYLIB_PV="1.2.1"							# https://github.com/tensorflow/hub/blob/v0.16.1/WORKSPACE#L66
-BAZEL_SLOT="6.1"
+BAZEL_SLOT="6.1"							# Undocumented version
 DISTUTILS_USE_PEP517="setuptools"
 PROTOBUF_PV="3.19.6"							# https://github.com/tensorflow/hub/blob/v0.16.1/WORKSPACE#L36
 PYTHON_COMPAT=( "python3_10" )
-RULES_CC_PV="0.0.2"							# https://github.com/bazelbuild/bazel/blob/6.1.2/MODULE.bazel#L22
-RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"
+RULES_CC_PV="0.0.2"							# https://github.com/bazelbuild/bazel/blob/6.1.2/distdir_deps.bzl#L57
+RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"		# https://github.com/bazelbuild/bazel/blob/6.1.2/distdir_deps.bzl#L69
 RULES_LICENSE_PV="0.0.4"						# https://github.com/tensorflow/hub/blob/v0.16.1/WORKSPACE#L58
 RULES_PROTO_COMMIT="7e4afce6fe62dbff0a4a03450143146f9f2d7488"		# https://github.com/bazelbuild/buildtools/blob/v6.1.2/WORKSPACE
 RULES_PYTHON_COMMIT="70cce26432187a60b4e950118791385e6fb3c26f"		# https://github.com/tensorflow/hub/blob/v0.16.1/WORKSPACE#L24
