@@ -9,8 +9,8 @@ EAPI=8
 
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
-DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.8
+DISTUTILS_USE_PEP517="pdm-backend"
+PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.12
 
 inherit distutils-r1
 
@@ -31,8 +31,10 @@ SLOT="0"
 IUSE="doc modelindex"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=sci-libs/pytorch-1.4.0[${PYTHON_USEDEP}]
+		>=sci-libs/pytorch-1.7[${PYTHON_USEDEP}]
+		>=sci-libs/safetensors-0.2[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
+		sci-libs/huggingface_hub[${PYTHON_USEDEP}]
 		modelindex? (
 			>=dev-python/model-index-0.1.10[${PYTHON_USEDEP}]
 			>=dev-python/jinja-2.11.3[${PYTHON_USEDEP}]
@@ -45,13 +47,19 @@ DEPEND+="
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
-		dev-python/setuptools[${PYTHON_USEDEP}]
-		dev-python/wheel[${PYTHON_USEDEP}]
+		dev-python/pdm-backend[${PYTHON_USEDEP}]
 		doc? (
 			dev-python/mkdocs[${PYTHON_USEDEP}]
 			dev-python/mkdocs-awesome-pages-plugin[${PYTHON_USEDEP}]
 			dev-python/mkdocs-material[${PYTHON_USEDEP}]
 			dev-python/mdx_truly_sane_lists[${PYTHON_USEDEP}]
+		)
+		test? (
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pytest-timeout[${PYTHON_USEDEP}]
+			dev-python/pytest-xdist[${PYTHON_USEDEP}]
+			dev-python/pytest-forked[${PYTHON_USEDEP}]
+			dev-python/expecttest[${PYTHON_USEDEP}]
 		)
 	')
 "
