@@ -4,7 +4,7 @@
 EAPI=8
 
 GENPATCHES_FALLBACK_COMMIT="abbbd285be43f4a758e4cbaac9cf33c6bc74e32a" # 2024-05-05 13:54:13 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="83a7eefedc9b56fe7bfeff13b6c7356688ffa670" # 2024-06-09 14:19:43 -0700
+LINUX_SOURCES_FALLBACK_COMMIT="d20f6b3d747c36889b7ce75ee369182af3decb6b" # 2024-06-13 11:11:53 -0700
 RC_PV="rc3" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
@@ -14,7 +14,7 @@ RC_PV="rc3" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux
 EBUILD_REV="r6"
 GENPATCHES_VER="live" # can be live only when 9999
 PATCH_PROJC_VER="6.9-r0"
-PATCH_RT_VER="6.10-rc2-rt3"
+PATCH_RT_VER="6.10-rc3-rt5"
 
 inherit ot-kernel-v6.10
 
