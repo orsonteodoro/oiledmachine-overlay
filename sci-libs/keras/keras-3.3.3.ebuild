@@ -22,7 +22,7 @@ https://keras.io/
 https://github.com/keras-team/keras
 "
 LICENSE="Apache-2.0"
-# Bazel tests not pytest, also want GPU access
+# Bazel tests, not pytest, want GPU access
 RESTRICT=""
 SLOT="0"
 KEYWORDS="~amd64"
