@@ -43,7 +43,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
-MODEL_RDEPEND="
+STABLE_DIFFUSION_MODEL_RDEPEND="
 	(
 		>=sci-libs/tensorflow-2.5
 		<sci-libs/tensorflow-2.12
@@ -110,8 +110,8 @@ PLUGIN_RDEPEND="
 	sci-libs/huggingface_hub[${PYTHON_USEDEP}]
 	sci-libs/openvino[${PYTHON_USEDEP}]
 "
+#	${STABLE_DIFFUSION_MODEL_RDEPEND}
 RDEPEND+="
-	${MODEL_RDEPEND}
 	${PLUGIN_RDEPEND}
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_USEDEP}]
 	>=dev-python/timm-0.4.5[${PYTHON_USEDEP}]
