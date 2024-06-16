@@ -334,8 +334,13 @@ einfo "Building for ${EPYTHON}"
 		pypv="${pypv/python/}"
 		local wheel_path=$(realpath "${WORKDIR}/text-${PV}-${EPYTHON/./_}/tensorflow_text-${PV}-cp${pypv}-cp${pypv}-"*".whl")
 		einfo "wheel_path=${wheel_path}"
-		distutils_wheel_install "${WORKDIR}/text-${PV}-${EPYTHON/./_}/install" \
+		local d="${WORKDIR}/text-${PV}-${EPYTHON/./_}/install"
+		distutils_wheel_install "${d}" \
 			"${wheel_path}"
+
+		# Unbreak die check
+		mkdir -p "${d}/usr/bin"
+		touch "${d}/usr/bin/"{"${EPYTHON}","python3","python","pyvenv.cfg"}
 	popd >/dev/null 2>&1 || die
 }
 
