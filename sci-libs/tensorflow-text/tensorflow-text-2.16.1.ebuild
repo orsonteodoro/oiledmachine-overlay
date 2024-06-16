@@ -334,7 +334,7 @@ einfo "Building for ${EPYTHON}"
 		pypv="${pypv/python/}"
 		local wheel_path=$(realpath "${WORKDIR}/text-${PV}-${EPYTHON/./_}/tensorflow_text-${PV}-cp${pypv}-cp${pypv}-"*".whl")
 		einfo "wheel_path=${wheel_path}"
-		distutils_wheel_install "${BUILD_DIR}/install" \
+		distutils_wheel_install "${WORKDIR}/text-${PV}-${EPYTHON/./_}/install" \
 			"${wheel_path}"
 	popd >/dev/null 2>&1 || die
 }
