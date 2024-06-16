@@ -33,7 +33,6 @@ HIGHWAYHASH_COMMIT="c13d28517a4db259d738ea4886b1f00352a3cc33"		# https://github.
 ICU_PV="64-2"								# https://github.com/tensorflow/text/blob/v2.16.1/WORKSPACE#L11
 LIBJPEG_TURBO_PV="2.1.4"						# https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/jpeg/workspace.bzl#L8
 LLVM_COMMIT="8697bbe2d4aed109520e83c6beab52196ec5b702"			# https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/llvm/workspace.bzl#L7
-LLVM_COMPAT=( {16..15} )
 ML_DTYPES_COMMIT="2ca30a2b3c0744625ae3d6988f5596740080bbd0"		# https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/py/ml_dtypes/workspace.bzl#L10
 NASM_PV="2.14.02"							# https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/nasm/workspace.bzl#L11
 NSYNC_PV="1.25.0"							# https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl#L395
@@ -132,7 +131,6 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-${LLVM_COMPAT[@]/#/llvm_slot_}
 big-endian doc python test
 "
 REQUIRED_USE+="
