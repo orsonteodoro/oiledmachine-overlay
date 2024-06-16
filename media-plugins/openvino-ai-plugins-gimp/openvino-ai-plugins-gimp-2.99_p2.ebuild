@@ -46,7 +46,7 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 		>=sci-libs/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
 		>=sci-libs/torchmetrics-0.11.0[${PYTHON_SINGLE_USEDEP}]
 		>=sci-libs/torchvision-0.14.1[${PYTHON_SINGLE_USEDEP}]
-		dev-python/pytorch-lightning[${PYTHON_SINGLE_USEDEP}]
+		sci-libs/pytorch-lightning[${PYTHON_SINGLE_USEDEP}]
 	')
 	(
 		>=sci-libs/tensorflow-2.5[${PYTHON_USEDEP}]

@@ -110,7 +110,7 @@ BDEPEND+="
 	)
 	test? (
 		$(python_gen_any_dep '
-			dev-python/torchvision[${PYTHON_SINGLE_USEDEP}]
+			sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 		')
 		(
 			>=sci-libs/sentencepiece-0.1.91[${PYTHON_USEDEP}]
