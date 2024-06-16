@@ -267,14 +267,10 @@ src_configure() {
 			python_path=$(which python)
 		fi
 
-		TF_CFLAGS=( $(${python_path} -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_compile_flags()))" | awk '{print $1}') )
-		TF_LFLAGS=( $(${python_path} -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_link_flags()))" | awk '{print $1}') )
 		TF_LFLAGS_2=( $(${python_path} -c "import tensorflow as tf; print(' '.join(tf.sysconfig.get_link_flags()))" | awk '{print $2}') )
 		TF_ABIFLAG=$(${python_path} -c "import tensorflow as tf; print(tf.sysconfig.CXX11_ABI_FLAG)")
 
-#		HEADER_DIR=${TF_CFLAGS:2}
 		HEADER_DIR="/usr/include/tensorflow"
-#		SHARED_LIBRARY_DIR=${TF_LFLAGS:2}
 		SHARED_LIBRARY_DIR="/usr/$(get_libdir)"
 		SHARED_LIBRARY_NAME=$(echo ${TF_LFLAGS_2} | rev | cut -d ":" -f1 | rev)
 
@@ -321,13 +317,7 @@ einfo "Building for ${EPYTHON}"
 		local src=$(realpath "${HOME}/.cache/bazel/_bazel_portage/"*"/execroot/org_tensorflow_text/bazel-out/k8-opt/bin/oss_scripts/pip_package/build_pip_package.runfiles")
 		cp -L \
 			"${src}/org_tensorflow_text/oss_scripts/pip_package/setup.py" \
-			"${out}" \
-			|| die
-		cp -L \
 			"${src}/org_tensorflow_text/oss_scripts/pip_package/LICENSE" \
-			"${out}" \
-			|| die
-		cp -L \
 			"${src}/org_tensorflow_text/oss_scripts/pip_package/MANIFEST.in" \
 			"${out}" \
 			|| die
