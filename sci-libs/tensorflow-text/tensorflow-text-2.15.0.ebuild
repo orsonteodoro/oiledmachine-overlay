@@ -19,6 +19,7 @@ DOUBLE_CONVERSION_PV="3.2.0"						# https://github.com/tensorflow/tensorflow/blo
 EIGEN_COMMIT="66e8f38891841bf88ee976a316c0c78a52f0cee5"			# https://github.com/tensorflow/tensorflow/blob/v2.15.0/third_party/eigen3/workspace.bzl#L10
 FARMHASH_COMMIT="0d859a811870d10f53a594927d0d0b97573ad06d"		# https://github.com/tensorflow/tensorflow/blob/v2.15.0/third_party/farmhash/workspace.bzl#L10
 FLATBUFFERS_PV="23.5.26"						# https://github.com/tensorflow/tensorflow/blob/v2.15.0/third_party/flatbuffers/workspace.bzl#L10
+GCC_COMPAT=( {12..9} )
 GIFLIB_PV="5.2.1"							# https://github.com/tensorflow/tensorflow/blob/v2.15.0/tensorflow/workspace2.bzl#L341
 GOOGLEAPIS_COMMIT="6b3fdcea8bc5398be4e7e9930c693f0ea09316a0"		# https://github.com/tensorflow/tensorflow/blob/v2.15.0/tensorflow/workspace2.bzl#L309
 GRPC_COMMIT="b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd"			# https://github.com/tensorflow/tensorflow/blob/v2.15.0/tensorflow/workspace2.bzl#L438
@@ -26,6 +27,7 @@ HIGHWAYHASH_COMMIT="c13d28517a4db259d738ea4886b1f00352a3cc33"		# https://github.
 ICU_PV="64-2"								# https://github.com/tensorflow/text/blob/v2.15.0/WORKSPACE#L11
 LIBJPEG_TURBO_PV="2.1.4"						# https://github.com/tensorflow/tensorflow/blob/v2.15.0/third_party/jpeg/workspace.bzl#L8
 LLVM_COMMIT="49cb1595c1b3ae1de3684fea6148363c15bae12a"			# https://github.com/tensorflow/tensorflow/blob/v2.15.0/third_party/llvm/workspace.bzl#L7
+LLVM_COMPAT=( {16..15} )
 ML_DTYPES_COMMIT="2ca30a2b3c0744625ae3d6988f5596740080bbd0"		# https://github.com/tensorflow/tensorflow/blob/v2.15.0/third_party/py/ml_dtypes/workspace.bzl#L10
 NASM_PV="2.14.02"							# https://github.com/tensorflow/tensorflow/blob/v2.15.0/third_party/nasm/workspace.bzl#L11
 NSYNC_PV="1.25.0"							# https://github.com/tensorflow/tensorflow/blob/v2.15.0/tensorflow/workspace2.bzl#L386
@@ -60,7 +62,7 @@ ZLIB_PV="1.2.13"							# https://github.com/tensorflow/tensorflow/blob/v2.15.0/t
 
 inherit bazel distutils-r1 flag-o-matic
 
-#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 S="${WORKDIR}/text-${PV}"
 bazel_external_uris="
 https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT}.tar.gz -> abseil-cpp-${ABSEIL_CPP_COMMIT}.tar.gz
@@ -112,7 +114,6 @@ https://storage.googleapis.com/mirror.tensorflow.org/github.com/protocolbuffers/
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/unicode-org/icu/archive/release-${ICU_PV}.zip -> icu-${ICU_PV}.zip
 https://www.nasm.us/pub/nasm/releasebuilds/${NASM_PV}/nasm-${NASM_PV}.tar.bz2 -> nasm-${NASM_PV}.tar.bz2
 https://zlib.net/fossils/zlib-${ZLIB_PV}.tar.gz -> zlib-${ZLIB_PV}.tar.gz
-
 "
 SRC_URI="
 	${bazel_external_uris}
@@ -130,23 +131,28 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" big-endian doc python test"
+IUSE+="
+${LLVM_COMPAT[@]/#/llvm_slot_}
+big-endian doc python test
+"
+REQUIRED_USE+="
+"
 RDEPEND_PROTOBUF_3_21="
 	|| (
 		(
 			!big-endian? (
-				=net-libs/grpc-1.53*[${PYTHON_USEDEP},big-endian=,python]
+				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
 			)
 			big-endian? (
-				=net-libs/grpc-1.53*[big-endian=,-python]
+				=net-libs/grpc-1.53*[-python]
 			)
 		)
 		(
 			!big-endian? (
-				=net-libs/grpc-1.54*[${PYTHON_USEDEP},big-endian=,python]
+				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
 			)
 			big-endian? (
-				=net-libs/grpc-1.54*[big-endian=,-python]
+				=net-libs/grpc-1.54*[-python]
 			)
 		)
 	)
@@ -154,20 +160,41 @@ RDEPEND_PROTOBUF_3_21="
 "
 RDEPEND+="
 	${RDEPEND_PROTOBUF_3_21}
-	=sci-libs/tensorflow-${PV%.*}[${PYTHON_USEDEP},python=]
+	=sci-libs/tensorflow-${PV%.*}[${PYTHON_USEDEP},big-endian=,python=]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
+	sys-devel/binutils[gold,plugins]
 "
 DOCS=( "README.md" )
 PATCHES=(
+	"${FILESDIR}/tensorflow-text-2.16.1-fix-bazel-bin-detect.patch"
 )
 
 pkg_setup() {
 	python_setup
+	# Building with clang is broken.
+	local s
+	local GCC_SLOT="-1"
+	for s in ${GCC_COMPAT[@]} ; do
+		if has_version "sys-devel/gcc:${s}" ; then
+			GCC_SLOT=${s}
+			export CC="${CHOST}-gcc-${GCC_SLOT}"
+			export CXX="${CHOST}-g++-${GCC_SLOT}"
+			export CPP="${CXX} -E"
+			break
+		fi
+	done
+	if (( ${GCC_SLOT} == -1 )) ; then
+eerror "You need slot 9-12 for sys-devel/gcc."
+		die
+	fi
+	export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${GCC_SLOT}"
+	export HOST_C_COMPILER="${EPREFIX}/usr/bin/${CC}"
+	export HOST_CXX_COMPILER="${EPREFIX}/usr/bin/${CXX}"
 }
 
 src_unpack() {
@@ -185,6 +212,9 @@ src_prepare() {
 	echo 'build --noshow_progress' >> "${S}/.bazelrc" || die # Disable high CPU usage on xfce4-terminal
 	echo 'build --subcommands' >> "${S}/.bazelrc" || die # Increase verbosity
 	replace-flags '-O0' '-O1'
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=gold
+	BUILD_LDFLAGS+=" -fuse-ld=gold"
 	bazel_setup_bazelrc
 	cat "${T}/bazelrc" >> "${S}/.bazelrc"
 
@@ -197,7 +227,7 @@ src_prepare() {
 
 set_envvars() {
 	export TF_PYTHON_VERSION="${EPYTHON/python/}"
-	if use python; then
+	if use python ; then
 		export PYTHON_BIN_PATH="${PYTHON}"
 		export PYTHON_LIB_PATH="$(python_get_sitedir)"
 		HERMETIC_PYTHON_VERSION=$("${PYTHON}" -c "import sys; print('.'.join(map(str, sys.version_info[:2])))")
@@ -208,6 +238,7 @@ set_envvars() {
 		HERMETIC_PYTHON_VERSION=$("$(which python)" -c "import sys; print('.'.join(map(str, sys.version_info[:2])))")
 		export HERMETIC_PYTHON_VERSION
 	fi
+	export TF_NEED_CLANG=0
 }
 
 src_configure() {
@@ -262,7 +293,8 @@ src_configure() {
         fi
 }
 
-python_compile() {
+do_compile() {
+einfo "Building for ${EPYTHON}"
 	export JAVA_HOME=$(java-config --jre-home)
 	pushd "${WORKDIR}/text-${PV}-${EPYTHON/./_}/" >/dev/null 2>&1 || die
 		set_envvars
@@ -270,7 +302,8 @@ python_compile() {
 		bazel run \
 			--enable_runfiles \
 			//oss_scripts/pip_package:build_pip_package \
-			-- "$(realpath .)" \
+			-- \
+			"${WORKDIR}/text-${PV}-${EPYTHON/./_}" \
 			|| die
 		bazel shutdown || die
 
@@ -297,7 +330,23 @@ python_compile() {
 		pushd "${out}" >/dev/null 2>&1 || die
 			distutils-r1_python_compile
 		popd >/dev/null 2>&1 || die
+
+		local pypv="${EPYTHON}"
+		pypv="${pypv/./}"
+		pypv="${pypv/python/}"
+		local wheel_path=$(realpath "${WORKDIR}/text-${PV}-${PV}-${EPYTHON/./_}/tensorflow_text-${PV}-cp${pypv}-cp${pypv}-"*".whl")
+		einfo "wheel_path=${wheel_path}"
+		distutils_wheel_install "${BUILD_DIR}/install" \
+			"${wheel_path}"
 	popd >/dev/null 2>&1 || die
+}
+
+src_compile() {
+	if use python; then
+		python_foreach_impl run_in_build_dir do_compile
+        else
+		do_compile
+        fi
 }
 
 src_install() {

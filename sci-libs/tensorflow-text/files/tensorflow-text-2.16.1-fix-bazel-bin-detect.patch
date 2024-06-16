@@ -1,0 +1,11 @@
+--- text-2.16.1/oss_scripts/pip_package/build_pip_package.sh.orig	2024-06-16 11:18:22.737853690 -0700
++++ text-2.16.1/oss_scripts/pip_package/build_pip_package.sh	2024-06-16 11:18:23.921817521 -0700
+@@ -56,6 +56,8 @@ main() {
+   output_dir=$(abspath "${output_dir}")
+   echo "=== Destination directory: ${output_dir}"
+ 
++  cd "${output_dir}"
++
+   if [[ ! -d "bazel-bin/tensorflow_text" ]]; then
+     die "Could not find bazel-bin. Did you run from the root of the build tree?"
+   fi
