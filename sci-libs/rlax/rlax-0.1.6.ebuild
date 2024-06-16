@@ -57,7 +57,7 @@ BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
-		<dev-python/jinja2-3.1[${PYTHON_USEDEP}]
+		<dev-python/jinja-3.1[${PYTHON_USEDEP}]
 		>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
 		>=dev-python/ipykernel-5.3.4[${PYTHON_USEDEP}]
 		>=dev-python/ipython-7.16.3[${PYTHON_USEDEP}]
