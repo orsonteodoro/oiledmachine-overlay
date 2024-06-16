@@ -6,7 +6,7 @@ EAPI=8
 
 ABSEIL_CPP_COMMIT="b971ac5250ea8de900eae9f95e06548d14cd95fe"		# https://github.com/tensorflow/tensorflow/blob/v2.15.0/third_party/absl/workspace.bzl#L10
 APPLE_SUPPORT_PV="1.6.0"						# https://github.com/tensorflow/tensorflow/blob/v2.15.0/tensorflow/workspace2.bzl#L742
-BAZEL_PV="6.1.0"
+BAZEL_PV="6.1.0"							# https://github.com/tensorflow/tensorflow/blob/v2.15.0/.bazelversion
 BAZEL_SKYLIB_PV="1.3.0"							# https://github.com/tensorflow/tensorflow/blob/v2.15.0/tensorflow/workspace3.bzl#L26
 BAZEL_TOOLCHAINS_COMMIT="8c717f8258cd5f6c7a45b97d974292755852b658"	# https://github.com/tensorflow/tensorflow/blob/v2.15.0/tensorflow/workspace1.bzl#L30
 BENCHMARK_COMMIT="f7547e29ccaed7b64ef4f7495ecfff1c9f6f3d03"		# https://github.com/tensorflow/tensorflow/blob/v2.15.0/third_party/benchmark/workspace.bzl#L7
