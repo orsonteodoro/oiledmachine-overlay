@@ -4,11 +4,11 @@
 
 EAPI=8
 
-# FIXME:
+# FIXME (clang 17-18):
 # ld.lld: error: version script assignment of 'global' to symbol 'BuildFastBertNormalizerModel' failed: symbol not defined
 # collect2: error: ld returned 1 exit status
 # Target //oss_scripts/pip_package:build_pip_package failed to build
-
+# Workaround:  Use gcc 12
 
 ABSEIL_CPP_COMMIT="fb3621f4f897824c0dbe0615fa94543df6192f30"		# https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/absl/workspace.bzl#L10
 APPLE_SUPPORT_PV="1.6.0"						# https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl#L752
@@ -163,9 +163,20 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+gen_gcc_bdepend() {
+	local s
+	for s in ${GCC_COMPAT[@]} ; do
+		echo "
+			sys-devel/gcc:${s}
+		"
+	done
+}
 BDEPEND+="
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 	sys-devel/binutils[gold,plugins]
+	|| (
+		$(gen_gcc_bdepend)
+	)
 "
 DOCS=( "README.md" )
 PATCHES=(

@@ -163,9 +163,20 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+gen_gcc_bdepend() {
+	local s
+	for s in ${GCC_COMPAT[@]} ; do
+		echo "
+			sys-devel/gcc:${s}
+		"
+	done
+}
 BDEPEND+="
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
 	sys-devel/binutils[gold,plugins]
+	|| (
+		$(gen_gcc_bdepend)
+	)
 "
 DOCS=( "README.md" )
 PATCHES=(
