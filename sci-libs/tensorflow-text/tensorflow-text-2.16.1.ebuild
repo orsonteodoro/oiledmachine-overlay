@@ -271,6 +271,7 @@ python_compile() {
 			//oss_scripts/pip_package:build_pip_package \
 			-- "$(realpath .)" \
 			|| die
+		bazel shutdown || die
 
 		local out="${T}/out-${EPYTHON}"
 		mkdir -p "${out}" || die
