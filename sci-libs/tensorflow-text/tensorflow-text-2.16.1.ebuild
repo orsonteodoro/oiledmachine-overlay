@@ -352,7 +352,19 @@ src_compile() {
         fi
 }
 
+_DEFAULT_PYTHON=""
+python_install() {
+	if ! use python ; then
+		[[ $(${EPYTHON} --version) != "${_DEFAULT_PYTHON}" ]] && return
+	fi
+	distutils-r1_python_install
+}
+
 src_install() {
+	if ! use python; then
+		_DEFAULT_PYTHON=$(python --version)
+        fi
+
 	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
