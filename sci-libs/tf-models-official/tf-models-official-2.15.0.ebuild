@@ -5,9 +5,6 @@ EAPI=8
 
 # A snapshot of the TensorFlow Model Garden
 
-# TODO package:
-# tensorflow-text
-
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} )
 

@@ -6,7 +6,6 @@ EAPI=8
 # A snapshot of the TensorFlow Model Garden
 
 # TODO package:
-# tensorflow-text	rdep[nlp]
 # tf-keras		rdep
 
 DISTUTILS_USE_PEP517="setuptools"
