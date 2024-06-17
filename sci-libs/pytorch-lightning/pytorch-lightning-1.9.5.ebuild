@@ -11,7 +11,6 @@ EAPI=8
 # horovod
 # lai-sphinx-theme
 # lightning_api_access
-# lightning-cloud
 # lightning-utilities
 # inquirer
 # playwright (or use playwright-bin)
@@ -99,7 +98,7 @@ APP_BASE_RDEPEND="
 		<dev-python/uvicorn-0.17.7[${PYTHON_USEDEP}]
 		<dev-python/websocket-client-1.5.2[${PYTHON_USEDEP}]
 		<dev-python/websockets-10.4.1[${PYTHON_USEDEP}]
-		>=dev-python/lightning-cloud-0.5.27[${PYTHON_USEDEP}]
+		>=sci-libs/lightning-cloud-0.5.27[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 	')
 "

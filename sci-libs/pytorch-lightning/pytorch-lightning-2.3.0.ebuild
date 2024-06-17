@@ -7,7 +7,6 @@ EAPI=8
 # deepspeed
 # lai-sphinx-theme
 # lightning_api_access			components
-# lightning-cloud			base
 # lightning-fabric			components
 # lightning-utilities			base
 # inquirer				base
@@ -104,8 +103,8 @@ APP_BASE_RDEPEND="
 		<dev-python/uvicorn-0.24.0[${PYTHON_USEDEP}]
 		<dev-python/websocket-client-1.7.0[${PYTHON_USEDEP}]
 		<dev-python/websockets-11.1.0[${PYTHON_USEDEP}]
-		>=dev-python/lightning-cloud-0.5.69[${PYTHON_USEDEP}]
 		>=dev-python/pydantic-1.7.4[${PYTHON_USEDEP}]
+		>=sci-libs/lightning-cloud-0.5.69[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/starlette[${PYTHON_USEDEP}]
 	')
