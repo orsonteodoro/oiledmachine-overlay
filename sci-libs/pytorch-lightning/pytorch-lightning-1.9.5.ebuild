@@ -36,7 +36,7 @@ HOMEPAGE="
 "
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE+=" doc examples test"
+IUSE+=" doc examples extra test"
 APP_BASE_RDEPEND="
 	$(python_gen_cond_dep '
 		(
@@ -204,6 +204,36 @@ PYTORCH_EXAMPLES_RDEPEND="
 		<sci-libs/torchvision-0.15.2[${PYTHON_SINGLE_USEDEP}]
 	)
 "
+PYTORCH_EXTRA_RDEPEND="
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/hydra-core-1.0.5[${PYTHON_USEDEP}]
+			<dev-python/hydra-core-1.4.0[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/jsonargparse-4.18.0[${PYTHON_USEDEP},signatures]
+			<dev-python/jsonargparse-4.19.0[${PYTHON_USEDEP},signatures]
+		)
+		(
+			>dev-python/matplotlib-3.1[${PYTHON_USEDEP}]
+			<dev-python/matplotlib-3.6.2[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/omegaconf-2.0.5[${PYTHON_USEDEP}]
+			<dev-python/omegaconf-2.4.0[${PYTHON_USEDEP}]
+		)
+		(
+			!~dev-python/rich-10.15.0a[${PYTHON_USEDEP}]
+			!~dev-python/rich-10.15.0_alpha[${PYTHON_USEDEP}]
+			>=dev-python/rich-10.14.0[${PYTHON_USEDEP}]
+			<dev-python/rich-13.0.0[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/tensorboardX-2.2[${PYTHON_USEDEP}]
+			<dev-python/tensorboardX-2.5.2[${PYTHON_USEDEP}]
+		)
+	')
+"
 RDEPEND+="
 	${APP_BASE_RDEPEND}
 	${FABRIC_BASE_RDEPEND}
@@ -211,6 +241,9 @@ RDEPEND+="
 	examples? (
 		${FABRIC_EXAMPLES_RDEPEND}
 		${PYTORCH_EXAMPLES_RDEPEND}
+	)
+	extra? (
+		${PYTORCH_EXTRA_RDEPEND}
 	)
 "
 DEPEND+="
