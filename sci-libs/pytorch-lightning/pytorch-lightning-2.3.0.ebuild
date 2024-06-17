@@ -12,6 +12,7 @@ EAPI=8
 # sphinx-multiproject
 # sphinx-toolbox
 # sphinxcontrib-mockautodoc
+# sphinxcontrib-video
 # tensorboardX
 # torchmetrics
 
