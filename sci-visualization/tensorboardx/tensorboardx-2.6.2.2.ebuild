@@ -28,7 +28,7 @@ https://github.com/lanpa/tensorboardX/archive/refs/tags/v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="Clean up the public namespace of your package!"
+DESCRIPTION="TensorBoardX lets you watch Tensors Flow without Tensorflow"
 HOMEPAGE="
 	https://github.com/lanpa/tensorboardX
 	https://pypi.org/project/tensorboardX
