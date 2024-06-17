@@ -57,9 +57,9 @@ BDEPEND+="
 	dev-python/wheel[${PYTHON_USEDEP}]
 	dev? (
 		dev-python/notebook[${PYTHON_USEDEP}]
-		dev-python/pre-commit[${PYTHON_USEDEP}]
 		dev-python/twine[${PYTHON_USEDEP}]
 		dev-util/ruff
+		dev-vcs/pre-commit[${PYTHON_USEDEP}]
 
 		>=dev-python/pyright-1.1.364[${PYTHON_USEDEP}]
 		dev-python/pandas-stubs[${PYTHON_USEDEP}]
