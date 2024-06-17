@@ -375,12 +375,12 @@ FABRIC_DOCS_BDEPEND="
 FABRIC_STRATEGIES_BDEPEND="
 	$(python_gen_cond_dep '
 		(
-			>=dev-python/deepspeed-0.8.2[${PYTHON_USEDEP}]
-			<dev-python/deepspeed-0.9.4[${PYTHON_USEDEP}]
-		)
-		(
 			>=dev-python/bitsandbytes-0.42.0[${PYTHON_USEDEP}]
 			<dev-python/bitsandbytes-0.43.0[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/deepspeed-0.8.2[${PYTHON_USEDEP}]
+			<dev-python/deepspeed-0.9.4[${PYTHON_USEDEP}]
 		)
 	')
 "

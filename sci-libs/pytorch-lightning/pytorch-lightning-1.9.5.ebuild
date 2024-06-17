@@ -404,12 +404,12 @@ PYTORCH_STRATEGIES="
 			<dev-python/colossalai-0.2.5[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/fairscale-0.4.5[${PYTHON_USEDEP}]
-			<dev-python/fairscale-0.4.13[${PYTHON_USEDEP}]
-		)
-		(
 			>=dev-python/deepspeed-0.6.0[${PYTHON_USEDEP}]
 			<dev-python/deepspeed-0.8.0[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/fairscale-0.4.5[${PYTHON_USEDEP}]
+			<dev-python/fairscale-0.4.13[${PYTHON_USEDEP}]
 		)
 		(
 			!~dev-python/horovod-0.24.0[${PYTHON_USEDEP}]
