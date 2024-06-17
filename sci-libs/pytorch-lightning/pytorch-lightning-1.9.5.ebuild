@@ -458,6 +458,16 @@ PYTORCH_TEST_BDEPEND="
 		>=dev-vcs/pre-commit-2.20.0[${PYTHON_USEDEP}]
 	')
 "
+STORE_TEST_BDEPEND="
+	$(python_gen_cond_dep '
+		>=dev-python/coverage-7.3.1[${PYTHON_USEDEP}]
+		>=dev-python/pytest-7.4.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-random-order-1.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-rerunfailures-12.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
+	')
+"
 BDEPEND="
 	$(python_gen_cond_dep '
 		dev-python/setuptools[${PYTHON_USEDEP}]
@@ -471,6 +481,7 @@ BDEPEND="
 		${APP_TEST_BDEPEND}
 		${FABRIC_TEST_BDEPEND}
 		${PYTORCH_TEST_BDEPEND}
+		${STORE_TEST_BDEPEND}
 	)
 	test-gpu? (
 		${FABRIC_STRATEGIES_BDEPEND}
