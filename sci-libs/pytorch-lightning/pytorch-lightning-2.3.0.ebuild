@@ -30,7 +30,10 @@ https://github.com/Lightning-AI/pytorch-lightning/archive/refs/tags/${PV}.tar.gz
 "
 
 DESCRIPTION="Lightweight PyTorch wrapper for ML researchers"
-HOMEPAGE="https://github.com/Lightning-AI/lightning"
+HOMEPAGE="
+	https://github.com/Lightning-AI/pytorch-lightning
+	https://pypi.org/project/pytorch-lightning
+"
 LICENSE="Apache-2.0"
 SLOT="0"
 IUSE+=" doc examples test"
