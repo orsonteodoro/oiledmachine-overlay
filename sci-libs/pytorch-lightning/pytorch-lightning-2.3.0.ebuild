@@ -4,8 +4,11 @@
 EAPI=8
 
 # TODO package:
+# deepspeed
 # lai-sphinx-theme
+# lightning_api_access
 # lightning-cloud
+# lightning-fabric
 # lightning-utilities
 # inquirer
 # playwright (or use playwright-bin)

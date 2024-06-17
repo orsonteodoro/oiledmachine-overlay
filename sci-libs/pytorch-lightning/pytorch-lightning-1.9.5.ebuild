@@ -4,7 +4,13 @@
 EAPI=8
 
 # TODO package:
+# colossalai
+# deepspeed
+# fairscale
+# hivemind
+# horovod
 # lai-sphinx-theme
+# lightning_api_access
 # lightning-cloud
 # lightning-utilities
 # inquirer
