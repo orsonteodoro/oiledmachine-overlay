@@ -264,8 +264,8 @@ PYTORCH_EXTRA_RDEPEND="
 			<dev-python/rich-13.6.0[${PYTHON_USEDEP}]
 		)
 		(
-			>=sci-visualization/tensorboardX-2.2[${PYTHON_USEDEP}]
-			<sci-visualization/tensorboardX-2.7.0[${PYTHON_USEDEP}]
+			>=sci-visualization/tensorboardx-2.2[${PYTHON_USEDEP}]
+			<sci-visualization/tensorboardx-2.7.0[${PYTHON_USEDEP}]
 		)
 	')
 "
@@ -386,8 +386,8 @@ FABRIC_STRATEGIES_BDEPEND="
 FABRIC_TEST_BDEPEND="
 	$(python_gen_cond_dep '
 		(
-			>=sci-visualization/tensorboardX-2.2[${PYTHON_USEDEP}]
-			<sci-visualization/tensorboardX-2.7.0[${PYTHON_USEDEP}]
+			>=sci-visualization/tensorboardx-2.2[${PYTHON_USEDEP}]
+			<sci-visualization/tensorboardx-2.7.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=dev-python/torchmetrics-0.7.0[${PYTHON_USEDEP}]

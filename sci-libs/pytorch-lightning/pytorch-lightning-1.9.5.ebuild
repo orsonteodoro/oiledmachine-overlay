@@ -260,8 +260,8 @@ PYTORCH_EXTRA_RDEPEND="
 			<dev-python/rich-13.0.0[${PYTHON_USEDEP}]
 		)
 		(
-			>=sci-visualization/tensorboardX-2.2[${PYTHON_USEDEP}]
-			<sci-visualization/tensorboardX-2.5.2[${PYTHON_USEDEP}]
+			>=sci-visualization/tensorboardx-2.2[${PYTHON_USEDEP}]
+			<sci-visualization/tensorboardx-2.5.2[${PYTHON_USEDEP}]
 		)
 	')
 "
@@ -374,8 +374,8 @@ FABRIC_STRATEGIES_BDEPEND="
 FABRIC_TEST_BDEPEND="
 	$(python_gen_cond_dep '
 		(
-			>=sci-visualization/tensorboardX-2.2[${PYTHON_USEDEP}]
-			<sci-visualization/tensorboardX-2.5.2[${PYTHON_USEDEP}]
+			>=sci-visualization/tensorboardx-2.2[${PYTHON_USEDEP}]
+			<sci-visualization/tensorboardx-2.5.2[${PYTHON_USEDEP}]
 		)
 		>=dev-python/click-8.1.3[${PYTHON_USEDEP}]
 		>=dev-python/codecov-2.1.12[${PYTHON_USEDEP}]
