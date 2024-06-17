@@ -4,7 +4,6 @@
 EAPI=8
 
 # TODO package:
-# model-index
 # mdx_truly_sane_lists
 
 DISTUTILS_EXT=1
@@ -35,7 +34,7 @@ RDEPEND+="
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		sci-libs/huggingface_hub[${PYTHON_USEDEP}]
 		modelindex? (
-			>=dev-python/model-index-0.1.10[${PYTHON_USEDEP}]
+			>=sci-libs/model-index-0.1.10[${PYTHON_USEDEP}]
 			>=dev-python/jinja-2.11.3[${PYTHON_USEDEP}]
 		)
 	')
