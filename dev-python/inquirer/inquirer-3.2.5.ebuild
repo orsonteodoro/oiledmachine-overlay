@@ -53,12 +53,12 @@ BDEPEND+="
 		>=dev-python/furo-2022.9.29[${PYTHON_USEDEP}]
 		>=dev-python/isort-5.10.1[${PYTHON_USEDEP}]
 		>=dev-python/pexpect-4.8.0[${PYTHON_USEDEP}]
-		>=dev-python/pre-commit-2.17.0[${PYTHON_USEDEP}]
 		>=dev-python/pre-commit-hooks-4.3.0[${PYTHON_USEDEP}]
 		>=dev-python/pyupgrade-2.31.1[${PYTHON_USEDEP}]
 		>=dev-python/safety-2.3.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-5.3.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-autobuild-2021.3.14[${PYTHON_USEDEP}]
+		>=dev-vcs/pre-commit-2.17.0[${PYTHON_USEDEP}]
 
 		dev-python/black[${PYTHON_USEDEP}]
 		dev-python/mypy[${PYTHON_USEDEP}]
