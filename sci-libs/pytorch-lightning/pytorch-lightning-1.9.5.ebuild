@@ -264,8 +264,8 @@ PYTORCH_EXTRA_RDEPEND="
 			<dev-python/rich-13.0.0[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/tensorboardX-2.2[${PYTHON_USEDEP}]
-			<dev-python/tensorboardX-2.5.2[${PYTHON_USEDEP}]
+			>=sci-visualization/tensorboardX-2.2[${PYTHON_USEDEP}]
+			<sci-visualization/tensorboardX-2.5.2[${PYTHON_USEDEP}]
 		)
 	')
 "
@@ -378,8 +378,8 @@ FABRIC_STRATEGIES_BDEPEND="
 FABRIC_TEST_BDEPEND="
 	$(python_gen_cond_dep '
 		(
-			>=dev-python/tensorboardX-2.2[${PYTHON_USEDEP}]
-			<dev-python/tensorboardX-2.5.2[${PYTHON_USEDEP}]
+			>=sci-visualization/tensorboardX-2.2[${PYTHON_USEDEP}]
+			<sci-visualization/tensorboardX-2.5.2[${PYTHON_USEDEP}]
 		)
 		>=dev-python/click-8.1.3[${PYTHON_USEDEP}]
 		>=dev-python/codecov-2.1.12[${PYTHON_USEDEP}]
@@ -440,8 +440,8 @@ PYTORCH_TEST_BDEPEND="
 			<dev-python/scikit-learn-1.2.1[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/tensorboard-2.9.1[${PYTHON_USEDEP}]
-			<dev-python/tensorboard-2.12.0[${PYTHON_USEDEP}]
+			>=sci-visualization/tensorboard-2.9.1[${PYTHON_USEDEP}]
+			<sci-visualization/tensorboard-2.12.0[${PYTHON_USEDEP}]
 		)
 		<dev-python/fastapi-0.87.0[${PYTHON_USEDEP}]
 		<dev-python/onnx-1.14.0[${PYTHON_USEDEP}]

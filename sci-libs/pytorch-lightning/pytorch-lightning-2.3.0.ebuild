@@ -268,8 +268,8 @@ PYTORCH_EXTRA_RDEPEND="
 			<dev-python/rich-13.6.0[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/tensorboardX-2.2[${PYTHON_USEDEP}]
-			<dev-python/tensorboardX-2.7.0[${PYTHON_USEDEP}]
+			>=sci-visualization/tensorboardX-2.2[${PYTHON_USEDEP}]
+			<sci-visualization/tensorboardX-2.7.0[${PYTHON_USEDEP}]
 		)
 	')
 "
@@ -390,8 +390,8 @@ FABRIC_STRATEGIES_BDEPEND="
 FABRIC_TEST_BDEPEND="
 	$(python_gen_cond_dep '
 		(
-			>=dev-python/tensorboardX-2.2[${PYTHON_USEDEP}]
-			<dev-python/tensorboardX-2.7.0[${PYTHON_USEDEP}]
+			>=sci-visualization/tensorboardX-2.2[${PYTHON_USEDEP}]
+			<sci-visualization/tensorboardX-2.7.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=dev-python/torchmetrics-0.7.0[${PYTHON_USEDEP}]
@@ -449,8 +449,8 @@ PYTORCH_TEST_BDEPEND="
 			<dev-python/scikit-learn-1.4.0[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/tensorboard-2.9.1[${PYTHON_USEDEP}]
-			<dev-python/tensorboard-2.15.0[${PYTHON_USEDEP}]
+			>=sci-visualization/tensorboard-2.9.1[${PYTHON_USEDEP}]
+			<sci-visualization/tensorboard-2.15.0[${PYTHON_USEDEP}]
 		)
 		<dev-python/psutil-5.9.6[${PYTHON_USEDEP}]
 		>=dev-python/coverage-7.3.1[${PYTHON_USEDEP}]
