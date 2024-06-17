@@ -15,10 +15,10 @@ EAPI=8
 # tensorboardX
 # torchmetrics
 
-PYTHON_COMPAT=( "python3_"{10..11} )
 DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_SINGLE_IMPL=1
 PYPI_NO_NORMALIZE=1
+PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit distutils-r1
 
@@ -35,91 +35,89 @@ SLOT="0"
 IUSE+=" doc examples test"
 APP_BASE_RDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/lightning-cloud-0.5.69[${PYTHON_USEDEP}]
-		dev-python/packaging[${PYTHON_USEDEP}]
-		(
-			>=dev-python/typing-extensions-4.4.0[${PYTHON_USEDEP}]
-			<dev-python/typing-extensions-4.10.0[${PYTHON_USEDEP}]
-		)
-		(
-			>=dev-python/deepdiff-5.7.0[${PYTHON_USEDEP}]
-			<dev-python/deepdiff-6.6.0[${PYTHON_USEDEP}]
-		)
-		(
-			>=dev-python/fsspec-2022.5.0[${PYTHON_USEDEP},http(+)]
-			<dev-python/fsspec-2023.11.0[${PYTHON_USEDEP},http(+)]
-		)
-		(
-			>=dev-python/croniter-1.3.0[${PYTHON_USEDEP}]
-			<dev-python/croniter-1.5.0[${PYTHON_USEDEP}]
-		)
-		(
-			>=dev-python/traitlets-5.3.0[${PYTHON_USEDEP}]
-			<dev-python/traitlets-5.12.0[${PYTHON_USEDEP}]
-		)
 		(
 			>=dev-python/arrow-1.2.0[${PYTHON_USEDEP}]
 			<dev-python/arrow-1.3.0[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+			>=dev-python/backoff-2.2.1[${PYTHON_USEDEP}]
+			<dev-python/backoff-2.3.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=dev-python/beautifulsoup4-4.8.0[${PYTHON_USEDEP}]
 			<dev-python/beautifulsoup4-4.13.0[${PYTHON_USEDEP}]
 		)
 		(
+			>=dev-python/croniter-1.3.0[${PYTHON_USEDEP}]
+			<dev-python/croniter-1.5.0[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/deepdiff-5.7.0[${PYTHON_USEDEP}]
+			<dev-python/deepdiff-6.6.0[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/fastapi-0.92.0[${PYTHON_USEDEP}]
+			<dev-python/fastapi-0.104.0[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/fsspec-2022.5.0[${PYTHON_USEDEP},http(+)]
+			<dev-python/fsspec-2023.11.0[${PYTHON_USEDEP},http(+)]
+		)
+		(
 			>=dev-python/inquirer-2.10.0[${PYTHON_USEDEP}]
 			<dev-python/inquirer-3.2.0[${PYTHON_USEDEP}]
 		)
-		<dev-python/psutil-5.9.6[${PYTHON_USEDEP}]
-		<dev-python/click-8.2[${PYTHON_USEDEP}]
+		(
+			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
+			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+		)
 		(
 			>=dev-python/python-multipart-0.0.5[${PYTHON_USEDEP}]
 			<dev-python/python-multipart-0.0.7[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/backoff-2.2.1[${PYTHON_USEDEP}]
-			<dev-python/backoff-2.3.0[${PYTHON_USEDEP}]
-		)
-
-		(
-			>=dev-python/fastapi-0.92.0[${PYTHON_USEDEP}]
-			<dev-python/fastapi-0.104.0[${PYTHON_USEDEP}]
-		)
-		dev-python/starlette[${PYTHON_USEDEP}]
-		>=dev-python/pydantic-1.7.4[${PYTHON_USEDEP}]
-
-		<dev-python/dateutils-0.8.0[${PYTHON_USEDEP}]
-		<dev-python/jinja-3.2.0[${PYTHON_USEDEP}]
-		<dev-python/pyyaml-6.0.2[${PYTHON_USEDEP}]
-		<dev-python/requests-2.32.0[${PYTHON_USEDEP}]
-		(
 			>=dev-python/rich-12.3.0[${PYTHON_USEDEP}]
 			<dev-python/rich-13.6.0[${PYTHON_USEDEP}]
 		)
+		(
+			>=dev-python/traitlets-5.3.0[${PYTHON_USEDEP}]
+			<dev-python/traitlets-5.12.0[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/typing-extensions-4.4.0[${PYTHON_USEDEP}]
+			<dev-python/typing-extensions-4.10.0[${PYTHON_USEDEP}]
+		)
+		<dev-python/click-8.2[${PYTHON_USEDEP}]
+		<dev-python/dateutils-0.8.0[${PYTHON_USEDEP}]
+		<dev-python/jinja-3.2.0[${PYTHON_USEDEP}]
+		<dev-python/psutil-5.9.6[${PYTHON_USEDEP}]
+		<dev-python/pyyaml-6.0.2[${PYTHON_USEDEP}]
+		<dev-python/requests-2.32.0[${PYTHON_USEDEP}]
 		<dev-python/urllib3-2.0.0[${PYTHON_USEDEP}]
 		<dev-python/uvicorn-0.24.0[${PYTHON_USEDEP}]
 		<dev-python/websocket-client-1.7.0[${PYTHON_USEDEP}]
 		<dev-python/websockets-11.1.0[${PYTHON_USEDEP}]
+		>=dev-python/lightning-cloud-0.5.69[${PYTHON_USEDEP}]
+		>=dev-python/pydantic-1.7.4[${PYTHON_USEDEP}]
+		dev-python/packaging[${PYTHON_USEDEP}]
+		dev-python/starlette[${PYTHON_USEDEP}]
 	')
 "
 APP_UI_RDEPEND="
 "
 FABRIC_BASE_RDEPEND="
-	(
-		>=sci-libs/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
-		<sci-libs/pytorch-2.4.0[${PYTHON_SINGLE_USEDEP}]
-	)
 	$(python_gen_cond_dep '
-		(
-			>=dev-python/numpy-1.17.2[${PYTHON_USEDEP}]
-			<dev-python/numpy-1.27.0[${PYTHON_USEDEP}]
-		)
 		(
 			>=dev-python/fsspec-2022.5.0[${PYTHON_USEDEP},http(+)]
 			<dev-python/fsspec-2024.4.0[${PYTHON_USEDEP},http(+)]
+		)
+		(
+			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
+			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/numpy-1.17.2[${PYTHON_USEDEP}]
+			<dev-python/numpy-1.27.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
@@ -129,57 +127,57 @@ FABRIC_BASE_RDEPEND="
 			>=dev-python/typing-extensions-4.4.0[${PYTHON_USEDEP}]
 			<dev-python/typing-extensions-4.10.0[${PYTHON_USEDEP}]
 		)
-		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
-		)
 	')
+	(
+		>=sci-libs/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
+		<sci-libs/pytorch-2.4.0[${PYTHON_SINGLE_USEDEP}]
+	)
 "
 FABRIC_EXAMPLES_RDEPEND="
 	$(python_gen_cond_dep '
 		(
-			>=sci-libs/torchvision-0.15.0[${PYTHON_USEDEP}]
-			<sci-libs/torchvision-0.19.0[${PYTHON_USEDEP}]
+			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
+			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=sci-libs/torchmetrics-0.10.0[${PYTHON_USEDEP}]
 			<sci-libs/torchmetrics-1.3.0[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+			>=sci-libs/torchvision-0.15.0[${PYTHON_USEDEP}]
+			<sci-libs/torchvision-0.19.0[${PYTHON_USEDEP}]
 		)
 	')
 "
 PYTORCH_BASE_RDEPEND="
 	$(python_gen_cond_dep '
 		(
-			>=dev-python/numpy-1.17.2[${PYTHON_USEDEP}]
-			<dev-python/numpy-1.27.0[${PYTHON_USEDEP}]
-		)
-		(
-			>=dev-python/tqdm-4.57.0[${PYTHON_USEDEP}]
-			<dev-python/tqdm-4.67.0[${PYTHON_USEDEP}]
-		)
-		(
-			>=dev-python/pyyaml-5.4[${PYTHON_USEDEP}]
-			<dev-python/pyyaml-6.1.0[${PYTHON_USEDEP}]
-		)
-		(
 			>=dev-python/fsspec-2022.5.0[${PYTHON_USEDEP},http(+)]
 			<dev-python/fsspec-2024.4.0[${PYTHON_USEDEP},http(+)]
+		)
+		(
+			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
+			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/numpy-1.17.2[${PYTHON_USEDEP}]
+			<dev-python/numpy-1.27.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
 			<dev-python/packaging-23.1.1[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/typing-extensions-4.4.0[${PYTHON_USEDEP}]
-			<dev-python/typing-extensions-4.10.0[${PYTHON_USEDEP}]
+			>=dev-python/pyyaml-5.4[${PYTHON_USEDEP}]
+			<dev-python/pyyaml-6.1.0[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+			>=dev-python/tqdm-4.57.0[${PYTHON_USEDEP}]
+			<dev-python/tqdm-4.67.0[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/typing-extensions-4.4.0[${PYTHON_USEDEP}]
+			<dev-python/typing-extensions-4.10.0[${PYTHON_USEDEP}]
 		)
 	')
 	(
@@ -193,20 +191,20 @@ PYTORCH_BASE_RDEPEND="
 "
 PYTORCH_EXAMPLES_RDEPEND="
 	$(python_gen_cond_dep '
-		<dev-python/requests-2.32.0[${PYTHON_USEDEP}]
 		(
-			>=sci-libs/torchvision-0.15.0[${PYTHON_USEDEP}]
-			<sci-libs/torchvision-0.19.0[${PYTHON_USEDEP}]
+			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
+			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 		)
-		<dev-python/ipython-8.15.0[${PYTHON_USEDEP},all(-)]
 		(
 			>=sci-libs/torchmetrics-0.10.0[${PYTHON_USEDEP}]
 			<sci-libs/torchmetrics-1.3.0[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+			>=sci-libs/torchvision-0.15.0[${PYTHON_USEDEP}]
+			<sci-libs/torchvision-0.19.0[${PYTHON_USEDEP}]
 		)
+		<dev-python/ipython-8.15.0[${PYTHON_USEDEP},all(-)]
+		<dev-python/requests-2.32.0[${PYTHON_USEDEP}]
 	')
 "
 RDEPEND+="
@@ -224,8 +222,12 @@ DEPEND+="
 DOCS_BDEPEND="
 	$(python_gen_cond_dep '
 		(
-			>=dev-python/sphinx-5.0[${PYTHON_USEDEP}]
-			<dev-python/sphinx-6.0[${PYTHON_USEDEP}]
+			>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
+			<dev-python/docutils-0.21[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/lightning-utilities-0.11.1[${PYTHON_USEDEP}]
+			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=dev-python/myst-parser-0.18.1[${PYTHON_USEDEP}]
@@ -235,22 +237,18 @@ DOCS_BDEPEND="
 			>=dev-python/nbsphinx-0.8.5[${PYTHON_USEDEP}]
 			<dev-python/nbsphinx-0.9.3[${PYTHON_USEDEP}]
 		)
-		<dev-python/nbconvert-7.14[${PYTHON_USEDEP}]
 		(
 			>=dev-python/pandoc-1.0[${PYTHON_USEDEP}]
 			<dev-python/pandoc-2.3.1[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
-			<dev-python/docutils-0.21[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-5.0[${PYTHON_USEDEP}]
+			<dev-python/sphinx-6.0[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/sphinxcontrib-fulltoc-1.0[${PYTHON_USEDEP}]
-			<dev-python/sphinxcontrib-fulltoc-1.2.1[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-copybutton-0.3[${PYTHON_USEDEP}]
+			<dev-python/sphinx-copybutton-0.5.3[${PYTHON_USEDEP}]
 		)
-		dev-python/sphinxcontrib-mockautodoc[${PYTHON_USEDEP}]
-		dev-python/sphinx-autobuild[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-autodoc-typehints-1.16[${PYTHON_USEDEP}]
 		(
 			>=dev-python/sphinx-paramlinks-0.5.1[${PYTHON_USEDEP}]
 			<dev-python/sphinx-paramlinks-0.6.1[${PYTHON_USEDEP}]
@@ -260,21 +258,19 @@ DOCS_BDEPEND="
 			<dev-python/sphinx-togglebutton-0.3.3[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/sphinx-copybutton-0.3[${PYTHON_USEDEP}]
-			<dev-python/sphinx-copybutton-0.5.3[${PYTHON_USEDEP}]
+			>=dev-python/sphinxcontrib-fulltoc-1.0[${PYTHON_USEDEP}]
+			<dev-python/sphinxcontrib-fulltoc-1.2.1[${PYTHON_USEDEP}]
 		)
-		dev-python/sphinx-multiproject[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-toolbox-3.5.0[${PYTHON_USEDEP}]
-		dev-python/sphinx-rtd-dark-mode[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-video-0.2.0[${PYTHON_USEDEP}]
 		<dev-python/jinja-3.2.0[${PYTHON_USEDEP}]
-
-		(
-			>=dev-python/lightning-utilities-0.11.1[${PYTHON_USEDEP}]
-			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
-		)
-
+		<dev-python/nbconvert-7.14[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-autodoc-typehints-1.16[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-toolbox-3.5.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-video-0.2.0[${PYTHON_USEDEP}]
 		dev-python/lai-sphinx-theme[${PYTHON_USEDEP}]
+		dev-python/sphinx-autobuild[${PYTHON_USEDEP}]
+		dev-python/sphinx-multiproject[${PYTHON_USEDEP}]
+		dev-python/sphinx-rtd-dark-mode[${PYTHON_USEDEP}]
+		dev-python/sphinxcontrib-mockautodoc[${PYTHON_USEDEP}]
 	')
 "
 APP_DOCS_BDEPEND="
@@ -282,23 +278,22 @@ APP_DOCS_BDEPEND="
 "
 APP_TEST_BDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/coverage-7.3.1[${PYTHON_USEDEP}]
-		>=dev-python/pytest-7.4.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-doctestplus-1.0.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-asyncio-0.21.1[${PYTHON_USEDEP}]
-		>=dev-python/pytest-rerunfailures-12.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-xdist-3.3.1[${PYTHON_USEDEP}]
-
-		>=dev-python/playwright-1.38.0[${PYTHON_USEDEP}]
-		>=dev-python/httpx-0.25.0[${PYTHON_USEDEP}]
-		<dev-python/trio-0.22.0[${PYTHON_USEDEP}]
-		dev-python/pympler[${PYTHON_USEDEP}]
 		<dev-python/psutil-5.10.0[${PYTHON_USEDEP}]
 		<dev-python/setuptools-68.3.0[${PYTHON_USEDEP}]
+		<dev-python/trio-0.22.0[${PYTHON_USEDEP}]
+		>=dev-python/coverage-7.3.1[${PYTHON_USEDEP}]
+		>=dev-python/httpx-0.25.0[${PYTHON_USEDEP}]
+		>=dev-python/playwright-1.38.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-7.4.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-asyncio-0.21.1[${PYTHON_USEDEP}]
+		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-doctestplus-1.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-rerunfailures-12.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-xdist-3.3.1[${PYTHON_USEDEP}]
 		>=dev-python/requests-mock-1.11.0[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
+		dev-python/pympler[${PYTHON_USEDEP}]
 	')
 "
 FABRIC_DOCS_BDEPEND="
@@ -307,13 +302,6 @@ FABRIC_DOCS_BDEPEND="
 "
 FABRIC_TEST_BDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/coverage-7.3.1[${PYTHON_USEDEP}]
-		>=dev-python/pytest-7.4.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-rerunfailures-12.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-random-order-1.1.0[${PYTHON_USEDEP}]
-		>=dev-python/click-8.1.7[${PYTHON_USEDEP}]
 		(
 			>=dev-python/tensorboardX-2.2[${PYTHON_USEDEP}]
 			<dev-python/tensorboardX-2.7.0[${PYTHON_USEDEP}]
@@ -322,6 +310,13 @@ FABRIC_TEST_BDEPEND="
 			>=dev-python/torchmetrics-0.7.0[${PYTHON_USEDEP}]
 			<dev-python/torchmetrics-1.3.0[${PYTHON_USEDEP}]
 		)
+		>=dev-python/click-8.1.7[${PYTHON_USEDEP}]
+		>=dev-python/coverage-7.3.1[${PYTHON_USEDEP}]
+		>=dev-python/pytest-7.4.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-random-order-1.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-rerunfailures-12.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
 	')
 "
 PYTORCH_DOCS_BDEPEND="
@@ -329,32 +324,20 @@ PYTORCH_DOCS_BDEPEND="
 	$(python_gen_cond_dep '
 		<dev-python/ipython-8.7.0[${PYTHON_USEDEP},notebook]
 		<dev-python/setuptools-58.0[${PYTHON_USEDEP}]
-		dev-python/pt-lightning-sphinx-theme[${PYTHON_USEDEP}]
-
 		dev-python/fire[${PYTHON_USEDEP}]
-		dev-python/tqdm[${PYTHON_USEDEP}]
-		dev-python/pyyaml[${PYTHON_USEDEP}]
-		dev-python/wcmatch[${PYTHON_USEDEP}]
-		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/pip[${PYTHON_USEDEP}]
+		dev-python/pt-lightning-sphinx-theme[${PYTHON_USEDEP}]
+		dev-python/pyyaml[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+		dev-python/tqdm[${PYTHON_USEDEP}]
+		dev-python/wcmatch[${PYTHON_USEDEP}]
 	')
 "
 PYTORCH_TEST_BDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/coverage-7.3.1[${PYTHON_USEDEP}]
-		>=dev-python/pytest-7.4.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-rerunfailures-12.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-random-order-1.1.0[${PYTHON_USEDEP}]
-
 		(
 			>=dev-python/cloudpickle-1.3[${PYTHON_USEDEP}]
 			<dev-python/cloudpickle-2.3.0[${PYTHON_USEDEP}]
-		)
-		(
-			>dev-python/scikit-learn-0.22.1[${PYTHON_USEDEP}]
-			<dev-python/scikit-learn-1.4.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=dev-python/onnx-0.14.0[${PYTHON_USEDEP}]
@@ -364,18 +347,27 @@ PYTORCH_TEST_BDEPEND="
 			>=dev-python/onnxruntime-0.15.0[${PYTHON_USEDEP}]
 			<dev-python/onnxruntime-1.17.0[${PYTHON_USEDEP}]
 		)
-		<dev-python/psutil-5.9.6[${PYTHON_USEDEP}]
 		(
 			>dev-python/pandas-1.0[${PYTHON_USEDEP}]
 			<dev-python/pandas-2.2.0[${PYTHON_USEDEP}]
 		)
-		dev-python/fastapi[${PYTHON_USEDEP}]
-		dev-python/uvicorn[${PYTHON_USEDEP}]
-
+		(
+			>dev-python/scikit-learn-0.22.1[${PYTHON_USEDEP}]
+			<dev-python/scikit-learn-1.4.0[${PYTHON_USEDEP}]
+		)
 		(
 			>=dev-python/tensorboard-2.9.1[${PYTHON_USEDEP}]
 			<dev-python/tensorboard-2.15.0[${PYTHON_USEDEP}]
 		)
+		<dev-python/psutil-5.9.6[${PYTHON_USEDEP}]
+		>=dev-python/coverage-7.3.1[${PYTHON_USEDEP}]
+		>=dev-python/pytest-7.4.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-random-order-1.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-rerunfailures-12.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
+		dev-python/fastapi[${PYTHON_USEDEP}]
+		dev-python/uvicorn[${PYTHON_USEDEP}]
 	')
 "
 BDEPEND="
