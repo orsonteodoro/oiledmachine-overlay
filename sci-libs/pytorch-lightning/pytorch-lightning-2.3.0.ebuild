@@ -6,7 +6,6 @@ EAPI=8
 # TODO package:
 # deepspeed
 # lai-sphinx-theme
-# lightning_api_access			components
 # lightning-fabric			components
 # playwright (or use playwright-bin)
 # sphinx-multiproject
@@ -129,8 +128,8 @@ APP_COMPONENTS_RDEPEND="
 			<dev-python/aiohttp-3.9.0[${PYTHON_USEDEP}]
 		)
 		>=dev-python/lightning-fabric-1.9.0[${PYTHON_USEDEP}]
-		>=dev-python/lightning_api_access-0.0.3[${PYTHON_USEDEP}]
 		>=dev-python/pytorch-lightning-1.9.0[${PYTHON_USEDEP}]
+		>=sci-libs/lightning-api-access-0.0.3[${PYTHON_USEDEP}]
 	')
 "
 APP_UI_RDEPEND="

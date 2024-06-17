@@ -10,7 +10,6 @@ EAPI=8
 # hivemind
 # horovod
 # lai-sphinx-theme
-# lightning_api_access
 # playwright (or use playwright-bin)
 # sphinx-multiproject
 # sphinx-toolbox
@@ -125,7 +124,7 @@ APP_COMPONENTS_RDEPEND="
 			>dev-python/pytorch-lightning-1.8.0[${PYTHON_USEDEP}]
 			<dev-python/pytorch-lightning-2.0.0[${PYTHON_USEDEP}]
 		)
-		>=dev-python/lightning_api_access-0.0.3[${PYTHON_USEDEP}]
+		>=sci-libs/lightning-api-access-0.0.3[${PYTHON_USEDEP}]
 	')
 "
 APP_UI_RDEPEND="
