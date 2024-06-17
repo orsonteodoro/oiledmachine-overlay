@@ -9,9 +9,9 @@ EAPI=8
 # hf-doc-builder
 # invisible-watermark
 # k-diffusion
-# note_seq
+# note_seq		*
 # peft
-# torchsde
+# torchsde		*
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
