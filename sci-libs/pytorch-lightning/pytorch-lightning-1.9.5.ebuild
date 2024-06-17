@@ -11,7 +11,6 @@ EAPI=8
 # horovod
 # lai-sphinx-theme
 # lightning_api_access
-# inquirer
 # playwright (or use playwright-bin)
 # sphinx-multiproject
 # sphinx-toolbox

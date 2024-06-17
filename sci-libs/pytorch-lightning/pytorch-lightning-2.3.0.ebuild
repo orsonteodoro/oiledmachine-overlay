@@ -8,7 +8,6 @@ EAPI=8
 # lai-sphinx-theme
 # lightning_api_access			components
 # lightning-fabric			components
-# inquirer				base
 # playwright (or use playwright-bin)
 # sphinx-multiproject
 # sphinx-toolbox
