@@ -420,7 +420,7 @@ PYTORCH_DOCS_BDEPEND="
 		dev-python/wcmatch[${PYTHON_USEDEP}]
 	')
 "
-PYTORCH_STRATEGIES="
+PYTORCH_STRATEGIES_BDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/deepspeed-0.8.2[${PYTHON_USEDEP}]
 		<dev-python/deepspeed-0.9.4[${PYTHON_USEDEP}]
@@ -486,6 +486,6 @@ BDEPEND="
 	)
 	test-gpu? (
 		${FABRIC_STRATEGIES_BDEPEND}
-		${PYTORCH_STRATEGIES}
+		${PYTORCH_STRATEGIES_BDEPEND}
 	)
 "
