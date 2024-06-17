@@ -61,7 +61,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Missing dependencies
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	S="${WORKDIR}/${PN}-${MY_PV}"
 	SRC_URI="
 https://github.com/Lightning-AI/torchmetrics/archive/refs/tags/v${MY_PV}.tar.gz
