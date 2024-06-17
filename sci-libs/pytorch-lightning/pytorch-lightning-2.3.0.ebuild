@@ -36,7 +36,7 @@ HOMEPAGE="
 "
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE+=" doc examples extra test"
+IUSE+=" cloud components doc examples extra test test-gpu"
 APP_BASE_RDEPEND="
 	$(python_gen_cond_dep '
 		(
@@ -105,6 +105,33 @@ APP_BASE_RDEPEND="
 		>=dev-python/pydantic-1.7.4[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/starlette[${PYTHON_USEDEP}]
+	')
+"
+APP_CLOUD_RDEPEND="
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/redis-4.0.1[${PYTHON_USEDEP}]
+			<dev-python/redis-5.1.0[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/docker-5.0.0[${PYTHON_USEDEP}]
+			<dev-python/docker-6.1.4[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/s3fs-2022.5.0[${PYTHON_USEDEP}]
+			<dev-python/s3fs-2023.6.1[${PYTHON_USEDEP}]
+		)
+	')
+"
+APP_COMPONENTS_RDEPEND="
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/aiohttp-3.8.0[${PYTHON_USEDEP}]
+			<dev-python/aiohttp-3.9.0[${PYTHON_USEDEP}]
+		)
+		>=dev-python/lightning-fabric-1.9.0[${PYTHON_USEDEP}]
+		>=dev-python/lightning_api_access-0.0.3[${PYTHON_USEDEP}]
+		>=dev-python/pytorch-lightning-1.9.0[${PYTHON_USEDEP}]
 	')
 "
 APP_UI_RDEPEND="
@@ -247,6 +274,12 @@ RDEPEND+="
 	${APP_BASE_RDEPEND}
 	${FABRIC_BASE_RDEPEND}
 	${PYTORCH_BASE_RDEPEND}
+	cloud? (
+		${APP_CLOUD_RDEPEND}
+	)
+	components? (
+		${APP_COMPONENTS_RDEPEND}
+	)
 	examples? (
 		${FABRIC_EXAMPLES_RDEPEND}
 		${PYTORCH_EXAMPLES_RDEPEND}
@@ -339,6 +372,18 @@ FABRIC_DOCS_BDEPEND="
 	${DOCS_BDEPEND}
 	sci-visualization/tensorboard[${PYTHON_SINGLE_USEDEP}]
 "
+FABRIC_STRATEGIES_BDEPEND="
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/deepspeed-0.8.2[${PYTHON_USEDEP}]
+			<dev-python/deepspeed-0.9.4[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/bitsandbytes-0.42.0[${PYTHON_USEDEP}]
+			<dev-python/bitsandbytes-0.43.0[${PYTHON_USEDEP}]
+		)
+	')
+"
 FABRIC_TEST_BDEPEND="
 	$(python_gen_cond_dep '
 		(
@@ -370,6 +415,12 @@ PYTORCH_DOCS_BDEPEND="
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		dev-python/wcmatch[${PYTHON_USEDEP}]
+	')
+"
+PYTORCH_STRATEGIES="
+	$(python_gen_cond_dep '
+		>=dev-python/deepspeed-0.8.2[${PYTHON_USEDEP}]
+		<dev-python/deepspeed-0.9.4[${PYTHON_USEDEP}]
 	')
 "
 PYTORCH_TEST_BDEPEND="
@@ -429,5 +480,9 @@ BDEPEND="
 		${APP_TEST_BDEPEND}
 		${FABRIC_TEST_BDEPEND}
 		${PYTORCH_TEST_BDEPEND}
+	)
+	test-gpu? (
+		${FABRIC_STRATEGIES_BDEPEND}
+		${PYTORCH_STRATEGIES}
 	)
 "
