@@ -19,7 +19,8 @@ PYTHON_COMPAT=( "python3_10" )
 
 inherit distutils-r1
 
-#KEYWORDS="~amd64" # Needs install test
+KEYWORDS="~amd64"
+S="${WORKDIR}/pytorch-lightning-${PV}"
 SRC_URI="
 https://github.com/Lightning-AI/pytorch-lightning/archive/refs/tags/${PV}.tar.gz
 	-> pytorch-lightning-${PV}.tar.gz
