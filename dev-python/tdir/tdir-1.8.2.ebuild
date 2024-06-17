@@ -4,7 +4,7 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517="setuptools"
+DISTUTILS_USE_PEP517="poetry"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -44,8 +44,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
+	dev-python/poetry-core[${PYTHON_USEDEP}]
 	dev? (
 		dev-python/black[${PYTHON_USEDEP}]
 		dev-python/coverage[${PYTHON_USEDEP}]
