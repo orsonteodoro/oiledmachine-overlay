@@ -6,6 +6,7 @@ EAPI=8
 
 # TODO package:
 # deepspeed
+# jsonargparse
 # sphinx-multiproject
 # sphinx-toolbox
 # sphinxcontrib-mockautodoc
