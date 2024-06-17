@@ -13,7 +13,6 @@ EAPI=8
 # sphinx-toolbox
 # sphinxcontrib-mockautodoc
 # sphinxcontrib-video
-# tensorboardX				extra
 # torchmetrics				examples
 
 DISTUTILS_USE_PEP517="setuptools"

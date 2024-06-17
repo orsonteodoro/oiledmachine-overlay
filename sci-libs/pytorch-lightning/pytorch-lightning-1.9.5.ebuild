@@ -16,7 +16,6 @@ EAPI=8
 # sphinx-toolbox
 # sphinxcontrib-mockautodoc
 # sqlmodel
-# tensorboardX
 # torchmetrics
 
 DISTUTILS_SINGLE_IMPL=1
