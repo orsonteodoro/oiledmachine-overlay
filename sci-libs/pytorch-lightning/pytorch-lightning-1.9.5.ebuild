@@ -10,7 +10,9 @@ EAPI=8
 # fairscale
 # hivemind
 # horovod
+# hydra-core
 # jsonargparse
+# omegaconf
 # sphinx-multiproject
 # sphinx-toolbox
 # sphinxcontrib-mockautodoc

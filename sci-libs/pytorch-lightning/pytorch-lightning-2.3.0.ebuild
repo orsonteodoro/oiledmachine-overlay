@@ -5,8 +5,11 @@
 EAPI=8
 
 # TODO package:
+# bitsandbytes
 # deepspeed
+# hydra-core
 # jsonargparse
+# omegaconf
 # sphinx-multiproject
 # sphinx-toolbox
 # sphinxcontrib-mockautodoc
