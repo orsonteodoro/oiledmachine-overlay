@@ -37,7 +37,7 @@ RDEPEND+="
 		>=sci-libs/ale-py-0.8.1[${PYTHON_USEDEP}]
 	)
 	bsuite? (
-		>=dev-python/bsuite-0.3.5[${PYTHON_USEDEP}]
+		>=sci-libs/bsuite-0.3.5[${PYTHON_USEDEP}]
 	)
 	gym? (
 		>=sci-libs/gym-0.26.2[${PYTHON_USEDEP}]

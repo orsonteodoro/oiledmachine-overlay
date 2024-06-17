@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO package:
-# bsuite
 # sphinx-autobuild
 # sphinx_github_changelog
 
@@ -35,7 +34,7 @@ RDEPEND+="
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 	>=sci-libs/gymnasium-1.0.0_alpha1[${PYTHON_USEDEP}]
 	bsuite? (
-		>=dev-python/bsuite-0.3.5[${PYTHON_USEDEP}]
+		>=sci-libs/bsuite-0.3.5[${PYTHON_USEDEP}]
 	)
 	gym? (
 		>=sci-libs/gym-0.26.2[${PYTHON_USEDEP}]
