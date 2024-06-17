@@ -11,7 +11,6 @@ EAPI=8
 # horovod
 # lai-sphinx-theme
 # lightning_api_access
-# lightning-utilities
 # inquirer
 # playwright (or use playwright-bin)
 # sphinx-multiproject
@@ -73,8 +72,8 @@ APP_BASE_RDEPEND="
 			<dev-python/arrow-1.2.4[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/lightning-utilities-0.6.0_p0[${PYTHON_USEDEP}]
-			<dev-python/lightning-utilities-0.7.0[${PYTHON_USEDEP}]
+			>=sci-libs/lightning-utilities-0.6.0_p0[${PYTHON_USEDEP}]
+			<sci-libs/lightning-utilities-0.7.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=dev-python/beautifulsoup4-4.8.0[${PYTHON_USEDEP}]
@@ -150,8 +149,8 @@ FABRIC_BASE_RDEPEND="
 			<dev-python/fsspec-2023.2.0[${PYTHON_USEDEP},http(+)]
 		)
 		(
-			>=dev-python/lightning-utilities-0.6.0_p0[${PYTHON_USEDEP}]
-			<dev-python/lightning-utilities-0.7.0[${PYTHON_USEDEP}]
+			>=sci-libs/lightning-utilities-0.6.0_p0[${PYTHON_USEDEP}]
+			<sci-libs/lightning-utilities-0.7.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=dev-python/numpy-1.17.2[${PYTHON_USEDEP}]
@@ -196,8 +195,8 @@ PYTORCH_BASE_RDEPEND="
 			<dev-python/fsspec-2023.2.0[${PYTHON_USEDEP},http(+)]
 		)
 		(
-			>=dev-python/lightning-utilities-0.6.0_p0[${PYTHON_USEDEP}]
-			<dev-python/lightning-utilities-0.7.0[${PYTHON_USEDEP}]
+			>=sci-libs/lightning-utilities-0.6.0_p0[${PYTHON_USEDEP}]
+			<sci-libs/lightning-utilities-0.7.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=dev-python/packaging-17.1[${PYTHON_USEDEP}]

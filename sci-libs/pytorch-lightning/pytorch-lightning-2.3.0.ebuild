@@ -8,7 +8,6 @@ EAPI=8
 # lai-sphinx-theme
 # lightning_api_access			components
 # lightning-fabric			components
-# lightning-utilities			base
 # inquirer				base
 # playwright (or use playwright-bin)
 # sphinx-multiproject
@@ -74,8 +73,8 @@ APP_BASE_RDEPEND="
 			<dev-python/inquirer-3.2.0[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+			>=sci-libs/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
+			<sci-libs/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=dev-python/python-multipart-0.0.5[${PYTHON_USEDEP}]
@@ -145,8 +144,8 @@ FABRIC_BASE_RDEPEND="
 			<dev-python/fsspec-2024.4.0[${PYTHON_USEDEP},http(+)]
 		)
 		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+			>=sci-libs/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
+			<sci-libs/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=dev-python/numpy-1.17.2[${PYTHON_USEDEP}]
@@ -169,8 +168,8 @@ FABRIC_BASE_RDEPEND="
 FABRIC_EXAMPLES_RDEPEND="
 	$(python_gen_cond_dep '
 		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+			>=sci-libs/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
+			<sci-libs/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=sci-libs/torchmetrics-0.10.0[${PYTHON_USEDEP}]
@@ -189,8 +188,8 @@ PYTORCH_BASE_RDEPEND="
 			<dev-python/fsspec-2024.4.0[${PYTHON_USEDEP},http(+)]
 		)
 		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+			>=sci-libs/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
+			<sci-libs/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=dev-python/numpy-1.17.2[${PYTHON_USEDEP}]
@@ -225,8 +224,8 @@ PYTORCH_BASE_RDEPEND="
 PYTORCH_EXAMPLES_RDEPEND="
 	$(python_gen_cond_dep '
 		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+			>=sci-libs/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
+			<sci-libs/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=sci-libs/torchmetrics-0.10.0[${PYTHON_USEDEP}]
@@ -300,8 +299,8 @@ DOCS_BDEPEND="
 			<dev-python/docutils-0.21[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/lightning-utilities-0.11.1[${PYTHON_USEDEP}]
-			<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+			>=sci-libs/lightning-utilities-0.11.1[${PYTHON_USEDEP}]
+			<sci-libs/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 		)
 		(
 			>=dev-python/myst-parser-0.18.1[${PYTHON_USEDEP}]
