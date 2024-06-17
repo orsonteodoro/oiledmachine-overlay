@@ -38,7 +38,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
 RDEPEND+="
-	dev-python/dek
+	dev-python/dek[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
