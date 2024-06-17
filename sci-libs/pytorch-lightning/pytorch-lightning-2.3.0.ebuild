@@ -6,18 +6,18 @@ EAPI=8
 # TODO package:
 # deepspeed
 # lai-sphinx-theme
-# lightning_api_access
-# lightning-cloud
-# lightning-fabric
-# lightning-utilities
-# inquirer
+# lightning_api_access			components
+# lightning-cloud			base
+# lightning-fabric			components
+# lightning-utilities			base
+# inquirer				base
 # playwright (or use playwright-bin)
 # sphinx-multiproject
 # sphinx-toolbox
 # sphinxcontrib-mockautodoc
 # sphinxcontrib-video
-# tensorboardX
-# torchmetrics
+# tensorboardX				extra
+# torchmetrics				examples
 
 DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_SINGLE_IMPL=1
