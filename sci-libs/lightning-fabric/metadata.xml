@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <!-- Ebuild originators -->
+    <email>sci@gentoo.org</email>
+    <name>Science Project</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">Lightning-AI/pytorch-lightning</remote-id>
+    <remote-id type="pypi">lightning-fabric</remote-id>
+  </upstream>
+</pkgmetadata>
