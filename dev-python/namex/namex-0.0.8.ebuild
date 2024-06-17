@@ -4,27 +4,26 @@
 
 EAPI=8
 
-MY_PN="${PN/-/_}"
-
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	IUSE+=" fallback-commit"
 	EGIT_BRANCH="main"
-	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_PN}-${PV}"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/fchollet/namex.git"
 	FALLBACK_COMMIT="4a8f74cb950b99bb108485c6f08adf1eb6dc4fa2" # Feb 27, 2023
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 mirror://pypi/${PN:0:1}/${PN}/${PN}-${PV}.tar.gz
 	"
 fi
-S="${WORKDIR}/${MY_PN}-${PV}"
 
 DESCRIPTION="Clean up the public namespace of your package!"
 HOMEPAGE="
