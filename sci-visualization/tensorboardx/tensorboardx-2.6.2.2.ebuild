@@ -1,0 +1,106 @@
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+MY_PN="tensorboardX"
+
+DISTUTILS_USE_PEP517="setuptools"
+PYTHON_COMPAT=( "python3_"{10..12} )
+
+inherit distutils-r1 pypi
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="master"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+	EGIT_REPO_URI="https://github.com/lanpa/tensorboardX.git"
+	FALLBACK_COMMIT="d4386c1a917fdc7f0f23ecee2bea0abfe5d7bec6" # Aug 20, 2023
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
+	inherit git-r3
+else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	S="${WORKDIR}/${MY_PN}-${PV}"
+	SRC_URI="
+https://github.com/lanpa/tensorboardX/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
+fi
+
+DESCRIPTION="Clean up the public namespace of your package!"
+HOMEPAGE="
+	https://github.com/lanpa/tensorboardX
+	https://pypi.org/project/tensorboardX
+"
+LICENSE="
+	MIT
+"
+RESTRICT="mirror"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+=" doc test"
+RDEPEND+="
+	>=dev-python/protobuf-python-3.20:0/3.21[${PYTHON_USEDEP}]
+	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/packaging[${PYTHON_USEDEP}]
+"
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/setuptools-scm[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
+	doc? (
+		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
+	)
+	test? (
+		>=dev-python/imageio-2.27[${PYTHON_USEDEP}]
+		>=dev-python/protobuf-python-4.22.3[${PYTHON_USEDEP}]
+		dev-python/boto3[${PYTHON_USEDEP}]
+		dev-python/flake8[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/torch[${PYTHON_USEDEP}]
+		dev-python/torchvision[${PYTHON_USEDEP}]
+		dev-python/tensorboard[${PYTHON_USEDEP}]
+		dev-python/matplotlib[${PYTHON_USEDEP}]
+		dev-python/moto[${PYTHON_USEDEP}]
+		dev-python/onnx[${PYTHON_USEDEP}]
+		dev-python/pytest-cov[${PYTHON_USEDEP}]
+		dev-python/soundfile[${PYTHON_USEDEP}]
+		dev-python/visdom[${PYTHON_USEDEP}]
+	)
+"
+DOCS=( "HISTORY.rst" "README.md" )
+
+# For dev-python/setuptools-scm
+init_repo() {
+	git init || die
+	touch dummy || die
+	git config user.email "name@example.com" || die
+	git config user.name "John Doe" || die
+	git add dummy || die
+	git commit -m "Dummy" || die
+	git tag v${PV} || die
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+		cd "${S}" || die
+		init_repo
+	fi
+}
+
+src_install() {
+	distutils-r1_src_install
+	docinto "licenses"
+	dodoc "LICENSE"
+}
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
