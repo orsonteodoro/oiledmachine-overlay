@@ -84,19 +84,19 @@ FABRIC_EXAMPLES_RDEPEND="
 				<sci-libs/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 			)
 		)
-		(
-			>=sci-libs/torchmetrics-0.10.0[${PYTHON_USEDEP}]
-			strict? (
-				<sci-libs/torchmetrics-1.3.0[${PYTHON_USEDEP}]
-			)
-		)
-		(
-			>=sci-libs/torchvision-0.15.0[${PYTHON_USEDEP}]
-			strict? (
-				<sci-libs/torchvision-0.19.0[${PYTHON_USEDEP}]
-			)
-		)
 	')
+	(
+		>=sci-libs/torchmetrics-0.10.0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<sci-libs/torchmetrics-1.3.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
+	(
+		>=sci-libs/torchvision-0.15.0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<sci-libs/torchvision-0.19.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 "
 RDEPEND+="
 	${FABRIC_BASE_RDEPEND}
@@ -215,12 +215,6 @@ FABRIC_TEST_BDEPEND="
 				<sci-visualization/tensorboardx-2.7.0[${PYTHON_USEDEP}]
 			)
 		)
-		(
-			>=sci-libs/torchmetrics-0.7.0[${PYTHON_USEDEP}]
-			strict? (
-				<sci-libs/torchmetrics-1.3.0[${PYTHON_USEDEP}]
-			)
-		)
 		>=dev-python/click-8.1.7[${PYTHON_USEDEP}]
 		>=dev-python/coverage-7.3.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.4.0[${PYTHON_USEDEP}]
@@ -229,6 +223,12 @@ FABRIC_TEST_BDEPEND="
 		>=dev-python/pytest-rerunfailures-12.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
 	')
+	(
+		>=sci-libs/torchmetrics-0.7.0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<sci-libs/torchmetrics-1.3.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 "
 BDEPEND="
 	$(python_gen_cond_dep '

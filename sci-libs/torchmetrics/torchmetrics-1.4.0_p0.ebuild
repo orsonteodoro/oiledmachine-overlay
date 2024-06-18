@@ -116,13 +116,13 @@ DETECTION_RDEPEND="
 				>=dev-python/pycocotools-2.0.8[${PYTHON_USEDEP}]
 			)
 		)
-		(
-			>=sci-libs/torchvision-0.8[${PYTHON_USEDEP}]
-			strict? (
-				<sci-libs/torchvision-0.19.0[${PYTHON_USEDEP}]
-			)
-		)
 	')
+	(
+		>=sci-libs/torchvision-0.8[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<sci-libs/torchvision-0.19.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 "
 IMAGE_RDEPEND="
 	$(python_gen_cond_dep '
@@ -132,12 +132,6 @@ IMAGE_RDEPEND="
 				<dev-python/scipy-1.11.0[${PYTHON_USEDEP}]
 			)
 		)
-		(
-			>=sci-libs/torchvision-0.8[${PYTHON_USEDEP}]
-			strict? (
-				<sci-libs/torchvision-0.19.0[${PYTHON_USEDEP}]
-			)
-		)
 		!strict? (
 			sci-libs/torch-fidelity[${PYTHON_USEDEP}]
 		)
@@ -145,6 +139,12 @@ IMAGE_RDEPEND="
 			<sci-libs/torch-fidelity-0.4.1[${PYTHON_USEDEP}]
 		)
 	')
+	(
+		>=sci-libs/torchvision-0.8[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<sci-libs/torchvision-0.19.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 "
 MULTIMODAL_RDEPEND="
 	$(python_gen_cond_dep '

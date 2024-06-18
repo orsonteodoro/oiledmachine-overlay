@@ -14,7 +14,6 @@ EAPI=8
 # sphinx-toolbox
 # sphinxcontrib-mockautodoc
 # sphinxcontrib-video
-# torchmetrics				examples
 
 DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_SINGLE_IMPL=1
@@ -106,18 +105,6 @@ PYTORCH_EXAMPLES_RDEPEND="
 				<sci-libs/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 			)
 		)
-		(
-			>=sci-libs/torchmetrics-0.10.0[${PYTHON_USEDEP}]
-			strict? (
-				<sci-libs/torchmetrics-1.3.0[${PYTHON_USEDEP}]
-			)
-		)
-		(
-			>=sci-libs/torchvision-0.15.0[${PYTHON_USEDEP}]
-			strict? (
-				<sci-libs/torchvision-0.19.0[${PYTHON_USEDEP}]
-			)
-		)
 		!strict? (
 			dev-python/ipython[${PYTHON_USEDEP},all(-)]
 			dev-python/requests[${PYTHON_USEDEP}]
@@ -127,6 +114,18 @@ PYTORCH_EXAMPLES_RDEPEND="
 			<dev-python/requests-2.32.0[${PYTHON_USEDEP}]
 		)
 	')
+	(
+		>=sci-libs/torchmetrics-0.10.0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<sci-libs/torchmetrics-1.3.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
+	(
+		>=sci-libs/torchvision-0.15.0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<sci-libs/torchvision-0.19.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 "
 PYTORCH_EXTRA_RDEPEND="
 	$(python_gen_cond_dep '

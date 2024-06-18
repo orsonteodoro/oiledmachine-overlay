@@ -16,7 +16,6 @@ EAPI=8
 # sphinx-multiproject
 # sphinx-toolbox
 # sphinxcontrib-mockautodoc
-# torchmetrics
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
