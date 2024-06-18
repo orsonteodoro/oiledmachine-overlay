@@ -11,7 +11,6 @@ EAPI=8
 # sphinx-toolbox
 # sphinxcontrib-mockautodoc
 # sphinxcontrib-video
-# torchmetrics				examples
 
 DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_SINGLE_IMPL=1
@@ -217,9 +216,9 @@ FABRIC_TEST_BDEPEND="
 			)
 		)
 		(
-			>=dev-python/torchmetrics-0.7.0[${PYTHON_USEDEP}]
+			>=sci-libs/torchmetrics-0.7.0[${PYTHON_USEDEP}]
 			strict? (
-				<dev-python/torchmetrics-1.3.0[${PYTHON_USEDEP}]
+				<sci-libs/torchmetrics-1.3.0[${PYTHON_USEDEP}]
 			)
 		)
 		>=dev-python/click-8.1.7[${PYTHON_USEDEP}]
