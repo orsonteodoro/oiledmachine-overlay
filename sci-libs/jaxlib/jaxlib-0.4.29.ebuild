@@ -1352,11 +1352,11 @@ einfo "Building wheel for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 
 	# Keep in sync with
 	# https://github.com/google/jax/blob/jaxlib-v0.4.29/build/build.py#L546
+#		--config=override_rules_python \
 	_ebazel run \
 		--verbose_failures=true \
 		-s \
 		"//jaxlib/tools:build_wheel" \
-		--config=override_rules_python \
 		-- \
 		--output_path="${PWD}/dist" \
 		--cpu=$(get_host) \
