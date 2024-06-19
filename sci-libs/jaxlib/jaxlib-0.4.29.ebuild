@@ -328,7 +328,7 @@ LICENSE="
 		BSD-2
 	)
 "
-#KEYWORDS="~amd64 ~arm64"
+KEYWORDS="~amd64 ~arm64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${ROCM_IUSE}
@@ -877,17 +877,7 @@ src_unpack() {
 	unpack "openxla-xla-${EGIT_XLA_COMMIT}.zip"
 	mkdir -p "${WORKDIR}/tarballs" || die
 	mkdir -p "${WORKDIR}/patches" || die
-#	pushd "${S}" || die
-#		eapply "${FILESDIR}/jaxlib-0.4.29-rules_python-pip-offline.patch"
-#	popd || die
 	bazel_load_distfiles "${bazel_external_uris}"
-
-#	pushd "${WORKDIR}" || die
-#		unpack "rules_python-${RULES_PYTHON_PV}.tar.gz"
-#		pushd "${WORKDIR}/rules_python-${RULES_PYTHON_PV}" || die
-#			eapply "${FILESDIR}/jaxlib-0.4.29-rules_python-pip-offline2.patch"
-#		popd || die
-#	popd || die
 }
 
 load_env() {
@@ -1283,18 +1273,6 @@ einfo "Running:  ${EPYTHON} build/build.py --configure_only ${args[@]}"
 	echo "build --action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> ".bazelrc.user" || die
 	echo "build --host_action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> ".bazelrc.user" || die
 
-	echo "build:override_rules_python --override_repository=rules_python=${WORKDIR}/rules_python-${RULES_PYTHON_PV}" >> ".bazelrc.user" || die
-
-	mkdir -p ~/.cache/pip || die
-	cp -L "${DISTDIR}/"*".whl" ~/.cache/pip || die
-
-#cat <<EOF > "${WORKDIR}/bin"
-##!/bin/bash
-#/usr/bin/pip  $@
-#EOF
-	echo "build --action_env=XDG_CACHE_HOME=\"${HOME}/.cache/pip\"" >> ".bazelrc.user" || die
-	echo "build --host_action_env=XDG_CACHE_HOME=\"${HOME}/.cache/pip\"" >> ".bazelrc.user" || die
-
 	if has_version "dev-java/openjdk-bin:11" ; then
 		local jdk_path=$(realpath "/opt/openjdk-bin-11")
 		export JAVA_HOME_11="${jdk_path}"
@@ -1352,7 +1330,6 @@ einfo "Building wheel for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 
 	# Keep in sync with
 	# https://github.com/google/jax/blob/jaxlib-v0.4.29/build/build.py#L546
-#		--config=override_rules_python \
 	_ebazel run \
 		--verbose_failures=true \
 		-s \
