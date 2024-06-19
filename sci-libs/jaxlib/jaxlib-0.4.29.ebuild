@@ -4,20 +4,43 @@
 
 EAPI=8
 
-# Build/install only progress for 0.4.27:
+# Build/install only progress for 0.4.29:
 # CPU - testing
 # GPU (rocm) - testing/in-development
 # GPU (cuda) - testing/in-development
 
-# CUDA version:  https://github.com/google/jax/blob/jaxlib-v0.4.27/docs/installation.md?plain=1#L116
-# ROCm version:  https://github.com/google/jax/blob/jaxlib-v0.4.27/build/rocm/ci_build.sh#L52
+# FIXME:  fix floating point exception for CPU only for examples
+# https://en.wikipedia.org/wiki/Google_JAX#grad
+# https://jax.readthedocs.io/en/latest/quickstart.html#jax-as-numpy
+
+# Error of the above problem with https://en.wikipedia.org/wiki/Google_JAX#grad
+#Thread 1 "python3.11" received signal SIGFPE, Arithmetic exception.
+#0x00007fffebfcc15b in Xbyak::util::Cpu::setCacheHierarchy() () from /usr/lib/python3.11/site-packages/jaxlib/xla_extension.so
+#(gdb) bt
+#0  0x00007fffebfcc15b in Xbyak::util::Cpu::setCacheHierarchy() () from /usr/lib/python3.11/site-packages/jaxlib/xla_extension.so
+#1  0x00007fffec31be7f in dnnl::impl::cpu::platform::get_max_threads_to_use() () from /usr/lib/python3.11/site-packages/jaxlib/xla_extension.so
+#2  0x00007fffebfb0f2d in dnnl::impl::threadpool_utils::get_threadlocal_max_concurrency() () from /usr/lib/python3.11/site-packages/jaxlib/xla_extension.so
+#3  0x00007fffebf84ed0 in dnnl_threadpool_interop_set_max_concurrency () from /usr/lib/python3.11/site-packages/jaxlib/xla_extension.so
+#4  0x00007fffeb395321 in xla::cpu::OneDnnMatMulRewriter::Run(xla::HloModule*, absl::lts_20230802::flat_hash_set<std::basic_string_view<char, std::char_traits<char> >, absl::lts_20230802::container_internal::StringHash, absl::lts_20230802::container_internal::StringEq, std::allocator<std::basic_string_view<char, std::char_traits<char> > > > const&) () from /usr/lib/python3.11/site-packages/jaxlib/xla_extension.so
+#5  0x00007fffeb5b3979 in absl::lts_20230802::StatusOr<bool> xla::HloPassPipeline::RunPassesInternal<xla::HloModule>(xla::HloModule*, xla::DebugOptions const&, absl::lts_20230802::flat_hash_set<std::basic_string_view<char, std::char_traits<char> >, absl::lts_20230802::container_internal::StringHash, absl::lts_20230802::container_internal::StringEq, std::allocator<std::basic_string_view<char, std::char_traits<char> > > > const&) () from /usr/lib/python3.11/site-packages/jaxlib/xla_extension.so
+
+
+# With clang-17 as host compiler:
+# FIXME:
+#external/boringssl/src/crypto/refcount_c11.c:37:23: error: address argument to atomic operation must be a pointer to a trivially-copyable type ('_Atomic(CRYPTO_refcount_t) *' invalid)
+#   37 |   uint32_t expected = atomic_load(count);
+#      |                       ^~~~~~~~~~~~~~~~~~
+# The current workaround for this is to use gcc and disable the clang USE flag.
+
+# CUDA version:  https://github.com/google/jax/blob/jaxlib-v0.4.29/docs/installation.md?plain=1#L116
+# ROCm version:  https://github.com/google/jax/blob/jaxlib-v0.4.29/build/rocm/ci_build.sh#L52
 
 MAINTAINER_MODE=0
 MY_PN="jax"
 
 AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/google/jax/blob/jaxlib-v0.4.27/.bazelrc#L119
-# See https://github.com/google/jax/blob/jaxlib-v0.4.27/build/rocm/Dockerfile.ms#L7C53-L7C89
+# See https://github.com/google/jax/blob/jaxlib-v0.4.29/.bazelrc#L119
+# See https://github.com/google/jax/blob/jaxlib-v0.4.29/build/rocm/Dockerfile.ms#L7C53-L7C89
 	gfx900
 	gfx906
 	gfx908
@@ -28,12 +51,12 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1030
 	gfx1100
 )
-BAZEL_PV="6.1.2"
+BAZEL_PV="6.5.0"
 CPU_FLAGS_X86_64=(
 	cpu_flags_x86_avx
 )
 CUDA_TARGETS_COMPAT=(
-# See https://github.com/google/jax/blob/jaxlib-v0.4.27/.bazelrc#L68
+# See https://github.com/google/jax/blob/jaxlib-v0.4.29/.bazelrc#L68
 	sm_50
 	sm_60
 	sm_70
@@ -42,7 +65,7 @@ CUDA_TARGETS_COMPAT=(
 )
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="standalone"
-EGIT_COMMIT="500da57e91eb4b9094eb2b5cfa0826691862417f"
+EGIT_COMMIT="9e62994bce7c7fcbb2f6a50c9ef89526cd2c2be6"
 EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
 GCC_COMPAT=( {11..9} ) # Based on U22, U20
 JAVA_SLOT="11"
@@ -51,7 +74,7 @@ LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( python3_{10..12} ) # Limited by Flax CI
 
 inherit bazel cuda distutils-r1 flag-o-matic git-r3 hip-versions java-pkg-opt-2
-inherit llvm rocm toolchain-funcs
+inherit llvm pypi rocm toolchain-funcs
 
 # DO NOT HARD WRAP
 # DO NOT CHANGE TARBALL FILE EXT
@@ -63,49 +86,156 @@ inherit llvm rocm toolchain-funcs
 # Search and replace old PV with new PV
 # Search and replace old EGIT_XLA_COMMIT with new EGIT_XLA_COMMIT
 
-APPLE_SUPPORT_PV="1.1.0"	# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L540
-BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace3.bzl#L26
-CUDNN_FRONTEND_PV="1.3.0"	# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/workspace2.bzl#L53
-CURL_PV="8.4.0"			# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L339
-FLATBUFFERS_PV="23.5.26"	# From https://github.com/google/jax/blob/jaxlib-v0.4.27/third_party/flatbuffers/workspace.bzl
-JSONCPP_PV="1.9.5"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L381
-NANOBIND_PV="1.9.2"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/nanobind/workspace.bzl#L10
-NCCL_PV="2.19.3-1"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L408
-ONEDNN_PV="3.2"			# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L164
+APPLE_SUPPORT_PV="1.1.0"	# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace2.bzl#L534
+BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace3.bzl#L23
+CPYTHON_X86_64_3_10_PV="20231002:3.10.13+20231002"	# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/versions.bzl#L285
+CPYTHON_X86_64_3_11_PV="20231002:3.11.6+20231002"	# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/versions.bzl#L285
+CPYTHON_X86_64_3_12_PV="20231002:3.12.0+20231002"	# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/versions.bzl#L285
+CUDNN_FRONTEND_PV="1.3.0"	# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/workspace2.bzl#L53
+CURL_PV="8.4.0"			# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace2.bzl#L333
+FLATBUFFERS_PV="23.5.26"	# From https://github.com/google/jax/blob/jaxlib-v0.4.29/third_party/flatbuffers/workspace.bzl
+JSONCPP_PV="1.9.5"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace2.bzl#L375
+NANOBIND_PV="1.9.2"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/nanobind/workspace.bzl#L10
+NCCL_PV="2.19.3-1"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace2.bzl#L402
+ONEDNN_PV="3.2"			# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace2.bzl#L158
 PLATFORMS_PV="0.0.6"		# Delete?
-PROTOBUF_PV="3.21.9"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L300
-PYBIND11_PV="2.10.0"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L575
-ROBIN_MAP_PV="1.2.1"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/robin_map/workspace.bzl
-RULES_ANDROID_PV="0.1.1"	# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L518
-RULES_APPLE_PV="1.0.1"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L526
-RULES_CC_PV="0.0.2"		# From https://github.com/bazelbuild/bazel/blob/6.1.2/distdir_deps.bzl#L57
-RULES_PKG_PV="0.7.1"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace3.bzl#L34
-RULES_PYTHON_PV="0.0.1"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L510
-RULES_PYTHON_PV2="0.22.1"	# From https://github.com/bazelbuild/bazel/blob/7.1.1/src/MODULE.tools
-RULES_SWIFT_PV="1.0.0"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L526
-TRITON_TAG="cl623533461"	# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/triton/workspace.bzl
+PROTOBUF_PV="3.21.9"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace2.bzl#L294
+PYBIND11_PV="2.10.0"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace2.bzl#L563
+ROBIN_MAP_PV="1.3.0"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/robin_map/workspace.bzl
+RULES_ANDROID_PV="0.1.1"	# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace2.bzl#L512
+RULES_APPLE_PV="1.0.1"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace2.bzl#L520
+RULES_CC_PV="0.0.2"		# From https://github.com/bazelbuild/bazel/blob/6.5.0/distdir_deps.bzl#L57
+RULES_JAVA_PV="5.5.1"		# From https://github.com/bazelbuild/bazel/blob/6.5.0/distdir_deps.bzl#L69
+RULES_PKG_PV="0.7.1"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace3.bzl#L34
+RULES_PYTHON_PV="0.26.0"	# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/py/python_init_rules.bzl#L10
+RULES_SWIFT_PV="1.0.0"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace2.bzl#L533
+TRITON_TAG="cl640084124"	# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/triton/workspace.bzl
 
-EGIT_ABSEIL_CPP_COMMIT="fb3621f4f897824c0dbe0615fa94543df6192f30"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/third_party/absl/workspace.bzl
-EGIT_BAZEL_TOOLCHAINS_COMMIT="8c717f8258cd5f6c7a45b97d974292755852b658"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace1.bzl#L26
-EGIT_BORINGSSL_COMMIT="c00d7ca810e93780bd0c8ee4eea28f4f2ea4bcdc"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/workspace2.bzl#L55
-EGIT_DLPACK_COMMIT="2a7e9f1256ddc48186c86dff7a00e189b47e5310"			# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/dlpack/workspace.bzl
-EGIT_DUCC_COMMIT="3d28aadfd8bb0219e3df188613dbbcdfffccc3cd"			# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/third_party/ducc/workspace.bzl
-EGIT_EIGEN_COMMIT="c1d637433e3b3f9012b226c2c9125c494b470ae6"			# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/third_party/eigen3/workspace.bzl
-EGIT_FARMHASH_COMMIT="0d859a811870d10f53a594927d0d0b97573ad06d"			# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/third_party/farmhash/workspace.bzl
-EGIT_GLOO_COMMIT="5354032ea08eadd7fc4456477f7f7c6308818509"			# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/gloo/workspace.bzl
-EGIT_LLVM_COMMIT="6217abce86b55778cf39f7db7f591a16b9fd4d28"			# llvm 19 ; From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/llvm/workspace.bzl https://github.com/llvm/llvm-project/blob/6217abce86b55778cf39f7db7f591a16b9fd4d28/cmake/Modules/LLVMVersion.cmake#L4
-EGIT_ML_DTYPES_COMMIT="24084d9ed2c3d45bf83b7a9bff833aa185bf9172"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/py/ml_dtypes/workspace.bzl
-EGIT_MPITRAMPOLINE_COMMIT="25efb0f7a4cd00ed82bafb8b1a6285fc50d297ed"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/mpitrampoline/workspace.bzl#L8
-EGIT_PYBIND11_ABSEIL_COMMIT="2c4932ed6f6204f1656e245838f4f5eae69d2e29"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/third_party/pybind11_abseil/workspace.bzl
-EGIT_PYBIND11_BAZEL_COMMIT="72cbbf1fbc830e487e3012862b7b720001b70672"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/third_party/pybind11_bazel/workspace.bzl
-EGIT_RE2_COMMIT="03da4fc0857c285e3a26782f6bc8931c4c950df4"			# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L233
-EGIT_RULES_CLOSURE_COMMIT="308b05b2419edb5c8ee0471b67a40403df940149"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace3.bzl#L13
-EGIT_RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"		# From https://github.com/bazelbuild/bazel/blob/6.1.2/distdir_deps.bzl#L69
-EGIT_RULES_PROTO_COMMIT="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace0.bzl#L117
-EGIT_SNAPPY_COMMIT="984b191f0fefdeb17050b42a90b7625999c13b8d"			# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/workspace2.bzl#L399
-EGIT_STABLEHLO_COMMIT="b6406a43b48b7803f3efdbc235b1fbb5da782449"		# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/stablehlo/workspace.bzl#L7
-EGIT_TENSORFLOW_RUNTIME_COMMIT="7bdf48f1aac0b48ff85a4e0fb5ff7f98a703f8d6"	# From https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/third_party/tf_runtime/workspace.bzl#L9
-EGIT_XLA_COMMIT="873d09720f83cbbebf2a2a381c09be8fa0934b36"			# From https://github.com/google/jax/blob/jaxlib-v0.4.27/third_party/xla/workspace.bzl#L23
+BUILD_PV="58/91/17b00d5fac63d3dca605f1b8269ba3c65e98059e1fd99d00283e42a454f0:0.10.0"			# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/pip_install/repositories.bzl#L26
+CLICK_PV="00/2e/d53fa4befbf2cfa713304affc7ca780ce4fc1fd8710527771b58311a3229:8.1.7"			# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/pip_install/repositories.bzl#L31
+COLORAMA_PV="d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221:0.4.6"			# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/pip_install/repositories.bzl#L36
+IMPORTLIB_METADATA_PV="cc/37/db7ba97e676af155f5fcb1a35466f446eadc9104e25b83366e8088c9c926:6.8.0"	# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/pip_install/repositories.bzl#L41
+INSTALLER_PV="e5/ca/1172b6638d52f2d6caa2dd262ec4c811ba59eee96d54a7701930726bce18:0.7.0"			# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/pip_install/repositories.bzl#L46
+MORE_ITERTOOLS_PV="5a/cb/6dce742ea14e47d6f565589e859ad225f2a5de576d7696e0623b784e226b:10.1.0"		# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/pip_install/repositories.bzl#L51
+PACKAGING_PV="ab/c3/57f0601a2d4fe15de7a553c00adbc901425661bf048f2a22dfc500caf121:23.1"			# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/pip_install/repositories.bzl#L56
+PEP517_PV="ee/2f/ef63e64e9429111e73d3d6cbee80591672d16f2725e648ebc52096f3d323:0.13.0"			# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/pip_install/repositories.bzl#L61
+PIP_PV="50/c2/e06851e8cc28dcad7c155f4753da8833ac06a5c704c109313b8d5a62968a:23.2.1"			# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/pip_install/repositories.bzl#L66
+PIP_TOOLS_PV="e8/df/47e6267c6b5cdae867adbdd84b437393e6202ce4322de0a5e0b92960e1d6:7.3.0"			# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/pip_install/repositories.bzl#L71
+PYPROJECT_HOOKS_PV="d5/ea/9ae603de7fbb3df820b23a70f6aff92bf8c7770043254ad8d2dc9d6bcba4:1.0.0"		# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/pip_install/repositories.bzl#L76
+SETUPTOOLS_PV="4f/ab/0bcfebdfc3bfa8554b2b2c97a555569c4c1ebc74ea288741ea8326c51906:68.1.2"		# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/pip_install/repositories.bzl#L81
+TOMLI_PV="97/75/10a9ebee3fd790d20926a90a2547f0bf78f371b2f13aa822c759680ca7b9:2.0.1"			# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/pip_install/repositories.bzl#L86
+WHEEL_PV="b8/8b/31273bf66016be6ad22bb7345c37ff350276cfd46e389a0c2ac5da9d9073:0.41.2"			# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/pip_install/repositories.bzl#L91
+ZIPP_PV="8c/08/d3006317aefe25ea79d3b76c9650afabaf6d63d1c8443b236e7405447503:3.16.2"			# From https://github.com/bazelbuild/rules_python/blob/0.26.0/python/pip_install/repositories.bzl#L96
+
+EGIT_ABSEIL_CPP_COMMIT="fb3621f4f897824c0dbe0615fa94543df6192f30"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/third_party/absl/workspace.bzl
+EGIT_BAZEL_TOOLCHAINS_COMMIT="8c717f8258cd5f6c7a45b97d974292755852b658"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace1.bzl#L26
+EGIT_BORINGSSL_COMMIT="c00d7ca810e93780bd0c8ee4eea28f4f2ea4bcdc"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/workspace2.bzl#L55
+EGIT_DLPACK_COMMIT="2a7e9f1256ddc48186c86dff7a00e189b47e5310"			# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/dlpack/workspace.bzl
+EGIT_DUCC_COMMIT="aa46a4c21e440b3d416c16eca3c96df19c74f316"			# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/third_party/ducc/workspace.bzl
+EGIT_EIGEN_COMMIT="c1d637433e3b3f9012b226c2c9125c494b470ae6"			# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/third_party/eigen3/workspace.bzl
+EGIT_FARMHASH_COMMIT="0d859a811870d10f53a594927d0d0b97573ad06d"			# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/third_party/farmhash/workspace.bzl
+EGIT_GLOO_COMMIT="5354032ea08eadd7fc4456477f7f7c6308818509"			# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/gloo/workspace.bzl
+EGIT_LLVM_COMMIT="6f2c61071c274a1b5e212e6ad4114641ec7c7fc3"			# llvm 19 ; From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/llvm/workspace.bzl https://github.com/llvm/llvm-project/blob/6f2c61071c274a1b5e212e6ad4114641ec7c7fc3/cmake/Modules/LLVMVersion.cmake#L4
+EGIT_ML_DTYPES_COMMIT="24084d9ed2c3d45bf83b7a9bff833aa185bf9172"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/py/ml_dtypes/workspace.bzl
+EGIT_MPITRAMPOLINE_COMMIT="25efb0f7a4cd00ed82bafb8b1a6285fc50d297ed"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/mpitrampoline/workspace.bzl#L8
+EGIT_PYBIND11_ABSEIL_COMMIT="2c4932ed6f6204f1656e245838f4f5eae69d2e29"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/third_party/pybind11_abseil/workspace.bzl
+EGIT_PYBIND11_BAZEL_COMMIT="72cbbf1fbc830e487e3012862b7b720001b70672"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/third_party/pybind11_bazel/workspace.bzl
+EGIT_RE2_COMMIT="03da4fc0857c285e3a26782f6bc8931c4c950df4"			# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace2.bzl#L227
+EGIT_RULES_CLOSURE_COMMIT="308b05b2419edb5c8ee0471b67a40403df940149"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace3.bzl#L14
+EGIT_RULES_PROTO_COMMIT="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace0.bzl#L117
+EGIT_SNAPPY_COMMIT="984b191f0fefdeb17050b42a90b7625999c13b8d"			# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/workspace2.bzl#L393
+EGIT_STABLEHLO_COMMIT="14e2323f0ee3d308c1384fdb806dc6d0c98b16ca"		# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/stablehlo/workspace.bzl#L7
+EGIT_TENSORFLOW_RUNTIME_COMMIT="4662f7552dc2e420ee20361c077b7aeb334a1087"	# From https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/third_party/tf_runtime/workspace.bzl#L9
+EGIT_XLA_COMMIT="32ba408c0e2b7ef5f5821c0781601ba17d467076"			# From https://github.com/google/jax/blob/jaxlib-v0.4.29/third_party/xla/workspace.bzl#L23
+
+#colorama==0.4.6
+_PYPI_PACKAGES=(
+absl-py==2.1.0
+attrs==23.2.0
+build==1.2.1
+cloudpickle==3.0.0
+contourpy==1.2.1
+cycler==0.12.1
+exceptiongroup==1.2.1
+execnet==2.1.1
+flatbuffers==24.3.25
+fonttools==4.51.0
+fsspec==2024.5.0
+hypothesis==6.102.4
+importlib-resources==6.4.0
+iniconfig==2.0.0
+kiwisolver==1.4.5
+markdown-it-py==3.0.0
+matplotlib==3.9.0
+mdurl==0.1.2
+ml-dtypes==0.4.0
+mpmath==1.4.0a1
+numpy==2.0.0rc2
+opt-einsum==3.3.0
+packaging==24.0
+pillow==10.3.0
+pluggy==1.5.0
+portpicker==1.6.0
+psutil==5.9.8
+pygments==2.18.0
+pyparsing==3.1.2
+pyproject-hooks==1.1.0
+pytest-xdist==3.6.1
+pytest==8.2.0
+python-dateutil==2.9.0.post0
+rich==13.7.1
+scipy==1.13.0
+setuptools==58.2.0
+setuptools==69.5.1
+six==1.16.0
+sortedcontainers==2.4.0
+typing-extensions==4.12.0rc1
+wheel==0.43.0
+zipp==3.18.2
+zstandard==0.22.0
+)
+#tomli==2.0.1
+
+_PYPI_URLS=""
+gen_pypi_uris() {
+	local pkg
+	for pkg in ${_PYPI_PACKAGES[@]} ; do
+		local name="${pkg%%=*}"
+		local version="${pkg##*=}"
+		local abi
+		local platform
+		if [[ "${name}" =~ "psutil" ]] ; then
+			abi="cp36"
+			platform="abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64"
+			_PYPI_URLS+=" $(pypi_wheel_url ${name} ${version} ${abi} ${platform})"
+		elif [[ "${name}" =~ ("kiwisolver") ]] ; then
+			abi="cp311"
+			platform="${abi}-manylinux_2_17_x86_64.manylinux2014_x86_64"
+			_PYPI_URLS+=" $(pypi_wheel_url ${name} ${version} ${abi} ${platform})"
+
+			abi="cp312"
+			platform="${abi}-manylinux_2_17_x86_64.manylinux2014_x86_64"
+			_PYPI_URLS+=" $(pypi_wheel_url ${name} ${version} ${abi} ${platform})"
+		elif [[ "${name}" =~ ("contourpy"|"matplotlib"|"ml-dtypes"|"numpy"|"pillow"|"scipy"|"zstandard") ]] ; then
+			abi="cp310"
+			platform="${abi}-manylinux_2_17_x86_64.manylinux2014_x86_64"
+			_PYPI_URLS+=" $(pypi_wheel_url ${name} ${version} ${abi} ${platform})"
+
+			abi="cp311"
+			platform="${abi}-manylinux_2_17_x86_64.manylinux2014_x86_64"
+			_PYPI_URLS+=" $(pypi_wheel_url ${name} ${version} ${abi} ${platform})"
+
+			abi="cp312"
+			platform="${abi}-manylinux_2_17_x86_64.manylinux2014_x86_64"
+			_PYPI_URLS+=" $(pypi_wheel_url ${name} ${version} ${abi} ${platform})"
+		elif [[ "${name}" =~ ("colorama"|"flatbuffers"|"python-dateutil"|"six"|"sortedcontainers") ]] ; then
+			_PYPI_URLS+=" $(pypi_wheel_url ${name} ${version} py2.py3)"
+		else
+			_PYPI_URLS+=" $(pypi_wheel_url ${name} ${version})"
+		fi
+	done
+}
+gen_pypi_uris
 
 bazel_external_uris="
 https://curl.haxx.se/download/curl-${CURL_PV}.tar.gz
@@ -118,10 +248,10 @@ https://github.com/bazelbuild/rules_android/archive/v${RULES_ANDROID_PV}.zip -> 
 https://github.com/bazelbuild/rules_apple/releases/download/${RULES_APPLE_PV}/rules_apple.${RULES_APPLE_PV}.tar.gz -> rules_apple-${RULES_APPLE_PV}.tar.gz
 https://github.com/bazelbuild/rules_cc/releases/download/${RULES_CC_PV}/rules_cc-${RULES_CC_PV}.tar.gz -> rules_cc-${RULES_CC_PV}.tar.gz
 https://github.com/bazelbuild/rules_closure/archive/${EGIT_RULES_CLOSURE_COMMIT}.tar.gz -> rules_closure-${EGIT_RULES_CLOSURE_COMMIT}.tar.gz
-https://github.com/bazelbuild/rules_java/archive/${EGIT_RULES_JAVA_COMMIT}.zip -> rules_java-${EGIT_RULES_JAVA_COMMIT}.zip
+https://github.com/bazelbuild/rules_java/releases/download/${RULES_JAVA_PV}/rules_java-${RULES_JAVA_PV}.tar.gz -> rules_java-${RULES_JAVA_PV}.tar.gz
 https://github.com/bazelbuild/rules_pkg/releases/download/${RULES_PKG_PV}/rules_pkg-${RULES_PKG_PV}.tar.gz
 https://github.com/bazelbuild/rules_proto/archive/${EGIT_RULES_PROTO_COMMIT}.tar.gz -> rules_proto-${EGIT_RULES_PROTO_COMMIT}.tar.gz
-https://github.com/bazelbuild/rules_python/releases/download/${RULES_PYTHON_PV}/rules_python-0.0.1.tar.gz -> rules_python-${RULES_PYTHON_PV}.tar.gz
+https://github.com/bazelbuild/rules_python/releases/download/${RULES_PYTHON_PV}/rules_python-${RULES_PYTHON_PV}.tar.gz -> rules_python-${RULES_PYTHON_PV}.tar.gz
 https://github.com/bazelbuild/rules_swift/releases/download/${RULES_SWIFT_PV}/rules_swift.${RULES_SWIFT_PV}.tar.gz -> rules_swift-${RULES_SWIFT_PV}.tar.gz
 https://github.com/dmlc/dlpack/archive/${EGIT_DLPACK_COMMIT}.tar.gz -> dlpack-${EGIT_DLPACK_COMMIT}.tar.gz
 https://github.com/eschnett/mpitrampoline/archive/${EGIT_MPITRAMPOLINE_COMMIT}.tar.gz -> mpitrampoline-${EGIT_MPITRAMPOLINE_COMMIT}.tar.gz
@@ -147,11 +277,32 @@ https://storage.googleapis.com/mirror.tensorflow.org/github.com/pybind/pybind11_
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/openxla/triton/archive/${TRITON_TAG}.tar.gz -> triton-${TRITON_TAG}.tar.gz
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/wjakob/nanobind/archive/refs/tags/v${NANOBIND_PV}.tar.gz -> nanobind-${NANOBIND_PV}.tar.gz
 https://storage.googleapis.com/mirror.tensorflow.org/gitlab.mpcdf.mpg.de/mtr/ducc/-/archive/${EGIT_DUCC_COMMIT}/ducc-${EGIT_DUCC_COMMIT}.tar.gz -> ducc-${EGIT_DUCC_COMMIT}.tar.gz
-
 cuda? (
 https://github.com/NVIDIA/cudnn-frontend/archive/refs/tags/v${CUDNN_FRONTEND_PV}.zip -> cudnn-frontend-${CUDNN_FRONTEND_PV}.zip
 https://github.com/nvidia/nccl/archive/v${NCCL_PV}.tar.gz -> nccl-${NCCL_PV}.tar.gz
 )
+
+https://github.com/indygreg/python-build-standalone/releases/download/${CPYTHON_X86_64_3_10_PV%:*}/cpython-${CPYTHON_X86_64_3_10_PV#*:}-x86_64-unknown-linux-gnu-install_only.tar.gz
+https://github.com/indygreg/python-build-standalone/releases/download/${CPYTHON_X86_64_3_11_PV%:*}/cpython-${CPYTHON_X86_64_3_11_PV#*:}-x86_64-unknown-linux-gnu-install_only.tar.gz
+https://github.com/indygreg/python-build-standalone/releases/download/${CPYTHON_X86_64_3_12_PV%:*}/cpython-${CPYTHON_X86_64_3_12_PV#*:}-x86_64-unknown-linux-gnu-install_only.tar.gz
+
+https://files.pythonhosted.org/packages/${BUILD_PV%:*}/build-${BUILD_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${CLICK_PV%:*}/click-${CLICK_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${COLORAMA_PV%:*}/colorama-${COLORAMA_PV#*:}-py2.py3-none-any.whl
+https://files.pythonhosted.org/packages/${IMPORTLIB_METADATA_PV%:*}/importlib_metadata-${IMPORTLIB_METADATA_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${INSTALLER_PV%:*}/installer-${INSTALLER_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${MORE_ITERTOOLS_PV%:*}/more_itertools-${MORE_ITERTOOLS_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${PACKAGING_PV%:*}/packaging-${PACKAGING_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${PEP517_PV%:*}/pep517-${PEP517_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${PIP_PV%:*}/pip-${PIP_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${PIP_TOOLS_PV%:*}/pip_tools-${PIP_TOOLS_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${PYPROJECT_HOOKS_PV%:*}/pyproject_hooks-${PYPROJECT_HOOKS_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${SETUPTOOLS_PV%:*}/setuptools-${SETUPTOOLS_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${TOMLI_PV%:*}/tomli-${TOMLI_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${WHEEL_PV%:*}/wheel-${WHEEL_PV#*:}-py3-none-any.whl
+https://files.pythonhosted.org/packages/${ZIPP_PV%:*}/zipp-${ZIPP_PV#*:}-py3-none-any.whl
+
+${_PYPI_URLS}
 "
 # Has .gitmodules:
 # triton
@@ -177,7 +328,7 @@ LICENSE="
 		BSD-2
 	)
 "
-#KEYWORDS="~amd64 ~arm64" # Needs install test
+KEYWORDS="~amd64 ~arm64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${ROCM_IUSE}
@@ -265,7 +416,7 @@ REQUIRED_USE+="
 # hipsolver
 
 ROCM_SLOTS=(
-# See https://github.com/google/jax/blob/jaxlib-v0.4.27/build/rocm/Dockerfile.ms
+# See https://github.com/google/jax/blob/jaxlib-v0.4.29/build/rocm/Dockerfile.ms
 	"${HIP_6_0_VERSION}" # For llvm 17, relaxed, upstream uses 6.0.0
 )
 
@@ -382,7 +533,7 @@ BDEPEND+="
 	)
 "
 
-S="${WORKDIR}/jax-jaxlib-v${PV}"
+S="${WORKDIR}/jax-jax-v${PV}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md CITATION.bib README.md )
 ROCM_PATCHES=(
@@ -713,7 +864,7 @@ eerror
 	java-pkg-opt-2_pkg_setup
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 
-#	check_network_sandbox_permissions
+	check_network_sandbox_permissions # Required because rules_python/pip cannot do offline easily.
 }
 
 src_unpack() {
@@ -726,7 +877,17 @@ src_unpack() {
 	unpack "openxla-xla-${EGIT_XLA_COMMIT}.zip"
 	mkdir -p "${WORKDIR}/tarballs" || die
 	mkdir -p "${WORKDIR}/patches" || die
+#	pushd "${S}" || die
+#		eapply "${FILESDIR}/jaxlib-0.4.29-rules_python-pip-offline.patch"
+#	popd || die
 	bazel_load_distfiles "${bazel_external_uris}"
+
+#	pushd "${WORKDIR}" || die
+#		unpack "rules_python-${RULES_PYTHON_PV}.tar.gz"
+#		pushd "${WORKDIR}/rules_python-${RULES_PYTHON_PV}" || die
+#			eapply "${FILESDIR}/jaxlib-0.4.29-rules_python-pip-offline2.patch"
+#		popd || die
+#	popd || die
 }
 
 load_env() {
@@ -981,7 +1142,7 @@ python_compile() {
 		)
 	fi
 
-# See https://github.com/openxla/xla/blob/873d09720f83cbbebf2a2a381c09be8fa0934b36/third_party/tsl/third_party/systemlibs/syslibs_configure.bzl#L11
+# See https://github.com/openxla/xla/blob/32ba408c0e2b7ef5f5821c0781601ba17d467076/third_party/tsl/third_party/systemlibs/syslibs_configure.bzl#L11
 	local SYSLIBS=(
 #		absl_py
 #		astor_archive
@@ -1084,7 +1245,7 @@ einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 
 	# See
 	# https://jax.readthedocs.io/en/latest/developer.html#additional-notes-for-building-a-rocm-jaxlib-for-amd-gpus
-	# https://github.com/google/jax/blob/jaxlib-v0.4.27/build/rocm/build_rocm.sh
+	# https://github.com/google/jax/blob/jaxlib-v0.4.29/build/rocm/build_rocm.sh
 		args+=(
 			--bazel_options="--override_repository=xla=${WORKDIR}/xla-${EGIT_XLA_COMMIT}"
 			--enable_rocm
@@ -1101,7 +1262,7 @@ einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 	fi
 
 	if use debug ; then
-# For showing function names in gdb
+# For showing gdb function names
 		echo 'build --config=debug_symbols' >> ".bazelrc.user" || die
 	fi
 
@@ -1121,6 +1282,18 @@ einfo "Running:  ${EPYTHON} build/build.py --configure_only ${args[@]}"
 
 	echo "build --action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> ".bazelrc.user" || die
 	echo "build --host_action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> ".bazelrc.user" || die
+
+	echo "build:override_rules_python --override_repository=rules_python=${WORKDIR}/rules_python-${RULES_PYTHON_PV}" >> ".bazelrc.user" || die
+
+	mkdir -p ~/.cache/pip || die
+	cp -L "${DISTDIR}/"*".whl" ~/.cache/pip || die
+
+#cat <<EOF > "${WORKDIR}/bin"
+##!/bin/bash
+#/usr/bin/pip  $@
+#EOF
+	echo "build --action_env=XDG_CACHE_HOME=\"${HOME}/.cache/pip\"" >> ".bazelrc.user" || die
+	echo "build --host_action_env=XDG_CACHE_HOME=\"${HOME}/.cache/pip\"" >> ".bazelrc.user" || die
 
 	if has_version "dev-java/openjdk-bin:11" ; then
 		local jdk_path=$(realpath "/opt/openjdk-bin-11")
@@ -1146,7 +1319,6 @@ einfo "Adding build --sandbox_writable_path=\"${ccache_dir}\" to .bazelrc.user"
 		echo "build --host_action_env=CCACHE_DIR=\"${ccache_dir}\"" >> ".bazelrc.user" || die
 		echo "build --sandbox_writable_path=${ccache_dir}" >> ".bazelrc.user" || die
 	fi
-	sed -i -e "/nodistinct_host_configuration/d" ".bazelrc.user" || die
 
 	if use cuda ; then
 		sed -i \
@@ -1179,11 +1351,12 @@ einfo "Building wheel for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 		|| die
 
 	# Keep in sync with
-	# https://github.com/google/jax/blob/jaxlib-v0.4.27/build/build.py#L546
+	# https://github.com/google/jax/blob/jaxlib-v0.4.29/build/build.py#L546
 	_ebazel run \
 		--verbose_failures=true \
 		-s \
 		"//jaxlib/tools:build_wheel" \
+		--config=override_rules_python \
 		-- \
 		--output_path="${PWD}/dist" \
 		--cpu=$(get_host) \
