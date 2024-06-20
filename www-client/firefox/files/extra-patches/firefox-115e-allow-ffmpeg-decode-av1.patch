@@ -5,8 +5,8 @@
    if (mCodecContext->pix_fmt == AV_PIX_FMT_YUV444P ||
        mCodecContext->pix_fmt == AV_PIX_FMT_YUV444P10LE ||
 +#if defined(FFMPEG_AV1_DECODE) \
-+    || ( LIBAVCODEC_VERSION_MAJOR == 58 && LIBAVCODEC_VERSION_MINOR >= 91 ) \
-+    || ( LIBAVCODEC_VERSION_MAJOR >= 59 )
++    && ( ( LIBAVCODEC_VERSION_MAJOR == 58 && LIBAVCODEC_VERSION_MINOR >= 91 ) \
++    ||   ( LIBAVCODEC_VERSION_MAJOR >= 59 ) )
        mCodecContext->pix_fmt == AV_PIX_FMT_GBRP
 +#else
 +      0
@@ -20,8 +20,8 @@
  
 -#if defined(FFMPEG_AV1_DECODE)
 +#if defined(FFMPEG_AV1_DECODE) \
-+  || ( LIBAVCODEC_VERSION_MAJOR == 58 && LIBAVCODEC_VERSION_MINOR >= 91 ) \
-+  || ( LIBAVCODEC_VERSION_MAJOR >= 59 )
++  && ( ( LIBAVCODEC_VERSION_MAJOR == 58 && LIBAVCODEC_VERSION_MINOR >= 91 ) \
++  ||   ( LIBAVCODEC_VERSION_MAJOR >= 59 ) )
    if (AOMDecoder::IsAV1(aMimeType)) {
      return AV_CODEC_ID_AV1;
    }
