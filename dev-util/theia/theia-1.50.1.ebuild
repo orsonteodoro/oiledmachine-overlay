@@ -2855,7 +2855,7 @@ THIRD_PARTY_LICENSES="
 LICENSE="
 	${ELECTRON_APP_LICENSES}
 	${THIRD_PARTY_LICENSES}
-	electron-23.3.13-chromium.html
+	electron-28.2.10-chromium.html
 	EPL-2.0
 	GPL-2-with-classpath-exception
 "
