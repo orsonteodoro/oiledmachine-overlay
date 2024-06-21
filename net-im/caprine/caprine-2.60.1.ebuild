@@ -11,7 +11,7 @@ NPM_INSTALL_PATH="/opt/${PN}"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV}.AppImage"
 #ELECTRON_APP_SNAP="1"
 ELECTRON_APP_SNAP_ARCHIVE_NAME="${PN}_${PV}_amd64.snap"
-ELECTRON_APP_ELECTRON_PV="29.2.0"
+ELECTRON_APP_ELECTRON_PV="29.4.2"
 ELECTRON_APP_TYPESCRIPT_PV="5.4.4"
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 NODE_VERSION=20 # Upstream uses 20.11.1
@@ -1174,6 +1174,7 @@ KEYWORDS="~amd64"
 
 DESCRIPTION="Elegant Facebook Messenger desktop app"
 HOMEPAGE="https://github.com/sindresorhus/caprine"
+# The 29.4.2 license has the same fingerprint as 29.1.1.
 LICENSE="
 	MIT
 	electron-29.1.1-chromium.html
@@ -1185,7 +1186,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0"
 # Deps based on their CI
-IUSE+=" ebuild-revision-1"
+IUSE+=" ebuild-revision-3"
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-16[npm]
