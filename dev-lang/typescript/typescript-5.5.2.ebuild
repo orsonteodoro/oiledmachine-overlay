@@ -433,3 +433,12 @@ pkg_postinst() {
 #  87478 passing (15m)
 #
 #Finished do-runtests-parallel in 15m 11.9s
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (test suite) 5.5.2 (20240620)
+#12 errors
+#Error in lint in 2m 45.1s
+#  [▬▬▬▬▬▬▬▬▬▬] ✔ 94798 passing (24m)
+#
+#
+#  94798 passing (24m)
+
