@@ -6,7 +6,7 @@ EAPI=8
 
 # U 22.04
 
-DISTUTILS_USE_PEP517="poetry"
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10,11} ) # Can support 3.12 but limited by Nuitka
 
 inherit lcnr distutils-r1
@@ -44,7 +44,9 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/Nuitka-0.6.19.1[${PYTHON_USEDEP}]
 	>=dev-python/poetry-1.1.12[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-46.4[${PYTHON_USEDEP}]
 	>=dev-build/make-4.3
+	dev-python/wheel[${PYTHON_USEDEP}]
 "
 
 set_gui_port() {
