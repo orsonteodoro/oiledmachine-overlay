@@ -24,15 +24,9 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" gtk3 html hwmon openrc qt6 systemd wayland X ebuild-revision-1"
+IUSE+=" gtk3 html hwmon openrc systemd wayland X ebuild-revision-1"
 REQUIRED_USE="
 	gtk3? (
-		|| (
-			wayland
-			X
-		)
-	)
-	qt6? (
 		|| (
 			wayland
 			X
@@ -41,7 +35,6 @@ REQUIRED_USE="
 	|| (
 		gtk3
 		html
-		qt6
 	)
 "
 RDEPEND+="
@@ -49,9 +42,6 @@ RDEPEND+="
 	~sys-apps/coolercontrold-${PV}[hwmon?,openrc?,systemd?]
 	gtk3? (
 		~sys-apps/coolercontrol-ui-${PV}[wayland?,X?]
-	)
-	qt6? (
-		~sys-apps/coolercontrol-gui-${PV}[${PYTHON_USEDEP},hwmon?,wayland?,X?]
 	)
 "
 DEPEND+="
