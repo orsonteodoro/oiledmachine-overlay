@@ -36,6 +36,7 @@ else
 fi
 
 _npm_set_globals() {
+	NPM_DEDUPE=${NPM_DEDUPE:-0}
 	NPM_NETWORK_FETCH_RETRIES=${NPM_NETWORK_FETCH_RETRIES:-7}
 	NPM_NETWORK_MAX_SOCKETS=${NPM_NETWORK_MAX_SOCKETS:-1}
 	NPM_NETWORK_RETRY_MAXTIMEOUT=${NPM_NETWORK_RETRY_MAXTIMEOUT:-300000}
@@ -572,6 +573,10 @@ npm_src_unpack() {
 			${NPM_AUDIT_FIX_ARGS[@]}
 		if declare -f npm_update_lock_audit_post > /dev/null 2>&1 ; then
 			npm_update_lock_audit_post
+		fi
+
+		if [[ "${NPM_DEDUPE}" == "1" ]] ; then
+			enpm dedupe
 		fi
 
 		if declare -f npm_save_lockfiles > /dev/null 2>&1 ; then
