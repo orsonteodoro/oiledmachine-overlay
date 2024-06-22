@@ -27,7 +27,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" openrc systemd r1"
+IUSE+=" openrc systemd ebuild-revision-1"
 RDEPEND+="
 	${PYTHON_DEPS}
 	>=app-misc/liquidctl-1.5.1[${PYTHON_USEDEP}]

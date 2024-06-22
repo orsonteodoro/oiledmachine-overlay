@@ -24,7 +24,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" gtk3 html hwmon openrc qt6 systemd wayland X r1"
+IUSE+=" gtk3 html hwmon openrc qt6 systemd wayland X ebuild-revision-1"
 REQUIRED_USE="
 	gtk3? (
 		|| (
