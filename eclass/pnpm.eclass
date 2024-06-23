@@ -66,6 +66,8 @@ eerror
 # @DESCRIPTION:
 # Wrapper for the pnpm command.
 epnpm() {
+einfo "Current directory:\t${PWD}"
+einfo "Running:\t\tpnpm $@"
 	pnpm "$@" || die
 }
 

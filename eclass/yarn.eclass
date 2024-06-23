@@ -353,6 +353,8 @@ _yarn_src_unpack_default_ebuild() {
 		yarn_unpack_install_pre
 	fi
 	eyarn install \
+		--network-concurrency ${YARN_NETWORK_CONCURRENT_CONNECTIONS} \
+		--network-timeout ${YARN_NETWORK_TIMEOUT} \
 		--prefer-offline \
 		--pure-lockfile \
 		--verbose \
@@ -469,8 +471,9 @@ einfo "Skipping audit fix."
 	local tries
 	tries=0
 	while (( ${tries} < ${NPM_TRIES} )) ; do
-einfo "Tries:\t${tries}"
-einfo "Running:\tnpm ${cmd[@]}"
+einfo "Current directory:\t${PWD}"
+einfo "Tries:\t\t${tries}"
+einfo "Running:\t\tnpm ${cmd[@]}"
 		npm "${cmd[@]}" || die
 		if ! grep -q -E -r -e "(EAI_AGAIN|ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
 			break

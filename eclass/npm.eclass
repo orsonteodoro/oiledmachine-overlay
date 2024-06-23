@@ -435,8 +435,9 @@ einfo "Skipping audit fix."
 	local tries
 	tries=0
 	while (( ${tries} < ${NPM_TRIES} )) ; do
-einfo "Tries:\t${tries}"
-einfo "Running:\tnpm ${cmd[@]}"
+einfo "Current directory:\t${PWD}"
+einfo "Tries:\t\t${tries}"
+einfo "Running:\t\tnpm ${cmd[@]}"
 		npm "${cmd[@]}" || die
 		if ! grep -q -E -r -e "(EAI_AGAIN|ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
 			break
