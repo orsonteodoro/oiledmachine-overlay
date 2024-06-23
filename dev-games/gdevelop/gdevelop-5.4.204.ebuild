@@ -51,6 +51,7 @@ NPM_AUDIT_FIX_ARGS=(
 )
 PYTHON_COMPAT=( python3_{10,11} ) # CI uses 3.8, 3.9
 
+# Using yarn results in failures.
 inherit check-reqs desktop electron-app evar_dump flag-o-matic llvm-r1 npm
 inherit python-r1 toolchain-funcs xdg
 
@@ -2153,11 +2154,11 @@ __src_unpack_all_production() {
 	fi
 
 	local lockfiles=(
-		"newIDE/app/package-lock.json"			# Required step #2  # Cannot use yarn import
-		"GDevelop.js/package-lock.json"			# Required step #1  # Cannot use yarn import
-		"GDJS/package-lock.json"			# Required step #2a
+		"newIDE/app/package-lock.json"			# Required step #2		# yarn import does not work.
+		"GDevelop.js/package-lock.json"			# Required step #1		# yarn import does not work.
+		"GDJS/package-lock.json"			# Required step #2_postinstall
 		"newIDE/electron-app/package-lock.json"		# Required step #3
-		"newIDE/electron-app/app/package-lock.json"	# Required step #3a
+		"newIDE/electron-app/app/package-lock.json"	# Required step #3_postinstall
 #		"newIDE/web-app/package-lock.json"
 #		"GDJS/tests/package-lock.json"
 	)
@@ -2291,11 +2292,11 @@ einfo "Building ${MY_PN}.js"
 		mkdir -p "${WORKDIR}/lockfile-image" || die
 
 		local lockfiles=(
-			"GDevelop.js/package-lock.json"			# Required step #1  # Cannot use yarn import
-			"newIDE/app/package-lock.json"			# Required step #2  # Cannot use yarn import
-			"GDJS/package-lock.json"			# Required step #2a
+			"GDevelop.js/package-lock.json"			# Required step #1		# yarn import does not work.
+			"newIDE/app/package-lock.json"			# Required step #2		# yarn import does not work.
+			"GDJS/package-lock.json"			# Required step #2_postinstall
 			"newIDE/electron-app/package-lock.json"		# Required step #3
-			"newIDE/electron-app/app/package-lock.json"	# Required step #3a
+			"newIDE/electron-app/app/package-lock.json"	# Required step #3_postinstall
 			"newIDE/web-app/package-lock.json"		# Optional
 			"GDJS/tests/package-lock.json"			# Optional
 		)
