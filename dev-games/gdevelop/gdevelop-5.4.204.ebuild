@@ -1953,6 +1953,7 @@ SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+="
 	${LLVM_COMPAT[@]/#/llvm_slot_}
+	-analytics
 	ebuild-revision-4
 "
 REQUIRED_USE+="
@@ -2359,18 +2360,15 @@ eerror "ABI=${ABI} is not supported."
 src_prepare() {
 	default
 
-	eapply \
-"${FILESDIR}/${PN}-5.0.0_beta97-use-emscripten-envvar-for-webidl_binder_py.patch"
-	eapply \
-"${FILESDIR}/${PN}-5.0.0_beta108-unix-make.patch"
-#	eapply \
-#"${FILESDIR}/${PN}-5.0.127-fix-cmake-cxx-tests.patch"
-	eapply --binary \
-"${FILESDIR}/${PN}-5.0.127-SFML-define-linux-00.patch"
-	eapply \
-"${FILESDIR}/${PN}-5.0.127-SFML-define-linux-01.patch"
-	eapply \
-"${FILESDIR}/${PN}-5.3.198-electron-builder-placeholder.patch"
+	if ! use analytics ; then
+		eapply "${FILESDIR}/${PN}-5.4.204-disable-analytics.patch"
+	fi
+	eapply "${FILESDIR}/${PN}-5.0.0_beta97-use-emscripten-envvar-for-webidl_binder_py.patch"
+	eapply "${FILESDIR}/${PN}-5.0.0_beta108-unix-make.patch"
+#	eapply #"${FILESDIR}/${PN}-5.0.127-fix-cmake-cxx-tests.patch"
+	eapply --binary "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-00.patch"
+	eapply "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-01.patch"
+	eapply "${FILESDIR}/${PN}-5.3.198-electron-builder-placeholder.patch"
 
 	gen_electron_builder_config
 
@@ -2520,13 +2518,6 @@ einfo "Your projects are saved in"
 einfo
 einfo "  \"\$(xdg-user-dir DOCUMENTS)/${MY_PN} projects\""
 einfo
-ewarn
-ewarn "Games may send anonymous statistics.  See the following commits for"
-ewarn "details:"
-ewarn
-ewarn "  https://github.com/4ian/GDevelop/commit/5d62f0c92655a3d83b8d5763c87d0226594478d1"
-ewarn "  https://github.com/4ian/GDevelop/commit/f650a6aa9cf5d123f1e5fe632a2523f2ac2faaaf"
-ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

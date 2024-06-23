@@ -24,7 +24,10 @@
     <doc lang="en">https://docs.gdevelop-app.com/GDCore%20Documentation/</doc>
   </upstream>
   <use>
-    <flag name="rN">
+    <flag name="analytics">
+      Allow to track user session time to upstream developer server.
+    </flag>
+    <flag name="ebuild-revision-1">
       Bumps ebuild revision (FOR INTERNAL USE ONLY)
     </flag>
   </use>
