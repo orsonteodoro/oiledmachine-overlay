@@ -2159,8 +2159,8 @@ __src_unpack_all_production() {
 	fi
 
 	local lockfiles=(
-		"newIDE/app/package-lock.json"			# Required step #2
-		"GDevelop.js/package-lock.json"			# Required step #1
+		"newIDE/app/package-lock.json"			# Required step #2  # Cannot use yarn import
+		"GDevelop.js/package-lock.json"			# Required step #1  # Cannot use yarn import
 		"GDJS/package-lock.json"			# Required step #2a
 		"newIDE/electron-app/package-lock.json"		# Required step #3
 		"newIDE/electron-app/app/package-lock.json"	# Required step #3a
@@ -2297,8 +2297,8 @@ einfo "Building ${MY_PN}.js"
 		mkdir -p "${WORKDIR}/lockfile-image" || die
 
 		local lockfiles=(
-			"GDevelop.js/package-lock.json"			# Required step #1
-			"newIDE/app/package-lock.json"			# Required step #2
+			"GDevelop.js/package-lock.json"			# Required step #1  # Cannot use yarn import
+			"newIDE/app/package-lock.json"			# Required step #2  # Cannot use yarn import
 			"GDJS/package-lock.json"			# Required step #2a
 			"newIDE/electron-app/package-lock.json"		# Required step #3
 			"newIDE/electron-app/app/package-lock.json"	# Required step #3a
