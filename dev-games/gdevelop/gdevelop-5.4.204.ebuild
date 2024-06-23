@@ -56,25 +56,6 @@ inherit python-r1 toolchain-funcs xdg
 
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
-http://registry.npmjs.org/commander/-/commander-0.6.1.tgz -> npmpkg-commander-0.6.1.tgz
-http://registry.npmjs.org/commander/-/commander-2.3.0.tgz -> npmpkg-commander-2.3.0.tgz
-http://registry.npmjs.org/debug/-/debug-2.0.0.tgz -> npmpkg-debug-2.0.0.tgz
-http://registry.npmjs.org/debug/-/debug-2.2.0.tgz -> npmpkg-debug-2.2.0.tgz
-http://registry.npmjs.org/debug/-/debug-2.3.3.tgz -> npmpkg-debug-2.3.3.tgz
-http://registry.npmjs.org/http-errors/-/http-errors-1.6.3.tgz -> npmpkg-http-errors-1.6.3.tgz
-http://registry.npmjs.org/lodash/-/lodash-3.10.1.tgz -> npmpkg-lodash-3.10.1.tgz
-http://registry.npmjs.org/log4js/-/log4js-0.6.38.tgz -> npmpkg-log4js-0.6.38.tgz
-http://registry.npmjs.org/minimist/-/minimist-0.0.8.tgz -> npmpkg-minimist-0.0.8.tgz
-http://registry.npmjs.org/minimist/-/minimist-1.2.0.tgz -> npmpkg-minimist-1.2.0.tgz
-http://registry.npmjs.org/mkdirp/-/mkdirp-0.3.0.tgz -> npmpkg-mkdirp-0.3.0.tgz
-http://registry.npmjs.org/mkdirp/-/mkdirp-0.5.0.tgz -> npmpkg-mkdirp-0.5.0.tgz
-http://registry.npmjs.org/mocha/-/mocha-1.21.5.tgz -> npmpkg-mocha-1.21.5.tgz
-http://registry.npmjs.org/ms/-/ms-0.6.2.tgz -> npmpkg-ms-0.6.2.tgz
-http://registry.npmjs.org/ms/-/ms-0.7.1.tgz -> npmpkg-ms-0.7.1.tgz
-http://registry.npmjs.org/ms/-/ms-0.7.2.tgz -> npmpkg-ms-0.7.2.tgz
-http://registry.npmjs.org/readable-stream/-/readable-stream-1.0.34.tgz -> npmpkg-readable-stream-1.0.34.tgz
-http://registry.npmjs.org/readable-stream/-/readable-stream-2.3.6.tgz -> npmpkg-readable-stream-2.3.6.tgz
-http://registry.npmjs.org/semver/-/semver-4.3.6.tgz -> npmpkg-semver-4.3.6.tgz
 https://github.com/4ian/lingui-react/archive/dc6b1e013470d952cf85f96cc4affdd28e29634a.tar.gz -> npmpkg-lingui-react.git-dc6b1e013470d952cf85f96cc4affdd28e29634a.tgz
 https://github.com/4ian/react-mosaic/archive/d5ef155119d786c08c7c72e34997dcef2f01f98b.tar.gz -> npmpkg-react-mosaic.git-d5ef155119d786c08c7c72e34997dcef2f01f98b.tgz
 https://github.com/4ian/webidl-tools/archive/348f9c03afc9d8f278efccdd74543e265a41fd11.tar.gz -> npmpkg-webidl-tools.git-348f9c03afc9d8f278efccdd74543e265a41fd11.tgz
@@ -715,7 +696,9 @@ https://registry.npmjs.org/colors/-/colors-1.3.2.tgz -> npmpkg-colors-1.3.2.tgz
 https://registry.npmjs.org/combine-lists/-/combine-lists-1.0.1.tgz -> npmpkg-combine-lists-1.0.1.tgz
 https://registry.npmjs.org/combined-stream/-/combined-stream-1.0.5.tgz -> npmpkg-combined-stream-1.0.5.tgz
 https://registry.npmjs.org/combined-stream/-/combined-stream-1.0.8.tgz -> npmpkg-combined-stream-1.0.8.tgz
+https://registry.npmjs.org/commander/-/commander-0.6.1.tgz -> npmpkg-commander-0.6.1.tgz
 https://registry.npmjs.org/commander/-/commander-2.20.3.tgz -> npmpkg-commander-2.20.3.tgz
+https://registry.npmjs.org/commander/-/commander-2.3.0.tgz -> npmpkg-commander-2.3.0.tgz
 https://registry.npmjs.org/commander/-/commander-5.1.0.tgz -> npmpkg-commander-5.1.0.tgz
 https://registry.npmjs.org/commander/-/commander-6.2.1.tgz -> npmpkg-commander-6.2.1.tgz
 https://registry.npmjs.org/commander/-/commander-8.3.0.tgz -> npmpkg-commander-8.3.0.tgz
@@ -766,7 +749,9 @@ https://registry.npmjs.org/cycle/-/cycle-1.0.3.tgz -> npmpkg-cycle-1.0.3.tgz
 https://registry.npmjs.org/d/-/d-1.0.1.tgz -> npmpkg-d-1.0.1.tgz
 https://registry.npmjs.org/dashdash/-/dashdash-1.14.1.tgz -> npmpkg-dashdash-1.14.1.tgz
 https://registry.npmjs.org/dateformat/-/dateformat-1.0.12.tgz -> npmpkg-dateformat-1.0.12.tgz
+https://registry.npmjs.org/debug/-/debug-2.0.0.tgz -> npmpkg-debug-2.0.0.tgz
 https://registry.npmjs.org/debug/-/debug-2.2.0.tgz -> npmpkg-debug-2.2.0.tgz
+https://registry.npmjs.org/debug/-/debug-2.3.3.tgz -> npmpkg-debug-2.3.3.tgz
 https://registry.npmjs.org/debug/-/debug-2.6.9.tgz -> npmpkg-debug-2.6.9.tgz
 https://registry.npmjs.org/debug/-/debug-3.1.0.tgz -> npmpkg-debug-3.1.0.tgz
 https://registry.npmjs.org/debug/-/debug-4.1.1.tgz -> npmpkg-debug-4.1.1.tgz
@@ -1103,6 +1088,7 @@ https://registry.npmjs.org/htmlparser2/-/htmlparser2-6.1.0.tgz -> npmpkg-htmlpar
 https://registry.npmjs.org/http-auth/-/http-auth-3.1.3.tgz -> npmpkg-http-auth-3.1.3.tgz
 https://registry.npmjs.org/http-cache-semantics/-/http-cache-semantics-4.1.0.tgz -> npmpkg-http-cache-semantics-4.1.0.tgz
 https://registry.npmjs.org/http-errors/-/http-errors-1.6.2.tgz -> npmpkg-http-errors-1.6.2.tgz
+https://registry.npmjs.org/http-errors/-/http-errors-1.6.3.tgz -> npmpkg-http-errors-1.6.3.tgz
 https://registry.npmjs.org/http-parser-js/-/http-parser-js-0.4.10.tgz -> npmpkg-http-parser-js-0.4.10.tgz
 https://registry.npmjs.org/http-proxy-agent/-/http-proxy-agent-5.0.0.tgz -> npmpkg-http-proxy-agent-5.0.0.tgz
 https://registry.npmjs.org/http-proxy/-/http-proxy-1.17.0.tgz -> npmpkg-http-proxy-1.17.0.tgz
@@ -1303,6 +1289,7 @@ https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz -> npmpkg-lodash-4.17.21.
 https://registry.npmjs.org/lodash/-/lodash-4.17.4.tgz -> npmpkg-lodash-4.17.4.tgz
 https://registry.npmjs.org/lodash/-/lodash-4.3.0.tgz -> npmpkg-lodash-4.3.0.tgz
 https://registry.npmjs.org/log-symbols/-/log-symbols-4.1.0.tgz -> npmpkg-log-symbols-4.1.0.tgz
+https://registry.npmjs.org/log4js/-/log4js-0.6.38.tgz -> npmpkg-log4js-0.6.38.tgz
 https://registry.npmjs.org/longest/-/longest-1.0.1.tgz -> npmpkg-longest-1.0.1.tgz
 https://registry.npmjs.org/loud-rejection/-/loud-rejection-1.6.0.tgz -> npmpkg-loud-rejection-1.6.0.tgz
 https://registry.npmjs.org/lower-case/-/lower-case-2.0.2.tgz -> npmpkg-lower-case-2.0.2.tgz
@@ -1369,12 +1356,17 @@ https://registry.npmjs.org/minizlib/-/minizlib-2.1.2.tgz -> npmpkg-minizlib-2.1.
 https://registry.npmjs.org/mixin-deep/-/mixin-deep-1.3.1.tgz -> npmpkg-mixin-deep-1.3.1.tgz
 https://registry.npmjs.org/mixin-deep/-/mixin-deep-1.3.2.tgz -> npmpkg-mixin-deep-1.3.2.tgz
 https://registry.npmjs.org/mkdirp-classic/-/mkdirp-classic-0.5.3.tgz -> npmpkg-mkdirp-classic-0.5.3.tgz
+https://registry.npmjs.org/mkdirp/-/mkdirp-0.3.0.tgz -> npmpkg-mkdirp-0.3.0.tgz
+https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.0.tgz -> npmpkg-mkdirp-0.5.0.tgz
 https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.1.tgz -> npmpkg-mkdirp-0.5.1.tgz
 https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.5.tgz -> npmpkg-mkdirp-0.5.5.tgz
 https://registry.npmjs.org/mkdirp/-/mkdirp-1.0.4.tgz -> npmpkg-mkdirp-1.0.4.tgz
+https://registry.npmjs.org/mocha/-/mocha-1.21.5.tgz -> npmpkg-mocha-1.21.5.tgz
 https://registry.npmjs.org/mock-xmlhttprequest/-/mock-xmlhttprequest-8.2.0.tgz -> npmpkg-mock-xmlhttprequest-8.2.0.tgz
 https://registry.npmjs.org/morgan/-/morgan-1.9.0.tgz -> npmpkg-morgan-1.9.0.tgz
+https://registry.npmjs.org/ms/-/ms-0.6.2.tgz -> npmpkg-ms-0.6.2.tgz
 https://registry.npmjs.org/ms/-/ms-0.7.1.tgz -> npmpkg-ms-0.7.1.tgz
+https://registry.npmjs.org/ms/-/ms-0.7.2.tgz -> npmpkg-ms-0.7.2.tgz
 https://registry.npmjs.org/ms/-/ms-2.0.0.tgz -> npmpkg-ms-2.0.0.tgz
 https://registry.npmjs.org/ms/-/ms-2.1.2.tgz -> npmpkg-ms-2.1.2.tgz
 https://registry.npmjs.org/multimatch/-/multimatch-2.1.0.tgz -> npmpkg-multimatch-2.1.0.tgz
@@ -1556,6 +1548,7 @@ https://registry.npmjs.org/read-pkg/-/read-pkg-5.2.0.tgz -> npmpkg-read-pkg-5.2.
 https://registry.npmjs.org/readable-stream/-/readable-stream-1.0.34.tgz -> npmpkg-readable-stream-1.0.34.tgz
 https://registry.npmjs.org/readable-stream/-/readable-stream-1.1.14.tgz -> npmpkg-readable-stream-1.1.14.tgz
 https://registry.npmjs.org/readable-stream/-/readable-stream-2.3.3.tgz -> npmpkg-readable-stream-2.3.3.tgz
+https://registry.npmjs.org/readable-stream/-/readable-stream-2.3.6.tgz -> npmpkg-readable-stream-2.3.6.tgz
 https://registry.npmjs.org/readable-stream/-/readable-stream-2.3.7.tgz -> npmpkg-readable-stream-2.3.7.tgz
 https://registry.npmjs.org/readable-stream/-/readable-stream-3.6.2.tgz -> npmpkg-readable-stream-3.6.2.tgz
 https://registry.npmjs.org/readdirp/-/readdirp-2.2.1.tgz -> npmpkg-readdirp-2.2.1.tgz
@@ -1616,6 +1609,7 @@ https://registry.npmjs.org/sax/-/sax-1.3.0.tgz -> npmpkg-sax-1.3.0.tgz
 https://registry.npmjs.org/schema-utils/-/schema-utils-3.3.0.tgz -> npmpkg-schema-utils-3.3.0.tgz
 https://registry.npmjs.org/schema-utils/-/schema-utils-4.2.0.tgz -> npmpkg-schema-utils-4.2.0.tgz
 https://registry.npmjs.org/semver-compare/-/semver-compare-1.0.0.tgz -> npmpkg-semver-compare-1.0.0.tgz
+https://registry.npmjs.org/semver/-/semver-4.3.6.tgz -> npmpkg-semver-4.3.6.tgz
 https://registry.npmjs.org/semver/-/semver-5.4.1.tgz -> npmpkg-semver-5.4.1.tgz
 https://registry.npmjs.org/semver/-/semver-5.7.1.tgz -> npmpkg-semver-5.7.1.tgz
 https://registry.npmjs.org/semver/-/semver-6.3.0.tgz -> npmpkg-semver-6.3.0.tgz
@@ -2190,7 +2184,7 @@ einfo "Running \`npm install ${NPM_INSTALL_ARGS[@]}\` per each lockfile"
 				${NPM_INSTALL_ARGS[@]}
 		popd >/dev/null 2>&1 || die
 	done
-einfo "Running \`npm install ${NPM_INSTALL_ARGS[@]}\` per each lockfile"
+einfo "Running \`npm audit fix ${NPM_AUDIT_FIX_ARGS[@]}\` per each lockfile"
 	local lockfile
 	for lockfile in ${lockfiles[@]} ; do
 		local d="$(dirname ${lockfile})"
