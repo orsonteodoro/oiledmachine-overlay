@@ -22,6 +22,7 @@
   "devDependencies": {
     "@electron/notarize": "^2.1.0",
     "adm-zip": "^0.5.10",
+    "app-builder-lib": "^24.13.2",
     "dotenv": "^8.2.0",
     "electron": "18.2.2",
     "electron-builder": "^24.9.1",

@@ -10,22 +10,30 @@
   "dependencies": {
     "@electron/remote": "^2.0.8",
     "archiver": "^2.1.1",
-    "async": "^2.6.0",
-    "axios": "^0.19.1",
+    "async": "^2.6.4",
+    "axios": "^0.21.2",
+    "braces": "^3.0.3",
     "chokidar": "3.5.3",
+    "debug": "^2.6.9",
+    "decode-uri-component": "^0.2.1",
     "discord-rich-presence": "^0.0.8",
     "dotenv": "^4.0.0",
     "electron-editor-context-menu": "^1.1.1",
     "electron-is": "^2.4.0",
     "electron-log": "^4.1.1",
     "electron-updater": "4.2.0",
+    "follow-redirects": "^1.14.7",
     "fs-extra": "^3.0.1",
+    "glob-parent": "^5.1.2",
     "live-server": "^1.2.0",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
+    "minimatch": "^3.0.5",
     "minimist": "^1.2.6",
     "morgan": "^1.9.1",
+    "node-fetch": "^2.6.7",
     "steamworks.js": "0.3.1",
-    "ws": "^5.1.1"
+    "websocket-extensions": "^0.1.4",
+    "ws": "^7.5.10"
   }
 }
