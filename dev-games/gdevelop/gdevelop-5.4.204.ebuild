@@ -2287,6 +2287,7 @@ einfo "Fixing critical vulnerabilities"
 				sed -i -e "s|\"json-schema\": \"0.2.3\",|\"json-schema\": \"^0.4.0\",|g" "package-lock.json" || die	# [12]
 				sed -i -e "s|\"lodash\": \"~1.3.1\",|\"lodash\": \"~4.17.12\",|g" "package-lock.json" || die		# [12]
 				sed -i -e "s|\"lodash\": \"~3.10.1\",|\"lodash\": \"~4.17.12\",|g" "package-lock.json" || die		# [12]
+				sed -i -e "s|\"lodash\": \"~4.3.0\"|\"lodash\": \"~4.17.12\"|g" "package-lock.json" || die		# [12]
 				sed -i -e "s|\"lodash\": \"~4.3.0\",|\"lodash\": \"~4.17.12\",|g" "package-lock.json" || die		# [12]
 
 				enpm install "cryptiles@4.1.2" -D		# [11]
