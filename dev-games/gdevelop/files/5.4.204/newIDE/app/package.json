@@ -40,7 +40,7 @@
     "react-scripts": "5.0.1",
     "recursive-copy": "^2.0.14",
     "recursive-readdir": "^2.2.2",
-    "shelljs": "0.8.4",
+    "shelljs": "^0.8.5",
     "storybook": "^7.4.0",
     "storybook-addon-mock": "4.2.1",
     "style-dictionary": "^2.10.2",

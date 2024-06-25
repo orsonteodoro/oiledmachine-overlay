@@ -21,6 +21,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.3.1",
+    "bl": "^1.2.3",
     "braces": "^3.0.3",
     "cryptiles": "^4.1.2",
     "ejs": "^3.1.7",
@@ -42,7 +43,7 @@
     "lodash": "^4.17.19",
     "minimist": "^1.2.6",
     "prettier": "^3.2.2",
-    "shelljs": "^0.8.4",
+    "shelljs": "^0.8.5",
     "tar": "^4.4.18",
     "webidl-tools": "github:4ian/webidl-tools#348f9c03afc9d8f278efccdd74543e265a41fd11"
   },

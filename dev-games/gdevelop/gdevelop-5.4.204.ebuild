@@ -607,6 +607,7 @@ https://registry.npmjs.org/binary-extensions/-/binary-extensions-1.13.1.tgz -> n
 https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.3.0.tgz -> npmpkg-binary-extensions-2.3.0.tgz
 https://registry.npmjs.org/bindings/-/bindings-1.5.0.tgz -> npmpkg-bindings-1.5.0.tgz
 https://registry.npmjs.org/bl/-/bl-1.2.1.tgz -> npmpkg-bl-1.2.1.tgz
+https://registry.npmjs.org/bl/-/bl-1.2.3.tgz -> npmpkg-bl-1.2.3.tgz
 https://registry.npmjs.org/bl/-/bl-4.1.0.tgz -> npmpkg-bl-4.1.0.tgz
 https://registry.npmjs.org/block-stream/-/block-stream-0.0.9.tgz -> npmpkg-block-stream-0.0.9.tgz
 https://registry.npmjs.org/bluebird-lst/-/bluebird-lst-1.0.9.tgz -> npmpkg-bluebird-lst-1.0.9.tgz
@@ -1249,7 +1250,6 @@ https://registry.npmjs.org/lodash.isfunction/-/lodash.isfunction-3.0.8.tgz -> np
 https://registry.npmjs.org/lodash.isplainobject/-/lodash.isplainobject-4.0.6.tgz -> npmpkg-lodash.isplainobject-4.0.6.tgz
 https://registry.npmjs.org/lodash.throttle/-/lodash.throttle-4.1.1.tgz -> npmpkg-lodash.throttle-4.1.1.tgz
 https://registry.npmjs.org/lodash.union/-/lodash.union-4.6.0.tgz -> npmpkg-lodash.union-4.6.0.tgz
-https://registry.npmjs.org/lodash/-/lodash-3.10.1.tgz -> npmpkg-lodash-3.10.1.tgz
 https://registry.npmjs.org/lodash/-/lodash-4.17.19.tgz -> npmpkg-lodash-4.17.19.tgz
 https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz -> npmpkg-lodash-4.17.21.tgz
 https://registry.npmjs.org/lodash/-/lodash-4.3.0.tgz -> npmpkg-lodash-4.3.0.tgz
@@ -1302,6 +1302,7 @@ https://registry.npmjs.org/minimatch/-/minimatch-3.0.8.tgz -> npmpkg-minimatch-3
 https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz -> npmpkg-minimatch-3.1.2.tgz
 https://registry.npmjs.org/minimatch/-/minimatch-5.1.6.tgz -> npmpkg-minimatch-5.1.6.tgz
 https://registry.npmjs.org/minimatch/-/minimatch-9.0.4.tgz -> npmpkg-minimatch-9.0.4.tgz
+https://registry.npmjs.org/minimist/-/minimist-0.2.4.tgz -> npmpkg-minimist-0.2.4.tgz
 https://registry.npmjs.org/minimist/-/minimist-1.2.6.tgz -> npmpkg-minimist-1.2.6.tgz
 https://registry.npmjs.org/minimist/-/minimist-1.2.8.tgz -> npmpkg-minimist-1.2.8.tgz
 https://registry.npmjs.org/minipass/-/minipass-2.9.0.tgz -> npmpkg-minipass-2.9.0.tgz
@@ -1575,7 +1576,7 @@ https://registry.npmjs.org/shebang-command/-/shebang-command-2.0.0.tgz -> npmpkg
 https://registry.npmjs.org/shebang-regex/-/shebang-regex-1.0.0.tgz -> npmpkg-shebang-regex-1.0.0.tgz
 https://registry.npmjs.org/shebang-regex/-/shebang-regex-3.0.0.tgz -> npmpkg-shebang-regex-3.0.0.tgz
 https://registry.npmjs.org/shell-quote/-/shell-quote-1.8.1.tgz -> npmpkg-shell-quote-1.8.1.tgz
-https://registry.npmjs.org/shelljs/-/shelljs-0.8.4.tgz -> npmpkg-shelljs-0.8.4.tgz
+https://registry.npmjs.org/shelljs/-/shelljs-0.8.5.tgz -> npmpkg-shelljs-0.8.5.tgz
 https://registry.npmjs.org/shiki/-/shiki-0.10.0.tgz -> npmpkg-shiki-0.10.0.tgz
 https://registry.npmjs.org/side-channel/-/side-channel-1.0.4.tgz -> npmpkg-side-channel-1.0.4.tgz
 https://registry.npmjs.org/sigmund/-/sigmund-1.0.1.tgz -> npmpkg-sigmund-1.0.1.tgz
@@ -2277,6 +2278,7 @@ ewarn "Skipping audit fix"
 # [12] Prototype pollution [which could lead to DoS or Remote Code Execution]
 # [13] Race Condition [which could lead to lead to local privilege escalation]
 # [14] Server-side request forgery (SSRF)
+# [15] Remote Memory Exposure
 
 einfo "Fixing critical vulnerabilities"
 			pushd "${S}/GDevelop.js" || die
@@ -2284,6 +2286,7 @@ einfo "Fixing critical vulnerabilities"
 				sed -i -e "s|\"getobject\": \"~0.1.0\",|\"getobject\": \"~1.0.0\",|g" "package-lock.json" || die	# [12]
 				sed -i -e "s|\"json-schema\": \"0.2.3\",|\"json-schema\": \"^0.4.0\",|g" "package-lock.json" || die	# [12]
 				sed -i -e "s|\"lodash\": \"~1.3.1\",|\"lodash\": \"~4.17.12\",|g" "package-lock.json" || die		# [12]
+				sed -i -e "s|\"lodash\": \"~3.10.1\",|\"lodash\": \"~4.17.12\",|g" "package-lock.json" || die		# [12]
 				sed -i -e "s|\"lodash\": \"~4.3.0\",|\"lodash\": \"~4.17.12\",|g" "package-lock.json" || die		# [12]
 
 				enpm install "cryptiles@4.1.2" -D		# [11]
@@ -2298,6 +2301,8 @@ einfo "Fixing critical vulnerabilities"
 				enpm install "minimist@1.2.6" -D		# [12]
 			popd || die
 			pushd "${S}/newIDE/app" || die
+				sed -i -e "s|\"minimist\": \"0.0.8\"|\"minimist\": \"0.2.4\"|g" "package-lock.json" || die
+
 				enpm install "@babel/traverse@7.23.2" -D	# [4]
 				enpm install "cryptiles@4.1.2" -D		# [11]
 				enpm install "getobject@1.0.0" -D
@@ -2320,14 +2325,14 @@ einfo "Fixing high vulnerabilities"
 #				enpm install "grunt@1.5.3" -D			# * [4,13]
 				enpm install "js-yaml@3.13.1" -D		# [6]
 				enpm install "lodash@4.17.19" -D		# [7,12]
-#				enpm install "shelljs@0.8.5" -D			# * [10]
+				enpm install "shelljs@0.8.5" -D			# [10]
 				#enpm install "tar@3.2.2" -D			# * [5]
 				enpm install "tar@4.4.18" -D			# [5] ; Windows only
 			popd || die
 			pushd "${S}/GDJS" || die
 				enpm install "braces@3.0.3" -D			# [12]
 				enpm install "lodash@4.17.19" -D		# [7,12]
-#				enpm install "shelljs@0.8.5" -D			# * [10]
+				enpm install "shelljs@0.8.5" -D			# [10]
 			popd || die
 			pushd "${S}/newIDE/app" || die
 				sed -i -e "s|\"hoek\": \"6.x.x\",|\"hoek\": \"8.5.1\",|g" "package-lock.json" || die		# [12]
@@ -2340,7 +2345,7 @@ einfo "Fixing high vulnerabilities"
 				#enpm install "lodash@4.17.12" -D		# * [7] ; No fix for lodash.template
 				enpm install "minimatch@3.0.5" -D		# [8]
 				enpm install "node-fetch@2.6.7" -P		# [2]
-#				enpm install "shelljs@0.8.5" -D			# * [10]
+				enpm install "shelljs@0.8.5" -D			# [10]
 				enpm install "ua-parser-js@0.7.24" -P		# [8]
 				enpm install "ws@7.5.10" -D			# [8]
 			popd || die
@@ -2350,7 +2355,7 @@ einfo "Fixing high vulnerabilities"
 				#enpm install "electron@22.3.25" -P		# * [1] ; Testing major change later
 				#enpm install "http-cache-semantics@4.1.1" -D	# * [8] ; Depends on electron
 				#enpm install "http-cache-semantics@4.1.1" -P	# * [8] ; Depends on electron
-#				enpm install "shelljs@0.8.5" -D			# * [10]
+				enpm install "shelljs@0.8.5" -D			# [10]
 			popd || die
 			pushd "${S}/newIDE/electron-app/app" || die
 				enpm install "async@2.6.4" -P			# [12]
@@ -2370,7 +2375,7 @@ einfo "Fixing high vulnerabilities"
 
 einfo "Fixing moderate vulnerabilities"
 			pushd "${S}/GDevelop.js" || die
-				:
+				enpm install "bl@1.2.3" -D			# [15]
 			popd || die
 			pushd "${S}/GDJS" || die
 				:
