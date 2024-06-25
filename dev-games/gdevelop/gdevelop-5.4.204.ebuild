@@ -2323,7 +2323,7 @@ einfo "Fixing high vulnerabilities"
 			pushd "${S}/GDevelop.js" || die
 				sed -i -e "s|\"hoek\": \"6.x.x\",|\"hoek\": \"8.5.1\",|g" "package-lock.json" || die		# [12]
 				enpm install "braces@3.0.3" -D			# [12]
-#				enpm install "grunt@1.5.3" -D			# * [4,13]
+#				enpm install "grunt@1.5.3" -D			# * [4,13] ; Bumping breaks during build time
 				enpm install "js-yaml@3.13.1" -D		# [6]
 				enpm install "lodash@4.17.19" -D		# [7,12]
 				enpm install "shelljs@0.8.5" -D			# [10]
