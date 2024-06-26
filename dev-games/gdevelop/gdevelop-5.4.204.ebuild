@@ -2284,7 +2284,6 @@ einfo "Fixing critical vulnerabilities"
 
 				enpm uninstall "cryptiles"
 				enpm install "@hapi/cryptiles@5.1.0" -D		# [11]
-#				enpm install "cryptiles@4.1.2" -D		# [11]
 				enpm install "ejs@3.1.7" -D			# [3]
 				enpm install "getobject@1.0.0" -D		# [12]
 				enpm install "json-schema@0.4.0" -D		# [12]
@@ -2301,7 +2300,6 @@ einfo "Fixing critical vulnerabilities"
 				enpm install "@babel/traverse@7.23.2" -D	# [4]
 				enpm uninstall "cryptiles"
 				enpm install "@hapi/cryptiles@5.1.0" -D		# [11]
-#				enpm install "cryptiles@4.1.2" -D		# [11]
 				enpm install "getobject@1.0.0" -D
 				enpm install "json-schema@0.4.0" -D
 				enpm install "lodash@4.17.21" -P		# [7,12]
@@ -2317,11 +2315,9 @@ einfo "Fixing critical vulnerabilities"
 # Lines begining with # or have * are still undergoing testing.
 einfo "Fixing high vulnerabilities"
 			pushd "${S}/GDevelop.js" || die
-#				sed -i -e "s|\"hoek\": \"6.x.x\"|\"@hapi/hoek\": \"8.5.1\"|g" "package-lock.json" || die		# [12]
 				sed -i -e "s|\"js-yaml\": \"~3.5.2\",|\"js-yaml\": \"~3.13.1\",|g" "package-lock.json" || die		# [6]
 				sed -i -e "s|\"lodash\": \"~4.3.0\",|\"lodash\": \"~4.17.21\",|g" "package-lock.json" || die		# [7,12]
 				sed -i -e "s|\"tar\": \"^2.0.0\",|\"tar\": \"^4.4.18\",|g" "package-lock.json" || die			# [7,12]
-#				enpm install "@hapi/hoek@8.5.1" -D		# * [12]
 				enpm install "braces@3.0.3" -D			# [8]
 #				enpm install "grunt@1.5.3" -D			# * [4,13] ; Bumping breaks during build time
 				enpm install "js-yaml@3.13.1" -D		# [6]
@@ -2337,7 +2333,6 @@ einfo "Fixing high vulnerabilities"
 			popd || die
 			pushd "${S}/newIDE/app" || die
 				sed -i -e "s|\"d3-color\": \"1 - 2\",|\"d3-color\": \"^3.1.0\",|g" "package-lock.json" || die		# [8]
-#				sed -i -e "s|\"hoek\": \"6.x.x\"|\"@hapi/hoek\": \"8.5.1\"|g" "package-lock.json" || die		# [12]
 				sed -i -e "s|\"node-fetch\": \"^1.0.1\",|\"node-fetch\": \"^2.6.7\",|g" "package-lock.json" || die	# [2]
 				sed -i -e "s|\"node-fetch\": \"^2.0.0\",|\"node-fetch\": \"^2.6.7\",|g" "package-lock.json" || die	# [2]
 				sed -i -e "s|\"node-fetch\": \"2.6.1\",|\"node-fetch\": \"^2.6.7\",|g" "package-lock.json" || die	# [2]
@@ -2357,8 +2352,8 @@ einfo "Fixing high vulnerabilities"
 			pushd "${S}/newIDE/electron-app" || die
 				sed -i -e "s|\"app-builder-lib\": \"24.9.1\",|\"app-builder-lib\": \"^24.13.2\",|g" "package-lock.json" || die	# [4]
 				enpm install "app-builder-lib@24.13.2" -D	# [4] ; For Windows only
-				enpm install "electron@22.3.25" -D		# * [1] ; Testing major change later
-				enpm install "http-cache-semantics@4.1.1" -D	# * [8] ; Depends on electron
+				enpm install "electron@22.3.25" -D		# [1] ; Testing major change later
+				enpm install "http-cache-semantics@4.1.1" -D	# [8] ; Depends on electron
 				enpm install "shelljs@0.8.5" -D			# [10]
 			popd || die
 			pushd "${S}/newIDE/electron-app/app" || die
@@ -2374,10 +2369,10 @@ einfo "Fixing high vulnerabilities"
 				enpm install "braces@3.0.3" -P			# [8]
 				enpm install "debug@2.6.9" -P			# [8]
 				enpm install "decode-uri-component@0.2.1" -P	# [8]
-				enpm install "electron@22.3.25" -D		# * [1] ; Testing major change later
+				enpm install "electron@22.3.25" -D		# [1] ; Testing major change later
 				enpm install "follow-redirects@1.14.7" -P	# [9]
 				enpm install "glob-parent@5.1.2" -P		# [8]
-				enpm install "http-cache-semantics@4.1.1" -D	# * [8] ; Depends on electron
+				enpm install "http-cache-semantics@4.1.1" -D	# [8] ; Depends on electron
 				enpm install "minimatch@3.0.5" -P		# [8]
 				enpm install "node-fetch@2.6.7" -P		# [2]
 				enpm install "ws@7.5.10" -P			# [8]
