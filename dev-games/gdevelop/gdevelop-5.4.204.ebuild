@@ -2327,17 +2327,17 @@ ewarn "Skipping audit fix.  Applying security selectively."
 
 einfo "Fixing critical vulnerabilities"
 			pushd "${S}/GDevelop.js" || die
-				sed -i -e "s|\"ejs\": \"^2.4.1\",|\"ejs\": \"^3.1.10\",|g" "package-lock.json" || die				# [3,17]
-				sed -i -e "s|\"getobject\": \"~0.1.0\",|\"getobject\": \"~1.0.0\",|g" "package-lock.json" || die		# [12]
-				sed -i -e "s|\"json-schema\": \"0.2.3\",|\"json-schema\": \"^0.4.0\",|g" "package-lock.json" || die		# [12]
-				sed -i -e "s|\"lodash\": \"~1.3.1\",|\"lodash\": \"~4.17.21\",|g" "package-lock.json" || die			# [7,12]
-				sed -i -e "s|\"lodash\": \"~3.10.1\",|\"lodash\": \"~4.17.21\",|g" "package-lock.json" || die			# [7,12]
+				sed -i -e "s|\"ejs\": \"^2.4.1\"|\"ejs\": \"^3.1.10\"|g" "package-lock.json" || die				# [3,17]
+				sed -i -e "s|\"getobject\": \"~0.1.0\"|\"getobject\": \"~1.0.0\"|g" "package-lock.json" || die		# [12]
+				sed -i -e "s|\"json-schema\": \"0.2.3\"|\"json-schema\": \"^0.4.0\"|g" "package-lock.json" || die		# [12]
+				sed -i -e "s|\"lodash\": \"~1.3.1\"|\"lodash\": \"~4.17.21\"|g" "package-lock.json" || die			# [7,12]
+				sed -i -e "s|\"lodash\": \"~3.10.1\"|\"lodash\": \"~4.17.21\"|g" "package-lock.json" || die			# [7,12]
 				sed -i -e "s|\"lodash\": \"~4.3.0\"|\"lodash\": \"~4.17.21\"|g" "package-lock.json" || die			# [7,12]
-				sed -i -e "s|\"lodash\": \"~4.3.0\",|\"lodash\": \"~4.17.21\",|g" "package-lock.json" || die			# [7,12]
-				sed -i -e "s|\"lodash\": \"~4.17.12\",|\"lodash\": \"~4.17.21\",|g" "package-lock.json" || die			# [7,12]
-				sed -i -e "s|\"lodash\": \"^4.1.0\",|\"lodash\": \"^4.17.21\",|g" "package-lock.json" || die			# [7,12]
-				sed -i -e "s|\"lodash\": \"^4.7.0\",|\"lodash\": \"^4.17.21\",|g" "package-lock.json" || die			# [7,12]
-				sed -i -e "s|\"lodash\": \"^4.8.0\",|\"lodash\": \"^4.17.21\",|g" "package-lock.json" || die			# [7,12]
+				sed -i -e "s|\"lodash\": \"~4.3.0\"|\"lodash\": \"~4.17.21\"|g" "package-lock.json" || die			# [7,12]
+				sed -i -e "s|\"lodash\": \"~4.17.12\"|\"lodash\": \"~4.17.21\"|g" "package-lock.json" || die			# [7,12]
+				sed -i -e "s|\"lodash\": \"^4.1.0\"|\"lodash\": \"^4.17.21\"|g" "package-lock.json" || die			# [7,12]
+				sed -i -e "s|\"lodash\": \"^4.7.0\"|\"lodash\": \"^4.17.21\"|g" "package-lock.json" || die			# [7,12]
+				sed -i -e "s|\"lodash\": \"^4.8.0\"|\"lodash\": \"^4.17.21\"|g" "package-lock.json" || die			# [7,12]
 
 				enpm uninstall "cryptiles"
 				enpm install "@hapi/cryptiles@5.1.0" -D		# [11]
@@ -2372,10 +2372,10 @@ einfo "Fixing critical vulnerabilities"
 # Lines begining with # or have * are still undergoing testing.
 einfo "Fixing high vulnerabilities"
 			pushd "${S}/GDevelop.js" || die
-				sed -i -e "s|\"braces\": \"^1.8.2\",|\"braces\": \"^1.8.2\",|g" "package-lock.json" || die			# [8]
-				sed -i -e "s|\"js-yaml\": \"~3.5.2\",|\"js-yaml\": \"~3.13.1\",|g" "package-lock.json" || die			# [6]
-				sed -i -e "s|\"lodash\": \"~4.3.0\",|\"lodash\": \"~4.17.21\",|g" "package-lock.json" || die			# [7,12]
-				sed -i -e "s|\"tar\": \"^2.0.0\",|\"tar\": \"^4.4.18\",|g" "package-lock.json" || die				# [7,12]
+				sed -i -e "s|\"braces\": \"^1.8.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die			# [8]
+				sed -i -e "s|\"js-yaml\": \"~3.5.2\"|\"js-yaml\": \"~3.13.1\"|g" "package-lock.json" || die			# [6]
+				sed -i -e "s|\"lodash\": \"~4.3.0\"|\"lodash\": \"~4.17.21\"|g" "package-lock.json" || die			# [7,12]
+				sed -i -e "s|\"tar\": \"^2.0.0\"|\"tar\": \"^4.4.18\"|g" "package-lock.json" || die				# [7,12]
 				enpm install "braces@3.0.3" -D			# [8]
 #				enpm install "grunt@1.5.3" -D			# * [4,13] ; Bumping breaks during build time
 				enpm install "js-yaml@3.13.1" -D		# [6]
@@ -2390,9 +2390,9 @@ einfo "Fixing high vulnerabilities"
 			popd || die
 			pushd "${S}/newIDE/app" || die
 				sed -i -e "s|\"d3-color\": \"1 - 2\"|\"d3-color\": \"^3.1.0\"|g" "package-lock.json" || die			# [8]
-				sed -i -e "s|\"node-fetch\": \"^1.0.1\",|\"node-fetch\": \"^2.6.7\",|g" "package-lock.json" || die		# [2]
-				sed -i -e "s|\"node-fetch\": \"^2.0.0\",|\"node-fetch\": \"^2.6.7\",|g" "package-lock.json" || die		# [2]
-				sed -i -e "s|\"node-fetch\": \"2.6.1\",|\"node-fetch\": \"^2.6.7\",|g" "package-lock.json" || die		# [2]
+				sed -i -e "s|\"node-fetch\": \"^1.0.1\"|\"node-fetch\": \"^2.6.7\"|g" "package-lock.json" || die		# [2]
+				sed -i -e "s|\"node-fetch\": \"^2.0.0\"|\"node-fetch\": \"^2.6.7\"|g" "package-lock.json" || die		# [2]
+				sed -i -e "s|\"node-fetch\": \"2.6.1\"|\"node-fetch\": \"^2.6.7\"|g" "package-lock.json" || die		# [2]
 				enpm install "axios@0.28.0" -P			# [8,21 (moderate)]
 				enpm install "braces@3.0.3" -D			# [8]
 				enpm install "d3-color@3.1.0" -P		# [8]
@@ -2407,19 +2407,19 @@ einfo "Fixing high vulnerabilities"
 				enpm install "ws@7.5.10" -D			# [8]
 			popd || die
 			pushd "${S}/newIDE/electron-app" || die
-				sed -i -e "s|\"app-builder-lib\": \"24.9.1\",|\"app-builder-lib\": \"^24.13.2\",|g" "package-lock.json" || die	# [4]
+				sed -i -e "s|\"app-builder-lib\": \"24.9.1\"|\"app-builder-lib\": \"^24.13.2\"|g" "package-lock.json" || die	# [4]
 				enpm install "app-builder-lib@24.13.2" -D	# [4] ; For Windows only
 				enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D		# [1]
 				enpm install "http-cache-semantics@4.1.1" -D	# [8] ; Depends on electron
 				enpm install "shelljs@0.8.5" -D			# [10]
 			popd || die
 			pushd "${S}/newIDE/electron-app/app" || die
-				sed -i -e "s|\"braces\": \"^1.8.2\",|\"braces\": \"^3.0.3\",|g" "package-lock.json" || die			# [8]
-				sed -i -e "s|\"braces\": \"^2.3.1\",|\"braces\": \"^3.0.3\",|g" "package-lock.json" || die			# [8]
-				sed -i -e "s|\"braces\": \"~3.0.2\",|\"braces\": \"~3.0.3\",|g" "package-lock.json" || die			# [8]
-				sed -i -e "s|\"debug\": \"~2.2.0\",|\"debug\": \"~2.6.9\",|g" "package-lock.json" || die			# [8]
+				sed -i -e "s|\"braces\": \"^1.8.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die			# [8]
+				sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die			# [8]
+				sed -i -e "s|\"braces\": \"~3.0.2\"|\"braces\": \"~3.0.3\"|g" "package-lock.json" || die			# [8]
+				sed -i -e "s|\"debug\": \"~2.2.0\"|\"debug\": \"~2.6.9\"|g" "package-lock.json" || die			# [8]
 				sed -i -e "s|\"glob-parent\": \"^2.0.0\"|\"glob-parent\": \"^5.1.2\"|g" "package-lock.json" || die		# [8]
-				sed -i -e "s|\"node-fetch\": \"2.6.0\",|\"node-fetch\": \"^2.6.7\",|g" "package-lock.json" || die		# [2]
+				sed -i -e "s|\"node-fetch\": \"2.6.0\"|\"node-fetch\": \"^2.6.7\"|g" "package-lock.json" || die		# [2]
 				sed -i -e "s|\"ws\": \"7.1.2\"|\"ws\": \"^7.5.10\"|g" "package-lock.json" || die				# [8]
 				enpm install "async@2.6.4" -P			# [12]
 				enpm install "axios@0.28.0" -P			# [8,21]
@@ -2438,20 +2438,21 @@ einfo "Fixing high vulnerabilities"
 
 einfo "Fixing moderate vulnerabilities"
 			pushd "${S}/GDevelop.js" || die
-				sed -i -e "s|\"bl\": \"^1.0.0\",|\"bl\": \"^1.0.0\",|g" "package-lock.json" || die				# [8]
-				sed -i -e "s|\"jsdom\": \"^7.0.2\",|\"jsdom\": \"^16.5.0\",|g" "package-lock.json" || die			# [16]
-				sed -i -e "s|\"tough-cookie\": \"^2.2.0\",|\"tough-cookie\": \"^4.1.3\",|g" "package-lock.json" || die		# [12]
-				sed -i -e "s|\"tough-cookie\": \"~2.5.0\",|\"tough-cookie\": \"^4.1.3\",|g" "package-lock.json" || die		# [12]
+				sed -i -e "s|\"bl\": \"^1.0.0\"|\"bl\": \"^1.0.0\"|g" "package-lock.json" || die				# [8]
+				sed -i -e "s|\"jsdom\": \"^7.0.2\"|\"jsdom\": \"^16.5.0\"|g" "package-lock.json" || die			# [16]
+				sed -i -e "s|\"tough-cookie\": \"^2.2.0\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die		# [12]
+				sed -i -e "s|\"tough-cookie\": \"~2.5.0\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die		# [12]
+				sed -i -e "s|\"tough-cookie\": \"^4.0.0\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die		# [12]
 				enpm install "bl@1.2.3" -D			# [15]
 				enpm install "jsdom@16.5.0" -D			# [16]
 				enpm install "tough-cookie@4.1.3" -D		# [12]
 			popd || die
 			pushd "${S}/newIDE/app" || die
-				sed -i -e "s|\"axios\": \"^0.21.2\",|\"axios\": \"^0.28.0\",|g" "package-lock.json" || die			# [21]
-				sed -i -e "s|\"express\": \"^4.17.3\",|\"express\": \"^4.19.2\",|g" "package-lock.json" || die			# [19]
-				sed -i -e "s|\"follow-redirects\": \"^1.0.0\",|\"follow-redirects\": \"^1.15.6\",|g" "package-lock.json" || die		# [19,20,22]
-				sed -i -e "s|\"follow-redirects\": \"^1.14.0\",|\"follow-redirects\": \"^1.15.6\",|g" "package-lock.json" || die	# [19,20,22]
-				sed -i -e "s|\"follow-redirects\": \"^1.14.7\",|\"follow-redirects\": \"^1.15.6\",|g" "package-lock.json" || die	# [19,20,22]
+				sed -i -e "s|\"axios\": \"^0.21.2\"|\"axios\": \"^0.28.0\"|g" "package-lock.json" || die			# [21]
+				sed -i -e "s|\"express\": \"^4.17.3\"|\"express\": \"^4.19.2\"|g" "package-lock.json" || die			# [19]
+				sed -i -e "s|\"follow-redirects\": \"^1.0.0\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die		# [19,20,22]
+				sed -i -e "s|\"follow-redirects\": \"^1.14.0\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die	# [19,20,22]
+				sed -i -e "s|\"follow-redirects\": \"^1.14.7\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die	# [19,20,22]
 				sed -i -e "s|\"@grpc/grpc-js\": \"^1.0.0\"|\"@grpc/grpc-js\": \"^1.8.22\"|g" "package-lock.json" || die		# [23]
 				sed -i -e "s#\"postcss\": \"^7.0.0 || ^8.0.1\"#\"postcss\": \"^8.4.31\"#g" "package-lock.json" || die		# [18]
 				sed -i -e "s|\"postcss\": \"^7.0.35\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die			# [18]
@@ -2493,33 +2494,29 @@ einfo "Fixing moderate vulnerabilities"
 				enpm install "ejs@3.1.10" -D			# [3,17]
 			popd || die
 			pushd "${S}/newIDE/electron-app/app" || die
-				sed -i -e "s|\"bl\": \"^1.0.0\",|\"bl\": \"^1.0.0\",|g" "package-lock.json" || die				# [8]
-				sed -i -e "s|\"follow-redirects\": \"^1.14.0\",|\"follow-redirects\": \"^1.15.6\",|g" "package-lock.json" || die	# [19,20,22]
-				sed -i -e "s|\"follow-redirects\": \"^1.14.7\",|\"follow-redirects\": \"^1.15.6\",|g" "package-lock.json" || die	# [19,20,22]
+				sed -i -e "s|\"bl\": \"^1.0.0\"|\"bl\": \"^1.0.0\"|g" "package-lock.json" || die				# [8]
+				sed -i -e "s|\"follow-redirects\": \"^1.14.0\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die	# [19,20,22]
+				sed -i -e "s|\"follow-redirects\": \"^1.14.7\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die	# [19,20,22]
 				enpm install "bl@1.2.3" -D			# [15]
 				enpm install "follow-redirects@1.15.6" -P	# [9,20,22]
 			popd || die
 
 einfo "Fixing low vulnerabilities"
 			pushd "${S}/newIDE/electron-app/app" || die
-				sed -i -e "s|\"axios\": \"^0.21.2\",|\"axios\": \"^0.28.0\",|g" "package-lock.json" || die			# [21]
-				sed -i -e "s|\"braces\": \"^1.8.2\",|\"braces\": \"^2.3.1\",|g" "package-lock.json" || die			# [8]
+				sed -i -e "s|\"axios\": \"^0.21.2\"|\"axios\": \"^0.28.0\"|g" "package-lock.json" || die			# [21]
+				sed -i -e "s|\"braces\": \"^1.8.2\"|\"braces\": \"^2.3.1\"|g" "package-lock.json" || die			# [8]
 				enpm install "braces@2.3.1" -P			# [8]
 			popd || die
 
 # Reapplies
-			pushd "${S}/GDevelop.js" || die
-				sed -i -e "s|\"braces\": \"^1.8.2\",|\"braces\": \"^1.8.2\",|g" "package-lock.json" || die			# [8] ; high
-				enpm install "braces@3.0.3" -D			# [8]
-			popd || die
 			pushd "${S}/newIDE/electron-app" || die
-				sed -i -e "s|\"app-builder-lib\": \"24.9.1\",|\"app-builder-lib\": \"^24.13.2\",|g" "package-lock.json" || die	# [4]
+				sed -i -e "s|\"app-builder-lib\": \"24.9.1\"|\"app-builder-lib\": \"^24.13.2\"|g" "package-lock.json" || die	# [4]
 				enpm install "app-builder-lib@24.13.2" -D	# [4] ; For Windows only
 			popd || die
 			pushd "${S}/newIDE/electron-app/app" || die
-				sed -i -e "s|\"braces\": \"^1.8.2\",|\"braces\": \"^3.0.3\",|g" "package-lock.json" || die			# [8]
-				sed -i -e "s|\"braces\": \"^2.3.1\",|\"braces\": \"^3.0.3\",|g" "package-lock.json" || die			# [8]
-				sed -i -e "s|\"braces\": \"~3.0.2\",|\"braces\": \"~3.0.3\",|g" "package-lock.json" || die			# [8]
+				sed -i -e "s|\"braces\": \"^1.8.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die			# [8]
+				sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die			# [8]
+				sed -i -e "s|\"braces\": \"~3.0.2\"|\"braces\": \"~3.0.3\"|g" "package-lock.json" || die			# [8]
 				sed -i -e "s|\"glob-parent\": \"^2.0.0\"|\"glob-parent\": \"^5.1.2\"|g" "package-lock.json" || die		# [8]
 				enpm install "braces@3.0.3" -P			# [8]
 				enpm install "glob-parent@5.1.2" -P		# [8]
