@@ -14,7 +14,7 @@
     "braces": "^3.0.3",
     "esbuild": "^0.13.12",
     "lebab": "^3.1.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "minimist": "^1.2.6",
     "patch-package": "^6.4.7",
     "pixi-spine": "4.0.4",
