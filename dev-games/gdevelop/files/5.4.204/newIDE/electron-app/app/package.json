@@ -12,6 +12,7 @@
     "archiver": "^2.1.1",
     "async": "^2.6.4",
     "axios": "^0.28.0",
+    "braces": "^3.0.3",
     "chokidar": "3.5.3",
     "debug": "^2.6.9",
     "decode-uri-component": "^0.2.1",
@@ -37,7 +38,6 @@
   },
   "devDependencies": {
     "bl": "^1.2.3",
-    "braces": "^2.3.1",
     "electron": "^22.3.25",
     "http-cache-semantics": "^4.1.1"
   }
