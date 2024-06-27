@@ -260,10 +260,10 @@ EOF
     T_CONFIG=$(mktemp)
     cat << EOF > "${T_CONFIG}" || die
 import os
-EMSCRIPTEN_ROOT = os.path.expanduser(os.getenv('EMSCRIPTEN') or '/usr/share/emscripten-${PV}')
-LLVM_ROOT = os.path.expanduser(os.getenv('LLVM') or '${__LLVM_BIN_PATH__}')
-BINARYEN_ROOT = os.path.expanduser(os.getenv('BINARYEN', '') or '/usr/$(get_libdir)/binaryen/${__EMSDK_BINARYEN_VERSION__}')
-NODE_JS = os.path.expanduser(os.getenv('NODE') or '/usr/bin/node')
+EMSCRIPTEN_ROOT = os.path.expanduser('/usr/share/emscripten-${PV}')
+LLVM_ROOT = os.path.expanduser('${__LLVM_BIN_PATH__}')
+BINARYEN_ROOT = os.path.expanduser('/usr/$(get_libdir)/binaryen/${__EMSDK_BINARYEN_VERSION__}')
+NODE_JS = os.path.expanduser('/usr/bin/node')
 JAVA = 'java'
 TEMP_DIR = '/tmp'
 EOF
