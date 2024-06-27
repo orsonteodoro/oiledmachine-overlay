@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20240627"
+VERSION="20240627-r1"
 PN="emscripten"
 
 # version tests
@@ -300,7 +300,7 @@ EOF
     echo
     echo -e "BINARYEN:\t\t${BINARYEN}"
     echo -e "CLOSURE_COMPILER:\t${EMSDK_CLOSURE_COMPILER}"
-    echo -e "EM_BINARYEN_ROOT:\t\t${EM_BINARYEN_ROOT}"
+    echo -e "EM_BINARYEN_ROOT:\t${EM_BINARYEN_ROOT}"
     echo -e "EM_CONFIG:\t\t${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
     echo -e "EMCC_WASM_BACKEND:\t${__EMCC_WASM_BACKEND__}"
     echo -e "EROOT:\t\t${EROOT}"
@@ -333,14 +333,9 @@ EOF
     echo
     echo "env-update"
     echo ". /etc/profile"
-    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "==" "2.0.26" ; then
-        echo "export EM_BINARYEN_ROOT=\"\${EMSDK_BINARYEN_BASE_PATH}\""
-    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.44" ; then
-        echo "export EM_BINARYEN_ROOT=\"\${EMSDK_BINARYEN_BASE_PATH}\""
-    else
-        echo "export BINARYEN=\"\${EMSDK_BINARYEN_BASE_PATH}\""
-    fi
-    # The CLOSURE_COMPILER is reserved for the closure-compiler package,
+    echo "export BINARYEN=\"\${EMSDK_BINARYEN_BASE_PATH}\""
+    echo "export EM_BINARYEN_ROOT=\"\${EMSDK_BINARYEN_BASE_PATH}\""
+    # The CLOSURE_COMPILER is reserved for the closure-compiler package, \
     # the emscripten package has no right to it.
     echo "export CLOSURE_COMPILER=\"\${EMSDK_CLOSURE_COMPILER}\""
     # The LLVM_ prefix is reserved for the package llvm package only, \
