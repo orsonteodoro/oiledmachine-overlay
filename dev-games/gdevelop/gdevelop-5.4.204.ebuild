@@ -45,9 +45,12 @@ ELECTRON_APP_REACT_PV="16.14.0" # See \
 # https://github.com/4ian/GDevelop/blob/v5.4.204/newIDE/app/package-lock.json#L27009
 ELECTRON_APP_REACT_PV="ignore" # The lock file says >=0.10.0 but it is wrong.  We force it because CI tests passed.
 EMBUILD_DIR="${WORKDIR}/build"
-EMSCRIPTEN_PV="3.1.21" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
+#EMSCRIPTEN_PV="3.1.21" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
+EMSCRIPTEN_PV="1.39.20" # Temporary until 3.1.30 ebuild is fixed.
 # Emscripten 3.1.21 requires llvm 16 for wasm, 4.1.1 nodejs
-LLVM_COMPAT=( 16 ) # Deleted 9 8 7 because asm.js support was dropped.
+# For LLVM_COMPAT; 9, 8, and 7 was deleted because asm.js support was dropped.
+#LLVM_COMPAT=( 16 ) # For Emscripten 3.1.30.
+LLVM_COMPAT=( 14 ) # For Emscripten 1.39.20.
 LLVM_SLOT="${LLVM_COMPAT[0]}"
 EMSCRIPTEN_SLOT="${LLVM_SLOT}-${EMSCRIPTEN_PV%.*}"
 GDEVELOP_JS_NODEJS_PV="16.20.0" # Based on CI, For building GDevelop.js.
@@ -68,7 +71,7 @@ NPM_AUDIT_FIX_ARGS=(
 PYTHON_COMPAT=( python3_{10,11} ) # CI uses 3.8, 3.9
 
 # Using yarn results in failures.
-inherit check-reqs desktop electron-app evar_dump flag-o-matic llvm-r1 npm
+inherit check-reqs desktop electron-app evar_dump flag-o-matic llvm npm
 inherit python-r1 toolchain-funcs xdg
 
 # UPDATER_START_NPM_EXTERNAL_URIS
@@ -1985,7 +1988,7 @@ pkg_setup() {
 	# It still breaks when NPM_OFFLINE=1.
 	check_network_sandbox
 
-	llvm-r1_pkg_setup
+	llvm_pkg_setup
 
 # Addresses:
 # FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
@@ -2683,7 +2686,8 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.1.164 (20230604)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.1.185 (20231217) load test only
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.1.198 (20240408) platformer prototype only
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.4.204 (20240620) platformer prototype only
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.4.204 (20240620) platformer prototype only (emscripten 3.1.30)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.4.204 (20240627) platformer demo, car-coin demo (emscripten 1.39.20)
 # wayland:                    failed
 # X:                          passed
 # command-line wrapper:       passed
