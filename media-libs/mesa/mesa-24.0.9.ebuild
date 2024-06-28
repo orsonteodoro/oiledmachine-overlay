@@ -46,7 +46,7 @@ VIDEO_CARDS=(
 )
 
 # Bug
-inherit llvm-r1 python-any-r1 linux-info meson multilib-build toolchain-funcs uopts
+inherit flag-o-matic llvm-r1 python-any-r1 linux-info meson multilib-build toolchain-funcs uopts
 
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
 
@@ -178,7 +178,7 @@ RDEPEND="
 		>=media-libs/libva-1.7.3:=[${MULTILIB_USEDEP}]
 	)
 	vdpau? (
-		>=x11-libs/libvdpau-1.1:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libvdpau-1.4:=[${MULTILIB_USEDEP}]
 	)
 	video_cards_radeonsi? (
 		virtual/libelf:0=[${MULTILIB_USEDEP}]
@@ -503,6 +503,9 @@ src_configure() { :; }
 
 _src_configure() {
 	local emesonargs=()
+
+	# bug #932591 and https://gitlab.freedesktop.org/mesa/mesa/-/issues/11140
+	tc-is-gcc && [[ $(gcc-major-version) -ge 14 ]] && filter-lto
 
 	uopts_src_configure
 
