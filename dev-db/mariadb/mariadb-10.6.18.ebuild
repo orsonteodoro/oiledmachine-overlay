@@ -15,13 +15,13 @@ UOPTS_SUPPORT_TPGO=1
 inherit cmake flag-o-matic java-pkg-opt-2 multiprocessing prefix systemd
 inherit toolchain-funcs uopts
 
-KEYWORDS="~amd64 ~riscv ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~ia64 ~ppc ~ppc64 ~riscv ~x86"
 # Shorten the path because the socket path length must be shorter than 107 chars
 # and we will run a mysql server during test phase
 S="${WORKDIR}/mysql"
 SRC_URI="
 	mirror://mariadb/${PN}-${PV}/source/${P}.tar.gz
-	https://github.com/hydrapolic/gentoo-dist/raw/master/mariadb/mariadb-${PATCHSET_VER%:*}-patches-${PATCHSET_VER#*:}.tar.xz
+	https://github.com/hydrapolic/gentoo-dist/raw/main/mariadb/mariadb-${PATCHSET_VER%:*}-patches-${PATCHSET_VER#*:}.tar.xz
 "
 
 HOMEPAGE="https://mariadb.org/"
@@ -186,6 +186,10 @@ RDEPEND="
 	!dev-db/mariadb:10.10
 	!dev-db/mariadb:10.11
 	!dev-db/mariadb:11.0
+	!dev-db/mariadb:11.1
+	!dev-db/mariadb:11.2
+	!dev-db/mariadb:11.3
+	!dev-db/mariadb:11.4
 	!dev-db/mysql
 	!dev-db/mysql-cluster
 	!dev-db/percona-server

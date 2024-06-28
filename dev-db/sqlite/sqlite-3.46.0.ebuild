@@ -22,15 +22,15 @@ else
 	#printf -v DOC_PV "%u%02u%02u00" $(ver_rs 1-3 " ")
 
 	KEYWORDS="
-~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
-sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
+~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
 ~x64-solaris
 	"
 	S="${WORKDIR}/${PN}-src-${SRC_PV}"
 	SRC_URI="
-		https://sqlite.org/2023/${PN}-src-${SRC_PV}.zip
+		https://sqlite.org/2024/${PN}-src-${SRC_PV}.zip
 		doc? (
-			https://sqlite.org/2023/${PN}-doc-${DOC_PV}.zip
+			https://sqlite.org/2024/${PN}-doc-${DOC_PV}.zip
 		)
 	"
 fi
@@ -88,8 +88,7 @@ else
 fi
 
 PATCHES=(
-	"${FILESDIR}/${PN}-3.44.2-tracker-regression.patch"
-	"${FILESDIR}/${PN}-3.44.2-fts-regression.patch"
+	"${FILESDIR}/${PN}-3.45.1-ppc64-ptr.patch"
 )
 
 erun() {
@@ -131,7 +130,8 @@ eerror
 				|| die
 			erun \
 			fossil pull \
-				--repository "${repo_id}.fossil" \
+				--repository \
+				"${repo_id}.fossil" \
 				--verbose \
 				"${repo_uri}" \
 				|| die
@@ -437,7 +437,8 @@ _src_configure() {
 				${CFLAGS} \
 				-E \
 				-P \
-				-dM - \
+				-dM \
+				- \
 				< /dev/null \
 				2> /dev/null \
 			| grep -q "^#define __SSE__ 1$" \
@@ -445,13 +446,6 @@ _src_configure() {
 			append-cflags -mfpmath=sse
 		else
 			append-cflags -ffloat-store
-		fi
-
-		# Skip known-broken test for now
-		# https://sqlite.org/forum/forumpost/d97caf168f
-		# https://sqlite.org/forum/forumpost/50f136d91d
-		if use test ; then
-			rm test/atof1.test || die
 		fi
 	fi
 
@@ -488,7 +482,7 @@ _src_compile() {
 		emake ${tools[@]}
 	fi
 
-	if [[ "${PV}" == "9999" ]] && use doc && multilib_is_native_abi ; then
+	if [[ ${PV} == 9999 ]] && use doc && multilib_is_native_abi ; then
 		emake tclsqlite3.c
 
 		local build_directory="$(pwd)"
