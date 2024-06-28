@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{9..10} )
+PYTHON_COMPAT=( "python3_"{9..10} )
 
 inherit cmake flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 
@@ -14,8 +14,8 @@ HOMEPAGE="https://llvm.org/"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 SLOT="$(ver_cut 1-3)"

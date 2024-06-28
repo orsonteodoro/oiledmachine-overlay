@@ -44,8 +44,8 @@ src_install() {
 	newdoc "vim/README" "README.vim"
 	dodoc "vim/vimrc"
 	if use emacs ; then
-		elisp-install "llvm" "emacs/"*"."{"el","elc"}
-		elisp-make-site-file "${SITEFILE}" llvm
+		elisp-install "llvm" "emacs/"*{".el",".elc"}
+		elisp-make-site-file "${SITEFILE}" "llvm"
 	fi
 }
 

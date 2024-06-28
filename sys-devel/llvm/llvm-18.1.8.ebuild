@@ -4,7 +4,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_GROUP="portage"
 UOPTS_USER="portage"
@@ -35,7 +35,7 @@ inherit cmake llvm.org multilib-minimal pax-utils python-any-r1 toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils uopts
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
 ~arm64-macos ~ppc-macos ~x64-macos
 "
 
@@ -55,10 +55,9 @@ LICENSE="
 # 4. ConvertUTF.h: TODO.
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-+binutils-plugin +debug debuginfod doc exegesis libedit +libffi ncurses test
-xml z3 zstd
-
-bolt bolt-heatmap -dump jemalloc tcmalloc r6
++binutils-plugin bolt bolt-heatmap +debug debuginfod doc -dump exegesis jemalloc
+libedit +libffi ncurses tcmalloc test xml z3 zstd
+ebuild-revison-6
 ${LLVM_EBUILDS_LLVM18_REVISION}
 "
 REQUIRED_USE+="

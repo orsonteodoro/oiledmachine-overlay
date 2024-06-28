@@ -33,7 +33,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_80
 )
 LLVM_SLOT="${PV%%.*}"
-PYTHON_COMPAT=( python3_{9..10} )
+PYTHON_COMPAT=( "python3_"{9..10} )
 inherit hip-versions
 ROCM_SLOTS=(
 	"${HIP_4_5_VERSION}"
@@ -51,8 +51,8 @@ HOMEPAGE="https://openmp.llvm.org"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 RESTRICT="

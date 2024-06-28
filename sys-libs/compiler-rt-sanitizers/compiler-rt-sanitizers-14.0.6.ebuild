@@ -4,7 +4,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( "python3_"{9..11} )
 
 inherit check-reqs cmake flag-o-matic llvm llvm.org python-any-r1
 inherit llvm-ebuilds
@@ -17,15 +17,15 @@ HOMEPAGE="https://llvm.org/"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 SLOT="$(ver_cut 1-3)"
 IUSE+="
-+abi_x86_32 abi_x86_64 +clang debug hexagon test
-
-+libfuzzer +memprof +orc +profile +xray r3
++abi_x86_32 abi_x86_64 +clang debug hexagon +libfuzzer +memprof +orc +profile
+test +xray
+ebuild-revision-3
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries

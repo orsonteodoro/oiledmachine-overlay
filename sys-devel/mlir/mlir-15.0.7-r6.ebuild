@@ -17,14 +17,14 @@ HOMEPAGE="https://openmp.llvm.org"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE="
 	debug rocm_5_3 rocm_5_4 test
-	r3
+	ebuild-revision-3
 "
 REQUIRED_USE="
 	rocm_5_3? (

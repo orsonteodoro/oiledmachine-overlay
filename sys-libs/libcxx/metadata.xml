@@ -35,7 +35,7 @@
       Use libunwind instead of libgcc_s for stack unwinding, thus avoiding
       a dependency on gcc.
     </flag>
-    <flag name="rN">
+    <flag name="ebuild-revision-N">
       FOR INTERNAL USE ONLY.  Preserve paths for faster CCACHE rebuilds
     </flag>
   </use>

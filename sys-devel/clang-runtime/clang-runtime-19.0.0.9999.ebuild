@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# Last update:  2024-03-18
+
 inherit multilib-build toolchain-funcs
 
 DESCRIPTION="Meta-ebuild for clang runtime libraries"

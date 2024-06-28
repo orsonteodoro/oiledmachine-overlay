@@ -13,7 +13,7 @@ LLVM_COMPONENTS=(
 )
 LLVM_MAX_SLOT=${PV%%.*}
 LLVM_PATCHSET="${PV}-r2"
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( "python3_"{9..11} )
 
 inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 
@@ -24,8 +24,8 @@ HOMEPAGE="https://libcxx.llvm.org/"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 RESTRICT="
@@ -35,9 +35,8 @@ RESTRICT="
 "
 SLOT="0"
 IUSE="
-+libcxxabi +libunwind +static-libs test +threads -pstl
-
-hardened r11
+hardened +libcxxabi +libunwind +static-libs test +threads -pstl
+ebuild-revision-11
 "
 REQUIRED_USE="
 	libunwind? (

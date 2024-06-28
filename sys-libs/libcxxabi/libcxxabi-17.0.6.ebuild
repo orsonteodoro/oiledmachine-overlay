@@ -22,7 +22,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit cmake-multilib llvm llvm.org python-any-r1 toolchain-funcs
 
@@ -34,15 +34,14 @@ HOMEPAGE="https://libcxxabi.llvm.org/"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 SLOT="0"
 IUSE+="
-+static-libs test
-
-hardened r9
+hardened +static-libs test
+ebuild-revision-9
 ${LLVM_EBUILDS_LLVM17_REVISION}
 "
 # in 15.x, cxxabi.h is moving from libcxx to libcxxabi

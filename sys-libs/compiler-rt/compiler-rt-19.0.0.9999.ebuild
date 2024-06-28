@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# Last update:  2024-02-10
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -21,17 +23,18 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit cmake crossdev flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit cmake crossdev flag-o-matic llvm.org llvm-utils python-any-r1
+inherit toolchain-funcs
 
 DESCRIPTION="Compiler runtime library for clang (built-in part)"
 HOMEPAGE="https://llvm.org/"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 SLOT="${LLVM_MAJOR}"

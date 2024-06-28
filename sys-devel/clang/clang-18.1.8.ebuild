@@ -4,7 +4,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_GROUP="portage"
 UOPTS_USER="portage"
@@ -48,12 +48,11 @@ LICENSE="
 # sorttable.js: MIT
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-+debug doc +extra ieee-long-double +pie +static-analyzer test xml
-
-default-fortify-source-2 default-fortify-source-3 default-full-relro
-default-partial-relro default-ssp-buffer-size-4
-default-stack-clash-protection cet hardened hardened-compat ssp
-r9
+cet +debug default-fortify-source-2 default-fortify-source-3 default-full-relro
+default-partial-relro default-ssp-buffer-size-4 default-stack-clash-protection
+doc +extra hardened hardened-compat ieee-long-double +pie ssp +static-analyzer
+test xml
+ebuild-revision-9
 ${LLVM_EBUILDS_LLVM18_REVISION}
 "
 REQUIRED_USE="
@@ -346,27 +345,21 @@ ewarn
 			"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-3-by-default.patch"
 		)
 		hardened_features+="_FORITIFY_SOURCE=3, "
-ewarn
 ewarn "The _FORITIFY_SOURCE=3 is in testing."
-ewarn
 	fi
 	if use default-full-relro ; then
 		patches_hardened+=(
 			"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
 		)
 		hardened_features+="Full RELRO, "
-ewarn
 ewarn "The Full RELRO is in testing."
-ewarn
 	fi
 	if use default-partial-relro ; then
 		patches_hardened+=(
 			"${FILESDIR}/clang-12.0.1-enable-partial-relro-by-default.patch"
 		)
 		hardened_features+="Partial RELRO, "
-ewarn
 ewarn "The Partial RELRO is in testing."
-ewarn
 	fi
 	if use default-stack-clash-protection ; then
 		if use x86 || use amd64 ; then
@@ -391,9 +384,7 @@ ewarn
 			"${FILESDIR}/clang-17.0.0.9999-enable-cf-protection-full-by-default.patch"
 		)
 		hardened_features+="CET, "
-ewarn
 ewarn "The CET as default is in testing."
-ewarn
 	fi
 	patches_hardened+=(
 		"${FILESDIR}/clang-18.0.0.9999-cross-dso-cfi-link-with-shared.patch"

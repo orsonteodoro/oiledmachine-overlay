@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# Last update:  2024-05-27
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -21,23 +23,24 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1
+inherit toolchain-funcs
 
 DESCRIPTION="C++ runtime stack unwinder from LLVM"
 HOMEPAGE="https://llvm.org/docs/ExceptionHandling.html"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 SLOT="0"
 IUSE+="
-+clang +debug static-libs test
 ${LLVM_EBUILDS_LLVM19_REVISION}
++clang +debug static-libs test
 "
 REQUIRED_USE="
 	test? (

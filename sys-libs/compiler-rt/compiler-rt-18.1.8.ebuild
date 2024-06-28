@@ -21,9 +21,10 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit cmake crossdev flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit cmake crossdev flag-o-matic llvm.org llvm-utils python-any-r1
+inherit toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 
@@ -32,8 +33,8 @@ HOMEPAGE="https://llvm.org/"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 SLOT="${LLVM_MAJOR}"
@@ -127,7 +128,7 @@ src_configure() {
 		elif test_compiler "${nolib_flags[@]}" -nostartfiles; then
 			# Avoiding -nostartfiles earlier on for bug #862540,
 			# and set available entry symbol for bug #862798.
-			nolib_flags+=( -nostartfiles -emain )
+			nolib_flags+=( -nostartfiles -e main )
 
 			local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
 			ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"

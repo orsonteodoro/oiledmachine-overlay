@@ -4,7 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=${PV%%.*}
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit cmake flag-o-matic llvm.org python-any-r1 toolchain-funcs
 

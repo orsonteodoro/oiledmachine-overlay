@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# Last update:  2024-04-04
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit

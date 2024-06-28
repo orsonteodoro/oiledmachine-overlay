@@ -4,7 +4,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( "python3_"{9..11} )
 
 inherit cmake-multilib llvm llvm.org python-any-r1 toolchain-funcs
 
@@ -16,15 +16,14 @@ HOMEPAGE="https://libcxxabi.llvm.org/"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 SLOT="0"
 IUSE="
-+static-libs test
-
-hardened r9
+hardened +static-libs test
+ebuild-revision-9
 "
 # in 15.x, cxxabi.h is moving from libcxx to libcxxabi
 RDEPEND="

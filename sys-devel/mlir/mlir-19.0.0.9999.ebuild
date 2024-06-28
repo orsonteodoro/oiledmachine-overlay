@@ -33,14 +33,14 @@ HOMEPAGE="https://openmp.llvm.org"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 	debug test
-	r3
+	ebuild-revision-3
 ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 REQUIRED_USE="

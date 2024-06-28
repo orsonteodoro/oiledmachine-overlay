@@ -23,7 +23,7 @@ _llvm_set_globals
 unset -f _llvm_set_globals
 
 CMAKE_ECLASS="cmake"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 
@@ -37,8 +37,8 @@ HOMEPAGE="https://github.com/llvm/llvm-project/tree/main/pstl"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 RESTRICT="

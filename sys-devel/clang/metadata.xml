@@ -242,7 +242,7 @@ CLANG_TRAINERS="lld"
     <flag name="static-analyzer">
       Install the Clang static analyzer
     </flag>
-    <flag name="rN">
+    <flag name="ebuild-revision-N">
       (INTERNAL USE ONLY: oiledmachine-overlay) bumped revisions to reuse ccache
       [for faster rebuilds on very large packages] while applying ebuild fixes.
     </flag>

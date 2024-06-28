@@ -4,7 +4,9 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} )
+# Last update:  2024-06-23
+
+PYTHON_COMPAT=( "python3_"{10..13} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_GROUP="portage"
 UOPTS_USER="portage"
@@ -46,12 +48,11 @@ LICENSE="
 # sorttable.js: MIT
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-+debug doc +extra ieee-long-double +pie +static-analyzer test xml
-
-default-fortify-source-2 default-fortify-source-3 default-full-relro
-default-partial-relro default-ssp-buffer-size-4
-default-stack-clash-protection cet hardened hardened-compat ssp
-r9
+cet +debug default-fortify-source-2 default-fortify-source-3 default-full-relro
+default-partial-relro default-ssp-buffer-size-4 default-stack-clash-protection
+doc +extra hardened hardened-compat ieee-long-double +pie ssp +static-analyzer
+test xml
+ebuild-revision-9
 ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 REQUIRED_USE="
@@ -164,7 +165,6 @@ LLVM_COMPONENTS=(
 	"clang"
 	"clang-tools-extra"
 	"cmake"
-	"llvm/lib/Transforms/Hello"
 )
 LLVM_MANPAGES=1
 LLVM_TEST_COMPONENTS=(
@@ -347,27 +347,21 @@ ewarn
 			"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-3-by-default.patch"
 		)
 		hardened_features+="_FORITIFY_SOURCE=3, "
-ewarn
 ewarn "The _FORITIFY_SOURCE=3 is in testing."
-ewarn
 	fi
 	if use default-full-relro ; then
 		patches_hardened+=(
 			"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
 		)
 		hardened_features+="Full RELRO, "
-ewarn
 ewarn "The Full RELRO is in testing."
-ewarn
 	fi
 	if use default-partial-relro ; then
 		patches_hardened+=(
 			"${FILESDIR}/clang-12.0.1-enable-partial-relro-by-default.patch"
 		)
 		hardened_features+="Partial RELRO, "
-ewarn
 ewarn "The Partial RELRO is in testing."
-ewarn
 	fi
 	if use default-stack-clash-protection ; then
 		if use x86 || use amd64 ; then
@@ -392,9 +386,7 @@ ewarn
 			"${FILESDIR}/clang-17.0.0.9999-enable-cf-protection-full-by-default.patch"
 		)
 		hardened_features+="CET, "
-ewarn
 ewarn "The CET as default is in testing."
-ewarn
 	fi
 	patches_hardened+=(
 		"${FILESDIR}/clang-18.0.0.9999-cross-dso-cfi-link-with-shared.patch"
@@ -546,6 +538,7 @@ get_distribution_components() {
 			c-index-test
 			clang
 			clang-format
+			clang-installapi
 			clang-linker-wrapper
 			clang-offload-bundler
 			clang-offload-packager
@@ -738,13 +731,6 @@ einfo
 		# libgomp support fails to find headers without explicit -I
 		# furthermore, it provides only syntax checking
 		-DCLANG_DEFAULT_OPENMP_RUNTIME=libomp
-
-		# Disable CUDA to autodetect GPU, so build for all.
-		-DCMAKE_DISABLE_FIND_PACKAGE_CUDAToolkit=ON
-
-		# Disable linking to HSA to avoid automagic dep.
-		# Load it dynamically instead.
-		-DCMAKE_DISABLE_FIND_PACKAGE_hsa-runtime64=ON
 
 		-DCLANG_DEFAULT_PIE_ON_LINUX=$(usex pie)
 

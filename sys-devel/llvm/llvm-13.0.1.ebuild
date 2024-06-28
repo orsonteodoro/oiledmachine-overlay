@@ -4,7 +4,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_GROUP="portage"
 UOPTS_USER="portage"
@@ -37,9 +37,9 @@ LICENSE="
 # 4. ConvertUTF.h: TODO.
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3
-
--dump r5
++binutils-plugin debug doc -dump exegesis libedit +libffi ncurses test xar xml
+z3
+ebuild-revison-5
 "
 REQUIRED_USE+="
 	amd64? (

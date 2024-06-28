@@ -25,7 +25,7 @@ unset -f _llvm_set_globals
 GCC_SLOT=13
 CMAKE_ECLASS="cmake"
 LLVM_MAX_SLOT=${LLVM_MAJOR}
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
@@ -37,8 +37,8 @@ HOMEPAGE="https://github.com/llvm/llvm-project/tree/main/pstl"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 RESTRICT="

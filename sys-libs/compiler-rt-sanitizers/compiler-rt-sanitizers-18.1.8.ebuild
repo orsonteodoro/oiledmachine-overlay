@@ -22,7 +22,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit check-reqs cmake flag-o-matic llvm.org llvm-utils python-any-r1
 
@@ -36,15 +36,15 @@ HOMEPAGE="https://llvm.org/"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 SLOT="${LLVM_MAJOR}"
 IUSE+="
-+abi_x86_32 abi_x86_64 +clang +debug hexagon test
-
-+libfuzzer +memprof +orc +profile +xray r3
++abi_x86_32 abi_x86_64 +clang +debug hexagon +libfuzzer +memprof +orc +profile
+test +xray
+ebuild-revision-3
 ${LLVM_EBUILDS_LLVM18_REVISION}
 "
 # sanitizer targets, keep in sync with config-ix.cmake

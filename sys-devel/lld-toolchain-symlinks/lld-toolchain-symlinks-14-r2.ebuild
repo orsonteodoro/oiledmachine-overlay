@@ -28,9 +28,10 @@ src_install() {
 		done
 	fi
 
-	local dest=/usr/lib/llvm/${SLOT}/bin
+	local dest="/usr/lib/llvm/${SLOT}/bin"
 	dodir "${dest}"
 	dosym ld.lld "${dest}/ld"
+	local chost
 	for chost in "${chosts[@]}"; do
 		dosym ld.lld "${dest}/${chost}-ld"
 	done

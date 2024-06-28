@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Last update:	2024-05-27
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -23,7 +25,7 @@ _llvm_set_globals
 unset -f _llvm_set_globals
 
 GCC_SLOT=13
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit cmake-multilib llvm.org llvm-utils python-any-r1 toolchain-funcs
 
@@ -34,15 +36,14 @@ HOMEPAGE="https://libcxxabi.llvm.org/"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 SLOT="0"
 IUSE+="
-+static-libs test
-
-hardened r9
+hardened +static-libs test
+ebuild-revision-9
 ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 # in 15.x, cxxabi.h is moving from libcxx to libcxxabi

@@ -24,7 +24,7 @@ unset -f _llvm_set_globals
 inherit elisp-common llvm.org
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
 ~arm64-macos ~ppc-macos ~x64-macos
 "
 
@@ -67,7 +67,7 @@ src_install() {
 	newdoc "vim/README" "README.vim"
 	dodoc "vim/vimrc"
 	if use emacs ; then
-		elisp-install "llvm" "emacs/"*"."{"el","elc"}
+		elisp-install "llvm" "emacs/"*{".el",".elc"}
 		elisp-make-site-file "${SITEFILE}" "llvm"
 	fi
 }

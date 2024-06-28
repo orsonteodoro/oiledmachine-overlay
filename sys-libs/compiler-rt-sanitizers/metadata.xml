@@ -23,12 +23,37 @@
 
   -->
   <use>
+    <flag name="asan">
+      Build the Address Sanitizer runtime for reporting invalid memory/pointer
+      violations.
+    </flag>
+    <flag name="cfi">
+      Build the Control Flow Integrity (CFI) runtime to abort the program on
+      undefined behavior that may lead to control flow attacks.
+
+      It ensures the derived dynamic type is of the (static) source type.
+      Checks are made with pointers, objects, functions, types, dynamic libs.
+      Unrelated types and not derived dynamic types are violations.
+    </flag>
     <flag name="clang">
       Force building using the installed Clang (rather than the default CC/CXX).
+    </flag>
+    <flag name="dfsan">
+      Build the Data Flow Sanitizer runtime for detect code issues through
+      generic data flows analysis.
     </flag>
     <flag name="fallback-commit">
       Rollback commit for reliable working patches and for missing symbols
       avoidance.
+    </flag>
+    <flag name="gwp-asan">
+      Build the GWP-ASAN runtime for ASAN in production builds/environments.
+
+      (It's recommend to also enable scudo to easily deploy gwp-asan.)
+    </flag>
+    <flag name="hwasan">
+      Build the Hardware ASAN runtime on supported hardware.  Lower memory cost
+      compared to non hardware assisted ASAN.  64-bit only.
     </flag>
     <flag name="libfuzzer">
       Build the libFuzzer engine used to generate and mutate input files from
@@ -37,8 +62,14 @@
       or more sanitizers such as asan, ubsan, msan, lsan which are detected and
       logged during fuzzing.
     </flag>
+    <flag name="lsan">
+      Build the [Memory] Leak Sanitizer runtime.
+    </flag>
     <flag name="memprof">
       Build the memory profiler runtime.
+    </flag>
+    <flag name="msan">
+      Build the Memory Sanitizer runtime for uninitalized value checks.
     </flag>
     <flag name="orc">
       Build the ORC JIT API that could be utilized for LLVM optimization,
@@ -49,40 +80,6 @@
       Build the profiling runtime which is required by Clang PGO (Profile
       Guided Optimization).
     </flag>
-    <flag name="sanitize">
-      Build the sanitizer runtimes.
-    </flag>
-    <flag name="xray">
-      Build the XRay runtime for dynamic profiling.
-    </flag>
-
-    <flag name="asan">
-      Build the Address Sanitizer runtime for reporting invalid memory/pointer
-      violations.
-    </flag>
-    <flag name="dfsan">
-      Build the Data Flow Sanitizer runtime for detect code issues through
-      generic data flows analysis.
-    </flag>
-    <flag name="lsan">
-      Build the [Memory] Leak Sanitizer runtime.
-    </flag>
-    <flag name="msan">
-      Build the Memory Sanitizer runtime for uninitalized value checks.
-    </flag>
-    <flag name="hwasan">
-      Build the Hardware ASAN runtime on supported hardware.  Lower memory cost
-      compared to non hardware assisted ASAN.  64-bit only.
-    </flag>
-    <flag name="tsan">
-      Build the Thread Sanitizer runtime for data races detection where one
-      of the threads is a writer of a multithread variable which is illegal
-      in c++11.
-    </flag>
-    <flag name="ubsan">
-      Build the Undefined Behavior Sanitizer runtime for out-of-bounds,
-      overflows, disallowed dereferencing checks.
-    </flag>
     <flag name="safestack">
       Build the SafeStack runtime for stack buffer overflow protection using
       disjoint safe/unsafe stacks instead of canaries and additional
@@ -92,13 +89,8 @@
       SafeStack.  There seems to be a consensus of no benefit in using this.
       One researcher noted a information disclosure attack/vulnerability.
     </flag>
-    <flag name="cfi">
-      Build the Control Flow Integrity (CFI) runtime to abort the program on
-      undefined behavior that may lead to control flow attacks.
-
-      It ensures the derived dynamic type is of the (static) source type.
-      Checks are made with pointers, objects, functions, types, dynamic libs.
-      Unrelated types and not derived dynamic types are violations.
+    <flag name="sanitize">
+      Build the sanitizer runtimes.
     </flag>
     <flag name="scudo">
       Build the Scudo Hardened Allocator for mitigation against heap based
@@ -113,10 +105,17 @@
       return addresses using a disjoint, isolated, hidden SCS.  SCS is a
       better alternative to fstack-protector and SafeStack.
     </flag>
-    <flag name="gwp-asan">
-      Build the GWP-ASAN runtime for ASAN in production builds/environments.
-
-      (It's recommend to also enable scudo to easily deploy gwp-asan.)
+    <flag name="tsan">
+      Build the Thread Sanitizer runtime for data races detection where one
+      of the threads is a writer of a multithread variable which is illegal
+      in c++11.
+    </flag>
+    <flag name="ubsan">
+      Build the Undefined Behavior Sanitizer runtime for out-of-bounds,
+      overflows, disallowed dereferencing checks.
+    </flag>
+    <flag name="xray">
+      Build the XRay runtime for dynamic profiling.
     </flag>
   </use>
 </pkgmetadata>

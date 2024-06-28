@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Last update:  2024-05-25
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -22,7 +24,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit check-reqs cmake flag-o-matic llvm.org llvm-utils python-any-r1
 
@@ -33,15 +35,15 @@ HOMEPAGE="https://llvm.org/"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 SLOT="${LLVM_MAJOR}"
 IUSE+="
-+abi_x86_32 abi_x86_64 +clang +debug hexagon test
-
-+libfuzzer +memprof +orc +profile +xray r3
++abi_x86_32 abi_x86_64 +clang +ctx-profile +debug hexagon +libfuzzer +memprof
++orc +profile test +xray
+ebuild-revision-3
 ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 # sanitizer targets, keep in sync with config-ix.cmake
@@ -339,6 +341,7 @@ LLVM_COMPONENTS=(
 	"llvm/cmake"
 )
 LLVM_TEST_COMPONENTS=(
+	"llvm/include/llvm/ProfileData"
 	"llvm/lib/Testing/Support"
 	"third-party"
 )
@@ -433,6 +436,7 @@ eerror
 		# builtins & crt installed by sys-libs/compiler-rt
 		-DCOMPILER_RT_BUILD_BUILTINS=OFF
 		-DCOMPILER_RT_BUILD_CRT=OFF
+		-DCOMPILER_RT_BUILD_CTX_PROFILE=$(usex ctx-profile)
 		-DCOMPILER_RT_BUILD_LIBFUZZER=$(usex libfuzzer)
 		-DCOMPILER_RT_BUILD_MEMPROF=$(usex memprof)
 		-DCOMPILER_RT_BUILD_ORC=$(usex orc)

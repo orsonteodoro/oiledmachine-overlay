@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Last update:  2024-06-15
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -31,7 +33,7 @@ LLVM_COMPONENTS=(
 	"cmake"
 )
 LLVM_MAX_SLOT=${PV%%.*}
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
@@ -45,8 +47,8 @@ HOMEPAGE="https://libcxx.llvm.org/"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 RESTRICT="
@@ -56,9 +58,8 @@ RESTRICT="
 "
 SLOT="0"
 IUSE+="
-+libcxxabi +static-libs test +threads
-
-hardened r12
+hardened +libcxxabi +static-libs test +threads
+ebuild-revision-12
 ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 RDEPEND="
@@ -237,27 +238,6 @@ pkg_setup() {
 	check_libstdcxx
 }
 
-src_prepare() {
-	pushd "${WORKDIR}" || die
-		# Retesting
-		# Still bugged since Sept 30, 2022
-		# Fixes build time failure:
-#
-# include/c++/v1/system_error: In instantiation of 'std::__1::error_code::error_code(_Ep, typename std::__1::enable_if<std::__1::is_error_code_enum<_Ep>::value>::type*) [with _Ep = st>
-# include/c++/v1/ios:452:34:   required from here
-# include/c++/v1/system_error:355:40: error: use of deleted function 'void std::__1::__adl_only::make_error_code()'
-#   355 |                 *this = make_error_code(__e);
-#       |                         ~~~~~~~~~~~~~~~^~~~~
-# include/c++/v1/system_error:263:10: note: declared here
-#   263 |     void make_error_code() = delete;
-#
-#		filterdiff -x "*/Cxx2bIssues.csv" "${DISTDIR}/libcxx-commit-ef843c8.patch" \
-#			> "${T}/libcxx-commit-ef843c8.patch" || die
-#		eapply -R "${T}/libcxx-commit-ef843c8.patch"
-	popd
-	llvm.org_src_prepare
-}
-
 src_configure() {
 	llvm_prepend_path "${PV%%.*}"
 
@@ -385,6 +365,7 @@ einfo
 		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
 		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
 		-DLIBCXX_INCLUDE_TESTS=$(usex test)
+		-DLIBCXX_INSTALL_MODULES=ON
 		-DLIBCXX_USE_COMPILER_RT=${use_compiler_rt}
 		-DLLVM_ENABLE_RUNTIMES=libcxx
 		-DLLVM_INCLUDE_TESTS=OFF

@@ -4,7 +4,9 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} )
+# Last update:  2024-05-25
+
+PYTHON_COMPAT=( "python3_"{10..13} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_GROUP="portage"
 UOPTS_USER="portage"
@@ -43,10 +45,9 @@ LICENSE="
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-+debug test zstd
-
-default-full-relro +default-partial-relro default-no-relro
-hardened hardened-compat r1
++debug default-full-relro default-no-relro +default-partial-relro hardened
+hardened-compat test zstd
+ebuild-revision-1
 ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 REQUIRED_USE+="
@@ -189,9 +190,7 @@ src_unpack() {
 }
 
 eapply_hardened() {
-ewarn
 ewarn "The hardened USE flag and Full RELRO default ON patch is in testing."
-ewarn
 	local hardened_flags=""
 	if use default-full-relro ; then
 		eapply "${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"

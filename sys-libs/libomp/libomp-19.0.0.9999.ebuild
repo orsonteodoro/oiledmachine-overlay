@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# Last update:  2024-05-25
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -61,7 +63,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_90
 )
 LLVM_SLOT="${PV%%.*}"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 inherit hip-versions
 ROCM_SLOTS=(
 #	"${HIP_6_3_VERSION}"
@@ -90,8 +92,8 @@ HOMEPAGE="https://openmp.llvm.org"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 RESTRICT="

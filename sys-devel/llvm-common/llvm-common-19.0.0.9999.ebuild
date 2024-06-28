@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# Last update:  2024-01-24
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -61,7 +63,7 @@ src_install() {
 	newdoc "vim/README" "README.vim"
 	dodoc "vim/vimrc"
 	if use emacs ; then
-		elisp-install llvm emacs/*.{el,elc}
+		elisp-install "llvm" "emacs/"*{".el",".elc"}
 		elisp-make-site-file "${SITEFILE}" "llvm"
 	fi
 }

@@ -4,7 +4,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_GROUP="portage"
 UOPTS_USER="portage"
@@ -38,9 +38,9 @@ LICENSE="
 # 4. ConvertUTF.h: TODO.
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3 zstd
-
-bolt bolt-heatmap -dump jemalloc tcmalloc r6
++binutils-plugin bolt bolt-heatmap debug doc -dump exegesis jemalloc libedit
++libffi ncurses tcmalloc test xar xml z3 zstd
+ebuild-revison-6
 "
 REQUIRED_USE+="
 	!amd64? (

@@ -31,7 +31,7 @@ LLVM_COMPONENTS=(
 	"cmake"
 )
 LLVM_MAX_SLOT=${PV%%.*}
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
@@ -46,8 +46,8 @@ HOMEPAGE="https://libcxx.llvm.org/"
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 RESTRICT="
@@ -57,9 +57,8 @@ RESTRICT="
 "
 SLOT="0"
 IUSE+="
-+libcxxabi +static-libs test +threads
-
-hardened r12
+hardened +libcxxabi +static-libs test +threads
+ebuild-revision-12
 ${LLVM_EBUILDS_LLVM18_REVISION}
 "
 RDEPEND="

@@ -62,7 +62,7 @@
     <flag name="epgo">
       Builds with the event based Profile Guided Optimization strategy.
     </flag>
-    <flag name="r1">
+    <flag name="ebuild-revision-N">
       Revision bump (FOR INTERNAL USE ONLY)
     </flag>
   </use>

@@ -4,7 +4,9 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} )
+# Last update:  2024-06-01
+
+PYTHON_COMPAT=( "python3_"{10..13} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_GROUP="portage"
 UOPTS_USER="portage"
@@ -50,10 +52,9 @@ LICENSE="
 # 4. ConvertUTF.h: TODO.
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-+binutils-plugin +debug debuginfod doc exegesis libedit +libffi ncurses test
-xml z3 zstd
-
-bolt bolt-heatmap -dump jemalloc tcmalloc r6
++binutils-plugin bolt bolt-heatmap +debug debuginfod doc -dump exegesis jemalloc
+libedit +libffi tcmalloc test xml z3 zstd
+ebuild-revison-6
 ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 REQUIRED_USE+="
@@ -125,9 +126,6 @@ RDEPEND="
 	)
 	libffi? (
 		>=dev-libs/libffi-3.0.13-r1:0=[${MULTILIB_USEDEP}]
-	)
-	ncurses? (
-		>=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}]
 	)
 	tcmalloc? (
 		dev-util/google-perftools
@@ -513,6 +511,7 @@ get_distribution_components() {
 			llvm-xray
 			obj2yaml
 			opt
+			reduce-chunk-list
 			sancov
 			sanstats
 			split-file
@@ -651,7 +650,6 @@ einfo
 		-DLLVM_ENABLE_DUMP=$(usex dump)
 		-DLLVM_ENABLE_FFI=$(usex libffi)
 		-DLLVM_ENABLE_LIBEDIT=$(usex libedit)
-		-DLLVM_ENABLE_TERMINFO=$(usex ncurses)
 		-DLLVM_ENABLE_LIBXML2=$(usex xml)
 		-DLLVM_ENABLE_ASSERTIONS=$(usex debug)
 		-DLLVM_ENABLE_LIBPFM=$(usex exegesis)
@@ -673,14 +671,9 @@ einfo
 		-DOCAMLFIND=NO
 	)
 
-	# On the macos prefix, this distro doesn't split sys-libs/ncurses to
-	# libtinfo and libncurses, but llvm tries to use libtinfo before
-	# libncurses, and ends up using libtinfo (actually, libncurses.dylib)
-	# from system instead of prefix.
 	use kernel_Darwin && mycmakeargs+=(
 		# Use our libtool instead of looking it up with xcrun \
 		-DCMAKE_LIBTOOL="${EPREFIX}/usr/bin/${CHOST}-libtool"
-		-DTerminfo_LIBRARIES="-lncurses"
 	)
 
 	local suffix=
