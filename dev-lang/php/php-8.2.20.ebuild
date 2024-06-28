@@ -31,22 +31,11 @@ WANT_AUTOMAKE="none"
 inherit autotools flag-o-matic llvm multilib systemd uopts
 
 KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
-~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
+~alpha ~amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ~ppc ppc64 ~riscv ~s390 ~sparc
+~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
 "
-export BENCHMARKING_DATA_COMMIT="abfbebbf1a771df2b925fbb04ef7a3a8e3f55d74"
-BENCHMARKING_SYMFONY_DEMO_2_2_3="7979f0def39dfde24afebbd29ad205f6c32ea795"
-BENCHMARKING_WORDPRESS_6_2="ef263dad5e1e6bbc78885cb6707c0a4d07ad5fc6"
 SRC_URI="
 	https://www.php.net/distributions/${P}.tar.xz
-	trainer-benchmark? (
-https://github.com/php/benchmarking-data/archive/${BENCHMARKING_DATA_COMMIT}.tar.gz
-	-> php-benchmarking-data-${BENCHMARKING_DATA_COMMIT:0:7}.tar.gz
-https://github.com/php/benchmarking-symfony-demo-2.2.3/archive/${BENCHMARKING_SYMFONY_DEMO_2_2_3}.tar.gz
-	-> php-benchmarking-symfony-demo-2_2_3-${BENCHMARKING_SYMFONY_DEMO_2_2_3:0:7}.tar.gz
-https://github.com/php/benchmarking-wordpress-6.2/archive/${BENCHMARKING_WORDPRESS_6_2}.tar.gz
-	-> php-benchmarking-wordpress-6.2-${BENCHMARKING_WORDPRESS_6_2:0:7}.tar.gz
-	)
 "
 
 DESCRIPTION="The PHP language runtime engine"
@@ -78,19 +67,18 @@ SLOT="$(ver_cut 1-2)"
 # SAPIs and SAPI-specific USE flags (cli SAPI is default on):
 IUSE+="
 ${SAPIS_DEFAULTS}
--acl -apparmor -argon2 -avif -bcmath -berkdb -bzip2 -calendar -capstone -cdb
--cjk +ctype -curl debug -enchant -exif -ffi +fileinfo +filter -firebird
-+flatfile -ftp -gd -gdbm +gmp +iconv imap -inifile -intl -iodbc -ipv6 +jit
--kerberos -ldap -ldap-sasl -libedit -lmdb -mhash -mssql -mysql -mysqli -nls
--odbc +opcache -pcntl +pdo +phar +posix -postgres -qdbm
--readline selinux +session session-mm -sharedmem +simplexml -snmp -soap -sockets
--sodium -spell +sqlite -ssl -sysvipc -systemd test -tidy threads +tokenizer
--tokyocabinet -truetype -unicode valgrind -webp +xml +xmlreader +xmlwriter -xpm
--xslt -zip -zlib
+-acl -apparmor -argon2 -avif -bcmath -berkdb -bzip2 -calendar -cdb -cjk +ctype
+-curl debug -enchant -exif -ffi +fileinfo +filter -firebird +flatfile -ftp -gd
+-gdbm +gmp +iconv imap -inifile -intl -iodbc -ipv6 +jit -kerberos -ldap
+-ldap-sasl -libedit -lmdb -mhash -mssql -mysql -mysqli -nls -oci8-instant-client
+-odbc +opcache -pcntl +pdo +phar +posix -postgres -qdbm -readline selinux
++session session-mm -sharedmem +simplexml -snmp -soap -sockets -sodium -spell
++sqlite -ssl -sysvipc -systemd test -tidy threads +tokenizer -tokyocabinet
+-truetype -unicode valgrind -webp +xml +xmlreader +xmlwriter -xpm -xslt -zip
+-zlib
 clang
 trainer-all
 trainer-basic
-trainer-benchmark
 trainer-ext
 trainer-ext-com_dotnet
 trainer-ext-date
@@ -103,23 +91,7 @@ trainer-ext-standard
 trainer-zend
 "
 # Without USE=readline or libedit, the interactive "php -a" CLI will hang.
-REQUIRED_USE_BENCHMARK_SYMFONY_DEMO="
-	(
-		ctype
-		iconv
-		pdo
-		sqlite
-		session
-		simplexml
-		tokenizer
-	)
-"
-REQUIRED_USE_BENCHMARK_WORDPRESS="
-	(
-		mysql
-		phar
-	)
-"
+# The Oracle instant client provides its own incompatible ldap library.
 REQUIRED_USE="
 	!cli? (
 		?? (
@@ -136,7 +108,6 @@ REQUIRED_USE="
 		^^ (
 			trainer-all
 			trainer-basic
-			trainer-benchmark
 		)
 	)
 	cjk? (
@@ -171,12 +142,14 @@ REQUIRED_USE="
 			pdo
 		)
 	)
+	oci8-instant-client? (
+		!ldap
+	)
 	pgo? (
 		cli
 		^^ (
 			trainer-all
 			trainer-basic
-			trainer-benchmark
 		)
 	)
 	qdbm? (
@@ -194,13 +167,6 @@ REQUIRED_USE="
 	)
 	test? (
 		cli
-	)
-	trainer-benchmark? (
-		${REQUIRED_USE_BENCHMARK_SYMFONY_DEMO}
-		${REQUIRED_USE_BENCHMARK_WORDPRESS}
-		cli
-		cgi
-		gmp
 	)
 	trainer-ext? (
 		trainer-basic
@@ -271,13 +237,12 @@ REQUIRED_USE="
 		phpdbg
 	)
 "
-
 # The supported (that is, autodetected) versions of BDB are listed in
 # the ./configure script. Other versions *work*, but we need to stick to
 # the ones that can be detected to avoid a repeat of bug #564824.
 COMMON_DEPEND="
-	app-eselect/eselect-php[apache2?,fpm?]
-	dev-libs/libpcre2[jit?,unicode]
+	>=app-eselect/eselect-php-0.9.7[apache2?,fpm?]
+	>=dev-libs/libpcre2-10.30[jit?,unicode]
 	virtual/libcrypt:=
 	fpm? (
 		acl? (
@@ -308,22 +273,20 @@ COMMON_DEPEND="
 	bzip2? (
 		app-arch/bzip2:0=
 	)
-	capstone? (
-		dev-libs/capstone
-	)
 	cdb? (
 		|| (
-			dev-db/cdb dev-db/tinycdb
+			dev-db/cdb
+			dev-db/tinycdb
 		)
 	)
 	curl? (
-		net-misc/curl
+		>=net-misc/curl-7.29.0
 	)
 	enchant? (
 		app-text/enchant:2
 	)
 	ffi? (
-		dev-libs/libffi:=
+		>=dev-libs/libffi-3.0.11:=
 	)
 	firebird? (
 		dev-db/firebird
@@ -333,7 +296,7 @@ COMMON_DEPEND="
 		media-libs/libpng:0=
 	)
 	gdbm? (
-		sys-libs/gdbm:0=
+		>=sys-libs/gdbm-1.8.0:0=
 	)
 	gmp? (
 		dev-libs/gmp:0=
@@ -351,7 +314,7 @@ COMMON_DEPEND="
 		virtual/krb5
 	)
 	ldap? (
-		net-nds/openldap:=
+		>=net-nds/openldap-1.2.11:=
 	)
 	ldap-sasl? (
 		dev-libs/cyrus-sasl
@@ -368,16 +331,19 @@ COMMON_DEPEND="
 	nls? (
 		sys-devel/gettext
 	)
+	oci8-instant-client? (
+		dev-db/oracle-instantclient[sdk]
+	)
 	odbc? (
 		!iodbc? (
-			dev-db/unixODBC
+			>=dev-db/unixODBC-1.8.13
 		)
 		iodbc? (
 			dev-db/libiodbc
 		)
 	)
 	postgres? (
-		dev-db/postgresql:*
+		>=dev-db/postgresql-9.1:*
 	)
 	qdbm? (
 		dev-db/qdbm
@@ -389,19 +355,19 @@ COMMON_DEPEND="
 		dev-libs/mm
 	)
 	snmp? (
-		net-analyzer/net-snmp
+		>=net-analyzer/net-snmp-5.2
 	)
 	sodium? (
 		dev-libs/libsodium:=[-minimal(-)]
 	)
 	spell? (
-		app-text/aspell
+		>=app-text/aspell-0.50
 	)
 	sqlite? (
-		dev-db/sqlite
+		>=dev-db/sqlite-3.7.6.3
 	)
 	ssl? (
-		dev-libs/openssl:0=
+		>=dev-libs/openssl-1.0.2:0=
 	)
 	tidy? (
 		app-text/htmltidy
@@ -410,7 +376,7 @@ COMMON_DEPEND="
 		dev-db/tokyocabinet
 	)
 	truetype? (
-		media-libs/freetype
+		=media-libs/freetype-2*
 	)
 	unicode? (
 		dev-libs/oniguruma:=
@@ -422,7 +388,7 @@ COMMON_DEPEND="
 		media-libs/libwebp:0=
 	)
 	xml? (
-		dev-libs/libxml2
+		>=dev-libs/libxml2-2.9.0
 	)
 	xpm? (
 		x11-libs/libXpm
@@ -431,17 +397,16 @@ COMMON_DEPEND="
 		dev-libs/libxslt
 	)
 	zip? (
-		dev-libs/libzip:=
+		>=dev-libs/libzip-1.2.0:=
 	)
 	zlib? (
-		sys-libs/zlib:0=
+		>=sys-libs/zlib-1.2.0.4:0=
 	)
 "
 IDEPEND="
-	app-eselect/eselect-php[apache2?,fpm?]
+	>=app-eselect/eselect-php-0.9.7[apache2?,fpm?]
 "
-RDEPEND="
-	${COMMON_DEPEND}
+RDEPEND="${COMMON_DEPEND}
 	virtual/mta
 	fpm? (
 		selinux? (
@@ -457,11 +422,8 @@ RDEPEND="
 # have an incompatible version installed. See bug 593278.
 DEPEND="
 	${COMMON_DEPEND}
+	>=sys-devel/bison-3.0.1
 	app-arch/xz-utils
-	sys-devel/bison
-	trainer-benchmark? (
-		dev-debug/valgrind
-	)
 "
 gen_clang_bdepend() {
 	local s
@@ -497,14 +459,14 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/php-iodbc-header-location.patch"
-	"${FILESDIR}/php-8.3.3-benchmark-local.patch"
-	"${FILESDIR}/fix-musl-llvm.patch"
+	"${FILESDIR}/php-capstone-optional.patch"
+	"${FILESDIR}/php-8.2.8-openssl-tests.patch"
 )
 
 php_install_ini() {
 	local phpsapi="${1}"
 
-	# Work out where we are installing the ini file
+	# work out where we are installing the ini file
 	php_set_ini_dir "${phpsapi}"
 
 	# Always install the production INI file, bug 611214.
@@ -514,15 +476,21 @@ php_install_ini() {
 		"${phpinisrc}" \
 		|| die
 
-	# Set the include path to point to where we want to find PEAR
-	# packages
-	local sed_src='^;include_path = ".:/php.*'
-	local include_path="."
-	include_path+=":${EPREFIX}/usr/share/php${PHP_MV}"
-	include_path+=":${EPREFIX}/usr/share/php"
-	local sed_dst="include_path = \"${include_path}\""
+	# Default to /tmp for save_path, bug #282768
 	sed -i \
-		-e "s|${sed_src}|${sed_dst}|" \
+		-e 's|^;session.save_path .*$|session.save_path = "'"${EPREFIX}"'/tmp"|g' \
+		"${phpinisrc}" \
+		|| die
+
+	# Set the extension dir
+	sed -i \
+		-e "s|^extension_dir .*$|extension_dir = ${extension_dir}|g" \
+		"${phpinisrc}" \
+		|| die
+
+	# Set the include path to point to where we want to find PEAR packages
+	sed -i \
+		-e 's|^;include_path = ".:/php/includes".*|include_path = ".:'"${EPREFIX}"'/usr/share/php'${PHP_MV}':'"${EPREFIX}"'/usr/share/php"|' \
 		"${phpinisrc}" \
 		|| die
 
@@ -538,7 +506,7 @@ php_install_ini() {
 	if use opcache ; then
 		elog "Adding opcache to $PHP_EXT_INI_DIR"
 		echo \
-			"zend_extension = opcache.so" \
+			"zend_extension=${PHP_DESTDIR}/$(get_libdir)/opcache.so" \
 			>> \
 			"${D}/${PHP_EXT_INI_DIR}/opcache.ini"
 		dosym \
@@ -593,16 +561,6 @@ einfo "PATH:  ${PATH} (before)"
 			| tr "\n" ":" \
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
 einfo "PATH:  ${PATH} (after)"
-		if use trainer-benchmark ; then
-ewarn
-ewarn "The trainer-benchmark USE flag requires the following *sql settings"
-ewarn "for benchmarking to avoid clobbering www-apps/wordpress installation:"
-ewarn
-ewarn "  mysql -u root -p -e \"CREATE DATABASE IF NOT EXISTS trainer_benchmark\""
-ewarn "  mysql -u root -p -e \"CREATE USER 'trainer-benchmark'@'localhost' IDENTIFIED BY 'trainer-benchmark'; FLUSH PRIVILEGES;\""
-ewarn "  mysql -u root -p -e \"GRANT ALL PRIVILEGES ON *.* TO 'trainer-benchmark'@'localhost' WITH GRANT OPTION;\""
-ewarn
-		fi
 ewarn "${PN} may need to be temporarly unemerged for PGO training to work."
 	fi
 	uopts_setup
@@ -610,94 +568,6 @@ ewarn "${PN} may need to be temporarly unemerged for PGO training to work."
 
 src_unpack() {
 	unpack ${A}
-	if use trainer-benchmark ; then
-		mkdir -p "${S}/benchmark/repos"
-		mv \
-			"${WORKDIR}/benchmarking-data-${BENCHMARKING_DATA_COMMIT}" \
-			"${S}/benchmark/repos/data" \
-			|| die
-		mv \
-			"${WORKDIR}/benchmarking-symfony-demo-2.2.3-${BENCHMARKING_SYMFONY_DEMO_2_2_3}" \
-			"${S}/benchmark/repos/symfony-demo-2.2.3" \
-			|| die
-		mv \
-			"${WORKDIR}/benchmarking-wordpress-6.2-${BENCHMARKING_WORDPRESS_6_2}" \
-			"${S}/benchmark/repos/wordpress-6.2" \
-			|| die
-
-		local loc
-		loc=$(grep -n -e "DB_NAME" \
-			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
-			| cut -f 1 -d ":")
-		sed -i \
-			-e "${loc}d" \
-			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
-			|| die
-		sed -i \
-			-e "${loc}i define( 'DB_NAME', 'trainer_benchmark' );" \
-			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
-			|| die
-
-		loc=$(grep -n -e "DB_USER" \
-			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
-			| cut -f 1 -d ":")
-		sed -i \
-			-e "${loc}d" \
-			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
-			|| die
-		sed -i \
-			-e "${loc}i define( 'DB_USER', 'trainer-benchmark' );" \
-			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
-			|| die
-
-		loc=$(grep -n -e "DB_PASSWORD" \
-			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
-			| cut -f 1 -d ":")
-		sed -i \
-			-e "${loc}d" \
-			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
-			|| die
-		sed -i \
-			-e "${loc}i define( 'DB_PASSWORD', 'trainer-benchmark' );" \
-			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
-			|| die
-
-		loc=$(grep -n -e "--admin_user=wordpress" \
-			"${S}/benchmark/benchmark.php" \
-			| cut -f 1 -d ":")
-		sed -i \
-			-e "${loc}d" \
-			"${S}/benchmark/benchmark.php" \
-			|| die
-		sed -i \
-			-e "${loc}i '--admin_user=trainer-benchmark'," \
-			"${S}/benchmark/benchmark.php" \
-			|| die
-
-		loc=$(grep -n -e "--admin_password=wordpress" \
-			"${S}/benchmark/benchmark.php" \
-			| cut -f 1 -d ":")
-		sed -i \
-			-e "${loc}d" \
-			"${S}/benchmark/benchmark.php" \
-			|| die
-		sed -i \
-			-e "${loc}i '--admin_password=trainer-benchmark'," \
-			"${S}/benchmark/benchmark.php" \
-			|| die
-
-		loc=$(grep -n -e "--admin_email=benchmark@php.net" \
-			"${S}/benchmark/benchmark.php" \
-			| cut -f 1 -d ":")
-		sed -i \
-			-e "${loc}d" \
-			"${S}/benchmark/benchmark.php" \
-			|| die
-		sed -i \
-			-e "${loc}i '--admin_email=trainer-benchmark@trainer-benchmark.net'," \
-			"${S}/benchmark/benchmark.php" \
-			|| die
-	fi
 }
 
 src_prepare() {
@@ -726,11 +596,53 @@ src_prepare() {
 	eautoheader
 
 	local deleted_files=(
+	# missing skipif; fixed upstream already
+		sapi/cgi/tests/005.phpt
+
+	# These three get BORKED on no-ipv6 systems,
+	#
+	#   https://github.com/php/php-src/pull/11651
+	#
+		ext/sockets/tests/mcast_ipv6_recv.phpt
+		ext/sockets/tests/mcast_ipv6_recv_limited.phpt
+		ext/sockets/tests/mcast_ipv6_send.phpt
+
 	# fails in a network sandbox,
 	#
 	#   https://github.com/php/php-src/issues/11662
 	#
 		ext/sockets/tests/bug63000.phpt
+
+	# expected output needs to be updated,
+	#
+	#   https://github.com/php/php-src/pull/11648
+	#
+		ext/dba/tests/dba_tcadb.phpt
+
+	# Two IMAP tests missing SKIPIFs,
+	#
+	#   https://github.com/php/php-src/pull/11654
+	#
+		ext/imap/tests/imap_mutf7_to_utf8.phpt
+		ext/imap/tests/imap_utf8_to_mutf7_basic.phpt
+
+	# broken upstream with icu-73.x,
+	#
+	#   https://github.com/php/php-src/issues/11128
+	#
+		ext/intl/tests/calendar_clear_variation1.phpt
+
+	# overly sensitive to INI values; fixes sent upstream:
+	#
+	#  https://github.com/php/php-src/pull/11631
+	#
+		ext/session/tests/{bug74514,bug74936,gh7787}.phpt
+
+	# This is sensitive to the current "nice" level:
+	#
+	#   https://github.com/php/php-src/issues/11630
+	#
+		ext/standard/tests/general_functions/proc_nice_basic.phpt
 
 	# Tests ignoring the "-n" flag we pass to run-tests.php,
 	#
@@ -749,15 +661,37 @@ src_prepare() {
 		sapi/cli/tests/bug74600.phpt
 		sapi/cli/tests/bug78323.phpt
 
+	# Same TEST_PHP_EXTRA_ARGS (-n) issue with this one, but it's
+	# already been fixed upstream.
+		sapi/cli/tests/017.phpt
+
+	# Most Oracle tests are borked,
+	#
+	#  * https://github.com/php/php-src/issues/11804
+	#  * https://github.com/php/php-src/pull/11820
+	#  * https://github.com/php/php-src/issues/11819
+	#
+		ext/oci8/tests/*.phpt
+
 	# https://github.com/php/php-src/issues/12801
 		ext/pcre/tests/gh11374.phpt
 
-	# A new test failure appearing in 8.3.2, mentioned on the PR
-	# where it was likely introduced:
+	# This is a memory usage test with hard-coded limits. Whenever the
+	# limits are surpassed... they get increased... but in the meantime,
+	# the tests fail. This is not really a test that end users should
+	# be running pre-install, in my opinion. Bug 927461.
+		ext/fileinfo/tests/bug78987.phpt
+
+	# glibc-2.39 compatibility, fixed upstream in
+	# https://github.com/php/php-src/pull/14097
+		ext/standard/tests/strings/setlocale_variation3.phpt
+
+	# The expected warnings aren't triggered in this test because we
+	# define session.save_path on the CLI:
 	#
-	#   https://github.com/php/php-src/pull/13017
+	#   https://github.com/php/php-src/issues/14368
 	#
-		ext/dom/tests/DOMNode_isEqualNode.phpt
+		ext/session/tests/gh13856.phpt
 	)
 	rm -v ${deleted_files[@]} || die
 
@@ -769,13 +703,7 @@ src_prepare() {
 
 	for sapi in ${SAPIS} ; do
 		cp -a "${S}" "${S}_${sapi}" || die
-		if use cgi ; then
-			if [[ "${sapi}" == "cgi" || "${sapi}" == "cli" ]] ; then
-				UOPTS_IMPLS="_${sapi}"
-			else
-				UOPTS_IMPLS="_cgi"
-			fi
-		fi
+		#UOPTS_IMPLS="_${sapi}"
 		uopts_src_prepare
 	done
 }
@@ -788,7 +716,7 @@ check_libstdcxx() {
 
 	if ver_test "${gcc_current_profile_slot}" -ne "${GCC_SLOT}" ; then
 eerror
-eerror "You must switch to >= ${GCC_SLOT}.  Do"
+eerror "You must switch to GCC ${GCC_SLOT}.  Do"
 eerror
 eerror "  eselect gcc set ${CHOST}-${GCC_SLOT}"
 eerror "  source /etc/profile"
@@ -830,13 +758,7 @@ _src_configure_compiler() {
 
 _src_configure() {
 	check_libstdcxx
-	if use cgi ; then
-		if [[ "${sapi}" == "cgi" || "${sapi}" == "cli" ]] ; then
-			UOPTS_IMPLS="_${sapi}"
-		else
-			UOPTS_IMPLS="_cgi"
-		fi
-	fi
+	#UOPTS_IMPLS="_${sapi}"
 	uopts_src_configure # Wipes -fprofile*
 	if use clang ; then
 		if [[ "${PGO_PHASE}" == "PGI" || "${PGO_PHASE}" == "PGO" ]] ; then
@@ -899,7 +821,6 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 		$(use_with argon2 password-argon2 "${EPREFIX}/usr")
 		$(use_with avif)
 		$(use_with bzip2 bz2 "${EPREFIX}/usr")
-		$(use_with capstone)
 		$(use_with curl)
 		$(use_with enchant)
 		$(use_with ffi)
@@ -924,12 +845,12 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 		$(use_with valgrind)
 	# The php-fpm config file wants localstatedir to be ${EPREFIX}/var
 	# and not the Gentoo default ${EPREFIX}/var/lib. See bug 572002.
-		--infodir="${PHP_DESTDIR}/info"
-		--mandir="${PHP_DESTDIR}/man"
 		--prefix="${PHP_DESTDIR}"
+		--mandir="${PHP_DESTDIR}/man"
+		--infodir="${PHP_DESTDIR}/info"
 		--libdir="${PHP_DESTDIR}/lib"
-		--localstatedir="${EPREFIX}/var"
 		--with-libdir="$(get_libdir)"
+		--localstatedir="${EPREFIX}/var"
 		--without-pear
 		--without-valgrind
 		--with-external-libcrypt
@@ -944,8 +865,8 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 	our_conf+=(
 		$(use_enable flatfile)
 		$(use_enable inifile)
-		$(use_with berkdb db4 "${EPREFIX}/usr")
 		$(use_with cdb)
+		$(use_with berkdb db4 "${EPREFIX}/usr")
 		$(use_with gdbm gdbm "${EPREFIX}/usr")
 		$(use_with lmdb lmdb "${EPREFIX}/usr")
 		$(use_with qdbm qdbm "${EPREFIX}/usr")
@@ -1008,9 +929,13 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 		)
 	fi
 
+	# Oracle support
+	our_conf+=( $(use_with oci8-instant-client oci8) )
+
 	# PDO support
 	if use pdo ; then
 		our_conf+=(
+			$(use_with firebird pdo-firebird "${EPREFIX}/usr")
 			$(use_with mssql pdo-dblib "${EPREFIX}/usr")
 			$(use_with mysql pdo-mysql "mysqlnd")
 			$(use_with oci8-instant-client pdo-oci)
@@ -1060,11 +985,6 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 	# in main/build-defs.h which is included in main/php.h which is
 	# included by basically everything; so, avoiding a rebuild after
 	# changing it is not an easy job.
-	#
-	# The upstream build system also does not support building the
-	# apache2 and embed SAPIs at the same time, presumably because they
-	# both produce a libphp.so.
-
 	local _sapi
 	mkdir -p "${WORKDIR}/sapis-build" || true
 
@@ -1127,6 +1047,18 @@ _src_compile() {
 	# snmp seems to run during src_compile, too (bug #324739)
 	addpredict /usr/share/snmp/mibs/.index #nowarn
 	addpredict /var/lib/net-snmp/mib_indexes #nowarn
+
+	if use oci8-instant-client && use kerberos && use imap && use phar ; then
+		# A conspiracy takes place when the first three of these flags
+		# are set together, causing the newly-built "php" to open
+		# /dev/urandom with mode rw when it starts. That's not actually
+		# a problem... unless you also have USE=phar, which runs that
+		# "php" to build some phar thingy in src_compile(). Later in
+		# src_test(), portage (at least) sets "addpredict /" so the
+		# problem does not repeat.
+		addpredict /dev/urandom #nowarn
+	fi
+
 	emake -C "${WORKDIR}/sapis-build/${sapi}"
 }
 
@@ -1134,13 +1066,7 @@ src_compile() {
 	local sapi
 	for sapi in ${SAPIS} ; do
 		if use ${sapi} ; then
-			if use cgi ; then
-				if [[ "${sapi}" == "cgi" || "${sapi}" == "cli" ]] ; then
-					UOPTS_IMPLS="_${sapi}"
-				else
-					UOPTS_IMPLS="_cgi"
-				fi
-			fi
+			#UOPTS_IMPLS="_${sapi}"
 			uopts_src_compile
 		fi
 	done
@@ -1155,26 +1081,7 @@ _src_test() {
 	local mode="${1}"
 	if [[ "${sapi}" == "cli" ]] ; then
 		_src_test_cli "${mode}"
-	elif [[ "${sapi}" == "cgi" ]] ; then
-		_src_test_cgi "${mode}"
 	fi
-}
-
-_src_test_cgi() {
-	local mode="${1}"
-	export TEST_PHP_EXECUTABLE="${WORKDIR}/sapis-build/cli/sapi/cli/php"
-
-	if [[ -x "${WORKDIR}/sapis-build/cgi/sapi/cgi/php-cgi" ]] ; then
-		export TEST_PHP_CGI_EXECUTABLE="${WORKDIR}/sapis-build/cgi/sapi/cgi/php-cgi"
-	fi
-
-	if [[ "${mode}" == "pgo" ]] ; then
-		if use trainer-benchmark ; then
-			"${TEST_PHP_EXECUTABLE}" "${S}/benchmark/benchmark.php" "true" "${TEST_PHP_CGI_EXECUTABLE}" || die
-		fi
-	fi
-	unset TEST_PHP_EXECUTABLE
-	unset TEST_PHP_CGI_EXECUTABLE
 }
 
 _src_test_cli() {
@@ -1716,10 +1623,10 @@ _src_test_cli() {
 
 # Prevent error:
 # /bin/sh: - : invalid option
-	unset TEST_PHP_EXECUTABLE
-	unset TEST_PHP_EXTRA_ARGS
-	unset TEST_PHP_CGI_EXECUTABLE
-	unset TEST_PHPDBG_EXECUTABLE
+unset TEST_PHP_EXECUTABLE
+unset TEST_PHP_EXTRA_ARGS
+unset TEST_PHP_CGI_EXECUTABLE
+unset TEST_PHPDBG_EXECUTABLE
 }
 
 train_trainer_custom() {
@@ -1811,20 +1718,31 @@ src_install() {
 		fi
 	done
 
-	# Install SAPI-independent targets
+	# Makefile forgets to create this before trying to write to it...
+	dodir "${PHP_DESTDIR#${EPREFIX}}/bin"
+
+	# Install php environment (without any sapis)
 	cd "${WORKDIR}/sapis-build/$first_sapi" || die
 	emake INSTALL_ROOT="${D}" \
 		install-build install-headers install-programs
-	use opcache && emake INSTALL_ROOT="${D}" install-modules
+
+	local extension_dir="$("${ED}/${PHP_DESTDIR#${EPREFIX}}/bin/php-config" --extension-dir)"
 
 	# Create the directory where we'll put version-specific php scripts
 	keepdir "/usr/share/php${PHP_MV}"
 
+	local file=""
 	local sapi_list=""
 
 	for sapi in ${SAPIS} ; do
 		_install_single_sapi
 	done
+
+	# Installing opcache module
+	if use opcache ; then
+		into "${PHP_DESTDIR#${EPREFIX}}"
+		dolib.so "modules/opcache$(get_libname)"
+	fi
 
 	# Install env.d files
 	newenvd "${FILESDIR}/20php5-envd" "20php${SLOT}"
@@ -1845,24 +1763,18 @@ src_install() {
 
 	if use fpm ; then
 		if use systemd ; then
-			systemd_newunit \
+			systemd_newunit
 				"${FILESDIR}/php-fpm_at.service" \
 				"php-fpm@${SLOT}.service"
 		else
-			systemd_newunit \
+			systemd_newunit
 				"${FILESDIR}/php-fpm_at-simple.service" \
 				"php-fpm@${SLOT}.service"
 		fi
 	fi
 
 	for sapi in ${SAPIS} ; do
-		if use cgi ; then
-			if [[ "${sapi}" == "cgi" || "${sapi}" == "cli" ]] ; then
-				UOPTS_IMPLS="_${sapi}"
-			else
-				UOPTS_IMPLS="_cgi"
-			fi
-		fi
+		#UOPTS_IMPLS="_${sapi}"
 		uopts_src_install
 	done
 }
