@@ -16,7 +16,7 @@ inherit blender-v4.1
 # See eclass below for implementation:
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender.eclass
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender-multibuild.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender-v4.0.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender-v4.1.eclass
 
 # For version bumps see,
 # https://download.blender.org/release/Blender4.1/
