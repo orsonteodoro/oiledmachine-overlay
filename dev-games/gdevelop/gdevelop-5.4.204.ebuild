@@ -2304,7 +2304,7 @@ einfo "Fixing high vulnerabilities"
 				sed -i -e "s|\"lodash\": \"~4.3.0\"|\"lodash\": \"~4.17.21\"|g" "package-lock.json" || die			# [7,12]
 				sed -i -e "s|\"tar\": \"^2.0.0\"|\"tar\": \"^4.4.18\"|g" "package-lock.json" || die				# [7,12]
 				enpm install "braces@3.0.3" -D			# [8]
-				enpm install "grunt@1.6.1" -D			# * [4,13] ; Bumping breaks during build time
+				enpm install "grunt@1.6.1" -D			# [4,13]
 					enpm install "grunt-contrib-clean@2.0.1" -D
 					enpm install "grunt-contrib-compress@2.0.0" -D
 					enpm install "grunt-contrib-concat@2.1.0" -D
@@ -2597,7 +2597,7 @@ einfo "PATH:  ${PATH}"
 
 src_install() {
 	insinto "${NPM_INSTALL_PATH}"
-	doins -r newIDE/electron-app/dist/linux-unpacked/*
+	doins -r "newIDE/electron-app/dist/linux-unpacked/"*
 	electron-app_gen_wrapper \
 		"${PN}" \
 		"${NPM_INSTALL_PATH}/${PN}"
