@@ -19,7 +19,7 @@ inherit check-reqs cmake edo flag-o-matic linux-info multiprocessing prefix
 inherit toolchain-funcs uopts
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips -ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
+amd64 ~arm ~arm64 ~hppa ~ia64 ~mips -ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris
 "
 # Shorten the path because the socket path length must be shorter than 107 chars
