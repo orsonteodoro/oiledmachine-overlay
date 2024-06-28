@@ -27,12 +27,12 @@ YARN_LOCKFILE_SOURCE="upstream"
 YARN_OFFLINE=1
 YARN_TEST_SCRIPT="test:theia"
 # Generated from
-# find /var/tmp/portage/dev-util/theia-1.50.1/work/theia-1.50.1/ -type f -executable \
+# find /var/tmp/portage/dev-util/theia-1.51.0/work/theia-1.51.0/ -type f -executable \
 #	| grep -v ".ts$" \
 #	| grep -v "LICENSE" \
 #	| grep -v "README" \
 #	| grep -v ".json$" \
-#	| sed -e "s|/var/tmp/portage/dev-util/theia-1.50.1/work/theia-1.50.1|/opt/theia|" \
+#	| sed -e "s|/var/tmp/portage/dev-util/theia-1.51.0/work/theia-1.51.0|/opt/theia|" \
 #	| LC_COLLATE=C sort
 YARN_EXE_LIST="
 /opt/theia/.browser_modules/cpu-features/build/Release/cpufeatures.node
@@ -720,7 +720,7 @@ SLOT="0/monthly"
 if [[ "${SLOT}" =~ "community" ]] ; then
 	SUFFIX="-community"
 fi
-# Initially generated from:  grep "resolved" /var/tmp/portage/dev-util/theia-1.50.1/work/theia-1.50.1/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
+# Initially generated from:  grep "resolved" /var/tmp/portage/dev-util/theia-1.51.0/work/theia-1.51.0/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
 # For the generator script, see typescript/transform-uris.sh ebuild-package.
 # UPDATER_START_YARN_EXTERNAL_URIS
 YARN_EXTERNAL_URIS="
@@ -3097,4 +3097,3 @@ src_install() {
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.37.1 (20230525)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.50.1 (20240620)
 # launch-test:  passed
-
