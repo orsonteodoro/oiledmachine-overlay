@@ -173,9 +173,7 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	closure-compiler? (
-		>=dev-util/closure-compiler-npm-20220502.0.0:\
-${CLOSURE_COMPILER_SLOT}\
-[closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?]
+		>=dev-util/closure-compiler-npm-20220502.0.0:${CLOSURE_COMPILER_SLOT}[closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?]
 		closure_compiler_java? (
 			virtual/jre:${JAVA_SLOT}
 		)
@@ -216,7 +214,7 @@ _PATCHES=(
 pkg_setup() {
 	java-pkg-opt-2_pkg_setup
 	if use test ; then
-		if [[ ! "${FEATURES}" =~ test ]] ; then
+		if [[ ! "${FEATURES}" =~ "test" ]] ; then
 eerror
 eerror "The test USE flag requires the environmental variable test to be added to"
 eerror "FEATURES"
@@ -275,7 +273,7 @@ prepare_file() {
 }
 
 src_prepare() {
-	export PYTHON_EXE_ABSPATH=$(which ${PYTHON})
+	export PYTHON_EXE_ABSPATH="${PYTHON}"
 	einfo "PYTHON_EXE_ABSPATH=${PYTHON_EXE_ABSPATH}"
 	eapply ${_PATCHES[@]}
 
@@ -298,7 +296,7 @@ gen_files() {
 	mkdir "${TEST_PATH}" || die "Could not create test directory!"
 	prepare_file "${t}" "${TEST_PATH}" "99emscripten"
 	prepare_file "${t}" "${TEST_PATH}" "emscripten.config.${EMSCRIPTEN_CONFIG_VER}"
-	mv "${TEST_PATH}/emscripten.config"{.${EMSCRIPTEN_CONFIG_VER},} || die
+	mv "${TEST_PATH}/emscripten.config"{".${EMSCRIPTEN_CONFIG_VER}",""} || die
 	source "${TEST_PATH}/99emscripten"
 }
 
