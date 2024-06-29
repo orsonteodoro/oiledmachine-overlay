@@ -361,6 +361,8 @@ PGO_LLVM_SUPPORTED_VERSIONS=(
 # /usr/lib/llvm/${LLVM_SLOT}/include/llvm/ProfileData/InstrProfData.inc
 # https://github.com/llvm/llvm-project/blob/main/compiler-rt/include/profile/InstrProfData.inc ; change from main to tagged version
 #	"19.0.0.9999" # profraw v9
+	"18.1.8"
+	"18.1.7"
 	"18.1.6"
 	"18.1.5"
 	"18.1.4"
