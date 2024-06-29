@@ -3,20 +3,30 @@
 
 EAPI=8
 
+# U 22.04
+
+LIBFLAC_SONAME="10"
+LIBFLACXX_SONAME="12"
+
 inherit autotools flag-o-matic multilib-minimal toolchain-funcs
 
-SRC_URI="https://downloads.xiph.org/releases/${PN}/${P}.tar.xz"
-S="${WORKDIR}/${P}"
-S_orig="${WORKDIR}/${P}"
-
-DESCRIPTION="free lossless audio encoder and decoder"
-HOMEPAGE="https://xiph.org/flac/"
-LICENSE="BSD FDL-1.2 GPL-2 LGPL-2.1"
-SLOT="0"
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-solaris
 "
+S="${WORKDIR}/${P}"
+S_orig="${WORKDIR}/${P}"
+SRC_URI="https://downloads.xiph.org/releases/${PN}/${P}.tar.xz"
+
+DESCRIPTION="free lossless audio encoder and decoder"
+HOMEPAGE="https://xiph.org/flac/"
+LICENSE="
+	BSD
+	FDL-1.2
+	GPL-2
+	LGPL-2.1
+"
+SLOT="0/${LIBFLAC_SONAME}-${LIBFLACXX_SONAME}"
 X86_IUSE="
 	cpu_flags_x86_avx
 	cpu_flags_x86_avx2
@@ -31,7 +41,6 @@ REQUIRED_USE="
 		cpu_flags_x86_avx
 	)
 "
-# U 22.04
 RDEPEND="
 	ogg? (
 		>=media-libs/libogg-1.3.5[${MULTILIB_USEDEP}]

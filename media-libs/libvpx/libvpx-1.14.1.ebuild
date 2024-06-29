@@ -16,17 +16,6 @@ UOPTS_SUPPORT_TPGO=1
 
 inherit aocc flag-o-matic flag-o-matic-om llvm multilib-minimal toolchain-funcs uopts
 
-#
-# To create a new testdata tarball:
-#
-# 1. Unpack source tarball or checkout git tag
-# 2. mkdir libvpx-testdata
-# 3. export LIBVPX_TEST_DATA_PATH=libvpx-testdata
-# 4. configure --enable-unit-tests --enable-vp9-highbitdepth
-# 5. make testdata
-# 6. tar -caf libvpx-testdata-${MY_PV}.tar.xz libvpx-testdata
-#
-
 KEYWORDS="
 ~amd64 ~arm ~arm64 ~ia64 ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
 ~amd64-linux ~x86-linux
@@ -36,9 +25,11 @@ S_orig="${WORKDIR}/${P}"
 SRC_URI="
 	https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 	test? (
-		https://dev.gentoo.org/~whissi/dist/libvpx/${PN}-testdata-${LIBVPX_TESTDATA_VER}.tar.xz
+		https://deps.gentoo.zip/media-libs/${P}-testdata.tar.xz
 	)
 "
+
+# proj/chromium-tools.git/generate-libvpx-test-tarball.sh
 
 DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
@@ -488,7 +479,6 @@ _src_configure() {
 		append-flags -mllvm -vp-counters-per-site=8
 	fi
 
-	# #498364: sse doesn't work without sse2 enabled,
 	local myconfargs=(
 		--prefix="${EPREFIX}"/usr
 		--libdir="${EPREFIX}"/usr/$(get_libdir)
@@ -983,7 +973,7 @@ src_test() {
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			local -x LD_LIBRARY_PATH="${BUILD_DIR}"
-			local -x LIBVPX_TEST_DATA_PATH="${WORKDIR}/${PN}-testdata"
+			local -x LIBVPX_TEST_DATA_PATH="${WORKDIR}/${P}-testdata"
 			emake verbose=yes GEN_EXAMPLES= test
 		done
 	}
