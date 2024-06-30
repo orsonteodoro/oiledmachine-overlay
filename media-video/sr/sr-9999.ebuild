@@ -37,6 +37,7 @@ FORMATS=(
 	"tensorflow"
 )
 PYTHON_COMPAT=( "python3_"{10..12} ) # Limited by tensorflow
+MAINTAINER_MODE=0
 QUICK_TEST_VIDEO_ASSET="29b0z4w9lj4p54q2hf7il9jz6codx36v"
 
 inherit edo git-r3 python-single-r1 security-scan
@@ -176,7 +177,11 @@ DEPEND+="
 	!pretrained? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
+			(
+				>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
+				<sci-libs/tensorflow-2.16[${PYTHON_USEDEP},python]
+			)
+			<sci-libs/keras-3[${PYTHON_USEDEP}]
 			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/pillow[${PYTHON_USEDEP}]
 			dev-python/requests[${PYTHON_USEDEP}]
