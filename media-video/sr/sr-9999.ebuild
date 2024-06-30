@@ -36,6 +36,7 @@ FORMATS=(
 	"native"
 	"tensorflow"
 )
+MAINTAINER_MODE=0
 PYTHON_COMPAT=( "python3_"{10..12} ) # Limited by tensorflow
 QUICK_TEST_VIDEO_ASSET="29b0z4w9lj4p54q2hf7il9jz6codx36v"
 
@@ -171,16 +172,33 @@ REQUIRED_USE="
 "
 RDEPEND+="
 "
-DEPEND+="
-	${RDEPEND}
-	!pretrained? (
-		${PYTHON_DEPS}
+if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
+	NOT_PRETRAINED_DEPENDS="
+		$(python_gen_cond_dep '
+			(
+				>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
+			)
+			sci-libs/keras[${PYTHON_USEDEP}]
+		')
+	"
+else
+	NOT_PRETRAINED_DEPENDS="
 		$(python_gen_cond_dep '
 			(
 				>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
 				<sci-libs/tensorflow-2.16[${PYTHON_USEDEP},python]
 			)
 			<sci-libs/keras-3[${PYTHON_USEDEP}]
+		')
+	"
+fi
+
+DEPEND+="
+	${RDEPEND}
+	!pretrained? (
+		${NOT_PRETRAINED_DEPENDS}
+		${PYTHON_DEPS}
+		$(python_gen_cond_dep '
 			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/pillow[${PYTHON_USEDEP}]
 			dev-python/requests[${PYTHON_USEDEP}]
