@@ -302,7 +302,7 @@ LLVM_COMPONENTS=(
 llvm.org_set_globals
 PATCHES=(
 	"${FILESDIR}/${PN}-17.0.0.9999-sover-suffix.patch"
-	"${FILESDIR}/${PN}-19.0.0.9999-libffi.patch"
+#	"${FILESDIR}/${PN}-19.0.0.9999-libffi.patch"
 )
 
 kernel_pds_check() {
