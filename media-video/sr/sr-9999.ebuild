@@ -37,7 +37,6 @@ FORMATS=(
 	"tensorflow"
 )
 PYTHON_COMPAT=( "python3_"{10..12} ) # Limited by tensorflow
-MAINTAINER_MODE=0
 QUICK_TEST_VIDEO_ASSET="29b0z4w9lj4p54q2hf7il9jz6codx36v"
 
 inherit edo git-r3 python-single-r1 security-scan
