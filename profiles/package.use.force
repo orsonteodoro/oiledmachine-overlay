@@ -16,7 +16,7 @@ dev-libs/libappimage system-boost
 # Required
 app-arch/go-appimage systemd
 
-# Untrained untested
+# Disabled pretrained untested to completion
 media-video/sr pretrained
 
 dev-python/cython -python_targets_pypy3
