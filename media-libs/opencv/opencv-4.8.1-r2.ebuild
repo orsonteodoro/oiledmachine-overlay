@@ -287,7 +287,7 @@ ${ROCM_SLOTS[@]}
 contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
 -examples +features2d +ffmpeg -gdal gflags glog -gphoto2 +gstreamer +gtk3
 +ieee1394 +java +jpeg +jpeg2k +lapack +libaom -mkl -non-free -openblas +opencl
-+openexr -opengl -openmp +opencvapps +openh264 -openvx +png +python
++openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png +python
 +quirc -qt5 -qt6 rocm -spng -system-flatbuffers tesseract -testprograms -tbb
 +tiff +vaapi +v4l +vpx +vtk -wayland +webp -xine video_cards_intel
 ebuild-revision-5
@@ -589,6 +589,9 @@ RDEPEND="
 	opengl? (
 		virtual/opengl[${MULTILIB_USEDEP}]
 		virtual/glu[${MULTILIB_USEDEP}]
+	)
+	openvino? (
+		=sci-libs/openvino-2021.4.2[${PYTHON_USEDEP}]
 	)
 	png? (
 		>=media-libs/libpng-1.6.37:0[${MULTILIB_USEDEP}]
@@ -957,6 +960,7 @@ multilib_src_configure() {
 		-DWITH_OPENMP=$(usex !tbb $(usex openmp))
 		-DWITH_OPENNI=OFF					# Not packaged
 		-DWITH_OPENNI2=OFF					# Not packaged
+		-DWITH_OPENVINO=$(usex openvino)
 		-DWITH_PNG=$(usex png)
 		-DWITH_PROTOBUF=ON
 		-DWITH_PTHREADS_PF=ON
@@ -987,6 +991,27 @@ multilib_src_configure() {
 	else
 		mycmakeargs+=(
 			-DWITH_CAROTENE=OFF
+		)
+	fi
+
+	local openvino_arch=""
+	if use openvino && [[ "${ARCH}" == "x86" ]] ; then
+		openvino_arch="ia32"
+	elif use openvino && [[ "${ARCH}" == "arm" ]] ; then
+		openvino_arch="arm"
+	elif use openvino && [[ "${ARCH}" == "arm64" ]] ; then
+		openvino_arch="arm64"
+	elif use openvino && [[ "${ARCH}" == "amd64" ]] ; then
+		openvino_arch="intel64"
+	elif use openvino ; then
+eerror "OpenVINO is not supported for ${ARCH}"
+		die
+	fi
+
+	if [[ -n "${openvino_arch}" ]] ; then
+		mycmakeargs+=(
+			-DInferenceEngine_DIR="/usr/$(get_libdir)/openvino/deployment_tools/inference_engine/share"
+			-Dngraph_DIR="/usr/$(get_libdir)/openvino/deployment_tools/ngraph/cmake"
 		)
 	fi
 

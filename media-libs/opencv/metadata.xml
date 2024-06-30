@@ -136,6 +136,9 @@
     <flag name="opencvapps">
       Enable compilation with opencvapps
     </flag>
+    <flag name="openvino">
+      Enable support for OpenVINO.
+    </flag>
     <flag name="openvx">
       Enable the Hardware Acceleration Layer (HAL) for image processing via
       OpenVX™.  (EXPERIMENTAL)

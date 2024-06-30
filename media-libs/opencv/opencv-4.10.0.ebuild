@@ -285,7 +285,7 @@ IUSE="
 "
 # hal for acceleration
 IUSE+="
-	+carotene -kleidicv +ndsrvp -openvx
+	+carotene -kleidicv +ndsrvp openvino -openvx
 "
 # modules
 IUSE+="
@@ -633,6 +633,9 @@ RDEPEND="
 	opengl? (
 		virtual/opengl[${MULTILIB_USEDEP}]
 		virtual/glu[${MULTILIB_USEDEP}]
+	)
+	openvino? (
+		>=sci-libs/openvino-2024.0.0[${PYTHON_USEDEP}]
 	)
 	png? (
 		>=media-libs/libpng-1.6.43:0[${MULTILIB_USEDEP}]
@@ -1076,6 +1079,7 @@ multilib_src_configure() {
 		-DWITH_OPENMP=$(usex !tbb $(usex openmp))
 		-DWITH_OPENNI=OFF							# Not packaged
 		-DWITH_OPENNI2=OFF							# Not packaged
+		-DWITH_OPENVINO=$(usex openvino)
 		-DWITH_PNG=$(usex png)
 		-DWITH_PROTOBUF=ON
 		-DWITH_PTHREADS_PF=ON
@@ -1127,6 +1131,26 @@ multilib_src_configure() {
 	else
 		mycmakeargs+=(
 			-DWITH_NDSRVP=OFF
+		)
+	fi
+
+	local openvino_arch=""
+	if use openvino && [[ "${ARCH}" == "x86" ]] ; then
+		openvino_arch="ia32"
+	elif use openvino && [[ "${ARCH}" == "arm" ]] ; then
+		openvino_arch="arm"
+	elif use openvino && [[ "${ARCH}" == "arm64" ]] ; then
+		openvino_arch="arm64"
+	elif use openvino && [[ "${ARCH}" == "amd64" ]] ; then
+		openvino_arch="intel64"
+	elif use openvino ; then
+eerror "OpenVINO is not supported for ${ARCH}"
+		die
+	fi
+
+	if [[ -n "${openvino_arch}" ]] ; then
+ewarn "OpenVINO ebuild level support is still WIP (Work In Progress)"
+		mycmakeargs+=(
 		)
 	fi
 
