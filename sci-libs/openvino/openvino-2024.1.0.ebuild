@@ -140,7 +140,7 @@ IUSE+="
 	development-tools doc -lto +mlas +npu -openmp runtime +samples
 	-system-flatbuffers system-opencl system-protobuf system-pugixml
 	system-snappy system-tbb -telemetry test +tbb video_cards_intel
-	ebuild-revision-4
+	ebuild-revision-5
 "
 REQUIRED_USE="
 	?? (
@@ -807,6 +807,9 @@ fix_rpaths() {
 	for x in $(find "${ED}/usr/$(get_libdir)/openvino/runtime/lib/${arch}" -name "*.so") ; do
 		patchelf --add-rpath "/usr/$(get_libdir)/openvino/runtime/lib/${arch}" "${x}" || die
 	done
+	for x in $(find "${ED}/usr/$(get_libdir)/openvino/deployment_tools/inference_engine/lib/${arch}" -name "*.so") ; do
+		patchelf --add-rpath "/usr/$(get_libdir)/openvino/deployment_tools/inference_engine/lib/${arch}" "${x}" || die
+	done
 
 	# Fix bindings rpath
 	fix_rpath_python_impl() {
@@ -846,15 +849,15 @@ src_install() {
 
 		local suffix=$(${EPYTHON} -c "import distutils.sysconfig;print(distutils.sysconfig.get_config_var('EXT_SUFFIX'))")
 
-		dosym \
-			"/usr/$(get_libdir)/openvino/python/${EPYTHON}/python/_pyngraph${suffix}" \
-			"/usr/lib/${EPYTHON}/site-packages/_pyngraph${suffix}"
-		dosym \
-			"/usr/$(get_libdir)/openvino/python/${EPYTHON}/python/ngraph" \
-			"/usr/lib/${EPYTHON}/site-packages/ngraph"
-		dosym \
-			"/usr/$(get_libdir)/openvino/python/${EPYTHON}/python/openvino" \
-			"/usr/lib/${EPYTHON}/site-packages/openvino"
+#		dosym \
+#			"/usr/$(get_libdir)/openvino/python/${EPYTHON}/python/_pyngraph${suffix}" \
+#			"/usr/lib/${EPYTHON}/site-packages/_pyngraph${suffix}"
+#		dosym \
+#			"/usr/$(get_libdir)/openvino/python/${EPYTHON}/python/ngraph" \
+#			"/usr/lib/${EPYTHON}/site-packages/ngraph"
+#		dosym \
+#			"/usr/$(get_libdir)/openvino/python/${EPYTHON}/python/openvino" \
+#			"/usr/lib/${EPYTHON}/site-packages/openvino"
 	}
 	python_foreach_impl install_python_impl
 	docinto "licenses"

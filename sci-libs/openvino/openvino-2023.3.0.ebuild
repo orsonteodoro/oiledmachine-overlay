@@ -147,7 +147,7 @@ IUSE+="
 	development-tools doc gna -lto +mlas -openmp runtime +samples
 	-system-flatbuffers system-opencl system-protobuf system-pugixml
 	system-snappy system-tbb test +tbb video_cards_intel
-	ebuild-revision-4
+	ebuild-revision-5
 "
 REQUIRED_USE="
 	?? (
@@ -791,6 +791,9 @@ fix_rpaths() {
 	local x
 	for x in $(find "${ED}/usr/$(get_libdir)/openvino/runtime/lib/${arch}" -name "*.so") ; do
 		patchelf --add-rpath "/usr/$(get_libdir)/openvino/runtime/lib/${arch}" "${x}" || die
+	done
+	for x in $(find "${ED}/usr/$(get_libdir)/openvino/deployment_tools/inference_engine/lib/${arch}" -name "*.so") ; do
+		patchelf --add-rpath "/usr/$(get_libdir)/openvino/deployment_tools/inference_engine/lib/${arch}" "${x}" || die
 	done
 
 	# Fix bindings rpath

@@ -116,7 +116,7 @@ IUSE+="
 	${CPU_FLAGS_X86[@]}
 	doc gna gna1 gna1_1401 gna2 -lto +mkl-dnn -openmp
 	+samples system-pugixml test +tbb video_cards_intel
-	ebuild-revision-2
+	ebuild-revision-3
 "
 REQUIRED_USE="
 	?? (
@@ -572,6 +572,9 @@ fix_rpaths() {
 	local x
 	for x in $(find "${ED}/usr/$(get_libdir)/openvino/deployment_tools" -name "*.so") ; do
 		patchelf --add-rpath "/usr/$(get_libdir)/openvino/deployment_tools/ngraph/$(get_libdir)" "${x}" || die
+	done
+	for x in $(find "${ED}/usr/$(get_libdir)/openvino/deployment_tools/inference_engine/lib/${arch}" -name "*.so") ; do
+		patchelf --add-rpath "/usr/$(get_libdir)/openvino/deployment_tools/inference_engine/lib/${arch}" "${x}" || die
 	done
 
 	# Fix bindings rpath
