@@ -603,7 +603,7 @@ src_unpack() {
 python_prepare_all() {
 	eapply ${_PATCHES[@]}
 	if ! use telemetry ; then
-		eapply "openvino-2024.1.0-hard-disable-telemetry.patch"
+		eapply "${FILESDIR}/openvino-2024.1.0-hard-disable-telemetry.patch"
 	fi
 	cmake_src_prepare
 	distutils-r1_python_prepare_all
