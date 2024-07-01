@@ -159,6 +159,16 @@ _UOPTS_BOLT_PATH="" # Set in tbolt_setup
 # Example:
 # UOPTS_BOLT_FORCE_INST=1 emerge foo
 
+# @ECLASS_VARIABLE: UOPTS_BOLT_INST_ARGS
+# @DESCRIPTION:
+# Extra instrumentation args to pass to basename.  Extra args are separated by
+# semicolon.
+# Example:
+# UOPTS_BOLT_INST_ARGS=(
+#	"libjpeg.so.62.3.0:--skip-funcs=.text/1"
+#	"libturbojpeg.so.0.2.0:--skip-funcs=.text/1"
+# )
+
 _tbolt_check_bolt() {
 	if use bolt ; then
 		if ! use kernel_linux ; then
@@ -578,11 +588,32 @@ ewarn "Skipping ${p} because of missing .rela.text section"
 ewarn "${p}.orig existed and BUILD_DIR was not completely wiped."
 				fi
 einfo "Instrumenting ${p} with BOLT"
+				local extra_args=()
+				local arg
+				for arg in ${UOPTS_BOLT_INST_ARGS[@]} ; do
+					local bn=$(basename "${p}")
+					local fn="${arg%%:*}"
+					local raw_args="${arg##*:}"
+					if [[ "${fn}" =~ "${bn}" ]] ; then
+						local t_args=(
+							$(echo "${raw_args}" | tr ";" "\n")
+						)
+						local x_arg
+						for x_arg in ${t_args[@]} ; do
+							extra_args+=(
+								${x_arg}
+							)
+						done
+					fi
+				done
+
+#einfo "DEBUG:  LD_PRELOAD=\"${_UOPTS_BOLT_MALLOC_LIB}\" ${_UOPTS_BOLT_PATH}/llvm-bolt \"${p}.orig\" -instrument -o \"${p}\" -instrumentation-file \"${bolt_data_staging_dir}/${bn}.fdata\" ${extra_args[@]}"
 				LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
 					"${p}.orig" \
 					-instrument \
 					-o "${p}" \
 					-instrumentation-file "${bolt_data_staging_dir}/${bn}.fdata" \
+					${extra_args[@]} \
 					|| die
 			fi
 		) &

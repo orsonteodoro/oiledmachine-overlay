@@ -11,6 +11,10 @@ UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
+UOPTS_BOLT_INST_ARGS=(
+	"libjpeg.so.62.3.0:--skip-funcs=.text/1"
+	"libturbojpeg.so.0.2.0:--skip-funcs=.text/1"
+)
 
 inherit cmake-multilib java-pkg-opt-2 flag-o-matic flag-o-matic-om
 inherit toolchain-funcs uopts
