@@ -1151,6 +1151,7 @@ eerror "OpenVINO is not supported for ${ARCH}"
 	if [[ -n "${openvino_arch}" ]] ; then
 ewarn "OpenVINO ebuild level support is still WIP (Work In Progress)"
 		mycmakeargs+=(
+			-DOpenVINO_DIR="/usr/$(get_libdir)/openvino/runtime/cmake"
 		)
 	fi
 
