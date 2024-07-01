@@ -848,7 +848,7 @@ src_install() {
 
 		dosym \
 			"/usr/$(get_libdir)/openvino/python/${EPYTHON}/python/_pyngraph${suffix}" \
-			"/usr/lib/${EPYTHON}/site-packages/"
+			"/usr/lib/${EPYTHON}/site-packages/_pyngraph${suffix}"
 		dosym \
 			"/usr/$(get_libdir)/openvino/python/${EPYTHON}/python/ngraph" \
 			"/usr/lib/${EPYTHON}/site-packages/ngraph"
