@@ -5,7 +5,7 @@
 EAPI=8
 
 CMAKE_BUILD_TYPE="RelWithDebInfo"
-LLVM_SLOT=16
+LLVM_SLOT=17
 LLVM_TARGETS=(
 	AMDGPU
 	NVPTX
@@ -22,7 +22,7 @@ UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
-inherit cmake flag-o-matic rocm uopts
+inherit cmake flag-o-matic rocm toolchain-funcs uopts
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
@@ -74,17 +74,17 @@ LICENSE="
 	rc
 	public-domain
 "
-# Apache-2.0 - llvm-project-rocm-5.6.1/third-party/benchmark/LICENSE
-# Apache-2.0-with-LLVM-exceptions, UoI-NCSA - llvm-project-rocm-5.6.1/lldb/LICENSE.TXT
-# Apache-2.0-with-LLVM-exceptions, BSD, MIT - llvm-project-rocm-5.6.1/libclc/LICENSE.TXT
-# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-5.6.1/openmp/LICENSE.TXT
+# Apache-2.0 - llvm-project-rocm-5.7.0/third-party/benchmark/LICENSE
+# Apache-2.0-with-LLVM-exceptions, UoI-NCSA - llvm-project-rocm-5.7.0/lldb/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions, BSD, MIT - llvm-project-rocm-5.7.0/libclc/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-5.7.0/openmp/LICENSE.TXT
 #   Keyword search:  "all right, title, and interest"
-# BSD - llvm-project-rocm-5.6.1/third-party/unittest/googlemock/LICENSE.txt
-# BSD - llvm-project-rocm-5.6.1/openmp/runtime/src/thirdparty/ittnotify/LICENSE.txt
-# CC0-1.0, Apache-2.0 - llvm-project-rocm-5.6.1/llvm/lib/Support/BLAKE3/LICENSE
-# ISC - llvm-project-rocm-5.6.1/lldb/third_party/Python/module/pexpect-4.6/LICENSE
-# MIT - llvm-project-rocm-5.6.1/polly/lib/External/isl/LICENSE
-# ZLIB, BSD - llvm-project-rocm-5.6.1/llvm/lib/Support/COPYRIGHT.regex
+# BSD - llvm-project-rocm-5.7.0/third-party/unittest/googlemock/LICENSE.txt
+# BSD - llvm-project-rocm-5.7.0/openmp/runtime/src/thirdparty/ittnotify/LICENSE.txt
+# CC0-1.0, Apache-2.0 - llvm-project-rocm-5.7.0/llvm/lib/Support/BLAKE3/LICENSE
+# ISC - llvm-project-rocm-5.7.0/lldb/third_party/Python/module/pexpect-4.6/LICENSE
+# MIT - llvm-project-rocm-5.7.0/polly/lib/External/isl/LICENSE
+# ZLIB, BSD - llvm-project-rocm-5.7.0/llvm/lib/Support/COPYRIGHT.regex
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
@@ -109,6 +109,7 @@ DEPEND="
 "
 BDEPEND="
 	sys-devel/gcc
+	sys-devel/lld:${LLVM_SLOT}
 "
 PATCHES=(
 )
@@ -122,7 +123,7 @@ ewarn "source /etc/profile"
 ewarn
 	rocm_pkg_setup
 	uopts_setup
-	if use epgo || use ebolt ; then
+	if use epgo || ( has ebolt ${IUSE_EFFECTIVE} && use ebolt ) ; then
 einfo "See comments of metadata.xml for documentation on ebolt/epgo."
 		local path="/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}/${MULTILIB_ABI_FLAG}.${ABI}"
 		addwrite "${path}"
@@ -134,13 +135,13 @@ einfo "See comments of metadata.xml for documentation on ebolt/epgo."
 src_prepare() {
 	cmake_src_prepare
 	pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
-		eapply "${FILESDIR}/llvm-roc-5.6.1-path-changes.patch"
+		eapply "${FILESDIR}/llvm-roc-6.1.2-path-changes.patch"
 	popd
-	if use bolt ; then
+	if has bolt ${IUSE_EFFECTIVE} && use bolt ; then
 		pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
 			eapply -p1 "${FILESDIR}/llvm-16.0.5-bolt-set-cmake-libdir.patch"
-			eapply -p1 "${FILESDIR}/llvm-16.0.0.9999-bolt_rt-RuntimeLibrary.cpp-path.patch"
-		popd
+			eapply -p1 "${FILESDIR}/llvm-17.0.0.9999-v3-bolt_rt-RuntimeLibrary.cpp-path.patch"
+                popd
 	fi
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:
@@ -202,7 +203,12 @@ _src_configure() {
 	)
 	uopts_src_configure
 	filter-flags "-fuse-ld=*"
-	#strip-unsupported-flags # Broken, strips -fprofile-use
+
+# Fixes:
+# ld.gold: internal error in do_layout, at /var/tmp/portage/sys-devel/binutils-2.40-r5/work/binutils-2.40/gold/object.cc:1939
+	append-ldflags -fuse-ld=lld
+
+#	strip-unsupported-flags # Broken, strips -fprofile-use
 
 	# Speed up composable_kernel, rocBLAS build times
 	# -O3 may cause random ICE/segfault.
@@ -215,6 +221,7 @@ _src_configure() {
 
 	# For PGO
 	if tc-is-gcc ; then
+# The error is not a problem for 5.7.0.
 # error: number of counters in profile data for function '...' does not match its profile data (counter 'arcs', expected 7 and have 13) [-Werror=coverage-mismatch]
 # The PGO profiles are isolated.  The Code is the same.
 		append-flags -Wno-error=coverage-mismatch
@@ -225,7 +232,7 @@ _src_configure() {
 		-DCMAKE_MODULE_LINKER_FLAGS="${LDFLAGS}"
 		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
 	)
-	if ( use epgo || use ebolt ) && tc-is-gcc ; then
+	if ( use epgo || ( has ebolt ${IUSE_EFFECTIVE} && use ebolt ) ) && tc-is-gcc ; then
 		local gcc_slot=$(gcc-major-version)
 		mycmakeargs+=(
 			-DCMAKE_STATIC_LINKER_FLAGS="/usr/lib/gcc/${CHOST}/${gcc_slot}/libgcov.a"
@@ -236,7 +243,7 @@ _src_configure() {
 	if use runtime ; then
 		PROJECTS+=";compiler-rt"
 	fi
-	if use bolt ; then
+	if has bolt ${IUSE_EFFECTIVE} && use bolt ; then
 		PROJECTS+=";bolt"
 	fi
 
@@ -314,5 +321,3 @@ pkg_postinst() {
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
-
-
