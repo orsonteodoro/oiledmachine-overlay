@@ -61,9 +61,9 @@ COMPUTELIBRARY_COMMIT="f2eda6665c12d568e179f5b0e7a24ccdc0ac824d"
 FLATBUFFERS_COMMIT="0100f6a5779831fa7a651e4b67ef389a8752bd9b"
 GFLAGS_1_COMMIT="e171aa2d15ed9eb17054558e0b3a6a413bb01067"
 GFLAGS_2_COMMIT="8411df715cf522606e3b1aca386ddfc0b63d34b4"
-GOOGLE_TEST_1_COMMIT="18f8200e3079b0e54fa00cb7ac55d4c39dcf6da6"
-GOOGLE_TEST_2_COMMIT="5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081"
-GOOGLE_TEST_3_COMMIT="70a225df5dd55bd5931664fadaa67765eb9f6016"
+GOOGLETEST_1_COMMIT="18f8200e3079b0e54fa00cb7ac55d4c39dcf6da6"
+GOOGLETEST_2_COMMIT="5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081"
+GOOGLETEST_3_COMMIT="70a225df5dd55bd5931664fadaa67765eb9f6016"
 ITTAPI_COMMIT="69dd04030d3a2cf4c32e649ac1f2a628d5af6b46"
 LEVEL_ZERO_COMMIT="4ed13f327d3389285592edcf7598ec3cb2bc712e"
 LEVEL_ZERO_NPU_EXTENSIONS_COMMIT="0e1c471356a724ef6d176ba027a68e210d90939e"
@@ -102,7 +102,7 @@ $(_gen_gh_uri openvinotoolkit open_model_zoo ${OPEN_MODEL_ZOO_COMMIT})
 !system-snappy? (
 	$(_gen_gh_uri google snappy ${SNAPPY_COMMIT})
 	$(_gen_gh_uri google benchmark ${BENCHMARK_1_COMMIT})
-	$(_gen_gh_uri google googletest ${GOOGLE_TEST_1_COMMIT})
+	$(_gen_gh_uri google googletest ${GOOGLETEST_1_COMMIT})
 )
 $(_gen_gh_uri openvinotoolkit telemetry ${TELEMETRY_COMMIT})
 $(_gen_gh_uri ARM-software ComputeLibrary ${COMPUTELIBRARY_COMMIT})
@@ -112,7 +112,7 @@ $(_gen_gh_uri madler zlib ${ZLIB_COMMIT})
 !system-protobuf? (
 	$(_gen_gh_uri protocolbuffers protobuf ${PROTOBUF_COMMIT})
 	$(_gen_gh_uri google benchmark ${BENCHMARK_2_COMMIT})
-	$(_gen_gh_uri google googletest ${GOOGLE_TEST_2_COMMIT})
+	$(_gen_gh_uri google googletest ${GOOGLETEST_2_COMMIT})
 )
 $(_gen_gh_uri onnx onnx ${ONNX_COMMIT})
 !system-opencl? (
@@ -123,7 +123,7 @@ $(_gen_gh_uri onnx onnx ${ONNX_COMMIT})
 )
 $(_gen_gh_uri nlohmann json ${NLOHMANN_JSON_COMMIT})
 $(_gen_gh_uri intel ittapi ${ITTAPI_COMMIT})
-$(_gen_gh_uri openvinotoolkit googletest ${GOOGLE_TEST_3_COMMIT})
+$(_gen_gh_uri openvinotoolkit googletest ${GOOGLETEST_3_COMMIT})
 $(_gen_gh_uri gflags gflags ${GFLAGS_1_COMMIT})
 $(_gen_gh_uri gflags gflags ${GFLAGS_2_COMMIT} gflags-doc)
 !system-flatbuffers? (
@@ -576,7 +576,7 @@ src_unpack() {
 	if ! use system-snappy ; then
 		_unpack_gh "thirdparty/snappy" google snappy ${SNAPPY_COMMIT}
 		_unpack_gh "thirdparty/snappy/third_party/benchmark" google benchmark ${BENCHMARK_1_COMMIT}
-		_unpack_gh "thirdparty/snappy/third_party/googletest" google googletest ${GOOGLE_TEST_1_COMMIT}
+		_unpack_gh "thirdparty/snappy/third_party/googletest" google googletest ${GOOGLETEST_1_COMMIT}
 	fi
 	_unpack_gh "thirdparty/telemetry" openvinotoolkit telemetry ${TELEMETRY_COMMIT}
 	_unpack_gh "src/plugins/intel_cpu/thirdparty/ComputeLibrary" ARM-software ComputeLibrary ${COMPUTELIBRARY_COMMIT}
@@ -586,7 +586,7 @@ src_unpack() {
 	if ! use system-protobuf ; then
 		_unpack_gh "thirdparty/protobuf/protobuf" protocolbuffers protobuf ${PROTOBUF_COMMIT}
 		_unpack_gh "thirdparty/protobuf/protobuf/third_party/benchmark" google benchmark ${BENCHMARK_2_COMMIT}
-		_unpack_gh "thirdparty/protobuf/protobuf/third_party/googletest" google googletest ${GOOGLE_TEST_2_COMMIT}
+		_unpack_gh "thirdparty/protobuf/protobuf/third_party/googletest" google googletest ${GOOGLETEST_2_COMMIT}
 	fi
 	_unpack_gh "thirdparty/onnx/onnx" onnx onnx ${ONNX_COMMIT}
 	if ! use system-opencl ; then
@@ -597,7 +597,7 @@ src_unpack() {
 	fi
 	_unpack_gh "thirdparty/json/nlohmann_json" nlohmann json ${NLOHMANN_JSON_COMMIT}
 	_unpack_gh "thirdparty/ittapi/ittapi" intel ittapi ${ITTAPI_COMMIT}
-	_unpack_gh "thirdparty/gtest/gtest" openvinotoolkit googletest ${GOOGLE_TEST_3_COMMIT}
+	_unpack_gh "thirdparty/gtest/gtest" openvinotoolkit googletest ${GOOGLETEST_3_COMMIT}
 	_unpack_gh_dupe "${WORKDIR}/gflags-${GFLAGS_1_COMMIT}" "thirdparty/gflags/gflags"
 	_unpack_gh_dupe "${WORKDIR}/gflags-${GFLAGS_2_COMMIT}" "thirdparty/gflags/gflags/doc"
 	_unpack_gh "thirdparty/open_model_zoo/demos/thirdparty/gflags" gflags gflags ${GFLAGS_1_COMMIT}

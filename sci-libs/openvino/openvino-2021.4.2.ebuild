@@ -45,7 +45,7 @@ PYTHON_COMPAT=( "python3_10" ) # 3.6 (U18), 3.8 (U20)
 ADE_COMMIT="58b2595a1a95cc807be8bf6222f266a9a1f393a9"
 GFLAGS_1_COMMIT="46f73f88b18aee341538c0dfc22b1710a6abedef"
 GFLAGS_2_COMMIT="971dd2a4fadac9cdab174c523c22df79efd63aa5"
-GOOGLE_TEST_COMMIT="9bd163b993459b2ca6ba2dc508577bbc8774c851"
+GOOGLETEST_COMMIT="9bd163b993459b2ca6ba2dc508577bbc8774c851"
 ONEDNN_COMMIT="60f41b3a9988ce7b1bc85c4f1ce7f9443bc91c9d"
 XBYAK_COMMIT="8d1e41b650890080fb77548372b6236bbd4079f9"
 ZLIB_COMMIT="cacf7f1d4e3d44d871b605da3b647f07d718623f"
@@ -77,7 +77,7 @@ $(_gen_gh_uri herumi xbyak ${XBYAK_COMMIT})
 $(_gen_gh_uri madler zlib ${ZLIB_COMMIT})
 $(_gen_gh_uri opencv ade ${ADE_COMMIT})
 $(_gen_gh_uri openvinotoolkit oneDNN ${ONEDNN_COMMIT})
-$(_gen_gh_uri openvinotoolkit googletest ${GOOGLE_TEST_COMMIT})
+$(_gen_gh_uri openvinotoolkit googletest ${GOOGLETEST_COMMIT})
 $(_gen_gh_uri gflags gflags ${GFLAGS_1_COMMIT})
 $(_gen_gh_uri gflags gflags ${GFLAGS_2_COMMIT} gflags-doc)
 https://download.01.org/opencv/master/openvinotoolkit/thirdparty/unified/VPU/usb-ma2x8x/firmware_usb-ma2x8x_1875.zip
@@ -349,7 +349,7 @@ src_unpack() {
 	_unpack_gh "thirdparty/zlib/zlib" madler zlib ${ZLIB_COMMIT}
 	_unpack_gh "inference-engine/thirdparty/ade" opencv ade ${ADE_COMMIT}
 	_unpack_gh "inference-engine/thirdparty/mkl-dnn" openvinotoolkit oneDNN ${ONEDNN_COMMIT}
-	_unpack_gh "inference-engine/tests/ie_test_utils/common_test_utils/gtest" openvinotoolkit googletest ${GOOGLE_TEST_COMMIT}
+	_unpack_gh "inference-engine/tests/ie_test_utils/common_test_utils/gtest" openvinotoolkit googletest ${GOOGLETEST_COMMIT}
 	_unpack_gh "inference-engine/samples/thirdparty/gflags" gflags gflags ${GFLAGS_1_COMMIT}
 	_unpack_gh "inference-engine/samples/thirdparty/gflags/doc" gflags gflags ${GFLAGS_2_COMMIT}
 
