@@ -1190,7 +1190,7 @@ pkg_postrm() {
 	xdg_icon_cache_update
 	xdg_pkg_postrm
 ewarn
-ewarn "The .xinitrc must be modified for dbus-launch.  See"
+ewarn "If using OpenRC, the .xinitrc must be modified for dbus-launch.  See"
 ewarn
 ewarn "  https://wiki.gentoo.org/wiki/D-Bus#The_session_bus"
 ewarn "  https://wiki.gentoo.org/wiki/Dwm#Starting"
