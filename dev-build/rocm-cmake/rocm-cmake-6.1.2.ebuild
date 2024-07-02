@@ -3,7 +3,8 @@
 
 EAPI=8
 
-LLVM_SLOT=14
+CMAKE_MAKEFILE_GENERATOR="emake"
+LLVM_SLOT=17
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -34,8 +35,8 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.0.2-license.patch"
-	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
+	"${FILESDIR}/${PN}-6.1.2-license.patch"
+	"${FILESDIR}/${PN}-6.1.2-path-changes.patch"
 )
 
 pkg_setup() {
@@ -49,7 +50,7 @@ src_prepare() {
 	sed \
 		-i \
 		-e "s|@PYTHON_SITEDIRS@|${new_site_dirs}|g" \
-		"${S}/share/rocm/cmake/ROCMCreatePackage.cmake" \
+		"${S}/share/rocmcmakebuildtools/cmake/ROCMCreatePackage.cmake" \
 		|| die
 	cmake_src_prepare
 	rocm_src_prepare

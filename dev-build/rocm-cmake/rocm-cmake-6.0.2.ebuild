@@ -3,7 +3,8 @@
 
 EAPI=8
 
-LLVM_SLOT=14
+CMAKE_MAKEFILE_GENERATOR="emake"
+LLVM_SLOT=17
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -35,7 +36,7 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-license.patch"
-	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
+	"${FILESDIR}/${PN}-6.0.2-path-changes.patch"
 )
 
 pkg_setup() {
