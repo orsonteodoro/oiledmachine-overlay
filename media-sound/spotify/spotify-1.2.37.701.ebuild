@@ -193,7 +193,7 @@ RESTRICT="binchecks mirror strip"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
 emoji ffmpeg libnotify pulseaudio vaapi wayland zenity +X
-ebuild-revision
+ebuild-revision-1
 "
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -1055,12 +1055,22 @@ gen_wrapper() {
 # dbus-launch required for openrc, but not required for systemd.
 cat <<-EOF >"${D}/usr/bin/${PN}" || die
 #!/bin/bash
+
+if ! pgrep dbus-launch ; then
+echo
+echo "Did not detect a running dbus-launch.  Please read"
+echo
+echo "https://wiki.gentoo.org/wiki/D-Bus#The_session_bus"
+echo "https://wiki.gentoo.org/wiki/Dwm#Starting"
+echo
+fi
+
 INIT_SYSTEM="${init_system}"
 if test -n "\${DISPLAY}" ; then
-	dbus-launch "${DEST}/${PN}" "\$@"
+	"${DEST}/${PN}" "\$@"
 else
 	LD_PRELOAD=/usr/$(get_libdir)/${PN}-xstub.so \
-	dbus-launch "${DEST}/${PN}" \
+	"${DEST}/${PN}" \
 		--enable-features=UseOzonePlatform \
 		--ozone-platform=wayland \
 		"\$@"
@@ -1179,6 +1189,12 @@ ewarn
 pkg_postrm() {
 	xdg_icon_cache_update
 	xdg_pkg_postrm
+ewarn
+ewarn "The .xinitrc must be modified for dbus-launch.  See"
+ewarn
+ewarn "  https://wiki.gentoo.org/wiki/D-Bus#The_session_bus"
+ewarn "  https://wiki.gentoo.org/wiki/Dwm#Starting"
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.8.923 (20230608)
