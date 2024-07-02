@@ -28,6 +28,40 @@ CPU_FLAGS_X86=(
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} ) # Based on https://github.com/openvinotoolkit/openvino/blob/2023.3.0/docs/dev/build_linux.md#software-requirements
 
+ADE_COMMIT="0e8a2ccdd34f29dba55894f5f3c5179809888b9e"
+BENCHMARK_1_COMMIT="bf585a2789e30585b4e3ce6baf11ef2750b54677"
+BENCHMARK_2_COMMIT="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8"
+CEXCEPTION_COMMIT="dce9e8b26f2179439002e02d691429e81a32b6c0"
+CMOCK_COMMIT="7cc41ddfdd07dc5eb8359d278f439f14031d64ad"
+COMPUTELIBRARY_COMMIT="874e0c7b3fe93a6764ecb2d8cfad924af19a9d25"
+FLATBUFFERS_COMMIT="01834de25e4bf3975a9a00e816292b1ad0fe184b"
+GFLAGS_1_COMMIT="e171aa2d15ed9eb17054558e0b3a6a413bb01067"
+GFLAGS_2_COMMIT="8411df715cf522606e3b1aca386ddfc0b63d34b4"
+GOOGLE_TEST_1_COMMIT="18f8200e3079b0e54fa00cb7ac55d4c39dcf6da6"
+GOOGLE_TEST_2_COMMIT="5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081"
+GOOGLE_TEST_3_COMMIT="d269d902e4c3cd02f3e731e1e2ff8307352817a4"
+ITTAPI_COMMIT="69dd04030d3a2cf4c32e649ac1f2a628d5af6b46"
+MLAS_COMMIT="7a35e48a723944972088627be1a8b60841e8f6a5"
+NCC_COMMIT="63e59ed312ba7a946779596e86124c1633f67607"
+NLOHMANN_JSON_COMMIT="9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03"
+ONEDNN_1_COMMIT="cb3060bbf4694e46a1359a3d4dfe70500818f72d"
+ONEDNN_2_COMMIT="cb77937ffcf5e83b5d1cf2940c94e8b508d8f7b4"
+ONNX_COMMIT="b86cc54efce19530fb953e4b21f57e6b3888534c"
+OPEN_MODEL_ZOO_COMMIT="e8fb4cd86a516ce5765290e9665f8afe87b79b2e"
+OPENCL_CLHPP_COMMIT="4a1157466afe72a87e8abc59537ef577534ccadf"
+OPENCL_HEADERS_COMMIT="4c82e9cfaaad18c340f48af3cf5d09ff33e8c1b7"
+OPENCL_ICD_LOADER_COMMIT="2cde5d09953a041786d1cfdcb1c08704a82cb904"
+PROTOBUF_COMMIT="fe271ab76f2ad2b2b28c10443865d2af21e27e0e"
+PUGIXML_COMMIT="2e357d19a3228c0a301727aac6bea6fecd982d21"
+PYBIND11_COMMIT="2965fa8de3cf9e82c789f906a525a76197b186c1"
+SNAPPY_COMMIT="dc05e026488865bc69313a68bcc03ef2e4ea8e83"
+TELEMETRY_COMMIT="58e16c257a512ec7f451c9fccf9ff455065b285b"
+UNITY_1_COMMIT="7d2bf62b7e6afaf38153041a9d53c21aeeca9a25"
+UNITY_2_COMMIT="2c7629a0ae90ffe991b5fd08e4db8672f72ed64c"
+UNITY_3_COMMIT="031f3bbe45f8adf504ca3d13e6f093869920b091"
+XBYAK_COMMIT="740dff2e866f3ae1a70dd42d6e8836847ed95cc2"
+ZLIB_COMMIT="04f42ceca40f73e2978b50e93806c2a18c1281fc"
+
 inherit cmake distutils-r1
 
 _gen_gh_uri() {
@@ -58,52 +92,49 @@ S="${WORKDIR}/${P}"
 
 SRC_URI="
 https://github.com/openvinotoolkit/openvino/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz
-$(_gen_gh_uri opencv ade 0e8a2ccdd34f29dba55894f5f3c5179809888b9e)
-$(_gen_gh_uri herumi xbyak 740dff2e866f3ae1a70dd42d6e8836847ed95cc2)
-$(_gen_gh_uri openvinotoolkit open_model_zoo e8fb4cd86a516ce5765290e9665f8afe87b79b2e)
+$(_gen_gh_uri opencv ade ${ADE_COMMIT})
+$(_gen_gh_uri herumi xbyak ${XBYAK_COMMIT})
+$(_gen_gh_uri openvinotoolkit open_model_zoo ${OPEN_MODEL_ZOO_COMMIT})
 !system-pugixml? (
-	$(_gen_gh_uri zeux pugixml 2e357d19a3228c0a301727aac6bea6fecd982d21)
+	$(_gen_gh_uri zeux pugixml ${PUGIXML_COMMIT})
 )
 !system-snappy? (
-	$(_gen_gh_uri google snappy dc05e026488865bc69313a68bcc03ef2e4ea8e83)
-	$(_gen_gh_uri google benchmark bf585a2789e30585b4e3ce6baf11ef2750b54677)
-	$(_gen_gh_uri google googletest 18f8200e3079b0e54fa00cb7ac55d4c39dcf6da6)
+	$(_gen_gh_uri google snappy ${SNAPPY_COMMIT})
+	$(_gen_gh_uri google benchmark ${BENCHMARK_1_COMMIT})
+	$(_gen_gh_uri google googletest ${GOOGLE_TEST_1_COMMIT})
 )
-$(_gen_gh_uri openvinotoolkit telemetry 58e16c257a512ec7f451c9fccf9ff455065b285b)
-$(_gen_gh_uri herumi xbyak 740dff2e866f3ae1a70dd42d6e8836847ed95cc2)
-$(_gen_gh_uri ARM-software ComputeLibrary 874e0c7b3fe93a6764ecb2d8cfad924af19a9d25)
-$(_gen_gh_uri openvinotoolkit mlas 7a35e48a723944972088627be1a8b60841e8f6a5)
-$(_gen_gh_uri openvinotoolkit oneDNN cb3060bbf4694e46a1359a3d4dfe70500818f72d)
-$(_gen_gh_uri madler zlib 04f42ceca40f73e2978b50e93806c2a18c1281fc)
+$(_gen_gh_uri openvinotoolkit telemetry ${TELEMETRY_COMMIT})
+$(_gen_gh_uri ARM-software ComputeLibrary ${COMPUTELIBRARY_COMMIT})
+$(_gen_gh_uri openvinotoolkit mlas ${MLAS_COMMIT})
+$(_gen_gh_uri openvinotoolkit oneDNN ${ONEDNN_1_COMMIT})
+$(_gen_gh_uri madler zlib ${ZLIB_COMMIT})
 !system-protobuf? (
-	$(_gen_gh_uri protocolbuffers protobuf fe271ab76f2ad2b2b28c10443865d2af21e27e0e)
-	$(_gen_gh_uri google benchmark 5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8)
-	$(_gen_gh_uri google googletest 5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081)
+	$(_gen_gh_uri protocolbuffers protobuf ${PROTOBUF_COMMIT})
+	$(_gen_gh_uri google benchmark ${BENCHMARK_2_COMMIT})
+	$(_gen_gh_uri google googletest ${GOOGLE_TEST_2_COMMIT})
 )
-$(_gen_gh_uri onnx onnx b86cc54efce19530fb953e4b21f57e6b3888534c)
+$(_gen_gh_uri onnx onnx ${ONNX_COMMIT})
 !system-opencl? (
-	$(_gen_gh_uri KhronosGroup OpenCL-Headers 4c82e9cfaaad18c340f48af3cf5d09ff33e8c1b7)
-	$(_gen_gh_uri KhronosGroup OpenCL-CLHPP 4a1157466afe72a87e8abc59537ef577534ccadf)
-	$(_gen_gh_uri KhronosGroup OpenCL-ICD-Loader 2cde5d09953a041786d1cfdcb1c08704a82cb904)
-	$(_gen_gh_uri ThrowTheSwitch CMock 7cc41ddfdd07dc5eb8359d278f439f14031d64ad)
-	$(_gen_gh_uri ThrowTheSwitch Unity 7d2bf62b7e6afaf38153041a9d53c21aeeca9a25)
-	$(_gen_gh_uri throwtheswitch cexception dce9e8b26f2179439002e02d691429e81a32b6c0)
-	$(_gen_gh_uri throwtheswitch unity 2c7629a0ae90ffe991b5fd08e4db8672f72ed64c)
-	$(_gen_gh_uri throwtheswitch unity 031f3bbe45f8adf504ca3d13e6f093869920b091)
+	$(_gen_gh_uri KhronosGroup OpenCL-Headers ${OPENCL_HEADERS_COMMIT})
+	$(_gen_gh_uri KhronosGroup OpenCL-CLHPP ${OPENCL_CLHPP_COMMIT})
+	$(_gen_gh_uri KhronosGroup OpenCL-ICD-Loader ${OPENCL_ICD_LOADER_COMMIT})
+	$(_gen_gh_uri ThrowTheSwitch CMock ${CMOCK_COMMIT})
+	$(_gen_gh_uri ThrowTheSwitch Unity ${UNITY_1_COMMIT})
+	$(_gen_gh_uri throwtheswitch cexception ${CEXCEPTION_COMMIT})
+	$(_gen_gh_uri throwtheswitch unity ${UNITY_2_COMMIT})
+	$(_gen_gh_uri throwtheswitch unity ${UNITY_3_COMMIT})
 )
-$(_gen_gh_uri nlohmann json 9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03)
-$(_gen_gh_uri intel ittapi 69dd04030d3a2cf4c32e649ac1f2a628d5af6b46)
-$(_gen_gh_uri openvinotoolkit googletest d269d902e4c3cd02f3e731e1e2ff8307352817a4)
-$(_gen_gh_uri gflags gflags e171aa2d15ed9eb17054558e0b3a6a413bb01067)
-$(_gen_gh_uri gflags gflags 8411df715cf522606e3b1aca386ddfc0b63d34b4 gflags-doc)
+$(_gen_gh_uri nlohmann json ${NLOHMANN_JSON_COMMIT})
+$(_gen_gh_uri intel ittapi ${ITTAPI_COMMIT})
+$(_gen_gh_uri openvinotoolkit googletest ${GOOGLE_TEST_3_COMMIT})
+$(_gen_gh_uri gflags gflags ${GFLAGS_1_COMMIT})
+$(_gen_gh_uri gflags gflags ${GFLAGS_2_COMMIT} gflags-doc)
 !system-flatbuffers? (
-	$(_gen_gh_uri google flatbuffers 01834de25e4bf3975a9a00e816292b1ad0fe184b)
+	$(_gen_gh_uri google flatbuffers ${FLATBUFFERS_COMMIT})
 )
-$(_gen_gh_uri pybind pybind11 2965fa8de3cf9e82c789f906a525a76197b186c1)
-$(_gen_gh_uri nithinn ncc 63e59ed312ba7a946779596e86124c1633f67607)
-$(_gen_gh_uri oneapi-src oneDNN cb77937ffcf5e83b5d1cf2940c94e8b508d8f7b4)
-$(_gen_gh_uri google benchmark 5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8)
-$(_gen_gh_uri google googletest 18f8200e3079b0e54fa00cb7ac55d4c39dcf6da6)
+$(_gen_gh_uri pybind pybind11 ${PYBIND11_COMMIT})
+$(_gen_gh_uri nithinn ncc ${NCC_COMMIT})
+$(_gen_gh_uri oneapi-src oneDNN ${ONEDNN_2_COMMIT})
 gna? (
 	https://storage.openvinotoolkit.org/dependencies/gna/gna_03.05.00.2116.zip
 )
@@ -523,51 +554,51 @@ precache_resolved_dep() {
 
 src_unpack() {
 	unpack ${A}
-	_unpack_gh "thirdparty/ade" opencv ade 0e8a2ccdd34f29dba55894f5f3c5179809888b9e
-	_unpack_gh "thirdparty/xbyak" herumi xbyak 740dff2e866f3ae1a70dd42d6e8836847ed95cc2
-	_unpack_gh "thirdparty/open_model_zoo" openvinotoolkit open_model_zoo e8fb4cd86a516ce5765290e9665f8afe87b79b2e
+	_unpack_gh "thirdparty/ade" opencv ade ${ADE_COMMIT}
+	_unpack_gh "thirdparty/xbyak" herumi xbyak ${XBYAK_COMMIT}
+	_unpack_gh "thirdparty/open_model_zoo" openvinotoolkit open_model_zoo ${OPEN_MODEL_ZOO_COMMIT}
 	if ! use system-pugixml ; then
-		_unpack_gh "thirdparty/pugixml" zeux pugixml 2e357d19a3228c0a301727aac6bea6fecd982d21
+		_unpack_gh "thirdparty/pugixml" zeux pugixml ${PUGIXML_COMMIT}
 	fi
 	if ! use system-snappy ; then
-		_unpack_gh "thirdparty/snappy" google snappy dc05e026488865bc69313a68bcc03ef2e4ea8e83
-		_unpack_gh "thirdparty/snappy/third_party/benchmark" google benchmark bf585a2789e30585b4e3ce6baf11ef2750b54677
-		_unpack_gh "thirdparty/snappy/third_party/googletest" google googletest 18f8200e3079b0e54fa00cb7ac55d4c39dcf6da6
+		_unpack_gh "thirdparty/snappy" google snappy ${SNAPPY_COMMIT}
+		_unpack_gh "thirdparty/snappy/third_party/benchmark" google benchmark ${BENCHMARK_1_COMMIT}
+		_unpack_gh "thirdparty/snappy/third_party/googletest" google googletest ${GOOGLE_TEST_1_COMMIT}
 	fi
-	_unpack_gh "thirdparty/telemetry" openvinotoolkit telemetry 58e16c257a512ec7f451c9fccf9ff455065b285b
-	_unpack_gh "src/plugins/intel_cpu/thirdparty/ComputeLibrary" ARM-software ComputeLibrary 874e0c7b3fe93a6764ecb2d8cfad924af19a9d25
-	_unpack_gh "src/plugins/intel_cpu/thirdparty/mlas" openvinotoolkit mlas 7a35e48a723944972088627be1a8b60841e8f6a5
-	_unpack_gh "src/plugins/intel_cpu/thirdparty/onednn" openvinotoolkit oneDNN cb3060bbf4694e46a1359a3d4dfe70500818f72d
-	_unpack_gh "thirdparty/zlib/zlib" madler zlib 04f42ceca40f73e2978b50e93806c2a18c1281fc
+	_unpack_gh "thirdparty/telemetry" openvinotoolkit telemetry ${TELEMETRY_COMMIT}
+	_unpack_gh "src/plugins/intel_cpu/thirdparty/ComputeLibrary" ARM-software ComputeLibrary ${COMPUTELIBRARY_COMMIT}
+	_unpack_gh "src/plugins/intel_cpu/thirdparty/mlas" openvinotoolkit mlas ${MLAS_COMMIT}
+	_unpack_gh "src/plugins/intel_cpu/thirdparty/onednn" openvinotoolkit oneDNN ${ONEDNN_1_COMMIT}
+	_unpack_gh "thirdparty/zlib/zlib" madler zlib ${ZLIB_COMMIT}
 	if ! use system-protobuf ; then
-		_unpack_gh "thirdparty/protobuf/protobuf" protocolbuffers protobuf fe271ab76f2ad2b2b28c10443865d2af21e27e0e
-		_unpack_gh "thirdparty/protobuf/protobuf/third_party/benchmark" google benchmark 5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8
-		_unpack_gh "thirdparty/protobuf/protobuf/third_party/googletest" google googletest 5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081
+		_unpack_gh "thirdparty/protobuf/protobuf" protocolbuffers protobuf ${PROTOBUF_COMMIT}
+		_unpack_gh "thirdparty/protobuf/protobuf/third_party/benchmark" google benchmark ${BENCHMARK_2_COMMIT}
+		_unpack_gh "thirdparty/protobuf/protobuf/third_party/googletest" google googletest ${GOOGLE_TEST_2_COMMIT}
 	fi
-	_unpack_gh "thirdparty/onnx/onnx" onnx onnx b86cc54efce19530fb953e4b21f57e6b3888534c
+	_unpack_gh "thirdparty/onnx/onnx" onnx onnx ${ONNX_COMMIT}
 	if ! use system-opencl ; then
-		_unpack_gh "thirdparty/ocl/cl_headers" KhronosGroup OpenCL-Headers 4c82e9cfaaad18c340f48af3cf5d09ff33e8c1b7
-		_unpack_gh "thirdparty/ocl/clhpp_headers" KhronosGroup OpenCL-CLHPP 4a1157466afe72a87e8abc59537ef577534ccadf
-		_unpack_gh "thirdparty/ocl/icd_loader" KhronosGroup OpenCL-ICD-Loader 2cde5d09953a041786d1cfdcb1c08704a82cb904
-		_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock" ThrowTheSwitch CMock 7cc41ddfdd07dc5eb8359d278f439f14031d64ad
-		_unpack_gh "thirdparty/ocl/clhpp_headers/external/Unity" ThrowTheSwitch Unity 7d2bf62b7e6afaf38153041a9d53c21aeeca9a25 Unity
-		_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock/vendor/c_exception" throwtheswitch cexception dce9e8b26f2179439002e02d691429e81a32b6c0 CException
-		_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock/vendor/c_exception/vendor/unity" throwtheswitch unity 2c7629a0ae90ffe991b5fd08e4db8672f72ed64c Unity
-		_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock/vendor/unity" throwtheswitch unity 031f3bbe45f8adf504ca3d13e6f093869920b091 Unity
+		_unpack_gh "thirdparty/ocl/cl_headers" KhronosGroup OpenCL-Headers ${OPENCL_HEADERS_COMMIT}
+		_unpack_gh "thirdparty/ocl/clhpp_headers" KhronosGroup OpenCL-CLHPP ${OPENCL_CLHPP_COMMIT}
+		_unpack_gh "thirdparty/ocl/icd_loader" KhronosGroup OpenCL-ICD-Loader ${OPENCL_ICD_LOADER_COMMIT}
+		_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock" ThrowTheSwitch CMock ${CMOCK_COMMIT}
+		_unpack_gh "thirdparty/ocl/clhpp_headers/external/Unity" ThrowTheSwitch Unity ${UNITY_1_COMMIT} Unity
+		_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock/vendor/c_exception" throwtheswitch cexception ${CEXCEPTION_COMMIT} CException
+		_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock/vendor/c_exception/vendor/unity" throwtheswitch unity ${UNITY_2_COMMIT} Unity
+		_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock/vendor/unity" throwtheswitch unity ${UNITY_3_COMMIT} Unity
 	fi
-	_unpack_gh "thirdparty/json/nlohmann_json" nlohmann json 9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03
-	_unpack_gh "thirdparty/ittapi/ittapi" intel ittapi 69dd04030d3a2cf4c32e649ac1f2a628d5af6b46
-	_unpack_gh "thirdparty/gtest/gtest" openvinotoolkit googletest d269d902e4c3cd02f3e731e1e2ff8307352817a4
-	_unpack_gh_dupe "${WORKDIR}/gflags-e171aa2d15ed9eb17054558e0b3a6a413bb01067" "thirdparty/gflags/gflags"
-	_unpack_gh_dupe "${WORKDIR}/gflags-8411df715cf522606e3b1aca386ddfc0b63d34b4" "thirdparty/gflags/gflags/doc"
-	_unpack_gh "thirdparty/open_model_zoo/demos/thirdparty/gflags" gflags gflags e171aa2d15ed9eb17054558e0b3a6a413bb01067
-	_unpack_gh "thirdparty/open_model_zoo/demos/thirdparty/gflags/doc" gflags gflags 8411df715cf522606e3b1aca386ddfc0b63d34b4
+	_unpack_gh "thirdparty/json/nlohmann_json" nlohmann json ${NLOHMANN_JSON_COMMIT}
+	_unpack_gh "thirdparty/ittapi/ittapi" intel ittapi ${ITTAPI_COMMIT}
+	_unpack_gh "thirdparty/gtest/gtest" openvinotoolkit googletest ${GOOGLE_TEST_3_COMMIT}
+	_unpack_gh_dupe "${WORKDIR}/gflags-${GFLAGS_1_COMMIT}" "thirdparty/gflags/gflags"
+	_unpack_gh_dupe "${WORKDIR}/gflags-${GFLAGS_2_COMMIT}" "thirdparty/gflags/gflags/doc"
+	_unpack_gh "thirdparty/open_model_zoo/demos/thirdparty/gflags" gflags gflags ${GFLAGS_1_COMMIT}
+	_unpack_gh "thirdparty/open_model_zoo/demos/thirdparty/gflags/doc" gflags gflags ${GFLAGS_2_COMMIT}
 	if ! use system-flatbuffers ; then
-		_unpack_gh "thirdparty/flatbuffers/flatbuffers" google flatbuffers 01834de25e4bf3975a9a00e816292b1ad0fe184b
+		_unpack_gh "thirdparty/flatbuffers/flatbuffers" google flatbuffers ${FLATBUFFERS_COMMIT}
 	fi
-	_unpack_gh "src/bindings/python/thirdparty/pybind11" pybind pybind11 2965fa8de3cf9e82c789f906a525a76197b186c1
-	_unpack_gh "cmake/developer_package/ncc_naming_style/ncc" nithinn ncc 63e59ed312ba7a946779596e86124c1633f67607
-	_unpack_gh "src/plugins/intel_gpu/thirdparty/onednn_gpu" oneapi-src oneDNN cb77937ffcf5e83b5d1cf2940c94e8b508d8f7b4
+	_unpack_gh "src/bindings/python/thirdparty/pybind11" pybind pybind11 ${PYBIND11_COMMIT}
+	_unpack_gh "cmake/developer_package/ncc_naming_style/ncc" nithinn ncc ${NCC_COMMIT}
+	_unpack_gh "src/plugins/intel_gpu/thirdparty/onednn_gpu" oneapi-src oneDNN ${ONEDNN_2_COMMIT}
 
 	if use tbb ; then
 		if use kernel_linux && [[ "${ABI}" == "amd64" ]] ; then
