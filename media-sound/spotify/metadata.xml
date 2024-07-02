@@ -62,7 +62,7 @@
     <flag name="zenity">
       Add support for the file picker used for locating local files.
     </flag>
-    <flag name="rN">
+    <flag name="ebuild-revision-N">
       The ebuild's internal revision.
     </flag>
   </use>
