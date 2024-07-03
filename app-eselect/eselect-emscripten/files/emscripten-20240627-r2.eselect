@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20240627-r1"
+VERSION="20240627-r2"
 PN="emscripten"
 
 # version tests
@@ -243,6 +243,7 @@ EMSDK_NODE="/usr/bin/node"
 EMSDK_NODE_VERSION_MIN="${__EMSDK_NODE_VERSION_MIN__}"
 EMSDK_PYTHON="${PYTHON_EXE_ABSPATH}"
 EMSCRIPTEN_NATIVE_OPTIMIZER="/usr/share/emscripten-${PV}/optimizer"
+EMTEST_LACKS_NATIVE_CLANG="1"
 PATH="/usr/share/emscripten-${PV}"
 EMCC_WASM_BACKEND="${__EMCC_WASM_BACKEND__}"
 EOF
@@ -305,6 +306,7 @@ EOF
     echo -e "EMCC_WASM_BACKEND:\t${__EMCC_WASM_BACKEND__}"
     echo -e "EROOT:\t\t${EROOT}"
     echo -e "LLVM_ROOT:\t\t${EMSDK_LLVM_ROOT}"
+    echo -e "PYTHON_EXE_ABSPATH:\t${PYTHON_EXE_ABSPATH}"
     echo
 
     /usr/bin/emcc -v
