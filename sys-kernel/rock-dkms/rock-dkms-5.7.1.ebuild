@@ -16,7 +16,7 @@ DKMS_MODULES=(
 	"amddrm_buddy . /kernel/drivers/gpu/drm"
 	"amdxcp amd/amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
 )
-MAINTAINER_MODE=0
+MAINTAINER_MODE=1
 USE_DKMS=0
 
 DESCRIPTION="ROCk DKMS kernel module"
@@ -1197,6 +1197,7 @@ einfo "Updating /lib/modules/${kernel_release}/modules.dep for \`modprobe amdgpu
 		done
 einfo
 	fi
+ewarn "FIXME:  Security fixes have not been applied.  Please apply manually."
 }
 
 pkg_prerm() {

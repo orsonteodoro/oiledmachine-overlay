@@ -1196,6 +1196,7 @@ einfo "Updating /lib/modules/${kernel_release}/modules.dep for \`modprobe amdgpu
 		done
 einfo
 	fi
+ewarn "FIXME:  Security fixes have not been applied.  Please apply manually."
 }
 
 pkg_prerm() {
