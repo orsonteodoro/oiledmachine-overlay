@@ -3,10 +3,6 @@
 
 EAPI=8
 
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-
-inherit linux-info toolchain-funcs
-
 DKMS_MODULES=(
 	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 	"amdttm ttm /kernel/drivers/gpu/drm/ttm"
@@ -16,21 +12,6 @@ DKMS_MODULES=(
 	"amddrm_buddy . /kernel/drivers/gpu/drm"
 	"amdxcp amd/amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
 )
-MAINTAINER_MODE=0
-USE_DKMS=0
-
-DESCRIPTION="ROCk DKMS kernel module"
-HOMEPAGE="
-https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver
-"
-LICENSE="
-	GPL-2
-	MIT
-"
-KEYWORDS="~amd64"
-PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
-ROCK_VER="${PV}"
-SUFFIX="${PV_MAJOR_MINOR}"
 KV="6.2.8" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.7.1/Makefile#L2
 KVS=(
 # Commented out means EOL kernel.
@@ -42,6 +23,33 @@ KVS=(
 #	"4.18" # R 8.7, 8.8
 #	"3.10" # R 7.9
 )
+MAINTAINER_MODE=0
+PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+ROCK_VER="${PV}"
+SUFFIX="${PV_MAJOR_MINOR}"
+USE_DKMS=0
+
+if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
+# For verification of patch correctness
+	KV_NOT_SUPPORTED_MAX="99999999"
+	KV_SUPPORTED_MIN="3.10"
+else
+	KV_NOT_SUPPORTED_MAX="5.18" # Exclusive
+	KV_SUPPORTED_MIN="5.15"
+fi
+
+inherit linux-info toolchain-funcs
+
+DESCRIPTION="ROCk DKMS kernel module"
+HOMEPAGE="
+https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver
+"
+LICENSE="
+	GPL-2
+	MIT
+"
+KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
@@ -60,14 +68,6 @@ REQUIRED_USE="
 		acpi
 	)
 "
-if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
-# For verification of patch correctness
-	KV_NOT_SUPPORTED_MAX="99999999"
-	KV_SUPPORTED_MIN="3.10"
-else
-	KV_NOT_SUPPORTED_MAX="5.18" # Exclusive
-	KV_SUPPORTED_MIN="5.15"
-fi
 gen_kernel_pairs() {
 	local FLAVORS=(
 		"sys-kernel/gentoo-kernel"
