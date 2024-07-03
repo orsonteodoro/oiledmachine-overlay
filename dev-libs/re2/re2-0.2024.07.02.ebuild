@@ -8,7 +8,7 @@ EAPI=8
 # Different date format used upstream.
 RE2_VER="${PV#0.}"
 RE2_VER="${RE2_VER//./-}"
-SONAME="11" # https://github.com/google/re2/blob/2024-03-01/CMakeLists.txt#L33
+SONAME="11" # https://github.com/google/re2/blob/2024-07-02/CMakeLists.txt#L33
 
 inherit cmake-multilib toolchain-funcs
 
