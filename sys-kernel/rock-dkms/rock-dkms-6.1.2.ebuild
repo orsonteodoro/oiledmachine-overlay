@@ -27,13 +27,15 @@ LICENSE="
 	GPL-2
 	MIT
 "
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64"
 PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 ROCK_VER="${PV}"
 SUFFIX="${PV_MAJOR_MINOR}"
-KV="6.2.8" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.7.1/Makefile#L2
+KV="6.7.0" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.1.2/Makefile#L2
 KVS=(
 # Commented out means EOL kernel.
+#	"6.5"  # U 22.04 HWE
+#	"6.2"  # U 22.04 HWE
 #	"5.17" # U 22.04 Desktop OEM
 	"5.15" # U 22.04 Desktop HWE, 22.04 Server generic
 #	"5.14" # S 15.4; R 9.1, 9.2
@@ -154,7 +156,7 @@ https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/archive/refs/tags/rocm-$
 S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${SUFFIX}"
-DC_VER="3.2.241" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.7.1/drivers/gpu/drm/amd/display/dc/dc.h#L48
+DC_VER="3.2.269" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.1.2/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
 PATCHES=(
 	"${FILESDIR}/rock-dkms-3.10_p27-makefile-recognize-gentoo.patch"
@@ -515,7 +517,7 @@ eerror "Missing kernel sources.  Install the kernel sources package first."
 fi
 }
 
-# See also https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.7.1/drivers/gpu/drm/amd/dkms/sources
+# See also https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.1.2/drivers/gpu/drm/amd/dkms/sources
 _reconstruct_tarball_layout() {
 einfo "Reconstructing tarball layout"
 	local tarball_root="${WORKDIR}/ROCK-Kernel-Driver-rocm-${PV}"
@@ -786,7 +788,7 @@ _verify_magic_all() {
 }
 
 _copy_modules() {
-	# Keep in sync with https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.7.1/drivers/gpu/drm/amd/dkms/dkms.conf
+	# Keep in sync with https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.1.2/drivers/gpu/drm/amd/dkms/dkms.conf
 	IFS=$'\n'
 
 	local x
@@ -1197,7 +1199,6 @@ einfo "Updating /lib/modules/${kernel_release}/modules.dep for \`modprobe amdgpu
 		done
 einfo
 	fi
-ewarn "FIXME:  Security fixes have not been applied.  Please apply manually."
 }
 
 pkg_prerm() {
@@ -1237,7 +1238,7 @@ einfo "Try again"
 	check_modprobe_conf
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems (5.7.1, 20231122, kernel 5.15.139)
+# OILEDMACHINE-OVERLAY-STATUS:  needs install test
 
 # OILEDMACHINE-OVERLAY-TEST:  passed (5.7.1, 20231122, kernel 5.15.139)
 # USE="build compress zstd -acpi -check-mmu-notifier -custom-kernel -directgma -gzip -hybrid-graphics -numa -r15 -sign-modules -ssg -strict-pairing -xz"
