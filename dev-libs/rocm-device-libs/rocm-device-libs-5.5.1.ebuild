@@ -25,7 +25,7 @@ DESCRIPTION="Radeon Open Compute Device Libraries"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-Device-Libs"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm test r5"
+IUSE="system-llvm test ebuild-revision-5"
 RDEPEND="
 	!dev-libs/rocm-device-libs:0
 	!system-llvm? (

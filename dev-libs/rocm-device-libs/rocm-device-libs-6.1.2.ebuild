@@ -3,22 +3,22 @@
 
 EAPI=8
 
-LLVM_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.6.0/llvm/CMakeLists.txt
+LLVM_SLOT=17 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.7.0/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
 
 if [[ ${PV} == *9999 ]] ; then
-	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-Device-Libs/"
+	EGIT_REPO_URI="https://github.com/ROCm/llvm-project.git"
 	inherit git-r3
 	S="${WORKDIR}/${P}/src"
 else
 	SRC_URI="
-https://github.com/RadeonOpenCompute/ROCm-Device-Libs/archive/rocm-${PV}.tar.gz
-	-> ${P}.tar.gz
+https://github.com/ROCm/llvm-project/archive/refs/tags/rocm-${PV}.tar.gz
+	-> llvm-project-rocm-${PV}.tar.gz
 	"
-	S="${WORKDIR}/ROCm-Device-Libs-rocm-${PV}"
-	KEYWORDS="~amd64"
+	S="${WORKDIR}/llvm-project-rocm-${PV}/amd/device-libs"
+#	KEYWORDS="~amd64"
 fi
 
 DESCRIPTION="Radeon Open Compute Device Libraries"
@@ -88,4 +88,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  needs install test
