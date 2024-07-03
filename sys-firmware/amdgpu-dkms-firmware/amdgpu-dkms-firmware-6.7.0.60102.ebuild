@@ -4,21 +4,22 @@
 EAPI=7
 
 DEB_OS_REL="22.04"
-DRIVER_PV="5.5.1" # Folder name
-KERNEL_PV="6.3" # Equivalent for vanilla kernel based on DC_VER
-ROCM_PV="5.5.1"
+DRIVER_PV="6.1.2" # Folder name
+KERNEL_PV="6.8" # Equivalent for vanilla kernel based on DC_VER
+ROCM_PV="6.1.2"
 ROCM_SLOT="${ROCM_PV%.*}"
-MY_PV="6.0.5.50501-1593694" # The 4th component is the rock version 5.05.01 == 5.5.1.
+MY_PV="6.7.0.60102-1781449"  # The 4th component is the rock version 6.01.02 == 6.1.2.
 FN="amdgpu-dkms-firmware_${MY_PV}.${DEB_OS_REL}_all.deb"
 KVS=(
 # Commented out means EOL kernel.
+#	"6.5"  # U 22.04 HWE
+#	"6.2"  # U 22.04 HWE
 #	"5.17" # U 22.04 Desktop OEM
 	"5.15" # U 22.04 Desktop HWE, 22.04 Server generic
-#	"5.14" # S 15.4; R 9.0, 9.1, 9.2
+#	"5.14" # S 15.4; R 9.1, 9.2
 #	"5.8"  # U 20.04 HWE
 	"5.4"  # U 20.04 generic
-#	"5.3"  # S 15.3
-#	"4.18" # R 8.4, 8.5, 8.6, 8.7
+#	"4.18" # R 8.7, 8.8
 #	"3.10" # R 7.9
 )
 

@@ -5,7 +5,7 @@ EAPI=7
 
 DEB_OS_REL="22.04"
 DRIVER_PV="5.4.3" # Folder name
-KERNEL_PV="6.2" # For vanilla kernel
+KERNEL_PV="6.2" # Equivalent for vanilla kernel based on DC_VER
 ROCM_PV="5.4.3"
 ROCM_SLOT="${ROCM_PV%.*}"
 MY_PV="5.18.13.50403-1538762"  # The 4th component is the rock version 5.04.03 == 5.4.3.
@@ -39,7 +39,7 @@ RDEPEND="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 inherit unpacker
-IUSE="si r7"
+IUSE="si ebuild-revision-7"
 REQUIRED_USE="
 "
 SRC_URI="
@@ -66,11 +66,11 @@ src_unpack() {
 }
 
 src_configure() {
-	:;
+	:
 }
 
 src_compile() {
-	:;
+	:
 }
 
 PKG_POSTINST_LIST=""

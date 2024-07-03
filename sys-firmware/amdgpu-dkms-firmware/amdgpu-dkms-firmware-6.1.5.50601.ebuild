@@ -5,10 +5,10 @@ EAPI=7
 
 DEB_OS_REL="22.04"
 DRIVER_PV="5.6.1" # Folder name
-KERNEL_PV="6.4" # For vanilla kernel
+KERNEL_PV="6.4" # Equivalent for vanilla kernel based on DC_VER
 ROCM_PV="5.6.1"
 ROCM_SLOT="${ROCM_PV%.*}"
-MY_PV="6.1.5.50601-1649308"  # The 4th component is the rock version 5.06.00 == 5.6.0.
+MY_PV="6.1.5.50601-1649308"  # The 4th component is the rock version 5.06.01 == 5.6.1.
 FN="amdgpu-dkms-firmware_${MY_PV}.${DEB_OS_REL}_all.deb"
 KVS=(
 # Commented out means EOL kernel.
@@ -38,7 +38,7 @@ RDEPEND="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 inherit unpacker
-IUSE="si r7"
+IUSE="si ebuild-revision-7"
 REQUIRED_USE="
 "
 SRC_URI="
@@ -65,11 +65,11 @@ src_unpack() {
 }
 
 src_configure() {
-	:;
+	:
 }
 
 src_compile() {
-	:;
+	:
 }
 
 PKG_POSTINST_LIST=""

@@ -5,10 +5,9 @@ EAPI=7
 
 DEB_OS_REL="22.04"
 DRIVER_PV="5.7.1" # Folder name
-KERNEL_PV="6.5" # For vanilla kernel
+KERNEL_PV="6.5" # Equivalent for vanilla kernel based on DC_VER
 ROCM_PV="5.7.1"
 ROCM_SLOT="${ROCM_PV%.*}"
-#https://repo.radeon.com/amdgpu/5.7.1/ubuntu/pool/main/a/amdgpu-dkms/amdgpu-dkms-firmware_6.2.4.50701-1664922.22.04_all.deb
 MY_PV="6.2.4.50701-1664922"  # The 4th component is the rock version 5.07.01 == 5.7.1.
 FN="amdgpu-dkms-firmware_${MY_PV}.${DEB_OS_REL}_all.deb"
 KVS=(
@@ -38,7 +37,7 @@ RDEPEND="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 inherit unpacker
-IUSE="si r7"
+IUSE="si ebuild-revision-7"
 REQUIRED_USE="
 "
 SRC_URI="
@@ -65,11 +64,11 @@ src_unpack() {
 }
 
 src_configure() {
-	:;
+	:
 }
 
 src_compile() {
-	:;
+	:
 }
 
 PKG_POSTINST_LIST=""

@@ -5,10 +5,10 @@ EAPI=7
 
 DEB_OS_REL="20.04"
 DRIVER_PV="22.20.3" # Folder name
-KERNEL_PV="5.19" # For vanilla kernel
+KERNEL_PV="5.19" # Equivalent for vanilla kernel based on DC_VER
 ROCM_PV="5.2.3"
 ROCM_SLOT="${ROCM_PV%.*}"
-MY_PV="5.16.9.22.20.50203-1462319" # The 6th component is the rock version 5.01.03 == 5.1.3.
+MY_PV="5.16.9.22.20.50203-1462319" # The 6th component is the rock version 5.02.03 == 5.2.3.
 MY_PV2="5.16.9.22.20-1462319~${DEB_OS_REL}"
 FN="amdgpu-dkms-firmware_${MY_PV}~${DEB_OS_REL}_all.deb"
 KVS=(
@@ -40,7 +40,7 @@ RDEPEND="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 inherit unpacker
-IUSE="si r7"
+IUSE="si ebuild-revision-7"
 REQUIRED_USE="
 "
 SRC_URI="
@@ -67,11 +67,11 @@ src_unpack() {
 }
 
 src_configure() {
-	:;
+	:
 }
 
 src_compile() {
-	:;
+	:
 }
 
 PKG_POSTINST_LIST=""
