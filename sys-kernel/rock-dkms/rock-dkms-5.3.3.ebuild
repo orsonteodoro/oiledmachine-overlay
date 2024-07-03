@@ -567,7 +567,7 @@ src_configure() {
 }
 
 src_compile() {
-	:;
+	:
 }
 
 install_examples() {
