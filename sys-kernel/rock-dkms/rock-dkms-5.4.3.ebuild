@@ -5,6 +5,7 @@ EAPI=8
 
 # TODO:  pick security commit fixes in 5.4.4 or bump this package to 5.4.4.
 
+AMDGPU_FIRMWARE_PV="5.18.13.50403"
 DKMS_MODULES=(
 	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 	"amdttm ttm /kernel/drivers/gpu/drm/ttm"
@@ -102,7 +103,6 @@ gen_kernel_pairs() {
 		done
 	done
 }
-AMDGPU_FIRMWARE_PV="5.18.13.50403"
 CDEPEND="
 	!custom-kernel? (
 		|| (

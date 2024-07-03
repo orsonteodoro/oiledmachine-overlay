@@ -6,10 +6,6 @@ EAPI=7
 U_OS_REL="22.04"
 DRIVER_PV="5.7.1" # Folder name
 KERNEL_PV="6.5" # Equivalent for vanilla kernel based on DC_VER
-ROCM_PV="5.7.1"
-ROCM_SLOT="${ROCM_PV%.*}"
-MY_PV="6.2.4.50701-1664922"  # The 4th component is the rock version 5.07.01 == 5.7.1.
-FN="amdgpu-dkms-firmware_${MY_PV}.${U_OS_REL}_all.deb"
 KVS=(
 # Commented out means EOL kernel.
 #	"5.17" # U 22.04 Desktop OEM
@@ -20,6 +16,12 @@ KVS=(
 #	"4.18" # R 8.7, 8.8
 #	"3.10" # R 7.9
 )
+MY_PV="6.2.4.50701-1664922"  # The 4th component is the rock version 5.07.01 == 5.7.1.
+PKG_POSTINST_LIST="" # Global var
+PKG_RADEON_LIST="" # Global var
+ROCM_PV="5.7.1"
+ROCM_SLOT="${ROCM_PV%.*}"
+FN="amdgpu-dkms-firmware_${MY_PV}.${U_OS_REL}_all.deb"
 
 DESCRIPTION="Firmware blobs used by the amdgpu kernel driver"
 HOMEPAGE="
@@ -70,9 +72,6 @@ src_configure() {
 src_compile() {
 	:
 }
-
-PKG_POSTINST_LIST=""
-PKG_RADEON_LIST=""
 
 gen_radeon_list() {
 	local amdgpu_cgs_path="${DISTDIR}/amdgpu_cgs.c.${ROCM_PV}"

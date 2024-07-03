@@ -3,6 +3,7 @@
 
 EAPI=8
 
+AMDGPU_FIRMWARE_PV="6.1.5.50601"
 DKMS_MODULES=(
 	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 	"amdttm ttm /kernel/drivers/gpu/drm/ttm"
@@ -101,7 +102,6 @@ gen_kernel_pairs() {
 		done
 	done
 }
-AMDGPU_FIRMWARE_PV="6.1.5.50601"
 CDEPEND="
 	!custom-kernel? (
 		|| (

@@ -3,23 +3,29 @@
 
 EAPI=7
 
-U_OS_REL="22.04"
-DRIVER_PV="22.10.3" # Folder name
-KERNEL_PV="5.18" # Equivalent for vanilla kernel based on DC_VER
-ROCM_PV="5.1.3"
-ROCM_SLOT="${ROCM_PV%.*}"
-MY_PV="5.13.20.22.10.50103-1420323" # The 6th component is the rock version 5.01.03 == 5.1.3.
-MY_PV2="5.13.20.22.10-1420323"
-FN="amdgpu-dkms-firmware_${MY_PV}_all.deb"
+U_OS_REL="20.04"
+DRIVER_PV="22.20.3" # Folder name
+KERNEL_PV="5.19" # Equivalent for vanilla kernel based on DC_VER
 KVS=(
 # Commented out means EOL kernel.
+#	"5.17" # U 22.04 Desktop OEM
+	"5.15" # U 22.04 HWE, 22.04 Server generic
+#	"5.14" # S 15.4
 #	"5.8"  # U 20.04 HWE
 	"5.4"  # U 18.04 HWE, 20.04 generic
+#	"5.3"  # S 15.3
 #	"4.18" # R 8.4, 8.5, 8.6
 #	"4.15" # U 18.04 generic
-#	"4.12" # S 15
 #	"3.10" # R 7.9
 )
+MY_PV="5.16.9.22.20.50203"
+MY_PV2="${MY_PV}-1462319" # The 6th component is the rock version 5.02.03 == 5.2.3.
+MY_PV3="${MY_PV%.*}-1462319~${U_OS_REL}"
+PKG_POSTINST_LIST="" # Global var
+PKG_RADEON_LIST="" # Global var
+ROCM_PV="5.2.3"
+ROCM_SLOT="${ROCM_PV%.*}"
+FN="amdgpu-dkms-firmware_${MY_PV2}~${U_OS_REL}_all.deb"
 
 DESCRIPTION="Firmware blobs used by the amdgpu kernel driver"
 HOMEPAGE="
@@ -35,7 +41,7 @@ KEYWORDS="~amd64"
 RDEPEND="
 	!sys-firmware/rock-firmware
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="${ROCM_SLOT}/${MY_PV}"
 inherit unpacker
 IUSE="si ebuild-revision-7"
 REQUIRED_USE="
@@ -60,7 +66,7 @@ unpack_deb() {
 src_unpack() {
 	default
 	unpack_deb "${DISTDIR}/${FN}"
-	export S="${WORKDIR}/usr/src/amdgpu-${MY_PV2}/firmware/amdgpu"
+	export S="${WORKDIR}/usr/src/amdgpu-${MY_PV3}/firmware/amdgpu"
 }
 
 src_configure() {
@@ -70,9 +76,6 @@ src_configure() {
 src_compile() {
 	:
 }
-
-PKG_POSTINST_LIST=""
-PKG_RADEON_LIST=""
 
 gen_radeon_list() {
 	local amdgpu_cgs_path="${DISTDIR}/amdgpu_cgs.c.${ROCM_PV}"
@@ -184,7 +187,7 @@ cat <<EOF > "${ED}/usr/bin/install-${P}.sh"
 echo "Installing ${P} into /lib/firmware/amdgpu"
 rm -f /lib/firmware/amdgpu/*
 mkdir -p /lib/firmware/amdgpu
-cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
+cp -aT /lib/firmware/amdgpu-${MY_PV2%-*} /lib/firmware/amdgpu
 EOF
 
 	local kv_slot
@@ -194,7 +197,7 @@ cat <<EOF > "${ED}/usr/bin/install-${P}-for-rock-kernel-module-slot-${kv_slot}.s
 echo "Installing ${P} into /lib/firmware/amdgpu"
 rm -f /lib/firmware/amdgpu/*
 mkdir -p /lib/firmware/amdgpu
-cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
+cp -aT /lib/firmware/amdgpu-${MY_PV2%-*} /lib/firmware/amdgpu
 EOF
 	done
 
@@ -203,7 +206,7 @@ cat <<EOF > "${ED}/usr/bin/install-${P}-for-vanilla-kernel-module-slot-${KERNEL_
 echo "Installing ${P} into /lib/firmware/amdgpu"
 rm -f /lib/firmware/amdgpu/*
 mkdir -p /lib/firmware/amdgpu
-cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
+cp -aT /lib/firmware/amdgpu-${MY_PV2%-*} /lib/firmware/amdgpu
 EOF
 
 cat <<EOF > "${ED}/usr/bin/install-rocm-firmware-${ROCM_PV}.sh"
@@ -211,7 +214,7 @@ cat <<EOF > "${ED}/usr/bin/install-rocm-firmware-${ROCM_PV}.sh"
 echo "Installing ROCm v${ROCM_PV} compatible firmware into /lib/firmware/amdgpu"
 rm -f /lib/firmware/amdgpu/*
 mkdir -p /lib/firmware/amdgpu
-cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
+cp -aT /lib/firmware/amdgpu-${MY_PV2%-*} /lib/firmware/amdgpu
 EOF
 
 cat <<EOF > "${ED}/usr/bin/install-rocm-firmware-slot-${ROCM_SLOT}.sh"
@@ -219,7 +222,7 @@ cat <<EOF > "${ED}/usr/bin/install-rocm-firmware-slot-${ROCM_SLOT}.sh"
 echo "Installing ROCm ${ROCM_SLOT} (slot) compatible firmware into /lib/firmware/amdgpu"
 rm -f /lib/firmware/amdgpu/*
 mkdir -p /lib/firmware/amdgpu
-cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
+cp -aT /lib/firmware/amdgpu-${MY_PV2%-*} /lib/firmware/amdgpu
 
 EOF
 	fperms 0755 /usr/bin/install-${P}.sh
@@ -233,20 +236,20 @@ EOF
 }
 
 src_install() {
-	insinto /lib/firmware/amdgpu-${MY_PV%-*}
+	insinto /lib/firmware/amdgpu-${MY_PV2%-*}
 	doins -r *
 	docinto licenses
 	cd "${WORKDIR}/usr/share/doc/amdgpu-dkms-firmware" || die
 	dodoc "copyright"
 	dodoc "LICENSE"
 	# Touched files that act like metadata that indicate compatibility.
-	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rocm-version-${ROCM_PV}"
-	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rocm-slot-${ROCM_SLOT}"
+	touch "${ED}/lib/firmware/amdgpu-${MY_PV2%-*}/rocm-version-${ROCM_PV}"
+	touch "${ED}/lib/firmware/amdgpu-${MY_PV2%-*}/rocm-slot-${ROCM_SLOT}"
 	local kv_slot
 	for kv_slot in ${KVS[@]} ; do
-		touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rock-kernel-module-slot-${kv_slot}"
+		touch "${ED}/lib/firmware/amdgpu-${MY_PV2%-*}/rock-kernel-module-slot-${kv_slot}"
 	done
-	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/vanilla-kernel-module-series-${KERNEL_PV}"
+	touch "${ED}/lib/firmware/amdgpu-${MY_PV2%-*}/vanilla-kernel-module-series-${KERNEL_PV}"
 	gen_scripts
 }
 

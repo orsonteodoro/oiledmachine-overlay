@@ -3,6 +3,9 @@
 
 EAPI=8
 
+AMDGPU_FIRMWARE_PV="5.16.9.50203"
+DKMS_PKG_NAME="amdgpu"
+DC_VER="3.2.181" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.2.3/drivers/gpu/drm/amd/display/dc/dc.h#L48
 DKMS_MODULES=(
 	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 	"amdttm ttm /kernel/drivers/gpu/drm/ttm"
@@ -28,6 +31,7 @@ PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCK_VER="${PV}"
 SUFFIX="${PV_MAJOR_MINOR}"
+DKMS_PKG_VER="${SUFFIX}"
 USE_DKMS=0
 
 if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
@@ -101,7 +105,6 @@ gen_kernel_pairs() {
 		done
 	done
 }
-AMDGPU_FIRMWARE_PV="5.16.9.22.20.50203"
 CDEPEND="
 	!custom-kernel? (
 		|| (
@@ -152,9 +155,6 @@ https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/archive/refs/tags/rocm-$
 	-> ${P}.tar.gz
 "
 S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
-DKMS_PKG_NAME="amdgpu"
-DKMS_PKG_VER="${SUFFIX}"
-DC_VER="3.2.181" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.2.3/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
 PATCHES=(
 	"${FILESDIR}/rock-dkms-3.10_p27-makefile-recognize-gentoo.patch"

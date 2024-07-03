@@ -6,7 +6,7 @@ EAPI=7
 # The PV is the same as DC_VER in
 # https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.3.3/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
-AMDGPU_FIRMWARE_PV="5.18.2.22.40.50303"
+AMDGPU_FIRMWARE_PV="5.18.2.50303"
 KERNEL_FIRMWARE_PV="20221214" # Based on linux-firmware commit logs ; not released, no 22.40 commit message
 KERNEL_PV="6.0"  # DC_VER = 3.2.198 ; KERNEL_PV is from linux-kernel not rock-dkms
 ROCM_VERSION="5.3.3" # DC_VER = ${PV}
