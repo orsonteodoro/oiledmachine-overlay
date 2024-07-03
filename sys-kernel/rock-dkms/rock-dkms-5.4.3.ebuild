@@ -47,7 +47,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-r16
+ebuild-revision-16
 "
 REQUIRED_USE="
 	compress? (
@@ -488,6 +488,10 @@ if [[ "${MAINTAINER_MODE}" != "1" ]] ; then
 			local V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" \
 				| sort --version-sort -r \
 				| sed -e "s|.*/linux-||")
+			if [[ -z "${V}" ]] ; then
+eerror "Missing kernel sources.  Install the kernel sources package first."
+				die
+			fi
 			local v
 			for v in ${V} ; do
 				k="${v}"
@@ -500,6 +504,10 @@ if [[ "${MAINTAINER_MODE}" != "1" ]] ; then
 				| sort --version-sort -r \
 				| head -n 1 \
 				| sed -e "s|.*/linux-||")
+			if [[ -z "${k}" ]] ; then
+eerror "Missing kernel sources.  Install the kernel sources package first."
+				die
+			fi
 			check_kernel "${k}"
 		else
 			check_kernel "${k}"
