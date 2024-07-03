@@ -3,7 +3,7 @@
 
 EAPI=7
 
-DEB_OS_REL="22.04"
+U_OS_REL="22.04"
 DRIVER_PV="22.10.3" # Folder name
 KERNEL_PV="5.18" # Equivalent for vanilla kernel based on DC_VER
 ROCM_PV="5.1.3"

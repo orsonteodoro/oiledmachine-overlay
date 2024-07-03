@@ -3,14 +3,14 @@
 
 EAPI=7
 
-DEB_OS_REL="22.04"
+U_OS_REL="22.04"
 DRIVER_PV="5.3.3" # Folder name
 KERNEL_PV="6.0" # Equivalent for vanilla kernel based on DC_VER
 ROCM_PV="5.3.3"
 ROCM_SLOT="${ROCM_PV%.*}"
 MY_PV="5.18.2.22.40.50303-1504718" # The 6th component is the rock version 5.03.03 == 5.3.3.
 MY_PV2="5.18.2.22.40-1504718.22.04"
-FN="amdgpu-dkms-firmware_${MY_PV}.${DEB_OS_REL}_all.deb"
+FN="amdgpu-dkms-firmware_${MY_PV}.${U_OS_REL}_all.deb"
 KVS=(
 # Commented out means EOL kernel.
 #	"5.17" # U 22.04 Desktop OEM
