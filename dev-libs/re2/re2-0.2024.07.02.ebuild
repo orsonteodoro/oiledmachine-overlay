@@ -1,3 +1,4 @@
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 2012-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -10,21 +11,21 @@ EAPI=8
 # Different date format used upstream.
 ABSEIL_CPP_PV="20240116.2"						# https://github.com/google/re2/blob/2024-07-02/MODULE.bazel#L16
 DISTUTILS_EXT=1
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 RE2_VER="${PV#0.}"
 RE2_VER="${RE2_VER//./-}"
-DISTUTILS_USE_PEP517="setuptools"
 SONAME="11" # https://github.com/google/re2/blob/2024-07-02/CMakeLists.txt#L33
 
 inherit cmake-multilib distutils-r1 toolchain-funcs
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc x86"
+S="${WORKDIR}/re2-${RE2_VER}"
 SRC_URI="
 https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_PV}.tar.gz -> abseil-cpp-${ABSEIL_CPP_PV}.tar.gz
 https://github.com/google/re2/archive/${RE2_VER}.tar.gz
 	-> re2-${RE2_VER}.tar.gz
 "
-S="${WORKDIR}/re2-${RE2_VER}"
 
 DESCRIPTION="An efficient, principled regular expression library"
 HOMEPAGE="https://github.com/google/re2"
