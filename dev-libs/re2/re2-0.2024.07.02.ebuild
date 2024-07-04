@@ -4,8 +4,6 @@
 
 EAPI=8
 
-# Bazel needed to avoid multiple abseil-cpp subslots.
-
 # Bump every month
 
 # Different date format used upstream.
