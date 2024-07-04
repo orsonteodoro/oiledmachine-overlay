@@ -33,12 +33,12 @@ LICENSE="BSD"
 SLOT="0/${SONAME}"
 IUSE="-debug icu python test"
 RDEPEND="
+	icu? (
+		dev-libs/icu:0=[${MULTILIB_USEDEP}]
+	)
 	python? (
 		dev-python/absl-py[${PYTHON_USEDEP}]
 		dev-python/pybind11[${PYTHON_USEDEP}]
-	)
-	icu? (
-		dev-libs/icu:0=[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
