@@ -12,4 +12,9 @@
   Latest version for TensorFlow.
 
   -->
+  <use>
+    <flag name="python">
+      Install RE2 Python bindings
+    </flag>
+  </use>
 </pkgmetadata>

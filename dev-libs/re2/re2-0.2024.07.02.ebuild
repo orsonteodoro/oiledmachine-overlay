@@ -9,9 +9,11 @@ EAPI=8
 
 # Different date format used upstream.
 ABSEIL_CPP_PV="20240116.2"						# https://github.com/google/re2/blob/2024-07-02/MODULE.bazel#L16
+DISTUTILS_EXT=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 RE2_VER="${PV#0.}"
 RE2_VER="${RE2_VER//./-}"
+DISTUTILS_USE_PEP517="setuptools"
 SONAME="11" # https://github.com/google/re2/blob/2024-07-02/CMakeLists.txt#L33
 
 inherit cmake-multilib distutils-r1 toolchain-funcs
@@ -81,7 +83,7 @@ src_prepare() {
 }
 
 build_multilib_abseil() {
-	pushd "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_PV}_build-${MULTILIB_ABI_FLAG}.${ABI}" || die
+	pushd "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_PV}_build-${MULTILIB_ABI_FLAG}.${ABI}"  >/dev/null 2>&1 || die
 		mkdir -p build || die
 		cd build || die
 		append-flags -fPIC
@@ -91,7 +93,7 @@ build_multilib_abseil() {
 			|| die
 		emake
 		DESTDIR="${WORKDIR}/${PN}-${RE2_VER}_build-${MULTILIB_ABI_FLAG}.${ABI}/abseil-cpp" emake install
-	popd || die
+	popd  >/dev/null 2>&1 || die
 }
 
 python_configure() {
@@ -117,7 +119,19 @@ src_configure() {
 }
 
 python_compile() {
-	"${PYTHON}" -m build --wheel || die
+	pushd "${WORKDIR}/${PN}-${RE2_VER}/python" >/dev/null 2>&1 || die
+		"${PYTHON}" -m build --wheel || die
+
+		local pyver="${EPYTHON/python}"
+		pyver="${pyver/.}"
+		local wheel_path=$(realpath "dist/google_re2-"*"-cp${pyver}-cp${pyver}-linux_"*".whl")
+
+		local d="${WORKDIR}/${PN}-${RE2_VER}_build-${EPYTHON/./_}/install"
+einfo "Installing ${wheel_path}"
+		distutils_wheel_install \
+			"${d}" \
+			"${wheel_path}"
+	popd  >/dev/null 2>&1 || die
 }
 
 src_compile() {
@@ -128,17 +142,22 @@ src_compile() {
 }
 
 python_test() {
-	local dir=$(mktemp -d -p "${T}")
-	cp "re2_test.py" "${dir}" || die
-	cd "${dir}" || die
-	"${PYTHON}" "re2_test.py" || die
+	local old_pythonpath="${PYTHONPATH}"
+	export PYTHONPATH="${WORKDIR}/${PN}-${RE2_VER}_build-${EPYTHON/./_}/install/usr/lib/${EPYTHON}/site-packages"
+	pushd "${WORKDIR}/${PN}-${RE2_VER}/python" >/dev/null 2>&1 || die
+		local dir=$(mktemp -d -p "${T}")
+		cp "re2_test.py" "${dir}" || die
+		cd "${dir}" || die
+		"${PYTHON}" "re2_test.py" || die
+	popd  >/dev/null 2>&1 || die
+	export PYTHONPATH="${old_pythonpath}"
 }
 
 test_abi() {
-	pushd "${WORKDIR}/${PN}-${RE2_VER}_build-${MULTILIB_ABI_FLAG}.${ABI}" || die
+	pushd "${WORKDIR}/${PN}-${RE2_VER}_build-${MULTILIB_ABI_FLAG}.${ABI}"  >/dev/null 2>&1 || die
 		local configuration=$(usex debug "Debug" "Release")
 		ctest -C ${configuration} --output-on-failure -E 'dfa|exhaustive|random' || die
-	popd
+	popd  >/dev/null 2>&1 || die
 }
 
 src_test() {
