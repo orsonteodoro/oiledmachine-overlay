@@ -13,7 +13,10 @@ SONAME="10" # https://github.com/google/re2/blob/2023-03-01/CMakeLists.txt#L33
 inherit cmake-multilib toolchain-funcs
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc x86"
-SRC_URI="https://github.com/google/re2/archive/${RE2_VER}.tar.gz -> re2-${RE2_VER}.tar.gz"
+SRC_URI="
+https://github.com/google/re2/archive/${RE2_VER}.tar.gz
+	-> re2-${RE2_VER}.tar.gz
+"
 S="${WORKDIR}/re2-${RE2_VER}"
 
 DESCRIPTION="An efficient, principled regular expression library"
@@ -21,21 +24,21 @@ HOMEPAGE="https://github.com/google/re2"
 LICENSE="BSD"
 SLOT="0/${SONAME}"
 IUSE="-debug icu test"
+RDEPEND="
+	icu? (
+		dev-libs/icu:0=[${MULTILIB_USEDEP}]
+	)
+"
+DEPEND="
+	${RDEPEND}
+"
 BDEPEND="
 	icu? (
 		virtual/pkgconfig
 	)
 "
-DEPEND="
-	icu? (
-		dev-libs/icu:0=[${MULTILIB_USEDEP}]
-	)
-"
-RDEPEND="
-	${DEPEND}
-"
-DOCS=( AUTHORS CONTRIBUTORS README doc/syntax.txt )
-HTML_DOCS=( doc/syntax.html )
+DOCS=( "AUTHORS" "CONTRIBUTORS" "README" "doc/syntax.txt" )
+HTML_DOCS=( "doc/syntax.html" )
 
 src_configure() {
 	local mycmakeargs=(

@@ -3,7 +3,7 @@
 
 EAPI=8
 
-JAVA_SLOT=11
+JAVA_SLOT=11 # https://github.com/bazelbuild/bazel/blob/5.4.1/scripts/bootstrap/buildenv.sh#L80
 
 inherit bash-completion-r1 bazel flag-o-matic java-pkg-2 multiprocessing
 

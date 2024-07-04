@@ -3,7 +3,7 @@
 
 EAPI=8
 
-JAVA_SLOT=11 # https://github.com/bazelbuild/bazel/blob/5.3.2/scripts/bootstrap/buildenv.sh#L80
+JAVA_SLOT=11 # https://github.com/bazelbuild/bazel/blob/7.1.2/scripts/bootstrap/buildenv.sh#L80
 
 inherit bash-completion-r1 bazel flag-o-matic java-pkg-2 multiprocessing
 
@@ -23,7 +23,7 @@ RESTRICT="
 SLOT="$(ver_cut 1-2 ${PV})"
 IUSE="
 bash-completion examples tools zsh-completion
-ebuild-revision-5
+ebuild-revision-6
 "
 RDEPEND="
 	!dev-build/bazel:0
@@ -68,12 +68,6 @@ src_prepare() {
 
 src_compile() {
 	replace-flags '-O0' '-O1' # Package uses _FORTIFY_SOURCE
-ewarn
-ewarn "If it fails to build, switch to gcc 12."
-ewarn
-ewarn "eselect gcc set ${CHOST}-12"
-ewarn "source /etc/profile"
-ewarn
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 einfo "JAVA_HOME:  ${JAVA_HOME}"
 	export EXTRA_BAZEL_ARGS="--jobs=$(makeopts_jobs) $(bazel_get_flags)
