@@ -6,7 +6,7 @@ EAPI=8
 CMAKE_MAKEFILE_GENERATOR="emake"
 DOCS_BUILDER="doxygen"
 DOCS_DEPEND="media-gfx/graphviz"
-LLVM_SLOT=17 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.7.1/llvm/CMakeLists.txt
+LLVM_SLOT=17 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.0.2/llvm/CMakeLists.txt
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -23,7 +23,7 @@ https://github.com/ROCm-Developer-Tools/HIPCC/archive/refs/tags/rocm-${PV}.tar.g
 
 DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
 IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm system-llvm test r24"
@@ -115,27 +115,27 @@ ROCCLR_PATCHES=(
 	"${FILESDIR}/rocclr-5.7.0-path-changes.patch"
 )
 HIP_PATCHES=(
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+	"${FILESDIR}/${PN}-6.0.2-path-changes.patch"
 )
 HIPAMD_PATCHES=(
-	"${FILESDIR}/${PN}-5.7.0-DisableTest.patch"
+#	"${FILESDIR}/${PN}-5.7.0-DisableTest.patch"
 	"${FILESDIR}/${PN}-5.0.1-hip_vector_types.patch"
 	"${FILESDIR}/${PN}-5.0.2-set-build-id.patch"
 	"${FILESDIR}/${PN}-5.7.0-remove-cmake-doxygen-commands.patch"
 	"${FILESDIR}/${PN}-5.5.1-disable-Werror.patch"
 	"${FILESDIR}/${PN}-5.7.0-hip-config-not-cuda.patch"
-	"${FILESDIR}/${PN}-5.7.0-hip-host-not-cuda.patch"
-	"${FILESDIR}/hipamd-5.7.0-path-changes.patch"
+	"${FILESDIR}/${PN}-6.0.2-hip-host-not-cuda.patch"
+	"${FILESDIR}/hipamd-6.0.2-path-changes.patch"
 	"${FILESDIR}/hipamd-5.7.0-unwrap-line.patch"
-	"${FILESDIR}/hipamd-5.7.0-hip_fatbin-header.patch"
+	"${FILESDIR}/hipamd-6.0.2-hip_fatbin-header.patch"
 	"${FILESDIR}/hipamd-5.7.0-hiprtc-includes-path.patch"
 	"${FILESDIR}/hipamd-5.7.0-hiprtc-header.patch"
-	"${FILESDIR}/hipamd-5.7.0-fix-install-cmake-files.patch"
+	"${FILESDIR}/hipamd-6.0.2-fix-install-cmake-files.patch"
 	"${FILESDIR}/hipamd-5.7.1-link-hsa-runtime64.patch"
 )
 HIPCC_PATCHES=(
 	"${FILESDIR}/hipcc-5.6.0-fno-stack-protector.patch"
-	"${FILESDIR}/hipcc-5.7.0-path-changes.patch"
+	"${FILESDIR}/hipcc-6.0.2-path-changes.patch"
 )
 OCL_PATCHES=(
 	"${FILESDIR}/rocm-opencl-runtime-5.3.3-path-changes.patch"
@@ -326,4 +326,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  needs test

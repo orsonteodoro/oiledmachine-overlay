@@ -1,0 +1,298 @@
+diff '--color=auto' -urp HIP-rocm-6.1.2.orig/cmake/FindHIP.cmake HIP-rocm-6.1.2/cmake/FindHIP.cmake
+--- HIP-rocm-6.1.2.orig/cmake/FindHIP.cmake	2024-05-09 02:23:26.000000000 -0700
++++ HIP-rocm-6.1.2/cmake/FindHIP.cmake	2024-07-04 15:13:36.669358398 -0700
+@@ -271,35 +271,7 @@ if("${HIP_COMPILER}" STREQUAL "nvcc")
+     set(CMAKE_HIP_LINK_EXECUTABLE "${HIP_HIPCC_CMAKE_LINKER_HELPER} <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+ elseif("${HIP_COMPILER}" STREQUAL "clang")
+     #Set HIP_CLANG_PATH
+-    if("x${HIP_CLANG_PATH}" STREQUAL "x")
+-      # IF HIP_CLANG_INSTALL_DIR is Found
+-      if( HIP_CLANG_INSTALL_DIR )
+-        set(HIP_CLANG_PATH ${HIP_CLANG_INSTALL_DIR})
+-      else() # IF HIP_CLANG_INSTALL_DIR is not found
+-        if(DEFINED ENV{HIP_CLANG_PATH})
+-            set(HIP_CLANG_PATH $ENV{HIP_CLANG_PATH})
+-        elseif(DEFINED ENV{ROCM_PATH})
+-            set(HIP_CLANG_PATH "$ENV{ROCM_PATH}/llvm/bin")
+-        elseif(DEFINED ENV{HIP_PATH})
+-            if(EXISTS "$ENV{HIP_PATH}/llvm/bin") #File Reorg backward compatibility
+-                set(HIP_CLANG_PATH "$ENV{HIP_PATH}/llvm/bin")
+-            else()
+-                set(HIP_CLANG_PATH "$ENV{HIP_PATH}/../llvm/bin")
+-            endif()
+-        elseif(DEFINED HIP_PATH)
+-            if(EXISTS "${HIP_PATH}/llvm/bin") #File Reorg backward compatibility
+-                set(HIP_CLANG_PATH "${HIP_PATH}/llvm/bin")
+-            else()
+-                set(HIP_CLANG_PATH "${HIP_PATH}/../llvm/bin")
+-            endif()
+-        # Handle the case where ROCM_PATH is defined and not set in ENV
+-        elseif(DEFINED ROCM_PATH)
+-            set(HIP_CLANG_PATH "${ROCM_PATH}/llvm/bin")
+-        else()
+-            message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env ")
+-        endif()
+-      endif() # HIP_CLANG_INSTALL_DIR Check
+-    endif() # Set HIP_CLANG_PATH
++    set(HIP_CLANG_PATH "@ESYSROOT_LLVM_PATH@/bin")
+ 
+     #Number of parallel jobs by default is 1
+     if(NOT DEFINED HIP_CLANG_NUM_PARALLEL_JOBS)
+@@ -693,36 +665,7 @@ macro(HIP_ADD_EXECUTABLE hip_target)
+         list(REMOVE_ITEM _sources ${_source_files})
+     endif()
+     if("${HIP_COMPILER}" STREQUAL "clang")
+-        if("x${HIP_CLANG_PATH}" STREQUAL "x")
+-          # IF HIP_CLANG_INSTALL_DIR is Found
+-          if( HIP_CLANG_INSTALL_DIR )
+-            set(HIP_CLANG_PATH ${HIP_CLANG_INSTALL_DIR})
+-          else() # IF HIP_CLANG_INSTALL_DIR is not found
+-            if(DEFINED ENV{HIP_CLANG_PATH})
+-                set(HIP_CLANG_PATH $ENV{HIP_CLANG_PATH})
+-            elseif(DEFINED ENV{ROCM_PATH})
+-                set(HIP_CLANG_PATH "$ENV{ROCM_PATH}/llvm/bin")
+-            elseif(DEFINED ENV{HIP_PATH})
+-                if(EXISTS "$ENV{HIP_PATH}/llvm/bin") #file reorg backward compatibility
+-                    set(HIP_CLANG_PATH "$ENV{HIP_PATH}/llvm/bin")
+-                else()
+-                    set(HIP_CLANG_PATH "$ENV{HIP_PATH}/../llvm/bin")
+-                endif()
+-            elseif(DEFINED HIP_PATH)
+-                if(EXISTS "${HIP_PATH}/llvm/bin") #file reorg backward compatibility
+-                    set(HIP_CLANG_PATH "${HIP_PATH}/llvm/bin")
+-                else()
+-                    set(HIP_CLANG_PATH "${HIP_PATH}/../llvm/bin")
+-                endif()
+-            # Handle  the case where ROCM_PATH is defined and not set in ENV
+-            elseif(DEFINED ROCM_PATH)
+-                set(HIP_CLANG_PATH "${ROCM_PATH}/llvm/bin")
+-            else()
+-                message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env")
+-            endif()
+-          endif() # HIP_CLANG_INSTALL_DIR Check
+-        endif()
+-
++        set(HIP_CLANG_PATH "@ESYSROOT_LLVM_PATH@/bin")
+         set(CMAKE_HIP_LINK_EXECUTABLE "${HIP_HIPCC_CMAKE_LINKER_HELPER} ${HIP_CLANG_PATH} ${HIP_CLANG_PARALLEL_BUILD_LINK_OPTIONS} <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+     else()
+         set(CMAKE_HIP_LINK_EXECUTABLE "${HIP_HIPCC_CMAKE_LINKER_HELPER} <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+diff '--color=auto' -urp HIP-rocm-6.1.2.orig/docs/developer_guide/build.md HIP-rocm-6.1.2/docs/developer_guide/build.md
+--- HIP-rocm-6.1.2.orig/docs/developer_guide/build.md	2024-05-09 02:23:26.000000000 -0700
++++ HIP-rocm-6.1.2/docs/developer_guide/build.md	2024-07-04 15:16:02.519402804 -0700
+@@ -34,7 +34,7 @@ export ROCM_BRANCH=rocm-5.7.x
+ ```
+ Similiar format for future branches.
+ 
+-`ROCM_PATH` is path where ROCM is installed. BY default `ROCM_PATH` is at `/opt/rocm`.
++`ROCM_PATH` is path where ROCM is installed. BY default `ROCM_PATH` is at `@EPREFIX_ROCM_PATH@`.
+ 
+ 
+ ## Build HIP
+@@ -84,7 +84,7 @@ Commands to build HIP runtime on the AMD
+ ```shell
+ cd "$CLR_DIR"
+ mkdir -p build; cd build
+-cmake -DHIP_COMMON_DIR=$HIP_DIR -DHIP_PLATFORM=amd -DCMAKE_PREFIX_PATH="/opt/rocm/" -DCMAKE_INSTALL_PREFIX=$PWD/install -DHIPCC_BIN_DIR=$HIPCC_DIR/build -DHIP_CATCH_TEST=0 -DCLR_BUILD_HIP=ON -DCLR_BUILD_OCL=OFF ..
++cmake -DHIP_COMMON_DIR=$HIP_DIR -DHIP_PLATFORM=amd -DCMAKE_PREFIX_PATH="@EPREFIX_ROCM_PATH@/" -DCMAKE_INSTALL_PREFIX=$PWD/install -DHIPCC_BIN_DIR=$HIPCC_DIR/build -DHIP_CATCH_TEST=0 -DCLR_BUILD_HIP=ON -DCLR_BUILD_OCL=OFF ..
+ make -j$(nproc)
+ sudo make install
+ ```
+@@ -95,10 +95,10 @@ By default, release version of HIP is bu
+ 
+ #### Default paths and environment variables
+ 
+-   * By default HIP looks for HSA in `<ROCM_PATH>/hsa` (can be overridden by setting `HSA_PATH` environment variable).
+-   * By default HIP is installed into `<ROCM_PATH>/hip`.
+-   * By default HIP looks for clang in `<ROCM_PATH>/llvm/bin` (can be overridden by setting `HIP_CLANG_PATH` environment variable)
+-   * By default HIP looks for device library in `<ROCM_PATH>/lib` (can be overridden by setting `DEVICE_LIB_PATH` environment variable).
++   * By default HIP looks for HSA in `<ROCM_PATH>` (can be overridden by setting `HSA_PATH` environment variable).
++   * By default HIP is installed into `<ROCM_PATH>`.
++   * By default HIP looks for clang in `@EPREFIX_LLVM_PATH@/bin` (can be overridden by setting `HIP_CLANG_PATH` environment variable)
++   * By default HIP looks for device library in `<ROCM_PATH>/@LIBDIR@/amdgcn/bitcode` (can be overridden by setting `DEVICE_LIB_PATH` environment variable).
+    * Optionally, consider adding `<ROCM_PATH>/bin` to your `PATH` to make it easier to use the tools.
+    * Optionally, set `HIPCC_VERBOSE=7` to output the command line for compilation.
+ 
+@@ -142,7 +142,7 @@ git clone -b "$ROCM_BRANCH" https://gith
+ export HIPTESTS_DIR="$(readlink -f hip-tests)"
+ cd "$HIPTESTS_DIR"
+ mkdir -p build; cd build
+-cmake ../catch -DHIP_PLATFORM=amd -DHIP_PATH=$CLR_DIR/build/install # or any path where HIP is installed, for example, /opt/rocm.
++cmake ../catch -DHIP_PLATFORM=amd -DHIP_PATH=$CLR_DIR/build/install # or any path where HIP is installed, for example, @EPREFIX_ROCM_PATH@.
+ make -j$(nproc) build_tests # build tests
+ cd build/catch_tests && ctest # to run all tests.
+ ```
+@@ -186,7 +186,7 @@ Commands to build HIP on the NVIDIA plat
+ ```shell
+ cd "$CLR_DIR"
+ mkdir -p build; cd build
+-cmake -DHIP_COMMON_DIR=$HIP_DIR -DCMAKE_PREFIX_PATH="/opt/rocm/" -DCMAKE_INSTALL_PREFIX=$PWD/install -DHIPCC_BIN_DIR=$HIPCC_DIR/build -DHIP_CATCH_TEST=0 -DCLR_BUILD_HIP=ON -DCLR_BUILD_OCL=OFF -DHIPNV_DIR=$HIP_OTHER/hipnv -DHIP_PLATFORM=nvidia ..
++cmake -DHIP_COMMON_DIR=$HIP_DIR -DCMAKE_PREFIX_PATH="@EPREFIX_ROCM_PATH@/" -DCMAKE_INSTALL_PREFIX=$PWD/install -DHIPCC_BIN_DIR=$HIPCC_DIR/build -DHIP_CATCH_TEST=0 -DCLR_BUILD_HIP=ON -DCLR_BUILD_OCL=OFF -DHIPNV_DIR=$HIP_OTHER/hipnv -DHIP_PLATFORM=nvidia ..
+ make -j$(nproc)
+ sudo make install
+ ```
+Only in HIP-rocm-6.1.2/docs/developer_guide: build.md.orig
+Only in HIP-rocm-6.1.2/docs/developer_guide: build.md.rej
+diff '--color=auto' -urp HIP-rocm-6.1.2.orig/docs/developer_guide/contributing.md HIP-rocm-6.1.2/docs/developer_guide/contributing.md
+--- HIP-rocm-6.1.2.orig/docs/developer_guide/contributing.md	2024-05-09 02:23:26.000000000 -0700
++++ HIP-rocm-6.1.2/docs/developer_guide/contributing.md	2024-07-04 15:13:36.673358345 -0700
+@@ -1,7 +1,7 @@
+ # Contributor Guidelines
+ 
+ ## Make Tips
+-`ROCM_PATH` is path where ROCM is installed. BY default `ROCM_PATH` is `/opt/rocm`.
++`ROCM_PATH` is path where ROCM is installed. BY default `ROCM_PATH` is `@EPREFIX_ROCM_PATH@`.
+ When building HIP, you will likely want to build and install to a local user-accessible directory (rather than `<ROCM_PATH>`).
+ This can be easily be done by setting the `-DCMAKE_INSTALL_PREFIX` variable when running cmake.  Typical use case is to
+ set `CMAKE_INSTALL_PREFIX` to your HIP git root, and then ensure `HIP_PATH` points to this directory. For example
+@@ -41,11 +41,11 @@ HIP_VERSION_PATCH=20345-519ef3f2
+ HIP-Clang compiler version
+ 
+ ```console
+-$ <ROCM_PATH>/llvm/bin/clang -v
+-clang version 11.0.0 (/src/external/llvm-project/clang 075fedd3fd2f4d9d8cca79d0cd51f64c5ef21432)
++$ @EPREFIX_LLVM_PATH@/bin/clang -v
++clang version @LLVM_SLOT@.0.0 (/src/external/llvm-project/clang <40 digit commit>)
+ Target: x86_64-unknown-linux-gnu
+ Thread model: posix
+-InstalledDir: <ROCM_PATH>/llvm/bin
++InstalledDir: @EPREFIX_LLVM_PATH@/bin
+ Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/7
+ Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/7.5.0
+ Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/8
+@@ -72,7 +72,7 @@ For applications and benchmarks outside
+ - #2. Relink the target application to include changes in HIP runtime file.
+ 
+ ## Environment Variables
+-- **HIP_PATH** : Location of HIP include, src, bin, lib directories.
++- **HIP_PATH** : Location of HIP include, src, bin, @LIBDIR@ directories.
+ - **HCC_ROCCLR_HOME** : Path to HIP/ROCclr directory, used on AMD platforms.  Default <ROCM_PATH>/rocclr.
+ - **HSA_PATH** : Path to HSA include, lib.  Default <ROCM_PATH>/hsa.
+ - **CUDA_PATH* : On nvcc system, this points to root of CUDA installation.
+diff '--color=auto' -urp HIP-rocm-6.1.2.orig/docs/gen_clang_option_doc.sh HIP-rocm-6.1.2/docs/gen_clang_option_doc.sh
+--- HIP-rocm-6.1.2.orig/docs/gen_clang_option_doc.sh	2024-05-09 02:23:26.000000000 -0700
++++ HIP-rocm-6.1.2/docs/gen_clang_option_doc.sh	2024-07-04 15:13:36.677358291 -0700
+@@ -21,7 +21,7 @@
+ 
+ ## generates documentation about clang options.
+ 
+-clang=/opt/rocm*/llvm/bin/clang
++clang="@ESYSROOT_LLVM_PATH@/bin/clang"
+ 
+ exec > clang_options.md
+ 
+diff '--color=auto' -urp HIP-rocm-6.1.2.orig/docs/how_to_guides/debugging.md HIP-rocm-6.1.2/docs/how_to_guides/debugging.md
+--- HIP-rocm-6.1.2.orig/docs/how_to_guides/debugging.md	2024-05-09 02:23:26.000000000 -0700
++++ HIP-rocm-6.1.2/docs/how_to_guides/debugging.md	2024-07-04 15:13:36.697358023 -0700
+@@ -81,10 +81,10 @@ HIP developers on ROCm can use AMD's ROC
+ ROCgdb is the ROCm source-level debugger for Linux, based on GDB, the GNU source-level debugger, equivalent of cuda-gdb, can be used with debugger frontends, such as eclipse, vscode, or gdb-dashboard.
+ For details, see (https://github.com/ROCm/ROCgdb).
+ 
+-Below is a sample how to use ROCgdb run and debug HIP application, rocgdb is installed with ROCM package in the folder /opt/rocm/bin.
++Below is a sample how to use ROCgdb run and debug HIP application, rocgdb is installed with ROCM package in the folder @EPREFIX_ROCM_PATH@/bin.
+ 
+ ```console
+-$ export PATH=$PATH:/opt/rocm/bin
++$ export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
+ $ rocgdb ./hipTexObjPitch
+ GNU gdb (rocm-dkms-no-npi-hipclang-6549) 10.1
+ Copyright (C) 2020 Free Software Foundation, Inc.
+@@ -102,7 +102,7 @@ Breakpoint 1 at 0x4013d1: file /home/<yo
+ (gdb) run
+ Starting program: MatrixTranspose
+ [Thread debugging using libthread_db enabled]
+-Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
++Using host libthread_db library "@EPREFIX@/@LIBDIR@/libthread_db.so.1".
+ 
+ Breakpoint 1, main ()
+     at MatrixTranspose.cpp:56
+@@ -165,7 +165,7 @@ Breakpoint 1 at 0x21275e: file app.cpp,
+ Starting program: /home/<your_awesome_name>/app
+ warning: os_agent_id 31475: `Device 1002:164e' architecture not supported.
+ [Thread debugging using libthread_db enabled]
+-Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
++Using host libthread_db library "@EPREFIX@/@LIBDIR@/libthread_db.so.1".
+ 
+ Breakpoint 1, hipMalloc<int> (devPtr=0x7fffffffe098, size=4096) at /opt/rocm/include/hip/hip_runtime_api.h:8487
+ 8487        return hipMalloc((void**)devPtr, size);
+@@ -193,12 +193,12 @@ main () at app.cpp:15
+ 
+ (gdb) bt
+ #0  __GI___ioctl (fd=3, request=3222817548) at ../sysdeps/unix/sysv/linux/ioctl.c:36
+-#1  0x00007fffeb8fda80 in ?? () from /opt/rocm/lib/libhsa-runtime64.so.1
+-#2  0x00007fffeb8f6912 in ?? () from /opt/rocm/lib/libhsa-runtime64.so.1
+-#3  0x00007fffeb883021 in ?? () from /opt/rocm/lib/libhsa-runtime64.so.1
+-#4  0x00007fffeb85e026 in ?? () from /opt/rocm/lib/libhsa-runtime64.so.1
+-#5  0x00007fffeb874b6a in ?? () from /opt/rocm/lib/libhsa-runtime64.so.1
+-#6  0x00007fffeb828fdb in ?? () from /opt/rocm/lib/libhsa-runtime64.so.1
++#1  0x00007fffeb8fda80 in ?? () from @EPREFIX_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#2  0x00007fffeb8f6912 in ?? () from @EPREFIX_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#3  0x00007fffeb883021 in ?? () from @EPREFIX_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#4  0x00007fffeb85e026 in ?? () from @EPREFIX_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#5  0x00007fffeb874b6a in ?? () from @EPREFIX_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#6  0x00007fffeb828fdb in ?? () from @EPREFIX_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
+ #7  0x00007ffff5c94b43 in start_thread (arg=<optimised out>) at ./nptl/pthread_create.c:442
+ #8  0x00007ffff5d26a00 in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:81
+ ...
+Only in HIP-rocm-6.1.2/docs/how_to_guides: debugging.md.orig
+diff '--color=auto' -urp HIP-rocm-6.1.2.orig/docs/how_to_guides/install.md HIP-rocm-6.1.2/docs/how_to_guides/install.md
+--- HIP-rocm-6.1.2.orig/docs/how_to_guides/install.md	2024-05-09 02:23:26.000000000 -0700
++++ HIP-rocm-6.1.2/docs/how_to_guides/install.md	2024-07-04 15:13:36.705357916 -0700
+@@ -13,7 +13,7 @@ On NVIDIA platform, check system require
+ 
+ HIP is part of ROCM packages, it will be automatically installed following the ROCm Installation Guide on AMD public documentation site (https://docs.amd.com/) for the coresponding ROCm release.
+ 
+-By default, HIP is installed into /opt/rocm/hip.
++By default, HIP is installed into @EPREFIX_ROCM_PATH@.
+ 
+ 
+ ## NVIDIA Platform
+@@ -33,16 +33,16 @@ The driver will be installed automatical
+ apt-get install hip-runtime-nvidia hip-dev
+ ```
+ * Default paths:
+-   * By default HIP looks for CUDA SDK in /usr/local/cuda.
+-   * By default HIP is installed into /opt/rocm/hip.
+-   * Optionally, consider adding /opt/rocm/bin to your path to make it easier to use the tools.
++   * By default HIP looks for CUDA SDK in @EPREFIX@/opt/cuda.
++   * By default HIP is installed into @EPREFIX_ROCM_PATH@.
++   * Optionally, consider adding @EPREFIX_ROCM_PATH@/bin to your path to make it easier to use the tools.
+ 
+ 
+ # Verify your installation
+ 
+ Run hipconfig (instructions below assume default installation path):
+ ```
+-/opt/rocm/bin/hipconfig --full
++@EPREFIX_ROCM_PATH@/bin/hipconfig --full
+ ```
+ 
+ # How to build HIP from source
+diff '--color=auto' -urp HIP-rocm-6.1.2.orig/docs/user_guide/programming_manual.md HIP-rocm-6.1.2/docs/user_guide/programming_manual.md
+--- HIP-rocm-6.1.2.orig/docs/user_guide/programming_manual.md	2024-05-09 02:23:26.000000000 -0700
++++ HIP-rocm-6.1.2/docs/user_guide/programming_manual.md	2024-07-04 15:13:36.705357916 -0700
+@@ -182,7 +182,7 @@ Here is an example to create and use sta
+ - Type 1 using --emit-static-lib:
+     ```
+     hipcc hipOptLibrary.cpp --emit-static-lib -fPIC -o libHipOptLibrary.a
+-    gcc test.cpp -L. -lhipOptLibrary -L/path/to/hip/lib -lamdhip64 -o test.out
++    gcc test.cpp -L. -lhipOptLibrary -L@EPREFIX_ROCM_PATH@/@LIBDIR@ -lamdhip64 -o test.out
+     ```
+ - Type 2 using system ar:
+     ```
+Only in HIP-rocm-6.1.2/docs/user_guide: programming_manual.md.orig
+diff '--color=auto' -urp HIP-rocm-6.1.2.orig/hip-lang-config.cmake.in HIP-rocm-6.1.2/hip-lang-config.cmake.in
+--- HIP-rocm-6.1.2.orig/hip-lang-config.cmake.in	2024-05-09 02:23:26.000000000 -0700
++++ HIP-rocm-6.1.2/hip-lang-config.cmake.in	2024-07-04 15:13:36.705357916 -0700
+@@ -62,11 +62,7 @@ set(HIP_RUNTIME "@HIP_RUNTIME@")
+ 
+ include( "${CMAKE_CURRENT_LIST_DIR}/hip-lang-targets.cmake" )
+ 
+-# Find the hip-lang config file path with symlinks resolved
+-# RealPath: /opt/rocm-ver/lib/cmake/hip-lang/hip-lang-config.cmake
+-# Go 4 level up to get IMPORT PREFIX
+-get_filename_component(_DIR "${CMAKE_CURRENT_LIST_FILE}" REALPATH)
+-get_filename_component(_IMPORT_PREFIX "${_DIR}/../../../../" ABSOLUTE)
++set(_IMPORT_PREFIX "@ESYSROOT_ROCM_PATH@")
+ 
+ 
+ set_target_properties(hip-lang::device PROPERTIES

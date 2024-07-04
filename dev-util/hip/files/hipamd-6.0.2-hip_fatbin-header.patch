@@ -1,0 +1,13 @@
+diff '--color=auto' -urp hipamd.orig/src/hip_fatbin.cpp hipamd/src/hip_fatbin.cpp
+--- hipamd.orig/src/hip_fatbin.cpp	2024-01-04 19:16:33.000000000 -0800
++++ hipamd/src/hip_fatbin.cpp	2024-07-04 11:40:18.069717107 -0700
+@@ -25,6 +25,7 @@ THE SOFTWARE.
+ #include <unordered_map>
+ #include "hip_code_object.hpp"
+ #include "hip_platform.hpp"
++#include <amd_comgr/amd_comgr.h>
+ 
+ namespace hip {
+ 
+Only in hipamd/src: hip_fatbin.cpp.orig
+Only in hipamd/src: hip_fatbin.cpp.rej
