@@ -8,16 +8,16 @@ EAPI=8
 # Different date format used upstream.
 RE2_VER="${PV#0.}"
 RE2_VER="${RE2_VER//./-}"
-SONAME="10" # https://github.com/google/re2/blob/2023-03-01/CMakeLists.txt#L33
+SONAME="10"				# https://github.com/google/re2/blob/2023-03-01/CMakeLists.txt#L33
 
 inherit cmake-multilib toolchain-funcs
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc x86"
+S="${WORKDIR}/re2-${RE2_VER}"
 SRC_URI="
 https://github.com/google/re2/archive/${RE2_VER}.tar.gz
 	-> re2-${RE2_VER}.tar.gz
 "
-S="${WORKDIR}/re2-${RE2_VER}"
 
 DESCRIPTION="An efficient, principled regular expression library"
 HOMEPAGE="https://github.com/google/re2"

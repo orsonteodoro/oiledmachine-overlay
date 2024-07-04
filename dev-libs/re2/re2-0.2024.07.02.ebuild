@@ -7,13 +7,13 @@ EAPI=8
 # Bump every month
 
 # Different date format used upstream.
-ABSEIL_CPP_PV="20240116.2"						# https://github.com/google/re2/blob/2024-07-02/MODULE.bazel#L16
+ABSEIL_CPP_PV="20240116.2"		# https://github.com/google/re2/blob/2024-07-02/MODULE.bazel#L16
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 RE2_VER="${PV#0.}"
 RE2_VER="${RE2_VER//./-}"
-SONAME="11" # https://github.com/google/re2/blob/2024-07-02/CMakeLists.txt#L33
+SONAME="11"				# https://github.com/google/re2/blob/2024-07-02/CMakeLists.txt#L33
 
 inherit cmake-multilib distutils-r1 toolchain-funcs
 
@@ -153,7 +153,7 @@ python_test() {
 }
 
 test_abi() {
-	pushd "${WORKDIR}/${PN}-${RE2_VER}_build-${MULTILIB_ABI_FLAG}.${ABI}"  >/dev/null 2>&1 || die
+	pushd "${WORKDIR}/${PN}-${RE2_VER}_build-${MULTILIB_ABI_FLAG}.${ABI}" >/dev/null 2>&1 || die
 		local configuration=$(usex debug "Debug" "Release")
 		ctest -C ${configuration} --output-on-failure -E 'dfa|exhaustive|random' || die
 	popd  >/dev/null 2>&1 || die
