@@ -50,7 +50,13 @@ src_configure() {
 	cmake-multilib_src_configure
 }
 
+test_abi() {
+	pushd "${WORKDIR}/${PN}-${RE2_VER}_build-${MULTILIB_ABI_FLAG}.${ABI}" || die
+		local configuration=$(usex debug "Debug" "Release")
+		ctest -C ${configuration} --output-on-failure -E 'dfa|exhaustive|random' || die
+	popd
+}
+
 src_test() {
-	local configuration=$(usex debug "Debug" "Release")
-	ctest -C ${configuration} --output-on-failure -E 'dfa|exhaustive|random'
+	multilib_foreach_abi test_abi
 }
