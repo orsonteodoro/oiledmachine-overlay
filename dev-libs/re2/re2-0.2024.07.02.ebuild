@@ -14,6 +14,7 @@ APPLE_SUPPORT_PV="1.15.1"						# https://github.com/google/re2/blob/2024-07-02/M
 BAZEL_PV="7.2.1"							# Observed in CI
 BENCHMARK_PV="1.8.4"							# https://github.com/google/re2/blob/2024-07-02/MODULE.bazel#L27
 GOOGLETEST_PV="1.14.0"							# https://github.com/google/re2/blob/2024-07-02/MODULE.bazel#L28
+JAVA_SLOT="21"
 PYBIND11_BAZEL_PV="2.12.0"						# https://github.com/google/re2/blob/2024-07-02/MODULE.bazel#L18
 PYTHON_COMPAT=( "python3_"{10..12} )
 RE2_VER="${PV#0.}"
@@ -22,7 +23,7 @@ RULES_CC_PV="0.0.9"							# https://github.com/google/re2/blob/2024-07-02/MODULE
 RULES_PYTHON_PV="0.1.0"							# https://github.com/google/re2/blob/2024-07-02/MODULE.bazel#L17
 SONAME="11" # https://github.com/google/re2/blob/2024-07-02/CMakeLists.txt#L33
 
-inherit bazel distutils-r1 toolchain-funcs
+inherit bazel distutils-r1 java-pkg-opt-2 toolchain-funcs
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc x86"
 bazel_external_uris="
@@ -49,12 +50,14 @@ SLOT="0/${SONAME}"
 IUSE="-debug icu test"
 RDEPEND="
 	dev-python/absl-py[${PYTHON_USEDEP}]
+	virtual/jre:${JAVA_SLOT}
 	icu? (
 		dev-libs/icu:0=
 	)
 "
 DEPEND="
 	${RDEPEND}
+	virtual/jdk:${JAVA_SLOT}
 "
 BDEPEND="
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
@@ -71,6 +74,8 @@ HTML_DOCS=( "doc/syntax.html" )
 
 pkg_setup() {
 	python_setup
+	java-pkg-opt-2_pkg_setup
+	java-pkg_ensure-vm-version-eq "${JAVA_SLOT}"
 }
 
 src_unpack() {
@@ -80,11 +85,12 @@ src_unpack() {
 	ln -s "/usr/bin/bazel-${BAZEL_PV%.*}" "${WORKDIR}/bin/bazel" || die
 	bazel --version | grep -q "bazel ${BAZEL_PV%.*}" || die "dev-build/bazel:${BAZEL_PV%.*} is not installed"
 	bazel_load_distfiles "${bazel_external_uris}"
-	cat "${T}/bazelrc" >> "${S}/.bazelrc"
 }
 
 src_prepare() {
 	bazel_setup_bazelrc
+	sed -i -e "/--nodistinct_host_configuration/d" "${T}/bazelrc" || die
+	cat "${T}/bazelrc" >> "${S}/.bazelrc"
 	"${EPYTHON}" "python/toolchains/generate.py" || die
 
 	default
