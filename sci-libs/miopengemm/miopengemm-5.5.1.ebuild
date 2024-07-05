@@ -9,17 +9,17 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 inherit cmake flag-o-matic rocm
 
 KEYWORDS="~amd64"
+S="${WORKDIR}/MIOpenGEMM-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/MIOpenGEMM/archive/rocm-${PV}.tar.gz
 	-> miopengemm-${PV}.tar.gz
 "
-S="${WORKDIR}/MIOpenGEMM-rocm-${PV}"
 
 DESCRIPTION="An OpenCL general matrix multiplication (GEMM) API and kernel generator"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpenGEMM"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="-benchmark r1"
+IUSE="-benchmark ebuild-revision-2"
 RDEPEND="
 	virtual/blas
 	virtual/opencl
@@ -37,7 +37,6 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-v5.3.3-gentoo-rocm-overlay-fixes.patch"
-	"${FILESDIR}/${PN}-5.5.0-path-changes.patch"
 )
 
 pkg_setup() {
