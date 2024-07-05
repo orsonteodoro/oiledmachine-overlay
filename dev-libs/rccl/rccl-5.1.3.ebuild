@@ -34,11 +34,10 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm test r2"
+IUSE="test ebuild-revision-2"
 RDEPEND="
 	!dev-libs/rccl:0
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm,system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 "
 DEPEND="
@@ -54,7 +53,6 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-change_install_location.patch"
 	"${FILESDIR}/${PN}-5.1.3-remove-chrpath.patch"
-	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 pkg_setup() {
