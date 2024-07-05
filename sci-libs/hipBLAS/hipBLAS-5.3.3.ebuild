@@ -8,6 +8,8 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic rocm
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/hipBLAS-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipBLAS/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -16,9 +18,8 @@ https://github.com/ROCmSoftwarePlatform/hipBLAS/archive/rocm-${PV}.tar.gz
 DESCRIPTION="ROCm BLAS marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipBLAS"
 LICENSE="MIT"
-KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" cuda +rocm system-llvm r2"
+IUSE+=" cuda +rocm ebuild-revision-3"
 REQUIRED_USE="
 	^^ (
 		cuda
@@ -26,8 +27,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?,system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
@@ -41,9 +41,7 @@ DEPEND="
 "
 BDEPEND="
 "
-S="${WORKDIR}/hipBLAS-rocm-${PV}"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -104,7 +102,7 @@ src_install() {
 	rm -f "${ED}/usr/include/hipblas/hipblas_module.f90"
 	insinto "${EPREFIX}/${EROCM_PATH}/include/hipblas"
 	if [[ -e "library/src/hipblas_module.f90" ]] ; then
-		doins library/src/hipblas_module.f90
+		doins "library/src/hipblas_module.f90"
 	fi
 	rocm_mv_docs
 }
