@@ -32,14 +32,14 @@ DOCS_DEPEND="
 	media-gfx/graphviz
 "
 LLVM_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
-PYTHON_COMPAT=( python3_{10..11} )
-QA_FLAGS_IGNORED="/usr/lib64/rocblas/library/.*"
+PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake docs edo flag-o-matic multiprocessing prefix python-single-r1 rocm
 
 KEYWORDS="~amd64"
+S="${WORKDIR}/${PN}-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocBLAS/archive/rocm-${PV}.tar.gz
 	-> rocm-${P}.tar.gz
@@ -47,7 +47,6 @@ https://github.com/ROCmSoftwarePlatform/rocBLAS/archive/rocm-${PV}.tar.gz
 https://media.githubusercontent.com/media/littlewu2508/littlewu2508.github.io/main/gentoo-distfiles/${PN}-5.0.2-Tensile-asm_full-navi22.tar.gz
 	)
 "
-S="${WORKDIR}/${PN}-rocm-${PV}"
 
 DESCRIPTION="AMD's library for BLAS on ROCm"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocBLAS"
@@ -60,7 +59,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm system-llvm test r8
+benchmark cuda +rocm test ebuild-revision-9
 "
 gen_cuda_required_use() {
 	local x
@@ -100,16 +99,10 @@ REQUIRED_USE="
 "
 RDEPEND="
 	>=dev-libs/msgpack-3.0.1
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?,system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	benchmark? (
+		sys-libs/llvm-roc-libomp:${ROCM_SLOT}
 		virtual/blas
-		!system-llvm? (
-			sys-libs/llvm-roc-libomp:${ROCM_SLOT}
-		)
-		system-llvm? (
-			sys-libs/libomp:${LLVM_SLOT}
-		)
 	)
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
@@ -129,25 +122,21 @@ BDEPEND="
 	)
 	test? (
 		dev-cpp/gtest
+		sys-libs/llvm-roc-libomp:${ROCM_SLOT}
 		virtual/blas
-		!system-llvm? (
-			sys-libs/llvm-roc-libomp:${ROCM_SLOT}
-		)
-		system-llvm? (
-			sys-libs/libomp:${LLVM_SLOT}
-		)
 	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-fix-glibc-2.32-and-above.patch"
 	"${FILESDIR}/${PN}-5.0.2-cpp_lib_filesystem.patch"
 	"${FILESDIR}/${PN}-5.0.2-unbundle-Tensile.patch"
-	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 pkg_setup() {
 	python-single-r1_pkg_setup
 	rocm_pkg_setup
+
+	QA_FLAGS_IGNORED="${EROCM_PATH}/$(rocm_get_libdir)/rocblas/library/.*"
 }
 
 src_prepare() {
