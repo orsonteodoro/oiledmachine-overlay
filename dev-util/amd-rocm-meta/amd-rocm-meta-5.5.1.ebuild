@@ -11,7 +11,6 @@ LICENSE="metapackage"
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
 IUSE="
-	aqlprofile
 	atmi
 	flang
 	hipfort
@@ -26,9 +25,6 @@ IUSE="
 	rocm-utils
 "
 REQUIRED_USE="
-	aqlprofile? (
-		rocm-dev
-	)
 	rocm-dev? (
 		rocm-utils
 	)
@@ -72,14 +68,10 @@ RDEPEND="
 		~dev-util/HIPIFY-${PV}:${ROCM_SLOT}
 		~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
-		~dev-util/rocprofiler-${PV}:${ROCM_SLOT}[aqlprofile?]
+		~dev-util/rocprofiler-${PV}:${ROCM_SLOT}
 		~dev-util/roctracer-${PV}:${ROCM_SLOT}
 
 		dev-util/clinfo
-
-		aqlprofile? (
-			~dev-libs/hsa-amd-aqlprofile-${PV}:${ROCM_SLOT}
-		)
 	)
 	rocm-gdb? (
 		~dev-util/ROCgdb-${PV}:${ROCM_SLOT}
