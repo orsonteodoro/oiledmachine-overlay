@@ -46,7 +46,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda perfscripts +rocm test ebuild-revision-4
+benchmark cuda perfscripts +rocm test ebuild-revision-5
 "
 gen_cuda_required_use() {
 	local x
@@ -125,7 +125,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-unbundle-sqlite.patch"
 	"${FILESDIR}/${PN}-5.0.2-add-math-header.patch"
 	"${FILESDIR}/${PN}-5.1.3-add-stdexcept-header.patch"
-	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 required_mem() {
