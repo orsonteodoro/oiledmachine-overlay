@@ -41,7 +41,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm system-llvm test r1
+benchmark cuda +rocm test ebuild-revision-2
 "
 gen_cuda_required_use() {
 	local x
@@ -86,8 +86,7 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?,system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	benchmark? (
 		dev-cpp/benchmark
 	)
@@ -111,7 +110,6 @@ BDEPEND="
 S="${WORKDIR}/hipCUB-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-add-memory-header.patch"
-	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -159,8 +157,8 @@ get_nvgpu_targets() {
 }
 
 src_configure() {
-	addpredict /dev/kfd
-	addpredict /dev/dri/
+	addpredict "/dev/kfd"
+	addpredict "/dev/dri/"
 
 	local mycmakeargs=(
 		-DBUILD_BENCHMARK=$(usex benchmark ON OFF)

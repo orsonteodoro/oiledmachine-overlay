@@ -11,6 +11,9 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
 	gfx1030
+	gfx1100
+	gfx1101
+	gfx1102
 )
 CUDA_TARGETS_COMPAT=(
 	auto
@@ -23,7 +26,7 @@ CUDA_TARGETS_COMPAT=(
 	compute_70
 	compute_75
 )
-LLVM_SLOT=15
+LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -218,5 +221,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
