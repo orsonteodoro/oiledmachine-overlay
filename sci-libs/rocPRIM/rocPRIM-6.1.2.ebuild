@@ -10,12 +10,15 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx908_xnack_minus
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
+	gfx940
+	gfx941
+	gfx942
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
 )
-LLVM_SLOT=16
+LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -167,4 +170,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  build needs test

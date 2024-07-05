@@ -15,8 +15,11 @@ AMDGPU_TARGETS_COMPAT=(
 LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
+
 inherit cmake rocm
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/rocPRIM-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocPRIM/archive/rocm-${PV}.tar.gz
 	-> rocPRIM-${PV}.tar.gz
@@ -25,9 +28,13 @@ https://github.com/ROCmSoftwarePlatform/rocPRIM/archive/rocm-${PV}.tar.gz
 DESCRIPTION="HIP parallel primitives for developing performant GPU-accelerated code on ROCm"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocPRIM"
 LICENSE="MIT"
-KEYWORDS="~amd64"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="benchmark hip-cpu +rocm test"
+IUSE="benchmark hip-cpu +rocm test ebuild-revision-1"
 gen_rocm_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -67,14 +74,7 @@ BDEPEND="
 DEPEND="
 	${RDEPEND}
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
-S="${WORKDIR}/rocPRIM-rocm-${PV}"
 PATCHES=(
-	"${FILESDIR}/rocPRIM-5.4.3-path-changes.patch"
 )
 
 pkg_setup() {
