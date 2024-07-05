@@ -4,7 +4,7 @@
 EAPI=8
 
 LLVM_SLOT=14
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-single-r1 rocm
@@ -37,7 +37,6 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-detect-builtin-amdgpu.patch"
-	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 pkg_setup() {

@@ -4,7 +4,7 @@
 EAPI=8
 
 LLVM_SLOT=16
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-single-r1 rocm
@@ -36,7 +36,6 @@ BDEPEND="
 	>=dev-build/cmake-3.6.3
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 pkg_setup() {
