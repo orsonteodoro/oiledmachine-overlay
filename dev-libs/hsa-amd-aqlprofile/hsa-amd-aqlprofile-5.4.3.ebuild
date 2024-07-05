@@ -23,7 +23,7 @@ LICENSE="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE="deny-install skip-install r2"
+IUSE="deny-install skip-install ebuild-revision-2"
 RDEPEND="
 	!dev-libs/hsa-amd-aqlprofile:0
 "
@@ -77,7 +77,7 @@ einfo "Sanitizing file/folder permissions"
 		elif file "${path}" | grep -q -e "ELF .* shared object" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "symbolic link" ; then
-			:;
+			:
 		else
 			# Licenses
 			chmod 0644 "${path}" || die
