@@ -25,7 +25,7 @@ DESCRIPTION="ROCm Application for Reporting System Info"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocminfo"
 LICENSE="UoI-NCSA"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" ebuild-revision-2"
+IUSE+=" ebuild-revision-3"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
