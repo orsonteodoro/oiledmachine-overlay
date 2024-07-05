@@ -35,7 +35,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 #KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm system-llvm test ebuild-revision-24"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-24"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -77,7 +77,6 @@ REQUIRED_USE="
 RDEPEND="
 	>=dev-perl/URI-Encode-1.1.1
 	app-eselect/eselect-rocm
-	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
 	virtual/opengl
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
@@ -90,18 +89,10 @@ RDEPEND="
 		sys-process/numactl
 	)
 	rocm? (
-		!system-llvm? (
-			sys-devel/llvm-roc:=
-			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-		)
-		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
+		sys-devel/llvm-roc:=
 		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
-		system-llvm? (
-			=sys-devel/clang-${LLVM_SLOT}*:=
-			=sys-devel/clang-runtime-${LLVM_SLOT}*:=
-			=sys-libs/compiler-rt-${LLVM_SLOT}*:=
-		)
+		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	)
 "
 DEPEND="
@@ -121,10 +112,8 @@ CLR_PATCHES=(
 #	"${FILESDIR}/rocclr-5.7.0-opencl-header.patch"
 )
 ROCCLR_PATCHES=(
-	"${FILESDIR}/rocclr-5.7.0-path-changes.patch"
 )
 HIP_PATCHES=(
-	"${FILESDIR}/${PN}-6.0.2-path-changes.patch"
 )
 HIPAMD_PATCHES=(
 #	"${FILESDIR}/${PN}-5.7.0-DisableTest.patch"
@@ -134,7 +123,6 @@ HIPAMD_PATCHES=(
 	"${FILESDIR}/${PN}-5.5.1-disable-Werror.patch"
 	"${FILESDIR}/${PN}-5.7.0-hip-config-not-cuda.patch"
 	"${FILESDIR}/${PN}-6.0.2-hip-host-not-cuda.patch"
-	"${FILESDIR}/hipamd-6.0.2-path-changes.patch"
 	"${FILESDIR}/hipamd-5.7.0-unwrap-line.patch"
 	"${FILESDIR}/hipamd-6.0.2-hip_fatbin-header.patch"
 	"${FILESDIR}/hipamd-5.7.0-hiprtc-includes-path.patch"
@@ -144,10 +132,8 @@ HIPAMD_PATCHES=(
 )
 HIPCC_PATCHES=(
 	"${FILESDIR}/hipcc-5.6.0-fno-stack-protector.patch"
-	"${FILESDIR}/hipcc-6.0.2-path-changes.patch"
 )
 OCL_PATCHES=(
-	"${FILESDIR}/rocm-opencl-runtime-5.3.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -240,7 +226,7 @@ src_configure() {
 		-DHIPCC_BIN_DIR="${WORKDIR}/HIPCC-rocm-${PV}/bin"
 		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
 		-DUSE_PROF_API=0
-		-DUSE_SYSTEM_LLVM=$(usex system-llvm)
+		-DUSE_SYSTEM_LLVM=OFF
 	)
 
 	if use cuda ; then

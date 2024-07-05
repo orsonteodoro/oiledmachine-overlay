@@ -43,7 +43,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm system-llvm test ebuild-revision-24"
+IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test ebuild-revision-24"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -88,7 +88,6 @@ REQUIRED_USE="
 RDEPEND="
 	>=dev-perl/URI-Encode-1.1.1
 	app-eselect/eselect-rocm
-	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
 	virtual/opengl
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
@@ -101,17 +100,10 @@ RDEPEND="
 		sys-process/numactl
 	)
 	rocm? (
-		!system-llvm? (
-			sys-devel/llvm-roc:=
-			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-		)
-		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
+		sys-devel/llvm-roc:=
 		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
-		system-llvm? (
-			=sys-devel/clang-${LLVM_SLOT}*:=
-			=sys-devel/clang-runtime-${LLVM_SLOT}*:=
-		)
+		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	)
 "
 DEPEND="
@@ -134,11 +126,9 @@ BDEPEND="
 	>=dev-build/cmake-3.16.8
 "
 CLR_PATCHES=(
-	"${FILESDIR}/rocclr-5.1.3-path-changes.patch"
 )
 HIP_PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-fno-stack-protector.patch"
-	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 HIPAMD_PATCHES=(
 	"${FILESDIR}/${PN}-5.0.1-DisableTest.patch"
@@ -151,14 +141,11 @@ HIPAMD_PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-llvm-15-noinline-keyword.patch"
 	"${FILESDIR}/${PN}-5.6.0-hip-config-not-cuda.patch"
 	"${FILESDIR}/${PN}-5.6.0-hip-host-not-cuda.patch"
-	"${FILESDIR}/hipamd-5.1.3-path-changes.patch"
 	"${FILESDIR}/hipamd-5.1.3-link-hsa-runtime64.patch"
 )
 OCL_PATCHES=(
-	"${FILESDIR}/rocm-opencl-runtime-5.1.3-path-changes.patch"
 )
 RTC_PATCHES=(
-	"${FILESDIR}/roctracer-5.1.3-path-changes.patch"
 )
 
 python_check_deps() {
@@ -251,7 +238,7 @@ src_configure() {
 		-DHIP_COMMON_DIR="${HIP_S}"
 		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
 		-DUSE_PROF_API=$(usex profile 1 0)
-		-DUSE_SYSTEM_LLVM=$(usex system-llvm)
+		-DUSE_SYSTEM_LLVM=OFF
 	)
 
 	if use cuda ; then
