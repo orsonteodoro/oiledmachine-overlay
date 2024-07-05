@@ -16,7 +16,7 @@ if [[ "${PV##*.}" == "0" ]] ; then
 else
 	MY_PV="${PV}"
 fi
-ROCM_SLOT="5.5"
+ROCM_SLOT="5.7"
 ROCM_VERSION="${PV}"
 
 inherit rocm unpacker
@@ -25,34 +25,28 @@ if [[ "${MAINTAINER_MODE}" =~ "1" ]] ; then
 	:
 elif [[ "${AUPDATE}" =~ "1" ]] ; then
 	SRC_URI="
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx1030-36kdb/miopen-hip-gfx1030-36kdb_2.19.0.50501-74~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900-56kdb/miopen-hip-gfx900-56kdb_2.19.0.50501-74~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900-64kdb/miopen-hip-gfx900-64kdb_2.19.0.50501-74~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906-60kdb/miopen-hip-gfx906-60kdb_2.19.0.50501-74~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906-64kdb/miopen-hip-gfx906-64kdb_2.19.0.50501-74~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx908-120kdb/miopen-hip-gfx908-120kdb_2.19.0.50501-74~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90a-104kdb/miopen-hip-gfx90a-104kdb_2.19.0.50501-74~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90a-110kdb/miopen-hip-gfx90a-110kdb_2.19.0.50501-74~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx1030kdb/miopen-hip-gfx1030kdb_3.00.0.60002-115~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900kdb/miopen-hip-gfx900kdb_3.00.0.60002-115~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906kdb/miopen-hip-gfx906kdb_3.00.0.60002-115~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx908kdb/miopen-hip-gfx908kdb_3.00.0.60002-115~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90akdb/miopen-hip-gfx90akdb_3.00.0.60002-115~20.04_amd64.deb
 	"
 else
 	SRC_URI="
 		amdgpu_targets_gfx1030? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx1030-36kdb/miopen-hip-gfx1030-36kdb_2.19.0.50501-74~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx1030kdb/miopen-hip-gfx1030kdb_3.00.0.60002-115~20.04_amd64.deb
 		)
 		amdgpu_targets_gfx900? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900-56kdb/miopen-hip-gfx900-56kdb_2.19.0.50501-74~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900-64kdb/miopen-hip-gfx900-64kdb_2.19.0.50501-74~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900kdb/miopen-hip-gfx900kdb_3.00.0.60002-115~20.04_amd64.deb
 		)
 		amdgpu_targets_gfx906? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906-60kdb/miopen-hip-gfx906-60kdb_2.19.0.50501-74~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906-64kdb/miopen-hip-gfx906-64kdb_2.19.0.50501-74~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906kdb/miopen-hip-gfx906kdb_3.00.0.60002-115~20.04_amd64.deb
 		)
 		amdgpu_targets_gfx908? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx908-120kdb/miopen-hip-gfx908-120kdb_2.19.0.50501-74~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx908kdb/miopen-hip-gfx908kdb_3.00.0.60002-115~20.04_amd64.deb
 		)
 		amdgpu_targets_gfx90a? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90a-104kdb/miopen-hip-gfx90a-104kdb_2.19.0.50501-74~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90a-110kdb/miopen-hip-gfx90a-110kdb_2.19.0.50501-74~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90akdb/miopen-hip-gfx90akdb_3.00.0.60002-115~20.04_amd64.deb
 		)
 	"
 fi
@@ -168,4 +162,4 @@ einfo "Compressing kernels"
 	popd
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  finished, builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs install test

@@ -22,7 +22,7 @@ ROCM_VERSION="${PV}"
 inherit rocm unpacker
 
 if [[ "${MAINTAINER_MODE}" =~ "1" ]] ; then
-	:;
+	:
 elif [[ "${AUPDATE}" =~ "1" ]] ; then
 	SRC_URI="
 https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx1030kdb/miopen-hip-gfx1030kdb_2.20.0.50701-98~20.04_amd64.deb
@@ -56,7 +56,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen#installing-miopen-kerne
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-IUSE="r2"
+IUSE="ebuild-revision-3"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -149,13 +149,13 @@ src_prepare() {
 }
 
 src_install() {
-	insinto "/opt/rocm-${MY_PV}/share/miopen/db"
+	insinto "/opt/rocm-${PV}/share/miopen/db"
 	local f
 	for f in $(find . -name "*.kdb") ; do
 		doins "${f}"
 	done
 einfo "Compressing kernels"
-	pushd "${ED}/opt/rocm-${MY_PV}/share/miopen/db" || die
+	pushd "${ED}/opt/rocm-${PV}/share/miopen/db" || die
 		for f in $(find . -name "*.kdb") ; do
 			bzip2 -kv "${f}"
 		done
