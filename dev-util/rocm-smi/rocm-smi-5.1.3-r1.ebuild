@@ -29,7 +29,7 @@ LICENSE="
 	NCSA-AMD
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild-revision-1"
+IUSE=" ebuild-revision-3"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -61,10 +61,10 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
+		-D_VERSION_MAJOR=$(ver_cut 1 "${PV}")
+		-D_VERSION_MINOR=$(ver_cut 2 "${PV}")
 		-DCMAKE_DISABLE_FIND_PACKAGE_LATEX=ON
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
-		-D_VERSION_MAJOR=$(ver_cut 1 ${PV})
-		-D_VERSION_MINOR=$(ver_cut 2 ${PV})
 	)
 	cmake_src_configure
 }
@@ -73,11 +73,11 @@ src_install() {
 	cmake_src_install
 	python_foreach_impl \
 		python_newscript \
-			python_smi_tools/rocm_smi.py \
-			rocm-smi
+			"python_smi_tools/rocm_smi.py" \
+			"rocm-smi"
 	python_foreach_impl \
 		python_domodule \
-			python_smi_tools/rsmiBindings.py
+			"python_smi_tools/rsmiBindings.py"
 }
 
 src_install() {

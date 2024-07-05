@@ -29,7 +29,7 @@ LICENSE="
 	NCSA-AMD
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild-revision-1"
+IUSE=" ebuild-revision-3"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -71,10 +71,11 @@ src_install() {
 	cmake_src_install
 	python_foreach_impl \
 		python_newscript \
-			python_smi_tools/rocm_smi.py rocm-smi
+			"python_smi_tools/rocm_smi.py" \
+			"rocm-smi"
 	python_foreach_impl \
 		python_domodule \
-			python_smi_tools/rsmiBindings.py
+			"python_smi_tools/rsmiBindings.py"
 }
 
 src_install() {
