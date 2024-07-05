@@ -27,7 +27,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	+aqlprofile debug system-llvm
-	r4
+	ebuild-revision-4
 "
 CDEPEND="
 	dev-libs/elfutils
