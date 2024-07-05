@@ -38,7 +38,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug
-ebuild-revision-1
+ebuild-revision-2
 "
 RDEPEND="
 	sys-devel/llvm-roc:=
