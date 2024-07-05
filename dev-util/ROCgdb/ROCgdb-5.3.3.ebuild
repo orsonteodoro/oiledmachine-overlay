@@ -4,7 +4,7 @@
 EAPI=8
 
 LLVM_SLOT=15
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit python-single-r1 rocm
@@ -26,9 +26,12 @@ HOMEPAGE="
 https://rocm.docs.amd.com/projects/ROCgdb/en/latest/
 https://github.com/ROCm-Developer-Tools/ROCgdb
 "
-LICENSE="GPL-3+ LGPL-2.1+"
+LICENSE="
+	GPL-3+
+	LGPL-2.1+
+"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm r4"
+IUSE="ebuild-revision-4"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -54,15 +57,13 @@ BDEPEND="
 	app-alternatives/lex
 	app-alternatives/sh
 	app-alternatives/yacc
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	sys-apps/texinfo
 	dev-build/automake
 	dev-build/make
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
-DOCS=( README-ROCM.md )
+DOCS=( "README-ROCM.md" )
 
 pkg_setup() {
 	python-single-r1_pkg_setup

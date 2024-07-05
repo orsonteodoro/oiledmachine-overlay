@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=16
+LLVM_SLOT=17
 PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -124,4 +124,4 @@ src_install() {
 	rocm_fix_rpath
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
