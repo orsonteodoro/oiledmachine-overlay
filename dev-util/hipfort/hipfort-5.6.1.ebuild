@@ -39,10 +39,9 @@ BDEPEND="
 "
 RESTRICT="test"
 S="${WORKDIR}/${PN}-rocm-${PV}"
-DOCS=( README.md )
+DOCS=( "README.md" )
 CMAKE_BUILD_TYPE="RELEASE"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 pkg_setup() {
