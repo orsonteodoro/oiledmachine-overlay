@@ -38,7 +38,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-aocc doc test r3
+aocc doc test ebuild-revision-3
 "
 REQUIRED_USE="
 "
@@ -65,7 +65,6 @@ BDEPEND="
 S="${WORKDIR}/flang-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/rocm-flang-5.1.3-rt-flang2-no-rule-fix.patch"
-	"${FILESDIR}/rocm-flang-5.1.3-path-changes.patch"
 )
 
 fmake() {
