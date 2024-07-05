@@ -24,75 +24,20 @@ DESCRIPTION="HIPIFY: Convert CUDA to Portable C++ Code"
 HOMEPAGE="https://github.com/RadeonOpenCompute/HIPIFY"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm test r9"
-gen_llvm_rdepend() {
-	local s="${1}"
-	echo "
-		(
-			system-llvm? (
-				~sys-devel/llvm-${s}
-				~sys-devel/clang-${s}
-			)
-		)
-	"
-}
+IUSE="test ebuild-revision-9"
 # https://github.com/ROCm-Developer-Tools/HIPIFY/blob/rocm-5.6.1/docs/hipify-clang.md#hipify-clang-dependencies
 TEST_BDEPEND="
 	|| (
-		(
-			=dev-util/nvidia-cuda-toolkit-12.1*:=
-			|| (
-				$(gen_llvm_rdepend 17.0.0.9999)
-				$(gen_llvm_rdepend 16.0.3)
-				$(gen_llvm_rdepend 16.0.2)
-				$(gen_llvm_rdepend 16.0.1)
-				$(gen_llvm_rdepend 16.0.0)
-			)
-		)
-		(
-			=dev-util/nvidia-cuda-toolkit-11.8*:=
-			|| (
-				$(gen_llvm_rdepend 15.0.7)
-				$(gen_llvm_rdepend 15.0.6)
-				$(gen_llvm_rdepend 15.0.5)
-				$(gen_llvm_rdepend 15.0.4)
-				$(gen_llvm_rdepend 15.0.3)
-				$(gen_llvm_rdepend 15.0.2)
-				$(gen_llvm_rdepend 15.0.1)
-				$(gen_llvm_rdepend 15.0.0)
-				$(gen_llvm_rdepend 14.0.6)
-				$(gen_llvm_rdepend 14.0.5)
-			)
-		)
-		(
-			=dev-util/nvidia-cuda-toolkit-11.7*:=
-			|| (
-				$(gen_llvm_rdepend 14.0.4)
-				$(gen_llvm_rdepend 14.0.3)
-				$(gen_llvm_rdepend 14.0.2)
-				$(gen_llvm_rdepend 14.0.1)
-				$(gen_llvm_rdepend 14.0.0)
-			)
-		)
-		(
-			=dev-util/nvidia-cuda-toolkit-11.5*:=
-			|| (
-				$(gen_llvm_rdepend 13.0.1)
-				$(gen_llvm_rdepend 13.0.0)
-			)
-		)
+		=dev-util/nvidia-cuda-toolkit-12.1*
+		=dev-util/nvidia-cuda-toolkit-11.8*
+		=dev-util/nvidia-cuda-toolkit-11.7*
+		=dev-util/nvidia-cuda-toolkit-11.5*
 	)
+	dev-util/nvidia-cuda-toolkit:=
 "
 RDEPEND="
-	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
 	!test? (
-		!system-llvm? (
-			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-		)
-		system-llvm? (
-			sys-devel/llvm:${LLVM_SLOT}
-			sys-devel/clang:${LLVM_SLOT}
-		)
+		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	)
 "
 DEPEND="
@@ -100,13 +45,7 @@ DEPEND="
 "
 BDEPEND="
 	!test? (
-		!system-llvm? (
-			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-		)
-		system-llvm? (
-			sys-devel/llvm:${LLVM_SLOT}
-			sys-devel/clang:${LLVM_SLOT}
-		)
+		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	)
 	test? (
 		${TEST_BDEPEND}
@@ -118,7 +57,6 @@ RESTRICT="
 "
 PATCHES=(
 	"${FILESDIR}/HIPIFY-5.6.1-llvm-dynlib-on.patch"
-	"${FILESDIR}/HIPIFY-5.6.0-path-changes.patch"
 	"${FILESDIR}/HIPIFY-5.6.1-install-headers-option.patch"
 )
 

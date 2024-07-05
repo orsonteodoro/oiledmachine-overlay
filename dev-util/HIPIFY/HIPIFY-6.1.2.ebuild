@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=15
+LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
@@ -25,9 +25,10 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/HIPIFY"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test ebuild-revision-9"
-# https://github.com/ROCm-Developer-Tools/HIPIFY/tree/rocm-5.4.3#-hipify-clang-dependencies
+# https://github.com/ROCm-Developer-Tools/HIPIFY/blob/rocm-6.1.2/docs/hipify-clang.md#hipify-clang-dependencies
 TEST_BDEPEND="
 	|| (
+		=dev-util/nvidia-cuda-toolkit-12.2*
 		=dev-util/nvidia-cuda-toolkit-11.8*
 		=dev-util/nvidia-cuda-toolkit-11.7*
 		=dev-util/nvidia-cuda-toolkit-11.5*
@@ -55,13 +56,17 @@ RESTRICT="
 	test
 "
 PATCHES=(
-	"${FILESDIR}/HIPIFY-5.6.1-llvm-dynlib-on.patch"
-	"${FILESDIR}/HIPIFY-5.1.3-install-headers-option.patch"
+	"${FILESDIR}/HIPIFY-5.7.0-llvm-dynlib-on.patch"
+	"${FILESDIR}/HIPIFY-5.7.0-install-headers-option.patch"
 )
 
 pkg_setup() {
 	if ! use test ; then
 		:;
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.2*" && has_version "=sys-devel/clang-17*" && has_version "=sys-devel/llvm-17*" ; then
+		LLVM_SLOT=17
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.2*" && has_version "=sys-devel/clang-16*" && has_version "=sys-devel/llvm-16*" ; then
+		LLVM_SLOT=16
 	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/clang-15*" && has_version "=sys-devel/llvm-15*" ; then
 		LLVM_SLOT=15
 	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/clang-14*" && has_version "=sys-devel/llvm-14*" ; then
@@ -103,4 +108,4 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  created-ebuild
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  needs install test
