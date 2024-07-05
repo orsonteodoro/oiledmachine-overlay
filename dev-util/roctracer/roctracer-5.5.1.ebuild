@@ -28,7 +28,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-3"
+IUSE=" test ebuild-revision-5"
 CDEPEND="
 	sys-devel/clang:${LLVM_SLOT}
 	sys-devel/llvm:${LLVM_SLOT}
@@ -83,7 +83,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
-		-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/cmake/hip"
+		-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/cmake/hip"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"

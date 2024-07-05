@@ -31,7 +31,7 @@ RESTRICT="
 	test
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-3"
+IUSE=" test ebuild-revision-5"
 RDEPEND="
 	!dev-util/roctracer:0
 	sys-devel/gcc:11
