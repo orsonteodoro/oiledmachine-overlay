@@ -117,7 +117,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -rpc
-ebuild-revision-18
+ebuild-revision-19
 "
 
 gen_cuda_required_use() {
@@ -366,7 +366,7 @@ src_configure() {
 		experimental_targets+=";NVPTX"
 	fi
 	experimental_targets="${experimental_targets:1}"
-	local libdir="$(get_libdir)"
+	local libdir="$(rocm_get_libdir)"
 	local mycmakeargs=(
 #		-DBUILD_SHARED_LIBS=OFF
 		-DCMAKE_C_COMPILER="${CHOST}-gcc"
@@ -385,7 +385,7 @@ src_configure() {
 		-DLLVM_ENABLE_ZLIB=OFF # For mlir
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${experimental_targets}"
 		-DLLVM_EXTERNAL_LIT="/usr/bin/lit"
-		-DLLVM_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm/$(get_libdir)/cmake/llvm"
+		-DLLVM_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm/$(rocm_get_libdir)/cmake/llvm"
 		-DLLVM_INSTALL_UTILS=ON
 #		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD=""
@@ -404,7 +404,7 @@ src_configure() {
 		)
 		if use llvm_targets_AMDGPU ; then
 			mycmakeargs+=(
-				-DAMDDeviceLibs_DIR="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/cmake/AMDDeviceLibs"
+				-DAMDDeviceLibs_DIR="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/cmake/AMDDeviceLibs"
 				-DDEVICELIBS_ROOT="${S_DEVICELIBS}"
 				-DLIBOMPTARGET_AMDGCN_GFXLIST=$(get_amdgpu_flags)
 			)
@@ -529,8 +529,8 @@ _install_libomptarget() {
 		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -name "libomptarget*.bc")
 	)
 
-	exeinto "${EROCM_PATH}/llvm/$(get_libdir)"
-	insinto "${EROCM_PATH}/llvm/$(get_libdir)"
+	exeinto "${EROCM_PATH}/llvm/$(rocm_get_libdir)"
+	insinto "${EROCM_PATH}/llvm/$(rocm_get_libdir)"
 	IFS=$'\n'
 	for x in "${L1[@]}" ; do
 		doexe "${x}"
@@ -542,7 +542,7 @@ _install_libomptarget() {
 }
 
 _install_libomp_libs() {
-	exeinto "${EROCM_PATH}/llvm/$(get_libdir)"
+	exeinto "${EROCM_PATH}/llvm/$(rocm_get_libdir)"
 	local L1=(
 		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -name "libgomp.so*")
 		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -name "libiomp*.so*")
@@ -555,7 +555,7 @@ _install_libomp_libs() {
 	done
 	IFS=$' \t\n'
 
-	insinto "${EROCM_PATH}/llvm/$(get_libdir)/cmake/openmp"
+	insinto "${EROCM_PATH}/llvm/$(rocm_get_libdir)/cmake/openmp"
 	local L2=(
 		$(find "${WORKDIR}/llvm-project-rocm-${PV}/openmp" -name "FindOpenMPTarget.cmake")
 	)
@@ -567,7 +567,7 @@ _install_libomp_libs() {
 }
 
 _install_archer() {
-	exeinto "${EROCM_PATH}/llvm/$(get_libdir)"
+	exeinto "${EROCM_PATH}/llvm/$(rocm_get_libdir)"
 	local L1=(
 		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -name "libarcher.so*")
 	)
@@ -576,7 +576,7 @@ _install_archer() {
 		doexe "${x}"
 	done
 	IFS=$' \t\n'
-	insinto "${EROCM_PATH}/llvm/$(get_libdir)"
+	insinto "${EROCM_PATH}/llvm/$(rocm_get_libdir)"
 	local L2=(
 		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -name "libarcher_static.a*")
 	)
@@ -590,15 +590,15 @@ _install_archer() {
 src_install() {
 	cd "${BUILD_DIR}" || die
 	_install_libomp_libs
-	exeinto "${EROCM_PATH}/llvm/$(get_libdir)"
+	exeinto "${EROCM_PATH}/llvm/$(rocm_get_libdir)"
 	insinto "${EROCM_PATH}/llvm/include"
 	doins "${S_ROOT}/openmp/runtime/exports/common.dia.ompt.optional/include/omp.h"
 	if use ompt ; then
 		doins "${S_ROOT}/openmp/runtime/exports/common.dia.ompt.optional/include/omp-tools.h"
 		doins "${S_ROOT}/openmp/tools/multiplex/ompt-multiplex.h"
 		dosym \
-			"/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/include/omp-tools.h" \
-			"/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/include/ompt.h"
+			"/opt/rocm-${ROCM_VERSION}/llvm/include/omp-tools.h" \
+			"/opt/rocm-${ROCM_VERSION}/llvm/include/ompt.h"
 	fi
 	_install_libomptarget
 	use archer && _install_archer
