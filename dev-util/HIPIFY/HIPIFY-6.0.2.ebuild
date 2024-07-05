@@ -24,8 +24,8 @@ DESCRIPTION="HIPIFY: Convert CUDA to Portable C++ Code"
 HOMEPAGE="https://github.com/RadeonOpenCompute/HIPIFY"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-9"
-# https://github.com/ROCm-Developer-Tools/HIPIFY/blob/rocm-6.0.2/docs/hipify-clang.md#hipify-clang-dependencies
+IUSE="test ebuild-revision-10"
+# https://github.com/ROCm/HIPIFY/blob/rocm-6.0.2/docs/hipify-clang.md
 TEST_BDEPEND="
 	|| (
 		=dev-util/nvidia-cuda-toolkit-12.2*
@@ -62,7 +62,7 @@ PATCHES=(
 
 pkg_setup() {
 	if ! use test ; then
-		:;
+		:
 	elif has_version "=dev-util/nvidia-cuda-toolkit-12.2*" && has_version "=sys-devel/clang-17*" && has_version "=sys-devel/llvm-17*" ; then
 		LLVM_SLOT=17
 	elif has_version "=dev-util/nvidia-cuda-toolkit-12.2*" && has_version "=sys-devel/clang-16*" && has_version "=sys-devel/llvm-16*" ; then
