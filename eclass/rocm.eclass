@@ -136,9 +136,9 @@ BDEPEND+="
 
 # @ECLASS_VARIABLE: ROCM_USE_LLVM_ROC
 # @DESCRIPTION:
-# If the system-llvm USE flag is not present in IUSE but use the llvm-roc
-# to build the package, ROCM_USE_LLVM_ROC=1 needs to be set in order
-# for rpaths or @...@ symbol replacement to work work properly.
+# ROCM_USE_LLVM_ROC=1 fixes rpaths for llvm-roc and sets some @...@ symbols to
+# point to paths in use the llvm-roc.  If ROCM_USE_LLVM_ROC=0, it will fix
+# rpaths and @...@ symbols to point to the system's llvm.
 
 # @FUNCTION: _rocm_set_globals_default
 # @DESCRIPTION:
@@ -261,7 +261,10 @@ ewarn "QA:  ROCM_SLOT should be defined."
 
 	# LLVM_SLOT must be after llvm_pkg_setup or llvm-r1_pkg_setup
 	# The CLANG_SLOT is the folder name.
-	if has system-llvm ${IUSE} && use system-llvm ; then
+	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
+		# ls /opt/rocm-*/llvm/lib64/clang -> 16.0.0 17.0.0
+		CLANG_SLOT="${LLVM_SLOT}.0.0"
+	else
 		# ls /usr/lib/clang -> 13.0.1  14.0.6  15.0.1  15.0.5  15.0.6  15.0.7  16  17
 		if ver_test ${LLVM_SLOT} -ge 16 ; then
 			CLANG_SLOT="${LLVM_SLOT}"
@@ -270,19 +273,10 @@ ewarn "QA:  ROCM_SLOT should be defined."
 				| sed -e "s|sys-devel/clang-||")
 			CLANG_SLOT=$(ver_cut 1-3 "${CLANG_SLOT}")
 		fi
-	else
-		# ls /opt/rocm-*/llvm/lib64/clang -> 16.0.0 17.0.0
-		CLANG_SLOT="${LLVM_SLOT}.0.0"
 	fi
 
 	local clang_selected_desc
-	if [[ "${ROCM_USE_LLVM_ROC}" == "1" ]] ; then
-		EROCM_CLANG_PATH="/opt/rocm-${ROCM_VERSION}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
-		clang_selected_desc="sys-devel/llvm-roc:${LLVM_SLOT}"
-	elif has system-llvm ${IUSE} && ! use system-llvm ; then
-		EROCM_CLANG_PATH="/opt/rocm-${ROCM_VERSION}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
-		clang_selected_desc="sys-devel/llvm-roc:${LLVM_SLOT}"
-	elif has_version "dev-util/hip-compiler:${ROCM_SLOT}[-system-llvm]" ; then
+	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
 		EROCM_CLANG_PATH="/opt/rocm-${ROCM_VERSION}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
 		clang_selected_desc="sys-devel/llvm-roc:${LLVM_SLOT}"
 	else
@@ -290,11 +284,7 @@ ewarn "QA:  ROCM_SLOT should be defined."
 		clang_selected_desc="sys-devel/clang:${LLVM_SLOT}"
 	fi
 
-	if [[ "${ROCM_USE_LLVM_ROC}" == "1" ]] ; then
-		EROCM_LLVM_PATH="/opt/rocm-${ROCM_VERSION}/llvm"
-	elif has system-llvm ${IUSE} && ! use system-llvm ; then
-		EROCM_LLVM_PATH="/opt/rocm-${ROCM_VERSION}/llvm"
-	elif has_version "dev-util/hip-compiler:${ROCM_SLOT}[-system-llvm]" ; then
+	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
 		EROCM_LLVM_PATH="/opt/rocm-${ROCM_VERSION}/llvm"
 	else
 		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_SLOT}"
@@ -312,8 +302,8 @@ ewarn "QA:  ROCM_SLOT should be defined."
 		| tr "\n" ":" \
 		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
 
-#	if has system-llvm ${IUSE} && use system-llvm ; then
-#		:;
+#	if [[ "${ROCM_USE_LLVM_ROC:-1}" != "1" ]] ; then
+#		:
 #	else
 #einfo "Removing ccache from PATH to prevent override by system's clang..."
 #		export PATH=$(echo "${PATH}" \
@@ -375,22 +365,22 @@ einfo
 #
 # @CHOST@        - x86_64-pc-linux-gnu, or whatever is produced by `gcc -dumpmachine`
 # @CLANG_SLOT@   -
-#     if !system-llvm then 13.0.0, 14.0.0, 15.0.0, 16.0.0, 17.0.0.
-#     if system-llvm then 13.0.1, 14.0.6, 15.0.1, 15.0.5, 15.0.6, 15.0.7, 16, 17.
+#     if ROCM_USE_LLVM_ROC==1 (default) then 13.0.0, 14.0.0, 15.0.0, 16.0.0, 17.0.0.
+#     if ROCM_USE_LLVM_ROC==0 then 13.0.1, 14.0.6, 15.0.1, 15.0.5, 15.0.6, 15.0.7, 16, 17.
 # @EPREFIX@      - /home/<USER>/blah, "", or any path
 # @EPREFIX_CLANG_PATH@  -
-#     if !system-llvm then ${EPREFIX}/opt/rocm-${ROCM_VERSION}/llvm/lib/clang/${LLVM_SLOT}.0.0
-#     if system-llvm then ${EPREFIX}/usr/lib/clang/${CLANG_SLOT}
+#     if ROCM_USE_LLVM_ROC==1 (default) then ${EPREFIX}/opt/rocm-${ROCM_VERSION}/llvm/lib/clang/${LLVM_SLOT}.0.0
+#     if ROCM_USE_LLVM_ROC==0 then ${EPREFIX}/usr/lib/clang/${CLANG_SLOT}
 # @EPREFIX_LLVM_PATH@   -
-#     if !system-llvm then ${EPREFIX}/opt/rocm-${ROCM_VERSION}/llvm
-#     if system-llvm then ${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}
+#     if ROCM_USE_LLVM_ROC==1 (default) then ${EPREFIX}/opt/rocm-${ROCM_VERSION}/llvm
+#     if ROCM_USE_LLVM_ROC==0 then ${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}
 # @ESYSROOT@     - /usr/x86_64-pc-linux-gnu, "", or any path.
 # @ESYSROOT_CLANG_PATH@ -
-#     if !system-llvm then ${ESYSROOT}/opt/rocm-${ROCM_VERSION}/llvm/lib/clang/${LLVM_SLOT}.0.0
-#     if system-llvm then ${ESYSROOT}/usr/lib/clang/${CLANG_SLOT}
+#     if ROCM_USE_LLVM_ROC==1 (default) then ${ESYSROOT}/opt/rocm-${ROCM_VERSION}/llvm/lib/clang/${LLVM_SLOT}.0.0
+#     if ROCM_USE_LLVM_ROC==0 then ${ESYSROOT}/usr/lib/clang/${CLANG_SLOT}
 # @ESYSROOT_LLVM_PATH@  -
-#     if !system-llvm then ${ESYSROOT}/opt/rocm-${ROCM_VERSION}/llvm
-#     if system-llvm then ${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}
+#     if ROCM_USE_LLVM_ROC==1 (default) then ${ESYSROOT}/opt/rocm-${ROCM_VERSION}/llvm
+#     if ROCM_USE_LLVM_ROC==0 then ${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}
 # @GCC_SLOT@     - 10, 11, 12 [based on folders contained in /usr/lib/gcc/]
 # @LIBDIR@       - lib or lib64
 # @LLVM_SLOT@    - 13, 14, 15, 16, 17
@@ -837,22 +827,20 @@ rocm_fix_rpath() {
 			for l in "${rocm_libs[@]}" ; do
 				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
-						:;
+						:
 					else
 						needs_rpath_patch_rocm=1
 					fi
 				fi
 			done
 
-			if \
-				[[ "${IUSE}" =~ "system-llvm" && ! "${USE}" =~ "system-llvm" ]] \
-					|| \
-				[[ "${ROCM_USE_LLVM_ROC}" == "1" ]] \
-			; then
+			if [[ "${ROCM_USE_LLVM_ROC:-1}" == "0" ]] ; then
+				:
+			else
 				for l in "${llvm_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
-							:;
+							:
 						else
 							needs_rpath_patch_llvm=1
 						fi
@@ -862,7 +850,7 @@ rocm_fix_rpath() {
 				for l in "${clang_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
-							:;
+							:
 						else
 							needs_rpath_patch_clang=1
 						fi
@@ -872,7 +860,7 @@ rocm_fix_rpath() {
 				for l in "${libomp_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
-							:;
+							:
 						else
 							needs_rpath_patch_libomp=1
 						fi
@@ -880,11 +868,11 @@ rocm_fix_rpath() {
 				done
 			fi
 
-			if [[ "${IUSE}" =~ "system-llvm" && "${USE}" =~ "system-llvm" ]] ; then
+			if [[ "${ROCM_USE_LLVM_ROC:-1}" == "0" ]] ; then
 				for l in "${llvm_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "lib/llvm" ; then
-							:;
+							:
 						else
 							needs_rpath_patch_llvm=1
 						fi
@@ -894,7 +882,7 @@ rocm_fix_rpath() {
 				for l in "${clang_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "lib/llvm" ; then
-							:;
+							:
 						else
 							needs_rpath_patch_clang=1
 						fi
@@ -904,7 +892,7 @@ rocm_fix_rpath() {
 				for l in "${libomp_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "lib/llvm" ; then
-							:;
+							:
 						else
 							needs_rpath_patch_libomp=1
 						fi
@@ -1035,7 +1023,7 @@ rocm_verify_rpath_correctness() {
 			for l in "${rocm_libs[@]}" ; do
 				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
-						:;
+						:
 					else
 						reason_rocm="${l}"
 						needs_rpath_patch_rocm=1
@@ -1043,15 +1031,13 @@ rocm_verify_rpath_correctness() {
 				fi
 			done
 
-			if \
-				[[ "${IUSE}" =~ "system-llvm" && ! "${USE}" =~ "system-llvm" ]] \
-					|| \
-				[[ "${ROCM_USE_LLVM_ROC}" == "1" ]] \
-			; then
+			if [[ "${ROCM_USE_LLVM_ROC:-1}" == "0" ]] ; then
+				:
+			else
 				for l in "${llvm_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
-							:;
+							:
 						else
 							reason_llvm="${l}"
 							needs_rpath_patch_llvm=1
@@ -1062,7 +1048,7 @@ rocm_verify_rpath_correctness() {
 				for l in "${clang_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
-							:;
+							:
 						else
 							reason_clang="${l}"
 							needs_rpath_patch_clang=1
@@ -1073,7 +1059,7 @@ rocm_verify_rpath_correctness() {
 				for l in "${libomp_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
-							:;
+							:
 						else
 							reason_libomp="${l}"
 							needs_rpath_patch_libomp=1
@@ -1082,11 +1068,11 @@ rocm_verify_rpath_correctness() {
 				done
 			fi
 
-			if [[ "${IUSE}" =~ "system-llvm" && "${USE}" =~ "system-llvm" ]] ; then
+			if [[ "${ROCM_USE_LLVM_ROC:-1}" == "0" ]] ; then
 				for l in "${llvm_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "lib/llvm" ; then
-							:;
+							:
 						else
 							reason_llvm="${l}"
 							needs_rpath_patch_llvm=1
@@ -1097,7 +1083,7 @@ rocm_verify_rpath_correctness() {
 				for l in "${clang_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "lib/llvm" ; then
-							:;
+							:
 						else
 							reason_clang="${l}"
 							needs_rpath_patch_clang=1
@@ -1108,7 +1094,7 @@ rocm_verify_rpath_correctness() {
 				for l in "${libomp_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "lib/llvm" ; then
-							:;
+							:
 						else
 							reason_libomp="${l}"
 							needs_rpath_patch_libomp=1
@@ -1176,9 +1162,8 @@ rocm_verify_rpath_correctness() {
 # @DESCRIPTION:
 # Gets the abspath to libomp.so*.
 rocm_get_libomp_path() {
-	[[ "${IUSE}" =~ "system-llvm" ]] || die "QA:  Add system-llvm to IUSE."
 	local libomp_path
-	if use system-llvm ; then
+	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "0" ]] ; then
 		# Stable API, slotted
 		libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
 	else
