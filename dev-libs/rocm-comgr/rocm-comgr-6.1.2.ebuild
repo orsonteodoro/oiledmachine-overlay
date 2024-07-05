@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CMAKE_BUILD_TYPE="Release"
 LLVM_SLOT=17 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.7.0/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -10,15 +11,15 @@ inherit cmake flag-o-matic prefix rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport/"
-	inherit git-r3
 	S="${WORKDIR}/${P}/lib/comgr"
+	inherit git-r3
 else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr"
 	SRC_URI="
 https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 	-> llvm-project-rocm-${PV}.tar.gz
 	"
-	S="${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr"
-	KEYWORDS="~amd64"
 fi
 
 DESCRIPTION="Radeon Open Compute Code Object Manager"
@@ -51,7 +52,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.6.1-llvm-not-dylib-add-libs.patch"
 	"${FILESDIR}/${PN}-5.6.1-rpath.patch"
 )
-CMAKE_BUILD_TYPE="Release"
 
 pkg_setup() {
 	rocm_pkg_setup
@@ -79,4 +79,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
