@@ -248,11 +248,15 @@ eerror
 ewarn "QA:  ROCM_SLOT should be defined."
 	fi
 
-	if [[ "${ROCM_SLOT+x}" == "x" ]] ; then
-		export PATH="${ESYSROOT}/usr/$(get_libdir)/rocm/${ROCM_SLOT}/bin:${PATH}"
+	if [[ -z "${ROCM_VERSION}" ]] ; then
+		export ROCM_VERSION="${PV}"
 	fi
 
-	export EROCM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+	if [[ "${ROCM_SLOT+x}" == "x" ]] ; then
+		export PATH="${ESYSROOT}/opt/rocm-${ROCM_VERSION}/bin:${PATH}"
+	fi
+
+	export EROCM_PATH="/opt/rocm-${ROCM_VERSION}"
 	export ROCM_PATH="${ESYSROOT}${EROCM_PATH}"
 
 	# LLVM_SLOT must be after llvm_pkg_setup or llvm-r1_pkg_setup
@@ -267,19 +271,19 @@ ewarn "QA:  ROCM_SLOT should be defined."
 			CLANG_SLOT=$(ver_cut 1-3 "${CLANG_SLOT}")
 		fi
 	else
-		# ls /usr/lib64/rocm/*/llvm/lib64/clang -> 16.0.0 17.0.0
+		# ls /opt/rocm-*/llvm/lib64/clang -> 16.0.0 17.0.0
 		CLANG_SLOT="${LLVM_SLOT}.0.0"
 	fi
 
 	local clang_selected_desc
 	if [[ "${ROCM_USE_LLVM_ROC}" == "1" ]] ; then
-		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
+		EROCM_CLANG_PATH="/opt/rocm-${ROCM_VERSION}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
 		clang_selected_desc="sys-devel/llvm-roc:${LLVM_SLOT}"
 	elif has system-llvm ${IUSE} && ! use system-llvm ; then
-		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
+		EROCM_CLANG_PATH="/opt/rocm-${ROCM_VERSION}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
 		clang_selected_desc="sys-devel/llvm-roc:${LLVM_SLOT}"
 	elif has_version "dev-util/hip-compiler:${ROCM_SLOT}[-system-llvm]" ; then
-		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
+		EROCM_CLANG_PATH="/opt/rocm-${ROCM_VERSION}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
 		clang_selected_desc="sys-devel/llvm-roc:${LLVM_SLOT}"
 	else
 		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
@@ -287,11 +291,11 @@ ewarn "QA:  ROCM_SLOT should be defined."
 	fi
 
 	if [[ "${ROCM_USE_LLVM_ROC}" == "1" ]] ; then
-		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
+		EROCM_LLVM_PATH="/opt/rocm-${ROCM_VERSION}/llvm"
 	elif has system-llvm ${IUSE} && ! use system-llvm ; then
-		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
+		EROCM_LLVM_PATH="/opt/rocm-${ROCM_VERSION}/llvm"
 	elif has_version "dev-util/hip-compiler:${ROCM_SLOT}[-system-llvm]" ; then
-		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
+		EROCM_LLVM_PATH="/opt/rocm-${ROCM_VERSION}/llvm"
 	else
 		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_SLOT}"
 	fi
@@ -375,17 +379,17 @@ einfo
 #     if system-llvm then 13.0.1, 14.0.6, 15.0.1, 15.0.5, 15.0.6, 15.0.7, 16, 17.
 # @EPREFIX@      - /home/<USER>/blah, "", or any path
 # @EPREFIX_CLANG_PATH@  -
-#     if !system-llvm then ${EPREFIX}/usr/lib64/rocm/${ROCM_SLOT}/llvm/lib/clang/${LLVM_SLOT}.0.0
+#     if !system-llvm then ${EPREFIX}/opt/rocm-${ROCM_VERSION}/llvm/lib/clang/${LLVM_SLOT}.0.0
 #     if system-llvm then ${EPREFIX}/usr/lib/clang/${CLANG_SLOT}
 # @EPREFIX_LLVM_PATH@   -
-#     if !system-llvm then ${EPREFIX}/usr/lib64/rocm/${ROCM_SLOT}/llvm
+#     if !system-llvm then ${EPREFIX}/opt/rocm-${ROCM_VERSION}/llvm
 #     if system-llvm then ${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}
 # @ESYSROOT@     - /usr/x86_64-pc-linux-gnu, "", or any path.
 # @ESYSROOT_CLANG_PATH@ -
-#     if !system-llvm then ${ESYSROOT}/usr/lib64/rocm/${ROCM_SLOT}/llvm/lib/clang/${LLVM_SLOT}.0.0
+#     if !system-llvm then ${ESYSROOT}/opt/rocm-${ROCM_VERSION}/llvm/lib/clang/${LLVM_SLOT}.0.0
 #     if system-llvm then ${ESYSROOT}/usr/lib/clang/${CLANG_SLOT}
 # @ESYSROOT_LLVM_PATH@  -
-#     if !system-llvm then ${ESYSROOT}/usr/lib64/rocm/${ROCM_SLOT}/llvm
+#     if !system-llvm then ${ESYSROOT}/opt/rocm-${ROCM_VERSION}/llvm
 #     if system-llvm then ${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}
 # @GCC_SLOT@     - 10, 11, 12 [based on folders contained in /usr/lib/gcc/]
 # @LIBDIR@       - lib or lib64
