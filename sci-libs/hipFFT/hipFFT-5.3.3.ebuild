@@ -35,8 +35,8 @@ DESCRIPTION="CU / ROCM agnostic hip FFT implementation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipFFT"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-cuda +rocm system-llvm
-r1
+cuda +rocm
+ebuild-revision-2
 "
 gen_cuda_required_use() {
 	local x
@@ -78,8 +78,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 RDEPEND="
-	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?,system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
@@ -100,7 +99,6 @@ S="${WORKDIR}/hipFFT-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-remove-git-dependency.patch"
 	"${FILESDIR}/${PN}-4.3.0-add-complex-header.patch"
-	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -119,8 +117,8 @@ src_configure() {
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR="include"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
-		-DCMAKE_MODULE_PATH="${EPREFIX}/usr/$(get_libdir)/cmake"
-		-DCMAKE_MODULE_PATH="${EPREFIX}/usr/$(get_libdir)/cmake/hip"
+		-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/cmake"
+		-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/cmake/hip"
 		-DHIP_ROOT_DIR="${EPREFIX}${EROCM_PATH}"
 		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
 	)
