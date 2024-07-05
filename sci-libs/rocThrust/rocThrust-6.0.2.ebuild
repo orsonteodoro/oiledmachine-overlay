@@ -11,9 +11,13 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
 	gfx1030
+	gfx1100
+	gfx1101
+	gfx1102
 )
-CUB_COMMIT="0905d7effcb3395d4157895e1d77bbcb252e55c8"
-LLVM_SLOT=14
+CUB_COMMIT="7106f901990803ca512cd7d9e6d7d2782f2c4839"
+LIBCUDACXX_COMMIT="05d48aaa12a3c310c333298331c41a9214f08f22"
+LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -26,6 +30,8 @@ https://github.com/ROCmSoftwarePlatform/rocThrust/archive/rocm-${PV}.tar.gz
 	-> rocThrust-${PV}.tar.gz
 https://github.com/NVlabs/cub/archive/${CUB_COMMIT}.tar.gz
 	-> cub-${CUB_COMMIT:0:7}.tar.gz
+https://github.com/NVIDIA/libcudacxx/archive/${LIBCUDACXX_COMMIT}.tar.gz
+	-> libcudacxx-${LIBCUDACXX_COMMIT:0:7}.tar.gz
 "
 
 DESCRIPTION="HIP back-end for the parallel algorithm library Thrust"
@@ -70,9 +76,14 @@ pkg_setup() {
 src_unpack() {
 	unpack ${A}
 	rm -rf "${S}/dependencies/cub" || die
+	rm -rf "${S}/dependencies/libcudacxx" || die
 	ln -s \
 		"${WORKDIR}/cub-${CUB_COMMIT}" \
 		"${S}/dependencies/cub" \
+		|| die
+	ln -s \
+		"${WORKDIR}/libcudacxx-${LIBCUDACXX_COMMIT}" \
+		"${S}/dependencies/libcudacxx" \
 		|| die
 }
 
@@ -130,5 +141,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test

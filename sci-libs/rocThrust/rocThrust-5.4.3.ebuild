@@ -21,6 +21,8 @@ ROCM_VERSION="${PV}"
 
 inherit cmake rocm
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/rocThrust-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocThrust/archive/rocm-${PV}.tar.gz
 	-> rocThrust-${PV}.tar.gz
@@ -32,17 +34,21 @@ DESCRIPTION="HIP back-end for the parallel algorithm library Thrust"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocThrust"
 
 LICENSE="Apache-2.0"
-KEYWORDS="~amd64"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark system-llvm test r2
+benchmark test ebuild-revision-2
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 #[${ROCM_USEDEP}]
 RDEPEND="
-	~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}
 	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}
 	test? (
 		dev-cpp/gtest
@@ -55,15 +61,8 @@ BDEPEND="
 	>=dev-build/cmake-3.15
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
-S="${WORKDIR}/rocThrust-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.0-operator_new.patch"
-	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -84,14 +83,14 @@ src_prepare() {
 	sed  -r \
 		-e '/Downloading/{:a;N;/\n *\)$/!ba; d}' \
 		-i \
-		cmake/Dependencies.cmake \
+		"cmake/Dependencies.cmake" \
 		|| die
 
 	# Remove the GIT dependency.
 	sed  -r \
 		-e '/find_package\(Git/{:a;N;/\nendif/!ba; d}' \
 		-i \
-		cmake/Dependencies.cmake \
+		"cmake/Dependencies.cmake" \
 		|| die
 
 	cmake_src_prepare
@@ -99,8 +98,8 @@ src_prepare() {
 }
 
 src_configure() {
-	addpredict /dev/kfd
-	addpredict /dev/dri/
+	addpredict "/dev/kfd"
+	addpredict "/dev/dri/"
 
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
