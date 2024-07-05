@@ -20,12 +20,12 @@ if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rdc/"
 	inherit git-r3
 else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/${PN}-rocm-${PV}"
 	SRC_URI="
 https://github.com/RadeonOpenCompute/rdc/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
-	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-rocm-${PV}"
 fi
 
 DESCRIPTION="The ROCm™ Data Center Tool simplifies the administration and \
@@ -35,7 +35,7 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/rdc"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc +raslib +standalone systemd test r6"
+IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-6"
 REQUIRED_USE="
 	raslib
 	standalone
@@ -89,7 +89,6 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/rdc-5.4.3-raslib-install.patch"
-	"${FILESDIR}/rdc-5.4.3-path-changes.patch"
 )
 
 pkg_setup() {
