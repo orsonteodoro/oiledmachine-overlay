@@ -15,11 +15,11 @@ ROCM_VERSION="${PV}"
 inherit cmake rocm
 
 KEYWORDS="~amd64"
+S="${WORKDIR}/${PN}-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocWMMA/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${PN}-rocm-${PV}"
 
 DESCRIPTION="AMD's C++ library for accelerating mixed-precision matrix \
 multiply-accumulate (MMA) operations leveraging AMD GPU hardware"
@@ -29,20 +29,14 @@ RESTRICT="
 	test
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm"
+IUSE=""
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 RDEPEND="
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm,system-llvm=]
-	!system-llvm? (
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
-		sys-libs/llvm-roc-libomp:=
-	)
-	system-llvm? (
-		sys-libs/libomp:${LLVM_SLOT}
-	)
+	sys-libs/llvm-roc-libomp:=
+	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
+	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -55,7 +49,6 @@ DEPEND="
 	${RDEPEND}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -68,8 +61,8 @@ src_prepare() {
 }
 
 src_configure() {
-	addpredict /dev/kfd
-	addpredict /dev/dri/
+	addpredict "/dev/kfd"
+	addpredict "/dev/dri/"
 
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
