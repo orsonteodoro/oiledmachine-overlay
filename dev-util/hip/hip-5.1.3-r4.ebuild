@@ -13,6 +13,7 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake docs prefix python-any-r1 rocm
 
+KEYWORDS="~amd64"
 S="${WORKDIR}/hipamd-rocm-${PV}"
 HIP_S="${WORKDIR}/HIP-rocm-${PV}"
 OCL_S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
@@ -40,7 +41,6 @@ https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
-KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
 IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test ebuild-revision-24"

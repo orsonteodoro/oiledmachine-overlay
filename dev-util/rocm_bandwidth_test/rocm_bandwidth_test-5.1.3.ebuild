@@ -8,6 +8,8 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/${PN}-rocm-${PV}"
 SRC_URI="
 https://github.com/RadeonOpenCompute/${PN}/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -17,7 +19,6 @@ DESCRIPTION="Bandwidth test for ROCm"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_bandwidth_test"
 LICENSE="NCSA-AMD"
 SLOT="${ROCM_SLOT}/${PV}"
-KEYWORDS="~amd64"
 IUSE+=" ebuild-revision-5"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
@@ -28,7 +29,6 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.6.3
 "
-S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 )
 

@@ -13,12 +13,12 @@ if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rocminfo/"
 	inherit git-r3
 else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/rocminfo-rocm-${PV}"
 	SRC_URI="
 https://github.com/RadeonOpenCompute/rocminfo/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
-	KEYWORDS="~amd64"
-	S="${WORKDIR}/rocminfo-rocm-${PV}"
 fi
 
 DESCRIPTION="ROCm Application for Reporting System Info"

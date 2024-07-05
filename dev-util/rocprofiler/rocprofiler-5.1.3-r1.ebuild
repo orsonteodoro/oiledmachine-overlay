@@ -57,7 +57,6 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-nostrip.patch"
 	"${FILESDIR}/${PN}-5.1.3-remove-Werror.patch"
-	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 python_check_deps() {
@@ -77,20 +76,13 @@ src_prepare() {
 		|| die
 
 	cmake_src_prepare
-
-	if ! use aqlprofile ; then
-		eapply "${FILESDIR}/${PN}-4.3.0-no-aqlprofile.patch"
-	fi
-
 	rocm_src_prepare
 }
 
 src_configure() {
-	if use aqlprofile ; then
-		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] \
-			|| die "Missing" # For 071379b
-		append-ldflags -Wl,-rpath="${EPREFIX}/opt/rocm-${PV}/lib"
-	fi
+	[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] \
+		|| die "Missing" # For 071379b
+	append-ldflags -Wl,-rpath="${EPREFIX}/opt/rocm-${PV}/lib"
 
 	local gpu_targets=$(get_amdgpu_flags \
 		| tr ";" " ")

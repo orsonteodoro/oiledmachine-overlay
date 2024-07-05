@@ -71,8 +71,6 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.7.0-toggle-aqlprofile.patch"
-	"${FILESDIR}/${PN}-5.7.1-path-changes.patch"
 )
 
 python_check_deps() {
@@ -86,46 +84,15 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-
-	if ! use aqlprofile ; then
-ewarn
-ewarn "You are enabling an experimental patch."
-ewarn "For production, set USE=aqlprofile ON."
-ewarn
-
-		# Caused by commit e80f7cb
-		sed \
-			-i \
-			-e "s|NOT AQLPROFILE_LIB|FALSE|g" \
-			"src/api/CMakeLists.txt" \
-			|| die
-
-		# Caused by commit e80f7cb
-		sed \
-			-i \
-			-e "s|NOT AQLPROFILE_LIB|FALSE|g" \
-			"src/tools/rocprofv2/CMakeLists.txt" \
-			|| die
-
-		# Caused by commit 071379b
-		sed \
-			-i \
-			-e "s|NOT FIND_AQL_PROFILE_LIB|FALSE|g" \
-			"cmake_modules/env.cmake" \
-			|| die
-	fi
-
 	rocm_src_prepare
 }
 
 src_configure() {
-	if use aqlprofile ; then
-		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/hsa-amd-aqlprofile/librocprofv2_att.so" ]] \
-			|| die "Missing" # For e80f7cb
-		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] \
-			|| die "Missing" # For 071379b
-		append-ldflags -Wl,-rpath="${EPREFIX}/opt/rocm-${PV}/lib"
-	fi
+	[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/hsa-amd-aqlprofile/librocprofv2_att.so" ]] \
+		|| die "Missing" # For e80f7cb
+	[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] \
+		|| die "Missing" # For 071379b
+	append-ldflags -Wl,-rpath="${EPREFIX}/opt/rocm-${PV}/lib"
 
 	export CMAKE_BUILD_TYPE="debug"
 	export HIP_PLATFORM="amd"
@@ -144,7 +111,7 @@ src_configure() {
 		-DHIP_RUNTIME="rocclr"
 		-DPROF_API_HEADER_PATH="${ESYSROOT}${EROCM_PATH}/include/roctracer/ext"
 		-DUSE_PROF_API=1
-		-DAQLPROFILE=$(usex aqlprofile ON OFF)
+		-DAQLPROFILE=ON
 	)
 	export CC="${HIP_CC:-clang}"
 	export CXX="${HIP_CXX:-clang++}"
@@ -157,4 +124,4 @@ src_install() {
 	rocm_fix_rpath
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test

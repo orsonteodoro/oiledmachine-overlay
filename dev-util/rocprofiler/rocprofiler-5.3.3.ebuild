@@ -57,7 +57,6 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-nostrip.patch"
 	"${FILESDIR}/${PN}-5.1.3-remove-Werror.patch"
-	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
 
 python_check_deps() {
@@ -71,28 +70,13 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-
-	if ! use aqlprofile ; then
-		eapply "${FILESDIR}/${PN}-4.3.0-no-aqlprofile.patch"
-		eapply "${FILESDIR}/${PN}-5.3.3-remove-aql-in-cmake.patch"
-
-		# Caused by commit 071379b
-		sed \
-			-i \
-			-e "s|NOT FIND_AQL_PROFILE_LIB|FALSE|g" \
-			"cmake_modules/env.cmake" \
-			|| die
-	fi
-
 	rocm_src_prepare
 }
 
 src_configure() {
-	if use aqlprofile ; then
-		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] \
-			|| die "Missing" # For 071379b
-		append-ldflags -Wl,-rpath="${EPREFIX}/opt/rocm-${PV}/lib"
-	fi
+	[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] \
+		|| die "Missing" # For 071379b
+	append-ldflags -Wl,-rpath="${EPREFIX}/opt/rocm-${PV}/lib"
 
 	local gpu_targets=$(get_amdgpu_flags \
 		| tr ";" " ")

@@ -3,14 +3,18 @@
 
 EAPI=8
 
+HSA_CLASS_COMMIT="f8b387043b9f510afdf2e72e38a011900360d6ab"
 LLVM_SLOT=14
-PYTHON_COMPAT=( python3_{9..10} )
+PYTHON_COMPAT=( "python3_"{9..10} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic prefix python-any-r1 rocm
 
-HSA_CLASS_COMMIT="f8b387043b9f510afdf2e72e38a011900360d6ab"
+KEYWORDS="~amd64"
+S="${WORKDIR}/roctracer-rocm-${PV}"
+S_HSA_CLASS="${WORKDIR}/hsa-class-${HSA_CLASS_COMMIT}"
+S_PROFILER="${WORKDIR}/rocprofiler"
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/roctracer/archive/rocm-${PV}.tar.gz
 	-> rocm-tracer-${PV}.tar.gz
@@ -23,8 +27,10 @@ https://github.com/ROCmSoftwarePlatform/hsa-class/archive/${HSA_CLASS_COMMIT}.ta
 DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="MIT"
+RESTRICT="
+	test
+"
 SLOT="${ROCM_SLOT}/${PV}"
-KEYWORDS="~amd64"
 IUSE=" test ebuild-revision-3"
 RDEPEND="
 	!dev-util/roctracer:0
@@ -45,10 +51,6 @@ BDEPEND="
 	>=dev-build/cmake-2.8.12
 	sys-devel/gcc:11
 "
-RESTRICT="test"
-S="${WORKDIR}/roctracer-rocm-${PV}"
-S_PROFILER="${WORKDIR}/rocprofiler"
-S_HSA_CLASS="${WORKDIR}/hsa-class-${HSA_CLASS_COMMIT}"
 PATCHES=(
 	# https://github.com/ROCm-Developer-Tools/roctracer/pull/63
 	"${FILESDIR}/${PN}-4.3.0-glibc-2.34.patch"

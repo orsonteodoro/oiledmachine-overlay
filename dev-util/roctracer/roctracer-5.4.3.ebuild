@@ -4,12 +4,15 @@
 EAPI=8
 
 LLVM_SLOT=15
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic prefix python-any-r1 rocm
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/roctracer-rocm-${PV}"
+S_PROFILER="${WORKDIR}/rocprofiler"
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/roctracer/archive/rocm-${PV}.tar.gz
 	-> rocm-tracer-${PV}.tar.gz
@@ -21,8 +24,12 @@ https://github.com/ROCm-Developer-Tools/roctracer/commit/c95d5dd96fa50a567b7b203
 DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="MIT"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="${ROCM_SLOT}/${PV}"
-KEYWORDS="~amd64"
 IUSE=" test ebuild-revision-3"
 RDEPEND="
 	!dev-util/roctracer:0
@@ -41,13 +48,6 @@ BDEPEND="
 	>=dev-build/cmake-3.18.0
 	sys-devel/gcc:12
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
-S="${WORKDIR}/roctracer-rocm-${PV}"
-S_PROFILER="${WORKDIR}/rocprofiler"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-do-not-install-test-files.patch"
 	"${FILESDIR}/${PN}-5.3.3-Werror.patch"
