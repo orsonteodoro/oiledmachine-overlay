@@ -5,11 +5,12 @@ EAPI=8
 
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
+KEYWORDS="~amd64"
+
 DESCRIPTION="ROCm metapackage"
 HOMEPAGE=""
 LICENSE="metapackage"
 SLOT="${ROCM_SLOT}/${PV}"
-KEYWORDS="~amd64"
 IUSE="
 	flang
 	hipfort
