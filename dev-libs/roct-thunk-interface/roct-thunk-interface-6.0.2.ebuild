@@ -31,7 +31,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
-ebuild-revision-3
+ebuild-revision-4
 "
 RDEPEND="
 	!dev-libs/roct-thunk-interface:0
@@ -82,7 +82,7 @@ _fix_rpath() {
 	local path="${1}"
 	einfo "Fixing rpath for ${path}"
 	patchelf \
-		--add-rpath "${EPREFIX}${EROCM_PATH}/$(get_libdir)" \
+		--add-rpath "${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)" \
 		"${path}" \
 		|| die
 }
@@ -90,7 +90,7 @@ _fix_rpath() {
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
-	_fix_rpath "${ED}/usr/$(get_libdir)/rocm/${ROCM_SLOT}/$(get_libdir)/libhsakmt.so.1.0.6"
+	_fix_rpath "${ED}/opt/rocm-${ROCM_VERSION}/$(rocm_get_libdir)/libhsakmt.so.1.0.6"
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
