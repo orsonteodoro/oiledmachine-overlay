@@ -4,7 +4,7 @@
 EAPI=8
 
 LLVM_SLOT=14
-PYTHON_COMPAT=( python3_{9..10} )
+PYTHON_COMPAT=( "python3_"{9..10} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-r1 rocm
@@ -29,7 +29,7 @@ LICENSE="
 	NCSA-AMD
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" r1"
+IUSE=" ebuild-revision-1"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -43,7 +43,6 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-gcc12-memcpy.patch"
-	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 pkg_setup() {

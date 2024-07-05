@@ -4,7 +4,7 @@
 EAPI=8
 
 LLVM_SLOT=16
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( "python3_"{9..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-r1 rocm
@@ -29,7 +29,7 @@ LICENSE="
 	NCSA-AMD
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" r1"
+IUSE=" ebuild-revision-1"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -42,7 +42,6 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.5.1-path-changes.patch"
 )
 
 pkg_setup() {
