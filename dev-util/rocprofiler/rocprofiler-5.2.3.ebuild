@@ -10,13 +10,14 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx908
 	gfx90a
 )
-
 LLVM_SLOT=15
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic python-any-r1 rocm
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/${PN}-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/${PN}/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -30,20 +31,15 @@ LICENSE="
 "
 # BSD - src/util/hsa_rsrc_factory.cpp
 SLOT="${ROCM_SLOT}/${PV}"
-KEYWORDS="~amd64"
-IUSE=" +aqlprofile system-llvm test r9"
+IUSE=" test r9"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 RDEPEND="
 	!dev-util/rocprofiler:0
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
+	~dev-libs/hsa-amd-aqlprofile-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/roctracer-${PV}:${ROCM_SLOT}
-	aqlprofile? (
-		~dev-libs/hsa-amd-aqlprofile-${PV}:${ROCM_SLOT}
-		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
-	)
 "
 DEPEND="
 	${RDEPEND}
@@ -54,16 +50,10 @@ BDEPEND="
 	')
 	>=dev-build/cmake-3.16.8
 	test? (
-		!system-llvm? (
-			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-		)
 		sys-devel/gcc[sanitize]
-		system-llvm? (
-			sys-devel/clang:${LLVM_SLOT}
-		)
+		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	)
 "
-S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-nostrip.patch"
 	"${FILESDIR}/${PN}-5.1.3-remove-Werror.patch"
@@ -116,13 +106,8 @@ src_configure() {
 		-DPROF_API_HEADER_PATH="${ESYSROOT}${EROCM_PATH}/include/roctracer/ext"
 		-DUSE_PROF_API=1
 	)
-	if use system-llvm ; then
-		export CC="${HIP_CC:-${CHOST}-clang-${LLVM_SLOT}}"
-		export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_SLOT}}"
-	else
-		export CC="${HIP_CC:-clang}"
-		export CXX="${HIP_CXX:-clang++}"
-	fi
+	export CC="${HIP_CC:-clang}"
+	export CXX="${HIP_CXX:-clang++}"
 	cmake_src_configure
 }
 
