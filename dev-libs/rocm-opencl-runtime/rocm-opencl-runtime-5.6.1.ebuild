@@ -33,7 +33,7 @@ LICENSE="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug test
-r1
+ebuild-revision-1
 "
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
@@ -62,13 +62,11 @@ RESTRICT="
 	)
 "
 OCL_PATCHES=(
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 ROCCLR_PATCHES=(
 	# Bug #753377
 	# patch re-enables accidentally disabled gfx800 family
 	"${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
-	"${FILESDIR}/ROCclr-5.6.0-path-changes.patch"
 )
 ROCCLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
 

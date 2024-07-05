@@ -24,7 +24,7 @@ LICENSE="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug test
-r1
+ebuild-revision-1
 "
 KEYWORDS="~amd64"
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
@@ -57,7 +57,6 @@ OCL_PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-remove-clinfo.patch"
 	"${FILESDIR}/${PN}-3.5.0-do-not-install-libopencl.patch"
 	"${FILESDIR}/${PN}-5.3.3-gcc13.patch"
-	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 ROCCLR_PATCHES=(
 	# Bug #753377
@@ -65,7 +64,6 @@ ROCCLR_PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
 	"${FILESDIR}/rocclr-5.1.3-fix-include.patch"
 	"${FILESDIR}/rocclr-5.3.3-gcc13.patch"
-	"${FILESDIR}/ROCclr-5.1.3-path-changes.patch"
 )
 S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
 ROCCLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
