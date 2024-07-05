@@ -23,7 +23,7 @@ https://github.com/ROCmSoftwarePlatform/hipfort
 "
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="debug ebuild-revision-4"
+IUSE="debug ebuild-revision-5"
 RDEPEND="
 	!dev-util/hipfort:0
 	|| (
@@ -68,7 +68,7 @@ src_configure() {
 
 src_install() {
         cmake_src_install
-	dodoc LICENSE
+	dodoc "LICENSE"
 	rocm_mv_docs
 }
 
