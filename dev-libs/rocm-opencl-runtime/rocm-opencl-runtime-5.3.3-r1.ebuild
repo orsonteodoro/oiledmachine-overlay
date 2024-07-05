@@ -9,6 +9,8 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 inherit cmake edo flag-o-matic rocm
 
 KEYWORDS="~amd64"
+S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
+ROCCLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
 	-> rocclr-${PV}.tar.gz
@@ -63,8 +65,6 @@ ROCCLR_PATCHES=(
 	"${FILESDIR}/rocclr-5.3.3-fix-include.patch"
 	"${FILESDIR}/rocclr-5.3.3-gcc13.patch"
 )
-S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
-ROCCLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
 
 pkg_setup() {
 	rocm_pkg_setup

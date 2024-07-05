@@ -15,14 +15,15 @@ if [[ ${PV} == *9999 ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
+	S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
 	SRC_URI="
 https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
 	-> rocclr-${PV}.tar.gz
 https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/rocm-${PV}.tar.gz
 	-> rocm-opencl-runtime-${PV}.tar.gz
 	"
-	S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
 fi
+ROCCLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
 
 DESCRIPTION="Radeon Open Compute OpenCL Compatible Runtime"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime"
@@ -68,7 +69,6 @@ ROCCLR_PATCHES=(
 	# patch re-enables accidentally disabled gfx800 family
 	"${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
 )
-ROCCLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
 
 pkg_setup() {
 	rocm_pkg_setup
