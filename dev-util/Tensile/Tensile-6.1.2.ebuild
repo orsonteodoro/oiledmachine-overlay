@@ -13,13 +13,17 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1011
 	gfx1012
 	gfx1030
+	gfx1031
+	gfx1032
+	gfx1034
+	gfx1035
 	gfx1100
 	gfx1101
 	gfx1102
 )
 DISTUTILS_USE_PEP517="setuptools"
-LLVM_SLOT=14
-PYTHON_COMPAT=( "python3_"{9..11} )
+LLVM_SLOT=17
+PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -29,7 +33,6 @@ KEYWORDS="~amd64"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 	-> rocm-Tensile-${PV}.tar.gz
-https://github.com/littlewu2508/littlewu2508.github.io/raw/main/gentoo-distfiles/${PN}-5.0.2-PR1419.patch.gz
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
 CMAKE_USE_DIR="${S}/${PN}/Source"
@@ -51,6 +54,7 @@ RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-cpp/msgpack-cxx-6.0.0
 	dev-lang/python-exec:rocm-${ROCM_SLOT}
+	dev-python/joblib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	~dev-util/hip-${PV}:${ROCM_SLOT}
@@ -64,9 +68,10 @@ RDEPEND="
 		dev-libs/boost
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 	)
-	openmp? (
-		sys-devel/lld:${LLVM_SLOT}
-	)
+
+	sys-process/numactl
+	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -76,10 +81,9 @@ BDEPEND="
 "
 _PATCHES=(
 	"${FILESDIR}/${PN}-change-cmake-name-for-msgpack-cxx-6-release.patch"
-	"${FILESDIR}/${PN}-4.3.0-output-commands.patch"
-	"${FILESDIR}/${PN}-5.0.2-gfx1031.patch"
-	"${FILESDIR}/${PN}-5.0.2-fix-arch-parse.patch"
-	"${FILESDIR}/${PN}-5.0.2-use-ninja.patch"
+	"${FILESDIR}/${PN}-5.6.0-output-commands.patch"
+	"${FILESDIR}/${PN}-5.4.2-fix-arch-parse.patch"
+	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"
 	"${FILESDIR}/${PN}-5.7.1-avoid-hipcc-bat.patch"
 )
 
@@ -99,14 +103,9 @@ src_prepare() {
 			-i \
 			"Source/CMakeLists.txt" \
 			|| die
+		hipconfig --help >/dev/null || die
 		sed \
-			-e "/chmod 755/d" \
-			-i \
-			"Source/TensileCreateLibrary.cmake" \
-			|| die # remove chmod 755 on
-		hipconfig --version || die
-		sed \
-			-e "/HipClangVersion/s/0,0,0/$(hipconfig -v)/" \
+			-e "/HipClangVersion/s/0.0.0/$(hipconfig -v)/" \
 			-i \
 			"Common.py" \
 			|| die
@@ -118,6 +117,7 @@ src_prepare() {
 		-i \
 		"setup.py" \
 		|| die
+
 	cmake_src_prepare
 	rocm_src_prepare
 }
@@ -128,6 +128,12 @@ src_configure() {
 	if use openmp ; then
 		append-flags -fuse-ld=lld
 	fi
+	append-ldflags \
+		-Wl,-L/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir) \
+		-Wl,-lLLVMSupport \
+		-Wl,-lhsa-runtime64 \
+		-Wl,-lamd_comgr \
+		-Wl,-lnuma
 
 	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
 	export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"
@@ -150,6 +156,11 @@ src_configure() {
 		)
 		rocm_src_configure
 	fi
+}
+
+src_compile() {
+	distutils-r1_src_compile
+	use client && cmake_src_compile
 }
 
 python_install() {
@@ -183,11 +194,14 @@ src_install() {
 		"Configs" \
 		"CustomKernels" \
 		"Perf" \
-		"ReplacementKernels" \
 		"ReplacementKernels-cov3" \
 		"Source"
 	insinto "${EROCM_PATH}/$(get_libdir)/cmake/${PN}"
 	doins "cmake/"*".cmake"
+	if use client; then
+		pushd "${BUILD_DIR}" || die
+		dobin "client/tensile_client"
+	fi
 	rocm_mv_docs
 
 	cp -aT \
@@ -199,4 +213,4 @@ src_install() {
 	rocm_fix_rpath
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test

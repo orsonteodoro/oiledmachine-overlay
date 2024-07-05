@@ -19,7 +19,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 DISTUTILS_USE_PEP517="setuptools"
 LLVM_SLOT=15
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -39,7 +39,7 @@ LICENSE="MIT"
 # Not compatible with recent versions of pytest \
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="client openmp system-llvm r9"
+IUSE="client openmp r9"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -52,15 +52,12 @@ RDEPEND="
 	dev-lang/python-exec:rocm-${ROCM_SLOT}
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
-	!system-llvm? (
-		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-		sys-devel/llvm-roc:=
-		openmp? (
-			dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
-			sys-libs/llvm-roc-libomp:${ROCM_SLOT}
-		)
+	~dev-util/hip-${PV}:${ROCM_SLOT}
+	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+	sys-devel/llvm-roc:=
+	openmp? (
+		dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
+		sys-libs/llvm-roc-libomp:${ROCM_SLOT}
 	)
 	client? (
 		dev-libs/boost
@@ -68,13 +65,6 @@ RDEPEND="
 	)
 	openmp? (
 		sys-devel/lld:${LLVM_SLOT}
-	)
-	system-llvm? (
-		sys-devel/clang:${LLVM_SLOT}
-		openmp? (
-			sys-devel/lld:${LLVM_SLOT}
-			sys-libs/libomp:${LLVM_SLOT}
-		)
 	)
 "
 DEPEND="
@@ -89,7 +79,6 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-5.4.2-gfx1031.patch"
 	"${FILESDIR}/${PN}-5.4.2-fix-arch-parse.patch"
 	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"
-	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
 	"${FILESDIR}/${PN}-5.7.1-avoid-hipcc-bat.patch"
 )
 
