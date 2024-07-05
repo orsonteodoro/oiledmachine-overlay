@@ -12,6 +12,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_plus
 	gfx1030
 )
+CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -20,11 +21,11 @@ ROCM_VERSION="${PV}"
 inherit cmake rocm
 
 KEYWORDS="~amd64"
+S="${WORKDIR}/${PN}-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocALUTION/archive/rocm-${PV}.tar.gz
 	-> rocALUTION-${PV}.tar.gz
 "
-S="${WORKDIR}/${PN}-rocm-${PV}"
 
 DESCRIPTION="Next generation library for iterative sparse solvers for ROCm platform"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocALUTION"
@@ -32,7 +33,7 @@ LICENSE="MIT"
 RESTRICT="mirror"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-rocm samples +openmp mpi system-llvm r3
+rocm samples +openmp mpi ebuild-revision-4
 "
 gen_rocm_required_use() {
 	local x
@@ -56,22 +57,15 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	mpi? (
 		virtual/mpi
 	)
 	openmp? (
-		!system-llvm? (
-			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
-		)
-		system-llvm? (
-			sys-devel/clang:${LLVM_SLOT}
-			sys-libs/libomp:${LLVM_SLOT}
-		)
+		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 	)
 	rocm? (
-		~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
+		~dev-util/hip-${PV}:${ROCM_SLOT}
 		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
 		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}
 		~sci-libs/rocRAND-${PV}:${ROCM_SLOT}
@@ -87,9 +81,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/rocALUTION-5.6.0-invalid-operands-fix.patch"
-	"${FILESDIR}/rocALUTION-5.6.0-path-changes.patch"
 )
-CMAKE_BUILD_TYPE="RelWithDebInfo"
 
 pkg_setup() {
 	rocm_pkg_setup
@@ -118,8 +110,8 @@ src_prepare() {
 
 src_configure() {
 	# Grant access to the device to omit a sandbox violation
-	addwrite /dev/kfd
-	addpredict /dev/dri/
+	addwrite "/dev/kfd"
+	addpredict "/dev/dri/"
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_BENCHMARKS=OFF
 		-DBUILD_CLIENTS_SAMPLES=$(usex samples ON OFF)
@@ -127,7 +119,7 @@ src_configure() {
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR="include"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
-		-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/cmake/hip"
+		-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/cmake/hip"
 		-DSUPPORT_HIP=$(usex rocm ON OFF)
 		-DSUPPORT_MPI=$(usex mpi ON OFF)
 		-DSUPPORT_OMP=$(usex openmp ON OFF)
@@ -144,19 +136,11 @@ eerror
 	fi
 
 	if use openmp ; then
-		if use system-llvm ; then
-			mycmakeargs+=(
-				-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
-				-DOpenMP_CXX_LIB_NAMES="libomp"
-				-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
-			)
-		else
-			mycmakeargs+=(
-				-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
-				-DOpenMP_CXX_LIB_NAMES="libomp"
-				-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so"
-			)
-		fi
+		mycmakeargs+=(
+			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
+			-DOpenMP_CXX_LIB_NAMES="libomp"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so"
+		)
 	fi
 
 	if use rocm ; then
@@ -175,7 +159,7 @@ eerror
 
 src_install() {
         cmake_src_install
-        chrpath --delete "${D}/usr/$(get_libdir)/librocalution.so.0.1" || die
+        chrpath --delete "${D}${EROCM_PATH}/$(rocm_get_libdir)/librocalution.so.0.1" || die
 	rocm_mv_docs
 	rocm_fix_rpath
 }
