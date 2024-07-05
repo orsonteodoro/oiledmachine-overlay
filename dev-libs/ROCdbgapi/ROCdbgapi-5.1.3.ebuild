@@ -19,7 +19,7 @@ DESCRIPTION="AMD Debugger API"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/ROCdbgapi"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild-revision-4"
+IUSE=" ebuild-revision-5"
 RDEPEND="
 	!dev-libs/ROCdbgapi:0
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
