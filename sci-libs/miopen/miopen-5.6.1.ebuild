@@ -39,7 +39,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm system-llvm test r2"
+IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test ebuild-revision-2"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -106,9 +106,6 @@ BDEPEND="
 	mlir? (
 		=sci-libs/rocMLIR-${ROCM_SLOT}*:${ROCM_SLOT}[fat-librockcompiler(+)]
 	)
-	system-llvm? (
-		>=sys-devel/llvmgold-${LLVM_SLOT}
-	)
 "
 RESTRICT="
 	!test? (
@@ -125,7 +122,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-no-strip.patch"
 	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
 #	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # Fixed in pr #1830
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 pkg_setup() {
@@ -334,13 +330,8 @@ src_configure() {
 	# lld: error: undefined hidden symbol: free
 	replace-flags '-O0' '-O1'
 
-	if use system-llvm ; then
-		export CC="${CHOST}-clang-${LLVM_SLOT}"
-		export CXX="${CHOST}-clang++${LLVM_SLOT}"
-	else
-		export CC="clang"
-		export CXX="clang++"
-	fi
+	export CC="clang"
+	export CXX="clang++"
 	rocm_src_configure
 }
 

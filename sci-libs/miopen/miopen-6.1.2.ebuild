@@ -13,18 +13,28 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx906
 	gfx908
 	gfx90a
+	gfx940
+	gfx941
+	gfx942
 	gfx1011
 	gfx1012
 	gfx1030
+	gfx1031
+	gfx1100
+	gfx1101
+	gfx1102
 )
+FIN_COMMIT="0e597645a57df36993baf8f21d0a57e7293ae1c6"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
-LLVM_SLOT=14
+LLVM_SLOT=17
 inherit cmake flag-o-matic rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/MIOpen/archive/rocm-${PV}.tar.gz
 	-> MIOpen-${PV}.tar.gz
+https://github.com/ROCmSoftwarePlatform/MIFin/archive/${FIN_COMMIT}.tar.gz
+	-> MIFin-${FIN_COMMIT:0:7}.tar.gz
 "
 
 DESCRIPTION="AMD's Machine Intelligence Library"
@@ -32,7 +42,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="comgr debug hiprtc kernels mlir opencl +rocm test ebuild-revision-1"
+IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test ebuild-revision-2"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -45,12 +55,16 @@ gen_amdgpu_required_use() {
 }
 REQUIRED_USE="
 	$(gen_amdgpu_required_use)
+	composable-kernel? (
+		rocm
+	)
 	hiprtc? (
 		comgr
 		rocm
 	)
 	opencl? (
 		!comgr
+		!composable-kernel
 	)
 	^^ (
 		rocm
@@ -65,13 +79,16 @@ RDEPEND="
 	comgr? (
 		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	)
+	composable-kernel? (
+		sci-libs/composable_kernel:${ROCM_SLOT}
+	)
 	kernels? (
 		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}
 	)
 	opencl? (
 		sys-devel/clang
 		virtual/opencl
-		~sci-libs/miopengemm-${PV}:${ROCM_SLOT}
+		=sci-libs/miopengemm-5.5*:0/5.5
 	)
 	rocm? (
 		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
@@ -81,6 +98,8 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	>=dev-libs/half-1.12.0:=
+	>=dev-cpp/eigen-3.4.0:3=
+	>=dev-cpp/frugally-deep-0.15.20:=
 	>=dev-cpp/nlohmann_json-3.10.4:=
 "
 BDEPEND="
@@ -88,7 +107,7 @@ BDEPEND="
 	virtual/pkgconfig
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	mlir? (
-		~sci-libs/rocMLIR-${PV}:${ROCM_SLOT}[fat-librockcompiler(+)]
+		=sci-libs/rocMLIR-${ROCM_SLOT}*:${ROCM_SLOT}[fat-librockcompiler(+)]
 	)
 "
 RESTRICT="
@@ -99,25 +118,32 @@ RESTRICT="
 S="${WORKDIR}/MIOpen-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.2.0-disable-no-inline-boost.patch"
-	"${FILESDIR}/${PN}-4.2.0-gcc11-numeric_limits.patch"
-	"${FILESDIR}/${PN}-5.0.2-strip-xnack-in-flags.patch"
+	"${FILESDIR}/${PN}-5.6.0-strip-xnack-in-flags.patch"
 	"${FILESDIR}/${PN}-4.3.0-fix-interface-include-in-HIP_COMPILER_FLAGS.patch"
-	"${FILESDIR}/${PN}-4.3.0-enable-test.patch"
-	"${FILESDIR}/${PN}-5.1.3-gfx1031.patch"
-	"${FILESDIR}/${PN}-5.1.3-deprecate-clang-ocl.patch"
+	"${FILESDIR}/${PN}-5.3.3-enable-test.patch"
+#	"${FILESDIR}/${PN}-5.1.3-gfx1031.patch" # Already added upstream but some parts missing
 	"${FILESDIR}/${PN}-5.1.3-no-strip.patch"
 	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
-	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # See also pr #1830
+#	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # Fixed in pr #1830
+	"${FILESDIR}/${PN}-5.7.1-bunzip2-path.patch"
 )
 
 pkg_setup() {
 	rocm_pkg_setup
 }
 
+src_unpack() {
+	unpack ${A}
+	rm -rf "${S}/fin" || true
+	mv \
+		"${WORKDIR}/MIFin-${FIN_COMMIT}" \
+		"${S}/fin" \
+		|| die
+}
+
 src_prepare() {
 ewarn "Please wait... Patching may take longer than usual."
 	cmake_src_prepare
-
 	hipconfig --help >/dev/null || die
 	sed \
 		-e '/MIOPEN_TIDY_ERRORS ALL/d' \
@@ -243,8 +269,10 @@ einfo "Copying kernels"
 }
 
 filter_test_gpus() {
-	if use "${gpu_target}" && [[ "${gputarget}" =~ "gfx1030" ]] ; then
-		echo "-DMIOPEN_TEST_GFX1030=ON"
+	if use "${gpu_target}" && [[ "${gputarget}" =~ "gfx103" ]] ; then
+		echo "-DMIOPEN_TEST_GFX103x=ON"
+	elif use "${gpu_target}" && [[ "${gputarget}" =~ "gfx110" ]] ; then
+		echo "-DMIOPEN_TEST_GFX110X=ON"
 	elif [[ "${gpu_target}" =~ ("gfx900"|"gfx906"|"gfx908"|"gfx90a") ]] ; then
 		echo "-DMIOPEN_TEST_${gpu_target^^}=ON"
 	fi
@@ -275,6 +303,7 @@ src_configure() {
 		-DMIOPEN_BACKEND=HIP
 		-DMIOPEN_TEST_ALL=$(usex test ON OFF)
 		-DMIOPEN_USE_COMGR=$(usex comgr ON OFF)
+		-DMIOPEN_USE_COMPOSABLEKERNEL=$(usex composable-kernel ON OFF)
 		-DMIOPEN_USE_HIPRTC=$(usex hiprtc ON OFF)
 		-DMIOPEN_USE_MLIR=$(usex mlir ON OFF)
 	)
@@ -322,4 +351,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
