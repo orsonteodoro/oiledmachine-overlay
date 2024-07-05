@@ -62,4 +62,4 @@ src_install() {
 	rocm_fix_rpath
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  needs install test

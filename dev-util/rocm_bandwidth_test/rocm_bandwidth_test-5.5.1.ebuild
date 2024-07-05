@@ -21,7 +21,7 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_bandwidth_test"
 LICENSE="NCSA-AMD"
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE+=" r5"
+IUSE+=" ebuild-revision-5"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
@@ -34,7 +34,6 @@ BDEPEND="
 S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${DISTDIR}/${PN}-pr90-a58f9fd.patch"
-	"${FILESDIR}/rocm_bandwidth_test-5.3.3-path-changes.patch"
 )
 
 pkg_setup() {
