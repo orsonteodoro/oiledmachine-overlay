@@ -87,13 +87,8 @@ src_prepare() {
 }
 
 src_configure() {
-	if use system-llvm ; then
-		export CC="${CHOST}-clang-${LLVM_SLOT}"
-		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
-	else
-		export CC="clang"
-		export CXX="clang++"
-	fi
+	export CC="clang"
+	export CXX="clang++"
 
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
@@ -105,7 +100,7 @@ src_configure() {
 #                          ~~~~~~~^
 		-DSWDEV_375013=ON
 
-		-DUSE_SYSTEM_LLVM=$(usex system-llvm)
+		-DUSE_SYSTEM_LLVM=OFF
 	)
 	cmake_src_configure
 }
