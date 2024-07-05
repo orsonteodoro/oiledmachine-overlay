@@ -79,7 +79,7 @@ https://sparse.tamu.edu/MM/Chevron/Chevron4.tar.gz
 DESCRIPTION="Basic Linear Algebra Subroutines for sparse computation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSPARSE"
 LICENSE="MIT"
-IUSE="benchmark system-llvm test r4"
+IUSE="benchmark test ebuild-revision-5"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -91,16 +91,10 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 RDEPEND="
 	!sci-libs/rocSPARSE:0
-	!system-llvm? (
-		sys-libs/llvm-roc-libomp:=
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
-	)
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm,system-llvm=]
+	sys-libs/llvm-roc-libomp:=
+	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[rocm(+)]
-	system-llvm? (
-		sys-libs/libomp:${LLVM_SLOT}
-	)
+	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -108,6 +102,7 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.5
 	sys-devel/gcc[fortran]
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		$(python_gen_any_dep '
 			dev-python/pyyaml[${PYTHON_USEDEP}]
@@ -117,13 +112,11 @@ BDEPEND="
 	benchmark? (
 		app-admin/chrpath
 	)
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-remove-matrices-unpacking.patch"
 	"${FILESDIR}/${PN}-5.6.0-includes.patch"
 	"${FILESDIR}/${PN}-5.4.3-fma-fix.patch"
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 python_check_deps() {
@@ -142,7 +135,7 @@ src_prepare() {
 	sed \
 		-e "/find_package(Git/d" \
 		-i \
-		cmake/Dependencies.cmake \
+		"cmake/Dependencies.cmake" \
 		|| die
 
 	cmake_src_prepare
@@ -210,14 +203,14 @@ src_test() {
 	check_amdgpu
 	cd "${BUILD_DIR}/clients/staging" || die
 	LD_LIBRARY_PATH="${BUILD_DIR}/library" \
-	edob ./${PN,,}-test
+	edob "./${PN,,}-test"
 }
 
 src_install() {
 	cmake_src_install
-	if use benchmark; then
+	if use benchmark ; then
 		cd "${BUILD_DIR}" || die
-		dobin clients/staging/rocsparse-bench
+		dobin "clients/staging/rocsparse-bench"
 	fi
 	rocm_mv_docs
 	rocm_fix_rpath

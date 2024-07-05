@@ -25,7 +25,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
+LLVM_SLOT=17 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.6.0/llvm/CMakeLists.txt
 PYTHON_COMPAT=( python3_{9..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -88,6 +88,7 @@ https://sparse.tamu.edu/MM/Chevron/Chevron4.tar.gz
 	-> ${PN}_Chevron4.tar.gz
 	)
 "
+# 0be37a2 - fixing fma ambiguities (#516)
 
 DESCRIPTION="Basic Linear Algebra Subroutines for sparse computation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSPARSE"
@@ -260,5 +261,4 @@ src_install() {
 	rocm_fix_rpath
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
