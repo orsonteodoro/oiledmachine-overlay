@@ -235,7 +235,7 @@ RDEPEND="
 		=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*[profiler]
 	)
 	fbgemm? (
-		>=dev-libs/FBGEMM-2022.09.28
+		>=sci-libs/FBGEMM-2022.09.28
 	)
 	ffmpeg? (
 		$(gen_ffmpeg_depends)

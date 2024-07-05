@@ -239,7 +239,7 @@ RDEPEND="
 		>=sci-libs/tensorpipe-2021.12.27[cuda?]
 	)
 	fbgemm? (
-		>=dev-libs/FBGEMM-2023.12.01
+		>=sci-libs/FBGEMM-2023.12.01
 	)
 	ffmpeg? (
 		$(gen_ffmpeg_depends)
