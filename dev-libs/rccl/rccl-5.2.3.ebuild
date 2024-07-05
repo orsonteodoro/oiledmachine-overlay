@@ -19,11 +19,11 @@ ROCM_VERSION="${PV}"
 inherit cmake edo flag-o-matic rocm
 
 KEYWORDS="~amd64"
+S="${WORKDIR}/rccl-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rccl/archive/rocm-${PV}.tar.gz
 	-> rccl-${PV}.tar.gz
 "
-S="${WORKDIR}/rccl-rocm-${PV}"
 
 DESCRIPTION="ROCm Communication Collectives Library (RCCL)"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rccl"
