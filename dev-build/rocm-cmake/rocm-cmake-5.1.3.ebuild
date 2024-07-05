@@ -26,9 +26,8 @@ DESCRIPTION="Radeon Open Compute CMake Modules"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm-cmake"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm ebuild-revision-2"
+IUSE="ebuild-revision-2"
 RDEPEND="
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 "
 BDEPEND="
 	>=dev-build/cmake-3.5
@@ -36,7 +35,6 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-license.patch"
-	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 pkg_setup() {
