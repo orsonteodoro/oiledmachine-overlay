@@ -34,7 +34,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-2"
+IUSE="test ebuild-revision-3"
 RDEPEND="
 	!dev-libs/rccl:0
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
@@ -63,12 +63,12 @@ src_prepare() {
 	rocm_src_prepare
 
 	# Prevent swapping
-	sed -i -r -e "s|-parallel-jobs=[0-9]+||g" CMakeLists.txt || die
+	sed -i -r -e "s|-parallel-jobs=[0-9]+||g" "CMakeLists.txt" || die
 }
 
 src_configure() {
-	addpredict /dev/kfd
-	addpredict /dev/dri/
+	addpredict "/dev/kfd"
+	addpredict "/dev/dri/"
 
 	replace-flags '-O0' '-O1'
 
@@ -93,7 +93,7 @@ src_configure() {
 
 src_test() {
 	check_amdgpu
-	LD_LIBRARY_PATH="${BUILD_DIR}" edob test/UnitTests
+	LD_LIBRARY_PATH="${BUILD_DIR}" edob "test/UnitTests"
 }
 
 src_install() {
