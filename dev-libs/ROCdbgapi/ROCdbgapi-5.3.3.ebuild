@@ -9,11 +9,11 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 inherit cmake rocm
 
 KEYWORDS="~amd64"
+S="${WORKDIR}/ROCdbgapi-rocm-${PV}"
 SRC_URI="
 	https://github.com/ROCm-Developer-Tools/ROCdbgapi/archive/rocm-${PV}.tar.gz
 		-> ${P}.tar.gz
 "
-S="${WORKDIR}/ROCdbgapi-rocm-${PV}"
 
 DESCRIPTION="AMD Debugger API"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/ROCdbgapi"
