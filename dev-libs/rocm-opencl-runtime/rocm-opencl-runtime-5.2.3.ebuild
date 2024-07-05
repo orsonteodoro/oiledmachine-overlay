@@ -8,6 +8,7 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake edo flag-o-matic rocm
 
+KEYWORDS="~amd64"
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
 	-> rocclr-${PV}.tar.gz
@@ -21,12 +22,16 @@ LICENSE="
 	Apache-2.0
 	MIT
 "
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug test
 ebuild-revision-1
 "
-KEYWORDS="~amd64"
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
 	!dev-libs/rocm-opencl-runtime:0
@@ -46,11 +51,6 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		>=x11-apps/mesa-progs-8.5.0[X]
-	)
-"
-RESTRICT="
-	!test? (
-		test
 	)
 "
 OCL_PATCHES=(

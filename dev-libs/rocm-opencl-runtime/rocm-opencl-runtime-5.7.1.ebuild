@@ -9,10 +9,10 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 inherit cmake edo flag-o-matic rocm
 
 if [[ ${PV} == *9999 ]] ; then
-	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime"
 	EGIT_CLR_REPO_URI="https://github.com/ROCm-Developer-Tools/ROCclr"
-	inherit git-r3
+	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime"
 	S="${WORKDIR}/${P}"
+	inherit git-r3
 else
 	KEYWORDS="~amd64"
 	SRC_URI="
@@ -27,6 +27,11 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime"
 LICENSE="
 	Apache-2.0
 	MIT
+"
+RESTRICT="
+	!test? (
+		test
+	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
@@ -52,11 +57,6 @@ BDEPEND="
 	test? (
 		>=x11-apps/mesa-progs-8.5.0[X]
 		media-libs/glew
-	)
-"
-RESTRICT="
-	!test? (
-		test
 	)
 "
 OCL_PATCHES=(
