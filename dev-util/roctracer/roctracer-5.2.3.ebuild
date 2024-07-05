@@ -25,13 +25,12 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE=" system-llvm test r3"
+IUSE=" test ebuild-revision-3"
 RDEPEND="
 	!dev-util/roctracer:0
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	sys-devel/gcc:12
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
-	~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -43,9 +42,6 @@ BDEPEND="
 	')
 	>=dev-build/cmake-3.18.0
 	sys-devel/gcc:12
-	test? (
-		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	)
 "
 RESTRICT="
 	!test? (
@@ -57,7 +53,6 @@ S_PROFILER="${WORKDIR}/rocprofiler"
 PATCHES=(
 #	"${FILESDIR}/${PN}-5.3.3-do-not-install-test-files.patch"
 	"${FILESDIR}/${PN}-5.2.3-Werror.patch"
-	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
 #	"${DISTDIR}/${PN}-c95d5dd.patch"
 )
 
@@ -78,10 +73,6 @@ src_prepare() {
 		"${WORKDIR}/rocprofiler-rocm-${PV}" \
 		"${WORKDIR}/rocprofiler" \
 		|| die
-
-	pushd "${S_PROFILER}" || die
-		eapply "${FILESDIR}/rocprofiler-5.2.3-path-changes.patch"
-	popd
 
 	hprefixify script/*.py
 	rocm_src_prepare

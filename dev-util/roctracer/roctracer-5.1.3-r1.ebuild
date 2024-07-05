@@ -25,17 +25,14 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE=" +aqlprofile system-llvm test r3"
+IUSE=" test ebuild-revision-3"
 RDEPEND="
 	!dev-util/roctracer:0
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	sys-devel/gcc:11
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
-	~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
-	aqlprofile? (
-		~dev-libs/hsa-amd-aqlprofile-${PV}:${ROCM_SLOT}
-		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
-	)
+	~dev-util/hip-${PV}:${ROCM_SLOT}
+	~dev-libs/hsa-amd-aqlprofile-${PV}:${ROCM_SLOT}
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -47,9 +44,6 @@ BDEPEND="
 	')
 	>=dev-build/cmake-2.8.12
 	sys-devel/gcc:11
-	test? (
-		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	)
 "
 RESTRICT="test"
 S="${WORKDIR}/roctracer-rocm-${PV}"
@@ -60,8 +54,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-glibc-2.34.patch"
 	"${FILESDIR}/${PN}-5.0.2-Werror.patch"
 	"${FILESDIR}/${PN}-5.0.2-strip-license.patch"
-
-	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 python_check_deps() {
@@ -82,17 +74,6 @@ src_prepare() {
 		"${WORKDIR}/rocprofiler-rocm-${PV}" \
 		"${WORKDIR}/rocprofiler" \
 		|| die
-
-	pushd "${S_PROFILER}" || die
-		eapply "${FILESDIR}/rocprofiler-5.1.3-path-changes.patch"
-	popd
-	pushd "${S_HSA_CLASS}" || die
-		eapply "${FILESDIR}/hsa-class-5.1.3-path-changes.patch"
-	popd
-
-	if ! use aqlprofile ; then
-		eapply "${FILESDIR}/${PN}-5.1.3-no-aqlprofile.patch"
-	fi
 
 	mv \
 		"${WORKDIR}/hsa-class-${HSA_CLASS_COMMIT}/test/util" \
@@ -117,10 +98,6 @@ src_prepare() {
 }
 
 src_configure() {
-	if use aqlprofile ; then
-		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing"
-	fi
-
 	export CC="${HIP_CC:-gcc-11}"
 	export CXX="${HIP_CXX:-g++-11}"
 

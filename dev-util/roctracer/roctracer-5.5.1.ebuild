@@ -22,7 +22,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE=" system-llvm test r3"
+IUSE=" test ebuild-revision-3"
 CDEPEND="
 	sys-devel/clang:${LLVM_SLOT}
 	sys-devel/llvm:${LLVM_SLOT}
@@ -31,10 +31,9 @@ CDEPEND="
 RDEPEND="
 	!dev-util/roctracer:0
 	${CDEPEND}
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
-	~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -46,9 +45,6 @@ BDEPEND="
 	')
 	${CDEPEND}
 	>=dev-build/cmake-3.18.0
-	test? (
-		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	)
 "
 RESTRICT="
 	!test? (
@@ -59,7 +55,6 @@ S="${WORKDIR}/roctracer-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-do-not-install-test-files.patch"
 	"${FILESDIR}/${PN}-5.3.3-Werror.patch"
-	"${FILESDIR}/${PN}-5.5.1-path-changes.patch"
 )
 
 python_check_deps() {
