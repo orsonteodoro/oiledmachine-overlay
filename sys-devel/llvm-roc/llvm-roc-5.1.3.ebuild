@@ -133,9 +133,6 @@ einfo "See comments of metadata.xml for documentation on epgo."
 
 src_prepare() {
 	cmake_src_prepare
-	pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
-		eapply "${FILESDIR}/llvm-roc-5.1.3-path-changes.patch"
-	popd
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq

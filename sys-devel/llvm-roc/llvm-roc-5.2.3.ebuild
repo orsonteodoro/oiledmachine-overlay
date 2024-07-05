@@ -146,9 +146,6 @@ einfo "See comments of metadata.xml for documentation on ebolt/epgo."
 
 src_prepare() {
 	cmake_src_prepare
-	pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
-		eapply "${FILESDIR}/llvm-roc-5.2.3-path-changes.patch"
-	popd
 	if use bolt ; then
 		pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
 			eapply -p1 "${DISTDIR}/llvm-commit-eddf384.patch"
