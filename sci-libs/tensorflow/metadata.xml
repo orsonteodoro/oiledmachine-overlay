@@ -62,10 +62,6 @@
       Use the system's flatbuffers package instead of the internal vendored
       version.
     </flag>
-    <flag name="system-llvm">
-      Use the system clang/llvm packages instead of the ROCm forks at the
-      expense of minor version availability in HIP/ROCm contexts.
-    </flag>
     <flag name="xla">
       Enables and builds the XLA (Accelerated Linear Algebra) compiler for
       fusing linear algebra operations into single GPU kernel to improve
