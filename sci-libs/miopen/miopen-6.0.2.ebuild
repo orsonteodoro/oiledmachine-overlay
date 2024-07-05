@@ -48,7 +48,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test ebuild-revision-2"
+IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test ebuild-revision-3"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -310,7 +310,7 @@ src_configure() {
 
 	if use mlir ; then
 		mycmakeargs+=(
-			-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/cmake/rocMLIR"
+			-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/cmake/rocMLIR"
 		)
 	fi
 
@@ -326,7 +326,7 @@ src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 	append-cxxflags "--rocm-path=${ESYSROOT}${EROCM_PATH}"
-	append-cxxflags "--hip-device-lib-path=${ESYSROOT}${EROCM_PATH}/$(get_libdir)/amdgcn/bitcode"
+	append-cxxflags "--hip-device-lib-path=${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/amdgcn/bitcode"
 
 	# Fix for both
 	# lld: error: undefined symbol: __stack_chk_fail ; if fail try append-flags "-fno-stack-protector"
@@ -340,7 +340,7 @@ src_configure() {
 
 src_test() {
 	check_amdgpu
-	export LD_LIBRARY_PATH="${BUILD_DIR}/$(get_libdir)"
+	export LD_LIBRARY_PATH="${BUILD_DIR}/$(rocm_get_libdir)"
 
 	MAKEOPTS="-j1" \
 	cmake_src_test
