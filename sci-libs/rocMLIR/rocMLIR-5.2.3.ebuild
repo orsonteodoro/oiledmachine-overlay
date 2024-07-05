@@ -4,7 +4,7 @@
 EAPI=8
 
 LLVM_SLOT=15
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-r1 rocm
@@ -13,12 +13,12 @@ if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/rocMLIR/"
 	inherit git-r3
 else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/${PN}-rocm-${PV}"
 	SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocMLIR/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
-	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-rocm-${PV}"
 fi
 
 DESCRIPTION="MLIR-based convolution and GEMM kernel generator for ROCm"
@@ -31,15 +31,14 @@ LICENSE="
 # all rights reserved with MIT - mlir/tools/rocmlir-lib/LICENSE
 # The distro MIT license template does not have all rights reserved
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm r8"
+IUSE="ebuild-revision-8"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
 	>=dev-python/pybind11-2.8[${PYTHON_USEDEP}]
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	media-libs/vulkan-loader
 	virtual/libc
-	~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -53,7 +52,6 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
 	"${FILESDIR}/${PN}-5.3.3-fix-so-suffix.patch"
 )
 
@@ -80,44 +78,13 @@ pkg_setup() {
 src_prepare() {
 ewarn "Patching may take a long time.  Please wait..."
 	sed -i -e "s|FATAL_ERROR|WARNING|g" \
-		external/llvm-project/llvm/cmake/modules/CheckCompilerVersion.cmake \
-		external/llvm-project/llvm/cmake/modules/CheckAtomic.cmake \
+		"external/llvm-project/llvm/cmake/modules/CheckCompilerVersion.cmake" \
+		"external/llvm-project/llvm/cmake/modules/CheckAtomic.cmake" \
 		|| die
 	sed -i -e "s|LLVM_VERSION_SUFFIX git|LLVM_VERSION_SUFFIX roc|g" \
-		external/llvm-project/llvm/CMakeLists.txt \
+		"external/llvm-project/llvm/CMakeLists.txt" \
 		|| die
 	cmake_src_prepare
-
-        IFS=$'\n'
-        sed \
-                -i \
-                -e "s|/lib64)|/@LIBDIR@)|g" \
-                -e "s|BINARY_DIR}/lib/|BINARY_DIR}/@LIBDIR@/|g" \
-                -e "s|BINARY_DIR}/lib64/|BINARY_DIR}/@LIBDIR@/|g" \
-                -e "s|DESTINATION lib/|DESTINATION @LIBDIR@/|g" \
-                -e "s|DESTINATION lib64/|DESTINATION @LIBDIR@/|g" \
-		-e "s|INSTALL_PATH}/lib$|INSTALL_PATH}/@LIBDIR@$|g" \
-                $(find . \
-			\( \
-				   -name "CMakeLists.txt" \
-				-o -name "*.cmake" \
-			\) \
-		) \
-                || true
-        sed \
-                -i \
-		-e "s|/lib)|/@LIBDIR@)|g" \
-                $(find . \
-			\( \
-				\( \
-					   -name "CMakeLists.txt" \
-					-o -name "*.cmake" \
-				\) \
-				-a -not -path "*/external/llvm-project/clang-tools-extra/include-cleaner/unittests/CMakeLists.txt" \
-			\) \
-		) \
-                || true
-        IFS=$' \t\n'
 
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:
@@ -167,7 +134,7 @@ build_rocmlir() {
 		["emake"]="Unix Makefiles"
 	        ["ninja"]="Ninja"
 	)
-	local libdir_suffix=$(get_libdir)
+	local libdir_suffix=$(rocm_get_libdir)
 	libdir_suffix="${libdir_suffix/lib}"
 	local mycmakeargs=(
 		-G "${_cmake_generator[${CMAKE_MAKEFILE_GENERATOR}]}"
@@ -206,13 +173,8 @@ build_rocmlir() {
 		-DHAVE_SYSEXITS_H=1
 	)
 
-	if use system-llvm ; then
-		export CC="${HIP_CC:-${CHOST}-clang-${LLVM_SLOT}}"
-		export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_SLOT}}"
-	else
-		export CC="${HIP_CC:-clang}"
-		export CXX="${HIP_CXX:-clang++}"
-	fi
+	export CC="${HIP_CC:-clang}"
+	export CXX="${HIP_CXX:-clang++}"
 	ccmake \
 		"${mycmakeargs[@]}" \
 		..
@@ -237,7 +199,7 @@ sanitize_permissions() {
 		elif file "${path}" | grep -q "ELF .* LSB pie executable" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q "symbolic link" ; then
-			:;
+			:
 		else
 			chmod 0644 "${path}" || die
 		fi

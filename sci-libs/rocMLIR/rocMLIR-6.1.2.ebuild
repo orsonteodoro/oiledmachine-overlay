@@ -4,7 +4,7 @@
 EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="ninja"
-LLVM_SLOT=16
+LLVM_SLOT=17
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -165,7 +165,7 @@ build_rocmlir() {
 		-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/${EROCM_LLVM_PATH}/llvm/include"
 		-DLLVM_LIBDIR_SUFFIX="${libdir_suffix}"
 
-		-DLLVM_CMAKE_DIR="${WORKDIR}/${PN}-rocm-${PV}/external/llvm-project/llvm/cmake"
+		-DLLVM_CMAKE_DIR="${WORKDIR}/${PN}-rocm-${PV}/external/llvm-project"
 		-DLIB_INSTALL_DIR="$(rocm_get_libdir)"
 	)
 
@@ -213,5 +213,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
-# works
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
