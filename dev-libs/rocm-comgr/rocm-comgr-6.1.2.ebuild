@@ -3,10 +3,10 @@
 
 EAPI=8
 
-LLVM_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
+LLVM_SLOT=17 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.7.0/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake prefix rocm
+inherit cmake flag-o-matic prefix rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport/"
@@ -14,10 +14,10 @@ if [[ ${PV} == *9999 ]] ; then
 	S="${WORKDIR}/${P}/lib/comgr"
 else
 	SRC_URI="
-https://github.com/RadeonOpenCompute/ROCm-CompilerSupport/archive/rocm-${PV}.tar.gz
-	-> ${P}.tar.gz
+https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
+	-> llvm-project-rocm-${PV}.tar.gz
 	"
-	S="${WORKDIR}/ROCm-CompilerSupport-rocm-${PV}/lib/comgr"
+	S="${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr"
 	KEYWORDS="~amd64"
 fi
 
@@ -25,7 +25,7 @@ DESCRIPTION="Radeon Open Compute Code Object Manager"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-6"
+IUSE="test ebuild-revision-6"
 RDEPEND="
 	!dev-libs/rocm-comgr:0
 	sys-devel/llvm-roc:=
@@ -35,18 +35,20 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
+RESTRICT="
+	!test? (
+		test
+	)
+"
 BDEPEND="
 	>=dev-build/cmake-3.13.4
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-4.5.2-dependencies.patch"
-	"${FILESDIR}/${PN}-5.1.3-clang-link.patch"
 	"${FILESDIR}/${PN}-5.1.3-clang-fix-include.patch"
-#	"${FILESDIR}/${PN}-5.1.3-llvm-15-remove-zlib-gnu"
-#	"${FILESDIR}/${PN}-5.1.3-llvm-15-args-changed"
+#	"${FILESDIR}/${PN}-5.3.3-fix-tests.patch"
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
-	"${FILESDIR}/${PN}-5.1.3-llvm-not-dylib-add-libs.patch"
+	"${FILESDIR}/${PN}-5.6.1-llvm-not-dylib-add-libs.patch"
 	"${FILESDIR}/${PN}-5.6.1-rpath.patch"
 )
 CMAKE_BUILD_TYPE="Release"
@@ -62,6 +64,7 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DBUILD_TESTING=$(usex test ON OFF)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	# Disable stripping defined at lib/comgr/CMakeLists.txt:58
 		-DCMAKE_STRIP=""

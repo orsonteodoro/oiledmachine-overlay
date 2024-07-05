@@ -25,23 +25,12 @@ DESCRIPTION="Radeon Open Compute Code Object Manager"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm test r6"
+IUSE="test ebuild-revision-6"
 RDEPEND="
-	!system-llvm? (
-		sys-devel/llvm-roc:=
-		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-	)
 	!dev-libs/rocm-comgr:0
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
+	sys-devel/llvm-roc:=
 	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
-	system-llvm? (
-		=sys-devel/clang-runtime-${LLVM_SLOT}*
-		sys-devel/clang:${LLVM_SLOT}
-		sys-devel/clang:=
-		sys-devel/clang-runtime:=
-		sys-devel/lld:${LLVM_SLOT}
-		sys-devel/lld:=
-	)
+	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -60,7 +49,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-fix-tests.patch"
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
 	"${FILESDIR}/${PN}-5.3.3-remove-h-option.patch"
-	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
 	"${FILESDIR}/${PN}-5.5.1-llvm-not-dylib-add-libs.patch"
 	"${FILESDIR}/${PN}-5.6.1-rpath.patch"
 )
@@ -82,7 +70,7 @@ src_configure() {
 	# Disable stripping defined at lib/comgr/CMakeLists.txt:58
 		-DCMAKE_STRIP=""
 		-DLLVM_DIR="${ESYSROOT}${EROCM_LLVM_PATH}"
-		-DLLVM_LINK_LLVM_DYLIB=$(usex system-llvm)
+		-DLLVM_LINK_LLVM_DYLIB=OFF
 	)
 	cmake_src_configure
 }
