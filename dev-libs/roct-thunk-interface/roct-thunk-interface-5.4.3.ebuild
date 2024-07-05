@@ -3,6 +3,8 @@
 
 EAPI=8
 
+CMAKE_BUILD_TYPE="Release"
+CONFIG_CHECK="~HSA_AMD ~HMM_MIRROR ~ZONE_DEVICE ~DRM_AMDGPU ~DRM_AMDGPU_USERPTR"
 LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -12,17 +14,16 @@ if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface/"
 	inherit git-r3
 else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/ROCT-Thunk-Interface-rocm-${PV}"
 	SRC_URI="
 https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
-	S="${WORKDIR}/ROCT-Thunk-Interface-rocm-${PV}"
-	KEYWORDS="~amd64"
 fi
 
 DESCRIPTION="Radeon Open Compute Thunk Interface"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface"
-CONFIG_CHECK="~HSA_AMD ~HMM_MIRROR ~ZONE_DEVICE ~DRM_AMDGPU ~DRM_AMDGPU_USERPTR"
 LICENSE="MIT"
 # Don't strip hsaKmtReplaceAsanHeaderPage \
 RESTRICT="
@@ -46,7 +47,6 @@ BDEPEND="
 	>=x11-libs/libdrm-2.4.114[video_cards_amdgpu]
 	dev-util/patchelf
 "
-CMAKE_BUILD_TYPE="Release"
 PATCHES=(
 )
 

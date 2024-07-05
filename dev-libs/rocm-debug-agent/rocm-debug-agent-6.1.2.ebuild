@@ -9,6 +9,8 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic linux-info rocm
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/rocr_debug_agent-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/rocr_debug_agent/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -16,7 +18,6 @@ https://github.com/ROCm-Developer-Tools/rocr_debug_agent/archive/rocm-${PV}.tar.
 
 DESCRIPTION="Radeon Open Compute Debug Agent"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/rocr_debug_agent/"
-KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test ebuild-revision-3"
@@ -40,7 +41,6 @@ BDEPEND="
 RESTRICT="
 	test
 "
-S="${WORKDIR}/rocr_debug_agent-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.7.0-epoll_wait-nevents.patch"
 )
@@ -81,4 +81,4 @@ src_install() {
 	rocm_fix_rpath
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
