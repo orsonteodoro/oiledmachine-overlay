@@ -10,6 +10,8 @@ ROCM_VERSION="${PV}"
 inherit cmake edo flag-o-matic rocm toolchain-funcs
 
 # Some test datasets are shared with rocSPARSE.
+KEYWORDS="~amd64"
+S="${WORKDIR}/hipSOLVER-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipSOLVER/archive/refs/tags/rocm-${PV}.tar.gz
 	-> hipSOLVER-${PV}.tar.gz
@@ -18,9 +20,8 @@ https://github.com/ROCmSoftwarePlatform/hipSOLVER/archive/refs/tags/rocm-${PV}.t
 DESCRIPTION="ROCm SOLVER marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSOLVER"
 LICENSE="MIT"
-KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test cuda +rocm system-llvm r2"
+IUSE="test cuda +rocm ebuild-revision-3"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
@@ -34,8 +35,7 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?,system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
@@ -57,9 +57,7 @@ BDEPEND="
 		dev-cpp/gtest
 	)
 "
-S="${WORKDIR}/hipSOLVER-rocm-${PV}"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 pkg_setup() {
