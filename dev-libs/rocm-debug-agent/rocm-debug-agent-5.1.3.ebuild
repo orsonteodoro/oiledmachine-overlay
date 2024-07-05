@@ -42,7 +42,6 @@ RESTRICT="
 "
 S="${WORKDIR}/rocr_debug_agent-rocm-${PV}"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 pkg_setup() {
