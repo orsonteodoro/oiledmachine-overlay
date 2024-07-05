@@ -29,9 +29,9 @@ _llvm_roc_libomp_globals
 unset -f _llvm_roc_libomp_globals
 
 # Cuda compatibility:
-# https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.7.1/clang/include/clang/Basic/Cuda.h
-# CUDA targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.7.1/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L59
-# ROCm targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.7.1/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L83
+# https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.0.2/clang/include/clang/Basic/Cuda.h
+# CUDA targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.0.2/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L59
+# ROCm targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.0.2/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L83
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
@@ -110,7 +110,7 @@ LICENSE="
 	public-domain
 	UoI-NCSA
 "
-# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-5.7.1/openmp/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-6.0.2/openmp/LICENSE.TXT
 #   Keyword search:  "all right, title, and interest"
 RESTRICT="
 	strip
@@ -645,5 +645,5 @@ src_install() {
 	rocm_fix_rpath
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-failure
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

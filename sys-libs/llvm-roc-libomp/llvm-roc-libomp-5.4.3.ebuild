@@ -72,13 +72,16 @@ CUDA_TARGETS_COMPAT=(
 	auto
 )
 LLVM_SLOT=15
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_USE_LLVM_ROC=1
 
 inherit cmake flag-o-matic python-single-r1 rocm
 
 KEYWORDS="~amd64"
+S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
+S_DEVICELIBS="${WORKDIR}/ROCm-Device-Libs-rocm-${PV}"
+S_ROOT="${WORKDIR}/llvm-project-rocm-${PV}"
 SRC_URI="
 https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 	-> llvm-project-rocm-${PV}.tar.gz
@@ -88,9 +91,6 @@ https://github.com/RadeonOpenCompute/llvm-project/commit/056b229c2c479171ff7bd63
 	-> llvm-roc-commit-056b229.patch
 "
 # 056b229 - [openmp] - Fix DP issue in amdgpu plugin.
-S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
-S_DEVICELIBS="${WORKDIR}/ROCm-Device-Libs-rocm-${PV}"
-S_ROOT="${WORKDIR}/llvm-project-rocm-${PV}"
 
 DESCRIPTION="The ROCm™ fork of LLVM's libomp"
 HOMEPAGE="
@@ -120,7 +120,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -rpc
-r18
+ebuild-revision-18
 "
 
 gen_cuda_required_use() {
@@ -301,7 +301,6 @@ src_prepare() {
 	cd "${S_ROOT}" || die
 	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-ompt-includes.patch"
 	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-omp-tools-includes.patch"
-	eapply "${FILESDIR}/llvm-roc-5.4.3-path-changes.patch"
 	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-omp.h-includes.patch"
 	eapply "${FILESDIR}/llvm-roc-libomp-5.1.3-libomptarget-includes-path.patch"
 	eapply "${FILESDIR}/llvm-roc-libomp-5.2.3-libomptarget-prep-libomptarget-bc-link-directory.patch"
