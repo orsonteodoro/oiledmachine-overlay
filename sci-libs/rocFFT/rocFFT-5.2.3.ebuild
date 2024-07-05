@@ -22,12 +22,14 @@ CUDA_TARGETS_COMPAT=(
 )
 CHECKREQS_DISK_BUILD="7G"
 LLVM_SLOT=14
-PYTHON_COMPAT=( python3_{9..10} )
+PYTHON_COMPAT=( "python3_"{9..10} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake check-reqs edo flag-o-matic multiprocessing python-r1 rocm
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/rocFFT-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocFFT/archive/rocm-${PV}.tar.gz
 	-> rocFFT-${PV}.tar.gz
@@ -36,11 +38,15 @@ https://github.com/ROCmSoftwarePlatform/rocFFT/archive/rocm-${PV}.tar.gz
 DESCRIPTION="Next generation FFT implementation for ROCm"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocFFT"
 LICENSE="MIT"
-KEYWORDS="~amd64"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda perfscripts +rocm system-llvm test r4
+benchmark cuda perfscripts +rocm test ebuild-revision-4
 "
 gen_cuda_required_use() {
 	local x
@@ -86,8 +92,7 @@ REQUIRED_USE="
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3.36
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?,system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
@@ -112,21 +117,10 @@ BDEPEND="
 		>=dev-cpp/gtest-1.11.0
 		>=sci-libs/fftw-3
 		dev-libs/boost
-		!system-llvm? (
-			~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
-		)
-		system-llvm? (
-			sys-libs/libomp:${LLVM_SLOT}
-		)
+		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 	)
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
-S="${WORKDIR}/rocFFT-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.2.0-add-functional-header.patch"
 	"${FILESDIR}/${PN}-5.1.3-add-stdexcept-header.patch"
@@ -241,20 +235,20 @@ src_test() {
 	check_amdgpu
 	cd "${BUILD_DIR}/clients/staging" || die
 	export LD_LIBRARY_PATH="${BUILD_DIR}/library/src/:${BUILD_DIR}/library/src/device"
-	edob ./${PN,,}-test
-	edob ./${PN,,}-selftest
+	edob "${PN,,}-test"
+	edob "${PN,,}-selftest"
 }
 
 src_install() {
 	cmake_src_install
 
-	if use benchmark; then
+	if use benchmark ; then
 		cd "${BUILD_DIR}/clients/staging" || die
-		dobin *rider
+		dobin *"rider"
 	fi
 
-	if use perfscripts; then
-		cd "${S}"/scripts/perf || die
+	if use perfscripts ; then
+		cd "${S}/scripts/perf" || die
 		python_foreach_impl \
 			python_doexe \
 				"rocfft-perf"
@@ -262,9 +256,11 @@ src_install() {
 			"${PN}_perflib"
 		python_foreach_impl \
 			python_domodule \
-				perflib/*.py
+				"perflib/"*".py"
 		insinto "/usr/share/${PN}-perflib"
-		doins *.asy suites.py
+		doins \
+			*".asy" \
+			"suites.py"
 	fi
 	rocm_mv_docs
 	rocm_fix_rpath
