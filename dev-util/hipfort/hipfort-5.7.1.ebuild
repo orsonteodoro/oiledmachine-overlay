@@ -21,7 +21,7 @@ https://github.com/ROCmSoftwarePlatform/hipfort
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="debug r4"
+IUSE="debug ebuild-revision-4"
 RDEPEND="
 	!dev-util/hipfort:0
 	|| (
