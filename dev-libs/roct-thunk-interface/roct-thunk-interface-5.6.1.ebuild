@@ -30,7 +30,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
-r3
+ebuild-revision-3
 "
 RDEPEND="
 	!dev-libs/roct-thunk-interface:0
@@ -48,7 +48,6 @@ BDEPEND="
 "
 CMAKE_BUILD_TYPE="Release"
 PATCHES=(
-	"${FILESDIR}/roct-thunk-interface-5.7.0-path-changes.patch"
 )
 
 pkg_setup() {
