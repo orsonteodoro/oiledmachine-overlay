@@ -31,7 +31,7 @@ LICENSE="
 "
 # BSD - src/util/hsa_rsrc_factory.cpp
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test r8"
+IUSE=" test ebuild-revision-8"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
