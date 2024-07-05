@@ -30,6 +30,8 @@ ROCM_VERSION="${PV}"
 LLVM_SLOT=17
 inherit cmake flag-o-matic rocm
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/MIOpen-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/MIOpen/archive/rocm-${PV}.tar.gz
 	-> MIOpen-${PV}.tar.gz
@@ -40,7 +42,11 @@ https://github.com/ROCmSoftwarePlatform/MIFin/archive/${FIN_COMMIT}.tar.gz
 DESCRIPTION="AMD's Machine Intelligence Library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen"
 LICENSE="MIT"
-KEYWORDS="~amd64"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test ebuild-revision-2"
 gen_amdgpu_required_use() {
@@ -110,12 +116,6 @@ BDEPEND="
 		=sci-libs/rocMLIR-${ROCM_SLOT}*:${ROCM_SLOT}[fat-librockcompiler(+)]
 	)
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
-S="${WORKDIR}/MIOpen-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.2.0-disable-no-inline-boost.patch"
 	"${FILESDIR}/${PN}-5.6.0-strip-xnack-in-flags.patch"
@@ -147,7 +147,7 @@ ewarn "Please wait... Patching may take longer than usual."
 	hipconfig --help >/dev/null || die
 	sed \
 		-e '/MIOPEN_TIDY_ERRORS ALL/d' \
-		-i CMakeLists.txt \
+		-i "CMakeLists.txt" \
 		|| die
 
         # Speed up symbol replacmenet for @...@ by reducing the search space
