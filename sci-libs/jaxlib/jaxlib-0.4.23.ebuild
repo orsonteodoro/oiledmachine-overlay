@@ -177,7 +177,7 @@ ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-clang cpu cuda debug +hardened rocm rocm_5_6 system-llvm
+clang cpu cuda debug +hardened rocm rocm_5_6
 ebuild-revision-1
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
@@ -219,9 +219,6 @@ REQUIRED_USE+="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
 	$(gen_llvm_slot_required_use)
-	!system-llvm? (
-		rocm
-	)
 	^^ (
 		python_targets_python3_10
 		python_targets_python3_11
@@ -277,7 +274,7 @@ gen_rocm_depends() {
 			rocm_${u}? (
 				~dev-libs/rccl-${pv}:${s}
 				~dev-libs/rocm-device-libs-${pv}:${s}
-				~dev-util/hip-${pv}:${s}[rocm,system-llvm=]
+				~dev-util/hip-${pv}:${s}[rocm]
 				~dev-util/roctracer-${pv}:${s}
 				~sci-libs/hipBLAS-${pv}:${s}[rocm]
 				~sci-libs/hipFFT-${pv}:${s}[rocm]
@@ -288,9 +285,6 @@ gen_rocm_depends() {
 				~sci-libs/hipBLASLt-${pv}:${s}[rocm]
 
 				sys-devel/lld:${LLD_SLOT[${pv}]}
-
-				dev-util/hip-compiler:${s}[system-llvm=]
-				dev-util/rocm-compiler:${s}[system-llvm=]
 		"
 
 		if ver_test "${s}" -ge "5.5" ; then
@@ -400,12 +394,6 @@ eerror
 setup_linker() {
 	# The package likes to use lld with gcc which is disallowed.
 	LLD="ld.lld"
-	if ! use system-llvm ; then
-		if ! has_version "sys-devel/llvm-roc:${ROCM_SLOT}" ; then
-eerror "Missing sys-devel/llvm-roc:${ROCM_SLOT}"
-			die
-		fi
-	fi
 einfo "PATH:\t${PATH}"
 	local lld_pv=-1
 	if tc-is-clang \
