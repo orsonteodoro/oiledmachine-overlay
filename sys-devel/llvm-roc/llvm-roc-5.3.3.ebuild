@@ -98,7 +98,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt profile +runtime
-ebuild-revision-12
+ebuild-revision-13
 "
 REQUIRED_USE="
 	cfi? (
@@ -265,7 +265,7 @@ _src_configure() {
 		fi
 	done
 
-	local libdir=$(get_libdir)
+	local libdir=$(rocm_get_libdir)
 	mycmakeargs+=(
 #		-DBUILD_SHARED_LIBS=OFF
 		-DCMAKE_C_FLAGS="${CFLAGS}"
