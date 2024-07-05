@@ -5,13 +5,20 @@ EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
 DOCS_BUILDER="doxygen"
+DOCS_CONFIG_NAME="doxy.cfg"
 DOCS_DEPEND="media-gfx/graphviz"
 LLVM_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake docs prefix python-any-r1 rocm
 
+S="${WORKDIR}/hipamd-rocm-${PV}"
+HIP_S="${WORKDIR}/HIP-rocm-${PV}"
+OCL_S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
+ROCCLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
+RTC_S="${WORKDIR}/roctracer-rocm-${PV}"
+DOCS_DIR="${HIP_S}/docs/doxygen-input"
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/hipamd/archive/rocm-${PV}.tar.gz
 	-> rocm-hipamd-${PV}.tar.gz
@@ -30,7 +37,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm system-llvm test r24"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm system-llvm test ebuild-revision-24"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -133,13 +140,6 @@ HIPAMD_PATCHES=(
 OCL_PATCHES=(
 	"${FILESDIR}/rocm-opencl-runtime-5.3.3-path-changes.patch"
 )
-S="${WORKDIR}/hipamd-rocm-${PV}"
-HIP_S="${WORKDIR}/HIP-rocm-${PV}"
-OCL_S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
-ROCCLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
-RTC_S="${WORKDIR}/roctracer-rocm-${PV}"
-DOCS_DIR="${HIP_S}/docs/doxygen-input"
-DOCS_CONFIG_NAME="doxy.cfg"
 
 pkg_setup() {
 	# Ignore QA FLAGS check for library compiled from assembly sources
