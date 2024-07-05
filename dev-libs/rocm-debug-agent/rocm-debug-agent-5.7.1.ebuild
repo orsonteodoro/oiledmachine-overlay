@@ -19,6 +19,9 @@ https://github.com/ROCm-Developer-Tools/rocr_debug_agent/archive/rocm-${PV}.tar.
 DESCRIPTION="Radeon Open Compute Debug Agent"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/rocr_debug_agent/"
 LICENSE="MIT"
+RESTRICT="
+	test
+"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test ebuild-revision-3"
 RDEPEND="
@@ -37,9 +40,6 @@ BDEPEND="
 	test? (
 		~dev-util/hip-${PV}:${ROCM_SLOT}
 	)
-"
-RESTRICT="
-	test
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.7.0-epoll_wait-nevents.patch"
