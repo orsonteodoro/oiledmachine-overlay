@@ -267,7 +267,7 @@ src_test() {
 	export ROCBLAS_TENSILE_LIBPATH="${BUILD_DIR}/Tensile/library"
 	export ROCBLAS_TEST_TIMEOUT=3600
 	export LD_LIBRARY_PATH="${BUILD_DIR}/clients:${BUILD_DIR}/library/src"
-	edob "${PN,,}-test"
+	edob "./${PN,,}-test"
 }
 
 src_install() {
