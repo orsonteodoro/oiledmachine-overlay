@@ -3,10 +3,19 @@
 
 EAPI=8
 
+QA_PREBUILT="
+/opt/rocm-5.1.3/hsa-amd-aqlprofile/lib/libhsa-amd-aqlprofile64.so.1
+/opt/rocm-5.1.3/hsa-amd-aqlprofile/lib/libhsa-amd-aqlprofile64.so.1.0.50103
+/opt/rocm-5.1.3/hsa-amd-aqlprofile/lib/libhsa-amd-aqlprofile64.so
+/opt/rocm-5.1.3/lib/libhsa-amd-aqlprofile64.so
+/opt/rocm-5.1.3/share/doc/hsa-amd-aqlprofile/LICENSE.md
+"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit unpacker
 
+KEYWORDS="~amd64"
+S="${WORKDIR}"
 SRC_URI="
 https://repo.radeon.com/rocm/apt/5.1.3/pool/main/h/hsa-amd-aqlprofile/hsa-amd-aqlprofile_1.0.0.50103-66_amd64.deb
 "
@@ -19,23 +28,14 @@ https://github.com/RadeonOpenCompute/ROCm
 LICENSE="
 	hsa-amd-aqlprofile-LICENSE
 "
+RESTRICT="binchecks strip"
 SLOT="${ROCM_SLOT}/${PV}"
-KEYWORDS="~amd64"
 IUSE="deny-install skip-install ebuild-revision-2"
 RDEPEND="
 	!dev-libs/hsa-amd-aqlprofile:0
 "
 DEPEND="
 	${RDEPEND}
-"
-RESTRICT="binchecks strip"
-S="${WORKDIR}"
-QA_PREBUILT="
-/opt/rocm-5.1.3/hsa-amd-aqlprofile/lib/libhsa-amd-aqlprofile64.so.1
-/opt/rocm-5.1.3/hsa-amd-aqlprofile/lib/libhsa-amd-aqlprofile64.so.1.0.50103
-/opt/rocm-5.1.3/hsa-amd-aqlprofile/lib/libhsa-amd-aqlprofile64.so
-/opt/rocm-5.1.3/lib/libhsa-amd-aqlprofile64.so
-/opt/rocm-5.1.3/share/doc/hsa-amd-aqlprofile/LICENSE.md
 "
 
 src_unpack(){

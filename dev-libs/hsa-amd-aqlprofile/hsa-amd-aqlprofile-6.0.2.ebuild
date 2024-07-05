@@ -3,10 +3,21 @@
 
 EAPI=8
 
+QA_PREBUILT="
+/opt/rocm-6.0.2/lib/libhsa-amd-aqlprofile64.so.1
+/opt/rocm-6.0.2/lib/hsa-amd-aqlprofile/librocprofv2_att.so
+/opt/rocm-6.0.2/lib/libhsa-amd-aqlprofile64.so.1.0.60002
+/opt/rocm-6.0.2/lib/libhsa-amd-aqlprofile64.so
+/opt/rocm-6.0.2/share/doc/hsa-amd-aqlprofile/EULA
+/opt/rocm-6.0.2/share/doc/hsa-amd-aqlprofile/DISCLAIMER.txt
+/opt/rocm-6.0.2/share/doc/hsa-amd-aqlprofile/LICENSE.md
+"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit unpacker
 
+KEYWORDS="~amd64"
+S="${WORKDIR}"
 SRC_URI="
 hsa-amd-aqlprofile_1.0.0.60002.60002-115~22.04_amd64.deb
 "
@@ -21,25 +32,14 @@ LICENSE="
 	hsa-amd-aqlprofile-DISCLAIMER
 	hsa-amd-aqlprofile-LICENSE
 "
+RESTRICT="binchecks strip fetch"
 SLOT="${ROCM_SLOT}/${PV}"
-KEYWORDS="~amd64"
 IUSE="deny-install skip-install ebuild-revision-2"
 RDEPEND="
 	!dev-libs/hsa-amd-aqlprofile:0
 "
 DEPEND="
 	${RDEPEND}
-"
-RESTRICT="binchecks strip fetch"
-S="${WORKDIR}"
-QA_PREBUILT="
-/opt/rocm-6.0.2/lib/libhsa-amd-aqlprofile64.so.1
-/opt/rocm-6.0.2/lib/hsa-amd-aqlprofile/librocprofv2_att.so
-/opt/rocm-6.0.2/lib/libhsa-amd-aqlprofile64.so.1.0.60002
-/opt/rocm-6.0.2/lib/libhsa-amd-aqlprofile64.so
-/opt/rocm-6.0.2/share/doc/hsa-amd-aqlprofile/EULA
-/opt/rocm-6.0.2/share/doc/hsa-amd-aqlprofile/DISCLAIMER.txt
-/opt/rocm-6.0.2/share/doc/hsa-amd-aqlprofile/LICENSE.md
 "
 
 pkg_nofetch() {
