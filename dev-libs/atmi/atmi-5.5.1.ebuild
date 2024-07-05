@@ -37,24 +37,17 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-debug system-llvm
+debug
 r1
 "
 RDEPEND="
-	!system-llvm? (
-		sys-devel/llvm-roc:=
-		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-	)
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
+	sys-devel/llvm-roc:=
 	sys-devel/llvm:${LLVM_SLOT}
 	virtual/libelf
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
-	system-llvm? (
-		>=sys-devel/llvm-${LLVM_SLOT}:${LLVM_SLOT}
-		sys-devel/llvm:=
-	)
+	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -64,7 +57,6 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
-	"${FILESDIR}/atmi-5.5.1-path-changes.patch"
 	"${FILESDIR}/atmi-5.5.1-headers.patch"
 )
 S="${WORKDIR}/atmi-rocm-${PV}/src"
