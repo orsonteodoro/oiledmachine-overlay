@@ -10,55 +10,42 @@ inherit cmake rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-Device-Libs/"
-	inherit git-r3
 	S="${WORKDIR}/${P}/src"
+	inherit git-r3
 else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/ROCm-Device-Libs-rocm-${PV}"
 	SRC_URI="
 https://github.com/RadeonOpenCompute/ROCm-Device-Libs/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
-	S="${WORKDIR}/ROCm-Device-Libs-rocm-${PV}"
-	KEYWORDS="~amd64"
 fi
 
 DESCRIPTION="Radeon Open Compute Device Libraries"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-Device-Libs"
 LICENSE="MIT"
-SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm test ebuild-revision-5"
-RDEPEND="
-	!dev-libs/rocm-device-libs:0
-	!system-llvm? (
-		sys-devel/llvm-roc:=
-		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-	)
-	system-llvm? (
-		sys-devel/clang:${LLVM_SLOT}
-		sys-devel/llvm:${LLVM_SLOT}
-	)
-"
-DEPEND="
-	${RDEPEND}
-"
-BDEPEND="
-	!system-llvm? (
-		sys-devel/llvm-roc:=
-		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-	)
-	>=dev-build/cmake-3.13.4
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
-	system-llvm? (
-		sys-devel/clang:${LLVM_SLOT}
-		sys-devel/llvm:${LLVM_SLOT}
-	)
-"
 RESTRICT="
 	!test? (
 		test
 	)
 "
+SLOT="${ROCM_SLOT}/${PV}"
+IUSE="test ebuild-revision-5"
+RDEPEND="
+	!dev-libs/rocm-device-libs:0
+	sys-devel/llvm-roc:=
+	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+"
+DEPEND="
+	${RDEPEND}
+"
+BDEPEND="
+	>=dev-build/cmake-3.13.4
+	sys-devel/llvm-roc:=
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 
@@ -68,10 +55,6 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-	if use system-llvm ; then
-# https://github.com/RadeonOpenCompute/ROCm-Device-Libs/issues/94
-		eapply "${FILESDIR}/${PN}-5.5.1-llvm-link.patch"
-	fi
 	rocm_src_prepare
 }
 
