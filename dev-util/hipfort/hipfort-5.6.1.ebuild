@@ -3,11 +3,14 @@
 
 EAPI=8
 
+CMAKE_BUILD_TYPE="RELEASE"
 LLVM_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/${PN}-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipfort/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -18,7 +21,6 @@ HOMEPAGE="
 https://rocm.docs.amd.com/projects/hipfort/en/latest/
 https://github.com/ROCmSoftwarePlatform/hipfort
 "
-KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="debug ebuild-revision-4"
@@ -38,9 +40,7 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}
 "
 RESTRICT="test"
-S="${WORKDIR}/${PN}-rocm-${PV}"
 DOCS=( "README.md" )
-CMAKE_BUILD_TYPE="RELEASE"
 PATCHES=(
 )
 

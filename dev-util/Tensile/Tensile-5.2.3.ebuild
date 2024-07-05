@@ -19,6 +19,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+CMAKE_USE_DIR="${WORKDIR}/${PN}-rocm-${PV}/${PN}/Source"
 DISTUTILS_USE_PEP517="setuptools"
 GCC_SLOT=11
 LLVM_SLOT=14
@@ -29,12 +30,11 @@ ROCM_VERSION="${PV}"
 inherit cmake distutils-r1 prefix rocm toolchain-funcs
 
 KEYWORDS="~amd64"
+S="${WORKDIR}/${PN}-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 	-> rocm-Tensile-${PV}.tar.gz
 "
-S="${WORKDIR}/${PN}-rocm-${PV}"
-CMAKE_USE_DIR="${S}/${PN}/Source"
 
 DESCRIPTION="Stretching GPU performance for GEMMs and tensor contractions"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/Tensile"
