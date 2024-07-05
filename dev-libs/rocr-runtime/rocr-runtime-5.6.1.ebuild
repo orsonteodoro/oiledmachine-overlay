@@ -10,15 +10,15 @@ inherit cmake flag-o-matic rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCR-Runtime/"
-	inherit git-r3
 	S="${WORKDIR}/${P}/src"
+	inherit git-r3
 else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/ROCR-Runtime-rocm-${PV}/src"
 	SRC_URI="
 https://github.com/RadeonOpenCompute/ROCR-Runtime/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
-	S="${WORKDIR}/ROCR-Runtime-rocm-${PV}/src"
-	KEYWORDS="~amd64"
 fi
 
 DESCRIPTION="Radeon Open Compute Runtime"
@@ -26,8 +26,8 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/ROCR-Runtime"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-	+aqlprofile debug system-llvm
-	ebuild-revision-4
+	debug
+	ebuild-revision-5
 "
 CDEPEND="
 	dev-libs/elfutils
@@ -36,29 +36,21 @@ RDEPEND="
 	!dev-libs/rocr-runtime:0
 	${CDEPEND}
 	dev-libs/roct-thunk-interface:${ROCM_SLOT}
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 "
 DEPEND="
 	${CDEPEND}
-	~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
+	~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 "
 # vim-core is needed for "xxd"
 BDEPEND="
-	!system-llvm? (
-		sys-devel/llvm-roc:=
-		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-	)
-	>=dev-build/cmake-3.7
 	>=app-editors/vim-core-9.0.1378
+	>=dev-build/cmake-3.7
+	sys-devel/llvm-roc:=
 	virtual/pkgconfig
-	system-llvm? (
-		=sys-devel/lld-${LLVM_SLOT}*
-		sys-devel/clang:${LLVM_SLOT}
-	)
+	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.6.1-path-changes.patch"
 	"${FILESDIR}/${PN}-5.7.1-link-hsakmt.patch"
 )
 
@@ -68,9 +60,6 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-	if ! use aqlprofile ; then
-		eapply "${FILESDIR}/${PN}-4.3.0_no-aqlprofiler.patch"
-	fi
 	rocm_src_prepare
 }
 
