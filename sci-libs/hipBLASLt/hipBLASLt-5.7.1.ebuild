@@ -22,7 +22,7 @@ CUDA_TARGETS_COMPAT=(
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=17
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic python-r1 rocm
@@ -48,7 +48,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
-benchmark cuda +rocm system-llvm +tensile r2
+benchmark cuda +rocm +tensile ebuild-revison-3
 "
 gen_cuda_required_use() {
 	local x
@@ -87,15 +87,12 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	!system-llvm? (
-		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
-	)
 	dev-libs/boost
 	dev-libs/msgpack
-	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
 	virtual/blas
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?,system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[cuda]
@@ -103,13 +100,6 @@ RDEPEND="
 	rocm? (
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[rocm]
-	)
-	system-llvm? (
-		sys-devel/clang:${LLVM_SLOT}
-		sys-libs/libomp:${LLVM_SLOT}
-	)
-	tensile? (
-		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	)
 "
 DEPEND="
@@ -126,7 +116,6 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/hipBLASLt-5.6.0-set-CMP0074-NEW.patch"
-	"${FILESDIR}/hipBLASLt-5.6.0-path-changes.patch"
 )
 
 pkg_setup() {
@@ -189,7 +178,7 @@ ewarn
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
-		-DCMAKE_INSTALL_LIBDIR="$(get_libdir)"
+		-DCMAKE_INSTALL_LIBDIR="$(rocm_get_libdir)"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DUSE_CUDA=$(usex cuda ON OFF)
 #		-DVIRTUALENV_BIN_DIR="${BUILD_DIR}/venv/bin"

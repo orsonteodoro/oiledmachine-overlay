@@ -6,6 +6,9 @@ EAPI=8
 AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
+	gfx940
+	gfx941
+	gfx942
 )
 CUDA_TARGETS_COMPAT=(
 # The project does not define.
@@ -18,7 +21,7 @@ CUDA_TARGETS_COMPAT=(
         compute_75
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_SLOT=16
+LLVM_SLOT=17
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -216,7 +219,7 @@ ewarn
 			export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
 			export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"
 			mycmakeargs+=(
-				-DTensile_CODE_OBJECT_VERSION="V3" # Avoid V2 build error with with xnack-
+				-DTensile_CODE_OBJECT_VERSION="V3" # Avoid V2 build error with xnack-
 				-DTensile_CPU_THREADS="${nprocs}"
 #				-DTensile_ROOT="${ESYSROOT}${EROCM_PATH}"
 				-DTensile_ROOT="${S}/tensilelite"
@@ -257,5 +260,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
