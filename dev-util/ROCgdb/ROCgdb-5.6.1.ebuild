@@ -31,7 +31,7 @@ LICENSE="
 	LGPL-2.1+
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-4"
+IUSE="ebuild-revision-5"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
