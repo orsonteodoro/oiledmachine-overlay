@@ -6,7 +6,7 @@ EAPI=8
 AOCC_COMPAT=( 16 )
 AOCC_SLOT=${AOCC_COMPAT[0]}
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_SLOT=15 # Same as llvm-roc
+LLVM_SLOT=17 # Same as llvm-roc
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -65,7 +65,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/rocm-flang-5.1.3-rt-flang2-no-rule-fix.patch"
+	"${FILESDIR}/rocm-flang-5.6.0-rt-flang2-no-rule-fix.patch"
 )
 
 fmake() {
@@ -236,9 +236,6 @@ eerror
 		die
 	fi
 
-	append-flags -Wno-int-conversion # Same as a6deb3b a277d13
-	append-flags -Wno-incompatible-function-pointer-types # Same as 8ff4926 061a0fc
-
 	local staging_prefix="${PWD}/install"
 	declare -A _cmake_generator=(
 		["emake"]="Unix Makefiles"
@@ -248,10 +245,12 @@ eerror
 		-G "${_cmake_generator[${CMAKE_MAKEFILE_GENERATOR}]}"
 		-DCMAKE_BUILD_TYPE="Release"
 		-DCMAKE_Fortran_COMPILER_ID="Flang"
+		-DCMAKE_INSTALL_LIBDIR="$(rocm_get_libdir)"
 		-DCMAKE_INSTALL_PREFIX="${staging_prefix}"
 		-DENABLE_DEVEL_PACKAGE=OFF
 		-DENABLE_RUN_PACKAGE=OFF
 		-DPYTHON_EXECUTABLE="${ESYSROOT}/usr/bin/${EPYTHON}"
+#		-DPYTHON_VERSION_STRING="${EPYTHON/python}"
 	)
 	if use aocc ; then
 		export PATH="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin:${PATH}"
@@ -342,13 +341,13 @@ einfo "Switching ${EROOT}/usr/bin/rocm-flang -> ${EROOT}/usr/bin/flang"
 		"${EROOT}/usr/bin/flang"
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
+# OILEDMACHINE-OVERLAY-TEST:  passed (5.7.1, 20240324)
 # Testing:
 #cat <<EOF > "hello.f90"
 #program hello
 #  print *, "hello world"
 #end program
 #EOF
-#/usr/lib64/rocm/5.2/bin/flang hello.f90 -L/usr/lib64/rocm/5.2/llvm/lib64 -o hello.exe
-#LD_LIBRARY_PATH="/usr/lib64/rocm/5.2/llvm/lib64" ./hello.exe
+#/usr/lib64/rocm/5.7/bin/flang hello.f90 -L/usr/lib64/rocm/5.7/llvm/lib64 -o hello.exe
+#LD_LIBRARY_PATH="/usr/lib64/rocm/5.7/llvm/lib64" ./hello.exe

@@ -7,15 +7,18 @@ AOCC_COMPAT=( 16 )
 AOCC_SLOT=${AOCC_COMPAT[0]}
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=17 # Same as llvm-roc
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit aocc cmake flag-o-matic python-any-r1 rocm toolchain-funcs
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/flang-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/flang/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 "
+
 DESCRIPTION="ROCm's fork of Classic Flang with GPU offload support"
 HOMEPAGE="https://github.com/flang-compiler/flang"
 THIRD_PARTY_LICENSES="
@@ -31,7 +34,6 @@ LICENSE="
 # all-rights-reserved, Apache-2.0 - flang-rocm-5.6.0/runtime/libpgmath/LICENSE.txt
 # The Apache-2.0 license template does not have all rights reserved in the distro
 # template but all rights reserved is explicit in Apache-1.0 and BSD licenses.
-KEYWORDS="~amd64"
 RESTRICT="
 	strip
 	test
@@ -62,7 +64,6 @@ BDEPEND="
 		')
 	)
 "
-S="${WORKDIR}/flang-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/rocm-flang-5.6.0-rt-flang2-no-rule-fix.patch"
 )
@@ -107,14 +108,14 @@ einfo "Building Flang lib"
 		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=OFF
-		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)"
+		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(rocm_get_libdir)"
 	)
 einfo "GCC major version:  ${gcc_slot}"
 	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include"
 	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}" -lquadmath
 	filter-flags -Wl,--as-needed
 	if has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
-		:;
+		:
 	else
 eerror
 eerror "64-bit only supported."
@@ -152,14 +153,14 @@ einfo "Building Flang runtime"
 		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=ON
-		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)"
+		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(rocm_get_libdir)"
 	)
 einfo "GCC major version:  ${gcc_slot}"
 	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include"
 	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}" -lquadmath
 	filter-flags -Wl,--as-needed
 	if has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
-		:;
+		:
 	else
 eerror
 eerror "64-bit only supported."
@@ -244,7 +245,7 @@ eerror
 		-G "${_cmake_generator[${CMAKE_MAKEFILE_GENERATOR}]}"
 		-DCMAKE_BUILD_TYPE="Release"
 		-DCMAKE_Fortran_COMPILER_ID="Flang"
-		-DCMAKE_INSTALL_LIBDIR="$(get_libdir)"
+		-DCMAKE_INSTALL_LIBDIR="$(rocm_get_libdir)"
 		-DCMAKE_INSTALL_PREFIX="${staging_prefix}"
 		-DENABLE_DEVEL_PACKAGE=OFF
 		-DENABLE_RUN_PACKAGE=OFF
@@ -262,7 +263,7 @@ eerror
 		)
 	else
 		export PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin:${PATH}"
-		export LD_LIBRARY_PATH="${ED}${EROCM_LLVM_PATH}/$(get_libdir)"
+		export LD_LIBRARY_PATH="${ED}${EROCM_LLVM_PATH}/$(rocm_get_libdir)"
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang"
 			-DCMAKE_CXX_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
@@ -307,7 +308,7 @@ einfo "Sanitizing file/folder permissions"
 		elif file "${path}" | grep -q -e "ELF .* executable" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "symbolic link" ; then
-			:;
+			:
 		elif file "${path}" | grep -q -e "Python script" ; then
 			chmod 0755 "${path}" || die
 		elif [[ "${path}" =~ \.sh$ ]] ; then
