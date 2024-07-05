@@ -39,7 +39,7 @@ LICENSE="MIT"
 # Not compatible with recent versions of pytest \
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="client openmp ebuild-revision-9"
+IUSE="client openmp ebuild-revision-10"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -52,9 +52,9 @@ RDEPEND="
 	dev-lang/python-exec:rocm-${ROCM_SLOT}
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
+	sys-devel/llvm-roc:=
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-	sys-devel/llvm-roc:=
 	openmp? (
 		dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
 		sys-libs/llvm-roc-libomp:${ROCM_SLOT}
@@ -129,7 +129,7 @@ src_configure() {
 		append-flags -fuse-ld=lld
 	fi
 	append-ldflags \
-		-Wl,-L/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir) \
+		-Wl,-L/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir) \
 		-Wl,-lLLVMSupport
 
 	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
@@ -194,7 +194,7 @@ src_install() {
 		"ReplacementKernels" \
 		"ReplacementKernels-cov3" \
 		"Source"
-	insinto "${EROCM_PATH}/$(get_libdir)/cmake/${PN}"
+	insinto "${EROCM_PATH}/$(rocm_get_libdir)/cmake/${PN}"
 	doins "cmake/"*".cmake"
 	if use client; then
 		pushd "${BUILD_DIR}" || die
