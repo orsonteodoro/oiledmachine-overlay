@@ -32,7 +32,6 @@ BDEPEND="
 	>=dev-build/cmake-3.8
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 pkg_setup() {

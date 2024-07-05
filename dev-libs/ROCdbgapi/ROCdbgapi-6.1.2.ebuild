@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=14
+LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
@@ -23,6 +23,7 @@ IUSE=" ebuild-revision-3"
 RDEPEND="
 	!dev-libs/ROCdbgapi:0
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -56,4 +57,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
