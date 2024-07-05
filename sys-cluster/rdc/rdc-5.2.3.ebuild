@@ -35,7 +35,7 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/rdc"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-6"
+IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-7"
 REQUIRED_USE="
 	raslib
 	systemd? (
@@ -131,9 +131,10 @@ src_install() {
 }
 
 pkg_postinst() {
-	if has_version "~sys-kernel/rock-dkms-${PV}" \
+	if \
+		   has_version "~sys-kernel/rock-dkms-${PV}" \
 		|| has_version "~sys-kernel/rocm-sources-${PV}" ; then
-		:;
+		:
 	else
 ewarn
 ewarn "ONE following are required to use ${PN}:"
