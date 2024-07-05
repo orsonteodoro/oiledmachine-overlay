@@ -10,6 +10,8 @@ ROCM_VERSION="${PV}"
 inherit cmake edo flag-o-matic rocm toolchain-funcs
 
 # Some test datasets are shared with rocSPARSE.
+KEYWORDS="~amd64"
+S="${WORKDIR}/hipSPARSE-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipSPARSE/archive/rocm-${PV}.tar.gz
 	-> hipSPARSE-${PV}.tar.gz
@@ -58,9 +60,8 @@ https://sparse.tamu.edu/MM/DNVS/shipsec1.tar.gz
 DESCRIPTION="ROCm SPARSE marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSPARSE"
 LICENSE="MIT"
-KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="cuda +rocm system-llvm test r3"
+IUSE="cuda +rocm test ebuild-revision-4"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
@@ -74,8 +75,7 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?,system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
@@ -92,19 +92,12 @@ BDEPEND="
 	test? (
 		dev-cpp/gtest
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
-		!system-llvm? (
-			~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
-		)
-		system-llvm? (
-			sys-libs/libomp:${LLVM_SLOT}
-		)
+		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 	)
 "
-S="${WORKDIR}/hipSPARSE-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-remove-matrices-unpacking.patch"
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 pkg_setup() {
