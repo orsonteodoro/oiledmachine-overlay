@@ -25,28 +25,34 @@ CUDA_TARGETS_COMPAT=(
 	compute_70
 	compute_75
 )
+HIPRAND_COMMIT="8babdbe0cf4dc330c9ec5a0231ac059187a7bc8a"
 LLVM_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic rocm
 
-HIPRAND_COMMIT_HASH="8babdbe0cf4dc330c9ec5a0231ac059187a7bc8a"
+KEYWORDS="~amd64"
+S="${WORKDIR}/rocRAND-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/${PN}/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/ROCmSoftwarePlatform/hipRAND/archive/${HIPRAND_COMMIT_HASH}.tar.gz
-	-> hipRAND-${HIPRAND_COMMIT_HASH}.tar.gz
+https://github.com/ROCmSoftwarePlatform/hipRAND/archive/${HIPRAND_COMMIT}.tar.gz
+	-> hipRAND-${HIPRAND_COMMIT}.tar.gz
 "
 
 DESCRIPTION="Generate pseudo-random and quasi-random numbers"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocRAND"
 LICENSE="MIT"
-KEYWORDS="~amd64"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda hip-cpu +rocm test r4
+benchmark cuda hip-cpu +rocm test ebuild-revision-5
 "
 gen_cuda_required_use() {
 	local x
@@ -106,15 +112,7 @@ BDEPEND="
 	>=dev-build/cmake-3.10.2
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
-
-RESTRICT="
-	!test? (
-		test
-	)
-"
-S="${WORKDIR}/rocRAND-rocm-${PV}"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.5.1-path-changes.patch"
 )
 
 pkg_setup() {
@@ -124,7 +122,7 @@ pkg_setup() {
 src_prepare() {
 	rmdir hipRAND || die
 	mv -v \
-		../hipRAND-${HIPRAND_COMMIT_HASH} \
+		../hipRAND-${HIPRAND_COMMIT} \
 		hipRAND \
 		|| die
 
@@ -167,8 +165,8 @@ get_nvgpu_targets() {
 }
 
 src_configure() {
-	addpredict /dev/kfd
-	addpredict /dev/dri/
+	addpredict "/dev/kfd"
+	addpredict "/dev/dri/"
 	local mycmakeargs=(
 		-DBUILD_BENCHMARK=$(usex benchmark ON OFF)
 
@@ -244,8 +242,8 @@ src_test() {
 src_install() {
 	cmake_src_install
 	if use benchmark; then
-		cd "${BUILD_DIR}"/benchmark
-		dobin benchmark_rocrand_*
+		cd "${BUILD_DIR}/benchmark"
+		dobin "benchmark_rocrand_"*
 	fi
 	rocm_mv_docs
 	rocm_fix_rpath
