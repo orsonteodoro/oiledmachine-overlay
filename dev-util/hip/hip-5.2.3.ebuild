@@ -37,7 +37,7 @@ DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-24"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-25"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -131,10 +131,11 @@ OCL_PATCHES=(
 )
 
 pkg_setup() {
-	# Ignore QA FLAGS check for library compiled from assembly sources
-	QA_FLAGS_IGNORED="/usr/$(get_libdir)/libhiprtc-builtins.so.$(ver_cut 1-2)"
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
+
+	# Ignore QA FLAGS check for library compiled from assembly sources
+	QA_FLAGS_IGNORED="/opt/rocm-${PV}/$(rocm_get_libdir)/libhiprtc-builtins.so.$(ver_cut 1-2)"
 }
 
 src_prepare() {
