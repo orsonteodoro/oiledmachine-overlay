@@ -277,7 +277,7 @@ ewarn "QA:  ROCM_SLOT should be defined."
 
 	local clang_selected_desc
 	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
-		EROCM_CLANG_PATH="/opt/rocm-${ROCM_VERSION}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
+		EROCM_CLANG_PATH="/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)/clang/${CLANG_SLOT}"
 		clang_selected_desc="sys-devel/llvm-roc:${LLVM_SLOT}"
 	else
 		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
@@ -412,7 +412,7 @@ _rocm_change_common_paths() {
 		2>/dev/null || true
 	sed \
 		-i \
-		-e "s|@LIBDIR@|$(get_libdir)|g" \
+		-e "s|@LIBDIR@|$(rocm_get_libdir)|g" \
 		$(grep -r -l -e "@LIBDIR@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
@@ -485,7 +485,7 @@ _rocm_change_common_paths() {
 		2>/dev/null || true
 
 
-	local libdir_suffix="$(get_libdir)"
+	local libdir_suffix="$(rocm_get_libdir)"
 	libdir_suffix="${libdir_suffix/lib}"
 	sed \
 		-i \
@@ -582,12 +582,12 @@ verify_libstdcxx() {
 		["3.4.27"]="9" # guessed
 		["3.4.28"]="8" # guessed
 	)
-	local hip_libstdcxx_ver=$(strings "${EROCM_PATH}/$(get_libdir)/libamdhip64.so" \
+	local hip_libstdcxx_ver=$(strings "${EROCM_PATH}/$(rocm_get_libdir)/libamdhip64.so" \
 		| grep -E "GLIBCXX_[0-9]\.[0-9]\.[0-9]+" \
 		| sort -V \
 		| tail -n 1 \
 		| cut -f 2 -d "_")
-	local hsa_runtime_libstdcxx_ver=$(strings "${EROCM_PATH}/$(get_libdir)/libhsa-runtime64.so" \
+	local hsa_runtime_libstdcxx_ver=$(strings "${EROCM_PATH}/$(rocm_get_libdir)/libhsa-runtime64.so" \
 		| grep -E "GLIBCXX_[0-9]\.[0-9]\.[0-9]+" \
 		| sort -V \
 		| tail -n 1 \
@@ -655,7 +655,7 @@ rocm_src_configure() {
 			# You must call rocm_src_configure not cmake_src_configure
 			# Prevent configure test issues
 			append-flags \
-				-Wl,-L"${ESYSROOT}${EROCM_PATH}/$(get_libdir)" \
+				-Wl,-L"${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)" \
 
 			if grep -q -e "gfortran" $(find "${WORKDIR}" -name "CMakeLists.txt" -o -name "*.cmake") ; then
 				:
@@ -663,15 +663,15 @@ rocm_src_configure() {
 				# Prevent configure test issues
 				append-flags \
 					--rocm-path="${ESYSROOT}${EROCM_PATH}" \
-					--rocm-device-lib-path="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/amdgcn/bitcode"
+					--rocm-device-lib-path="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/amdgcn/bitcode"
 			fi
 			append-ldflags \
-				-L"${ESYSROOT}${EROCM_PATH}/$(get_libdir)"
+				-L"${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)"
 		else
 			append-flags \
-				-Wl,-L"${ESYSROOT}${EROCM_PATH}/$(get_libdir)"
+				-Wl,-L"${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)"
 			append-ldflags \
-				-L"${ESYSROOT}${EROCM_PATH}/$(get_libdir)"
+				-L"${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)"
 		fi
 		cmake_src_configure
 	else
@@ -750,15 +750,7 @@ rocm_mv_docs() {
 # @DESCRIPTION:
 # Prints out the corresponding lib folder matchin the ABI.
 rocm_get_libdir() {
-	if [[ "${_ABI}" == "amd64" ]] ; then
-		echo "lib64"
-	#elif [[ "${_ABI}" == "x86" ]] ; then
-# Not supported
-	#	echo "lib"
-	else
-eerror "ABI=${ABI} is not supported."
-		die
-	fi
+	echo "lib"
 }
 
 # @FUNCTION: rocm_fix_rpath
@@ -1168,19 +1160,19 @@ rocm_get_libomp_path() {
 		libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
 	else
 		# The suffix allows us to resolve the ambiguousness.
-		if [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}roc" ]] ; then
-			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}roc"
-		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}git" ]] ; then
+		if [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so.${LLVM_SLOT}roc" ]] ; then
+			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so.${LLVM_SLOT}roc"
+		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so.${LLVM_SLOT}git" ]] ; then
 			# May require RPATH
 			# Unstable API, slotted
-			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}git"
-		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}" ]] ; then
+			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so.${LLVM_SLOT}git"
+		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so.${LLVM_SLOT}" ]] ; then
 			# Requires RPATH
 			# Stable API, slotted
-			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
+			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so.${LLVM_SLOT}"
 		else
 			# Requires RPATH
-			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so"
+			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so"
 		fi
 	fi
 	echo "${libomp_path}"
