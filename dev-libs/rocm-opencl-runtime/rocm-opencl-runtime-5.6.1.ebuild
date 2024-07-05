@@ -39,7 +39,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug test
-ebuild-revision-1
+ebuild-revision-2
 "
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
@@ -116,16 +116,16 @@ src_configure() {
 }
 
 src_install() {
-	insinto /usr/$(get_libdir)/rocm/${ROCM_SLOT}/etc/OpenCL/vendors
-	doins config/amdocl64.icd
+	insinto "/opt/rocm-${ROCM_VERSION}/etc/OpenCL/vendors"
+	doins "config/amdocl64.icd"
 	cd "${BUILD_DIR}" || die
-	insinto /usr/$(get_libdir)/rocm/${ROCM_SLOT}/$(get_libdir)
-	doins amdocl/libamdocl64.so
-	doins tools/cltrace/libcltrace.so
+	insinto "/opt/rocm-${ROCM_VERSION}/$(rocm_get_libdir)"
+	doins "amdocl/libamdocl64.so"
+	doins "tools/cltrace/libcltrace.so"
 	# TODO symlinks:
-	# /usr/$(get_libdir)/rocm/${ROCM_SLOT}/etc/OpenCL/vendors/amdocl64.icd -> /etc/OpenCL/vendors/amdocl64.icd
-	# /usr/$(get_libdir)/rocm/${ROCM_SLOT}/$(get_libdir)/libamdocl64.so /usr/$(get_libdir)/libamdocl64.so
-	# /usr/$(get_libdir)/rocm/${ROCM_SLOT}/$(get_libdir)/libcltrace.so /usr/$(get_libdir)/libcltrace.so
+	# /opt/rocm-${ROCM_VERSION}/etc/OpenCL/vendors/amdocl64.icd -> /etc/OpenCL/vendors/amdocl64.icd
+	# /opt/rocm-${ROCM_VERSION}/$(rocm_get_libdir)/libamdocl64.so /usr/$(get_libdir)/libamdocl64.so
+	# /opt/rocm-${ROCM_VERSION}/$(rocm_get_libdir)/libcltrace.so /usr/$(get_libdir)/libcltrace.so
 }
 
 # Copied from rocm.eclass. This ebuild does not need amdgpu_targets
