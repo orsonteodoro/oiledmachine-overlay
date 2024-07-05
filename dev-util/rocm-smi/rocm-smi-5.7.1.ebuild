@@ -10,16 +10,16 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 inherit cmake python-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
-	inherit git-r3
-	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rocm_smi_lib"
 	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rocm_smi_lib"
+	inherit git-r3
 else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/rocm_smi_lib-rocm-${PV}"
 	SRC_URI="
 https://github.com/RadeonOpenCompute/rocm_smi_lib/archive/rocm-${PV}.tar.gz
 	-> rocm-smi-${PV}.tar.gz
 	"
-	KEYWORDS="~amd64"
-	S="${WORKDIR}/rocm_smi_lib-rocm-${PV}"
 fi
 
 DESCRIPTION="ROCm System Management Interface Library"

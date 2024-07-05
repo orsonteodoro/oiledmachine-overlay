@@ -13,12 +13,12 @@ if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCm-Developer-Tools/ROCgdb/"
 	inherit git-r3
 else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/${PN}-rocm-${PV}"
 	SRC_URI="
 https://github.com/ROCm-Developer-Tools/ROCgdb/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
-	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-rocm-${PV}"
 fi
 
 DESCRIPTION=""
