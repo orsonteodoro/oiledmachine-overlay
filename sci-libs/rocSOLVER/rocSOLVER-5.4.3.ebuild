@@ -21,6 +21,8 @@ ROCM_VERSION="${PV}"
 
 inherit cmake edo rocm
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/${PN}-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocSOLVER/archive/rocm-${PV}.tar.gz
 	-> rocSOLVER-${PV}.tar.gz
@@ -29,16 +31,19 @@ https://github.com/ROCmSoftwarePlatform/rocSOLVER/archive/rocm-${PV}.tar.gz
 DESCRIPTION="Implementation of a subset of LAPACK functionality on the ROCm platform"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSOLVER"
 LICENSE="BSD"
-KEYWORDS="~amd64"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test benchmark system-llvm r2"
+IUSE="test benchmark ebuild-revision-3"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 RDEPEND="
 	=dev-libs/libfmt-8*
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm,system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCM_USEDEP},rocm]
 	benchmark? (
 		virtual/blas
@@ -56,15 +61,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
-
-RESTRICT="
-	!test? (
-		test
-	)
-"
-S="${WORKDIR}/${PN}-rocm-${PV}"
 
 pkg_setup() {
 	rocm_pkg_setup
@@ -77,8 +74,8 @@ src_prepare() {
 
 src_configure() {
 	# Avoiding a sandbox violation
-	addpredict /dev/kfd
-	addpredict /dev/dri/
+	addpredict "/dev/kfd"
+	addpredict "/dev/dri/"
 
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
@@ -104,14 +101,14 @@ src_test() {
 	check_amdgpu
 	cd "${BUILD_DIR}/clients/staging" || die
 	LD_LIBRARY_PATH="${BUILD_DIR}/library/src" \
-	edob ./rocsolver-test
+	edob "./rocsolver-test"
 }
 
 src_install() {
 	cmake_src_install
 	if use benchmark; then
 		cd "${BUILD_DIR}" || die
-		dobin clients/staging/rocsolver-bench
+		dobin "clients/staging/rocsolver-bench"
 	fi
 	rocm_mv_docs
 }
