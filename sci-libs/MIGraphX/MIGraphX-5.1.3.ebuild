@@ -13,7 +13,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1030
 )
 LLVM_SLOT=14
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-r1 rocm
@@ -22,12 +22,12 @@ if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX/"
 	inherit git-r3
 else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/${MY_PN}-rocm-${PV}"
 	SRC_URI="
 https://github.com/ROCmSoftwarePlatform/AMDMIGraphX/archive/rocm-${PV}.tar.gz
 	-> ${MY_PN}-${PV}.tar.gz
 	"
-	KEYWORDS="~amd64"
-	S="${WORKDIR}/${MY_PN}-rocm-${PV}"
 fi
 
 DESCRIPTION="AMD's graph optimization engine"
@@ -35,7 +35,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
--cpu -fpga -hip-rtc -mlir +rocm system-llvm test
+-cpu -fpga -hip-rtc -mlir +rocm test
 r2
 "
 REQUIRED_USE="
@@ -59,20 +59,15 @@ RDEPEND="
 	dev-libs/msgpack
 	cpu? (
 		dev-libs/oneDNN
-		!system-llvm? (
-			~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
-		)
-		system-llvm? (
-			sys-libs/libomp:${LLVM_SLOT}
-		)
+		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 	)
 	rocm? (
 		~sci-libs/miopen-${PV}:${ROCM_SLOT}
 		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
 	)
 	test? (
-		~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
+		~dev-util/hip-${PV}:${ROCM_SLOT}
 	)
 "
 DEPEND="
@@ -81,21 +76,11 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-build/cmake-3.5
-	sys-devel/hip-compiler:${ROCM_SLOT}[system-llvm=]
+	sys-devel/llvm-roc:=
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
-	!system-llvm? (
-		sys-devel/llvm-roc:=
-		~sys-devel/llvm-roc-${PV}
-	)
-	rocm? (
-		sys-devel/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	)
-	system-llvm? (
-		sys-devel/clang:${LLVM_SLOT}[extra(+)]
-	)
+	~sys-devel/llvm-roc-${PV}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 pkg_setup() {

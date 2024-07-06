@@ -10,13 +10,14 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906
 	gfx908
+	gfx940
 	gfx1030
 )
-LLVM_SLOT=15
+LLVM_SLOT=17
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake python-r1 rocm
+inherit cmake flag-o-matic python-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX/"
@@ -73,15 +74,18 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-cpp/blaze-3.8:=
+	>=dev-cpp/blaze-3.4:=
 "
 BDEPEND="
-	>=dev-build/cmake-3.5
+	>=dev-build/cmake-3.15
 	sys-devel/llvm-roc:=
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	~sys-devel/llvm-roc-${PV}
 	mlir? (
-		~sci-libs/rocMLIR-${PV}:${ROCM_SLOT}
+		|| (
+			~sci-libs/rocMLIR-${PV}:${ROCM_SLOT}
+			=sci-libs/rocMLIR-${ROCM_SLOT}*:${ROCM_SLOT}
+		)
 	)
 "
 PATCHES=(
@@ -131,6 +135,5 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
-
