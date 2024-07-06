@@ -29,18 +29,14 @@ EAPI=8
 # OSError: [Errno 8] Exec format error: '//usr/lib64/rocm/5.7/bin/hipcc.bat'
 
 AMDGPU_TARGETS_COMPAT=(
-	gfx803
 	gfx900
 	gfx906_xnack_minus
 	gfx908_xnack_minus
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
-	gfx940_xnack_minus
-	gfx940_xnack_plus
-	gfx941_xnack_minus
-	gfx941_xnack_plus
-	gfx942_xnack_minus
-	gfx942_xnack_plus
+	gfx940
+	gfx941
+	gfx942
 	gfx1010
 	gfx1012
 	gfx1030
@@ -49,16 +45,6 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
-CUDA_TARGETS_COMPAT=(
-# The project does not define.
-# Listed is same as rocFFT's.
-        sm_60
-	sm_70
-	sm_75
-	compute_60
-        compute_70
-        compute_75
-)
 DOCS_BUILDER="doxygen"
 DOCS_DIR="docs"
 DOCS_DEPEND="
@@ -88,19 +74,8 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 benchmark cuda +rocm test ebuild-revision-9
 "
-gen_cuda_required_use() {
-	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
-		echo "
-			cuda_targets_${x}? (
-				cuda
-			)
-		"
-	done
-}
 gen_rocm_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -112,13 +87,7 @@ gen_rocm_required_use() {
 	done
 }
 REQUIRED_USE="
-	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
-	cuda? (
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		)
-	)
 	rocm? (
 		${ROCM_REQUIRED_USE}
 	)
@@ -217,9 +186,9 @@ src_prepare() {
 }
 
 src_configure() {
-	addpredict /dev/random
-	addpredict /dev/kfd
-	addpredict /dev/dri/
+	addpredict "/dev/random"
+	addpredict "/dev/kfd"
+	addpredict "/dev/dri/"
 
 	# Prevent error below for miopen
 	# undefined reference to `rocblas_status_ rocblas_internal_check_numerics_matrix_template
