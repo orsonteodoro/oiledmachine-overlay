@@ -4,6 +4,7 @@
 EAPI=8
 
 # TODO:  review the install prefix
+# TODO:  recheck/patch hardcoded paths in code level to /opt/rocm/
 
 inherit hip-versions
 
@@ -45,8 +46,8 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
-cpu opencl rocm system-llvm test
-r2
+cpu opencl rocm test
+ebuild-revision-4
 "
 gen_rocm_required_use() {
 	local x
@@ -81,15 +82,12 @@ gen_rdepend_llvm() {
 }
 RDEPEND="
 	!sci-libs/rpp:0
-	!system-llvm? (
-		dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
-		sys-libs/llvm-roc-libomp:${ROCM_SLOT}
-		sys-devel/llvm-roc:${ROCM_SLOT}
-		sys-libs/llvm-roc-libomp:=
-		sys-devel/llvm-roc:=
-	)
+	dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
+	sys-libs/llvm-roc-libomp:${ROCM_SLOT}
+	sys-devel/llvm-roc:${ROCM_SLOT}
+	sys-libs/llvm-roc-libomp:=
+	sys-devel/llvm-roc:=
 	>=dev-libs/boost-1.72:=
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	opencl? (
 		virtual/opencl
 	)
@@ -97,11 +95,6 @@ RDEPEND="
 		dev-util/hip:${ROCM_SLOT}[rocm]
 		dev-libs/rocm-device-libs:${ROCM_SLOT}
 		dev-util/hip:=
-	)
-	system-llvm? (
-		$(gen_rdepend_llvm)
-		sys-devel/clang:=
-		sys-devel/llvm:=
 	)
 "
 DEPEND="
@@ -117,7 +110,6 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
-	"${FILESDIR}/rpp-0.96-path-changes.patch"
 )
 
 pkg_setup() {
@@ -185,7 +177,7 @@ ewarn
 		)
 		append-flags \
 			--rocm-path="${ESYSROOT}${EROCM_PATH}" \
-			--rocm-device-lib-path="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/amdgcn/bitcode"
+			--rocm-device-lib-path="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/amdgcn/bitcode"
 
 		# Fix:
 		# lld: error: undefined symbol: __stack_chk_guard
@@ -227,19 +219,11 @@ eerror
 		)
 	else
 einfo "Using libomp"
-		if use system-llvm ; then
-			mycmakeargs+=(
-				-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp -Wno-unused-command-line-argument"
-				-DOpenMP_CXX_LIB_NAMES="libomp"
-				-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
-			)
-		else
-			mycmakeargs+=(
-				-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp -Wno-unused-command-line-argument"
-				-DOpenMP_CXX_LIB_NAMES="libomp"
-				-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so"
-			)
-		fi
+		mycmakeargs+=(
+			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp -Wno-unused-command-line-argument"
+			-DOpenMP_CXX_LIB_NAMES="libomp"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so"
+		)
 	fi
 
 	rocm_src_configure
