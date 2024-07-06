@@ -6,6 +6,28 @@ EAPI=8
 # LLVM 17 ; See https://github.com/intel/llvm/blob/sycl-nightly/20230417/llvm/CMakeLists.txt#L19
 # U22.04 ; See https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/doc/GetStartedGuide.md?plain=1#L292
 
+ALL_LLVM_TARGETS=(
+	AArch64
+	AMDGPU
+	ARM
+	AVR
+	BPF
+	Hexagon
+	Lanai
+	Mips
+	MSP430
+	NVPTX
+	PowerPC
+	RISCV
+	Sparc
+	SystemZ
+	WebAssembly
+	X86
+	XCore
+)
+ALL_LLVM_TARGETS=(
+	${ALL_LLVM_TARGETS[@]/#/llvm_targets_}
+)
 # GPUs were tested/supported upstream.
 # See https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/doc/UsersManual.md?plain=1#L73
 AMDGPU_TARGETS_COMPAT=(
@@ -33,6 +55,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1032
 	gfx1034
 )
+BUILD_DIR="${WORKDIR}/llvm-sycl-nightly-${PV//./}/build"
+CMAKE_USE_DIR="${WORKDIR}/llvm-sycl-nightly-${PV//./}/llvm"
+# We cannot unbundle this because it has to be compiled with the clang/llvm
+# that we are building here. Otherwise we run into problems running the compiler.
+CPU_EMUL_COMMIT="38f070a7e1de00d0398224e9d6306cc59010d147" # Same as 1.0.31 ; Search committer-date:<=2023-04-17
 CUDA_TARGETS_COMPAT=(
 	sm_50 # Default
 	sm_52
@@ -52,14 +79,16 @@ CUDA_TARGETS_COMPAT=(
 )
 GCC_COMPAT=( {13..11} ) # Should only list non EOL
 LLVM_COMPAT=( 17 13 12 ) # Should only list non EOL
-# We cannot unbundle this because it has to be compiled with the clang/llvm
-# that we are building here. Otherwise we run into problems running the compiler.
-CPU_EMUL_COMMIT="38f070a7e1de00d0398224e9d6306cc59010d147" # Same as 1.0.31 ; Search committer-date:<=2023-04-17
-VC_INTR_COMMIT="3ac855c9253d608a36d10b8ff87e62aa413bbf23" # Newer versions cause compile failure \
-# See https://github.com/intel/llvm/blob/sycl-nightly/20230417/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19C36-L19C76
-UR_COMMIT="74843ea0800e6fb7ce0f82e0ef991fc258f4b9bd" # \
-# See https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/plugins/unified_runtime/CMakeLists.txt#L7
+LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/(-)?}
 PYTHON_COMPAT=( python3_{10..12} )
+ROCM_SLOTS=(
+	rocm_4_3
+	rocm_4_2
+)
+# For UR_COMMIT, see https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/plugins/unified_runtime/CMakeLists.txt#L7
+UR_COMMIT="74843ea0800e6fb7ce0f82e0ef991fc258f4b9bd" # \
+# For VC_INTR_COMMIT, see https://github.com/intel/llvm/blob/sycl-nightly/20230417/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19
+VC_INTR_COMMIT="3ac855c9253d608a36d10b8ff87e62aa413bbf23" # Newer versions cause compile failure \
 
 inherit cmake flag-o-matic llvm python-any-r1 rocm toolchain-funcs
 
@@ -79,6 +108,8 @@ DOCS_DEPEND="
 inherit docs
 
 #KEYWORDS="~amd64" # Needs install test
+S="${WORKDIR}/llvm-sycl-nightly-${PV//./}"
+S_UR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
 SRC_URI="
 https://github.com/intel/llvm/archive/refs/tags/sycl-nightly/${PV//./}.tar.gz
 	-> ${P}.tar.gz
@@ -99,11 +130,6 @@ https://github.com/oneapi-src/unified-runtime/commit/4311ed92392cf3a6d5221f3a2e9
 #   list sub-command FILTER, mode REGEX failed to compile regex
 #   "/var/tmp/portage/sys-devel/DPC++-2023.04.17/work/llvm-sycl-nightly-20230417/build/tools/sycl/plugins/unified_runtime/unified-runtime.".
 
-S="${WORKDIR}/llvm-sycl-nightly-${PV//./}"
-S_UR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
-BUILD_DIR="${S}/build"
-CMAKE_USE_DIR="${S}/llvm"
-
 DESCRIPTION="oneAPI Data Parallel C++ compiler"
 HOMEPAGE="https://github.com/intel/llvm"
 LICENSE="
@@ -117,33 +143,6 @@ RESTRICT="
 "
 SLOT="0/6" # Based on libsycl.so with SYCL_MAJOR_VERSION in \
 # https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/CMakeLists.txt#L35
-ALL_LLVM_TARGETS=(
-	AArch64
-	AMDGPU
-	ARM
-	AVR
-	BPF
-	Hexagon
-	Lanai
-	Mips
-	MSP430
-	NVPTX
-	PowerPC
-	RISCV
-	Sparc
-	SystemZ
-	WebAssembly
-	X86
-	XCore
-)
-ALL_LLVM_TARGETS=(
-	${ALL_LLVM_TARGETS[@]/#/llvm_targets_}
-)
-LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/(-)?}
-ROCM_SLOTS=(
-	rocm_4_3
-	rocm_4_2
-)
 IUSE+="
 ${ALL_LLVM_TARGETS[*]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}

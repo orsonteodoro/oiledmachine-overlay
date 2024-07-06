@@ -6,6 +6,28 @@ EAPI=8
 # LLVM 16 ; See https://github.com/intel/llvm/blob/2022-12/llvm/CMakeLists.txt#L12
 # U20.04 ; See https://github.com/intel/llvm/blob/2022-12/sycl/doc/GetStartedGuide.md?plain=1#L292
 
+ALL_LLVM_TARGETS=(
+	AArch64
+	AMDGPU
+	ARM
+	AVR
+	BPF
+	Hexagon
+	Lanai
+	Mips
+	MSP430
+	NVPTX
+	PowerPC
+	RISCV
+	Sparc
+	SystemZ
+	WebAssembly
+	X86
+	XCore
+)
+ALL_LLVM_TARGETS=(
+	${ALL_LLVM_TARGETS[@]/#/llvm_targets_}
+)
 # GPUs were tested/supported upstream.
 # See https://github.com/intel/llvm/blob/2022-12/sycl/doc/UsersManual.md?plain=1#L60
 AMDGPU_TARGETS_COMPAT=(
@@ -32,6 +54,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1031
 	gfx1032
 )
+BUILD_DIR="${WORKDIR}/llvm-sycl-nightly-${PV//./}/build"
+CMAKE_USE_DIR="${WORKDIR}/llvm-sycl-nightly-${PV//./}/llvm"
+# We cannot unbundle this because it has to be compiled with the clang/llvm
+# that we are building here. Otherwise we run into problems running the compiler.
+CPU_EMUL_COMMIT="0c5fc287f34ae38d3184ab70ea5513d9fb1ff338" # Search committer-date:<=2022-12-13
 CUDA_TARGETS_COMPAT=(
 	sm_50 # Default
 	sm_52
@@ -49,15 +76,17 @@ CUDA_TARGETS_COMPAT=(
 	sm_89
 	sm_90
 )
-# We cannot unbundle this because it has to be compiled with the clang/llvm
-# that we are building here. Otherwise we run into problems running the compiler.
-CPU_EMUL_COMMIT="0c5fc287f34ae38d3184ab70ea5513d9fb1ff338" # Search committer-date:<=2022-12-13
-VC_INTR_COMMIT="782fbf7301dc73acaa049a4324c976ad94f587f7" # Newer versions cause compile failure \
-# See https://github.com/intel/llvm/blob/2022-12/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19C36-L19C76
+LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/(-)?}
 UR_COMMIT="fd711c920acc4434cb52ff18b078c082d9d7f44d" # \
-# See https://github.com/intel/llvm/blob/2022-12/sycl/plugins/unified_runtime/CMakeLists.txt#L7
+# For UR_COMMIT, see https://github.com/intel/llvm/blob/2022-12/sycl/plugins/unified_runtime/CMakeLists.txt#L7
 LLVM_COMPAT=( 16 13 12 ) # Upstream tested versions
 PYTHON_COMPAT=( python3_{10..12} )
+ROCM_SLOTS=(
+	rocm_4_3
+	rocm_4_2
+)
+# For VC_INTR_COMMIT, see https://github.com/intel/llvm/blob/2022-12/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19
+VC_INTR_COMMIT="782fbf7301dc73acaa049a4324c976ad94f587f7" # Newer versions cause compile failure \
 
 inherit cmake flag-o-matic python-any-r1 rocm toolchain-funcs
 
@@ -77,6 +106,8 @@ DOCS_DEPEND="
 inherit docs
 
 #KEYWORDS="~amd64" # Needs install test
+S="${WORKDIR}/llvm-${PV//./-}"
+S_UR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
 SRC_URI="
 https://github.com/intel/llvm/archive/refs/tags/sycl-nightly/${PV//./}.tar.gz
 	-> ${P}.tar.gz
@@ -89,11 +120,6 @@ https://github.com/intel/cm-cpu-emulation/archive/${CPU_EMUL_COMMIT}.tar.gz
 	-> ${P}-cm-cpu-emulation-${CPU_EMUL_COMMIT:0:7}.tar.gz
 	)
 "
-
-S="${WORKDIR}/llvm-${PV//./-}"
-S_UR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
-BUILD_DIR="${S}/build"
-CMAKE_USE_DIR="${S}/llvm"
 
 DESCRIPTION="oneAPI Data Parallel C++ compiler"
 HOMEPAGE="https://github.com/intel/llvm"
@@ -108,33 +134,6 @@ RESTRICT="
 "
 SLOT="0/6" # Based on libsycl.so with SYCL_MAJOR_VERSION in \
 # https://github.com/intel/llvm/blob/2022-12/sycl/CMakeLists.txt#L35
-ALL_LLVM_TARGETS=(
-	AArch64
-	AMDGPU
-	ARM
-	AVR
-	BPF
-	Hexagon
-	Lanai
-	Mips
-	MSP430
-	NVPTX
-	PowerPC
-	RISCV
-	Sparc
-	SystemZ
-	WebAssembly
-	X86
-	XCore
-)
-ALL_LLVM_TARGETS=(
-	${ALL_LLVM_TARGETS[@]/#/llvm_targets_}
-)
-LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/(-)?}
-ROCM_SLOTS=(
-	rocm_4_3
-	rocm_4_2
-)
 IUSE+="
 ${ALL_LLVM_TARGETS[*]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}

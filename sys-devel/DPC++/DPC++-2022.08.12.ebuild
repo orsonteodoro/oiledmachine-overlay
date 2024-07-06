@@ -6,70 +6,6 @@ EAPI=8
 # LLVM 16 ; See https://github.com/intel/llvm/blob/sycl-nightly/20220812/llvm/CMakeLists.txt#L19
 # U20.04 ; See https://github.com/intel/llvm/blob/sycl-nightly/20220812/sycl/doc/GetStartedGuide.md?plain=1#L292
 
-# GPUs were tested/supported upstream.
-# See https://github.com/intel/llvm/blob/sycl-nightly/20220812/sycl/doc/GetStartedGuide.md
-AMDGPU_TARGETS_COMPAT=(
-        gfx906 # Tested upstream
-	gfx908 # Tested upstream
-)
-CUDA_TARGETS_COMPAT=(
-	sm_50 # Default
-	sm_71 # Tested upstream
-	#sm_86 # Set by libclc
-)
-# We cannot unbundle this because it has to be compiled with the clang/llvm
-# that we are building here. Otherwise we run into problems running the compiler.
-CPU_EMUL_COMMIT="673f2071ed7b648cd05824cd0ded24f96734e50c" # Same as 1.0.23 ; Search committer-date:<=2022-08-12
-VC_INTR_COMMIT="abce9184b7a3a7fe1b02289b9285610d9dc45465" # Newer versions cause compile failure \
-# See https://github.com/intel/llvm/blob/sycl-nightly/20220812/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19C36-L19C76
-LLVM_COMPAT=( 16 13 12 ) # Upstream tested versions
-PYTHON_COMPAT=( python3_{10..12} )
-
-inherit cmake flag-o-matic python-any-r1 rocm toolchain-funcs
-
-DOCS_BUILDER="doxygen"
-DOCS_DIR="build/docs"
-DOCS_CONFIG_NAME="doxygen.cfg"
-DOCS_DEPEND="
-	>=media-gfx/graphviz-2.42.2
-	virtual/latex-base
-	$(python_gen_any_dep '
-		>=dev-python/sphinx-1.8.5[${PYTHON_USEDEP}]
-		>=dev-python/recommonmark-0.4.0[${PYTHON_USEDEP}]
-		dev-python/myst-parser[${PYTHON_USEDEP}]
-	')
-"
-
-inherit docs
-
-#KEYWORDS="~amd64" # Needs install test
-SRC_URI="
-https://github.com/intel/llvm/archive/refs/tags/sycl-nightly/${PV//./}.tar.gz
-	-> ${P}.tar.gz
-https://github.com/intel/vc-intrinsics/archive/${VC_INTR_COMMIT}.tar.gz
-	-> ${P}-vc-intrinsics-${VC_INTR_COMMIT:0:7}.tar.gz
-	esimd_emulator? (
-https://github.com/intel/cm-cpu-emulation/archive/${CPU_EMUL_COMMIT}.tar.gz
-	-> ${P}-cm-cpu-emulation-${CPU_EMUL_COMMIT:0:7}.tar.gz
-	)
-"
-S="${WORKDIR}/llvm-sycl-nightly-${PV//./}"
-BUILD_DIR="${S}/build"
-CMAKE_USE_DIR="${S}/llvm"
-
-DESCRIPTION="oneAPI Data Parallel C++ compiler"
-HOMEPAGE="https://github.com/intel/llvm"
-LICENSE="
-	Apache-2.0
-	MIT
-"
-RESTRICT="
-	!test? (
-		test
-	)
-"
-SLOT="0/5" # Based on libsycl.so with SYCL_MAJOR_VERSION in \
-# https://github.com/intel/llvm/blob/sycl-nightly/20220812/sycl/CMakeLists.txt#L35
 ALL_LLVM_TARGETS=(
 	AArch64
 	AMDGPU
@@ -92,11 +28,75 @@ ALL_LLVM_TARGETS=(
 ALL_LLVM_TARGETS=(
 	${ALL_LLVM_TARGETS[@]/#/llvm_targets_}
 )
+# GPUs were tested/supported upstream.
+# See https://github.com/intel/llvm/blob/sycl-nightly/20220812/sycl/doc/GetStartedGuide.md
+AMDGPU_TARGETS_COMPAT=(
+        gfx906 # Tested upstream
+	gfx908 # Tested upstream
+)
+BUILD_DIR="${WORKDIR}/llvm-sycl-nightly-${PV//./}/build"
+CMAKE_USE_DIR="${WORKDIR}/llvm-sycl-nightly-${PV//./}/llvm"
+# We cannot unbundle this because it has to be compiled with the clang/llvm
+# that we are building here. Otherwise we run into problems running the compiler.
+CPU_EMUL_COMMIT="673f2071ed7b648cd05824cd0ded24f96734e50c" # Same as 1.0.23 ; Search committer-date:<=2022-08-12
+CUDA_TARGETS_COMPAT=(
+	sm_50 # Default
+	sm_71 # Tested upstream
+	#sm_86 # Set by libclc
+)
+# For UR_COMMIT, see https://github.com/intel/llvm/blob/sycl-nightly/20220812/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19C36-L19C76
+LLVM_COMPAT=( 16 13 12 ) # Upstream tested versions
 LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/(-)?}
+PYTHON_COMPAT=( python3_{10..12} )
 ROCM_SLOTS=(
 	rocm_4_3
 	rocm_4_2
 )
+VC_INTR_COMMIT="abce9184b7a3a7fe1b02289b9285610d9dc45465" # Newer versions cause compile failure \
+
+inherit cmake flag-o-matic python-any-r1 rocm toolchain-funcs
+
+DOCS_BUILDER="doxygen"
+DOCS_DIR="build/docs"
+DOCS_CONFIG_NAME="doxygen.cfg"
+DOCS_DEPEND="
+	>=media-gfx/graphviz-2.42.2
+	virtual/latex-base
+	$(python_gen_any_dep '
+		>=dev-python/sphinx-1.8.5[${PYTHON_USEDEP}]
+		>=dev-python/recommonmark-0.4.0[${PYTHON_USEDEP}]
+		dev-python/myst-parser[${PYTHON_USEDEP}]
+	')
+"
+
+inherit docs
+
+#KEYWORDS="~amd64" # Needs install test
+S="${WORKDIR}/llvm-sycl-nightly-${PV//./}"
+SRC_URI="
+https://github.com/intel/llvm/archive/refs/tags/sycl-nightly/${PV//./}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/intel/vc-intrinsics/archive/${VC_INTR_COMMIT}.tar.gz
+	-> ${P}-vc-intrinsics-${VC_INTR_COMMIT:0:7}.tar.gz
+	esimd_emulator? (
+https://github.com/intel/cm-cpu-emulation/archive/${CPU_EMUL_COMMIT}.tar.gz
+	-> ${P}-cm-cpu-emulation-${CPU_EMUL_COMMIT:0:7}.tar.gz
+	)
+"
+
+DESCRIPTION="oneAPI Data Parallel C++ compiler"
+HOMEPAGE="https://github.com/intel/llvm"
+LICENSE="
+	Apache-2.0
+	MIT
+"
+RESTRICT="
+	!test? (
+		test
+	)
+"
+SLOT="0/5" # Based on libsycl.so with SYCL_MAJOR_VERSION in \
+# https://github.com/intel/llvm/blob/sycl-nightly/20220812/sycl/CMakeLists.txt#L35
 IUSE+="
 ${ALL_LLVM_TARGETS[*]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
