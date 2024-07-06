@@ -3,17 +3,6 @@
 
 EAPI=8
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx803
-	gfx900
-	gfx906
-	gfx908
-	gfx90a
-	gfx940
-	gfx1030
-	gfx1031
-	gfx1032
-)
 LLVM_SLOT=16
 PYTHON_COMPAT=( "python3_10" ) # U 20/22
 RAPIDJSON_COMMIT="973dc9c06dcd3d035ebd039cfb9ea457721ec213" # committer-date:<=2023-06-05
@@ -233,9 +222,9 @@ src_configure() {
 		if [[ "${CXX}" =~ (^|-)"g++" ]] ; then
 			local gcc_slot=$(gcc-major-version)
 			local gomp_abspath
-			if [[ "${ABI}" =~ (amd64) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so" ]] ; then
+			if [[ "${ABI}" =~ "amd64" && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so" ]] ; then
 				gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so"
-			elif [[ "${ABI}" =~ (x86) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so" ]] ; then
+			elif [[ "${ABI}" =~ "x86" && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so" ]] ; then
 				gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so"
 			elif [[ -e "${GOMP_LIB_ABSPATH}" ]] ; then
 				gomp_abspath="${GOMP_LIB_ABSPATH}"

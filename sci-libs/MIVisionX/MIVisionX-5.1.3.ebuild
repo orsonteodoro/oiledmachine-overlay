@@ -215,9 +215,9 @@ src_configure() {
 		if [[ "${CXX}" =~ (^|-)"g++" ]] ; then
 			local gcc_slot=$(gcc-major-version)
 			local gomp_abspath
-			if [[ "${ABI}" =~ (amd64) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so" ]] ; then
+			if [[ "${ABI}" =~ "amd64" && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so" ]] ; then
 				gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so"
-			elif [[ "${ABI}" =~ (x86) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so" ]] ; then
+			elif [[ "${ABI}" =~ "x86" && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so" ]] ; then
 				gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so"
 			elif [[ -e "${GOMP_LIB_ABSPATH}" ]] ; then
 				gomp_abspath="${GOMP_LIB_ABSPATH}"
