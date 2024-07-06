@@ -266,10 +266,10 @@ multilib_src_configure() {
 			-DLIBOMPTARGET_BUILD_NVPTX_BCLIB=$(usex llvm_targets_NVPTX)
 			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=$(usex rpc)
 	# A cheap hack to force clang. \
-			-DLIBOMPTARGET_NVPTX_CUDA_COMPILER="$(type -P "${CHOST}-clang")"
+			-DLIBOMPTARGET_NVPTX_CUDA_COMPILER=$(type -P "${CHOST}-clang")
 	# Upstream defaults to looking for it in clang dir.  This fails when
 	# ccache is being used. \
-			-DLIBOMPTARGET_NVPTX_BC_LINKER="$(type -P llvm-link)"
+			-DLIBOMPTARGET_NVPTX_BC_LINKER=$(type -P llvm-link)
 			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 		)
 		if use llvm_targets_NVPTX ; then
@@ -300,10 +300,11 @@ eerror
 	# This project does not use standard LLVM cmake macros.
 		-DOPENMP_LIT_ARGS="$(get_lit_flags)"
 		-DOPENMP_LLVM_LIT_EXECUTABLE="${EPREFIX}/usr/bin/lit"
-		-DOPENMP_TEST_C_COMPILER="$(type -P "${CHOST}-clang")"
-		-DOPENMP_TEST_CXX_COMPILER="$(type -P "${CHOST}-clang++")"
+		-DOPENMP_TEST_C_COMPILER=$(type -P "${CHOST}-clang")
+		-DOPENMP_TEST_CXX_COMPILER=$(type -P "${CHOST}-clang++")
 	)
-	addpredict /dev/nvidiactl
+	addpredict "/dev/nvidiactl"
+	addpredict "/proc/self/task/"
 	cmake_src_configure
 }
 

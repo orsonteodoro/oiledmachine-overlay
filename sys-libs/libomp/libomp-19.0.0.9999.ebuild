@@ -344,10 +344,11 @@ eerror
 	# This project does not use standard LLVM cmake macros.
 		-DOPENMP_LIT_ARGS="$(get_lit_flags)"
 		-DOPENMP_LLVM_LIT_EXECUTABLE="${EPREFIX}/usr/bin/lit"
-		-DOPENMP_TEST_C_COMPILER="$(type -P "${CHOST}-clang")"
-		-DOPENMP_TEST_CXX_COMPILER="$(type -P "${CHOST}-clang++")"
+		-DOPENMP_TEST_C_COMPILER=$(type -P "${CHOST}-clang")
+		-DOPENMP_TEST_CXX_COMPILER=$(type -P "${CHOST}-clang++")
 	)
-	addpredict /dev/nvidiactl
+	addpredict "/dev/nvidiactl"
+	addpredict "/proc/self/task/"
 	cmake_src_configure
 }
 
