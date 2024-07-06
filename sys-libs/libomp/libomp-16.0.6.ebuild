@@ -3,34 +3,8 @@
 
 EAPI=8
 
-# For AMDGPUs, see https://github.com/llvm/llvm-project/blob/llvmorg-16.0.6/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L83
 # For NVPTX, see https://github.com/llvm/llvm-project/blob/llvmorg-16.0.6/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L59
 # For CUDA sdk versions, https://github.com/llvm/llvm-project/blob/llvmorg-16.0.6/clang/include/clang/Basic/Cuda.h
-AMDGPU_TARGETS_COMPAT=(
-	gfx700
-	gfx701
-	gfx801
-	gfx803
-	gfx900
-	gfx902
-	gfx906
-	gfx908
-	gfx90a
-	gfx90c
-	gfx940
-	gfx1010
-	gfx1030
-	gfx1031
-	gfx1032
-	gfx1033
-	gfx1034
-	gfx1035
-	gfx1036
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1103
-)
 CUDA_TARGETS_COMPAT=(
 	auto
 	sm_35
@@ -51,14 +25,9 @@ CUDA_TARGETS_COMPAT=(
 )
 LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( "python3_"{10..12} )
-inherit hip-versions
-ROCM_SLOTS=(
-	"${HIP_5_6_VERSION}"
-	"${HIP_5_5_VERSION}"
-)
 
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-single-r1
-inherit rocm toolchain-funcs
+inherit toolchain-funcs
 
 KEYWORDS="
 amd64 arm arm64 ~loong ppc64 ~riscv x86 ~amd64-linux ~x64-macos
@@ -81,9 +50,8 @@ RESTRICT="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-${ROCM_IUSE}
-debug gdb-plugin hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
-rocm_5_5 rocm_5_6 rpc
+debug gdb-plugin hwloc offload ompt test llvm_targets_NVPTX
+rpc
 r5
 "
 gen_cuda_required_use() {
@@ -96,56 +64,20 @@ gen_cuda_required_use() {
 		"
 	done
 }
-gen_rocm_required_use() {
-	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
-		echo "
-			amdgpu_targets_${x}? (
-				llvm_targets_AMDGPU
-			)
-		"
-	done
-}
 REQUIRED_USE="
 	$(gen_cuda_required_use)
-	$(gen_rocm_required_use)
 	gdb-plugin? (
 		${PYTHON_REQUIRED_USE}
-	)
-	llvm_targets_AMDGPU? (
-		${ROCM_REQUIRED_USE}
-		^^ (
-			rocm_5_6
-			rocm_5_5
-		)
 	)
 	llvm_targets_NVPTX? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
-	rocm_5_5? (
-		llvm_targets_AMDGPU
-	)
-	rocm_5_6? (
-		llvm_targets_AMDGPU
-	)
 	rpc? (
 		offload
 	)
 "
-gen_amdgpu_rdepend() {
-	local pv
-	for pv in ${ROCM_SLOTS[@]} ; do
-		local s="${pv%.*}"
-		echo "
-			rocm_${s/./_}? (
-				~dev-libs/rocr-runtime-${pv}:${s}[system-llvm]
-				~dev-libs/roct-thunk-interface-${pv}:${s}
-			)
-		"
-	done
-}
 RDEPEND="
 	cuda_targets_sm_35? (
 		=dev-util/nvidia-cuda-toolkit-11*:=
@@ -224,25 +156,12 @@ RDEPEND="
 	hwloc? (
 		>=sys-apps/hwloc-2.5:0=[${MULTILIB_USEDEP}]
 	)
-	llvm_targets_AMDGPU? (
-		|| (
-			$(gen_amdgpu_rdepend)
-		)
-	)
 	llvm_targets_NVPTX? (
 		<dev-util/nvidia-cuda-toolkit-11.9
 	)
 	offload? (
 		dev-libs/libffi:=[${MULTILIB_USEDEP}]
 		~sys-devel/llvm-${PV}[${MULTILIB_USEDEP}]
-		llvm_targets_AMDGPU? (
-			rocm_5_5? (
-				sys-devel/clang:16[rocm_5_5]
-			)
-			rocm_5_6? (
-				sys-devel/clang:16[rocm_5_6]
-			)
-		)
 	)
 	rpc? (
 		dev-libs/protobuf:0/3.21
@@ -265,9 +184,6 @@ DEPEND="
 BDEPEND="
 	dev-lang/perl
 	offload? (
-		llvm_targets_AMDGPU? (
-			sys-devel/clang
-		)
 		llvm_targets_NVPTX? (
 			sys-devel/clang
 		)
@@ -315,40 +231,12 @@ ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
 	if use gdb-plugin || use test; then
 		python-single-r1_pkg_setup
 	fi
-einfo
-einfo "The hardmask for llvm_targets_AMDGPU in ${CATEGORY}/${PN} can be removed by doing..."
-einfo
-einfo "mkdir -p /etc/portage/profile"
-einfo "echo \"sys-libs/libomp -llvm_targets_AMDGPU\" >> /etc/portage/profile/package.use.force"
-einfo "echo \"sys-libs/libomp -llvm_targets_AMDGPU\" >> /etc/portage/profile/package.use.mask"
-einfo
-	if use rocm_5_5 ; then
-		ROCM_SLOT="5.5"
-		ROCM_VERSION="${HIP_5_5_VERSION}"
-		rocm_pkg_setup
-	elif use rocm_5_6 ; then
-		ROCM_SLOT="5.6"
-		ROCM_VERSION="${HIP_5_6_VERSION}"
-		rocm_pkg_setup
-	else
-		LLVM_MAX_SLOT="${LLVM_SLOT}"
-		llvm_pkg_setup
-	fi
+	LLVM_MAX_SLOT="${LLVM_SLOT}"
+	llvm_pkg_setup
 }
 
 src_prepare() {
 	llvm.org_src_prepare # Already calls cmake_src_prepare
-	PATCH_PATHS=(
-		"${WORKDIR}/openmp/libompd/src/CMakeLists.txt"
-		"${WORKDIR}/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
-		"${WORKDIR}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
-		"${WORKDIR}/openmp/runtime/src/CMakeLists.txt"
-		"${WORKDIR}/openmp/tools/archer/CMakeLists.txt"
-	)
-	if use rocm_5_5 || use rocm_5_6 ; then
-		eapply "${FILESDIR}/${PN}-17.0.0.9999-path-changes.patch"
-		rocm_src_prepare
-	fi
 }
 
 gen_nvptx_list() {
@@ -392,27 +280,21 @@ multilib_src_configure() {
 
 	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		mycmakeargs+=(
-			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
+			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
 			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=$(usex rpc)
 			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 		)
-		if use llvm_targets_AMDGPU ; then
-			mycmakeargs+=(
-				-DLIBOMPTARGET_AMDGCN_GFXLIST=$(get_amdgpu_flags)
-			)
-		fi
 		if use llvm_targets_NVPTX ; then
 			mycmakeargs+=(
 				-DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES=$(gen_nvptx_list)
 			)
 		fi
-		if use ppc64 && ( use llvm_targets_AMDGPU || use llvm_targets_NVPTX ) ; then
+		if use ppc64 && ( use llvm_targets_NVPTX ) ; then
 			if ! [[ "${CHOST}" =~ "powerpc64le" ]] ; then
 eerror
 eerror "Big endian is not supported for ppc64 for offload.  Disable either the"
-eerror "offload, llvm_targets_AMDGPU, llvm_targets_NVPTX USE flag(s) to"
-eerror "continue."
+eerror "offload or the llvm_targets_NVPTX USE flag(s) to continue."
 eerror
 				die
 			fi
