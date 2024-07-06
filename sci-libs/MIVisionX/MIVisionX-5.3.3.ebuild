@@ -4,7 +4,7 @@
 EAPI=8
 
 LLVM_SLOT=15
-PYTHON_COMPAT=( python3_10 ) # U 20/22
+PYTHON_COMPAT=( "python3_10" ) # U 20/22
 RAPIDJSON_COMMIT="06d58b9e848c650114556a23294d0b6440078c61" # committer-date:<=2022-09-16
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -37,8 +37,8 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu +enhanced-message ffmpeg +loom +migraphx +neural-net opencl opencv +rocal
-+rocm +rpp system-llvm system-rapidjson
-ebuild-revision-9
++rocm +rpp system-rapidjson
+ebuild-revision-11
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -70,7 +70,7 @@ RDEPEND="
 		>=dev-python/pybind11-2.4[${PYTHON_USEDEP}]
 	')
 	dev-libs/openssl
-	~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}
 	ffmpeg? (
 		>=media-video/ffmpeg-4.0.4:0/56.58.58[fdk,gpl,libass,x264,x265,nonfree]
 	)
@@ -87,27 +87,16 @@ RDEPEND="
 	rocal? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
 		media-libs/libjpeg-turbo
+		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 		!ffmpeg? (
 			>=dev-libs/boost-${BOOST_PV}:=
 		)
-		!system-llvm? (
-			~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
-		)
-		system-llvm? (
-			sys-libs/libomp:${LLVM_SLOT}
-		)
 	)
 	rocm? (
-		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
-		!system-llvm? (
-			~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
-		)
-		system-llvm? (
-			sys-libs/libomp:${LLVM_SLOT}
-		)
+		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 	)
 	rpp? (
 		>=dev-libs/boost-${BOOST_PV}:=
@@ -127,10 +116,6 @@ BDEPEND="
 	>=dev-build/cmake-3.5
 	dev-util/patchelf
 	virtual/pkgconfig
-	system-llvm? (
-		>=sys-devel/llvmgold-${LLVM_SLOT}
-		sys-devel/binutils[gold,plugins]
-	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-change-libjpeg-turbo-search-path.patch"
@@ -162,8 +147,8 @@ src_configure() {
 	append-cppflags -D__STDC_CONSTANT_MACROS
 
 	if use rocal && ! use system-rapidjson ; then
-		append-cppflags -I"${WORKDIR}/install/${EPREFIX}${EROCM_PATH}/$(get_libdir)/rapidjson/include"
-		append-ldflags -L"${WORKDIR}/install/${EPREFIX}${EROCM_PATH}/$(get_libdir)/rapidjson/lib"
+		append-cppflags -I"${WORKDIR}/install/${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/rapidjson/include"
+		append-ldflags -L"${WORKDIR}/install/${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/rapidjson/lib"
 	fi
 
 # Avoid
@@ -185,13 +170,8 @@ src_configure() {
 		-DROCAL=$(usex rocal ON OFF)
 	)
 
-	if use system-llvm ; then
-		export CC="${HIP_CC:-${CHOST}-clang-${LLVM_SLOT}}"
-		export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_SLOT}}"
-	else
-		export CC="${HIP_CC:-clang}"
-		export CXX="${HIP_CXX:-clang++}"
-	fi
+	export CC="${HIP_CC:-clang}"
+	export CXX="${HIP_CXX:-clang++}"
 	export CPP="${CXX} -E"
 
 	if use opencl ; then
@@ -214,9 +194,9 @@ src_configure() {
 		if use rocal ; then
 			# FIXME: fix prefix in TURBO_JPEG_PATH.
 			local staging_dir="${WORKDIR}/install"
-			export TURBO_JPEG_PATH="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/libjpeg-turbo"
+			export TURBO_JPEG_PATH="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/libjpeg-turbo"
 			mycmakeargs+=(
-				-DTURBO_JPEG_PATH="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/libjpeg-turbo"
+				-DTURBO_JPEG_PATH="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/libjpeg-turbo"
 				-DPYBIND11_INCLUDES="${ESYSROOT}/usr/include"
 			)
 		fi
@@ -260,24 +240,16 @@ eerror
 				-DOpenMP_libgomp_LIBRARY="${gomp_abspath}"
 			)
 		else
-			if use system-llvm ; then
-				mycmakeargs+=(
-					-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
-					-DOpenMP_CXX_LIB_NAMES="libomp"
-					-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
-				)
-			else
-				mycmakeargs+=(
-					-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
-					-DOpenMP_CXX_LIB_NAMES="libomp"
-					-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so"
-				)
-			fi
+			mycmakeargs+=(
+				-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
+				-DOpenMP_CXX_LIB_NAMES="libomp"
+				-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so"
+			)
 		fi
 		IFS=$'\n'
 		sed \
 			-i \
-			-e "s|-DNDEBUG -fPIC|-DNDEBUG -fPIC --rocm-path='${ESYSROOT}${EROCM_PATH}' --rocm-device-lib-path='${ESYSROOT}${EROCM_PATH}/$(get_libdir)/amdgcn/bitcode'|g" \
+			-e "s|-DNDEBUG -fPIC|-DNDEBUG -fPIC --rocm-path='${ESYSROOT}${EROCM_PATH}' --rocm-device-lib-path='${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/amdgcn/bitcode'|g" \
 			$(grep -l -r -e "-DNDEBUG -fPIC" "${WORKDIR}") \
 			|| die
 		IFS=$' \t\n'
@@ -292,7 +264,7 @@ build_libjpeg_turbo() {
 	mkdir -p "build" || die
 	cd "build" || die
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/libjpeg-turbo"
+		-DCMAKE_INSTALL_PREFIX="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/libjpeg-turbo"
 		-DCMAKE_BUILD_TYPE=RELEASE
 		-DENABLE_STATIC=FALSE
 		-DCMAKE_INSTALL_DEFAULT_LIBDIR=lib
@@ -312,7 +284,7 @@ build_rapidjson() {
 		mkdir build || die
 		cd build || die
 		local mycmakeargs=(
-			-DCMAKE_INSTALL_PREFIX="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/rapidjson"
+			-DCMAKE_INSTALL_PREFIX="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/rapidjson"
 		)
 		cmake \
 			"${mycmakeargs[@]}" \
@@ -335,7 +307,7 @@ sanitize_permissions() {
 		elif file "${path}" | grep -q "ELF .* LSB pie executable" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q "symbolic link" ; then
-			:;
+			:
 		else
 			chmod 0644 "${path}" || die
 		fi
@@ -347,16 +319,16 @@ fix_rpath() {
 	local rpath
 	local file_path
 	if use rocal ; then
-		rpath=$(patchelf --print-rpath "${ED}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/librocal.so")
-		rpath="${EPREFIX}${EROCM_PATH}/$(get_libdir)/libjpeg-turbo/lib:${rpath}"
-		file_path="${ED}/${EPREFIX}${EROCM_PATH}/$(get_libdir)/librocal.so"
+		rpath=$(patchelf --print-rpath "${ED}/${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/librocal.so")
+		rpath="${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/libjpeg-turbo/lib:${rpath}"
+		file_path="${ED}/${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/librocal.so"
 		patchelf \
 			--set-rpath "${rpath}" \
 			"${file_path}" \
 			|| die
 	fi
 	if use rocal-python ; then
-		rpath="${EPREFIX}${EROCM_PATH}/$(get_libdir)/libjpeg-turbo/lib"
+		rpath="${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/libjpeg-turbo/lib"
 		file_path=$(realpath "${ED}/${EPREFIX}${EROCM_PATH}/lib/${EPYTHON}/site-packages/rocal_pybind.cpython-"*"-linux-gnu.so")
 		patchelf \
 			--set-rpath "${rpath}" \
