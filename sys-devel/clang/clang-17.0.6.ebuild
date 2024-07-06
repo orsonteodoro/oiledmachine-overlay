@@ -53,8 +53,8 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 cet debug default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4 default-stack-clash-protection
-doc +extra  hardened hardened-compat ieee-long-double +pie rocm_5_7 ssp
-+static-analyzer test xml
+doc +extra  hardened hardened-compat ieee-long-double +pie ssp +static-analyzer
+test xml
 ebuild-revision-9
 ${LLVM_EBUILDS_LLVM17_REVISION}
 "
@@ -132,10 +132,6 @@ RDEPEND+="
 	>=sys-devel/clang-common-${PV}
 	ebolt? (
 		~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[${MULTILIB_USEDEP},bolt,debug=]
-	)
-	rocm_5_7? (
-		~dev-libs/rocm-device-libs-${HIP_5_7_VERSION}:5.7
-		~dev-libs/rocr-runtime-${HIP_5_7_VERSION}:5.7
 	)
 	static-analyzer? (
 		dev-lang/perl:*
@@ -405,41 +401,6 @@ ewarn "The CET as default is in testing."
 	fi
 }
 
-fix_rocm_paths() {
-	eapply "${FILESDIR}/clang-17.0.0.9999-rocm-path-changes.patch"
-	sed \
-		-i \
-		-e "s|@LIBDIR@|$(get_libdir)|g" \
-		-e "s|@EPREFIX_LLVM_PATH@|${EPREFIX}/usr/lib/llvm/${PV%%.*}|g" \
-		"lib/Driver/ToolChains/AMDGPU.cpp" \
-		|| die
-
-	if use rocm_5_7 ; then
-		local rocm_slot="5.7"
-		sed \
-			-i \
-			-e "s|@ROCM_PATH@|/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			-e "s|@EPREFIX_ROCM_PATH@|${EPREFIX}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			"lib/Driver/ToolChains/AMDGPU.cpp" \
-			|| die
-	elif has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 ; then
-		local rocm_slot="6.0"
-		sed \
-			-i \
-			-e "s|@ROCM_PATH@|/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			-e "s|@EPREFIX_ROCM_PATH@|${EPREFIX}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			"lib/Driver/ToolChains/AMDGPU.cpp" \
-			|| die
-	fi
-	sed \
-		-i \
-		-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-		"tools/amdgpu-arch/CMakeLists.txt" \
-		|| die
-}
-
 src_prepare() {
 	# Create an extra parent dir for relative CLANG_RESOURCE_DIR access.
 	mkdir -p "${WORKDIR}/x/y" || die
@@ -463,10 +424,6 @@ src_prepare() {
 		sed -i "/LibDir.*Loader/s@return \"\/\"@return \"${EPREFIX}/\"@" \
 			lib/Driver/ToolChains/Linux.cpp \
 			|| die
-	fi
-
-	if use rocm_5_7 ; then
-		fix_rocm_paths
 	fi
 
 	prepare_abi() {

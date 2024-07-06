@@ -36,17 +36,13 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 cet debug default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4 default-stack-clash-protection
-doc +extra hardened hardened-compat ieee-long-double +pie rocm_5_5 rocm_5_6 ssp
-+static-analyzer test xml
+doc +extra hardened hardened-compat ieee-long-double +pie ssp +static-analyzer
+test xml
 ebuild-revision-9
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 
-	?? (
-		rocm_5_5
-		rocm_5_6
-	)
 	amd64? (
 		llvm_targets_X86
 	)
@@ -118,14 +114,6 @@ RDEPEND+="
 	>=sys-devel/clang-common-${PV}
 	ebolt? (
 		~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[${MULTILIB_USEDEP},bolt,debug=]
-	)
-	rocm_5_5? (
-		~dev-libs/rocm-device-libs-${HIP_5_5_VERSION}:5.5
-		~dev-libs/rocr-runtime-${HIP_5_5_VERSION}:5.5
-	)
-	rocm_5_6? (
-		~dev-libs/rocm-device-libs-${HIP_5_6_VERSION}:5.6
-		~dev-libs/rocr-runtime-${HIP_5_6_VERSION}:5.6
 	)
 	static-analyzer? (
 		dev-lang/perl:*
@@ -397,41 +385,6 @@ ewarn "The CET as default is in testing."
 	fi
 }
 
-fix_rocm_paths() {
-	eapply "${FILESDIR}/clang-16.0.6-rocm-path-changes.patch"
-	sed \
-		-i \
-		-e "s|@LIBDIR@|$(get_libdir)|g" \
-		-e "s|@EPREFIX_LLVM_PATH@|${EPREFIX}/usr/lib/llvm/${PV%%.*}|g" \
-		"lib/Driver/ToolChains/AMDGPU.cpp" \
-		|| die
-
-	if use rocm_5_5 ; then
-		local rocm_slot="5.5"
-		sed \
-			-i \
-			-e "s|@ROCM_PATH@|/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			-e "s|@EPREFIX_ROCM_PATH@|${EPREFIX}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			"lib/Driver/ToolChains/AMDGPU.cpp" \
-			|| die
-	elif use rocm_5_6 ; then
-		local rocm_slot="5.6"
-		sed \
-			-i \
-			-e "s|@ROCM_PATH@|/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			-e "s|@EPREFIX_ROCM_PATH@|${EPREFIX}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			"lib/Driver/ToolChains/AMDGPU.cpp" \
-			|| die
-	fi
-	sed \
-		-i \
-		-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-		"tools/amdgpu-arch/CMakeLists.txt" \
-		|| die
-}
-
 src_prepare() {
 	# Create an extra parent dir for relative CLANG_RESOURCE_DIR access.
 	mkdir -p "${WORKDIR}/x/y" || die
@@ -455,10 +408,6 @@ src_prepare() {
 		sed -i "/LibDir.*Loader/s@return \"\/\"@return \"${EPREFIX}/\"@" \
 			lib/Driver/ToolChains/Linux.cpp \
 			|| die
-	fi
-
-	if use rocm_5_5 || use rocm_5_6 ; then
-		fix_rocm_paths
 	fi
 
 	prepare_abi() {

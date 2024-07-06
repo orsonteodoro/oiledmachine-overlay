@@ -36,17 +36,12 @@ IUSE+="
 cet debug default-compiler-rt default-fortify-source-2 default-fortify-source-3
 default-full-relro default-libcxx default-lld default-partial-relro
 default-ssp-buffer-size-4 default-stack-clash-protection doc hardened
-hardened-compat llvm-libunwind pie rocm_4_3 rocm_4_5 ssp +static-analyzer test
-xml
+hardened-compat llvm-libunwind pie ssp +static-analyzer test xml
 ebuild-revision-8
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 
-	?? (
-		rocm_4_3
-		rocm_4_5
-	)
 	amd64? (
 		llvm_targets_X86
 	)
@@ -115,14 +110,6 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	${PYTHON_DEPS}
-	rocm_4_3? (
-		~dev-libs/rocm-device-libs-${HIP_4_3_VERSION}:4.3
-		~dev-libs/rocr-runtime-${HIP_4_3_VERSION}:4.3
-	)
-	rocm_4_5? (
-		~dev-libs/rocm-device-libs-${HIP_4_5_VERSION}:4.5
-		~dev-libs/rocr-runtime-${HIP_4_5_VERSION}:4.5
-	)
 	static-analyzer? (
 		dev-lang/perl:*
 	)
@@ -406,41 +393,6 @@ ewarn "The CET as default is in testing."
 	fi
 }
 
-fix_rocm_paths() {
-	eapply "${FILESDIR}/clang-13.0.1-rocm-path-changes.patch"
-	sed \
-		-i \
-		-e "s|@LIBDIR@|$(get_libdir)|g" \
-		-e "s|@EPREFIX_LLVM_PATH@|${EPREFIX}/usr/lib/llvm/${PV%%.*}|g" \
-		"lib/Driver/ToolChains/AMDGPU.cpp" \
-		|| die
-
-	if use rocm_4_3 ; then
-		local rocm_slot="4.3"
-		sed \
-			-i \
-			-e "s|@ROCM_PATH@|/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			-e "s|@EPREFIX_ROCM_PATH@|${EPREFIX}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			"lib/Driver/ToolChains/AMDGPU.cpp" \
-			|| die
-	elif use rocm_4_5 ; then
-		local rocm_slot="4.5"
-		sed \
-			-i \
-			-e "s|@ROCM_PATH@|/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			-e "s|@EPREFIX_ROCM_PATH@|${EPREFIX}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			"lib/Driver/ToolChains/AMDGPU.cpp" \
-			|| die
-	fi
-	sed \
-		-i \
-		-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-		"tools/amdgpu-arch/CMakeLists.txt" \
-		|| die
-}
-
 src_prepare() {
 	# Create an extra parent dir for relative CLANG_RESOURCE_DIR access.
 	mkdir -p "${WORKDIR}/x/y" || die
@@ -456,10 +408,6 @@ src_prepare() {
 	eprefixify \
 		lib/Frontend/InitHeaderSearch.cpp \
 		lib/Driver/ToolChains/Darwin.cpp || die
-
-	if use rocm_4_3 || use rocm_4_5 ; then
-		fix_rocm_paths
-	fi
 
 	prepare_abi() {
 		uopts_src_prepare
