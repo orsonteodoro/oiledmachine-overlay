@@ -26,7 +26,6 @@ PYTHON_COMPAT=( python3_{10..12} )
 
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org
 inherit python-single-r1 toolchain-funcs
-#inherit rocm
 
 KEYWORDS="
 ~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
@@ -80,34 +79,12 @@ pkg_setup() {
 	if use test; then
 		python-single-r1_pkg_setup
 	fi
-	if has rocm_6_1 ${IUSE_EFFECTIVE} && use rocm_6_1 ; then
-		export ROCM_SLOT="6.1"
-		rocm_pkg_setup
-	elif has rocm_6_2 ${IUSE_EFFECTIVE} && use rocm_6_2 ; then
-		export ROCM_SLOT="6.2"
-		rocm_pkg_setup
-	else
-		llvm_pkg_setup
-	fi
+	LLVM_MAX_SLOT="${LLVM_SLOT}"
+	llvm_pkg_setup
 }
 
 src_prepare() {
 	cmake_src_prepare
-	if false \
-		|| ( has rocm_6_1 ${IUSE_EFFECTIVE} && use rocm_6_1 ) \
-		|| ( has rocm_6_2 ${IUSE_EFFECTIVE} && use rocm_6_2 ) \
-	; then
-		pushd "${WORKDIR}" || die
-			eapply "${FILESDIR}/mlir-18.0.0.9999-path-changes.patch"
-		popd || die
-		PATCH_PATHS=(
-			"${WORKDIR}/mlir/lib/Dialect/GPU/CMakeLists.txt"
-			"${WORKDIR}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
-			"${WORKDIR}/mlir/lib/ExecutionEngine/CMakeLists.txt"
-			"${WORKDIR}/mlir/lib/Target/LLVM/ROCDL/Target.cpp"
-		)
-		rocm_src_prepare
-	fi
 }
 
 multilib_src_configure() {

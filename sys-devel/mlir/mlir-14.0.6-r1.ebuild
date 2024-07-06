@@ -6,7 +6,7 @@ EAPI=8
 LLVM_SLOT=${PV%%.*}
 PYTHON_COMPAT=( python3_{9..10} )
 
-inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-any-r1 rocm
+inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-any-r1
 
 KEYWORDS="
 ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
@@ -23,28 +23,14 @@ LICENSE="
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE="
-	debug rocm_5_1 rocm_5_2 test
+	debug test
 	ebuild-revision-3
 "
 REQUIRED_USE="
-	rocm_5_1? (
-		!rocm_5_2
-	)
-	rocm_5_2? (
-		!rocm_5_1
-	)
 "
 RDEPEND="
 	sys-devel/clang:${SLOT}
 	sys-devel/llvm:${SLOT}
-	rocm_5_1? (
-		dev-libs/rocm-device-libs:5.1
-		dev-libs/rocr-runtime:5.1
-	)
-	rocm_5_2? (
-		dev-libs/rocm-device-libs:5.2
-		dev-libs/rocr-runtime:5.2
-	)
 "
 DEPEND="
 	${RDEPEND}
@@ -73,32 +59,12 @@ python_check_deps() {
 
 pkg_setup() {
 	use test && python-any-r1_pkg_setup
-	if use rocm_5_1 ; then
-		export ROCM_SLOT="5.1"
-		rocm_pkg_setup
-	elif use rocm_5_2 ; then
-		export ROCM_SLOT="5.2"
-		rocm_pkg_setup
-	else
-		LLVM_MAX_SLOT="${LLVM_SLOT}"
-		llvm_pkg_setup
-	fi
+	LLVM_MAX_SLOT="${LLVM_SLOT}"
+	llvm_pkg_setup
 }
 
 src_prepare() {
 	cmake_src_prepare
-	if use rocm_5_1 || use rocm_5_2 ; then
-		pushd "${WORKDIR}" || die
-			eapply "${FILESDIR}/mlir-14.0.6-path-changes.patch"
-		popd || die
-		PATCH_PATHS=(
-			"${WORKDIR}/mlir/lib/Dialect/GPU/CMakeLists.txt"
-			"${WORKDIR}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
-			"${WORKDIR}/mlir/lib/ExecutionEngine/CMakeLists.txt"
-			"${WORKDIR}/mlir/lib/Target/LLVM/ROCDL/Target.cpp"
-		)
-		rocm_src_prepare
-	fi
 }
 
 multilib_src_configure() {
