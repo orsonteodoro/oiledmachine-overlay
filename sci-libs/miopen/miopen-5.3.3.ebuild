@@ -5,12 +5,16 @@ EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
 # https://github.com/ROCm/MIOpen/blob/rocm-5.3.3/test/CMakeLists.txt#L99
+	gfx803
 	gfx900
 	gfx906
 	gfx908
 	gfx90a
 	gfx1030
 	gfx1031
+)
+AMDGPU_UNTESTED_TARGETS=(
+	gfx803
 )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -104,8 +108,18 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # See also pr #1830
 )
 
+warn_untested_gpu() {
+	local gpu
+	for gpu in ${AMDGPU_UNTESTED_TARGETS} ; do
+		if use "amdgpu_targets_${gpu}" ; then
+ewarn "${gpu} is not tested upstream but may still be available."
+		fi
+	done
+}
+
 pkg_setup() {
 	rocm_pkg_setup
+	warn_untested_gpu
 }
 
 src_prepare() {

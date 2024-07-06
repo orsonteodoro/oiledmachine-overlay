@@ -5,6 +5,7 @@ EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
 # https://github.com/ROCm/MIOpen/blob/rocm-5.7.1/test/CMakeLists.txt#L126
+	gfx803
 	gfx900
 	gfx906
 	gfx908
@@ -17,6 +18,9 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1100
 	gfx1101
 	gfx1102
+)
+AMDGPU_UNTESTED_TARGETS=(
+	gfx803
 )
 FIN_COMMIT="55c154d374cef086daeddc18226910b90555bf18"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -123,8 +127,18 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.7.1-bunzip2-path.patch"
 )
 
+warn_untested_gpu() {
+	local gpu
+	for gpu in ${AMDGPU_UNTESTED_TARGETS} ; do
+		if use "amdgpu_targets_${gpu}" ; then
+ewarn "${gpu} is not tested upstream but may still be available."
+		fi
+	done
+}
+
 pkg_setup() {
 	rocm_pkg_setup
+	warn_untested_gpu
 }
 
 src_unpack() {
