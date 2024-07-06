@@ -4,7 +4,8 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
-# Same as MIOpen's requirements.txt
+# https://github.com/ROCm/composable_kernel/blob/0a8dac4ef1a232abd8f6896a5b016f9e76192ddd/include/ck/ck.hpp#L31
+	gfx803
 	gfx900
 	gfx906
 	gfx908
