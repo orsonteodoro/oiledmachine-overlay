@@ -7,11 +7,14 @@ MY_PN="AMDMIGraphX"
 MY_P="${CATEGORY}/${MY_PN}-${PV}"
 
 AMDGPU_TARGETS_COMPAT=(
-	gfx900
+# See https://github.com/ROCm/AMDMIGraphX/blob/rocm-6.0.2/Jenkinsfile
 	gfx906
 	gfx908
-	gfx940
+	gfx90a
 	gfx1030
+	gfx1100
+	gfx1101
+	gfx1102
 )
 LLVM_SLOT=17
 PYTHON_COMPAT=( "python3_"{10..11} )
@@ -119,6 +122,7 @@ src_configure() {
 	if use rocm ; then
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
+			-DGPU_TARGETS="$(get_amdgpu_flags)"
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"

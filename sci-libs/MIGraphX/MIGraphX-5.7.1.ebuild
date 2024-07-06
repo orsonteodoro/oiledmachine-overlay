@@ -7,11 +7,11 @@ MY_PN="AMDMIGraphX"
 MY_P="${CATEGORY}/${MY_PN}-${PV}"
 
 AMDGPU_TARGETS_COMPAT=(
+# See https://github.com/ROCm/AMDMIGraphX/blob/rocm-5.7.1/Jenkinsfile
 	gfx900
 	gfx906
 	gfx908
-	gfx940
-	gfx1030
+	gfx90a
 )
 LLVM_SLOT=17
 PYTHON_COMPAT=( "python3_"{10..11} )
