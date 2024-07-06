@@ -168,7 +168,7 @@ ${ROCM_SLOTS[@]}
 +elbeem +embree +ffmpeg +fftw flac +gmp +hdr +jack +jemalloc +jpeg2k -llvm
 -man +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
 +openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace
-+pulseaudio release -rocm +sdl +sndfile sycl system-llvm +tbb test +tiff +usd
++pulseaudio release -rocm +sdl +sndfile sycl +tbb test +tiff +usd
 -valgrind
 r2
 "
@@ -717,6 +717,9 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		$(gen_llvm_depends)
 	)
 	llvm_slot_11? (
+		!rocm? (
+			sys-libs/libomp:11
+		)
 		|| (
 			~media-libs/mesa-20.2.3[X?]
 			~media-libs/mesa-20.2.4[X?]
@@ -759,11 +762,11 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 			~media-libs/mesa-22.0.1[X?]
 			~media-libs/mesa-22.0.2[X?]
 		)
-		system-llvm? (
-			sys-libs/libomp:11
-		)
 	)
 	llvm_slot_12? (
+		!rocm? (
+			sys-libs/libomp:12
+		)
 		|| (
 			~media-libs/mesa-21.1.0[X?]
 			~media-libs/mesa-21.1.1[X?]
@@ -799,11 +802,11 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 			~media-libs/mesa-22.1.2[X?]
 			~media-libs/mesa-22.1.3[X?]
 		)
-		system-llvm? (
-			sys-libs/libomp:12
-		)
 	)
 	llvm_slot_13? (
+		!rocm? (
+			sys-libs/libomp:13
+		)
 		|| (
 			~media-libs/mesa-21.2.5[X?]
 			~media-libs/mesa-21.2.6[X?]
@@ -839,9 +842,6 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 			~media-libs/mesa-22.3.2[X?]
 			~media-libs/mesa-22.3.3[X?]
 			 ~media-libs/mesa-22.3.7[X?]
-		)
-		system-llvm? (
-			sys-libs/libomp:13
 		)
 	)
 	ndof? (
@@ -909,74 +909,54 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 	)
 	rocm? (
 		rocm_4_5? (
-			~dev-util/hip-${HIP_4_5_VERSION}:4.5[rocm,system-llvm=]
-			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-${HIP_4_5_VERSION}:4.5
-				~sys-libs/llvm-roc-libomp-${HIP_4_5_VERSION}:4.5
-			)
+			~dev-libs/rocm-opencl-runtime-${HIP_4_5_VERSION}:4.5
+			~dev-util/hip-${HIP_4_5_VERSION}:4.5[rocm]
+			~sys-libs/llvm-roc-libomp-${HIP_4_5_VERSION}:4.5
 		)
 		rocm_4_3? (
-			~dev-util/hip-${HIP_4_3_VERSION}:4.3[rocm,system-llvm=]
-			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-${HIP_4_3_VERSION}:4.3
-				~sys-libs/llvm-roc-libomp-${HIP_4_3_VERSION}:4.3
-			)
+			~dev-libs/rocm-opencl-runtime-${HIP_4_3_VERSION}:4.3
+			~dev-util/hip-${HIP_4_3_VERSION}:4.3[rocm]
+			~sys-libs/llvm-roc-libomp-${HIP_4_3_VERSION}:4.3
 		)
 		rocm_4_2? (
-			~dev-util/hip-${HIP_4_2_VERSION}:4.2[rocm,system-llvm=]
-			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-${HIP_4_2_VERSION}:4.2
-				~sys-libs/llvm-roc-libomp-${HIP_4_2_VERSION}:4.2
-			)
+			~dev-libs/rocm-opencl-runtime-${HIP_4_2_VERSION}:4.2
+			~dev-util/hip-${HIP_4_2_VERSION}:4.2[rocm]
+			~sys-libs/llvm-roc-libomp-${HIP_4_2_VERSION}:4.2
 		)
 		rocm_4_1? (
-			~dev-util/hip-${HIP_4_1_VERSION}:4.1[rocm,system-llvm=]
-			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-${HIP_4_1_VERSION}:4.1
-				~sys-libs/llvm-roc-libomp-${HIP_4_1_VERSION}:4.1
-			)
+			~dev-libs/rocm-opencl-runtime-${HIP_4_1_VERSION}:4.1
+			~dev-util/hip-${HIP_4_1_VERSION}:4.1[rocm]
+			~sys-libs/llvm-roc-libomp-${HIP_4_1_VERSION}:4.1
 		)
 		rocm_4_0? (
-			~dev-util/hip-${HIP_4_0_VERSION}:4.0[rocm,system-llvm=]
-			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-${HIP_4_0_VERSION}:4.0
-				~sys-libs/llvm-roc-libomp-${HIP_4_0_VERSION}:4.0
-			)
+			~dev-libs/rocm-opencl-runtime-${HIP_4_0_VERSION}:4.0
+			~dev-util/hip-${HIP_4_0_VERSION}:4.0[rocm]
+			~sys-libs/llvm-roc-libomp-${HIP_4_0_VERSION}:4.0
 		)
 		rocm_3_10? (
-			~dev-util/hip-${HIP_3_10_VERSION}:3.10[rocm,system-llvm=]
-			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-${HIP_3_10_VERSION}:3.10
-				~sys-libs/llvm-roc-libomp-${HIP_3_10_VERSION}:3.10
-			)
+			~dev-libs/rocm-opencl-runtime-${HIP_3_10_VERSION}:3.10
+			~dev-util/hip-${HIP_3_10_VERSION}:3.10[rocm]
+			~sys-libs/llvm-roc-libomp-${HIP_3_10_VERSION}:3.10
 		)
 		rocm_3_9? (
-			~dev-util/hip-${HIP_3_9_VERSION}:3.9[rocm,system-llvm=]
-			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-${HIP_3_9_VERSION}:3.9
-				~sys-libs/llvm-roc-libomp-${HIP_3_9_VERSION}:3.9
-			)
+			~dev-libs/rocm-opencl-runtime-${HIP_3_9_VERSION}:3.9
+			~dev-util/hip-${HIP_3_9_VERSION}:3.9[rocm]
+			~sys-libs/llvm-roc-libomp-${HIP_3_9_VERSION}:3.9
 		)
 		rocm_3_8? (
-			~dev-util/hip-${HIP_3_8_VERSION}:3.8[rocm,system-llvm=]
-			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-${HIP_3_8_VERSION}:3.8
-				~sys-libs/llvm-roc-libomp-${HIP_3_8_VERSION}:3.8
-			)
+			~dev-libs/rocm-opencl-runtime-${HIP_3_8_VERSION}:3.8
+			~dev-util/hip-${HIP_3_8_VERSION}:3.8[rocm]
+			~sys-libs/llvm-roc-libomp-${HIP_3_8_VERSION}:3.8
 		)
 		rocm_3_7? (
-			~dev-util/hip-${HIP_3_7_VERSION}:3.7[rocm,system-llvm=]
-			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-${HIP_3_7_VERSION}:3.7
-				~sys-libs/llvm-roc-libomp-${HIP_3_7_VERSION}:3.7
-			)
+			~dev-libs/rocm-opencl-runtime-${HIP_3_7_VERSION}:3.7
+			~dev-util/hip-${HIP_3_7_VERSION}:3.7[rocm]
+			~sys-libs/llvm-roc-libomp-${HIP_3_7_VERSION}:3.7
 		)
 		rocm_3_5? (
-			~dev-util/hip-${HIP_3_5_VERSION}:3.5[rocm,system-llvm=]
-			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-${HIP_3_5_VERSION}:3.5
-				~sys-libs/llvm-roc-libomp-${HIP_3_5_VERSION}:3.5
-			)
+			~dev-libs/rocm-opencl-runtime-${HIP_3_5_VERSION}:3.5
+			~dev-util/hip-${HIP_3_5_VERSION}:3.5[rocm]
+			~sys-libs/llvm-roc-libomp-${HIP_3_5_VERSION}:3.5
 		)
 		dev-util/hip:=
 	)
@@ -1443,7 +1423,7 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 		for s in ${LLVM_COMPAT[@]} ; do
 			use "llvm_slot_${s}" && llvm_slot=${s}
 		done
-		if use system-llvm ; then
+		if ! use rocm ; then
 			mycmakeargs+=(
 				-DOPENMP_CUSTOM=ON
 				-DOPENMP_FOUND=ON
@@ -1457,7 +1437,7 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 				-DOPENMP_FOUND=ON
 				-DOpenMP_C_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
 				-DOpenMP_C_LIB_NAMES="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
-				-DOpenMP_LINKER_FLAGS="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so"
+				-DOpenMP_LINKER_FLAGS="${ESYSROOT}${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so"
 			)
 		fi
 	fi

@@ -160,7 +160,7 @@ ${ROCM_SLOTS[@]}
 +jemalloc +jpeg2k -llvm -man -materialx +nanovdb +ndof +nls +nvcc +openal
 +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb
 +openxr -optix +osl +pdf +potrace +pulseaudio release -rocm +sdl +sndfile sycl
-system-llvm +tbb test +tiff +usd -valgrind +wayland
++tbb test +tiff +usd -valgrind +wayland
 r2
 "
 # hip is default ON upstream.
@@ -706,6 +706,11 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		$(gen_llvm_depends)
 	)
 	llvm_slot_12? (
+		openmp? (
+			!rocm? (
+				sys-libs/libomp:12
+			)
+		)
 		|| (
 			~media-libs/mesa-21.1.0[X?]
 			~media-libs/mesa-21.1.1[X?]
@@ -740,11 +745,13 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 			~media-libs/mesa-22.1.2[X?]
 			~media-libs/mesa-22.1.3[X?]
 		)
-		system-llvm? (
-			sys-libs/libomp:12
-		)
 	)
 	llvm_slot_13? (
+		openmp? (
+			!rocm? (
+				sys-libs/libomp:13
+			)
+		)
 		|| (
 			~media-libs/mesa-21.2.5[X?]
 			~media-libs/mesa-21.2.6[X?]
@@ -778,11 +785,13 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 			~media-libs/mesa-22.3.3[X?]
 			 ~media-libs/mesa-22.3.7[X?]
 		)
-		system-llvm? (
-			sys-libs/libomp:13
-		)
 	)
 	llvm_slot_14? (
+		openmp? (
+			!rocm? (
+				sys-libs/libomp:14
+			)
+		)
 		|| (
 			~media-libs/mesa-22.0.5[X?]
 			~media-libs/mesa-22.1.0[X?]
@@ -801,11 +810,13 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 			~media-libs/mesa-22.3.3[X?]
 			 ~media-libs/mesa-22.3.7[X?]
 		)
-		system-llvm? (
-			sys-libs/libomp:14
-		)
 	)
 	llvm_slot_15? (
+		openmp? (
+			!rocm? (
+				sys-libs/libomp:15
+			)
+		)
 		|| (
 			~media-libs/mesa-22.2.0[X?]
 			~media-libs/mesa-22.2.1[X?]
@@ -840,11 +851,13 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 			=media-libs/mesa-24.0*[X?]
 			=media-libs/mesa-9999[X?]
 		)
-		system-llvm? (
-			sys-libs/libomp:15
-		)
 	)
 	llvm_slot_16? (
+		openmp? (
+			!rocm? (
+				sys-libs/libomp:16
+			)
+		)
 		|| (
 			=media-libs/mesa-22.3*[X?]
 			=media-libs/mesa-23.0*[X?]
@@ -924,11 +937,9 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 	)
 	rocm? (
 		rocm_5_5? (
-			~dev-util/hip-${HIP_5_5_VERSION}:5.5[rocm,system-llvm=]
-			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-${HIP_5_5_VERSION}:5.5
-				~sys-libs/llvm-roc-libomp-${HIP_5_5_VERSION}:5.5
-			)
+			~dev-libs/rocm-opencl-runtime-${HIP_5_5_VERSION}:5.5
+			~dev-util/hip-${HIP_5_5_VERSION}:5.5[rocm]
+			~sys-libs/llvm-roc-libomp-${HIP_5_5_VERSION}:5.5
 		)
 		dev-util/hip:=
 	)
@@ -1392,7 +1403,7 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 		for s in ${LLVM_COMPAT[@]} ; do
 			use "llvm_slot_${s}" && llvm_slot=${s}
 		done
-		if use system-llvm ; then
+		if ! use rocm ; then
 			mycmakeargs+=(
 				-DOPENMP_CUSTOM=ON
 				-DOPENMP_FOUND=ON
@@ -1406,7 +1417,7 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 				-DOPENMP_FOUND=ON
 				-DOpenMP_C_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
 				-DOpenMP_C_LIB_NAMES="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
-				-DOpenMP_LINKER_FLAGS="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so"
+				-DOpenMP_LINKER_FLAGS="${ESYSROOT}${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so"
 			)
 		fi
 	fi
