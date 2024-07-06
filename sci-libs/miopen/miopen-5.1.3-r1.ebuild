@@ -109,7 +109,7 @@ PATCHES=(
 
 warn_untested_gpu() {
 	local gpu
-	for gpu in ${AMDGPU_UNTESTED_TARGETS} ; do
+	for gpu in ${AMDGPU_UNTESTED_TARGETS[@]} ; do
 		if use "amdgpu_targets_${gpu}" ; then
 ewarn "${gpu} is not tested upstream but may still be available."
 		fi
