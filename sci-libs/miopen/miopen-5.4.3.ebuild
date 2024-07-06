@@ -4,6 +4,7 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
+# https://github.com/ROCm/MIOpen/blob/rocm-5.4.3/test/CMakeLists.txt#L99
 	gfx900
 	gfx906
 	gfx908
@@ -46,6 +47,7 @@ gen_amdgpu_required_use() {
 REQUIRED_USE="
 	$(gen_amdgpu_required_use)
 	composable-kernel? (
+		!amdgpu_targets_gfx1031
 		rocm
 	)
 	hiprtc? (

@@ -4,6 +4,7 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
+# https://github.com/ROCm/MIOpen/blob/rocm-5.2.3/test/CMakeLists.txt#L99
 	gfx900
 	gfx906
 	gfx908
