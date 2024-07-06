@@ -187,6 +187,7 @@ LLVM_PATCHSET="${PV/_/-}"
 llvm.org_set_globals
 PATCHES=(
 	"${FILESDIR}/${PN}-13.0.1-sover-suffix.patch"
+	"${FILESDIR}/${PN}-14.0.6-r1-includes.patch"
 )
 
 python_check_deps() {
