@@ -17,7 +17,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx940
 	gfx1030
 )
-# See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/1.2.0/docs/release.md?plain=1#L18C22-L18C25
+# See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/1.2.0/docs/release.md?plain=1#L18
 LLVM_COMPAT=( 14 )
 LLVM_SLOT=${LLVM_COMPAT[0]}
 ROCM_SLOT="5.1"
@@ -29,12 +29,12 @@ if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/"
 	inherit git-r3
 else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/${P}"
 	SRC_URI="
 https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
-	KEYWORDS="~amd64"
-	S="${WORKDIR}/${P}"
 fi
 
 DESCRIPTION="AMD ROCm Performance Primitives (RPP) library is a comprehensive \
@@ -42,6 +42,7 @@ high-performance computer vision library for AMD processors with HIP/OpenCL/CPU 
 back-ends."
 HOMEPAGE="https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp"
 LICENSE="MIT"
+RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
@@ -82,12 +83,12 @@ gen_rdepend_llvm() {
 }
 RDEPEND="
 	!sci-libs/rpp:0
-	dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
-	sys-libs/llvm-roc-libomp:${ROCM_SLOT}
-	sys-devel/llvm-roc:${ROCM_SLOT}
-	sys-libs/llvm-roc-libomp:=
-	sys-devel/llvm-roc:=
 	>=dev-libs/boost-1.72:=
+	dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
+	sys-devel/llvm-roc:${ROCM_SLOT}
+	sys-devel/llvm-roc:=
+	sys-libs/llvm-roc-libomp:${ROCM_SLOT}
+	sys-libs/llvm-roc-libomp:=
 	opencl? (
 		virtual/opencl
 	)
@@ -104,11 +105,10 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.5
 	test? (
-		>=media-libs/opencv-3.4.0[jpeg]
 		>=media-libs/libjpeg-turbo-2.0.6.1
+		>=media-libs/opencv-3.4.0[jpeg]
 	)
 "
-RESTRICT="test"
 PATCHES=(
 )
 
