@@ -4,19 +4,11 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
-#	 gfx800
-#	 gfx802
-	gfx803
-#	 gfx804
 	gfx900
-#	 gfx904
 	gfx906
 	gfx908
 	gfx90a
-	gfx1011
-	gfx1012
 	gfx1030
-	gfx1031
 )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -104,7 +96,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-strip-xnack-in-flags.patch"
 	"${FILESDIR}/${PN}-4.3.0-fix-interface-include-in-HIP_COMPILER_FLAGS.patch"
 	"${FILESDIR}/${PN}-5.3.3-enable-test.patch"
-#	"${FILESDIR}/${PN}-5.1.3-gfx1031.patch" # Already added upstream but some parts missing
 #	"${FILESDIR}/${PN}-5.3.3-deprecate-clang-ocl.patch" # TODO: review
 	"${FILESDIR}/${PN}-5.1.3-no-strip.patch"
 	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
