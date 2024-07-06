@@ -39,7 +39,7 @@ LICENSE="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 	debug test
-	ebuild-revision-3
+	ebuild-revision-4
 ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 REQUIRED_USE="
