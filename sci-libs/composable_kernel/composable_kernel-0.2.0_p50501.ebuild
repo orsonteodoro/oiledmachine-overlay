@@ -12,7 +12,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a
 	gfx1030
 )
-UNTESTED_UPSTREAM_TARGETS=(
+AMDGPU_UNTESTED_TARGETS=(
 	gfx803
 	gfx900
 	gfx906
@@ -83,7 +83,7 @@ fi
 
 warn_untested_gpu() {
 	local gpu
-	for gpu in ${UNTESTED_UPSTREAM_TARGETS} ; do
+	for gpu in ${AMDGPU_UNTESTED_TARGETS} ; do
 		if use "amdgpu_targets_${gpu}" ; then
 ewarn "${gpu} is not tested upstream."
 		fi
