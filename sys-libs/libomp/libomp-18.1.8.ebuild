@@ -68,7 +68,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 +debug gdb-plugin hwloc offload ompt test llvm_targets_NVPTX
-r5
+ebuild-revision-6
 ${LLVM_EBUILDS_LLVM18_REVISION}
 "
 gen_cuda_required_use() {

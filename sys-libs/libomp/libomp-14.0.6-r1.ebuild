@@ -49,7 +49,7 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda debug hwloc offload ompt test llvm_targets_NVPTX
 rpc
-r5
+ebuild-revision-6
 "
 # CUDA works only with the x86_64 ABI
 gen_cuda_required_use() {
