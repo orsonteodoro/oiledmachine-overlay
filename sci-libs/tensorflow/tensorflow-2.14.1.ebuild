@@ -403,7 +403,7 @@ ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${HIP_SLOTS2[@]}
 alt-ssl -big-endian clang cuda +hardened models -mpi +python rocm
-system-flatbuffers system-llvm test +xla
+system-flatbuffers test +xla
 ebuild-revision-1
 "
 gen_required_use_cuda_targets() {
@@ -429,9 +429,6 @@ gen_required_use_rocm_targets() {
 REQUIRED_USE="
 	$(gen_required_use_cuda_targets)
 	$(gen_required_use_rocm_targets)
-	!system-llvm? (
-		rocm
-	)
 	?? (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
@@ -494,7 +491,7 @@ gen_rocm_rdepend() {
 			rocm_${u}? (
 				~dev-libs/rccl-${pv}:${s}
 				~dev-libs/rocm-device-libs-${pv}:${s}
-				~dev-util/hip-${pv}:${s}[rocm,system-llvm=]
+				~dev-util/hip-${pv}:${s}[rocm]
 				~dev-util/roctracer-${pv}:${s}
 				~sci-libs/hipBLAS-${pv}:${s}[rocm]
 				~sci-libs/hipFFT-${pv}:${s}[rocm]
@@ -514,9 +511,6 @@ gen_rocm_rdepend() {
 				~dev-util/Tensile-${pv}:${s}
 
 				sys-devel/lld:${LLD_SLOT[${pv}]}
-
-				dev-util/hip-compiler:${s}[system-llvm=]
-				dev-util/rocm-compiler:${s}[system-llvm=]
 
 				amdgpu_targets_gfx90a? (
 					~sci-libs/hipBLASLt-${pv}:${s}[rocm]
@@ -1127,12 +1121,6 @@ src_unpack() {
 setup_linker() {
 	# The package likes to use lld with gcc which is disallowed.
 	LLD="ld.lld"
-	if ! use system-llvm ; then
-		if ! has_version "sys-devel/llvm-roc:${ROCM_SLOT}" ; then
-eerror "Missing sys-devel/llvm-roc:${ROCM_SLOT}"
-			die
-		fi
-	fi
 	local lld_pv=-1
 	if tc-is-clang \
 		&& ${LLD} --version 2>/dev/null 1>/dev/null ; then
