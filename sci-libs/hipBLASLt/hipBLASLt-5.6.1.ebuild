@@ -7,16 +7,6 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
 )
-CUDA_TARGETS_COMPAT=(
-# The project does not define.
-# Listed is same as rocFFT's.
-        sm_60
-	sm_70
-	sm_75
-	compute_60
-        compute_70
-        compute_75
-)
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=16
 PYTHON_COMPAT=( "python3_"{10..11} )
@@ -43,20 +33,9 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipBLASLt"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 benchmark cuda +rocm +tensile ebuild-revison-3
 "
-gen_cuda_required_use() {
-	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
-		echo "
-			cuda_targets_${x}? (
-				cuda
-			)
-		"
-	done
-}
 gen_rocm_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -68,13 +47,7 @@ gen_rocm_required_use() {
 	done
 }
 REQUIRED_USE="
-	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
-	cuda? (
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		)
-	)
 	rocm? (
 		${ROCM_REQUIRED_USE}
 	)
