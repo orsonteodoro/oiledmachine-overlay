@@ -5,6 +5,8 @@ EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx908_xnack_minus
+	gfx90a_xnack_minus
+	gfx90a_xnack_plus
 )
 LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
