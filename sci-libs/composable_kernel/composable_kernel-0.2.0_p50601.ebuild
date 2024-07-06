@@ -15,6 +15,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+UNTESTED_UPSTREAM_TARGETS=(
+	gfx803
+	gfx900
+	gfx906
+)
 CMAKE_MAKEFILE_GENERATOR="emake"
 inherit hip-versions
 LLVM_SLOT=16
@@ -80,8 +85,18 @@ else
 	)
 fi
 
+warn_untested_gpu() {
+	local gpu
+	for gpu in ${UNTESTED_UPSTREAM_TARGETS} ; do
+		if use "amdgpu_targets_${gpu}" ; then
+ewarn "${gpu} is not tested upstream."
+		fi
+	done
+}
+
 pkg_setup() {
 	rocm_pkg_setup
+	warn_untested_gpu
 }
 
 src_unpack() {

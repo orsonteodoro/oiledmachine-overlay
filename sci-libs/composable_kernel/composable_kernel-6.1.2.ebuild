@@ -18,6 +18,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+UNTESTED_UPSTREAM_TARGETS=(
+	gfx803
+	gfx900
+	gfx906
+)
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=17
 ROCM_SLOT="5.7"
@@ -70,7 +75,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-expf.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-hip_runtime-header.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-sqrtf.patch"
-	"${FILESDIR}/${PN}-1.0.0_p9999-path-changes.patch"
 	"${FILESDIR}/${PN}-5.7.0-example-libs.patch"
 )
 if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
@@ -83,8 +87,18 @@ else
 	)
 fi
 
+warn_untested_gpu() {
+	local gpu
+	for gpu in ${UNTESTED_UPSTREAM_TARGETS} ; do
+		if use "amdgpu_targets_${gpu}" ; then
+ewarn "${gpu} is not tested upstream."
+		fi
+	done
+}
+
 pkg_setup() {
 	rocm_pkg_setup
+	warn_untested_gpu
 }
 
 src_unpack() {
