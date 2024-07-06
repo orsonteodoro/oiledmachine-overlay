@@ -6,9 +6,12 @@ EAPI=8
 AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
-	gfx940
-	gfx941
-	gfx942
+	gfx940_xnack_minus
+	gfx940_xnack_plus
+	gfx941_xnack_minus
+	gfx941_xnack_plus
+	gfx942_xnack_minus
+	gfx942_xnack_plus
 )
 CUDA_TARGETS_COMPAT=(
 # The project does not define.
