@@ -9,13 +9,16 @@ EAPI=8
 inherit hip-versions
 
 AMDGPU_TARGETS_COMPAT=(
+# Based on commit 189c648
 	gfx803
 	gfx900
 	gfx906
+# See https://github.com/ROCm/rpp/blob/0.99/.jenkins/precheckin.groovy
 	gfx908
-	gfx90a
-	gfx940
-	gfx1030
+)
+AMDGPU_UNTESTED_TARGETS=(
+	gfx803
+	gfx900
 )
 # See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/1.2.0/docs/release.md?plain=1#L18
 LLVM_COMPAT=( 16 )
@@ -93,8 +96,8 @@ RDEPEND="
 		virtual/opencl
 	)
 	rocm? (
-		dev-util/hip:${ROCM_SLOT}[rocm]
 		dev-libs/rocm-device-libs:${ROCM_SLOT}
+		dev-util/hip:${ROCM_SLOT}[rocm]
 		dev-util/hip:=
 	)
 "
@@ -112,8 +115,18 @@ BDEPEND="
 PATCHES=(
 )
 
+warn_untested_gpu() {
+	local gpu
+	for gpu in ${AMDGPU_UNTESTED_TARGETS[@]} ; do
+		if use "amdgpu_targets_${gpu}" ; then
+ewarn "${gpu} is not CI tested upstream."
+		fi
+	done
+}
+
 pkg_setup() {
 	rocm_pkg_setup
+	warn_untested_gpu
 }
 
 src_prepare() {

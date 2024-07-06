@@ -13,8 +13,19 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx908
 	gfx90a
 	gfx940
+	gfx941
+	gfx942
 	gfx1030
 	gfx1100
+)
+AMDGPU_UNTESTED_TARGETS=(
+	gfx803
+	gfx900
+	gfx90a
+	gfx940
+	gfx941
+	gfx942
+	gfx1030
 )
 # See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/rocm-6.1.2/docs/release.md?plain=1#L18
 LLVM_COMPAT=( 17 )
@@ -93,8 +104,8 @@ RDEPEND="
 	)
 	rocm? (
 		dev-libs/rocm-device-libs:${ROCM_SLOT}
-		dev-util/hip:=
 		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
+		dev-util/hip:=
 	)
 "
 DEPEND="
@@ -111,8 +122,18 @@ BDEPEND="
 PATCHES=(
 )
 
+warn_untested_gpu() {
+	local gpu
+	for gpu in ${AMDGPU_UNTESTED_TARGETS[@]} ; do
+		if use "amdgpu_targets_${gpu}" ; then
+ewarn "${gpu} is not CI tested upstream."
+		fi
+	done
+}
+
 pkg_setup() {
 	rocm_pkg_setup
+	warn_untested_gpu
 }
 
 src_prepare() {
