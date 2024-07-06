@@ -21,61 +21,49 @@ MY_PV=$(ver_cut 1-2)
 
 inherit cmake flag-o-matic rocm
 
-if [[ ${PV} =~ 9999 ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="develop"
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/composable_kernel.git"
-	inherit git-r3
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
+	inherit git-r3
 else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/${PN}-${COMPOSABLE_KERNEL_COMMIT}"
 	SRC_URI="
 https://github.com/ROCmSoftwarePlatform/composable_kernel/archive/${COMPOSABLE_KERNEL_COMMIT}.tar.gz
 	-> ${PN}-${MY_PV}-${COMPOSABLE_KERNEL_COMMIT:0:7}.tar.gz
 	"
-	S="${WORKDIR}/${PN}-${COMPOSABLE_KERNEL_COMMIT}"
 fi
 
 DESCRIPTION="Composable Kernel: Performance Portable Programming Model for Machine Learning Tensor Operators"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/composable_kernel"
 LICENSE="MIT"
-KEYWORDS="~amd64"
+#RESTRICT="test"
 SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
 IUSE+="
-system-llvm test r3
+test ebuild-revision-6
 "
 REQUIRED_USE="
 "
 RDEPEND="
-	~dev-util/hip-${ROCM_VERSION}:${ROCM_SLOT}[system-llvm=]
-	!system-llvm? (
-		~dev-libs/rocm-opencl-runtime-${ROCM_VERSION}:${ROCM_SLOT}
-		~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}
-	)
-	system-llvm? (
-		sys-libs/libomp:${LLVM_SLOT}
-	)
+	~dev-libs/rocm-opencl-runtime-${ROCM_VERSION}:${ROCM_SLOT}
+	~dev-util/hip-${ROCM_VERSION}:${ROCM_SLOT}
+	~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-build/rocm-cmake-${ROCM_VERSION}:${ROCM_SLOT}
-	!system-llvm? (
-		~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
-	)
-	system-llvm? (
-		sys-devel/clang:${LLVM_SLOT}
-	)
+	~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
 	test? (
 		dev-cpp/gtest
 	)
 "
-#RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-0.2.0_p50601-fix-missing-libstdcxx-expf.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-hip_runtime-header.patch"
-	"${FILESDIR}/${PN}-0.2.0_p50501-path-changes.patch"
 )
 if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
 	PATCHES+=(
@@ -92,7 +80,7 @@ pkg_setup() {
 }
 
 src_unpack() {
-	if [[ ${PV} =~ 9999 ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 		if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
 			use fallback-commit && EGIT_COMMIT="7a29f711d48198177a960ce095d9405cdd883dba" # develop
 		else
@@ -108,7 +96,7 @@ src_unpack() {
 src_prepare() {
 	cmake_src_prepare
 
-	[[ -e "${ESYSROOT}/${EROCM_PATH}/$(get_libdir)/cmake/hip/hip-config.cmake" ]] || die "emerge hip"
+	[[ -e "${ESYSROOT}/${EROCM_PATH}/$(rocm_get_libdir)/cmake/hip/hip-config.cmake" ]] || die "emerge hip"
 
 #	hipconfig --help >/dev/null || die
 	rocm_src_prepare
@@ -117,19 +105,10 @@ src_prepare() {
 src_configure() {
 	local llvm_slot="${LLVM_SLOT}"
 
-	if use system-llvm ; then
-		export CC="${CHOST}-clang-${llvm_slot}"
-		export CXX="${CHOST}-clang++-${llvm_slot}"
-		has_version "sys-devel/llvm:${llvm_slot}" \
-			|| die "sys-devel/llvm-${llvm_slot} must be installed."
-		has_version "sys-devel/clang:${llvm_slot}" \
-			|| die "sys-devel/clang-${llvm_slot} must be installed."
-	else
-		export CC="clang"
-		export CXX="clang++"
-		has_version "sys-devel/llvm-roc:${ROCM_SLOT}" \
-			|| die "sys-devel/llvm-roc-${ROCM_SLOT} must be installed."
-	fi
+	export CC="clang"
+	export CXX="clang++"
+	has_version "sys-devel/llvm-roc:${ROCM_SLOT}" \
+		|| die "sys-devel/llvm-roc-${ROCM_SLOT} must be installed."
 
 	# Prevent
 	# error: Illegal instruction detected: Operand has incorrect register class.

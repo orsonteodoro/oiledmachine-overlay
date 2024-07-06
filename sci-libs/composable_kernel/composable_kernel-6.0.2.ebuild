@@ -5,22 +5,20 @@ EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
 # Same as MIOpen's requirements.txt
-	gfx900
-	gfx906
 	gfx908
 	gfx90a
+	gfx940
+	gfx941
+	gfx942
 	gfx1030
 	gfx1100
 	gfx1101
 	gfx1102
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
-inherit hip-versions
-LLVM_SLOT=16
-ROCM_SLOT="5.6"
-ROCM_VERSION="${HIP_5_6_VERSION}"
-COMPOSABLE_KERNEL_COMMIT="0a8dac4ef1a232abd8f6896a5b016f9e76192ddd" # Same as MIOpen's requirements.txt
-MY_PV=$(ver_cut 1-2)
+LLVM_SLOT=17
+ROCM_SLOT="5.7"
+ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic rocm
 
@@ -32,10 +30,10 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-${COMPOSABLE_KERNEL_COMMIT}"
+	S="${WORKDIR}/${PN}-rocm-${PV}"
 	SRC_URI="
-https://github.com/ROCmSoftwarePlatform/composable_kernel/archive/${COMPOSABLE_KERNEL_COMMIT}.tar.gz
-	-> ${PN}-${MY_PV}-${COMPOSABLE_KERNEL_COMMIT:0:7}.tar.gz
+https://github.com/ROCmSoftwarePlatform/composable_kernel/archive/refs/tags/rocm-${PV}.tar.gz
+	-> ${PN}-rocm-${PV}.tar.gz
 	"
 fi
 
@@ -58,6 +56,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	sys-devel/binutils[gold]
 	~dev-build/rocm-cmake-${ROCM_VERSION}:${ROCM_SLOT}
 	~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
 	test? (
@@ -65,9 +64,11 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.2.0_p50601-fix-missing-libstdcxx-expf.patch"
+	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-expf.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-hip_runtime-header.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-sqrtf.patch"
+	"${FILESDIR}/${PN}-1.0.0_p9999-path-changes.patch"
+	"${FILESDIR}/${PN}-5.7.0-example-libs.patch"
 )
 if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
 	PATCHES+=(
@@ -75,7 +76,7 @@ if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
 	)
 else
 	PATCHES+=(
-		"${FILESDIR}/${PN}-0.2.0_p50601-optional-tests.patch"
+		"${FILESDIR}/${PN}-5.7.0-optional-tests.patch"
 	)
 fi
 
@@ -117,6 +118,12 @@ src_configure() {
 	# Prevent
 	# error: Illegal instruction detected: Operand has incorrect register class.
 	replace-flags '-O0' '-O1'
+
+	filter-flags -Wl,--as-needed
+
+	# Fix libhsa-runtime64.so: undefined reference to `hsaKmtWaitOnEvent_Ext'
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=gold
 
 	einfo "USE=${USE}"
 	local gpu_targets=$(echo "${USE}" \
@@ -160,4 +167,4 @@ src_install() {
 	rocm_fix_rpath
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
