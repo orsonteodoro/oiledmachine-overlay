@@ -4,7 +4,7 @@
 EAPI=8
 
 # TODO:  review the install prefix
-# TODO:  recheck/patch hardcoded paths in code level to /opt/rocm/
+# TODO:  recheck/patch hardcoded paths in source code level from /opt/rocm/ to /opt/rocm-5.6.1
 
 inherit hip-versions
 
