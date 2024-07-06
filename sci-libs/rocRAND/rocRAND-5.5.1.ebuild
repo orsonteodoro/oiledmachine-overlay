@@ -11,6 +11,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
 	gfx1030
+	gfx1100
 	gfx1101
 	gfx1102
 )
