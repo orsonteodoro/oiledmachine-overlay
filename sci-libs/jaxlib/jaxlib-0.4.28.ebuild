@@ -71,7 +71,7 @@ GCC_COMPAT=( {11..9} ) # Based on U22, U20
 JAVA_SLOT="11"
 LLVM_COMPAT=( 17 ) # From .bazelrc
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-PYTHON_COMPAT=( python3_{10..12} ) # Limited by Flax CI
+PYTHON_COMPAT=( "python3_"{10..12} ) # Limited by Flax CI
 
 inherit bazel cuda distutils-r1 flag-o-matic git-r3 hip-versions java-pkg-opt-2
 inherit llvm rocm toolchain-funcs
@@ -399,7 +399,7 @@ BDEPEND+="
 
 S="${WORKDIR}/jax-jaxlib-v${PV}"
 RESTRICT="mirror"
-DOCS=( CHANGELOG.md CITATION.bib README.md )
+DOCS=( "CHANGELOG.md" "CITATION.bib" "README.md" )
 ROCM_PATCHES=(
 	"0050-fix-rocm-build-scripts.patch"
 	"0050-fix-rocm-source-code.patch"
@@ -817,29 +817,17 @@ ewarn
 	XLA_S="${WORKDIR}/xla-${EGIT_XLA_COMMIT}"
 	PATCH_PATHS=(
 	# Generated in this folder from:
-	# grep -F -r -e "+++" files/xla | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
-		"${S}/jaxlib/gpu/vendor.h"
-
-	# Generated in this folder from:
-	# grep -F -r -e "+++" files/*.patch | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
-		"${XLA_S}/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl"
-		"${XLA_S}/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl"
-		"${XLA_S}/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl"
-		"${XLA_S}/third_party/gpus/find_rocm_config.py"
-		"${XLA_S}/third_party/gpus/rocm_configure.bzl"
+	# grep -F -r -e "+++" files/0.4.28/xla | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 		"${XLA_S}/third_party/tsl/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl"
 		"${XLA_S}/third_party/tsl/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl"
 		"${XLA_S}/third_party/tsl/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl"
-		"${XLA_S}/third_party/tsl/third_party/gpus/find_rocm_config.py"
 		"${XLA_S}/third_party/tsl/third_party/gpus/rocm_configure.bzl"
 		"${XLA_S}/third_party/tsl/tsl/platform/default/rocm_rocdl_path.cc"
 		"${XLA_S}/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc"
 		"${XLA_S}/xla/stream_executor/gpu/asm_compiler.cc"
-		"${XLA_S}/xla/stream_executor/rocm/hipblaslt_wrapper.h"
-		"${XLA_S}/xla/stream_executor/rocm/hipsolver_wrapper.h"
-		"${XLA_S}/xla/stream_executor/rocm/hipsparse_wrapper.h"
-		"${XLA_S}/xla/stream_executor/rocm/rocm_fft.h"
-		"${XLA_S}/xla/stream_executor/rocm/rocsolver_wrapper.h"
+
+	# Generated in this folder from:
+	# grep -F -r -e "+++" files/0.4.28/*.patch | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	)
 
 	if use rocm ; then
