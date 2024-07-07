@@ -145,7 +145,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-add-stdexcept-header.patch"
-	"${FILESDIR}/${PN}-5.7.0-aot-optional.patch"
+	"${FILESDIR}/${PN}-6.0.2-aot-optional.patch"
 )
 
 required_mem() {

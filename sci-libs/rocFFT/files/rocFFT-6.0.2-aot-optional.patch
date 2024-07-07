@@ -1,0 +1,105 @@
+diff '--color=auto' -urp rocFFT-rocm-6.0.2.orig/library/src/CMakeLists.txt rocFFT-rocm-6.0.2/library/src/CMakeLists.txt
+--- rocFFT-rocm-6.0.2.orig/library/src/CMakeLists.txt	2024-01-08 11:20:41.000000000 -0800
++++ rocFFT-rocm-6.0.2/library/src/CMakeLists.txt	2024-07-07 13:48:19.544322009 -0700
+@@ -358,11 +358,14 @@ foreach( target
+ 
+ endforeach()
+ 
+-add_executable( rocfft_aot_helper
+-  enum_printer.cpp
+-  rocfft_aot_helper.cpp
+-  rocfft_stub.cpp
+-)
++option(BUILD_AOT "Build AOT kernels" ON)
++if(BUILD_AOT)
++  add_executable( rocfft_aot_helper
++    enum_printer.cpp
++    rocfft_aot_helper.cpp
++    rocfft_stub.cpp
++  )
++endif()
+ 
+ add_executable( rocfft_config_search
+   rocfft_config_search.cpp
+@@ -421,7 +424,11 @@ if(TARGET rocfft-device-3)
+   target_link_libraries( rocfft PRIVATE rocfft-device-3 )
+ endif()
+ 
+-foreach( target rocfft rocfft_offline_tuner rocfft_solmap_convert rocfft_aot_helper rocfft_config_search )
++if(BUILD_AOT)
++  set(ROCFFT_EXTRAS_AOT rocfft_aot_helper)
++endif()
++
++foreach( target rocfft rocfft_offline_tuner rocfft_solmap_convert ${ROCFFT_EXTRAS_AOT} rocfft_config_search )
+ 
+   if(( NOT ROCFFT_BUILD_OFFLINE_TUNER ) AND ((${target} STREQUAL "rocfft_offline_tuner") OR (${target} STREQUAL "rocfft_solmap_convert")))
+     continue()
+@@ -475,11 +482,13 @@ target_link_libraries( rocfft_config_sea
+   rocfft-rtc-launch
+   rocfft-function-pool
+   )
+-target_link_libraries( rocfft_aot_helper PRIVATE
+-  generator
+-  rocfft-function-pool
+-  rocfft-solution-map
+-  )
++if(BUILD_AOT)
++  target_link_libraries( rocfft_aot_helper PRIVATE
++    generator
++    rocfft-function-pool
++    rocfft-solution-map
++    )
++endif()
+ 
+  # build executable rocfft-offline-tuner
+ if( ROCFFT_BUILD_OFFLINE_TUNER )
+@@ -519,21 +528,23 @@ endif()
+ # Only build kernels ahead-of-time for a more limited set of
+ # architectures.  Less common architectures are filtered out from the
+ # list and kernels for them are built at runtime instead.
+-set( AMDGPU_TARGETS_AOT ${AMDGPU_TARGETS} )
+-list( REMOVE_ITEM AMDGPU_TARGETS_AOT gfx803 )
+-list( REMOVE_ITEM AMDGPU_TARGETS_AOT gfx900 )
+-# The binary will be having relative RUNPATH with respect to install directory
+-# Set LD_LIBRARY_PATH for executing the binary from build directory.
+-add_custom_command(
+-  OUTPUT rocfft_kernel_cache.db
+-  COMMAND ${CMAKE_COMMAND} -E env "LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:${ROCM_PATH}/${CMAKE_INSTALL_LIBDIR}" ./rocfft_aot_helper \"${ROCFFT_BUILD_KERNEL_CACHE_PATH}\" ${ROCFFT_KERNEL_CACHE_PATH} $<TARGET_FILE:rocfft_rtc_helper> ${AMDGPU_TARGETS_AOT}
+-  DEPENDS rocfft_aot_helper rocfft_rtc_helper
+-  COMMENT "Compile default kernels and solution-map kernels into shipped cache file"
+-)
+-add_custom_target( rocfft_kernel_cache_target ALL
+-  DEPENDS rocfft_kernel_cache.db
+-  VERBATIM
+-)
++if(BUILD_AOT)
++  set( AMDGPU_TARGETS_AOT ${AMDGPU_TARGETS} )
++  list( REMOVE_ITEM AMDGPU_TARGETS_AOT gfx803 )
++  list( REMOVE_ITEM AMDGPU_TARGETS_AOT gfx900 )
++  # The binary will be having relative RUNPATH with respect to install directory
++  # Set LD_LIBRARY_PATH for executing the binary from build directory.
++  add_custom_command(
++    OUTPUT rocfft_kernel_cache.db
++    COMMAND ${CMAKE_COMMAND} -E env "LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:${ROCM_PATH}/${CMAKE_INSTALL_LIBDIR}" ./rocfft_aot_helper \"${ROCFFT_BUILD_KERNEL_CACHE_PATH}\" ${ROCFFT_KERNEL_CACHE_PATH} $<TARGET_FILE:rocfft_rtc_helper> ${AMDGPU_TARGETS_AOT}
++    DEPENDS rocfft_aot_helper rocfft_rtc_helper
++    COMMENT "Compile default kernels and solution-map kernels into shipped cache file"
++  )
++  add_custom_target( rocfft_kernel_cache_target ALL
++    DEPENDS rocfft_kernel_cache.db
++    VERBATIM
++  )
++endif()
+ 
+ rocm_set_soversion( rocfft ${rocfft_SOVERSION} )
+ set_target_properties( rocfft PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/staging" )
+@@ -574,7 +585,7 @@ else()
+   set(ROCFFT_KERNEL_CACHE_INSTALL_DIR ${ROCM_INSTALL_LIBDIR}/rocfft)
+ endif()
+ 
+-if( NOT ENABLE_ASAN_PACKAGING )
++if( BUILD_AOT AND NOT ENABLE_ASAN_PACKAGING )
+   rocm_install(FILES ${ROCFFT_KERNEL_CACHE_PATH}
+     DESTINATION "${ROCFFT_KERNEL_CACHE_INSTALL_DIR}"
+     COMPONENT runtime
+Only in rocFFT-rocm-6.0.2/library/src: CMakeLists.txt.orig
+Only in rocFFT-rocm-6.0.2/library/src: CMakeLists.txt.rej
