@@ -86,21 +86,21 @@ src_prepare() {
 	sed \
 		-e "/HIP_PLATFORM STREQUAL/s,hcc,rocclr," \
 		-i \
-		cmake/VerifyCompiler.cmake \
+		"cmake/VerifyCompiler.cmake" \
 		|| die
 
 	# Disable downloading googletest and googlebenchmark
 	sed -r \
 		-e '/Downloading/{:a;N;/\n *\)$/!ba; d}' \
 		-i \
-		cmake/Dependencies.cmake \
+		"cmake/Dependencies.cmake" \
 		|| die
 
 	# Remove GIT dependency
 	sed -r \
 		-e '/find_package\(Git/{:a;N;/\nendif/!ba; d}' \
 		-i \
-		cmake/Dependencies.cmake \
+		"cmake/Dependencies.cmake" \
 		|| die
 
 	# Install benchmark files
@@ -109,7 +109,7 @@ src_prepare() {
 			-e "/get_filename_component/s,\${BENCHMARK_SOURCE},${PN}_\${BENCHMARK_SOURCE}," \
 			-e "/add_executable/a\  install(TARGETS \${BENCHMARK_TARGET})" \
 			-i \
-			benchmark/CMakeLists.txt \
+			"benchmark/CMakeLists.txt" \
 			|| die
 	fi
 
@@ -118,8 +118,8 @@ src_prepare() {
 }
 
 src_configure() {
-	addpredict /dev/kfd
-	addpredict /dev/dri/
+	addpredict "/dev/kfd"
+	addpredict "/dev/dri/"
 
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
