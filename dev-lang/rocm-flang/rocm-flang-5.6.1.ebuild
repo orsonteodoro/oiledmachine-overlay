@@ -198,13 +198,7 @@ src_prepare() {
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
-		"${S}/CMakeLists.txt"
-		"${S}/flang-legacy/CMakeLists.txt"
-		"${S}/runtime/flang/CMakeLists.txt"
-		"${S}/runtime/flangrti/CMakeLists.txt"
-		"${S}/runtime/libpgmath/CMakeLists.txt"
-		"${S}/runtime/libpgmath/cmake/modules/HandleOutOfTreeLLVM.cmake"
-		"${S}/runtime/libpgmath/lib/CMakeLists.txt"
+		"${S}/runtime/flang/CMakeLists.txt" # Placeholder
 	)
 	rocm_src_prepare
 }
