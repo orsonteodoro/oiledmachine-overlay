@@ -29,7 +29,6 @@ CUDA_TARGETS_COMPAT=(
 	compute_70
 	compute_75
 )
-HIPRAND_COMMIT="b7b91006d19c84cb742c75f19157ece72ab8f9ca"
 LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -41,8 +40,6 @@ S="${WORKDIR}/rocRAND-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/${PN}/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/ROCmSoftwarePlatform/hipRAND/archive/${HIPRAND_COMMIT}.tar.gz
-	-> hipRAND-${HIPRAND_COMMIT}.tar.gz
 "
 
 DESCRIPTION="Generate pseudo-random and quasi-random numbers"
@@ -124,12 +121,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	rmdir hipRAND || die
-	mv -v \
-		../hipRAND-${HIPRAND_COMMIT} \
-		hipRAND \
-		|| die
-
 	# Removed the GIT dependency.
 	sed \
 		-e "/find_package(Git/,+4d" \
@@ -198,7 +189,6 @@ src_configure() {
 		export CUDA_PATH="${ESYSROOT}/opt/cuda"
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
-			-DBUILD_HIPRAND=ON
 			-DDISABLE_WERROR=ON
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
@@ -217,7 +207,6 @@ src_configure() {
 #during IPA pass: simdclone
 #/var/tmp/portage/sci-libs/rocRAND-5.6.0/work/rocRAND-rocm-5.6.0/library/src/rocrand.cpp:2042:1: internal compiler error: Floating point exception
 		mycmakeargs+=(
-			-DBUILD_HIPRAND=OFF
 			-Dhip_cpu_rt_DIR="${ESYSROOT}/usr/lib/hip-cpu/share/hip_cpu_rt/cmake"
 		)
 		HIP_CXX="${CHOST}-clang++-${LLVM_SLOT}"
@@ -225,7 +214,6 @@ src_configure() {
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
-			-DBUILD_HIPRAND=ON
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
