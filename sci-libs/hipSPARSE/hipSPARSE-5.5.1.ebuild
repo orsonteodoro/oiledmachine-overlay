@@ -183,7 +183,7 @@ src_configure() {
 src_test() {
 	check_amdgpu
 	cd "${BUILD_DIR}/clients/staging" || die
-	edob ./${PN,,}-test
+	edob "./${PN,,}-test"
 }
 
 src_install() {
