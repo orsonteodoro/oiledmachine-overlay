@@ -120,7 +120,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-strip-xnack-in-flags.patch"
 	"${FILESDIR}/${PN}-4.3.0-fix-interface-include-in-HIP_COMPILER_FLAGS.patch"
 	"${FILESDIR}/${PN}-5.3.3-enable-test.patch"
-#	"${FILESDIR}/${PN}-5.1.3-gfx1031.patch" # Already added upstream but some parts missing
 	"${FILESDIR}/${PN}-5.1.3-no-strip.patch"
 	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
 #	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # Fixed in pr #1830

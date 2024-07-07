@@ -1,0 +1,13 @@
+diff '--color=auto' -urp MIOpen-rocm-6.1.2.orig/CMakeLists.txt MIOpen-rocm-6.1.2/CMakeLists.txt
+--- MIOpen-rocm-6.1.2.orig/CMakeLists.txt	2024-04-09 11:00:10.000000000 -0700
++++ MIOpen-rocm-6.1.2/CMakeLists.txt	2024-07-07 15:54:38.008998441 -0700
+@@ -270,6 +270,7 @@ endif()
+ message(STATUS "Hip compiler flags: ${HIP_COMPILER_FLAGS}")
+ 
+ add_compile_definitions($<$<COMPILE_LANGUAGE:CXX>:HIP_COMPILER_FLAGS=${HIP_COMPILER_FLAGS}>)
++add_compile_definitions($<$<COMPILE_LANGUAGE:CXX>:BOOST_CONTAINER_DISABLE_NOINLINE>)
+ 
+ # HIP
+ if( MIOPEN_BACKEND STREQUAL "HIP" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN_BACKEND STREQUAL "HIPNOGPU")
+Only in MIOpen-rocm-6.1.2: CMakeLists.txt.orig
+Only in MIOpen-rocm-6.1.2: CMakeLists.txt.rej

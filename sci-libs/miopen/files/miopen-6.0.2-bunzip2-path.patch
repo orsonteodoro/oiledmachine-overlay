@@ -1,0 +1,14 @@
+diff '--color=auto' -urp MIOpen-rocm-6.0.2.orig/CMakeLists.txt MIOpen-rocm-6.0.2/CMakeLists.txt
+--- MIOpen-rocm-6.0.2.orig/CMakeLists.txt	2024-07-07 15:49:55.373122070 -0700
++++ MIOpen-rocm-6.0.2/CMakeLists.txt	2024-07-07 15:51:03.388129336 -0700
+@@ -437,7 +437,9 @@ endif()
+ function(unpack_db db_bzip2_file)
+     set(KERNELS_DIR "${CMAKE_SOURCE_DIR}/src/kernels")
+     STRING(REPLACE ".bz2" "" db_file "${db_bzip2_file}")
+-    find_program(UNZIPPER NAMES lbunzip2 bunzip2)
++    find_program(UNZIPPER NAMES lbunzip2 bunzip2
++        PATHS /bin/bunzip2
++    )
+     if(EXISTS "${db_file}")
+         message(STATUS "WARNING: ${db_file} already exists and will be overwritten")
+     endif()
