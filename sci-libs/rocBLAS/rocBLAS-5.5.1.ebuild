@@ -225,8 +225,8 @@ src_install() {
 
 	if use benchmark; then
 		cd "${BUILD_DIR}" || die
-		dolib.a clients/librocblas_fortran_client.a
-		dobin clients/staging/rocblas-bench
+		dolib.a "clients/librocblas_fortran_client.a"
+		dobin "clients/staging/rocblas-bench"
 	fi
 	rocm_mv_docs
 	rocm_fix_rpath
