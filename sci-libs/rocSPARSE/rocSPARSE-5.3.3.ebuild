@@ -153,7 +153,7 @@ src_prepare() {
 		mkdir -p "${BUILD_DIR}/clients/matrices"
 	# Compile and use the mtx2csr converter. Do not use any optimization
 	# flags, because it causes error!
-		edo $(tc-getCXX) deps/convert.cpp -o deps/convert
+		edo $(tc-getCXX) "deps/convert.cpp" -o "deps/convert"
 		find \
 			"${WORKDIR}" \
 			-maxdepth 2 \
@@ -163,7 +163,8 @@ src_prepare() {
 				-regex ".*/(.*)/\1\.mtx" \
 				-print0 |
 		while IFS= read -r -d '' mtxfile; do
-			local destination="${BUILD_DIR}/clients/matrices/"$(basename -s '.mtx' "${mtxfile}")".csr"
+			local mtx_bn=$(basename -s '.mtx' "${mtxfile}")
+			local destination="${BUILD_DIR}/clients/matrices/${mtx_bn}.csr"
 			ebegin "Converting ${mtxfile} to ${destination}"
 			deps/convert "${mtxfile}" "${destination}"
 			eend $?
@@ -173,8 +174,8 @@ src_prepare() {
 }
 
 src_configure() {
-	addpredict /dev/kfd
-	addpredict /dev/dri/
+	addpredict "/dev/kfd"
+	addpredict "/dev/dri/"
 
 # Fix for
 # local memory (403200) exceeds limit (65536) in function '_Z10bsr_gatherILj4ELj64ELj2EifEv20rocsparse_direction_T2_PKS1_PKT3_PS4_S1_'
