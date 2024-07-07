@@ -104,8 +104,6 @@ RESTRICT="test mirror" # The distro mirrored copy is wrong
 S="${WORKDIR}/hipFFT-rocm-${PV}"
 
 PATCHES=(
-	"${FILESDIR}/${PN}-5.0.2-remove-git-dependency.patch"
-	"${FILESDIR}/${PN}-4.3.0-add-complex-header.patch"
 )
 
 pkg_setup() {
