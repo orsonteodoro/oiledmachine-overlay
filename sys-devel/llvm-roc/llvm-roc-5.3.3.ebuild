@@ -162,38 +162,13 @@ src_prepare() {
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
-		"${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr/comgr-backward-compat.cmake"
-		"${WORKDIR}/llvm-project-rocm-${PV}/amd/hipcc/bin/hipconfig.pl"
-		"${WORKDIR}/llvm-project-rocm-${PV}/amd/hipcc/bin/hipvars.pm"
-		"${WORKDIR}/llvm-project-rocm-${PV}/amd/hipcc/src/hipBin_base.h"
 		"${WORKDIR}/llvm-project-rocm-${PV}/bolt/CMakeLists.txt"
 		"${WORKDIR}/llvm-project-rocm-${PV}/bolt/include/bolt/RuntimeLibs/RuntimeLibrary.h"
 		"${WORKDIR}/llvm-project-rocm-${PV}/bolt/lib/RuntimeLibs/HugifyRuntimeLibrary.cpp"
 		"${WORKDIR}/llvm-project-rocm-${PV}/bolt/lib/RuntimeLibs/InstrumentationRuntimeLibrary.cpp"
 		"${WORKDIR}/llvm-project-rocm-${PV}/bolt/lib/RuntimeLibs/RuntimeLibrary.cpp"
 		"${WORKDIR}/llvm-project-rocm-${PV}/bolt/runtime/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-${PV}/clang/lib/Driver/ToolChains/AMDGPU.cpp"
-		"${WORKDIR}/llvm-project-rocm-${PV}/clang/lib/Driver/ToolChains/AMDGPUOpenMP.cpp"
-		"${WORKDIR}/llvm-project-rocm-${PV}/clang/tools/amdgpu-arch/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-${PV}/compiler-rt/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-${PV}/compiler-rt/test/asan/lit.cfg.py"
-		"${WORKDIR}/llvm-project-rocm-${PV}/libc/cmake/modules/prepare_libc_gpu_build.cmake"
-		"${WORKDIR}/llvm-project-rocm-${PV}/libc/src/math/gpu/vendor/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-${PV}/libc/utils/gpu/loader/CMakeLists.txt"
 		"${WORKDIR}/llvm-project-rocm-${PV}/llvm/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-${PV}/mlir/lib/Dialect/GPU/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-${PV}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
-		"${WORKDIR}/llvm-project-rocm-${PV}/mlir/lib/ExecutionEngine/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/DeviceRTL/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/deviceRTLs/libm/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/hostexec/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/hostexec/CMakeLists.txt.with400files"
-		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/hostrpc/services/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/plugins/amdgpu/rtl_test/buildrun.sh"
-		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/src/CMakeLists.txt"
 	)
 	rocm_src_prepare
 	uopts_src_prepare
