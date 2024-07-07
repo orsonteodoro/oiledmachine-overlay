@@ -3,12 +3,14 @@
 
 EAPI=8
 
+CMAKE_BUILD_TYPE="Release"
+
 inherit cmake linux-info
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCm-Developer-Tools/HIP-CPU.git"
-	inherit git-r3
 	IUSE+=" fallback-commit"
+	inherit git-r3
 fi
 
 DESCRIPTION="An implementation of HIP that works on CPUs, across OSes."
@@ -24,12 +26,11 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.12
 "
-CMAKE_BUILD_TYPE="Release"
 PATCHES=(
 )
 
 src_unpack() {
-	use fallback-commit && EGIT_COMMIT="06186c545308173babda129d6f0cb795b322a5c7"
+	use fallback-commit && EGIT_COMMIT="e112c935057434897bb12d9ab3910380a8bd5f58"
 	git-r3_fetch
 	git-r3_checkout
 	grep -q \
