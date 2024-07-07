@@ -280,7 +280,6 @@ src_prepare() {
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	export PATCH_PATHS=(
-		"${S_UR}/source/adapters/hip/CMakeLists.txt"
 		"${S}/clang/tools/amdgpu-arch/CMakeLists.txt"
 		"${S}/libc/src/math/gpu/vendor/CMakeLists.txt"
 		"${S}/libc/utils/gpu/loader/CMakeLists.txt"
@@ -289,8 +288,9 @@ src_prepare() {
 		"${S}/mlir/lib/Target/LLVM/CMakeLists.txt"
 		"${S}/opencl/CMakeLists.txt"
 		"${S}/opencl/opencl-aot/CMakeLists.txt"
-		"${S}/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
 		"${S}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
+		"${S}/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
+		"${S_UR}/source/adapters/hip/CMakeLists.txt"
 		"${S}/sycl/CMakeLists.txt"
 		"${S}/sycl/cmake/modules/AddSYCL.cmake"
 		"${S}/sycl/cmake/modules/AddSYCLUnitTest.cmake"
