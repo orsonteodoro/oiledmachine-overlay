@@ -236,8 +236,8 @@ CPU_FEATURES_MAP=(
 	${X86_CPU_FEATURES[@]}
 )
 
-inherit cuda java-pkg-opt-2 java-ant-2 cmake-multilib flag-o-matic python-r1
-inherit toolchain-funcs
+inherit cuda java-pkg-opt-2 java-ant-2 cmake-multilib flag-o-matic hip-versions
+inherit python-r1 toolchain-funcs
 
 KEYWORDS="amd64 ~arm arm64 ~loong ~ppc ~ppc64 ~riscv x86"
 SRC_URI="
@@ -290,7 +290,7 @@ contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
 +openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png +python
 +quirc -qt5 -qt6 rocm -spng -system-flatbuffers tesseract -testprograms -tbb
 +tiff +vaapi +v4l +vpx +vtk -wayland +webp -xine video_cards_intel
-ebuild-revision-5
+ebuild-revision-6
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
 # will silently disable it without the user knowing, which defeats the
@@ -1016,45 +1016,45 @@ eerror "OpenVINO is not supported for ${ARCH}"
 	fi
 
 	if use openvx && use rocm_5_7 ; then
-		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.7"
+		export ROCM_PATH="/opt/rocm-${HIP_5_7_VERSION}"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.7"
+			-DOPENVX_ROOT="/opt/rocm-${HIP_5_7_VERSION}"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_6 ; then
-		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.6"
+		export ROCM_PATH="/opt/rocm-${HIP_5_6_VERSION}"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.6"
+			-DOPENVX_ROOT="/opt/rocm-${HIP_5_6_VERSION}"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_5 ; then
-		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.5"
+		export ROCM_PATH="/opt/rocm-${HIP_5_5_VERSION}"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.5"
+			-DOPENVX_ROOT="/opt/rocm-${HIP_5_5_VERSION}"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_4 ; then
-		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.4"
+		export ROCM_PATH="/opt/rocm-${HIP_5_4_VERSION}"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.4"
+			-DOPENVX_ROOT="/opt/rocm-${HIP_5_4_VERSION}"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_3 ; then
-		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.3"
+		export ROCM_PATH="/opt/rocm-${HIP_5_3_VERSION}"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.3"
+			-DOPENVX_ROOT="/opt/rocm-${HIP_5_3_VERSION}"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_2 ; then
-		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.2"
+		export ROCM_PATH="/opt/rocm-${HIP_5_2_VERSION}"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.2"
+			-DOPENVX_ROOT="/opt/rocm-${HIP_5_2_VERSION}"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_1 ; then
-		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.1"
+		export ROCM_PATH="/opt/rocm-${HIP_5_1_VERSION}"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.1"
+			-DOPENVX_ROOT="/opt/rocm-${HIP_5_1_VERSION}"
 			-DWITH_OPENVX=ON
 		)
 	else

@@ -215,8 +215,8 @@ ROCM_SLOTS=(
 	"rocm_5_1"
 )
 
-inherit cuda java-pkg-opt-2 java-ant-2 cmake-multilib flag-o-matic python-r1
-inherit toolchain-funcs virtualx
+inherit cuda java-pkg-opt-2 java-ant-2 cmake-multilib flag-o-matic hip-versions
+inherit python-r1 toolchain-funcs virtualx
 
 if [[ ${PV} = *9999* ]] ; then
 	inherit git-r3
@@ -281,7 +281,7 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 IUSE="
 	debug -doc +eigen gflags glog +java -non-free +opencvapps +python
 	-system-flatbuffers test -testprograms -zlib-ng
-	ebuild-revision-5
+	ebuild-revision-6
 "
 # hal for acceleration
 IUSE+="
@@ -1149,52 +1149,51 @@ eerror "OpenVINO is not supported for ${ARCH}"
 	fi
 
 	if [[ -n "${openvino_arch}" ]] ; then
-ewarn "OpenVINO ebuild level support is still WIP (Work In Progress)"
 		mycmakeargs+=(
 			-DOpenVINO_DIR="/usr/$(get_libdir)/openvino/runtime/cmake"
 		)
 	fi
 
 	if use openvx && use rocm_5_7 ; then
-		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.7"
+		export ROCM_PATH="/opt/rocm-${HIP_5_7_VERSION}"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.7"
+			-DOPENVX_ROOT="/opt/rocm-${HIP_5_7_VERSION}"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_6 ; then
-		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.6"
+		export ROCM_PATH="/opt/rocm-${HIP_5_6_VERSION}"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.6"
+			-DOPENVX_ROOT="/opt/rocm-${HIP_5_6_VERSION}"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_5 ; then
-		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.5"
+		export ROCM_PATH="/opt/rocm-${HIP_5_5_VERSION}"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.5"
+			-DOPENVX_ROOT="/opt/rocm-${HIP_5_5_VERSION}"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_4 ; then
-		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.4"
+		export ROCM_PATH="/opt/rocm-${HIP_5_4_VERSION}"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.4"
+			-DOPENVX_ROOT="/opt/rocm-${HIP_5_4_VERSION}"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_3 ; then
-		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.3"
+		export ROCM_PATH="/opt/rocm-${HIP_5_3_VERSION}"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.3"
+			-DOPENVX_ROOT="/opt/rocm-${HIP_5_3_VERSION}"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_2 ; then
-		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.2"
+		export ROCM_PATH="/opt/rocm-${HIP_5_2_VERSION}"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.2"
+			-DOPENVX_ROOT="/opt/rocm-${HIP_5_2_VERSION}"
 			-DWITH_OPENVX=ON
 		)
 	elif use openvx && use rocm_5_1 ; then
-		export ROCM_PATH="/usr/$(get_libdir)/rocm/5.1"
+		export ROCM_PATH="/opt/rocm-${HIP_5_1_VERSION}"
 		mycmakeargs+=(
-			-DOPENVX_ROOT="/usr/$(get_libdir)/rocm/5.1"
+			-DOPENVX_ROOT="/opt/rocm-${HIP_5_1_VERSION}"
 			-DWITH_OPENVX=ON
 		)
 	else
