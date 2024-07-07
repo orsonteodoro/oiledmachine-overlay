@@ -76,16 +76,7 @@ src_prepare() {
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
-		"${S}/gdb/configure"
-		"${S}/gdb/configure.ac"
-		"${S}/gdb/doc/gdb.texinfo"
-		"${S}/gdb/gdb-hip-test-mode.c"
-		"${S}/gdb/testsuite/gdb.rocm/lane-pc-vega20-kernel.S"
-		"${S}/gdb/testsuite/gdb.rocm/show-info.exp"
-		"${S}/gdb/testsuite/lib/future.exp"
-		"${S}/gdb/testsuite/lib/hip/__clang_hip_runtime_wrapper.h"
-		"${S}/gdb/testsuite/lib/rocm.exp"
-		"${S}/README-ROCM.md"
+		"${S}/gdb/configure" # placeholder
 	)
 	rocm_src_prepare
 }
