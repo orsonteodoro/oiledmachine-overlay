@@ -33,6 +33,7 @@ addresses key infrastructure challenges in AMD GPUs in cluster and datacenter \
 environments."
 HOMEPAGE="https://github.com/RadeonOpenCompute/rdc"
 LICENSE="MIT"
+RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
 IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-9"
@@ -85,7 +86,6 @@ BDEPEND="
 		~dev-util/rocprofiler-${PV}:${ROCM_SLOT}
 	)
 "
-RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/rdc-6.1.2-raslib-install.patch"
 )
