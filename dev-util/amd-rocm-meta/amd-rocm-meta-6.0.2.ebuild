@@ -15,6 +15,7 @@ IUSE="
 	flang
 	hipfort
 	hiptensor
+	hiprand
 	migraphx
 	mivisionx
 	rdc
@@ -33,6 +34,9 @@ REQUIRED_USE="
 RDEPEND="
 	hipfort? (
 		~dev-util/hipfort-${PV}:${ROCM_SLOT}
+	)
+	hiprand? (
+		~sci-libs/hipRAND-${PV}:${ROCM_SLOT}[rocm]
 	)
 	flang? (
 		~dev-lang/rocm-flang-${PV}:${ROCM_SLOT}
