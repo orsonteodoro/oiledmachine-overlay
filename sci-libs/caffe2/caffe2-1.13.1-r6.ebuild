@@ -82,7 +82,7 @@ ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
 cuda +distributed +fbgemm -ffmpeg +gloo +magma +mpi +nnpack +numpy -opencl
 -opencv +openmp rocm +qnnpack +tensorpipe +xnnpack
-r1
+ebuild-revision-2
 "
 gen_cuda_required_use() {
 	local x
@@ -348,9 +348,6 @@ src_prepare() {
 		cmake/Dependencies.cmake \
 		|| die
 	cmake_src_prepare
-	if use rocm ; then
-		eapply "${FILESDIR}/extra-patches/${PN}-2.0.1-hip-cmake.patch"
-	fi
 	pushd torch/csrc/jit/serialization >/dev/null 2>&1 || die
 		flatc \
 			--cpp \
