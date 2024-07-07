@@ -1243,7 +1243,7 @@ ewarn "Install both if build fails."
 ewarn
 	fi
 	if use rocm ; then
-		sed -e "s|/opt/rocm/hip/lib/libamdhip64.so|${EPREFIX}${EROCM_PATH}/$(get_libdir)/libamdhip64.so|" \
+		sed -e "s|/opt/rocm/hip/lib/libamdhip64.so|${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/libamdhip64.so|" \
 			-i extern/hipew/src/hipew.c \
 			|| die
 

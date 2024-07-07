@@ -568,7 +568,7 @@ icl-magma-v2_8_src_configure() {
 			-DMAGMA_ENABLE_HIP=$(usex rocm ON OFF)
 		)
 		append-ldflags \
-			-L"${EPREFIX}${EROCM_PATH}/$(get_libdir)"
+			-L"${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)"
 	else
 		mycmakeargs+=(
 			-DMAGMA_ENABLE_HIP=OFF
@@ -690,7 +690,7 @@ icl-magma-v2_8_src_install() {
 	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 		insinto "${EROCM_PATH}/include/${PN}"
 		doins include/*.h
-		insinto "${EROCM_PATH}/$(get_libdir)/pkgconfig"
+		insinto "${EROCM_PATH}/$(rocm_get_libdir)/pkgconfig"
 	fi
 	doins "${PN}.pc"
 	local DOCS=(
