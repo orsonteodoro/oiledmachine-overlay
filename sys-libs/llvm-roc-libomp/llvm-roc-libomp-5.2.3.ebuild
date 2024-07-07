@@ -296,29 +296,11 @@ src_prepare() {
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
-		"${S_ROOT}/clang/lib/Driver/ToolChains/AMDGPU.cpp"
-		"${S_ROOT}/clang/lib/Driver/ToolChains/AMDGPUOpenMP.cpp"
-		"${S_ROOT}/clang/tools/amdgpu-arch/CMakeLists.txt"
-		"${S_ROOT}/compiler-rt/CMakeLists.txt"
-		"${S_ROOT}/compiler-rt/test/asan/lit.cfg.py"
-		"${S_ROOT}/libc/cmake/modules/prepare_libc_gpu_build.cmake"
-		"${S_ROOT}/libc/utils/gpu/loader/CMakeLists.txt"
-		"${S_ROOT}/mlir/lib/Dialect/GPU/CMakeLists.txt"
-		"${S_ROOT}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
-		"${S_ROOT}/mlir/lib/ExecutionEngine/CMakeLists.txt"
 		"${S_ROOT}/openmp/libomptarget/CMakeLists.txt"
-		"${S_ROOT}/openmp/libomptarget/DeviceRTL/CMakeLists.txt"
-		"${S_ROOT}/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt"
-		"${S_ROOT}/openmp/libomptarget/deviceRTLs/libm/CMakeLists.txt"
-		"${S_ROOT}/openmp/libomptarget/hostexec/CMakeLists.txt"
-		"${S_ROOT}/openmp/libomptarget/hostexec/CMakeLists.txt.with400files"
-		"${S_ROOT}/openmp/libomptarget/hostrpc/services/CMakeLists.txt"
 		"${S_ROOT}/openmp/libomptarget/libm/CMakeLists.txt"
 		"${S_ROOT}/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
-		"${S_ROOT}/openmp/libomptarget/plugins/amdgpu/rtl_test/buildrun.sh"
-		"${S_ROOT}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
+		"${S_ROOT}/openmp/libomptarget/plugins/amdgpu/impl/impl.cpp"
 		"${S_ROOT}/openmp/libomptarget/src/CMakeLists.txt"
-
 		"${S_ROOT}/openmp/libomptarget/tools/prep-libomptarget-bc/CMakeLists.txt"
 	)
 	rocm_src_prepare
