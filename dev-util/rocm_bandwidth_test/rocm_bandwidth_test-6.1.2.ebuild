@@ -33,7 +33,7 @@ BDEPEND="
 	>=dev-build/cmake-3.6.3
 "
 PATCHES=(
-	"${DISTDIR}/${PN}-pr90-a58f9fd.patch"
+	"${FILESDIR}/${PN}-6.1.2-pr90-a58f9fd.patch"
 )
 
 pkg_setup() {
