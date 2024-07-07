@@ -111,7 +111,6 @@ BDEPEND="
 "
 CLR_PATCHES=(
 	"${FILESDIR}/rocclr-5.3.3-gcc13.patch"
-	"${FILESDIR}/rocclr-5.2.3-comgr-header.patch"
 )
 HIP_PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-fno-stack-protector.patch"
@@ -148,14 +147,14 @@ src_prepare() {
 	sed \
 		-e "/set (HIP_LIB_VERSION_STRING/cset (HIP_LIB_VERSION_STRING ${SLOT#*/})" \
 		-i \
-		CMakeLists.txt \
+		"CMakeLists.txt" \
 		|| die
 
 	sed \
 		-e "/\.hip/d" \
 		-e "/CPACK_RESOURCE_FILE_LICENSE/d" \
 		-i \
-		packaging/CMakeLists.txt \
+		"packaging/CMakeLists.txt" \
 		|| die
 
 	pushd "${HIP_S}" || die
@@ -175,7 +174,7 @@ src_prepare() {
 
 	if use rocm ; then
 		pushd "${OCL_S}" || die
-			eapply "${OCL_PATCHES[@]}"
+			#eapply "${OCL_PATCHES[@]}"
 		popd || die
 		pushd "${ROCCLR_S}" || die
 			eapply "${CLR_PATCHES[@]}"

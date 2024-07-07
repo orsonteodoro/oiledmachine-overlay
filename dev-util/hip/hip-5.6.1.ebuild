@@ -151,14 +151,14 @@ src_prepare() {
 	sed \
 		-e "/set (HIP_LIB_VERSION_STRING/cset (HIP_LIB_VERSION_STRING ${SLOT#*/})" \
 		-i \
-		CMakeLists.txt \
+		"CMakeLists.txt" \
 		|| die
 
 	sed \
 		-e "/\.hip/d" \
 		-e "/CPACK_RESOURCE_FILE_LICENSE/d" \
 		-i \
-		packaging/CMakeLists.txt \
+		"packaging/CMakeLists.txt" \
 		|| die
 
 	pushd "${HIPCC_S}" || die
@@ -177,7 +177,7 @@ src_prepare() {
 	popd || die
 
 	pushd "${HIP_S}" || die
-		eapply "${HIP_PATCHES[@]}"
+		#eapply "${HIP_PATCHES[@]}"
 		hprefixify $(grep \
 			-rl \
 			--exclude-dir="build/" \
@@ -188,10 +188,10 @@ src_prepare() {
 
 	if use rocm ; then
 		pushd "${OCL_S}" || die
-			eapply "${OCL_PATCHES[@]}"
+			#eapply "${OCL_PATCHES[@]}"
 		popd || die
 		pushd "${ROCCLR_S}" || die
-			eapply "${CLR_PATCHES[@]}"
+			#eapply "${CLR_PATCHES[@]}"
 		popd || die
 	fi
 

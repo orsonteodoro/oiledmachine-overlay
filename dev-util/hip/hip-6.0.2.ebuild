@@ -123,7 +123,7 @@ HIPAMD_PATCHES=(
 	"${FILESDIR}/${PN}-5.5.1-disable-Werror.patch"
 	"${FILESDIR}/${PN}-5.7.0-hip-config-not-cuda.patch"
 	"${FILESDIR}/${PN}-6.0.2-hip-host-not-cuda.patch"
-	"${FILESDIR}/hipamd-5.7.0-unwrap-line.patch"
+	"${FILESDIR}/hipamd-5.7.1-unwrap-line.patch"
 	"${FILESDIR}/hipamd-6.0.2-hip_fatbin-header.patch"
 	"${FILESDIR}/hipamd-5.7.0-hiprtc-includes-path.patch"
 	"${FILESDIR}/hipamd-5.7.0-hiprtc-header.patch"
@@ -158,14 +158,14 @@ src_prepare() {
 	sed \
 		-e "/set (HIP_LIB_VERSION_STRING/cset (HIP_LIB_VERSION_STRING ${SLOT#*/})" \
 		-i \
-		CMakeLists.txt \
+		"CMakeLists.txt" \
 		|| die
 
 	sed \
 		-e "/\.hip/d" \
 		-e "/CPACK_RESOURCE_FILE_LICENSE/d" \
 		-i \
-		packaging/CMakeLists.txt \
+		"packaging/CMakeLists.txt" \
 		|| die
 
 	pushd "${HIPCC_S}" || die
@@ -184,7 +184,7 @@ src_prepare() {
 	popd || die
 
 	pushd "${HIP_S}" || die
-		eapply "${HIP_PATCHES[@]}"
+		#eapply "${HIP_PATCHES[@]}"
 		hprefixify $(grep \
 			-rl \
 			--exclude-dir="build/" \
@@ -195,10 +195,10 @@ src_prepare() {
 
 	if use rocm ; then
 		pushd "${OCL_S}" || die
-			eapply "${OCL_PATCHES[@]}"
+			#eapply "${OCL_PATCHES[@]}"
 		popd || die
 		pushd "${ROCCLR_S}" || die
-			eapply "${ROCCLR_PATCHES[@]}"
+			#eapply "${ROCCLR_PATCHES[@]}"
 		popd || die
 		pushd "${CLR_S}" || die
 			eapply "${CLR_PATCHES[@]}"

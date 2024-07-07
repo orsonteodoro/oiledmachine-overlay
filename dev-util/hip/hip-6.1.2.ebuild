@@ -123,7 +123,7 @@ HIPAMD_PATCHES=(
 	"${FILESDIR}/${PN}-5.5.1-disable-Werror.patch"
 	"${FILESDIR}/${PN}-5.7.0-hip-config-not-cuda.patch"
 	"${FILESDIR}/${PN}-6.0.2-hip-host-not-cuda.patch"
-	"${FILESDIR}/hipamd-5.7.0-unwrap-line.patch"
+	"${FILESDIR}/hipamd-5.7.1-unwrap-line.patch"
 	"${FILESDIR}/hipamd-6.0.2-hip_fatbin-header.patch"
 	"${FILESDIR}/hipamd-5.7.0-hiprtc-includes-path.patch"
 	"${FILESDIR}/hipamd-5.7.0-hiprtc-header.patch"
@@ -158,14 +158,14 @@ src_prepare() {
 	sed \
 		-e "/set (HIP_LIB_VERSION_STRING/cset (HIP_LIB_VERSION_STRING ${SLOT#*/})" \
 		-i \
-		CMakeLists.txt \
+		"CMakeLists.txt" \
 		|| die
 
 	sed \
 		-e "/\.hip/d" \
 		-e "/CPACK_RESOURCE_FILE_LICENSE/d" \
 		-i \
-		packaging/CMakeLists.txt \
+		"packaging/CMakeLists.txt" \
 		|| die
 
 	pushd "${HIPCC_S}" || die
@@ -184,7 +184,7 @@ src_prepare() {
 	popd || die
 
 	pushd "${HIP_S}" || die
-		eapply "${HIP_PATCHES[@]}"
+		#eapply "${HIP_PATCHES[@]}"
 		hprefixify $(grep \
 			-rl \
 			--exclude-dir="build/" \
@@ -195,15 +195,58 @@ src_prepare() {
 
 	if use rocm ; then
 		pushd "${OCL_S}" || die
-			eapply "${OCL_PATCHES[@]}"
+			#eapply "${OCL_PATCHES[@]}"
 		popd || die
 		pushd "${ROCCLR_S}" || die
-			eapply "${ROCCLR_PATCHES[@]}"
+			#eapply "${ROCCLR_PATCHES[@]}"
 		popd || die
 		pushd "${CLR_S}" || die
 			eapply "${CLR_PATCHES[@]}"
 		popd || die
 	fi
+
+	# Speed up symbol replacmenet for @...@ by reducing the search space
+	# Generated from below one liner ran in the same folder as this file:
+	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
+	PATCH_PATHS=()
+	local _PREFIXES=(
+		"${S}"
+		"${CLR_S}"
+		"${HIP_S}"
+		"${HIPCC_S}"
+		"${OCL_S}"
+		"${ROCCLR_S}"
+		"${RTC_S}"
+	)
+	PATCH_PATHS+=(
+		"${HIPCC_S}/bin/hipvars.pm"
+	)
+	local _prefix
+	for _prefix in ${_PREFIXES[@]} ; do
+		PATCH_PATHS+=(
+			"${_prefix}/CMakeLists.txt"
+			"${_prefix}/bin/hipcc.pl"
+			"${_prefix}/bin/hipvars.pm"
+			"${_prefix}/device/comgrctx.hpp"
+			"${_prefix}/device/devhcprintf.cpp"
+			"${_prefix}/device/devkernel.hpp"
+			"${_prefix}/device/devprogram.hpp"
+			"${_prefix}/hip-config-amd.cmake"
+			"${_prefix}/hip-config.cmake.in"
+			"${_prefix}/hipamd/src/CMakeLists.txt"
+			"${_prefix}/include/hip/amd_detail/amd_hip_vector_types.h"
+			"${_prefix}/include/hip/amd_detail/host_defines.h"
+			"${_prefix}/opencl/amdocl/CMakeLists.txt"
+			"${_prefix}/packaging/CMakeLists.txt"
+			"${_prefix}/src/CMakeLists.txt"
+			"${_prefix}/src/hip_fatbin.cpp"
+			"${_prefix}/src/hip_prof_gen.py"
+			"${_prefix}/src/hip_surface.cpp"
+			"${_prefix}/src/hiprtc/CMakeLists.txt"
+			"${_prefix}/src/hiprtc/hiprtc.cpp"
+			"${_prefix}/src/hiprtc/hiprtcInternal.hpp"
+		)
+	done
 
 	rocm_src_prepare
 }

@@ -171,14 +171,14 @@ src_prepare() {
 	sed \
 		-e "/set (HIP_LIB_VERSION_STRING/cset (HIP_LIB_VERSION_STRING ${SLOT#*/})" \
 		-i \
-		CMakeLists.txt \
+		"CMakeLists.txt" \
 		|| die
 
 	# Disable PCH, because it results in a build error in ROCm 4.0.0.
 	sed \
 		-e "s:option(__HIP_ENABLE_PCH:#option(__HIP_ENABLE_PCH:" \
 		-i \
-		CMakeLists.txt \
+		"CMakeLists.txt" \
 		|| die
 
 	sed \
@@ -186,7 +186,7 @@ src_prepare() {
 		-e "/cmake DESTINATION/d" \
 		-e "/CPACK_RESOURCE_FILE_LICENSE/d" \
 		-i \
-		packaging/CMakeLists.txt \
+		"packaging/CMakeLists.txt" \
 		|| die
 
 	pushd "${HIP_S}" || die
@@ -206,16 +206,16 @@ src_prepare() {
 
 	if use rocm ; then
 		pushd "${OCL_S}" || die
-			eapply "${OCL_PATCHES[@]}"
+			#eapply "${OCL_PATCHES[@]}"
 		popd || die
 		pushd "${ROCCLR_S}" || die
-			eapply "${CLR_PATCHES[@]}"
+			#eapply "${CLR_PATCHES[@]}"
 		popd || die
 	fi
 
 	if use profile ; then
 		pushd "${RTC_S}" || die
-			eapply "${RTC_PATCHES[@]}"
+			#eapply "${RTC_PATCHES[@]}"
 		popd || die
 	fi
 	rocm_src_prepare
