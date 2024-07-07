@@ -5,15 +5,15 @@ EAPI=8
 
 LLVM_SLOT=17
 MY_P="${PN}-$(ver_cut 1-3 ${PV})"
-PYTHON_COMPAT=( python3_{9..11} pypy3 )
+PYTHON_COMPAT=( "python3_"{9..11} "pypy3" )
 ROCM_SLOT="5.7"
-ROCM_VERSION="5.7.0"
+ROCM_VERSION="5.7.1"
 
 inherit python-any-r1 rocm
 
-KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
-SRC_URI="https://github.com/projg2/python-exec/releases/download/v${PV}/${MY_P}.tar.bz2"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_P}"
+SRC_URI="https://github.com/projg2/python-exec/releases/download/v${PV}/${MY_P}.tar.bz2"
 
 DESCRIPTION="Python script wrapper"
 HOMEPAGE="https://github.com/projg2/python-exec/"
@@ -55,8 +55,10 @@ src_configure() {
 	local pyimpls=() i EPYTHON
 	for i in "${_PYTHON_ALL_IMPLS[@]}"; do
 		if use "python_targets_${i}"; then
-			_python_export "${i}" EPYTHON
-			pyimpls+=( "${EPYTHON}" )
+			_python_export "${i}" "EPYTHON"
+			pyimpls+=(
+				"${EPYTHON}"
+			)
 		fi
 	done
 

@@ -3,11 +3,11 @@
 
 EAPI=8
 
-LLVM_SLOT=16
+LLVM_SLOT=17
 MY_P="${PN}-$(ver_cut 1-3 ${PV})"
 PYTHON_COMPAT=( "python3_"{9..11} "pypy3" )
-ROCM_SLOT="5.6"
-ROCM_VERSION="5.6.1"
+ROCM_SLOT="6.1"
+ROCM_VERSION="6.1.2"
 
 inherit python-any-r1 rocm
 
