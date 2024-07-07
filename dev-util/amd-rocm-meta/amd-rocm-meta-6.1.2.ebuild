@@ -14,17 +14,16 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	flang
 	hipfort
-	hiptensor
-	hiprand
 	migraphx
 	mivisionx
 	rdc
-	rocm-bandwidth-test
 	rock-dkms
+	rocm-bandwidth-test
 	rocm-dev
 	rocm-gdb
 	rocm-libs
 	rocm-utils
+	rocdecode
 "
 REQUIRED_USE="
 	rocm-dev? (
@@ -34,9 +33,6 @@ REQUIRED_USE="
 RDEPEND="
 	hipfort? (
 		~dev-util/hipfort-${PV}:${ROCM_SLOT}
-	)
-	hiprand? (
-		~sci-libs/hipRAND-${PV}:${ROCM_SLOT}[rocm]
 	)
 	flang? (
 		~dev-lang/rocm-flang-${PV}:${ROCM_SLOT}
@@ -81,12 +77,16 @@ RDEPEND="
 	rocm-libs? (
 		~dev-libs/rccl-${PV}:${ROCM_SLOT}
 		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
+		~sci-libs/composable_kernel-${PV}:${ROCM_SLOT}
 		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipCUB-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipFFT-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/hipRAND-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipSOLVER-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipSPARSE-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/hipSPARSELt-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/hiptensor-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/miopen-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/rocALUTION-${PV}:${ROCM_SLOT}
 		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[rocm]
@@ -103,8 +103,8 @@ RDEPEND="
 		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 	)
-	hiptensor? (
-		~sci-libs/hiptensor-${PV}:${ROCM_SLOT}[rocm]
+	rocdecode? (
+		~media-libs/rocDecode-${PV}:${ROCM_SLOT}
 	)
 "
 
@@ -122,67 +122,75 @@ RDEPEND="
 # rocm-dev:
 #
 # comgr x
+# hip-dev ; Included in hip
 # hip-doc -
-# hipcc x ; Included in hip
-# hipify-clang # Alias for HIPIFY
 # hip-runtime-amd x ; Alias for hip
 # hip-samples -
-# hsa-rocr x Alias for rocr-runtime
+# hipcc x ; Included in hip
+# hipify-clang # Alias for HIPIFY
 # hsa-amd-aqlprofile x No repo
-# rocm-llvm x
+# hsa-rocr x Alias for rocr-runtime
+# hsa-rocr-dev # Alias for rocr-runtime
+# hsakmt-roct-dev # Alias for roct-thunk-interface
+# openmp-extras-dev ; omp headers, aompcc from aomp-extras, flang
 # openmp-extras-runtime ; libarcher (and static-lib), libomp, flang
 # rocm-cmake x
+# rocm-core x
 # rocm-dbgapi x
 # rocm-debug-agent x
 # rocm-device-libs x
 # rocm-gdb x
+# rocm-llvm x
+# rocm-ocl-icd - dev-libs/opencl-icd-loader is the drop in replacement
+# rocm-opencl x dev-util/clinfo + rocm-opencl-runtime
+# rocm-opencl-dev x
 # rocm-smi-lib x
 # rocm-utils x
-# rocm-core x
-# rocm-opencl x dev-util/clinfo + rocm-opencl-runtime
-# rocm-ocl-icd - dev-libs/opencl-icd-loader is the drop in replacement
 # rocprofiler x
-# roctracer x
-# hip-dev ; Included in hip
-# hsa-rocr-dev # Alias for rocr-runtime
-# hsakmt-roct-dev # Alias for roct-thunk-interface
 # rocprofiler-dev x
+# rocprofiler-plugins
+# roctracer x
 # roctracer-dev x
-# openmp-extras-dev ; omp headers, aompcc from aomp-extras, flang
-# rocm-opencl-dev x
 #
 
 #
 # rocm-libs:
 #
+# composablekernel-dev x
 # hipblas x
-# hipblaslt x
-# hipfft x
-# hipsolver x
-# hipsparse x
-# miopen-hip x
-# rccl x
-# rocalution x
-# rocblas x
-# rocfft x
-# rocrand x
-# rocsolver x
-# rocsparse x
-# rocm-core x
 # hipblas-dev x
+# hipblaslt x
 # hipblaslt-dev x
 # hipcub-dev x
+# hipfft x
 # hipfft-dev x
+# hiprand x
+# hiprand-dev x
+# hipsolver x
 # hipsolver-dev x
+# hipsparse x
 # hipsparse-dev x
+# hipsparselt x
+# hipsparselt-dev x
+# hiptensor x
+# hiptensor-dev x
+# miopen-hip x
 # miopen-hip-dev x
+# rccl x
 # rccl-dev x
+# rocalution x
 # rocalution-dev x
+# rocblas x
 # rocblas-dev x
+# rocfft x
 # rocfft-dev x
+# rocm-core x
 # rocprim-dev x
+# rocrand x
 # rocrand-dev x
+# rocsolver x
 # rocsolver-dev x
+# rocsparse x
 # rocsparse-dev x
 # rocthrust-dev x
 # rocwmma-dev x
@@ -191,8 +199,8 @@ RDEPEND="
 #
 # rocm-utils:
 #
-# rocminfo x
 # rocm-clang-ocl # Metapackage for rocm-llvm x, rocm-opencl-dev x, rocm-core x
 # rocm-cmake x
 # rocm-core -
+# rocminfo x
 #
