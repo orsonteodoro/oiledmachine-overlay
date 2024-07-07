@@ -50,7 +50,7 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-5.3.3-fix-tests.patch"
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
 	"${FILESDIR}/${PN}-5.6.1-llvm-not-dylib-add-libs.patch"
-	"${FILESDIR}/${PN}-5.6.1-rpath.patch"
+	"${FILESDIR}/${PN}-6.1.2-rpath.patch"
 )
 
 pkg_setup() {
@@ -58,6 +58,19 @@ pkg_setup() {
 }
 
 src_prepare() {
+	# Speed up symbol replacmenet for @...@ by reducing the search space
+	# Generated from below one liner ran in the same folder as this file:
+	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
+	PATCH_PATHS=(
+		"${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr/src/comgr-objdump.cpp"
+		"${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr/src/comgr-compiler.cpp"
+		"${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr/src/comgr-env.cpp"
+		"${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr/src/comgr-env.h"
+		"${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr/src/comgr-objdump.cpp"
+		"${WORKDIR}/llvm-project-rocm-${PV}/amd/comgr/test/source1.cl"
+	)
+
 	cmake_src_prepare
 	rocm_src_prepare
 }
