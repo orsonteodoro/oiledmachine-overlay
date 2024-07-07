@@ -69,7 +69,7 @@ OCL_PATCHES=(
 ROCCLR_PATCHES=(
 	# Bug #753377
 	# patch re-enables accidentally disabled gfx800 family
-	"${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
+	"${FILESDIR}/${PN}-6.0.2-enable-gfx800.patch"
 )
 
 pkg_setup() {

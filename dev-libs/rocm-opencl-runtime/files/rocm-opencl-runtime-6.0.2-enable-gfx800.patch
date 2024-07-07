@@ -1,0 +1,11 @@
+--- rocclr.orig/device/device.hpp	2024-01-04 19:16:33.000000000 -0800
++++ rocclr/device/device.hpp	2024-07-07 03:20:43.899091647 -0700
+@@ -1387,7 +1387,7 @@ class Isa {
+ 
+   /// @returns If the ROCm runtime supports the ISA.
+   bool runtimeRocSupported() const {
+-    if (!IS_HIP && (versionMajor_ == 8)) {
++    if (!IS_HIP && 0 && (versionMajor_ == 8)) {
+       return false;
+     }
+     return runtimeRocSupported_;
