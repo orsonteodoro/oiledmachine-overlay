@@ -1,0 +1,23 @@
+diff '--color=auto' -urp rccl-rocm-6.1.2.orig/CMakeLists.txt rccl-rocm-6.1.2/CMakeLists.txt
+--- rccl-rocm-6.1.2.orig/CMakeLists.txt	2024-05-28 11:01:58.000000000 -0700
++++ rccl-rocm-6.1.2/CMakeLists.txt	2024-07-07 09:55:00.190767414 -0700
+@@ -58,7 +58,7 @@ if (BUILD_LOCAL_GPU_TARGET_ONLY)
+ endif()
+ 
+ # Determine which GPU architectures to build for
+-set(AMDGPU_TARGETS "${DEFAULT_GPUS}" CACHE STRING "Target default GPUs if AMDGPU_TARGETS is not defined.")
++option(AMDGPU_TARGETS "Target default GPUs if AMDGPU_TARGETS is not defined." "${DEFAULT_GPUS}")
+ if (COMMAND rocm_check_target_ids)
+   message(STATUS "Checking for ROCm support for GPU targets:")
+   rocm_check_target_ids(SUPPORTED_GPUS TARGETS ${AMDGPU_TARGETS})
+@@ -66,7 +66,7 @@ else()
+   message(WARNING "Unable to check for supported GPU targets. Falling back to default GPUs.")
+   set(SUPPORTED_GPUS ${DEFAULT_GPUS})
+ endif()
+-set(GPU_TARGETS "${SUPPORTED_GPUS}" CACHE STRING "GPU targets to compile for.")
++option(GPU_TARGETS "GPU targets to compile for." "${SUPPORTED_GPUS}")
+ message(STATUS "Compiling for ${GPU_TARGETS}")
+ 
+ ## NOTE: Reload rocm-cmake in order to update GPU_TARGETS
+Only in rccl-rocm-6.1.2: CMakeLists.txt.orig
+Only in rccl-rocm-6.1.2: CMakeLists.txt.rej

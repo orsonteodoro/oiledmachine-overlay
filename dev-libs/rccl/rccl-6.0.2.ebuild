@@ -57,7 +57,6 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.5.1-remove-chrpath.patch"
 	"${FILESDIR}/${PN}-5.7.0-customize-targets.patch"
 )
 
