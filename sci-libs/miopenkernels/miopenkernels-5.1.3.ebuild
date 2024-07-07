@@ -23,17 +23,6 @@ inherit rocm unpacker
 
 if [[ "${MAINTAINER_MODE}" =~ "1" ]] ; then
 	:
-elif [[ "${AUPDATE}" =~ "1" ]] ; then
-	SRC_URI="
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx1030-36kdb/miopenkernels-gfx1030-36kdb_1.1.0.50103-66_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx900-56kdb/miopenkernels-gfx900-56kdb_1.1.0.50103-66_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx900-64kdb/miopenkernels-gfx900-64kdb_1.1.0.50103-66_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx906-60kdb/miopenkernels-gfx906-60kdb_1.1.0.50103-66_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx906-64kdb/miopenkernels-gfx906-64kdb_1.1.0.50103-66_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx908-120kdb/miopenkernels-gfx908-120kdb_1.1.0.50103-66_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx90a-104/miopenkernels-gfx90a-104_1.1.0.50103-66_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx90a-110/miopenkernels-gfx90a-110_1.1.0.50103-66_amd64.deb
-	"
 else
 	SRC_URI="
 		amdgpu_targets_gfx1030? (

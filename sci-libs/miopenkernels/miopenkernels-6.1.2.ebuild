@@ -24,15 +24,6 @@ inherit rocm unpacker
 
 if [[ "${MAINTAINER_MODE}" =~ "1" ]] ; then
 	:
-elif [[ "${AUPDATE}" =~ "1" ]] ; then
-	SRC_URI="
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx1030kdb/miopen-hip-gfx1030kdb_3.1.0.60102-119~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900kdb/miopen-hip-gfx900kdb_3.1.0.60102-119~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906kdb/miopen-hip-gfx906kdb_3.1.0.60102-119~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx908kdb/miopen-hip-gfx908kdb_3.1.0.60102-119~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90akdb/miopen-hip-gfx90akdb_3.1.0.60102-119~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx942kdb/miopen-hip-gfx942kdb_3.1.0.60102-119~20.04_amd64.deb
-	"
 else
 	SRC_URI="
 		amdgpu_targets_gfx1030? (
