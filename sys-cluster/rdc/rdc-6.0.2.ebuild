@@ -35,7 +35,7 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/rdc"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-8"
+IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-9"
 REQUIRED_USE="
 	raslib
 	systemd? (
@@ -88,7 +88,6 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/rdc-5.6.0-raslib-install.patch"
-	"${FILESDIR}/rdc-5.7.0-path-changes.patch"
 )
 
 pkg_setup() {
