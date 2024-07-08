@@ -183,6 +183,8 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
+	addpredict "/dev/nvidiactl"
+	addpredict "/proc/self/task/"
 	local mycmakeargs=()
 	mycmakeargs+=(
 		-DCMAKE_C_COMPILER="${CC}"
