@@ -103,7 +103,7 @@ ${ALL_LLVM_TARGETS[*]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
-cuda esimd_emulator rocm system-llvm test
+cuda esimd_emulator rocm test
 "
 gen_cuda_required_use() {
 	local x
@@ -168,26 +168,12 @@ RDEPEND="
 	)
 	rocm? (
 		rocm_4_3? (
-			=dev-util/hip-4.3*:=[system-llvm=]
-			!system-llvm? (
-				=sys-devel/llvm-roc-4.3*
-			)
-			system-llvm? (
-				=sys-devel/clang-13*
-				=sys-devel/lld-13*
-				=sys-devel/llvm-13*
-			)
+			=dev-util/hip-4.3*:=
+			=sys-devel/llvm-roc-4.3*
 		)
 		rocm_4_2? (
-			=dev-util/hip-4.2*:=[system-llvm=]
-			!system-llvm? (
-				=sys-devel/llvm-roc-4.2*
-			)
-			system-llvm? (
-				=sys-devel/clang-12*
-				=sys-devel/lld-12*
-				=sys-devel/llvm-12*
-			)
+			=dev-util/hip-4.2*:=
+			=sys-devel/llvm-roc-4.2*
 		)
 	)
 "
@@ -278,10 +264,7 @@ src_configure() {
 	# Unbreak clang detection with cmake
 	export PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/ccache/d" | tr $'\n' ":")
 
-	if use rocm && use system-llvm ; then
-		export CC="${CHOST}-clang-${LLVM_SLOT}"
-		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
-	elif use rocm ; then
+	if use rocm ; then
 		export CC="clang"
 		export CXX="clang++"
 	fi
