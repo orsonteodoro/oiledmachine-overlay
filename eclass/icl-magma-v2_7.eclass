@@ -338,11 +338,14 @@ Requires: $(usex openblas "openblas" "blas lapack")
 EOF
 }
 
+# Replace symbols for cuda builds even if not inheriting rocm eclass.
 replace_symbols() {
 	IFS=$'\n'
 
 	local llvm_slot
-	if [[ "${ROCM_SLOT}" == "6.0" ]] ; then
+	if [[ "${ROCM_SLOT}" == "6.1" ]] ; then
+		llvm_slot=17
+	elif [[ "${ROCM_SLOT}" == "6.0" ]] ; then
 		llvm_slot=17
 	elif [[ "${ROCM_SLOT}" == "5.7" ]] ; then
 		llvm_slot=17

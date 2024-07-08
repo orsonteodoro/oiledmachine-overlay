@@ -179,8 +179,8 @@ diff -urp magma-2.7.2.orig/example/Makefile magma-2.7.2/example/Makefile
 -#                     -L$(OPENBLASDIR)/lib -lopenblas
 +# # may be lib instead of @LIBDIR@ on some systems
 +# MAGMA_LIBS       := -L$(MAGMADIR)/@LIBDIR@ -lmagma_sparse -lmagma \
-+#                     -L$(CUDADIR)/@LIBDIR@ -lcublas -lcudart -lcusparse \
-+#                     -L$(OPENBLASDIR)/@LIBDIR@ -lopenblas
++#                     -L$(CUDADIR)/@ABI_LIBDIR@ -lcublas -lcudart -lcusparse \
++#                     -L$(OPENBLASDIR)/@ABI_LIBDIR@ -lopenblas
  
  
  # ----------------------------------------
@@ -204,8 +204,8 @@ diff -urp magma-2.7.2.orig/example/README.txt magma-2.7.2/example/README.txt
 -        -L$CUDADIR/lib64   -lcublas -lcudart -lcusparse \
 -        -L$OPENBLASDIR/lib -lopenblas \
 +    gcc -L$MAGMADIR/@LIBDIR@    -lmagma_sparse -lmagma \
-+        -L$CUDADIR/@LIBDIR@   -lcublas -lcudart -lcusparse \
-+        -L$OPENBLASDIR/@LIBDIR@ -lopenblas \
++        -L$CUDADIR/@ABI_LIBDIR@   -lcublas -lcudart -lcusparse \
++        -L$OPENBLASDIR/@ABI_LIBDIR@ -lopenblas \
          -o example example.o
  
  If you are not using MAGMA sparse routines, you can omit -lmagma_sparse.
@@ -214,12 +214,12 @@ diff -urp magma-2.7.2.orig/example/README.txt magma-2.7.2/example/README.txt
  sh/bash:
  
 -    LD_LIBRARY_PATH=$MAGMADIR/lib:$CUDADIR/lib64:$OPENBLASDIR/lib
-+    LD_LIBRARY_PATH=$MAGMADIR/@LIBDIR@:$CUDADIR/@LIBDIR@:$OPENBLASDIR/@LIBDIR@
++    LD_LIBRARY_PATH=$MAGMADIR/@LIBDIR@:$CUDADIR/@ABI_LIBDIR@:$OPENBLASDIR/@ABI_LIBDIR@
  
  or with csh/tcsh:
  
 -    setenv LD_LIBRARY_PATH $MAGMADIR/lib:$CUDADIR/lib64:$OPENBLASDIR/lib
-+    setenv LD_LIBRARY_PATH $MAGMADIR/@LIBDIR@:$CUDADIR/@LIBDIR@:$OPENBLASDIR/@LIBDIR@
++    setenv LD_LIBRARY_PATH $MAGMADIR/@LIBDIR@:$CUDADIR/@ABI_LIBDIR@:$OPENBLASDIR/@ABI_LIBDIR@
  
  ----------------------------------------
  Fortran example
@@ -231,8 +231,8 @@ diff -urp magma-2.7.2.orig/example/README.txt magma-2.7.2/example/README.txt
 -             -L$CUDADIR/lib64   -lcublas -lcudart -lcusparse \
 -             -L$OPENBLASDIR/lib -lopenblas \
 +    gfortran -L$MAGMADIR/@LIBDIR@    -lmagma_sparse -lmagma \
-+             -L$CUDADIR/@LIBDIR@   -lcublas -lcudart -lcusparse \
-+             -L$OPENBLASDIR/@LIBDIR@ -lopenblas \
++             -L$CUDADIR/@ABI_LIBDIR@   -lcublas -lcudart -lcusparse \
++             -L$OPENBLASDIR/@ABI_LIBDIR@ -lopenblas \
               -o example_f example_f.o fortran.o
  
  
@@ -241,7 +241,7 @@ diff -urp magma-2.7.2.orig/example/README.txt magma-2.7.2/example/README.txt
  to $PKG_CONFIG_PATH, e.g. with csh,
  
 -    setenv PKG_CONFIG_PATH ${PKG_CONFIG_PATH}:/usr/local/magma/lib/pkgconfig
-+    setenv PKG_CONFIG_PATH ${PKG_CONFIG_PATH}:/usr/@LIBDIR@/pkgconfig
++    setenv PKG_CONFIG_PATH ${PKG_CONFIG_PATH}:/usr/@ABI_LIBDIR@/pkgconfig
  
  then use 'pkg-config --cflags magma' and 'pkg-config --libs magma' as shown in
  the Makefile.
@@ -438,7 +438,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.acml magma-2.7.2/make.inc-
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
 -            -L$(ACMLDIR)/gfortran64_mp/lib
-+LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
++LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
 +            -L$(ACMLDIR)/gfortran64_mp/@LIBDIR@
  
  INC       = -I$(CUDADIR)/include \
@@ -449,17 +449,18 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.atlas magma-2.7.2/make.inc
 @@ -75,12 +75,12 @@ LIB      += -lcublas -lcusparse -lcudart
  # define library directories preferably in your environment, or here.
  #LAPACKDIR ?= /opt/lapack
- #ATLASDIR  ?= /opt/atlas
+-#ATLASDIR  ?= /opt/atlas
++#ATLASDIR  ?= /usr
 -#CUDADIR   ?= /usr/local/cuda
 +#CUDADIR   ?= /opt/cuda
  -include make.check-atlas
  -include make.check-cuda
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
-+LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
++LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
              -L$(LAPACKDIR) \
 -            -L$(ATLASDIR)/lib
-+            -L$(ATLASDIR)/@LIBDIR@
++            -L$(ATLASDIR)/@ABI_LIBDIR@
  
  INC       = -I$(CUDADIR)/include
 diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-mkl magma-2.7.2/make.inc-examples/make.inc.hip-gcc-mkl
@@ -493,12 +494,12 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-mkl magma-2.7.2/ma
  ifeq ($(BACKEND),cuda)
      INC    += -I$(CUDADIR)/include
 -    LIBDIR += -L$(CUDADIR)/lib64 -L$(MKLROOT)/lib/intel64
-+    LIBDIR += -L$(CUDADIR)/@LIBDIR@ -L$(MKLROOT)/lib/intel64
++    LIBDIR += -L$(CUDADIR)/@ABI_LIBDIR@ -L$(MKLROOT)/lib/intel64
  else ifeq ($(BACKEND),hip)
 -    INC    += -I$(HIPDIR)/../include
 -    LIBDIR += -L$(HIPDIR)/../aomp/lib -L$(HIPDIR)/../hipblas/lib -L$(HIPDIR)/../hipsparse/lib -L$(MKLROOT)/lib/intel64
 +    INC    += -I$(HIPDIR)/include
-+    LIBDIR += -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -L$(MKLROOT)/lib/intel64
++    LIBDIR += -L@ESYSROOT_ROCM_PATH@/@ROCM_LIBDIR@ -L$(MKLROOT)/lib/intel64
  endif
  
  
@@ -546,7 +547,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-openblas magma-2.7
  
  # define library directories preferably in your environment, or here.
 -LIBDIR    += -L$(OPENBLASDIR)/lib
-+LIBDIR    += -L$(OPENBLASDIR)/@LIBDIR@
++LIBDIR    += -L$(OPENBLASDIR)/@ABI_LIBDIR@
  
  # include each's directories
  # note: we don't need to include the library directories, since nvcc or hipcc
@@ -555,12 +556,12 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-openblas magma-2.7
  ifeq ($(BACKEND),cuda)
      INC    += -I$(CUDADIR)/include
 -    LIBDIR += -L$(CUDADIR)/lib64
-+    LIBDIR += -L$(CUDADIR)/@LIBDIR@
++    LIBDIR += -L$(CUDADIR)/@ABI_LIBDIR@
  else ifeq ($(BACKEND),hip)
 -    INC    += -I$(HIPDIR)/../include
 -    LIBDIR += -L$(HIPDIR)/../aomp/lib -L$(HIPDIR)/../hipblas/lib -L$(HIPDIR)/../hipsparse/lib
 +    INC    += -I$(HIPDIR)/include
-+    LIBDIR += -L@ESYSROOT_ROCM_PATH@/@LIBDIR@
++    LIBDIR += -L@ESYSROOT_ROCM_PATH@/@ROCM_LIBDIR@
  endif
  
  
@@ -576,7 +577,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.macos magma-2.7.2/make.inc
  -include make.check-cuda
  
 -LIBDIR    = -L$(CUDADIR)/lib
-+LIBDIR    = -L$(CUDADIR)/@LIBDIR@
++LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@
  
  INC       = -I$(CUDADIR)/include
  
@@ -592,7 +593,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.macos-debug magma-2.7.2/ma
  -include make.check-cuda
  
 -LIBDIR    = -L$(CUDADIR)/lib
-+LIBDIR    = -L$(CUDADIR)/@LIBDIR@
++LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@
  
  INC       = -I$(CUDADIR)/include
  
@@ -609,7 +610,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.macos-mkl magma-2.7.2/make
  
 -LIBDIR    = -L$(CUDADIR)/lib \
 -            -L$(MKLROOT)/lib
-+LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
++LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
 +            -L$(MKLROOT)/@LIBDIR@
  
  INC       = -I$(CUDADIR)/include
@@ -625,7 +626,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.macos-openmp magma-2.7.2/m
  -include make.check-cuda
  
 -LIBDIR    = -L$(CUDADIR)/lib
-+LIBDIR    = -L$(CUDADIR)/@LIBDIR@
++LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@
  
  INC       = -I$(CUDADIR)/include
  
@@ -646,7 +647,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc magma-2.7.2/make.i
  -include make.check-cuda
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
-+LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
++LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
@@ -667,7 +668,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc-debug magma-2.7.2/
  -include make.check-cuda
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
-+LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
++LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
@@ -688,7 +689,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc-ilp64 magma-2.7.2/
  -include make.check-cuda
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
-+LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
++LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
@@ -709,7 +710,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-gcc-ilp64-debug magma-
  -include make.check-cuda
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
-+LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
++LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
@@ -730,7 +731,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc magma-2.7.2/make.i
  -include make.check-cuda
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
-+LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
++LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
@@ -751,7 +752,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc-debug magma-2.7.2/
  -include make.check-cuda
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
-+LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
++LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
@@ -772,7 +773,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc-ilp64 magma-2.7.2/
  -include make.check-cuda
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
-+LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
++LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
@@ -793,7 +794,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.mkl-icc-ilp64-debug magma-
  -include make.check-cuda
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
-+LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
++LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
@@ -818,7 +819,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.openblas magma-2.7.2/make.
  
  # define library directories preferably in your environment, or here.
 -LIBDIR    += -L$(OPENBLASDIR)/lib
-+LIBDIR    += -L$(OPENBLASDIR)/@LIBDIR@
++LIBDIR    += -L$(OPENBLASDIR)/@ABI_LIBDIR@
  INC       +=
  
  
@@ -827,7 +828,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.openblas magma-2.7.2/make.
      # link with cuda specific libraries
      INC    += -I$(CUDADIR)/include
 -    LIBDIR += -L$(CUDADIR)/lib64
-+    LIBDIR += -L$(CUDADIR)/@LIBDIR@
++    LIBDIR += -L$(CUDADIR)/@ABI_LIBDIR@
      LIB    += -lcublas -lcusparse -lcudart -lcudadevrt
  endif
  
@@ -838,7 +839,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.openblas magma-2.7.2/make.
 -    INC    += -I$(HIPDIR)/../include
 -    LIBDIR += -L$(HIPDIR)/../aomp/lib -L$(HIPDIR)/../hipblas/lib -L$(HIPDIR)/../hipsparse/lib
 +    INC    += -I$(HIPDIR)/include
-+    LIBDIR += -L@ESYSROOT_ROCM_PATH@/@LIBDIR@
++    LIBDIR += -L@ESYSROOT_ROCM_PATH@/@ROCM_LIBDIR@
      LIB    += -lhipblas -lhipsparse
  endif
  
@@ -858,8 +859,8 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.openblas-debug magma-2.7.2
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
 -            -L$(OPENBLASDIR)/lib
-+LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
-+            -L$(OPENBLASDIR)/@LIBDIR@
++LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
++            -L$(OPENBLASDIR)/@ABI_LIBDIR@
  
  INC       = -I$(CUDADIR)/include
 diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.power9-essl magma-2.7.2/make.inc-examples/make.inc.power9-essl

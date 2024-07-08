@@ -97,7 +97,7 @@ diff -uNrp magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-mkl-ilp64 magma-2
 +#   the compiler sometimes, so we need to add -L here too if there are problems
 +#FOPENMP     = -fopenmp
 +#FOPENMP     =
-+FOPENMP     = -fopenmp -L@ESYSROOT_LLVM_PATH@/@LIBDIR@ -I@ESYSROOT_LLVM_PATH@/include
++FOPENMP     = -fopenmp -L@ESYSROOT_LLVM_PATH@/@COND_LIBDIR@ -I@ESYSROOT_LLVM_PATH@/include
 +
 +# now, generate our flags
 +CFLAGS      = -O3 $(FPIC) $(FOPENMP) -DNDEBUG -DADD_ -Wall -std=c99
@@ -152,10 +152,10 @@ diff -uNrp magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-mkl-ilp64 magma-2
 +#   folders
 +ifeq ($(BACKEND),cuda)
 +    INC    += -I$(CUDADIR)/include
-+    LIBDIR += -L$(CUDADIR)/@LIBDIR@ -L$(MKLROOT)/lib/intel64
++    LIBDIR += -L$(CUDADIR)/@ABI_LIBDIR@ -L$(MKLROOT)/lib/intel64
 +else ifeq ($(BACKEND),hip)
 +    INC    += -I$(HIPDIR)/include
-+    LIBDIR += -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -L$(MKLROOT)/lib/intel64
++    LIBDIR += -L@ESYSROOT_ROCM_PATH@/@ROCM_LIBDIR@ -L$(MKLROOT)/lib/intel64
 +endif
 +
 +
