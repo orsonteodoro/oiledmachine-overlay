@@ -387,6 +387,7 @@ einfo
 # @COND_LIBDIR@  - When evaluating @ESYSROOT_LLVM_PATH@/@COND_LIBDIR@,
 #                  If cuda, then same as get_libdir.
 #                  If rocm, then same as rocm_get_libdir.
+#                  The ebuild defines cond_get_libdir which should echo lib or lib64.
 # @ROCM_LIBDIR@  - lib (same as rocm_get_libdir)
 # @LLVM_SLOT@    - 13, 14, 15, 16, 17
 # @PV@           - x.y.z
@@ -432,6 +433,12 @@ _rocm_change_common_paths() {
 		-i \
 		-e "s|@ROCM_LIBDIR@|$(rocm_get_libdir)|g" \
 		$(grep -r -l -e "@ROCM_LIBDIR@" "${_patch_paths[@]}" 2>/dev/null) \
+		2>/dev/null || true
+
+	sed \
+		-i \
+		-e "s|@COND_LIBDIR@|$(cond_get_libdir)|g" \
+		$(grep -r -l -e "@COND_LIBDIR@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	# @LLVM_SLOT@ is deprecated.  Use @EPREFIX_LLVM_PATH@, @ESYSROOT_LLVM_PATH@.
