@@ -59,6 +59,8 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 	gfx1103
+	gfx1150
+	gfx1151
 )
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CUDA_TARGETS_COMPAT=(
@@ -75,6 +77,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_75
 	sm_80
 	sm_86
+	sm_87
 	sm_89
 	sm_90
 	auto
