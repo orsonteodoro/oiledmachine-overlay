@@ -40,7 +40,7 @@ diff -urp llvm-sycl-nightly-20220812.orig/mlir/lib/ExecutionEngine/CMakeLists.tx
 -  set(CMAKE_MODULE_PATH "${HIP_PATH}/cmake" ${CMAKE_MODULE_PATH})
 -  find_package(HIP)
 -  if (NOT HIP_FOUND)
-+  set(CMAKE_MODULE_PATH "${ROCM_PATH}/@LIBDIR@/cmake/hip" ${CMAKE_MODULE_PATH})
++  set(CMAKE_MODULE_PATH "${ROCM_PATH}/@ROCM_LIBDIR@/cmake/hip" ${CMAKE_MODULE_PATH})
 +  find_package(hip)
 +  if (NOT hip_FOUND)
      message(SEND_ERROR "Building mlir with ROCm support requires a working ROCm and HIP install")
@@ -51,7 +51,7 @@ diff -urp llvm-sycl-nightly-20220812.orig/mlir/lib/ExecutionEngine/CMakeLists.tx
    # Locate HIP runtime library.
    find_library(ROCM_RUNTIME_LIBRARY amdhip64
 -               PATHS "${HIP_PATH}/lib")
-+               PATHS "${ROCM_PATH}/@LIBDIR@")
++               PATHS "${ROCM_PATH}/@ROCM_LIBDIR@")
    if (NOT ROCM_RUNTIME_LIBRARY)
      message(SEND_ERROR "Could not locate ROCm HIP runtime library")
    else()
@@ -235,7 +235,7 @@ diff -urp llvm-sycl-nightly-20220812.orig/sycl/plugins/hip/CMakeLists.txt llvm-s
    set_target_properties(
      rocmdrv PROPERTIES
 -      IMPORTED_LOCATION                    "${SYCL_BUILD_PI_HIP_ROCM_DIR}/hip/lib/libamdhip64.so"
-+      IMPORTED_LOCATION                    "${SYCL_BUILD_PI_HIP_ROCM_DIR}/@LIBDIR@/libamdhip64.so"
++      IMPORTED_LOCATION                    "${SYCL_BUILD_PI_HIP_ROCM_DIR}/@ROCM_LIBDIR@/libamdhip64.so"
        INTERFACE_INCLUDE_DIRECTORIES        "${HIP_HEADERS}"
        INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${HIP_HEADERS}"
    )

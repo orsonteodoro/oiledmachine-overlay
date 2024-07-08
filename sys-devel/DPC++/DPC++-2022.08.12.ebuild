@@ -104,6 +104,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 cuda esimd_emulator rocm test
+ebuild-revision-1
 "
 gen_cuda_required_use() {
 	local x

@@ -150,6 +150,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 cet cfi cuda esimd_emulator hardened rocm +sycl-fusion test
+ebuild-revision-1
 "
 gen_cuda_required_use() {
 	local x

@@ -16,7 +16,7 @@ diff -urp unified-runtime-cf26de283a1233e6c93feb085acc10c566888b59.orig/source/a
  
  # Set HIP lib dir
 -set(UR_HIP_LIB_DIR "${UR_HIP_ROCM_DIR}/lib")
-+set(UR_HIP_LIB_DIR "${UR_HIP_ROCM_DIR}/@LIBDIR@")
++set(UR_HIP_LIB_DIR "${UR_HIP_ROCM_DIR}/@ROCM_LIBDIR@")
  
  # Check if HIP library path exists (AMD platform only)
  if("${UR_HIP_PLATFORM}" STREQUAL "AMD")

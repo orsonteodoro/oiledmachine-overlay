@@ -51,7 +51,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/mlir/lib/ExecutionEngine/CMakeLists.tx
      # load HIP, then remove it
      set(REAL_CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}")
 -    list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} "${ROCM_PATH}/hip")
-+    list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} "${ROCM_PATH}/@LIBDIR@/cmake/hip")
++    list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} "${ROCM_PATH}/@ROCM_LIBDIR@/cmake/hip")
      find_package(hip REQUIRED)
      set(CMAKE_PREFIX_PATH "${REAL_CMAKE_PREFIX_PATH}")
  
@@ -249,7 +249,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/sycl/plugins/hip/CMakeLists.txt llvm-s
  set(SYCL_BUILD_PI_HIP_LIB_DIR "" CACHE STRING "Override HIP lib dir path (set to \"\" for default behavior)")
  if("${SYCL_BUILD_PI_HIP_LIB_DIR}" STREQUAL "")
 -  set(PI_HIP_LIB_DIR "${SYCL_BUILD_PI_HIP_ROCM_DIR}/hip/lib")
-+  set(PI_HIP_LIB_DIR "${SYCL_BUILD_PI_HIP_ROCM_DIR}/@LIBDIR@")
++  set(PI_HIP_LIB_DIR "${SYCL_BUILD_PI_HIP_ROCM_DIR}/@ROCM_LIBDIR@")
  else()
    set(PI_HIP_LIB_DIR "${SYCL_BUILD_PI_HIP_LIB_DIR}")
  endif()

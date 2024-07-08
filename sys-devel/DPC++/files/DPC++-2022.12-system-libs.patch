@@ -36,7 +36,7 @@ diff -urp llvm-2022-12.orig/mlir/lib/ExecutionEngine/CMakeLists.txt llvm-2022-12
      endif()
    endif()
 -  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} "${ROCM_PATH}/hip")
-+  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} "${ROCM_PATH}/@LIBDIR@/cmake/hip")
++  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} "${ROCM_PATH}/@ROCM_LIBDIR@/cmake/hip")
    find_package(hip REQUIRED)
  
    if (NOT DEFINED ROCM_TEST_CHIPSET)
@@ -216,7 +216,7 @@ diff -urp llvm-2022-12.orig/sycl/plugins/hip/CMakeLists.txt llvm-2022-12/sycl/pl
    set_target_properties(
      rocmdrv PROPERTIES
 -      IMPORTED_LOCATION                    "${SYCL_BUILD_PI_HIP_ROCM_DIR}/hip/lib/libamdhip64.so"
-+      IMPORTED_LOCATION                    "${SYCL_BUILD_PI_HIP_ROCM_DIR}/@LIBDIR@/libamdhip64.so"
++      IMPORTED_LOCATION                    "${SYCL_BUILD_PI_HIP_ROCM_DIR}/@ROCM_LIBDIR@/libamdhip64.so"
        INTERFACE_INCLUDE_DIRECTORIES        "${HIP_HEADERS}"
        INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${HIP_HEADERS}"
    )
