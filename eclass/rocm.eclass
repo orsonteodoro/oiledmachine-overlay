@@ -435,11 +435,13 @@ _rocm_change_common_paths() {
 		$(grep -r -l -e "@ROCM_LIBDIR@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
-	sed \
-		-i \
-		-e "s|@COND_LIBDIR@|$(cond_get_libdir)|g" \
-		$(grep -r -l -e "@COND_LIBDIR@" "${_patch_paths[@]}" 2>/dev/null) \
-		2>/dev/null || true
+	if declare -f cond_get_libdir >/dev/null ; then
+		sed \
+			-i \
+			-e "s|@COND_LIBDIR@|$(cond_get_libdir)|g" \
+			$(grep -r -l -e "@COND_LIBDIR@" "${_patch_paths[@]}" 2>/dev/null) \
+			2>/dev/null || true
+	fi
 
 	# @LLVM_SLOT@ is deprecated.  Use @EPREFIX_LLVM_PATH@, @ESYSROOT_LLVM_PATH@.
 	sed \
