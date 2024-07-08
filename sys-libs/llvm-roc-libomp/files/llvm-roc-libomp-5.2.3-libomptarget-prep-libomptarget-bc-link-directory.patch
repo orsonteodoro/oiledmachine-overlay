@@ -6,5 +6,5 @@
    )
  add_llvm_tool(prep-libomptarget-bc prep-libomptarget-bc.cpp)
  llvm_update_compile_flags(prep-libomptarget-bc)
-+target_link_options(prep-libomptarget-bc PRIVATE "-Wl,-rpath=@ESYSROOT_LLVM_PATH@/@LIBDIR@")
++target_link_options(prep-libomptarget-bc PRIVATE "-Wl,-rpath=@ESYSROOT_LLVM_PATH@/@ROCM_LIBDIR@")
  include_directories( ${LLVM_INCLUDE_DIR} ${LLVM_MAIN_INCLUDE_DIR})
