@@ -1935,6 +1935,8 @@ _src_configure_compiler() {
 	_set_cc
 }
 
+src_configure() { :; }
+
 _src_configure() {
 	local s=$(_get_s)
 	cd "${s}" || die
