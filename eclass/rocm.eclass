@@ -700,6 +700,7 @@ rocm_src_configure() {
 			append-ldflags \
 				-L"${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)"
 		fi
+einfo "rocm_src_configure():  Calling cmake_src_configure()"
 		cmake_src_configure
 	else
 		ewarn "src_configure not called for the build system."
