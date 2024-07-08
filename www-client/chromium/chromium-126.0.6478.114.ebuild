@@ -2555,6 +2555,8 @@ _src_configure_compiler() {
 	fi
 }
 
+src_configure() { :; }
+
 _src_configure() {
 	local s
 	s=$(_get_s)
