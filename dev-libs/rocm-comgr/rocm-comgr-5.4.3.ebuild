@@ -26,7 +26,7 @@ DESCRIPTION="Radeon Open Compute Code Object Manager"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-7"
+IUSE="test ebuild-revision-8"
 RDEPEND="
 	!dev-libs/rocm-comgr:0
 	sys-devel/llvm-roc:=
