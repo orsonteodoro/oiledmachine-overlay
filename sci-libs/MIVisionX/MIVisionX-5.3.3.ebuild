@@ -118,9 +118,7 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.3.3-change-libjpeg-turbo-search-path.patch"
 	"${FILESDIR}/${PN}-5.1.3-use-system-pybind11.patch"
-	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
 
 pkg_setup() {
