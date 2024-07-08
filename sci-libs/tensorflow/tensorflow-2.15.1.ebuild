@@ -418,7 +418,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${HIP_SLOTS2[@]}
 alt-ssl -big-endian clang cuda +hardened models -mpi +python rocm
 system-flatbuffers test +xla
-ebuild-revision-1
+ebuild-revision-2
 "
 gen_required_use_cuda_targets() {
 	local x
