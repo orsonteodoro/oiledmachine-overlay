@@ -35,7 +35,7 @@ DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-25"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-26"
 REQUIRED_USE="
 	hsa? (
 		rocm

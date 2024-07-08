@@ -5,8 +5,8 @@ diff -urp hipamd-rocm-5.1.3.orig/src/CMakeLists.txt hipamd-rocm-5.1.3/src/CMakeL
  target_compile_definitions(amdhip64 PRIVATE __HIP_PLATFORM_AMD__)
  target_link_libraries(amdhip64 PRIVATE ${OPENGL_LIBRARIES})
  target_link_libraries(amdhip64 PRIVATE ${CMAKE_DL_LIBS})
-+target_link_options(amdhip64 PUBLIC -Wl,-rpath=@ROCM_PATH@/@LIBDIR@)
-+target_link_directories(amdhip64 PUBLIC @ROCM_PATH@/@LIBDIR@)
++target_link_options(amdhip64 PUBLIC -Wl,-rpath=@ROCM_PATH@/@ROCM_LIBDIR@)
++target_link_directories(amdhip64 PUBLIC @ROCM_PATH@/@ROCM_LIBDIR@)
 +target_link_libraries(amdhip64 PUBLIC hsa-runtime64 amd_comgr)
  # Additional dependencies for hipRTC
  if(WIN32)

@@ -5,8 +5,8 @@ diff -urp hipamd-rocm-5.2.3.orig/src/hiprtc/CMakeLists.txt hipamd-rocm-5.2.3/src
    target_link_libraries(hiprtc PRIVATE Dbghelp.lib)
  endif()
  
-+target_link_options(hiprtc PUBLIC -Wl,-rpath=@ROCM_PATH@/@LIBDIR@)
-+target_link_directories(hiprtc PUBLIC @ROCM_PATH@/@LIBDIR@)
++target_link_options(hiprtc PUBLIC -Wl,-rpath=@ROCM_PATH@/@ROCM_LIBDIR@)
++target_link_directories(hiprtc PUBLIC @ROCM_PATH@/@ROCM_LIBDIR@)
  target_link_libraries(hiprtcobject PRIVATE ${CMAKE_DL_LIBS})
  
  if(BUILD_SHARED_LIBS)
