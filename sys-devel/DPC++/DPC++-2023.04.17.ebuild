@@ -90,6 +90,7 @@ UR_COMMIT="74843ea0800e6fb7ce0f82e0ef991fc258f4b9bd" # \
 # For VC_INTR_COMMIT, see https://github.com/intel/llvm/blob/sycl-nightly/20230417/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19
 VC_INTR_COMMIT="3ac855c9253d608a36d10b8ff87e62aa413bbf23" # Newer versions cause compile failure \
 
+inherit hip-versions
 inherit cmake flag-o-matic llvm python-any-r1 rocm toolchain-funcs
 
 DOCS_BUILDER="doxygen"
@@ -343,14 +344,14 @@ eerror "Switch to >=sys-devel/clang-5.0"
 	if use rocm ; then
 		if use rocm_4_3 ; then
 			export LLVM_SLOT="13"
-			export ROCM_VERSION=$(best_version "=dev-util/hip-4.3*" | sed -e "s|dev-util/hip-||g")
+			export ROCM_VERSION="${HIP_4_3_VERSION}"
 			export ROCM_SLOT="4.3"
 		elif use rocm_4_2 ; then
 			export LLVM_SLOT="12"
-			export ROCM_VERSION=$(best_version "=dev-util/hip-4.2*" | sed -e "s|dev-util/hip-||g")
+			export ROCM_VERSION="${HIP_4_2_VERSION}"
 			export ROCM_SLOT="4.2"
 		fi
-# Use the clang compiler in /usr/lib64/rocm/${ROCM_SLOT}/llvm/bin/ if dev-util/hip[-system-llvm]
+# Use the clang compiler in /opt/rocm-${ROCM_VERSION}/llvm/bin/ if dev-util/hip[-system-llvm]
 # Use the clang compiler in /usr/lib/llvm/${LLVM_SLOT}/bin/ if dev-util/hip[system-llvm]
 		rocm_pkg_setup
 	else
@@ -561,7 +562,7 @@ src_configure() {
 		mycmakeargs+=(
 			-DLIBCLC_GENERATE_REMANGLED_VARIANTS="ON"
 			-DLIBCLC_TARGETS_TO_BUILD=";amdgcn--;amdgcn--amdhsa"
-			-DSYCL_BUILD_PI_HIP_ROCM_DIR="/usr/lib64/rocm/${ROCM_SLOT}"
+			-DSYCL_BUILD_PI_HIP_ROCM_DIR="/opt/rocm-${ROCM_VERSION}"
 			-DSYCL_BUILD_PI_HIP_PLATFORM="AMD"
 		)
 	fi
