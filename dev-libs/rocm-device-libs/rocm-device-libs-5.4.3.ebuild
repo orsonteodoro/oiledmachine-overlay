@@ -30,7 +30,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-6"
+IUSE="test ebuild-revision-7"
 RDEPEND="
 	!dev-libs/rocm-device-libs:0
 	sys-devel/llvm-roc:=
