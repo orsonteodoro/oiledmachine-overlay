@@ -50,7 +50,7 @@ fi
 DESCRIPTION="Composable Kernel: Performance Portable Programming Model for Machine Learning Tensor Operators"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/composable_kernel"
 LICENSE="MIT"
-#RESTRICT="test"
+RESTRICT="test"
 SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
 IUSE+="
 test ebuild-revision-6
@@ -74,20 +74,11 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-expf.patch"
+	"${FILESDIR}/${PN}-6.1.2-fix-missing-libstdcxx-expf.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-hip_runtime-header.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-sqrtf.patch"
-	"${FILESDIR}/${PN}-5.7.0-example-libs.patch"
+	"${FILESDIR}/${PN}-6.0.2-example-libs.patch"
 )
-if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
-	PATCHES+=(
-		"${FILESDIR}/${PN}-1.0.0_p9999-optional-tests.patch"
-	)
-else
-	PATCHES+=(
-		"${FILESDIR}/${PN}-5.7.0-optional-tests.patch"
-	)
-fi
 
 warn_untested_gpu() {
 	local gpu
@@ -153,7 +144,7 @@ src_configure() {
 		| sed -e "s|;$||g")
 	einfo "GPU_TARGETS=${gpu_targets}"
 	local mycmakeargs=(
-		-DBUILD_TEST=$(use test)
+		-DBUILD_TESTING=$(use test)
 		-DCMAKE_BUILD_TYPE=release
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_C_COMPILER="${CC}"

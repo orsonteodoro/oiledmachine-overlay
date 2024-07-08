@@ -1,0 +1,23 @@
+diff '--color=auto' -urp composable_kernel-rocm-6.0.2.orig/example/CMakeLists.txt composable_kernel-rocm-6.0.2/example/CMakeLists.txt
+--- composable_kernel-rocm-6.0.2.orig/example/CMakeLists.txt	2023-11-08 15:03:57.000000000 -0800
++++ composable_kernel-rocm-6.0.2/example/CMakeLists.txt	2024-07-07 17:19:25.362107263 -0700
+@@ -51,7 +51,7 @@ function(add_example_executable EXAMPLE_
+     #only continue if there are some source files left on the list
+     if(FILE_NAME)
+         add_executable(${EXAMPLE_NAME} ${FILE_NAME})
+-        target_link_libraries(${EXAMPLE_NAME} PRIVATE utility)
++        target_link_libraries(${EXAMPLE_NAME} PRIVATE utility amd_comgr hsa-runtime64 numa amdhip64)
+         add_test(NAME ${EXAMPLE_NAME} COMMAND $<TARGET_FILE:${EXAMPLE_NAME}> ${ARGN})
+         add_dependencies(examples ${EXAMPLE_NAME})
+         add_dependencies(check ${EXAMPLE_NAME})
+@@ -108,7 +108,7 @@ function(add_example_executable_no_testi
+     #only continue if there are some source files left on the list
+     if(FILE_NAME)
+         add_executable(${EXAMPLE_NAME} ${FILE_NAME})
+-        target_link_libraries(${EXAMPLE_NAME} PRIVATE utility)
++        target_link_libraries(${EXAMPLE_NAME} PRIVATE utility amd_comgr hsa-runtime64 numa amdhip64)
+         add_dependencies(examples ${EXAMPLE_NAME})
+         rocm_install(TARGETS ${EXAMPLE_NAME} COMPONENT examples)
+         set(result 0)
+Only in composable_kernel-rocm-6.0.2/example: CMakeLists.txt.orig
+Only in composable_kernel-rocm-6.0.2/example: CMakeLists.txt.rej

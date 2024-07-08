@@ -1,0 +1,31 @@
+diff '--color=auto' -urp composable_kernel-rocm-6.1.2.orig/include/ck/utility/math.hpp composable_kernel-rocm-6.1.2/include/ck/utility/math.hpp
+--- composable_kernel-rocm-6.1.2.orig/include/ck/utility/math.hpp	2024-03-18 08:38:33.000000000 -0700
++++ composable_kernel-rocm-6.1.2/include/ck/utility/math.hpp	2024-07-07 17:25:06.880986488 -0700
+@@ -8,6 +8,9 @@
+ #include "number.hpp"
+ #include "type.hpp"
+ #include "enable_if.hpp"
++#if !defined(_LIBCPP_VERSION)
++#  include <cmath>
++#endif
+ 
+ namespace ck {
+ namespace math {
+Only in composable_kernel-rocm-6.1.2/include/ck/utility: math.hpp.orig
+Only in composable_kernel-rocm-6.1.2/include/ck/utility: math.hpp.rej
+diff '--color=auto' -urp composable_kernel-rocm-6.1.2.orig/include/ck/utility/math_v2.hpp composable_kernel-rocm-6.1.2/include/ck/utility/math_v2.hpp
+--- composable_kernel-rocm-6.1.2.orig/include/ck/utility/math_v2.hpp	2024-03-18 08:38:33.000000000 -0700
++++ composable_kernel-rocm-6.1.2/include/ck/utility/math_v2.hpp	2024-07-07 17:27:54.506505482 -0700
+@@ -120,7 +120,11 @@ inline __host__ T exp(T x)
+ template <>
+ inline __host__ float exp<float>(float x)
+ {
++#if !defined(_LIBCPP_VERSION)
++    return expf(x);
++#else
+     return std::expf(x);
++#endif
+ }
+ 
+ template <>
+Only in composable_kernel-rocm-6.1.2/include/ck/utility: math_v2.hpp.orig

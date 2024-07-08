@@ -77,7 +77,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-expf.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-hip_runtime-header.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-sqrtf.patch"
-	"${FILESDIR}/${PN}-5.7.0-example-libs.patch"
+	"${FILESDIR}/${PN}-6.0.2-example-libs.patch"
 )
 if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
 	PATCHES+=(
@@ -85,7 +85,7 @@ if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
 	)
 else
 	PATCHES+=(
-		"${FILESDIR}/${PN}-5.7.0-optional-tests.patch"
+		"${FILESDIR}/${PN}-6.0.2-optional-tests.patch"
 	)
 fi
 
