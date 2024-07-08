@@ -166,7 +166,7 @@ eerror "This display does not have AMD OpenGL vendor!"
 eerror
 			die
 		fi
-		./ocltst -m $(realpath liboclgl.so) -A ogl.exclude
+		"./ocltst" -m $(realpath "liboclgl.so") -A "ogl.exclude"
 		eend $? || die "oclgl test failed"
 	else
 eerror
@@ -176,8 +176,8 @@ eerror "\${OCLGL_DISPLAY} is not set."
 eerror
 		die
 	fi
-	edob ./ocltst -m $(realpath liboclruntime.so) -A oclruntime.exclude
-	edob ./ocltst -m $(realpath liboclperf.so) -A oclperf.exclude
+	edob "./ocltst" -m $(realpath "liboclruntime.so") -A "oclruntime.exclude"
+	edob "./ocltst" -m $(realpath "liboclperf.so") -A "oclperf.exclude"
 }
 
 pkg_postinst() {
