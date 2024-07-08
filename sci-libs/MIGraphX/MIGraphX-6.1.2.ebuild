@@ -39,7 +39,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
--cpu -fpga -hip-rtc -mlir +rocm test
++composable-kernel -cpu -fpga -hip-rtc -mlir +rocm test
 r2
 "
 REQUIRED_USE="
@@ -62,6 +62,9 @@ RDEPEND="
 	>=dev-libs/protobuf-3.11:0/3.21
 	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
 	dev-libs/msgpack
+	composable-kernel? (
+		~sci-libs/composable_kernel-${PV}:${ROCM_SLOT}
+	)
 	cpu? (
 		dev-libs/oneDNN
 		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
@@ -116,6 +119,7 @@ src_configure() {
 		-DMIGRAPHX_ENABLE_FPGA=$(usex fpga ON OFF)
 		-DMIGRAPHX_ENABLE_GPU=$(usex rocm ON OFF)
 		-DMIGRAPHX_ENABLE_MLIR=$(usex mlir ON OFF)
+		-DMIGRAPHX_USE_COMPOSABLEKERNEL=$(usex composable-kernel ON OFF)
 		-DMIGRAPHX_USE_HIPRTC=$(usex hip-rtc ON OFF)
 	)
 

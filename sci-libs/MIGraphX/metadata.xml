@@ -10,12 +10,15 @@
     <remote-id type="github">ROCmSoftwarePlatform/AMDMIGraphX</remote-id>
   </upstream>
   <use>
-    <flag name="mlir">
-      Add support for rocMLIR for convolutions on GPU.
+    <flag name="composable-kernel">
+      Use the Composable Kernel JIT library.
     </flag>
     <flag name="hip-rtc">
       Build kernels [GPU programs] during runtime.  If disabled, it will build
       kernels during build time.
+    </flag>
+    <flag name="mlir">
+      Add support for rocMLIR for convolutions on GPU.
     </flag>
   </use>
 </pkgmetadata>
