@@ -100,7 +100,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt profile +runtime
-ebuild-revision-13
+ebuild-revision-14
 "
 REQUIRED_USE="
 	cfi? (
@@ -186,6 +186,10 @@ _src_configure_compiler() {
 		export CC="${CHOST}-gcc-12"
 		export CXX="${CHOST}-g++-12"
 	fi
+}
+
+src_configure() {
+	:
 }
 
 _src_configure() {
