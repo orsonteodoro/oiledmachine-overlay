@@ -5,8 +5,8 @@ diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
  endif()
  
  ## Link dependencies.
-+target_link_options ( ${CORE_RUNTIME_TARGET} PUBLIC -Wl,-rpath=@ROCM_PATH@/@LIBDIR@ )
-+target_link_directories ( ${CORE_RUNTIME_TARGET} PUBLIC @ROCM_PATH@/@LIBDIR@ )
++target_link_options ( ${CORE_RUNTIME_TARGET} PUBLIC -Wl,-rpath=@ROCM_PATH@/@ROCM_LIBDIR@ )
++target_link_directories ( ${CORE_RUNTIME_TARGET} PUBLIC @ROCM_PATH@/@ROCM_LIBDIR@ )
 +target_link_libraries ( ${CORE_RUNTIME_TARGET} PUBLIC hsakmt )
 +target_include_directories ( ${CORE_RUNTIME_TARGET} PRIVATE @ROCM_PATH@/include )
 -target_link_libraries ( ${CORE_RUNTIME_TARGET} PRIVATE hsakmt::hsakmt )
