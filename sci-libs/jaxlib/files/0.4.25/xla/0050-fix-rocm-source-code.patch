@@ -9,7 +9,7 @@ Context:  https://bugs.gentoo.org/705712#c29
  }
  
 -string RocdlRoot() { return io::JoinPath(RocmRoot(), "amdgcn/bitcode"); }
-+string RocdlRoot() { return io::JoinPath(RocmRoot(), "@LIBDIR@/amdgcn/bitcode"); }
++string RocdlRoot() { return io::JoinPath(RocmRoot(), "@ROCM_LIBDIR@/amdgcn/bitcode"); }
  
  }  // namespace tsl
 --- a/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc.orig	2024-04-03 18:20:52.264113477 -0700
