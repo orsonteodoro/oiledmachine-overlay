@@ -384,6 +384,9 @@ einfo
 # @GCC_SLOT@     - 10, 11, 12 [based on folders contained in /usr/lib/gcc/]
 # @LIBDIR@       - lib (deprecated, same as rocm_get_libdir)
 # @ABI_LIBDIR@   - lib or lib64 (same as get_libdir)
+# @COND_LIBDIR@  - When evaluating @ESYSROOT_LLVM_PATH@/@COND_LIBDIR@,
+#                  If cuda, then same as get_libdir.
+#                  If rocm, then same as rocm_get_libdir.
 # @ROCM_LIBDIR@  - lib (same as rocm_get_libdir)
 # @LLVM_SLOT@    - 13, 14, 15, 16, 17
 # @PV@           - x.y.z
