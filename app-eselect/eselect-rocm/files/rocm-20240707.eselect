@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manages the ROCm multslot symlinks"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20270707"
+VERSION="20240707"
 PN="rocm"
 EPREFIX="@EPREFIX@"
 LIBDIR="@LIBDIR@"

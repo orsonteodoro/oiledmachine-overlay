@@ -9,7 +9,7 @@ SRC_URI=""
 
 DESCRIPTION="Manages the rocm symlinks"
 HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/app-eselect/eselect-rocm"
-LICENSE="GPL-2"
+LICENSE="GPL-2+"
 RESTRICT="fetch"
 SLOT="0"
 IUSE+=" ebuild-revision-1"
