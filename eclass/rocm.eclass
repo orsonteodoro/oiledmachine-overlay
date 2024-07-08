@@ -382,7 +382,9 @@ einfo
 #     if ROCM_USE_LLVM_ROC==1 (default) then ${ESYSROOT}/opt/rocm-${ROCM_VERSION}/llvm
 #     if ROCM_USE_LLVM_ROC==0 then ${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}
 # @GCC_SLOT@     - 10, 11, 12 [based on folders contained in /usr/lib/gcc/]
-# @LIBDIR@       - lib or lib64
+# @LIBDIR@       - lib (deprecated, same as rocm_get_libdir)
+# @ABI_LIBDIR@   - lib or lib64 (same as get_libdir)
+# @ROCM_LIBDIR@  - lib (same as rocm_get_libdir)
 # @LLVM_SLOT@    - 13, 14, 15, 16, 17
 # @PV@           - x.y.z
 # @ROCM_VERSION@ - 5.1.3, 5.2.3, 5.3.3, 5.4.3, 5.5.1, 5.6.1, 5.7.0
@@ -410,10 +412,23 @@ _rocm_change_common_paths() {
 		-e "s|@ESYSROOT@|${ESYSROOT}|g" \
 		$(grep -r -l -e "@ESYSROOT@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
+
 	sed \
 		-i \
 		-e "s|@LIBDIR@|$(rocm_get_libdir)|g" \
 		$(grep -r -l -e "@LIBDIR@" "${_patch_paths[@]}" 2>/dev/null) \
+		2>/dev/null || true
+
+	sed \
+		-i \
+		-e "s|@ABI_LIBDIR@|$(get_libdir)|g" \
+		$(grep -r -l -e "@ABI_LIBDIR@" "${_patch_paths[@]}" 2>/dev/null) \
+		2>/dev/null || true
+
+	sed \
+		-i \
+		-e "s|@ROCM_LIBDIR@|$(rocm_get_libdir)|g" \
+		$(grep -r -l -e "@ROCM_LIBDIR@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	# @LLVM_SLOT@ is deprecated.  Use @EPREFIX_LLVM_PATH@, @ESYSROOT_LLVM_PATH@.
