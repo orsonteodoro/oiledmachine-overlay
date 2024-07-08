@@ -371,13 +371,16 @@ einfo "Removing LLVM references"
 		sed -i -e "s|-I@ESYSROOT_LLVM_PATH@/include||g" \
 			$(grep -r -l -e "@ESYSROOT_LLVM_PATH@/include" "${WORKDIR}") \
 			|| die
-		sed -i -e "s|-L@ESYSROOT_LLVM_PATH@/@LIBDIR@||g" \
-			$(grep -r -l -e "@ESYSROOT_LLVM_PATH@/@LIBDIR@" "${WORKDIR}") \
+		sed -i -e "s|-L@ESYSROOT_LLVM_PATH@/@ROCM_LIBDIR@||g" \
+			$(grep -r -l -e "@ESYSROOT_LLVM_PATH@/@ROCM_LIBDIR@" "${WORKDIR}") \
 			|| die
 	fi
 
-	sed -i -e "s|@LIBDIR@|$(get_libdir)|g" \
-		$(grep -r -l -e "@LIBDIR@" "${WORKDIR}") \
+	sed -i -e "s|@ABI_LIBDIR@|$(get_libdir)|g" \
+		$(grep -r -l -e "@ABI_LIBDIR@" "${WORKDIR}") \
+		|| true
+	sed -i -e "s|@ROCM_LIBDIR@|$(rocm_get_libdir)|g" \
+		$(grep -r -l -e "@ROCM_LIBDIR@" "${WORKDIR}") \
 		|| true
 	sed -i -e "s|@EPREFIX@|${EPREFIX}|g" \
 		$(grep -r -l -e "@EPREFIX@" "${WORKDIR}") \
