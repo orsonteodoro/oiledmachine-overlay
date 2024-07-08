@@ -2117,6 +2117,8 @@ _src_configure_compiler() {
 	_set_cxx
 }
 
+src_configure() { :; }
+
 _src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
