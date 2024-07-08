@@ -380,6 +380,11 @@ einfo "Removing LLVM references"
 			|| die
 	fi
 
+	# For magma installs,
+	# If cuda, use /usr/$(get_libdir).  get_libdir will be lib64.
+	# If rocm, use /opt/rocm-${ROCM_VERSION}/$(rocm_get_libdir).  rocm_get_libdir will be lib.
+	# This is why @COND_LIBDIR@ is used for destination for LIBDIR install.
+
 	sed -i -e "s|@ABI_LIBDIR@|$(get_libdir)|g" \
 		$(grep -r -l -e "@ABI_LIBDIR@" "${WORKDIR}") \
 		|| true
