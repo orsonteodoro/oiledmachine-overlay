@@ -116,7 +116,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	sys-devel/gcc
+	sys-devel/gcc:12
 	bolt? (
 		dev-util/patchutils
 	)
@@ -177,8 +177,8 @@ _src_configure_compiler() {
 		export CC="${EROCM_PATH}/bin/clang"
 		export CXX="${EROCM_PATH}/bin/clang++"
 	else
-		export CC="${CHOST}-gcc"
-		export CXX="${CHOST}-g++"
+		export CC="${CHOST}-gcc-12"
+		export CXX="${CHOST}-g++-12"
 	fi
 }
 
