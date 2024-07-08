@@ -1,8 +1,8 @@
 Backport of https://github.com/ROCm/rocFFT/commit/4de95432b42831c01eb1aafa107aa3ede29ba618
-diff '--color=auto' -urp rocFFT-rocm-6.0.2.orig/library/src/CMakeLists.txt rocFFT-rocm-6.0.2/library/src/CMakeLists.txt
---- rocFFT-rocm-6.0.2.orig/library/src/CMakeLists.txt	2024-01-08 11:20:41.000000000 -0800
-+++ rocFFT-rocm-6.0.2/library/src/CMakeLists.txt	2024-07-08 00:11:46.848117640 -0700
-@@ -503,6 +503,11 @@ endif()
+diff '--color=auto' -urp rocFFT-rocm-5.7.1.orig/library/src/CMakeLists.txt rocFFT-rocm-5.7.1/library/src/CMakeLists.txt
+--- rocFFT-rocm-5.7.1.orig/library/src/CMakeLists.txt	2023-08-09 09:19:51.000000000 -0700
++++ rocFFT-rocm-5.7.1/library/src/CMakeLists.txt	2024-07-08 00:08:30.658807923 -0700
+@@ -484,6 +484,11 @@ endif()
  
  # compile kernels into the cache file we ship
  #
@@ -14,37 +14,32 @@ diff '--color=auto' -urp rocFFT-rocm-6.0.2.orig/library/src/CMakeLists.txt rocFF
  # cache file should go next to the shared object - on Windows this
  # would be the DLL, not the import library.
  if( WIN32 )
-@@ -519,21 +524,24 @@ endif()
+@@ -500,19 +505,21 @@ endif()
  # Only build kernels ahead-of-time for a more limited set of
  # architectures.  Less common architectures are filtered out from the
  # list and kernels for them are built at runtime instead.
 -set( AMDGPU_TARGETS_AOT ${AMDGPU_TARGETS} )
 -list( REMOVE_ITEM AMDGPU_TARGETS_AOT gfx803 )
 -list( REMOVE_ITEM AMDGPU_TARGETS_AOT gfx900 )
--# The binary will be having relative RUNPATH with respect to install directory
--# Set LD_LIBRARY_PATH for executing the binary from build directory.
 -add_custom_command(
 -  OUTPUT rocfft_kernel_cache.db
--  COMMAND ${CMAKE_COMMAND} -E env "LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:${ROCM_PATH}/${CMAKE_INSTALL_LIBDIR}" ./rocfft_aot_helper \"${ROCFFT_BUILD_KERNEL_CACHE_PATH}\" ${ROCFFT_KERNEL_CACHE_PATH} $<TARGET_FILE:rocfft_rtc_helper> ${AMDGPU_TARGETS_AOT}
+-  COMMAND rocfft_aot_helper \"${ROCFFT_BUILD_KERNEL_CACHE_PATH}\" ${ROCFFT_KERNEL_CACHE_PATH} $<TARGET_FILE:rocfft_rtc_helper> ${AMDGPU_TARGETS_AOT}
 -  DEPENDS rocfft_aot_helper rocfft_rtc_helper
--  COMMENT "Compile default kernels and solution-map kernels into shipped cache file"
+-  COMMENT "Compile kernels into shipped cache file"
 -)
 -add_custom_target( rocfft_kernel_cache_target ALL
 -  DEPENDS rocfft_kernel_cache.db
 -  VERBATIM
 -)
 +if ( ROCFFT_KERNEL_CACHE_ENABLE )
-+
 +  set( AMDGPU_TARGETS_AOT ${AMDGPU_TARGETS} )
 +  list( REMOVE_ITEM AMDGPU_TARGETS_AOT gfx803 )
 +  list( REMOVE_ITEM AMDGPU_TARGETS_AOT gfx900 )
-+  # The binary will be having relative RUNPATH with respect to install directory
-+  # Set LD_LIBRARY_PATH for executing the binary from build directory.
 +  add_custom_command(
 +    OUTPUT rocfft_kernel_cache.db
-+    COMMAND ${CMAKE_COMMAND} -E env "LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:${ROCM_PATH}/${CMAKE_INSTALL_LIBDIR}" ./rocfft_aot_helper \"${ROCFFT_BUILD_KERNEL_CACHE_PATH}\" ${ROCFFT_KERNEL_CACHE_PATH} $<TARGET_FILE:rocfft_rtc_helper> ${AMDGPU_TARGETS_AOT}
++    COMMAND rocfft_aot_helper \"${ROCFFT_BUILD_KERNEL_CACHE_PATH}\" ${ROCFFT_KERNEL_CACHE_PATH} $<TARGET_FILE:rocfft_rtc_helper> ${AMDGPU_TARGETS_AOT}
 +    DEPENDS rocfft_aot_helper rocfft_rtc_helper
-+    COMMENT "Compile default kernels and solution-map kernels into shipped cache file"
++    COMMENT "Compile kernels into shipped cache file"
 +  )
 +  add_custom_target( rocfft_kernel_cache_target ALL
 +    DEPENDS rocfft_kernel_cache.db
@@ -54,7 +49,7 @@ diff '--color=auto' -urp rocFFT-rocm-6.0.2.orig/library/src/CMakeLists.txt rocFF
  
  rocm_set_soversion( rocfft ${rocfft_SOVERSION} )
  set_target_properties( rocfft PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/staging" )
-@@ -574,7 +582,7 @@ else()
+@@ -554,7 +561,7 @@ else()
    set(ROCFFT_KERNEL_CACHE_INSTALL_DIR ${ROCM_INSTALL_LIBDIR}/rocfft)
  endif()
  
@@ -63,3 +58,20 @@ diff '--color=auto' -urp rocFFT-rocm-6.0.2.orig/library/src/CMakeLists.txt rocFF
    rocm_install(FILES ${ROCFFT_KERNEL_CACHE_PATH}
      DESTINATION "${ROCFFT_KERNEL_CACHE_INSTALL_DIR}"
      COMPONENT runtime
+Only in rocFFT-rocm-5.7.1/library/src: CMakeLists.txt.orig
+Only in rocFFT-rocm-5.7.1/library/src: CMakeLists.txt.rej
+diff '--color=auto' -urp rocFFT-rocm-5.7.1.orig/library/src/device/CMakeLists.txt rocFFT-rocm-5.7.1/library/src/device/CMakeLists.txt
+--- rocFFT-rocm-5.7.1.orig/library/src/device/CMakeLists.txt	2023-08-09 09:19:51.000000000 -0700
++++ rocFFT-rocm-5.7.1/library/src/device/CMakeLists.txt	2024-07-08 00:07:47.971392731 -0700
+@@ -112,8 +112,10 @@ if( STATUS AND NOT STATUS EQUAL 0 )
+   message( FATAL_ERROR "Kernel generator failed (list): ${STATUS}")
+ endif()
+ 
++# stockham_aot will be having relative RUNPATH with respect to package install directory
++# Set LD_LIBRARY_PATH for running the executable from build directory
+ add_custom_command(OUTPUT ${gen_headers}
+-  COMMAND ${PYTHON3_EXE} ${kgen}
++  COMMAND ${CMAKE_COMMAND} -E env "LD_LIBRARY_PATH=${ROCM_PATH}/${CMAKE_INSTALL_LIBDIR}" ${PYTHON3_EXE} ${kgen}
+   --pattern=${GENERATOR_PATTERN}
+   --precision=${GENERATOR_PRECISION}
+   --manual-small=${GENERATOR_MANUAL_SMALL_SIZE}

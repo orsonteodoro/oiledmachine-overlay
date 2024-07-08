@@ -141,7 +141,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-add-stdexcept-header.patch"
-	"${FILESDIR}/${PN}-5.6.0-aot-optional.patch"
+	"${FILESDIR}/${PN}-5.5.1-aot-optional.patch"
 )
 
 required_mem() {
@@ -238,7 +238,7 @@ src_configure() {
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
-			-DBUILD_AOT=$(usex aot ON OFF)
+			-DROCFFT_KERNEL_CACHE_ENABLE=$(usex aot ON OFF)
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"

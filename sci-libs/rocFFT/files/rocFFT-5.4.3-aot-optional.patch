@@ -1,54 +1,42 @@
-diff -urp rocFFT-rocm-5.4.3.orig/library/src/CMakeLists.txt rocFFT-rocm-5.4.3/library/src/CMakeLists.txt
+Backport of https://github.com/ROCm/rocFFT/commit/4de95432b42831c01eb1aafa107aa3ede29ba618
+diff '--color=auto' -urp rocFFT-rocm-5.4.3.orig/library/src/CMakeLists.txt rocFFT-rocm-5.4.3/library/src/CMakeLists.txt
 --- rocFFT-rocm-5.4.3.orig/library/src/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
-+++ rocFFT-rocm-5.4.3/library/src/CMakeLists.txt	2024-04-03 08:01:35.758849489 -0700
-@@ -250,10 +250,13 @@ foreach( target
- 
- endforeach()
- 
--add_executable( rocfft_aot_helper
--  rocfft_aot_helper.cpp
--  rocfft_stub.cpp
--)
-+option(BUILD_AOT "Build AOT kernels" ON)
-+if(BUILD_AOT)
-+  add_executable( rocfft_aot_helper
-+    rocfft_aot_helper.cpp
-+    rocfft_stub.cpp
-+  )
-+endif()
- 
- add_executable( rocfft_config_search
-   rocfft_config_search.cpp
-@@ -283,7 +286,10 @@ target_link_libraries( rocfft PRIVATE ro
- target_link_libraries( rocfft PRIVATE rocfft-device-1 )
- target_link_libraries( rocfft PRIVATE rocfft-device-2 )
- target_link_libraries( rocfft PRIVATE rocfft-device-3 )
--foreach( target rocfft rocfft_aot_helper rocfft_config_search )
-+if(BUILD_AOT)
-+  set(ROCFFT_EXTRAS_AOT rocfft_aot_helper)
-+endif()
-+foreach( target rocfft ${ROCFFT_EXTRAS_AOT} rocfft_config_search )
-   # RTC uses dladdr to find the RTC helper program
-   if( NOT WIN32 )
-     target_link_libraries( ${target} PUBLIC -ldl pthread )
-@@ -328,9 +334,11 @@ target_link_libraries( rocfft_config_sea
-   rocfft-rtc-launch
-   rocfft-function-pool-standalone
++++ rocFFT-rocm-5.4.3/library/src/CMakeLists.txt	2024-07-08 00:02:57.055372748 -0700
+@@ -333,24 +333,31 @@ target_link_libraries( rocfft_aot_helper
    )
--target_link_libraries( rocfft_aot_helper PRIVATE
--  rocfft-function-pool-standalone
--  )
-+if(BUILD_AOT)
-+  target_link_libraries( rocfft_aot_helper PRIVATE
-+    rocfft-function-pool-standalone
-+    )
-+endif()
  
  # compile kernels into the cache file we ship
- #
-@@ -341,16 +349,18 @@ if( WIN32 )
- else()
-   set( ROCFFT_KERNEL_CACHE_PATH ${CMAKE_BINARY_DIR}/library/src/rocfft_kernel_cache.db )
+-#
+-# cache file should go next to the shared object - on Windows this
+-# would be the DLL, not the import library.
+-if( WIN32 )
+-  set( ROCFFT_KERNEL_CACHE_PATH ${CMAKE_BINARY_DIR}/staging/rocfft_kernel_cache.db )
+-else()
+-  set( ROCFFT_KERNEL_CACHE_PATH ${CMAKE_BINARY_DIR}/library/src/rocfft_kernel_cache.db )
++
++# While useful in most situations, building the kernel cache takes a long time
++# enable a configure-time option to skip kernel cache building
++option( ROCFFT_KERNEL_CACHE_ENABLE "Enable building rocFFT kernel cache" ON)
++
++if ( ROCFFT_KERNEL_CACHE_ENABLE )
++  #
++  # cache file should go next to the shared object - on Windows this
++  # would be the DLL, not the import library.
++  if( WIN32 )
++    set( ROCFFT_KERNEL_CACHE_PATH ${CMAKE_BINARY_DIR}/staging/rocfft_kernel_cache.db )
++  else()
++    set( ROCFFT_KERNEL_CACHE_PATH ${CMAKE_BINARY_DIR}/library/src/rocfft_kernel_cache.db )
++  endif()
++  add_custom_command(
++    OUTPUT rocfft_kernel_cache.db
++    COMMAND rocfft_aot_helper ${ROCFFT_KERNEL_CACHE_PATH} $<TARGET_FILE:rocfft_rtc_helper> ${AMDGPU_TARGETS}
++    DEPENDS rocfft_aot_helper rocfft_rtc_helper
++    COMMENT "Compile kernels into shipped cache file"
++  )
++  add_custom_target( rocfft_kernel_cache_target ALL
++    DEPENDS rocfft_kernel_cache.db
++    VERBATIM
++  )
  endif()
 -add_custom_command(
 -  OUTPUT rocfft_kernel_cache.db
@@ -60,22 +48,10 @@ diff -urp rocFFT-rocm-5.4.3.orig/library/src/CMakeLists.txt rocFFT-rocm-5.4.3/li
 -  DEPENDS rocfft_kernel_cache.db
 -  VERBATIM
 -)
-+if(BUILD_AOT)
-+  add_custom_command(
-+    OUTPUT rocfft_kernel_cache.db
-+    COMMAND rocfft_aot_helper ${ROCFFT_KERNEL_CACHE_PATH} $<TARGET_FILE:rocfft_rtc_helper> ${AMDGPU_TARGETS}
-+    DEPENDS rocfft_aot_helper rocfft_rtc_helper
-+    COMMENT "Compile kernels into shipped cache file"
-+  )
-+  add_custom_target( rocfft_kernel_cache_target ALL
-+    DEPENDS rocfft_kernel_cache.db
-+    VERBATIM
-+  )
-+endif()
  
  rocm_set_soversion( rocfft ${rocfft_SOVERSION} )
  set_target_properties( rocfft PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/staging" )
-@@ -390,10 +400,12 @@ if(WIN32)
+@@ -390,10 +397,12 @@ if(WIN32)
  else()
    set(ROCFFT_KERNEL_CACHE_INSTALL_DIR ${ROCM_INSTALL_LIBDIR})
  endif()
@@ -83,7 +59,7 @@ diff -urp rocFFT-rocm-5.4.3.orig/library/src/CMakeLists.txt rocFFT-rocm-5.4.3/li
 -  DESTINATION "${ROCFFT_KERNEL_CACHE_INSTALL_DIR}"
 -  COMPONENT runtime
 -)
-+if(BUILD_AOT)
++if(ROCFFT_KERNEL_CACHE_ENABLE)
 +  rocm_install(FILES ${ROCFFT_KERNEL_CACHE_PATH}
 +    DESTINATION "${ROCFFT_KERNEL_CACHE_INSTALL_DIR}"
 +    COMPONENT runtime
@@ -92,5 +68,18 @@ diff -urp rocFFT-rocm-5.4.3.orig/library/src/CMakeLists.txt rocFFT-rocm-5.4.3/li
  
  #         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ
  
-Only in rocFFT-rocm-5.4.3/library/src: CMakeLists.txt.orig
-Only in rocFFT-rocm-5.4.3/library/src: CMakeLists.txt.rej
+diff '--color=auto' -urp rocFFT-rocm-5.4.3.orig/library/src/device/CMakeLists.txt rocFFT-rocm-5.4.3/library/src/device/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/library/src/device/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/library/src/device/CMakeLists.txt	2024-07-08 00:03:22.695022366 -0700
+@@ -112,8 +112,10 @@ if( STATUS AND NOT STATUS EQUAL 0 )
+   message( FATAL_ERROR "Kernel generator failed (list): ${STATUS}")
+ endif()
+ 
++# stockham_aot will be having relative RUNPATH with respect to package install directory
++# Set LD_LIBRARY_PATH for running the executable from build directory
+ add_custom_command(OUTPUT ${gen_headers}
+-  COMMAND ${PYTHON3_EXE} ${kgen}
++  COMMAND ${CMAKE_COMMAND} -E env "LD_LIBRARY_PATH=${ROCM_PATH}/${CMAKE_INSTALL_LIBDIR}" ${PYTHON3_EXE} ${kgen}
+   --pattern=${GENERATOR_PATTERN}
+   --precision=${GENERATOR_PRECISION}
+   --manual-small=${GENERATOR_MANUAL_SMALL_SIZE}
