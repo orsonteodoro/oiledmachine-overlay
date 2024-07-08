@@ -35,8 +35,8 @@ main() {
 		"libomp.so"
 	)
 	local l
-#	for path in $(find /usr/lib64/rocm/*/{bin,lib64,lib} 2>/dev/null) ; do
-	for path in $(find /usr/lib64/rocm/* 2>/dev/null) ; do
+#	for path in $(find /opt/rocm-*/{bin,lib64,lib} 2>/dev/null) ; do
+	for path in $(find /opt/rocm-* 2>/dev/null) ; do
 		local is_so=0
 		local is_exe=0
 		if file "${path}" | grep -q "shared object" ; then
