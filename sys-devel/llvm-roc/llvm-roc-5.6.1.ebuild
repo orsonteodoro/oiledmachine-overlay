@@ -176,6 +176,8 @@ _src_configure() {
 	filter-flags "-fuse-ld=*"
 	#strip-unsupported-flags # Broken, strips -fprofile-use
 
+	append-ldflags -fuse-ld=bfd
+
 	# Speed up composable_kernel, rocBLAS build times
 	# -O3 may cause random ICE/segfault.
 	replace-flags '-O0' '-O2'

@@ -63,17 +63,31 @@ declare -A GET_LLVM_SLOT_FROM_ROCM_SLOT=(
 	["5.5"]="16"
 	["5.6"]="16"
 	["5.7"]="17"
+	["6.0"]="17"
+	["6.1"]="17"
 )
 
-# PV = Package Version
-declare -A GET_ROCM_COMPILER_PV_SUFFIX_FROM_ROCM_SLOT=(
-	["5.1"]="_p501"
-	["5.2"]="_p502"
-	["5.3"]="_p503"
-	["5.4"]="_p504"
-	["5.5"]="_p505"
-	["5.6"]="_p506"
-	["5.7"]="5.7"
+declare -A GET_ROCM_VERSION_FROM_ROCM_SLOT=(
+	["3.5"]="3.5.1"
+	["3.7"]="3.7.0"
+	["3.8"]="3.8.0"
+	["3.9"]="3.9.0"
+	["3.10"]="3.10.0"
+	["4.0"]="4.0.1"
+	["4.1"]="4.1.1"
+	["4.2"]="4.2.0"
+	["4.3"]="4.3.1"
+	["4.5"]="4.5.2"
+	["5.0"]="5.0.2"
+	["5.1"]="5.1.3"
+	["5.2"]="5.2.3"
+	["5.3"]="5.3.3"
+	["5.4"]="5.4.3"
+	["5.5"]="5.5.1"
+	["5.6"]="5.6.1"
+	["5.7"]="5.7.1"
+	["6.0"]="6.0.2"
+	["6.1"]="6.1.2"
 )
 
 _build_one_slot() {
@@ -99,14 +113,11 @@ echo "PGO Phase (3/3)"
 	fi
 
 	is_system_llvm=0
-	if grep "system-llvm" /var/db/pkg/dev-util/rocm-compiler*${GET_ROCM_COMPILER_PV_SUFFIX_FROM_ROCM_SLOT[${ROCM_SLOT}]}*/USE ; then
-		is_system_llvm=1
-	fi
 
 	llvm_bolt_path=""
-	if [[ -e "/usr/lib64/rocm/${ROCM_SLOT}/llvm/bin/llvm-bolt" ]] && (( ${is_system_llvm} == 0 )) ; then
-		llvm_bolt_path="/usr/lib64/rocm/${ROCM_SLOT}/llvm/bin/llvm-bolt"
-		export UOPTS_BOLT_PATH="/usr/lib64/rocm/${ROCM_SLOT}/llvm/bin"
+	if [[ -e "/opt/rocm-${GET_ROCM_VERSION_FROM_ROCM_SLOT[${ROCM_SLOT}]}/llvm/bin/llvm-bolt" ]] && (( ${is_system_llvm} == 0 )) ; then
+		llvm_bolt_path="/opt/rocm-${GET_ROCM_VERSION_FROM_ROCM_SLOT[${ROCM_SLOT}]}/llvm/bin/llvm-bolt"
+		export UOPTS_BOLT_PATH="/opt/rocm-${GET_ROCM_VERSION_FROM_ROCM_SLOT[${ROCM_SLOT}]}/llvm/bin"
 	elif [[ -e "/usr/lib/llvm/${GET_LLVM_SLOT_FROM_ROCM_SLOT[${ROCM_SLOT}]}/bin/llvm-bolt" ]] && (( ${is_system_llvm} == 1 )); then
 		llvm_bolt_path="/usr/lib/llvm/${GET_LLVM_SLOT_FROM_ROCM_SLOT[${ROCM_SLOT}]}/bin/llvm-bolt"
 		export UOPTS_BOLT_PATH="/usr/lib/llvm/${GET_LLVM_SLOT_FROM_ROCM_SLOT[${ROCM_SLOT}]}/bin"

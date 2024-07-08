@@ -178,7 +178,9 @@ _src_configure() {
 
 # Fixes:
 # ld.gold: internal error in do_layout, at /var/tmp/portage/sys-devel/binutils-2.40-r5/work/binutils-2.40/gold/object.cc:1939
-	append-ldflags -fuse-ld=lld
+#	append-ldflags -fuse-ld=lld
+
+	append-ldflags -fuse-ld=bfd
 
 #	strip-unsupported-flags # Broken, strips -fprofile-use
 
