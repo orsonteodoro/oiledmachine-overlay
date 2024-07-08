@@ -176,6 +176,9 @@ _src_configure() {
 	filter-flags "-fuse-ld=*"
 	#strip-unsupported-flags # Broken, strips -fprofile-use
 
+# Avoid:
+#collect2: fatal error: cannot find 'ld'
+#compilation terminated.
 	append-ldflags -fuse-ld=bfd
 
 	# Speed up composable_kernel, rocBLAS build times
