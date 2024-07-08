@@ -23,8 +23,9 @@ src_unpack() {
 		"${S}/rocm.eselect" \
 		|| die
 	sed -i \
+		-e "s|@ABI_LIBDIR@|lib64|g" \
 		-e "s|@EPREFIX@|${EPREFIX}|g" \
-		-e "s|@LIBDIR@|lib|g" \
+		-e "s|@ROCM_LIBDIR@|lib|g" \
 		"${S}/rocm.eselect" \
 		|| die
 }

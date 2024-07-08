@@ -5,10 +5,11 @@
 
 DESCRIPTION="Manages the ROCm multslot symlinks"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20240707"
+VERSION="20240708"
 PN="rocm"
 EPREFIX="@EPREFIX@"
-LIBDIR="@LIBDIR@"
+ABI_LIBDIR="@ABI_LIBDIR@"
+ROCM_LIBDIR="@ROCM_LIBDIR@"
 
 find_rocm_slots() {
 	local L=(
@@ -29,8 +30,8 @@ remove_symlinks() {
 
     local L=(
         "/etc/OpenCL/vendors/amdocl64.icd"
-        "/usr/${LIBDIR}/libamdocl64.so"
-        "/usr/${LIBDIR}/libcltrace.so"
+        "/usr/${ABI_LIBDIR}/libamdocl64.so"
+        "/usr/${ABI_LIBDIR}/libcltrace.so"
     )
 
     local path
@@ -64,8 +65,8 @@ is_blacklisted_exe() {
 add_rocm_opencl_runtime_symlinks() {
     local ROWS=(
         "${EPREFIX}/opt/rocm-${slot}/etc/OpenCL/vendors/amdocl64.icd:/etc/OpenCL/vendors/amdocl64.icd"
-        "${EPREFIX}/opt/rocm-${slot}/${LIBDIR}/libamdocl64.so:/usr/${LIBDIR}/libamdocl64.so"
-        "${EPREFIX}/opt/rocm-${slot}/${LIBDIR}/libcltrace.so:/usr/${LIBDIR}/libcltrace.so"
+        "${EPREFIX}/opt/rocm-${slot}/${ROCM_LIBDIR}/libamdocl64.so:/usr/${ABI_LIBDIR}/libamdocl64.so"
+        "${EPREFIX}/opt/rocm-${slot}/${ROCM_LIBDIR}/libcltrace.so:/usr/${ABI_LIBDIR}/libcltrace.so"
     )
 
     local row
@@ -164,8 +165,8 @@ do_show() {
 
     local L=(
         "/etc/OpenCL/vendors/amdocl64.icd"
-        "/usr/${LIBDIR}/libamdocl64.so"
-        "/usr/${LIBDIR}/libcltrace.so"
+        "/usr/${ABI_LIBDIR}/libamdocl64.so"
+        "/usr/${ABI_LIBDIR}/libcltrace.so"
     )
 
     local path
@@ -276,8 +277,8 @@ do_remove() {
 
     local L=(
         "/etc/OpenCL/vendors/amdocl64.icd"
-        "/usr/${LIBDIR}/libamdocl64.so"
-        "/usr/${LIBDIR}/libcltrace.so"
+        "/usr/${ABI_LIBDIR}/libamdocl64.so"
+        "/usr/${ABI_LIBDIR}/libcltrace.so"
     )
 
     local path
