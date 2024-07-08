@@ -7,27 +7,28 @@ EAPI=8
 # See scripts/build.py for release versioning.
 # Clang is more smoother multitask-wise.
 
+# MKL_DNN is oneDNN 2.2.4 with additional custom commits.
+
 CMAKE_BUILD_TYPE=Release
 LEGACY_TBB_SLOT="2"
 LLVM_COMPAT=( {16..10} )
 LLVM_SLOT="${LLVM_COMPAT[0]}"
 MIN_CLANG_PV="3.3"
 MIN_GCC_PV="4.8.1"
-ONETBB_SLOT="0"
-PYTHON_COMPAT=( python3_{10..11} )
-
-inherit cmake flag-o-matic llvm python-single-r1 toolchain-funcs
-
-# MKL_DNN is oneDNN 2.2.4 with additional custom commits.
 MKL_DNN_COMMIT="f53274c9fef211396655fc4340cb838452334089"
 OIDN_WEIGHTS_COMMIT="a34b7641349c5a79e46a617d61709c35df5d6c28"
+ONETBB_SLOT="0"
 ORG_GH="https://github.com/OpenImageDenoise"
+PYTHON_COMPAT=( "python3_"{10..11} )
+
+inherit cmake flag-o-matic llvm python-single-r1 toolchain-funcs
 
 if [[ ${PV} = *9999 ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="${ORG_GH}/oidn.git"
 	EGIT_BRANCH="master"
 else
+	KEYWORDS="~amd64"
 	SRC_URI="
 ${ORG_GH}/${PN}/releases/download/v${PV}/${P}.src.tar.gz
 	-> ${P}.tar.gz
@@ -42,13 +43,13 @@ fi
 
 DESCRIPTION="Intel(R) Open Image Denoise library"
 HOMEPAGE="http://www.openimagedenoise.org/"
-KEYWORDS="~amd64"
 LICENSE="Apache-2.0"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +apps +built-in-weights +clang doc gcc openimageio
+ebuild-revision-3
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -102,7 +103,7 @@ BDEPEND+="
 		)
 	)
 "
-DOCS=( CHANGELOG.md README.md readme.pdf )
+DOCS=( "CHANGELOG.md" "README.md" "readme.pdf" )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.4.1-findtbb-print-paths.patch"
 	"${FILESDIR}/${PN}-1.4.1-findtbb-alt-lib-path.patch"
@@ -129,7 +130,7 @@ pkg_setup() {
 	llvm_pkg_setup
 
 	# This needs to be placed here to avoid this error:
-	# python: no python-exec wrapped executable found in /usr/lib64/rocm/5.5/lib/python-exec.
+	# python: no python-exec wrapped executable found in /opt/rocm-5.5.1/lib/python-exec.
 	python-single-r1_pkg_setup
 }
 

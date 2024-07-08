@@ -21,12 +21,14 @@ AMDGPU_TARGETS_COMPAT=(
 #	gfx1103
 )
 CMAKE_BUILD_TYPE=Release
+COMPOSABLE_KERNEL_COMMIT="e85178b4ca892a78344271ae64103c9d4d1bfc40"
 CUDA_TARGETS_COMPAT=(
 	sm_70
 	sm_75
 	sm_80
 	sm_90
 )
+CUTLASS_COMMIT="66d9cddc832c1cdc2b30a8755274f7f74640cfe6"
 inherit hip-versions
 HIP_VERSIONS=(
 	"${HIP_5_5_VERSION}"
@@ -41,22 +43,20 @@ LLVM_COMPAT=( {16..10} )
 LLVM_SLOT="${LLVM_COMPAT[0]}"
 MIN_CLANG_PV="3.3"
 MIN_GCC_PV="4.8.1"
-ONETBB_SLOT="0"
-PYTHON_COMPAT=( python3_{10..11} )
-
-inherit cmake cuda flag-o-matic llvm python-single-r1 rocm toolchain-funcs
-
-COMPOSABLE_KERNEL_COMMIT="e85178b4ca892a78344271ae64103c9d4d1bfc40"
-CUTLASS_COMMIT="66d9cddc832c1cdc2b30a8755274f7f74640cfe6"
 MKL_DNN_COMMIT="9bea36e6b8e341953f922ce5c6f5dbaca9179a86"
 OIDN_WEIGHTS_COMMIT="4322c25e25a05584f65da1a4be5cef40a4b2e90b"
+ONETBB_SLOT="0"
 ORG_GH="https://github.com/OpenImageDenoise"
+PYTHON_COMPAT=( "python3_"{10..11} )
+
+inherit cmake cuda flag-o-matic llvm python-single-r1 rocm toolchain-funcs
 
 if [[ ${PV} = *9999 ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="${ORG_GH}/oidn.git"
 	EGIT_BRANCH="master"
 else
+	KEYWORDS="~amd64"
 	SRC_URI="
 ${ORG_GH}/${PN}/releases/download/v${PV}/${P}.src.tar.gz
 	-> ${P}.tar.gz
@@ -75,7 +75,6 @@ fi
 
 DESCRIPTION="Intel(R) Open Image Denoise library"
 HOMEPAGE="http://www.openimagedenoise.org/"
-KEYWORDS="~amd64"
 LICENSE="
 	Apache-2.0
 	BSD
@@ -91,7 +90,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
-ebuild-revision-2
+ebuild-revision-3
 "
 
 gen_required_use_cuda_targets() {
@@ -223,7 +222,7 @@ BDEPEND+="
 		)
 	)
 "
-DOCS=( CHANGELOG.md README.md readme.pdf )
+DOCS=( "CHANGELOG.md" "README.md" "readme.pdf" )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.4.1-findtbb-print-paths.patch"
 	"${FILESDIR}/${PN}-1.4.1-findtbb-alt-lib-path.patch"
@@ -268,7 +267,7 @@ pkg_setup() {
 	fi
 
 	# This needs to be placed here to avoid this error:
-	# python: no python-exec wrapped executable found in /usr/lib64/rocm/5.5/lib/python-exec.
+	# python: no python-exec wrapped executable found in /opt/rocm-5.5.1/lib/python-exec.
 	python-single-r1_pkg_setup
 	if use cuda ; then
 		cuda_add_sandbox
