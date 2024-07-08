@@ -149,7 +149,7 @@ ${ALL_LLVM_TARGETS[*]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
-cet cfi cuda esimd_emulator hardened rocm +sycl-fusion system-llvm test
+cet cfi cuda esimd_emulator hardened rocm +sycl-fusion test
 "
 gen_cuda_required_use() {
 	local x
@@ -172,11 +172,6 @@ gen_rocm_required_use() {
 	done
 }
 REQUIRED_USE="
-	!rocm? (
-		cfi? (
-			system-llvm
-		)
-	)
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
 	?? (
@@ -202,28 +197,10 @@ REQUIRED_USE="
 		)
 	)
 "
-gen_cfi_rdepend() {
-	local s
-	for s in ${LLVM_COMPAT[@]} ; do
-		echo "
-			llvm_slot_${s}? (
-				system-llvm? (
-					cfi? (
-						=sys-libs/compiler-rt-sanitizers-${s}*[cfi]
-						sys-devel/clang:${s}
-						sys-devel/lld:${s}
-						sys-devel/llvm:${s}
-					)
-				)
-			)
-		"
-	done
-}
 # See https://github.com/intel/llvm/blob/sycl-nightly/20230417/clang/include/clang/Basic/Cuda.h
 # See https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/doc/GetStartedGuide.md?plain=1#L191 for CUDA
 # See https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/doc/GetStartedGuide.md?plain=1#L247 for ROCm
 RDEPEND="
-	$(gen_cfi_rdepend)
 	>=dev-build/libtool-2.4.6
 	>=dev-libs/boost-1.74.0:=
 	>=dev-libs/level-zero-1.8.8:=
@@ -242,32 +219,12 @@ RDEPEND="
 	)
 	rocm? (
 		rocm_4_3? (
-			=dev-util/hip-4.3*:=[system-llvm=]
-			!system-llvm? (
-				=sys-devel/llvm-roc-4.3*[cfi?]
-			)
-			system-llvm? (
-				=sys-devel/clang-13*
-				=sys-devel/lld-13*
-				=sys-devel/llvm-13*
-				cfi? (
-					=sys-libs/compiler-rt-sanitizers-13*[cfi]
-				)
-			)
+			=dev-util/hip-4.3*:=
+			=sys-devel/llvm-roc-4.3*[cfi?]
 		)
 		rocm_4_2? (
-			=dev-util/hip-4.2*:=[system-llvm=]
-			!system-llvm? (
-				=sys-devel/llvm-roc-4.2*[cfi?]
-			)
-			system-llvm? (
-				=sys-devel/clang-12*
-				=sys-devel/lld-12*
-				=sys-devel/llvm-12*
-				cfi? (
-					=sys-libs/compiler-rt-sanitizers-12*[cfi]
-				)
-			)
+			=dev-util/hip-4.2*:=
+			=sys-devel/llvm-roc-4.2*[cfi?]
 		)
 	)
 "
@@ -480,10 +437,7 @@ src_configure() {
 		)
 	fi
 
-	if use rocm && use system-llvm ; then
-		export CC="${CHOST}-clang-${LLVM_SLOT}"
-		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
-	elif use rocm ; then
+	if use rocm ; then
 		export CC="clang"
 		export CXX="clang++"
 	fi
