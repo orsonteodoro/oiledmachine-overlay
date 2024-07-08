@@ -16,7 +16,7 @@ diff -urp magma-2.8.0.orig/CMakeLists.txt magma-2.8.0/CMakeLists.txt
          endif()
 +        message(STATUS "MKLROOT:  ${MKLROOT}" )
          include_directories( ${MKLROOT}/include )
-+        link_directories( ${MKLROOT}/lib/intel64 )
++        link_directories( ${MKLROOT}/@MKL_LIBDIR@/intel64 )
          add_definitions( -DMAGMA_WITH_MKL )
          message( STATUS "Define -DMAGMA_WITH_MKL" )
      endif()
@@ -27,9 +27,9 @@ diff -urp magma-2.8.0.orig/CMakeLists.txt magma-2.8.0/CMakeLists.txt
 -# save magma.lib, magma_sparse.lib, etc. in lib/
 -set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib )
 -set( CMAKE_LIBRARY_OUTPUT_DIRECTORY lib )
-+# save magma.lib, magma_sparse.lib, etc. in @LIBDIR@/
-+set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY @LIBDIR@ )
-+set( CMAKE_LIBRARY_OUTPUT_DIRECTORY @LIBDIR@ )
++# save magma.lib, magma_sparse.lib, etc. in @COND_LIBDIR@/
++set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY @COND_LIBDIR@ )
++set( CMAKE_LIBRARY_OUTPUT_DIRECTORY @COND_LIBDIR@ )
  
  
  # ----------------------------------------
@@ -38,7 +38,7 @@ diff -urp magma-2.8.0.orig/CMakeLists.txt magma-2.8.0/CMakeLists.txt
  
  # save testers to testing/
 -# save tester lib files to testing_lib/ to avoid cluttering lib/
-+# save tester lib files to testing_lib/ to avoid cluttering @LIBDIR@/
++# save tester lib files to testing_lib/ to avoid cluttering @COND_LIBDIR@/
  set( CMAKE_RUNTIME_OUTPUT_DIRECTORY testing )
  set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY testing_lib )
  set( CMAKE_LIBRARY_OUTPUT_DIRECTORY testing_lib )
@@ -48,8 +48,8 @@ diff -urp magma-2.8.0.orig/CMakeLists.txt magma-2.8.0/CMakeLists.txt
           RUNTIME DESTINATION bin
 -         LIBRARY DESTINATION lib
 -         ARCHIVE DESTINATION lib )
-+         LIBRARY DESTINATION @LIBDIR@
-+         ARCHIVE DESTINATION @LIBDIR@ )
++         LIBRARY DESTINATION @COND_LIBDIR@
++         ARCHIVE DESTINATION @COND_LIBDIR@ )
  if (MAGMA_ENABLE_CUDA)
    file( GLOB headers include/*.h sparse/include/*.h "${CMAKE_BINARY_DIR}/include/*.h" )
  else()
@@ -60,7 +60,7 @@ diff -urp magma-2.8.0.orig/CMakeLists.txt magma-2.8.0/CMakeLists.txt
 -set( pkgconfig lib/pkgconfig/magma.pc )
 -message( STATUS "pkgconfig ${pkgconfig}" )
 +set( pkgconfig_in lib/pkgconfig/magma.pc )
-+set( pkgconfig_out @LIBDIR@/pkgconfig/magma.pc )
++set( pkgconfig_out @COND_LIBDIR@/pkgconfig/magma.pc )
 +message( STATUS "pkgconfig_in ${pkgconfig_in}" )
 +message( STATUS "pkgconfig_out ${pkgconfig_out}" )
  set( INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}" )
@@ -75,7 +75,7 @@ diff -urp magma-2.8.0.orig/CMakeLists.txt magma-2.8.0/CMakeLists.txt
 -         DESTINATION lib/pkgconfig )
 +configure_file( "${pkgconfig_in}.in" "${pkgconfig_out}" @ONLY )
 +install( FILES "${CMAKE_BINARY_DIR}/${pkgconfig_out}"
-+         DESTINATION @LIBDIR@/pkgconfig )
++         DESTINATION @COND_LIBDIR@/pkgconfig )
  
  # ----------------------------------------
  get_directory_property( compile_definitions COMPILE_DEFINITIONS )
@@ -110,7 +110,7 @@ diff -urp magma-2.8.0.orig/docs/documentation.txt magma-2.8.0/docs/documentation
  to substitute reference implementations of these functions, found in
  `magma/blas_fix`. Setting `blas_fix = 1` in `make.inc` will compile these into
 -`magma/lib/libblas_fix.a`, with which your application should link.
-+`/usr/@LIBDIR@/libblas_fix.a`, with which your application should link.
++`magma/@COND_LIBDIR@/libblas_fix.a`, with which your application should link.
  
  
  Linking to BLAS
@@ -120,15 +120,15 @@ diff -urp magma-2.8.0.orig/docs/documentation.txt magma-2.8.0/docs/documentation
  
 -    lib/libmagma.so
 -    lib/libmagma_sparse.so
-+    @LIBDIR@/libmagma.so
-+    @LIBDIR@/libmagma_sparse.so
++    @COND_LIBDIR@/libmagma.so
++    @COND_LIBDIR@/libmagma_sparse.so
  
  and static libraries:
  
 -    lib/libmagma.a
 -    lib/libmagma_sparse.a
-+    @LIBDIR@/libmagma.a
-+    @LIBDIR@/libmagma_sparse.a
++    @COND_LIBDIR@/libmagma.a
++    @COND_LIBDIR@/libmagma_sparse.a
  
  and testing drivers in `testing` and `sparse-iter/testing`.
  
@@ -138,8 +138,8 @@ diff -urp magma-2.8.0.orig/docs/documentation.txt magma-2.8.0/docs/documentation
  
 -    lib/libmagma.a
 -    lib/libmagma_sparse.a
-+    @LIBDIR@/libmagma.a
-+    @LIBDIR@/libmagma_sparse.a
++    @COND_LIBDIR@/libmagma.a
++    @COND_LIBDIR@/libmagma_sparse.a
  
  and testing drivers in `testing` and `sparse-iter/testing`.
  
@@ -148,10 +148,10 @@ diff -urp magma-2.8.0.orig/docs/documentation.txt magma-2.8.0/docs/documentation
  The default prefix is `/usr/local/magma`. You can also set `prefix` in `make.inc`.
  This installs
 -MAGMA libraries in `${prefix}/lib`,
-+MAGMA libraries in `${prefix}/@LIBDIR@`,
++MAGMA libraries in `${prefix}/@COND_LIBDIR@`,
  MAGMA header files in `${prefix}/include`, and
 -`${prefix}/lib/pkgconfig/magma.pc` for `pkg-config`.
-+`${prefix}/@LIBDIR@/pkgconfig/magma.pc` for `pkg-config`.
++`${prefix}/@COND_LIBDIR@/pkgconfig/magma.pc` for `pkg-config`.
  
  
  Tuning
@@ -177,8 +177,8 @@ diff -urp magma-2.8.0.orig/example/Makefile magma-2.8.0/example/Makefile
 -# MAGMA_LIBS       := -L$(MAGMADIR)/lib -lmagma_sparse -lmagma \
 -#                     -L$(CUDADIR)/lib64 -lcublas -lcudart -lcusparse \
 -#                     -L$(OPENBLASDIR)/lib -lopenblas
-+# # may be lib instead of @LIBDIR@ on some systems
-+# MAGMA_LIBS       := -L$(MAGMADIR)/@LIBDIR@ -lmagma_sparse -lmagma \
++# # may be lib instead of lib64 on some systems
++# MAGMA_LIBS       := -L$(MAGMADIR)/@COND_LIBDIR@ -lmagma_sparse -lmagma \
 +#                     -L$(CUDADIR)/@ABI_LIBDIR@ -lcublas -lcudart -lcusparse \
 +#                     -L$(OPENBLASDIR)/@ABI_LIBDIR@ -lopenblas
  
@@ -192,7 +192,7 @@ diff -urp magma-2.8.0.orig/example/README.txt magma-2.8.0/example/README.txt
  you can tell the convention by using nm to examine your BLAS library:
  
 -    nm /mnt/scratch/openblas/lib/libopenblas.a | grep -i dnrm2
-+    nm /usr/@LIBDIR@/libopenblas.a | grep -i dnrm2
++    nm /usr/@ABI_LIBDIR@/libopenblas.a | grep -i dnrm2
      dnrm2.o:
      0000000000000000 T dnrm2_
                       U dnrm2_k
@@ -203,7 +203,7 @@ diff -urp magma-2.8.0.orig/example/README.txt magma-2.8.0/example/README.txt
 -    gcc -L$MAGMADIR/lib    -lmagma_sparse -lmagma \
 -        -L$CUDADIR/lib64   -lcublas -lcudart -lcusparse \
 -        -L$OPENBLASDIR/lib -lopenblas \
-+    gcc -L$MAGMADIR/@LIBDIR@    -lmagma_sparse -lmagma \
++    gcc -L$MAGMADIR/@COND_LIBDIR@    -lmagma_sparse -lmagma \
 +        -L$CUDADIR/@ABI_LIBDIR@   -lcublas -lcudart -lcusparse \
 +        -L$OPENBLASDIR/@ABI_LIBDIR@ -lopenblas \
          -o example example.o
@@ -214,12 +214,12 @@ diff -urp magma-2.8.0.orig/example/README.txt magma-2.8.0/example/README.txt
  sh/bash:
  
 -    LD_LIBRARY_PATH=$MAGMADIR/lib:$CUDADIR/lib64:$OPENBLASDIR/lib
-+    LD_LIBRARY_PATH=$MAGMADIR/@LIBDIR@:$CUDADIR/@ABI_LIBDIR@:$OPENBLASDIR/@ABI_LIBDIR@
++    LD_LIBRARY_PATH=$MAGMADIR/@COND_LIBDIR@:$CUDADIR/@ABI_LIBDIR@:$OPENBLASDIR/@ABI_LIBDIR@
  
  or with csh/tcsh:
  
 -    setenv LD_LIBRARY_PATH $MAGMADIR/lib:$CUDADIR/lib64:$OPENBLASDIR/lib
-+    setenv LD_LIBRARY_PATH $MAGMADIR/@LIBDIR@:$CUDADIR/@ABI_LIBDIR@:$OPENBLASDIR/@ABI_LIBDIR@
++    setenv LD_LIBRARY_PATH $MAGMADIR/@COND_LIBDIR@:$CUDADIR/@ABI_LIBDIR@:$OPENBLASDIR/@ABI_LIBDIR@
  
  ----------------------------------------
  Fortran example
@@ -230,7 +230,7 @@ diff -urp magma-2.8.0.orig/example/README.txt magma-2.8.0/example/README.txt
 -    gfortran -L$MAGMADIR/lib    -lmagma_sparse -lmagma \
 -             -L$CUDADIR/lib64   -lcublas -lcudart -lcusparse \
 -             -L$OPENBLASDIR/lib -lopenblas \
-+    gfortran -L$MAGMADIR/@LIBDIR@    -lmagma_sparse -lmagma \
++    gfortran -L$MAGMADIR/@COND_LIBDIR@    -lmagma_sparse -lmagma \
 +             -L$CUDADIR/@ABI_LIBDIR@   -lcublas -lcudart -lcusparse \
 +             -L$OPENBLASDIR/@ABI_LIBDIR@ -lopenblas \
               -o example_f example_f.o fortran.o
@@ -241,7 +241,7 @@ diff -urp magma-2.8.0.orig/example/README.txt magma-2.8.0/example/README.txt
  to $PKG_CONFIG_PATH, e.g. with csh,
  
 -    setenv PKG_CONFIG_PATH ${PKG_CONFIG_PATH}:/usr/local/magma/lib/pkgconfig
-+    setenv PKG_CONFIG_PATH ${PKG_CONFIG_PATH}:/usr/@ABI_LIBDIR@/pkgconfig
++    setenv PKG_CONFIG_PATH ${PKG_CONFIG_PATH}:/usr/@COND_LIBDIR@/pkgconfig
  
  then use 'pkg-config --cflags magma' and 'pkg-config --libs magma' as shown in
  the Makefile.
@@ -253,7 +253,7 @@ diff -urp magma-2.8.0.orig/fortran/Makefile magma-2.8.0/fortran/Makefile
  FCFLAGS    = -Wall -Wno-unused-function
  LDFLAGS    =
 -LIBS       = -L$(MAGMADIR)/lib -lmagma -Wl,-rpath,$(MAGMADIR)/lib
-+LIBS       = -L$(MAGMADIR)/@LIBDIR@ -lmagma -Wl,-rpath,$(MAGMADIR)/@LIBDIR@
++LIBS       = -L$(MAGMADIR)/@COND_LIBDIR@ -lmagma -Wl,-rpath,$(MAGMADIR)/@COND_LIBDIR@
  
  # BLAS and LAPACK libraries
  # framework Accelerate is for MacOS
@@ -265,7 +265,7 @@ diff -urp magma-2.8.0.orig/include/magma_types.h magma-2.8.0/include/magma_types
       * To generate a list of these, first remove all these macro definitions, run a `make clean`
       * to clear caches, and then start running:
 -     * $ make lib/libmagma.so -j64 2>&1 \
-+     * $ make @LIBDIR@/libmagma.so -j64 2>&1 \
++     * $ make @COND_LIBDIR@/libmagma.so -j64 2>&1 \
       *     | grep "use of undeclared identifier" \
       *     | awk '{gsub("'"'"'", "", $7) ; gsub(";", "", $7) ; print $7}'
       *
@@ -276,7 +276,7 @@ diff -urp magma-2.8.0.orig/lib/pkgconfig/magma.pc.in magma-2.8.0/lib/pkgconfig/m
  prefix=@INSTALL_PREFIX@
  exec_prefix=${prefix}
 -libdir=${exec_prefix}/lib
-+libdir=${exec_prefix}/@LIBDIR@
++libdir=${exec_prefix}/@COND_LIBDIR@
  includedir=${prefix}/include
  
  Name: magma
@@ -348,7 +348,7 @@ diff -urp magma-2.8.0.orig/Makefile magma-2.8.0/Makefile
  
  # where testers look for MAGMA libraries
 -RPATH      = -Wl,-rpath,${abspath ./lib}
-+RPATH      = -Wl,-rpath,${abspath ./@LIBDIR@}
++RPATH      = -Wl,-rpath,${abspath ./@COND_LIBDIR@}
  
  codegen    = ./tools/codegen.py
  
@@ -359,15 +359,15 @@ diff -urp magma-2.8.0.orig/Makefile magma-2.8.0/Makefile
 -libmagma_a      := lib/libmagma.a
 -libmagma_so     := lib/libmagma.so
 -libblas_fix_a   := lib/libblas_fix.a
-+libmagma_a      := @LIBDIR@/libmagma.a
-+libmagma_so     := @LIBDIR@/libmagma.so
-+libblas_fix_a   := @LIBDIR@/libblas_fix.a
++libmagma_a      := @COND_LIBDIR@/libmagma.a
++libmagma_so     := @COND_LIBDIR@/libmagma.so
++libblas_fix_a   := @COND_LIBDIR@/libblas_fix.a
  libtest_a       := testing/libtest.a
  liblapacktest_a := testing/lin/liblapacktest.a
 -libsparse_a     := lib/libmagma_sparse.a
 -libsparse_so    := lib/libmagma_sparse.so
-+libsparse_a     := @LIBDIR@/libmagma_sparse.a
-+libsparse_so    := @LIBDIR@/libmagma_sparse.so
++libsparse_a     := @COND_LIBDIR@/libmagma_sparse.a
++libsparse_so    := @COND_LIBDIR@/libmagma_sparse.so
  
  
  # static libraries
@@ -376,7 +376,7 @@ diff -urp magma-2.8.0.orig/Makefile magma-2.8.0/Makefile
  	-rm -f $(liblapacktest_a) $(liblapacktest_obj)
  
 -# hmm... what should lib/clean do? just the libraries, not objects?
-+# hmm... what should @LIBDIR@/clean do? just the libraries, not objects?
++# hmm... what should lib/clean do? just the libraries, not objects?
  lib/clean: blas_fix/clean sparse/clean
  	-rm -f $(libmagma_a) $(libmagma_so) $(libmagma_obj)
  
@@ -394,7 +394,7 @@ diff -urp magma-2.8.0.orig/Makefile magma-2.8.0/Makefile
  	$(CXX) $(LDFLAGS) -shared -o $@ \
  		$^ \
 -		-L./lib $(LIBS) -lmagma
-+		-L./@LIBDIR@ $(LIBS) -lmagma
++		-L./@COND_LIBDIR@ $(LIBS) -lmagma
  	@echo
  else
      # missing -fPIC: "make shared" prints warning
@@ -403,7 +403,7 @@ diff -urp magma-2.8.0.orig/Makefile magma-2.8.0/Makefile
  	-o $@ $< \
  	-L./testing -ltest \
 -	-L./lib -lmagma \
-+	-L./@LIBDIR@ -lmagma \
++	-L./@COND_LIBDIR@ -lmagma \
  	-L./testing/lin -llapacktest \
  	$(LIBS)
  
@@ -412,7 +412,7 @@ diff -urp magma-2.8.0.orig/Makefile magma-2.8.0/Makefile
  	-L./testing -ltest \
  	-L./testing/lin -llapacktest \
 -	-L./lib -lmagma \
-+	-L./@LIBDIR@ -lmagma \
++	-L./@COND_LIBDIR@ -lmagma \
  	$(LIBS)
  
  # link sparse testing_foo from testing_foo.o
@@ -421,7 +421,7 @@ diff -urp magma-2.8.0.orig/Makefile magma-2.8.0/Makefile
  	-o $@ $< \
  	-L./testing -ltest \
 -	-L./lib -lmagma_sparse -lmagma \
-+	-L./@LIBDIR@ -lmagma_sparse -lmagma \
++	-L./@COND_LIBDIR@ -lmagma_sparse -lmagma \
  	$(LIBS)
  
  
@@ -440,7 +440,7 @@ diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.acml magma-2.8.0/make.inc-
 -LIBDIR    = -L$(CUDADIR)/lib64 \
 -            -L$(ACMLDIR)/gfortran64_mp/lib
 +LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
-+            -L$(ACMLDIR)/gfortran64_mp/@LIBDIR@
++            -L$(ACMLDIR)/gfortran64_mp/@ACML_LIBDIR@
  
  INC       = -I$(CUDADIR)/include \
              -I$(ACMLDIR)/gfortran64_mp/include
@@ -486,7 +486,7 @@ diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.hip-gcc-mkl magma-2.8.0/ma
 +#FOPENMP     = -fopenmp
  #FOPENMP     =
 -#FOPENMP     = -fopenmp -L$(ROCM_PATH)/lib -I$(ROCM_PATH)/include
-+FOPENMP     = -fopenmp -L@ESYSROOT_LLVM_PATH@/@LIBDIR@ -I@ESYSROOT_LLVM_PATH@/include
++FOPENMP     = -fopenmp -L@ESYSROOT_LLVM_PATH@/@COND_LIBDIR@ -I@ESYSROOT_LLVM_PATH@/include
  
  # now, generate our flags
  CFLAGS      = -O3 $(FPIC) $(FOPENMP) -DNDEBUG -DADD_ -Wall -std=c99
@@ -495,11 +495,11 @@ diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.hip-gcc-mkl magma-2.8.0/ma
  ifeq ($(BACKEND),cuda)
      INC    += -I$(CUDADIR)/include
 -    LIBDIR += -L$(CUDADIR)/lib64 -L$(MKLROOT)/lib/intel64
-+    LIBDIR += -L$(CUDADIR)/@ABI_LIBDIR@ -L$(MKLROOT)/lib/intel64
++    LIBDIR += -L$(CUDADIR)/@ABI_LIBDIR@ -L$(MKLROOT)/@MKL_LIBDIR@/intel64
  else ifeq ($(BACKEND),hip)
      INC    += -I$(ROCM_PATH)/include
 -    LIBDIR += -L$(ROCM_PATH)/lib -L$(MKLROOT)/lib/intel64
-+    LIBDIR += -L$(ROCM_PATH)/@ROCM_LIBDIR@ -L$(MKLROOT)/lib/intel64
++    LIBDIR += -L$(ROCM_PATH)/@ROCM_LIBDIR@ -L$(MKLROOT)/@MKL_LIBDIR@/intel64
  endif
  
  
@@ -538,7 +538,7 @@ diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.hip-gcc-openblas magma-2.8
 +#FOPENMP     = -fopenmp
  #FOPENMP     =
 -#FOPENMP     = -fopenmp -L$(ROCM_PATH)/lib -I$(ROCM_PATH)/include
-+FOPENMP     = -fopenmp -L@ESYSROOT_LLVM_PATH@/@LIBDIR@ -I@ESYSROOT_LLVM_PATH@/include
++FOPENMP     = -fopenmp -L@ESYSROOT_LLVM_PATH@/@COND_LIBDIR@ -I@ESYSROOT_LLVM_PATH@/include
  
  # now, generate our flags
  CFLAGS      = -O3 $(FPIC) $(FOPENMP) -DNDEBUG -DADD_ -Wall -std=c99
@@ -610,7 +610,7 @@ diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.macos-mkl magma-2.8.0/make
 -LIBDIR    = -L$(CUDADIR)/lib \
 -            -L$(MKLROOT)/lib
 +LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
-+            -L$(MKLROOT)/@LIBDIR@
++            -L$(MKLROOT)/@MKL_LIBDIR@
  
  INC       = -I$(CUDADIR)/include
 diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.macos-openmp magma-2.8.0/make.inc-examples/make.inc.macos-openmp
@@ -647,7 +647,8 @@ diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-gcc magma-2.8.0/make.i
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
 +LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
-             -L$(MKLROOT)/lib/intel64
+-            -L$(MKLROOT)/lib/intel64
++            -L$(MKLROOT)/@MKL_LIBDIR@/intel64
  
  INC       = -I$(CUDADIR)/include \
 diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-gcc-debug magma-2.8.0/make.inc-examples/make.inc.mkl-gcc-debug
@@ -668,7 +669,8 @@ diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-gcc-debug magma-2.8.0/
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
 +LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
-             -L$(MKLROOT)/lib/intel64
+-            -L$(MKLROOT)/lib/intel64
++            -L$(MKLROOT)/@MKL_LIBDIR@/intel64
  
  INC       = -I$(CUDADIR)/include \
 diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-gcc-ilp64 magma-2.8.0/make.inc-examples/make.inc.mkl-gcc-ilp64
@@ -689,7 +691,8 @@ diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-gcc-ilp64 magma-2.8.0/
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
 +LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
-             -L$(MKLROOT)/lib/intel64
+-            -L$(MKLROOT)/lib/intel64
++            -L$(MKLROOT)/@MKL_LIBDIR@/intel64
  
  INC       = -I$(CUDADIR)/include \
 diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-gcc-ilp64-debug magma-2.8.0/make.inc-examples/make.inc.mkl-gcc-ilp64-debug
@@ -710,7 +713,8 @@ diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-gcc-ilp64-debug magma-
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
 +LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
-             -L$(MKLROOT)/lib/intel64
+-            -L$(MKLROOT)/lib/intel64
++            -L$(MKLROOT)/@MKL_LIBDIR@/intel64
  
  INC       = -I$(CUDADIR)/include \
 diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc magma-2.8.0/make.inc-examples/make.inc.mkl-icc
@@ -731,7 +735,8 @@ diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc magma-2.8.0/make.i
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
 +LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
-             -L$(MKLROOT)/lib/intel64
+-            -L$(MKLROOT)/lib/intel64
++            -L$(MKLROOT)/@MKL_LIBDIR@/intel64
  
  INC       = -I$(CUDADIR)/include \
 diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc-debug magma-2.8.0/make.inc-examples/make.inc.mkl-icc-debug
@@ -752,7 +757,8 @@ diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc-debug magma-2.8.0/
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
 +LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
-             -L$(MKLROOT)/lib/intel64
+-            -L$(MKLROOT)/lib/intel64
++            -L$(MKLROOT)/@MKL_LIBDIR@/intel64
  
  INC       = -I$(CUDADIR)/include \
 diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc-ilp64 magma-2.8.0/make.inc-examples/make.inc.mkl-icc-ilp64
@@ -773,7 +779,8 @@ diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc-ilp64 magma-2.8.0/
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
 +LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
-             -L$(MKLROOT)/lib/intel64
+-            -L$(MKLROOT)/lib/intel64
++            -L$(MKLROOT)/@MKL_LIBDIR@/intel64
  
  INC       = -I$(CUDADIR)/include \
 diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc-ilp64-debug magma-2.8.0/make.inc-examples/make.inc.mkl-icc-ilp64-debug
@@ -794,7 +801,8 @@ diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.mkl-icc-ilp64-debug magma-
  
 -LIBDIR    = -L$(CUDADIR)/lib64 \
 +LIBDIR    = -L$(CUDADIR)/@ABI_LIBDIR@ \
-             -L$(MKLROOT)/lib/intel64
+-            -L$(MKLROOT)/lib/intel64
++            -L$(MKLROOT)/@MKL_LIBDIR@/intel64
  
  INC       = -I$(CUDADIR)/include \
 diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.openblas magma-2.8.0/make.inc-examples/make.inc.openblas
@@ -874,8 +882,8 @@ diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.power9-essl magma-2.8.0/ma
  
 -LIBDIR    = -L$(OLCF_CUDA_ROOT)/lib64 \
 -            -L$(OLCF_ESSL_ROOT)/lib64 -L$(OLCF_NETLIB_LAPACK_ROOT)/lib64
-+LIBDIR    = -L$(OLCF_CUDA_ROOT)/@LIBDIR@ \
-+            -L$(OLCF_ESSL_ROOT)/@LIBDIR@ -L$(OLCF_NETLIB_LAPACK_ROOT)/@LIBDIR@
++LIBDIR    = -L$(OLCF_CUDA_ROOT)/@ABI_LIBDIR@ \
++            -L$(OLCF_ESSL_ROOT)/@ESSL_LIBDIR@ -L$(OLCF_NETLIB_LAPACK_ROOT)/@LIBDIR@
  
  INC       = -I$(OLCF_CUDA_ROOT)/include \
              -I$(OLCF_ESSL_ROOT)/include -I$(OLCF_NETLIB_LAPACK_ROOT)/include
@@ -921,7 +929,7 @@ diff -urp magma-2.8.0.orig/testing/lin/Makefile.src magma-2.8.0/testing/lin/Make
  	$(TMGLIB) -o xlintsts \
  	testing/fortran.$(o_ext) \
 -	$(LDFLAGS) -L$(MAGMA_DIR)/lib -lmagma \
-+	$(LDFLAGS) -L$(MAGMA_DIR)/@LIBDIR@ -lmagma \
++	$(LDFLAGS) -L$(MAGMA_DIR)/@COND_LIBDIR@ -lmagma \
  	$(LIBDIR) $(LIB)
  
  xlintstc : $(ALINTST) $(CLINTST) $(SCLNTST) testing/fortran.$(o_ext) $(TMGLIB)
@@ -929,7 +937,7 @@ diff -urp magma-2.8.0.orig/testing/lin/Makefile.src magma-2.8.0/testing/lin/Make
  	$(TMGLIB) -o xlintstc \
  	testing/fortran.$(o_ext) \
 -	$(LDFLAGS) -L$(MAGMA_DIR)/lib -lmagma \
-+	$(LDFLAGS) -L$(MAGMA_DIR)/@LIBDIR@ -lmagma \
++	$(LDFLAGS) -L$(MAGMA_DIR)/@COND_LIBDIR@ -lmagma \
  	$(LIBDIR) $(LIB)
   
  xlintstd : $(ALINTST) $(DLINTST) $(DZLNTST) testing/fortran.$(o_ext) $(TMGLIB)
@@ -937,7 +945,7 @@ diff -urp magma-2.8.0.orig/testing/lin/Makefile.src magma-2.8.0/testing/lin/Make
  	$(TMGLIB) -o xlintstd \
  	testing/fortran.$(o_ext) \
 -	$(LDFLAGS) -L$(MAGMA_DIR)/lib -lmagma \
-+	$(LDFLAGS) -L$(MAGMA_DIR)/@LIBDIR@ -lmagma \
++	$(LDFLAGS) -L$(MAGMA_DIR)/@COND_LIBDIR@ -lmagma \
  	$(LIBDIR) $(LIB)
   
  xlintstz : $(ALINTST) $(ZLINTST) $(DZLNTST) testing/fortran.$(o_ext) $(TMGLIB)
@@ -945,7 +953,7 @@ diff -urp magma-2.8.0.orig/testing/lin/Makefile.src magma-2.8.0/testing/lin/Make
  	$(TMGLIB) -o xlintstz \
  	testing/fortran.$(o_ext) \
 -	$(LDFLAGS) -L$(MAGMA_DIR)/lib -lmagma \
-+	$(LDFLAGS) -L$(MAGMA_DIR)/@LIBDIR@ -lmagma \
++	$(LDFLAGS) -L$(MAGMA_DIR)/@COND_LIBDIR@ -lmagma \
  	$(LIBDIR) $(LIB)
   
  $(ALINTST): $(FRC)
@@ -957,7 +965,7 @@ diff -urp magma-2.8.0.orig/testing/testing_veclib.cpp magma-2.8.0/testing/testin
  // This is essentially a bug from an old f2c version of lapack (clapack).
  //
 -// We work around this bug by putting replacement routines in the magma/lib/libblas_fix.a library.
-+// We work around this bug by putting replacement routines in magma's /usr/@LIBDIR@/libblas_fix.a library.
++// We work around this bug by putting replacement routines in the magma/@COND_LIBDIR@/libblas_fix.a library.
  // These correctly return float for the single precision functions that had issues.
  
  #include <stdio.h>
@@ -969,7 +977,7 @@ diff -urp magma-2.8.0.orig/tools/build.sh magma-2.8.0/tools/build.sh
      fi
  
 -    mkdir $builds/$config/lib
-+    mkdir $builds/$config/@LIBDIR@
++    mkdir $builds/$config/@COND_LIBDIR@
      mkdir $builds/$config/testing
  
      mkdir $builds/$config/sparse
@@ -977,7 +985,7 @@ diff -urp magma-2.8.0.orig/tools/build.sh magma-2.8.0/tools/build.sh
  
      # link libraries
 -    ln lib/lib*       $builds/$config/lib
-+    ln lib/lib*       $builds/$config/lib # todo review
++    ln lib/lib*       $builds/$config/@COND_LIBDIR@
  
      # link testers
      ln `find testing        -maxdepth 1 -perm -u+x -type f -not -name '*.py' -not -name '*.pl' -not -name '*.sh' -not -name '*.csh'` $builds/$config/testing

@@ -69,6 +69,7 @@ LICENSE="BSD"
 KEYWORDS="~amd64"
 IUSE+="
 doc examples -ilp64 mkl openblas tbb openmp test
+ebuild-revision-1
 "
 if ! [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	IUSE+="
@@ -386,22 +387,32 @@ einfo "Removing LLVM references"
 	sed -i -e "s|@ABI_LIBDIR@|$(get_libdir)|g" \
 		$(grep -r -l -e "@ABI_LIBDIR@" "${WORKDIR}") \
 		|| true
+	sed -i -e "s|@ACML_LIBDIR@|lib|g" \
+		$(grep -r -l -e "@ACML_LIBDIR@" "${WORKDIR}") \
+		|| true
+	sed -i -e "s|@ESSL_LIBDIR@|lib64|g" \
+		$(grep -r -l -e "@ESSL_LIBDIR@" "${WORKDIR}") \
+		|| true
 	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
-		sed -i -e "s|@ROCM_LIBDIR@|$(rocm_get_libdir)|g" \
-			$(grep -r -l -e "@ROCM_LIBDIR@" "${WORKDIR}") \
-			|| true
 		sed -i -e "s|@COND_LIBDIR@|$(rocm_get_libdir)|g" \
 			$(grep -r -l -e "@COND_LIBDIR@" "${WORKDIR}") \
 			|| true
-	else
-		# Placeholder
-		sed -i -e "s|@ROCM_LIBDIR@|$(get_libdir)|g" \
+		sed -i -e "s|@ROCM_LIBDIR@|$(rocm_get_libdir)|g" \
 			$(grep -r -l -e "@ROCM_LIBDIR@" "${WORKDIR}") \
 			|| true
+	else
+		# Placeholder
 		sed -i -e "s|@COND_LIBDIR@|$(get_libdir)|g" \
 			$(grep -r -l -e "@COND_LIBDIR@" "${WORKDIR}") \
 			|| true
+		sed -i -e "s|@ROCM_LIBDIR@|$(get_libdir)|g" \
+			$(grep -r -l -e "@ROCM_LIBDIR@" "${WORKDIR}") \
+			|| true
 	fi
+	sed -i -e "s|@MKL_LIBDIR@|lib|g" \
+		$(grep -r -l -e "@MKL_LIBDIR@" "${WORKDIR}") \
+		|| true
+
 	sed -i -e "s|@EPREFIX@|${EPREFIX}|g" \
 		$(grep -r -l -e "@EPREFIX@" "${WORKDIR}") \
 		|| true
