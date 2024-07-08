@@ -65,15 +65,15 @@ pkg_setup() {
 	# Darwin Prefix builds do not have llvm installed yet, so rely on
 	# bootstrap-prefix to set the appropriate path vars to LLVM instead
 	# of using llvm_pkg_setup.
-	if [[ ${CHOST} != *-darwin* ]] || has_version dev-lang/llvm; then
+	if [[ ${CHOST} != *"-darwin"* ]] || has_version "dev-lang/llvm" ; then
 		llvm_pkg_setup
 	fi
 	python-any-r1_pkg_setup
 }
 
 test_compiler() {
-	$(tc-getCC) ${CFLAGS} ${LDFLAGS} "${@}" -o /dev/null -x c - \
-		<<<'int main() { return 0; }' &>/dev/null
+	$(tc-getCC) ${CFLAGS} ${LDFLAGS} "${@}" -o "/dev/null" -x c - \
+		<<<'int main() { return 0; }' &>"/dev/null"
 }
 
 src_configure() {
@@ -81,12 +81,12 @@ src_configure() {
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
 	# pre-set since we need to pass it to cmake
-	BUILD_DIR=${WORKDIR}/${P}_build
+	BUILD_DIR="${WORKDIR}/${P}_build"
 
 	local nolib_flags=( -nodefaultlibs -lc )
 	if use clang; then
-		local -x CC=${CHOST}-clang
-		local -x CXX=${CHOST}-clang++
+		local -x CC="${CHOST}-clang"
+		local -x CXX="${CHOST}-clang++"
 		strip-unsupported-flags
 		# ensure we can use clang before installing compiler-rt
 		local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
@@ -118,7 +118,7 @@ src_configure() {
 		)
 	fi
 
-	if use prefix && [[ "${CHOST}" == *-darwin* ]] ; then
+	if use prefix && [[ "${CHOST}" == *"-darwin"* ]] ; then
 		mycmakeargs+=(
 			# setting -isysroot is disabled with compiler-rt-prefix-paths.patch
 			# this allows adding arm64 support using SDK in EPREFIX

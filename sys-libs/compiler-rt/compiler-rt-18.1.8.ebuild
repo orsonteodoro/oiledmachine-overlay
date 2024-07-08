@@ -95,8 +95,8 @@ pkg_setup() {
 
 test_compiler() {
 	target_is_not_host && return
-	$(tc-getCC) ${CFLAGS} ${LDFLAGS} "${@}" -o /dev/null -x c - \
-		<<<'int main() { return 0; }' &>/dev/null
+	$(tc-getCC) ${CFLAGS} ${LDFLAGS} "${@}" -o "/dev/null" -x c - \
+		<<<'int main() { return 0; }' &>"/dev/null"
 }
 
 src_configure() {
@@ -106,14 +106,14 @@ src_configure() {
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
 	# pre-set since we need to pass it to cmake
-	BUILD_DIR=${WORKDIR}/${P}_build
+	BUILD_DIR="${WORKDIR}/${P}_build"
 
 	if use clang && ! is_crosspkg ; then
 		# Only do this conditionally to allow overriding with
 		# e.g. CC=clang-13 in case of breakage
 		if ! tc-is-clang ; then
-			local -x CC=${CHOST}-clang
-			local -x CXX=${CHOST}-clang++
+			local -x CC="${CHOST}-clang"
+			local -x CXX="${CHOST}-clang++"
 		fi
 
 		strip-unsupported-flags
@@ -156,7 +156,7 @@ src_configure() {
 		)
 	fi
 
-	if is_crosspkg; then
+	if is_crosspkg ; then
 		# Needed to target built libc headers
 		export CFLAGS="${CFLAGS} -isystem /usr/${CTARGET}/usr/include"
 		mycmakeargs+=(
@@ -176,7 +176,7 @@ src_configure() {
 		)
 	fi
 
-	if use prefix && [[ "${CHOST}" == *-darwin* ]] ; then
+	if use prefix && [[ "${CHOST}" == *"-darwin"* ]] ; then
 		mycmakeargs+=(
 			# setting -isysroot is disabled with compiler-rt-prefix-paths.patch
 			# this allows adding arm64 support using SDK in EPREFIX

@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# Last update:  2024-02-10
+# Last update:  2024-07-06
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -23,7 +23,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit cmake crossdev flag-o-matic llvm.org llvm-utils python-any-r1
 inherit toolchain-funcs
@@ -69,6 +69,9 @@ LLVM_COMPONENTS=(
 	"cmake"
 	"llvm/cmake"
 )
+LLVM_TEST_COMPONENTS=(
+	"llvm/include/llvm/TargetParser"
+)
 llvm.org_set_globals
 
 python_check_deps() {
@@ -95,8 +98,8 @@ pkg_setup() {
 
 test_compiler() {
 	target_is_not_host && return
-	$(tc-getCC) ${CFLAGS} ${LDFLAGS} "${@}" -o /dev/null -x c - \
-		<<<'int main() { return 0; }' &>/dev/null
+	$(tc-getCC) ${CFLAGS} ${LDFLAGS} "${@}" -o "/dev/null" -x c - \
+		<<<'int main() { return 0; }' &>"/dev/null"
 }
 
 src_configure() {
@@ -106,14 +109,14 @@ src_configure() {
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
 	# pre-set since we need to pass it to cmake
-	BUILD_DIR=${WORKDIR}/${P}_build
+	BUILD_DIR="${WORKDIR}/${P}_build"
 
 	if use clang && ! is_crosspkg ; then
 		# Only do this conditionally to allow overriding with
 		# e.g. CC=clang-13 in case of breakage
 		if ! tc-is-clang ; then
-			local -x CC=${CHOST}-clang
-			local -x CXX=${CHOST}-clang++
+			local -x CC="${CHOST}-clang"
+			local -x CXX="${CHOST}-clang++"
 		fi
 
 		strip-unsupported-flags
@@ -128,7 +131,7 @@ src_configure() {
 		elif test_compiler "${nolib_flags[@]}" -nostartfiles; then
 			# Avoiding -nostartfiles earlier on for bug #862540,
 			# and set available entry symbol for bug #862798.
-			nolib_flags+=( -nostartfiles -emain )
+			nolib_flags+=( -nostartfiles -e main )
 
 			local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
 			ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
@@ -139,6 +142,7 @@ src_configure() {
 		-DCOMPILER_RT_INSTALL_PATH="${EPREFIX}/usr/lib/clang/${LLVM_MAJOR}"
 
 		-DCOMPILER_RT_INCLUDE_TESTS=$(usex test)
+		-DCOMPILER_RT_BUILD_CTX_PROFILE=OFF
 		-DCOMPILER_RT_BUILD_LIBFUZZER=OFF
 		-DCOMPILER_RT_BUILD_MEMPROF=OFF
 		-DCOMPILER_RT_BUILD_ORC=OFF
@@ -156,7 +160,7 @@ src_configure() {
 		)
 	fi
 
-	if is_crosspkg; then
+	if is_crosspkg ; then
 		# Needed to target built libc headers
 		export CFLAGS="${CFLAGS} -isystem /usr/${CTARGET}/usr/include"
 		mycmakeargs+=(
@@ -176,7 +180,7 @@ src_configure() {
 		)
 	fi
 
-	if use prefix && [[ "${CHOST}" == *-darwin* ]] ; then
+	if use prefix && [[ "${CHOST}" == *"-darwin"* ]] ; then
 		mycmakeargs+=(
 			# setting -isysroot is disabled with compiler-rt-prefix-paths.patch
 			# this allows adding arm64 support using SDK in EPREFIX
@@ -208,3 +212,4 @@ src_test() {
 
 	cmake_build check-builtins
 }
+
