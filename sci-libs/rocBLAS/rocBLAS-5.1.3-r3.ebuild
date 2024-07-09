@@ -46,7 +46,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark cuda +rocm test ebuild-revision-9
+benchmark cuda +rocm test ebuild-revision-10
 "
 gen_rocm_required_use() {
 	local x
@@ -101,6 +101,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-fix-glibc-2.32-and-above.patch"
 	"${FILESDIR}/${PN}-5.0.2-cpp_lib_filesystem.patch"
 	"${FILESDIR}/${PN}-5.0.2-unbundle-Tensile.patch"
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-path.patch"
 )
 
 pkg_setup() {
@@ -127,6 +128,7 @@ src_prepare() {
 		"${S}/clients/include/testing_logging.hpp"
 		"${S}/clients/include/testing_ostream_threadsafety.hpp"
 		"${S}/clients/include/utility.hpp"
+		"${S}/library/src/tensile_host.cpp"
 	)
 	rocm_src_prepare
 }

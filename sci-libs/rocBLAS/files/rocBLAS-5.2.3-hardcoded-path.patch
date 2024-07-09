@@ -1,0 +1,14 @@
+diff '--color=auto' -urp rocBLAS-rocm-5.2.3.orig/library/src/tensile_host.cpp rocBLAS-rocm-5.2.3/library/src/tensile_host.cpp
+--- rocBLAS-rocm-5.2.3.orig/library/src/tensile_host.cpp	2022-05-26 07:31:25.000000000 -0700
++++ rocBLAS-rocm-5.2.3/library/src/tensile_host.cpp	2024-07-09 01:03:20.067507434 -0700
+@@ -47,7 +47,7 @@ extern "C" void rocblas_shutdown();
+ #include <libgen.h>
+ #include <link.h>
+ #include <unistd.h>
+-#define ROCBLAS_LIB_PATH "/opt/rocm/lib/rocblas"
++#define ROCBLAS_LIB_PATH "/opt/rocm-@ROCM_VERSION@/lib/rocblas"
+ #endif
+ 
+ #ifdef WIN32
+Only in rocBLAS-rocm-5.2.3/library/src: tensile_host.cpp.orig
+Only in rocBLAS-rocm-5.2.3/library/src: tensile_host.cpp.rej

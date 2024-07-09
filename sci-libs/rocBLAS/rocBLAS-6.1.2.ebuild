@@ -76,7 +76,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark cuda +rocm test ebuild-revision-9
+benchmark cuda +rocm test ebuild-revision-10
 "
 gen_rocm_required_use() {
 	local x
@@ -142,6 +142,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.7.0-unbundle-Tensile.patch"
 	"${FILESDIR}/${PN}-5.4.2-add-missing-header.patch"
 	"${FILESDIR}/${PN}-5.4.2-link-cblas.patch"
+	"${FILESDIR}/${PN}-5.2.3-hardcoded-path.patch"
 )
 
 pkg_setup() {
@@ -167,6 +168,7 @@ src_prepare() {
 		"${S}/clients/include/testing_logging.hpp"
 		"${S}/clients/include/testing_ostream_threadsafety.hpp"
 		"${S}/clients/include/utility.hpp"
+		"${S}/library/src/tensile_host.cpp"
 	)
 	rocm_src_prepare
 }
