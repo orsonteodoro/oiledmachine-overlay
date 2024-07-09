@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# library/src/tensile_host.cpp contains fallback hardcoded path.
+
 # Error:
 
 # Traceback (most recent call last):
