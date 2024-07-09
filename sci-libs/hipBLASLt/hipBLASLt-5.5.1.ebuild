@@ -34,7 +34,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${ROCM_IUSE}
-benchmark cuda +rocm +tensile ebuild-revison-4
+benchmark cuda +rocm +tensile ebuild-revison-5
 "
 gen_rocm_required_use() {
 	local x
@@ -174,8 +174,15 @@ ewarn
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="cuda"
+			-DOPENCL_ROOT="/opt/cuda"
 		)
+		if use tensile ; then
+			mycmakeargs+=(
+				-DOPENCL_ROOT="/opt/cuda"
+			)
+		fi
 	elif use rocm ; then
+		export HIP_PATH="${ROCM_PATH}"
 		export HIP_PLATFORM="amd"
 		export ROCM_PATH="${ROCM_PATH}"
 		einfo "get_amdgpu_flags:  $(get_amdgpu_flags)"
@@ -190,6 +197,7 @@ ewarn
 			export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
 			export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"
 			mycmakeargs+=(
+				-DOPENCL_ROOT="${EROCM_PATH}/opencl"
 				-DTensile_CODE_OBJECT_VERSION="V3" # Avoid V2 build error with with xnack-
 				-DTensile_CPU_THREADS="${nprocs}"
 #				-DTensile_ROOT="${ESYSROOT}${EROCM_PATH}"
