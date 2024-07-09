@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# hardcoded path:  src/tools/rocprofv2/rocprofv2.cpp
+# hardcoded path:  src/tools/rocsys/rocsys.cpp
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906
