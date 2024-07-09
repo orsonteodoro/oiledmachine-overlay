@@ -1,0 +1,12 @@
+diff '--color=auto' -urp rocprofiler-rocm-5.7.1.orig/src/tools/rocsys/rocsys.cpp rocprofiler-rocm-5.7.1/src/tools/rocsys/rocsys.cpp
+--- rocprofiler-rocm-5.7.1.orig/src/tools/rocsys/rocsys.cpp	2023-09-28 10:34:21.000000000 -0700
++++ rocprofiler-rocm-5.7.1/src/tools/rocsys/rocsys.cpp	2024-07-09 09:51:37.937722701 -0700
+@@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
+   if (Dl_info dl_info; dladdr(reinterpret_cast<void*>(main), &dl_info) != 0) {
+     bin_path = fs::path(dl_info.dli_fname).remove_filename();
+   } else {
+-    bin_path = "/opt/rocm";
++    bin_path = "/opt/rocm-@ROCM_VERSION@";
+   }
+ 
+   std::string session_name = "default_session_roctracer";

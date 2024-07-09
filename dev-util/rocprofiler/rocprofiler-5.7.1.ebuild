@@ -42,7 +42,7 @@ LICENSE="
 # Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-9"
+IUSE=" test ebuild-revision-11"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -71,6 +71,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.7.1-hardcoded-paths.patch"
 )
 
 python_check_deps() {

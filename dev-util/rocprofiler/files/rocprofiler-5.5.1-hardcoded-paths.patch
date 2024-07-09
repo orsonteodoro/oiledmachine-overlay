@@ -1,0 +1,12 @@
+diff '--color=auto' -urp rocprofiler-rocm-5.5.1.orig/src/tools/amdsys/amdsys.cpp rocprofiler-rocm-5.5.1/src/tools/amdsys/amdsys.cpp
+--- rocprofiler-rocm-5.5.1.orig/src/tools/amdsys/amdsys.cpp	2023-04-14 10:32:14.000000000 -0700
++++ rocprofiler-rocm-5.5.1/src/tools/amdsys/amdsys.cpp	2024-07-09 09:48:39.956216717 -0700
+@@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
+   if (Dl_info dl_info; dladdr(reinterpret_cast<void*>(main), &dl_info) != 0) {
+     bin_path = fs::path(dl_info.dli_fname).remove_filename();
+   } else {
+-    bin_path = "/opt/rocm";
++    bin_path = "/opt/rocm-@ROCM_VERSION@";
+   }
+ 
+   std::string session_name = "default_session_roctracer";
