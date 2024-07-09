@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# library/src/device/generator.py has hardcoded /opt/rocm/
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900
