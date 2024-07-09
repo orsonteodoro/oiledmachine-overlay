@@ -53,7 +53,7 @@ LICENSE="MIT"
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
 IUSE+="
-test ebuild-revision-6
+test ebuild-revision-7
 "
 REQUIRED_USE="
 "
@@ -78,6 +78,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.0_p9999-hip_runtime-header.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-sqrtf.patch"
 	"${FILESDIR}/${PN}-6.0.2-example-libs.patch"
+	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {

@@ -48,7 +48,7 @@ LICENSE="MIT"
 #RESTRICT="test"
 SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
 IUSE+="
-test ebuild-revision-6
+test ebuild-revision-7
 "
 REQUIRED_USE="
 "
@@ -70,6 +70,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-0.2.0_p50601-fix-missing-libstdcxx-expf.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-hip_runtime-header.patch"
+	"${FILESDIR}/${PN}-0.2.0_p50403-hardcoded-paths.patch"
 )
 if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
 	PATCHES+=(
