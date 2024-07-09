@@ -1,0 +1,14 @@
+diff '--color=auto' -urp rocRAND-rocm-6.0.2.orig/python/rocrand/rocrand/hip.py rocRAND-rocm-6.0.2/python/rocrand/rocrand/hip.py
+--- rocRAND-rocm-6.0.2.orig/python/rocrand/rocrand/hip.py	2024-01-11 09:42:29.000000000 -0800
++++ rocRAND-rocm-6.0.2/python/rocrand/rocrand/hip.py	2024-07-09 12:21:28.317488319 -0700
+@@ -58,8 +58,8 @@ hip = None
+ HIP_PATHS = [
+     os.getenv("ROCM_PATH"),
+     os.getenv("HIP_PATH"),
+-    "/opt/rocm",
+-    "/opt/rocm/hip"]
++    "/opt/rocm-@ROCM_VERSION@",
++    "/opt/rocm-@ROCM_VERSION@/hip"]
+ 
+ CUDA_PATHS = [
+     os.getenv("CUDA_PATH"),

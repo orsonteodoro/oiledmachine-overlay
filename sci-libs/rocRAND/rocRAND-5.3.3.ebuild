@@ -50,7 +50,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test ebuild-revision-5
+benchmark cuda +rocm test ebuild-revision-6
 "
 gen_cuda_required_use() {
 	local x
@@ -106,6 +106,7 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
