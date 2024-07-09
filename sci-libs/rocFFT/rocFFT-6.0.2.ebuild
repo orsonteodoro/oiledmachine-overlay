@@ -60,7 +60,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+aot benchmark cuda perfscripts +rocm test ebuild-revision-6
++aot benchmark cuda perfscripts +rocm test ebuild-revision-7
 "
 gen_cuda_required_use() {
 	local x
@@ -146,6 +146,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-add-stdexcept-header.patch"
 	"${FILESDIR}/${PN}-6.0.2-aot-optional.patch"
+	"${FILESDIR}/${PN}-5.6.1-hardcoded-paths.patch"
 )
 
 required_mem() {

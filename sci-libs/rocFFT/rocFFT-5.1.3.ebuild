@@ -3,8 +3,6 @@
 
 EAPI=8
 
-# library/src/device/generator.py has hardcoded /opt/rocm/
-
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900_xnack_minus
@@ -48,7 +46,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda perfscripts +rocm test ebuild-revision-6
+benchmark cuda perfscripts +rocm test ebuild-revision-7
 "
 gen_cuda_required_use() {
 	local x
@@ -127,6 +125,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-unbundle-sqlite.patch"
 	"${FILESDIR}/${PN}-5.0.2-add-math-header.patch"
 	"${FILESDIR}/${PN}-5.1.3-add-stdexcept-header.patch"
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 )
 
 required_mem() {
