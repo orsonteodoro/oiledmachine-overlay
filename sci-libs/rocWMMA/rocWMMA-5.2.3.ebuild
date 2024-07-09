@@ -29,7 +29,7 @@ RESTRICT="
 	test
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-1"
+IUSE="ebuild-revision-2"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -49,6 +49,7 @@ DEPEND="
 	${RDEPEND}
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.2.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {

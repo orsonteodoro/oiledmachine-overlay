@@ -1,6 +1,6 @@
-diff '--color=auto' -urp rocWMMA-rocm-5.5.1.orig/CMakeLists.txt rocWMMA-rocm-5.5.1/CMakeLists.txt
---- rocWMMA-rocm-5.5.1.orig/CMakeLists.txt	2023-01-03 10:58:35.000000000 -0800
-+++ rocWMMA-rocm-5.5.1/CMakeLists.txt	2024-07-09 15:44:10.297151867 -0700
+diff '--color=auto' -urp rocWMMA-rocm-5.2.3.orig/CMakeLists.txt rocWMMA-rocm-5.2.3/CMakeLists.txt
+--- rocWMMA-rocm-5.2.3.orig/CMakeLists.txt	2022-05-26 09:16:04.000000000 -0700
++++ rocWMMA-rocm-5.2.3/CMakeLists.txt	2024-07-09 15:40:04.384710109 -0700
 @@ -50,7 +50,7 @@ endif()
  
  # set( AMDGPU_TARGETS "gfx908:xnack-" ) # User variable
@@ -19,23 +19,11 @@ diff '--color=auto' -urp rocWMMA-rocm-5.5.1.orig/CMakeLists.txt rocWMMA-rocm-5.5
  # Append our library helper cmake path and the cmake path for hip (for convenience).
  # Users may override HIP path by specifying their own in CMAKE_MODULE_PATH
  list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
-diff '--color=auto' -urp rocWMMA-rocm-5.5.1.orig/samples/hipRTC_gemm.cpp rocWMMA-rocm-5.5.1/samples/hipRTC_gemm.cpp
---- rocWMMA-rocm-5.5.1.orig/samples/hipRTC_gemm.cpp	2023-01-03 10:58:35.000000000 -0800
-+++ rocWMMA-rocm-5.5.1/samples/hipRTC_gemm.cpp	2024-07-09 15:43:40.141588735 -0700
-@@ -214,7 +214,7 @@ int main()
-     // 1. Environment variable
-     // 2. Default path
-     std::string rocm_path
--        = (std::getenv("ROCM_PATH") == nullptr) ? "/opt/rocm" : std::getenv("ROCM_PATH");
-+        = (std::getenv("ROCM_PATH") == nullptr) ? "/opt/rocm-@ROCM_VERSION@" : std::getenv("ROCM_PATH");
-     std::string rocWMMAIncludePath = std::string("-I") + rocm_path + std::string("/include");
- 
-     // gemm parameters
-diff '--color=auto' -urp rocWMMA-rocm-5.5.1.orig/test/gemm/CMakeLists.txt rocWMMA-rocm-5.5.1/test/gemm/CMakeLists.txt
---- rocWMMA-rocm-5.5.1.orig/test/gemm/CMakeLists.txt	2023-01-03 10:58:35.000000000 -0800
-+++ rocWMMA-rocm-5.5.1/test/gemm/CMakeLists.txt	2024-07-09 15:44:08.441178759 -0700
-@@ -33,7 +33,7 @@ set_property(GLOBAL PROPERTY RULE_LAUNCH
- set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${CMAKE_COMMAND} -E time")
+diff '--color=auto' -urp rocWMMA-rocm-5.2.3.orig/test/gemm/CMakeLists.txt rocWMMA-rocm-5.2.3/test/gemm/CMakeLists.txt
+--- rocWMMA-rocm-5.2.3.orig/test/gemm/CMakeLists.txt	2022-05-26 09:16:04.000000000 -0700
++++ rocWMMA-rocm-5.2.3/test/gemm/CMakeLists.txt	2024-07-09 15:40:06.164684389 -0700
+@@ -30,7 +30,7 @@ cmake_dependent_option( ROCWMMA_VALIDATE
+ cmake_dependent_option( ROCWMMA_BENCHMARK_WITH_ROCBLAS "Include rocBLAS benchmark performance comparisons" OFF "ROCWMMA_BUILD_BENCHMARK_TESTS" OFF )
  
  if(ROCWMMA_VALIDATE_WITH_ROCBLAS OR ROCWMMA_BENCHMARK_WITH_ROCBLAS)
 -  find_package( rocblas REQUIRED PATHS /opt/rocm /opt/rocm/rocblas $ENV{ROCBLAS_DIR} )
