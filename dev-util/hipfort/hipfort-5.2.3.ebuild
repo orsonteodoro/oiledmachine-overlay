@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# hardcoded path:  bin/hipfc
+
 CMAKE_BUILD_TYPE="RELEASE"
 LLVM_SLOT=14
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
