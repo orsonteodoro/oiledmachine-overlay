@@ -3,6 +3,7 @@
 
 EAPI=8
 
+LLVM_SLOT=16
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
 
@@ -21,7 +22,7 @@ REQUIRED_USE="${ROCM_REQUIRED_USE}"
 LICENSE="MIT"
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="cuda rocm"
+IUSE="cuda rocm ebuild-revision-1"
 REQUIRED_USE="
 	^^ (
 		cuda
@@ -43,6 +44,18 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.10.2
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
+)
+
+pkg_setup() {
+	rocm_pkg_setup
+}
+
+src_prepare() {
+	cmake_src_prepare
+	rocm_src_prepare
+}
 
 src_configure() {
 	local mycmakeargs=()
