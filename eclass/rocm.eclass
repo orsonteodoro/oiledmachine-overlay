@@ -382,7 +382,6 @@ einfo
 #     if ROCM_USE_LLVM_ROC==1 (default) then ${ESYSROOT}/opt/rocm-${ROCM_VERSION}/llvm
 #     if ROCM_USE_LLVM_ROC==0 then ${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}
 # @GCC_SLOT@     - 10, 11, 12 [based on folders contained in /usr/lib/gcc/]
-# @LIBDIR@       - lib (deprecated, same as rocm_get_libdir)
 # @ABI_LIBDIR@   - lib or lib64 (same as get_libdir)
 # @COND_LIBDIR@  - When evaluating @ESYSROOT_LLVM_PATH@/@COND_LIBDIR@,
 #                  If cuda, then same as get_libdir.
@@ -415,12 +414,6 @@ _rocm_change_common_paths() {
 		-i \
 		-e "s|@ESYSROOT@|${ESYSROOT}|g" \
 		$(grep -r -l -e "@ESYSROOT@" "${_patch_paths[@]}" 2>/dev/null) \
-		2>/dev/null || true
-
-	sed \
-		-i \
-		-e "s|@LIBDIR@|$(rocm_get_libdir)|g" \
-		$(grep -r -l -e "@LIBDIR@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	sed \
