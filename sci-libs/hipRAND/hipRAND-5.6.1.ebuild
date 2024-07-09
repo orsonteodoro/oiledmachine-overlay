@@ -22,7 +22,7 @@ REQUIRED_USE="${ROCM_REQUIRED_USE}"
 LICENSE="MIT"
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="cuda rocm ebuild-revision-1"
+IUSE="cuda rocm ebuild-revision-2"
 REQUIRED_USE="
 	^^ (
 		cuda
@@ -45,7 +45,7 @@ BDEPEND="
 	>=dev-build/cmake-3.10.2
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-5.5.1-hardcoded-paths.patch"
 )
 
 pkg_setup() {
