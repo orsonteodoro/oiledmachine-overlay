@@ -52,6 +52,7 @@ DEPEND="
 	${RDEPEND}
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.5.1-hardcoded-paths.patch"
 )
 
 pkg_setup() {
