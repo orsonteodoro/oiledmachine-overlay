@@ -1,0 +1,117 @@
+diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/HostLibraryTests/CMakeLists.txt Tensile-rocm-5.3.3/HostLibraryTests/CMakeLists.txt
+--- Tensile-rocm-5.3.3.orig/HostLibraryTests/CMakeLists.txt	2022-10-29 10:39:08.000000000 -0700
++++ Tensile-rocm-5.3.3/HostLibraryTests/CMakeLists.txt	2024-07-09 13:10:57.016592105 -0700
+@@ -29,7 +29,7 @@ project(TensileHostLibraryTest)
+ set( CMAKE_CXX_STANDARD 14 )
+ set( CMAKE_CXX_EXTENSIONS OFF )
+ 
+-list(APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} /opt/rocm-@ROCM_VERSION@)
+ 
+ option(TENSILE_USE_HIP       "Use the Hip runtime." ON)
+ option(TENSILE_USE_OPENCL    "Use the OpenCL runtime." ON)
+@@ -83,7 +83,7 @@ find_package(Boost COMPONENTS filesystem
+ 
+ #if(TENSILE_USE_HIP AND NOT HIP_DIR)
+ if(TENSILE_USE_HIP)
+-    find_package(HIP REQUIRED CONFIG PATHS $ENV{ROCM_PATH} /opt/rocm)
++    find_package(HIP REQUIRED CONFIG PATHS $ENV{ROCM_PATH} /opt/rocm-@ROCM_VERSION@)
+ endif()
+ 
+ if(TENSILE_USE_OPENMP AND NOT TARGET custom_openmp_cxx)
+Only in Tensile-rocm-5.3.3/HostLibraryTests: CMakeLists.txt.orig
+diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/Tensile/Common.py Tensile-rocm-5.3.3/Tensile/Common.py
+--- Tensile-rocm-5.3.3.orig/Tensile/Common.py	2024-07-09 13:10:38.940838880 -0700
++++ Tensile-rocm-5.3.3/Tensile/Common.py	2024-07-09 13:10:57.016592105 -0700
+@@ -1926,7 +1926,7 @@ def assignGlobalParameters( config ):
+     else:
+       print2(" %24s: %8s (unspecified)" % (key, defaultValue))
+ 
+-  globalParameters["ROCmPath"] = "/opt/rocm"
++  globalParameters["ROCmPath"] = "/opt/rocm-@ROCM_VERSION@"
+   if "ROCM_PATH" in os.environ:
+     globalParameters["ROCmPath"] = os.environ.get("ROCM_PATH")
+   if "TENSILE_ROCM_PATH" in os.environ:
+Only in Tensile-rocm-5.3.3/Tensile: Common.py.orig
+diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/Tensile/Source/CMakeLists.txt Tensile-rocm-5.3.3/Tensile/Source/CMakeLists.txt
+--- Tensile-rocm-5.3.3.orig/Tensile/Source/CMakeLists.txt	2024-07-09 13:10:38.944838825 -0700
++++ Tensile-rocm-5.3.3/Tensile/Source/CMakeLists.txt	2024-07-09 13:11:17.332314705 -0700
+@@ -26,7 +26,7 @@ cmake_minimum_required(VERSION 3.13)
+ 
+ # Override all paths arguments as they do not work properly
+ file(TO_CMAKE_PATH "$ENV{ROCM_PATH}" ROCM_PATH_ENV_VALUE)
+-list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH_ENV_VALUE} /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH_ENV_VALUE} /opt/rocm-@ROCM_VERSION@)
+ 
+ project(Tensile)
+ 
+@@ -61,7 +61,7 @@ CMAKE_DEPENDENT_OPTION(TENSILE_BUILD_CLI
+                         "TENSILE_USE_HIP" OFF)
+ 
+ if(TENSILE_USE_HIP)
+-    find_package(HIP REQUIRED CONFIG PATHS ${ROCM_PATH_ENV_VALUE} /opt/rocm)
++    find_package(HIP REQUIRED CONFIG PATHS ${ROCM_PATH_ENV_VALUE} /opt/rocm-@ROCM_VERSION@)
+ endif()
+ 
+ if(TENSILE_USE_OPENMP)
+Only in Tensile-rocm-5.3.3/Tensile/Source: CMakeLists.txt.orig
+Only in Tensile-rocm-5.3.3/Tensile/Source: CMakeLists.txt.rej
+diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/Tensile/Source/FindHIP.cmake Tensile-rocm-5.3.3/Tensile/Source/FindHIP.cmake
+--- Tensile-rocm-5.3.3.orig/Tensile/Source/FindHIP.cmake	2022-10-29 10:39:08.000000000 -0700
++++ Tensile-rocm-5.3.3/Tensile/Source/FindHIP.cmake	2024-07-09 13:10:57.016592105 -0700
+@@ -79,7 +79,7 @@ else()
+         hip/hip_runtime.h
+       PATHS
+         ENV HIP_PATH
+-        /opt/rocm
++        /opt/rocm-@ROCM_VERSION@
+       PATH_SUFFIXES
+         /include/hip
+         /include
+@@ -98,7 +98,7 @@ else()
+     NAMES  hipcc
+     PATHS
+       ENV HIP_PATH
+-          /opt/rocm
++          /opt/rocm-@ROCM_VERSION@
+     PATH_SUFFIXES
+           /bin
+       )
+Only in Tensile-rocm-5.3.3/Tensile/Source: FindHIP.cmake.orig
+diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/Tensile/Source/FindOpenCL.cmake Tensile-rocm-5.3.3/Tensile/Source/FindOpenCL.cmake
+--- Tensile-rocm-5.3.3.orig/Tensile/Source/FindOpenCL.cmake	2022-10-29 10:39:08.000000000 -0700
++++ Tensile-rocm-5.3.3/Tensile/Source/FindOpenCL.cmake	2024-07-09 13:10:57.016592105 -0700
+@@ -71,8 +71,8 @@ find_path(OPENCL_INCLUDE_DIRS
+   PATHS
+     /usr/include
+     /usr/local/include
+-    /usr/local/cuda/include
+-    /opt/rocm/opencl/include
++    /usr/cuda/include
++    /opt/rocm-@ROCM_VERSION@/opencl/include
+   DOC "OpenCL header file path"
+ )
+ mark_as_advanced( OPENCL_INCLUDE_DIRS )
+@@ -130,8 +130,8 @@ if( LIB64 )
+     PATH_SUFFIXES x86_64 x64
+     PATHS
+     /usr/lib
+-    /usr/local/cuda/lib
+-    /opt/rocm/opencl/lib
++    /usr/cuda/lib
++    /opt/rocm-@ROCM_VERSION@/opencl/lib
+   )
+ else( )
+   find_library( OPENCL_LIBRARIES
+@@ -145,8 +145,8 @@ else( )
+     PATH_SUFFIXES x86 Win32
+     PATHS
+     /usr/lib
+-    /usr/local/cuda/lib
+-    /opt/rocm/opencl/lib
++    /usr/cuda/lib
++    /opt/rocm-@ROCM_VERSION@/opencl/lib
+   )
+ endif( )
+ mark_as_advanced( OPENCL_LIBRARIES )
+Only in Tensile-rocm-5.3.3/Tensile/Source: FindOpenCL.cmake.orig

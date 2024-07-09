@@ -84,6 +84,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-5.2.3-fix-arch-parse.patch"
 	"${FILESDIR}/${PN}-5.0.2-use-ninja.patch"
 	"${FILESDIR}/${PN}-5.7.1-avoid-hipcc-bat.patch"
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {

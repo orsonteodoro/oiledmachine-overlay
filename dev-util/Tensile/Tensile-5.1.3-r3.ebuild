@@ -27,6 +27,7 @@ ROCM_VERSION="${PV}"
 inherit cmake distutils-r1 prefix rocm toolchain-funcs
 
 KEYWORDS="~amd64"
+S="${WORKDIR}/${PN}-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 	-> rocm-Tensile-${PV}.tar.gz
@@ -81,6 +82,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-fix-arch-parse.patch"
 	"${FILESDIR}/${PN}-5.0.2-use-ninja.patch"
 	"${FILESDIR}/${PN}-5.7.1-avoid-hipcc-bat.patch"
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
