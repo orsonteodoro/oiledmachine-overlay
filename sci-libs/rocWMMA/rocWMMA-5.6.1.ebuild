@@ -39,6 +39,7 @@ REQUIRED_USE="
 RDEPEND="
 	sys-libs/llvm-roc-libomp:=
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
+	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 "
 DEPEND="
