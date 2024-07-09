@@ -1,0 +1,53 @@
+diff '--color=auto' -urp rpp-0.96.orig/cmake/ClangTidy.cmake rpp-0.96/cmake/ClangTidy.cmake
+--- rpp-0.96.orig/cmake/ClangTidy.cmake	2022-08-03 15:34:16.000000000 -0700
++++ rpp-0.96/cmake/ClangTidy.cmake	2024-07-09 08:23:35.659467334 -0700
+@@ -39,7 +39,8 @@ find_program(CLANG_TIDY_EXE
+     PATH_SUFFIXES
+         compiler/bin
+     PATHS
+-        /opt/rocm/hcc
++        /opt/rocm-@ROCM_VERSION@/hcc
++        /opt/rocm-@ROCM_VERSION@/llvm/bin
+         /usr/local/opt/llvm/bin
+ )
+ 
+diff '--color=auto' -urp rpp-0.96.orig/cmake/CppCheck.cmake rpp-0.96/cmake/CppCheck.cmake
+--- rpp-0.96.orig/cmake/CppCheck.cmake	2022-08-03 15:34:16.000000000 -0700
++++ rpp-0.96/cmake/CppCheck.cmake	2024-07-09 08:23:34.347485846 -0700
+@@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
+     NAMES 
+         cppcheck
+     PATHS
+-        /opt/rocm/bin
++        /opt/rocm-@ROCM_VERSION@/bin
+ )
+ 
+ ProcessorCount(CPPCHECK_JOBS)
+Only in rpp-0.96/src/modules: CMakeLists.txt.orig
+Only in rpp-0.96/src/modules: CMakeLists.txt.rej
+diff '--color=auto' -urp rpp-0.96.orig/src/modules/cl/hip_build_utils.cpp rpp-0.96/src/modules/cl/hip_build_utils.cpp
+--- rpp-0.96.orig/src/modules/cl/hip_build_utils.cpp	2022-08-03 15:34:16.000000000 -0700
++++ rpp-0.96/src/modules/cl/hip_build_utils.cpp	2024-07-09 08:21:30.109238846 -0700
+@@ -59,7 +59,7 @@ boost::filesystem::path HipBuild(boost::
+     auto bin_file = tmp_dir->path / (filename + ".o");
+     // compile with hcc
+     auto env = std::string("KMOPTLLC=-mattr=+enable-ds128");
+-    tmp_dir->Execute(env + std::string(" ") + "/opt/rocm/hip/bin/hipcc",
++    tmp_dir->Execute(env + std::string(" ") + "/opt/rocm-@ROCM_VERSION@/hip/bin/hipcc",
+                      params + filename + " -o " + bin_file.string());
+     if(!boost::filesystem::exists(bin_file))
+         RPP_THROW(filename + " failed to compile");
+Only in rpp-0.96/src/modules/cl: hip_build_utils.cpp.orig
+diff '--color=auto' -urp rpp-0.96.orig/src/modules/hip/hip_build_utils.cpp rpp-0.96/src/modules/hip/hip_build_utils.cpp
+--- rpp-0.96.orig/src/modules/hip/hip_build_utils.cpp	2022-08-03 15:34:16.000000000 -0700
++++ rpp-0.96/src/modules/hip/hip_build_utils.cpp	2024-07-09 08:21:30.109238846 -0700
+@@ -59,7 +59,7 @@ boost::filesystem::path HipBuild(boost::
+     auto bin_file = tmp_dir->path / (filename + ".o");
+     // compile with hcc
+     auto env = std::string("KMOPTLLC=-mattr=+enable-ds128");
+-    tmp_dir->Execute(env + std::string(" ") + "/opt/rocm/hip/bin/hipcc",
++    tmp_dir->Execute(env + std::string(" ") + "/opt/rocm-@ROCM_VERSION@/hip/bin/hipcc",
+                      params + filename + " -o " + bin_file.string());
+     if(!boost::filesystem::exists(bin_file))
+         RPP_THROW(filename + " failed to compile");
+Only in rpp-0.96/src/modules/hip: hip_build_utils.cpp.orig

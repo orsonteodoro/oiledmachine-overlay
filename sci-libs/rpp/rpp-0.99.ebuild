@@ -4,7 +4,6 @@
 EAPI=8
 
 # TODO:  review the install prefix
-# TODO:  recheck/patch hardcoded paths in source code level from /opt/rocm/ to /opt/rocm-5.5.1
 
 inherit hip-versions
 
@@ -51,7 +50,7 @@ IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
 cpu opencl rocm test
-ebuild-revision-4
+ebuild-revision-5
 "
 gen_rocm_required_use() {
 	local x
@@ -113,6 +112,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-0.97-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {

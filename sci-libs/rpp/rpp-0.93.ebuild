@@ -4,10 +4,6 @@
 EAPI=8
 
 # TODO:  review the install prefix
-# TODO:  recheck/patch hardcoded paths in source code level from /opt/rocm/ to /opt/rocm-5.1.3
-# hardcoded path:  src/modules/cl/hip_build_utils.cpp
-# hardcoded path:  src/modules/hip/hip_build_utils.cpp
-# hardcoded path:  src/modules/CMakeLists.txt
 
 inherit hip-versions
 
@@ -54,7 +50,7 @@ IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
 cpu opencl rocm test
-ebuild-revision-4
+ebuild-revision-5
 "
 gen_rocm_required_use() {
 	local x
@@ -116,6 +112,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-0.93-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
@@ -134,13 +131,13 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-	IFS=$'\n'
-	sed \
-		-i \
-		-e "s|half/half.hpp|half.hpp|g" \
-		$(grep -l -r -e "half/half.hpp" "${S}") \
-		|| die
-	IFS=$' \t\n'
+#	IFS=$'\n'
+#	sed \
+#		-i \
+#		-e "s|half/half.hpp|half.hpp|g" \
+#		$(grep -l -r -e "half/half.hpp" "${S}") \
+#		|| die
+#	IFS=$' \t\n'
 
 	# Unbreak rocm builds:
 	sed \
@@ -181,6 +178,7 @@ ewarn
 	if use opencl ; then
 		mycmakeargs+=(
 			-DBACKEND="OCL"
+			-DOPENCL_ROOT="${EROCM_PATH}/opencl"
 		)
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"

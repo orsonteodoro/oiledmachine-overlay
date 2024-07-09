@@ -1,0 +1,40 @@
+diff '--color=auto' -urp rpp-0.97.orig/cmake/CppCheck.cmake rpp-0.97/cmake/CppCheck.cmake
+--- rpp-0.97.orig/cmake/CppCheck.cmake	2022-09-16 11:44:32.000000000 -0700
++++ rpp-0.97/cmake/CppCheck.cmake	2024-07-09 08:35:16.761690738 -0700
+@@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
+     NAMES 
+         cppcheck
+     PATHS
+-        /opt/rocm/bin
++        /opt/rocm-@ROCM_VERSION@/bin
+ )
+ 
+ ProcessorCount(CPPCHECK_JOBS)
+diff '--color=auto' -urp rpp-0.97.orig/src/modules/cl/hip_build_utils.cpp rpp-0.97/src/modules/cl/hip_build_utils.cpp
+--- rpp-0.97.orig/src/modules/cl/hip_build_utils.cpp	2022-09-16 11:44:32.000000000 -0700
++++ rpp-0.97/src/modules/cl/hip_build_utils.cpp	2024-07-09 08:35:55.857147668 -0700
+@@ -59,7 +59,7 @@ boost::filesystem::path HipBuild(boost::
+     auto bin_file = tmp_dir->path / (filename + ".o");
+     // compile with hcc
+     auto env = std::string("KMOPTLLC=-mattr=+enable-ds128");
+-    tmp_dir->Execute(env + std::string(" ") + "/opt/rocm/bin/hipcc",
++    tmp_dir->Execute(env + std::string(" ") + "/opt/rocm-@ROCM_VERSION@/bin/hipcc",
+                      params + filename + " -o " + bin_file.string());
+     if(!boost::filesystem::exists(bin_file))
+         RPP_THROW(filename + " failed to compile");
+Only in rpp-0.97/src/modules/cl: hip_build_utils.cpp.orig
+Only in rpp-0.97/src/modules/cl: hip_build_utils.cpp.rej
+diff '--color=auto' -urp rpp-0.97.orig/src/modules/hip/hip_build_utils.cpp rpp-0.97/src/modules/hip/hip_build_utils.cpp
+--- rpp-0.97.orig/src/modules/hip/hip_build_utils.cpp	2022-09-16 11:44:32.000000000 -0700
++++ rpp-0.97/src/modules/hip/hip_build_utils.cpp	2024-07-09 08:35:54.833161894 -0700
+@@ -59,7 +59,7 @@ boost::filesystem::path HipBuild(boost::
+     auto bin_file = tmp_dir->path / (filename + ".o");
+     // compile with hcc
+     auto env = std::string("KMOPTLLC=-mattr=+enable-ds128");
+-    tmp_dir->Execute(env + std::string(" ") + "/opt/rocm/bin/hipcc",
++    tmp_dir->Execute(env + std::string(" ") + "/opt/rocm-@ROCM_VERSION@/bin/hipcc",
+                      params + filename + " -o " + bin_file.string());
+     if(!boost::filesystem::exists(bin_file))
+         RPP_THROW(filename + " failed to compile");
+Only in rpp-0.97/src/modules/hip: hip_build_utils.cpp.orig
+Only in rpp-0.97/src/modules/hip: hip_build_utils.cpp.rej
