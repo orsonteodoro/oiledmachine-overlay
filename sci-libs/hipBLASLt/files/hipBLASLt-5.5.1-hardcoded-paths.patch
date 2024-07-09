@@ -1,0 +1,36 @@
+diff '--color=auto' -urp hipBLASLt-rocm-5.5.1.orig/library/src/amd_detail/rocblaslt/src/tensile_host.cpp hipBLASLt-rocm-5.5.1/library/src/amd_detail/rocblaslt/src/tensile_host.cpp
+--- hipBLASLt-rocm-5.5.1.orig/library/src/amd_detail/rocblaslt/src/tensile_host.cpp	2023-01-12 00:53:42.000000000 -0800
++++ hipBLASLt-rocm-5.5.1/library/src/amd_detail/rocblaslt/src/tensile_host.cpp	2024-07-09 07:54:28.584004007 -0700
+@@ -63,7 +63,7 @@
+ #include <link.h>
+ #include <unistd.h>
+ 
+-#define HIPBLASLT_LIB_PATH "/opt/rocm/hipblaslt/lib"
++#define HIPBLASLT_LIB_PATH "/opt/rocm-@ROCM_VERSION@/hipblaslt/lib"
+ 
+ namespace
+ {
+diff '--color=auto' -urp hipBLASLt-rocm-5.5.1.orig/tensilelite/Tensile/Common.py hipBLASLt-rocm-5.5.1/tensilelite/Tensile/Common.py
+--- hipBLASLt-rocm-5.5.1.orig/tensilelite/Tensile/Common.py	2023-01-12 00:53:42.000000000 -0800
++++ hipBLASLt-rocm-5.5.1/tensilelite/Tensile/Common.py	2024-07-09 07:56:21.374428884 -0700
+@@ -1359,7 +1359,7 @@ def assignGlobalParameters( config ):
+     else:
+       print2(" %24s: %8s (unspecified)" % (key, defaultValue))
+ 
+-  globalParameters["ROCmPath"] = "/opt/rocm"
++  globalParameters["ROCmPath"] = "/opt/rocm-@ROCM_VERSION@"
+   if "ROCM_PATH" in os.environ:
+     globalParameters["ROCmPath"] = os.environ.get("ROCM_PATH")
+   if "TENSILE_ROCM_PATH" in os.environ:
+diff '--color=auto' -urp hipBLASLt-rocm-5.5.1.orig/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake hipBLASLt-rocm-5.5.1/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake
+--- hipBLASLt-rocm-5.5.1.orig/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake	2023-01-12 00:53:42.000000000 -0800
++++ hipBLASLt-rocm-5.5.1/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake	2024-07-09 07:54:54.031648672 -0700
+@@ -21,7 +21,7 @@
+ 
+ if(NOT ROCM_ROOT)
+     if(NOT ROCM_DIR)
+-        set(ROCM_ROOT "/opt/rocm")
++        set(ROCM_ROOT "/opt/rocm-@ROCM_VERSION@")
+     else()
+         set(ROCM_DIR "${ROCM_DIR}/../../..")
+     endif()

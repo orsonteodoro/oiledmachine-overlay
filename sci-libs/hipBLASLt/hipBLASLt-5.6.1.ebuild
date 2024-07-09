@@ -34,7 +34,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${ROCM_IUSE}
-benchmark cuda +rocm +tensile ebuild-revison-3
+benchmark cuda +rocm +tensile ebuild-revison-4
 "
 gen_rocm_required_use() {
 	local x
@@ -85,7 +85,8 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
-	"${FILESDIR}/hipBLASLt-5.6.0-set-CMP0074-NEW.patch"
+	"${FILESDIR}/${PN}-5.6.0-set-CMP0074-NEW.patch"
+	"${FILESDIR}/${PN}-5.5.1-hardcoded-paths.patch"
 )
 
 pkg_setup() {
