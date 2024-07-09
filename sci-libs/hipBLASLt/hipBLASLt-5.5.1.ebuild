@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# hardcoded path:  library/src/amd_detail/rocblaslt/src/tensile_host.cpp
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
