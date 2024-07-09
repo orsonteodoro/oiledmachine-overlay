@@ -3,8 +3,6 @@
 
 EAPI=8
 
-# hardcoded path:  bin/hipfc
-
 CMAKE_BUILD_TYPE="RELEASE"
 LLVM_SLOT=14
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -25,7 +23,7 @@ https://github.com/ROCmSoftwarePlatform/hipfort
 "
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="debug ebuild-revision-5"
+IUSE="debug ebuild-revision-6"
 RDEPEND="
 	!dev-util/hipfort:0
 	|| (
@@ -44,6 +42,7 @@ BDEPEND="
 RESTRICT="test"
 DOCS=( "README.md" )
 PATCHES=(
+	"${FILESDIR}/hipfort-5.1.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
