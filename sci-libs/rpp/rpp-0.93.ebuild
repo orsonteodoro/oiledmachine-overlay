@@ -5,6 +5,9 @@ EAPI=8
 
 # TODO:  review the install prefix
 # TODO:  recheck/patch hardcoded paths in source code level from /opt/rocm/ to /opt/rocm-5.1.3
+# hardcoded path:  src/modules/cl/hip_build_utils.cpp
+# hardcoded path:  src/modules/hip/hip_build_utils.cpp
+# hardcoded path:  src/modules/CMakeLists.txt
 
 inherit hip-versions
 
