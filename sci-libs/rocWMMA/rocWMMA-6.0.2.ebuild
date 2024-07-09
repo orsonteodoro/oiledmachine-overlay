@@ -35,7 +35,7 @@ RESTRICT="
 	test
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=""
+IUSE="ebuild-revision-1"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
