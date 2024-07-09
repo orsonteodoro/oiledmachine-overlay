@@ -3,8 +3,6 @@
 
 EAPI=8
 
-# library/src/tensile_host.cpp contains fallback hardcoded path.
-
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900
