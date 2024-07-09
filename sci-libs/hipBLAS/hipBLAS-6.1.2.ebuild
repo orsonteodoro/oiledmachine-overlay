@@ -42,6 +42,7 @@ DEPEND="
 BDEPEND="
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
