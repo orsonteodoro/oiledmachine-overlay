@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# hardcoded path:  rdc_libs/rdc/src/RdcRocpLib.cc
+# hardcoded path:  python_binding/rdc_collectd.conf
+
 # Before fixing the paths any further, a reminder or warning for modders.
 # There is a prebuilt binary that has a hardcoded path.  It is unknown if the
 # path is relative or absolute.  All these ebuilds may need to use paths exactly
