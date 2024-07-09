@@ -1,6 +1,6 @@
 diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/HostLibraryTests/CMakeLists.txt Tensile-rocm-5.3.3/HostLibraryTests/CMakeLists.txt
 --- Tensile-rocm-5.3.3.orig/HostLibraryTests/CMakeLists.txt	2022-10-29 10:39:08.000000000 -0700
-+++ Tensile-rocm-5.3.3/HostLibraryTests/CMakeLists.txt	2024-07-09 13:10:57.016592105 -0700
++++ Tensile-rocm-5.3.3/HostLibraryTests/CMakeLists.txt	2024-07-09 14:47:59.989231939 -0700
 @@ -29,7 +29,7 @@ project(TensileHostLibraryTest)
  set( CMAKE_CXX_STANDARD 14 )
  set( CMAKE_CXX_EXTENSIONS OFF )
@@ -19,10 +19,9 @@ diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/HostLibraryTests/CMakeLists.txt
  endif()
  
  if(TENSILE_USE_OPENMP AND NOT TARGET custom_openmp_cxx)
-Only in Tensile-rocm-5.3.3/HostLibraryTests: CMakeLists.txt.orig
 diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/Tensile/Common.py Tensile-rocm-5.3.3/Tensile/Common.py
---- Tensile-rocm-5.3.3.orig/Tensile/Common.py	2024-07-09 13:10:38.940838880 -0700
-+++ Tensile-rocm-5.3.3/Tensile/Common.py	2024-07-09 13:10:57.016592105 -0700
+--- Tensile-rocm-5.3.3.orig/Tensile/Common.py	2024-07-09 14:47:43.765487296 -0700
++++ Tensile-rocm-5.3.3/Tensile/Common.py	2024-07-09 14:48:00.001231750 -0700
 @@ -1926,7 +1926,7 @@ def assignGlobalParameters( config ):
      else:
        print2(" %24s: %8s (unspecified)" % (key, defaultValue))
@@ -32,10 +31,9 @@ diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/Tensile/Common.py Tensile-rocm-
    if "ROCM_PATH" in os.environ:
      globalParameters["ROCmPath"] = os.environ.get("ROCM_PATH")
    if "TENSILE_ROCM_PATH" in os.environ:
-Only in Tensile-rocm-5.3.3/Tensile: Common.py.orig
 diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/Tensile/Source/CMakeLists.txt Tensile-rocm-5.3.3/Tensile/Source/CMakeLists.txt
---- Tensile-rocm-5.3.3.orig/Tensile/Source/CMakeLists.txt	2024-07-09 13:10:38.944838825 -0700
-+++ Tensile-rocm-5.3.3/Tensile/Source/CMakeLists.txt	2024-07-09 13:11:17.332314705 -0700
+--- Tensile-rocm-5.3.3.orig/Tensile/Source/CMakeLists.txt	2024-07-09 14:47:43.769487234 -0700
++++ Tensile-rocm-5.3.3/Tensile/Source/CMakeLists.txt	2024-07-09 14:48:00.013231562 -0700
 @@ -26,7 +26,7 @@ cmake_minimum_required(VERSION 3.13)
  
  # Override all paths arguments as they do not work properly
@@ -54,11 +52,9 @@ diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/Tensile/Source/CMakeLists.txt T
  endif()
  
  if(TENSILE_USE_OPENMP)
-Only in Tensile-rocm-5.3.3/Tensile/Source: CMakeLists.txt.orig
-Only in Tensile-rocm-5.3.3/Tensile/Source: CMakeLists.txt.rej
 diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/Tensile/Source/FindHIP.cmake Tensile-rocm-5.3.3/Tensile/Source/FindHIP.cmake
 --- Tensile-rocm-5.3.3.orig/Tensile/Source/FindHIP.cmake	2022-10-29 10:39:08.000000000 -0700
-+++ Tensile-rocm-5.3.3/Tensile/Source/FindHIP.cmake	2024-07-09 13:10:57.016592105 -0700
++++ Tensile-rocm-5.3.3/Tensile/Source/FindHIP.cmake	2024-07-09 14:48:00.013231562 -0700
 @@ -79,7 +79,7 @@ else()
          hip/hip_runtime.h
        PATHS
@@ -77,10 +73,9 @@ diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/Tensile/Source/FindHIP.cmake Te
      PATH_SUFFIXES
            /bin
        )
-Only in Tensile-rocm-5.3.3/Tensile/Source: FindHIP.cmake.orig
 diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/Tensile/Source/FindOpenCL.cmake Tensile-rocm-5.3.3/Tensile/Source/FindOpenCL.cmake
 --- Tensile-rocm-5.3.3.orig/Tensile/Source/FindOpenCL.cmake	2022-10-29 10:39:08.000000000 -0700
-+++ Tensile-rocm-5.3.3/Tensile/Source/FindOpenCL.cmake	2024-07-09 13:10:57.016592105 -0700
++++ Tensile-rocm-5.3.3/Tensile/Source/FindOpenCL.cmake	2024-07-09 14:48:00.013231562 -0700
 @@ -71,8 +71,8 @@ find_path(OPENCL_INCLUDE_DIRS
    PATHS
      /usr/include
@@ -114,4 +109,15 @@ diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/Tensile/Source/FindOpenCL.cmake
    )
  endif( )
  mark_as_advanced( OPENCL_LIBRARIES )
-Only in Tensile-rocm-5.3.3/Tensile/Source: FindOpenCL.cmake.orig
+diff '--color=auto' -urp Tensile-rocm-5.3.3.orig/Tensile/Source/cmake/FindROCmSMI.cmake Tensile-rocm-5.3.3/Tensile/Source/cmake/FindROCmSMI.cmake
+--- Tensile-rocm-5.3.3.orig/Tensile/Source/cmake/FindROCmSMI.cmake	2022-10-29 10:39:08.000000000 -0700
++++ Tensile-rocm-5.3.3/Tensile/Source/cmake/FindROCmSMI.cmake	2024-07-09 14:48:44.272535271 -0700
+@@ -24,7 +24,7 @@
+ 
+ if(NOT ROCM_ROOT)
+     if(NOT ROCM_DIR)
+-        set(ROCM_ROOT "/opt/rocm")
++        set(ROCM_ROOT "/opt/rocm-@ROCM_VERSION@")
+     else()
+         set(ROCM_DIR "${ROCM_DIR}/../../..")
+     endif()
