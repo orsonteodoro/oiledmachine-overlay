@@ -46,7 +46,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda perfscripts +rocm test ebuild-revision-7
+benchmark cuda perfscripts +rocm test ebuild-revision-8
 "
 gen_cuda_required_use() {
 	local x

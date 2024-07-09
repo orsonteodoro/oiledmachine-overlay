@@ -1,7 +1,7 @@
-diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/CMakeLists.txt rocFFT-rocm-5.6.1/CMakeLists.txt
---- rocFFT-rocm-5.6.1.orig/CMakeLists.txt	2023-07-31 11:27:10.000000000 -0700
-+++ rocFFT-rocm-5.6.1/CMakeLists.txt	2024-07-09 16:40:00.674438954 -0700
-@@ -31,7 +31,7 @@ if( WIN32 )
+diff '--color=auto' -urp rocFFT-rocm-5.4.3.orig/CMakeLists.txt rocFFT-rocm-5.4.3/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/CMakeLists.txt	2024-07-09 16:35:08.439286910 -0700
+@@ -28,7 +28,7 @@ if( WIN32 )
    set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
      "Install path prefix, prepended onto install directories" )
  else( )
@@ -10,7 +10,7 @@ diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/CMakeLists.txt rocFFT-rocm-5.6.1
      "Install path prefix, prepended onto install directories" )
  endif( )
  
-@@ -62,7 +62,7 @@ endif()
+@@ -59,7 +59,7 @@ endif()
  # This finds the rocm-cmake project, and installs it if not found
  # rocm-cmake contains common cmake code for rocm projects to help setup and install
  set( PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern )
@@ -19,9 +19,9 @@ diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/CMakeLists.txt rocFFT-rocm-5.6.1
  if( NOT ROCM_FOUND )
    set( rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download" )
    file( DOWNLOAD https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip
-diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/clients/CMakeLists.txt rocFFT-rocm-5.6.1/clients/CMakeLists.txt
---- rocFFT-rocm-5.6.1.orig/clients/CMakeLists.txt	2023-07-31 11:27:10.000000000 -0700
-+++ rocFFT-rocm-5.6.1/clients/CMakeLists.txt	2024-07-09 16:40:01.598423659 -0700
+diff '--color=auto' -urp rocFFT-rocm-5.4.3.orig/clients/CMakeLists.txt rocFFT-rocm-5.4.3/clients/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/clients/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/CMakeLists.txt	2024-07-09 16:35:08.439286910 -0700
 @@ -30,9 +30,9 @@ if( WIN32 )
    set( CPACK_PACKAGING_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
      "Install path prefix, prepended onto install directories" )
@@ -34,9 +34,9 @@ diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/clients/CMakeLists.txt rocFFT-ro
      "Install path prefix, prepended onto install directories" )
  endif( )
  
-diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/clients/rider/CMakeLists.txt rocFFT-rocm-5.6.1/clients/rider/CMakeLists.txt
---- rocFFT-rocm-5.6.1.orig/clients/rider/CMakeLists.txt	2023-07-31 11:27:10.000000000 -0700
-+++ rocFFT-rocm-5.6.1/clients/rider/CMakeLists.txt	2024-07-09 16:40:06.894335996 -0700
+diff '--color=auto' -urp rocFFT-rocm-5.4.3.orig/clients/rider/CMakeLists.txt rocFFT-rocm-5.4.3/clients/rider/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/clients/rider/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/rider/CMakeLists.txt	2024-07-09 16:35:08.439286910 -0700
 @@ -28,7 +28,7 @@ if( WIN32 )
    set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
      "Install path prefix, prepended onto install directories" )
@@ -46,9 +46,9 @@ diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/clients/rider/CMakeLists.txt roc
      "Install path prefix, prepended onto install directories" )
  endif( )
  
-diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/clients/samples/CMakeLists.txt rocFFT-rocm-5.6.1/clients/samples/CMakeLists.txt
---- rocFFT-rocm-5.6.1.orig/clients/samples/CMakeLists.txt	2023-07-31 11:27:10.000000000 -0700
-+++ rocFFT-rocm-5.6.1/clients/samples/CMakeLists.txt	2024-07-09 16:40:03.342394791 -0700
+diff '--color=auto' -urp rocFFT-rocm-5.4.3.orig/clients/samples/CMakeLists.txt rocFFT-rocm-5.4.3/clients/samples/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/clients/samples/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/samples/CMakeLists.txt	2024-07-09 16:35:08.439286910 -0700
 @@ -28,7 +28,7 @@ if( WIN32 )
    set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
      "Install path prefix, prepended onto install directories" )
@@ -58,9 +58,9 @@ diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/clients/samples/CMakeLists.txt r
      "Install path prefix, prepended onto install directories" )
  endif( )
  
-diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/clients/samples/fixed-16/CMakeLists.txt rocFFT-rocm-5.6.1/clients/samples/fixed-16/CMakeLists.txt
---- rocFFT-rocm-5.6.1.orig/clients/samples/fixed-16/CMakeLists.txt	2023-07-31 11:27:10.000000000 -0700
-+++ rocFFT-rocm-5.6.1/clients/samples/fixed-16/CMakeLists.txt	2024-07-09 16:40:05.042366652 -0700
+diff '--color=auto' -urp rocFFT-rocm-5.4.3.orig/clients/samples/fixed-16/CMakeLists.txt rocFFT-rocm-5.4.3/clients/samples/fixed-16/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/clients/samples/fixed-16/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/samples/fixed-16/CMakeLists.txt	2024-07-09 16:35:08.439286910 -0700
 @@ -28,7 +28,7 @@ if( WIN32 )
    set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
      "Install path prefix, prepended onto install directories" )
@@ -70,9 +70,9 @@ diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/clients/samples/fixed-16/CMakeLi
      "Install path prefix, prepended onto install directories" )
  endif( )
  
-diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/clients/samples/fixed-large/CMakeLists.txt rocFFT-rocm-5.6.1/clients/samples/fixed-large/CMakeLists.txt
---- rocFFT-rocm-5.6.1.orig/clients/samples/fixed-large/CMakeLists.txt	2023-07-31 11:27:10.000000000 -0700
-+++ rocFFT-rocm-5.6.1/clients/samples/fixed-large/CMakeLists.txt	2024-07-09 16:40:05.982351091 -0700
+diff '--color=auto' -urp rocFFT-rocm-5.4.3.orig/clients/samples/fixed-large/CMakeLists.txt rocFFT-rocm-5.4.3/clients/samples/fixed-large/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/clients/samples/fixed-large/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/samples/fixed-large/CMakeLists.txt	2024-07-09 16:35:08.439286910 -0700
 @@ -28,7 +28,7 @@ if( WIN32 )
    set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
      "Install path prefix, prepended onto install directories" )
@@ -82,9 +82,9 @@ diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/clients/samples/fixed-large/CMak
      "Install path prefix, prepended onto install directories" )
  endif( )
  
-diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/clients/samples/rocfft/CMakeLists.txt rocFFT-rocm-5.6.1/clients/samples/rocfft/CMakeLists.txt
---- rocFFT-rocm-5.6.1.orig/clients/samples/rocfft/CMakeLists.txt	2023-07-31 11:27:10.000000000 -0700
-+++ rocFFT-rocm-5.6.1/clients/samples/rocfft/CMakeLists.txt	2024-07-09 16:40:04.162381216 -0700
+diff '--color=auto' -urp rocFFT-rocm-5.4.3.orig/clients/samples/rocfft/CMakeLists.txt rocFFT-rocm-5.4.3/clients/samples/rocfft/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/clients/samples/rocfft/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/samples/rocfft/CMakeLists.txt	2024-07-09 16:35:08.439286910 -0700
 @@ -28,7 +28,7 @@ if( WIN32 )
    set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
      "Install path prefix, prepended onto install directories" )
@@ -94,9 +94,9 @@ diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/clients/samples/rocfft/CMakeList
      "Install path prefix, prepended onto install directories" )
  endif( )
  
-diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/clients/tests/CMakeLists.txt rocFFT-rocm-5.6.1/clients/tests/CMakeLists.txt
---- rocFFT-rocm-5.6.1.orig/clients/tests/CMakeLists.txt	2023-07-31 11:27:10.000000000 -0700
-+++ rocFFT-rocm-5.6.1/clients/tests/CMakeLists.txt	2024-07-09 16:40:02.530408232 -0700
+diff '--color=auto' -urp rocFFT-rocm-5.4.3.orig/clients/tests/CMakeLists.txt rocFFT-rocm-5.4.3/clients/tests/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/clients/tests/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/tests/CMakeLists.txt	2024-07-09 16:35:09.559268289 -0700
 @@ -28,7 +28,7 @@ if( WIN32 )
    set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
      "Install path prefix, prepended onto install directories" )
@@ -106,9 +106,10 @@ diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/clients/tests/CMakeLists.txt roc
      "Install path prefix, prepended onto install directories" )
  endif( )
  
-diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/library/src/device/generator.py rocFFT-rocm-5.6.1/library/src/device/generator.py
---- rocFFT-rocm-5.6.1.orig/library/src/device/generator.py	2023-07-31 11:27:10.000000000 -0700
-+++ rocFFT-rocm-5.6.1/library/src/device/generator.py	2024-07-09 16:38:48.563633273 -0700
+Only in rocFFT-rocm-5.4.3/clients/tests: CMakeLists.txt.orig
+diff '--color=auto' -urp rocFFT-rocm-5.4.3.orig/library/src/device/generator.py rocFFT-rocm-5.4.3/library/src/device/generator.py
+--- rocFFT-rocm-5.4.3.orig/library/src/device/generator.py	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/library/src/device/generator.py	2024-07-09 16:35:09.559268289 -0700
 @@ -68,7 +68,7 @@ def cjoin(n):
  def clang_format(code):
      """Format code using clang-format."""
@@ -127,15 +128,17 @@ diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/library/src/device/generator.py 
      except:
          # code formatting doesn't affect functionality, so just assume
          # default ROCm path and ignore errors if it's not there.
-diff '--color=auto' -urp rocFFT-rocm-5.6.1.orig/toolchain-linux.cmake rocFFT-rocm-5.6.1/toolchain-linux.cmake
---- rocFFT-rocm-5.6.1.orig/toolchain-linux.cmake	2023-07-31 11:27:10.000000000 -0700
-+++ rocFFT-rocm-5.6.1/toolchain-linux.cmake	2024-07-09 16:38:48.563633273 -0700
+Only in rocFFT-rocm-5.4.3/library/src/device: generator.py.orig
+diff '--color=auto' -urp rocFFT-rocm-5.4.3.orig/toolchain-linux.cmake rocFFT-rocm-5.4.3/toolchain-linux.cmake
+--- rocFFT-rocm-5.4.3.orig/toolchain-linux.cmake	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/toolchain-linux.cmake	2024-07-09 16:35:09.559268289 -0700
 @@ -23,7 +23,7 @@
  if (DEFINED ENV{ROCM_PATH})
-   set(rocm_bin "$ENV{ROCM_PATH}/bin")
+   set(rocm_bin "$ENV{ROCM_PATH}/hip/bin")
  else()
--  set(rocm_bin "/opt/rocm/bin")
-+  set(rocm_bin "/opt/rocm-@ROCM_VERSION@/bin")
+-  set(rocm_bin "/opt/rocm/hip/bin")
++  set(rocm_bin "/opt/rocm-@ROCM_VERSION@/hip/bin")
  endif()
  
  set(CMAKE_CXX_COMPILER "${rocm_bin}/hipcc")
+Only in rocFFT-rocm-5.4.3: toolchain-linux.cmake.orig
