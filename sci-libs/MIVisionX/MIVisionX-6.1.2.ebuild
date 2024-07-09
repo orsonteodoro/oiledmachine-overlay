@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# TODO check hardcoded paths
+
 LLVM_SLOT=17
 PYTHON_COMPAT=( "python3_10" ) # U 20/22
 RAPIDJSON_COMMIT="f9d53419e912910fd8fa57d5705fa41425428c35" # committer-date:<=2023-10-05
