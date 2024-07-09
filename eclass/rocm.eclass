@@ -452,7 +452,7 @@ _rocm_change_common_paths() {
 
 	sed \
 		-i \
-		-e "s|@ROCM_VERSION@|${PV}|g" \
+		-e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" \
 		$(grep -r -l -e "@ROCM_VERSION@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 

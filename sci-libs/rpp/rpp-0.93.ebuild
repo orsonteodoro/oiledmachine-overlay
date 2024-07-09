@@ -50,7 +50,7 @@ IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
 cpu opencl rocm test
-ebuild-revision-6
+ebuild-revision-8
 "
 gen_rocm_required_use() {
 	local x
@@ -131,13 +131,6 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-#	IFS=$'\n'
-#	sed \
-#		-i \
-#		-e "s|half/half.hpp|half.hpp|g" \
-#		$(grep -l -r -e "half/half.hpp" "${S}") \
-#		|| die
-#	IFS=$' \t\n'
 
 	# Unbreak rocm builds:
 	sed \
