@@ -3,9 +3,6 @@
 
 EAPI=8
 
-# hardcoded path:  rdc_libs/rdc/src/RdcRocpLib.cc
-# hardcoded path:  python_binding/rdc_collectd.conf
-
 # Before fixing the paths any further, a reminder or warning for modders.
 # There is a prebuilt binary that has a hardcoded path.  It is unknown if the
 # path is relative or absolute.  All these ebuilds may need to use paths exactly
@@ -39,7 +36,7 @@ LICENSE="MIT"
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-10"
+IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-11"
 REQUIRED_USE="
 	raslib
 	systemd? (
@@ -90,7 +87,8 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/rdc-6.1.2-raslib-install.patch"
+	"${FILESDIR}/${PN}-6.1.2-raslib-install.patch"
+	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {

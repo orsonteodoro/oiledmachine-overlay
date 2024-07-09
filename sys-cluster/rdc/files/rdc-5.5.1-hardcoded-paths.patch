@@ -1,0 +1,34 @@
+diff '--color=auto' -urp rdc-rocm-5.5.1.orig/cmake_modules/Findrocmtools.cmake rdc-rocm-5.5.1/cmake_modules/Findrocmtools.cmake
+--- rdc-rocm-5.5.1.orig/cmake_modules/Findrocmtools.cmake	2023-02-27 09:13:11.000000000 -0800
++++ rdc-rocm-5.5.1/cmake_modules/Findrocmtools.cmake	2024-07-09 09:15:11.520296877 -0700
+@@ -4,7 +4,7 @@
+ set(NAME rocmtools)
+ 
+ if(NOT DEFINED ROCM_DIR)
+-    set(ROCM_DIR "/opt/rocm")
++    set(ROCM_DIR "/opt/rocm-@ROCM_VERSION@")
+ endif()
+ 
+ find_library(
+diff '--color=auto' -urp rdc-rocm-5.5.1.orig/python_binding/rdc_collectd.conf rdc-rocm-5.5.1/python_binding/rdc_collectd.conf
+--- rdc-rocm-5.5.1.orig/python_binding/rdc_collectd.conf	2023-02-27 09:13:11.000000000 -0800
++++ rdc-rocm-5.5.1/python_binding/rdc_collectd.conf	2024-07-09 09:14:54.772530362 -0700
+@@ -1,5 +1,5 @@
+  <Plugin python>
+-    ModulePath "/opt/rocm/rdc/python_binding"
++    ModulePath "/opt/rocm-@ROCM_VERSION@/rdc/python_binding"
+     LogTraces true
+     Interactive false
+     Import "rdc_collectd"
+diff '--color=auto' -urp rdc-rocm-5.5.1.orig/rdc_libs/rdc/src/RdcRocpLib.cc rdc-rocm-5.5.1/rdc_libs/rdc/src/RdcRocpLib.cc
+--- rdc-rocm-5.5.1.orig/rdc_libs/rdc/src/RdcRocpLib.cc	2023-02-27 09:13:11.000000000 -0800
++++ rdc-rocm-5.5.1/rdc_libs/rdc/src/RdcRocpLib.cc	2024-07-09 09:14:54.772530362 -0700
+@@ -140,7 +140,7 @@ rdc_status_t RdcRocpLib::rdc_telemetry_f
+ 
+ std::string RdcRocpLib::get_rocm_path() {
+     // set default rocm path in case lookup fails
+-    std::string rocm_path("/opt/rocm");
++    std::string rocm_path("/opt/rocm-@ROCM_VERSION@");
+     const char* rocm_path_env = getenv("ROCM_PATH");
+     if (rocm_path_env != nullptr) {
+         rocm_path = rocm_path_env;

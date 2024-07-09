@@ -1,0 +1,48 @@
+diff '--color=auto' -urp rdc-rocm-6.1.2.orig/cmake_modules/Findrocmtools.cmake rdc-rocm-6.1.2/cmake_modules/Findrocmtools.cmake
+--- rdc-rocm-6.1.2.orig/cmake_modules/Findrocmtools.cmake	2024-02-07 18:14:51.000000000 -0800
++++ rdc-rocm-6.1.2/cmake_modules/Findrocmtools.cmake	2024-07-09 09:12:27.358584978 -0700
+@@ -4,7 +4,7 @@
+ set(NAME rocmtools)
+ 
+ if(NOT DEFINED ROCM_DIR)
+-    set(ROCM_DIR "/opt/rocm")
++    set(ROCM_DIR "/opt/rocm-@ROCM_VERSION@")
+ endif()
+ 
+ find_library(
+diff '--color=auto' -urp rdc-rocm-6.1.2.orig/cmake_modules/Findrvs.cmake rdc-rocm-6.1.2/cmake_modules/Findrvs.cmake
+--- rdc-rocm-6.1.2.orig/cmake_modules/Findrvs.cmake	2024-02-07 18:14:51.000000000 -0800
++++ rdc-rocm-6.1.2/cmake_modules/Findrvs.cmake	2024-07-09 09:12:33.118504715 -0700
+@@ -4,7 +4,7 @@
+ set(NAME rvs)
+ 
+ if(NOT DEFINED ROCM_DIR)
+-    set(ROCM_DIR "/opt/rocm")
++    set(ROCM_DIR "/opt/rocm-@ROCM_VERSION@")
+ endif()
+ 
+ find_library(
+diff '--color=auto' -urp rdc-rocm-6.1.2.orig/python_binding/rdc_collectd.conf rdc-rocm-6.1.2/python_binding/rdc_collectd.conf
+--- rdc-rocm-6.1.2.orig/python_binding/rdc_collectd.conf	2024-02-07 18:14:51.000000000 -0800
++++ rdc-rocm-6.1.2/python_binding/rdc_collectd.conf	2024-07-09 09:11:16.791568194 -0700
+@@ -1,5 +1,5 @@
+  <Plugin python>
+-    ModulePath "/opt/rocm/rdc/python_binding"
++    ModulePath "/opt/rocm-@ROCM_VERSION@/rdc/python_binding"
+     LogTraces true
+     Interactive false
+     Import "rdc_collectd"
+diff '--color=auto' -urp rdc-rocm-6.1.2.orig/rdc_libs/rdc/src/RdcRocpLib.cc rdc-rocm-6.1.2/rdc_libs/rdc/src/RdcRocpLib.cc
+--- rdc-rocm-6.1.2.orig/rdc_libs/rdc/src/RdcRocpLib.cc	2024-02-07 18:14:51.000000000 -0800
++++ rdc-rocm-6.1.2/rdc_libs/rdc/src/RdcRocpLib.cc	2024-07-09 09:11:30.707374321 -0700
+@@ -128,7 +128,7 @@ rdc_status_t RdcRocpLib::rdc_telemetry_f
+ 
+ std::string RdcRocpLib::get_rocm_path() {
+   // set default rocm path in case lookup fails
+-  std::string rocm_path("/opt/rocm");
++  std::string rocm_path("/opt/rocm-@ROCM_VERSION@");
+   const char* rocm_path_env = getenv("ROCM_PATH");
+   if (rocm_path_env != nullptr) {
+     rocm_path = rocm_path_env;
+Only in rdc-rocm-6.1.2/rdc_libs/rdc/src: RdcRocpLib.cc.orig
+Only in rdc-rocm-6.1.2/rdc_libs/rdc/src: RdcRocpLib.cc.rej
