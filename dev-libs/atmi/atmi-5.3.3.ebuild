@@ -38,7 +38,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug
-ebuild-revision-2
+ebuild-revision-3
 "
 RDEPEND="
 	sys-devel/llvm-roc:=
@@ -91,6 +91,7 @@ src_configure() {
 		-DHSA_DIR="${ESYSROOT}${EROCM_PATH}"
 		-DLLVM_DIR="${ESYSROOT}${EROCM_LLVM_PATH}"
 		-DROCM_VERSION="${PV}"
+		-DROC_DIR="${EROCM_PATH}"
 	)
 	cmake_src_configure
 }
