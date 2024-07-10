@@ -45,7 +45,7 @@ LICENSE="MIT"
 RESTRICT="mirror"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-rocm samples +openmp mpi ebuild-revision-4
+rocm samples +openmp mpi ebuild-revision-5
 "
 gen_rocm_required_use() {
 	local x
@@ -92,7 +92,8 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
-	"${FILESDIR}/rocALUTION-5.6.0-invalid-operands-fix.patch"
+	"${FILESDIR}/${PN}-5.6.0-invalid-operands-fix.patch"
+	"${FILESDIR}/${PN}-5.3.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
