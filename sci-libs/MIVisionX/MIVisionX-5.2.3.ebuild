@@ -38,7 +38,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu +enhanced-message ffmpeg +loom +migraphx +neural-net opencl opencv +rocal
 +rocm +rpp system-rapidjson
-ebuild-revision-11
+ebuild-revision-13
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -120,6 +120,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-change-libjpeg-turbo-search-path.patch"
 	"${FILESDIR}/${PN}-5.1.3-use-system-pybind11.patch"
+	"${FILESDIR}/${PN}-5.2.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {

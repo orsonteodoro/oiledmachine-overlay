@@ -3,8 +3,6 @@
 
 EAPI=8
 
-# TODO check hardcoded paths
-
 LLVM_SLOT=17
 PYTHON_COMPAT=( "python3_10" ) # U 20/22
 RAPIDJSON_COMMIT="f9d53419e912910fd8fa57d5705fa41425428c35" # committer-date:<=2023-10-05
@@ -40,7 +38,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu +enhanced-message ffmpeg -fp16 +loom +migraphx +neural-net opencl
 opencv +rocal +rocal-python +rocm +rpp system-rapidjson
-ebuild-revision-11
+ebuild-revision-13
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -124,6 +122,7 @@ BDEPEND="
 "
 PATCHES=(
 #	"${FILESDIR}/${PN}-5.6.0-use-system-pybind11.patch"
+	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {

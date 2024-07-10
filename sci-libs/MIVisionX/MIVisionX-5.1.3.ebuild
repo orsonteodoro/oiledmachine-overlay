@@ -3,8 +3,6 @@
 
 EAPI=8
 
-# TODO check hardcoded paths
-
 LLVM_SLOT=14
 PYTHON_COMPAT=( "python3_10" ) # U 18/20
 RAPIDJSON_COMMIT="232389d4f1012dddec4ef84861face2d2ba85709" # committer-date:<=2022-06-19
@@ -40,7 +38,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu ffmpeg +loom +migraphx +neural-net opencl opencv +rocal +rocm +rpp
 system-rapidjson
-ebuild-revision-11
+ebuild-revision-13
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -122,6 +120,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-change-libjpeg-turbo-search-path.patch"
 	"${FILESDIR}/${PN}-5.1.3-use-system-pybind11.patch"
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {

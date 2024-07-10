@@ -38,7 +38,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu +enhanced-message ffmpeg -fp16 +loom +migraphx +neural-net opencl
 opencv +rocal +rocal-python +rocm +rpp system-rapidjson
-ebuild-revision-11
+ebuild-revision-13
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -122,6 +122,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.4.3-use-system-pybind11.patch"
+	"${FILESDIR}/${PN}-5.5.1-hardcoded-paths.patch"
 )
 
 pkg_setup() {
