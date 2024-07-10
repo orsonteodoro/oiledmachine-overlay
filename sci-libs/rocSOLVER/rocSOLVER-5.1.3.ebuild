@@ -35,7 +35,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test benchmark ebuild-revision-3"
+IUSE="test benchmark ebuild-revision-4"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -61,6 +61,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-4.2.0-add-stdint-header.patch"
 	"${FILESDIR}/${PN}-5.0.2-libfmt8.patch"
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
