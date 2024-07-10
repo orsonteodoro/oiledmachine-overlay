@@ -35,7 +35,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 -cpu -fpga -hip-rtc -mlir +rocm test
-r2
+ebuild-revision-3
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -81,6 +81,7 @@ BDEPEND="
 	~sys-devel/llvm-roc-${PV}
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.3.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {

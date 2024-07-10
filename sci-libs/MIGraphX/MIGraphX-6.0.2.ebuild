@@ -40,7 +40,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 -cpu -fpga -hip-rtc -mlir +rocm test
-r2
+ebuild-revision-3
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -92,6 +92,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
