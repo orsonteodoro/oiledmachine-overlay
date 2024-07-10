@@ -19,7 +19,7 @@ DESCRIPTION="An OpenCL general matrix multiplication (GEMM) API and kernel gener
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpenGEMM"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="-benchmark ebuild-revision-2"
+IUSE="-benchmark ebuild-revision-3"
 RDEPEND="
 	virtual/blas
 	virtual/opencl
@@ -37,6 +37,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-v5.3.3-gentoo-rocm-overlay-fixes.patch"
+	"${FILESDIR}/${PN}-5.2.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
