@@ -13,7 +13,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1030
 )
 LLVM_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.3.3/llvm/CMakeLists.txt
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( "python3_"{9..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -79,7 +79,7 @@ https://sparse.tamu.edu/MM/Chevron/Chevron4.tar.gz
 DESCRIPTION="Basic Linear Algebra Subroutines for sparse computation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSPARSE"
 LICENSE="MIT"
-IUSE="benchmark test ebuild-revision-5"
+IUSE="benchmark test ebuild-revision-6"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -116,6 +116,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-5.2.3-remove-matrices-unpacking.patch"
 	"${FILESDIR}/${PN}-5.2.3-fma-fix.patch"
+	"${FILESDIR}/${PN}-5.2.3-hardcoded-paths.patch"
 )
 
 python_check_deps() {
