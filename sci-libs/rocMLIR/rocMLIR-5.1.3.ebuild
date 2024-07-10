@@ -35,7 +35,7 @@ LICENSE="
 # all rights reserved with MIT - mlir/tools/rocmlir-lib/LICENSE
 # The distro MIT license template does not have all rights reserved
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-8"
+IUSE="ebuild-revision-9"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
@@ -57,6 +57,7 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-fix-so-suffix.patch"
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 )
 
 ccmake() {
