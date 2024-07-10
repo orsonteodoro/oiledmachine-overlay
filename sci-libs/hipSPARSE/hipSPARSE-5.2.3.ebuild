@@ -61,7 +61,7 @@ DESCRIPTION="ROCm SPARSE marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSPARSE"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="cuda +rocm test ebuild-revision-4"
+IUSE="cuda +rocm test ebuild-revision-5"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
@@ -98,6 +98,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-remove-matrices-unpacking.patch"
+	"${FILESDIR}/${PN}-5.2.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
