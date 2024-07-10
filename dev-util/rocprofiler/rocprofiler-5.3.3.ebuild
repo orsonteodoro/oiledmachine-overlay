@@ -31,7 +31,7 @@ LICENSE="
 "
 # BSD - src/util/hsa_rsrc_factory.cpp
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-11"
+IUSE=" test ebuild-revision-12"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -57,6 +57,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-nostrip.patch"
 	"${FILESDIR}/${PN}-5.1.3-remove-Werror.patch"
+	"${FILESDIR}/${PN}-5.3.3-hardcoded-paths.patch"
 )
 
 python_check_deps() {
