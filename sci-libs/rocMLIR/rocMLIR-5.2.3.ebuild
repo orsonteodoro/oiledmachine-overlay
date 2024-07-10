@@ -31,7 +31,7 @@ LICENSE="
 # all rights reserved with MIT - mlir/tools/rocmlir-lib/LICENSE
 # The distro MIT license template does not have all rights reserved
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-9"
+IUSE="ebuild-revision-10"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
@@ -92,7 +92,28 @@ ewarn "Patching may take a long time.  Please wait..."
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
 		"${S}/CMakeLists.txt"
+		"${S}/cmake/llvm-project.cmake"
+		"${S}/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt"
+		"${S}/external/llvm-project/compiler-rt/CMakeLists.txt"
+		"${S}/external/llvm-project/libc/cmake/modules/prepare_libc_gpu_build.cmake"
+		"${S}/external/llvm-project/libc/src/math/gpu/vendor/CMakeLists.txt"
+		"${S}/external/llvm-project/libc/utils/gpu/loader/CMakeLists.txt"
+		"${S}/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt"
+		"${S}/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt"
+		"${S}/external/llvm-project/openmp/libomptarget/DeviceRTL/CMakeLists.txt"
+		"${S}/external/llvm-project/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt"
+		"${S}/external/llvm-project/openmp/libomptarget/hostexec/CMakeLists.txt"
+		"${S}/external/llvm-project/openmp/libomptarget/hostrpc/services/CMakeLists.txt"
+		"${S}/external/llvm-project/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
+		"${S}/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
+		"${S}/external/llvm-project/openmp/libomptarget/src/CMakeLists.txt"
 		"${S}/mlir/CMakeLists.txt"
+		"${S}/mlir/lib/Dialect/MIOpen/CMakeLists.txt"
+		"${S}/mlir/tools/rocmlir-lib/CMakeLists.txt"
+		"${S}/mlir/tools/rocmlir-tuning-driver/CMakeLists.txt"
+		"${S}/mlir/utils/performance/ck-benchmark-driver/CMakeLists.txt"
+		"${S}/mlir/utils/performance/common/CMakeLists.txt"
+		"${S}/mlir/utils/performance/rocblas-benchmark-driver/CMakeLists.txt"
 	)
 	rocm_src_prepare
 }
