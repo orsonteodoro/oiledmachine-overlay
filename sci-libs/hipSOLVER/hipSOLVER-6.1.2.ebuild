@@ -21,7 +21,7 @@ DESCRIPTION="ROCm SOLVER marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSOLVER"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test cuda +rocm ebuild-revision-3"
+IUSE="test cuda +rocm ebuild-revision-4"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
@@ -58,6 +58,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
