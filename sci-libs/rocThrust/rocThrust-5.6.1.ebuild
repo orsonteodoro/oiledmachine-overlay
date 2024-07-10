@@ -42,7 +42,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark test ebuild-revision-2
+benchmark test ebuild-revision-3
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -64,6 +64,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-4.0-operator_new.patch"
+	"${FILESDIR}/${PN}-5.5.1-hardcoded-paths.patch"
 )
 
 pkg_setup() {
