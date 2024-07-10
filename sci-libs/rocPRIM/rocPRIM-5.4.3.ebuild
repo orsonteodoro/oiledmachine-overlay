@@ -36,7 +36,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="benchmark hip-cpu +rocm test ebuild-revision-1"
+IUSE="benchmark hip-cpu +rocm test ebuild-revision-3"
 gen_rocm_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -77,6 +77,7 @@ DEPEND="
 	${RDEPEND}
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.3.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
