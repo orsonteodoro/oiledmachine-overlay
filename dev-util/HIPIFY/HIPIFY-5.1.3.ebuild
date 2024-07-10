@@ -30,7 +30,7 @@ TEST_BDEPEND="
 	|| (
 		=dev-util/nvidia-cuda-toolkit-11.5*
 	)
-	=dev-util/nvidia-cuda-toolkit:=
+	dev-util/nvidia-cuda-toolkit:=
 "
 RDEPEND="
 	!test? (
