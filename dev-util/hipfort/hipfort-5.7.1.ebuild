@@ -23,7 +23,7 @@ https://github.com/ROCmSoftwarePlatform/hipfort
 "
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="debug ebuild-revision-6"
+IUSE="debug ebuild-revision-7"
 RDEPEND="
 	!dev-util/hipfort:0
 	|| (
