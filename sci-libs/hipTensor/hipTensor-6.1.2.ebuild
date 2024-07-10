@@ -29,7 +29,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipTensor"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-+rocm samples test ebuild-revision-2
++rocm samples test ebuild-revision-3
 "
 gen_rocm_required_use() {
 	local x
@@ -66,6 +66,7 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
