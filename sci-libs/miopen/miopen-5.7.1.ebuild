@@ -46,7 +46,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test ebuild-revision-3"
+IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test ebuild-revision-4"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -124,6 +124,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
 #	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # Fixed in pr #1830
 	"${FILESDIR}/${PN}-5.7.1-bunzip2-path.patch"
+	"${FILESDIR}/${PN}-5.6.1-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
