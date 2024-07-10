@@ -41,7 +41,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test ebuild-revision-2
+benchmark cuda +rocm test ebuild-revision-3
 "
 gen_cuda_required_use() {
 	local x
@@ -110,6 +110,7 @@ BDEPEND="
 S="${WORKDIR}/hipCUB-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-add-memory-header.patch"
+	"${FILESDIR}/${PN}-5.2.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
