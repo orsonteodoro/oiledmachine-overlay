@@ -36,7 +36,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipFFT"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +rocm
-ebuild-revision-2
+ebuild-revision-3
 "
 gen_cuda_required_use() {
 	local x
@@ -99,6 +99,7 @@ S="${WORKDIR}/hipFFT-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-remove-git-dependency.patch"
 	"${FILESDIR}/${PN}-4.3.0-add-complex-header.patch"
+	"${FILESDIR}/${PN}-5.2.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {

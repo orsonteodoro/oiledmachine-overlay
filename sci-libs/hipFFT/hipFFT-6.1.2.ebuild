@@ -42,7 +42,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipFFT"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +rocm
-ebuild-revision-2
+ebuild-revision-3
 "
 gen_cuda_required_use() {
 	local x
@@ -104,6 +104,7 @@ RESTRICT="test mirror" # The distro mirrored copy is wrong
 S="${WORKDIR}/hipFFT-rocm-${PV}"
 
 PATCHES=(
+	"${FILESDIR}/${PN}-5.4.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
