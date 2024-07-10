@@ -36,7 +36,7 @@ LICENSE="MIT"
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-11"
+IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-12"
 REQUIRED_USE="
 	raslib
 	systemd? (

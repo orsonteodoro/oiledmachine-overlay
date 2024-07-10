@@ -36,7 +36,7 @@ LICENSE="MIT"
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-11"
+IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-12"
 REQUIRED_USE="
 	raslib
 	standalone
@@ -89,7 +89,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.4.3-raslib-install.patch"
-	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-5.4.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {

@@ -1,6 +1,18 @@
+diff '--color=auto' -urp rdc-rocm-5.5.1.orig/CMakeLists.txt rdc-rocm-5.5.1/CMakeLists.txt
+--- rdc-rocm-5.5.1.orig/CMakeLists.txt	2024-07-09 18:15:06.769641073 -0700
++++ rdc-rocm-5.5.1/CMakeLists.txt	2024-07-09 18:16:03.104844394 -0700
+@@ -80,7 +80,7 @@ include(GNUInstallDirs)
+ 
+ # ROCM_DIR should be passed in via command line; it will be used
+ # in sub-projects. Override with -DROCM_DIR=
+-set(ROCM_DIR "/opt/rocm" CACHE STRING "ROCm directory.")
++set(ROCM_DIR "/opt/rocm-@ROCM_VERSION@" CACHE STRING "ROCm directory.")
+ 
+ # Only populate RUNPATH if ROCM_RPATH env variable is set
+ # Mostly makes sense in ROCm build scripts context
 diff '--color=auto' -urp rdc-rocm-5.5.1.orig/cmake_modules/Findrocmtools.cmake rdc-rocm-5.5.1/cmake_modules/Findrocmtools.cmake
 --- rdc-rocm-5.5.1.orig/cmake_modules/Findrocmtools.cmake	2023-02-27 09:13:11.000000000 -0800
-+++ rdc-rocm-5.5.1/cmake_modules/Findrocmtools.cmake	2024-07-09 09:15:11.520296877 -0700
++++ rdc-rocm-5.5.1/cmake_modules/Findrocmtools.cmake	2024-07-09 18:15:26.757358529 -0700
 @@ -4,7 +4,7 @@
  set(NAME rocmtools)
  
@@ -10,9 +22,21 @@ diff '--color=auto' -urp rdc-rocm-5.5.1.orig/cmake_modules/Findrocmtools.cmake r
  endif()
  
  find_library(
+diff '--color=auto' -urp rdc-rocm-5.5.1.orig/example/CMakeLists.txt rdc-rocm-5.5.1/example/CMakeLists.txt
+--- rdc-rocm-5.5.1.orig/example/CMakeLists.txt	2023-02-27 09:13:11.000000000 -0800
++++ rdc-rocm-5.5.1/example/CMakeLists.txt	2024-07-09 18:16:05.280813601 -0700
+@@ -58,7 +58,7 @@ include(CMakePrintHelpers)
+ if(DEFINED ENV{ROCM_PATH})
+     set(ROCM_DIR "$ENV{ROCM_PATH}" CACHE STRING "ROCm directory.")
+ else()
+-    set(ROCM_DIR "/opt/rocm" CACHE STRING "ROCm directory.")
++    set(ROCM_DIR "/opt/rocm-@ROCM_VERSION@" CACHE STRING "ROCm directory.")
+ endif()
+ 
+ # add package search paths
 diff '--color=auto' -urp rdc-rocm-5.5.1.orig/python_binding/rdc_collectd.conf rdc-rocm-5.5.1/python_binding/rdc_collectd.conf
 --- rdc-rocm-5.5.1.orig/python_binding/rdc_collectd.conf	2023-02-27 09:13:11.000000000 -0800
-+++ rdc-rocm-5.5.1/python_binding/rdc_collectd.conf	2024-07-09 09:14:54.772530362 -0700
++++ rdc-rocm-5.5.1/python_binding/rdc_collectd.conf	2024-07-09 18:15:26.757358529 -0700
 @@ -1,5 +1,5 @@
   <Plugin python>
 -    ModulePath "/opt/rocm/rdc/python_binding"
@@ -22,7 +46,7 @@ diff '--color=auto' -urp rdc-rocm-5.5.1.orig/python_binding/rdc_collectd.conf rd
      Import "rdc_collectd"
 diff '--color=auto' -urp rdc-rocm-5.5.1.orig/rdc_libs/rdc/src/RdcRocpLib.cc rdc-rocm-5.5.1/rdc_libs/rdc/src/RdcRocpLib.cc
 --- rdc-rocm-5.5.1.orig/rdc_libs/rdc/src/RdcRocpLib.cc	2023-02-27 09:13:11.000000000 -0800
-+++ rdc-rocm-5.5.1/rdc_libs/rdc/src/RdcRocpLib.cc	2024-07-09 09:14:54.772530362 -0700
++++ rdc-rocm-5.5.1/rdc_libs/rdc/src/RdcRocpLib.cc	2024-07-09 18:15:26.757358529 -0700
 @@ -140,7 +140,7 @@ rdc_status_t RdcRocpLib::rdc_telemetry_f
  
  std::string RdcRocpLib::get_rocm_path() {
