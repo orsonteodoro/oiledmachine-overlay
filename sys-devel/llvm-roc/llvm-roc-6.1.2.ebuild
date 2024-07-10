@@ -4,6 +4,10 @@
 
 EAPI=8
 
+#FIXME:
+# llvm-dwarfdump.cpp.o: undefined reference to symbol '_ZN4llvm5dwarf18AddressSpaceStringEjNS_6TripleE'
+# libLLVMBinaryFormat.so.17git: error adding symbols: DSO missing from command line
+
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 LLVM_SLOT=17
 LLVM_TARGETS=(
@@ -90,7 +94,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt profile +runtime
-ebuild-revision-14
+ebuild-revision-15
 "
 REQUIRED_USE="
 	cfi? (
@@ -107,8 +111,9 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
+# gcc12 -fail
 BDEPEND="
-	sys-devel/gcc:12
+	sys-devel/gcc:13
 	sys-devel/lld:${LLVM_SLOT}
 "
 PATCHES=(
@@ -116,9 +121,9 @@ PATCHES=(
 
 pkg_setup() {
 ewarn
-ewarn "You may need to switch to GCC 12.  If the build fails, do"
+ewarn "You may need to switch to GCC 13.  If the build fails, do"
 ewarn
-ewarn "eselect gcc set <CHOST>-12"
+ewarn "eselect gcc set <CHOST>-13"
 ewarn "source /etc/profile"
 ewarn
 	rocm_pkg_setup
@@ -133,6 +138,10 @@ einfo "See comments of metadata.xml for documentation on ebolt/epgo."
 }
 
 src_prepare() {
+	pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
+		eapply "${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
+	popd
+
 	cmake_src_prepare
 	if has bolt ${IUSE_EFFECTIVE} && use bolt ; then
 		pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
@@ -150,7 +159,21 @@ src_prepare() {
 		"${WORKDIR}/llvm-project-rocm-${PV}/bolt/lib/RuntimeLibs/InstrumentationRuntimeLibrary.cpp"
 		"${WORKDIR}/llvm-project-rocm-${PV}/bolt/lib/RuntimeLibs/RuntimeLibrary.cpp"
 		"${WORKDIR}/llvm-project-rocm-${PV}/bolt/runtime/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-${PV}/clang/tools/amdgpu-arch/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-${PV}/compiler-rt/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-${PV}/libc/cmake/modules/prepare_libc_gpu_build.cmake"
+		"${WORKDIR}/llvm-project-rocm-${PV}/libc/src/math/gpu/vendor/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-${PV}/libc/utils/gpu/loader/CMakeLists.txt"
 		"${WORKDIR}/llvm-project-rocm-${PV}/llvm/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-${PV}/mlir/lib/Dialect/GPU/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-${PV}/mlir/lib/ExecutionEngine/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/DeviceRTL/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/hostexec/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/hostrpc/services/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/src/CMakeLists.txt"
 	)
 	rocm_src_prepare
 	uopts_src_prepare
@@ -162,8 +185,8 @@ _src_configure_compiler() {
 		export CC="${EROCM_PATH}/bin/clang"
 		export CXX="${EROCM_PATH}/bin/clang++"
 	else
-		export CC="${CHOST}-gcc-12"
-		export CXX="${CHOST}-g++-12"
+		export CC="${CHOST}-gcc-13"
+		export CXX="${CHOST}-g++-13"
 	fi
 }
 
