@@ -42,7 +42,7 @@ BDEPEND="
 RESTRICT="test"
 DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/hipfort-5.1.3-hardcoded-paths.patch"
+	"${FILESDIR}/hipfort-6.0.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
