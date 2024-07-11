@@ -19,7 +19,7 @@ DESCRIPTION="AMD Debugger API"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/ROCdbgapi"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild-revision-5"
+IUSE=" ebuild-revision-6"
 RDEPEND="
 	!dev-libs/ROCdbgapi:0
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
@@ -31,6 +31,7 @@ BDEPEND="
 	>=dev-build/cmake-3.8
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
