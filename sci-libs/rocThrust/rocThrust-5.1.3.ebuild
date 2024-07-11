@@ -3,8 +3,6 @@
 
 EAPI=8
 
-# TODO:  Fix hardcode-paths patch for multi tarball.
-
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900_xnack_minus
