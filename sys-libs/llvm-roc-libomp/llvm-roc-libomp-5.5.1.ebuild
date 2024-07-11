@@ -121,7 +121,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -rpc
-ebuild-revision-20
+ebuild-revision-21
 "
 
 gen_cuda_required_use() {
@@ -299,6 +299,10 @@ pkg_setup() {
 }
 
 src_prepare() {
+	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/${PN}-5.5.1-hardcoded-paths.patch"
+	popd >/dev/null 2>&1 || die
+
 	cd "${S_ROOT}" || die
 	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-ompt-includes.patch"
 	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-omp-tools-includes.patch"
@@ -311,8 +315,20 @@ src_prepare() {
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
+		"${S_ROOT}/clang/tools/amdgpu-arch/CMakeLists.txt"
+		"${S_ROOT}/compiler-rt/CMakeLists.txt"
+		"${S_ROOT}/libc/cmake/modules/prepare_libc_gpu_build.cmake"
+		"${S_ROOT}/libc/src/math/gpu/vendor/CMakeLists.txt"
+		"${S_ROOT}/libc/utils/gpu/loader/CMakeLists.txt"
+		"${S_ROOT}/mlir/lib/Dialect/GPU/CMakeLists.txt"
+		"${S_ROOT}/mlir/lib/ExecutionEngine/CMakeLists.txt"
 		"${S_ROOT}/openmp/libomptarget/CMakeLists.txt"
+		"${S_ROOT}/openmp/libomptarget/DeviceRTL/CMakeLists.txt"
+		"${S_ROOT}/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt"
+		"${S_ROOT}/openmp/libomptarget/hostexec/CMakeLists.txt"
+		"${S_ROOT}/openmp/libomptarget/hostrpc/services/CMakeLists.txt"
 		"${S_ROOT}/openmp/libomptarget/libm/CMakeLists.txt"
+		"${S_ROOT}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
 		"${S_ROOT}/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
 		"${S_ROOT}/openmp/libomptarget/plugins/amdgpu/impl/impl.cpp"
 		"${S_ROOT}/openmp/libomptarget/src/CMakeLists.txt"
