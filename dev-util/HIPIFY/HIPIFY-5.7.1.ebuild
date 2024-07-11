@@ -24,7 +24,7 @@ DESCRIPTION="HIPIFY: Convert CUDA to Portable C++ Code"
 HOMEPAGE="https://github.com/RadeonOpenCompute/HIPIFY"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-10"
+IUSE="test ebuild-revision-11"
 # https://github.com/ROCm-Developer-Tools/HIPIFY/blob/rocm-5.7.1/docs/hipify-clang.md#hipify-clang-dependencies
 TEST_BDEPEND="
 	|| (
@@ -56,8 +56,9 @@ RESTRICT="
 	test
 "
 PATCHES=(
-	"${FILESDIR}/HIPIFY-5.7.0-llvm-dynlib-on.patch"
-	"${FILESDIR}/HIPIFY-5.7.0-install-headers-option.patch"
+	"${FILESDIR}/${PN}-5.7.0-llvm-dynlib-on.patch"
+	"${FILESDIR}/${PN}-5.7.0-install-headers-option.patch"
+	"${FILESDIR}/${PN}-5.7.1-hardcoded-paths.patch"
 )
 
 pkg_setup() {
