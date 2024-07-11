@@ -261,7 +261,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	sys-devel/gcc
+	sys-devel/gcc:12
 	offload? (
 		virtual/pkgconfig
 	)
@@ -345,11 +345,12 @@ src_prepare() {
 
 src_configure() {
 	addpredict /dev/kfd
-	export CC="${CHOST}-gcc"
-	export CXX="${CHOST}-g++"
+	export CC="${CHOST}-gcc-12"
+	export CXX="${CHOST}-g++-12"
 	filter-flags "-fuse-ld=*"
 	strip-unsupported-flags
 	replace-flags '-O0' '-O1'
+	append-ldflags -fuse-ld=bfd
 # Avoid
 # The dependency target "clang" of target "check-all" does not exist.
 	PROJECTS="clang;openmp"
