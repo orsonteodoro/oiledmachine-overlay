@@ -113,7 +113,7 @@ DEPEND="
 "
 # gcc12 -fail
 BDEPEND="
-	sys-devel/gcc:13
+	sys-devel/gcc:12
 	sys-devel/lld:${LLVM_SLOT}
 "
 PATCHES=(
@@ -121,9 +121,9 @@ PATCHES=(
 
 pkg_setup() {
 ewarn
-ewarn "You may need to switch to GCC 13.  If the build fails, do"
+ewarn "You may need to switch to GCC 12.  If the build fails, do"
 ewarn
-ewarn "eselect gcc set <CHOST>-13"
+ewarn "eselect gcc set <CHOST>-12"
 ewarn "source /etc/profile"
 ewarn
 	rocm_pkg_setup
@@ -185,8 +185,8 @@ _src_configure_compiler() {
 		export CC="${EROCM_PATH}/bin/clang"
 		export CXX="${EROCM_PATH}/bin/clang++"
 	else
-		export CC="${CHOST}-gcc-13"
-		export CXX="${CHOST}-g++-13"
+		export CC="${CHOST}-gcc-12"
+		export CXX="${CHOST}-g++-12"
 	fi
 }
 
@@ -212,7 +212,11 @@ _src_configure() {
 # Avoid:
 #collect2: fatal error: cannot find 'ld'
 #compilation terminated.
-	append-ldflags -fuse-ld=bfd
+#	append-ldflags -fuse-ld=bfd
+
+	# Possible fix for:
+	# llvm-dwarfdump.cpp.o: undefined reference to symbol '_ZN4llvm5dwarf18AddressSpaceStringEjNS_6TripleE'
+	append-ldflags -fuse-ld=gold
 
 #	strip-unsupported-flags # Broken, strips -fprofile-use
 
