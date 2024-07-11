@@ -38,7 +38,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-3"
+IUSE="test ebuild-revision-4"
 RDEPEND="
 	!dev-libs/rccl:0
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
@@ -58,6 +58,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-6.1.2-customize-targets.patch"
+	"${FILESDIR}/${PN}-5.7.1-hardcoded-paths.patch"
 )
 
 pkg_pretend() {

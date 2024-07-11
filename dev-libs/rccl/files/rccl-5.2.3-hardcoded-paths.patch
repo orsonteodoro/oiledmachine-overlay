@@ -1,0 +1,40 @@
+diff '--color=auto' -urp rccl-rocm-5.2.3.orig/cmake/Dependencies.cmake rccl-rocm-5.2.3/cmake/Dependencies.cmake
+--- rccl-rocm-5.2.3.orig/cmake/Dependencies.cmake	2022-08-11 11:10:52.000000000 -0700
++++ rccl-rocm-5.2.3/cmake/Dependencies.cmake	2024-07-11 00:28:39.406445747 -0700
+@@ -73,7 +73,7 @@ endif()
+ 
+ # Find or download/install rocm-cmake project
+ set( PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern )
+-find_package(ROCM 0.7.3 QUIET CONFIG PATHS /opt/rocm)
++find_package(ROCM 0.7.3 QUIET CONFIG PATHS /opt/rocm-@ROCM_VERSION@)
+ if(NOT ROCM_FOUND)
+     set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
+     file(
+Only in rccl-rocm-5.2.3/cmake: Dependencies.cmake.orig
+Only in rccl-rocm-5.2.3/cmake: Dependencies.cmake.rej
+diff '--color=auto' -urp rccl-rocm-5.2.3.orig/test/CMakeLists.txt rccl-rocm-5.2.3/test/CMakeLists.txt
+--- rccl-rocm-5.2.3.orig/test/CMakeLists.txt	2024-07-11 00:27:49.787157392 -0700
++++ rccl-rocm-5.2.3/test/CMakeLists.txt	2024-07-11 00:28:36.318490040 -0700
+@@ -10,7 +10,7 @@ if(BUILD_TESTS)
+   #    message(FATAL_ERROR "chrpath is required for UnitTests. Please install (e.g. sudo apt-get install chrpath)")
+   #endif()
+ 
+-  find_package(hsa-runtime64 PATHS /opt/rocm )
++  find_package(hsa-runtime64 PATHS /opt/rocm-@ROCM_VERSION@ )
+   if(${hsa-runtime64_FOUND})
+     message("hsa-runtime64 found @  ${hsa-runtime64_DIR} ")
+   else()
+@@ -19,11 +19,11 @@ if(BUILD_TESTS)
+     message("Looking for library files in ${ROCR_LIB_DIR}")
+ 
+     # Search for ROCr header file in user defined locations
+-    find_path(ROCR_HDR hsa.h PATHS ${ROCR_INC_DIR} "/opt/rocm" PATH_SUFFIXES include/hsa REQUIRED)
++    find_path(ROCR_HDR hsa.h PATHS ${ROCR_INC_DIR} "/opt/rocm-@ROCM_VERSION@" PATH_SUFFIXES include/hsa REQUIRED)
+     INCLUDE_DIRECTORIES(${ROCR_HDR})
+ 
+     # Search for ROCr library file in user defined locations
+-    find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "/opt/rocm" PATH_SUFFIXES lib lib64 REQUIRED)
++    find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "/opt/rocm-@ROCM_VERSION@" PATH_SUFFIXES lib lib64 REQUIRED)
+   endif()
+ 
+   include_directories(${GTEST_INCLUDE_DIRS} ./common)

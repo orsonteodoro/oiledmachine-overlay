@@ -1,0 +1,60 @@
+diff '--color=auto' -urp rccl-rocm-5.7.1.orig/CMakeLists.txt rccl-rocm-5.7.1/CMakeLists.txt
+--- rccl-rocm-5.7.1.orig/CMakeLists.txt	2024-07-11 00:34:47.345162685 -0700
++++ rccl-rocm-5.7.1/CMakeLists.txt	2024-07-11 00:35:40.668396191 -0700
+@@ -80,7 +80,7 @@ if(NOT DEFINED ROCM_PATH)
+     message(STATUS "Setting ROCM_PATH based on hipcc location to ${ROCM_PATH}")
+   else()
+     # Guess default location
+-    set(ROCM_PATH "/opt/rocm")
++    set(ROCM_PATH "/opt/rocm-@ROCM_VERSION@")
+     message(WARNING "Unable to find ROCM_PATH: Falling back to ${ROCM_PATH}")
+   endif()
+ else()
+diff '--color=auto' -urp rccl-rocm-5.7.1.orig/cmake/Dependencies.cmake rccl-rocm-5.7.1/cmake/Dependencies.cmake
+--- rccl-rocm-5.7.1.orig/cmake/Dependencies.cmake	2023-10-06 13:05:52.000000000 -0700
++++ rccl-rocm-5.7.1/cmake/Dependencies.cmake	2024-07-11 00:35:53.736208317 -0700
+@@ -121,7 +121,7 @@ endfunction()
+ 
+ # Find or download/install rocm-cmake project
+ set( PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern )
+-find_package(ROCM 0.7.3 QUIET CONFIG PATHS /opt/rocm)
++find_package(ROCM 0.7.3 QUIET CONFIG PATHS /opt/rocm-@ROCM_VERSION@)
+ if(NOT ROCM_FOUND)
+     set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
+     file(
+@@ -158,7 +158,7 @@ endif()
+ # NOTE: This will eventually be part of ROCm-CMake and should be removed at that time
+ function(rocm_local_targets VARIABLE)
+   set(${VARIABLE} "NOTFOUND" PARENT_SCOPE)
+-  find_program(_rocm_agent_enumerator rocm_agent_enumerator HINTS /opt/rocm/bin ENV ROCM_PATH)
++  find_program(_rocm_agent_enumerator rocm_agent_enumerator HINTS /opt/rocm-@ROCM_VERSION@/bin ENV ROCM_PATH)
+   if(NOT _rocm_agent_enumerator STREQUAL "_rocm_agent_enumerator-NOTFOUND")
+     execute_process(
+       COMMAND "${_rocm_agent_enumerator}"
+Only in rccl-rocm-5.7.1/cmake: Dependencies.cmake.orig
+diff '--color=auto' -urp rccl-rocm-5.7.1.orig/test/CMakeLists.txt rccl-rocm-5.7.1/test/CMakeLists.txt
+--- rccl-rocm-5.7.1.orig/test/CMakeLists.txt	2024-07-11 00:34:47.333162857 -0700
++++ rccl-rocm-5.7.1/test/CMakeLists.txt	2024-07-11 00:35:23.392644544 -0700
+@@ -12,7 +12,7 @@ if(BUILD_TESTS)
+   #    message(FATAL_ERROR "chrpath is required for rccl-UnitTests. Please install (e.g. sudo apt-get install chrpath)")
+   #endif()
+ 
+-  find_package(hsa-runtime64 PATHS /opt/rocm )
++  find_package(hsa-runtime64 PATHS /opt/rocm-@ROCM_VERSION@ )
+   if(${hsa-runtime64_FOUND})
+     message("hsa-runtime64 found @  ${hsa-runtime64_DIR} ")
+   else()
+@@ -21,11 +21,11 @@ if(BUILD_TESTS)
+     message("Looking for library files in ${ROCR_LIB_DIR}")
+ 
+     # Search for ROCr header file in user defined locations
+-    find_path(ROCR_HDR hsa/hsa.h PATHS ${ROCR_INC_DIR} "/opt/rocm" PATH_SUFFIXES include REQUIRED)
++    find_path(ROCR_HDR hsa/hsa.h PATHS ${ROCR_INC_DIR} "/opt/rocm-@ROCM_VERSION@" PATH_SUFFIXES include REQUIRED)
+     INCLUDE_DIRECTORIES(${ROCR_HDR})
+ 
+     # Search for ROCr library file in user defined locations
+-    find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "/opt/rocm" PATH_SUFFIXES lib lib64 REQUIRED)
++    find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "/opt/rocm-@ROCM_VERSION@" PATH_SUFFIXES lib lib64 REQUIRED)
+   endif()
+ 
+   include_directories(${GTEST_INCLUDE_DIRS} ./common)
