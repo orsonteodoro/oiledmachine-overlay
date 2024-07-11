@@ -23,7 +23,7 @@ RESTRICT="
 	test
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-3"
+IUSE="test ebuild-revision-5"
 RDEPEND="
 	!dev-libs/rocm-debug-agent:0
 	dev-libs/elfutils
@@ -42,6 +42,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {

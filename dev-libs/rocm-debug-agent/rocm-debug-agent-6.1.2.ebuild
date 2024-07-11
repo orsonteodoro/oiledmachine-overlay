@@ -23,7 +23,7 @@ RESTRICT="
 	test
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-4"
+IUSE="test ebuild-revision-5"
 RDEPEND="
 	!dev-libs/rocm-debug-agent:0
 	dev-libs/elfutils
@@ -43,6 +43,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.7.0-epoll_wait-nevents.patch"
+	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
