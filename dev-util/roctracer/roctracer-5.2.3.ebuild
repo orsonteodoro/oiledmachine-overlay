@@ -32,7 +32,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-5"
+IUSE=" test ebuild-revision-7"
 RDEPEND="
 	!dev-util/roctracer:0
 	sys-devel/gcc:12
@@ -69,12 +69,17 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
+
+	pushd "${WORKDIR}" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/roctracer-5.2.3-hardcoded-paths.patch"
+	popd >/dev/null 2>&1 || die
+
 	ln -s \
 		"${WORKDIR}/rocprofiler-rocm-${PV}" \
 		"${WORKDIR}/rocprofiler" \
 		|| die
 
-	hprefixify script/*.py
+	hprefixify "script/"*".py"
 	rocm_src_prepare
 }
 

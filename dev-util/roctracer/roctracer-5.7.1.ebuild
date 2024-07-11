@@ -26,7 +26,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-6"
+IUSE=" test ebuild-revision-7"
 CDEPEND="
 	sys-devel/clang:${LLVM_SLOT}
 	sys-devel/llvm:${LLVM_SLOT}
@@ -69,7 +69,12 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-	hprefixify script/*.py
+
+	pushd "${S}" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/roctracer-5.6.1-hardcoded-paths.patch"
+	popd >/dev/null 2>&1 || die
+
+	hprefixify "script/"*".py"
 	rocm_src_prepare
 }
 
