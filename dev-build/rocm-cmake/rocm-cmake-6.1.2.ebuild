@@ -35,7 +35,7 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-6.1.2-license.patch"
-	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
