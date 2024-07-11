@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# Fix hardcoded-paths patch for multitarball
+
 LLVM_SLOT=14
 PYTHON_COMPAT=( "python3_10" ) # U 18/20
 RAPIDJSON_COMMIT="232389d4f1012dddec4ef84861face2d2ba85709" # committer-date:<=2022-06-19

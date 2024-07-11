@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# FIME:  fix hardcoded-paths patch for multitarball
+
 AMDGPU_TARGETS_COMPAT=(
 # https://github.com/ROCm/MIOpen/blob/rocm-5.1.3/test/CMakeLists.txt#L99
 	gfx803
