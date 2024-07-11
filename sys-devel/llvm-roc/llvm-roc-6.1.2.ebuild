@@ -205,18 +205,16 @@ _src_configure() {
 	uopts_src_configure
 	filter-flags "-fuse-ld=*"
 
-# Fixes:
+# Still present in 6.1.2:
 # ld.gold: internal error in do_layout, at /var/tmp/portage/sys-devel/binutils-2.40-r5/work/binutils-2.40/gold/object.cc:1939
+
+# Breaks during configure test: fatal error: cannot find 'ld'
 #	append-ldflags -fuse-ld=lld
 
 # Avoid:
 #collect2: fatal error: cannot find 'ld'
 #compilation terminated.
-#	append-ldflags -fuse-ld=bfd
-
-	# Possible fix for:
-	# llvm-dwarfdump.cpp.o: undefined reference to symbol '_ZN4llvm5dwarf18AddressSpaceStringEjNS_6TripleE'
-	append-ldflags -fuse-ld=gold
+	append-ldflags -fuse-ld=bfd
 
 #	strip-unsupported-flags # Broken, strips -fprofile-use
 
