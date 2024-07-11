@@ -20,6 +20,13 @@ AMDGPU_UNTESTED_TARGETS=(
 	gfx803
 )
 FIN_COMMIT="55c154d374cef086daeddc18226910b90555bf18"
+MIOPENKERNELS_TARGETS_COMPAT=(
+	gfx900
+	gfx906
+	gfx908
+	gfx90a
+	gfx1030
+)
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 LLVM_SLOT=16
@@ -64,6 +71,11 @@ REQUIRED_USE="
 		comgr
 		rocm
 	)
+	kernels? (
+		|| (
+			${MIOPENKERNELS_TARGETS_COMPAT[@]/#/amdgpu_targets_}
+		)
+	)
 	opencl? (
 		!comgr
 		!composable-kernel
@@ -73,6 +85,17 @@ REQUIRED_USE="
 		opencl
 	)
 "
+gen_miopenkernels_depends() {
+	local g
+	local list=""
+	for g in ${MIOPENKERNELS_TARGETS_COMPAT[@]} ; do
+		list="${list},amdgpu_targets_${g}?"
+	done
+	list="${list:1}"
+	echo "
+		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}[${list}]
+	"
+}
 RDEPEND="
 	>=dev-db/sqlite-3.17
 	>=dev-libs/boost-1.72
@@ -85,7 +108,7 @@ RDEPEND="
 		sci-libs/composable_kernel:${ROCM_SLOT}
 	)
 	kernels? (
-		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}
+		$(gen_miopenkernels_depends)
 	)
 	opencl? (
 		sys-devel/clang
@@ -207,10 +230,10 @@ einfo "Copying kernels"
 
 filter_test_gpus() {
 	if use "${gpu_target}" && [[ "${gputarget}" =~ "gfx103" ]] ; then
-		echo "-DMIOPEN_TEST_GFX103x=ON"
+		echo "-DMIOPEN_TEST_GFX103X=ON"
 	elif use "${gpu_target}" && [[ "${gputarget}" =~ "gfx110" ]] ; then
 		echo "-DMIOPEN_TEST_GFX110X=ON"
-	elif [[ "${gpu_target}" =~ ("gfx900"|"gfx906"|"gfx908"|"gfx90a") ]] ; then
+	elif use "amdgpu_targets_${gpu_target}" ; then
 		echo "-DMIOPEN_TEST_${gpu_target^^}=ON"
 	fi
 }
@@ -253,7 +276,7 @@ src_configure() {
 
 	if use test ; then
 		local gpu_target
-		for gpu_target in ${AMDGPU_TARGETS} ; do
+		for gpu_target in ${AMDGPU_TARGETS_COMPAT[@]} ; do
 			mycmakeargs+=(
 				$(filter_test_gpus)
 			)
