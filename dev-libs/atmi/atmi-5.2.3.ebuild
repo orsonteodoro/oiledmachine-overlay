@@ -21,6 +21,8 @@ VERBOSE=1
 
 inherit cmake flag-o-matic rocm
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/atmi-rocm-${PV}/src"
 SRC_URI="
 https://github.com/RadeonOpenCompute/atmi/archive/refs/tags/rocm-${PV}.tar.gz
 	-> rocm-atmi-${PV}.tar.gz
@@ -34,11 +36,10 @@ LICENSE="
 	custom
 "
 # custom - bin/mymcpu
-KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug
-ebuild-revision-3
+ebuild-revision-4
 "
 RDEPEND="
 	sys-devel/llvm-roc:=
@@ -56,10 +57,9 @@ BDEPEND="
 	>=dev-build/cmake-3.16.8
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
-PATCHES=(
+_PATCHES=(
 	"${FILESDIR}/atmi-5.5.1-headers.patch"
 )
-S="${WORKDIR}/atmi-rocm-${PV}/src"
 
 pkg_setup() {
 ewarn "The ebuild is under construction."
@@ -67,6 +67,11 @@ ewarn "The ebuild is under construction."
 }
 
 src_prepare() {
+	eapply ${_PATCHES[@]}
+	pushd "${WORKDIR}/atmi-rocm-${PV}" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/atmi-5.2.3-hardcoded-paths.patch"
+	popd >/dev/null 2>&1 || die
+
 	cmake_src_prepare
 	rocm_src_prepare
 }
