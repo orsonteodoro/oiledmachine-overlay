@@ -1,0 +1,10 @@
+--- a/llvm/tools/llvm-dwarfdump/CMakeLists.txt.orig	2024-07-11 10:21:12.443357959 -0700
++++ b/llvm/tools/llvm-dwarfdump/CMakeLists.txt	2024-07-11 10:57:53.960172709 -0700
+@@ -2,6 +2,7 @@ set(LLVM_LINK_COMPONENTS
+   DebugInfoDWARF
+   AllTargetsDescs
+   AllTargetsInfos
++  BinaryFormat
+   MC
+   Object
+   Support

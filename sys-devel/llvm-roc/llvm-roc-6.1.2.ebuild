@@ -111,7 +111,6 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
-# gcc12 -fail
 BDEPEND="
 	sys-devel/gcc:12
 	sys-devel/lld:${LLVM_SLOT}
@@ -140,6 +139,7 @@ einfo "See comments of metadata.xml for documentation on ebolt/epgo."
 src_prepare() {
 	pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
 		eapply "${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-6.1.2-llvm-dwarfdump-link-to-BinaryFormat.patch"
 	popd
 
 	cmake_src_prepare
