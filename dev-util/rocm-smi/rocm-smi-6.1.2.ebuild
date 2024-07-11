@@ -29,7 +29,7 @@ LICENSE="
 	NCSA-AMD
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild-revision-3"
+IUSE=" ebuild-revision-5"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -42,6 +42,7 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.7.1-hardcoded-paths.patch"
 )
 
 pkg_setup() {

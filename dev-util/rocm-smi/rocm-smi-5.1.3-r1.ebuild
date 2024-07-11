@@ -29,7 +29,7 @@ LICENSE="
 	NCSA-AMD
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild-revision-3"
+IUSE=" ebuild-revision-5"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -43,6 +43,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-gcc12-memcpy.patch"
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
