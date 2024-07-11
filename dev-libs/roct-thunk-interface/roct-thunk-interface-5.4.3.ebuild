@@ -31,7 +31,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
-ebuild-revision-4
+ebuild-revision-5
 "
 RDEPEND="
 	!dev-libs/roct-thunk-interface:0
@@ -48,6 +48,7 @@ BDEPEND="
 	dev-util/patchelf
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -59,12 +60,12 @@ src_prepare() {
 	sed \
 		-e "s:get_version ( \"1.0.0\" ):get_version ( \"${PV}\" ):" \
 		-i \
-		CMakeLists.txt \
+		"CMakeLists.txt" \
 		|| die
 	sed \
 		-e "s:ubuntu:gentoo:" \
 		-i \
-		CMakeLists.txt \
+		"CMakeLists.txt" \
 		|| die
 	cmake_src_prepare
 	rocm_src_prepare
