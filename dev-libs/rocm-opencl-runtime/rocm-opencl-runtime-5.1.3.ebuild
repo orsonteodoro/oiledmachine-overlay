@@ -32,7 +32,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug test
-ebuild-revision-2
+ebuild-revision-3
 "
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
@@ -82,6 +82,11 @@ src_prepare() {
 
 	eapply ${OCL_PATCHES[@]}
 	cmake_src_prepare
+
+	pushd "${WORKDIR}" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
+	popd >/dev/null 2>&1 || die
+
 	rocm_src_prepare
 
 	# remove trailing CR or it won't work
