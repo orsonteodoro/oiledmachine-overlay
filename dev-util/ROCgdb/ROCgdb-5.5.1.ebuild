@@ -31,7 +31,7 @@ LICENSE="
 	LGPL-2.1+
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-5"
+IUSE="ebuild-revision-6"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -62,6 +62,7 @@ BDEPEND="
 	dev-build/make
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 )
 DOCS=( "README-ROCM.md" )
 
@@ -76,7 +77,8 @@ src_prepare() {
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
-		"${S}/gdb/configure" # placeholder
+		"${S}/gdb/configure"
+		"${S}/gdb/configure.ac"
 	)
 	rocm_src_prepare
 }
