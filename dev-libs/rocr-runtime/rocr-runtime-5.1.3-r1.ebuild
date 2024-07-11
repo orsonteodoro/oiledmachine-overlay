@@ -28,7 +28,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	debug
-	ebuild-revision-8
+	ebuild-revision-9
 "
 CDEPEND="
 	dev-libs/elfutils
@@ -59,6 +59,9 @@ pkg_setup() {
 }
 
 src_prepare() {
+	pushd "${WORKDIR}/ROCR-Runtime-rocm-${PV}" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
+	popd >/dev/null 2>&1 || die
 	cmake_src_prepare
 	rocm_src_prepare
 }
