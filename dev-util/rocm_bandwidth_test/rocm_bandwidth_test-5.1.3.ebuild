@@ -19,7 +19,7 @@ DESCRIPTION="Bandwidth test for ROCm"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_bandwidth_test"
 LICENSE="NCSA-AMD"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" ebuild-revision-6"
+IUSE+=" ebuild-revision-7"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
@@ -30,6 +30,7 @@ BDEPEND="
 	>=dev-build/cmake-3.6.3
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
