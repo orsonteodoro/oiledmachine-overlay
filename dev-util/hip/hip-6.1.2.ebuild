@@ -35,7 +35,7 @@ DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-26"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-27"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -168,7 +168,7 @@ src_prepare() {
 		"packaging/CMakeLists.txt" \
 		|| die
 
-	pushd "${HIPCC_S}" || die
+	pushd "${HIPCC_S}" >/dev/null 2>&1 || die
 		eapply "${HIPCC_PATCHES[@]}"
 		cp \
 			$(prefixify_ro "${FILESDIR}/hipvars-5.3.3.pm") \
@@ -181,9 +181,9 @@ src_prepare() {
 			-i \
 			"${HIPCC_S}/bin/hipvars.pm" \
 			|| die
-	popd || die
+	popd >/dev/null 2>&1 || die
 
-	pushd "${HIP_S}" || die
+	pushd "${HIP_S}" >/dev/null 2>&1 || die
 		#eapply "${HIP_PATCHES[@]}"
 		hprefixify $(grep \
 			-rl \
@@ -191,18 +191,18 @@ src_prepare() {
 			--exclude="hipcc.pl" \
 			"/usr" \
 			"${HIP_S}")
-	popd || die
+	popd >/dev/null 2>&1 || die
 
 	if use rocm ; then
-		pushd "${OCL_S}" || die
+		pushd "${OCL_S}" >/dev/null 2>&1 || die
 			#eapply "${OCL_PATCHES[@]}"
-		popd || die
-		pushd "${ROCCLR_S}" || die
+		popd >/dev/null 2>&1 || die
+		pushd "${ROCCLR_S}" >/dev/null 2>&1 || die
 			#eapply "${ROCCLR_PATCHES[@]}"
-		popd || die
-		pushd "${CLR_S}" || die
+		popd >/dev/null 2>&1 || die
+		pushd "${CLR_S}" >/dev/null 2>&1 || die
 			eapply "${CLR_PATCHES[@]}"
-		popd || die
+		popd >/dev/null 2>&1 || die
 	fi
 
 	# Speed up symbol replacmenet for @...@ by reducing the search space
@@ -247,6 +247,34 @@ src_prepare() {
 			"${_prefix}/src/hiprtc/hiprtcInternal.hpp"
 		)
 	done
+
+	# grep -F -r -e "+++" files/*6.1.2*hardcode* | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
+	PATCH_PATHS+=(
+		"${WORKDIR}/clr-rocm-6.1.2/CMakeLists.txt"
+		"${WORKDIR}/clr-rocm-6.1.2/hipamd/CMakeLists.txt"
+		"${WORKDIR}/clr-rocm-6.1.2/opencl/CMakeLists.txt"
+		"${WORKDIR}/clr-rocm-6.1.2/rocclr/cmake/ROCclrHSA.cmake"
+		"${WORKDIR}/clr-rocm-6.1.2/rocclr/cmake/ROCclrLC.cmake"
+		"${WORKDIR}/clr-rocm-6.1.2/rocclr/elf/test/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.1.2/clang/tools/amdgpu-arch/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.1.2/compiler-rt/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.1.2/libc/cmake/modules/prepare_libc_gpu_build.cmake"
+		"${WORKDIR}/llvm-project-rocm-6.1.2/libc/src/math/gpu/vendor/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.1.2/libc/utils/gpu/loader/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.1.2/mlir/lib/Dialect/GPU/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.1.2/mlir/lib/ExecutionEngine/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.1.2/openmp/libomptarget/DeviceRTL/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.1.2/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.1.2/openmp/libomptarget/hostexec/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.1.2/openmp/libomptarget/hostrpc/services/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.1.2/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.1.2/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.1.2/openmp/libomptarget/src/CMakeLists.txt"
+	)
+
+	pushd "${WORKDIR}" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
+	popd >/dev/null 2>&1 || die
 
 	rocm_src_prepare
 }
@@ -303,38 +331,38 @@ src_configure() {
 		)
 	fi
 
-	pushd "${ROCCLR_S}" || die
+	pushd "${ROCCLR_S}" >/dev/null 2>&1 || die
 		CMAKE_USE_DIR="${ROCCLR_S}" \
 		BUILD_DIR="${ROCCLR_S}_build" \
 		cmake_src_configure
-	popd
+	popd >/dev/null 2>&1 || die
 
 	cmake_src_configure
 
-	pushd "${HIPCC_S}" || die
+	pushd "${HIPCC_S}" >/dev/null 2>&1 || die
 		CMAKE_USE_DIR="${HIPCC_S}" \
 		BUILD_DIR="${HIPCC_S}_build" \
 		cmake_src_configure
-	popd
+	popd >/dev/null 2>&1 || die
 }
 
 src_compile() {
-	pushd "${ROCCLR_S}" || die
+	pushd "${ROCCLR_S}" >/dev/null 2>&1 || die
 		CMAKE_USE_DIR="${ROCCLR_S}" \
 		BUILD_DIR="${ROCCLR_S}_build" \
 		cmake_src_compile
-	popd
+	popd >/dev/null 2>&1 || die
 
 	HIP_PATH="${HIP_S}" \
 	docs_compile
 	cmake_src_compile
 
 
-	pushd "${HIPCC_S}_build" || die
+	pushd "${HIPCC_S}_build" >/dev/null 2>&1 || die
 		CMAKE_USE_DIR="${HIPCC_S}" \
 		BUILD_DIR="${HIPCC_S}_build" \
 		cmake_src_compile
-	popd
+	popd >/dev/null 2>&1 || die
 }
 
 src_install() {
@@ -343,11 +371,11 @@ src_install() {
 
 	cmake_src_install
 
-	pushd "${HIPCC_S}_build" || die
+	pushd "${HIPCC_S}_build" >/dev/null 2>&1 || die
 		CMAKE_USE_DIR="${HIPCC_S}" \
 		BUILD_DIR="${HIPCC_S}_build" \
 		cmake_src_install
-	popd
+	popd >/dev/null 2>&1 || die
 
 	rm "${ED}${EROCM_PATH}/include/hip/hcc_detail" || die
 
