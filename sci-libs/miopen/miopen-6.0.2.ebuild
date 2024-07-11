@@ -116,7 +116,6 @@ RDEPEND="
 	opencl? (
 		sys-devel/clang
 		virtual/opencl
-		=sci-libs/miopengemm-5.5*:0/5.5
 	)
 	rocm? (
 		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
