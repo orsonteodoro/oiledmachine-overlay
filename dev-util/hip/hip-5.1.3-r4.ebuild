@@ -160,6 +160,7 @@ ewarn "The 5.1.x series may require a compiler switch to gcc:12"
 }
 
 src_prepare() {
+	cmake_src_prepare
 	eapply "${HIPAMD_PATCHES[@]}"
 	use profile && eapply "${WORKDIR}/${P}-update-header.patch"
 
@@ -231,7 +232,6 @@ src_configure() {
 	filter-flags '-fuse-ld=*'
 	append-flags -fuse-ld=bfd
 	strip-unsupported-flags
-	cmake_src_prepare
 	use debug && CMAKE_BUILD_TYPE="Debug"
 
 	# TODO: Currently the distro configuration is to build.
