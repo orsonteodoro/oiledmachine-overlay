@@ -370,6 +370,7 @@ src_configure() {
 	addpredict /dev/kfd
 	export CC="${CHOST}-gcc-12"
 	export CXX="${CHOST}-g++-12"
+	export CPP="${CXX} -E"
 	filter-flags "-fuse-ld=*"
 	strip-unsupported-flags
 	replace-flags '-O0' '-O1'

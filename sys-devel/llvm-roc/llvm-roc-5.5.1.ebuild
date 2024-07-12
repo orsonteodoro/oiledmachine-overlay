@@ -115,12 +115,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-ewarn
-ewarn "You may need to switch to GCC 12.  If the build fails, do"
-ewarn
-ewarn "eselect gcc set <CHOST>-12"
-ewarn "source /etc/profile"
-ewarn
 	rocm_pkg_setup
 	uopts_setup
 	if use epgo || use ebolt ; then
@@ -175,14 +169,10 @@ src_prepare() {
 }
 
 _src_configure_compiler() {
-	PGO_TOOLCHAIN="${PGO_TOOLCHAIN:-gcc}"
-	if [[ "${PGO_TOOLCHAIN}" == "clang" ]] ; then
-		export CC="${EROCM_PATH}/bin/clang"
-		export CXX="${EROCM_PATH}/bin/clang++"
-	else
-		export CC="${CHOST}-gcc-12"
-		export CXX="${CHOST}-g++-12"
-	fi
+	PGO_TOOLCHAIN="gcc"
+	export CC="${CHOST}-gcc-12"
+	export CXX="${CHOST}-g++-12"
+	export CPP="${CXX} -E"
 }
 
 src_configure() {
