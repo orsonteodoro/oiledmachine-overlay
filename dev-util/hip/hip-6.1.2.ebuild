@@ -287,7 +287,6 @@ src_configure() {
 	filter-flags '-fuse-ld=*'
 	append-flags -fuse-ld=bfd
 	strip-unsupported-flags
-	cmake_src_prepare
 	use debug && CMAKE_BUILD_TYPE="Debug"
 
 	# TODO: Currently the distro configuration is to build.
