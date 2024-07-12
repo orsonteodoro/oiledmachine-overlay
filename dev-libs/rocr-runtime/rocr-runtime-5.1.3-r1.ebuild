@@ -28,7 +28,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	debug
-	ebuild-revision-10
+	ebuild-revision-11
 "
 CDEPEND="
 	dev-libs/elfutils
@@ -72,7 +72,7 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DINCLUDE_PATH_COMPATIBILITY=OFF
 	)
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_install() {
