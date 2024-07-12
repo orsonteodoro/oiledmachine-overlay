@@ -30,7 +30,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-7"
+IUSE="test ebuild-revision-8"
 RDEPEND="
 	!dev-libs/rocm-device-libs:0
 	sys-devel/llvm-roc:=
@@ -64,6 +64,7 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DCMAKE_INSTALL_LIBDIR=$(rocm_get_libdir)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DLLVM_DIR="${ESYSROOT}${EROCM_LLVM_PATH}"
 	)
