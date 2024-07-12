@@ -160,9 +160,6 @@ ewarn "The 5.1.x series may require a compiler switch to gcc:12"
 }
 
 src_prepare() {
-	export CC="${CHOST}-gcc-12"
-	export CXX="${CHOST}-g++-12"
-	export CPP="${CXX} -E"
 	cmake_src_prepare
 	eapply "${HIPAMD_PATCHES[@]}"
 	use profile && eapply "${WORKDIR}/${P}-update-header.patch"
@@ -229,6 +226,9 @@ src_prepare() {
 }
 
 src_configure() {
+	export CC="${CHOST}-gcc-12"
+	export CXX="${CHOST}-g++-12"
+	export CPP="${CXX} -E"
 	filter-flags '-fuse-ld=*'
 	append-flags -fuse-ld=bfd
 	strip-unsupported-flags
