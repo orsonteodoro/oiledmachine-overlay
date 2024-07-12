@@ -23,7 +23,7 @@ https://github.com/ROCmSoftwarePlatform/hipfort
 "
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="debug ebuild-revision-7"
+IUSE="debug ebuild-revision-8"
 RDEPEND="
 	!dev-util/hipfort:0
 	|| (
@@ -60,11 +60,11 @@ src_prepare() {
 }
 
 src_configure() {
-        local mycmakeargs=(
-                -DCMAKE_BUILD_TYPE=$(usex debug "DEBUG" "RELEASE")
+	local mycmakeargs=(
+		-DCMAKE_BUILD_TYPE=$(usex debug "DEBUG" "RELEASE")
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
-        )
-        cmake_src_configure
+	)
+	rocm_src_configure
 }
 
 src_install() {
