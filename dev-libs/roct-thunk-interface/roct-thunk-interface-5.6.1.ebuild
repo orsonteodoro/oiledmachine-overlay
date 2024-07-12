@@ -31,7 +31,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
-ebuild-revision-5
+ebuild-revision-6
 "
 RDEPEND="
 	!dev-libs/roct-thunk-interface:0
@@ -73,6 +73,7 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DCMAKE_INSTALL_LIBDIR=$(rocm_get_libdir)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCPACK_PACKAGING_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	)
