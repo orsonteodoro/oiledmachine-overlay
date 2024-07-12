@@ -31,7 +31,10 @@ https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/rocm-${PV}.tar.
 https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
 	-> rocclr-${PV}.tar.gz
 	)
+https://github.com/ROCm/ROCclr/commit/197ea6f76f34e0b3c8ab46d96c2fa5014e467e37.patch
+	-> rocclr-197ea6f.patch
 "
+# 197ea6f - SWDEV-350289 - Fix build warnings due to file re-org
 
 DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
@@ -112,6 +115,7 @@ BDEPEND="
 "
 CLR_PATCHES=(
 	"${FILESDIR}/rocclr-5.3.3-gcc13.patch"
+	"${DISTDIR}/rocclr-197ea6f.patch"
 )
 HIP_PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-fno-stack-protector.patch"
