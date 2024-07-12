@@ -104,6 +104,7 @@ REQUIRED_USE="
 RDEPEND="
 	!sys-devel/llvm-rocm:0
 	dev-libs/libxml2
+	sys-devel/llvm-roc-symlinks:${ROCM_SLOT}/${PV}
 	sys-libs/ncurses:=
 	sys-libs/zlib
 	virtual/cblas
