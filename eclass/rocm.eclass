@@ -666,6 +666,16 @@ rocm_src_configure() {
 	verify_libstdcxx
 
 	if [[ -n "${_CMAKE_ECLASS}" ]] ; then
+		if [[ "${ROCM_DEFAULT_LIBDIR:-lib}" == "lib" ]] ; then
+			mycmakeargs+=(
+				-DCMAKE_INSTALL_LIBDIR=$(rocm_get_libdir)
+			)
+		else
+			mycmakeargs+=(
+				-DCMAKE_INSTALL_LIBDIR="${ROCM_DEFAULT_LIBDIR}"
+			)
+		fi
+
 		if [[ "${CXX}" =~ "hipcc" || "${CXX}" =~ "clang++" ]] ; then
 			# For llvm-roc that is still in PGI phase
 			# Fixes:  ld.lld: error: undefined symbol: __gcov_indirect_call

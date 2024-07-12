@@ -28,7 +28,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	debug
-	ebuild-revision-9
+	ebuild-revision-10
 "
 CDEPEND="
 	dev-libs/elfutils

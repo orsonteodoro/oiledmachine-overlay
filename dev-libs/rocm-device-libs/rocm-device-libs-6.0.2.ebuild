@@ -60,7 +60,6 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_LIBDIR=$(rocm_get_libdir)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DLLVM_DIR="${ESYSROOT}${EROCM_LLVM_PATH}"
 	)
