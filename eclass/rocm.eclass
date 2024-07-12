@@ -622,7 +622,7 @@ verify_libstdcxx() {
 einfo
 einfo "libstdcxx used:"
 einfo
-printf " \e[32m*\e[0m %-30s%s\n" "dev-libs/hsa-runtime:${ROCM_SLOT}" "GCC ${_glibc_ver[${hsa_runtime_libstdcxx_ver}]} (libstdcxx version ${hsa_runtime_libstdcxx_ver})"
+printf " \e[32m*\e[0m %-30s%s\n" "dev-libs/rocr-runtime:${ROCM_SLOT}" "GCC ${_glibc_ver[${hsa_runtime_libstdcxx_ver}]} (libstdcxx version ${hsa_runtime_libstdcxx_ver})"
 printf " \e[32m*\e[0m %-30s%s\n" "sys-deve/gcc:${_glibc_ver[${libstdcxx_ver}]}" "GCC ${_glibc_ver[${libstdcxx_ver}]} (libstdcxx version ${libstdcxx_ver})"
 printf " \e[32m*\e[0m %-30s%s\n" "sys-devel/hip:${ROCM_SLOT}" "GCC ${_glibc_ver[${hip_libstdcxx_ver}]} (libstdcxx version ${hip_libstdcxx_ver})"
 einfo
@@ -636,6 +636,8 @@ eerror "  source /etc/profile"
 eerror
 eerror "Error 1"
 eerror
+eerror "Uninstall all dev-libs/rocr-runtime slots and rebuild with gcc 12."
+eerror
 		die
 	fi
 	if ver_test "${libstdcxx_ver}" -lt "${hip_libstdcxx_ver}" ; then
@@ -647,6 +649,8 @@ eerror "  eselect gcc set ${CHOST}-${built_gcc_slot}"
 eerror "  source /etc/profile"
 eerror
 eerror "Error 2"
+eerror
+eerror "Uninstall all dev-libs/rocr-runtime slots and rebuild with gcc 12."
 eerror
 		die
 	fi
