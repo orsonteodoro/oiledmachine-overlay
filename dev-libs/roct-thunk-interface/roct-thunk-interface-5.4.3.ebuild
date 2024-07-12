@@ -31,7 +31,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
-ebuild-revision-6
+ebuild-revision-7
 "
 RDEPEND="
 	!dev-libs/roct-thunk-interface:0
@@ -76,7 +76,7 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCPACK_PACKAGING_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	)
-	cmake_src_configure
+	rocm_src_configure
 }
 
 _fix_rpath() {
