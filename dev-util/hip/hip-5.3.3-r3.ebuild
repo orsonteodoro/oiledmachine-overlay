@@ -189,7 +189,28 @@ src_prepare() {
 	rocm_src_prepare
 }
 
+check_libstdcxx() {
+	local slot="${1}"
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot=${gcc_current_profile##*-}
+
+	local slot="12"
+	if ver_test "${gcc_current_profile_slot}" -ne "${slot}" ; then
+eerror
+eerror "You must switch to GCC ${slot}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${slot}"
+eerror "  source /etc/profile"
+eerror
+eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
+eerror "to the default immediately after this package has been merged."
+eerror
+		die
+	fi
+}
+
 src_configure() {
+	check_libstdcxx
 	export CC="${CHOST}-gcc-12"
 	export CXX="${CHOST}-g++-12"
 	export CPP="${CXX} -E"
