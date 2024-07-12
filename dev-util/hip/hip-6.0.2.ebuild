@@ -151,6 +151,9 @@ ewarn
 }
 
 src_prepare() {
+	export CC="${CHOST}-gcc-12"
+	export CXX="${CHOST}-g++-12"
+	export CPP="${CXX} -E"
 	cmake_src_prepare
 	eapply "${HIPAMD_PATCHES[@]}"
 	eapply_user
@@ -214,9 +217,6 @@ src_prepare() {
 }
 
 src_configure() {
-	export CC="${CHOST}-gcc-12"
-	export CXX="${CHOST}-g++-12"
-	export CPP="${CXX} -E"
 	filter-flags '-fuse-ld=*'
 	append-flags -fuse-ld=bfd
 	strip-unsupported-flags
