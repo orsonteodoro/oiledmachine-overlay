@@ -34,7 +34,7 @@ LICENSE="
 # BSD - src/util/hsa_rsrc_factory.cpp
 # Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-12"
+IUSE=" test ebuild-revision-13"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -108,7 +108,7 @@ src_configure() {
 	)
 	export CC="${HIP_CC:-clang}"
 	export CXX="${HIP_CXX:-clang++}"
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_install() {

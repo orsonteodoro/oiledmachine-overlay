@@ -31,7 +31,7 @@ LICENSE="
 "
 # BSD - src/util/hsa_rsrc_factory.cpp
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-12"
+IUSE=" test ebuild-revision-13"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -95,7 +95,7 @@ src_configure() {
 		-DPROF_API_HEADER_PATH="${ESYSROOT}${EROCM_PATH}/include/roctracer/ext"
 		-DUSE_PROF_API=1
 	)
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_install() {
