@@ -317,7 +317,7 @@ src_install() {
 		cmake_src_install
 	popd >/dev/null 2>&1 || die
 
-	rm "${ED}${EROCM_PATH}/include/hip/hcc_detail" || die
+#	rm "${ED}${EROCM_PATH}/include/hip/hcc_detail" || die
 
 	# Don't install .hipInfo and .hipVersion to bin/lib
 #	rm "${ED}${EROCM_PATH}/bin/.hipVersion" || die

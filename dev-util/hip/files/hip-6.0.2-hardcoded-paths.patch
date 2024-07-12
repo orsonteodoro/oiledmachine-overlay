@@ -1,6 +1,6 @@
-diff '--color=auto' -urp clr-rocm-6.0.2.orig/CMakeLists.txt clr-rocm-6.0.2/CMakeLists.txt
---- clr-rocm-6.0.2.orig/CMakeLists.txt	2024-01-04 19:16:33.000000000 -0800
-+++ clr-rocm-6.0.2/CMakeLists.txt	2024-07-10 21:39:43.095852480 -0700
+diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/CMakeLists.txt work/clr-rocm-6.0.2/CMakeLists.txt
+--- work.orig/clr-rocm-6.0.2/CMakeLists.txt	2024-01-04 19:16:33.000000000 -0800
++++ work/clr-rocm-6.0.2/CMakeLists.txt	2024-07-12 03:34:26.959765081 -0700
 @@ -43,7 +43,7 @@ endif()
  if(CLR_BUILD_HIP)
      # Set default HIPCC_BIN_DIR to /opt/rocm/bin
@@ -10,9 +10,9 @@ diff '--color=auto' -urp clr-rocm-6.0.2.orig/CMakeLists.txt clr-rocm-6.0.2/CMake
      endif()
      message(STATUS "HIPCC Binary Directory: ${HIPCC_BIN_DIR}")
  
-diff '--color=auto' -urp clr-rocm-6.0.2.orig/hipamd/CMakeLists.txt clr-rocm-6.0.2/hipamd/CMakeLists.txt
---- clr-rocm-6.0.2.orig/hipamd/CMakeLists.txt	2024-07-10 21:39:13.800285161 -0700
-+++ clr-rocm-6.0.2/hipamd/CMakeLists.txt	2024-07-10 21:40:18.567328644 -0700
+diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/hipamd/CMakeLists.txt work/clr-rocm-6.0.2/hipamd/CMakeLists.txt
+--- work.orig/clr-rocm-6.0.2/hipamd/CMakeLists.txt	2024-07-12 03:32:42.541266952 -0700
++++ work/clr-rocm-6.0.2/hipamd/CMakeLists.txt	2024-07-12 03:35:00.431283649 -0700
 @@ -229,7 +229,7 @@ add_to_config(_buildInfo HIP_RUNTIME)
  add_to_config(_buildInfo HIP_COMPILER)
  
@@ -22,9 +22,9 @@ diff '--color=auto' -urp clr-rocm-6.0.2.orig/hipamd/CMakeLists.txt clr-rocm-6.0.
  endif ()
  message (STATUS "ROCM Installation path(ROCM_PATH): ${ROCM_PATH}")
  
-diff '--color=auto' -urp clr-rocm-6.0.2.orig/opencl/CMakeLists.txt clr-rocm-6.0.2/opencl/CMakeLists.txt
---- clr-rocm-6.0.2.orig/opencl/CMakeLists.txt	2024-01-04 19:16:33.000000000 -0800
-+++ clr-rocm-6.0.2/opencl/CMakeLists.txt	2024-07-10 21:40:08.487477496 -0700
+diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/opencl/CMakeLists.txt work/clr-rocm-6.0.2/opencl/CMakeLists.txt
+--- work.orig/clr-rocm-6.0.2/opencl/CMakeLists.txt	2024-01-04 19:16:33.000000000 -0800
++++ work/clr-rocm-6.0.2/opencl/CMakeLists.txt	2024-07-12 03:34:49.979433982 -0700
 @@ -54,7 +54,7 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURC
  # Packaging steps
  #############################
@@ -43,9 +43,9 @@ diff '--color=auto' -urp clr-rocm-6.0.2.orig/opencl/CMakeLists.txt clr-rocm-6.0.
  #ROCM_PATH is needed to create symlink of libraries
  if(NOT DEFINED ROCM_PATH)
    string(REPLACE "/opencl" "" ROCM_PATH ${CPACK_PACKAGING_INSTALL_PREFIX})
-diff '--color=auto' -urp clr-rocm-6.0.2.orig/rocclr/cmake/ROCclrHSA.cmake clr-rocm-6.0.2/rocclr/cmake/ROCclrHSA.cmake
---- clr-rocm-6.0.2.orig/rocclr/cmake/ROCclrHSA.cmake	2024-01-04 19:16:33.000000000 -0800
-+++ clr-rocm-6.0.2/rocclr/cmake/ROCclrHSA.cmake	2024-07-10 21:40:00.327597997 -0700
+diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/rocclr/cmake/ROCclrHSA.cmake work/clr-rocm-6.0.2/rocclr/cmake/ROCclrHSA.cmake
+--- work.orig/clr-rocm-6.0.2/rocclr/cmake/ROCclrHSA.cmake	2024-01-04 19:16:33.000000000 -0800
++++ work/clr-rocm-6.0.2/rocclr/cmake/ROCclrHSA.cmake	2024-07-12 03:34:43.371529025 -0700
 @@ -20,7 +20,7 @@
  
  find_package(hsa-runtime64 1.11 REQUIRED CONFIG
@@ -55,9 +55,9 @@ diff '--color=auto' -urp clr-rocm-6.0.2.orig/rocclr/cmake/ROCclrHSA.cmake clr-ro
      ${ROCM_INSTALL_PATH}
    PATH_SUFFIXES
      cmake/hsa-runtime64
-diff '--color=auto' -urp clr-rocm-6.0.2.orig/rocclr/cmake/ROCclrLC.cmake clr-rocm-6.0.2/rocclr/cmake/ROCclrLC.cmake
---- clr-rocm-6.0.2.orig/rocclr/cmake/ROCclrLC.cmake	2024-01-04 19:16:33.000000000 -0800
-+++ clr-rocm-6.0.2/rocclr/cmake/ROCclrLC.cmake	2024-07-10 21:40:33.139113469 -0700
+diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/rocclr/cmake/ROCclrLC.cmake work/clr-rocm-6.0.2/rocclr/cmake/ROCclrLC.cmake
+--- work.orig/clr-rocm-6.0.2/rocclr/cmake/ROCclrLC.cmake	2024-01-04 19:16:33.000000000 -0800
++++ work/clr-rocm-6.0.2/rocclr/cmake/ROCclrLC.cmake	2024-07-12 03:34:39.515584487 -0700
 @@ -20,7 +20,7 @@
  
  find_package(amd_comgr REQUIRED CONFIG
@@ -67,9 +67,9 @@ diff '--color=auto' -urp clr-rocm-6.0.2.orig/rocclr/cmake/ROCclrLC.cmake clr-roc
      ${ROCM_INSTALL_PATH}
    PATH_SUFFIXES
      cmake/amd_comgr
-diff '--color=auto' -urp clr-rocm-6.0.2.orig/rocclr/elf/test/CMakeLists.txt clr-rocm-6.0.2/rocclr/elf/test/CMakeLists.txt
---- clr-rocm-6.0.2.orig/rocclr/elf/test/CMakeLists.txt	2024-01-04 19:16:33.000000000 -0800
-+++ clr-rocm-6.0.2/rocclr/elf/test/CMakeLists.txt	2024-07-10 21:39:53.271702199 -0700
+diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/rocclr/elf/test/CMakeLists.txt work/clr-rocm-6.0.2/rocclr/elf/test/CMakeLists.txt
+--- work.orig/clr-rocm-6.0.2/rocclr/elf/test/CMakeLists.txt	2024-01-04 19:16:33.000000000 -0800
++++ work/clr-rocm-6.0.2/rocclr/elf/test/CMakeLists.txt	2024-07-12 03:34:35.595640868 -0700
 @@ -26,14 +26,14 @@ cmake_minimum_required(VERSION 3.5.1)
  
  find_package(amd_comgr REQUIRED CONFIG
