@@ -1,0 +1,11 @@
+--- comgr.orig/src/comgr-env.h	2024-07-11 22:24:07.212352660 -0700
++++ comgr/src/comgr-env.h	2024-07-11 23:07:11.968037929 -0700
+@@ -37,7 +37,7 @@
+ #define COMGR_ENV_H
+ 
+ #include "llvm/ADT/StringRef.h"
+-#include "llvm/ADT/Optional.h"
++//#include "llvm/ADT/Optional.h"
+ 
+ namespace COMGR {
+ namespace env {

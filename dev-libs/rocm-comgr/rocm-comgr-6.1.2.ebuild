@@ -51,6 +51,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
 	"${FILESDIR}/${PN}-5.6.1-llvm-not-dylib-add-libs.patch"
 	"${FILESDIR}/${PN}-6.1.2-rpath.patch"
+	"${FILESDIR}/${PN}-6.1.2-disable-header.patch"
 )
 
 pkg_setup() {
@@ -76,6 +77,10 @@ src_prepare() {
 }
 
 src_configure() {
+	export COMGR="${S}/amd/comgr"
+	export DEVICE_LIBS="${S}/amd/device-libs"
+	export LLVM_PROJECT="${S}"
+
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test ON OFF)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
