@@ -40,7 +40,7 @@ DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-27"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-29"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -106,6 +106,7 @@ DEPEND="
 BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-build/cmake-3.16.8
+	sys-devel/gcc:12
 	test? (
 		rocm? (
 			~dev-util/rocminfo-${PV}:${ROCM_SLOT}
@@ -203,6 +204,13 @@ src_prepare() {
 }
 
 src_configure() {
+	export CC="${CHOST}-gcc-12"
+	export CXX="${CHOST}-g++-12"
+	export CPP="${CXX} -E"
+	filter-flags '-fuse-ld=*'
+	append-flags -fuse-ld=bfd
+	strip-unsupported-flags
+	cmake_src_prepare
 	use debug && CMAKE_BUILD_TYPE="Debug"
 
 	# TODO: Currently the distro configuration is to build.
@@ -251,12 +259,12 @@ src_configure() {
 		)
 	fi
 
-	cmake_src_configure
+	rocm_src_configure
 
 	pushd "${HIPCC_S}" >/dev/null 2>&1 || die
 		CMAKE_USE_DIR="${HIPCC_S}" \
 		BUILD_DIR="${HIPCC_S}_build" \
-		cmake_src_configure
+		rocm_src_configure
 	popd >/dev/null 2>&1 || die
 }
 
