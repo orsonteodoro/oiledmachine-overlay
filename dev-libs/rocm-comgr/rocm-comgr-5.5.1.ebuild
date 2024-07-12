@@ -26,7 +26,7 @@ DESCRIPTION="Radeon Open Compute Code Object Manager"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-8"
+IUSE="test ebuild-revision-10"
 RDEPEND="
 	!dev-libs/rocm-comgr:0
 	sys-devel/llvm-roc:=
@@ -75,7 +75,7 @@ src_configure() {
 		-DLLVM_DIR="${ESYSROOT}${EROCM_LLVM_PATH}"
 		-DLLVM_LINK_LLVM_DYLIB=OFF
 	)
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_install() {
