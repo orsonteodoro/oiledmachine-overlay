@@ -152,7 +152,6 @@ ewarn
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
-		-DCMAKE_INSTALL_LIBDIR="$(rocm_get_libdir)"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DUSE_CUDA=$(usex cuda ON OFF)
 #		-DVIRTUALENV_BIN_DIR="${BUILD_DIR}/venv/bin"
