@@ -194,6 +194,7 @@ check_libstdcxx() {
 	local gcc_current_profile=$(gcc-config -c)
 	local gcc_current_profile_slot=${gcc_current_profile##*-}
 
+	local slot="12"
 	if ver_test "${gcc_current_profile_slot}" -ne "${slot}" ; then
 eerror
 eerror "You must switch to GCC ${slot}.  Do"
