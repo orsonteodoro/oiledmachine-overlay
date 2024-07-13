@@ -17,6 +17,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+CMAKE_BUILD_TYPE="Debug"
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=17
 PYTHON_COMPAT=( "python3_"{10..11} )
@@ -65,6 +66,8 @@ BDEPEND="
 		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
 	')
 	>=dev-build/cmake-3.18.0
+	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+	~sys-devel/llvm-roc-symlinks-${PV}:${ROCM_SLOT}
 	test? (
 		sys-devel/gcc[sanitize]
 		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
@@ -89,13 +92,20 @@ src_prepare() {
 }
 
 src_configure() {
+	export CC="${CHOST}-clang-${ROCM_SLOT}"
+	export CXX="${CHOST}-clang++-${ROCM_SLOT}"
+	export CPP="${CXX} -E"
+	filter-flags '-fuse-ld=*'
+	filter-flags '-Wl,-fuse-ld=*'
+	# Fixes for libhsa-runtime64.so.1.12.0: undefined reference to `hsaKmtGetAMDGPUDeviceHandle'
+	append-ldflags -Wl,-fuse-ld=lld
+	strip-unsupported-flags
 	[[ -e "${ESYSROOT}/opt/rocm-${PV}/$(rocm_get_libdir)/hsa-amd-aqlprofile/librocprofv2_att.so" ]] \
 		|| die "Missing" # For e80f7cb
 	[[ -e "${ESYSROOT}/opt/rocm-${PV}/$(rocm_get_libdir)/libhsa-amd-aqlprofile64.so" ]] \
 		|| die "Missing" # For 071379b
 	append-ldflags -Wl,-rpath="${EPREFIX}/opt/rocm-${PV}/$(rocm_get_libdir)"
 
-	export CMAKE_BUILD_TYPE="debug"
 	export HIP_PLATFORM="amd"
 	local gpu_targets=$(get_amdgpu_flags \
 		| tr ";" " ")
@@ -114,8 +124,6 @@ src_configure() {
 		-DUSE_PROF_API=1
 		-DAQLPROFILE=ON
 	)
-	export CC="${HIP_CC:-clang}"
-	export CXX="${HIP_CXX:-clang++}"
 	rocm_src_configure
 }
 

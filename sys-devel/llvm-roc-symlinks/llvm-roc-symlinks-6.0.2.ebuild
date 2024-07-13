@@ -17,7 +17,7 @@ HOMEPAGE=""
 LICENSE="public-domain"
 RESTRICT="mirror"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-IUSE+="ebuild-revision-1"
+IUSE+="ebuild-revision-2"
 RDEPEND+="
 "
 DEPEND+="
@@ -46,6 +46,11 @@ src_install() {
 			dosym \
 				"/opt/rocm-${ROCM_VERSION}/llvm/bin/${src_name}" \
 				"/opt/rocm-${ROCM_VERSION}/llvm/bin/${dest_name}-${LLVM_SLOT}"
+		fi
+		if [[ "${dest_name}" =~ "clang" ]] ; then
+			dosym \
+				"/opt/rocm-${ROCM_VERSION}/llvm/bin/${src_name}" \
+				"/opt/rocm-${ROCM_VERSION}/llvm/bin/${CHOST}-${dest_name}-${LLVM_SLOT}"
 		fi
 		if [[ "${dest_name}" =~ "roc" ]] ; then
 			dosym \

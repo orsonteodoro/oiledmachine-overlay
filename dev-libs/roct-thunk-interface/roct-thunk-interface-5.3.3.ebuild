@@ -8,7 +8,7 @@ CONFIG_CHECK="~HSA_AMD ~HMM_MIRROR ~ZONE_DEVICE ~DRM_AMDGPU ~DRM_AMDGPU_USERPTR"
 LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake linux-info rocm
+inherit cmake flag-o-matic linux-info rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface/"
@@ -31,7 +31,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
-ebuild-revision-7
+ebuild-revision-8
 "
 RDEPEND="
 	!dev-libs/roct-thunk-interface:0
@@ -45,6 +45,7 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.6.3
 	>=x11-libs/libdrm-2.4.114[video_cards_amdgpu]
+	sys-devel/gcc:12
 	dev-util/patchelf
 "
 PATCHES=(
@@ -72,6 +73,12 @@ src_prepare() {
 }
 
 src_configure() {
+	export CC="${CHOST}-gcc-12"
+	export CXX="${CHOST}-g++-12"
+	export CPP="${CXX} -E"
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=bfd
+	strip-unsupported-flags
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCPACK_PACKAGING_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
