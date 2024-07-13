@@ -11,7 +11,7 @@ LLVM_SLOT=17 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake docs prefix python-any-r1 rocm
+inherit cmake docs flag-o-matic prefix python-any-r1 rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/clr-rocm-${PV}/hipamd"
@@ -34,6 +34,7 @@ https://github.com/ROCm-Developer-Tools/HIPCC/archive/refs/tags/rocm-${PV}.tar.g
 DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 LICENSE="MIT"
+RESTRICT="strip"
 SLOT="$(ver_cut 1-2)/${PV}"
 IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-29"
 REQUIRED_USE="
