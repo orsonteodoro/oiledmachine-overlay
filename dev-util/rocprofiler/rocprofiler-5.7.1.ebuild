@@ -43,7 +43,7 @@ LICENSE="
 # Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-13"
+IUSE=" test ebuild-revision-14"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -92,8 +92,8 @@ src_prepare() {
 }
 
 src_configure() {
-	export CC="${CHOST}-clang-${ROCM_SLOT}"
-	export CXX="${CHOST}-clang++-${ROCM_SLOT}"
+	export CC="${CHOST}-roc-${ROCM_SLOT}"
+	export CXX="${CHOST}-roc++-${ROCM_SLOT}"
 	export CPP="${CXX} -E"
 	filter-flags '-fuse-ld=*'
 	filter-flags '-Wl,-fuse-ld=*'
