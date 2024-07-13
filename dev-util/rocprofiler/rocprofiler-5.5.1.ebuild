@@ -58,6 +58,7 @@ BDEPEND="
 		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
 	')
 	>=dev-build/cmake-3.18.0
+	~dev-libs/ROCdbgapi-${PV}:${ROCM_SLOT}
 	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	~sys-devel/llvm-roc-symlinks-${PV}:${ROCM_SLOT}
 	test? (

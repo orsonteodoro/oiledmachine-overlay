@@ -45,6 +45,7 @@ RDEPEND="
 		dev-python/barectf[${PYTHON_USEDEP}]
 	')
 	!dev-util/rocprofiler:0
+	sys-apps/systemd
 	~dev-libs/hsa-amd-aqlprofile-${PV}:${ROCM_SLOT}
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
@@ -59,6 +60,7 @@ BDEPEND="
 		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
 	')
 	>=dev-build/cmake-3.18.0
+	~dev-libs/ROCdbgapi-${PV}:${ROCM_SLOT}
 	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	~sys-devel/llvm-roc-symlinks-${PV}:${ROCM_SLOT}
 	test? (
