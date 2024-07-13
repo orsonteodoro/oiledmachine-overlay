@@ -106,7 +106,7 @@ src_configure() {
 		|| die "Missing" # For e80f7cb
 	[[ -e "${ESYSROOT}/opt/rocm-${PV}/$(rocm_get_libdir)/libhsa-amd-aqlprofile64.so" ]] \
 		|| die "Missing" # For 071379b
-	append-libs -Wl,-rpath="${EPREFIX}/opt/rocm-${PV}/$(rocm_get_libdir)"
+	append-ldflags -Wl,-rpath="${EPREFIX}/opt/rocm-${PV}/$(rocm_get_libdir)"
 
 	export HIP_PLATFORM="amd"
 	local gpu_targets=$(get_amdgpu_flags \
