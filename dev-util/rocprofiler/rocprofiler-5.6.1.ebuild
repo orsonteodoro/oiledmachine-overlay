@@ -36,7 +36,7 @@ LICENSE="
 # Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-14"
+IUSE=" test ebuild-revision-15"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -91,7 +91,7 @@ src_configure() {
 	filter-flags '-fuse-ld=*'
 	filter-flags '-Wl,-fuse-ld=*'
 	# Fixes for libhsa-runtime64.so.1.12.0: undefined reference to `hsaKmtGetAMDGPUDeviceHandle'
-	append-ldflags -Wl,-fuse-ld=lld
+	append-ldflags -fuse-ld=lld
 	strip-unsupported-flags
 	[[ -e "${ESYSROOT}/opt/rocm-${PV}/$(rocm_get_libdir)/hsa-amd-aqlprofile/librocprofv2_att.so" ]] \
 		|| die "Missing" # For e80f7cb

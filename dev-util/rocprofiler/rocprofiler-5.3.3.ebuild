@@ -32,7 +32,7 @@ LICENSE="
 "
 # BSD - src/util/hsa_rsrc_factory.cpp
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-14"
+IUSE=" test ebuild-revision-15"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -84,7 +84,7 @@ src_configure() {
 	filter-flags '-fuse-ld=*'
 	filter-flags '-Wl,-fuse-ld=*'
 	# Fixes for libhsa-runtime64.so.1.12.0: undefined reference to `hsaKmtGetAMDGPUDeviceHandle'
-	append-ldflags -Wl,-fuse-ld=lld
+	append-ldflags -fuse-ld=lld
 	strip-unsupported-flags
 	[[ -e "${ESYSROOT}/opt/rocm-${PV}/$(rocm_get_libdir)/libhsa-amd-aqlprofile64.so" ]] \
 		|| die "Missing" # For 071379b
