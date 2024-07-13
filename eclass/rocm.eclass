@@ -605,11 +605,13 @@ verify_libstdcxx() {
 	local hip_libstdcxx_ver=$(strings "${EROCM_PATH}/$(rocm_get_libdir)/libamdhip64.so" \
 		| grep -E "GLIBCXX_[0-9]\.[0-9]\.[0-9]+" \
 		| sort -V \
+		| grep -E "^GLIBCXX" \
 		| tail -n 1 \
 		| cut -f 2 -d "_")
 	local hsa_runtime_libstdcxx_ver=$(strings "${EROCM_PATH}/$(rocm_get_libdir)/libhsa-runtime64.so" \
 		| grep -E "GLIBCXX_[0-9]\.[0-9]\.[0-9]+" \
 		| sort -V \
+		| grep -E "^GLIBCXX" \
 		| tail -n 1 \
 		| cut -f 2 -d "_")
 	local gcc_current_profile=$(gcc-config -c)
@@ -617,6 +619,7 @@ verify_libstdcxx() {
 	local libstdcxx_ver=$(strings "/usr/lib/gcc/${CHOST}/${gcc_current_profile_slot}/libstdc++.so" \
 		| grep -E "GLIBCXX_[0-9]\.[0-9]\.[0-9]+" \
 		| sort -V \
+		| grep -E "^GLIBCXX" \
 		| tail -n 1 \
 		| cut -f 2 -d "_")
 einfo
