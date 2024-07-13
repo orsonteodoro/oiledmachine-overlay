@@ -46,9 +46,10 @@ DEPEND="
 BDEPEND="
 	>=app-editors/vim-core-9.0.1378
 	>=dev-build/cmake-3.7
-	sys-devel/llvm-roc:=
+	sys-devel/gcc:12
 	virtual/pkgconfig
 	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+	sys-devel/llvm-roc:=
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-link-hsakmt.patch"
@@ -67,6 +68,13 @@ src_prepare() {
 }
 
 src_configure() {
+	export CC="${CHOST}-gcc-12"
+	export CXX="${CHOST}-g++-12"
+	export CPP="${CXX} -E"
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=bfd
+	strip-unsupported-flags
+
 	use debug || append-cxxflags "-DNDEBUG"
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"

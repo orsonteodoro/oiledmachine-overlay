@@ -7,7 +7,7 @@ CMAKE_BUILD_TYPE="Release"
 LLVM_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake rocm
+inherit cmake flag-o-matic rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCR-Runtime/"
@@ -47,8 +47,9 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.7
 	app-editors/vim-core
-	sys-devel/llvm-roc:=
+	sys-devel/gcc:12
 	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+	sys-devel/llvm-roc:=
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.7.1-link-hsakmt.patch"
@@ -67,6 +68,13 @@ src_prepare() {
 }
 
 src_configure() {
+	export CC="${CHOST}-gcc-12"
+	export CXX="${CHOST}-g++-12"
+	export CPP="${CXX} -E"
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=bfd
+	strip-unsupported-flags
+
 	use debug || append-cxxflags "-DNDEBUG"
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"

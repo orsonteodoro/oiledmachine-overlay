@@ -7,7 +7,7 @@ CMAKE_BUILD_TYPE="Release"
 LLVM_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.2.3/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake prefix rocm
+inherit cmake flag-o-matic prefix rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport/"
@@ -26,7 +26,7 @@ DESCRIPTION="Radeon Open Compute Code Object Manager"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-10"
+IUSE="test ebuild-revision-11"
 RDEPEND="
 	!dev-libs/rocm-comgr:0
 	sys-devel/llvm-roc:=
@@ -43,6 +43,7 @@ RESTRICT="
 "
 BDEPEND="
 	>=dev-build/cmake-3.13.4
+	sys-devel/gcc:12
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
@@ -65,6 +66,13 @@ src_prepare() {
 }
 
 src_configure() {
+	export CC="${CHOST}-gcc-12"
+	export CXX="${CHOST}-g++-12"
+	export CPP="${CXX} -E"
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=bfd
+	strip-unsupported-flags
+
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test ON OFF)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
