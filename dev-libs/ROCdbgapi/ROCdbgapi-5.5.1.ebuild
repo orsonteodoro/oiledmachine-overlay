@@ -19,7 +19,7 @@ DESCRIPTION="AMD Debugger API"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/ROCdbgapi"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild-revision-6"
+IUSE=" ebuild-revision-7"
 RDEPEND="
 	!dev-libs/ROCdbgapi:0
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
@@ -50,7 +50,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	)
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_install() {
