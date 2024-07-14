@@ -1,0 +1,25 @@
+diff '--color=auto' -urp rocprofiler-rocm-5.7.1.orig/CMakeLists.txt rocprofiler-rocm-5.7.1/CMakeLists.txt
+--- rocprofiler-rocm-5.7.1.orig/CMakeLists.txt	2024-07-13 20:02:40.312083029 -0700
++++ rocprofiler-rocm-5.7.1/CMakeLists.txt	2024-07-13 20:05:01.030266010 -0700
+@@ -160,12 +160,19 @@ endif()
+ # Build libraries
+ add_subdirectory(src)
+ 
++option(ROCPROFILER_BUILD_TESTS "Enable building the tests" OFF)
++option(ROCPROFILER_BUILD_SAMPLES "Enable building the code samples" OFF)
++
+ if(${LIBRARY_TYPE} STREQUAL SHARED)
++  if(ROCPROFILER_BUILD_SAMPLES)
+     # Build samples
+     add_subdirectory(samples)
++  endif()
+ 
++  if(ROCPROFILER_BUILD_TESTS)
+     # Build tests
+     add_subdirectory(tests-v2)
++  endif()
+ endif()
+ 
+ # Build Plugins
+Only in rocprofiler-rocm-5.7.1: CMakeLists.txt.orig
+Only in rocprofiler-rocm-5.7.1: CMakeLists.txt.rej

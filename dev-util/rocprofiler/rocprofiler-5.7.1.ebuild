@@ -43,7 +43,7 @@ LICENSE="
 # Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" plugins test ebuild-revision-15"
+IUSE=" plugins samples test ebuild-revision-15"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -58,6 +58,9 @@ RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	~dev-util/roctracer-${PV}:${ROCM_SLOT}
 	plugins? (
+		sys-apps/systemd
+	)
+	samples? (
 		sys-apps/systemd
 	)
 "
@@ -79,6 +82,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-5.7.1-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-5.7.1-optional-plugins.patch"
+	"${FILESDIR}/${PN}-5.7.1-optional-tests-and-samples.patch"
 )
 
 python_check_deps() {
@@ -128,6 +132,8 @@ src_configure() {
 		-DROCPROFILER_BUILD_PLUGIN_ATT=$(usex plugins)
 		-DROCPROFILER_BUILD_PLUGIN_CTF=$(usex plugins)
 		-DROCPROFILER_BUILD_PLUGIN_PERFETTO=$(usex plugins)
+		-DROCPROFILER_BUILD_SAMPLES=$(usex samples)
+		-DROCPROFILER_BUILD_TESTS=$(usex test)
 		-DUSE_PROF_API=1
 		-DAQLPROFILE=ON
 	)
