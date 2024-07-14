@@ -39,7 +39,7 @@ LICENSE="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug
-ebuild-revision-4
+ebuild-revision-5
 "
 RDEPEND="
 	sys-devel/llvm-roc:=
@@ -98,7 +98,7 @@ src_configure() {
 		-DROCM_VERSION="${PV}"
 		-DROC_DIR="${EROCM_PATH}"
 	)
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_install() {
