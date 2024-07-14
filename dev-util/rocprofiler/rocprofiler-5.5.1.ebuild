@@ -49,12 +49,6 @@ RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	~dev-util/roctracer-${PV}:${ROCM_SLOT}
-	plugins? (
-		sys-apps/systemd
-	)
-	samples? (
-		sys-apps/systemd
-	)
 "
 DEPEND="
 	${RDEPEND}
