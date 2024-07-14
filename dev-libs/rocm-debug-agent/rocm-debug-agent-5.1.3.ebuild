@@ -70,7 +70,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	)
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_install() {
