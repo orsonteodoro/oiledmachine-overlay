@@ -229,10 +229,12 @@ _rocm_set_globals_default() {
 		if [[ -n "${ROCM_VERSION}" ]] ; then
 			ROCM_CLANG_DEPEND="
 				~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+				sys-devel/llvm-roc:=
 			"
 		else
 			ROCM_CLANG_DEPEND="
 				sys-devel/llvm-roc:${!llvm_slot}
+				sys-devel/llvm-roc:=
 			"
 		fi
 	fi
