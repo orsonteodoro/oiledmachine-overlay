@@ -118,15 +118,9 @@ src_install() {
 		"${ED}/opt/rocm-${PV}/include/hipify" \
 		|| die
 	mv \
-		"${ED}/opt/rocm-${PV}/findcode.sh" \
-		"${ED}/opt/rocm-${PV}/finduncodep.sh" \
+		"${ED}/opt/rocm-${PV}/bin/findcode.sh" \
+		"${ED}/opt/rocm-${PV}/bin/finduncodep.sh" \
 		"${ED}/opt/rocm-${PV}/libexec/hipify" \
-		|| die
-	mv \
-		"${ED}/opt/rocm-${PV}/"*".sh" \
-		"${ED}/opt/rocm-${PV}/hipify-clang" \
-		"${ED}/opt/rocm-${PV}/hipify-perl" \
-		"${ED}/opt/rocm-${PV}/bin" \
 		|| die
 }
 
