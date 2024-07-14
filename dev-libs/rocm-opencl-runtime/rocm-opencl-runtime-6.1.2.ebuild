@@ -38,7 +38,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug test
-ebuild-revision-3
+ebuild-revision-4
 "
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
@@ -123,9 +123,9 @@ src_configure() {
 	pushd "${ROCCLR_S}" || die
 		CMAKE_USE_DIR="${ROCCLR_S}" \
 		BUILD_DIR="${ROCCLR_S}_build" \
-		cmake_src_configure
+		rocm_src_configure
 	popd || die
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_compile() {
