@@ -93,6 +93,7 @@ esac
 if [[ ! ${_ROCM_ECLASS} ]]; then
 _ROCM_ECLASS=1
 
+inherit hip-versions
 inherit flag-o-matic toolchain-funcs
 
 BDEPEND+="
@@ -217,6 +218,16 @@ _rocm_set_globals_default() {
 	done
 	list="${list:1}"
 	ROCM_USEDEP="${list}"
+
+	local gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
+	ROCM_GCC_BDEPENDS="
+		sys-devel/gcc:${!gcc_slot}
+	"
+
+	local clang_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
+	ROCM_CLANG_BDEPENDS="
+		sys-devel/llvm-roc:${!clang_slot}
+	"
 }
 
 
@@ -1214,6 +1225,34 @@ rocm_get_libomp_path() {
 		fi
 	fi
 	echo "${libomp_path}"
+}
+
+# @FUNCTION: rocm_set_default_gcc
+# @DESCRIPTION:
+# Sets compiler defaults to gcc to avoid versioned C++ linking errors.
+rocm_set_default_gcc() {
+	local _gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
+	gcc_slot="${!_gcc_slot}"
+	export CC="${CHOST}-gcc-${gcc_slot}"
+	export CXX="${CHOST}-g++-${gcc_slot}"
+	export CPP="${CXX} -E"
+	strip-unsupported-flags
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=bfd
+}
+
+# @FUNCTION: rocm_set_default_clang
+# @DESCRIPTION:
+# Sets compiler defaults to clang to avoid primarily linker errors.
+rocm_set_default_clang() {
+	local _clang_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
+	clang_slot="${!_clang_slot}"
+	export CC="${CHOST}-clang-${clang_slot}"
+	export CXX="${CHOST}-clang++-${clang_slot}"
+	export CPP="${CXX} -E"
+	strip-unsupported-flags
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=lld
 }
 
 #Do it manually

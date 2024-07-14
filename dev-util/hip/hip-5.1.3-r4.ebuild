@@ -111,8 +111,8 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
+	${ROCM_GCC_DEPENDS}
 	>=dev-build/cmake-3.16.8
-	sys-devel/gcc:12
 	profile? (
 		$(python_gen_any_dep '
 			dev-python/CppHeaderParser[${PYTHON_USEDEP}]
@@ -226,12 +226,7 @@ src_prepare() {
 }
 
 src_configure() {
-	export CC="${CHOST}-gcc-12"
-	export CXX="${CHOST}-g++-12"
-	export CPP="${CXX} -E"
-	filter-flags '-fuse-ld=*'
-	append-flags -fuse-ld=bfd
-	strip-unsupported-flags
+	rocm_set_default_gcc
 	use debug && CMAKE_BUILD_TYPE="Debug"
 
 	# TODO: Currently the distro configuration is to build.
