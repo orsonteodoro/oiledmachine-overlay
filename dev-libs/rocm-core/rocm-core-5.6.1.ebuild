@@ -25,7 +25,7 @@ DESCRIPTION="rocm-core is a utility which can be used to get ROCm release versio
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm-core"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-3"
+IUSE="ebuild-revision-4"
 RDEPEND="
 	!dev-libs/rocm-core:0
 "
@@ -53,7 +53,7 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DROCM_VERSION="${PV}"
 	)
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_install() {
