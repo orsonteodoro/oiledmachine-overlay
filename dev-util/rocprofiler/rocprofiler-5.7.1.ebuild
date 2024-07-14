@@ -78,7 +78,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.7.1-hardcoded-paths.patch"
-	"${FILESDIR}/${PN}-5.5.1-optional-plugins.patch"
+	"${FILESDIR}/${PN}-5.7.1-optional-plugins.patch"
 )
 
 python_check_deps() {
