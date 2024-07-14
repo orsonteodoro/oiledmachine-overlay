@@ -6,6 +6,7 @@ EAPI=8
 CMAKE_BUILD_TYPE="Release"
 LLVM_SLOT=17 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.7.0/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic prefix rocm
 
@@ -28,10 +29,9 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test ebuild-revision-11"
 RDEPEND="
+	${ROCM_CLANG_DEPEND}
 	!dev-libs/rocm-comgr:0
-	sys-devel/llvm-roc:=
 	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
-	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -42,8 +42,8 @@ RESTRICT="
 	)
 "
 BDEPEND="
+	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-3.13.4
-	sys-devel/gcc:12
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
@@ -64,12 +64,7 @@ src_prepare() {
 }
 
 src_configure() {
-	export CC="${CHOST}-gcc-12"
-	export CXX="${CHOST}-g++-12"
-	export CPP="${CXX} -E"
-	filter-flags '-fuse-ld=*'
-	append-ldflags -fuse-ld=bfd
-	strip-unsupported-flags
+	rocm_set_default_gcc
 
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test ON OFF)

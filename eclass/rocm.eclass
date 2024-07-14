@@ -219,15 +219,23 @@ _rocm_set_globals_default() {
 	list="${list:1}"
 	ROCM_USEDEP="${list}"
 
-	local gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
-	ROCM_GCC_DEPEND="
-		sys-devel/gcc:${!gcc_slot}
-	"
+	if [[ -n "${ROCM_SLOT}" ]] ; then
+		local gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
+		ROCM_GCC_DEPEND="
+			sys-devel/gcc:${!gcc_slot}
+		"
 
-	local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
-	ROCM_CLANG_DEPEND="
-		sys-devel/llvm-roc:${!llvm_slot}
-	"
+		local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
+		if [[ -n "${ROCM_VERSION}" ]] ; then
+			ROCM_CLANG_DEPEND="
+				~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+			"
+		else
+			ROCM_CLANG_DEPEND="
+				sys-devel/llvm-roc:${!llvm_slot}
+			"
+		fi
+	fi
 }
 
 

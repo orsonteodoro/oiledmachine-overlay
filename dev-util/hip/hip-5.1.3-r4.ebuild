@@ -10,6 +10,7 @@ DOCS_DEPEND="media-gfx/graphviz"
 LLVM_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+ROCM_VERSION="${PV}"
 
 inherit cmake docs prefix python-any-r1 rocm
 
@@ -100,10 +101,9 @@ RDEPEND="
 		sys-process/numactl
 	)
 	rocm? (
-		sys-devel/llvm-roc:=
+		${ROCM_CLANG_DEPEND}
 		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
-		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	)
 "
 DEPEND="
