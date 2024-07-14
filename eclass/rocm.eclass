@@ -220,13 +220,13 @@ _rocm_set_globals_default() {
 	ROCM_USEDEP="${list}"
 
 	local gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
-	ROCM_GCC_BDEPENDS="
+	ROCM_GCC_DEPEND="
 		sys-devel/gcc:${!gcc_slot}
 	"
 
-	local clang_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
-	ROCM_CLANG_BDEPENDS="
-		sys-devel/llvm-roc:${!clang_slot}
+	local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
+	ROCM_CLANG_DEPEND="
+		sys-devel/llvm-roc:${!llvm_slot}
 	"
 }
 
@@ -1245,10 +1245,10 @@ rocm_set_default_gcc() {
 # @DESCRIPTION:
 # Sets compiler defaults to clang to avoid primarily linker errors.
 rocm_set_default_clang() {
-	local _clang_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
-	clang_slot="${!_clang_slot}"
-	export CC="${CHOST}-clang-${clang_slot}"
-	export CXX="${CHOST}-clang++-${clang_slot}"
+	local _llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
+	llvm_slot="${!_clang_slot}"
+	export CC="${CHOST}-clang-${llvm_slot}"
+	export CXX="${CHOST}-clang++-${llvm_slot}"
 	export CPP="${CXX} -E"
 	strip-unsupported-flags
 	filter-flags '-fuse-ld=*'
