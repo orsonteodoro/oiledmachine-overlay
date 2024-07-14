@@ -1,6 +1,6 @@
 diff '--color=auto' -urp rocprofiler-rocm-5.7.1.orig/CMakeLists.txt rocprofiler-rocm-5.7.1/CMakeLists.txt
---- rocprofiler-rocm-5.7.1.orig/CMakeLists.txt	2024-07-13 21:08:02.804036029 -0700
-+++ rocprofiler-rocm-5.7.1/CMakeLists.txt	2024-07-13 21:09:27.694840241 -0700
+--- rocprofiler-rocm-5.7.1.orig/CMakeLists.txt	2024-07-13 21:24:21.197741268 -0700
++++ rocprofiler-rocm-5.7.1/CMakeLists.txt	2024-07-13 21:25:01.521152578 -0700
 @@ -160,19 +160,28 @@ endif()
  # Build libraries
  add_subdirectory(src)
@@ -32,3 +32,19 @@ diff '--color=auto' -urp rocprofiler-rocm-5.7.1.orig/CMakeLists.txt rocprofiler-
  
  # Installation and packaging
  set(DEST_NAME ${ROCPROFILER_NAME})
+@@ -236,6 +245,7 @@ install(
+     DESTINATION ${CMAKE_INSTALL_LIBDIR}/${ROCPROFILER_NAME}
+     COMPONENT runtime)
+ 
++if(FALSE)
+ # librocprof-tool.so
+ install(
+     FILES ${PROJECT_BINARY_DIR}/test/librocprof-tool.so
+@@ -253,6 +263,7 @@ install(
+     PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ
+                 WORLD_EXECUTE
+     COMPONENT runtime)
++endif()
+ 
+ # File reorg backward compatibility for non ASAN packaging
+ if(NOT ENABLE_ASAN_PACKAGING)
