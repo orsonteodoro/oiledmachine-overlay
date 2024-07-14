@@ -101,7 +101,7 @@ src_configure() {
 
 src_test() {
 	check_amdgpu
-	LD_LIBRARY_PATH="${BUILD_DIR}" edob "test/UnitTests"
+	LD_LIBRARY_PATH="${BUILD_DIR}" edob "./test/UnitTests"
 }
 
 src_install() {
