@@ -1,0 +1,26 @@
+diff '--color=auto' -urp rocprofiler-rocm-5.5.1.orig/plugin/CMakeLists.txt rocprofiler-rocm-5.5.1/plugin/CMakeLists.txt
+--- rocprofiler-rocm-5.5.1.orig/plugin/CMakeLists.txt	2023-04-14 10:32:14.000000000 -0700
++++ rocprofiler-rocm-5.5.1/plugin/CMakeLists.txt	2024-07-13 18:31:32.313217655 -0700
+@@ -21,6 +21,19 @@
+ ################################################################################
+ 
+ add_subdirectory(file)
+-add_subdirectory(perfetto)
+-add_subdirectory(ctf)
+-add_subdirectory(att)
++
++foreach(_PLUGIN "ATT" "CTF" "PERFETTO")
++    option(ROCPROFILER_BUILD_PLUGIN_${_PLUGIN} "Enable building the ${_PLUGIN} plugin" ON)
++endforeach()
++
++if(ROCPROFILER_BUILD_PLUGIN_PERFETTO)
++    add_subdirectory(perfetto)
++endif()
++
++if(ROCPROFILER_BUILD_PLUGIN_CTF)
++    add_subdirectory(ctf)
++endif()
++
++if(ROCPROFILER_BUILD_PLUGIN_ATT)
++    add_subdirectory(att)
++endif()

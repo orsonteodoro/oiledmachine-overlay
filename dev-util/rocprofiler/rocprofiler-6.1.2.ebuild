@@ -52,12 +52,14 @@ RDEPEND="
 		dev-python/barectf[${PYTHON_USEDEP}]
 	')
 	!dev-util/rocprofiler:0
-	sys-apps/systemd
 	~dev-libs/hsa-amd-aqlprofile-${PV}:${ROCM_SLOT}
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	~dev-util/roctracer-${PV}:${ROCM_SLOT}
+	plugins? (
+		sys-apps/systemd
+	)
 "
 DEPEND="
 	${RDEPEND}

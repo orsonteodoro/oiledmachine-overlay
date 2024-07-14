@@ -43,7 +43,7 @@ LICENSE="
 # Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-15"
+IUSE=" plugins test ebuild-revision-15"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -52,12 +52,14 @@ RDEPEND="
 		dev-python/barectf[${PYTHON_USEDEP}]
 	')
 	!dev-util/rocprofiler:0
-	sys-apps/systemd
 	~dev-libs/hsa-amd-aqlprofile-${PV}:${ROCM_SLOT}
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	~dev-util/roctracer-${PV}:${ROCM_SLOT}
+	plugins? (
+		sys-apps/systemd
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -76,6 +78,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.7.1-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-5.5.1-optional-plugins.patch"
 )
 
 python_check_deps() {
@@ -122,6 +125,9 @@ src_configure() {
 		-DHIP_ROOT_DIR="${ESYSROOT}${EROCM_PATH}"
 		-DHIP_RUNTIME="rocclr"
 		-DPROF_API_HEADER_PATH="${ESYSROOT}${EROCM_PATH}/include/roctracer/ext"
+		-DROCPROFILER_BUILD_PLUGIN_ATT=$(usex plugins)
+		-DROCPROFILER_BUILD_PLUGIN_CTF=$(usex plugins)
+		-DROCPROFILER_BUILD_PLUGIN_PERFETTO=$(usex plugins)
 		-DUSE_PROF_API=1
 		-DAQLPROFILE=ON
 	)
