@@ -1,7 +1,7 @@
 diff '--color=auto' -urp rocprofiler-rocm-5.5.1.orig/CMakeLists.txt rocprofiler-rocm-5.5.1/CMakeLists.txt
---- rocprofiler-rocm-5.5.1.orig/CMakeLists.txt	2024-07-13 19:35:25.995018788 -0700
-+++ rocprofiler-rocm-5.5.1/CMakeLists.txt	2024-07-13 19:38:46.568138211 -0700
-@@ -160,12 +160,19 @@ endif()
+--- rocprofiler-rocm-5.5.1.orig/CMakeLists.txt	2024-07-13 21:04:52.506606970 -0700
++++ rocprofiler-rocm-5.5.1/CMakeLists.txt	2024-07-13 21:07:13.744699136 -0700
+@@ -160,19 +160,28 @@ endif()
  # Build libraries
  add_subdirectory(src)
  
@@ -25,3 +25,14 @@ diff '--color=auto' -urp rocprofiler-rocm-5.5.1.orig/CMakeLists.txt rocprofiler-
  endif()
  
  # Build Plugins
+ add_subdirectory(plugin)
+ 
+-# Build tests
+-add_subdirectory(${TEST_DIR} ${PROJECT_BINARY_DIR}/test)
++if(ROCPROFILER_BUILD_TESTS)
++  # Build tests
++  add_subdirectory(${TEST_DIR} ${PROJECT_BINARY_DIR}/test)
++endif()
+ 
+ # Installation and packaging
+ set(DEST_NAME ${ROCPROFILER_NAME})
