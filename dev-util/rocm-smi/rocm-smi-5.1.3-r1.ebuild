@@ -29,7 +29,7 @@ LICENSE="
 	NCSA-AMD
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild-revision-6"
+IUSE=" ebuild-revision-7"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -51,11 +51,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	sed \
-		-i \
-		-e "/LICENSE.txt/d" \
-		"CMakeLists.txt" \
-		|| die
 	cmake_src_prepare
 	rocm_src_prepare
 }
