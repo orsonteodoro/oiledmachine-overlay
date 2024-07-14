@@ -24,7 +24,7 @@ DESCRIPTION="HIPIFY: Convert CUDA to Portable C++ Code"
 HOMEPAGE="https://github.com/RadeonOpenCompute/HIPIFY"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-11"
+IUSE="test ebuild-revision-12"
 # https://github.com/ROCm-Developer-Tools/HIPIFY/tree/rocm-5.3.3#-hipify-clang-dependencies
 TEST_BDEPEND="
 	|| (
@@ -81,6 +81,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
+		-DHIPIFY_INSTALL_HEADERS=ON
 		-DUSE_SYSTEM_LLVM=OFF
 	)
 	cmake_src_configure
@@ -90,6 +91,49 @@ src_install() {
 	cmake_src_install
 	rocm_mv_docs
 	rocm_fix_rpath
+	# See tarball for layout.
+	dodir "/opt/rocm-${PV}/libexec/hipify"
+	dodir "/opt/rocm-${PV}/include/hipify"
+	dodir "/opt/rocm-${PV}/bin"
+	dodir "/opt/rocm-${PV}/hip/bin"
+	mv \
+		"${ED}/opt/rocm-${PV}/include/"*".h" \
+		"${ED}/opt/rocm-${PV}/include/cuda_wrappers" \
+		"${ED}/opt/rocm-${PV}/include/fuzzer" \
+		"${ED}/opt/rocm-${PV}/include/profile" \
+		"${ED}/opt/rocm-${PV}/include/sanitizer" \
+		"${ED}/opt/rocm-${PV}/include/xray" \
+		"${ED}/opt/rocm-${PV}/include/hipify" \
+		|| die
+	mv \
+		"${ED}/opt/rocm-${PV}/findcode.sh" \
+		"${ED}/opt/rocm-${PV}/finduncodep.sh" \
+		"${ED}/opt/rocm-${PV}/libexec/hipify" \
+		|| die
+	mv \
+		"${ED}/opt/rocm-${PV}/"*".sh" \
+		"${ED}/opt/rocm-${PV}/hipify-clang" \
+		"${ED}/opt/rocm-${PV}/hipify-perl" \
+		"${ED}/opt/rocm-${PV}/bin" \
+		|| die
+	local pairs=(
+		"libexec/hipify/findcode.sh:hip/bin/findcode.sh"
+		"libexec/hipify/finduncodep.sh:hip/bin/finduncodep.sh"
+		"bin/hipconvertinplace-perl.sh:hip/bin/hipconvertinplace-perl.sh"
+		"bin/hipconvertinplace.sh:hip/bin/hipconvertinplace.sh"
+		"bin/hipexamine-perl.sh:hip/bin/hipexamine-perl.sh"
+		"bin/hipexamine.sh:hip/bin/hipexamine.sh"
+		"bin/hipify-clang:hip/bin/hipify-clang"
+		"bin/hipify-perl:hip/bin/hipify-perl"
+	)
+	local pair
+	for pair in ${pairs[@]} ; do
+		local src="${pair%:*}"
+		local dest="${pair#*:}"
+		dosym \
+			"/opt/rocm-${PV}/${src}" \
+			"/opt/rocm-${PV}/${dest}"
+	done
 }
 
 # OILEDMACHINE-OVERLAY-META:  created-ebuild

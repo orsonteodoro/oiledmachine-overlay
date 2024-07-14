@@ -24,7 +24,7 @@ DESCRIPTION="HIPIFY: Convert CUDA to Portable C++ Code"
 HOMEPAGE="https://github.com/RadeonOpenCompute/HIPIFY"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-11"
+IUSE="test ebuild-revision-12"
 # https://github.com/ROCm-Developer-Tools/HIPIFY/tree/rocm-5.1.3#-hipify-clang-dependencies
 TEST_BDEPEND="
 	|| (
@@ -56,6 +56,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-llvm-dynlib-on.patch"
 	"${FILESDIR}/${PN}-5.1.3-install-headers-option.patch"
 	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
+#	"${FILESDIR}/${PN}-5.1.3-install-paths.patch"
 )
 
 pkg_setup() {
@@ -79,6 +80,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
+		-DHIPIFY_INSTALL_HEADERS=ON
 		-DUSE_SYSTEM_LLVM=OFF
 	)
 	cmake_src_configure
@@ -88,6 +90,18 @@ src_install() {
 	cmake_src_install
 	rocm_mv_docs
 	rocm_fix_rpath
+	# See tarball for layout.
+	dodir "/opt/rocm-${PV}/hip/bin"
+	mv \
+		"${ED}/opt/rocm-${PV}/include/" \
+		"${ED}/opt/rocm-${PV}/hip/bin/" \
+		|| die
+	mv \
+		"${ED}/opt/rocm-${PV}/"*".sh" \
+		"${ED}/opt/rocm-${PV}/hipify-clang" \
+		"${ED}/opt/rocm-${PV}/hipify-perl" \
+		"${ED}/opt/rocm-${PV}/hip/bin" \
+		|| die
 }
 
 # OILEDMACHINE-OVERLAY-META:  created-ebuild
