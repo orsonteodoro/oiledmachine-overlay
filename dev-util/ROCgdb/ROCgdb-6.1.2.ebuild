@@ -31,7 +31,7 @@ LICENSE="
 	LGPL-2.1+
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-6"
+IUSE="ebuild-revision-7"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -96,6 +96,7 @@ src_configure() {
 		--disable-sim
 		--disable-shared
 		--infodir="${EPREFIX}${EROCM_PATH}/share/info"
+		--libdir="${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)"
 		--localedir="${EPREFIX}${EROCM_PATH}/share/locale"
 		--mandir="${EPREFIX}${EROCM_PATH}/share/man"
 		--program-prefix=roc
