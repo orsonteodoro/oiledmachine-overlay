@@ -29,7 +29,7 @@ LICENSE="
 	NCSA-AMD
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild-revision-5"
+IUSE=" ebuild-revision-6"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -71,7 +71,7 @@ src_configure() {
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DPKG_VERSION_STR="${PV}"
 	)
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_install() {

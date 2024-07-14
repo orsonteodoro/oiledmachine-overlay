@@ -29,7 +29,7 @@ LICENSE="
 	NCSA-AMD
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild-revision-5"
+IUSE=" ebuild-revision-6"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -67,7 +67,7 @@ src_configure() {
 		-DCMAKE_DISABLE_FIND_PACKAGE_LATEX=ON
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	)
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_install() {
