@@ -56,6 +56,7 @@ DEPEND="
 	>=dev-util/opencl-headers-2023.02.06
 "
 BDEPEND="
+	${ROCM_GCC_DEPEND}
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		>=x11-apps/mesa-progs-8.5.0[X]
@@ -101,6 +102,7 @@ src_prepare() {
 }
 
 src_configure() {
+	rocm_set_default_gcc
 #
 # Reported upstream:
 #

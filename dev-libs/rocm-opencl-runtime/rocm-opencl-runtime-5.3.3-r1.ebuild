@@ -49,6 +49,7 @@ DEPEND="
 	>=dev-util/opencl-headers-2023.02.06
 "
 BDEPEND="
+	${ROCM_GCC_DEPEND}
 	>=media-libs/glew-2.2.0
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
@@ -85,6 +86,7 @@ src_prepare() {
 }
 
 src_configure() {
+	rocm_set_default_gcc
 #
 # Reported upstream:
 #
