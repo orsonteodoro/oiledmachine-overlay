@@ -39,21 +39,20 @@ LICENSE="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug
-ebuild-revision-5
+ebuild-revision-6
 "
 RDEPEND="
-	sys-devel/llvm-roc:=
-	sys-devel/llvm:${LLVM_SLOT}
+	${ROCM_CLANG_DEPEND}
 	virtual/libelf
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
-	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.16.8
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
@@ -77,6 +76,7 @@ src_prepare() {
 }
 
 src_configure() {
+	rocm_set_default_clang
 	if use debug ; then
 		CMAKE_BUILD_TYPE="Debug"
 	else
