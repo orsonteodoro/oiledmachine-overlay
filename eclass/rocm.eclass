@@ -160,6 +160,9 @@ _rocm_set_globals_default() {
 			~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
 			sys-devel/llvm-roc:=
 		"
+		HIP_CLANG_DEPEND="
+			${ROCM_CLANG_DEPEND}
+		"
 	fi
 
 	HIP_SUPPORT_CUDA="${HIP_SUPPORT_CUDA:-1}"
