@@ -102,6 +102,7 @@ DEPEND="
 	)
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.10.2
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
@@ -174,16 +175,6 @@ src_configure() {
 	)
 
 	if use cuda ; then
-		local s=11
-		strip-flags
-		filter-flags \
-			-pipe \
-			-Wl,-O1 \
-			-Wl,--as-needed \
-			-Wno-unknown-pragmas
-		if [[ "${HIP_CXX}" == "nvcc" ]] ; then
-			append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
-		fi
 		export CUDA_PATH="${ESYSROOT}/opt/cuda"
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
@@ -211,8 +202,7 @@ src_configure() {
 			-DHIP_RUNTIME="rocclr"
 		)
 	fi
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 	rocm_src_configure
 }
 

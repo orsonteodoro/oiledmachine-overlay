@@ -98,8 +98,8 @@ RDEPEND="
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	hip-cpu? (
+		${HIP_CLANG_DEPEND}
 		dev-libs/hip-cpu
-		sys-devel/clang:${LLVM_SLOT}
 	)
 "
 DEPEND="
@@ -112,6 +112,12 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.10.2
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	!hip-cpu? (
+		${HIPCC_DEPEND}
+	)
+	hip-cpu? (
+		${HIP_CLANG_DEPEND}
+	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.5.1-hardcoded-paths.patch"
@@ -183,16 +189,6 @@ src_configure() {
 	)
 
 	if use cuda ; then
-		local s=11
-		strip-flags
-		filter-flags \
-			-pipe \
-			-Wl,-O1 \
-			-Wl,--as-needed \
-			-Wno-unknown-pragmas
-		if [[ "${HIP_CXX}" == "nvcc" ]] ; then
-			append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
-		fi
 		export CUDA_PATH="${ESYSROOT}/opt/cuda"
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
@@ -218,7 +214,6 @@ src_configure() {
 			-DBUILD_HIPRAND=OFF
 			-Dhip_cpu_rt_DIR="${ESYSROOT}/usr/lib/hip-cpu/share/hip_cpu_rt/cmake"
 		)
-		HIP_CXX="${CHOST}-clang++-${LLVM_SLOT}"
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
@@ -229,8 +224,11 @@ src_configure() {
 			-DHIP_RUNTIME="rocclr"
 		)
 	fi
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	if use hip-cpu ; then
+		rocm_set_default_clang
+	else
+		rocm_set_default_hipcc
+	fi
 	rocm_src_configure
 }
 
