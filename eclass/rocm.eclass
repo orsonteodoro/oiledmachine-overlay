@@ -217,10 +217,17 @@ _rocm_set_globals_default() {
 				)
 			"
 		fi
-		if [[ "${HIP_SUPPORT_ROCM}" == "1" ]] ; then
+		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
+			local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
 			HIPCC_DEPEND+="
 				rocm? (
 					~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+					sys-devel/llvm-roc:=
+				)
+			"
+		elif [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
+			HIPCC_DEPEND+="
+				rocm? (
 					sys-devel/llvm-roc:=
 				)
 			"
@@ -236,10 +243,17 @@ _rocm_set_globals_default() {
 				)
 			"
 		fi
-		if [[ "${HIP_SUPPORT_ROCM}" == "1" ]] ; then
+		if [[ "${HIP_SUPPORT_ROCM}" == "1" -n "${ROCM_SLOT}" ]] ; then
+			local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
 			HIPCC_DEPEND+="
 				rocm? (
 					~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+					sys-devel/llvm-roc:=
+				)
+			"
+		elif [[ "${HIP_SUPPORT_ROCM}" == "1" -n "${ROCM_SLOT}" ]] ; then
+			HIPCC_DEPEND+="
+				rocm? (
 					sys-devel/llvm-roc:=
 				)
 			"
@@ -255,10 +269,17 @@ _rocm_set_globals_default() {
 				)
 			"
 		fi
-		if [[ "${HIP_SUPPORT_ROCM}" == "1" ]] ; then
+		if [[ "${HIP_SUPPORT_ROCM}" == "1" -n "${ROCM_SLOT}" ]] ; then
+			local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
 			HIPCC_DEPEND+="
 				!cuda? (
 					~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+					sys-devel/llvm-roc:=
+				)
+			"
+		elif [[ "${HIP_SUPPORT_ROCM}" == "1" -z "${ROCM_SLOT}" ]] ; then
+			HIPCC_DEPEND+="
+				!cuda? (
 					sys-devel/llvm-roc:=
 				)
 			"
@@ -272,9 +293,14 @@ _rocm_set_globals_default() {
 				dev-util/nvidia-cuda-toolkit:=
 			"
 		fi
-		if [[ "${HIP_SUPPORT_ROCM}" == "1" ]] ; then
+		if [[ "${HIP_SUPPORT_ROCM}" == "1" -n "${ROCM_SLOT}" ]] ; then
+			local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
 			HIPCC_DEPEND="
 				~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+				sys-devel/llvm-roc:=
+			"
+		elif [[ "${HIP_SUPPORT_ROCM}" == "1" -z "${ROCM_SLOT}" ]] ; then
+			HIPCC_DEPEND="
 				sys-devel/llvm-roc:=
 			"
 		fi
