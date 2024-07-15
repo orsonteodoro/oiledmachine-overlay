@@ -1406,11 +1406,19 @@ rocm_set_default_clang() {
 # @DESCRIPTION:
 # Sets compiler defaults for hipcc.
 rocm_set_default_hipcc() {
+	export CC="hipcc"
+	export CXX="hipcc"
 	if has cuda && use cuda ; then
+		unset CPP
 		# It should use nvcc.
 		strip-flags
+		filter-flags '-fuse-ld=*'
+		append-ldflags -fuse-ld=bfd
 	else
-		rocm_set_default_clang
+		export CPP="${CXX} -E"
+		strip-unsupported-flags
+		filter-flags '-fuse-ld=*'
+		append-ldflags -fuse-ld=lld
 	fi
 }
 

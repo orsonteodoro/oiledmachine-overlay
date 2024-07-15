@@ -71,32 +71,19 @@ REQUIRED_USE="
 	)
 "
 
-gen_rdepend_llvm() {
-	local s
-	for s in ${LLVM_COMPAT[@]} ; do
-		echo "
-			llvm_slot_${s}? (
-				sys-devel/clang:${s}
-				sys-devel/llvm:${s}
-				sys-libs/libomp:${s}
-			)
-		"
-	done
-}
 RDEPEND="
+	${HIPCC_DEPEND}
 	!sci-libs/rpp:0
 	>=dev-libs/boost-1.72:=
 	dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
-	sys-devel/llvm-roc:${ROCM_SLOT}
-	sys-devel/llvm-roc:=
-	sys-libs/llvm-roc-libomp:${ROCM_SLOT}
+	~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}
 	sys-libs/llvm-roc-libomp:=
 	opencl? (
 		virtual/opencl
 	)
 	rocm? (
 		dev-libs/rocm-device-libs:${ROCM_SLOT}
-		dev-util/hip:${ROCM_SLOT}[rocm]
+		~dev-util/hip-${ROCM_VERSION}:${ROCM_SLOT}[rocm]
 		dev-util/hip:=
 	)
 "
@@ -105,6 +92,7 @@ DEPEND="
 	>=dev-libs/half-1.12.0:=
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
 	test? (
 		>=media-libs/libjpeg-turbo-2.0.6.1
@@ -159,10 +147,7 @@ src_configure() {
 		-DROCM_PATH="${ESYSROOT}${EROCM_PATH}"
 	)
 
-#	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_SLOT}}"
-#	export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_SLOT}}"
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 
 ewarn
 ewarn "If the build fails, use either -O0 or the systemwide optimization level."
