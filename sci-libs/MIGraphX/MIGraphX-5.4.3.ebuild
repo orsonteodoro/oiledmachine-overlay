@@ -35,7 +35,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 -cpu -fpga -hip-rtc -mlir +rocm test
-ebuild-revision-3
+ebuild-revision-5
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -74,11 +74,11 @@ DEPEND="
 	${RDEPEND}
 	>=dev-cpp/blaze-3.8:=
 "
+# It uses hip-clang for GPU.
 BDEPEND="
+	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.5
-	sys-devel/llvm-roc:=
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
-	~sys-devel/llvm-roc-${PV}
 	mlir? (
 		~sci-libs/rocMLIR-${PV}:${ROCM_SLOT}
 	)
@@ -121,8 +121,7 @@ src_configure() {
 		)
 	fi
 
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 	rocm_src_configure
 }
 
