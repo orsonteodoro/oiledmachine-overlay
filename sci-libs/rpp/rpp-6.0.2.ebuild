@@ -55,7 +55,7 @@ IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
 cpu opencl rocm test
-ebuild-revision-9
+ebuild-revision-10
 "
 gen_rocm_required_use() {
 	local x
