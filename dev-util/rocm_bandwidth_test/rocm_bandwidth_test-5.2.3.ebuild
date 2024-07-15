@@ -22,7 +22,7 @@ DESCRIPTION="Bandwidth test for ROCm"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_bandwidth_test"
 LICENSE="NCSA-AMD"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" ebuild-revision-7"
+IUSE+=" ebuild-revision-8"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
@@ -30,6 +30,7 @@ DEPEND="
 	${DEPEND}
 "
 BDEPEND="
+	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.6.3
 "
 PATCHES=(
@@ -46,6 +47,7 @@ src_prepare() {
 }
 
 src_configure() {
+	rocm_set_default_clang
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	)
