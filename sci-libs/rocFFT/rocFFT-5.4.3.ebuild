@@ -128,6 +128,7 @@ DEPEND="
 	${PYTHON_DEPS}
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.16
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
@@ -194,8 +195,8 @@ get_cuda_arch() {
 }
 
 src_configure() {
-	addpredict /dev/kfd
-	addpredict /dev/dri/
+	addpredict "/dev/kfd"
+	addpredict "/dev/dri/"
 
 	# Fix errror for
 # local memory (23068672) exceeds limit (65536) in function '_Z17transpose_kernel2I15HIP_vector_typeIfLj2EE6planarIS1_E11interleavedIS1_ELm64ELm16ELb1ELi0ELi1ELb0ELb0ELb0EL12CallbackType1EEvT0_T1_PKT_PmSC_SC_PvSD_jSD_SD_'
@@ -215,16 +216,6 @@ src_configure() {
 	)
 
 	if use cuda ; then
-		local s=11
-		strip-flags
-		filter-flags \
-			-pipe \
-			-Wl,-O1 \
-			-Wl,--as-needed \
-			-Wno-unknown-pragmas
-		if [[ "${HIP_CXX}" == "nvcc" ]] ; then
-			append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
-		fi
 		export CUDA_PATH="${ESYSROOT}/opt/cuda"
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
@@ -244,8 +235,7 @@ src_configure() {
 			-DHIP_RUNTIME="rocclr"
 		)
 	fi
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 	rocm_src_configure
 }
 
