@@ -10,7 +10,6 @@ DOCS_DEPEND="media-gfx/graphviz"
 LLVM_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.6.1/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit cmake docs prefix python-any-r1 rocm
 

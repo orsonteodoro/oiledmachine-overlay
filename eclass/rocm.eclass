@@ -219,6 +219,10 @@ _rocm_set_globals_default() {
 	list="${list:1}"
 	ROCM_USEDEP="${list}"
 
+	if [[ -z "${ROCM_VERSION}" ]] ; then
+		export ROCM_VERSION="${PV}"
+	fi
+
 	if [[ -n "${ROCM_SLOT}" ]] ; then
 		local gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
 		ROCM_GCC_DEPEND="
@@ -226,17 +230,10 @@ _rocm_set_globals_default() {
 		"
 
 		local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
-		if [[ -n "${ROCM_VERSION}" ]] ; then
-			ROCM_CLANG_DEPEND="
-				~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
-				sys-devel/llvm-roc:=
-			"
-		else
-			ROCM_CLANG_DEPEND="
-				sys-devel/llvm-roc:${!llvm_slot}
-				sys-devel/llvm-roc:=
-			"
-		fi
+		ROCM_CLANG_DEPEND="
+			~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+			sys-devel/llvm-roc:=
+		"
 	fi
 }
 
@@ -267,10 +264,6 @@ eerror
 
 	if [[ "${ROCM_SLOT+x}" != "x" ]] ; then
 ewarn "QA:  ROCM_SLOT should be defined."
-	fi
-
-	if [[ -z "${ROCM_VERSION}" ]] ; then
-		export ROCM_VERSION="${PV}"
 	fi
 
 	if [[ "${ROCM_SLOT+x}" == "x" ]] ; then
