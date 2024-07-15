@@ -714,7 +714,7 @@ rocm_src_configure() {
 				# Prevent configure test issues
 				append-flags \
 					--rocm-path="${ESYSROOT}${EROCM_PATH}" \
-					--rocm-device-lib-path="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/amdgcn/bitcode"
+					--rocm-device-lib-path="${ESYSROOT}${EROCM_PATH}/amdgcn/bitcode"
 			fi
 			append-ldflags \
 				-L"${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)"
