@@ -28,7 +28,6 @@ MIOPENKERNELS_TARGETS_COMPAT=(
 	gfx1030
 )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 LLVM_SLOT=16
 inherit cmake flag-o-matic rocm
 
@@ -111,8 +110,7 @@ RDEPEND="
 		$(gen_miopenkernels_depends)
 	)
 	opencl? (
-		sys-devel/clang
-		virtual/opencl
+		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
 		=sci-libs/miopengemm-5.5*:0/5.5
 	)
 	rocm? (
@@ -128,6 +126,7 @@ DEPEND="
 	>=dev-cpp/nlohmann_json-3.10.4:=
 "
 BDEPEND="
+	${ROCM_CLANG_DEPEND}
 	sys-devel/binutils[gold,plugins]
 	virtual/pkgconfig
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
@@ -293,8 +292,7 @@ src_configure() {
 	# lld: error: undefined hidden symbol: free
 	replace-flags '-O0' '-O1'
 
-	export CC="clang"
-	export CXX="clang++"
+	rocm_set_default_clang
 	rocm_src_configure
 }
 
