@@ -113,8 +113,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	sys-devel/gcc:12
-	sys-devel/lld:${LLVM_SLOT}
+	${ROCM_GCC_DEPEND}
 "
 PATCHES=(
 )
@@ -176,9 +175,7 @@ src_prepare() {
 
 _src_configure_compiler() {
 	PGO_TOOLCHAIN="gcc"
-	export CC="${CHOST}-gcc-12"
-	export CXX="${CHOST}-g++-12"
-	export CPP="${CXX} -E"
+	rocm_set_default_gcc
 }
 
 src_configure() {
