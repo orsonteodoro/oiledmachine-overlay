@@ -39,7 +39,7 @@ LICENSE="MIT"
 # Not compatible with recent versions of pytest \
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="client openmp ebuild-revision-12"
+IUSE="client openmp ebuild-revision-13"
 REQUIRED_USE="
 	openmp
 	client? (
