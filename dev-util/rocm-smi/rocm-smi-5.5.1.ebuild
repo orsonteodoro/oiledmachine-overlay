@@ -29,7 +29,7 @@ LICENSE="
 	NCSA-AMD
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild-revision-7"
+IUSE=" ebuild-revision-8"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -38,6 +38,7 @@ RDEPEND="
 	sys-apps/hwdata
 "
 BDEPEND="
+	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-3.16.8
 	virtual/pkgconfig
 "
@@ -55,6 +56,7 @@ src_prepare() {
 }
 
 src_configure() {
+	rocm_set_default_gcc
 	local mycmakeargs=(
 		-DCMAKE_DISABLE_FIND_PACKAGE_LATEX=ON
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
