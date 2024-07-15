@@ -75,6 +75,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.13
 "
 _PATCHES=(
