@@ -126,7 +126,7 @@ DEPEND="
 	>=dev-cpp/nlohmann_json-3.10.4:=
 "
 BDEPEND="
-	${ROCM_CLANG_DEPEND}
+	${HIP_CLANG_DEPEND}
 	sys-devel/binutils[gold,plugins]
 	virtual/pkgconfig
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}

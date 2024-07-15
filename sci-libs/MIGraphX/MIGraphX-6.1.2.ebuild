@@ -82,9 +82,9 @@ DEPEND="
 	${RDEPEND}
 	>=dev-cpp/blaze-3.4:=
 "
-# It uses hip-clang for GPU.
+# It uses hip-clang (--cuda-host-only -x hip) for GPU.
 BDEPEND="
-	${ROCM_CLANG_DEPEND}
+	${HIP_CLANG_DEPEND}
 	>=dev-build/cmake-3.15
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	mlir? (
