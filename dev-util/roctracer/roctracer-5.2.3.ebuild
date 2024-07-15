@@ -32,10 +32,13 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-7"
+IUSE=" test ebuild-revision-8"
+CDEPEND="
+	${ROCM_CLANG_DEPEND}
+"
 RDEPEND="
+	${CDEPEND}
 	!dev-util/roctracer:0
-	sys-devel/gcc:12
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 "
@@ -43,12 +46,12 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${CDEPEND}
 	$(python_gen_any_dep '
 		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
 	>=dev-build/cmake-3.18.0
-	sys-devel/gcc:12
 "
 PATCHES=(
 #	"${FILESDIR}/${PN}-5.3.3-do-not-install-test-files.patch"
@@ -84,15 +87,9 @@ src_prepare() {
 }
 
 src_configure() {
-	addpredict /dev/kfd
+	addpredict "/dev/kfd"
 
-	export CC="${HIP_CC:-gcc-12}"
-	export CXX="${HIP_CXX:-g++-12}"
-
-	if [[ "${CXX}" =~ "hipcc" ]] ; then
-		append-flags \
-			-Wl,-fuse-ld=lld
-	fi
+	rocm_set_default_clang
 
 	hipconfig --help >/dev/null || die
 	export HIP_PLATFORM="amd"

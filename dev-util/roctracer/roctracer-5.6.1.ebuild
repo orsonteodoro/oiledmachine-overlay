@@ -28,11 +28,9 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-7"
+IUSE=" test ebuild-revision-8"
 CDEPEND="
-	sys-devel/clang:${LLVM_SLOT}
-	sys-devel/llvm:${LLVM_SLOT}
-	sys-devel/gcc:12
+	${ROCM_CLANG_DEPEND}
 "
 RDEPEND="
 	${CDEPEND}
@@ -80,8 +78,9 @@ src_prepare() {
 }
 
 src_configure() {
-	export CC="${HIP_CC:-gcc-12}"
-	export CXX="${HIP_CXX:-g++-12}"
+	addpredict "/dev/kfd"
+
+	rocm_set_default_clang
 
 	hipconfig --help >/dev/null || die
 	export HIP_PLATFORM="amd"

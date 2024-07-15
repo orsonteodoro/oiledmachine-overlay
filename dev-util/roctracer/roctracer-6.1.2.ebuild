@@ -26,11 +26,9 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-7"
+IUSE=" test ebuild-revision-8"
 CDEPEND="
-	sys-devel/clang:${LLVM_SLOT}
-	sys-devel/llvm:${LLVM_SLOT}
-	sys-devel/gcc:12
+	${ROCM_CLANG_DEPEND}
 "
 RDEPEND="
 	${CDEPEND}
@@ -49,7 +47,6 @@ BDEPEND="
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
 	>=dev-build/cmake-3.18.0
-	sys-devel/binutils[gold]
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.7.0-do-not-install-test-files.patch"
@@ -79,16 +76,9 @@ src_prepare() {
 }
 
 src_configure() {
-	export CC="${HIP_CC:-clang}"
-	export CXX="${HIP_CXX:-clang++}"
+	addpredict "/dev/kfd"
 
-	if [[ "${CXX}" =~ "hipcc" || "${CXX}" =~ "clang++" ]] ; then
-		append-ldflags \
-			-fuse-ld=gold
-	else
-		append-ldflags \
-			-fuse-ld=gold
-	fi
+	rocm_set_default_clang
 
 	hipconfig --help >/dev/null || die
 	export HIP_PLATFORM="amd"
