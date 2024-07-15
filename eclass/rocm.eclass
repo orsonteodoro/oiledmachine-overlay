@@ -145,6 +145,23 @@ BDEPEND+="
 # @DESCRIPTION:
 # Allow ebuilds to define IUSE, ROCM_REQUIRED_USE
 _rocm_set_globals_default() {
+	if [[ -z "${ROCM_VERSION}" ]] ; then
+		export ROCM_VERSION="${PV}"
+	fi
+
+	if [[ -n "${ROCM_SLOT}" ]] ; then
+		local gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
+		ROCM_GCC_DEPEND="
+			sys-devel/gcc:${!gcc_slot}
+		"
+
+		local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
+		ROCM_CLANG_DEPEND="
+			~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+			sys-devel/llvm-roc:=
+		"
+	fi
+
 	(( ${#AMDGPU_TARGETS_COMPAT[@]} == 0 )) && return
 	local allflags=(
 		"${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}"
@@ -218,23 +235,6 @@ _rocm_set_globals_default() {
 	done
 	list="${list:1}"
 	ROCM_USEDEP="${list}"
-
-	if [[ -z "${ROCM_VERSION}" ]] ; then
-		export ROCM_VERSION="${PV}"
-	fi
-
-	if [[ -n "${ROCM_SLOT}" ]] ; then
-		local gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
-		ROCM_GCC_DEPEND="
-			sys-devel/gcc:${!gcc_slot}
-		"
-
-		local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
-		ROCM_CLANG_DEPEND="
-			~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
-			sys-devel/llvm-roc:=
-		"
-	fi
 }
 
 
