@@ -49,7 +49,7 @@ LICENSE="MIT"
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
 IUSE+="
-test ebuild-revision-8
+test ebuild-revision-9
 "
 REQUIRED_USE="
 "
