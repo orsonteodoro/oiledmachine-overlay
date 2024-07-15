@@ -40,7 +40,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 +composable-kernel -cpu -fpga -hip-rtc -mlir +rocm test
-ebuild-revision-5
+ebuild-revision-6
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
