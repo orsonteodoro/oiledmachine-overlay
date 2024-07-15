@@ -52,6 +52,19 @@ pkg_setup() {
 }
 
 src_prepare() {
+	# Generated from:
+	#grep -F -r -e "+++" files | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
+	PATCH_PATHS=(
+		"${S}/doc/OCKL.md"
+		"${S}/ockl/inc/ockl.h"
+		"${S}/ockl/src/dm.cl"
+		"${S}/ockl/src/mtime.cl"
+		"${S}/ockl/src/wait.cl"
+		"${S}/src/dm.cl"
+		"${S}/src/wait.cl"
+		"${S}/test/constant_folding/CMakeLists.txt"
+		"${S}/test/constant_folding/RunConstantFoldTest.cmake"
+	)
 	cmake_src_prepare
 	rocm_src_prepare
 }
