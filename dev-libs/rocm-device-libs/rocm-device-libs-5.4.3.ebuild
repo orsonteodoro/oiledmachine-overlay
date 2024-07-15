@@ -40,6 +40,7 @@ DEPEND="
 "
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
+	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-3.13.4
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
@@ -61,7 +62,7 @@ src_prepare() {
 }
 
 src_configure() {
-	rocm_set_default_clang
+	rocm_set_default_gcc
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DLLVM_DIR="${ESYSROOT}${EROCM_LLVM_PATH}"
