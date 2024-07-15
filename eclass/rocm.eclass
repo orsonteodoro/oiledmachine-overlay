@@ -1249,7 +1249,7 @@ rocm_set_default_gcc() {
 # Sets compiler defaults to clang to avoid primarily linker errors.
 rocm_set_default_clang() {
 	local _llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
-	llvm_slot="${!_clang_slot}"
+	llvm_slot="${!_llvm_slot}"
 	export CC="${CHOST}-clang-${llvm_slot}"
 	export CXX="${CHOST}-clang++-${llvm_slot}"
 	export CPP="${CXX} -E"
