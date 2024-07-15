@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# FIXME:  Fix hardcoded hipvars.pm to amd in def-util/hip.  Ebuild should chose either amd or nvidia, not just amd.
+# FIXME:  Fix hardcoded hipvars.pm to clang in def-util/hip.  Ebuild should choose either clang or nvcc, not just clang.
+
 CMAKE_MAKEFILE_GENERATOR="emake"
 DOCS_BUILDER="doxygen"
 DOCS_CONFIG_NAME="doxy.cfg"

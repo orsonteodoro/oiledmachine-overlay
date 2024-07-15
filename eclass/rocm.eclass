@@ -162,6 +162,124 @@ _rocm_set_globals_default() {
 		"
 	fi
 
+	HIP_SUPPORT_CUDA="${HIP_SUPPORT_CUDA:-1}"
+	HIP_SUPPORT_ROCM="${HIP_SUPPORT_ROCM:-1}"
+	# Based on hipify and dev-util/nvidia-cuda-toolkit version availability
+	if [[ "${ROCM_SLOT}" == "6.1" ]] ; then
+		# https://github.com/ROCm/HIPIFY/blob/rocm-6.1.2/docs/hipify-clang.rst
+		HIP_CUDA_VERSIONS="11.8 12.3"
+	elif [[ "${ROCM_SLOT}" == "6.0" ]] ; then
+		# https://github.com/ROCm/HIPIFY/blob/rocm-6.0.2/docs/hipify-clang.md
+		HIP_CUDA_VERSIONS="11.8 "
+	elif [[ "${ROCM_SLOT}" == "5.7" ]] ; then
+		# https://github.com/ROCm/HIPIFY/blob/rocm-5.7.1/docs/hipify-clang.md
+		HIP_CUDA_VERSIONS="11.8"
+	elif [[ "${ROCM_SLOT}" == "5.6" ]] ; then
+		# https://github.com/ROCm/HIPIFY/blob/rocm-5.6.1/docs/hipify-clang.md
+		HIP_CUDA_VERSIONS="11.8"
+	elif [[ "${ROCM_SLOT}" == "5.5" ]] ; then
+		# https://github.com/ROCm/HIPIFY/blob/rocm-5.5.1/README.md
+		HIP_CUDA_VERSIONS="11.8"
+	elif [[ "${ROCM_SLOT}" == "5.4" ]] ; then
+		# https://github.com/ROCm/HIPIFY/blob/rocm-5.4.3/README.md
+		HIP_CUDA_VERSIONS="11.8"
+	elif [[ "${ROCM_SLOT}" == "5.3" ]] ; then
+		# https://github.com/ROCm/HIPIFY/blob/rocm-5.3.3/README.md
+		HIP_SUPPORT_CUDA="0"
+		HIP_CUDA_VERSIONS=""
+	elif [[ "${ROCM_SLOT}" == "5.2" ]] ; then
+		# https://github.com/ROCm/HIPIFY/blob/rocm-5.2.3/README.md
+		HIP_SUPPORT_CUDA="0"
+		HIP_CUDA_VERSIONS=""
+	elif [[ "${ROCM_SLOT}" == "5.1" ]] ; then
+		# https://github.com/ROCm/HIPIFY/blob/rocm-5.1.3/README.md
+		HIP_SUPPORT_CUDA="0"
+		HIP_CUDA_VERSIONS=""
+	else
+		# Same as latest (6.1.x)
+		HIP_CUDA_VERSIONS=${HIP_CUDA_VERSIONS:-"11.8 12.3"}
+	fi
+	local gen_hip_cuda_impl=""
+	local s
+	for s in ${HIP_CUDA_VERSIONS[@]} ; do
+		gen_hip_cuda_impl+="
+			=dev-util/nvidia-cuda-toolkit-${s}*
+		"
+	done
+	if has rocm ${IUSE_EFFECTIVE} && has cuda ${IUSE_EFFECTIVE} ; then
+		if [[ "${HIP_SUPPORT_CUDA}" == "1" ]] ; then
+			HIPCC_DEPEND+="
+				cuda? (
+					|| (
+						${gen_hip_cuda_impl[@]}
+					)
+					dev-util/nvidia-cuda-toolkit:=
+				)
+			"
+		fi
+		if [[ "${HIP_SUPPORT_ROCM}" == "1" ]] ; then
+			HIPCC_DEPEND+="
+				rocm? (
+					~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+					sys-devel/llvm-roc:=
+				)
+			"
+		fi
+	elif has rocm ${IUSE_EFFECTIVE} && ! has cuda ${IUSE_EFFECTIVE} ; then
+		if [[ "${HIP_SUPPORT_CUDA}" == "1" ]] ; then
+			HIPCC_DEPEND+="
+				!rocm? (
+					|| (
+						${gen_hip_cuda_impl[@]}
+					)
+					dev-util/nvidia-cuda-toolkit:=
+				)
+			"
+		fi
+		if [[ "${HIP_SUPPORT_ROCM}" == "1" ]] ; then
+			HIPCC_DEPEND+="
+				rocm? (
+					~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+					sys-devel/llvm-roc:=
+				)
+			"
+		fi
+	elif has cuda ${IUSE_EFFECTIVE} && ! has rocm ${IUSE_EFFECTIVE} ; then
+		if [[ "${HIP_SUPPORT_CUDA}" == "1" ]] ; then
+			HIPCC_DEPEND+="
+				cuda? (
+					|| (
+						${gen_hip_cuda_impl[@]}
+					)
+					dev-util/nvidia-cuda-toolkit:=
+				)
+			"
+		fi
+		if [[ "${HIP_SUPPORT_ROCM}" == "1" ]] ; then
+			HIPCC_DEPEND+="
+				!cuda? (
+					~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+					sys-devel/llvm-roc:=
+				)
+			"
+		fi
+	else
+		if [[ "${HIP_SUPPORT_CUDA}" == "1" ]] ; then
+			HIPCC_DEPEND="
+				|| (
+					${gen_hip_cuda_impl[@]}
+				)
+				dev-util/nvidia-cuda-toolkit:=
+			"
+		fi
+		if [[ "${HIP_SUPPORT_ROCM}" == "1" ]] ; then
+			HIPCC_DEPEND="
+				~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+				sys-devel/llvm-roc:=
+			"
+		fi
+	fi
+
 	(( ${#AMDGPU_TARGETS_COMPAT[@]} == 0 )) && return
 	local allflags=(
 		"${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}"
