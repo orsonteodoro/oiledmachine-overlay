@@ -41,7 +41,7 @@ RESTRICT="
 	)
 "
 BDEPEND="
-	${ROCM_GCC_DEPEND}
+	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.13.4
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
@@ -63,7 +63,7 @@ src_prepare() {
 }
 
 src_configure() {
-	rocm_set_default_gcc
+	rocm_set_default_clang
 
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test ON OFF)
