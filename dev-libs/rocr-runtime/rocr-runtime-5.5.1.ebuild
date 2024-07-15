@@ -44,12 +44,11 @@ DEPEND="
 "
 # vim-core is needed for "xxd"
 BDEPEND="
+	${ROCM_CLANG_DEPEND}
+	${ROCM_GCC_DEPEND}
 	>=app-editors/vim-core-9.0.1378
 	>=dev-build/cmake-3.7
-	sys-devel/gcc:12
 	virtual/pkgconfig
-	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-	sys-devel/llvm-roc:=
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.7.1-link-hsakmt.patch"
@@ -68,12 +67,7 @@ src_prepare() {
 }
 
 src_configure() {
-	export CC="${CHOST}-gcc-12"
-	export CXX="${CHOST}-g++-12"
-	export CPP="${CXX} -E"
-	filter-flags '-fuse-ld=*'
-	append-ldflags -fuse-ld=bfd
-	strip-unsupported-flags
+	rocm_set_default_gcc
 
 	use debug || append-cxxflags "-DNDEBUG"
 	local mycmakeargs=(
