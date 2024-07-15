@@ -45,7 +45,7 @@ fi
 DESCRIPTION="Composable Kernel: Performance Portable Programming Model for Machine Learning Tensor Operators"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/composable_kernel"
 LICENSE="MIT"
-#RESTRICT="test"
+RESTRICT="test"
 SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
 IUSE+="
 test ebuild-revision-8
@@ -61,8 +61,8 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${ROCM_CLANG_DEPEND}
 	~dev-build/rocm-cmake-${ROCM_VERSION}:${ROCM_SLOT}
-	~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
 	test? (
 		dev-cpp/gtest
 	)
@@ -122,10 +122,7 @@ src_prepare() {
 src_configure() {
 	local llvm_slot="${LLVM_SLOT}"
 
-	export CC="clang"
-	export CXX="clang++"
-	has_version "sys-devel/llvm-roc:${ROCM_SLOT}" \
-		|| die "sys-devel/llvm-roc-${ROCM_SLOT} must be installed."
+	rocm_set_default_clang
 
 	# Prevent
 	# error: Illegal instruction detected: Operand has incorrect register class.
