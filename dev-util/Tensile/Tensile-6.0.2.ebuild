@@ -52,14 +52,13 @@ REQUIRED_USE="
 "
 RDEPEND="
 	${PYTHON_DEPS}
+	${ROCM_CLANG_DEPEND}
 	>=dev-cpp/msgpack-cxx-6.0.0
 	dev-lang/python-exec:rocm-${ROCM_SLOT}
 	dev-python/joblib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
-	sys-devel/llvm-roc:=
 	~dev-util/hip-${PV}:${ROCM_SLOT}
-	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	openmp? (
 		dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
 		sys-libs/llvm-roc-libomp:${ROCM_SLOT}
@@ -130,7 +129,7 @@ src_configure() {
 		append-flags -fuse-ld=lld
 	fi
 	append-ldflags \
-		-Wl,-L/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir) \
+		-Wl,-L"/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)" \
 		-Wl,-lLLVMSupport \
 		-Wl,-lhsa-runtime64 \
 		-Wl,-lamd_comgr \
