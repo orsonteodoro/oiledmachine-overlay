@@ -131,6 +131,7 @@ src_configure() {
 		-DROCPROFILER_BUILD_SAMPLES=$(usex samples)
 		-DUSE_PROF_API=1
 		-DAQLPROFILE=ON
+		-DPython3_EXECUTABLE="/usr/bin/${EPYTHON}"
 	)
 	rocm_src_configure
 }
