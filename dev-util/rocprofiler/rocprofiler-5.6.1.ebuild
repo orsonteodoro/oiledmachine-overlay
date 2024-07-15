@@ -61,16 +61,15 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${ROCM_CLANG_DEPEND}
 	$(python_gen_any_dep '
 		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
 	')
 	>=dev-build/cmake-3.18.0
 	~dev-libs/ROCdbgapi-${PV}:${ROCM_SLOT}
-	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	~sys-devel/llvm-roc-symlinks-${PV}:${ROCM_SLOT}
 	test? (
 		sys-devel/gcc[sanitize]
-		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	)
 "
 PATCHES=(
@@ -94,14 +93,9 @@ src_prepare() {
 }
 
 src_configure() {
-	export CC="${CHOST}-roc-${ROCM_SLOT}"
-	export CXX="${CHOST}-roc++-${ROCM_SLOT}"
-	export CPP="${CXX} -E"
-	filter-flags '-fuse-ld=*'
-	filter-flags '-Wl,-fuse-ld=*'
 	# Fixes for libhsa-runtime64.so.1.12.0: undefined reference to `hsaKmtGetAMDGPUDeviceHandle'
-	append-ldflags -fuse-ld=lld
-	strip-unsupported-flags
+	rocm_set_default_clang
+
 	[[ -e "${ESYSROOT}/opt/rocm-${PV}/$(rocm_get_libdir)/hsa-amd-aqlprofile/librocprofv2_att.so" ]] \
 		|| die "Missing" # For e80f7cb
 	[[ -e "${ESYSROOT}/opt/rocm-${PV}/$(rocm_get_libdir)/libhsa-amd-aqlprofile64.so" ]] \
