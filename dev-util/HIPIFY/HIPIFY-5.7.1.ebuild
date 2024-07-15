@@ -37,7 +37,7 @@ TEST_BDEPEND="
 "
 RDEPEND="
 	!test? (
-		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+		${ROCM_CLANG_DEPEND}
 	)
 "
 DEPEND="
@@ -45,7 +45,7 @@ DEPEND="
 "
 BDEPEND="
 	!test? (
-		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+		${ROCM_CLANG_DEPEND}
 	)
 	test? (
 		${TEST_BDEPEND}
@@ -86,8 +86,7 @@ src_prepare() {
 }
 
 src_configure() {
-	export CC="clang"
-	export CXX="clang++"
+	rocm_set_default_clang
 
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
