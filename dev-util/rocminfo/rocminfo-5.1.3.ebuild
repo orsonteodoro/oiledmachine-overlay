@@ -25,7 +25,7 @@ DESCRIPTION="ROCm Application for Reporting System Info"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocminfo"
 LICENSE="UoI-NCSA"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" ebuild-revision-3"
+IUSE+=" ebuild-revision-4"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
@@ -33,6 +33,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.6.3
 "
 PATCHES=(
@@ -63,6 +64,7 @@ src_prepare() {
 }
 
 src_configure() {
+	rocm_set_default_clang
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_PREFIX_PATH="${ESYSROOT}${EROCM_PATH}"
