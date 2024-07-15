@@ -23,7 +23,7 @@ RESTRICT="
 	test
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-5"
+IUSE="test ebuild-revision-6"
 RDEPEND="
 	!dev-libs/rocm-debug-agent:0
 	dev-libs/elfutils
@@ -36,6 +36,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-3.8.0
 	test? (
 		~dev-util/hip-${PV}:${ROCM_SLOT}
@@ -67,6 +68,7 @@ src_prepare() {
 }
 
 src_configure() {
+	rocm_set_default_gcc
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	)
