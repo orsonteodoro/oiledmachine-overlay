@@ -32,7 +32,7 @@ LICENSE="
 # all rights reserved with MIT - mlir/tools/rocmlir-lib/LICENSE
 # The distro MIT license template does not have all rights reserved
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-10"
+IUSE="ebuild-revision-11"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
@@ -56,6 +56,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
+	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.15.1
 	dev-util/patchelf
 	virtual/pkgconfig
@@ -163,8 +164,7 @@ build_rocmlir() {
 		-DLLVM_LIBDIR_SUFFIX="${libdir_suffix}"
 	)
 
-	export CC="${HIP_CC:-clang}"
-	export CXX="${HIP_CXX:-clang++}"
+	rocm_set_default_clang
 	ccmake \
 		"${mycmakeargs[@]}" \
 		..
