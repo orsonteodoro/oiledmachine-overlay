@@ -31,7 +31,7 @@ LICENSE="
 	LGPL-2.1+
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-7"
+IUSE="ebuild-revision-8"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -54,6 +54,7 @@ DEPEND="
 	sys-libs/readline
 "
 BDEPEND="
+	${ROCM_GCC_DEPEND}
 	app-alternatives/lex
 	app-alternatives/sh
 	app-alternatives/yacc
@@ -82,6 +83,7 @@ src_prepare() {
 }
 
 src_configure() {
+	rocm_set_default_gcc
 	local myconf=(
 		--enable-targets="${CHOST},amdgcn-amd-amdhsa"
 		--enable-64-bit-bfd
