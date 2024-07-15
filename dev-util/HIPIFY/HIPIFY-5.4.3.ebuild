@@ -24,7 +24,7 @@ DESCRIPTION="HIPIFY: Convert CUDA to Portable C++ Code"
 HOMEPAGE="https://github.com/RadeonOpenCompute/HIPIFY"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-13"
+IUSE="test ebuild-revision-14"
 # https://github.com/ROCm-Developer-Tools/HIPIFY/tree/rocm-5.4.3#-hipify-clang-dependencies
 TEST_BDEPEND="
 	|| (
@@ -105,6 +105,7 @@ src_install() {
 		"${ED}/opt/rocm-${PV}/include/"*".h" \
 		"${ED}/opt/rocm-${PV}/include/cuda_wrappers" \
 		"${ED}/opt/rocm-${PV}/include/fuzzer" \
+		"${ED}/opt/rocm-${PV}/include/module.modulemap" \
 		"${ED}/opt/rocm-${PV}/include/orc" \
 		"${ED}/opt/rocm-${PV}/include/profile" \
 		"${ED}/opt/rocm-${PV}/include/sanitizer" \
