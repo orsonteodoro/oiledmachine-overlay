@@ -113,6 +113,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
+	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.5
 	dev-util/patchelf
 	virtual/pkgconfig
@@ -170,9 +171,7 @@ src_configure() {
 		-DROCAL=$(usex rocal ON OFF)
 	)
 
-	export CC="${HIP_CC:-clang}"
-	export CXX="${HIP_CXX:-clang++}"
-	export CPP="${CXX} -E"
+	rocm_set_default_clang
 
 	if use opencl ; then
 		mycmakeargs+=(
