@@ -225,7 +225,7 @@ _rocm_set_globals_default() {
 					sys-devel/llvm-roc:=
 				)
 			"
-		elif [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
+		elif [[ "${HIP_SUPPORT_ROCM}" == "1" && -z "${ROCM_SLOT}" ]] ; then
 			HIPCC_DEPEND+="
 				rocm? (
 					sys-devel/llvm-roc:=
@@ -243,7 +243,7 @@ _rocm_set_globals_default() {
 				)
 			"
 		fi
-		if [[ "${HIP_SUPPORT_ROCM}" == "1" -n "${ROCM_SLOT}" ]] ; then
+		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
 			local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
 			HIPCC_DEPEND+="
 				rocm? (
@@ -251,7 +251,7 @@ _rocm_set_globals_default() {
 					sys-devel/llvm-roc:=
 				)
 			"
-		elif [[ "${HIP_SUPPORT_ROCM}" == "1" -n "${ROCM_SLOT}" ]] ; then
+		elif [[ "${HIP_SUPPORT_ROCM}" == "1" && -z "${ROCM_SLOT}" ]] ; then
 			HIPCC_DEPEND+="
 				rocm? (
 					sys-devel/llvm-roc:=
@@ -269,7 +269,7 @@ _rocm_set_globals_default() {
 				)
 			"
 		fi
-		if [[ "${HIP_SUPPORT_ROCM}" == "1" -n "${ROCM_SLOT}" ]] ; then
+		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
 			local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
 			HIPCC_DEPEND+="
 				!cuda? (
@@ -277,7 +277,7 @@ _rocm_set_globals_default() {
 					sys-devel/llvm-roc:=
 				)
 			"
-		elif [[ "${HIP_SUPPORT_ROCM}" == "1" -z "${ROCM_SLOT}" ]] ; then
+		elif [[ "${HIP_SUPPORT_ROCM}" == "1" && -z "${ROCM_SLOT}" ]] ; then
 			HIPCC_DEPEND+="
 				!cuda? (
 					sys-devel/llvm-roc:=
@@ -293,13 +293,13 @@ _rocm_set_globals_default() {
 				dev-util/nvidia-cuda-toolkit:=
 			"
 		fi
-		if [[ "${HIP_SUPPORT_ROCM}" == "1" -n "${ROCM_SLOT}" ]] ; then
+		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
 			local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
 			HIPCC_DEPEND="
 				~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
 				sys-devel/llvm-roc:=
 			"
-		elif [[ "${HIP_SUPPORT_ROCM}" == "1" -z "${ROCM_SLOT}" ]] ; then
+		elif [[ "${HIP_SUPPORT_ROCM}" == "1" && -z "${ROCM_SLOT}" ]] ; then
 			HIPCC_DEPEND="
 				sys-devel/llvm-roc:=
 			"
@@ -1400,6 +1400,18 @@ rocm_set_default_clang() {
 	strip-unsupported-flags
 	filter-flags '-fuse-ld=*'
 	append-ldflags -fuse-ld=lld
+}
+
+# @FUNCTION: rocm_set_default_hipcc
+# @DESCRIPTION:
+# Sets compiler defaults for hipcc.
+rocm_set_default_hipcc() {
+	if has cuda && use cuda ; then
+		# It should use nvcc.
+		strip-flags
+	else
+		rocm_set_default_clang
+	fi
 }
 
 #Do it manually

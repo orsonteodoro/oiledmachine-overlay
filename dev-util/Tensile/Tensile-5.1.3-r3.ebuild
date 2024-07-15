@@ -124,11 +124,7 @@ src_prepare() {
 }
 
 src_configure() {
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
-	if use openmp ; then
-		append-flags -fuse-ld=lld
-	fi
+	rocm_set_default_hipcc
 
 	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
 	export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"

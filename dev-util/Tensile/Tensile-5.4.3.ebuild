@@ -41,6 +41,7 @@ RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="client openmp ebuild-revision-12"
 REQUIRED_USE="
+	openmp
 	client? (
 		${ROCM_REQUIRED_USE}
 		openmp
@@ -123,11 +124,8 @@ src_prepare() {
 }
 
 src_configure() {
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
-	if use openmp ; then
-		append-flags -fuse-ld=lld
-	fi
+	rocm_set_default_hipcc
+
 	append-ldflags \
 		-Wl,-L"/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)" \
 		-Wl,-lLLVMSupport
