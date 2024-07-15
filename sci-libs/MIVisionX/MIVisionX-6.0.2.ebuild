@@ -38,7 +38,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu +enhanced-message ffmpeg -fp16 +loom +migraphx +neural-net opencl
 opencv +rocal +rocal-python +rocm +rpp system-rapidjson
-ebuild-revision-13
+ebuild-revision-14
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
