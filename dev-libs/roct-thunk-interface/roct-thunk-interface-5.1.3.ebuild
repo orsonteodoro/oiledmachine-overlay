@@ -43,9 +43,9 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-3.6.3
 	>=x11-libs/libdrm-2.4.114[video_cards_amdgpu]
-	sys-devel/gcc:12
 	dev-util/patchelf
 "
 PATCHES=(
@@ -73,12 +73,7 @@ src_prepare() {
 }
 
 src_configure() {
-	export CC="${CHOST}-gcc-12"
-	export CXX="${CHOST}-g++-12"
-	export CPP="${CXX} -E"
-	filter-flags '-fuse-ld=*'
-	append-ldflags -fuse-ld=bfd
-	strip-unsupported-flags
+	rocm_set_default_gcc
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_DOCDIR="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
