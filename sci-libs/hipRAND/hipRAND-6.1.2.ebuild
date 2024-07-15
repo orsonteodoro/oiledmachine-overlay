@@ -22,7 +22,7 @@ REQUIRED_USE="${ROCM_REQUIRED_USE}"
 LICENSE="MIT"
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="cuda rocm ebuild-revision-2"
+IUSE="cuda rocm ebuild-revision-3"
 REQUIRED_USE="
 	^^ (
 		cuda
@@ -42,6 +42,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.10.2
 "
 PATCHES=(
@@ -76,7 +77,6 @@ src_configure() {
 			-DROCM_SYMLINK_LIBS=OFF
 		)
 	fi
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 	rocm_src_configure
 }
