@@ -19,7 +19,7 @@ DESCRIPTION="AMD Debugger API"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/ROCdbgapi"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild-revision-7"
+IUSE=" ebuild-revision-8"
 RDEPEND="
 	!dev-libs/ROCdbgapi:0
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
@@ -28,6 +28,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-3.8
 "
 PATCHES=(
@@ -46,6 +47,7 @@ src_prepare() {
 }
 
 src_configure() {
+	rocm_set_default_gcc
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	)
