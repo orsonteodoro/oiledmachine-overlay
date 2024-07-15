@@ -34,7 +34,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${ROCM_IUSE}
-benchmark cuda +rocm +tensile ebuild-revision-6
+benchmark cuda +rocm +tensile ebuild-revision-7
 "
 gen_rocm_required_use() {
 	local x
@@ -57,11 +57,11 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	${HIPCC_DEPEND}
 	dev-libs/boost
 	dev-libs/msgpack
 	virtual/blas
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
-	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
@@ -78,6 +78,7 @@ DEPEND="
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.16.8
 	dev-python/pip[${PYTHON_USEDEP}]
 	dev-python/virtualenv[${PYTHON_USEDEP}]
@@ -133,9 +134,9 @@ get_makeopts_nprocs() {
 }
 
 src_configure() {
-	addpredict /dev/random
-	addpredict /dev/kfd
-	addpredict /dev/dri/
+	addpredict "/dev/random"
+	addpredict "/dev/kfd"
+	addpredict "/dev/dri/"
 
 	replace-flags '-O0' '-O1'
 	local nprocs=$(get_makeopts_nprocs)
@@ -212,8 +213,7 @@ ewarn
 	export PYTHONPATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/:${PYTHONPATH}"
 
 	export VERBOSE=1
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 	rocm_src_configure
 #	deactivate || die
 }
