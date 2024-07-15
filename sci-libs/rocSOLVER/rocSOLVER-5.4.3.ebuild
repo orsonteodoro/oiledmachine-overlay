@@ -15,9 +15,9 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 	gfx1100
 )
+HIP_SUPPORT_CUDA=0
 LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit cmake edo rocm
 
@@ -37,7 +37,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test benchmark ebuild-revision-4"
+IUSE="test benchmark ebuild-revision-5"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -53,6 +53,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		>=dev-build/cmake-3.13
@@ -93,8 +94,7 @@ src_configure() {
 		-Wno-dev
 	)
 
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 	rocm_src_configure
 }
 
