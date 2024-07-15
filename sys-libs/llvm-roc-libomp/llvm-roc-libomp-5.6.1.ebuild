@@ -277,7 +277,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	sys-devel/gcc:12
+	${ROCM_GCC_DEPEND}
 	offload? (
 		virtual/pkgconfig
 	)
@@ -362,15 +362,9 @@ src_prepare() {
 }
 
 src_configure() {
-	addpredict /dev/kfd
-	export CC="${CHOST}-gcc-12"
-	export CXX="${CHOST}-g++-12"
-	export CPP="${CXX} -E"
-	filter-flags "-fuse-ld=*"
-	strip-unsupported-flags
+	addpredict "/dev/kfd"
+	rocm_set_default_gcc
 	replace-flags '-O0' '-O1'
-#	append-ldflags -fuse-ld=lld # Fix ld: duplicate version tag `VERS1.0'
-	append-ldflags -fuse-ld=bfd
 # Avoid
 # The dependency target "clang" of target "check-all" does not exist.
 	PROJECTS="clang;openmp"
