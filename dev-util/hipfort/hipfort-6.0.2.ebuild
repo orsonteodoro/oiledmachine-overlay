@@ -23,11 +23,11 @@ https://github.com/ROCmSoftwarePlatform/hipfort
 "
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="debug ebuild-revision-8"
+IUSE="debug ebuild-revision-9"
 RDEPEND="
 	!dev-util/hipfort:0
 	|| (
-		>=sys-devel/gcc-7.5.0[fortran]
+		sys-devel/gcc:${HIP_6_0_GCC_SLOT}[fortran]
 		dev-lang/flang
 	)
 "
@@ -36,7 +36,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-build/cmake-2.8.12
-	>=sys-devel/gcc-7.5.0[fortran]
+	sys-devel/gcc:${HIP_6_0_GCC_SLOT}[fortran]
 	~dev-build/rocm-cmake-${PV}
 "
 RESTRICT="test"
@@ -60,6 +60,8 @@ src_prepare() {
 }
 
 src_configure() {
+	rocm_set_default_gcc
+	export FC="${CHOST}-gfortran-${HIP_6_0_GCC_SLOT}"
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE=$(usex debug "DEBUG" "RELEASE")
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
