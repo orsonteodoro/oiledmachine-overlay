@@ -180,6 +180,7 @@ _rocm_set_globals_default() {
 		local gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
 		ROCM_GCC_DEPEND="
 			sys-devel/gcc:${!gcc_slot}${_ROCM_GCC_USEDEP}
+			sys-devel/gcc:=
 		"
 
 		local _ROCM_CLANG_USEDEP=""
