@@ -5,6 +5,7 @@ EAPI=8
 
 CMAKE_BUILD_TYPE="RELEASE"
 LLVM_SLOT=14
+ROCM_GCC_USEDEP="fortran"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
@@ -27,7 +28,7 @@ IUSE="debug ebuild-revision-9"
 RDEPEND="
 	!dev-util/hipfort:0
 	|| (
-		sys-devel/gcc:${HIP_5_1_GCC_SLOT}[fortran]
+		${ROCM_GCC_DEPEND}
 		dev-lang/flang
 	)
 "
@@ -35,8 +36,8 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-2.8.12
-	sys-devel/gcc:${HIP_5_1_GCC_SLOT}[fortran]
 	~dev-build/rocm-cmake-${PV}
 "
 RESTRICT="test"

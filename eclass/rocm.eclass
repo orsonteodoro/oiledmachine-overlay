@@ -172,9 +172,14 @@ _rocm_set_globals_default() {
 	fi
 
 	if [[ -n "${ROCM_SLOT}" ]] ; then
+		local _ROCM_GCC_USEDEP=""
+		if [[ -n "${ROCM_GCC_USEDEP}" ]] ; then
+			_ROCM_GCC_USEDEP="[${ROCM_GCC_USEDEP}]"
+		fi
+
 		local gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
 		ROCM_GCC_DEPEND="
-			sys-devel/gcc:${!gcc_slot}
+			sys-devel/gcc:${!gcc_slot}${_ROCM_GCC_USEDEP}
 		"
 
 		local _ROCM_CLANG_USEDEP=""

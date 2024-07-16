@@ -27,7 +27,7 @@ IUSE="debug ebuild-revision-9"
 RDEPEND="
 	!dev-util/hipfort:0
 	|| (
-		sys-devel/gcc:${HIP_6_0_GCC_SLOT}[fortran]
+		${ROCM_GCC_DEPEND}
 		dev-lang/flang
 	)
 "
@@ -35,8 +35,8 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-2.8.12
-	sys-devel/gcc:${HIP_6_0_GCC_SLOT}[fortran]
 	~dev-build/rocm-cmake-${PV}
 "
 RESTRICT="test"
