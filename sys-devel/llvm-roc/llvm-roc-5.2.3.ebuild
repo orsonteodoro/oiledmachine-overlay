@@ -103,7 +103,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
-bolt profile +runtime
+bolt -cuda_11_7 profile +runtime
 ebuild-revision-16
 "
 REQUIRED_USE="
@@ -148,9 +148,11 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-5.2.3-hardcoded-paths.patch"
 	popd >/dev/null 2>&1 || die
 
-	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
-		eapply "${DISTDIR}/llvm-project-rocm-c231471.patch"
-	popd >/dev/null 2>&1 || die
+	if use cuda_11_7 ; then
+		pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
+			eapply "${DISTDIR}/llvm-project-rocm-c231471.patch"
+		popd >/dev/null 2>&1 || die
+	fi
 
 	cmake_src_prepare
 	if use bolt ; then

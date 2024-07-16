@@ -88,6 +88,9 @@
     <flag name="cfi">
       Add Control Flow Integrity support.
     </flag>
+    <flag name="cuda_11_7">
+      Apply proposed patch for cuda 11.7 compatibility.
+    </flag>
     <flag name="epgo">
       Build an optimized Clang toolchain using Profile Guided Optimization (PGO)
       to decrease build times by maybe 20%.

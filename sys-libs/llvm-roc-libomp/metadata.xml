@@ -13,6 +13,9 @@
     <flag name="archer">
       Adds the archer runtime library used for data racing detection in OpenMP.
     </flag>
+    <flag name="cuda_11_7">
+      Apply proposed patch for cuda 11.7 compatibility.
+    </flag>
     <flag name="ompd">
       Add debug tools support.
     </flag>

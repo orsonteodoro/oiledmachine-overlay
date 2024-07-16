@@ -113,7 +113,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
-+archer -cuda +gdb-plugin -offload -ompt +ompd -rpc
++archer -cuda -cuda_11_7 +gdb-plugin -offload -ompt +ompd -rpc
 ebuild-revision-23
 "
 
@@ -292,9 +292,11 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 	popd >/dev/null 2>&1 || die
 
-	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
-		eapply "${DISTDIR}/llvm-project-rocm-c231471.patch"
-	popd >/dev/null 2>&1 || die
+	if use cuda_11_7 ; then
+		pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
+			eapply "${DISTDIR}/llvm-project-rocm-c231471.patch"
+		popd >/dev/null 2>&1 || die
+	fi
 
 	cd "${S_ROOT}" || die
 	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-ompt-includes.patch"
