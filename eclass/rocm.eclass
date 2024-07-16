@@ -141,6 +141,23 @@ BDEPEND+="
 # point to paths in use the llvm-roc.  If ROCM_USE_LLVM_ROC=0, it will fix
 # rpaths and @...@ symbols to point to the system's llvm.
 
+# @FUNCTION: _report_hipify_requirements
+# @DESCRIPTION:
+_report_hipify_requirements() {
+	if [[ -n "${ROCM_SLOT}" ]] ; then
+		local _HIP_CUDA_VERSION="HIPIFY_${ROCM_SLOT/./_}_CUDA_SLOT"
+		local HIP_CUDA_VERSION="${!_HIP_CUDA_VERSION}"
+
+		local _HIPIFY_CUDA_SDK_EBUILD_URI="HIPIFY_${ROCM_SLOT/./_}_CUDA_URI"
+		local HIPIFY_CUDA_SDK_EBUILD_URI="${!_HIPIFY_CUDA_SDK_EBUILD_URI}"
+
+ewarn
+ewarn "You are responsible for maintaining a local copy of =dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}* for ${CATEGORY}/${PN}-${PVR}:${SLOT} for CUDA support if ebuild not available."
+ewarn "nvidia-cuda-toolkit ebuild uri:  ${HIPIFY_CUDA_SDK_EBUILD_URI}"
+ewarn
+	fi
+}
+
 # @FUNCTION: _rocm_set_globals_default
 # @DESCRIPTION:
 # Allow ebuilds to define IUSE, ROCM_REQUIRED_USE
@@ -155,10 +172,9 @@ _rocm_set_globals_default() {
 			sys-devel/gcc:${!gcc_slot}
 		"
 
+		local _ROCM_CLANG_USEDEP=""
 		if [[ -n "${ROCM_CLANG_USEDEP}" ]] ; then
 			_ROCM_CLANG_USEDEP="[${ROCM_CLANG_USEDEP}]"
-		else
-			_ROCM_CLANG_USEDEP=""
 		fi
 		ROCM_CLANG_DEPEND="
 			~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}${_ROCM_CLANG_USEDEP}
@@ -187,20 +203,15 @@ _rocm_set_globals_default() {
 
 	local gen_hip_cuda_impl=""
 	if [[ -n "${ROCM_SLOT}" ]] ; then
-		_HIP_CUDA_VERSION="HIPIFY_${ROCM_SLOT/./_}_CUDA_SLOT"
-		HIP_CUDA_VERSION="${!_HIP_CUDA_VERSIONS}"
+		local _HIP_CUDA_VERSION="HIPIFY_${ROCM_SLOT/./_}_CUDA_SLOT"
+		HIP_CUDA_VERSION="${!_HIP_CUDA_VERSION}"
 
-		_HIPIFY_CUDA_SDK_EBUILD_URI="HIPIFY_${ROCM_SLOT/./_}_CUDA_URI"
+		local _HIPIFY_CUDA_SDK_EBUILD_URI="HIPIFY_${ROCM_SLOT/./_}_CUDA_URI"
 		HIPIFY_CUDA_SDK_EBUILD_URI="${!_HIPIFY_CUDA_SDK_EBUILD_URI}"
 
 		gen_hip_cuda_impl+="
 			=dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}*
 		"
-
-ewarn
-ewarn "You are responsible for maintaining a local copy of =dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}* for ${CATEGORY}/${PN}-${PVR}:${SLOT} for CUDA support if ebuild not available."
-ewarn "nvidia-cuda-toolkit ebuild uri:  ${HIPIFY_CUDA_SDK_EBUILD_URI}"
-ewarn
 	else
 		HIP_SUPPORT_CUDA=0
 	fi
@@ -515,6 +526,8 @@ einfo
 einfo "  PATH:  ${PATH}"
 einfo "  PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
 einfo
+
+	_report_hipify_requirements
 }
 
 # @FUNCTION:  _rocm_change_common_paths

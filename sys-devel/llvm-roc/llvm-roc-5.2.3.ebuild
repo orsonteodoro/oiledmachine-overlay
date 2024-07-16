@@ -35,11 +35,15 @@ https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 		https://github.com/llvm/llvm-project/commit/bdba3d091c66e3ab87fe0d631d90771b747ddf0d.patch
 			-> llvm-commit-bdba3d0.patch
 	)
+https://github.com/llvm/llvm-project/commit/c23147106f7efc4b5e29c47a08951116b4d994ac.patch
+	-> llvm-project-rocm-c231471.patch
 "
 # eddf384 - [BOLT-UnitTests] Fix shared libraries build
 #   Commit dependency of bdba3d0
 # bdba3d0 - [BOLT][CMAKE] Fix DYLIB build
 #   Fixes linking
+# c231471 -  [clang][CUDA][Windows] Fix compilation error on Windows with `uint32_t __nvvm_get_smem_pointer`
+#   Fix for HIPIFY
 
 DESCRIPTION="The ROCm™ fork of the LLVM project"
 HOMEPAGE="
@@ -100,7 +104,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt profile +runtime
-ebuild-revision-15
+ebuild-revision-16
 "
 REQUIRED_USE="
 	cfi? (
@@ -140,13 +144,17 @@ einfo "See comments of metadata.xml for documentation on ebolt/epgo."
 }
 
 src_prepare() {
-	pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
+	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
 		eapply "${FILESDIR}/${PN}-5.2.3-hardcoded-paths.patch"
-	popd
+	popd >/dev/null 2>&1 || die
+
+	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
+		eapply "${DISTDIR}/llvm-project-rocm-c231471.patch"
+	popd >/dev/null 2>&1 || die
 
 	cmake_src_prepare
 	if use bolt ; then
-		pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
+		pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
 			eapply -p1 "${DISTDIR}/llvm-commit-eddf384.patch"
 			cat "${DISTDIR}/llvm-commit-bdba3d0.patch" \
 				> "${T}/llvm-commit-bdba3d0.patch" || die
@@ -158,7 +166,7 @@ src_prepare() {
 			eapply -p1 "${FILESDIR}/llvm-14.0.6-bolt_rt-libdir.patch"
 			eapply -p1 "${FILESDIR}/llvm-14.0.6-bolt-set-cmake-libdir.patch"
 			eapply -p1 "${FILESDIR}/llvm-14.0.6-bolt_rt-RuntimeLibrary.cpp-path.patch"
-                popd
+                popd >/dev/null 2>&1 || die
 	fi
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:

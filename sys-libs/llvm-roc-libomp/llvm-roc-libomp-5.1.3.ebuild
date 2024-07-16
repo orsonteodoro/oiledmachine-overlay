@@ -80,7 +80,11 @@ https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 	-> llvm-project-rocm-${PV}.tar.gz
 https://github.com/RadeonOpenCompute/ROCm-Device-Libs/archive/refs/tags/rocm-${PV}.tar.gz
 	-> rocm-device-libs-${PV}.tar.gz
+https://github.com/llvm/llvm-project/commit/c23147106f7efc4b5e29c47a08951116b4d994ac.patch
+	-> llvm-project-rocm-c231471.patch
 "
+# c231471 -  [clang][CUDA][Windows] Fix compilation error on Windows with `uint32_t __nvvm_get_smem_pointer`
+#   Fix for HIPIFY
 
 DESCRIPTION="The ROCm™ fork of LLVM's libomp"
 HOMEPAGE="
@@ -110,7 +114,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -rpc
-ebuild-revision-22
+ebuild-revision-23
 "
 
 gen_cuda_required_use() {
@@ -286,6 +290,10 @@ pkg_setup() {
 src_prepare() {
 	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
 		eapply "${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
+	popd >/dev/null 2>&1 || die
+
+	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
+		eapply "${DISTDIR}/llvm-project-rocm-c231471.patch"
 	popd >/dev/null 2>&1 || die
 
 	cd "${S_ROOT}" || die

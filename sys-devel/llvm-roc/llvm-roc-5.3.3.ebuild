@@ -138,13 +138,13 @@ einfo "See comments of metadata.xml for documentation on ebolt/epgo."
 }
 
 src_prepare() {
-	pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
+	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
 		eapply "${FILESDIR}/${PN}-5.3.3-hardcoded-paths.patch"
-	popd
+	popd >/dev/null 2>&1 || die
 
 	cmake_src_prepare
 	if use bolt ; then
-		pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
+		pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
 			eapply -p1 "${FILESDIR}/llvm-14.0.6-bolt-set-cmake-libdir.patch"
 			eapply -p1 "${FILESDIR}/llvm-14.0.6-bolt_rt-RuntimeLibrary.cpp-path.patch"
 			eapply -p1 "${FILESDIR}/llvm-commit-90dcdc4-v2.patch"
@@ -155,7 +155,7 @@ src_prepare() {
 				$(realpath "${DISTDIR}/llvm-commit-61cff90.patch") \
 				> "${T}/llvm-commit-61cff90.patch" || die
 			eapply -p1 "${T}/llvm-commit-61cff90.patch"
-		popd
+		popd >/dev/null 2>&1 || die
 	fi
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:

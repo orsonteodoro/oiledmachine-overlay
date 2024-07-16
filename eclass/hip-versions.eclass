@@ -57,9 +57,9 @@ HIP_6_1_GCC_SLOT="12"
 
 # Corresponding llvm-roc and cuda version
 HIPIFY_4_5_CUDA_SLOT="11.5" # LLVM 13
-HIPIFY_5_0_CUDA_SLOT="11.5" # LLVM 14
-HIPIFY_5_1_CUDA_SLOT="11.5" # LLVM 14, missing c231471 to support 11.7.1
-HIPIFY_5_2_CUDA_SLOT="11.5" # LLVM 14, missing c231471 to support 11.7.1
+HIPIFY_5_0_CUDA_SLOT="11.7" # LLVM 14
+HIPIFY_5_1_CUDA_SLOT="11.7" # LLVM 14
+HIPIFY_5_2_CUDA_SLOT="11.7" # LLVM 14
 HIPIFY_5_3_CUDA_SLOT="11.8" # LLVM 15
 HIPIFY_5_4_CUDA_SLOT="11.8" # LLVM 15
 HIPIFY_5_5_CUDA_SLOT="12.1" # LLVM 16
@@ -68,11 +68,10 @@ HIPIFY_5_7_CUDA_SLOT="12.2" # LLVM 17
 HIPIFY_6_0_CUDA_SLOT="12.2" # LLVM 17
 HIPIFY_6_1_CUDA_SLOT="12.2" # LLVM 17
 
-# llvm-roc does not apply c231471
 HIPIFY_4_5_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.5.0-r1.ebuild?id=3e598a395f06403e05d63b15458d90a56cb1a3ec"
-HIPIFY_5_0_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.5.0-r1.ebuild?id=3e598a395f06403e05d63b15458d90a56cb1a3ec"
-HIPIFY_5_1_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.5.0-r1.ebuild?id=3e598a395f06403e05d63b15458d90a56cb1a3ec"
-HIPIFY_5_2_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.5.0-r1.ebuild?id=3e598a395f06403e05d63b15458d90a56cb1a3ec"
+HIPIFY_5_0_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.7.0-r4.ebuild?id=5165cc0405cc638a674b1ba7576c4df496012fe0"
+HIPIFY_5_1_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.7.0-r4.ebuild?id=5165cc0405cc638a674b1ba7576c4df496012fe0"
+HIPIFY_5_2_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.7.0-r4.ebuild?id=5165cc0405cc638a674b1ba7576c4df496012fe0"
 HIPIFY_5_3_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.8.0-r4.ebuild?id=3e598a395f06403e05d63b15458d90a56cb1a3ec"
 HIPIFY_5_4_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.8.0-r4.ebuild?id=3e598a395f06403e05d63b15458d90a56cb1a3ec"
 HIPIFY_5_5_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.1.1-r1.ebuild?id=56bf30db3c55f0bf7786e5e057a5546932aa99ca"

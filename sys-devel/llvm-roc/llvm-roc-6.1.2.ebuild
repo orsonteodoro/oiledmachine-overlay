@@ -131,17 +131,17 @@ einfo "See comments of metadata.xml for documentation on ebolt/epgo."
 }
 
 src_prepare() {
-	pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
+	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
 		eapply "${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
 		eapply "${FILESDIR}/${PN}-6.1.2-llvm-dwarfdump-link-to-BinaryFormat.patch"
-	popd
+	popd >/dev/null 2>&1 || die
 
 	cmake_src_prepare
 	if has bolt ${IUSE_EFFECTIVE} && use bolt ; then
-		pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
+		pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
 			eapply -p1 "${FILESDIR}/llvm-16.0.5-bolt-set-cmake-libdir.patch"
 			eapply -p1 "${FILESDIR}/llvm-17.0.0.9999-v3-bolt_rt-RuntimeLibrary.cpp-path.patch"
-                popd
+                popd >/dev/null 2>&1 || die
 	fi
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:

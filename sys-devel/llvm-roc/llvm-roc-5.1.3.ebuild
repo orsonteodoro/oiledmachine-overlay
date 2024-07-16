@@ -29,7 +29,11 @@ S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 SRC_URI="
 https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 	-> llvm-project-rocm-${PV}.tar.gz
+https://github.com/llvm/llvm-project/commit/c23147106f7efc4b5e29c47a08951116b4d994ac.patch
+	-> llvm-project-rocm-c231471.patch
 "
+# c231471 -  [clang][CUDA][Windows] Fix compilation error on Windows with `uint32_t __nvvm_get_smem_pointer`
+#   Fix for HIPIFY
 
 DESCRIPTION="The ROCm™ fork of the LLVM project"
 HOMEPAGE="
@@ -90,7 +94,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 profile +runtime cfi
-ebuild-revision-15
+ebuild-revision-16
 "
 REQUIRED_USE="
 	cfi? (
@@ -127,9 +131,13 @@ einfo "See comments of metadata.xml for documentation on epgo."
 }
 
 src_prepare() {
-	pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
+	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
 		eapply "${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
-	popd
+	popd >/dev/null 2>&1 || die
+
+	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
+		eapply "${DISTDIR}/llvm-project-rocm-c231471.patch"
+	popd >/dev/null 2>&1 || die
 
 	cmake_src_prepare
 	# Speed up symbol replacmenet for @...@ by reducing the search space
