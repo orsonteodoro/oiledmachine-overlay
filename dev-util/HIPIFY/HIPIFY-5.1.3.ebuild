@@ -26,12 +26,6 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test ebuild-revision-14"
 # https://github.com/ROCm-Developer-Tools/HIPIFY/tree/rocm-5.1.3#-hipify-clang-dependencies
-TEST_BDEPEND="
-	|| (
-		=dev-util/nvidia-cuda-toolkit-11.5*
-	)
-	dev-util/nvidia-cuda-toolkit:=
-"
 RDEPEND="
 	!test? (
 		${ROCM_CLANG_DEPEND}
@@ -42,11 +36,11 @@ DEPEND="
 "
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
-	!test? (
-		${ROCM_CLANG_DEPEND}
-	)
 	test? (
-		${TEST_BDEPEND}
+		|| (
+			=dev-util/nvidia-cuda-toolkit-11.5*
+		)
+		dev-util/nvidia-cuda-toolkit:=
 	)
 	>=dev-build/cmake-3.8
 "
