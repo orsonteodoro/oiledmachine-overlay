@@ -173,69 +173,37 @@ _rocm_set_globals_default() {
 	HIP_SUPPORT_ROCM="${HIP_SUPPORT_ROCM:-1}"
 	# Based on sys-devel/llvm-roc.
 	# See
-	# https://github.com/ROCm/llvm-project/blob/rocm-5.1.3/clang/include/clang/Basic/Cuda.h#L39
-	# https://github.com/ROCm/llvm-project/blob/rocm-5.2.3/clang/include/clang/Basic/Cuda.h#L39
-	# https://github.com/ROCm/llvm-project/blob/rocm-5.3.3/clang/include/clang/Basic/Cuda.h#L39
-	# https://github.com/ROCm/llvm-project/blob/rocm-5.4.3/clang/include/clang/Basic/Cuda.h#L39
-	# https://github.com/ROCm/llvm-project/blob/rocm-5.5.1/clang/include/clang/Basic/Cuda.h#L42
-	# https://github.com/ROCm/llvm-project/blob/rocm-5.6.1/clang/include/clang/Basic/Cuda.h#L42
-	# https://github.com/ROCm/llvm-project/blob/rocm-5.7.1/clang/include/clang/Basic/Cuda.h#L42
-	# https://github.com/ROCm/llvm-project/blob/rocm-6.0.2/clang/include/clang/Basic/Cuda.h#L42
-	# https://github.com/ROCm/llvm-project/blob/rocm-6.1.2/clang/include/clang/Basic/Cuda.h#L44
-	if [[ "${ROCM_SLOT}" == "6.1" ]] ; then
-		HIP_CUDA_VERSIONS="11.8"
-	elif [[ "${ROCM_SLOT}" == "6.0" ]] ; then
-		HIP_CUDA_VERSIONS="11.8"
-	elif [[ "${ROCM_SLOT}" == "5.7" ]] ; then
-		HIP_CUDA_VERSIONS="11.8"
-	elif [[ "${ROCM_SLOT}" == "5.6" ]] ; then
-		HIP_CUDA_VERSIONS="11.8"
-	elif [[ "${ROCM_SLOT}" == "5.5" ]] ; then
-		HIP_CUDA_VERSIONS="11.5"
-ewarn "You are responsible to maintaining a local copy of =dev-util/nvidia-cuda-toolkit-11.5* for ${CATEGORY}/${PN}-${PVR}:${SLOT} for CUDA support."
-		if has cuda && use cuda ; then
-ewarn "HIP-nvcc (CUDA) is not supported on distro for ROCM_SLOT=${ROCM_SLOT}"
-		fi
-	elif [[ "${ROCM_SLOT}" == "5.4" ]] ; then
-		HIP_CUDA_VERSIONS="11.5"
-ewarn "You are responsible to maintaining a local copy of =dev-util/nvidia-cuda-toolkit-11.5* for ${CATEGORY}/${PN}-${PVR}:${SLOT} for CUDA support."
-		if has cuda && use cuda ; then
-ewarn "HIP-nvcc (CUDA) is not supported on distro for ROCM_SLOT=${ROCM_SLOT}"
-		fi
-	elif [[ "${ROCM_SLOT}" == "5.3" ]] ; then
-		HIP_CUDA_VERSIONS="11.5"
-ewarn "You are responsible to maintaining a local copy of =dev-util/nvidia-cuda-toolkit-11.5* for ${CATEGORY}/${PN}-${PVR}:${SLOT} for CUDA support."
-		if has cuda && use cuda ; then
-ewarn "HIP-nvcc (CUDA) is not supported on distro for ROCM_SLOT=${ROCM_SLOT}"
-		fi
-	elif [[ "${ROCM_SLOT}" == "5.2" ]] ; then
-		# https://github.com/ROCm/HIPIFY/blob/rocm-5.2.3/README.md
-		HIP_CUDA_VERSIONS="11.5"
-ewarn "You are responsible to maintaining a local copy of =dev-util/nvidia-cuda-toolkit-11.5* for ${CATEGORY}/${PN}-${PVR}:${SLOT} for CUDA support."
-		if has cuda && use cuda ; then
-ewarn "HIP-nvcc (CUDA) is not supported on distro for ROCM_SLOT=${ROCM_SLOT}"
-		fi
-	elif [[ "${ROCM_SLOT}" == "5.1" ]] ; then
-		# https://github.com/ROCm/HIPIFY/blob/rocm-5.1.3/README.md
-		HIP_CUDA_VERSIONS="11.5"
-ewarn "You are responsible to maintaining a local copy of =dev-util/nvidia-cuda-toolkit-11.5* for ${CATEGORY}/${PN}-${PVR}:${SLOT} for CUDA support."
-		if has cuda && use cuda ; then
-ewarn "HIP-nvcc (CUDA) is not supported on distro for ROCM_SLOT=${ROCM_SLOT}"
-		fi
-	else
-		# Same as latest (6.1.x)
-		HIP_CUDA_VERSIONS=${HIP_CUDA_VERSIONS:-"11.8"}
-		if has cuda && use cuda ; then
-ewarn "hip-nvcc (cuda) is not supported on distro for ROCM_SLOT < 5.4"
-		fi
-	fi
+	# https://github.com/ROCm/HIPIFY/blob/rocm-6.1.2/docs/hipify-clang.rst
+	# https://github.com/ROCm/HIPIFY/blob/rocm-6.0.2/docs/hipify-clang.md
+	# https://github.com/ROCm/HIPIFY/blob/rocm-5.7.1/docs/hipify-clang.md
+	# https://github.com/ROCm/HIPIFY/blob/rocm-5.6.1/docs/hipify-clang.md
+	# https://github.com/ROCm/HIPIFY/blob/rocm-5.5.1/README.md
+	# https://github.com/ROCm/HIPIFY/blob/rocm-5.4.3/README.md
+	# https://github.com/ROCm/HIPIFY/blob/rocm-5.3.3/README.md
+	# https://github.com/ROCm/HIPIFY/blob/rocm-5.2.3/README.md
+	# https://github.com/ROCm/HIPIFY/blob/rocm-5.1.3/README.md
+	# https://github.com/ROCm/HIPIFY/blob/rocm-5.0.2/README.md
+	# https://github.com/ROCm/HIPIFY/blob/rocm-4.5.2/README.md
+
 	local gen_hip_cuda_impl=""
-	local s
-	for s in ${HIP_CUDA_VERSIONS[@]} ; do
+	if [[ -n "${ROCM_SLOT}" ]] ; then
+		_HIP_CUDA_VERSION="HIPIFY_${ROCM_SLOT/./_}_CUDA_SLOT"
+		HIP_CUDA_VERSION="${!_HIP_CUDA_VERSIONS}"
+
+		_HIPIFY_CUDA_URI="HIPIFY_${ROCM_SLOT/./_}_CUDA_URI"
+		HIPIFY_CUDA_URI="${!_HIPIFY_CUDA_URI}"
+
 		gen_hip_cuda_impl+="
-			=dev-util/nvidia-cuda-toolkit-${s}*
+			=dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}*
 		"
-	done
+
+ewarn
+ewarn "You are responsible to maintaining a local copy of =dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}* for ${CATEGORY}/${PN}-${PVR}:${SLOT} for CUDA support if ebuild not available."
+ewarn "nvidia-cuda-toolkit ebuild uri:  ${HIPIFY_CUDA_URI}"
+ewarn
+	else
+		HIP_SUPPORT_CUDA=0
+	fi
 	if [[ "${HIP_SUPPORT_CUDA}" == "1" ]] ; then
 		HIP_CUDA_DEPEND="
 			|| (
