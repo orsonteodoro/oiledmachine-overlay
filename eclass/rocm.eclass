@@ -422,7 +422,7 @@ rocm_pkg_setup() {
 eerror
 eerror "Change HIP_PLATFORM=\"nvidia\" in /etc/portage/make.conf to continue."
 eerror
-eerror "The HIP stack should be completely uninstalled also to build with the"
+eerror "The HIP stack should be completely uninstalled also to rebuild with the"
 eerror "same GCC version."
 eerror
 			die
@@ -434,7 +434,7 @@ eerror
 eerror
 eerror "Change HIP_PLATFORM=\"amd\" in /etc/portage/make.conf to continue."
 eerror
-eerror "The HIP stack should be completely uninstalled also to build with the"
+eerror "The HIP stack should be completely uninstalled also to rebuild with the"
 eerror "same GCC version."
 eerror
 			die
