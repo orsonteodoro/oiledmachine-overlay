@@ -181,42 +181,12 @@ ewarn
 		)
 	fi
 
-	if [[ "${CC}" =~ (^|-)"g++" ]] ; then
-einfo "Using libgomp"
-		local gcc_slot=$(gcc-major-version)
-		local gomp_abspath
-		if [[ "${ABI}" =~ (amd64) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so" ]] ; then
-			gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so"
-		elif [[ "${ABI}" =~ (x86) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so" ]] ; then
-			gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so"
-		elif [[ -e "${GOMP_LIB_ABSPATH}" ]] ; then
-			gomp_abspath="${GOMP_LIB_ABSPATH}"
-		else
-eerror
-eerror "${ABI} is unknown.  Please set one of the following per-package"
-eerror "environment variables:"
-eerror
-eerror "  GOMP_LIB_ABSPATH"
-eerror
-eerror "to point to the the absolute path to libgomp.so for GCC slot ${gcc_slot}"
-eerror "corresponding to that ABI."
-eerror
-			die
-		fi
-		mycmakeargs+=(
-			-DCMAKE_THREAD_LIBS_INIT="-lpthread"
-			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include -fopenmp"
-			-DOpenMP_CXX_LIB_NAMES="libgomp"
-			-DOpenMP_libgomp_LIBRARY="${gomp_abspath}"
-		)
-	else
 einfo "Using libomp"
-		mycmakeargs+=(
-			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp -Wno-unused-command-line-argument"
-			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so"
-		)
-	fi
+	mycmakeargs+=(
+		-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp -Wno-unused-command-line-argument"
+		-DOpenMP_CXX_LIB_NAMES="libomp"
+		-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(rocm_get_libdir)/libomp.so"
+	)
 
 	rocm_src_configure
 }
