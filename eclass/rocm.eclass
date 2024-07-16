@@ -171,49 +171,65 @@ _rocm_set_globals_default() {
 
 	HIP_SUPPORT_CUDA="${HIP_SUPPORT_CUDA:-0}"
 	HIP_SUPPORT_ROCM="${HIP_SUPPORT_ROCM:-1}"
-	# Based on hipify and dev-util/nvidia-cuda-toolkit version availability
+	# Based on sys-devel/llvm-roc.
+	# See
+	# https://github.com/ROCm/llvm-project/blob/rocm-5.1.3/clang/include/clang/Basic/Cuda.h#L39
+	# https://github.com/ROCm/llvm-project/blob/rocm-5.2.3/clang/include/clang/Basic/Cuda.h#L39
+	# https://github.com/ROCm/llvm-project/blob/rocm-5.3.3/clang/include/clang/Basic/Cuda.h#L39
+	# https://github.com/ROCm/llvm-project/blob/rocm-5.4.3/clang/include/clang/Basic/Cuda.h#L39
+	# https://github.com/ROCm/llvm-project/blob/rocm-5.5.1/clang/include/clang/Basic/Cuda.h#L42
+	# https://github.com/ROCm/llvm-project/blob/rocm-5.6.1/clang/include/clang/Basic/Cuda.h#L42
+	# https://github.com/ROCm/llvm-project/blob/rocm-5.7.1/clang/include/clang/Basic/Cuda.h#L42
+	# https://github.com/ROCm/llvm-project/blob/rocm-6.0.2/clang/include/clang/Basic/Cuda.h#L42
+	# https://github.com/ROCm/llvm-project/blob/rocm-6.1.2/clang/include/clang/Basic/Cuda.h#L44
 	if [[ "${ROCM_SLOT}" == "6.1" ]] ; then
-		# https://github.com/ROCm/HIPIFY/blob/rocm-6.1.2/docs/hipify-clang.rst
-		HIP_CUDA_VERSIONS="11.8 12.3"
+		HIP_CUDA_VERSIONS="11.8"
 	elif [[ "${ROCM_SLOT}" == "6.0" ]] ; then
-		# https://github.com/ROCm/HIPIFY/blob/rocm-6.0.2/docs/hipify-clang.md
-		HIP_CUDA_VERSIONS="11.8 "
+		HIP_CUDA_VERSIONS="11.8"
 	elif [[ "${ROCM_SLOT}" == "5.7" ]] ; then
-		# https://github.com/ROCm/HIPIFY/blob/rocm-5.7.1/docs/hipify-clang.md
 		HIP_CUDA_VERSIONS="11.8"
 	elif [[ "${ROCM_SLOT}" == "5.6" ]] ; then
-		# https://github.com/ROCm/HIPIFY/blob/rocm-5.6.1/docs/hipify-clang.md
 		HIP_CUDA_VERSIONS="11.8"
 	elif [[ "${ROCM_SLOT}" == "5.5" ]] ; then
-		# https://github.com/ROCm/HIPIFY/blob/rocm-5.5.1/README.md
-		HIP_CUDA_VERSIONS="11.8"
-	elif [[ "${ROCM_SLOT}" == "5.4" ]] ; then
-		# https://github.com/ROCm/HIPIFY/blob/rocm-5.4.3/README.md
-		HIP_CUDA_VERSIONS="11.8"
-	elif [[ "${ROCM_SLOT}" == "5.3" ]] ; then
-		# https://github.com/ROCm/HIPIFY/blob/rocm-5.3.3/README.md
 		HIP_SUPPORT_CUDA="0"
-		HIP_CUDA_VERSIONS=""
+		HIP_CUDA_VERSIONS="11.5"
+ewarn "You are responsible to maintaining a local copy of =dev-util/nvidia-cuda-toolkit-11.5*"
+		if has cuda && use cuda ; then
+ewarn "hip-nvcc (cuda) is not supported on distro for ROCM_SLOT=${ROCM_SLOT}"
+		fi
+	elif [[ "${ROCM_SLOT}" == "5.4" ]] ; then
+		HIP_SUPPORT_CUDA="0"
+		HIP_CUDA_VERSIONS="11.5"
+ewarn "You are responsible to maintaining a local copy of =dev-util/nvidia-cuda-toolkit-11.5*"
+		if has cuda && use cuda ; then
+ewarn "hip-nvcc (cuda) is not supported on distro for ROCM_SLOT=${ROCM_SLOT}"
+		fi
+	elif [[ "${ROCM_SLOT}" == "5.3" ]] ; then
+		HIP_SUPPORT_CUDA="0"
+		HIP_CUDA_VERSIONS="11.5"
+ewarn "You are responsible to maintaining a local copy of =dev-util/nvidia-cuda-toolkit-11.5*"
 		if has cuda && use cuda ; then
 ewarn "hip-nvcc (cuda) is not supported on distro for ROCM_SLOT=${ROCM_SLOT}"
 		fi
 	elif [[ "${ROCM_SLOT}" == "5.2" ]] ; then
 		# https://github.com/ROCm/HIPIFY/blob/rocm-5.2.3/README.md
 		HIP_SUPPORT_CUDA="0"
-		HIP_CUDA_VERSIONS=""
+		HIP_CUDA_VERSIONS="11.5"
+ewarn "You are responsible to maintaining a local copy of =dev-util/nvidia-cuda-toolkit-11.5*"
 		if has cuda && use cuda ; then
 ewarn "hip-nvcc (cuda) is not supported on distro for ROCM_SLOT=${ROCM_SLOT}"
 		fi
 	elif [[ "${ROCM_SLOT}" == "5.1" ]] ; then
 		# https://github.com/ROCm/HIPIFY/blob/rocm-5.1.3/README.md
 		HIP_SUPPORT_CUDA="0"
-		HIP_CUDA_VERSIONS=""
+		HIP_CUDA_VERSIONS="11.5"
+ewarn "You are responsible to maintaining a local copy of =dev-util/nvidia-cuda-toolkit-11.5*"
 		if has cuda && use cuda ; then
 ewarn "hip-nvcc (cuda) is not supported on distro for ROCM_SLOT=${ROCM_SLOT}"
 		fi
 	else
 		# Same as latest (6.1.x)
-		HIP_CUDA_VERSIONS=${HIP_CUDA_VERSIONS:-"11.8 12.3"}
+		HIP_CUDA_VERSIONS=${HIP_CUDA_VERSIONS:-"11.8"}
 		if has cuda && use cuda ; then
 ewarn "hip-nvcc (cuda) is not supported on distro for ROCM_SLOT < 5.4"
 		fi
@@ -1459,6 +1475,17 @@ eerror "CUDA version not supported.  Use dev-util/nvidia-cuda-toolkit must be 11
 		strip-unsupported-flags
 		filter-flags '-fuse-ld=*'
 		append-ldflags -fuse-ld=lld
+	fi
+}
+
+# @FUNCTION: hip_nvcc_get_gcc_slot
+# @DESCRIPTION:
+# Gets the gcc slot for cuda builds needed for fopenmp or DEPENDs with gcc.
+hip_nvcc_get_gcc_slot() {
+	if has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
+		echo "11"
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" ; then
+		echo "11"
 	fi
 }
 
