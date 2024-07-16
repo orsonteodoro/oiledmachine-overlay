@@ -427,6 +427,18 @@ eerror "same GCC version."
 eerror
 			die
 		fi
+	elif has cuda && ! use cuda ; then
+		if [[ -z "${HIP_PLATFORM}" ]] ; then
+			:
+		elif [[ "${HIP_PLATFORM}" != "amd" ]] ; then
+eerror
+eerror "Change HIP_PLATFORM=\"amd\" in /etc/portage/make.conf to continue."
+eerror
+eerror "The HIP stack should be completely uninstalled also to build with the"
+eerror "same GCC version."
+eerror
+			die
+		fi
 	fi
 
 	if [[ -z "${LLVM_SLOT}" ]] ; then
