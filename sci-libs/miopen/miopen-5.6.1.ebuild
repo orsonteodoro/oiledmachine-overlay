@@ -282,8 +282,8 @@ src_configure() {
 		done
 	fi
 
-	addpredict /dev/kfd
-	addpredict /dev/dri/
+	addpredict "/dev/kfd"
+	addpredict "/dev/dri/"
 	append-cxxflags "--rocm-path=${ESYSROOT}${EROCM_PATH}"
 	append-cxxflags "--hip-device-lib-path=${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/amdgcn/bitcode"
 
