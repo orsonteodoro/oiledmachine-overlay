@@ -37,7 +37,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 LICENSE="MIT"
 RESTRICT="strip"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-32"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-33"
 REQUIRED_USE="
 	hsa? (
 		rocm

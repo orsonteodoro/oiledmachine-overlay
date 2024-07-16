@@ -37,7 +37,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipFFT"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +rocm
-ebuild-revision-6
+ebuild-revision-7
 "
 gen_cuda_required_use() {
 	local x

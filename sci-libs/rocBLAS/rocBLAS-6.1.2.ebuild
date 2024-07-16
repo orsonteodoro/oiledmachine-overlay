@@ -74,7 +74,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark cuda +rocm test ebuild-revision-15
+benchmark cuda +rocm test ebuild-revision-16
 "
 gen_rocm_required_use() {
 	local x
@@ -108,7 +108,6 @@ RDEPEND="
 	)
 	cuda? (
 		${HIP_CUDA_DEPEND}
-		dev-util/nvidia-cuda-toolkit:=
 	)
 "
 DEPEND="

@@ -26,7 +26,6 @@ CUDA_TARGETS_COMPAT=(
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=14
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit cmake rocm
 
@@ -42,7 +41,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test ebuild-revision-6
+benchmark cuda +rocm test ebuild-revision-7
 "
 gen_cuda_required_use() {
 	local x
@@ -92,7 +91,7 @@ RDEPEND="
 		dev-cpp/benchmark
 	)
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
+		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
 		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCM_USEDEP},rocm?]

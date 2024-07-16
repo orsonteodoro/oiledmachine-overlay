@@ -47,7 +47,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark cuda +rocm test ebuild-revision-15
+benchmark cuda +rocm test ebuild-revision-16
 "
 gen_rocm_required_use() {
 	local x

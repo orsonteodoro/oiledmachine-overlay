@@ -20,7 +20,7 @@ DESCRIPTION="ROCm BLAS marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipBLAS"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" cuda +rocm ebuild-revision-5"
+IUSE+=" cuda +rocm ebuild-revision-6"
 REQUIRED_USE="
 	^^ (
 		cuda
@@ -30,7 +30,7 @@ REQUIRED_USE="
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
+		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
 		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[rocm]

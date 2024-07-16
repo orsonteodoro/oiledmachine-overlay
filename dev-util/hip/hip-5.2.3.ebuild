@@ -38,7 +38,7 @@ DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-32"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-33"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -82,7 +82,7 @@ RDEPEND="
 	app-eselect/eselect-rocm
 	virtual/opengl
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
+		${HIP_CUDA_DEPEND}
 	)
 	lc? (
 		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
@@ -91,7 +91,7 @@ RDEPEND="
 		sys-process/numactl
 	)
 	rocm? (
-		dev-util/nvidia-cuda-toolkit:=
+		${ROCM_CLANG_DEPEND}
 		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 	)
