@@ -417,6 +417,18 @@ unset -f _rocm_set_globals
 # @DESCRIPTION:
 # Init paths
 rocm_pkg_setup() {
+	if has cuda && use cuda ; then
+		if [[ "${HIP_PLATFORM}" != "nvidia" ]] ; then
+eerror
+eerror "Change HIP_PLATFORM=\"nvidia\" in /etc/portage/make.conf to continue."
+eerror
+eerror "The HIP stack should be completely uninstalled also to build with the"
+eerror "same GCC version."
+eerror
+			die
+		fi
+	fi
+
 	if [[ -z "${LLVM_SLOT}" ]] ; then
 eerror
 eerror "LLVM_SLOT must be defined."

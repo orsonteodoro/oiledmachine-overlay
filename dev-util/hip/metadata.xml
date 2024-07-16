@@ -24,6 +24,16 @@
   <upstream>
     <remote-id type="github">ROCm-Developer-Tools/HIP</remote-id>
   </upstream>
+  <!--
+
+  Environment variables:
+
+  HIP_PLATFORM - Select the GPU platform to use for proper GCC version pinning.
+  Valid values:  amd (default), nvidia.
+
+  (The HIP_PLATFORM environment variable should be set in /etc/portage/make.conf)
+
+  -->
   <use>
     <flag name="hsa">
       Support HSA compute kernels with the HSA runtime.
