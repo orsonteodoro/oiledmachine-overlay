@@ -72,7 +72,7 @@ HIP_6_1_GCC_SLOT="12"
 #           programming.
 #
 # For the "missing" tag in brackets, we fill the missing details using the
-# documentation in the newer release of HIPIFY.
+# documentation from the next minor version of HIPIFY.
 #
 HIPIFY_4_5_CUDA_SLOT="11.5" # LLVM 13, [missing]
 HIPIFY_5_0_CUDA_SLOT="11.6" # LLVM 14, [missing]
@@ -90,7 +90,7 @@ HIPIFY_4_5_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvi
 HIPIFY_5_0_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.6.2.ebuild?id=e51ca099bec28c5a27a7eb070e7c77a06790a30d"
 HIPIFY_5_1_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.6.2.ebuild?id=e51ca099bec28c5a27a7eb070e7c77a06790a30d"
 HIPIFY_5_2_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.6.2.ebuild?id=e51ca099bec28c5a27a7eb070e7c77a06790a30d"
-# If cuda_11_7 USE flag enabled for the sys-devel/llvm-roc ebuild, it may be
+# If cuda_11_7 USE flag is enabled for the sys-devel/llvm-roc ebuild, it may be
 # possible to use the dev-util/nvidia-cuda-toolkit 11.7.0 ebuild.
 # https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.7.0-r4.ebuild?id=5165cc0405cc638a674b1ba7576c4df496012fe0"
 HIPIFY_5_3_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.8.0-r4.ebuild?id=3e598a395f06403e05d63b15458d90a56cb1a3ec"
