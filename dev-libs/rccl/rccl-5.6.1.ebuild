@@ -18,7 +18,6 @@ AMDGPU_TARGETS_COMPAT=(
 CHECKREQS_MEMORY=25G # Tested with 34.3G total memory
 LLVM_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit check-reqs cmake edo flag-o-matic rocm
 
@@ -38,7 +37,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-4"
+IUSE="test ebuild-revision-5"
 RDEPEND="
 	!dev-libs/rccl:0
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
@@ -49,6 +48,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
 	~dev-util/HIPIFY-${PV}:${ROCM_SLOT}
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
@@ -99,8 +99,7 @@ src_configure() {
 # XXXXXXXXXXX is omitted
 	replace-flags '-O0' '-O1'
 
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
@@ -115,6 +114,7 @@ src_configure() {
 		-Wno-dev
 	)
 
+ewarn "It may hang when generating git_version.cpp.  Restart emerge if it happens."
 	rocm_src_configure
 }
 

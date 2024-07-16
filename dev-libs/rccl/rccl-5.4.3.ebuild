@@ -17,7 +17,6 @@ AMDGPU_TARGETS_COMPAT=(
 )
 LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit cmake edo flag-o-matic rocm
 
@@ -37,7 +36,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-4"
+IUSE="test ebuild-revision-5"
 RDEPEND="
 	!dev-libs/rccl:0
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
@@ -47,6 +46,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
@@ -76,8 +76,7 @@ src_configure() {
 
 	replace-flags '-O0' '-O1'
 
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
@@ -92,6 +91,7 @@ src_configure() {
 		-Wno-dev
 	)
 
+ewarn "It may hang when generating git_version.cpp.  Restart emerge if it happens."
 	rocm_src_configure
 }
 
