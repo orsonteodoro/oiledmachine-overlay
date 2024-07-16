@@ -110,7 +110,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	${HIPCC_DEPEND}
+	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-3.16.8
 	profile? (
 		$(python_gen_any_dep '
