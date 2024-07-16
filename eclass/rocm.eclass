@@ -190,8 +190,8 @@ _rocm_set_globals_default() {
 		_HIP_CUDA_VERSION="HIPIFY_${ROCM_SLOT/./_}_CUDA_SLOT"
 		HIP_CUDA_VERSION="${!_HIP_CUDA_VERSIONS}"
 
-		_HIPIFY_CUDA_URI="HIPIFY_${ROCM_SLOT/./_}_CUDA_URI"
-		HIPIFY_CUDA_URI="${!_HIPIFY_CUDA_URI}"
+		_HIPIFY_CUDA_SDK_EBUILD_URI="HIPIFY_${ROCM_SLOT/./_}_CUDA_URI"
+		HIPIFY_CUDA_SDK_EBUILD_URI="${!_HIPIFY_CUDA_SDK_EBUILD_URI}"
 
 		gen_hip_cuda_impl+="
 			=dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}*
@@ -199,7 +199,7 @@ _rocm_set_globals_default() {
 
 ewarn
 ewarn "You are responsible for maintaining a local copy of =dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}* for ${CATEGORY}/${PN}-${PVR}:${SLOT} for CUDA support if ebuild not available."
-ewarn "nvidia-cuda-toolkit ebuild uri:  ${HIPIFY_CUDA_URI}"
+ewarn "nvidia-cuda-toolkit ebuild uri:  ${HIPIFY_CUDA_SDK_EBUILD_URI}"
 ewarn
 	else
 		HIP_SUPPORT_CUDA=0
