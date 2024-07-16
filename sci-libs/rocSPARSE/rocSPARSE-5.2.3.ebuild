@@ -15,7 +15,6 @@ AMDGPU_TARGETS_COMPAT=(
 LLVM_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.3.3/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{9..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit cmake edo flag-o-matic python-any-r1 toolchain-funcs rocm
 
@@ -79,29 +78,26 @@ https://sparse.tamu.edu/MM/Chevron/Chevron4.tar.gz
 DESCRIPTION="Basic Linear Algebra Subroutines for sparse computation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSPARSE"
 LICENSE="MIT"
-IUSE="benchmark test ebuild-revision-6"
+IUSE="benchmark test ebuild-revision-8"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
+RESTRICT="test" # Test ebuild sections needs update
 SLOT="${ROCM_SLOT}/${PV}"
 RDEPEND="
 	!sci-libs/rocSPARSE:0
-	sys-libs/llvm-roc-libomp:=
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[rocm(+)]
 	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${HIP_CLANG_DEPEND}
 	>=dev-build/cmake-3.5
-	sys-devel/gcc[fortran]
+	sys-devel/gcc:${HIP_5_2_GCC_SLOT}[fortran]
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		$(python_gen_any_dep '
@@ -195,8 +191,8 @@ src_configure() {
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
 	)
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
+	export FC="${CHOST}-gfortran-${HIP_5_1_GCC_SLOT}"
 	rocm_src_configure
 }
 

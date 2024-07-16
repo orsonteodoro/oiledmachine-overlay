@@ -3,6 +3,7 @@
 
 EAPI=8
 
+HIP_SUPPORT_CUDA=1
 LLVM_SLOT=16
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
@@ -22,7 +23,7 @@ REQUIRED_USE="${ROCM_REQUIRED_USE}"
 LICENSE="MIT"
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="cuda rocm ebuild-revision-4"
+IUSE="cuda rocm ebuild-revision-5"
 REQUIRED_USE="
 	^^ (
 		cuda

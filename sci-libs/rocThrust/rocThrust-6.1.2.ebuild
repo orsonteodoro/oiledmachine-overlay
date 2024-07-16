@@ -22,7 +22,6 @@ CUB_COMMIT="7106f901990803ca512cd7d9e6d7d2782f2c4839"
 LIBCUDACXX_COMMIT="05d48aaa12a3c310c333298331c41a9214f08f22"
 LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit cmake rocm
 
@@ -48,7 +47,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark test ebuild-revision-3
+benchmark test ebuild-revision-4
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -65,6 +64,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.20.1
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
@@ -127,8 +127,7 @@ src_configure() {
 		-DSKIP_RPATH=ON
 	)
 
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 	rocm_src_configure
 }
 

@@ -15,7 +15,6 @@ AMDGPU_TARGETS_COMPAT=(
 CUB_COMMIT="ed040d585c3237d706973d7ad290bfee40958270"
 LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit cmake rocm
 
@@ -39,7 +38,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark test ebuild-revision-3
+benchmark test ebuild-revision-4
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -56,6 +55,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.15
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
@@ -113,8 +113,7 @@ src_configure() {
 		-DSKIP_RPATH=ON
 	)
 
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 	rocm_src_configure
 }
 

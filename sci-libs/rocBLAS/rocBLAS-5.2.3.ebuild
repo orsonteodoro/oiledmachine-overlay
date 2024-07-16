@@ -20,10 +20,10 @@ DOCS_DIR="docs"
 DOCS_DEPEND="
 	media-gfx/graphviz
 "
+HIP_SUPPORT_CUDA=1
 LLVM_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.2.3/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit cmake docs edo flag-o-matic multiprocessing python-single-r1 rocm
 
@@ -44,7 +44,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark cuda +rocm test ebuild-revision-12
+benchmark cuda +rocm test ebuild-revision-14
 "
 gen_rocm_required_use() {
 	local x
@@ -89,14 +89,14 @@ DEPEND="
 	)
 "
 BDEPEND="
+	${PYTHON_DEPS}
+	${ROCM_CLANG_DEPEND}
 	$(python_gen_cond_dep '
 		dev-python/msgpack[${PYTHON_USEDEP}]
 		dev-python/six[${PYTHON_USEDEP}]
 		dev-python/virtualenv[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
 	')
-	${PYTHON_DEPS}
-	sys-devel/clang:${LLVM_SLOT}
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	rocm? (
 		$(python_gen_cond_dep '
@@ -167,16 +167,6 @@ src_configure() {
 	)
 
 	if use cuda ; then
-		local s=11
-		strip-flags
-		filter-flags \
-			-pipe \
-			-Wl,-O1 \
-			-Wl,--as-needed \
-			-Wno-unknown-pragmas
-		if [[ "${HIP_CXX}" == "nvcc" ]] ; then
-			append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
-		fi
 		export CUDA_PATH="${ESYSROOT}/opt/cuda"
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
@@ -202,8 +192,7 @@ src_configure() {
 			-DTensile_TEST_LOCAL_PATH="${ESYSROOT}${EROCM_PATH}/share/Tensile"
 		)
 	fi
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 	rocm_src_configure
 }
 

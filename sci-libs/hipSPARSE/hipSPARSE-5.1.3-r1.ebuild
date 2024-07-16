@@ -3,6 +3,7 @@
 
 EAPI=8
 
+HIP_SUPPORT_CUDA=1
 LLVM_SLOT=14
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -60,8 +61,9 @@ https://sparse.tamu.edu/MM/DNVS/shipsec1.tar.gz
 DESCRIPTION="ROCm SPARSE marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSPARSE"
 LICENSE="MIT"
+RESTRICT="test" # Test ebuild sections needs update
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="cuda +rocm test ebuild-revision-5"
+IUSE="cuda +rocm test ebuild-revision-7"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
@@ -87,6 +89,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
@@ -148,16 +151,6 @@ src_configure() {
 	)
 
 	if use cuda ; then
-		local s=11
-		strip-flags
-		filter-flags \
-			-pipe \
-			-Wl,-O1 \
-			-Wl,--as-needed \
-			-Wno-unknown-pragmas
-		if [[ "${HIP_CXX}" == "nvcc" ]] ; then
-			append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
-		fi
 		export CUDA_PATH="${ESYSROOT}/opt/cuda"
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
@@ -175,8 +168,7 @@ src_configure() {
 			-DHIP_RUNTIME="rocclr"
 		)
 	fi
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 	rocm_src_configure
 }
 

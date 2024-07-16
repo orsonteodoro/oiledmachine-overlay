@@ -29,7 +29,6 @@ CUDA_TARGETS_COMPAT=(
 HIPRAND_COMMIT="8babdbe0cf4dc330c9ec5a0231ac059187a7bc8a"
 LLVM_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic rocm
 

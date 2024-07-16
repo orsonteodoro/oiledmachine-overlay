@@ -14,6 +14,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx942_xnack_plus
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
+HIP_SUPPORT_CUDA=1
 LLVM_SLOT=17
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -40,7 +41,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${ROCM_IUSE}
-benchmark cuda +rocm +tensile ebuild-revision-7
+benchmark cuda +rocm +tensile ebuild-revision-8
 "
 gen_rocm_required_use() {
 	local x
@@ -163,16 +164,6 @@ ewarn
 	)
 
 	if use cuda ; then
-		local s=11
-		strip-flags
-		filter-flags \
-			-pipe \
-			-Wl,-O1 \
-			-Wl,--as-needed \
-			-Wno-unknown-pragmas
-		if [[ "${HIP_CXX}" == "nvcc" ]] ; then
-			append-cxxflags -ccbin "${ESYSROOT}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
-		fi
 		export CUDA_PATH="${ESYSROOT}/opt/cuda"
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(

@@ -26,6 +26,7 @@ CUDA_TARGETS_COMPAT=(
 	compute_80
 	compute_86
 )
+HIP_SUPPORT_CUDA=1
 LLVM_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -42,7 +43,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipFFT"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +rocm
-ebuild-revision-3
+ebuild-revision-4
 "
 gen_cuda_required_use() {
 	local x
@@ -97,6 +98,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.16
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
@@ -131,16 +133,6 @@ src_configure() {
 		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
 	)
 	if use cuda ; then
-		local s=11
-		strip-flags
-		filter-flags \
-			-pipe \
-			-Wl,-O1 \
-			-Wl,--as-needed \
-			-Wno-unknown-pragmas
-		if [[ "${HIP_CXX}" == "nvcc" ]] ; then
-			append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
-		fi
 		export CUDA_PATH="${ESYSROOT}/opt/cuda"
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
@@ -159,8 +151,7 @@ src_configure() {
 			-DHIP_RUNTIME="rocclr"
 		)
 	fi
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 	rocm_src_configure
 }
 

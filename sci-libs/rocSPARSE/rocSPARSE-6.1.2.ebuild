@@ -31,7 +31,6 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=17 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.6.0/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{9..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit cmake edo flag-o-matic python-any-r1 toolchain-funcs rocm
 
@@ -96,29 +95,26 @@ https://sparse.tamu.edu/MM/Chevron/Chevron4.tar.gz
 DESCRIPTION="Basic Linear Algebra Subroutines for sparse computation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSPARSE"
 LICENSE="MIT"
-IUSE="benchmark test ebuild-revision-6"
+IUSE="benchmark test ebuild-revision-8"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
+RESTRICT="test" # Test ebuild sections needs update
 SLOT="${ROCM_SLOT}/${PV}"
 RDEPEND="
 	!sci-libs/rocSPARSE:0
-	sys-libs/llvm-roc-libomp:=
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[rocm(+)]
 	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${HIP_CLANG_DEPEND}
 	>=dev-build/cmake-3.5
-	sys-devel/gcc[fortran]
+	sys-devel/gcc:${HIP_6_1_GCC_SLOT}[fortran]
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		$(python_gen_any_dep '
@@ -151,7 +147,6 @@ pkg_setup() {
 add_gfortran_wrapper() {
 	mkdir -p "${WORKDIR}/bin" || die
 	touch "${WORKDIR}/bin/${CHOST}-gfortran" || die
-	local gcc_major_version=$(gcc-major-version)
 cat <<EOF > "${WORKDIR}/bin/${CHOST}-gfortran" || die
 #!/bin/bash
 args="\$@"
@@ -163,7 +158,7 @@ args=\$(echo "\${args}" \
 		-e "/-pipe/d" \
 		-e "/--rocm-path/d" \
 		-e "/--rocm-device-lib-path=/d")
-"/usr/${CHOST}/gcc-bin/${gcc_major_version}/${CHOST}-gfortran" \${args}
+"/usr/${CHOST}/gcc-bin/${HIP_6_1_GCC_SLOT}/gfortran" \${args}
 EOF
 	chmod +x "${WORKDIR}/bin/${CHOST}-gfortran" || die
 	ln -s \
@@ -172,7 +167,7 @@ EOF
 		|| die
 	ln -s \
 		"${WORKDIR}/bin/${CHOST}-gfortran" \
-		"${WORKDIR}/bin/gfortran-${gcc_major_version}" \
+		"${WORKDIR}/bin/gfortran-${HIP_6_1_GCC_SLOT}" \
 		|| die
 }
 
@@ -242,8 +237,7 @@ src_configure() {
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
 	)
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 	export FC="${WORKDIR}/bin/gfortran"
 	export PATH="${WORKDIR}/bin:${PATH}"
 	rocm_src_configure

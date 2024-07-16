@@ -24,7 +24,6 @@ CHECKREQS_DISK_BUILD="7G"
 LLVM_SLOT=14
 PYTHON_COMPAT=( "python3_"{9..10} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit cmake check-reqs edo flag-o-matic multiprocessing python-r1 rocm
 

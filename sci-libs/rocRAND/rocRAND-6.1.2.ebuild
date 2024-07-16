@@ -31,7 +31,6 @@ CUDA_TARGETS_COMPAT=(
 )
 LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic rocm
 

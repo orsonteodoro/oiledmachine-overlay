@@ -32,25 +32,23 @@ RESTRICT="
 	test
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-2"
+IUSE="ebuild-revision-3"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 RDEPEND="
-	sys-libs/llvm-roc-libomp:=
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
-"
-DEPEND="
-	${RDEPEND}
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.5.1-hardcoded-paths.patch"
@@ -82,8 +80,7 @@ src_configure() {
 		-DROCWMMA_BUILD_TESTS=OFF
 	)
 
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 	rocm_src_configure
 }
 

@@ -11,9 +11,9 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx941
 	gfx942
 )
+HIP_SUPPORT_CUDA=1
 LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic rocm
 
@@ -29,7 +29,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipTensor"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-+rocm samples test ebuild-revision-3
++rocm samples test ebuild-revision-4
 "
 gen_rocm_required_use() {
 	local x
@@ -62,6 +62,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.14
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
@@ -102,8 +103,7 @@ src_configure() {
 		)
 	fi
 
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	rocm_set_default_hipcc
 	rocm_src_configure
 }
 

@@ -165,7 +165,7 @@ _rocm_set_globals_default() {
 		"
 	fi
 
-	HIP_SUPPORT_CUDA="${HIP_SUPPORT_CUDA:-1}"
+	HIP_SUPPORT_CUDA="${HIP_SUPPORT_CUDA:-0}"
 	HIP_SUPPORT_ROCM="${HIP_SUPPORT_ROCM:-1}"
 	# Based on hipify and dev-util/nvidia-cuda-toolkit version availability
 	if [[ "${ROCM_SLOT}" == "6.1" ]] ; then
@@ -1412,11 +1412,28 @@ rocm_set_default_hipcc() {
 	export CC="hipcc"
 	export CXX="hipcc"
 	if has cuda && use cuda ; then
+		# Limited by HIPIFY.  See _rocm_set_globals_default()
+		local s
+		if has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=sys-devel/gcc-12" ; then
+			s="12"
+		elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/gcc-11" ; then
+			s="11"
+		else
+eerror "CUDA version not supported.  Use dev-util/nvidia-cuda-toolkit must be 11.8 or 12.3."
+			die
+		fi
+
 		unset CPP
 		# It should use nvcc.
 		strip-flags
+		filter-flags \
+			-pipe \
+			-Wl,-O1 \
+			-Wl,--as-needed \
+			-Wno-unknown-pragmas
 		filter-flags '-fuse-ld=*'
 		append-ldflags -fuse-ld=bfd
+		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
 	else
 		export CPP="${CXX} -E"
 		strip-unsupported-flags

@@ -16,7 +16,6 @@ CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=14
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit cmake rocm
 
@@ -33,7 +32,7 @@ LICENSE="MIT"
 RESTRICT="mirror"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-rocm samples +openmp mpi ebuild-revision-5
+rocm samples +openmp mpi ebuild-revision-6
 "
 gen_rocm_required_use() {
 	local x
@@ -61,7 +60,7 @@ RDEPEND="
 		virtual/mpi
 	)
 	openmp? (
-		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+		${ROCM_CLANG_DEPEND}
 		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 	)
 	rocm? (
@@ -76,6 +75,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
@@ -126,15 +126,7 @@ src_configure() {
 		-DSUPPORT_OMP=$(usex openmp ON OFF)
 	)
 
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
-
-	if [[ "${CXX}" =~ (^|-)"g++" ]] ; then
-eerror
-eerror "Only hipcc or clang++ allowed for HIP_CXX"
-eerror
-		die
-	fi
+	rocm_set_default_hipcc
 
 	if use openmp ; then
 		mycmakeargs+=(

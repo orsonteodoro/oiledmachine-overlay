@@ -20,7 +20,6 @@ AMDGPU_TARGETS_COMPAT=(
 )
 LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
 
 inherit cmake rocm
 
@@ -40,7 +39,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="benchmark hip-cpu +rocm test ebuild-revision-3"
+IUSE="benchmark hip-cpu +rocm test ebuild-revision-5"
 gen_rocm_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -73,12 +72,18 @@ RDEPEND="
 		dev-cpp/gtest
 	)
 "
+DEPEND="
+	${RDEPEND}
+"
 BDEPEND="
 	>=dev-build/cmake-3.16
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
-"
-DEPEND="
-	${RDEPEND}
+	!hip-cpu? (
+		${HIPCC_DEPEND}
+	)
+	hip-cpu? (
+		${ROCM_GCC_DEPEND}
+	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
@@ -128,9 +133,6 @@ src_configure() {
 	addpredict "/dev/kfd"
 	addpredict "/dev/dri/"
 
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
-
 	local mycmakeargs=(
 		-DBUILD_BENCHMARK=$(usex benchmark ON OFF)
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
@@ -145,8 +147,6 @@ src_configure() {
 			-DBUILD_HIPRAND=OFF
 			-Dhip_cpu_rt_DIR="${ESYSROOT}/usr/lib/hip-cpu/share/hip_cpu_rt/cmake"
 		)
-		export CC="gcc"
-		export CXX="g++"
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
@@ -156,6 +156,11 @@ src_configure() {
 			-DHIP_RUNTIME="rocclr"
 			-DROCM_ROOT="${EROCM_PATH}"
 		)
+	fi
+	if use hip-cpu ; then
+		rocm_set_default_gcc
+	else
+		rocm_set_default_hipcc
 	fi
 	rocm_src_configure
 }

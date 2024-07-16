@@ -23,6 +23,7 @@ CUDA_TARGETS_COMPAT=(
 	compute_70
 	compute_75
 )
+HIP_SUPPORT_CUDA=1
 LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -41,7 +42,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test ebuild-revision-4
+benchmark cuda +rocm test ebuild-revision-5
 "
 gen_cuda_required_use() {
 	local x
