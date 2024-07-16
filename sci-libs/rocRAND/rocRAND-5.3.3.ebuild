@@ -24,6 +24,7 @@ CUDA_TARGETS_COMPAT=(
 	compute_75
 )
 HIPRAND_COMMIT="12e2f070337945318295c330bf69c6c060928b9e"
+HIP_SUPPORT_CUDA=1
 LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -49,7 +50,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test ebuild-revision-8
+benchmark cuda +rocm test ebuild-revision-9
 "
 gen_cuda_required_use() {
 	local x

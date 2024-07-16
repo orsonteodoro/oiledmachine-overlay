@@ -44,7 +44,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark cuda +rocm test ebuild-revision-14
+benchmark cuda +rocm test ebuild-revision-15
 "
 gen_rocm_required_use() {
 	local x
@@ -82,7 +82,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	${ROCM_CLANG_DEPEND}
+	${HIPCC_DEPEND}
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	rocm? (
 		$(python_gen_cond_dep '

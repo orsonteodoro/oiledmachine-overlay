@@ -27,6 +27,7 @@ CUDA_TARGETS_COMPAT=(
 	compute_75
 )
 HIPRAND_COMMIT="8babdbe0cf4dc330c9ec5a0231ac059187a7bc8a"
+HIP_SUPPORT_CUDA=1
 LLVM_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -52,7 +53,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda hip-cpu +rocm test ebuild-revision-8
+benchmark cuda hip-cpu +rocm test ebuild-revision-9
 "
 gen_cuda_required_use() {
 	local x
@@ -94,7 +95,7 @@ REQUIRED_USE="
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
+		${HIP_CUDA_DEPEND}
 	)
 	hip-cpu? (
 		${HIP_CLANG_DEPEND}

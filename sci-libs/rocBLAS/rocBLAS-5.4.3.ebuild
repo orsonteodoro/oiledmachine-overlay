@@ -46,7 +46,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark cuda +rocm test ebuild-revision-14
+benchmark cuda +rocm test ebuild-revision-15
 "
 gen_rocm_required_use() {
 	local x
@@ -79,7 +79,7 @@ RDEPEND="
 		virtual/blas
 	)
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
+		${HIP_CUDA_DEPEND}
 	)
 "
 DEPEND="
@@ -92,7 +92,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	${ROCM_CLANG_DEPEND}
+	${HIPCC_DEPEND}
 	$(python_gen_cond_dep '
 		dev-python/msgpack[${PYTHON_USEDEP}]
 		dev-python/six[${PYTHON_USEDEP}]

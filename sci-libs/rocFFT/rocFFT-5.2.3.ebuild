@@ -94,7 +94,7 @@ RDEPEND="
 	>=dev-db/sqlite-3.36
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
-		${HIP_CUDA_DEPEND}
+		dev-util/nvidia-cuda-toolkit:=
 	)
 	perfscripts? (
 		>=media-gfx/asymptote-2.61
