@@ -156,8 +156,13 @@ _rocm_set_globals_default() {
 		"
 
 		local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
+		if [[ -n "${ROCM_CLANG_USEDEP}" ]] ; then
+			_ROCM_CLANG_USEDEP="[${ROCM_CLANG_USEDEP}]"
+		else
+			_ROCM_CLANG_USEDEP=""
+		fi
 		ROCM_CLANG_DEPEND="
-			~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+			~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}${_ROCM_CLANG_USEDEP}
 			sys-devel/llvm-roc:=
 		"
 		HIP_CLANG_DEPEND="

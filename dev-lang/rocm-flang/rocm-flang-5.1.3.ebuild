@@ -8,6 +8,7 @@ AOCC_SLOT=${AOCC_COMPAT[0]}
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=14 # Same as llvm-roc
 PYTHON_COMPAT=( "python3_"{10..11} )
+ROCM_CLANG_USEDEP="llvm_targets_AMDGPU,llvm_targets_X86"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit aocc cmake flag-o-matic python-any-r1 rocm toolchain-funcs
@@ -43,15 +44,14 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-aocc doc test ebuild-revision-3
+aocc doc test ebuild-revision-4
 "
 REQUIRED_USE="
 "
 RDEPEND="
+	${ROCM_CLANG_DEPEND}
 	!dev-lang/rocm-flang:0
-	dev-util/rocm-compiler[-system-llvm]
 	sys-devel/gcc
-	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}[llvm_targets_AMDGPU,llvm_targets_X86]
 	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[llvm_targets_AMDGPU,llvm_targets_X86,offload]
 "
 DEPEND="
@@ -60,6 +60,9 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.9.0
 	sys-devel/gcc-config
+	!aocc? (
+		${ROCM_CLANG_DEPEND}
+	)
 	doc? (
 		app-text/doxygen
 		$(python_gen_any_dep '
@@ -212,12 +215,7 @@ src_configure() {
 }
 
 src_compile() {
-	local gcc_slot=$(gcc-major-version) # Wrong when ROCM_USE_LLVM_ROC=1
-	local gcc_slot=$(gcc --version \
-		| cut -f 2 -d ")" \
-		| sed -e "s|^ ||g" \
-		| head -n 1 \
-		| cut -f 1 -d " ")
+	local gcc_slot="${HIP_5_1_GCC_SLOT}"
 	gcc_slot="${gcc_slot%%.*}"
 	local gcc_current_profile=$(gcc-config -c)
 	local gcc_current_profile_slot=${gcc_current_profile##*-}
@@ -261,8 +259,8 @@ eerror
 		export PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin:${PATH}"
 		export LD_LIBRARY_PATH="${ED}${EROCM_LLVM_PATH}/$(rocm_get_libdir)"
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang"
-			-DCMAKE_CXX_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
+			-DCMAKE_C_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-${LLVM_SLOT}"
+			-DCMAKE_CXX_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++-${LLVM_SLOT}"
 			-DCMAKE_Fortran_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/flang"
 			-DUSE_AAOC=0
 		)
