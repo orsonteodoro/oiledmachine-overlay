@@ -36,7 +36,7 @@ LICENSE="MIT"
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-12"
+IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-13"
 REQUIRED_USE="
 	raslib
 	systemd? (
@@ -73,6 +73,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-3.16.8
 	doc? (
 		>=app-text/doxygen-1.8.11
@@ -110,6 +111,7 @@ src_prepare() {
 }
 
 src_configure() {
+	rocm_set_default_gcc
 	local mycmakeargs=(
 		-DBUILD_RASLIB=OFF # No repo
 		-DBUILD_ROCPTEST=$(usex test ON OFF)
