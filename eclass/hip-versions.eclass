@@ -55,13 +55,23 @@ HIP_5_7_GCC_SLOT="12"
 HIP_6_0_GCC_SLOT="12"
 HIP_6_1_GCC_SLOT="12"
 
-# Corresponding llvm-roc and cuda version
+#
+# The table for corresponding llvm-roc and CUDA versions.
+#
 # Key:
-# c - consistent CUDA version with HIPIFY documentation
-# s - stable config
-# u - not marked stable config (implied unstable or not CI tested)
-# match - The versions are matching.  (e.g. the git version in HIPIFY documentation is the same as version in llvm-roc with the git suffix)
-# missing - The corresponding llvm-roc version is not found in HIPIFY documentation
+# c       - consistent CUDA version with HIPIFY documentation
+# s       - stable config
+# u       - not marked stable config (implied unstable or not CI tested)
+# match   - The versions are matching.  (e.g. the git version in HIPIFY
+#           documentation is the same as version in llvm-roc with the git
+#           suffix)
+# missing - The corresponding llvm-roc major version is not found in HIPIFY
+#           documentation.  Upstream may have forgotten to update the
+#           documentation, which is a common bad habit in programming.
+#
+# For the "missing" tag in brackets, we fill the missing details using the
+# documentation in the newer release of HIPIFY.
+#
 HIPIFY_4_5_CUDA_SLOT="11.5" # LLVM 13, [missing]
 HIPIFY_5_0_CUDA_SLOT="11.6" # LLVM 14, [missing]
 HIPIFY_5_1_CUDA_SLOT="11.6" # LLVM 14, [missing]
@@ -78,6 +88,9 @@ HIPIFY_4_5_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvi
 HIPIFY_5_0_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.6.2.ebuild?id=e51ca099bec28c5a27a7eb070e7c77a06790a30d"
 HIPIFY_5_1_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.6.2.ebuild?id=e51ca099bec28c5a27a7eb070e7c77a06790a30d"
 HIPIFY_5_2_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.6.2.ebuild?id=e51ca099bec28c5a27a7eb070e7c77a06790a30d"
+# If cuda_11_7 USE flag enabled for the sys-devel/llvm-roc ebuild, it may be
+# possible to use the dev-util/nvidia-cuda-toolkit 11.7.0 ebuild.
+# https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.7.0-r4.ebuild?id=5165cc0405cc638a674b1ba7576c4df496012fe0"
 HIPIFY_5_3_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.8.0-r4.ebuild?id=3e598a395f06403e05d63b15458d90a56cb1a3ec"
 HIPIFY_5_4_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.8.0-r4.ebuild?id=3e598a395f06403e05d63b15458d90a56cb1a3ec"
 HIPIFY_5_5_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.1.1-r1.ebuild?id=56bf30db3c55f0bf7786e5e057a5546932aa99ca"
@@ -85,4 +98,3 @@ HIPIFY_5_6_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvi
 HIPIFY_5_7_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.2.2-r1.ebuild?id=6d5c521d947b4ccc81b2031f1b51b5ce06fdb880"
 HIPIFY_6_0_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.2.2-r1.ebuild?id=6d5c521d947b4ccc81b2031f1b51b5ce06fdb880"
 HIPIFY_6_1_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.3.2.ebuild?id=c6a96e9169b96c35d91263b113b334655f752e60"
-

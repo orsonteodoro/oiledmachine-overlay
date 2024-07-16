@@ -89,7 +89,7 @@
       Add Control Flow Integrity support.
     </flag>
     <flag name="cuda_11_7">
-      Apply proposed patch for cuda 11.7 compatibility.
+      Apply proposed patch for cuda 11.7 compatibility for HIPIFY.
     </flag>
     <flag name="epgo">
       Build an optimized Clang toolchain using Profile Guided Optimization (PGO)
