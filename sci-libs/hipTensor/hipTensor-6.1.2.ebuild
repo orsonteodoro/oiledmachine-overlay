@@ -29,7 +29,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipTensor"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-+rocm samples test ebuild-revision-4
+cuda +rocm samples test ebuild-revision-5
 "
 gen_rocm_required_use() {
 	local x
@@ -48,6 +48,7 @@ REQUIRED_USE="
 		${ROCM_REQUIRED_USE}
 	)
 	^^ (
+		cuda
 		rocm
 	)
 "
@@ -57,6 +58,9 @@ RESTRICT="
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~sci-libs/composable_kernel-${PV}:${ROCM_SLOT}
+	cuda? (
+		${HIP_CUDA_DEPEND}
+	)
 "
 DEPEND="
 	${RDEPEND}

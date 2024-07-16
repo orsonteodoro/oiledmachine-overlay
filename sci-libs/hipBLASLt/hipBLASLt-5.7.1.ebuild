@@ -41,7 +41,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${ROCM_IUSE}
-benchmark cuda +rocm +tensile ebuild-revision-8
+benchmark cuda +rocm +tensile ebuild-revision-9
 "
 gen_rocm_required_use() {
 	local x
@@ -71,7 +71,7 @@ RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
+		${HIP_CUDA_DEPEND}
 		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[cuda]
 	)
 	rocm? (

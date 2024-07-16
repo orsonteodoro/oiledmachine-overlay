@@ -22,7 +22,7 @@ DESCRIPTION="ROCm SOLVER marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSOLVER"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test cuda +rocm ebuild-revision-5"
+IUSE="test cuda +rocm ebuild-revision-6"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
@@ -38,7 +38,7 @@ RESTRICT="
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
+		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
 		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[rocm]

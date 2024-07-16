@@ -20,7 +20,7 @@ DESCRIPTION="ROCm BLAS marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipBLAS"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" cuda +rocm ebuild-revision-4"
+IUSE+=" cuda +rocm ebuild-revision-5"
 REQUIRED_USE="
 	^^ (
 		cuda

@@ -42,7 +42,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test ebuild-revision-5
+benchmark cuda +rocm test ebuild-revision-6
 "
 gen_cuda_required_use() {
 	local x
@@ -92,7 +92,7 @@ RDEPEND="
 		dev-cpp/benchmark
 	)
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
+		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
 		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCM_USEDEP},rocm?]

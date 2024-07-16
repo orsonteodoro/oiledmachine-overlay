@@ -37,7 +37,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipFFT"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +rocm
-ebuild-revision-4
+ebuild-revision-6
 "
 gen_cuda_required_use() {
 	local x
@@ -81,7 +81,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
+		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
 		~sci-libs/rocFFT-${PV}:${ROCM_SLOT}[rocm]

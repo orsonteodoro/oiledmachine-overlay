@@ -190,17 +190,29 @@ _rocm_set_globals_default() {
 		# https://github.com/ROCm/HIPIFY/blob/rocm-5.3.3/README.md
 		HIP_SUPPORT_CUDA="0"
 		HIP_CUDA_VERSIONS=""
+		if has cuda && use cuda ; then
+ewarn "HIP is not supported on distro for ROCM_SLOT=${ROCM_SLOT}"
+		fi
 	elif [[ "${ROCM_SLOT}" == "5.2" ]] ; then
 		# https://github.com/ROCm/HIPIFY/blob/rocm-5.2.3/README.md
 		HIP_SUPPORT_CUDA="0"
 		HIP_CUDA_VERSIONS=""
+		if has cuda && use cuda ; then
+ewarn "HIP is not supported on distro for ROCM_SLOT=${ROCM_SLOT}"
+		fi
 	elif [[ "${ROCM_SLOT}" == "5.1" ]] ; then
 		# https://github.com/ROCm/HIPIFY/blob/rocm-5.1.3/README.md
 		HIP_SUPPORT_CUDA="0"
 		HIP_CUDA_VERSIONS=""
+		if has cuda && use cuda ; then
+ewarn "HIP is not supported on distro for ROCM_SLOT=${ROCM_SLOT}"
+		fi
 	else
 		# Same as latest (6.1.x)
 		HIP_CUDA_VERSIONS=${HIP_CUDA_VERSIONS:-"11.8 12.3"}
+		if has cuda && use cuda ; then
+ewarn "HIP is not supported on distro for ROCM_SLOT < 5.4"
+		fi
 	fi
 	local gen_hip_cuda_impl=""
 	local s
@@ -209,6 +221,14 @@ _rocm_set_globals_default() {
 			=dev-util/nvidia-cuda-toolkit-${s}*
 		"
 	done
+	if [[ "${HIP_SUPPORT_CUDA}" == "1" ]] ; then
+		HIP_CUDA_DEPEND="
+			|| (
+				${gen_hip_cuda_impl}
+			)
+			dev-util/nvidia-cuda-toolkit:=
+		"
+	fi
 	if has rocm ${IUSE_EFFECTIVE} && has cuda ${IUSE_EFFECTIVE} ; then
 		if [[ "${HIP_SUPPORT_CUDA}" == "1" ]] ; then
 			HIPCC_DEPEND+="

@@ -23,7 +23,7 @@ REQUIRED_USE="${ROCM_REQUIRED_USE}"
 LICENSE="MIT"
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="cuda rocm ebuild-revision-5"
+IUSE="cuda rocm ebuild-revision-6"
 REQUIRED_USE="
 	^^ (
 		cuda
@@ -33,7 +33,7 @@ REQUIRED_USE="
 RDEPEND="
 	dev-util/hip:${SLOT}
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
+		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
 		sci-libs/rocRAND:${SLOT}

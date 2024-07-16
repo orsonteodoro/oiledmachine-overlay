@@ -23,7 +23,7 @@ REQUIRED_USE="${ROCM_REQUIRED_USE}"
 LICENSE="MIT"
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="cuda rocm ebuild-revision-5"
+IUSE="cuda rocm ebuild-revision-6"
 REQUIRED_USE="
 	^^ (
 		cuda

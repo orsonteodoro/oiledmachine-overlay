@@ -63,7 +63,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSPARSE"
 LICENSE="MIT"
 RESTRICT="test" # Test ebuild sections needs update
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="cuda +rocm test ebuild-revision-7"
+IUSE="cuda +rocm test ebuild-revision-8"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
@@ -79,7 +79,7 @@ RESTRICT="
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
+		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
 		~sci-libs/rocSPARSE-${PV}:${ROCM_SLOT}[rocm(+)]

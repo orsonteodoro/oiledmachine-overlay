@@ -7,6 +7,7 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 DOCS_BUILDER="doxygen"
 DOCS_CONFIG_NAME="doxy.cfg"
 DOCS_DEPEND="media-gfx/graphviz"
+HIP_SUPPORT_CUDA=1
 LLVM_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -37,7 +38,7 @@ DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-29"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-30"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -81,8 +82,7 @@ RDEPEND="
 	app-eselect/eselect-rocm
 	virtual/opengl
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
-		sys-devel/gcc:11
+		${HIP_CUDA_DEPEND}
 	)
 	lc? (
 		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
@@ -101,7 +101,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	${ROCM_GCC_DEPEND}
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.16.8
 	test? (
 		rocm? (
