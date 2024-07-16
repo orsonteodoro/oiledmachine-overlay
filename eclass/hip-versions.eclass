@@ -45,15 +45,35 @@ HIP_5_7_LLVM_SLOT="17"
 HIP_6_0_LLVM_SLOT="17"
 HIP_6_1_LLVM_SLOT="17"
 
-HIP_5_1_GCC_SLOT="12"
-HIP_5_2_GCC_SLOT="12"
-HIP_5_3_GCC_SLOT="12"
-HIP_5_4_GCC_SLOT="12"
-HIP_5_5_GCC_SLOT="12"
-HIP_5_6_GCC_SLOT="12"
-HIP_5_7_GCC_SLOT="12"
-HIP_6_0_GCC_SLOT="12"
-HIP_6_1_GCC_SLOT="12"
+_hip_set_globals() {
+	local hip_platform="${HIP_PLATFORM:-amd}"
+	if [[ "${hip_platform}" == "amd" ]] ; then
+		# For HIP_PLATFORM == amd.
+		HIP_5_1_GCC_SLOT="12"
+		HIP_5_2_GCC_SLOT="12"
+		HIP_5_3_GCC_SLOT="12"
+		HIP_5_4_GCC_SLOT="12"
+		HIP_5_5_GCC_SLOT="12"
+		HIP_5_6_GCC_SLOT="12"
+		HIP_5_7_GCC_SLOT="12"
+		HIP_6_0_GCC_SLOT="12"
+		HIP_6_1_GCC_SLOT="12"
+	else
+		# For HIP_PLATFORM == nvidia.
+		HIP_5_1_GCC_SLOT="11" # CUDA 11.5
+		HIP_5_2_GCC_SLOT="11" # CUDA 11.6
+		HIP_5_3_GCC_SLOT="11" # CUDA 11.8
+		HIP_5_4_GCC_SLOT="11" # CUDA 11.8
+		HIP_5_5_GCC_SLOT="12" # CUDA 12.1
+		HIP_5_6_GCC_SLOT="12" # CUDA 12.1
+		HIP_5_7_GCC_SLOT="12" # CUDA 12.2
+		HIP_6_0_GCC_SLOT="12" # CUDA 12.2
+		HIP_6_1_GCC_SLOT="12" # CUDA 12.3
+	fi
+}
+
+_hip_set_globals
+unset -f _hip_set_globals
 
 #
 # The table for corresponding llvm-roc and CUDA versions.
