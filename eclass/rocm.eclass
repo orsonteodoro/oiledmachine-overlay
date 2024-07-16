@@ -152,8 +152,13 @@ _report_hipify_requirements() {
 		local HIPIFY_CUDA_SDK_EBUILD_URI="${!_HIPIFY_CUDA_SDK_EBUILD_URI}"
 
 ewarn
-ewarn "You are responsible for maintaining a local copy of =dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}* for ${CATEGORY}/${PN}-${PVR}:${SLOT} for CUDA support if ebuild not available."
-ewarn "nvidia-cuda-toolkit ebuild uri:  ${HIPIFY_CUDA_SDK_EBUILD_URI}"
+ewarn "You are responsible for maintaining a local copy of"
+ewarn "=dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}* for"
+ewarn "${CATEGORY}/${PN}-${PVR}:${SLOT} for CUDA support if ebuild not"
+ewarn "available."
+ewarn
+ewarn "dev-util/nvidia-cuda-toolkit ebuild uri:"
+ewarn "${HIPIFY_CUDA_SDK_EBUILD_URI}"
 ewarn
 	fi
 }
