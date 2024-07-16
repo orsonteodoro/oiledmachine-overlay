@@ -59,15 +59,17 @@ HIP_6_1_GCC_SLOT="12"
 # The table for corresponding llvm-roc and CUDA versions.
 #
 # Key:
-# c       - consistent CUDA version with HIPIFY documentation
+# c       - consistent CUDA version with HIPIFY documentation with the same
+#           ROCM_SLOT.
 # s       - stable config
 # u       - not marked stable config (implied unstable or not CI tested)
-# match   - The versions are matching.  (e.g. the git version in HIPIFY
-#           documentation is the same as version in llvm-roc with the git
-#           suffix)
+# match   - The versions are matching.  (e.g. The git version in HIPIFY
+#           documentation with the same ROCM_SLOT is the same as version in
+#           llvm-roc with the git suffix.)
 # missing - The corresponding llvm-roc major version is not found in HIPIFY
-#           documentation.  Upstream may have forgotten to update the
-#           documentation, which is a common bad habit in programming.
+#           documentation for the same ROCM_SLOT.  Upstream may have forgotten
+#           to update the documentation, which is a common bad habit in
+#           programming.
 #
 # For the "missing" tag in brackets, we fill the missing details using the
 # documentation in the newer release of HIPIFY.
