@@ -21,6 +21,7 @@ CUDA_TARGETS_COMPAT=(
 	compute_75
 )
 CHECKREQS_DISK_BUILD="7G"
+HIP_SUPPORT_CUDA=1
 LLVM_SLOT=14
 PYTHON_COMPAT=( "python3_"{9..10} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -45,7 +46,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda perfscripts +rocm test ebuild-revision-9
+benchmark cuda perfscripts +rocm test ebuild-revision-10
 "
 gen_cuda_required_use() {
 	local x
@@ -92,7 +93,7 @@ RDEPEND="
 	${PYTHON_DEPS}
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
+		${HIP_CUDA_DEPEND}
 	)
 	perfscripts? (
 		>=media-gfx/asymptote-2.61

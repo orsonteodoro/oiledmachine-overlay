@@ -109,7 +109,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	${HIP_CLANG_DEPEND}
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
 	sys-devel/gcc:${HIP_5_6_GCC_SLOT}[fortran]
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
