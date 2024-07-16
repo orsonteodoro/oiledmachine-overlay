@@ -113,7 +113,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	${HIPCC_DEPEND}
+	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.5
 	dev-util/patchelf
 	virtual/pkgconfig
