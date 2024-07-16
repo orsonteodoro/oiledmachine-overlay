@@ -155,14 +155,13 @@ _rocm_set_globals_default() {
 			sys-devel/gcc:${!gcc_slot}
 		"
 
-		local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
 		if [[ -n "${ROCM_CLANG_USEDEP}" ]] ; then
 			_ROCM_CLANG_USEDEP="[${ROCM_CLANG_USEDEP}]"
 		else
 			_ROCM_CLANG_USEDEP=""
 		fi
 		ROCM_CLANG_DEPEND="
-			~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}${_ROCM_CLANG_USEDEP}
+			~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}${_ROCM_CLANG_USEDEP}
 			sys-devel/llvm-roc:=
 		"
 		HIP_CLANG_DEPEND="
@@ -246,10 +245,9 @@ ewarn "hip-nvcc (cuda) is not supported on distro for ROCM_SLOT < 5.4"
 			"
 		fi
 		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
-			local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
 			HIPCC_DEPEND+="
 				rocm? (
-					~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+					~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
 					sys-devel/llvm-roc:=
 				)
 			"
@@ -272,10 +270,9 @@ ewarn "hip-nvcc (cuda) is not supported on distro for ROCM_SLOT < 5.4"
 			"
 		fi
 		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
-			local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
 			HIPCC_DEPEND+="
 				rocm? (
-					~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+					~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
 					sys-devel/llvm-roc:=
 				)
 			"
@@ -298,10 +295,9 @@ ewarn "hip-nvcc (cuda) is not supported on distro for ROCM_SLOT < 5.4"
 			"
 		fi
 		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
-			local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
 			HIPCC_DEPEND+="
 				!cuda? (
-					~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+					~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
 					sys-devel/llvm-roc:=
 				)
 			"
@@ -322,9 +318,8 @@ ewarn "hip-nvcc (cuda) is not supported on distro for ROCM_SLOT < 5.4"
 			"
 		fi
 		if [[ "${HIP_SUPPORT_ROCM}" == "1" && -n "${ROCM_SLOT}" ]] ; then
-			local llvm_slot="HIP_${ROCM_SLOT/./_}_LLVM_SLOT"
 			HIPCC_DEPEND="
-				~sys-devel/llvm-roc-${ROCM_VERSION}:${!llvm_slot}
+				~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
 				sys-devel/llvm-roc:=
 			"
 		elif [[ "${HIP_SUPPORT_ROCM}" == "1" && -z "${ROCM_SLOT}" ]] ; then
@@ -464,7 +459,7 @@ ewarn "QA:  ROCM_SLOT should be defined."
 	local clang_selected_desc
 	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
 		EROCM_CLANG_PATH="/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)/clang/${CLANG_SLOT}"
-		clang_selected_desc="sys-devel/llvm-roc:${LLVM_SLOT}"
+		clang_selected_desc="sys-devel/llvm-roc:${ROCM_SLOT}"
 	else
 		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
 		clang_selected_desc="sys-devel/clang:${LLVM_SLOT}"
