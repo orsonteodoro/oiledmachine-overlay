@@ -198,7 +198,7 @@ _rocm_set_globals_default() {
 		"
 
 ewarn
-ewarn "You are responsible to maintaining a local copy of =dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}* for ${CATEGORY}/${PN}-${PVR}:${SLOT} for CUDA support if ebuild not available."
+ewarn "You are responsible for maintaining a local copy of =dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}* for ${CATEGORY}/${PN}-${PVR}:${SLOT} for CUDA support if ebuild not available."
 ewarn "nvidia-cuda-toolkit ebuild uri:  ${HIPIFY_CUDA_URI}"
 ewarn
 	else
