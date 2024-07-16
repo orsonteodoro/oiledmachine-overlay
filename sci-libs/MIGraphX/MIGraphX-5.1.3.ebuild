@@ -75,7 +75,7 @@ DEPEND="
 "
 # It uses hip-clang (--cuda-host-only -x hip) for GPU.
 BDEPEND="
-	${HIP_CLANG_DEPEND}
+	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
