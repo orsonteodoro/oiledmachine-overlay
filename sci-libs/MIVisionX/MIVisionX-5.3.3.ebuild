@@ -141,8 +141,8 @@ src_prepare() {
 
 src_configure() {
 	# Fix libhsa-runtime64.so: undefined reference to `hsaKmtReplaceAsanHeaderPage'
-        append-flags -Wl,-fuse-ld=gold
-        append-ldflags -fuse-ld=gold
+#        append-flags -Wl,-fuse-ld=gold
+#        append-ldflags -fuse-ld=gold
 
 	append-cppflags -D__STDC_CONSTANT_MACROS
 
