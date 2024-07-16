@@ -43,7 +43,7 @@ LICENSE="MIT"
 # Not compatible with recent versions of pytest \
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="client openmp ebuild-revision-13"
+IUSE="+client +opencl +openmp ebuild-revision-13"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -59,13 +59,15 @@ RDEPEND="
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	~dev-util/hip-${PV}:${ROCM_SLOT}
-	openmp? (
-		dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
-		sys-libs/llvm-roc-libomp:${ROCM_SLOT}
-	)
 	client? (
 		dev-libs/boost
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
+	)
+	opencl? (
+		dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
+	)
+	openmp? (
+		sys-libs/llvm-roc-libomp:${ROCM_SLOT}
 	)
 
 	sys-process/numactl
@@ -148,6 +150,7 @@ src_configure() {
 			-DTENSILE_BUILD_CLIENT=$(usex client ON OFF)
 			-DTENSILE_USE_LLVM=ON
 			-DTENSILE_USE_MSGPACK=ON
+			-DTENSILE_USE_OPENCL=$(usex opencl ON OFF)
 			-DTENSILE_USE_OPENMP=$(usex openmp ON OFF)
 			-DTensile_LIBRARY_FORMAT="msgpack"
 		)
