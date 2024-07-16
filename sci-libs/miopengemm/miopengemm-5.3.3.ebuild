@@ -19,7 +19,7 @@ DESCRIPTION="An OpenCL general matrix multiplication (GEMM) API and kernel gener
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpenGEMM"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="-benchmark ebuild-revision-3"
+IUSE="-benchmark ebuild-revision-4"
 RDEPEND="
 	virtual/blas
 	virtual/opencl
@@ -28,6 +28,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${ROCM_GCC_DEPEND}
 	>=dev-build/cmake-3.0
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
@@ -58,6 +59,7 @@ src_configure() {
 			-DAPI_BENCH_MIOGEMM=ON
 		)
 	fi
+	rocm_set_default_gcc
 	rocm_src_configure
 }
 
