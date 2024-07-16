@@ -157,7 +157,7 @@ ewarn "=dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}* for"
 ewarn "${CATEGORY}/${PN}-${PVR}:${SLOT} for CUDA support if ebuild not"
 ewarn "available."
 ewarn
-ewarn "dev-util/nvidia-cuda-toolkit ebuild uri:"
+ewarn "=dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}* ebuild URI:"
 ewarn "${HIPIFY_CUDA_SDK_EBUILD_URI}"
 ewarn
 	fi
