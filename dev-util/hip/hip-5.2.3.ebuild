@@ -91,7 +91,7 @@ RDEPEND="
 		sys-process/numactl
 	)
 	rocm? (
-		${ROCM_CLANG_DEPEND}
+		dev-util/nvidia-cuda-toolkit:=
 		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 	)
