@@ -27,25 +27,22 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	debug
-	ebuild-revision-11
-"
-CDEPEND="
-	dev-libs/elfutils
+	ebuild-revision-12
 "
 RDEPEND="
+	${ROCM_CLANG_DEPEND}
 	!dev-libs/rocr-runtime:0
-	${CDEPEND}
+	dev-libs/elfutils
 	dev-libs/roct-thunk-interface:${ROCM_SLOT}
 "
 DEPEND="
-	${CDEPEND}
+	${RDEPEND}
 	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 	~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 "
 # vim-core is needed for "xxd"
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
-	${ROCM_GCC_DEPEND}
 	>=app-editors/vim-core-9.0.1378
 	>=dev-build/cmake-3.7
 	virtual/pkgconfig
@@ -67,7 +64,7 @@ src_prepare() {
 }
 
 src_configure() {
-	rocm_set_default_gcc
+	rocm_set_default_clang
 
 	use debug || append-cxxflags "-DNDEBUG"
 	local mycmakeargs=(
