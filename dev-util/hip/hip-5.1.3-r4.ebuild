@@ -3,9 +3,6 @@
 
 EAPI=8
 
-# FIXME:  Fix hardcoded hipvars.pm to amd in def-util/hip.  Ebuild should chose either amd or nvidia, not just amd.
-# FIXME:  Fix hardcoded hipvars.pm to clang in def-util/hip.  Ebuild should choose either clang or nvcc, not just clang.
-
 CMAKE_MAKEFILE_GENERATOR="emake"
 DOCS_BUILDER="doxygen"
 DOCS_CONFIG_NAME="doxy.cfg"
@@ -47,7 +44,7 @@ DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test ebuild-revision-30"
+IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test ebuild-revision-31"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -165,7 +162,6 @@ src_prepare() {
 	cmake_src_prepare
 	eapply "${HIPAMD_PATCHES[@]}"
 	use profile && eapply "${WORKDIR}/${P}-update-header.patch"
-
 	eapply_user
 
 	# Use the ebuild slot number, otherwise git hash is attempted in vain.
@@ -196,6 +192,23 @@ src_prepare() {
 			$(prefixify_ro "${FILESDIR}/hipvars-5.1.3.pm") \
 			"${HIP_S}/bin/hipvars.pm" \
 			|| die "failed to replace hipvars.pm"
+		if use cuda ; then
+			sed \
+				-e "s,@HIP_COMPILER@,nvcc," \
+				-e "s,@HIP_PLATFORM@,nvidia," \
+				-e "s,@HIP_RUNTIME@,cuda," \
+				-i \
+				"${HIP_S}/bin/hipvars.pm" \
+				|| die
+		elif use rocm ; then
+			sed \
+				-e "s,@HIP_COMPILER@,clang," \
+				-e "s,@HIP_PLATFORM@,amd," \
+				-e "s,@HIP_RUNTIME@,rocclr," \
+				-i \
+				"${HIP_S}/bin/hipvars.pm" \
+				|| die
+		fi
 		sed \
 			-e "s,@HIP_BASE_VERSION_MAJOR@,$(ver_cut 1)," \
 			-e "s,@HIP_BASE_VERSION_MINOR@,$(ver_cut 2)," \

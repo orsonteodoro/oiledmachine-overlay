@@ -38,7 +38,7 @@ DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-30"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-31"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -139,7 +139,6 @@ pkg_setup() {
 src_prepare() {
 	cmake_src_prepare
 	eapply "${HIPAMD_PATCHES[@]}"
-
 	eapply_user
 
 	# Use the ebuild slot number, otherwise git hash is attempted in vain.
@@ -158,11 +157,27 @@ src_prepare() {
 
 	pushd "${HIP_S}" >/dev/null 2>&1 || die
 		eapply "${HIP_PATCHES[@]}"
-
 		cp \
 			$(prefixify_ro "${FILESDIR}/hipvars-5.3.3.pm") \
 			"${HIP_S}/bin/hipvars.pm" \
 			|| die "failed to replace hipvars.pm"
+		if use cuda ; then
+			sed \
+				-e "s,@HIP_COMPILER@,nvcc," \
+				-e "s,@HIP_PLATFORM@,nvidia," \
+				-e "s,@HIP_RUNTIME@,cuda," \
+				-i \
+				"${HIP_S}/bin/hipvars.pm" \
+				|| die
+		elif use rocm ; then
+			sed \
+				-e "s,@HIP_COMPILER@,clang," \
+				-e "s,@HIP_PLATFORM@,amd," \
+				-e "s,@HIP_RUNTIME@,rocclr," \
+				-i \
+				"${HIP_S}/bin/hipvars.pm" \
+				|| die
+		fi
 		sed \
 			-e "s,@HIP_BASE_VERSION_MAJOR@,$(ver_cut 1)," \
 			-e "s,@HIP_BASE_VERSION_MINOR@,$(ver_cut 2)," \
