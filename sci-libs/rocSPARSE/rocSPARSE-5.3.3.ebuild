@@ -193,7 +193,7 @@ src_configure() {
 		-DHIP_RUNTIME="rocclr"
 	)
 	rocm_set_default_hipcc
-	export FC="${CHOST}-gfortran-${HIP_5_1_GCC_SLOT}"
+	export FC="${CHOST}-gfortran-${HIP_5_3_GCC_SLOT}"
 	rocm_src_configure
 }
 
