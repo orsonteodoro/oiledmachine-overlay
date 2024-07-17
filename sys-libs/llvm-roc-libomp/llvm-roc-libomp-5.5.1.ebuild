@@ -354,6 +354,12 @@ src_configure() {
 	addpredict "/proc/self/task/"
 	rocm_set_default_gcc
 	replace-flags '-O0' '-O1'
+
+# Fix
+# /usr/bin/python3.12: No module named pip
+	export PYTHONPATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/:${PYTHONPATH}"
+	export PYTHONPATH="${ESYSROOT}/${EROCM_PATH}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
+
 # Avoid
 # The dependency target "clang" of target "check-all" does not exist.
 	PROJECTS="clang;openmp"
