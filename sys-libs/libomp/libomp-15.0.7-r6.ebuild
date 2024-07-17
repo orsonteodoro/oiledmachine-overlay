@@ -49,7 +49,7 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 debug hwloc offload ompt test llvm_targets_NVPTX
 rpc
-ebuild-revision-6
+ebuild-revision-7
 "
 gen_cuda_required_use() {
 	local x
@@ -262,6 +262,7 @@ multilib_src_configure() {
 
 		-DLLVM_VERSION_MAJOR="${PV%%.*}"
 		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
+		-DPython3_EXECUTABLE="${PYTHON}"
 	)
 
 	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then

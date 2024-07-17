@@ -70,7 +70,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 +debug gdb-plugin hwloc offload ompt test llvm_targets_NVPTX
-ebuild-revision-6
+ebuild-revision-7
 ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 gen_cuda_required_use() {
@@ -304,6 +304,8 @@ multilib_src_configure() {
 		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
 
 		-DLIBOMP_HEADERS_INSTALL_PATH="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/include"
+
+		-DPython3_EXECUTABLE="${PYTHON}"
 	)
 
 	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
