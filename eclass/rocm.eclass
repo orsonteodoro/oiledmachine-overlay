@@ -151,6 +151,7 @@ _report_hipify_requirements() {
 		local _HIPIFY_CUDA_SDK_EBUILD_URI="HIPIFY_${ROCM_SLOT/./_}_CUDA_URI"
 		local HIPIFY_CUDA_SDK_EBUILD_URI="${!_HIPIFY_CUDA_SDK_EBUILD_URI}"
 
+		if has cuda ; then
 ewarn
 ewarn "You are responsible for maintaining a local copy of"
 ewarn "=dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}* for"
@@ -160,6 +161,7 @@ ewarn
 ewarn "=dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}* ebuild URI:"
 ewarn "${HIPIFY_CUDA_SDK_EBUILD_URI}"
 ewarn
+		fi
 	fi
 }
 
