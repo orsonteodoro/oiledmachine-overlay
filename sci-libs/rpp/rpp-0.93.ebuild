@@ -73,6 +73,7 @@ REQUIRED_USE="
 
 RDEPEND="
 	${HIPCC_DEPEND}
+	${ROCM_CLANG_DEPEND}
 	!sci-libs/rpp:0
 	>=dev-libs/boost-1.72:=
 	dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
@@ -93,6 +94,7 @@ DEPEND="
 "
 BDEPEND="
 	${HIPCC_DEPEND}
+	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.5
 	test? (
 		>=media-libs/libjpeg-turbo-2.0.6.1

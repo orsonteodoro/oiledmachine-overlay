@@ -72,6 +72,7 @@ REQUIRED_USE="
 "
 
 RDEPEND="
+	${HIPCC_DEPEND}
 	${ROCM_CLANG_DEPEND}
 	!sci-libs/rpp:0
 	>=dev-libs/boost-1.72:=
@@ -92,6 +93,7 @@ DEPEND="
 	>=dev-libs/half-1.12.0:=
 "
 BDEPEND="
+	${HIPCC_DEPEND}
 	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.5
 	test? (
