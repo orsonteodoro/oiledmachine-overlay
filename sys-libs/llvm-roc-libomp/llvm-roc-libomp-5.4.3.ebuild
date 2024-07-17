@@ -389,12 +389,13 @@ src_configure() {
 	addpredict "/proc/self/task/"
 	rocm_set_default_gcc
 
+	replace-flags '-O0' '-O1'
+
 # Fixes:
 # ld.bfd: duplicate version tag `VERS1.0'
 	filter-flags '-fuse-ld=*'
 	append-ldflags -fuse-ld=lld
-
-	replace-flags '-O0' '-O1'
+	strip-unsupported-flags # Filter LDFLAGS
 
 # Fix
 # /usr/bin/python3.12: No module named pip
