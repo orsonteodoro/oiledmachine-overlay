@@ -123,6 +123,7 @@ src_prepare() {
 }
 
 src_configure() {
+	addpredict "/proc/self/task/"
 	rocm_set_default_hipcc
 
 	append-ldflags \
