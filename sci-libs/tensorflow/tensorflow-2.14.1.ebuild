@@ -758,6 +758,24 @@ BDEPEND="
 			dev-python/mock[${PYTHON_USEDEP}]
 		)
 	)
+	rocm? (
+		rocm_5_3? (
+			sys-devel/gcc:${HIP_5_3_GCC_SLOT}
+		)
+		rocm_5_4? (
+			sys-devel/gcc:${HIP_5_4_GCC_SLOT}
+		)
+		rocm_5_5? (
+			sys-devel/gcc:${HIP_5_5_GCC_SLOT}
+		)
+		rocm_5_6? (
+			sys-devel/gcc:${HIP_5_6_GCC_SLOT}
+		)
+		rocm_5_7? (
+			sys-devel/gcc:${HIP_5_7_GCC_SLOT}
+		)
+		sys-devel/gcc:=
+	)
 	|| (
 		>=sys-devel/gcc-12:12
 		>=sys-devel/gcc-11.3.1_p20230120-r1:11
@@ -834,12 +852,16 @@ gcc_symlink_ver() {
 	ver_cut 1-3 ${pv}
 }
 
-use_gcc() {
+_remove_llvm_from_path() {
 	export PATH=$(echo "${PATH}" \
 		| tr ":" "\n" \
 		| sed -e "\|/usr/lib/llvm|d" \
 		| tr "\n" ":")
 einfo "PATH:\t${PATH}"
+}
+
+use_gcc() {
+	_remove_llvm_from_path
 	local found=0
 	use cuda && GCC_COMPAT=( ${GCC_SLOT_WITH_CUDA} )
 	local s
@@ -1014,13 +1036,15 @@ einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
 	if use rocm ; then
 ewarn "ROCm support is a Work In Progress (WIP)"
-		use_gcc
+		_remove_llvm_from_path
 
+		local gcc_slot
 		# Build with GCC but initialize LLVM_SLOT.
 		if has rocm_5_7 ${IUSE_EFFECTIVE} && use rocm_5_7 ; then
 			LLVM_SLOT=17
 			ROCM_SLOT="5.7"
 			ROCM_VERSION="${HIP_5_7_VERSION}"
+			gcc_slot="${HIP_5_7_GCC_SLOT}"
 		elif has rocm_5_6 ${IUSE_EFFECTIVE} && use rocm_5_6 ; then
 			LLVM_SLOT=16
 			ROCM_SLOT="5.6"
@@ -1050,6 +1074,9 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 			ROCM_SLOT="5.0"
 			ROCM_VERSION="${HIP_5_0_VERSION}"
 		fi
+		local _gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
+		local gcc_slot="${!_gcc_slot}"
+		check_libstdcxx ${gcc_slot}
 	elif tc-is-clang || use clang ; then
 		use_gcc
 		use_clang
