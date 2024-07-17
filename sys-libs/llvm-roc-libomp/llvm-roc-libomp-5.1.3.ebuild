@@ -72,7 +72,7 @@ ROCM_USE_LLVM_ROC=1
 inherit cmake flag-o-matic python-single-r1 rocm
 
 KEYWORDS="~amd64"
-S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
+S="${WORKDIR}/llvm-project-rocm-${PV}/openmp"
 S_DEVICELIBS="${WORKDIR}/ROCm-Device-Libs-rocm-${PV}"
 S_ROOT="${WORKDIR}/llvm-project-rocm-${PV}"
 SRC_URI="
@@ -299,7 +299,7 @@ src_prepare() {
 	fi
 
 	cd "${S_ROOT}" || die
-	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-ompt-includes.patch"
+#	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-ompt-includes.patch"
 	eapply "${FILESDIR}/llvm-roc-libomp-5.1.3-omp-tools-includes.patch"
 	eapply "${FILESDIR}/llvm-roc-libomp-5.1.3-libomptarget-includes-path.patch"
 	cd "${S}" || die
@@ -350,6 +350,39 @@ src_prepare() {
 			"${S_ROOT}/llvm/lib/OffloadArch/offload-arch/CMakeLists.txt" \
 			|| die
 	fi
+
+	cd "${WORKDIR}/llvm-project-rocm-${PV}" || die
+	local prune_dirs=(
+		"bolt"
+		"clang"
+		"clang-tools-extra"
+		#"cmake"
+		"compiler-rt"
+		"cross-project-tests"
+		"flang"
+		"libc"
+		"libclc"
+		"libcxx"
+		"libcxxabi"
+		"libunwind"
+		"lld"
+		"lldb"
+		#"llvm"
+		"mlir"
+		#"openmp"
+		"polly"
+		"pstl"
+		#"rocm-device-libs"
+		"runtimes"
+		"third-party"
+		"utils"
+	)
+	rm -rf ${prune_dirs[@]} || die
+	mkdir -p "t"
+	mv "llvm/include/" "t" || die
+	mkdir -p "llvm" || die
+	mv "t/include" "llvm" || die
+	rm -rf t
 }
 
 src_configure() {
@@ -365,7 +398,8 @@ src_configure() {
 
 # Avoid
 # The dependency target "clang" of target "check-all" does not exist.
-	PROJECTS="clang;openmp"
+#	PROJECTS="clang;openmp"
+	PROJECTS="openmp"
 	local experimental_targets=""
 	if use llvm_targets_X86 ; then
 		experimental_targets+=";X86"
@@ -438,179 +472,12 @@ src_configure() {
 	cmake_src_configure
 }
 
-# The reason why to do this is to reduce the build cost from 4000 compilation
-# units to 1000 units skipping over the already built ones in both src_compile()
-# and src_install().
 src_compile() {
-	local targets
-	targets=(
-		"omp_gen"
-		"omp"
-	)
-	if use archer ; then
-		targets+=(
-			"libarcher.so"
-			"libarcher_static.a"
-		)
-	fi
-	if use offload ; then
-		if use llvm_targets_X86 ; then
-			targets+=(
-				"omptarget.rtl.x86_64"
-			)
-		fi
-		if use llvm_targets_AMDGPU ; then
-			local target
-			for target in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
-				if use "amdgpu_targets_${target}" ; then
-					targets+=(
-						"libm-amdgcn-${target}"
-						"omptarget-new-amdgpu-${target}-bc"
-					)
-				fi
-			done
-			targets+=(
-				"omptarget-amdgcn"
-				"omptarget.rtl.amdgpu"
-			)
-		fi
-		if use llvm_targets_NVPTX ; then
-			local target
-			for target in "${CUDA_TARGETS_COMPAT[@]}" ; do
-				if use "cuda_targets_${target}" ; then
-					targets+=(
-						"libm-nvptx-${target}"
-						"omptarget-nvptx-${target}-bc"
-						"omptarget-new-nvptx-${target}-bc"
-					)
-				fi
-			done
-			targets+=(
-				"omptarget-nvptx-bc"
-			)
-		fi
-		if use rpc ; then
-			targets+=(
-				"libomptarget.rtl.rpc.so"
-				"omptarget.rtl.rpc"
-			)
-		fi
-		targets+=(
-			"omptarget"
-		)
-	fi
-	if use ompd ; then
-		targets+=(
-			"ompd"
-		)
-	fi
-	cmake_src_compile \
-		"${targets[@]}"
-}
-
-# From cmake.eclass.  Removed cmake_build install.
-# @FUNCTION: cmake_src_install
-# @DESCRIPTION:
-# Function for installing the package. Automatically detects the build type.
-_cmake_src_install() {
-	debug-print-function ${FUNCNAME} "$@"
-
-	DESTDIR="${D}" cmake_build "$@"
-
-	if [[ ${EAPI} == 7 ]]; then
-		pushd "${S}" > /dev/null || die
-		einstalldocs
-		popd > /dev/null || die
-	else
-		pushd "${CMAKE_USE_DIR}" > /dev/null || die
-		einstalldocs
-		popd > /dev/null || die
-	fi
-}
-
-_install_libomptarget() {
-	# Missing install-* targets.
-	local L1=(
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -name "libomptarget.so*")
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -name "libomptarget.rtl.*.so*")
-	)
-	local L2=(
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -name "libomptarget*.bc")
-	)
-
-	exeinto "${EROCM_PATH}/llvm/$(rocm_get_libdir)"
-	insinto "${EROCM_PATH}/llvm/$(rocm_get_libdir)"
-	IFS=$'\n'
-	for x in "${L1[@]}" ; do
-		doexe "${x}"
-	done
-	for x in "${L2[@]}" ; do
-		doins "${x}"
-	done
-	IFS=$' \t\n'
-}
-
-_install_libomp_libs() {
-	exeinto "${EROCM_PATH}/llvm/$(rocm_get_libdir)"
-	local L1=(
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -name "libgomp.so*")
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -name "libiomp*.so*")
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -name "libomp.so*")
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -name "libompd.so*")
-	)
-	IFS=$'\n'
-	for x in "${L1[@]}" ; do
-		doexe "${x}"
-	done
-	IFS=$' \t\n'
-
-	insinto "${EROCM_PATH}/llvm/$(rocm_get_libdir)/cmake/openmp"
-	local L2=(
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/openmp" -name "FindOpenMPTarget.cmake")
-	)
-	IFS=$'\n'
-	for x in "${L2[@]}" ; do
-		doins "${x}"
-	done
-	IFS=$' \t\n'
-}
-
-_install_archer() {
-	exeinto "${EROCM_PATH}/llvm/$(rocm_get_libdir)"
-	local L1=(
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -name "libarcher.so*")
-	)
-	IFS=$'\n'
-	for x in "${L1[@]}" ; do
-		doexe "${x}"
-	done
-	IFS=$' \t\n'
-	insinto "${EROCM_PATH}/llvm/$(rocm_get_libdir)"
-	local L2=(
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -name "libarcher_static.a*")
-	)
-	IFS=$'\n'
-	for x in "${L2[@]}" ; do
-		doins "${x}"
-	done
-	IFS=$' \t\n'
+	cmake_src_compile
 }
 
 src_install() {
-	cd "${BUILD_DIR}" || die
-	_install_libomp_libs
-	exeinto "${EROCM_PATH}/llvm/$(rocm_get_libdir)"
-	insinto "${EROCM_PATH}/llvm/include"
-	doins "${S_ROOT}/openmp/runtime/exports/common.dia.ompt.optional/include/omp.h"
-	if use ompt ; then
-		doins "${S_ROOT}/openmp/runtime/exports/common.dia.ompt.optional/include/omp-tools.h"
-		doins "${S_ROOT}/openmp/tools/multiplex/ompt-multiplex.h"
-		dosym \
-			"/opt/rocm-${ROCM_VERSION}/llvm/include/omp-tools.h" \
-			"/opt/rocm-${ROCM_VERSION}/llvm/include/ompt.h"
-	fi
-	_install_libomptarget
-	use archer && _install_archer
+	cmake_src_install
 	rocm_fix_rpath
 }
 
