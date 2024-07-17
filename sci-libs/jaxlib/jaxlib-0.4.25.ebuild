@@ -363,6 +363,12 @@ BDEPEND+="
 	clang? (
 		$(gen_llvm_bdepend)
 	)
+	rocm? (
+		rocm_6_0? (
+			sys-devel/gcc:${HIP_6_0_GCC_SLOT}
+		)
+		sys-devel/gcc:=
+	)
 	|| (
 		>=sys-devel/gcc-12:12
 		>=sys-devel/gcc-11.3.1_p20230120-r1:11
@@ -405,11 +411,7 @@ einfo "PATH:\t${PATH}"
 			| awk '{print $2}')
 	fi
 	if use rocm ; then
-einfo "Using LLD"
-		${LLD} --version || die
-		filter-flags '-fuse-ld=*'
-		append-ldflags -fuse-ld=lld
-		BUILD_LDFLAGS+=" -fuse-ld=lld"
+		:
 	elif is-flagq '-fuse-ld=mold' \
 		&& test-flag-CCLD '-fuse-ld=mold' \
 		&& has_version "sys-devel/mold" ; then
@@ -649,7 +651,6 @@ einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
 	if use rocm ; then
 ewarn "ROCm support is a Work In Progress (WIP)"
-		use_gcc
 
 		# Build with GCC but initialize LLVM_SLOT.
 		if has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 ; then
@@ -902,7 +903,7 @@ eerror
 
 # From bazel.eclass
 _ebazel() {
-	bazel_setup_bazelrc
+	#bazel_setup_bazelrc # Save CFLAGS.  Disabled to save only once.
 
 	# Use different build folders for each multibuild variant.
 	local output_base="${BUILD_DIR:-${S}}"
@@ -923,7 +924,10 @@ python_compile() {
 
 	prepare_jaxlib
 
-	bazel_setup_bazelrc
+	if use rocm ; then
+		rocm_set_default_gcc
+	fi
+	bazel_setup_bazelrc # Save CFLAGS
 
 	if is-flagq '-march=native' ; then
 # Autodetect
