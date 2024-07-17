@@ -558,6 +558,7 @@ eerror
 setup_linker() {
 	if use rocm ; then
 		return
+		# Use lld if bfd fails.
 	fi
 
 	# The package likes to use lld with gcc which is disallowed.
