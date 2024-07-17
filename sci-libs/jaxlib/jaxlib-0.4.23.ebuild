@@ -400,7 +400,6 @@ eerror
 setup_linker() {
 	if use rocm ; then
 		return
-		# Use lld if bfd fails.
 	fi
 
 	# The package likes to use lld with gcc which is disallowed.
@@ -914,7 +913,7 @@ eerror
 
 # From bazel.eclass
 _ebazel() {
-	#bazel_setup_bazelrc # Save CFLAGS.  Disabled to save only once.
+	bazel_setup_bazelrc # Save CFLAGS.  Ignored.
 
 	# Use different build folders for each multibuild variant.
 	local output_base="${BUILD_DIR:-${S}}"
@@ -937,6 +936,10 @@ python_compile() {
 
 	if use rocm ; then
 		rocm_set_default_gcc
+		filter-flags '-fuse-ld=*'
+		append-ldflags -fuse-ld=lld
+		BUILD_LDFLAGS+=" -fuse-ld=lld"
+		strip-unsupported-flags # Filter LDFLAGS after switch
 	fi
 	bazel_setup_bazelrc # Save CFLAGS
 

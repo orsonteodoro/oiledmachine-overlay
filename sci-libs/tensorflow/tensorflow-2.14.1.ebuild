@@ -1148,7 +1148,6 @@ src_unpack() {
 setup_linker() {
 	if use rocm ; then
 		return
-		# Use lld if bfd fails.
 	fi
 
 	# The package likes to use lld with gcc which is disallowed.
@@ -1312,6 +1311,10 @@ src_prepare() {
 
 	if use rocm ; then
 		rocm_set_default_gcc
+		filter-flags '-fuse-ld=*'
+		append-ldflags -fuse-ld=lld
+		BUILD_LDFLAGS+=" -fuse-ld=lld"
+		strip-unsupported-flags # Filter linker flags
 	fi
 
 ewarn
