@@ -354,6 +354,12 @@ src_configure() {
 	addpredict "/dev/kfd"
 	addpredict "/proc/self/task/"
 	rocm_set_default_gcc
+
+# Fixes:
+# ld.bfd: duplicate version tag `VERS1.0'
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=lld
+
 	replace-flags '-O0' '-O1'
 
 # Fix
