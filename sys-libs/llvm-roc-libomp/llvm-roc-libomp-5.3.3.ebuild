@@ -345,6 +345,7 @@ src_prepare() {
 
 src_configure() {
 	addpredict "/dev/kfd"
+	addpredict "/proc/self/task/"
 	rocm_set_default_gcc
 	replace-flags '-O0' '-O1'
 # Avoid
