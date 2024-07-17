@@ -1119,6 +1119,11 @@ src_unpack() {
 }
 
 setup_linker() {
+	if use rocm ; then
+		return
+		# Use lld if bfd fails.
+	fi
+
 	# The package likes to use lld with gcc which is disallowed.
 	LLD="ld.lld"
 	local lld_pv=-1
@@ -1127,17 +1132,7 @@ setup_linker() {
 		lld_pv=$(${LLD} --version \
 			| awk '{print $2}')
 	fi
-	if use rocm ; then
-# Error with USE="rocm" and -fuse-ld=mold:
-# mold: error: undefined symbol: absl::lts_20220623::Mutex::Lock()
-# >>> referenced by debug_service.grpc.pb.cc
-# >>>               bazel-out/k8-opt/bin/tensorflow/core/debug/_objs/debug_service_cc_grpc_proto/debug_service.grpc.pb.pic.o:(absl::lts_20220623::MutexLock::MutexLock(absl::lts_20220623::Mutex*))
-einfo "Using LLD"
-		${LLD} --version || die
-		filter-flags '-fuse-ld=*'
-		append-ldflags -fuse-ld=lld
-		BUILD_LDFLAGS+=" -fuse-ld=lld"
-	elif is-flagq '-fuse-ld=mold' \
+	if is-flagq '-fuse-ld=mold' \
 		&& test-flag-CCLD '-fuse-ld=mold' \
 		&& has_version "sys-devel/mold" ; then
 		# Explicit -fuse-ld=mold because of license of the linker.
@@ -1288,6 +1283,10 @@ src_prepare() {
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 	export TF_PYTHON_VERSION="${EPYTHON/python/}"
 
+	if use rocm ; then
+		rocm_set_default_gcc
+	fi
+
 ewarn
 ewarn "If build failure, use MAKEOPTS=\"-j1\".  Expect memory use to be 6-11"
 ewarn "GiB per process."
@@ -1329,7 +1328,7 @@ ewarn
 		BUILD_LDFLAGS+=" -Wl,-z,lazy"
 	fi
 
-	bazel_setup_bazelrc
+	bazel_setup_bazelrc # Save CFLAGS
 
 	# Relax version checks in setup.py
 	sed -i "/^    '/s/==/>=/g" tensorflow/tools/pip_package/setup.py || die
@@ -1414,7 +1413,7 @@ ewarn
 		export TF_NEED_MPI=$(usex mpi 1 0)
 		export TF_SET_ANDROID_WORKSPACE=0
 
-		if use python; then
+		if use python ; then
 			export PYTHON_BIN_PATH="${PYTHON}"
 			export PYTHON_LIB_PATH="$(python_get_sitedir)"
 		else
@@ -1427,7 +1426,7 @@ ewarn
 		export TF_DOWNLOAD_CLANG=0
 		export TF_CUDA_CLANG=0
 		export TF_NEED_TENSORRT=0 # $(usex cuda 1 0)
-		if use cuda; then
+		if use cuda ; then
 			export TF_NEED_CLANG=0
 			export TF_CUDA_COMPUTE_CAPABILITIES=$(get_cuda_targets)
 			export TF_CUDA_PATHS="${EPREFIX}/opt/cuda"
@@ -1570,7 +1569,7 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 			echo "build --host_copt=\"${cflag}\"" >> ".bazelrc" || die
 		done
 	}
-	if use python; then
+	if use python ; then
 		python_foreach_impl run_in_build_dir do_configure
 	else
 		do_configure
@@ -1629,7 +1628,7 @@ src_compile() {
 	)
 
 einfo "src_compile():  Step 1"
-	if use python; then
+	if use python ; then
 		python_setup
 
 	# Some determinism problem
@@ -1701,7 +1700,7 @@ einfo "Installing ${EPYTHON} files"
 		python_optimize
 	}
 
-	if use python; then
+	if use python ; then
 		python_foreach_impl run_in_build_dir do_install
 
 		# Symlink to python-exec scripts
