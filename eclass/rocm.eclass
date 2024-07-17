@@ -151,7 +151,7 @@ _report_hipify_requirements() {
 		local _HIPIFY_CUDA_SDK_EBUILD_URI="HIPIFY_${ROCM_SLOT/./_}_CUDA_URI"
 		local HIPIFY_CUDA_SDK_EBUILD_URI="${!_HIPIFY_CUDA_SDK_EBUILD_URI}"
 
-		if has cuda ; then
+		if has cuda ${IUSE_EFFECTIVE} ; then
 ewarn
 ewarn "You are responsible for maintaining a local copy of"
 ewarn "=dev-util/nvidia-cuda-toolkit-${HIP_CUDA_VERSION}* for"
@@ -425,7 +425,7 @@ unset -f _rocm_set_globals
 # @DESCRIPTION:
 # Init paths
 rocm_pkg_setup() {
-	if has cuda && use cuda ; then
+	if has cuda ${IUSE_EFFECTIVE} && use cuda ; then
 		if [[ "${HIP_PLATFORM}" != "nvidia" ]] ; then
 eerror
 eerror "Change HIP_PLATFORM=\"nvidia\" in /etc/portage/make.conf to continue."
@@ -435,7 +435,7 @@ eerror "same GCC version."
 eerror
 			die
 		fi
-	elif has cuda && ! use cuda ; then
+	elif has cuda ${IUSE_EFFECTIVE} && ! use cuda ; then
 		if [[ -z "${HIP_PLATFORM}" ]] ; then
 			:
 		elif [[ "${HIP_PLATFORM}" != "amd" ]] ; then
@@ -1460,7 +1460,7 @@ rocm_set_default_clang() {
 rocm_set_default_hipcc() {
 	export CC="hipcc"
 	export CXX="hipcc"
-	if has cuda && use cuda ; then
+	if has cuda ${IUSE_EFFECTIVE} && use cuda ; then
 		# Limited by HIPIFY.  See _rocm_set_globals_default()
 		local s
 		if has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=sys-devel/gcc-12" ; then
