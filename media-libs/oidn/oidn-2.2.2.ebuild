@@ -125,8 +125,10 @@ REQUIRED_USE+="
 	^^ (
 		clang
 		gcc
+		rocm
 	)
 	cuda? (
+		gcc
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
@@ -214,6 +216,13 @@ BDEPEND+="
 		sys-devel/binutils[gold,plugins]
 	)
 	rocm? (
+		rocm_5_5? (
+			~sys-devel/llvm-roc-${HIP_5_5_VERSION}:5.5
+		)
+		rocm_5_6? (
+			~sys-devel/llvm-roc-${HIP_5_6_VERSION}:5.6
+		)
+		sys-devel/llvm-roc:=
 		$(gen_hip_depends)
 		>=dev-build/cmake-3.21
 	)
@@ -397,6 +406,8 @@ eerror
 	elif use clang ; then
 		export CC="${CHOST}-clang"
 		export CXX="${CHOST}-clang++"
+	elif use rocm ; then
+		rocm_set_default_clang
 	else
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
@@ -434,13 +445,6 @@ ewarn "All APU + GPU HIP targets on the device must be built/installed to avoid"
 ewarn "a crash."
 ewarn
 		einfo "${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}"
-		if has_version "dev-util/hip[system-llvm]" ; then
-			export CC="${CHOST}-clang-${LLVM_SLOT}"
-			export CXX="${CHOST}-clang++-${LLVM_SLOT}"
-		else
-			export CC="clang"
-			export CXX="clang++"
-		fi
 		mycmakeargs+=(
 			-DHIP_COMPILER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}"
 		)
