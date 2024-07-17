@@ -36,7 +36,7 @@ LICENSE="MIT"
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-13"
+IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-14"
 REQUIRED_USE="
 	raslib
 	systemd? (
@@ -124,12 +124,12 @@ src_install() {
 	rocm_mv_docs
 	rocm_fix_rpath
 	patchelf \
-		--add-rpath "${EPREFIX}${EROCM_PATH}/rdc/$(get_libdir)" \
-		"${ED}${EROCM_PATH}/rdc/$(get_libdir)/librdc.so.1.0" \
+		--add-rpath "${EPREFIX}${EROCM_PATH}/rdc/$(rocm_get_libdir)" \
+		"${ED}${EROCM_PATH}/rdc/$(rocm_get_libdir)/librdc.so.1.0" \
 		|| die
 	patchelf \
-		--add-rpath "${EPREFIX}${EROCM_PATH}/rdc/$(get_libdir)" \
-		"${ED}${EROCM_PATH}/rdc/$(get_libdir)/librdc_rocr.so.1.0" \
+		--add-rpath "${EPREFIX}${EROCM_PATH}/rdc/$(rocm_get_libdir)" \
+		"${ED}${EROCM_PATH}/rdc/$(rocm_get_libdir)/librdc_rocr.so.1.0" \
 		|| die
 }
 
