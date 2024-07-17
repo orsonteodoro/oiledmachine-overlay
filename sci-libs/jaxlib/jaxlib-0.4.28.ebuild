@@ -426,6 +426,10 @@ eerror
 }
 
 setup_linker() {
+	if use rocm ; then
+		return
+	fi
+
 	# The package likes to use lld with gcc which is disallowed.
 	LLD="ld.lld"
 einfo "PATH:\t${PATH}"
@@ -435,9 +439,7 @@ einfo "PATH:\t${PATH}"
 		lld_pv=$(${LLD} --version \
 			| awk '{print $2}')
 	fi
-	if use rocm ; then
-		:
-	elif is-flagq '-fuse-ld=mold' \
+	if is-flagq '-fuse-ld=mold' \
 		&& test-flag-CCLD '-fuse-ld=mold' \
 		&& has_version "sys-devel/mold" ; then
 		# Explicit -fuse-ld=mold because of license of the linker.
@@ -549,12 +551,16 @@ gcc_symlink_ver() {
 	ver_cut 1-3 "${pv}"
 }
 
-use_gcc() {
+_remove_llvm_from_path() {
 	export PATH=$(echo "${PATH}" \
 		| tr ":" "\n" \
 		| sed -e "\|/usr/lib/llvm|d" \
 		| tr "\n" ":")
 einfo "PATH:\t${PATH}"
+}
+
+use_gcc() {
+	_remove_llvm_from_path
 	local found=0
 	local s
 	for s in ${GCC_COMPAT[@]} ; do
@@ -588,7 +594,7 @@ eerror
 		die
 	fi
 	if (( ${found2} == 1 )) ; then
-		:;
+		:
 	else
 ewarn
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
@@ -655,7 +661,7 @@ eerror
 		die
 	fi
 	if (( ${found2} == 1 )) ; then
-		:;
+		:
 	else
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
@@ -676,6 +682,7 @@ einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
 	if use rocm ; then
 ewarn "ROCm support is a Work In Progress (WIP)"
+		_remove_llvm_from_path
 
 		# Build with GCC but initialize LLVM_SLOT.
 		if has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 ; then
