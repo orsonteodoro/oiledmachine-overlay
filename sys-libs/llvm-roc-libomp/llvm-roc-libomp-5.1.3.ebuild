@@ -114,7 +114,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda -cuda_11_7 +gdb-plugin -offload -ompt +ompd -rpc
-ebuild-revision-23
+ebuild-revision-24
 "
 
 gen_cuda_required_use() {
@@ -439,6 +439,7 @@ src_configure() {
 		-DOCAMLFIND=OFF
 #		-DOPENMP_ENABLE_LIBOMPTARGET=$(usex offload ON OFF)
 		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
+		-DPython3_EXECUTABLE="${PYTHON}"
 	)
 	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		mycmakeargs+=(
