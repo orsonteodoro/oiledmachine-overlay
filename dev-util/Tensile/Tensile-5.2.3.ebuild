@@ -126,25 +126,6 @@ src_prepare() {
 	rocm_src_prepare
 }
 
-check_libstdcxx() {
-	if ver_test "${GCC_SLOT}" -ne "${gcc_current_profile_slot}" ; then
-# Fixes:
-#shared_ptr_base.h:196:22: error: use of undeclared identifier 'noinline'; did you mean 'inline'?
-#      __attribute__((__noinline__))
-#                     ^
-eerror
-eerror "You must switch to == GCC ${GCC_SLOT}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${GCC_SLOT}"
-eerror "  source /etc/profile"
-eerror
-eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
-eerror "to the default immediately after this package has been merged."
-eerror
-		die
-	fi
-}
-
 src_configure() {
 	rocm_set_default_hipcc
 
@@ -161,7 +142,6 @@ src_configure() {
 		local gcc_current_profile=$(gcc-config -c)
 		local gcc_current_profile_slot=${gcc_current_profile##*-}
 
-		check_libstdcxx
 		check_pkg_glibcxx "dev-libs/boost" "/usr/$(get_libdir)/libboost_program_options.so" "${HIP_5_2_GCC_SLOT}"
 
 		export HIP_PLATFORM="amd"
