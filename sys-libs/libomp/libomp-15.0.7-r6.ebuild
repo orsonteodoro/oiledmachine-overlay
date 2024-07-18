@@ -165,7 +165,7 @@ DEPEND="
 "
 BDEPEND="
 	dev-lang/perl
-	sys-devel/lld
+	sys-devel/lld:${PV%%.*}
 	offload? (
 		llvm_targets_NVPTX? (
 			sys-devel/clang
