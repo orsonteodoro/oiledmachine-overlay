@@ -1505,4 +1505,42 @@ hip_nvcc_get_gcc_slot() {
 #Do it manually
 #EXPORT_FUNCTIONS pkg_setup src_prepare
 
+# @FUNCTION: gen_x_usedep
+# @DESCRIPTION:
+# Generate a USEDEP compat
+#
+# Example:
+# ROCBLAS_USEDEP=$(gen_x_usedep ROCBLAS_5_1_TARGETS_COMPAT)
+# COMPOSABLE_KERNEL_USEDEP=$(gen_x_usedep COMPOSABLE_KERNEL_5_1_TARGETS_COMPAT)
+# RDEPEND="
+#	sci-libs/rocBLAS[ROCBLAS_USEDEP]
+#	sci-libs/composable_kernel[ROCBLAS_USEDEP]
+# "
+#
+gen_x_usedep() {
+	if [[ -z "${ROCBLAS_TARGETS_COMPAT[@]}" ]] ; then
+		return
+	fi
+	local x_targets_compat="${1}" # ROCBLAS_5_1_TARGETS_COMPAT
+	if [[ -z "${!x_targets_compat[@]}" ]] ; then
+		return
+	fi
+	local list
+	local g1
+	for g1 in ${ROCBLAS_TARGETS_COMPAT[@]} ; do
+		local found=0
+		local g2
+		for g2 in ${!x_targets_compat[@]} ; do
+			if [[ "${g2}" == "${g1}" ]] ; then
+				found=1
+			fi
+		done
+		if (( ${found} == 1 )) ; then
+			list+=",${g1}"
+		fi
+	done
+	list="${list:1}"
+	echo "${list}"
+}
+
 fi
