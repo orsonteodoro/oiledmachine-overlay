@@ -28,7 +28,7 @@ PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake distutils-r1 prefix rocm toolchain-funcs
+inherit check-glibcxx-ver cmake distutils-r1 prefix rocm toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -141,6 +141,7 @@ src_configure() {
 	distutils-r1_src_configure
 
 	if use client; then
+		check_pkg_glibcxx "dev-libs/boost" "/usr/$(get_libdir)/libboost_program_options.so" "${HIP_6_0_GCC_SLOT}"
 		export HIP_PLATFORM="amd"
 		local mycmakeargs=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
@@ -148,6 +149,7 @@ src_configure() {
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
+			-DROCM_ROOT="${ROCM_PATH}"
 			-DTENSILE_BUILD_CLIENT=$(usex client ON OFF)
 			-DTENSILE_USE_LLVM=ON
 			-DTENSILE_USE_MSGPACK=ON
@@ -195,7 +197,6 @@ src_install() {
 		"Configs" \
 		"CustomKernels" \
 		"Perf" \
-		"ReplacementKernels-cov3" \
 		"Source"
 	insinto "${EROCM_PATH}/$(rocm_get_libdir)/cmake/${PN}"
 	doins "cmake/"*".cmake"

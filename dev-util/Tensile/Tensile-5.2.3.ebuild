@@ -27,7 +27,7 @@ PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake distutils-r1 prefix rocm toolchain-funcs
+inherit check-glibcxx-ver cmake distutils-r1 prefix rocm toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -126,6 +126,25 @@ src_prepare() {
 	rocm_src_prepare
 }
 
+check_libstdcxx() {
+	if ver_test "${GCC_SLOT}" -ne "${gcc_current_profile_slot}" ; then
+# Fixes:
+#shared_ptr_base.h:196:22: error: use of undeclared identifier 'noinline'; did you mean 'inline'?
+#      __attribute__((__noinline__))
+#                     ^
+eerror
+eerror "You must switch to == GCC ${GCC_SLOT}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${GCC_SLOT}"
+eerror "  source /etc/profile"
+eerror
+eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
+eerror "to the default immediately after this package has been merged."
+eerror
+		die
+	fi
+}
+
 src_configure() {
 	rocm_set_default_hipcc
 
@@ -142,22 +161,8 @@ src_configure() {
 		local gcc_current_profile=$(gcc-config -c)
 		local gcc_current_profile_slot=${gcc_current_profile##*-}
 
-		if ver_test "${GCC_SLOT}" -ne "${gcc_current_profile_slot}" ; then
-# Fixes:
-#shared_ptr_base.h:196:22: error: use of undeclared identifier 'noinline'; did you mean 'inline'?
-#      __attribute__((__noinline__))
-#                     ^
-eerror
-eerror "You must switch to == GCC ${GCC_SLOT}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${GCC_SLOT}"
-eerror "  source /etc/profile"
-eerror
-eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
-eerror "to the default immediately after this package has been merged."
-eerror
-			die
-		fi
+		check_libstdcxx
+		check_pkg_glibcxx "dev-libs/boost" "/usr/$(get_libdir)/libboost_program_options.so" "${HIP_5_2_GCC_SLOT}"
 
 		export HIP_PLATFORM="amd"
 		local mycmakeargs=(
@@ -166,6 +171,7 @@ eerror
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
+			-DROCM_ROOT="${ROCM_PATH}"
 			-DTENSILE_BUILD_CLIENT=$(usex client ON OFF)
 			-DTENSILE_USE_LLVM=ON
 			-DTENSILE_USE_MSGPACK=ON
