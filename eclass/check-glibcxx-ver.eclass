@@ -57,25 +57,39 @@ check_pkg_glibcxx() {
 		| sort \
 		| tail -n 1 \
 		| cut -f 2 -d "_")
-	if [[ "${glibcxx_ver}" -gt "${gcc_version}" ]] ; then
-		local gcc_ver="${glibcxx_to_gcc[${glibcxx_ver}]}"
-eerror "${package} needs to be rebuilt with gcc ${gcc_ver} or earlier."
-eerror "Use per-package cflags."
-eerror
-eerror "Contents of /etc/portage/env/gcc-${gcc_ver}.conf:"
-eerror "CC=\"gcc-${gcc_ver}\""
-eerror "CXX=\"g++-${gcc_ver}\""
-eerror "CPP=\"\${CXX} -E\""
-eerror "AR=\"ar\""
-eerror "NM=\"nm\""
-eerror "OBJCOPY=\"objcopy\""
-eerror "OBJDUMP=\"objdump\""
-eerror "READELF=\"readelf\""
-eerror "STRIP=\"strip\""
-eerror
-eerror "Contents of /etc/portage/package.env:"
-eerror "${package} gcc-${gcc_ver}.conf"
-eerror
-		die
+	if true ; then
+		local key="${glibcxx_ver}"
+		local library_gcc_version="${glibcxx_to_gcc[${key}]}"
+ewarn
+ewarn "${package} needs to be rebuilt with gcc ${gcc_version} or earlier."
+ewarn "Use per-package cflags to avoid linking issues with versioned symbols."
+ewarn
+ewarn "Library:\t\t${library_path}"
+ewarn "Actual version:\tGCC ${library_gcc_version} (GLIBCXX ${glibcxx_ver})"
+ewarn "Expected version:\tGCC ${gcc_version} (GLIBCXX ${gcc_to_glibcxx[${gcc_version}]})"
+	if ver_test "${glibcxx_ver}" -le "${gcc_version}" ; then
+ewarn "Compatible:\t\tYes"
+	else
+eerror "Compatible:\t\tNo"
+	fi
+ewarn
+ewarn "Contents of /etc/portage/env/gcc-${gcc_version}.conf:"
+ewarn "CC=\"gcc-${gcc_version}\""
+ewarn "CXX=\"g++-${gcc_version}\""
+ewarn "CPP=\"\${CXX} -E\""
+ewarn "AR=\"ar\""
+ewarn "NM=\"nm\""
+ewarn "OBJCOPY=\"objcopy\""
+ewarn "OBJDUMP=\"objdump\""
+ewarn "READELF=\"readelf\""
+ewarn "STRIP=\"strip\""
+ewarn
+ewarn "Contents of /etc/portage/package.env:"
+ewarn "${package} gcc-${gcc_version}.conf"
+ewarn
+		if ver_test "${glibcxx_ver}" -gt "${gcc_version}" ; then
+eerror "Detected incompatible version symbol."
+			die
+		fi
 	fi
 }
