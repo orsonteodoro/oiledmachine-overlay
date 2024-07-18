@@ -1,0 +1,38 @@
+diff '--color=auto' -urp hipamd-rocm-5.2.3.orig/include/hip/amd_detail/host_defines.h hipamd-rocm-5.2.3/include/hip/amd_detail/host_defines.h
+--- hipamd-rocm-5.2.3.orig/include/hip/amd_detail/host_defines.h	2022-07-28 14:56:47.000000000 -0700
++++ hipamd-rocm-5.2.3/include/hip/amd_detail/host_defines.h	2024-07-18 09:01:24.182531890 -0700
+@@ -1,5 +1,5 @@
+ /*
+-Copyright (c) 2015 - 2021 Advanced Micro Devices, Inc. All rights reserved.
++Copyright (c) 2015 - 2022 Advanced Micro Devices, Inc. All rights reserved.
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+@@ -47,7 +47,12 @@ THE SOFTWARE.
+ #define __constant__ __attribute__((constant))
+ #endif // !__CLANG_HIP_RUNTIME_WRAPPER_INCLUDED__
+ 
++#if defined(__GNUC__)
++#define __noinline__ __noinline__
++#elif !defined(__has_feature) || !__has_feature(cuda_noinline_keyword)
+ #define __noinline__ __attribute__((noinline))
++#endif
++
+ #define __forceinline__ inline __attribute__((always_inline))
+ 
+ #if __HIP_NO_IMAGE_SUPPORT
+diff '--color=auto' -urp hipamd-rocm-5.2.3.orig/src/hiprtc/cmake/HIPRTC.cmake hipamd-rocm-5.2.3/src/hiprtc/cmake/HIPRTC.cmake
+--- hipamd-rocm-5.2.3.orig/src/hiprtc/cmake/HIPRTC.cmake	2022-07-28 14:56:47.000000000 -0700
++++ hipamd-rocm-5.2.3/src/hiprtc/cmake/HIPRTC.cmake	2024-07-18 09:01:10.378753455 -0700
+@@ -35,7 +35,11 @@ function(get_hiprtc_macros HIPRTC_DEFINE
+ #define __constant__ __attribute__((constant))\n\
+ #define __shared__ __attribute__((shared))\n\
+ #define __align__(x) __attribute__((aligned(x)))\n\
++#if defined(__GNUC__)
++#define __noinline__ __noinline__
++#elif !defined(__has_feature) || !__has_feature(cuda_noinline_keyword)\n\
+ #define __noinline__ __attribute__((noinline))\n\
++#endif\n\
+ #define __forceinline__ inline __attribute__((always_inline))\n\
+ 
+ #define launch_bounds_impl0(requiredMaxThreadsPerBlock)                                       \\\n\

@@ -38,7 +38,7 @@ DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-33"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-34"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -125,6 +125,7 @@ HIPAMD_PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-hip-host-not-cuda.patch"
 	"${FILESDIR}/hipamd-5.7.1-link-hsa-runtime64.patch"
 	"${FILESDIR}/hipamd-5.2.3-set-rpath-hiprtc.patch"
+	"${FILESDIR}/hipamd-5.2.3-noinline.patch"
 )
 OCL_PATCHES=(
 )
