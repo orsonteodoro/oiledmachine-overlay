@@ -69,7 +69,7 @@ IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 debug gdb-plugin hwloc offload ompt test llvm_targets_NVPTX
 rpc
-ebuild-revision-7
+ebuild-revision-8
 ${LLVM_EBUILDS_LLVM17_REVISION}
 "
 gen_cuda_required_use() {
@@ -220,6 +220,7 @@ DEPEND="
 "
 BDEPEND="
 	dev-lang/perl
+	sys-devel/lld
 	offload? (
 		llvm_targets_NVPTX? (
 			sys-devel/clang
@@ -295,6 +296,12 @@ gen_nvptx_list() {
 multilib_src_configure() {
 	# LTO causes issues in other packages building, #870127
 	filter-lto
+
+	# Avoid possible error:
+	# ld.bfd: duplicate version tag `VERS1.0'
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=lld
+	strip-unsupported-flags
 
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
