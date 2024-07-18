@@ -57,7 +57,7 @@ check_pkg_glibcxx() {
 		| sort \
 		| tail -n 1 \
 		| cut -f 2 -d "_")
-	if [[ "${glibcxx_ver}" -ge "${gcc_version}" ]] ; then
+	if [[ "${glibcxx_ver}" -gt "${gcc_version}" ]] ; then
 		local gcc_ver="${glibcxx_to_gcc[${glibcxx_ver}]}"
 eerror "${package} needs to be rebuilt with gcc ${gcc_ver} or earlier."
 eerror "Use per-package cflags."
