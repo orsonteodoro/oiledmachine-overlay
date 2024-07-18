@@ -170,6 +170,7 @@ DEPEND="
 "
 BDEPEND="
 	dev-lang/perl
+	sys-devel/lld:${PV%%.*}
 	offload? (
 		llvm_targets_NVPTX? (
 			sys-devel/clang
@@ -247,6 +248,13 @@ gen_nvptx_list() {
 multilib_src_configure() {
 	# LTO causes issues in other packages building, #870127
 	filter-lto
+
+	# Not observed in this release but added as a precaution.
+	# Avoid possible error:
+	# ld.bfd: duplicate version tag `VERS1.0'
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=lld
+	strip-unsupported-flags
 
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
