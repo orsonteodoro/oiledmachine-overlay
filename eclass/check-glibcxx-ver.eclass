@@ -72,21 +72,23 @@ ewarn "Compatible:\t\tYes"
 	else
 eerror "Compatible:\t\tNo"
 	fi
-ewarn
-ewarn "Contents of /etc/portage/env/gcc-${gcc_version}.conf:"
-ewarn "CC=\"gcc-${gcc_version}\""
-ewarn "CXX=\"g++-${gcc_version}\""
-ewarn "CPP=\"\${CXX} -E\""
-ewarn "AR=\"ar\""
-ewarn "NM=\"nm\""
-ewarn "OBJCOPY=\"objcopy\""
-ewarn "OBJDUMP=\"objdump\""
-ewarn "READELF=\"readelf\""
-ewarn "STRIP=\"strip\""
-ewarn
-ewarn "Contents of /etc/portage/package.env:"
-ewarn "${package} gcc-${gcc_version}.conf"
-ewarn
+echo -e
+echo -e "# Contents of /etc/portage/env/gcc-${gcc_version}.conf:"
+echo -e
+echo -e "CC=\"gcc-${gcc_version}\""
+echo -e "CXX=\"g++-${gcc_version}\""
+echo -e "CPP=\"\${CXX} -E\""
+echo -e "AR=\"ar\""
+echo -e "NM=\"nm\""
+echo -e "OBJCOPY=\"objcopy\""
+echo -e "OBJDUMP=\"objdump\""
+echo -e "READELF=\"readelf\""
+echo -e "STRIP=\"strip\""
+echo -e
+echo -e "# Contents of /etc/portage/package.env:"
+echo -e
+echo -e "${package} gcc-${gcc_version}.conf"
+echo -e
 		if ver_test "${glibcxx_ver}" -gt "${gcc_version}" ; then
 eerror "Detected incompatible version symbol."
 			die
