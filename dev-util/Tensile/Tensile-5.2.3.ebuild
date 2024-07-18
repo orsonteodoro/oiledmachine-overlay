@@ -21,7 +21,6 @@ AMDGPU_TARGETS_COMPAT=(
 )
 CMAKE_USE_DIR="${WORKDIR}/${PN}-rocm-${PV}/${PN}/Source"
 DISTUTILS_USE_PEP517="setuptools"
-GCC_SLOT=11
 LLVM_SLOT=14
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -59,7 +58,6 @@ RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	client? (
 		dev-libs/boost
-		sys-devel/gcc:${GCC_SLOT}
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 	)
 	opencl? (
@@ -139,9 +137,6 @@ src_configure() {
 	distutils-r1_src_configure
 
 	if use client; then
-		local gcc_current_profile=$(gcc-config -c)
-		local gcc_current_profile_slot=${gcc_current_profile##*-}
-
 		check_pkg_glibcxx "dev-libs/boost" "/usr/$(get_libdir)/libboost_program_options.so" "${HIP_5_2_GCC_SLOT}"
 
 		export HIP_PLATFORM="amd"
