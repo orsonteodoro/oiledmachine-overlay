@@ -1,0 +1,14 @@
+diff '--color=auto' -urp hipamd-rocm-5.1.3.orig/hip-config.cmake.in hipamd-rocm-5.1.3/hip-config.cmake.in
+--- hipamd-rocm-5.1.3.orig/hip-config.cmake.in	2024-07-18 09:52:13.788506891 -0700
++++ hipamd-rocm-5.1.3/hip-config.cmake.in	2024-07-18 09:55:45.753169818 -0700
+@@ -217,8 +217,8 @@ if(HIP_RUNTIME MATCHES "rocclr")
+ 
+   if(NOT WIN32)
+     set_target_properties(hip::device PROPERTIES
+-      INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/../include"
+-      INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/../include"
++      INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
++      INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+     )
+   endif()
+ endif()
