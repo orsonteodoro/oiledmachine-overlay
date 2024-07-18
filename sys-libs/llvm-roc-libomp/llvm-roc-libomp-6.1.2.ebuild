@@ -126,7 +126,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -rpc
-ebuild-revision-24
+ebuild-revision-25
 "
 
 gen_cuda_required_use() {
@@ -406,14 +406,18 @@ src_configure() {
 	rocm_set_default_gcc
 	replace-flags '-O0' '-O1'
 
+# Fixes:
+# ld.bfd: duplicate version tag `VERS1.0'
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=lld
+	strip-unsupported-flags # Filter LDFLAGS
+
 # Fix
 # /usr/bin/python3.12: No module named pip
 	export PYTHONPATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/:${PYTHONPATH}"
 	export PYTHONPATH="${ESYSROOT}/${EROCM_PATH}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 
-# Avoid
-# The dependency target "clang" of target "check-all" does not exist.
-	PROJECTS="clang;openmp"
+	PROJECTS="openmp"
 	local experimental_targets=""
 	if use llvm_targets_X86 ; then
 		experimental_targets+=";X86"
@@ -470,6 +474,14 @@ src_configure() {
 				-DDEVICELIBS_ROOT="${S_DEVICELIBS}"
 				-DLIBOMPTARGET_AMDGCN_GFXLIST=$(get_amdgpu_flags)
 			)
+			if ! use llvm_targets_NVPTX ; then
+	# Workaround
+	# For error:
+	#/opt/rocm-5.7.1/llvm/lib/clang/17.0.0/include/__clang_cuda_device_functions.h:697:10: error: '__nvvm_atom_sys_add_gen_ll' needs target feature sm_60|sm_61|sm_62|sm_70|sm_72|sm_75|sm_80|sm_86|sm_87|sm_89|sm_90
+				mycmakeargs+=(
+					-DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES="60"
+				)
+			fi
 		fi
 		if use llvm_targets_NVPTX ; then
 			mycmakeargs+=(

@@ -152,7 +152,7 @@ diff '--color=auto' -urp llvm-project-rocm-5.7.1.orig/openmp/libomptarget/plugin
  
  # libhsakmt.a
 -find_library ( HSAKMT_LIB libhsakmt.a REQURIED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
-+find_library ( HSAKMT_LIB libhsakmt.a REQURIED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm-@ROCM_VERSION@)
++find_library ( HSAKMT_LIB libhsakmt.so REQURIED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm-@ROCM_VERSION@/lib)
  get_filename_component ( HSAKMT_LIB_PATH ${HSAKMT_LIB} DIRECTORY )
  link_directories (${HSAKMT_LIB_PATH})
  
@@ -166,7 +166,7 @@ diff '--color=auto' -urp llvm-project-rocm-5.7.1.orig/openmp/libomptarget/plugin
  
  # libhsakmt.a
 -find_library ( HSAKMT_LIB libhsakmt.a REQURIED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
-+find_library ( HSAKMT_LIB libhsakmt.a REQURIED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm-@ROCM_VERSION@)
++find_library ( HSAKMT_LIB libhsakmt.so REQURIED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm-@ROCM_VERSION@/lib)
  get_filename_component ( HSAKMT_LIB_PATH ${HSAKMT_LIB} DIRECTORY )
  link_directories (${HSAKMT_LIB_PATH})
  

@@ -120,7 +120,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -rpc
-ebuild-revision-24
+ebuild-revision-25
 "
 
 gen_cuda_required_use() {
@@ -402,9 +402,7 @@ src_configure() {
 	export PYTHONPATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/:${PYTHONPATH}"
 	export PYTHONPATH="${ESYSROOT}/${EROCM_PATH}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 
-# Avoid
-# The dependency target "clang" of target "check-all" does not exist.
-	PROJECTS="clang;openmp"
+	PROJECTS="openmp"
 	local experimental_targets=""
 	if use llvm_targets_X86 ; then
 		experimental_targets+=";X86"
@@ -484,6 +482,7 @@ src_compile() {
 }
 
 src_install() {
+	addpredict "/opt/rocm-${PV}/llvm/share"
 	cmake_src_install
 	rocm_fix_rpath
 }
