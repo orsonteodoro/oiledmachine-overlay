@@ -58,8 +58,8 @@ check_pkg_glibcxx() {
 		| tail -n 1 \
 		| cut -f 2 -d "_")
 	if true ; then
-		local key="${glibcxx_ver}"
-		local library_gcc_version="${glibcxx_to_gcc[${key}]}"
+		local library_glibcxx_version="${glibcxx_ver}"
+		local library_gcc_version="${glibcxx_to_gcc[${library_glibcxx_version}]}"
 ewarn
 ewarn "${package} needs to be rebuilt with gcc ${gcc_version} or earlier."
 ewarn "Use per-package cflags to avoid linking issues with versioned symbols."
@@ -67,7 +67,7 @@ ewarn
 ewarn "Library:\t\t${library_path}"
 ewarn "Actual version:\tGCC ${library_gcc_version} (GLIBCXX ${glibcxx_ver})"
 ewarn "Expected version:\tGCC ${gcc_version} (GLIBCXX ${gcc_to_glibcxx[${gcc_version}]})"
-	if ver_test "${glibcxx_ver}" -le "${gcc_version}" ; then
+	if ver_test "${library_gcc_version}" -le "${gcc_version}" ; then
 ewarn "Compatible:\t\tYes"
 	else
 eerror "Compatible:\t\tNo"
