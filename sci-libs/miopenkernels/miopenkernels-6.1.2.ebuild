@@ -17,7 +17,7 @@ if [[ "${PV##*.}" == "0" ]] ; then
 else
 	MY_PV="${PV}"
 fi
-ROCM_SLOT="5.7"
+ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
 
 inherit rocm unpacker
