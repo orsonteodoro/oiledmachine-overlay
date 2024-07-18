@@ -389,6 +389,13 @@ src_configure() {
 	rocm_set_default_gcc
 	replace-flags '-O0' '-O1'
 
+# Bug not observed in this release but added as a precaution.
+# Fixes:
+# ld.bfd: duplicate version tag `VERS1.0'
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=lld
+	strip-unsupported-flags # Filter LDFLAGS
+
 # Fix
 # /usr/bin/python3.12: No module named pip
 	export PYTHONPATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/:${PYTHONPATH}"

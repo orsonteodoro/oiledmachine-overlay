@@ -262,6 +262,10 @@ BDEPEND="
 	offload? (
 		virtual/pkgconfig
 	)
+	|| (
+		sys-devel/lld:${LLVM_SLOT}
+		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}[${LLVM_TARGETS_USEDEP}]
+	)
 "
 PATCHES=(
 )
@@ -390,6 +394,13 @@ src_configure() {
 	addpredict "/proc/self/task/"
 	rocm_set_default_gcc
 	replace-flags '-O0' '-O1'
+
+# Bug not observed in this release but added as a precaution.
+# Fixes:
+# ld.bfd: duplicate version tag `VERS1.0'
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=lld
+	strip-unsupported-flags # Filter LDFLAGS
 
 # Fix
 # /usr/bin/python3.12: No module named pip
