@@ -259,8 +259,8 @@ fi
 if [[ "${PV}" =~ "9999" ]] ; then
 	:
 else
+#clear
 IUSE+="
-clear
 "
 fi
 IUSE+="
@@ -656,11 +656,11 @@ elif [[ "${PV}" =~ "9999" ]] ; then
 		)
 	"
 elif [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
+#		${CLEAR_LINUX_PATCHES_URI}
 	SRC_URI+="
 		${BBRV2_SRC_URIS}
 		${BBRV3_SRC_URIS}
 		${C2TCP_URIS}
-		${CLEAR_LINUX_PATCHES_URI}
 		${GENPATCHES_URI}
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
@@ -676,6 +676,9 @@ elif [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${TRESOR_SYSFS_SRC_URI}
 		${ZEN_SAUCE_URIS}
 	"
+#		clear? (
+#			${CLEAR_LINUX_PATCHES_URI}
+#		)
 else
 	SRC_URI+="
 		${KCP_SRC_4_9_URI}
@@ -690,9 +693,6 @@ else
 		)
 		c2tcp? (
 			${C2TCP_URIS}
-		)
-		clear? (
-			${CLEAR_LINUX_PATCHES_URI}
 		)
 		deepcc? (
 			${C2TCP_URIS}
