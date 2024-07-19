@@ -499,6 +499,20 @@ CUDA_CDEPEND="
 	)
 "
 
+get_rocm_usedep() {
+	local name="${1}"
+	local t1="${name}_${u}_AMDGPU_USEDEP"
+	t2="${t1}[@]"
+	if [[ -z "${!t2}" ]] ; then
+# Dep does not contain GPU target.
+		return
+	fi
+	if [[ "${name}" =~ ("HIPBLASLT"|"HIPFFT"|"MIOPEN"|"ROCBLAS"|"ROCFFT"|"ROCRAND"|"ROCPRIM") ]] ; then
+		echo "[${!t2},rocm]"
+	else
+		echo "[${!t2}]"
+	fi
+}
 gen_rocm_rdepend() {
 	local pv
 	for pv in ${HIP_SLOTS[@]} ; do
@@ -513,33 +527,48 @@ gen_rocm_rdepend() {
 				~dev-util/hip-${pv}:${s}[rocm]
 				~dev-util/roctracer-${pv}:${s}
 				~sci-libs/hipBLAS-${pv}:${s}[rocm]
-				~sci-libs/hipFFT-${pv}:${s}[rocm]
+				~sci-libs/hipFFT-${pv}:${s}$(get_rocm_usedep HIPFFT)
 				~sci-libs/hipSOLVER-${pv}:${s}[rocm]
 				~sci-libs/hipSPARSE-${pv}:${s}[rocm]
-				~sci-libs/rocBLAS-${pv}:${s}[rocm]
-				~sci-libs/rocFFT-${pv}:${s}[rocm]
-				~sci-libs/rocRAND-${pv}:${s}[rocm]
-				~sci-libs/rocSOLVER-${pv}:${s}[rocm(+)]
-				~sci-libs/miopen-${pv}:${s}[rocm]
+				~sci-libs/rocBLAS-${pv}:${s}$(get_rocm_usedep ROCBLAS)
+				~sci-libs/rocFFT-${pv}:${s}$(get_rocm_usedep ROCFFT)
+				~sci-libs/rocRAND-${pv}:${s}$(get_rocm_usedep ROCRAND)
+				~sci-libs/rocSOLVER-${pv}:${s}$(get_rocm_usedep ROCSOLVER)
+				~sci-libs/miopen-${pv}:${s}$(get_rocm_usedep MIOPEN)
 
 				~dev-libs/rocm-comgr-${pv}:${s}
 				~dev-libs/rocr-runtime-${pv}:${s}
 				~dev-build/rocm-cmake-${pv}:${s}
 				~dev-util/rocm-smi-${pv}:${s}
 				~dev-util/rocminfo-${pv}:${s}
-				~dev-util/Tensile-${pv}:${s}
+				~dev-util/Tensile-${pv}:${s}$(get_rocm_usedep TENSILE)
 
 				sys-devel/lld:${LLD_SLOT[${pv}]}
-
-				amdgpu_targets_gfx90a? (
-					~sci-libs/hipBLASLt-${pv}:${s}[rocm]
-				)
 			)
 		"
 		if ver_test "${s}" -ge "5.5" ; then
 			echo "
 				rocm_${u}? (
 					~dev-libs/rocm-core-${pv}:${s}
+
+					amdgpu_targets_gfx90a? (
+						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+					)
+				)
+			"
+		fi
+		if ver_test "${s}" -ge "5.7" ; then
+			echo "
+				rocm_${u}? (
+					amdgpu_targets_gfx940? (
+						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+					)
+					amdgpu_targets_gfx941? (
+						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+					)
+					amdgpu_targets_gfx942? (
+						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+					)
 				)
 			"
 		fi
