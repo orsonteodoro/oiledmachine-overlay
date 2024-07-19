@@ -429,7 +429,7 @@ get_rocm_usedep() {
 # Dep does not contain GPU target.
 		return
 	fi
-	if [[ "${name}" =~ ("HIPFFT"|"MIOPEN"|"ROCBLAS"|"ROCFFT"|"ROCRAND"|"ROCPRIM") ]] ; then
+	if [[ "${name}" =~ ("HIPBLASLT"|"HIPFFT"|"MIOPEN"|"ROCBLAS"|"ROCFFT"|"ROCRAND"|"ROCPRIM") ]] ; then
 		echo "[${!t2},rocm]"
 	else
 		echo "[${!t2}]"
@@ -454,7 +454,6 @@ gen_rocm_depends() {
 				~sci-libs/miopen-${pv}:${s}$(get_rocm_usedep MIOPEN)
 				~sci-libs/rocFFT-${pv}:${s}$(get_rocm_usedep ROCFFT)
 				~sci-libs/rocRAND-${pv}:${s}$(get_rocm_usedep ROCRAND)
-				~sci-libs/hipBLASLt-${pv}:${s}[rocm]
 
 				sys-devel/lld:${LLD_SLOT[${pv}]}
 		"
@@ -463,6 +462,25 @@ gen_rocm_depends() {
 			echo "
 				rocm_${u}? (
 					~dev-libs/rocm-core-${pv}:${s}
+				)
+			"
+		fi
+
+		if ver_test "${s}" -eq "6.0" ; then
+			echo "
+				rocm_${u}? (
+					amdgpu_targets_gfx90a? (
+						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+					)
+					amdgpu_targets_gfx940? (
+						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+					)
+					amdgpu_targets_gfx941? (
+						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+					)
+					amdgpu_targets_gfx942? (
+						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+					)
 				)
 			"
 		fi
