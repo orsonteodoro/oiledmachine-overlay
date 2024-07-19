@@ -63,7 +63,7 @@ eerror "${x_targets_compat} is a typo or missing."
 			fi
 		done
 		if (( ${found} == 1 )) ; then
-			list+=",${g1}"
+			list+=",amdgpu_targets_${g1}?"
 		fi
 	done
 	list="${list:1}"
