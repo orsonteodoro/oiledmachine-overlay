@@ -97,7 +97,7 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCM_USEDEP},rocm?]
+		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCPRIM_6_1_AMDGPU_USEDEP},rocm?]
 	)
 	test? (
 		dev-cpp/gtest
