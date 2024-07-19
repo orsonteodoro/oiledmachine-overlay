@@ -90,8 +90,8 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		~sci-libs/rocFFT-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/rocRAND-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/rocFFT-${PV}:${ROCM_SLOT}[${ROCFFT_5_7_AMDGPU_USEDEP},rocm]
+		~sci-libs/rocRAND-${PV}:${ROCM_SLOT}[${ROCRAND_5_7_AMDGPU_USEDEP},rocm]
 	)
 "
 DEPEND="
