@@ -72,17 +72,6 @@ REQUIRED_USE="
 		opencl
 	)
 "
-gen_miopenkernels_depends() {
-	local g
-	local list=""
-	for g in ${MIOPENKERNELS_TARGETS_COMPAT[@]} ; do
-		list="${list},amdgpu_targets_${g}?"
-	done
-	list="${list:1}"
-	echo "
-		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}[${list}]
-	"
-}
 RDEPEND="
 	>=dev-db/sqlite-3.17
 	>=dev-libs/boost-1.72
@@ -92,15 +81,15 @@ RDEPEND="
 		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	)
 	kernels? (
-		$(gen_miopenkernels_depends)
+		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}[${MIOPENKERNELS_5_1_AMDGPU_USEDEP}]
 	)
 	opencl? (
-		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
+		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_1_AMDGPU_USEDEP}]
 		~sci-libs/miopengemm-${PV}:${ROCM_SLOT}
 	)
 	rocm? (
 		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_5_1_AMDGPU_USEDEP},rocm]
 	)
 "
 DEPEND="
