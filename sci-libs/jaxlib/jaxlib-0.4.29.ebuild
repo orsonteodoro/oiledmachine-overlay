@@ -462,16 +462,16 @@ gen_rocm_depends() {
 			echo "
 				rocm_${u}? (
 					~dev-libs/rocm-core-${pv}:${s}
+					amdgpu_targets_gfx90a? (
+						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
+					)
 				)
 			"
 		fi
 
-		if ver_test "${s}" -eq "6.0" ; then
+		if ver_test "${s}" -ge "6.0" ; then
 			echo "
 				rocm_${u}? (
-					amdgpu_targets_gfx90a? (
-						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
-					)
 					amdgpu_targets_gfx940? (
 						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
 					)

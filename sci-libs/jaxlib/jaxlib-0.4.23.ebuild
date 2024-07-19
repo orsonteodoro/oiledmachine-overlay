@@ -304,13 +304,6 @@ gen_rocm_depends() {
 			echo "
 				rocm_${u}? (
 					~dev-libs/rocm-core-${pv}:${s}
-				)
-			"
-		fi
-
-		if ver_test "${s}" -eq "5.6" ; then
-			echo "
-				rocm_${u}? (
 					amdgpu_targets_gfx90a? (
 						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
 					)
