@@ -77,10 +77,10 @@ RDEPEND="
 	)
 	rocm? (
 		~dev-util/hip-${PV}:${ROCM_SLOT}
-		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
-		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}
-		~sci-libs/rocRAND-${PV}:${ROCM_SLOT}
-		~sci-libs/rocSPARSE-${PV}:${ROCM_SLOT}
+		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_6_0_AMDGPU_USEDEP}]
+		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCPRIM_6_0_AMDGPU_USEDEP}]
+		~sci-libs/rocRAND-${PV}:${ROCM_SLOT}[${ROCRAND_6_0_AMDGPU_USEDEP}]
+		~sci-libs/rocSPARSE-${PV}:${ROCM_SLOT}[${ROCSPARSE_6_0_AMDGPU_USEDEP}]
 	)
 "
 DEPEND="
