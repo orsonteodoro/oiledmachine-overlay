@@ -55,7 +55,7 @@ REQUIRED_USE="
 #[${ROCM_USEDEP}]
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}
-	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}
+	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCPRIM_6_1_AMDGPU_USEDEP}]
 	test? (
 		dev-cpp/gtest
 	)
