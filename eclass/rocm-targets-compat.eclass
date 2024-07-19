@@ -43,7 +43,7 @@ gen_x_usedep() {
 	local x_targets_compat="${1}"
 
 	if [[ -z "${AMDGPU_TARGETS_COMPAT[@]}" ]] ; then
-eerror "AMDGPU_TARGETS_COMPAT is a typo or missing."
+#eerror "AMDGPU_TARGETS_COMPAT is a typo or missing."
 		return
 	fi
 	local t="${x_targets_compat}[@]"
