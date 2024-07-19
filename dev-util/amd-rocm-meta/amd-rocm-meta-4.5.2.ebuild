@@ -210,7 +210,6 @@ pkg_setup() {
 # rocsparse x
 # rocsparse-dev x
 # rocthrust-dev x
-# rocwmma-dev -
 #
 
 #
