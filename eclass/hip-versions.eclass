@@ -32,9 +32,9 @@ HIP_4_0_LLVM_SLOT="12"
 HIP_4_1_LLVM_SLOT="12"
 HIP_4_2_LLVM_SLOT="12"
 HIP_4_3_LLVM_SLOT="13"
+# The latest supported for this overlay below
 HIP_4_5_LLVM_SLOT="13"
 HIP_5_0_LLVM_SLOT="14"
-# The latest supported for this overlay below
 HIP_5_1_LLVM_SLOT="14"
 HIP_5_2_LLVM_SLOT="14"
 HIP_5_3_LLVM_SLOT="15"
@@ -49,6 +49,7 @@ _hip_set_globals() {
 	local hip_platform="${HIP_PLATFORM:-amd}"
 	if [[ "${hip_platform}" == "amd" ]] ; then
 		# For HIP_PLATFORM == amd.
+		HIP_4_5_GCC_SLOT="12"
 		HIP_5_1_GCC_SLOT="12"
 		HIP_5_2_GCC_SLOT="12"
 		HIP_5_3_GCC_SLOT="12"
@@ -60,6 +61,7 @@ _hip_set_globals() {
 		HIP_6_1_GCC_SLOT="12"
 	else
 		# For HIP_PLATFORM == nvidia.
+		HIP_4_5_GCC_SLOT="11" # CUDA 11.5
 		HIP_5_1_GCC_SLOT="11" # CUDA 11.5
 		HIP_5_2_GCC_SLOT="11" # CUDA 11.6
 		HIP_5_3_GCC_SLOT="11" # CUDA 11.8
