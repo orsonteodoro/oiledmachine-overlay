@@ -469,7 +469,7 @@ gen_rocm_depends() {
 			"
 		fi
 
-		if ver_test "${s}" -ge "6.0" ; then
+		if ver_test "${s}" -ge "5.7" ; then
 			echo "
 				rocm_${u}? (
 					amdgpu_targets_gfx940? (
