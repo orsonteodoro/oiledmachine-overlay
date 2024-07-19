@@ -102,7 +102,7 @@ RDEPEND="
 	!sci-libs/rocSPARSE:0
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCPRIM_5_6_AMDGPU_USEDEP},rocm(+)]
-	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_6_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="
