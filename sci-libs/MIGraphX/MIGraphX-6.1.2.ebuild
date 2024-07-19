@@ -63,16 +63,16 @@ RDEPEND="
 	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
 	dev-libs/msgpack
 	composable-kernel? (
-		~sci-libs/composable_kernel-${PV}:${ROCM_SLOT}
+		~sci-libs/composable_kernel-${PV}:${ROCM_SLOT}[${COMPOSABLE_KERNEL_6_1_AMDGPU_USEDEP}]
 	)
 	cpu? (
 		dev-libs/oneDNN
 		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_1_AMDGPU_USEDEP}]
 	)
 	rocm? (
-		~sci-libs/miopen-${PV}:${ROCM_SLOT}
-		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
+		~sci-libs/miopen-${PV}:${ROCM_SLOT}[${MIOPEN_6_1_AMDGPU_USEDEP}]
+		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_6_1_AMDGPU_USEDEP}]
 	)
 	test? (
 		~dev-util/hip-${PV}:${ROCM_SLOT}

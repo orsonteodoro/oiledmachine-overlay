@@ -59,11 +59,11 @@ RDEPEND="
 	cpu? (
 		dev-libs/oneDNN
 		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_1_AMDGPU_USEDEP}]
 	)
 	rocm? (
-		~sci-libs/miopen-${PV}:${ROCM_SLOT}
-		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
+		~sci-libs/miopen-${PV}:${ROCM_SLOT}[${MIOPEN_5_1_AMDGPU_USEDEP}]
+		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_5_1_AMDGPU_USEDEP}]
 	)
 	test? (
 		~dev-util/hip-${PV}:${ROCM_SLOT}
