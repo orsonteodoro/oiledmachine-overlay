@@ -109,7 +109,7 @@ RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3.36
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
-	~sci-libs/rocRAND-${PV}:${ROCM_SLOT}
+	~sci-libs/rocRAND-${PV}:${ROCM_SLOT}[${ROCRAND_5_4_AMDGPU_USEDEP}]
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
@@ -136,7 +136,7 @@ BDEPEND="
 		>=sci-libs/fftw-3
 		dev-libs/boost
 		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_4_AMDGPU_USEDEP}]
 	)
 "
 PATCHES=(

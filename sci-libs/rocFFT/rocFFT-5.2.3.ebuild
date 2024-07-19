@@ -119,7 +119,7 @@ BDEPEND="
 		>=sci-libs/fftw-3
 		dev-libs/boost
 		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_2_AMDGPU_USEDEP}]
 	)
 "
 PATCHES=(
