@@ -87,7 +87,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 RDEPEND="
 	!sci-libs/rocSPARSE:0
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
-	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[rocm(+)]
+	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCPRIM_5_2_AMDGPU_USEDEP},rocm(+)]
 	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 	sys-libs/llvm-roc-libomp:=
 "
