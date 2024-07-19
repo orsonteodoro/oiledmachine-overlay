@@ -366,4 +366,65 @@ LLVM_ROC_LIBOMP_6_0_AMDGPU_TARGETS_COMPAT=(
 )
 LLVM_ROC_LIBOMP_6_0_AMDGPU_USEDEP=$(gen_x_usedep "LLVM_ROC_LIBOMP_6_0_AMDGPU_TARGETS_COMPAT")
 
+MAGMA_2_7_6_0_AMDGPU_TARGETS_COMPAT=(
+	gfx700
+	gfx701
+	gfx702
+	gfx703
+	gfx704
+	gfx705
+	gfx801
+	gfx802
+	gfx803
+	gfx805
+	gfx810
+	gfx900
+	gfx902
+	gfx904
+	gfx906
+	gfx908
+	gfx909
+	gfx90c
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1033
+)
+MAGMA_2_7_6_0_AMDGPU_USEDEP=$(gen_x_usedep "MAGMA_2_7_6_0_AMDGPU_TARGETS_COMPAT")
+
+MAGMA_2_8_6_0_AMDGPU_TARGETS_COMPAT=(
+	gfx700
+	gfx701
+	gfx702
+	gfx703
+	gfx704
+	gfx705
+	gfx801
+	gfx802
+	gfx803
+	gfx805
+	gfx810
+	gfx900
+	gfx902
+	gfx904
+	gfx906
+	gfx908
+	gfx909
+	gfx90c
+	gfx940
+	gfx941
+	gfx942
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1033
+)
+MAGMA_2_8_6_0_AMDGPU_USEDEP=$(gen_x_usedep "MAGMA_2_8_6_0_AMDGPU_TARGETS_COMPAT")
+
 fi
