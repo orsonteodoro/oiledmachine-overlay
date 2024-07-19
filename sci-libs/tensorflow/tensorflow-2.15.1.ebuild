@@ -557,21 +557,6 @@ gen_rocm_rdepend() {
 				)
 			"
 		fi
-		if ver_test "${s}" -ge "5.7" ; then
-			echo "
-				rocm_${u}? (
-					amdgpu_targets_gfx940? (
-						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
-					)
-					amdgpu_targets_gfx941? (
-						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
-					)
-					amdgpu_targets_gfx942? (
-						~sci-libs/hipBLASLt-${pv}:${s}$(get_rocm_usedep HIPBLASLT)
-					)
-				)
-			"
-		fi
 	done
 }
 
