@@ -266,20 +266,6 @@ declare -A LLD_SLOT=(
 	["${HIP_6_0_VERSION}"]="${HIP_6_0_LLVM_SLOT}"
 )
 
-get_rocm_usedep() {
-	local name="${1}"
-	local t1="${name}_${u}_AMDGPU_USEDEP"
-	t2="${t1}[@]"
-	if [[ -z "${!t2}" ]] ; then
-# Dep does not contain GPU target.
-		return
-	fi
-	if [[ "${name}" =~ ("HIPBLASLT"|"HIPFFT"|"MIOPEN"|"ROCBLAS"|"ROCFFT"|"ROCRAND"|"ROCPRIM") ]] ; then
-		echo "[${!t2},rocm]"
-	else
-		echo "[${!t2}]"
-	fi
-}
 gen_rocm_depends() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do

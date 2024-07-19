@@ -3,7 +3,17 @@
 
 EAPI=8
 
+# See https://github.com/ROCm/ROCm/blob/docs/5.3.3/docs/release/gpu_os_support.md
+AMDGPU_TARGETS_COMPAT=(
+	gfx906
+	gfx908
+	gfx90a
+	gfx1030
+)
+
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
+inherit rocm
 
 KEYWORDS="~amd64"
 
@@ -33,7 +43,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	atmi? (
-		~dev-libs/atmi-${PV}:${ROCM_SLOT}
+		~dev-libs/atmi-${PV}:${ROCM_SLOT}$(get_rocm_usedep ATMI)
 	)
 	hipfort? (
 		~dev-util/hipfort-${PV}:${ROCM_SLOT}
@@ -45,7 +55,7 @@ RDEPEND="
 		~dev-lang/rocm-flang-${PV}:${ROCM_SLOT}
 	)
 	migraphx? (
-		~sci-libs/MIGraphX-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/MIGraphX-${PV}:${ROCM_SLOT}$(get_rocm_usedep MIGRAPHX)
 	)
 	mivisionx? (
 		~sci-libs/MIVisionX-${PV}:${ROCM_SLOT}[rocm]
@@ -72,32 +82,34 @@ RDEPEND="
 		~dev-util/HIPIFY-${PV}:${ROCM_SLOT}
 		~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
-		~dev-util/rocprofiler-${PV}:${ROCM_SLOT}
+		~dev-util/rocprofiler-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCPROFILER)
 		~dev-util/roctracer-${PV}:${ROCM_SLOT}
 
 		dev-util/clinfo
+
+		~sys-libs/llvm-roc-${PV}:${ROCM_SLOT}
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}$(get_rocm_usedep LLVM_ROC_LIBOMP)
 	)
 	rocm-gdb? (
 		~dev-util/ROCgdb-${PV}:${ROCM_SLOT}
 	)
 	rocm-libs? (
-		~dev-libs/rccl-${PV}:${ROCM_SLOT}
+		~dev-libs/rccl-${PV}:${ROCM_SLOT}$(get_rocm_usedep RCCL)
 		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/hipCUB-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/hipFFT-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/hipCUB-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPCUB)
+		~sci-libs/hipFFT-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPFFT)
 		~sci-libs/hipSOLVER-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipSPARSE-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/miopen-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/rocALUTION-${PV}:${ROCM_SLOT}
-		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/rocFFT-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/rocRAND-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/rocSOLVER-${PV}:${ROCM_SLOT}
-		~sci-libs/rocSPARSE-${PV}:${ROCM_SLOT}
-		~sci-libs/rocThrust-${PV}:${ROCM_SLOT}
-		~sci-libs/rocWMMA-${PV}:${ROCM_SLOT}
+		~sci-libs/miopen-${PV}:${ROCM_SLOT}$(get_rocm_usedep MIOPEN)
+		~sci-libs/rocALUTION-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCALUTION)
+		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCBLAS)
+		~sci-libs/rocFFT-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCFFT)
+		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCPRIM)
+		~sci-libs/rocRAND-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCRAND)
+		~sci-libs/rocSOLVER-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCSOLVER)
+		~sci-libs/rocSPARSE-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCSPARSE)
+		~sci-libs/rocThrust-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCTHRUST)
+		~sci-libs/rocWMMA-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCWMMA)
 	)
 	rocm-utils? (
 		~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}

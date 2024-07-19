@@ -142,24 +142,6 @@ REQUIRED_USE="
 		llvm_slot_15
 	)
 "
-get_rocm_usedep() {
-	local name="${1}"
-	local t1="${name}_${u}_AMDGPU_USEDEP"
-	t2="${t1}[@]"
-	if [[ -z "${!t2}" ]] ; then
-# Dep does not contain GPU target.
-		return
-	fi
-	if [[ "${name}" == "MAGMA_2_6" ]] ; then
-# Not packaged.
-		return
-	fi
-	if [[ "${name}" =~ ("MIOPEN"|"ROCBLAS"|"ROCFFT"|"ROCRAND"|"ROCPRIM") ]] ; then
-		echo "[${!t2},rocm]"
-	else
-		echo "[${!t2}]"
-	fi
-}
 gen_rocm_depends() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
@@ -168,22 +150,22 @@ gen_rocm_depends() {
 		u="${u/./_}"
 		echo "
 			rocm_${u}? (
-				~dev-libs/rccl-${pv}:${s}[$(get_rocm_usedep RCCL)]
+				~dev-libs/rccl-${pv}:${s}$(get_rocm_usedep RCCL)
 				~dev-libs/rocm-comgr-${pv}:${s}
 				~dev-libs/rocm-core-${pv}:${s}
 				~dev-libs/rocr-runtime-${pv}:${s}
 				~dev-util/hip-${pv}:${s}[rocm]
-				~dev-util/rocprofiler-${pv}:${s}[$(get_rocm_usedep ROCPROFILER)]
+				~dev-util/rocprofiler-${pv}:${s}$(get_rocm_usedep ROCPROFILER)
 				~dev-util/roctracer-${pv}:${s}
 				~sci-libs/hipCUB-${pv}:${s}[rocm]
 				~sci-libs/hipSPARSE-${pv}:${s}[rocm]
 				~sci-libs/hipFFT-${pv}:${s}[rocm]
-				~sci-libs/miopen-${pv}:${s}[$(get_rocm_usedep MIOPEN),rocm]
-				~sci-libs/rocBLAS-${pv}:${s}[$(get_rocm_usedep ROCBLAS),rocm]
-				~sci-libs/rocFFT-${pv}:${s}[$(get_rocm_usedep ROCFFT),rocm]
-				~sci-libs/rocRAND-${pv}:${s}[$(get_rocm_usedep ROCRAND),rocm]
-				~sci-libs/rocPRIM-${pv}:${s}[$(get_rocm_usedep ROCPRIM),rocm]
-				~sci-libs/rocThrust-${pv}:${s}[$(get_rocm_usedep ROCTHRUST)]
+				~sci-libs/miopen-${pv}:${s}$(get_rocm_usedep MIOPEN)
+				~sci-libs/rocBLAS-${pv}:${s}$(get_rocm_usedep ROCBLAS)
+				~sci-libs/rocFFT-${pv}:${s}$(get_rocm_usedep ROCFFT)
+				~sci-libs/rocRAND-${pv}:${s}$(get_rocm_usedep ROCRAND)
+				~sci-libs/rocPRIM-${pv}:${s}$(get_rocm_usedep ROCPRIM)
+				~sci-libs/rocThrust-${pv}:${s}$(get_rocm_usedep ROCTHRUST)
 				magma? (
 					>=sci-libs/magma-2.6*:${s}$(get_rocm_usedep MAGMA_2_6)
 				)

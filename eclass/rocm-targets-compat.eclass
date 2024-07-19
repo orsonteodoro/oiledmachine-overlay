@@ -70,6 +70,37 @@ eerror "${x_targets_compat} is a typo or missing."
 	echo "${list}"
 }
 
+# @FUNCTION: get_rocm_usedep
+# @DESCRIPTION:
+# Generate a USEDEP compat with enabled rocm USE flag
+get_rocm_usedep() {
+        local name="${1}"
+        local extra_useflags="${2}"
+        local t1="${name}_${u}_AMDGPU_USEDEP"
+        t2="${t1}[@]"
+        if [[ "${name}" == "MAGMA_2_6" ]] ; then
+# Not packaged yet.
+                return
+        fi
+        if [[ -z "${!t2}" ]] ; then
+# Dep does not contain GPU target.
+                return
+        fi
+        if [[ "${name}" =~ ("HIPBLASLT"|"HIPCUB"|"HIPFFT"|"MIGRAPHX"|"MIOPEN"|"ROCALUTION"|"ROCBLAS"|"ROCFFT"|"ROCRAND"|"ROCPRIM") ]] ; then
+		if [[ -n "${extra_useflags}" ]] ; then
+	                echo "[${!t2},rocm,${extra_useflags}]"
+		else
+	                echo "[${!t2},rocm]"
+		fi
+        else
+		if [[ -n "${extra_useflags}" ]] ; then
+	                echo "[${!t2},${extra_useflags}]"
+		else
+	                echo "[${!t2}]"
+		fi
+        fi
+}
+
 inherit rocm-targets-compat-5.1
 inherit rocm-targets-compat-5.2
 inherit rocm-targets-compat-5.3
