@@ -62,7 +62,7 @@ RDEPEND="
 		dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
 	)
 	openmp? (
-		sys-libs/llvm-roc-libomp:${ROCM_SLOT}
+		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_3_AMDGPU_USEDEP}]
 	)
 "
 DEPEND="
