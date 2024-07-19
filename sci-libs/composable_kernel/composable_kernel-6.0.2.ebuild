@@ -27,7 +27,7 @@ AMDGPU_UNTESTED_TARGETS=(
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=17
-ROCM_SLOT="5.7"
+ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic rocm
@@ -53,14 +53,14 @@ LICENSE="MIT"
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
 IUSE+="
-test ebuild-revision-9
+test ebuild-revision-10
 "
 REQUIRED_USE="
 "
 RDEPEND="
 	~dev-libs/rocm-opencl-runtime-${ROCM_VERSION}:${ROCM_SLOT}
 	~dev-util/hip-${ROCM_VERSION}:${ROCM_SLOT}
-	~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}
+	~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_0_AMDGPU_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}

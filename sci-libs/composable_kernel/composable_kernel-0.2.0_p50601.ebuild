@@ -51,14 +51,14 @@ LICENSE="MIT"
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
 IUSE+="
-test ebuild-revision-9
+test ebuild-revision-10
 "
 REQUIRED_USE="
 "
 RDEPEND="
 	~dev-libs/rocm-opencl-runtime-${ROCM_VERSION}:${ROCM_SLOT}
 	~dev-util/hip-${ROCM_VERSION}:${ROCM_SLOT}
-	~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}
+	~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_6_AMDGPU_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
