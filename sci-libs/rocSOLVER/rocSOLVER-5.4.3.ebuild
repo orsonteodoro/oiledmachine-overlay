@@ -43,7 +43,7 @@ REQUIRED_USE="
 RDEPEND="
 	=dev-libs/libfmt-8*
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
-	~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCM_USEDEP},rocm]
+	~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_5_4_AMDGPU_USEDEP},rocm]
 	benchmark? (
 		virtual/blas
 	)
