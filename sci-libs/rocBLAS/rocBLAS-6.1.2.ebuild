@@ -103,7 +103,7 @@ RDEPEND="
 	>=dev-libs/msgpack-3.0.1
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	benchmark? (
-		sys-libs/llvm-roc-libomp:${ROCM_SLOT}
+		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_1_AMDGPU_USEDEP}]
 		virtual/blas
 	)
 	cuda? (
@@ -114,7 +114,7 @@ DEPEND="
 	${RDEPEND}
 	test? (
 		dev-cpp/gtest
-		sys-libs/llvm-roc-libomp:${ROCM_SLOT}
+		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_1_AMDGPU_USEDEP}]
 		virtual/blas
 	)
 "
@@ -131,7 +131,7 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	rocm? (
 		$(python_gen_cond_dep '
-			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'[${PYTHON_USEDEP},client]
+			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_1_AMDGPU_USEDEP}"',${PYTHON_USEDEP},client]
 		')
 	)
 "
