@@ -66,7 +66,7 @@ RDEPEND="
 	dev-libs/msgpack
 	virtual/blas
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
-	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_0_AMDGPU_USEDEP}]
 	cuda? (
 		${HIP_CUDA_DEPEND}
 		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[cuda]
