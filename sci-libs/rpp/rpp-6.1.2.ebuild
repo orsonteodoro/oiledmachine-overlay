@@ -84,7 +84,7 @@ RDEPEND="
 	!sci-libs/rpp:0
 	>=dev-libs/boost-1.72:=
 	dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
-	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_1_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 	opencl? (
 		virtual/opencl
