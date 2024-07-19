@@ -291,6 +291,20 @@ declare -A LLD_SLOT=(
 	["${HIP_6_0_VERSION}"]="${HIP_6_0_LLVM_SLOT}"
 )
 
+get_rocm_usedep() {
+	local name="${1}"
+	local t1="${name}_${u}_AMDGPU_USEDEP"
+	t2="${t1}[@]"
+	if [[ -z "${!t2}" ]] ; then
+# Dep does not contain GPU target.
+		return
+	fi
+	if [[ "${name}" =~ ("HIPFFT"|"MIOPEN"|"ROCBLAS"|"ROCFFT"|"ROCRAND"|"ROCPRIM") ]] ; then
+		echo "[${!t2},rocm]"
+	else
+		echo "[${!t2}]"
+	fi
+}
 gen_rocm_depends() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
@@ -305,11 +319,11 @@ gen_rocm_depends() {
 				~dev-util/hip-${pv}:${s}[rocm]
 				~dev-util/roctracer-${pv}:${s}
 				~sci-libs/hipBLAS-${pv}:${s}[rocm]
-				~sci-libs/hipFFT-${pv}:${s}[rocm]
+				~sci-libs/hipFFT-${pv}:${s}$(get_rocm_usedep HIPFFT)
 				~sci-libs/hipSPARSE-${pv}:${s}[rocm]
-				~sci-libs/miopen-${pv}:${s}[rocm]
-				~sci-libs/rocFFT-${pv}:${s}[rocm]
-				~sci-libs/rocRAND-${pv}:${s}[rocm]
+				~sci-libs/miopen-${pv}:${s}$(get_rocm_usedep MIOPEN)
+				~sci-libs/rocFFT-${pv}:${s}$(get_rocm_usedep ROCFFT)
+				~sci-libs/rocRAND-${pv}:${s}$(get_rocm_usedep ROCRAND)
 				~sci-libs/hipBLASLt-${pv}:${s}[rocm]
 
 				sys-devel/lld:${LLD_SLOT[${pv}]}
@@ -331,8 +345,8 @@ gen_rocm_depends() {
 				~dev-build/rocm-cmake-${pv}:${s}
 				~dev-util/rocm-smi-${pv}:${s}
 				~dev-util/rocminfo-${pv}:${s}
-				~dev-util/Tensile-${pv}:${s}
-				~sci-libs/rocBLAS-${pv}:${s}[rocm]
+				~dev-util/Tensile-${pv}:${s}$(get_rocm_usedep TENSILE)
+				~sci-libs/rocBLAS-${pv}:${s}$(get_rocm_usedep ROCBLAS)
 			)
 		"
 	done
