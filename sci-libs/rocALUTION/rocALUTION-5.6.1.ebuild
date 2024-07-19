@@ -70,7 +70,7 @@ RDEPEND="
 	)
 	openmp? (
 		${ROCM_CLANG_DEPEND}
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_6_AMDGPU_USEDEP}]
 	)
 	rocm? (
 		~dev-util/hip-${PV}:${ROCM_SLOT}
