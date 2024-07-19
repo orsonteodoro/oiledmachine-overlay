@@ -42,7 +42,7 @@ REQUIRED_USE="
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
-	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_1_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="
