@@ -13,6 +13,7 @@ inherit cmake edo flag-o-matic rocm toolchain-funcs
 # Some test datasets are shared with rocSPARSE.
 KEYWORDS="~amd64"
 S="${WORKDIR}/hipSPARSE-rocm-${PV}"
+# Test data from cmake/ClientMatrices.cmake
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipSPARSE/archive/rocm-${PV}.tar.gz
 	-> hipSPARSE-${PV}.tar.gz

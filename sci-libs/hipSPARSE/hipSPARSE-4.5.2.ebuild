@@ -4,7 +4,7 @@
 EAPI=8
 
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=17
+LLVM_SLOT=13
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -13,7 +13,7 @@ inherit cmake edo flag-o-matic rocm toolchain-funcs
 # Some test datasets are shared with rocSPARSE.
 KEYWORDS="~amd64"
 S="${WORKDIR}/hipSPARSE-rocm-${PV}"
-# Test data from cmake/ClientMatrices.cmake
+# Test data from clients/tests/CMakeLists.txt
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipSPARSE/archive/rocm-${PV}.tar.gz
 	-> hipSPARSE-${PV}.tar.gz
@@ -64,7 +64,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSPARSE"
 LICENSE="MIT"
 RESTRICT="test" # Test ebuild sections needs update
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="cuda +rocm test ebuild-revision-9"
+IUSE="cuda +rocm test ebuild-revision-10"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
@@ -101,7 +101,8 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-4.5.2-remove-matrices-unpacking.patch"
+	"${FILESDIR}/${PN}-4.5.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -145,7 +146,6 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
-		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR="include"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DUSE_CUDA=$(usex cuda ON OFF)
