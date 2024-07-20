@@ -1,0 +1,13 @@
+diff '--color=auto' -urp hipamd-rocm-4.5.2.orig/CMakeLists.txt hipamd-rocm-4.5.2/CMakeLists.txt
+--- hipamd-rocm-4.5.2.orig/CMakeLists.txt	2024-07-19 18:16:32.950135569 -0700
++++ hipamd-rocm-4.5.2/CMakeLists.txt	2024-07-19 18:17:42.192993797 -0700
+@@ -87,6 +87,7 @@ list(GET VERSION_LIST 2 HIP_VERSION_PATC
+ string(REPLACE "-" ";" VERSION_LIST ${HIP_VERSION_PATCH_GITHASH})
+ list(GET VERSION_LIST 0 HIP_VERSION_PATCH)
+ set(HIP_VERSION_GITDATE 0)
++set(HIP_VERSION_BUILD_ID 0)
+ 
+ find_package(Git)
+ 
+Only in hipamd-rocm-4.5.2: CMakeLists.txt.orig
+Only in hipamd-rocm-4.5.2: CMakeLists.txt.rej
