@@ -4,7 +4,7 @@
 EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_SLOT=14
+LLVM_SLOT=13
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
