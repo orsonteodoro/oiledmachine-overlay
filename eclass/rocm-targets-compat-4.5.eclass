@@ -158,6 +158,13 @@ ROCSOLVER_4_5_AMDGPU_TARGETS_COMPAT=(
 ROCSOLVER_4_5_AMDGPU_USEDEP=$(gen_x_usedep "ROCSOLVER_4_5_AMDGPU_TARGETS_COMPAT")
 
 ROCSPARSE_4_5_AMDGPU_TARGETS_COMPAT=(
+	gfx803
+	gfx900_xnack_minus
+	gfx906_xnack_minus
+	gfx908_xnack_minus
+	gfx90a_xnack_minus
+	gfx90a_xnack_plus
+	gfx1030
 )
 ROCSPARSE_4_5_AMDGPU_USEDEP=$(gen_x_usedep "ROCSPARSE_4_5_AMDGPU_TARGETS_COMPAT")
 
