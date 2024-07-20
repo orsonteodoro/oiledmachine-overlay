@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=14
+LLVM_SLOT=13
 PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -31,7 +31,7 @@ LICENSE="
 	LGPL-2.1+
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-8"
+IUSE="ebuild-revision-9"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
