@@ -39,9 +39,9 @@ RCCL_6_0_AMDGPU_USEDEP=$(gen_x_usedep "RCCL_6_0_AMDGPU_TARGETS_COMPAT")
 TENSILE_6_0_AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900
-	gfx906
-	gfx908
-	gfx90a
+	gfx906_xnack_minus
+	gfx908_xnack_minus
+	gfx90a_xnack_minus
 	gfx1010
 	gfx1011
 	gfx1012

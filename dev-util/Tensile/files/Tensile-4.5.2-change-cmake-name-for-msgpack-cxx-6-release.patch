@@ -1,0 +1,14 @@
+diff '--color=auto' -urp Tensile-rocm-4.5.2.orig/Tensile/Source/lib/CMakeLists.txt Tensile-rocm-4.5.2/Tensile/Source/lib/CMakeLists.txt
+--- Tensile-rocm-4.5.2.orig/Tensile/Source/lib/CMakeLists.txt	2021-09-23 13:37:23.000000000 -0700
++++ Tensile-rocm-4.5.2/Tensile/Source/lib/CMakeLists.txt	2024-07-19 22:33:58.391428432 -0700
+@@ -97,7 +97,7 @@ endif()
+ if(TENSILE_USE_MSGPACK)
+     target_compile_definitions(TensileHost PUBLIC -DTENSILE_MSGPACK=1)
+ 
+-    find_package(msgpack)
++    find_package(msgpack-cxx)
+     if(TARGET msgpackc-static)
+         target_link_libraries(TensileHost PRIVATE msgpackc-static)
+     else()
+Only in Tensile-rocm-4.5.2/Tensile/Source/lib: CMakeLists.txt.orig
+Only in Tensile-rocm-4.5.2/Tensile/Source/lib: CMakeLists.txt.rej

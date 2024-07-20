@@ -341,7 +341,7 @@ _rocm_set_globals_default() {
 		"${AMDGPU_TARGETS_COMPAT[@]/#/+amdgpu_targets_}"
 	)
 
-	if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "gfx900_xnack" ]] ; then
+	if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "gfx900_xnack" && "${AMDGPU_TARGETS_COMPAT[@]}" =~ "amdgpu_targets_gfx900_xnack_minus" ]] ; then
 		ROCM_REQUIRED_USE+="
 			amdgpu_targets_gfx900? (
 				amdgpu_targets_gfx900_xnack_minus
@@ -349,7 +349,7 @@ _rocm_set_globals_default() {
 		"
 	fi
 
-	if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "gfx906_xnack" ]] ; then
+	if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "gfx906_xnack" && "${AMDGPU_TARGETS_COMPAT[@]}" =~ "amdgpu_targets_gfx906_xnack_minus" ]] ; then
 		ROCM_REQUIRED_USE+="
 			amdgpu_targets_gfx906? (
 				amdgpu_targets_gfx906_xnack_minus
@@ -357,7 +357,7 @@ _rocm_set_globals_default() {
 		"
 	fi
 
-	if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "gfx908_xnack" ]] ; then
+	if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "gfx908_xnack" && "${AMDGPU_TARGETS_COMPAT[@]}" =~ "amdgpu_targets_gfx908_xnack_minus" ]] ; then
 		ROCM_REQUIRED_USE+="
 			amdgpu_targets_gfx908? (
 				amdgpu_targets_gfx908_xnack_minus
@@ -365,13 +365,19 @@ _rocm_set_globals_default() {
 		"
 	fi
 
-	if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "gfx90a_xnack" ]] ; then
+	if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "gfx90a_xnack" && "${AMDGPU_TARGETS_COMPAT[@]}" =~ "amdgpu_targets_gfx90a_xnack_minus" && "${AMDGPU_TARGETS_COMPAT[@]}" =~ "amdgpu_targets_gfx90a_xnack_plus" ]] ; then
 		ROCM_REQUIRED_USE+="
 			amdgpu_targets_gfx90a? (
 				|| (
 					amdgpu_targets_gfx90a_xnack_minus
 					amdgpu_targets_gfx90a_xnack_plus
 				)
+			)
+		"
+	elif [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "gfx90a_xnack" && "${AMDGPU_TARGETS_COMPAT[@]}" =~ "amdgpu_targets_gfx90a_xnack_minus" ]] ; then
+		ROCM_REQUIRED_USE+="
+			amdgpu_targets_gfx90a? (
+				amdgpu_targets_gfx90a_xnack_minus
 			)
 		"
 	fi

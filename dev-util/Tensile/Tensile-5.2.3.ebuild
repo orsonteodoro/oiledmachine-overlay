@@ -8,9 +8,9 @@ EAPI=8
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900
-	gfx906
-	gfx908
-	gfx90a
+	gfx906_xnack_minus
+	gfx908_xnack_minus
+	gfx90a_xnack_minus
 	gfx1010
 	gfx1011
 	gfx1012

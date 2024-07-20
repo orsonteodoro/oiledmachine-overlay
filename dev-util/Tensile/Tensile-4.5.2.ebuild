@@ -13,18 +13,12 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1011
 	gfx1012
 	gfx1030
-	gfx1031
-	gfx1032
-	gfx1034
-	gfx1035
-	gfx1100
-	gfx1101
-	gfx1102
+#	gfx1031
 )
 CMAKE_USE_DIR="${WORKDIR}/${PN}-rocm-${PV}/${PN}/Source"
 DISTUTILS_USE_PEP517="setuptools"
-LLVM_SLOT=17
-PYTHON_COMPAT=( "python3_"{10..11} )
+LLVM_SLOT=13
+PYTHON_COMPAT=( "python3_"{9..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -35,7 +29,9 @@ S="${WORKDIR}/${PN}-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 	-> rocm-Tensile-${PV}.tar.gz
+https://github.com/littlewu2508/littlewu2508.github.io/raw/main/gentoo-distfiles/${PN}-5.0.2-PR1419.patch.gz
 "
+# #1419 - Remove no longer supported benchmarking steps
 
 DESCRIPTION="Stretching GPU performance for GEMMs and tensor contractions"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/Tensile"
@@ -43,7 +39,7 @@ LICENSE="MIT"
 # Not compatible with recent versions of pytest \
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="+client +opencl +openmp ebuild-revision-13"
+IUSE="client +opencl +openmp ebuild-revision-13"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -55,7 +51,6 @@ RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	>=dev-cpp/msgpack-cxx-6.0.0
 	dev-lang/python-exec:rocm-${ROCM_SLOT}
-	dev-python/joblib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	~dev-util/hip-${PV}:${ROCM_SLOT}
@@ -67,12 +62,8 @@ RDEPEND="
 		dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
 	)
 	openmp? (
-		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_7_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_1_AMDGPU_USEDEP}]
 	)
-
-	sys-process/numactl
-	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
-	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -82,12 +73,13 @@ BDEPEND="
 	>=dev-build/cmake-3.13
 "
 _PATCHES=(
-	"${FILESDIR}/${PN}-change-cmake-name-for-msgpack-cxx-6-release.patch"
-	"${FILESDIR}/${PN}-5.6.0-output-commands.patch"
-	"${FILESDIR}/${PN}-5.4.2-fix-arch-parse.patch"
-	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"
+	"${FILESDIR}/${PN}-4.5.2-change-cmake-name-for-msgpack-cxx-6-release.patch"
+	"${FILESDIR}/${PN}-4.3.0-output-commands.patch"
+	"${FILESDIR}/${PN}-4.5.2-gfx1031.patch"
+	"${FILESDIR}/${PN}-5.0.2-fix-arch-parse.patch"
+	"${FILESDIR}/${PN}-5.0.2-use-ninja.patch"
 	"${FILESDIR}/${PN}-5.7.1-avoid-hipcc-bat.patch"
-	"${FILESDIR}/${PN}-5.3.3-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-4.5.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -106,9 +98,14 @@ src_prepare() {
 			-i \
 			"Source/CMakeLists.txt" \
 			|| die
-		hipconfig --help >/dev/null || die
 		sed \
-			-e "/HipClangVersion/s/0.0.0/$(hipconfig -v)/" \
+			-e "/chmod 755/d" \
+			-i \
+			"Source/TensileCreateLibrary.cmake" \
+			|| die # remove chmod 755 on
+		hipconfig --version || die
+		sed \
+			-e "/HipClangVersion/s/0,0,0/$(hipconfig -v)/" \
 			-i \
 			"Common.py" \
 			|| die
@@ -120,7 +117,6 @@ src_prepare() {
 		-i \
 		"setup.py" \
 		|| die
-
 	cmake_src_prepare
 	rocm_src_prepare
 }
@@ -128,20 +124,13 @@ src_prepare() {
 src_configure() {
 	rocm_set_default_hipcc
 
-	append-ldflags \
-		-Wl,-L"/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)" \
-		-Wl,-lLLVMSupport \
-		-Wl,-lhsa-runtime64 \
-		-Wl,-lamd_comgr \
-		-Wl,-lnuma
-
 	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
 	export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"
 
 	distutils-r1_src_configure
 
 	if use client; then
-		check_pkg_glibcxx "dev-libs/boost" "/usr/$(get_libdir)/libboost_program_options.so" "${HIP_5_7_GCC_SLOT}"
+		check_pkg_glibcxx "dev-libs/boost" "/usr/$(get_libdir)/libboost_program_options.so" "${HIP_5_1_GCC_SLOT}"
 		export HIP_PLATFORM="amd"
 		local mycmakeargs=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
@@ -159,11 +148,6 @@ src_configure() {
 		)
 		rocm_src_configure
 	fi
-}
-
-src_compile() {
-	distutils-r1_src_compile
-	use client && cmake_src_compile
 }
 
 python_install() {
@@ -197,14 +181,11 @@ src_install() {
 		"Configs" \
 		"CustomKernels" \
 		"Perf" \
+		"ReplacementKernels" \
 		"ReplacementKernels-cov3" \
 		"Source"
 	insinto "${EROCM_PATH}/$(rocm_get_libdir)/cmake/${PN}"
 	doins "cmake/"*".cmake"
-	if use client; then
-		pushd "${BUILD_DIR}" || die
-		dobin "client/tensile_client"
-	fi
 	rocm_mv_docs
 
 	cp -aT \
@@ -216,4 +197,4 @@ src_install() {
 	rocm_fix_rpath
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

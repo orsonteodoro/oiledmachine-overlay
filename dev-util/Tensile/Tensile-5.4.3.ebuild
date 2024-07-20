@@ -6,9 +6,9 @@ EAPI=8
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900
-	gfx906
-	gfx908
-	gfx90a
+	gfx906_xnack_minus
+	gfx908_xnack_minus
+	gfx90a_xnack_minus
 	gfx1010
 	gfx1011
 	gfx1012
@@ -75,7 +75,7 @@ BDEPEND="
 _PATCHES=(
 	"${FILESDIR}/${PN}-change-cmake-name-for-msgpack-cxx-6-release.patch"
 	"${FILESDIR}/${PN}-4.3.0-output-commands.patch"
-	"${FILESDIR}/${PN}-5.4.2-gfx1031.patch"
+#	"${FILESDIR}/${PN}-5.4.2-gfx1031.patch"
 	"${FILESDIR}/${PN}-5.4.2-fix-arch-parse.patch"
 	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"
 	"${FILESDIR}/${PN}-5.7.1-avoid-hipcc-bat.patch"
