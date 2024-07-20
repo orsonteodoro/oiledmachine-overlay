@@ -180,7 +180,6 @@ src_prepare() {
 #	sed \
 #		-e "/\.hip/d" \
 #		-e "/cmake DESTINATION/d" \
-#		-e "/CPACK_RESOURCE_FILE_LICENSE/d" \
 #		-i \
 #		"packaging/CMakeLists.txt" \
 #		|| die

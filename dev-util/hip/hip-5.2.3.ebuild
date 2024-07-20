@@ -152,7 +152,6 @@ src_prepare() {
 
 	sed \
 		-e "/\.hip/d" \
-		-e "/CPACK_RESOURCE_FILE_LICENSE/d" \
 		-i \
 		"packaging/CMakeLists.txt" \
 		|| die
