@@ -38,7 +38,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu +enhanced-message ffmpeg -fp16 +loom +migraphx +neural-net opencl
 opencv +rocal +rocal-python +rocm +rpp system-rapidjson
-ebuild-revision-14
+ebuild-revision-15
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -225,7 +225,7 @@ src_configure() {
 		IFS=$'\n'
 		sed \
 			-i \
-			-e "s|-DNDEBUG -fPIC|-DNDEBUG -fPIC --rocm-path='${ESYSROOT}${EROCM_PATH}' --rocm-device-lib-path='${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/amdgcn/bitcode'|g" \
+			-e "s|-DNDEBUG -fPIC|-DNDEBUG -fPIC --rocm-path='${ESYSROOT}${EROCM_PATH}' --rocm-device-lib-path='${ESYSROOT}${EROCM_PATH}/amdgcn/bitcode'|g" \
 			$(grep -l -r -e "-DNDEBUG -fPIC" "${WORKDIR}") \
 			|| die
 		IFS=$' \t\n'

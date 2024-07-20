@@ -5,7 +5,7 @@ EAPI=8
 
 LLVM_SLOT=14
 PYTHON_COMPAT=( "python3_10" ) # U 18/20
-RAPIDJSON_COMMIT="232389d4f1012dddec4ef84861face2d2ba85709" # committer-date:<=2022-06-19
+RAPIDJSON_COMMIT="fd3dc29a5c2852df569e1ea81dbde2c412ac5051" # committer-date:<=2021-12-09
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -82,7 +82,7 @@ RDEPEND="
 		~sci-libs/miopengemm-${PV}:${ROCM_SLOT}
 	)
 	opencv? (
-		>=media-libs/opencv-4.5.5[features2d,jpeg]
+		>=media-libs/opencv-3.4.0[features2d,jpeg]
 	)
 	rocal? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
@@ -100,7 +100,7 @@ RDEPEND="
 	)
 	rpp? (
 		>=dev-libs/boost-${BOOST_PV}:=
-		>=sci-libs/rpp-0.93:${ROCM_SLOT}
+		>=sci-libs/rpp-0.91:${ROCM_SLOT}
 		sci-libs/rpp:=
 	)
 "
@@ -121,7 +121,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-change-libjpeg-turbo-search-path.patch"
 	"${FILESDIR}/${PN}-5.1.3-use-system-pybind11.patch"
-	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-4.5.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
