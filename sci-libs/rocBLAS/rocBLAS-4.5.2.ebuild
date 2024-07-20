@@ -21,7 +21,7 @@ DOCS_DEPEND="
 	media-gfx/graphviz
 "
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
+LLVM_SLOT=13 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-4.5.2/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -44,7 +44,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark cuda +rocm test ebuild-revision-16
+benchmark cuda +rocm test ebuild-revision-17
 "
 gen_rocm_required_use() {
 	local x
