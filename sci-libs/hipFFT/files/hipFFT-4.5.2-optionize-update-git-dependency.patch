@@ -1,0 +1,52 @@
+Only in hipFFT-rocm-4.5.2/clients: CMakeLists.txt.orig
+Only in hipFFT-rocm-4.5.2/clients: CMakeLists.txt.rej
+diff '--color=auto' -urp hipFFT-rocm-4.5.2.orig/clients/tests/CMakeLists.txt hipFFT-rocm-4.5.2/clients/tests/CMakeLists.txt
+--- hipFFT-rocm-4.5.2.orig/clients/tests/CMakeLists.txt	2021-10-14 15:35:09.000000000 -0700
++++ hipFFT-rocm-4.5.2/clients/tests/CMakeLists.txt	2024-07-20 13:10:38.117604893 -0700
+@@ -45,19 +45,22 @@ add_executable( hipfft-test ${hipfft-tes
+ 
+ set_target_properties( hipfft-test PROPERTIES CXX_STANDARD 14 CXX_STANDARD_REQUIRED ON )
+ 
+-if( GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/.git" )
+-  message(STATUS "rocFFT submodule update")
+-  execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+-    RESULT_VARIABLE GIT_SUBMOD_RESULT)
+-  if( NOT GIT_SUBMOD_RESULT EQUAL "0" )
+-    message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules manually.")
++option(DOWNLOAD_TEST_SUBMODULES "Update test submodules?" OFF)
++if(DOWNLOAD_TEST_SUBMODULES)
++  if( GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/.git" )
++    message(STATUS "rocFFT submodule update")
++    execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
++      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
++      RESULT_VARIABLE GIT_SUBMOD_RESULT)
++    if( NOT GIT_SUBMOD_RESULT EQUAL "0" )
++      message(FATAL_ERROR "git submodule update --init --recursive failed with ${GIT_SUBMOD_RESULT}, please checkout submodules manually.")
++    endif( )
+   endif( )
+-endif( )
+ 
+-if( NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/rocFFT/CMakeLists.txt" )
+-  message(FATAL_ERROR "The rocFFT submodule is not present!  Please update git submodules and try again. ${CMAKE_CURRENT_SOURCE_DIR}/rocFFT/CMakeLists.txt")
+-endif( )
++  if( NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/rocFFT/CMakeLists.txt" )
++    message(FATAL_ERROR "The rocFFT submodule is not present!  Please update git submodules and try again. ${CMAKE_CURRENT_SOURCE_DIR}/rocFFT/CMakeLists.txt")
++  endif( )
++endif()
+ 
+ target_include_directories(
+   hipfft-test
+diff '--color=auto' -urp hipFFT-rocm-4.5.2.orig/cmake/dependencies.cmake hipFFT-rocm-4.5.2/cmake/dependencies.cmake
+--- hipFFT-rocm-4.5.2.orig/cmake/dependencies.cmake	2021-10-14 15:35:09.000000000 -0700
++++ hipFFT-rocm-4.5.2/cmake/dependencies.cmake	2024-07-20 13:06:22.405663807 -0700
+@@ -21,9 +21,6 @@
+ #
+ # #############################################################################
+ 
+-# Git
+-find_package(Git REQUIRED)
+-
+ # HIP
+ if( NOT CMAKE_CXX_COMPILER MATCHES ".*/hipcc$" )
+   if( NOT BUILD_WITH_LIB STREQUAL "CUDA" )
