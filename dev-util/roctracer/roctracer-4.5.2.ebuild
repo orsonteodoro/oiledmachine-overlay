@@ -4,7 +4,7 @@
 EAPI=8
 
 HSA_CLASS_COMMIT="f8b387043b9f510afdf2e72e38a011900360d6ab" # From https://github.com/ROCm/roctracer/blob/rocm-4.5.2/test/CMakeLists.txt#L47
-LLVM_SLOT=14
+LLVM_SLOT=13
 PYTHON_COMPAT=( "python3_"{9..10} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -31,7 +31,7 @@ RESTRICT="
 	test
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-8"
+IUSE=" test ebuild-revision-9"
 #	sys-devel/gcc:11
 CDEPEND="
 	${ROCM_CLANG_DEPEND}
