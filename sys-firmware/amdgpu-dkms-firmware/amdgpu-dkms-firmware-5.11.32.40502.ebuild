@@ -3,23 +3,21 @@
 
 EAPI=7
 
-DRIVER_PV="22.10.3" # Folder name
+DRIVER_PV="21.40.2" # Folder name
 KERNEL_PV="5.18" # Equivalent for vanilla kernel based on DC_VER
 KVS=(
 # Commented out means EOL kernel.
 #	"5.8"  # U 20.04 HWE
 	"5.4"  # U 18.04 HWE, 20.04 generic
 #	"4.18" # R 8.4, 8.5, 8.6
-#	"4.15" # U 18.04 generic
-#	"4.12" # S 15
 #	"3.10" # R 7.9
 )
-MY_PV="5.13.20.22.10.50103"
-MY_PV2="${MY_PV}-1420323" # The 6th component is the rock version 5.01.03 == 5.1.3.
-MY_PV3="${MY_PV%.*}-1420323"
+MY_PV="5.11.32.40502"
+MY_PV2="${MY_PV}-1350683" # The 6th component is the rock version 4.05.02 == 4.5.2.
+MY_PV3="${MY_PV%.*}-1350683"
 PKG_POSTINST_LIST="" # Global var
 PKG_RADEON_LIST="" # Global var
-ROCM_PV="5.1.3"
+ROCM_PV="4.5.2"
 ROCM_SLOT="${ROCM_PV%.*}"
 FN="amdgpu-dkms-firmware_${MY_PV2}_all.deb"
 
