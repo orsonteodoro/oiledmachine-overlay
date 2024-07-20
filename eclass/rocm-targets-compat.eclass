@@ -48,8 +48,8 @@ gen_x_usedep() {
 	fi
 	local t="${x_targets_compat}[@]"
 	if [[ -z "${!t}" ]] ; then
-eerror "${x_targets_compat} is a typo or missing."
-		die
+ewarn "${x_targets_compat} is a typo or missing."
+#		die
 	fi
 
 	local list
@@ -101,6 +101,7 @@ get_rocm_usedep() {
         fi
 }
 
+inherit rocm-targets-compat-4.5
 inherit rocm-targets-compat-5.1
 inherit rocm-targets-compat-5.2
 inherit rocm-targets-compat-5.3
