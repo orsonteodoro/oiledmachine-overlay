@@ -5,6 +5,7 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
+# From:  grep -o -E -r -e "gfx[0-9a]+" ./ | cut -f 2 -d ":" | sort | uniq | grep -E -e "gfx[0-9a]{3,4}"
 	gfx900
 	gfx906
 	gfx908
@@ -13,9 +14,15 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx941
 	gfx942
 	gfx1030
+	gfx1031
+	gfx1032
 	gfx1100
 	gfx1101
 	gfx1102
+)
+AMDGPU_UNTESTED_TARGETS=(
+	gfx1031
+	gfx1032
 )
 CMAKE_BUILD_TYPE="Debug"
 CMAKE_MAKEFILE_GENERATOR="emake"
@@ -88,9 +95,19 @@ python_check_deps() {
 	python_has_version "dev-python/CppHeaderParser[${PYTHON_USEDEP}]"
 }
 
+warn_untested_gpu() {
+	local gpu
+	for gpu in ${AMDGPU_UNTESTED_TARGETS[@]} ; do
+		if use "amdgpu_targets_${gpu}" ; then
+ewarn "${gpu} is not CI tested upstream."
+		fi
+	done
+}
+
 pkg_setup() {
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
+	warn_untested_gpu
 }
 
 src_prepare() {

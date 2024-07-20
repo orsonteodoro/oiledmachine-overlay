@@ -65,6 +65,8 @@ ROCPROFILER_5_7_AMDGPU_TARGETS_COMPAT=(
 	gfx941
 	gfx942
 	gfx1030
+	gfx1031
+	gfx1032
 	gfx1100
 	gfx1101
 	gfx1102
