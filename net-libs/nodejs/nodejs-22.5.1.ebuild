@@ -9,7 +9,7 @@ EAPI=8
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Jun 25, 2024
+# Last deps commit date:  Jul 16, 2024
 
 ACORN_PV="8.11.3"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
@@ -56,11 +56,11 @@ TRAINER_TYPES=(
 	zlib
 )
 CONFIG_CHECK="~ADVISE_SYSCALLS"
-COREPACK_PV="0.28.2"
+COREPACK_PV="0.29.2"
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
 NGHTTP2_PV="1.62.1"
-NPM_PV="10.8.1" # See https://github.com/nodejs/node/blob/v22.4.0/deps/npm/package.json
+NPM_PV="10.8.2" # See https://github.com/nodejs/node/blob/v22.5.1/deps/npm/package.json
 PYTHON_COMPAT=( "python3_"{8..12} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -150,7 +150,7 @@ RDEPEND+="
 	>=app-arch/brotli-1.1.0
 	>=app-eselect/eselect-nodejs-20230521
 	>=dev-libs/libuv-1.48.0:=
-	>=net-dns/c-ares-1.31.0
+	>=net-dns/c-ares-1.32.1
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3
 	system-icu? (
