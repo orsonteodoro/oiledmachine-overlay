@@ -162,16 +162,16 @@ GENPATCHES_VER="${GENPATCHES_VER:?1}"
 LLVM_COMPAT=( {18..13} )
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
-PATCH_ALLOW_O3_COMMIT="8487801039c6ac602794b6bde1716b3a947bd034" # from zen repo
+PATCH_ALLOW_O3_COMMIT="c6b7164e46e2f25737467d0a44e6338acb46aaf1" # id from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor ~ oldest
 PATCH_BBRV2_COMMIT_D="a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361" # descendant ~ newest
-PATCH_BFQ_DEFAULT="3f8c3ff6d8b2c0b94972ee8a019009ae7fe37c36" # Single Queue
-PATCH_KCP_COMMIT="54b1cf4aa81a528599e39faa2fc801002e0207f1" # from zen repo
-PATCH_KYBER_DEFAULT="65a6cc703701ece5c283e21288865a026624221d" # Multi Queue
-PATCH_OPENRGB_COMMIT="764c84f850557c8fd90b5929f3ce3df59c51c8a5" # apply from zen repo
+PATCH_BFQ_DEFAULT="2a919829e5660e1558de9311d7b7997fb310b5d7" # id from zen repo
+PATCH_KCP_COMMIT="baf1cd3238d4d4aa1f3c11b7d5e522c300e3ad66" # id from zen repo ; aka more-uarches
+PATCH_KYBER_DEFAULT="8a5a9d3e2a4a77fb0f1d9b8ade7cbb4d6c0a19cc" # id from zen repo
+PATCH_OPENRGB_COMMIT="eebb5e2cb1f7b9410633bd5bc9a97d8c1e6dc3d1" # id from zen repo
 PATCH_TRESOR_VER="3.18.5"
-PATCH_ZEN_SAUCE_BRANDING="1bccd8a7399be4df94df3ab1e7d121681d6dba2e"
+PATCH_ZEN_SAUCE_BRANDING="23a8108e8164bc9c110709d619276739329c388c" # id from zen repo
 
 PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS=(
 # Avoid merge conflict or duplicates with already upstreamed.
@@ -251,7 +251,7 @@ c53c5fdcd0f40318d211f47605b36982c7c51ed7
 )
 
 RUST_PV="1.76.0"
-ZEN_KV="6.8.0"
+ZEN_KV="6.9.0"
 
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"

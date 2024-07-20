@@ -137,24 +137,21 @@ GENPATCHES_VER="${GENPATCHES_VER:?1}"
 LLVM_COMPAT=( {18..10} )
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
-PATCH_ALLOW_O3_COMMIT="b67c5033547771052515687e96adf98858ea0de6" # from zen repo
+PATCH_ALLOW_O3_COMMIT="b67c5033547771052515687e96adf98858ea0de6" # id from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor ~ oldest
 PATCH_BBRV2_COMMIT_D="a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361" # descendant ~ newest
-PATCH_BFQ_DEFAULT="de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac"
-PATCH_KCP_COMMIT="ff1381103099207c61c0e8426e82eabbb2808b04" # from zen repo
+PATCH_BFQ_DEFAULT="de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac" # id from zen repo
+PATCH_KCP_COMMIT="ff1381103099207c61c0e8426e82eabbb2808b04" # id from zen repo ; aka more-uarches
 PATCH_MULTIGEN_LRU_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
 PATCH_MULTIGEN_LRU_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor ~ oldest
 PATCH_MULTIGEN_LRU_COMMIT_D="87542b28c81281bd1a54969df035ccf5ce1853da" # descendant ~ newest
-PATCH_OPENRGB_COMMIT="aa864eded832387e4ace9652ca2edbeb8155d703" # apply from zen repo
+PATCH_OPENRGB_COMMIT="aa864eded832387e4ace9652ca2edbeb8155d703" # id from zen repo
 PATCH_TRESOR_VER="3.18.5"
-PATCH_ZEN_MULTIGEN_LRU_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
-PATCH_ZEN_MULTIGEN_LRU_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor ~ oldest
-PATCH_ZEN_MULTIGEN_LRU_COMMIT_D="f16e06ddde0e38b172d8da03d4fd39c3296b0564" # descendant ~ newest
-
-PATCH_ZEN_SAUCE_BRANDING="
-7607cbe5890545c3d4a2c5598cfb0eb9255ab46a
-"
+PATCH_ZEN_MULTIGEN_LRU_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813" # id from zen repo
+PATCH_ZEN_MULTIGEN_LRU_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor ~ oldest ; id from zen repo
+PATCH_ZEN_MULTIGEN_LRU_COMMIT_D="f16e06ddde0e38b172d8da03d4fd39c3296b0564" # descendant ~ newest ; id from zen repo
+PATCH_ZEN_SAUCE_BRANDING="7607cbe5890545c3d4a2c5598cfb0eb9255ab46a" # id from zen repo
 
 PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS=(
 # Avoid merge conflict or duplicates with already upstreamed.
@@ -162,6 +159,7 @@ PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS=(
 # Disabled ZEN: INTERACTIVE: Use BFQ as our elevator
 # Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
 )
+
 
 PATCH_ZEN_SAUCE_COMMITS=(
 # From https://github.com/torvalds/linux/compare/v5.15...zen-kernel:zen-kernel:5.15/zen-sauce

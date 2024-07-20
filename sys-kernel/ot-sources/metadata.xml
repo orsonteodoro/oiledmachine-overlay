@@ -154,21 +154,6 @@
 		    TRESOR (x86-64) [5]			E
 		    zen-sauce				N
 
-    6.8 (Stable)					A
-		    -rt	(RT_PREEMPT)			A
-		    Clang PGO				E
-		    Clear Linux patchset		A
-		    genpatches				A
-		    kernel_compiler_patch		A
-		    Nest				E
-		    Project C				D
-		    TCP BBR v2 [5]			E
-		    TCP BBR v3 [5]			E
-		    TRESOR (AES-NI) [5]			b
-		    TRESOR (x86) [5]			b
-		    TRESOR (x86-64) [5]			E
-		    zen-sauce				D
-
     6.9 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				E
@@ -4106,17 +4091,13 @@ unset OT_KERNEL_PRIVATE_KEY
 
       https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
 
-    For 6.7, see:
-
-      https://github.com/torvalds/linux/compare/v6.7...zen-kernel:6.7/zen-sauce
-
-    For 6.8, see:
-
-      https://github.com/torvalds/linux/compare/v6.8...zen-kernel:6.8/zen-sauce
-
     For 6.9, see:
 
       https://github.com/torvalds/linux/compare/v6.9...zen-kernel:6.9/zen-sauce
+
+    For 6.10, see:
+
+      https://github.com/torvalds/linux/compare/v6.10...zen-kernel:6.10/zen-sauce
 
     Use the zen-sauce USE flags instead of passing their Zen commit IDs
     equivalents.

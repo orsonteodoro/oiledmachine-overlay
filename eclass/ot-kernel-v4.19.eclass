@@ -94,10 +94,16 @@ PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # O3 config option
 PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow fix
 PATCH_PDS_VER="${PATCH_PDS_VER:-099h}"
 PATCH_TRESOR_VER="3.18.5"
+PATCH_ZEN_SAUCE_BRANDING="c340c84b774aee3eda9a818fc4c0dc6a46a2c83d" # id from zen repo
 
-PATCH_ZEN_SAUCE_BRANDING="
-c340c84b774aee3eda9a818fc4c0dc6a46a2c83d
-"
+# Avoid merge conflicts.
+# BFQ is not made default
+# BL = Blacklisted
+PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS=(
+	${PATCH_ZEN_SAUCE_BRANDING}
+	# ZEN: Add a choice of boot logos [permissions issue and conflicts with logo patch] \
+	bec5c50bb387f4c4956fc4553d2c6491363b1489
+)
 
 PATCH_ZEN_SAUCE_COMMITS=(
 # From https://github.com/torvalds/linux/compare/v4.19...zen-kernel:zen-kernel:4.19/misc
@@ -125,15 +131,6 @@ e3cac2b4fbe70c670966818b67f4b6fbdb6e66f5
 170b2e90d7a511364ebb151f57cd101828833d4c
 1a6fe347cb588521e221de8966551564a80f202c
 face163a2ef728af8ed4d4923b56711ff882b350
-)
-
-# Avoid merge conflicts.
-# BFQ is not made default
-# BL = Blacklisted
-PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS=(
-	${PATCH_ZEN_SAUCE_BRANDING}
-	# ZEN: Add a choice of boot logos [permissions issue and conflicts with logo patch] \
-	bec5c50bb387f4c4956fc4553d2c6491363b1489
 )
 
 # This is a list containing elements of LEFT_ZEN_COMMIT:RIGHT_ZEN_COMMIT.  Each

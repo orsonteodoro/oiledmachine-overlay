@@ -40,7 +40,8 @@
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.1
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.6
-#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.8
+#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.9
+#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.10
 # KCFI:
 #	https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
 # kernel_compiler_patch:
@@ -85,7 +86,8 @@
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.6/
-#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.8/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.9/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.10/
 # Project C CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/Project%20C
 #	https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -102,7 +104,8 @@
 #	https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.5...zen-kernel:6.5/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
-#	https://github.com/torvalds/linux/compare/v6.8...zen-kernel:6.8/zen-sauce
+#	https://github.com/torvalds/linux/compare/v6.9...zen-kernel:6.9/zen-sauce
+#	https://github.com/torvalds/linux/compare/v6.10...zen-kernel:6.10/zen-sauce
 
 case ${EAPI:-0} in
 	[78]) ;;
