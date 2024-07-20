@@ -4,6 +4,10 @@
 
 EAPI=8
 
+# FIXME:
+# ld.bfd: lib/Target/AMDGPU/Disassembler/CMakeFiles/LLVMAMDGPUDisassembler.dir/CodeObject.cpp.o: in function `llvm::object::defaultWarningHandler(llvm::Twine const&)':
+#CodeObject.cpp:(.text._ZN4llvm6objectL21defaultWarningHandlerERKNS_5TwineE+0x18): undefined reference to `llvm::object::object_category()'
+
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 LLVM_SLOT=13
 LLVM_TARGETS=(
@@ -191,7 +195,7 @@ _src_configure() {
 # Avoid:
 #collect2: fatal error: cannot find 'ld'
 #compilation terminated.
-	append-ldflags -fuse-ld=bfd
+#	append-ldflags -fuse-ld=bfd
 
 	# Speed up composable_kernel, rocBLAS build times
 	# -O3 may cause random ICE/segfault.

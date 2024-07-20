@@ -6,7 +6,7 @@ EAPI=8
 
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
-LLVM_SLOT="14"
+LLVM_SLOT="13"
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
@@ -17,7 +17,7 @@ HOMEPAGE=""
 LICENSE="public-domain"
 RESTRICT="mirror"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-IUSE+="ebuild-revision-2"
+IUSE+="ebuild-revision-3"
 RDEPEND+="
 "
 DEPEND+="
