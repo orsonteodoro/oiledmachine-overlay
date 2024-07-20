@@ -5,7 +5,7 @@
 EAPI=8
 
 CMAKE_BUILD_TYPE="RelWithDebInfo"
-LLVM_SLOT=14
+LLVM_SLOT=13
 LLVM_TARGETS=(
 	AMDGPU
 	NVPTX
@@ -94,7 +94,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 profile +runtime cfi
-ebuild-revision-16
+ebuild-revision-17
 "
 REQUIRED_USE="
 	cfi? (
