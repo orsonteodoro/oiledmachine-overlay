@@ -5,6 +5,8 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
+# From Readme.txt
+	gfx803
 # From:  grep -o -E -r -e "gfx[0-9a]+" ./ | cut -f 2 -d ":" | sort | uniq | grep -E -e "gfx[0-9a]{3,4}"
 	gfx900
 	gfx906
