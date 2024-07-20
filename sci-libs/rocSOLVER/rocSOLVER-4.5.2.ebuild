@@ -33,14 +33,14 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test benchmark ebuild-revision-6"
+IUSE="test benchmark ebuild-revision-7"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 RDEPEND="
 	=dev-libs/libfmt-8*
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
-	~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_5_1_AMDGPU_USEDEP},rocm]
+	~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_4_5_AMDGPU_USEDEP},rocm]
 	benchmark? (
 		virtual/blas
 	)
