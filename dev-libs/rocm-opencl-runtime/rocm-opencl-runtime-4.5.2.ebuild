@@ -57,7 +57,7 @@ BDEPEND="
 	)
 "
 OCL_PATCHES=(
-	"${FILESDIR}/${PN}-5.1.3-remove-clinfo.patch"
+	"${FILESDIR}/${PN}-4.5.2-remove-clinfo.patch"
 	"${FILESDIR}/${PN}-3.5.0-do-not-install-libopencl.patch"
 	"${FILESDIR}/${PN}-5.3.3-gcc13.patch"
 )
@@ -65,7 +65,7 @@ ROCCLR_PATCHES=(
 	# Bug #753377
 	# patch re-enables accidentally disabled gfx800 family
 	"${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
-	"${FILESDIR}/rocclr-5.1.3-fix-include.patch"
+	"${FILESDIR}/rocclr-4.5.2-fix-include.patch"
 	"${FILESDIR}/rocclr-5.3.3-gcc13.patch"
 )
 
@@ -85,7 +85,7 @@ src_prepare() {
 	cmake_src_prepare
 
 	pushd "${WORKDIR}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-4.5.2-hardcoded-paths.patch"
 	popd >/dev/null 2>&1 || die
 
 	rocm_src_prepare

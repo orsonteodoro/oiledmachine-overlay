@@ -1,0 +1,11 @@
+diff '--color=auto' -urp ROCm-OpenCL-Runtime-rocm-4.5.2.orig/CMakeLists.txt ROCm-OpenCL-Runtime-rocm-4.5.2/CMakeLists.txt
+--- ROCm-OpenCL-Runtime-rocm-4.5.2.orig/CMakeLists.txt	2021-09-27 09:33:06.000000000 -0700
++++ ROCm-OpenCL-Runtime-rocm-4.5.2/CMakeLists.txt	2024-07-19 23:40:44.885632520 -0700
+@@ -14,7 +14,6 @@ option(BUILD_TESTS "Enable building Open
+ set(OPENCL_ICD_LOADER_HEADERS_DIR "${CMAKE_CURRENT_LIST_DIR}/khronos/headers/opencl2.2" CACHE PATH "")
+ add_subdirectory(khronos/icd)
+ add_subdirectory(amdocl)
+-add_subdirectory(tools/clinfo)
+ add_subdirectory(tools/cltrace)
+ if(BUILD_TESTS)
+   add_subdirectory(tests/ocltst)
