@@ -1,0 +1,22 @@
+diff '--color=auto' -urp HIPIFY-rocm-4.5.2.orig/CMakeLists.txt HIPIFY-rocm-4.5.2/CMakeLists.txt
+--- HIPIFY-rocm-4.5.2.orig/CMakeLists.txt	2024-07-20 00:31:27.004075743 -0700
++++ HIPIFY-rocm-4.5.2/CMakeLists.txt	2024-07-20 00:32:21.627172130 -0700
+@@ -112,6 +112,8 @@ endif()
+ 
+ install(TARGETS hipify-clang DESTINATION ${HIPIFY_INSTALL_PATH})
+ 
++option(HIPIFY_INSTALL_HEADERS "Install headers" OFF)
++if(HIPIFY_INSTALL_HEADERS)
+ install(
+     DIRECTORY ${LLVM_DIR}/../../clang/${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR}.${LLVM_VERSION_PATCH}/
+     DESTINATION ${HIPIFY_INSTALL_PATH}
+@@ -124,6 +126,7 @@ install(
+     PATTERN "new"
+     PATTERN "ppc_wrappers" EXCLUDE
+     PATTERN "openmp_wrappers" EXCLUDE)
++endif()
+ 
+ if(UNIX)
+     set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/rocm/hip" CACHE PATH "HIP Package Installation Path")
+Only in HIPIFY-rocm-4.5.2: CMakeLists.txt.orig
+Only in HIPIFY-rocm-4.5.2: CMakeLists.txt.rej
