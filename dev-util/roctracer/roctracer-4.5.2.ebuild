@@ -3,6 +3,7 @@
 
 EAPI=8
 
+HSA_CLASS_COMMIT="f8b387043b9f510afdf2e72e38a011900360d6ab" # From https://github.com/ROCm/roctracer/blob/rocm-4.5.2/test/CMakeLists.txt#L47
 LLVM_SLOT=14
 PYTHON_COMPAT=( "python3_"{9..10} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -12,12 +13,15 @@ inherit cmake flag-o-matic prefix python-any-r1 rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/roctracer-rocm-${PV}"
+S_HSA_CLASS="${WORKDIR}/hsa-class-${HSA_CLASS_COMMIT}"
 S_PROFILER="${WORKDIR}/rocprofiler"
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/roctracer/archive/rocm-${PV}.tar.gz
 	-> rocm-tracer-${PV}.tar.gz
 https://github.com/ROCm-Developer-Tools/rocprofiler/archive/rocm-${PV}.tar.gz
 	-> rocprofiler-${PV}.tar.gz
+https://github.com/ROCmSoftwarePlatform/hsa-class/archive/${HSA_CLASS_COMMIT}.tar.gz
+	-> hsa-class-${HSA_CLASS_COMMIT:0:7}.tar.gz
 "
 
 DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
@@ -72,12 +76,30 @@ src_prepare() {
 	cmake_src_prepare
 
 	pushd "${WORKDIR}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/roctracer-5.1.3-hardcoded-paths.patch"
+		eapply "${FILESDIR}/roctracer-4.5.2-hardcoded-paths.patch"
 	popd >/dev/null 2>&1 || die
 
 	ln -s \
 		"${WORKDIR}/rocprofiler-rocm-${PV}" \
 		"${WORKDIR}/rocprofiler" \
+		|| die
+
+	mv \
+		"${WORKDIR}/hsa-class-${HSA_CLASS_COMMIT}/test/util" \
+		"${S}/inc/" \
+		|| die
+	rm "${S}/inc/util/hsa"* || die
+	cp -a \
+		"${S}/src/util/hsa"* \
+		"${S}/inc/util/" \
+		|| die
+
+	# Do not download additional sources via git.
+	sed \
+		-e "/execute_process ( COMMAND sh -xc \"if/d" \
+		-e "/add_subdirectory ( \${HSA_TEST_DIR} \${PROJECT_BINARY_DIR}/d" \
+		-i \
+		"test/CMakeLists.txt" \
 		|| die
 
 	hprefixify "script/"*".py"
