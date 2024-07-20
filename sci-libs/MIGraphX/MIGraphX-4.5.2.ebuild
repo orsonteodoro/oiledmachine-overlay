@@ -7,10 +7,10 @@ MY_PN="AMDMIGraphX"
 MY_P="${CATEGORY}/${MY_PN}-${PV}"
 
 AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/ROCm/AMDMIGraphX/blob/rocm-5.1.3/Jenkinsfile
+# See https://github.com/ROCm/AMDMIGraphX/blob/rocm-4.5.2/Jenkinsfile
 	gfx900
 )
-LLVM_SLOT=14
+LLVM_SLOT=13
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -58,11 +58,11 @@ RDEPEND="
 	cpu? (
 		dev-libs/oneDNN
 		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_1_AMDGPU_USEDEP}]
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_4_5_AMDGPU_USEDEP}]
 	)
 	rocm? (
-		~sci-libs/miopen-${PV}:${ROCM_SLOT}[${MIOPEN_5_1_AMDGPU_USEDEP}]
-		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_5_1_AMDGPU_USEDEP}]
+		~sci-libs/miopen-${PV}:${ROCM_SLOT}[${MIOPEN_4_5_AMDGPU_USEDEP}]
+		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_4_5_AMDGPU_USEDEP}]
 	)
 	test? (
 		~dev-util/hip-${PV}:${ROCM_SLOT}
@@ -79,7 +79,7 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-4.5.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {
