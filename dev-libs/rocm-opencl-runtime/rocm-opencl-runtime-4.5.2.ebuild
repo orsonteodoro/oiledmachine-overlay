@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=14
+LLVM_SLOT=13
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake edo flag-o-matic prefix rocm
@@ -32,7 +32,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug test
-ebuild-revision-5
+ebuild-revision-6
 "
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
@@ -192,4 +192,4 @@ pkg_postinst() {
 ewarn "This package requires PCIe atomics."
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
