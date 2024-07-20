@@ -56,12 +56,12 @@ https://github.com/ROCm-Developer-Tools/${PN}/archive/rocm-${PV}.tar.gz
 DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/rocprofiler.git"
 LICENSE="
-	MIT
-	BSD
 	Apache-2.0
+	BSD
+	MIT
 "
-# BSD - src/util/hsa_rsrc_factory.cpp
 # Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
+# BSD - src/util/hsa_rsrc_factory.cpp
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE=" plugins samples test ebuild-revision-15"
