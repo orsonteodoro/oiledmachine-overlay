@@ -87,12 +87,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	sed \
-		-e "/CPACK_RESOURCE_FILE_LICENSE/d" \
-		-i \
-		CMakeLists.txt \
-		|| die
-
 	cmake_src_prepare
 	rocm_src_prepare
 }
