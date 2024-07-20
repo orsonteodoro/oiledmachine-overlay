@@ -46,11 +46,6 @@ pkg_setup() {
 
 src_prepare() {
 	sed \
-		-e "/CPACK_RESOURCE_FILE_LICENSE/d" \
-		-i \
-		CMakeLists.txt \
-		|| die
-	sed \
 		-e "/num_change_since_prev_pkg(/cset(NUM_COMMITS 0)" \
 		-i \
 		cmake_modules/utils.cmake \
