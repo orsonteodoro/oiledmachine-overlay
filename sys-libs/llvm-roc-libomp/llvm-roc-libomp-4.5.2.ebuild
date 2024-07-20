@@ -30,8 +30,8 @@ unset -f _llvm_roc_libomp_globals
 
 # Cuda compatibility:
 # https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-4.5.2/clang/include/clang/Basic/Cuda.h
-# CUDA targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-4.5.2/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L59
-# ROCm targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-4.5.2/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L83
+# CUDA targets:  https://github.com/ROCm/llvm-project/blob/rocm-4.5.2/openmp/libomptarget/deviceRTLs/nvptx/CMakeLists.txt#L76
+# ROCm targets:  https://github.com/ROCm/llvm-project/blob/rocm-4.5.2/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt#L117
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
@@ -42,10 +42,6 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx902
 	gfx906
 	gfx908
-	gfx90a
-	gfx1010
-	gfx1030
-	gfx1031
 )
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CUDA_TARGETS_COMPAT=(
@@ -61,7 +57,6 @@ CUDA_TARGETS_COMPAT=(
 	sm_72
 	sm_75
 	sm_80
-	sm_86
 	auto
 )
 LLVM_SLOT=13
@@ -222,11 +217,6 @@ RDEPEND="
 		)
 	)
 	cuda_targets_sm_80? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_86? (
 		|| (
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
