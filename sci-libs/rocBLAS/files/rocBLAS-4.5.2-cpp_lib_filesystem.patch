@@ -1,0 +1,52 @@
+diff '--color=auto' -urp rocBLAS-rocm-4.5.2.orig/clients/common/utility.cpp rocBLAS-rocm-4.5.2/clients/common/utility.cpp
+--- rocBLAS-rocm-4.5.2.orig/clients/common/utility.cpp	2021-09-30 14:43:15.000000000 -0700
++++ rocBLAS-rocm-4.5.2/clients/common/utility.cpp	2024-07-20 11:27:21.303913910 -0700
+@@ -25,6 +25,7 @@
+ //
+ // https://en.cppreference.com/w/User:D41D8CD98F/feature_testing_macros
+ //
++#include <version>
+ #ifdef __cpp_lib_filesystem
+ #include <filesystem>
+ #else
+Only in rocBLAS-rocm-4.5.2/clients/common: utility.cpp.orig
+Only in rocBLAS-rocm-4.5.2/clients/common: utility.cpp.rej
+diff '--color=auto' -urp rocBLAS-rocm-4.5.2.orig/clients/include/rocblas_data.hpp rocBLAS-rocm-4.5.2/clients/include/rocblas_data.hpp
+--- rocBLAS-rocm-4.5.2.orig/clients/include/rocblas_data.hpp	2021-09-30 14:43:15.000000000 -0700
++++ rocBLAS-rocm-4.5.2/clients/include/rocblas_data.hpp	2024-07-20 11:27:44.151551745 -0700
+@@ -19,6 +19,7 @@
+ 
+ // https://en.cppreference.com/w/User:D41D8CD98F/feature_testing_macros
+ //
++#include<version>
+ #ifdef __cpp_lib_filesystem
+ #include <filesystem>
+ #else
+Only in rocBLAS-rocm-4.5.2/clients/include: rocblas_data.hpp.orig
+Only in rocBLAS-rocm-4.5.2/clients/include: rocblas_data.hpp.rej
+diff '--color=auto' -urp rocBLAS-rocm-4.5.2.orig/clients/include/testing_logging.hpp rocBLAS-rocm-4.5.2/clients/include/testing_logging.hpp
+--- rocBLAS-rocm-4.5.2.orig/clients/include/testing_logging.hpp	2021-09-30 14:43:15.000000000 -0700
++++ rocBLAS-rocm-4.5.2/clients/include/testing_logging.hpp	2024-07-20 11:27:59.351310796 -0700
+@@ -25,6 +25,7 @@
+ //
+ // https://en.cppreference.com/w/User:D41D8CD98F/feature_testing_macros
+ //
++#include<version>
+ #ifdef __cpp_lib_filesystem
+ #include <filesystem>
+ #else
+Only in rocBLAS-rocm-4.5.2/clients/include: testing_logging.hpp.orig
+Only in rocBLAS-rocm-4.5.2/clients/include: testing_logging.hpp.rej
+diff '--color=auto' -urp rocBLAS-rocm-4.5.2.orig/clients/include/testing_ostream_threadsafety.hpp rocBLAS-rocm-4.5.2/clients/include/testing_ostream_threadsafety.hpp
+--- rocBLAS-rocm-4.5.2.orig/clients/include/testing_ostream_threadsafety.hpp	2021-09-30 14:43:15.000000000 -0700
++++ rocBLAS-rocm-4.5.2/clients/include/testing_ostream_threadsafety.hpp	2024-07-20 11:28:15.335057407 -0700
+@@ -32,6 +32,7 @@
+ //
+ // https://en.cppreference.com/w/User:D41D8CD98F/feature_testing_macros
+ //
++#include <version>
+ #ifdef __cpp_lib_filesystem
+ #include <filesystem>
+ #else
+Only in rocBLAS-rocm-4.5.2/clients/include: testing_ostream_threadsafety.hpp.orig
+Only in rocBLAS-rocm-4.5.2/clients/include: testing_ostream_threadsafety.hpp.rej
