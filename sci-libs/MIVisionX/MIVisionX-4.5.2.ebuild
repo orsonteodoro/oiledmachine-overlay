@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=14
+LLVM_SLOT=13
 PYTHON_COMPAT=( "python3_10" ) # U 18/20
 RAPIDJSON_COMMIT="fd3dc29a5c2852df569e1ea81dbde2c412ac5051" # committer-date:<=2021-12-09
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
@@ -38,7 +38,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu ffmpeg +loom +migraphx +neural-net opencl opencv +rocal +rocm +rpp
 system-rapidjson
-ebuild-revision-15
+ebuild-revision-16
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
