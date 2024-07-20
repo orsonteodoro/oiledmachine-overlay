@@ -75,6 +75,13 @@ HIPFFT_4_5_AMDGPU_TARGETS_COMPAT=(
 HIPFFT_4_5_AMDGPU_USEDEP=$(gen_x_usedep "HIPFFT_4_5_AMDGPU_TARGETS_COMPAT")
 
 MIOPEN_4_5_AMDGPU_TARGETS_COMPAT=(
+# https://github.com/ROCm/MIOpen/blob/rocm-4.5.2/test/CMakeLists.txt#L99
+	gfx803
+	gfx900
+	gfx906
+	gfx908
+	gfx90a
+	gfx1030
 )
 MIOPEN_4_5_AMDGPU_USEDEP=$(gen_x_usedep "MIOPEN_4_5_AMDGPU_TARGETS_COMPAT")
 

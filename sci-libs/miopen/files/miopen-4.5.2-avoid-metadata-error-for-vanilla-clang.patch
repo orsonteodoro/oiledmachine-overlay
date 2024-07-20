@@ -1,0 +1,173 @@
+diff '--color=auto' -urp MIOpen-rocm-4.5.2.orig/src/kernels/Conv_Winograd_v13_3_12_epilogue.inc MIOpen-rocm-4.5.2/src/kernels/Conv_Winograd_v13_3_12_epilogue.inc
+--- MIOpen-rocm-4.5.2.orig/src/kernels/Conv_Winograd_v13_3_12_epilogue.inc	2021-10-21 18:30:06.000000000 -0700
++++ MIOpen-rocm-4.5.2/src/kernels/Conv_Winograd_v13_3_12_epilogue.inc	2024-07-20 11:57:04.155439450 -0700
+@@ -76,7 +76,7 @@ amdhsa.kernels:
+     .max_flat_workgroup_size: \wg_x
+     .wavefront_size: 64
+     .args:
+-    - { .size: 4, .offset: 0,   .value_kind: by_value,      .value_type: i32, .name: N }
++    - { .size: 4, .offset: 0,   .value_kind: by_value,      .value_type: i32, .name: X }
+     - { .size: 4, .offset: 4,   .value_kind: by_value,      .value_type: i32, .name: C }
+     - { .size: 4, .offset: 8,   .value_kind: by_value,      .value_type: i32, .name: H }
+     - { .size: 4, .offset: 12,  .value_kind: by_value,      .value_type: i32, .name: W }
+diff '--color=auto' -urp MIOpen-rocm-4.5.2.orig/src/kernels/Conv_Winograd_v16_5_0_epilogue.inc MIOpen-rocm-4.5.2/src/kernels/Conv_Winograd_v16_5_0_epilogue.inc
+--- MIOpen-rocm-4.5.2.orig/src/kernels/Conv_Winograd_v16_5_0_epilogue.inc	2021-10-21 18:30:06.000000000 -0700
++++ MIOpen-rocm-4.5.2/src/kernels/Conv_Winograd_v16_5_0_epilogue.inc	2024-07-20 11:57:04.243438025 -0700
+@@ -76,7 +76,7 @@ amdhsa.kernels:
+     .max_flat_workgroup_size: \wg_x
+     .wavefront_size: 64
+     .args:
+-    - { .size: 4, .offset: 0,   .value_kind: by_value,      .value_type: i32, .name: N }
++    - { .size: 4, .offset: 0,   .value_kind: by_value,      .value_type: i32, .name: X }
+     - { .size: 4, .offset: 4,   .value_kind: by_value,      .value_type: i32, .name: C }
+     - { .size: 4, .offset: 8,   .value_kind: by_value,      .value_type: i32, .name: H }
+     - { .size: 4, .offset: 12,  .value_kind: by_value,      .value_type: i32, .name: W }
+diff '--color=auto' -urp MIOpen-rocm-4.5.2.orig/src/kernels/Conv_Winograd_v21_1_2_metadata.inc MIOpen-rocm-4.5.2/src/kernels/Conv_Winograd_v21_1_2_metadata.inc
+--- MIOpen-rocm-4.5.2.orig/src/kernels/Conv_Winograd_v21_1_2_metadata.inc	2021-10-21 18:30:06.000000000 -0700
++++ MIOpen-rocm-4.5.2/src/kernels/Conv_Winograd_v21_1_2_metadata.inc	2024-07-20 11:58:34.429978247 -0700
+@@ -51,7 +51,7 @@ amdhsa.kernels:
+     .max_flat_workgroup_size: \wg_x
+     .wavefront_size: 64
+     .args:
+-    - { .size: 4, .offset:   0, .value_kind: by_value, .value_type: i32, .name: N }
++    - { .size: 4, .offset:   0, .value_kind: by_value, .value_type: i32, .name: X }
+     - { .size: 4, .offset:   4, .value_kind: by_value, .value_type: i32, .name: C }
+     - { .size: 4, .offset:   8, .value_kind: by_value, .value_type: i32, .name: H }
+     - { .size: 4, .offset:  12, .value_kind: by_value, .value_type: i32, .name: W }
+diff '--color=auto' -urp MIOpen-rocm-4.5.2.orig/src/kernels/conv1x1u.s MIOpen-rocm-4.5.2/src/kernels/conv1x1u.s
+--- MIOpen-rocm-4.5.2.orig/src/kernels/conv1x1u.s	2021-10-21 18:30:06.000000000 -0700
++++ MIOpen-rocm-4.5.2/src/kernels/conv1x1u.s	2024-07-20 11:57:06.467402024 -0700
+@@ -1055,7 +1055,7 @@ amdhsa.kernels:
+     .max_flat_workgroup_size: \wg_x
+     .wavefront_size: 64
+     .args:
+-    - { .size: 4, .offset:  0, .value_kind: by_value, .value_type: i32, .name: N }
++    - { .size: 4, .offset:  0, .value_kind: by_value, .value_type: i32, .name: X }
+     - { .size: 4, .offset:  4, .value_kind: by_value, .value_type: i32, .name: C }
+     - { .size: 4, .offset:  8, .value_kind: by_value, .value_type: i32, .name: H }
+     - { .size: 4, .offset: 12, .value_kind: by_value, .value_type: i32, .name: W }
+Only in MIOpen-rocm-4.5.2/src/kernels: conv1x1u.s.orig
+diff '--color=auto' -urp MIOpen-rocm-4.5.2.orig/src/kernels/conv1x1u_bias_activ.s MIOpen-rocm-4.5.2/src/kernels/conv1x1u_bias_activ.s
+--- MIOpen-rocm-4.5.2.orig/src/kernels/conv1x1u_bias_activ.s	2021-10-21 18:30:06.000000000 -0700
++++ MIOpen-rocm-4.5.2/src/kernels/conv1x1u_bias_activ.s	2024-07-20 11:57:06.491401635 -0700
+@@ -1209,7 +1209,7 @@ amdhsa.kernels:
+     .max_flat_workgroup_size: \wg_x
+     .wavefront_size: 64
+     .args:
+-    - { .size: 4, .offset:  0, .value_kind: by_value, .value_type: i32, .name: N }
++    - { .size: 4, .offset:  0, .value_kind: by_value, .value_type: i32, .name: X }
+     - { .size: 4, .offset:  4, .value_kind: by_value, .value_type: i32, .name: C }
+     - { .size: 4, .offset:  8, .value_kind: by_value, .value_type: i32, .name: H }
+     - { .size: 4, .offset: 12, .value_kind: by_value, .value_type: i32, .name: W }
+Only in MIOpen-rocm-4.5.2/src/kernels: conv1x1u_bias_activ.s.orig
+diff '--color=auto' -urp MIOpen-rocm-4.5.2.orig/src/kernels/conv1x1u_stride2.s MIOpen-rocm-4.5.2/src/kernels/conv1x1u_stride2.s
+--- MIOpen-rocm-4.5.2.orig/src/kernels/conv1x1u_stride2.s	2021-10-21 18:30:06.000000000 -0700
++++ MIOpen-rocm-4.5.2/src/kernels/conv1x1u_stride2.s	2024-07-20 11:57:06.499401505 -0700
+@@ -1141,7 +1141,7 @@ amdhsa.kernels:
+     .max_flat_workgroup_size: \wg_x
+     .wavefront_size: 64
+     .args:
+-    - { .size: 4, .offset:  0, .value_kind: by_value, .value_type: i32, .name: N }
++    - { .size: 4, .offset:  0, .value_kind: by_value, .value_type: i32, .name: X }
+     - { .size: 4, .offset:  4, .value_kind: by_value, .value_type: i32, .name: C }
+     - { .size: 4, .offset:  8, .value_kind: by_value, .value_type: i32, .name: H }
+     - { .size: 4, .offset: 12, .value_kind: by_value, .value_type: i32, .name: W }
+Only in MIOpen-rocm-4.5.2/src/kernels: conv1x1u_stride2.s.orig
+diff '--color=auto' -urp MIOpen-rocm-4.5.2.orig/src/kernels/conv1x1wrw.s MIOpen-rocm-4.5.2/src/kernels/conv1x1wrw.s
+--- MIOpen-rocm-4.5.2.orig/src/kernels/conv1x1wrw.s	2021-10-21 18:30:06.000000000 -0700
++++ MIOpen-rocm-4.5.2/src/kernels/conv1x1wrw.s	2024-07-20 11:57:06.507401377 -0700
+@@ -1213,7 +1213,7 @@ amdhsa.kernels:
+     .max_flat_workgroup_size: \wg_x
+     .wavefront_size: 64
+     .args:
+-    - { .size: 4, .offset:  0, .value_kind: by_value, .value_type: i32, .name: N }
++    - { .size: 4, .offset:  0, .value_kind: by_value, .value_type: i32, .name: X }
+     - { .size: 4, .offset:  4, .value_kind: by_value, .value_type: i32, .name: C }
+     - { .size: 4, .offset:  8, .value_kind: by_value, .value_type: i32, .name: H }
+     - { .size: 4, .offset: 12, .value_kind: by_value, .value_type: i32, .name: W }
+Only in MIOpen-rocm-4.5.2/src/kernels: conv1x1wrw.s.orig
+diff '--color=auto' -urp MIOpen-rocm-4.5.2.orig/src/kernels/conv3x3wrw.s MIOpen-rocm-4.5.2/src/kernels/conv3x3wrw.s
+--- MIOpen-rocm-4.5.2.orig/src/kernels/conv3x3wrw.s	2021-10-21 18:30:06.000000000 -0700
++++ MIOpen-rocm-4.5.2/src/kernels/conv3x3wrw.s	2024-07-20 11:57:06.515401247 -0700
+@@ -978,7 +978,7 @@ amdhsa.kernels:
+     .max_flat_workgroup_size: \wg_x
+     .wavefront_size: 64
+     .args:
+-    - { .size: 4, .offset:  0, .value_kind: by_value, .value_type: i32, .name: N }
++    - { .size: 4, .offset:  0, .value_kind: by_value, .value_type: i32, .name: X }
+     - { .size: 4, .offset:  4, .value_kind: by_value, .value_type: i32, .name: C }
+     - { .size: 4, .offset:  8, .value_kind: by_value, .value_type: i32, .name: H }
+     - { .size: 4, .offset: 12, .value_kind: by_value, .value_type: i32, .name: W }
+Only in MIOpen-rocm-4.5.2/src/kernels: conv3x3wrw.s.orig
+diff '--color=auto' -urp MIOpen-rocm-4.5.2.orig/src/kernels/conv_3x3_wheel_alpha_v3_0b_epilogue.inc MIOpen-rocm-4.5.2/src/kernels/conv_3x3_wheel_alpha_v3_0b_epilogue.inc
+--- MIOpen-rocm-4.5.2.orig/src/kernels/conv_3x3_wheel_alpha_v3_0b_epilogue.inc	2021-10-21 18:30:06.000000000 -0700
++++ MIOpen-rocm-4.5.2/src/kernels/conv_3x3_wheel_alpha_v3_0b_epilogue.inc	2024-07-20 11:57:06.515401247 -0700
+@@ -76,7 +76,7 @@ amdhsa.kernels:
+     .max_flat_workgroup_size: \wg_x
+     .wavefront_size: 64
+     .args:
+-    - { .size: 4, .offset: 0,   .value_kind: by_value,      .value_type: i32, .name: N }
++    - { .size: 4, .offset: 0,   .value_kind: by_value,      .value_type: i32, .name: X }
+     - { .size: 4, .offset: 4,   .value_kind: by_value,      .value_type: i32, .name: C }
+     - { .size: 4, .offset: 8,   .value_kind: by_value,      .value_type: i32, .name: H }
+     - { .size: 4, .offset: 12,  .value_kind: by_value,      .value_type: i32, .name: W }
+diff '--color=auto' -urp MIOpen-rocm-4.5.2.orig/src/kernels/conv_3x3_wheel_alpha_v7_0_3b_epilogue.inc MIOpen-rocm-4.5.2/src/kernels/conv_3x3_wheel_alpha_v7_0_3b_epilogue.inc
+--- MIOpen-rocm-4.5.2.orig/src/kernels/conv_3x3_wheel_alpha_v7_0_3b_epilogue.inc	2021-10-21 18:30:06.000000000 -0700
++++ MIOpen-rocm-4.5.2/src/kernels/conv_3x3_wheel_alpha_v7_0_3b_epilogue.inc	2024-07-20 11:57:06.519401182 -0700
+@@ -76,7 +76,7 @@ amdhsa.kernels:
+     .max_flat_workgroup_size: \wg_x
+     .wavefront_size: 64
+     .args:
+-    - { .size: 4, .offset: 0,   .value_kind: by_value,      .value_type: i32, .name: N }
++    - { .size: 4, .offset: 0,   .value_kind: by_value,      .value_type: i32, .name: X }
+     - { .size: 4, .offset: 4,   .value_kind: by_value,      .value_type: i32, .name: C }
+     - { .size: 4, .offset: 8,   .value_kind: by_value,      .value_type: i32, .name: H }
+     - { .size: 4, .offset: 12,  .value_kind: by_value,      .value_type: i32, .name: W }
+diff '--color=auto' -urp MIOpen-rocm-4.5.2.orig/src/kernels/conv_3x3_wheel_alpha_v9_0_15_epilogue.inc MIOpen-rocm-4.5.2/src/kernels/conv_3x3_wheel_alpha_v9_0_15_epilogue.inc
+--- MIOpen-rocm-4.5.2.orig/src/kernels/conv_3x3_wheel_alpha_v9_0_15_epilogue.inc	2021-10-21 18:30:06.000000000 -0700
++++ MIOpen-rocm-4.5.2/src/kernels/conv_3x3_wheel_alpha_v9_0_15_epilogue.inc	2024-07-20 11:57:06.523401118 -0700
+@@ -76,7 +76,7 @@ amdhsa.kernels:
+     .max_flat_workgroup_size: \wg_x
+     .wavefront_size: 64
+     .args:
+-    - { .size: 4, .offset: 0,   .value_kind: by_value,      .value_type: i32, .name: N }
++    - { .size: 4, .offset: 0,   .value_kind: by_value,      .value_type: i32, .name: X }
+     - { .size: 4, .offset: 4,   .value_kind: by_value,      .value_type: i32, .name: C }
+     - { .size: 4, .offset: 8,   .value_kind: by_value,      .value_type: i32, .name: H }
+     - { .size: 4, .offset: 12,  .value_kind: by_value,      .value_type: i32, .name: W }
+diff '--color=auto' -urp MIOpen-rocm-4.5.2.orig/src/kernels/conv_3x3_wheel_alpha_v9_2_7_epilogue.inc MIOpen-rocm-4.5.2/src/kernels/conv_3x3_wheel_alpha_v9_2_7_epilogue.inc
+--- MIOpen-rocm-4.5.2.orig/src/kernels/conv_3x3_wheel_alpha_v9_2_7_epilogue.inc	2021-10-21 18:30:06.000000000 -0700
++++ MIOpen-rocm-4.5.2/src/kernels/conv_3x3_wheel_alpha_v9_2_7_epilogue.inc	2024-07-20 11:57:06.523401118 -0700
+@@ -76,7 +76,7 @@ amdhsa.kernels:
+     .max_flat_workgroup_size: \wg_x
+     .wavefront_size: 64
+     .args:
+-    - { .size: 4, .offset: 0,   .value_kind: by_value,      .value_type: i32, .name: N }
++    - { .size: 4, .offset: 0,   .value_kind: by_value,      .value_type: i32, .name: X }
+     - { .size: 4, .offset: 4,   .value_kind: by_value,      .value_type: i32, .name: C }
+     - { .size: 4, .offset: 8,   .value_kind: by_value,      .value_type: i32, .name: H }
+     - { .size: 4, .offset: 12,  .value_kind: by_value,      .value_type: i32, .name: W }
+diff '--color=auto' -urp MIOpen-rocm-4.5.2.orig/src/kernels/xform_bidirect_winograd_code.inc MIOpen-rocm-4.5.2/src/kernels/xform_bidirect_winograd_code.inc
+--- MIOpen-rocm-4.5.2.orig/src/kernels/xform_bidirect_winograd_code.inc	2021-10-21 18:30:06.000000000 -0700
++++ MIOpen-rocm-4.5.2/src/kernels/xform_bidirect_winograd_code.inc	2024-07-20 11:57:06.523401118 -0700
+@@ -1566,7 +1566,7 @@ amdhsa.kernels:
+     .max_flat_workgroup_size: \wg_x
+     .wavefront_size: 64
+     .args:
+-    - { .size: 4, .offset:   0, .value_kind: by_value, .value_type: i32, .name: N }
++    - { .size: 4, .offset:   0, .value_kind: by_value, .value_type: i32, .name: X }
+     - { .size: 4, .offset:   4, .value_kind: by_value, .value_type: i32, .name: C }
+     - { .size: 4, .offset:   8, .value_kind: by_value, .value_type: i32, .name: H }
+     - { .size: 4, .offset:  12, .value_kind: by_value, .value_type: i32, .name: W }
+diff '--color=auto' -urp MIOpen-rocm-4.5.2.orig/src/kernels/xform_metadata.inc MIOpen-rocm-4.5.2/src/kernels/xform_metadata.inc
+--- MIOpen-rocm-4.5.2.orig/src/kernels/xform_metadata.inc	2021-10-21 18:30:06.000000000 -0700
++++ MIOpen-rocm-4.5.2/src/kernels/xform_metadata.inc	2024-07-20 11:57:06.527401053 -0700
+@@ -74,7 +74,7 @@ amdhsa.kernels:
+     .max_flat_workgroup_size: \wg_x
+     .wavefront_size: 64
+     .args:
+-    - { .size: 4, .offset:   0, .value_kind: by_value, .value_type: i32, .name: N }
++    - { .size: 4, .offset:   0, .value_kind: by_value, .value_type: i32, .name: X }
+     - { .size: 4, .offset:   4, .value_kind: by_value, .value_type: i32, .name: C }
+     - { .size: 4, .offset:   8, .value_kind: by_value, .value_type: i32, .name: H }
+     - { .size: 4, .offset:  12, .value_kind: by_value, .value_type: i32, .name: W }
