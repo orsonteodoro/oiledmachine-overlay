@@ -16,7 +16,7 @@ AMDGPU_TARGETS_COMPAT=(
 AMDGPU_UNTESTED_TARGETS=(
 )
 CMAKE_BUILD_TYPE="Debug"
-LLVM_SLOT=14
+LLVM_SLOT=13
 PYTHON_COMPAT=( "python3_"{9..10} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -37,7 +37,7 @@ LICENSE="
 "
 # BSD - src/util/hsa_rsrc_factory.cpp
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-15"
+IUSE=" test ebuild-revision-16"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "

@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CMAKE_BUILD_TYPE="Release"
 LLVM_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.4.3/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -49,7 +50,6 @@ PATCHES=(
 # Fixes mtime.cl:20:12: error: use of undeclared identifier '__builtin_amdgcn_s_sendmsg_rtnl'
 	"${FILESDIR}/${PN}-5.4.3-Revert-Update-counters-for-gfx11.patch"
 )
-CMAKE_BUILD_TYPE="Release"
 
 pkg_setup() {
 	rocm_pkg_setup

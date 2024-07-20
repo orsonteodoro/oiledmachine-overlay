@@ -12,7 +12,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_plus
 	gfx1030
 )
-LLVM_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
+LLVM_SLOT=13 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{9..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -78,7 +78,7 @@ https://sparse.tamu.edu/MM/Chevron/Chevron4.tar.gz
 DESCRIPTION="Basic Linear Algebra Subroutines for sparse computation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSPARSE"
 LICENSE="MIT"
-IUSE="benchmark test ebuild-revision-8"
+IUSE="benchmark test ebuild-revision-9"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "

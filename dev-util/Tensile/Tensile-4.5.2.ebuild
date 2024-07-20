@@ -39,7 +39,7 @@ LICENSE="MIT"
 # Not compatible with recent versions of pytest \
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="client +opencl +openmp ebuild-revision-13"
+IUSE="client +opencl +openmp ebuild-revision-14"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -130,7 +130,7 @@ src_configure() {
 	distutils-r1_src_configure
 
 	if use client; then
-		check_pkg_glibcxx "dev-libs/boost" "/usr/$(get_libdir)/libboost_program_options.so" "${HIP_5_1_GCC_SLOT}"
+		check_pkg_glibcxx "dev-libs/boost" "/usr/$(get_libdir)/libboost_program_options.so" "${HIP_4_5_GCC_SLOT}"
 		export HIP_PLATFORM="amd"
 		local mycmakeargs=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"

@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CMAKE_BUILD_TYPE="Release"
 LLVM_SLOT=13 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-4.5.2/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -13,7 +14,7 @@ if [[ ${PV} == *9999 ]] ; then
 	S="${WORKDIR}/${P}/src"
 	inherit git-r3
 else
-	KEYWORDS="~amd64"
+#	KEYWORDS="~amd64"
 	S="${WORKDIR}/ROCm-Device-Libs-rocm-${PV}"
 	SRC_URI="
 https://github.com/RadeonOpenCompute/ROCm-Device-Libs/archive/rocm-${PV}.tar.gz
@@ -46,7 +47,6 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-test-bitcode-dir.patch"
 )
-CMAKE_BUILD_TYPE="Release"
 
 pkg_setup() {
 	rocm_pkg_setup
@@ -72,4 +72,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test

@@ -14,7 +14,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 
 # Partially supported
-AMDGPU_UNOFFICIAL_COMPAT=(
+AMDGPU_UNOFFICIAL_TARGETS=(
 	gfx701
 	gfx803
 )
@@ -122,7 +122,7 @@ RDEPEND="
 
 warn_unsupported_gpu() {
 	local gpu
-	for gpu in ${AMDGPU_UNOFFICIAL_COMPAT[@]} ; do
+	for gpu in ${AMDGPU_UNOFFICIAL_TARGETS[@]} ; do
 		if use "amdgpu_targets_${gpu}" ; then
 ewarn "${gpu} is not fully supported upstream but may still be available."
 		fi

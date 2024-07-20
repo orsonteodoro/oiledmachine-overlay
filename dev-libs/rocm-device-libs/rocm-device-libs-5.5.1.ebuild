@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CMAKE_BUILD_TYPE="Release"
 LLVM_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -45,7 +46,6 @@ BDEPEND="
 "
 PATCHES=(
 )
-CMAKE_BUILD_TYPE="Release"
 
 pkg_setup() {
 	rocm_pkg_setup

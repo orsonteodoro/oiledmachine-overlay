@@ -21,7 +21,7 @@ CUDA_TARGETS_COMPAT=(
 	compute_86
 )
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=14
+LLVM_SLOT=13
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -37,7 +37,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipFFT"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +rocm
-ebuild-revision-7
+ebuild-revision-8
 "
 gen_cuda_required_use() {
 	local x
@@ -84,7 +84,7 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		~sci-libs/rocFFT-${PV}:${ROCM_SLOT}[${ROCFFT_5_1_AMDGPU_USEDEP},rocm]
+		~sci-libs/rocFFT-${PV}:${ROCM_SLOT}[${ROCFFT_4_5_AMDGPU_USEDEP},rocm]
 	)
 "
 DEPEND="
