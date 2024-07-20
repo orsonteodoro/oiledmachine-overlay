@@ -143,6 +143,13 @@ ROCPRIM_4_5_AMDGPU_TARGETS_COMPAT=(
 ROCPRIM_4_5_AMDGPU_USEDEP=$(gen_x_usedep "ROCPRIM_4_5_AMDGPU_TARGETS_COMPAT")
 
 ROCRAND_4_5_AMDGPU_TARGETS_COMPAT=(
+	gfx803
+	gfx900_xnack_minus
+	gfx906_xnack_minus
+	gfx908_xnack_minus
+	gfx90a_xnack_minus
+	gfx90a_xnack_plus
+	gfx1030
 )
 ROCRAND_4_5_AMDGPU_USEDEP=$(gen_x_usedep "ROCRAND_4_5_AMDGPU_TARGETS_COMPAT")
 
