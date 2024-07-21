@@ -7,8 +7,16 @@ EAPI=7
 # https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.1.3/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
 AMDGPU_FIRMWARE_PV="5.13.20.50103"
-KERNEL_FIRMWARE_PV="20220516" # Based on linux-firmware commit logs
-KERNEL_PV="5.18"  # DC_VER = 3.2.177 ; KERNEL_PV is from linux-kernel not rock-dkms
+KERNEL_FIRMWARE_PV="20220516" # Based on linux-firmware commit logs for git message 22.10 (2022-05-16)
+# Expected firmware properites:
+# Git message:  5.1
+# Driver folder = 22.10.3
+# DCN = missing [3.1]
+# GC = missing
+# PSP = missing
+# SDMA = missing
+# VCN = missing
+KERNEL_PV="5.18" # DC_VER = 3.2.177 ; DCN = 3.1.6 ; KERNEL_PV is from linux-kernel not rock-dkms
 ROCM_VERSION="5.1.3" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #

@@ -7,8 +7,16 @@ EAPI=7
 # https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.6.1/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
 AMDGPU_FIRMWARE_PV="6.1.5.50601"
-KERNEL_FIRMWARE_PV="99999999" # Based on linux-firmware commit logs ; not released yet, no 5.6 commit message.  It could be skipped.
-KERNEL_PV="6.4"  # DC_VER = 3.2.230 ; KERNEL_PV is from linux-kernel not rock-dkms
+KERNEL_FIRMWARE_PV="20230724" # Based on linux-firmware commit logs for sha1sum of green sardine VCN (2023-07-24) add PSP (2023-03-30)
+# Expected firmware properites:
+# Git message:  5.6
+# Driver folder = 5.6.1
+# DCN = 3.2.1
+# GC = 11.0.4
+# PSP = 13.0.11
+# SDMA = 6.0.2
+# VCN = 4.0.4
+KERNEL_PV="6.4" # DC_VER = 3.2.230 ; DCN = 3.2.1 ; KERNEL_PV is from linux-kernel not rock-dkms
 ROCM_VERSION="5.6.1" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #

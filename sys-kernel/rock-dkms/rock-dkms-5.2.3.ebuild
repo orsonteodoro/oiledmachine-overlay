@@ -5,6 +5,7 @@ EAPI=8
 
 AMDGPU_FIRMWARE_PV="5.16.9.50203"
 DC_VER="3.2.181" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.2.3/drivers/gpu/drm/amd/display/dc/dc.h#L48
+DCN_VER="3.1.6" # See https://github.com/ROCm/ROCK-Kernel-Driver/blob/rocm-5.2.3/drivers/gpu/drm/amd/display/include/dal_types.h#L61
 DKMS_MODULES=(
 # Keep in sync with https://github.com/ROCm/ROCK-Kernel-Driver/blob/rocm-5.2.3/drivers/gpu/drm/amd/dkms/dkms.conf
 	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
@@ -29,7 +30,7 @@ KVS=(
 #	"3.10" # R 7.9
 # Active LTS only supported in this overlay.
 )
-MAINTAINER_MODE=0
+MAINTAINER_MODE=1
 PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCK_VER="${PV}"

@@ -49,12 +49,12 @@ LICENSE="
 		MIT
 	)
 "
-RDEPEND="
-	!sys-firmware/rock-firmware
-"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="si ebuild-revision-7"
 REQUIRED_USE="
+"
+RDEPEND="
+	!sys-firmware/rock-firmware
 "
 
 unpack_deb() {

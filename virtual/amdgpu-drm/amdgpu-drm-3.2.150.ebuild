@@ -4,20 +4,23 @@
 EAPI=7
 
 # The PV is the same as DC_VER in
-# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.5.1/drivers/gpu/drm/amd/display/dc/dc.h#L48
+# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.1.3/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
-AMDGPU_FIRMWARE_PV="6.0.5.50501"
-KERNEL_FIRMWARE_PV="20230523" # Based on linux-firmware commit logs for git message 5.5 (2023-05-23) and add PSP (2023-03-30)
+AMDGPU_FIRMWARE_PV="5.11.32.40502"
+KERNEL_FIRMWARE_PV="20211112" # Based on linux-firmware commit logs for git message 21.40 (2021-11-12)
 # Expected firmware properites:
-# Git message:  5.5
-# Driver folder = 5.5.1
-# DCN = 3.2.1
-# GC = 11.0.4
-# PSP = 13.0.11
-# SDMA = 6.0.2
-# VCN = 4.0.4
-KERNEL_PV="6.3" # DC_VER = 3.2.223 ; DCN = 3.2.1 ; KERNEL_PV is from linux-kernel not rock-dkms
-ROCM_VERSION="5.5.1" # DC_VER = ${PV}
+# Git message:  21.40
+# Driver folder = 21.40.2
+# DCN = missing [3.1]
+# GC = missing
+# PSP = missing
+# SDMA = missing
+# VCN = missing
+# beige_goby = yes (2021-09-28)
+# vangogh = yes (2021-08-12)
+# yellow_carp = yes (2021-09-15)
+KERNEL_PV="5.15" # DC_VER = 3.2.149 ; DCN = 3.1 ; KERNEL_PV is from linux-kernel not rock-dkms
+ROCM_VERSION="4.5.2" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #
 # linux firmware notes:

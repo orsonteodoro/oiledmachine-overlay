@@ -3,6 +3,8 @@
 
 EAPI=7
 
+# TODO update
+
 DRIVER_PV="22.10.3" # Folder name
 KERNEL_PV="5.18" # Equivalent for vanilla kernel based on DC_VER
 KVS=(

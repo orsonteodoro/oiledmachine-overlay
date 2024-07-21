@@ -7,8 +7,16 @@ EAPI=7
 # https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.7.1/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
 AMDGPU_FIRMWARE_PV="6.2.4.50701"
-KERNEL_FIRMWARE_PV="20230928" # Based on linux-firmware commit logs
-KERNEL_PV="6.5"  # DC_VER = 3.2.241 ; KERNEL_PV is from linux-kernel not rock-dkms
+KERNEL_FIRMWARE_PV="20230928" # Based on linux-firmware commit logs for git message 5.7 (2023-09-28) and add PSP (2023-03-30)
+# Expected firmware properites:
+# Git message:  5.7
+# Driver folder = 5.7.1
+# DCN = 3.2.1
+# GC = 11.0.4
+# PSP = 13.0.11
+# SDMA = 6.0.3
+# VCN = 4.0.4
+KERNEL_PV="6.5" # DC_VER = 3.2.241 ; DCN = 3.2.1 ; KERNEL_PV is from linux-kernel not rock-dkms
 ROCM_VERSION="5.7.1" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #
