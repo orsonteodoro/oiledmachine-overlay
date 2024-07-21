@@ -7,7 +7,7 @@ EAPI=7
 # https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.0.2/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
 AMDGPU_FIRMWARE_PV="6.3.6.60002"
-KERNEL_FIRMWARE_PV="20240420" # Based on linux-firmware commit logs for add PSP (2024-04-20)
+KERNEL_FIRMWARE_PV="20240420" # Based on linux-firmware commit logs for add PSP (2024-04-20), sha1sum of beige goby (2024-01-23), add GC (2024-04-20)
 # Expected firmware properites:
 # Git message:  6.0
 # Driver folder = 6.0.2

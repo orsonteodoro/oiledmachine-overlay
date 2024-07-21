@@ -7,7 +7,7 @@ EAPI=7
 # https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.1.2/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
 AMDGPU_FIRMWARE_PV="6.7.0.60102"
-KERNEL_FIRMWARE_PV="20240530" # Based on linux-firmware commit logs for add GC (2024-05-30), add VCN (2024-04-20)
+KERNEL_FIRMWARE_PV="20240530" # Based on linux-firmware commit logs for add GC (2024-05-30), add VCN (2024-04-20), sha1sum of beige goby (2024-04-12), sha1sum of dimgrey cavefish (2024-04-12)
 # Expected firmware properites:
 # Git message:  6.1
 # Driver folder = 6.1.2
