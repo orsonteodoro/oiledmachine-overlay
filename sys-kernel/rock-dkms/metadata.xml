@@ -88,24 +88,24 @@
 
     Environment variables
 
-    (You may place them in /etc/portage/make.conf.)
+    (You may place them in /etc/portage/make.conf)
 
     It must look like:
 
-    ROCK_DKMS_KERNELS_5_7="6.1.53-builder 6.1.^-gaming 6.1.^-pf"
+    ROCK_DKMS_KERNELS_5_7="5.4.280-builder 5.4.^-gaming 5.4.^-pf"
 
     * 5_7 comes from the package major/minor version for this package.
     ROCK_DKMS_KERNELS_X_Y contains a X the major version and Y the minor
-    version.  sys-kernel/rocm-dkms-5.7.0 would correspond to
+    version.  sys-kernel/rocm-dkms-5.7.1 would correspond to
     ROCK_DKMS_KERNELS_5_7.
 
     Use:
 
     * to build all point releases
-    Examples: 5.2.*-builder
+    Examples: 5.7.*-builder
 
     ^ to build only the highest point release
-    Examples: 5.2.^-builder
+    Examples: 5.7.^-builder
 
   -->
   <upstream>
