@@ -4,7 +4,7 @@
 EAPI=7
 
 DRIVER_PV="21.40.2" # Folder name
-KERNEL_PV="5.18" # Equivalent for vanilla kernel based on DC_VER
+KERNEL_PV="5.17" # Equivalent for vanilla kernel based on amdkfd last commits
 KVS=(
 # Commented out means EOL kernel.
 #	"5.8"  # U 20.04 HWE
@@ -45,7 +45,7 @@ LICENSE="
 	)
 "
 SLOT="${ROCM_SLOT}/${MY_PV}"
-IUSE="si ebuild-revision-7"
+IUSE="si ebuild-revision-8"
 REQUIRED_USE="
 "
 RDEPEND="
@@ -197,6 +197,7 @@ cp -aT /lib/firmware/amdgpu-${MY_PV2%-*} /lib/firmware/amdgpu
 EOF
 	done
 
+if false ; then
 cat <<EOF > "${ED}/usr/bin/install-${P}-for-vanilla-kernel-module-slot-${KERNEL_PV}.sh"
 #!/bin/bash
 echo "Installing ${P} into /lib/firmware/amdgpu"
@@ -204,6 +205,7 @@ rm -f /lib/firmware/amdgpu/*
 mkdir -p /lib/firmware/amdgpu
 cp -aT /lib/firmware/amdgpu-${MY_PV2%-*} /lib/firmware/amdgpu
 EOF
+fi
 
 cat <<EOF > "${ED}/usr/bin/install-rocm-firmware-${ROCM_PV}.sh"
 #!/bin/bash
@@ -219,14 +221,13 @@ echo "Installing ROCm ${ROCM_SLOT} (slot) compatible firmware into /lib/firmware
 rm -f /lib/firmware/amdgpu/*
 mkdir -p /lib/firmware/amdgpu
 cp -aT /lib/firmware/amdgpu-${MY_PV2%-*} /lib/firmware/amdgpu
-
 EOF
 	fperms 0755 /usr/bin/install-${P}.sh
 	local kv_slot
 	for kv_slot in ${KVS[@]} ; do
 		fperms 0755 /usr/bin/install-${P}-for-rock-kernel-module-slot-${kv_slot}.sh
 	done
-	fperms 0755 /usr/bin/install-${P}-for-vanilla-kernel-module-slot-${KERNEL_PV}.sh
+#	fperms 0755 /usr/bin/install-${P}-for-vanilla-kernel-module-slot-${KERNEL_PV}.sh
 	fperms 0755 /usr/bin/install-rocm-firmware-${ROCM_PV}.sh
 	fperms 0755 /usr/bin/install-rocm-firmware-slot-${ROCM_SLOT}.sh
 }
@@ -245,7 +246,7 @@ src_install() {
 	for kv_slot in ${KVS[@]} ; do
 		touch "${ED}/lib/firmware/amdgpu-${MY_PV2%-*}/rock-kernel-module-slot-${kv_slot}"
 	done
-	touch "${ED}/lib/firmware/amdgpu-${MY_PV2%-*}/vanilla-kernel-module-series-${KERNEL_PV}"
+#	touch "${ED}/lib/firmware/amdgpu-${MY_PV2%-*}/vanilla-kernel-module-series-${KERNEL_PV}"
 	gen_scripts
 }
 
@@ -276,7 +277,7 @@ einfo "  install-${P}.sh"
 	for kv_slot in ${KVS[@]} ; do
 einfo "  install-${P}-for-rock-kernel-module-slot-${kv_slot}.sh"
 	done
-einfo "  install-${P}-for-vanilla-kernel-module-slot-${KERNEL_PV}.sh"
+#einfo "  install-${P}-for-vanilla-kernel-module-slot-${KERNEL_PV}.sh"
 einfo "  install-rocm-firmware-${ROCM_PV}.sh"
 einfo "  install-rocm-firmware-slot-${ROCM_SLOT}.sh"
 einfo
