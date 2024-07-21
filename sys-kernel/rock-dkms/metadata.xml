@@ -166,7 +166,7 @@
     <flag name="strict-pairing">
       Ensures that the equivalent firmware used is the same one as the release
       of this package.  Meaning that the firmware is the same such that for
-      example 5.6.0 kernel driver is paired with the 5.6 firmware.  Otherwise,
+      example 5.7.1 kernel driver is paired with the 5.7 firmware.  Otherwise,
       the kernel driver is paired with a version greater than or equal to
       the firmware version.
 
