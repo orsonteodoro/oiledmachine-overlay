@@ -17,6 +17,11 @@ KERNEL_FIRMWARE_PV="20240530" # Based on linux-firmware commit logs for add GC (
 # SDMA = 6.1.0
 # VCN = 4.0.5
 KERNEL_PV="6.8" # DC_VER = 3.2.266 ; DCN = 3.5.1 ; KERNEL_PV is from linux-kernel not rock-dkms
+# Expected kernel properties:
+# Some of the last amdkfd commits are applied to the amdkfd folder (30cfbe5, ca83dda, 005dfe8, edd10b0)
+# DCN is >= 3.5
+# DC_VER is >= 3.2.269
+# See also https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-6.1.2/drivers/gpu/drm/amd/amdkfd
 ROCM_VERSION="6.1.2" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #

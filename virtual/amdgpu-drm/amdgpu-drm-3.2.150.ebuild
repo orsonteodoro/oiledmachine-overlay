@@ -19,7 +19,12 @@ KERNEL_FIRMWARE_PV="20211112" # Based on linux-firmware commit logs for git mess
 # beige_goby = yes (2021-09-28)
 # vangogh = yes (2021-08-12)
 # yellow_carp = yes (2021-09-15)
-KERNEL_PV="5.15" # DC_VER = 3.2.149 ; DCN = 3.1 ; KERNEL_PV is from linux-kernel not rock-dkms
+KERNEL_PV="5.17" # DC_VER = 3.2.167 ; DCN = 3.1 ; KERNEL_PV is from linux-kernel not rock-dkms
+# Expected kernel properties:
+# Some of the last amdkfd commits are applied to the amdkfd folder (55a383f, 4bf8e09, 5c3c497)
+# DCN is >= 3.1
+# DC_VER is >= 3.2.150
+# See also https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-4.5.2/drivers/gpu/drm/amd/amdkfd
 ROCM_VERSION="4.5.2" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #

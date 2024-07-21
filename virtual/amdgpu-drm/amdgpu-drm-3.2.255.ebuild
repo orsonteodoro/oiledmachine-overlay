@@ -16,7 +16,12 @@ KERNEL_FIRMWARE_PV="20240420" # Based on linux-firmware commit logs for add PSP 
 # PSP = 14.0.0
 # SDMA = 6.1.0
 # VCN = 4.0.5
-KERNEL_PV="6.7" # DC_VER = 3.2.259 ; DCN = 3.5.1 ; KERNEL_PV is from linux-kernel not rock-dkms
+KERNEL_PV="6.8" # DC_VER = 3.2.266 ; DCN = 3.5.1 ; KERNEL_PV is from linux-kernel not rock-dkms
+# Expected kernel properties:
+# Some of the last amdkfd commits are applied to the amdkfd folder (e2d9f31, 3e5a14e, 702a993, 001b9ac)
+# DCN is >= 3.5
+# DC_VER is >= 3.2.255
+# See also https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-6.0.2/drivers/gpu/drm/amd/amdkfd
 ROCM_VERSION="6.0.2" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #

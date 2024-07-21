@@ -17,6 +17,11 @@ KERNEL_FIRMWARE_PV="20230724" # Based on linux-firmware commit logs for sha1sum 
 # SDMA = 6.0.2
 # VCN = 4.0.4
 KERNEL_PV="6.4" # DC_VER = 3.2.230 ; DCN = 3.2.1 ; KERNEL_PV is from linux-kernel not rock-dkms
+# Expected kernel properties:
+# Some of the last amdkfd commits are applied to the amdkfd folder (611b682, 5608985, 42e0bed, 9143b4e)
+# DCN is >= 3.2
+# DC_VER is >= 3.2.230
+# See also https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-5.6.1/drivers/gpu/drm/amd/amdkfd
 ROCM_VERSION="5.6.1" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #
