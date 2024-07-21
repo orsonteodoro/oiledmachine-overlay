@@ -4,7 +4,9 @@
 EAPI=8
 
 AMDGPU_FIRMWARE_PV="6.2.4.50701"
+DC_VER="3.2.269" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.1.2/drivers/gpu/drm/amd/display/dc/dc.h#L48
 DKMS_MODULES=(
+# Keep in sync with https://github.com/ROCm/ROCK-Kernel-Driver/blob/rocm-6.1.2/drivers/gpu/drm/amd/dkms/dkms.conf
 	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 	"amdttm ttm /kernel/drivers/gpu/drm/ttm"
 	"amdkcl amd/amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
@@ -13,8 +15,10 @@ DKMS_MODULES=(
 	"amddrm_buddy . /kernel/drivers/gpu/drm"
 	"amdxcp amd/amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
 )
+DKMS_PKG_NAME="amdgpu"
 KV="6.7.0" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.1.2/Makefile#L2
 KVS=(
+# See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.1.2/docs/reference/system-requirements.rst#supported-operating-systems
 # Commented out means EOL kernel.
 #	"6.5"  # U 22.04 HWE
 #	"6.2"  # U 22.04 HWE
@@ -25,12 +29,14 @@ KVS=(
 #	"5.4"  # U 20.04 generic ; Missing DRM_MODE_COLORIMETRY_BT601_YCC
 #	"4.18" # R 8.7, 8.8
 #	"3.10" # R 7.9
+# Active LTS only supported in this overlay.
 )
 MAINTAINER_MODE=0
 PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCK_VER="${PV}"
 SUFFIX="${PV_MAJOR_MINOR}"
+DKMS_PKG_VER="${SUFFIX}"
 USE_DKMS=0
 
 if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
@@ -44,6 +50,13 @@ fi
 
 inherit linux-info toolchain-funcs
 
+#KEYWORDS="~amd64"
+S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
+SRC_URI="
+https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/archive/refs/tags/rocm-${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+
 DESCRIPTION="ROCk DKMS kernel module"
 HOMEPAGE="
 https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver
@@ -52,7 +65,6 @@ LICENSE="
 	GPL-2
 	MIT
 "
-#KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
@@ -118,11 +130,11 @@ CDEPEND="
 	)
 "
 RDEPEND="
-	!sys-kernel/rock-dkms:0
 	${CDEPEND}
-	sys-apps/kmod[tools]
+	!sys-kernel/rock-dkms:0
 	dev-build/autoconf
 	dev-build/automake
+	sys-apps/kmod[tools]
 	!build? (
 		>=sys-kernel/dkms-1.95
 	)
@@ -149,15 +161,6 @@ BDEPEND="
 		)
 	)
 "
-SRC_URI="
-https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/archive/refs/tags/rocm-${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
-DKMS_PKG_NAME="amdgpu"
-DKMS_PKG_VER="${SUFFIX}"
-DC_VER="3.2.269" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.1.2/drivers/gpu/drm/amd/display/dc/dc.h#L48
-
 PATCHES=(
 	"${FILESDIR}/rock-dkms-3.10_p27-makefile-recognize-gentoo.patch"
 	"${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"

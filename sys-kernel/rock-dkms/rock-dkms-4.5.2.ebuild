@@ -3,32 +3,23 @@
 
 EAPI=8
 
-AMDGPU_FIRMWARE_PV="6.2.4.50701"
-DC_VER="3.2.255" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.0.2/drivers/gpu/drm/amd/display/dc/dc.h#L48
+AMDGPU_FIRMWARE_PV="5.11.32.40502"
+DC_VER="3.2.150" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-4.5.2/drivers/gpu/drm/amd/display/dc/dc.h#L48
 DKMS_MODULES=(
-# Keep in sync with https://github.com/ROCm/ROCK-Kernel-Driver/blob/rocm-6.0.2/drivers/gpu/drm/amd/dkms/dkms.conf
+# Keep in sync with https://github.com/ROCm/ROCK-Kernel-Driver/blob/rocm-4.5.2/drivers/gpu/drm/amd/dkms/dkms.conf
 	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 	"amdttm ttm /kernel/drivers/gpu/drm/ttm"
 	"amdkcl amd/amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
 	"amd-sched scheduler /kernel/drivers/gpu/drm/scheduler"
-	"amddrm_ttm_helper . /kernel/drivers/gpu/drm"
-	"amddrm_buddy . /kernel/drivers/gpu/drm"
-	"amdxcp amd/amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
 )
 DKMS_PKG_NAME="amdgpu"
-KV="6.3.7" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.0.2/Makefile#L2
+KV="5.11.0" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-4.5.2/Makefile#L2
 KVS=(
-# See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.0.2/docs/reference/system-requirements.rst#supported-operating-systems
+# See https://github.com/ROCm/ROCm/blob/roc-4.5.x/README.md#supported-operating-environments
 # Commented out means EOL kernel.
-	"6.6"  # U 22.04 HWE
-#	"6.2"  # U 22.04
-#	"5.19" # U 22.04
-#	"5.17" # U 22.04 Desktop OEM
-	"5.15" # U 22.04 Desktop HWE, 22.04 Server generic
-#	"5.14" # S 15.4; R 9.1, 9.2
 #	"5.8"  # U 20.04 HWE
-#	"5.4"  # U 20.04 generic ; Missing DRM_MODE_COLORIMETRY_BT601_YCC
-#	"4.18" # R 8.7, 8.8
+	"5.4"  # U 18.04 HWE, 20.04 generic
+#	"4.18" # R 8.4, 8.5, 8.6
 #	"3.10" # R 7.9
 # Active LTS only supported in this overlay.
 )
@@ -45,13 +36,13 @@ if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
 	KV_NOT_SUPPORTED_MAX="99999999"
 	KV_SUPPORTED_MIN="3.10"
 else
-	KV_NOT_SUPPORTED_MAX="6.7" # Exclusive
-	KV_SUPPORTED_MIN="5.15"
+	KV_NOT_SUPPORTED_MAX="5.9" # Exclusive
+	KV_SUPPORTED_MIN="5.4"
 fi
 
 inherit linux-info toolchain-funcs
 
-#KEYWORDS="~amd64"
+KEYWORDS="~amd64"
 S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
 SRC_URI="
 https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/archive/refs/tags/rocm-${PV}.tar.gz
@@ -167,7 +158,6 @@ PATCHES=(
 	"${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
 	"${FILESDIR}/rock-dkms-5.4.3-seq_printf-header.patch"
 	"${FILESDIR}/rock-dkms-5.4.3-pre-build-change-kcl-defs.patch"
-	"${FILESDIR}/rock-dkms-5.6.1-fix-gpu_scheduler-MODULE_PARM_DESC.patch"
 )
 
 pkg_setup_warn() {
@@ -423,7 +413,6 @@ eerror
 }
 
 check_kernel() {
-einfo "k: ${k}"
 	local k="${1}"
 	local kv=$(echo "${k}" \
 		| cut -f1 -d'-')
@@ -431,7 +420,7 @@ einfo "k: ${k}"
 eerror
 eerror "The ROCK_DKMS_KERNELS has been renamed to ROCK_DKMS_KERNELS_X_Y, where"
 eerror "X is the major version and Y is the minor version corresponding to this"
-eerror "package.  For this kernel it is named ROCK_DKMS_KERNELS_5_7."
+eerror "package.  For this kernel it is named ROCK_DKMS_KERNELS_5_1."
 eerror
 eerror "Rename it to continue."
 eerror
@@ -439,14 +428,14 @@ eerror
 	fi
 	if ver_test ${kv} -ge ${KV_NOT_SUPPORTED_MAX} ; then
 eerror
-eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_5_7"
+eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_5_1"
 eerror "environmental variable."
 eerror
 		die
 	fi
 	if ver_test ${kv} -lt ${KV_SUPPORTED_MIN} ; then
 eerror
-eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_5_7"
+eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_5_1"
 eerror "environmental variable."
 eerror
 		die
@@ -467,27 +456,26 @@ show_supported_kv() {
 ewarn
 ewarn "The following kernel versions are only supported for ${P}:"
 ewarn
-ewarn "LTS 5.15.x"
-#ewarn "LTS 5.4.x"
+ewarn "LTS 5.4.x"
 ewarn
 }
 
 pkg_setup() {
 	show_supported_kv
-	if [[ -z "${ROCK_DKMS_KERNELS_5_7}" ]] ; then
+	if [[ -z "${ROCK_DKMS_KERNELS_5_1}" ]] ; then
 eerror
 eerror "You must define a per-package env or add to /etc/portage/make.conf an"
-eerror "environmental variable named ROCK_DKMS_KERNELS_5_7 containing a space"
+eerror "environmental variable named ROCK_DKMS_KERNELS_5_1 containing a space"
 eerror "delimited <kernvel_ver>-<extra_version>."
 eerror
-eerror "It should look like ROCK_DKMS_KERNELS_5_7=\"${KV}-pf ${KV}-zen\""
+eerror "It should look like ROCK_DKMS_KERNELS_5_1=\"${KV}-pf ${KV}-zen\""
 eerror
 		die
 	fi
 
 if [[ "${MAINTAINER_MODE}" != "1" ]] ; then
 	local k
-	for k in ${ROCK_DKMS_KERNELS_5_7} ; do
+	for k in ${ROCK_DKMS_KERNELS_5_1} ; do
 		if [[ "${k}" =~ "*" ]] ; then
 			# Pick all point releases:  6.1.*-zen
 			local V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" \
@@ -521,7 +509,7 @@ eerror "Missing kernel sources.  Install the kernel sources package first."
 fi
 }
 
-# See also https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.0.2/drivers/gpu/drm/amd/dkms/sources
+# See also https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.1.3/drivers/gpu/drm/amd/dkms/sources
 _reconstruct_tarball_layout() {
 einfo "Reconstructing tarball layout"
 	local tarball_root="${WORKDIR}/ROCK-Kernel-Driver-rocm-${PV}"
@@ -684,6 +672,7 @@ einfo "CC:  ${CC}"
 		-e "s/ CC=('|\"|)[a-z0-9._-]+('|\"|)//g" \
 		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/dkms.conf" \
 		|| die
+
 	sed -i \
 		-e "s/make /make CC=${CC} /" \
 		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/dkms.conf" \
@@ -792,7 +781,7 @@ _verify_magic_all() {
 }
 
 _copy_modules() {
-	# Keep in sync with https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.0.2/drivers/gpu/drm/amd/dkms/dkms.conf
+	# Keep in sync with https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.1.3/drivers/gpu/drm/amd/dkms/dkms.conf
 	IFS=$'\n'
 
 	local x
@@ -900,13 +889,11 @@ else
 fi
 
 DKMS_MODULES=(
-	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
-	"amdttm ttm /kernel/drivers/gpu/drm/ttm"
-	"amdkcl amd/amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
-	"amd-sched scheduler /kernel/drivers/gpu/drm/scheduler"
-	"amddrm_ttm_helper . /kernel/drivers/gpu/drm"
-	"amddrm_buddy . /kernel/drivers/gpu/drm"
-	"amdxcp amd/amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
+        "amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
+        "amdttm ttm /kernel/drivers/gpu/drm/ttm"
+        "amdkcl amd/amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
+        "amd-sched scheduler /kernel/drivers/gpu/drm/scheduler"
+        "amddrm_ttm_helper . /kernel/drivers/gpu/drm"
 )
 
 # Entries from all versions of the rock-dkms driver and the vanilla amdgpu kernel driver.
@@ -981,7 +968,7 @@ einfo "CONFIG_GCC_VERSION:  ${CONFIG_GCC_VERSION}"
 		build_root="/rock_build"
 	else
 		# "/" breaks with 5.4
-		# Default M=/var/lib/dkms/amdgpu/5.7/build
+		# Default M=/var/lib/dkms/amdgpu/5.1/build
 		args+=( --dkmstree "/" )
 		build_root="/rock_build"
 	fi
@@ -1098,7 +1085,7 @@ pkg_postinst() {
 	chmod -v 0750 "${EROOT}/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/configure"
 	if use build ; then
 		local k
-		for k in ${ROCK_DKMS_KERNELS_5_7} ; do
+		for k in ${ROCK_DKMS_KERNELS_5_1} ; do
 			if [[ "${k}" =~ "*" ]] ; then
 				# Pick all point releases:  6.1.*-zen
 				local pat="${k}"
@@ -1243,10 +1230,4 @@ einfo "Try again"
 	check_modprobe_conf
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  needs install test
-
-# OILEDMACHINE-OVERLAY-TEST:  passed (5.7.1, 20231122, kernel 5.15.139)
-# USE="build compress zstd -acpi -check-mmu-notifier -custom-kernel -directgma -gzip -hybrid-graphics -numa -r15 -sign-modules -ssg -strict-pairing -xz"
-
-# OILEDMACHINE-OVERLAY-STATUS:  build-failure (5.7.1, 20231115, kernel 5.4.260)
-# DRM_MODE_COLORIMETRY_BT601_YCC is undefined
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems (5.1.3, 20231118, kernel 5.4.260)

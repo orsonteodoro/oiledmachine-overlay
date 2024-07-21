@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# See https://github.com/ROCm/ROCm/tree/roc-4.5.x
+# See https://github.com/ROCm/ROCm/blob/roc-4.5.x/README.md
 AMDGPU_TARGETS_COMPAT=(
 # For names see, https://github.com/ROCm/rocminfo/blob/rocm-6.1.2/rocm_agent_enumerator
 	gfx701 # Hawaii

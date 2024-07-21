@@ -26,6 +26,19 @@ ROCM_PV="6.0.2"
 ROCM_SLOT="${ROCM_PV%.*}"
 FN="amdgpu-dkms-firmware_${MY_PV}.${U_OS_REL}_all.deb"
 
+inherit unpacker
+
+KEYWORDS="~amd64"
+S="${WORKDIR}"
+SRC_URI="
+https://repo.radeon.com/amdgpu/${DRIVER_PV}/ubuntu/pool/main/a/amdgpu-dkms/${FN}
+	si? (
+https://raw.githubusercontent.com/RadeonOpenCompute/ROCK-Kernel-Driver/rocm-${ROCM_PV}/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+	-> amdgpu_cgs.c.${ROCM_PV}
+	)
+"
+# The amdgpu_cgs.c file is used to obtain CONFIG_EXTRA_FIRMWARE for Southern Islands (SI).
+
 DESCRIPTION="Firmware blobs used by the amdgpu kernel driver"
 HOMEPAGE="
 https://www.amd.com/en/support/linux-drivers
@@ -36,24 +49,13 @@ LICENSE="
 		MIT
 	)
 "
-KEYWORDS="~amd64"
 RDEPEND="
 	!sys-firmware/rock-firmware
 "
 SLOT="${ROCM_SLOT}/${PV}"
-inherit unpacker
 IUSE="si ebuild-revision-7"
 REQUIRED_USE="
 "
-SRC_URI="
-https://repo.radeon.com/amdgpu/${DRIVER_PV}/ubuntu/pool/main/a/amdgpu-dkms/${FN}
-	si? (
-https://raw.githubusercontent.com/RadeonOpenCompute/ROCK-Kernel-Driver/rocm-${ROCM_PV}/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-	-> amdgpu_cgs.c.${ROCM_PV}
-	)
-"
-# The amdgpu_cgs.c file is used to obtain CONFIG_EXTRA_FIRMWARE for Southern Islands (SI).
-S="${WORKDIR}"
 
 unpack_deb() {
 	echo ">>> Unpacking ${1##*/} to ${PWD}"
