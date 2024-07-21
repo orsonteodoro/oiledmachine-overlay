@@ -19,11 +19,13 @@
     both the vanilla kernel and the ROCK-Kernel-Driver.  The flaw in the
     assumption has been corrected.
 
-    To find the vanilla kernel equivalent, we see the last commits of
-    https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-@ROCM_VERSION@/drivers/gpu/drm/amd/amdkfd
+    To find the vanilla kernel equivalent, we see the most recent last commits of
+
+      https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-@ROCM_VERSION@/drivers/gpu/drm/amd/amdkfd
+
     are present in the vanilla kernel.
 
-    DC_VER  | ROCm version | Vanilla kernel (only) equivalent | rock-dkms kernel support
+    DC_VER  | ROCm version | Vanilla kernel (only) equivalent | rock-dkms supported kernel versions
     3.2.150 | 4.5.2        | 5.17                             | 5.4
     3.2.173 | 5.1.3        | 5.19                             | 5.4
     3.2.181 | 5.2.3    	   | 6.0                              | 5.4, 5.15
