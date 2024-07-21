@@ -13,25 +13,10 @@
 
     oiledmachine-overlay notes:
 
-    This package will build the kernel modules using the DKMS framework allowing
-    for version agnostic compatibility meaning that you can compile this package 
-    against the latest point release of the long-term support kernel 5.4.x,
-    5.15.x kernel series only (for security update reasons).  The ROCk
-    package has more GPU features like IPC related features (Memory sharing API,
-    Signal sharing API); increasing GPU system memory limits from 3/8 of system 
-    memory to 29/32 of system memory; RDMA (aka Remote Device Programming or 
-    ROCmRDMA) to allow other PCIe kernel modules and devices DMA access to GPU
-    memory, KFD (Kernel Fusion Driver) features, and DirectGMA (Direct 
-    Graphic Memory Access) support.  ROCk is also a core component of the
-    ROCm platform.
-
-    The amdgpu-dkms package has the same source code but different build files
-    as the rock-dkms package.
-
-    This amdgpu module contains extra kernel parameters compared to the
-    vanilla amdgpu module that can be used to tune ROCk, SSG, power savings,
-    memory usage.  For details, do `modinfo amdgpu`.
-
+    This package will build the kernel modules out of source allowing for
+    version agnostic compatibility meaning that you can compile this package 
+    against one of the long-term support (LTS) kernels (for security update
+    reasons).
 
     Slot  Kernel version support
 
@@ -46,6 +31,64 @@
     6.0   5.15, 6.6
     6.1   5.15
 
+    The amdgpu-dkms package has the same source code but different build files
+    as the rock-dkms package.
+
+
+    Feature       ROCK-Kernel-Driver | Vanilla kernel | Commits introducing feature | Symbol or file indicating presence
+    DirectGMA     Yes                | No             | f331d74, bb892cd, 487ae13   | amdgpu_direct_gma_init in amdgpu_ttm.c
+    IPC API       Yes                | No             | 6e02e1e                     | kfd_ipc.c
+    RDMA[1]       Yes                | No             | d3afe74                     | kfd_peerdirect.c
+
+
+    GPU usage as a fraction of system memory[2a][2b][2c]
+
+    ROCK-Kernel-Driver | Vanilla kernel
+    2.10.0 : 29/30     | 5.0-rc1 : 3/8
+    3.0.0  : 29/30     | 5.2-rc2 : 3/8
+    3.1.0  : 3/8       | 5.4-rc7 : 3/8
+    4.5.2  : 3/8       | 5.17 : 3/8
+    5.1.3  : 3/8       | 5.19 : 3/8
+    5.2.3  : 3/8       | 6.0  : 3/8
+    5.3.3  : 3/8       | 6.0  : 3/8
+    5.4.3  : 3/8       | 6.3  : 3/8
+    5.5.1  : 3/8       | 6.3  : 3/8
+    5.6.1  : 3/8       | 6.4  : 3/8
+    5.7.1  : 3/8       | 6.5  : 3/8 
+    6.0.2  : 3/8       | 6.8  : 3/8
+    6.1.2  : 3/8       | 6.8  : 3/8
+
+
+    Modinfo differences
+
+    Option                    | ROCK-Kernel-Driver | Vanilla kernel
+    direct_gma_size           | Yes in 1.5.0+      | No
+    freesync_video            | Yes in 4.3.0+      | Yes in 5.13+, but not in earlier versions
+    keep_idle_process_evicted | Yes in 2.0.0+      | No
+    mtype_local               | Yes in 5.7.0+      | No
+    no_evict                  | Yes in 1.5.0+      | No
+    priv_cp_queues            | Yes in 2.0.0+      | No
+    pcie_p2p                  | Yes in 2.0.0+      | Yes in 6.0+, but not in earlier versions
+    smu_pptable_id            | Yes in 4.2.0+      | No
+    ssg                       | Yes in 1.7.0+[5]   | No
+    user_partt_mode           | Yes in 5.7.0+      | Yes in 6.5+, but not in earlier versions
+    timeout_fatal_disable     | Yes in 4.2.0+      | Yes in 5.13+, but not in earlier versions
+    timeout_period            | Yes in 4.2.0+      | Yes in 5.13+, but not in earlier versions
+    
+    Footnotes:
+
+    [1] Remote Device Programming or ROCmRDMA to allow other PCIe kernel modules and devices DMA access to GPU memory
+    [2a] Shown as TTM memory - 3/8th System RAM in amdgpu_amdkfd_gpuvm.c
+    [2b] Introduced in commit 35ea03e
+    [2c] Discussed in issue #708 of ROCm
+    [3] For details, do `modinfo amdgpu`
+    [4] amdgpu_drv.c contains the AMDGPU_VERSION in ROCK-Kernel-Driver but not vanilla kernel.
+    [5] Removed in 5.3.0 and later
+
+
+    Environment variables
+
+    (You may place them in /etc/portage/make.conf.)
 
     It must look like:
 

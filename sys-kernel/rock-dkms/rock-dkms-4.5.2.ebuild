@@ -24,7 +24,7 @@ KVS=(
 #	"3.10" # R 7.9
 # Active LTS only supported in this overlay.
 )
-MAINTAINER_MODE=0
+MAINTAINER_MODE=1
 PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCK_VER="${PV}"
