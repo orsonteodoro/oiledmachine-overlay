@@ -1,0 +1,22 @@
+diff '--color=auto' -urp HIPRT-4996b9794cdbc3852fad6e2ae0dbab1e48f2e5f0.orig/CMakeLists.txt HIPRT-4996b9794cdbc3852fad6e2ae0dbab1e48f2e5f0/CMakeLists.txt
+--- HIPRT-4996b9794cdbc3852fad6e2ae0dbab1e48f2e5f0.orig/CMakeLists.txt	2024-07-22 14:25:16.305039020 -0700
++++ HIPRT-4996b9794cdbc3852fad6e2ae0dbab1e48f2e5f0/CMakeLists.txt	2024-07-22 14:28:41.277578119 -0700
+@@ -374,7 +374,7 @@ target_sources(${HIPRT_NAME} PRIVATE ${h
+ # install script
+ #
+ 
+-install(TARGETS ${HIPRT_NAME} DESTINATION bin)
++install(TARGETS ${HIPRT_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ 
+ # add header files
+ file(GLOB HIPRT_HEADERS "${CMAKE_SOURCE_DIR}/hiprt/*.h")
+@@ -384,7 +384,7 @@ install(FILES ${HIPRT_HEADERS}
+ # add hipfb files
+ file(GLOB HIPRT_HIPFB_FILES "${BASE_OUTPUT_DIR}/${CMAKE_BUILD_TYPE}/*.hipfb")
+ install(FILES ${HIPRT_HIPFB_FILES}
+-		DESTINATION bin)
++		DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ 
+ 
+ 
+Only in HIPRT-4996b9794cdbc3852fad6e2ae0dbab1e48f2e5f0: CMakeLists.txt.orig
