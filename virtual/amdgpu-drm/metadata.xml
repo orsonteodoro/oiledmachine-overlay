@@ -12,7 +12,7 @@
 
     The amdgpu-drm is a virtual ebuild.   It was originally intended as a way
     to choose either between amdgpu driver in the rock-dkms package or the
-    amdgpu driver provided by the kernel package.
+    amdgpu driver provided by the kernel package.[1]
 
     Historically, it used the DC_VER from the rock-dkms package as a way to
     ensure correspondence and equivalence between the ROCm version and DC_VER in
@@ -36,6 +36,11 @@
     3.2.241 | 5.7.1    	   | 6.5                              | 5.15
     3.2.255 | 6.0.2    	   | 6.8                              | 5.15, 6.6
     3.2.269 | 6.1.2    	   | 6.8                              | 5.15
+
+
+    Footnotes:
+
+    [1]  Verified claim:  https://github.com/ROCm/ROCm/blob/rocm-4.5.2/README.md#rocm-support-in-upstream-linux-kernels
 
   -->
   <use>
