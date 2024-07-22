@@ -120,11 +120,17 @@ CUDA_TARGETS_COMPAT=(
 	sm_86
 	sm_89
 )
+OPTIX_RAYTRACE_TARGETS=(
+	sm_75
+	sm_86
+	sm_89
+)
 
 AMDGPU_TARGETS_COMPAT=(
+# https://github.com/blender/blender/blob/v4.1.1/CMakeLists.txt#L649
 	gfx900
-	gfx90c
 	gfx902
+	gfx90c
 	gfx1010
 	gfx1011
 	gfx1012
@@ -133,6 +139,26 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1032
 	gfx1034
 	gfx1035
+	gfx1036
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1103
+)
+HIPRT_RAYTRACE_TARGETS=(
+# See https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/blob/2.3.7df94af/scripts/bitcodes/compile.py#L90
+	gfx900
+	gfx902
+	gfx90c
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1034
+	gfx1035
+	gfx1036
 	gfx1100
 	gfx1101
 	gfx1102
@@ -151,8 +177,8 @@ ${OPENVDB_ABIS[@]}
 ${ROCM_SLOTS[@]}
 +X +abi10-compat +alembic -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles -cycles-device-oneapi +cycles-path-guiding +dds
--debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp +hydra +jack
-+jemalloc +jpeg2k -llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal
+-debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp -hiprt +hydra
++jack +jemalloc +jpeg2k -llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal
 +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb
 +openxr -optix +osl +pdf +potrace +pulseaudio release -rocm +sdl +sndfile sycl
 +tbb test +tiff +usd -valgrind +wayland
@@ -246,6 +272,12 @@ REQUIRED_USE+="
 	embree? (
 		cycles
 	)
+	hiprt? (
+		cycles
+		|| (
+			${HIPRT_RAYTRACE_TARGETS[@]/#/amdgpu_targets_}
+		)
+	)
 	hydra? (
 		usd
 	)
@@ -283,6 +315,9 @@ REQUIRED_USE+="
 		cuda
 		cycles
 		nvcc
+		|| (
+			${OPTIX_RAYTRACE_TARGETS[@]/#/cuda_targets_}
+		)
 	)
 	opus? (
 		ffmpeg
@@ -688,6 +723,9 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 	)
 	gmp? (
 		>=dev-libs/gmp-6.2.1[cxx]
+	)
+	hiprt? (
+		>=media-libs/hiprt-2.0.3[rocm]
 	)
 	jack? (
 		virtual/jack
@@ -1249,8 +1287,8 @@ eerror
 		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
 		-DWITH_CXX11_ABI=ON
+		-DWITH_CYCLES_DEVICE_HIPRT=$(usex hiprt)
 		-DWITH_CYCLES_HIP_BINARIES=$(usex rocm)
-		-DWITH_CYCLES_DEVICE_HIPRT=NO # No package yet
 		-DWITH_CYCLES_PATH_GUIDING=$(usex cycles-path-guiding)
 		-DWITH_DOC_MANPAGE=$(usex man)
 		-DWITH_DRACO=$(usex draco)

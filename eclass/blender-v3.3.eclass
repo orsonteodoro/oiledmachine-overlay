@@ -127,12 +127,18 @@ CUDA_TARGETS_COMPAT=(
 	sm_75
 	sm_86
 )
+OPTIX_RAYTRACE_TARGETS=(
+	sm_75
+	sm_86
+	sm_89
+)
 
 AMDGPU_TARGETS_COMPAT=(
+# https://github.com/blender/blender/blob/v3.3.21/CMakeLists.txt#L450
 	gfx900
+	gfx902
 	gfx906
 	gfx90c
-	gfx902
 	gfx1010
 	gfx1011
 	gfx1012
@@ -299,6 +305,9 @@ REQUIRED_USE+="
 		cuda
 		cycles
 		nvcc
+		|| (
+			${OPTIX_RAYTRACE_TARGETS[@]/#/cuda_targets_}
+		)
 	)
 	opus? (
 		ffmpeg
