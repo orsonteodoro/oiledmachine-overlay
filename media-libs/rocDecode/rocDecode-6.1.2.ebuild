@@ -41,6 +41,7 @@ LICENSE="
 	custom
 	MIT
 "
+# custom - https://github.com/ROCm/rocDecode/blob/rocm-6.1.2/LICENSE
 RESTRICT="
 	test
 "
