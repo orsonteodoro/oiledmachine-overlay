@@ -1048,7 +1048,7 @@ BDEPEND+="
 	)
 	rocm? (
 		rocm_5_5? (
-			~sys-devel/llvm-roc${HIP_5_5_VERSION}:5.5
+			~sys-devel/llvm-roc-${HIP_5_5_VERSION}:5.5
 		)
 	)
 	|| (

@@ -1055,34 +1055,34 @@ BDEPEND+="
 	)
 	rocm? (
 		rocm_4_5? (
-			~sys-devel/llvm-roc${HIP_4_5_VERSION}:4.5
+			~sys-devel/llvm-roc-${HIP_4_5_VERSION}:4.5
 		)
 		rocm_4_3? (
-			~sys-devel/llvm-roc${HIP_4_3_VERSION}:4.3
+			~sys-devel/llvm-roc-${HIP_4_3_VERSION}:4.3
 		)
 		rocm_4_2? (
-			~sys-devel/llvm-roc${HIP_4_2_VERSION}:4.2
+			~sys-devel/llvm-roc-${HIP_4_2_VERSION}:4.2
 		)
 		rocm_4_1? (
-			~sys-devel/llvm-roc${HIP_4_1_VERSION}:4.1
+			~sys-devel/llvm-roc-${HIP_4_1_VERSION}:4.1
 		)
 		rocm_4_0? (
-			~sys-devel/llvm-roc${HIP_4_0_VERSION}:4.0
+			~sys-devel/llvm-roc-${HIP_4_0_VERSION}:4.0
 		)
 		rocm_3_10? (
-			~sys-devel/llvm-roc${HIP_3_10_VERSION}:3.10
+			~sys-devel/llvm-roc-${HIP_3_10_VERSION}:3.10
 		)
 		rocm_3_9? (
-			~sys-devel/llvm-roc${HIP_3_9_VERSION}:3.9
+			~sys-devel/llvm-roc-${HIP_3_9_VERSION}:3.9
 		)
 		rocm_3_8? (
-			~sys-devel/llvm-roc${HIP_3_8_VERSION}:3.8
+			~sys-devel/llvm-roc-${HIP_3_8_VERSION}:3.8
 		)
 		rocm_3_7? (
-			~sys-devel/llvm-roc${HIP_3_7_VERSION}:3.7
+			~sys-devel/llvm-roc-${HIP_3_7_VERSION}:3.7
 		)
 		rocm_3_5? (
-			~sys-devel/llvm-roc${HIP_3_5_VERSION}:3.5
+			~sys-devel/llvm-roc-${HIP_3_5_VERSION}:3.5
 		)
 	)
 	|| (
