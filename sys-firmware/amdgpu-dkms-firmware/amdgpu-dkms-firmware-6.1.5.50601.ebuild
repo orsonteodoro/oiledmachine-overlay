@@ -5,7 +5,7 @@ EAPI=7
 
 U_OS_REL="22.04"
 DRIVER_PV="5.6.1" # Folder name
-KERNEL_PV="6.4" # Equivalent for vanilla kernel based on amdkfd last commits
+KERNEL_PV="6.5" # Equivalent for vanilla kernel based on amdkfd last commits and KMS version
 KVS=(
 # Commented out means EOL kernel.
 #	"5.17" # U 22.04 Desktop OEM

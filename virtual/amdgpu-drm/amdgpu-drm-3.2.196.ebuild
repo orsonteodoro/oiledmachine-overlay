@@ -9,7 +9,7 @@ EAPI=7
 AMDGPU_FIRMWARE_PV="5.18.2.50303"
 KERNEL_FIRMWARE_PV="20220902" # Based on linux-firmware commit logs for sha1sum of beige goby VCN (2022-09-02), sha1sum of yellow carp (2022-08-08), add PSP (2022-03-04) and add DCN (2022-03-04)
 # Expected firmware properites:
-# Git message:  5.3
+# Git message:  5.3, 22.40
 # Driver folder = 5.3.3
 # DCN = 3.1.6
 # GC = 11.0.1
@@ -21,7 +21,13 @@ KERNEL_PV="6.0" # DC_VER = 3.2.198 ; DCN = 3.2.1 ; KERNEL_PV is from linux-kerne
 # Some of the last amdkfd commits are applied to the amdkfd folder (c48a944, 2cf146c, cebb86a)
 # DCN is >= 3.1
 # DC_VER is >= 3.2.196
-# See also https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-5.3.3/drivers/gpu/drm/amd/amdkfd
+# KMS is >= 3.48.0
+#
+# See also
+# https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-5.3.3/drivers/gpu/drm/amd/amdkfd
+# drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c for KMS version
+# drivers/gpu/drm/amd/display/dc/dc.h for DC_VER
+# drivers/gpu/drm/amd/display/include/dal_types.h for DCN version
 ROCM_VERSION="5.3.3" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #

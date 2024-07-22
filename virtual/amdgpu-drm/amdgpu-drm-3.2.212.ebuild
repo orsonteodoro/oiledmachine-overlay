@@ -21,7 +21,13 @@ KERNEL_PV="6.3" # DC_VER = 3.2.223 ; DCN = 3.2.1 ; KERNEL_PV is from linux-kerne
 # Some of the last amdkfd commits are applied to the amdkfd folder (79ff64f, fc65b97, 0caeefd, 954866d)
 # DCN is >= 3.2
 # DC_VER is >= 3.2.212
-# See also https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-5.4.3/drivers/gpu/drm/amd/amdkfd
+# KMS is >= 3.48.0
+#
+# See also
+# https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-5.4.3/drivers/gpu/drm/amd/amdkfd
+# drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c for KMS version
+# drivers/gpu/drm/amd/display/dc/dc.h for DC_VER
+# drivers/gpu/drm/amd/display/include/dal_types.h for DCN version
 ROCM_VERSION="5.4.3" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #
