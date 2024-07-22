@@ -1024,6 +1024,7 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
 	"${FILESDIR}/${PN}-3.5.1-tbb-rpath.patch"
 	"${FILESDIR}/${PN}-3.6.0-hip-flags.patch"
+	"${FILESDIR}/${PN}-pr-121050-20240719.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {

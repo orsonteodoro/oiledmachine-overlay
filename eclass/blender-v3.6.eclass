@@ -151,6 +151,23 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+HIPRT_RAYTRACE_TARGETS=(
+# See https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/blob/2.3.7df94af/scripts/bitcodes/compile.py#L90
+	gfx900
+	gfx902
+	gfx90c
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1034
+	gfx1035
+	gfx1100
+	gfx1101
+	gfx1102
+)
 ROCM_SLOTS=(
 	rocm_5_5
 )
@@ -164,7 +181,7 @@ ${OPENVDB_ABIS[@]}
 ${ROCM_SLOTS[@]}
 +X +abi10-compat +alembic -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles -cycles-device-oneapi +cycles-path-guiding +dds
--debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp +jack
+-debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp -hiprt +jack
 +jemalloc +jpeg2k -llvm -man -materialx +nanovdb +ndof +nls +nvcc +openal
 +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb
 +openxr -optix +osl +pdf +potrace +pulseaudio release -rocm +sdl +sndfile sycl
@@ -260,6 +277,15 @@ REQUIRED_USE+="
 	)
 	embree? (
 		cycles
+	)
+	hiprt? (
+		cycles
+		|| (
+			${HIPRT_RAYTRACE_TARGETS[@]/#/amdgpu_targets_}
+		)
+		|| (
+			rocm_5_5
+		)
 	)
 	materialx? (
 		!python_single_target_python3_10
@@ -1345,7 +1371,7 @@ eerror
 		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
 		-DWITH_CXX11_ABI=ON
-		-DWITH_CYCLES_DEVICE_HIPRT=OFF # HIPRT repo doesn't contain 2.0 and doesn't support ROCm 5.7
+		-DWITH_CYCLES_DEVICE_HIPRT=$(usex hiprt)
 		-DWITH_CYCLES_HIP_BINARIES=$(usex rocm)
 		-DWITH_CYCLES_PATH_GUIDING=$(usex cycles-path-guiding)
 		-DWITH_DOC_MANPAGE=$(usex man)
