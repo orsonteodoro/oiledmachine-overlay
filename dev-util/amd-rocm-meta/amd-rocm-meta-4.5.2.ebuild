@@ -160,7 +160,6 @@ pkg_setup() {
 # openmp-extras-dev ; omp headers, aompcc from aomp-extras, flang
 # openmp-extras-runtime ; libarcher (and static-lib), libomp, flang
 # rocm-cmake x
-# rocm-core -
 # rocm-dbgapi x
 # rocm-debug-agent x
 # rocm-device-libs x
@@ -201,7 +200,6 @@ pkg_setup() {
 # rocblas-dev x
 # rocfft x
 # rocfft-dev x
-# rocm-core -
 # rocprim-dev x
 # rocrand x
 # rocrand-dev x
@@ -215,8 +213,7 @@ pkg_setup() {
 #
 # rocm-utils:
 #
-# rocm-clang-ocl # Metapackage for rocm-llvm x, rocm-opencl-dev x, rocm-core -
+# rocm-clang-ocl # Metapackage for rocm-llvm x, rocm-opencl-dev x
 # rocm-cmake x
-# rocm-core -
 # rocminfo x
 #

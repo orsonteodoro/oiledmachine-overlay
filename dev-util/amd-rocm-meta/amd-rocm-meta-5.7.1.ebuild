@@ -212,6 +212,6 @@ RDEPEND="
 #
 # rocm-clang-ocl # Metapackage for rocm-llvm x, rocm-opencl-dev x, rocm-core x
 # rocm-cmake x
-# rocm-core -
+# rocm-core x
 # rocminfo x
 #
