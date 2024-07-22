@@ -274,6 +274,7 @@ REQUIRED_USE+="
 	)
 	hiprt? (
 		cycles
+		rocm_5_7
 		|| (
 			${HIPRT_RAYTRACE_TARGETS[@]/#/amdgpu_targets_}
 		)
@@ -725,7 +726,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		>=dev-libs/gmp-6.2.1[cxx]
 	)
 	hiprt? (
-		>=media-libs/hiprt-2.0.3[rocm]
+		>=media-libs/hiprt-2.3_p20240717:5.7[rocm]
 	)
 	jack? (
 		virtual/jack
