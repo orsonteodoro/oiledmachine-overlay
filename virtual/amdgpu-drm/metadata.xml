@@ -11,7 +11,7 @@
     oiledmachine-overlay notes:
 
     The amdgpu-drm is a virtual ebuild.   It was originally intended as a way
-    to choose either between amdgpu driver in the rock-dkms package or the
+    to choose either between the amdgpu driver in the rock-dkms package or the
     amdgpu driver provided by the kernel package.[1]
 
     Historically, it used the DC_VER from the rock-dkms package as a way to
