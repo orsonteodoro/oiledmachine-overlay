@@ -87,6 +87,7 @@
     [3] For details, do `modinfo amdgpu`
     [4] amdgpu_drv.c contains the AMDGPU_VERSION in ROCK-Kernel-Driver but not vanilla kernel.
     [5] Removed in 5.3.0 and later
+    [6] For this distro only
 
 
     Environment variables
