@@ -53,8 +53,9 @@ REQUIRED_USE="
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	>=media-libs/libva-2.7.0
+	>=media-libs/mesa-24.1.0[proprietary-codecs,vaapi,video_cards_radeonsi]
 	samples? (
-		>=media-video/ffmpeg-4.2.2:0/56.58.58
+		>=media-video/ffmpeg-4.2.7:0/56.58.58
 	)
 "
 DEPEND="
@@ -62,7 +63,7 @@ DEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 BDEPEND="
-	${HIPCC_DEPEND}
+	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.5
 	virtual/pkgconfig
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
@@ -110,7 +111,7 @@ src_configure() {
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
 	)
-	rocm_set_default_hipcc
+	rocm_set_default_clang
 	rocm_src_configure
 }
 
