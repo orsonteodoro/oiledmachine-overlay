@@ -91,3 +91,6 @@ sci-libs/jaxlib clang
 
 # Build time failure.  Use an older ebuild.
 =media-video/ffmpeg-7* openvino
+
+# Slotted deps not available yet or not planned
+=media-gfx/blender-3.3 rocm_4_3 rocm_4_2 rocm_4_1 rocm_4_0 rocm_3_10 rocm_3_9 rocm_3_8 rocm_3_7 rocm_3_5
