@@ -15,10 +15,10 @@
 
     This package will build the kernel modules out of source allowing for
     version agnostic compatibility meaning that you can compile this package 
-    against one of the long-term support (LTS) kernels (for security update
+    against one of the Long Term Support (LTS) kernels (for security update
     reasons).
 
-    Slot  Kernel version support
+    Slot  Kernel version support[6]
 
     4.5   5.4    
     5.1   5.4
@@ -62,15 +62,18 @@
     Modinfo differences
 
     Option                    | ROCK-Kernel-Driver | Vanilla kernel
+    backlight                 | Yes in 4.2.0+      | Yes in 5.10+, but not in earlier versions
     direct_gma_size           | Yes in 1.5.0+      | No
     freesync_video            | Yes in 4.3.0+      | Yes in 5.13+, but not in earlier versions
     keep_idle_process_evicted | Yes in 2.0.0+      | No
+    lbpw                      | Yes in 1.6.1+      | Yes in 4.13+, but not in earlier versions
     mtype_local               | Yes in 5.7.0+      | No
     no_evict                  | Yes in 1.5.0+      | No
     priv_cp_queues            | Yes in 2.0.0+      | No
     pcie_p2p                  | Yes in 2.0.0+      | Yes in 6.0+, but not in earlier versions
     smu_pptable_id            | Yes in 4.2.0+      | No
     ssg                       | Yes in 1.7.0+[5]   | No
+    use_xgmi_p2p              | Yes in 5.2.0+      | Yes in 5.18+, but not in earlier versions
     user_partt_mode           | Yes in 5.7.0+      | Yes in 6.5+, but not in earlier versions
     timeout_fatal_disable     | Yes in 4.2.0+      | Yes in 5.13+, but not in earlier versions
     timeout_period            | Yes in 4.2.0+      | Yes in 5.13+, but not in earlier versions
