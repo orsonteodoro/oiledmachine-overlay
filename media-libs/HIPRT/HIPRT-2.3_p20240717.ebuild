@@ -69,7 +69,7 @@ LICENSE="
 "
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-IUSE="-bake-kernel -bitcode cuda rocm test ebuild-revision-0"
+IUSE="-bake-kernel -bitcode cuda rocm test ebuild-revision-1"
 REQUIRED_USE="
 	^^ (
 		cuda
@@ -88,6 +88,7 @@ DEPEND="
 BDEPEND="
 	${HIP_CLANG_DEPEND}
 	>=dev-build/cmake-3.10
+	dev-util/premake:5
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-2.3_p20240717-hardcoded-paths.patch"
@@ -101,12 +102,42 @@ pkg_setup() {
 	rocm_pkg_setup
 }
 
+build_easy_encryption() {
+	pushd "contrib/easy-encryption" >/dev/null 2>&1 || die
+		premake5 gmake || die
+		make || die
+		make config=release_x64 || die
+		mv \
+			"${S}/contrib/easy-encryption/dist/bin/Release/ee64" \
+			"${S}/contrib/easy-encryption/bin/linux/ee64" \
+			|| die
+	popd >/dev/null 2>&1 || die
+}
+
 src_prepare() {
 	cmake_src_prepare
 	rocm_src_prepare
 
-	# TODO: remove or rebuild blob from source
-	chmod +x contrib/easy-encryption/bin/linux/ee64 || die
+	rm "contrib/easy-encryption/bin/linux/ee64" || die
+	build_easy_encryption
+
+	# Test build
+	echo "lol world" > "contrib/easy-encryption/bin/linux/message.plaintext"
+	"contrib/easy-encryption/bin/linux/ee64" \
+		"contrib/easy-encryption/bin/linux/message.plaintext" \
+		"contrib/easy-encryption/bin/linux/message.ciphertext" \
+		key \
+		0 \
+		|| die
+	"contrib/easy-encryption/bin/linux/ee64" \
+		"contrib/easy-encryption/bin/linux/message.ciphertext" \
+		"contrib/easy-encryption/bin/linux/message.plaintext2" \
+		key \
+		1 \
+		|| die
+	cat "contrib/easy-encryption/bin/linux/message.plaintext2" \
+		| grep -q -e "lol world" \
+		|| die
 }
 
 src_configure() {
