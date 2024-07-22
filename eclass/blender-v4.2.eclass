@@ -279,9 +279,12 @@ REQUIRED_USE+="
 	)
 	hiprt? (
 		cycles
-		rocm_5_7
 		|| (
 			${HIPRT_RAYTRACE_TARGETS[@]/#/amdgpu_targets_}
+		)
+		|| (
+			rocm_5_5
+			rocm_5_7
 		)
 	)
 	hydra? (
@@ -731,7 +734,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		>=dev-libs/gmp-6.2.1[cxx]
 	)
 	hiprt? (
-		>=media-libs/hiprt-2.3_p20240717:5.7[rocm]
+		=media-libs/hiprt-2.0*[rocm]
 	)
 	jack? (
 		virtual/jack
@@ -1024,7 +1027,6 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
 	"${FILESDIR}/${PN}-3.5.1-tbb-rpath.patch"
 	"${FILESDIR}/${PN}-3.6.0-hip-flags.patch"
-	"${FILESDIR}/${PN}-pr-121050-20240719.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
