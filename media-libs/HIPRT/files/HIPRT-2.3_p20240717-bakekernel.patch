@@ -1,0 +1,16 @@
+diff '--color=auto' -urp HIPRT-4996b9794cdbc3852fad6e2ae0dbab1e48f2e5f0.orig/tools/bakeKernel.sh HIPRT-4996b9794cdbc3852fad6e2ae0dbab1e48f2e5f0/tools/bakeKernel.sh
+--- HIPRT-4996b9794cdbc3852fad6e2ae0dbab1e48f2e5f0.orig/tools/bakeKernel.sh	2024-07-17 15:14:54.000000000 -0700
++++ HIPRT-4996b9794cdbc3852fad6e2ae0dbab1e48f2e5f0/tools/bakeKernel.sh	2024-07-22 14:50:19.595935418 -0700
+@@ -1,10 +1,11 @@
+-# mkdir hiprt/cache/
++# mkdir "${S}/hiprt/cache/"
+ 
+ 
+ if [ -z "$PYTHON_BIN" ]; then
+     PYTHON_BIN=python3
+ fi
+ 
++cd "${S}"
+ 
+ echo "// automatically generated, don't edit" > hiprt/cache/Kernels.h
+ echo "// automatically generated, don't edit" > hiprt/cache/KernelArgs.h

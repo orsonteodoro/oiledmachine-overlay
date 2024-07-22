@@ -93,6 +93,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.3_p20240717-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-2.3_p20240717-cuda-option.patch"
 	"${FILESDIR}/${PN}-2.3_p20240717-install-paths.patch"
+	"${FILESDIR}/${PN}-2.3_p20240717-bakekernel.patch"
 )
 DOCS=( "README.md" )
 
@@ -103,6 +104,9 @@ pkg_setup() {
 src_prepare() {
 	cmake_src_prepare
 	rocm_src_prepare
+
+	# TODO: remove or rebuild blob from source
+	chmod +x contrib/easy-encryption/bin/linux/ee64 || die
 }
 
 src_configure() {
