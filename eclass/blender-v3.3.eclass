@@ -1251,12 +1251,6 @@ ewarn
 			export LLVM_SLOT=11
 			export ROCM_SLOT="3.5"
 			export ROCM_VERSION="${HIP_3_5_VERSION}"
-		elif use llvm-13 || use llvm-12 || use llvm-11 ; then
-eerror
-eerror "ROCm < 4.5 is not supported on the distro."
-eerror "Disable the rocm USE flag."
-eerror
-			die
 		else
 eerror
 eerror "No matching llvm/hip pair."
