@@ -37,6 +37,8 @@
 
 # HIP:  https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/intern/cycles/cmake/external_libs.cmake#L47
 
+# GPU lib versions:  https://github.com/blender/blender/blob/v4.2.0/build_files/config/pipeline_config.yaml
+
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
 # doc/python_api/requirements.txt
