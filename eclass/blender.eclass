@@ -274,8 +274,10 @@ blender_check_requirements() {
 	# tc-check-openmp does not print slot/version details.
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 einfo "CC:\t\t${CC}"
 einfo "CXX:\t\t${CXX}"
+einfo "CPP:\t\t${CPP}"
 	${CC} --version
 
 	# Use /usr/include/omp.h instead of /usr/lib/gcc/${CHOST}/12/include/omp.h
@@ -345,7 +347,7 @@ ewarn
 			elif has_version 'media-libs/embree[ray_mask]' || \
 			     has_version 'media-libs/embree[ray-mask]' || \
 			     has_version 'media-libs/embree[raymask]' ; then
-				:;
+				:
 			elif has_version 'media-libs/embree' ; then
 ewarn
 ewarn "EMBREE_RAY_MASK should be set to ON for embree."
@@ -399,7 +401,7 @@ blender_pkg_setup() {
 	check_embree
 	check_compiler
 	uopts_setup
-	if declare -f _blender_pkg_setup > /dev/null ; then
+	if declare -f _blender_pkg_setup >/dev/null 2>&1 ; then
 		_blender_pkg_setup
 	fi
 }
@@ -423,7 +425,7 @@ check_portable_dependencies() {
 		if use build_portable ; then
 			if [[ "${ABI}" == "x86" ]] ; then
 				if [[ "${CXXFLAGS}" =~ "march=x86-64" ]] ; then
-					:;
+					:
 				else
 ewarn
 ewarn "The CXXFLAGs doesn't contain -march=x86-64.  It will not be portable"
@@ -433,7 +435,7 @@ ewarn
 			fi
 			if [[ "${ABI}" == "x86" ]] ; then
 				if [[ "${CXXFLAGS}" =~ "march=i686" ]] ; then
-					:;
+					:
 				else
 ewarn
 ewarn "The CXXFLAGs doesn't contain -march=i686.  It will not be portable"
@@ -464,7 +466,7 @@ ewarn
 					2>/dev/null 1>/dev/null ; then
 					if [[ "${ABI}" == "amd64" ]] ; then
 						if ! grep -q -F -e "march=x86-64" \
-							"${EROOT}"/var/db/pkg/${p}-*/C{,XX}FLAGS ; then
+							"${EROOT}/var/db/pkg/${p}-"*"/C"{"","XX"}"FLAGS" ; then
 ewarn
 ewarn "${p} is not compiled with -march=x86-64.  It is not portable.  Recompile"
 ewarn "the dependency."
@@ -473,7 +475,7 @@ ewarn
 					fi
 					if [[ "${ABI}" == "x86" ]] ; then
 						if ! grep -q -F -e "march=i686" \
-							"${EROOT}"/var/db/pkg/${p}-*/C{,XX}FLAGS ; then
+							"${EROOT}/var/db/pkg/${p}-"*"/C"{"","XX"}"FLAGS" ; then
 ewarn
 ewarn "${p} is not compiled with -march=i686.  It is not portable.  Recompile"
 ewarn "the dependency"
@@ -659,20 +661,24 @@ check_optimal_compiler_for_cycles_x86() {
 		if [[ -n "${BLENDER_CC_ALT}" && -n "${BLENDER_CXX_ALT}" ]] ; then
 			export CC="${BLENDER_CC_ALT}"
 			export CXX="${BLENDER_CXX_ALT}"
+			export CPP="${CXX} -E"
 		elif [[ -n "${CC}" && -n "${CXX}" ]] \
 			&& [[ ! ( "${CC}" =~ (^|"-")"gcc" ) ]] \
 			&& [[ ! ( "${CXX}" =~ (^|"-")"g++" ) ]] ; then
 			# Defined by user from per-package environmental variables.
 			export CC
 			export CXX
+			export CPP
 		elif has_version 'sys-devel/clang' ; then
 			export CC="${CHOST}-clang"
 			export CXX="${CHOST}-clang++"
+			export CPP="${CXX} -E"
 		fi
 	else
 		if [[ ! -n "${CC}" || ! -n "${CXX}" ]] ; then
 			export CC="$(tc-getCC)"
 			export CXX="$(tc-getCXX)"
+			export CPP="${CXX} -E"
 		fi
 	fi
 	strip-unsupported-flags
@@ -730,7 +736,7 @@ blender_src_unpack() {
 blender_src_prepare() {
 	cd "${S}" || die
 	cmake_src_prepare
-	if declare -f _src_prepare_patches > /dev/null ; then
+	if declare -f _src_prepare_patches >/dev/null 2>&1 ; then
 		_src_prepare_patches
 	fi
 
@@ -743,18 +749,25 @@ blender_src_prepare() {
 einfo
 einfo "Removing -DGLEW_STATIC from ${file}"
 einfo
-			sed -i -e '/-DGLEW_STATIC/d' "${file}"
+			sed -i \
+				-e '/-DGLEW_STATIC/d' "${file}" \
+				|| die
 		fi
 	done < <(find . -type f -name "CMakeLists.txt" -print0)
 	export IFS=$' \t\n'
 
-	sed -i -e "s|bf_intern_glew_mx|bf_intern_glew_mx \${GLEW_LIBRARY}|g" \
-		intern/cycles/app/CMakeLists.txt || die
+	sed -i \
+		-e "s|bf_intern_glew_mx|bf_intern_glew_mx \${GLEW_LIBRARY}|g" \
+		"intern/cycles/app/CMakeLists.txt" \
+		|| die
 
 	# Disable MS Windows help generation. The variable doesn't do what it
 	# it sounds like.
-	sed -e "s|GENERATE_HTMLHELP      = YES|GENERATE_HTMLHELP      = NO|" \
-	    -i doc/doxygen/Doxyfile || die
+	sed \
+		-i \
+		-e "s|GENERATE_HTMLHELP      = YES|GENERATE_HTMLHELP      = NO|" \
+		"doc/doxygen/Doxyfile" \
+		|| die
 
 	if use cuda ; then
 		cuda_add_sandbox -w
@@ -776,7 +789,7 @@ knl|knm|skylake-avx512|cannonlake|icelake-client|icelake-server|cascadelake|\
 cooperlake|tigerlake|sapphirerapids|rocketlake) ]] \
 		|| [[ "${CXXFLAGS}" =~ "mavx512f"( |$) ]] ; then
 			# Already added
-			:;
+			:
 		else
 			append-cxxflags -mavx512f
 		fi
@@ -792,7 +805,7 @@ skylake-avx512|cannonlake|icelake-client|icelake-server|cascadelake|cooperlake|\
 tigerlake|sapphirerapids|rocketlake) ]] \
 		|| [[ "${CXXFLAGS}" =~ "mavx512dq"( |$) ]] ; then
 			# Already added
-			:;
+			:
 		else
 			append-cxxflags -mavx512dq
 		fi
@@ -807,7 +820,7 @@ native|\
 knl|knm) ]] \
 		|| [[ "${CXXFLAGS}" =~ "mavx512er"( |$) ]] ; then
 			# Already added
-			:;
+			:
 		else
 			append-cxxflags -mavx512er
 		fi
@@ -873,99 +886,140 @@ blender_configure_simd_cycles() {
 	if ver_test $(ver_cut 1-2 "${PV}") -ge "2.80" ; then
 		if [[ -e "${ESYSROOT}/usr/$(get_libdir)/libembree_avx512.a" ]] ; then
 			# Avoid missing symbols
-			sed -i -e "/embree_avx2$/a    embree_avx512" \
-				build_files/cmake/Modules/FindEmbree.cmake || die
+			sed -i \
+				-e "/embree_avx2$/a    embree_avx512" \
+				"build_files/cmake/Modules/FindEmbree.cmake" \
+				|| die
 		fi
 
 		if [[ ! -e "${ESYSROOT}/usr/$(get_libdir)/libembree_avx.a" ]] ; then
-			sed -i -e "/embree_avx$/d" \
-				build_files/cmake/Modules/FindEmbree.cmake || die
+			sed -i \
+				-e "/embree_avx$/d" \
+				"build_files/cmake/Modules/FindEmbree.cmake" \
+				|| die
 		fi
 
 		if [[ ! -e "${ESYSROOT}/usr/$(get_libdir)/libembree_avx2.a" ]] ; then
-			sed -i -e "/embree_avx2$/d" \
-				build_files/cmake/Modules/FindEmbree.cmake || die
+			sed -i \
+				-e "/embree_avx2$/d" \
+				"build_files/cmake/Modules/FindEmbree.cmake" \
+				|| die
 		fi
 
 		if [[ ! -e "${ESYSROOT}/usr/$(get_libdir)/libembree_sse42.a" ]] ; then
-			sed -i -e "/embree_sse42$/d" \
-				build_files/cmake/Modules/FindEmbree.cmake || die
+			sed -i \
+				-e "/embree_sse42$/d" \
+				"build_files/cmake/Modules/FindEmbree.cmake" \
+				|| die
 		fi
 	fi
 
 	if use cycles && ! use cpudetection ; then
 		if use cpu_flags_x86_sse ; then
 			# clang / gcc
-			sed -i -e "s|check_cxx_compiler_flag(-msse CXX_HAS_SSE)|set(CXX_HAS_SSE TRUE)|g" \
-				intern/cycles/CMakeLists.txt || die
+			sed -i \
+				-e "s|check_cxx_compiler_flag(-msse CXX_HAS_SSE)|set(CXX_HAS_SSE TRUE)|g" \
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 			# icc
-			sed -i -e "s|check_cxx_compiler_flag(-xsse2 CXX_HAS_SSE)|set(CXX_HAS_SSE TRUE)|g" \
-				intern/cycles/CMakeLists.txt || die
+			sed -i \
+				-e "s|check_cxx_compiler_flag(-xsse2 CXX_HAS_SSE)|set(CXX_HAS_SSE TRUE)|g" \
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 		else
 			# clang / gcc
 			sed -i -e "s|check_cxx_compiler_flag(-msse CXX_HAS_SSE)|set(CXX_HAS_SSE FALSE)|g" \
-				intern/cycles/CMakeLists.txt || die
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 			# icc
-			sed -i -e "s|check_cxx_compiler_flag(-xsse2 CXX_HAS_SSE)|set(CXX_HAS_SSE FALSE)|g" \
-				intern/cycles/CMakeLists.txt || die
+			sed -i \
+				-e "s|check_cxx_compiler_flag(-xsse2 CXX_HAS_SSE)|set(CXX_HAS_SSE FALSE)|g" \
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 		fi
 
 		if ! use cpu_flags_x86_sse2 ; then
-			sed -i -e "/WITH_KERNEL_SSE2$/d" \
-				intern/cycles/CMakeLists.txt || die
+			sed -i \
+				-e "/WITH_KERNEL_SSE2$/d" \
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 		fi
 
 		if ! use cpu_flags_x86_sse3 ; then
-			sed -i -e "/WITH_KERNEL_SSE3$/d" \
-				intern/cycles/CMakeLists.txt || die
+			sed -i \
+				-e "/WITH_KERNEL_SSE3$/d" \
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 		fi
 
 		if ! use cpu_flags_x86_sse4_1 ; then
-			sed -i -e "/WITH_KERNEL_SSE41$/d" \
-				intern/cycles/CMakeLists.txt || die
+			sed -i \
+				-e "/WITH_KERNEL_SSE41$/d" \
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 		fi
 
 		if use cpu_flags_x86_avx ; then
 			# clang / gcc
-			sed -i -e "s|check_cxx_compiler_flag(-mavx CXX_HAS_AVX)|set(CXX_HAS_AVX TRUE)|g" \
-				intern/cycles/CMakeLists.txt || die
+			sed -i \
+				-e "s|check_cxx_compiler_flag(-mavx CXX_HAS_AVX)|set(CXX_HAS_AVX TRUE)|g" \
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 			# icc
-			sed -i -e "s|check_cxx_compiler_flag(-xavx CXX_HAS_AVX)|set(CXX_HAS_AVX TRUE)|g" \
-				intern/cycles/CMakeLists.txt || die
+			sed -i \
+				-e "s|check_cxx_compiler_flag(-xavx CXX_HAS_AVX)|set(CXX_HAS_AVX TRUE)|g" \
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 		else
 			# clang / gcc
-			sed -i -e "s|check_cxx_compiler_flag(-mavx CXX_HAS_AVX)|set(CXX_HAS_AVX FALSE)|g" \
-				intern/cycles/CMakeLists.txt || die
+			sed -i \
+				-e "s|check_cxx_compiler_flag(-mavx CXX_HAS_AVX)|set(CXX_HAS_AVX FALSE)|g" \
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 			# icc
-			sed -i -e "s|check_cxx_compiler_flag(-xavx CXX_HAS_AVX)|set(CXX_HAS_AVX FALSE)|g" \
-				intern/cycles/CMakeLists.txt || die
+			sed -i \
+				-e "s|check_cxx_compiler_flag(-xavx CXX_HAS_AVX)|set(CXX_HAS_AVX FALSE)|g" \
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 		fi
 
 		if use cpu_flags_x86_avx2 ; then
 			# clang / gcc
-			sed -i -e "s|check_cxx_compiler_flag(-mavx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 TRUE)|g" \
-				intern/cycles/CMakeLists.txt || die
+			sed -i \
+				-e "s|check_cxx_compiler_flag(-mavx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 TRUE)|g" \
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 			# icc
-			sed -i -e "s|check_cxx_compiler_flag(-xcore-avx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 TRUE)|g" \
-				intern/cycles/CMakeLists.txt || die
+			sed -i \
+				-e "s|check_cxx_compiler_flag(-xcore-avx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 TRUE)|g" \
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 		else
 			# clang / gcc
-			sed -i -e "s|check_cxx_compiler_flag(-mavx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 FALSE)|g" \
-				intern/cycles/CMakeLists.txt || die
+			sed -i \
+				-e "s|check_cxx_compiler_flag(-mavx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 FALSE)|g" \
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 			# icc
-			sed -i -e "s|check_cxx_compiler_flag(-xcore-avx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 FALSE)|g" \
-				intern/cycles/CMakeLists.txt || die
+			sed -i \
+				-e "s|check_cxx_compiler_flag(-xcore-avx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 FALSE)|g" \
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 		fi
 
-		if [[ "${ABI}" == "x86" ]] && grep -q -F -e "WITH_KERNEL_SSE41" intern/cycles/CMakeLists.txt ; then
+		if [[ "${ABI}" == "x86" ]] && grep -q -F -e "WITH_KERNEL_SSE41" "intern/cycles/CMakeLists.txt" ; then
 			# See intern/cycles/util/util_optimization.h for reason why it was axed in x86 (32-bit)..
-			sed -i -e "/WITH_KERNEL_SSE41$/d" \
-				intern/cycles/CMakeLists.txt || die
+			sed -i \
+				-e "/WITH_KERNEL_SSE41$/d" \
+				"intern/cycles/CMakeLists.txt" \
+				|| die
 		fi
 
 		# No instructions present
-		sed -i -e "s|-mbmi2||g" \
-			intern/cycles/CMakeLists.txt || die
+		sed -i \
+			-e "s|-mbmi2||g" \
+			"intern/cycles/CMakeLists.txt" \
+			|| die
 	fi
 
 	# The avx2 config in CMakeLists.txt already sets this.
@@ -983,7 +1037,7 @@ rocketlake|\
 bdver2|bdver3|bdver4|znver1|znver2|btver2) ]] \
 				|| [[ "${CXXFLAGS}" =~ "mbmi"( |$) ]] ; then
 					# Already added
-					:;
+					:
 				else
 					append-cxxflags -mbmi
 				fi
@@ -1003,7 +1057,7 @@ rocketlake|\
 amdfam10|barcelona|bdver1|bdver2|bdver3|bdver4|znver1|znver2|btver1|btver2) ]] \
 				|| [[ "${CXXFLAGS}" =~ "mlzcnt" ]] ; then
 					# Already added
-					:;
+					:
 				else
 					append-cxxflags -mlzcnt
 				fi
@@ -1023,7 +1077,7 @@ alderlake|rocketlake|\
 bdver2|bdver3|bdver4|znver1|znver2|btver2) ]] \
 			|| [[ "${CXXFLAGS}" =~ "mf16c" ]] ; then
 				# Already added
-				:;
+				:
 			else
 				append-cxxflags -mf16c
 			fi
@@ -1043,7 +1097,7 @@ rocketlake|\
 bdver2|bdver3|bdver4|znver1|znver2) ]] \
 			|| [[ "${CXXFLAGS}" =~ "mfma" ]] ; then
 				# Already added
-				:;
+				:
 			else
 				append-cxxflags -mfma
 			fi
@@ -1052,10 +1106,21 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 		fi
 
 		if use cycles && use cpudetection ; then
-			# automatically adds -march=native
-			filter-flags -m*avx* -m*mmx -m*sse* -m*ssse3 -m*3dnow \
-				-m*popcnt -m*abm -m*bmi -m*lzcnt -m*f16c -m*fma
-			filter-flags -march=*
+			# It is automatically added by -march=native
+			filter-flags \
+				'-m*3dnow' \
+				'-m*abm' \
+				'-m*avx*' \
+				'-m*bmi' \
+				'-m*f16c' \
+				'-m*fma' \
+				'-m*lzcnt' \
+				'-m*mmx' \
+				'-m*popcnt' \
+				'-m*sse*' \
+				'-m*ssse3'
+			filter-flags \
+				'-march=*'
 		fi
 
 	fi
@@ -1088,9 +1153,9 @@ _src_compile() {
 _src_compile_docs() {
 	if use doc; then
 		# Workaround for binary drivers.
-		addpredict /dev/ati
-		addpredict /dev/dri
-		addpredict /dev/nvidiactl
+		addpredict "/dev/ati"
+		addpredict "/dev/dri"
+		addpredict "/dev/nvidiactl"
 
 einfo
 einfo "Generating Blender C/C++ API docs ..."
@@ -1341,7 +1406,8 @@ fecho1
 			"${T}"/build-build_portable.log \
 			| grep -o -E -e "[^ ]+\.so(.[0-9]+)?" | sort | uniq \
 			| sed -e "/^$/d" \
-			>> "${ED}${d_dest}/README.3rdparty_deps" || die
+			>> "${ED}${d_dest}/README.3rdparty_deps" \
+			|| die
 fecho1
 fecho1 "# Dependency of direct shared dependencies:"
 fecho1
@@ -1358,7 +1424,8 @@ fecho1
 			| tr " " "\n" | sort | uniq \
 			| sed -E -e "/(statically|linked|linux-vdso.so.1)/d" \
 			| sed -e "/^$/d" \
-			>> "${ED}${d_dest}/README.3rdparty_deps" || die
+			>> "${ED}${d_dest}/README.3rdparty_deps" \
+			|| die
 fecho1
 fecho1
 fecho1 "Place the shared libraries in the lib folder containing blenderplayer"

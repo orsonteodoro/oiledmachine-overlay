@@ -1220,18 +1220,21 @@ _src_prepare_patches() {
 			has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" \
 		) \
 		&& \
-		use usd ; then
-		:;
+		use usd \
+	; then
+		:
 	elif \
 		! has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
 		has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
-		use usd ; then
+		use usd \
+	; then
 		show_tbb_error
 	fi
 	if \
 		has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
 		has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
-		use usd ; then
+		use usd \
+	; then
 		eapply "${FILESDIR}/blender-3.5.1-tbb2-usd.patch"
 	elif use usd ;then
 ewarn
@@ -1243,17 +1246,21 @@ ewarn "Install both if build fails."
 ewarn
 	fi
 	if use rocm ; then
-		sed -e "s|/opt/rocm/hip/lib/libamdhip64.so|${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/libamdhip64.so|" \
-			-i extern/hipew/src/hipew.c \
-			|| die
-
 		local rocm_version=""
 		if use rocm_5_5 ; then
 			rocm_version="${HIP_5_5_VERSION}"
 		fi
 
-		sed -i "s|HIP 5.5.0|HIP ${rocm_version}|g" \
-			-i intern/cycles/cmake/external_libs.cmake \
+		sed \
+			-i \
+			-e "s|/opt/rocm/hip/lib/libamdhip64.so|/opt/rocm-${rocm_version}/hip/$(rocm_get_libdir)/libamdhip64.so|" \
+			"extern/hipew/src/hipew.c" \
+			|| die
+
+		sed \
+			-i \
+			-e "s|HIP 5.5.0|HIP ${rocm_version}|g" \
+			"intern/cycles/cmake/external_libs.cmake" \
 			|| die
 	fi
 }
@@ -1267,6 +1274,10 @@ _src_configure() {
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${CMAKE_USE_DIR}" || die
 
+	if use rocm ; then
+		rocm_set_default_hipcc
+	fi
+
 	if has_version "dev-libs/wayland" && ! use wayland ; then
 eerror
 eerror "You must enable the wayland USE flag or uninstall wayland."
@@ -1279,13 +1290,14 @@ eerror
 	append-flags -funsigned-char
 	append-lfs-flags
 
-	local s=${OPENVDB_ABIS_MAJOR_VERS}
-	if use abi${s}-compat ; then
+	local s="${OPENVDB_ABIS_MAJOR_VERS}"
+	if use "abi${s}-compat" ; then
 		append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=${s}
 	fi
 
-	local mycmakeargs=()
-	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH="${EPREFIX}$(get_dest)" )
+	local mycmakeargs=(
+		-DCMAKE_INSTALL_BINDIR:PATH="${EPREFIX}$(get_dest)"
+	)
 
 	unset CMAKE_INCLUDE_PATH
 	unset CMAKE_LIBRARY_PATH
@@ -1535,7 +1547,7 @@ eerror
 
 	if [[ -n "${BLENDER_DISABLE_CUDA_AUTODETECT}" \
 		&& "${BLENDER_DISABLE_CUDA_AUTODETECT}" == "1" ]] ; then
-		:;
+		:
 	else
 		if use cuda ; then
 			blender_configure_optix
@@ -1545,7 +1557,9 @@ eerror
 	if (( ${#BLENDER_CMAKE_ARGS[@]} > 0 )) ; then
 		# Set as per-package environmental variable
 		# For setting up optix/cuda
-		mycmakeargs+=( ${BLENDER_CMAKE_ARGS[@]} )
+		mycmakeargs+=(
+			${BLENDER_CMAKE_ARGS[@]}
+		)
 	fi
 
 	cmake_src_configure

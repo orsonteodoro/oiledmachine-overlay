@@ -1221,7 +1221,7 @@ ewarn
 			export ROCM_VERSION="${HIP_3_5_VERSION}"
 		elif use llvm-13 || use llvm-12 || use llvm-11 ; then
 eerror
-eerror "ROCm < 5.1 is not supported on the distro."
+eerror "ROCm < 4.5 is not supported on the distro."
 eerror "Disable the rocm USE flag."
 eerror
 			die
@@ -1229,7 +1229,7 @@ eerror
 eerror
 eerror "No matching llvm/hip pair."
 eerror
-eerror "llvm-14 can only pair with hip 5.1.3, 5.2.3"
+eerror "Use the ROCm 4.5 slotted ebuilds instead."
 eerror
 			die
 		fi
@@ -1263,18 +1263,21 @@ _src_prepare_patches() {
 			has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" \
 		) \
 		&& \
-		use usd ; then
-		:;
+		use usd \
+	; then
+		:
 	elif \
 		! has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
 		has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
-		use usd ; then
+		use usd \
+	; then
 		show_tbb_error
 	fi
 	if \
 		has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
 		has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
-		use usd ; then
+		use usd \
+	; then
 		eapply "${FILESDIR}/blender-2.93.10-tbb2-usd.patch"
 	elif use usd ;then
 ewarn
@@ -1286,8 +1289,33 @@ ewarn "Install both if build fails."
 ewarn
 	fi
 	if use rocm ; then
-		sed -e "s|/opt/rocm/hip/lib/libamdhip64.so|${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/libamdhip64.so|" \
-			-i extern/hipew/src/hipew.c \
+		local rocm_version=""
+		if use rocm_4_5 ; then
+			rocm_version="${HIP_4_5_VERSION}"
+		elif use rocm_4_3 ; then
+			rocm_version="${HIP_4_3_VERSION}"
+		elif use rocm_4_2 ; then
+			rocm_version="${HIP_4_2_VERSION}"
+		elif use rocm_4_1 ; then
+			rocm_version="${HIP_4_1_VERSION}"
+		elif use rocm_4_0 ; then
+			rocm_version="${HIP_4_0_VERSION}"
+		elif use rocm_3_10 ; then
+			rocm_version="${HIP_3_10_VERSION}"
+		elif use rocm_3_9 ; then
+			rocm_version="${HIP_3_9_VERSION}"
+		elif use rocm_3_8 ; then
+			rocm_version="${HIP_3_8_VERSION}"
+		elif use rocm_3_7 ; then
+			rocm_version="${HIP_3_7_VERSION}"
+		elif use rocm_3_5 ; then
+			rocm_version="${HIP_3_5_VERSION}"
+		fi
+
+		sed \
+			-i \
+			-e "s|/opt/rocm/hip/lib/libamdhip64.so|/opt/rocm-${rocm_version}/hip/$(rocm_get_libdir)/libamdhip64.so|" \
+			"extern/hipew/src/hipew.c" \
 			|| die
 	fi
 }
@@ -1301,18 +1329,23 @@ _src_configure() {
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${CMAKE_USE_DIR}" || die
 
+	if use rocm ; then
+		rocm_set_default_hipcc
+	fi
+
 	# FIX: forcing '-funsigned-char' fixes an anti-aliasing issue with menu
 	# shadows, see bug #276338 for reference
 	append-flags -funsigned-char
 	append-lfs-flags
 
-	local s=${OPENVDB_ABIS_MAJOR_VERS}
-	if use abi${s}-compat ; then
+	local s="${OPENVDB_ABIS_MAJOR_VERS}"
+	if use "abi${s}-compat" ; then
 		append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=${s}
 	fi
 
-	local mycmakeargs=()
-	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH="${EPREFIX}$(get_dest)" )
+	local mycmakeargs=(
+		-DCMAKE_INSTALL_BINDIR:PATH="${EPREFIX}$(get_dest)"
+	)
 
 	unset CMAKE_INCLUDE_PATH
 	unset CMAKE_LIBRARY_PATH
@@ -1550,7 +1583,7 @@ eerror
 
 	if [[ -n "${BLENDER_DISABLE_CUDA_AUTODETECT}" \
 		&& "${BLENDER_DISABLE_CUDA_AUTODETECT}" == "1" ]] ; then
-		:;
+		:
 	else
 		if use cuda ; then
 			blender_configure_optix
@@ -1560,7 +1593,9 @@ eerror
 	if (( ${#BLENDER_CMAKE_ARGS[@]} > 0 )) ; then
 		# Set as per-package environmental variable
 		# For setting up optix/cuda
-		mycmakeargs+=( ${BLENDER_CMAKE_ARGS[@]} )
+		mycmakeargs+=(
+			${BLENDER_CMAKE_ARGS[@]}
+		)
 	fi
 
 	cmake_src_configure
