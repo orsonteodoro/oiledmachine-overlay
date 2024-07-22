@@ -953,6 +953,14 @@ BDEPEND+="
 	nls? (
 		sys-devel/gettext
 	)
+	rocm? (
+		rocm_5_7? (
+			~sys-devel/llvm-roc${HIP_5_7_VERSION}:5.7
+		)
+		rocm_5_5? (
+			~sys-devel/llvm-roc${HIP_5_5_VERSION}:5.5
+		)
+	)
 	test? (
 		>=dev-libs/weston-12.0.92
 	)
