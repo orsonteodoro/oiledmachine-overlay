@@ -60,7 +60,7 @@ ewarn
 ewarn "(1) Go to ${HOMEPAGE}"
 ewarn "(2) Read and agree to the ${PN^^} EULA"
 ewarn "(3) Download ${SRC_URI} and place into ${distdir}"
-ewarn "(4) mkdir -p /etc/portage/package.license && echo \"${PN^^}-${PV%.*}-EULA\" > /etc/portage/package.license/${PN,,}"
+ewarn "(4) mkdir -p /etc/portage/package.license && echo \"sys-devel/aocc ${PN^^}-${PV%.*}-EULA\" >> /etc/portage/package.license/${PN,,}"
 ewarn "(5) Re-emerge the package"
 ewarn
 }
@@ -88,7 +88,7 @@ einfo "Sanitizing file/folder permissions"
 		elif [[ "${path}" =~ ".sh"$ ]] ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "symbolic link" ; then
-			:;
+			:
 		else
 			chmod 0644 "${path}" || die
 		fi

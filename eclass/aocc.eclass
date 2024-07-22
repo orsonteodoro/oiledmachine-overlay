@@ -64,6 +64,10 @@ eerror "AOCC_COMPAT must be defined"
 		BDEPEND+="
 			~sys-devel/aocc-4.0.0
 		"
+	elif _aocc_is_slot_compat "13" ; then
+		BDEPEND+="
+			~sys-devel/aocc-3.2.0
+		"
 	fi
 	BDEPEND+="
 			)
