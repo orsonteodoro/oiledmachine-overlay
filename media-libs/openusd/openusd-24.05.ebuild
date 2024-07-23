@@ -123,7 +123,7 @@ RDEPEND+="
 	!experimental? (
 		!<dev-cpp/tbb-2021:0=
 		<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
-		>=dev-cpp/tbb-2018.6:${LEGACY_TBB_SLOT}=
+		>=dev-cpp/tbb-2020.3:${LEGACY_TBB_SLOT}=
 	)
 	!python? (
 		>=dev-libs/boost-${BOOST_PV}:=
