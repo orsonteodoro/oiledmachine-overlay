@@ -69,7 +69,7 @@ LICENSE="
 "
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-IUSE="-bake-kernel -bitcode cuda rocm test ebuild-revision-4"
+IUSE="-bake-kernels -bitcode cuda encrypt precompile rocm test ebuild-revision-4"
 REQUIRED_USE="
 	^^ (
 		cuda
@@ -150,9 +150,20 @@ src_configure() {
 		-DGENERATE_BAKE_KERNEL=$(usex bake-kernel)
 		-DHIP_PATH="/opt/rocm-${ROCM_VERSION}"
 		-DHIPRT_PREFER_HIP_5=ON
+		-DNO_ENCRYPT=$(usex !encrypt)
 		-DNO_UNITTEST=$(usex !test)
+		-DPRECOMPILE=$(usex precompile)
 		-DUSE_CUDA=$(usex cuda)
 	)
+	if ! use encrypt && ! use bake-kernels ; then
+		mycmakeargs+=(
+			-DBAKE_KERNEL=OFF
+		)
+	else
+		mycmakeargs+=(
+			-DBAKE_KERNEL=ON
+		)
+	fi
 	if use cuda ; then
 		mycmakeargs+=(
 			-DHIP_COMPILER="nvcc"

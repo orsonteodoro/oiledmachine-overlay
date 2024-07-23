@@ -9,4 +9,18 @@
   <upstream>
     <remote-id type="github">GPUOpen-LibrariesAndSDKs/HIPRT</remote-id>
   </upstream>
+  <use>
+    <flag name="bake-kernel">
+      Generate baked kernels
+    </flag>
+    <flag name="bitcode">
+      Enable bitcode linking
+    </flag>
+    <flag name="encrypt">
+      Encrypt kernels
+    </flag>
+    <flag name="precompile">
+      Precompile kernels
+    </flag>
+  <use>
 </pkgmetadata>
