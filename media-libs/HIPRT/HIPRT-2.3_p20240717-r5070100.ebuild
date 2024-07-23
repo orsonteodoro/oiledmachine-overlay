@@ -147,7 +147,7 @@ src_configure() {
 		-DBITCODE=$(usex bitcode)
 		-DCMAKE_INSTALL_LIBDIR="$(rocm_get_libdir)"
 		-DCMAKE_INSTALL_PREFIX="/opt/rocm-${ROCM_VERSION}"
-		-DGENERATE_BAKE_KERNEL=$(usex bake-kernel)
+		-DGENERATE_BAKE_KERNEL=$(usex bake-kernels)
 		-DHIP_PATH="/opt/rocm-${ROCM_VERSION}"
 		-DHIPRT_PREFER_HIP_5=ON
 		-DNO_ENCRYPT=$(usex !encrypt)
