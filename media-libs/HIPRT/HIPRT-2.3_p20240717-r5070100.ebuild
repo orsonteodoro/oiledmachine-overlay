@@ -71,6 +71,10 @@ RESTRICT="test"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 IUSE="-bake-kernels -bitcode cuda encrypt precompile rocm test ebuild-revision-4"
 REQUIRED_USE="
+	?? (
+		bake-kernels
+		bitcode
+	)
 	^^ (
 		cuda
 		rocm
