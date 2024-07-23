@@ -1,0 +1,44 @@
+From 4eb3743881df056ebaa1853ac5169f8361b84818 Mon Sep 17 00:00:00 2001
+From: salipourto <sahar.alipourkashi@amd.com>
+Date: Fri, 19 Jul 2024 15:07:02 -0700
+Subject: [PATCH 19/19] Fixed the broken compatibilty between HIPRT 2.0 and
+ HIPRT 2.2 for custom geometry bounding box
+
+---
+ intern/cycles/device/hiprt/device_impl.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/intern/cycles/device/hiprt/device_impl.cpp b/intern/cycles/device/hiprt/device_impl.cpp
+index 7189eff7772..0584056373e 100644
+--- a/intern/cycles/device/hiprt/device_impl.cpp
++++ b/intern/cycles/device/hiprt/device_impl.cpp
+@@ -458,7 +458,7 @@ hiprtGeometryBuildInput HIPRTDevice::prepare_triangle_blas(BVHHIPRT *bvh, Mesh *
+     bvh->custom_prim_aabb.aabbs = (void *)bvh->custom_primitive_bound.device_pointer;
+ 
+     geom_input.type = hiprtPrimitiveTypeAABBList;
+-    geom_input.primitive.aabbList.aabbs = &bvh->custom_prim_aabb;
++    geom_input.primitive.aabbList = bvh->custom_prim_aabb;
+     geom_input.geomType = Motion_Triangle;
+   }
+   else {
+@@ -613,7 +613,7 @@ hiprtGeometryBuildInput HIPRTDevice::prepare_curve_blas(BVHHIPRT *bvh, Hair *hai
+   bvh->custom_prim_aabb.aabbs = (void *)bvh->custom_primitive_bound.device_pointer;
+ 
+   geom_input.type = hiprtPrimitiveTypeAABBList;
+-  geom_input.primitive.aabbList.aabbs = &bvh->custom_prim_aabb;
++  geom_input.primitive.aabbList = bvh->custom_prim_aabb;
+   geom_input.geomType = Curve;
+ 
+   return geom_input;
+@@ -714,7 +714,7 @@ hiprtGeometryBuildInput HIPRTDevice::prepare_point_blas(BVHHIPRT *bvh, PointClou
+   bvh->custom_prim_aabb.aabbs = (void *)bvh->custom_primitive_bound.device_pointer;
+ 
+   geom_input.type = hiprtPrimitiveTypeAABBList;
+-  geom_input.primitive.aabbList.aabbs = &bvh->custom_prim_aabb;
++  geom_input.primitive.aabbList = bvh->custom_prim_aabb;
+   geom_input.geomType = Point;
+ 
+   return geom_input;
+-- 
+2.30.2
+

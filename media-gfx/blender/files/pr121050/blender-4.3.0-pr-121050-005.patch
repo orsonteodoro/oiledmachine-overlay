@@ -1,0 +1,377 @@
+From a2e716965837ca71a388d4a6eb8a48f5beaef149 Mon Sep 17 00:00:00 2001
+From: salipourto <sahar.alipourkashi@amd.com>
+Date: Wed, 1 May 2024 17:47:33 -0700
+Subject: [PATCH 05/19] HIPRT Linux, Code Review #1 Conflict resolved for
+ harvest.cmake
+
+---
+ CMakeLists.txt                                |   4 +-
+ .../build_environment/cmake/harvest.cmake     | 202 ++++++++++++++++++
+ .../build_environment/cmake/hiprt.cmake       |  12 +-
+ build_files/cmake/Modules/FindHIPRT.cmake     |   2 +-
+ .../cmake/platform/platform_unix.cmake        |   2 +
+ intern/cycles/blender/addon/properties.py     |   7 +-
+ intern/cycles/kernel/CMakeLists.txt           |   1 -
+ source/creator/CMakeLists.txt                 |  18 ++
+ 8 files changed, 234 insertions(+), 14 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 60cfefb6997..36b45639762 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -706,7 +706,7 @@ if(NOT APPLE AND NOT (WIN32 AND CMAKE_SYSTEM_PROCESSOR STREQUAL "ARM64"))
+   mark_as_advanced(WITH_CYCLES_DEVICE_HIP)
+   mark_as_advanced(CYCLES_HIP_BINARIES_ARCH)
+ 
+-   option(WITH_CYCLES_DEVICE_HIPRT "Enable Cycles AMD HIPRT support" ON)
++   option(WITH_CYCLES_DEVICE_HIPRT "Enable Cycles AMD HIPRT support" OFF)
+    mark_as_advanced(WITH_CYCLES_DEVICE_HIPRT)
+ 
+ endif()
+@@ -2772,8 +2772,8 @@ if(FIRST_RUN)
+       info_cfg_option(WITH_CYCLES_ONEAPI_BINARIES)
+       info_cfg_option(WITH_CYCLES_DEVICE_HIP)
+       info_cfg_option(WITH_CYCLES_HIP_BINARIES)
++      info_cfg_option(WITH_CYCLES_DEVICE_HIPRT)
+     endif()
+-    info_cfg_option(WITH_CYCLES_DEVICE_HIPRT)
+   endif()
+ 
+   info_cfg_text("")
+diff --git a/build_files/build_environment/cmake/harvest.cmake b/build_files/build_environment/cmake/harvest.cmake
+index d5fcbff1a67..67d50f18e30 100644
+--- a/build_files/build_environment/cmake/harvest.cmake
++++ b/build_files/build_environment/cmake/harvest.cmake
+@@ -121,4 +121,206 @@ else()
+         endif()\n
+       endforeach()")
+   endfunction()
++
++  harvest(alembic/include alembic/include "*.h")
++  harvest(alembic/lib/libAlembic.a alembic/lib/libAlembic.a)
++  harvest_rpath_bin(alembic/bin alembic/bin "*")
++  harvest(brotli/include brotli/include "*.h")
++  harvest(brotli/lib brotli/lib "*.a")
++  harvest(boost/include boost/include "*")
++  harvest_rpath_lib(boost/lib boost/lib "*${SHAREDLIBEXT}*")
++  harvest(imath/include imath/include "*.h")
++  harvest_rpath_lib(imath/lib imath/lib "*${SHAREDLIBEXT}*")
++  harvest(ffmpeg/include ffmpeg/include "*.h")
++  harvest(ffmpeg/lib ffmpeg/lib "*.a")
++  harvest(fftw3/include fftw3/include "*.h")
++  harvest(fftw3/lib fftw3/lib "*.a")
++  harvest(flac/lib sndfile/lib "libFLAC.a")
++  harvest(freetype/include freetype/include "*.h")
++  harvest(freetype/lib/libfreetype2ST.a freetype/lib/libfreetype.a)
++  harvest(fribidi/include fribidi/include "*.h")
++  harvest(fribidi/lib fribidi/lib "*.a")
++  harvest(epoxy/include epoxy/include "*.h")
++  harvest(epoxy/lib epoxy/lib "*.a")
++  harvest(gmp/include gmp/include "*.h")
++  harvest(gmp/lib gmp/lib "*.a")
++  harvest(harfbuzz/include harfbuzz/include "*.h")
++  harvest(harfbuzz/lib harfbuzz/lib "*.a")
++  harvest(jemalloc/include jemalloc/include "*.h")
++  harvest(jemalloc/lib jemalloc/lib "*.a")
++  harvest(jpeg/include jpeg/include "*.h")
++  harvest(jpeg/lib jpeg/lib "libjpeg.a")
++  harvest(lame/lib ffmpeg/lib "*.a")
++  if(NOT APPLE)
++    harvest(level-zero/include/level_zero level-zero/include/level_zero "*.h")
++    harvest(level-zero/lib level-zero/lib "*${SHAREDLIBEXT}*")
++    harvest(hiprt/hiprt hiprt/hiprt "*.h")
++    harvest(hiprt/hiprt/impl hiprt/hiprt/impl "*.h")
++    harvest(hiprt/dist/bin/Release hiprt/bin "*${SHAREDLIBEXT}*")
++  endif()
++  harvest(llvm/bin llvm/bin "clang-format")
++  if(BUILD_CLANG_TOOLS)
++    harvest(llvm/bin llvm/bin "clang-tidy")
++    harvest(llvm/share/clang llvm/share "run-clang-tidy.py")
++  endif()
++  harvest(llvm/include llvm/include "*")
++  harvest(llvm/bin llvm/bin "llvm-config")
++  harvest(llvm/lib llvm/lib "libLLVM*.a")
++  harvest(llvm/lib llvm/lib "libclang*.a")
++  harvest(llvm/lib/clang llvm/lib/clang "*.h")
++  if(APPLE)
++    harvest(openmp/lib openmp/lib "libomp.dylib")
++    harvest(openmp/include openmp/include "*.h")
++  endif()
++  if(BLENDER_PLATFORM_ARM)
++    harvest(sse2neon sse2neon "*.h")
++  endif()
++  harvest(ogg/lib ffmpeg/lib "*.a")
++  harvest(openal/include openal/include "*.h")
++  if(UNIX AND NOT APPLE)
++    harvest(openal/lib openal/lib "*.a")
++
++    harvest(zlib/include zlib/include "*.h")
++    harvest(zlib/lib zlib/lib "*.a")
++
++    harvest(xml2/include xml2/include "*.h")
++    harvest(xml2/lib xml2/lib "*.a")
++
++    harvest(
++      wayland-protocols/share/wayland-protocols
++      wayland-protocols/share/wayland-protocols/
++      "*.xml"
++    )
++    harvest(wayland/bin wayland/bin "wayland-scanner")
++    harvest(wayland/include wayland/include "*.h")
++    harvest(wayland_libdecor/include wayland_libdecor/include "*.h")
++    # Only needed for running the WESTON compositor.
++    harvest(wayland/lib64 wayland/lib64 "*")
++
++    harvest(
++      wayland_weston/
++      wayland_weston/
++      "*"
++    )
++  else()
++    harvest(blosc/lib openvdb/lib "*.a")
++    harvest(xml2/lib opencollada/lib "*.a")
++  endif()
++  harvest(opencollada/include/opencollada opencollada/include "*.h")
++  harvest(opencollada/lib/opencollada opencollada/lib "*.a")
++  harvest(opencolorio/include opencolorio/include "*.h")
++  harvest_rpath_lib(opencolorio/lib opencolorio/lib "*${SHAREDLIBEXT}*")
++  harvest_rpath_python(
++    opencolorio/lib/python${PYTHON_SHORT_VERSION}
++    python/lib/python${PYTHON_SHORT_VERSION}
++    "*"
++  )
++  harvest(openexr/include openexr/include "*.h")
++  harvest_rpath_lib(openexr/lib openexr/lib "*${SHAREDLIBEXT}*")
++  harvest_rpath_bin(openimageio/bin openimageio/bin "idiff")
++  harvest_rpath_bin(openimageio/bin openimageio/bin "maketx")
++  harvest_rpath_bin(openimageio/bin openimageio/bin "oiiotool")
++  harvest(openimageio/include openimageio/include "*")
++  harvest_rpath_lib(openimageio/lib openimageio/lib "*${SHAREDLIBEXT}*")
++  harvest_rpath_python(
++    openimageio/lib/python${PYTHON_SHORT_VERSION}
++    python/lib/python${PYTHON_SHORT_VERSION}
++    "*"
++  )
++  harvest(openimagedenoise/include openimagedenoise/include "*")
++  harvest_rpath_lib(openimagedenoise/lib openimagedenoise/lib "*${SHAREDLIBEXT}*")
++  harvest(openimagedenoise/lib/cmake/OpenImageDenoise-${OIDN_VERSION} openimagedenoise/lib/cmake/OpenImageDenoise "*.cmake")
++  harvest(embree/include embree/include "*.h")
++  harvest(embree/lib embree/lib "*.a")
++  harvest_rpath_lib(embree/lib embree/lib "*${SHAREDLIBEXT}*")
++  harvest(openpgl/include openpgl/include "*.h")
++  harvest(openpgl/lib openpgl/lib "*.a")
++  harvest(openpgl/lib/cmake/openpgl-${OPENPGL_SHORT_VERSION} openpgl/lib/cmake/openpgl "*.cmake")
++  harvest(openjpeg/include/openjpeg-${OPENJPEG_SHORT_VERSION} openjpeg/include "*.h")
++  harvest(openjpeg/lib openjpeg/lib "*.a")
++  harvest(opensubdiv/include opensubdiv/include "*.h")
++  harvest_rpath_lib(opensubdiv/lib opensubdiv/lib "*${SHAREDLIBEXT}*")
++  harvest(openvdb/include/openvdb openvdb/include/openvdb "*.h")
++  harvest(openvdb/include/nanovdb openvdb/include/nanovdb "*.h")
++  harvest_rpath_lib(openvdb/lib openvdb/lib "*${SHAREDLIBEXT}*")
++  harvest_rpath_python(
++    openvdb/lib/python${PYTHON_SHORT_VERSION}
++    python/lib/python${PYTHON_SHORT_VERSION}
++    "*pyopenvdb*"
++  )
++  harvest(xr_openxr_sdk/include/openxr xr_openxr_sdk/include/openxr "*.h")
++  harvest(xr_openxr_sdk/lib xr_openxr_sdk/lib "*.a")
++  harvest_rpath_bin(osl/bin osl/bin "oslc")
++  harvest(osl/include osl/include "*.h")
++  harvest_rpath_lib(osl/lib osl/lib "*${SHAREDLIBEXT}*")
++  harvest(osl/share/OSL/shaders osl/share/OSL/shaders "*.h")
++  harvest(png/include png/include "*.h")
++  harvest(png/lib png/lib "*.a")
++  harvest(pugixml/include pugixml/include "*.hpp")
++  harvest(pugixml/lib pugixml/lib "*.a")
++  harvest(python/bin python/bin "python${PYTHON_SHORT_VERSION}")
++  harvest(python/include python/include "*h")
++  harvest(python/lib python/lib "*")
++  harvest(sdl/include/SDL2 sdl/include "*.h")
++  harvest(sdl/lib sdl/lib "libSDL2.a")
++  harvest(sndfile/include sndfile/include "*.h")
++  harvest(sndfile/lib sndfile/lib "*.a")
++  harvest(spnav/include spnav/include "*.h")
++  harvest(spnav/lib spnav/lib "*.a")
++  harvest(tbb/include tbb/include "*.h")
++  harvest_rpath_lib(tbb/lib tbb/lib "libtbb${SHAREDLIBEXT}*")
++  harvest(theora/lib ffmpeg/lib "*.a")
++  harvest(tiff/include tiff/include "*.h")
++  harvest(tiff/lib tiff/lib "*.a")
++  harvest(vorbis/lib ffmpeg/lib "*.a")
++  harvest(opus/lib ffmpeg/lib "*.a")
++  harvest(vpx/lib ffmpeg/lib "*.a")
++  harvest(x264/lib ffmpeg/lib "*.a")
++  harvest(aom/lib ffmpeg/lib "*.a")
++  harvest(webp/lib webp/lib "*.a")
++  harvest(webp/include webp/include "*.h")
++  harvest(usd/include usd/include "*.h")
++  harvest(usd/include usd/include "*.hpp")
++  harvest_rpath_lib(usd/lib usd/lib "libusd_ms${SHAREDLIBEXT}")
++  harvest(usd/lib/usd usd/lib/usd "*")
++  harvest_rpath_python(
++    usd/lib/python/pxr
++    python/lib/python${PYTHON_SHORT_VERSION}/site-packages/pxr
++    "*"
++  )
++  harvest(usd/plugin usd/plugin "*")
++  harvest(materialx/include materialx/include "*.h")
++  harvest_rpath_lib(materialx/lib materialx/lib "*${SHAREDLIBEXT}*")
++  harvest(materialx/libraries materialx/libraries "*")
++  harvest(materialx/lib/cmake/MaterialX materialx/lib/cmake/MaterialX "*.cmake")
++  harvest_rpath_python(
++    materialx/python/MaterialX
++    python/lib/python${PYTHON_SHORT_VERSION}/site-packages/MaterialX
++    "*"
++  )
++  # We do not need anything from the resources folder, but the MaterialX config
++  # file will complain if the folder does not exist, so just copy the readme.md
++  # files to ensure the folder will exist.
++  harvest(materialx/resources materialx/resources "README.md")
++  harvest(potrace/include potrace/include "*.h")
++  harvest(potrace/lib potrace/lib "*.a")
++  harvest(haru/include haru/include "*.h")
++  harvest(haru/lib haru/lib "*.a")
++  harvest(zstd/include zstd/include "*.h")
++  harvest(zstd/lib zstd/lib "*.a")
++  harvest(shaderc shaderc "*")
++  harvest(vulkan_headers vulkan "*")
++  harvest_rpath_lib(vulkan_loader/lib vulkan/lib "*${SHAREDLIBEXT}*")
++  if(APPLE)
++    harvest(vulkan_loader/loader vulkan/loader "*")
++  endif()
++
++  if(UNIX AND NOT APPLE)
++    harvest(libglu/lib mesa/lib "*${SHAREDLIBEXT}*")
++    harvest(mesa/lib64 mesa/lib "*${SHAREDLIBEXT}*")
++
++    harvest(dpcpp dpcpp "*")
++    harvest(igc dpcpp/lib/igc "*")
++    harvest(ocloc dpcpp/lib/ocloc "*")
++  endif()
+ endif()
+diff --git a/build_files/build_environment/cmake/hiprt.cmake b/build_files/build_environment/cmake/hiprt.cmake
+index 585f6f03089..9818a1ae628 100644
+--- a/build_files/build_environment/cmake/hiprt.cmake
++++ b/build_files/build_environment/cmake/hiprt.cmake
+@@ -8,7 +8,7 @@
+ set(HIPRT_CMAKE_FLAGS ${DEFAULT_CMAKE_FLAGS})
+ 
+ set(HIPRT_EXTRA_ARGS
+-  --DHIPRT_EXPORTS=ON
++  -DHIPRT_EXPORTS=ON
+   -D__USE_HIP__=ON
+   -DHIPRT_BITCODE_LINKING=ON
+   -DHIPRT_LOAD_FROM_STRING=OFF
+@@ -43,18 +43,18 @@ if(WIN32)
+     ExternalProject_Add_Step(external_hiprt after_install
+       COMMAND ${CMAKE_COMMAND} -E copy_directory
+         ${LIBDIR}/hiprt/hiprt
+-        ${HARVEST_TARGET}/hiprt/include
++        ${HARVEST_TARGET}/hiprt/hiprt
+       COMMAND ${CMAKE_COMMAND} -E copy
+-        ${LIBDIR}/hiprt/dist/bin/Release/hiprt64.dll
+-        ${HARVEST_TARGET}/hiprt/bin/hiprt64.dll
++        ${LIBDIR}/hiprt/dist/bin/Release/hiprt*64.dll
++        ${HARVEST_TARGET}/hiprt/bin/hiprt*64.dll
+ 
+       DEPENDEES install
+     )
+   else()
+     ExternalProject_Add_Step(external_hiprt after_install
+       COMMAND ${CMAKE_COMMAND} -E copy
+-        ${LIBDIR}/hiprt/dist/bin/Release/hiprt64.dll
+-        ${HARVEST_TARGET}/hiprt/bin/hiprt64.dll
++        ${LIBDIR}/hiprt/dist/bin/Debug/hiprt*64D.dll
++        ${HARVEST_TARGET}/hiprt/bin/hiprt*64D.dll
+ 
+       DEPENDEES install
+     )
+diff --git a/build_files/cmake/Modules/FindHIPRT.cmake b/build_files/cmake/Modules/FindHIPRT.cmake
+index c53efacf1c2..b27222dd143 100644
+--- a/build_files/cmake/Modules/FindHIPRT.cmake
++++ b/build_files/cmake/Modules/FindHIPRT.cmake
+@@ -49,7 +49,7 @@ endif()
+ 
+ find_path(HIPRT_LIB_DIR
+   NAMES
+-    hiprt${_hiprt_version}64.dll
++    ${HIPRT_DYNAMIC_LIB}
+   HINTS
+     ${_hiprt_SEARCH_DIRS}
+   PATH_SUFFIXES
+diff --git a/build_files/cmake/platform/platform_unix.cmake b/build_files/cmake/platform/platform_unix.cmake
+index e8af939761d..676ff137024 100644
+--- a/build_files/cmake/platform/platform_unix.cmake
++++ b/build_files/cmake/platform/platform_unix.cmake
+@@ -634,6 +634,8 @@ if(DEFINED LIBDIR)
+   without_system_libs_end()
+ endif()
+ 
++add_bundled_libraries(hiprt/bin)
++
+ # ----------------------------------------------------------------------------
+ # Build and Link Flags
+ 
+diff --git a/intern/cycles/blender/addon/properties.py b/intern/cycles/blender/addon/properties.py
+index dbad9f61f18..3972ba332c9 100644
+--- a/intern/cycles/blender/addon/properties.py
++++ b/intern/cycles/blender/addon/properties.py
+@@ -1831,10 +1831,9 @@ class CyclesPreferences(bpy.types.AddonPreferences):
+ 
+         if compute_device_type == 'HIP':
+             import platform
+-            if platform.system() == "Windows":  # HIP-RT is currently only supported on Windows
+-                row = layout.row()
+-                row.active = has_rt_api_support['HIP']
+-                row.prop(self, "use_hiprt")
++            row = layout.row()
++            row.active = has_rt_api_support['HIP']
++            row.prop(self, "use_hiprt")
+ 
+         elif compute_device_type == 'ONEAPI' and _cycles.with_embree_gpu:
+             row = layout.row()
+diff --git a/intern/cycles/kernel/CMakeLists.txt b/intern/cycles/kernel/CMakeLists.txt
+index b858f4efb04..f02b77e364b 100644
+--- a/intern/cycles/kernel/CMakeLists.txt
++++ b/intern/cycles/kernel/CMakeLists.txt
+@@ -817,7 +817,6 @@ if(WITH_CYCLES_DEVICE_HIPRT AND WITH_CYCLES_HIP_BINARIES)
+     COMMAND ${hiprt_compile_command} ${hiprt_compile_flags_sdk_bc}
+     DEPENDS ${HIPRT_INCLUDE_DIR}/hiprt/impl/hiprt_kernels_bitcode.h)
+ 
+-
+   add_custom_command(
+     OUTPUT  ${bvh_file}
+     COMMAND ${hiprt_compile_command} ${hiprt_compile_flags_bvh}
+diff --git a/source/creator/CMakeLists.txt b/source/creator/CMakeLists.txt
+index 4329cb35fc0..7136cbdd5e3 100644
+--- a/source/creator/CMakeLists.txt
++++ b/source/creator/CMakeLists.txt
+@@ -1830,6 +1830,24 @@ if(WIN32)
+   endforeach()
+ endif()
+ 
++if(WIN32)
++  if(WITH_CYCLES_DEVICE_HIPRT)
++    #place holder, HIPRT_VERSION is out of scope, this won't work
++    if(EXISTS ${LIBDIR}/hiprt/bin/hiprt${HIPRT_VERSION}64.dll)
++      windows_install_shared_manifest(
++        FILES
++        ${LIBDIR}/hiprt/bin/hiprt${HIPRT_VERSION}64.dll
++        RELEASE
++      )
++      windows_install_shared_manifest(
++        FILES
++        ${LIBDIR}/hiprt/bin/hiprt${HIPRT_VERSION}64D.dll
++        DEBUG
++      )
++    endif()
++  endif()
++endif()
++
+ # `vcpkg` substitutes our libraries with theirs, which will cause issues when you you run
+ # these builds on other systems due to missing DLL's. So we opt out the use of `vcpkg`.
+ if(WIN32)
+-- 
+2.30.2
+
+

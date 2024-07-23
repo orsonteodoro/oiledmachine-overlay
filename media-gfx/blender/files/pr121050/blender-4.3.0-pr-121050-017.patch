@@ -1,0 +1,25 @@
+From bdad2a737bf3b8d8309b561b270b71d765353697 Mon Sep 17 00:00:00 2001
+From: salipourto <sahar.alipourkashi@amd.com>
+Date: Wed, 17 Jul 2024 12:12:51 -0700
+Subject: [PATCH 17/19] Updated hiprt.cmake to align with changes at
+ https://projects.blender.org/blender/blender/pulls/123196
+
+---
+ build_files/build_environment/cmake/hiprt.cmake | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/build_files/build_environment/cmake/hiprt.cmake b/build_files/build_environment/cmake/hiprt.cmake
+index c7e473f089d..ff48b6eebbb 100644
+--- a/build_files/build_environment/cmake/hiprt.cmake
++++ b/build_files/build_environment/cmake/hiprt.cmake
+@@ -69,4 +69,6 @@ else()
+ 
+     DEPENDEES install
+   )
++  harvest(external_hiprt hiprt/include hiprt/include "*.h")
++  harvest(external_hiprt hiprt/bin hiprt/lib "*${SHAREDLIBEXT}*")
+ endif()
+-- 
+2.30.2
+
+

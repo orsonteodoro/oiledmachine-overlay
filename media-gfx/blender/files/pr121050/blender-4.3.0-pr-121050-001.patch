@@ -1,0 +1,29 @@
+From 290c860a3d3034d2b777a24a6282afe3ced1cdee Mon Sep 17 00:00:00 2001
+From: salipourto <sahar.alipourkashi@amd.com>
+Date: Tue, 26 Mar 2024 12:01:05 -0700
+Subject: [PATCH 01/19] 1. Fix for Cycles Crash on deleting/hiding all mesh
+ objects with HIP RT (#112983) 2. Update for hip path to also include ROCm 6
+ driver
+
+# Conflicts:
+#	intern/cycles/device/hiprt/device_impl.cpp
+---
+ intern/cycles/device/hiprt/device_impl.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/intern/cycles/device/hiprt/device_impl.cpp b/intern/cycles/device/hiprt/device_impl.cpp
+index c326ef3259c..8c3c9e0bd5b 100644
+--- a/intern/cycles/device/hiprt/device_impl.cpp
++++ b/intern/cycles/device/hiprt/device_impl.cpp
+@@ -799,6 +799,7 @@ hiprtScene HIPRTDevice::build_tlas(BVHHIPRT *bvh,
+ {
+ 
+   size_t num_object = objects.size();
++
+   if (num_object == 0) {
+     return 0;
+   }
+-- 
+2.30.2
+
+

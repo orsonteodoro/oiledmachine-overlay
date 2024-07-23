@@ -94,10 +94,3 @@ sci-libs/jaxlib clang
 
 # Slotted deps not available yet or not planned
 =media-gfx/blender-3.3* rocm_4_3 rocm_4_2 rocm_4_1 rocm_4_0 rocm_3_10 rocm_3_9 rocm_3_8 rocm_3_7 rocm_3_5
-
-# No tarball archives for HIPRT 2.0
-# Backport to applies HIPRT 2.3 patch requires lot of edits.
-# The hiprt USE will be allowed in a future release (4.3+).
-=media-gfx/blender-3.6* hiprt
-=media-gfx/blender-4.1* hiprt
-=media-gfx/blender-4.2* hiprt

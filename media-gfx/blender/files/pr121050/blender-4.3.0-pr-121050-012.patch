@@ -1,0 +1,135 @@
+From dc72b84f2468e581e44caa6f08cfd1679624838c Mon Sep 17 00:00:00 2001
+From: Brecht Van Lommel <brecht@blender.org>
+Date: Tue, 11 Jun 2024 21:12:49 +0200
+Subject: [PATCH 12/19] WIP: Use latest RC and CMake build system
+
+---
+ build_files/build_environment/CMakeLists.txt  |  1 -
+ .../build_environment/cmake/download.cmake    |  1 -
+ .../build_environment/cmake/hiprt.cmake       | 32 ++++---------------
+ .../build_environment/cmake/orochi.cmake      | 16 ----------
+ .../build_environment/cmake/versions.cmake    | 10 ++----
+ 5 files changed, 9 insertions(+), 51 deletions(-)
+ delete mode 100644 build_files/build_environment/cmake/orochi.cmake
+
+diff --git a/build_files/build_environment/CMakeLists.txt b/build_files/build_environment/CMakeLists.txt
+index c68fbe73ce9..44261b2db0a 100644
+--- a/build_files/build_environment/CMakeLists.txt
++++ b/build_files/build_environment/CMakeLists.txt
+@@ -90,7 +90,6 @@ include(cmake/harfbuzz.cmake)
+ if(NOT APPLE)
+   include(cmake/xr_openxr.cmake)
+   if(NOT BLENDER_PLATFORM_ARM)
+-    include(cmake/orochi.cmake)
+     include(cmake/hiprt.cmake)
+   endif()
+   if(NOT BLENDER_PLATFORM_WINDOWS_ARM)
+diff --git a/build_files/build_environment/cmake/download.cmake b/build_files/build_environment/cmake/download.cmake
+index b8b0dd3064c..5dc48258a95 100644
+--- a/build_files/build_environment/cmake/download.cmake
++++ b/build_files/build_environment/cmake/download.cmake
+@@ -181,4 +181,3 @@ download_source(VULKAN_LOADER)
+ download_source(PYBIND11)
+ download_source(DEFLATE)
+ download_source(HIPRT)
+-download_source(OROCHI)
+diff --git a/build_files/build_environment/cmake/hiprt.cmake b/build_files/build_environment/cmake/hiprt.cmake
+index 393fea2b2ef..129b5f327c6 100644
+--- a/build_files/build_environment/cmake/hiprt.cmake
++++ b/build_files/build_environment/cmake/hiprt.cmake
+@@ -10,13 +10,11 @@ set(HIPRT_CMAKE_FLAGS ${DEFAULT_CMAKE_FLAGS})
+ get_filename_component(_hip_path ${HIP_HIPCC_EXECUTABLE} DIRECTORY)
+ get_filename_component(_hip_path ${_hip_path} DIRECTORY)
+ 
+-if(WIN32)
+-  set(hiprt_configure set HIP_PATH=${_hip_path} && set PYTHON_BIN=${PYTHON_BINARY} && .\\tools\\premake5\\win\\premake5.exe vs2019)
+-  set(hiprt_build msbuild /m build/hiprt.sln /p:Configuration=Release)
+-else()
+-  set(hiprt_configure HIP_PATH=${_hip_path} ./tools/premake5/linux64/premake5 gmake)
+-  set(hiprt_build make -C build -j config=release_x64)
+-endif()
++set(HIPRT_EXTRA_ARGS
++  -DCMAKE_BUILD_TYPE=Release
++  -DHIP_PATH=${_hip_path}
++  -DBITCODE=ON
++)
+ 
+ ExternalProject_Add(external_hiprt
+   URL file://${PACKAGE_DIR}/${HIPRT_FILE}
+@@ -25,26 +23,10 @@ ExternalProject_Add(external_hiprt
+   PREFIX ${BUILD_DIR}/hiprt
+   INSTALL_DIR ${LIBDIR}/hiprt
+ 
+-  PATCH_COMMAND
+-    ${PATCH_CMD} -p 1 -d ${BUILD_DIR}/hiprt/src/external_hiprt < ${PATCH_DIR}/hiprt.diff &&
+-    ${CMAKE_COMMAND} -E copy_directory ${BUILD_DIR}/orochi/src/external_orochi ${BUILD_DIR}/hiprt/src/external_hiprt/contrib/Orochi
+-
+-  CONFIGURE_COMMAND
+-    cd ${BUILD_DIR}/hiprt/src/external_hiprt/ &&
+-    ${hiprt_configure} --bitcode=true --no-unittest=true --no-encrypt=true
+-  BUILD_COMMAND
+-    cd ${BUILD_DIR}/hiprt/src/external_hiprt/ &&
+-    ${hiprt_build}
+-  INSTALL_COMMAND
+-    ${CMAKE_COMMAND} -E copy ${BUILD_DIR}/hiprt/src/external_hiprt/dist/bin/Release/${LIBPREFIX}hiprt${HIPRT_LIBRARY_VERSION}64${SHAREDLIBEXT} ${LIBDIR}/hiprt/bin/${LIBPREFIX}hiprt64${SHAREDLIBEXT} &&
+-    ${CMAKE_COMMAND} -E copy_directory ${BUILD_DIR}/hiprt/src/external_hiprt/hiprt ${LIBDIR}/hiprt/include/hiprt &&
+-    ${CMAKE_COMMAND} -E copy_directory ${BUILD_DIR}/hiprt/src/external_hiprt/contrib/Orochi/ParallelPrimitives ${LIBDIR}/hiprt/include/orochi/ParallelPrimitives
++  CMAKE_ARGS ${DEFAULT_CMAKE_ARGS} ${HIPRT_EXTRA_ARGS} 
+ )
+ 
+-add_dependencies(
+-  external_hiprt
+-  external_orochi
+-)
++# TODO: check installed files are as expected.
+ 
+ if(WIN32)
+   if(BUILD_MODE STREQUAL Release)
+diff --git a/build_files/build_environment/cmake/orochi.cmake b/build_files/build_environment/cmake/orochi.cmake
+deleted file mode 100644
+index 8bd0308adbd..00000000000
+--- a/build_files/build_environment/cmake/orochi.cmake
++++ /dev/null
+@@ -1,16 +0,0 @@
+-# SPDX-FileCopyrightText: 2017-2024 Blender Authors
+-#
+-# SPDX-License-Identifier: GPL-2.0-or-later
+-#
+-# Only download, will be copied as submodule for hiprt.
+-
+-ExternalProject_Add(external_orochi
+-  URL file://${PACKAGE_DIR}/${OROCHI_FILE}
+-  DOWNLOAD_DIR ${DOWNLOAD_DIR}
+-  URL_HASH ${OROCHI_HASH_TYPE}=${OROCHI_HASH}
+-  PREFIX ${BUILD_DIR}/orochi
+-
+-  CONFIGURE_COMMAND echo .
+-  BUILD_COMMAND echo .
+-  INSTALL_COMMAND echo .
+-)
+diff --git a/build_files/build_environment/cmake/versions.cmake b/build_files/build_environment/cmake/versions.cmake
+index 705e3964e7a..37632f5bc14 100644
+--- a/build_files/build_environment/cmake/versions.cmake
++++ b/build_files/build_environment/cmake/versions.cmake
+@@ -870,15 +870,9 @@ set(PYBIND11_HASH ce07bfd5089245da7807b3faf6cbc878)
+ set(PYBIND11_HASH_TYPE MD5)
+ set(PYBIND11_FILE pybind-v${PYBIND11_VERSION}.tar.gz)
+ 
+-set(HIPRT_VERSION 5ffcea6322519b25500f6d3140bbb42dd06fb464)
++set(HIPRT_VERSION 5d3b220544676eb00f68a517c88992ba043b3b01)
+ set(HIPRT_LIBRARY_VERSION 02003)
+ set(HIPRT_URI https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/archive/${HIPRT_VERSION}.tar.gz)
+-set(HIPRT_HASH ccdeb345c4dc07793b6a106e113a45d6)
++set(HIPRT_HASH b5cf9556e5bb257e61d570adb963b63f)
+ set(HIPRT_HASH_TYPE MD5)
+ set(HIPRT_FILE hiprt-${HIPRT_VERSION}.tar.gz)
+-
+-set(OROCHI_VERSION c82a229f5a424117855b86b78b480d003419bf66)
+-set(OROCHI_URI https://github.com/amdadvtech/Orochi/archive/${OROCHI_VERSION}.tar.gz)
+-set(OROCHI_HASH c71c311e5ca0614732f8cb1db40035b9)
+-set(OROCHI_HASH_TYPE MD5)
+-set(OROCHI_FILE orochi-${OROCHI_VERSION}.tar.gz)
+-- 
+2.30.2
+
+

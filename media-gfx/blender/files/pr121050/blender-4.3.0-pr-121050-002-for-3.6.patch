@@ -1,0 +1,607 @@
+diff '--color=auto' -urp blender-3.6.13.orig/build_files/cmake/Modules/FindHIPRT.cmake blender-3.6.13/build_files/cmake/Modules/FindHIPRT.cmake
+--- blender-3.6.13.orig/build_files/cmake/Modules/FindHIPRT.cmake	2023-09-14 22:05:56.000000000 -0700
++++ blender-3.6.13/build_files/cmake/Modules/FindHIPRT.cmake	2024-07-22 16:58:27.987914984 -0700
+@@ -37,7 +37,7 @@ if(HIPRT_INCLUDE_DIR)
+ 
+   find_file(HIPRT_BITCODE
+     NAMES
+-      hiprt${_hiprt_version}_amd_lib_win.bc
++      hiprt${_hiprt_version}_6.0_amd_lib_win.bc # this has to be handled automatically, should not hardcode rcom version
+     HINTS
+       ${HIPRT_ROOT_DIR}/bin
+       ${HIPRT_ROOT_DIR}/dist/bin/Release
+Only in blender-3.6.13/build_files/cmake/Modules: FindHIPRT.cmake.orig
+diff '--color=auto' -urp blender-3.6.13.orig/extern/hipew/include/hiprtew.h blender-3.6.13/extern/hipew/include/hiprtew.h
+--- blender-3.6.13.orig/extern/hipew/include/hiprtew.h	2023-06-20 12:03:48.000000000 -0700
++++ blender-3.6.13/extern/hipew/include/hiprtew.h	2024-07-22 16:58:27.987914984 -0700
+@@ -20,63 +20,134 @@
+ #include <hiprt/hiprt_types.h>
+ 
+ #define HIPRT_MAJOR_VERSION 2
+-#define HIPRT_MINOR_VERSION 0
+-#define HIPRT_PATCH_VERSION 0xb68861
++#define HIPRT_MINOR_VERSION 2
++#define HIPRT_PATCH_VERSION 0x8ac8f884
+ 
+-#define HIPRT_API_VERSION 2000
+-#define HIPRT_VERSION_STR "02000"
++#define HIPRT_API_VERSION 2002
++#define HIPRT_VERSION_STR "02002"
++#define HIP_VERSION_STR   "5.5"
+ 
+ typedef unsigned int hiprtuint32_t;
+ 
+ /* Function types. */
+ typedef hiprtError(thiprtCreateContext)(hiprtuint32_t hiprtApiVersion,
+-                                        hiprtContextCreationInput &input,
++                                        const hiprtContextCreationInput &input,
+                                         hiprtContext *outContext);
+ typedef hiprtError(thiprtDestroyContext)(hiprtContext context);
+ typedef hiprtError(thiprtCreateGeometry)(hiprtContext context,
+-                                         const hiprtGeometryBuildInput *buildInput,
+-                                         const hiprtBuildOptions *buildOptions,
+-                                         hiprtGeometry *outGeometry);
++                                         const hiprtGeometryBuildInput &buildInput,
++                                         const hiprtBuildOptions buildOptions,
++                                         hiprtGeometry &outGeometry);
+ typedef hiprtError(thiprtDestroyGeometry)(hiprtContext context,
+                                           hiprtGeometry outGeometry);
++typedef hiprtError(thiprtCreateGeometries)(hiprtContext context,
++                                           uint32_t numGeometries,
++                                         const hiprtGeometryBuildInput *buildInput,
++                                         const hiprtBuildOptions buildOptions,
++                                         hiprtGeometry **outGeometries);
++typedef hiprtError(thiprtDestroyGeometries)(hiprtContext context, uint32_t numGeometries,
++                                          hiprtGeometry* outGeometry);
++
+ typedef hiprtError(thiprtBuildGeometry)(hiprtContext context,
+                                         hiprtBuildOperation buildOperation,
++                                        const hiprtGeometryBuildInput &buildInput,
++                                        const hiprtBuildOptions buildOptions,
++                                        hiprtDevicePtr temporaryBuffer,
++                                        hiprtApiStream stream,
++                                        hiprtGeometry outGeometry);
++
++typedef hiprtError(thiprtBuildGeometries)(hiprtContext context,
++                                        uint32_t numGeometries,
++                                        hiprtBuildOperation buildOperation,
+                                         const hiprtGeometryBuildInput *buildInput,
+                                         const hiprtBuildOptions *buildOptions,
+                                         hiprtDevicePtr temporaryBuffer,
+                                         hiprtApiStream stream,
+-                                        hiprtGeometry outGeometry);
++                                        hiprtGeometry *outGeometries);
++
++
+ typedef hiprtError(thiprtGetGeometryBuildTemporaryBufferSize)(
+     hiprtContext context,
++    const hiprtGeometryBuildInput &buildInput,
++    const hiprtBuildOptions buildOptions,
++    size_t &outSize);
++
++typedef hiprtError(thiprtGetGeometriesBuildTemporaryBufferSize)(
++    hiprtContext context,
++    uint32_t numGeometries,
+     const hiprtGeometryBuildInput *buildInput,
+     const hiprtBuildOptions *buildOptions,
+-    size_t *outSize);
++    size_t &outSize);
++
++typedef hiprtError(thiprtCompactGeometry)( hiprtContext context, hiprtApiStream stream, hiprtGeometry geometryIn, hiprtGeometry& geometryOut);
++
++typedef hiprtError(thiprtCompactGeometries)(
++	hiprtContext	context,
++	uint32_t		numGeometries,
++	hiprtApiStream	stream,
++	hiprtGeometry*	geometriesIn,
++	hiprtGeometry** geometriesOut );
++
+ typedef hiprtError(thiprtCreateScene)(hiprtContext context,
++                                      const hiprtSceneBuildInput &buildInput,
++                                      const hiprtBuildOptions buildOptions,
++                                      hiprtScene &outScene);
++
++typedef hiprtError(thiprtCreateScenes)(hiprtContext context,
++                                      uint32_t numScenes,
+                                       const hiprtSceneBuildInput *buildInput,
+-                                      const hiprtBuildOptions *buildOptions,
+-                                      hiprtScene *outScene);
++                                      const hiprtBuildOptions buildOptions,
++                                      hiprtScene **outScene);
++
+ typedef hiprtError(thiprtDestroyScene)(hiprtContext context, hiprtScene outScene);
++typedef hiprtError(thiprtDestroyScenes)( hiprtContext context, uint32_t numScenes,hiprtScene *scene );
+ typedef hiprtError(thiprtBuildScene)(hiprtContext context,
+                                      hiprtBuildOperation buildOperation,
++                                     const hiprtSceneBuildInput &buildInput,
++                                     const hiprtBuildOptions buildOptions,
++                                     hiprtDevicePtr temporaryBuffer,
++                                     hiprtApiStream stream,
++                                     hiprtScene outScene);
++typedef hiprtError(thiprtBuildScenes)(hiprtContext context,
++                                     uint32_t numScenes,
++                                     hiprtBuildOperation buildOperation,
+                                      const hiprtSceneBuildInput *buildInput,
+                                      const hiprtBuildOptions *buildOptions,
+                                      hiprtDevicePtr temporaryBuffer,
+                                      hiprtApiStream stream,
+-                                     hiprtScene outScene);
++                                     hiprtScene *outScene);
+ typedef hiprtError(thiprtGetSceneBuildTemporaryBufferSize)(
+     hiprtContext context,
++    const hiprtSceneBuildInput &buildInput,
++    const hiprtBuildOptions buildOptions,
++    size_t &outSize);
++
++typedef hiprtError(thiprtGetScenesBuildTemporaryBufferSize)(
++    hiprtContext context,
++    uint32_t numScenes,
+     const hiprtSceneBuildInput *buildInput,
+-    const hiprtBuildOptions *buildOptions,
+-    size_t *outSize);
++    const hiprtBuildOptions buildOptions,
++    size_t &outSize);
++
++typedef hiprtError(thiprtCompactScene)( hiprtContext context, hiprtApiStream stream, hiprtScene sceneIn, hiprtScene& sceneOut );
++
++typedef hiprtError(thiprtCompactScenes)(
++	hiprtContext context, uint32_t numScenes, hiprtApiStream stream, hiprtScene* scenesIn, hiprtScene** scenesOut );
++
+ typedef hiprtError(thiprtCreateFuncTable)(hiprtContext context,
+                                           hiprtuint32_t numGeomTypes,
+                                           hiprtuint32_t numRayTypes,
+-                                          hiprtFuncTable *outFuncTable);
++                                          hiprtFuncTable &outFuncTable);
+ typedef hiprtError(thiprtSetFuncTable)(hiprtContext context,
+                                        hiprtFuncTable funcTable,
+                                        hiprtuint32_t geomType,
+                                        hiprtuint32_t rayType,
+                                         hiprtFuncDataSet set);
++
++
++typedef hiprtError (thiprtCreateGlobalStackBuffer)(hiprtContext context, const hiprtGlobalStackBufferInput& input, hiprtGlobalStackBuffer& stackBufferOut );
++typedef hiprtError (thiprtDestroyGlobalStackBuffer)( hiprtContext context, hiprtGlobalStackBuffer stackBuffer );
++
+ typedef hiprtError(thiprtDestroyFuncTable)(hiprtContext context,
+                                            hiprtFuncTable funcTable);
+ typedef void(thiprtSetLogLevel)( hiprtLogLevel level );
+@@ -94,6 +165,8 @@ extern thiprtBuildScene *hiprtBuildScene
+ extern thiprtGetSceneBuildTemporaryBufferSize *hiprtGetSceneBuildTemporaryBufferSize;
+ extern thiprtCreateFuncTable *hiprtCreateFuncTable;
+ extern thiprtSetFuncTable *hiprtSetFuncTable;
++extern thiprtCreateGlobalStackBuffer *hiprtCreateGlobalStackBuffer;
++extern thiprtDestroyGlobalStackBuffer *hiprtDestroyGlobalStackBuffer;
+ extern thiprtDestroyFuncTable *hiprtDestroyFuncTable;
+ extern thiprtSetLogLevel *hiprtSetLogLevel;
+ 
+diff '--color=auto' -urp blender-3.6.13.orig/extern/hipew/src/hipew.c blender-3.6.13/extern/hipew/src/hipew.c
+--- blender-3.6.13.orig/extern/hipew/src/hipew.c	2024-03-12 03:01:52.000000000 -0700
++++ blender-3.6.13/extern/hipew/src/hipew.c	2024-07-22 16:58:27.987914984 -0700
+@@ -233,7 +233,9 @@ static int hipewHipInit(void) {
+   /* Library paths. */
+ #ifdef _WIN32
+   /* Expected in C:/Windows/System32 or similar, no path needed. */
+-  const char *hip_paths[] = {"amdhip64.dll", "amdhip64_6.dll", NULL};
++
++  const char *hip_paths[] = {"amdhip64_6.dll", "amdhip64.dll", NULL};
++
+ 
+ #elif defined(__APPLE__)
+   /* Default installation path. */
+diff '--color=auto' -urp blender-3.6.13.orig/extern/hipew/src/hiprtew.cc blender-3.6.13/extern/hipew/src/hiprtew.cc
+--- blender-3.6.13.orig/extern/hipew/src/hiprtew.cc	2023-06-20 12:03:48.000000000 -0700
++++ blender-3.6.13/extern/hipew/src/hiprtew.cc	2024-07-22 16:58:27.987914984 -0700
+@@ -40,6 +40,8 @@ thiprtBuildScene *hiprtBuildScene;
+ thiprtGetSceneBuildTemporaryBufferSize *hiprtGetSceneBuildTemporaryBufferSize;
+ thiprtCreateFuncTable *hiprtCreateFuncTable;
+ thiprtSetFuncTable *hiprtSetFuncTable;
++thiprtCreateGlobalStackBuffer *hiprtCreateGlobalStackBuffer;
++thiprtDestroyGlobalStackBuffer *hiprtDestroyGlobalStackBuffer;
+ thiprtDestroyFuncTable *hiprtDestroyFuncTable;
+ thiprtSetLogLevel *hiprtSetLogLevel;
+ 
+@@ -89,7 +91,9 @@ bool hiprtewInit()
+   HIPRT_LIBRARY_FIND(hiprtGetSceneBuildTemporaryBufferSize)
+   HIPRT_LIBRARY_FIND(hiprtCreateFuncTable)
+   HIPRT_LIBRARY_FIND(hiprtSetFuncTable)
++  HIPRT_LIBRARY_FIND(hiprtCreateGlobalStackBuffer)
+   HIPRT_LIBRARY_FIND(hiprtDestroyFuncTable)
++  HIPRT_LIBRARY_FIND(hiprtDestroyGlobalStackBuffer)
+   HIPRT_LIBRARY_FIND(hiprtSetLogLevel)
+ 
+   result = true;
+diff '--color=auto' -urp blender-3.6.13.orig/intern/cycles/device/hiprt/device_impl.cpp blender-3.6.13/intern/cycles/device/hiprt/device_impl.cpp
+--- blender-3.6.13.orig/intern/cycles/device/hiprt/device_impl.cpp	2024-07-22 16:58:07.460244411 -0700
++++ blender-3.6.13/intern/cycles/device/hiprt/device_impl.cpp	2024-07-22 17:01:59.080525050 -0700
+@@ -76,6 +76,7 @@ HIPRTDevice::HIPRTDevice(const DeviceInf
+       prim_time_offset(this, "prim_time_offset", MEM_GLOBAL)
+ {
+   HIPContextScope scope(this);
++  global_stack_buffer = {0};
+   hiprtContextCreationInput hiprt_context_input = {0};
+   hiprt_context_input.ctxt = hipContext;
+   hiprt_context_input.device = hipDevice;
+@@ -89,7 +90,7 @@ HIPRTDevice::HIPRTDevice(const DeviceInf
+   }
+ 
+   rt_result = hiprtCreateFuncTable(
+-      hiprt_context, Max_Primitive_Type, Max_Intersect_Filter_Function, &functions_table);
++      hiprt_context, Max_Primitive_Type, Max_Intersect_Filter_Function, functions_table);
+ 
+   if (rt_result != hiprtSuccess) {
+     set_error(string_printf("Failed to create HIPRT Function Table"));
+@@ -112,7 +113,8 @@ HIPRTDevice::~HIPRTDevice()
+   custom_prim_info.free();
+   prim_time_offset.free();
+   prims_time.free();
+-  global_stack_buffer.free();
++
++  hiprtDestroyGlobalStackBuffer(hiprt_context, global_stack_buffer);
+   hiprtDestroyFuncTable(hiprt_context, functions_table);
+   hiprtDestroyScene(hiprt_context, scene);
+   hiprtDestroyContext(hiprt_context);
+@@ -444,7 +446,7 @@ hiprtGeometryBuildInput HIPRTDevice::pre
+     bvh->custom_prim_aabb.aabbs = (void *)bvh->custom_primitive_bound.device_pointer;
+ 
+     geom_input.type = hiprtPrimitiveTypeAABBList;
+-    geom_input.aabbList.primitive = &bvh->custom_prim_aabb;
++    geom_input.primitive.aabbList.aabbs = &bvh->custom_prim_aabb;
+     geom_input.geomType = Motion_Triangle;
+   }
+   else {
+@@ -477,7 +479,7 @@ hiprtGeometryBuildInput HIPRTDevice::pre
+     bvh->vertex_data.host_pointer = 0;
+ 
+     geom_input.type = hiprtPrimitiveTypeTriangleMesh;
+-    geom_input.triangleMesh.primitive = &(bvh->triangle_mesh);
++    geom_input.primitive.triangleMesh = bvh->triangle_mesh;
+   }
+   return geom_input;
+ }
+@@ -599,7 +601,7 @@ hiprtGeometryBuildInput HIPRTDevice::pre
+   bvh->custom_prim_aabb.aabbs = (void *)bvh->custom_primitive_bound.device_pointer;
+ 
+   geom_input.type = hiprtPrimitiveTypeAABBList;
+-  geom_input.aabbList.primitive = &bvh->custom_prim_aabb;
++  geom_input.primitive.aabbList.aabbs = &bvh->custom_prim_aabb;
+   geom_input.geomType = Curve;
+ 
+   return geom_input;
+@@ -700,7 +702,7 @@ hiprtGeometryBuildInput HIPRTDevice::pre
+   bvh->custom_prim_aabb.aabbs = (void *)bvh->custom_primitive_bound.device_pointer;
+ 
+   geom_input.type = hiprtPrimitiveTypeAABBList;
+-  geom_input.aabbList.primitive = &bvh->custom_prim_aabb;
++  geom_input.primitive.aabbList.aabbs = &bvh->custom_prim_aabb;
+   geom_input.geomType = Point;
+ 
+   return geom_input;
+@@ -747,13 +749,13 @@ void HIPRTDevice::build_blas(BVHHIPRT *b
+ 
+   size_t blas_scratch_buffer_size = 0;
+   hiprtError rt_err = hiprtGetGeometryBuildTemporaryBufferSize(
+-      hiprt_context, &geom_input, &options, &blas_scratch_buffer_size);
++      hiprt_context, geom_input, options, blas_scratch_buffer_size);
+ 
+   if (rt_err != hiprtSuccess) {
+     set_error(string_printf("Failed to get scratch buffer size for BLAS!"));
+   }
+ 
+-  rt_err = hiprtCreateGeometry(hiprt_context, &geom_input, &options, &bvh->hiprt_geom);
++  rt_err = hiprtCreateGeometry(hiprt_context, geom_input, options, bvh->hiprt_geom);
+ 
+   if (rt_err != hiprtSuccess) {
+     set_error(string_printf("Failed to create BLAS!"));
+@@ -768,8 +770,8 @@ void HIPRTDevice::build_blas(BVHHIPRT *b
+     }
+     rt_err = hiprtBuildGeometry(hiprt_context,
+                                 hiprtBuildOperationBuild,
+-                                &bvh->geom_input,
+-                                &options,
++                                bvh->geom_input,
++                                options,
+                                 (void *)(scratch_buffer.device_pointer),
+                                 0,
+                                 bvh->hiprt_geom);
+@@ -919,7 +921,8 @@ hiprtScene HIPRTDevice::build_tlas(BVHHI
+ 
+       user_instance_id[num_instances] = blender_instance_id;
+       visibility[num_instances] = mask;
+-      hiprt_blas_ptr[num_instances] = (uint64_t)hiprt_geom_current;
++      hiprt_blas_ptr[num_instances].geometry = hiprt_geom_current;
++      hiprt_blas_ptr[num_instances].type = hiprtInstanceTypeGeometry;
+       num_instances++;
+     }
+     blas_ptr[blender_instance_id] = (uint64_t)hiprt_geom_current;
+@@ -948,13 +951,13 @@ hiprtScene HIPRTDevice::build_tlas(BVHHI
+   }
+ 
+   scene_input_ptr.instanceMasks = (void *)visibility.device_pointer;
+-  scene_input_ptr.instanceGeometries = (void *)hiprt_blas_ptr.device_pointer;
++  scene_input_ptr.instances = (void *)hiprt_blas_ptr.device_pointer;
+   scene_input_ptr.instanceTransformHeaders = (void *)transform_headers.device_pointer;
+   scene_input_ptr.instanceFrames = (void *)instance_transform_matrix.device_pointer;
+ 
+   hiprtScene scene = 0;
+ 
+-  hiprtError rt_err = hiprtCreateScene(hiprt_context, &scene_input_ptr, &options, &scene);
++  hiprtError rt_err = hiprtCreateScene(hiprt_context, scene_input_ptr, options, scene);
+ 
+   if (rt_err != hiprtSuccess) {
+     set_error(string_printf("Failed to create TLAS"));
+@@ -962,7 +965,7 @@ hiprtScene HIPRTDevice::build_tlas(BVHHI
+ 
+   size_t tlas_scratch_buffer_size;
+   rt_err = hiprtGetSceneBuildTemporaryBufferSize(
+-      hiprt_context, &scene_input_ptr, &options, &tlas_scratch_buffer_size);
++      hiprt_context, scene_input_ptr, options, tlas_scratch_buffer_size);
+ 
+   if (rt_err != hiprtSuccess) {
+     set_error(string_printf("Failed to get scratch buffer size for TLAS"));
+@@ -975,8 +978,8 @@ hiprtScene HIPRTDevice::build_tlas(BVHHI
+ 
+   rt_err = hiprtBuildScene(hiprt_context,
+                            build_operation,
+-                           &scene_input_ptr,
+-                           &options,
++                           scene_input_ptr,
++                           options,
+                            (void *)scratch_buffer.device_pointer,
+                            0,
+                            scene);
+Only in blender-3.6.13/intern/cycles/device/hiprt: device_impl.cpp.orig
+Only in blender-3.6.13/intern/cycles/device/hiprt: device_impl.cpp.rej
+diff '--color=auto' -urp blender-3.6.13.orig/intern/cycles/device/hiprt/device_impl.h blender-3.6.13/intern/cycles/device/hiprt/device_impl.h
+--- blender-3.6.13.orig/intern/cycles/device/hiprt/device_impl.h	2023-05-17 16:38:28.000000000 -0700
++++ blender-3.6.13/intern/cycles/device/hiprt/device_impl.h	2024-07-22 16:58:27.991914920 -0700
+@@ -52,7 +52,7 @@ class HIPRTDevice : public HIPDevice {
+     return hiprt_context;
+   }
+ 
+-  device_vector<int> global_stack_buffer;
++  hiprtGlobalStackBuffer global_stack_buffer;
+ 
+  protected:
+   enum Filter_Function { Closest = 0, Shadows, Local, Volume, Max_Intersect_Filter_Function };
+@@ -106,7 +106,7 @@ class HIPRTDevice : public HIPDevice {
+    * blas_ptr has all the valid pointers and null pointers and blas for any geometry can be
+    * directly retrieved from this array (used in subsurface scattering). */
+   device_vector<int> user_instance_id;
+-  device_vector<uint64_t> hiprt_blas_ptr;
++  device_vector<hiprtInstance> hiprt_blas_ptr;
+   device_vector<uint64_t> blas_ptr;
+ 
+   /* custom_prim_info stores custom information for custom primitives for all the primitives in a
+Only in blender-3.6.13/intern/cycles/device/hiprt: device_impl.h.orig
+diff '--color=auto' -urp blender-3.6.13.orig/intern/cycles/device/hiprt/queue.cpp blender-3.6.13/intern/cycles/device/hiprt/queue.cpp
+--- blender-3.6.13.orig/intern/cycles/device/hiprt/queue.cpp	2023-06-20 12:03:48.000000000 -0700
++++ blender-3.6.13/intern/cycles/device/hiprt/queue.cpp	2024-07-22 16:58:27.991914920 -0700
+@@ -33,14 +33,25 @@ bool HIPRTDeviceQueue::enqueue(DeviceKer
+   const HIPContextScope scope(hiprt_device_);
+   const HIPDeviceKernel &hip_kernel = hiprt_device_->kernels.get(kernel);
+ 
+-  if (!hiprt_device_->global_stack_buffer.device_pointer) {
+-    int max_path = num_concurrent_states(0);
+-    hiprt_device_->global_stack_buffer.alloc(max_path * HIPRT_SHARED_STACK_SIZE * sizeof(int));
+-    hiprt_device_->global_stack_buffer.zero_to_device();
++  if (!hiprt_device_->global_stack_buffer.stackData) {
++    uint32_t max_path = num_concurrent_states(0);
++    hiprtGlobalStackBufferInput stack_buffer_input{
++        hiprtStackTypeGlobal, hiprtStackEntryTypeInteger, HIPRT_THREAD_STACK_SIZE, max_path};
++
++    hiprtError rt_result = hiprtCreateGlobalStackBuffer(hiprt_device_->get_hiprt_context(),
++                                                        stack_buffer_input,
++                                                        hiprt_device_->global_stack_buffer);
++
++    if (rt_result != hiprtSuccess) {
++      string_printf("Failed to create hiprt Global Stack Buffer");
++      return false;
++    }
+   }
+ 
+   DeviceKernelArguments args_copy = args;
+-  args_copy.add(&hiprt_device_->global_stack_buffer.device_pointer);
++  args_copy.add(DeviceKernelArguments::HIPRT_GLOBAL_STACK,
++                (void *)(& hiprt_device_->global_stack_buffer),
++                sizeof(hiprtGlobalStackBuffer));
+ 
+   /* Compute kernel launch parameters. */
+   const int num_threads_per_block = HIPRT_THREAD_GROUP_SIZE;
+Only in blender-3.6.13/intern/cycles/device/hiprt: queue.cpp.orig
+diff '--color=auto' -urp blender-3.6.13.orig/intern/cycles/device/queue.h blender-3.6.13/intern/cycles/device/queue.h
+--- blender-3.6.13.orig/intern/cycles/device/queue.h	2023-05-17 16:38:28.000000000 -0700
++++ blender-3.6.13/intern/cycles/device/queue.h	2024-07-22 16:58:27.991914920 -0700
+@@ -28,6 +28,7 @@ struct DeviceKernelArguments {
+     FLOAT32,
+     BOOLEAN,
+     KERNEL_FILM_CONVERT,
++    HIPRT_GLOBAL_STACK
+   };
+ 
+   static const int MAX_ARGS = 18;
+Only in blender-3.6.13/intern/cycles/device: queue.h.orig
+diff '--color=auto' -urp blender-3.6.13.orig/intern/cycles/kernel/device/hiprt/bvh.h blender-3.6.13/intern/cycles/kernel/device/hiprt/bvh.h
+--- blender-3.6.13.orig/intern/cycles/kernel/device/hiprt/bvh.h	2023-06-20 12:03:48.000000000 -0700
++++ blender-3.6.13/intern/cycles/kernel/device/hiprt/bvh.h	2024-07-22 16:58:27.991914920 -0700
+@@ -115,7 +115,7 @@ ccl_device_intersect bool scene_intersec
+   void *local_geom = (void *)(kernel_data_fetch(blas_ptr, local_object));
+   // we don't need custom intersection functions for SSR
+ #  ifdef HIPRT_SHARED_STACK
+-  hiprtGeomTraversalAnyHitCustomStack<Stack> traversal(local_geom,
++  hiprtGeomTraversalAnyHitCustomStack<Stack> traversal((hiprtGeometry)local_geom,
+                                                        ray_hip,
+                                                        stack,
+                                                        hiprtTraversalHintDefault,
+Only in blender-3.6.13/intern/cycles/kernel/device/hiprt: bvh.h.orig
+diff '--color=auto' -urp blender-3.6.13.orig/intern/cycles/kernel/device/hiprt/common.h blender-3.6.13/intern/cycles/kernel/device/hiprt/common.h
+--- blender-3.6.13.orig/intern/cycles/kernel/device/hiprt/common.h	2023-06-20 12:03:48.000000000 -0700
++++ blender-3.6.13/intern/cycles/kernel/device/hiprt/common.h	2024-07-22 16:58:27.991914920 -0700
+@@ -43,19 +43,20 @@ struct LocalPayload {
+ 
+ #  if defined(HIPRT_SHARED_STACK)
+ #    define GET_TRAVERSAL_STACK() \
+-      Stack stack(&kg->global_stack_buffer[0], \
+-                  HIPRT_THREAD_STACK_SIZE, \
+-                  kg->shared_stack, \
+-                  HIPRT_SHARED_STACK_SIZE);
++      Stack stack(kg->global_stack_buffer, \
++                  kg->shared_stack); \
++      Instance_Stack instance_stack;
+ #  else
+ #    define GET_TRAVERSAL_STACK()
+ #  endif
+ 
+ #  ifdef HIPRT_SHARED_STACK
+ #    define GET_TRAVERSAL_ANY_HIT(FUNCTION_TABLE, RAY_TYPE, RAY_TIME) \
+-      hiprtSceneTraversalAnyHitCustomStack<Stack> traversal(kernel_data.device_bvh, \
++      hiprtSceneTraversalAnyHitCustomStack<Stack, Instance_Stack> traversal( \
++                                                            (hiprtScene)kernel_data.device_bvh, \
+                                                             ray_hip, \
+                                                             stack, \
++                                                            instance_stack, \
+                                                             visibility, \
+                                                             hiprtTraversalHintDefault, \
+                                                             &payload, \
+@@ -64,9 +65,11 @@ struct LocalPayload {
+                                                             RAY_TIME);
+ 
+ #    define GET_TRAVERSAL_CLOSEST_HIT(FUNCTION_TABLE, RAY_TYPE, RAY_TIME) \
+-      hiprtSceneTraversalClosestCustomStack<Stack> traversal(kernel_data.device_bvh, \
++      hiprtSceneTraversalClosestCustomStack<Stack, Instance_Stack> traversal( \
++                                                             (hiprtScene)kernel_data.device_bvh, \
+                                                              ray_hip, \
+                                                              stack, \
++                                                             instance_stack, \
+                                                              visibility, \
+                                                              hiprtTraversalHintDefault, \
+                                                              &payload, \
+@@ -573,14 +576,14 @@ ccl_device_inline bool volume_intersecti
+     return false;
+ }
+ 
+-HIPRT_DEVICE bool intersectFunc(u32 geomType,
+-                                u32 rayType,
++HIPRT_DEVICE bool intersectFunc(uint geomType,
++                                uint rayType,
+                                 const hiprtFuncTableHeader &tableHeader,
+                                 const hiprtRay &ray,
+                                 void *payload,
+                                 hiprtHit &hit)
+ {
+-  const u32 index = tableHeader.numGeomTypes * rayType + geomType;
++  const uint index = tableHeader.numGeomTypes * rayType + geomType;
+   const void *data = tableHeader.funcDataSets[index].filterFuncData;
+   switch (index) {
+     case Curve_Intersect_Function:
+@@ -602,14 +605,14 @@ HIPRT_DEVICE bool intersectFunc(u32 geom
+   return false;
+ }
+ 
+-HIPRT_DEVICE bool filterFunc(u32 geomType,
+-                             u32 rayType,
++HIPRT_DEVICE bool filterFunc(uint geomType,
++                             uint rayType,
+                              const hiprtFuncTableHeader &tableHeader,
+                              const hiprtRay &ray,
+                              void *payload,
+                              const hiprtHit &hit)
+ {
+-  const u32 index = tableHeader.numGeomTypes * rayType + geomType;
++  const uint index = tableHeader.numGeomTypes * rayType + geomType;
+   const void *data = tableHeader.funcDataSets[index].intersectFuncData;
+   switch (index) {
+     case Triangle_Filter_Closest:
+Only in blender-3.6.13/intern/cycles/kernel/device/hiprt: common.h.orig
+diff '--color=auto' -urp blender-3.6.13.orig/intern/cycles/kernel/device/hiprt/globals.h blender-3.6.13/intern/cycles/kernel/device/hiprt/globals.h
+--- blender-3.6.13.orig/intern/cycles/kernel/device/hiprt/globals.h	2023-05-17 16:38:28.000000000 -0700
++++ blender-3.6.13/intern/cycles/kernel/device/hiprt/globals.h	2024-07-22 16:58:27.991914920 -0700
+@@ -30,9 +30,9 @@
+ CCL_NAMESPACE_BEGIN
+ 
+ struct KernelGlobalsGPU {
+-  int *global_stack_buffer;
++  hiprtGlobalStackBuffer global_stack_buffer;
+ #ifdef HIPRT_SHARED_STACK
+-  int *shared_stack;
++  hiprtSharedStackBuffer shared_stack;
+ #endif
+ };
+ 
+@@ -46,7 +46,8 @@ typedef ccl_global KernelGlobalsGPU *ccl
+     ccl_gpu_shared int shared_stack[HIPRT_SHARED_STACK_SIZE * HIPRT_THREAD_GROUP_SIZE]; \
+     ccl_global KernelGlobalsGPU kg_gpu; \
+     KernelGlobals kg = &kg_gpu; \
+-    kg->shared_stack = &shared_stack[0]; \
++    kg->shared_stack.stackData = &shared_stack[0]; \
++    kg->shared_stack.stackSize = HIPRT_SHARED_STACK_SIZE; \
+     kg->global_stack_buffer = stack_buffer;
+ #else
+ #  define HIPRT_INIT_KERNEL_GLOBAL() \
+@@ -145,6 +146,7 @@ __constant__ KernelParamsHIPRT kernel_pa
+ 
+ #  ifdef HIPRT_SHARED_STACK
+ typedef hiprtGlobalStack Stack;
++typedef hiprtEmptyInstanceStack Instance_Stack;
+ #  endif
+ 
+ #endif
+Only in blender-3.6.13/intern/cycles/kernel/device/hiprt: globals.h.orig
+diff '--color=auto' -urp blender-3.6.13.orig/intern/cycles/kernel/device/hiprt/hiprt_kernels.h blender-3.6.13/intern/cycles/kernel/device/hiprt/hiprt_kernels.h
+--- blender-3.6.13.orig/intern/cycles/kernel/device/hiprt/hiprt_kernels.h	2023-05-17 16:38:28.000000000 -0700
++++ blender-3.6.13/intern/cycles/kernel/device/hiprt/hiprt_kernels.h	2024-07-22 16:58:27.995914856 -0700
+@@ -8,7 +8,7 @@ ccl_gpu_kernel_threads(GPU_HIPRT_KERNEL_
+                              ccl_global const int *path_index_array,
+                              ccl_global float *render_buffer,
+                              const int work_size,
+-                             ccl_global int *stack_buffer)
++                             ccl_global hiprtGlobalStackBuffer stack_buffer)
+ {
+   const int global_index = ccl_gpu_global_id_x();
+ 
+@@ -24,7 +24,7 @@ ccl_gpu_kernel_threads(GPU_HIPRT_KERNEL_
+     ccl_gpu_kernel_signature(integrator_intersect_shadow,
+                              ccl_global const int *path_index_array,
+                              const int work_size,
+-                             ccl_global int *stack_buffer)
++                             ccl_global hiprtGlobalStackBuffer stack_buffer)
+ {
+   const int global_index = ccl_gpu_global_id_x();
+ 
+@@ -40,7 +40,7 @@ ccl_gpu_kernel_threads(GPU_HIPRT_KERNEL_
+     ccl_gpu_kernel_signature(integrator_intersect_subsurface,
+                              ccl_global const int *path_index_array,
+                              const int work_size,
+-                             ccl_global int *stack_buffer)
++                             ccl_global hiprtGlobalStackBuffer stack_buffer)
+ {
+   const int global_index = ccl_gpu_global_id_x();
+ 
+@@ -56,7 +56,7 @@ ccl_gpu_kernel_threads(GPU_HIPRT_KERNEL_
+     ccl_gpu_kernel_signature(integrator_intersect_volume_stack,
+                              ccl_global const int *path_index_array,
+                              const int work_size,
+-                             ccl_global int *stack_buffer)
++                             ccl_global hiprtGlobalStackBuffer stack_buffer)
+ {
+   const int global_index = ccl_gpu_global_id_x();
+ 
+@@ -72,7 +72,7 @@ ccl_gpu_kernel_threads(GPU_HIPRT_KERNEL_
+                              ccl_global const int *path_index_array,
+                              ccl_global float *render_buffer,
+                              const int work_size,
+-                             ccl_global int *stack_buffer)
++                             ccl_global hiprtGlobalStackBuffer stack_buffer)
+ {
+   const int global_index = ccl_gpu_global_id_x();
+   if (global_index < work_size) {
+@@ -87,7 +87,7 @@ ccl_gpu_kernel_threads(GPU_HIPRT_KERNEL_
+                              ccl_global const int *path_index_array,
+                              ccl_global float *render_buffer,
+                              const int work_size,
+-                             ccl_global int *stack_buffer)
++                             ccl_global hiprtGlobalStackBuffer stack_buffer)
+ {
+   const int global_index = ccl_gpu_global_id_x();
+   if (global_index < work_size) {
+Only in blender-3.6.13/intern/cycles/kernel/device/hiprt: hiprt_kernels.h.orig
+Only in blender-3.6.13/intern/cycles/kernel/device/hiprt: hiprt_kernels.h.rej

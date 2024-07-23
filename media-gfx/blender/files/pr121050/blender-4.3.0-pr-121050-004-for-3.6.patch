@@ -1,0 +1,430 @@
+diff '--color=auto' -urp blender-3.6.13.orig/CMakeLists.txt blender-3.6.13/CMakeLists.txt
+--- blender-3.6.13.orig/CMakeLists.txt	2024-07-22 17:26:49.580131838 -0700
++++ blender-3.6.13/CMakeLists.txt	2024-07-22 17:27:17.867660953 -0700
+@@ -534,11 +534,9 @@ if(NOT APPLE)
+   mark_as_advanced(WITH_CYCLES_DEVICE_HIP)
+   mark_as_advanced(CYCLES_HIP_BINARIES_ARCH)
+ 
+-  # HIPRT is only available on Windows for now.
+-  if(WIN32)
+-    option(WITH_CYCLES_DEVICE_HIPRT      "Enable Cycles AMD HIPRT support" OFF)
+-    mark_as_advanced(WITH_CYCLES_DEVICE_HIPRT)
+-  endif()
++   option(WITH_CYCLES_DEVICE_HIPRT      "Enable Cycles AMD HIPRT support" ON)
++   mark_as_advanced(WITH_CYCLES_DEVICE_HIPRT)
++
+ endif()
+ 
+ # Apple Metal
+@@ -2010,9 +2008,7 @@ if(FIRST_RUN)
+       info_cfg_option(WITH_CYCLES_DEVICE_HIP)
+       info_cfg_option(WITH_CYCLES_HIP_BINARIES)
+     endif()
+-    if(WIN32)
+-      info_cfg_option(WITH_CYCLES_DEVICE_HIPRT)
+-    endif()
++    info_cfg_option(WITH_CYCLES_DEVICE_HIPRT)
+   endif()
+ 
+   info_cfg_text("")
+diff '--color=auto' -urp blender-3.6.13.orig/build_files/build_environment/cmake/download.cmake blender-3.6.13/build_files/build_environment/cmake/download.cmake
+--- blender-3.6.13.orig/build_files/build_environment/cmake/download.cmake	2024-03-11 02:57:40.000000000 -0700
++++ blender-3.6.13/build_files/build_environment/cmake/download.cmake	2024-07-22 17:27:08.931809700 -0700
+@@ -176,3 +176,4 @@ download_source(SHADERC_GLSLANG)
+ download_source(VULKAN_HEADERS)
+ download_source(VULKAN_LOADER)
+ download_source(PYBIND11)
++download_source(HIPRT)
+Only in blender-3.6.13/build_files/build_environment/cmake: hiprt.cmake
+diff '--color=auto' -urp blender-3.6.13.orig/build_files/build_environment/cmake/versions.cmake blender-3.6.13/build_files/build_environment/cmake/versions.cmake
+--- blender-3.6.13.orig/build_files/build_environment/cmake/versions.cmake	2024-03-14 17:36:15.000000000 -0700
++++ blender-3.6.13/build_files/build_environment/cmake/versions.cmake	2024-07-22 17:27:08.935809633 -0700
+@@ -804,3 +804,9 @@ set(PYBIND11_URI https://github.com/pybi
+ set(PYBIND11_HASH ce07bfd5089245da7807b3faf6cbc878)
+ set(PYBIND11_HASH_TYPE MD5)
+ set(PYBIND11_FILE pybind-v${PYBIND11_VERSION}.tar.gz)
++
++set(HIPRT_VERSION 2.3.7df94af)
++set(HIPRT_URI https://github.com/GPUOpen-LibrariesAndSDKs/HIPRTSDK/releases/tag/${HIPRT_VERSION}.zip)
++set(HIPRT_HASH 813aa5ed29e24693f8d1edf9bc13b38cad5d2928)
++set(HIPRT_HASH_TYPE MD5)
++set(HIPRT_FILE hiprt-${HIPRT_VERSION}.zip)
+diff '--color=auto' -urp blender-3.6.13.orig/build_files/cmake/Modules/FindHIP.cmake blender-3.6.13/build_files/cmake/Modules/FindHIP.cmake
+--- blender-3.6.13.orig/build_files/cmake/Modules/FindHIP.cmake	2023-09-14 22:05:56.000000000 -0700
++++ blender-3.6.13/build_files/cmake/Modules/FindHIP.cmake	2024-07-22 17:27:08.935809633 -0700
+@@ -90,6 +90,7 @@ if(HIP_HIPCC_EXECUTABLE)
+ 
+   # Construct full semantic version.
+   set(HIP_VERSION "${HIP_VERSION_MAJOR}.${HIP_VERSION_MINOR}.${HIP_VERSION_PATCH}")
++  set(HIP_VERSION_SHORT "${HIP_VERSION_MAJOR}.${HIP_VERSION_MINOR}")
+   unset(_hip_version_raw)
+   unset(_hipcc_executable)
+ endif()
+diff '--color=auto' -urp blender-3.6.13.orig/build_files/cmake/Modules/FindHIPRT.cmake blender-3.6.13/build_files/cmake/Modules/FindHIPRT.cmake
+--- blender-3.6.13.orig/build_files/cmake/Modules/FindHIPRT.cmake	2024-07-22 17:26:49.616131239 -0700
++++ blender-3.6.13/build_files/cmake/Modules/FindHIPRT.cmake	2024-07-22 17:27:08.935809633 -0700
+@@ -3,7 +3,7 @@
+ 
+ # Find HIPRT SDK. This module defines:
+ #   HIPRT_INCLUDE_DIR, path to HIPRT include directory
+-#   HIPRT_BITCODE, bitcode file with ray-tracing functionality
++#   HIPRT_DYNAMIC_LIB, dynamic library with ray-tracing functionality
+ #   HIPRT_FOUND, if SDK found
+ 
+ # If `HIPRT_ROOT_DIR` was defined in the environment, use it.
+@@ -19,8 +19,8 @@ else()
+ endif()
+ 
+ set(_hiprt_SEARCH_DIRS
+-  ${HIPRT_ROOT_DIR}
+-)
++ ${HIPRT_ROOT_DIR}
++ /opt/lib/hiprt)
+ 
+ find_path(HIPRT_INCLUDE_DIR
+   NAMES
+@@ -35,21 +35,33 @@ if(HIPRT_INCLUDE_DIR)
+     REGEX "^#define HIPRT_VERSION_STR[ \t]\".*\"$")
+   string(REGEX MATCHALL "[0-9]+[.0-9]+" _hiprt_version ${_hiprt_version})
+ 
+-  find_file(HIPRT_BITCODE
+-    NAMES
+-      hiprt${_hiprt_version}_6.0_amd_lib_win.bc # this has to be handled automatically, should not hardcode rcom version
+-    HINTS
+-      ${HIPRT_ROOT_DIR}/bin
+-      ${HIPRT_ROOT_DIR}/dist/bin/Release
+-    NO_DEFAULT_PATH
+-  )
++  set(HIPRT_VERSION  ${_hiprt_version})
++ endif()
++
++if(WIN32)
++ set(HIPRT_DYNAMIC_LIB hiprt${HIPRT_VERSION}64.dll)
++else()
++ set(HIPRT_DYNAMIC_LIB hiprt${HIPRT_VERSION}64.so)
++endif()
++
++find_path(HIPRT_LIB_DIR
++  NAMES
++    hiprt${_hiprt_version}64.dll
++  HINTS
++    ${_hiprt_SEARCH_DIRS}
++  PATH_SUFFIXES
++   bin
++)
+ 
+-  unset(_hiprt_version)
++if(HIPRT_LIB_DIR)
++ set(HIPRT_DYNAMIC_LIB_PATH
++ ${HIPRT_LIB_DIR}/bin/${HIPRT_DYNAMIC_LIB}})
+ endif()
+ 
++unset(_hiprt_version)
+ include(FindPackageHandleStandardArgs)
+ find_package_handle_standard_args(HIPRT DEFAULT_MSG
+-  HIPRT_INCLUDE_DIR HIPRT_BITCODE)
++  HIPRT_INCLUDE_DIR HIPRT_DYNAMIC_LIB_PATH)
+ 
+ mark_as_advanced(
+   HIPRT_INCLUDE_DIR
+diff '--color=auto' -urp blender-3.6.13.orig/extern/hipew/include/hiprtew.h blender-3.6.13/extern/hipew/include/hiprtew.h
+--- blender-3.6.13.orig/extern/hipew/include/hiprtew.h	2024-07-22 17:26:49.616131239 -0700
++++ blender-3.6.13/extern/hipew/include/hiprtew.h	2024-07-22 17:27:08.935809633 -0700
+@@ -20,12 +20,19 @@
+ #include <hiprt/hiprt_types.h>
+ 
+ #define HIPRT_MAJOR_VERSION 2
+-#define HIPRT_MINOR_VERSION 2
+-#define HIPRT_PATCH_VERSION 0x8ac8f884
++#define HIPRT_MINOR_VERSION 3
++#define HIPRT_PATCH_VERSION 0x7df94af
+ 
+-#define HIPRT_API_VERSION 2002
+-#define HIPRT_VERSION_STR "02002"
+-#define HIP_VERSION_STR   "5.5"
++#define HIPRT_API_VERSION 2003
++#define HIPRT_VERSION_STR "02003"
++#define HIP_VERSION_STR "6.0"
++
++#ifdef _WIN32
++#define HIPRTAPI __stdcall
++#else
++#define HIPRTAPI
++#define HIP_CB
++#endif
+ 
+ typedef unsigned int hiprtuint32_t;
+ 
+diff '--color=auto' -urp blender-3.6.13.orig/intern/cycles/device/hiprt/queue.cpp blender-3.6.13/intern/cycles/device/hiprt/queue.cpp
+--- blender-3.6.13.orig/intern/cycles/device/hiprt/queue.cpp	2024-07-22 17:26:49.620131173 -0700
++++ blender-3.6.13/intern/cycles/device/hiprt/queue.cpp	2024-07-22 17:27:08.935809633 -0700
+@@ -50,7 +50,7 @@ bool HIPRTDeviceQueue::enqueue(DeviceKer
+ 
+   DeviceKernelArguments args_copy = args;
+   args_copy.add(DeviceKernelArguments::HIPRT_GLOBAL_STACK,
+-                (void *)(& hiprt_device_->global_stack_buffer),
++                (void *)(&hiprt_device_->global_stack_buffer),
+                 sizeof(hiprtGlobalStackBuffer));
+ 
+   /* Compute kernel launch parameters. */
+diff '--color=auto' -urp blender-3.6.13.orig/intern/cycles/device/queue.h blender-3.6.13/intern/cycles/device/queue.h
+--- blender-3.6.13.orig/intern/cycles/device/queue.h	2024-07-22 17:26:49.620131173 -0700
++++ blender-3.6.13/intern/cycles/device/queue.h	2024-07-22 17:27:08.935809633 -0700
+@@ -22,14 +22,7 @@ struct KernelWorkTile;
+ /* Container for device kernel arguments with type correctness ensured by API. */
+ struct DeviceKernelArguments {
+ 
+-  enum Type {
+-    POINTER,
+-    INT32,
+-    FLOAT32,
+-    BOOLEAN,
+-    KERNEL_FILM_CONVERT,
+-    HIPRT_GLOBAL_STACK
+-  };
++  enum Type { POINTER, INT32, FLOAT32, BOOLEAN, KERNEL_FILM_CONVERT, HIPRT_GLOBAL_STACK };
+ 
+   static const int MAX_ARGS = 18;
+   Type types[MAX_ARGS];
+diff '--color=auto' -urp blender-3.6.13.orig/intern/cycles/kernel/CMakeLists.txt blender-3.6.13/intern/cycles/kernel/CMakeLists.txt
+--- blender-3.6.13.orig/intern/cycles/kernel/CMakeLists.txt	2024-07-22 17:26:49.328136033 -0700
++++ blender-3.6.13/intern/cycles/kernel/CMakeLists.txt	2024-07-22 17:27:08.935809633 -0700
+@@ -659,12 +659,16 @@ endif()
+ # HIP RT module
+ 
+ if(WITH_CYCLES_DEVICE_HIPRT AND WITH_CYCLES_HIP_BINARIES)
++
+   set(hiprt_sources device/hiprt/kernel.cpp
+     ${SRC_KERNEL_HEADERS}
+     ${SRC_KERNEL_DEVICE_GPU_HEADERS}
+     ${SRC_KERNEL_DEVICE_HIPRT_HEADERS}
+     ${SRC_UTIL_HEADERS})
+-  set(bitcode_file ${CMAKE_CURRENT_BINARY_DIR}/kernel_rt_gfx.bc)
++  set(cycles_bitcode_file ${CMAKE_CURRENT_BINARY_DIR}/kernel_rt_gfx.bc)
++  set(sdk_bitcode_file ${CMAKE_CURRENT_BINARY_DIR}/hiprt${HIPRT_VERSION}_${HIP_VERSION_SHORT}_amd_lib.bc)
++  set(bvh_file ${CMAKE_CURRENT_BINARY_DIR}/hiprt${HIPRT_VERSION}_${HIP_VERSION_SHORT}_amd.hipfb)
++  set(bvh_file_oro ${CMAKE_CURRENT_BINARY_DIR}/oro_compiled_kernels.hipfb)
+   set(hiprt_file ${CMAKE_CURRENT_BINARY_DIR}/kernel_rt_gfx.hipfb)
+   set(kernel_sources ${hiprt_sources})
+   set(hiprt_kernel_src "/device/hiprt/kernel.cpp")
+@@ -676,12 +680,79 @@ if(WITH_CYCLES_DEVICE_HIPRT AND WITH_CYC
+   else()
+     set(hiprt_compile_command ${HIP_HIPCC_EXECUTABLE})
+     set(hiprt_compile_flags)
++    #set(hiprt_compile_flags -mcode-object-version=4)
+   endif()
+   set(target_gpus)
+   foreach(arch ${CYCLES_HIP_BINARIES_ARCH})
+     list(APPEND target_gpus "--offload-arch=${arch}")
+   endforeach()
+-  set(hiprt_compile_flags
++  if(WITH_CYCLES_DEBUG)
++    set(hiprt_compile_flags ${hiprt_compile_flags} -D WITH_CYCLES_DEBUG)
++  endif()
++
++  set(hiprt_compile_flags_bvh
++    ${hiprt_compile_flags}
++    ${target_gpus}
++    ${HIP_HIPCC_FLAGS}
++    -x hip
++    ${HIPRT_INCLUDE_DIR}/hiprt/impl/hiprt_kernels.h
++    ${flags}
++    -D HIPRT_BITCODE_LINKING
++    -std=c++17
++    -mllvm
++    -amdgpu-early-inline-all=false
++    -mllvm
++    -amdgpu-function-calls=true
++    --genco
++    -I ${HIPRT_INCLUDE_DIR}
++    -Wno-parentheses-equality
++    -Wno-unused-value
++    -ffast-math
++    -o ${bvh_file})
++
++  set(hiprt_compile_flags_bvh_oro
++    ${hiprt_compile_flags}
++    ${target_gpus}
++    ${HIP_HIPCC_FLAGS}
++    -x hip
++    ${HIPRT_INCLUDE_DIR}/orochi/ParallelPrimitives/RadixSortKernels.h
++    ${flags}
++    -D HIPRT_BITCODE_LINKING
++    -std=c++17
++    -mllvm
++    -amdgpu-early-inline-all=false
++    -mllvm
++    -amdgpu-function-calls=true
++    --genco
++    -I ${HIPRT_INCLUDE_DIR}/orochi
++    -include hip/hip_runtime.h
++    -Wno-parentheses-equality
++    -Wno-unused-value
++    -ffast-math
++    -o ${bvh_file_oro})
++
++  set(hiprt_compile_flags_sdk_bc
++    ${hiprt_compile_flags}
++    ${target_gpus}
++    ${HIP_HIPCC_FLAGS}
++    ${flags}
++    -x hip
++    ${HIPRT_INCLUDE_DIR}/hiprt/impl/hiprt_kernels_bitcode.h
++    -O3
++    -D HIPRT_BITCODE_LINKING
++    -std=c++17
++    -fgpu-rdc
++    -c
++    --gpu-bundle-output
++    -emit-llvm
++    -I ${HIPRT_INCLUDE_DIR}
++    -I ${HIPRT_INCLUDE_DIR}/orochi
++    -Wno-parentheses-equality
++    -Wno-unused-value
++    -ffast-math
++    -o ${sdk_bitcode_file})
++
++  set(hiprt_compile_flags_cycles_bc
+     ${hiprt_compile_flags}
+     ${target_gpus}
+     ${HIP_HIPCC_FLAGS}
+@@ -704,30 +775,56 @@ if(WITH_CYCLES_DEVICE_HIPRT AND WITH_CYC
+     -Wno-unused-value
+     --hipcc-func-supp
+     -ffast-math
+-    -o ${bitcode_file})
+-  if(WITH_CYCLES_DEBUG)
+-    set(hiprt_compile_flags ${hiprt_compile_flags} -D WITH_CYCLES_DEBUG)
+-  endif()
++    -o ${cycles_bitcode_file})
++
+   add_custom_command(
+-    OUTPUT  ${bitcode_file}
+-    COMMAND ${hiprt_compile_command} ${hiprt_compile_flags}
++    OUTPUT  ${cycles_bitcode_file}
++    COMMAND ${hiprt_compile_command} ${hiprt_compile_flags_cycles_bc}
+     DEPENDS ${kernel_sources})
+-  if(WIN32)
+-    set(hiprt_link_command ${CMAKE_COMMAND})
+-    set(hiprt_link_flags   -E env "HIP_PATH=${HIP_ROOT_DIR}"
+-      ${HIP_LINKER_EXECUTABLE})
+-  else()
+-    # not implemented yet
+-  endif()
++
++  add_custom_command(
++    OUTPUT  ${sdk_bitcode_file}
++    COMMAND ${hiprt_compile_command} ${hiprt_compile_flags_sdk_bc}
++    DEPENDS ${HIPRT_INCLUDE_DIR}/hiprt/impl/hiprt_kernels_bitcode.h)
++
++
++  add_custom_command(
++    OUTPUT  ${bvh_file}
++    COMMAND ${hiprt_compile_command} ${hiprt_compile_flags_bvh}
++    DEPENDS ${HIPRT_INCLUDE_DIR}/hiprt/impl/hiprt_kernels.h)
++
++  add_custom_command(
++    OUTPUT  ${bvh_file_oro}
++    COMMAND ${hiprt_compile_command} ${hiprt_compile_flags_bvh_oro}
++    DEPENDS ${HIPRT_INCLUDE_DIR}/orochi/ParallelPrimitives/RadixSortKernels.h)
++
++
++
++  set(hiprt_link_command ${CMAKE_COMMAND})
++  set(hiprt_link_flags   -E env "HIP_PATH=${HIP_ROOT_DIR}"
++    ${HIP_LINKER_EXECUTABLE})
++
+   set(hiprt_link_flags
+     ${hiprt_link_flags}
+     ${target_gpus}
+     -fgpu-rdc
++    -mcode-object-version=4
+     --hip-link
+     --cuda-device-only
+-    ${bitcode_file}
+-    ${HIPRT_BITCODE}
++    ${cycles_bitcode_file}
++    ${sdk_bitcode_file}
+     -o ${hiprt_file})
++ add_custom_command(
++   OUTPUT  ${hiprt_file}
++   COMMAND ${hiprt_link_command} ${hiprt_link_flags}
++   DEPENDS ${cycles_bitcode_file} ${sdk_bitcode_file})
++
++ delayed_install("${CMAKE_CURRENT_BINARY_DIR}" "${hiprt_file}"  ${CYCLES_INSTALL_PATH}/lib)
++ delayed_install("${CMAKE_CURRENT_BINARY_DIR}" "${bvh_file}"     ${CMAKE_INSTALL_PREFIX})
++ delayed_install("${CMAKE_CURRENT_BINARY_DIR}" "${bvh_file_oro}" ${CMAKE_INSTALL_PREFIX})
++ delayed_install("${HIPRT_INCLUDE_DIR}/bin"   "${HIPRT_DYNAMIC_LIB}"    ${CMAKE_INSTALL_PREFIX})
++ add_custom_target(cycles_kernel_hiprt ALL DEPENDS ${hiprt_file} ${bvh_file} ${bvh_file_oro})
++ cycles_set_solution_folder(cycles_kernel_hiprt)
+   add_custom_command(
+     OUTPUT  ${hiprt_file}
+     COMMAND ${hiprt_link_command} ${hiprt_link_flags}
+diff --git a/build_files/build_environment/cmake/hiprt.cmake b/build_files/build_environment/cmake/hiprt.cmake
+new file mode 100644
+index 00000000000..585f6f03089
+--- /dev/null
++++ b/build_files/build_environment/cmake/hiprt.cmake
+@@ -0,0 +1,62 @@
++# SPDX-FileCopyrightText: 2017-2024 Blender Authors
++#
++# SPDX-License-Identifier: GPL-2.0-or-later
++
++# Note the utility apps may use png/tiff/gif system libraries, but the
++# library itself does not depend on them, so should give no problems.
++
++set(HIPRT_CMAKE_FLAGS ${DEFAULT_CMAKE_FLAGS})
++
++set(HIPRT_EXTRA_ARGS
++  --DHIPRT_EXPORTS=ON
++  -D__USE_HIP__=ON
++  -DHIPRT_BITCODE_LINKING=ON
++  -DHIPRT_LOAD_FROM_STRING=OFF
++  -DORO_PRECOMPILED=ON
++)
++
++if(WIN32)
++  set(HIPRT_EXTRA_ARGS
++    ${HIPRT_EXTRA_ARGS}
++    -DCMAKE_DEBUG_POSTFIX=_d
++  )
++endif()
++
++
++ExternalProject_Add(external_hiprt
++  URL file://${PACKAGE_DIR}/${HIPRT_FILE}
++  DOWNLOAD_DIR ${DOWNLOAD_DIR}
++  URL_HASH ${HIPRT_HASH_TYPE}=${HIPRT_HASH}
++  CMAKE_GENERATOR ${PLATFORM_ALT_GENERATOR}
++  PREFIX ${BUILD_DIR}/hiprt
++
++  CMAKE_ARGS
++    -DCMAKE_INSTALL_PREFIX=${LIBDIR}/hiprt
++    ${HIPRT_CMAKE_FLAGS}
++    ${HIPRT_EXTRA_ARGS}
++
++  INSTALL_DIR ${LIBDIR}/hiprt
++)
++
++if(WIN32)
++  if(BUILD_MODE STREQUAL Release)
++    ExternalProject_Add_Step(external_hiprt after_install
++      COMMAND ${CMAKE_COMMAND} -E copy_directory
++        ${LIBDIR}/hiprt/hiprt
++        ${HARVEST_TARGET}/hiprt/include
++      COMMAND ${CMAKE_COMMAND} -E copy
++        ${LIBDIR}/hiprt/dist/bin/Release/hiprt64.dll
++        ${HARVEST_TARGET}/hiprt/bin/hiprt64.dll
++
++      DEPENDEES install
++    )
++  else()
++    ExternalProject_Add_Step(external_hiprt after_install
++      COMMAND ${CMAKE_COMMAND} -E copy
++        ${LIBDIR}/hiprt/dist/bin/Release/hiprt64.dll
++        ${HARVEST_TARGET}/hiprt/bin/hiprt64.dll
++
++      DEPENDEES install
++    )
++  endif()
++endif()

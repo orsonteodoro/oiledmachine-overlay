@@ -1,0 +1,20 @@
+From 92f6c54468abe3da16e3a809b62e8f572d1a4933 Mon Sep 17 00:00:00 2001
+From: salipourto <sahar.alipourkashi@amd.com>
+Date: Tue, 26 Mar 2024 12:46:06 -0700
+Subject: [PATCH 03/19] Submodule rebase update
+
+---
+ lib/windows_x64 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/windows_x64 b/lib/windows_x64
+index 30392df6de7..19b2b87f5ef 160000
+--- a/lib/windows_x64
++++ b/lib/windows_x64
+@@ -1 +1 @@
+-Subproject commit 30392df6de73a5a10bdd1972ada583fc020d552c
++Subproject commit 19b2b87f5ef0d8caa39e0882fbf832052974b785
+-- 
+2.30.2
+
+

@@ -1351,7 +1351,7 @@ ewarn
 
 		sed \
 			-i \
-			-e "s|/opt/rocm/hip/lib/libamdhip64.so|/opt/rocm-${rocm_version}/hip/$(rocm_get_libdir)/libamdhip64.so|" \
+			-e "s|/opt/rocm/|/opt/rocm-${rocm_version}/|g" \
 			"extern/hipew/src/hipew.c" \
 			|| die
 	fi
@@ -1483,6 +1483,7 @@ einfo "CUDA_TARGETS:  ${targets}"
 			| sed -e "s|^;||g")
 		mycmakeargs+=(
 			-DCYCLES_HIP_BINARIES_ARCH="${targets}"
+			-DHIP_DIR="/opt/rocm-${ROCM_VERSION}"
 		)
 einfo "AMDGPU_TARGETS:  ${targets}"
 	fi

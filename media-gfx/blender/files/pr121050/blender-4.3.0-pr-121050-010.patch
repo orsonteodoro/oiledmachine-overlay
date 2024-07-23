@@ -1,0 +1,62 @@
+From a558e8bad6dca59ec30752805bf4afb76b1eaf01 Mon Sep 17 00:00:00 2001
+From: Brecht Van Lommel <brecht@blender.org>
+Date: Fri, 24 May 2024 19:38:05 +0200
+Subject: [PATCH 10/19] Remove now unnecessary dynamic lib detection
+
+---
+ build_files/cmake/Modules/FindHIPRT.cmake | 28 +----------------------
+ 1 file changed, 1 insertion(+), 27 deletions(-)
+
+diff --git a/build_files/cmake/Modules/FindHIPRT.cmake b/build_files/cmake/Modules/FindHIPRT.cmake
+index b874b9861aa..c7d5a048942 100644
+--- a/build_files/cmake/Modules/FindHIPRT.cmake
++++ b/build_files/cmake/Modules/FindHIPRT.cmake
+@@ -4,7 +4,6 @@
+ 
+ # Find HIPRT SDK. This module defines:
+ #   HIPRT_INCLUDE_DIR, path to HIPRT include directory
+-#   HIPRT_DYNAMIC_LIB, dynamic library with ray-tracing functionality
+ #   HIPRT_FOUND, if SDK found
+ 
+ if(NOT (DEFINED HIPRT_ROOT_DIR))
+@@ -35,35 +34,10 @@ find_path(HIPRT_INCLUDE_DIR
+     include
+ )
+ 
+-if(HIPRT_INCLUDE_DIR)
+-  file(STRINGS "${HIPRT_INCLUDE_DIR}/hiprt/hiprt.h" _hiprt_version
+-    REGEX "^#define HIPRT_VERSION_STR[ \t]\".*\"$")
+-  string(REGEX MATCHALL "[0-9]+[.0-9]+" HIPRT_VERSION ${_hiprt_version})
+-endif()
+-
+-if(WIN32)
+-  set(HIPRT_DYNAMIC_LIB hiprt64.dll hiprt${HIPRT_VERSION}64.dll)
+-else()
+-  set(HIPRT_DYNAMIC_LIB libhiprt64.so libhiprt${HIPRT_VERSION}64.so)
+-endif()
+-
+-find_path(HIPRT_LIB_DIR
+-  NAMES
+-    ${HIPRT_DYNAMIC_LIB}
+-  HINTS
+-    ${_hiprt_SEARCH_DIRS}
+-  PATH_SUFFIXES
+-   bin
+-)
+-
+-if(HIPRT_LIB_DIR)
+-  set(HIPRT_DYNAMIC_LIB_PATH ${HIPRT_LIB_DIR}/bin/${HIPRT_DYNAMIC_LIB}})
+-endif()
+-
+ unset(_hiprt_version)
+ include(FindPackageHandleStandardArgs)
+ find_package_handle_standard_args(HIPRT DEFAULT_MSG
+-  HIPRT_INCLUDE_DIR HIPRT_DYNAMIC_LIB_PATH)
++  HIPRT_INCLUDE_DIR)
+ 
+ mark_as_advanced(
+   HIPRT_INCLUDE_DIR
+-- 
+2.30.2
+
+

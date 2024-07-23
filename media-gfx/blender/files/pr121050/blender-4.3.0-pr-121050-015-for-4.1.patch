@@ -1,0 +1,39 @@
+diff '--color=auto' -urp blender-4.1.1.orig/intern/cycles/device/hiprt/device_impl.cpp blender-4.1.1/intern/cycles/device/hiprt/device_impl.cpp
+--- blender-4.1.1.orig/intern/cycles/device/hiprt/device_impl.cpp	2024-07-22 16:44:48.593030310 -0700
++++ blender-4.1.1/intern/cycles/device/hiprt/device_impl.cpp	2024-07-22 16:47:01.338910599 -0700
+@@ -59,7 +59,6 @@ BVHLayoutMask HIPRTDevice::get_bvh_layou
+ 
+ HIPRTDevice::HIPRTDevice(const DeviceInfo &info, Stats &stats, Profiler &profiler)
+     : HIPDevice(info, stats, profiler),
+-      global_stack_buffer(this, "global_stack_buffer", MEM_DEVICE_ONLY),
+       hiprt_context(NULL),
+       scene(NULL),
+       functions_table(NULL),
+Only in blender-4.1.1/intern/cycles/device/hiprt: device_impl.cpp.orig
+Only in blender-4.1.1/intern/cycles/device/hiprt: device_impl.cpp.rej
+diff '--color=auto' -urp blender-4.1.1.orig/intern/cycles/kernel/CMakeLists.txt blender-4.1.1/intern/cycles/kernel/CMakeLists.txt
+--- blender-4.1.1.orig/intern/cycles/kernel/CMakeLists.txt	2024-07-22 16:44:48.833026480 -0700
++++ blender-4.1.1/intern/cycles/kernel/CMakeLists.txt	2024-07-22 16:51:54.598220654 -0700
+@@ -848,18 +848,15 @@ if(WITH_CYCLES_DEVICE_HIPRT AND WITH_CYC
+     set(BVH_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/lib)
+   endif()
+ 
+-
+- delayed_install("${CMAKE_CURRENT_BINARY_DIR}" "${hiprt_file}"  ${CYCLES_INSTALL_PATH}/lib)
+  delayed_install("${CMAKE_CURRENT_BINARY_DIR}" "${bvh_file}"     ${BVH_INSTALL_PATH})
+  delayed_install("${CMAKE_CURRENT_BINARY_DIR}" "${bvh_file_oro}" ${BVH_INSTALL_PATH})
+- add_custom_target(cycles_kernel_hiprt ALL DEPENDS ${hiprt_file} ${bvh_file} ${bvh_file_oro})
+- cycles_set_solution_folder(cycles_kernel_hiprt)
++
+   add_custom_command(
+     OUTPUT  ${hiprt_file}
+     COMMAND ${hiprt_link_command} ${hiprt_link_flags}
+     DEPENDS ${bitcode_file})
+   delayed_install("${CMAKE_CURRENT_BINARY_DIR}" "${hiprt_file}" ${CYCLES_INSTALL_PATH}/lib)
+-  add_custom_target(cycles_kernel_hiprt ALL DEPENDS ${hiprt_file})
++  add_custom_target(cycles_kernel_hiprt ALL DEPENDS ${hiprt_file} ${bvh_file} ${bvh_file_oro})
+   cycles_set_solution_folder(cycles_kernel_hiprt)
+ endif()
+ 
+Only in blender-4.1.1/intern/cycles/kernel: CMakeLists.txt.orig
+Only in blender-4.1.1/intern/cycles/kernel: CMakeLists.txt.rej

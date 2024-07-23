@@ -1,0 +1,652 @@
+From 787deb2de697c791adb144d25feb93966e916fce Mon Sep 17 00:00:00 2001
+From: Brecht Van Lommel <brecht@blender.org>
+Date: Wed, 22 May 2024 23:20:44 +0200
+Subject: [PATCH 07/19] Various changes towards getting this to actually build
+ on Linux
+
+---
+ build_files/build_environment/CMakeLists.txt  |   3 +
+ .../build_environment/cmake/harvest.cmake     |   5 +-
+ .../build_environment/cmake/hiprt.cmake       |  70 +--
+ .../build_environment/cmake/versions.cmake    |   8 +-
+ .../build_environment/patches/hiprt.diff      | 408 ++++++++++++++++++
+ build_files/cmake/Modules/FindHIPRT.cmake     |  21 +-
+ intern/cycles/cmake/external_libs.cmake       |   3 +
+ 7 files changed, 473 insertions(+), 45 deletions(-)
+ create mode 100644 build_files/build_environment/patches/hiprt.diff
+
+diff --git a/build_files/build_environment/CMakeLists.txt b/build_files/build_environment/CMakeLists.txt
+index be3c1dccdbd..44261b2db0a 100644
+--- a/build_files/build_environment/CMakeLists.txt
++++ b/build_files/build_environment/CMakeLists.txt
+@@ -89,6 +89,9 @@ include(cmake/fribidi.cmake)
+ include(cmake/harfbuzz.cmake)
+ if(NOT APPLE)
+   include(cmake/xr_openxr.cmake)
++  if(NOT BLENDER_PLATFORM_ARM)
++    include(cmake/hiprt.cmake)
++  endif()
+   if(NOT BLENDER_PLATFORM_WINDOWS_ARM)
+     include(cmake/dpcpp.cmake)
+     include(cmake/dpcpp_deps.cmake)
+diff --git a/build_files/build_environment/cmake/harvest.cmake b/build_files/build_environment/cmake/harvest.cmake
+index 67d50f18e30..825e5420099 100644
+--- a/build_files/build_environment/cmake/harvest.cmake
++++ b/build_files/build_environment/cmake/harvest.cmake
+@@ -154,9 +154,8 @@ else()
+   if(NOT APPLE)
+     harvest(level-zero/include/level_zero level-zero/include/level_zero "*.h")
+     harvest(level-zero/lib level-zero/lib "*${SHAREDLIBEXT}*")
+-    harvest(hiprt/hiprt hiprt/hiprt "*.h")
+-    harvest(hiprt/hiprt/impl hiprt/hiprt/impl "*.h")
+-    harvest(hiprt/dist/bin/Release hiprt/bin "*${SHAREDLIBEXT}*")
++    harvest(hiprt/include hiprt/include "*.h")
++    harvest(hiprt/bin hiprt/bin "*${SHAREDLIBEXT}*")
+   endif()
+   harvest(llvm/bin llvm/bin "clang-format")
+   if(BUILD_CLANG_TOOLS)
+diff --git a/build_files/build_environment/cmake/hiprt.cmake b/build_files/build_environment/cmake/hiprt.cmake
+index 9818a1ae628..13084a79aea 100644
+--- a/build_files/build_environment/cmake/hiprt.cmake
++++ b/build_files/build_environment/cmake/hiprt.cmake
+@@ -7,55 +7,71 @@
+ 
+ set(HIPRT_CMAKE_FLAGS ${DEFAULT_CMAKE_FLAGS})
+ 
+-set(HIPRT_EXTRA_ARGS
+-  -DHIPRT_EXPORTS=ON
+-  -D__USE_HIP__=ON
+-  -DHIPRT_BITCODE_LINKING=ON
+-  -DHIPRT_LOAD_FROM_STRING=OFF
+-  -DORO_PRECOMPILED=ON
+-)
++# TODO:
++# Do anything with these?
++# -DHIPRT_EXPORTS=ON
++# -D__USE_HIP__=ON
++# -DHIPRT_BITCODE_LINKING=ON
++# -DHIPRT_LOAD_FROM_STRING=OFF
++# -DORO_PRECOMPILED=ON
++
++get_filename_component(_hip_path ${HIP_HIPCC_EXECUTABLE} DIRECTORY)
++get_filename_component(_hip_path ${_hip_path} DIRECTORY)
+ 
+ if(WIN32)
+-  set(HIPRT_EXTRA_ARGS
+-    ${HIPRT_EXTRA_ARGS}
+-    -DCMAKE_DEBUG_POSTFIX=_d
+-  )
++  set(hiprt_configure HIP_PATH=${_hip_path} .\tools\premake5\win\premake5.exe vs2019)
++  set(hiprt_build msbuild /m build/hiprt.sln /p:Configuration=Release)
++else()
++  set(hiprt_configure HIP_PATH=${_hip_path} ./tools/premake5/linux64/premake5 gmake)
++  set(hiprt_build make -C build -j config=release_x64)
+ endif()
+ 
+-
+ ExternalProject_Add(external_hiprt
+   URL file://${PACKAGE_DIR}/${HIPRT_FILE}
+   DOWNLOAD_DIR ${DOWNLOAD_DIR}
+   URL_HASH ${HIPRT_HASH_TYPE}=${HIPRT_HASH}
+-  CMAKE_GENERATOR ${PLATFORM_ALT_GENERATOR}
+   PREFIX ${BUILD_DIR}/hiprt
+-
+-  CMAKE_ARGS
+-    -DCMAKE_INSTALL_PREFIX=${LIBDIR}/hiprt
+-    ${HIPRT_CMAKE_FLAGS}
+-    ${HIPRT_EXTRA_ARGS}
+-
+   INSTALL_DIR ${LIBDIR}/hiprt
++
++  # TODO: should not be downloading git repos here
++  PATCH_COMMAND ${PATCH_CMD} -p 1 -d
++    ${BUILD_DIR}/hiprt/src/external_hiprt <
++    ${PATCH_DIR}/hiprt.diff &&
++    cd ${BUILD_DIR}/hiprt/src/external_hiprt/contrib &&
++    git clone git@github.com:amdadvtech/Orochi.git &&
++    cd Orochi && git checkout c82a229f5a424117855b86b78b480d003419bf66 && cd .. &&
++    git clone https://github.com/amdadvtech/easy-encryption
++
++  # TODO: disabling unittest is not working, binary still gets written
++  CONFIGURE_COMMAND
++    cd ${BUILD_DIR}/hiprt/src/external_hiprt/ &&
++    ${hiprt_configure} --bitcode=true --unittest=false
++  BUILD_COMMAND
++    cd ${BUILD_DIR}/hiprt/src/external_hiprt/ &&
++    ${hiprt_build}
++  # TODO: does premake not have an install command?
++  INSTALL_COMMAND
++    ${CMAKE_COMMAND} -E copy_directory ${BUILD_DIR}/hiprt/src/external_hiprt/dist/bin/Release ${LIBDIR}/hiprt/bin &&
++    ${CMAKE_COMMAND} -E copy_directory ${BUILD_DIR}/hiprt/src/external_hiprt/hiprt ${LIBDIR}/hiprt/include/hiprt &&
++    ${CMAKE_COMMAND} -E copy_directory ${BUILD_DIR}/hiprt/src/external_hiprt/contrib/Orochi/ParallelPrimitives ${LIBDIR}/hiprt/include/orochi/ParallelPrimitives
+ )
+ 
+ if(WIN32)
+   if(BUILD_MODE STREQUAL Release)
+     ExternalProject_Add_Step(external_hiprt after_install
+       COMMAND ${CMAKE_COMMAND} -E copy_directory
+-        ${LIBDIR}/hiprt/hiprt
+-        ${HARVEST_TARGET}/hiprt/hiprt
++        ${LIBDIR}/hiprt/include
++        ${HARVEST_TARGET}/hiprt/include
+       COMMAND ${CMAKE_COMMAND} -E copy
+-        ${LIBDIR}/hiprt/dist/bin/Release/hiprt*64.dll
+-        ${HARVEST_TARGET}/hiprt/bin/hiprt*64.dll
+-
++        ${LIBDIR}/hiprt/bin/hiprt*64.dll
++        ${HARVEST_TARGET}/hiprt/bin/
+       DEPENDEES install
+     )
+   else()
+     ExternalProject_Add_Step(external_hiprt after_install
+       COMMAND ${CMAKE_COMMAND} -E copy
+-        ${LIBDIR}/hiprt/dist/bin/Debug/hiprt*64D.dll
+-        ${HARVEST_TARGET}/hiprt/bin/hiprt*64D.dll
+-
++        ${LIBDIR}/hiprt/bin/hiprt*64D.dll
++        ${HARVEST_TARGET}/hiprt/bin/
+       DEPENDEES install
+     )
+   endif()
+diff --git a/build_files/build_environment/cmake/versions.cmake b/build_files/build_environment/cmake/versions.cmake
+index a5a1bb49ac1..fc632cfb27a 100644
+--- a/build_files/build_environment/cmake/versions.cmake
++++ b/build_files/build_environment/cmake/versions.cmake
+@@ -870,8 +870,8 @@ set(PYBIND11_HASH ce07bfd5089245da7807b3faf6cbc878)
+ set(PYBIND11_HASH_TYPE MD5)
+ set(PYBIND11_FILE pybind-v${PYBIND11_VERSION}.tar.gz)
+ 
+-set(HIPRT_VERSION 2.3.7df94af)
+-set(HIPRT_URI https://github.com/GPUOpen-LibrariesAndSDKs/HIPRTSDK/releases/tag/${HIPRT_VERSION}.zip)
+-set(HIPRT_HASH 813aa5ed29e24693f8d1edf9bc13b38cad5d2928)
++set(HIPRT_VERSION 5ffcea6322519b25500f6d3140bbb42dd06fb464)
++set(HIPRT_URI https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/archive//${HIPRT_VERSION}.tar.gz)
++set(HIPRT_HASH ccdeb345c4dc07793b6a106e113a45d6)
+ set(HIPRT_HASH_TYPE MD5)
+-set(HIPRT_FILE hiprt-${HIPRT_VERSION}.zip)
++set(HIPRT_FILE hiprt-${HIPRT_VERSION}.tar.gz)
+diff --git a/build_files/build_environment/patches/hiprt.diff b/build_files/build_environment/patches/hiprt.diff
+new file mode 100644
+index 00000000000..09ce2a4e633
+--- /dev/null
++++ b/build_files/build_environment/patches/hiprt.diff
+@@ -0,0 +1,408 @@
++From 0dedf6df1353c4872be9e35236de5c027761e8b7 Mon Sep 17 00:00:00 2001
++From: Brecht Van Lommel <brecht@blender.org>
++Date: Wed, 22 May 2024 21:25:55 +0200
++Subject: [PATCH 1/4] Support HIP_PATH on Linux, and prefer it over PATH on all
++ platforms
++
++---
++ premake5.lua | 75 ++++++++++++++++++++++++++++++----------------------
++ 1 file changed, 43 insertions(+), 32 deletions(-)
++
++diff --git a/premake5.lua b/premake5.lua
++index 8566cfb..0c78fcb 100644
++--- a/premake5.lua
+++++ b/premake5.lua
++@@ -92,39 +92,50 @@ function get_hip_sdk_verion()
++ 	PATH = os.getenv("PATH")
++ 	hipInPath = false
++ 
++-	-- check if HIP is in the PATH environement variable
++-	for token in string.gmatch(PATH, "[^;]+") do
++-		if string.find(token, 'hip') then
++-			if os.isfile(path.join(token, 'hipcc')) then
++-				hipInPath = true
++-			end
++-		end
++-	end
++-	
++-	if os.ishost("windows") then
++-        if hipInPath then
++-			hipCommand = 'hipcc'
++-		elseif not HIP_PATH then
++-			hipCommand = root .. 'hipSdk\\bin\\hipcc'
++-		else
++-            if string.sub(HIP_PATH, -1, -1) == '\\' or string.sub(HIP_PATH, -1, -1) == '/' then
++-                HIP_PATH = string.sub(HIP_PATH, 1, -2)
+++    if HIP_PATH then
+++        -- Use explicit path to hip if specific.
+++        -- HIP_PATH is expected to look like: C:\Program Files\AMD\ROCm\5.7
+++        if string.sub(HIP_PATH, -1, -1) == '\\' or string.sub(HIP_PATH, -1, -1) == '/' then
+++            HIP_PATH = string.sub(HIP_PATH, 1, -2)
+++        end
+++        if os.ishost("windows") then
+++            hipCommand = '\"' .. HIP_PATH..'\\bin\\'..hipCommand .. '\"'
+++        else
+++            hipCommand = '\"' .. HIP_PATH..'/bin/'..hipCommand .. '\"'
+++        end
+++    else
+++        -- check if HIP is in the PATH environement variable
+++        if os.ishost("windows") then
+++            path_split_pattern = "[^;]+"
+++        else
+++            path_split_pattern = "[^:]+"
+++        end
+++
+++        for token in string.gmatch(PATH, path_split_pattern) do
+++            if string.find(token, 'hip') then
+++                if os.isfile(path.join(token, 'hipcc')) then
+++                    hipInPath = true
+++                end
++             end
++-			-- HIP_PATH is expected to look like:   C:\Program Files\AMD\ROCm\5.7
++-			hipCommand = '\"' .. HIP_PATH..'\\bin\\'..hipCommand .. '\"'
++-		end
++-	end
++-	
++-	tmpFile = os.tmpname ()
++-	os.execute (hipCommand .. " --version > " .. tmpFile)
++-	
++-	local version
++-	for line in io.lines (tmpFile) do
++-		print (line)
++-		version =  string.sub(line, string.find(line, "%d.%d"))
++-		break
++-	end
++-	os.remove (tmpFile)
+++        end
+++
+++        if hipInPath then
+++            hipCommand = 'hipcc'
+++        elseif os.ishost("windows") then
+++            hipCommand = root .. 'hipSdk\\bin\\hipcc'
+++        end
+++    end
+++
+++    tmpFile = os.tmpname ()
+++    os.execute (hipCommand .. " --version > " .. tmpFile)
+++
+++    local version
+++    for line in io.lines (tmpFile) do
+++        print (line)
+++        version =  string.sub(line, string.find(line, "%d.%d"))
+++        break
+++    end
+++    os.remove (tmpFile)
++ 
++     if version == nil or version == '' then
++         version = "HIP_SDK_NOT_FOUND"
++-- 
++2.43.2
++
++
++From ed86075897be7a56c346b1fc517732b8146cb3de Mon Sep 17 00:00:00 2001
++From: Brecht Van Lommel <brecht@blender.org>
++Date: Wed, 22 May 2024 21:25:42 +0200
++Subject: [PATCH 2/4] Add build option to disable unit tests
++
++---
++ premake5.lua | 121 +++++++++++++++++++++++++++------------------------
++ 1 file changed, 65 insertions(+), 56 deletions(-)
++
++diff --git a/premake5.lua b/premake5.lua
++index 0c78fcb..f76a8bd 100644
++--- a/premake5.lua
+++++ b/premake5.lua
++@@ -19,6 +19,12 @@ newoption {
++     description = "Use hiprtew"
++ }
++ 
+++newoption {
+++    trigger = "unittest",
+++    description = "Build unit tests",
+++    default = true
+++}
+++
++ function copydir(src_dir, dst_dir, filter, single_dst_dir)
++     filter = filter or "**"
++     src_dir = src_dir .. "/"
++@@ -256,63 +262,66 @@ workspace "hiprt"
++     files {"contrib/Orochi/contrib/**.h", "contrib/Orochi/contrib/**.cpp"}
++     files {"contrib/Orochi/ParallelPrimitives/**.h", "contrib/Orochi/ParallelPrimitives/**.cpp"}
++ 
++-	
++-    project( "unittest" )
++-        cppdialect "C++20"
++-        kind "ConsoleApp"
++-	    if _OPTIONS["bitcode"] then
++-	    	defines {"HIPRT_BITCODE_LINKING"}
++-	    end
++-        if os.ishost("windows") then
++-            buildoptions { "/wd4244" }
++-            links{ "version" }
++-        end
++-        externalincludedirs {"./"}
++-		links { HIPRT_NAME }
++-		
++-        if os.ishost("linux") then
++-            links { "pthread", "dl" }
++-        end
++-        files { "test/hiprtT*.h", "test/hiprtT*.cpp", "test/shared.h", "test/main.cpp", "test/CornellBox.h", "test/kernels/*.h" }
++-        externalincludedirs { "./contrib/Orochi/" }
++-        files {"contrib/Orochi/Orochi/**.h", "contrib/Orochi/Orochi/**.cpp"}
++-        files {"contrib/Orochi/contrib/**.h", "contrib/Orochi/contrib/**.cpp"}
++ 
++-        files { "contrib/gtest-1.6.0/gtest-all.cc" }
++-        externalincludedirs { "contrib/gtest-1.6.0/" }
++-        defines { "GTEST_HAS_TR1_TUPLE=0" }
++-        externalincludedirs { "contrib/embree/include/" }
++-        if os.istarget("windows") then
++-            libdirs{"contrib/embree/win/"}
++-            copydir( "./contrib/embree/win", "./dist/bin/Release/", "*.dll" )
++-            copydir( "./contrib/embree/win", "./dist/bin/Debug/", "*.dll" )
++-			libdirs{"contrib/bin/win64"}
++-            copydir( "./contrib/Orochi/contrib/bin/win64", "./dist/bin/Release/", "*.dll" )
++-            copydir( "./contrib/Orochi/contrib/bin/win64", "./dist/bin/Debug/", "*.dll" )
++-        end
++-        if os.istarget("linux") then
++-            libdirs{"contrib/embree/linux/"}
++-        end
++-        links{ "embree4", "tbb" }
++-		if _OPTIONS["hiprtew"] then
+++    if _OPTIONS["unittest"] then
+++        project( "unittest" )
+++            cppdialect "C++20"
+++            kind "ConsoleApp"
+++            if _OPTIONS["bitcode"] then
+++                defines {"HIPRT_BITCODE_LINKING"}
+++            end
+++            if os.ishost("windows") then
+++                buildoptions { "/wd4244" }
+++                links{ "version" }
+++            end
+++            externalincludedirs {"./"}
+++            links { HIPRT_NAME }
+++
+++            if os.ishost("linux") then
+++                links { "pthread", "dl" }
+++            end
+++            files { "test/hiprtT*.h", "test/hiprtT*.cpp", "test/shared.h", "test/main.cpp", "test/CornellBox.h", "test/kernels/*.h" }
+++            externalincludedirs { "./contrib/Orochi/" }
+++            files {"contrib/Orochi/Orochi/**.h", "contrib/Orochi/Orochi/**.cpp"}
+++            files {"contrib/Orochi/contrib/**.h", "contrib/Orochi/contrib/**.cpp"}
+++
+++            files { "contrib/gtest-1.6.0/gtest-all.cc" }
+++            externalincludedirs { "contrib/gtest-1.6.0/" }
+++            defines { "GTEST_HAS_TR1_TUPLE=0" }
+++            externalincludedirs { "contrib/embree/include/" }
+++            if os.istarget("windows") then
+++                libdirs{"contrib/embree/win/"}
+++                copydir( "./contrib/embree/win", "./dist/bin/Release/", "*.dll" )
+++                copydir( "./contrib/embree/win", "./dist/bin/Debug/", "*.dll" )
+++                libdirs{"contrib/bin/win64"}
+++                copydir( "./contrib/Orochi/contrib/bin/win64", "./dist/bin/Release/", "*.dll" )
+++                copydir( "./contrib/Orochi/contrib/bin/win64", "./dist/bin/Debug/", "*.dll" )
+++            end
+++            if os.istarget("linux") then
+++                libdirs{"contrib/embree/linux/"}
+++            end
+++            links{ "embree4", "tbb" }
+++
+++        if _OPTIONS["hiprtew"] then
++              project( "hiprtewtest" )
++-                     kind "ConsoleApp"
++-                     defines {"HIPRT_EXPORTS"}
++-					 defines {"USE_HIPRTEW"}
++-                     if os.ishost("windows") then
++-                             buildoptions { "/wd4244" }
++-                             links{ "version" }
++-                     end
++-                     externalincludedirs {"./", "./contrib/Orochi/"}
++-                     if os.ishost("linux") then
++-                             links { "pthread", "dl"}
++-                     end
++-					 files {"contrib/Orochi/Orochi/**.h", "contrib/Orochi/Orochi/**.cpp"}
++-					 files {"contrib/Orochi/contrib/**.h", "contrib/Orochi/contrib/**.cpp"}
++-                     files { "test/hiprtewTest.h", "test/hiprtewTest.cpp" }
++-			
++-                     files { "contrib/gtest-1.6.0/gtest-all.cc" }
++-                     externalincludedirs { "contrib/gtest-1.6.0/" }
++-                     defines { "GTEST_HAS_TR1_TUPLE=0" }
+++                 kind "ConsoleApp"
+++                 defines {"HIPRT_EXPORTS"}
+++                 defines {"USE_HIPRTEW"}
+++                 if os.ishost("windows") then
+++                         buildoptions { "/wd4244" }
+++                         links{ "version" }
+++                 end
+++                 externalincludedirs {"./", "./contrib/Orochi/"}
+++                 if os.ishost("linux") then
+++                         links { "pthread", "dl"}
+++                 end
+++                 files {"contrib/Orochi/Orochi/**.h", "contrib/Orochi/Orochi/**.cpp"}
+++                 files {"contrib/Orochi/contrib/**.h", "contrib/Orochi/contrib/**.cpp"}
+++                 files { "test/hiprtewTest.h", "test/hiprtewTest.cpp" }
+++
+++                 files { "contrib/gtest-1.6.0/gtest-all.cc" }
+++                 externalincludedirs { "contrib/gtest-1.6.0/" }
+++                 defines { "GTEST_HAS_TR1_TUPLE=0" }
+++        end
++     end
++ 
++-- 
++2.43.2
++
++
++From 130a5ea732f110da3a77bf7936db6f8522d2cb20 Mon Sep 17 00:00:00 2001
++From: Brecht Van Lommel <brecht@blender.org>
++Date: Wed, 22 May 2024 21:32:05 +0200
++Subject: [PATCH 3/4] Fix error building bitcode a second time
++
++---
++ premake5.lua | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/premake5.lua b/premake5.lua
++index f76a8bd..76a3370 100644
++--- a/premake5.lua
+++++ b/premake5.lua
++@@ -242,7 +242,7 @@ workspace "hiprt"
++             os.execute("mkdir hiprt\\cache")
++             os.execute("tools\\bakeKernel.bat")
++         else
++-            os.execute("mkdir hiprt/cache")
+++            os.execute("mkdir -p hiprt/cache")
++             os.execute("./tools/bakeKernel.sh")
++         end
++         if _OPTIONS["bakeKernel"] then
++-- 
++2.43.2
++
++
++From c383f3888d5132f1b193b550dcef7d242b8aa879 Mon Sep 17 00:00:00 2001
++From: Brecht Van Lommel <brecht@blender.org>
++Date: Wed, 22 May 2024 21:32:22 +0200
++Subject: [PATCH 4/4] Fix failure to bake due to missing "python" command on
++ Linux
++
++For example Ubuntu only has a python3 command, and this should be
++available on all Linux distributions.
++---
++ tools/bakeKernel.sh | 84 ++++++++++++++++++++++-----------------------
++ 1 file changed, 42 insertions(+), 42 deletions(-)
++
++diff --git a/tools/bakeKernel.sh b/tools/bakeKernel.sh
++index 21cbfe2..cdc914b 100755
++--- a/tools/bakeKernel.sh
+++++ b/tools/bakeKernel.sh
++@@ -5,66 +5,66 @@ echo "// automatically generated, don't edit" > hiprt/cache/KernelArgs.h
++ echo "// automatically generated, don't edit" > contrib/Orochi/ParallelPrimitives/cache/Kernels.h
++ echo "// automatically generated, don't edit" > contrib/Orochi/ParallelPrimitives/cache/KernelArgs.h
++ 
++-python tools/stringify.py ./contrib/Orochi/ParallelPrimitives/RadixSortKernels.h  >> contrib/Orochi/ParallelPrimitives/cache/Kernels.h
++-python tools/genArgs.py ./contrib/Orochi/ParallelPrimitives/RadixSortKernels.h  >> contrib/Orochi/ParallelPrimitives/cache/KernelArgs.h
++-python tools/stringify.py ./contrib/Orochi/ParallelPrimitives/RadixSortConfigs.h  >> contrib/Orochi/ParallelPrimitives/cache/Kernels.h
+++python3 tools/stringify.py ./contrib/Orochi/ParallelPrimitives/RadixSortKernels.h  >> contrib/Orochi/ParallelPrimitives/cache/Kernels.h
+++python3 tools/genArgs.py ./contrib/Orochi/ParallelPrimitives/RadixSortKernels.h  >> contrib/Orochi/ParallelPrimitives/cache/KernelArgs.h
+++python3 tools/stringify.py ./contrib/Orochi/ParallelPrimitives/RadixSortConfigs.h  >> contrib/Orochi/ParallelPrimitives/cache/Kernels.h
++ 
++ echo "#pragma once" >> hiprt/cache/Kernels.h
++ echo "#pragma once" >> hiprt/cache/KernelArgs.h
++ 
++-python tools/stringify.py ./hiprt/impl/Math.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/hiprt_vec.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/Aabb.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/AabbList.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/BvhCommon.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/BvhNode.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/Geometry.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/QrDecomposition.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/Quaternion.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/Transform.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/Instance.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/InstanceList.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/MortonCode.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/Scene.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/TriangleMesh.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/Triangle.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/BvhBuilderUtil.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/SbvhCommon.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/ApiNodeList.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/BvhConfig.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/MemoryArena.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/hiprt_types.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/hiprt_common.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/Math.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/hiprt_vec.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/Aabb.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/AabbList.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/BvhCommon.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/BvhNode.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/Geometry.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/QrDecomposition.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/Quaternion.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/Transform.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/Instance.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/InstanceList.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/MortonCode.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/Scene.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/TriangleMesh.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/Triangle.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/BvhBuilderUtil.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/SbvhCommon.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/ApiNodeList.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/BvhConfig.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/impl/MemoryArena.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/hiprt_types.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/stringify.py ./hiprt/hiprt_common.h 20220318  >> hiprt/cache/Kernels.h
++ 
++ 
++ # hiprt_device_impl.h
++-python tools/stringify.py ./hiprt/impl/hiprt_device_impl.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/impl/hiprt_device_impl.h 20220318  >> hiprt/cache/KernelArgs.h
+++python3 tools/stringify.py ./hiprt/impl/hiprt_device_impl.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/genArgs.py ./hiprt/impl/hiprt_device_impl.h 20220318  >> hiprt/cache/KernelArgs.h
++ 
++ # hiprt_device.h
++-python tools/stringify.py ./hiprt/hiprt_device.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/hiprt_device.h 20220318  >> hiprt/cache/KernelArgs.h
+++python3 tools/stringify.py ./hiprt/hiprt_device.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/genArgs.py ./hiprt/hiprt_device.h 20220318  >> hiprt/cache/KernelArgs.h
++ 
++ # BvhBuilderKernels.h
++-python tools/stringify.py ./hiprt/impl/BvhBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/impl/BvhBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
+++python3 tools/stringify.py ./hiprt/impl/BvhBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/genArgs.py ./hiprt/impl/BvhBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
++ 
++ # LbvhBuilderKernels.h
++-python tools/stringify.py ./hiprt/impl/LbvhBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/impl/LbvhBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
+++python3 tools/stringify.py ./hiprt/impl/LbvhBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/genArgs.py ./hiprt/impl/LbvhBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
++ 
++ # PlocBuilderKernels.h
++-python tools/stringify.py ./hiprt/impl/PlocBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/impl/PlocBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
+++python3 tools/stringify.py ./hiprt/impl/PlocBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/genArgs.py ./hiprt/impl/PlocBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
++ 
++ # SbvhBuilderKernels.h
++-python tools/stringify.py ./hiprt/impl/SbvhBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/impl/SbvhBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
+++python3 tools/stringify.py ./hiprt/impl/SbvhBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/genArgs.py ./hiprt/impl/SbvhBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
++ 
++ # BatchBuilderKernels.h
++-python tools/stringify.py ./hiprt/impl/BatchBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/impl/BatchBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
+++python3 tools/stringify.py ./hiprt/impl/BatchBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/genArgs.py ./hiprt/impl/BatchBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
++ 
++ # BvhImporterKernels.h
++-python tools/stringify.py ./hiprt/impl/BvhImporterKernels.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/impl/BvhImporterKernels.h 20220318  >> hiprt/cache/KernelArgs.h
+++python3 tools/stringify.py ./hiprt/impl/BvhImporterKernels.h 20220318  >> hiprt/cache/Kernels.h
+++python3 tools/genArgs.py ./hiprt/impl/BvhImporterKernels.h 20220318  >> hiprt/cache/KernelArgs.h
++-- 
++2.43.2
++
+diff --git a/build_files/cmake/Modules/FindHIPRT.cmake b/build_files/cmake/Modules/FindHIPRT.cmake
+index b27222dd143..61803f13925 100644
+--- a/build_files/cmake/Modules/FindHIPRT.cmake
++++ b/build_files/cmake/Modules/FindHIPRT.cmake
+@@ -22,29 +22,29 @@ elseif(DEFINED ENV{HIP_PATH})
+ endif()
+ 
+ set(_hiprt_SEARCH_DIRS
+- ${HIPRT_ROOT_DIR}
+- /opt/lib/hiprt)
++  ${HIPRT_ROOT_DIR}
++  /opt/lib/hiprt
++)
+ 
+ find_path(HIPRT_INCLUDE_DIR
+   NAMES
+     hiprt/hiprt.h
+   HINTS
+-    ${_hiprt_SEARCH_DIRS}/include
+     ${_hiprt_SEARCH_DIRS}
++  PATH_SUFFIXES
++    include
+ )
+ 
+ if(HIPRT_INCLUDE_DIR)
+   file(STRINGS "${HIPRT_INCLUDE_DIR}/hiprt/hiprt.h" _hiprt_version
+     REGEX "^#define HIPRT_VERSION_STR[ \t]\".*\"$")
+-  string(REGEX MATCHALL "[0-9]+[.0-9]+" _hiprt_version ${_hiprt_version})
+-
+-  set(HIPRT_VERSION  ${_hiprt_version})
+- endif()
++  string(REGEX MATCHALL "[0-9]+[.0-9]+" HIPRT_VERSION ${_hiprt_version})
++endif()
+ 
+ if(WIN32)
+- set(HIPRT_DYNAMIC_LIB hiprt${HIPRT_VERSION}64.dll)
++  set(HIPRT_DYNAMIC_LIB hiprt${HIPRT_VERSION}64.dll)
+ else()
+- set(HIPRT_DYNAMIC_LIB hiprt${HIPRT_VERSION}64.so)
++  set(HIPRT_DYNAMIC_LIB libhiprt${HIPRT_VERSION}64.so)
+ endif()
+ 
+ find_path(HIPRT_LIB_DIR
+@@ -57,8 +57,7 @@ find_path(HIPRT_LIB_DIR
+ )
+ 
+ if(HIPRT_LIB_DIR)
+- set(HIPRT_DYNAMIC_LIB_PATH
+- ${HIPRT_LIB_DIR}/bin/${HIPRT_DYNAMIC_LIB}})
++  set(HIPRT_DYNAMIC_LIB_PATH ${HIPRT_LIB_DIR}/bin/${HIPRT_DYNAMIC_LIB}})
+ endif()
+ 
+ unset(_hiprt_version)
+diff --git a/intern/cycles/cmake/external_libs.cmake b/intern/cycles/cmake/external_libs.cmake
+index 935e5296572..aa9dbd151fd 100644
+--- a/intern/cycles/cmake/external_libs.cmake
++++ b/intern/cycles/cmake/external_libs.cmake
+@@ -55,6 +55,9 @@ if(WITH_CYCLES_DEVICE_HIP)
+ 
+   # HIP RT
+   if(WITH_CYCLES_DEVICE_HIP AND WITH_CYCLES_DEVICE_HIPRT)
++    if(DEFINED LIBDIR)
++      set(HIPRT_ROOT_DIR ${LIBDIR}/hiprt)
++    endif()
+     find_package(HIPRT)
+     set_and_warn_library_found("HIP RT" HIPRT_FOUND WITH_CYCLES_DEVICE_HIPRT)
+   endif()
+-- 
+2.30.2
+
+

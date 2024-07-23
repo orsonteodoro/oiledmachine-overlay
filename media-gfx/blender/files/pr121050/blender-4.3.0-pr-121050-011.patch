@@ -1,0 +1,237 @@
+From 851d86caaf5da703293d1bdd6c5d384cbedf31a4 Mon Sep 17 00:00:00 2001
+From: Ray Molenkamp <github@lazydodo.com>
+Date: Fri, 24 May 2024 14:47:41 -0600
+Subject: [PATCH 11/19] - Fix Python not being found for the preprocessing
+ steps - Fix C++20 Usage
+
+---
+ .../build_environment/cmake/hiprt.cmake       |   2 +-
+ .../build_environment/patches/hiprt.diff      | 194 +++++++++++++++++-
+ 2 files changed, 194 insertions(+), 2 deletions(-)
+
+diff --git a/build_files/build_environment/cmake/hiprt.cmake b/build_files/build_environment/cmake/hiprt.cmake
+index 01607a8c1fd..393fea2b2ef 100644
+--- a/build_files/build_environment/cmake/hiprt.cmake
++++ b/build_files/build_environment/cmake/hiprt.cmake
+@@ -11,7 +11,7 @@ get_filename_component(_hip_path ${HIP_HIPCC_EXECUTABLE} DIRECTORY)
+ get_filename_component(_hip_path ${_hip_path} DIRECTORY)
+ 
+ if(WIN32)
+-  set(hiprt_configure HIP_PATH=${_hip_path} .\tools\premake5\win\premake5.exe vs2019)
++  set(hiprt_configure set HIP_PATH=${_hip_path} && set PYTHON_BIN=${PYTHON_BINARY} && .\\tools\\premake5\\win\\premake5.exe vs2019)
+   set(hiprt_build msbuild /m build/hiprt.sln /p:Configuration=Release)
+ else()
+   set(hiprt_configure HIP_PATH=${_hip_path} ./tools/premake5/linux64/premake5 gmake)
+diff --git a/build_files/build_environment/patches/hiprt.diff b/build_files/build_environment/patches/hiprt.diff
+index ac387709e5a..77ad718e88b 100644
+--- a/build_files/build_environment/patches/hiprt.diff
++++ b/build_files/build_environment/patches/hiprt.diff
+@@ -169,7 +169,7 @@ index 0c78fcb..48abbce 100644
+ -		if _OPTIONS["hiprtew"] then
+ +    if not _OPTIONS["no-unittest"] then
+ +        project( "unittest" )
+-+            cppdialect "C++20"
+++            cppdialect "C++17"
+ +            kind "ConsoleApp"
+ +            if _OPTIONS["bitcode"] then
+ +                defines {"HIPRT_BITCODE_LINKING"}
+@@ -545,3 +545,195 @@ index aa8f148..00c7300 100644
+ -- 
+ 2.43.2
+ 
++diff --git a/tools/bakeKernel.bat b/tools/bakeKernel.bat
++index 5c6c7dc..9a5717d 100644
++--- a/tools/bakeKernel.bat
+++++ b/tools/bakeKernel.bat
++@@ -1,3 +1,7 @@
+++if "%PYTHON_BIN%%"=="" (
+++set PYTHON_BIN=python
+++)
+++
++ echo // automatically generated, don't edit > hiprt/cache/Kernels.h
++ echo // automatically generated, don't edit > hiprt/cache/KernelArgs.h
++ 
++@@ -5,57 +9,57 @@ echo // automatically generated, don't edit > hiprt/cache/KernelArgs.h
++ echo // automatically generated, don't edit > contrib/Orochi/ParallelPrimitives/cache/Kernels.h
++ echo // automatically generated, don't edit > contrib/Orochi/ParallelPrimitives/cache/KernelArgs.h
++ 
++-python tools/stringify.py ./contrib/Orochi/ParallelPrimitives/RadixSortKernels.h   >> contrib/Orochi/ParallelPrimitives/cache/Kernels.h
++-python tools/genArgs.py ./contrib/Orochi/ParallelPrimitives/RadixSortKernels.h  >> contrib/Orochi/ParallelPrimitives/cache/KernelArgs.h
++-python tools/stringify.py ./contrib/Orochi/ParallelPrimitives/RadixSortConfigs.h  >> contrib/Orochi/ParallelPrimitives/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./contrib/Orochi/ParallelPrimitives/RadixSortKernels.h   >> contrib/Orochi/ParallelPrimitives/cache/Kernels.h
+++%PYTHON_BIN% tools/genArgs.py ./contrib/Orochi/ParallelPrimitives/RadixSortKernels.h  >> contrib/Orochi/ParallelPrimitives/cache/KernelArgs.h
+++%PYTHON_BIN% tools/stringify.py ./contrib/Orochi/ParallelPrimitives/RadixSortConfigs.h  >> contrib/Orochi/ParallelPrimitives/cache/Kernels.h
++ 
++ echo #pragma once >> hiprt/cache/Kernels.h
++ echo #pragma once >> hiprt/cache/KernelArgs.h
++ 
++-python tools/stringify.py ./hiprt/impl/Math.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/hiprt_vec.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/Aabb.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/AabbList.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/BvhCommon.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/BvhNode.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/Geometry.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/QrDecomposition.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/Quaternion.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/Transform.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/Instance.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/InstanceList.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/MortonCode.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/Scene.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/TriangleMesh.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/Triangle.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/BvhBuilderUtil.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/SbvhCommon.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/ApiNodeList.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/BvhConfig.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/impl/MemoryArena.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/hiprt_types.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/stringify.py ./hiprt/hiprt_common.h 20220318  >> hiprt/cache/Kernels.h
++-
++-python tools/stringify.py ./hiprt/impl/hiprt_device_impl.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/impl/hiprt_device_impl.h 20220318  >> hiprt/cache/KernelArgs.h
++-
++-python tools/stringify.py ./hiprt/hiprt_device.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/hiprt_device.h 20220318  >> hiprt/cache/KernelArgs.h
++-
++-python tools/stringify.py ./hiprt/impl/BvhBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/impl/BvhBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
++-
++-python tools/stringify.py ./hiprt/impl/LbvhBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/impl/LbvhBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
++-
++-python tools/stringify.py ./hiprt/impl/PlocBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/impl/PlocBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
++-
++-python tools/stringify.py ./hiprt/impl/SbvhBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/impl/SbvhBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
++-
++-python tools/stringify.py ./hiprt/impl/BatchBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/impl/BatchBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
++-
++-python tools/stringify.py ./hiprt/impl/BvhImporterKernels.h 20220318  >> hiprt/cache/Kernels.h
++-python tools/genArgs.py ./hiprt/impl/BvhImporterKernels.h 20220318  >> hiprt/cache/KernelArgs.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/Math.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/hiprt_vec.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/Aabb.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/AabbList.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/BvhCommon.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/BvhNode.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/Geometry.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/QrDecomposition.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/Quaternion.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/Transform.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/Instance.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/InstanceList.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/MortonCode.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/Scene.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/TriangleMesh.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/Triangle.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/BvhBuilderUtil.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/SbvhCommon.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/ApiNodeList.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/BvhConfig.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/MemoryArena.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/hiprt_types.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/stringify.py ./hiprt/hiprt_common.h 20220318  >> hiprt/cache/Kernels.h
+++
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/hiprt_device_impl.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/genArgs.py ./hiprt/impl/hiprt_device_impl.h 20220318  >> hiprt/cache/KernelArgs.h
+++
+++%PYTHON_BIN% tools/stringify.py ./hiprt/hiprt_device.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/genArgs.py ./hiprt/hiprt_device.h 20220318  >> hiprt/cache/KernelArgs.h
+++
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/BvhBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/genArgs.py ./hiprt/impl/BvhBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
+++
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/LbvhBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/genArgs.py ./hiprt/impl/LbvhBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
+++
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/PlocBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/genArgs.py ./hiprt/impl/PlocBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
+++
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/SbvhBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/genArgs.py ./hiprt/impl/SbvhBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
+++
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/BatchBuilderKernels.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/genArgs.py ./hiprt/impl/BatchBuilderKernels.h 20220318  >> hiprt/cache/KernelArgs.h
+++
+++%PYTHON_BIN% tools/stringify.py ./hiprt/impl/BvhImporterKernels.h 20220318  >> hiprt/cache/Kernels.h
+++%PYTHON_BIN% tools/genArgs.py ./hiprt/impl/BvhImporterKernels.h 20220318  >> hiprt/cache/KernelArgs.h
++diff --git a/premake5.lua b/premake5.lua
++index 8566cfb..5220c3d 100644
++--- a/premake5.lua
+++++ b/premake5.lua
++@@ -207,7 +207,7 @@ workspace "hiprt"
++ 
++     HIPRT_NAME = "hiprt"..HIPRT_VERSION_STR
++     project( HIPRT_NAME )
++-        cppdialect "C++20"
+++        cppdialect "C++17"
++         kind "SharedLib"
++         defines {"HIPRT_EXPORTS"}
++ 	if _OPTIONS["bitcode"] then
++diff --git a/hiprt/impl/Error.cpp b/hiprt/impl/Error.cpp
++index 677acbe..36e9a80 100644
++--- a/hiprt/impl/Error.cpp
+++++ b/hiprt/impl/Error.cpp
++@@ -29,7 +29,7 @@
++ 
++ namespace hiprt
++ {
++-void checkOro( oroError res, const std::source_location& location )
+++void checkOro( oroError res, const std::string& file, const int line)
++ {
++ 	if ( res != oroSuccess )
++ 	{
++@@ -39,13 +39,13 @@ void checkOro( oroError res, const std::source_location& location )
++ 			"Orochi error: '%s' [ %d ] on line %d in '%s'.",
++ 			errStr,
++ 			static_cast<uint32_t>( res ),
++-			location.line(),
++-			location.file_name() );
+++			line,
+++			file );
++ 		throw std::runtime_error( msg );
++ 	}
++ }
++ 
++-void checkOrortc( orortcResult res, const std::source_location& location )
+++void checkOrortc( orortcResult res, const std::string& file, const int line)
++ {
++ 	if ( res != ORORTC_SUCCESS )
++ 	{
++@@ -53,8 +53,8 @@ void checkOrortc( orortcResult res, const std::source_location& location )
++ 			"Orortc error: '%s' [ %d ] on line %d in '%s'.",
++ 			orortcGetErrorString( res ),
++ 			static_cast<uint32_t>( res ),
++-			location.line(),
++-			location.file_name() );
+++			line,
+++			file );
++ 		throw std::runtime_error( msg );
++ 	}
++ }
++diff --git a/hiprt/impl/Error.h b/hiprt/impl/Error.h
++index 6bc1bb7..3a0a34f 100644
++--- a/hiprt/impl/Error.h
+++++ b/hiprt/impl/Error.h
++@@ -25,10 +25,10 @@
++ #pragma once
++ #include <Orochi/Orochi.h>
++ #include <hiprt/hiprt_common.h>
++-#include <source_location>
+++#include <string>
++ 
++ namespace hiprt
++ {
++-void checkOro( oroError res, const std::source_location& location = std::source_location::current() );
++-void checkOrortc( orortcResult res, const std::source_location& location = std::source_location::current() );
+++void checkOro( oroError res, const std::string& file= __FILE__ , const int line = __LINE__ );
+++void checkOrortc( orortcResult res, const std::string& file = __FILE__, const int line = __LINE__ );
++ } // namespace hiprt
+-- 
+2.30.2
+
+

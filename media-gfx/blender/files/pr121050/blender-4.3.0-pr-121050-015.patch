@@ -1,0 +1,59 @@
+From 68d52dd786b665f9294733179cbf070a5e8c7573 Mon Sep 17 00:00:00 2001
+From: salipourto <sahar.alipourkashi@amd.com>
+Date: Tue, 16 Jul 2024 17:33:48 -0700
+Subject: [PATCH 15/19] rebase onto origin/main
+
+---
+ intern/cycles/device/hiprt/device_impl.cpp |  1 -
+ intern/cycles/kernel/CMakeLists.txt        | 15 ++++++---------
+ 2 files changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/intern/cycles/device/hiprt/device_impl.cpp b/intern/cycles/device/hiprt/device_impl.cpp
+index 74532a626b9..7189eff7772 100644
+--- a/intern/cycles/device/hiprt/device_impl.cpp
++++ b/intern/cycles/device/hiprt/device_impl.cpp
+@@ -59,7 +59,6 @@ BVHLayoutMask HIPRTDevice::get_bvh_layout_mask(const uint /* kernel_features */)
+ 
+ HIPRTDevice::HIPRTDevice(const DeviceInfo &info, Stats &stats, Profiler &profiler, bool headless)
+     : HIPDevice(info, stats, profiler, headless),
+-      global_stack_buffer(this, "global_stack_buffer", MEM_DEVICE_ONLY),
+       hiprt_context(NULL),
+       scene(NULL),
+       functions_table(NULL),
+diff --git a/intern/cycles/kernel/CMakeLists.txt b/intern/cycles/kernel/CMakeLists.txt
+index 5df1d688c94..6c2e588cc70 100644
+--- a/intern/cycles/kernel/CMakeLists.txt
++++ b/intern/cycles/kernel/CMakeLists.txt
+@@ -864,22 +864,19 @@ if(WITH_CYCLES_DEVICE_HIPRT AND WITH_CYCLES_HIP_BINARIES)
+     set(BVH_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/lib)
+   endif()
+ 
+-
+- delayed_install("${CMAKE_CURRENT_BINARY_DIR}" "${hiprt_file}"  ${CYCLES_INSTALL_PATH}/lib)
+  delayed_install("${CMAKE_CURRENT_BINARY_DIR}" "${bvh_file}"     ${BVH_INSTALL_PATH})
+  delayed_install("${CMAKE_CURRENT_BINARY_DIR}" "${bvh_file_oro}" ${BVH_INSTALL_PATH})
+- add_custom_target(cycles_kernel_hiprt ALL DEPENDS ${hiprt_file} ${bvh_file} ${bvh_file_oro})
+- cycles_set_solution_folder(cycles_kernel_hiprt)
++
+   add_custom_command(
+     OUTPUT  ${hiprt_file}
+     COMMAND ${hiprt_link_command} ${hiprt_link_flags}
+     DEPENDS ${bitcode_file})
+-    add_custom_command(
+-      OUTPUT ${hiprt_file_compressed}
+-      COMMAND "$<TARGET_FILE:zstd_compress>" ${hiprt_file} ${hiprt_file_compressed}
+-      DEPENDS ${hiprt_file})
++  add_custom_command(
++    OUTPUT ${hiprt_file_compressed}
++    COMMAND "$<TARGET_FILE:zstd_compress>" ${hiprt_file} ${hiprt_file_compressed}
++    DEPENDS ${hiprt_file})
+   delayed_install("${CMAKE_CURRENT_BINARY_DIR}" "${hiprt_file_compressed}" ${CYCLES_INSTALL_PATH}/lib)
+-  add_custom_target(cycles_kernel_hiprt ALL DEPENDS ${hiprt_file_compressed})
++  add_custom_target(cycles_kernel_hiprt ALL DEPENDS ${hiprt_file_compressed} ${bvh_file} ${bvh_file_oro})
+   cycles_set_solution_folder(cycles_kernel_hiprt)
+ endif()
+ 
+-- 
+2.30.2
+
+

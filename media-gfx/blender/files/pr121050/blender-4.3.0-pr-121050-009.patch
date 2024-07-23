@@ -1,0 +1,138 @@
+From ce4ce57b735ff64d1323c108bd56b85faddeab62 Mon Sep 17 00:00:00 2001
+From: Brecht Van Lommel <brecht@blender.org>
+Date: Fri, 24 May 2024 19:35:32 +0200
+Subject: [PATCH 09/19] Remove version number from library name
+
+This makes installing and loading the library easier.
+---
+ build_files/build_environment/cmake/hiprt.cmake  | 16 +++-------------
+ .../build_environment/cmake/versions.cmake       |  1 +
+ build_files/cmake/Modules/FindHIPRT.cmake        |  4 ++--
+ extern/hipew/src/hiprtew.cc                      |  9 +++++----
+ source/creator/CMakeLists.txt                    | 12 +++---------
+ 5 files changed, 14 insertions(+), 28 deletions(-)
+
+diff --git a/build_files/build_environment/cmake/hiprt.cmake b/build_files/build_environment/cmake/hiprt.cmake
+index bf457806b4f..01607a8c1fd 100644
+--- a/build_files/build_environment/cmake/hiprt.cmake
++++ b/build_files/build_environment/cmake/hiprt.cmake
+@@ -36,7 +36,7 @@ ExternalProject_Add(external_hiprt
+     cd ${BUILD_DIR}/hiprt/src/external_hiprt/ &&
+     ${hiprt_build}
+   INSTALL_COMMAND
+-    ${CMAKE_COMMAND} -E copy_directory ${BUILD_DIR}/hiprt/src/external_hiprt/dist/bin/Release ${LIBDIR}/hiprt/bin &&
++    ${CMAKE_COMMAND} -E copy ${BUILD_DIR}/hiprt/src/external_hiprt/dist/bin/Release/${LIBPREFIX}hiprt${HIPRT_LIBRARY_VERSION}64${SHAREDLIBEXT} ${LIBDIR}/hiprt/bin/${LIBPREFIX}hiprt64${SHAREDLIBEXT} &&
+     ${CMAKE_COMMAND} -E copy_directory ${BUILD_DIR}/hiprt/src/external_hiprt/hiprt ${LIBDIR}/hiprt/include/hiprt &&
+     ${CMAKE_COMMAND} -E copy_directory ${BUILD_DIR}/hiprt/src/external_hiprt/contrib/Orochi/ParallelPrimitives ${LIBDIR}/hiprt/include/orochi/ParallelPrimitives
+ )
+@@ -50,18 +50,8 @@ if(WIN32)
+   if(BUILD_MODE STREQUAL Release)
+     ExternalProject_Add_Step(external_hiprt after_install
+       COMMAND ${CMAKE_COMMAND} -E copy_directory
+-        ${LIBDIR}/hiprt/include
+-        ${HARVEST_TARGET}/hiprt/include
+-      COMMAND ${CMAKE_COMMAND} -E copy
+-        ${LIBDIR}/hiprt/bin/hiprt*64.dll
+-        ${HARVEST_TARGET}/hiprt/bin/
+-      DEPENDEES install
+-    )
+-  else()
+-    ExternalProject_Add_Step(external_hiprt after_install
+-      COMMAND ${CMAKE_COMMAND} -E copy
+-        ${LIBDIR}/hiprt/bin/hiprt*64D.dll
+-        ${HARVEST_TARGET}/hiprt/bin/
++        ${LIBDIR}/hiprt
++        ${HARVEST_TARGET}/hiprt
+       DEPENDEES install
+     )
+   endif()
+diff --git a/build_files/build_environment/cmake/versions.cmake b/build_files/build_environment/cmake/versions.cmake
+index 9c67d1166a9..705e3964e7a 100644
+--- a/build_files/build_environment/cmake/versions.cmake
++++ b/build_files/build_environment/cmake/versions.cmake
+@@ -871,6 +871,7 @@ set(PYBIND11_HASH_TYPE MD5)
+ set(PYBIND11_FILE pybind-v${PYBIND11_VERSION}.tar.gz)
+ 
+ set(HIPRT_VERSION 5ffcea6322519b25500f6d3140bbb42dd06fb464)
++set(HIPRT_LIBRARY_VERSION 02003)
+ set(HIPRT_URI https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/archive/${HIPRT_VERSION}.tar.gz)
+ set(HIPRT_HASH ccdeb345c4dc07793b6a106e113a45d6)
+ set(HIPRT_HASH_TYPE MD5)
+diff --git a/build_files/cmake/Modules/FindHIPRT.cmake b/build_files/cmake/Modules/FindHIPRT.cmake
+index 61803f13925..b874b9861aa 100644
+--- a/build_files/cmake/Modules/FindHIPRT.cmake
++++ b/build_files/cmake/Modules/FindHIPRT.cmake
+@@ -42,9 +42,9 @@ if(HIPRT_INCLUDE_DIR)
+ endif()
+ 
+ if(WIN32)
+-  set(HIPRT_DYNAMIC_LIB hiprt${HIPRT_VERSION}64.dll)
++  set(HIPRT_DYNAMIC_LIB hiprt64.dll hiprt${HIPRT_VERSION}64.dll)
+ else()
+-  set(HIPRT_DYNAMIC_LIB libhiprt${HIPRT_VERSION}64.so)
++  set(HIPRT_DYNAMIC_LIB libhiprt64.so libhiprt${HIPRT_VERSION}64.so)
+ endif()
+ 
+ find_path(HIPRT_LIB_DIR
+diff --git a/extern/hipew/src/hiprtew.cc b/extern/hipew/src/hiprtew.cc
+index 1c0c85b5f8a..b1db74faa7e 100644
+--- a/extern/hipew/src/hiprtew.cc
++++ b/extern/hipew/src/hiprtew.cc
+@@ -63,15 +63,17 @@ bool hiprtewInit()
+     return result;
+   }
+ 
+-#ifdef _WIN32
+   initialized = true;
+ 
+   if (atexit(hipewHipRtExit)) {
+     return false;
+   }
+ 
+-  std::string hiprt_ver(HIPRT_VERSION_STR);
+-  std::string hiprt_path = "hiprt" + hiprt_ver + "64.dll";
++#ifdef _WIN32
++  std::string hiprt_path = "hiprt64.dll";
++#else
++  std::string hiprt_path = "libhiprt64.so";
++#endif
+ 
+   hiprt_lib = dynamic_library_open(hiprt_path.c_str());
+ 
+@@ -97,7 +99,6 @@ bool hiprtewInit()
+   HIPRT_LIBRARY_FIND(hiprtSetLogLevel)
+ 
+   result = true;
+-#endif
+ 
+   return result;
+ }
+diff --git a/source/creator/CMakeLists.txt b/source/creator/CMakeLists.txt
+index 7136cbdd5e3..642282e9487 100644
+--- a/source/creator/CMakeLists.txt
++++ b/source/creator/CMakeLists.txt
+@@ -1832,17 +1832,11 @@ endif()
+ 
+ if(WIN32)
+   if(WITH_CYCLES_DEVICE_HIPRT)
+-    #place holder, HIPRT_VERSION is out of scope, this won't work
+-    if(EXISTS ${LIBDIR}/hiprt/bin/hiprt${HIPRT_VERSION}64.dll)
++    if(EXISTS ${LIBDIR}/hiprt/bin/hiprt64.dll)
+       windows_install_shared_manifest(
+         FILES
+-        ${LIBDIR}/hiprt/bin/hiprt${HIPRT_VERSION}64.dll
+-        RELEASE
+-      )
+-      windows_install_shared_manifest(
+-        FILES
+-        ${LIBDIR}/hiprt/bin/hiprt${HIPRT_VERSION}64D.dll
+-        DEBUG
++        ${LIBDIR}/hiprt/bin/hiprt64.dll
++        ALL
+       )
+     endif()
+   endif()
+-- 
+2.30.2
+
+

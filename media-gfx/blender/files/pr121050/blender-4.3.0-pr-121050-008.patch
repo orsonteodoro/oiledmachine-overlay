@@ -1,0 +1,387 @@
+From 9f701ecacee7bd2ba7c51f508cfed0925612b140 Mon Sep 17 00:00:00 2001
+From: Brecht Van Lommel <brecht@blender.org>
+Date: Fri, 24 May 2024 18:02:02 +0200
+Subject: [PATCH 08/19] Handle orochi as own package, disable encryption, and
+ more fixes
+
+---
+ build_files/build_environment/CMakeLists.txt  |   1 +
+ .../build_environment/cmake/download.cmake    |   1 +
+ .../build_environment/cmake/hiprt.cmake       |  28 +--
+ .../build_environment/cmake/orochi.cmake      |  16 ++
+ .../build_environment/cmake/versions.cmake    |   8 +-
+ .../build_environment/patches/hiprt.diff      | 175 ++++++++++++++++--
+ 6 files changed, 191 insertions(+), 38 deletions(-)
+ create mode 100644 build_files/build_environment/cmake/orochi.cmake
+
+diff --git a/build_files/build_environment/CMakeLists.txt b/build_files/build_environment/CMakeLists.txt
+index 44261b2db0a..c68fbe73ce9 100644
+--- a/build_files/build_environment/CMakeLists.txt
++++ b/build_files/build_environment/CMakeLists.txt
+@@ -90,6 +90,7 @@ include(cmake/harfbuzz.cmake)
+ if(NOT APPLE)
+   include(cmake/xr_openxr.cmake)
+   if(NOT BLENDER_PLATFORM_ARM)
++    include(cmake/orochi.cmake)
+     include(cmake/hiprt.cmake)
+   endif()
+   if(NOT BLENDER_PLATFORM_WINDOWS_ARM)
+diff --git a/build_files/build_environment/cmake/download.cmake b/build_files/build_environment/cmake/download.cmake
+index 5dc48258a95..b8b0dd3064c 100644
+--- a/build_files/build_environment/cmake/download.cmake
++++ b/build_files/build_environment/cmake/download.cmake
+@@ -181,3 +181,4 @@ download_source(VULKAN_LOADER)
+ download_source(PYBIND11)
+ download_source(DEFLATE)
+ download_source(HIPRT)
++download_source(OROCHI)
+diff --git a/build_files/build_environment/cmake/hiprt.cmake b/build_files/build_environment/cmake/hiprt.cmake
+index 13084a79aea..bf457806b4f 100644
+--- a/build_files/build_environment/cmake/hiprt.cmake
++++ b/build_files/build_environment/cmake/hiprt.cmake
+@@ -7,14 +7,6 @@
+ 
+ set(HIPRT_CMAKE_FLAGS ${DEFAULT_CMAKE_FLAGS})
+ 
+-# TODO:
+-# Do anything with these?
+-# -DHIPRT_EXPORTS=ON
+-# -D__USE_HIP__=ON
+-# -DHIPRT_BITCODE_LINKING=ON
+-# -DHIPRT_LOAD_FROM_STRING=OFF
+-# -DORO_PRECOMPILED=ON
+-
+ get_filename_component(_hip_path ${HIP_HIPCC_EXECUTABLE} DIRECTORY)
+ get_filename_component(_hip_path ${_hip_path} DIRECTORY)
+ 
+@@ -33,29 +25,27 @@ ExternalProject_Add(external_hiprt
+   PREFIX ${BUILD_DIR}/hiprt
+   INSTALL_DIR ${LIBDIR}/hiprt
+ 
+-  # TODO: should not be downloading git repos here
+-  PATCH_COMMAND ${PATCH_CMD} -p 1 -d
+-    ${BUILD_DIR}/hiprt/src/external_hiprt <
+-    ${PATCH_DIR}/hiprt.diff &&
+-    cd ${BUILD_DIR}/hiprt/src/external_hiprt/contrib &&
+-    git clone git@github.com:amdadvtech/Orochi.git &&
+-    cd Orochi && git checkout c82a229f5a424117855b86b78b480d003419bf66 && cd .. &&
+-    git clone https://github.com/amdadvtech/easy-encryption
++  PATCH_COMMAND
++    ${PATCH_CMD} -p 1 -d ${BUILD_DIR}/hiprt/src/external_hiprt < ${PATCH_DIR}/hiprt.diff &&
++    ${CMAKE_COMMAND} -E copy_directory ${BUILD_DIR}/orochi/src/external_orochi ${BUILD_DIR}/hiprt/src/external_hiprt/contrib/Orochi
+ 
+-  # TODO: disabling unittest is not working, binary still gets written
+   CONFIGURE_COMMAND
+     cd ${BUILD_DIR}/hiprt/src/external_hiprt/ &&
+-    ${hiprt_configure} --bitcode=true --unittest=false
++    ${hiprt_configure} --bitcode=true --no-unittest=true --no-encrypt=true
+   BUILD_COMMAND
+     cd ${BUILD_DIR}/hiprt/src/external_hiprt/ &&
+     ${hiprt_build}
+-  # TODO: does premake not have an install command?
+   INSTALL_COMMAND
+     ${CMAKE_COMMAND} -E copy_directory ${BUILD_DIR}/hiprt/src/external_hiprt/dist/bin/Release ${LIBDIR}/hiprt/bin &&
+     ${CMAKE_COMMAND} -E copy_directory ${BUILD_DIR}/hiprt/src/external_hiprt/hiprt ${LIBDIR}/hiprt/include/hiprt &&
+     ${CMAKE_COMMAND} -E copy_directory ${BUILD_DIR}/hiprt/src/external_hiprt/contrib/Orochi/ParallelPrimitives ${LIBDIR}/hiprt/include/orochi/ParallelPrimitives
+ )
+ 
++add_dependencies(
++  external_hiprt
++  external_orochi
++)
++
+ if(WIN32)
+   if(BUILD_MODE STREQUAL Release)
+     ExternalProject_Add_Step(external_hiprt after_install
+diff --git a/build_files/build_environment/cmake/orochi.cmake b/build_files/build_environment/cmake/orochi.cmake
+new file mode 100644
+index 00000000000..8bd0308adbd
+--- /dev/null
++++ b/build_files/build_environment/cmake/orochi.cmake
+@@ -0,0 +1,16 @@
++# SPDX-FileCopyrightText: 2017-2024 Blender Authors
++#
++# SPDX-License-Identifier: GPL-2.0-or-later
++#
++# Only download, will be copied as submodule for hiprt.
++
++ExternalProject_Add(external_orochi
++  URL file://${PACKAGE_DIR}/${OROCHI_FILE}
++  DOWNLOAD_DIR ${DOWNLOAD_DIR}
++  URL_HASH ${OROCHI_HASH_TYPE}=${OROCHI_HASH}
++  PREFIX ${BUILD_DIR}/orochi
++
++  CONFIGURE_COMMAND echo .
++  BUILD_COMMAND echo .
++  INSTALL_COMMAND echo .
++)
+diff --git a/build_files/build_environment/cmake/versions.cmake b/build_files/build_environment/cmake/versions.cmake
+index fc632cfb27a..9c67d1166a9 100644
+--- a/build_files/build_environment/cmake/versions.cmake
++++ b/build_files/build_environment/cmake/versions.cmake
+@@ -871,7 +871,13 @@ set(PYBIND11_HASH_TYPE MD5)
+ set(PYBIND11_FILE pybind-v${PYBIND11_VERSION}.tar.gz)
+ 
+ set(HIPRT_VERSION 5ffcea6322519b25500f6d3140bbb42dd06fb464)
+-set(HIPRT_URI https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/archive//${HIPRT_VERSION}.tar.gz)
++set(HIPRT_URI https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/archive/${HIPRT_VERSION}.tar.gz)
+ set(HIPRT_HASH ccdeb345c4dc07793b6a106e113a45d6)
+ set(HIPRT_HASH_TYPE MD5)
+ set(HIPRT_FILE hiprt-${HIPRT_VERSION}.tar.gz)
++
++set(OROCHI_VERSION c82a229f5a424117855b86b78b480d003419bf66)
++set(OROCHI_URI https://github.com/amdadvtech/Orochi/archive/${OROCHI_VERSION}.tar.gz)
++set(OROCHI_HASH c71c311e5ca0614732f8cb1db40035b9)
++set(OROCHI_HASH_TYPE MD5)
++set(OROCHI_FILE orochi-${OROCHI_VERSION}.tar.gz)
+diff --git a/build_files/build_environment/patches/hiprt.diff b/build_files/build_environment/patches/hiprt.diff
+index 09ce2a4e633..ac387709e5a 100644
+--- a/build_files/build_environment/patches/hiprt.diff
++++ b/build_files/build_environment/patches/hiprt.diff
+@@ -1,7 +1,7 @@
+ From 0dedf6df1353c4872be9e35236de5c027761e8b7 Mon Sep 17 00:00:00 2001
+ From: Brecht Van Lommel <brecht@blender.org>
+ Date: Wed, 22 May 2024 21:25:55 +0200
+-Subject: [PATCH 1/4] Support HIP_PATH on Linux, and prefer it over PATH on all
++Subject: [PATCH 1/6] Support HIP_PATH on Linux, and prefer it over PATH on all
+  platforms
+ 
+ ---
+@@ -99,33 +99,32 @@ index 8566cfb..0c78fcb 100644
+ 2.43.2
+ 
+ 
+-From ed86075897be7a56c346b1fc517732b8146cb3de Mon Sep 17 00:00:00 2001
++From 828613420dbd636c75654e293776044e56d7a65e Mon Sep 17 00:00:00 2001
+ From: Brecht Van Lommel <brecht@blender.org>
+ Date: Wed, 22 May 2024 21:25:42 +0200
+-Subject: [PATCH 2/4] Add build option to disable unit tests
++Subject: [PATCH 2/6] Add build option to disable unit tests
+ 
+ ---
+- premake5.lua | 121 +++++++++++++++++++++++++++------------------------
+- 1 file changed, 65 insertions(+), 56 deletions(-)
++ premake5.lua | 120 +++++++++++++++++++++++++++------------------------
++ 1 file changed, 64 insertions(+), 56 deletions(-)
+ 
+ diff --git a/premake5.lua b/premake5.lua
+-index 0c78fcb..f76a8bd 100644
++index 0c78fcb..48abbce 100644
+ --- a/premake5.lua
+ +++ b/premake5.lua
+-@@ -19,6 +19,12 @@ newoption {
++@@ -19,6 +19,11 @@ newoption {
+      description = "Use hiprtew"
+  }
+  
+ +newoption {
+-+    trigger = "unittest",
+-+    description = "Build unit tests",
+-+    default = true
+++    trigger = "no-unittest",
+++    description = "Don't build unit tests",
+ +}
+ +
+  function copydir(src_dir, dst_dir, filter, single_dst_dir)
+      filter = filter or "**"
+      src_dir = src_dir .. "/"
+-@@ -256,63 +262,66 @@ workspace "hiprt"
++@@ -256,63 +261,66 @@ workspace "hiprt"
+      files {"contrib/Orochi/contrib/**.h", "contrib/Orochi/contrib/**.cpp"}
+      files {"contrib/Orochi/ParallelPrimitives/**.h", "contrib/Orochi/ParallelPrimitives/**.cpp"}
+  
+@@ -168,7 +167,7 @@ index 0c78fcb..f76a8bd 100644
+ -        end
+ -        links{ "embree4", "tbb" }
+ -		if _OPTIONS["hiprtew"] then
+-+    if _OPTIONS["unittest"] then
+++    if not _OPTIONS["no-unittest"] then
+ +        project( "unittest" )
+ +            cppdialect "C++20"
+ +            kind "ConsoleApp"
+@@ -252,20 +251,117 @@ index 0c78fcb..f76a8bd 100644
+ 2.43.2
+ 
+ 
+-From 130a5ea732f110da3a77bf7936db6f8522d2cb20 Mon Sep 17 00:00:00 2001
++From 1266967c5618675e6c1e23128cc8f365b527dd68 Mon Sep 17 00:00:00 2001
++From: Brecht Van Lommel <brecht@blender.org>
++Date: Thu, 23 May 2024 17:07:43 +0200
++Subject: [PATCH 3/6] Add build option to disable encryption
++
++---
++ hiprt/impl/Compiler.cpp | 10 ++++++++++
++ premake5.lua            |  8 ++++++++
++ 2 files changed, 18 insertions(+)
++
++diff --git a/hiprt/impl/Compiler.cpp b/hiprt/impl/Compiler.cpp
++index 2c5378a..90735fe 100644
++--- a/hiprt/impl/Compiler.cpp
+++++ b/hiprt/impl/Compiler.cpp
++@@ -27,7 +27,9 @@
++ #include <hiprt/impl/Error.h>
++ #include <hiprt/impl/Utility.h>
++ #include <hiprt/impl/Context.h>
+++#if defined ( HIPRT_ENCRYPT )
++ #include <contrib/easy-encryption/encrypt.h>
+++#endif
++ #include <regex>
++ #if defined( HIPRT_LOAD_FROM_STRING ) || defined( HIPRT_BITCODE_LINKING )
++ #include <hiprt/cache/Kernels.h>
++@@ -541,6 +543,7 @@ bool Compiler::isCachedFileUpToDate( const std::filesystem::path& cachedFile, co
++ 
++ std::string Compiler::decryptSourceCode( const std::string& srcIn )
++ {
+++#if defined ( HIPRT_ENCRYPT )
++ 	std::lock_guard<std::mutex> lock( m_decryptMutex );
++ 	std::string					src;
++ 	if ( m_decryptCache.find( srcIn ) != m_decryptCache.end() )
++@@ -555,6 +558,9 @@ std::string Compiler::decryptSourceCode( const std::string& srcIn )
++ 		m_decryptCache[srcIn] = src;
++ 	}
++ 	return src;
+++#else
+++  return srcIn;
+++#endif
++ }
++ 
++ std::string Compiler::getCacheFilename(
++@@ -649,8 +655,10 @@ std::string Compiler::loadCacheFileToBinary( const std::string& cacheName, const
++ 			}
++ 			else
++ 			{
+++#if defined ( HIPRT_ENCRYPT )
++ 				std::string deryptKeyStr( DecryptKey );
++ 				binary				  = decrypt( binary, deryptKeyStr );
+++#endif
++ 				m_binCache[cacheName] = binary;
++ 			}
++ 		}
++@@ -662,11 +670,13 @@ std::string Compiler::loadCacheFileToBinary( const std::string& cacheName, const
++ void Compiler::cacheBinaryToFile( const std::string& binaryIn, const std::string& cacheName, const std::string& deviceName )
++ {
++ 	std::string binary = binaryIn;
+++#if defined ( HIPRT_ENCRYPT )
++ 	if constexpr ( !UseBitcode )
++ 	{
++ 		std::string deryptKeyStr( DecryptKey );
++ 		if ( deviceName.find( "NVIDIA" ) != std::string::npos ) binary = encrypt( binary, deryptKeyStr );
++ 	}
+++#endif
++ 
++ 	{
++ 		std::filesystem::path path = m_cacheDirectory / cacheName;
++diff --git a/premake5.lua b/premake5.lua
++index 48abbce..3dcc1bf 100644
++--- a/premake5.lua
+++++ b/premake5.lua
++@@ -24,6 +24,11 @@ newoption {
++     description = "Don't build unit tests",
++ }
++ 
+++newoption {
+++    trigger = "no-encrypt",
+++    description = "Don't encrypt kernel source and binaries",
+++}
+++
++ function copydir(src_dir, dst_dir, filter, single_dst_dir)
++     filter = filter or "**"
++     src_dir = src_dir .. "/"
++@@ -230,6 +235,9 @@ workspace "hiprt"
++ 		defines {"HIPRT_BITCODE_LINKING"}
++         defines {"ORO_PRECOMPILED"}
++ 	end
+++	if not _OPTIONS["no-encrypt"] then
+++		defines {"HIPRT_ENCRYPT"}
+++	end
++ 
++     if _OPTIONS["precompile"] then
++         os.execute( "cd ./scripts/bitcodes/ && python compile.py")
++-- 
++2.43.2
++
++
++From 5de6fe2df67540ec8e76b058290d722d70bd00c0 Mon Sep 17 00:00:00 2001
+ From: Brecht Van Lommel <brecht@blender.org>
+ Date: Wed, 22 May 2024 21:32:05 +0200
+-Subject: [PATCH 3/4] Fix error building bitcode a second time
++Subject: [PATCH 4/6] Fix error building bitcode a second time
+ 
+ ---
+  premake5.lua | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+ 
+ diff --git a/premake5.lua b/premake5.lua
+-index f76a8bd..76a3370 100644
++index 3dcc1bf..5a38802 100644
+ --- a/premake5.lua
+ +++ b/premake5.lua
+-@@ -242,7 +242,7 @@ workspace "hiprt"
++@@ -249,7 +249,7 @@ workspace "hiprt"
+              os.execute("mkdir hiprt\\cache")
+              os.execute("tools\\bakeKernel.bat")
+          else
+@@ -278,10 +374,10 @@ index f76a8bd..76a3370 100644
+ 2.43.2
+ 
+ 
+-From c383f3888d5132f1b193b550dcef7d242b8aa879 Mon Sep 17 00:00:00 2001
++From 7b5cd5dbc1ad43a856e3b1650cf9cf5f3bd49700 Mon Sep 17 00:00:00 2001
+ From: Brecht Van Lommel <brecht@blender.org>
+ Date: Wed, 22 May 2024 21:32:22 +0200
+-Subject: [PATCH 4/4] Fix failure to bake due to missing "python" command on
++Subject: [PATCH 5/6] Fix failure to bake due to missing "python" command on
+  Linux
+ 
+ For example Ubuntu only has a python3 command, and this should be
+@@ -406,3 +502,46 @@ index 21cbfe2..cdc914b 100755
+ -- 
+ 2.43.2
+ 
++
++From f5261100d9104ce3b06cdedbdba33ca073d5d2a0 Mon Sep 17 00:00:00 2001
++From: Brecht Van Lommel <brecht@blender.org>
++Date: Fri, 24 May 2024 18:31:28 +0200
++Subject: [PATCH 6/6] Hack to disable encryption for stringify also
++
++Better solution would be to pass some arguments, but it gets a bit
++annoying with both bat and bash files. Easier would be refactor to make
++all of it Python, if needed.
++---
++ tools/stringify.py | 9 ++++++++-
++ 1 file changed, 8 insertions(+), 1 deletion(-)
++
++diff --git a/tools/stringify.py b/tools/stringify.py
++index aa8f148..00c7300 100644
++--- a/tools/stringify.py
+++++ b/tools/stringify.py
++@@ -22,6 +22,13 @@ def encrypt(message, key):
++     else:
++         binary = './contrib/easy-encryption/bin/linux/ee64'
++ 
+++    # TODO hack
+++    if not os.path.exists(binary):
+++        msg = ""
+++        for c in message:
+++            msg += "\\x{:02x}".format(ord(c))
+++        return msg
+++
++     subprocess.check_output([binary, './tmp.txt', './tmp.bin', key, "0"])
++ 
++     file1 = open('./tmp.bin',mode='r')
++@@ -94,7 +101,7 @@ def stringify(filename, stringname, api):
++     if( ekey != '' ):
++         ans = encrypt( ans, ekey )
++ #    print( '"'+ans+'";' )
++-        chars_per_line = 255
+++        chars_per_line = 256
++         for i in range(0, len(ans), chars_per_line):
++             print( '"'+ans[i:i+chars_per_line]+'"\\')
++         print(';')
++-- 
++2.43.2
++
+-- 
+2.30.2
+
+

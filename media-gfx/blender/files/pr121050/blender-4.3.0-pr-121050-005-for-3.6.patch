@@ -1,0 +1,143 @@
+diff '--color=auto' -urp blender-3.6.13.orig/CMakeLists.txt blender-3.6.13/CMakeLists.txt
+--- blender-3.6.13.orig/CMakeLists.txt	2024-07-22 17:32:31.354444078 -0700
++++ blender-3.6.13/CMakeLists.txt	2024-07-22 17:33:14.753722069 -0700
+@@ -534,7 +534,7 @@ if(NOT APPLE)
+   mark_as_advanced(WITH_CYCLES_DEVICE_HIP)
+   mark_as_advanced(CYCLES_HIP_BINARIES_ARCH)
+ 
+-   option(WITH_CYCLES_DEVICE_HIPRT      "Enable Cycles AMD HIPRT support" ON)
++   option(WITH_CYCLES_DEVICE_HIPRT      "Enable Cycles AMD HIPRT support" OFF)
+    mark_as_advanced(WITH_CYCLES_DEVICE_HIPRT)
+ 
+ endif()
+@@ -2007,8 +2007,8 @@ if(FIRST_RUN)
+       info_cfg_option(WITH_CYCLES_ONEAPI_BINARIES)
+       info_cfg_option(WITH_CYCLES_DEVICE_HIP)
+       info_cfg_option(WITH_CYCLES_HIP_BINARIES)
++      info_cfg_option(WITH_CYCLES_DEVICE_HIPRT)
+     endif()
+-    info_cfg_option(WITH_CYCLES_DEVICE_HIPRT)
+   endif()
+ 
+   info_cfg_text("")
+Only in blender-3.6.13: CMakeLists.txt.orig
+Only in blender-3.6.13: CMakeLists.txt.rej
+diff '--color=auto' -urp blender-3.6.13.orig/build_files/build_environment/cmake/harvest.cmake blender-3.6.13/build_files/build_environment/cmake/harvest.cmake
+--- blender-3.6.13.orig/build_files/build_environment/cmake/harvest.cmake	2023-05-17 16:38:28.000000000 -0700
++++ blender-3.6.13/build_files/build_environment/cmake/harvest.cmake	2024-07-22 17:32:53.734071755 -0700
+@@ -152,6 +152,9 @@ else()
+   if(NOT APPLE)
+     harvest(level-zero/include/level_zero level-zero/include/level_zero "*.h")
+     harvest(level-zero/lib level-zero/lib "*${SHAREDLIBEXT}*")
++    harvest(hiprt/hiprt hiprt/hiprt "*.h")
++    harvest(hiprt/hiprt/impl hiprt/hiprt/impl "*.h")
++    harvest(hiprt/dist/bin/Release hiprt/bin "*${SHAREDLIBEXT}*")
+   endif()
+   harvest(llvm/bin llvm/bin "clang-format")
+   if(BUILD_CLANG_TOOLS)
+Only in blender-3.6.13/build_files/build_environment/cmake: harvest.cmake.orig
+diff '--color=auto' -urp blender-3.6.13.orig/build_files/build_environment/cmake/hiprt.cmake blender-3.6.13/build_files/build_environment/cmake/hiprt.cmake
+--- blender-3.6.13.orig/build_files/build_environment/cmake/hiprt.cmake	2024-07-22 17:32:31.370443812 -0700
++++ blender-3.6.13/build_files/build_environment/cmake/hiprt.cmake	2024-07-22 17:32:53.738071688 -0700
+@@ -8,7 +8,7 @@
+ set(HIPRT_CMAKE_FLAGS ${DEFAULT_CMAKE_FLAGS})
+ 
+ set(HIPRT_EXTRA_ARGS
+-  --DHIPRT_EXPORTS=ON
++  -DHIPRT_EXPORTS=ON
+   -D__USE_HIP__=ON
+   -DHIPRT_BITCODE_LINKING=ON
+   -DHIPRT_LOAD_FROM_STRING=OFF
+@@ -43,18 +43,18 @@ if(WIN32)
+     ExternalProject_Add_Step(external_hiprt after_install
+       COMMAND ${CMAKE_COMMAND} -E copy_directory
+         ${LIBDIR}/hiprt/hiprt
+-        ${HARVEST_TARGET}/hiprt/include
++        ${HARVEST_TARGET}/hiprt/hiprt
+       COMMAND ${CMAKE_COMMAND} -E copy
+-        ${LIBDIR}/hiprt/dist/bin/Release/hiprt64.dll
+-        ${HARVEST_TARGET}/hiprt/bin/hiprt64.dll
++        ${LIBDIR}/hiprt/dist/bin/Release/hiprt*64.dll
++        ${HARVEST_TARGET}/hiprt/bin/hiprt*64.dll
+ 
+       DEPENDEES install
+     )
+   else()
+     ExternalProject_Add_Step(external_hiprt after_install
+       COMMAND ${CMAKE_COMMAND} -E copy
+-        ${LIBDIR}/hiprt/dist/bin/Release/hiprt64.dll
+-        ${HARVEST_TARGET}/hiprt/bin/hiprt64.dll
++        ${LIBDIR}/hiprt/dist/bin/Debug/hiprt*64D.dll
++        ${HARVEST_TARGET}/hiprt/bin/hiprt*64D.dll
+ 
+       DEPENDEES install
+     )
+diff '--color=auto' -urp blender-3.6.13.orig/build_files/cmake/Modules/FindHIPRT.cmake blender-3.6.13/build_files/cmake/Modules/FindHIPRT.cmake
+--- blender-3.6.13.orig/build_files/cmake/Modules/FindHIPRT.cmake	2024-07-22 17:32:31.362443945 -0700
++++ blender-3.6.13/build_files/cmake/Modules/FindHIPRT.cmake	2024-07-22 17:32:53.738071688 -0700
+@@ -46,7 +46,7 @@ endif()
+ 
+ find_path(HIPRT_LIB_DIR
+   NAMES
+-    hiprt${_hiprt_version}64.dll
++    ${HIPRT_DYNAMIC_LIB}
+   HINTS
+     ${_hiprt_SEARCH_DIRS}
+   PATH_SUFFIXES
+Only in blender-3.6.13/build_files/cmake/Modules: FindHIPRT.cmake.orig
+diff '--color=auto' -urp blender-3.6.13.orig/build_files/cmake/platform/platform_unix.cmake blender-3.6.13/build_files/cmake/platform/platform_unix.cmake
+--- blender-3.6.13.orig/build_files/cmake/platform/platform_unix.cmake	2024-07-22 17:32:30.770453794 -0700
++++ blender-3.6.13/build_files/cmake/platform/platform_unix.cmake	2024-07-22 17:32:53.738071688 -0700
+@@ -543,6 +543,8 @@ if(DEFINED LIBDIR)
+   without_system_libs_end()
+ endif()
+ 
++add_bundled_libraries(hiprt/bin)
++
+ # ----------------------------------------------------------------------------
+ # Build and Link Flags
+ 
+Only in blender-3.6.13/build_files/cmake/platform: platform_unix.cmake.orig
+Only in blender-3.6.13/intern/cycles/blender/addon: properties.py.orig
+Only in blender-3.6.13/intern/cycles/blender/addon: properties.py.rej
+diff '--color=auto' -urp blender-3.6.13.orig/intern/cycles/kernel/CMakeLists.txt blender-3.6.13/intern/cycles/kernel/CMakeLists.txt
+--- blender-3.6.13.orig/intern/cycles/kernel/CMakeLists.txt	2024-07-22 17:32:31.366443878 -0700
++++ blender-3.6.13/intern/cycles/kernel/CMakeLists.txt	2024-07-22 17:32:53.738071688 -0700
+@@ -787,7 +787,6 @@ if(WITH_CYCLES_DEVICE_HIPRT AND WITH_CYC
+     COMMAND ${hiprt_compile_command} ${hiprt_compile_flags_sdk_bc}
+     DEPENDS ${HIPRT_INCLUDE_DIR}/hiprt/impl/hiprt_kernels_bitcode.h)
+ 
+-
+   add_custom_command(
+     OUTPUT  ${bvh_file}
+     COMMAND ${hiprt_compile_command} ${hiprt_compile_flags_bvh}
+Only in blender-3.6.13/intern/cycles/kernel: CMakeLists.txt.orig
+diff '--color=auto' -urp blender-3.6.13.orig/source/creator/CMakeLists.txt blender-3.6.13/source/creator/CMakeLists.txt
+--- blender-3.6.13.orig/source/creator/CMakeLists.txt	2024-07-22 17:32:31.142447606 -0700
++++ blender-3.6.13/source/creator/CMakeLists.txt	2024-07-22 17:32:53.738071688 -0700
+@@ -1636,6 +1636,24 @@ if(WIN32)
+   endforeach()
+ endif()
+ 
++if(WIN32)
++  if(WITH_CYCLES_DEVICE_HIPRT)
++    #place holder, HIPRT_VERSION is out of scope, this won't work
++    if(EXISTS ${LIBDIR}/hiprt/bin/hiprt${HIPRT_VERSION}64.dll)
++      windows_install_shared_manifest(
++        FILES
++        ${LIBDIR}/hiprt/bin/hiprt${HIPRT_VERSION}64.dll
++        RELEASE
++      )
++      windows_install_shared_manifest(
++        FILES
++        ${LIBDIR}/hiprt/bin/hiprt${HIPRT_VERSION}64D.dll
++        DEBUG
++      )
++    endif()
++  endif()
++endif()
++
+ # `vcpkg` substitutes our libraries with theirs, which will cause issues when you you run
+ # these builds on other systems due to missing DLL's. So we opt out the use of `vcpkg`.
+ if(WIN32)
+Only in blender-3.6.13/source/creator: CMakeLists.txt.orig

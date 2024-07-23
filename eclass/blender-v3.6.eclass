@@ -730,6 +730,12 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 	gmp? (
 		>=dev-libs/gmp-6.2.1[cxx]
 	)
+	hiprt? (
+		rocm_5_5? (
+			=media-libs/hiprt-2.3*:5.5[rocm]
+		)
+		media-libs/hiprt:=
+	)
 	jack? (
 		virtual/jack
 	)
@@ -1252,7 +1258,37 @@ eerror
 	die
 }
 
+apply_hiprt_2_3_patchset() {
+	local hiprt_patchset=(
+		"blender-4.3.0-pr-121050-001.patch"
+		"blender-4.3.0-pr-121050-002-for-3.6.patch"
+#		"blender-4.3.0-pr-121050-003.patch"
+		"blender-4.3.0-pr-121050-004-for-3.6.patch"
+		"blender-4.3.0-pr-121050-005-for-3.6.patch"
+#		"blender-4.3.0-pr-121050-006.patch"
+		"blender-4.3.0-pr-121050-007-for-4.1.patch"
+		"blender-4.3.0-pr-121050-008.patch"
+		"blender-4.3.0-pr-121050-009.patch"
+		"blender-4.3.0-pr-121050-010.patch"
+		"blender-4.3.0-pr-121050-011.patch"
+		"blender-4.3.0-pr-121050-012.patch"
+		"blender-4.3.0-pr-121050-013.patch"
+		"blender-4.3.0-pr-121050-014.patch"
+		"blender-4.3.0-pr-121050-015-for-4.1.patch"
+		"blender-4.3.0-pr-121050-016-for-3.6.patch"
+		"blender-4.3.0-pr-121050-017.patch"
+		"blender-4.3.0-pr-121050-018.patch"
+		"blender-4.3.0-pr-121050-019.patch"
+	)
+einfo "Applying hiprt_patchset"
+	local x
+	for x in ${hiprt_patchset[@]} ; do
+		eapply "${FILESDIR}/pr121050/${x}"
+	done
+}
+
 _src_prepare_patches() {
+	apply_hiprt_2_3_patchset
 	eapply "${FILESDIR}/blender-3.2.2-findtbb2.patch"
 	eapply "${FILESDIR}/blender-3.6.0-parent-datafiles-dir-change.patch"
 	if \
@@ -1295,7 +1331,7 @@ ewarn
 
 		sed \
 			-i \
-			-e "s|/opt/rocm/hip/lib/libamdhip64.so|/opt/rocm-${rocm_version}/hip/$(rocm_get_libdir)/libamdhip64.so|" \
+			-e "s|/opt/rocm/|/opt/rocm-${rocm_version}/|g" \
 			"extern/hipew/src/hipew.c" \
 			|| die
 
@@ -1441,8 +1477,15 @@ einfo "CUDA_TARGETS:  ${targets}"
 			| sed -e "s|^;||g")
 		mycmakeargs+=(
 			-DCYCLES_HIP_BINARIES_ARCH="${targets}"
+			-DHIP_DIR="/opt/rocm-${ROCM_VERSION}"
 		)
 einfo "AMDGPU_TARGETS:  ${targets}"
+	fi
+
+	if use hiprt ; then
+		mycmakeargs+=(
+			-DHIPRT_DIR="/opt/rocm-${ROCM_VERSION}"
+		)
 	fi
 
 	local llvm_slot

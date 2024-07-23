@@ -1,0 +1,61 @@
+From 7162ac53023315574d1597cdcf505c30a7b4d554 Mon Sep 17 00:00:00 2001
+From: salipourto <sahar.alipourkashi@amd.com>
+Date: Fri, 19 Jul 2024 08:49:14 -0700
+Subject: [PATCH 18/19] Updated to the latest version of HIPRT; Made enablement
+ of HIPRT conditioned on finding HIP_LINKER_EXECUTABLE
+
+---
+ build_files/build_environment/cmake/hiprt.cmake    | 3 ++-
+ build_files/build_environment/cmake/versions.cmake | 4 ++--
+ build_files/cmake/Modules/FindHIPRT.cmake          | 4 ++++
+ 3 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/build_files/build_environment/cmake/hiprt.cmake b/build_files/build_environment/cmake/hiprt.cmake
+index ff48b6eebbb..92e8e34a9d9 100644
+--- a/build_files/build_environment/cmake/hiprt.cmake
++++ b/build_files/build_environment/cmake/hiprt.cmake
+@@ -11,7 +11,8 @@ get_filename_component(_hip_path ${_hip_path} DIRECTORY)
+ set(HIPRT_EXTRA_ARGS
+   -DCMAKE_BUILD_TYPE=Release
+   -DHIP_PATH=${_hip_path}
+-  -DBITCODE=OFF # revert back to ON once hiprt cmake is updated to skip bake kernel for BITCODE
++  -DBITCODE=ON
++  -DGENERATE_BAKE_KERNEL=OFF
+   -DNO_UNITTEST=ON
+   -DHIPRT_PREFER_HIP_5=ON
+ )
+diff --git a/build_files/build_environment/cmake/versions.cmake b/build_files/build_environment/cmake/versions.cmake
+index 3cbd51be6d7..a90a20c4e8e 100644
+--- a/build_files/build_environment/cmake/versions.cmake
++++ b/build_files/build_environment/cmake/versions.cmake
+@@ -870,9 +870,9 @@ set(PYBIND11_HASH ce07bfd5089245da7807b3faf6cbc878)
+ set(PYBIND11_HASH_TYPE MD5)
+ set(PYBIND11_FILE pybind-v${PYBIND11_VERSION}.tar.gz)
+ 
+-set(HIPRT_VERSION 24fb85b78a44bd4927788edb7dccc63c8143df3d)
++set(HIPRT_VERSION 4996b9794cdbc3852fad6e2ae0dbab1e48f2e5f0)
+ set(HIPRT_LIBRARY_VERSION 02003)
+ set(HIPRT_URI https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT/archive/${HIPRT_VERSION}.tar.gz)
+-set(HIPRT_HASH b7daa06f89e050e0b47c7f6786e625eb)
++set(HIPRT_HASH 04eebbd3a582f2b86706184cc97a692e)
+ set(HIPRT_HASH_TYPE MD5)
+ set(HIPRT_FILE hiprt-${HIPRT_VERSION}.tar.gz)
+diff --git a/build_files/cmake/Modules/FindHIPRT.cmake b/build_files/cmake/Modules/FindHIPRT.cmake
+index c7d5a048942..f268664605b 100644
+--- a/build_files/cmake/Modules/FindHIPRT.cmake
++++ b/build_files/cmake/Modules/FindHIPRT.cmake
+@@ -39,6 +39,10 @@ include(FindPackageHandleStandardArgs)
+ find_package_handle_standard_args(HIPRT DEFAULT_MSG
+   HIPRT_INCLUDE_DIR)
+ 
++find_package_handle_standard_args(HIPRT
++    REQUIRED_VARS HIP_LINKER_EXECUTABLE)
++
++
+ mark_as_advanced(
+   HIPRT_INCLUDE_DIR
+ )
+-- 
+2.30.2
+
+
