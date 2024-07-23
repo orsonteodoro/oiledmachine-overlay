@@ -51,7 +51,9 @@ RDEPEND="
 		~dev-util/hipfort-${PV}:${ROCM_SLOT}
 	)
 	hipsparselt? (
-		~sci-libs/hipSPARSELt-${PV}:${ROCM_SLOT}[rocm]
+		amdgpu_targets_gfx942? (
+			~sci-libs/hipSPARSELt-${PV}:${ROCM_SLOT}[rocm]
+		)
 	)
 	flang? (
 		~dev-lang/rocm-flang-${PV}:${ROCM_SLOT}

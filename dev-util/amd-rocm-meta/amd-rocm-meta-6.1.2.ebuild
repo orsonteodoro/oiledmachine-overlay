@@ -99,7 +99,9 @@ RDEPEND="
 		~sci-libs/hipRAND-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipSOLVER-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipSPARSE-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/hipSPARSELt-${PV}:${ROCM_SLOT}[rocm]
+		amdgpu_targets_gfx942? (
+			~sci-libs/hipSPARSELt-${PV}:${ROCM_SLOT}[rocm]
+		)
 		~sci-libs/hiptensor-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/miopen-${PV}:${ROCM_SLOT}$(get_rocm_usedep MIOPEN)
 		~sci-libs/rocALUTION-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCALUTION)
