@@ -1259,6 +1259,7 @@ eerror
 }
 
 apply_hiprt_2_3_patchset() {
+	use hiprt || return
 	local hiprt_patchset=(
 		"blender-4.3.0-pr-121050-001.patch"
 		"blender-4.3.0-pr-121050-002-for-3.6.patch"
