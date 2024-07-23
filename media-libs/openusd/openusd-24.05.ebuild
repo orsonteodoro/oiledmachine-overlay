@@ -4,8 +4,8 @@
 EAPI=8
 
 # For dependencies, see
-# https://github.com/PixarAnimationStudios/USD/blob/v23.11/VERSIONS.md
-# https://github.com/PixarAnimationStudios/USD/blob/v23.11/build_scripts/build_usd.py#L2019
+# https://github.com/PixarAnimationStudios/USD/blob/v24.05/VERSIONS.md
+# https://github.com/PixarAnimationStudios/USD/blob/v24.05/build_scripts/build_usd.py#L2019
 # TBB 2021 not ready yet.  tbb::task, tbb::empty_task references are the major hurdles
 
 BOOST_PV="1.76.0"
@@ -48,7 +48,7 @@ LICENSE="
 	MIT
 	OpenUSD-23.11
 "
-# custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/v23.11/pxr/usdImaging/usdImaging/drawModeStandin.cpp#L9
+# custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/v24.05/pxr/usdImaging/usdImaging/drawModeStandin.cpp#L9
 # custom - search "In consideration of your agreement"
 # MIT - the distro MIT license template does not have all rights reserved.
 SLOT="0"
@@ -123,7 +123,7 @@ RDEPEND+="
 	!experimental? (
 		!<dev-cpp/tbb-2021:0=
 		<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
-		>=dev-cpp/tbb-2020.3:${LEGACY_TBB_SLOT}=
+		>=dev-cpp/tbb-2018.6:${LEGACY_TBB_SLOT}=
 	)
 	!python? (
 		>=dev-libs/boost-${BOOST_PV}:=
@@ -144,14 +144,14 @@ RDEPEND+="
 		>=sci-libs/hdf5-1.10[cxx,hl]
 	)
 	imaging? (
-		>=media-libs/opensubdiv-3.5.1
+		>=media-libs/opensubdiv-3.6.0
 		x11-libs/libX11
 	)
 	jemalloc? (
 		dev-libs/jemalloc-usd
 	)
 	materialx? (
-		>=media-libs/materialx-1.38.7
+		>=media-libs/materialx-1.38.8
 	)
 	opencolorio? (
 		>=media-libs/opencolorio-2.1.3
@@ -198,7 +198,7 @@ RDEPEND+="
 		')
 	)
         vulkan? (
-		>=dev-util/vulkan-headers-1.2.135.0
+		>=dev-util/vulkan-headers-1.3.243.0
 	)
 "
 DEPEND+="
@@ -291,7 +291,7 @@ ewarn
 			-DDRACO_ATTRIBUTE_VALUES_DEDUPLICATION_SUPPORTED=ON \
 			-DTBB_SUPPRESS_DEPRECATED_MESSAGES=1
 	fi
-        # See https://github.com/PixarAnimationStudios/USD/blob/v23.11/cmake/defaults/Options.cmake
+        # See https://github.com/PixarAnimationStudios/USD/blob/v24.05/cmake/defaults/Options.cmake
 	local mycmakeargs+=(
 		$(usex experimental "
 			-DTBB_INCLUDE_DIR=${ESYSROOT}/usr/include
