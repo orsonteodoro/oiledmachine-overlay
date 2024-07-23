@@ -56,7 +56,6 @@ HOMEPAGE="
 	https://github.com/GPUOpen-LibrariesAndSDKs/HIPRTSDK
 	https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT
 "
-REQUIRED_USE="${ROCM_REQUIRED_USE}"
 LICENSE="
 	Apache-2.0
 	BSD
@@ -69,8 +68,9 @@ LICENSE="
 "
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-IUSE="-bake-kernels -bitcode cuda encrypt precompile rocm test ebuild-revision-4"
+IUSE="-bake-kernels -bitcode cuda encrypt precompile rocm system-orochi test ebuild-revision-7"
 REQUIRED_USE="
+	${ROCM_REQUIRED_USE}
 	?? (
 		bake-kernels
 		bitcode
@@ -79,11 +79,17 @@ REQUIRED_USE="
 		cuda
 		rocm
 	)
+	bake-kernels? (
+		!system-orochi
+	)
 "
 RDEPEND="
 	dev-util/hip:${SLOT}
 	cuda? (
 		${HIP_CUDA_DEPEND}
+	)
+	system-orochi? (
+		=dev-libs/Orochi-2.00*:${SLOT}
 	)
 "
 DEPEND="
@@ -198,4 +204,8 @@ src_install() {
 	doins "version.txt"
 	insinto "/opt/rocm-${ROCM_VERSION}/include/hiprt"
 	doins -r "hiprt/impl"
+	if ! use system-orochi ; then
+		insinto "/opt/rocm-${ROCM_VERSION}/include"
+		doins -r "contrib/Orochi"
+	fi
 }
