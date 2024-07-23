@@ -1201,7 +1201,6 @@ apply_hiprt_2_3_patchset() {
 		"blender-4.3.0-pr-121050-017.patch"
 		"blender-4.3.0-pr-121050-018.patch"
 		"blender-4.3.0-pr-121050-019.patch"
-		"A"
 	)
 einfo "Applying hiprt_patchset"
 	local x
