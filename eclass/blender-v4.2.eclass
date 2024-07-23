@@ -1213,6 +1213,7 @@ einfo "Applying hiprt_patchset"
 		eapply "${FILESDIR}/pr121050/${x}"
 	done
 	eapply "${FILESDIR}/${PN}-3.6.13-hiprt-linker-changes.patch"
+	eapply "${FILESDIR}/${PN}-3.6.13-HIPRT-change-version-file-path.patch"
 }
 
 _src_prepare_patches() {

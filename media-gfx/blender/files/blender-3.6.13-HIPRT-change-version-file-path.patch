@@ -1,0 +1,12 @@
+diff '--color=auto' -urp blender-3.6.13.orig/intern/cycles/kernel/CMakeLists.txt blender-3.6.13/intern/cycles/kernel/CMakeLists.txt
+--- blender-3.6.13.orig/intern/cycles/kernel/CMakeLists.txt	2024-07-22 20:29:29.737235378 -0700
++++ blender-3.6.13/intern/cycles/kernel/CMakeLists.txt	2024-07-22 20:47:26.914928809 -0700
+@@ -666,7 +666,7 @@ if(WITH_CYCLES_DEVICE_HIPRT AND WITH_CYC
+     ${SRC_KERNEL_DEVICE_HIPRT_HEADERS}
+     ${SRC_UTIL_HEADERS})
+   # Get HIP-RT version
+-  file(STRINGS ${HIPRT_INCLUDE_DIR}/../version.txt lines)
++  file(STRINGS ${HIPRT_ROOT_DIR}/share/HIPRT/version.txt lines)
+   list(GET lines 0 HIPRT_MAJOR_VER)
+   list(GET lines 1 HIPRT_MINOR_VER)
+   math(EXPR HIPRT_VERSION "${HIPRT_MAJOR_VER} * 1000 + ${HIPRT_MINOR_VER}")
