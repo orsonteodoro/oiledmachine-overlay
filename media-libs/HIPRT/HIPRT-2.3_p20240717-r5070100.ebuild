@@ -69,7 +69,7 @@ LICENSE="
 "
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-IUSE="-bake-kernel -bitcode cuda rocm test ebuild-revision-1"
+IUSE="-bake-kernel -bitcode cuda rocm test ebuild-revision-2"
 REQUIRED_USE="
 	^^ (
 		cuda

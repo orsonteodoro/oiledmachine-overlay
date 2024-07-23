@@ -1207,6 +1207,7 @@ einfo "Applying hiprt_patchset"
 	for x in ${hiprt_patchset[@]} ; do
 		eapply "${FILESDIR}/pr121050/${x}"
 	done
+	eapply "${FILESDIR}/${PN}-3.6.13-hiprt-linker-changes.patch"
 }
 
 _src_prepare_patches() {
@@ -1400,13 +1401,14 @@ einfo "CUDA_TARGETS:  ${targets}"
 		mycmakeargs+=(
 			-DCYCLES_HIP_BINARIES_ARCH="${targets}"
 			-DHIP_DIR="/opt/rocm-${ROCM_VERSION}"
+			-DHIP_ROOT_DIR="/opt/rocm-${ROCM_VERSION}"
 		)
 einfo "AMDGPU_TARGETS:  ${targets}"
 	fi
 
 	if use hiprt ; then
 		mycmakeargs+=(
-			-DHIPRT_DIR="/opt/rocm-${ROCM_VERSION}"
+			-DHIPRT_ROOT_DIR="/opt/rocm-${ROCM_VERSION}"
 		)
 	fi
 

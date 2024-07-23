@@ -1,0 +1,21 @@
+diff '--color=auto' -urp blender-3.6.13.orig/build_files/cmake/Modules/FindHIP.cmake blender-3.6.13/build_files/cmake/Modules/FindHIP.cmake
+--- blender-3.6.13.orig/build_files/cmake/Modules/FindHIP.cmake	2024-07-22 19:49:21.578305074 -0700
++++ blender-3.6.13/build_files/cmake/Modules/FindHIP.cmake	2024-07-22 19:51:31.860053461 -0700
+@@ -34,7 +34,7 @@ find_program(HIP_HIPCC_EXECUTABLE
+ if(WIN32)
+   set(LINKER clang++)
+ else()
+-  set(LINKER amdclang++)
++  set(LINKER clang++)
+ endif()
+ 
+ find_program(HIP_LINKER_EXECUTABLE
+@@ -42,6 +42,8 @@ find_program(HIP_LINKER_EXECUTABLE
+     ${LINKER}
+   HINTS
+     ${_hip_SEARCH_DIRS}
++  PATH
++    /opt/rocm-@ROCM_VERSION@/llvm
+     PATH_SUFFIXES
+       bin
+     NO_DEFAULT_PATH

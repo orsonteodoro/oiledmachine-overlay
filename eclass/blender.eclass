@@ -739,6 +739,12 @@ blender_src_prepare() {
 	if declare -f _src_prepare_patches >/dev/null 2>&1 ; then
 		_src_prepare_patches
 	fi
+	if use rocm ; then
+		PATCH_PATHS=(
+			"${S}/build_files/cmake/Modules/FindHIP.cmake"
+		)
+		rocm_src_prepare
+	fi
 
 	# we don't want static glew, but it's scattered across
 	# multiple files that differ from version to version
