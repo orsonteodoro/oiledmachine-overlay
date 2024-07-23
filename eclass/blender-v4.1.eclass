@@ -69,7 +69,7 @@ CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 # For max and min package versions see link below. \
 # https://github.com/blender/blender/blob/v4.1.1/build_files/build_environment/install_linux_packages.py
 FFMPEG_IUSE+="
-	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
+	+aom +avi +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
 "
 
 LLVM_COMPAT=( {17..15} )
