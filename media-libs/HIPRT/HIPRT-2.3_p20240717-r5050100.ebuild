@@ -69,7 +69,7 @@ LICENSE="
 "
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-IUSE="-bake-kernel -bitcode cuda rocm test ebuild-revision-3"
+IUSE="-bake-kernel -bitcode cuda rocm test ebuild-revision-4"
 REQUIRED_USE="
 	^^ (
 		cuda
@@ -181,4 +181,6 @@ src_install() {
 	rocm_mv_docs
 	insinto "/opt/rocm-${ROCM_VERSION}/share/${PN}"
 	doins "version.txt"
+	insinto "/opt/rocm-${ROCM_VERSION}/include/hiprt"
+	doins -r "hiprt/impl"
 }
