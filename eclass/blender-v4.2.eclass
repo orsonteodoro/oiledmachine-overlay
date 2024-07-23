@@ -18,24 +18,25 @@
 # The ebuild uses the same matching LLVM version used with Mesa to prevent
 # the multiple LLVM bug.
 
+# 509de56830f859989e2f65bdacef461419ff29cb -> 4.2.0
 # For versioning see:
-# https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/source/blender/blenkernel/BKE_blender_version.h
+# https://github.com/blender/blender/blob/v4.2.0/source/blender/blenkernel/BKE_blender_version.h
 
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # no need to look past those dates.
 
-# Last change was Feb 23, 2024 for:
-# https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/build_files/build_environment/install_linux_packages.py
+# Last change was May 31, 2024 for:
+# https://github.com/blender/blender/blob/v4.2.0/build_files/build_environment/install_linux_packages.py
 
-# Last change was Feb 20, 2024 for:
-# https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/build_files/cmake/config/blender_release.cmake
+# Last change was Mar 6, 2024 for:
+# https://github.com/blender/blender/blob/v4.2.0/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
 # Last change was Feb 19, 2024 for:
-# https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/build_files/build_environment/cmake/versions.cmake
+# https://github.com/blender/blender/blob/v4.2.0/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
-# HIP:  https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/intern/cycles/cmake/external_libs.cmake#L47
+# HIP:  https://github.com/blender/blender/blob/v4.2.0/intern/cycles/cmake/external_libs.cmake#L47
 
 # GPU lib versions:  https://github.com/blender/blender/blob/v4.2.0/build_files/config/pipeline_config.yaml
 
@@ -71,9 +72,9 @@ CPU_FLAGS_3_3=(
 CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/build_files/build_environment/install_linux_packages.py
+# https://github.com/blender/blender/blob/v4.2.0/build_files/build_environment/install_linux_packages.py
 FFMPEG_IUSE+="
-	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
+	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +x265 +xvid
 "
 
 LLVM_COMPAT=( {17..15} )
@@ -90,7 +91,7 @@ OPENVDB_ABIS=(
 )
 
 # For the max exclusive Python supported (and others), see \
-# https://github.com/blender/blender/blob/509de56830f859989e2f65bdacef461419ff29cb/build_files/build_environment/install_linux_packages.py#L693 \
+# https://github.com/blender/blender/blob/v4.2.0/build_files/build_environment/install_linux_packages.py#L693 \
 PYTHON_COMPAT=( "python3_"{11,12} ) # <= 3.12.
 
 BOOST_PV="1.82"
@@ -418,6 +419,9 @@ REQUIRED_USE+="
 	x264? (
 		ffmpeg
 	)
+	x265? (
+		ffmpeg
+	)
 	xvid? (
 		ffmpeg
 	)
@@ -453,7 +457,7 @@ gen_oidn_depends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 		llvm_slot_${s}? (
-			>=media-libs/oidn-2.2.2[llvm_slot_${s}]
+			>=media-libs/oidn-2.3.0[llvm_slot_${s}]
 			<media-libs/oidn-3[llvm_slot_${s}]
 		)
 		"
@@ -467,7 +471,7 @@ gen_oiio_depends() {
 			${s}? (
 				>=dev-cpp/robin-map-0.6.2
 				>=dev-libs/libfmt-9.1.0
-				>=media-libs/openimageio-2.5.6.0[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
+				>=media-libs/openimageio-2.5.11.0[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 				<media-libs/openimageio-2.6[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 			)
 		"
@@ -700,14 +704,14 @@ RDEPEND+="
 		)
 	)
 	cycles-device-oneapi? (
-		>=dev-libs/level-zero-1.15.8
+		>=dev-libs/level-zero-1.16.1
 		<dev-libs/level-zero-2
 	)
 	dbus? (
 		sys-apps/dbus
 	)
 	embree? (
-		>=media-libs/embree-4.1.0:=\
+		>=media-libs/embree-4.3.2:=\
 [-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,\
 cpu_flags_x86_sse4_2?,\
 cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sycl?,tbb?]
@@ -915,7 +919,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		)
 	)
 	sycl? (
-		>=sys-devel/DPC++-2022.12:0/6
+		>=sys-devel/DPC++-2024.03.14:0/8
 	)
 	tbb? (
 		>=dev-cpp/tbb-2021:${ONETBB_SLOT}[tbbmalloc]
@@ -925,19 +929,19 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		)
 	)
 	tiff? (
-		>=media-libs/tiff-4.5.1:0[jpeg,zlib]
+		>=media-libs/tiff-4.6.0:0[jpeg,zlib]
 	)
 	usd? (
-		>=media-libs/openusd-23.11[imaging,monolithic,opengl,openvdb,openimageio,python]
-		<media-libs/openusd-24[imaging,monolithic,opengl,openvdb,openimageio,python]
+		>=media-libs/openusd-24.05[imaging,monolithic,opengl,openvdb,openimageio,python]
+		<media-libs/openusd-25[imaging,monolithic,opengl,openvdb,openimageio,python]
 	)
 	valgrind? (
 		dev-util/valgrind
 	)
 	wayland? (
-		>=dev-libs/wayland-1.22.0
-		>=dev-libs/wayland-protocols-1.32
-		>=gui-libs/libdecor-0.1.0
+		>=dev-libs/wayland-1.23.0
+		>=dev-libs/wayland-protocols-1.36
+		>=gui-libs/libdecor-0.2.2
 	)
 	webp? (
 		>=media-libs/libwebp-1.3.2
@@ -1014,7 +1018,7 @@ BDEPEND+="
 		)
 	)
 	test? (
-		>=dev-libs/weston-12.0.92
+		>=dev-libs/weston-13.0.3
 	)
 	|| (
 		>=sys-devel/gcc-${GCC_MIN}
@@ -1191,9 +1195,9 @@ apply_hiprt_2_3_patchset() {
 		"blender-4.3.0-pr-121050-002.patch"
 #		"blender-4.3.0-pr-121050-003.patch"
 		"blender-4.3.0-pr-121050-004.patch"
-		"blender-4.3.0-pr-121050-005-for-4.1.patch"
+		"blender-4.3.0-pr-121050-005.patch"
 #		"blender-4.3.0-pr-121050-006.patch"
-		"blender-4.3.0-pr-121050-007-for-4.1.patch"
+		"blender-4.3.0-pr-121050-007-for-4.2.patch"
 		"blender-4.3.0-pr-121050-008.patch"
 		"blender-4.3.0-pr-121050-009.patch"
 		"blender-4.3.0-pr-121050-010.patch"
@@ -1201,7 +1205,7 @@ apply_hiprt_2_3_patchset() {
 		"blender-4.3.0-pr-121050-012.patch"
 		"blender-4.3.0-pr-121050-013.patch"
 		"blender-4.3.0-pr-121050-014.patch"
-		"blender-4.3.0-pr-121050-015-for-4.1.patch"
+		"blender-4.3.0-pr-121050-015.patch"
 		"blender-4.3.0-pr-121050-016.patch"
 		"blender-4.3.0-pr-121050-017.patch"
 		"blender-4.3.0-pr-121050-018.patch"
@@ -1516,7 +1520,7 @@ eerror
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/509de56830f859989e2f65bdacef461419ff29cb/build_files/cmake/config
+# https://github.com/blender/blender/tree/v4.2.0/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(
