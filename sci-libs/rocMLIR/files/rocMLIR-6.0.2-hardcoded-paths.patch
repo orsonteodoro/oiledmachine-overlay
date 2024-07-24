@@ -186,3 +186,15 @@ diff '--color=auto' -urp rocMLIR-rocm-6.0.2.orig/mlir/utils/performance/rocblas-
    set(LIBS ${rocblas_LIBRARY} benchmark-driver-utils)
 Only in rocMLIR-rocm-6.0.2/mlir/utils/performance/rocblas-benchmark-driver: CMakeLists.txt.orig
 Only in rocMLIR-rocm-6.0.2/mlir/utils/performance/rocblas-benchmark-driver: CMakeLists.txt.rej
+diff '--color=auto' -urp rocMLIR-rocm-5.1.3.orig/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp rocMLIR-rocm-5.1.3/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp
+--- rocMLIR-rocm-5.1.3.orig/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp	2022-01-20 11:34:11.000000000 -0800
++++ rocMLIR-rocm-5.1.3/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp	2024-07-24 04:33:21.098778312 -0700
+@@ -260,7 +260,7 @@ RocmInstallationDetector::getInstallatio
+   ROCmSearchDirs.emplace_back(D.ResourceDir,
+                               /*StrictChecking=*/true);
+ 
+-  ROCmSearchDirs.emplace_back(D.SysRoot + "/opt/rocm",
++  ROCmSearchDirs.emplace_back(D.SysRoot + "/opt/rocm-@ROCM_VERSION@",
+                               /*StrictChecking=*/true);
+ 
+   // Find the latest /opt/rocm-{release} directory.

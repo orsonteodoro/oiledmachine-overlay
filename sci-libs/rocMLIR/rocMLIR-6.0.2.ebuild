@@ -32,7 +32,7 @@ LICENSE="
 # all rights reserved with MIT - mlir/tools/rocmlir-lib/LICENSE
 # The distro MIT license template does not have all rights reserved
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-11"
+IUSE="ebuild-revision-12"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
@@ -98,6 +98,7 @@ ewarn "Patching may take a long time.  Please wait..."
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
+		"${S}/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp"
 		"${S}/CMakeLists.txt"
 		"${S}/cmake/llvm-project.cmake"
 		"${S}/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt"
