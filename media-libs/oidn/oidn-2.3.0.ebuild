@@ -98,7 +98,7 @@ IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
-+apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
+aot +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
 ebuild-revision-3
 "
 gen_required_use_cuda_targets() {
@@ -132,6 +132,9 @@ REQUIRED_USE+="
 		clang
 		gcc
 		rocm
+	)
+	aot? (
+		sycl
 	)
 	cuda? (
 		gcc
@@ -207,7 +210,7 @@ RDEPEND+="
 		dev-util/hip:=[rocm]
 	)
 	sycl? (
-		>=sys-devel/DPC++-2023.10.26:0/7
+		>=sys-devel/DPC++-2023.10.26:0/7[aot?]
 		dev-libs/level-zero
 		sys-devel/DPC++:=
 	)

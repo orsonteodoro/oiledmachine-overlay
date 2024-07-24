@@ -25,6 +25,10 @@
     <remote-id type="github">OpenImageDenoise/oidn</remote-id>
   </upstream>
   <use>
+    <flag name="aot">
+      Add support the AOT (Ahead Of Time) compiler for Broadwell (Gen8) and
+      newer.
+    </flag>
     <flag name="apps">
       Builds examples and tests.
     </flag>
