@@ -1,3 +1,15 @@
+diff '--color=auto' -urp llvm-project-rocm-4.5.2.orig/clang/lib/Driver/ToolChains/AMDGPU.cpp llvm-project-rocm-4.5.2/clang/lib/Driver/ToolChains/AMDGPU.cpp
+--- llvm-project-rocm-4.5.2.orig/clang/lib/Driver/ToolChains/AMDGPU.cpp	2021-10-26 10:45:58.000000000 -0700
++++ llvm-project-rocm-4.5.2/clang/lib/Driver/ToolChains/AMDGPU.cpp	2024-07-24 01:45:28.829213317 -0700
+@@ -252,7 +252,7 @@ RocmInstallationDetector::getInstallatio
+   ROCmSearchDirs.emplace_back(D.ResourceDir,
+                               /*StrictChecking=*/true);
+ 
+-  ROCmSearchDirs.emplace_back(D.SysRoot + "/opt/rocm",
++  ROCmSearchDirs.emplace_back(D.SysRoot + "/opt/rocm-@ROCM_VERSION@",
+                               /*StrictChecking=*/true);
+ 
+   // Find the latest /opt/rocm-{release} directory.
 diff '--color=auto' -urp llvm-project-rocm-5.7.1.orig/clang/tools/amdgpu-arch/CMakeLists.txt llvm-project-rocm-5.7.1/clang/tools/amdgpu-arch/CMakeLists.txt
 --- llvm-project-rocm-5.7.1.orig/clang/tools/amdgpu-arch/CMakeLists.txt	2023-09-19 10:39:23.000000000 -0700
 +++ llvm-project-rocm-5.7.1/clang/tools/amdgpu-arch/CMakeLists.txt	2024-07-10 15:34:03.961304914 -0700

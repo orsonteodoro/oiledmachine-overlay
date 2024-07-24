@@ -1,8 +1,18 @@
-Only in llvm-project-rocm-4.5.2/compiler-rt: CMakeLists.txt.orig
-Only in llvm-project-rocm-4.5.2/compiler-rt: CMakeLists.txt.rej
+diff '--color=auto' -urp llvm-project-rocm-4.5.2.orig/clang/lib/Driver/ToolChains/AMDGPU.cpp llvm-project-rocm-4.5.2/clang/lib/Driver/ToolChains/AMDGPU.cpp
+--- llvm-project-rocm-4.5.2.orig/clang/lib/Driver/ToolChains/AMDGPU.cpp	2021-10-26 10:45:58.000000000 -0700
++++ llvm-project-rocm-4.5.2/clang/lib/Driver/ToolChains/AMDGPU.cpp	2024-07-24 01:45:28.829213317 -0700
+@@ -252,7 +252,7 @@ RocmInstallationDetector::getInstallatio
+   ROCmSearchDirs.emplace_back(D.ResourceDir,
+                               /*StrictChecking=*/true);
+ 
+-  ROCmSearchDirs.emplace_back(D.SysRoot + "/opt/rocm",
++  ROCmSearchDirs.emplace_back(D.SysRoot + "/opt/rocm-@ROCM_VERSION@",
+                               /*StrictChecking=*/true);
+ 
+   // Find the latest /opt/rocm-{release} directory.
 diff '--color=auto' -urp llvm-project-rocm-4.5.2.orig/mlir/lib/Dialect/GPU/CMakeLists.txt llvm-project-rocm-4.5.2/mlir/lib/Dialect/GPU/CMakeLists.txt
 --- llvm-project-rocm-4.5.2.orig/mlir/lib/Dialect/GPU/CMakeLists.txt	2021-10-26 10:45:58.000000000 -0700
-+++ llvm-project-rocm-4.5.2/mlir/lib/Dialect/GPU/CMakeLists.txt	2024-07-19 16:29:48.697251996 -0700
++++ llvm-project-rocm-4.5.2/mlir/lib/Dialect/GPU/CMakeLists.txt	2024-07-24 01:44:57.069739701 -0700
 @@ -113,7 +113,7 @@ if(MLIR_ROCM_RUNNER_ENABLED)
    # Configure ROCm support.
    if (NOT DEFINED ROCM_PATH)
@@ -12,11 +22,9 @@ diff '--color=auto' -urp llvm-project-rocm-4.5.2.orig/mlir/lib/Dialect/GPU/CMake
      else()
        set(ROCM_PATH $ENV{ROCM_PATH} CACHE PATH "Path to which ROCm has been installed")
      endif()
-Only in llvm-project-rocm-4.5.2/mlir/lib/Dialect/GPU: CMakeLists.txt.orig
-Only in llvm-project-rocm-4.5.2/mlir/lib/Dialect/GPU: CMakeLists.txt.rej
 diff '--color=auto' -urp llvm-project-rocm-4.5.2.orig/mlir/lib/ExecutionEngine/CMakeLists.txt llvm-project-rocm-4.5.2/mlir/lib/ExecutionEngine/CMakeLists.txt
 --- llvm-project-rocm-4.5.2.orig/mlir/lib/ExecutionEngine/CMakeLists.txt	2021-10-26 10:45:58.000000000 -0700
-+++ llvm-project-rocm-4.5.2/mlir/lib/ExecutionEngine/CMakeLists.txt	2024-07-19 16:28:05.254940026 -0700
++++ llvm-project-rocm-4.5.2/mlir/lib/ExecutionEngine/CMakeLists.txt	2024-07-24 01:44:57.097739237 -0700
 @@ -142,7 +142,7 @@ if(MLIR_ROCM_RUNNER_ENABLED)
    # Configure ROCm support.
    if (NOT DEFINED ROCM_PATH)
@@ -28,7 +36,7 @@ diff '--color=auto' -urp llvm-project-rocm-4.5.2.orig/mlir/lib/ExecutionEngine/C
      endif()
 diff '--color=auto' -urp llvm-project-rocm-4.5.2.orig/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt llvm-project-rocm-4.5.2/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt
 --- llvm-project-rocm-4.5.2.orig/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt	2021-10-26 10:45:58.000000000 -0700
-+++ llvm-project-rocm-4.5.2/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt	2024-07-19 16:29:46.517287573 -0700
++++ llvm-project-rocm-4.5.2/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt	2024-07-24 01:44:57.101739171 -0700
 @@ -15,7 +15,7 @@ find_package(LLVM QUIET CONFIG
    ${LLVM_INSTALL_PREFIX}
    $ENV{AOMP}
@@ -40,7 +48,7 @@ diff '--color=auto' -urp llvm-project-rocm-4.5.2.orig/openmp/libomptarget/device
    ${LIBOMPTARGET_NVPTX_CUDA_LINKER_DIR}
 diff '--color=auto' -urp llvm-project-rocm-4.5.2.orig/openmp/libomptarget/hostrpc/services/CMakeLists.txt llvm-project-rocm-4.5.2/openmp/libomptarget/hostrpc/services/CMakeLists.txt
 --- llvm-project-rocm-4.5.2.orig/openmp/libomptarget/hostrpc/services/CMakeLists.txt	2021-10-26 10:45:58.000000000 -0700
-+++ llvm-project-rocm-4.5.2/openmp/libomptarget/hostrpc/services/CMakeLists.txt	2024-07-19 16:31:26.119661900 -0700
++++ llvm-project-rocm-4.5.2/openmp/libomptarget/hostrpc/services/CMakeLists.txt	2024-07-24 01:44:57.101739171 -0700
 @@ -2,6 +2,6 @@
  if (OPENMP_ENABLE_LIBOMPTARGET_HSA)
    add_library(hostrpc_services STATIC hostcall.cpp hostrpc_execute_service.c hostrpc_externs.c)
@@ -49,11 +57,9 @@ diff '--color=auto' -urp llvm-project-rocm-4.5.2.orig/openmp/libomptarget/hostrp
 +  find_path(HSA_INCLUDE hsa.h HINTS ${CMAKE_INSTALL_PREFIX}/include/hsa ${CMAKE_INSTALL_PREFIX}/../include/hsa /opt/rocm-@ROCM_VERSION@/include/hsa PATH_SUFFIXES hsa)
    include_directories(${HSA_INCLUDE})
  endif()
-Only in llvm-project-rocm-4.5.2/openmp/libomptarget/hostrpc/services: CMakeLists.txt.orig
-Only in llvm-project-rocm-4.5.2/openmp/libomptarget/hostrpc/services: CMakeLists.txt.rej
 diff '--color=auto' -urp llvm-project-rocm-4.5.2.orig/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt llvm-project-rocm-4.5.2/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt
 --- llvm-project-rocm-4.5.2.orig/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2021-10-26 10:45:58.000000000 -0700
-+++ llvm-project-rocm-4.5.2/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2024-07-19 16:31:27.735635522 -0700
++++ llvm-project-rocm-4.5.2/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2024-07-24 01:44:57.101739171 -0700
 @@ -14,7 +14,7 @@
  ################################################################################
  
@@ -63,5 +69,3 @@ diff '--color=auto' -urp llvm-project-rocm-4.5.2.orig/openmp/libomptarget/plugin
  if (NOT ${hsa-runtime64_FOUND})
    libomptarget_say("Not building AMDGPU plugin: hsa-runtime64 not found")
    return()
-Only in llvm-project-rocm-4.5.2/openmp/libomptarget/plugins/amdgpu: CMakeLists.txt.orig
-Only in llvm-project-rocm-4.5.2/openmp/libomptarget/plugins/amdgpu: CMakeLists.txt.rej

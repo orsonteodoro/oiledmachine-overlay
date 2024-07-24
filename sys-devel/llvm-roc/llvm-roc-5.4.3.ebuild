@@ -98,7 +98,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt profile +runtime
-ebuild-revision-15
+ebuild-revision-18
 "
 REQUIRED_USE="
 	cfi? (
@@ -158,6 +158,7 @@ src_prepare() {
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
+		"${WORKDIR}/llvm-project-rocm-${PV}/clang/lib/Driver/ToolChains/AMDGPU.cpp"
 		"${WORKDIR}/llvm-project-rocm-${PV}/bolt/CMakeLists.txt"
 		"${WORKDIR}/llvm-project-rocm-${PV}/bolt/include/bolt/RuntimeLibs/RuntimeLibrary.h"
 		"${WORKDIR}/llvm-project-rocm-${PV}/bolt/lib/RuntimeLibs/HugifyRuntimeLibrary.cpp"
