@@ -29,7 +29,10 @@ LICENSE="
 	MIT
 "
 # See also https://github.com/KhronosGroup/OpenXR-SDK-Source/blob/release-1.0.18/.reuse/dep5
-HOMEPAGE="https://khronos.org/openxr"
+HOMEPAGE="
+	https://khronos.org/openxr
+	https://github.com/KhronosGroup/OpenXR-SDK-Source
+"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
