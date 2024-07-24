@@ -219,7 +219,8 @@ ${ALL_LLVM_TARGETS[*]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
-cet cfi cuda esimd_emulator hardened rocm +sycl-fusion test
+aot cet cfi cuda esimd_emulator hardened rocm +sycl-fusion test
+video_cards_intel
 ebuild-revision-2
 "
 gen_cuda_required_use() {
@@ -280,13 +281,18 @@ RDEPEND="
 	>=dev-util/spirv-tools-1.3.216
 	>=media-libs/libva-2.14.0
 	dev-libs/opencl-icd-loader
-	esimd_emulator? (
-		>=dev-libs/libffi-3.4.2:=
+	aot? (
+		video_cards_intel? (
+			dev-libs/intel-compute-runtime[l0]
+		)
 	)
 	cuda? (
 		|| (
 			=dev-util/nvidia-cuda-toolkit-11.8*:=
 		)
+	)
+	esimd_emulator? (
+		>=dev-libs/libffi-3.4.2:=
 	)
 	rocm? (
 		rocm_4_3? (

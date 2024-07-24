@@ -15,6 +15,10 @@
     <remote-id type="github">intel/llvm</remote-id>
   </upstream>
   <use>
+    <flag name="aot">
+      Add support the AOT (Ahead Of Time) compiler for Broadwell (Gen8) and
+      newer.
+    </flag>
     <flag name="cet">
       Builds with hardware assisted Control-flow Enforcement Technology (CET)
       with protection to branches and returns.
