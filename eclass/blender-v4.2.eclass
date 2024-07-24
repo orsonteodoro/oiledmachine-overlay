@@ -175,15 +175,9 @@ ROCM_SLOTS=(
 	rocm_5_5
 )
 
-CYCLES_ONEAPI_AOT_TARGETS=(
-	12_55_8
-	12_70_4
-)
-
 IUSE+="
 ${CPU_FLAGS_3_3[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-${CYCLES_ONEAPI_AOT_TARGETS[@]/#/oneapi_targets_}
 ${FFMPEG_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS[@]}
@@ -194,7 +188,7 @@ ${ROCM_SLOTS[@]}
 +jack +jemalloc +jpeg2k -llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal
 +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb
 +openxr -optix +osl +pdf +potrace +pulseaudio release -rocm +sdl +sndfile sycl
-+tbb test +tiff +usd -valgrind video_cards_intel +wayland
++tbb test +tiff +usd -valgrind +wayland
 r2
 "
 # hip is default ON upstream.
@@ -313,12 +307,6 @@ REQUIRED_USE+="
 			cuda
 			optix
 		)
-	)
-	oneapi_targets_12_55_8? (
-		sycl
-	)
-	oneapi_targets_12_70_4? (
-		sycl
 	)
 	opencl? (
 		cycles
@@ -932,11 +920,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 	)
 	sycl? (
 		>=sys-devel/DPC++-2024.03.15:0/8[aot?]
-		oneapi_targets_12_55_8? (
-			>=dev-libs/intel-compute-runtime-23.43.27642.40[l0]
-			>=dev-util/intel-graphics-compiler-1.0.15468.25
-		)
-		oneapi_targets_12_70_4? (
+		aot? (
 			>=dev-libs/intel-compute-runtime-23.43.27642.40[l0]
 			>=dev-util/intel-graphics-compiler-1.0.15468.25
 		)
@@ -1354,6 +1338,7 @@ eerror
 		-DWITH_CXX11_ABI=ON
 		-DWITH_CYCLES_DEVICE_HIPRT=$(usex hiprt)
 		-DWITH_CYCLES_HIP_BINARIES=$(usex rocm)
+		-DWITH_CYCLES_ONEAPI_BINARIES=$(usex aot)
 		-DWITH_CYCLES_PATH_GUIDING=$(usex cycles-path-guiding)
 		-DWITH_DOC_MANPAGE=$(usex man)
 		-DWITH_DRACO=$(usex draco)
@@ -1574,16 +1559,6 @@ eerror
 			-DWITH_SYSTEM_GLEW=ON
 			-DWITH_X11_XINPUT=OFF
 			-DWITH_X11=OFF
-		)
-	fi
-
-	if use aot && ( use oneapi_targets_12_55_8 || use oneapi_targets_12_70_4 ) ; then
-		mycmakeargs+=(
-			-DWITH_CYCLES_ONEAPI_BINARIES=ON
-		)
-	else
-		mycmakeargs+=(
-			-DWITH_CYCLES_ONEAPI_BINARIES=OFF
 		)
 	fi
 

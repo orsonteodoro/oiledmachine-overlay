@@ -331,18 +331,6 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
     <flag name="nvrtc">
       Use NVRTC to build the cubin compiler for CUDA® support.
     </flag>
-    <flag name="oneapi_targets_12_55_8">
-      Build support for for Alchemist G10 GPUs, optionally adding aot USE flag
-      support.
-    </flag>
-    <flag name="oneapi_targets_12_70_0">
-      Build support for for Meteor Lake GPUs, optionally adding aot USE flag
-      support.
-    </flag>
-    <flag name="oneapi_targets_12_70_4">
-      Build support for for Meteor Lake GPUs, optionally adding aot USE flag
-      support.
-    </flag>
     <flag name="openal">
       Adds 3D sound support.
     </flag>

@@ -176,7 +176,7 @@ ${ROCM_SLOTS[@]}
 -man +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
 +openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace
 +pulseaudio release -rocm +sdl +sndfile sycl +tbb test +tiff +usd
--valgrind video_cards_intel
+-valgrind
 r2
 "
 
