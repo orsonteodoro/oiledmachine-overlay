@@ -8,7 +8,7 @@ EAPI=8
 PYTHON_COMPAT=( "python3_11" ) # CI does not list 3.10 for this package.
 inherit cmake python-single-r1
 if [[ "${PV}" =~ "9999" ]] ; then
-	FALLBACK_COMMIT="97505091af01390b888905237ff6aef432bff2dc"
+	FALLBACK_COMMIT="f679db7875a928fd0162cd38bdc7461b2aa81c0f"
 	MY_PN="${PN}"
 	MY_P="${MY_PN}-${PV}"
 	IUSE+=" fallback-commit"
