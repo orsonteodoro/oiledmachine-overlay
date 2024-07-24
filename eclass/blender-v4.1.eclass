@@ -694,10 +694,6 @@ RDEPEND+="
 			>=dev-libs/pugixml-${PUGIXML_PV}
 		)
 	)
-	sycl? (
-		>=dev-libs/level-zero-1.15.8
-		<dev-libs/level-zero-2
-	)
 	dbus? (
 		sys-apps/dbus
 	)
@@ -910,6 +906,10 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		)
 	)
 	sycl? (
+		(
+			>=dev-libs/level-zero-1.15.8
+			<dev-libs/level-zero-2
+		)
 		>=sys-devel/DPC++-2022.12:0/6[aot?]
 		aot? (
 			>=dev-libs/intel-compute-runtime-23.43.27642.40[l0]
