@@ -31,25 +31,124 @@ ALL_LLVM_TARGETS=(
 # GPUs were tested/supported upstream.
 # See https://github.com/intel/llvm/blob/sycl-nightly/20220812/sycl/doc/GetStartedGuide.md
 AMDGPU_TARGETS_COMPAT=(
-        gfx906 # Tested upstream
+# https://github.com/intel/llvm/blob/sycl-nightly/20220812/clang/include/clang/Basic/Cuda.h#L66
+	gfx600
+	gfx601
+	gfx602
+	gfx700
+	gfx701
+	gfx702
+	gfx703
+	gfx704
+	gfx705
+	gfx801
+	gfx802
+	gfx803
+	gfx805
+	gfx810
+	gfx900
+	gfx902
+	gfx904
+	gfx906 # Tested upstream
 	gfx908 # Tested upstream
+	gfx909
+	gfx90a
+	gfx90c
+	gfx940
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1013
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1033
+	gfx1034
+	gfx1035
+	gfx1036
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1103
 )
 AMDGPU_UNTESTED_TARGETS=(
+	gfx600
+	gfx601
+	gfx602
+	gfx700
+	gfx701
+	gfx702
+	gfx703
+	gfx704
+	gfx705
+	gfx801
+	gfx802
+	gfx803
+	gfx805
+	gfx810
+	gfx900
+	gfx902
+	gfx904
+#	gfx906 # Tested upstream
+#	gfx908 # Tested upstream
+	gfx909
+	gfx90a
+	gfx90c
+	gfx940
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1013
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1033
+	gfx1034
+	gfx1035
+	gfx1036
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1103
 )
 BUILD_DIR="${WORKDIR}/llvm-sycl-nightly-${PV//./}/build"
 CMAKE_USE_DIR="${WORKDIR}/llvm-sycl-nightly-${PV//./}/llvm"
 # We cannot unbundle this because it has to be compiled with the clang/llvm
 # that we are building here. Otherwise we run into problems running the compiler.
 CPU_EMUL_COMMIT="673f2071ed7b648cd05824cd0ded24f96734e50c" # Same as 1.0.23 ; Search committer-date:<=2022-08-12
+CUDA_PARTIAL_SUPPORT=(
+	sm_20
+	sm_21
+	sm_30
+	sm_32
+	sm_35
+	sm_37
+)
 CUDA_TARGETS_COMPAT=(
+# See https://github.com/intel/llvm/blob/sycl-nightly/20220812/clang/include/clang/Basic/Cuda.h#L49
+	sm_20
+	sm_21
+	sm_30
+	sm_32
+	sm_35
+	sm_37
 	sm_50 # Default
-	sm_71 # Tested upstream
-	#sm_86 # Set by libclc
+	sm_52
+	sm_53
+	sm_60
+	sm_61
+	sm_62
+	sm_70
+	# sm_71 # Tested upstream
+	sm_72
+	sm_75
+	sm_80
+	sm_86
 )
 # For UR_COMMIT, see https://github.com/intel/llvm/blob/sycl-nightly/20220812/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19C36-L19C76
 LLVM_COMPAT=( 16 13 12 ) # Upstream tested versions
 LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/(-)?}
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOTS=(
 	rocm_4_3
 	rocm_4_2
@@ -202,8 +301,18 @@ ewarn "${gpu} is not CI tested upstream."
 	done
 }
 
+warn_partial_gpu_support() {
+	local gpu
+	for gpu in ${CUDA_PARTIAL_SUPPORT[@]} ; do
+		if use "cuda_targets_${gpu}" ; then
+ewarn "${gpu} is available but support is not feature complete."
+		fi
+	done
+}
+
 pkg_setup() {
 	warn_untested_gpu
+	warn_partial_gpu_support
 	if tc-is-gcc ; then
 		if ver_test $(gcc-version) -lt "7.1" ; then
 eerror "Switch to >=sys-devel/gcc-7.1"

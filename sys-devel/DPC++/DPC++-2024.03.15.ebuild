@@ -31,9 +31,16 @@ ALL_LLVM_TARGETS=(
 # GPUs were tested/supported upstream.
 # See https://github.com/intel/llvm/blob/nightly-2024-03-15/sycl/doc/UsersManual.md?plain=1#L74
 AMDGPU_TARGETS_COMPAT=(
+# See https://github.com/intel/llvm/blob/nightly-2024-03-15/clang/include/clang/Basic/Cuda.h#L74
+	gfx600
+	gfx601
+	gfx602
 	gfx700
 	gfx701
 	gfx702
+	gfx703
+	gfx704
+	gfx705
 	gfx801
 	gfx802
 	gfx803
@@ -44,18 +51,20 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx904
 	gfx906 # Tested upstream
 	gfx908 # Tested upstream
+	gfx909
 	gfx90a # Tested upstream
 	gfx90c
-	gfx940 # Set by libclc
+	gfx940 # Tested upstream
 	gfx941
 	gfx942
 	gfx1010
 	gfx1011
 	gfx1012
 	gfx1013
-	gfx1030 # Tested upstream
+	gfx1030
 	gfx1031
 	gfx1032
+	gfx1033
 	gfx1034
 	gfx1035
 	gfx1036
@@ -69,9 +78,15 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1201
 )
 AMDGPU_UNTESTED_TARGETS=(
+	gfx600
+	gfx601
+	gfx602
 	gfx700
 	gfx701
 	gfx702
+	gfx703
+	gfx704
+	gfx705
 	gfx801
 	gfx802
 	gfx803
@@ -82,18 +97,20 @@ AMDGPU_UNTESTED_TARGETS=(
 	gfx904
 #	gfx906 # Tested upstream
 #	gfx908 # Tested upstream
+	gfx909
 #	gfx90a # Tested upstream
 	gfx90c
-	gfx940 # Set by libclc
+#	gfx940 # Tested upstream
 	gfx941
 	gfx942
 	gfx1010
 	gfx1011
 	gfx1012
 	gfx1013
-#	gfx1030 # Tested upstream
+	gfx1030
 	gfx1031
 	gfx1032
+	gfx1033
 	gfx1034
 	gfx1035
 	gfx1036
@@ -109,6 +126,12 @@ AMDGPU_UNTESTED_TARGETS=(
 BUILD_DIR="${WORKDIR}/llvm-nightly-${PV//./}/build"
 CMAKE_USE_DIR="${WORKDIR}/llvm-nightly-${PV//./-}/llvm"
 CUDA_TARGETS_COMPAT=(
+	sm_20
+	sm_21
+	sm_30
+	sm_32
+	sm_35
+	sm_37
 	sm_50 # Default
 	sm_52
 	sm_53
@@ -116,14 +139,23 @@ CUDA_TARGETS_COMPAT=(
 	sm_61
 	sm_62
 	sm_70
-	#sm_71 # Tested upstream
+	# sm_71 # Tested upstream
 	sm_72
 	sm_75
 	sm_80
-	sm_86 # Set by libclc
+	sm_86
 	sm_87
 	sm_89
 	sm_90
+	sm_90a
+)
+CUDA_PARTIAL_SUPPORT=(
+	sm_20
+	sm_21
+	sm_30
+	sm_32
+	sm_35
+	sm_37
 )
 GCC_COMPAT=( {13..11} ) # Should only list non EOL
 # We cannot unbundle this because it has to be compiled with the clang/llvm
@@ -131,7 +163,7 @@ GCC_COMPAT=( {13..11} ) # Should only list non EOL
 CPU_EMUL_COMMIT="38f070a7e1de00d0398224e9d6306cc59010d147" # Same as 1.0.31 ; Search committer-date:<=2024-03-15
 LLVM_COMPAT=( 18 15 13 12 ) # Should only list non EOL
 LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/(-)?}
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOTS=(
 	rocm_5_4
 	rocm_5_3
@@ -347,8 +379,18 @@ ewarn "${gpu} is not CI tested upstream."
 	done
 }
 
+warn_partial_gpu_support() {
+	local gpu
+	for gpu in ${CUDA_PARTIAL_SUPPORT[@]} ; do
+		if use "cuda_targets_${gpu}" ; then
+ewarn "${gpu} is available but support is not feature complete."
+		fi
+	done
+}
+
 pkg_setup() {
 	warn_untested_gpu
+	warn_partial_gpu_support
 	if tc-is-gcc ; then
 		if ver_test $(gcc-version) -lt "7.1" ; then
 eerror "Switch to >=sys-devel/gcc-7.1"
