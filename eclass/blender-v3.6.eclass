@@ -180,7 +180,7 @@ CYCLES_ONEAPI_AOT_TARGETS=(
 IUSE+="
 ${CPU_FLAGS_3_3[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-${CYCLES_ONEAPI_AOT_TARGETS[@]/#/intel_targets_}
+${CYCLES_ONEAPI_AOT_TARGETS[@]/#/oneapi_targets_}
 ${FFMPEG_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS[@]}
@@ -1006,11 +1006,11 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 	)
 	sycl? (
 		>=sys-devel/DPC++-2022.12:0/6[aot?]
-		intel_targets_12_55_8? (
+		oneapi_targets_12_55_8? (
 			>=dev-libs/intel-compute-runtime-23.43.27642.40[l0]
 			>=dev-util/intel-graphics-compiler-1.0.15468.25
 		)
-		intel_targets_12_70_0? (
+		oneapi_targets_12_70_0? (
 			>=dev-libs/intel-compute-runtime-23.43.27642.40[l0]
 			>=dev-util/intel-graphics-compiler-1.0.15468.25
 		)
@@ -1641,7 +1641,7 @@ eerror
 		)
 	fi
 
-	if use aot && ( use intel_targets_12_55_8 || use intel_targets_12_70_0 ) ; then
+	if use aot && ( use oneapi_targets_12_55_8 || use oneapi_targets_12_70_0 ) ; then
 		mycmakeargs+=(
 			-DWITH_CYCLES_ONEAPI_BINARIES=ON
 		)

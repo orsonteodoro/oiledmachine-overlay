@@ -294,15 +294,6 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
     <flag name="hydra">
       Use USD hydra for rendering and for a performance benefit.
     </flag>
-    <flag name="intel_targets_12_55_8">
-      Build support for AOT in Cycles for Alchemist G10 GPUs.
-    </flag>
-    <flag name="intel_targets_12_70_0">
-      Build support for AOT in Cycles for Meteor Lake GPUs.
-    </flag>
-    <flag name="intel_targets_12_70_4">
-      Build support for AOT in Cycles for Meteor Lake GPUs.
-    </flag>
     <flag name="joystick">
       Adds support for a joystick through SDL used for the Blender Game Engine
       (BGE, 2.79.x only).
@@ -339,6 +330,15 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
     </flag>
     <flag name="nvrtc">
       Use NVRTC to build the cubin compiler for CUDA® support.
+    </flag>
+    <flag name="oneapi_targets_12_55_8">
+      Build support for AOT in Cycles for Alchemist G10 GPUs.
+    </flag>
+    <flag name="oneapi_targets_12_70_0">
+      Build support for AOT in Cycles for Meteor Lake GPUs.
+    </flag>
+    <flag name="oneapi_targets_12_70_4">
+      Build support for AOT in Cycles for Meteor Lake GPUs.
     </flag>
     <flag name="openal">
       Adds 3D sound support.
