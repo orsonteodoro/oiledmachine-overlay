@@ -315,11 +315,9 @@ REQUIRED_USE+="
 		)
 	)
 	oneapi_targets_12_55_8? (
-		aot
 		sycl
 	)
 	oneapi_targets_12_70_4? (
-		aot
 		sycl
 	)
 	opencl? (
@@ -1579,7 +1577,7 @@ eerror
 		)
 	fi
 
-	if use oneapi_targets_12_55_8 || use oneapi_targets_12_70_4 ; then
+	if use aot && ( use oneapi_targets_12_55_8 || use oneapi_targets_12_70_4 ) ; then
 		mycmakeargs+=(
 			-DWITH_CYCLES_ONEAPI_BINARIES=ON
 		)
