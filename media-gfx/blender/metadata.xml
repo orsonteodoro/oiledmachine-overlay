@@ -188,6 +188,9 @@
       Add support for Alembic through <pkg>media-gfx/alembic</pkg> used as an
       animation interchange format.
     </flag>
+    <flag name="aot">
+      Enable AOT (Ahead Of Time) optimization/compilation for Intel® GPUs.
+    </flag>
     <flag name="asan">
       Enable address sanitiation.  This is only for bug and vulnerability
       discovery only.  It does not necessarily prevent when activated.
@@ -233,9 +236,6 @@
     <flag name="cycles">
       Build the Cycles renderer (requires <pkg>media-libs/openimageio</pkg> and
       <pkg>dev-libs/boost</pkg>).
-    </flag>
-    <flag name="cycles-device-oneapi">
-      Support for newer GPUs (EXPERIMENTAL/IN DEVELOPMENT)
     </flag>
     <flag name="cycles-network">
       Enable experimental peer-to-peer LAN networking support for Cycles.
@@ -293,6 +293,15 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
     </flag>
     <flag name="hydra">
       Use USD hydra for rendering and for a performance benefit.
+    </flag>
+    <flag name="intel_targets_12_55_8">
+      Build support for AOT in Cycles for Alchemist G10 GPUs.
+    </flag>
+    <flag name="intel_targets_12_70_0">
+      Build support for AOT in Cycles for Meteor Lake GPUs.
+    </flag>
+    <flag name="intel_targets_12_70_4">
+      Build support for AOT in Cycles for Meteor Lake GPUs.
     </flag>
     <flag name="joystick">
       Adds support for a joystick through SDL used for the Blender Game Engine
@@ -386,7 +395,7 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       consistency with render farms.
     </flag>
     <flag name="sycl">
-      Add support for GPU accelerated raytracing.
+      Add support for GPU accelerated raytracing for Intel® GPUs.
     </flag>
     <flag name="tbb">
       Enables using TBB componenents which also may enable sculpt multithreading,

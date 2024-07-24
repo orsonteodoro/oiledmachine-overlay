@@ -176,7 +176,7 @@ ${ROCM_SLOTS[@]}
 -man +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
 +openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace
 +pulseaudio release -rocm +sdl +sndfile sycl +tbb test +tiff +usd
--valgrind
+-valgrind video_cards_intel
 r2
 "
 
@@ -984,6 +984,10 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 	)
 	sycl? (
 		>=sys-devel/DPC++-2022.08.12:0/5
+		video_cards_intel? (
+			>=dev-libs/intel-compute-runtime-22.20.23198[l0]
+			>=dev-util/intel-graphics-compiler-1.0.11222
+		)
 	)
 	tbb? (
 		>=dev-cpp/tbb-2021:${ONETBB_SLOT}[tbbmalloc]

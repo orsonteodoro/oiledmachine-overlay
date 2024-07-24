@@ -172,20 +172,26 @@ ROCM_SLOTS=(
 	rocm_5_5
 )
 
+CYCLES_ONEAPI_AOT_TARGETS=(
+	12_55_8
+	12_70_0
+)
+
 IUSE+="
 ${CPU_FLAGS_3_3[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${CYCLES_ONEAPI_AOT_TARGETS[@]/#/intel_targets_}
 ${FFMPEG_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS[@]}
 ${ROCM_SLOTS[@]}
-+X +abi10-compat +alembic -asan +boost +bullet +collada +color-management
--cpudetection +cuda +cycles -cycles-device-oneapi +cycles-path-guiding +dds
++X +abi10-compat +alembic -asan aot +boost +bullet +collada +color-management
+-cpudetection +cuda +cycles +cycles-path-guiding +dds
 -debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp -hiprt +jack
 +jemalloc +jpeg2k -llvm -man -materialx +nanovdb +ndof +nls +nvcc +openal
 +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb
 +openxr -optix +osl +pdf +potrace +pulseaudio release -rocm +sdl +sndfile sycl
-+tbb test +tiff +usd -valgrind +wayland
++tbb test +tiff +usd -valgrind video_cards_intel +wayland
 r2
 "
 # hip is default ON upstream.
@@ -269,7 +275,7 @@ REQUIRED_USE+="
 	cycles? (
 		tbb
 	)
-	cycles-device-oneapi? (
+	sycl? (
 		cycles
 	)
 	dbus? (
@@ -450,8 +456,8 @@ gen_oidn_depends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 		llvm_slot_${s}? (
-			>=media-libs/oidn-1.4.3[llvm_slot_${s}]
-			<media-libs/oidn-1.5[llvm_slot_${s}]
+			>=media-libs/oidn-1.4.3[llvm_slot_${s},aot?,sycl?]
+			<media-libs/oidn-1.5[llvm_slot_${s},aot?,sycl?]
 		)
 		"
 	done
@@ -696,7 +702,7 @@ RDEPEND+="
 			>=dev-libs/pugixml-${PUGIXML_PV}
 		)
 	)
-	cycles-device-oneapi? (
+	sycl? (
 		>=dev-libs/level-zero-1.8.8
 		<dev-libs/level-zero-2
 	)
@@ -999,7 +1005,15 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		)
 	)
 	sycl? (
-		>=sys-devel/DPC++-2022.12:0/6
+		>=sys-devel/DPC++-2022.12:0/6[aot?]
+		intel_targets_12_55_8? (
+			>=dev-libs/intel-compute-runtime-23.43.27642.40[l0]
+			>=dev-util/intel-graphics-compiler-1.0.15468.25
+		)
+		intel_targets_12_70_0? (
+			>=dev-libs/intel-compute-runtime-23.43.27642.40[l0]
+			>=dev-util/intel-graphics-compiler-1.0.15468.25
+		)
 	)
 	tbb? (
 		>=dev-cpp/tbb-2021:${ONETBB_SLOT}[tbbmalloc]
@@ -1207,13 +1221,6 @@ ewarn "loaded bug which includes (proprietary) GPU driver parts linked with a"
 ewarn "different version of LLVM.  To avoid this bug, use the same LLVM"
 ewarn "version from the driver to this package in the dependency chain"
 ewarn "including all dependencies of this package."
-ewarn
-	fi
-
-	if use cycles-device-oneapi ; then
-ewarn
-ewarn "Support for the cycles-device-oneapi may be incomplete because distro"
-ewarn "may be missing several packages."
 ewarn
 	fi
 
@@ -1597,7 +1604,7 @@ eerror
 			-DWITH_CYCLES=$(usex cycles)
 			-DWITH_CYCLES_CUDA_BINARIES=$(usex cuda)
 			-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
-			-DWITH_CYCLES_DEVICE_ONEAPI=$(usex cycles-device-oneapi)
+			-DWITH_CYCLES_DEVICE_ONEAPI=$(usex sycl)
 			-DWITH_CYCLES_DEVICE_OPENCL=$(usex opencl)
 			-DWITH_CYCLES_DEVICE_OPTIX=$(usex optix)
 			-DWITH_CYCLES_EMBREE=$(usex embree)
@@ -1631,6 +1638,16 @@ eerror
 			-DWITH_SYSTEM_GLEW=ON
 			-DWITH_X11_XINPUT=OFF
 			-DWITH_X11=OFF
+		)
+	fi
+
+	if use aot && ( use intel_targets_12_55_8 || use intel_targets_12_70_0 ) ; then
+		mycmakeargs+=(
+			-DWITH_CYCLES_ONEAPI_BINARIES=ON
+		)
+	else
+		mycmakeargs+=(
+			-DWITH_CYCLES_ONEAPI_BINARIES=OFF
 		)
 	fi
 
