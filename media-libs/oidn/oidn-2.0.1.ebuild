@@ -11,14 +11,14 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1030
 	gfx1031
 	gfx1032
-#	gfx1033
+	gfx1033
 	gfx1034
 	gfx1035
-#	gfx1036
+	gfx1036
 	gfx1100
 	gfx1101
 	gfx1102
-#	gfx1103
+	gfx1103
 )
 CMAKE_BUILD_TYPE=Release
 COMPOSABLE_KERNEL_COMMIT="e85178b4ca892a78344271ae64103c9d4d1bfc40"
@@ -33,13 +33,13 @@ inherit hip-versions
 HIP_VERSIONS=(
 	"${HIP_5_5_VERSION}"
 	"${HIP_5_6_VERSION}"
-) # 5.3.0 fails
+)
 ROCM_SLOTS=(
 	rocm_5_5
 	rocm_5_6
 )
 LEGACY_TBB_SLOT="2"
-LLVM_COMPAT=( {16..10} )
+LLVM_COMPAT=( {16..10} ) # Based on DPC++ (sycl-nightly)
 LLVM_SLOT="${LLVM_COMPAT[0]}"
 MIN_CLANG_PV="3.3"
 MIN_GCC_PV="4.8.1"
@@ -196,6 +196,7 @@ RDEPEND+="
 	)
 	sycl? (
 		>=sys-devel/DPC++-2022.12.15:0/6
+		dev-libs/level-zero
 		sys-devel/DPC++:=
 	)
 	|| (
