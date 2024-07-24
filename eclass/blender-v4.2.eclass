@@ -919,7 +919,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		)
 	)
 	sycl? (
-		>=sys-devel/DPC++-2024.03.14:0/8
+		>=sys-devel/DPC++-2024.03.15:0/8
 	)
 	tbb? (
 		>=dev-cpp/tbb-2021:${ONETBB_SLOT}[tbbmalloc]
