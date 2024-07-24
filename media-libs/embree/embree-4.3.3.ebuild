@@ -13,6 +13,7 @@ ARM_CPU_FLAGS=(
 )
 CMAKE_BUILD_TYPE="Release"
 CXXABI_V=11
+EGIT_COMMIT="4.3.2-blender"
 IMAGEMAGICK_PV="6.9.11.60"
 LEGACY_TBB_SLOT="2"
 MIN_CLANG_PV="3.3" # for c++11
@@ -47,8 +48,9 @@ CPU_FLAGS=(
 
 inherit cmake flag-o-matic linux-info python-r1 toolchain-funcs uopts
 
+S="${WORKDIR}/embree-${PV}-blender"
 SRC_URI="
-https://github.com/embree/embree/archive/v${PV}.tar.gz
+https://github.com/RenderKit/embree/archive/refs/tags/v${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz
 "
 
@@ -148,11 +150,6 @@ RDEPEND+="
 			>=dev-cpp/tbb-2021.2.0:${ONETBB_SLOT}=
 		)
 	)
-	tutorials? (
-		<media-libs/openimageio-2.3.5.0[-cxx17(-),-abi8-compat,-abi9-compat]
-		>=media-libs/libpng-1.6.37:0=
-		virtual/jpeg:0
-	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -204,7 +201,7 @@ BDEPEND+="
 DOCS=( "CHANGELOG.md" "README.md" "readme.pdf" )
 PATCHES=(
 	"${FILESDIR}/${PN}-3.13.0-findtbb-more-debug-messages.patch"
-	"${FILESDIR}/${PN}-3.13.0-findtbb-alt-lib-path.patch"
+	"${FILESDIR}/${PN}-4.3.2-findtbb-alt-lib-path.patch"
 	"${FILESDIR}/${PN}-4.1.0-tbb-alt-config.patch"
 	"${FILESDIR}/${PN}-4.1.0-customize-flags.patch"
 )
@@ -421,11 +418,6 @@ eerror
 	if use tutorials; then
 		use ispc && \
 		mycmakeargs+=( -DEMBREE_ISPC_ADDRESSING:STRING="64" )
-		mycmakeargs+=(
-			-DEMBREE_TUTORIALS_LIBJPEG=ON
-			-DEMBREE_TUTORIALS_LIBPNG=ON
-			-DEMBREE_TUTORIALS_OPENIMAGEIO=ON
-		)
 	fi
 
 	if use cpu_flags_arm_neon2x ; then
