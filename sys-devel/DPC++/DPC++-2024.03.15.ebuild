@@ -3,8 +3,8 @@
 
 EAPI=8
 
-# LLVM 18 ; See https://github.com/intel/llvm/blob/nightly-2023-10-26/llvm/CMakeLists.txt#L19
-# U22.04 ; See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/doc/GetStartedGuide.md?plain=1#L310
+# LLVM 19 ; See https://github.com/intel/llvm/blob/nightly-2024-03-15/llvm/CMakeLists.txt#L19
+# U22.04 ; See https://github.com/intel/llvm/blob/nightly-2024-03-15/sycl/doc/GetStartedGuide.md?plain=1#L310
 
 ALL_LLVM_TARGETS=(
 	AArch64
@@ -29,7 +29,7 @@ ALL_LLVM_TARGETS=(
 	${ALL_LLVM_TARGETS[@]/#/llvm_targets_}
 )
 # GPUs were tested/supported upstream.
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/doc/UsersManual.md?plain=1#L74
+# See https://github.com/intel/llvm/blob/nightly-2024-03-15/sycl/doc/UsersManual.md?plain=1#L74
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
 	gfx701
@@ -45,7 +45,10 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx906 # Tested upstream
 	gfx908 # Tested upstream
 	gfx90a # Tested upstream
-	#gfx940 # Set by libclc
+	gfx90c
+	gfx940 # Set by libclc
+	gfx941
+	gfx942
 	gfx1010
 	gfx1011
 	gfx1012
@@ -54,6 +57,16 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1031
 	gfx1032
 	gfx1034
+	gfx1035
+	gfx1036
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1103
+	gfx1150
+	gfx1151
+	gfx1200
+	gfx1201
 )
 AMDGPU_UNTESTED_TARGETS=(
 	gfx700
@@ -70,7 +83,10 @@ AMDGPU_UNTESTED_TARGETS=(
 #	gfx906 # Tested upstream
 #	gfx908 # Tested upstream
 #	gfx90a # Tested upstream
-	#gfx940 # Set by libclc
+	gfx90c
+	gfx940 # Set by libclc
+	gfx941
+	gfx942
 	gfx1010
 	gfx1011
 	gfx1012
@@ -79,6 +95,16 @@ AMDGPU_UNTESTED_TARGETS=(
 	gfx1031
 	gfx1032
 	gfx1034
+	gfx1035
+	gfx1036
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1103
+	gfx1150
+	gfx1151
+	gfx1200
+	gfx1201
 )
 BUILD_DIR="${WORKDIR}/llvm-nightly-${PV//./}/build"
 CMAKE_USE_DIR="${WORKDIR}/llvm-nightly-${PV//./-}/llvm"
@@ -102,7 +128,7 @@ CUDA_TARGETS_COMPAT=(
 GCC_COMPAT=( {13..11} ) # Should only list non EOL
 # We cannot unbundle this because it has to be compiled with the clang/llvm
 # that we are building here. Otherwise we run into problems running the compiler.
-CPU_EMUL_COMMIT="38f070a7e1de00d0398224e9d6306cc59010d147" # Same as 1.0.31 ; Search committer-date:<=2023-10-26
+CPU_EMUL_COMMIT="38f070a7e1de00d0398224e9d6306cc59010d147" # Same as 1.0.31 ; Search committer-date:<=2024-03-15
 LLVM_COMPAT=( 18 15 13 12 ) # Should only list non EOL
 LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/(-)?}
 PYTHON_COMPAT=( python3_{10..12} )
@@ -113,10 +139,10 @@ ROCM_SLOTS=(
 	rocm_4_3
 	rocm_4_2
 )
-# For UR_COMMIT, see https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/plugins/unified_runtime/CMakeLists.txt#L63
-UR_COMMIT="cf26de283a1233e6c93feb085acc10c566888b59" # \
-# For VC_INTR_COMMIT, see https://github.com/intel/llvm/blob/nightly-2023-10-26/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19
-VC_INTR_COMMIT="17a53f4304463b8e7e639d57ef17479040a8a2ad" # Newer versions cause compile failure \
+# For UR_COMMIT, see https://github.com/intel/llvm/blob/nightly-2024-03-15/sycl/plugins/unified_runtime/CMakeLists.txt#L63
+UR_COMMIT="ec634ff05b067d7922ec45059dda94665e5dcd9b" # \
+# For VC_INTR_COMMIT, see https://github.com/intel/llvm/blob/nightly-2024-03-15/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19
+VC_INTR_COMMIT="da892e1982b6c25b9a133f85b4ac97142d8a3def" # Newer versions cause compile failure \
 
 inherit hip-versions
 inherit cmake flag-o-matic llvm python-any-r1 rocm toolchain-funcs
@@ -164,7 +190,7 @@ RESTRICT="
 	)
 "
 SLOT="0/7" # Based on libsycl.so with SYCL_MAJOR_VERSION in \
-# https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/CMakeLists.txt#L35
+# https://github.com/intel/llvm/blob/nightly-2024-03-15/sycl/CMakeLists.txt#L35
 IUSE+="
 ${ALL_LLVM_TARGETS[*]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -219,9 +245,9 @@ REQUIRED_USE="
 		)
 	)
 "
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/clang/include/clang/Basic/Cuda.h#L42
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/doc/GetStartedGuide.md?plain=1#L194 for CUDA
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/doc/GetStartedGuide.md?plain=1#L244 for ROCm
+# See https://github.com/intel/llvm/blob/nightly-2024-03-15/clang/include/clang/Basic/Cuda.h#L42
+# See https://github.com/intel/llvm/blob/nightly-2024-03-15/sycl/doc/GetStartedGuide.md?plain=1#L194 for CUDA
+# See https://github.com/intel/llvm/blob/nightly-2024-03-15/sycl/doc/GetStartedGuide.md?plain=1#L244 for ROCm
 RDEPEND="
 	>=dev-build/libtool-2.4.6
 	>=dev-libs/boost-1.74.0:=
@@ -309,7 +335,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2023.10.26-system-libs.patch"
+	"${FILESDIR}/${PN}-2024.03.15-system-libs.patch"
 )
 
 warn_untested_gpu() {
@@ -402,7 +428,7 @@ src_prepare() {
 	cmake_src_prepare
 
 	pushd "${WORKDIR}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-2023.10.26-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-2024.03.15-hardcoded-paths.patch"
 	popd >/dev/null 2>&1 || die
 
 	# Speed up symbol replacmenet for @...@ by reducing the search space

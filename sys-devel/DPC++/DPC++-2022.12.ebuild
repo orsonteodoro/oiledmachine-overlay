@@ -54,8 +54,32 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1031
 	gfx1032
 )
-BUILD_DIR="${WORKDIR}/llvm-sycl-nightly-${PV//./}/build"
-CMAKE_USE_DIR="${WORKDIR}/llvm-sycl-nightly-${PV//./}/llvm"
+AMDGPU_UNTESTED_TARGETS=(
+	gfx700
+	gfx701
+	gfx702
+	gfx801
+	gfx802
+	gfx803
+	gfx805
+	gfx810
+	gfx900
+	gfx902
+	gfx904
+#	gfx906 # Tested upstream
+#	gfx908 # Tested upstream
+	gfx90a
+	#gfx940 # Set by libclc
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1013
+	gfx1030
+	gfx1031
+	gfx1032
+)
+BUILD_DIR="${WORKDIR}/llvm-${PV//./}/build"
+CMAKE_USE_DIR="${WORKDIR}/llvm-${PV//./-}/llvm"
 # We cannot unbundle this because it has to be compiled with the clang/llvm
 # that we are building here. Otherwise we run into problems running the compiler.
 CPU_EMUL_COMMIT="0c5fc287f34ae38d3184ab70ea5513d9fb1ff338" # Search committer-date:<=2022-12-13
@@ -141,7 +165,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 cuda esimd_emulator rocm test
-ebuild-revision-1
+ebuild-revision-2
 "
 gen_cuda_required_use() {
 	local x
@@ -228,7 +252,17 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2022.12-gcc13.patch"
 )
 
+warn_untested_gpu() {
+	local gpu
+	for gpu in ${AMDGPU_UNTESTED_TARGETS[@]} ; do
+		if use "amdgpu_targets_${gpu}" ; then
+ewarn "${gpu} is not CI tested upstream."
+		fi
+	done
+}
+
 pkg_setup() {
+	warn_untested_gpu
 	if tc-is-gcc ; then
 		if ver_test $(gcc-version) -lt "7.1" ; then
 eerror "Switch to >=sys-devel/gcc-7.1"
@@ -264,41 +298,60 @@ eerror "Switch to >=sys-devel/gcc-7.1"
 src_prepare() {
 	cmake_src_prepare
 
+	pushd "${WORKDIR}" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/${PN}-2022.12-hardcoded-paths.patch"
+	popd >/dev/null 2>&1 || die
+
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:
-	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
+	# grep -F -r -e "+++" files/*hardcoded-paths* | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	export PATCH_PATHS=(
-		"${S}/clang/tools/amdgpu-arch/CMakeLists.txt"
-		"${S}/libc/src/math/gpu/vendor/CMakeLists.txt"
-		"${S}/libc/utils/gpu/loader/CMakeLists.txt"
-		"${S}/mlir/lib/Dialect/GPU/CMakeLists.txt"
-		"${S}/mlir/lib/ExecutionEngine/CMakeLists.txt"
-		"${S}/mlir/lib/Target/LLVM/CMakeLists.txt"
-		"${S}/opencl/CMakeLists.txt"
-		"${S}/opencl/opencl-aot/CMakeLists.txt"
-		"${S}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
-		"${S}/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
-		"${S_UR}/source/adapters/hip/CMakeLists.txt"
-		"${S}/sycl/CMakeLists.txt"
-		"${S}/sycl/cmake/modules/AddSYCL.cmake"
-		"${S}/sycl/cmake/modules/AddSYCLUnitTest.cmake"
-		"${S}/sycl/include/sycl/sycl_span.hpp"
-		"${S}/sycl/plugins/esimd_emulator/CMakeLists.txt"
-		"${S}/sycl/plugins/hip/CMakeLists.txt"
-		"${S}/sycl/plugins/level_zero/CMakeLists.txt"
-		"${S}/sycl/plugins/opencl/CMakeLists.txt"
-		"${S}/sycl/plugins/unified_runtime/CMakeLists.txt"
-		"${S}/sycl/source/CMakeLists.txt"
-		"${S}/sycl/tools/CMakeLists.txt"
-		"${S}/sycl/tools/sycl-ls/CMakeLists.txt"
-		"${S}/sycl/tools/sycl-prof/CMakeLists.txt"
-		"${S}/sycl/tools/sycl-sanitize/CMakeLists.txt"
-		"${S}/sycl/tools/sycl-trace/CMakeLists.txt"
+		"${WORKDIR}/llvm-2022-12/clang/lib/Driver/ToolChains/AMDGPU.cpp"
+		"${WORKDIR}/llvm-2022-12/clang/tools/amdgpu-arch/CMakeLists.txt"
+		"${WORKDIR}/llvm-2022-12/mlir/lib/Dialect/GPU/CMakeLists.txt"
+		"${WORKDIR}/llvm-2022-12/mlir/lib/ExecutionEngine/CMakeLists.txt"
+		"${WORKDIR}/llvm-2022-12/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/llvm-2022-12/sycl/plugins/hip/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2023-10-26/clang/lib/Driver/ToolChains/AMDGPU.cpp"
+		"${WORKDIR}/llvm-nightly-2023-10-26/libc/cmake/modules/prepare_libc_gpu_build.cmake"
+		"${WORKDIR}/llvm-nightly-2023-10-26/libc/src/math/gpu/vendor/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2023-10-26/libc/utils/gpu/loader/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2023-10-26/mlir/lib/Dialect/GPU/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2023-10-26/mlir/lib/ExecutionEngine/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2023-10-26/mlir/lib/Target/LLVM/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2023-10-26/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2023-10-26/sycl/plugins/hip/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2024-03-15/clang/lib/Driver/ToolChains/AMDGPU.cpp"
+		"${WORKDIR}/llvm-nightly-2024-03-15/libc/src/math/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2024-03-15/libc/utils/gpu/loader/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2024-03-15/mlir/lib/Dialect/GPU/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2024-03-15/mlir/lib/ExecutionEngine/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2024-03-15/mlir/lib/Target/LLVM/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2024-03-15/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2024-03-15/sycl/plugins/hip/CMakeLists.txt"
+		"${WORKDIR}/llvm-sycl-nightly-20220812/clang/lib/Driver/ToolChains/AMDGPU.cpp"
+		"${WORKDIR}/llvm-sycl-nightly-20220812/clang/tools/amdgpu-arch/CMakeLists.txt"
+		"${WORKDIR}/llvm-sycl-nightly-20220812/mlir/lib/Dialect/GPU/CMakeLists.txt"
+		"${WORKDIR}/llvm-sycl-nightly-20220812/mlir/lib/ExecutionEngine/CMakeLists.txt"
+		"${WORKDIR}/llvm-sycl-nightly-20220812/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/llvm-sycl-nightly-20220812/sycl/plugins/hip/CMakeLists.txt"
+		"${WORKDIR}/llvm-sycl-nightly-20230417/clang/lib/Driver/ToolChains/AMDGPU.cpp"
+		"${WORKDIR}/llvm-sycl-nightly-20230417/clang/tools/amdgpu-arch/CMakeLists.txt"
+		"${WORKDIR}/llvm-sycl-nightly-20230417/libc/cmake/modules/prepare_libc_gpu_build.cmake"
+		"${WORKDIR}/llvm-sycl-nightly-20230417/libc/utils/gpu/loader/CMakeLists.txt"
+		"${WORKDIR}/llvm-sycl-nightly-20230417/mlir/lib/Dialect/GPU/CMakeLists.txt"
+		"${WORKDIR}/llvm-sycl-nightly-20230417/mlir/lib/ExecutionEngine/CMakeLists.txt"
+		"${WORKDIR}/llvm-sycl-nightly-20230417/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/llvm-sycl-nightly-20230417/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/llvm-sycl-nightly-20230417/sycl/plugins/hip/CMakeLists.txt"
+		"${WORKDIR}/unified-runtime-cf26de283a1233e6c93feb085acc10c566888b59/source/adapters/hip/CMakeLists.txt"
+		"${WORKDIR}/unified-runtime-ec634ff05b067d7922ec45059dda94665e5dcd9b/source/adapters/hip/CMakeLists.txt"
 	)
 	rocm_src_prepare
 }
 
 src_configure() {
+	addpredict "/proc/self/task/"
 	# Unbreak clang detection with cmake
 	export PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/ccache/d" | tr $'\n' ":")
 
@@ -356,6 +409,7 @@ src_configure() {
 
 	if use cuda ; then
 		mycmakeargs+=(
+			-DCUDA_TOOLKIT_ROOT_DIR="/opt/cuda"
 			-DLIBCLC_GENERATE_REMANGLED_VARIANTS="ON"
 			-DLIBCLC_TARGETS_TO_BUILD=";nvptx64--;nvptx64--nvidiacl"
 		)
