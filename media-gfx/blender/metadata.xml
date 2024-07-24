@@ -423,7 +423,7 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
     <flag name="xvid">
       Adds support for the Xvid codec to render and output MPEG-4 video.
     </flag>
-    <flag name="rN">
+    <flag name="ebuild-revision-N">
       Ebuild revision.  FOR INTERNAL USE ONLY.  Bumps the revision while keeping
       CCACHE paths for faster rebuilds.
     </flag>

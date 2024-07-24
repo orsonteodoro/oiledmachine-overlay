@@ -189,7 +189,7 @@ ${ROCM_SLOTS[@]}
 +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb
 +openxr -optix +osl +pdf +potrace +pulseaudio release -rocm +sdl +sndfile sycl
 +tbb test +tiff +usd -valgrind +wayland
-r2
+ebuild-revision-3
 "
 # hip is default ON upstream.
 inherit blender
