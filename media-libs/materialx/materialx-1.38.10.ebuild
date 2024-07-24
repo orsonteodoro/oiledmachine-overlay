@@ -4,9 +4,12 @@
 
 EAPI=8
 
+# cxx14
 
-PYTHON_COMPAT=( "python3_11" ) # CI does not list 3.10 for this package.
+PYTHON_COMPAT=( "python3_"{10..11} ) # CI does not list 3.10 for this package.
+
 inherit cmake python-single-r1
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="97505091af01390b888905237ff6aef432bff2dc"
 	MY_PN="${PN}"
@@ -97,7 +100,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-build/cmake-3.1
+	>=dev-build/cmake-3.16
 	|| (
 		>=sys-devel/gcc-6
 		>=sys-devel/clang-6
