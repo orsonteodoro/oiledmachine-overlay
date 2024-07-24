@@ -17,7 +17,7 @@ OPENEXR_V3_PV="3.2.4 3.2.3 3.2.2 3.2.1 3.2.0 3.1.13 3.1.12 3.1.11 3.1.10 3.1.9 3
 OPENVDB_APIS=( {10..5} )
 OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
 OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
-PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 QT5_PV="5.15"
 QT6_PV="6.6"
 TEST_OEXR_IMAGE_COMMIT="df16e765fee28a947244657cae3251959ae63c00" # committer-date:<=2024-05-01
@@ -213,6 +213,7 @@ RDEPEND+="
 			media-video/ffmpeg:0/56.58.58
 			media-video/ffmpeg:0/57.59.59
 			media-video/ffmpeg:0/58.60.60
+			media-video/ffmpeg:0/59.61.61
 		)
 		media-video/ffmpeg:=
 	)
