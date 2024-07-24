@@ -254,6 +254,9 @@ REQUIRED_USE="
 		cet
 		cfi
 	)
+	aot? (
+		video_cards_intel
+	)
 	cuda? (
 		llvm_targets_NVPTX
 		|| (

@@ -243,6 +243,9 @@ REQUIRED_USE="
 		cuda
 		rocm
 	)
+	aot? (
+		video_cards_intel
+	)
 	cuda? (
 		llvm_targets_NVPTX
 		|| (
