@@ -213,6 +213,7 @@ _src_configure() {
 	replace-flags '-O1' '-O2'
 	replace-flags '-Oz' '-O2'
 	replace-flags '-Os' '-O2'
+	replace-flags '-O3' '-O2'
 	replace-flags '-Ofast' '-O2'
 	replace-flags '-O4' '-O2'
 
