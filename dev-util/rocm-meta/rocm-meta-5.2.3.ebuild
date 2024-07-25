@@ -22,6 +22,7 @@ HOMEPAGE=""
 LICENSE="metapackage"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
+	aocc
 	atmi
 	flang
 	hipfort
@@ -42,6 +43,10 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	!dev-util/amd-rocm-meta
+	aocc? (
+		~sys-devel/llvm-roc-alt-${PV}:${ROCM_SLOT}
+	)
 	atmi? (
 		~dev-libs/atmi-${PV}:${ROCM_SLOT}$(get_rocm_usedep ATMI)
 	)

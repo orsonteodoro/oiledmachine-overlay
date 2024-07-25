@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# See https://github.com/ROCm/ROCm/blob/rocm-5.5.1/docs/release/gpu_os_support.md
+# See https://github.com/ROCm/ROCm/blob/docs/5.4.3/docs/release/gpu_os_support.md
 AMDGPU_TARGETS_COMPAT=(
 	gfx906
 	gfx908
@@ -22,6 +22,7 @@ HOMEPAGE=""
 LICENSE="metapackage"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
+	aocc
 	atmi
 	flang
 	hipfort
@@ -42,6 +43,10 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	!dev-util/amd-rocm-meta
+	aocc? (
+		~sys-devel/llvm-roc-alt-${PV}:${ROCM_SLOT}
+	)
 	atmi? (
 		~dev-libs/atmi-${PV}:${ROCM_SLOT}$(get_rocm_usedep ATMI)
 	)
@@ -72,7 +77,6 @@ RDEPEND="
 	rocm-dev? (
 		~dev-libs/ROCdbgapi-${PV}:${ROCM_SLOT}
 		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
-		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
 		~dev-libs/rocm-debug-agent-${PV}:${ROCM_SLOT}
 		~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
@@ -96,7 +100,6 @@ RDEPEND="
 	)
 	rocm-libs? (
 		~dev-libs/rccl-${PV}:${ROCM_SLOT}$(get_rocm_usedep RCCL)
-		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
 		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipCUB-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPCUB)
 		~sci-libs/hipFFT-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPFFT)
@@ -112,13 +115,9 @@ RDEPEND="
 		~sci-libs/rocSPARSE-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCSPARSE)
 		~sci-libs/rocThrust-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCTHRUST)
 		~sci-libs/rocWMMA-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCWMMA)
-		amdgpu_targets_gfx90a? (
-			~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPBLASLT)
-		)
 	)
 	rocm-utils? (
 		~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
-		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 	)
 
@@ -151,7 +150,6 @@ RDEPEND="
 # openmp-extras-dev ; omp headers, aompcc from aomp-extras, flang
 # openmp-extras-runtime ; libarcher (and static-lib), libomp, flang
 # rocm-cmake x
-# rocm-core x
 # rocm-dbgapi x
 # rocm-debug-agent x
 # rocm-device-libs x
@@ -192,7 +190,6 @@ RDEPEND="
 # rocblas-dev x
 # rocfft x
 # rocfft-dev x
-# rocm-core x
 # rocprim-dev x
 # rocrand x
 # rocrand-dev x
@@ -207,8 +204,7 @@ RDEPEND="
 #
 # rocm-utils:
 #
-# rocm-clang-ocl # Metapackage for rocm-llvm x, rocm-opencl-dev x, rocm-core x
+# rocm-clang-ocl # Metapackage for rocm-llvm x, rocm-opencl-dev x
 # rocm-cmake x
-# rocm-core x
 # rocminfo x
 #

@@ -22,6 +22,7 @@ HOMEPAGE=""
 LICENSE="metapackage"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
+	aocc
 	composable-kernel
 	flang
 	hipfort
@@ -43,6 +44,10 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	!dev-util/amd-rocm-meta
+	aocc? (
+		~sys-devel/llvm-roc-alt-${PV}:${ROCM_SLOT}
+	)
 	composable-kernel? (
 		~sci-libs/composable_kernel-${PV}:${ROCM_SLOT}$(get_rocm_usedep COMPOSABLE_KERNEL)
 	)

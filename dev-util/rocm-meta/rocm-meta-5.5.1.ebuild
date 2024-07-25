@@ -3,13 +3,11 @@
 
 EAPI=8
 
-# See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.1.2/docs/reference/system-requirements.rst
+# See https://github.com/ROCm/ROCm/blob/rocm-5.5.1/docs/release/gpu_os_support.md
 AMDGPU_TARGETS_COMPAT=(
 	gfx906
 	gfx908
 	gfx90a
-	gfx942
-	gfx1100
 	gfx1030
 )
 
@@ -24,8 +22,11 @@ HOMEPAGE=""
 LICENSE="metapackage"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
+	aocc
+	atmi
 	flang
 	hipfort
+	hiprand
 	migraphx
 	mivisionx
 	rdc
@@ -35,7 +36,6 @@ IUSE="
 	rocm-gdb
 	rocm-libs
 	rocm-utils
-	rocdecode
 "
 REQUIRED_USE="
 	rocm-dev? (
@@ -43,8 +43,18 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	!dev-util/amd-rocm-meta
+	aocc? (
+		~sys-devel/llvm-roc-alt-${PV}:${ROCM_SLOT}
+	)
+	atmi? (
+		~dev-libs/atmi-${PV}:${ROCM_SLOT}$(get_rocm_usedep ATMI)
+	)
 	hipfort? (
 		~dev-util/hipfort-${PV}:${ROCM_SLOT}
+	)
+	hiprand? (
+		~sci-libs/hipRAND-${PV}:${ROCM_SLOT}[rocm]
 	)
 	flang? (
 		~dev-lang/rocm-flang-${PV}:${ROCM_SLOT}
@@ -92,17 +102,11 @@ RDEPEND="
 	rocm-libs? (
 		~dev-libs/rccl-${PV}:${ROCM_SLOT}$(get_rocm_usedep RCCL)
 		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
-		~sci-libs/composable_kernel-${PV}:${ROCM_SLOT}$(get_rocm_usedep COMPOSABLE_KERNEL)
 		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipCUB-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPCUB)
 		~sci-libs/hipFFT-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPFFT)
-		~sci-libs/hipRAND-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipSOLVER-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipSPARSE-${PV}:${ROCM_SLOT}[rocm]
-		amdgpu_targets_gfx942? (
-			~sci-libs/hipSPARSELt-${PV}:${ROCM_SLOT}[rocm]
-		)
-		~sci-libs/hiptensor-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/miopen-${PV}:${ROCM_SLOT}$(get_rocm_usedep MIOPEN)
 		~sci-libs/rocALUTION-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCALUTION)
 		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCBLAS)
@@ -112,11 +116,8 @@ RDEPEND="
 		~sci-libs/rocSOLVER-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCSOLVER)
 		~sci-libs/rocSPARSE-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCSPARSE)
 		~sci-libs/rocThrust-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCTHRUST)
-		~sci-libs/rocWMMA-${PV}:${ROCM_SLOT}
+		~sci-libs/rocWMMA-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCWMMA)
 		amdgpu_targets_gfx90a? (
-			~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPBLASLT)
-		)
-		amdgpu_targets_gfx942? (
 			~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPBLASLT)
 		)
 	)
@@ -125,9 +126,7 @@ RDEPEND="
 		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 	)
-	rocdecode? (
-		~media-libs/rocDecode-${PV}:${ROCM_SLOT}
-	)
+
 "
 
 #
@@ -170,7 +169,6 @@ RDEPEND="
 # rocm-utils x
 # rocprofiler x
 # rocprofiler-dev x
-# rocprofiler-plugins
 # roctracer x
 # roctracer-dev x
 #
@@ -178,7 +176,6 @@ RDEPEND="
 #
 # rocm-libs:
 #
-# composablekernel-dev x
 # hipblas x
 # hipblas-dev x
 # hipblaslt x
@@ -186,16 +183,10 @@ RDEPEND="
 # hipcub-dev x
 # hipfft x
 # hipfft-dev x
-# hiprand x
-# hiprand-dev x
 # hipsolver x
 # hipsolver-dev x
 # hipsparse x
 # hipsparse-dev x
-# hipsparselt x
-# hipsparselt-dev x
-# hiptensor x
-# hiptensor-dev x
 # miopen-hip x
 # miopen-hip-dev x
 # rccl x

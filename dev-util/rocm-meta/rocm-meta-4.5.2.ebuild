@@ -49,6 +49,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	!dev-util/amd-rocm-meta
 	atmi? (
 		~dev-libs/atmi-${PV}:${ROCM_SLOT}$(get_rocm_usedep ATMI)
 	)

@@ -20,6 +20,10 @@
 
   -->
   <use>
+    <flag name="aocc">
+      Install the ROCm™ version of AOCC with additional closed source CPU
+      optimizations.
+    </flag>
     <flag name="atmi">
       Install a library for task and memory management for CPUs and/or GPUs.
     </flag>
