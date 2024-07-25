@@ -23,7 +23,7 @@
 # https://github.com/blender/blender/blob/v4.2.0/source/blender/blenkernel/BKE_blender_version.h
 
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
-# no need to look past those dates.
+# No need to look past those dates.
 
 # Last change was May 31, 2024 for:
 # https://github.com/blender/blender/blob/v4.2.0/build_files/build_environment/install_linux_packages.py

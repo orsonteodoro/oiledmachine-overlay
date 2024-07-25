@@ -19,7 +19,7 @@
 # the multiple LLVM bug.
 
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
-# no need to look past those dates.
+# No need to look past those dates.
 
 # Last change was Mar 18, 2024 for:
 # https://github.com/blender/blender/blob/v4.1.1/build_files/build_environment/install_linux_packages.py

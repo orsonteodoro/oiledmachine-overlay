@@ -17,7 +17,7 @@
 # the multiple LLVM bug.
 
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
-# no need to look past those dates.
+# No need to look past those dates.
 
 # Last change was Feb 22, 2022 for:
 # https://github.com/blender/blender/blob/v3.3.20/build_files/build_environment/install_deps.sh
@@ -222,10 +222,10 @@ REQUIRED_USE+="
 	$(gen_required_use_rocm_targets)
 	!boost? (
 		!alembic
+		!color-management
 		!cycles
 		!nls
 		!openvdb
-		!color-management
 	)
 	!tbb? (
 		!cycles
