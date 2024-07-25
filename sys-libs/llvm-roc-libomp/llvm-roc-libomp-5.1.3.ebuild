@@ -313,13 +313,6 @@ src_prepare() {
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
-		"${S_ROOT}/clang/tools/amdgpu-arch/CMakeLists.txt"
-		"${S_ROOT}/compiler-rt/CMakeLists.txt"
-		"${S_ROOT}/libc/cmake/modules/prepare_libc_gpu_build.cmake"
-		"${S_ROOT}/libc/src/math/gpu/vendor/CMakeLists.txt"
-		"${S_ROOT}/libc/utils/gpu/loader/CMakeLists.txt"
-		"${S_ROOT}/mlir/lib/Dialect/GPU/CMakeLists.txt"
-		"${S_ROOT}/mlir/lib/ExecutionEngine/CMakeLists.txt"
 		"${S_ROOT}/openmp/libomptarget/CMakeLists.txt"
 		"${S_ROOT}/openmp/libomptarget/DeviceRTL/CMakeLists.txt"
 		"${S_ROOT}/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt"
