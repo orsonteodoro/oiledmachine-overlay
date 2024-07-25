@@ -189,7 +189,6 @@ pkg_setup() {
 		ROCM_USE_LLVM_ROC=1
 	fi
 	rocm_pkg_setup
-	aocc_pkg_setup
 }
 
 src_prepare() {
@@ -208,7 +207,7 @@ src_prepare() {
 }
 
 src_configure() {
-	aocc_src_configure
+	:
 }
 
 src_compile() {
@@ -324,7 +323,6 @@ src_install() {
 		"${EROCM_LLVM_PATH}/bin/flang" \
 		"${EROCM_PATH}/bin/flang"
 	rocm_fix_rpath
-	aocc_fix_rpath
 }
 
 pkg_postinst() {

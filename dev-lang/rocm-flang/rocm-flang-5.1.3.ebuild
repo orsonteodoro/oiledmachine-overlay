@@ -325,7 +325,6 @@ src_install() {
 		"${EROCM_LLVM_PATH}/bin/flang" \
 		"${EROCM_PATH}/bin/flang"
 	rocm_fix_rpath
-	aocc_fix_rpath
 }
 
 pkg_postinst() {
