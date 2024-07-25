@@ -1162,7 +1162,7 @@ einfo "Fixing rpath for ${path}"
 einfo "Fixing rpath for ${path}"
 			if [[ "${_USE_AOCC}" == "1" ]] ; then
 				patchelf \
-					--add-rpath "/opt/rocm-${ROCM_VERSION}/$(rocm_get_libdir)/llvm/alt/lib" \
+					--add-rpath "${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/llvm/alt/lib" \
 					"${path}" \
 					|| die
 			else
