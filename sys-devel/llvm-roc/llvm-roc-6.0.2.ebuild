@@ -110,6 +110,7 @@ DEPEND="
 "
 BDEPEND="
 	${ROCM_GCC_DEPEND}
+	sys-devel/lld:${LLVM_SLOT}
 "
 PATCHES=(
 )
@@ -190,13 +191,8 @@ _src_configure() {
 	filter-flags "-fuse-ld=*"
 
 # Fixes:
-# ld.gold: internal error in do_layout, at /var/tmp/portage/sys-devel/binutils-2.40-r5/work/binutils-2.40/gold/object.cc:1939
-#	append-ldflags -fuse-ld=lld
-
-# Avoid:
-#collect2: fatal error: cannot find 'ld'
-#compilation terminated.
-	append-ldflags -fuse-ld=bfd
+# libhsa-runtime64.so.1.12.0: undefined reference to `hsaKmtGetAMDGPUDeviceHandle'
+	append-ldflags -fuse-ld=lld
 
 #	strip-unsupported-flags # Broken, strips -fprofile-use
 
