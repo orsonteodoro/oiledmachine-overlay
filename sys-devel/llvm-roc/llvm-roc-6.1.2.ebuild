@@ -94,7 +94,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt profile +runtime
-ebuild-revision-18
+ebuild-revision-19
 "
 REQUIRED_USE="
 	cfi? (
