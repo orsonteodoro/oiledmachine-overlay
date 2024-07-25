@@ -45,6 +45,17 @@ HIP_5_7_LLVM_SLOT="17"
 HIP_6_0_LLVM_SLOT="17"
 HIP_6_1_LLVM_SLOT="17"
 
+# AOCC in this context means rocm-llvm-alt
+AOCC_5_1_SLOT="13"
+AOCC_5_2_SLOT="14"
+AOCC_5_3_SLOT="15"
+AOCC_5_4_SLOT="15"
+AOCC_5_5_SLOT="16"
+AOCC_5_6_SLOT="16"
+AOCC_5_7_SLOT="17"
+AOCC_6_0_SLOT="17"
+AOCC_6_1_SLOT="17"
+
 _hip_set_globals() {
 	local hip_platform="${HIP_PLATFORM:-amd}"
 	if [[ "${hip_platform}" == "amd" ]] ; then

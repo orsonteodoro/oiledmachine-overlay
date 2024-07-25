@@ -1038,6 +1038,8 @@ rocm_fix_rpath() {
 	)
 	local clang_libs=(
 		"libclangBasic.so"
+		"libclang.so"
+		"libclang-cpp.so"
 	)
 	local libomp_libs=(
 		"libomp.so"
@@ -1158,10 +1160,17 @@ einfo "Fixing rpath for ${path}"
 
 		if (( ${needs_rpath_patch_clang} )) ; then
 einfo "Fixing rpath for ${path}"
-			patchelf \
-				--add-rpath "${EPREFIX}${EROCM_CLANG_PATH}/$(rocm_get_libdir)" \
-				"${path}" \
-				|| die
+			if [[ "${_USE_AOCC}" == "1" ]] ; then
+				patchelf \
+					--add-rpath "/opt/rocm-${ROCM_VERSION}/$(rocm_get_libdir)/llvm/alt/lib" \
+					"${path}" \
+					|| die
+			else
+				patchelf \
+					--add-rpath "${EPREFIX}${EROCM_CLANG_PATH}/$(rocm_get_libdir)" \
+					"${path}" \
+					|| die
+			fi
 		fi
 
 		if (( ${needs_rpath_patch_llvm} )) ; then
@@ -1230,6 +1239,8 @@ rocm_verify_rpath_correctness() {
 	)
 	local clang_libs=(
 		"libclangBasic.so"
+		"libclang.so"
+		"libclang-cpp.so"
 	)
 	local libomp_libs=(
 		"libomp.so"
@@ -1459,6 +1470,22 @@ rocm_set_default_clang() {
 	strip-unsupported-flags
 	filter-flags '-fuse-ld=*'
 	append-ldflags -fuse-ld=lld
+}
+
+# @FUNCTION: rocm_set_default_aocc
+# @DESCRIPTION:
+# Sets compiler defaults to aocc to avoid primarily linker errors.
+rocm_set_default_aocc() {
+	export PATH="${ESYSROOT}/opt/rocm-${ROCM_VERSION}/lib/llvm/alt/bin:${PATH}"
+	local _llvm_slot="AOCC_${ROCM_SLOT/./_}_SLOT"
+	llvm_slot="${!_llvm_slot}"
+	export CC="${CHOST}-clang-${llvm_slot}"
+	export CXX="${CHOST}-clang++-${llvm_slot}"
+	export CPP="${CXX} -E"
+	strip-unsupported-flags
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=lld
+	export _USE_AOCC=1
 }
 
 # @FUNCTION: rocm_set_default_hipcc
