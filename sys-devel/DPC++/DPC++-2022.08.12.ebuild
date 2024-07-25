@@ -3,6 +3,7 @@
 
 EAPI=8
 
+# Deps:  https://github.com/intel/llvm/blob/sycl-nightly/20220812/devops/dependencies.json
 # LLVM 16 ; See https://github.com/intel/llvm/blob/sycl-nightly/20220812/llvm/CMakeLists.txt#L19
 # U20.04 ; See https://github.com/intel/llvm/blob/sycl-nightly/20220812/sycl/doc/GetStartedGuide.md?plain=1#L292
 
@@ -294,6 +295,14 @@ BDEPEND="
 	>=dev-build/cmake-3.16.3
 	>=sys-devel/gcc-7.1.0[cxx]
 	virtual/pkgconfig
+	rocm? (
+		rocm_4_3? (
+			~sys-devel/llvm-roc-${HIP_4_3_VERSION}:4.3/${HIP_4_3_VERSION}
+		)
+		rocm_4_2? (
+			~sys-devel/llvm-roc-${HIP_4_2_VERSION}:4.2/${HIP_4_2_VERSION}
+		)
+	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-2022.08.12-system-libs.patch"
@@ -414,13 +423,13 @@ src_configure() {
 	export PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/ccache/d" | tr $'\n' ":")
 
 	if use rocm ; then
-		export CC="clang"
-		export CXX="clang++"
+		rocm_set_default_clang
 	fi
-	strip-unsupported-flags
 
 	# Prevent runtime failures with llvm parts.
 	replace-flags '-O*' '-O2'
+
+	strip-unsupported-flags
 
 	# Extracted from buildbot/configure.py
 	local mycmakeargs=(

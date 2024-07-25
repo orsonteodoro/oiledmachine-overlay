@@ -3,6 +3,7 @@
 
 EAPI=8
 
+# Deps:  https://github.com/intel/llvm/blob/nightly-2024-03-15/devops/dependencies.json
 # LLVM 19 ; See https://github.com/intel/llvm/blob/nightly-2024-03-15/llvm/CMakeLists.txt#L19
 # U22.04 ; See https://github.com/intel/llvm/blob/nightly-2024-03-15/sycl/doc/GetStartedGuide.md?plain=1#L310
 
@@ -287,7 +288,7 @@ REQUIRED_USE="
 RDEPEND="
 	>=dev-build/libtool-2.4.6
 	>=dev-libs/boost-1.74.0:=
-	>=dev-libs/level-zero-1.11.0:=
+	>=dev-libs/level-zero-1.16.1:=
 	>=dev-util/opencl-headers-2022.01.04:=
 	>=dev-util/spirv-headers-1.3.216:=
 	>=dev-util/spirv-tools-1.3.216
@@ -368,6 +369,23 @@ BDEPEND="
 		sys-devel/lld
 		|| (
 			$(gen_llvm_bdepend)
+		)
+	)
+	rocm? (
+		rocm_5_4? (
+			~sys-devel/llvm-roc-${HIP_5_4_VERSION}:5.4/${HIP_5_4_VERSION}
+		)
+		rocm_5_3? (
+			~sys-devel/llvm-roc-${HIP_5_3_VERSION}:5.3/${HIP_5_3_VERSION}
+		)
+		rocm_4_5? (
+			~sys-devel/llvm-roc-${HIP_4_5_VERSION}:4.5/${HIP_4_5_VERSION}
+		)
+		rocm_4_3? (
+			~sys-devel/llvm-roc-${HIP_4_3_VERSION}:4.3/${HIP_4_3_VERSION}
+		)
+		rocm_4_2? (
+			~sys-devel/llvm-roc-${HIP_4_2_VERSION}:4.2/${HIP_4_2_VERSION}
 		)
 	)
 	|| (
@@ -587,13 +605,13 @@ src_configure() {
 	fi
 
 	if use rocm ; then
-		export CC="clang"
-		export CXX="clang++"
+		rocm_set_default_clang
 	fi
-	strip-unsupported-flags
 
 	# Prevent runtime failures with llvm parts.
 	replace-flags '-O*' '-O2'
+
+	strip-unsupported-flags
 
 	# Extracted from buildbot/configure.py
 	mycmakeargs+=(

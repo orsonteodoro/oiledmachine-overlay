@@ -3,6 +3,7 @@
 
 EAPI=8
 
+# Deps:  https://github.com/intel/llvm/blob/sycl-nightly/20230417/devops/dependencies.json
 # LLVM 17 ; See https://github.com/intel/llvm/blob/sycl-nightly/20230417/llvm/CMakeLists.txt#L19
 # U22.04 ; See https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/doc/GetStartedGuide.md?plain=1#L292
 
@@ -278,7 +279,7 @@ REQUIRED_USE="
 RDEPEND="
 	>=dev-build/libtool-2.4.6
 	>=dev-libs/boost-1.74.0:=
-	>=dev-libs/level-zero-1.8.8:=
+	>=dev-libs/level-zero-1.8.12:=
 	>=dev-util/opencl-headers-2022.01.04:=
 	>=dev-util/spirv-headers-1.3.216:=
 	>=dev-util/spirv-tools-1.3.216
@@ -347,6 +348,14 @@ BDEPEND="
 		sys-devel/lld
 		|| (
 			$(gen_llvm_bdepend)
+		)
+	)
+	rocm? (
+		rocm_4_3? (
+			~sys-devel/llvm-roc-${HIP_4_3_VERSION}:4.3/${HIP_4_3_VERSION}
+		)
+		rocm_4_2? (
+			~sys-devel/llvm-roc-${HIP_4_2_VERSION}:4.2/${HIP_4_2_VERSION}
 		)
 	)
 	|| (
@@ -557,13 +566,13 @@ src_configure() {
 	fi
 
 	if use rocm ; then
-		export CC="clang"
-		export CXX="clang++"
+		rocm_set_default_clang
 	fi
-	strip-unsupported-flags
 
 	# Prevent runtime failures with llvm parts.
 	replace-flags '-O*' '-O2'
+
+	strip-unsupported-flags
 
 	# Extracted from buildbot/configure.py
 	mycmakeargs+=(
