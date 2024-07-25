@@ -120,6 +120,7 @@ BDEPEND="
 	${ROCM_GCC_DEPEND}
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-4.5.2-fix-linking-for-LLVMAMDGPUDisassembler.patch"
 )
 
 pkg_setup() {
@@ -196,7 +197,7 @@ _src_configure() {
 # Avoid:
 #collect2: fatal error: cannot find 'ld'
 #compilation terminated.
-#	append-ldflags -fuse-ld=bfd
+	append-ldflags -fuse-ld=bfd
 
 	# Speed up composable_kernel, rocBLAS build times
 	# -O3 may cause random ICE/segfault.

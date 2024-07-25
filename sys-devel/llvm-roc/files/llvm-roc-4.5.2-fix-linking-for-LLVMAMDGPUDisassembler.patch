@@ -1,0 +1,10 @@
+--- llvm/lib/Target/AMDGPU/Disassembler/CMakeLists.txt.orig	2024-07-25 08:44:19.513511623 -0700
++++ llvm/lib/Target/AMDGPU/Disassembler/CMakeLists.txt	2024-07-25 08:46:22.983484911 -0700
+@@ -10,6 +10,7 @@ add_llvm_component_library(LLVMAMDGPUDis
+   AMDGPUUtils
+   MC
+   MCDisassembler
++  Object
+   Support
+ 
+   ADD_TO_COMPONENT
