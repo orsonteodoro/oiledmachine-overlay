@@ -17,7 +17,7 @@ HOMEPAGE=""
 LICENSE="public-domain"
 RESTRICT="mirror"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-IUSE+="ebuild-revision-3"
+IUSE+="ebuild-revision-4"
 RDEPEND+="
 "
 DEPEND+="
@@ -29,6 +29,13 @@ DOCS=( )
 
 src_install() {
 	local names=(
+		"clang:amdclang"
+		"clang++:amdclang++"
+		"clang-cl:amdclang-cl"
+		"clang-cpp:amdclang-cpp"
+		"flang:amdflang"
+		"lld:amdlld"
+
 		"clang:clang"
 		"clang-cl:clang-cl"
 		"clang-cpp:clang-cpp"
