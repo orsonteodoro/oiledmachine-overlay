@@ -3,15 +3,13 @@
 
 EAPI=8
 
-AOCC_COMPAT=( 14 )
-AOCC_SLOT=${AOCC_COMPAT[0]}
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=14 # Same as llvm-roc
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_CLANG_USEDEP="llvm_targets_AMDGPU,llvm_targets_X86"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit aocc cmake flag-o-matic python-any-r1 rocm toolchain-funcs
+inherit cmake flag-o-matic python-any-r1 rocm toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/flang-rocm-${PV}"
@@ -62,6 +60,9 @@ BDEPEND="
 	sys-devel/gcc-config
 	!aocc? (
 		${ROCM_CLANG_DEPEND}
+	)
+	aocc? (
+		~sys-devel/llvm-roc-alt-${PV}:${ROCM_SLOT}
 	)
 	doc? (
 		app-text/doxygen
@@ -192,7 +193,6 @@ pkg_setup() {
 		ROCM_USE_LLVM_ROC=1
 	fi
 	rocm_pkg_setup
-	aocc_pkg_setup
 }
 
 src_prepare() {
@@ -211,7 +211,7 @@ src_prepare() {
 }
 
 src_configure() {
-	aocc_src_configure
+	:
 }
 
 src_compile() {
@@ -247,12 +247,12 @@ eerror
 		-DPYTHON_EXECUTABLE="${ESYSROOT}/usr/bin/${EPYTHON}"
 	)
 	if use aocc ; then
-		export PATH="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin:${PATH}"
+		export PATH="${ESYSROOT}/opt/rocm-${ROCM_VERSION}/lib/llvm/alt/bin:${PATH}"
 		export LD_LIBRARY_PATH="${ED}${EROCM_LLVM_PATH}/lib"
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin/clang++"
-			-DCMAKE_Fortran_COMPILER="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin/flang"
+			-DCMAKE_C_COMPILER="${ESYSROOT}/opt/rocm-${ROCM_VERSION}/lib/llvm/alt/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ESYSROOT}/opt/rocm-${ROCM_VERSION}/lib/llvm/alt/bin/clang++"
+			-DCMAKE_Fortran_COMPILER="${ESYSROOT}/opt/rocm-${ROCM_VERSION}/lib/llvm/alt/bin/flang"
 			-DUSE_AAOC=1
 		)
 	else
