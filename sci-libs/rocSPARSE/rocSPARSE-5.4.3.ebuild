@@ -79,7 +79,13 @@ https://sparse.tamu.edu/MM/Chevron/Chevron4.tar.gz
 
 DESCRIPTION="Basic Linear Algebra Subroutines for sparse computation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSPARSE"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro's MIT license template does not have All rights reserved.
 IUSE="benchmark test ebuild-revision-8"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
