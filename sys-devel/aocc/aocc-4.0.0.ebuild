@@ -17,11 +17,20 @@ SRC_URI="
 DESCRIPTION="The AOCC compiler system"
 HOMEPAGE="https://www.amd.com/en/developer/aocc.html"
 LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
 	AOCC-${PV%.*}-EULA
 	Apache-2.0-with-LLVM-exceptions
 	BSD-2
 	UoI-NCSA
 "
+# all-rights-reserved MIT - include/llvm/Transforms/Utils/imath.h
+# Apache-2.0-with-LLVM-exceptions - include/llvm/Pass.h
+# BSD-2 - include/llvm/Support/xxhash.h
+# BSD UoI-NCSA - include/llvm/Analysis/ArrayDFA.h
+# The distro's MIT license template does not have All Rights Reserved.
 RESTRICT="
 	binchecks
 	fetch
@@ -29,7 +38,7 @@ RESTRICT="
 "
 SLOT="${LLVM_MAX_SLOT}/${PV}"
 IUSE="
-	r2
+	ebuild-revision-3
 "
 REQUIRED_USE="
 "
