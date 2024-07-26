@@ -80,6 +80,11 @@ einfo "Download URI:\t${dl_location}"
 einfo "Destination:\t\t${distdir}/${fn_d}"
 einfo "SHA512 fingerprint:\t${hash}"
 einfo
+einfo "After downloading, sanitize the download permission as follows:"
+einfo
+einfo "chmod 664 ${distdir}/${fn_d}"
+einfo "chown portage:portage ${distdir}/${fn_d}"
+einfo
 }
 
 pkg_nofetch() {
