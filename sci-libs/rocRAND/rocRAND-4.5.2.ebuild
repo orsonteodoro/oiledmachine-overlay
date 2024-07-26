@@ -38,7 +38,13 @@ https://github.com/ROCmSoftwarePlatform/${PN}/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="Generate pseudo-random and quasi-random numbers"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocRAND"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro's license template does not have All rights reserved.
 RESTRICT="
 	!test? (
 		test

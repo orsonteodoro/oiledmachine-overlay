@@ -41,7 +41,13 @@ https://github.com/ROCmSoftwarePlatform/hipRAND/archive/${HIPRAND_COMMIT}.tar.gz
 
 DESCRIPTION="Generate pseudo-random and quasi-random numbers"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocRAND"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro's license template does not have All rights reserved.
 RESTRICT="
 	!test? (
 		test
