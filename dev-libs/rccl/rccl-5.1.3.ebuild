@@ -26,7 +26,10 @@ https://github.com/ROCmSoftwarePlatform/rccl/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="ROCm Communication Collectives Library (RCCL)"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rccl"
-LICENSE="BSD"
+LICENSE="
+	Apache-2.0-with-LLVM-exceptions
+	BSD
+"
 RESTRICT="
 	!test? (
 		test
