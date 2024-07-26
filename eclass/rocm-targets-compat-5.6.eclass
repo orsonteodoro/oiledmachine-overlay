@@ -19,8 +19,8 @@ case ${EAPI} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-if [[ ! ${_ROCM_TARGETS_COMPAT_5_4_ECLASS} ]]; then
-_ROCM_TARGETS_COMPAT_5_4_ECLASS=1
+if [[ ! ${_ROCM_TARGETS_COMPAT_5_6_ECLASS} ]]; then
+_ROCM_TARGETS_COMPAT_5_6_ECLASS=1
 
 RCCL_5_6_AMDGPU_TARGETS_COMPAT=(
 	gfx803

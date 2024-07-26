@@ -39,7 +39,14 @@ https://github.com/ROCmSoftwarePlatform/rocBLAS/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="AMD's library for BLAS on ROCm"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocBLAS"
-LICENSE="BSD"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	BSD
+"
+# The distro's MIT license template does not have All rights reserved.
 RESTRICT="
 	!test? (
 		test
@@ -83,7 +90,7 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 "
-DEPEND="
+ADEPEND="
 	${RDEPEND}
 	test? (
 		dev-cpp/gtest
@@ -91,7 +98,7 @@ DEPEND="
 		virtual/blas
 	)
 "
-BDEPEND="
+ABDEPEND="
 	${PYTHON_DEPS}
 	${HIPCC_DEPEND}
 	$(python_gen_cond_dep '

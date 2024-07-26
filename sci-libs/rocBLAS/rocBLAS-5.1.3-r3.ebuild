@@ -36,7 +36,10 @@ https://github.com/ROCmSoftwarePlatform/rocBLAS/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="AMD's library for BLAS on ROCm"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocBLAS"
-LICENSE="BSD"
+LICENSE="
+	BSD
+	MIT
+"
 RESTRICT="
 	!test? (
 		test
