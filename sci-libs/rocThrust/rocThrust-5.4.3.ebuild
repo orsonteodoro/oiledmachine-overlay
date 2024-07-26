@@ -31,8 +31,15 @@ https://github.com/NVlabs/cub/archive/${CUB_COMMIT}.tar.gz
 
 DESCRIPTION="HIP back-end for the parallel algorithm library Thrust"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocThrust"
-
-LICENSE="Apache-2.0"
+LICENSE="
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	BSD
+	MIT
+"
+# The distro's Apache-2.0 license template does not have All rights reserved.
 RESTRICT="
 	!test? (
 		test
