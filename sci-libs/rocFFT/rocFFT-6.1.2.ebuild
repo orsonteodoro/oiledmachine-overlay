@@ -51,7 +51,13 @@ https://github.com/ROCmSoftwarePlatform/rocFFT/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="Next generation FFT implementation for ROCm"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocFFT"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro's MIT license template does not have All rights reserved.
 RESTRICT="
 	!test? (
 		test
