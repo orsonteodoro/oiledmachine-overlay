@@ -56,7 +56,7 @@ einfo "(1) Read https://github.com/ROCm/ROCm/blob/docs/6.1.2/docs/about/license.
 einfo "(2) Navigate to ${DOWNLOAD_FOLDER_URI} and download ${DOWNLOAD_FILE} and place into ${distdir}"
 einfo "(3) chmod 664 ${distdir}/${DOWNLOAD_FILE}"
 einfo "(4) chown portage:portage ${distdir}/${DOWNLOAD_FILE}"
-einfo "(5) mkdir -p /usr/portage/package.license && echo \"${CATEGORY}/${PN} ${PN}-EULA ${PN}-DISCLAIMER ${PN}-LICENSE\""
+einfo "(5) mkdir -p /usr/portage/package.license && echo \"${CATEGORY}/${PN} ${PN}-EULA ${PN}-DISCLAIMER ${PN}-LICENSE\" >> /usr/portage/package.license/${PN}"
 einfo "(6) Re-emerge the package."
 einfo
 }
