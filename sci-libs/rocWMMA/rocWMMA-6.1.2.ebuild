@@ -30,7 +30,13 @@ https://github.com/ROCmSoftwarePlatform/rocWMMA/archive/refs/tags/rocm-${PV}.tar
 DESCRIPTION="AMD's C++ library for accelerating mixed-precision matrix \
 multiply-accumulate (MMA) operations leveraging AMD GPU hardware"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocWMMA"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro's MIT license template does not have All rights reserved.
 RESTRICT="
 	test
 "
