@@ -3,6 +3,7 @@
 
 EAPI=8
 
+DOWNLOADED_FILE="${PN}-compiler-${PV}.tar"
 LLVM_MAX_SLOT=16 # Based on sover
 PYTHON_COMPAT=( python3_{10..12} )
 
@@ -11,7 +12,7 @@ KEYWORDS="
 "
 S="${WORKDIR}/${PN}-compiler-${PV}"
 SRC_URI="
-	${PN}-compiler-${PV}.tar
+	${DOWNLOADED_FILE}
 "
 
 DESCRIPTION="The AOCC compiler system"
@@ -69,8 +70,10 @@ ewarn
 ewarn "(1) Go to ${HOMEPAGE}"
 ewarn "(2) Read and agree to the ${PN^^} EULA"
 ewarn "(3) Download ${SRC_URI} and place into ${distdir}"
-ewarn "(4) mkdir -p /etc/portage/package.license && echo \"sys-devel/aocc ${PN^^}-${PV%.*}-EULA\" >> /etc/portage/package.license/${PN,,}"
-ewarn "(5) Re-emerge the package"
+ewarn "(4) chmod 644 ${distdir}/${DOWNLOADED_FILE}"
+ewarn "(5) chown portage:portage ${distdir}/${DOWNLOADED_FILE}"
+ewarn "(6) mkdir -p /etc/portage/package.license && echo \"sys-devel/aocc ${PN^^}-${PV%.*}-EULA\" >> /etc/portage/package.license/${PN,,}"
+ewarn "(7) Re-emerge the package"
 ewarn
 }
 
