@@ -80,12 +80,12 @@
   After the process is done, you should set both epgo and ebolt in package.use.
 
 
-  Package names
+  Package equivalence
 
   Placeholder name by distro's community | Upstream tarball name | Formal name | Nickname
   llvm-roc                               | rocm-llvm             | amdclang++  | HIP-Clang
   llvm-roc-alt                           | rocm-llvm-alt         |             | AOCC
-  aocc                                   | aocc                  | AOCC        |
+  aocc                                   | aocc-compiler         | AOCC        |
 
 
   See also
