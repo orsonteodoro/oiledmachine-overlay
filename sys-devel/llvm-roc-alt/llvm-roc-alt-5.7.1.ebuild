@@ -85,7 +85,7 @@ ewarn "(2) Read and agree to both ${MY_PN} EULA and DISCLAIMER"
 ewarn "(3) Navigate to ${DOWNLOAD_FOLDER_URI} and download ${DOWNLOAD_FILE} and place the file into ${distdir}"
 ewarn "(4) chmod 664 ${distdir}/${DOWNLOAD_FILE}"
 ewarn "(5) chown portage:portage ${distdir}/${DOWNLOAD_FILE}"
-ewarn "(6) mkdir -p /etc/portage/package.license && echo \"sys-devel/${PN} ${MY_PN}-EULA ${MY_PN}-DISCLAIMER\" >> /etc/portage/package.license/${PN}"
+ewarn "(6) mkdir -p /etc/portage/package.license && echo \"sys-devel/${PN} ${MY_PN}-EULA ${MY_PN}-DISCLAIMER all-rights-reserved\" >> /etc/portage/package.license/${PN}"
 ewarn "(7) Re-emerge the package"
 ewarn
 }
