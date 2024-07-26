@@ -98,7 +98,6 @@ unpack_deb() {
 
 src_unpack() {
 	unpack_deb "${DISTDIR}/${DOWNLOAD_FILE}"
-#	export S="${WORKDIR}/usr/src/amdgpu-${MY_PV3}/firmware/amdgpu"
 }
 
 sanitize_file_permissions() {
