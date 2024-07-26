@@ -37,6 +37,11 @@ LICENSE="
 	BSD-2
 	UoI-NCSA
 "
+# all-rights-reserved MIT - llvm/alt/include/llvm/Transforms/Utils/imath.h
+# Apache-2.0-with-LLVM-exceptions - llvm/alt/include/lld/Core/SharedLibraryAtom.h
+# BSD-2 - llvm/alt/include/llvm/Support/xxhash.h
+# UoI-NCSA - llvm/alt/include/clang-tidy/objc/SuperSelfCheck.h
+# The distro's MIT license template does not have All Rights Reserved.
 RESTRICT="
 	binchecks
 	fetch
