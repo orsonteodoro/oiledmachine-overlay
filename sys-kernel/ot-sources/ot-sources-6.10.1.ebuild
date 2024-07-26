@@ -11,8 +11,9 @@ RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.10
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
+CLEAR_LINUX_PATCHES_VER="6.10.1-1453"
 EBUILD_REV="r6"
-GENPATCHES_VER="1" # can be live only when 9999
+GENPATCHES_VER="3" # can be live only when 9999
 PATCH_PROJC_VER="6.9-r0"
 PATCH_RT_VER="6.10-rc6-rt11"
 
