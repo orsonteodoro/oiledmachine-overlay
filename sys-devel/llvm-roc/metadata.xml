@@ -80,6 +80,13 @@
   After the process is done, you should set both epgo and ebolt in package.use.
 
 
+  Package names
+
+  Placeholder name by distro's community | Upstream tarball name | Formal name | Nickname
+  llvm-roc                               | rocm-llvm             | amdclang++  | HIP-Clang
+  llvm-roc-alt                           | rocm-llvm-alt         |             | AOCC
+  aocc                                   | aocc                  | AOCC        |
+
   See also
 
   https://github.com/ROCm/ROCm/blob/develop/docs/conceptual/compiler-disambiguation.md
