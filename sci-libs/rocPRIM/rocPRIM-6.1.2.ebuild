@@ -32,7 +32,14 @@ https://github.com/ROCmSoftwarePlatform/rocPRIM/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="HIP parallel primitives for developing performant GPU-accelerated code on ROCm"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocPRIM"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	MIT
+"
+# The distro's MIT license template does not have All rights reserved.
 RESTRICT="
 	!test? (
 		test
