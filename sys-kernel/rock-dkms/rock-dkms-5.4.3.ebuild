@@ -63,8 +63,46 @@ https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver
 "
 LICENSE="
 	GPL-2
+	Linux-syscall-note
 	MIT
 "
+# All the remaining licenses listed are based on the vanilla kernel.
+# For kernel license templates see:
+# https://github.com/torvalds/linux/tree/master/LICENSES
+# See also https://github.com/torvalds/linux/blob/master/Documentation/process/license-rules.rst
+LICENSE+=" GPL-2 Linux-syscall-note" #  Applies to whole source  \
+	# that are GPL-2 compatible.  See paragraph 3 of the above link for details.
+LICENSE+=" ( GPL-2 all-rights-reserved )" # See mm/list_lru.c
+LICENSE+=" ( GPL-2+ all-rights-reserved )" # See drivers/gpu/drm/meson/meson_plane.c
+LICENSE+=" ( all-rights-reserved BSD || ( GPL-2 BSD ) )" # See lib/zstd/compress.c
+LICENSE+=" ( all-rights-reserved MIT || ( GPL-2 MIT ) )" # See drivers/gpu/drm/ttm/ttm_execbuf_util.c
+LICENSE+=" ( custom GPL-2+ )" # See drivers/scsi/esas2r/esas2r_main.c, ... ; # \
+	# Samples warranty/liability paragraphs from maybe EPL-2.0
+LICENSE+=" 0BSD" # See lib/math/cordic.c
+# It is missing SPDX: compared to the other all-rights-reserved files. \
+LICENSE+=" all-rights-reserved" # See lib/dynamic_debug.c
+LICENSE+=" BSD" # See include/linux/packing.h, ...
+LICENSE+=" BSD-2" # See include/linux/firmware/broadcom/tee_bnxt_fw.h
+LICENSE+=" Clear-BSD" # See drivers/net/wireless/ath/ath11k/core.h, ...
+LICENSE+=" custom" # See crypto/cts.c
+LICENSE+=" ISC" # See linux/drivers/net/wireless/ath/wil6210/trace.c, \
+	# linux/drivers/net/wireless/ath/ath5k/Makefile, ...
+LICENSE+=" LGPL-2.1" # See fs/ext4/migrate.c, ...
+LICENSE+=" LGPL-2+ Linux-syscall-note" # See arch/x86/include/uapi/asm/mtrr.h
+LICENSE+=" MIT" # See drivers/gpu/drm/drm_dsc.c
+LICENSE+=" Prior-BSD-License" # See drivers/net/slip/slhc.c
+LICENSE+=" unicode" # See fs/nls/mac-croatian.c ; 3 clause data files
+LICENSE+=" Unlicense" # See tools/usb/ffs-aio-example/multibuff/device_app/aio_multibuff.c
+LICENSE+=" ZLIB" # See lib/zlib_dfltcc/dfltcc.c, ...
+LICENSE+=" || ( BSD GPL-2 )" # See lib/test_parman.c
+LICENSE+=" || ( GPL-2 Apache-2.0 )" # See drivers/net/wireless/silabs/wfx/hif_api_cmd.h
+LICENSE+=" || ( GPL-2 MIT )" # See lib/crypto/poly1305-donna32.c
+LICENSE+=" || ( GPL-2 BSD-2 )" # See arch/x86/crypto/sha512-ssse3-asm.S
+# The following licenses applies to individual files:
+# The distro BSD license template does have all rights reserved and implied.
+# The distro GPL licenses templates do not have all rights reserved but it's
+# found in the headers.
+# The distro MIT license template does not have all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
