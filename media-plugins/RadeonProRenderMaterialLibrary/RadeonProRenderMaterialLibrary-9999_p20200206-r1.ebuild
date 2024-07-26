@@ -3,38 +3,50 @@
 
 EAPI=8
 
-inherit check-reqs linux-info unpacker
-
-DESCRIPTION="Radeon ProRender for Blender Material Library for Linux"
-HOMEPAGE="https://www.amd.com/en/technologies/radeon-prorender-blender"
-HOMEPAGE_DL=\
-"https://www.amd.com/en/technologies/radeon-prorender-downloads"
-LICENSE="AMD-RADEON-PRORENDER-BLENDER-EULA
-	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES"
-KEYWORDS="~amd64"
-PLUGIN_NAME="rprblender"
+HOMEPAGE_DL="https://www.amd.com/en/technologies/radeon-prorender-downloads"
 MATLIB_NAME="rprmaterials"
-S_FN="radeonprorendermateriallibraryinstaller.run"
 MIN_BLENDER_V="2.80"
 MAX_BLENDER_V="2.94" # exclusive
-# Hash verified in Nov 13, 2021
-SHA512SUM_MATLIB="f119d9002c2f1d2b260777393816660cb88a84e3e88e0c353297e787d5ce5672899c5b99527d42d28a86f5e6167931c7761d674148dadba1fc11b5d26980c317"
-D_FN="${PN}-matlib-${SHA512SUM_MATLIB:0:7}.run"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-RDEPEND="media-plugins/RadeonProRenderBlenderAddon"
-RESTRICT="fetch strip"
-SRC_URI="${D_FN}"
-S="${WORKDIR}"
+PLUGIN_NAME="rprblender"
+S_FN="radeonprorendermateriallibraryinstaller.run"
 S_PLUGIN="${WORKDIR}/${PN}-${PV}-plugin"
 S_MATLIB="${WORKDIR}/${PN}-${PV}-matlib"
 D_USER_MATLIB="Documents/Radeon ProRender/Material Library"
 D_MATERIALS="/usr/share/${PN}/${D_USER_MATLIB}"
+# Hash verified in Nov 13, 2021
+SHA512SUM_MATLIB="f119d9002c2f1d2b260777393816660cb88a84e3e88e0c353297e787d5ce5672899c5b99527d42d28a86f5e6167931c7761d674148dadba1fc11b5d26980c317"
+D_FN="${PN}-matlib-${SHA512SUM_MATLIB:0:7}.run"
+
+inherit check-reqs linux-info unpacker
+
+KEYWORDS="~amd64"
+S="${WORKDIR}"
+SRC_URI="${D_FN}"
+
+DESCRIPTION="Radeon ProRender for Blender Material Library for Linux"
+HOMEPAGE="https://www.amd.com/en/technologies/radeon-prorender-blender"
+LICENSE="
+	AMD-RADEON-PRORENDER-BLENDER-EULA
+	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES
+"
+RESTRICT="fetch strip"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+RDEPEND="media-plugins/RadeonProRenderBlenderAddon"
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	einfo "Please download"
-	einfo "  - ${S_FN} (sha512sum is ${SHA512SUM_MATLIB})"
-	einfo "from ${HOMEPAGE_DL} and rename it to ${D_FN} place it in ${distdir}"
+# The download is EULA restricted.
+einfo
+einfo "The following steps must be preformed to download:"
+einfo
+einfo "(1) Navigate to ${HOMEPAGE_DL} and download ${S_FN}"
+einfo "(2) Rename file as ${D_FN}"
+einfo "(3) Place file into ${distdir}"
+einfo "(4) chmod 664 ${distdir}/${D_FN}"
+einfo "(5) chown portage:portage ${distdir}/${D_FN}"
+einfo "(6) mkdir -p /etc/portage/package.license && echo \"${CATEGORY}/${PN} AMD-RADEON-PRORENDER-BLENDER-EULA AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES\" >> /etc/portage/package.license/${PN}"
+einfo "(7) Re-emerge ebuild."
+einfo
 }
 
 _set_check_reqs_requirements() {
@@ -51,9 +63,10 @@ pkg_pretend() {
 pkg_setup() {
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
-	ewarn \
-"eclass/unpacker.eclass from the oiledmachine-overlay is required for \
-Makeself 2.3.0 compatibility if ebuild copied to local repo."
+ewarn
+ewarn "The unpacker.eclass from the oiledmachine-overlay is required for"
+ewarn "Makeself 2.3.0 compatibility if ebuild copied to local repo."
+ewarn
 }
 
 src_unpack() {
@@ -65,7 +78,7 @@ src_unpack() {
 
 src_install_systemwide_matlib() {
 	cd "${S_MATLIB}" || die
-	einfo "Copying materials..."
+einfo "Copying materials..."
 	dodir "${D_MATERIALS}"
 	cp -a "${S_MATLIB}"/matlib/feature_MaterialLibrary/* \
 		"${ED}/${D_MATERIALS}" || die
@@ -84,7 +97,7 @@ src_install_systemwide_plugin_meta() {
 		d_ver=$(basename ${d_ver})
 		if ver_test ${MIN_BLENDER_V} -le ${d_ver} \
 			&& ver_test ${d_ver} -lt ${MAX_BLENDER_V} ; then
-			einfo "Blender ${d_ver} is supported.  Installing..."
+einfo "Blender ${d_ver} is supported.  Installing..."
 			d_addon_base="/usr/share/blender/${d_ver}/scripts/addons_contrib"
 			ed_addon_base="${ED}/${d_addon_base}"
 			d_install="${d_addon_base}/${PLUGIN_NAME}"
@@ -99,7 +112,7 @@ src_install_systemwide_plugin_meta() {
 			echo "${D_MATERIALS}" > "${ed_matlib_meta}/.matlib_installed" || die
 			echo "${D_MATERIALS}" > "${ed_install}/.matlib_installed" || die
 		else
-			einfo "Blender ${d_ver} not supported.  Skipping..."
+einfo "Blender ${d_ver} not supported.  Skipping..."
 		fi
 	done
 
@@ -121,18 +134,18 @@ EOF
 }
 
 pkg_postinst() {
-	einfo
-	einfo "The material library have been installed in:"
-	einfo "${D_MATERIALS}"
-	einfo
+einfo
+einfo "The material library have been installed in:"
+einfo "${D_MATERIALS}"
+einfo
 	env-update
-	einfo "You must \`source /etc/profile\` or reboot in order for the Addon to see the material library"
-	einfo
-	einfo
-	einfo "If you installed the material library previously, remove RPR_MATERIAL_LIBRARY_PATH from"
-	einfo "your ~/.bashrc to use the system wide RPR_MATERIAL_LIBRARY_PATH setting or change it"
-	einfo "per-profile to:"
-	einfo
-	einfo "export RPR_MATERIAL_LIBRARY_PATH=\"${D_MATERIALS}\""
-	einfo
+einfo "You must \`source /etc/profile\` or reboot in order for the Addon to see the material library"
+einfo
+einfo
+einfo "If you installed the material library previously, remove RPR_MATERIAL_LIBRARY_PATH from"
+einfo "your ~/.bashrc to use the system wide RPR_MATERIAL_LIBRARY_PATH setting or change it"
+einfo "per-profile to:"
+einfo
+einfo "export RPR_MATERIAL_LIBRARY_PATH=\"${D_MATERIALS}\""
+einfo
 }
