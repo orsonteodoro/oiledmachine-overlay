@@ -12,7 +12,7 @@ ID1="61b22aefce4456920ba99f2c36906eda"
 ID2="00046ac3403768bfe45857610a3d333b8e35e026"
 TARBALL_SHA1SUM="f31ebce83a2e17d845edb5a585722479c361811a"
 export AUTOROM_FILE_NAME="${PN}-roms-${ID1:0:7}-${ID2:0:7}.tar.gz.b64"
-PYTHON_COMPAT=( python3_10 ) # Upstream tested up to 3.10
+PYTHON_COMPAT=( "python3_10" ) # Upstream tested up to 3.10
 ROM_LIST=(
 adventure.bin
 air_raid.bin
@@ -260,6 +260,13 @@ einfo
 einfo "You may skip downloading by using the skip-roms USE flag."
 einfo
 	fi
+einfo
+einfo "After downloading, you need to sanitize the permissions of the download"
+einfo "as follows:"
+einfo
+einfo "chmod 664 ${distdir}/${AUTOROM_FILE_NAME}"
+einfo "chown portage:portage ${distdir}/${AUTOROM_FILE_NAME}"
+einfo
 }
 
 python_prepare_all() {
