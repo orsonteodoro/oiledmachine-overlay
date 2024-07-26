@@ -84,8 +84,10 @@ ewarn
 ewarn "(1) Read https://github.com/ROCm/ROCm/blob/rocm-6.1.2/docs/about/license.md?plain=1#L84 for an overview and general guidance."
 ewarn "(2) Read and agree to both ${MY_PN} EULA and DISCLAIMER"
 ewarn "(3) Navigate to ${DOWNLOAD_FOLDER_URI} and download ${DOWNLOAD_FILE} and place the file into ${distdir}"
-ewarn "(4) mkdir -p /etc/portage/package.license && echo \"sys-devel/${PN} ${MY_PN}-EULA ${MY_PN}-DISCLAIMER\" >> /etc/portage/package.license/${PN}"
-ewarn "(5) Re-emerge the package"
+ewarn "(4) chmod 664 ${distdir}/${DOWNLOAD_FILE}"
+ewarn "(5) chown portage:portage ${distdir}/${DOWNLOAD_FILE}"
+ewarn "(6) mkdir -p /etc/portage/package.license && echo \"sys-devel/${PN} ${MY_PN}-EULA ${MY_PN}-DISCLAIMER\" >> /etc/portage/package.license/${PN}"
+ewarn "(7) Re-emerge the package"
 ewarn
 }
 
