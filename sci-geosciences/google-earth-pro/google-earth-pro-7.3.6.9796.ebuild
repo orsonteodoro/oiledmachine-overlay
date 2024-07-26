@@ -3,9 +3,6 @@
 
 EAPI=8
 
-# For list of direct links, see
-# https://support.google.com/earth/answer/168344?hl=en
-
 # To find the version use:
 # dpkg -I 'google-earth-pro-stable_7.3.3_amd64.deb'
 
@@ -20,6 +17,7 @@ EXPECTED_SHA512="\
 4ee90c226cbe9323177aa3bb31afc39aaa99b0ab8622949af53755dbccf29483\
 "
 DEST_FN_AMD64="${PN}-stable_${MY_PV}_${EXPECTED_SHA512:0:7}_amd64.deb"
+DOWNLOAD_PAGE_URI="https://support.google.com/earth/answer/168344?hl=en"
 EXPAT_PV="2.2.1"
 FFMPEG_PV="4.4.2"
 FFMPEG_SLOT="56.58.58"
@@ -383,14 +381,19 @@ pkg_nofetch() {
 eerror "${ARCH} is not supported"
 		die
 	fi
-einfo
-einfo "Please download"
-einfo
-einfo "  ${src_fn}"
-einfo
-einfo "from ${HOMEPAGE} and place them in ${distdir} as ${dest_fn}"
-einfo "The shell assumes bash."
-einfo
+ewarn
+ewarn "To download/install this the following steps are required:"
+ewarn
+ewarn "1.  Navigate to ${HOMEPAGE} for a general overview."
+ewarn "2.  You will eventually land on ${DOWNLOAD_PAGE_URI}"
+ewarn "3.  Download ${src_fn}"
+ewarn "4.  Rename the file as ${dest_fn}"
+ewarn "5.  Place the file into ${distdir}"
+ewarn "6.  chmod 664 ${distdir}/${dest_fn}"
+ewarn "7.  chown portage:portage ${distdir}/${dest_fn}"
+ewarn "8.  mkdir -p /etc/portage/package.license && echo \"${CATEGORY}/${PN} google-earth-pro-7.3.6\" >> /etc/portage/package.license/${PN}"
+ewarn "9.  Re-emerge ebuild."
+ewarn
 }
 
 src_unpack() {
