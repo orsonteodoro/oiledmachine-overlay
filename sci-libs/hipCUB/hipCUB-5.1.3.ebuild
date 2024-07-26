@@ -29,6 +29,8 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/hipCUB-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipCUB/archive/rocm-${PV}.tar.gz
 	-> hipCUB-${PV}.tar.gz
@@ -36,8 +38,15 @@ https://github.com/ROCmSoftwarePlatform/hipCUB/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="Wrapper of rocPRIM or CUB for GPU parallel primitives"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipCUB"
-LICENSE="BSD"
-KEYWORDS="~amd64"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	BSD
+	MIT
+"
+# The distro MIT license template does not have All rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -108,7 +117,6 @@ BDEPEND="
 	>=dev-build/cmake-3.16
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
-S="${WORKDIR}/hipCUB-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-add-memory-header.patch"
 	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
