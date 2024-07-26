@@ -33,7 +33,10 @@ https://github.com/ROCmSoftwarePlatform/rocSOLVER/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="Implementation of a subset of LAPACK functionality on the ROCm platform"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSOLVER"
-LICENSE="BSD"
+LICENSE="
+	BSD
+	BSD-2
+"
 RESTRICT="
 	!test? (
 		test
