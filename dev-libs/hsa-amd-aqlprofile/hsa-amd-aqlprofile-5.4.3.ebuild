@@ -3,6 +3,8 @@
 
 EAPI=8
 
+DOWNLOAD_FILE="hsa-amd-aqlprofile_1.0.0.50403-121~22.04_amd64.deb"
+DOWNLOAD_FOLDER_URI="https://repo.radeon.com/rocm/apt/5.4.3/pool/main/h/hsa-amd-aqlprofile/"
 QA_PREBUILT="
 /opt/rocm-5.4.3/hsa-amd-aqlprofile/lib/libhsa-amd-aqlprofile64.so.1
 /opt/rocm-5.4.3/hsa-amd-aqlprofile/lib/libhsa-amd-aqlprofile64.so.1.0.50403
@@ -21,7 +23,7 @@ inherit unpacker
 KEYWORDS="~amd64"
 S="${WORKDIR}"
 SRC_URI="
-hsa-amd-aqlprofile_1.0.0.50403-121~22.04_amd64.deb
+${DOWNLOAD_FILE}
 "
 
 DESCRIPTION="AQLPROFILE library for AMD HSA runtime API extension support"
@@ -52,9 +54,12 @@ pkg_nofetch() {
 einfo
 einfo "Due to EULA restrictions.  You must manually download."
 einfo
-einfo "Go to https://repo.radeon.com/rocm/apt/5.4.3/pool/main/h/hsa-amd-aqlprofile/"
-einfo "Download hsa-amd-aqlprofile_1.0.0.50403-121~22.04_amd64.deb"
-einfo "Place the download in ${distdir}"
+einfo "(1) Read https://github.com/ROCm/ROCm/blob/docs/6.1.2/docs/about/license.md?plain=1#L87 for the overview and general guidance."
+einfo "(2) Navigate to ${DOWNLOAD_FOLDER_URI} and download ${DOWNLOAD_FILE} and place into ${distdir}"
+einfo "(3) chmod 664 ${distdir}/${DOWNLOAD_FILE}"
+einfo "(4) chown portage:portage ${distdir}/${DOWNLOAD_FILE}"
+einfo "(5) mkdir -p /usr/portage/package.license && echo \"${CATEGORY}/${PN} ${PN}-EULA ${PN}-DISCLAIMER ${PN}-LICENSE\""
+einfo "(6) Re-emerge the package."
 einfo
 }
 

@@ -3,6 +3,8 @@
 
 EAPI=8
 
+DOWNLOAD_FILE="hsa-amd-aqlprofile_1.0.0.50103-66_amd64.deb"
+DOWNLOAD_FOLDER_URI="https://repo.radeon.com/rocm/apt/5.1.3/pool/main/h/hsa-amd-aqlprofile/"
 QA_PREBUILT="
 /opt/rocm-5.1.3/hsa-amd-aqlprofile/lib/libhsa-amd-aqlprofile64.so.1
 /opt/rocm-5.1.3/hsa-amd-aqlprofile/lib/libhsa-amd-aqlprofile64.so.1.0.50103
@@ -17,7 +19,7 @@ inherit unpacker
 KEYWORDS="~amd64"
 S="${WORKDIR}"
 SRC_URI="
-https://repo.radeon.com/rocm/apt/5.1.3/pool/main/h/hsa-amd-aqlprofile/hsa-amd-aqlprofile_1.0.0.50103-66_amd64.deb
+${DOWNLOAD_FOLDER_URI}${DOWNLOAD_FILE}
 "
 
 DESCRIPTION="AQLPROFILE library for AMD HSA runtime API extension support"
