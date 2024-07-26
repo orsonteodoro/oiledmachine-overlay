@@ -72,7 +72,7 @@ ewarn "(2) Read and agree to the ${PN^^} EULA"
 ewarn "(3) Download ${SRC_URI} and place into ${distdir}"
 ewarn "(4) chmod 644 ${distdir}/${DOWNLOADED_FILE}"
 ewarn "(5) chown portage:portage ${distdir}/${DOWNLOADED_FILE}"
-ewarn "(6) mkdir -p /etc/portage/package.license && echo \"sys-devel/aocc ${PN^^}-${PV%.*}-EULA\" >> /etc/portage/package.license/${PN,,}"
+ewarn "(6) mkdir -p /etc/portage/package.license && echo \"sys-devel/aocc ${PN^^}-${PV%.*}-EULA all-rights-reserved\" >> /etc/portage/package.license/${PN}"
 ewarn "(7) Re-emerge the package"
 ewarn
 }
