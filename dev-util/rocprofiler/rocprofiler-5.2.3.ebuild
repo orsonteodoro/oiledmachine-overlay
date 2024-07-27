@@ -30,12 +30,16 @@ https://github.com/ROCm-Developer-Tools/${PN}/archive/rocm-${PV}.tar.gz
 "
 
 DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
-HOMEPAGE="https://github.com/ROCm-Developer-Tools/rocprofiler.git"
+HOMEPAGE="https://github.com/ROCm/rocprofiler"
 LICENSE="
-	BSD
+	(
+		all-rights-reserved
+		MIT
+	)
+	BSD-2
 	MIT
 "
-# BSD - src/util/hsa_rsrc_factory.cpp
+# BSD-2 - test/util/hsa_rsrc_factory.h
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE=" test ebuild-revision-15"
 REQUIRED_USE="
