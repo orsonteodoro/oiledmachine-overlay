@@ -27,7 +27,15 @@ https://github.com/ROCm/hipSPARSELt/archive/refs/tags/rocm-${PV}.tar.gz
 DESCRIPTION="hipSPARSELt is a SPARSE marshalling library, with multiple supported backends."
 HOMEPAGE="https://github.com/ROCm/hipSPARSELt"
 REQUIRED_USE="${ROCM_REQUIRED_USE}"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	MIT
+"
+# all-rights-reserved MIT - cmake/os-detection.cmake
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="cuda rocm samples test ebuild-revision-0"
