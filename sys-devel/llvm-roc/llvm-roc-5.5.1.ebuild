@@ -57,7 +57,7 @@ SUBPROJECTS_LICENSES="
 	)
 	(
 		BSD
-		ZLIB
+		rc
 	)
 	Apache-2.0
 	BSD
@@ -84,7 +84,7 @@ LICENSE="
 # CC0-1.0, Apache-2.0 - llvm-project-rocm-5.6.0/llvm/lib/Support/BLAKE3/LICENSE
 # ISC - llvm-project-rocm-5.6.0/lldb/third_party/Python/module/pexpect-4.6/LICENSE
 # MIT - llvm-project-rocm-5.6.0/polly/lib/External/isl/LICENSE
-# ZLIB, BSD - llvm-project-rocm-5.6.0/llvm/lib/Support/COPYRIGHT.regex
+# rc, BSD - llvm-project-rocm-5.6.0/llvm/lib/Support/COPYRIGHT.regex
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
