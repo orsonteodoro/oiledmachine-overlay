@@ -33,7 +33,13 @@ fi
 
 DESCRIPTION="AMD's graph optimization engine"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro's MIT license template does not contain All rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 -cpu -fpga -hip-rtc -mlir +rocm test
