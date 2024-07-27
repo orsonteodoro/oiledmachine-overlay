@@ -92,6 +92,10 @@ RPIPSDK_LICENSE="
 	UoI-NCSA
 "
 RPRSC_LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
 	Apache-2.0
 	Boost-1.0
 	BSD
@@ -99,9 +103,13 @@ RPRSC_LICENSE="
 	MPL-2.0
 "
 RPRSDK_LICENSE="
-	Apache-2.0
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
 	BSD
 	BSD-2
+	CC0-1.0
 	Khronos-IP-framework
 	MIT
 "
@@ -122,6 +130,8 @@ LICENSE="
 	${RPIPSDK_LICENSE}
 	${RPRBLENDER_EULA_LICENSE}
 "
+# The distro's Apache-2.0 license template does not contain all-rights-reserved.
+# The distro's MIT license template does not contain all-rights-reserved.
 RESTRICT="mirror strip"
 SLOT="0/${CONFIGURATION}"
 IUSE+="
