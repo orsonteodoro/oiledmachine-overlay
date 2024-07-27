@@ -23,7 +23,7 @@ fi
 
 DESCRIPTION="ROCm Application for Reporting System Info"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocminfo"
-LICENSE="UoI-NCSA"
+LICENSE="NCSA-AMD"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+=" ebuild-revision-4"
 RDEPEND="
