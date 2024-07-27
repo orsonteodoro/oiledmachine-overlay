@@ -21,6 +21,9 @@ DESCRIPTION="CU / ROCM agnostic hip RAND implementation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipRAND"
 REQUIRED_USE="${ROCM_REQUIRED_USE}"
 LICENSE="MIT"
+# all-rights-reserved MIT - CMakeLists.txt
+# all-rights-reserved MIT - LICENSE.txt
+# BSD - test/fortran/fruit/LICENSE.txt
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="cuda rocm ebuild-revision-7"
