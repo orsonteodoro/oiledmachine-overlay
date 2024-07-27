@@ -24,11 +24,40 @@ fi
 DESCRIPTION="MLIR-based convolution and GEMM kernel generator for ROCm"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocMLIR"
 LICENSE="
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
 	Apache-2.0-with-LLVM-exceptions
+	BSD
+	BSD-2
+	CC0-1.0
+	custom
+	GPL-2+-with-autoconf-exception
+	ISC
+	LGPL-3+
 	MIT
+	rc
+	UoI-NCSA
 "
 # Apache-2.0-with-LLVM-exceptions - mlir/LICENSE.TXT
-# all rights reserved with MIT - mlir/tools/rocmlir-lib/LICENSE
+# Apache-2.0-with-LLVM-exceptions BSD MIT UoI-NCSA - external/llvm-project/pstl/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions custom MIT UoI-NCSA - external/llvm-project/openmp/LICENSE.TXT
+#   custom license keywords:  2. Grant of Patent License
+# all-rights-reserved Apache-2.0 external/llvm-project/libcxx/utils/google-benchmark/include/benchmark/benchmark.h
+# all-rights-reserved MIT - mlir/tools/rocmlir-lib/LICENSE
+# BSD rc - external/llvm-project/llvm/lib/Support/COPYRIGHT.regex
+# BSD-2 - external/llvm-project/llvm/include/llvm/Support/xxhash.h
+# CC0-1.0 - external/llvm-project/llvm/lib/Support/BLAKE3/LICENSE
+# custom - external/llvm-project/clang-tools-extra/clang-tidy/cert/LICENSE.TXT
+# GPL-2+-with-autoconf-exception - external/llvm-project/llvm/cmake/config.guess
+# ISC - external/llvm-project/lldb/third_party/Python/module/pexpect-4.6/LICENSE
+# LGPL-3+ - external/llvm-project/polly/www/video-js/video.js
+# The distro Apache-2.0 license template does not have all rights reserved
 # The distro MIT license template does not have all rights reserved
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="ebuild-revision-12"
