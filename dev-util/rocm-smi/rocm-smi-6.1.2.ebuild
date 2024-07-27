@@ -35,6 +35,7 @@ LICENSE="
 # all-rights-reserved MIT - License.txt
 # MIT - third_party/shared_mutex/LICENSE
 # NCSA-AMD - src/rocm_smi.cc
+# The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE=" ebuild-revision-8"
 REQUIRED_USE="
