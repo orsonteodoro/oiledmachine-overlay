@@ -5,9 +5,39 @@ EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
 # Based on:
-# for x in $(ls /opt/rocm-4.5.2/amdgcn/bitcode/oclc_isa_version_*.bc | grep -E -o -e "oclc_isa_version_[0-9]+.bc" | cut -f 4 -d "_" | cut -f 1 -d ".") ; do echo -e "\tgfx${x}" ; done | sort -r
-# TODO:  Update list
-	gfx909 # placeholder
+# for x in $(ls /opt/rocm-4.5.2/amdgcn/bitcode/oclc_isa_version_*.bc | cut -f 6 -d "/" | cut -f 4 -d "_" | cut -f 1 -d "." | sort -g) ; do echo -e "\tgfx${x}" ; done
+	gfx600
+	gfx601
+	gfx602
+	gfx700
+	gfx701
+	gfx702
+	gfx703
+	gfx704
+	gfx705
+	gfx801
+	gfx802
+	gfx803
+	gfx805
+	gfx810
+	gfx900
+	gfx902
+	gfx904
+	gfx906
+	gfx908
+	gfx909
+	gfx90a
+	gfx90c
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1013
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1033
+	gfx1034
+	gfx1035
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=13
@@ -52,7 +82,7 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 _PATCHES=(
-	"${FILESDIR}/atmi-4.5.2-headers.patch"
+	"${FILESDIR}/atmi-5.5.1-headers.patch"
 )
 
 pkg_setup() {
@@ -63,7 +93,7 @@ ewarn "The ebuild is under construction."
 src_prepare() {
 	eapply ${_PATCHES[@]}
 	pushd "${WORKDIR}/atmi-rocm-${PV}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/atmi-5.1.3-hardcoded-paths.patch"
+		eapply "${FILESDIR}/atmi-4.5.2-hardcoded-paths.patch"
 	popd >/dev/null 2>&1 || die
 
 	cmake_src_prepare

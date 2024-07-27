@@ -5,43 +5,45 @@ EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
 # Based on:
-# for x in $(ls /opt/rocm-5.5.1/amdgcn/bitcode/oclc_isa_version_*.bc | grep -E -o -e "oclc_isa_version_[0-9]+.bc" | cut -f 4 -d "_" | cut -f 1 -d ".") ; do echo -e "\tgfx${x}" ; done | sort -r
-	gfx940
-	gfx909
-	gfx908
-	gfx906
-	gfx904
-	gfx902
-	gfx900
-	gfx810
-	gfx805
-	gfx803
-	gfx802
-	gfx801
-	gfx705
-	gfx704
-	gfx703
-	gfx702
-	gfx701
-	gfx700
-	gfx602
-	gfx601
+# for x in $(ls /opt/rocm-5.5.1/amdgcn/bitcode/oclc_isa_version_*.bc | cut -f 6 -d "/" | cut -f 4 -d "_" | cut -f 1 -d "." | sort -g) ; do echo -e "\tgfx${x}" ; done
 	gfx600
-	gfx1103
-	gfx1102
-	gfx1101
-	gfx1100
-	gfx1036
-	gfx1035
-	gfx1034
-	gfx1033
-	gfx1032
-	gfx1031
-	gfx1030
-	gfx1013
-	gfx1012
-	gfx1011
+	gfx601
+	gfx602
+	gfx700
+	gfx701
+	gfx702
+	gfx703
+	gfx704
+	gfx705
+	gfx801
+	gfx802
+	gfx803
+	gfx805
+	gfx810
+	gfx900
+	gfx902
+	gfx904
+	gfx906
+	gfx908
+	gfx909
+	gfx90a
+	gfx90c
+	gfx940
 	gfx1010
+	gfx1011
+	gfx1012
+	gfx1013
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1033
+	gfx1034
+	gfx1035
+	gfx1036
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1103
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=16
