@@ -145,7 +145,7 @@ ${BLENDER_SLOTS}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 ${VIDEO_CARDS}
-denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca system-llvm -systemwide +vulkan
+denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca -systemwide +vulkan
 "
 gen_rocm_required_use() {
 	local s
@@ -173,7 +173,6 @@ REQUIRED_USE+="
 		python_single_target_python3_11
 	)
 	opencl_orca? (
-		system-llvm
 		video_cards_amdgpu
 	)
 	opencl_rocr? (
@@ -233,9 +232,7 @@ gen_omp_depends() {
 		echo "
 			llvm_slot_${s}? (
 				media-gfx/blender[llvm_slot_${s}]
-				system-llvm? (
-					sys-libs/libomp:${s}
-				)
+				sys-libs/libomp:${s}
 			)
 		"
 	done
