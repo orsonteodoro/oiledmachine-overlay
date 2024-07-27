@@ -21,7 +21,12 @@ https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/rocm-${PV}.tar.
 DESCRIPTION="Radeon Open Compute OpenCL Compatible Runtime"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime"
 LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
 	Apache-2.0
+	custom
 	MIT
 "
 RESTRICT="

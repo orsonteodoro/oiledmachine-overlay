@@ -27,9 +27,16 @@ ROCCLR_S="${WORKDIR}/clr-rocm-${PV}/rocclr"
 DESCRIPTION="Radeon Open Compute OpenCL Compatible Runtime"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime"
 LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
 	Apache-2.0
+	custom
 	MIT
 "
+# all-rights-reserved MIT - ./clr-rocm-6.1.2/CMakeLists.txt
+# custom - ./clr-rocm-6.1.2/opencl/khronos/headers/opencl2.2/LICENSE.txt
 RESTRICT="
 	!test? (
 		test
