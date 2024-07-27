@@ -31,7 +31,16 @@ DESCRIPTION="hipBLASLt is a library that provides general matrix-matrix \
 operations with a flexible API and extends functionalities beyond a \
 traditional BLAS library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipBLASLt"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	MIT
+"
+# tensilelite/Tensile/ClientWriter.py
+# MIT - LICENSE.md
+# The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${ROCM_IUSE}
@@ -57,13 +66,15 @@ REQUIRED_USE="
 		cuda
 	)
 "
+LOL="
+	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_5_AMDGPU_USEDEP}]
+"
 RDEPEND="
 	${HIPCC_DEPEND}
 	dev-libs/boost
 	dev-libs/msgpack
 	virtual/blas
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
-	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_5_AMDGPU_USEDEP}]
 	cuda? (
 		${HIP_CUDA_DEPEND}
 		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[cuda]

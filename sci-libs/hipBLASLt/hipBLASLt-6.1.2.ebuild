@@ -34,7 +34,15 @@ DESCRIPTION="hipBLASLt is a library that provides general matrix-matrix \
 operations with a flexible API and extends functionalities beyond a \
 traditional BLAS library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipBLASLt"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	MIT
+"
+# all-rights-reserved MIT - utilities/find_exact.py
+# MIT - LICENSE.md
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${ROCM_IUSE}
