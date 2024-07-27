@@ -20,7 +20,16 @@ https://github.com/ROCmSoftwarePlatform/hipSOLVER/archive/refs/tags/rocm-${PV}.t
 
 DESCRIPTION="ROCm SOLVER marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSOLVER"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	MIT
+"
+# all-rights-reserved MIT - CMakeLists.txt
+# MIT - LICENSE.md
+# The distro's MIT license template does not have all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test cuda +rocm ebuild-revision-7"
 REQUIRED_USE="
