@@ -23,42 +23,44 @@ if [[ ! ${_ROCM_TARGETS_COMPAT_5_4_ECLASS} ]]; then
 _ROCM_TARGETS_COMPAT_5_4_ECLASS=1
 
 ATMI_5_4_AMDGPU_TARGETS_COMPAT=(
-	gfx940
-	gfx909
-	gfx908
-	gfx906
-	gfx904
-	gfx902
-	gfx900
-	gfx810
-	gfx805
-	gfx803
-	gfx802
-	gfx801
-	gfx705
-	gfx704
-	gfx703
-	gfx702
-	gfx701
-	gfx700
-	gfx602
-	gfx601
+	gfx90a
+	gfx90c
 	gfx600
-	gfx1103
-	gfx1102
-	gfx1101
-	gfx1100
-	gfx1036
-	gfx1035
-	gfx1034
-	gfx1033
-	gfx1032
-	gfx1031
-	gfx1030
-	gfx1013
-	gfx1012
-	gfx1011
+	gfx601
+	gfx602
+	gfx700
+	gfx701
+	gfx702
+	gfx703
+	gfx704
+	gfx705
+	gfx801
+	gfx802
+	gfx803
+	gfx805
+	gfx810
+	gfx900
+	gfx902
+	gfx904
+	gfx906
+	gfx908
+	gfx909
+	gfx940
 	gfx1010
+	gfx1011
+	gfx1012
+	gfx1013
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1033
+	gfx1034
+	gfx1035
+	gfx1036
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1103
 )
 ATMI_5_4_AMDGPU_USEDEP=$(gen_x_usedep "ATMI_5_4_AMDGPU_TARGETS_COMPAT")
 
