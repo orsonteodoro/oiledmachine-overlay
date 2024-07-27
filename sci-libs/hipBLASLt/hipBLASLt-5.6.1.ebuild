@@ -40,7 +40,7 @@ LICENSE="
 "
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="
+IUSE+="
 ${ROCM_IUSE}
 benchmark cuda +rocm +tensile ebuild-revision-9
 "
@@ -70,7 +70,12 @@ RDEPEND="
 	dev-libs/msgpack
 	virtual/blas
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
-	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_6_AMDGPU_USEDEP}]
+	amdgpu_targets_gfx90a_xnack_minus? (
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[amdgpu_targets_gfx90a]
+	)
+	amdgpu_targets_gfx90a_xnack_plus? (
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[amdgpu_targets_gfx90a]
+	)
 	cuda? (
 		${HIP_CUDA_DEPEND}
 		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[cuda]

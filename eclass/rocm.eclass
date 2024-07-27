@@ -94,7 +94,6 @@ if [[ ! ${_ROCM_ECLASS} ]]; then
 _ROCM_ECLASS=1
 
 inherit hip-versions
-inherit rocm-targets-compat
 inherit flag-o-matic toolchain-funcs
 
 BDEPEND+="
@@ -386,13 +385,13 @@ _rocm_set_globals_default() {
 		local x
 		for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
 			if [[ "${x}" =~ "xnack" ]] ; then
+				IUSE+="
+					amdgpu_targets_${x%%_*}
+				"
 				ROCM_REQUIRED_USE+="
 					amdgpu_targets_${x}? (
 						amdgpu_targets_${x%%_*}
 					)
-				"
-				IUSE+="
-					amdgpu_targets_${x%%_*}
 				"
 			fi
 		done
@@ -427,6 +426,8 @@ _rocm_set_globals
 unset -f _rocm_set_globals_override
 unset -f _rocm_set_globals_default
 unset -f _rocm_set_globals
+
+inherit rocm-targets-compat
 
 # @FUNCTION:  rocm_pkg_setup
 # @DESCRIPTION:
