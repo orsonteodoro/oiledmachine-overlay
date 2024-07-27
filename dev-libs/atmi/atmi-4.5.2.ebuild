@@ -57,8 +57,8 @@ DESCRIPTION="ATMI is a runtime framework for efficient task management in \
 heterogeneous CPU-GPU systems"
 HOMEPAGE="https://github.com/RadeonOpenCompute/atmi"
 LICENSE="
-	MIT
 	custom
+	MIT
 "
 # custom - bin/mymcpu
 SLOT="${ROCM_SLOT}/${PV}"

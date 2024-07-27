@@ -57,10 +57,16 @@ DESCRIPTION="ATMI is a runtime framework for efficient task management in \
 heterogeneous CPU-GPU systems"
 HOMEPAGE="https://github.com/RadeonOpenCompute/atmi"
 LICENSE="
-	MIT
+	(
+		all-rights-reserved
+		MIT
+	)
 	custom
+	MIT
 "
+# all-rights-reserved MIT - src/atmi-backward-compat.cmake
 # custom - bin/mymcpu
+# The distro's MIT license template does not contail all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug
