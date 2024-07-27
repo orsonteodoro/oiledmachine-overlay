@@ -42,7 +42,26 @@ https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	Apache-2.0
+	Boost-1.0
+	BSD
+	BSD-2
+	custom
+	MIT
+"
+# all-rights-reserved MIT - hipamd-rocm-5.1.3/hip-config.cmake.in
+# Apache-2.0 - ROCm-OpenCL-Runtime-rocm-5.1.3/khronos/icd/LICENSE
+# Boost-1.0 - HIP-rocm-5.1.3/tests/catch/external/Catch2/LICENSE.txt
+# BSD-2 - HIP-rocm-5.1.3/tests/catch/external/picojson/LICENSE
+# BSD - HIP-rocm-5.1.3/samples/1_Utils/hipBusBandwidth/LICENSE.txt
+# custom - ROCm-OpenCL-Runtime-rocm-5.1.3/khronos/icd/LICENSE.txt
+# custom - ROCm-OpenCL-Runtime-rocm-5.1.3/khronos/headers/opencl2.2/LICENSE
+# MIT - hipamd-rocm-5.1.3/LICENSE.txt
 SLOT="$(ver_cut 1-2)/${PV}"
 IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test ebuild-revision-35"
 REQUIRED_USE="

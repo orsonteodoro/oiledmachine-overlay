@@ -34,7 +34,38 @@ https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		custom
+		UoI-NCSA
+	)
+	Apache-2.0
+	BSD
+	CC0-1.0
+	ISC
+	MIT
+	rc
+	UoI-NCSA
+"
+# all-rights-reserved MIT - clr-rocm-6.1.2/CMakeLists.txt
+# Apache-2.0 - clr-rocm-6.1.2/opencl/khronos/icd/LICENSE
+# Apache-2.0-with-LLVM-exceptions UoI-NCSA - llvm-project-rocm-6.1.2/lldb/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions UoI-NCSA custom - llvm-project-rocm-6.1.2/openmp/LICENSE.TXT
+# BSD - llvm-project-rocm-6.1.2/third-party/unittest/googlemock/LICENSE.txt
+# BSD rc - llvm-project-rocm-6.1.2/llvm/lib/Support/COPYRIGHT.regex
+# CC0-1.0 - llvm-project-rocm-6.1.2/llvm/lib/Support/BLAKE3/LICENSE
+# custom - clr-rocm-6.1.2/opencl/khronos/icd/LICENSE.txt
+# custom - clr-rocm-6.1.2/opencl/khronos/headers/opencl2.2/LICENSE
+# custom - llvm-project-rocm-6.1.2/clang-tools-extra/clang-tidy/cert/LICENSE.TXT
+# ISC - llvm-project-rocm-6.1.2/lldb/third_party/Python/module/pexpect-4.6/LICENSE
+# MIT - clr-rocm-6.1.2/rocclr/LICENSE.txt
+# UoI-NCSA - llvm-project-rocm-6.1.2/amd/device-libs/LICENSE.TXT
+
 SLOT="$(ver_cut 1-2)/${PV}"
 IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-33"
 REQUIRED_USE="
