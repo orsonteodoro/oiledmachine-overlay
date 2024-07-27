@@ -35,7 +35,17 @@ https://github.com/littlewu2508/littlewu2508.github.io/raw/main/gentoo-distfiles
 
 DESCRIPTION="Stretching GPU performance for GEMMs and tensor contractions"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/Tensile"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	MIT
+"
+# all-rights-reserved MIT - Tensile/Utils.py
+# MIT - HostLibraryTests/testlib/include/GEMMKernelTest.hpp
+# MIT - LICENSE.md
+# The distro's MIT license template does not contain all rights reserved.
 # Not compatible with recent versions of pytest \
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
