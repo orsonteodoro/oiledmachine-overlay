@@ -20,14 +20,11 @@ https://github.com/ROCm-Developer-Tools/flang/archive/refs/tags/rocm-${PV}.tar.g
 
 DESCRIPTION="ROCm's fork of Classic Flang with GPU offload support"
 HOMEPAGE="https://github.com/flang-compiler/flang"
-THIRD_PARTY_LICENSES="
+LICENSE="
 	(
 		all-rights-reserved
 		Apache-2.0
 	)
-"
-LICENSE="
-	${THIRD_PARTY_LICENSES}
 	Apache-2.0-with-LLVM-exceptions
 "
 # all-rights-reserved, Apache-2.0 - flang-rocm-5.6.0/runtime/libpgmath/LICENSE.txt
