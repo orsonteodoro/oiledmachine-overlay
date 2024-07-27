@@ -32,7 +32,13 @@ DESCRIPTION="The ROCm™ Data Center Tool simplifies the administration and \
 addresses key infrastructure challenges in AMD GPUs in cluster and datacenter \
 environments."
 HOMEPAGE="https://github.com/RadeonOpenCompute/rdc"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro's MIT license template does not contain All rights reserved.
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
