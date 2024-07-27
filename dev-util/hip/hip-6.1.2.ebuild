@@ -49,7 +49,9 @@ LICENSE="
 	CC0-1.0
 	ISC
 	MIT
+	NCSA-AMD
 	rc
+	SunPro
 	UoI-NCSA
 "
 # all-rights-reserved MIT - clr-rocm-6.1.2/CMakeLists.txt
@@ -64,6 +66,8 @@ LICENSE="
 # custom - llvm-project-rocm-6.1.2/clang-tools-extra/clang-tidy/cert/LICENSE.TXT
 # ISC - llvm-project-rocm-6.1.2/lldb/third_party/Python/module/pexpect-4.6/LICENSE
 # MIT - clr-rocm-6.1.2/rocclr/LICENSE.txt
+# NCSA-AMD - llvm-project-rocm-6.1.2/amd/device-libs/ockl/inc/hsa.h
+# SunPro - llvm-project-rocm-6.1.2/amd/device-libs/ocml/src/erfcF.cl
 # UoI-NCSA - llvm-project-rocm-6.1.2/amd/device-libs/LICENSE.TXT
 
 SLOT="$(ver_cut 1-2)/${PV}"
