@@ -31,6 +31,7 @@ LICENSE="
 "
 # all-rights-reserved MIT - ./ROCclr-rocm-4.5.2/elf/test/CMakeLists.txt
 # custom - ./ROCm-OpenCL-Runtime-rocm-4.5.2/khronos/headers/opencl1.2/CL/cl_gl_ext.h
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="
 	!test? (
 		test

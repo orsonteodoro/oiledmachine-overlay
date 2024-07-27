@@ -36,6 +36,7 @@ LICENSE="
 	custom
 	MIT
 "
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="
 	!test? (
 		test

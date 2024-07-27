@@ -39,6 +39,7 @@ LICENSE="
 # all-rights-reserved MIT - ./ROCclr-rocm-5.5.1/elf/test/CMakeLists.txt
 # custom - ./ROCm-OpenCL-Runtime-rocm-5.5.1/khronos/headers/opencl2.2/LICENSE.txt
 # custom - ./ROCm-OpenCL-Runtime-rocm-5.5.1/khronos/headers/opencl2.2/LICENSE
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="
 	!test? (
 		test
