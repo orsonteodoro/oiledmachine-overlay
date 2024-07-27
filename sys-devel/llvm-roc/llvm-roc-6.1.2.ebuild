@@ -75,8 +75,10 @@ LICENSE="
 		UoI-NCSA
 	)
 	BSD
-	rc
+	NCSA-AMD
 	public-domain
+	rc
+	SunPro
 "
 # Apache-2.0 - llvm-project-rocm-5.7.0/third-party/benchmark/LICENSE
 # Apache-2.0-with-LLVM-exceptions, UoI-NCSA - llvm-project-rocm-5.7.0/lldb/LICENSE.TXT
@@ -88,7 +90,9 @@ LICENSE="
 # CC0-1.0, Apache-2.0 - llvm-project-rocm-5.7.0/llvm/lib/Support/BLAKE3/LICENSE
 # ISC - llvm-project-rocm-5.7.0/lldb/third_party/Python/module/pexpect-4.6/LICENSE
 # MIT - llvm-project-rocm-5.7.0/polly/lib/External/isl/LICENSE
+# NCSA-AMD - rocm-6.1.2/amd/device-libs/ockl/inc/hsa.h
 # rc, BSD - llvm-project-rocm-5.7.0/llvm/lib/Support/COPYRIGHT.regex
+# SunPro - rocm-6.1.2/amd/device-libs/ocml/src/erfcF.cl
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
