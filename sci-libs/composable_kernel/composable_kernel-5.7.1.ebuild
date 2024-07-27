@@ -45,7 +45,13 @@ fi
 
 DESCRIPTION="Composable Kernel: Performance Portable Programming Model for Machine Learning Tensor Operators"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/composable_kernel"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro's MIT license template does not contain All rights reserved.
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
 IUSE+="
