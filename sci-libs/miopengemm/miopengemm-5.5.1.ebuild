@@ -17,7 +17,13 @@ https://github.com/ROCmSoftwarePlatform/MIOpenGEMM/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="An OpenCL general matrix multiplication (GEMM) API and kernel generator"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpenGEMM"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro MIT license template does not contain All rights Reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="-benchmark ebuild-revision-4"
 RDEPEND="
