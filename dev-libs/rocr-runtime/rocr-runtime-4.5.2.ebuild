@@ -24,7 +24,14 @@ fi
 
 DESCRIPTION="Radeon Open Compute Runtime"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCR-Runtime"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	NCSA-AMD
+"
+# The distro's MIT license template does not contain All Rights Reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	debug
