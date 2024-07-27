@@ -24,7 +24,16 @@ fi
 
 DESCRIPTION="Radeon Open Compute Thunk Interface"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	BSD-2
+	custom
+"
+# all-rights-reserved MIT custom - tests/kfdtest/LICENSE.kfdtest
+# The distro's MIT license template does not contain All Rights Reserved.
 # Don't strip hsaKmtReplaceAsanHeaderPage \
 RESTRICT="
 	strip
