@@ -18,7 +18,7 @@ https://github.com/ROCm-Developer-Tools/rocr_debug_agent/archive/rocm-${PV}.tar.
 
 DESCRIPTION="Radeon Open Compute Debug Agent"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/rocr_debug_agent/"
-LICENSE="MIT"
+LICENSE="NCSA-AMD"
 RESTRICT="
 	test
 "
