@@ -15,7 +15,11 @@ fi
 
 DESCRIPTION="An implementation of HIP that works on CPUs, across OSes."
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/HIP-CPU"
-LICENSE="MIT"
+LICENSE="
+	Boost-1.0
+	MIT
+	ISC
+"
 SLOT="0/$(ver_cut 1-2)"
 RDEPEND="
 	dev-cpp/tbb
