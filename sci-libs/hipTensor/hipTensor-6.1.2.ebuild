@@ -26,7 +26,13 @@ https://github.com/ROCmSoftwarePlatform/hipTensor/archive/refs/tags/rocm-${PV}.t
 
 DESCRIPTION="AMD’s C++ library for accelerating tensor primitives"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipTensor"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cuda +rocm samples test ebuild-revision-5
