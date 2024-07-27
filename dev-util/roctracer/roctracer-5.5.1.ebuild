@@ -21,7 +21,13 @@ https://github.com/ROCm-Developer-Tools/roctracer/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="
 	!test? (
 		test

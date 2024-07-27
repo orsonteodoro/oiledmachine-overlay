@@ -23,7 +23,13 @@ https://github.com/ROCm-Developer-Tools/roctracer/commit/c95d5dd96fa50a567b7b203
 
 DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="
 	!test? (
 		test
