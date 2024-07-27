@@ -22,7 +22,13 @@ HOMEPAGE="
 https://rocm.docs.amd.com/projects/hipfort/en/latest/
 https://github.com/ROCmSoftwarePlatform/hipfort
 "
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro's MIT license template does not have all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="debug ebuild-revision-9"
 RDEPEND="
