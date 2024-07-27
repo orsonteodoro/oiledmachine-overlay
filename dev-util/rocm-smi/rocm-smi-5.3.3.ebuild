@@ -25,9 +25,13 @@ fi
 DESCRIPTION="ROCm System Management Interface Library"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_smi_lib"
 LICENSE="
+	BSD
 	MIT
 	NCSA-AMD
 "
+# BSD - tests/rocm_smi_test/gtest/LICENSE
+# MIT - third_party/shared_mutex/LICENSE
+# NCSA-AMD - License.txt
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE=" ebuild-revision-8"
 REQUIRED_USE="

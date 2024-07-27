@@ -28,6 +28,8 @@ LICENSE="
 	MIT
 	NCSA-AMD
 "
+# MIT - third_party/shared_mutex/LICENSE
+# NCSA-AMD - License.txt
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE=" ebuild-revision-8"
 REQUIRED_USE="
