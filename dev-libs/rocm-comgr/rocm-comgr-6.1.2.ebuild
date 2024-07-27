@@ -50,6 +50,8 @@ TARBALL_LICENSES="
 	custom
 	ISC
 	MIT
+	NCSA-AMD
+	SunPro
 	UoI-NCSA
 "
 LICENSE="
@@ -73,6 +75,8 @@ LICENSE="
 # custom - clang-tools-extra/clang-tidy/cert/LICENSE.TXT
 # ISC - lldb/third_party/Python/module/pexpect-4.6/LICENSE
 # MIT - llvm/test/YAMLParser/LICENSE.txt
+# SunPro - amd/device-libs/ocml/src/erfcF.cl
+# NCSA-AMD - amd/device-libs/ockl/inc/hsa.h
 # UoI-NCSA - amd/device-libs/LICENSE.TXT
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
