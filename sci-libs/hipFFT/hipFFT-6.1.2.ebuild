@@ -33,6 +33,8 @@ ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic rocm toolchain-funcs
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/hipFFT-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipFFT/archive/refs/tags/rocm-${PV}.tar.gz
 	-> hipFFT-rocm-${PV}.tar.gz
@@ -40,6 +42,16 @@ https://github.com/ROCmSoftwarePlatform/hipFFT/archive/refs/tags/rocm-${PV}.tar.
 
 DESCRIPTION="CU / ROCM agnostic hip FFT implementation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipFFT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	MIT
+"
+# all-rights-reserved MIT - CMakeLists.txt
+# MIT - LICENSE.md
+# The distro's MIT license template does not contain all rights reserved.
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +rocm
@@ -82,7 +94,7 @@ REQUIRED_USE="
 	)
 "
 LICENSE="MIT"
-KEYWORDS="~amd64"
+RESTRICT="test mirror" # The distro mirrored copy is wrong
 SLOT="${ROCM_SLOT}/${PV}"
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
@@ -102,8 +114,6 @@ BDEPEND="
 	>=dev-build/cmake-3.16
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
-RESTRICT="test mirror" # The distro mirrored copy is wrong
-S="${WORKDIR}/hipFFT-rocm-${PV}"
 
 PATCHES=(
 	"${FILESDIR}/${PN}-5.4.3-hardcoded-paths.patch"

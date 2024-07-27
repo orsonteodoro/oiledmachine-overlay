@@ -33,6 +33,8 @@ ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic rocm toolchain-funcs
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/hipFFT-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipFFT/archive/refs/tags/rocm-${PV}.tar.gz
 	-> hipFFT-rocm-${PV}.tar.gz
@@ -40,6 +42,16 @@ https://github.com/ROCmSoftwarePlatform/hipFFT/archive/refs/tags/rocm-${PV}.tar.
 
 DESCRIPTION="CU / ROCM agnostic hip FFT implementation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipFFT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	MIT
+"
+# all-rights-reserved MIT - CMakeLists.txt
+# MIT - LICENSE.md
+# The distro's MIT license template does not contain all rights reserved.
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +rocm
@@ -81,8 +93,7 @@ REQUIRED_USE="
 		cuda
 	)
 "
-LICENSE="MIT"
-KEYWORDS="~amd64"
+RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
@@ -101,8 +112,6 @@ BDEPEND="
 	>=dev-build/cmake-3.5
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
-RESTRICT="test"
-S="${WORKDIR}/hipFFT-rocm-${PV}"
 
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-remove-git-dependency.patch"
