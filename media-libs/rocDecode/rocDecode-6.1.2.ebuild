@@ -39,10 +39,21 @@ https://github.com/ROCmSoftwarePlatform/${PN}/archive/rocm-${PV}.tar.gz
 DESCRIPTION="rocDecode is a high performance video decode SDK for AMD hardware"
 HOMEPAGE="https://github.com/ROCm/rocDecode"
 LICENSE="
-	custom
+	(
+		all-rights-reserved
+		custom
+		MIT
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
 	MIT
 "
-# custom - https://github.com/ROCm/rocDecode/blob/rocm-6.1.2/LICENSE
+# all-rights-reserved custom MIT - https://github.com/ROCm/rocDecode/blob/rocm-6.1.2/LICENSE
+# all-rights-reserved MIT - test/testScripts/run_rocDecode_Conformance.py
+# MIT - CMakeLists.txt
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="
 	test
 "
