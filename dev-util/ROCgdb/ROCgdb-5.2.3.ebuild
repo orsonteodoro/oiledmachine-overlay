@@ -27,9 +27,58 @@ https://rocm.docs.amd.com/projects/ROCgdb/en/latest/
 https://github.com/ROCm-Developer-Tools/ROCgdb
 "
 LICENSE="
+	(
+		all-rights-reserved
+		custom
+	)
+	(
+		all-rights-reserved
+		GPL-3+
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
+	(
+		GPL-3+
+		gcc-runtime-library-exception-3.1
+	)
+	(
+		GPL-3+
+		LGPL-2.1+
+		UoI-NCSA
+		ZLIB
+	)
+	Boost-1.0
+	BSD
+	BSD-2
+	custom
+	FDL-1.3+
+	GPL-2+
 	GPL-3+
 	LGPL-2.1+
+	LIBGLOSS
+	NEWLIB
+	ZLIB
 "
+# all-rights-reserved custom - gdb/exc_request.defs
+# all-rights-reserved GPL-3+ - binutils/dwarf.c
+# all-rights-reserved MIT - gdb/testsuite/gdb.rocm/step-schedlock-spurious-waves.cpp
+# Boost-1.0 - zlib/contrib/dotzlib/LICENSE_1_0.txt
+# BSD - gprof/gprof.h
+# BSD - libiberty/strtoul.c
+# BSD-2 - ld/elf-hints-local.h
+# custom - mkdep
+# custom - libiberty/strncasecmp.c
+# GPL-2+ - libiberty/cp-demangle.c
+# GPL-3+ LGPL-2.1+ UoI-NCSA ZLIB - gdb/NOTICES.txt
+# GPL-3+ gcc-runtime-library-exception-3.1 - include/dwarf2.def
+# FDL-1.3+ - gdb/doc/python.texi
+# LIBGLOSS - COPYING.LIBGLOSS
+# NEWLIB - COPYING.NEWLIB
+# ZLIB - zlib/contrib/puff/puff.h
+# The distro's GPL-3+ license template does not contain all rights reserved.
+# The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="ebuild-revision-8"
 REQUIRED_USE="

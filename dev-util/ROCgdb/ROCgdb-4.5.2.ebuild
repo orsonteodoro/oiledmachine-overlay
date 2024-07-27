@@ -27,9 +27,49 @@ https://rocm.docs.amd.com/projects/ROCgdb/en/latest/
 https://github.com/ROCm-Developer-Tools/ROCgdb
 "
 LICENSE="
+	(
+		all-rights-reserved
+		custom
+	)
+	(
+		all-rights-reserved
+		GPL-3+
+	)
+	(
+		GPL-3+
+		gcc-runtime-library-exception-3.1
+	)
+	(
+		GPL-3+
+		LGPL-2.1+
+		UoI-NCSA
+		ZLIB
+	)
+	Boost-1.0
+	BSD
+	BSD-2
+	custom
+	FDL-1.3+
 	GPL-3+
 	LGPL-2.1+
+	MIT
+	NEWLIB
+	ZLIB
 "
+# all-rights-reserved custom - gdb/exc_request.defs
+# all-rights-reserved GPL-3+ - gdb/target.h
+# Boost-1.0 - zlib/contrib/dotzlib/LICENSE_1_0.txt
+# BSD - gprof/gprof.h
+# BSD-2 - ld/elf-hints-local.h
+# custom - mkdep
+# custom - gdb/exc_request.defs
+# FDL-1.3+ - gdb/doc/python.texi
+# GPL-3+ - binutils/readelf.c
+# GPL-3+ gcc-runtime-library-exception-3.1 include/dwarf2.def
+# GPL-3+ LGPL-2.1+ UoI-NCSA ZLIB - gdb/NOTICES.txt
+# MIT - install-sh
+# NEWLIB - COPYING.NEWLIB
+# ZLIB - zlib/contrib/puff/puff.h
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="ebuild-revision-9"
 REQUIRED_USE="
