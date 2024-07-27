@@ -45,6 +45,7 @@ LICENSE="
 	)
 	BSD
 	GPL-3+
+	JSON
 	MIT
 "
 # GPL-3+ - apps/cloud_inference/client_app/qcustomplot.h
