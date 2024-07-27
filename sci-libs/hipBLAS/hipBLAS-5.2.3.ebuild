@@ -26,6 +26,7 @@ LICENSE="
 	MIT
 "
 # all-rights-reserved MIT - hipBLAS-rocm-5.2.3/clients/samples/example_hip_complex_her2.cpp
+# The distro's MIT license template does not have all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+=" cuda +rocm ebuild-revision-6"
 REQUIRED_USE="
