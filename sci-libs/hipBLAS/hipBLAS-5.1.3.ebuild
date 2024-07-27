@@ -18,7 +18,14 @@ https://github.com/ROCmSoftwarePlatform/hipBLAS/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="ROCm BLAS marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipBLAS"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	MIT
+"
+# all-rights-reserved MIT - clients/samples/example_hip_complex_her2.cpp
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+=" cuda +rocm ebuild-revision-6"
 REQUIRED_USE="
