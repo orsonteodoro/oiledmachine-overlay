@@ -24,7 +24,65 @@ fi
 
 DESCRIPTION="Radeon Open Compute Device Libraries"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-Device-Libs"
-LICENSE="MIT"
+TARBALL_LICENSES="
+	(
+		all-rights-reserved
+		MIT
+	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		UoI-NCSA
+	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		BSD
+		MIT
+	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		UoI-NCSA
+	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		custom
+		MIT
+		UoI-NCSA
+	)
+	Apache-2.0
+	BSD
+	CC0-1.0
+	custom
+	ISC
+	MIT
+	rc
+	UoI-NCSA
+"
+LICENSE="
+	${TARBALL_LICENSES}
+	NCSA-AMD
+	SunPro
+	UoI-NCSA
+"
+# all-rights-reserved MIT - amd/comgr/comgr-backward-compat.cmake
+# Apache-2.0 - third-party/benchmark/LICENSE
+# Apache-2.0-with-LLVM-exceptions - mlir/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions BSD MIT - libclc/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions custom MIT UoI-NCSA - openmp/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions UoI-NCSA - lldb/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions UoI-NCSA - clang-tools-extra/LICENSE.TXT
+# BSD - third-party/unittest/googlemock/LICENSE.txt
+# BSD - openmp/runtime/src/thirdparty/ittnotify/LICENSE.txt
+# BSD - amd/comgr/LICENSE.txt
+# BSD rc - llvm/lib/Support/COPYRIGHT.regex
+# CC0-1.0 - llvm/lib/Support/BLAKE3/LICENSE
+# custom - clang-tools-extra/clang-tidy/cert/LICENSE.TXT
+# ISC - lldb/third_party/Python/module/pexpect-4.6/LICENSE
+# MIT - llvm/test/YAMLParser/LICENSE.txt
+# NCSA-AMD - amd/device-libs/ockl/inc/hsa.h
+# SunPro - amd/device-libs/ocml/src/erfcF.cl
+# UoI-NCSA - amd/device-libs/LICENSE.TXT
+# UoI-NCSA - amd/device-libs/LICENSE.TXT
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="
 	!test? (
 		test

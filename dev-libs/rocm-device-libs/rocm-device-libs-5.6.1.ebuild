@@ -24,7 +24,14 @@ fi
 
 DESCRIPTION="Radeon Open Compute Device Libraries"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-Device-Libs"
-LICENSE="MIT"
+LICENSE="
+	NCSA-AMD
+	SunPro
+	UoI-NCSA
+"
+# NCSA-AMD - ockl/inc/hsa.h
+# SunPro - ocml/src/erfcF.cl
+# UoI-NCSA - LICENSE
 RESTRICT="
 	!test? (
 		test
