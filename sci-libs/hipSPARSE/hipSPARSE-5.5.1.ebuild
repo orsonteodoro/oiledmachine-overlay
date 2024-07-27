@@ -61,7 +61,16 @@ https://sparse.tamu.edu/MM/DNVS/shipsec1.tar.gz
 
 DESCRIPTION="ROCm SPARSE marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSPARSE"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	MIT
+"
+# all-rights-reserved MIT - CMakeLists.txt
+# MIT - LICENSE.md
+# The distro's MIT license template does not have all rights reserved.
 RESTRICT="test" # Test ebuild sections needs update
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="cuda +rocm test ebuild-revision-9"
