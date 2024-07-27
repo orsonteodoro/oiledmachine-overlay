@@ -23,8 +23,6 @@ if [[ ! ${_ROCM_TARGETS_COMPAT_5_4_ECLASS} ]]; then
 _ROCM_TARGETS_COMPAT_5_4_ECLASS=1
 
 ATMI_5_4_AMDGPU_TARGETS_COMPAT=(
-	gfx90a
-	gfx90c
 	gfx600
 	gfx601
 	gfx602
@@ -45,6 +43,8 @@ ATMI_5_4_AMDGPU_TARGETS_COMPAT=(
 	gfx906
 	gfx908
 	gfx909
+	gfx90a
+	gfx90c
 	gfx940
 	gfx1010
 	gfx1011
