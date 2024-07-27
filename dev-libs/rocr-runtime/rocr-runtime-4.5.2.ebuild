@@ -61,6 +61,7 @@ src_prepare() {
 	popd >/dev/null 2>&1 || die
 	cmake_src_prepare
 	rocm_src_prepare
+	sed -i -e "s|-Werror||g" "CMakeLists.txt" || die
 }
 
 src_configure() {
