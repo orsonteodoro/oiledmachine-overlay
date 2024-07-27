@@ -21,8 +21,17 @@ https://github.com/ROCm-Developer-Tools/HIPIFY/archive/refs/tags/rocm-${PV}.tar.
 fi
 
 DESCRIPTION="HIPIFY: Convert CUDA to Portable C++ Code"
-HOMEPAGE="https://github.com/RadeonOpenCompute/HIPIFY"
-LICENSE="MIT"
+HOMEPAGE="https://github.com/ROCm/HIPIFY"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	MIT
+"
+# all-rights-reserved MIT - src/LLVMCompat.h
+# MIT - tests/unit_tests/libraries/cuRAND/cmdparser.hpp
+# The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test ebuild-revision-14"
 # https://github.com/ROCm-Developer-Tools/HIPIFY/tree/rocm-4.5.2#-hipify-clang-dependencies
