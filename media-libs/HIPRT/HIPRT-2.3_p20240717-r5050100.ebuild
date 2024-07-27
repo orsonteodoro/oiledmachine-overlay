@@ -57,6 +57,10 @@ HOMEPAGE="
 	https://github.com/GPUOpen-LibrariesAndSDKs/HIPRT
 "
 LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
 	Apache-2.0
 	BSD
 	MIT
@@ -66,6 +70,8 @@ LICENSE="
 		GPL-3
 	)
 "
+# license.txt - ( all-rights-reserved MIT ) Apache-2.0 BSD MIT public-domain || ( Apache-2.0-with-LLVM-exceptions GPL-3 )
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 IUSE="-bake-kernels -bitcode cuda encrypt precompile rocm system-orochi test ebuild-revision-7"
