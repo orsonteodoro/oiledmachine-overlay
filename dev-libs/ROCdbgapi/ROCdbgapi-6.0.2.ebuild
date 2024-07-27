@@ -17,7 +17,17 @@ SRC_URI="
 
 DESCRIPTION="AMD Debugger API"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/ROCdbgapi"
-LICENSE="MIT"
+LICENSE="
+	MIT
+	|| (
+		(
+			GPL-2.0
+			Linux-syscall-note
+		)
+		MIT
+	)
+"
+# || ( ( GPL-2.0 Linux-syscall-note ) MIT ) - src/linux/kfd_sysfs.h
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE=" ebuild-revision-8"
 RDEPEND="
