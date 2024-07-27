@@ -21,7 +21,25 @@ https://github.com/GPUOpen-LibrariesAndSDKs/Orochi/archive/refs/tags/v${PV}.tar.
 
 DESCRIPTION="Orochi is a library loading HIP and CUDA APIs dynamically, allowing the user to switch APIs at runtime"
 HOMEPAGE="https://github.com/GPUOpen-LibrariesAndSDKs/Orochi"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
+	BSD
+	MIT
+"
+# all-rights-reserved Apache-2.0 - contrib/cuew/include/cuew.h
+# all-rights-reserved MIT - Orochi/nvidia_hip_runtime_api_oro.h
+# BSD - UnitTest/contrib/gtest-1.6.0/gtest-all.cc
+# BSD MIT - Test/SimpleD3D12/DXSampleHelper.h
+# MIT - LICENSE
+# The distro's Apache-2.0 license template does not contain all rights reserved.
+# The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 RDEPEND="
 "
