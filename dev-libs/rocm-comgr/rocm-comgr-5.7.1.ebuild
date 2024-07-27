@@ -24,7 +24,18 @@ fi
 
 DESCRIPTION="Radeon Open Compute Code Object Manager"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	BSD
+	UoI-NCSA
+"
+# BSD - lib/comgr/LICENSE.txt
+# all-rights-reserved MIT - lib/comgr/comgr-backward-compat.cmake
+# UoI-NCSA - lib/comgr/test/disasm_options_test.c
+# The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test ebuild-revision-12"
 RDEPEND="

@@ -24,7 +24,18 @@ fi
 
 DESCRIPTION="Radeon Open Compute Code Object Manager"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport"
-LICENSE="MIT"
+LICENSE="
+	(
+		BSD
+		MIT
+		UoI-NCSA
+	)
+	BSD
+	UoI-NCSA
+"
+# BSD - lib/comgr/LICENSE.txt
+# UoI-NCSA - lib/comgr/test/source2.hip
+# UoI-NCSA BSD MIT - lib/comgr/NOTICES.txt
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="ebuild-revision-12"
 RDEPEND="

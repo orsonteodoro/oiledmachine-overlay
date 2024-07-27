@@ -24,7 +24,57 @@ fi
 
 DESCRIPTION="Radeon Open Compute Code Object Manager"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport"
-LICENSE="MIT"
+TARBALL_LICENSES="
+	(
+		Apache-2.0-with-LLVM-exceptions
+		UoI-NCSA
+	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		BSD
+		MIT
+	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		UoI-NCSA
+	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		custom
+		MIT
+		UoI-NCSA
+	)
+	Apache-2.0
+	BSD
+	CC0-1.0
+	custom
+	ISC
+	MIT
+	UoI-NCSA
+"
+LICENSE="
+	${TARBALL_LICENSES}
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# all-rights-reserved MIT - amd/comgr/comgr-backward-compat.cmake
+# Apache-2.0 - third-party/benchmark/LICENSE
+# Apache-2.0-with-LLVM-exceptions - mlir/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions BSD MIT - libclc/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions custom MIT UoI-NCSA - openmp/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions UoI-NCSA - lldb/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions UoI-NCSA - clang-tools-extra/LICENSE.TXT
+# BSD - third-party/unittest/googlemock/LICENSE.txt
+# BSD - openmp/runtime/src/thirdparty/ittnotify/LICENSE.txt
+# BSD - amd/comgr/LICENSE.txt
+# CC0-1.0 - llvm/lib/Support/BLAKE3/LICENSE
+# custom - clang-tools-extra/clang-tidy/cert/LICENSE.TXT
+# ISC - lldb/third_party/Python/module/pexpect-4.6/LICENSE
+# MIT - llvm/test/YAMLParser/LICENSE.txt
+# UoI-NCSA - amd/device-libs/LICENSE.TXT
+# The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test ebuild-revision-12"
 RDEPEND="
