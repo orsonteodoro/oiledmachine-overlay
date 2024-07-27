@@ -23,7 +23,13 @@ fi
 
 DESCRIPTION="rocm-core is a utility which can be used to get ROCm release version. "
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm-core"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="ebuild-revision-5"
 RDEPEND="
