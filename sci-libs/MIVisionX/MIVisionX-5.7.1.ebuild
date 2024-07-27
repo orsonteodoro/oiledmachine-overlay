@@ -33,7 +33,22 @@ DESCRIPTION="MIVisionX toolkit is a set of comprehensive computer vision and \
 machine intelligence libraries, utilities, and applications bundled into a \
 single toolkit."
 HOMEPAGE="https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX"
-LICENSE="MIT"
+LICENSE="
+	(
+		BSD
+		IJG
+		ZLIB
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
+	BSD
+	GPL-3+
+	MIT
+"
+# GPL-3+ - apps/cloud_inference/client_app/qcustomplot.h
+# The distro's MIT license template does not contain All rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu +enhanced-message ffmpeg -fp16 +loom +migraphx +neural-net opencl
