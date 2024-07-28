@@ -208,6 +208,10 @@ LICENSE+="
 				GPL-2
 			)
 		)
+		(
+			Apache-2.0
+			custom
+		)
 		0BSD
 		Apache-2.0-with-LLVM-exceptions
 		Boost-1.0
@@ -283,6 +287,7 @@ LICENSE+="
 # ( all-rights-reserved Apache-2.0 )
 #   ( all-rights-reserved MIT )
 #   ( all-rights-reserved || ( BSD GPL-2 ) )
+#   ( Apache-2.0 custom )
 #   0BSD
 #   Apache-2.0-with-LLVM-exceptions
 #   Boost-1.0
