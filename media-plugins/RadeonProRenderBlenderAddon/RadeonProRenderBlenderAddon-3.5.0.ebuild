@@ -3,6 +3,132 @@
 
 EAPI=8
 
+# U18, U20
+
+# Essentially if it is >= GCN 1.x it is supported.
+AMDGPU_TARGETS_COMPAT=(
+# From dev-libs/rocm-device-libs:5.3
+# For names, see
+# https://llvm.org/docs/AMDGPUUsage.html
+# https://en.wikipedia.org/wiki/Template:AMD_GPU_features
+	gfx600
+	gfx601
+	gfx602
+	gfx700
+	gfx701
+	gfx702
+	gfx703
+	gfx704
+	gfx705
+	gfx801
+	gfx802
+	gfx803
+	gfx805
+	gfx810
+	gfx900
+	gfx902
+	gfx904
+	gfx906
+	gfx908
+	gfx909
+	gfx940
+	gfx90a
+	gfx90c
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1013
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1033
+	gfx1034
+	gfx1035
+	gfx1036
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1103
+)
+AMDGPU_TARGETS_UNTESTED=(
+## = Supported by general matching
+#	gfx600
+#	gfx601
+#	gfx602
+	gfx700
+#	gfx701
+##	gfx702
+	gfx703
+#	gfx704
+	gfx705
+	gfx801
+##	gfx802
+#	gfx803
+#	gfx805
+	gfx810
+#	gfx900
+	gfx902
+	gfx904
+##	gfx906
+##	gfx908
+	gfx909
+	gfx940
+##	gfx90a
+	gfx90c
+##	gfx1010
+	gfx1011
+##	gfx1012
+	gfx1013
+#	gfx1030
+##	gfx1031
+	gfx1032
+	gfx1033
+	gfx1034
+	gfx1035
+	gfx1036
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1103
+)
+CUDA_TARGETS_COMPAT=(
+# For names, see https://en.wikipedia.org/wiki/CUDA
+	sm_35
+	sm_37
+	sm_50
+	sm_52
+	sm_53
+	sm_60
+	sm_61
+	sm_62
+	sm_70
+	sm_72
+	sm_75
+	sm_80
+	sm_86
+	sm_87
+	sm_89
+	sm_90
+)
+CUDA_TARGETS_UNTESTED=(
+#	sm_35
+#	sm_37
+#	sm_50
+#	sm_52
+#	sm_53
+	sm_60
+	sm_61
+	sm_62
+	sm_70
+	sm_72
+	sm_75
+	sm_80
+	sm_86
+	sm_87
+	sm_89
+	sm_90
+)
+LEGACY_TBB_SLOT="2" # https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSharedComponents/blob/master/OpenVDB/include/tbb/tbb_stddef.h
 LLVM_COMPAT=( 15 )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 # LLVM versions supported by Blender:
@@ -30,9 +156,6 @@ PYTHON_COMPAT=( "python3_11" )
 ROCM_SLOTS=(
 	rocm_5_3
 )
-declare -A ROCM_TO_LLVM_SLOT=(
-	["rocm_5_3"]="15"
-)
 # Commits are based on left side.  The commit associated with the message
 # (right) differs with the commit associated with the folder (left) on the
 # GitHub website.
@@ -46,7 +169,6 @@ VIDEO_CARDS="
 	video_cards_amdgpu
 	video_cards_intel
 	video_cards_nvidia
-	video_cards_radeonsi
 "
 
 inherit check-reqs git-r3 linux-info python-single-r1 unpacker
@@ -114,34 +236,83 @@ RPRBLENDER_EULA_LICENSE="
 	SPA-DISCLAIMER-DATA-AND-SOFTWARE
 "
 LICENSE="
-	Apache-2.0
 	${RPRSC_LICENSE}
 	${RPRSDK_LICENSE}
 	${RPIPSDK_LICENSE}
 	${RPRBLENDER_EULA_LICENSE}
+	Apache-2.0
 "
 # The distro's Apache-2.0 license template does not contain all-rights-reserved.
 # The distro's MIT license template does not contain all-rights-reserved.
 RESTRICT="mirror strip"
 SLOT="0/${CONFIGURATION}"
 IUSE+="
+${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${BLENDER_SLOTS[@]}
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 ${VIDEO_CARDS}
-denoiser intel-ocl +matlib +opencl rocr +vulkan
+denoiser intel-ocl +matlib +opencl +rocr +vulkan
 "
-gen_rocm_required_use() {
-	local s
-	for s in ${ROCM_SLOTS[@]} ; do
+gen_amdgpu_opencl_required_use() {
+	local g
+	for g in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		if [[ "${g}" =~ ^("gfx6"|"gfx7") ]] ; then
+			echo "
+				amdgpu_targets_${g}? (
+					!rocr
+				)
+			"
+		fi
+	done
+}
+gen_amdgpu_required_use() {
+	local g
+	for g in ${AMDGPU_TARGETS_COMPAT[@]} ; do
 		echo "
-			${s}? (
-				llvm_slot_${ROCM_TO_LLVM_SLOT[${s}]}
-				rocr
+			amdgpu_targets_${g}? (
+				video_cards_amdgpu
 			)
 		"
 	done
 }
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+	$(gen_amdgpu_opencl_required_use)
+	$(gen_amdgpu_required_use)
+	blender-3_3? (
+		python_single_target_python3_11
+	)
+	blender-3_4? (
+		python_single_target_python3_11
+	)
+	rocm_5_3? (
+		llvm_slot_15
+	)
+	rocr? (
+		video_cards_amdgpu
+		^^ (
+			${ROCM_SLOTS[@]}
+		)
+	)
+	video_cards_amdgpu? (
+		|| (
+			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
+		)
+	)
+	video_cards_nvidia? (
+		|| (
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		)
+	)
+	|| (
+		${BLENDER_SLOTS[@]}
+	)
+	|| (
+		opencl
+	)
+"
 # Assumes U 18.04.03 minimal
 CDEPEND_NOT_LISTED="
 	dev-lang/python[xml]
@@ -159,7 +330,6 @@ PIP_DOWNLOADED="
 		dev-python/wheel[${PYTHON_USEDEP}]
 	')
 "
-LEGACY_TBB_SLOT="2" # https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSharedComponents/blob/master/OpenVDB/include/tbb/tbb_stddef.h
 gen_omp_depends() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
@@ -243,9 +413,6 @@ RDEPEND+="
 			video_cards_nvidia? (
 				>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_OCL_1_2}
 			)
-			video_cards_radeonsi? (
-				dev-libs/amdgpu-pro-opencl
-			)
 		)
 	)
 	vulkan? (
@@ -262,9 +429,6 @@ RDEPEND+="
 			)
 			video_cards_nvidia? (
 				>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
-			)
-			video_cards_radeonsi? (
-				media-libs/mesa[video_cards_radeonsi,vulkan]
 			)
 		)
 	)
@@ -314,7 +478,22 @@ pkg_pretend() {
 	check-reqs_pkg_setup
 }
 
+warn_untested_gpu() {
+	local gpu
+	for gpu in ${AMDGPU_TARGETS_UNTESTED[@]} ; do
+		if use "amdgpu_targets_${gpu}" ; then
+ewarn "${gpu} is not CI tested upstream."
+		fi
+	done
+	for gpu in ${CUDA_TARGETS_UNTESTED[@]} ; do
+		if use "cuda_targets_${gpu}" ; then
+ewarn "${gpu} is not CI tested upstream."
+		fi
+	done
+}
+
 pkg_setup() {
+	warn_untested_gpu
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 
@@ -349,14 +528,11 @@ ewarn "CPU may not be compatible.  ${PN} requires SSE2."
 	fi
 
 	if use rocr ; then
+ewarn "You may disable the rocr USE flag for legacy OpenCL support."
 		# No die checks for this kernel config in dev-libs/rocm-opencl-runtime.
 		CONFIG_CHECK="HSA_AMD"
-		ERROR_HSA_AMD="Change CONFIG_HSA_AMD=y in kernel config.  It's required for ROCr support."
+		ERROR_HSA_AMD="Change CONFIG_HSA_AMD=y in kernel config.  It's required for ROCr OpenCL support."
 		linux-info_pkg_setup
-ewarn
-ewarn "You need PCI atomics to use ROCr.  Disable the rocr USE flag for legacy"
-ewarn "OpenCL support."
-ewarn
 	fi
 }
 
