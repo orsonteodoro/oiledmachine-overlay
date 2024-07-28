@@ -1212,9 +1212,7 @@ ewarn
 	fi
 	if use rocm ; then
 		local rocm_version=""
-		if use rocm_5_7 ; then
-			rocm_version="${HIP_5_7_VERSION}"
-		elif use rocm_5_5 ; then
+		if use rocm_5_5 ; then
 			rocm_version="${HIP_5_5_VERSION}"
 		fi
 
