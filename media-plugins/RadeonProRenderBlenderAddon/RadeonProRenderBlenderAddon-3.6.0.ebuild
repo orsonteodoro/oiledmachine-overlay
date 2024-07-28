@@ -259,7 +259,6 @@ RDEPEND+="
 	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
 	hip? (
 		dev-util/hip:5.3
-		media-libs/HIPRT:5.3
 	)
 	matlib? (
 		media-plugins/RadeonProRenderMaterialLibrary
