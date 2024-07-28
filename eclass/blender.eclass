@@ -41,68 +41,6 @@ inherit python-single-r1 rocm toolchain-funcs xdg uopts
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
 KEYWORDS=${KEYWORDS:-"~amd64 ~x86"}
-
-LICENSE="
-	(
-		(
-			0BSD
-			PSF-2
-		)
-		PSF-2.4
-	)
-	all-rights-reserved
-	LGPL-2.1+
-	MPL-2.0
-	build_creator? (
-		AFL-3.0
-		Apache-2.0
-		BitstreamVera
-		CC-BY-SA-3.0
-		GPL-2
-		GPL-3
-		GPL-3-with-font-exception
-		LGPL-2.1+
-		ZLIB
-		color-management? (
-			BSD
-		)
-		jemalloc? (
-			BSD-2
-		)
-	)
-	build_headless? (
-		AFL-3.0
-		Apache-2.0
-		BitstreamVera
-		CC-BY-SA-3.0
-		GPL-2
-		GPL-3
-		GPL-3-with-font-exception
-		LGPL-2.1+
-		ZLIB
-		color-management? (
-			BSD
-		)
-		jemalloc? (
-			BSD-2
-		)
-	)
-	cycles? (
-		Apache-2.0
-		Boost-1.0
-		BSD
-		MIT
-	)
-	|| (
-		BL
-		GPL-2
-	)
-"
-
-# intern/mikktspace contains ZLIB
-# intern/CMakeLists.txt contains GPL+ with all-rights-reserved ; there is no
-#   all rights reserved in the vanilla GPL-2
-
 # Slotting is for scripting and plugin compatibility
 SLOT_MAJ=${SLOT%/*}
 SLOT="${PV}"

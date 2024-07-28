@@ -174,7 +174,7 @@ ${FFMPEG_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS[@]}
 ${ROCM_SLOTS[@]}
-+X +abi10-compat +alembic -asan aot +boost +bullet +collada +color-management
++X +abi10-compat +alembic aot -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles +cycles-path-guiding +dds
 -debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp -hiprt +hydra
 +jack +jemalloc +jpeg2k -llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal
@@ -186,8 +186,136 @@ ebuild-revision-3
 # hip is default ON upstream.
 inherit blender
 
-# See the blender.eclass for the LICENSE variable.
-LICENSE+=" CC-BY-4.0" # The splash screen is CC-BY stated in https://www.blender.org/download/demo-files/ )
+LICENSE+="
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
+	(
+		(
+			all-rights-reserved
+			Apache-2.0
+		)
+		(
+			all-rights-reserved
+			MIT
+		)
+		(
+			all-rights-reserved
+			|| (
+				BSD
+				GPL-2
+			)
+		)
+		0BSD
+		Apache-2.0-with-LLVM-exceptions
+		Boost-1.0
+		BSD
+		BSD-2
+		CC0-1.0
+		custom
+		GPL-3
+		LGPL-2.1
+		libpng
+		MPL-2.0
+		Old-MIT
+		PSF-2.2
+		public-domain
+		UoI-NCSA
+		ZLIB
+	)
+	(
+		Apache-2.0
+		BSD
+		MIT
+		ZLIB
+	)
+	(
+		Apache-2.0
+		BSD-2
+		BSD
+		GPL-2.0+
+		GPL-3.0+
+		LGPL-2.1+
+		MIT
+		MPL-2.0
+		ZLIB
+	)
+	(
+		BSD
+		custom
+	)
+	(
+		custom
+		MIT
+	)
+	Apache-2.0
+	BL
+	Boost-1.0
+	BSD
+	BSD-2
+	CC-BY-4.0
+	CC0-1.0
+	GPL-2
+	GPL-2+
+	GPL-3
+	LGPL-2.1
+	MIT
+	ZLIB
+	|| (
+		CC0-1.0
+		MIT
+	)
+"
+# ( all-rights-reserved Apache-2.0 ) - blender-4.1.1/extern/mantaflow/LICENSE
+# ( all-rights-reserved MIT ) - blender-4.1.1/extern/vulkan_memory_allocator/LICENSE.txt
+# ( all-rights-reserved Apache-2.0 )
+#   ( all-rights-reserved MIT )
+#   ( all-rights-reserved || ( BSD GPL-2 ) )
+#   0BSD
+#   Apache-2.0-with-LLVM-exceptions
+#   Boost-1.0
+#   BSD
+#   BSD-2
+#   CC0-1.0
+#   custom
+#   GPL-3
+#   LGPL-2.1
+#   libpng
+#   MPL-2.0
+#   Old-MIT
+#   PSF-2.2
+#   public-domain
+#   UoI-NCSA
+#   ZLIB
+#   - blender-4.1.1/release/license/THIRD-PARTY-LICENSES.txt
+# Apache-2.0 - blender-4.1.1/intern/cycles/doc/license/Apache2-license.txt
+# Apache-2.0 - blender-4.1.1/extern/cuew/LICENSE
+# Apache-2.0 BSD MIT ZLIB - blender-4.1.1/intern/cycles/doc/license/SPDX-license-identifiers.txt
+# Apache-2.0 BSD-2 BSD GPL-2.0+ GPL-3.0+ LGPL-2.1+ MIT MPL-2.0 ZLIB - blender-4.1.1/doc/license/SPDX-license-identifiers.txt
+# BL - blender-4.1.1/doc/license/BL-license.txt
+# Boost-1.0 - blender-4.1.1/extern/quadriflow/3rd/lemon-1.3.1/LICENSE
+# BSD - blender-4.1.1/intern/cycles/doc/license/BSD-3-Clause-license.txt
+# BSD custom - blender-4.1.1/extern/quadriflow/LICENSE.txt
+# BSD-2 - blender-4.1.1/doc/license/BSD-2-Clause-license.txt
+# CC-BY-4.0 - The splash screen is CC-BY stated in https://www.blender.org/download/demo-files/ )
+# CC0-1.0 - blender-4.1.1/release/datafiles/studiolights/world/license.txt
+# custom MIT - blender-4.1.1/extern/fmtlib/LICENSE.rst
+# GPL-2 - blender-4.1.1/release/license/GPL-license.txt
+# GPL-2+ - blender-4.1.1/tools/check_source/check_licenses.py
+# GPL-3 - blender-4.1.1/doc/license/GPL3-license.txt
+# LGPL-2.1 - blender-4.1.1/doc/license/LGPL2.1-license.txt
+# MIT - blender-4.1.1/intern/cycles/doc/license/MIT-license.txt
+# ZLIB - blender-4.1.1/intern/cycles/doc/license/Zlib-license.txt
+# ZLIB - blender-4.1.1/doc/license/Zlib-license.txt
+# || ( CC0-1.0 MIT ) - blender-4.1.1/release/datafiles/studiolights/matcap/license.txt
+# The distro's Apache-2.0 license template does not contain all rights reserved.
+# The distro's GPL-2 license template does not contain all rights reserved.
+# The distro's MIT license template does not contain all rights reserved.
 
 gen_required_use_cuda_targets() {
 	local x

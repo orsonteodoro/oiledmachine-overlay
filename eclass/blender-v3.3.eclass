@@ -161,7 +161,7 @@ ${FFMPEG_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS[@]}
 ${ROCM_SLOTS[@]}
-+X +abi9-compat +alembic -asan +boost +bullet +collada +color-management
++X +abi9-compat +alembic aot -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles -cycles-device-oneapi +dds -debug doc +draco
 +elbeem +embree +ffmpeg +fftw flac +gmp +hdr +jack +jemalloc +jpeg2k -llvm
 -man +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
@@ -173,8 +173,144 @@ ebuild-revision-3
 
 inherit blender
 
-# See the blender.eclass for the LICENSE variable.
-LICENSE+=" CC-BY-4.0" # The splash screen is CC-BY stated in https://www.blender.org/download/demo-files/ )
+LICENSE+="
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		(
+			(
+				all-rights-reserved
+				MIT
+			)
+			BSD
+			MIT
+		)
+		(
+			all-rights-reserved
+			Apache-2.0
+		)
+		(
+			all-rights-reserved
+			MIT
+		)
+		(
+			all-rights-reserved
+			|| (
+				BSD
+				GPL-2
+			)
+		)
+		0BSD
+		Apache-2.0-with-LLVM-exceptions
+		Boost-1.0
+		BSD
+		BSD-2
+		CC0-1.0
+		custom
+		public-domain
+		GPL-3
+		LGPL-2.1
+		LGPL-3
+		libpng
+		MPL-2.0
+		PSF-2.2
+		UoI-NCSA
+		ZLIB
+	)
+	(
+		Apache-2.0
+		BSD
+		MIT
+		ZLIB
+	)
+	(
+		Apache-2.0
+		BSD-2
+		BSD
+		GPL-2.0+
+		GPL-3.0+
+		LGPL-2.1+
+		MIT
+		ZLIB
+	)
+	(
+		BSD
+		custom
+	)
+	(
+		BSD
+		MIT
+	)
+	(
+		custom
+		MIT
+	)
+	Apache-2.0
+	BL
+	Boost-1.0
+	BSD
+	BSD-2
+	CC-BY-4.0
+	CC0-1.0
+	GPL-2
+	GPL-3
+	GPL-2+
+	LGPL-2.1
+	MIT
+	ZLIB
+	|| (
+		CC0-1.0
+		MIT
+	)
+"
+# ( all-rights-reserved Apache-2.0 ) - blender-3.3.21/extern/mantaflow/LICENSE
+# ( all-rights-reserved Apache-2.0 )
+#   ( all-rights-reserved MIT )
+#   ( all-rights-reserved || ( BSD GPL-2 ) )
+#   0BSD
+#   Apache-2.0-with-LLVM-exceptions
+#   Boost-1.0
+#   BSD
+#   BSD-2
+#   CC0-1.0
+#   custom
+#   public-domain
+#   GPL-3
+#   LGPL-2.1
+#   LGPL-3
+#   libpng
+#   MPL-2.0
+#   PSF-2.2
+#   UoI-NCSA
+#   ZLIB
+#   - blender-3.3.21/release/license/THIRD-PARTY-LICENSES.txt
+# ( all-rights-reserved MIT ) BSD MIT - blender-3.3.21/extern/glew-es/LICENSE.txt
+# Apache-2.0 - blender-3.3.21/intern/cycles/doc/license/Apache2-license.txt
+# Apache-2.0 - blender-3.3.21/extern/cuew/LICENSE
+# Apache-2.0 BSD MIT ZLIB - blender-3.3.21/intern/cycles/doc/license/SPDX-license-identifiers.txt
+# Apache-2.0 BSD-2 BSD GPL-2.0+ GPL-3.0+ LGPL-2.1+ MIT ZLIB - blender-3.3.21/doc/license/SPDX-license-identifiers.txt
+# BL - blender-3.3.21/doc/license/BL-license.txt
+# Boost-1.0 - blender-3.3.21/extern/quadriflow/3rd/lemon-1.3.1/LICENSE
+# BSD - blender-3.3.21/intern/cycles/doc/license/BSD-3-Clause-license.txt
+# BSD-2 - blender-3.3.21/doc/license/BSD-2-Clause-license.txt
+# BSD custom - blender-3.3.21/extern/quadriflow/LICENSE.txt
+# BSD MIT -  blender-3.3.21/extern/glew/LICENSE.txt
+# CC-BY-4.0 - The splash screen is CC-BY stated in https://www.blender.org/download/demo-files/ )
+# CC0-1.0 blender-3.3.21/release/datafiles/studiolights/world/license.txt
+# custom MIT - blender-3.3.21/extern/fmtlib/LICENSE.rst
+# GPL-2 - blender-3.3.21/release/license/GPL-license.txt
+# GPL-3 - blender-3.3.21/doc/license/GPL3-license.txt
+# GPL-2+ - blender-3.3.21/source/tools/check_source/check_licenses.py
+# LGPL-2.1 - blender-3.3.21/doc/license/LGPL2.1-license.txt
+# MIT - blender-3.3.21/intern/cycles/doc/license/MIT-license.txt
+# ZLIB - blender-3.3.21/intern/cycles/doc/license/Zlib-license.txt
+# ZLIB - blender-3.3.21/doc/license/Zlib-license.txt
+# || ( CC0-1.0 MIT ) - blender-3.3.21/release/datafiles/studiolights/matcap/license.txt
+# The distro's Apache-2.0 license template does not contain all rights reserved.
+# The distro's GPL-2 license template does not contain all rights reserved.
+# The distro's MIT license template does not contain all rights reserved.
 
 gen_required_use_cuda_targets() {
 	local x
@@ -897,7 +1033,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 	)
 	sycl? (
 		>=sys-devel/DPC++-2022.08.12:0/5
-		video_cards_intel? (
+		aot? (
 			>=dev-libs/intel-compute-runtime-22.20.23198[l0]
 			>=dev-util/intel-graphics-compiler-1.0.11222
 		)
