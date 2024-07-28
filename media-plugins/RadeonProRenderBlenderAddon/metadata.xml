@@ -54,9 +54,6 @@
     <flag name="opencl">
       Checks for proper OpenCL support for GPUs.
     </flag>
-    <flag name="opencl_orca">
-      Checks for proper OpenCL support for pre-Vega 10
-    </flag>
     <flag name="rocr">
       Enabling uses the ROCr OpenCL implementation.
       Disabling uses the legacy OpenCL implementation.
@@ -76,10 +73,6 @@
     </flag>
     <flag name="video_cards_nvidia">
       Checks if the GPU driver is OpenCL 1.2 or Vulkan compatibility.
-    </flag>
-    <flag name="video_cards_radeonsi">
-      Checks if the GPU driver is OpenCL 1.2 or Vulkan compatibility for Mesa
-      Gallium3D users.
     </flag>
     <flag name="vulkan">
       Installs dependencies for Vulkan support.  Vulkan is used for Full
