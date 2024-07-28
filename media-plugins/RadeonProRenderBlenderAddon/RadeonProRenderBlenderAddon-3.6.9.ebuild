@@ -163,7 +163,7 @@ REQUIRED_USE+="
 	$(gen_rocm_required_use)
 	${PYTHON_REQUIRED_USE}
 	!systemwide
-	^^ (
+	|| (
 		hip
 		opencl
 	)
@@ -701,9 +701,13 @@ ewarn "For HIP-cuda, the following symlink may be required"
 ewarn
 ewarn "  ln -s /opt/cuda /usr/local/cuda"
 ewarn
+	fi
+	if use hip ; then
+ewarn
 ewarn "You must manually disable \"Use OpenCL\" in the Blender User Setting for HIP support."
 ewarn
-	else
+	fi
+	if use opencl ; then
 ewarn
 ewarn "You must manually enable \"Use OpenCL\" in the Blender User Setting."
 ewarn
