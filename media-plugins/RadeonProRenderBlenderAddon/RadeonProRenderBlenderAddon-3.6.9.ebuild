@@ -681,6 +681,6 @@ einfo "To see the material browser, the renderer must be set to Radeon ProRender
 einfo "It is located at the bottom of the materials property tab."
 einfo
 ewarn
-ewarn "For multislot HIP/ROCm, ensure the symlink to /opt/rocm exists."
+ewarn "For multislot HIP/ROCm, ensure the symlink from /opt/rocm-<ver> to /opt/rocm exists."
 ewarn
 }
