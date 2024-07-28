@@ -49,7 +49,7 @@ VIDEO_CARDS="
 	video_cards_radeonsi
 "
 
-inherit check-reqs git-r3 linux-info llvm python-single-r1 unpacker
+inherit check-reqs git-r3 linux-info python-single-r1 unpacker
 
 KEYWORDS="~amd64"
 
@@ -145,7 +145,7 @@ gen_rocm_required_use() {
 # Assumes U 18.04.03 minimal
 CDEPEND_NOT_LISTED="
 	dev-lang/python[xml]
-	sys-devel/gcc[openmp]
+	sys-devel/gcc[cxx,openmp]
 "
 # These are mentioned in the command line output and downloaded after install.
 # They are not really used on linux since athena_send is disabled on Linux but
@@ -166,9 +166,6 @@ gen_omp_depends() {
 		echo "
 			llvm_slot_${s}? (
 				media-gfx/blender[llvm_slot_${s}]
-				!rocr? (
-					sys-libs/libomp:${s}
-				)
 			)
 		"
 	done
@@ -237,7 +234,6 @@ RDEPEND+="
 				rocr? (
 					rocm_5_3? (
 						dev-libs/rocm-opencl-runtime:5.3
-						sys-libs/llvm-roc-libomp:5.3
 					)
 				)
 			)
@@ -318,32 +314,9 @@ pkg_pretend() {
 	check-reqs_pkg_setup
 }
 
-check_iomp5() {
-	local s
-	for s in ${LLVM_COMPAT[@]} ; do
-		if use denoiser \
-			&& has_version "media-gfx/blender[llvm_slot_${s}]" \
-			&& [[ ! -e "${EROOT}/usr/lib/llvm/${s}/$(get_libdir)/libiomp5.so" ]] \
-	; then
-ewarn
-ewarn "Missing libiomp5.so symlink.  You may need to..."
-ewarn
-ewarn "ln -s /usr/lib/llvm/${s}/$(get_libdir)/libomp.so /usr/lib/llvm/${s}/$(get_libdir)/libiomp5.so"
-ewarn "ln -s /usr/lib/llvm/${s}/$(get_libdir)/libomp.so /usr/$(get_libdir)/libiomp5.so"
-ewarn
-		fi
-	done
-}
-
 pkg_setup() {
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
-
-	use blender-3_3 && export LLVM_MAX_SLOT=15
-	use blender-3_4 && export LLVM_MAX_SLOT=15
-
-	llvm_pkg_setup
-	check_iomp5
 
 	if ! use opencl ; then
 einfo
@@ -515,8 +488,6 @@ pkg_postinst() {
 ewarn
 ewarn "You must enable the addon manually."
 ewarn
-
-	# The denoiser may need libiomp.so.5 from sys-libs/libomp.
 
 einfo
 einfo "You may need to clear the caches.  Run:"
