@@ -294,8 +294,8 @@ RDEPEND+="
 	>=media-libs/openimageio-1.6
 	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
 	hip? (
-		dev-util/hip:=
-		media-libs/HIPRT:=
+		dev-util/hip
+		media-libs/HIPRT
 	)
 	matlib? (
 		media-plugins/RadeonProRenderMaterialLibrary
