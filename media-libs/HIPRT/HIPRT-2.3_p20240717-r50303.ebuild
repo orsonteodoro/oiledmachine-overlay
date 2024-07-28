@@ -39,7 +39,7 @@ HIP_SUPPORT_CUDA=1
 LLVM_SLOT=15
 ROCM_SLOT="5.3"
 inherit hip-versions
-ROCM_VERSION="${HIP_5_5_VERSION}"
+ROCM_VERSION="${HIP_5_3_VERSION}"
 EGIT_COMMIT="4996b9794cdbc3852fad6e2ae0dbab1e48f2e5f0"
 
 inherit cmake rocm
