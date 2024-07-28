@@ -145,7 +145,7 @@ ${BLENDER_SLOTS}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 ${VIDEO_CARDS}
-denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca -systemwide +vulkan
+denoiser intel-ocl +matlib +opencl rocr -systemwide +vulkan
 "
 gen_rocm_required_use() {
 	local s
@@ -153,7 +153,7 @@ gen_rocm_required_use() {
 		echo "
 			${s}? (
 				llvm_slot_${ROCM_TO_LLVM_SLOT[${s}]}
-				opencl_rocr
+				rocr
 			)
 		"
 	done
@@ -172,10 +172,7 @@ REQUIRED_USE+="
 	blender-3_5? (
 		python_single_target_python3_11
 	)
-	opencl_orca? (
-		video_cards_amdgpu
-	)
-	opencl_rocr? (
+	rocr? (
 		video_cards_amdgpu
 		^^ (
 			${ROCM_SLOTS[@]}
@@ -183,10 +180,6 @@ REQUIRED_USE+="
 	)
 	video_cards_amdgpu? (
 		!video_cards_radeonsi
-		|| (
-			opencl_orca
-			opencl_rocr
-		)
 	)
 	|| (
 		${BLENDER_SLOTS}
@@ -232,7 +225,9 @@ gen_omp_depends() {
 		echo "
 			llvm_slot_${s}? (
 				media-gfx/blender[llvm_slot_${s}]
-				sys-libs/libomp:${s}
+				!rocr? (
+					sys-libs/libomp:${s}
+				)
 			)
 		"
 	done
@@ -284,7 +279,7 @@ BLENDER_RDEPEND="
 
  # Disabled to avoid multiple LLVMs loaded bug
 RDEPEND_DISABLED="
-				opencl_rocr? (
+				rocr? (
 					rocm_5_4? (
 						dev-libs/rocm-opencl-runtime:5.4
 						sys-libs/llvm-roc-libomp:5.4
@@ -320,10 +315,10 @@ RDEPEND+="
 		)
 		|| (
 			video_cards_amdgpu? (
-				opencl_orca? (
+				!rocr? (
 					dev-libs/amdgpu-pro-opencl
 				)
-				opencl_rocr? (
+				rocr? (
 					rocm_4_5? (
 						dev-libs/rocm-opencl-runtime:4.5
 						sys-libs/llvm-roc-libomp:4.5
@@ -453,15 +448,14 @@ einfo "CPU is compatible."
 ewarn "CPU may not be compatible.  ${PN} requires SSE2."
 	fi
 
-	if use opencl_rocr ; then
+	if use rocr ; then
 		# No die checks for this kernel config in dev-libs/rocm-opencl-runtime.
 		CONFIG_CHECK="HSA_AMD"
-		ERROR_HSA_AMD=\
-"Change CONFIG_HSA_AMD=y in kernel config.  It's required for opencl_rocr support."
+		ERROR_HSA_AMD="Change CONFIG_HSA_AMD=y in kernel config.  It's required for ROCr support."
 		linux-info_pkg_setup
 ewarn
-ewarn "You need PCI atomics to use opencl_rocr.  Use opencl_orca if opencl_rocr"
-ewarn "doesn't work."
+ewarn "You need PCI atomics to use ROCr.  Disable the rocr USE flag for legacy"
+ewarn "OpenCL support."
 ewarn
 	fi
 }
@@ -686,4 +680,7 @@ einfo
 einfo "To see the material browser, the renderer must be set to Radeon ProRender"
 einfo "It is located at the bottom of the materials property tab."
 einfo
+ewarn
+ewarn "For multislot HIP/ROCm, ensure the symlink to /opt/rocm exists."
+ewarn
 }
