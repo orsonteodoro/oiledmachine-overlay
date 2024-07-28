@@ -71,7 +71,7 @@ FFMPEG_IUSE+="
 "
 
 # FAIL!  Distro only has >= 14.
-LLVM_COMPAT=( {15..11} ) # Upstream says 13 inclusive is max
+LLVM_COMPAT=( 15 {13..11} ) # Upstream says 13 inclusive is max
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 LLVM_MAX_UPSTREAM=13 # (inclusive)
 
@@ -220,7 +220,6 @@ REQUIRED_USE+="
 	)
 	!rocm_5_3? (
 		!llvm_slot_15
-		!llvm_slot_14
 	)
 	!tbb? (
 		!cycles
