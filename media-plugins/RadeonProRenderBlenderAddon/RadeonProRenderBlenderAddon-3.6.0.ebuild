@@ -3,20 +3,20 @@
 
 EAPI=8
 
-LLVM_COMPAT=( {13..11} )
+LLVM_COMPAT=( 15 )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-# LLVM versions supported:
-# =media-gfx/blender-9999 (4.2.0 alpha) :: 17 16 15 ( not supported in this series )
-# =media-gfx/blender-3.6* :: 16 15 14 13 12 11      ( not supported in this series )
+# LLVM versions supported by Blender:
+# =media-gfx/blender-9999 (4.2.0 alpha) :: 17 16 15
+# =media-gfx/blender-3.6* :: 16 15 14 13 12 11
 # =media-gfx/blender-3.5* :: 13 12 11
 # =media-gfx/blender-3.4* :: 13 12 11
 # =media-gfx/blender-3.3* :: 13 12 11
 
-BLENDER_SLOTS="
+BLENDER_SLOTS=(
 	blender-3_3 # python3_11 .. python3_10
 	blender-3_4 # python3_11 .. python3_10
 	blender-3_5 # python3_11 .. python3_10
-"
+)
 CONFIGURATION="release"
 # Ceiling values based on python compatibility matching the particular Blender
 # version
@@ -34,20 +34,10 @@ PYTHON_COMPAT=( "python3_11" )
 HIPBIN_COMMIT="1fc712e1e5912db2a732bbe046691523e64fd93c"
 HIPBIN_DF="RadeonProRenderSDKKernels-${HIPBIN_COMMIT:0:7}.tar.gz"
 ROCM_SLOTS=(
-#	rocm_5_4 # Disabled to avoid multiple LLVMs loaded bug
-#	rocm_5_3 # Disabled to avoid multiple LLVMs loaded bug
-#	rocm_5_2 # Disabled to avoid multiple LLVMs loaded bug
-#	rocm_5_1 # Disabled to avoid multiple LLVMs loaded bug
-	rocm_4_5
-	rocm_4_3
+	rocm_5_3
 )
 declare -A ROCM_TO_LLVM_SLOT=(
-#	["rocm_5_4"]="15" # Disabled to avoid multiple LLVMs loaded bug
-#	["rocm_5_3"]="15" # Disabled to avoid multiple LLVMs loaded bug
-#	["rocm_5_2"]="14" # Disabled to avoid multiple LLVMs loaded bug
-#	["rocm_5_1"]="14" # Disabled to avoid multiple LLVMs loaded bug
-	["rocm_4_5"]="13"
-	["rocm_4_3"]="13"
+	["rocm_5_3"]="15"
 )
 RPIPSDK_COMMIT="76068b7ca29aa8a7f29f65475f334981f0dd5e53"
 RPIPSDK_DF="RadeonImageFilter-${RPIPSDK_COMMIT:0:7}.tar.gz"
@@ -141,11 +131,11 @@ LICENSE="
 RESTRICT="mirror strip"
 SLOT="0/${CONFIGURATION}"
 IUSE+="
-${BLENDER_SLOTS}
+${BLENDER_SLOTS[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 ${VIDEO_CARDS}
-denoiser hip intel-ocl +matlib +opencl rocr -systemwide +vulkan
+denoiser +hip intel-ocl +matlib +opencl rocr +vulkan
 "
 gen_rocm_required_use() {
 	local s
@@ -158,11 +148,9 @@ gen_rocm_required_use() {
 		"
 	done
 }
-# Systemwide is preferred but currently doesn't work but did in the past in <2.0
 REQUIRED_USE+="
 	$(gen_rocm_required_use)
 	${PYTHON_REQUIRED_USE}
-	!systemwide
 	|| (
 		hip
 		opencl
@@ -186,7 +174,7 @@ REQUIRED_USE+="
 		!video_cards_radeonsi
 	)
 	|| (
-		${BLENDER_SLOTS}
+		${BLENDER_SLOTS[@]}
 	)
 "
 # Assumes U 18.04.03 minimal
@@ -265,27 +253,6 @@ BLENDER_RDEPEND="
 	)
 "
 
- # Disabled to avoid multiple LLVMs loaded bug
-RDEPEND_DISABLED="
-				rocr? (
-					rocm_5_4? (
-						dev-libs/rocm-opencl-runtime:5.4
-						sys-libs/llvm-roc-libomp:5.4
-					)
-					rocm_5_3? (
-						dev-libs/rocm-opencl-runtime:5.3
-						sys-libs/llvm-roc-libomp:5.3
-					)
-					rocm_5_2? (
-						dev-libs/rocm-opencl-runtime:5.2
-						sys-libs/llvm-roc-libomp:5.2
-					)
-					rocm_5_1? (
-						dev-libs/rocm-opencl-runtime:5.1
-						sys-libs/llvm-roc-libomp:5.1
-					)
-				)
-"
 RDEPEND+="
 	${BLENDER_RDEPEND}
 	${CDEPEND_NOT_LISTED}
@@ -294,8 +261,8 @@ RDEPEND+="
 	>=media-libs/openimageio-1.6
 	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
 	hip? (
-		dev-util/hip
-		media-libs/HIPRT
+		dev-util/hip:5.3
+		media-libs/HIPRT:5.3
 	)
 	matlib? (
 		media-plugins/RadeonProRenderMaterialLibrary
@@ -310,13 +277,9 @@ RDEPEND+="
 					dev-libs/amdgpu-pro-opencl
 				)
 				rocr? (
-					rocm_4_5? (
-						dev-libs/rocm-opencl-runtime:4.5
-						sys-libs/llvm-roc-libomp:4.5
-					)
-					rocm_4_3? (
-						dev-libs/rocm-opencl-runtime:4.3
-						sys-libs/llvm-roc-libomp:4.3
+					rocm_5_3? (
+						dev-libs/rocm-opencl-runtime:5.3
+						sys-libs/llvm-roc-libomp:5.3
 					)
 				)
 			)
@@ -421,9 +384,9 @@ pkg_setup() {
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 
-	use blender-3_3 && export LLVM_MAX_SLOT=13
-	use blender-3_4 && export LLVM_MAX_SLOT=13
-	use blender-3_5 && export LLVM_MAX_SLOT=13
+	use blender-3_3 && export LLVM_MAX_SLOT=15
+	use blender-3_4 && export LLVM_MAX_SLOT=15
+	use blender-3_5 && export LLVM_MAX_SLOT=15
 
 	llvm_pkg_setup
 	check_iomp5
@@ -532,52 +495,20 @@ src_configure() {
 src_compile() {
 	cd "${S}/BlenderPkg" || die
 	./build_linux.sh || die
-
-	if use systemwide ; then
-		local head_commit
-		# BlenderPkg/.build/rprblender-3.1.0-0422bc6-linux.zip
-		pushd "${S}" || die
-			head_commit=$(git rev-parse HEAD)
-		popd
-		D_FN="${PLUGIN_NAME}-${PV}-${head_commit:0:7}-linux.zip"
-
-		D_RPRUP="${WORKDIR}/rpr-unpacked"
-		mkdir -p "${D_RPRUP}" || die
-		pushd "${D_RPRUP}" || die
-			unpack "${S}/BlenderPkg/.build/${D_FN}"
-		popd
-	fi
 }
 
-src_install_systemwide_plugin_unpacked() {
-	cd "${S}" || die
-	local d
-	DIRS=$(find /usr/share/blender/ -maxdepth 1 | tail -n +2)
-
-	local old_dotglob=$(shopt dotglob | cut -f 2)
-	shopt -s dotglob # copy hidden files
-
-	for d_ver in ${DIRS} ; do
-		d_ver=$(basename ${d_ver})
-		if ver_test ${MIN_BLENDER_PV} -le ${d_ver} \
-			&& ver_test ${d_ver} -lt ${MAX_BLENDER_PV} ; then
-			einfo "Blender ${d_ver} is supported.  Installing..."
-			d_addon_base="/usr/share/blender/${d_ver}/scripts/addons_contrib"
-			ed_addon_base="${ED}/${d_addon_base}"
-			d_install="${d_addon_base}/${PLUGIN_NAME}"
-			ed_install="${ED}/${d_install}"
-			dodir "${d_install}"
-			cp -a "${D_RPRUP}/"* "${ed_install}" || die
-		else
-			einfo "Blender ${d_ver} not supported.  Skipping..."
+is_version_supported() {
+	local folder_version="${1}"
+	local slot
+	for slot in ${BLENDER_SLOTS[@]} ; do
+		local supported_version="${slot/blender-}"
+		supported_version="${supported_version/_/.}"
+		local _folder_version=$(ver_cut 1-2 "${folder_version}")
+		if ver_test "${_folder_version}" -eq "${supported_version}" ; then
+			return 0
 		fi
 	done
-
-	if [[ "${old_dotglob}" == "on" ]] ; then
-		shopt -s dotglob
-	else
-		shopt -u dotglob
-	fi
+	return 1
 }
 
 src_install_packed_shared() {
@@ -613,19 +544,15 @@ eerror "Failed to build ${p}.  Make sure your dependencies are installed first."
 }
 
 src_install() {
-	if use systemwide ; then
-		src_install_systemwide_plugin_unpacked
-	else
-		src_install_packed_shared
-	fi
+	src_install_packed_shared
 	cd "${S}" || die
-	docinto licenses/RadeonProRenderSharedComponents
+	docinto "licenses/RadeonProRenderSharedComponents"
 	dodoc "${S_RPRSC}/License.txt"
-	docinto licenses/RadeonProRenderSDK
+	docinto "licenses/RadeonProRenderSDK"
 	dodoc "${S_RPRSDK}/license.txt"
-	docinto licenses/RadeonImageFilter
+	docinto "licenses/RadeonImageFilter"
 	dodoc "${S_RPIPSDK}/License.md"
-	docinto licenses/RadeonProRenderBlenderAddon
+	docinto "licenses/RadeonProRenderBlenderAddon"
 	dodoc "${S}/LICENSE.txt"
 	dodoc "${S}/src/${PLUGIN_NAME}/EULA.html"
 	verify_addon
@@ -637,29 +564,6 @@ ewarn "You must enable the addon manually."
 ewarn
 
 	# The denoiser may need libiomp.so.5 from sys-libs/libomp.
-
-	if use systemwide ; then
-einfo
-einfo "It is listed under: Edit > Preferences > Add-ons > Community >"
-einfo "Render: Radeon ProRender"
-einfo
-	else
-einfo
-einfo "You must install this product manually through blender per user."
-einfo "The addon can be found in /usr/share/${PN}/addon.zip"
-einfo
-einfo "The addon can be uninstalled/installed at:"
-einfo "Edit > Preferences > Add-ons > Community > Install button at top right >"
-einfo "navigate to /usr/share/${PN}/addon.zip"
-einfo
-einfo "The addon can be found and check enabled on after installation by going to:"
-einfo "Edit > Preferences > Add-ons > Community > Render: Radeon ProRender"
-einfo
-ewarn
-ewarn "You must completely uninstall and reinstall the addon through the same"
-ewarn "menu for changes or upgrades to take affect."
-ewarn
-	fi
 
 einfo
 einfo "You may need to clear the caches.  Run:"
