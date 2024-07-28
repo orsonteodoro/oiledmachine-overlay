@@ -60,7 +60,8 @@
       Checks for proper OpenCL support for pre-Vega 10
     </flag>
     <flag name="rocr">
-      Use the ROCm OpenCL Compatible Runtime (ROCr) for OpenCL support.
+      Use ROCr backend provided by <pkg>dev-libs/rocm-opencl-runtime</pkg> for
+      OpenCL support.  Otherwise, fallback to the legacy backend.
 
       Enable for Vega10 (gfx900) or newer GPUs with PCIe atomics.
 
