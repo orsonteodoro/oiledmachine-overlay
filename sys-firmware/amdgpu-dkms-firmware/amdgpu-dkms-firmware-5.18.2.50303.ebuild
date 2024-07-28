@@ -170,7 +170,7 @@ gen_ma() {
 	echo ${MA[@]}
 }
 
-pkg_preinst() {
+_pre_gen_radeon_list() {
 	cd "${S}" || die
 
 	local MA=(
@@ -253,6 +253,7 @@ src_install() {
 	done
 #	touch "${ED}/lib/firmware/amdgpu-${MY_PV2%-*}/vanilla-kernel-module-series-${KERNEL_PV}"
 	gen_scripts
+	_pre_gen_radeon_list
 }
 
 pkg_postinst() {
