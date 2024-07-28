@@ -164,7 +164,6 @@ HIPRT_RAYTRACE_TARGETS=(
 	gfx1102
 )
 ROCM_SLOTS=(
-	rocm_5_7
 	rocm_5_5
 )
 
@@ -279,7 +278,6 @@ REQUIRED_USE+="
 		)
 		|| (
 			rocm_5_5
-			rocm_5_7
 		)
 	)
 	hydra? (
@@ -384,10 +382,6 @@ REQUIRED_USE+="
 		^^ (
 			${ROCM_SLOTS[@]}
 		)
-	)
-	rocm_5_7? (
-		llvm_slot_17
-		rocm
 	)
 	rocm_5_5? (
 		llvm_slot_16
@@ -728,9 +722,6 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		rocm_5_5? (
 			=media-libs/hiprt-2.3*:5.5[rocm]
 		)
-		rocm_5_7? (
-			=media-libs/hiprt-2.3*:5.7[rocm]
-		)
 		media-libs/hiprt:=
 	)
 	jack? (
@@ -881,11 +872,6 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		media-libs/harfbuzz[truetype]
 	)
 	rocm? (
-		rocm_5_7? (
-			~dev-libs/rocm-opencl-runtime-${HIP_5_7_VERSION}:5.7
-			~dev-util/hip-${HIP_5_7_VERSION}:5.7[rocm]
-			~sys-libs/llvm-roc-libomp-${HIP_5_7_VERSION}:5.7
-		)
 		rocm_5_5? (
 			~dev-libs/rocm-opencl-runtime-${HIP_5_5_VERSION}:5.5
 			~dev-util/hip-${HIP_5_5_VERSION}:5.5[rocm]
@@ -1005,9 +991,6 @@ BDEPEND+="
 		sys-devel/gettext
 	)
 	rocm? (
-		rocm_5_7? (
-			~sys-devel/llvm-roc-${HIP_5_7_VERSION}:5.7
-		)
 		rocm_5_5? (
 			~sys-devel/llvm-roc-${HIP_5_5_VERSION}:5.5
 		)
@@ -1131,28 +1114,14 @@ ewarn
 	fi
 
 	if use rocm ; then
-# It is assumed that the referenced versions are tested upstream.
-# Unlisted versions are assumed to break.
-		if use rocm_5_7 ; then
-			export LLVM_SLOT=17
-			export ROCM_SLOT="5.7"
-			export ROCM_VERSION="${HIP_5_7_VERSION}"
-		elif use rocm_5_5 ; then
+		if use rocm_5_5 ; then
 			export LLVM_SLOT=16
 			export ROCM_SLOT="5.5"
 			export ROCM_VERSION="${HIP_5_5_VERSION}"
-		elif use llvm-13 || use llvm-12 ; then
-eerror
-eerror "ROCm < 5.1 is not supported on the distro."
-eerror "Disable the rocm USE flag."
-eerror
-			die
 		else
+# See https://github.com/blender/blender/blob/v4.1.1/build_files/config/pipeline_config.yaml
 eerror
-eerror "No matching llvm/hip pair."
-eerror
-eerror "llvm-17 can only pair with hip ${HIP_5_7_VERSION}"
-eerror "llvm-16 can only pair with hip ${HIP_5_5_VERSION}"
+eerror "Only rocm_5_5 supported."
 eerror
 			die
 		fi

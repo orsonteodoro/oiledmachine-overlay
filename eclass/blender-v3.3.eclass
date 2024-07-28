@@ -71,7 +71,7 @@ FFMPEG_IUSE+="
 "
 
 # FAIL!  Distro only has >= 14.
-LLVM_COMPAT=( {13..11} ) # Upstream says 13 inclusive is max
+LLVM_COMPAT=( {15..11} ) # Upstream says 13 inclusive is max
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 LLVM_MAX_UPSTREAM=13 # (inclusive)
 
@@ -151,16 +151,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 ROCM_SLOTS=(
-	rocm_4_5
-	rocm_4_3
-	rocm_4_2
-	rocm_4_1
-	rocm_4_0
-	rocm_3_10
-	rocm_3_9
-	rocm_3_8
-	rocm_3_7
-	rocm_3_5
+	rocm_5_3
 )
 
 IUSE+="
@@ -226,6 +217,10 @@ REQUIRED_USE+="
 		!cycles
 		!nls
 		!openvdb
+	)
+	!rocm_5_3? (
+		!llvm_slot_15
+		!llvm_slot_14
 	)
 	!tbb? (
 		!cycles
@@ -369,44 +364,8 @@ REQUIRED_USE+="
 			${ROCM_SLOTS[@]}
 		)
 	)
-	rocm_4_5? (
-		llvm_slot_13
-		rocm
-	)
-	rocm_4_3? (
-		llvm_slot_13
-		rocm
-	)
-	rocm_4_2? (
-		llvm_slot_12
-		rocm
-	)
-	rocm_4_1? (
-		llvm_slot_12
-		rocm
-	)
-	rocm_4_0? (
-		llvm_slot_12
-		rocm
-	)
-	rocm_3_10? (
-		llvm_slot_12
-		rocm
-	)
-	rocm_3_9? (
-		llvm_slot_12
-		rocm
-	)
-	rocm_3_8? (
-		llvm_slot_11
-		rocm
-	)
-	rocm_3_7? (
-		llvm_slot_11
-		rocm
-	)
-	rocm_3_5? (
-		llvm_slot_11
+	rocm_5_3? (
+		llvm_slot_15
 		rocm
 	)
 	theora? (
@@ -918,55 +877,10 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		>=media-libs/freetype-${FREETYPE_PV}[brotli,bzip2,harfbuzz,png]
 	)
 	rocm? (
-		rocm_4_5? (
-			~dev-libs/rocm-opencl-runtime-${HIP_4_5_VERSION}:4.5
-			~dev-util/hip-${HIP_4_5_VERSION}:4.5[rocm]
-			~sys-libs/llvm-roc-libomp-${HIP_4_5_VERSION}:4.5
-		)
-		rocm_4_3? (
-			~dev-libs/rocm-opencl-runtime-${HIP_4_3_VERSION}:4.3
-			~dev-util/hip-${HIP_4_3_VERSION}:4.3[rocm]
-			~sys-libs/llvm-roc-libomp-${HIP_4_3_VERSION}:4.3
-		)
-		rocm_4_2? (
-			~dev-libs/rocm-opencl-runtime-${HIP_4_2_VERSION}:4.2
-			~dev-util/hip-${HIP_4_2_VERSION}:4.2[rocm]
-			~sys-libs/llvm-roc-libomp-${HIP_4_2_VERSION}:4.2
-		)
-		rocm_4_1? (
-			~dev-libs/rocm-opencl-runtime-${HIP_4_1_VERSION}:4.1
-			~dev-util/hip-${HIP_4_1_VERSION}:4.1[rocm]
-			~sys-libs/llvm-roc-libomp-${HIP_4_1_VERSION}:4.1
-		)
-		rocm_4_0? (
-			~dev-libs/rocm-opencl-runtime-${HIP_4_0_VERSION}:4.0
-			~dev-util/hip-${HIP_4_0_VERSION}:4.0[rocm]
-			~sys-libs/llvm-roc-libomp-${HIP_4_0_VERSION}:4.0
-		)
-		rocm_3_10? (
-			~dev-libs/rocm-opencl-runtime-${HIP_3_10_VERSION}:3.10
-			~dev-util/hip-${HIP_3_10_VERSION}:3.10[rocm]
-			~sys-libs/llvm-roc-libomp-${HIP_3_10_VERSION}:3.10
-		)
-		rocm_3_9? (
-			~dev-libs/rocm-opencl-runtime-${HIP_3_9_VERSION}:3.9
-			~dev-util/hip-${HIP_3_9_VERSION}:3.9[rocm]
-			~sys-libs/llvm-roc-libomp-${HIP_3_9_VERSION}:3.9
-		)
-		rocm_3_8? (
-			~dev-libs/rocm-opencl-runtime-${HIP_3_8_VERSION}:3.8
-			~dev-util/hip-${HIP_3_8_VERSION}:3.8[rocm]
-			~sys-libs/llvm-roc-libomp-${HIP_3_8_VERSION}:3.8
-		)
-		rocm_3_7? (
-			~dev-libs/rocm-opencl-runtime-${HIP_3_7_VERSION}:3.7
-			~dev-util/hip-${HIP_3_7_VERSION}:3.7[rocm]
-			~sys-libs/llvm-roc-libomp-${HIP_3_7_VERSION}:3.7
-		)
-		rocm_3_5? (
-			~dev-libs/rocm-opencl-runtime-${HIP_3_5_VERSION}:3.5
-			~dev-util/hip-${HIP_3_5_VERSION}:3.5[rocm]
-			~sys-libs/llvm-roc-libomp-${HIP_3_5_VERSION}:3.5
+		rocm_5_3? (
+			~dev-libs/rocm-opencl-runtime-${HIP_5_3_VERSION}:5.3
+			~dev-util/hip-${HIP_5_3_VERSION}:5.3[rocm]
+			~sys-libs/llvm-roc-libomp-${HIP_5_3_VERSION}:5.3
 		)
 		dev-util/hip:=
 	)
@@ -1068,35 +982,8 @@ BDEPEND+="
 		sys-devel/gettext
 	)
 	rocm? (
-		rocm_4_5? (
-			~sys-devel/llvm-roc-${HIP_4_5_VERSION}:4.5
-		)
-		rocm_4_3? (
-			~sys-devel/llvm-roc-${HIP_4_3_VERSION}:4.3
-		)
-		rocm_4_2? (
-			~sys-devel/llvm-roc-${HIP_4_2_VERSION}:4.2
-		)
-		rocm_4_1? (
-			~sys-devel/llvm-roc-${HIP_4_1_VERSION}:4.1
-		)
-		rocm_4_0? (
-			~sys-devel/llvm-roc-${HIP_4_0_VERSION}:4.0
-		)
-		rocm_3_10? (
-			~sys-devel/llvm-roc-${HIP_3_10_VERSION}:3.10
-		)
-		rocm_3_9? (
-			~sys-devel/llvm-roc-${HIP_3_9_VERSION}:3.9
-		)
-		rocm_3_8? (
-			~sys-devel/llvm-roc-${HIP_3_8_VERSION}:3.8
-		)
-		rocm_3_7? (
-			~sys-devel/llvm-roc-${HIP_3_7_VERSION}:3.7
-		)
-		rocm_3_5? (
-			~sys-devel/llvm-roc-${HIP_3_5_VERSION}:3.5
+		rocm_5_3? (
+			~sys-devel/llvm-roc-${HIP_5_3_VERSION}:5.3
 		)
 	)
 	|| (
@@ -1225,51 +1112,14 @@ ewarn
 	fi
 
 	if use rocm ; then
-		if use rocm_4_5 ; then
-			export LLVM_SLOT=13
-			export ROCM_SLOT="4.5"
-			export ROCM_VERSION="${HIP_4_5_VERSION}"
-		elif use rocm_4_3 ; then
-			export LLVM_SLOT=13
-			export ROCM_SLOT="4.3"
-			export ROCM_VERSION="${HIP_4_3_VERSION}"
-		elif use rocm_4_2 ; then
-			export LLVM_SLOT=12
-			export ROCM_SLOT="4.2"
-			export ROCM_VERSION="${HIP_4_2_VERSION}"
-		elif use rocm_4_1 ; then
-			export LLVM_SLOT=12
-			export ROCM_SLOT="4.1"
-			export ROCM_VERSION="${HIP_4_1_VERSION}"
-		elif use rocm_4_0 ; then
-			export LLVM_SLOT=12
-			export ROCM_SLOT="4.0"
-			export ROCM_VERSION="${HIP_4_0_VERSION}"
-		elif use rocm_3_10 ; then
-			export LLVM_SLOT=12
-			export ROCM_SLOT="3.10"
-			export ROCM_VERSION="${HIP_3_10_VERSION}"
-		elif use rocm_3_9 ; then
-			export LLVM_SLOT=12
-			export ROCM_SLOT="3.9"
-			export ROCM_VERSION="${HIP_3_9_VERSION}"
-		elif use rocm_3_8 ; then
-			export LLVM_SLOT=11
-			export ROCM_SLOT="3.8"
-			export ROCM_VERSION="${HIP_3_8_VERSION}"
-		elif use rocm_3_7 ; then
-			export LLVM_SLOT=11
-			export ROCM_SLOT="3.7"
-			export ROCM_VERSION="${HIP_3_7_VERSION}"
-		elif use rocm_3_5 ; then
-			export LLVM_SLOT=11
-			export ROCM_SLOT="3.5"
-			export ROCM_VERSION="${HIP_3_5_VERSION}"
+		if use rocm_5_3 ; then
+			export LLVM_SLOT=15
+			export ROCM_SLOT="5.3"
+			export ROCM_VERSION="${HIP_5_3_VERSION}"
 		else
+# See https://github.com/blender/blender/blob/v3.3.21/build_files/config/pipeline_config.yaml
 eerror
-eerror "No matching llvm/hip pair."
-eerror
-eerror "Use the ROCm 4.5 slotted ebuilds instead."
+eerror "Only rocm_5_3 supported."
 eerror
 			die
 		fi
@@ -1330,26 +1180,8 @@ ewarn
 	fi
 	if use rocm ; then
 		local rocm_version=""
-		if use rocm_4_5 ; then
-			rocm_version="${HIP_4_5_VERSION}"
-		elif use rocm_4_3 ; then
-			rocm_version="${HIP_4_3_VERSION}"
-		elif use rocm_4_2 ; then
-			rocm_version="${HIP_4_2_VERSION}"
-		elif use rocm_4_1 ; then
-			rocm_version="${HIP_4_1_VERSION}"
-		elif use rocm_4_0 ; then
-			rocm_version="${HIP_4_0_VERSION}"
-		elif use rocm_3_10 ; then
-			rocm_version="${HIP_3_10_VERSION}"
-		elif use rocm_3_9 ; then
-			rocm_version="${HIP_3_9_VERSION}"
-		elif use rocm_3_8 ; then
-			rocm_version="${HIP_3_8_VERSION}"
-		elif use rocm_3_7 ; then
-			rocm_version="${HIP_3_7_VERSION}"
-		elif use rocm_3_5 ; then
-			rocm_version="${HIP_3_5_VERSION}"
+		if use rocm_5_3 ; then
+			rocm_version="${HIP_5_3_VERSION}"
 		fi
 
 		sed \

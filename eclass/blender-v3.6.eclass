@@ -72,7 +72,7 @@ FFMPEG_IUSE+="
 	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
 "
 
-LLVM_COMPAT=( {16..11} )
+LLVM_COMPAT=( {15..11} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 LLVM_MAX_UPSTREAM=15 # (inclusive)
 
@@ -169,7 +169,7 @@ HIPRT_RAYTRACE_TARGETS=(
 	gfx1102
 )
 ROCM_SLOTS=(
-	rocm_5_5
+	rocm_5_3
 )
 
 IUSE+="
@@ -236,9 +236,6 @@ REQUIRED_USE+="
 		!nls
 		!openvdb
 	)
-	!rocm? (
-		!llvm_slot_16
-	)
 	!tbb? (
 		!cycles
 		!elbeem
@@ -284,7 +281,7 @@ REQUIRED_USE+="
 			${HIPRT_RAYTRACE_TARGETS[@]/#/amdgpu_targets_}
 		)
 		|| (
-			rocm_5_5
+			rocm_5_3
 		)
 	)
 	materialx? (
@@ -391,8 +388,8 @@ REQUIRED_USE+="
 			${ROCM_SLOTS[@]}
 		)
 	)
-	rocm_5_5? (
-		llvm_slot_16
+	rocm_5_3? (
+		llvm_slot_15
 		rocm
 	)
 	theora? (
@@ -727,8 +724,8 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		>=dev-libs/gmp-6.2.1[cxx]
 	)
 	hiprt? (
-		rocm_5_5? (
-			=media-libs/hiprt-2.3*:5.5[rocm]
+		rocm_5_3? (
+			=media-libs/hiprt-2.3*:5.3[rocm]
 		)
 		media-libs/hiprt:=
 	)
@@ -975,10 +972,10 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		media-libs/harfbuzz[truetype]
 	)
 	rocm? (
-		rocm_5_5? (
-			~dev-libs/rocm-opencl-runtime-${HIP_5_5_VERSION}:5.5
-			~dev-util/hip-${HIP_5_5_VERSION}:5.5[rocm]
-			~sys-libs/llvm-roc-libomp-${HIP_5_5_VERSION}:5.5
+		rocm_5_3? (
+			~dev-libs/rocm-opencl-runtime-${HIP_5_3_VERSION}:5.3
+			~dev-util/hip-${HIP_5_3_VERSION}:5.3[rocm]
+			~sys-libs/llvm-roc-libomp-${HIP_5_3_VERSION}:5.3
 		)
 		dev-util/hip:=
 	)
@@ -1094,8 +1091,8 @@ BDEPEND+="
 		sys-devel/gettext
 	)
 	rocm? (
-		rocm_5_5? (
-			~sys-devel/llvm-roc-${HIP_5_5_VERSION}:5.5
+		rocm_5_3? (
+			~sys-devel/llvm-roc-${HIP_5_3_VERSION}:5.3
 		)
 	)
 	|| (
@@ -1215,23 +1212,14 @@ ewarn
 	fi
 
 	if use rocm ; then
-# It is assumed that the referenced versions are tested upstream.
-# Unlisted versions are assumed to break.
-		if use rocm_5_5 ; then
-			export LLVM_SLOT=16
-			export ROCM_SLOT="5.5"
-			export ROCM_VERSION="${HIP_5_5_VERSION}"
-		elif use llvm-13 || use llvm-12 ; then
-eerror
-eerror "ROCm < 5.1 is not supported on the distro."
-eerror "Disable the rocm USE flag."
-eerror
-			die
+		if use rocm_5_3 ; then
+			export LLVM_SLOT=15
+			export ROCM_SLOT="5.3"
+			export ROCM_VERSION="${HIP_5_3_VERSION}"
 		else
+# See https://github.com/blender/blender/blob/v3.6.14/build_files/config/pipeline_config.yaml
 eerror
-eerror "No matching llvm/hip pair."
-eerror
-eerror "llvm-16 can only pair with hip ${HIP_5_5_VERSION}"
+eerror "Only rocm_5_3 supported."
 eerror
 			die
 		fi
@@ -1325,8 +1313,8 @@ ewarn
 	fi
 	if use rocm ; then
 		local rocm_version=""
-		if use rocm_5_5 ; then
-			rocm_version="${HIP_5_5_VERSION}"
+		if use rocm_5_3 ; then
+			rocm_version="${HIP_5_3_VERSION}"
 		fi
 
 		sed \
