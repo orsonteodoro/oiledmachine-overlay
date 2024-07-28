@@ -315,7 +315,7 @@ LICENSE+="
 # BSD - blender-3.6.14/intern/cycles/doc/license/BSD-3-Clause-license.txt
 # BSD-2 - blender-3.6.14/doc/license/BSD-2-Clause-license.txt
 # BSD custom - blender-3.6.14/extern/quadriflow/LICENSE.txt
-# CC-BY-4.0 - The splash screen is CC-BY stated in https://www.blender.org/download/demo-files/ )
+# CC-BY-4.0 - The splash screen chosen license can be found in https://www.blender.org/download/demo-files/ )
 # CC0-1.0 - blender-3.6.14/release/datafiles/studiolights/world/license.txt
 # custom MIT - blender-3.6.14/extern/fmtlib/LICENSE.rst
 # GPL-2 - blender-3.6.14/release/license/GPL-license.txt
