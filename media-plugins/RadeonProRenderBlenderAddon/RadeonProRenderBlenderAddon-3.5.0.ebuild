@@ -181,22 +181,6 @@ CDEPEND_NOT_LISTED="
 	dev-lang/python[xml]
 	sys-devel/gcc[openmp]
 "
-DEPEND_NOT_LISTED=""
-# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.5.0/README-LNX.md#build-requirements
-DEPEND+="
-	${CDEPEND_NOT_LISTED}
-	${DEPEND_NOT_LISTED}
-	${PYTHON_DEPS}
-	$(python_gen_cond_dep '
-		dev-python/cffi:=[${PYTHON_USEDEP}]
-		dev-python/distro[${PYTHON_USEDEP}]
-		dev-python/imageio[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
-	')
-	dev-util/opencl-headers
-	sys-apps/pciutils
-	x11-libs/libdrm
-"
 # These are mentioned in the command line output and downloaded after install.
 # They are not really used on linux since athena_send is disabled on Linux but
 # may crash if not installed.
@@ -348,6 +332,22 @@ RDEPEND+="
 			)
 		)
 	)
+"
+DEPEND_NOT_LISTED=""
+# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.5.0/README-LNX.md#build-requirements
+DEPEND+="
+	${CDEPEND_NOT_LISTED}
+	${DEPEND_NOT_LISTED}
+	${PYTHON_DEPS}
+	$(python_gen_cond_dep '
+		dev-python/cffi:=[${PYTHON_USEDEP}]
+		dev-python/distro[${PYTHON_USEDEP}]
+		dev-python/imageio[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+	')
+	dev-util/opencl-headers
+	sys-apps/pciutils
+	x11-libs/libdrm
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
@@ -667,3 +667,4 @@ einfo "To see the material browser, the renderer must be set to Radeon ProRender
 einfo "It is located at the bottom of the materials property tab."
 einfo
 }
+

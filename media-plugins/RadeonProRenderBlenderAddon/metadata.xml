@@ -47,6 +47,9 @@
     <flag name="denoiser">
       Checks for dynamic libraries that may be required to use the denoiser.
     </flag>
+    <flag name="hip">
+      Build GPU kernels using HIP to avoid buggy OpenCL implementations.
+    </flag>
     <flag name="intel-ocl">
       Checks for OpenCL 1.2 support for Intel CPUs that may be required.
     </flag>

@@ -145,7 +145,7 @@ ${BLENDER_SLOTS}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 ${VIDEO_CARDS}
-denoiser intel-ocl +matlib +opencl rocr -systemwide +vulkan
+denoiser hip intel-ocl +matlib +opencl rocr -systemwide +vulkan
 "
 gen_rocm_required_use() {
 	local s
@@ -163,6 +163,10 @@ REQUIRED_USE+="
 	$(gen_rocm_required_use)
 	${PYTHON_REQUIRED_USE}
 	!systemwide
+	^^ (
+		hip
+		opencl
+	)
 	blender-3_3? (
 		python_single_target_python3_11
 	)
@@ -189,22 +193,6 @@ REQUIRED_USE+="
 CDEPEND_NOT_LISTED="
 	dev-lang/python[xml]
 	sys-devel/gcc[openmp]
-"
-DEPEND_NOT_LISTED=""
-# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.6.0/README-LNX.md#build-requirements
-DEPEND+="
-	${CDEPEND_NOT_LISTED}
-	${DEPEND_NOT_LISTED}
-	${PYTHON_DEPS}
-	$(python_gen_cond_dep '
-		dev-python/cffi:=[${PYTHON_USEDEP}]
-		dev-python/distro[${PYTHON_USEDEP}]
-		dev-python/imageio[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
-	')
-	dev-util/opencl-headers
-	sys-apps/pciutils
-	x11-libs/libdrm
 "
 # These are mentioned in the command line output and downloaded after install.
 # They are not really used on linux since athena_send is disabled on Linux but
@@ -298,7 +286,6 @@ RDEPEND_DISABLED="
 					)
 				)
 "
-
 RDEPEND+="
 	${BLENDER_RDEPEND}
 	${CDEPEND_NOT_LISTED}
@@ -306,6 +293,10 @@ RDEPEND+="
 	>=media-libs/embree-2.12.0
 	>=media-libs/openimageio-1.6
 	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
+	hip? (
+		dev-util/hip:=
+		media-libs/HIPRT:=
+	)
 	matlib? (
 		media-plugins/RadeonProRenderMaterialLibrary
 	)
@@ -334,6 +325,9 @@ RDEPEND+="
 			)
 			video_cards_nvidia? (
 				>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_OCL_1_2}
+				hip? (
+					dev-util/hip[cuda]
+				)
 			)
 			video_cards_radeonsi? (
 				dev-libs/amdgpu-pro-opencl
@@ -360,6 +354,22 @@ RDEPEND+="
 			)
 		)
 	)
+"
+DEPEND_NOT_LISTED=""
+# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.6.0/README-LNX.md#build-requirements
+DEPEND+="
+	${CDEPEND_NOT_LISTED}
+	${DEPEND_NOT_LISTED}
+	${PYTHON_DEPS}
+	$(python_gen_cond_dep '
+		dev-python/cffi:=[${PYTHON_USEDEP}]
+		dev-python/distro[${PYTHON_USEDEP}]
+		dev-python/imageio[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+	')
+	dev-util/opencl-headers
+	sys-apps/pciutils
+	x11-libs/libdrm
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
@@ -680,7 +690,21 @@ einfo
 einfo "To see the material browser, the renderer must be set to Radeon ProRender"
 einfo "It is located at the bottom of the materials property tab."
 einfo
+	if use hip ; then
 ewarn
-ewarn "For multislot HIP/ROCm, ensure the symlink from /opt/rocm-<ver> to /opt/rocm exists."
+ewarn "For multislot HIP/ROCm, ensure the following symlink exist:"
 ewarn
+ewarn "  ln -s /opt/rocm-<ver> /opt/rocm"
+ewarn
+ewarn "For HIP-cuda, the following symlink may be required"
+ewarn
+ewarn "  ln -s /opt/cuda /usr/local/cuda"
+ewarn
+ewarn "You must manually disable \"Use OpenCL\" in the Blender User Setting for HIP support."
+ewarn
+	else
+ewarn
+ewarn "You must manually enable \"Use OpenCL\" in the Blender User Setting."
+ewarn
+	fi
 }
