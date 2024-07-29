@@ -14,6 +14,6 @@ ROCM_SLOTS=(
 declare -A ROCM_PV_TO_LLVM_SLOT=(
 	["${HIP_5_4_VERSION}"]="15"
 )
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="${ROCM_SLOT}/${HIP_5_4_VERSION}"
 
 inherit icl-magma-v2_7
