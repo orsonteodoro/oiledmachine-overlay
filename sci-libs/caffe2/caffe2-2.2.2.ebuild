@@ -191,7 +191,7 @@ gen_ffmpeg_depends() {
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-cpp/glog-0.5.0
-	>=dev-libs/cpuinfo-2023-06-13
+	>=dev-libs/cpuinfo-2023.06.13
 	>=dev-libs/protobuf-3.13.1:0/3.21
 	>=dev-libs/pthreadpool-2023.08.28
 	>=sci-libs/onnx-1.15.0_rc2
