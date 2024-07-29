@@ -223,7 +223,7 @@ LICENSE+="
 		CC0-1.0
 		custom
 		GPL-3
-		LGPL-2.1
+		LGPL-2.1+
 		libpng
 		MPL-2.0
 		Old-MIT

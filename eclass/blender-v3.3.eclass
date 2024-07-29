@@ -215,7 +215,7 @@ LICENSE+="
 		custom
 		public-domain
 		GPL-3
-		LGPL-2.1
+		LGPL-2.1+
 		LGPL-3
 		libpng
 		MPL-2.0
