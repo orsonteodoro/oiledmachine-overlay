@@ -132,6 +132,7 @@ src_prepare() {
 }
 
 src_configure() {
+	addpredict "/dev/kfd"
 	rocm_set_default_hipcc
 
 	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
