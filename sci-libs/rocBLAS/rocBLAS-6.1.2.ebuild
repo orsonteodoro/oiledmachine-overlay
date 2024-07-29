@@ -81,7 +81,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark cuda +rocm test ebuild-revision-18
+benchmark cuda +rocm test ebuild-revision-19
 "
 gen_rocm_required_use() {
 	local x
@@ -227,9 +227,9 @@ src_configure() {
 			-DTensile_CPU_THREADS=$(makeopts_jobs)
 			-DTensile_LIBRARY_FORMAT="msgpack"
 			-DTensile_LOGIC="asm_full"
-			-DTensile_ROOT="${ESYSROOT}${EROCM_PATH}/share/Tensile"
+			-DTensile_ROOT="${ESYSROOT}${EROCM_PATH}/lib/${EPYTHON}/site-packages/Tensile"
 			-DTensile_TENSILE_ROOT="${ESYSROOT}${EROCM_PATH}"
-			-DTensile_TEST_LOCAL_PATH="${ESYSROOT}${EROCM_PATH}/share/Tensile"
+			-DTensile_TEST_LOCAL_PATH="${ESYSROOT}${EROCM_PATH}/lib/${EPYTHON}/site-packages/Tensile"
 		)
 	fi
 	rocm_set_default_hipcc

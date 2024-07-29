@@ -53,7 +53,7 @@ LICENSE="
 # Not compatible with recent versions of pytest \
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="+client +opencl +openmp ebuild-revision-13"
+IUSE="+client +opencl +openmp ebuild-revision-16"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -199,10 +199,9 @@ python_install() {
 }
 
 src_install() {
-	export EPREFIX="${EPREFIX}/${EROCM_PATH}"
 	distutils-r1_src_install
 	cd "${PN}" || die
-	insinto "${EROCM_PATH}/share/${PN}"
+	insinto "${EROCM_PATH}/lib/${EPYTHON}/site-packages/${PN}"
 	doins -r \
 		"Configs" \
 		"CustomKernels" \

@@ -49,7 +49,7 @@ LICENSE="
 # Not compatible with recent versions of pytest \
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="client +opencl +openmp ebuild-revision-14"
+IUSE="client +opencl +openmp ebuild-revision-16"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -90,6 +90,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-use-ninja.patch"
 	"${FILESDIR}/${PN}-5.7.1-avoid-hipcc-bat.patch"
 	"${FILESDIR}/${PN}-4.5.2-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-4.5.2-fix-msgpack-c-linking.patch"
 )
 
 pkg_setup() {
@@ -184,10 +185,9 @@ python_install() {
 }
 
 src_install() {
-	export EPREFIX="${EPREFIX}/${EROCM_PATH}"
 	distutils-r1_src_install
 	cd "${PN}" || die
-	insinto "${EROCM_PATH}/share/${PN}"
+	insinto "${EROCM_PATH}/lib/${EPYTHON}/site-packages/${PN}"
 	doins -r \
 		"Configs" \
 		"CustomKernels" \
