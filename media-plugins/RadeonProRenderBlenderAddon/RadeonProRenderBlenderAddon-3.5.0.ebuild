@@ -265,6 +265,13 @@ gen_amdgpu_opencl_required_use() {
 				)
 			"
 		fi
+		if [[ "${g}" =~ ^("gfx9"|"gfx10"|"gfx11") ]] ; then
+			echo "
+				amdgpu_targets_${g}? (
+					rocr
+				)
+			"
+		fi
 	done
 }
 gen_amdgpu_required_use() {
@@ -279,13 +286,15 @@ gen_amdgpu_required_use() {
 }
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
-	$(gen_amdgpu_opencl_required_use)
 	$(gen_amdgpu_required_use)
 	blender-3_3? (
 		python_single_target_python3_11
 	)
 	blender-3_4? (
 		python_single_target_python3_11
+	)
+	opencl? (
+		$(gen_amdgpu_opencl_required_use)
 	)
 	rocm_5_3? (
 		llvm_slot_15
