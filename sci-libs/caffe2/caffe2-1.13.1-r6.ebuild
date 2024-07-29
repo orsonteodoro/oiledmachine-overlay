@@ -11,6 +11,7 @@ EAPI=8
 # https://github.com/pytorch/pytorch/blob/v1.13.1/.circleci/docker/common/install_rocm_magma.sh#L9 for magma
 
 AMDGPU_TARGETS_COMPAT=(
+# Based on rocm_agent_enumerator
 	gfx700
 	gfx701
 	gfx801
@@ -35,6 +36,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1035
 )
 AMDGPU_TARGETS_UNTESTED=(
+# Based on https://github.com/pytorch/pytorch/blob/v1.13.1/.jenkins/pytorch/build.sh
 	gfx700
 	gfx701
 	gfx801
