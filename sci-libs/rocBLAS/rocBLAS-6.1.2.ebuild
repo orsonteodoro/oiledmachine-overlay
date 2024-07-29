@@ -116,6 +116,9 @@ RDEPEND="
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
+	rocm? (
+		~dev-util/Tensile-${PV}:${ROCM_SLOT}[${TENSILE_6_1_AMDGPU_USEDEP}]
+	)
 "
 DEPEND="
 	${RDEPEND}

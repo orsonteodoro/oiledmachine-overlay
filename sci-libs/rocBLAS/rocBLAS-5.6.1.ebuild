@@ -89,8 +89,11 @@ RDEPEND="
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
+	rocm? (
+		~dev-util/Tensile-${PV}:${ROCM_SLOT}[${TENSILE_5_6_AMDGPU_USEDEP}]
+	)
 "
-ADEPEND="
+DEPEND="
 	${RDEPEND}
 	test? (
 		dev-cpp/gtest
@@ -98,7 +101,7 @@ ADEPEND="
 		virtual/blas
 	)
 "
-ABDEPEND="
+BDEPEND="
 	${PYTHON_DEPS}
 	${HIPCC_DEPEND}
 	$(python_gen_cond_dep '
