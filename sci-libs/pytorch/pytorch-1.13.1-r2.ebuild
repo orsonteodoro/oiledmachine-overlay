@@ -9,9 +9,52 @@ EAPI=8
 # https://github.com/pytorch/pytorch/blob/v2.0.1/RELEASE.md?plain=1#L45
 
 AMDGPU_TARGETS_COMPAT=(
+	gfx700
+	gfx701
+	gfx801
+	gfx802
+	gfx803
 	gfx900
+	gfx902
+	gfx904
 	gfx906
 	gfx908
+	gfx90a
+	gfx90c
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1013
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1033
+	gfx1034
+	gfx1035
+)
+AMDGPU_TARGETS_UNTESTED=(
+	gfx700
+	gfx701
+	gfx801
+	gfx802
+	gfx803
+	gfx900
+	gfx902
+	gfx904
+#	gfx906
+	gfx908
+	gfx90a
+	gfx90c
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1013
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1033
+	gfx1034
+	gfx1035
 )
 CUDA_TARGETS_COMPAT=(
 # Builds for all cards
@@ -204,6 +247,20 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-1.13.0-setup.patch"
 	"${FILESDIR}/${P}-emptyso.patch"
 )
+
+warn_untested_gpu() {
+	local gpu
+	for gpu in ${AMDGPU_TARGETS_UNTESTED[@]} ; do
+		if use "amdgpu_targets_${gpu}" ; then
+ewarn "${gpu} is not CI tested upstream."
+		fi
+	done
+}
+
+pkg_setup() {
+	warn_untested_gpu
+	python-single-r1_pkg_setup
+}
 
 src_prepare() {
 	eapply ${_PATCHES[@]}

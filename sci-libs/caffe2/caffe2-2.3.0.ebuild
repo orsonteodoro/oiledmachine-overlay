@@ -11,9 +11,52 @@ EAPI=8
 # https://github.com/pytorch/pytorch/blob/v2.3.0/.ci/docker/common/install_rocm_magma.sh#L10 for magma
 
 AMDGPU_TARGETS_COMPAT=(
+	gfx700
+	gfx701
+	gfx801
+	gfx802
+	gfx803
 	gfx900
+	gfx902
+	gfx904
 	gfx906
 	gfx908
+	gfx90a
+	gfx90c
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1013
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1033
+	gfx1034
+	gfx1035
+)
+AMDGPU_TARGETS_UNTESTED=(
+	gfx700
+	gfx701
+	gfx801
+	gfx802
+	gfx803
+	gfx900
+	gfx902
+	gfx904
+#	gfx906
+	gfx908
+	gfx90a
+	gfx90c
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1013
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1033
+	gfx1034
+	gfx1035
 )
 # CUDA 12 not supported yet: https://github.com/pytorch/pytorch/issues/91122
 CUDA_PV="11.8" # 11.7 minimum required
@@ -322,7 +365,17 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.3.0-rocm-fix-std-cpp17.patch"
 )
 
+warn_untested_gpu() {
+	local gpu
+	for gpu in ${AMDGPU_TARGETS_UNTESTED[@]} ; do
+		if use "amdgpu_targets_${gpu}" ; then
+ewarn "${gpu} is not CI tested upstream."
+		fi
+	done
+}
+
 pkg_setup() {
+	warn_untested_gpu
 	if use rocm_6_0 ; then
 		LLVM_SLOT="17"
 		LLVM_MAX_SLOT="${LLVM_SLOT}"
