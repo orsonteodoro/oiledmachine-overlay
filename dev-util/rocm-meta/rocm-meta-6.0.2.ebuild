@@ -27,6 +27,7 @@ IUSE="
 	aocc
 	composable-kernel
 	flang
+	hip-dev
 	hipfort
 	hipsparselt
 	migraphx
@@ -48,6 +49,18 @@ RDEPEND="
 	!dev-util/amd-rocm-meta
 	aocc? (
 		~sys-devel/llvm-roc-alt-${PV}:${ROCM_SLOT}
+	)
+	hip-dev? (
+		>=dev-lang/perl-5.0
+		sys-apps/file
+		sys-libs/glibc
+		dev-perl/URI-Encode
+		dev-perl/File-BaseDir
+		dev-perl/File-Copy-Recursive
+		dev-perl/File-Listing
+		dev-perl/File-Which
+		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
+		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	)
 	composable-kernel? (
 		~sci-libs/composable_kernel-${PV}:${ROCM_SLOT}$(get_rocm_usedep COMPOSABLE_KERNEL)

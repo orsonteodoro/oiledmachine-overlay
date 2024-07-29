@@ -24,6 +24,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	aocc
 	flang
+	hip-dev
 	hipfort
 	hiprand
 	migraphx
@@ -45,6 +46,18 @@ RDEPEND="
 	!dev-util/amd-rocm-meta
 	aocc? (
 		~sys-devel/llvm-roc-alt-${PV}:${ROCM_SLOT}
+	)
+	hip-dev? (
+		>=dev-lang/perl-5.0
+		sys-apps/file
+		sys-libs/glibc
+		dev-perl/URI-Encode
+		dev-perl/File-BaseDir
+		dev-perl/File-Copy-Recursive
+		dev-perl/File-Listing
+		dev-perl/File-Which
+		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
+		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	)
 	hipfort? (
 		~dev-util/hipfort-${PV}:${ROCM_SLOT}

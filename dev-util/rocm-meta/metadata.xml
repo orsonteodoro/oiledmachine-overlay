@@ -27,6 +27,9 @@
     <flag name="atmi">
       Install a library for task and memory management for CPUs and/or GPUs.
     </flag>
+    <flag name="hip-dev">
+      Install the HIP development packages.
+    </flag>
     <flag name="composable-kernel">
       Install the Composable Kernel package.
     </flag>
