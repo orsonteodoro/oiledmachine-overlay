@@ -34,7 +34,9 @@ LICENSE="
 # The distro's MIT license template does not have All Rights Reserved.
 RESTRICT="
 	binchecks
+	bindist
 	fetch
+	mirror
 	strip
 "
 SLOT="${LLVM_MAX_SLOT}/${PV}"
