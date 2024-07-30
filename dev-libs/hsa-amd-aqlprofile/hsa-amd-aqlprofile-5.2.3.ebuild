@@ -36,7 +36,7 @@ LICENSE="
 	hsa-amd-aqlprofile-DISCLAIMER
 	hsa-amd-aqlprofile-LICENSE
 "
-RESTRICT="binchecks strip fetch"
+RESTRICT="binchecks bindist fetch mirror strip"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="deny-install skip-install ebuild-revision-2"
 RDEPEND="
