@@ -387,11 +387,11 @@ eerror "${ARCH} is not supported"
 ewarn
 ewarn "To use/download/install this the following steps are required:"
 ewarn
-ewarn "1.  Read and agree to the Google Terms of Service at https://policies.google.com/terms"
+ewarn "1.  Navigate to ${HOMEPAGE} for a general overview."
+ewarn "2.  Read and agree to the Google Terms of Service at https://policies.google.com/terms"
 ewarn "    Read and agree to the Google Maps/Google Earth Additional Terms of Service at https://www.google.com/help/terms_maps/"
 ewarn "    Read and agree to the Privacy Policy at https://policies.google.com/privacy?hl=en"
 ewarn "    Read and agree to the third party licenses and copyright notices at https://htmlpreview.github.io/?https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/licenses/google-earth-pro-7.3.6"
-ewarn "2.  Navigate to ${HOMEPAGE} for a general overview."
 ewarn "3.  You will eventually land on ${DOWNLOAD_PAGE_URI}"
 ewarn "4.  Download ${src_fn}"
 ewarn "5.  Rename the file as ${dest_fn}"
