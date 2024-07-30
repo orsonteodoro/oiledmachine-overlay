@@ -82,22 +82,22 @@ einfo
 einfo "(1) Read https://rocm.docs.amd.com/projects/install-on-linux/en/latest/how-to/amdgpu-install.html for the installer frontend and repo access."
 einfo "    Read https://amdgpu-install.readthedocs.io/en/latest/install-prereq.html#downloading-the-installer-package for repo access."
 einfo "    Read https://www.amd.com/en/legal/eula/amd-software-eula.html for the EULA."
-einfo "(2)"
+einfo "(2) Download these files and place them into ${distdir}."
 	if use abi_x86_64 ; then
-einfo "     Navigate to ${DOWNLOAD_FOLDER_URI_1} and download ${DOWNLOAD_FILE_AMD64_1} and place into ${distdir}"
+einfo "     Navigate to ${DOWNLOAD_FOLDER_URI_1} and download ${DOWNLOAD_FILE_AMD64_1}"
 	fi
 	if use abi_x86_32 ; then
-einfo "     Navigate to ${DOWNLOAD_FOLDER_URI_1} and download ${DOWNLOAD_FILE_I386_1} and place into ${distdir}"
+einfo "     Navigate to ${DOWNLOAD_FOLDER_URI_1} and download ${DOWNLOAD_FILE_I386_1}"
 	fi
 	if ! use system-libdrm ; then
 		if use abi_x86_64 ; then
-einfo "     Navigate to ${DOWNLOAD_FOLDER_URI_2} and download ${DOWNLOAD_FILE_AMD64_2} and place into ${distdir}"
+einfo "     Navigate to ${DOWNLOAD_FOLDER_URI_2} and download ${DOWNLOAD_FILE_AMD64_2}"
 		fi
 		if use abi_x86_32 ; then
-einfo "     Navigate to ${DOWNLOAD_FOLDER_URI_2} and download ${DOWNLOAD_FILE_I386_2} and place into ${distdir}"
+einfo "     Navigate to ${DOWNLOAD_FOLDER_URI_2} and download ${DOWNLOAD_FILE_I386_2}"
 		fi
 	fi
-einfo "(3)"
+einfo "(3) Do the following to sanitize permissions"
 	if use abi_x86_64 ; then
 einfo "     chmod 664 ${distdir}/${DOWNLOAD_FILE_AMD64_1}"
 einfo "     chown portage:portage ${distdir}/${DOWNLOAD_FILE_AMD64_1}"
@@ -116,7 +116,9 @@ einfo "     chmod 664 ${distdir}/${DOWNLOAD_FILE_I386_2}"
 einfo "     chown portage:portage ${distdir}/${DOWNLOAD_FILE_I386_2}"
 		fi
 	fi
-einfo "(4) mkdir -p /usr/portage/package.license && echo \"${CATEGORY}/${PN} opencl-legacy-amdgpu-pro-icd-LICENSE\" >> /usr/portage/package.license/${PN}"
+einfo "(4) To tell the package manager you accepted these licenses, do"
+einfo "    mkdir -p /usr/portage/package.license"
+einfo "    echo \"${CATEGORY}/${PN} opencl-legacy-amdgpu-pro-icd-LICENSE\" >> /usr/portage/package.license/${PN}"
 	if ! use system-libdrm ; then
 einfo "    echo \"${CATEGORY}/${PN} all-rights-reserved\" >> /usr/portage/package.license/${PN}"
 	fi
