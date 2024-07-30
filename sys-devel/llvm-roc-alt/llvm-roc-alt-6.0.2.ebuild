@@ -81,12 +81,17 @@ ewarn
 ewarn "In order to obtain/install this package you must:"
 ewarn
 ewarn "(1) Read https://github.com/ROCm/ROCm/blob/rocm-6.1.2/docs/about/license.md?plain=1#L84 for an overview and general guidance."
-ewarn "(2) Read and agree to both ${MY_PN} EULA and DISCLAIMER"
-ewarn "(3) Navigate to ${DOWNLOAD_FOLDER_URI} and download ${DOWNLOAD_FILE} and place the file into ${distdir}"
-ewarn "(4) chmod 664 ${distdir}/${DOWNLOAD_FILE}"
-ewarn "(5) chown portage:portage ${distdir}/${DOWNLOAD_FILE}"
-ewarn "(6) mkdir -p /etc/portage/package.license && echo \"sys-devel/${PN} ${MY_PN}-EULA ${MY_PN}-DISCLAIMER all-rights-reserved\" >> /etc/portage/package.license/${PN}"
-ewarn "(7) Re-emerge the package"
+ewarn "    Read and accept the EULA at https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/licenses/rocm-llvm-alt-EULA"
+ewarn "    Read and accept the DISCLAIMER at https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/licenses/rocm-llvm-alt-DISCLAIMER"
+# The tarball's EULA is slightly different from the 2024 version on https://www.amd.com/en/legal/eula/amd-software-eula.html
+ewarn "(2) Navigate to ${DOWNLOAD_FOLDER_URI} and download ${DOWNLOAD_FILE} and place the file into ${distdir}"
+ewarn "(3) Sanitize the permissions of the downloaded file:"
+ewarn "    chmod 664 ${distdir}/${DOWNLOAD_FILE}"
+ewarn "    chown portage:portage ${distdir}/${DOWNLOAD_FILE}"
+ewarn "(4) Tell the package manager that you accepted the licenses:"
+ewarn "    mkdir -p /etc/portage/package.license"
+ewarn "    echo \"sys-devel/${PN} ${MY_PN}-EULA ${MY_PN}-DISCLAIMER all-rights-reserved\" >> /etc/portage/package.license/${PN}"
+ewarn "(5) Re-emerge the package"
 ewarn
 }
 
