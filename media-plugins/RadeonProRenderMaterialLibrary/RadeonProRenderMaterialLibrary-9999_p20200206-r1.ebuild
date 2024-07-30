@@ -41,6 +41,7 @@ einfo "The following steps must be preformed to download:"
 einfo
 einfo "(1) Read the third party licenses at https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.6.10/src/rprblender/EULA.html"
 einfo "    Read and accept the EULA at https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/licenses/AMD-RADEON-PRORENDER-BLENDER-EULA"
+# The AMD-RADEON-PRORENDER-BLENDER-EULA is likely the 2020/2021 edition.  The 2024 version from https://www.amd.com/en/legal/eula/amd-software-eula.html is slightly different.
 einfo "(2) Navigate to ${HOMEPAGE_DL} and download ${S_FN}"
 einfo "(3) Rename file as ${D_FN}"
 einfo "(4) Place the downloaded file into ${distdir}"
