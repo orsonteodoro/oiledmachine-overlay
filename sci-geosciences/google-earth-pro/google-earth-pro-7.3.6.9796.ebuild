@@ -63,6 +63,7 @@ LICENSE="
 	google-earth-pro-7.3.6
 	google-maps-google-earth-additional-terms-of-service
 	google-privacy-policy
+	google-terms-of-service
 	GPL-2
 	IJG
 	Info-ZIP
@@ -384,9 +385,10 @@ eerror "${ARCH} is not supported"
 		die
 	fi
 ewarn
-ewarn "To download/install this the following steps are required:"
+ewarn "To use/download/install this the following steps are required:"
 ewarn
-ewarn "1.  Read and agree to the Terms of Service at https://www.google.com/help/terms_maps/"
+ewarn "1.  Read and agree to the Google Terms of Service at https://policies.google.com/terms"
+ewarn "    Read and agree to the Google Maps/Google Earth Additional Terms of Service at https://www.google.com/help/terms_maps/"
 ewarn "    Read and agree to the Privacy Policy at https://policies.google.com/privacy?hl=en"
 ewarn "    Read and agree to the third party licenses and copyright notices at https://htmlpreview.github.io/?https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/licenses/google-earth-pro-7.3.6"
 ewarn "2.  Navigate to ${HOMEPAGE} for a general overview."
@@ -399,7 +401,7 @@ ewarn "    chmod 664 ${distdir}/${dest_fn}"
 ewarn "    chown portage:portage ${distdir}/${dest_fn}"
 ewarn "8.  Tell the package manager that you accepted the licenses:"
 ewarn "    mkdir -p /etc/portage/package.license"
-ewarn "    echo \"${CATEGORY}/${PN} google-earth-pro-7.3.6 google-maps-google-earth-additional-terms-of-service google-privacy-policy\" >> /etc/portage/package.license/${PN}"
+ewarn "    echo \"${CATEGORY}/${PN} google-earth-pro-7.3.6 google-terms-of-service google-maps-google-earth-additional-terms-of-service google-privacy-policy\" >> /etc/portage/package.license/${PN}"
 ewarn "9.  Re-emerge ebuild."
 ewarn
 }
