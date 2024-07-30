@@ -159,7 +159,7 @@ LICENSE="
 	)
 	MIT
 "
-RESTRICT="binchecks fetch mirror strip test"
+RESTRICT="binchecks bindist fetch mirror strip test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 gen_rom_iuse() {
 	local f
