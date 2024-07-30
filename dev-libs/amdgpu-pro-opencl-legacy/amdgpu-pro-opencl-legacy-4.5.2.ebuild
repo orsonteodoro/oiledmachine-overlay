@@ -49,6 +49,7 @@ LICENSE="
 		MIT
 	)
 "
+RESTRICT="binchecks fetch strip"
 SLOT="0/${PV}"
 IUSE+=" system-libdrm ebuild-revision-0"
 RDEPEND="
