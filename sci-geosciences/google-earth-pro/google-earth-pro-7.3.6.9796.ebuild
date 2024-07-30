@@ -114,7 +114,7 @@ LICENSE="
 # WebKit BSD-2, BSD (ANGLE), LGPL-2.1 (for WebCore), plus possibly some
 #   custom code
 # More custom licenses and copyright notices are located in Google-Earth-Pro-7.3.6
-RESTRICT="fetch strip" # fetch for more control and determinism
+RESTRICT="binchecks bindist mirror fetch strip" # fetch for more control and determinism
 SLOT="0"
 IUSE="
 ${LANGS[@]/#/l10n_}
