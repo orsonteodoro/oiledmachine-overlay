@@ -27,8 +27,8 @@ IUSE="
 	flang
 	hip-dev
 	hipfort
-	hiptensor
 	hiprand
+	hiptensor
 	migraphx
 	mivisionx
 	rdc
