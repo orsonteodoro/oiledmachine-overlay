@@ -71,10 +71,13 @@ ewarn "(1) Go to ${HOMEPAGE}"
 ewarn "(2) Click the link to ${DOWNLOADED_FILE}"
 ewarn "(3) Read and accept the ${PN^^} EULA"
 ewarn "(4) Place ${DOWNLOADED_FILE} into ${distdir}"
-ewarn "(5) chmod 644 ${distdir}/${DOWNLOADED_FILE}"
-ewarn "(6) chown portage:portage ${distdir}/${DOWNLOADED_FILE}"
-ewarn "(7) mkdir -p /etc/portage/package.license && echo \"sys-devel/aocc ${PN^^}-${PV%.*}-EULA all-rights-reserved\" >> /etc/portage/package.license/${PN}"
-ewarn "(8) Re-emerge the package"
+ewarn "(5) Sanitize the permissions of the downloaded file:"
+ewarn "    chmod 644 ${distdir}/${DOWNLOADED_FILE}"
+ewarn "    chown portage:portage ${distdir}/${DOWNLOADED_FILE}"
+ewarn "(6) Tell the package manager you accepted the license:"
+ewarn "    mkdir -p /etc/portage/package.license"
+ewarn "    echo \"sys-devel/aocc ${PN^^}-${PV%.*}-EULA all-rights-reserved\" >> /etc/portage/package.license/${PN}"
+ewarn "(7) Re-emerge the package"
 ewarn
 }
 
