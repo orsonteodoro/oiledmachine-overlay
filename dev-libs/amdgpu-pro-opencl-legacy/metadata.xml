@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <use>
+    <flag name="system-libdrm">
+      Install bundled libdrm to prevent undocumented bug.
+    </flag>
+  </use>
+</pkgmetadata>
