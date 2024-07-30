@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# TODO package:  nccl
+
 # See https://github.com/ROCm/ROCm/blob/rocm-5.7.1/docs/release/gpu_os_support.md
 AMDGPU_TARGETS_COMPAT=(
 	gfx906
@@ -24,9 +26,10 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	cuda
 	hip-dev
+	hip-libs
 	hipfort
-	hiptensor
 	hiprand
+	hiptensor
 	migraphx
 	mivisionx
 	rocm
@@ -46,11 +49,34 @@ RDEPEND="
 		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
 		~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	)
+	hip-libs? (
+		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+		~sci-libs/hipSOLVER-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+		~sci-libs/hipSPARSE-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+		cuda? (
+			~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}[cuda]
+			~sci-libs/hipCUB-${PV}:${ROCM_SLOT}[cuda]
+			~sci-libs/hipFFT-${PV}:${ROCM_SLOT}[cuda]
+			~sci-libs/miopen-${PV}:${ROCM_SLOT}[opencl]
+		)
+		rocm? (
+			~dev-libs/rccl-${PV}:${ROCM_SLOT}$(get_rocm_usedep RCCL)
+			~sci-libs/hipCUB-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPCUB)
+			~sci-libs/hipFFT-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPFFT)
+			~sci-libs/miopen-${PV}:${ROCM_SLOT}$(get_rocm_usedep MIOPEN)
+			amdgpu_targets_gfx90a? (
+				~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPBLASLT)
+			)
+		)
+	)
 	hipfort? (
 		~dev-util/hipfort-${PV}:${ROCM_SLOT}
 	)
 	hiprand? (
 		~sci-libs/hipRAND-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	)
+	hiptensor? (
+		~sci-libs/hipTensor-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	)
 	migraphx? (
 		cuda? (
@@ -67,8 +93,5 @@ RDEPEND="
 		rocm? (
 			~sci-libs/MIVisionX-${PV}:${ROCM_SLOT}[rocm]
 		)
-	)
-	hiptensor? (
-		~sci-libs/hiptensor-${PV}:${ROCM_SLOT}[rocm]
 	)
 "
