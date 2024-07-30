@@ -101,9 +101,9 @@ RDEPEND="
 		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 		~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 
+		~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 		~dev-util/HIPIFY-${PV}:${ROCM_SLOT}
-		~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 		~dev-util/rocprofiler-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCPROFILER)
 		~dev-util/roctracer-${PV}:${ROCM_SLOT}
@@ -125,7 +125,7 @@ RDEPEND="
 		~sci-libs/hipRAND-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipSOLVER-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipSPARSE-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/hiptensor-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/hipTensor-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/miopen-${PV}:${ROCM_SLOT}$(get_rocm_usedep MIOPEN)
 		~sci-libs/rocALUTION-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCALUTION)
 		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCBLAS)

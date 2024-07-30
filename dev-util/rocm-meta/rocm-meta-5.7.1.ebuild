@@ -70,6 +70,9 @@ RDEPEND="
 	hiprand? (
 		~sci-libs/hipRAND-${PV}:${ROCM_SLOT}[rocm]
 	)
+	hiptensor? (
+		~sci-libs/hipTensor-${PV}:${ROCM_SLOT}[rocm]
+	)
 	flang? (
 		~dev-lang/rocm-flang-${PV}:${ROCM_SLOT}
 	)
@@ -98,9 +101,9 @@ RDEPEND="
 		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 		~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 
+		~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 		~dev-util/HIPIFY-${PV}:${ROCM_SLOT}
-		~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 		~dev-util/rocprofiler-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCPROFILER)
 		~dev-util/roctracer-${PV}:${ROCM_SLOT}
@@ -139,9 +142,6 @@ RDEPEND="
 		~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
-	)
-	hiptensor? (
-		~sci-libs/hiptensor-${PV}:${ROCM_SLOT}[rocm]
 	)
 "
 
