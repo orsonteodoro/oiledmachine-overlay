@@ -60,10 +60,10 @@ LICENSE="
 	FIPL-1.0
 	FTL
 	GEOTRANS
-	google-earth-pro-7.3.6
-	google-maps-google-earth-additional-terms-of-service
-	google-privacy-policy
-	google-terms-of-service
+	Google-Earth-Pro-7.3.6
+	Google-Maps-Google-Earth-Additional-Terms-of-Service
+	Google-Privacy-Policy
+	Google-Terms-of-Service
 	GPL-2
 	IJG
 	Info-ZIP
@@ -103,7 +103,7 @@ LICENSE="
 	!system-qt5? (
 		BSD
 		BSD-2
-		google-earth-pro-7.3.4
+		Google-Earth-Pro-7.3.6
 		LGPL-2.1
 	)
 	!system-spnav? (
@@ -113,7 +113,7 @@ LICENSE="
 # libvpx is BSD.  libvpx is referenced in ffmpeg and possibly internally
 # WebKit BSD-2, BSD (ANGLE), LGPL-2.1 (for WebCore), plus possibly some
 #   custom code
-# More custom licenses and copyright notices are located in google-earth-pro-7.3.4
+# More custom licenses and copyright notices are located in Google-Earth-Pro-7.3.6
 RESTRICT="fetch strip" # fetch for more control and determinism
 SLOT="0"
 IUSE="
@@ -401,7 +401,7 @@ ewarn "    chmod 664 ${distdir}/${dest_fn}"
 ewarn "    chown portage:portage ${distdir}/${dest_fn}"
 ewarn "8.  Tell the package manager that you accepted the licenses:"
 ewarn "    mkdir -p /etc/portage/package.license"
-ewarn "    echo \"${CATEGORY}/${PN} google-earth-pro-7.3.6 google-terms-of-service google-maps-google-earth-additional-terms-of-service google-privacy-policy\" >> /etc/portage/package.license/${PN}"
+ewarn "    echo \"${CATEGORY}/${PN} Google-Earth-Pro-7.3.6 Google-Terms-of-Service Google-Maps-Google-Earth-Additional-Terms-of-Service Google-Privacy-Policy\" >> /etc/portage/package.license/${PN}"
 ewarn "9.  Re-emerge ebuild."
 ewarn
 }
