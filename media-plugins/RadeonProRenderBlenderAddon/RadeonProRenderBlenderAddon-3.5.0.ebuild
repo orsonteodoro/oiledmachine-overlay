@@ -408,7 +408,7 @@ RDEPEND+="
 		|| (
 			video_cards_amdgpu? (
 				!rocr? (
-					dev-libs/amdgpu-pro-opencl
+					dev-libs/amdgpu-pro-opencl-legacy
 				)
 				rocr? (
 					rocm_5_3? (

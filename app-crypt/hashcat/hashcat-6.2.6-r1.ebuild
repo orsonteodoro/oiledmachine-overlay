@@ -86,7 +86,6 @@ IUSE="
 $(rocm_gen_iuse)
 brain
 intel-opencl-cpu-runtime
-orca
 pocl
 rocm
 video_cards_amdgpu
@@ -96,17 +95,8 @@ video_cards_nvidia
 REQUIRED_USE="
 	$(rocm_gen_rocm_required_use1)
 	$(rocm_gen_rocm_required_use2)
-	orca? (
-		video_cards_amdgpu
-	)
 	rocm? (
 		video_cards_amdgpu
-	)
-	video_cards_amdgpu? (
-		|| (
-			orca
-			rocm
-		)
 	)
 	^^ (
 		intel-opencl-cpu-runtime
@@ -134,8 +124,8 @@ DEPEND="
 		dev-libs/pocl
 	)
 	video_cards_amdgpu? (
-		orca? (
-			dev-libs/amdgpu-pro-opencl
+		!rocm? (
+			dev-libs/amdgpu-pro-opencl-legacy
 		)
 		rocm? (
 			$(gen_depend_rocm)
