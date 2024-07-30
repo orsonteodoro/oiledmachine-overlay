@@ -48,7 +48,7 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE+="
 	${ROCM_SLOTS[@]}
-	cuda rocm opencl sycl ebuild-revision-0
+	cuda doc rocm opencl sycl ebuild-revision-0
 "
 REQUIRED_USE="
 	rocm? (
@@ -340,6 +340,10 @@ src_install() {
 				fi
 				if [[ -e "${BUILD_DIR}/mixbench-${x3}" ]] ; then
 					doexe "${BUILD_DIR}/mixbench-${x3}"
+				fi
+				if use doc && [[ -e "README.md" ]] ; then
+					docinto "readmes/mixbench-${x2}"
+					dodoc "README.md"
 				fi
 			popd >/dev/null 2>&1 || die
 		fi

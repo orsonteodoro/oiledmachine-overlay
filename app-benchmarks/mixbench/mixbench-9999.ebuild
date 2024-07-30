@@ -49,7 +49,7 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE+="
 	${ROCM_SLOTS[@]}
-	cuda rocm opencl openmp sycl ebuild-revision-0
+	cuda doc rocm opencl openmp sycl ebuild-revision-0
 "
 REQUIRED_USE="
 	rocm? (
@@ -352,6 +352,10 @@ src_install() {
 				local BUILD_DIR="${S}_${x2}_build"
 				exeinto "/usr/bin"
 				doexe "${BUILD_DIR}/mixbench-${x3}"
+				if use doc && [[ -e "README.md" ]] ; then
+					docinto "readmes/mixbench-${x2}"
+					dodoc "README.md"
+				fi
 			popd >/dev/null 2>&1 || die
 		fi
 	done
