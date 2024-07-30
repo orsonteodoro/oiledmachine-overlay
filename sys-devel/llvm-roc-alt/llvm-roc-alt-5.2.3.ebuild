@@ -44,7 +44,9 @@ LICENSE="
 # The distro's MIT license template does not have All Rights Reserved.
 RESTRICT="
 	binchecks
+	bindist
 	fetch
+	mirror
 	strip
 "
 SLOT="${ROCM_SLOT}/${PV}"
