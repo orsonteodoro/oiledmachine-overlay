@@ -17,7 +17,7 @@ inherit rocm
 
 KEYWORDS="~amd64"
 
-DESCRIPTION="ROCm metapackage"
+DESCRIPTION="HIP metapackage"
 HOMEPAGE=""
 LICENSE="metapackage"
 SLOT="${ROCM_SLOT}/${PV}"
