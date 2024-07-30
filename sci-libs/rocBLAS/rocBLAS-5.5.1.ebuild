@@ -208,6 +208,17 @@ src_configure() {
 		)
 	fi
 	rocm_set_default_hipcc
+
+# Error with HIP-Clang (llvm-roc):
+#1.	<eof> parser at end of file
+#2.	Code generation
+#3.	Running pass 'CallGraph Pass Manager' on module '/var/tmp/portage/sci-libs/rocBLAS-5.5.1/work/rocBLAS-rocm-5.5.1/library/src/blas_ex/rocblas_geam_ex_kernels.cpp'.
+#4.	Running pass 'SI optimize exec mask operations pre-RA' on function '@_ZN12_GLOBAL__N_120geam_min_plus_kernelIf15HIP_vector_typeIfLj2EEfLi8ELi32ELi64ELi256ELi4ELi64ELi4ELi64ELi4ELc78ELc84ELb0ELb0ELb1EPKfKS4_KPfEEviiiT16_PT17_ilSA_ilS8_SA_ilPT18_ili26rocblas_geam_ex_operation_'
+# #0 0x00007f3b4a9c84b1 llvm::sys::PrintStackTrace(llvm::raw_ostream&, int) (/opt/rocm-5.5.1/llvm/bin/../lib/libLLVMSupport.so.16git+0x1c84b1)
+	replace-flags '-O1' '-O2' # Fix for above error
+	replace-flags '-O0' '-O2'
+	replace-flags '-Os' '-O2'
+
 	rocm_src_configure
 }
 
