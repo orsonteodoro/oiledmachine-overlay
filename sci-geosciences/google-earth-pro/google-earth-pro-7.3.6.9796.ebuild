@@ -61,6 +61,8 @@ LICENSE="
 	FTL
 	GEOTRANS
 	google-earth-pro-7.3.6
+	google-maps-google-earth-additional-terms-of-service
+	google-privacy-policy
 	GPL-2
 	IJG
 	Info-ZIP
@@ -397,7 +399,7 @@ ewarn "    chmod 664 ${distdir}/${dest_fn}"
 ewarn "    chown portage:portage ${distdir}/${dest_fn}"
 ewarn "8.  Tell the package manager that you accepted the licenses:"
 ewarn "    mkdir -p /etc/portage/package.license"
-ewarn "    echo \"${CATEGORY}/${PN} google-earth-pro-7.3.6\" >> /etc/portage/package.license/${PN}"
+ewarn "    echo \"${CATEGORY}/${PN} google-earth-pro-7.3.6 google-maps-google-earth-additional-terms-of-service google-privacy-policy\" >> /etc/portage/package.license/${PN}"
 ewarn "9.  Re-emerge ebuild."
 ewarn
 }
