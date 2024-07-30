@@ -52,7 +52,7 @@ RDEPEND="
 		~sci-libs/hipRAND-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	)
 	migraphx? (
-		cpu? (
+		cuda? (
 			~sci-libs/MIGraphX-${PV}:${ROCM_SLOT}[cpu]
 		)
 		rocm? (
