@@ -16,7 +16,7 @@ DESCRIPTION="A small OpenCL benchmark program to measure peak GPU/CPU performanc
 HOMEPAGE="https://github.com/ProjectPhysX/OpenCL-Benchmark"
 LICENSE="ZLIB"
 SLOT="0"
-IUSE=""
+IUSE="ebuild-revision-1"
 RDEPEND="
 	virtual/opencl
 "
@@ -32,7 +32,7 @@ PATCHES=(
 )
 
 src_configure() {
-	addpredict "/dev/dri/card0"
+	:
 }
 
 src_compile() {
@@ -41,6 +41,6 @@ src_compile() {
 
 src_install() {
 	dobin "bin/${MY_PN}"
-	docinto "/usr/share/${PN}/licenses"
-	doins "LICENSE.md"
+	docinto "licenses"
+	dodoc "LICENSE.md"
 }
