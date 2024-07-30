@@ -68,12 +68,13 @@ ewarn
 ewarn "In order to obtain/install this package you must:"
 ewarn
 ewarn "(1) Go to ${HOMEPAGE}"
-ewarn "(2) Read and agree to the ${PN^^} EULA"
-ewarn "(3) Download ${SRC_URI} and place into ${distdir}"
-ewarn "(4) chmod 644 ${distdir}/${DOWNLOADED_FILE}"
-ewarn "(5) chown portage:portage ${distdir}/${DOWNLOADED_FILE}"
-ewarn "(6) mkdir -p /etc/portage/package.license && echo \"sys-devel/aocc ${PN^^}-${PV%.*}-EULA all-rights-reserved\" >> /etc/portage/package.license/${PN}"
-ewarn "(7) Re-emerge the package"
+ewarn "(2) Click the link to ${DOWNLOADED_FILE}"
+ewarn "(3) Read and accept the ${PN^^} EULA"
+ewarn "(4) Place ${DOWNLOADED_FILE} into ${distdir}"
+ewarn "(5) chmod 644 ${distdir}/${DOWNLOADED_FILE}"
+ewarn "(6) chown portage:portage ${distdir}/${DOWNLOADED_FILE}"
+ewarn "(7) mkdir -p /etc/portage/package.license && echo \"sys-devel/aocc ${PN^^}-${PV%.*}-EULA all-rights-reserved\" >> /etc/portage/package.license/${PN}"
+ewarn "(8) Re-emerge the package"
 ewarn
 }
 
