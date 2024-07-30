@@ -117,7 +117,7 @@ einfo "     chmod 664 ${distdir}/${DOWNLOAD_FILE_I386_2}"
 einfo "     chown portage:portage ${distdir}/${DOWNLOAD_FILE_I386_2}"
 		fi
 	fi
-einfo "(4) mkdir -p /usr/portage/package.license && echo \"${CATEGORY}/${PN} opencl-legacy-amdgpu-pro-icd-LICENSE\" >> /usr/portage/package.license/${PN}"
+einfo "(4) mkdir -p /usr/portage/package.license && echo \"${CATEGORY}/${PN} opencl-legacy-amdgpu-pro-icd-LICENSE all-rights-reserved\" >> /usr/portage/package.license/${PN}"
 einfo "(5) Re-emerge the package."
 einfo
 }
