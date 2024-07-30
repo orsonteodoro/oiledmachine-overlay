@@ -29,11 +29,15 @@ S="${WORKDIR}"
 SRC_URI="
 	abi_x86_64? (
 		${DOWNLOAD_FILE_AMD64_1}
-		${DOWNLOAD_FILE_AMD64_2}
+		!system-libdrm? (
+			${DOWNLOAD_FILE_AMD64_2}
+		)
 	)
 	abi_x86_32? (
 		${DOWNLOAD_FILE_I386_1}
-		${DOWNLOAD_FILE_I386_2}
+		!system-libdrm? (
+			${DOWNLOAD_FILE_I386_2}
+		)
 	)
 "
 
