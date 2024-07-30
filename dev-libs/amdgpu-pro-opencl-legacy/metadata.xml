@@ -3,7 +3,7 @@
 <pkgmetadata>
   <use>
     <flag name="system-libdrm">
-      Install bundled libdrm to prevent undocumented bug.
+      Disable to install bundled libdrm to prevent undocumented bug.
     </flag>
   </use>
 </pkgmetadata>
