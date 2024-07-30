@@ -56,11 +56,14 @@ einfo
 einfo "Due to EULA restrictions.  You must manually download."
 einfo
 einfo "(1) Read https://github.com/ROCm/ROCm/blob/docs/6.1.2/docs/about/license.md?plain=1#L87 for the overview and general guidance."
-einfo "(2) Navigate to ${DOWNLOAD_FOLDER_URI} and download ${DOWNLOAD_FILE} and place into ${distdir}"
-einfo "(3) chmod 664 ${distdir}/${DOWNLOAD_FILE}"
-einfo "(4) chown portage:portage ${distdir}/${DOWNLOAD_FILE}"
-einfo "(5) mkdir -p /usr/portage/package.license && echo \"${CATEGORY}/${PN} ${PN}-EULA ${PN}-DISCLAIMER ${PN}-LICENSE\" >> /usr/portage/package.license/${PN}"
-einfo "(6) Re-emerge the package."
+einfo "(2) Navigate to ${DOWNLOAD_FOLDER_URI} and download ${DOWNLOAD_FILE} and place it into ${distdir}"
+einfo "(3) Sanitize the file permissions of the downloaded files:"
+einfo "    chmod 664 ${distdir}/${DOWNLOAD_FILE}"
+einfo "    chown portage:portage ${distdir}/${DOWNLOAD_FILE}"
+einfo "(4) Do the following to tell the package manager you accept the licenses:"
+einfo "    mkdir -p /usr/portage/package.license"
+einfo "    echo \"${CATEGORY}/${PN} ${PN}-EULA ${PN}-DISCLAIMER ${PN}-LICENSE\" >> /usr/portage/package.license/${PN}"
+einfo "(5) Re-emerge the package."
 einfo
 }
 
