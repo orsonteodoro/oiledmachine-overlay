@@ -29,7 +29,7 @@ LICENSE="
 	AMD-RADEON-PRORENDER-BLENDER-EULA
 	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES
 "
-RESTRICT="fetch strip"
+RESTRICT="binchecks bindist fetch mirror strip"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND="media-plugins/RadeonProRenderBlenderAddon"
 
