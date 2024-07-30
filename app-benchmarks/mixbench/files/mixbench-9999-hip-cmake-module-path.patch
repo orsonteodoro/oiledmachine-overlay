@@ -1,0 +1,13 @@
+diff '--color=auto' -urp mixbench-9999.orig/mixbench-hip/CMakeLists.txt mixbench-9999/mixbench-hip/CMakeLists.txt
+--- mixbench-9999.orig/mixbench-hip/CMakeLists.txt	2024-07-30 01:45:13.603118394 -0700
++++ mixbench-9999/mixbench-hip/CMakeLists.txt	2024-07-30 01:45:43.110632641 -0700
+@@ -1,5 +1,7 @@
+ cmake_minimum_required(VERSION 3.10)
+ 
++list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
++
+ if(NOT DEFINED ENV{HIP_PATH})
+     set(ENV{HIP_PATH} "/opt/rocm-@ROCM_VERSION@/hip")
+ endif()
+Only in mixbench-9999/mixbench-hip: CMakeLists.txt.orig
+Only in mixbench-9999/mixbench-hip: CMakeLists.txt.rej

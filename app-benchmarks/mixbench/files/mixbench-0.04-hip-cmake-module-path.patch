@@ -1,0 +1,11 @@
+diff '--color=auto' -urp mixbench-0.04.orig/mixbench-hip/CMakeLists.txt mixbench-0.04/mixbench-hip/CMakeLists.txt
+--- mixbench-0.04.orig/mixbench-hip/CMakeLists.txt	2024-07-30 01:38:35.949645902 -0700
++++ mixbench-0.04/mixbench-hip/CMakeLists.txt	2024-07-30 01:41:09.147143988 -0700
+@@ -1,5 +1,7 @@
+ cmake_minimum_required(VERSION 2.8.3)
+ 
++list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
++
+ if(NOT DEFINED HIP_PATH)
+     if(NOT DEFINED ENV{HIP_PATH})
+         set(HIP_PATH "/opt/rocm-5.7.1/hip" CACHE PATH "Path to which HIP has been installed")

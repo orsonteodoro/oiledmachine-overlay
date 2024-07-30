@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild from the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Environment variables
+
+  MIXBENCH_SYCL_TARGETS - AOT targets for the SYCL build.  The default is
+  nvptx64-nvidia-cuda.  See [1] for possibilities.
+
+  Footnotes
+
+  [1] https://github.com/intel/llvm/blob/nightly-2024-07-29/sycl/doc/UsersManual.md?plain=1#L33
+
+  -->
+  <use>
+    <flag name="cuda">
+      Build/install the CUDA® version for benchmarking NVIDIA® GPUs.
+    </name>
+    <flag name="opencl">
+      Build/install the OpenCL version for CPU/GPU benchmarking.
+    </name>
+    <flag name="openmp">
+      Build/install the OpenMP version for CPU benchmarking.
+    </name>
+    <flag name="rocm">
+      Build/install the HIP ROCm™ version for benchmarking AMD® GPUs.
+    </name>
+    <flag name="sycl">
+      Build/install the SYCL version for benchmarking GPUs.
+    </name>
+  </use>
+</pkgmetadata>

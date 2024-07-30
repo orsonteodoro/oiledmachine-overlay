@@ -1,0 +1,28 @@
+diff '--color=auto' -urp mixbench-0.04.orig/mixbench-hip/CMakeLists.txt mixbench-0.04/mixbench-hip/CMakeLists.txt
+--- mixbench-0.04.orig/mixbench-hip/CMakeLists.txt	2024-07-30 03:28:17.061690761 -0700
++++ mixbench-0.04/mixbench-hip/CMakeLists.txt	2024-07-30 03:29:52.580013232 -0700
+@@ -2,6 +2,24 @@ cmake_minimum_required(VERSION 2.8.3)
+ 
+ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+ 
++if(AMDGPU_TARGETS)
++    set(CMAKE_HIP_ARCHITECTURES ${AMDGPU_TARGETS})
++else()
++    if(NOT $ENV{ROCM_SLOT} AND $ENV{ROCM_SLOT} VERSION_EQUAL "4.5")
++        set(hip_architectures gfx700 gfx701 gfx801 gfx802 gfx803 gfx900)
++        set(CMAKE_HIP_ARCHITECTURES ${hip_architectures})
++    elseif(NOT $ENV{ROCM_SLOT} AND $ENV{ROCM_SLOT} VERSION_GREATER_EQUAL "5.1")
++        set(hip_architectures gfx700 gfx701 gfx801 gfx802 gfx803 gfx900 gfx906 gfx908 gfx90a gfx90c gfx1010 gfx1011 gfx1012 gfx1013 gfx1030 gfx1031 gfx1032 gfx1033 gfx1034 gfx1035)
++        set(CMAKE_HIP_ARCHITECTURES ${hip_architectures})
++    elseif(NOT $ENV{ROCM_SLOT} AND $ENV{ROCM_SLOT} VERSION_GREATER_EQUAL "6.0")
++        set(hip_architectures gfx700 gfx701 gfx801 gfx802 gfx803 gfx900 gfx906 gfx908 gfx90a gfx90c gfx1010 gfx1011 gfx1012 gfx1013 gfx1030 gfx1031 gfx1032 gfx1033 gfx1034 gfx1035)
++        set(CMAKE_HIP_ARCHITECTURES ${hip_architectures})
++    else()
++        set(hip_architectures gfx700 gfx701 gfx801 gfx802 gfx803 gfx900 gfx906 gfx908 gfx90a gfx90c gfx1010 gfx1011 gfx1012 gfx1013 gfx1030 gfx1031 gfx1032 gfx1033 gfx1034 gfx1035)
++        set(CMAKE_HIP_ARCHITECTURES ${hip_architectures})
++    endif()
++endif()
++
+ if(NOT DEFINED HIP_PATH)
+     if(NOT DEFINED ENV{HIP_PATH})
+         set(HIP_PATH "/opt/rocm-@ROCM_VERSION@/hip" CACHE PATH "Path to which HIP has been installed")
