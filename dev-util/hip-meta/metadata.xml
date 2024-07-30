@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    This is a metapackage for HIP metapackages.
+  </longdescription>
+  <use>
+    <flag name="hip-dev">
+      Install the HIP development packages.
+    </flag>
+    <flag name="hipfort">
+      Install the hipfort frontend for accessing GPU kernels for Fortran 2003
+      programs.
+    </flag>
+    <flag name="hiprand">
+      Install the HIP random number generator library.
+    </flag>
+    <flag name="migraphx">
+      Install software to accelerate machine learning model inference.
+    </flag>
+    <flag name="mivisionx">
+      Install a rapid prototyping toolkit for computer vision and machine
+      intelligence.
+    </flag>
+  </use>
+</pkgmetadata>
