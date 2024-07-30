@@ -82,7 +82,8 @@ einfo
 einfo "(1) Read ${DRIVER_HOMEPAGE} for the overview and general guidance on the driver."
 einfo "    Read https://rocm.docs.amd.com/projects/install-on-linux/en/latest/how-to/amdgpu-install.html for the installer frontend and repo access."
 einfo "    Read https://amdgpu-install.readthedocs.io/en/latest/install-prereq.html#downloading-the-installer-package for repo access."
-einfo "    Read https://www.amd.com/en/legal/eula/amd-software-eula.html for the EULA."
+einfo "    Read and accept the EULA at https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/licenses/opencl-legacy-amdgpu-pro-icd-LICENSE"
+# The opencl-legacy-amdgpu-pro-icd-LICENSE is the same in the tarball.  The https://www.amd.com/en/legal/eula/amd-software-eula.html is slighty different.
 einfo "(2) Download these files and place them into ${distdir}."
 	if use abi_x86_64 ; then
 einfo "     Navigate to ${DOWNLOAD_FOLDER_URI_1} and download ${DOWNLOAD_FILE_AMD64_1}"
