@@ -58,6 +58,7 @@ einfo "(1) Read https://github.com/ROCm/ROCm/blob/docs/6.1.2/docs/about/license.
 einfo "    Read and accept the EULA at https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/licenses/hsa-amd-aqlprofile-EULA"
 einfo "    Read and accept the DISCLAIMER at https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/licenses/hsa-amd-aqlprofile-DISCLAIMER"
 einfo "    Read and accept the LICENSE at https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/licenses/hsa-amd-aqlprofile-LICENSE"
+# The hsa-amd-aqlprofile-EULA is the same as the tarball version.  The 2024 EULA from https://www.amd.com/en/legal/eula/amd-software-eula.html is slightly different.
 einfo "(2) Navigate to ${DOWNLOAD_FOLDER_URI} and download ${DOWNLOAD_FILE} and place it into ${distdir}"
 einfo "(3) Sanitize the file permissions of the downloaded files:"
 einfo "    chmod 664 ${distdir}/${DOWNLOAD_FILE}"
