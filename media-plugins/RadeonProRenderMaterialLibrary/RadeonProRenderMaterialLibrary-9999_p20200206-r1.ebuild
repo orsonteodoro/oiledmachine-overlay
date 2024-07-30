@@ -3,7 +3,7 @@
 
 EAPI=8
 
-HOMEPAGE_DL="https://www.amd.com/en/technologies/radeon-prorender-downloads"
+HOMEPAGE_DL="https://www.amd.com/en/products/graphics/software/radeon-prorender/blender.html"
 MATLIB_NAME="rprmaterials"
 MIN_BLENDER_V="2.80"
 MAX_BLENDER_V="2.94" # exclusive
@@ -39,12 +39,17 @@ pkg_nofetch() {
 einfo
 einfo "The following steps must be preformed to download:"
 einfo
-einfo "(1) Navigate to ${HOMEPAGE_DL} and download ${S_FN}"
-einfo "(2) Rename file as ${D_FN}"
-einfo "(3) Place file into ${distdir}"
-einfo "(4) chmod 664 ${distdir}/${D_FN}"
-einfo "(5) chown portage:portage ${distdir}/${D_FN}"
-einfo "(6) mkdir -p /etc/portage/package.license && echo \"${CATEGORY}/${PN} AMD-RADEON-PRORENDER-BLENDER-EULA AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES\" >> /etc/portage/package.license/${PN}"
+einfo "(1) Read the third party licenses at https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.6.10/src/rprblender/EULA.html"
+einfo "    Read and accept the EULA.  A web friendly version can be at https://www.amd.com/en/legal/eula/amd-software-eula.html"
+einfo "(2) Navigate to ${HOMEPAGE_DL} and download ${S_FN}"
+einfo "(3) Rename file as ${D_FN}"
+einfo "(4) Place the downloaded file into ${distdir}"
+einfo "(5) Sanitize the file permissions of the downloaded files:"
+einfo "    chmod 664 ${distdir}/${D_FN}"
+einfo "    chown portage:portage ${distdir}/${D_FN}"
+einfo "(6) Tell the package manager you accepted the licenses:"
+einfo "    mkdir -p /etc/portage/package.license"
+einfo "    echo \"${CATEGORY}/${PN} AMD-RADEON-PRORENDER-BLENDER-EULA AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES\" >> /etc/portage/package.license/${PN}"
 einfo "(7) Re-emerge ebuild."
 einfo
 }
