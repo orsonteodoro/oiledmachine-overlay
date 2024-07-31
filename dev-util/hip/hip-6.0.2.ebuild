@@ -49,7 +49,7 @@ LICENSE="
 # custom - clr-rocm-6.0.2/opencl/khronos/headers/opencl2.2/LICENSE
 # MIT - HIPCC-rocm-6.0.2/LICENSE.txt
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-33"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-34"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -94,6 +94,7 @@ RDEPEND="
 	virtual/opengl
 	cuda? (
 		${HIP_CUDA_DEPEND}
+		~dev-libs/hipother-${PV}:${ROCM_SLOT}
 	)
 	lc? (
 		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
