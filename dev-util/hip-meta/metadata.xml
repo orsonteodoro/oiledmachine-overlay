@@ -7,25 +7,29 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    This is a metapackage for HIP metapackages.
+    This is a metapackage for HIP packages.
   </longdescription>
   <use>
-    <flag name="hip-dev">
-      Install the HIP development packages.
+    <flag name="cuda">
+      Install CUDA® support.
     </flag>
-    <flag name="hipfort">
-      Install the hipfort frontend for accessing GPU kernels for Fortran 2003
-      programs.
+    <flag name="cxx-primitives">
+      Install C++ primitives support.
     </flag>
-    <flag name="hiprand">
-      Install the HIP random number generator library.
+    <flag name="fortran">
+      Install GPU optimized fortran support.
     </flag>
-    <flag name="migraphx">
-      Install software to accelerate machine learning model inference.
+    <flag name="hip">
+      Install HIP runtime and compiler support.
     </flag>
-    <flag name="mivisionx">
-      Install a rapid prototyping toolkit for computer vision and machine
-      intelligence.
+    <flag name="math-libs">
+      Install math libraries support.
+    </flag>
+    <flag name="rocm">
+      Install ROCm™ support.
+    </flag>
+    <flag name="support-libs">
+      Install support libraries for ROCm™ support.
     </flag>
   </use>
 </pkgmetadata>

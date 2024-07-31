@@ -3,8 +3,6 @@
 
 EAPI=8
 
-# TODO package:  nccl
-
 # See https://github.com/ROCm/ROCm/blob/docs/5.1.3/docs/release/gpu_os_support.md
 AMDGPU_TARGETS_COMPAT=(
 	gfx906
@@ -19,51 +17,92 @@ inherit rocm
 
 KEYWORDS="~amd64"
 
-DESCRIPTION="ROCm metapackage"
+DESCRIPTION="HIP metapackage"
 HOMEPAGE=""
 LICENSE="metapackage"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
+	compilers
 	cuda
-	hip-dev
-	hip-libs
-	hipfort
-	hiprand
+	cxx-primitives
+	fortran
+	hip
+	math-libs
 	rocm
+	runtimes
+	support-libs
 "
 REQUIRED_USE="
+	hip? (
+		compilers
+		runtimes
+		rocm? (
+			support-libs
+		)
+	)
+	^^ (
+		cuda
+		rocm
+	)
+	|| (
+		hip
+	)
 "
 RDEPEND="
-	hip-dev? (
-		>=dev-lang/perl-5.0
-		sys-apps/file
-		sys-libs/glibc
-		dev-perl/URI-Encode
-		dev-perl/File-BaseDir
-		dev-perl/File-Copy-Recursive
-		dev-perl/File-Listing
-		dev-perl/File-Which
-		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
-		~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	compilers? (
+		cuda? (
+			dev-util/nvidia-cuda-toolkit:=
+		)
+		rocm? (
+			~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
+			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+		)
 	)
-	hip-libs? (
+	cxx-primitives? (
+		cuda? (
+			~sci-libs/hipCUB-${PV}:${ROCM_SLOT}[cuda]
+		)
+		rocm? (
+			~sci-libs/hipCUB-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPCUB)
+		)
+	)
+	math-libs? (
 		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+		~sci-libs/hipRAND-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 		~sci-libs/hipSOLVER-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 		~sci-libs/hipSPARSE-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 		cuda? (
-			~sci-libs/hipCUB-${PV}:${ROCM_SLOT}[cuda]
 			~sci-libs/hipFFT-${PV}:${ROCM_SLOT}[cuda]
 		)
+		fortran? (
+			~dev-util/hipfort-${PV}:${ROCM_SLOT}
+		)
 		rocm? (
-			~dev-libs/rccl-${PV}:${ROCM_SLOT}$(get_rocm_usedep RCCL)
-			~sci-libs/hipCUB-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPCUB)
 			~sci-libs/hipFFT-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPFFT)
 		)
 	)
-	hipfort? (
-		~dev-util/hipfort-${PV}:${ROCM_SLOT}
+	runtimes? (
+		hip? (
+			>=dev-lang/perl-5.0
+			sys-apps/file
+			sys-libs/glibc
+			dev-perl/URI-Encode
+			dev-perl/File-BaseDir
+			dev-perl/File-Copy-Recursive
+			dev-perl/File-Listing
+			dev-perl/File-Which
+			~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+		)
+		rocm? (
+			~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
+			~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+		)
 	)
-	hiprand? (
-		~sci-libs/hipRAND-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	support-libs? (
+		rocm? (
+			~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+			~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
+			~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
+		)
 	)
 "
