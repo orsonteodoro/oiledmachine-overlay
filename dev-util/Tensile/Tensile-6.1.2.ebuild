@@ -53,11 +53,15 @@ LICENSE="
 # Not compatible with recent versions of pytest \
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="+client +opencl +openmp ebuild-revision-16"
+IUSE="+client cuda +opencl +openmp +rocm ebuild-revision-16"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
 		openmp
+	)
+	|| (
+		cuda
+		rocm
 	)
 "
 RDEPEND="
@@ -68,21 +72,26 @@ RDEPEND="
 	dev-python/joblib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	client? (
 		dev-libs/boost
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 	)
-	opencl? (
-		dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
+	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
 	)
-	openmp? (
-		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_1_AMDGPU_USEDEP}]
+	rocm? (
+		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
+		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+		opencl? (
+			dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
+		)
+		openmp? (
+			sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_1_AMDGPU_USEDEP}]
+		)
 	)
 
 	sys-process/numactl
-	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
-	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -115,9 +124,8 @@ src_prepare() {
 			-i \
 			"Source/CMakeLists.txt" \
 			|| die
-		hipconfig --help >/dev/null || die
 		sed \
-			-e "/HipClangVersion/s/0.0.0/$(hipconfig -v)/" \
+			-e "/HipClangVersion/s/0.0.0/${PV}/" \
 			-i \
 			"Common.py" \
 			|| die
@@ -137,12 +145,14 @@ src_prepare() {
 src_configure() {
 	rocm_set_default_hipcc
 
-	append-ldflags \
-		-Wl,-L"/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)" \
-		-Wl,-lLLVMSupport \
-		-Wl,-lhsa-runtime64 \
-		-Wl,-lamd_comgr \
-		-Wl,-lnuma
+	if use rocm ; then
+		append-ldflags \
+			-Wl,-L"/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)" \
+			-Wl,-lLLVMSupport \
+			-Wl,-lhsa-runtime64 \
+			-Wl,-lamd_comgr \
+			-Wl,-lnuma
+	fi
 
 	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
 	export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"
@@ -151,13 +161,9 @@ src_configure() {
 
 	if use client; then
 		check_pkg_glibcxx "dev-libs/boost" "/usr/$(get_libdir)/libboost_program_options.so" "${HIP_6_1_GCC_SLOT}"
-		export HIP_PLATFORM="amd"
+
 		local mycmakeargs=(
-			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DCMAKE_SKIP_RPATH=ON
-			-DHIP_COMPILER="clang"
-			-DHIP_PLATFORM="amd"
-			-DHIP_RUNTIME="rocclr"
 			-DROCM_ROOT="${ROCM_PATH}"
 			-DTENSILE_BUILD_CLIENT=$(usex client ON OFF)
 			-DTENSILE_USE_LLVM=ON
@@ -166,6 +172,22 @@ src_configure() {
 			-DTENSILE_USE_OPENMP=$(usex openmp ON OFF)
 			-DTensile_LIBRARY_FORMAT="msgpack"
 		)
+		if use cuda ; then
+			export HIP_PLATFORM="nvidia"
+			mycmakeargs+=(
+				-DHIP_COMPILER="nvcc"
+				-DHIP_PLATFORM="nvidia"
+				-DHIP_RUNTIME="cuda"
+			)
+		elif use rocm ; then
+			export HIP_PLATFORM="amd"
+			mycmakeargs+=(
+				-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+				-DHIP_COMPILER="clang"
+				-DHIP_PLATFORM="amd"
+				-DHIP_RUNTIME="rocclr"
+			)
+		fi
 		rocm_src_configure
 	fi
 }
