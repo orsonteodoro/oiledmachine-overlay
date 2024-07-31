@@ -56,6 +56,7 @@ REQUIRED_USE="
 	)
 	fortran? (
 		compilers
+		hip
 	)
 	hip? (
 		compilers
@@ -81,7 +82,12 @@ RDEPEND="
 			~sys-libs/llvm-roc-${PV}:${ROCM_SLOT}
 		)
 		fortran? (
-			~dev-lang/rocm-flang-${PV}:${ROCM_SLOT}
+			hip? (
+				~dev-lang/rocm-flang-${PV}:${ROCM_SLOT}[-aocc]
+			)
+			non-free? (
+				~dev-lang/rocm-flang-${PV}:${ROCM_SLOT}[aocc]
+			)
 		)
 		opencl? (
 			~sys-libs/llvm-roc-${PV}:${ROCM_SLOT}
