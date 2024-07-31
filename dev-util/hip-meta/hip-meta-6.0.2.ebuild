@@ -31,8 +31,6 @@ IUSE="
 	hip-libs
 	hipfort
 	hipsparselt
-	migraphx
-	mivisionx
 	rocm
 "
 REQUIRED_USE="
@@ -60,13 +58,11 @@ RDEPEND="
 			~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}[cuda]
 			~sci-libs/hipCUB-${PV}:${ROCM_SLOT}[cuda]
 			~sci-libs/hipFFT-${PV}:${ROCM_SLOT}[cuda]
-			~sci-libs/miopen-${PV}:${ROCM_SLOT}[opencl]
 		)
 		rocm? (
 			~dev-libs/rccl-${PV}:${ROCM_SLOT}$(get_rocm_usedep RCCL)
 			~sci-libs/hipCUB-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPCUB)
 			~sci-libs/hipFFT-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPFFT)
-			~sci-libs/miopen-${PV}:${ROCM_SLOT}$(get_rocm_usedep MIOPEN)
 			amdgpu_targets_gfx90a? (
 				~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPBLASLT)
 			)
@@ -81,22 +77,6 @@ RDEPEND="
 	hipsparselt? (
 		amdgpu_targets_gfx942? (
 			~sci-libs/hipSPARSELt-${PV}:${ROCM_SLOT}[rocm]
-		)
-	)
-	migraphx? (
-		cuda? (
-			~sci-libs/MIGraphX-${PV}:${ROCM_SLOT}[cpu]
-		)
-		rocm? (
-			~sci-libs/MIGraphX-${PV}:${ROCM_SLOT}$(get_rocm_usedep MIGRAPHX)
-		)
-	)
-	mivisionx? (
-		cuda? (
-			~sci-libs/MIVisionX-${PV}:${ROCM_SLOT}[opencl]
-		)
-		rocm? (
-			~sci-libs/MIVisionX-${PV}:${ROCM_SLOT}[rocm]
 		)
 	)
 "
