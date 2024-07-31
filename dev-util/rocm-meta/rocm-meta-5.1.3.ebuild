@@ -27,7 +27,7 @@ IUSE="
 	+communication
 	+cv
 	+cxx-primitives
-	+fortran
+	fortran
 	+hip
 	+kernel-driver
 	+math-libs
@@ -36,9 +36,9 @@ IUSE="
 	+opencl
 	+runtimes
 	+support-libs
-	+tools-dev
-	+tools-perf
-	+tools-system
+	tools-dev
+	tools-perf
+	tools-system
 "
 REQUIRED_USE="
 	kernel-driver
