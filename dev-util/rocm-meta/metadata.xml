@@ -23,7 +23,7 @@
       Install C++ primitives.
     </flag>
     <flag name="cv">
-      Install computer vision support.
+      Install Computer Vision (CV) support.
     </flag>
     <flag name="fortran">
       Install GPU optimized Fortran.
@@ -38,7 +38,7 @@
       Install math libraries.
     </flag>
     <flag name="ml">
-      Install Machine Learning support.
+      Install Machine Learning (ML) support.
     </flag>
     <flag name="non-free">
       Permit non-free packages directly or indirectly.
