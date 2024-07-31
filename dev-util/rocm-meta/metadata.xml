@@ -7,74 +7,59 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    This is a metapackage to expand rocm-dev, rocm-libs, rocm-utils from other
-    distros to their equivalent packages on the distro.
+    This is a metapackage to install the ROCm platform.
   </longdescription>
-  <!--
-
-  oiledmachine-overlay notes:
-
-  If the package is not in rocm-libs, it will be made optional as a USE flag.
-
-  If the package is in rocm-libs, it will be removed from the USE flag.
-
-  -->
   <use>
-    <flag name="aocc">
-      Install the ROCm™ version of AOCC with additional closed source CPU
-      optimizations.
+    <flag name="ai">
+      Install Artificial Intelligence (AI) support.
     </flag>
-    <flag name="atmi">
-      Install a library for task and memory management for CPUs and/or GPUs.
+    <flag name="compilers">
+      Install tools to convert source code to binary/machine format.
     </flag>
-    <flag name="hip-dev">
-      Install the HIP development packages.
+    <flag name="communication">
+      Install communication support.
     </flag>
-    <flag name="composable-kernel">
-      Install the Composable Kernel package.
+    <flag name="cxx-primitives">
+      Install C++ primitives.
     </flag>
-    <flag name="flang">
-      Install ROCm's fork of Classic Flang supporting GPU offload for AMD GPUs.
-      Flang is a Fortran frontend with a LLVM backend based on ROCm's fork.
+    <flag name="cv">
+      Install computer vision support.
     </flag>
-    <flag name="hipfort">
-      Install the hipfort frontend for accessing GPU kernels for Fortran 2003
-      programs.
+    <flag name="fortran">
+      Install GPU optimized Fortran.
     </flag>
-    <flag name="hiprand">
-      Install the HIP random number generator library.
+    <flag name="hip">
+      Install HIP runtime and HIP-clang.
     </flag>
-    <flag name="migraphx">
-      Install software to accelerate machine learning model inference.
-    </flag>
-    <flag name="mivisionx">
-      Install a rapid prototyping toolkit for computer vision and machine
-      intelligence.
-    </flag>
-    <flag name="rdc">
-      Install the Data Center Tool for administration of GPUs in clusters
-      and datacenters.
-    </flag>
-    <flag name="rocdecode">
-      Install the GPU decode SDK for H.264/H.265.
-    </flag>
-    <flag name="rock-dkms">
+    <flag name="kernel-driver">
       Install the kernel driver.
     </flag>
-    <flag name="rocm-bandwidth-test">
-      Install this individual program, for inspecting performance or topology.
+    <flag name="math-libs">
+      Install math libraries.
     </flag>
-    <flag name="rocm-dev">
-      Install build development packages.  For flang
+    <flag name="ml">
+      Install Machine Learning support.
     </flag>
-    <flag name="rocm-gdb">
-      Install this individual program, a debugger for both CPU and GPU.
+    <flag name="non-free">
+      Permit non-free packages directly or indirectly.
     </flag>
-    <flag name="rocm-libs">
-      Install dependencies for user space apps.
+    <flag name="opencl">
+      Install the ROCr OpenCL™ driver and support.
     </flag>
-    <flag name="rocm-utils">
-      Install utilities or development packages.
+    <flag name="runtimes">
+      Install runtime support.
+    </flag>
+    <flag name="support-libs">
+      Install support libs support.
+    </flag>
+    <flag name="tools-dev">
+      Install development tools.
+    </flag>
+    <flag name="tools-perf">
+      Install performance tools.
+    </flag>
+    <flag name="tools-system">
+      Install system tools.
     </flag>
   </use>
 </pkgmetadata>
