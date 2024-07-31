@@ -80,6 +80,7 @@ REQUIRED_USE="
 		fortran
 		hip
 		opencl
+		tools-system
 	)
 "
 RDEPEND="
@@ -174,10 +175,12 @@ RDEPEND="
 		)
 	)
 	tools-system? (
-		dev-util/clinfo
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 		~sys-cluster/rdc-${PV}:${ROCM_SLOT}
+		opencl? (
+			dev-util/clinfo
+		)
 	)
 "
 
