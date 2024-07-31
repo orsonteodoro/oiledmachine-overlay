@@ -107,7 +107,7 @@ get_rocm_usedep() {
 # Dep does not contain GPU target.
                 return
         fi
-        if [[ "${name}" =~ ("HIPBLASLT"|"HIPCUB"|"HIPFFT"|"MIGRAPHX"|"MIOPEN"|"ROCALUTION"|"ROCBLAS"|"ROCFFT"|"ROCRAND"|"ROCPRIM") ]] ; then
+        if [[ "${name}" =~ ("HIPBLASLT"|"HIPCUB"|"HIPFFT"|"MIGRAPHX"|"MIOPEN"|"ROCALUTION"|"ROCBLAS"|"ROCFFT"|"ROCRAND"|"ROCPRIM"|"TENSILE") ]] ; then
 		if [[ -n "${extra_useflags}" ]] ; then
 	                echo "[${!t2},rocm,${extra_useflags}]"
 		else

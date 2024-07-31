@@ -117,7 +117,10 @@ RDEPEND="
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		~dev-util/Tensile-${PV}:${ROCM_SLOT}[${TENSILE_6_0_AMDGPU_USEDEP}]
+		~dev-util/Tensile-${PV}:${ROCM_SLOT}[${TENSILE_6_0_AMDGPU_USEDEP},rocm]
+		$(python_gen_cond_dep '
+			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_0_AMDGPU_USEDEP}"',rocm]
+		')
 	)
 "
 DEPEND="
@@ -141,7 +144,7 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	rocm? (
 		$(python_gen_cond_dep '
-			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_0_AMDGPU_USEDEP}"',${PYTHON_USEDEP},client]
+			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_0_AMDGPU_USEDEP}"',${PYTHON_USEDEP},client,rocm]
 		')
 	)
 "
