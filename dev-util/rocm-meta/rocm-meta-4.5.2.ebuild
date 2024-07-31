@@ -49,7 +49,6 @@ IUSE="
 	tools-system
 "
 REQUIRED_USE="
-	kernel-driver
 	ai? (
 		cv
 		ml
@@ -67,6 +66,15 @@ REQUIRED_USE="
 		compilers
 		runtimes
 		support-libs
+	)
+	support-libs? (
+		kernel-driver
+	)
+	tools-dev? (
+		kernel-driver
+	)
+	tools-system? (
+		kernel-driver
 	)
 	|| (
 		fortran
