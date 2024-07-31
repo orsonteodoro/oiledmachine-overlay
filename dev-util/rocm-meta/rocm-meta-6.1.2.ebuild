@@ -105,9 +105,6 @@ RDEPEND="
 			~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 			~sys-libs/llvm-roc-${PV}:${ROCM_SLOT}
 		)
-		non-free? (
-			~sys-devel/llvm-roc-alt-${PV}:${ROCM_SLOT}
-		)
 		opencl? (
 			~sys-libs/llvm-roc-${PV}:${ROCM_SLOT}
 			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}$(get_rocm_usedep LLVM_ROC_LIBOMP)
