@@ -29,7 +29,7 @@
       Install ROCm™ support.
     </flag>
     <flag name="support-libs">
-      Install support libraries for ROCm™ support.
+      Install support libraries.
     </flag>
   </use>
 </pkgmetadata>

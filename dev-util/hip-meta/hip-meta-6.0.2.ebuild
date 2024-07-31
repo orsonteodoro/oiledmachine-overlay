@@ -35,12 +35,16 @@ IUSE="
 	support-libs
 "
 REQUIRED_USE="
+	cxx-primitives? (
+		support-libs
+	)
 	hip? (
 		compilers
 		runtimes
-		rocm? (
-			support-libs
-		)
+		support-libs
+	)
+	math-libs? (
+		support-libs
 	)
 	^^ (
 		cuda
@@ -112,6 +116,9 @@ RDEPEND="
 		)
 	)
 	support-libs? (
+		cuda? (
+			~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+		)
 		rocm? (
 			~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 			~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
