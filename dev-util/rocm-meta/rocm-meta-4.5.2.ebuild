@@ -32,8 +32,8 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	ai
 	+compilers
-	+communication
-	+cv
+	communication
+	cv
 	+cxx-primitives
 	fortran
 	+hip
