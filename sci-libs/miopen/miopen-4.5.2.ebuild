@@ -40,7 +40,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="comgr debug hiprtc kernels mlir opencl +rocm test ebuild-revision-7"
+IUSE="comgr debug hiprtc kernels opencl +rocm test ebuild-revision-7"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -100,9 +100,6 @@ BDEPEND="
 	sys-devel/binutils[gold,plugins]
 	virtual/pkgconfig
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
-	mlir? (
-		~sci-libs/rocMLIR-${PV}:${ROCM_SLOT}[fat-librockcompiler(+)]
-	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-4.2.0-disable-no-inline-boost.patch"
@@ -245,14 +242,7 @@ src_configure() {
 		-DMIOPEN_TEST_ALL=$(usex test ON OFF)
 		-DMIOPEN_USE_COMGR=$(usex comgr ON OFF)
 		-DMIOPEN_USE_HIPRTC=$(usex hiprtc ON OFF)
-		-DMIOPEN_USE_MLIR=$(usex mlir ON OFF)
 	)
-
-	if use mlir ; then
-		mycmakeargs+=(
-			-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/cmake/rocMLIR"
-		)
-	fi
 
 	if use test ; then
 		local gpu_target
