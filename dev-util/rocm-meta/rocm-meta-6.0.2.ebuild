@@ -47,6 +47,9 @@ REQUIRED_USE="
 		cv
 		ml
 	)
+	cxx-primitives? (
+		support-libs
+	)
 	fortran? (
 		compilers
 		|| (
@@ -59,6 +62,12 @@ REQUIRED_USE="
 		runtimes
 		support-libs
 	)
+	math-libs? (
+		support-libs
+	)
+	ml? (
+		support-libs
+	)
 	opencl? (
 		compilers
 		runtimes
@@ -69,6 +78,7 @@ REQUIRED_USE="
 	)
 	tools-dev? (
 		kernel-driver
+		support-libs
 	)
 	tools-system? (
 		kernel-driver
