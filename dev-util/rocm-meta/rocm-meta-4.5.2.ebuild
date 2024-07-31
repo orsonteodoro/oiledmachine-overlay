@@ -55,7 +55,10 @@ REQUIRED_USE="
 	)
 	fortran? (
 		compilers
-		hip
+		|| (
+			hip
+			non-free
+		)
 	)
 	hip? (
 		compilers
