@@ -117,6 +117,7 @@ RDEPEND="
 	support-libs? (
 		cuda? (
 			~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+			~dev-libs/hipother-${PV}:${ROCM_SLOT}
 		)
 		rocm? (
 			~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
