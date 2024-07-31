@@ -29,7 +29,7 @@
       Install GPU optimized Fortran.
     </flag>
     <flag name="hip">
-      Install HIP runtime and HIP-clang.
+      Install HIP runtime and HIP-Clang.
     </flag>
     <flag name="kernel-driver">
       Install the kernel driver.
