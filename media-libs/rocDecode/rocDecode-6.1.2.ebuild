@@ -17,12 +17,18 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
-AMDGPU_UNTESTED_TARGETS=(
-	gfx908
-	gfx90a
-	gfx942
-	gfx1030
-	gfx1101
+AMDGPU_TARGETS_UNTESTED=(
+#	gfx908
+#	gfx90a
+	gfx940
+	gfx941
+#	gfx942
+#	gfx1030
+	gfx1031
+	gfx1032
+	gfx1100
+#	gfx1101
+	gfx1102
 )
 LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -87,7 +93,7 @@ PATCHES=(
 
 warn_untested_gpu() {
 	local gpu
-	for gpu in ${AMDGPU_UNTESTED_TARGETS[@]} ; do
+	for gpu in ${AMDGPU_TARGETS_UNTESTED[@]} ; do
 		if use "amdgpu_targets_${gpu}" ; then
 ewarn "${gpu} is not tested upstream."
 		fi
