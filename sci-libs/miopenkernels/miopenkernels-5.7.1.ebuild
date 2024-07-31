@@ -152,6 +152,7 @@ einfo "Compressing kernels"
 			bzip2 -kv "${f}"
 		done
 	popd
+	find "${ED}" -name "gfx*.kdb" -delete || die
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  finished

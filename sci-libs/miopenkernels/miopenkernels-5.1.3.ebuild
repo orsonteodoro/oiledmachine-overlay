@@ -149,12 +149,6 @@ src_install() {
 	for f in $(find . -name "*.kdb") ; do
 		doins "${f}"
 	done
-einfo "Compressing kernels"
-	pushd "${ED}/opt/rocm-${PV}/share/miopen/db" || die
-		for f in $(find . -name "*.kdb") ; do
-			bzip2 -kv "${f}"
-		done
-	popd
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  finished, builds-without-problems
