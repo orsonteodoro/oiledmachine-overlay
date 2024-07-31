@@ -117,8 +117,8 @@ RDEPEND="
 		~dev-libs/rccl-${PV}:${ROCM_SLOT}$(get_rocm_usedep RCCL)
 	)
 	cv? (
-		~media-libs/rocDecode-${PV}:${ROCM_SLOT}
 		~sci-libs/MIVisionX-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/rocDecode-${PV}:${ROCM_SLOT}
 		~sci-libs/rpp-${PV}:${ROCM_SLOT}$(get_rocm_usedep RPP)
 	)
 	cxx-primitives? (
