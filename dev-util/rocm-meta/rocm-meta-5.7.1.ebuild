@@ -81,10 +81,6 @@ REQUIRED_USE="
 RDEPEND="
 	!dev-util/amd-rocm-meta
 	compilers? (
-		hip? (
-			~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
-			~sys-libs/llvm-roc-${PV}:${ROCM_SLOT}
-		)
 		fortran? (
 			hip? (
 				~dev-lang/rocm-flang-${PV}:${ROCM_SLOT}[-aocc]
@@ -92,6 +88,10 @@ RDEPEND="
 			non-free? (
 				~dev-lang/rocm-flang-${PV}:${ROCM_SLOT}[aocc]
 			)
+		)
+		hip? (
+			~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
+			~sys-libs/llvm-roc-${PV}:${ROCM_SLOT}
 		)
 		non-free? (
 			~sys-devel/llvm-roc-alt-${PV}:${ROCM_SLOT}
