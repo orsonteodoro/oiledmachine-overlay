@@ -50,7 +50,7 @@
       Install runtime support.
     </flag>
     <flag name="support-libs">
-      Install support libs support.
+      Install support libraries.
     </flag>
     <flag name="tools-dev">
       Install development tools.

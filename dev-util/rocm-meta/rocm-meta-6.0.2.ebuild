@@ -43,9 +43,7 @@ IUSE="
 	+tools-system
 "
 REQUIRED_USE="
-	compilers
 	kernel-driver
-	runtimes
 	ai? (
 		cv
 		ml
@@ -56,10 +54,12 @@ REQUIRED_USE="
 	hip? (
 		compilers
 		runtimes
+		support-libs
 	)
 	opencl? (
 		compilers
 		runtimes
+		support-libs
 	)
 	|| (
 		fortran
@@ -91,6 +91,12 @@ RDEPEND="
 	cv? (
 		~sci-libs/MIVisionX-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/rpp-${PV}:${ROCM_SLOT}$(get_rocm_usedep RPP)
+	)
+	cxx-primitives? (
+		~sci-libs/hipCUB-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPCUB)
+		~sci-libs/hipTensor-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCPRIM)
+		~sci-libs/rocThrust-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCTHRUST)
 	)
 	kernel-driver? (
 		~virtual/amdgpu-${PV}:${PV%.*}
@@ -125,12 +131,6 @@ RDEPEND="
 		~sci-libs/composable_kernel-${PV}:${ROCM_SLOT}$(get_rocm_usedep COMPOSABLE_KERNEL)
 		~sci-libs/MIGraphX-${PV}:${ROCM_SLOT}$(get_rocm_usedep MIGRAPHX)
 		~sci-libs/miopen-${PV}:${ROCM_SLOT}$(get_rocm_usedep MIOPEN)
-	)
-	cxx-primitives? (
-		~sci-libs/hipCUB-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPCUB)
-		~sci-libs/hipTensor-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCPRIM)
-		~sci-libs/rocThrust-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCTHRUST)
 	)
 	runtimes? (
 		~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
