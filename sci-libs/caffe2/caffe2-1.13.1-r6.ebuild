@@ -194,7 +194,6 @@ gen_rocm_depends() {
 			rocm_${u}? (
 				~dev-libs/rccl-${pv}:${s}$(get_rocm_usedep RCCL)
 				~dev-libs/rocm-comgr-${pv}:${s}
-				~dev-libs/rocm-core-${pv}:${s}
 				~dev-libs/rocr-runtime-${pv}:${s}
 				~dev-util/hip-${pv}:${s}[rocm]
 				~dev-util/rocprofiler-${pv}:${s}$(get_rocm_usedep ROCPROFILER)
