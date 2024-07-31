@@ -153,7 +153,6 @@ RDEPEND="
 			dev-perl/File-Copy-Recursive
 			dev-perl/File-Listing
 			dev-perl/File-Which
-			~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
 			~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 		)
 		opencl? (
