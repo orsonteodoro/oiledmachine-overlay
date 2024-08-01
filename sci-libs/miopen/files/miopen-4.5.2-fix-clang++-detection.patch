@@ -1,0 +1,11 @@
+--- a/CMakeLists.txt.orig	2024-08-01 11:12:03.995640976 -0700
++++ b/CMakeLists.txt	2024-08-01 11:14:37.777153551 -0700
+@@ -277,7 +277,7 @@ endif()
+ message( STATUS "${MIOPEN_BACKEND} backend selected." )
+ 
+ # look for and register clang-offload-bundler
+-if(MIOPEN_HIP_COMPILER MATCHES ".*clang\\+\\+$")
++if(MIOPEN_HIP_COMPILER MATCHES ".*clang\\+\\+")
+     find_program(MIOPEN_OFFLOADBUNDLER_BIN clang-offload-bundler
+         PATH_SUFFIXES bin
+         PATHS

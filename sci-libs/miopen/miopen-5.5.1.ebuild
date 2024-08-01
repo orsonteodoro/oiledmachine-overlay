@@ -115,9 +115,9 @@ DEPEND="
 	>=dev-libs/half-1.12.0:=
 	>=dev-cpp/nlohmann_json-3.10.4:=
 "
+#	sys-devel/binutils[gold,plugins]
 BDEPEND="
 	${HIP_CLANG_DEPEND}
-	sys-devel/binutils[gold,plugins]
 	virtual/pkgconfig
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	mlir? (
@@ -136,6 +136,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
 #	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # Fixed in pr #1830
 	"${FILESDIR}/${PN}-5.4.3-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-4.5.2-fix-clang++-detection.patch"
 )
 
 warn_untested_gpu() {
@@ -224,8 +225,8 @@ filter_test_gpus() {
 src_configure() {
 	# Prevent linking error:
 	# libhsa-runtime64.so: undefined reference to `hsaKmtReplaceAsanHeaderPage'
-	append-flags -Wl,-fuse-ld=gold
-	append-ldflags -fuse-ld=gold
+	#append-flags -Wl,-fuse-ld=gold
+	#append-ldflags -fuse-ld=gold
 	filter-flags -Wl,--as-needed
 
 	if ! use debug ; then

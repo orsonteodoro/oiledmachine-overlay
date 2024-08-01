@@ -123,9 +123,9 @@ DEPEND="
 	>=dev-cpp/frugally-deep-0.15.20:=
 	>=dev-cpp/nlohmann_json-3.10.4:=
 "
+#	sys-devel/binutils[gold,plugins]
 BDEPEND="
 	${HIP_CLANG_DEPEND}
-	sys-devel/binutils[gold,plugins]
 	virtual/pkgconfig
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	mlir? (
@@ -239,8 +239,8 @@ filter_test_gpus() {
 src_configure() {
 	# Prevent linking error:
 	# libhsa-runtime64.so: undefined reference to `hsaKmtReplaceAsanHeaderPage'
-	append-flags -Wl,-fuse-ld=gold
-	append-ldflags -fuse-ld=gold
+	#append-flags -Wl,-fuse-ld=gold
+	#append-ldflags -fuse-ld=gold
 	filter-flags -Wl,--as-needed
 
 	if ! use debug ; then
