@@ -1,0 +1,11 @@
+--- ./src/CMakeLists.txt.orig	2024-07-31 20:13:48.224234991 -0700
++++ ./src/CMakeLists.txt	2024-07-31 20:15:27.094618363 -0700
+@@ -131,7 +131,7 @@ install(FILES ${PROJECT_SOURCE_DIR}/rocm
+ find_package(Doxygen)
+ find_package(LATEX COMPONENTS PDFLATEX)
+ 
+-if(DOXYGEN_FOUND AND LATEX_FOUND)
++if(FALSE)
+     set(ASMI_MANUAL_NAME "AMD_SMI_Manual")
+     configure_file(${PROJECT_SOURCE_DIR}/docs/amd_smi_doxygen.cfg ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+ 
