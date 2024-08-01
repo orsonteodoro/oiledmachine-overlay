@@ -192,6 +192,7 @@ RDEPEND="
 	tools-perf? (
 		~dev-util/rocm_bandwidth_test-${PV}:${ROCM_SLOT}
 		non-free? (
+			~dev-libs/rocprofiler-register-${PV}:${ROCM_SLOT}
 			~dev-util/rocprofiler-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCPROFILER)
 			~dev-util/roctracer-${PV}:${ROCM_SLOT}
 		)
