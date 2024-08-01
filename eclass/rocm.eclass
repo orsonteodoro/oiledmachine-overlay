@@ -479,7 +479,11 @@ ewarn "QA:  ROCM_SLOT should be defined."
 	# The CLANG_SLOT is the folder name.
 	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then
 		# ls /opt/rocm-*/llvm/lib64/clang -> 16.0.0 17.0.0
-		CLANG_SLOT="${LLVM_SLOT}.0.0"
+		if ver_test ${ROCM_SLOT} -ge 6.1 ; then
+			CLANG_SLOT="${LLVM_SLOT}"
+		else
+			CLANG_SLOT="${LLVM_SLOT}.0.0"
+		fi
 	else
 		# ls /usr/lib/clang -> 13.0.1  14.0.6  15.0.1  15.0.5  15.0.6  15.0.7  16  17
 		if ver_test ${LLVM_SLOT} -ge 16 ; then
@@ -519,25 +523,11 @@ ewarn "QA:  ROCM_SLOT should be defined."
 		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
 
 	if [[ "${HIP_CLANG_DISABLE_CCACHE}" == "1" ]] ; then
-# Enabling fixes:
-
-#  Imported target "hip::device" includes non-existent path
-#
-#    "HIP_CLANG_INCLUDE_PATH-NOTFOUND/.."
-#
-#  in its INTERFACE_INCLUDE_DIRECTORIES.  Possible reasons include:
-
-# The HIP_CLANG_ROOT in /opt/rocm-*/lib/cmake/hip/hip-config.cmake does dirname
-# like tricks with get_filename_component that break it when it falsely assumes
-# it is is not using ccache.
-
 einfo "Removing ccache from PATH to prevent override by system's clang..."
 		export PATH=$(echo "${PATH}" \
 			| tr ":" "\n" \
 			| sed -E -e "/ccache/d" \
 			| tr "\n" ":")
-	else
-ewarn "Disable ccache if HIP_CLANG_INCLUDE_PATH-NOTFOUND/.. error encountered."
 	fi
 
 # Avoid these kinds of errors with pgo by disabling ccache:
@@ -594,7 +584,7 @@ einfo
 #
 # @CHOST@        - x86_64-pc-linux-gnu, or whatever is produced by `gcc -dumpmachine`
 # @CLANG_SLOT@   -
-#     if ROCM_USE_LLVM_ROC==1 (default) then 13.0.0, 14.0.0, 15.0.0, 16.0.0, 17.0.0.
+#     if ROCM_USE_LLVM_ROC==1 (default) then 13.0.0, 14.0.0, 15.0.0, 16.0.0, 17.0.0 if ROCM_SLOT <= 6.0; 17 if ROCM_SLOT >= 6.1.
 #     if ROCM_USE_LLVM_ROC==0 then 13.0.1, 14.0.6, 15.0.1, 15.0.5, 15.0.6, 15.0.7, 16, 17.
 # @EPREFIX@      - /home/<USER>/blah, "", or any path
 # @EPREFIX_CLANG_PATH@  -

@@ -1,0 +1,15 @@
+diff '--color=auto' -urp hipamd-rocm-4.5.2.orig/hip-config.cmake.in hipamd-rocm-4.5.2/hip-config.cmake.in
+--- hipamd-rocm-4.5.2.orig/hip-config.cmake.in	2024-08-01 13:08:39.749018208 -0700
++++ hipamd-rocm-4.5.2/hip-config.cmake.in	2024-08-01 13:09:37.520087940 -0700
+@@ -148,8 +148,9 @@ if(HIP_COMPILER STREQUAL "clang")
+       get_filename_component(HIP_CLANG_ROOT "${CMAKE_MATCH_1}" DIRECTORY)
+     endif()
+   elseif (HIP_CXX_COMPILER MATCHES ".*clang\\+\\+")
+-    get_filename_component(HIP_CLANG_ROOT "${HIP_CXX_COMPILER}" DIRECTORY)
+-    get_filename_component(HIP_CLANG_ROOT "${HIP_CLANG_ROOT}" DIRECTORY)
++    get_filename_component(_HIP_CLANG_REAL_PATH "${HIP_CXX_COMPILER}" REALPATH)
++    get_filename_component(_HIP_CLANG_BIN_PATH "${_HIP_CLANG_REAL_PATH}" DIRECTORY)
++    get_filename_component(HIP_CLANG_ROOT "${_HIP_CLANG_BIN_PATH}" DIRECTORY)
+   endif()
+   file(GLOB HIP_CLANG_INCLUDE_SEARCH_PATHS ${HIP_CLANG_ROOT}/lib/clang/*/include)
+   find_path(HIP_CLANG_INCLUDE_PATH stddef.h

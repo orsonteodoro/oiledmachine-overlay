@@ -66,7 +66,7 @@ LICENSE="
 # MIT - hipamd-rocm-4.5.2/LICENSE.txt
 
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test ebuild-revision-35"
+IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test ebuild-revision-36"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -161,6 +161,7 @@ HIPAMD_PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-hip-host-not-cuda.patch"
 	"${FILESDIR}/hipamd-5.1.3-link-hsa-runtime64.patch"
 	"${FILESDIR}/hipamd-4.5.2-fix-hip-lang-device-interface-path.patch"
+	"${FILESDIR}/hipamd-4.5.2-fix-hip-clang-root.patch"
 )
 OCL_PATCHES=(
 )
