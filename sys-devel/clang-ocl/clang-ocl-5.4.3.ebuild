@@ -49,7 +49,7 @@ BDEPEND="
 	>=dev-build/cmake-3.5
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-4.5.2-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-5.3.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
