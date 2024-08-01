@@ -1,0 +1,11 @@
+diff '--color=auto' -urp rocprofiler-register-rocm-6.1.2.orig/cmake/rocprofiler_register_config_packaging.cmake rocprofiler-register-rocm-6.1.2/cmake/rocprofiler_register_config_packaging.cmake
+--- rocprofiler-register-rocm-6.1.2.orig/cmake/rocprofiler_register_config_packaging.cmake	2023-12-21 19:56:10.000000000 -0800
++++ rocprofiler-register-rocm-6.1.2/cmake/rocprofiler_register_config_packaging.cmake	2024-07-31 22:18:20.391590015 -0700
+@@ -1,5 +1,7 @@
+ # configure packaging
+ 
++include(CPack)
++
+ # Add packaging directives
+ set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+ set(CPACK_PACKAGE_VENDOR "Advanced Micro Devices, Inc.")
