@@ -190,6 +190,7 @@ RDEPEND="
 		~dev-util/ROCgdb-${PV}:${ROCM_SLOT}
 	)
 	tools-perf? (
+		app-benchmarks/transferbench:${ROCM_SLOT}
 		~dev-util/rocm_bandwidth_test-${PV}:${ROCM_SLOT}
 		non-free? (
 			~dev-libs/rocprofiler-register-${PV}:${ROCM_SLOT}
