@@ -113,6 +113,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.5.2-avoid-metadata-error-for-vanilla-clang.patch" # See also pr #1830
 	"${FILESDIR}/${PN}-4.5.2-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-4.5.2-fix-clang++-detection.patch"
+	"${FILESDIR}/${PN}-4.5.2-include-filesystem-exception.patch"
 )
 
 warn_untested_gpu() {

@@ -1,0 +1,10 @@
+--- MIOpen-rocm-4.5.2.orig/src/include/miopen/lock_file.hpp	2021-10-21 18:30:06.000000000 -0700
++++ MIOpen-rocm-4.5.2/src/include/miopen/lock_file.hpp	2024-08-01 13:40:26.468282264 -0700
+@@ -32,6 +32,7 @@
+ #include <boost/date_time/posix_time/posix_time_types.hpp>
+ #include <boost/date_time/posix_time/ptime.hpp>
+ #include <boost/date_time/time.hpp>
++#include <boost/filesystem/exception.hpp>
+ #include <boost/filesystem/operations.hpp>
+ #include <boost/interprocess/sync/file_lock.hpp>
+ 
