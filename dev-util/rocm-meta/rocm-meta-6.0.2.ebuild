@@ -106,6 +106,7 @@ RDEPEND="
 			~sys-libs/llvm-roc-${PV}:${ROCM_SLOT}
 		)
 		opencl? (
+			~sys-devel/clang-ocl-${PV}:${ROCM_SLOT}
 			~sys-libs/llvm-roc-${PV}:${ROCM_SLOT}
 			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}$(get_rocm_usedep LLVM_ROC_LIBOMP)
 		)
