@@ -46,12 +46,12 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	dev-util/hip:${SLOT}
-	~dev-util/Tensile-${PV}:${SLOT}
+	dev-util/hip:${SLOT}[cuda?,rocm?]
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
+		~dev-util/Tensile-${PV}:${SLOT}$(get_rocm_usedep TENSILE)
 		~sci-libs/hipSPARSE-${PV}:${SLOT}
 	)
 "
@@ -88,6 +88,7 @@ src_configure() {
 	)
 	if use cuda ; then
 		mycmakeargs+=(
+			-DBUILD_WITH_TENSILE=OFF
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="cuda"
@@ -97,6 +98,7 @@ src_configure() {
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
+			-DBUILD_WITH_TENSILE=ON
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
