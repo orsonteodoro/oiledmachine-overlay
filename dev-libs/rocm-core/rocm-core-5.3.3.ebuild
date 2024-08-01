@@ -4,7 +4,7 @@
 EAPI=8
 
 MY_PV="5.5.0"
-LLVM_SLOT=16
+LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
@@ -33,7 +33,7 @@ LICENSE="
 "
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-5"
+IUSE="ebuild-revision-6"
 RDEPEND="
 	!dev-libs/rocm-core:0
 "
