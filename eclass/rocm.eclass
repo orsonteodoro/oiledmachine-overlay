@@ -506,7 +506,7 @@ ewarn "QA:  ROCM_SLOT should be defined."
 		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_SLOT}"
 	fi
 
-	if [[ "${FEATURES}" =~ "ccache" ]] ; then
+	if [[ "${FEATURES}" =~ "ccache" && "${HIP_CLANG_DISABLE_CCACHE}" != "1" ]] ; then
 		export CCACHE_PATH="${EROCM_LLVM_PATH}/bin"
 	fi
 
@@ -518,16 +518,27 @@ ewarn "QA:  ROCM_SLOT should be defined."
 		| tr "\n" ":" \
 		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
 
-#	if [[ "${ROCM_USE_LLVM_ROC:-1}" != "1" ]] ; then
-#		:
-#	else
-#einfo "Removing ccache from PATH to prevent override by system's clang..."
-#		export PATH=$(echo "${PATH}" \
-#			| tr ":" "\n" \
-#			| sed -E -e "/ccache/d" \
-#			| tr "\n" ":")
-#	fi
+	if [[ "${HIP_CLANG_DISABLE_CCACHE}" == "1" ]] ; then
+# Enabling fixes:
 
+#  Imported target "hip::device" includes non-existent path
+#
+#    "HIP_CLANG_INCLUDE_PATH-NOTFOUND/.."
+#
+#  in its INTERFACE_INCLUDE_DIRECTORIES.  Possible reasons include:
+
+# The HIP_CLANG_ROOT in /opt/rocm-*/lib/cmake/hip/hip-config.cmake does dirname
+# like tricks with get_filename_component that break it when it falsely assumes
+# it is is not using ccache.
+
+einfo "Removing ccache from PATH to prevent override by system's clang..."
+		export PATH=$(echo "${PATH}" \
+			| tr ":" "\n" \
+			| sed -E -e "/ccache/d" \
+			| tr "\n" ":")
+	else
+ewarn "Disable ccache if HIP_CLANG_INCLUDE_PATH-NOTFOUND/.. error encountered."
+	fi
 
 # Avoid these kinds of errors with pgo by disabling ccache:
 #error: number of counters in profile data for function '...' does not match its profile data (counter 'indirect_call', expected 2 and have 3) [-Werror=coverage-mismatch]
