@@ -133,6 +133,7 @@ RDEPEND="
 		~virtual/amdgpu-${PV}:${PV%.*}
 	)
 	math-libs? (
+		~dev-util/Tensile-${PV}:${ROCM_SLOT}$(get_rocm_usedep TENSILE)
 		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipFFT-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPFFT)
 		~sci-libs/hipSOLVER-${PV}:${ROCM_SLOT}[rocm]
