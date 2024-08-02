@@ -88,7 +88,7 @@ REQUIRED_USE="
 		fortran
 		hip
 		opencl
-		tools-system
+		tools-deploy
 	)
 "
 RDEPEND="
