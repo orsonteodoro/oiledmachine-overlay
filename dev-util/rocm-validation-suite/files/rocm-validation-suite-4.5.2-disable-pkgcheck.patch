@@ -1,0 +1,33 @@
+diff '--color=auto' -urp ROCmValidationSuite-rocm-4.5.2.orig/rcqt.so/src/action.cpp ROCmValidationSuite-rocm-4.5.2/rcqt.so/src/action.cpp
+--- ROCmValidationSuite-rocm-4.5.2.orig/rcqt.so/src/action.cpp	2021-10-11 10:58:47.000000000 -0700
++++ ROCmValidationSuite-rocm-4.5.2/rcqt.so/src/action.cpp	2024-08-01 19:39:10.678120340 -0700
+@@ -149,10 +149,13 @@ int rcqt_action::run() {
+     }
+   }
+ 
++#if 0
++// It doesn't support this distro
+   // check if package check action is going to trigger
+   pkgchk_bool =  rvs::actionbase::has_property(PACKAGE);
+   if (pkgchk_bool == true)
+     return pkgchk_run();
++#endif
+ 
+   // check if usrer check action is going to trigger
+   usrchk_bool = rvs::actionbase::has_property(USER);
+@@ -186,6 +189,7 @@ int rcqt_action::run() {
+  * @return 0 - success, non-zero otherwise
+  * */
+ 
++#if 0
+ int rcqt_action::pkgchk_run() {
+   string package_name;
+   string msg;
+@@ -316,6 +320,7 @@ int rcqt_action::pkgchk_run() {
+ 
+   return 0;
+ }
++#endif
+ 
+ /**
+  * Check if the user exists in the system (optional: check for the group membership )

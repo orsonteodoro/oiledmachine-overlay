@@ -103,6 +103,7 @@ src_install() {
 	cmake_src_install
 	rocm_mv_docs
 	rocm_fix_rpath
+ewarn "RCQT (ROCm Configuration Qualification Tool) does not support portage."
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

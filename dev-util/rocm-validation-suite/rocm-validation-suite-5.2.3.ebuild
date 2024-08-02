@@ -68,6 +68,8 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-4.5.2-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-4.5.2-system-libs.patch"
+	"${FILESDIR}/${PN}-4.5.2-disable-pkgcheck.patch"
+	"${FILESDIR}/${PN}-5.2.3-fix-rocblas-includes-path.patch"
 )
 
 pkg_setup() {
@@ -103,6 +105,7 @@ src_install() {
 	cmake_src_install
 	rocm_mv_docs
 	rocm_fix_rpath
+ewarn "RCQT (ROCm Configuration Qualification Tool) does not support portage."
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

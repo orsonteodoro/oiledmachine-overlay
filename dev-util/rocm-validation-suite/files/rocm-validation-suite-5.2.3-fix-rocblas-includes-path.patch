@@ -1,0 +1,12 @@
+diff '--color=auto' -urp ROCmValidationSuite-rocm-5.2.3.orig/include/rvs_blas.h ROCmValidationSuite-rocm-5.2.3/include/rvs_blas.h
+--- ROCmValidationSuite-rocm-5.2.3.orig/include/rvs_blas.h	2022-04-18 20:44:48.000000000 -0700
++++ ROCmValidationSuite-rocm-5.2.3/include/rvs_blas.h	2024-08-01 19:59:33.782597435 -0700
+@@ -27,7 +27,7 @@
+ 
+ #define __HIP_PLATFORM_HCC__
+ 
+-#include "rocblas.h"
++#include <rocblas/rocblas.h>
+ #include "include/hip/hip_runtime.h"
+ #include "include/hip/hip_runtime_api.h"
+ #include <sys/time.h>
