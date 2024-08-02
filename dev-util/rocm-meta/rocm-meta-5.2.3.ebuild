@@ -185,6 +185,7 @@ RDEPEND="
 	)
 	tools-system? (
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
+		~dev-util/rocm-validation-suite-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 		~sys-cluster/rdc-${PV}:${ROCM_SLOT}
 		opencl? (
