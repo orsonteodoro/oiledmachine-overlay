@@ -69,7 +69,7 @@ LICENSE="BSD"
 KEYWORDS="~amd64"
 IUSE+="
 doc examples -ilp64 mkl openblas tbb openmp test
-ebuild-revision-2
+ebuild-revision-3
 "
 if ! [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	IUSE+="
@@ -290,7 +290,7 @@ RESTRICT="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2.8.0-path-changes.patch"
+	"A${FILESDIR}/${PN}-2.8.0-path-changes.patch"
 	"${FILESDIR}/${PN}-2.8.0-make-inc.patch"
 	"${FILESDIR}/${PN}-2.7.1-mkl.patch"
 )
@@ -313,7 +313,7 @@ icl-magma-v2_8_pkg_setup() {
 		done
 		llvm_pkg_setup
 	fi
-	tc-check-openmp || die "Need OpenMP to compile ${P}"
+	#tc-check-openmp || die "Need OpenMP to compile ${P}"
 	if use mkl ; then
 		source "/opt/intel/oneapi/mkl/latest/env/vars.sh"
 	fi
@@ -395,8 +395,11 @@ einfo "Removing LLVM references"
 	sed -i -e "s|@ACML_LIBDIR@|lib|g" \
 		$(grep -r -l -e "@ACML_LIBDIR@" "${WORKDIR}") \
 		|| true
-	sed -i -e "s|@ESSL_LIBDIR@|lib64|g" \
-		$(grep -r -l -e "@ESSL_LIBDIR@" "${WORKDIR}") \
+	sed -i -e "s|@OLCF_ESSL_LIBDIR@|lib64|g" \
+		$(grep -r -l -e "@OLCF_ESSL_LIBDIR@" "${WORKDIR}") \
+		|| true
+	sed -i -e "s|@OLCF_NETLIB_LAPACK_LIBDIR@|lib64|g" \
+		$(grep -r -l -e "@OLCF_NETLIB_LAPACK_LIBDIR@" "${WORKDIR}") \
 		|| true
 	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 		sed -i -e "s|@COND_LIBDIR@|$(rocm_get_libdir)|g" \

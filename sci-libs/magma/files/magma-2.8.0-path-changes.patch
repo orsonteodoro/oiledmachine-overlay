@@ -385,7 +385,7 @@ diff -urp magma-2.8.0.orig/Makefile magma-2.8.0/Makefile
  	$(CXX) $(LDFLAGS) -shared -o $@ \
  		$^ \
 -		-L./lib $(LIBS)
-+		-L./@LIBDIR@ $(LIBS)
++		-L./@COND_LIBDIR@ $(LIBS)
  	@echo
  
      # Can't add -Llib -lmagma to LIBS, because that would apply to libsparse_so's
@@ -883,7 +883,7 @@ diff -urp magma-2.8.0.orig/make.inc-examples/make.inc.power9-essl magma-2.8.0/ma
 -LIBDIR    = -L$(OLCF_CUDA_ROOT)/lib64 \
 -            -L$(OLCF_ESSL_ROOT)/lib64 -L$(OLCF_NETLIB_LAPACK_ROOT)/lib64
 +LIBDIR    = -L$(OLCF_CUDA_ROOT)/@ABI_LIBDIR@ \
-+            -L$(OLCF_ESSL_ROOT)/@ESSL_LIBDIR@ -L$(OLCF_NETLIB_LAPACK_ROOT)/@LIBDIR@
++            -L$(OLCF_ESSL_ROOT)/@OLCF_ESSL_LIBDIR@ -L$(OLCF_NETLIB_LAPACK_ROOT)/@LIBDIR@
  
  INC       = -I$(OLCF_CUDA_ROOT)/include \
              -I$(OLCF_ESSL_ROOT)/include -I$(OLCF_NETLIB_LAPACK_ROOT)/include
