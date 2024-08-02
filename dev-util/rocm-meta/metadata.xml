@@ -31,7 +31,7 @@
     <flag name="kernel-driver">
       Install the kernel driver.
     </flag>
-    <flag name="math-libs">
+    <flag name="math">
       Install math libraries.
     </flag>
     <flag name="ml">
