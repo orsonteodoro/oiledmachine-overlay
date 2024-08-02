@@ -86,6 +86,7 @@ if [[ "${PV}" == *"9999" ]] ; then
 	"
 	BDEPEND="
 		${PYTHON_DEPS}
+		sys-devel/gcc[openmp]
 		sys-devel/gcc:=
 		>=dev-build/cmake-3.5
 		$(python_gen_cond_dep '
@@ -124,7 +125,8 @@ else
 	"
 	BDEPEND="
 		${PYTHON_DEPS}
-		${ROCM_GCC_DEPEND}
+		sys-devel/gcc:${HIP_6_2_GCC_SLOT}[openmp]
+		sys-devel/gcc:=
 		>=dev-build/cmake-3.5
 		$(python_gen_cond_dep '
 			dev-python/pip[${PYTHON_USEDEP}]
