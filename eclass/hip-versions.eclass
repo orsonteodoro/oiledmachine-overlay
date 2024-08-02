@@ -60,6 +60,7 @@ _hip_set_globals() {
 	local hip_platform="${HIP_PLATFORM:-amd}"
 	if [[ "${hip_platform}" == "amd" ]] ; then
 		# For HIP_PLATFORM == amd.
+		HIP_4_1_GCC_SLOT="12"
 		HIP_4_5_GCC_SLOT="12"
 		HIP_5_1_GCC_SLOT="12"
 		HIP_5_2_GCC_SLOT="12"
@@ -72,6 +73,7 @@ _hip_set_globals() {
 		HIP_6_1_GCC_SLOT="12"
 	else
 		# For HIP_PLATFORM == nvidia.
+		HIP_4_1_GCC_SLOT="10" # CUDA 11.3
 		HIP_4_5_GCC_SLOT="11" # CUDA 11.5
 		HIP_5_1_GCC_SLOT="11" # CUDA 11.5
 		HIP_5_2_GCC_SLOT="11" # CUDA 11.6
@@ -107,6 +109,7 @@ unset -f _hip_set_globals
 # For the "missing" tag in brackets, we fill the missing details using the
 # documentation from the next minor version of HIPIFY.
 #
+HIPIFY_4_1_CUDA_SLOT="11.3" # LLVM 12, [missing]
 HIPIFY_4_5_CUDA_SLOT="11.5" # LLVM 13, [missing]
 HIPIFY_5_0_CUDA_SLOT="11.6" # LLVM 14, [missing]
 HIPIFY_5_1_CUDA_SLOT="11.6" # LLVM 14, [missing]
@@ -119,6 +122,7 @@ HIPIFY_5_7_CUDA_SLOT="12.2" # LLVM 17, [c,u,match]
 HIPIFY_6_0_CUDA_SLOT="12.2" # LLVM 17, [c,s]
 HIPIFY_6_1_CUDA_SLOT="12.3" # LLVM 17, [c,s]
 
+HIPIFY_4_1_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.3.1.ebuild?id=38b155fa1bf907617067c98eb4ba3a5d0790eb1a"
 HIPIFY_4_5_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.5.0-r1.ebuild?id=3e598a395f06403e05d63b15458d90a56cb1a3ec"
 HIPIFY_5_0_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.6.2.ebuild?id=e51ca099bec28c5a27a7eb070e7c77a06790a30d"
 HIPIFY_5_1_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.6.2.ebuild?id=e51ca099bec28c5a27a7eb070e7c77a06790a30d"
