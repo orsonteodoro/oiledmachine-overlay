@@ -62,7 +62,7 @@ LICENSE="
 # The distro Apache-2.0 license template does not have all rights reserved
 # The distro MIT license template does not have all rights reserved
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-12"
+IUSE="ebuild-revision-13"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
@@ -149,6 +149,10 @@ ewarn "Patching may take a long time.  Please wait..."
 		"${S}/mlir/utils/performance/rocblas-benchmark-driver/CMakeLists.txt"
 	)
 	rocm_src_prepare
+
+	# Fix for:
+	# python3: no python-exec wrapped executable found in /opt/rocm-6.0.2/lib/python-exec.
+	python_fix_shebang ./
 }
 
 # DO NOT REMOVE/CHANGE
@@ -164,7 +168,6 @@ build_rocmlir() {
 		["emake"]="Unix Makefiles"
 	        ["ninja"]="Ninja"
 	)
-
 	local libdir_suffix=$(rocm_get_libdir)
 	libdir_suffix="${libdir_suffix/lib}"
 	local mycmakeargs=(
@@ -205,6 +208,10 @@ build_rocmlir() {
 	)
 
 	rocm_set_default_clang
+
+	# Just a precaution.  llvm/clang is broken at -O3.
+	replace-flags '-O*' '-O2'
+
 	ccmake \
 		"${mycmakeargs[@]}" \
 		..
