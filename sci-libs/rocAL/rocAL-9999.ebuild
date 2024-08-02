@@ -60,7 +60,7 @@ LICENSE="
 "
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" cpu enhanced-message ffmpeg opencv python system-rapidjson system-jpeg ebuild-revision-0"
+IUSE+=" cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson system-jpeg test ebuild-revision-0"
 if [[ "${PV}" == *"9999" ]] ; then
 	RDEPEND="
 		${PYTHON_DEPS}
@@ -81,7 +81,7 @@ if [[ "${PV}" == *"9999" ]] ; then
 			>=dev-libs/boost-${BOOST_PV}:=
 		)
 		opencv? (
-			>=media-libs/opencv-4.6.0[features2d,jpeg]
+			>=media-libs/opencv-4.6.0[features2d,gtk3,ieee1394?,jpeg,png,tiff]
 		)
 	"
 	DEPEND="
@@ -92,13 +92,19 @@ if [[ "${PV}" == *"9999" ]] ; then
 	"
 	BDEPEND="
 		${PYTHON_DEPS}
-		sys-devel/gcc[openmp]
-		sys-devel/gcc:=
 		>=dev-build/cmake-3.5
 		$(python_gen_cond_dep '
+			>=dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
 			dev-python/pip[${PYTHON_USEDEP}]
-			dev-python/wheel[${PYTHON_USEDEP}]
+			test? (
+				>=dev-python/pytest-7.0.0[${PYTHON_USEDEP}]
+			)
 		')
+		dev-lang/nasm
+		dev-lang/yasm
+		sys-devel/gcc[openmp]
+		sys-devel/gcc:=
+		virtual/pkgconfig
 	"
 else
 	RDEPEND="
@@ -120,7 +126,7 @@ else
 			>=dev-libs/boost-${BOOST_PV}:=
 		)
 		opencv? (
-			>=media-libs/opencv-4.6.0[features2d,jpeg]
+			>=media-libs/opencv-4.6.0[features2d,gtk3,ieee1394?,jpeg,png,tiff]
 		)
 	"
 	DEPEND="
@@ -131,13 +137,19 @@ else
 	"
 	BDEPEND="
 		${PYTHON_DEPS}
-		sys-devel/gcc:${HIP_6_2_GCC_SLOT}[openmp]
-		sys-devel/gcc:=
 		>=dev-build/cmake-3.5
 		$(python_gen_cond_dep '
+			>=dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
 			dev-python/pip[${PYTHON_USEDEP}]
-			dev-python/wheel[${PYTHON_USEDEP}]
+			test? (
+				>=dev-python/pytest-7.0.0[${PYTHON_USEDEP}]
+			)
 		')
+		dev-lang/nasm
+		dev-lang/yasm
+		sys-devel/gcc:${HIP_6_2_GCC_SLOT}[openmp]
+		sys-devel/gcc:=
+		virtual/pkgconfig
 	"
 fi
 PATCHES=(
