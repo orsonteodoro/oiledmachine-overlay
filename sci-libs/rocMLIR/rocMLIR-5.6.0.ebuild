@@ -7,6 +7,8 @@ CMAKE_MAKEFILE_GENERATOR="ninja"
 LLVM_SLOT=16
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+inherit hip-versions
+ROCM_VERSION="${HIP_5_6_VERSION}" # Workaround for finding HIP-Clang
 
 inherit cmake python-r1 rocm
 
