@@ -24,24 +24,24 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	compilers
 	cuda
-	cxx-primitives
 	fortran
 	hip
-	math-libs
+	math
+	primitives
 	rocm
 	runtimes
 	support-libs
 "
 REQUIRED_USE="
-	cxx-primitives? (
-		support-libs
-	)
 	hip? (
 		compilers
 		runtimes
 		support-libs
 	)
-	math-libs? (
+	math? (
+		support-libs
+	)
+	primitives? (
 		support-libs
 	)
 	^^ (
@@ -62,15 +62,7 @@ RDEPEND="
 			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 		)
 	)
-	cxx-primitives? (
-		cuda? (
-			~sci-libs/hipCUB-${PV}:${ROCM_SLOT}[cuda]
-		)
-		rocm? (
-			~sci-libs/hipCUB-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPCUB)
-		)
-	)
-	math-libs? (
+	math? (
 		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 		~sci-libs/hipRAND-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 		~sci-libs/hipSOLVER-${PV}:${ROCM_SLOT}[cuda?,rocm?]
@@ -83,6 +75,14 @@ RDEPEND="
 		)
 		rocm? (
 			~sci-libs/hipFFT-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPFFT)
+		)
+	)
+	primitives? (
+		cuda? (
+			~sci-libs/hipCUB-${PV}:${ROCM_SLOT}[cuda]
+		)
+		rocm? (
+			~sci-libs/hipCUB-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPCUB)
 		)
 	)
 	runtimes? (

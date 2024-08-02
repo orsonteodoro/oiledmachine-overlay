@@ -13,17 +13,17 @@
     <flag name="cuda">
       Install CUDA® support.
     </flag>
-    <flag name="cxx-primitives">
-      Install C++ primitives support.
-    </flag>
     <flag name="fortran">
       Install GPU optimized fortran support.
     </flag>
     <flag name="hip">
       Install HIP runtime and compiler support.
     </flag>
-    <flag name="math-libs">
+    <flag name="math">
       Install math libraries support.
+    </flag>
+    <flag name="primitives">
+      Install HIP/C++ primitives support.
     </flag>
     <flag name="rocm">
       Install ROCm™ support.
