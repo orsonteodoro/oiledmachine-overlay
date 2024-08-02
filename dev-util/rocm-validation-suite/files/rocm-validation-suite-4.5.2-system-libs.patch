@@ -1,0 +1,231 @@
+diff '--color=auto' -urp ROCmValidationSuite-rocm-4.5.2.orig/CMakeLists.txt ROCmValidationSuite-rocm-4.5.2/CMakeLists.txt
+--- ROCmValidationSuite-rocm-4.5.2.orig/CMakeLists.txt	2024-08-01 17:26:51.558467645 -0700
++++ ROCmValidationSuite-rocm-4.5.2/CMakeLists.txt	2024-08-01 17:30:17.963101940 -0700
+@@ -160,10 +160,17 @@ set(RVS_BUILD_TESTS TRUE CACHE BOOL "TRU
+ set(RVS_DO_TRACE "1" CACHE STRING "Expand RVSTRACE_ macro")
+ set(RVS_ROCBLAS "0" CACHE STRING "1 = use local rocBLAS")
+ set(RVS_ROCMSMI "0" CACHE STRING "1 = use local rocm_smi_lib")
++set(RVS_GTEST "0" CACHE STRING "1 = use local gtest")
++set(RVS_YAML_CPP "0" CACHE STRING "1 = use local yaml-cpp")
+ 
+ set(RVS_LIB_DIR "${CMAKE_BINARY_DIR}/rvslib" CACHE PATH "Contains RVS library")
+-set(YAML_INC_DIR "${CMAKE_BINARY_DIR}/yaml-src/include" CACHE PATH "Contains header files exported by yaml-cpp")
+-set(YAML_LIB_DIR "${CMAKE_BINARY_DIR}/yaml-build" CACHE PATH "Contains library files exported by yaml-cpp")
++if(RVS_YAML_CPP)
++  set(YAML_INC_DIR "${CMAKE_BINARY_DIR}/yaml-src/include" CACHE PATH "Contains header files exported by yaml-cpp")
++  set(YAML_LIB_DIR "${CMAKE_BINARY_DIR}/yaml-build" CACHE PATH "Contains library files exported by yaml-cpp")
++else()
++  set(YAML_INC_DIR "/usr/include" CACHE PATH "Contains header files exported by yaml-cpp")
++  set(YAML_LIB_DIR "/usr/@ABI_LIBDIR@" CACHE PATH "Contains library files exported by yaml-cpp")
++endif()
+ 
+ if (${RVS_OS_TYPE} STREQUAL "centos")
+   set(ROCT_LIB_DIR "${ROCM_PATH}/lib64" CACHE PATH "Contains library files exported by ROC Trunk")
+@@ -210,80 +217,90 @@ message (STATUS "CPACK_GENERATOR ${CPACK
+ 
+ ################################################################################
+ # Download and unpack yaml-cpp at configure time
+-configure_file(CMakeYamlDownload.cmake yaml-download/CMakeLists.txt)
+-execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+-  RESULT_VARIABLE result
+-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/yaml-download )
+-if(result)
+-  message(FATAL_ERROR "CMake step for yaml-download failed: ${result}")
+-endif()
+-execute_process(COMMAND ${CMAKE_COMMAND} --build .
+-  RESULT_VARIABLE result
+-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/yaml-download )
+-if(result)
+-  message(FATAL_ERROR "Build step for yaml-download failed: ${result}")
+-endif()
+-execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_BINARY_DIR}/yaml-src -B${CMAKE_BINARY_DIR}/yaml-build
+-  RESULT_VARIABLE result
+-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/yaml-src )
+-if(result)
+-  message(FATAL_ERROR "Config step for yaml-src failed: ${result}")
+-endif()
+-
+-add_custom_target(rvs_yaml_target
+-  DEPENDS ${CMAKE_BINARY_DIR}/yaml-build/libyaml-cpp.a
+-)
+-
+-add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/yaml-build/libyaml-cpp.a
+-  COMMAND make -C ${CMAKE_BINARY_DIR}/yaml-build
+-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/yaml-src
+-  COMMENT "Generating yaml-cpp targets"
+-  VERBATIM)
+-
+-################################################################################
+-## GOOGLE TEST
+-if(RVS_BUILD_TESTS)
+-  # Download and unpack googletest at configure time
+-  configure_file(CMakeGtestDownload.cmake googletest-download/CMakeLists.txt)
++if(RVS_YAML_CPP)
++  configure_file(CMakeYamlDownload.cmake yaml-download/CMakeLists.txt)
+   execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+     RESULT_VARIABLE result
+-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download )
++    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/yaml-download )
+   if(result)
+-    message(FATAL_ERROR "CMake step for googletest failed: ${result}")
++    message(FATAL_ERROR "CMake step for yaml-download failed: ${result}")
+   endif()
+   execute_process(COMMAND ${CMAKE_COMMAND} --build .
+     RESULT_VARIABLE result
+-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download )
++    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/yaml-download )
+   if(result)
+-    message(FATAL_ERROR "Build step for googletest failed: ${result}")
++    message(FATAL_ERROR "Build step for yaml-download failed: ${result}")
+   endif()
+-  execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_BINARY_DIR}/googletest-src -B${CMAKE_BINARY_DIR}/googletest-build
++  execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_BINARY_DIR}/yaml-src -B${CMAKE_BINARY_DIR}/yaml-build
+     RESULT_VARIABLE result
+-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-src )
++    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/yaml-src )
+   if(result)
+-    message(FATAL_ERROR "Config step for googletest-src failed: ${result}")
++    message(FATAL_ERROR "Config step for yaml-src failed: ${result}")
+   endif()
+ 
+-  add_custom_target(rvs_gtest_target
+-    DEPENDS ${CMAKE_BINARY_DIR}/googletest-build/lib/libgtest_main.a
++  add_custom_target(rvs_yaml_target
++    DEPENDS ${CMAKE_BINARY_DIR}/yaml-build/libyaml-cpp.a
+   )
+ 
+-  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/googletest-build/lib/libgtest_main.a
+-    COMMAND make -C ${CMAKE_BINARY_DIR}/googletest-build
+-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-src
+-    COMMENT "Generating googletest targets"
++  add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/yaml-build/libyaml-cpp.a
++    COMMAND make -C ${CMAKE_BINARY_DIR}/yaml-build
++    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/yaml-src
++    COMMENT "Generating yaml-cpp targets"
+     VERBATIM)
++else()
++  find_package(yaml-cpp)
++endif()
+ 
+-  ## Set default unit test framework include path
+-  if (NOT DEFINED UT_INC)
+-      set (UT_INC "${CMAKE_BINARY_DIR}/googletest-src/googletest/include")
+-      message ("UT_INC ${UT_INC}")
+-  endif ()
+-
+-  ## Set default unit test framework include path
+-  if (NOT DEFINED UT_LIB)
+-      set (UT_LIB "${CMAKE_BINARY_DIR}/googletest-build/lib")
+-      message ("UT_LIB ${UT_LIB}")
++################################################################################
++## GOOGLE TEST
++if(RVS_BUILD_TESTS)
++  if(RVS_GTEST)
++    # Download and unpack googletest at configure time
++    configure_file(CMakeGtestDownload.cmake googletest-download/CMakeLists.txt)
++    execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
++      RESULT_VARIABLE result
++      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download )
++    if(result)
++      message(FATAL_ERROR "CMake step for googletest failed: ${result}")
++    endif()
++    execute_process(COMMAND ${CMAKE_COMMAND} --build .
++      RESULT_VARIABLE result
++      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download )
++    if(result)
++      message(FATAL_ERROR "Build step for googletest failed: ${result}")
++    endif()
++    execute_process(COMMAND ${CMAKE_COMMAND} ${CMAKE_BINARY_DIR}/googletest-src -B${CMAKE_BINARY_DIR}/googletest-build
++      RESULT_VARIABLE result
++      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-src )
++    if(result)
++      message(FATAL_ERROR "Config step for googletest-src failed: ${result}")
++    endif()
++
++    add_custom_target(rvs_gtest_target
++      DEPENDS ${CMAKE_BINARY_DIR}/googletest-build/lib/libgtest_main.a
++    )
++
++    add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/googletest-build/lib/libgtest_main.a
++      COMMAND make -C ${CMAKE_BINARY_DIR}/googletest-build
++      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-src
++      COMMENT "Generating googletest targets"
++      VERBATIM)
++
++    ## Set default unit test framework include path
++    if (NOT DEFINED UT_INC)
++        set (UT_INC "${CMAKE_BINARY_DIR}/googletest-src/googletest/include")
++        message ("UT_INC ${UT_INC}")
++    endif ()
++
++    ## Set default unit test framework include path
++    if (NOT DEFINED UT_LIB)
++        set (UT_LIB "${CMAKE_BINARY_DIR}/googletest-build/lib")
++        message ("UT_LIB ${UT_LIB}")
++    endif()
++  else()
++    find_package(gtest)
++    set (UT_INC "/usr/include")
++    set (UT_LIB "/usr/@ABI_LIBDIR@")
+   endif()
+ 
+ endif()
+@@ -413,6 +430,7 @@ else()
+   set(ROCBLAS_INC_DIR "${ROCM_PATH}/include")
+   set(ROCBLAS_LIB_DIR "${ROCM_PATH}/lib")
+ endif()
++set(ROCM_ROCBLAS "rocblas" CACHE STRING "rocblas library name")
+ 
+ if (RVS_ROCMSMI EQUAL 1)
+   set(ROCM_SMI_INC_DIR "${CMAKE_BINARY_DIR}/rvs_smi-src/include")
+@@ -454,7 +472,11 @@ if (RVS_BUILD_TESTS)
+   add_subdirectory(testif.so)
+ endif()
+ 
+-add_dependencies(rvshelper rvs_bin_folder rvs_doc rvs_yaml_target)
++if(RVS_YAML_CPP)
++  add_dependencies(rvshelper rvs_bin_folder rvs_doc rvs_yaml_target)
++else()
++  add_dependencies(rvshelper rvs_bin_folder rvs_doc)
++endif()
+ 
+ 
+ add_dependencies(pesm rvslib rvslibrt)
+@@ -489,7 +511,11 @@ if (RVS_BUILD_TESTS)
+   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+   COMMENT "Create the bintest directory"
+   VERBATIM)
+-  add_dependencies(rvshelper rvs_bintest_folder rvs_gtest_target)
++  if(RVS_GTEST)
++    add_dependencies(rvshelper rvs_bintest_folder rvs_gtest_target)
++  else()
++    add_dependencies(rvshelper rvs_bintest_folder)
++  endif()
+ endif()
+ 
+ add_custom_target(rvs_doc ALL
+diff '--color=auto' -urp ROCmValidationSuite-rocm-4.5.2.orig/rvs/CMakeLists.txt ROCmValidationSuite-rocm-4.5.2/rvs/CMakeLists.txt
+--- ROCmValidationSuite-rocm-4.5.2.orig/rvs/CMakeLists.txt	2021-10-11 10:58:47.000000000 -0700
++++ ROCmValidationSuite-rocm-4.5.2/rvs/CMakeLists.txt	2024-08-01 17:30:37.958775893 -0700
+@@ -123,7 +123,11 @@ include_directories(./ ../ ${YAML_INC_DI
+ ## define lib directories
+ link_directories(${CMAKE_CURRENT_BINARY_DIR} ${RVS_LIB_DIR} ${ASAN_LIB_PATH})
+ ## additional libraries
+-set (PROJECT_LINK_LIBS libdl.so "${YAML_LIB_DIR}/libyaml-cpp.a" libpthread.so)
++if(RVS_YAML_CPP)
++  set (PROJECT_LINK_LIBS libdl.so "${YAML_LIB_DIR}/libyaml-cpp.a" libpthread.so)
++else()
++  set (PROJECT_LINK_LIBS libdl.so "${YAML_LIB_DIR}/libyaml-cpp.so" libpthread.so)
++endif()
+ 
+ ## define source files
+ set(SOURCES
+@@ -143,7 +147,7 @@ add_library(rvshelper ${SOURCES})
+ 
+ ## define target
+ add_executable(${RVS_TARGET} src/rvs.cpp)
+-target_link_libraries(${RVS_TARGET} rvshelper rvslib ${PROJECT_LINK_LIBS} )
++target_link_libraries(${RVS_TARGET} rvshelper rvslib rvslibrt pci hsa-runtime64 ${PROJECT_LINK_LIBS} ${ROCM_ROCBLAS} ${ROCM_SMI_LIB} )
+ add_dependencies(${RVS_TARGET} rvshelper)
+ 
+ 
