@@ -19,9 +19,6 @@
     <flag name="communication">
       Install communication support.
     </flag>
-    <flag name="cxx-primitives">
-      Install C++ primitives.
-    </flag>
     <flag name="cv">
       Install Computer Vision (CV) support.
     </flag>
@@ -46,11 +43,17 @@
     <flag name="opencl">
       Install the ROCr OpenCL™ driver and support.
     </flag>
+    <flag name="primitives">
+      Install HIP/C++ primitives.
+    </flag>
     <flag name="runtimes">
       Install runtime support.
     </flag>
     <flag name="support-libs">
       Install support libraries.
+    </flag>
+    <flag name="tools-deploy">
+      Install depolyment tools.
     </flag>
     <flag name="tools-dev">
       Install development tools.

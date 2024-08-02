@@ -28,16 +28,17 @@ IUSE="
 	+compilers
 	communication
 	cv
-	+cxx-primitives
 	fortran
 	+hip
 	+kernel-driver
-	+math-libs
+	+math
 	+ml
 	non-free
 	+opencl
+	+primitives
 	+runtimes
 	+support-libs
+	tools-deploy
 	tools-dev
 	tools-perf
 	tools-system
@@ -46,9 +47,6 @@ REQUIRED_USE="
 	ai? (
 		cv
 		ml
-	)
-	cxx-primitives? (
-		support-libs
 	)
 	fortran? (
 		compilers
@@ -62,7 +60,7 @@ REQUIRED_USE="
 		runtimes
 		support-libs
 	)
-	math-libs? (
+	math? (
 		support-libs
 	)
 	ml? (
@@ -71,6 +69,9 @@ REQUIRED_USE="
 	opencl? (
 		compilers
 		runtimes
+		support-libs
+	)
+	primitives? (
 		support-libs
 	)
 	support-libs? (
@@ -119,16 +120,10 @@ RDEPEND="
 		~sci-libs/rocDecode-${PV}:${ROCM_SLOT}
 		~sci-libs/rpp-${PV}:${ROCM_SLOT}$(get_rocm_usedep RPP)
 	)
-	cxx-primitives? (
-		~sci-libs/hipCUB-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPCUB)
-		~sci-libs/hipTensor-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCPRIM)
-		~sci-libs/rocThrust-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCTHRUST)
-	)
 	kernel-driver? (
 		~virtual/amdgpu-${PV}:${PV%.*}
 	)
-	math-libs? (
+	math? (
 		~dev-util/Tensile-${PV}:${ROCM_SLOT}$(get_rocm_usedep TENSILE)
 		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/hipFFT-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPFFT)
@@ -160,6 +155,12 @@ RDEPEND="
 		~sci-libs/MIGraphX-${PV}:${ROCM_SLOT}$(get_rocm_usedep MIGRAPHX)
 		~sci-libs/miopen-${PV}:${ROCM_SLOT}$(get_rocm_usedep MIOPEN)
 	)
+	primitives? (
+		~sci-libs/hipCUB-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPCUB)
+		~sci-libs/hipTensor-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCPRIM)
+		~sci-libs/rocThrust-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCTHRUST)
+	)
 	runtimes? (
 		~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
@@ -183,6 +184,12 @@ RDEPEND="
 		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
 		~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 	)
+	tools-deploy? (
+		~dev-util/amd-smi-${PV}:${ROCM_SLOT}
+		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
+		~dev-util/rocm-validation-suite-${PV}:${ROCM_SLOT}
+		~sys-cluster/rdc-${PV}:${ROCM_SLOT}
+	)
 	tools-dev? (
 		~dev-libs/ROCdbgapi-${PV}:${ROCM_SLOT}
 		~dev-libs/rocm-debug-agent-${PV}:${ROCM_SLOT}
@@ -199,11 +206,7 @@ RDEPEND="
 		)
 	)
 	tools-system? (
-		~dev-util/amd-smi-${PV}:${ROCM_SLOT}
-		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
-		~dev-util/rocm-validation-suite-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
-		~sys-cluster/rdc-${PV}:${ROCM_SLOT}
 		opencl? (
 			dev-util/clinfo
 		)
