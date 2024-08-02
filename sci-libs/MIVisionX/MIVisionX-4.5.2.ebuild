@@ -52,12 +52,28 @@ LICENSE="
 # The distro's MIT license template does not contain All rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-cpu ffmpeg +loom +migraphx +neural-net opencl opencv +rocal +rocm +rpp
-system-rapidjson
+caffe cpu ffmpeg +ieee1394 +loom +neural-net nnef onnx opencl opencv +rocal
++rocm +rpp system-rapidjson
 ebuild-revision-16
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
+	caffe? (
+		neural-net
+	)
+	neural-net? (
+		|| (
+			caffe
+			nnef
+			onnx
+		)
+	)
+	nnef? (
+		neural-net
+	)
+	onnx? (
+		neural-net
+	)
 	rocal? (
 		^^ (
 			rocm
@@ -87,18 +103,39 @@ RDEPEND="
 	')
 	dev-libs/openssl
 	~dev-util/hip-${PV}:${ROCM_SLOT}
+	caffe? (
+		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
+		$(python_gen_cond_dep '
+			dev-python/numpy[${PYTHON_USEDEP}]
+		')
+	)
 	ffmpeg? (
 		>=media-video/ffmpeg-4.0.4:0/56.58.58[fdk,gpl,libass,x264,x265,nonfree]
 	)
 	neural-net? (
+		$(python_gen_cond_dep '
+			dev-python/future[${PYTHON_USEDEP}]
+			dev-python/numpy[${PYTHON_USEDEP}]
+			dev-python/pytz[${PYTHON_USEDEP}]
+		')
+	)
+	nnef? (
+		$(python_gen_cond_dep '
+			sci-libs/nnef-tools[${PYTHON_USEDEP}]
+		')
+	)
+	onnx? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
+		$(python_gen_cond_dep '
+			sci-libs/onnx[${PYTHON_USEDEP}]
+		')
 	)
 	opencl? (
 		virtual/opencl
 		~sci-libs/miopengemm-${PV}:${ROCM_SLOT}
 	)
 	opencv? (
-		>=media-libs/opencv-3.4.0[features2d,jpeg]
+		>=media-libs/opencv-3.4.0[features2d,gtk3,ieee1394?,jpeg,png,tiff]
 	)
 	rocal? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
@@ -133,6 +170,11 @@ BDEPEND="
 	>=dev-build/cmake-3.5
 	dev-util/patchelf
 	virtual/pkgconfig
+	neural-net? (
+		$(python_gen_cond_dep '
+			dev-python/pip[${PYTHON_USEDEP}]
+		')
+	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-change-libjpeg-turbo-search-path.patch"
@@ -180,7 +222,6 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DGPU_SUPPORT=$(usex cpu OFF ON)
 		-DLOOM=$(usex loom ON OFF)
-		-DMIGRAPHX=$(usex migraphx ON OFF)
 		-DNEURAL_NET=$(usex neural-net ON OFF)
 		-DPYTHON_EXECUTABLE="/usr/bin/${EPYTHON}"
 		-DROCAL=$(usex rocal ON OFF)
@@ -266,7 +307,7 @@ build_libjpeg_turbo() {
 build_rapidjson() {
 	local staging_dir="${WORKDIR}/install"
 	use system-rapidjson && return
-	pushd "${S_RAPIDJSON}" || die
+	pushd "${S_RAPIDJSON}" >/dev/null 2>&1 || die
 		mkdir build || die
 		cd build || die
 		local mycmakeargs=(
@@ -278,7 +319,7 @@ build_rapidjson() {
 			|| die
 		emake
 		emake install || die
-	popd
+	popd >/dev/null 2>&1 || die
 }
 
 sanitize_permissions() {

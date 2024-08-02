@@ -10,6 +10,9 @@
     <remote-id type="github">GPUOpen-ProfessionalCompute-Libraries/MIVisionX</remote-id>
   </upstream>
   <use>
+    <flag name="caffe">
+      Add support for caffe pretrained models for inference.
+    </flag>
     <flag name="enhanced-message">
       Add colors to build output
     </flag>
@@ -22,8 +25,22 @@
     <flag name="ffmpeg">
       Adds support for decoding video streams
     </flag>
+    <flag name="loom">
+      Add support for building live 360 degrees stiching apps and the vx_loomsl
+      OpenVX™ extension module.
+    </flag>
+    <flag name="migraphx">
+      Adds support for building vision inference apps and the vx_amd_migraphx
+      OpenVX™ extension module.
+    </flag>
     <flag name="neural-net">
-      Adds support for neural nets
+      Adds support for the vx_nn neural network OpenVX™ extension module.
+    </flag>
+    <flag name="nnef">
+      Add support for NNEF pretrained models for inference.
+    </flag>
+    <flag name="onnx">
+      Add support for ONNX pretrained models for inference.
     </flag>
     <flag name="opencl">
       Adds support for GPUs

@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_SLOT=16
+NNEF_TOOLS_COMMIT="0a149ef0019a4fa03a2a3f951f895a1a6ffcc396" # committer-date:<=2023-02-23
 PYTHON_COMPAT=( "python3_10" ) # U 20/22
 RAPIDJSON_COMMIT="012be8528783cdbf4b7a9e64f78bd8f056b97e24" # committer-date:<=2023-02-23
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
@@ -25,6 +26,10 @@ https://github.com/rrawther/libjpeg-turbo/archive/${RRAWTHER_LIBJPEG_TURBO_COMMI
 	-> rrawther-libjpeg-turbo-${RRAWTHER_LIBJPEG_TURBO_COMMIT:0:7}.tar.gz
 	!system-rapidjson? (
 https://github.com/Tencent/rapidjson/archive/${RAPIDJSON_COMMIT}.tar.gz -> rapidjson-${RAPIDJSON_COMMIT:0:7}.tar.gz
+	)
+	nnef? (
+https://github.com/KhronosGroup/NNEF-Tools/archive/${NNEF_TOOLS_COMMIT}.tar.gz
+	-> NNEF-Tools-${NNEF_TOOLS_COMMIT:0:7}.tar.gz
 	)
 	"
 fi
@@ -52,12 +57,29 @@ LICENSE="
 # The distro's MIT license template does not contain All rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-cpu +enhanced-message ffmpeg -fp16 +loom +migraphx +neural-net opencl
-opencv +rocal +rocal-python +rocm +rpp system-rapidjson
+caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx +neural-net
+nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-tools
+system-rapidjson
 ebuild-revision-15
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
+	caffe? (
+		neural-net
+	)
+	neural-net? (
+		|| (
+			caffe
+			nnef
+			onnx
+		)
+	)
+	nnef? (
+		neural-net
+	)
+	onnx? (
+		neural-net
+	)
 	opencl? (
 		!rocal-python
 	)
@@ -90,18 +112,41 @@ RDEPEND="
 	')
 	dev-libs/openssl
 	~dev-util/hip-${PV}:${ROCM_SLOT}
+	caffe? (
+		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
+	)
 	ffmpeg? (
 		>=media-video/ffmpeg-4.4.2:0/56.58.58[fdk,gpl,libass,x264,x265,nonfree]
 	)
+	migraphx? (
+		~sci-libs/MIGraphX-${PV}:${ROCM_SLOT}
+	)
 	neural-net? (
+		$(python_gen_cond_dep '
+			dev-python/future[${PYTHON_USEDEP}]
+			dev-python/numpy[${PYTHON_USEDEP}]
+			dev-python/pytz[${PYTHON_USEDEP}]
+		')
+	)
+	nnef? (
+		system-nnef-tools? (
+			$(python_gen_cond_dep '
+				sci-libs/nnef-tools[${PYTHON_USEDEP}]
+			')
+		)
+	)
+	onnx? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
+		$(python_gen_cond_dep '
+			sci-libs/onnx[${PYTHON_USEDEP}]
+		')
 	)
 	opencl? (
 		virtual/opencl
 		~sci-libs/miopengemm-${PV}:${ROCM_SLOT}
 	)
 	opencv? (
-		>=media-libs/opencv-4.6.0[features2d,jpeg]
+		>=media-libs/opencv-4.6.0[features2d,gtk3,ieee1394?,jpeg,png,tiff]
 	)
 	rocal? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
@@ -136,6 +181,11 @@ BDEPEND="
 	>=dev-build/cmake-3.5
 	dev-util/patchelf
 	virtual/pkgconfig
+	neural-net? (
+		$(python_gen_cond_dep '
+			dev-python/pip[${PYTHON_USEDEP}]
+		')
+	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.4.3-use-system-pybind11.patch"
@@ -177,6 +227,7 @@ src_configure() {
 
 	build_libjpeg_turbo
 	build_rapidjson
+	build_nnef_tools
 	cd "${S}" || die
 	local mycmakeargs=(
 		-DAMD_FP16_SUPPORT=$(usex fp16 ON OFF)
@@ -272,7 +323,7 @@ build_libjpeg_turbo() {
 build_rapidjson() {
 	local staging_dir="${WORKDIR}/install"
 	use system-rapidjson && return
-	pushd "${S_RAPIDJSON}" || die
+	pushd "${S_RAPIDJSON}" >/dev/null 2>&1 || die
 		mkdir build || die
 		cd build || die
 		local mycmakeargs=(
@@ -284,7 +335,25 @@ build_rapidjson() {
 			|| die
 		emake
 		emake install || die
-	popd
+	popd >/dev/null 2>&1 || die
+}
+
+build_nnef_tools() {
+	local staging_dir="${WORKDIR}/install"
+	use system-nnef-tools && return
+	pushd "${S_NNEF_TOOLS}" >/dev/null 2>&1 || die
+		mkdir build || die
+		cd build || die
+		local mycmakeargs=(
+			-DCMAKE_INSTALL_PREFIX="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/nnef-tools"
+		)
+		cmake \
+			"${mycmakeargs[@]}" \
+			.. \
+			|| die
+		emake
+		emake install || die
+	popd >/dev/null 2>&1 || die
 }
 
 sanitize_permissions() {
