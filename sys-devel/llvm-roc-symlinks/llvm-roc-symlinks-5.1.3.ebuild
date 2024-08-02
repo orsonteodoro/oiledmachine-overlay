@@ -17,7 +17,7 @@ HOMEPAGE=""
 LICENSE="public-domain"
 RESTRICT="mirror"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-IUSE+="ebuild-revision-4"
+IUSE+="ebuild-revision-5"
 RDEPEND+="
 "
 DEPEND+="
@@ -49,6 +49,12 @@ src_install() {
 	for name in ${names[@]} ; do
 		local src_name="${name%:*}"
 		local dest_name="${name#*:}"
+		if [[ "${dest_name}" =~ "amd" ]] ; then
+			dosym \
+				"/opt/rocm-${ROCM_VERSION}/llvm/bin/${src_name}" \
+				"/opt/rocm-${ROCM_VERSION}/bin/${dest_name}"
+			continue
+		fi
 		if [[ "${name}" != "clang:clang" ]] ; then
 			dosym \
 				"/opt/rocm-${ROCM_VERSION}/llvm/bin/${src_name}" \
