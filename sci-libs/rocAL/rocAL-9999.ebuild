@@ -1,0 +1,214 @@
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+BOOST_PV="1.72.0"
+PYTHON_COMPAT=( "python3_10" ) # U 20/22
+RAPIDJSON_COMMIT="f9d53419e912910fd8fa57d5705fa41425428c35" # committer-date:<=2023-10-05
+RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
+LLVM_SLOT=17
+PROTOBUF_PV="3.12.0" # The version is behind the 3.21 offered.
+ROCM_SLOT="6.2"
+ROCM_VERSION="6.2.0"
+
+inherit cmake python-single-r1 rocm
+
+if [[ ${PV} == *"9999" ]] ; then
+	EGIT_REPO_URI="https://github.com/ROCm/rocAL.git"
+	EGIT_BRANCH="develop"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
+	SRC_URI="
+https://github.com/rrawther/libjpeg-turbo/archive/${RRAWTHER_LIBJPEG_TURBO_COMMIT}.tar.gz
+	-> rrawther-libjpeg-turbo-${RRAWTHER_LIBJPEG_TURBO_COMMIT:0:7}.tar.gz
+	!system-rapidjson? (
+https://github.com/Tencent/rapidjson/archive/${RAPIDJSON_COMMIT}.tar.gz -> rapidjson-${RAPIDJSON_COMMIT:0:7}.tar.gz
+	)
+	"
+	inherit git-r3
+else
+	SRC_URI="
+https://github.com/ROCm/rocAL/archive/refs/tags/rocm-${PV}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/rrawther/libjpeg-turbo/archive/${RRAWTHER_LIBJPEG_TURBO_COMMIT}.tar.gz
+	-> rrawther-libjpeg-turbo-${RRAWTHER_LIBJPEG_TURBO_COMMIT:0:7}.tar.gz
+	!system-rapidjson? (
+https://github.com/Tencent/rapidjson/archive/${RAPIDJSON_COMMIT}.tar.gz -> rapidjson-${RAPIDJSON_COMMIT:0:7}.tar.gz
+	)
+	"
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/${PN}-rocm-${PV}"
+fi
+
+DESCRIPTION="The AMD rocAL is designed to efficiently decode and process \
+images and videos from a variety of storage formats and modify them through a \
+processing graph programmable by the user. "
+HOMEPAGE="https://github.com/ROCm/rocAL"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro's MIT license template does not contain all rights reserved.
+SLOT="${ROCM_SLOT}/${PV}"
+IUSE+=" cpu enhanced-message ffmpeg opencv system-rapidjson ebuild-revision-0"
+if [[ "${PV}" == *"9999" ]] ; then
+	RDEPEND="
+		${PYTHON_DEPS}
+		>=dev-libs/half-1.12.0
+		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
+		$(python_gen_cond_dep '
+			>=dev-python/pybind11-2.11.1[${PYTHON_USEDEP}]
+		')
+		dev-db/lmdb
+		dev-libs/rocm-opencl-runtime:=
+		dev-util/hip:=
+		media-libs/libjpeg-turbo
+		sci-libs/MIVisionX:=
+		sci-libs/rocDecode:=
+		sci-libs/rpp:=
+		sys-libs/llvm-roc-libomp:=
+		!ffmpeg? (
+			>=dev-libs/boost-${BOOST_PV}:=
+		)
+		opencv? (
+			>=media-libs/opencv-4.6.0[features2d,jpeg]
+		)
+	"
+	DEPEND="
+		${RDEPEND}
+		system-rapidjson? (
+			=dev-libs/rapidjson-9999
+		)
+	"
+	BDEPEND="
+		${PYTHON_DEPS}
+		sys-devel/gcc:=
+		>=dev-build/cmake-3.5
+		$(python_gen_cond_dep '
+			dev-python/pip[${PYTHON_USEDEP}]
+			dev-python/wheel[${PYTHON_USEDEP}]
+		')
+	"
+else
+	RDEPEND="
+		${PYTHON_DEPS}
+		>=dev-libs/half-1.12.0
+		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
+		$(python_gen_cond_dep '
+			>=dev-python/pybind11-2.11.1[${PYTHON_USEDEP}]
+		')
+		dev-db/lmdb
+		media-libs/libjpeg-turbo
+		~dev-util/hip-${PV}:${ROCM_SLOT}
+		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
+		~sci-libs/MIVisionX-${PV}:${ROCM_SLOT}
+		~sci-libs/rocDecode-${PV}:${ROCM_SLOT}
+		~sci-libs/rpp-${PV}:${ROCM_SLOT}
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		!ffmpeg? (
+			>=dev-libs/boost-${BOOST_PV}:=
+		)
+		opencv? (
+			>=media-libs/opencv-4.6.0[features2d,jpeg]
+		)
+	"
+	DEPEND="
+		${RDEPEND}
+		system-rapidjson? (
+			=dev-libs/rapidjson-9999
+		)
+	"
+	BDEPEND="
+		${PYTHON_DEPS}
+		${ROCM_GCC_DEPEND}
+		>=dev-build/cmake-3.5
+		$(python_gen_cond_dep '
+			dev-python/pip[${PYTHON_USEDEP}]
+			dev-python/wheel[${PYTHON_USEDEP}]
+		')
+	"
+fi
+PATCHES=(
+	"${FILESDIR}/${PN}-95ce348-hardcoded-paths.patch"
+)
+
+pkg_setup() {
+ewarn "Ebuild in development"
+die
+	rocm_pkg_setup
+}
+
+src_unpack() {
+	if [[ ${PV} == *"9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
+build_libjpeg_turbo() {
+	local staging_dir="${WORKDIR}/install"
+	cd "${WORKDIR}/libjpeg-turbo-${RRAWTHER_LIBJPEG_TURBO_COMMIT}" || die
+	mkdir -p "build" || die
+	cd "build" || die
+	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/libjpeg-turbo"
+		-DCMAKE_BUILD_TYPE=RELEASE
+		-DENABLE_STATIC=FALSE
+		-DCMAKE_INSTALL_DEFAULT_LIBDIR=lib
+	)
+	cmake \
+		"${mycmakeargs[@]}" \
+		.. \
+		|| die
+	emake || die
+	emake install || die
+}
+
+build_rapidjson() {
+	local staging_dir="${WORKDIR}/install"
+	use system-rapidjson && return
+	pushd "${S_RAPIDJSON}" || die
+		mkdir build || die
+		cd build || die
+		local mycmakeargs=(
+			-DCMAKE_INSTALL_PREFIX="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/rapidjson"
+		)
+		cmake \
+			"${mycmakeargs[@]}" \
+			.. \
+			|| die
+		emake
+		emake install || die
+	popd
+}
+
+src_prepare() {
+	cmake_src_prepare
+	rocm_src_prepare
+}
+
+src_configure() {
+	rocm_set_default_gcc
+	build_libjpeg_turbo
+	build_rapidjson
+	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
+		-DENHANCED_MESSAGE=$(usex enhanced-message ON OFF)
+		-DGPU_SUPPORT=$(usex cpu OFF ON)
+	)
+	rocm_src_configure
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
+}
+
+# OILEDMACHINE-OVERLAY-STATUS:  in development
