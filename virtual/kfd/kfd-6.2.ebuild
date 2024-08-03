@@ -56,6 +56,9 @@ REQUIRED_USE="
 "
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 FIRMWARE_RDEPEND="
+	>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
+"
+DISABLED_FIRMWARE_RDEPEND="
 	!strict-pairing? (
 		|| (
 			>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
