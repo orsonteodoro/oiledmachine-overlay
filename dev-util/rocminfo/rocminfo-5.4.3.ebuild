@@ -9,8 +9,11 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-single-r1 rocm
 
-if [[ ${PV} == *9999 ]] ; then
+if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rocminfo/"
+	EGIT_BRANCH="amd-staging"
+	FALLBACK_COMMIT="rocm-5.4.3"
+	IUSE+=" fallback-commit"
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
@@ -43,6 +46,16 @@ PATCHES=(
 pkg_setup() {
 	python-single-r1_pkg_setup
 	rocm_pkg_setup
+}
+
+src_unpack() {
+	if [[ "${PV}" == *"9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {
