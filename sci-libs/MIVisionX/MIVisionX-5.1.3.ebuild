@@ -106,6 +106,7 @@ RDEPEND="
 	caffe? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
 		$(python_gen_cond_dep '
+			dev-python/google[${PYTHON_USEDEP}]
 			dev-python/numpy[${PYTHON_USEDEP}]
 		')
 	)
@@ -124,7 +125,7 @@ RDEPEND="
 	)
 	nnef? (
 		$(python_gen_cond_dep '
-			sci-libs/nnef-tools[${PYTHON_USEDEP}]
+			sci-libs/nnef[${PYTHON_USEDEP},python]
 		')
 	)
 	onnx? (

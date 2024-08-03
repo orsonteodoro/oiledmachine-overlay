@@ -105,6 +105,9 @@ RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	caffe? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
+		$(python_gen_cond_dep '
+			dev-python/google[${PYTHON_USEDEP}]
+		')
 	)
 	ffmpeg? (
 		>=media-video/ffmpeg-4.0.4:0/56.58.58[fdk,gpl,libass,x264,x265,nonfree]
@@ -121,7 +124,7 @@ RDEPEND="
 	)
 	nnef? (
 		$(python_gen_cond_dep '
-			sci-libs/nnef-tools[${PYTHON_USEDEP}]
+			sci-libs/nnef[${PYTHON_USEDEP},python]
 		')
 	)
 	onnx? (

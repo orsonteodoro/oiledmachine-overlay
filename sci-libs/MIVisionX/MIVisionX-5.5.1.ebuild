@@ -30,8 +30,10 @@ https://github.com/rrawther/libjpeg-turbo/archive/${RRAWTHER_LIBJPEG_TURBO_COMMI
 https://github.com/Tencent/rapidjson/archive/${RAPIDJSON_COMMIT}.tar.gz -> rapidjson-${RAPIDJSON_COMMIT:0:7}.tar.gz
 	)
 	nnef? (
+		!system-nnef? (
 https://github.com/KhronosGroup/NNEF-Tools/archive/${NNEF_TOOLS_COMMIT}.tar.gz
 	-> NNEF-Tools-${NNEF_TOOLS_COMMIT:0:7}.tar.gz
+		)
 	)
 	"
 fi
@@ -60,7 +62,7 @@ LICENSE="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx +neural-net
-nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-tools
+nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef
 system-rapidjson
 ebuild-revision-15
 "
@@ -114,6 +116,9 @@ RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	caffe? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
+		$(python_gen_cond_dep '
+			dev-python/google[${PYTHON_USEDEP}]
+		')
 	)
 	ffmpeg? (
 		>=media-video/ffmpeg-4.4.2:0/56.58.58[fdk,gpl,libass,x264,x265,nonfree]
@@ -129,9 +134,9 @@ RDEPEND="
 		')
 	)
 	nnef? (
-		system-nnef-tools? (
+		system-nnef? (
 			$(python_gen_cond_dep '
-				sci-libs/nnef-tools[${PYTHON_USEDEP}]
+				sci-libs/nnef[${PYTHON_USEDEP},python]
 			')
 		)
 	)
@@ -234,7 +239,7 @@ src_configure() {
 
 	build_libjpeg_turbo
 	build_rapidjson
-	build_nnef_tools
+	build_nnef_parser
 	cd "${S}" || die
 	local mycmakeargs=(
 		-DAMD_FP16_SUPPORT=$(usex fp16 ON OFF)
@@ -323,8 +328,8 @@ build_libjpeg_turbo() {
 		"${mycmakeargs[@]}" \
 		.. \
 		|| die
-	emake || die
-	emake install || die
+	emake
+	emake install
 }
 
 build_rapidjson() {
@@ -341,25 +346,28 @@ build_rapidjson() {
 			.. \
 			|| die
 		emake
-		emake install || die
+		emake install
 	popd >/dev/null 2>&1 || die
 }
 
-build_nnef_tools() {
+build_nnef_parser() {
 	local staging_dir="${WORKDIR}/install"
-	use system-nnef-tools && return
-	pushd "${S_NNEF_TOOLS}" >/dev/null 2>&1 || die
+	use system-nnef && return
+	pushd "${S_NNEF_TOOLS}/nnef-pyproject/nnef/cpp" >/dev/null 2>&1 || die
 		mkdir build || die
 		cd build || die
 		local mycmakeargs=(
-			-DCMAKE_INSTALL_PREFIX="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/nnef-tools"
+			-DCMAKE_INSTALL_PREFIX="${staging_dir}/${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)/nnef"
 		)
 		cmake \
 			"${mycmakeargs[@]}" \
 			.. \
 			|| die
 		emake
-		emake install || die
+		emake install
+	popd >/dev/null 2>&1 || die
+	pushd "${S_NNEF_TOOLS}/nnef-pyproject/" >/dev/null 2>&1 || die
+		"${EPYTHON}" setup.py install || die
 	popd >/dev/null 2>&1 || die
 }
 
