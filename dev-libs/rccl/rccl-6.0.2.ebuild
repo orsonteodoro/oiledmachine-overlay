@@ -10,6 +10,9 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx908_xnack_minus
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
+	gfx940
+	gfx941
+	gfx942
 	gfx1030
 	gfx1100
 	gfx1101
@@ -41,7 +44,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-5"
+IUSE="test ebuild-revision-7"
 RDEPEND="
 	!dev-libs/rccl:0
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
@@ -62,7 +65,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.7.0-customize-targets.patch"
-	"${FILESDIR}/${PN}-5.7.1-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
 )
 
 pkg_pretend() {

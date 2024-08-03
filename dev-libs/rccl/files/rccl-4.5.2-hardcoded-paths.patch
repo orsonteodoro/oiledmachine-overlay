@@ -1,6 +1,6 @@
-diff '--color=auto' -urp rccl-rocm-5.1.3.orig/cmake/Dependencies.cmake rccl-rocm-5.1.3/cmake/Dependencies.cmake
---- rccl-rocm-5.1.3.orig/cmake/Dependencies.cmake	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/cmake/Dependencies.cmake	2024-08-03 10:51:08.373193106 -0700
+diff '--color=auto' -urp rccl-rocm-4.5.2.orig/cmake/Dependencies.cmake rccl-rocm-4.5.2/cmake/Dependencies.cmake
+--- rccl-rocm-4.5.2.orig/cmake/Dependencies.cmake	2021-09-30 14:36:20.000000000 -0700
++++ rccl-rocm-4.5.2/cmake/Dependencies.cmake	2024-08-03 11:03:43.740732670 -0700
 @@ -73,7 +73,7 @@ endif()
  
  # Find or download/install rocm-cmake project
@@ -10,9 +10,9 @@ diff '--color=auto' -urp rccl-rocm-5.1.3.orig/cmake/Dependencies.cmake rccl-rocm
  if(NOT ROCM_FOUND)
      set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
      file(
-diff '--color=auto' -urp rccl-rocm-5.1.3.orig/ext-net/dummy/Makefile rccl-rocm-5.1.3/ext-net/dummy/Makefile
---- rccl-rocm-5.1.3.orig/ext-net/dummy/Makefile	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/ext-net/dummy/Makefile	2024-08-03 10:51:38.688692383 -0700
+diff '--color=auto' -urp rccl-rocm-4.5.2.orig/ext-net/dummy/Makefile rccl-rocm-4.5.2/ext-net/dummy/Makefile
+--- rccl-rocm-4.5.2.orig/ext-net/dummy/Makefile	2021-09-30 14:36:20.000000000 -0700
++++ rccl-rocm-4.5.2/ext-net/dummy/Makefile	2024-08-03 11:03:43.740732670 -0700
 @@ -4,7 +4,7 @@
  # See LICENSE.txt for license information
  #
@@ -22,18 +22,9 @@ diff '--color=auto' -urp rccl-rocm-5.1.3.orig/ext-net/dummy/Makefile rccl-rocm-5
  INC:= -I$(NCCL_HOME)/include -I$(CUDA_HOME)/include
  PLUGIN_SO:=libnccl-net.so
  
-diff '--color=auto' -urp rccl-rocm-5.1.3.orig/ext-net/google-fastsocket/Makefile rccl-rocm-5.1.3/ext-net/google-fastsocket/Makefile
---- rccl-rocm-5.1.3.orig/ext-net/google-fastsocket/Makefile	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/ext-net/google-fastsocket/Makefile	2024-08-03 10:51:37.728708240 -0700
-@@ -1,4 +1,4 @@
--CUDA_HOME?=/usr/local/cuda
-+CUDA_HOME?=/opt/cuda
- INC:=-I$(CUDA_HOME)/include
- PLUGIN_SO:=../../build/libnccl-net.so
- 
-diff '--color=auto' -urp rccl-rocm-5.1.3.orig/makefiles/common.mk rccl-rocm-5.1.3/makefiles/common.mk
---- rccl-rocm-5.1.3.orig/makefiles/common.mk	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/makefiles/common.mk	2024-08-03 10:51:39.616677055 -0700
+diff '--color=auto' -urp rccl-rocm-4.5.2.orig/makefiles/common.mk rccl-rocm-4.5.2/makefiles/common.mk
+--- rccl-rocm-4.5.2.orig/makefiles/common.mk	2021-09-30 14:36:20.000000000 -0700
++++ rccl-rocm-4.5.2/makefiles/common.mk	2024-08-03 11:03:44.568719037 -0700
 @@ -4,7 +4,7 @@
  # See LICENSE.txt for license information
  #
@@ -43,9 +34,9 @@ diff '--color=auto' -urp rccl-rocm-5.1.3.orig/makefiles/common.mk rccl-rocm-5.1.
  PREFIX ?= /usr/local
  VERBOSE ?= 0
  KEEP ?= 0
-diff '--color=auto' -urp rccl-rocm-5.1.3.orig/tools/HelloRccl/Makefile rccl-rocm-5.1.3/tools/HelloRccl/Makefile
---- rccl-rocm-5.1.3.orig/tools/HelloRccl/Makefile	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/tools/HelloRccl/Makefile	2024-08-03 10:53:00.451341897 -0700
+diff '--color=auto' -urp rccl-rocm-4.5.2.orig/tools/HelloRccl/Makefile rccl-rocm-4.5.2/tools/HelloRccl/Makefile
+--- rccl-rocm-4.5.2.orig/tools/HelloRccl/Makefile	2021-09-30 14:36:20.000000000 -0700
++++ rccl-rocm-4.5.2/tools/HelloRccl/Makefile	2024-08-03 11:03:44.568719037 -0700
 @@ -3,7 +3,7 @@
  # Set to where RCCL is installed
  RCCL_INSTALL=../../build/release
@@ -55,9 +46,9 @@ diff '--color=auto' -urp rccl-rocm-5.1.3.orig/tools/HelloRccl/Makefile rccl-rocm
  ifeq (,$(HIP_PATH))
  HIP_PATH=../../..
  endif
-diff '--color=auto' -urp rccl-rocm-5.1.3.orig/tools/TransferBench/Makefile rccl-rocm-5.1.3/tools/TransferBench/Makefile
---- rccl-rocm-5.1.3.orig/tools/TransferBench/Makefile	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/tools/TransferBench/Makefile	2024-08-03 10:52:38.499704477 -0700
+diff '--color=auto' -urp rccl-rocm-4.5.2.orig/tools/TransferBench/Makefile rccl-rocm-4.5.2/tools/TransferBench/Makefile
+--- rccl-rocm-4.5.2.orig/tools/TransferBench/Makefile	2021-09-30 14:36:20.000000000 -0700
++++ rccl-rocm-4.5.2/tools/TransferBench/Makefile	2024-08-03 11:03:44.568719037 -0700
 @@ -1,5 +1,5 @@
  # Copyright (c) 2019-2020 Advanced Micro Devices, Inc. All rights reserved.
 -HIP_PATH?= $(wildcard /opt/rocm/hip)
@@ -65,9 +56,9 @@ diff '--color=auto' -urp rccl-rocm-5.1.3.orig/tools/TransferBench/Makefile rccl-
  ifeq (,$(HIP_PATH))
  HIP_PATH=../../..
  endif
-diff '--color=auto' -urp rccl-rocm-5.1.3.orig/tools/ib-test/Makefile rccl-rocm-5.1.3/tools/ib-test/Makefile
---- rccl-rocm-5.1.3.orig/tools/ib-test/Makefile	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/tools/ib-test/Makefile	2024-08-03 10:53:12.483143166 -0700
+diff '--color=auto' -urp rccl-rocm-4.5.2.orig/tools/ib-test/Makefile rccl-rocm-4.5.2/tools/ib-test/Makefile
+--- rccl-rocm-4.5.2.orig/tools/ib-test/Makefile	2021-09-30 14:36:20.000000000 -0700
++++ rccl-rocm-4.5.2/tools/ib-test/Makefile	2024-08-03 11:03:44.572718971 -0700
 @@ -1,5 +1,5 @@
  # Copyright (c) 2019-2020 Advanced Micro Devices, Inc. All rights reserved.
 -HIP_PATH ?= $(wildcard /opt/rocm/hip)
@@ -75,9 +66,9 @@ diff '--color=auto' -urp rccl-rocm-5.1.3.orig/tools/ib-test/Makefile rccl-rocm-5
  ifeq (,$(HIP_PATH))
  HIP_PATH = ../../..
  endif
-diff '--color=auto' -urp rccl-rocm-5.1.3.orig/tools/rccl-prim-test/Makefile rccl-rocm-5.1.3/tools/rccl-prim-test/Makefile
---- rccl-rocm-5.1.3.orig/tools/rccl-prim-test/Makefile	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/tools/rccl-prim-test/Makefile	2024-08-03 10:52:57.491390788 -0700
+diff '--color=auto' -urp rccl-rocm-4.5.2.orig/tools/rccl-prim-test/Makefile rccl-rocm-4.5.2/tools/rccl-prim-test/Makefile
+--- rccl-rocm-4.5.2.orig/tools/rccl-prim-test/Makefile	2021-09-30 14:36:20.000000000 -0700
++++ rccl-rocm-4.5.2/tools/rccl-prim-test/Makefile	2024-08-03 11:03:44.572718971 -0700
 @@ -1,12 +1,12 @@
  # Copyright (c) 2019-2020 Advanced Micro Devices, Inc. All rights reserved.
 -HIP_PATH?= $(wildcard /opt/rocm/hip)
@@ -93,9 +84,9 @@ diff '--color=auto' -urp rccl-rocm-5.1.3.orig/tools/rccl-prim-test/Makefile rccl
  
  all: $(EXE)
  
-diff '--color=auto' -urp rccl-rocm-5.1.3.orig/tools/topo_expl/Makefile rccl-rocm-5.1.3/tools/topo_expl/Makefile
---- rccl-rocm-5.1.3.orig/tools/topo_expl/Makefile	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/tools/topo_expl/Makefile	2024-08-03 10:53:07.779220861 -0700
+diff '--color=auto' -urp rccl-rocm-4.5.2.orig/tools/topo_expl/Makefile rccl-rocm-4.5.2/tools/topo_expl/Makefile
+--- rccl-rocm-4.5.2.orig/tools/topo_expl/Makefile	2021-09-30 14:36:20.000000000 -0700
++++ rccl-rocm-4.5.2/tools/topo_expl/Makefile	2024-08-03 11:03:44.572718971 -0700
 @@ -1,12 +1,12 @@
  # Copyright (c) 2019-2020 Advanced Micro Devices, Inc. All rights reserved.
 -HIP_PATH ?= $(wildcard /opt/rocm/hip)

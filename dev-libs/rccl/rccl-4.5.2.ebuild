@@ -36,7 +36,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-5"
+IUSE="test ebuild-revision-7"
 RDEPEND="
 	!dev-libs/rccl:0
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
@@ -54,8 +54,8 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.0.2-change_install_location.patch"
-	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
+#	"${FILESDIR}/${PN}-5.0.2-change_install_location.patch"
+	"${FILESDIR}/${PN}-4.5.2-hardcoded-paths.patch"
 )
 
 pkg_setup() {

@@ -60,12 +60,9 @@ ATMI_4_1_AMDGPU_USEDEP=$(gen_x_usedep "ATMI_4_1_AMDGPU_TARGETS_COMPAT")
 
 RCCL_4_1_AMDGPU_TARGETS_COMPAT=(
 	gfx803
-	gfx900_xnack_minus
+	gfx900
 	gfx906_xnack_minus
 	gfx908_xnack_minus
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx1030
 )
 RCCL_4_1_AMDGPU_USEDEP=$(gen_x_usedep "RCCL_4_1_AMDGPU_TARGETS_COMPAT")
 

@@ -36,7 +36,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-5"
+IUSE="test ebuild-revision-7"
 RDEPEND="
 	!dev-libs/rccl:0
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]

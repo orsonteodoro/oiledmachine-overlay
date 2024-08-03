@@ -5,14 +5,11 @@ EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
-	gfx900_xnack_minus
+	gfx900
 	gfx906_xnack_minus
 	gfx908_xnack_minus
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx1030
 )
-LLVM_SLOT=14
+LLVM_SLOT=12
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake edo flag-o-matic rocm
@@ -55,8 +52,7 @@ BDEPEND="
 "
 PATCHES=(
 #	"${FILESDIR}/${PN}-5.0.2-change_install_location.patch"
-	"${FILESDIR}/${PN}-5.1.3-remove-chrpath.patch"
-	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-4.1.0-hardcoded-paths.patch"
 )
 
 pkg_setup() {
