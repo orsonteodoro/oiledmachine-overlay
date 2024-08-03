@@ -10,11 +10,12 @@ MY_PN="amdsmi"
 
 inherit cmake python-single-r1 rocm
 
-if [[ ${PV} == *"9999" ]] ; then
+if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_BRANCH="amd-staging"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/ROCm/amdsmi/"
-	FALLBACK_COMMIT="rocm-${PV}"
+	FALLBACK_COMMIT="rocm-5.6.1"
+	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
@@ -75,6 +76,16 @@ PATCHES=(
 pkg_setup() {
 	python-single-r1_pkg_setup
 	rocm_pkg_setup
+}
+
+src_unpack() {
+	if [[ "${PV}" == *"9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {

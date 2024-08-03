@@ -14,11 +14,12 @@ MY_PN="amdsmi"
 
 inherit cmake flag-o-matic python-single-r1 rocm
 
-if [[ ${PV} == *"9999" ]] ; then
+if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_BRANCH="amd-staging"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/ROCm/amdsmi/"
-	FALLBACK_COMMIT="rocm-${PV}"
+	FALLBACK_COMMIT="rocm-6.1.2"
+	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
@@ -90,7 +91,13 @@ pkg_setup() {
 }
 
 src_unpack() {
-	unpack ${A}
+	if [[ "${PV}" == *"9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 	if use esmi ; then
 		ESMI_S_SRC="${WORKDIR}/esmi_ib_library-esmi_pkg_ver-${ESMI_PV}"
 		ESMI_S_DEST="${S}/esmi_ib_library"

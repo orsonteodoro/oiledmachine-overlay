@@ -6,8 +6,8 @@ EAPI=8
 # Viewer URI:  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/tree/arch/x86/include/uapi/asm/amd_hsmp.h?h=review-ilpo&id=54aa699e8094efb7d7675fefbc03dfce24f98456
 AMD_HSMP_H_DATE="2024-01-03 11:46:22 +0100"
 AMD_HSMP_H_COMMIT="54aa699e8094efb7d7675fefbc03dfce24f98456"
-ESMI_PV="3.0"
-LLVM_SLOT=17
+ESMI_PV="3.0.3"
+LLVM_SLOT=18
 PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 MY_PN="amdsmi"
@@ -18,7 +18,7 @@ if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_BRANCH="amd-staging"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/ROCm/amdsmi/"
-	FALLBACK_COMMIT="rocm-6.0.2"
+	FALLBACK_COMMIT="rocm-6.2.0"
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -59,6 +59,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE+=" doc +esmi test ebuild-revision-0"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
+	esmi
 "
 RDEPEND="
 	${PYTHON_DEPS}
@@ -69,7 +70,7 @@ DEPEND="
 BDEPEND="
 	${PYTHON_DEPS}
 	${ROCM_GCC_DEPEND}
-	>=dev-build/cmake-3.14
+	>=dev-build/cmake-3.20
 	virtual/pkgconfig
 	doc? (
 		>=app-text/doxygen-1.8.11
