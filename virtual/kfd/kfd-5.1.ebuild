@@ -29,6 +29,7 @@ KERNEL_PV="5.19" # DC_VER = 3.2.187 ; DCN = 3.1.6 ; KERNEL_PV is from linux-kern
 # drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c for KMS version
 # drivers/gpu/drm/amd/display/dc/dc.h for DC_VER
 # drivers/gpu/drm/amd/display/include/dal_types.h for DCN version
+# drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c for VCN version
 ROCM_VERSION="5.1.3" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #

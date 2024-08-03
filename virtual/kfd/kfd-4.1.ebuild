@@ -4,36 +4,36 @@
 EAPI=7
 
 # The PV is the same as DC_VER in
-# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-4.5.2/drivers/gpu/drm/amd/display/dc/dc.h#L48
+# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-4.1.0/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
-AMDGPU_FIRMWARE_PV="5.11.32.40502"
-DC_VER="3.2.150" # From rock-dkms
-KERNEL_FIRMWARE_PV="20211112" # Based on linux-firmware commit logs for git message 21.40 (2021-11-12)
+AMDGPU_FIRMWARE_PV="5.11.32.40502" # Missing folder
+DC_VER="3.2.116" # From rock-dkms
+KERNEL_FIRMWARE_PV="20210812" # Based on vangogh presence and missing beige goby and missing yellow carp
 # Expected firmware properites:
-# Git message:  21.40
-# Driver folder = 21.40.2
-# DCN = missing [3.1]
+# Git message:  ?
+# Driver folder = ?
+# DCN = missing [3.0.2]
 # GC = missing
 # PSP = missing
 # SDMA = missing
 # VCN = missing
-# beige_goby = yes (2021-09-28)
-# vangogh = yes (2021-08-12)
-# yellow_carp = yes (2021-09-15)
-KERNEL_PV="5.17" # DC_VER = 3.2.167 ; DCN = 3.1 ; KERNEL_PV is from linux-kernel not rock-dkms
+# beige_goby = missing
+# vangogh = present
+# yellow_carp = missing
+KERNEL_PV="5.13" # DC_VER = 3.2.132 ; DCN = 3.0.2 ; KERNEL_PV is from linux-kernel not rock-dkms
 # Expected kernel properties:
-# Some of the last amdkfd commits are applied to the amdkfd folder (55a383f, 4bf8e09, 5c3c497)
-# DCN is >= 3.1
-# DC_VER is >= 3.2.150
-# KMS is >= 3.43.0
+# Some of the last amdkfd commits are applied to the amdkfd folder (6a986c0, e6a20c0, 67ac9c3) ; not applied: 9b83380, 32572fa, d7aad84, 34bdd37
+# DCN is >= 3.0.2
+# DC_VER is >= 3.2.116
+# KMS is >= 3.40.0
 #
 # See also
-# https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-4.5.2/drivers/gpu/drm/amd/amdkfd
+# https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-4.1.0/drivers/gpu/drm/amd/amdkfd
 # drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c for KMS version
 # drivers/gpu/drm/amd/display/dc/dc.h for DC_VER
 # drivers/gpu/drm/amd/display/include/dal_types.h for DCN version
 # drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c for VCN version
-ROCM_VERSION="4.5.2" # DC_VER = ${PV}
+ROCM_VERSION="4.1.0" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #
 # linux firmware notes:
@@ -45,7 +45,7 @@ ROCM_SLOT="${ROCM_VERSION%.*}"
 #
 
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
-KEYWORDS="~amd64 ~x86"
+#KEYWORDS="~amd64 ~x86" # Work In Progress (WIP)
 IUSE="custom-kernel kernel rock-dkms strict-pairing"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 RDEPEND="
