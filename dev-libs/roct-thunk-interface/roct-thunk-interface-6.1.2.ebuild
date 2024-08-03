@@ -42,11 +42,17 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
 ebuild-revision-8
 "
+# See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.1.2/docs/reference/user-kernel-space-compat-matrix.rst
 RDEPEND="
 	!dev-libs/roct-thunk-interface:0
 	>=sys-apps/pciutils-3.9.0
 	>=sys-process/numactl-2.0.16
-	virtual/amdgpu-drm:${ROCM_SLOT}
+	|| (
+		virtual/kfd:6.2
+		virtual/kfd:6.1
+		virtual/kfd:6.0
+		virtual/kfd:5.7
+	)
 "
 DEPEND="
 	${RDEPEND}

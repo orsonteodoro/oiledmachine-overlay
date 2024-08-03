@@ -123,7 +123,11 @@ RDEPEND="
 		~sci-libs/rpp-${PV}:${ROCM_SLOT}$(get_rocm_usedep RPP)
 	)
 	kernel-driver? (
-		~virtual/amdgpu-${PV}:${PV%.*}
+		|| (
+			virtual/kfd:6.2
+			virtual/kfd:6.1
+			virtual/kfd:6.0
+		)
 	)
 	math? (
 		~dev-util/Tensile-${PV}:${ROCM_SLOT}$(get_rocm_usedep TENSILE)

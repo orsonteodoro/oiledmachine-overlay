@@ -4,31 +4,32 @@
 EAPI=7
 
 # The PV is the same as DC_VER in
-# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.6.1/drivers/gpu/drm/amd/display/dc/dc.h#L48
+# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.7.1/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
-AMDGPU_FIRMWARE_PV="6.1.5.50601"
-KERNEL_FIRMWARE_PV="20230724" # Based on linux-firmware commit logs for sha1sum of green sardine VCN (2023-07-24) add PSP (2023-03-30)
+AMDGPU_FIRMWARE_PV="6.2.4.50701"
+DC_VER="3.2.241" # From rock-dkms
+KERNEL_FIRMWARE_PV="20230928" # Based on linux-firmware commit logs for git message 5.7 (2023-09-28) and add PSP (2023-03-30)
 # Expected firmware properites:
-# Git message:  5.6
-# Driver folder = 5.6.1
+# Git message:  5.7
+# Driver folder = 5.7.1
 # DCN = 3.2.1
 # GC = 11.0.4
 # PSP = 13.0.11
-# SDMA = 6.0.2
+# SDMA = 6.0.3
 # VCN = 4.0.4
 KERNEL_PV="6.5" # DC_VER = 3.2.241 ; DCN = 3.2.1 ; KERNEL_PV is from linux-kernel not rock-dkms
 # Expected kernel properties:
-# Some of the last amdkfd commits are applied to the amdkfd folder (611b682, 5608985, 42e0bed, 9143b4e)
+# Some of the last amdkfd commits are applied to the amdkfd folder (2a83b3a, d3db6fc, d3f7aa2)
 # DCN is >= 3.2
-# DC_VER is >= 3.2.230
-# KMS is >= 3.53.0
+# DC_VER is >= 3.2.241
+# KMS is >= 3.54.0
 #
 # See also
-# https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-5.6.1/drivers/gpu/drm/amd/amdkfd
+# https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-5.7.1/drivers/gpu/drm/amd/amdkfd
 # drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c for KMS version
 # drivers/gpu/drm/amd/display/dc/dc.h for DC_VER
 # drivers/gpu/drm/amd/display/include/dal_types.h for DCN version
-ROCM_VERSION="5.6.1" # DC_VER = ${PV}
+ROCM_VERSION="5.7.1" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #
 # linux firmware notes:
@@ -41,12 +42,15 @@ ROCM_SLOT="${ROCM_VERSION%.*}"
 
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
 KEYWORDS="~amd64 ~x86"
-IUSE="custom-kernel kernel rock-dkms strict-pairing"
+IUSE="custom-kernel kernel rock-dkms strict-pairing r3"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 RDEPEND="
 	!virtual/amdgpu-drm:0
 	!strict-pairing? (
-		>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
+		|| (
+			>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
+			>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
+		)
 		kernel? (
 			!custom-kernel? (
 				|| (

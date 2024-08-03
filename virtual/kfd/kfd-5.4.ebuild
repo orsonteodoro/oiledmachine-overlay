@@ -4,31 +4,32 @@
 EAPI=7
 
 # The PV is the same as DC_VER in
-# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.5.1/drivers/gpu/drm/amd/display/dc/dc.h#L48
+# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.4.3/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
-AMDGPU_FIRMWARE_PV="6.0.5.50501"
-KERNEL_FIRMWARE_PV="20230523" # Based on linux-firmware commit logs for git message 5.5 (2023-05-23) and add PSP (2023-03-30)
+AMDGPU_FIRMWARE_PV="5.18.13.50403"
+DC_VER="3.2.212" # From rock-dkms
+KERNEL_FIRMWARE_PV="20230125" # Based on linux-firmware commit logs for git message 5.4 (2023-01-10) and add VCN (2023-01-25)
 # Expected firmware properites:
-# Git message:  5.5
-# Driver folder = 5.5.1
-# DCN = 3.2.1
-# GC = 11.0.4
-# PSP = 13.0.11
-# SDMA = 6.0.2
-# VCN = 4.0.4
+# Git message:  5.4
+# Driver folder = 5.4.3
+# DCN = 3.2.0
+# GC = 11.0.1
+# PSP = 13.0.8
+# SDMA = 6.0.1
+# VCN = 4.0.2
 KERNEL_PV="6.3" # DC_VER = 3.2.223 ; DCN = 3.2.1 ; KERNEL_PV is from linux-kernel not rock-dkms
 # Expected kernel properties:
-# Some of the last amdkfd commits are applied to the amdkfd folder (62e2a0f, 7f75823 [cancelled by 62e2a0f but applied for 6.0 with 0ab2d75], 7efe5d3, e81ed7b, f5c1d84)
+# Some of the last amdkfd commits are applied to the amdkfd folder (79ff64f, fc65b97, 0caeefd, 954866d)
 # DCN is >= 3.2
-# DC_VER is >= 3.2.223
-# KMS is >= 3.51.0
+# DC_VER is >= 3.2.212
+# KMS is >= 3.48.0
 #
 # See also
-# https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-5.5.1/drivers/gpu/drm/amd/amdkfd
+# https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-5.4.3/drivers/gpu/drm/amd/amdkfd
 # drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c for KMS version
 # drivers/gpu/drm/amd/display/dc/dc.h for DC_VER
 # drivers/gpu/drm/amd/display/include/dal_types.h for DCN version
-ROCM_VERSION="5.5.1" # DC_VER = ${PV}
+ROCM_VERSION="5.4.3" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #
 # linux firmware notes:

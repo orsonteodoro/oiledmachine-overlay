@@ -38,7 +38,13 @@ REQUIRED_USE="
 RDEPEND="
 	${PYTHON_DEPS}
 	sys-apps/hwdata
-	virtual/amdgpu-drm:${ROCM_SLOT}
+	|| (
+		virtual/kfd:6.1
+		virtual/kfd:6.0
+		virtual/kfd:5.7
+		virtual/kfd:5.6
+		virtual/kfd:5.5
+	)
 "
 BDEPEND="
 	${ROCM_GCC_DEPEND}

@@ -4,34 +4,32 @@
 EAPI=7
 
 # The PV is the same as DC_VER in
-# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.1.3/drivers/gpu/drm/amd/display/dc/dc.h#L48
+# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.6.1/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
-AMDGPU_FIRMWARE_PV="5.11.32.40502"
-KERNEL_FIRMWARE_PV="20211112" # Based on linux-firmware commit logs for git message 21.40 (2021-11-12)
+AMDGPU_FIRMWARE_PV="6.1.5.50601"
+DC_VER="3.2.230" # From rock-dkms
+KERNEL_FIRMWARE_PV="20230724" # Based on linux-firmware commit logs for sha1sum of green sardine VCN (2023-07-24) add PSP (2023-03-30)
 # Expected firmware properites:
-# Git message:  21.40
-# Driver folder = 21.40.2
-# DCN = missing [3.1]
-# GC = missing
-# PSP = missing
-# SDMA = missing
-# VCN = missing
-# beige_goby = yes (2021-09-28)
-# vangogh = yes (2021-08-12)
-# yellow_carp = yes (2021-09-15)
-KERNEL_PV="5.17" # DC_VER = 3.2.167 ; DCN = 3.1 ; KERNEL_PV is from linux-kernel not rock-dkms
+# Git message:  5.6
+# Driver folder = 5.6.1
+# DCN = 3.2.1
+# GC = 11.0.4
+# PSP = 13.0.11
+# SDMA = 6.0.2
+# VCN = 4.0.4
+KERNEL_PV="6.5" # DC_VER = 3.2.241 ; DCN = 3.2.1 ; KERNEL_PV is from linux-kernel not rock-dkms
 # Expected kernel properties:
-# Some of the last amdkfd commits are applied to the amdkfd folder (55a383f, 4bf8e09, 5c3c497)
-# DCN is >= 3.1
-# DC_VER is >= 3.2.150
-# KMS is >= 3.43.0
+# Some of the last amdkfd commits are applied to the amdkfd folder (611b682, 5608985, 42e0bed, 9143b4e)
+# DCN is >= 3.2
+# DC_VER is >= 3.2.230
+# KMS is >= 3.53.0
 #
 # See also
-# https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-4.5.2/drivers/gpu/drm/amd/amdkfd
+# https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-5.6.1/drivers/gpu/drm/amd/amdkfd
 # drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c for KMS version
 # drivers/gpu/drm/amd/display/dc/dc.h for DC_VER
 # drivers/gpu/drm/amd/display/include/dal_types.h for DCN version
-ROCM_VERSION="4.5.2" # DC_VER = ${PV}
+ROCM_VERSION="5.6.1" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #
 # linux firmware notes:
@@ -49,10 +47,7 @@ SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 RDEPEND="
 	!virtual/amdgpu-drm:0
 	!strict-pairing? (
-		|| (
-			>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
-			>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
-		)
+		>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
 		kernel? (
 			!custom-kernel? (
 				|| (

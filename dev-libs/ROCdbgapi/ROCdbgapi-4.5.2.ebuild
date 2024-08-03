@@ -22,8 +22,10 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE=" ebuild-revision-8"
 RDEPEND="
 	!dev-libs/ROCdbgapi:0
-	virtual/amdgpu-drm:${ROCM_SLOT}
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
+	|| (
+		virtual/kfd:4.5
+	)
 "
 DEPEND="
 	${RDEPEND}

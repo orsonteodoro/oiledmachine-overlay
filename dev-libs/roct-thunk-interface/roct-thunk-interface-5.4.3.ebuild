@@ -46,7 +46,13 @@ RDEPEND="
 	!dev-libs/roct-thunk-interface:0
 	>=sys-apps/pciutils-3.9.0
 	>=sys-process/numactl-2.0.16
-	virtual/amdgpu-drm:${ROCM_SLOT}
+	|| (
+		virtual/kfd:5.6
+		virtual/kfd:5.5
+		virtual/kfd:5.4
+		virtual/kfd:5.3
+		virtual/kfd:5.2
+	)
 "
 DEPEND="
 	${RDEPEND}
