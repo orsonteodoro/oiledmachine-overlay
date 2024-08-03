@@ -34,7 +34,7 @@ LICENSE="
 # MIT - LICENSE.txt
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-14"
+IUSE="test ebuild-revision-15"
 # https://github.com/ROCm/HIPIFY/blob/rocm-6.1.2/docs/hipify-clang.rst
 RDEPEND="
 	!test? (
@@ -62,8 +62,6 @@ RESTRICT="
 	test
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.7.0-llvm-dynlib-on.patch"
-	"${FILESDIR}/${PN}-5.7.0-install-headers-option.patch"
 	"${FILESDIR}/${PN}-5.7.1-hardcoded-paths.patch"
 )
 
@@ -99,8 +97,6 @@ src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
-		-DHIPIFY_INSTALL_HEADERS=ON
-		-DUSE_SYSTEM_LLVM=OFF
 	)
 	cmake_src_configure
 }

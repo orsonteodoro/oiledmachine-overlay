@@ -3,12 +3,12 @@
 
 EAPI=8
 
-LLVM_SLOT=13
+LLVM_SLOT=12
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
 
-if [[ ${PV} == *9999 ]] ; then
+if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/HIPIFY/"
 	inherit git-r3
 else
@@ -34,7 +34,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test ebuild-revision-15"
-# https://github.com/ROCm-Developer-Tools/HIPIFY/tree/rocm-4.5.2#-hipify-clang-dependencies
+# https://github.com/ROCm-Developer-Tools/HIPIFY/tree/rocm-4.1.0#-hipify-clang-dependencies
 RDEPEND="
 	!test? (
 		${ROCM_CLANG_DEPEND}
@@ -57,14 +57,14 @@ RESTRICT="
 	test
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-4.5.2-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-4.1.0-hardcoded-paths.patch"
 )
 
 pkg_setup() {
 	if ! use test ; then
 		:
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=sys-devel/clang-13*" && has_version "=sys-devel/llvm-13*" ; then
-		LLVM_SLOT=13
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.2*" && has_version "=sys-devel/clang-11*" && has_version "=sys-devel/llvm-13*" ; then
+		LLVM_SLOT=11
 	fi
 	rocm_pkg_setup
 }

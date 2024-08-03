@@ -3,12 +3,12 @@
 
 EAPI=8
 
-LLVM_SLOT=16
+LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
 
-if [[ ${PV} == *9999 ]] ; then
+if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/HIPIFY/"
 	inherit git-r3
 else
@@ -31,10 +31,11 @@ LICENSE="
 "
 # all-rights-reserved MIT - src/LLVMCompat.h
 # MIT - tests/unit_tests/libraries/cuRAND/cmdparser.hpp
+# MIT - LICENSE.txt
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test ebuild-revision-15"
-# https://github.com/ROCm-Developer-Tools/HIPIFY/blob/rocm-5.6.1/docs/hipify-clang.md#hipify-clang-dependencies
+# https://github.com/ROCm/HIPIFY/blob/rocm-6.2.0/docs/hipify-clang.rst
 RDEPEND="
 	!test? (
 		${ROCM_CLANG_DEPEND}
@@ -47,7 +48,8 @@ BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	test? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12.1*
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			=dev-util/nvidia-cuda-toolkit-12.2*
 			=dev-util/nvidia-cuda-toolkit-11.8*
 			=dev-util/nvidia-cuda-toolkit-11.7*
 			=dev-util/nvidia-cuda-toolkit-11.5*
@@ -60,15 +62,21 @@ RESTRICT="
 	test
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.3.3-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-5.7.1-hardcoded-paths.patch"
 )
 
 pkg_setup() {
 	if ! use test ; then
 		:
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.1*" && has_version "=sys-devel/clang-17*" && has_version "=sys-devel/llvm-17*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.4*" && has_version "=sys-devel/clang-19*" && has_version "=sys-devel/llvm-17*" ; then
+		LLVM_SLOT=19
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=sys-devel/clang-18*" && has_version "=sys-devel/llvm-17*" ; then
+		LLVM_SLOT=18
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=sys-devel/clang-17*" && has_version "=sys-devel/llvm-17*" ; then
 		LLVM_SLOT=17
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.1*" && has_version "=sys-devel/clang-16*" && has_version "=sys-devel/llvm-16*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.2*" && has_version "=sys-devel/clang-17*" && has_version "=sys-devel/llvm-17*" ; then
+		LLVM_SLOT=17
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.2*" && has_version "=sys-devel/clang-16*" && has_version "=sys-devel/llvm-16*" ; then
 		LLVM_SLOT=16
 	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/clang-15*" && has_version "=sys-devel/llvm-15*" ; then
 		LLVM_SLOT=15
@@ -122,25 +130,7 @@ src_install() {
 		"${ED}/opt/rocm-${PV}/bin/finduncodep.sh" \
 		"${ED}/opt/rocm-${PV}/libexec/hipify" \
 		|| die
-	local pairs=(
-		"libexec/hipify/findcode.sh:hip/bin/findcode.sh"
-		"libexec/hipify/finduncodep.sh:hip/bin/finduncodep.sh"
-		"bin/hipconvertinplace-perl.sh:hip/bin/hipconvertinplace-perl.sh"
-		"bin/hipconvertinplace.sh:hip/bin/hipconvertinplace.sh"
-		"bin/hipexamine-perl.sh:hip/bin/hipexamine-perl.sh"
-		"bin/hipexamine.sh:hip/bin/hipexamine.sh"
-		"bin/hipify-clang:hip/bin/hipify-clang"
-		"bin/hipify-perl:hip/bin/hipify-perl"
-	)
-	local pair
-	for pair in ${pairs[@]} ; do
-		local src="${pair%:*}"
-		local dest="${pair#*:}"
-		dosym \
-			"/opt/rocm-${PV}/${src}" \
-			"/opt/rocm-${PV}/${dest}"
-	done
 }
 
 # OILEDMACHINE-OVERLAY-META:  created-ebuild
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  needs install test

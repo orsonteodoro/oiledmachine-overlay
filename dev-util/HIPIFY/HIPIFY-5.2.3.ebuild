@@ -33,7 +33,7 @@ LICENSE="
 # MIT - tests/unit_tests/libraries/cuRAND/cmdparser.hpp
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-14"
+IUSE="test ebuild-revision-15"
 # https://github.com/ROCm-Developer-Tools/HIPIFY/tree/rocm-5.3.3#-hipify-clang-dependencies
 RDEPEND="
 	!test? (
@@ -58,9 +58,7 @@ RESTRICT="
 	test
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.1.3-llvm-dynlib-on.patch"
 #	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
-	"${FILESDIR}/${PN}-5.1.3-install-headers-option.patch"
 	"${FILESDIR}/${PN}-5.2.3-hardcoded-paths.patch"
 )
 
@@ -84,8 +82,6 @@ src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
-		-DHIPIFY_INSTALL_HEADERS=ON
-		-DUSE_SYSTEM_LLVM=OFF
 	)
 	cmake_src_configure
 }
