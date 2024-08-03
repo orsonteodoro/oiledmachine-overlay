@@ -1,0 +1,38 @@
+diff '--color=auto' -urp a/openmp/libomptarget/CMakeLists.txt b/openmp/libomptarget/CMakeLists.txt
+--- a/openmp/libomptarget/CMakeLists.txt	2024-07-23 09:19:13.000000000 -0700
++++ b/openmp/libomptarget/CMakeLists.txt	2024-08-02 19:37:53.922182152 -0700
+@@ -41,7 +41,9 @@ if (NOT LIBOMPTARGET_LLVM_INCLUDE_DIRS)
+   message(FATAL_ERROR "Missing definition for LIBOMPTARGET_LLVM_INCLUDE_DIRS")
+ endif()
+ 
+-include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS})
++set(_OPENMP_RUNTIME_DIR "${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src")
++set(_OMPT_HEADER_DIR "${PROJECT_SOURCE_DIR}/../openmp/runtime/exports/common.dia.ompt.optional/include")
++include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS} ${_OPENMP_RUNTIME_DIR} ${_OMPT_HEADER_DIR})
+ 
+ # This is a list of all the targets that are supported/tested right now.
+ set (LIBOMPTARGET_ALL_TARGETS "${LIBOMPTARGET_ALL_TARGETS} aarch64-unknown-linux-gnu")
+Only in openmp/libomptarget: CMakeLists.txt.orig
+diff '--color=auto' -urp a/openmp/libomptarget/src/CMakeLists.txt b/openmp/libomptarget/src/CMakeLists.txt
+--- a/openmp/libomptarget/src/CMakeLists.txt	2024-07-23 09:19:13.000000000 -0700
++++ b/openmp/libomptarget/src/CMakeLists.txt	2024-08-02 19:38:33.133501677 -0700
+@@ -9,6 +9,8 @@
+ # Build offloading library libomptarget.so.
+ #
+ ##===----------------------------------------------------------------------===##
++set(_OPENMP_RUNTIME_DIR "${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src")
++set(_OMPT_HEADER_DIR "${PROJECT_SOURCE_DIR}/../openmp/runtime/exports/common.dia.ompt.optional/include")
+ add_llvm_library(omptarget
+   SHARED
+ 
+@@ -63,7 +65,7 @@ endif()
+ 
+ find_library(LLVM_OFFLOAD_ARCH LLVMOffloadArch HINTS ${LLVM_LIBRARY_DIR} ${LLVM_BINARY_DIR} PATH_SUFFIXES lib REQUIRED)
+ 
+-target_include_directories(omptarget PRIVATE ${LIBOMPTARGET_INCLUDE_DIR})
++target_include_directories(omptarget PRIVATE ${LIBOMPTARGET_INCLUDE_DIR} ${_OPENMP_RUNTIME_DIR} ${_OMPT_HEADER_DIR})
+ 
+ target_link_libraries(
+   omptarget
+Only in openmp/libomptarget/src: CMakeLists.txt.orig
+Only in openmp/libomptarget/src: CMakeLists.txt.rej

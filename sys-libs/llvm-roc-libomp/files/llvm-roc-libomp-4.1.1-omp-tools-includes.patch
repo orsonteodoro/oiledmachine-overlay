@@ -1,0 +1,36 @@
+diff '--color=auto' -urp a/openmp/libomptarget/CMakeLists.txt b/openmp/libomptarget/CMakeLists.txt
+--- a/openmp/libomptarget/CMakeLists.txt	2021-03-29 10:25:18.000000000 -0700
++++ b/openmp/libomptarget/CMakeLists.txt	2024-08-02 19:47:41.856013061 -0700
+@@ -34,6 +34,10 @@ if (NOT LIBOMPTARGET_LLVM_MAIN_INCLUDE_D
+   message(FATAL_ERROR "Missing definition for LIBOMPTARGET_LLVM_MAIN_INCLUDE_DIR")
+ endif()
+ 
++set(_OPENMP_RUNTIME_DIR "${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src")
++set(_OMPT_HEADER_DIR "${PROJECT_SOURCE_DIR}/../openmp/runtime/exports/common.dia.ompt.optional/include")
++include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS} ${_OMPT_HEADER_DIR})
++
+ # This is a list of all the targets that are supported/tested right now.
+ set (LIBOMPTARGET_ALL_TARGETS "${LIBOMPTARGET_ALL_TARGETS} aarch64-unknown-linux-gnu")
+ set (LIBOMPTARGET_ALL_TARGETS "${LIBOMPTARGET_ALL_TARGETS} powerpc64le-ibm-linux-gnu")
+diff '--color=auto' -urp a/openmp/libomptarget/src/CMakeLists.txt b/openmp/libomptarget/src/CMakeLists.txt
+--- a/openmp/libomptarget/src/CMakeLists.txt	2021-03-29 10:25:18.000000000 -0700
++++ b/openmp/libomptarget/src/CMakeLists.txt	2024-08-02 19:50:46.868827195 -0700
+@@ -12,6 +12,9 @@
+ 
+ libomptarget_say("Building offloading runtime library libomptarget.")
+ 
++set(_OPENMP_RUNTIME_DIR "${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src")
++set(_OMPT_HEADER_DIR "${PROJECT_SOURCE_DIR}/../openmp/runtime/exports/common.dia.ompt.optional/include")
++
+ set(src_files
+   api.cpp
+   device.cpp
+@@ -22,6 +25,8 @@ set(src_files
+   omptarget.cpp
+ )
+ 
++include_directories(${_OPENMP_RUNTIME_DIR} ${_OMPT_HEADER_DIR})
++
+ # Build libomptarget library with libdl dependency.
+ add_library(omptarget SHARED ${src_files})
+ target_link_libraries(omptarget
