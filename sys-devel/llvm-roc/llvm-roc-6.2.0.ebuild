@@ -4,8 +4,12 @@
 
 EAPI=8
 
+#FIXME:
+# llvm-dwarfdump.cpp.o: undefined reference to symbol '_ZN4llvm5dwarf18AddressSpaceStringEjNS_6TripleE'
+# libLLVMBinaryFormat.so.17git: error adding symbols: DSO missing from command line
+
 CMAKE_BUILD_TYPE="RelWithDebInfo"
-LLVM_SLOT=17
+LLVM_SLOT=18
 LLVM_TARGETS=(
 	AMDGPU
 	NVPTX
@@ -71,8 +75,10 @@ LICENSE="
 		UoI-NCSA
 	)
 	BSD
-	rc
+	NCSA-AMD
 	public-domain
+	rc
+	SunPro
 "
 # Apache-2.0 - llvm-project-rocm-5.7.0/third-party/benchmark/LICENSE
 # Apache-2.0-with-LLVM-exceptions, UoI-NCSA - llvm-project-rocm-5.7.0/lldb/LICENSE.TXT
@@ -84,7 +90,9 @@ LICENSE="
 # CC0-1.0, Apache-2.0 - llvm-project-rocm-5.7.0/llvm/lib/Support/BLAKE3/LICENSE
 # ISC - llvm-project-rocm-5.7.0/lldb/third_party/Python/module/pexpect-4.6/LICENSE
 # MIT - llvm-project-rocm-5.7.0/polly/lib/External/isl/LICENSE
+# NCSA-AMD - rocm-6.1.2/amd/device-libs/ockl/inc/hsa.h
 # rc, BSD - llvm-project-rocm-5.7.0/llvm/lib/Support/COPYRIGHT.regex
+# SunPro - rocm-6.1.2/amd/device-libs/ocml/src/erfcF.cl
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
@@ -110,7 +118,6 @@ DEPEND="
 "
 BDEPEND="
 	${ROCM_GCC_DEPEND}
-	sys-devel/lld:${LLVM_SLOT}
 "
 PATCHES=(
 )
@@ -129,14 +136,14 @@ einfo "See comments of metadata.xml for documentation on ebolt/epgo."
 
 src_prepare() {
 	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-5.7.1-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
 	popd >/dev/null 2>&1 || die
 
 	cmake_src_prepare
 	if has bolt ${IUSE_EFFECTIVE} && use bolt ; then
 		pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
 			eapply -p1 "${FILESDIR}/llvm-16.0.5-bolt-set-cmake-libdir.patch"
-			eapply -p1 "${FILESDIR}/llvm-17.0.0.9999-v2-bolt_rt-RuntimeLibrary.cpp-path.patch"
+			eapply -p1 "${FILESDIR}/llvm-17.0.0.9999-v3-bolt_rt-RuntimeLibrary.cpp-path.patch"
                 popd >/dev/null 2>&1 || die
 	fi
 	# Speed up symbol replacmenet for @...@ by reducing the search space
@@ -196,11 +203,16 @@ _src_configure() {
 	uopts_src_configure
 	filter-flags "-fuse-ld=*"
 
-# Fixes:
-#ld.bfd: /opt/rocm-5.7.1/lib/libhsa-runtime64.so.1.11.0: undefined reference to `hsaKmtWaitOnMultipleEvents_Ext'
-#ld.bfd: /opt/rocm-5.7.1/lib/libhsa-runtime64.so.1.11.0: undefined reference to `hsaKmtReplaceAsanHeaderPage'
-#ld.bfd: /opt/rocm-5.7.1/lib/libhsa-runtime64.so.1.11.0: undefined reference to `hsaKmtWaitOnEvent_Ext'
-	append-ldflags -fuse-ld=lld
+# Still present in 6.1.2:
+# ld.gold: internal error in do_layout, at /var/tmp/portage/sys-devel/binutils-2.40-r5/work/binutils-2.40/gold/object.cc:1939
+
+# Breaks during configure test: fatal error: cannot find 'ld'
+#	append-ldflags -fuse-ld=lld
+
+# Avoid:
+#collect2: fatal error: cannot find 'ld'
+#compilation terminated.
+	append-ldflags -fuse-ld=bfd
 
 #	strip-unsupported-flags # Broken, strips -fprofile-use
 

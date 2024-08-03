@@ -7,6 +7,8 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=12
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+inherit hip-versions
+ROCM_VERSION="${HIP_4_1_VERSION}" # Workaround for install
 
 inherit cmake python-r1 rocm
 
@@ -26,7 +28,7 @@ DESCRIPTION="Radeon Open Compute CMake Modules"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm-cmake"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-4"
+IUSE="ebuild-revision-5"
 RDEPEND="
 "
 BDEPEND="

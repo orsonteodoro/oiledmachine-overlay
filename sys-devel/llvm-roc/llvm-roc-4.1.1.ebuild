@@ -4,8 +4,12 @@
 
 EAPI=8
 
+# FIXME:
+# ld.bfd: lib/Target/AMDGPU/Disassembler/CMakeFiles/LLVMAMDGPUDisassembler.dir/CodeObject.cpp.o: in function `llvm::object::defaultWarningHandler(llvm::Twine const&)':
+#CodeObject.cpp:(.text._ZN4llvm6objectL21defaultWarningHandlerERKNS_5TwineE+0x18): undefined reference to `llvm::object::object_category()'
+
 CMAKE_BUILD_TYPE="RelWithDebInfo"
-LLVM_SLOT=17
+LLVM_SLOT=12
 LLVM_TARGETS=(
 	AMDGPU
 	NVPTX
@@ -22,14 +26,18 @@ UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
-inherit cmake flag-o-matic rocm toolchain-funcs uopts
+inherit cmake flag-o-matic rocm uopts
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 SRC_URI="
 https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 	-> llvm-project-rocm-${PV}.tar.gz
+https://github.com/llvm/llvm-project/commit/c23147106f7efc4b5e29c47a08951116b4d994ac.patch
+	-> llvm-project-rocm-c231471.patch
 "
+# c231471 -  [clang][CUDA][Windows] Fix compilation error on Windows with `uint32_t __nvvm_get_smem_pointer`
+#   Fix for HIPIFY
 
 DESCRIPTION="The ROCm™ fork of the LLVM project"
 HOMEPAGE="
@@ -74,22 +82,22 @@ LICENSE="
 	rc
 	public-domain
 "
-# Apache-2.0 - llvm-project-rocm-5.7.0/third-party/benchmark/LICENSE
-# Apache-2.0-with-LLVM-exceptions, UoI-NCSA - llvm-project-rocm-5.7.0/lldb/LICENSE.TXT
-# Apache-2.0-with-LLVM-exceptions, BSD, MIT - llvm-project-rocm-5.7.0/libclc/LICENSE.TXT
-# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-5.7.0/openmp/LICENSE.TXT
+# Apache-2.0 - llvm-project-rocm-5.6.0/third-party/benchmark/LICENSE
+# Apache-2.0-with-LLVM-exceptions, UoI-NCSA - llvm-project-rocm-5.6.0/lldb/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions, BSD, MIT - llvm-project-rocm-5.6.0/libclc/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-5.6.0/openmp/LICENSE.TXT
 #   Keyword search:  "all right, title, and interest"
-# BSD - llvm-project-rocm-5.7.0/third-party/unittest/googlemock/LICENSE.txt
-# BSD - llvm-project-rocm-5.7.0/openmp/runtime/src/thirdparty/ittnotify/LICENSE.txt
-# CC0-1.0, Apache-2.0 - llvm-project-rocm-5.7.0/llvm/lib/Support/BLAKE3/LICENSE
-# ISC - llvm-project-rocm-5.7.0/lldb/third_party/Python/module/pexpect-4.6/LICENSE
-# MIT - llvm-project-rocm-5.7.0/polly/lib/External/isl/LICENSE
-# rc, BSD - llvm-project-rocm-5.7.0/llvm/lib/Support/COPYRIGHT.regex
+# BSD - llvm-project-rocm-5.6.0/third-party/unittest/googlemock/LICENSE.txt
+# BSD - llvm-project-rocm-5.6.0/openmp/runtime/src/thirdparty/ittnotify/LICENSE.txt
+# CC0-1.0, Apache-2.0 - llvm-project-rocm-5.6.0/llvm/lib/Support/BLAKE3/LICENSE
+# ISC - llvm-project-rocm-5.6.0/lldb/third_party/Python/module/pexpect-4.6/LICENSE
+# MIT - llvm-project-rocm-5.6.0/polly/lib/External/isl/LICENSE
+# rc, BSD - llvm-project-rocm-5.6.0/llvm/lib/Support/COPYRIGHT.regex
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
-bolt profile +runtime
+profile +runtime cfi
 ebuild-revision-19
 "
 REQUIRED_USE="
@@ -110,16 +118,16 @@ DEPEND="
 "
 BDEPEND="
 	${ROCM_GCC_DEPEND}
-	sys-devel/lld:${LLVM_SLOT}
 "
 PATCHES=(
+#	"${FILESDIR}/${PN}-4.5.2-fix-linking-for-LLVMAMDGPUDisassembler.patch"
 )
 
 pkg_setup() {
 	rocm_pkg_setup
 	uopts_setup
-	if use epgo || ( has ebolt ${IUSE_EFFECTIVE} && use ebolt ) ; then
-einfo "See comments of metadata.xml for documentation on ebolt/epgo."
+	if use epgo ; then
+einfo "See comments of metadata.xml for documentation on epgo."
 		local path="/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}/${MULTILIB_ABI_FLAG}.${ABI}"
 		addwrite "${path}"
 		mkdir -p "${path}"
@@ -129,16 +137,10 @@ einfo "See comments of metadata.xml for documentation on ebolt/epgo."
 
 src_prepare() {
 	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-5.7.1-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-4.1.1-hardcoded-paths.patch"
 	popd >/dev/null 2>&1 || die
 
 	cmake_src_prepare
-	if has bolt ${IUSE_EFFECTIVE} && use bolt ; then
-		pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
-			eapply -p1 "${FILESDIR}/llvm-16.0.5-bolt-set-cmake-libdir.patch"
-			eapply -p1 "${FILESDIR}/llvm-17.0.0.9999-v2-bolt_rt-RuntimeLibrary.cpp-path.patch"
-                popd >/dev/null 2>&1 || die
-	fi
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
@@ -195,14 +197,12 @@ _src_configure() {
 	)
 	uopts_src_configure
 	filter-flags "-fuse-ld=*"
+	#strip-unsupported-flags # Broken, strips -fprofile-use
 
-# Fixes:
-#ld.bfd: /opt/rocm-5.7.1/lib/libhsa-runtime64.so.1.11.0: undefined reference to `hsaKmtWaitOnMultipleEvents_Ext'
-#ld.bfd: /opt/rocm-5.7.1/lib/libhsa-runtime64.so.1.11.0: undefined reference to `hsaKmtReplaceAsanHeaderPage'
-#ld.bfd: /opt/rocm-5.7.1/lib/libhsa-runtime64.so.1.11.0: undefined reference to `hsaKmtWaitOnEvent_Ext'
-	append-ldflags -fuse-ld=lld
-
-#	strip-unsupported-flags # Broken, strips -fprofile-use
+# Avoid:
+#collect2: fatal error: cannot find 'ld'
+#compilation terminated.
+	append-ldflags -fuse-ld=bfd
 
 	# Speed up composable_kernel, rocBLAS build times
 	# -O3 may cause random ICE/segfault.
@@ -216,7 +216,6 @@ _src_configure() {
 
 	# For PGO
 	if tc-is-gcc ; then
-# The error is not a problem for 5.7.0.
 # error: number of counters in profile data for function '...' does not match its profile data (counter 'arcs', expected 7 and have 13) [-Werror=coverage-mismatch]
 # The PGO profiles are isolated.  The Code is the same.
 		append-flags -Wno-error=coverage-mismatch
@@ -227,7 +226,7 @@ _src_configure() {
 		-DCMAKE_MODULE_LINKER_FLAGS="${LDFLAGS}"
 		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
 	)
-	if ( use epgo || ( has ebolt ${IUSE_EFFECTIVE} && use ebolt ) ) && tc-is-gcc ; then
+	if use epgo && tc-is-gcc ; then
 		local gcc_slot=$(gcc-major-version)
 		mycmakeargs+=(
 			-DCMAKE_STATIC_LINKER_FLAGS="/usr/lib/gcc/${CHOST}/${gcc_slot}/libgcov.a"
@@ -237,9 +236,6 @@ _src_configure() {
 	PROJECTS="llvm;clang;lld"
 	if use runtime ; then
 		PROJECTS+=";compiler-rt"
-	fi
-	if has bolt ${IUSE_EFFECTIVE} && use bolt ; then
-		PROJECTS+=";bolt"
 	fi
 
 	local flag
