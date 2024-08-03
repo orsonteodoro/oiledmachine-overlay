@@ -46,57 +46,41 @@ ROCM_SLOT="${ROCM_VERSION%.*}"
 
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
 #KEYWORDS="~amd64 ~x86" # Work In Progress (WIP)
-IUSE="custom-kernel kernel rock-dkms strict-pairing"
+IUSE="custom-kernel kernel rock-dkms strict-pairing ebuild-revision-4"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-RDEPEND="
-	!virtual/amdgpu-drm:0
+FIRMWARE_RDEPEND="
 	!strict-pairing? (
-		|| (
-			>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
-			>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
-		)
-		kernel? (
-			!custom-kernel? (
-				|| (
-					>=sys-kernel/gentoo-kernel-${KERNEL_PV}
-					>=sys-kernel/gentoo-kernel-bin-${KERNEL_PV}
-					>=sys-kernel/gentoo-sources-${KERNEL_PV}
-					>=sys-kernel/git-sources-${KERNEL_PV}
-					>=sys-kernel/ot-sources-${KERNEL_PV}
-					>=sys-kernel/pf-sources-${KERNEL_PV}
-					>=sys-kernel/rt-sources-${KERNEL_PV}
-					>=sys-kernel/vanilla-kernel-${KERNEL_PV}
-					>=sys-kernel/vanilla-sources-${KERNEL_PV}
-					>=sys-kernel/zen-sources-${KERNEL_PV}
-				)
-			)
-		)
-		rock-dkms? (
-			>=sys-kernel/rock-dkms-${ROCM_VERSION}
-		)
+		>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
 	)
 	strict-pairing? (
-		~sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:${ROCM_SLOT}
-		kernel? (
-			!custom-kernel? (
-				|| (
-					=sys-kernel/gentoo-kernel-${KERNEL_PV}*
-					=sys-kernel/gentoo-kernel-bin-${KERNEL_PV}*
-					=sys-kernel/gentoo-sources-${KERNEL_PV}*
-					=sys-kernel/git-sources-${KERNEL_PV}*
-					=sys-kernel/ot-sources-${KERNEL_PV}*
-					=sys-kernel/pf-sources-${KERNEL_PV}*
-					=sys-kernel/rt-sources-${KERNEL_PV}*
-					=sys-kernel/vanilla-kernel-${KERNEL_PV}*
-					=sys-kernel/vanilla-sources-${KERNEL_PV}*
-					=sys-kernel/zen-sources-${KERNEL_PV}*
-				)
+		=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}*
+	)
+"
+KFD_RDEPEND="
+	kernel? (
+		!custom-kernel? (
+			|| (
+				=sys-kernel/gentoo-kernel-${KERNEL_PV}*
+				=sys-kernel/gentoo-kernel-bin-${KERNEL_PV}*
+				=sys-kernel/gentoo-sources-${KERNEL_PV}*
+				=sys-kernel/git-sources-${KERNEL_PV}*
+				=sys-kernel/ot-sources-${KERNEL_PV}*
+				=sys-kernel/pf-sources-${KERNEL_PV}*
+				=sys-kernel/rt-sources-${KERNEL_PV}*
+				=sys-kernel/vanilla-kernel-${KERNEL_PV}*
+				=sys-kernel/vanilla-sources-${KERNEL_PV}*
+				=sys-kernel/zen-sources-${KERNEL_PV}*
 			)
 		)
-		rock-dkms? (
-			~sys-kernel/rock-dkms-${ROCM_VERSION}:${ROCM_SLOT}
-		)
 	)
+	rock-dkms? (
+		~sys-kernel/rock-dkms-${ROCM_VERSION}:${ROCM_SLOT}
+	)
+"
+RDEPEND="
+	!virtual/amdgpu-drm
+	${FIRMWARE_RDEPEND}
+	${KFD_RDEPEND}
 "
 # A mask for sys-kernel/linux-firmware should be in REQUIRED_USE
 REQUIRED_USE="
