@@ -3,7 +3,9 @@
 
 EAPI=8
 
+BOOST_PV="1.72.0"
 LLVM_SLOT=14
+PROTOBUF_PV="3.12.0" # The version is behind the 3.21 offered.
 PYTHON_COMPAT=( "python3_10" ) # U 18/20
 RAPIDJSON_COMMIT="232389d4f1012dddec4ef84861face2d2ba85709" # committer-date:<=2022-06-19
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
@@ -94,8 +96,6 @@ REQUIRED_USE="
 "
 # GCC 12 (libstdcxx:12) required to fix:
 # libhsa-runtime64.so.1: undefined reference to `std::condition_variable::wait(std::unique_lock<std::mutex>&)@GLIBCXX_3.4.30'
-BOOST_PV="1.72.0"
-PROTOBUF_PV="3.12.0" # The version is behind the 3.21 offered.
 RDEPEND="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
@@ -142,6 +142,9 @@ RDEPEND="
 	)
 	rocal? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
+		dev-cpp/gflags
+		dev-cpp/glog
+		dev-db/lmdb
 		media-libs/libjpeg-turbo
 		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
 		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
@@ -177,6 +180,10 @@ BDEPEND="
 		$(python_gen_cond_dep '
 			dev-python/pip[${PYTHON_USEDEP}]
 		')
+	)
+	rocal? (
+		dev-lang/nasm
+		dev-lang/yasm
 	)
 "
 PATCHES=(
