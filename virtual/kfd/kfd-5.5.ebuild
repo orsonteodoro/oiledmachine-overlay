@@ -30,6 +30,15 @@ KERNEL_PV="6.3" # DC_VER = 3.2.223 ; DCN = 3.2.1 ; KERNEL_PV is from linux-kerne
 # drivers/gpu/drm/amd/display/dc/dc.h for DC_VER
 # drivers/gpu/drm/amd/display/include/dal_types.h for DCN version
 # drivers/gpu/drm/amd/amdgpu/amdgpu_vcn.c for VCN version
+KERNEL_RANGE=(
+# Avoid pinning solely to EOL version.
+# See footnote 2 in metadata.xml.
+	"6.5"  # +2
+	"6.4"  # +1
+	"6.3"  #  0 : KERNEL_PV, not LTS or EOL
+	"6.2"  # -1
+	"6.1"  # -2 : LTS
+)
 ROCM_VERSION="5.5.1" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #
@@ -56,20 +65,29 @@ FIRMWARE_RDEPEND="
 		~sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:${ROCM_SLOT}
 	)
 "
+gen_kfd_entry() {
+	local atom="${1}" # ex: sys-kernel/ot-sources
+	local x
+	for x in ${KERNEL_RANGE[@]} ; do
+		echo "
+			=${atom}-${x}*
+		"
+	done
+}
 KFD_RDEPEND="
 	kernel? (
 		!custom-kernel? (
 			|| (
-				=sys-kernel/gentoo-kernel-${KERNEL_PV}*
-				=sys-kernel/gentoo-kernel-bin-${KERNEL_PV}*
-				=sys-kernel/gentoo-sources-${KERNEL_PV}*
-				=sys-kernel/git-sources-${KERNEL_PV}*
-				=sys-kernel/ot-sources-${KERNEL_PV}*
-				=sys-kernel/pf-sources-${KERNEL_PV}*
-				=sys-kernel/rt-sources-${KERNEL_PV}*
-				=sys-kernel/vanilla-kernel-${KERNEL_PV}*
-				=sys-kernel/vanilla-sources-${KERNEL_PV}*
-				=sys-kernel/zen-sources-${KERNEL_PV}*
+				$(gen_kfd_entry sys-kernel/gentoo-kernel)
+				$(gen_kfd_entry sys-kernel/gentoo-kernel-bin)
+				$(gen_kfd_entry sys-kernel/gentoo-sources)
+				$(gen_kfd_entry sys-kernel/git-sources)
+				$(gen_kfd_entry sys-kernel/ot-sources)
+				$(gen_kfd_entry sys-kernel/pf-sources)
+				$(gen_kfd_entry sys-kernel/rt-sources)
+				$(gen_kfd_entry sys-kernel/vanilla-kernel)
+				$(gen_kfd_entry sys-kernel/vanilla-sources)
+				$(gen_kfd_entry sys-kernel/zen-sources)
 			)
 		)
 	)
