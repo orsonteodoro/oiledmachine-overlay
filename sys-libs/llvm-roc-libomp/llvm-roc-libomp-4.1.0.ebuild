@@ -29,9 +29,9 @@ _llvm_roc_libomp_globals
 unset -f _llvm_roc_libomp_globals
 
 # Cuda compatibility:
-# https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-4.1.1/clang/include/clang/Basic/Cuda.h
-# CUDA targets:  https://github.com/ROCm/llvm-project/blob/rocm-4.1.1/openmp/libomptarget/deviceRTLs/nvptx/CMakeLists.txt#L76
-# ROCm targets:  https://github.com/ROCm/llvm-project/blob/rocm-4.1.1/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt#L117
+# https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-4.1.0/clang/include/clang/Basic/Cuda.h
+# CUDA targets:  https://github.com/ROCm/llvm-project/blob/rocm-4.1.0/openmp/libomptarget/deviceRTLs/nvptx/CMakeLists.txt#L76
+# ROCm targets:  https://github.com/ROCm/llvm-project/blob/rocm-4.1.0/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt#L117
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
