@@ -16,11 +16,12 @@
     oiledmachine-overlay notes:
 
 
-    Maintained versions:
+    Available ebuild versions:
 
     2.16.1 - latest release, support for latest dev-util/nvidia-cuda-toolkit-12.3*
     2.15.1 - previous release
     2.14.1 - Support for dev-util/nvidia-cuda-toolkit-11.8*
+    2.5.3  - Support for gfx803
 
     Environment variables:
 
@@ -40,7 +41,7 @@
   </upstream>
   <use>
     <flag name="big-endian">
-      Avoid unbuildable package on big endian machines.
+      Avoid unbuildable package(s) on big endian machines.
     </flag>
     <flag name="clang">
       Use Clang + LLD to build the package

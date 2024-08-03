@@ -118,7 +118,7 @@ gen_seq_inc() {
 	done
 }
 
-inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr llvm-r1 multibuild
+inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr llvm multibuild
 inherit prefix rocm toolchain-funcs
 
 # For deps versioning, see
@@ -426,6 +426,7 @@ IUSE="
 ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${HIP_SLOTS2[@]}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian +clang cuda +hardened models -mpi +python rocm
 system-flatbuffers test +xla
 ebuild-revision-2
@@ -1033,7 +1034,7 @@ eerror
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
 	LLVM_SLOT=${s}
-	llvm-r1_pkg_setup
+	llvm_pkg_setup
 	${CC} --version || die
 	strip-unsupported-flags
 }
