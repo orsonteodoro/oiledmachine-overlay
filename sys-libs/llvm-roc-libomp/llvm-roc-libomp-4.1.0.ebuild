@@ -46,7 +46,7 @@ CUDA_TARGETS_COMPAT=(
 	auto
 )
 DEVICE_LIBS_PV="4.1.0"
-LLVM_SLOT=13
+LLVM_SLOT=12
 PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_USE_LLVM_ROC=1
@@ -96,7 +96,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -rpc
-ebuild-revision-25
+ebuild-revision-26
 "
 
 gen_cuda_required_use() {
