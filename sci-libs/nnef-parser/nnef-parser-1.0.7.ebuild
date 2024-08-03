@@ -1,0 +1,63 @@
+# Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+DISTUTILS_USE_PEP517="setuptools"
+PYTHON_COMPAT=( "python3_"{8..11} )
+
+inherit distutils-r1
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="main"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+	EGIT_REPO_URI="https://github.com/KhronosGroup/NNEF-Tools.git"
+	FALLBACK_COMMIT="c1aac758ad155d8c132e9b5166d9490b73f70811"
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}/nnef-pyproject"
+else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	S="${WORKDIR}/NNEF-Tools-nnef-v${PV}/nnef-pyproject"
+	SRC_URI="
+https://github.com/KhronosGroup/NNEF-Tools/archive/refs/tags/nnef-v${PV}.tar.gz
+	"
+fi
+
+DESCRIPTION="The NNEF parser"
+HOMEPAGE="https://github.com/KhronosGroup/NNEF-Tools"
+LICENSE="
+	Apache-2.0
+"
+RESTRICT="mirror"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+=" "
+REQUIRED_USE="
+"
+RDEPEND+="
+	dev-python/numpy[${PYTHON_USEDEP}]
+"
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	dev-python/cython[${PYTHON_USEDEP}]
+	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
+"
+DOCS=( "README.md" )
+PATCHES=(
+)
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
