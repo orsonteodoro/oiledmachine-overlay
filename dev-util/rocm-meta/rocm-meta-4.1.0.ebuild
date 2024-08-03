@@ -102,10 +102,10 @@ RDEPEND="
 	compilers? (
 		fortran? (
 			hip? (
-				dev-lang/rocm-flang:${ROCM_SLOT}[-aocc]
+				~dev-lang/rocm-flang-${PV}:${ROCM_SLOT}[-aocc]
 			)
 			non-free? (
-				dev-lang/rocm-flang:${ROCM_SLOT}[aocc]
+				~dev-lang/rocm-flang-${PV}:${ROCM_SLOT}[aocc]
 			)
 		)
 		hip? (
@@ -171,7 +171,7 @@ RDEPEND="
 		)
 	)
 	support-libs? (
-		dev-build/rocm-cmake:${ROCM_SLOT}
+		~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
 		~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 	)

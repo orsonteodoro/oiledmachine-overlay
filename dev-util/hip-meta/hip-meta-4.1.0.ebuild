@@ -110,10 +110,10 @@ RDEPEND="
 	)
 	support-libs? (
 		cuda? (
-			dev-build/rocm-cmake:${ROCM_SLOT}
+			~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 		)
 		rocm? (
-			dev-build/rocm-cmake:${ROCM_SLOT}
+			~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 			~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
 			~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 		)
