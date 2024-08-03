@@ -42,7 +42,7 @@ ROCM_SLOT="${ROCM_VERSION%.*}"
 #
 
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
-KEYWORDS="~amd64 ~x86" # Work In Progress (WIP)
+#KEYWORDS="~amd64 ~x86" # Work In Progress (WIP)
 IUSE="custom-kernel kernel rock-dkms strict-pairing r3"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 RDEPEND="
