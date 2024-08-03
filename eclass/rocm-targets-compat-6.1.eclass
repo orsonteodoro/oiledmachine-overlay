@@ -10,7 +10,7 @@
 # @SUPPORTED_EAPIS: 8
 # @BLURB: AMDGPU targets for the *USEDEP generator
 # @DESCRIPTION:
-# AMDGPU targets for the *USEDEP generator for HIP/ROCm 5.7 ebuilds.
+# AMDGPU targets for the *USEDEP generator for HIP/ROCm 6.1 ebuilds.
 
 # This ebuild is part of the rocm.eclass.
 

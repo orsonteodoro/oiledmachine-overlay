@@ -22,6 +22,7 @@ HIP_5_6_VERSION="5.6.1"
 HIP_5_7_VERSION="5.7.1"
 HIP_6_0_VERSION="6.0.2"
 HIP_6_1_VERSION="6.1.2"
+HIP_6_2_VERSION="6.2.0"
 
 HIP_3_5_LLVM_SLOT="11"
 HIP_3_7_LLVM_SLOT="11"
@@ -44,6 +45,7 @@ HIP_5_6_LLVM_SLOT="16"
 HIP_5_7_LLVM_SLOT="17"
 HIP_6_0_LLVM_SLOT="17"
 HIP_6_1_LLVM_SLOT="17"
+HIP_6_2_LLVM_SLOT="18"
 
 # AOCC in this context means rocm-llvm-alt
 AOCC_5_1_SLOT="13"
@@ -71,6 +73,7 @@ _hip_set_globals() {
 		HIP_5_7_GCC_SLOT="12"
 		HIP_6_0_GCC_SLOT="12"
 		HIP_6_1_GCC_SLOT="12"
+		HIP_6_2_GCC_SLOT="12"
 	else
 		# For HIP_PLATFORM == nvidia.
 		HIP_4_1_GCC_SLOT="10" # CUDA 11.3
@@ -84,6 +87,7 @@ _hip_set_globals() {
 		HIP_5_7_GCC_SLOT="12" # CUDA 12.2
 		HIP_6_0_GCC_SLOT="12" # CUDA 12.2
 		HIP_6_1_GCC_SLOT="12" # CUDA 12.3
+		HIP_6_2_GCC_SLOT="12" # CUDA 12.3
 	fi
 }
 
