@@ -3,6 +3,11 @@
 
 EAPI=8
 
+# FIXME:
+# /var/tmp/portage/sci-libs/rocMLIR-5.2.3/work/rocMLIR-rocm-5.2.3/external/llvm-project/llvm/lib/Support/ErrorHandling.cpp:113:25: error: no member named 'write' in the global namespace
+#     ssize_t written = ::write(2, MessageStr.data(), MessageStr.size());
+#                       ~~^
+
 LLVM_SLOT=14
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"

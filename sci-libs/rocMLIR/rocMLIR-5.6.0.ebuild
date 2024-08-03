@@ -3,6 +3,15 @@
 
 EAPI=8
 
+# FIXME
+# mlir/utils/performance/rocblas-benchmark-driver/rocblas-benchmark-driver.cpp:52:35: error: reference to incomplete type 'const std::string' (aka 'const basic_string<char>') could not bind to an lvalue of type 'const char[25]'
+#       benchmark::parseCommandLine("rocblas-benchmark-driver", argc, argv);
+#                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+# mlir/utils/performance/rocblas-benchmark-driver/../common/benchmarkUtils.h:34:51: note: passing argument to parameter 'name' here
+# BenchmarkArgs parseCommandLine(const std::string &name, int argc, char **argv);
+#                                                   ^
+# 1 error generated.
+
 CMAKE_MAKEFILE_GENERATOR="ninja"
 LLVM_SLOT=16
 PYTHON_COMPAT=( "python3_"{10..11} )
