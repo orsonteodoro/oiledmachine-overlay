@@ -9,7 +9,7 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit python-single-r1 rocm
 
-if [[ ${PV} == *9999 ]] ; then
+if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCm-Developer-Tools/ROCgdb/"
 	inherit git-r3
 else

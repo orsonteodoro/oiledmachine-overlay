@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=15
+LLVM_SLOT=18
 PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -117,7 +117,6 @@ BDEPEND="
 	dev-build/make
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 )
 DOCS=( "README-ROCM.md" )
 
@@ -132,8 +131,7 @@ src_prepare() {
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
-		"${S}/gdb/configure"
-		"${S}/gdb/configure.ac"
+		"${S}/gdb/configure" # placeholder
 	)
 	rocm_src_prepare
 }
@@ -174,4 +172,4 @@ src_install() {
 	rocm_fix_rpath
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test

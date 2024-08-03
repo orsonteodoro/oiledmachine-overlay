@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=15
+LLVM_SLOT=12
 PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -36,14 +36,6 @@ LICENSE="
 		GPL-3+
 	)
 	(
-		all-rights-reserved
-		MIT
-	)
-	(
-		GPL-3+
-		BSD
-	)
-	(
 		GPL-3+
 		gcc-runtime-library-exception-3.1
 	)
@@ -58,34 +50,28 @@ LICENSE="
 	BSD-2
 	custom
 	FDL-1.3+
-	GPL-2+
 	GPL-3+
 	LGPL-2.1+
-	LIBGLOSS
+	MIT
 	NEWLIB
 	ZLIB
 "
 # all-rights-reserved custom - gdb/exc_request.defs
-# all-rights-reserved GPL-3+ - binutils/dwarf.c
-# all-rights-reserved MIT - gdb/testsuite/gdb.rocm/step-schedlock-spurious-waves.cpp
+# all-rights-reserved GPL-3+ - gdb/target.h
 # Boost-1.0 - zlib/contrib/dotzlib/LICENSE_1_0.txt
 # BSD - gprof/gprof.h
-# BSD - libiberty/strtoul.c
 # BSD-2 - ld/elf-hints-local.h
 # custom - mkdep
-# custom - libiberty/strncasecmp.c
-# GPL-2+ - libiberty/cp-demangle.c
-# GPL-3+ LGPL-2.1+ UoI-NCSA ZLIB - gdb/NOTICES.txt
-# GPL-3+ BSD - gprofng/common/opteron_pcbe.c
-# GPL-3+ gcc-runtime-library-exception-3.1 - include/dwarf2.def
+# custom - gdb/exc_request.defs
 # FDL-1.3+ - gdb/doc/python.texi
-# LIBGLOSS - COPYING.LIBGLOSS
+# GPL-3+ - binutils/readelf.c
+# GPL-3+ gcc-runtime-library-exception-3.1 include/dwarf2.def
+# GPL-3+ LGPL-2.1+ UoI-NCSA ZLIB - gdb/NOTICES.txt
+# MIT - install-sh
 # NEWLIB - COPYING.NEWLIB
 # ZLIB - zlib/contrib/puff/puff.h
-# The distro's GPL-3+ license template does not contain all rights reserved.
-# The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-8"
+IUSE="ebuild-revision-9"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
