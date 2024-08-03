@@ -122,7 +122,7 @@ RDEPEND="
 	)
 	nnef? (
 		$(python_gen_cond_dep '
-			sci-libs/nnef[${PYTHON_USEDEP},python]
+			sci-libs/nnef-parser[${PYTHON_USEDEP}]
 		')
 	)
 	onnx? (

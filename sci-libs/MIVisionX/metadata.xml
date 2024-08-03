@@ -62,8 +62,8 @@
       Adds support for computer vision primatives [or common image manipulation
       operations] supporting GPUs and CPUs.
     </flag>
-    <flag name="system-nnef">
-      Use the system's <pkg>sci-libs/nnef</pkg> package instead.
+    <flag name="system-nnef-parser">
+      Use the system's <pkg>sci-libs/nnef-parser</pkg> package instead.
     </flag>
   </use>
 </pkgmetadata>

@@ -30,7 +30,7 @@ https://github.com/rrawther/libjpeg-turbo/archive/${RRAWTHER_LIBJPEG_TURBO_COMMI
 https://github.com/Tencent/rapidjson/archive/${RAPIDJSON_COMMIT}.tar.gz -> rapidjson-${RAPIDJSON_COMMIT:0:7}.tar.gz
 	)
 	nnef? (
-		!system-nnef? (
+		!system-nnef-parser? (
 https://github.com/KhronosGroup/NNEF-Tools/archive/${NNEF_TOOLS_COMMIT}.tar.gz
 	-> NNEF-Tools-${NNEF_TOOLS_COMMIT:0:7}.tar.gz
 		)
@@ -62,7 +62,7 @@ LICENSE="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx +neural-net
-nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef
+nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
 system-rapidjson
 ebuild-revision-15
 "
@@ -134,9 +134,9 @@ RDEPEND="
 		')
 	)
 	nnef? (
-		system-nnef? (
+		system-nnef-parser? (
 			$(python_gen_cond_dep '
-				sci-libs/nnef[${PYTHON_USEDEP},python]
+				sci-libs/nnef-parser[${PYTHON_USEDEP}]
 			')
 		)
 	)
