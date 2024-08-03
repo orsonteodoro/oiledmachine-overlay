@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=14
+LLVM_SLOT=18
 PYTHON_COMPAT=( "python3_"{9..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -25,13 +25,17 @@ fi
 DESCRIPTION="ROCm System Management Interface Library"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_smi_lib"
 LICENSE="
-	BSD
+	(
+		all-rights-reserved
+		MIT
+	)
 	MIT
 	NCSA-AMD
 "
-# BSD - tests/rocm_smi_test/gtest/LICENSE
+# all-rights-reserved MIT - License.txt
 # MIT - third_party/shared_mutex/LICENSE
-# NCSA-AMD - License.txt
+# NCSA-AMD - src/rocm_smi.cc
+# The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE=" ebuild-revision-8"
 REQUIRED_USE="
@@ -41,7 +45,9 @@ RDEPEND="
 	${PYTHON_DEPS}
 	sys-apps/hwdata
 	|| (
-		virtual/kfd:5.2
+		virtual/kfd:6.2
+		virtual/kfd:6.1
+		virtual/kfd:6.0
 	)
 "
 BDEPEND="
@@ -50,8 +56,7 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.0.2-gcc12-memcpy.patch"
-	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -59,6 +64,11 @@ pkg_setup() {
 }
 
 src_prepare() {
+	sed \
+		-i \
+		-e "/find_program (GIT/d" \
+		"CMakeLists.txt" \
+		|| die
 	cmake_src_prepare
 	rocm_src_prepare
 }
@@ -69,6 +79,7 @@ src_configure() {
 		-DCMAKE_DISABLE_FIND_PACKAGE_LATEX=ON
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
+		-DPKG_VERSION_STR="${PV}"
 	)
 	rocm_src_configure
 }
@@ -89,4 +100,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test

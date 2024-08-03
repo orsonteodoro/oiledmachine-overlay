@@ -3,8 +3,8 @@
 
 EAPI=8
 
-LLVM_SLOT=14
-PYTHON_COMPAT=( "python3_"{9..11} )
+LLVM_SLOT=12
+PYTHON_COMPAT=( "python3_"{9..10} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-r1 rocm
@@ -25,11 +25,13 @@ fi
 DESCRIPTION="ROCm System Management Interface Library"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_smi_lib"
 LICENSE="
+	Apache-2.0
 	BSD
 	MIT
 	NCSA-AMD
 "
-# BSD - tests/rocm_smi_test/gtest/LICENSE
+# Apache-2.0 - tests/rocm_smi_test/gtest/googlemock/scripts/generator/LICENSE
+# BSD - tests/rocm_smi_test/gtest/googlemock/LICENSE
 # MIT - third_party/shared_mutex/LICENSE
 # NCSA-AMD - License.txt
 SLOT="${ROCM_SLOT}/${PV}"
@@ -41,17 +43,16 @@ RDEPEND="
 	${PYTHON_DEPS}
 	sys-apps/hwdata
 	|| (
-		virtual/kfd:5.2
+		virtual/kfd:4.1
 	)
 "
 BDEPEND="
 	${ROCM_GCC_DEPEND}
-	>=dev-build/cmake-3.16.8
+	>=dev-build/cmake-3.6.3
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.0.2-gcc12-memcpy.patch"
-	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-4.1.0-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -66,9 +67,10 @@ src_prepare() {
 src_configure() {
 	rocm_set_default_gcc
 	local mycmakeargs=(
+		-D_VERSION_MAJOR=$(ver_cut 1 "${PV}")
+		-D_VERSION_MINOR=$(ver_cut 2 "${PV}")
 		-DCMAKE_DISABLE_FIND_PACKAGE_LATEX=ON
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
-		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 	)
 	rocm_src_configure
 }

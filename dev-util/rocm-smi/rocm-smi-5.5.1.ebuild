@@ -9,7 +9,7 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-r1 rocm
 
-if [[ ${PV} == *9999 ]] ; then
+if [[ ${PV} == *"9999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rocm_smi_lib"
 	inherit git-r3
