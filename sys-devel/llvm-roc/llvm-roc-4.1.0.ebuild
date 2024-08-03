@@ -98,7 +98,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 profile +runtime cfi
-ebuild-revision-19
+ebuild-revision-20
 "
 REQUIRED_USE="
 	cfi? (

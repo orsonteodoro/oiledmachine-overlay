@@ -23,7 +23,7 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit rocm
 
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64"
 
 DESCRIPTION="ROCm metapackage"
 HOMEPAGE=""
