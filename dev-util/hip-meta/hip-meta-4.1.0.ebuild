@@ -114,7 +114,6 @@ RDEPEND="
 		)
 		rocm? (
 			~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
-			~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
 			~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 		)
 	)
