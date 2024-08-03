@@ -63,7 +63,7 @@
       operations] supporting GPUs and CPUs.
     </flag>
     <flag name="system-nnef">
-      Use the system nnef package instead.
+      Use the system's <pkg>sci-libs/nnef</pkg> package instead.
     </flag>
   </use>
 </pkgmetadata>
