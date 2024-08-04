@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{8..11} )
 
@@ -31,7 +32,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" ebuild-revision-2"
 REQUIRED_USE="
 "
 RDEPEND+="
@@ -58,6 +59,41 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+}
+
+src_prepare() {
+	default
+	pushd "${S}/.." >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/${PN}-1.0.7-change-install-paths.patch"
+	popd >/dev/null 2>&1 || die
+}
+
+build_libnnef() {
+	pushd "${S}/nnef/cpp" >/dev/null 2>&1 || die
+		local mycmakeargs=(
+			-DBUILD_SHARED_LIBS=ON
+			-DCMAKE_INSTALL_LIBDIR="$(get_libdir)"
+			-DCMAKE_INSTALL_PREFIX="/usr"
+		)
+		mkdir -p "build" || die
+einfo "Building libnnef"
+		cd "build" || die
+		cmake ${mycmakeargs[@]} ".." || die
+		emake || die
+	popd >/dev/null 2>&1 || die
+}
+
+python_compile() {
+	build_libnnef
+	distutils-r1_python_compile
+}
+
+python_install() {
+einfo "Installing libnnef"
+	pushd "${S}/nnef/cpp/build" >/dev/null 2>&1 || die
+		emake DESTDIR="${D}" install || die
+	popd >/dev/null 2>&1 || die
+	distutils-r1_python_install
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
