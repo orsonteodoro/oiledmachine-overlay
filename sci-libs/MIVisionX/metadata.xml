@@ -37,7 +37,7 @@
       Adds support for the vx_nn neural network OpenVX™ extension module.
     </flag>
     <flag name="nnef">
-      Add support for NNEF pretrained models for inference.
+      Add support for NNEF™ pretrained models for inference.
     </flag>
     <flag name="onnx">
       Add support for ONNX pretrained models for inference.
