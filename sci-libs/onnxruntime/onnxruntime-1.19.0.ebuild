@@ -78,7 +78,7 @@ SRC_URI="
 	https://github.com/google/flatbuffers/archive/v${FLATBUFFERS_PV}.tar.gz
 		-> flatbuffers-${FLATBUFFERS_PV}.tar.gz
 	https://github.com/HowardHinnant/date/archive/v${DATE_PV}.tar.gz
-		-> hhdate-${DATE_PV}.tar.gz
+		-> HowardHinnant-date-${DATE_PV}.tar.gz
 "
 
 LICENSE="
