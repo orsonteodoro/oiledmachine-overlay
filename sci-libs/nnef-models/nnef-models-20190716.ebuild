@@ -180,7 +180,7 @@ ${MODELS_URI[@]}
 #https://github.com/KhronosGroup/NNEF-Tools/archive/refs/tags/nnef-v${PV}.tar.gz
 fi
 
-gen_license_caffe() {
+gen_license_models_caffe() {
 	local x
 	for x in ${CAFFE_MODELS[@]} ; do
 		echo "
@@ -192,7 +192,7 @@ gen_license_caffe() {
 }
 
 
-gen_license_caffe2() {
+gen_license_models_caffe2() {
 	local x
 	for x in ${CAFFE2_MODELS[@]} ; do
 		echo "
@@ -203,7 +203,7 @@ gen_license_caffe2() {
 	done
 }
 
-gen_license_onnx() {
+gen_license_models_onnx() {
 	local x
 	for x in ${ONNX_MODELS[@]} ; do
 		echo "
@@ -214,7 +214,7 @@ gen_license_onnx() {
 	done
 }
 
-gen_license_tensorflow() {
+gen_license_models_tensorflow() {
 	local x
 	for x in ${TENSORFLOW_MODELS[@]} ; do
 		echo "
@@ -232,10 +232,10 @@ https://github.com/KhronosGroup/NNEF-Tools/tree/main/models
 "
 LICENSE="
 	Apache-2.0
-	$(gen_license_caffe)
-	$(gen_license_caffe2)
-	$(gen_license_onnx)
-	$(gen_license_tensorflow)
+	$(gen_license_models_caffe)
+	$(gen_license_models_caffe2)
+	$(gen_license_models_onnx)
+	$(gen_license_models_tensorflow)
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
