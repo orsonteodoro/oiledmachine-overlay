@@ -4,10 +4,12 @@
 EAPI=8
 
 # TODO: package
-# lintrunner-adapters
 # clang-format
 # dev-python/triton
+# lintrunner-adapters
 # neural-compressor
+# onnxmltools
+# pydocstyle
 
 # For deps versioning, see
 # https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/deps.txt
@@ -141,7 +143,7 @@ LICENSE="
 # custom keywords:  The copyright holders provide no reassurances
 # The distro's Apache-2.0 license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
-RESTRICT="mirror test"
+RESTRICT="mirror test" # Untested
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="
@@ -192,6 +194,9 @@ REQUIRED_USE="
 	rocm? (
 		llvm_slot_17
 		migraphx
+	)
+	test? (
+		python
 	)
 	|| (
 		cudnn
@@ -263,7 +268,14 @@ RDEPEND="
 		dev-libs/protobuf:=
 	)
 	(
-		>=sci-libs/onnx-1.16.1[disableStaticReg]
+		!python? (
+			>=sci-libs/onnx-1.16.1[disableStaticReg]
+		)
+		python? (
+			$(python_gen_cond_dep '
+				>=sci-libs/onnx-1.16.1[${PYTHON_USEDEP},disableStaticReg]
+			')
+		)
 		sci-libs/onnx:=
 	)
 	(
@@ -365,6 +377,8 @@ RDEPEND="
 			dev-python/cerberus[${PYTHON_USEDEP}]
 			dev-python/coloredlogs[${PYTHON_USEDEP}]
 			dev-python/h5py[${PYTHON_USEDEP}]
+			dev-python/packaging[${PYTHON_USEDEP}]
+			dev-python/protobuf-python[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
 			dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 			>=dev-python/sympy-1.12[${PYTHON_USEDEP}]
@@ -389,11 +403,17 @@ BDEPEND+="
 	)
 	test? (
 		$(python_gen_cond_dep '
-			dev-python/mypy[${PYTHON_USEDEP}]
-			dev-python/pytest[${PYTHON_USEDEP}]
-
+			>=dev-python/parameterized-0.8.1[${PYTHON_USEDEP}]
 			>=dev-python/black-24.2.0[${PYTHON_USEDEP}]
 			>=dev-python/isort-5.13.2[${PYTHON_USEDEP}]
+			dev-python/jinja[${PYTHON_USEDEP}]
+			dev-python/mypy[${PYTHON_USEDEP}]
+			dev-python/pandas[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pytest-cov[${PYTHON_USEDEP}]
+			dev-python/scikit-learn[${PYTHON_USEDEP}]
+			dev-python/scipy[${PYTHON_USEDEP}]
+
 			>=dev-util/ruff-0.5.4
 			dev-python/clang-format[${PYTHON_USEDEP}]
 			dev-python/lintrunner-adapters[${PYTHON_USEDEP}]
