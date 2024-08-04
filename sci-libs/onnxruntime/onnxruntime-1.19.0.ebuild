@@ -216,7 +216,7 @@ gen_rocm_rdepend() {
 			rocm_${u}? (
 				~dev-libs/rccl-${pv}:${s}$(get_rocm_usedep RCCL)
 				~dev-libs/rocr-runtime-${pv}:${s}
-				~dev-util/hip-${pv}:${s}
+				~dev-util/hip-${pv}:${s}[rocm]
 				~dev-util/rocm-smi-${pv}:${s}
 				~dev-util/roctracer-${pv}:${s}
 				~sci-libs/hipCUB-${pv}:${s}$(get_rocm_usedep HIPCUB)
