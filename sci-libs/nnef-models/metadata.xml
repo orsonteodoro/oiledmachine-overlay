@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/KhronosGroup/NNEF-Tools/issues</bugs-to>
+    <remote-id type="github">KhronosGroup/NNEF-Tools</remote-id>
+  </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  See also
+  https://github.com/onnx/models?tab=readme-ov-file#image_classification
+  https://keras.io/api/applications/
+
+  -->
+  <use>
+    <flag name="bvlc_alexnet_caffemodel_nnef">
+      An image recognition and image classification model
+    </flag>
+    <flag name="bvlc_alexnet_onnx_nnef">
+      An image recognition and image classification model
+    </flag>
+    <flag name="bvlc_googlenet_caffemodel_nnef">
+      An image classification model
+    </flag>
+    <flag name="bvlc_googlenet_onnx_nnef">
+      An image classification model
+    </flag>
+    <flag name="inception_resnet_v2_tfpb_nnef">
+      An image classification model
+    </flag>
+    <flag name="inception_v1_caffe2_nnef">
+      An image classification model
+    </flag>
+    <flag name="inception_v1_onnx_nnef">
+      An image classification model
+    </flag>
+    <flag name="inception_v1_quant_tflite_nnef">
+      An image classification model with reduced model size
+    </flag>
+    <flag name="inception_v2_caffe2_nnef">
+      An image classification model
+    </flag>
+    <flag name="inception_v2_onnx_nnef">
+      An image classification model
+    </flag>
+    <flag name="inception_v2_quant_tflite_nnef">
+      An image classification model with reduced model size
+    </flag>
+    <flag name="inception_v3_tfpb_nnef">
+      An image classification model
+    </flag>
+    <flag name="inception_v3_quant_tflite_nnef">
+      An image classification model with reduced model size
+    </flag>
+    <flag name="inception_v4_tfpb_nnef">
+      An image classification model
+    </flag>
+    <flag name="inception_v4_quant_tflite_nnef">
+      An image classification model with reduced model size
+    </flag>
+    <flag name="mobilenet_v1_1_0_caffemodel_nnef">
+      A mobile first image classification model
+    </flag>
+    <flag name="mobilenet_v1_1_0_tfpb_nnef">
+      A mobile first image classification model
+    </flag>
+    <flag name="mobilenet_v1_1_0_quant_tflite_nnef">
+      A mobile first image classification model with reduced model size
+    </flag>
+    <flag name="mobilenet_v2_1_0_caffemodel_nnef">
+      A mobile first image classification model
+    </flag>
+    <flag name="mobilenet_v2_1_0_onnx_nnef">
+      A mobile first image classification model
+    </flag>
+    <flag name="mobilenet_v2_1_0_tfpb_nnef">
+      A mobile first image classification model
+    </flag>
+    <flag name="mobilenet_v2_1_0_quant_tflite_nnef">
+      A mobile first image classification model with reduced model size
+    </flag>
+    <flag name="nasnet_mobile_tfpb_nnef">
+      An image classification model
+    </flag>
+    <flag name="resnet_v1_101_onnx_nnef">
+      An image classification model
+    </flag>
+    <flag name="resnet_v1_152_caffemodel_nnef">
+      An image classification model
+    </flag>
+    <flag name="resnet_v1_18_onnx_nnef">
+      An image classification model
+    </flag>
+    <flag name="resnet_v1_34_onnx_nnef">
+      An image classification model
+    </flag>
+    <flag name="resnet_v1_50_onnx_nnef">
+      An image classification model
+    </flag>
+    <flag name="resnet_v2_101_onnx_nnef">
+      An image classification model
+    </flag>
+    <flag name="resnet_v2_18_onnx_nnef">
+      An image classification model
+    </flag>
+    <flag name="resnet_v2_34_onnx_nnef">
+      An image classification model
+    </flag>
+    <flag name="resnet_v2_50_onnx_nnef">
+      An image classification model
+    </flag>
+    <flag name="shufflenet_onnx_nnef">
+      An mobile efficient image classification model
+    </flag>
+    <flag name="squeezenet_tfpb_nnef">
+      An image classification model
+    </flag>
+    <flag name="squeezenet_v1_0_caffemodel_nnef">
+      An image classification model
+    </flag>
+    <flag name="squeezenet_v1_0_onnx_nnef">
+      An image classification model
+    </flag>
+    <flag name="squeezenet_v1_1_caffemodel_nnef">
+      An image classification model
+    </flag>
+    <flag name="squeezenet_v1_1_onnx_nnef">
+      An image classification model
+    </flag>
+    <flag name="vgg16_caffemodel_nnef">
+      An image classification model
+    </flag>
+    <flag name="vgg16_onnx_nnef">
+      An image classification model
+    </flag>
+    <flag name="vgg19_caffemodel_nnef">
+      An image classification model
+    </flag>
+    <flag name="vgg19_onnx_nnef">
+      An image classification model
+    </flag>
+  </use>
+</pkgmetadata>
