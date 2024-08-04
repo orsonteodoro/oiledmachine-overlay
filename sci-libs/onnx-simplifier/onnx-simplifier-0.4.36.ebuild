@@ -142,6 +142,10 @@ HOMEPAGE="
 "
 LICENSE="
 	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
 		(
 			all-rights-reserved
 			Apache-2.0
@@ -170,10 +174,6 @@ LICENSE="
 	(
 		all-rights-reserved
 		MIT
-	)
-	(
-		all-rights-reserved
-		Apache-2.0
 	)
 	Apache-2.0
 	Boost-1.0
