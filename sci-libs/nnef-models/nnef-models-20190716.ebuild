@@ -226,8 +226,10 @@ gen_license_tensorflow() {
 }
 
 
-DESCRIPTION="The NNEF models"
-HOMEPAGE="https://github.com/KhronosGroup/NNEF-Tools"
+DESCRIPTION="The NNEF model zoo"
+HOMEPAGE="
+https://github.com/KhronosGroup/NNEF-Tools/tree/main/models
+"
 LICENSE="
 	Apache-2.0
 	$(gen_license_caffe)
