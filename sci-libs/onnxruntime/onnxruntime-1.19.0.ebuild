@@ -82,7 +82,10 @@ SRC_URI="
 "
 
 LICENSE="
-	custom
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
 	(
 		all-rights-reserved
 		MIT
@@ -94,6 +97,7 @@ LICENSE="
 	CC-BY-3.0
 	CC-BY-4.0
 	CC-PD
+	custom
 	HPND
 	ISC
 	ISSL
@@ -126,11 +130,11 @@ LICENSE="
 #	Unlicense
 #	UoI-NCSA
 #	ZLIB
+# all-rights-reserved Apache-2.0 - onnxruntime/core/common/status.cc
 # CC-BY-3.0 CC-BY-4.0 - winml/test/collateral/images/LICENSE.md
 # custom - dockerfiles/LICENSE-IMAGE.txt
-
 # custom keywords:  The copyright holders provide no reassurances
-
+# The distro's Apache-2.0 license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror test"
 SLOT="0"
