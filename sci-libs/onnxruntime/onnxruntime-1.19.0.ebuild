@@ -13,6 +13,9 @@ EAPI=8
 # https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/deps.txt
 # https://github.com/microsoft/onnxruntime/blob/v1.19.0/tools/ci_build/github/linux/docker/scripts/manylinux/requirements.txt
 # https://github.com/microsoft/onnxruntime/blob/v1.19.0/onnxruntime/python/tools/transformers/requirements.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/external/dnnl.cmake#L5
+
+# clog has same version as cpuinfo
 
 AMDGPU_TARGETS_COMPAT=(
 # See https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/CMakeLists.txt#L299
