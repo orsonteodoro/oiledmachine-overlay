@@ -1,0 +1,36 @@
+diff '--color=auto' -urp onnxruntime-1.19.0.orig/cmake/onnxruntime_providers_migraphx.cmake onnxruntime-1.19.0/cmake/onnxruntime_providers_migraphx.cmake
+--- onnxruntime-1.19.0.orig/cmake/onnxruntime_providers_migraphx.cmake	2024-07-30 03:49:14.000000000 -0700
++++ onnxruntime-1.19.0/cmake/onnxruntime_providers_migraphx.cmake	2024-08-03 21:19:55.561094334 -0700
+@@ -19,7 +19,7 @@
+   endif()
+ 
+   # Add search paths for default rocm installation
+-  list(APPEND CMAKE_PREFIX_PATH /opt/rocm/hcc /opt/rocm/hip /opt/rocm $ENV{HIP_PATH})
++  list(APPEND CMAKE_PREFIX_PATH /opt/rocm-@ROCM_VERSION@/hcc /opt/rocm-@ROCM_VERSION@/hip /opt/rocm-@ROCM_VERSION@ $ENV{HIP_PATH})
+ 
+   # Suppress the warning about the small capitals of the package name - Enable when support to CMake 3.27.0 is used
+   # cmake_policy(SET CMP0144 NEW)
+diff '--color=auto' -urp onnxruntime-1.19.0.orig/onnxruntime/python/tools/transformers/benchmark_helper.py onnxruntime-1.19.0/onnxruntime/python/tools/transformers/benchmark_helper.py
+--- onnxruntime-1.19.0.orig/onnxruntime/python/tools/transformers/benchmark_helper.py	2024-07-30 03:49:14.000000000 -0700
++++ onnxruntime-1.19.0/onnxruntime/python/tools/transformers/benchmark_helper.py	2024-08-03 21:20:15.720813434 -0700
+@@ -516,7 +516,7 @@ class CudaMemoryMonitor(MemoryMonitor):
+ class RocmMemoryMonitor(MemoryMonitor):
+     def __init__(self, keep_measuring=True):
+         super().__init__(keep_measuring)
+-        rocm_smi_path = "/opt/rocm/libexec/rocm_smi"
++        rocm_smi_path = "/opt/rocm-@ROCM_VERSION@/libexec/rocm_smi"
+         if os.path.exists(rocm_smi_path):
+             if rocm_smi_path not in sys.path:
+                 sys.path.append(rocm_smi_path)
+diff '--color=auto' -urp onnxruntime-1.19.0.orig/orttraining/tools/amdgpu/script/run_bert.sh onnxruntime-1.19.0/orttraining/tools/amdgpu/script/run_bert.sh
+--- onnxruntime-1.19.0.orig/orttraining/tools/amdgpu/script/run_bert.sh	2024-07-30 03:49:14.000000000 -0700
++++ onnxruntime-1.19.0/orttraining/tools/amdgpu/script/run_bert.sh	2024-08-03 21:20:05.048962131 -0700
+@@ -71,7 +71,7 @@ fi
+ 
+ if [ ${profile} == 1 ]; then
+   if [ ${gpu_name} == "mi100" ]; then
+-    profile_commands="/opt/rocm/bin/rocprof --obj-tracking on --stats"
++    profile_commands="/opt/rocm-@ROCM_VERSION@/bin/rocprof --obj-tracking on --stats"
+   elif [ ${gpu_name} == "v100" ]; then
+     profile_commands="nvprof --print-gpu-summary --log-file ${log_dir}/${run_name}-trace.log"
+   fi

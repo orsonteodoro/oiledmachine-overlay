@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- Ebuild originally from cg overlay -->
+  <upstream>
+    <remote-id type="github">microsoft/onnxruntime</remote-id>
+    <bugs-to>https://github.com/microsoft/onnxruntime/issues</bugs-to>
+  </upstream>
+  <use>
+    <flag name="benchmarks">
+      Build microbenchmarks
+    </flag>
+    <flag name="cudnn">
+      Add support for GPU accelerated deep neural network primitives for NVIDIA®
+      GPUs.
+    </flag>
+    <flag name="composable-kernel">
+      Enable use of the composable-kernel library.
+    </flag>
+    <flag name="triton">
+      Enable GPU kernels written in Triton language.
+    </flag>
+    <flag name="migraphx">
+      Build with GPU accelerated inference for AMD GPUs.
+    </flag>
+    <flag name="mimalloc">
+      Enable use of a performance based memory allocator.
+    </flag>
+    <flag name="mpi">
+      Add support for MPI for training.
+    </flag>
+    <flag name="onednn">
+      Use optimized JITable deep learning primitives for CPUs and/or GPUs.
+    </flag>
+    <flag name="tensorrt">
+      Run inference on NVIDIA® GPUs
+    </flag>
+    <flag name="xnnpack">
+      Build support for CPU accelerated inference primitives.
+    </flag>
+  </use>
+</pkgmetadata>
