@@ -14,6 +14,11 @@ EAPI=8
 # https://github.com/microsoft/onnxruntime/blob/v1.19.0/tools/ci_build/github/linux/docker/scripts/manylinux/requirements.txt
 # https://github.com/microsoft/onnxruntime/blob/v1.19.0/onnxruntime/python/tools/transformers/requirements.txt
 # https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/external/dnnl.cmake#L5
+# https://github.com/microsoft/onnxruntime/blob/v1.19.0/requirements.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.19.0/requirements-dev.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.19.0/requirements-doc.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.19.0/requirements-lintrunner.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.19.0/requirements-training.txt
 
 # clog has same version as cpuinfo
 
@@ -208,6 +213,7 @@ gen_rocm_rdepend() {
 				~dev-libs/rocr-runtime-${pv}:${s}
 				~dev-util/hip-${pv}:${s}
 				~dev-util/rocm-smi-${pv}:${s}
+				~dev-util/roctracer-${pv}:${s}
 				~sci-libs/hipCUB-${pv}:${s}$(get_rocm_usedep HIPCUB)
 				~sci-libs/hipFFT-${pv}:${s}$(get_rocm_usedep HIPFFT)
 				~sci-libs/hipRAND-${pv}:${s}[rocm]
@@ -310,7 +316,9 @@ RDEPEND="
 		dev-libs/cudnn:=
 	)
 	javascript? (
-		>=dev-util/emscripten-3.1.59
+		llvm_slot_18? (
+			>=dev-util/emscripten-3.1.59:18-3.1
+		)
 	)
 	onednn? (
 		>=dev-libs/oneDNN-3.0.1
