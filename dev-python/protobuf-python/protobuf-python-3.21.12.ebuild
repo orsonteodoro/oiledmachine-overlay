@@ -3,6 +3,14 @@
 
 EAPI=8
 
+#
+# About the confusing versioning.
+#
+# Upstream uses 4.21.12 for their python package in __init__.py.  See https://github.com/protocolbuffers/protobuf/blob/v3.21.12/python/google/protobuf/__init__.py#L33
+# The versioning here corresponds to configure.ac.
+# 3.21.12 is equivalent to 4.21.12 and equivalent to 21.12.
+#
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream supports up to 3.10
 
