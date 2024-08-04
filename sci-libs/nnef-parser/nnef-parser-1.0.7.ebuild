@@ -1,4 +1,4 @@
-# Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -25,7 +25,7 @@ https://github.com/KhronosGroup/NNEF-Tools/archive/refs/tags/nnef-v${PV}.tar.gz
 fi
 
 DESCRIPTION="The NNEF parser"
-HOMEPAGE="https://github.com/KhronosGroup/NNEF-Tools"
+HOMEPAGE="https://github.com/KhronosGroup/NNEF-Tools/tree/main/nnef-pyproject"
 LICENSE="
 	Apache-2.0
 "

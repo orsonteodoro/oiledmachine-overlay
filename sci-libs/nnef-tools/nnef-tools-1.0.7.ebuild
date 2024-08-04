@@ -1,4 +1,4 @@
-# Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -25,13 +25,13 @@ https://github.com/KhronosGroup/NNEF-Tools/archive/refs/tags/nnef-v${PV}.tar.gz
 fi
 
 DESCRIPTION="NNEF Tools"
-HOMEPAGE="https://github.com/KhronosGroup/NNEF-Tools"
+HOMEPAGE="https://github.com/KhronosGroup/NNEF-Tools/tree/main/nnef_tools-pyproject"
 LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" caffe full models onnx tensorflow-lite tensorflow-protobuf test visualization"
+IUSE+=" caffe full onnx tensorflow-lite tensorflow-protobuf test visualization"
 REQUIRED_USE="
 	full? (
 		caffe
