@@ -3,6 +3,17 @@
 
 EAPI=8
 
+# TODO: package
+# lintrunner-adapters
+# clang-format
+# dev-python/triton
+# neural-compressor
+
+# For deps versioning, see
+# https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/deps.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.19.0/tools/ci_build/github/linux/docker/scripts/manylinux/requirements.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.19.0/onnxruntime/python/tools/transformers/requirements.txt
+
 AMDGPU_TARGETS_COMPAT=(
 # See https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/CMakeLists.txt#L299
 	gfx906
@@ -126,8 +137,8 @@ ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_SLOTS[@]}
--benchmark -composable-kernel -cuda cudnn debug -javascript -llvm -migraphx -mpi
--mimalloc -lto onednn +python -rocm test -tensorrt -triton -xnnpack
+-benchmark -composable-kernel -cuda cudnn debug doc -javascript -llvm -migraphx
+-mpi -mimalloc -lto onednn +python -rocm test -tensorrt -triton -xnnpack
 "
 gen_cuda_required_use() {
 	local x
@@ -160,6 +171,12 @@ REQUIRED_USE="
 		cudnn
 		!lto
 	)
+	cudnn? (
+		cuda
+	)
+	javascript? (
+		llvm_slot_18
+	)
 	rocm? (
 		llvm_slot_17
 		migraphx
@@ -181,7 +198,10 @@ gen_rocm_rdepend() {
 		echo "
 			rocm_${u}? (
 				~dev-libs/rccl-${pv}:${s}$(get_rocm_usedep RCCL)
+				~dev-libs/rocr-runtime-${pv}:${s}
+				~dev-util/hip-${pv}:${s}
 				~dev-util/rocm-smi-${pv}:${s}
+				~sci-libs/hipCUB-${pv}:${s}$(get_rocm_usedep HIPCUB)
 				~sci-libs/hipFFT-${pv}:${s}$(get_rocm_usedep HIPFFT)
 				~sci-libs/hipRAND-${pv}:${s}[rocm]
 				~sci-libs/miopen-${pv}:${s}$(get_rocm_usedep MIOPEN)
@@ -197,58 +217,142 @@ gen_rocm_rdepend() {
 }
 RDEPEND="
 	${PYTHON_DEPS}
+	(
+		>=dev-cpp/eigen-3.4.0[cuda?]
+		dev-cpp/eigen:=
+	)
+	(
+		>=dev-cpp/ms-gsl-4.0.0
+		dev-cpp/ms-gsl:=
+	)
+	(
+		>=dev-cpp/nlohmann_json-3.10.5
+		dev-cpp/nlohmann_json:=
+	)
+	(
+		>=dev-libs/clog-2024.07.09
+		dev-libs/clog:=
+	)
+	(
+		>=dev-libs/cpuinfo-2024.07.09
+		dev-libs/cpuinfo:=
+	)
+	(
+		>=dev-libs/date-3.0.1
+		dev-libs/date:=
+	)
+	(
+		>=dev-libs/flatbuffers-23.5.26
+		dev-libs/flatbuffers:=
+	)
+	(
+		>=dev-libs/protobuf-21.12:0/3.21
+		dev-libs/protobuf:=
+	)
+	(
+		>=sci-libs/onnx-1.16.1[disableStaticReg]
+		sci-libs/onnx:=
+	)
+	(
+		>=sys-cluster/openmpi-4.0.0[cuda?]
+		sys-cluster/openmpi:=
+	)
+	>=dev-libs/FP16-2021.03.16
+	>=dev-libs/FXdiv-2020.12.08
+	>=dev-libs/re2-0.2024.07.02:0/11
+	>=dev-python/numpy-2.0.0
+	>=sci-libs/pytorch-1.13.1
 	app-admin/chrpath
-	dev-cpp/eigen:=[cuda?]
-	dev-cpp/ms-gsl:=
-	dev-cpp/nlohmann_json
-	dev-libs/cpuinfo:=
-	dev-libs/date:=
-	dev-libs/flatbuffers:=
-	dev-libs/clog:=
-	dev-libs/FP16
-	dev-libs/FXdiv
-	dev-libs/nsync:=
-	dev-libs/protobuf:=
-	dev-libs/re2
-	dev-python/numpy
-	sci-libs/pytorch
-	sci-libs/onnx:=[disableStaticReg]
-	sys-cluster/openmpi:=[cuda?]
+	(
+		>=dev-libs/nsync-1.26.0
+		dev-libs/nsync:=
+	)
 	benchmark? (
-		dev-cpp/benchmark
+		>=dev-cpp/benchmark-1.8.5
 	)
 	cuda? (
+		|| (
+			(
+				=dev-util/nvidia-cuda-toolkit-11.8*
+				!python? (
+					>=sci-libs/pytorch-2.0.0
+				)
+				cudnn? (
+					=dev-libs/cudnn-8.8*
+				)
+				python? (
+					>=sci-libs/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
+				)
+			)
+			(
+				=dev-util/nvidia-cuda-toolkit-12.3*
+				!python? (
+					>=sci-libs/pytorch-2.1.0
+				)
+				cudnn? (
+					=dev-libs/cudnn-8.6*
+				)
+				python? (
+					>=sci-libs/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
+				)
+			)
+		)
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	cudnn? (
 		dev-libs/cudnn:=
 	)
 	javascript? (
-		dev-util/emscripten
+		>=dev-util/emscripten-3.1.59
 	)
 	onednn? (
+		>=dev-libs/oneDNN-3.0.1
 		dev-libs/oneDNN:=
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
-		>=dev-libs/rocr-runtime-${ROCM_VERSION}:=
-		>=dev-util/hip-${ROCM_VERSION}:=
-		sci-libs/hipCUB:=
-		sci-libs/hipFFT:=
+		rocm_5_7? (
+			!python? (
+				|| (
+					=sci-libs/pytorch-2.3*
+					=sci-libs/pytorch-2.2*
+				)
+			)
+			python? (
+				|| (
+					=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
+					=sci-libs/pytorch-2.2*[${PYTHON_SINGLE_USEDEP}]
+				)
+			)
+		)
+		rocm_6_0? (
+			!python? (
+				|| (
+					=sci-libs/pytorch-2.3*
+				)
+			)
+			python? (
+				|| (
+					=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
+				)
+			)
+		)
 	)
 	xnnpack? (
-		sci-libs/XNNPACK
+		>=sci-libs/XNNPACK-2023.10.19
 	)
 	python? (
+		>=sci-libs/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
 		$(python_gen_cond_dep '
+			>=dev-python/flatbuffers-23.5.26[${PYTHON_USEDEP}]
+			>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
+			>=sci-libs/transformers-4.18.0[${PYTHON_USEDEP}]
 			dev-python/cerberus[${PYTHON_USEDEP}]
 			dev-python/coloredlogs[${PYTHON_USEDEP}]
-			dev-python/flatbuffers[${PYTHON_USEDEP}]
 			dev-python/h5py[${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
 			dev-python/py-cpuinfo[${PYTHON_USEDEP}]
-			dev-python/sympy[${PYTHON_USEDEP}]
+			>=dev-python/sympy-1.12[${PYTHON_USEDEP}]
 		')
 	)
 "
@@ -256,6 +360,30 @@ DEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
+	>=dev-python/setuptools-68.2.2
+	$(python_gen_cond_dep '
+		dev-python/packaging[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+	')
+	doc? (
+		$(python_gen_cond_dep '
+			dev-python/sphinx[${PYTHON_USEDEP}]
+			dev-python/sphinx-gallery[${PYTHON_USEDEP}]
+			dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
+		')
+	)
+	test? (
+		$(python_gen_cond_dep '
+			dev-python/mypy[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+
+			>=dev-python/black-24.2.0[${PYTHON_USEDEP}]
+			>=dev-python/isort-5.13.2[${PYTHON_USEDEP}]
+			>=dev-util/ruff-0.5.4
+			dev-python/clang-format[${PYTHON_USEDEP}]
+			dev-python/lintrunner-adapters[${PYTHON_USEDEP}]
+		')
+	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-system-dnnl.patch"
