@@ -45,7 +45,7 @@ TENSORBOARD_COMMIT="373eb09e4c5d2b3cc2493f0949dc4be6b6a45e81" # onnxruntime dep
 WIL_COMMIT="e8c599bca6c56c44b6730ad93f6abbc9ecd60fc1" # onnxruntime dep
 
 
-inherit distutils-r1 pypi
+inherit distutils-r1 dep-prepare pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -229,31 +229,6 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 
-dep_prepare_mv() {
-	local from="${1}"
-	local to="${2}"
-einfo "Moving dep ${from} -> ${to}"
-	rm -rf "${to}" || die
-	mkdir -p "${to}"
-	cp -aT \
-		"${from}" \
-		"${to}" \
-		|| die
-	rm -rf "${from}" || die
-}
-
-dep_prepare_copy() {
-	local from="${1}"
-	local to="${2}"
-einfo "Copying dep ${from} -> ${to}"
-	rm -rf "${t}" || die
-	mkdir -p "${to}"
-	cp -aT \
-		"${from}" \
-		"${to}" \
-		|| die
-}
-
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -271,8 +246,8 @@ src_unpack() {
 		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2}" "${S}/third_party/onnx-optimizer/third_party/onnx/third_party/pybind"
 
 		dep_prepare_mv "${WORKDIR}/protobuf-${PROTOBUF_COMMIT_1}" "${S}/third_party/onnx-optimizer/third_party/protobuf"
-		dep_prepare_copy "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/third_party/onnx-optimizer/third_party/protobuf/third_party/benchmark"
-		dep_prepare_copy "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_1}" "${S}/third_party/onnx-optimizer/third_party/protobuf/third_party/googletest"
+		dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/third_party/onnx-optimizer/third_party/protobuf/third_party/benchmark"
+		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_1}" "${S}/third_party/onnx-optimizer/third_party/protobuf/third_party/googletest"
 
 		dep_prepare_mv "${WORKDIR}/onnxruntime-${ONNXRUNTIME_COMMIT}" "${S}/third_party/onnxruntime"
 		dep_prepare_mv "${WORKDIR}/cub-${CUB_COMMIT}" "${S}/third_party/onnxruntime/cmake/external/cub"
@@ -301,8 +276,8 @@ src_unpack() {
 
 		dep_prepare_mv "${WORKDIR}/onnxruntime-extensions-${ONNXRUNTIME_EXTENSIONS_COMMIT}" "${S}/third_party/onnxruntime/cmake/external/onnxruntime-extensions"
 		dep_prepare_mv "${WORKDIR}/protobuf-${PROTOBUF_COMMIT_2}" "${S}/third_party/onnxruntime/cmake/external/protobuf"
-		dep_prepare_copy "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/third_party/onnxruntime/cmake/external/protobuf/benchmark"
-		dep_prepare_copy "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_1}" "${S}/third_party/onnxruntime/cmake/external/protobuf/googletest"
+		dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/third_party/onnxruntime/cmake/external/protobuf/benchmark"
+		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_1}" "${S}/third_party/onnxruntime/cmake/external/protobuf/googletest"
 
 		dep_prepare_mv "${WORKDIR}/cpuinfo-${PYTORCH_CPUINFO}" "${S}/third_party/onnxruntime/cmake/external/pytorch_cpuinfo"
 		dep_prepare_mv "${WORKDIR}/re2-${RE2_COMMIT}" "${S}/third_party/onnxruntime/cmake/external/re2"
