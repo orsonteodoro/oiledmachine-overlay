@@ -40,7 +40,7 @@ CPU_FLAGS="
 	cpu_flags_x86_avx2
 	cpu_flags_x86_avx512
 "
-DATE_PV="3.0.1" # From https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/deps.txt#L18
+DATE_PV="3.0.1" # From cmake/deps.txt
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -60,17 +60,19 @@ CUDA_TARGETS_COMPAT=(
 	sm_80
 	sm_90
 )
-FLATBUFFERS_PV="23.5.26" # From https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/deps.txt#L26
+FLATBUFFERS_PV="23.5.26" # From cmake/deps.txt
 ROCM_SLOTS=(
 	rocm_6_0
 	rocm_5_7
 )
 LLVM_COMPAT=( 17 18 )
 LLVM_OPTIONAL=1
+MIMALLOC_PV="2.1.1" # From cmake/deps.txt
 PYTHON_COMPAT=( "python3_"{10..12} )
-SAFEINT_COMMIT="3.0.28" # From https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/deps.txt#L54
+SAFEINT_COMMIT="3.0.28" # From cmake/deps.txt
 
-inherit cmake cuda distutils-r1 flag-o-matic llvm-r1 rocm toolchain-funcs
+inherit cmake cuda dep-prepare distutils-r1 flag-o-matic llvm-r1 rocm toolchain-funcs
+
 
 DESCRIPTION="Cross-platform inference and training machine-learning accelerator."
 HOMEPAGE="
@@ -86,6 +88,10 @@ SRC_URI="
 		-> flatbuffers-${FLATBUFFERS_PV}.tar.gz
 	https://github.com/HowardHinnant/date/archive/v${DATE_PV}.tar.gz
 		-> HowardHinnant-date-${DATE_PV}.tar.gz
+	mimalloc? (
+		https://github.com/microsoft/mimalloc/archive/refs/tags/v${MIMALLOC_PV}.tar.gz
+		-> mimalloc-${MIMALLOC_PV}.tar.gz
+	)
 "
 
 LICENSE="
@@ -455,6 +461,11 @@ pkg_setup() {
 	use rocm && rocm_pkg_setup
 }
 
+src_unpack() {
+	unpack ${A}
+	use mimalloc && dep_prepare "${WORKDIR}/mimalloc-${MIMALLOC_PV}" "${S}/cmake/external/mimalloc"
+}
+
 src_prepare() {
 	CMAKE_USE_DIR="${S}/cmake"
 
@@ -605,7 +616,6 @@ src_configure() {
 		-Donnxruntime_USE_LLVM=$(usex llvm)
 		-Donnxruntime_USE_MIGRAPHX=$(usex migraphx)
 		-Donnxruntime_USE_MIMALLOC=$(usex mimalloc)
-		-Donnxruntime_USE_MIMALLOC=OFF
 		-Donnxruntime_USE_MPI=$(usex mpi)
 		-Donnxruntime_USE_NCCL=OFF
 		-Donnxruntime_USE_NNAPI_BUILTIN=OFF
@@ -641,6 +651,12 @@ src_configure() {
 			-Donnxruntime_NVCC_THREADS=1
 			-Donnxruntime_TVM_CUDA_RUNTIME=OFF
 			-Donnxruntime_USE_NCCL=OFF # Multi GPU CUDA
+		)
+	fi
+
+	if use mimalloc ; then
+		mycmakeargs+=(
+			-Dmimalloc_SOURCE_PATH="${S}/cmake/external/mimalloc"
 		)
 	fi
 

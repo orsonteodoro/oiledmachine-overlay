@@ -299,22 +299,6 @@ pkg_setup() {
 	python_setup
 }
 
-_dep_prepare_cp() {
-	local dest="${1}"
-	local org="${2}"
-	local project_name="${3}"
-	local commit="${4}"
-	local alt_name="${5}"
-	local src_path
-	local dest_path="${S}/${dest}"
-	if [[ -n "${alt_name}" ]] ; then
-		src_path="${WORKDIR}/${alt_name}-${commit}"
-	else
-		src_path="${WORKDIR}/${project_name}-${commit}"
-	fi
-	dep_prepare_cp "${src_path}" "${dest_path}"
-}
-
 dep_prepare_archive_cp() {
 	local dest="${1}"
 	local filename="${2}"
@@ -329,14 +313,13 @@ dep_prepare_archive_cp() {
 
 src_unpack() {
 	unpack ${A}
-	_dep_prepare_cp "thirdparty/xbyak" herumi xbyak ${XBYAK_COMMIT}
-	_dep_prepare_cp "thirdparty/zlib/zlib" madler zlib ${ZLIB_COMMIT}
-	_dep_prepare_cp "inference-engine/thirdparty/ade" opencv ade ${ADE_COMMIT}
-	_dep_prepare_cp "inference-engine/thirdparty/mkl-dnn" openvinotoolkit oneDNN ${ONEDNN_COMMIT}
-	_dep_prepare_cp "inference-engine/tests/ie_test_utils/common_test_utils/gtest" openvinotoolkit googletest ${GOOGLETEST_COMMIT}
-	_dep_prepare_cp "inference-engine/samples/thirdparty/gflags" gflags gflags ${GFLAGS_1_COMMIT}
-	_dep_prepare_cp "inference-engine/samples/thirdparty/gflags/doc" gflags gflags ${GFLAGS_2_COMMIT}
-
+	dep_prepare_cp "${WORKDIR}/xbyak-${XBYAK_COMMIT}" "${S}/thirdparty/xbyak"
+	dep_prepare_cp "${WORKDIR}/zlib-${ZLIB_COMMIT}" "${S}/thirdparty/zlib/zlib"
+	dep_prepare_cp "${WORKDIR}/ade-${ADE_COMMIT}" "${S}/inference-engine/thirdparty/ade"
+	dep_prepare_cp "${WORKDIR}/oneDNN-${ONEDNN_COMMIT}" "${S}/inference-engine/thirdparty/mkl-dnn"
+	dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_COMMIT}" "${S}/inference-engine/tests/ie_test_utils/common_test_utils/gtest"
+	dep_prepare_cp "${WORKDIR}/gflags-${GFLAGS_1_COMMIT}" "${S}/inference-engine/samples/thirdparty/gflags"
+	dep_prepare_cp "${WORKDIR}/gflags-${GFLAGS_2_COMMIT}" "${S}/inference-engine/samples/thirdparty/gflags/doc"
 	dep_prepare_archive_cp "inference-engine/temp/download/VPU/usb-ma2x8x" "firmware_usb-ma2x8x_1875.zip"
 	dep_prepare_archive_cp "inference-engine/temp/download/VPU/pcie-ma2x8x" "firmware_pcie-ma2x8x_1875.zip"
 	if use tbb ; then

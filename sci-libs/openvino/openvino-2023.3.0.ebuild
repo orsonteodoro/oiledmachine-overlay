@@ -508,22 +508,6 @@ pkg_setup() {
 	python_setup
 }
 
-_dep_prepare_cp() {
-	local dest="${1}"
-	local org="${2}"
-	local project_name="${3}"
-	local commit="${4}"
-	local alt_name="${5}"
-	local src_path
-	local dest_path="${S}/${dest}"
-	if [[ -n "${alt_name}" ]] ; then
-		src_path="${WORKDIR}/${alt_name}-${commit}"
-	else
-		src_path="${WORKDIR}/${project_name}-${commit}"
-	fi
-	dep_prepare_cp "${src_path}" "${dest_path}"
-}
-
 dep_prepare_archive_cp() {
 	local dest="${1}"
 	local filename="${2}"
@@ -538,51 +522,51 @@ dep_prepare_archive_cp() {
 
 src_unpack() {
 	unpack ${A}
-	_dep_prepare_cp "thirdparty/ade" opencv ade ${ADE_COMMIT}
-	_dep_prepare_cp "thirdparty/xbyak" herumi xbyak ${XBYAK_COMMIT}
-	_dep_prepare_cp "thirdparty/open_model_zoo" openvinotoolkit open_model_zoo ${OPEN_MODEL_ZOO_COMMIT}
+	dep_prepare_cp "${WORKDIR}/ade-${ADE_COMMIT}" "${S}/thirdparty/ade"
+	dep_prepare_cp "${WORKDIR}/xbyak-${XBYAK_COMMIT}" "${S}/thirdparty/xbyak"
+	dep_prepare_cp "${WORKDIR}/open_model_zoo-${OPEN_MODEL_ZOO_COMMIT}" "${S}/thirdparty/open_model_zoo"
 	if ! use system-pugixml ; then
-		_dep_prepare_cp "thirdparty/pugixml" zeux pugixml ${PUGIXML_COMMIT}
+		dep_prepare_cp "${WORKDIR}/pugixml-${PUGIXML_COMMIT}" "${S}/thirdparty/pugixml"
 	fi
 	if ! use system-snappy ; then
-		_dep_prepare_cp "thirdparty/snappy" google snappy ${SNAPPY_COMMIT}
-		_dep_prepare_cp "thirdparty/snappy/third_party/benchmark" google benchmark ${BENCHMARK_1_COMMIT}
-		_dep_prepare_cp "thirdparty/snappy/third_party/googletest" google googletest ${GOOGLETEST_1_COMMIT}
+		dep_prepare_cp "${WORKDIR}/snappy-${SNAPPY_COMMIT}" "${S}/thirdparty/snappy"
+		dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_1_COMMIT}" "${S}/thirdparty/snappy/third_party/benchmark"
+		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_1_COMMIT}" "${S}/thirdparty/snappy/third_party/googletest"
 	fi
-	_dep_prepare_cp "thirdparty/telemetry" openvinotoolkit telemetry ${TELEMETRY_COMMIT}
-	_dep_prepare_cp "src/plugins/intel_cpu/thirdparty/ComputeLibrary" ARM-software ComputeLibrary ${COMPUTELIBRARY_COMMIT}
-	_dep_prepare_cp "src/plugins/intel_cpu/thirdparty/mlas" openvinotoolkit mlas ${MLAS_COMMIT}
-	_dep_prepare_cp "src/plugins/intel_cpu/thirdparty/onednn" openvinotoolkit oneDNN ${ONEDNN_1_COMMIT}
-	_dep_prepare_cp "thirdparty/zlib/zlib" madler zlib ${ZLIB_COMMIT}
+	dep_prepare_cp "${WORKDIR}/telemetry-${TELEMETRY_COMMIT}" "${S}/thirdparty/telemetry"
+	dep_prepare_cp "${WORKDIR}/ComputeLibrary-${COMPUTELIBRARY_COMMIT}" "${S}/src/plugins/intel_cpu/thirdparty/ComputeLibrary"
+	dep_prepare_cp "${WORKDIR}/mlas-${MLAS_COMMIT}" "${S}/src/plugins/intel_cpu/thirdparty/mlas"
+	dep_prepare_cp "${WORKDIR}/oneDNN-${ONEDNN_1_COMMIT}" "${S}/src/plugins/intel_cpu/thirdparty/onednn"
+	dep_prepare_cp "${WORKDIR}/zlib-${ZLIB_COMMIT}" "${S}/thirdparty/zlib/zlib"
 	if ! use system-protobuf ; then
-		_dep_prepare_cp "thirdparty/protobuf/protobuf" protocolbuffers protobuf ${PROTOBUF_COMMIT}
-		_dep_prepare_cp "thirdparty/protobuf/protobuf/third_party/benchmark" google benchmark ${BENCHMARK_2_COMMIT}
-		_dep_prepare_cp "thirdparty/protobuf/protobuf/third_party/googletest" google googletest ${GOOGLETEST_2_COMMIT}
+		dep_prepare_cp "${WORKDIR}/protobuf-${PROTOBUF_COMMIT}" "${S}/thirdparty/protobuf/protobuf"
+		dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_2_COMMIT}" "${S}/thirdparty/protobuf/protobuf/third_party/benchmark"
+		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_2_COMMIT}" "${S}/thirdparty/protobuf/protobuf/third_party/googletest"
 	fi
-	_dep_prepare_cp "thirdparty/onnx/onnx" onnx onnx ${ONNX_COMMIT}
+	dep_prepare_cp "${WORKDIR}/onnx-${ONNX_COMMIT}" "${S}/thirdparty/onnx/onnx"
 	if ! use system-opencl ; then
-		_dep_prepare_cp "thirdparty/ocl/cl_headers" KhronosGroup OpenCL-Headers ${OPENCL_HEADERS_COMMIT}
-		_dep_prepare_cp "thirdparty/ocl/clhpp_headers" KhronosGroup OpenCL-CLHPP ${OPENCL_CLHPP_COMMIT}
-		_dep_prepare_cp "thirdparty/ocl/icd_loader" KhronosGroup OpenCL-ICD-Loader ${OPENCL_ICD_LOADER_COMMIT}
-		_dep_prepare_cp "thirdparty/ocl/clhpp_headers/external/CMock" ThrowTheSwitch CMock ${CMOCK_COMMIT}
-		_dep_prepare_cp "thirdparty/ocl/clhpp_headers/external/Unity" ThrowTheSwitch Unity ${UNITY_1_COMMIT} Unity
-		_dep_prepare_cp "thirdparty/ocl/clhpp_headers/external/CMock/vendor/c_exception" throwtheswitch cexception ${CEXCEPTION_COMMIT} CException
-		_dep_prepare_cp "thirdparty/ocl/clhpp_headers/external/CMock/vendor/c_exception/vendor/unity" throwtheswitch unity ${UNITY_2_COMMIT} Unity
-		_dep_prepare_cp "thirdparty/ocl/clhpp_headers/external/CMock/vendor/unity" throwtheswitch unity ${UNITY_3_COMMIT} Unity
+		dep_prepare_cp "${WORKDIR}/OpenCL-Headers-${OPENCL_HEADERS_COMMIT}" "${S}/thirdparty/ocl/cl_headers"
+		dep_prepare_cp "${WORKDIR}/OpenCL-CLHPP-${OPENCL_CLHPP_COMMIT}" "${S}/thirdparty/ocl/clhpp_headers"
+		dep_prepare_cp "${WORKDIR}/OpenCL-ICD-Loader-${OPENCL_ICD_LOADER_COMMIT}" "${S}/thirdparty/ocl/icd_loader"
+		dep_prepare_cp "${WORKDIR}/CMock-${CMOCK_COMMIT}" "${S}/thirdparty/ocl/clhpp_headers/external/CMock"
+		dep_prepare_cp "${WORKDIR}/Unity-${UNITY_1_COMMIT}" "${S}/thirdparty/ocl/clhpp_headers/external/Unity"
+		dep_prepare_cp "${WORKDIR}/CException-${CEXCEPTION_COMMIT}" "${S}/thirdparty/ocl/clhpp_headers/external/CMock/vendor/c_exception"
+		dep_prepare_cp "${WORKDIR}/Unity-${UNITY_2_COMMIT}" "${S}/thirdparty/ocl/clhpp_headers/external/CMock/vendor/c_exception/vendor/unity"
+		dep_prepare_cp "${WORKDIR}/Unity-${UNITY_3_COMMIT}" "${S}/thirdparty/ocl/clhpp_headers/external/CMock/vendor/unity"
 	fi
-	_dep_prepare_cp "thirdparty/json/nlohmann_json" nlohmann json ${NLOHMANN_JSON_COMMIT}
-	_dep_prepare_cp "thirdparty/ittapi/ittapi" intel ittapi ${ITTAPI_COMMIT}
-	_dep_prepare_cp "thirdparty/gtest/gtest" openvinotoolkit googletest ${GOOGLETEST_3_COMMIT}
+	dep_prepare_cp "${WORKDIR}/json-${NLOHMANN_JSON_COMMIT}" "${S}/thirdparty/json/nlohmann_json"
+	dep_prepare_cp "${WORKDIR}/ittapi-${ITTAPI_COMMIT}" "${S}/thirdparty/ittapi/ittapi"
+	dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_3_COMMIT}" "${S}/thirdparty/gtest/gtest"
 	dep_prepare_cp "${WORKDIR}/gflags-${GFLAGS_1_COMMIT}" "${S}/thirdparty/gflags/gflags"
 	dep_prepare_cp "${WORKDIR}/gflags-${GFLAGS_2_COMMIT}" "${S}/thirdparty/gflags/gflags/doc"
-	_dep_prepare_cp "thirdparty/open_model_zoo/demos/thirdparty/gflags" gflags gflags ${GFLAGS_1_COMMIT}
-	_dep_prepare_cp "thirdparty/open_model_zoo/demos/thirdparty/gflags/doc" gflags gflags ${GFLAGS_2_COMMIT}
+	dep_prepare_cp "${WORKDIR}/gflags-${GFLAGS_1_COMMIT}" "${S}/thirdparty/open_model_zoo/demos/thirdparty/gflags"
+	dep_prepare_cp "${WORKDIR}/gflags-${GFLAGS_2_COMMIT}" "${S}/thirdparty/open_model_zoo/demos/thirdparty/gflags/doc"
 	if ! use system-flatbuffers ; then
-		_dep_prepare_cp "thirdparty/flatbuffers/flatbuffers" google flatbuffers ${FLATBUFFERS_COMMIT}
+		dep_prepare_cp "${WORKDIR}/flatbuffers-${FLATBUFFERS_COMMIT}" "${S}/thirdparty/flatbuffers/flatbuffers"
 	fi
-	_dep_prepare_cp "src/bindings/python/thirdparty/pybind11" pybind pybind11 ${PYBIND11_COMMIT}
-	_dep_prepare_cp "cmake/developer_package/ncc_naming_style/ncc" nithinn ncc ${NCC_COMMIT}
-	_dep_prepare_cp "src/plugins/intel_gpu/thirdparty/onednn_gpu" oneapi-src oneDNN ${ONEDNN_2_COMMIT}
+	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT}" "${S}/src/bindings/python/thirdparty/pybind11"
+	dep_prepare_cp "${WORKDIR}/ncc-${NCC_COMMIT}" "${S}/cmake/developer_package/ncc_naming_style/ncc"
+	dep_prepare_cp "${WORKDIR}/oneDNN-${ONEDNN_2_COMMIT}" "${S}/src/plugins/intel_gpu/thirdparty/onednn_gpu"
 
 	if use tbb ; then
 		if use kernel_linux && [[ "${ABI}" == "amd64" ]] ; then
