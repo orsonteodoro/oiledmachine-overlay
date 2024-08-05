@@ -573,8 +573,8 @@ src_unpack() {
 	_dep_prepare_cp "thirdparty/json/nlohmann_json" nlohmann json ${NLOHMANN_JSON_COMMIT}
 	_dep_prepare_cp "thirdparty/ittapi/ittapi" intel ittapi ${ITTAPI_COMMIT}
 	_dep_prepare_cp "thirdparty/gtest/gtest" openvinotoolkit googletest ${GOOGLETEST_3_COMMIT}
-	dep_prepare_cp "${WORKDIR}/gflags-${GFLAGS_1_COMMIT}" "thirdparty/gflags/gflags"
-	dep_prepare_cp "${WORKDIR}/gflags-${GFLAGS_2_COMMIT}" "thirdparty/gflags/gflags/doc"
+	dep_prepare_cp "${WORKDIR}/gflags-${GFLAGS_1_COMMIT}" "${S}/thirdparty/gflags/gflags"
+	dep_prepare_cp "${WORKDIR}/gflags-${GFLAGS_2_COMMIT}" "${S}/thirdparty/gflags/gflags/doc"
 	_dep_prepare_cp "thirdparty/open_model_zoo/demos/thirdparty/gflags" gflags gflags ${GFLAGS_1_COMMIT}
 	_dep_prepare_cp "thirdparty/open_model_zoo/demos/thirdparty/gflags/doc" gflags gflags ${GFLAGS_2_COMMIT}
 	if ! use system-flatbuffers ; then
