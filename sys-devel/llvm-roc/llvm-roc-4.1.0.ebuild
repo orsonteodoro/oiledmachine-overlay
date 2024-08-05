@@ -121,6 +121,7 @@ BDEPEND="
 "
 PATCHES=(
 #	"${FILESDIR}/${PN}-4.5.2-fix-linking-for-LLVMAMDGPUDisassembler.patch"
+	"${FILESDIR}/${PN}-4.1.0-benchmark-register-include-limits.patch"
 )
 
 pkg_setup() {
