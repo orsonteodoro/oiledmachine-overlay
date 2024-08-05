@@ -524,45 +524,29 @@ pkg_setup() {
 	python_setup
 }
 
-_unpack_gh() {
+_dep_prepare_cp() {
 	local dest="${1}"
 	local org="${2}"
 	local project_name="${3}"
 	local commit="${4}"
 	local alt_name="${5}"
-	rm -rf "${dest}"
-	mkdir -p "${dest}"
+	local src_path
+	local dest_path="${S}/${dest}"
 	if [[ -n "${alt_name}" ]] ; then
-		cp -aT \
-			"${WORKDIR}/${alt_name}-${commit}" \
-			"${S}/${dest}" \
-			|| die
+		src_path="${WORKDIR}/${alt_name}-${commit}"
 	else
-		cp -aT \
-			"${WORKDIR}/${project_name}-${commit}" \
-			"${S}/${dest}" \
-			|| die
+		src_path="${WORKDIR}/${project_name}-${commit}"
 	fi
+	dep_prepare_cp "${src_path}" "${dest_path}"
 }
 
-_unpack_gh_dupe() {
-	local dupe_path="${1}"
-	local dest="${2}"
-	rm -rf "${dest}"
-	mkdir -p "${dest}"
-	cp -aT \
-		"${dupe_path}" \
-		"${S}/${dest}" \
-		|| die
-}
-
-precache_resolved_dep() {
+dep_prepare_archive_cp() {
 	local dest="${1}"
 	local filename="${2}"
 	local new_name="${3}"
 	mkdir -p "${S}/${dest}"
 	if [[ -n "${new_name}" ]] ; then
-		cp -a $(realpath "${DISTDIR}/${filename}") "${S}/${dest}" || die
+		cp -a $(realpath "${DISTDIR}/${filename}") "${S}/${dest}/${new_name}" || die
 	else
 		cp -a $(realpath "${DISTDIR}/${filename}") "${S}/${dest}" || die
 	fi
@@ -571,65 +555,65 @@ precache_resolved_dep() {
 src_unpack() {
 #	die "This ebuild is undergoing review.  Use the older ebuilds instead."
 	unpack ${A}
-	_unpack_gh "thirdparty/xbyak" herumi xbyak ${XBYAK_COMMIT}
-	_unpack_gh "thirdparty/open_model_zoo" openvinotoolkit open_model_zoo ${OPEN_MODEL_ZOO_COMMIT}
+	_dep_prepare_cp "thirdparty/xbyak" herumi xbyak ${XBYAK_COMMIT}
+	_dep_prepare_cp "thirdparty/open_model_zoo" openvinotoolkit open_model_zoo ${OPEN_MODEL_ZOO_COMMIT}
 	if ! use system-pugixml ; then
-		_unpack_gh "thirdparty/pugixml" zeux pugixml ${PUGIXML_COMMIT}
+		_dep_prepare_cp "thirdparty/pugixml" zeux pugixml ${PUGIXML_COMMIT}
 	fi
 	if ! use system-snappy ; then
-		_unpack_gh "thirdparty/snappy" google snappy ${SNAPPY_COMMIT}
-		_unpack_gh "thirdparty/snappy/third_party/benchmark" google benchmark ${BENCHMARK_1_COMMIT}
-		_unpack_gh "thirdparty/snappy/third_party/googletest" google googletest ${GOOGLETEST_1_COMMIT}
+		_dep_prepare_cp "thirdparty/snappy" google snappy ${SNAPPY_COMMIT}
+		_dep_prepare_cp "thirdparty/snappy/third_party/benchmark" google benchmark ${BENCHMARK_1_COMMIT}
+		_dep_prepare_cp "thirdparty/snappy/third_party/googletest" google googletest ${GOOGLETEST_1_COMMIT}
 	fi
-	_unpack_gh "thirdparty/telemetry" openvinotoolkit telemetry ${TELEMETRY_COMMIT}
-	_unpack_gh "src/plugins/intel_cpu/thirdparty/ComputeLibrary" ARM-software ComputeLibrary ${COMPUTELIBRARY_COMMIT}
-	_unpack_gh "src/plugins/intel_cpu/thirdparty/libxsmm" libxsmm libxsmm ${LIBXSMM_COMMIT}
-	_unpack_gh "src/plugins/intel_cpu/thirdparty/mlas" openvinotoolkit mlas ${MLAS_COMMIT}
-	_unpack_gh "src/plugins/intel_cpu/thirdparty/onednn" openvinotoolkit oneDNN ${ONEDNN_1_COMMIT}
-	_unpack_gh "thirdparty/zlib/zlib" madler zlib ${ZLIB_COMMIT}
+	_dep_prepare_cp "thirdparty/telemetry" openvinotoolkit telemetry ${TELEMETRY_COMMIT}
+	_dep_prepare_cp "src/plugins/intel_cpu/thirdparty/ComputeLibrary" ARM-software ComputeLibrary ${COMPUTELIBRARY_COMMIT}
+	_dep_prepare_cp "src/plugins/intel_cpu/thirdparty/libxsmm" libxsmm libxsmm ${LIBXSMM_COMMIT}
+	_dep_prepare_cp "src/plugins/intel_cpu/thirdparty/mlas" openvinotoolkit mlas ${MLAS_COMMIT}
+	_dep_prepare_cp "src/plugins/intel_cpu/thirdparty/onednn" openvinotoolkit oneDNN ${ONEDNN_1_COMMIT}
+	_dep_prepare_cp "thirdparty/zlib/zlib" madler zlib ${ZLIB_COMMIT}
 	if ! use system-protobuf ; then
-		_unpack_gh "thirdparty/protobuf/protobuf" protocolbuffers protobuf ${PROTOBUF_COMMIT}
-		_unpack_gh "thirdparty/protobuf/protobuf/third_party/benchmark" google benchmark ${BENCHMARK_2_COMMIT}
-		_unpack_gh "thirdparty/protobuf/protobuf/third_party/googletest" google googletest ${GOOGLETEST_2_COMMIT}
+		_dep_prepare_cp "thirdparty/protobuf/protobuf" protocolbuffers protobuf ${PROTOBUF_COMMIT}
+		_dep_prepare_cp "thirdparty/protobuf/protobuf/third_party/benchmark" google benchmark ${BENCHMARK_2_COMMIT}
+		_dep_prepare_cp "thirdparty/protobuf/protobuf/third_party/googletest" google googletest ${GOOGLETEST_2_COMMIT}
 	fi
-	_unpack_gh "thirdparty/onnx/onnx" onnx onnx ${ONNX_COMMIT}
+	_dep_prepare_cp "thirdparty/onnx/onnx" onnx onnx ${ONNX_COMMIT}
 	if ! use system-opencl ; then
-		_unpack_gh "thirdparty/ocl/cl_headers" KhronosGroup OpenCL-Headers ${OPENCL_HEADERS_COMMIT}
-		_unpack_gh "thirdparty/ocl/clhpp_headers" KhronosGroup OpenCL-CLHPP ${OPENCL_CLHPP_COMMIT}
-		_unpack_gh "thirdparty/ocl/icd_loader" KhronosGroup OpenCL-ICD-Loader ${OPENCL_ICD_LOADER_COMMIT}
-		_unpack_gh "thirdparty/ocl/clhpp_headers/external/CMock" ThrowTheSwitch CMock ${CMOCK_COMMIT}
+		_dep_prepare_cp "thirdparty/ocl/cl_headers" KhronosGroup OpenCL-Headers ${OPENCL_HEADERS_COMMIT}
+		_dep_prepare_cp "thirdparty/ocl/clhpp_headers" KhronosGroup OpenCL-CLHPP ${OPENCL_CLHPP_COMMIT}
+		_dep_prepare_cp "thirdparty/ocl/icd_loader" KhronosGroup OpenCL-ICD-Loader ${OPENCL_ICD_LOADER_COMMIT}
+		_dep_prepare_cp "thirdparty/ocl/clhpp_headers/external/CMock" ThrowTheSwitch CMock ${CMOCK_COMMIT}
 	fi
-	_unpack_gh "thirdparty/json/nlohmann_json" nlohmann json ${NLOHMANN_JSON_COMMIT}
-	_unpack_gh "thirdparty/ittapi/ittapi" intel ittapi ${ITTAPI_COMMIT}
-	_unpack_gh "thirdparty/gtest/gtest" openvinotoolkit googletest ${GOOGLETEST_3_COMMIT}
-	_unpack_gh_dupe "${WORKDIR}/gflags-${GFLAGS_1_COMMIT}" "thirdparty/gflags/gflags"
-	_unpack_gh_dupe "${WORKDIR}/gflags-${GFLAGS_2_COMMIT}" "thirdparty/gflags/gflags/doc"
-	_unpack_gh "thirdparty/open_model_zoo/demos/thirdparty/gflags" gflags gflags ${GFLAGS_1_COMMIT}
-	_unpack_gh "thirdparty/open_model_zoo/demos/thirdparty/gflags/doc" gflags gflags ${GFLAGS_2_COMMIT}
+	_dep_prepare_cp "thirdparty/json/nlohmann_json" nlohmann json ${NLOHMANN_JSON_COMMIT}
+	_dep_prepare_cp "thirdparty/ittapi/ittapi" intel ittapi ${ITTAPI_COMMIT}
+	_dep_prepare_cp "thirdparty/gtest/gtest" openvinotoolkit googletest ${GOOGLETEST_3_COMMIT}
+	dep_prepare_cp "${WORKDIR}/gflags-${GFLAGS_1_COMMIT}" "thirdparty/gflags/gflags"
+	dep_prepare_cp "${WORKDIR}/gflags-${GFLAGS_2_COMMIT}" "thirdparty/gflags/gflags/doc"
+	_dep_prepare_cp "thirdparty/open_model_zoo/demos/thirdparty/gflags" gflags gflags ${GFLAGS_1_COMMIT}
+	_dep_prepare_cp "thirdparty/open_model_zoo/demos/thirdparty/gflags/doc" gflags gflags ${GFLAGS_2_COMMIT}
 	if ! use system-flatbuffers ; then
-		_unpack_gh "thirdparty/flatbuffers/flatbuffers" google flatbuffers ${FLATBUFFERS_COMMIT}
+		_dep_prepare_cp "thirdparty/flatbuffers/flatbuffers" google flatbuffers ${FLATBUFFERS_COMMIT}
 	fi
-	_unpack_gh "src/bindings/python/thirdparty/pybind11" pybind pybind11 ${PYBIND11_COMMIT}
-	_unpack_gh "cmake/developer_package/ncc_naming_style/ncc" nithinn ncc ${NCC_COMMIT}
-	_unpack_gh "src/plugins/intel_gpu/thirdparty/onednn_gpu" oneapi-src oneDNN ${ONEDNN_2_COMMIT}
-	_unpack_gh "src/plugins/intel_npu/thirdparty/level-zero" oneapi-src level-zero ${LEVEL_ZERO_COMMIT}
-	_unpack_gh "src/plugins/intel_npu/thirdparty/level-zero-ext" intel level-zero-npu-extensions ${LEVEL_ZERO_NPU_EXTENSIONS_COMMIT}
+	_dep_prepare_cp "src/bindings/python/thirdparty/pybind11" pybind pybind11 ${PYBIND11_COMMIT}
+	_dep_prepare_cp "cmake/developer_package/ncc_naming_style/ncc" nithinn ncc ${NCC_COMMIT}
+	_dep_prepare_cp "src/plugins/intel_gpu/thirdparty/onednn_gpu" oneapi-src oneDNN ${ONEDNN_2_COMMIT}
+	_dep_prepare_cp "src/plugins/intel_npu/thirdparty/level-zero" oneapi-src level-zero ${LEVEL_ZERO_COMMIT}
+	_dep_prepare_cp "src/plugins/intel_npu/thirdparty/level-zero-ext" intel level-zero-npu-extensions ${LEVEL_ZERO_NPU_EXTENSIONS_COMMIT}
 
 	if use tbb ; then
 		if use kernel_linux && [[ "${ABI}" == "amd64" ]] ; then
-			precache_resolved_dep "temp/download" "tbbbind_2_5_static_lin_v4.tgz" # prebuilt
+			dep_prepare_archive_cp "temp/download" "tbbbind_2_5_static_lin_v4.tgz" # prebuilt
 		fi
 	fi
 	if use openmp ; then
 		if [[ "${ABI}" == "amd64" ]] ; then
-			precache_resolved_dep "temp/download" "iomp-x86-64-7832b16.tgz" "iomp.tgz"
+			dep_prepare_archive_cp "temp/download" "iomp-x86-64-7832b16.tgz" "iomp.tgz"
 		fi
 	fi
 	if use tbb && use system-tbb ; then
 		if [[ "${ABI}" == "amd64" ]] ; then
-			precache_resolved_dep "temp/download" "oneapi-tbb-2021.2.4-lin.tgz"
+			dep_prepare_archive_cp "temp/download" "oneapi-tbb-2021.2.4-lin.tgz"
 		elif [[ "${ABI}" == "arm64" ]] ; then
-			precache_resolved_dep "temp/download" "oneapi-tbb-2021.2.1-lin-arm64-20231012.tgz"
+			dep_prepare_archive_cp "temp/download" "oneapi-tbb-2021.2.1-lin-arm64-20231012.tgz"
 		fi
 	fi
 }

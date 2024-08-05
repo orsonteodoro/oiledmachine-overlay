@@ -299,45 +299,29 @@ pkg_setup() {
 	python_setup
 }
 
-_unpack_gh() {
+_dep_prepare_cp() {
 	local dest="${1}"
 	local org="${2}"
 	local project_name="${3}"
 	local commit="${4}"
 	local alt_name="${5}"
-	rm -rf "${dest}"
-	mkdir -p "${dest}"
+	local src_path
+	local dest_path="${S}/${dest}"
 	if [[ -n "${alt_name}" ]] ; then
-		cp -aT \
-			"${WORKDIR}/${alt_name}-${commit}" \
-			"${S}/${dest}" \
-			|| die
+		src_path="${WORKDIR}/${alt_name}-${commit}"
 	else
-		cp -aT \
-			"${WORKDIR}/${project_name}-${commit}" \
-			"${S}/${dest}" \
-			|| die
+		src_path="${WORKDIR}/${project_name}-${commit}"
 	fi
+	dep_prepare_cp "${src_path}" "${dest_path}"
 }
 
-_unpack_gh_dupe() {
-	local dupe_path="${1}"
-	local dest="${2}"
-	rm -rf "${dest}"
-	mkdir -p "${dest}"
-	cp -aT \
-		"${dupe_path}" \
-		"${S}/${dest}" \
-		|| die
-}
-
-precache_resolved_dep() {
+dep_prepare_archive_cp() {
 	local dest="${1}"
 	local filename="${2}"
 	local new_name="${3}"
 	mkdir -p "${S}/${dest}"
 	if [[ -n "${new_name}" ]] ; then
-		cp -a $(realpath "${DISTDIR}/${filename}") "${S}/${dest}" || die
+		cp -a $(realpath "${DISTDIR}/${filename}") "${S}/${dest}/${new_name}" || die
 	else
 		cp -a $(realpath "${DISTDIR}/${filename}") "${S}/${dest}" || die
 	fi
@@ -345,30 +329,30 @@ precache_resolved_dep() {
 
 src_unpack() {
 	unpack ${A}
-	_unpack_gh "thirdparty/xbyak" herumi xbyak ${XBYAK_COMMIT}
-	_unpack_gh "thirdparty/zlib/zlib" madler zlib ${ZLIB_COMMIT}
-	_unpack_gh "inference-engine/thirdparty/ade" opencv ade ${ADE_COMMIT}
-	_unpack_gh "inference-engine/thirdparty/mkl-dnn" openvinotoolkit oneDNN ${ONEDNN_COMMIT}
-	_unpack_gh "inference-engine/tests/ie_test_utils/common_test_utils/gtest" openvinotoolkit googletest ${GOOGLETEST_COMMIT}
-	_unpack_gh "inference-engine/samples/thirdparty/gflags" gflags gflags ${GFLAGS_1_COMMIT}
-	_unpack_gh "inference-engine/samples/thirdparty/gflags/doc" gflags gflags ${GFLAGS_2_COMMIT}
+	_dep_prepare_cp "thirdparty/xbyak" herumi xbyak ${XBYAK_COMMIT}
+	_dep_prepare_cp "thirdparty/zlib/zlib" madler zlib ${ZLIB_COMMIT}
+	_dep_prepare_cp "inference-engine/thirdparty/ade" opencv ade ${ADE_COMMIT}
+	_dep_prepare_cp "inference-engine/thirdparty/mkl-dnn" openvinotoolkit oneDNN ${ONEDNN_COMMIT}
+	_dep_prepare_cp "inference-engine/tests/ie_test_utils/common_test_utils/gtest" openvinotoolkit googletest ${GOOGLETEST_COMMIT}
+	_dep_prepare_cp "inference-engine/samples/thirdparty/gflags" gflags gflags ${GFLAGS_1_COMMIT}
+	_dep_prepare_cp "inference-engine/samples/thirdparty/gflags/doc" gflags gflags ${GFLAGS_2_COMMIT}
 
-	precache_resolved_dep "inference-engine/temp/download/VPU/usb-ma2x8x" "firmware_usb-ma2x8x_1875.zip"
-	precache_resolved_dep "inference-engine/temp/download/VPU/pcie-ma2x8x" "firmware_pcie-ma2x8x_1875.zip"
+	dep_prepare_archive_cp "inference-engine/temp/download/VPU/usb-ma2x8x" "firmware_usb-ma2x8x_1875.zip"
+	dep_prepare_archive_cp "inference-engine/temp/download/VPU/pcie-ma2x8x" "firmware_pcie-ma2x8x_1875.zip"
 	if use tbb ; then
 		if use kernel_linux && [[ "${ABI}" == "amd64" ]] ; then
-			precache_resolved_dep "inference-engine/temp/download" "tbb2020_20200415_lin_strip.tgz"
-			precache_resolved_dep "inference-engine/temp/download" "tbbbind_2_4_static_lin_v2.tgz"
+			dep_prepare_archive_cp "inference-engine/temp/download" "tbb2020_20200415_lin_strip.tgz"
+			dep_prepare_archive_cp "inference-engine/temp/download" "tbbbind_2_4_static_lin_v2.tgz"
 		fi
 	fi
-	precache_resolved_dep "inference-engine/temp/download/opencv" "opencv_4.5.2-076_ubuntu20.txz"
+	dep_prepare_archive_cp "inference-engine/temp/download/opencv" "opencv_4.5.2-076_ubuntu20.txz"
 	if use gna ; then
 		if use gna1 ; then
-			precache_resolved_dep "inference-engine/temp/download/GNA" "gna_20181120.zip"
+			dep_prepare_archive_cp "inference-engine/temp/download/GNA" "gna_20181120.zip"
 		elif use gna1_1401 ; then
-			precache_resolved_dep "inference-engine/temp/download/GNA" "GNA_01.00.00.1401.zip"
+			dep_prepare_archive_cp "inference-engine/temp/download/GNA" "GNA_01.00.00.1401.zip"
 		elif use gna2 ; then
-			precache_resolved_dep "inference-engine/temp/download/GNA" "GNA_03.00.00.1377.zip"
+			dep_prepare_archive_cp "inference-engine/temp/download/GNA" "GNA_03.00.00.1377.zip"
 		fi
 	fi
 }
