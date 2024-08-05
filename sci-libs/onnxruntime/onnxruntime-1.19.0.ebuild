@@ -10,6 +10,7 @@ EAPI=8
 # neural-compressor
 # onnxmltools
 # pydocstyle
+# tensorrt
 
 # For deps versioning, see
 # https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/deps.txt
@@ -24,6 +25,7 @@ EAPI=8
 
 # clog has same version as cpuinfo
 
+ABSEIL_CPP_COMMIT="f46495ea96f68fc3f6c394f099b2992743f6ff7f" # From cmake/deps.txt
 AMDGPU_TARGETS_COMPAT=(
 # See https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/CMakeLists.txt#L299
 	gfx906
@@ -68,6 +70,17 @@ ROCM_SLOTS=(
 LLVM_COMPAT=( 17 18 )
 LLVM_OPTIONAL=1
 MIMALLOC_PV="2.1.1" # From cmake/deps.txt
+NEURAL_SPEED_PV="0.3" # From cmake/deps.txt
+ONNX_TENSORRT_COMMIT="f161f95883b4ebd8cb789de5efc67b73c0a6e694"
+OPENVINO_PV="2024.0"
+OPENVINO_TARGETS=(
+	cpu
+	cpu_np
+	gpu
+	gpu_np
+	npu
+	npu_np
+)
 PYTHON_COMPAT=( "python3_"{10..12} )
 SAFEINT_COMMIT="3.0.28" # From cmake/deps.txt
 
@@ -88,9 +101,21 @@ SRC_URI="
 		-> flatbuffers-${FLATBUFFERS_PV}.tar.gz
 	https://github.com/HowardHinnant/date/archive/v${DATE_PV}.tar.gz
 		-> HowardHinnant-date-${DATE_PV}.tar.gz
+	abseil-cpp? (
+https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT}.tar.gz
+	-> abseil-cpp-${ABSEIL_CPP_COMMIT:0:7}.tar.gz
+	)
 	mimalloc? (
-		https://github.com/microsoft/mimalloc/archive/refs/tags/v${MIMALLOC_PV}.tar.gz
-		-> mimalloc-${MIMALLOC_PV}.tar.gz
+https://github.com/microsoft/mimalloc/archive/refs/tags/v${MIMALLOC_PV}.tar.gz
+	-> mimalloc-${MIMALLOC_PV}.tar.gz
+	)
+	neural-speed? (
+https://github.com/intel/neural-speed/archive/refs/tags/v0.3.tar.gz
+	-> neural-speed-${NEURAL_SPEED_PV}.tar.gz
+	)
+	tensorrt-oss-parser? (
+https://github.com/onnx/onnx-tensorrt/archive/${ONNX_TENSORRT_COMMIT}.tar.gz
+	-> onnx-tensorrt-${ONNX_TENSORRT_COMMIT:0:7}.tar.gz
 	)
 "
 
@@ -156,9 +181,15 @@ IUSE="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${OPENVINO_TARGETS[@]/#/openvino_targets_}
 ${ROCM_SLOTS[@]}
--benchmark -composable-kernel -cuda cudnn debug doc -javascript -llvm -migraphx
--mpi -mimalloc -lto onednn +python -rocm test -tensorrt -triton -xnnpack
++abseil-cpp -benchmark -composable-kernel cpu -cuda cudnn debug doc -javascript
+-llvm -lto -migraphx -mpi -mimalloc -neural-speed -onednn -openvino +python
+-rocm test -tensorrt -tensorrt-oss-parser -triton -xnnpack
+
+openvino-auto
+openvino-hetero
+openvino-multi
 "
 gen_cuda_required_use() {
 	local x
@@ -180,6 +211,7 @@ gen_rocm_required_use() {
 		"
 	done
 }
+# For providers, see also https://github.com/microsoft/onnxruntime/blob/v1.19.0/onnxruntime/test/perftest/command_args_parser.cc#L40
 REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
@@ -197,18 +229,41 @@ REQUIRED_USE="
 	javascript? (
 		llvm_slot_18
 	)
+	openvino? (
+		|| (
+			openvino_targets_cpu
+			openvino_targets_cpu_np
+			openvino_targets_gpu
+			openvino_targets_gpu_np
+			openvino_targets_npu
+			openvino_targets_npu_np
+		)
+		|| (
+			openvino-auto
+			openvino-hetero
+			openvino-multi
+		)
+	)
 	rocm? (
 		llvm_slot_17
 		migraphx
+	)
+	tensorrt-oss-parser? (
+		cuda
+		tensorrt
 	)
 	test? (
 		python
 	)
 	|| (
+		cpu
 		cudnn
 		migraphx
 		onednn
+		openvino
+		rocm
 		tensorrt
+		xnnpack
 	)
 "
 gen_rocm_rdepend() {
@@ -342,6 +397,15 @@ RDEPEND="
 		>=dev-libs/oneDNN-3.0.1
 		dev-libs/oneDNN:=
 	)
+	openvino? (
+		>=sci-libs/openvino-${OPENVINO_PV}
+		openvino_targets_gpu? (
+			>=sci-libs/openvino-${OPENVINO_PV}[video_cards_intel]
+		)
+		openvino_targets_npu? (
+			>=sci-libs/openvino-${OPENVINO_PV}[npu]
+		)
+	)
 	rocm? (
 		$(gen_rocm_rdepend)
 		rocm_5_7? (
@@ -370,6 +434,9 @@ RDEPEND="
 				)
 			)
 		)
+	)
+	tensorrt? (
+		dev-util/tensorrt:=
 	)
 	xnnpack? (
 		>=sci-libs/XNNPACK-2023.10.19
@@ -463,7 +530,10 @@ pkg_setup() {
 
 src_unpack() {
 	unpack ${A}
+	use abseil-cpp && dep_prepare "${WORKDIR}/abseil_cpp-${ABSEIL_CPP_COMMIT}" "${S}/cmake/external/abseil_cpp"
 	use mimalloc && dep_prepare "${WORKDIR}/mimalloc-${MIMALLOC_PV}" "${S}/cmake/external/mimalloc"
+	use tensorrt-oss-parser && dep_prepare "${WORKDIR}/onnx_tensorrt-${ONNX_TENSORRT_COMMIT}" "${S}/cmake/external/onnx_tensorrt"
+	use neural-speed && dep_prepare "${WORKDIR}/neural_speed-${NEURAL_SPEED_PV}" "${S}/cmake/external/neural_speed"
 }
 
 src_prepare() {
@@ -502,7 +572,7 @@ src_prepare() {
 		"cmake/onnxruntime_mlas.cmake" \
 		|| die
 
-	#if use tensorrt; then
+	#if use tensorrt ; then
 		## Tensorrt 8.6 EA
 		#eapply "${FILESDIR}/15089.diff"
 
@@ -591,7 +661,7 @@ src_configure() {
 		-Donnxruntime_ENABLE_WEBASSEMBLY_PROFILING=OFF
 		-Donnxruntime_ENABLE_WEBASSEMBLY_THREADS=OFF
 		-Donnxruntime_EXTENDED_MINIMAL_BUILD=OFF
-		-DOnnxruntime_GCOV_COVERAGE=OFF
+		-Donnxruntime_GCOV_COVERAGE=OFF
 		-Donnxruntime_MINIMAL_BUILD=OFF
 		-Donnxruntime_MINIMAL_BUILD_CUSTOM_OPS=OFF
 		-Donnxruntime_PYBIND_EXPORT_OPSCHEMA=OFF
@@ -618,13 +688,24 @@ src_configure() {
 		-Donnxruntime_USE_MIMALLOC=$(usex mimalloc)
 		-Donnxruntime_USE_MPI=$(usex mpi)
 		-Donnxruntime_USE_NCCL=OFF
+		-Donnxruntime_USE_NEURAL_SPEED=$(usex neural-speed)
 		-Donnxruntime_USE_NNAPI_BUILTIN=OFF
+		-Donnxruntime_USE_OPENVINO=$(usex openvino)
+		-Donnxruntime_USE_OPENVINO_AUTO=$(usex openvino-auto)
+		-Donnxruntime_USE_OPENVINO_CPU=$(usex openvino_targets_cpu)
+		-Donnxruntime_USE_OPENVINO_CPU_NP=$(usex openvino_targets_cpu_np)
+		-Donnxruntime_USE_OPENVINO_GPU=$(usex openvino_targets_gpu)
+		-Donnxruntime_USE_OPENVINO_GPU_NP=$(usex openvino_targets_gpu_np)
+		-Donnxruntime_USE_OPENVINO_HETERO=$(usex openvino-hetero)
+		-Donnxruntime_USE_OPENVINO_MULTI=$(usex openvino-multi)
+		-Donnxruntime_USE_OPENVINO_NPU=$(usex openvino_targets_npu)
+		-Donnxruntime_USE_OPENVINO_NPU_NP=$(usex openvino_targets_npu_np)
 		-Donnxruntime_USE_PREINSTALLED_EIGEN=ON
 		-Donnxruntime_USE_RKNPU=OFF
 		-Donnxruntime_USE_ROCM=$(usex rocm)
 		-Donnxruntime_USE_TELEMETRY=OFF
 		-Donnxruntime_USE_TENSORRT=$(usex tensorrt)
-		-Donnxruntime_USE_TENSORRT_BUILTIN_PARSER=OFF
+		-Donnxruntime_USE_TENSORRT_BUILTIN_PARSER=$(usex !tensorrt-oss-parser)
 		-Donnxruntime_USE_TVM=OFF
 		-Donnxruntime_USE_VITISAI=OFF
 		-Donnxruntime_USE_WINML=OFF
@@ -660,6 +741,12 @@ src_configure() {
 		)
 	fi
 
+	if use neural-speed ; then
+		mycmakeargs+=(
+			-Dneural_speed_SOURCE_PATH="${S}/cmake/external/neural_speed"
+		)
+	fi
+
 	if use rocm ; then
 		mycmakeargs+=(
 			-DCMAKE_HIP_ARCHITECTURES="$(get_amdgpu_flags)"
@@ -678,6 +765,12 @@ src_configure() {
 				-Donnxruntime_USE_HIPBLASLT=OFF
 			)
 		fi
+	fi
+
+	if use tensorrt-oss-parser ; then
+		mycmakeargs+=(
+			-Donnx_tensorrt_SOURCE_PATH="${S}/cmake/external/onnx_tensorrt"
+		)
 	fi
 
 	if use rocm ; then

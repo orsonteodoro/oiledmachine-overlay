@@ -16,8 +16,8 @@
       Build microbenchmarks
     </flag>
     <flag name="cudnn">
-      Add support for GPU accelerated deep neural network primitives for NVIDIA®
-      GPUs.
+      Add support for GPU accelerated deep neural network primitives for
+      NVIDIA® GPUs.
     </flag>
     <flag name="composable-kernel">
       Enable use of the composable-kernel library.
@@ -34,11 +34,41 @@
     <flag name="mpi">
       Add support for MPI for training.
     </flag>
+    <flag name="neural-speed">
+      Add support for optimized LLM inference on Intel® CPUs.
+    </flag>
     <flag name="onednn">
-      Use optimized JITable deep learning primitives for CPUs and/or GPUs.
+      Use optimized JITable deep learning primitives for CPUs and/or
+      Intel® GPUs.
+    </flag>
+    <flag name="openvino">
+      Add support for optimized inference on CPUs, GPUs, Intel® NPUs.
+    </flag>
+    <flag name="openvino_targets_cpu">
+      Add support for CPUs for OpenVINO™ support.
+    </flag>
+    <flag name="openvino_targets_cpu_np">
+      Add support for CPUs for OpenVINO™ support with no graph partitioning.
+    </flag>
+    <flag name="openvino_targets_gpu">
+      Add support for Intel® GPUs for OpenVINO™ support.
+    </flag>
+    <flag name="openvino_targets_gpu_np">
+      Add support for Intel® GPUs for OpenVINO™ support with no graph partitioning.
+    </flag>
+    <flag name="openvino_targets_npu">
+      Add support for Intel® NPUs for OpenVINO™ support.
+    </flag>
+    <flag name="openvino_targets_npu_np">
+      Add support for Intel® NPUs for OpenVINO™ support with no graph partitioning.
     </flag>
     <flag name="tensorrt">
-      Run inference on NVIDIA® GPUs
+      Run inference on NVIDIA® GPUs.
+    </flag>
+    <flag name="tensorrt-oss-parser">
+      Use the open sourced TensorRT static-library parser package for faster
+      parser updates instead of the builtin shared library in the TensorRT
+      package.
     </flag>
     <flag name="xnnpack">
       Build support for CPU accelerated inference primitives.
