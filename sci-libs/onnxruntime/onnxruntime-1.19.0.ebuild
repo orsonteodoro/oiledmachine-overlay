@@ -71,7 +71,8 @@ LLVM_COMPAT=( 17 18 )
 LLVM_OPTIONAL=1
 MIMALLOC_PV="2.1.1" # From cmake/deps.txt
 NEURAL_SPEED_PV="0.3" # From cmake/deps.txt
-ONNX_TENSORRT_COMMIT="f161f95883b4ebd8cb789de5efc67b73c0a6e694"
+ONNX_TENSORRT_COMMIT="f161f95883b4ebd8cb789de5efc67b73c0a6e694" # From cmake/deps.txt
+ONNXRUNTIME_EXTENSIONS_COMMIT="94142d8391c9791ec71c38336436319a2d4ac7a0" # From cmake/deps.txt
 OPENVINO_PV="2024.0"
 OPENVINO_TARGETS=(
 	cpu
@@ -105,6 +106,10 @@ SRC_URI="
 https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT}.tar.gz
 	-> abseil-cpp-${ABSEIL_CPP_COMMIT:0:7}.tar.gz
 	)
+	extensions? (
+https://github.com/microsoft/onnxruntime-extensions/archive/${ONNXRUNTIME_EXTENSIONS_COMMIT}.tar.gz
+	-> onnxruntime-extensions-${ONNXRUNTIME_EXTENSIONS_COMMIT:0:7}.tar.gz
+	)
 	mimalloc? (
 https://github.com/microsoft/mimalloc/archive/refs/tags/v${MIMALLOC_PV}.tar.gz
 	-> mimalloc-${MIMALLOC_PV}.tar.gz
@@ -117,6 +122,21 @@ https://github.com/intel/neural-speed/archive/refs/tags/v0.3.tar.gz
 https://github.com/onnx/onnx-tensorrt/archive/${ONNX_TENSORRT_COMMIT}.tar.gz
 	-> onnx-tensorrt-${ONNX_TENSORRT_COMMIT:0:7}.tar.gz
 	)
+"
+DISABLE="
+
+"
+DISABLE_2="
+https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT}.tar.gz
+	-> abseil-cpp-${ABSEIL_CPP_COMMIT:0:7}.tar.gz
+https://github.com/microsoft/onnxruntime-extensions/archive/${ONNXRUNTIME_EXTENSIONS_COMMIT}.tar.gz
+	-> onnxruntime-extensions-${ONNXRUNTIME_EXTENSIONS_COMMIT:0:7}.tar.gz
+https://github.com/microsoft/mimalloc/archive/refs/tags/v${MIMALLOC_PV}.tar.gz
+	-> mimalloc-${MIMALLOC_PV}.tar.gz
+https://github.com/intel/neural-speed/archive/refs/tags/v0.3.tar.gz
+	-> neural-speed-${NEURAL_SPEED_PV}.tar.gz
+https://github.com/onnx/onnx-tensorrt/archive/${ONNX_TENSORRT_COMMIT}.tar.gz
+	-> onnx-tensorrt-${ONNX_TENSORRT_COMMIT:0:7}.tar.gz
 "
 
 LICENSE="
@@ -183,9 +203,10 @@ ${CPU_FLAGS}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${OPENVINO_TARGETS[@]/#/openvino_targets_}
 ${ROCM_SLOTS[@]}
-+abseil-cpp -benchmark -composable-kernel cpu -cuda cudnn debug doc -javascript
--llvm -lto -migraphx -mpi -mimalloc -neural-speed -onednn -openvino +python
--rocm test -tensorrt -tensorrt-oss-parser -triton -xnnpack
+onnxruntime_USE_EXTENSIONS
+-abseil-cpp -benchmark -composable-kernel cpu -cuda cudnn debug doc -extensions
+-javascript -llvm -lto -migraphx -mpi -mimalloc -neural-speed -onednn -openvino
++python -rocm test -tensorrt -tensorrt-oss-parser -triton -xnnpack
 
 openvino-auto
 openvino-hetero
@@ -530,10 +551,17 @@ pkg_setup() {
 
 src_unpack() {
 	unpack ${A}
-	use abseil-cpp && dep_prepare "${WORKDIR}/abseil_cpp-${ABSEIL_CPP_COMMIT}" "${S}/cmake/external/abseil_cpp"
-	use mimalloc && dep_prepare "${WORKDIR}/mimalloc-${MIMALLOC_PV}" "${S}/cmake/external/mimalloc"
-	use tensorrt-oss-parser && dep_prepare "${WORKDIR}/onnx_tensorrt-${ONNX_TENSORRT_COMMIT}" "${S}/cmake/external/onnx_tensorrt"
-	use neural-speed && dep_prepare "${WORKDIR}/neural_speed-${NEURAL_SPEED_PV}" "${S}/cmake/external/neural_speed"
+	use abseil-cpp && dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT}" "${S}/cmake/_deps/abseil_cpp-src"
+	use extensions && dep_prepare_mv "${WORKDIR}/onnxruntime-extensions-${ONNXRUNTIME_EXTENSIONS_COMMIT}" "${S}/cmake/external/extensions"
+	use mimalloc && dep_prepare_mv "${WORKDIR}/mimalloc-${MIMALLOC_PV}" "${S}/cmake/external/mimalloc"
+	use tensorrt-oss-parser && dep_prepare_mv "${WORKDIR}/onnx-tensorrt-${ONNX_TENSORRT_COMMIT}" "${S}/cmake/external/onnx_tensorrt"
+	use neural-speed && dep_prepare_mv "${WORKDIR}/neural-speed-${NEURAL_SPEED_PV}" "${S}/cmake/external/neural_speed"
+
+#	dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT}" "${S}/cmake/_deps/abseil_cpp-src"
+#	dep_prepare_mv "${WORKDIR}/onnxruntime-extensions-${ONNXRUNTIME_EXTENSIONS_COMMIT}" "${S}/cmake/external/extensions"
+#	dep_prepare_mv "${WORKDIR}/mimalloc-${MIMALLOC_PV}" "${S}/cmake/external/mimalloc"
+#	dep_prepare_mv "${WORKDIR}/onnx-tensorrt-${ONNX_TENSORRT_COMMIT}" "${S}/cmake/external/onnx_tensorrt"
+#	dep_prepare_mv "${WORKDIR}/neural-speed-${NEURAL_SPEED_PV}" "${S}/cmake/external/neural_speed"
 }
 
 src_prepare() {
@@ -681,6 +709,7 @@ src_configure() {
 		-Donnxruntime_USE_CUDA=$(usex cuda)
 		-Donnxruntime_USE_DML=OFF
 		-Donnxruntime_USE_DNNL=$(usex onednn)
+		-Donnxruntime_USE_EXTENSIONS=$(usex extensions)
 		-Donnxruntime_USE_FULL_PROTOBUF=OFF
 		-Donnxruntime_USE_JSEP=$(usex javascript)
 		-Donnxruntime_USE_LLVM=$(usex llvm)
@@ -714,6 +743,12 @@ src_configure() {
 		-Donnxruntime_WEBASSEMBLY_RUN_TESTS_IN_BROWSER=OFF
 	)
 
+	if use abseil-cpp ; then
+		mycmakeargs+=(
+			-Dabseil_cpp_SOURCE_PATH="${S}/cmake/_deps/abseil_cpp-src"
+		)
+	fi
+
 	if use cuda ; then
 		local CA
 		for CA in ${CUDA_TARGETS_COMPAT[*]}; do
@@ -735,6 +770,12 @@ src_configure() {
 		)
 	fi
 
+	if use extensions ; then
+		mycmakeargs+=(
+			-Dextensions_SOURCE_PATH="${S}/cmake/external/extensions"
+		)
+	fi
+
 	if use mimalloc ; then
 		mycmakeargs+=(
 			-Dmimalloc_SOURCE_PATH="${S}/cmake/external/mimalloc"
@@ -743,7 +784,7 @@ src_configure() {
 
 	if use neural-speed ; then
 		mycmakeargs+=(
-			-Dneural_speed_SOURCE_PATH="${S}/cmake/external/neural_speed"
+			-Dneural_speed_SOURCE_PATH="${S}/cmake/external/neural-speed"
 		)
 	fi
 
@@ -769,7 +810,7 @@ src_configure() {
 
 	if use tensorrt-oss-parser ; then
 		mycmakeargs+=(
-			-Donnx_tensorrt_SOURCE_PATH="${S}/cmake/external/onnx_tensorrt"
+			-Donnx_tensorrt_SOURCE_PATH="${S}/cmake/external/onnx-tensorrt"
 		)
 	fi
 
