@@ -68,7 +68,7 @@ TELEMETRY_COMMIT="58e16c257a512ec7f451c9fccf9ff455065b285b"
 XBYAK_COMMIT="58642e0cdd5cbe12f5d6e05069ddddbc0f5d5383"
 ZLIB_COMMIT="09155eaa2f9270dc4ed1fa13e2b4b2613e6e4851"
 
-inherit cmake distutils-r1
+inherit cmake dep-prepare distutils-r1
 
 _gen_gh_uri() {
 	local org="${1}"

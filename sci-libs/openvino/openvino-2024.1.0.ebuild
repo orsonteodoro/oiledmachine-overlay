@@ -36,7 +36,7 @@ CPU_FLAGS_X86=(
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} ) # Based on https://github.com/openvinotoolkit/openvino/blob/2024.1.0/docs/dev/build_linux.md#software-requirements
 
-inherit cmake distutils-r1
+inherit cmake dep-prepare distutils-r1
 
 _gen_gh_uri() {
 	local org="${1}"

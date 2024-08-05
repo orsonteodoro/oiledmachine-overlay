@@ -62,7 +62,7 @@ UNITY_3_COMMIT="031f3bbe45f8adf504ca3d13e6f093869920b091"
 XBYAK_COMMIT="740dff2e866f3ae1a70dd42d6e8836847ed95cc2"
 ZLIB_COMMIT="04f42ceca40f73e2978b50e93806c2a18c1281fc"
 
-inherit cmake distutils-r1
+inherit cmake dep-prepare distutils-r1
 
 _gen_gh_uri() {
 	local org="${1}"
