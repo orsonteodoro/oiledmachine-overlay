@@ -470,8 +470,7 @@ gen_rocm_rdepend() {
 		fi
 	done
 }
-RDEPEND="
-	${PYTHON_DEPS}
+DISABLED_RDEPEND="
 	(
 		>=dev-cpp/ms-gsl-4.0.0
 		dev-cpp/ms-gsl:=
@@ -497,9 +496,25 @@ RDEPEND="
 		dev-libs/flatbuffers:=
 	)
 	(
+		>=dev-libs/nsync-1.26.0
+		dev-libs/nsync:=
+	)
+	(
 		>=dev-libs/protobuf-21.12:0/3.21
 		dev-libs/protobuf:=
 	)
+	>=dev-libs/FP16-2021.03.16
+	>=dev-libs/FXdiv-2020.12.08
+	>=dev-libs/re2-0.2024.07.02:0/11
+	benchmark? (
+		>=dev-cpp/benchmark-1.8.5
+	)
+	xnnpack? (
+		>=sci-libs/XNNPACK-2023.10.19
+	)
+"
+RDEPEND="
+	${PYTHON_DEPS}
 	(
 		!python? (
 			>=sci-libs/onnx-1.16.1[disableStaticReg]
@@ -515,19 +530,9 @@ RDEPEND="
 		>=sys-cluster/openmpi-4.0.0[cuda?]
 		sys-cluster/openmpi:=
 	)
-	>=dev-libs/FP16-2021.03.16
-	>=dev-libs/FXdiv-2020.12.08
-	>=dev-libs/re2-0.2024.07.02:0/11
 	>=dev-python/numpy-2.0.0
 	>=sci-libs/pytorch-1.13.1
 	app-admin/chrpath
-	(
-		>=dev-libs/nsync-1.26.0
-		dev-libs/nsync:=
-	)
-	benchmark? (
-		>=dev-cpp/benchmark-1.8.5
-	)
 	cuda? (
 		|| (
 			(
@@ -626,9 +631,6 @@ RDEPEND="
 			dev-python/tornado[${PYTHON_USEDEP}]
 		')
 	)
-	xnnpack? (
-		>=sci-libs/XNNPACK-2023.10.19
-	)
 	python? (
 		training? (
 			>=sci-libs/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
@@ -659,6 +661,7 @@ RDEPEND="
 	)
 "
 DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	${PYTHON_DEPS}
