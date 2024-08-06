@@ -42,12 +42,7 @@ HOMEPAGE="
 	https://github.com/intel/intel-extension-for-pytorch
 "
 LICENSE="
-	(
-		custom
-		Apache-2.0
-	)
 	Apache-2.0
-	Boost-1.0
 	BSD
 	custom
 	MIT
