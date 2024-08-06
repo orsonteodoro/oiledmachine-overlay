@@ -797,9 +797,6 @@ src_unpack() {
 		dep_prepare_mv "${WORKDIR}/xnnpack-${XNNPACK_COMMIT}" "${S}/cmake/external/googlexnnpack"
 		dep_prepare_mv "${WORKDIR}/pthreadpool-${XNNPACK_COMMIT}" "${S}/cmake/external/pthreadpool"
 	fi
-
-#	dep_prepare_mv "${WORKDIR}/-${_PV}" "${S}/cmake/external/"
-#	dep_prepare_mv "${WORKDIR}/-${_PV}" "${S}/cmake/external/"
 }
 
 src_prepare() {

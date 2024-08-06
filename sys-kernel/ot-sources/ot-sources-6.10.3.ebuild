@@ -3,25 +3,25 @@
 
 EAPI=8
 
-GENPATCHES_FALLBACK_COMMIT="bf5362e40b7eaa6ea37b4205fdc8f6f106de74d9" # 2024-05-05 14:02:15 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="dd5a440a31fae6e459c0d6271dddd62825505361" # 2024-05-05 14:06:01 -0700
+GENPATCHES_FALLBACK_COMMIT="53580630bfd135163e3ad13a534797a02b652f7a" # 2024-06-17 18:17:27 -0400
+LINUX_SOURCES_FALLBACK_COMMIT="256abd8e550ce977b728be79a74e1729438b4948" # 2024-07-07 14:23:46 -0700
 RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
-# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.9
+# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.10
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-CLEAR_LINUX_PATCHES_VER="6.9.10-1451"
+CLEAR_LINUX_PATCHES_VER="6.10.2-1454"
 EBUILD_REV="r6"
-GENPATCHES_VER="13" # can be live only when 9999
+GENPATCHES_VER="6" # can be live only when 9999
 PATCH_PROJC_VER="6.9-r0"
-PATCH_RT_VER="6.9-rt5"
+PATCH_RT_VER="6.10.2-rt14"
 
-inherit ot-kernel-v6.9
+inherit ot-kernel-v6.10
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.9.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.10.eclass
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses

@@ -185,7 +185,7 @@
 		    zen-sauce				A
 
     6.11 (Mainline / Live / Master)			A
-		    -rt	(RT_PREEMPT)			D
+		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
 		    Clear Linux patchset		D (point releases only, not live)
 		    genpatches				D
