@@ -191,6 +191,10 @@ https://github.com/pytorch/cpuinfo/archive/${CPUINFO_COMMIT}.tar.gz
 	-> pytorch-cpuinfo-${CPUINFO_COMMIT:0:7}.tar.gz
 https://github.com/jarro2783/cxxopts/archive/${CXXOPTS_COMMIT}.tar.gz
 	-> cxxopts-${CXXOPTS_COMMIT:0:7}.tar.gz
+	!system-eigen? (
+https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_COMMIT}/eigen-${EIGEN_COMMIT}.tar.gz
+	-> eigen-${EIGEN_COMMIT:0:7}.tar.gz
+	)
 	abseil-cpp? (
 https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT_1}.tar.gz
 	-> abseil-cpp-${ABSEIL_CPP_COMMIT_1:0:7}.tar.gz
@@ -206,8 +210,10 @@ https://github.com/NVIDIA/cutlass/archive/refs/tags/v${CUTLASS_PV}.tar.gz
 	-> cutlas-${CUTLASS_PV}.tar.gz
 	)
 	composable-kernel? (
+		!system-composable-kernel? (
 https://github.com/ROCmSoftwarePlatform/composable_kernel/archive/${COMPOSABLE_KERNEL_COMMIT}.tar.gz
 	-> composable-kernel-${COMPOSABLE_KERNEL_COMMIT:0:7}.tar.gz
+		)
 	)
 	extensions? (
 https://github.com/microsoft/onnxruntime-extensions/archive/${ONNXRUNTIME_EXTENSIONS_COMMIT}.tar.gz
@@ -226,10 +232,6 @@ https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_2}.tar.gz
 	python? (
 https://github.com/pybind/pybind11/archive/refs/tags/v${PYBIND11_PV}.tar.gz
 	-> pybind11-${PYBIND11_PV}.tar.gz
-	)
-	system-eigen? (
-https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_COMMIT}/eigen-${EIGEN_COMMIT}.tar.gz
-	-> eigen-${EIGEN_COMMIT:0:7}.tar.gz
 	)
 	tensorrt-oss-parser? (
 https://github.com/onnx/onnx/archive/${ONNX_COMMIT_2}.tar.gz
@@ -347,8 +349,8 @@ ${ROCM_SLOTS[@]}
 onnxruntime_USE_EXTENSIONS
 -abseil-cpp -benchmark -composable-kernel cpu -cuda cudnn debug doc -extensions
 -javascript -llvm -lto -migraphx -mimalloc -mpi -neural-speed -onednn -openvino
-+python -quant -rocm -system-eigen test -tensorrt -tensorrt-oss-parser -training
-training-ort -triton -tvm -xnnpack
++python -quant -rocm -system-eigen -system-composable-kernel test -tensorrt
+-tensorrt-oss-parser -training training-ort -triton -tvm -xnnpack
 
 openvino-auto
 openvino-hetero
@@ -459,6 +461,9 @@ gen_rocm_rdepend() {
 				~sci-libs/hipRAND-${pv}:${s}[rocm]
 				~sci-libs/miopen-${pv}:${s}$(get_rocm_usedep MIOPEN)
 				~sci-libs/rocBLAS-${pv}:${s}$(get_rocm_usedep ROCBLAS)
+				system-composable-kernel? (
+					sci-libs/composable-kernel:${s}$(get_rocm_usedep COMPOSABLE_KERNEL)
+				)
 			)
 		"
 		if use amdgpu_targets_gfx90a ; then
@@ -693,6 +698,7 @@ BDEPEND+="
 "
 _PATCHES=(
 # TODO reintroduce external composable-kernel and emscripten patch
+	"${FILESDIR}/${PN}-1.19.0-use-system-composable-kernel.patch"
 )
 
 pkg_setup() {
@@ -702,11 +708,11 @@ pkg_setup() {
 	if use rocm_6_0 ; then
 		LLVM_SLOT="17"
 		ROCM_SLOT="6.0"
-		ROCM_VERSION="${HIP_6_0_VERSION}"
+		export ROCM_VERSION="${HIP_6_0_VERSION}"
 	elif use rocm_6_0 ; then
 		LLVM_SLOT="17"
 		ROCM_SLOT="5.7"
-		ROCM_VERSION="${HIP_5_7_VERSION}"
+		export ROCM_VERSION="${HIP_5_7_VERSION}"
 	fi
 
 	use rocm && rocm_pkg_setup
@@ -721,7 +727,7 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/onnx-${ONNX_COMMIT_1}" "${S}/cmake/external/onnx"
 	dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/cmake/external/onnx/third_party/benchmark"
 	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/cmake/external/onnx/third_party/pybind11"
-	dep_prepare_mv "${WORKDIR}/abseil-${ABSEIL_CPP_PV}" "${S}/cmake/external/onnx/third_party/abseil"
+	dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_PV}" "${S}/cmake/external/onnx/third_party/abseil"
 	dep_prepare_mv "${WORKDIR}/protobuf-${PROTOBUF_PV_2}" "${S}/cmake/external/onnx/third_party/protobuf"
 
 
@@ -746,7 +752,7 @@ src_unpack() {
 	if use cuda ; then
 		dep_prepare_mv "${WORKDIR}/cutlass-${CUTLASS_PV}" "${S}/cmake/external/cutlass"
 	fi
-	if use composable-kernel ; then
+	if use composable-kernel && ! use system-composable-kernel ; then
 		dep_prepare_mv "${WORKDIR}/composable-kernel-${COMPOSABLE_KERNEL_COMMIT}" "${S}/cmake/external/composable_kernel"
 	fi
 	if ! use system-eigen ; then
@@ -800,6 +806,8 @@ src_unpack() {
 }
 
 src_prepare() {
+	eapply ${_PATCHES[@]}
+
 	CMAKE_USE_DIR="${S}/cmake"
 
 	python && python_setup
@@ -856,7 +864,7 @@ src_prepare() {
 src_configure() {
 	export ROCM_PATH="${ESYSROOT}/${EROCM_PATH}"
 	export MIOPEN_PATH="${ESYSROOT}/${EROCM_PATH}"
-	export ROCM_VERSION="${ROCM_VERSION}"-
+	#export ROCM_VERSION="${ROCM_VERSION}"-
 
 	python && python_setup
 	CMAKE_BUILD_TYPE=$(usex debug RelWithDebInfo Release)
@@ -1007,7 +1015,11 @@ src_configure() {
 		)
 	fi
 
-	if use composable-kernel ; then
+	if use composable-kernel && use system-composable-kernel ; then
+		mycmakeargs+=(
+			-DCOMPOSABLE_KERNEL_DIR="${ESYSROOT}/${EROCM_PATH}/lib/cmake/composable-kernel" # TODO verify against multislot
+		)
+	elif use composable-kernel && ! use system-composable-kernel ; then
 		mycmakeargs+=(
 			-DFETCHCONTENT_SOURCE_DIR_COMPOSABLE_KERNEL="${S}/cmake/external/composable_kernel"
 		)
@@ -1088,9 +1100,10 @@ src_configure() {
 			-DCMAKE_HIP_ARCHITECTURES="$(get_amdgpu_flags)"
 			-DCMAKE_HIP_COMPILER="${ESYSROOT}/${EROCM_PATH}/llvm/bin/clang++"
 			-Donnxruntime_ENABLE_TRITON=$(usex triton)
+			-Donnxruntime_ROCM_HOME="${ESYSROOT}/${EROCM_PATH}"
+			-Donnxruntime_ROCM_VERSION="${ROCM_VERSION}"
 			-Donnxruntime_USE_TRITON_KERNEL=$(usex triton)
 			-Donnxruntime_USE_COMPOSABLE_KERNEL=$(usex composable-kernel)
-			#-DCOMPOSABLE_KERNEL_DIR="${ESYSROOT}/${EROCM_PATH}/lib/cmake/composable-kernel" # TODO verify
 		)
 		if use amdgpu_targets_gfx90a ; then
 			mycmakeargs+=(
