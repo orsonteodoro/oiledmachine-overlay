@@ -107,18 +107,13 @@ DOCS=( "README.md" )
 src_unpack() {
 	unpack ${A}
 	dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT}" "${S}/third_party/fmt"
-
 	dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT}" "${S}/third_party/googletest"
-
 	dep_prepare_mv "${WORKDIR}/ideep-${IDEEP_COMMIT}" "${S}/third_party/ideep"
 	dep_prepare_mv "${WORKDIR}/oneDNN-${MKL_DNN_COMMIT}" "${S}/third_party/ideep/mkl-dnn"
-
 	dep_prepare_mv "${WORKDIR}/libxsmm-${LIBXSMM_COMMIT}" "${S}/third_party/libxsmm"
-
 	dep_prepare_mv "${WORKDIR}/oneDNN-${ONEDNN_COMMIT}" "${S}/third_party/oneDNN"
 	dep_prepare_mv "${WORKDIR}/pti-gpu-${PTI_GPU_COMMIT}" "${S}/third_party/pti-gpu"
 	dep_prepare_mv "${WORKDIR}/spdlog-${SPDLOG_COMMIT}" "${S}/third_party/spdlog"
-
 }
 
 src_install() {
