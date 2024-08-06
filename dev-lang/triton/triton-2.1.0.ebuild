@@ -139,7 +139,6 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-2.1.0-find-llvm.patch"
 	"${FILESDIR}/${PN}-2.1.0-dynlib.patch"
 )
 
@@ -241,7 +240,7 @@ einfo "PATH:  ${PATH}"
 			-DLLVM_SHARED_MODE="shared"
 			-DLLVM_IS_SHARED=ON
 			-DLLVM_DYNLIB=OFF
-			-DMLIR_DYNLIB_OFF
+			-DMLIR_DYNLIB=OFF
 		)
 	else
 		# For sys-devel/llvm and sys-devel/mlir
@@ -250,14 +249,14 @@ einfo "PATH:  ${PATH}"
 				-DLLVM_SHARED_MODE="shared"
 				-DLLVM_IS_SHARED=ON
 				-DLLVM_DYNLIB=ON
-				-DMLIR_DYNLIB_OFF
+				-DMLIR_DYNLIB=OFF
 			)
 		else
 			mycmakeargs+=(
 				-DLLVM_SHARED_MODE="shared"
 				-DLLVM_IS_SHARED=ON
 				-DLLVM_DYNLIB=OFF
-				-DMLIR_DYNLIB_OFF
+				-DMLIR_DYNLIB=OFF
 			)
 		fi
 	fi

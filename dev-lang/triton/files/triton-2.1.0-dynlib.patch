@@ -1,12 +1,14 @@
 diff '--color=auto' -urp triton-2.1.0.orig/CMakeLists.txt triton-2.1.0/CMakeLists.txt
 --- triton-2.1.0.orig/CMakeLists.txt	2024-08-06 14:34:25.460218021 -0700
 +++ triton-2.1.0/CMakeLists.txt	2024-08-06 14:50:13.552316045 -0700
-@@ -22,6 +22,8 @@ endif()
+@@ -22,6 +22,10 @@ endif()
  # Options
  option(TRITON_BUILD_TUTORIALS "Build C++ Triton tutorials" ON)
  option(TRITON_BUILD_PYTHON_MODULE "Build Python Triton bindings" OFF)
 +option(LLVM_DYNLIB "Build with LLVM DYNLIB" ON)
 +option(MLIR_DYNLIB "Build with MLIR DYNLIB" OFF)
++message(STATUS "LLVM_DYNLIB=${LLVM_DYNLIB}")
++message(STATUS "MLIR_DYNLIB=${MLIR_DYNLIB}")
  set(TRITON_CODEGEN_BACKENDS "" CACHE STRING "Enable different codegen backends")
  
  # Ensure Python3 vars are set correctly
@@ -179,21 +181,23 @@ diff '--color=auto' -urp triton-2.1.0.orig/CMakeLists.txt triton-2.1.0/CMakeList
 diff '--color=auto' -urp triton-2.1.0.orig/bin/CMakeLists.txt triton-2.1.0/bin/CMakeLists.txt
 --- triton-2.1.0.orig/bin/CMakeLists.txt	2024-08-06 14:34:25.404218962 -0700
 +++ triton-2.1.0/bin/CMakeLists.txt	2024-08-06 14:50:12.320338751 -0700
-@@ -41,9 +41,42 @@ target_link_libraries(triton-reduce PRIV
+@@ -41,9 +41,44 @@ target_link_libraries(triton-reduce PRIV
  
  mlir_check_all_link_libraries(triton-reduce)
  
 +option(LLVM_DYNLIB "Build with LLVM DYNLIB" ON)
 +option(MLIR_DYNLIB "Build with MLIR DYNLIB" OFF)
++message(STATUS "LLVM_DYNLIB=${LLVM_DYNLIB}")
++message(STATUS "MLIR_DYNLIB=${MLIR_DYNLIB}")
  
  add_llvm_executable(triton-translate triton-translate.cpp PARTIAL_SOURCES_INTENDED)
  llvm_update_compile_flags(triton-translate)
 + if(LLVM_DYNLIB)
-+   set(LLVM_LIBRARIES
++   set(LLVM_LIBS
 +     LLVM
 +   )
 + else()
-+   set(LLVM_LIBRARIES
++   set(LLVM_LIBS
 +     LLVMCore
 +     LLVMSupport
 +     LLVMOption
@@ -204,7 +208,7 @@ diff '--color=auto' -urp triton-2.1.0.orig/bin/CMakeLists.txt triton-2.1.0/bin/C
 + if(LLVM_DYNLIB)
 +   message(FATAL_ERROR "MLIR DYNLIB ON is not supported")
 + else()
-+   set(MLIR_LIBRARIES
++   set(MLIR_LIBS
 +     MLIROptLib
 +     MLIRIR
 +     MLIRLLVMDialect
@@ -231,7 +235,7 @@ diff '--color=auto' -urp triton-2.1.0.orig/bin/CMakeLists.txt triton-2.1.0/bin/C
 -         LLVMOption
 -         LLVMCodeGen
 -         LLVMAsmParser
-+         ${LLVM_LIBRARIES}
++         ${LLVM_LIBS}
  
           # MLIR core
 -         MLIROptLib
@@ -246,6 +250,6 @@ diff '--color=auto' -urp triton-2.1.0.orig/bin/CMakeLists.txt triton-2.1.0/bin/C
 -         MLIRLLVMToLLVMIRTranslation
 -         MLIRNVVMToLLVMIRTranslation
 -         MLIRROCDLToLLVMIRTranslation
-+         ${MLIR_LIBRARIES}
++         ${MLIR_LIBS}
           )
  mlir_check_all_link_libraries(triton-translate)
