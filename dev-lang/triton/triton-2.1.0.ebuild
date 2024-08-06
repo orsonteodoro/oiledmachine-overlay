@@ -219,7 +219,7 @@ src_configure() {
 	elif use llvm_slot_7 && has_version "sys-devel/llvm:7" && has_version "sys-devel/mlir:7" ; then
 		llvm_root_dir="/usr/lib/llvm/7"
 	else
-eerror "Cannot find an LLVM installation."
+eerror "Cannot find a LLVM installation."
 		die
 	fi
 
