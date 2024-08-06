@@ -3,14 +3,16 @@
 
 EAPI=8
 
-# TODO: package
+# TODO package:
 # clang-format
 # dev-python/triton
 # lintrunner-adapters
 # neural-compressor
 # onnxmltools
 # pydocstyle
+# synr
 # tensorrt
+# torch-ort
 
 # For deps versioning, see
 # https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/deps.txt
@@ -22,10 +24,14 @@ EAPI=8
 # https://github.com/microsoft/onnxruntime/blob/v1.19.0/requirements-doc.txt
 # https://github.com/microsoft/onnxruntime/blob/v1.19.0/requirements-lintrunner.txt
 # https://github.com/microsoft/onnxruntime/blob/v1.19.0/requirements-training.txt
+# https://github.com/apache/tvm/blob/2379917985919ed3918dc12cad47f469f245be7a/python/gen_requirements.py#L65
 
 # clog has same version as cpuinfo
 
-ABSEIL_CPP_COMMIT="f46495ea96f68fc3f6c394f099b2992743f6ff7f" # From cmake/deps.txt
+# https://github.com/abseil/abseil-cpp/releases/download/20240722.0/abseil-cpp-20240722.0.tar.gz
+ABSEIL_CPP_COMMIT_1="f46495ea96f68fc3f6c394f099b2992743f6ff7f" # From cmake/deps.txt
+ABSEIL_CPP_COMMIT_2="4a2c63365eff8823a5221db86ef490e828306f9d" # # protobuf dep
+ABSEIL_CPP_PV="20230125.3" # From cmake/external/onnx/CMakeLists.txt
 AMDGPU_TARGETS_COMPAT=(
 # See https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/CMakeLists.txt#L299
 	gfx906
@@ -36,16 +42,27 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1100
 	gfx1101
 )
+BENCHMARK_PV="1.8.5" # onnxruntime dep
+BENCHMARK_COMMIT_1="2dd015dfef425c866d9a43f2c67d8b52d709acb6" # onnx dep
+BENCHMARK_COMMIT_2="0d98dba29d66e93259db7daa53a9327df767a415" # flatbuffers dep, from cmake/external/flatbuffers/benchmarks/CMakeLists.txt
 CMAKE_IN_SOURCE_BUILD=1
+COMPOSABLE_KERNEL_COMMIT="204da9c522cebec5220bba52cd3542ebcaf99e7a" # From cmake/deps.txt, >= rocm-6.2.0
 CPU_FLAGS="
 	cpu_flags_x86_avx
 	cpu_flags_x86_avx2
 	cpu_flags_x86_avx512
 "
-DATE_PV="3.0.1" # From cmake/deps.txt
+CPUINFO_COMMIT="ca678952a9a8eaa6de112d154e8e104b22f9ab3f" # From cmake/deps.txt
+CUTLASS_PV="3.5.0" # From cmake/deps.txt
+CUTLASS_COMMIT="c2ee13a0fe99241b0e798ce647acf98e237f1d0c" # tvm dep
+CXXOPTS_COMMIT="3c73d91c0b04e2b59462f0a741be8c07024c1bc0"
+DATE_PV_1="3.0.1" # From cmake/deps.txt
+DATE_PV_2="3.0.0" # From cmake/external/date/CMakeLists.txt
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
+DLPACK_COMMIT="ddeb264880a1fa7e7be238ab3901a810324fbe5f" # tvm dep
+DMLC_CORE_COMMIT="09511cf9fe5ff103900a5eafb50870dc84cc17c8" # tvm dep
 CUDA_TARGETS_COMPAT=(
 # See https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/CMakeLists.txt#L1453
 	sm_30
@@ -62,7 +79,25 @@ CUDA_TARGETS_COMPAT=(
 	sm_80
 	sm_90
 )
+EIGEN_COMMIT="e7248b26a1ed53fa030c5c459f7ea095dfd276ac" # From cmake/deps.txt
+EMSDK_COMMIT="d52c46520124845b1e0e0525f2759299d840143f"
 FLATBUFFERS_PV="23.5.26" # From cmake/deps.txt
+FP16_COMMIT="0a92994d729ff76a58f692d3028ca1b64b145d91" # From cmake/deps.txt
+FXDIV_COMMIT="63058eff77e11aa15bf531df5dd34395ec3017c8" # From cmake/deps.txt
+GOOGLETEST_PV="1.15.0" # From cmake/deps.txt
+GOOGLETEST_COMMIT_1="ff233bdd4cac0a0bf6e5cd45bda3406814cb2796" # flatbuffers dep, from cmake/external/flatbuffers/benchmarks/CMakeLists.txt
+GOOGLETEST_COMMIT_2="4c9a3bb62bf3ba1f1010bf96f9c8ed767b363774" # protobuf dep
+GOOGLETEST_COMMIT_3="e2239ee6043f73722e7aa812a459f54a28552929" # From cmake/external/flatbuffers/benchmarks/CMakeLists.txt
+GSL_PV="4.0.0" # From cmake/deps.txt
+JSON_PV="3.10.5" # From cmake/deps.txt
+JSONCPP_COMMIT="9059f5cad030ba11d37818847443a53918c327b1" # protobuf dep
+LIBBACKTRACE_COMMIT="08f7c7e69f8ea61a0c4151359bc8023be8e9217b" # tvm dep
+LIBPROTOBUF_MUTATOR_COMMIT="7a2ed51a6b682a83e345ff49fc4cfd7ca47550db"
+MP11_PV="1.82.0"
+NSYNC_PV="1.26.0" # From cmake/deps.txt
+ONNX_COMMIT_1="595228d99e3977ac27cb79d5963adda262af99ad" # onnxruntime dep
+ONNX_COMMIT_2="990217f043af7222348ca8f0301e17fa7b841781" # onnx-tensorrt dep
+PSIMD_COMMIT="072586a71b55b7f8c584153d223e95687148a900" # From cmake/deps.txt
 ROCM_SLOTS=(
 	rocm_6_0
 	rocm_5_7
@@ -82,29 +117,97 @@ OPENVINO_TARGETS=(
 	npu
 	npu_np
 )
+PROTOBUF_PV_1="21.12" # From cmake/deps.txt
+PROTOBUF_PV_2="22.3" # From cmake/external/onnx/CMakeLists.txt
+PSMID_COMMIT="072586a71b55b7f8c584153d223e95687148a900" # From cmake/deps.txt
+PTHREADPOOL_COMMIT="4fe0e1e183925bf8cfa6aae24237e724a96479b8" # From cmake/deps.txt
+PYBIND11_COMMIT_1="5b0a6fc2017fcc176545afe3e09c9f9885283242" # onnx dep
+PYBIND11_COMMIT_2="dc9b39596d986aeb061bd3debe52d30e2467dc48" # neural-speed dep
+PYBIND11_PV="2.13.1" # From cmake/deps.txt, onnxruntime dep
 PYTHON_COMPAT=( "python3_"{10..12} )
-SAFEINT_COMMIT="3.0.28" # From cmake/deps.txt
+RANG_COMMIT="cabe04d6d6b05356fa8f9741704924788f0dd762" # tvm dep
+RE2_PV="2024-07-02" # From cmake/deps.txt
+SAFEINT_PV="3.0.28" # From cmake/deps.txt
+TENSORBOARD_COMMIT="373eb09e4c5d2b3cc2493f0949dc4be6b6a45e81" # From cmake/deps.txt
+TVM_COMMIT="2379917985919ed3918dc12cad47f469f245be7a" # From cmake/external/tvm.cmake
+TVM_VTA_COMMIT="36a91576edf633479c78649e050f18dd2ddc8103" # tvm dep
+UTF8_RANGE_COMMIT="72c943dea2b9240cd09efde15191e144bc7c7d38" # From cmake/deps.txt, protobuf dep
+XNNPACK_COMMIT="0da379fc4808f9601faef392352018c741c0f297" # From cmake/deps.txt
 
 inherit cmake cuda dep-prepare distutils-r1 flag-o-matic llvm-r1 rocm toolchain-funcs
-
 
 DESCRIPTION="Cross-platform inference and training machine-learning accelerator."
 HOMEPAGE="
 	https://onnxruntime.ai
 	https://github.com/microsoft/onnxruntime
 "
+# TODO add gitmodules:
+# onnx
+
 SRC_URI="
-	https://github.com/microsoft/${PN}/archive/refs/tags/v${PV}.tar.gz
-		-> ${P}.tar.gz
-	https://github.com/dcleblanc/SafeInt/archive/${SAFEINT_COMMIT}.tar.gz
-		-> SafeInt-${SAFEINT_COMMIT:0:10}.tar.gz
-	https://github.com/google/flatbuffers/archive/v${FLATBUFFERS_PV}.tar.gz
-		-> flatbuffers-${FLATBUFFERS_PV}.tar.gz
-	https://github.com/HowardHinnant/date/archive/v${DATE_PV}.tar.gz
-		-> HowardHinnant-date-${DATE_PV}.tar.gz
+https://github.com/microsoft/${PN}/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/abseil/abseil-cpp/archive/refs/tags/${ABSEIL_CPP_PV}.tar.gz
+	-> abseil-cpp-${ABSEIL_CPP_PV}.tar.gz
+https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT_2}.tar.gz
+	-> abseil-cpp-${ABSEIL_CPP_COMMIT_2:0:7}.tar.gz
+https://github.com/boostorg/mp11/archive/refs/tags/boost-${MP11_PV}.tar.gz
+	-> mp11-${MP11_PV}.tar.gz
+https://github.com/dcleblanc/SafeInt/archive/${SAFEINT_PV}.tar.gz
+	-> SafeInt-${SAFEINT_PV}.tar.gz
+https://github.com/emscripten-core/emsdk/archive/${EMSDK_COMMIT}.tar.gz
+	-> emsdk-${EMSDK_COMMIT:0:7}.tar.gz
+https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_1}.tar.gz
+	-> benchmark-${BENCHMARK_COMMIT_1:0:7}.tar.gz
+https://github.com/google/flatbuffers/archive/v${FLATBUFFERS_PV}.tar.gz
+	-> flatbuffers-${FLATBUFFERS_PV}.tar.gz
+https://github.com/google/libprotobuf-mutator/archive/${LIBPROTOBUF_MUTATOR_COMMIT}.tar.gz
+	-> libprotobuf-mutator-${LIBPROTOBUF_MUTATOR_COMMIT:0:7}.tar.gz
+https://github.com/google/nsync/archive/refs/tags/${NSYNC_PV}.tar.gz
+	-> nsync-${NSYNC_PV}.tar.gz
+https://github.com/google/re2/archive/refs/tags/${RE2_PV}.tar.gz
+	-> re2-${RE2_PV}.tar.gz
+https://github.com/HowardHinnant/date/archive/v${DATE_PV_1}.tar.gz
+	-> HowardHinnant-date-${DATE_PV_1}.tar.gz
+https://github.com/HowardHinnant/date/archive/v${DATE_PV_2}.tar.gz
+	-> HowardHinnant-date-${DATE_PV_2}.tar.gz
+https://github.com/nlohmann/json/archive/refs/tags/v${JSON_PV}.tar.gz
+	-> nlohmann-json-${JSON_PV}.tar.gz
+https://github.com/microsoft/GSL/archive/refs/tags/v${GSL_PV}.tar.gz
+	-> microsoft-gsl-${GSL_PV}.tar.gz
+https://github.com/onnx/onnx/archive/${ONNX_COMMIT_1}.tar.gz
+	-> onnx-${ONNX_COMMIT_1:0:7}.tar.gz
+https://github.com/open-source-parsers/jsoncpp/archive/${JSONCPP_COMMIT}.tar.gz
+	-> jsoncpp-${JSONCPP_COMMIT:0:1}.tar.gz
+https://github.com/protocolbuffers/protobuf/archive/refs/tags/v${PROTOBUF_PV_1}.tar.gz
+	-> protobuf-${PROTOBUF_PV_1}.tar.gz
+https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_PV_2}/protobuf-${PROTOBUF_PV_2}.tar.gz
+	-> protobuf-${PROTOBUF_PV_2}.tar.gz
+https://github.com/protocolbuffers/utf8_range/archive/${UTF8_RANGE_COMMIT}.tar.gz
+	-> utf8_range-${UTF8_RANGE_COMMIT:0:7}.tar.gz
+https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_1}.tar.gz
+	-> pybind11-${PYBIND11_COMMIT_1:0:7}.tar.gz
+https://github.com/pytorch/cpuinfo/archive/${CPUINFO_COMMIT}.tar.gz
+	-> pytorch-cpuinfo-${CPUINFO_COMMIT:0:7}.tar.gz
+https://github.com/jarro2783/cxxopts/archive/${CXXOPTS_COMMIT}.tar.gz
+	-> cxxopts-${CXXOPTS_COMMIT:0:7}.tar.gz
 	abseil-cpp? (
-https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT}.tar.gz
-	-> abseil-cpp-${ABSEIL_CPP_COMMIT:0:7}.tar.gz
+https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT_1}.tar.gz
+	-> abseil-cpp-${ABSEIL_CPP_COMMIT_1:0:7}.tar.gz
+	)
+	benchmark? (
+https://github.com/google/benchmark/archive/refs/tags/v${BENCHMARK_PV}.tar.gz
+	-> benchmark-${BENCHMARK_PV}.tar.gz
+https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_2}.tar.gz
+	-> benchmark-${BENCHMAR_COMMIT_2:0:7}.tar.gz
+	)
+	cuda? (
+https://github.com/NVIDIA/cutlass/archive/refs/tags/v${CUTLASS_PV}.tar.gz
+	-> cutlas-${CUTLASS_PV}.tar.gz
+	)
+	composable-kernel? (
+https://github.com/ROCmSoftwarePlatform/composable_kernel/archive/${COMPOSABLE_KERNEL_COMMIT}.tar.gz
+	-> composable-kernel-${COMPOSABLE_KERNEL_COMMIT:0:7}.tar.gz
 	)
 	extensions? (
 https://github.com/microsoft/onnxruntime-extensions/archive/${ONNXRUNTIME_EXTENSIONS_COMMIT}.tar.gz
@@ -115,28 +218,66 @@ https://github.com/microsoft/mimalloc/archive/refs/tags/v${MIMALLOC_PV}.tar.gz
 	-> mimalloc-${MIMALLOC_PV}.tar.gz
 	)
 	neural-speed? (
-https://github.com/intel/neural-speed/archive/refs/tags/v0.3.tar.gz
+https://github.com/intel/neural-speed/archive/refs/tags/v${NEURAL_SPEED_PV}.tar.gz
 	-> neural-speed-${NEURAL_SPEED_PV}.tar.gz
+https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_2}.tar.gz
+	-> pybind11-${PYBIND11_COMMIT_2:0:7}.tar.gz
+	)
+	python? (
+https://github.com/pybind/pybind11/archive/refs/tags/v${PYBIND11_PV}.tar.gz
+	-> pybind11-${PYBIND11_PV}.tar.gz
+	)
+	system-eigen? (
+https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_COMMIT}/eigen-${EIGEN_COMMIT}.tar.gz
+	-> eigen-${EIGEN_COMMIT:0:7}.tar.gz
 	)
 	tensorrt-oss-parser? (
+https://github.com/onnx/onnx/archive/${ONNX_COMMIT_2}.tar.gz
+	-> onnx-${ONNX_COMMIT_2:0:7}.tar.gz
 https://github.com/onnx/onnx-tensorrt/archive/${ONNX_TENSORRT_COMMIT}.tar.gz
 	-> onnx-tensorrt-${ONNX_TENSORRT_COMMIT:0:7}.tar.gz
 	)
-"
-DISABLE="
+	test? (
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_1}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_1:0:7}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_2}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_2:0:7}.tar.gz
+https://github.com/google/googletest/archive/refs/tags/v${GOOGLETEST_PV}.tar.gz
+	-> googletest-${GOOGLETEST_PV}.tar.gz
+	)
+	training? (
+https://github.com/tensorflow/tensorboard/archive/${TENSORBOARD_COMMIT}.tar.gz
+	-> tensorboard-${TENSORBOARD_COMMIT:0:7}.tar.gz
+	)
+	tvm? (
+https://github.com/agauniyal/rang/archive/${RANG_COMMIT}.tar.gz
+	-> rang-${RANG_COMMIT:0:7}.tar.gz
+https://github.com/apache/tvm/archive/${TVM_COMMIT}.tar.gz
+	-> tvm-${TVM_COMMIT:0:7}.tar.gz
+https://github.com/apache/tvm-vta/archive/${TVM_VTA_COMMIT}.tar.gz
+	-> tvm-vta-${TVM_VTA_COMMIT:0:7}.tar.gz
+https://github.com/dmlc/dlpack/archive/${DLPACK_COMMIT}.tar.gz
+	-> dlpack-${DLPACK_COMMIT:0:7}.tar.gz
+https://github.com/dmlc/dmlc-core/archive/${DMLC_CORE_COMMIT}.tar.gz
+	-> dmlc-core-${DMLC_CORE_COMMIT:0:7}.tar.gz
+https://github.com/tlc-pack/libbacktrace/archive/${LIBBACKTRACE_COMMIT}.tar.gz
+	-> libbacktrace-${LIBBACKTRACE_COMMIT:0:7}.tar.gz
+https://github.com/NVIDIA/cutlass/archive/${CUTLASS_COMMIT}.tar.gz
+	-> cutlass-${CUTLASS_COMMIT:0:7}.tar.gz
+	)
+	xnnpack? (
+https://github.com/Maratyszcza/FP16/archive/${FP16_COMMIT}.tar.gz
+	-> fp16-${FP16_COMMIT:0:7}.tar.gz
+https://github.com/Maratyszcza/FXdiv/archive/${FXDIV_COMMIT}.tar.gz
+	-> fxdiv-${FXDIV_COMMIT:0:7}.tar.gz
+https://github.com/Maratyszcza/psimd/archive/${PSMID_COMMIT}.tar.gz
+	-> psimd-${PSIMD_COMMIT:0:7}.tar.gz
+https://github.com/Maratyszcza/pthreadpool/archive/${PTHREADPOOL_COMMIT}.tar.gz
+	-> pthreadpool-${PTHREADPOOL_COMMIT:0:7}.tar.gz
+https://github.com/google/XNNPACK/archive/${XNNPACK_COMMIT}.tar.gz
+	-> xnnpack-${XNNPACK:0:7}.tar.gz
+	)
 
-"
-DISABLE_2="
-https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT}.tar.gz
-	-> abseil-cpp-${ABSEIL_CPP_COMMIT:0:7}.tar.gz
-https://github.com/microsoft/onnxruntime-extensions/archive/${ONNXRUNTIME_EXTENSIONS_COMMIT}.tar.gz
-	-> onnxruntime-extensions-${ONNXRUNTIME_EXTENSIONS_COMMIT:0:7}.tar.gz
-https://github.com/microsoft/mimalloc/archive/refs/tags/v${MIMALLOC_PV}.tar.gz
-	-> mimalloc-${MIMALLOC_PV}.tar.gz
-https://github.com/intel/neural-speed/archive/refs/tags/v0.3.tar.gz
-	-> neural-speed-${NEURAL_SPEED_PV}.tar.gz
-https://github.com/onnx/onnx-tensorrt/archive/${ONNX_TENSORRT_COMMIT}.tar.gz
-	-> onnx-tensorrt-${ONNX_TENSORRT_COMMIT:0:7}.tar.gz
 "
 
 LICENSE="
@@ -205,8 +346,9 @@ ${OPENVINO_TARGETS[@]/#/openvino_targets_}
 ${ROCM_SLOTS[@]}
 onnxruntime_USE_EXTENSIONS
 -abseil-cpp -benchmark -composable-kernel cpu -cuda cudnn debug doc -extensions
--javascript -llvm -lto -migraphx -mpi -mimalloc -neural-speed -onednn -openvino
-+python -rocm test -tensorrt -tensorrt-oss-parser -triton -xnnpack
+-javascript -llvm -lto -migraphx -mimalloc -mpi -neural-speed -onednn -openvino
++python -quant -rocm -system-eigen test -tensorrt -tensorrt-oss-parser -training
+training-ort -triton -tvm -xnnpack
 
 openvino-auto
 openvino-hetero
@@ -233,9 +375,11 @@ gen_rocm_required_use() {
 	done
 }
 # For providers, see also https://github.com/microsoft/onnxruntime/blob/v1.19.0/onnxruntime/test/perftest/command_args_parser.cc#L40
+# abseil-cpp is required for protobuf and still links to it if disabled.
 REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
+	abseil-cpp
 	composable-kernel? (
 		amdgpu_targets_gfx90a
 		rocm
@@ -265,6 +409,9 @@ REQUIRED_USE="
 			openvino-multi
 		)
 	)
+	quant? (
+		python
+	)
 	rocm? (
 		llvm_slot_17
 		migraphx
@@ -274,6 +421,12 @@ REQUIRED_USE="
 		tensorrt
 	)
 	test? (
+		python
+	)
+	triton? (
+		python
+	)
+	tvm? (
 		python
 	)
 	|| (
@@ -317,10 +470,6 @@ gen_rocm_rdepend() {
 }
 RDEPEND="
 	${PYTHON_DEPS}
-	(
-		>=dev-cpp/eigen-3.4.0[cuda?]
-		dev-cpp/eigen:=
-	)
 	(
 		>=dev-cpp/ms-gsl-4.0.0
 		dev-cpp/ms-gsl:=
@@ -456,21 +605,49 @@ RDEPEND="
 			)
 		)
 	)
+	system-eigen? (
+		>=dev-cpp/eigen-3.4.0[cuda?]
+		dev-cpp/eigen:=
+	)
 	tensorrt? (
 		dev-util/tensorrt:=
+	)
+	tvm? (
+		$(python_gen_cond_dep '
+			dev-python/attrs[${PYTHON_USEDEP}]
+			dev-python/cloudpickle[${PYTHON_USEDEP}]
+			dev-python/decorator[${PYTHON_USEDEP}]
+			dev-python/numpy[${PYTHON_USEDEP}]
+			dev-python/psutil[${PYTHON_USEDEP}]
+			dev-python/scipy[${PYTHON_USEDEP}]
+			dev-python/synr[${PYTHON_USEDEP}]
+			dev-python/tornado[${PYTHON_USEDEP}]
+		')
 	)
 	xnnpack? (
 		>=sci-libs/XNNPACK-2023.10.19
 	)
 	python? (
-		>=sci-libs/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
+		training? (
+			>=sci-libs/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
+			sci-libs/pytorch-ort[${PYTHON_SINGLE_USEDEP}]
+		)
 		$(python_gen_cond_dep '
+			quant? (
+				sci-libs/neural-compressor[${PYTHON_USEDEP}]
+			)
+			triton? (
+				sci-libs/triton[${PYTHON_USEDEP}]
+			)
+			training? (
+				dev-python/cerberus[${PYTHON_USEDEP}]
+				dev-python/h5py[${PYTHON_USEDEP}]
+				sci-libs/onnx[${PYTHON_USEDEP}]
+			)
 			>=dev-python/flatbuffers-23.5.26[${PYTHON_USEDEP}]
 			>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
 			>=sci-libs/transformers-4.18.0[${PYTHON_USEDEP}]
-			dev-python/cerberus[${PYTHON_USEDEP}]
 			dev-python/coloredlogs[${PYTHON_USEDEP}]
-			dev-python/h5py[${PYTHON_USEDEP}]
 			dev-python/packaging[${PYTHON_USEDEP}]
 			dev-python/protobuf-python[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
@@ -514,22 +691,8 @@ BDEPEND+="
 		')
 	)
 "
-PATCHES=(
-	"${FILESDIR}/${PN}-system-dnnl.patch"
-	"${FILESDIR}/re2-pkg-config-r2.patch"
-	"${FILESDIR}/system-onnx-r3.patch"
-	"${FILESDIR}/system-nsync.patch"
-	"${FILESDIR}/system-composable_kernel-r2.patch"
-	"${FILESDIR}/system-protobuf.patch"
-	"${FILESDIR}/system-mp11.patch"
-	"${FILESDIR}/system-gsl-r2.patch"
-	#"${FILESDIR}/rocm-version-override-r2.patch"
-	"${FILESDIR}/hip-gentoo.patch"
-	"${FILESDIR}/shared-build-fix.patch"
-	"${FILESDIR}/hip-libdir.patch"
-	"${FILESDIR}/contrib-ops.patch"
-	"${FILESDIR}/disabled_rules_and_transformers.patch"
-	"${FILESDIR}/Werror.patch"
+_PATCHES=(
+# TODO reintroduce external composable-kernel and emscripten patch
 )
 
 pkg_setup() {
@@ -551,17 +714,92 @@ pkg_setup() {
 
 src_unpack() {
 	unpack ${A}
-	use abseil-cpp && dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT}" "${S}/cmake/_deps/abseil_cpp-src"
-	use extensions && dep_prepare_mv "${WORKDIR}/onnxruntime-extensions-${ONNXRUNTIME_EXTENSIONS_COMMIT}" "${S}/cmake/external/extensions"
-	use mimalloc && dep_prepare_mv "${WORKDIR}/mimalloc-${MIMALLOC_PV}" "${S}/cmake/external/mimalloc"
-	use tensorrt-oss-parser && dep_prepare_mv "${WORKDIR}/onnx-tensorrt-${ONNX_TENSORRT_COMMIT}" "${S}/cmake/external/onnx_tensorrt"
-	use neural-speed && dep_prepare_mv "${WORKDIR}/neural-speed-${NEURAL_SPEED_PV}" "${S}/cmake/external/neural_speed"
 
-#	dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT}" "${S}/cmake/_deps/abseil_cpp-src"
-#	dep_prepare_mv "${WORKDIR}/onnxruntime-extensions-${ONNXRUNTIME_EXTENSIONS_COMMIT}" "${S}/cmake/external/extensions"
-#	dep_prepare_mv "${WORKDIR}/mimalloc-${MIMALLOC_PV}" "${S}/cmake/external/mimalloc"
-#	dep_prepare_mv "${WORKDIR}/onnx-tensorrt-${ONNX_TENSORRT_COMMIT}" "${S}/cmake/external/onnx_tensorrt"
-#	dep_prepare_mv "${WORKDIR}/neural-speed-${NEURAL_SPEED_PV}" "${S}/cmake/external/neural_speed"
+	dep_prepare_mv "${WORKDIR}/emsdk-${EMSDK_COMMIT}" "${S}/cmake/external/emsdk"
+	dep_prepare_mv "${WORKDIR}/libprotobuf-mutator-${LIBPROTOBUF_MUTATOR_COMMIT}" "${S}/cmake/external/libprotobuf-mutator"
+
+	dep_prepare_mv "${WORKDIR}/onnx-${ONNX_COMMIT_1}" "${S}/cmake/external/onnx"
+	dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/cmake/external/onnx/third_party/benchmark"
+	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/cmake/external/onnx/third_party/pybind11"
+	dep_prepare_mv "${WORKDIR}/abseil-${ABSEIL_CPP_PV}" "${S}/cmake/external/onnx/third_party/abseil"
+	dep_prepare_mv "${WORKDIR}/protobuf-${PROTOBUF_PV_2}" "${S}/cmake/external/onnx/third_party/protobuf"
+
+
+	dep_prepare_mv "${WORKDIR}/cpuinfo-${CPUINFO_COMMIT}" "${S}/cmake/external/pytorch_cpuinfo"
+	dep_prepare_mv "${WORKDIR}/date-${DATE_PV_1}" "${S}/cmake/external/date-1"
+	dep_prepare_mv "${WORKDIR}/date-${DATE_PV_2}" "${S}/cmake/external/date-2"
+	dep_prepare_mv "${WORKDIR}/flatbuffers-${FLATBUFFERS_PV}" "${S}/cmake/external/flatbuffers"
+	dep_prepare_mv "${WORKDIR}/GSL-${GSL_PV}" "${S}/cmake/external/microsoft_gsl"
+	dep_prepare_mv "${WORKDIR}/json-${JSON_PV}" "${S}/cmake/external/json"
+	dep_prepare_mv "${WORKDIR}/nsync-${NSYNC_PV}" "${S}/cmake/external/google_nsync"
+	dep_prepare_mv "${WORKDIR}/protobuf-${PROTOBUF_PV_1}" "${S}/cmake/external/protobuf"
+	dep_prepare_mv "${WORKDIR}/re2-${RE2_PV}" "${S}/cmake/external/re2"
+	dep_prepare_mv "${WORKDIR}/SafeInt-${SAFEINT_PV}" "${S}/cmake/external/safeint"
+	dep_prepare_mv "${WORKDIR}/mp11-boost-${MP11_PV}" "${S}/cmake/external/mp11"
+
+	if use abseil-cpp ; then
+		dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT_1}" "${S}/cmake/external/abseil_cpp"
+	fi
+	if use benchmark ; then
+		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_PV}" "${S}/cmake/external/google_benchmark"
+	fi
+	if use cuda ; then
+		dep_prepare_mv "${WORKDIR}/cutlass-${CUTLASS_PV}" "${S}/cmake/external/cutlass"
+	fi
+	if use composable-kernel ; then
+		dep_prepare_mv "${WORKDIR}/composable-kernel-${COMPOSABLE_KERNEL_COMMIT}" "${S}/cmake/external/composable_kernel"
+	fi
+	if ! use system-eigen ; then
+		dep_prepare_mv "${WORKDIR}/eigen-${EIGEN_COMMIT}" "${S}/cmake/external/eigen"
+	fi
+	if use extensions ; then
+		dep_prepare_mv "${WORKDIR}/onnxruntime-extensions-${ONNXRUNTIME_EXTENSIONS_COMMIT}" "${S}/cmake/external/extensions"
+	fi
+	if use mimalloc ; then
+		dep_prepare_mv "${WORKDIR}/mimalloc-${MIMALLOC_PV}" "${S}/cmake/external/mimalloc"
+	fi
+	if use neural-speed ; then
+		dep_prepare_mv "${WORKDIR}/neural-speed-${NEURAL_SPEED_PV}" "${S}/cmake/external/neural_speed"
+		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2}" "${S}/cmake/external/neural_speed/third_party/pybind11"
+	fi
+	if use python ; then
+		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_PV}" "${S}/cmake/external/pybind11"
+	fi
+	if use training ; then
+		dep_prepare_mv "${WORKDIR}/tensorboard-${TENSORBOARD_COMMIT}" "${S}/cmake/external/tensorboard"
+	fi
+	if use tensorrt-oss-parser ; then
+		dep_prepare_mv "${WORKDIR}/onnx-tensorrt-${ONNX_TENSORRT_COMMIT}" "${S}/cmake/external/onnx_tensorrt"
+		dep_prepare_mv "${WORKDIR}/onnx-${ONNX_COMMIT_2}" "${S}/cmake/external/onnx_tensorrt/third_party/onnx"
+		dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/cmake/external/onnx_tensorrt/third_party/onnx/third_party/pybind11"
+		dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/cmake/external/onnx_tensorrt/third_party/onnx/third_party/benchmark"
+	fi
+	if use test ; then
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_PV}" "${S}/cmake/external/googletest" # For onnxruntime_external_deps.cmake
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_1}" "${S}/cmake/external/flatbuffers/third_party/googletest"
+		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_2}" "${S}/cmake/external/flatbuffers/third_party/googlebenchmark"
+	fi
+	if use test || use training ; then
+		dep_prepare_mv "${WORKDIR}/cxxopts-${CXXOPTS_COMMIT}" "${S}/cmake/external/cxxopts"
+	fi
+	if use tvm ; then
+		dep_prepare_mv "${WORKDIR}/cutlas-${CUTLASS_COMMIT}" "${S}/cmake/external/tvm/3rdparty/cutlass"
+		dep_prepare_mv "${WORKDIR}/dlpack-${DLPACK_COMMIT}" "${S}/cmake/external/tvm/3rdparty/dlpack"
+		dep_prepare_mv "${WORKDIR}/dmlc-core-${DMLC_CORE_COMMIT}" "${S}/cmake/external/tvm/3rdparty/dmlc-core"
+		dep_prepare_mv "${WORKDIR}/libbacktrace-${LIBBACKTRACE_COMMIT}" "${S}/cmake/external/tvm/3rdparty/libbacktrace"
+		dep_prepare_mv "${WORKDIR}/rang-${RANG_COMMIT}" "${S}/cmake/external/tvm/3rdparty/rang"
+		dep_prepare_mv "${WORKDIR}/vta-hw-${TVM_VTA_COMMIT}" "${S}/cmake/external/tvm/3rdparty/vta-hw"
+	fi
+	if use xnnpack ; then
+		dep_prepare_mv "${WORKDIR}/fp16-${FP16_COMMIT}" "${S}/cmake/external/fp16"
+		dep_prepare_mv "${WORKDIR}/fxdiv-${FXDIV_COMMIT}" "${S}/cmake/external/fxdiv"
+		dep_prepare_mv "${WORKDIR}/psimd-${PSIMD_COMMIT}" "${S}/cmake/external/psimd"
+		dep_prepare_mv "${WORKDIR}/xnnpack-${XNNPACK_COMMIT}" "${S}/cmake/external/googlexnnpack"
+		dep_prepare_mv "${WORKDIR}/pthreadpool-${XNNPACK_COMMIT}" "${S}/cmake/external/pthreadpool"
+	fi
+
+#	dep_prepare_mv "${WORKDIR}/-${_PV}" "${S}/cmake/external/"
+#	dep_prepare_mv "${WORKDIR}/-${_PV}" "${S}/cmake/external/"
 }
 
 src_prepare() {
@@ -614,10 +852,6 @@ src_prepare() {
 						#-i cmake/deps.txt || die sed "Sed failed"
 	#fi
 
-	strip-unsupported-flags
-
-	append-cppflags "-I/usr/include/eigen3"
-
 	cmake_src_prepare
 	use rocm && rocm_src_prepare
 }
@@ -635,19 +869,41 @@ src_configure() {
 	PYTHON_INCLUDE_DIR="$(python_get_includedir)"
 	PYTHON_LIBRARY="$(python_get_library_path)"
 
+	strip-unsupported-flags
+
+	if use system-eigen ; then
+		append-cppflags "-I/usr/include/eigen3"
+	fi
+
 	append-cxxflags \
 		-Wno-c++20-compat \
 		-Wno-dangling-reference
 
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_INCLUDEDIR="include/${PN}"
-		-Deigen_SOURCE_PATH=/usr/include/eigen3
 		-DFETCHCONTENT_FULLY_DISCONNECTED=ON
 		-DFETCHCONTENT_QUIET=OFF
-		-DFETCHCONTENT_SOURCE_DIR_SAFEINT="${WORKDIR}/SafeInt-${SAFEINT_COMMIT}"
-		-DFETCHCONTENT_SOURCE_DIR_FLATBUFFERS="${WORKDIR}/flatbuffers-${FLATBUFFERS_PV}"
-		-DFETCHCONTENT_SOURCE_DIR_DATE="${WORKDIR}/date-${DATE_PV}"
-		-DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS
+		-DFETCHCONTENT_SOURCE_DIR_DATE="${S}/cmake/external/date-1"
+		-DFETCHCONTENT_SOURCE_DIR_DATE_SRC="${S}/cmake/external/date-2"
+		-DFETCHCONTENT_SOURCE_DIR_FLATBUFFERS="${S}/cmake/external/flatbuffers"
+		-DFETCHCONTENT_SOURCE_DIR_GOOGLE_NSYNC="${S}/cmake/external/google_nsync"
+		-DFETCHCONTENT_SOURCE_DIR_GSL="${S}/cmake/external/microsoft_gsl"
+		-DFETCHCONTENT_SOURCE_DIR_MP11="${S}/cmake/external/mp11"
+		-DFETCHCONTENT_SOURCE_DIR_NLOHMANN_JSON="${S}/cmake/external/json"
+		-DFETCHCONTENT_SOURCE_DIR_ONNX="${S}/cmake/external/onnx"
+		-DFETCHCONTENT_SOURCE_DIR_ABSEIL="${S}/cmake/external/onnx/third_party/abseil" # For cmake/external/onnx/CMakeLists.txt
+		#-DFETCHCONTENT_SOURCE_DIR_PROTOBUF="${S}/cmake/external/onnx/third_party/protobuf" # For cmake/external/onnx/CMakeLists.txt # Disabled because it is ambiguous.
+		-DFETCHCONTENT_SOURCE_DIR_PROTOBUF="${S}/cmake/external/protobuf"
+		-DFETCHCONTENT_SOURCE_DIR_PYTORCH_CLOG="${S}/cmake/external/pytorch_cpuinfo"
+		-DFETCHCONTENT_SOURCE_DIR_PYTORCH_CPUINFO="${S}/cmake/external/pytorch_cpuinfo"
+		-DFETCHCONTENT_SOURCE_DIR_RE2="${S}/cmake/external/re2"
+		-DFETCHCONTENT_SOURCE_DIR_SAFEINT="${S}/cmake/external/safeint"
+		-DFETCHCONTENT_SOURCE_DIR_UTF8_RANGE="${S}/cmake/external/utf8_range"
+
+# We use vendored packages because the build scripts get confused between system and vendored.
+# Using ALWAYS causes confusion between system's abseil and vendored abseil.
+		-DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=NEVER
+
 		-Donnxruntime_ARMNN_BN_USE_CPU=ON
 		-Donnxruntime_ARMNN_RELU_USE_CPU=ON
 		-Donnxruntime_BUILD_APPLE_FRAMEWORK=OFF
@@ -658,11 +914,17 @@ src_configure() {
 		-Donnxruntime_BUILD_MS_EXPERIMENTAL_OPS=OFF
 		-Donnxruntime_BUILD_NODEJS=OFF
 		-Donnxruntime_BUILD_OBJC=OFF
-		-Donnxruntime_BUILD_SHARED_LIB=ON
+
+# Fixes:
+# CMake Error: install(EXPORT "onnxruntimeTargets" ...) includes target "onnxruntime" which requires target "absl_log_internal_message" that is not in any export set.
+# ...
+# CMake Error: install(EXPORT "onnxruntimeTargets" ...) includes target "onnxruntime" which requires target "nsync_cpp" that is not in any export set.
+		-Donnxruntime_BUILD_SHARED_LIB=OFF
+
 		-Donnxruntime_BUILD_UNIT_TESTS=$(usex test)
 		-Donnxruntime_BUILD_WEBASSEMBLY_STATIC_LIB=OFF
 		-Donnxruntime_CROSS_COMPILING=$(tc-is-cross-compiler && echo ON || echo OFF)
-		-Donnxruntime_DISABLE_ABSEIL=ON
+		-Donnxruntime_DISABLE_ABSEIL=$(usex !abseil-cpp)
 		-Donnxruntime_DISABLE_CONTRIB_OPS=ON
 		-Donnxruntime_DISABLE_EXCEPTIONS=$(usex !debug)
 		-Donnxruntime_DISABLE_ML_OPS=ON
@@ -679,7 +941,7 @@ src_configure() {
 		-Donnxruntime_ENABLE_NVTX_PROFILE=OFF
 		-Donnxruntime_ENABLE_PYTHON=$(usex python)
 		-Donnxruntime_ENABLE_ROCM_PROFILING=OFF
-		-Donnxruntime_ENABLE_TRAINING=OFF
+		-Donnxruntime_ENABLE_TRAINING=$(usex training)
 		-Donnxruntime_ENABLE_TRAINING_OPS=OFF
 		-Donnxruntime_ENABLE_TRAINING_APIS=OFF
 		-Donnxruntime_ENABLE_WEBASSEMBLY_API_EXCEPTION_CATCHING=OFF
@@ -720,22 +982,13 @@ src_configure() {
 		-Donnxruntime_USE_NEURAL_SPEED=$(usex neural-speed)
 		-Donnxruntime_USE_NNAPI_BUILTIN=OFF
 		-Donnxruntime_USE_OPENVINO=$(usex openvino)
-		-Donnxruntime_USE_OPENVINO_AUTO=$(usex openvino-auto)
-		-Donnxruntime_USE_OPENVINO_CPU=$(usex openvino_targets_cpu)
-		-Donnxruntime_USE_OPENVINO_CPU_NP=$(usex openvino_targets_cpu_np)
-		-Donnxruntime_USE_OPENVINO_GPU=$(usex openvino_targets_gpu)
-		-Donnxruntime_USE_OPENVINO_GPU_NP=$(usex openvino_targets_gpu_np)
-		-Donnxruntime_USE_OPENVINO_HETERO=$(usex openvino-hetero)
-		-Donnxruntime_USE_OPENVINO_MULTI=$(usex openvino-multi)
-		-Donnxruntime_USE_OPENVINO_NPU=$(usex openvino_targets_npu)
-		-Donnxruntime_USE_OPENVINO_NPU_NP=$(usex openvino_targets_npu_np)
-		-Donnxruntime_USE_PREINSTALLED_EIGEN=ON
+		-Donnxruntime_USE_PREINSTALLED_EIGEN=$(usex system-eigen)
 		-Donnxruntime_USE_RKNPU=OFF
 		-Donnxruntime_USE_ROCM=$(usex rocm)
 		-Donnxruntime_USE_TELEMETRY=OFF
 		-Donnxruntime_USE_TENSORRT=$(usex tensorrt)
 		-Donnxruntime_USE_TENSORRT_BUILTIN_PARSER=$(usex !tensorrt-oss-parser)
-		-Donnxruntime_USE_TVM=OFF
+		-Donnxruntime_USE_TVM=$(usex tvm)
 		-Donnxruntime_USE_VITISAI=OFF
 		-Donnxruntime_USE_WINML=OFF
 		-Donnxruntime_USE_XNNPACK=$(usex xnnpack)
@@ -745,7 +998,21 @@ src_configure() {
 
 	if use abseil-cpp ; then
 		mycmakeargs+=(
-			-Dabseil_cpp_SOURCE_PATH="${S}/cmake/_deps/abseil_cpp-src"
+			-DFETCHCONTENT_SOURCE_DIR_ABSEIL_CPP="${S}/cmake/external/abseil_cpp"
+		)
+	fi
+
+	if use benchmark ; then
+		mycmakeargs+=(
+			-DFETCHCONTENT_SOURCE_DIR_GOOGLE_BENCHMARK="${S}/cmake/external/google_benchmark" # For onnxruntime_external_deps.cmake
+			-DFETCHCONTENT_SOURCE_DIR_GOOGLEBENCHMARK="${S}/cmake/external/flatbuffers/third_party/googlebenchmark" # flatbuffers
+			-DFETCHCONTENT_SOURCE_DIR_BENCHMARK="${S}/cmake/external/google_benchmark" # json
+		)
+	fi
+
+	if use composable-kernel ; then
+		mycmakeargs+=(
+			-DFETCHCONTENT_SOURCE_DIR_COMPOSABLE_KERNEL="${S}/cmake/external/composable_kernel"
 		)
 	fi
 
@@ -760,8 +1027,9 @@ src_configure() {
 			-DCMAKE_CUDA_FLAGS="-forward-unknown-opts -fno-lto ${NVCCFLAGS}"
 			-DCMAKE_CUDA_STANDARD_REQUIRED=ON
 			-DCMAKE_CXX_STANDARD_REQUIRED=ON
-			-Donnxruntime_CUDA_HOME=/opt/cuda
-			-Donnxruntime_CUDNN_HOME=/usr
+			-DFETCHCONTENT_SOURCE_DIR_CUTLASS="${S}/cmake/external/cutlass"
+			-Donnxruntime_CUDA_HOME="/opt/cuda"
+			-Donnxruntime_CUDNN_HOME="/usr"
 			-Donnxruntime_ENABLE_CUDA_LINE_NUMBER_INFO=OFF
 			-Donnxruntime_ENABLE_CUDA_PROFILING=OFF
 			-Donnxruntime_NVCC_THREADS=1
@@ -770,21 +1038,51 @@ src_configure() {
 		)
 	fi
 
+	if use system-eigen ; then
+		mycmakeargs+=(
+			-Deigen_SOURCE_PATH="/usr/include/eigen3"
+		)
+	else
+		mycmakeargs+=(
+			-DFETCHCONTENT_SOURCE_DIR_EIGEN="${S}/cmake/external/eigen"
+		)
+	fi
+
 	if use extensions ; then
 		mycmakeargs+=(
-			-Dextensions_SOURCE_PATH="${S}/cmake/external/extensions"
+			-DFETCHCONTENT_SOURCE_DIR_EXTENSIONS="${S}/cmake/external/extensions"
 		)
 	fi
 
 	if use mimalloc ; then
 		mycmakeargs+=(
-			-Dmimalloc_SOURCE_PATH="${S}/cmake/external/mimalloc"
+			-DFETCHCONTENT_SOURCE_DIR_MIMALLOC="${S}/cmake/external/mimalloc"
 		)
 	fi
 
 	if use neural-speed ; then
 		mycmakeargs+=(
-			-Dneural_speed_SOURCE_PATH="${S}/cmake/external/neural-speed"
+			-DFETCHCONTENT_SOURCE_DIR_NEURAL_SPEED="${S}/cmake/external/neural-speed"
+		)
+	fi
+
+	if use openvino ; then
+		mycmakeargs+=(
+			-Donnxruntime_USE_OPENVINO_AUTO=$(usex openvino-auto)
+			-Donnxruntime_USE_OPENVINO_CPU=$(usex openvino_targets_cpu)
+			-Donnxruntime_USE_OPENVINO_CPU_NP=$(usex openvino_targets_cpu_np)
+			-Donnxruntime_USE_OPENVINO_GPU=$(usex openvino_targets_gpu)
+			-Donnxruntime_USE_OPENVINO_GPU_NP=$(usex openvino_targets_gpu_np)
+			-Donnxruntime_USE_OPENVINO_HETERO=$(usex openvino-hetero)
+			-Donnxruntime_USE_OPENVINO_MULTI=$(usex openvino-multi)
+			-Donnxruntime_USE_OPENVINO_NPU=$(usex openvino_targets_npu)
+			-Donnxruntime_USE_OPENVINO_NPU_NP=$(usex openvino_targets_npu_np)
+		)
+	fi
+
+	if use python ; then
+		mycmakeargs+=(
+			-DFETCHCONTENT_SOURCE_DIR_PYBIND11="${S}/cmake/external/pybind11"
 		)
 	fi
 
@@ -808,11 +1106,47 @@ src_configure() {
 		fi
 	fi
 
+	if use training ; then
+		mycmakeargs+=(
+			-DFETCHCONTENT_SOURCE_DIR_TENSORBOARD="${S}/cmake/external/tensorboard"
+		)
+	fi
+
 	if use tensorrt-oss-parser ; then
 		mycmakeargs+=(
+			-DFETCHCONTENT_SOURCE_DIR_ONNX_TENSORRT="${S}/cmake/external/onnx_tensorrt"
 			-Donnx_tensorrt_SOURCE_PATH="${S}/cmake/external/onnx-tensorrt"
 		)
 	fi
+
+	if use test ; then
+		mycmakeargs+=(
+			-DFETCHCONTENT_SOURCE_DIR_GOOGLETEST="${S}/cmake/external/googletest" # For onnxruntime_external_deps.cmake and onnx
+		)
+	fi
+
+	if use test || use training ; then
+		mycmakeargs+=(
+			-DFETCHCONTENT_SOURCE_DIR_CXXOPTS="${S}/cmake/external/flatbuffers/third_party/cxxopts"
+		)
+	fi
+
+	if use tvm ; then
+		mycmakeargs+=(
+			-DFETCHCONTENT_SOURCE_DIR_TVM="${S}/cmake/external/tvm"
+		)
+	fi
+
+	if use xnnpack ; then
+		mycmakeargs+=(
+			-DFETCHCONTENT_SOURCE_DIR_FP16="${S}/cmake/external/fp16"
+			-DFETCHCONTENT_SOURCE_DIR_FXDIV="${S}/cmake/external/fxdiv"
+			-DFETCHCONTENT_SOURCE_DIR_GOOGLEXNNPACK="${S}/cmake/external/googlexnnpack"
+			-DFETCHCONTENT_SOURCE_DIR_PSIMD="${S}/cmake/external/psimd"
+			-DFETCHCONTENT_SOURCE_DIR_PTHREADPOOL="${S}/cmake/external/pthreadpool"
+		)
+	fi
+
 
 	if use rocm ; then
 		rocm_src_configure

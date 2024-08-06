@@ -12,18 +12,33 @@
     <bugs-to>https://github.com/microsoft/onnxruntime/issues</bugs-to>
   </upstream>
   <use>
-    <flag name="benchmarks">
+    <flag name="abseil-cpp">
+      Use abseil-cpp to reduce memory allocations.
+    </flag>
+    <flag name="benchmark">
       Build microbenchmarks
+    </flag>
+    <flag name="cpu">
+      Use the default execution provider.
     </flag>
     <flag name="cudnn">
       Add support for GPU accelerated deep neural network primitives for
       NVIDIA® GPUs.
     </flag>
+    <flag name="extensions">
+      Add support for custom operations.
+    </flag>
     <flag name="composable-kernel">
       Enable use of the composable-kernel library.
     </flag>
-    <flag name="triton">
-      Enable GPU kernels written in Triton language.
+    <flag name="javascript">
+      Add JavaScript Node.js® bindings.
+    </flag>
+    <flag name="llvm">
+      Build TVM with LLVM.
+    </flag>
+    <flag name="lto">
+      Enable Link Time Optimization
     </flag>
     <flag name="migraphx">
       Build with GPU accelerated inference for AMD GPUs.
@@ -62,6 +77,12 @@
     <flag name="openvino_targets_npu_np">
       Add support for Intel® NPUs for OpenVINO™ support with no graph partitioning.
     </flag>
+    <flag name="quant">
+      Add support for model compression for the quantization tool.
+    </flag>
+    <flag name="rocm">
+      Add support for AMD GPUs.
+    </flag>
     <flag name="tensorrt">
       Run inference on NVIDIA® GPUs.
     </flag>
@@ -69,6 +90,21 @@
       Use the open sourced TensorRT static-library parser package for faster
       parser updates instead of the builtin shared library in the TensorRT
       package.
+    </flag>
+    <flag name="training">
+      Enable full training
+    </flag>
+    <flag name="training-ort">
+      Enable ORT [ONNX Runtime Training] APIs.
+    </flag>
+    <flag name="triton">
+      Enable GPU kernels written in Triton language.
+    </flag>
+    <flag name="tvm">
+      Build support for the TVM compiler for use in optimizing models.
+    </flag>
+    <flag name="system-eigen">
+      Use the system's eigen package instead.
     </flag>
     <flag name="xnnpack">
       Build support for CPU accelerated inference primitives.
