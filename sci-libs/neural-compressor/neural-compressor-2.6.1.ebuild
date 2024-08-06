@@ -25,13 +25,13 @@ EAPI=8
 
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
-DISTUTILS_USE_PEP517="pdm-backend"
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # U22 uses 3.10 but PyTorch is 3.12 inclusive.
 
 inherit distutils-r1
 
 KEYWORDS="~amd64"
-S="${WORKDIR}/pytorch-image-models-${PV}"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/intel/neural-compressor/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
