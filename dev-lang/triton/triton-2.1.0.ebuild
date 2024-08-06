@@ -140,6 +140,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-2.1.0-dynlib.patch"
+	"${FILESDIR}/${PN}-2.1.0-llvm-static-linking.patch"
 )
 
 pkg_setup() {
@@ -231,6 +232,7 @@ einfo "PATH:  ${PATH}"
 
 	local mycmakeargs=(
 		-DLLVM_ROOT_DIR="${llvm_root_dir}"
+		-DLLVM_STATIC_LINKING=OFF
 	)
 
 	if use rocm ; then

@@ -7,8 +7,8 @@ diff '--color=auto' -urp triton-2.1.0.orig/CMakeLists.txt triton-2.1.0/CMakeList
  option(TRITON_BUILD_PYTHON_MODULE "Build Python Triton bindings" OFF)
 +option(LLVM_DYNLIB "Build with LLVM DYNLIB" ON)
 +option(MLIR_DYNLIB "Build with MLIR DYNLIB" OFF)
-+message(STATUS "LLVM_DYNLIB=${LLVM_DYNLIB}")
-+message(STATUS "MLIR_DYNLIB=${MLIR_DYNLIB}")
++message(STATUS "LLVM_DYNLIB:  ${LLVM_DYNLIB}")
++message(STATUS "MLIR_DYNLIB:  ${MLIR_DYNLIB}")
  set(TRITON_CODEGEN_BACKENDS "" CACHE STRING "Enable different codegen backends")
  
  # Ensure Python3 vars are set correctly
@@ -142,7 +142,7 @@ diff '--color=auto' -urp triton-2.1.0.orig/CMakeLists.txt triton-2.1.0/CMakeList
 +  if(MLIR_DYNLIB)
 +    message(FATAL_ERROR "MLIR DYNLIB ON is not supported")
 +  else()
-+    set(MLIR_LIBRARIES
++    set(MLIR_LIBS
 +      MLIRBytecodeWriter
 +      MLIRPass
 +      MLIRTransforms
@@ -174,7 +174,7 @@ diff '--color=auto' -urp triton-2.1.0.orig/CMakeLists.txt triton-2.1.0/CMakeList
 -    MLIRNVVMToLLVMIRTranslation
 -    MLIRROCDLToLLVMIRTranslation
 -    MLIRIR
-+    ${MLIR_LIBRARIES}
++    ${MLIR_LIBS}
    )
  
    if(WIN32)
@@ -187,8 +187,8 @@ diff '--color=auto' -urp triton-2.1.0.orig/bin/CMakeLists.txt triton-2.1.0/bin/C
  
 +option(LLVM_DYNLIB "Build with LLVM DYNLIB" ON)
 +option(MLIR_DYNLIB "Build with MLIR DYNLIB" OFF)
-+message(STATUS "LLVM_DYNLIB=${LLVM_DYNLIB}")
-+message(STATUS "MLIR_DYNLIB=${MLIR_DYNLIB}")
++message(STATUS "LLVM_DYNLIB:  ${LLVM_DYNLIB}")
++message(STATUS "MLIR_DYNLIB:  ${MLIR_DYNLIB}")
  
  add_llvm_executable(triton-translate triton-translate.cpp PARTIAL_SOURCES_INTENDED)
  llvm_update_compile_flags(triton-translate)
@@ -205,7 +205,7 @@ diff '--color=auto' -urp triton-2.1.0.orig/bin/CMakeLists.txt triton-2.1.0/bin/C
 +     LLVMAsmParser
 +   )
 + endif()
-+ if(LLVM_DYNLIB)
++ if(MLIR_DYNLIB)
 +   message(FATAL_ERROR "MLIR DYNLIB ON is not supported")
 + else()
 +   set(MLIR_LIBS
