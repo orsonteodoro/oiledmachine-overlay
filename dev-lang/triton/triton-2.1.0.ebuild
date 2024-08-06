@@ -84,7 +84,8 @@ gen_llvm_triton_rdepend() {
 	for u in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${u}? (
-				sys-devel/llvm-triton:${u}
+				sys-devel/llvm:${u}
+				sys-devel/mlir:${u}
 			)
 		"
 	done
@@ -95,37 +96,37 @@ RDEPEND+="
 	)
 	rocm? (
 		rocm_6_1? (
-			sys-devel/llvm-roc:6.1
+			sys-devel/llvm-roc:6.1[mlir]
 		)
 		rocm_6_0? (
-			sys-devel/llvm-roc:6.0
+			sys-devel/llvm-roc:6.0[mlir]
 		)
 		rocm_5_7? (
-			sys-devel/llvm-roc:5.7
+			sys-devel/llvm-roc:5.7[mlir]
 		)
 		rocm_5_6? (
-			sys-devel/llvm-roc:5.6
+			sys-devel/llvm-roc:5.6[mlir]
 		)
 		rocm_5_5? (
-			sys-devel/llvm-roc:5.5
+			sys-devel/llvm-roc:5.5[mlir]
 		)
 		rocm_5_4? (
-			sys-devel/llvm-roc:5.4
+			sys-devel/llvm-roc:5.4[mlir]
 		)
 		rocm_5_3? (
-			sys-devel/llvm-roc:5.3
+			sys-devel/llvm-roc:5.3[mlir]
 		)
 		rocm_5_2? (
-			sys-devel/llvm-roc:5.2
+			sys-devel/llvm-roc:5.2[mlir]
 		)
 		rocm_5_1? (
-			sys-devel/llvm-roc:5.1
+			sys-devel/llvm-roc:5.1[mlir]
 		)
 		rocm_4_5? (
-			sys-devel/llvm-roc:4.5
+			sys-devel/llvm-roc:4.5[mlir]
 		)
 		rocm_4_1? (
-			sys-devel/llvm-roc:4.1
+			sys-devel/llvm-roc:4.1[mlir]
 		)
 	)
 "
@@ -139,6 +140,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-2.1.0-find-llvm.patch"
+	"${FILESDIR}/${PN}-2.1.0-dynlib.patch"
 )
 
 pkg_setup() {
@@ -162,6 +164,7 @@ src_prepare() {
 }
 
 src_configure() {
+	local dynlib=0
 	local llvm_root_dir
 	if use rocm_6_1 && has_version "~sys-devel/llvm-roc-6.1.2" ; then
 		llvm_root_dir="/opt/rocm-6.1.2/llvm"
@@ -185,28 +188,39 @@ src_configure() {
 		llvm_root_dir="/opt/rocm-4.5.2/llvm"
 	elif use rocm_4_1 && has_version "~sys-devel/llvm-roc-4.1.0" ; then
 		llvm_root_dir="/opt/rocm-4.1.0/llvm"
-	elif use llvm_slot_17 && has_version "sys-devel/llvm-triton:17" ; then
+	elif use llvm_slot_17 && has_version "sys-devel/llvm:17" && has_version "sys-devel/mlir:17" ; then
 		llvm_root_dir="/usr/lib/llvm/17"
-	elif use llvm_slot_16 && has_version "sys-devel/llvm-triton:16" ; then
+		dynlib=1
+	elif use llvm_slot_16 && has_version "sys-devel/llvm:16" && has_version "sys-devel/mlir:16" ; then
 		llvm_root_dir="/usr/lib/llvm/16"
-	elif use llvm_slot_15 && has_version "sys-devel/llvm-triton:15" ; then
+		dynlib=1
+	elif use llvm_slot_15 && has_version "sys-devel/llvm:15" && has_version "sys-devel/mlir:15"; then
 		llvm_root_dir="/usr/lib/llvm/15"
-	elif use llvm_slot_14 && has_version "sys-devel/llvm-triton:14" ; then
+		dynlib=1
+	elif use llvm_slot_14 && has_version "sys-devel/llvm:14" && has_version "sys-devel/mlir:14"; then
 		llvm_root_dir="/usr/lib/llvm/14"
-	elif use llvm_slot_13 && has_version "sys-devel/llvm-triton:13" ; then
+		dynlib=1
+	elif use llvm_slot_13 && has_version "sys-devel/llvm:13" && has_version "sys-devel/mlir:13"; then
 		llvm_root_dir="/usr/lib/llvm/13"
-	elif use llvm_slot_12 && has_version "sys-devel/llvm-triton:12" ; then
+		dynlib=1
+	elif use llvm_slot_12 && has_version "sys-devel/llvm:12" && has_version "sys-devel/mlir:12"; then
 		llvm_root_dir="/usr/lib/llvm/12"
-	elif use llvm_slot_11 && has_version "sys-devel/llvm-triton:11" ; then
+		dynlib=1
+	elif use llvm_slot_11 && has_version "sys-devel/llvm:11" && has_version "sys-devel/mlir:11"; then
 		llvm_root_dir="/usr/lib/llvm/11"
-	elif use llvm_slot_10 && has_version "sys-devel/llvm-triton:10" ; then
+		dynlib=1
+	elif use llvm_slot_10 && has_version "sys-devel/llvm:10" && has_version "sys-devel/mlir:10" ; then
 		llvm_root_dir="/usr/lib/llvm/10"
-	elif use llvm_slot_9 && has_version "sys-devel/llvm-triton:9" ; then
+		dynlib=1
+	elif use llvm_slot_9 && has_version "sys-devel/llvm:9" && has_version "sys-devel/mlir:9" ; then
 		llvm_root_dir="/usr/lib/llvm/9"
-	elif use llvm_slot_8 && has_version "sys-devel/llvm-triton:8" ; then
+	elif use llvm_slot_8 && has_version "sys-devel/llvm:8" && has_version "sys-devel/mlir:8" ; then
 		llvm_root_dir="/usr/lib/llvm/8"
-	elif use llvm_slot_7 && has_version "sys-devel/llvm-triton:7" ; then
+	elif use llvm_slot_7 && has_version "sys-devel/llvm:7" && has_version "sys-devel/mlir:7" ; then
 		llvm_root_dir="/usr/lib/llvm/7"
+	else
+eerror "Cannot find an LLVM installation."
+		die
 	fi
 
 	export PATH=$(echo "${PATH}" \
@@ -222,10 +236,30 @@ einfo "PATH:  ${PATH}"
 
 	if use rocm ; then
 # FIXME:  still tries to find static lib
+		# For sys-devel/llvm-roc
 		mycmakeargs+=(
 			-DLLVM_SHARED_MODE="shared"
 			-DLLVM_IS_SHARED=ON
+			-DLLVM_DYNLIB=OFF
+			-DMLIR_DYNLIB_OFF
 		)
+	else
+		# For sys-devel/llvm and sys-devel/mlir
+		if (( ${dynlib} == 1 )) ; then
+			mycmakeargs+=(
+				-DLLVM_SHARED_MODE="shared"
+				-DLLVM_IS_SHARED=ON
+				-DLLVM_DYNLIB=ON
+				-DMLIR_DYNLIB_OFF
+			)
+		else
+			mycmakeargs+=(
+				-DLLVM_SHARED_MODE="shared"
+				-DLLVM_IS_SHARED=ON
+				-DLLVM_DYNLIB=OFF
+				-DMLIR_DYNLIB_OFF
+			)
+		fi
 	fi
 
 	cmake_src_configure

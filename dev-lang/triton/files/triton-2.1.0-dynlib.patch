@@ -1,0 +1,251 @@
+diff '--color=auto' -urp triton-2.1.0.orig/CMakeLists.txt triton-2.1.0/CMakeLists.txt
+--- triton-2.1.0.orig/CMakeLists.txt	2024-08-06 14:34:25.460218021 -0700
++++ triton-2.1.0/CMakeLists.txt	2024-08-06 14:50:13.552316045 -0700
+@@ -22,6 +22,8 @@ endif()
+ # Options
+ option(TRITON_BUILD_TUTORIALS "Build C++ Triton tutorials" ON)
+ option(TRITON_BUILD_PYTHON_MODULE "Build Python Triton bindings" OFF)
++option(LLVM_DYNLIB "Build with LLVM DYNLIB" ON)
++option(MLIR_DYNLIB "Build with MLIR DYNLIB" OFF)
+ set(TRITON_CODEGEN_BACKENDS "" CACHE STRING "Enable different codegen backends")
+ 
+ # Ensure Python3 vars are set correctly
+@@ -85,61 +87,67 @@ if(NOT MLIR_DIR)
+   # sometimes we don't want to use llvm-config, since it may have been downloaded for some specific linux distros
+   else()
+     set(LLVM_LDFLAGS "-L${LLVM_LIBRARY_DIR}")
+-    set(LLVM_LIBRARIES
+-      LLVMNVPTXCodeGen
+-      LLVMNVPTXDesc
+-      LLVMNVPTXInfo
+-      LLVMAMDGPUDisassembler
+-      LLVMMCDisassembler
+-      LLVMAMDGPUCodeGen
+-      LLVMMIRParser
+-      LLVMGlobalISel
+-      LLVMSelectionDAG
+-      LLVMipo
+-      LLVMInstrumentation
+-      LLVMVectorize
+-      LLVMLinker
+-      LLVMIRReader
+-      LLVMAsmParser
+-      LLVMFrontendOpenMP
+-      LLVMAsmPrinter
+-      LLVMDebugInfoDWARF
+-      LLVMCodeGen
+-      LLVMTarget
+-      LLVMScalarOpts
+-      LLVMInstCombine
+-      LLVMAggressiveInstCombine
+-      LLVMTransformUtils
+-      LLVMBitWriter
+-      LLVMAnalysis
+-      LLVMProfileData
+-      LLVMObject
+-      LLVMTextAPI
+-      LLVMBitReader
+-      LLVMAMDGPUAsmParser
+-      LLVMMCParser
+-      LLVMAMDGPUDesc
+-      LLVMAMDGPUUtils
+-      LLVMMC
+-      LLVMDebugInfoCodeView
+-      LLVMDebugInfoMSF
+-      LLVMCore
+-      LLVMRemarks
+-      LLVMBitstreamReader
+-      LLVMBinaryFormat
+-      LLVMAMDGPUInfo
+-      LLVMSupport
+-      LLVMDemangle
+-      LLVMPasses
+-      LLVMAnalysis
+-      LLVMTransformUtils
+-      LLVMScalarOpts
+-      LLVMTransformUtils
+-      LLVMipo
+-      LLVMObjCARCOpts
+-      LLVMCoroutines
+-      LLVMAnalysis
+-    )
++    if(LLVM_DYNLIB)
++      set(LLVM_LIBRARIES
++        LLVM
++      )
++    else()
++      set(LLVM_LIBRARIES
++        LLVMNVPTXCodeGen
++        LLVMNVPTXDesc
++        LLVMNVPTXInfo
++        LLVMAMDGPUDisassembler
++        LLVMMCDisassembler
++        LLVMAMDGPUCodeGen
++        LLVMMIRParser
++        LLVMGlobalISel
++        LLVMSelectionDAG
++        LLVMipo
++        LLVMInstrumentation
++        LLVMVectorize
++        LLVMLinker
++        LLVMIRReader
++        LLVMAsmParser
++        LLVMFrontendOpenMP
++        LLVMAsmPrinter
++        LLVMDebugInfoDWARF
++        LLVMCodeGen
++        LLVMTarget
++        LLVMScalarOpts
++        LLVMInstCombine
++        LLVMAggressiveInstCombine
++        LLVMTransformUtils
++        LLVMBitWriter
++        LLVMAnalysis
++        LLVMProfileData
++        LLVMObject
++        LLVMTextAPI
++        LLVMBitReader
++        LLVMAMDGPUAsmParser
++        LLVMMCParser
++        LLVMAMDGPUDesc
++        LLVMAMDGPUUtils
++        LLVMMC
++        LLVMDebugInfoCodeView
++        LLVMDebugInfoMSF
++        LLVMCore
++        LLVMRemarks
++        LLVMBitstreamReader
++        LLVMBinaryFormat
++        LLVMAMDGPUInfo
++        LLVMSupport
++        LLVMDemangle
++        LLVMPasses
++        LLVMAnalysis
++        LLVMTransformUtils
++        LLVMScalarOpts
++        LLVMTransformUtils
++        LLVMipo
++        LLVMObjCARCOpts
++        LLVMCoroutines
++        LLVMAnalysis
++      )
++    endif()
+   endif()
+ 
+   set(MLIR_DIR ${LLVM_LIBRARY_DIR}/cmake/mlir)
+@@ -205,6 +213,23 @@ get_property(conversion_libs GLOBAL PROP
+ 
+ if(TRITON_BUILD_PYTHON_MODULE)
+   add_library(triton SHARED ${PYTHON_SRC})
++  if(MLIR_DYNLIB)
++    message(FATAL_ERROR "MLIR DYNLIB ON is not supported")
++  else()
++    set(MLIR_LIBRARIES
++      MLIRBytecodeWriter
++      MLIRPass
++      MLIRTransforms
++      MLIRLLVMDialect
++      MLIRSupport
++      MLIRTargetLLVMIRExport
++      MLIRExecutionEngine
++      MLIRMathToLLVM
++      MLIRNVVMToLLVMIRTranslation
++      MLIRROCDLToLLVMIRTranslation
++      MLIRIR
++    )
++  endif()
+   set(TRITON_LIBRARIES
+     TritonAnalysis
+     TritonTransforms
+@@ -216,17 +241,7 @@ if(TRITON_BUILD_PYTHON_MODULE)
+     ${conversion_libs}
+ 
+     # optimizations
+-    MLIRBytecodeWriter
+-    MLIRPass
+-    MLIRTransforms
+-    MLIRLLVMDialect
+-    MLIRSupport
+-    MLIRTargetLLVMIRExport
+-    MLIRExecutionEngine
+-    MLIRMathToLLVM
+-    MLIRNVVMToLLVMIRTranslation
+-    MLIRROCDLToLLVMIRTranslation
+-    MLIRIR
++    ${MLIR_LIBRARIES}
+   )
+ 
+   if(WIN32)
+diff '--color=auto' -urp triton-2.1.0.orig/bin/CMakeLists.txt triton-2.1.0/bin/CMakeLists.txt
+--- triton-2.1.0.orig/bin/CMakeLists.txt	2024-08-06 14:34:25.404218962 -0700
++++ triton-2.1.0/bin/CMakeLists.txt	2024-08-06 14:50:12.320338751 -0700
+@@ -41,9 +41,42 @@ target_link_libraries(triton-reduce PRIV
+ 
+ mlir_check_all_link_libraries(triton-reduce)
+ 
++option(LLVM_DYNLIB "Build with LLVM DYNLIB" ON)
++option(MLIR_DYNLIB "Build with MLIR DYNLIB" OFF)
+ 
+ add_llvm_executable(triton-translate triton-translate.cpp PARTIAL_SOURCES_INTENDED)
+ llvm_update_compile_flags(triton-translate)
++ if(LLVM_DYNLIB)
++   set(LLVM_LIBRARIES
++     LLVM
++   )
++ else()
++   set(LLVM_LIBRARIES
++     LLVMCore
++     LLVMSupport
++     LLVMOption
++     LLVMCodeGen
++     LLVMAsmParser
++   )
++ endif()
++ if(LLVM_DYNLIB)
++   message(FATAL_ERROR "MLIR DYNLIB ON is not supported")
++ else()
++   set(MLIR_LIBRARIES
++     MLIROptLib
++     MLIRIR
++     MLIRLLVMDialect
++     MLIRPass
++     MLIRSupport
++     MLIRTransforms
++     MLIRExecutionEngine
++     MLIRMathToLLVM
++     MLIRTransformUtils
++     MLIRLLVMToLLVMIRTranslation
++     MLIRNVVMToLLVMIRTranslation
++     MLIRROCDLToLLVMIRTranslation
++   )
++ endif()
+  target_link_libraries(triton-translate PRIVATE
+          TritonAnalysis
+          TritonTransforms
+@@ -56,24 +89,9 @@ llvm_update_compile_flags(triton-transla
+          # tests
+          TritonTestAnalysis
+ 
+-         LLVMCore
+-         LLVMSupport
+-         LLVMOption
+-         LLVMCodeGen
+-         LLVMAsmParser
++         ${LLVM_LIBRARIES}
+ 
+          # MLIR core
+-         MLIROptLib
+-         MLIRIR
+-         MLIRLLVMDialect
+-         MLIRPass
+-         MLIRSupport
+-         MLIRTransforms
+-         MLIRExecutionEngine
+-         MLIRMathToLLVM
+-         MLIRTransformUtils
+-         MLIRLLVMToLLVMIRTranslation
+-         MLIRNVVMToLLVMIRTranslation
+-         MLIRROCDLToLLVMIRTranslation
++         ${MLIR_LIBRARIES}
+          )
+ mlir_check_all_link_libraries(triton-translate)
