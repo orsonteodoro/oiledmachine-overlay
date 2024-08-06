@@ -207,7 +207,7 @@ https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_2}.tar.gz
 	)
 	cuda? (
 https://github.com/NVIDIA/cutlass/archive/refs/tags/v${CUTLASS_PV}.tar.gz
-	-> cutlas-${CUTLASS_PV}.tar.gz
+	-> cutlass-${CUTLASS_PV}.tar.gz
 	)
 	composable-kernel? (
 		!system-composable-kernel? (
@@ -789,19 +789,19 @@ src_unpack() {
 		dep_prepare_mv "${WORKDIR}/cxxopts-${CXXOPTS_COMMIT}" "${S}/cmake/external/cxxopts"
 	fi
 	if use tvm ; then
-		dep_prepare_mv "${WORKDIR}/cutlas-${CUTLASS_COMMIT}" "${S}/cmake/external/tvm/3rdparty/cutlass"
+		dep_prepare_mv "${WORKDIR}/cutlass-${CUTLASS_COMMIT}" "${S}/cmake/external/tvm/3rdparty/cutlass"
 		dep_prepare_mv "${WORKDIR}/dlpack-${DLPACK_COMMIT}" "${S}/cmake/external/tvm/3rdparty/dlpack"
 		dep_prepare_mv "${WORKDIR}/dmlc-core-${DMLC_CORE_COMMIT}" "${S}/cmake/external/tvm/3rdparty/dmlc-core"
 		dep_prepare_mv "${WORKDIR}/libbacktrace-${LIBBACKTRACE_COMMIT}" "${S}/cmake/external/tvm/3rdparty/libbacktrace"
 		dep_prepare_mv "${WORKDIR}/rang-${RANG_COMMIT}" "${S}/cmake/external/tvm/3rdparty/rang"
-		dep_prepare_mv "${WORKDIR}/vta-hw-${TVM_VTA_COMMIT}" "${S}/cmake/external/tvm/3rdparty/vta-hw"
+		dep_prepare_mv "${WORKDIR}/tvm-vta-${TVM_VTA_COMMIT}" "${S}/cmake/external/tvm/3rdparty/vta-hw"
 	fi
 	if use xnnpack ; then
-		dep_prepare_mv "${WORKDIR}/fp16-${FP16_COMMIT}" "${S}/cmake/external/fp16"
-		dep_prepare_mv "${WORKDIR}/fxdiv-${FXDIV_COMMIT}" "${S}/cmake/external/fxdiv"
+		dep_prepare_mv "${WORKDIR}/FP16-${FP16_COMMIT}" "${S}/cmake/external/fp16"
+		dep_prepare_mv "${WORKDIR}/FXdiv-${FXDIV_COMMIT}" "${S}/cmake/external/fxdiv"
 		dep_prepare_mv "${WORKDIR}/psimd-${PSIMD_COMMIT}" "${S}/cmake/external/psimd"
-		dep_prepare_mv "${WORKDIR}/xnnpack-${XNNPACK_COMMIT}" "${S}/cmake/external/googlexnnpack"
-		dep_prepare_mv "${WORKDIR}/pthreadpool-${XNNPACK_COMMIT}" "${S}/cmake/external/pthreadpool"
+		dep_prepare_mv "${WORKDIR}/XNNPACK-${XNNPACK_COMMIT}" "${S}/cmake/external/googlexnnpack"
+		dep_prepare_mv "${WORKDIR}/pthreadpool-${PTHREADPOOL_COMMIT}" "${S}/cmake/external/pthreadpool"
 	fi
 }
 
