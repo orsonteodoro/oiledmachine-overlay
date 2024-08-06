@@ -50,8 +50,8 @@ LICENSE="
 	)
 	Apache-2.0
 	BSD
-	MIT
 	GPL-3
+	MIT
 "
 # BSD - neural-compressor-2.6.1/neural_coder/extensions/neural_compressor_ext_lab/LICENSE
 # MIT - neural-compressor-2.6.1/neural_insights/web/app/static/js/main.b053b871.js.LICENSE.txt
