@@ -141,9 +141,6 @@ HOMEPAGE="
 	https://onnxruntime.ai
 	https://github.com/microsoft/onnxruntime
 "
-# TODO add gitmodules:
-# onnx
-
 SRC_URI="
 https://github.com/microsoft/${PN}/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -697,7 +694,6 @@ BDEPEND+="
 	)
 "
 _PATCHES=(
-# TODO reintroduce external composable-kernel and emscripten patch
 	"${FILESDIR}/${PN}-1.19.0-use-system-composable-kernel.patch"
 )
 
