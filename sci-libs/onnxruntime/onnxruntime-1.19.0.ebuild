@@ -274,7 +274,7 @@ https://github.com/Maratyszcza/psimd/archive/${PSMID_COMMIT}.tar.gz
 https://github.com/Maratyszcza/pthreadpool/archive/${PTHREADPOOL_COMMIT}.tar.gz
 	-> pthreadpool-${PTHREADPOOL_COMMIT:0:7}.tar.gz
 https://github.com/google/XNNPACK/archive/${XNNPACK_COMMIT}.tar.gz
-	-> xnnpack-${XNNPACK:0:7}.tar.gz
+	-> xnnpack-${XNNPACK_COMMIT:0:7}.tar.gz
 	)
 
 "
@@ -295,13 +295,16 @@ LICENSE="
 	CC-BY-3.0
 	CC-BY-4.0
 	CC-PD
+	CC0-1.0
 	custom
 	HPND
 	ISC
 	ISSL
 	JSON
+	LGPL-3+
 	MIT
 	MPL-2.0
+	Ms-PL
 	public-domain
 	Unlicense
 	UoI-NCSA
@@ -330,8 +333,12 @@ LICENSE="
 #	ZLIB
 # all-rights-reserved Apache-2.0 - onnxruntime/core/common/status.cc
 # CC-BY-3.0 CC-BY-4.0 - winml/test/collateral/images/LICENSE.md
+# CC0-1.0 MIT - cmake/external/json/doc/mkdocs/docs/home/license.md
 # custom - dockerfiles/LICENSE-IMAGE.txt
 # custom keywords:  The copyright holders provide no reassurances
+# LGPL-3+ MPL-2.0 cmake/external/eigen/scripts/relicense.py
+# Ms-PL - cmake/external/safeint/Archive/license/license.json
+# Unlicense - cmake/external/tvm/3rdparty/rang/LICENSE
 # The distro's Apache-2.0 license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror test" # Untested
