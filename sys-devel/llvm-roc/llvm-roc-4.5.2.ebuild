@@ -97,7 +97,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
-profile +runtime cfi
+-mlir profile +runtime cfi
 ebuild-revision-19
 "
 REQUIRED_USE="
@@ -236,6 +236,9 @@ _src_configure() {
 	PROJECTS="llvm;clang;lld"
 	if use runtime ; then
 		PROJECTS+=";compiler-rt"
+	fi
+	if use mlir ; then
+		PROJECTS+=";mlir"
 	fi
 
 	local flag

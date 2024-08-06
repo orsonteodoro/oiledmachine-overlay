@@ -103,7 +103,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
-bolt -cuda_11_7 profile +runtime
+-bolt -mlir -cuda_11_7 profile +runtime
 ebuild-revision-19
 "
 REQUIRED_USE="
@@ -268,6 +268,9 @@ _src_configure() {
 	fi
 	if use bolt ; then
 		PROJECTS+=";bolt"
+	fi
+	if use mlir ; then
+		PROJECTS+=";mlir"
 	fi
 
 	local flag

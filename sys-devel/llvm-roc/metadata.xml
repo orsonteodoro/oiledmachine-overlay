@@ -102,7 +102,7 @@
       Add Control Flow Integrity support.
     </flag>
     <flag name="cuda_11_7">
-      Apply proposed patch for cuda 11.7 compatibility for HIPIFY.
+      Apply proposed patch for CUDA 11.7 compatibility for HIPIFY.
     </flag>
     <flag name="epgo">
       Build an optimized Clang toolchain using Profile Guided Optimization (PGO)
@@ -116,6 +116,9 @@
     </flag>
     <flag name="profile">
       Add profile support required by Clang PGO (Profile Guided Optimization).
+    </flag>
+    <flag name="mlir">
+      Build MLIR for support for the Triton programming language.
     </flag>
   </use>
 </pkgmetadata>
