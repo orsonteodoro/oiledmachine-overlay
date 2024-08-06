@@ -4,8 +4,11 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( "python3_"{10..12} )
+GOOGLETEST_PV="1.12.1"
 INTEL_XPU_BACKEND_COMMIT="0bcc485f82b34d49494bd0264bacc24a20aafb7a"
+PYTHON_COMPAT=( "python3_"{10..12} )
+SPIRV_HEADERS_COMMIT="cfbe4feef20c3c0628712c2792624f0221e378ac"
+SPIRV_TOOLS_COMMIT="25ad5e19f193429b737433d5f6151062ddbc1680"
 
 inherit dep-prepare cmake
 
@@ -25,6 +28,12 @@ https://github.com/triton-lang/triton/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 https://github.com/intel/intel-xpu-backend-for-triton/archive/${INTEL_XPU_BACKEND_COMMIT}.tar.gz
 	-> intel-xpu-backend-for-triton-${INTEL_XPU_BACKEND_COMMIT:0:7}.tar.gz
+https://github.com/google/googletest/archive/refs/tags/release-${GOOGLETEST_PV}.tar.gz
+	-> googletest-release-${GOOGLETEST_PV}.tar.gz
+https://github.com/KhronosGroup/SPIRV-Headers/archive/${SPIRV_HEADERS_COMMIT}.tar.gz
+	-> SPIRV-Headers-${SPIRV_HEADERS_COMMIT:0:7}.tar.gz
+https://github.com/KhronosGroup/SPIRV-Tools/archive/${SPIRV_TOOLS_COMMIT}.tar.gz
+	-> SPIRV-Tools-${SPIRV_TOOLS_COMMIT:0:7}.tar.gz
 	"
 fi
 
@@ -156,6 +165,9 @@ src_unpack() {
 	else
 		unpack ${A}
 		dep_prepare_mv "${WORKDIR}/intel-xpu-backend-for-triton-${INTEL_XPU_BACKEND_COMMIT}" "${S}/third_party/intel_xpu_backend"
+		dep_prepare_mv "${WORKDIR}/googletest-release-${GOOGLETEST_PV}" "${S}/third_party/googletest"
+		dep_prepare_mv "${WORKDIR}/SPIRV-Headers-${SPIRV_HEADERS_COMMIT}" "${S}/third_party/intel_xpu_backend/third_party/SPIRV-Headers"
+		dep_prepare_mv "${WORKDIR}/SPIRV-Tools-${SPIRV_TOOLS_COMMIT}" "${S}/third_party/intel_xpu_backend/third_party/SPIRV-Tools"
 	fi
 }
 
@@ -234,6 +246,18 @@ einfo "PATH:  ${PATH}"
 		-DLLVM_ROOT_DIR="${llvm_root_dir}"
 		-DLLVM_STATIC_LINKING=OFF
 	)
+
+	if ! [[ "${PV}" == *"9999" ]] ; then
+		mycmakeargs+=(
+			-DFETCHCONTENT_FULLY_DISCONNECTED=ON
+			-DFETCHCONTENT_QUIET=OFF
+			-DFETCHCONTENT_SOURCE_DIR_GOOGLETEST="${S}/third_party/googletest"
+			-DFETCHCONTENT_SOURCE_DIR_SPIRV_HEADERS="${S}/third_party/intel_xpu_backend/third_party/SPIRV-Headers"
+			-DFETCHCONTENT_SOURCE_DIR_SPIRV_TOOLS="${S}/third_party/intel_xpu_backend/third_party/SPIRV-Tools"
+			-DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=NEVER
+			-DGOOGLETEST_DIR="${S}/third_party/googletest"
+		)
+	fi
 
 	if use rocm ; then
 # FIXME:  still tries to find static lib
