@@ -7,8 +7,8 @@ EAPI=8
 # TODO package:
 # expecttest
 
-MY_PV="${PV/c/}"
-MY_P="${PN}-${MY_PV}-cpu"
+MY_PV="${PV/c/}+cpu"
+MY_P="${PN}-${MY_PV}"
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -29,7 +29,7 @@ https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT}.tar.gz
 	-> googletest-${GOOGLETEST_COMMIT:0:7}.tar.gz
 https://github.com/intel/ideep/archive/${IDEEP_COMMIT}.tar.gz
 	-> ideep-${IDEEP_COMMIT:0:7}.tar.gz
-https://github.com/intel/intel-extension-for-pytorch/archive/refs/tags/v${MY_PV}+cpu.tar.gz
+https://github.com/intel/intel-extension-for-pytorch/archive/refs/tags/v${MY_PV}.tar.gz
 	-> ${MY_P}.tar.gz
 https://github.com/libxsmm/libxsmm/archive/${LIBXSMM_COMMIT}.tar.gz
 	-> libxsmm-${LIBXSMM_COMMIT:0:7}.tar.gz
@@ -72,14 +72,12 @@ RDEPEND+="
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 	')
-	>=sci-libs/pytorch-2.3.0[${PYTHON_SINGLE_USEDEP}]
+	=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-build/cmake-3.13.0
-	dev-build/ninja
 	$(python_gen_cond_dep '
 		>=dev-python/wheel-0.36[${PYTHON_USEDEP}]
 		>=dev-python/setuptools-50.0[${PYTHON_USEDEP}]
@@ -88,6 +86,10 @@ BDEPEND+="
 			dev-python/hypothesis[${PYTHON_USEDEP}]
 		)
 	')
+	>=dev-build/cmake-3.13.0
+	>=sys-devel/gcc-12.3.0:12
+	>=sys-devel/llvm-16.0.6:16
+	dev-build/ninja
 "
 DOCS=( "README.md" )
 
