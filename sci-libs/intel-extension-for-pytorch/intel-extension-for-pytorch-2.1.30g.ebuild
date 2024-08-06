@@ -80,7 +80,7 @@ RDEPEND+="
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/pydantic[${PYTHON_USEDEP}]
 	')
-	sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+	>=sci-libs/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
