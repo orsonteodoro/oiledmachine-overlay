@@ -17,7 +17,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64" # Ebuild still in development.
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${P}"
 	SRC_URI="
 https://github.com/triton-lang/triton/archive/refs/tags/v${PV}.tar.gz
@@ -111,7 +111,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	ewarn "This ebuild is still in development"
 	:
 }
 
@@ -163,7 +162,6 @@ einfo "PATH:  ${PATH}"
 	)
 
 	if use rocm ; then
-# FIXME:  still tries to find static lib
 		# For sys-devel/llvm-roc
 		mycmakeargs+=(
 			-DLLVM_SHARED_MODE="shared"
