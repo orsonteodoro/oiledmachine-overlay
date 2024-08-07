@@ -36,8 +36,9 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-LLVM_COMPAT=( {13..12} ) # Build time failure with LLVM 14, LLVM 11 untested but offered by setup.py.
+LLVM_COMPAT=( {14..12} )
 ROCM_SLOTS=(
+	rocm_5_1
 	rocm_4_5
 	rocm_4_1
 )
@@ -116,6 +117,18 @@ gen_llvm_rdepend() {
 		"
 	done
 }
+#
+# For CUDA compatibility, see
+#
+#   https://github.com/llvm/llvm-project/blob/llvmorg-14.0.6/clang/include/clang/Basic/Cuda.h#L37
+#
+# CUDA SDK ebuilds:
+#
+#   10.0:  https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-10.0.130.ebuild?id=8abf2c93e0c63e966018d3192de7f5d958fc6b97
+#   11.0:  https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.0.3.ebuild?id=8abf2c93e0c63e966018d3192de7f5d958fc6b97
+#   11.2:  https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.2.2.ebuild?id=38b155fa1bf907617067c98eb4ba3a5d0790eb1a
+#   11.5:  https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.5.1-r1.ebuild?id=e51ca099bec28c5a27a7eb070e7c77a06790a30d
+#
 RDEPEND+="
 	!rocm? (
 		$(gen_llvm_rdepend)
@@ -139,6 +152,11 @@ RDEPEND+="
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11.2*
 				=dev-util/nvidia-cuda-toolkit-10.1*
+			)
+		)
+		llvm_slot_14? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-11.5*
 			)
 		)
 		dev-util/nvidia-cuda-toolkit:=
@@ -186,7 +204,9 @@ python_configure() {
 einfo "Called python_configure"
 	local dynlib=0
 	local llvm_root_dir
-	if use rocm_4_5 && has_version "~sys-devel/llvm-roc-4.5.2" ; then
+	if use rocm_5_1 && has_version "~sys-devel/llvm-roc-5.1.3" ; then
+		llvm_root_dir="/opt/rocm-5.1.3/llvm" # LLVM 14.0.0git
+	elif use rocm_4_5 && has_version "~sys-devel/llvm-roc-4.5.2" ; then
 		llvm_root_dir="/opt/rocm-4.5.2/llvm" # LLVM 13.0.0git
 	elif use rocm_4_1 && has_version "~sys-devel/llvm-roc-4.1.0" ; then
 		llvm_root_dir="/opt/rocm-4.1.0/llvm" # LLVM 12.0.0git
