@@ -1,0 +1,54 @@
+diff '--color=auto' -urp triton-764d4432cf422ea24f5e2942fa480270568be9bc.orig/python/setup.py triton-764d4432cf422ea24f5e2942fa480270568be9bc/python/setup.py
+--- triton-764d4432cf422ea24f5e2942fa480270568be9bc.orig/python/setup.py	2024-01-17 15:55:39.000000000 -0800
++++ triton-764d4432cf422ea24f5e2942fa480270568be9bc/python/setup.py	2024-08-07 15:54:11.302813016 -0700
+@@ -292,7 +292,46 @@ class CMakeBuild(build_ext):
+             "-DTRITON_BUILD_PYTHON_MODULE=ON", "-DPython3_EXECUTABLE:FILEPATH=" + sys.executable,
+             "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON", "-DPYTHON_INCLUDE_DIRS=" + python_include_dir,
+-            "-DTRITON_CODEGEN_BACKENDS=" + ';'.join([b.name for b in backends])
++            "-DTRITON_CODEGEN_BACKENDS=" + ';'.join([b.name for b in backends]),
++            
++            "-DLLVM_ROOT_DIR=" + os.environ['LLVM_ROOT_DIR'],
++            "-DLLVM_STATIC_LINKING=OFF",
++            "-DUSE_AMDGPU=" + os.environ['USE_AMDGPU'],
++            "-DUSE_NVPTX=" + os.environ['USE_NVPTX'],
++            "-DLLVM_STATIC=OFF",
+         ]
++        
++        if os.environ['OFFLINE_INSTALL']:
++            cmake_args += [
++                "-DFETCHCONTENT_FULLY_DISCONNECTED=ON",
++                "-DFETCHCONTENT_QUIET=OFF",
++                "-DFETCHCONTENT_SOURCE_DIR_GOOGLETEST=" + os.environ['FETCHCONTENT_GOOGLETEST_DIR'],
++                "-DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=NEVER",
++                "-DGOOGLETEST_DIR=" + os.environ['FETCHCONTENT_GOOGLETEST_DIR'],
++            ]
++        
++        if os.environ['USE_ROCM']:
++            cmake_args += [
++                "-DLLVM_SHARED_MODE=shared",
++                "-DLLVM_IS_SHARED=ON",
++                "-DLLVM_DYNLIB=OFF",
++                "-DMLIR_DYNLIB=OFF",
++            ]
++        else:
++            if os.environ['USE_DYNLIB']:
++                cmake_args += [
++                    "-DLLVM_SHARED_MODE=shared",
++                    "-DLLVM_IS_SHARED=ON",
++                    "-DLLVM_DYNLIB=ON",
++                    "-DMLIR_DYNLIB=OFF",
++                ]
++            else:
++                cmake_args += [
++                    "-DLLVM_SHARED_MODE=shared",
++                    "-DLLVM_IS_SHARED=ON",
++                    "-DLLVM_DYNLIB=OFF",
++                    "-DMLIR_DYNLIB=OFF",
++                ]
++        
+         if lit_dir is not None:
+             cmake_args.append("-DLLVM_EXTERNAL_LIT=" + lit_dir)
+         cmake_args.extend(thirdparty_cmake_args)
+Only in triton-764d4432cf422ea24f5e2942fa480270568be9bc/python: setup.py.orig
+Only in triton-764d4432cf422ea24f5e2942fa480270568be9bc/python: setup.py.rej
+Only in triton-764d4432cf422ea24f5e2942fa480270568be9bc.orig: triton-764d4432cf422ea24f5e2942fa480270568be9bc

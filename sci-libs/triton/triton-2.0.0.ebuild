@@ -4,7 +4,11 @@
 
 EAPI=8
 
+# Check pypi also for version update.
+
 DISTUTILS_EXT=1
+GOOGLETEST_PV="1.12.1"
+PYBIND11_PV="2.10.0"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit dep-prepare distutils-r1 flag-o-matic
@@ -13,7 +17,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/triton-lang/triton.git"
-	FALLBACK_COMMIT="da40a1e984bf57c4708daf603eb427442025f99b" # Aug 31, 2023
+	FALLBACK_COMMIT="bd5c2117f62c73a9e922d5e93353a39ab3ac269b" # Mar 2, 2023
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -23,6 +27,10 @@ else
 	SRC_URI="
 https://github.com/triton-lang/triton/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/google/googletest/archive/refs/tags/release-${GOOGLETEST_PV}.tar.gz
+	-> googletest-release-${GOOGLETEST_PV}.tar.gz
+https://github.com/pybind/pybind11/archive/refs/tags/v${PYBIND11_PV}.tar.gz
+	-> pybind11-${PYBIND11_PV}.tar.gz
 	"
 fi
 
@@ -64,7 +72,9 @@ gen_rocm_required_use() {
 }
 # You need a local copy of dev-util/nvidia-cuda-toolkit if you want to use
 # llvm_targets_NVPTX on llvm:14.
+# Upstream missing GPU init section for AMDGPU.
 REQUIRED_USE="
+	!rocm
 	!rocm? (
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -202,6 +212,7 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
+		dep_prepare_mv "${WORKDIR}/googletest-release-${GOOGLETEST_PV}" "${S}/third_party/googletest"
 	fi
 }
 

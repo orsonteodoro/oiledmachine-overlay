@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Check pypi also for version update.
+
 DISTUTILS_EXT=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 

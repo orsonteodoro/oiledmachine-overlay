@@ -1,0 +1,241 @@
+diff '--color=auto' -urp triton-764d4432cf422ea24f5e2942fa480270568be9bc.orig/CMakeLists.txt triton-764d4432cf422ea24f5e2942fa480270568be9bc/CMakeLists.txt
+--- triton-764d4432cf422ea24f5e2942fa480270568be9bc.orig/CMakeLists.txt	2024-01-17 15:55:39.000000000 -0800
++++ triton-764d4432cf422ea24f5e2942fa480270568be9bc/CMakeLists.txt	2024-08-07 15:47:00.138116177 -0700
+@@ -24,6 +24,10 @@ endif()
+ # Options
+ option(TRITON_BUILD_TUTORIALS "Build C++ Triton tutorials" ON)
+ option(TRITON_BUILD_PYTHON_MODULE "Build Python Triton bindings" OFF)
++option(LLVM_DYNLIB "Build with LLVM DYNLIB" ON)
++option(MLIR_DYNLIB "Build with MLIR DYNLIB" OFF)
++message(STATUS "LLVM_DYNLIB:  ${LLVM_DYNLIB}")
++message(STATUS "MLIR_DYNLIB:  ${MLIR_DYNLIB}")
+ set(TRITON_CODEGEN_BACKENDS "" CACHE STRING "Enable different codegen backends")
+ 
+ # Ensure Python3 vars are set correctly
+@@ -51,6 +55,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -D
+ include_directories(${PYBIND11_INCLUDE_DIR})
+ 
+ 
++option(USE_AMDGPU "Use AMDGPU?" ON)
++option(USE_NVPTX "Use AMDGPU?" ON)
+ 
+ # #########
+ # LLVM
+@@ -152,41 +158,70 @@ if(TRITON_BUILD_PYTHON_MODULE)
+ 
+   get_property(triton_libs GLOBAL PROPERTY TRITON_LIBS)
+   get_property(triton_plugins GLOBAL PROPERTY TRITON_PLUGINS)
++  if(LLVM_DYNLIB)
++    set(LLVM_LIBRARIES
++      LLVM
++    )
++  else()
++    if(USE_AMDGPU)
++      set(AMDGPU_LIBS
++        LLVMAMDGPUCodeGen
++        LLVMAMDGPUAsmParser
++      )
++    else
++      set(AMDGPU_LIBS "")
++    endif()
++    if(USE_NVPTX)
++      set(NVPTX_LIBS
++        LLVMNVPTXCodeGen
++        # LLVMNVPTXAsmPrinter
++      )
++    else()
++      set(NVPTX_LIBS "")
++    endif()
++    set(LLVM_LIBRARIES
++      LLVMPasses
++      LLVMX86CodeGen
++      LLVMX86AsmParser
++      ${AMDGPU_LIBS}
++      ${NVPTX_LIBS}
++    )
++  endif()
++  if(MLIR_DYNLIB)
++    message(FATAL_ERROR "MLIR DYNLIB ON is not supported")
++  else()
++    # MLIR targets are not optionalized in llvm upstream
++    set(MLIR_LIBS
++      MLIRAMDGPUDialect
++      MLIRNVVMDialect
++      MLIRNVVMToLLVMIRTranslation
++      MLIRGPUToNVVMTransforms
++      MLIRGPUToGPURuntimeTransforms
++      MLIRGPUTransforms
++      MLIRIR
++      MLIRControlFlowToLLVM
++      MLIRBytecodeWriter
++      MLIRPass
++      MLIRTransforms
++      MLIRLLVMDialect
++      MLIRSupport
++      MLIRTargetLLVMIRExport
++      MLIRMathToLLVM
++      MLIRROCDLToLLVMIRTranslation
++      MLIRGPUDialect
++      MLIRSCFToControlFlow
++      MLIRIndexToLLVM
++      MLIRGPUToROCDLTransforms
++    )
++  endif()
+   set(TRITON_LIBRARIES
+     ${triton_libs}
+     ${triton_plugins}
+ 
+     # mlir
+-    MLIRAMDGPUDialect
+-    MLIRNVVMDialect
+-    MLIRNVVMToLLVMIRTranslation
+-    MLIRGPUToNVVMTransforms
+-    MLIRGPUToGPURuntimeTransforms
+-    MLIRGPUTransforms
+-    MLIRIR
+-    MLIRControlFlowToLLVM
+-    MLIRBytecodeWriter
+-    MLIRPass
+-    MLIRTransforms
+-    MLIRLLVMDialect
+-    MLIRSupport
+-    MLIRTargetLLVMIRExport
+-    MLIRMathToLLVM
+-    MLIRROCDLToLLVMIRTranslation
+-    MLIRGPUDialect
+-    MLIRSCFToControlFlow
+-    MLIRIndexToLLVM
+-    MLIRGPUToROCDLTransforms
+-
++    ${MLIR_LIBS}
+     # LLVM
+-    LLVMPasses
+-    LLVMX86CodeGen
+-    LLVMX86AsmParser
+-    LLVMNVPTXCodeGen
+-    # LLVMNVPTXAsmPrinter
+-    LLVMAMDGPUCodeGen
+-    LLVMAMDGPUAsmParser
+-
++    ${LLVM_LIBRARIES}
+   )
+ 
+   # Define triton library
+diff '--color=auto' -urp triton-764d4432cf422ea24f5e2942fa480270568be9bc.orig/bin/CMakeLists.txt triton-764d4432cf422ea24f5e2942fa480270568be9bc/bin/CMakeLists.txt
+--- triton-764d4432cf422ea24f5e2942fa480270568be9bc.orig/bin/CMakeLists.txt	2024-01-17 15:55:39.000000000 -0800
++++ triton-764d4432cf422ea24f5e2942fa480270568be9bc/bin/CMakeLists.txt	2024-08-07 15:32:54.960500159 -0700
+@@ -3,7 +3,21 @@ get_property(conversion_libs GLOBAL PROP
+ 
+ add_llvm_executable(triton-opt triton-opt.cpp PARTIAL_SOURCES_INTENDED)
+ 
++option(LLVM_DYNLIB "Build with LLVM DYNLIB" ON)
++option(MLIR_DYNLIB "Build with MLIR DYNLIB" OFF)
++message(STATUS "LLVM_DYNLIB:  ${LLVM_DYNLIB}")
++message(STATUS "MLIR_DYNLIB:  ${MLIR_DYNLIB}")
++
+ # TODO: what's this?
++if(MLIR_DYNLIB)
++  message(FATAL_ERROR "MLIR DYNLIB ON is not supported")
++else()
++  set(MLIR_LIBS_1
++    MLIROptLib
++    MLIRPass
++    MLIRTransforms
++  )
++endif()
+ llvm_update_compile_flags(triton-opt)
+ target_link_libraries(triton-opt PRIVATE
+   TritonLLVMIR
+@@ -17,9 +31,7 @@ target_link_libraries(triton-opt PRIVATE
+   # tests
+   TritonTestAnalysis
+   # MLIR core
+-  MLIROptLib
+-  MLIRPass
+-  MLIRTransforms
++  ${MLIR_LIBS_1}
+ )
+ 
+ mlir_check_all_link_libraries(triton-opt)
+@@ -27,6 +39,15 @@ mlir_check_all_link_libraries(triton-opt
+ add_llvm_executable(triton-reduce triton-reduce.cpp PARTIAL_SOURCES_INTENDED)
+ mlir_check_all_link_libraries(triton-reduce)
+ 
++if(MLIR_DYNLIB)
++  message(FATAL_ERROR "MLIR DYNLIB ON is not supported")
++else()
++  set(MLIR_LIBS_2
++    MLIRReduceLib
++    MLIRPass
++    MLIRTransforms
++  )
++endif()
+ llvm_update_compile_flags(triton-reduce)
+ target_link_libraries(triton-reduce PRIVATE
+   TritonLLVMIR
+@@ -40,9 +61,7 @@ target_link_libraries(triton-reduce PRIV
+   # tests
+   TritonTestAnalysis
+   # MLIR core
+-  MLIRReduceLib
+-  MLIRPass
+-  MLIRTransforms
++  ${MLIR_LIBS_2}
+ )
+ 
+ mlir_check_all_link_libraries(triton-reduce)
+@@ -50,6 +69,15 @@ mlir_check_all_link_libraries(triton-red
+ add_llvm_executable(triton-lsp triton-lsp.cpp PARTIAL_SOURCES_INTENDED)
+ mlir_check_all_link_libraries(triton-lsp)
+ 
++if(MLIR_DYNLIB)
++  message(FATAL_ERROR "MLIR DYNLIB ON is not supported")
++else()
++  set(MLIR_LIBS_3
++    MLIRLspServerLib
++    MLIRPass
++    MLIRTransforms
++  )
++endif()
+ llvm_update_compile_flags(triton-lsp)
+ target_link_libraries(triton-lsp PRIVATE
+   TritonAnalysis
+@@ -62,9 +90,7 @@ target_link_libraries(triton-lsp PRIVATE
+   # tests
+   TritonTestAnalysis
+   # MLIR core
+-  MLIRLspServerLib
+-  MLIRPass
+-  MLIRTransforms
++  ${MLIR_LIBS_3}
+ )
+ 
+ mlir_check_all_link_libraries(triton-lsp)
+@@ -77,13 +103,22 @@ add_llvm_executable(triton-llvm-opt
+   intrinsics_gen
+   SUPPORT_PLUGINS
+   )
++if(LLVM_DYNLIB)
++  set(LLVM_LIBS
++    LLVM
++  )
++else()
++  set(LLVM_LIBS
++    LLVMAnalysis
++    LLVMCore
++    LLVMSupport
++    LLVMOption
++    LLVMCodeGen
++  )
++endif()
+ target_link_libraries(triton-llvm-opt PRIVATE
+   TritonLLVMIR
+ 
+-  LLVMAnalysis
+-  LLVMCore
+-  LLVMSupport
+-  LLVMOption
+-  LLVMCodeGen
++  ${LLVM_LIBS}
+   )
+ export_executable_symbols_for_plugins(triton-llvm-opt)

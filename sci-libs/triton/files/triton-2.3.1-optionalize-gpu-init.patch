@@ -1,0 +1,44 @@
+diff '--color=auto' -urp triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/lib/Target/PTX/PTXTranslation.cpp triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/lib/Target/PTX/PTXTranslation.cpp
+--- triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/lib/Target/PTX/PTXTranslation.cpp	2024-05-14 14:34:02.000000000 -0700
++++ triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/lib/Target/PTX/PTXTranslation.cpp	2024-08-07 14:56:10.009071976 -0700
+@@ -23,6 +23,7 @@
+ namespace triton {
+ 
+ static void initLLVM() {
++#ifdef USE_NVPTX
+   static std::once_flag init_flag;
+   std::call_once(init_flag, []() {
+     LLVMInitializeNVPTXTargetInfo();
+@@ -30,6 +31,7 @@ static void initLLVM() {
+     LLVMInitializeNVPTXTargetMC();
+     LLVMInitializeNVPTXAsmPrinter();
+   });
++#endif
+ }
+ 
+ static bool findAndReplace(std::string &str, const std::string &begin,
+Only in triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/lib/Target/PTX: PTXTranslation.cpp.orig
+diff '--color=auto' -urp triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/third_party/amd_hip_backend/lib/Target/HSACO/HSACOTranslation.cpp triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/third_party/amd_hip_backend/lib/Target/HSACO/HSACOTranslation.cpp
+--- triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/third_party/amd_hip_backend/lib/Target/HSACO/HSACOTranslation.cpp	2023-08-31 07:56:21.000000000 -0700
++++ triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/third_party/amd_hip_backend/lib/Target/HSACO/HSACOTranslation.cpp	2024-08-07 14:56:44.596504765 -0700
+@@ -60,11 +60,13 @@
+ namespace {
+ 
+ void init_llvm() {
++#ifdef USE_AMDGPU
+   LLVMInitializeAMDGPUTarget();
+   LLVMInitializeAMDGPUTargetInfo();
+   LLVMInitializeAMDGPUTargetMC();
+   LLVMInitializeAMDGPUAsmParser();
+   LLVMInitializeAMDGPUAsmPrinter();
++#endif
+ }
+ 
+ std::unique_ptr<llvm::TargetMachine>
+@@ -731,4 +733,4 @@ translateTritonIRToHSACO(mlir::ModuleOp
+ 
+ } // namespace triton
+ } // namespace rocm
+-} // namespace mlir
+\ No newline at end of file
++} // namespace mlir
