@@ -1,0 +1,76 @@
+diff '--color=auto' -urp triton-2.0.0.orig/python/setup.py triton-2.0.0/python/setup.py
+--- triton-2.0.0.orig/python/setup.py	2023-03-02 15:57:45.000000000 -0800
++++ triton-2.0.0/python/setup.py	2024-08-07 09:44:10.405863597 -0700
+@@ -161,7 +161,8 @@ class CMakeBuild(build_ext):
+         lit_dir = shutil.which('lit')
+         triton_cache_path = os.path.join(os.environ["HOME"], ".triton")
+         # lit is used by the test suite
+-        thirdparty_cmake_args = get_thirdparty_packages(triton_cache_path)
++        if not os.environ['OFFLINE_INSTALL']:
++            thirdparty_cmake_args = get_thirdparty_packages(triton_cache_path)
+         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.path)))
+         # create build directories
+         if not os.path.exists(self.build_temp):
+@@ -176,10 +177,49 @@ class CMakeBuild(build_ext):
+             "-DPython3_EXECUTABLE:FILEPATH=" + sys.executable,
+             "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
+             "-DPYTHON_INCLUDE_DIRS=" + python_include_dir,
++            
++            "-DLLVM_ROOT_DIR=" + os.environ['LLVM_ROOT_DIR'],
++            "-DLLVM_STATIC_LINKING=OFF",
++            "-DUSE_AMDGPU=" + os.environ['USE_AMDGPU'],
++            "-DUSE_NVPTX=" + os.environ['USE_NVPTX'],
++            "-DLLVM_STATIC=OFF",
+         ]
+         if lit_dir is not None:
+             cmake_args.append("-DLLVM_EXTERNAL_LIT=" + lit_dir)
+-        cmake_args.extend(thirdparty_cmake_args)
++        
++        if os.environ['OFFLINE_INSTALL']:
++            cmake_args += [
++                "-DPYBIND11_INCLUDE_DIR=" + os.environ['PYBIND11_INCLUDE_DIR'],
++                "-DPYBIND11_SYSPATH=" + os.environ['PYBIND11_SYSPATH'],
++                "-DLLVM_INCLUDE_DIRS=" + os.environ['LLVM_INCLUDE_DIRS'],
++                "-DLLVM_LIBRARY_DIR=" + os.environ['LLVM_LIBRARY_DIR'],
++                "-DLLVM_SYSPATH=" + os.environ['LLVM_SYSPATH'],
++            ]
++        else:
++            cmake_args.extend(thirdparty_cmake_args)
++        
++        if os.environ['USE_ROCM']:
++            cmake_args += [
++                "-DLLVM_SHARED_MODE=shared",
++                "-DLLVM_IS_SHARED=ON",
++                "-DLLVM_DYNLIB=OFF",
++                "-DMLIR_DYNLIB=OFF",
++            ]
++        else:
++            if os.environ['USE_DYNLIB']:
++                cmake_args += [
++                    "-DLLVM_SHARED_MODE=shared",
++                    "-DLLVM_IS_SHARED=ON",
++                    "-DLLVM_DYNLIB=ON",
++                    "-DMLIR_DYNLIB=OFF",
++                ]
++            else:
++                cmake_args += [
++                    "-DLLVM_SHARED_MODE=shared",
++                    "-DLLVM_IS_SHARED=ON",
++                    "-DLLVM_DYNLIB=OFF",
++                    "-DMLIR_DYNLIB=OFF",
++                ]
+ 
+         # configuration
+         cfg = get_build_type()
+@@ -200,7 +240,8 @@ class CMakeBuild(build_ext):
+         subprocess.check_call(["cmake", "--build", "."] + build_args, cwd=self.build_temp)
+ 
+ 
+-download_and_copy_ptxas()
++if not os.environ['OFFLINE_INSTALL']:
++    download_and_copy_ptxas()
+ 
+ setup(
+     name="triton",
+Only in triton-2.0.0/python: setup.py.orig
+Only in triton-2.0.0/python: setup.py.rej

@@ -1,0 +1,236 @@
+diff '--color=auto' -urp triton-2.0.0.orig/CMakeLists.txt triton-2.0.0/CMakeLists.txt
+--- triton-2.0.0.orig/CMakeLists.txt	2023-03-02 15:57:45.000000000 -0800
++++ triton-2.0.0/CMakeLists.txt	2024-08-07 09:30:45.635634861 -0700
+@@ -49,7 +49,16 @@ if(APPLE)
+   set(CMAKE_OSX_DEPLOYMENT_TARGET 11.6)
+ endif()
+ 
++option(LLVM_DYNLIB "Build with LLVM DYNLIB" ON)
++option(MLIR_DYNLIB "Build with MLIR DYNLIB" OFF)
++option(LLVM_STATIC "Build with LLVM STATIC LIBS" OFF)
++message(STATUS "LLVM_DYNLIB:  ${LLVM_DYNLIB}")
++message(STATUS "MLIR_DYNLIB:  ${MLIR_DYNLIB}")
+ 
++option(USE_AMDGPU "Build with AMDGPU support?" ON)
++option(USE_NVPTX "Build with NVPTX support?" ON)
++message(STATUS "USE_AMDGPU:  ${USE_AMDGPU}")
++message(STATUS "USE_NVPTX:  ${USE_NVPTX}")
+ 
+ ##########
+ # LLVM
+@@ -68,7 +77,13 @@ if (NOT MLIR_DIR)
+         AMDGPUInfo AMDGPUcodegen
+       )
+     else()
+-      find_package(LLVM 11 REQUIRED COMPONENTS "nvptx;amdgpu")
++      if(USE_AMDGPU AND USE_NVPTX)
++        find_package(LLVM 11 REQUIRED COMPONENTS "nvptx;amdgpu")
++      elseif(USE_AMDGPU)
++        find_package(LLVM 11 REQUIRED COMPONENTS "amdgpu")
++      elseif(USE_NVPTX)
++        find_package(LLVM 11 REQUIRED COMPONENTS "nvptx")
++      endif()
+     endif()
+     message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+     # FindLLVM outputs LLVM_LIBRARY_DIRS but we expect LLVM_LIBRARY_DIR here
+@@ -79,61 +94,145 @@ if (NOT MLIR_DIR)
+   # sometimes we don't want to use llvm-config, since it may have been downloaded for some specific linux distros
+   else()
+     set(LLVM_LDFLAGS "-L${LLVM_LIBRARY_DIR}")
+-    set(LLVM_LIBRARIES
+-      libLLVMNVPTXCodeGen.a
+-      libLLVMNVPTXDesc.a
+-      libLLVMNVPTXInfo.a
+-      libLLVMAMDGPUDisassembler.a
+-      libLLVMMCDisassembler.a
+-      libLLVMAMDGPUCodeGen.a
+-      libLLVMMIRParser.a
+-      libLLVMGlobalISel.a
+-      libLLVMSelectionDAG.a
+-      libLLVMipo.a
+-      libLLVMInstrumentation.a
+-      libLLVMVectorize.a
+-      libLLVMLinker.a
+-      libLLVMIRReader.a
+-      libLLVMAsmParser.a
+-      libLLVMFrontendOpenMP.a
+-      libLLVMAsmPrinter.a
+-      libLLVMDebugInfoDWARF.a
+-      libLLVMCodeGen.a
+-      libLLVMTarget.a
+-      libLLVMScalarOpts.a
+-      libLLVMInstCombine.a
+-      libLLVMAggressiveInstCombine.a
+-      libLLVMTransformUtils.a
+-      libLLVMBitWriter.a
+-      libLLVMAnalysis.a
+-      libLLVMProfileData.a
+-      libLLVMObject.a
+-      libLLVMTextAPI.a
+-      libLLVMBitReader.a
+-      libLLVMAMDGPUAsmParser.a
+-      libLLVMMCParser.a
+-      libLLVMAMDGPUDesc.a
+-      libLLVMAMDGPUUtils.a
+-      libLLVMMC.a
+-      libLLVMDebugInfoCodeView.a
+-      libLLVMDebugInfoMSF.a
+-      libLLVMCore.a
+-      libLLVMRemarks.a
+-      libLLVMBitstreamReader.a
+-      libLLVMBinaryFormat.a
+-      libLLVMAMDGPUInfo.a
+-      libLLVMSupport.a
+-      libLLVMDemangle.a
+-      libLLVMPasses.a
+-      libLLVMAnalysis.a
+-      libLLVMTransformUtils.a
+-      libLLVMScalarOpts.a
+-      libLLVMTransformUtils.a
+-      libLLVMipo.a
+-      libLLVMObjCARCOpts.a
+-      libLLVMCoroutines.a
+-      libLLVMAnalysis.a
+-    )
++    if(LLVM_DYNLIB)
++      set(LLVM_LIBRARIES
++        LLVM
++      )
++    else()
++      if(LLVM_STATIC)
++        if(USE_AMDGPU)
++          set(AMDGPU_LIBS
++            libLLVMAMDGPUDisassembler.a
++            libLLVMAMDGPUCodeGen.a
++            libLLVMAMDGPUAsmParser.a
++            libLLVMAMDGPUDesc.a
++            libLLVMAMDGPUUtils.a
++            libLLVMAMDGPUInfo.a
++          )
++        endif()
++        if(USE_NVPTX)
++          set(NVPTX_LIBS
++            libLLVMNVPTXCodeGen.a
++            libLLVMNVPTXDesc.a
++            libLLVMNVPTXInfo.a
++          )
++        endif()
++        set(LLVM_LIBRARIES
++          ${AMDGPU_LIBS}
++          ${NVPTX_LIBS}
++          libLLVMMCDisassembler.a
++          libLLVMMIRParser.a
++          libLLVMGlobalISel.a
++          libLLVMSelectionDAG.a
++          libLLVMipo.a
++          libLLVMInstrumentation.a
++          libLLVMVectorize.a
++          libLLVMLinker.a
++          libLLVMIRReader.a
++          libLLVMAsmParser.a
++          libLLVMFrontendOpenMP.a
++          libLLVMAsmPrinter.a
++          libLLVMDebugInfoDWARF.a
++          libLLVMCodeGen.a
++          libLLVMTarget.a
++          libLLVMScalarOpts.a
++          libLLVMInstCombine.a
++          libLLVMAggressiveInstCombine.a
++          libLLVMTransformUtils.a
++          libLLVMBitWriter.a
++          libLLVMAnalysis.a
++          libLLVMProfileData.a
++          libLLVMObject.a
++          libLLVMTextAPI.a
++          libLLVMBitReader.a
++          libLLVMMCParser.a
++          libLLVMMC.a
++          libLLVMDebugInfoCodeView.a
++          libLLVMDebugInfoMSF.a
++          libLLVMCore.a
++          libLLVMRemarks.a
++          libLLVMBitstreamReader.a
++          libLLVMBinaryFormat.a
++          libLLVMSupport.a
++          libLLVMDemangle.a
++          libLLVMPasses.a
++          libLLVMAnalysis.a
++          libLLVMTransformUtils.a
++          libLLVMScalarOpts.a
++          libLLVMTransformUtils.a
++          libLLVMipo.a
++          libLLVMObjCARCOpts.a
++          libLLVMCoroutines.a
++          libLLVMAnalysis.a
++        )
++      else()
++        if(USE_AMDGPU)
++          set(AMDGPU_LIBS
++            LLVMAMDGPUDisassembler
++            LLVMAMDGPUCodeGen
++            LLVMAMDGPUAsmParser
++            LLVMAMDGPUDesc
++            LLVMAMDGPUUtils
++            LLVMAMDGPUInfo
++          )
++        endif()
++        if(USE_NVPTX)
++          set(NVPTX_LIBS
++            LLVMNVPTXCodeGen
++            LLVMNVPTXDesc
++            LLVMNVPTXInfo
++          )
++        endif()
++        set(LLVM_LIBRARIES
++          ${AMDGPU_LIBS}
++          ${NVPTX_LIBS}
++          LLVMMCDisassembler
++          LLVMMIRParser
++          LLVMGlobalISel
++          LLVMSelectionDAG
++          LLVMipo
++          LLVMInstrumentation
++          LLVMVectorize
++          LLVMLinker
++          LLVMIRReader
++          LLVMAsmParser
++          LLVMFrontendOpenMP
++          LLVMAsmPrinter
++          LLVMDebugInfoDWARF
++          LLVMCodeGen
++          LLVMTarget
++          LLVMScalarOpts
++          LLVMInstCombine
++          LLVMAggressiveInstCombine
++          LLVMTransformUtils
++          LLVMBitWriter
++          LLVMAnalysis
++          LLVMProfileData
++          LLVMObject
++          LLVMTextAPI
++          LLVMBitReader
++          LLVMMCParser
++          LLVMMC
++          LLVMDebugInfoCodeView
++          LLVMDebugInfoMSF
++          LLVMCore
++          LLVMRemarks
++          LLVMBitstreamReader
++          LLVMBinaryFormat
++          LLVMSupport
++          LLVMDemangle
++          LLVMPasses
++          LLVMAnalysis
++          LLVMTransformUtils
++          LLVMScalarOpts
++          LLVMTransformUtils
++          LLVMipo
++          LLVMObjCARCOpts
++          LLVMCoroutines
++          LLVMAnalysis
++        )
++      endif()
++    endif()
+   endif()
+   set (MLIR_DIR ${LLVM_LIBRARY_DIR}/cmake/mlir)
+ endif()

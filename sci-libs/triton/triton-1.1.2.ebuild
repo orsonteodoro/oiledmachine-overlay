@@ -38,6 +38,7 @@ RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 LLVM_COMPAT=( {14..12} )
 ROCM_SLOTS=(
+	rocm_5_2
 	rocm_5_1
 	rocm_4_5
 	rocm_4_1
@@ -48,9 +49,9 @@ LLVM_TARGETS=(
 )
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-${ROCM_SLOTS[@]}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
-rocm
+${ROCM_SLOTS[@]}
+rocm test
 "
 gen_rocm_required_use() {
 	local u
@@ -63,7 +64,7 @@ gen_rocm_required_use() {
 	done
 }
 # You need a local copy of dev-util/nvidia-cuda-toolkit if you want to use
-# llvm_targets_NVPTX on llvm:13 or llvm:12.
+# llvm_targets_NVPTX on llvm:12, llvm:13, llvm: 14.
 REQUIRED_USE="
 	!rocm? (
 		^^ (
@@ -130,10 +131,18 @@ gen_llvm_rdepend() {
 #   11.5:  https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.5.1-r1.ebuild?id=e51ca099bec28c5a27a7eb070e7c77a06790a30d
 #
 RDEPEND+="
+	dev-python/filelock[${PYTHON_USEDEP}]
+	sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
 	!rocm? (
 		$(gen_llvm_rdepend)
 	)
 	rocm? (
+		rocm_5_2? (
+			sys-devel/llvm-roc:5.2[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+		)
+		rocm_5_1? (
+			sys-devel/llvm-roc:5.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+		)
 		rocm_4_5? (
 			sys-devel/llvm-roc:4.5[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
@@ -168,6 +177,11 @@ DEPEND+="
 BDEPEND+="
 	>=dev-build/cmake-3.18
 	>=dev-build/ninja-1.11.1
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
+	test? (
+		dev-python/scipy[${PYTHON_USEDEP}]
+	)
 "
 DOCS=( "README.md" )
 _PATCHES=(
@@ -204,12 +218,17 @@ python_configure() {
 einfo "Called python_configure"
 	local dynlib=0
 	local llvm_root_dir
-	if use rocm_5_1 && has_version "~sys-devel/llvm-roc-5.1.3" ; then
+	if use rocm_5_2 && has_version "~sys-devel/llvm-roc-5.2.3" ; then
+		llvm_root_dir="/opt/rocm-5.2.3/llvm" # LLVM 14.0.0git
+	elif use rocm_5_1 && has_version "~sys-devel/llvm-roc-5.1.3" ; then
 		llvm_root_dir="/opt/rocm-5.1.3/llvm" # LLVM 14.0.0git
 	elif use rocm_4_5 && has_version "~sys-devel/llvm-roc-4.5.2" ; then
 		llvm_root_dir="/opt/rocm-4.5.2/llvm" # LLVM 13.0.0git
 	elif use rocm_4_1 && has_version "~sys-devel/llvm-roc-4.1.0" ; then
 		llvm_root_dir="/opt/rocm-4.1.0/llvm" # LLVM 12.0.0git
+	elif use llvm_slot_14 && has_version "sys-devel/llvm:14" && has_version "sys-devel/mlir:14"; then
+		llvm_root_dir="/usr/lib/llvm/14"
+		dynlib=1
 	elif use llvm_slot_13 && has_version "sys-devel/llvm:13" && has_version "sys-devel/mlir:13"; then
 		llvm_root_dir="/usr/lib/llvm/13"
 		dynlib=1

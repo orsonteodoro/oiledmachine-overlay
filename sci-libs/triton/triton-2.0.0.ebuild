@@ -5,12 +5,7 @@
 EAPI=8
 
 DISTUTILS_EXT=1
-GOOGLETEST_PV="1.12.1"
-INTEL_XPU_BACKEND_COMMIT="0bcc485f82b34d49494bd0264bacc24a20aafb7a"
-PYBIND11_PV="2.10.0"
 PYTHON_COMPAT=( "python3_"{10..12} )
-SPIRV_HEADERS_COMMIT="cfbe4feef20c3c0628712c2792624f0221e378ac"
-SPIRV_TOOLS_COMMIT="25ad5e19f193429b737433d5f6151062ddbc1680"
 
 inherit dep-prepare distutils-r1 flag-o-matic
 
@@ -23,22 +18,11 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64" # Ebuild still in development.
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${P}"
-	S_TRITION="${WORKDIR}/${P}"
 	SRC_URI="
 https://github.com/triton-lang/triton/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/intel/intel-xpu-backend-for-triton/archive/${INTEL_XPU_BACKEND_COMMIT}.tar.gz
-	-> intel-xpu-backend-for-triton-${INTEL_XPU_BACKEND_COMMIT:0:7}.tar.gz
-https://github.com/google/googletest/archive/refs/tags/release-${GOOGLETEST_PV}.tar.gz
-	-> googletest-release-${GOOGLETEST_PV}.tar.gz
-https://github.com/KhronosGroup/SPIRV-Headers/archive/${SPIRV_HEADERS_COMMIT}.tar.gz
-	-> SPIRV-Headers-${SPIRV_HEADERS_COMMIT:0:7}.tar.gz
-https://github.com/KhronosGroup/SPIRV-Tools/archive/${SPIRV_TOOLS_COMMIT}.tar.gz
-	-> SPIRV-Tools-${SPIRV_TOOLS_COMMIT:0:7}.tar.gz
-https://github.com/pybind/pybind11/archive/refs/tags/v${PYBIND11_PV}.tar.gz
-	-> pybind11-${PYBIND11_PV}.tar.gz
 	"
 fi
 
@@ -52,27 +36,10 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-# Missing target errors:
-# MLIRArithDialect - LLVM 16
-# MLIRArithToLLVM - LLVM 16
-# MLIRBuiltinToLLVMIRTranslation - LLVM 17
-# MLIRExecutionEngineUtils - LLVM 15
-# MLIRGPUOps - LLVM 13 (MIN), LLVM 16 (MAX), Renamed to MLIRGPUDialect in LLVM 17
-# MLIRGPUTransforms - LLVM 13
-# MLIRIndexToLLVM - LLVM 16
-# MLIRLLVMDialect - LLVM 15
-# MLIRLLVMToLLVMIRTranslation - LLVM 13
-# MLIRMathDialect - LLVM 15
-# MLIRNVVMToLLVMIRTranslation - LLVM 13
-# MLIRROCDLToLLVMIRTranslation - LLVM 13
-# MLIRSCFDialect - LLVM 15
-# MLIRSCFToControlFlow - LLVM 15
-# MLIRTargetLLVMIRExport - LLVM 13
-LLVM_COMPAT=( 17 )
+LLVM_COMPAT=( 14 )
 ROCM_SLOTS=(
-	rocm_6_1
-	rocm_6_0
-	rocm_5_7
+	rocm_5_2
+	rocm_5_1
 )
 LLVM_TARGETS=(
 	AMDGPU
@@ -94,6 +61,8 @@ gen_rocm_required_use() {
 		"
 	done
 }
+# You need a local copy of dev-util/nvidia-cuda-toolkit if you want to use
+# llvm_targets_NVPTX on llvm:14.
 REQUIRED_USE="
 	!rocm? (
 		^^ (
@@ -106,7 +75,6 @@ REQUIRED_USE="
 		)
 	)
 "
-# LoongArch appears in LLVM 16 (llvm/lib/Target folder)
 gen_llvm_rdepend() {
 	local u
 	for u in ${LLVM_COMPAT[@]} ; do
@@ -123,10 +91,6 @@ gen_llvm_rdepend() {
 				arm64? (
 					sys-devel/llvm:${u}[llvm_targets_AArch64]
 					sys-devel/mlir:${u}[llvm_targets_AArch64]
-				)
-				loong? (
-					sys-devel/llvm:${u}[llvm_targets_LoongArch]
-					sys-devel/mlir:${u}[llvm_targets_LoongArch]
 				)
 				mips? (
 					sys-devel/llvm:${u}[llvm_targets_Mips]
@@ -152,33 +116,36 @@ gen_llvm_rdepend() {
 		"
 	done
 }
-# This project uses nvcc from 12.1 but it doesn't exist on the distro.
+#
+# This project uses nvcc from 12.0 but it doesn't exist on the distro.
 #
 # For CUDA compatibility, see
 #
-#   https://github.com/llvm/llvm-project/blob/llvmorg-17.0.6/clang/include/clang/Basic/Cuda.h#L42C26-L42C29
+#   https://github.com/llvm/llvm-project/blob/llvmorg-14.0.6/clang/include/clang/Basic/Cuda.h#L37
 #
 # CUDA SDK ebuilds:
 #
-#   11.8:  https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.8.0-r4.ebuild?id=d071cb72002d9422a4d1d94160012d222196173c
+#   11.5:  https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.5.1-r1.ebuild?id=e51ca099bec28c5a27a7eb070e7c77a06790a30d
 #
 RDEPEND+="
+	dev-python/filelock[${PYTHON_USEDEP}]
 	!rocm? (
 		$(gen_llvm_rdepend)
 	)
 	rocm? (
-		rocm_6_1? (
-			sys-devel/llvm-roc:6.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+		rocm_5_2? (
+			sys-devel/llvm-roc:5.2[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
-		rocm_6_0? (
-			sys-devel/llvm-roc:6.0[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
-		)
-		rocm_5_7? (
-			sys-devel/llvm-roc:5.7[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+		rocm_5_1? (
+			sys-devel/llvm-roc:5.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 	)
 	llvm_targets_NVPTX? (
-		=dev-util/nvidia-cuda-toolkit-11.8*
+		llvm_slot_14? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-11.5*
+			)
+		)
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	tutorials? (
@@ -202,22 +169,19 @@ BDEPEND+="
 		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/isort[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/pycodestyle[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
 _PATCHES=(
-	"${FILESDIR}/${PN}-2.1.0-dynlib.patch"
-	"${FILESDIR}/${PN}-2.1.0-llvm-static-linking.patch"
-	"${FILESDIR}/${PN}-2.1.0-optionalize-targets.patch"
-	"${FILESDIR}/${PN}-2.1.0-rename-to-llvm-17-target.patch"
-	"${FILESDIR}/${PN}-2.1.0-optionalize-gpu-init.patch"
-	"${FILESDIR}/${PN}-2.1.0-customize-setup_py.patch"
-	"${FILESDIR}/${PN}-2.1.0-offline-install.patch"
+	"${FILESDIR}/${PN}-2.0.0-optionalize-gpu-targets-and-dynlib.patch"
+	"${FILESDIR}/${PN}-2.0.0-llvm-static-linking.patch"
+	"${FILESDIR}/${PN}-2.0.0-optionalize-gpu-init.patch"
+	"${FILESDIR}/${PN}-2.0.0-customize-setup_py.patch"
 )
 
 pkg_setup() {
-	ewarn "This ebuild is still in development"
 	:
 }
 
@@ -228,11 +192,6 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
-		dep_prepare_mv "${WORKDIR}/intel-xpu-backend-for-triton-${INTEL_XPU_BACKEND_COMMIT}" "${S}/third_party/intel_xpu_backend"
-		dep_prepare_mv "${WORKDIR}/googletest-release-${GOOGLETEST_PV}" "${S}/third_party/googletest"
-		dep_prepare_mv "${WORKDIR}/SPIRV-Headers-${SPIRV_HEADERS_COMMIT}" "${S}/third_party/intel_xpu_backend/third_party/SPIRV-Headers"
-		dep_prepare_mv "${WORKDIR}/SPIRV-Tools-${SPIRV_TOOLS_COMMIT}" "${S}/third_party/intel_xpu_backend/third_party/SPIRV-Tools"
-		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_PV}" "${S}/third_party/pybind11"
 	fi
 }
 
@@ -247,14 +206,12 @@ python_configure() {
 einfo "Called python_configure"
 	local dynlib=0
 	local llvm_root_dir
-	if use rocm_6_1 && has_version "~sys-devel/llvm-roc-6.1.2" ; then
-		llvm_root_dir="/opt/rocm-6.1.2/llvm" # LLVM 17.0.0git
-	elif use rocm_6_0 && has_version "~sys-devel/llvm-roc-6.0.2" ; then
-		llvm_root_dir="/opt/rocm-6.0.2/llvm" # LLVM 17.0.0git
-	elif use rocm_5_7 && has_version "~sys-devel/llvm-roc-5.7.1" ; then
-		llvm_root_dir="/opt/rocm-5.7.1/llvm" # LLVM 17.0.0git
-	elif use llvm_slot_17 && has_version "sys-devel/llvm:17" && has_version "sys-devel/mlir:17" ; then
-		llvm_root_dir="/usr/lib/llvm/17"
+	if use rocm_5_2 && has_version "~sys-devel/llvm-roc-5.2.3" ; then
+		llvm_root_dir="/opt/rocm-5.2.3/llvm" # LLVM 14.0.0git
+	elif use rocm_5_1 && has_version "~sys-devel/llvm-roc-5.1.3" ; then
+		llvm_root_dir="/opt/rocm-5.1.3/llvm" # LLVM 14.0.0git
+	elif use llvm_slot_14 && has_version "sys-devel/llvm:14" && has_version "sys-devel/mlir:14"; then
+		llvm_root_dir="/usr/lib/llvm/14"
 		dynlib=1
 	else
 eerror "Cannot find a LLVM installation."
@@ -268,7 +225,11 @@ eerror "Cannot find a LLVM installation."
 		| sed -e "s|/opt/bin|/opt/bin:${llvm_root_dir}/bin|g")
 einfo "PATH:  ${PATH}"
 
-	export USE_SYSTEM_LLVM=1
+	if [[ "${PV}" == *"9999" ]] ; then
+		export OFFLINE_INSTALL=0
+	else
+		export OFFLINE_INSTALL=1
+	fi
 	if use rocm ; then
 		export LLVM_INCLUDE_DIR="${llvm_root_dir}/include"
 		export LLVM_LIBRARY_DIR="${llvm_root_dir}/lib"
@@ -315,7 +276,6 @@ einfo "PATH:  ${PATH}"
 	else
 		export USE_NVPTX=0
 	fi
-
 }
 
 src_compile() {

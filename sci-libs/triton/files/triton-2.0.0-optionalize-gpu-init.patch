@@ -1,0 +1,16 @@
+diff '--color=auto' -urp triton-2.0.0.orig/lib/Target/PTX/PTXTranslation.cpp triton-2.0.0/lib/Target/PTX/PTXTranslation.cpp
+--- triton-2.0.0.orig/lib/Target/PTX/PTXTranslation.cpp	2023-03-02 15:57:45.000000000 -0800
++++ triton-2.0.0/lib/Target/PTX/PTXTranslation.cpp	2024-08-07 09:36:45.181471744 -0700
+@@ -12,10 +12,12 @@
+ namespace triton {
+ 
+ static void initLLVM() {
++#ifdef USE_NVPTX
+   LLVMInitializeNVPTXTargetInfo();
+   LLVMInitializeNVPTXTarget();
+   LLVMInitializeNVPTXTargetMC();
+   LLVMInitializeNVPTXAsmPrinter();
++#endif
+ }
+ 
+ static bool findAndReplace(std::string &str, const std::string &begin,
