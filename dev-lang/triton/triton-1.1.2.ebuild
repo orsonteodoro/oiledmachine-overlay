@@ -89,10 +89,6 @@ gen_llvm_rdepend() {
 					sys-devel/llvm:${u}[llvm_targets_AArch64]
 					sys-devel/mlir:${u}[llvm_targets_AArch64]
 				)
-				loong? (
-					sys-devel/llvm:${u}[llvm_targets_LoongArch]
-					sys-devel/mlir:${u}[llvm_targets_LoongArch]
-				)
 				mips? (
 					sys-devel/llvm:${u}[llvm_targets_Mips]
 					sys-devel/mlir:${u}[llvm_targets_Mips]
