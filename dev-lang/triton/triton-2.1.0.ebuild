@@ -47,23 +47,36 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-LLVM_COMPAT=( {17..7} )
+# Missing target errors:
+# MLIRArithDialect - LLVM 16
+# MLIRArithToLLVM - LLVM 16
+# MLIRBuiltinToLLVMIRTranslation - LLVM 17
+# MLIRExecutionEngineUtils - LLVM 15
+# MLIRGPUOps - LLVM 13 (MIN), LLVM 16 (MAX), Renamed to MLIRGPUDialect in LLVM 17
+# MLIRGPUTransforms - LLVM 13
+# MLIRIndexToLLVM - LLVM 16
+# MLIRLLVMDialect - LLVM 15
+# MLIRLLVMToLLVMIRTranslation - LLVM 13
+# MLIRMathDialect - LLVM 15
+# MLIRNVVMToLLVMIRTranslation - LLVM 13
+# MLIRROCDLToLLVMIRTranslation - LLVM 13
+# MLIRSCFDialect - LLVM 15
+# MLIRSCFToControlFlow - LLVM 15
+# MLIRTargetLLVMIRExport - LLVM 13
+LLVM_COMPAT=( 17 )
 ROCM_SLOTS=(
 	rocm_6_1
 	rocm_6_0
 	rocm_5_7
-	rocm_5_6
-	rocm_5_5
-	rocm_5_4
-	rocm_5_3
-	rocm_5_2
-	rocm_5_1
-	rocm_4_5
-	rocm_4_1
+)
+LLVM_TARGETS=(
+	AMDGPU
+	NVPTX
 )
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
+${LLVM_TARGETS[@]/#/llvm_targets_}
 rocm
 "
 gen_rocm_required_use() {
@@ -113,30 +126,6 @@ RDEPEND+="
 		rocm_5_7? (
 			sys-devel/llvm-roc:5.7[mlir]
 		)
-		rocm_5_6? (
-			sys-devel/llvm-roc:5.6[mlir]
-		)
-		rocm_5_5? (
-			sys-devel/llvm-roc:5.5[mlir]
-		)
-		rocm_5_4? (
-			sys-devel/llvm-roc:5.4[mlir]
-		)
-		rocm_5_3? (
-			sys-devel/llvm-roc:5.3[mlir]
-		)
-		rocm_5_2? (
-			sys-devel/llvm-roc:5.2[mlir]
-		)
-		rocm_5_1? (
-			sys-devel/llvm-roc:5.1[mlir]
-		)
-		rocm_4_5? (
-			sys-devel/llvm-roc:4.5[mlir]
-		)
-		rocm_4_1? (
-			sys-devel/llvm-roc:4.1[mlir]
-		)
 	)
 "
 DEPEND+="
@@ -150,6 +139,8 @@ DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-2.1.0-dynlib.patch"
 	"${FILESDIR}/${PN}-2.1.0-llvm-static-linking.patch"
+	"${FILESDIR}/${PN}-2.1.0-optionalize-targets.patch"
+	"${FILESDIR}/${PN}-2.1.0-rename-to-llvm-17-target.patch"
 )
 
 pkg_setup() {
@@ -245,6 +236,8 @@ einfo "PATH:  ${PATH}"
 	local mycmakeargs=(
 		-DLLVM_ROOT_DIR="${llvm_root_dir}"
 		-DLLVM_STATIC_LINKING=OFF
+		-DUSE_AMDGPU=$(usex llvm_targets_AMDGPU)
+		-DUSE_NVPTX=$(usex llvm_targets_NVPTX)
 	)
 
 	if ! [[ "${PV}" == *"9999" ]] ; then

@@ -1,0 +1,80 @@
+diff '--color=auto' -urp triton-2.1.0.orig/CMakeLists.txt triton-2.1.0/CMakeLists.txt
+--- triton-2.1.0.orig/CMakeLists.txt	2024-08-06 16:44:59.485428249 -0700
++++ triton-2.1.0/CMakeLists.txt	2024-08-06 16:51:40.711190288 -0700
+@@ -57,6 +57,9 @@ if(APPLE)
+   set(CMAKE_OSX_DEPLOYMENT_TARGET 11.6)
+ endif()
+ 
++option(USE_AMDGPU "Use AMDGPU?" ON)
++option(USE_NVPTX "Use AMDGPU?" ON)
++
+ # #########
+ # LLVM
+ # #########
+@@ -74,7 +77,13 @@ if(NOT MLIR_DIR)
+         AMDGPUInfo AMDGPUcodegen
+       )
+     else()
+-      find_package(LLVM 11 REQUIRED COMPONENTS "nvptx;amdgpu")
++      if(USE_AMDGPU AND USE_NVPTX)
++        find_package(LLVM 11 REQUIRED COMPONENTS "nvptx;amdgpu")
++      elseif(USE_AMDGPU)
++        find_package(LLVM 11 REQUIRED COMPONENTS "amdgpu")
++      elseif(USE_NVPTX)
++        find_package(LLVM 11 REQUIRED COMPONENTS "nvptx")
++      endif()
+     endif()
+ 
+     message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+@@ -94,13 +103,27 @@ if(NOT MLIR_DIR)
+         LLVM
+       )
+     else()
++      if(USE_NVPTX)
++        set(NVPTX_LIBS
++          LLVMNVPTXCodeGen
++          LLVMNVPTXDesc
++          LLVMNVPTXInfo
++          )
++      endif()
++      if(USE_AMDGPU)
++        set(AMDGPU_LIBS
++          LLVMAMDGPUDisassembler
++          LLVMAMDGPUCodeGen
++          LLVMAMDGPUAsmParser
++          LLVMAMDGPUDesc
++          LLVMAMDGPUUtils
++          LLVMAMDGPUInfo
++          )
++      endif()
+       set(LLVM_LIBRARIES
+-        LLVMNVPTXCodeGen
+-        LLVMNVPTXDesc
+-        LLVMNVPTXInfo
+-        LLVMAMDGPUDisassembler
++        ${NVPTX_LIBS}
++        ${AMDGPU_LIBS}
+         LLVMMCDisassembler
+-        LLVMAMDGPUCodeGen
+         LLVMMIRParser
+         LLVMGlobalISel
+         LLVMSelectionDAG
+@@ -125,10 +148,7 @@ if(NOT MLIR_DIR)
+         LLVMObject
+         LLVMTextAPI
+         LLVMBitReader
+-        LLVMAMDGPUAsmParser
+         LLVMMCParser
+-        LLVMAMDGPUDesc
+-        LLVMAMDGPUUtils
+         LLVMMC
+         LLVMDebugInfoCodeView
+         LLVMDebugInfoMSF
+@@ -136,7 +156,6 @@ if(NOT MLIR_DIR)
+         LLVMRemarks
+         LLVMBitstreamReader
+         LLVMBinaryFormat
+-        LLVMAMDGPUInfo
+         LLVMSupport
+         LLVMDemangle
+         LLVMPasses

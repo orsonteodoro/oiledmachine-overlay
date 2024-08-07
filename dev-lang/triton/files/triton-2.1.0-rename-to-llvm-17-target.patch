@@ -1,0 +1,42 @@
+diff '--color=auto' -urp triton-2.1.0.orig/lib/Conversion/TritonGPUToLLVM/CMakeLists.txt triton-2.1.0/lib/Conversion/TritonGPUToLLVM/CMakeLists.txt
+--- triton-2.1.0.orig/lib/Conversion/TritonGPUToLLVM/CMakeLists.txt	2024-08-06 17:28:41.431256015 -0700
++++ triton-2.1.0/lib/Conversion/TritonGPUToLLVM/CMakeLists.txt	2024-08-06 17:29:54.358046513 -0700
+@@ -35,7 +35,7 @@ add_mlir_conversion_library(TritonGPUToL
+     LINK_LIBS PUBLIC
+     MLIRIR
+     MLIRPass
+-    MLIRGPUOps
++    MLIRGPUDialect
+     MLIRGPUToNVVMTransforms
+     MLIRGPUToROCDLTransforms
+     MLIRGPUTransforms
+diff '--color=auto' -urp triton-2.1.0.orig/lib/Dialect/TritonGPU/IR/CMakeLists.txt triton-2.1.0/lib/Dialect/TritonGPU/IR/CMakeLists.txt
+--- triton-2.1.0.orig/lib/Dialect/TritonGPU/IR/CMakeLists.txt	2024-08-06 17:28:41.435255948 -0700
++++ triton-2.1.0/lib/Dialect/TritonGPU/IR/CMakeLists.txt	2024-08-06 17:29:55.574026346 -0700
+@@ -7,6 +7,6 @@ add_mlir_dialect_library(TritonGPUIR
+   TritonGPUAttrDefsIncGen
+ 
+   LINK_LIBS PUBLIC
+-  MLIRGPUOps
++  MLIRGPUDialect
+   TritonIR
+ )
+diff '--color=auto' -urp triton-2.1.0.orig/third_party/intel_xpu_backend/lib/Conversion/TritonGPUToSPIRV/CMakeLists.txt triton-2.1.0/third_party/intel_xpu_backend/lib/Conversion/TritonGPUToSPIRV/CMakeLists.txt
+--- triton-2.1.0.orig/third_party/intel_xpu_backend/lib/Conversion/TritonGPUToSPIRV/CMakeLists.txt	2024-08-06 17:28:41.443255815 -0700
++++ triton-2.1.0/third_party/intel_xpu_backend/lib/Conversion/TritonGPUToSPIRV/CMakeLists.txt	2024-08-06 17:29:52.662074639 -0700
+@@ -25,7 +25,7 @@ add_mlir_conversion_library(TritonGPUToS
+     LINK_LIBS PUBLIC
+     MLIRIR
+     MLIRPass
+-    MLIRGPUOps
++    MLIRGPUDialect
+     MLIRGPUToNVVMTransforms
+     MLIRGPUTransforms
+     TritonAnalysis
+@@ -34,4 +34,4 @@ add_mlir_conversion_library(TritonGPUToS
+     TritonGPUTransforms
+ )
+ 
+-MESSAGE(STATUS "Conversion_libs ${conversion_libs}")
+\ No newline at end of file
++MESSAGE(STATUS "Conversion_libs ${conversion_libs}")
