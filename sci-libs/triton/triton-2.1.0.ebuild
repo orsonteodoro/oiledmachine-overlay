@@ -29,8 +29,6 @@ else
 	SRC_URI="
 https://github.com/triton-lang/triton/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/intel/intel-xpu-backend-for-triton/archive/${INTEL_XPU_BACKEND_COMMIT}.tar.gz
-	-> intel-xpu-backend-for-triton-${INTEL_XPU_BACKEND_COMMIT:0:7}.tar.gz
 https://github.com/google/googletest/archive/refs/tags/release-${GOOGLETEST_PV}.tar.gz
 	-> googletest-release-${GOOGLETEST_PV}.tar.gz
 https://github.com/KhronosGroup/SPIRV-Headers/archive/${SPIRV_HEADERS_COMMIT}.tar.gz
@@ -39,6 +37,10 @@ https://github.com/KhronosGroup/SPIRV-Tools/archive/${SPIRV_TOOLS_COMMIT}.tar.gz
 	-> SPIRV-Tools-${SPIRV_TOOLS_COMMIT:0:7}.tar.gz
 https://github.com/pybind/pybind11/archive/refs/tags/v${PYBIND11_PV}.tar.gz
 	-> pybind11-${PYBIND11_PV}.tar.gz
+	video_cards_intel? (
+https://github.com/intel/intel-xpu-backend-for-triton/archive/${INTEL_XPU_BACKEND_COMMIT}.tar.gz
+	-> intel-xpu-backend-for-triton-${INTEL_XPU_BACKEND_COMMIT:0:7}.tar.gz
+	)
 	"
 fi
 
@@ -82,7 +84,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
-rocm test tutorials
+rocm test tutorials video_cards_intel
 ebuild-revision-1
 "
 gen_rocm_required_use() {
@@ -235,11 +237,13 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
-		dep_prepare_mv "${WORKDIR}/intel-xpu-backend-for-triton-${INTEL_XPU_BACKEND_COMMIT}" "${S}/third_party/intel_xpu_backend"
 		dep_prepare_mv "${WORKDIR}/googletest-release-${GOOGLETEST_PV}" "${S}/third_party/googletest"
-		dep_prepare_mv "${WORKDIR}/SPIRV-Headers-${SPIRV_HEADERS_COMMIT}" "${S}/third_party/intel_xpu_backend/third_party/SPIRV-Headers"
-		dep_prepare_mv "${WORKDIR}/SPIRV-Tools-${SPIRV_TOOLS_COMMIT}" "${S}/third_party/intel_xpu_backend/third_party/SPIRV-Tools"
 		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_PV}" "${S}/third_party/pybind11"
+		if use video_cards_intel ; then
+			dep_prepare_mv "${WORKDIR}/intel-xpu-backend-for-triton-${INTEL_XPU_BACKEND_COMMIT}" "${S}/third_party/intel_xpu_backend"
+			dep_prepare_mv "${WORKDIR}/SPIRV-Headers-${SPIRV_HEADERS_COMMIT}" "${S}/third_party/intel_xpu_backend/third_party/SPIRV-Headers"
+			dep_prepare_mv "${WORKDIR}/SPIRV-Tools-${SPIRV_TOOLS_COMMIT}" "${S}/third_party/intel_xpu_backend/third_party/SPIRV-Tools"
+		fi
 	fi
 }
 
@@ -326,6 +330,9 @@ einfo "PATH:  ${PATH}"
 		export USE_NVPTX=0
 	fi
 
+	if use video_cards_intel ; then
+		export TRITON_CODEGEN_INTEL_XPU_BACKEND=1
+	fi
 }
 
 src_compile() {

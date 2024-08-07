@@ -267,8 +267,6 @@ einfo "PATH:  ${PATH}"
 	else
 		export OFFLINE_INSTALL=1
 		export FETCHCONTENT_GOOGLETEST_DIR="${S_TRITION}/third_party/googletest"
-		export FETCHCONTENT_SPIRV_HEADERS_DIR="${S_TRITION}/third_party/intel_xpu_backend/third_party/SPIRV-Headers"
-		export FETCHCONTENT_SPIRV_TOOLS_DIR="${S_TRITION}/third_party/intel_xpu_backend/third_party/SPIRV-Tools"
 		export PYBIND11_INCLUDE_DIR="${S_TRITION}/third_party/pybind11/include"
 		export PYBIND11_SYSPATH="${S_TRITION}/third_party/pybind11/lib"
 		export LLVM_INCLUDE_DIRS="${LLVM_INCLUDE_DIR}"
