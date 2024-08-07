@@ -6,7 +6,7 @@ EAPI=8
 
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit dep-prepare cmake flag-o-matic
+inherit dep-prepare distutils-r1 flag-o-matic
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -134,10 +134,11 @@ BDEPEND+="
 	>=dev-build/ninja-1.11.1
 "
 DOCS=( "README.md" )
-PATCHES=(
+_PATCHES=(
 	"${FILESDIR}/${PN}-1.1.2-optionalize-gpu-targets-and-dynlib.patch"
 	"${FILESDIR}/${PN}-1.1.2-llvm-static-linking.patch"
 	"${FILESDIR}/${PN}-1.1.2-optionalize-gpu-init-llvm_cc.patch"
+	"${FILESDIR}/${PN}-1.1.2-customize-setup_py.patch"
 )
 
 pkg_setup() {
@@ -155,10 +156,14 @@ src_unpack() {
 }
 
 src_prepare() {
-	cmake_src_prepare
+	default
+	eapply ${_PATCHES[@]}
+	S="${WORKDIR}/${P}/python"
+	distutils-r1_src_prepare
 }
 
-src_configure() {
+python_configure() {
+einfo "Called python_configure"
 	local dynlib=0
 	local llvm_root_dir
 	if use rocm_4_5 && has_version "~sys-devel/llvm-roc-4.5.2" ; then
@@ -183,57 +188,38 @@ eerror "Cannot find a LLVM installation."
 		| sed -e "s|/opt/bin|/opt/bin:${llvm_root_dir}/bin|g")
 einfo "PATH:  ${PATH}"
 
-	local mycmakeargs=(
-		-DLLVM_ROOT_DIR="${llvm_root_dir}"
-		-DLLVM_STATIC_LINKING=OFF
-		-DUSE_AMDGPU=$(usex llvm_targets_AMDGPU)
-		-DUSE_NVPTX=$(usex llvm_targets_NVPTX)
-		-DLLVM_STATIC=OFF
-	)
-
+	export LLVM_ROOT_DIR="${llvm_root_dir}"
 	if use rocm ; then
-		# For sys-devel/llvm-roc
-		mycmakeargs+=(
-			-DLLVM_SHARED_MODE="shared"
-			-DLLVM_IS_SHARED=ON
-			-DLLVM_DYNLIB=OFF
-			-DMLIR_DYNLIB=OFF
-		)
+		export USE_ROCM=1
 	else
-		# For sys-devel/llvm and sys-devel/mlir
-		if (( ${dynlib} == 1 )) ; then
-			mycmakeargs+=(
-				-DLLVM_SHARED_MODE="shared"
-				-DLLVM_IS_SHARED=ON
-				-DLLVM_DYNLIB=ON
-				-DMLIR_DYNLIB=OFF
-			)
-		else
-			mycmakeargs+=(
-				-DLLVM_SHARED_MODE="shared"
-				-DLLVM_IS_SHARED=ON
-				-DLLVM_DYNLIB=OFF
-				-DMLIR_DYNLIB=OFF
-			)
-		fi
+		export USE_ROCM=0
+	fi
+	if (( ${dynlib} == 1 )) ; then
+		export USE_DYNLIB=1
+	else
+		export USE_DYNLIB=0
 	fi
 
 	if use llvm_targets_AMDGPU ; then
 		append-cxxflags -DUSE_AMDGPU
+		export USE_AMDGPU=1
+	else
+		export USE_AMDGPU=0
 	fi
 	if use llvm_targets_NVPTX ; then
 		append-cxxflags -DUSE_NVPTX
+		export USE_NVPTX=1
+	else
+		export USE_NVPTX=0
 	fi
-
-	cmake_src_configure
 }
 
 src_compile() {
-	cmake_src_compile
+	distutils-r1_src_compile
 }
 
 src_install() {
-	cmake_src_install
+	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
 }

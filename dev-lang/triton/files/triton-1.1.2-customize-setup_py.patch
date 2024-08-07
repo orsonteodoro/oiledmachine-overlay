@@ -1,0 +1,43 @@
+diff '--color=auto' -urp triton-1.1.2.orig/python/setup.py triton-1.1.2/python/setup.py
+--- triton-1.1.2.orig/python/setup.py	2021-10-29 01:24:19.000000000 -0700
++++ triton-1.1.2/python/setup.py	2024-08-06 20:29:28.080608156 -0700
+@@ -98,8 +98,38 @@ class CMakeBuild(build_ext):
+             #'-DPYTHON_EXECUTABLE=' + sys.executable,
+             #'-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON',
+             "-DTRITON_LLVM_BUILD_DIR=" + llvm_build_dir,
+-            "-DPYTHON_INCLUDE_DIRS=" + ";".join(python_include_dirs)
++            "-DPYTHON_INCLUDE_DIRS=" + ";".join(python_include_dirs),
++            
++            "-DLLVM_ROOT_DIR=" + os.environ['LLVM_ROOT_DIR'],
++            "-DLLVM_STATIC_LINKING=OFF",
++            "-DUSE_AMDGPU=" + os.environ['USE_AMDGPU'],
++            "-DUSE_NVPTX=" + os.environ['USE_NVPTX'],
++            "-DLLVM_STATIC=OFF"
+         ]
++        
++        if os.environ['USE_ROCM']:
++            cmake_args += [
++                "-DLLVM_SHARED_MODE=shared",
++                "-DLLVM_IS_SHARED=ON",
++                "-DLLVM_DYNLIB=OFF",
++                "-DMLIR_DYNLIB=OFF"
++            ]
++        else:
++            if os.environ['USE_DYNLIB']:
++                cmake_args += [
++                    "-DLLVM_SHARED_MODE=shared",
++                    "-DLLVM_IS_SHARED=ON",
++                    "-DLLVM_DYNLIB=ON",
++                    "-DMLIR_DYNLIB=OFF"
++                ]
++            else:
++                cmake_args += [
++                    "-DLLVM_SHARED_MODE=shared",
++                    "-DLLVM_IS_SHARED=ON",
++                    "-DLLVM_DYNLIB=OFF",
++                    "-DMLIR_DYNLIB=OFF"
++                ]
++        
+         # configuration
+         cfg = "Debug" if self.debug else "Release"
+         build_args = ["--config", cfg]

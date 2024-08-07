@@ -10,7 +10,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 SPIRV_HEADERS_COMMIT="cfbe4feef20c3c0628712c2792624f0221e378ac"
 SPIRV_TOOLS_COMMIT="25ad5e19f193429b737433d5f6151062ddbc1680"
 
-inherit dep-prepare cmake flag-o-matic
+inherit dep-prepare distutils-r1 flag-o-matic
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -170,12 +170,13 @@ BDEPEND+="
 	>=dev-build/ninja-1.11.1
 "
 DOCS=( "README.md" )
-PATCHES=(
+_PATCHES=(
 	"${FILESDIR}/${PN}-2.1.0-dynlib.patch"
 	"${FILESDIR}/${PN}-2.1.0-llvm-static-linking.patch"
 	"${FILESDIR}/${PN}-2.1.0-optionalize-targets.patch"
 	"${FILESDIR}/${PN}-2.1.0-rename-to-llvm-17-target.patch"
 	"${FILESDIR}/${PN}-2.1.0-optionalize-gpu-init.patch"
+	"${FILESDIR}/${PN}-2.1.0-customize-setup_py.patch"
 )
 
 pkg_setup() {
@@ -198,10 +199,14 @@ src_unpack() {
 }
 
 src_prepare() {
-	cmake_src_prepare
+	default
+	eapply ${_PATCHES[@]}
+	S="${WORKDIR}/${P}/python"
+	distutils-r1_src_prepare
 }
 
-src_configure() {
+python_configure() {
+einfo "Called python_configure"
 	local dynlib=0
 	local llvm_root_dir
 	if use rocm_6_1 && has_version "~sys-devel/llvm-roc-6.1.2" ; then
@@ -225,69 +230,44 @@ eerror "Cannot find a LLVM installation."
 		| sed -e "s|/opt/bin|/opt/bin:${llvm_root_dir}/bin|g")
 einfo "PATH:  ${PATH}"
 
-	local mycmakeargs=(
-		-DLLVM_ROOT_DIR="${llvm_root_dir}"
-		-DLLVM_STATIC_LINKING=OFF
-		-DUSE_AMDGPU=$(usex llvm_targets_AMDGPU)
-		-DUSE_NVPTX=$(usex llvm_targets_NVPTX)
-	)
-
-	if ! [[ "${PV}" == *"9999" ]] ; then
-		mycmakeargs+=(
-			-DFETCHCONTENT_FULLY_DISCONNECTED=ON
-			-DFETCHCONTENT_QUIET=OFF
-			-DFETCHCONTENT_SOURCE_DIR_GOOGLETEST="${S}/third_party/googletest"
-			-DFETCHCONTENT_SOURCE_DIR_SPIRV_HEADERS="${S}/third_party/intel_xpu_backend/third_party/SPIRV-Headers"
-			-DFETCHCONTENT_SOURCE_DIR_SPIRV_TOOLS="${S}/third_party/intel_xpu_backend/third_party/SPIRV-Tools"
-			-DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=NEVER
-			-DGOOGLETEST_DIR="${S}/third_party/googletest"
-		)
+	export LLVM_ROOT_DIR="${llvm_root_dir}"
+	if use rocm ; then
+		export USE_ROCM=1
+	else
+		export USE_ROCM=0
+	fi
+	if (( ${dynlib} == 1 )) ; then
+		export USE_DYNLIB=1
+	else
+		export USE_DYNLIB=0
 	fi
 
-	if use rocm ; then
-# FIXME:  still tries to find static lib
-		# For sys-devel/llvm-roc
-		mycmakeargs+=(
-			-DLLVM_SHARED_MODE="shared"
-			-DLLVM_IS_SHARED=ON
-			-DLLVM_DYNLIB=OFF
-			-DMLIR_DYNLIB=OFF
-		)
-	else
-		# For sys-devel/llvm and sys-devel/mlir
-		if (( ${dynlib} == 1 )) ; then
-			mycmakeargs+=(
-				-DLLVM_SHARED_MODE="shared"
-				-DLLVM_IS_SHARED=ON
-				-DLLVM_DYNLIB=ON
-				-DMLIR_DYNLIB=OFF
-			)
-		else
-			mycmakeargs+=(
-				-DLLVM_SHARED_MODE="shared"
-				-DLLVM_IS_SHARED=ON
-				-DLLVM_DYNLIB=OFF
-				-DMLIR_DYNLIB=OFF
-			)
-		fi
+	if ! [[ "${PV}" == *"9999" ]] ; then
+		export FETCHCONTENT_GOOGLETEST_DIR="${S}/third_party/googletest"
+		export FETCHCONTENT_SPIRV_HEADERS_DIR="${S}/third_party/intel_xpu_backend/third_party/SPIRV-Headers"
+		export FETCHCONTENT_SPIRV_TOOLS_DIR="${S}/third_party/intel_xpu_backend/third_party/SPIRV-Tools"
 	fi
 
 	if use llvm_targets_AMDGPU ; then
 		append-cxxflags -DUSE_AMDGPU
+		export USE_AMDGPU=1
+	else
+		export USE_AMDGPU=0
 	fi
 	if use llvm_targets_NVPTX ; then
 		append-cxxflags -DUSE_NVPTX
+		export USE_NVPTX=1
+	else
+		export USE_NVPTX=0
 	fi
-
-	cmake_src_configure
 }
 
 src_compile() {
-	cmake_src_compile
+	distutils-r1_src_compile
 }
 
 src_install() {
-	cmake_src_install
+	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
 }

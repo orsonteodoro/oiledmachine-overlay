@@ -1,0 +1,52 @@
+diff '--color=auto' -urp triton-2.1.0.orig/python/setup.py triton-2.1.0/python/setup.py
+--- triton-2.1.0.orig/python/setup.py	2023-08-31 23:28:27.000000000 -0700
++++ triton-2.1.0/python/setup.py	2024-08-06 20:31:21.474614596 -0700
+@@ -224,7 +224,48 @@ class CMakeBuild(build_ext):
+             "-DPython3_EXECUTABLE:FILEPATH=" + sys.executable,
+             "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
+             "-DPYTHON_INCLUDE_DIRS=" + python_include_dir,
++            
++            "-DLLVM_ROOT_DIR=" + os.environ['LLVM_ROOT_DIR'],
++            "-DLLVM_STATIC_LINKING=OFF",
++            "-DUSE_AMDGPU=" + os.environ['USE_AMDGPU'],
++            "-DUSE_NVPTX=" + os.environ['USE_NVPTX'],
++            "-DLLVM_STATIC=OFF",
+         ]
++        
++        if os.environ['OVERRIDE_FETCH']:
++            cmake_args += [
++                "-DFETCHCONTENT_FULLY_DISCONNECTED=ON",
++                "-DFETCHCONTENT_QUIET=OFF",
++                "-DFETCHCONTENT_SOURCE_DIR_GOOGLETEST=" + os.environ['FETCHCONTENT_GOOGLETEST_DIR'],
++                "-DFETCHCONTENT_SOURCE_DIR_SPIRV_HEADERS=" + os.environ['FETCHCONTENT_SPIRV_HEADERS_DIR'],
++                "-DFETCHCONTENT_SOURCE_DIR_SPIRV_TOOLS=" + os.environ['FETCHCONTENT_SPIRV_TOOLS_DIR'],
++                "-DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=NEVER",
++                "-DGOOGLETEST_DIR=" + os.environ['FETCHCONTENT_GOOGLETEST_DIR'],
++            ]
++        
++        if os.environ['USE_ROCM']:
++            cmake_args += [
++                "-DLLVM_SHARED_MODE=shared",
++                "-DLLVM_IS_SHARED=ON",
++                "-DLLVM_DYNLIB=OFF",
++                "-DMLIR_DYNLIB=OFF",
++            ]
++        else:
++            if os.environ['USE_DYNLIB']:
++                cmake_args += [
++                    "-DLLVM_SHARED_MODE=shared",
++                    "-DLLVM_IS_SHARED=ON",
++                    "-DLLVM_DYNLIB=ON",
++                    "-DMLIR_DYNLIB=OFF",
++                ]
++            else:
++                cmake_args += [
++                    "-DLLVM_SHARED_MODE=shared",
++                    "-DLLVM_IS_SHARED=ON",
++                    "-DLLVM_DYNLIB=OFF",
++                    "-DMLIR_DYNLIB=OFF",
++                ]
++        
+         if lit_dir is not None:
+             cmake_args.append("-DLLVM_EXTERNAL_LIT=" + lit_dir)
+         cmake_args.extend(thirdparty_cmake_args)
