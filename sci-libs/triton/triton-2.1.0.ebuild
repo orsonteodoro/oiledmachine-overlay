@@ -85,7 +85,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
 rocm test tutorials video_cards_intel
-ebuild-revision-1
+ebuild-revision-2
 "
 gen_rocm_required_use() {
 	local u
@@ -226,8 +226,7 @@ _PATCHES=(
 )
 
 pkg_setup() {
-	ewarn "This ebuild is still in development"
-	:
+	python_setup
 }
 
 src_unpack() {

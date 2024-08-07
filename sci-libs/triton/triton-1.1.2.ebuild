@@ -52,7 +52,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
 bench rocm test tutorials
-ebuild-revision-1
+ebuild-revision-2
 "
 gen_rocm_required_use() {
 	local u
@@ -211,7 +211,7 @@ _PATCHES=(
 )
 
 pkg_setup() {
-	:
+	python_setup
 }
 
 src_unpack() {
