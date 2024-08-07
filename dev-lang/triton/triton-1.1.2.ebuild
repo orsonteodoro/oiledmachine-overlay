@@ -35,27 +35,9 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-# Missing target errors:
-# MLIRArithDialect - LLVM 16
-# MLIRArithToLLVM - LLVM 16
-# MLIRBuiltinToLLVMIRTranslation - LLVM 17
-# MLIRExecutionEngineUtils - LLVM 15
-# MLIRGPUOps - LLVM 13 (MIN), LLVM 16 (MAX), Renamed to MLIRGPUDialect in LLVM 17
-# MLIRGPUTransforms - LLVM 13
-# MLIRIndexToLLVM - LLVM 16
-# MLIRLLVMDialect - LLVM 15
-# MLIRLLVMToLLVMIRTranslation - LLVM 13
-# MLIRMathDialect - LLVM 15
-# MLIRNVVMToLLVMIRTranslation - LLVM 13
-# MLIRROCDLToLLVMIRTranslation - LLVM 13
-# MLIRSCFDialect - LLVM 15
-# MLIRSCFToControlFlow - LLVM 15
-# MLIRTargetLLVMIRExport - LLVM 13
-LLVM_COMPAT=( 17 12 )
+LLVM_COMPAT=( {13,12} ) # Build time failure with LLVM 14, LLVM 11 untested.
 ROCM_SLOTS=(
-	rocm_6_1
-	rocm_6_0
-	rocm_5_7
+	rocm_4_5
 	rocm_4_1
 )
 LLVM_TARGETS=(
@@ -106,14 +88,11 @@ RDEPEND+="
 		$(gen_llvm_triton_rdepend)
 	)
 	rocm? (
-		rocm_6_1? (
-			sys-devel/llvm-roc:6.1[mlir]
+		rocm_4_5? (
+			sys-devel/llvm-roc:4.5[mlir]
 		)
-		rocm_6_0? (
-			sys-devel/llvm-roc:6.0[mlir]
-		)
-		rocm_5_7? (
-			sys-devel/llvm-roc:5.7[mlir]
+		rocm_4_1? (
+			sys-devel/llvm-roc:4.1[mlir]
 		)
 	)
 "
@@ -153,58 +132,16 @@ src_prepare() {
 src_configure() {
 	local dynlib=0
 	local llvm_root_dir
-	if use rocm_6_1 && has_version "~sys-devel/llvm-roc-6.1.2" ; then
-		llvm_root_dir="/opt/rocm-6.1.2/llvm"
-	elif use rocm_6_0 && has_version "~sys-devel/llvm-roc-6.0.2" ; then
-		llvm_root_dir="/opt/rocm-6.0.2/llvm"
-	elif use rocm_5_7 && has_version "~sys-devel/llvm-roc-5.7.1" ; then
-		llvm_root_dir="/opt/rocm-5.7.1/llvm"
-#	elif use rocm_5_6 && has_version "~sys-devel/llvm-roc-5.6.1" ; then
-#		llvm_root_dir="/opt/rocm-5.6.1/llvm"
-#	elif use rocm_5_5 && has_version "~sys-devel/llvm-roc-5.5.1" ; then
-#		llvm_root_dir="/opt/rocm-5.5.1/llvm"
-#	elif use rocm_5_4 && has_version "~sys-devel/llvm-roc-5.4.3" ; then
-#		llvm_root_dir="/opt/rocm-5.4.3/llvm"
-#	elif use rocm_5_3 && has_version "~sys-devel/llvm-roc-5.3.3" ; then
-#		llvm_root_dir="/opt/rocm-5.3.3/llvm"
-#	elif use rocm_5_2 && has_version "~sys-devel/llvm-roc-5.2.3" ; then
-#		llvm_root_dir="/opt/rocm-5.2.3/llvm"
-#	elif use rocm_5_1 && has_version "~sys-devel/llvm-roc-5.1.3" ; then
-#		llvm_root_dir="/opt/rocm-5.1.3/llvm"
-#	elif use rocm_4_5 && has_version "~sys-devel/llvm-roc-4.5.2" ; then
-#		llvm_root_dir="/opt/rocm-4.5.2/llvm"
+	if use rocm_4_5 && has_version "~sys-devel/llvm-roc-4.5.2" ; then
+		llvm_root_dir="/opt/rocm-4.5.2/llvm" # LLVM 13.0.0git
 	elif use rocm_4_1 && has_version "~sys-devel/llvm-roc-4.1.0" ; then
-		llvm_root_dir="/opt/rocm-4.1.0/llvm"
-#	elif use llvm_slot_17 && has_version "sys-devel/llvm:17" && has_version "sys-devel/mlir:17" ; then
-#		llvm_root_dir="/usr/lib/llvm/17"
-#		dynlib=1
-#	elif use llvm_slot_16 && has_version "sys-devel/llvm:16" && has_version "sys-devel/mlir:16" ; then
-#		llvm_root_dir="/usr/lib/llvm/16"
-#		dynlib=1
-#	elif use llvm_slot_15 && has_version "sys-devel/llvm:15" && has_version "sys-devel/mlir:15"; then
-#		llvm_root_dir="/usr/lib/llvm/15"
-#		dynlib=1
-#	elif use llvm_slot_14 && has_version "sys-devel/llvm:14" && has_version "sys-devel/mlir:14"; then
-#		llvm_root_dir="/usr/lib/llvm/14"
-#		dynlib=1
-#	elif use llvm_slot_13 && has_version "sys-devel/llvm:13" && has_version "sys-devel/mlir:13"; then
-#		llvm_root_dir="/usr/lib/llvm/13"
-#		dynlib=1
+		llvm_root_dir="/opt/rocm-4.1.0/llvm" # LLVM 12.0.0git
+	elif use llvm_slot_13 && has_version "sys-devel/llvm:13" && has_version "sys-devel/mlir:13"; then
+		llvm_root_dir="/usr/lib/llvm/13"
+		dynlib=1
 	elif use llvm_slot_12 && has_version "sys-devel/llvm:12" && has_version "sys-devel/mlir:12"; then
 		llvm_root_dir="/usr/lib/llvm/12"
 		dynlib=1
-#	elif use llvm_slot_11 && has_version "sys-devel/llvm:11" && has_version "sys-devel/mlir:11"; then
-#		llvm_root_dir="/usr/lib/llvm/11"
-#		dynlib=1
-#	elif use llvm_slot_10 && has_version "sys-devel/llvm:10" && has_version "sys-devel/mlir:10" ; then
-#		llvm_root_dir="/usr/lib/llvm/10"
-#		dynlib=1
-#	elif use llvm_slot_9 && has_version "sys-devel/llvm:9" && has_version "sys-devel/mlir:9" ; then
-#		llvm_root_dir="/usr/lib/llvm/9"
-#	elif use llvm_slot_8 && has_version "sys-devel/llvm:8" && has_version "sys-devel/mlir:8" ; then
-#		llvm_root_dir="/usr/lib/llvm/8"
-#	elif use llvm_slot_7 && has_version "sys-devel/llvm:7" && has_version "sys-devel/mlir:7" ; then
-#		llvm_root_dir="/usr/lib/llvm/7"
 	else
 eerror "Cannot find a LLVM installation."
 		die

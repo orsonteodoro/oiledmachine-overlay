@@ -1,0 +1,34 @@
+--- lib/Target/PTX/PTXTranslation.cpp.orig	2023-08-31 23:28:27.000000000 -0700
++++ lib/Target/PTX/PTXTranslation.cpp	2024-08-06 18:52:33.136410304 -0700
+@@ -17,6 +17,7 @@
+ namespace triton {
+ 
+ static void initLLVM() {
++#ifdef USE_NVPTX
+   static std::once_flag init_flag;
+   std::call_once(init_flag, []() {
+     LLVMInitializeNVPTXTargetInfo();
+@@ -24,6 +25,7 @@ static void initLLVM() {
+     LLVMInitializeNVPTXTargetMC();
+     LLVMInitializeNVPTXAsmPrinter();
+   });
++#endif
+ }
+ 
+ static bool findAndReplace(std::string &str, const std::string &begin,
+--- lib/Target/HSACO/HSACOTranslation.cpp.orig	2023-08-31 23:28:27.000000000 -0700
++++ lib/Target/HSACO/HSACOTranslation.cpp	2024-08-06 18:52:27.184507607 -0700
+@@ -38,11 +38,13 @@
+ namespace {
+ 
+ void init_llvm() {
++#ifdef USE_AMDGPU
+   LLVMInitializeAMDGPUTarget();
+   LLVMInitializeAMDGPUTargetInfo();
+   LLVMInitializeAMDGPUTargetMC();
+   LLVMInitializeAMDGPUAsmParser();
+   LLVMInitializeAMDGPUAsmPrinter();
++#endif
+ }
+ 
+ std::unique_ptr<llvm::TargetMachine>

@@ -141,6 +141,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.1.0-llvm-static-linking.patch"
 	"${FILESDIR}/${PN}-2.1.0-optionalize-targets.patch"
 	"${FILESDIR}/${PN}-2.1.0-rename-to-llvm-17-target.patch"
+	"${FILESDIR}/${PN}-2.1.0-optionalize-gpu-init.patch"
 )
 
 pkg_setup() {
