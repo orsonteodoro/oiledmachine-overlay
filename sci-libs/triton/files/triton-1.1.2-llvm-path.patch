@@ -1,0 +1,16 @@
+diff '--color=auto' -urp triton-1.1.2.orig/python/setup.py triton-1.1.2/python/setup.py
+--- triton-1.1.2.orig/python/setup.py	2024-08-06 20:36:13.393489944 -0700
++++ triton-1.1.2/python/setup.py	2024-08-06 21:01:28.542809821 -0700
+@@ -77,7 +77,11 @@ class CMakeBuild(build_ext):
+             self.build_extension(ext)
+ 
+     def build_extension(self, ext):
+-        llvm_include_dir, llvm_library_dir = get_llvm()
++        if os.environ['OFFLINE_INSTALL']:
++            llvm_include_dir = os.environ['LLVM_INCLUDE_DIR']
++            llvm_library_dir = os.environ['LLVM_LIBRARY_DIR']
++        else:
++            llvm_include_dir, llvm_library_dir = get_llvm()
+         # self.debug = True
+         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.path)))
+         # create build directories

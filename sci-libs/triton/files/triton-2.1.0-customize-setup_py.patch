@@ -13,7 +13,7 @@ diff '--color=auto' -urp triton-2.1.0.orig/python/setup.py triton-2.1.0/python/s
 +            "-DLLVM_STATIC=OFF",
          ]
 +        
-+        if os.environ['OVERRIDE_FETCH']:
++        if os.environ['OFFLINE_INSTALL']:
 +            cmake_args += [
 +                "-DFETCHCONTENT_FULLY_DISCONNECTED=ON",
 +                "-DFETCHCONTENT_QUIET=OFF",

@@ -1,0 +1,12 @@
+diff '--color=auto' -urp triton-1.1.2.orig/python/setup.py triton-1.1.2/python/setup.py
+--- triton-1.1.2.orig/python/setup.py	2024-08-06 20:36:13.393489944 -0700
++++ triton-1.1.2/python/setup.py	2024-08-06 21:01:28.542809821 -0700
+@@ -88,7 +92,7 @@ class CMakeBuild(build_ext):
+         if not os.path.exists(llvm_build_dir):
+             os.makedirs(llvm_build_dir)
+         # python directories
+-        python_include_dirs = [distutils.sysconfig.get_python_inc()] + ['/usr/local/cuda/include']
++        python_include_dirs = [distutils.sysconfig.get_python_inc()] + ['/opt/cuda/include']
+         cmake_args = [
+             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=" + extdir,
+             "-DBUILD_TUTORIALS=OFF",

@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_EXT=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit dep-prepare distutils-r1 flag-o-matic
@@ -35,7 +36,7 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-LLVM_COMPAT=( {13,12} ) # Build time failure with LLVM 14, LLVM 11 untested.
+LLVM_COMPAT=( {13..12} ) # Build time failure with LLVM 14, LLVM 11 untested but offered by setup.py.
 ROCM_SLOTS=(
 	rocm_4_5
 	rocm_4_1
@@ -60,6 +61,8 @@ gen_rocm_required_use() {
 		"
 	done
 }
+# You need a local copy of dev-util/nvidia-cuda-toolkit if you want to use
+# llvm_targets_NVPTX on llvm:13 or llvm:12.
 REQUIRED_USE="
 	!rocm? (
 		^^ (
@@ -125,6 +128,21 @@ RDEPEND+="
 			sys-devel/llvm-roc:4.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 	)
+	llvm_targets_NVPTX? (
+		llvm_slot_12? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-11.0*
+				=dev-util/nvidia-cuda-toolkit-10.1*
+			)
+		)
+		llvm_slot_13? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-11.2*
+				=dev-util/nvidia-cuda-toolkit-10.1*
+			)
+		)
+		dev-util/nvidia-cuda-toolkit:=
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -139,6 +157,8 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-1.1.2-llvm-static-linking.patch"
 	"${FILESDIR}/${PN}-1.1.2-optionalize-gpu-init-llvm_cc.patch"
 	"${FILESDIR}/${PN}-1.1.2-customize-setup_py.patch"
+	"${FILESDIR}/${PN}-1.1.2-cuda-path.patch"
+	"${FILESDIR}/${PN}-1.1.2-llvm-path.patch"
 )
 
 pkg_setup() {
@@ -188,6 +208,19 @@ eerror "Cannot find a LLVM installation."
 		| sed -e "s|/opt/bin|/opt/bin:${llvm_root_dir}/bin|g")
 einfo "PATH:  ${PATH}"
 
+	if [[ "${PV}" == *"9999" ]] ; then
+		export OFFLINE_INSTALL=0
+	else
+		export OFFLINE_INSTALL=1
+	fi
+	if use rocm ; then
+		export LLVM_INCLUDE_DIR="${llvm_root_dir}/include"
+		export LLVM_LIBRARY_DIR="${llvm_root_dir}/lib"
+	else
+		export LLVM_INCLUDE_DIR="${llvm_root_dir}/include"
+		export LLVM_LIBRARY_DIR="${llvm_root_dir}/$(get_libdir)"
+	fi
+
 	export LLVM_ROOT_DIR="${llvm_root_dir}"
 	if use rocm ; then
 		export USE_ROCM=1
@@ -220,6 +253,7 @@ src_compile() {
 
 src_install() {
 	distutils-r1_src_install
+	cd "${WORKDIR}/${P}" || die
 	docinto "licenses"
 	dodoc "LICENSE"
 }

@@ -4,8 +4,10 @@
 
 EAPI=8
 
+DISTUTILS_EXT=1
 GOOGLETEST_PV="1.12.1"
 INTEL_XPU_BACKEND_COMMIT="0bcc485f82b34d49494bd0264bacc24a20aafb7a"
+PYBIND11_PV="2.10.0"
 PYTHON_COMPAT=( "python3_"{10..12} )
 SPIRV_HEADERS_COMMIT="cfbe4feef20c3c0628712c2792624f0221e378ac"
 SPIRV_TOOLS_COMMIT="25ad5e19f193429b737433d5f6151062ddbc1680"
@@ -23,6 +25,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 else
 	#KEYWORDS="~amd64" # Ebuild still in development.
 	S="${WORKDIR}/${P}"
+	S_TRITION="${WORKDIR}/${P}"
 	SRC_URI="
 https://github.com/triton-lang/triton/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -34,6 +37,8 @@ https://github.com/KhronosGroup/SPIRV-Headers/archive/${SPIRV_HEADERS_COMMIT}.ta
 	-> SPIRV-Headers-${SPIRV_HEADERS_COMMIT:0:7}.tar.gz
 https://github.com/KhronosGroup/SPIRV-Tools/archive/${SPIRV_TOOLS_COMMIT}.tar.gz
 	-> SPIRV-Tools-${SPIRV_TOOLS_COMMIT:0:7}.tar.gz
+https://github.com/pybind/pybind11/archive/refs/tags/v${PYBIND11_PV}.tar.gz
+	-> pybind11-${PYBIND11_PV}.tar.gz
 	"
 fi
 
@@ -146,6 +151,9 @@ gen_llvm_rdepend() {
 		"
 	done
 }
+# This project uses nvcc from 12.1 but it doesn't exist on the distro.  The nvcc
+# used is based on
+# https://github.com/llvm/llvm-project/blob/llvmorg-17.0.6/clang/include/clang/Basic/Cuda.h#L42C26-L42C29
 RDEPEND+="
 	!rocm? (
 		$(gen_llvm_rdepend)
@@ -160,6 +168,10 @@ RDEPEND+="
 		rocm_5_7? (
 			sys-devel/llvm-roc:5.7[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
+	)
+	llvm_targets_NVPTX? (
+		=dev-util/nvidia-cuda-toolkit-11.8*
+		dev-util/nvidia-cuda-toolkit:=
 	)
 "
 DEPEND+="
@@ -177,6 +189,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.1.0-rename-to-llvm-17-target.patch"
 	"${FILESDIR}/${PN}-2.1.0-optionalize-gpu-init.patch"
 	"${FILESDIR}/${PN}-2.1.0-customize-setup_py.patch"
+	"${FILESDIR}/${PN}-2.1.0-offline-install.patch"
 )
 
 pkg_setup() {
@@ -195,6 +208,7 @@ src_unpack() {
 		dep_prepare_mv "${WORKDIR}/googletest-release-${GOOGLETEST_PV}" "${S}/third_party/googletest"
 		dep_prepare_mv "${WORKDIR}/SPIRV-Headers-${SPIRV_HEADERS_COMMIT}" "${S}/third_party/intel_xpu_backend/third_party/SPIRV-Headers"
 		dep_prepare_mv "${WORKDIR}/SPIRV-Tools-${SPIRV_TOOLS_COMMIT}" "${S}/third_party/intel_xpu_backend/third_party/SPIRV-Tools"
+		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_PV}" "${S}/third_party/pybind11"
 	fi
 }
 
@@ -230,6 +244,15 @@ eerror "Cannot find a LLVM installation."
 		| sed -e "s|/opt/bin|/opt/bin:${llvm_root_dir}/bin|g")
 einfo "PATH:  ${PATH}"
 
+	export USE_SYSTEM_LLVM=1
+	if use rocm ; then
+		export LLVM_INCLUDE_DIR="${llvm_root_dir}/include"
+		export LLVM_LIBRARY_DIR="${llvm_root_dir}/lib"
+	else
+		export LLVM_INCLUDE_DIR="${llvm_root_dir}/include"
+		export LLVM_LIBRARY_DIR="${llvm_root_dir}/$(get_libdir)"
+	fi
+
 	export LLVM_ROOT_DIR="${llvm_root_dir}"
 	if use rocm ; then
 		export USE_ROCM=1
@@ -242,10 +265,18 @@ einfo "PATH:  ${PATH}"
 		export USE_DYNLIB=0
 	fi
 
-	if ! [[ "${PV}" == *"9999" ]] ; then
-		export FETCHCONTENT_GOOGLETEST_DIR="${S}/third_party/googletest"
-		export FETCHCONTENT_SPIRV_HEADERS_DIR="${S}/third_party/intel_xpu_backend/third_party/SPIRV-Headers"
-		export FETCHCONTENT_SPIRV_TOOLS_DIR="${S}/third_party/intel_xpu_backend/third_party/SPIRV-Tools"
+	if [[ "${PV}" == *"9999" ]] ; then
+		export OFFLINE_INSTALL=0
+	else
+		export OFFLINE_INSTALL=1
+		export FETCHCONTENT_GOOGLETEST_DIR="${S_TRITION}/third_party/googletest"
+		export FETCHCONTENT_SPIRV_HEADERS_DIR="${S_TRITION}/third_party/intel_xpu_backend/third_party/SPIRV-Headers"
+		export FETCHCONTENT_SPIRV_TOOLS_DIR="${S_TRITION}/third_party/intel_xpu_backend/third_party/SPIRV-Tools"
+		export PYBIND11_INCLUDE_DIR="${S_TRITION}/third_party/pybind11/include"
+		export PYBIND11_SYSPATH="${S_TRITION}/third_party/pybind11/lib"
+		export LLVM_INCLUDE_DIRS="${LLVM_INCLUDE_DIR}"
+		export LLVM_LIBRARY_DIR="${LLVM_LIBRARY_DIR}"
+		export LLVM_SYSPATH="${llvm_root_dir}"
 	fi
 
 	if use llvm_targets_AMDGPU ; then
@@ -260,6 +291,7 @@ einfo "PATH:  ${PATH}"
 	else
 		export USE_NVPTX=0
 	fi
+
 }
 
 src_compile() {
@@ -268,6 +300,7 @@ src_compile() {
 
 src_install() {
 	distutils-r1_src_install
+	cd "${WORKDIR}/${P}" || die
 	docinto "licenses"
 	dodoc "LICENSE"
 }
