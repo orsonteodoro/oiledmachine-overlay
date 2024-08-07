@@ -171,11 +171,11 @@ src_configure() {
 	local dynlib=0
 	local llvm_root_dir
 	if use rocm_6_1 && has_version "~sys-devel/llvm-roc-6.1.2" ; then
-		llvm_root_dir="/opt/rocm-6.1.2/llvm"
+		llvm_root_dir="/opt/rocm-6.1.2/llvm" # LLVM 17.0.0git
 	elif use rocm_6_0 && has_version "~sys-devel/llvm-roc-6.0.2" ; then
-		llvm_root_dir="/opt/rocm-6.0.2/llvm"
+		llvm_root_dir="/opt/rocm-6.0.2/llvm" # LLVM 17.0.0git
 	elif use rocm_5_7 && has_version "~sys-devel/llvm-roc-5.7.1" ; then
-		llvm_root_dir="/opt/rocm-5.7.1/llvm"
+		llvm_root_dir="/opt/rocm-5.7.1/llvm" # LLVM 17.0.0git
 	elif use llvm_slot_17 && has_version "sys-devel/llvm:17" && has_version "sys-devel/mlir:17" ; then
 		llvm_root_dir="/usr/lib/llvm/17"
 		dynlib=1
