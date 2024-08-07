@@ -197,6 +197,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.1.0-llvm-static-linking.patch"
 	"${FILESDIR}/${PN}-3.0.0_p1-customize-setup_py.patch"
 	"${FILESDIR}/${PN}-3.0.0_p1-offline-install.patch"
+	"${FILESDIR}/${PN}-3.0.0_p1-llvm-arch.patch"
 )
 
 pkg_setup() {
@@ -220,6 +221,33 @@ src_prepare() {
 	eapply ${_PATCHES[@]}
 	S="${WORKDIR}/${P}/python"
 	distutils-r1_src_prepare
+}
+
+get_llvm_arch() {
+	if use amd64 ; then
+		echo "X86"
+	elif use arm ; then
+		echo "ARM"
+	elif use arm64 ; then
+		echo "AArch64"
+	elif use loong ; then
+		echo "LoongArch"
+	elif use mips ; then
+		echo "Mips"
+	elif use ppc ; then
+		echo "PowerPC"
+	elif use ppc64 ; then
+		echo "PowerPC"
+	elif use riscv ; then
+		echo "RISCV"
+	elif use sparc ; then
+		echo "Sparc"
+	elif use x86 ; then
+		echo "X86"
+	else
+eerror "${ABI} is not supported for LLVM target."
+		die
+	fi
 }
 
 python_configure() {
@@ -295,6 +323,8 @@ einfo "PATH:  ${PATH}"
 	if use video_cards_intel ; then
 		export TRITON_CODEGEN_INTEL_XPU_BACKEND=1
 	fi
+
+	export LLVM_ARCH=$(get_llvm_arch)
 }
 
 src_compile() {

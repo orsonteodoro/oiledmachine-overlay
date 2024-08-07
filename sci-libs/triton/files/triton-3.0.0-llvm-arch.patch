@@ -1,0 +1,19 @@
+diff '--color=auto' -urp triton-764d4432cf422ea24f5e2942fa480270568be9bc.orig/CMakeLists.txt triton-764d4432cf422ea24f5e2942fa480270568be9bc/CMakeLists.txt
+--- triton-764d4432cf422ea24f5e2942fa480270568be9bc.orig/CMakeLists.txt	2024-08-07 16:36:09.307891602 -0700
++++ triton-764d4432cf422ea24f5e2942fa480270568be9bc/CMakeLists.txt	2024-08-07 16:41:41.726228581 -0700
+@@ -179,10 +179,13 @@ if(TRITON_BUILD_PYTHON_MODULE)
+     else()
+       set(NVPTX_LIBS "")
+     endif()
++    set(ARCH_LIBS
++      LLVM$ENV{LLVM_ARCH}CodeGen
++      LLVM$ENV{LLVM_ARCH}AsmParser
++    )
+     set(LLVM_LIBRARIES
+       LLVMPasses
+-      LLVMX86CodeGen
+-      LLVMX86AsmParser
++      ${ARCH_LIBS}
+       ${AMDGPU_LIBS}
+       ${NVPTX_LIBS}
+     )
