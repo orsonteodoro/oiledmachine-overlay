@@ -50,6 +50,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
 rocm test tutorials
+ebuild-revision-1
 "
 gen_rocm_required_use() {
 	local u
@@ -128,17 +129,12 @@ gen_llvm_rdepend() {
 #   11.5:  https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.5.1-r1.ebuild?id=e51ca099bec28c5a27a7eb070e7c77a06790a30d
 #
 RDEPEND+="
+	$(python_gen_any_dep '
+		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+	')
 	dev-python/filelock[${PYTHON_USEDEP}]
 	!rocm? (
 		$(gen_llvm_rdepend)
-	)
-	rocm? (
-		rocm_5_2? (
-			sys-devel/llvm-roc:5.2[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
-		)
-		rocm_5_1? (
-			sys-devel/llvm-roc:5.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
-		)
 	)
 	llvm_targets_NVPTX? (
 		llvm_slot_14? (
@@ -148,9 +144,19 @@ RDEPEND+="
 		)
 		dev-util/nvidia-cuda-toolkit:=
 	)
+	rocm? (
+		rocm_5_2? (
+			sys-devel/llvm-roc:5.2[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+		)
+		rocm_5_1? (
+			sys-devel/llvm-roc:5.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+		)
+	)
 	tutorials? (
+		$(python_gen_any_dep '
+			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		')
 		dev-python/matplotlib[${PYTHON_USEDEP}]
-		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/tabulate[${PYTHON_USEDEP}]
 	)
 "
@@ -164,11 +170,15 @@ BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
+		$(python_gen_any_dep '
+			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		')
 		>=dev-python/scipy-1.7.1[${PYTHON_USEDEP}]
 		dev-python/autopep8[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/isort[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/pycodestyle[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 	)
@@ -208,8 +218,10 @@ einfo "Called python_configure"
 	local llvm_root_dir
 	if use rocm_5_2 && has_version "~sys-devel/llvm-roc-5.2.3" ; then
 		llvm_root_dir="/opt/rocm-5.2.3/llvm" # LLVM 14.0.0git
+		export ROCM_VERSION="5.2.3"
 	elif use rocm_5_1 && has_version "~sys-devel/llvm-roc-5.1.3" ; then
 		llvm_root_dir="/opt/rocm-5.1.3/llvm" # LLVM 14.0.0git
+		export ROCM_VERSION="5.1.3"
 	elif use llvm_slot_14 && has_version "sys-devel/llvm:14" && has_version "sys-devel/mlir:14"; then
 		llvm_root_dir="/usr/lib/llvm/14"
 		dynlib=1
@@ -287,6 +299,20 @@ src_install() {
 	cd "${WORKDIR}/${P}" || die
 	docinto "licenses"
 	dodoc "LICENSE"
+	if use tutorials ; then
+		insinto "/usr/share/${PN}"
+		doins -r "python/tutorials"
+	fi
+	if use rocm ; then
+		local paths=(
+			$(find "${ED}" -name "libtriton.so")
+		)
+		local x
+		for x in ${paths[@]} ; do
+einfo "Fixing RPATH for ${x}"
+			patchelf --add-rpath "/opt/rocm-${ROCM_VERSION}/llvm/lib" "${x}" || die
+		done
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

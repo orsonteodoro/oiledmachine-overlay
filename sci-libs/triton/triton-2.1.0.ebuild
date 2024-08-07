@@ -83,6 +83,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
 rocm test tutorials
+ebuild-revision-1
 "
 gen_rocm_required_use() {
 	local u
@@ -166,6 +167,10 @@ RDEPEND+="
 	!rocm? (
 		$(gen_llvm_rdepend)
 	)
+	llvm_targets_NVPTX? (
+		=dev-util/nvidia-cuda-toolkit-11.8*
+		dev-util/nvidia-cuda-toolkit:=
+	)
 	rocm? (
 		rocm_6_1? (
 			sys-devel/llvm-roc:6.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
@@ -177,13 +182,11 @@ RDEPEND+="
 			sys-devel/llvm-roc:5.7[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 	)
-	llvm_targets_NVPTX? (
-		=dev-util/nvidia-cuda-toolkit-11.8*
-		dev-util/nvidia-cuda-toolkit:=
-	)
 	tutorials? (
+		$(python_gen_any_dep '
+			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		')
 		dev-python/matplotlib[${PYTHON_USEDEP}]
-		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/tabulate[${PYTHON_USEDEP}]
 	)
 "
@@ -197,11 +200,15 @@ BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
+		$(python_gen_any_dep '
+			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		')
 		>=dev-python/scipy-1.7.1[${PYTHON_USEDEP}]
 		dev-python/autopep8[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/isort[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 	)
 "
@@ -249,10 +256,13 @@ einfo "Called python_configure"
 	local llvm_root_dir
 	if use rocm_6_1 && has_version "~sys-devel/llvm-roc-6.1.2" ; then
 		llvm_root_dir="/opt/rocm-6.1.2/llvm" # LLVM 17.0.0git
+		export ROCM_VERSION="6.1.2"
 	elif use rocm_6_0 && has_version "~sys-devel/llvm-roc-6.0.2" ; then
 		llvm_root_dir="/opt/rocm-6.0.2/llvm" # LLVM 17.0.0git
+		export ROCM_VERSION="6.0.2"
 	elif use rocm_5_7 && has_version "~sys-devel/llvm-roc-5.7.1" ; then
 		llvm_root_dir="/opt/rocm-5.7.1/llvm" # LLVM 17.0.0git
+		export ROCM_VERSION="5.7.1"
 	elif use llvm_slot_17 && has_version "sys-devel/llvm:17" && has_version "sys-devel/mlir:17" ; then
 		llvm_root_dir="/usr/lib/llvm/17"
 		dynlib=1
@@ -327,6 +337,20 @@ src_install() {
 	cd "${WORKDIR}/${P}" || die
 	docinto "licenses"
 	dodoc "LICENSE"
+	if use tutorials ; then
+		insinto "/usr/share/${PN}"
+		doins -r "python/tutorials"
+	fi
+	if use rocm ; then
+		local paths=(
+			$(find "${ED}" -name "libtriton.so")
+		)
+		local x
+		for x in ${paths[@]} ; do
+einfo "Fixing RPATH for ${x}"
+			patchelf --add-rpath "/opt/rocm-${ROCM_VERSION}/llvm/lib" "${x}" || die
+		done
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
