@@ -101,30 +101,64 @@ REQUIRED_USE="
 		)
 	)
 "
-gen_llvm_triton_rdepend() {
+gen_llvm_rdepend() {
 	local u
 	for u in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${u}? (
-				sys-devel/llvm:${u}
-				sys-devel/mlir:${u}
+				amd64? (
+					sys-devel/llvm:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
+					sys-devel/mlir:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
+				)
+				arm? (
+					sys-devel/llvm:${u}[llvm_targets_ARM]
+					sys-devel/mlir:${u}[llvm_targets_ARM]
+				)
+				arm64? (
+					sys-devel/llvm:${u}[llvm_targets_AArch64]
+					sys-devel/mlir:${u}[llvm_targets_AArch64]
+				)
+				loong? (
+					sys-devel/llvm:${u}[llvm_targets_LoongArch]
+					sys-devel/mlir:${u}[llvm_targets_LoongArch]
+				)
+				mips? (
+					sys-devel/llvm:${u}[llvm_targets_Mips]
+					sys-devel/mlir:${u}[llvm_targets_Mips]
+				)
+				ppc? (
+					sys-devel/llvm:${u}[llvm_targets_PowerPC]
+					sys-devel/mlir:${u}[llvm_targets_PowerPC]
+				)
+				ppc64? (
+					sys-devel/llvm:${u}[llvm_targets_PowerPC]
+					sys-devel/mlir:${u}[llvm_targets_PowerPC]
+				)
+				sparc? (
+					sys-devel/llvm:${u}[llvm_targets_Sparc]
+					sys-devel/mlir:${u}[llvm_targets_Sparc]
+				)
+				x86? (
+					sys-devel/llvm:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
+					sys-devel/mlir:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
+				)
 			)
 		"
 	done
 }
 RDEPEND+="
 	!rocm? (
-		$(gen_llvm_triton_rdepend)
+		$(gen_llvm_rdepend)
 	)
 	rocm? (
 		rocm_6_1? (
-			sys-devel/llvm-roc:6.1[mlir]
+			sys-devel/llvm-roc:6.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 		rocm_6_0? (
-			sys-devel/llvm-roc:6.0[mlir]
+			sys-devel/llvm-roc:6.0[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 		rocm_5_7? (
-			sys-devel/llvm-roc:5.7[mlir]
+			sys-devel/llvm-roc:5.7[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 	)
 "
