@@ -5,7 +5,6 @@ EAPI=8
 
 # TODO package:
 # clang-format
-# dev-lang/triton
 # lintrunner-adapters
 # neural-compressor
 # onnxmltools
@@ -648,7 +647,7 @@ RDEPEND="
 				sci-libs/neural-compressor[${PYTHON_USEDEP}]
 			)
 			triton? (
-				dev-lang/triton[${PYTHON_USEDEP}]
+				sci-libs/triton[${PYTHON_USEDEP}]
 			)
 			training? (
 				dev-python/cerberus[${PYTHON_USEDEP}]
