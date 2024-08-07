@@ -1,0 +1,22 @@
+diff '--color=auto' -urp triton-1.1.2.orig/lib/driver/llvm.cc triton-1.1.2/lib/driver/llvm.cc
+--- triton-1.1.2.orig/lib/driver/llvm.cc	2021-10-29 01:24:19.000000000 -0700
++++ triton-1.1.2/lib/driver/llvm.cc	2024-08-06 18:18:11.614079107 -0700
+@@ -62,14 +62,18 @@ namespace driver{
+ void init_llvm() {
+   static bool init = false;
+   if(!init){
++#ifdef USE_NVPTX
+     LLVMInitializeNVPTXTargetInfo();
+     LLVMInitializeNVPTXTarget();
+     LLVMInitializeNVPTXTargetMC();
+     LLVMInitializeNVPTXAsmPrinter();
++#endif
++#ifdef USE_AMDGPU
+     LLVMInitializeAMDGPUTargetInfo();
+     LLVMInitializeAMDGPUTarget();
+     LLVMInitializeAMDGPUTargetMC();
+     LLVMInitializeAMDGPUAsmPrinter();
++#endif
+     init = true;
+   }
+ }

@@ -1,0 +1,160 @@
+diff '--color=auto' -urp triton-1.1.2.orig/CMakeLists.txt triton-1.1.2/CMakeLists.txt
+--- triton-1.1.2.orig/CMakeLists.txt	2021-10-29 01:24:19.000000000 -0700
++++ triton-1.1.2/CMakeLists.txt	2024-08-06 18:14:37.365627227 -0700
+@@ -26,12 +26,28 @@ find_library(TERMINFO_LIBRARY tinfo)
+ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__STDC_FORMAT_MACROS  -std=gnu++17")
+ 
++option(LLVM_DYNLIB "Build with LLVM DYNLIB" ON)
++option(MLIR_DYNLIB "Build with MLIR DYNLIB" OFF)
++option(LLVM_STATIC "Build with LLVM STATIC LIBS" OFF)
++message(STATUS "LLVM_DYNLIB:  ${LLVM_DYNLIB}")
++message(STATUS "MLIR_DYNLIB:  ${MLIR_DYNLIB}")
++
++option(USE_AMDGPU "Build with AMDGPU support?" ON)
++option(USE_NVPTX "Build with NVPTX support?" ON)
++message(STATUS "USE_AMDGPU:  ${USE_AMDGPU}")
++message(STATUS "USE_NVPTX:  ${USE_NVPTX}")
+ 
+ ##########
+ # LLVM
+ ##########
+ if("${LLVM_LIBRARY_DIR}" STREQUAL "")
+-    find_package(LLVM 11 REQUIRED COMPONENTS "nvptx;amdgpu")
++    if(USE_AMDGPU AND USE_NVPTX)
++      find_package(LLVM 11 REQUIRED COMPONENTS "nvptx;amdgpu")
++    elseif(USE_AMDGPU)
++      find_package(LLVM 11 REQUIRED COMPONENTS "amdgpu")
++    elseif(USE_NVPTX)
++      find_package(LLVM 11 REQUIRED COMPONENTS "nvptx")
++    endif()
+     message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+     if(APPLE)
+       set(CMAKE_OSX_DEPLOYMENT_TARGET "10.14")
+@@ -39,13 +55,37 @@ if("${LLVM_LIBRARY_DIR}" STREQUAL "")
+ # sometimes we don't want to use llvm-config, since it may have been downloaded for some specific linux distros
+ else()
+     set(LLVM_LDFLAGS "-L${LLVM_LIBRARY_DIR}")
+-    set(LLVM_LIBRARIES 
++    if(LLVM_DYNLIB)
++      set(LLVM_LIBRARIES
++        LLVM
++      )
++    else()
++      if(LLVM_STATIC)
++        if(USE_AMDGPU)
++          set(AMDGPU_LIBS
++libLLVMAMDGPUDisassembler.a
++libLLVMAMDGPUCodeGen.a
++libLLVMAMDGPUAsmParser.a
++libLLVMAMDGPUDesc.a
++libLLVMAMDGPUUtils.a
++libLLVMAMDGPUInfo.a
++          )
++        else()
++          set(AMDGPU_LIBS "")
++        endif()
++        if(USE_NVPTX)
++          set(NVPTX_LIBS
+ libLLVMNVPTXCodeGen.a
+ libLLVMNVPTXDesc.a
+ libLLVMNVPTXInfo.a
+-libLLVMAMDGPUDisassembler.a
++          )
++        else()
++          set(NVPTX_LIBS "")
++        endif()
++        set(LLVM_LIBRARIES 
++          ${AMDGPU_LIBS}
++          ${NVPTX_LIBS}
+ libLLVMMCDisassembler.a
+-libLLVMAMDGPUCodeGen.a
+ libLLVMMIRParser.a
+ libLLVMGlobalISel.a
+ libLLVMSelectionDAG.a
+@@ -70,10 +110,7 @@ libLLVMProfileData.a
+ libLLVMObject.a
+ libLLVMTextAPI.a
+ libLLVMBitReader.a
+-libLLVMAMDGPUAsmParser.a
+ libLLVMMCParser.a
+-libLLVMAMDGPUDesc.a
+-libLLVMAMDGPUUtils.a
+ libLLVMMC.a
+ libLLVMDebugInfoCodeView.a
+ libLLVMDebugInfoMSF.a
+@@ -81,10 +118,72 @@ libLLVMCore.a
+ libLLVMRemarks.a
+ libLLVMBitstreamReader.a
+ libLLVMBinaryFormat.a
+-libLLVMAMDGPUInfo.a
+ libLLVMSupport.a
+ libLLVMDemangle.a
+-)
++        )
++      else()
++        if(USE_AMDGPU)
++          set(AMDGPU_LIBS
++LLVMAMDGPUDisassembler
++LLVMAMDGPUCodeGen
++LLVMAMDGPUAsmParser
++LLVMAMDGPUDesc
++LLVMAMDGPUUtils
++LLVMAMDGPUInfo
++          )
++        else()
++          set(AMDGPU_LIBS "")
++        endif()
++        if(USE_NVPTX)
++          set(NVPTX_LIBS 
++LLVMNVPTXCodeGen
++LLVMNVPTXDesc
++LLVMNVPTXInfo
++          )
++        else()
++          set(NVPTX_LIBS "")
++        endif()
++        set(LLVM_LIBRARIES 
++          ${AMDGPU_LIBS}
++          ${NVPTX_LIBS}
++LLVMMCDisassembler
++LLVMMIRParser
++LLVMGlobalISel
++LLVMSelectionDAG
++LLVMipo
++LLVMInstrumentation
++LLVMVectorize
++LLVMLinker
++LLVMIRReader
++LLVMAsmParser
++LLVMFrontendOpenMP
++LLVMAsmPrinter
++LLVMDebugInfoDWARF
++LLVMCodeGen
++LLVMTarget
++LLVMScalarOpts
++LLVMInstCombine
++LLVMAggressiveInstCombine
++LLVMTransformUtils
++LLVMBitWriter
++LLVMAnalysis
++LLVMProfileData
++LLVMObject
++LLVMTextAPI
++LLVMBitReader
++LLVMMCParser
++LLVMMC
++LLVMDebugInfoCodeView
++LLVMDebugInfoMSF
++LLVMCore
++LLVMRemarks
++LLVMBitstreamReader
++LLVMBinaryFormat
++LLVMSupport
++LLVMDemangle
++        )
++      endif()
++    endif()
+ endif()
+ include_directories("${LLVM_INCLUDE_DIRS}")
+ 

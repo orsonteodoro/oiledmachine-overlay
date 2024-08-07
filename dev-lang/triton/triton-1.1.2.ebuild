@@ -4,11 +4,7 @@
 
 EAPI=8
 
-GOOGLETEST_PV="1.12.1"
-INTEL_XPU_BACKEND_COMMIT="0bcc485f82b34d49494bd0264bacc24a20aafb7a"
 PYTHON_COMPAT=( "python3_"{10..12} )
-SPIRV_HEADERS_COMMIT="cfbe4feef20c3c0628712c2792624f0221e378ac"
-SPIRV_TOOLS_COMMIT="25ad5e19f193429b737433d5f6151062ddbc1680"
 
 inherit dep-prepare cmake flag-o-matic
 
@@ -26,14 +22,6 @@ else
 	SRC_URI="
 https://github.com/triton-lang/triton/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/intel/intel-xpu-backend-for-triton/archive/${INTEL_XPU_BACKEND_COMMIT}.tar.gz
-	-> intel-xpu-backend-for-triton-${INTEL_XPU_BACKEND_COMMIT:0:7}.tar.gz
-https://github.com/google/googletest/archive/refs/tags/release-${GOOGLETEST_PV}.tar.gz
-	-> googletest-release-${GOOGLETEST_PV}.tar.gz
-https://github.com/KhronosGroup/SPIRV-Headers/archive/${SPIRV_HEADERS_COMMIT}.tar.gz
-	-> SPIRV-Headers-${SPIRV_HEADERS_COMMIT:0:7}.tar.gz
-https://github.com/KhronosGroup/SPIRV-Tools/archive/${SPIRV_TOOLS_COMMIT}.tar.gz
-	-> SPIRV-Tools-${SPIRV_TOOLS_COMMIT:0:7}.tar.gz
 	"
 fi
 
@@ -63,11 +51,12 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # MLIRSCFDialect - LLVM 15
 # MLIRSCFToControlFlow - LLVM 15
 # MLIRTargetLLVMIRExport - LLVM 13
-LLVM_COMPAT=( 17 )
+LLVM_COMPAT=( 17 12 )
 ROCM_SLOTS=(
 	rocm_6_1
 	rocm_6_0
 	rocm_5_7
+	rocm_4_1
 )
 LLVM_TARGETS=(
 	AMDGPU
@@ -137,10 +126,9 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-2.1.0-dynlib.patch"
-	"${FILESDIR}/${PN}-2.1.0-llvm-static-linking.patch"
-	"${FILESDIR}/${PN}-2.1.0-optionalize-targets.patch"
-	"${FILESDIR}/${PN}-2.1.0-rename-to-llvm-17-target.patch"
+	"${FILESDIR}/${PN}-1.1.2-optionalize-gpu-targets-and-dynlib.patch"
+	"${FILESDIR}/${PN}-1.1.2-llvm-static-linking.patch"
+	"${FILESDIR}/${PN}-1.1.2-optionalize-gpu-init-llvm_cc.patch"
 )
 
 pkg_setup() {
@@ -155,10 +143,6 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
-		dep_prepare_mv "${WORKDIR}/intel-xpu-backend-for-triton-${INTEL_XPU_BACKEND_COMMIT}" "${S}/third_party/intel_xpu_backend"
-		dep_prepare_mv "${WORKDIR}/googletest-release-${GOOGLETEST_PV}" "${S}/third_party/googletest"
-		dep_prepare_mv "${WORKDIR}/SPIRV-Headers-${SPIRV_HEADERS_COMMIT}" "${S}/third_party/intel_xpu_backend/third_party/SPIRV-Headers"
-		dep_prepare_mv "${WORKDIR}/SPIRV-Tools-${SPIRV_TOOLS_COMMIT}" "${S}/third_party/intel_xpu_backend/third_party/SPIRV-Tools"
 	fi
 }
 
@@ -175,9 +159,52 @@ src_configure() {
 		llvm_root_dir="/opt/rocm-6.0.2/llvm"
 	elif use rocm_5_7 && has_version "~sys-devel/llvm-roc-5.7.1" ; then
 		llvm_root_dir="/opt/rocm-5.7.1/llvm"
-	elif use llvm_slot_17 && has_version "sys-devel/llvm:17" && has_version "sys-devel/mlir:17" ; then
-		llvm_root_dir="/usr/lib/llvm/17"
+#	elif use rocm_5_6 && has_version "~sys-devel/llvm-roc-5.6.1" ; then
+#		llvm_root_dir="/opt/rocm-5.6.1/llvm"
+#	elif use rocm_5_5 && has_version "~sys-devel/llvm-roc-5.5.1" ; then
+#		llvm_root_dir="/opt/rocm-5.5.1/llvm"
+#	elif use rocm_5_4 && has_version "~sys-devel/llvm-roc-5.4.3" ; then
+#		llvm_root_dir="/opt/rocm-5.4.3/llvm"
+#	elif use rocm_5_3 && has_version "~sys-devel/llvm-roc-5.3.3" ; then
+#		llvm_root_dir="/opt/rocm-5.3.3/llvm"
+#	elif use rocm_5_2 && has_version "~sys-devel/llvm-roc-5.2.3" ; then
+#		llvm_root_dir="/opt/rocm-5.2.3/llvm"
+#	elif use rocm_5_1 && has_version "~sys-devel/llvm-roc-5.1.3" ; then
+#		llvm_root_dir="/opt/rocm-5.1.3/llvm"
+#	elif use rocm_4_5 && has_version "~sys-devel/llvm-roc-4.5.2" ; then
+#		llvm_root_dir="/opt/rocm-4.5.2/llvm"
+	elif use rocm_4_1 && has_version "~sys-devel/llvm-roc-4.1.0" ; then
+		llvm_root_dir="/opt/rocm-4.1.0/llvm"
+#	elif use llvm_slot_17 && has_version "sys-devel/llvm:17" && has_version "sys-devel/mlir:17" ; then
+#		llvm_root_dir="/usr/lib/llvm/17"
+#		dynlib=1
+#	elif use llvm_slot_16 && has_version "sys-devel/llvm:16" && has_version "sys-devel/mlir:16" ; then
+#		llvm_root_dir="/usr/lib/llvm/16"
+#		dynlib=1
+#	elif use llvm_slot_15 && has_version "sys-devel/llvm:15" && has_version "sys-devel/mlir:15"; then
+#		llvm_root_dir="/usr/lib/llvm/15"
+#		dynlib=1
+#	elif use llvm_slot_14 && has_version "sys-devel/llvm:14" && has_version "sys-devel/mlir:14"; then
+#		llvm_root_dir="/usr/lib/llvm/14"
+#		dynlib=1
+#	elif use llvm_slot_13 && has_version "sys-devel/llvm:13" && has_version "sys-devel/mlir:13"; then
+#		llvm_root_dir="/usr/lib/llvm/13"
+#		dynlib=1
+	elif use llvm_slot_12 && has_version "sys-devel/llvm:12" && has_version "sys-devel/mlir:12"; then
+		llvm_root_dir="/usr/lib/llvm/12"
 		dynlib=1
+#	elif use llvm_slot_11 && has_version "sys-devel/llvm:11" && has_version "sys-devel/mlir:11"; then
+#		llvm_root_dir="/usr/lib/llvm/11"
+#		dynlib=1
+#	elif use llvm_slot_10 && has_version "sys-devel/llvm:10" && has_version "sys-devel/mlir:10" ; then
+#		llvm_root_dir="/usr/lib/llvm/10"
+#		dynlib=1
+#	elif use llvm_slot_9 && has_version "sys-devel/llvm:9" && has_version "sys-devel/mlir:9" ; then
+#		llvm_root_dir="/usr/lib/llvm/9"
+#	elif use llvm_slot_8 && has_version "sys-devel/llvm:8" && has_version "sys-devel/mlir:8" ; then
+#		llvm_root_dir="/usr/lib/llvm/8"
+#	elif use llvm_slot_7 && has_version "sys-devel/llvm:7" && has_version "sys-devel/mlir:7" ; then
+#		llvm_root_dir="/usr/lib/llvm/7"
 	else
 eerror "Cannot find a LLVM installation."
 		die
@@ -195,19 +222,8 @@ einfo "PATH:  ${PATH}"
 		-DLLVM_STATIC_LINKING=OFF
 		-DUSE_AMDGPU=$(usex llvm_targets_AMDGPU)
 		-DUSE_NVPTX=$(usex llvm_targets_NVPTX)
+		-DLLVM_STATIC=OFF
 	)
-
-	if ! [[ "${PV}" == *"9999" ]] ; then
-		mycmakeargs+=(
-			-DFETCHCONTENT_FULLY_DISCONNECTED=ON
-			-DFETCHCONTENT_QUIET=OFF
-			-DFETCHCONTENT_SOURCE_DIR_GOOGLETEST="${S}/third_party/googletest"
-			-DFETCHCONTENT_SOURCE_DIR_SPIRV_HEADERS="${S}/third_party/intel_xpu_backend/third_party/SPIRV-Headers"
-			-DFETCHCONTENT_SOURCE_DIR_SPIRV_TOOLS="${S}/third_party/intel_xpu_backend/third_party/SPIRV-Tools"
-			-DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=NEVER
-			-DGOOGLETEST_DIR="${S}/third_party/googletest"
-		)
-	fi
 
 	if use rocm ; then
 # FIXME:  still tries to find static lib

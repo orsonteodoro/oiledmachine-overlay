@@ -1,0 +1,49 @@
+diff '--color=auto' -urp triton-1.1.2.orig/cmake/FindLLVM.cmake triton-1.1.2/cmake/FindLLVM.cmake
+--- triton-1.1.2.orig/cmake/FindLLVM.cmake	2021-10-29 01:24:19.000000000 -0700
++++ triton-1.1.2/cmake/FindLLVM.cmake	2024-08-06 18:11:52.984345113 -0700
+@@ -71,6 +71,8 @@ macro(_LLVM_FAIL _msg)
+   endif()
+ endmacro()
+ 
++option(LLVM_STATIC_LINKING "Link LLVM statically?" OFF)
++message(STATUS "LLVM_STATIC_LINKING:  ${LLVM_STATIC_LINKING}")
+ 
+ if(NOT LLVM_CONFIG)
+     if(NOT LLVM_FIND_QUIETLY)
+@@ -82,8 +84,13 @@ else()
+             set(_quiet_arg ERROR_QUIET)
+         endif()
+         set(result_code)
++        if(LLVM_STATIC_LINKING)
++            set(link_static_flag "--link-static")
++        else()
++            set(link_static_flag "")
++        endif()
+         execute_process(
+-            COMMAND ${LLVM_CONFIG} --link-static --${flag}
++            COMMAND ${LLVM_CONFIG} ${link_static_flag} --${flag}
+             RESULT_VARIABLE result_code
+             OUTPUT_VARIABLE LLVM_${var}
+             OUTPUT_STRIP_TRAILING_WHITESPACE
+@@ -102,8 +109,13 @@ else()
+             set(_quiet_arg ERROR_QUIET)
+         endif()
+         set(result_code)
++        if(LLVM_STATIC_LINKING)
++            set(link_static_flag "--link-static")
++        else()
++            set(link_static_flag "")
++        endif()
+         execute_process(
+-            COMMAND ${LLVM_CONFIG} --link-static --${flag} ${components}
++            COMMAND ${LLVM_CONFIG} ${link_static_flag} --${flag} ${components}
+             RESULT_VARIABLE result_code
+             OUTPUT_VARIABLE tmplibs
+             OUTPUT_STRIP_TRAILING_WHITESPACE
+@@ -196,4 +208,4 @@ include(FindPackageHandleStandardArgs)
+ 
+ find_package_handle_standard_args(LLVM
+     REQUIRED_VARS LLVM_ROOT_DIR
+-    VERSION_VAR LLVM_VERSION_STRING)
+\ No newline at end of file
++    VERSION_VAR LLVM_VERSION_STRING)
