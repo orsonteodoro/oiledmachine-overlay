@@ -133,6 +133,7 @@ einfo "See comments of metadata.xml for documentation on epgo."
 src_prepare() {
 	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
 		eapply "${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-5.1.3-mlir-link-to-MLIRTransforms.patch"
 	popd >/dev/null 2>&1 || die
 
 	if use cuda_11_7 ; then

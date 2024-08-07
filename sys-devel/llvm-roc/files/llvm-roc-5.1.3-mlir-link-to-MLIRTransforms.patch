@@ -1,0 +1,8 @@
+--- a/mlir/lib/Conversion/TosaToLinalg/CMakeLists.txt.orig	2022-03-17 08:38:43.000000000 -0700
++++ b/mlir/lib/Conversion/TosaToLinalg/CMakeLists.txt	2024-08-07 07:34:55.171559589 -0700
+@@ -23,4 +23,5 @@ add_mlir_conversion_library(MLIRTosaToLi
+   MLIRTosa
+   MLIRTosaTransforms
+   MLIRSupport
++  MLIRTransforms
+   )
