@@ -46,10 +46,14 @@ S="${WORKDIR}/flash-attention-${PV}"
 SRC_URI="
 https://github.com/Dao-AILab/flash-attention/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
+	rocm? (
 https://github.com/ROCm/composable_kernel/archive/${COMPOSABLE_KERNEL_COMMIT}.tar.gz
 	-> composable_kernel-${COMPOSABLE_KERNEL_COMMIT:0:7}.tar.gz
+	)
+	cuda? (
 https://github.com/NVIDIA/cutlass/archive/${CUTLASS_COMMIT}.tar.gz
 	-> cutlass-${CUTLASS_COMMIT:0:7}.tar.gz
+	)
 "
 
 DESCRIPTION="Fast and memory-efficient exact attention"
