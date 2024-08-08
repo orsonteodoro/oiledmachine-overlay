@@ -1,0 +1,8 @@
+--- a/mlir/lib/Target/LLVMIR/Dialect/NVVM/CMakeLists.txt.orig	2023-05-11 11:50:45.000000000 -0700
++++ b/mlir/lib/Target/LLVMIR/Dialect/NVVM/CMakeLists.txt	2024-08-08 07:05:22.059254541 -0700
+@@ -13,4 +13,5 @@ add_mlir_translation_library(MLIRNVVMToL
+   MLIRNVVMDialect
+   MLIRSupport
+   MLIRTargetLLVMIRExport
++  MLIRDialectUtils
+   )

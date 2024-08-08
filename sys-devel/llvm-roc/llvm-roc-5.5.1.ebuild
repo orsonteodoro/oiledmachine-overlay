@@ -129,6 +129,7 @@ einfo "See comments of metadata.xml for documentation on ebolt/epgo."
 src_prepare() {
 	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
 		eapply "${FILESDIR}/${PN}-5.5.1-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-5.5.1-mlir-link-to-MLIRDialectUtils.patch"
 	popd >/dev/null 2>&1 || die
 
 	cmake_src_prepare
