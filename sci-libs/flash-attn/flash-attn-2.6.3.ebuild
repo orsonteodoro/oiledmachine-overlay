@@ -25,7 +25,9 @@ PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.12
 inherit hip-versions
 ROCM_SLOTS=(
 	# For RDEPEND
-	"${HIP_6_2_VERSION}"
+#	"${HIP_6_2_VERSION}" # Not supported by pytorch ebuilds yet
+	"${HIP_6_1_VERSION}" # Corresponds to pytorch 2.4.0 ebuild ; See https://github.com/Dao-AILab/flash-attention/issues/1086#issuecomment-2253854489
+	"${HIP_6_0_VERSION}" # Corresponds to pytorch 2.3.0 ebuild.
 )
 gen_rocm_iuse() {
 	local pv
@@ -159,6 +161,12 @@ RDEPEND+="
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
+	)
+	rocm_6_0? (
+		=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
+	)
+	rocm_6_1? (
+		=sci-libs/pytorch-2.4*[${PYTHON_SINGLE_USEDEP}]
 	)
 	training? (
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
