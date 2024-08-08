@@ -1,0 +1,48 @@
+diff '--color=auto' -urp triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/python/tutorials/07-math-functions.py triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/python/tutorials/07-math-functions.py
+--- triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/python/tutorials/07-math-functions.py	2024-05-14 14:34:02.000000000 -0700
++++ triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/python/tutorials/07-math-functions.py	2024-08-08 11:51:10.058726616 -0700
+@@ -62,7 +62,7 @@ print(f'The maximum difference between t
+ 
+ output_triton = torch.empty_like(x)
+ asin_kernel[grid](x, output_triton, n_elements, BLOCK_SIZE=1024,
+-                  extern_libs={'libdevice': '/usr/local/cuda/nvvm/libdevice/libdevice.10.bc'})
++                  extern_libs={'libdevice': '/opt/cuda/nvvm/libdevice/libdevice.10.bc'})
+ print(output_torch)
+ print(output_triton)
+ print(f'The maximum difference between torch and triton is '
+diff '--color=auto' -urp triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/third_party/amd_hip_backend/python/test/unit/language/test_elementwise.py triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/third_party/amd_hip_backend/python/test/unit/language/test_elementwise.py
+--- triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/third_party/amd_hip_backend/python/test/unit/language/test_elementwise.py	2023-08-31 07:56:21.000000000 -0700
++++ triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/third_party/amd_hip_backend/python/test/unit/language/test_elementwise.py	2024-08-08 11:50:41.003209568 -0700
+@@ -35,7 +35,7 @@ torch_ops = {
+ if torch.version.hip is not None:
+   e_libs = None
+ else:
+-  e_libs = {"libdevice": '/usr/local/cuda/nvvm/libdevice/libdevice.10.bc'}
++  e_libs = {"libdevice": '/opt/cuda/nvvm/libdevice/libdevice.10.bc'}
+ 
+ def get_tensor(shape, data_type, b_positive=False):
+     x = None
+diff '--color=auto' -urp triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/third_party/amd_hip_backend/python/test/unit/language/test_ext_elemwise.py triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/third_party/amd_hip_backend/python/test/unit/language/test_ext_elemwise.py
+--- triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/third_party/amd_hip_backend/python/test/unit/language/test_ext_elemwise.py	2023-08-31 07:56:21.000000000 -0700
++++ triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/third_party/amd_hip_backend/python/test/unit/language/test_ext_elemwise.py	2024-08-08 11:50:32.395352650 -0700
+@@ -153,7 +153,7 @@ def test_fmad_rn_no_mask(num_warps, bloc
+ 
+ 
+ @pytest.mark.parametrize("dtype_str, expr, lib_path",
+-                         [('int32', 'math.ffs', '/usr/local/cuda/nvvm/libdevice/libdevice.10.bc'),
++                         [('int32', 'math.ffs', '/opt/cuda/nvvm/libdevice/libdevice.10.bc'),
+                           ('int32', 'math.ffs', '')])
+ def test_math(dtype_str, expr, lib_path):
+     src = f"""
+diff '--color=auto' -urp triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/third_party/amd_hip_backend/python/tutorials/07-math-functions.py triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/third_party/amd_hip_backend/python/tutorials/07-math-functions.py
+--- triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/third_party/amd_hip_backend/python/tutorials/07-math-functions.py	2023-08-31 07:56:21.000000000 -0700
++++ triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/third_party/amd_hip_backend/python/tutorials/07-math-functions.py	2024-08-08 11:50:47.035109305 -0700
+@@ -64,7 +64,7 @@ print(
+ 
+ output_triton = torch.empty_like(x)
+ asin_kernel[grid](x, output_triton, n_elements, BLOCK_SIZE=1024,
+-                  extern_libs={'libdevice': '/usr/local/cuda/nvvm/libdevice/libdevice.10.bc'})
++                  extern_libs={'libdevice': '/opt/cuda/nvvm/libdevice/libdevice.10.bc'})
+ print(output_torch)
+ print(output_triton)
+ print(

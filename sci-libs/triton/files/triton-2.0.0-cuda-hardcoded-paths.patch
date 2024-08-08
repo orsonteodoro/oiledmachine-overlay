@@ -1,0 +1,12 @@
+diff '--color=auto' -urp triton-2.0.0.orig/python/triton/compiler.py triton-2.0.0/python/triton/compiler.py
+--- triton-2.0.0.orig/python/triton/compiler.py	2023-03-02 15:57:45.000000000 -0800
++++ triton-2.0.0/python/triton/compiler.py	2024-08-08 12:09:30.236475112 -0700
+@@ -1304,7 +1304,7 @@ def default_cache_dir():
+ 
+ 
+ def default_cuda_dir():
+-    default_dir = "/usr/local/cuda"
++    default_dir = "/opt/cuda"
+     return os.getenv("CUDA_HOME", default=default_dir)
+ 
+ 

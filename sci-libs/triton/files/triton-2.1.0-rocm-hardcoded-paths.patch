@@ -1,0 +1,36 @@
+diff '--color=auto' -urp triton-2.1.0.orig/lib/Target/HSACO/HSACOTranslation.cpp triton-2.1.0/lib/Target/HSACO/HSACOTranslation.cpp
+--- triton-2.1.0.orig/lib/Target/HSACO/HSACOTranslation.cpp	2024-08-08 11:53:02.884851487 -0700
++++ triton-2.1.0/lib/Target/HSACO/HSACOTranslation.cpp	2024-08-08 12:03:54.186033980 -0700
+@@ -139,7 +139,7 @@ std::string generate_hsaco(llvm::Module
+   std::filesystem::path hsaco(kernel_name + ".hsaco");
+   std::string hsaco_path = (kernel_dir / hsaco).string();
+   std::string error_message;
+-  std::string lld_path = "/opt/rocm/llvm/bin/ld.lld";
++  std::string lld_path = "/opt/rocm-@ROCM_VERSION@/llvm/bin/ld.lld";
+   int lld_result = llvm::sys::ExecuteAndWait(
+       lld_path,
+       {lld_path, "-flavor", "gnu", "-shared", "-o", hsaco_path, isabin_path},
+diff '--color=auto' -urp triton-2.1.0.orig/python/triton/common/build.py triton-2.1.0/python/triton/common/build.py
+--- triton-2.1.0.orig/python/triton/common/build.py	2023-08-31 23:28:27.000000000 -0700
++++ triton-2.1.0/python/triton/common/build.py	2024-08-08 12:04:04.333865521 -0700
+@@ -33,7 +33,7 @@ def libcuda_dirs():
+ 
+ @functools.lru_cache()
+ def rocm_path_dir():
+-    return os.getenv("ROCM_PATH", default="/opt/rocm")
++    return os.getenv("ROCM_PATH", default="/opt/rocm-@ROCM_VERSION@")
+ 
+ 
+ @contextlib.contextmanager
+diff '--color=auto' -urp triton-2.1.0.orig/python/triton/compiler/compiler.py triton-2.1.0/python/triton/compiler/compiler.py
+--- triton-2.1.0.orig/python/triton/compiler/compiler.py	2023-08-31 23:28:27.000000000 -0700
++++ triton-2.1.0/python/triton/compiler/compiler.py	2024-08-08 12:04:00.333931922 -0700
+@@ -189,7 +189,7 @@ def get_amdgpu_arch_fulldetails():
+     """
+     try:
+         # TODO: package rocm.cc with Triton
+-        rocm_path_dir = os.getenv("ROCM_PATH", default="/opt/rocm")
++        rocm_path_dir = os.getenv("ROCM_PATH", default="/opt/rocm-@ROCM_VERSION@")
+         rocminfo = subprocess.check_output(rocm_path_dir + '/bin/rocminfo').decode()
+         gfx_arch_details = re.search('amd.*', rocminfo).group(0).strip().split('--')
+         arch_triple = gfx_arch_details[0]

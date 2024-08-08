@@ -72,7 +72,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
 rocm test tutorials
-ebuild-revision-2
+ebuild-revision-3
 "
 gen_rocm_required_use() {
 	local u
@@ -87,8 +87,8 @@ gen_rocm_required_use() {
 # You need a local copy of dev-util/nvidia-cuda-toolkit if you want to use
 # llvm_targets_NVPTX on llvm:14.
 # Upstream missing GPU init section for AMDGPU.
+#	!rocm
 REQUIRED_USE="
-	!rocm
 	!rocm? (
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -213,6 +213,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.0.0-llvm-static-linking.patch"
 	"${FILESDIR}/${PN}-2.0.0-optionalize-gpu-init.patch"
 	"${FILESDIR}/${PN}-2.0.0-customize-setup_py.patch"
+	"${FILESDIR}/${PN}-2.0.0-cuda-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -254,6 +255,8 @@ einfo "Called python_configure"
 eerror "Cannot find a LLVM installation."
 		die
 	fi
+
+	# No ROCm hardcoded paths.
 
 	export PATH=$(echo "${PATH}" \
 		| tr ":" "\n" \

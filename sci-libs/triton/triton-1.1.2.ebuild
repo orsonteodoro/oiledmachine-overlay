@@ -68,7 +68,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
 bench rocm test tutorials
-ebuild-revision-2
+ebuild-revision-3
 "
 gen_rocm_required_use() {
 	local u
@@ -221,6 +221,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-1.1.2-customize-setup_py.patch"
 	"${FILESDIR}/${PN}-1.1.2-cuda-path.patch"
 	"${FILESDIR}/${PN}-1.1.2-llvm-path.patch"
+	"${FILESDIR}/${PN}-1.1.2-rocm-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -269,6 +270,13 @@ einfo "Called python_configure"
 	else
 eerror "Cannot find a LLVM installation."
 		die
+	fi
+
+	if [[ -n "${ROCM_VERSION}" ]] ; then
+		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -l -e "@ROCM_VERSION@" "${S}") || die
+	else
+	# Placeholder
+		sed -i -e "s|@ROCM_VERSION@|5.1.3|g" $(grep -l -e "@ROCM_VERSION@" "${S}") || die
 	fi
 
 	export PATH=$(echo "${PATH}" \

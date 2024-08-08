@@ -1,0 +1,12 @@
+diff '--color=auto' -urp triton-764d4432cf422ea24f5e2942fa480270568be9bc.orig/python/tutorials/07-math-functions.py triton-764d4432cf422ea24f5e2942fa480270568be9bc/python/tutorials/07-math-functions.py
+--- triton-764d4432cf422ea24f5e2942fa480270568be9bc.orig/python/tutorials/07-math-functions.py	2024-01-17 15:55:39.000000000 -0800
++++ triton-764d4432cf422ea24f5e2942fa480270568be9bc/python/tutorials/07-math-functions.py	2024-08-08 11:30:15.967597143 -0700
+@@ -62,7 +62,7 @@ print(f'The maximum difference between t
+ 
+ output_triton = torch.empty_like(x)
+ asin_kernel[grid](x, output_triton, n_elements, BLOCK_SIZE=1024,
+-                  extern_libs={'libdevice': '/usr/local/cuda/nvvm/libdevice/libdevice.10.bc'})
++                  extern_libs={'libdevice': '/opt/cuda/nvvm/libdevice/libdevice.10.bc'})
+ print(output_torch)
+ print(output_triton)
+ print(f'The maximum difference between torch and triton is '

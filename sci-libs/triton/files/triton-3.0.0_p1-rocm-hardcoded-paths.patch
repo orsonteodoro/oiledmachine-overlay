@@ -1,0 +1,31 @@
+diff '--color=auto' -urp triton-b51402436b71989f14218f70a955c65dd45aee7f.orig/third_party/amd/backend/compiler.py triton-b51402436b71989f14218f70a955c65dd45aee7f/third_party/amd/backend/compiler.py
+--- triton-b51402436b71989f14218f70a955c65dd45aee7f.orig/third_party/amd/backend/compiler.py	2024-07-18 12:41:31.000000000 -0700
++++ triton-b51402436b71989f14218f70a955c65dd45aee7f/third_party/amd/backend/compiler.py	2024-08-08 11:15:19.318502147 -0700
+@@ -95,13 +95,13 @@ class HIPBackend(BaseBackend):
+         lld = Path(__file__).parent / "llvm/bin/ld.lld"
+         if lld.is_file():
+             return lld
+-        lld = Path("/opt/rocm/llvm/bin/ld.lld")
++        lld = Path("/opt/rocm-@ROCM_VERSION@/llvm/bin/ld.lld")
+         if lld.is_file():
+             return lld
+         lld = Path("/usr/bin/ld.lld")
+         if lld.is_file():
+             return lld
+-        raise Exception("ROCm linker /opt/rocm/llvm/bin/ld.lld not found")
++        raise Exception("ROCm linker /opt/rocm-@ROCM_VERSION@/llvm/bin/ld.lld not found")
+ 
+     @staticmethod
+     def make_ttir(mod, metadata, options):
+diff '--color=auto' -urp triton-b51402436b71989f14218f70a955c65dd45aee7f.orig/third_party/amd/backend/driver.py triton-b51402436b71989f14218f70a955c65dd45aee7f/third_party/amd/backend/driver.py
+--- triton-b51402436b71989f14218f70a955c65dd45aee7f.orig/third_party/amd/backend/driver.py	2024-07-18 12:41:31.000000000 -0700
++++ triton-b51402436b71989f14218f70a955c65dd45aee7f/third_party/amd/backend/driver.py	2024-08-08 11:14:59.110837724 -0700
+@@ -57,7 +57,7 @@ def _get_path_to_hip_runtime_dylib():
+         paths.append(loc)
+ 
+     # As a last resort, guess if we have it in some common installation path.
+-    common_install_path = os.path.join('/opt/rocm/lib/', lib_name)
++    common_install_path = os.path.join('/opt/rocm-@ROCM_VERSION@/lib/', lib_name)
+     if os.path.exists(common_install_path):
+         return common_install_path
+     paths.append(common_install_path)

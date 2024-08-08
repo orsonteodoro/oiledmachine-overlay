@@ -1,0 +1,14 @@
+diff '--color=auto' -urp triton-1.1.2.orig/lib/driver/llvm.cc triton-1.1.2/lib/driver/llvm.cc
+--- triton-1.1.2.orig/lib/driver/llvm.cc	2024-08-08 12:11:04.898910217 -0700
++++ triton-1.1.2/lib/driver/llvm.cc	2024-08-08 12:11:42.714285091 -0700
+@@ -322,8 +322,8 @@ std::string llir_to_amdgpu(llvm::Module*
+   std::string hsaco_path = std::string("/tmp/") + module_name + std::string(".hsaco");
+   std::string error_message;
+   int lld_result =
+-      llvm::sys::ExecuteAndWait("/opt/rocm/llvm/bin/ld.lld",
+-                                {"/opt/rocm/llvm/bin/ld.lld", "-flavor", "gnu", "-shared", "-o", hsaco_path, isabin_path},
++      llvm::sys::ExecuteAndWait("/opt/rocm-@ROCM_VERSION@/llvm/bin/ld.lld",
++                                {"/opt/rocm-@ROCM_VERSION@/llvm/bin/ld.lld", "-flavor", "gnu", "-shared", "-o", hsaco_path, isabin_path},
+                                 llvm::None, {}, 0, 0, &error_message);
+   if (lld_result)
+   {

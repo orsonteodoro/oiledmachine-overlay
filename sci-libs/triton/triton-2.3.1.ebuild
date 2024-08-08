@@ -8,6 +8,7 @@ EAPI=8
 
 AMD_HIP_BACKEND_COMMIT="d0ad70d55df3ebe11cc80bbb364a91551e6b6248"
 DISTUTILS_EXT=1
+DISTUTILS_USE_PEP517="setuptools"
 GOOGLETEST_PV="1.12.1"
 INTEL_XPU_BACKEND_COMMIT_1="d05dc79dad638b8ebbacfef44886f568b5885fc3"
 INTEL_XPU_BACKEND_COMMIT_2="0bcc485f82b34d49494bd0264bacc24a20aafb7a"
@@ -17,7 +18,7 @@ SPIRV_HEADERS_COMMIT="cfbe4feef20c3c0628712c2792624f0221e378ac"
 SPIRV_TOOLS_COMMIT="25ad5e19f193429b737433d5f6151062ddbc1680"
 TRITION_SHARED_COMMIT="450e6be65f99a0b15fd130892594b85e0897574c"
 
-inherit dep-prepare distutils-r1 flag-o-matic
+inherit dep-prepare distutils-r1 flag-o-matic hip-versions
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -131,7 +132,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
 rocm test tutorials video_cards_intel
-ebuild-revision-2
+ebuild-revision-3
 "
 gen_rocm_required_use() {
 	local u
@@ -263,6 +264,8 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.3.1-optionalize-gpu-init.patch"
 	"${FILESDIR}/${PN}-2.1.0-customize-setup_py.patch"
 	"${FILESDIR}/${PN}-2.3.1-offline-install.patch"
+	"${FILESDIR}/${PN}-2.3.1-rocm-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-2.3.1-cuda-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -311,6 +314,13 @@ einfo "Called python_configure"
 	else
 eerror "Cannot find a LLVM installation."
 		die
+	fi
+
+	if [[ -n "${ROCM_VERSION}" ]] ; then
+		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -l -e "@ROCM_VERSION@" "${S}") || die
+	else
+	# Placeholder
+		sed -i -e "s|@ROCM_VERSION@|5.1.3|g" $(grep -l -e "@ROCM_VERSION@" "${S}") || die
 	fi
 
 	export PATH=$(echo "${PATH}" \

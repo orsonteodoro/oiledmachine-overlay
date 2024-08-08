@@ -15,7 +15,7 @@ GOOGLETEST_PV="1.12.1"
 PYBIND11_PV="2.11.1"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit dep-prepare distutils-r1 flag-o-matic
+inherit dep-prepare distutils-r1 flag-o-matic hip-versions
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="release/3.0.x"
@@ -68,7 +68,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
 rocm test tutorials video_cards_intel
-ebuild-revision-2
+ebuild-revision-3
 "
 gen_rocm_required_use() {
 	local u
@@ -82,8 +82,8 @@ gen_rocm_required_use() {
 }
 TRASH="
 "
+#	!rocm
 REQUIRED_USE="
-	!rocm
 	!rocm? (
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -202,6 +202,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-3.0.0_p1-customize-setup_py.patch"
 	"${FILESDIR}/${PN}-3.0.0_p1-offline-install.patch"
 	"${FILESDIR}/${PN}-3.0.0_p1-llvm-arch.patch"
+	"${FILESDIR}/${PN}-3.0.0_p1-rocm-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -267,6 +268,13 @@ einfo "Called python_configure"
 	else
 eerror "Cannot find a LLVM installation."
 		die
+	fi
+
+	if [[ -n "${ROCM_VERSION}" ]] ; then
+		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -l -e "@ROCM_VERSION@" "${S}") || die
+	else
+	# Placeholder
+		sed -i -e "s|@ROCM_VERSION@|5.1.3|g" $(grep -l -e "@ROCM_VERSION@" "${S}") || die
 	fi
 
 	export PATH=$(echo "${PATH}" \

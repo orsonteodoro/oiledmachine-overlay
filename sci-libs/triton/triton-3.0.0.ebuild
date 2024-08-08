@@ -13,7 +13,7 @@ PYBIND11_PV="2.11.1"
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_TRITON_COMMIT="5f0fa3a703a1ec7c9555d4a91788ebbe98cc7d42"
 
-inherit dep-prepare distutils-r1 flag-o-matic
+inherit dep-prepare distutils-r1 flag-o-matic hip-versions
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="release/3.0.x"
@@ -72,7 +72,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
 rocm test tutorials video_cards_intel
-ebuild-revision-2
+ebuild-revision-3
 "
 gen_rocm_required_use() {
 	local u
@@ -164,6 +164,8 @@ RDEPEND+="
 	rocm? (
 		rocm_6_2? (
 			sys-devel/llvm-roc:6.2[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+			~dev-libs/rocm-device-libs-${HIP_6_1_VERSION}:6.2
+			~dev-util/hip-${HIP_6_1_VERSION}:6.2
 		)
 	)
 	tutorials? (
@@ -203,6 +205,8 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-3.0.0-customize-setup_py.patch"
 	"${FILESDIR}/${PN}-3.0.0-offline-install.patch"
 	"${FILESDIR}/${PN}-3.0.0-llvm-arch.patch"
+	"${FILESDIR}/${PN}-3.0.0-rocm-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-3.0.0-cuda-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -226,6 +230,10 @@ src_prepare() {
 	default
 	eapply ${_PATCHES[@]}
 	S="${WORKDIR}/${P}/python"
+
+	# A hardcoded path in third_party/amd/backend/lib/libamdhip64.so
+	rm -rf "third_party/amd/backend/lib/"* || die # It contains blobs from hip, rocm-device-libs.
+
 	distutils-r1_src_prepare
 }
 
@@ -269,6 +277,13 @@ einfo "Called python_configure"
 	else
 eerror "Cannot find a LLVM installation."
 		die
+	fi
+
+	if [[ -n "${ROCM_VERSION}" ]] ; then
+		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -l -e "@ROCM_VERSION@" "${S}") || die
+	else
+	# Placeholder
+		sed -i -e "s|@ROCM_VERSION@|5.1.3|g" $(grep -l -e "@ROCM_VERSION@" "${S}") || die
 	fi
 
 	export PATH=$(echo "${PATH}" \

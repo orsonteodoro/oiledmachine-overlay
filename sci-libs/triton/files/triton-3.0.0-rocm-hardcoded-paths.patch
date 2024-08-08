@@ -1,0 +1,12 @@
+diff '--color=auto' -urp triton-764d4432cf422ea24f5e2942fa480270568be9bc.orig/third_party/amd/backend/compiler.py triton-764d4432cf422ea24f5e2942fa480270568be9bc/third_party/amd/backend/compiler.py
+--- triton-764d4432cf422ea24f5e2942fa480270568be9bc.orig/third_party/amd/backend/compiler.py	2024-01-16 08:52:48.000000000 -0800
++++ triton-764d4432cf422ea24f5e2942fa480270568be9bc/third_party/amd/backend/compiler.py	2024-08-08 11:20:39.505182748 -0700
+@@ -70,7 +70,7 @@ class HIPBackend(BaseBackend):
+ 
+     @staticmethod
+     def path_to_rocm_lld():
+-        return "/opt/rocm/llvm/bin/ld.lld"
++        return "/opt/rocm-@ROCM_PATH@/llvm/bin/ld.lld"
+ 
+     @staticmethod
+     def make_ttir(mod, metadata, opt):

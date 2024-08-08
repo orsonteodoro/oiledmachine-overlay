@@ -1,0 +1,48 @@
+diff '--color=auto' -urp triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/python/triton/common/build.py triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/python/triton/common/build.py
+--- triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/python/triton/common/build.py	2024-05-14 14:34:02.000000000 -0700
++++ triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/python/triton/common/build.py	2024-08-08 11:45:17.372590615 -0700
+@@ -43,7 +43,7 @@ def libcuda_dirs():
+ 
+ @functools.lru_cache()
+ def rocm_path_dir():
+-    return os.getenv("ROCM_PATH", default="/opt/rocm")
++    return os.getenv("ROCM_PATH", default="/opt/rocm-@ROCM_VERSION@")
+ 
+ 
+ @contextlib.contextmanager
+diff '--color=auto' -urp triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/third_party/amd_hip_backend/lib/Target/HSACO/HSACOTranslation.cpp triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/third_party/amd_hip_backend/lib/Target/HSACO/HSACOTranslation.cpp
+--- triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/third_party/amd_hip_backend/lib/Target/HSACO/HSACOTranslation.cpp	2024-08-08 11:32:20.741518117 -0700
++++ triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/third_party/amd_hip_backend/lib/Target/HSACO/HSACOTranslation.cpp	2024-08-08 11:44:54.336973758 -0700
+@@ -178,7 +178,7 @@ std::string generate_hsaco(llvm::Module
+   std::filesystem::path hsaco(kernel_name + ".hsaco");
+   std::string hsaco_path = (kernel_dir / hsaco).string();
+   std::string error_message;
+-  std::string lld_path = "/opt/rocm/llvm/bin/ld.lld";
++  std::string lld_path = "/opt/rocm-@ROCM_VERSION@/llvm/bin/ld.lld";
+   int lld_result = llvm::sys::ExecuteAndWait(
+       lld_path,
+       {lld_path, "-flavor", "gnu", "-shared", "-o", hsaco_path, isabin_path},
+diff '--color=auto' -urp triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/third_party/amd_hip_backend/python/__init__.py triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/third_party/amd_hip_backend/python/__init__.py
+--- triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/third_party/amd_hip_backend/python/__init__.py	2023-08-31 07:56:21.000000000 -0700
++++ triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/third_party/amd_hip_backend/python/__init__.py	2024-08-08 11:45:04.764800313 -0700
+@@ -280,7 +280,7 @@ def get_amdgpu_arch_fulldetails():
+     """
+     try:
+         # TODO: package rocm.cc with Triton
+-        rocm_path_dir = os.getenv("ROCM_PATH", default="/opt/rocm")
++        rocm_path_dir = os.getenv("ROCM_PATH", default="/opt/rocm-@ROCM_VERSION@")
+         rocminfo = subprocess.check_output(rocm_path_dir + '/bin/rocminfo').decode()
+         gfx_arch_details = re.search('amd.*', rocminfo).group(0).strip().split('--')
+         arch_triple = gfx_arch_details[0]
+diff '--color=auto' -urp triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/third_party/amd_hip_backend/python/triton/common/build.py triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/third_party/amd_hip_backend/python/triton/common/build.py
+--- triton-958fccea74da58e7e0595ab88ae6cd3f6795a173.orig/third_party/amd_hip_backend/python/triton/common/build.py	2023-08-31 07:56:21.000000000 -0700
++++ triton-958fccea74da58e7e0595ab88ae6cd3f6795a173/third_party/amd_hip_backend/python/triton/common/build.py	2024-08-08 11:45:10.396706640 -0700
+@@ -24,7 +24,7 @@ def libcuda_dirs():
+ 
+ @functools.lru_cache()
+ def rocm_path_dir():
+-    return os.getenv("ROCM_PATH", default="/opt/rocm")
++    return os.getenv("ROCM_PATH", default="/opt/rocm-@ROCM_VERSION@")
+ 
+ 
+ @contextlib.contextmanager

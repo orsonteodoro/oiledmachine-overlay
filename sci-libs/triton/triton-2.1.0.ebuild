@@ -14,7 +14,7 @@ PYTHON_COMPAT=( "python3_"{10..11} )
 SPIRV_HEADERS_COMMIT="cfbe4feef20c3c0628712c2792624f0221e378ac"
 SPIRV_TOOLS_COMMIT="25ad5e19f193429b737433d5f6151062ddbc1680"
 
-inherit dep-prepare distutils-r1 flag-o-matic
+inherit dep-prepare distutils-r1 flag-o-matic hip-versions
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -114,7 +114,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
 rocm test tutorials video_cards_intel
-ebuild-revision-2
+ebuild-revision-3
 "
 gen_rocm_required_use() {
 	local u
@@ -248,10 +248,12 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.1.0-dynlib.patch"
 	"${FILESDIR}/${PN}-2.1.0-llvm-static-linking.patch"
 	"${FILESDIR}/${PN}-2.1.0-optionalize-targets.patch"
-	"${FILESDIR}/${PN}-2.1.0-rename-to-llvm-17-target.patch"
+	"${FILESDIR}/${PN}-2.1.0-rename-to-llvm-17-target.patch" # The filename is kind of a misnomer but refers to the MLIRGPUOps -> MLIRGPUDialect rename discussed above.
 	"${FILESDIR}/${PN}-2.1.0-optionalize-gpu-init.patch"
 	"${FILESDIR}/${PN}-2.1.0-customize-setup_py.patch"
 	"${FILESDIR}/${PN}-2.1.0-offline-install.patch"
+	"${FILESDIR}/${PN}-2.1.0-rocm-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-2.1.0-cuda-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -278,6 +280,9 @@ src_unpack() {
 src_prepare() {
 	default
 	eapply ${_PATCHES[@]}
+	if use video_cards_intel ; then
+		eapply "${FILESDIR}/${PN}-2.1.0-rename-to-llvm-17-target-xpu.patch"
+	fi
 	S="${WORKDIR}/${P}/python"
 	distutils-r1_src_prepare
 }
@@ -301,6 +306,13 @@ einfo "Called python_configure"
 	else
 eerror "Cannot find a LLVM installation."
 		die
+	fi
+
+	if [[ -n "${ROCM_VERSION}" ]] ; then
+		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -l -e "@ROCM_VERSION@" "${S}") || die
+	else
+	# Placeholder
+		sed -i -e "s|@ROCM_VERSION@|5.1.3|g" $(grep -l -e "@ROCM_VERSION@" "${S}") || die
 	fi
 
 	export PATH=$(echo "${PATH}" \
