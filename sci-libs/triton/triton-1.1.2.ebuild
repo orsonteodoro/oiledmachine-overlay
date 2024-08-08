@@ -7,7 +7,7 @@ EAPI=8
 # Check pypi also for version update.
 
 DISTUTILS_EXT=1
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only tests up to 3.6 for this release.
 
 inherit dep-prepare distutils-r1 flag-o-matic
 

@@ -10,7 +10,7 @@ DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GOOGLETEST_PV="1.12.1"
 PYBIND11_PV="2.11.1"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_TRITON_COMMIT="5f0fa3a703a1ec7c9555d4a91788ebbe98cc7d42"
 
 inherit dep-prepare distutils-r1 flag-o-matic
