@@ -14,6 +14,22 @@ CUTLASS_COMMIT="756c351b4994854b2f8c6dded3821ebbb580876b"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.12
+inherit hip-versions
+ROCM_SLOTS=(
+	# For RDEPEND
+	"${HIP_6_2_VERSION}"
+)
+gen_rocm_iuse() {
+	local pv
+	for pv in ${ROCM_SLOTS[@]} ; do
+		local u=$(ver_cut 1-2 "${pv}")
+		u="${u/./_}"
+		echo "rocm_${u}"
+	done
+}
+ROCM_IUSE=(
+	$(gen_rocm_iuse)
+)
 
 inherit dep-prepare distutils-r1
 
@@ -52,13 +68,50 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror test" # Untested
 SLOT="0"
-IUSE="cuda rocm training"
+IUSE="
+${ROCM_IUSE[@]}
+cuda rocm training
+"
+gen_rocm_required_use() {
+	local pv
+	for pv in ${ROCM_SLOTS[@]} ; do
+		local u=$(ver_cut 1-2 "${pv}")
+		u="${u/./_}"
+		echo "
+			rocm_${u}? (
+				rocm
+			)
+		"
+	done
+}
 REQUIRED_USE="
+	$(gen_rocm_required_use)
 	^^ (
 		cuda
 		rocm
 	)
+	rocm? (
+		^^ (
+			${ROCM_IUSE[@]}
+		)
+	)
 "
+gen_rocm_rdepend() {
+	local pv
+	for pv in ${ROCM_SLOTS[@]} ; do
+		local s=$(ver_cut 1-2 ${pv})
+		local u="${s}"
+		u="${u/./_}"
+	# Check both the direct top and indirect bottom dependencies
+		echo "
+			rocm_${u}? (
+				~dev-build/rocm-cmake-${pv}:${s}
+				~dev-util/hip-${pv}:${s}[rocm]
+			)
+		"
+	done
+}
+
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/einops[${PYTHON_USEDEP}]
@@ -79,6 +132,9 @@ RDEPEND+="
 			=dev-util/nvidia-cuda-toolkit-11.8*
 		)
 		dev-util/nvidia-cuda-toolkit:=
+	)
+	rocm? (
+		$(gen_rocm_rdepend)
 	)
 	training? (
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
