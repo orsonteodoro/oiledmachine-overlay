@@ -181,9 +181,6 @@ RDEPEND+="
 		')
 	)
 "
-#Python 3.8+, Pytorch 1.12+, torchvision, einops, timm, hydra-core,
-#hydra-colorlog, python-dotenv, rich, pytorch-lightning, triton, flash-attn.
-
 DEPEND+="
 	${RDEPEND}
 "
