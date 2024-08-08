@@ -28,8 +28,11 @@ EAPI=8
 # pytest-html
 # python-decouple
 
-# For install see
+# For install, see
 # See https://github.com/openvinotoolkit/openvino/blob/2021.4.2/docs/install_guides/installing-openvino-linux.md#install-external-dependencies
+
+# For driver version, see
+# https://github.com/openvinotoolkit/openvino/blob/2021.4.2/scripts/install_dependencies/install_NEO_OCL_driver.sh#L24
 
 #MKL_DNN_PV="1.6.0"
 
@@ -147,7 +150,7 @@ RDEPEND+="
 	>=dev-libs/pugixml-1.7
 	<dev-cpp/tbb-2021
 	video_cards_intel? (
-		>=dev-libs/intel-compute-runtime-21.38.21026
+		>=dev-libs/intel-compute-runtime-19.41.14441
 	)
 "
 DEPEND+="

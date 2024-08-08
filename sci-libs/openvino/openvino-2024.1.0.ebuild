@@ -28,6 +28,9 @@ EAPI=8
 # tf-sentence-transformers
 # torchaudio
 
+# For driver version, see
+# https://github.com/openvinotoolkit/openvino/blob/2024.1.0/docs/dev/build_linux.md#software-requirements
+
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx2"
 	"cpu_flags_x86_avx512f"
@@ -56,6 +59,7 @@ https://github.com/${org}/${project_name}/archive/${commit}.tar.gz -> ${org}-${p
 
 BENCHMARK_1_COMMIT="bf585a2789e30585b4e3ce6baf11ef2750b54677"
 BENCHMARK_2_COMMIT="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8"
+BENCHMARK_3_COMMIT="2dd015dfef425c866d9a43f2c67d8b52d709acb6"
 CMOCK_COMMIT="379a9a8d5dd5cdff8fd345710dd70ae26f966c71"
 COMPUTELIBRARY_COMMIT="f2eda6665c12d568e179f5b0e7a24ccdc0ac824d"
 FLATBUFFERS_COMMIT="0100f6a5779831fa7a651e4b67ef389a8752bd9b"
@@ -79,7 +83,8 @@ OPENCL_HEADERS_COMMIT="2368105c0531069fe927989505de7d125ec58c55"
 OPENCL_ICD_LOADER_COMMIT="229410f86a8c8c9e0f86f195409e5481a2bae067"
 PROTOBUF_COMMIT="fe271ab76f2ad2b2b28c10443865d2af21e27e0e"
 PUGIXML_COMMIT="2e357d19a3228c0a301727aac6bea6fecd982d21"
-PYBIND11_COMMIT="2965fa8de3cf9e82c789f906a525a76197b186c1"
+PYBIND11_1_COMMIT="2965fa8de3cf9e82c789f906a525a76197b186c1"
+PYBIND11_2_COMMIT="5b0a6fc2017fcc176545afe3e09c9f9885283242"
 SNAPPY_COMMIT="dc05e026488865bc69313a68bcc03ef2e4ea8e83"
 TELEMETRY_COMMIT="58e16c257a512ec7f451c9fccf9ff455065b285b"
 XBYAK_COMMIT="740dff2e866f3ae1a70dd42d6e8836847ed95cc2"
@@ -115,6 +120,8 @@ $(_gen_gh_uri madler zlib ${ZLIB_COMMIT})
 	$(_gen_gh_uri google googletest ${GOOGLETEST_2_COMMIT})
 )
 $(_gen_gh_uri onnx onnx ${ONNX_COMMIT})
+$(_gen_gh_uri google benchmark ${BENCHMARK_3_COMMIT})
+$(_gen_gh_uri pybind pybind11 ${PYBIND11_2_COMMIT})
 !system-opencl? (
 	$(_gen_gh_uri KhronosGroup OpenCL-Headers ${OPENCL_HEADERS_COMMIT})
 	$(_gen_gh_uri KhronosGroup OpenCL-CLHPP ${OPENCL_CLHPP_COMMIT})
@@ -129,7 +136,7 @@ $(_gen_gh_uri gflags gflags ${GFLAGS_2_COMMIT} gflags-doc)
 !system-flatbuffers? (
 	$(_gen_gh_uri google flatbuffers ${FLATBUFFERS_COMMIT})
 )
-$(_gen_gh_uri pybind pybind11 ${PYBIND11_COMMIT})
+$(_gen_gh_uri pybind pybind11 ${PYBIND11_1_COMMIT})
 $(_gen_gh_uri nithinn ncc ${NCC_COMMIT})
 $(_gen_gh_uri oneapi-src oneDNN ${ONEDNN_2_COMMIT})
 $(_gen_gh_uri oneapi-src level-zero ${LEVEL_ZERO_COMMIT})
@@ -556,6 +563,8 @@ src_unpack() {
 		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_2_COMMIT}" "${S}/thirdparty/protobuf/protobuf/third_party/googletest"
 	fi
 	dep_prepare_cp "${WORKDIR}/onnx-${ONNX_COMMIT}" "${S}/thirdparty/onnx/onnx"
+	dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_3_COMMIT}" "${S}/thirdparty/onnx/onnx/third_party/benchmark"
+	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_2_COMMIT}" "${S}/thirdparty/onnx/onnx/third_party/pybind11"
 	if ! use system-opencl ; then
 		dep_prepare_cp "${WORKDIR}/OpenCL-Headers-${OPENCL_HEADERS_COMMIT}" "${S}/thirdparty/ocl/cl_headers"
 		dep_prepare_cp "${WORKDIR}/OpenCL-CLHPP-${OPENCL_CLHPP_COMMIT}" "${S}/thirdparty/ocl/clhpp_headers"
@@ -572,7 +581,7 @@ src_unpack() {
 	if ! use system-flatbuffers ; then
 		dep_prepare_cp "${WORKDIR}/flatbuffers-${FLATBUFFERS_COMMIT}" "${S}/thirdparty/flatbuffers/flatbuffers"
 	fi
-	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT}" "${S}/src/bindings/python/thirdparty/pybind11"
+	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_1_COMMIT}" "${S}/src/bindings/python/thirdparty/pybind11"
 	dep_prepare_cp "${WORKDIR}/ncc-${NCC_COMMIT}" "${S}/cmake/developer_package/ncc_naming_style/ncc"
 	dep_prepare_cp "${WORKDIR}/oneDNN-${ONEDNN_2_COMMIT}" "${S}/src/plugins/intel_gpu/thirdparty/onednn_gpu"
 	dep_prepare_cp "${WORKDIR}/level-zero-${LEVEL_ZERO_COMMIT}" "${S}/src/plugins/intel_npu/thirdparty/level-zero"

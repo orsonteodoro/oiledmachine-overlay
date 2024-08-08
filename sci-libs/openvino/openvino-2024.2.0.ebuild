@@ -24,9 +24,11 @@ EAPI=8
 # pytest-html
 # sacremoses
 # super-image
-# test-generator
 # tf-sentence-transformers
 # torchaudio
+
+# For driver version, see
+# https://github.com/openvinotoolkit/openvino/blob/2024.2.0/docs/dev/build_linux.md#software-requirements
 
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx2"
@@ -38,6 +40,7 @@ PYTHON_COMPAT=( "python3_"{10..11} ) # Based on https://github.com/openvinotoolk
 
 BENCHMARK_1_COMMIT="bf585a2789e30585b4e3ce6baf11ef2750b54677"
 BENCHMARK_2_COMMIT="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8"
+BENCHMARK_3_COMMIT="2dd015dfef425c866d9a43f2c67d8b52d709acb6"
 CMOCK_COMMIT="379a9a8d5dd5cdff8fd345710dd70ae26f966c71"
 COMPUTELIBRARY_COMMIT="4fda7a803eaadf00ba36bd532481a33c18952089"
 FLATBUFFERS_COMMIT="0100f6a5779831fa7a651e4b67ef389a8752bd9b"
@@ -62,7 +65,8 @@ OPENCL_HEADERS_COMMIT="2368105c0531069fe927989505de7d125ec58c55"
 OPENCL_ICD_LOADER_COMMIT="229410f86a8c8c9e0f86f195409e5481a2bae067"
 PROTOBUF_COMMIT="fe271ab76f2ad2b2b28c10443865d2af21e27e0e"
 PUGIXML_COMMIT="2e357d19a3228c0a301727aac6bea6fecd982d21"
-PYBIND11_COMMIT="3e9dfa2866941655c56877882565e7577de6fc7b"
+PYBIND11_1_COMMIT="3e9dfa2866941655c56877882565e7577de6fc7b"
+PYBIND11_2_COMMIT="5b0a6fc2017fcc176545afe3e09c9f9885283242"
 SNAPPY_COMMIT="dc05e026488865bc69313a68bcc03ef2e4ea8e83"
 TELEMETRY_COMMIT="58e16c257a512ec7f451c9fccf9ff455065b285b"
 XBYAK_COMMIT="58642e0cdd5cbe12f5d6e05069ddddbc0f5d5383"
@@ -117,6 +121,8 @@ $(_gen_gh_uri madler zlib ${ZLIB_COMMIT})
 	$(_gen_gh_uri google googletest ${GOOGLETEST_2_COMMIT})
 )
 $(_gen_gh_uri onnx onnx ${ONNX_COMMIT})
+$(_gen_gh_uri google benchmark ${BENCHMARK_3_COMMIT})
+$(_gen_gh_uri pybind pybind11 ${PYBIND11_2_COMMIT})
 !system-opencl? (
 	$(_gen_gh_uri KhronosGroup OpenCL-Headers ${OPENCL_HEADERS_COMMIT})
 	$(_gen_gh_uri KhronosGroup OpenCL-CLHPP ${OPENCL_CLHPP_COMMIT})
@@ -132,7 +138,7 @@ $(_gen_gh_uri gflags gflags ${GFLAGS_2_COMMIT} gflags-doc)
 !system-flatbuffers? (
 	$(_gen_gh_uri google flatbuffers ${FLATBUFFERS_COMMIT})
 )
-$(_gen_gh_uri pybind pybind11 ${PYBIND11_COMMIT})
+$(_gen_gh_uri pybind pybind11 ${PYBIND11_1_COMMIT})
 $(_gen_gh_uri nithinn ncc ${NCC_COMMIT})
 $(_gen_gh_uri oneapi-src oneDNN ${ONEDNN_2_COMMIT})
 $(_gen_gh_uri oneapi-src level-zero ${LEVEL_ZERO_COMMIT})
@@ -198,9 +204,9 @@ RDEPEND+="
 		>=dev-libs/flatbuffers-23.5.26
 	)
 	system-opencl? (
-		>=dev-cpp/clhpp-2023.02.06
-		>=dev-libs/opencl-icd-loader-2023.02.06
-		>=dev-util/opencl-headers-2023.02.06
+		>=dev-cpp/clhpp-2023.12.14
+		>=dev-libs/opencl-icd-loader-2023.12.14
+		>=dev-util/opencl-headers-2023.12.14
 	)
 	system-protobuf? (
 		>=dev-libs/protobuf-3.20.3:0/3.21
@@ -227,6 +233,10 @@ BDEPEND_TEST_CONSTRAINTS="
 		)
 	')
 	(
+		>=dev-python/h5py-3.1.0[${PYTHON_USEDEP}]
+		<dev-python/h5py-3.11.0[${PYTHON_USEDEP}]
+	)
+	(
 		>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
 		<dev-python/numpy-1.27[${PYTHON_USEDEP}]
 	)
@@ -238,6 +248,11 @@ BDEPEND_TEST_CONSTRAINTS="
 		>=dev-python/pytest-5.0[${PYTHON_USEDEP}]
 		<dev-python/pytest-7.5[${PYTHON_USEDEP}]
 	)
+	(
+		>=sci-libs/keras-2.0.0[${PYTHON_USEDEP}]
+		<sci-libs/keras-3.0.0[${PYTHON_USEDEP}]
+	)
+	<dev-python/networkx-3.1.1[${PYTHON_USEDEP}]
 	<sci-libs/jax-0.4.15[${PYTHON_USEDEP}]
 	<sci-libs/jaxlib-0.4.15[${PYTHON_USEDEP}]
 	>=dev-python/attrs-23.2.0[${PYTHON_USEDEP}]
@@ -245,7 +260,6 @@ BDEPEND_TEST_CONSTRAINTS="
 	>=dev-python/distro-1.9.0[${PYTHON_USEDEP}]
 	>=dev-python/fastjsonschema-2.17.1[${PYTHON_USEDEP}]
 	>=dev-python/kornia-0.7.0[${PYTHON_USEDEP}]
-	>=dev-python/h5py-3.1.0[${PYTHON_USEDEP}]
 	>=dev-python/jinja-2.11.2[${PYTHON_USEDEP}]
 	>=dev-python/paddlepaddle-2.5.0[${PYTHON_USEDEP}]
 	>=dev-python/pandas-1.3.5[${PYTHON_USEDEP}]
@@ -259,7 +273,6 @@ BDEPEND_TEST_CONSTRAINTS="
 	>=dev-python/requests-2.25.1[${PYTHON_USEDEP}]
 	>=dev-python/scipy-1.11.1[${PYTHON_USEDEP}]
 	>=dev-python/sympy-1.10[${PYTHON_USEDEP}]
-	>=dev-python/test-generator-0.1.2[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
 	>=media-libs/opencv-4.5[${PYTHON_USEDEP},python]
 "
@@ -454,21 +467,21 @@ BDEPEND+="
 		>=dev-python/certifi-2023.7.22[${PYTHON_USEDEP}]
 		>=dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
 		>=dev-python/cython-0.29.33[${PYTHON_USEDEP}]
-		>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
+		>=dev-python/docutils-0.20[${PYTHON_USEDEP}]
 		>=dev-python/idna-3.4[${PYTHON_USEDEP}]
-		>=dev-python/imagesize-1.2.0[${PYTHON_USEDEP}]
-		>=dev-python/importlib-metadata-4.4.0[${PYTHON_USEDEP}]
+		>=dev-python/imagesize-1.3.0[${PYTHON_USEDEP}]
+		>=dev-python/importlib-metadata-4.8.0[${PYTHON_USEDEP}]
 		>=dev-python/iniconfig-1.1.1[${PYTHON_USEDEP}]
 		>=dev-python/ipython-8.10.0[${PYTHON_USEDEP}]
 		>=dev-python/jinja-3.1.3[${PYTHON_USEDEP}]
 		>=dev-python/lxml-4.9.2[${PYTHON_USEDEP}]
 		>=dev-python/markupsafe-2.1.1[${PYTHON_USEDEP}]
 		>=dev-python/mistune-2.0.3[${PYTHON_USEDEP}]
-		>=dev-python/myst-parser-0.18.1[${PYTHON_USEDEP}]
+		>=dev-python/myst-parser-2.0.0[${PYTHON_USEDEP}]
 		>=dev-python/packaging-23.0[${PYTHON_USEDEP}]
 		>=dev-python/pluggy-0.13.1[${PYTHON_USEDEP}]
 		>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
-		>=dev-python/pydata-sphinx-theme-0.7.2[${PYTHON_USEDEP}]
+		>=dev-python/pydata-sphinx-theme-0.14.4[${PYTHON_USEDEP}]
 		>=dev-python/pygments-2.15.1[${PYTHON_USEDEP}]
 		>=dev-python/pyparsing-3.0.9[${PYTHON_USEDEP}]
 		>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]
@@ -476,22 +489,21 @@ BDEPEND+="
 		>=dev-python/pytest-metadata-1.11.0[${PYTHON_USEDEP}]
 		>=dev-python/pytz-2022.7[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-6.0.1[${PYTHON_USEDEP}]
-		>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
+		>=dev-python/requests-2.32.0[${PYTHON_USEDEP}]
 		>=dev-python/six-1.15.0[${PYTHON_USEDEP}]
 		>=dev-python/snowballstemmer-2.1.0[${PYTHON_USEDEP}]
 		>=dev-python/soupsieve-2.2.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-copybutton-0.5.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-design-0.3.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-inline-tabs-2021.8.17_beta10[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-panels-0.6.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-7.2.6[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-copybutton-0.5.2[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-design-0.5.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-inline-tabs-2023.4.21[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-sitemap-2.2.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinxcontrib-applehelp-1.0.2[${PYTHON_USEDEP}]
 		>=dev-python/sphinxcontrib-devhelp-1.0.2[${PYTHON_USEDEP}]
 		>=dev-python/sphinxcontrib-htmlhelp-2.0.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinxcontrib-jsmath-1.0.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinxcontrib-qthelp-1.0.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-serializinghtml-1.1.5[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-serializinghtml-1.1.9[${PYTHON_USEDEP}]
 		>=dev-python/toml-0.10.2[${PYTHON_USEDEP}]
 		>=dev-python/urllib3-1.26.18[${PYTHON_USEDEP}]
 		>=dev-python/zipp-3.4.1[${PYTHON_USEDEP}]
@@ -560,6 +572,8 @@ src_unpack() {
 		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_2_COMMIT}" "${S}/thirdparty/protobuf/protobuf/third_party/googletest"
 	fi
 	dep_prepare_cp "${WORKDIR}/onnx-${ONNX_COMMIT}" "${S}/thirdparty/onnx/onnx"
+	dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_3_COMMIT}" "${S}/thirdparty/onnx/onnx/third_party/benchmark"
+	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_2_COMMIT}" "${S}/thirdparty/onnx/onnx/third_party/pybind11"
 	if ! use system-opencl ; then
 		dep_prepare_cp "${WORKDIR}/OpenCL-Headers-${OPENCL_HEADERS_COMMIT}" "${S}/thirdparty/ocl/cl_headers"
 		dep_prepare_cp "${WORKDIR}/OpenCL-CLHPP-${OPENCL_CLHPP_COMMIT}" "${S}/thirdparty/ocl/clhpp_headers"
@@ -576,7 +590,7 @@ src_unpack() {
 	if ! use system-flatbuffers ; then
 		dep_prepare_cp "${WORKDIR}/flatbuffers-${FLATBUFFERS_COMMIT}" "${S}/thirdparty/flatbuffers/flatbuffers"
 	fi
-	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT}" "${S}/src/bindings/python/thirdparty/pybind11"
+	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_1_COMMIT}" "${S}/src/bindings/python/thirdparty/pybind11"
 	dep_prepare_cp "${WORKDIR}/ncc-${NCC_COMMIT}" "${S}/cmake/developer_package/ncc_naming_style/ncc"
 	dep_prepare_cp "${WORKDIR}/oneDNN-${ONEDNN_2_COMMIT}" "${S}/src/plugins/intel_gpu/thirdparty/onednn_gpu"
 	dep_prepare_cp "${WORKDIR}/level-zero-${LEVEL_ZERO_COMMIT}" "${S}/src/plugins/intel_npu/thirdparty/level-zero"
