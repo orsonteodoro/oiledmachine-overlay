@@ -99,7 +99,7 @@ gen_rocm_slots() {
 }
 ROCM_SLOTS2=( $(gen_rocm_slots) )
 
-inherit distutils-r1 multibuild rocm
+inherit distutils-r1 flag-o-matic multibuild rocm
 
 SRC_URI="
 https://github.com/pytorch/${PN}/archive/refs/tags/v${PV}.tar.gz
@@ -275,15 +275,11 @@ src_prepare() {
 src_compile() {
 	# Python files only
 	# For binaries/libs see caffe2
-	local pyargs=(
-		BUILD_DIR=
-		CMAKE_BUILD_DIR="${BUILD_DIR}"
-		PYTORCH_BUILD_VERSION="${PV}"
-		PYTORCH_BUILD_NUMBER=0
-		USE_SYSTEM_LIBS=ON
-	)
-
-	"${pyargs[@]}" \
+	BUILD_DIR="" \
+	CMAKE_BUILD_DIR="${BUILD_DIR}" \
+	PYTORCH_BUILD_VERSION="${PV}" \
+	PYTORCH_BUILD_NUMBER=0 \
+	USE_SYSTEM_LIBS=ON \
 	distutils-r1_src_compile
 }
 

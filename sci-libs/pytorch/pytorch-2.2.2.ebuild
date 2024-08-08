@@ -281,14 +281,12 @@ src_prepare() {
 python_compile() {
 	# Python files only
 	# For binaries/libs see caffe2
-	local pyargs=(
-		CMAKE_BUILD_DIR="${BUILD_DIR}"
-		PYTORCH_BUILD_VERSION="${PV}"
-		PYTORCH_BUILD_NUMBER=0
-		USE_SYSTEM_LIBS=ON
-	)
-
-	"${pyargs[@]}" \
+	mkdir -p "${BUILD_DIR}" || die
+	cd "${S}" || die
+	CMAKE_BUILD_DIR="${BUILD_DIR}" \
+	PYTORCH_BUILD_VERSION="${PV}" \
+	PYTORCH_BUILD_NUMBER=0 \
+	USE_SYSTEM_LIBS=ON \
 	distutils-r1_python_compile develop sdist
 }
 

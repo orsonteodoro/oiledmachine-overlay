@@ -6,7 +6,7 @@ EAPI=8
 # This is the python portion of the package.
 
 # For requirements, see
-# https://github.com/pytorch/pytorch/blob/v2.3.0/RELEASE.md?plain=1#L49
+# https://github.com/pytorch/pytorch/blob/v2.3.1/RELEASE.md?plain=1#L49
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
@@ -87,7 +87,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <= 3.11
 inherit hip-versions
 ROCM_SLOTS=(
-# See https://github.com/pytorch/pytorch/blob/v2.3.0/.github/workflows/trunk.yml#L180
+# See https://github.com/pytorch/pytorch/blob/v2.3.1/.github/workflows/trunk.yml#L180
 	"${HIP_6_0_VERSION}"
 	"${HIP_5_7_VERSION}"
 )
@@ -281,14 +281,12 @@ src_prepare() {
 python_compile() {
 	# Python files only
 	# For binaries/libs see caffe2
-	local pyargs=(
-		CMAKE_BUILD_DIR="${BUILD_DIR}"
-		PYTORCH_BUILD_VERSION="${PV}"
-		PYTORCH_BUILD_NUMBER=0
-		USE_SYSTEM_LIBS=ON
-	)
-
-	"${pyargs[@]}" \
+	mkdir -p "${BUILD_DIR}" || die
+	cd "${S}" || die
+	CMAKE_BUILD_DIR="${BUILD_DIR}" \
+	PYTORCH_BUILD_VERSION="${PV}" \
+	PYTORCH_BUILD_NUMBER=0 \
+	USE_SYSTEM_LIBS=ON \
 	distutils-r1_python_compile develop sdist
 }
 
