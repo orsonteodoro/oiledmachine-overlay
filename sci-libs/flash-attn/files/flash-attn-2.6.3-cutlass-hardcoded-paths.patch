@@ -1,0 +1,12 @@
+diff '--color=auto' -urp flash-attention-2.6.3.orig/csrc/cutlass/test/unit/nvrtc/thread/testbed.h flash-attention-2.6.3/csrc/cutlass/test/unit/nvrtc/thread/testbed.h
+--- flash-attention-2.6.3.orig/csrc/cutlass/test/unit/nvrtc/thread/testbed.h	2024-07-14 23:35:02.000000000 -0700
++++ flash-attention-2.6.3/csrc/cutlass/test/unit/nvrtc/thread/testbed.h	2024-08-08 11:07:17.726502823 -0700
+@@ -276,7 +276,7 @@ struct Testbed {
+ 
+     const char *opts[] = {"--gpu-architecture=compute_75",
+                           "--std=c++17",
+-                          "--include-path=/usr/local/cuda-10.1/include"};
++                          "--include-path=/opt/cuda/include"};
+ 
+     result_nvrtc = nvrtcCompileProgram(program, 3, opts);
+     if (result_nvrtc != NVRTC_SUCCESS) {

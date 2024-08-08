@@ -1,0 +1,197 @@
+diff '--color=auto' -urp flash-attention-2.6.3.orig/csrc/composable_kernel/CMakeLists.txt flash-attention-2.6.3/csrc/composable_kernel/CMakeLists.txt
+--- flash-attention-2.6.3.orig/csrc/composable_kernel/CMakeLists.txt	2024-07-08 11:09:55.000000000 -0700
++++ flash-attention-2.6.3/csrc/composable_kernel/CMakeLists.txt	2024-08-08 10:59:19.478454954 -0700
+@@ -18,7 +18,7 @@ endif()
+ 
+ # Default installation path
+ if(NOT WIN32)
+-    set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "")
++    set(CMAKE_INSTALL_PREFIX "/opt/rocm-@ROCM_VERSION@" CACHE PATH "")
+ endif()
+ 
+ set(version 1.1.0)
+@@ -89,7 +89,7 @@ execute_process(COMMAND "${GIT_EXECUTABL
+ configure_file(include/ck/version.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/ck/version.h)
+ 
+ set(ROCM_SYMLINK_LIBS OFF)
+-find_package(ROCM REQUIRED PATHS /opt/rocm)
++find_package(ROCM REQUIRED PATHS /opt/rocm-@ROCM_VERSION@)
+ 
+ include(ROCMInstallTargets)
+ include(ROCMPackageConfigHelpers)
+@@ -102,7 +102,7 @@ include(TargetFlags)
+ 
+ rocm_setup_version(VERSION ${version})
+ 
+-list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX}/llvm ${CMAKE_INSTALL_PREFIX}/hip /opt/rocm /opt/rocm/llvm /opt/rocm/hip "$ENV{ROCM_PATH}" "$ENV{HIP_PATH}")
++list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX}/llvm ${CMAKE_INSTALL_PREFIX}/hip /opt/rocm-@ROCM_VERSION@ /opt/rocm-@ROCM_VERSION@/llvm /opt/rocm-@ROCM_VERSION@/hip "$ENV{ROCM_PATH}" "$ENV{HIP_PATH}")
+ 
+ message("GPU_TARGETS= ${GPU_TARGETS}")
+ 
+diff '--color=auto' -urp flash-attention-2.6.3.orig/csrc/composable_kernel/client_example/CMakeLists.txt flash-attention-2.6.3/csrc/composable_kernel/client_example/CMakeLists.txt
+--- flash-attention-2.6.3.orig/csrc/composable_kernel/client_example/CMakeLists.txt	2024-07-08 11:09:55.000000000 -0700
++++ flash-attention-2.6.3/csrc/composable_kernel/client_example/CMakeLists.txt	2024-08-08 11:01:50.151948807 -0700
+@@ -57,7 +57,7 @@ find_package(composable_kernel COMPONENT
+ if(GPU_TARGETS MATCHES "gfx9")
+     find_package(composable_kernel COMPONENTS device_contraction_operations)
+ endif()
+-find_package(hip REQUIRED PATHS /opt/rocm)
++find_package(hip REQUIRED PATHS /opt/rocm-@ROCM_VERSION@)
+ message(STATUS "Build with HIP ${hip_VERSION}")
+ 
+ # add all example subdir
+diff '--color=auto' -urp flash-attention-2.6.3.orig/csrc/composable_kernel/cmake/ClangTidy.cmake flash-attention-2.6.3/csrc/composable_kernel/cmake/ClangTidy.cmake
+--- flash-attention-2.6.3.orig/csrc/composable_kernel/cmake/ClangTidy.cmake	2024-07-08 11:09:55.000000000 -0700
++++ flash-attention-2.6.3/csrc/composable_kernel/cmake/ClangTidy.cmake	2024-08-08 10:59:25.926347691 -0700
+@@ -43,8 +43,8 @@ find_program(CLANG_TIDY_EXE
+     PATH_SUFFIXES
+         compiler/bin
+     PATHS
+-        /opt/rocm/llvm/bin
+-        /opt/rocm/hcc
++        /opt/rocm-@ROCM_VERSION@/llvm/bin
++        /opt/rocm-@ROCM_VERSION@/hcc
+         /usr/local/opt/llvm/bin
+ )
+ 
+diff '--color=auto' -urp flash-attention-2.6.3.orig/csrc/composable_kernel/cmake/CppCheck.cmake flash-attention-2.6.3/csrc/composable_kernel/cmake/CppCheck.cmake
+--- flash-attention-2.6.3.orig/csrc/composable_kernel/cmake/CppCheck.cmake	2024-07-08 11:09:55.000000000 -0700
++++ flash-attention-2.6.3/csrc/composable_kernel/cmake/CppCheck.cmake	2024-08-08 10:59:36.566170697 -0700
+@@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
+     NAMES 
+         cppcheck
+     PATHS
+-        /opt/rocm/bin
++        /opt/rocm-@ROCM_VERSION@/bin
+ )
+ 
+ ProcessorCount(CPPCHECK_JOBS)
+diff '--color=auto' -urp flash-attention-2.6.3.orig/csrc/composable_kernel/codegen/test/CMakeLists.txt flash-attention-2.6.3/csrc/composable_kernel/codegen/test/CMakeLists.txt
+--- flash-attention-2.6.3.orig/csrc/composable_kernel/codegen/test/CMakeLists.txt	2024-07-08 11:09:55.000000000 -0700
++++ flash-attention-2.6.3/csrc/composable_kernel/codegen/test/CMakeLists.txt	2024-08-08 11:01:07.316661208 -0700
+@@ -1,4 +1,4 @@
+-list(APPEND CMAKE_PREFIX_PATH /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH /opt/rocm-@ROCM_VERSION@)
+ add_subdirectory(rtc)
+ file(GLOB TEST_SRCS CONFIGURE_DEPENDS *.cpp)
+ foreach(TEST_SRC ${TEST_SRCS})
+diff '--color=auto' -urp flash-attention-2.6.3.orig/csrc/composable_kernel/codegen/test/rtc/src/compile_kernel.cpp flash-attention-2.6.3/csrc/composable_kernel/codegen/test/rtc/src/compile_kernel.cpp
+--- flash-attention-2.6.3.orig/csrc/composable_kernel/codegen/test/rtc/src/compile_kernel.cpp	2024-07-08 11:09:55.000000000 -0700
++++ flash-attention-2.6.3/csrc/composable_kernel/codegen/test/rtc/src/compile_kernel.cpp	2024-08-08 11:01:32.260246360 -0700
+@@ -55,9 +55,9 @@ void write_string(const std::string& fil
+     write_buffer(filename, buffer.data(), buffer.size());
+ }
+ 
+-std::string compiler() { return "/opt/rocm/llvm/bin/clang++ -x hip --cuda-device-only"; }
++std::string compiler() { return "/opt/rocm-@ROCM_VERSION@/llvm/bin/clang++ -x hip --cuda-device-only"; }
+ // TODO: undo after extracting the codeobj
+-// std::string compiler() { return "/opt/rocm/llvm/bin/clang++ -x hip"; }
++// std::string compiler() { return "/opt/rocm-@ROCM_VERSION@/llvm/bin/clang++ -x hip"; }
+ 
+ kernel compile_kernel(const std::vector<src_file>& srcs, compile_options options)
+ {
+diff '--color=auto' -urp flash-attention-2.6.3.orig/csrc/composable_kernel/script/cmake-ck-dev.sh flash-attention-2.6.3/csrc/composable_kernel/script/cmake-ck-dev.sh
+--- flash-attention-2.6.3.orig/csrc/composable_kernel/script/cmake-ck-dev.sh	2024-07-08 11:09:55.000000000 -0700
++++ flash-attention-2.6.3/csrc/composable_kernel/script/cmake-ck-dev.sh	2024-08-08 11:01:54.739872508 -0700
+@@ -12,8 +12,8 @@ else
+ fi
+ 
+ cmake                                                                                             \
+--D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
+--D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                         \
++-D CMAKE_PREFIX_PATH=/opt/rocm-@ROCM_VERSION@                                                                    \
++-D CMAKE_CXX_COMPILER=/opt/rocm-@ROCM_VERSION@/bin/hipcc                                                         \
+ -D CMAKE_CXX_FLAGS="-Xclang -mllvm -Xclang -enable-post-misched=0 -std=c++17 -O3 -ftemplate-backtrace-limit=0  -fPIE  -Wno-gnu-line-marker"     \
+ -D CMAKE_BUILD_TYPE=Release                                                                       \
+ -D BUILD_DEV=ON                                                                                   \
+diff '--color=auto' -urp flash-attention-2.6.3.orig/csrc/composable_kernel/script/cmake-ck-release.sh flash-attention-2.6.3/csrc/composable_kernel/script/cmake-ck-release.sh
+--- flash-attention-2.6.3.orig/csrc/composable_kernel/script/cmake-ck-release.sh	2024-07-08 11:09:55.000000000 -0700
++++ flash-attention-2.6.3/csrc/composable_kernel/script/cmake-ck-release.sh	2024-08-08 11:01:58.019817962 -0700
+@@ -12,8 +12,8 @@ else
+ fi
+ 
+ cmake                                                                                             \
+--D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
+--D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                         \
++-D CMAKE_PREFIX_PATH=/opt/rocm-@ROCM_VERSION@                                                                    \
++-D CMAKE_CXX_COMPILER=/opt/rocm-@ROCM_VERSION@/bin/hipcc                                                         \
+ -D CMAKE_CXX_FLAGS="-O3"                                                                          \
+ -D CMAKE_BUILD_TYPE=Release                                                                       \
+ -D BUILD_DEV=OFF                                                                                  \
+diff '--color=auto' -urp flash-attention-2.6.3.orig/csrc/composable_kernel/script/hipclang_opt.sh flash-attention-2.6.3/csrc/composable_kernel/script/hipclang_opt.sh
+--- flash-attention-2.6.3.orig/csrc/composable_kernel/script/hipclang_opt.sh	2024-07-08 11:09:55.000000000 -0700
++++ flash-attention-2.6.3/csrc/composable_kernel/script/hipclang_opt.sh	2024-08-08 11:00:57.132830587 -0700
+@@ -2,24 +2,24 @@ rm *.ll *.s
+ 
+ BC_FILE=$1
+ 
+-/opt/rocm/llvm/bin/llvm-dis $BC_FILE -o original.ll
+-/opt/rocm/llvm/bin/opt -S -inline -inline-threshold=104857 original.ll > inline.ll
+-/opt/rocm/llvm/bin/opt -S -sroa inline.ll > sroa.ll
+-/opt/rocm/llvm/bin/opt -S -O3 sroa.ll > o3.ll
++/opt/rocm-@ROCM_VERSION@/llvm/bin/llvm-dis $BC_FILE -o original.ll
++/opt/rocm-@ROCM_VERSION@/llvm/bin/opt -S -inline -inline-threshold=104857 original.ll > inline.ll
++/opt/rocm-@ROCM_VERSION@/llvm/bin/opt -S -sroa inline.ll > sroa.ll
++/opt/rocm-@ROCM_VERSION@/llvm/bin/opt -S -O3 sroa.ll > o3.ll
+ 
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 original.ll
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 inline.ll
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 sroa.ll
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 o3.ll
++/opt/rocm-@ROCM_VERSION@/llvm/bin/llc -mcpu=gfx906 original.ll
++/opt/rocm-@ROCM_VERSION@/llvm/bin/llc -mcpu=gfx906 inline.ll
++/opt/rocm-@ROCM_VERSION@/llvm/bin/llc -mcpu=gfx906 sroa.ll
++/opt/rocm-@ROCM_VERSION@/llvm/bin/llc -mcpu=gfx906 o3.ll
+ 
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa inline.ll > o3.ll
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3.ll > o3_2.ll
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3_2.ll > o3_3.ll
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3_3.ll > o3_4.ll
++#/opt/rocm-@ROCM_VERSION@/llvm/bin/opt -S -O3 -sroa inline.ll > o3.ll
++#/opt/rocm-@ROCM_VERSION@/llvm/bin/opt -S -O3 -sroa o3.ll > o3_2.ll
++#/opt/rocm-@ROCM_VERSION@/llvm/bin/opt -S -O3 -sroa o3_2.ll > o3_3.ll
++#/opt/rocm-@ROCM_VERSION@/llvm/bin/opt -S -O3 -sroa o3_3.ll > o3_4.ll
+ 
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 opt.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 inline.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_2.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_3.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_4.ll
++#/opt/rocm-@ROCM_VERSION@/llvm/bin/llc -mcpu=gfx908 opt.ll
++#/opt/rocm-@ROCM_VERSION@/llvm/bin/llc -mcpu=gfx908 inline.ll
++#/opt/rocm-@ROCM_VERSION@/llvm/bin/llc -mcpu=gfx908 o3.ll
++#/opt/rocm-@ROCM_VERSION@/llvm/bin/llc -mcpu=gfx908 o3_2.ll
++#/opt/rocm-@ROCM_VERSION@/llvm/bin/llc -mcpu=gfx908 o3_3.ll
++#/opt/rocm-@ROCM_VERSION@/llvm/bin/llc -mcpu=gfx908 o3_4.ll
+diff '--color=auto' -urp flash-attention-2.6.3.orig/csrc/composable_kernel/script/run_full_performance_tests.sh flash-attention-2.6.3/csrc/composable_kernel/script/run_full_performance_tests.sh
+--- flash-attention-2.6.3.orig/csrc/composable_kernel/script/run_full_performance_tests.sh	2024-07-08 11:09:55.000000000 -0700
++++ flash-attention-2.6.3/csrc/composable_kernel/script/run_full_performance_tests.sh	2024-08-08 11:01:53.059900447 -0700
+@@ -31,7 +31,7 @@ function print_log_header(){
+ 	rocminfo | grep "Compute Unit:" >> $1;
+ 	hipcc --version | grep -e 'HIP version'  >> $1;
+ 	echo 'Environment type: ' $2 >> $1;
+-	/opt/rocm/bin/amdclang++ --version | grep -e 'InstalledDir' >> $1;
++	/opt/rocm-@ROCM_VERSION@/bin/amdclang++ --version | grep -e 'InstalledDir' >> $1;
+ }
+ 
+ #run gemm tests
+@@ -142,4 +142,4 @@ print_log_header $onnx_log $env_type $br
+ export mixed_gemm_log="perf_mixed_gemm.log"
+ print_log_header $mixed_gemm_log $env_type $branch $host_name
+ ./profile_mixed_gemm.sh gemm_splitk 4 0 $verify 2 0 1 16 2>&1 | tee -a $mixed_gemm_log
+-./profile_mixed_gemm.sh gemm_splitk 5 0 $verify 2 0 1 16 2>&1 | tee -a $mixed_gemm_log
+\ No newline at end of file
++./profile_mixed_gemm.sh gemm_splitk 5 0 $verify 2 0 1 16 2>&1 | tee -a $mixed_gemm_log
+diff '--color=auto' -urp flash-attention-2.6.3.orig/csrc/composable_kernel/script/run_performance_tests.sh flash-attention-2.6.3/csrc/composable_kernel/script/run_performance_tests.sh
+--- flash-attention-2.6.3.orig/csrc/composable_kernel/script/run_performance_tests.sh	2024-07-08 11:09:55.000000000 -0700
++++ flash-attention-2.6.3/csrc/composable_kernel/script/run_performance_tests.sh	2024-08-08 11:01:56.659840579 -0700
+@@ -28,7 +28,7 @@ function print_log_header(){
+ 	rocminfo | grep "Compute Unit:" >> $1;
+ 	hipcc --version | grep -e 'HIP version'  >> $1;
+ 	echo 'Environment type: ' $2 >> $1;
+-	/opt/rocm/bin/amdclang++ --version | grep -e 'InstalledDir' >> $1;
++	/opt/rocm-@ROCM_VERSION@/bin/amdclang++ --version | grep -e 'InstalledDir' >> $1;
+ }
+ 
+ #run gemm tests

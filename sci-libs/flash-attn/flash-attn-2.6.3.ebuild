@@ -205,9 +205,18 @@ distutils_enable_tests "pytest"
 src_prepare() {
 	if use cuda ; then
 		dep_prepare_mv "${WORKDIR}/cutlass-${CUTLASS_COMMIT}" "${S}/csrc/cutlass"
+		eapply "${FILESDIR}/${PN}-2.6.3-cutlass-hardcoded-paths.patch"
 	fi
 	if use rocm ; then
 		dep_prepare_mv "${WORKDIR}/composable_kernel-${COMPOSABLE_KERNEL_COMMIT}" "${S}/csrc/composable_kernel"
+		eapply "${FILESDIR}/${PN}-2.6.3-composable_kernel-hardcoded-paths.patch"
+		local ROCM_VERSION
+		if use rocm_6_0 ; then
+			ROCM_VERSION="${HIP_6_0_VERSION}"
+		elif use rocm_6_1 ; then
+			ROCM_VERSION="${HIP_6_1_VERSION}"
+		fi
+		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -l "@ROCM_VERSION@") || die
 	fi
 	distutils-r1_python_prepare_all
 }
