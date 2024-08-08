@@ -55,7 +55,6 @@ RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 LLVM_COMPAT=( {14..12} )
 ROCM_SLOTS=(
-	rocm_5_2
 	rocm_5_1
 	rocm_4_5
 	rocm_4_1
@@ -177,9 +176,6 @@ RDEPEND+="
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
-		rocm_5_2? (
-			sys-devel/llvm-roc:5.2[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
-		)
 		rocm_5_1? (
 			sys-devel/llvm-roc:5.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
@@ -252,10 +248,7 @@ python_configure() {
 einfo "Called python_configure"
 	local dynlib=0
 	local llvm_root_dir
-	if use rocm_5_2 && has_version "~sys-devel/llvm-roc-5.2.3" ; then
-		llvm_root_dir="/opt/rocm-5.2.3/llvm" # LLVM 14.0.0git
-		export ROCM_VERSION="5.2.3"
-	elif use rocm_5_1 && has_version "~sys-devel/llvm-roc-5.1.3" ; then
+	if use rocm_5_1 && has_version "~sys-devel/llvm-roc-5.1.3" ; then
 		llvm_root_dir="/opt/rocm-5.1.3/llvm" # LLVM 14.0.0git
 		export ROCM_VERSION="5.1.3"
 	elif use rocm_4_5 && has_version "~sys-devel/llvm-roc-4.5.2" ; then
