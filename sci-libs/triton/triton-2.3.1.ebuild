@@ -78,6 +78,11 @@ LICENSE="
 		all-rights-reserved
 		MIT
 	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		custom
+		UoI-NCSA
+	)
 	custom
 	BSD
 	Khronos-CLHPP
@@ -88,7 +93,7 @@ LICENSE="
 # all-rights-reserved custom - third_party/amd_hip_backend/python/triton/third_party/cuda/include/cuda.h
 # all-rights-reserved LGPL-2.1+ - third_party/amd_hip_backend/include/triton/Tools/Sys/GetPlatform.hpp
 # all-rights-reserved MIT - lib/Conversion/TritonGPUToLLVM/TensorPtrOpsToLLVM.h
-# Apache-2.0-with-LLVM-exceptions custom - third_party/intel_xpu_backend/third-party-programs.txt
+# Apache-2.0-with-LLVM-exceptions custom UoI-NCSA - third_party/intel_xpu_backend/third-party-programs.txt
 # BSD - third_party/pybind11/CMakeLists.txt
 # Khronos-CLHPP - third_party/intel_xpu_backend/third_party/SPIRV-Headers/LICENSE
 # NCSA-AMD - third_party/amd_hip_backend/include/triton/rocm/hsa/hsa.h

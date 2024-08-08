@@ -60,6 +60,11 @@ LICENSE="
 		all-rights-reserved
 		LGPL-2.1+
 	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		custom
+		UoI-NCSA
+	)
 	BSD
 	Khronos-CLHPP
 	MIT
