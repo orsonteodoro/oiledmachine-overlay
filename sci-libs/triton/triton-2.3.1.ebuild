@@ -320,7 +320,7 @@ eerror "Cannot find a LLVM installation."
 		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -l -e "@ROCM_VERSION@" "${S}") || die
 	else
 	# Placeholder
-		sed -i -e "s|@ROCM_VERSION@|5.1.3|g" $(grep -l -e "@ROCM_VERSION@" "${S}") || die
+		sed -i -e "s|@ROCM_VERSION@|6.2.0|g" $(grep -l -e "@ROCM_VERSION@" "${S}") || die
 	fi
 
 	export PATH=$(echo "${PATH}" \
