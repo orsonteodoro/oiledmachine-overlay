@@ -56,7 +56,7 @@ https://github.com/KhronosGroup/SPIRV-Tools/archive/${SPIRV_TOOLS_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="Development repository for the Triton language and compiler"
+DESCRIPTION="The Triton language and compiler"
 HOMEPAGE="
 	https://triton-lang.org/
 	https://github.com/triton-lang/triton
