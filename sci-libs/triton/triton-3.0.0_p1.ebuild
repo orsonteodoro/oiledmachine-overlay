@@ -249,7 +249,7 @@ get_llvm_arch() {
 	elif use x86 ; then
 		echo "X86"
 	else
-eerror "${ABI} is not supported for LLVM target."
+eerror "ARCH=${ARCH} is not supported for LLVM target."
 		die
 	fi
 }
