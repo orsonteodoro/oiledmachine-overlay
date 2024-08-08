@@ -34,8 +34,23 @@ HOMEPAGE="
 	https://github.com/triton-lang/triton
 "
 LICENSE="
+	(
+		all-rights-reserved
+		custom
+	)
+	(
+		all-rights-reserved
+		LGPL-2.1+
+	)
+	BSD
 	MIT
 "
+# all-rights-reserved custom - include/triton/external/CUDA/nvml.h
+# all-rights-reserved custom - include/triton/external/CUDA/cuda.h
+# all-rights-reserved LGPL-2.1+ - include/triton/tools/sys/mkdir.hpp
+# BSD - python/src/pybind11/chrono.h
+# MIT - LICENSE
+# The distro's LGPL-2.1+ license template does not contain all rights reserved.
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 LLVM_COMPAT=( {14..12} )

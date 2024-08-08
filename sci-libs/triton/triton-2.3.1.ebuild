@@ -62,8 +62,39 @@ HOMEPAGE="
 	https://github.com/triton-lang/triton
 "
 LICENSE="
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		all-rights-reserved
+		custom
+	)
+	(
+		all-rights-reserved
+		LGPL-2.1+
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
+	custom
+	BSD
+	Khronos-CLHPP
 	MIT
+	NCSA-AMD
 "
+# all-rights-reserved Apache-2.0 test/fuzzers/BUILD.gn
+# all-rights-reserved custom - third_party/amd_hip_backend/python/triton/third_party/cuda/include/cuda.h
+# all-rights-reserved LGPL-2.1+ - third_party/amd_hip_backend/include/triton/Tools/Sys/GetPlatform.hpp
+# all-rights-reserved MIT - lib/Conversion/TritonGPUToLLVM/TensorPtrOpsToLLVM.h
+# Apache-2.0-with-LLVM-exceptions custom - third_party/intel_xpu_backend/third-party-programs.txt
+# BSD - third_party/pybind11/CMakeLists.txt
+# Khronos-CLHPP - third_party/intel_xpu_backend/third_party/SPIRV-Headers/LICENSE
+# NCSA-AMD - third_party/amd_hip_backend/include/triton/rocm/hsa/hsa.h
+# The distro's Apache-2.0 license template does not contain all rights reserved.
+# The distro's LGPL-2.1+ license template does not contain all rights reserved.
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # Missing target errors:

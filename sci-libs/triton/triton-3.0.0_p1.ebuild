@@ -46,8 +46,12 @@ HOMEPAGE="
 	https://github.com/triton-lang/triton
 "
 LICENSE="
+	BSD
 	MIT
 "
+# BSD - third_party/googletest/LICENSE
+# MIT - LICENSE
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 LLVM_COMPAT=( 19 )

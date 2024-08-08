@@ -40,8 +40,22 @@ HOMEPAGE="
 	https://github.com/triton-lang/triton
 "
 LICENSE="
+	(
+		all-rights-reserved
+		custom
+	)
+	(
+		all-rights-reserved
+		LGPL-2.1+
+	)
+	BSD
 	MIT
 "
+# all-rights-reserved custom - python/triton/third_party/cuda/include/cuda.h
+# all-rights-reserved LGPL-2.1+ - include/triton/Tools/Sys/GetEnv.hpp
+# BSD - third_party/googletest/googlemock/test/gmock-matchers-arithmetic_test.cc
+# MIT - LICENSE
+# The distro's LGPL-2.1+ license template does not contain all rights reserved.
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 LLVM_COMPAT=( 14 )

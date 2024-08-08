@@ -46,8 +46,17 @@ HOMEPAGE="
 	https://github.com/triton-lang/triton
 "
 LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	BSD
 	MIT
 "
+# all-rights-reserved MIT - lib/Conversion/TritonGPUToLLVM/ClusterOpsToLLVM.cpp
+# BSD - third_party/googletest/LICENSE
+# MIT - LICENSE
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 LLVM_COMPAT=( 18 )
