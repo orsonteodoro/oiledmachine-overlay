@@ -163,10 +163,10 @@ RDEPEND+="
 		$(gen_rocm_rdepend)
 	)
 	rocm_6_0? (
-		=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
+		=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP},rocm_6_0]
 	)
 	rocm_6_1? (
-		=sci-libs/pytorch-2.4*[${PYTHON_SINGLE_USEDEP}]
+		=sci-libs/pytorch-2.4*[${PYTHON_SINGLE_USEDEP},rocm_6_1]
 	)
 	training? (
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
