@@ -86,6 +86,7 @@ IUSE="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${ROCM_IUSE[@]}
 cuda rocm training
+ebuild-revision-1
 "
 gen_rocm_required_use() {
 	local pv
@@ -216,7 +217,8 @@ src_prepare() {
 		elif use rocm_6_1 ; then
 			ROCM_VERSION="${HIP_6_1_VERSION}"
 		fi
-		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -l "@ROCM_VERSION@") || die
+	else
+		sed -i -e "s|@ROCM_VERSION@|6.1.2|g" $(grep -l "@ROCM_VERSION@") || die
 	fi
 	distutils-r1_python_prepare_all
 }
