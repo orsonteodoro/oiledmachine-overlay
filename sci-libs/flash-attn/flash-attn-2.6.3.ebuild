@@ -10,6 +10,12 @@ EAPI=8
 # hydra-colorlog
 # hydra-core
 
+AMDGPU_TARGETS_COMPAT=(
+	gfx90a
+	gfx940
+	gfx941
+	gfx942
+)
 COMPOSABLE_KERNEL_COMMIT="8182976c37433808b5e3a27a6536d1b74b0c23a1"
 CUTLASS_COMMIT="756c351b4994854b2f8c6dded3821ebbb580876b"
 #DISTUTILS_EXT=1 # TODO:  enable if required
@@ -71,6 +77,7 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0"
 IUSE="
+${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${ROCM_IUSE[@]}
 cuda rocm training
 "
@@ -86,8 +93,19 @@ gen_rocm_required_use() {
 		"
 	done
 }
+gen_rocm_targets_required_use() {
+	local g
+	for g in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo "
+			amdgpu_targets_${g}? (
+				rocm
+			)
+		"
+	done
+}
 REQUIRED_USE="
 	$(gen_rocm_required_use)
+	$(gen_rocm_targets_required_use)
 	^^ (
 		cuda
 		rocm
@@ -190,6 +208,14 @@ python_configure() {
 		export BUILD_TARGET="cuda"
 	elif use rocm ; then
 		export BUILD_TARGET="rocm"
+		local list=""
+		for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+			if use "amdgpu_targets_${x}" ; then
+				list+=";${x}"
+			fi
+		done
+		list="${list:1}"
+		export GPU_ARCHS="${list}"
 	fi
 }
 
