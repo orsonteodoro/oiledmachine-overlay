@@ -72,7 +72,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
 rocm test tutorials
-ebuild-revision-3
+ebuild-revision-4
 "
 gen_rocm_required_use() {
 	local u

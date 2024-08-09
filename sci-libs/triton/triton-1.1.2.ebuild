@@ -68,7 +68,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${ROCM_SLOTS[@]}
 bench rocm test tutorials
-ebuild-revision-3
+ebuild-revision-4
 "
 gen_rocm_required_use() {
 	local u
@@ -273,10 +273,10 @@ eerror "Cannot find a LLVM installation."
 	fi
 
 	if [[ -n "${ROCM_VERSION}" ]] ; then
-		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -l -e "@ROCM_VERSION@" "${S}") || die
+		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -l -e "@ROCM_VERSION@" "${WORKDIR}") || die
 	else
 	# Placeholder
-		sed -i -e "s|@ROCM_VERSION@|5.1.3|g" $(grep -l -e "@ROCM_VERSION@" "${S}") || die
+		sed -i -e "s|@ROCM_VERSION@|5.1.3|g" $(grep -l -e "@ROCM_VERSION@" "${WORKDIR}") || die
 	fi
 
 	export PATH=$(echo "${PATH}" \
