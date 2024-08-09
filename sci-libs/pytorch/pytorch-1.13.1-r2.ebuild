@@ -116,6 +116,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
 cuda rocm
+ebuild-revision-1
 "
 gen_cuda_required_use() {
 	local x
@@ -179,6 +180,8 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-1.7.1-torch_shm_manager.patch"
 	"${FILESDIR}/${PN}-1.13.0-setup.patch"
 	"${FILESDIR}/${P}-emptyso.patch"
+	"${FILESDIR}/caffe2-1.13.1-cuda-hardcoded-paths.patch"
+	"${FILESDIR}/caffe2-1.13.1-rocm-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
@@ -193,6 +196,11 @@ ewarn "${gpu} is not CI tested upstream."
 pkg_setup() {
 	warn_untested_gpu
 	python-single-r1_pkg_setup
+	if use rocm_5_2 ; then
+		export ROCM_SLOT="5.2"
+		export ROCM_VERSION="${HIP_5_2_VERSION}"
+	fi
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -203,6 +211,13 @@ src_prepare() {
 		-e "/BUILD_DIR/s|build|/var/lib/caffe2/|" \
 		"tools/setup_helpers/env.py" \
 		|| die
+
+	if [[ -n "${ROCM_VERSION}" ]] ; then
+		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -l "@ROCM_VERSION@" "${WORKDIR}") || die
+	else
+		sed -i -e "s|@ROCM_VERSION@|${HIP_5_2_VERSION}|g" $(grep -l "@ROCM_VERSION@" "${WORKDIR}") || die
+	fi
+
 	distutils-r1_src_prepare
 }
 

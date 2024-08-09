@@ -87,8 +87,8 @@ PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <= 3.11
 inherit hip-versions
 ROCM_SLOTS=(
 # See https://github.com/pytorch/pytorch/blob/v2.3.1/.github/workflows/trunk.yml#L180
+	"${HIP_6_1_VERSION}"
 	"${HIP_6_0_VERSION}"
-	"${HIP_5_7_VERSION}"
 )
 gen_rocm_slots() {
 	local s
@@ -118,6 +118,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
 cuda rocm
+ebuild-revision-1
 "
 gen_cuda_required_use() {
 	local x
@@ -182,6 +183,8 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.4.0-torch_shm_manager.patch"
 	"${FILESDIR}/${PN}-1.13.0-setup.patch"
 	"${FILESDIR}/${PN}-2.2.1-emptyso.patch"
+	"${FILESDIR}/caffe2-2.4.0-cuda-hardcoded-paths.patch"
+	"${FILESDIR}/caffe2-2.4.0-rocm-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
@@ -196,6 +199,14 @@ ewarn "${gpu} is not CI tested upstream."
 pkg_setup() {
 	warn_untested_gpu
 	python-single-r1_pkg_setup
+	if use rocm_6_1 ; then
+		export ROCM_SLOT="6.1"
+		export ROCM_VERSION="${HIP_6_1_VERSION}"
+	elif use rocm_6_0 ; then
+		export ROCM_SLOT="6.0"
+		export ROCM_VERSION="${HIP_6_0_VERSION}"
+	fi
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -207,6 +218,12 @@ src_prepare() {
 		"tools/setup_helpers/env.py" \
 		|| die
 	distutils-r1_src_prepare
+
+	if [[ -n "${ROCM_VERSION}" ]] ; then
+		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -l "@ROCM_VERSION@" "${WORKDIR}") || die
+	else
+		sed -i -e "s|@ROCM_VERSION@|${HIP_6_1_VERSION}|g" $(grep -l "@ROCM_VERSION@" "${WORKDIR}") || die
+	fi
 
 	hprefixify "tools/setup_helpers/env.py"
 }
