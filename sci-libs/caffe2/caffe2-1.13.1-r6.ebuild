@@ -61,7 +61,6 @@ AMDGPU_TARGETS_UNTESTED=(
 	gfx1035
 )
 # CUDA 12 not supported yet: https://github.com/pytorch/pytorch/issues/91122
-CUDA_PV="11.8" # 11.6 minimum required
 CUDA_TARGETS_COMPAT=(
 # Builds for all cards
 	auto
@@ -83,6 +82,7 @@ FFMPEG_COMPAT=(
 	"0/54.56.56" # 2.8 (U16 docs)
 	"0/52.54.54" # 1.2 (U14 docs)
 )
+FMT_COMMIT="cd4af11efc9c622896a3e4cb599fa28668ca3d05"
 LLVM_COMPAT=(
 	14 # ROCm slot
 	12 10 9 8 7 5 # Upstream build.sh, pull.yml
@@ -105,13 +105,17 @@ gen_rocm_slots() {
 }
 ROCM_SLOTS2=( $(gen_rocm_slots) )
 
-inherit cmake cuda flag-o-matic llvm rocm python-single-r1
+inherit cmake cuda dep-prepare flag-o-matic llvm rocm python-single-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MYP}"
 SRC_URI="
 https://github.com/pytorch/${MYPN}/archive/refs/tags/v${PV}.tar.gz
 	-> ${MYP}.tar.gz
+	!system-fmt? (
+https://github.com/fmtlib/fmt/archive/${FMT_COMMIT}.tar.gz
+	-> fmt-${FMT_COMMIT}.tar.gz
+	)
 "
 
 DESCRIPTION="A deep learning framework"
@@ -126,7 +130,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
 cuda +distributed +fbgemm -ffmpeg +gloo +magma +mpi +nnpack +numpy -opencl
--opencv +openmp rocm +qnnpack +tensorpipe +xnnpack
+-opencv +openmp rccl rocm system-fmt +qnnpack +tensorpipe test +xnnpack
 ebuild-revision-2
 "
 gen_cuda_required_use() {
@@ -192,13 +196,13 @@ gen_rocm_depends() {
 		u="${u/./_}"
 		echo "
 			rocm_${u}? (
-				~dev-libs/rccl-${pv}:${s}$(get_rocm_usedep RCCL)
 				~dev-libs/rocm-comgr-${pv}:${s}
 				~dev-libs/rocr-runtime-${pv}:${s}
 				~dev-util/hip-${pv}:${s}[rocm]
 				~dev-util/rocprofiler-${pv}:${s}$(get_rocm_usedep ROCPROFILER)
 				~dev-util/roctracer-${pv}:${s}
 				~sci-libs/hipCUB-${pv}:${s}[rocm]
+				~sci-libs/hipRAND-${pv}:${s}[rocm]
 				~sci-libs/hipSPARSE-${pv}:${s}[rocm]
 				~sci-libs/hipFFT-${pv}:${s}[rocm]
 				~sci-libs/miopen-${pv}:${s}$(get_rocm_usedep MIOPEN)
@@ -209,6 +213,9 @@ gen_rocm_depends() {
 				~sci-libs/rocThrust-${pv}:${s}$(get_rocm_usedep ROCTHRUST)
 				magma? (
 					=sci-libs/magma-2.6*:${s}$(get_rocm_usedep MAGMA_2_6)
+				)
+				rccl? (
+					~dev-libs/rccl-${pv}:${s}$(get_rocm_usedep RCCL)
 				)
 			)
 		"
@@ -230,53 +237,128 @@ gen_ffmpeg_depends() {
 		media-video/ffmpeg:=
 	"
 }
+CUDA_10_2_RDEPEND="
+(
+	=dev-util/nvidia-cuda-toolkit-10.2*:=[profiler]
+	=dev-libs/cudnn-8.3*
+)
+"
+CUDA_11_3_RDEPEND="
+(
+	=dev-util/nvidia-cuda-toolkit-11.3*:=[profiler]
+	=dev-libs/cudnn-8.6*
+)
+"
+CUDA_11_6_RDEPEND="
+(
+	=dev-util/nvidia-cuda-toolkit-11.6*:=[profiler]
+	=dev-libs/cudnn-8.6*
+)
+"
+CUDA_11_7_RDEPEND="
+(
+	=dev-util/nvidia-cuda-toolkit-11.7*:=[profiler]
+	=dev-libs/cudnn-8.6*
+)
+"
 
 RDEPEND="
 	${PYTHON_DEPS}
-	>=dev-cpp/glog-0.5.0
+	(
+		>=dev-cpp/gflags-2.2.2:=
+		dev-cpp/gflags:=
+	)
+	>=dev-cpp/glog-0.4.0
 	>=dev-libs/cpuinfo-2022.08.19
+	>=dev-libs/libfmt-7.0.3
 	>=dev-libs/protobuf-3.13.1:0/3.21
 	>=dev-libs/pthreadpool-2021.04.13
+	>=dev-libs/sleef-3.6.0
+	>=sci-libs/foxi-2021.05.26
 	>=sci-libs/onnx-1.12.0
-	dev-cpp/gflags:=
-	dev-libs/libfmt
-	dev-libs/sleef
 	sci-libs/lapack
-	sci-libs/foxi
 	cuda? (
-		=dev-libs/cudnn-8*
-		dev-libs/cudnn-frontend:0/8
+		>=dev-libs/cudnn-frontend-0.7.1:0/8
 		cuda_targets_auto? (
-			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
+			|| (
+				${CUDA_10_2_RDEPEND}
+				${CUDA_11_3_RDEPEND}
+				${CUDA_11_6_RDEPEND}
+				${CUDA_11_7_RDEPEND}
+			)
 		)
 		cuda_targets_sm_50_plus_ptx? (
-			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
+			|| (
+				${CUDA_10_2_RDEPEND}
+				${CUDA_11_3_RDEPEND}
+				${CUDA_11_6_RDEPEND}
+				${CUDA_11_7_RDEPEND}
+			)
 		)
 		cuda_targets_sm_52? (
-			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
+			|| (
+				${CUDA_10_2_RDEPEND}
+				${CUDA_11_3_RDEPEND}
+				${CUDA_11_6_RDEPEND}
+				${CUDA_11_7_RDEPEND}
+			)
 		)
 		cuda_targets_sm_60? (
-			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
+			|| (
+				${CUDA_10_2_RDEPEND}
+				${CUDA_11_3_RDEPEND}
+				${CUDA_11_6_RDEPEND}
+				${CUDA_11_7_RDEPEND}
+			)
 		)
 		cuda_targets_sm_61? (
-			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
+			|| (
+				${CUDA_10_2_RDEPEND}
+				${CUDA_11_3_RDEPEND}
+				${CUDA_11_6_RDEPEND}
+				${CUDA_11_7_RDEPEND}
+			)
 		)
 		cuda_targets_sm_70? (
-			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
+			|| (
+				${CUDA_10_2_RDEPEND}
+				${CUDA_11_3_RDEPEND}
+				${CUDA_11_6_RDEPEND}
+				${CUDA_11_7_RDEPEND}
+			)
 		)
 		cuda_targets_sm_70_plus_ptx? (
-			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
+			|| (
+				${CUDA_10_2_RDEPEND}
+				${CUDA_11_3_RDEPEND}
+				${CUDA_11_6_RDEPEND}
+				${CUDA_11_7_RDEPEND}
+			)
 		)
 		cuda_targets_sm_75? (
-			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
+			|| (
+				${CUDA_10_2_RDEPEND}
+				${CUDA_11_3_RDEPEND}
+				${CUDA_11_6_RDEPEND}
+				${CUDA_11_7_RDEPEND}
+			)
 		)
 		cuda_targets_sm_80? (
-			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
+			|| (
+				${CUDA_11_3_RDEPEND}
+				${CUDA_11_6_RDEPEND}
+				${CUDA_11_7_RDEPEND}
+			)
 		)
 		cuda_targets_sm_86? (
-			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
+			|| (
+				${CUDA_11_3_RDEPEND}
+				${CUDA_11_6_RDEPEND}
+				${CUDA_11_7_RDEPEND}
+			)
 		)
-		=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*[profiler]
+		dev-util/nvidia-cuda-toolkit:=
+		dev-libs/cudnn:=
 	)
 	fbgemm? (
 		>=sci-libs/FBGEMM-2022.09.28
@@ -285,7 +367,7 @@ RDEPEND="
 		$(gen_ffmpeg_depends)
 	)
 	gloo? (
-		sci-libs/gloo[cuda?]
+		>=sci-libs/gloo-0.5.0[cuda?]
 	)
 	magma? (
 		sci-libs/magma[cuda?,rocm?]
@@ -323,7 +405,7 @@ RDEPEND="
 		>=sci-libs/tensorpipe-2021.12.27
 	)
 	xnnpack? (
-		>=sci-libs/XNNPACK-2022.02.17
+		>=sci-libs/XNNPACK-2022.02.16
 	)
 "
 DEPEND="
@@ -332,19 +414,25 @@ DEPEND="
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 	')
 	${RDEPEND}
-	>=dev-cpp/eigen-3.4
+	>=dev-cpp/eigen-3.4.0
+	>=dev-libs/flatbuffers-2.0.5
+	>=dev-libs/FP16-2020.05.14
+	>=dev-libs/FXdiv-2020.04.17
+	>=dev-libs/pocketfft-2021.03.12
+	>=dev-libs/psimd-2020.05.17
 	>=sci-libs/kineto-0.4.0_p20220619
-	dev-libs/psimd
-	dev-libs/FP16
-	dev-libs/FXdiv
-	dev-libs/pocketfft
-	dev-libs/flatbuffers
 	cuda? (
-		dev-libs/cutlass
+		>=dev-libs/cutlass-2.10.0
+	)
+	onednn? (
+		>=sci-libs/ideep-0.5.0
 	)
 "
 BDEPEND="
 	>=dev-build/cmake-3.13
+	test? (
+		>=dev-cpp/benchmark-1.6.1
+	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-1.13.0-gentoo.patch"
@@ -396,6 +484,9 @@ ewarn
 }
 
 src_prepare() {
+	if ! use system-fmt ; then
+		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT}" "${S}/third_party/fmt"
+	fi
 	filter-lto #bug 862672
 	sed -i \
 		-e "/third_party\/gloo/d" \
@@ -491,7 +582,6 @@ einfo
 		-DUSE_MAGMA=$(usex magma)
 		-DUSE_MKLDNN=OFF
 		-DUSE_MPI=$(usex mpi)
-		-DUSE_NCCL=OFF # TODO: NVIDIA Collective Communication Library
 		-DUSE_NNPACK=$(usex nnpack)
 		-DUSE_QNNPACK=$(usex qnnpack)
 		-DUSE_SYSTEM_EIGEN_INSTALL=ON
@@ -508,6 +598,7 @@ einfo
 		-DUSE_OPENCL=$(usex opencl)
 		-DUSE_OPENCV=$(usex opencv)
 		-DUSE_OPENMP=$(usex openmp)
+		-DUSE_RCCL=$(usex rccl)
 		-DUSE_ROCM=$(usex rocm)
 		-DUSE_SYSTEM_CPUINFO=ON
 		-DUSE_SYSTEM_PYBIND11=ON
@@ -536,6 +627,7 @@ einfo
 		mycmakeargs+=(
 			-DCMAKE_CUDA_FLAGS=$(cuda_gccdir -f \
 				| tr -d \")
+			-DUSE_NCCL=OFF # TODO: NVIDIA Collective Communication Library
 		)
 	fi
 	if use rocm ; then
@@ -561,6 +653,8 @@ einfo
 		export THRUST_PATH="${ESYSROOT}${EROCM_PATH}/include"
 		mycmakeargs+=(
 			-DPYTORCH_ROCM_ARCH=$(get_amdgpu_flags)
+			-DUSE_NCCL=$(usex rccl)
+			-DUSE_SYSTEM_NCCL=ON
 		)
 	fi
 	cmake_src_configure

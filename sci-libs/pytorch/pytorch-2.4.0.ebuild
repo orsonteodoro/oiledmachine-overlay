@@ -6,7 +6,7 @@ EAPI=8
 # This is the python portion of the package.
 
 # For requirements, see
-# https://github.com/pytorch/pytorch/blob/v2.1.2/RELEASE.md?plain=1#L49
+# https://github.com/pytorch/pytorch/blob/v2.3.1/RELEASE.md?plain=1#L49
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
@@ -86,8 +86,9 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <= 3.11
 inherit hip-versions
 ROCM_SLOTS=(
-# See https://github.com/pytorch/pytorch/blob/v2.1.2/.github/workflows/trunk.yml#L178
-	"${HIP_5_6_VERSION}"
+# See https://github.com/pytorch/pytorch/blob/v2.3.1/.github/workflows/trunk.yml#L180
+	"${HIP_6_0_VERSION}"
+	"${HIP_5_7_VERSION}"
 )
 gen_rocm_slots() {
 	local s
@@ -175,12 +176,12 @@ DEPEND="
 BDEPEND="
 "
 _PATCHES=(
-	"${FILESDIR}/${PN}-2.1.1-dontbuildagain.patch"
+	"${FILESDIR}/${PN}-2.4.0-dontbuildagain.patch"
 	"${FILESDIR}/${PN}-1.9.0-Change-library-directory-according-to-CMake-build.patch"
-	"${FILESDIR}/${PN}-2.0.0-global-dlopen.patch"
-	"${FILESDIR}/${PN}-1.7.1-torch_shm_manager.patch"
+	"${FILESDIR}/${PN}-2.4.0-global-dlopen.patch"
+	"${FILESDIR}/${PN}-2.4.0-torch_shm_manager.patch"
 	"${FILESDIR}/${PN}-1.13.0-setup.patch"
-	"${FILESDIR}/${PN}-2.1.1-emptyso.patch"
+	"${FILESDIR}/${PN}-2.2.1-emptyso.patch"
 )
 
 warn_untested_gpu() {

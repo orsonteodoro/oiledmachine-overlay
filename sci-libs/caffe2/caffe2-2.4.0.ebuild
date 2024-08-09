@@ -6,9 +6,9 @@ EAPI=8
 # This package is a misnomer.  This is the non-python portions of pytorch.
 
 # For requirements, see
-# https://github.com/pytorch/pytorch/blob/v2.3.1/RELEASE.md?plain=1#L49
-# https://github.com/pytorch/pytorch/tree/v2.3.1/third_party
-# https://github.com/pytorch/pytorch/blob/v2.3.1/.ci/docker/common/install_rocm_magma.sh#L10 for magma
+# https://github.com/pytorch/pytorch/blob/v2.4.0/RELEASE.md?plain=1#L49
+# https://github.com/pytorch/pytorch/tree/v2.4.0/third_party
+# https://github.com/pytorch/pytorch/blob/v2.4.0/.ci/docker/common/install_rocm_magma.sh#L10 for magma
 
 AMDGPU_TARGETS_COMPAT=(
 # Based on rocm_agent_enumerator
@@ -36,7 +36,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1035
 )
 AMDGPU_TARGETS_UNTESTED=(
-# Based on https://github.com/pytorch/pytorch/blob/v2.3.1/.ci/pytorch/build.sh#L162
+# Based on https://github.com/pytorch/pytorch/blob/v2.4.0/.ci/pytorch/build.sh#L169
 	gfx700
 	gfx701
 	gfx801
@@ -78,11 +78,6 @@ CUDA_TARGETS_COMPAT=(
 	sm_86
 	sm_90
 )
-FFMPEG_COMPAT=(
-	"0/56.58.58" # 4.4 (U22 dockerfile)
-	"0/54.56.56" # 2.8 (U16 docs)
-	"0/52.54.54" # 1.2 (U14 docs)
-)
 FMT_COMMIT="e69e5f977d458f2650bb346dadf2ad30c5320281"
 LLVM_COMPAT=(
 	17 # ROCm slot
@@ -93,9 +88,9 @@ MYP="${MYPN}-${PV}"
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
 inherit hip-versions
 ROCM_SLOTS=(
-# See https://github.com/pytorch/pytorch/blob/v2.3.1/.ci/docker/build.sh#L190
+# See https://github.com/pytorch/pytorch/blob/v2.4.0/.ci/docker/build.sh#L190
+	"${HIP_6_1_VERSION}"
 	"${HIP_6_0_VERSION}"
-	"${HIP_5_7_VERSION}"
 )
 gen_rocm_slots() {
 	local s
@@ -131,8 +126,8 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
-cuda +distributed +fbgemm -ffmpeg +gloo +magma mkl +mpi +nnpack +numpy onednn
-openblas -opencl -opencv +openmp rccl rocm system-fmt +qnnpack test +xnnpack
+cuda +distributed +fbgemm flash +gloo +magma mkl +mpi +nnpack +numpy onednn
+openblas -opencl +openmp +qnnpack rccl rocm system-fmt test +xnnpack
 ebuild-revision-2
 "
 gen_cuda_required_use() {
@@ -168,9 +163,6 @@ REQUIRED_USE="
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
-	ffmpeg? (
-		opencv
-	)
 	mpi? (
 		distributed
 	)
@@ -183,10 +175,10 @@ REQUIRED_USE="
 			${ROCM_SLOTS2[@]}
 		)
 	)
-	rocm_6_0? (
+	rocm_6_1? (
 		llvm_slot_17
 	)
-	rocm_5_7? (
+	rocm_6_0? (
 		llvm_slot_17
 	)
 "
@@ -228,21 +220,6 @@ gen_rocm_depends() {
 	done
 }
 
-gen_ffmpeg_depends() {
-	echo "
-		|| (
-	"
-	local s
-	for s in ${FFMPEG_COMPAT[@]} ; do
-		echo "
-			media-video/ffmpeg:${s}
-		"
-	done
-	echo "
-		)
-		media-video/ffmpeg:=
-	"
-}
 CUDA_11_8_RDEPEND="
 (
 	=dev-util/nvidia-cuda-toolkit-11.8*:=[profiler]
@@ -255,6 +232,13 @@ CUDA_12_1_RDEPEND="
 	=dev-libs/cudnn-8.8*
 )
 "
+CUDA_12_4_RDEPEND="
+(
+	=dev-util/nvidia-cuda-toolkit-12.4*:=[profiler]
+	=dev-libs/cudnn-8.8*
+)
+"
+# glod missing
 RDEPEND="
 	${PYTHON_DEPS}
 	(
@@ -268,73 +252,85 @@ RDEPEND="
 	>=dev-libs/sleef-3.6.0
 	>=sci-libs/foxi-2021.05.26
 	>=sci-libs/onnx-1.16.0
+	dev-cpp/opentelemetry-cpp
 	virtual/lapack
 	cuda? (
-		>=dev-libs/cudnn-frontend-1.1.2:0/8
+		>=dev-libs/cudnn-frontend-1.4.0:0/8
 		cuda_targets_auto? (
 			|| (
 				${CUDA_11_8_RDEPEND}
 				${CUDA_12_1_RDEPEND}
+				${CUDA_12_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_50_plus_ptx? (
 			|| (
 				${CUDA_11_8_RDEPEND}
 				${CUDA_12_1_RDEPEND}
+				${CUDA_12_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_52? (
 			|| (
 				${CUDA_11_8_RDEPEND}
 				${CUDA_12_1_RDEPEND}
+				${CUDA_12_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_60? (
 			|| (
 				${CUDA_11_8_RDEPEND}
 				${CUDA_12_1_RDEPEND}
+				${CUDA_12_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_61? (
 			|| (
 				${CUDA_11_8_RDEPEND}
 				${CUDA_12_1_RDEPEND}
+				${CUDA_12_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_70? (
 			|| (
 				${CUDA_11_8_RDEPEND}
 				${CUDA_12_1_RDEPEND}
+				${CUDA_12_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_70_plus_ptx? (
 			|| (
 				${CUDA_11_8_RDEPEND}
 				${CUDA_12_1_RDEPEND}
+				${CUDA_12_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_75? (
 			|| (
 				${CUDA_11_8_RDEPEND}
 				${CUDA_12_1_RDEPEND}
+				${CUDA_12_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_80? (
 			|| (
 				${CUDA_11_8_RDEPEND}
 				${CUDA_12_1_RDEPEND}
+				${CUDA_12_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_86? (
 			|| (
 				${CUDA_11_8_RDEPEND}
 				${CUDA_12_1_RDEPEND}
+				${CUDA_12_4_RDEPEND}
 			)
 		)
 		cuda_targets_sm_90? (
 			|| (
 				${CUDA_11_8_RDEPEND}
 				${CUDA_12_1_RDEPEND}
+				${CUDA_12_4_RDEPEND}
 			)
 		)
 		dev-util/nvidia-cuda-toolkit:=
@@ -345,9 +341,6 @@ RDEPEND="
 	)
 	fbgemm? (
 		>=sci-libs/FBGEMM-2023.12.04
-	)
-	ffmpeg? (
-		$(gen_ffmpeg_depends)
 	)
 	gloo? (
 		>=sci-libs/gloo-0.5.0[cuda?]
@@ -368,7 +361,7 @@ RDEPEND="
 	nnpack? (
 		>=sci-libs/NNPACK-2020.12.21
 	)
-,	numpy? (
+	numpy? (
 		$(python_gen_cond_dep '
 			dev-python/numpy[${PYTHON_USEDEP}]
 		')
@@ -382,11 +375,9 @@ RDEPEND="
 	opencl? (
 		virtual/opencl
 	)
-	opencv? (
-		media-libs/opencv:=
-	)
 	qnnpack? (
-		>=sci-libs/QNNPACK-2019.08.28
+		!sci-libs/QNNPACK
+		>=dev-cpp/gemmlowp-2018.11.26
 	)
 	rocm? (
 		|| (
@@ -411,12 +402,12 @@ DEPEND="
 	>=dev-libs/FXdiv-2020.04.17
 	>=dev-libs/pocketfft-2023.12.30
 	>=dev-libs/psimd-2020.05.17
-	>=sci-libs/kineto-0.4.0_p20240131
+	>=sci-libs/kineto-0.4.0_p20240524
 	cuda? (
 		>=dev-libs/cutlass-3.4.1
 	)
 	onednn? (
-		>=sci-libs/ideep-3.3.6
+		>=sci-libs/ideep-3.4.2
 	)
 "
 BDEPEND="
@@ -453,15 +444,15 @@ ewarn "${gpu} is not CI tested upstream."
 
 pkg_setup() {
 	warn_untested_gpu
-	if use rocm_6_0 ; then
+	if use rocm_6_1 ; then
+		LLVM_SLOT="17"
+		LLVM_MAX_SLOT="${LLVM_SLOT}"
+		ROCM_SLOT="6.1"
+		rocm_pkg_setup
+	elif use rocm_6_0 ; then
 		LLVM_SLOT="17"
 		LLVM_MAX_SLOT="${LLVM_SLOT}"
 		ROCM_SLOT="6.0"
-		rocm_pkg_setup
-	elif use rocm_5_7 ; then
-		LLVM_SLOT="17"
-		LLVM_MAX_SLOT="${LLVM_SLOT}"
-		ROCM_SLOT="5.7"
 		rocm_pkg_setup
 	else
 		local s
@@ -557,7 +548,6 @@ einfo
 		-DBUILD_CUSTOM_PROTOBUF=OFF
 		-DBUILD_SHARED_LIBS=ON
 		-DLIBSHM_INSTALL_LIB_SUBDIR="${EPREFIX}/usr/$(get_libdir)"
-		-DPYBIND11_PYTHON_VERSION="${EPYTHON#python}"
 		-DPYTHON_EXECUTABLE="${PYTHON}"
 		-DTORCH_INSTALL_LIB_DIR="${EPREFIX}/usr/$(get_libdir)"
 		-DUSE_CCACHE=OFF
@@ -565,31 +555,30 @@ einfo
 		-DUSE_DISTRIBUTED=$(usex distributed)
 		-DUSE_FAKELOWP=OFF
 		-DUSE_FBGEMM=$(usex fbgemm)
-		-DUSE_FFMPEG=$(usex ffmpeg)
+		-DUSE_FLASH_ATTENTION=$(usex flash)
 		-DUSE_GFLAGS=ON
 		-DUSE_GLOG=ON
 		-DUSE_GLOO=$(usex gloo)
 		-DUSE_ITT=OFF
 		-DUSE_KINETO=OFF # TODO
-		-DUSE_LEVELDB=OFF
 		-DUSE_MAGMA=$(usex magma)
-		-DUSE_METAL=OFF
+		-DUSE_MEM_EFF_ATTENTION=OFF
 		-DUSE_MKLDNN=$(usex onednn)
 		-DUSE_MPI=$(usex mpi)
 		-DUSE_NNPACK=$(usex nnpack)
-		-DUSE_QNNPACK=$(usex qnnpack)
 		-DUSE_SYSTEM_FP16=ON
 		-DUSE_SYSTEM_FXDIV=ON
 		-DUSE_SYSTEM_GLOO=ON
 		-DUSE_SYSTEM_ONNX=ON
+		-DUSE_SYSTEM_PSIMD=ON
 		-DUSE_SYSTEM_PTHREADPOOL=ON
 		-DUSE_SYSTEM_SLEEF=ON
 		-DUSE_SYSTEM_XNNPACK=$(usex xnnpack)
 		-DUSE_TENSORPIPE=$(usex distributed)
-		-DUSE_PYTORCH_QNNPACK=OFF
+		-DUSE_PYTORCH_METAL=OFF
+		-DUSE_PYTORCH_QNNPACK=$(usex qnnpack)
 		-DUSE_NUMPY=$(usex numpy)
 		-DUSE_OPENCL=$(usex opencl)
-		-DUSE_OPENCV=$(usex opencv)
 		-DUSE_OPENMP=$(usex openmp)
 		-DUSE_RCCL=$(usex rccl)
 		-DUSE_ROCM=$(usex rocm)
@@ -598,6 +587,7 @@ einfo
 		-DUSE_UCC=OFF
 		-DUSE_VALGRIND=OFF
 		-DUSE_XNNPACK=$(usex xnnpack)
+		-DUSE_XPU=OFF
 		-Wno-dev
 	)
 
