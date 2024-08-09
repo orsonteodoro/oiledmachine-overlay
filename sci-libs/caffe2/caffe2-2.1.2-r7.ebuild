@@ -131,7 +131,8 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
 cuda +distributed +fbgemm -ffmpeg mkl +gloo +magma +mpi +nnpack +numpy onednn
-openblas -opencl -opencv +openmp rccl rocm system-fmt +qnnpack +tensorpipe test +xnnpack
+openblas -opencl -opencv +openmp rccl rocm roctracer system-fmt +qnnpack
++tensorpipe test +xnnpack
 ebuild-revision-2
 "
 gen_cuda_required_use() {
@@ -203,8 +204,6 @@ gen_rocm_depends() {
 				~dev-libs/rocm-comgr-${pv}:${s}
 				~dev-libs/rocr-runtime-${pv}:${s}
 				~dev-util/hip-${pv}:${s}[rocm]
-				~dev-util/rocprofiler-${pv}:${s}$(get_rocm_usedep ROCPROFILER)
-				~dev-util/roctracer-${pv}:${s}
 				~sci-libs/hipBLAS-${pv}:${s}[rocm]
 				~sci-libs/hipCUB-${pv}:${s}[rocm]
 				~sci-libs/hipRAND-${pv}:${s}[rocm]
@@ -222,6 +221,9 @@ gen_rocm_depends() {
 				)
 				rccl? (
 					~dev-libs/rccl-${pv}:${s}$(get_rocm_usedep RCCL)
+				)
+				roctracer? (
+					~dev-util/roctracer-${pv}:${s}
 				)
 			)
 		"
