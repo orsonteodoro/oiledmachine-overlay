@@ -417,21 +417,18 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2.2.1-gentoo.patch"
-	"${FILESDIR}/${PN}-1.13.0-install-dirs.patch"
+	"${FILESDIR}/${PN}-2.4.0-gentoo.patch"
+	"${FILESDIR}/${PN}-2.4.0-install-dirs.patch"
 	"${FILESDIR}/${PN}-1.12.0-glog-0.6.0.patch"
 	"${FILESDIR}/${PN}-1.13.1-tensorpipe.patch"
 	"${FILESDIR}/${PN}-2.3.0-cudnn_include_fix.patch"
 	"${FILESDIR}/${PN}-2.1.2-fix-rpath.patch"
-	"${FILESDIR}/${PN}-2.1.2-fix-openmp-link.patch"
-	"${FILESDIR}/${PN}-2.3.0-rocm-fix-std-cpp17.patch"
+	"${FILESDIR}/${PN}-2.4.0-fix-openmp-link.patch"
+	"${FILESDIR}/${PN}-2.4.0-rocm-fix-std-cpp17.patch"
 	"${FILESDIR}/${PN}-2.2.2-musl.patch"
-	"${FILESDIR}/${PN}-2.3.0-CMakeFix.patch"
-	"${FILESDIR}/${PN}-2.3.0-exclude-aotriton.patch"
+	"${FILESDIR}/${PN}-2.4.0-exclude-aotriton.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-rocm-gcc14-clamp.patch"
-	"${FILESDIR}/${PN}-2.3.0-optional-hipblaslt.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-libcpp.patch"
-	"${FILESDIR}/${PN}-2.3.0-fix-gcc-clang-abi-compat.patch"
 )
 
 warn_untested_gpu() {
