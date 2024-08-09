@@ -128,7 +128,7 @@ ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
 cuda +distributed +fbgemm flash +gloo +magma mkl +mpi +nnpack +numpy onednn
 openblas -opencl +openmp +qnnpack rccl rocm roctracer system-fmt test +xnnpack
-ebuild-revision-3
+ebuild-revision-4
 "
 gen_cuda_required_use() {
 	local x
@@ -430,7 +430,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.3.0-fix-rocm-gcc14-clamp.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-libcpp.patch"
 	"${FILESDIR}/${PN}-2.4.0-rocm-hardcoded-paths.patch"
-	"A${FILESDIR}/${PN}-2.4.0-cuda-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-2.4.0-cuda-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {

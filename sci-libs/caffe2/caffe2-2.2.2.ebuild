@@ -134,7 +134,7 @@ ${ROCM_SLOTS2[@]}
 cuda +distributed +fbgemm -ffmpeg +gloo +magma mkl +mpi +nnpack +numpy onednn
 openblas -opencl -opencv +openmp rccl rocm roctracer system-fmt +qnnpack test
 +xnnpack
-ebuild-revision-3
+ebuild-revision-4
 "
 gen_cuda_required_use() {
 	local x
