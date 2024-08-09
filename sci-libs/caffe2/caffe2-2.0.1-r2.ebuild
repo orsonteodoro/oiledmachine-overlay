@@ -130,10 +130,10 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
-cuda +distributed +fbgemm -ffmpeg +gloo +magma +mpi +nnpack +numpy -opencl
+cuda +distributed +fbgemm -ffmpeg +gloo +magma +mpi +nnpack +numpy onednn -opencl
 -opencv +openmp rccl rocm roctracer system-fmt +qnnpack +tensorpipe test
 +xnnpack
-ebuild-revision-2
+ebuild-revision-3
 "
 gen_cuda_required_use() {
 	local x
@@ -442,6 +442,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.0.0-gcc13.patch"
 	"${FILESDIR}/${PN}-2.0.0-cudnn_include_fix.patch"
 	"${FILESDIR}/${PN}-2.0.1-cudaExtra.patch"
+	"${FILESDIR}/${PN}-2.0.1-rocm-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-2.0.1-cuda-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
@@ -496,11 +498,6 @@ src_prepare() {
 			mobile_bytecode.fbs \
 			|| die
 	popd >/dev/null 2>&1 || die
-	sed \
-		-i \
-		-e "s|lib/cmake|$(get_libdir)/cmake|g" \
-		"cmake/public/LoadHIP.cmake" \
-		|| die
 	if use rocm ; then
 		rocm_src_prepare
 	fi

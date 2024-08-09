@@ -128,7 +128,7 @@ ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
 cuda +distributed +fbgemm flash +gloo +magma mkl +mpi +nnpack +numpy onednn
 openblas -opencl +openmp +qnnpack rccl rocm roctracer system-fmt test +xnnpack
-ebuild-revision-2
+ebuild-revision-3
 "
 gen_cuda_required_use() {
 	local x
@@ -429,6 +429,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.4.0-exclude-aotriton.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-rocm-gcc14-clamp.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-libcpp.patch"
+	"${FILESDIR}/${PN}-2.4.0-rocm-hardcoded-paths.patch"
+	"A${FILESDIR}/${PN}-2.4.0-cuda-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
@@ -466,6 +468,7 @@ pkg_setup() {
 }
 
 src_prepare() {
+	die
 	if ! use system-fmt ; then
 		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT}" "${S}/third_party/fmt"
 	fi
@@ -483,11 +486,6 @@ src_prepare() {
 			mobile_bytecode.fbs \
 			|| die
 	popd >/dev/null 2>&1 || die
-	sed \
-		-i \
-		-e "s|lib/cmake|$(get_libdir)/cmake|g" \
-		"cmake/public/LoadHIP.cmake" \
-		|| die
 	if use rocm ; then
 		rocm_src_prepare
 		ebegin "HIPifying cuda sources"

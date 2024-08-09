@@ -134,7 +134,7 @@ ${ROCM_SLOTS2[@]}
 cuda +distributed +fbgemm -ffmpeg +gloo +magma mkl +mpi +nnpack +numpy onednn
 openblas -opencl -opencv +openmp rccl rocm roctracer system-fmt +qnnpack test
 +xnnpack
-ebuild-revision-2
+ebuild-revision-3
 "
 gen_cuda_required_use() {
 	local x
@@ -436,6 +436,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.1.2-fix-openmp-link.patch"
 	"${FILESDIR}/${PN}-2.1.2-rocm-fix-std-cpp17.patch"
 	"${FILESDIR}/${PN}-2.2.2-musl.patch"
+	"${FILESDIR}/${PN}-2.2.2-cuda-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-2.2.2-rocm-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
@@ -490,11 +492,6 @@ src_prepare() {
 			mobile_bytecode.fbs \
 			|| die
 	popd >/dev/null 2>&1 || die
-	sed \
-		-i \
-		-e "s|lib/cmake|$(get_libdir)/cmake|g" \
-		"cmake/public/LoadHIP.cmake" \
-		|| die
 	if use rocm ; then
 		rocm_src_prepare
 		ebegin "HIPifying cuda sources"

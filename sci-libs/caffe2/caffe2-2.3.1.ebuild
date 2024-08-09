@@ -134,7 +134,7 @@ ${ROCM_SLOTS2[@]}
 cuda +distributed +fbgemm -ffmpeg +gloo +magma mkl +mpi +nnpack +numpy onednn
 openblas -opencl -opencv +openmp rccl rocm roctracer system-fmt +qnnpack test
 +xnnpack
-ebuild-revision-2
+ebuild-revision-3
 "
 gen_cuda_required_use() {
 	local x
@@ -370,7 +370,7 @@ RDEPEND="
 	nnpack? (
 		>=sci-libs/NNPACK-2020.12.21
 	)
-,	numpy? (
+	numpy? (
 		$(python_gen_cond_dep '
 			dev-python/numpy[${PYTHON_USEDEP}]
 		')
@@ -442,6 +442,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.3.0-optional-hipblaslt.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-libcpp.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-gcc-clang-abi-compat.patch"
+	"${FILESDIR}/${PN}-2.3.1-rocm-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-2.3.1-cuda-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
@@ -496,11 +498,6 @@ src_prepare() {
 			mobile_bytecode.fbs \
 			|| die
 	popd >/dev/null 2>&1 || die
-	sed \
-		-i \
-		-e "s|lib/cmake|$(get_libdir)/cmake|g" \
-		"cmake/public/LoadHIP.cmake" \
-		|| die
 	if use rocm ; then
 		rocm_src_prepare
 		ebegin "HIPifying cuda sources"
