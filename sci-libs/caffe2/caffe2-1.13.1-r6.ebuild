@@ -583,6 +583,7 @@ einfo
 		-DUSE_MKLDNN=OFF
 		-DUSE_MPI=$(usex mpi)
 		-DUSE_NNPACK=$(usex nnpack)
+		-DUSE_PYTORCH_QNNPACK=OFF
 		-DUSE_QNNPACK=$(usex qnnpack)
 		-DUSE_SYSTEM_EIGEN_INSTALL=ON
 		-DUSE_SYSTEM_FP16=ON
@@ -593,7 +594,6 @@ einfo
 		-DUSE_SYSTEM_SLEEF=ON
 		-DUSE_SYSTEM_XNNPACK=$(usex xnnpack)
 		-DUSE_TENSORPIPE=$(usex tensorpipe)
-		-DUSE_PYTORCH_QNNPACK=OFF
 		-DUSE_NUMPY=$(usex numpy)
 		-DUSE_OPENCL=$(usex opencl)
 		-DUSE_OPENCV=$(usex opencv)
