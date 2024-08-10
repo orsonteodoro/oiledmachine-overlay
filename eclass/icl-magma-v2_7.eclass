@@ -81,7 +81,31 @@ fi
 
 GPU_FRAMEWORKS=""
 if [[ "${MAGMA_CUDA}" == "1" ]] ; then
-	IUSE+="
+	CUDA_TOOLKIT_11_8="
+		(
+			=dev-util/nvidia-cuda-toolkit-11.8*
+			sys-devel/gcc:11
+		)
+	"
+	CUDA_TOOLKIT_12_3="
+		(
+			=dev-util/nvidia-cuda-toolkit-12*
+			sys-devel/gcc:12
+		)
+	"
+	CUDA_TOOLKIT_12_4="
+		(
+			=dev-util/nvidia-cuda-toolkit-12*
+			sys-devel/gcc:13
+		)
+	"
+	CUDA_TOOLKIT_12_5="
+		(
+			=dev-util/nvidia-cuda-toolkit-12*
+			sys-devel/gcc:13
+		)
+	"
+_	IUSE+="
 		${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		altas cuda
 	"
@@ -117,50 +141,65 @@ if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 	"
 	RDEPEND+="
 		cuda? (
-			>=dev-util/nvidia-cuda-toolkit-7.5:=
-			sys-devel/gcc:11
 			cuda_targets_sm_35? (
-				=dev-util/nvidia-cuda-toolkit-11.8*:=
+				|| (
+					${CUDA_TOOLKIT_11_8}
+				)
 			)
 			cuda_targets_sm_37? (
-				=dev-util/nvidia-cuda-toolkit-11.8*:=
+				|| (
+					${CUDA_TOOLKIT_11_8}
+				)
 			)
 			cuda_targets_sm_50? (
 				|| (
-					=dev-util/nvidia-cuda-toolkit-11.8*:=
-					=dev-util/nvidia-cuda-toolkit-12*:=
+					${CUDA_TOOLKIT_11_8}
+					${CUDA_TOOLKIT_12_3}
+					${CUDA_TOOLKIT_12_4}
+					${CUDA_TOOLKIT_12_5}
 				)
 			)
 			cuda_targets_sm_60? (
 				|| (
-					=dev-util/nvidia-cuda-toolkit-11.8*:=
-					=dev-util/nvidia-cuda-toolkit-12*:=
+					${CUDA_TOOLKIT_11_8}
+					${CUDA_TOOLKIT_12_3}
+					${CUDA_TOOLKIT_12_4}
+					${CUDA_TOOLKIT_12_5}
 				)
 			)
 			cuda_targets_sm_70? (
 				|| (
-					=dev-util/nvidia-cuda-toolkit-11.8*:=
-					=dev-util/nvidia-cuda-toolkit-12*:=
+					${CUDA_TOOLKIT_11_8}
+					${CUDA_TOOLKIT_12_3}
+					${CUDA_TOOLKIT_12_4}
+					${CUDA_TOOLKIT_12_5}
 				)
 			)
 			cuda_targets_sm_75? (
 				|| (
-					=dev-util/nvidia-cuda-toolkit-11.8*:=
-					=dev-util/nvidia-cuda-toolkit-12*:=
+					${CUDA_TOOLKIT_11_8}
+					${CUDA_TOOLKIT_12_3}
+					${CUDA_TOOLKIT_12_4}
+					${CUDA_TOOLKIT_12_5}
 				)
 			)
 			cuda_targets_sm_80? (
 				|| (
-					=dev-util/nvidia-cuda-toolkit-11.8*:=
-					=dev-util/nvidia-cuda-toolkit-12*:=
+					${CUDA_TOOLKIT_11_8}
+					${CUDA_TOOLKIT_12_3}
+					${CUDA_TOOLKIT_12_4}
+					${CUDA_TOOLKIT_12_5}
 				)
 			)
 			cuda_targets_sm_90? (
 				|| (
-					=dev-util/nvidia-cuda-toolkit-11.8*:=
-					=dev-util/nvidia-cuda-toolkit-12*:=
+					${CUDA_TOOLKIT_11_8}
+					${CUDA_TOOLKIT_12_3}
+					${CUDA_TOOLKIT_12_4}
+					${CUDA_TOOLKIT_12_5}
 				)
 			)
+			dev-util/nvidia-cuda-toolkit:=
 		)
 	"
 fi
@@ -430,7 +469,7 @@ einfo "Removing LLVM references"
 	IFS=$' \t\n'
 }
 
-cuda_host_cc_check() {
+libstdcxx_check() {
 	local required_gcc_slot="${1}"
         local gcc_current_profile=$(gcc-config -c)
         local gcc_current_profile_slot=${gcc_current_profile##*-}
@@ -499,32 +538,35 @@ eerror
 		export gpu="$(get_cuda_flags)"
 	fi
 
-	if has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-13*" ; then
+	if has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.5*" && has_version "=sys-devel/gcc-13*" ; then
 		export CC="${CHOST}-gcc-13"
 		export CXX="${CHOST}-g++-13"
-		cuda_host_cc_check 13
-	elif has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-12*" ; then
+		libstdcxx_check 13
+	elif has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.4*" && has_version "=sys-devel/gcc-13*" ; then
+		export CC="${CHOST}-gcc-13"
+		export CXX="${CHOST}-g++-13"
+		libstdcxx_check 13
+	elif has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=sys-devel/gcc-12*" ; then
 		export CC="${CHOST}-gcc-12"
 		export CXX="${CHOST}-g++-12"
-		cuda_host_cc_check 12
-	elif has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-11*" ; then
-		export CC="${CHOST}-gcc-11"
-		export CXX="${CHOST}-g++-11"
-		cuda_host_cc_check 11
+		libstdcxx_check 12
 	elif has cuda ${IUSE_EFFECTIVE} && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/gcc-11*" ; then
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
-		cuda_host_cc_check 11
+		libstdcxx_check 11
 	elif has cuda ${IUSE_EFFECTIVE} && use cuda ; then
 eerror
 eerror "If using"
 eerror
-eerror "CUDA 12 - install and switch via eselect gcc to either gcc 11, 12, 13"
-eerror "CUDA 11 - install and switch via eselect gcc to either gcc 11"
+eerror "CUDA 12.5 - install and switch via eselect gcc to either gcc 13"
+eerror "CUDA 12.4 - install and switch via eselect gcc to either gcc 13"
+eerror "CUDA 12.3 - install and switch via eselect gcc to either gcc 12"
+eerror "CUDA 11.8 - install and switch via eselect gcc to either gcc 11"
 eerror
 		die
 	elif has rocm ${IUSE_EFFECTIVE} && use rocm ; then
 		export gpu="$(get_amdgpu_flags)"
+		libstdcxx_check 12
 	fi
 	sed -i \
 		-e "s|@GPU_TARGET_OVERRIDE@|GPU_TARGET = ${gpu}|g" \
