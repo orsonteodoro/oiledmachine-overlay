@@ -32,7 +32,8 @@
       Add support for flash-attention
     </flag>
     <flag name="gloo">
-      Add multiple NUMA node or multiple CUDA® GPU support.
+      Add multiple NUMA node or minimal CUDA® GPU capabilities but recommended
+      for distributed CPU training but not GPU training.
     </flag>
     <flag name="kineto">
       Add CPU/GPU profiling support
@@ -49,14 +50,17 @@
     <flag name="nnpack">
       Use NNPACK
     </flag>
+    <flag name="mpi">
+      Support CPU distributed training.
+    </flag>
     <flag name="numpy">
       Add support for math operations through numpy
     </flag>
     <flag name="nccl">
-      Support multiple NVIDIA® GPUs.
+      Support multiple NVIDIA® GPUs for distributed GPU training.
     </flag>
     <flag name="rccl">
-      Support multiple AMD GPUs.  (IN DEVELOPMENT)
+      Support multiple AMD GPUs for distributed GPU training.
     </flag>
     <flag name="roctracer">
       Support tracing PyTorch annotated applications for ROCm™ builds.
