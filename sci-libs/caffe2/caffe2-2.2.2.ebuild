@@ -373,6 +373,9 @@ REQUIRED_USE="
 	ffmpeg? (
 		opencv
 	)
+	mimalloc? (
+		!system-libs
+	)
 	mpi? (
 		distributed
 	)

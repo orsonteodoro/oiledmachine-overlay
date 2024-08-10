@@ -340,6 +340,9 @@ REQUIRED_USE="
 	gloo? (
 		distributed
 	)
+	mimalloc? (
+		!system-libs
+	)
 	rocm? (
 		${ROCM_REQUIRED_USE}
 		^^ (
