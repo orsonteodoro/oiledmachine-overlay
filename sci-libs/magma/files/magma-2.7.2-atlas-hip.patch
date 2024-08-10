@@ -11,8 +11,8 @@ diff '--color=auto' -urp magma-2.7.2.orig/make.inc-examples/make.inc.atlas magma
 +@BACKEND_OVERRIDE@
 +
 +# set these to their real paths
-+ROCM_PATH ?= /opt/rocm
-+CUDADIR   ?= /usr/local/cuda
++ROCM_PATH ?= /opt/rocm-@ROCM_VERSION@
++CUDADIR   ?= /opt/cuda
 +
 +# require either hip or cuda
 +ifeq (,$(findstring $(BACKEND),hip cuda))

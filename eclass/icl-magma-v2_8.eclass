@@ -211,20 +211,19 @@ if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 			echo "
 				(
 					~dev-libs/rocm-core-${pv}:${slot}
-					~dev-util/hip-${pv}:${slot}[system-llvm=]
-					~sci-libs/hipBLAS-${pv}:${slot}
-					~sci-libs/hipSPARSE-${pv}:${slot}
+					~dev-util/hip-${pv}:${slot}[rocm]
+					~sci-libs/hipBLAS-${pv}:${slot}[rocm]
+					~sci-libs/hipSPARSE-${pv}:${slot}[rocm]
 				)
 			"
 		done
 	}
 	RDEPEND+="
 		rocm? (
-			dev-util/hip:=
-			dev-util/rocm-compiler[system-llvm=]
 			|| (
 				$(gen_rocm_rdepend)
 			)
+			dev-util/hip:=
 		)
 	"
 fi

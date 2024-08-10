@@ -19,7 +19,7 @@
       Use ATLAS as the BLAS vendor for CPU.
     </flag>
     <flag name="cuda">
-      Use CUDA as the BLAS vendor for GPU.
+      Use CUDA® as the BLAS vendor for NVIDIA GPUs.
     </flag>
     <flag name="ilp64">
       Use ILP64 for MKL.  Otherwise fallback to LP64 data model.
@@ -37,7 +37,7 @@
       Use OpenMP for MKL threading.
     </flag>
     <flag name="rocm">
-      Use ROCm as the BLAS vendor for GPU.
+      Use ROCm as the BLAS vendor for AMD GPUs.
     </flag>
     <flag name="tbb">
       Use TBB for MKL threading.
