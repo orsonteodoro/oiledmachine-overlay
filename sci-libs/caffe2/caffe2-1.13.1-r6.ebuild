@@ -416,10 +416,16 @@ REQUIRED_USE="
 	ffmpeg? (
 		opencv
 	)
+	gloo? (
+		distributed
+	)
 	mpi? (
 		distributed
 	)
-	gloo? (
+	nccl? (
+		distributed
+	)
+	rccl? (
 		distributed
 	)
 	rocm? (

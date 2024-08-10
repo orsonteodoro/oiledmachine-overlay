@@ -422,14 +422,20 @@ REQUIRED_USE="
 			tensorpipe
 		)
 	)
-	mpi? (
+	gloo? (
 		distributed
 	)
-	gloo? (
+	mpi? (
 		distributed
 	)
 	mimalloc? (
 		!system-libs
+	)
+	nccl? (
+		distributed
+	)
+	rccl? (
+		distributed
 	)
 	rocm? (
 		${ROCM_REQUIRED_USE}

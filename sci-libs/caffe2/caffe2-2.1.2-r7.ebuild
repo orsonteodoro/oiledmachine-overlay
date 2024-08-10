@@ -460,13 +460,19 @@ REQUIRED_USE="
 	ffmpeg? (
 		opencv
 	)
+	gloo? (
+		distributed
+	)
 	mimalloc? (
 		!system-libs
 	)
 	mpi? (
 		distributed
 	)
-	gloo? (
+	nccl? (
+		distributed
+	)
+	rccl? (
 		distributed
 	)
 	rocm? (
