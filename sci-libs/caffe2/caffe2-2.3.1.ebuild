@@ -322,7 +322,78 @@ https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_COMMIT}/eigen-${EIGEN_COMMIT
 
 DESCRIPTION="A deep learning framework"
 HOMEPAGE="https://pytorch.org/"
-LICENSE="BSD"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	(
+		Apache-2.0
+		Boost-1.0
+		BSD
+		BSD-2
+		MIT
+	)
+	(
+		(
+			BSD-2
+			custom
+		)
+		Apache-2.0
+		Boost-1.0
+		BSD
+		HPND
+	)
+	(
+		CC0-1.0
+		MIT
+	)
+	(
+		custom
+		MIT
+	)
+	(
+		BSD
+		BSD-2
+		ISC
+		MIT
+	)
+	Apache-2.0
+	Boost-1.0
+	BSD
+	BSD-2
+	CC-BY-4.0
+	MIT
+	PSF-3.3.0
+	GPL-3.0
+	ZLIB
+	^^ (
+		Apache-2.0
+		BSD
+	)
+"
+# ( Apache-2.0 with exception ) Apache-2.0 Boost-1.0 BSD BSD-2 MIT - third_party/LICENSES_BUNDLED.txt
+# ( BSD-2 custom ) Apache-2.0 Boost-1.0 BSD HPND - NOTICE
+# all-rights-reserved Apache-2.0 - third_party/kineto/third_party/dynolog/third_party/DCGM/LICENSE
+# all-rights-reserved MIT - third_party/miniz-2.1.0/LICENSE
+# all-rights-reserved MIT - third_party/cudnn_frontend/LICENSE.txt
+# Apache-2.0 - torch/_vendor/packaging/LICENSE.APACHE
+# Boost-1.0 - third_party/sleef/LICENSE.txt
+# BSD - aten/src/ATen/native/quantized/cpu/qnnpack/LICENSE
+# BSD - LICENSE
+# BSD BSD-2 ISC MIT - third_party/tensorpipe/third_party/libuv/LICENSE
+# BSD-2 - aten/src/ATen/native/quantized/cpu/qnnpack/deps/clog/LICENSE
+# CC-BY-4.0 - third_party/tensorpipe/third_party/libuv/LICENSE-docs
+# custom MIT - ./third_party/kineto/third_party/dynolog/third_party/fmt/LICENSE.rst
+# LGPL-3.0+ GPL-3+ MPL-2.0 - ./third_party/eigen/scripts/relicense.py
+# MIT - third_party/FXDIV/LICENSE
+# MIT CC0-1.0 - third_party/nlohmann/docs/mkdocs/docs/home/license.md
+# PSF-3.3.0 - third_party/kineto/third_party/dynolog/third_party/fmt/doc/python-license.txt
+# GPL-3.0 - third_party/kineto/third_party/dynolog/third_party/cpr/test/LICENSE
+# ZLIB - third_party/FBGEMM/third_party/asmjit/LICENSE.md
+# ^^ ( Apache-2.0 BSD ) - torch/_vendor/packaging/LICENSE
+# The distro's Apache-2.0 license template does not contain all rights reserved.
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="0"
 # cuda and rocm are enabled by default upstream.

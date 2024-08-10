@@ -329,7 +329,68 @@ https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_COMMIT}/eigen-${EIGEN_COMMIT
 
 DESCRIPTION="A deep learning framework"
 HOMEPAGE="https://pytorch.org/"
-LICENSE="BSD"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	(
+		BSD
+		ISC
+		MIT
+	)
+	(
+		CC0-1.0
+		MIT
+	)
+	(
+		MPL-2
+		LGPL-3.0+
+		GPL-2.0+
+	)
+	(
+		custom
+		BSD
+	)
+	(
+		BSD-2
+		custom
+	)
+	(
+		custom
+		MIT
+	)
+	Apache-2.0
+	Boost-1.0
+	BSD
+	BSD-2
+	CC-BY-4.0
+	PSF-3.3.0
+	UoI-NCSA
+	Unlicense
+	ZLIB
+"
+# ( BSD-2 custom ) Apache-2.0 Boost-1.0 BSD - NOTICE
+# all-rights-reserved MIT - third_party/miniz-2.1.0/LICENSE
+# Apache-2.0 - third_party/tensorpipe/third_party/googletest/googlemock/scripts/generator/LICENSE
+# Apache-2.0 Boost-1.0 BSD BSD-2 MIT - third_party/LICENSES_BUNDLED.txt
+# BSD - test/distributed/pipeline/sync/LICENSE
+# BSD - LICENSE
+# BSD-2 - aten/src/ATen/native/quantized/cpu/qnnpack/deps/clog/LICENSE
+# Boost-1.0 third_party/sleef/LICENSE.txt
+# BSD-2 BSD ISC MIT - third_party/tensorpipe/third_party/libuv/LICENSE
+# CC-BY-4.0 - third_party/tensorpipe/third_party/libuv/LICENSE-docs
+# CC0-1.0 MIT - third_party/nlohmann/docs/mkdocs/docs/home/license.md
+# custom MIT - third_party/kineto/third_party/fmt/LICENSE.rst
+# custom BSD - ./third_party/onnx-tensorrt/third_party/onnx/third_party/pybind11/LICENSE
+# custom BSD-2 - ./third_party/neon2sse/LICENSE
+# MIT - third_party/psimd/LICENSE
+# MPL-2.0 LGPL-3+ GPL-2+ - third_party/eigen/scripts/relicense.py
+# PSF-3.3.0 - third_party/kineto/third_party/fmt/doc/python-license.txt
+# Unlicense - caffe2/mobile/contrib/libopencl-stub/LICENSE
+# UoI-NCSA - third_party/tensorpipe/third_party/pybind11/tools/clang/LICENSE.TXT
+# UoI-NCSA - third_party/onnx-tensorrt/third_party/onnx/third_party/pybind11/tools/clang/LICENSE.TXT
+# ZLIB - third_party/FBGEMM/third_party/asmjit/LICENSE.md
 RESTRICT="test"
 SLOT="0"
 # cuda and rocm are enabled by default upstream.
