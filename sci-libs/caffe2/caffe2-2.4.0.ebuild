@@ -376,9 +376,9 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
 cuda +distributed +eigen +fbgemm +flash-attention +gloo +kineto +magma -mimalloc
--mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +qnnpack +rccl rocm
-roctracer -ssl system-libs test +xnnpack
-ebuild-revision-6
+-mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
++qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
+ebuild-revision-7
 "
 gen_cuda_required_use() {
 	local x
@@ -413,6 +413,15 @@ REQUIRED_USE="
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
+	distributed? (
+		|| (
+			gloo
+			mpi
+			nccl
+			rccl
+			tensorpipe
+		)
+	)
 	mpi? (
 		distributed
 	)
@@ -433,6 +442,9 @@ REQUIRED_USE="
 	)
 	rocm_6_0? (
 		llvm_slot_17
+	)
+	tensorpipe? (
+		distributed
 	)
 "
 gen_rocm_depends() {
@@ -629,9 +641,6 @@ RDEPEND="
 		cuda? (
 			>=dev-libs/cudnn-frontend-1.4.0:0/8
 		)
-		distributed? (
-			>=sci-libs/tensorpipe-2021.12.27[cuda?]
-		)
 		fbgemm? (
 			>=sci-libs/FBGEMM-2023.12.04
 		)
@@ -650,6 +659,9 @@ RDEPEND="
 		qnnpack? (
 			!sci-libs/QNNPACK
 			>=dev-cpp/gemmlowp-2018.11.26
+		)
+		tensorpipe? (
+			>=sci-libs/tensorpipe-2021.12.27[cuda?]
 		)
 		xnnpack? (
 			>=sci-libs/XNNPACK-2024.02.29
@@ -903,7 +915,7 @@ einfo
 		-DUSE_MPI=$(usex mpi)
 		-DUSE_NNPACK=$(usex nnpack)
 		-DUSE_PYTORCH_QNNPACK=$(usex qnnpack)
-		-DUSE_TENSORPIPE=$(usex distributed)
+		-DUSE_TENSORPIPE=$(usex tensorpipe)
 		-DUSE_PYTORCH_METAL=OFF
 		-DUSE_NUMPY=$(usex numpy)
 		-DUSE_OPENCL=$(usex opencl)
