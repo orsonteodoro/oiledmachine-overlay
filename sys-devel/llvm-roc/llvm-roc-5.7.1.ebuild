@@ -4,6 +4,21 @@
 
 EAPI=8
 
+# FIXME with USE=mlir
+# mlir/lib/Target/LLVMIR/DebugTranslation.cpp:171:36: error: no matching function for call to 'llvm::DILocalVariable::get(llvm::LLVMContext&, llvm::DIScope*, llvm::MDString*, llvm::DIFile*, unsigned int, llvm::DIType*, unsigned int, llvm::DINode::DIFlags, unsigned int, std::nullptr_t)'
+#   171 |   return llvm::DILocalVariable::get(
+#       |          ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+#   172 |       llvmCtx, translate(attr.getScope()), getMDStringOrNull(attr.getName()),
+#       |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#   173 |       translate(attr.getFile()), attr.getLine(), translate(attr.getType()),
+#       |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#   174 |       attr.getArg(),
+#       |       ~~~~~~~~~~~~~~                
+#   175 |       /*Flags=*/llvm::DINode::FlagZero, attr.getAlignInBits(),
+#       |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#   176 |       /*Annotations=*/nullptr);
+#       |       ~~~~~~~~~~~~~~~~~~~~~~~~
+
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 LLVM_SLOT=17
 LLVM_TARGETS=(

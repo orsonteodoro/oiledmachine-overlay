@@ -4,7 +4,7 @@
 
 EAPI=8
 
-#FIXME:
+# FIXME:
 # llvm-dwarfdump.cpp.o: undefined reference to symbol '_ZN4llvm5dwarf18AddressSpaceStringEjNS_6TripleE'
 # libLLVMBinaryFormat.so.17git: error adding symbols: DSO missing from command line
 

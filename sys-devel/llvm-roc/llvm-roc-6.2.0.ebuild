@@ -4,9 +4,14 @@
 
 EAPI=8
 
-#FIXME:
+# FIXME:
 # llvm-dwarfdump.cpp.o: undefined reference to symbol '_ZN4llvm5dwarf18AddressSpaceStringEjNS_6TripleE'
 # libLLVMBinaryFormat.so.17git: error adding symbols: DSO missing from command line
+
+# FIXME:
+# ld.bfd: tools/llvm-split/CMakeFiles/llvm-split.dir/llvm-split.cpp.o: undefined reference to symbol '_ZN4llvm6TripleC1ERKNS_5TwineE'
+# ld.bfd: /var/tmp/portage/sys-devel/llvm-roc-6.2.0/work/llvm-project-rocm-6.2.0/llvm_build/./lib/libLLVMTargetParser.so.18git: error adding symbols: DSO missing from command line
+# collect2: error: ld returned 1 exit status
 
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 LLVM_SLOT=18
