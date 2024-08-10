@@ -940,6 +940,14 @@ einfo "  /opt/cuda/extras/demo_suite/deviceQuery | grep 'CUDA Capability'"
 einfo
 	fi
 
+	if ( use amd64 && ! use fbgemm ) || ( use amd64 && ! use onednn ) ; then
+ewarn "Disabling either fbgemm or onednn may cause a performance penalty on ARCH=amd64."
+	fi
+
+	if use arm64 && ! use qnnpack ; then
+ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
+	fi
+
 	local mycmakeargs=(
 		-DBUILD_CUSTOM_PROTOBUF=$(usex system-libs OFF ON)
 		-DBUILD_SHARED_LIBS=ON

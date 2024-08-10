@@ -23,8 +23,7 @@
       generic implementation.
     </flag>
     <flag name="fbgemm">
-      Use FBGEMM as a x86 quantization backend.  Disabling may cause a
-      performance regression on x86 during quantization.
+      Use FBGEMM as a x86 quantization backend.
     </flag>
     <flag name="ffmpeg">
       Add support for video processing operators
