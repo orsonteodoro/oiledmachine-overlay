@@ -45,6 +45,9 @@
     <flag name="system-libs">
       Use system libs; otherwise, use vendored/bundled packages.
       This USE flag is the same as the vanilla USE flag.
+
+      For correctness and performance, disable this USE flag.
+      For security improvement, enable this USE flag.
     </flag>
     <flag name="qnnpack">
       Use QNNPACK
