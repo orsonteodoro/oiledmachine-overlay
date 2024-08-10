@@ -374,9 +374,9 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
-cuda +distributed +eigen +fbgemm +flash-attention +gloo +kineto +magma -mimalloc mkl
-+mpi +nnpack +numpy +onednn openblas -opencl +openmp +qnnpack rccl rocm roctracer
-system-libs test +xnnpack
+cuda +distributed +eigen +fbgemm +flash-attention +gloo +kineto +magma -mimalloc
+-mkl +mpi +nnpack +numpy +onednn openblas -opencl +openmp +qnnpack +rccl rocm
+roctracer system-libs test +xnnpack
 ebuild-revision-6
 "
 gen_cuda_required_use() {
@@ -897,7 +897,6 @@ einfo
 		-DUSE_NUMPY=$(usex numpy)
 		-DUSE_OPENCL=$(usex opencl)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_RCCL=$(usex rccl)
 		-DUSE_ROCM=$(usex rocm)
 		-DUSE_SYSTEM_BENCHMARK=$(usex system-libs)
 		-DUSE_SYSTEM_CPUINFO=$(usex system-libs)
@@ -998,7 +997,12 @@ einfo
 		mycmakeargs+=(
 			-DPYTORCH_ROCM_ARCH=$(get_amdgpu_flags)
 			-DUSE_NCCL=$(usex rccl)
+			-DUSE_RCCL=$(usex rccl)
 			-DUSE_SYSTEM_NCCL=ON
+		)
+	else
+		mycmakeargs+=(
+			-DUSE_RCCL=OFF
 		)
 	fi
 
