@@ -68,8 +68,8 @@ HOMEPAGE="
 LICENSE="BSD"
 KEYWORDS="~amd64"
 IUSE+="
-doc examples -ilp64 mkl openblas tbb openmp test
-ebuild-revision-3
+atlas doc examples -ilp64 mkl openblas tbb openmp test
+ebuild-revision-4
 "
 if ! [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	IUSE+="
@@ -249,6 +249,7 @@ REQUIRED_USE+="
 		mkl
 	)
 	^^ (
+		atlas
 		openblas
 		mkl
 	)
@@ -256,12 +257,15 @@ REQUIRED_USE+="
 # TODO: do not enforce openblas
 #	hip? ( sci-libs/hipBLAS )
 RDEPEND+="
+	sci-libs/hipBLAS
+	sys-devel/gcc[fortran]
 	!openblas? (
 		virtual/blas
 		virtual/lapack
 	)
-	sci-libs/hipBLAS
-	sys-devel/gcc[fortran]
+	atlas? (
+		sci-libs/atlas
+	)
 	mkl? (
 		sci-libs/mkl
 	)
@@ -290,9 +294,10 @@ RESTRICT="
 	)
 "
 PATCHES=(
-	"A${FILESDIR}/${PN}-2.8.0-path-changes.patch"
+	"${FILESDIR}/${PN}-2.8.0-path-changes.patch"
 	"${FILESDIR}/${PN}-2.8.0-make-inc.patch"
 	"${FILESDIR}/${PN}-2.7.1-mkl.patch"
+	"${FILESDIR}/${PN}-2.8.0-atlas-hip.patch"
 )
 S="${WORKDIR}/${PN}-${MY_PV}"
 
@@ -321,10 +326,12 @@ icl-magma-v2_8_pkg_setup() {
 
 gen_pc_file() {
 	local _prefix
-	if [[ "${MAGMA_CUDA}" == "1" ]] ; then
-		_prefix="${EPREFIX}/usr"
-	elif [[ "${MAGMA_ROCM}" == "1" ]] ; then
+	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 		_prefix="${EPREFIX}/${EROCM_PATH}"
+	elif [[ "${MAGMA_CUDA}" == "1" ]] ; then
+		_prefix="${EPREFIX}/usr"
+	else
+		_prefix="${EPREFIX}/usr"
 	fi
 
 # The distributed pc file is not so useful so replace it.
@@ -378,9 +385,6 @@ einfo "Using LLVM proper"
 einfo "Removing LLVM references"
 		sed -i -e "s|-I@ESYSROOT_LLVM_PATH@/include||g" \
 			$(grep -r -l -e "@ESYSROOT_LLVM_PATH@/include" "${WORKDIR}") \
-			|| die
-		sed -i -e "s|-L@ESYSROOT_LLVM_PATH@/@ROCM_LIBDIR@||g" \
-			$(grep -r -l -e "@ESYSROOT_LLVM_PATH@/@ROCM_LIBDIR@" "${WORKDIR}") \
 			|| die
 	fi
 
@@ -460,8 +464,12 @@ generate_precisions() {
 		inc_file="make.inc.hip-gcc-mkl"
 	elif has rocm ${IUSE_EFFECTIVE} && use rocm && use openblas ; then
 		inc_file="make.inc.hip-gcc-openblas"
+	elif has cuda ${IUSE_EFFECTIVE} && use cuda && use atlas ; then
+		inc_file="make.inc.atlas"
+	elif has rocm ${IUSE_EFFECTIVE} && use rocm && use atlas ; then
+		inc_file="make.inc.atlas"
 	else
-		local gpu_targets
+		local gpu_targets=""
 		if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 			gpu_targets+="cuda "
 		fi
@@ -472,8 +480,10 @@ generate_precisions() {
 eerror
 eerror "You must choose one of the following USE flags per row:"
 eerror
+		if [[ -n "${gpu_targets}" ]] ; then
 eerror "GPU target:  ${gpu_targets}"
-eerror "CPU target:  mkl openblas"
+		fi
+eerror "CPU target:  altas mkl openblas"
 eerror
 		die
 	fi
@@ -525,6 +535,20 @@ eerror
 		-e "s|@GPU_TARGET_OVERRIDE@|GPU_TARGET = ${gpu}|g" \
 		$(realpath make.inc) \
 		|| die
+
+	local backend
+	if has cuda ${IUSE_EFFECTIVE} use cuda ; then
+		backend="cuda"
+	elif has rocm ${IUSE_EFFECTIVE} use rocm ; then
+		backend="hip"
+	else
+		backend="cuda"
+	fi
+
+	sed -i \
+		-e "s|@BACKEND_OVERRIDE@|BACKEND = ${backend}|g" \
+		$(realpath make.inc) \
+		|| true
 
 	# Already generated
 	sed -i \
