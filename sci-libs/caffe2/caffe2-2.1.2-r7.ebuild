@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# TODO package:
+# aotriton
+
 # This package is a misnomer.  This is the non-python portions of pytorch.
 
 # For requirements, see
@@ -406,7 +409,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
-cuda +distributed +fbgemm -ffmpeg +gloo +magma -mimalloc mkl +mpi +nnpack +numpy
+cuda +distributed +fbgemm -ffmpeg +gloo +kineto +magma -mimalloc mkl +mpi +nnpack +numpy
 onednn openblas -opencl -opencv +openmp rccl rocm roctracer system-libs +qnnpack
 test +xnnpack
 ebuild-revision-6
@@ -684,7 +687,7 @@ DEPEND="
 	${RDEPEND}
 	system-libs? (
 		$(python_gen_cond_dep '
-			dev-python/pybind11[${PYTHON_USEDEP}]
+			>=dev-python/pybind11-2.11.0[${PYTHON_USEDEP}]
 		')
 		>=dev-cpp/eigen-3.4.0
 		>=dev-libs/flatbuffers-23.3.3
@@ -932,7 +935,7 @@ einfo
 		-DUSE_GLOG=ON
 		-DUSE_GLOO=$(usex gloo)
 		-DUSE_ITT=OFF
-		-DUSE_KINETO=OFF # TODO
+		-DUSE_KINETO=$(usex kineto $(usex system-libs OFF ON) OFF)
 		-DUSE_LEVELDB=OFF
 		-DUSE_MAGMA=$(usex magma)
 		-DUSE_METAL=OFF
