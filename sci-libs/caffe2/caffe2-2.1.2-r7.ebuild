@@ -409,7 +409,7 @@ ${ROCM_SLOTS2[@]}
 cuda +distributed +fbgemm -ffmpeg +gloo +magma -mimalloc mkl +mpi +nnpack +numpy
 onednn openblas -opencl -opencv +openmp rccl rocm roctracer system-libs +qnnpack
 test +xnnpack
-ebuild-revision-4
+ebuild-revision-5
 "
 gen_cuda_required_use() {
 	local x
@@ -942,13 +942,6 @@ einfo
 		-DUSE_NNPACK=$(usex nnpack)
 		-DUSE_PYTORCH_QNNPACK=OFF
 		-DUSE_QNNPACK=$(usex qnnpack)
-		-DUSE_SYSTEM_FP16=ON
-		-DUSE_SYSTEM_FXDIV=ON
-		-DUSE_SYSTEM_GLOO=ON
-		-DUSE_SYSTEM_ONNX=ON
-		-DUSE_SYSTEM_PTHREADPOOL=ON
-		-DUSE_SYSTEM_SLEEF=ON
-		-DUSE_SYSTEM_XNNPACK=$(usex xnnpack)
 		-DUSE_TENSORPIPE=$(usex distributed)
 		-DUSE_NUMPY=$(usex numpy)
 		-DUSE_OPENCL=$(usex opencl)
@@ -956,8 +949,15 @@ einfo
 		-DUSE_OPENMP=$(usex openmp)
 		-DUSE_RCCL=$(usex rccl)
 		-DUSE_ROCM=$(usex rocm)
-		-DUSE_SYSTEM_CPUINFO=ON
-		-DUSE_SYSTEM_PYBIND11=ON
+		-DUSE_SYSTEM_CPUINFO=$(use system-libs)
+		-DUSE_SYSTEM_FP16=$(use system-libs)
+		-DUSE_SYSTEM_FXDIV=$(use system-libs)
+		-DUSE_SYSTEM_GLOO=$(use system-libs)
+		-DUSE_SYSTEM_ONNX=$(use system-libs)
+		-DUSE_SYSTEM_PTHREADPOOL=$(use system-libs)
+		-DUSE_SYSTEM_PYBIND11=$(use system-libs)
+		-DUSE_SYSTEM_SLEEF=$(use system-libs)
+		-DUSE_SYSTEM_XNNPACK=$(use system-libs)
 		-DUSE_UCC=OFF
 		-DUSE_VALGRIND=OFF
 		-DUSE_XNNPACK=$(usex xnnpack)

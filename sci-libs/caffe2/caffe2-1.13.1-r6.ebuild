@@ -365,7 +365,7 @@ ${ROCM_SLOTS2[@]}
 cuda +distributed +fbgemm -ffmpeg +gloo +magma +mpi +nnpack +numpy onednn -opencl
 -opencv +openmp rccl rocm roctracer system-libs +qnnpack test
 +xnnpack
-ebuild-revision-4
+ebuild-revision-5
 "
 gen_cuda_required_use() {
 	local x
@@ -896,14 +896,14 @@ einfo
 		-DUSE_NNPACK=$(usex nnpack)
 		-DUSE_PYTORCH_QNNPACK=OFF
 		-DUSE_QNNPACK=$(usex qnnpack)
-		-DUSE_SYSTEM_EIGEN_INSTALL=ON
-		-DUSE_SYSTEM_FP16=ON
-		-DUSE_SYSTEM_FXDIV=ON
-		-DUSE_SYSTEM_GLOO=ON
-		-DUSE_SYSTEM_ONNX=ON
-		-DUSE_SYSTEM_PTHREADPOOL=ON
-		-DUSE_SYSTEM_SLEEF=ON
-		-DUSE_SYSTEM_XNNPACK=$(usex xnnpack)
+		-DUSE_SYSTEM_EIGEN_INSTALL=$(use system-libs)
+		-DUSE_SYSTEM_FP16=$(use system-libs)
+		-DUSE_SYSTEM_FXDIV=$(use system-libs)
+		-DUSE_SYSTEM_GLOO=$(use system-libs)
+		-DUSE_SYSTEM_ONNX=$(use system-libs)
+		-DUSE_SYSTEM_PTHREADPOOL=$(use system-libs)
+		-DUSE_SYSTEM_SLEEF=$(use system-libs)
+		-DUSE_SYSTEM_XNNPACK=$(use system-libs)
 		-DUSE_TENSORPIPE=$(usex distributed)
 		-DUSE_NUMPY=$(usex numpy)
 		-DUSE_OPENCL=$(usex opencl)
