@@ -374,7 +374,7 @@ ${ROCM_SLOTS2[@]}
 cuda +distributed +fbgemm flash +gloo +magma -mimalloc mkl +mpi +nnpack +numpy
 onednn openblas -opencl +openmp +qnnpack rccl rocm roctracer system-libs test
 +xnnpack
-ebuild-revision-5
+ebuild-revision-6
 "
 gen_cuda_required_use() {
 	local x
@@ -868,7 +868,7 @@ einfo
 
 	local mycmakeargs=(
 	# Avoid the use of MKL, if found on the system
-		-DBUILD_CUSTOM_PROTOBUF=OFF
+		-DBUILD_CUSTOM_PROTOBUF=$(usex system-libs OFF ON)
 		-DBUILD_SHARED_LIBS=ON
 		-DLIBSHM_INSTALL_LIB_SUBDIR="${EPREFIX}/usr/$(get_libdir)"
 		-DPYTHON_EXECUTABLE="${PYTHON}"
@@ -898,16 +898,17 @@ einfo
 		-DUSE_OPENMP=$(usex openmp)
 		-DUSE_RCCL=$(usex rccl)
 		-DUSE_ROCM=$(usex rocm)
-		-DUSE_SYSTEM_CPUINFO=$(use system-libs)
-		-DUSE_SYSTEM_FP16=$(use system-libs)
-		-DUSE_SYSTEM_FXDIV=$(use system-libs)
-		-DUSE_SYSTEM_GLOO=$(use system-libs)
-		-DUSE_SYSTEM_ONNX=$(use system-libs)
-		-DUSE_SYSTEM_PSIMD=$(use system-libs)
-		-DUSE_SYSTEM_PTHREADPOOL=$(use system-libs)
-		-DUSE_SYSTEM_PYBIND11=$(use system-libs)
-		-DUSE_SYSTEM_SLEEF=$(use system-libs)
-		-DUSE_SYSTEM_XNNPACK=$(use system-libs)
+		-DUSE_SYSTEM_BENCHMARK=$(usex system-libs)
+		-DUSE_SYSTEM_CPUINFO=$(usex system-libs)
+		-DUSE_SYSTEM_FP16=$(usex system-libs)
+		-DUSE_SYSTEM_FXDIV=$(usex system-libs)
+		-DUSE_SYSTEM_GLOO=$(usex system-libs)
+		-DUSE_SYSTEM_ONNX=$(usex system-libs)
+		-DUSE_SYSTEM_PSIMD=$(usex system-libs)
+		-DUSE_SYSTEM_PTHREADPOOL=$(usex system-libs)
+		-DUSE_SYSTEM_PYBIND11=$(usex system-libs)
+		-DUSE_SYSTEM_SLEEF=$(usex system-libs)
+		-DUSE_SYSTEM_XNNPACK=$(usex system-libs)
 		-DUSE_UCC=OFF
 		-DUSE_VALGRIND=OFF
 		-DUSE_XNNPACK=$(usex xnnpack)
