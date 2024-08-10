@@ -331,9 +331,9 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
-cuda +distributed +fbgemm -ffmpeg +gloo +magma mkl +mpi +nnpack +numpy onednn
-openblas -opencl -opencv +openmp rccl rocm roctracer system-libs +qnnpack test
-+xnnpack
+cuda +distributed +fbgemm -ffmpeg +gloo +magma -mimalloc mkl +mpi +nnpack +numpy
+onednn openblas -opencl -opencv +openmp rccl rocm roctracer system-libs +qnnpack
+test +xnnpack
 ebuild-revision-4
 "
 gen_cuda_required_use() {
@@ -606,11 +606,13 @@ RDEPEND="
 "
 DEPEND="
 	$(python_gen_cond_dep '
-		dev-python/pybind11[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 	')
 	${RDEPEND}
 	system-libs? (
+		$(python_gen_cond_dep '
+			dev-python/pybind11[${PYTHON_USEDEP}]
+		')
 		>=dev-libs/flatbuffers-23.3.3
 		>=dev-libs/FP16-2020.05.14
 		>=dev-libs/FXdiv-2020.04.17
@@ -626,6 +628,7 @@ DEPEND="
 	)
 "
 BDEPEND="
+	>=dev-build/cmake-3.21.0
 	system-libs? (
 		test? (
 			>=dev-cpp/benchmark-1.6.1
@@ -862,6 +865,7 @@ einfo
 		-DUSE_LEVELDB=OFF
 		-DUSE_MAGMA=$(usex magma)
 		-DUSE_METAL=OFF
+		-DUSE_MIMALLOC=$(usex mimalloc)
 		-DUSE_MKLDNN=$(usex onednn)
 		-DUSE_MPI=$(usex mpi)
 		-DUSE_NNPACK=$(usex nnpack)

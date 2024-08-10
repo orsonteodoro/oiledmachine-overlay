@@ -613,11 +613,13 @@ RDEPEND="
 "
 DEPEND="
 	$(python_gen_cond_dep '
-		dev-python/pybind11[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 	')
 	${RDEPEND}
 	system-libs? (
+		$(python_gen_cond_dep '
+			dev-python/pybind11[${PYTHON_USEDEP}]
+		')
 		>=dev-cpp/eigen-3.4.0
 		>=dev-libs/flatbuffers-2.0.5
 		>=dev-libs/FP16-2020.05.14
@@ -634,6 +636,7 @@ DEPEND="
 	)
 "
 BDEPEND="
+	>=dev-build/cmake-3.21.0
 	system-libs? (
 		test? (
 			>=dev-cpp/benchmark-1.6.1

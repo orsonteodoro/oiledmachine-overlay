@@ -27,6 +27,9 @@
     <flag name="gloo">
       Use sci-libs/gloo
     </flag>
+    <flag name="mimalloc">
+      Use the performance based memory allocator.
+    </flag>
     <flag name="nnpack">
       Use NNPACK
     </flag>
