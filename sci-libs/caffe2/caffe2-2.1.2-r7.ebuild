@@ -639,7 +639,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.1.1-gentoo.patch"
 	"${FILESDIR}/${PN}-1.13.0-install-dirs.patch"
 	"${FILESDIR}/${PN}-1.12.0-glog-0.6.0.patch"
-	"${FILESDIR}/${PN}-1.13.1-tensorpipe.patch"
 	"${FILESDIR}/${PN}-2.0.0-gcc13.patch"
 	"${FILESDIR}/${PN}-2.0.0-cudnn_include_fix.patch"
 	"${FILESDIR}/${PN}-2.1.1-cudaExtra.patch"
@@ -686,7 +685,11 @@ pkg_setup() {
 
 src_prepare() {
 	if use system-libs ; then
-		:
+		eapply "${FILESDIR}/${PN}-1.13.1-tensorpipe.patch"
+		sed -i \
+			-e "/third_party\/gloo/d" \
+			"cmake/Dependencies.cmake" \
+			|| die
 	else
 		dep_prepare_mv "${WORKDIR}/ARM_NEON_2_x86_SSE-${NEON2SSE_COMMIT}" "${S}/third_party/neon2sse"
 		dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/third_party/benchmark"
@@ -773,13 +776,8 @@ src_prepare() {
 		dep_prepare_mv "${WORKDIR}/VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_COMMIT}" "${S}/third_party/VulkanMemoryAllocator"
 		dep_prepare_mv "${WORKDIR}/XNNPACK-${XNNPACK_COMMIT}" "${S}/third_party/XNNPACK"
 		dep_prepare_mv "${WORKDIR}/zstd-${ZSTD_COMMIT}" "${S}/third_party/zstd"
-
 	fi
 	filter-lto #bug 862672
-	sed -i \
-		-e "/third_party\/gloo/d" \
-		cmake/Dependencies.cmake \
-		|| die
 	cmake_src_prepare
 	pushd torch/csrc/jit/serialization >/dev/null 2>&1 || die
 		flatc \

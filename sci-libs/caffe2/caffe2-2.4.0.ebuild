@@ -596,7 +596,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.4.0-gentoo.patch"
 	"${FILESDIR}/${PN}-2.4.0-install-dirs.patch"
 	"${FILESDIR}/${PN}-1.12.0-glog-0.6.0.patch"
-	"${FILESDIR}/${PN}-1.13.1-tensorpipe.patch"
 	"${FILESDIR}/${PN}-2.3.0-cudnn_include_fix.patch"
 	"${FILESDIR}/${PN}-2.1.2-fix-rpath.patch"
 	"${FILESDIR}/${PN}-2.4.0-fix-openmp-link.patch"
@@ -645,7 +644,11 @@ pkg_setup() {
 
 src_prepare() {
 	if use system-libs ; then
-		:
+		eapply "${FILESDIR}/${PN}-1.13.1-tensorpipe.patch"
+		sed -i \
+			-e "/third_party\/gloo/d" \
+			"cmake/Dependencies.cmake" \
+			|| die
 	else
 		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/third_party/benchmark"
 		dep_prepare_mv "${WORKDIR}/cpp-httplib-${CPP_HTTPLIB_COMMIT}" "${S}/third_party/cpp-httplib"
@@ -719,10 +722,6 @@ src_prepare() {
 		dep_prepare_mv "${WORKDIR}/XNNPACK-${XNNPACK_COMMIT}" "${S}/third_party/XNNPACK"
 	fi
 	filter-lto #bug 862672
-	sed -i \
-		-e "/third_party\/gloo/d" \
-		cmake/Dependencies.cmake \
-		|| die
 	cmake_src_prepare
 	pushd torch/csrc/jit/serialization >/dev/null 2>&1 || die
 		flatc \
