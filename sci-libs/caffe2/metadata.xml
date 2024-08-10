@@ -22,6 +22,10 @@ onednn openblas -opencl +openmp +qnnpack rccl rocm roctracer system-libs test
     <flag name="distributed">
       Support distributed applications
     </flag>
+    <flag name="eigen">
+      Use Eigen as the fallback for BLAS.  Otherwise, it fallback to the generic
+      implementation.
+    </flag>
     <flag name="fbgemm">
       Use FBGEMM
     </flag>

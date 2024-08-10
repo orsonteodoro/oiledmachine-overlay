@@ -404,8 +404,8 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
-cuda +distributed +fbgemm -ffmpeg +flash-attention +gloo +kineto +magma mkl
-+mpi +nnpack +numpy onednn -opencl -opencv +openmp rccl rocm roctracer
+cuda +distributed +eigen +fbgemm -ffmpeg +flash-attention +gloo +kineto +magma mkl
++mpi +nnpack +numpy +onednn -opencl -opencv +openmp rccl rocm roctracer
 system-libs +qnnpack test +xnnpack
 ebuild-revision-6
 "
@@ -918,8 +918,6 @@ einfo
 	fi
 
 	local mycmakeargs=(
-	# Avoid the use of MKL, if found on the system
-		-DBLAS="Eigen"
 		-DBUILD_CUSTOM_PROTOBUF=$(usex system-libs OFF ON)
 		-DBUILD_SHARED_LIBS=ON
 		-DLIBSHM_INSTALL_LIB_SUBDIR="${EPREFIX}/usr/$(get_libdir)"
@@ -970,6 +968,39 @@ einfo
 		-DUSE_XNNPACK=$(usex xnnpack)
 		-Wno-dev
 	)
+
+	if use onednn ; then
+		if use amd64 || use arm64 ; then
+			mycmakeargs+=(
+				-DUSE_MKLDNN=$(usex onednn)
+			)
+		else
+			mycmakeargs+=(
+				-DUSE_MKLDNN=OFF
+			)
+		fi
+	fi
+
+	if use mkl ; then
+		mycmakeargs+=(
+			-DBLAS="MKL"
+		)
+	elif use openblas ; then
+		mycmakeargs+=(
+			-DBLAS="OpenBLAS"
+		)
+	else
+		if use eigen ; then
+			mycmakeargs+=(
+				-DBLAS="Eigen"
+			)
+		else
+			mycmakeargs+=(
+				-DBLAS="Generic"
+				-DBLAS_LIBRARIES=""
+			)
+		fi
+	fi
 
 	if use cuda ; then
 		addpredict "/dev/nvidiactl" # bug 867706

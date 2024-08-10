@@ -374,8 +374,8 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
-cuda +distributed +fbgemm +flash-attention +gloo +kineto +magma -mimalloc mkl
-+mpi +nnpack +numpy onednn openblas -opencl +openmp +qnnpack rccl rocm roctracer
+cuda +distributed +eigen +fbgemm +flash-attention +gloo +kineto +magma -mimalloc mkl
++mpi +nnpack +numpy +onednn openblas -opencl +openmp +qnnpack rccl rocm roctracer
 system-libs test +xnnpack
 ebuild-revision-6
 "
@@ -870,7 +870,6 @@ einfo
 	fi
 
 	local mycmakeargs=(
-	# Avoid the use of MKL, if found on the system
 		-DBUILD_CUSTOM_PROTOBUF=$(usex system-libs OFF ON)
 		-DBUILD_SHARED_LIBS=ON
 		-DLIBSHM_INSTALL_LIB_SUBDIR="${EPREFIX}/usr/$(get_libdir)"
@@ -890,7 +889,6 @@ einfo
 		-DUSE_MAGMA=$(usex magma)
 		-DUSE_MEM_EFF_ATTENTION=OFF
 		-DUSE_MIMALLOC=$(usex mimalloc)
-		-DUSE_MKLDNN=$(usex onednn)
 		-DUSE_MPI=$(usex mpi)
 		-DUSE_NNPACK=$(usex nnpack)
 		-DUSE_PYTORCH_QNNPACK=$(usex qnnpack)
@@ -919,19 +917,37 @@ einfo
 		-Wno-dev
 	)
 
+	if use onednn ; then
+		if use amd64 || use arm64 ; then
+			mycmakeargs+=(
+				-DUSE_MKLDNN=$(usex onednn)
+			)
+		else
+			mycmakeargs+=(
+				-DUSE_MKLDNN=OFF
+			)
+		fi
+	fi
+
 	if use mkl ; then
 		mycmakeargs+=(
-			-DBLAS=MKL
+			-DBLAS="MKL"
 		)
 	elif use openblas ; then
 		mycmakeargs+=(
-			-DBLAS=OpenBLAS
+			-DBLAS="OpenBLAS"
 		)
 	else
-		mycmakeargs+=(
-			-DBLAS=Generic
-			-DBLAS_LIBRARIES=
-		)
+		if use eigen ; then
+			mycmakeargs+=(
+				-DBLAS="Eigen"
+			)
+		else
+			mycmakeargs+=(
+				-DBLAS="Generic"
+				-DBLAS_LIBRARIES=""
+			)
+		fi
 	fi
 
 	if use cuda ; then
