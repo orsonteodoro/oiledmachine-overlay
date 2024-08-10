@@ -92,7 +92,7 @@
       For security improvement, enable this USE flag.
     </flag>
     <flag name="qnnpack">
-      Use QNNPACK as an optimized ARM quantization backend.
+      Use QNNPACK as an optimized ARM64 quantization backend.
     </flag>
     <flag name="xnnpack">
       Use XNNPACK for optimized neural network inference operations for the CPU.
