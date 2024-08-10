@@ -23,7 +23,8 @@
       generic implementation.
     </flag>
     <flag name="fbgemm">
-      Use FBGEMM
+      Use FBGEMM as a x86 quantization backend.  Disabling may cause a
+      performance regression on x86 during quantization.
     </flag>
     <flag name="ffmpeg">
       Add support for video processing operators
@@ -66,7 +67,8 @@
       Support tracing PyTorch annotated applications for ROCm™ builds.
     </flag>
     <flag name="onednn">
-      Optimize deep learning primitives on CPUs and/or Intel® GPUs.
+      Use FBGEMM as a x86 quantization backend  for the latest CPUs and/or
+      Intel® GPUs.
     </flag>
     <flag name="openblas">
       Use OpenBLAS, for CPU optimized portability, as the BLAS provider.
@@ -91,10 +93,10 @@
       For security improvement, enable this USE flag.
     </flag>
     <flag name="qnnpack">
-      Use QNNPACK
+      Use QNNPACK as an optimized ARM quantization backend.
     </flag>
     <flag name="xnnpack">
-      Use XNNPACK
+      Use XNNPACK for optimized neural network inference operations for the CPU.
     </flag>
   </use>
   <upstream>
