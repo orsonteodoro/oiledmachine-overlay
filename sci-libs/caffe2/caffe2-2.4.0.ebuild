@@ -166,7 +166,7 @@ XNNPACK_COMMIT="fcbf55af6cf28a4627bcd1f703ab7ad843f0f3a2"
 
 inherit cmake cuda dep-prepare flag-o-matic llvm rocm python-single-r1
 
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MYP}"
 SRC_URI="
 https://github.com/pytorch/${MYPN}/archive/refs/tags/v${PV}.tar.gz
