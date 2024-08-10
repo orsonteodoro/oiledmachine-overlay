@@ -327,6 +327,10 @@ HOMEPAGE="https://pytorch.org/"
 LICENSE="
 	(
 		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		all-rights-reserved
 		MIT
 	)
 	(
@@ -366,6 +370,7 @@ LICENSE="
 	ZLIB
 "
 # ( BSD-2 custom ) Apache-2.0 Boost-1.0 BSD - NOTICE
+# all-rights-reserved Apache-2.0 - third_party/kineto/third_party/dynolog/third_party/DCGM/LICENSE
 # all-rights-reserved MIT - third_party/miniz-2.1.0/LICENSE
 # Apache-2.0 - third_party/tensorpipe/third_party/googletest/googlemock/scripts/generator/LICENSE
 # Apache-2.0 Boost-1.0 BSD BSD-2 MIT - third_party/LICENSES_BUNDLED.txt
@@ -386,6 +391,8 @@ LICENSE="
 # UoI-NCSA - third_party/tensorpipe/third_party/pybind11/tools/clang/LICENSE.TXT
 # UoI-NCSA - third_party/onnx-tensorrt/third_party/onnx/third_party/pybind11/tools/clang/LICENSE.TXT
 # ZLIB - third_party/FBGEMM/third_party/asmjit/LICENSE.md
+# The distro's Apache-2.0 license template does not contain all rights reserved.
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="0"
 # cuda and rocm are enabled by default upstream.

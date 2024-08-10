@@ -325,6 +325,10 @@ HOMEPAGE="https://pytorch.org/"
 LICENSE="
 	(
 		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		all-rights-reserved
 		MIT
 	)
 	(

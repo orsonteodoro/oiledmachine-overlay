@@ -353,6 +353,7 @@ LICENSE="
 # UoI-NCSA - third_party/tensorpipe/third_party/pybind11/tools/clang/LICENSE.TXT
 # UoI-NCSA - ,third_party/onnx-tensorrt/third_party/onnx/third_party/pybind11/tools/clang/LICENSE.TXT
 # ZLIB - third_party/FBGEMM/third_party/asmjit/LICENSE.md
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="0"
 # cuda and rocm are enabled by default upstream.
