@@ -12,6 +12,10 @@
     <name>James Beddek</name>
   </maintainer>
   <use>
+cuda +distributed +fbgemm +flash-attention +gloo +kineto +magma -mimalloc mkl +mpi +nnpack +numpy
+onednn openblas -opencl +openmp +qnnpack rccl rocm roctracer system-libs test
++xnnpack
+
     <flag name="cuda">
       Add support for CUDA processing
     </flag>
@@ -24,17 +28,26 @@
     <flag name="ffmpeg">
       Add support for video processing operators
     </flag>
+    <flag name="flash-attention">
+      Add support for flash-attention
+    </flag>
     <flag name="gloo">
       Use sci-libs/gloo
     </flag>
     <flag name="mimalloc">
       Use the performance based memory allocator.
     </flag>
+    <flag name="mkl">
+      Use MKL as the BLAS provider
+    </flag>
     <flag name="nnpack">
       Use NNPACK
     </flag>
     <flag name="numpy">
       Add support for math operations through numpy
+    </flag>
+    <flag name="onednn">
+      Optimize deep learning primitives on CPUs and/or Intel® GPUs.
     </flag>
     <flag name="opencl">
       Use OpenCL

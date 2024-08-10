@@ -365,9 +365,9 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
-cuda +distributed +fbgemm -ffmpeg +gloo +kineto +magma +mpi +nnpack +numpy onednn -opencl
--opencv +openmp rccl rocm roctracer system-libs +qnnpack test
-+xnnpack
+cuda +distributed +fbgemm -ffmpeg +flash-attention +gloo +kineto +magma +mpi
++nnpack +numpy onednn -opencl -opencv +openmp rccl rocm roctracer system-libs
++qnnpack test +xnnpack
 ebuild-revision-6
 "
 gen_cuda_required_use() {
@@ -636,8 +636,14 @@ RDEPEND="
 		gloo? (
 			>=sci-libs/gloo-0.5.0[cuda?]
 		)
+		mkl? (
+			sci-libs/mkl
+		)
 		nnpack? (
 			>=sci-libs/NNPACK-2020.12.21
+		)
+		onednn? (
+			>=dev-libs/oneDNN-0.5.0
 		)
 		qnnpack? (
 			>=sci-libs/QNNPACK-2019.08.28
@@ -678,6 +684,8 @@ BDEPEND="
 			>=dev-cpp/benchmark-1.6.1
 		)
 	)
+"
+PDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-1.13.0-gentoo.patch"
@@ -887,6 +895,7 @@ einfo
 		-DUSE_FAST_NVCC=$(usex cuda)
 		-DUSE_FBGEMM=$(usex fbgemm)
 		-DUSE_FFMPEG=$(usex ffmpeg)
+		-DUSE_FLASH_ATTENTION=$(usex flash-attention $(usex cuda ON $(usex rocm OFF OFF) OFF) OFF)
 		-DUSE_GFLAGS=ON
 		-DUSE_GLOG=ON
 		-DUSE_GLOO=$(usex gloo)

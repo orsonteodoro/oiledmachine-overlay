@@ -409,9 +409,9 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
-cuda +distributed +fbgemm -ffmpeg +gloo +kineto +magma -mimalloc mkl +mpi +nnpack +numpy
-onednn openblas -opencl -opencv +openmp rccl rocm roctracer system-libs +qnnpack
-test +xnnpack
+cuda +distributed +fbgemm -ffmpeg +flash-attention +gloo +kineto +magma
+-mimalloc mkl +mpi +nnpack +numpy onednn openblas -opencl -opencv +openmp rccl
+rocm roctracer system-libs +qnnpack test +xnnpack
 ebuild-revision-6
 "
 gen_cuda_required_use() {
@@ -670,7 +670,7 @@ RDEPEND="
 			>=sci-libs/NNPACK-2020.12.21
 		)
 		onednn? (
-			dev-libs/oneDNN
+			>=dev-libs/oneDNN-3.1.1
 		)
 		qnnpack? (
 			>=sci-libs/QNNPACK-2019.08.28
@@ -931,6 +931,7 @@ einfo
 		-DUSE_FAKELOWP=OFF
 		-DUSE_FBGEMM=$(usex fbgemm)
 		-DUSE_FFMPEG=$(usex ffmpeg)
+		-DUSE_FLASH_ATTENTION=$(usex flash-attention $(usex cuda ON $(usex rocm OFF OFF) OFF) OFF)
 		-DUSE_GFLAGS=ON
 		-DUSE_GLOG=ON
 		-DUSE_GLOO=$(usex gloo)
