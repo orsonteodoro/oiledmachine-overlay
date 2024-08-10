@@ -54,7 +54,7 @@
       Support CPU distributed training.
     </flag>
     <flag name="numpy">
-      Add support for math operations through numpy
+      Add support for NumPy compatibility.
     </flag>
     <flag name="nccl">
       Support multiple NVIDIA® GPUs for distributed GPU training.
