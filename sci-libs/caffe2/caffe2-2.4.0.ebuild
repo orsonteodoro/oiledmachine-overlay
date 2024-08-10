@@ -6,6 +6,7 @@ EAPI=8
 
 # TODO package:
 # aotriton
+# nccl
 
 # This package is a misnomer.  This is the non-python portions of pytorch.
 
@@ -375,8 +376,8 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
 cuda +distributed +eigen +fbgemm +flash-attention +gloo +kineto +magma -mimalloc
--mkl +mpi +nnpack +numpy +onednn openblas -opencl +openmp +qnnpack +rccl rocm
-roctracer system-libs test +xnnpack
+-mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +qnnpack +rccl rocm
+roctracer -ssl system-libs test +xnnpack
 ebuild-revision-6
 "
 gen_cuda_required_use() {
@@ -573,8 +574,17 @@ RDEPEND="
 				${CUDA_12_4_RDEPEND}
 			)
 		)
+		nccl? (
+			dev-libs/nccl
+		)
 		dev-util/nvidia-cuda-toolkit:=
 		dev-libs/cudnn:=
+	)
+	gloo? (
+		ssl? (
+			>=dev-libs/openssl-1.1
+			dev-libs/openssl:=
+		)
 	)
 	magma? (
 		sci-libs/magma[cuda?,rocm?]
@@ -626,7 +636,7 @@ RDEPEND="
 			>=sci-libs/FBGEMM-2023.12.04
 		)
 		gloo? (
-			>=sci-libs/gloo-0.5.0[cuda?]
+			>=sci-libs/gloo-0.5.0[cuda?,mpi?,ssl?]
 		)
 		mkl? (
 			sci-libs/mkl
@@ -884,6 +894,7 @@ einfo
 		-DUSE_GFLAGS=ON
 		-DUSE_GLOG=ON
 		-DUSE_GLOO=$(usex gloo)
+		-DUSE_GLOO_WITH_OPENSSL=$(usex gloo $(usex ssl ON OFF) OFF)
 		-DUSE_ITT=OFF
 		-DUSE_KINETO=$(usex kineto $(usex system-libs OFF ON) OFF)
 		-DUSE_MAGMA=$(usex magma)
@@ -970,7 +981,7 @@ einfo
 				| tr -d \")
 			-DUSE_CUDNN=ON
 			-DTORCH_CUDA_ARCH_LIST="${TORCH_CUDA_ARCH_LIST:-3.5 7.0}"
-			-DUSE_NCCL=OFF # TODO: NVIDIA Collective Communication Library
+			-DUSE_NCCL=$(usex nccl)
 		)
 	fi
 	if use rocm ; then

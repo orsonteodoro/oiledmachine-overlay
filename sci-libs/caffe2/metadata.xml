@@ -12,19 +12,15 @@
     <name>James Beddek</name>
   </maintainer>
   <use>
-cuda +distributed +fbgemm +flash-attention +gloo +kineto +magma -mimalloc mkl +mpi +nnpack +numpy
-onednn openblas -opencl +openmp +qnnpack rccl rocm roctracer system-libs test
-+xnnpack
-
     <flag name="cuda">
-      Add support for CUDA processing
+      Add support for CUDA® processing
     </flag>
     <flag name="distributed">
       Support distributed applications
     </flag>
     <flag name="eigen">
-      Use Eigen as the fallback for BLAS.  Otherwise, it fallback to the generic
-      implementation.
+      Use Eigen as the fallback for BLAS.  Otherwise, it will fallback to the
+      generic implementation.
     </flag>
     <flag name="fbgemm">
       Use FBGEMM
@@ -36,7 +32,13 @@ onednn openblas -opencl +openmp +qnnpack rccl rocm roctracer system-libs test
       Add support for flash-attention
     </flag>
     <flag name="gloo">
-      Use sci-libs/gloo
+      Add multiple NUMA node or multiple CUDA® GPU support.
+    </flag>
+    <flag name="kineto">
+      Add CPU/GPU profiling support
+    </flag>
+    <flag name="magma">
+      Add support for a GPU based linear algebra solver/factorizer.
     </flag>
     <flag name="mimalloc">
       Use the performance based memory allocator.
@@ -50,8 +52,20 @@ onednn openblas -opencl +openmp +qnnpack rccl rocm roctracer system-libs test
     <flag name="numpy">
       Add support for math operations through numpy
     </flag>
+    <flag name="nccl">
+      Support multiple NVIDIA® GPUs.
+    </flag>
+    <flag name="rccl">
+      Support multiple AMD GPUs.  (IN DEVELOPMENT)
+    </flag>
+    <flag name="roctracer">
+      Support tracing PyTorch annotated applications for ROCm™ builds.
+    </flag>
     <flag name="onednn">
       Optimize deep learning primitives on CPUs and/or Intel® GPUs.
+    </flag>
+    <flag name="openblas">
+      Use OpenBLAS, for CPU optimized portability, as the BLAS provider.
     </flag>
     <flag name="opencl">
       Use OpenCL
@@ -61,6 +75,9 @@ onednn openblas -opencl +openmp +qnnpack rccl rocm roctracer system-libs test
     </flag>
     <flag name="openmp">
       Use OpenMP for parallel code
+    </flag>
+    <flag name="ssl">
+      Use ssl for node to node communication.
     </flag>
     <flag name="system-libs">
       Use system libs; otherwise, use vendored/bundled packages.
