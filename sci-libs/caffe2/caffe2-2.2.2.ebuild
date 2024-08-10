@@ -460,6 +460,12 @@ REQUIRED_USE="
 	mimalloc? (
 		!system-libs
 	)
+	magma? (
+		^^ (
+			cuda
+			hip
+		)
+	)
 	mpi? (
 		distributed
 	)
@@ -638,7 +644,7 @@ RDEPEND="
 	magma? (
 		sci-libs/magma[cuda?,rocm?]
 		sci-libs/magma:=
-		!rocm? (
+		cuda? (
 			sci-libs/magma:0
 		)
 	)

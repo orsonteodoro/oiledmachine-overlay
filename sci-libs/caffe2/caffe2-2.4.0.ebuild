@@ -607,7 +607,7 @@ RDEPEND="
 	magma? (
 		sci-libs/magma[cuda?,rocm?]
 		sci-libs/magma:=
-		!rocm? (
+		cuda? (
 			sci-libs/magma:0
 		)
 	)
