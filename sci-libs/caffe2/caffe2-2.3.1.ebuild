@@ -373,6 +373,7 @@ LICENSE="
 	MIT
 	PSF-3.3.0
 	GPL-3.0
+	Unlicense
 	ZLIB
 	^^ (
 		Apache-2.0
@@ -396,6 +397,7 @@ LICENSE="
 # MIT - third_party/FXDIV/LICENSE
 # MIT CC0-1.0 - third_party/nlohmann/docs/mkdocs/docs/home/license.md
 # PSF-3.3.0 - third_party/kineto/third_party/dynolog/third_party/fmt/doc/python-license.txt
+# Unlicense - caffe2/mobile/contrib/libopencl-stub/LICENSE
 # GPL-3.0 - third_party/kineto/third_party/dynolog/third_party/cpr/test/LICENSE
 # ZLIB - third_party/FBGEMM/third_party/asmjit/LICENSE.md
 # ^^ ( Apache-2.0 BSD ) - torch/_vendor/packaging/LICENSE
