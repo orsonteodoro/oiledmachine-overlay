@@ -947,13 +947,14 @@ src_prepare() {
 	cmake_src_prepare
 
 	if use system-libs ; then
-		eapply "caffe2-2.3.1-cuda-hardcoded-paths.patch"
-		eapply "caffe2-2.3.1-rocm-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-2.3.1-cuda-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-2.3.1-rocm-hardcoded-paths.patch"
 	else
-		eapply "caffe2-2.3.1-cuda-hardcoded-paths.patch"
-		eapply "caffe2-2.3.1-rocm-hardcoded-paths.patch"
-		eapply "caffe2-2.3.1-cuda-hardcoded-paths-third-party.patch"
-		eapply "caffe2-2.3.1-rocm-hardcoded-paths-third-party.patch"
+		eapply "${FILESDIR}/${PN}-2.3.1-cuda-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-2.3.1-rocm-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-2.3.1-cuda-hardcoded-paths-third-party.patch"
+		eapply "${FILESDIR}/${PN}-2.3.1-rocm-hardcoded-paths-third-party.patch"
+		eapply "${FILESDIR}/${PN}-2.3.1-aotriton-offline-install.patch"
 	fi
 
 	pushd torch/csrc/jit/serialization >/dev/null 2>&1 || die

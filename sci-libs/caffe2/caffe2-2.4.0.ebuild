@@ -792,6 +792,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.2.2-musl.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-rocm-gcc14-clamp.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-libcpp.patch"
+	"${FILESDIR}/${PN}-2.4.0-aotriton-offline-install.patch"
 )
 
 warn_untested_gpu() {
@@ -927,13 +928,13 @@ src_prepare() {
 	filter-lto #bug 862672
 	cmake_src_prepare
 	if use system-libs ; then
-		eapply "${FILESDIR}/caffe2-2.4.0-rocm-hardcoded-paths.patch"
-		eapply "${FILESDIR}/caffe2-2.4.0-cuda-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-2.4.0-rocm-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-2.4.0-cuda-hardcoded-paths.patch"
 	else
-		eapply "${FILESDIR}/caffe2-2.4.0-rocm-hardcoded-paths.patch"
-		eapply "${FILESDIR}/caffe2-2.4.0-cuda-hardcoded-paths.patch"
-		eapply "${FILESDIR}/caffe2-2.4.0-rocm-hardcoded-paths-third-party.patch"
-		eapply "${FILESDIR}/caffe2-2.4.0-cuda-hardcoded-paths-third-party.patch"
+		eapply "${FILESDIR}/${PN}-2.4.0-rocm-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-2.4.0-cuda-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-2.4.0-rocm-hardcoded-paths-third-party.patch"
+		eapply "${FILESDIR}/${PN}-2.4.0-cuda-hardcoded-paths-third-party.patch"
 	fi
 	pushd torch/csrc/jit/serialization >/dev/null 2>&1 || die
 		flatc \

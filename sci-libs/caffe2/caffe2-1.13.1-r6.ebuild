@@ -860,13 +860,13 @@ src_prepare() {
 	cmake_src_prepare
 
 	if use system-libs ; then
-		eapply "${FILESDIR}/caffe2-1.13.1-cuda-hardcoded-paths.patch"
-		eapply "${FILESDIR}/caffe2-1.13.1-rocm-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-1.13.1-cuda-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-1.13.1-rocm-hardcoded-paths.patch"
 	else
-		eapply "${FILESDIR}/caffe2-1.13.1-cuda-hardcoded-paths.patch"
-		eapply "${FILESDIR}/caffe2-1.13.1-rocm-hardcoded-paths.patch"
-		eapply "${FILESDIR}/caffe2-1.13.1-cuda-hardcoded-paths-third-party.patch"
-		eapply "${FILESDIR}/caffe2-1.13.1-rocm-hardcoded-paths-third-party.patch"
+		eapply "${FILESDIR}/${PN}-1.13.1-cuda-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-1.13.1-rocm-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-1.13.1-cuda-hardcoded-paths-third-party.patch"
+		eapply "${FILESDIR}/${PN}-1.13.1-rocm-hardcoded-paths-third-party.patch"
 	fi
 
 	pushd torch/csrc/jit/serialization >/dev/null 2>&1 || die
