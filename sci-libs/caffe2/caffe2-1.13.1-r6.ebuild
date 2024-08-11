@@ -365,7 +365,7 @@ ${ROCM_SLOTS2[@]}
 cuda +distributed +eigen +fbgemm -ffmpeg +flash-attention +gloo +kineto +magma
 -mkl +mpi +nccl +nnpack +numpy +onednn -openblas -opencl -opencv +openmp +rccl rocm
 roctracer -ssl system-libs +tensorpipe +qnnpack test +xnnpack
-ebuild-revision-7
+ebuild-revision-8
 "
 gen_cuda_required_use() {
 	local x
@@ -416,7 +416,6 @@ REQUIRED_USE="
 		cuda? (
 			|| (
 				cuda_targets_sm_80
-				cuda_targets_sm_90
 			)
 		)
 	)
@@ -426,7 +425,7 @@ REQUIRED_USE="
 	magma? (
 		^^ (
 			cuda
-			hip
+			rocm
 		)
 	)
 	mpi? (
@@ -733,8 +732,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.13.0-install-dirs.patch"
 	"${FILESDIR}/${PN}-1.12.0-glog-0.6.0.patch"
 	"${FILESDIR}/${PN}-1.12.0-clang.patch"
-	"${FILESDIR}/${PN}-1.13.1-rocm-hardcoded-paths.patch"
-	"${FILESDIR}/${PN}-1.13.1-cuda-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
@@ -803,7 +800,7 @@ src_prepare() {
 		dep_prepare_mv "${WORKDIR}/hipify_torch-${HIPIFY_TORCH_COMMIT}" "${S}/third_party/FBGEMM/third_party/hipify_torch"
 
 		dep_prepare_mv "${WORKDIR}/FP16-${FP16_COMMIT}" "${S}/third_party/FP16"
-		dep_prepare_mv "${WORKDIR}/FXdiv-${FXDIV_COMMIT}" "${S}/third_party/FXDIV"
+		dep_prepare_mv "${WORKDIR}/FXdiv-${FXDIV_COMMIT}" "${S}/third_party/FXdiv"
 
 		dep_prepare_mv "${WORKDIR}/gloo-${GLOO_COMMIT}" "${S}/third_party/gloo"
 		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_1}" "${S}/third_party/gloo/third-party/googletest"
@@ -861,6 +858,17 @@ src_prepare() {
 	fi
 	filter-lto #bug 862672
 	cmake_src_prepare
+
+	if use system-libs ; then
+		eapply "${FILESDIR}/caffe2-1.13.1-cuda-hardcoded-paths.patch"
+		eapply "${FILESDIR}/caffe2-1.13.1-rocm-hardcoded-paths.patch"
+	else
+		eapply "${FILESDIR}/caffe2-1.13.1-cuda-hardcoded-paths.patch"
+		eapply "${FILESDIR}/caffe2-1.13.1-rocm-hardcoded-paths.patch"
+		eapply "${FILESDIR}/caffe2-1.13.1-cuda-hardcoded-paths-third-party.patch"
+		eapply "${FILESDIR}/caffe2-1.13.1-rocm-hardcoded-paths-third-party.patch"
+	fi
+
 	pushd torch/csrc/jit/serialization >/dev/null 2>&1 || die
 		flatc \
 			--cpp \

@@ -1,6 +1,6 @@
 diff '--color=auto' -urp pytorch-2.3.1.orig/caffe2/CMakeLists.txt pytorch-2.3.1/caffe2/CMakeLists.txt
---- pytorch-2.3.1.orig/caffe2/CMakeLists.txt	2024-08-09 00:56:36.420614318 -0700
-+++ pytorch-2.3.1/caffe2/CMakeLists.txt	2024-08-09 01:04:22.808874561 -0700
+--- pytorch-2.3.1.orig/caffe2/CMakeLists.txt	2024-08-10 22:30:32.698942107 -0700
++++ pytorch-2.3.1/caffe2/CMakeLists.txt	2024-08-10 22:38:47.790806532 -0700
 @@ -1343,7 +1343,7 @@ if(USE_ROCM)
      set(ROCM_SOURCE_DIR "$ENV{ROCM_SOURCE_DIR}")
    endif()
@@ -11,9 +11,9 @@ diff '--color=auto' -urp pytorch-2.3.1.orig/caffe2/CMakeLists.txt pytorch-2.3.1/
    message(INFO "caffe2 ROCM_SOURCE_DIR = ${ROCM_SOURCE_DIR}")
    target_include_directories(torch_hip PRIVATE
 diff '--color=auto' -urp pytorch-2.3.1.orig/cmake/Dependencies.cmake pytorch-2.3.1/cmake/Dependencies.cmake
---- pytorch-2.3.1.orig/cmake/Dependencies.cmake	2024-08-09 00:56:35.944622199 -0700
-+++ pytorch-2.3.1/cmake/Dependencies.cmake	2024-08-09 01:04:31.636727735 -0700
-@@ -1967,7 +1967,7 @@ if(USE_KINETO)
+--- pytorch-2.3.1.orig/cmake/Dependencies.cmake	2024-08-10 22:30:32.986937360 -0700
++++ pytorch-2.3.1/cmake/Dependencies.cmake	2024-08-10 22:38:56.398665209 -0700
+@@ -1969,7 +1969,7 @@ if(USE_KINETO)
  
    if(NOT LIBKINETO_NOROCTRACER)
      if("$ENV{ROCM_SOURCE_DIR}" STREQUAL "")
@@ -23,8 +23,8 @@ diff '--color=auto' -urp pytorch-2.3.1.orig/cmake/Dependencies.cmake pytorch-2.3
    endif()
  
 diff '--color=auto' -urp pytorch-2.3.1.orig/cmake/public/LoadHIP.cmake pytorch-2.3.1/cmake/public/LoadHIP.cmake
---- pytorch-2.3.1.orig/cmake/public/LoadHIP.cmake	2024-08-09 00:56:35.912622731 -0700
-+++ pytorch-2.3.1/cmake/public/LoadHIP.cmake	2024-08-09 01:04:37.172635662 -0700
+--- pytorch-2.3.1.orig/cmake/public/LoadHIP.cmake	2024-08-10 22:30:32.926938349 -0700
++++ pytorch-2.3.1/cmake/public/LoadHIP.cmake	2024-08-10 22:39:01.194586468 -0700
 @@ -1,7 +1,7 @@
  set(PYTORCH_FOUND_HIP FALSE)
  
@@ -36,7 +36,7 @@ diff '--color=auto' -urp pytorch-2.3.1.orig/cmake/public/LoadHIP.cmake pytorch-2
  endif()
 diff '--color=auto' -urp pytorch-2.3.1.orig/tools/amd_build/build_amd.py pytorch-2.3.1/tools/amd_build/build_amd.py
 --- pytorch-2.3.1.orig/tools/amd_build/build_amd.py	2024-05-29 08:15:01.000000000 -0700
-+++ pytorch-2.3.1/tools/amd_build/build_amd.py	2024-08-09 01:05:13.656028891 -0700
++++ pytorch-2.3.1/tools/amd_build/build_amd.py	2024-08-10 22:41:42.923930535 -0700
 @@ -144,7 +144,7 @@ ignores = [os.path.join(proj_dir, ignore
  # Check if the compiler is hip-clang.
  def is_hip_clang() -> bool:
@@ -48,7 +48,7 @@ diff '--color=auto' -urp pytorch-2.3.1.orig/tools/amd_build/build_amd.py pytorch
      except OSError:
 diff '--color=auto' -urp pytorch-2.3.1.orig/tools/stats/monitor.py pytorch-2.3.1/tools/stats/monitor.py
 --- pytorch-2.3.1.orig/tools/stats/monitor.py	2024-05-29 08:15:01.000000000 -0700
-+++ pytorch-2.3.1/tools/stats/monitor.py	2024-08-09 01:04:57.092304363 -0700
++++ pytorch-2.3.1/tools/stats/monitor.py	2024-08-10 22:41:32.484102015 -0700
 @@ -13,7 +13,7 @@ import pynvml  # type: ignore[import]
  # Must import from ROCm installation path.
  # Cannot use the high-level rocm_smi cmdline module due to its use of exit().
@@ -60,7 +60,7 @@ diff '--color=auto' -urp pytorch-2.3.1.orig/tools/stats/monitor.py pytorch-2.3.1
  
 diff '--color=auto' -urp pytorch-2.3.1.orig/tools/testing/test_selections.py pytorch-2.3.1/tools/testing/test_selections.py
 --- pytorch-2.3.1.orig/tools/testing/test_selections.py	2024-05-29 08:15:01.000000000 -0700
-+++ pytorch-2.3.1/tools/testing/test_selections.py	2024-08-09 01:05:03.432198926 -0700
++++ pytorch-2.3.1/tools/testing/test_selections.py	2024-08-10 22:41:36.780031452 -0700
 @@ -16,7 +16,7 @@ IS_MEM_LEAK_CHECK = os.getenv("PYTORCH_T
  # to ensure that sharding is consistent, NUM_PROCS is the actual number of procs
  # used to run tests.  If they are not equal, the only consequence should be
@@ -72,7 +72,7 @@ diff '--color=auto' -urp pytorch-2.3.1.orig/tools/testing/test_selections.py pyt
  THRESHOLD = 60 * 10  # 10 minutes
 diff '--color=auto' -urp pytorch-2.3.1.orig/torch/utils/cpp_extension.py pytorch-2.3.1/torch/utils/cpp_extension.py
 --- pytorch-2.3.1.orig/torch/utils/cpp_extension.py	2024-05-29 08:15:01.000000000 -0700
-+++ pytorch-2.3.1/torch/utils/cpp_extension.py	2024-08-09 01:04:41.656561085 -0700
++++ pytorch-2.3.1/torch/utils/cpp_extension.py	2024-08-10 22:39:05.954508317 -0700
 @@ -134,7 +134,7 @@ def _find_rocm_home() -> Optional[str]:
                  rocm_home = os.path.dirname(rocm_home)
          else:
@@ -84,7 +84,7 @@ diff '--color=auto' -urp pytorch-2.3.1.orig/torch/utils/cpp_extension.py pytorch
      if rocm_home and torch.version.hip is None:
 diff '--color=auto' -urp pytorch-2.3.1.orig/torch/utils/hipify/cuda_to_hip_mappings.py pytorch-2.3.1/torch/utils/hipify/cuda_to_hip_mappings.py
 --- pytorch-2.3.1.orig/torch/utils/hipify/cuda_to_hip_mappings.py	2024-05-29 08:15:01.000000000 -0700
-+++ pytorch-2.3.1/torch/utils/hipify/cuda_to_hip_mappings.py	2024-08-09 01:04:49.180435950 -0700
++++ pytorch-2.3.1/torch/utils/hipify/cuda_to_hip_mappings.py	2024-08-10 22:39:11.394419000 -0700
 @@ -29,7 +29,7 @@ supported in ROCm/HIP yet.
  
  # We need to know the ROCm version so we can conditionalize some of the mappings later.

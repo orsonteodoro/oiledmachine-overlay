@@ -1,20 +1,6 @@
-diff '--color=auto' -urp pytorch-2.4.0.orig/scripts/fbcode-dev-setup/ccache_setup.sh pytorch-2.4.0/scripts/fbcode-dev-setup/ccache_setup.sh
---- pytorch-2.4.0.orig/scripts/fbcode-dev-setup/ccache_setup.sh	2024-07-09 11:17:43.000000000 -0700
-+++ pytorch-2.4.0/scripts/fbcode-dev-setup/ccache_setup.sh	2024-08-10 21:31:11.493812239 -0700
-@@ -40,8 +40,8 @@ done
- set +e
- nvcc_path=$(which nvcc)
- if [[ -z "$nvcc_path" ]]; then
--  nvcc_path="/usr/local/cuda/bin/nvcc"
--  export PATH="/usr/local/cuda/bin:$PATH"
-+  nvcc_path="/opt/cuda/bin/nvcc"
-+  export PATH="/opt/cuda/bin:$PATH"
- fi
- set -e
- if [ ! -f "$nvcc_path" ] && ! $force; then
 diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/FBGEMM/fbgemm_gpu/setup.py pytorch-2.4.0/third_party/FBGEMM/fbgemm_gpu/setup.py
 --- pytorch-2.4.0.orig/third_party/FBGEMM/fbgemm_gpu/setup.py	2023-12-04 14:00:48.000000000 -0800
-+++ pytorch-2.4.0/third_party/FBGEMM/fbgemm_gpu/setup.py	2024-08-10 21:30:32.566465146 -0700
++++ pytorch-2.4.0/third_party/FBGEMM/fbgemm_gpu/setup.py	2024-08-10 23:31:02.767296515 -0700
 @@ -94,7 +94,7 @@ def find_cuda(major: int, minor: int) ->
      if nvcc_ok(cuda_home, major, minor):
          return cuda_home
@@ -26,7 +12,7 @@ diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/FBGEMM/fbgemm_gpu/setup.
  
 diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/FBGEMM/third_party/cutlass/test/unit/nvrtc/thread/testbed.h pytorch-2.4.0/third_party/FBGEMM/third_party/cutlass/test/unit/nvrtc/thread/testbed.h
 --- pytorch-2.4.0.orig/third_party/FBGEMM/third_party/cutlass/test/unit/nvrtc/thread/testbed.h	2022-09-15 13:20:33.000000000 -0700
-+++ pytorch-2.4.0/third_party/FBGEMM/third_party/cutlass/test/unit/nvrtc/thread/testbed.h	2024-08-10 21:31:38.661356577 -0700
++++ pytorch-2.4.0/third_party/FBGEMM/third_party/cutlass/test/unit/nvrtc/thread/testbed.h	2024-08-10 23:31:12.351138765 -0700
 @@ -201,7 +201,7 @@ struct Testbed {
  
      const char *opts[] = {"--gpu-architecture=compute_75",
@@ -38,7 +24,7 @@ diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/FBGEMM/third_party/cutla
      if (result_nvrtc != NVRTC_SUCCESS) {
 diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/aotriton/third_party/triton/python/tutorials/07-math-functions.py pytorch-2.4.0/third_party/aotriton/third_party/triton/python/tutorials/07-math-functions.py
 --- pytorch-2.4.0.orig/third_party/aotriton/third_party/triton/python/tutorials/07-math-functions.py	2024-03-29 12:41:35.000000000 -0700
-+++ pytorch-2.4.0/third_party/aotriton/third_party/triton/python/tutorials/07-math-functions.py	2024-08-10 21:30:16.390736454 -0700
++++ pytorch-2.4.0/third_party/aotriton/third_party/triton/python/tutorials/07-math-functions.py	2024-08-10 23:30:54.191437672 -0700
 @@ -62,7 +62,7 @@ print(f'The maximum difference between t
  
  output_triton = torch.empty_like(x)
@@ -50,7 +36,7 @@ diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/aotriton/third_party/tri
  print(f'The maximum difference between torch and triton is '
 diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/libkineto/sample_programs/build.sh pytorch-2.4.0/third_party/kineto/libkineto/sample_programs/build.sh
 --- pytorch-2.4.0.orig/third_party/kineto/libkineto/sample_programs/build.sh	2024-05-24 15:11:03.000000000 -0700
-+++ pytorch-2.4.0/third_party/kineto/libkineto/sample_programs/build.sh	2024-08-10 21:28:59.400027797 -0700
++++ pytorch-2.4.0/third_party/kineto/libkineto/sample_programs/build.sh	2024-08-10 23:29:46.224556297 -0700
 @@ -10,11 +10,11 @@ g++ \
    -O0 \
    kineto_playground.cpp \
@@ -67,7 +53,7 @@ diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/libkineto/sample_
    -lcudart \
 diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake
 --- pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake	2022-03-07 15:21:14.000000000 -0800
-+++ pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake	2024-08-10 21:34:05.986885637 -0700
++++ pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake	2024-08-10 23:30:04.912248744 -0700
 @@ -1,8 +1,8 @@
  include(utils)
  
@@ -82,7 +68,7 @@ diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynol
      foreach (prefix ${Cuda${cuda_version}_prefix})
 diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh
 --- pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh	2022-03-07 15:21:14.000000000 -0800
-+++ pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh	2024-08-10 21:29:52.743133086 -0700
++++ pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh	2024-08-10 23:30:25.903903259 -0700
 @@ -14,4 +14,4 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
@@ -91,7 +77,7 @@ diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynol
 +/opt/cuda/bin/nvcc -ptx -m64 -o DcgmProfTesterKernels.ptx DcgmProfTesterKernels.cu || die "Failed to compile DcgmProfTesterKernels.cu"
 diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh
 --- pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh	2022-03-07 15:21:14.000000000 -0800
-+++ pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh	2024-08-10 21:29:44.183276657 -0700
++++ pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh	2024-08-10 23:30:20.835986669 -0700
 @@ -20,6 +20,6 @@
  #
  # sm_30 is used here for Kepler or newer
@@ -102,7 +88,7 @@ diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynol
  python find_ptx_symbols.py compare.ptx gpuburn_ptx_string.h
 diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp
 --- pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp	2022-03-07 15:21:14.000000000 -0800
-+++ pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp	2024-08-10 21:29:28.679536697 -0700
++++ pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp	2024-08-10 23:30:14.356093317 -0700
 @@ -245,7 +245,7 @@ bool Software::checkLibraries(libraryChe
      if (checkLib == CHECK_CUDATK && fail == true)
      {
@@ -112,27 +98,17 @@ diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynol
          AddInfo("Some tests will not run.");
      }
      if (checkLib == CHECK_CUDA && fail == true)
-diff '--color=auto' -urp pytorch-2.4.0.orig/torch/utils/collect_env.py pytorch-2.4.0/torch/utils/collect_env.py
---- pytorch-2.4.0.orig/torch/utils/collect_env.py	2024-07-09 11:17:43.000000000 -0700
-+++ pytorch-2.4.0/torch/utils/collect_env.py	2024-08-10 21:28:28.712542516 -0700
-@@ -184,7 +184,7 @@ def get_cudnn_version(run_lambda):
-         # https://docs.nvidia.com/cuda/cuda-installation-guide-mac-os-x/index.html#install
-         # https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#installmac
-         # Use CUDNN_LIBRARY when cudnn library is installed elsewhere.
--        cudnn_cmd = 'ls /usr/local/cuda/lib/libcudnn*'
-+        cudnn_cmd = 'ls /opt/cuda/lib/libcudnn*'
-     else:
-         cudnn_cmd = 'ldconfig -p | grep libcudnn | rev | cut -d" " -f1 | rev'
-     rc, out, _ = run_lambda(cudnn_cmd)
-diff '--color=auto' -urp pytorch-2.4.0.orig/torch/utils/cpp_extension.py pytorch-2.4.0/torch/utils/cpp_extension.py
---- pytorch-2.4.0.orig/torch/utils/cpp_extension.py	2024-07-09 11:17:43.000000000 -0700
-+++ pytorch-2.4.0/torch/utils/cpp_extension.py	2024-08-10 21:28:20.088687164 -0700
-@@ -109,7 +109,7 @@ def _find_cuda_home() -> Optional[str]:
-                 else:
-                     cuda_home = cuda_homes[0]
-             else:
--                cuda_home = '/usr/local/cuda'
-+                cuda_home = '/opt/cuda'
-             if not os.path.exists(cuda_home):
-                 cuda_home = None
-     if cuda_home and not torch.cuda.is_available():
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt
+--- pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt	2024-08-10 23:17:48.000366609 -0700
++++ pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt	2024-08-10 23:30:38.719692326 -0700
+@@ -32,8 +32,8 @@ target_include_directories(sdk_nvml_inte
+ #)
+ #target_include_directories(sdk_nvml_interface SYSTEM INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/nvsmi/stats)
+ 
+-# target_include_directories(sdk_nvml_interface INTERFACE /usr/local/cuda100/include)
+-# target_include_directories(sdk_nvml_interface INTERFACE /usr/local/cuda100/kernel/common/inc)
++# target_include_directories(sdk_nvml_interface INTERFACE /opt/cuda/include)
++# target_include_directories(sdk_nvml_interface INTERFACE /opt/cuda/kernel/common/inc)
+ 
+ add_library(sdk_nvml_essentials_objects STATIC)
+ target_link_libraries(sdk_nvml_essentials_objects PUBLIC sdk_nvml_interface)

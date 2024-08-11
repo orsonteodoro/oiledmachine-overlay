@@ -1,6 +1,18 @@
+diff '--color=auto' -urp pytorch-2.2.2.orig/cmake/Modules/FindCUDAToolkit.cmake pytorch-2.2.2/cmake/Modules/FindCUDAToolkit.cmake
+--- pytorch-2.2.2.orig/cmake/Modules/FindCUDAToolkit.cmake	2024-03-25 14:33:04.000000000 -0700
++++ pytorch-2.2.2/cmake/Modules/FindCUDAToolkit.cmake	2024-08-11 01:27:29.552413061 -0700
+@@ -656,7 +656,7 @@ else()
+ 
+     # Force the global default /usr/local/cuda to the front on Unix.
+     if(UNIX)
+-      list(INSERT search_paths 0 "/usr/local/cuda")
++      list(INSERT search_paths 0 "/opt/cuda")
+     endif()
+ 
+     # Now search for the toolkit again using the platform default search paths.
 diff '--color=auto' -urp pytorch-2.2.2.orig/scripts/fbcode-dev-setup/ccache_setup.sh pytorch-2.2.2/scripts/fbcode-dev-setup/ccache_setup.sh
 --- pytorch-2.2.2.orig/scripts/fbcode-dev-setup/ccache_setup.sh	2024-03-25 14:33:04.000000000 -0700
-+++ pytorch-2.2.2/scripts/fbcode-dev-setup/ccache_setup.sh	2024-08-09 01:37:51.595418683 -0700
++++ pytorch-2.2.2/scripts/fbcode-dev-setup/ccache_setup.sh	2024-08-11 01:29:37.198314271 -0700
 @@ -40,8 +40,8 @@ done
  set +e
  nvcc_path=$(which nvcc)
@@ -14,7 +26,7 @@ diff '--color=auto' -urp pytorch-2.2.2.orig/scripts/fbcode-dev-setup/ccache_setu
  if [ ! -f "$nvcc_path" ] && ! $force; then
 diff '--color=auto' -urp pytorch-2.2.2.orig/torch/utils/collect_env.py pytorch-2.2.2/torch/utils/collect_env.py
 --- pytorch-2.2.2.orig/torch/utils/collect_env.py	2024-03-25 14:33:04.000000000 -0700
-+++ pytorch-2.2.2/torch/utils/collect_env.py	2024-08-09 01:37:37.019668681 -0700
++++ pytorch-2.2.2/torch/utils/collect_env.py	2024-08-11 01:27:54.576001645 -0700
 @@ -176,7 +176,7 @@ def get_cudnn_version(run_lambda):
          # https://docs.nvidia.com/cuda/cuda-installation-guide-mac-os-x/index.html#install
          # https://docs.nvidia.com/deeplearning/sdk/cudnn-install/index.html#installmac
@@ -26,7 +38,7 @@ diff '--color=auto' -urp pytorch-2.2.2.orig/torch/utils/collect_env.py pytorch-2
      rc, out, _ = run_lambda(cudnn_cmd)
 diff '--color=auto' -urp pytorch-2.2.2.orig/torch/utils/cpp_extension.py pytorch-2.2.2/torch/utils/cpp_extension.py
 --- pytorch-2.2.2.orig/torch/utils/cpp_extension.py	2024-03-25 14:33:04.000000000 -0700
-+++ pytorch-2.2.2/torch/utils/cpp_extension.py	2024-08-09 01:37:29.371799862 -0700
++++ pytorch-2.2.2/torch/utils/cpp_extension.py	2024-08-11 01:27:44.644164937 -0700
 @@ -111,7 +111,7 @@ def _find_cuda_home() -> Optional[str]:
                  else:
                      cuda_home = cuda_homes[0]

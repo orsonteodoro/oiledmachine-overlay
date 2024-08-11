@@ -436,7 +436,7 @@ ${ROCM_SLOTS2[@]}
 cuda +distributed +eigen +fbgemm -ffmpeg +flash-attention +gloo +kineto +magma
 -mimalloc -mkl +nccl +mpi +nnpack +numpy +onednn -openblas -opencl -opencv +openmp
 +rccl rocm roctracer -ssl system-libs +tensorpipe +qnnpack test +xnnpack
-ebuild-revision-7
+ebuild-revision-8
 "
 gen_cuda_required_use() {
 	local x
@@ -494,6 +494,7 @@ REQUIRED_USE="
 			)
 		)
 		rocm? (
+			!system-libs
 			|| (
 				amdgpu_targets_gfx90a
 				amdgpu_targets_gfx942
@@ -509,7 +510,7 @@ REQUIRED_USE="
 	magma? (
 		^^ (
 			cuda
-			hip
+			rocm
 		)
 	)
 	mpi? (
@@ -807,8 +808,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.3.0-optional-hipblaslt.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-libcpp.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-gcc-clang-abi-compat.patch"
-	"${FILESDIR}/${PN}-2.3.1-rocm-hardcoded-paths.patch"
-	"${FILESDIR}/${PN}-2.3.1-cuda-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
@@ -858,7 +857,7 @@ src_prepare() {
 
 		dep_prepare_mv "${WORKDIR}/aotriton-${AOTRITON_COMMIT}" "${S}/third_party/aotriton"
 		dep_prepare_mv "${WORKDIR}/incbin-${INCBIN_COMMIT}" "${S}/third_party/aotriton/third_party/incbin"
-		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND_COMMIT_5}" "${S}/third_party/aotriton/third_party/pybind11"
+		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_5}" "${S}/third_party/aotriton/third_party/pybind11"
 		dep_prepare_mv "${WORKDIR}/triton-${TRITON_COMMIT}" "${S}/third_party/aotriton/third_party/triton"
 
 		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/third_party/benchmark"
@@ -877,7 +876,7 @@ src_prepare() {
 		dep_prepare_mv "${WORKDIR}/hipify_torch-${HIPIFY_TORCH_COMMIT}" "${S}/third_party/FBGEMM/third_party/hipify_torch"
 
 		dep_prepare_mv "${WORKDIR}/FP16-${FP16_COMMIT}" "${S}/third_party/FP16"
-		dep_prepare_mv "${WORKDIR}/FXdiv-${FXDIV_COMMIT}" "${S}/third_party/FXDIV"
+		dep_prepare_mv "${WORKDIR}/FXdiv-${FXDIV_COMMIT}" "${S}/third_party/FXdiv"
 
 		dep_prepare_mv "${WORKDIR}/gloo-${GLOO_COMMIT}" "${S}/third_party/gloo"
 		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_1}" "${S}/third_party/gloo/third-party/googletest"
@@ -946,6 +945,17 @@ src_prepare() {
 	fi
 	filter-lto #bug 862672
 	cmake_src_prepare
+
+	if use system-libs ; then
+		eapply "caffe2-2.3.1-cuda-hardcoded-paths.patch"
+		eapply "caffe2-2.3.1-rocm-hardcoded-paths.patch"
+	else
+		eapply "caffe2-2.3.1-cuda-hardcoded-paths.patch"
+		eapply "caffe2-2.3.1-rocm-hardcoded-paths.patch"
+		eapply "caffe2-2.3.1-cuda-hardcoded-paths-third-party.patch"
+		eapply "caffe2-2.3.1-rocm-hardcoded-paths-third-party.patch"
+	fi
+
 	pushd torch/csrc/jit/serialization >/dev/null 2>&1 || die
 		flatc \
 			--cpp \
