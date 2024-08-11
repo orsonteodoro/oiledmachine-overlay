@@ -13,11 +13,13 @@ CUDA_TARGETS_COMPAT=(
 	sm_80
 	sm_90
 
-	sm_61_ptx
-	sm_70_ptx
-	sm_80_ptx
-	sm_90_ptx
+	compute_61
+	compute_70
+	compute_80
+	compute_90
 )
+NCCL_TESTS_COMMIT="1292b25553bd0384f2faa2965f9d82b99797a348" # committer-date:<=2024-06-19
+S_TESTS="${WORKDIR}/nccl-tests-${NCCL_TESTS_COMMIT}"
 
 inherit autotools flag-o-matic
 
@@ -26,8 +28,8 @@ KEYWORDS="~amd64"
 SRC_URI="
 https://github.com/NVIDIA/nccl/archive/refs/tags/v${PV}-1.tar.gz
 	-> ${P}.tar.gz
-https://github.com/RadeonOpenCompute/rocm-core/archive/refs/tags/rocm-${PV}.tar.gz
-	-> ${P}.tar.gz
+https://github.com/NVIDIA/nccl-tests/archive/${NCCL_TESTS_COMMIT}.tar.gz
+	-> nccl-tests-${NCCL_TESTS_COMMIT:0:7}.tar.gz
 "
 
 DESCRIPTION="Optimized primitives for collective multi-GPU communication"
@@ -44,9 +46,11 @@ LICENSE="
 "
 # Apache-2.0-with-LLVM-exceptions - NVTX/LICENSE.txt
 # Apache-2.0-with-LLVM-exceptions - src/include/nvtx3/nvtxDetail/nvtxExtPayloadHelperInternal.h
+RESTRICT="mirror test"
 SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+test
 ebuild-revision-0
 "
 REQUIRED_USE="
@@ -60,6 +64,38 @@ RDEPEND="
 		=dev-util/nvidia-cuda-toolkit-12.4*
 		=dev-util/nvidia-cuda-toolkit-12.3*
 		=dev-util/nvidia-cuda-toolkit-11.8*
+	)
+	cuda_targets_compute_61? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12.5*
+			=dev-util/nvidia-cuda-toolkit-12.4*
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
+	)
+	cuda_targets_compute_70? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12.5*
+			=dev-util/nvidia-cuda-toolkit-12.4*
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
+	)
+	cuda_targets_compute_80? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12.5*
+			=dev-util/nvidia-cuda-toolkit-12.4*
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
+	)
+	cuda_targets_compute_90? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12.5*
+			=dev-util/nvidia-cuda-toolkit-12.4*
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
 	)
 	cuda_targets_sm_35? (
 		=dev-util/nvidia-cuda-toolkit-11.8*
@@ -88,23 +124,7 @@ RDEPEND="
 			=dev-util/nvidia-cuda-toolkit-11.8*
 		)
 	)
-	cuda_targets_sm_61_ptx? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-12.5*
-			=dev-util/nvidia-cuda-toolkit-12.4*
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-11.8*
-		)
-	)
 	cuda_targets_sm_70? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-12.5*
-			=dev-util/nvidia-cuda-toolkit-12.4*
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-11.8*
-		)
-	)
-	cuda_targets_sm_70_ptx? (
 		|| (
 			=dev-util/nvidia-cuda-toolkit-12.5*
 			=dev-util/nvidia-cuda-toolkit-12.4*
@@ -120,23 +140,7 @@ RDEPEND="
 			=dev-util/nvidia-cuda-toolkit-11.8*
 		)
 	)
-	cuda_targets_sm_80_ptx? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-12.5*
-			=dev-util/nvidia-cuda-toolkit-12.4*
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-11.8*
-		)
-	)
 	cuda_targets_sm_90? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-12.5*
-			=dev-util/nvidia-cuda-toolkit-12.4*
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-11.8*
-		)
-	)
-	cuda_targets_sm_90_ptx? (
 		|| (
 			=dev-util/nvidia-cuda-toolkit-12.5*
 			=dev-util/nvidia-cuda-toolkit-12.4*
@@ -154,6 +158,7 @@ BDEPEND="
 	dev-build/make
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-2.22.3-libdir.patch"
 )
 
 libstdcxx_check() {
@@ -214,23 +219,41 @@ eerror "Unsupported cuda version."
 		list+=( -gencode=arch=compute_90,code=sm_90 )
 	fi
 
-	if use cuda_targets_sm_61_ptx ; then
+	# PTX
+	if use cuda_targets_compute_61 ; then
 		list+=( -gencode=arch=compute_61,code=compute_61 )
 	fi
-	if use cuda_targets_sm_70_ptx ; then
+	if use cuda_targets_compute_70 ; then
 		list+=( -gencode=arch=compute_70,code=compute_70 )
 	fi
-	if use cuda_targets_sm_80_ptx ; then
+	if use cuda_targets_compute_80 ; then
 		list+=( -gencode=arch=compute_80,code=compute_80 )
 	fi
-	if use cuda_targets_sm_90_ptx ; then
+	if use cuda_targets_compute_90 ; then
 		list+=( -gencode=arch=compute_90,code=compute_90 )
 	fi
 	export NVCC_GENCODE="${list[@]}"
 }
 
+src_compile() {
+	emake
+	pushd "${S_TESTS}" || die
+		export NCCL_HOME="${S}/build"
+		emake
+	popd
+}
+
+src_test() {
+	pushd "${S_TESTS}" || die
+		"./build/all_reduce_perf" -b 8 -e 256M -f 2 -g 1
+	popd
+}
+
 src_install() {
-	emake DESTDIR="${D}" install
+	emake \
+		INSTALL_LIBDIR="$(get_libdir)" \
+		PREFIX="${ED}/usr" \
+		install
 	dodoc "LICENSE.txt"
 }
 

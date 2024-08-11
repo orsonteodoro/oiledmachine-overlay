@@ -1,0 +1,38 @@
+diff '--color=auto' -urp nccl-2.22.3-1.orig/src/Makefile nccl-2.22.3-1/src/Makefile
+--- nccl-2.22.3-1.orig/src/Makefile	2024-06-19 01:57:16.000000000 -0700
++++ nccl-2.22.3-1/src/Makefile	2024-08-11 10:22:45.525648897 -0700
+@@ -92,6 +92,7 @@ $(PKGDIR)/nccl.pc : nccl.pc.in
+ 	    -e "s/\$${nccl:Major}/$(NCCL_MAJOR)/g" \
+ 	    -e "s/\$${nccl:Minor}/$(NCCL_MINOR)/g" \
+ 	    -e "s/\$${nccl:Patch}/$(NCCL_PATCH)/g" \
++	    -e "s/\$${nccl:InstallLibDir}/$(INSTALL_LIBDIR)/g" \
+ 	    $< > $@
+ 
+ $(INCDIR)/%.h : %.h
+@@ -124,11 +125,11 @@ clean :
+ 	rm -rf ${INCDIR} ${LIBDIR} ${PKGDIR} ${OBJDIR}
+ 
+ install : build
+-	mkdir -p $(PREFIX)/lib
+-	mkdir -p $(PREFIX)/lib/pkgconfig
++	mkdir -p $(PREFIX)/$(INSTALL_LIBDIR)
++	mkdir -p $(PREFIX)/$(INSTALL_LIBDIR)/pkgconfig
+ 	mkdir -p $(PREFIX)/include
+-	cp -P -v $(BUILDDIR)/lib/lib* $(PREFIX)/lib/
+-	cp -P -v $(BUILDDIR)/lib/pkgconfig/* $(PREFIX)/lib/pkgconfig/
++	cp -P -v $(BUILDDIR)/lib/lib* $(PREFIX)/$(INSTALL_LIBDIR)/
++	cp -P -v $(BUILDDIR)/lib/pkgconfig/* $(PREFIX)/$(INSTALL_LIBDIR)/pkgconfig/
+ 	cp -v $(BUILDDIR)/include/* $(PREFIX)/include/
+ 
+ FILESTOFORMAT := $(shell find . -name ".\#*" -prune -o \( -name "*.cc" -o -name "*.h" \) -print | grep -v -E 'ibvwrap.h|nvmlwrap.h|gdrwrap.h|nccl.h')
+diff '--color=auto' -urp nccl-2.22.3-1.orig/src/nccl.pc.in nccl-2.22.3-1/src/nccl.pc.in
+--- nccl-2.22.3-1.orig/src/nccl.pc.in	2024-06-19 01:57:16.000000000 -0700
++++ nccl-2.22.3-1/src/nccl.pc.in	2024-08-11 10:22:53.589520177 -0700
+@@ -1,6 +1,6 @@
+ prefix=${nccl:Prefix}
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=${exec_prefix}/${nccl:InstallLibDir}
+ includedir=${prefix}/include
+ 
+ Name: nccl
