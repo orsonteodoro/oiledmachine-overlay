@@ -1,0 +1,28 @@
+diff '--color=auto' -urp nccl-tests-1292b25553bd0384f2faa2965f9d82b99797a348.orig/src/Makefile nccl-tests-1292b25553bd0384f2faa2965f9d82b99797a348/src/Makefile
+--- nccl-tests-1292b25553bd0384f2faa2965f9d82b99797a348.orig/src/Makefile	2023-10-12 16:53:32.000000000 -0700
++++ nccl-tests-1292b25553bd0384f2faa2965f9d82b99797a348/src/Makefile	2024-08-11 15:21:59.248250361 -0700
+@@ -8,6 +8,7 @@ CUDA_HOME ?= /usr/local/cuda
+ PREFIX ?= /usr/local
+ VERBOSE ?= 0
+ DEBUG ?= 0
++RDMA_CORE ?= 0
+ 
+ CUDA_LIB ?= $(CUDA_HOME)/lib64
+ CUDA_INC ?= $(CUDA_HOME)/include
+@@ -37,8 +38,14 @@ endif
+ NVCUFLAGS  := -ccbin $(CXX) $(NVCC_GENCODE) -std=c++11
+ CXXFLAGS   := -std=c++11
+ 
+-LDFLAGS    := -L${CUDA_LIB} -lcudart -lrt
+-NVLDFLAGS  := -L${CUDA_LIB} -l${CUDARTLIB} -lrt
++ifeq ($(RDMA_CORE), 1)
++RDMA_CORE_LIBS := -libverbs
++else
++RDMA_CORE_LIBS := 
++endif
++
++LDFLAGS    := -L${CUDA_LIB} -lcudart -lrt ${RDMA_CORE_LIBS}
++NVLDFLAGS  := -L${CUDA_LIB} -l${CUDARTLIB} -lrt ${RDMA_CORE_LIBS}
+ 
+ ifeq ($(DEBUG), 0)
+ NVCUFLAGS += -O3 -g

@@ -1,0 +1,25 @@
+diff '--color=auto' -urp nccl-2.22.3-1.orig/makefiles/common.mk nccl-2.22.3-1/makefiles/common.mk
+--- nccl-2.22.3-1.orig/makefiles/common.mk	2024-06-19 01:57:16.000000000 -0700
++++ nccl-2.22.3-1/makefiles/common.mk	2024-08-11 15:24:19.325918012 -0700
+@@ -57,6 +57,12 @@ else
+ endif
+ $(info NVCC_GENCODE is ${NVCC_GENCODE})
+ 
++ifeq ($(RDMA_CORE),1)
++RDMA_CORE_LIBS := -libverbs
++else
++RDMA_CORE_LIBS := 
++endif
++
+ CXXFLAGS   := -DCUDA_MAJOR=$(CUDA_MAJOR) -DCUDA_MINOR=$(CUDA_MINOR) -fPIC -fvisibility=hidden \
+               -Wall -Wno-unused-function -Wno-sign-compare -std=c++11 -Wvla \
+               -I $(CUDA_INC) \
+@@ -66,7 +72,7 @@ CXXFLAGS   := -DCUDA_MAJOR=$(CUDA_MAJOR)
+ # We would not have to set this if we used __launch_bounds__, but this only works on kernels, not on functions.
+ NVCUFLAGS  := -ccbin $(CXX) $(NVCC_GENCODE) -std=c++11 --expt-extended-lambda -Xptxas -maxrregcount=96 -Xfatbin -compress-all
+ # Use addprefix so that we can specify more than one path
+-NVLDFLAGS  := -L${CUDA_LIB} -lcudart -lrt
++NVLDFLAGS  := -L${CUDA_LIB} -lcudart -lrt ${RDMA_CORE_LIBS}
+ 
+ ########## GCOV ##########
+ GCOV ?= 0 # disable by default.

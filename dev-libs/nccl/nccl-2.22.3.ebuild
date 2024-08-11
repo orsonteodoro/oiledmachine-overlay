@@ -20,8 +20,9 @@ CUDA_TARGETS_COMPAT=(
 )
 NCCL_TESTS_COMMIT="1292b25553bd0384f2faa2965f9d82b99797a348" # committer-date:<=2024-06-19
 S_TESTS="${WORKDIR}/nccl-tests-${NCCL_TESTS_COMMIT}"
+PYTHON_COMPAT=( python3_{10..12} )
 
-inherit autotools flag-o-matic
+inherit autotools flag-o-matic python-any-r1
 
 S="${WORKDIR}/${P}-1"
 KEYWORDS="~amd64"
@@ -50,7 +51,7 @@ RESTRICT="mirror test"
 SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-test
+-infiniband test
 ebuild-revision-2
 "
 REQUIRED_USE="
@@ -148,6 +149,9 @@ RDEPEND="
 			=dev-util/nvidia-cuda-toolkit-11.8*
 		)
 	)
+	infiniband? (
+		sys-cluster/rdma-core
+	)
 	dev-util/nvidia-cuda-toolkit:=
 	sys-libs/glibc
 "
@@ -159,7 +163,12 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-2.22.3-libdir.patch"
+	"${FILESDIR}/${PN}-2.22.3-link-ibverbs-nccl.patch"
 )
+
+pkg_setup() {
+	python-any-r1_pkg_setup
+}
 
 libstdcxx_check() {
 	local required_gcc_slot="${1}"
@@ -174,6 +183,14 @@ eerror "  source /etc/profile"
 eerror
                 die
         fi
+}
+
+src_prepare() {
+	default
+	pushd "${S_TESTS}" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/${PN}-2.22.3-link-ibverbs-tests.patch"
+	popd >/dev/null 2>&1 || die
+
 }
 
 src_configure() {
@@ -233,6 +250,7 @@ eerror "Unsupported cuda version."
 		list+=( -gencode=arch=compute_90,code=compute_90 )
 	fi
 	export NVCC_GENCODE="${list[@]}"
+	export RDMA_CORE=$(usex infiniband "1" "0")
 }
 
 src_compile() {
