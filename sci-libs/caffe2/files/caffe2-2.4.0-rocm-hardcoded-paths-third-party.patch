@@ -43,18 +43,6 @@ diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/aotriton/CMakeLists.txt 
  if(AOTRITON_ENABLE_ASAN)
      set(AOTRITON_EXTRA_COMPILER_OPTIONS "${AOTRITON_EXTRA_COMPILER_OPTIONS} -g -fsanitize=address -fno-omit-frame-pointer")
      set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${AOTRITON_EXTRA_COMPILER_OPTIONS}")
-diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/aotriton/python/compile.py pytorch-2.4.0/third_party/aotriton/python/compile.py
---- pytorch-2.4.0.orig/third_party/aotriton/python/compile.py	2024-06-03 13:21:28.000000000 -0700
-+++ pytorch-2.4.0/third_party/aotriton/python/compile.py	2024-08-10 23:43:35.110964931 -0700
-@@ -125,7 +125,7 @@ def main():
-         if args.nostrip:
-             shutil.copy(hsaco_path, out_path.with_suffix('.hsaco'))
-         else:
--            subprocess.run(['/opt/rocm/llvm/bin/llvm-objcopy', '--remove-section', '.debug_*', str(hsaco_path), str(out_path.with_suffix('.hsaco'))])
-+            subprocess.run(['/opt/rocm-@ROCM_VERSION@/llvm/bin/llvm-objcopy', '--remove-section', '.debug_*', str(hsaco_path), str(out_path.with_suffix('.hsaco'))])
- 
-     with out_path.with_suffix('.json').open("w") as fp:
-         json.dump(ccinfo.metadata, fp, indent=2)
 diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/aotriton/python/generate.py pytorch-2.4.0/third_party/aotriton/python/generate.py
 --- pytorch-2.4.0.orig/third_party/aotriton/python/generate.py	2024-06-03 13:21:28.000000000 -0700
 +++ pytorch-2.4.0/third_party/aotriton/python/generate.py	2024-08-10 23:43:42.230848623 -0700
