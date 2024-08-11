@@ -605,7 +605,7 @@ RDEPEND="
 			)
 		)
 		nccl? (
-			sci-libs/nccl
+			dev-libs/nccl
 		)
 		dev-util/nvidia-cuda-toolkit:=
 		dev-libs/cudnn:=
