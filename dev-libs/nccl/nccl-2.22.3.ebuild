@@ -51,7 +51,7 @@ SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 test
-ebuild-revision-1
+ebuild-revision-2
 "
 REQUIRED_USE="
 	|| (
@@ -236,11 +236,11 @@ eerror "Unsupported cuda version."
 }
 
 src_compile() {
+	INSTALL_LIBDIR="$(get_libdir)" \
+	PREFIX="/usr" \
 	emake
 	pushd "${S_TESTS}" || die
 		export NCCL_HOME="${S}/build"
-		INSTALL_LIBDIR="$(get_libdir)" \
-		PREFIX="/usr" \
 		emake
 	popd
 }
