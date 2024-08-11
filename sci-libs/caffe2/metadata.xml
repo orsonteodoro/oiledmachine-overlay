@@ -11,6 +11,23 @@
     <email>telans@posteo.de</email>
     <name>James Beddek</name>
   </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Footnotes:
+
+  [1] QNNPACK, FBGEMM, oneDNN differences are listed in here.
+  [2] x86 quantization is optimized/evaluated situationally based on either FBGEMM or oneDNN.
+  [3] Reassurance that gloo is not optimized for GPU.
+
+  Sources:
+
+  [1] https://pytorch.org/docs/stable/quantization.html
+  [2] https://github.com/pytorch/pytorch/issues/83888
+  [3] https://pytorch.org/docs/stable/distributed.html
+
+  -->
   <use>
     <flag name="cuda">
       Add support for CUDA® processing
