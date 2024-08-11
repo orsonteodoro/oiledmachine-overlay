@@ -51,7 +51,7 @@ SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 test
-ebuild-revision-0
+ebuild-revision-1
 "
 REQUIRED_USE="
 	|| (
@@ -239,6 +239,8 @@ src_compile() {
 	emake
 	pushd "${S_TESTS}" || die
 		export NCCL_HOME="${S}/build"
+		INSTALL_LIBDIR="$(get_libdir)" \
+		PREFIX="/usr" \
 		emake
 	popd
 }
