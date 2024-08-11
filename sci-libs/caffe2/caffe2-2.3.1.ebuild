@@ -53,8 +53,9 @@ AMDGPU_TARGETS_UNTESTED=(
 	gfx904
 #	gfx906
 	gfx908
-	gfx90a
+#	gfx90a # MI210
 	gfx90c
+	 gfx942
 	gfx1010
 	gfx1011
 	gfx1012
