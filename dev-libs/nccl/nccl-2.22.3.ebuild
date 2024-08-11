@@ -88,7 +88,23 @@ RDEPEND="
 			=dev-util/nvidia-cuda-toolkit-11.8*
 		)
 	)
+	cuda_targets_sm_61_ptx? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12.5*
+			=dev-util/nvidia-cuda-toolkit-12.4*
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
+	)
 	cuda_targets_sm_70? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12.5*
+			=dev-util/nvidia-cuda-toolkit-12.4*
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
+	)
+	cuda_targets_sm_70_ptx? (
 		|| (
 			=dev-util/nvidia-cuda-toolkit-12.5*
 			=dev-util/nvidia-cuda-toolkit-12.4*
@@ -104,7 +120,23 @@ RDEPEND="
 			=dev-util/nvidia-cuda-toolkit-11.8*
 		)
 	)
+	cuda_targets_sm_80_ptx? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12.5*
+			=dev-util/nvidia-cuda-toolkit-12.4*
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
+	)
 	cuda_targets_sm_90? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12.5*
+			=dev-util/nvidia-cuda-toolkit-12.4*
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
+	)
+	cuda_targets_sm_90_ptx? (
 		|| (
 			=dev-util/nvidia-cuda-toolkit-12.5*
 			=dev-util/nvidia-cuda-toolkit-12.4*
