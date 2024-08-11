@@ -31,6 +31,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE+=" ebuild-revision-4"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+	sys-apps/pciutils
 "
 DEPEND="
 	${RDEPEND}
