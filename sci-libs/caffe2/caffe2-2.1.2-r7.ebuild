@@ -4,10 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# aotriton
-# nccl
-
 # This package is a misnomer.  This is the non-python portions of pytorch.
 
 # For requirements, see
@@ -460,6 +456,14 @@ REQUIRED_USE="
 	ffmpeg? (
 		opencv
 	)
+	flash-attention? (
+		cuda? (
+			|| (
+				cuda_targets_sm_80
+				cuda_targets_sm_90
+			)
+		)
+	)
 	gloo? (
 		distributed
 	)
@@ -517,6 +521,9 @@ gen_rocm_depends() {
 				~sci-libs/rocRAND-${pv}:${s}$(get_rocm_usedep ROCRAND)
 				~sci-libs/rocPRIM-${pv}:${s}$(get_rocm_usedep ROCPRIM)
 				~sci-libs/rocThrust-${pv}:${s}$(get_rocm_usedep ROCTHRUST)
+				flash-attention? (
+					sci-libs/aiotriton:${s}
+				)
 				magma? (
 					=sci-libs/magma-2.7*:${s}$(get_rocm_usedep MAGMA_2_7)
 				)

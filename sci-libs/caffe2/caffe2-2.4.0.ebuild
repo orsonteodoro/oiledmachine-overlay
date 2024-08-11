@@ -4,9 +4,11 @@
 
 EAPI=8
 
-# TODO package:
-# aotriton
-# nccl
+# TODO SRC_URI:
+#   opentelemetry-cpp deps need to be added to SRC_URI
+
+# TODO patch:
+#   Make cmake/External/aotriton.cmake use unpacked folder.
 
 # This package is a misnomer.  This is the non-python portions of pytorch.
 
@@ -14,6 +16,8 @@ EAPI=8
 # https://github.com/pytorch/pytorch/blob/v2.4.0/RELEASE.md?plain=1#L49
 # https://github.com/pytorch/pytorch/tree/v2.4.0/third_party
 # https://github.com/pytorch/pytorch/blob/v2.4.0/.ci/docker/common/install_rocm_magma.sh#L10 for magma
+# https://github.com/pytorch/pytorch/blob/v2.4.0/cmake/External/aotriton.cmake
+#   https://github.com/pytorch/pytorch/blob/v2.4.0/.ci/docker/aotriton_version.txt
 
 AMDGPU_TARGETS_COMPAT=(
 # Based on rocm_agent_enumerator
@@ -29,6 +33,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx908
 	gfx90a
 	gfx90c
+	 gfx942 # Suggested by aotriton for flash-attention, but not listed in rocm_agent_enumerator
 	gfx1010
 	gfx1011
 	gfx1012
@@ -65,10 +70,13 @@ AMDGPU_TARGETS_UNTESTED=(
 	gfx1034
 	gfx1035
 )
+AOTRITON_COMMIT="04b5df8c8123f90cba3ede7e971e6fbc6040d506"
 ASMJIT_COMMIT="d3fbf7c9bc7c1d1365a94a45614b91c5a3706b81" # fbgemm dep
 BENCHMARK_COMMIT_1="0d98dba29d66e93259db7daa53a9327df767a415"
 BENCHMARK_COMMIT_2="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8" # protobuf dep
 BENCHMARK_COMMIT_3="2dd015dfef425c866d9a43f2c67d8b52d709acb6" # onnx dep
+BENCHMARK_COMMIT_5="d572f4777349d43653b21d6c2fc63020ab326db2"
+CIVETWEB_COMMIT="eefb26f82b233268fc98577d265352720d477ba4"
 CPP_HTTPLIB_COMMIT="3b6597bba913d51161383657829b7e644e59c006"
 CPR_COMMIT="871ed52d350214a034f6ef8a3b8f51c5ce1bd400" # dynolog dep
 CPUINFO_COMMIT_1="d6860c477c99f1fce9e28eb206891af3c0e1a1d7"
@@ -113,10 +121,14 @@ GOOGLETEST_COMMIT_3="518387203b573f35477fa6872dd54620e70d2bdb" # kineto dep ; co
 GOOGLETEST_COMMIT_4="58d77fa8070e8cec2dc1ed015d66b454c8d78850" # dynolog dep
 GOOGLETEST_COMMIT_5="cbf019de22c8dd37b2108da35b2748fd702d1796" # fbgemm dep
 GOOGLETEST_COMMIT_6="aee0f9d9b5b87796ee8a0ab26b7587ec30e8858e" # tensorpipe dep
+GOOGLETEST_COMMIT_7="b796f7d44681514f58a683a3a71ff17c94edb0c1"
+GOOGLETEST_COMMIT_8="e2239ee6043f73722e7aa812a459f54a28552929"
+GSL_COMMIT="6f4529395c5b7c2d661812257cd6780c67e54afa"
 EIGEN_COMMIT="3147391d946bb4b6c68edd901f2add6ac1f31f8c"
 FBGEMM_COMMIT="dbc3157bf256f1339b3fa1fef2be89ac4078be0e"
 HIPIFY_TORCH_COMMIT="23f53b025b466d8ec3c45d52290d3442f7fbe6b1" # fbgemm dep
 IDEEP_COMMIT="55ca0191687aaf19aca5cdb7881c791e3bea442b"
+INCBIN_COMMIT="6e576cae5ab5810f25e2631f2e0b80cbe7dc8cbf" # aotriton dep
 ITTAPI_COMMIT="5b8a7d7422611c3a0d799fb5fc5dd4abfae35b42"
 KINETO_COMMIT="be1317644c68b4bfc4646024a6b221066e430031"
 LIBNOP_COMMIT="910b55815be16109f04f4180e9adee14fb4ce281" # tensorpipe dep
@@ -131,17 +143,23 @@ MYPN="pytorch"
 MYP="${MYPN}-${PV}"
 NLOHMANN_COMMIT_1="87cda1d6646592ac5866dc703c8e1839046a6806"
 NLOHMANN_COMMIT_2="4f8fba14066156b73f1189a2b8bd568bde5284c5" # dynolog dep
+NLOHMANN_COMMIT_3="bc889afb4c5bf1c0d8ee29ef35eaaf4c8bef8a5d"
 NNPACK_COMMIT="c07e3a0400713d546e0dea2d5466dd22ea389c73"
 ONNX_COMMIT_1="990217f043af7222348ca8f0301e17fa7b841781"
+OPENTELEMETRY_CPP_COMMIT="a799f4aed9c94b765dcdaabaeab7d5e7e2310878"
+OPENTELEMETRY_PROTO_COMMIT="4ca4f0335c63cda7ab31ea7ed70d6553aee14dce"
+OPENTRACING_CPP_COMMIT="06b57f48ded1fa3bdd3d4346f6ef29e40e08eaf5"
 PEACHPY_COMMIT="f45429b087dd7d5bc78bb40dc7cf06425c252d67"
 PFS_COMMIT="f68a2fa8ea36c783bdd760371411fcb495aa3150" # dynolog dep
 POCKETFFT_COMMIT="9d3ab05a7fffbc71a492bc6a17be034e83e8f0fe"
+PROMETHEUS_CPP_COMMIT="c9ffcdda9086ffd9e1283ea7a0276d831f3c8a8d"
 PROTOBUF_COMMIT="d1eca4e4b421cd2997495c4b4e65cea6be4e9b8a"
 PSIMD_COMMIT="072586a71b55b7f8c584153d223e95687148a900"
 PTHREADPOOL_COMMIT="4fe0e1e183925bf8cfa6aae24237e724a96479b8"
 PYBIND11_COMMIT_1="3e9dfa2866941655c56877882565e7577de6fc7b"
 PYBIND11_COMMIT_2="5b0a6fc2017fcc176545afe3e09c9f9885283242" # onnx dep
 PYBIND11_COMMIT_4="a23996fce38ff6ccfbcdc09f1e63f2c4be5ea2ef" # tensorpipe dep
+PYBIND11_COMMIT_5="8a099e44b3d5f85b20f05828d919d2332a8de841" # aotriton dep
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
 inherit hip-versions
 ROCM_SLOTS=(
@@ -160,9 +178,10 @@ gen_rocm_slots() {
 ROCM_SLOTS2=( $(gen_rocm_slots) )
 SLEEF_COMMIT="60e76d2bce17d278b439d9da17177c8f957a9e9b"
 TENSORPIPE_COMMIT="52791a2fd214b2a9dc5759d36725909c1daa7f2e"
+TRITON_COMMIT="9b73a543a5545960bcaf2830900b0560eec443c5" # aotriton dep
+TRITON_SHARED_COMMIT="450e6be65f99a0b15fd130892594b85e0897574c" # aotriton/third_party/triton dep
 VULKANMEMORYALLOCATOR_COMMIT="a6bfc237255a6bac1513f7c1ebde6d8aed6b5191"
 XNNPACK_COMMIT="fcbf55af6cf28a4627bcd1f703ab7ad843f0f3a2"
-
 
 inherit cmake cuda dep-prepare flag-o-matic llvm rocm python-single-r1
 
@@ -174,6 +193,8 @@ https://github.com/pytorch/${MYPN}/archive/refs/tags/v${PV}.tar.gz
 	!system-libs? (
 https://github.com/asmjit/asmjit/archive/${ASMJIT_COMMIT}.tar.gz
 	-> asmjit-${ASMJIT_COMMIT:0:7}.tar.gz
+https://github.com/civetweb/civetweb/archive/${CIVETWEB_COMMIT}.tar.gz
+	-> civetweb-${CIVETWEB_COMMIT:0:7}.tar.gz
 https://github.com/dtrugman/pfs/archive/${PFS_COMMIT}.tar.gz
 	-> pfs-${PFS_COMMIT:0:7}.tar.gz
 https://github.com/facebookincubator/dynolog/archive/${DYNOLOG_COMMIT}.tar.gz
@@ -192,6 +213,8 @@ https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_2}.tar.gz
 	-> benchmark-${BENCHMARK_COMMIT_2:0:7}.tar.gz
 https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_3}.tar.gz
 	-> benchmark-${BENCHMARK_COMMIT_3:0:7}.tar.gz
+https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_5}.tar.gz
+	-> benchmark-${BENCHMARK_COMMIT_5:0:7}.tar.gz
 https://github.com/google/flatbuffers/archive/${FLATBUFFERS_COMMIT}.tar.gz
 	-> flatbuffers-${FLATBUFFERS_COMMIT:0:7}.tar.gz
 https://github.com/gflags/gflags/archive/${GFLAGS_COMMIT}.tar.gz
@@ -212,18 +235,26 @@ https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_5}.tar.gz
 	-> googletest-${GOOGLETEST_COMMIT_5:0:7}.tar.gz
 https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_6}.tar.gz
 	-> googletest-${GOOGLETEST_COMMIT_6:0:7}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_7}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_7:0:7}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_8}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_8:0:7}.tar.gz
 https://github.com/google/libnop/archive/${LIBNOP_COMMIT}.tar.gz
 	-> libnop-${LIBNOP_COMMIT:0:7}.tar.gz
 https://github.com/google/XNNPACK/archive/${XNNPACK_COMMIT}.tar.gz
 	-> XNNPACK-${XNNPACK_COMMIT:0:7}.tar.gz
 https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archive/${VULKANMEMORYALLOCATOR_COMMIT}.tar.gz
 	-> VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_COMMIT:0:7}.tar.gz
+https://github.com/graphitemaster/incbin/archive/${INCBIN_COMMIT}.tar.gz
+	-> incbin-${INCBIN_COMMIT:0:7}.tar.gz
 https://github.com/houseroad/foxi/archive/${FOXI_COMMIT}.tar.gz
 	-> foxi-${FOXI_COMMIT:0:7}.tar.gz
 https://github.com/intel/ideep/archive/${IDEEP_COMMIT}.tar.gz
 	-> ideep-${IDEEP_COMMIT:0:7}.tar.gz
 https://github.com/intel/ittapi/archive/${ITTAPI_COMMIT}.tar.gz
 	-> ittapi-${ITTAPI_COMMIT:0:7}.tar.gz
+https://github.com/jupp0r/prometheus-cpp/archive/${PROMETHEUS_CPP_COMMIT}.tar.gz
+	-> prometheus-cpp-${PROMETHEUS_CPP_COMMIT:0:7}.tar.gz
 https://github.com/libcpr/cpr/archive/${CPR_COMMIT}.tar.gz
 	-> cpr-${CPR_COMMIT:0:7}.tar.gz
 https://github.com/libuv/libuv/archive/${LIBUV_COMMIT}.tar.gz
@@ -240,14 +271,20 @@ https://github.com/Maratyszcza/psimd/archive/${PSIMD_COMMIT}.tar.gz
 	-> psimd-${PSIMD_COMMIT:0:7}.tar.gz
 https://github.com/Maratyszcza/pthreadpool/archive/${PTHREADPOOL_COMMIT}.tar.gz
 	-> pthreadpool-${PTHREADPOOL_COMMIT:0:7}.tar.gz
+https://github.com/microsoft/GSL/archive/${GSL_COMMIT}.tar.gz
+	-> GSL-${GSL_COMMIT:0:7}.tar.gz
 https://github.com/microsoft/mimalloc/archive/${MIMALLOC_COMMIT}.tar.gz
 	-> mimalloc-${MIMALLOC_COMMIT:0:7}.tar.gz
+https://github.com/microsoft/triton-shared/archive/${TRITON_SHARED_COMMIT}.tar.gz
+	-> triton-shared-${TRITON_SHARED_COMMIT:0:7}.tar.gz
 https://github.com/mreineck/pocketfft/archive/${POCKETFFT_COMMIT}.tar.gz
 	-> pocketfft-${POCKETFFT_COMMIT:0:7}.tar.gz
 https://github.com/nlohmann/json/archive/${NLOHMANN_COMMIT_1}.tar.gz
 	-> nlohmann-json-${NLOHMANN_COMMIT_1:0:7}.tar.gz
 https://github.com/nlohmann/json/archive/${NLOHMANN_COMMIT_2}.tar.gz
 	-> nlohmann-json-${NLOHMANN_COMMIT_2:0:7}.tar.gz
+https://github.com/nlohmann/json/archive/${NLOHMANN_COMMIT_3}.tar.gz
+	-> nlohmann-json-${NLOHMANN_COMMIT_3:0:7}.tar.gz
 https://github.com/NVIDIA/cudnn-frontend/archive/${CUDNN_FRONTEND_COMMIT}.tar.gz
 	-> cudnn-frontend-${CUDNN_FRONTEND_COMMIT:0:7}.tar.gz
 https://github.com/NVIDIA/cutlass/archive/${CUTLASS_COMMIT_1}.tar.gz
@@ -260,6 +297,12 @@ https://github.com/oneapi-src/oneDNN/archive/${MKL_DNN_COMMIT}.tar.gz
 	-> oneDNN-${MKL_DNN_COMMIT:0:7}.tar.gz
 https://github.com/onnx/onnx/archive/${ONNX_COMMIT_1}.tar.gz
 	-> onnx-${ONNX_COMMIT_1:0:7}.tar.gz
+https://github.com/open-telemetry/opentelemetry-cpp/archive/${OPENTELEMETRY_CPP_COMMIT}.tar.gz
+	-> opentelemetry-cpp-${OPENTELEMETRY_CPP_COMMIT:0:7}.tar.gz
+https://github.com/open-telemetry/opentelemetry-proto/archive/${OPENTELEMETRY_PROTO_COMMIT}.tar.gz
+	-> opentelemetry-proto-${OPENTELEMETRY_PROTO_COMMIT:0:7}.tar.gz
+https://github.com/opentracing/opentracing-cpp/archive/${OPENTRACING_CPP_COMMIT}.tar.gz
+	-> opentracing-cpp-${OPENTRACING_CPP_COMMIT:0:7}.tar.gz
 https://github.com/protocolbuffers/protobuf/archive/${PROTOBUF_COMMIT}.tar.gz
 	-> protobuf-${PROTOBUF_COMMIT:0:7}.tar.gz
 https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_1}.tar.gz
@@ -268,6 +311,8 @@ https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_2}.tar.gz
 	-> pybind11-${PYBIND11_COMMIT_2:0:7}.tar.gz
 https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_4}.tar.gz
 	-> pybind11-${PYBIND11_COMMIT_4:0:7}.tar.gz
+https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_5}.tar.gz
+	-> pybind11-${PYBIND11_COMMIT_5:0:7}.tar.gz
 https://github.com/pytorch/cpuinfo/archive/${CPUINFO_COMMIT_1}.tar.gz
 	-> pytorch-cpuinfo-${CPUINFO_COMMIT_1:0:7}.tar.gz
 https://github.com/pytorch/cpuinfo/archive/${CPUINFO_COMMIT_2}.tar.gz
@@ -278,14 +323,24 @@ https://github.com/pytorch/kineto/archive/${KINETO_COMMIT}.tar.gz
 	-> kineto-${KINETO_COMMIT:0:7}.tar.gz
 https://github.com/pytorch/tensorpipe/archive/${TENSORPIPE_COMMIT}.tar.gz
 	-> tensorpipe-${TENSORPIPE_COMMIT:0:7}.tar.gz
+https://github.com/ROCm/aotriton/archive/${AOTRITON_COMMIT}.tar.gz
+	-> aotriton-${AOTRITON_COMMIT:0:7}.tar.gz
 https://github.com/ROCm/hipify_torch/archive/${HIPIFY_TORCH_COMMIT}.tar.gz
 	-> hipify_torch-${HIPIFY_TORCH_COMMIT:0:7}.tar.gz
+https://github.com/ROCm/triton/archive/${TRITON_COMMIT}.tar.gz
+	-> ROCm-triton-${TRITON_COMMIT:0:7}.tar.gz
 https://github.com/shibatch/sleef/archive/${SLEEF_COMMIT}.tar.gz
 	-> sleef-${SLEEF_COMMIT:0:7}.tar.gz
 https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_COMMIT}/eigen-${EIGEN_COMMIT}.tar.gz
 	-> eigen-${EIGEN_COMMIT:0:7}.tar.gz
 https://github.com/yhirose/cpp-httplib/archive/${CPP_HTTPLIB_COMMIT}.tar.gz
 	-> cpp-httplib-${CPP_HTTPLIB_COMMIT:0:7}.tar.gz
+
+
+
+
+
+
 	)
 "
 
@@ -408,6 +463,12 @@ REQUIRED_USE="
 		cuda
 		rocm
 	)
+	amdgpu_targets_gfx942? (
+		|| (
+			rocm_6_0
+			rocm_6_1
+		)
+	)
 	cuda? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -420,6 +481,20 @@ REQUIRED_USE="
 			nccl
 			rccl
 			tensorpipe
+		)
+	)
+	flash-attention? (
+		cuda? (
+			|| (
+				cuda_targets_sm_80
+				cuda_targets_sm_90
+			)
+		)
+		rocm? (
+			|| (
+				amdgpu_targets_gfx90a
+				amdgpu_targets_gfx942
+			)
 		)
 	)
 	gloo? (
@@ -714,11 +789,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.4.0-fix-openmp-link.patch"
 	"${FILESDIR}/${PN}-2.4.0-rocm-fix-std-cpp17.patch"
 	"${FILESDIR}/${PN}-2.2.2-musl.patch"
-	"${FILESDIR}/${PN}-2.4.0-exclude-aotriton.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-rocm-gcc14-clamp.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-libcpp.patch"
-	"${FILESDIR}/${PN}-2.4.0-rocm-hardcoded-paths.patch"
-	"${FILESDIR}/${PN}-2.4.0-cuda-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
@@ -757,12 +829,18 @@ pkg_setup() {
 
 src_prepare() {
 	if use system-libs ; then
+		eapply "${FILESDIR}/${PN}-2.4.0-exclude-aotriton.patch"
 		eapply "${FILESDIR}/${PN}-1.13.1-tensorpipe.patch"
 		sed -i \
 			-e "/third_party\/gloo/d" \
 			"cmake/Dependencies.cmake" \
 			|| die
 	else
+		dep_prepare_mv "${WORKDIR}/aotriton-${AOTRITON_COMMIT}" "${S}/third_party/aotriton"
+		dep_prepare_mv "${WORKDIR}/incbin-${INCBIN_COMMIT}" "${S}/third_party/aotriton/third_party/incbin"
+		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_5}" "${S}/third_party/aotriton/third_party/pybind11"
+		dep_prepare_mv "${WORKDIR}/triton-${TRITON_COMMIT}" "${S}/third_party/aotriton/third_party/triton"
+
 		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/third_party/benchmark"
 		dep_prepare_mv "${WORKDIR}/cpp-httplib-${CPP_HTTPLIB_COMMIT}" "${S}/third_party/cpp-httplib"
 		dep_prepare_mv "${WORKDIR}/cpuinfo-${CPUINFO_COMMIT_1}" "${S}/third_party/cpuinfo"
@@ -813,6 +891,17 @@ src_prepare() {
 		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_3}" "${S}/third_party/onnx/third_party/benchmark"
 		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2}" "${S}/third_party/onnx/third_party/pybind11"
 
+		dep_prepare_mv "${WORKDIR}/opentelemetry-cpp-${OPENTELEMETRY_CPP_COMMIT}" "${S}/third_party/opentelemetry-cpp"
+		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_5}" "${S}/third_party/opentelemetry-cpp/third_party/benchmark"
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_7}" "${S}/third_party/opentelemetry-cpp/third_party/googletest"
+		dep_prepare_mv "${WORKDIR}/GSL-${GSL_COMMIT}" "${S}/third_party/opentelemetry-cpp/third_party/ms-gsl"
+		dep_prepare_mv "${WORKDIR}/json-${NLOHMANN_COMMIT_3}" "${S}/third_party/opentelemetry-cpp/third_party/nlohmann-json"
+		dep_prepare_mv "${WORKDIR}/opentelemetry-proto-${OPENTELEMETRY_PROTO_COMMIT}" "${S}/third_party/opentelemetry-cpp/third_party/opentelemetry-proto"
+		dep_prepare_mv "${WORKDIR}/opentracing-cpp-${OPENTRACING_CPP_COMMIT}" "${S}/third_party/opentelemetry-cpp/third_party/opentracing-cpp"
+		dep_prepare_mv "${WORKDIR}/prometheus-cpp-${PROMETHEUS_CPP_COMMIT}" "${S}/third_party/opentelemetry-cpp/third_party/prometheus-cpp"
+		dep_prepare_mv "${WORKDIR}/civetweb-${CIVETWEB_COMMIT}" "${S}/third_party/opentelemetry-cpp/third_party/prometheus-cpp/3rdparty/civetweb"
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_8}" "${S}/third_party/opentelemetry-cpp/third_party/prometheus-cpp/3rdparty/googletest"
+
 		dep_prepare_mv "${WORKDIR}/PeachPy-${PEACHPY_COMMIT}" "${S}/third_party/python-peachpy"
 		dep_prepare_mv "${WORKDIR}/pocketfft-${POCKETFFT_COMMIT}" "${S}/third_party/pocketfft"
 
@@ -836,6 +925,13 @@ src_prepare() {
 	fi
 	filter-lto #bug 862672
 	cmake_src_prepare
+	if use system-libs ; then
+		eapply "${FILESDIR}/caffe2-2.4.0-cuda-hardcoded-paths.patch"
+		eapply "${FILESDIR}/caffe2-2.4.0-rocm-hardcoded-paths.patch"
+	else
+		eapply "${FILESDIR}/caffe2-2.4.0-cuda-hardcoded-paths-alt.patch"
+		eapply "${FILESDIR}/caffe2-2.4.0-rocm-hardcoded-paths-alt.patch"
+	fi
 	pushd torch/csrc/jit/serialization >/dev/null 2>&1 || die
 		flatc \
 			--cpp \
@@ -916,7 +1012,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DUSE_DISTRIBUTED=$(usex distributed)
 		-DUSE_FAKELOWP=OFF
 		-DUSE_FBGEMM=$(usex fbgemm)
-		-DUSE_FLASH_ATTENTION=$(usex flash-attention $(usex cuda ON $(usex rocm OFF OFF) OFF) OFF)
+		-DUSE_FLASH_ATTENTION=$(usex flash-attention $(usex cuda ON $(usex rocm OFF OFF) OFF) OFF) # Will enable for rocm after aotriton.cmake is patched.
 		-DUSE_GFLAGS=ON
 		-DUSE_GLOG=ON
 		-DUSE_GLOO=$(usex gloo)

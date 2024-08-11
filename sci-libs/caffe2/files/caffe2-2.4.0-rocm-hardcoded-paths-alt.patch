@@ -1,0 +1,331 @@
+diff '--color=auto' -urp pytorch-2.4.0.orig/caffe2/CMakeLists.txt pytorch-2.4.0/caffe2/CMakeLists.txt
+--- pytorch-2.4.0.orig/caffe2/CMakeLists.txt	2024-08-10 21:17:35.403501346 -0700
++++ pytorch-2.4.0/caffe2/CMakeLists.txt	2024-08-10 21:21:39.363408863 -0700
+@@ -1307,7 +1307,7 @@ if(USE_ROCM)
+     set(ROCM_SOURCE_DIR "$ENV{ROCM_SOURCE_DIR}")
+   endif()
+   if($ROCM_SOURCE_DIR STREQUAL "")
+-    set(ROCM_SOURCE_DIR "/opt/rocm")
++    set(ROCM_SOURCE_DIR "/opt/rocm-@ROCM_VERSION@")
+   endif()
+   message(INFO "caffe2 ROCM_SOURCE_DIR = ${ROCM_SOURCE_DIR}")
+   target_include_directories(torch_hip PRIVATE
+diff '--color=auto' -urp pytorch-2.4.0.orig/cmake/Dependencies.cmake pytorch-2.4.0/cmake/Dependencies.cmake
+--- pytorch-2.4.0.orig/cmake/Dependencies.cmake	2024-08-10 21:17:35.403501346 -0700
++++ pytorch-2.4.0/cmake/Dependencies.cmake	2024-08-10 21:21:55.363140474 -0700
+@@ -1651,7 +1651,7 @@ if(USE_KINETO)
+ 
+   if(NOT LIBKINETO_NOROCTRACER)
+     if("$ENV{ROCM_SOURCE_DIR}" STREQUAL "")
+-      set(ENV{ROCM_SOURCE_DIR} "/opt/rocm")
++      set(ENV{ROCM_SOURCE_DIR} "/opt/rocm-@ROCM_VERSION@")
+     endif()
+   endif()
+ 
+diff '--color=auto' -urp pytorch-2.4.0.orig/cmake/public/LoadHIP.cmake pytorch-2.4.0/cmake/public/LoadHIP.cmake
+--- pytorch-2.4.0.orig/cmake/public/LoadHIP.cmake	2024-07-09 11:17:43.000000000 -0700
++++ pytorch-2.4.0/cmake/public/LoadHIP.cmake	2024-08-10 21:22:02.351023255 -0700
+@@ -1,7 +1,7 @@
+ set(PYTORCH_FOUND_HIP FALSE)
+ 
+ if(NOT DEFINED ENV{ROCM_PATH})
+-  set(ROCM_PATH /opt/rocm)
++  set(ROCM_PATH /opt/rocm-@ROCM_VERSION@)
+ else()
+   set(ROCM_PATH $ENV{ROCM_PATH})
+ endif()
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/FBGEMM/fbgemm_gpu/CMakeLists.txt pytorch-2.4.0/third_party/FBGEMM/fbgemm_gpu/CMakeLists.txt
+--- pytorch-2.4.0.orig/third_party/FBGEMM/fbgemm_gpu/CMakeLists.txt	2023-12-04 14:00:48.000000000 -0800
++++ pytorch-2.4.0/third_party/FBGEMM/fbgemm_gpu/CMakeLists.txt	2024-08-10 21:24:10.092880474 -0700
+@@ -31,7 +31,7 @@ set(THIRDPARTY ${FBGEMM}/third_party)
+ option(FBGEMM_CPU_ONLY  "Build FBGEMM_GPU without GPU support" OFF)
+ option(USE_ROCM         "Build FBGEMM_GPU for ROCm" OFF)
+ 
+-if(((EXISTS "/opt/rocm/") OR (EXISTS $ENV{ROCM_PATH}))
++if(((EXISTS "/opt/rocm-@ROCM_VERSION@/") OR (EXISTS $ENV{ROCM_PATH}))
+    AND NOT (EXISTS "/bin/nvcc"))
+   message("AMD GPU detected; setting to ROCm build")
+   set(USE_ROCM ON)
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/FBGEMM/fbgemm_gpu/cmake/Hip.cmake pytorch-2.4.0/third_party/FBGEMM/fbgemm_gpu/cmake/Hip.cmake
+--- pytorch-2.4.0.orig/third_party/FBGEMM/fbgemm_gpu/cmake/Hip.cmake	2023-12-04 14:00:48.000000000 -0800
++++ pytorch-2.4.0/third_party/FBGEMM/fbgemm_gpu/cmake/Hip.cmake	2024-08-10 21:24:23.608653760 -0700
+@@ -7,7 +7,7 @@
+ set(FBGEMM_HAVE_HIP FALSE)
+ 
+ if(NOT DEFINED ENV{ROCM_PATH})
+-  set(ROCM_PATH /opt/rocm)
++  set(ROCM_PATH /opt/rocm-@ROCM_VERSION@)
+ else()
+   set(ROCM_PATH $ENV{ROCM_PATH})
+ endif()
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/aotriton/CMakeLists.txt pytorch-2.4.0/third_party/aotriton/CMakeLists.txt
+--- pytorch-2.4.0.orig/third_party/aotriton/CMakeLists.txt	2024-06-03 13:21:28.000000000 -0700
++++ pytorch-2.4.0/third_party/aotriton/CMakeLists.txt	2024-08-10 21:22:50.542214873 -0700
+@@ -16,7 +16,7 @@ option(AOTRITON_NO_SHARED "Disable share
+ option(AOTRITON_NO_PYTHON "Disable python binding build" OFF)
+ option(AOTRITON_ENABLE_ASAN "Enable Address Sanitizer. Implies -g" OFF)
+ set(TARGET_GPUS "MI200;MI300X" CACHE STRING "Target Architecture (Note here uses Trade names)")
+-set(AMDHSA_LD_PRELOAD "/opt/rocm/lib/libhsa-runtime64.so" CACHE STRING "Workaround of libamdhip64.so.5: undefined symbol: hsa_amd_memory_async_copy_on_engine")
++set(AMDHSA_LD_PRELOAD "/opt/rocm-@ROCM_VERSION@/lib/libhsa-runtime64.so" CACHE STRING "Workaround of libamdhip64.so.5: undefined symbol: hsa_amd_memory_async_copy_on_engine")
+ 
+ # GPU kernel compression related options
+ option(AOTRITON_COMPRESS_KERNEL "Enable GPU kernel compression with zstd. Fail when zstd is unavailable. Only effective for AOTriton API V2" ON)
+@@ -49,7 +49,7 @@ if(AOTRITON_COMPRESS_KERNEL)
+     endif()
+ endif()
+ 
+-set(AOTRITON_EXTRA_COMPILER_OPTIONS "-I/opt/rocm/include/ ")
++set(AOTRITON_EXTRA_COMPILER_OPTIONS "-I/opt/rocm-@ROCM_VERSION@/include/ ")
+ if(AOTRITON_ENABLE_ASAN)
+     set(AOTRITON_EXTRA_COMPILER_OPTIONS "${AOTRITON_EXTRA_COMPILER_OPTIONS} -g -fsanitize=address -fno-omit-frame-pointer")
+     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${AOTRITON_EXTRA_COMPILER_OPTIONS}")
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/aotriton/python/compile.py pytorch-2.4.0/third_party/aotriton/python/compile.py
+--- pytorch-2.4.0.orig/third_party/aotriton/python/compile.py	2024-06-03 13:21:28.000000000 -0700
++++ pytorch-2.4.0/third_party/aotriton/python/compile.py	2024-08-10 21:23:55.241129598 -0700
+@@ -125,7 +125,7 @@ def main():
+         if args.nostrip:
+             shutil.copy(hsaco_path, out_path.with_suffix('.hsaco'))
+         else:
+-            subprocess.run(['/opt/rocm/llvm/bin/llvm-objcopy', '--remove-section', '.debug_*', str(hsaco_path), str(out_path.with_suffix('.hsaco'))])
++            subprocess.run(['/opt/rocm-@ROCM_VERSION@/llvm/bin/llvm-objcopy', '--remove-section', '.debug_*', str(hsaco_path), str(out_path.with_suffix('.hsaco'))])
+ 
+     with out_path.with_suffix('.json').open("w") as fp:
+         json.dump(ccinfo.metadata, fp, indent=2)
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/aotriton/python/generate.py pytorch-2.4.0/third_party/aotriton/python/generate.py
+--- pytorch-2.4.0.orig/third_party/aotriton/python/generate.py	2024-06-03 13:21:28.000000000 -0700
++++ pytorch-2.4.0/third_party/aotriton/python/generate.py	2024-08-10 21:24:03.592989504 -0700
+@@ -48,7 +48,7 @@ def main():
+     args = parse()
+     build_dir = Path(args.build_dir)
+     with open(build_dir / 'Makefile.compile', 'w') as f:
+-        print('LIBHSA_RUNTIME64=/opt/rocm/lib/libhsa-runtime64.so\n', file=f)
++        print('LIBHSA_RUNTIME64=/opt/rocm-@ROCM_VERSION@/lib/libhsa-runtime64.so\n', file=f)
+         makefile_content = io.StringIO()
+         per_kernel_targets = []
+         for k in rules.kernels:
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/aotriton/third_party/triton/CMakeLists.txt pytorch-2.4.0/third_party/aotriton/third_party/triton/CMakeLists.txt
+--- pytorch-2.4.0.orig/third_party/aotriton/third_party/triton/CMakeLists.txt	2024-03-29 12:41:35.000000000 -0700
++++ pytorch-2.4.0/third_party/aotriton/third_party/triton/CMakeLists.txt	2024-08-10 21:22:58.654078802 -0700
+@@ -35,7 +35,7 @@ set(TRITON_CODEGEN_BACKENDS "" CACHE STR
+ 
+ # Force TRITON_USE_ROCM for ROCm support
+ set(TRITON_USE_ROCM ON)
+-set(ROCM_DEFAULT_DIR "/opt/rocm")
++set(ROCM_DEFAULT_DIR "/opt/rocm-@ROCM_VERSION@")
+ add_definitions( -DROCM_DEFAULT_DIR="${ROCM_DEFAULT_DIR}")
+ 
+ # Ensure Python3 vars are set correctly
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/aotriton/third_party/triton/python/triton/common/build.py pytorch-2.4.0/third_party/aotriton/third_party/triton/python/triton/common/build.py
+--- pytorch-2.4.0.orig/third_party/aotriton/third_party/triton/python/triton/common/build.py	2024-03-29 12:41:35.000000000 -0700
++++ pytorch-2.4.0/third_party/aotriton/third_party/triton/python/triton/common/build.py	2024-08-10 21:23:17.097769421 -0700
+@@ -85,7 +85,7 @@ def rocm_path_dir():
+     if (os.path.exists(default_path+"/include/hip/hip_runtime.h")):
+         return default_path
+     else:
+-        return os.getenv("ROCM_PATH", default="/opt/rocm")
++        return os.getenv("ROCM_PATH", default="/opt/rocm-@ROCM_VERSION@")
+ 
+ 
+ @contextlib.contextmanager
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/aotriton/third_party/triton/python/triton/third_party/hip/CMakeLists.txt pytorch-2.4.0/third_party/aotriton/third_party/triton/python/triton/third_party/hip/CMakeLists.txt
+--- pytorch-2.4.0.orig/third_party/aotriton/third_party/triton/python/triton/third_party/hip/CMakeLists.txt	2024-03-29 12:41:35.000000000 -0700
++++ pytorch-2.4.0/third_party/aotriton/third_party/triton/python/triton/third_party/hip/CMakeLists.txt	2024-08-10 21:23:24.329648113 -0700
+@@ -2,7 +2,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_C
+ 
+ # FLAGS
+ message(STATUS "HIP_BACKEND_MODE = ${HIP_BACKEND_MODE}")
+-set(ROCM_DEFAULT_DIR "/opt/rocm")
++set(ROCM_DEFAULT_DIR "/opt/rocm-@ROCM_VERSION@")
+ add_definitions( -DROCM_DEFAULT_DIR="${ROCM_DEFAULT_DIR}")
+ set(ROCM_LIBRARIES
+   ${CMAKE_CURRENT_SOURCE_DIR}/lib/hsa/libhsa-runtime64.so
+@@ -106,4 +106,4 @@ if(TRITON_BUILD_PYTHON_MODULE)
+         DEPENDS ${HIP_BACKEND_PY_STAMP}
+         COMMENT "Checking and applying modifications to hip_backend.py"
+     )
+-endif()
+\ No newline at end of file
++endif()
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/aotriton/third_party/triton/python/triton/third_party/hip/lib/Target/HSACO/HSACOTranslation.cpp pytorch-2.4.0/third_party/aotriton/third_party/triton/python/triton/third_party/hip/lib/Target/HSACO/HSACOTranslation.cpp
+--- pytorch-2.4.0.orig/third_party/aotriton/third_party/triton/python/triton/third_party/hip/lib/Target/HSACO/HSACOTranslation.cpp	2024-03-29 12:41:35.000000000 -0700
++++ pytorch-2.4.0/third_party/aotriton/third_party/triton/python/triton/third_party/hip/lib/Target/HSACO/HSACOTranslation.cpp	2024-08-10 21:23:40.749372685 -0700
+@@ -221,7 +221,7 @@ std::string generate_hsaco(llvm::Module
+   std::string lld_path = compiletime_path.string();
+   if (!std::filesystem::exists(lld_path)) {
+     std::string rocm_path = ::triton::tools::getenv("ROCM_PATH");
+-    // auto ROCM_DEFAULT_DIR = "/opt/rocm";
++    // auto ROCM_DEFAULT_DIR = "/opt/rocm-@ROCM_VERSION@";
+     lld_path = (rocm_path.empty()) ? ROCM_DEFAULT_DIR : rocm_path;
+     lld_path += "/llvm/bin/ld.lld";
+   }
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/aotriton/third_party/triton/scripts/amd/setup_rocm_libs.sh pytorch-2.4.0/third_party/aotriton/third_party/triton/scripts/amd/setup_rocm_libs.sh
+--- pytorch-2.4.0.orig/third_party/aotriton/third_party/triton/scripts/amd/setup_rocm_libs.sh	2024-03-29 12:41:35.000000000 -0700
++++ pytorch-2.4.0/third_party/aotriton/third_party/triton/scripts/amd/setup_rocm_libs.sh	2024-08-10 21:23:10.877873756 -0700
+@@ -4,7 +4,7 @@ set -ex
+ 
+ # Set ROCM_HOME if not set
+ if [[ -z "${ROCM_HOME}" ]]; then
+-    export ROCM_HOME=/opt/rocm
++    export ROCM_HOME=/opt/rocm-@ROCM_VERSION@
+ fi
+ 
+ # Check TRITON_ROCM_DIR is set
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/aotriton/v2python/compile.py pytorch-2.4.0/third_party/aotriton/v2python/compile.py
+--- pytorch-2.4.0.orig/third_party/aotriton/v2python/compile.py	2024-06-03 13:21:28.000000000 -0700
++++ pytorch-2.4.0/third_party/aotriton/v2python/compile.py	2024-08-10 21:23:55.241129598 -0700
+@@ -125,7 +125,7 @@ def main():
+         if args.nostrip:
+             shutil.copy(hsaco_path, out_path.with_suffix('.hsaco'))
+         else:
+-            subprocess.run(['/opt/rocm/llvm/bin/llvm-objcopy', '--remove-section', '.debug_*', str(hsaco_path), str(out_path.with_suffix('.hsaco'))])
++            subprocess.run(['/opt/rocm-@ROCM_VERSION@/llvm/bin/llvm-objcopy', '--remove-section', '.debug_*', str(hsaco_path), str(out_path.with_suffix('.hsaco'))])
+ 
+     with out_path.with_suffix('.json').open("w") as fp:
+         json.dump(ccinfo.metadata, fp, indent=2)
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/aotriton/v2python/generate_compile.py pytorch-2.4.0/third_party/aotriton/v2python/generate_compile.py
+--- pytorch-2.4.0.orig/third_party/aotriton/v2python/generate_compile.py	2024-06-03 13:21:28.000000000 -0700
++++ pytorch-2.4.0/third_party/aotriton/v2python/generate_compile.py	2024-08-10 21:23:48.781237957 -0700
+@@ -75,7 +75,7 @@ def main():
+     fn = 'Bare.compile' if args.bare_mode else 'Makefile.compile'
+     with open(build_dir / fn, 'w') as f:
+         if not args.bare_mode:
+-            print('LIBHSA_RUNTIME64=/opt/rocm/lib/libhsa-runtime64.so\n', file=f)
++            print('LIBHSA_RUNTIME64=/opt/rocm-@ROCM_VERSION@/lib/libhsa-runtime64.so\n', file=f)
+         makefile_content = io.StringIO()
+         per_kernel_targets = []
+         for k in triton_kernels:
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/eigen/test/CMakeLists.txt pytorch-2.4.0/third_party/eigen/test/CMakeLists.txt
+--- pytorch-2.4.0.orig/third_party/eigen/test/CMakeLists.txt	2021-08-18 13:41:58.000000000 -0700
++++ pytorch-2.4.0/third_party/eigen/test/CMakeLists.txt	2024-08-10 21:22:30.654548477 -0700
+@@ -425,7 +425,7 @@ endif()
+ option(EIGEN_TEST_HIP "Add HIP support." OFF)
+ if (EIGEN_TEST_HIP)
+ 
+-  set(HIP_PATH "/opt/rocm/hip" CACHE STRING "Path to the HIP installation.")
++  set(HIP_PATH "/opt/rocm-@ROCM_VERSION@/hip" CACHE STRING "Path to the HIP installation.")
+ 
+   if (EXISTS ${HIP_PATH})
+     
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/eigen/unsupported/test/CMakeLists.txt pytorch-2.4.0/third_party/eigen/unsupported/test/CMakeLists.txt
+--- pytorch-2.4.0.orig/third_party/eigen/unsupported/test/CMakeLists.txt	2021-08-18 13:41:58.000000000 -0700
++++ pytorch-2.4.0/third_party/eigen/unsupported/test/CMakeLists.txt	2024-08-10 21:22:38.958409184 -0700
+@@ -362,7 +362,7 @@ endif()
+ # Add HIP specific tests
+ if (EIGEN_TEST_HIP)
+ 
+-  set(HIP_PATH "/opt/rocm/hip" CACHE STRING "Path to the HIP installation.")
++  set(HIP_PATH "/opt/rocm-@ROCM_VERSION@/hip" CACHE STRING "Path to the HIP installation.")
+ 
+   if (EXISTS ${HIP_PATH})
+ 
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/gloo/cmake/Hip.cmake pytorch-2.4.0/third_party/gloo/cmake/Hip.cmake
+--- pytorch-2.4.0.orig/third_party/gloo/cmake/Hip.cmake	2023-12-02 17:32:51.000000000 -0800
++++ pytorch-2.4.0/third_party/gloo/cmake/Hip.cmake	2024-08-10 21:22:14.046827063 -0700
+@@ -1,7 +1,7 @@
+ set(HAVE_HIP FALSE)
+ 
+ IF(NOT DEFINED ENV{ROCM_PATH})
+-  SET(ROCM_PATH /opt/rocm)
++  SET(ROCM_PATH /opt/rocm-@ROCM_VERSION@)
+ ELSE()
+   SET(ROCM_PATH $ENV{ROCM_PATH})
+ ENDIF()
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/gloo/cmake/Modules/Findrccl.cmake pytorch-2.4.0/third_party/gloo/cmake/Modules/Findrccl.cmake
+--- pytorch-2.4.0.orig/third_party/gloo/cmake/Modules/Findrccl.cmake	2023-12-02 17:32:51.000000000 -0800
++++ pytorch-2.4.0/third_party/gloo/cmake/Modules/Findrccl.cmake	2024-08-10 21:22:20.446719708 -0700
+@@ -17,7 +17,7 @@
+ if(DEFINED ENV{ROCM_PATH})
+     set(RCCL_ROOT_DIR $ENV{ROCM_PATH} CACHE PATH "Folder contains AMD RCCL")
+ else()
+-    set(RCCL_ROOT_DIR "/opt/rocm")
++    set(RCCL_ROOT_DIR "/opt/rocm-@ROCM_VERSION@")
+ endif()
+ 
+ find_path(RCCL_INCLUDE_DIR
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/ideep/mkl-dnn/cmake/FindHIP.cmake pytorch-2.4.0/third_party/ideep/mkl-dnn/cmake/FindHIP.cmake
+--- pytorch-2.4.0.orig/third_party/ideep/mkl-dnn/cmake/FindHIP.cmake	2024-05-10 14:39:30.000000000 -0700
++++ pytorch-2.4.0/third_party/ideep/mkl-dnn/cmake/FindHIP.cmake	2024-08-10 21:24:39.944379746 -0700
+@@ -20,8 +20,8 @@ find_package(Threads REQUIRED)
+ list(APPEND hip_root_hints
+             ${HIPROOT}
+             $ENV{HIPROOT}
+-            "/opt/rocm"
+-            "/opt/rocm/hip")
++            "/opt/rocm-@ROCM_VERSION@"
++            "/opt/rocm-@ROCM_VERSION@/hip")
+ 
+ find_path(
+     HIP_INCLUDE_DIR "hip/hip_runtime_api.h"
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/ideep/mkl-dnn/cmake/FindMIOpen.cmake pytorch-2.4.0/third_party/ideep/mkl-dnn/cmake/FindMIOpen.cmake
+--- pytorch-2.4.0.orig/third_party/ideep/mkl-dnn/cmake/FindMIOpen.cmake	2024-05-10 14:39:30.000000000 -0700
++++ pytorch-2.4.0/third_party/ideep/mkl-dnn/cmake/FindMIOpen.cmake	2024-08-10 21:24:52.812163904 -0700
+@@ -21,7 +21,7 @@ find_package(rocBLAS REQUIRED)
+ # Rely on the standard CMake config for amd_comgr as it doesn't add redundant
+ # dependencies.
+ find_package(amd_comgr REQUIRED CONFIG
+-    HINTS ${COMGRROOT}/lib/cmake $ENV{COMGRROOT}/lib/cmake /opt/rocm/lib/cmake
++    HINTS ${COMGRROOT}/lib/cmake $ENV{COMGRROOT}/lib/cmake /opt/rocm-@ROCM_VERSION@/lib/cmake
+ )
+ 
+ # amd_comgr target adds "${COMGRROOT}/include` directory that may contain
+@@ -36,8 +36,8 @@ list(APPEND EXTRA_SHARED_LIBS amd_comgr)
+ list(APPEND miopen_root_hints
+             ${MIOPENROOT}
+             $ENV{MIOPENROOT}
+-            "/opt/rocm"
+-            "/opt/rocm/miopen"
++            "/opt/rocm-@ROCM_VERSION@"
++            "/opt/rocm-@ROCM_VERSION@/miopen"
+ )
+ 
+ find_path(
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/ideep/mkl-dnn/cmake/FindrocBLAS.cmake pytorch-2.4.0/third_party/ideep/mkl-dnn/cmake/FindrocBLAS.cmake
+--- pytorch-2.4.0.orig/third_party/ideep/mkl-dnn/cmake/FindrocBLAS.cmake	2024-05-10 14:39:30.000000000 -0700
++++ pytorch-2.4.0/third_party/ideep/mkl-dnn/cmake/FindrocBLAS.cmake	2024-08-10 21:24:32.360506957 -0700
+@@ -21,8 +21,8 @@ find_package(Threads REQUIRED)
+ list(APPEND rocblas_root_hints
+             ${ROCBLASROOT}
+             $ENV{ROCBLASROOT}
+-            "/opt/rocm"
+-            "/opt/rocm/rocblas")
++            "/opt/rocm-@ROCM_VERSION@"
++            "/opt/rocm-@ROCM_VERSION@/rocblas")
+ 
+ find_path(
+     rocBLAS_INCLUDE_DIR "rocblas.h"
+diff '--color=auto' -urp pytorch-2.4.0.orig/tools/amd_build/build_amd.py pytorch-2.4.0/tools/amd_build/build_amd.py
+--- pytorch-2.4.0.orig/tools/amd_build/build_amd.py	2024-07-09 11:17:43.000000000 -0700
++++ pytorch-2.4.0/tools/amd_build/build_amd.py	2024-08-10 21:25:20.843693708 -0700
+@@ -144,7 +144,7 @@ ignores = [os.path.join(proj_dir, ignore
+ # Check if the compiler is hip-clang.
+ def is_hip_clang() -> bool:
+     try:
+-        hip_path = os.getenv("HIP_PATH", "/opt/rocm/hip")
++        hip_path = os.getenv("HIP_PATH", "/opt/rocm-@ROCM_VERSION@/hip")
+         with open(hip_path + "/lib/.hipInfo") as f:
+             return "HIP_COMPILER=clang" in f.read()
+     except OSError:
+diff '--color=auto' -urp pytorch-2.4.0.orig/tools/testing/test_selections.py pytorch-2.4.0/tools/testing/test_selections.py
+--- pytorch-2.4.0.orig/tools/testing/test_selections.py	2024-07-09 11:17:43.000000000 -0700
++++ pytorch-2.4.0/tools/testing/test_selections.py	2024-08-10 21:25:14.123806426 -0700
+@@ -18,7 +18,7 @@ USE_3_PROCS = "sm86" in BUILD_ENVIRONMEN
+ # to ensure that sharding is consistent, NUM_PROCS is the actual number of procs
+ # used to run tests.  If they are not equal, the only consequence should be
+ # unequal shards.
+-IS_ROCM = os.path.exists("/opt/rocm")
++IS_ROCM = os.path.exists("/opt/rocm-@ROCM_VERSION@")
+ NUM_PROCS = 1 if IS_MEM_LEAK_CHECK else 3 if USE_3_PROCS else 2
+ NUM_PROCS_FOR_SHARDING_CALC = NUM_PROCS if not IS_ROCM or IS_MEM_LEAK_CHECK else 2
+ THRESHOLD = 60 * 10  # 10 minutes
+diff '--color=auto' -urp pytorch-2.4.0.orig/torch/utils/cpp_extension.py pytorch-2.4.0/torch/utils/cpp_extension.py
+--- pytorch-2.4.0.orig/torch/utils/cpp_extension.py	2024-07-09 11:17:43.000000000 -0700
++++ pytorch-2.4.0/torch/utils/cpp_extension.py	2024-08-10 21:22:08.546919321 -0700
+@@ -132,7 +132,7 @@ def _find_rocm_home() -> Optional[str]:
+                 rocm_home = os.path.dirname(rocm_home)
+         else:
+             # Guess #3
+-            fallback_path = '/opt/rocm'
++            fallback_path = '/opt/rocm-@ROCM_VERSION@'
+             if os.path.exists(fallback_path):
+                 rocm_home = fallback_path
+     if rocm_home and torch.version.hip is None:

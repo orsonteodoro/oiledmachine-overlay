@@ -46,7 +46,9 @@
       Add support for video processing operators
     </flag>
     <flag name="flash-attention">
-      Add support for flash-attention
+      Add support for flash-attention, optimized GPU attention.
+      It uses FlashAttention-3 for CUDA for fastest benefits.
+      It uses FlashAttention-2 for ROCm for moderate benefits.
     </flag>
     <flag name="gloo">
       Add multiple NUMA node or minimal CUDA® GPU capabilities but recommended

@@ -4,9 +4,8 @@
 
 EAPI=8
 
-# TODO package:
-# aotriton
-# nccl
+# TODO patch:
+#   Make cmake/External/aotriton.cmake use unpacked folder.
 
 # This package is a misnomer.  This is the non-python portions of pytorch.
 
@@ -14,6 +13,7 @@ EAPI=8
 # https://github.com/pytorch/pytorch/blob/v2.3.1/RELEASE.md?plain=1#L49
 # https://github.com/pytorch/pytorch/tree/v2.3.1/third_party
 # https://github.com/pytorch/pytorch/blob/v2.3.1/.ci/docker/common/install_rocm_magma.sh#L10 for magma
+# https://github.com/pytorch/pytorch/blob/v2.3.1/cmake/External/aotriton.cmake
 
 AMDGPU_TARGETS_COMPAT=(
 # Based on rocm_agent_enumerator
@@ -29,6 +29,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx908
 	gfx90a
 	gfx90c
+	 gfx942 # Suggested by aotriton for flash-attention, but not listed in rocm_agent_enumerator.
 	gfx1010
 	gfx1011
 	gfx1012
@@ -65,6 +66,7 @@ AMDGPU_TARGETS_UNTESTED=(
 	gfx1034
 	gfx1035
 )
+AOTRITON_COMMIT="24a3fe9cb57e5cda3c923df29743f9767194cc27"
 ASMJIT_COMMIT="d3fbf7c9bc7c1d1365a94a45614b91c5a3706b81" # fbgemm dep
 BENCHMARK_COMMIT_1="0d98dba29d66e93259db7daa53a9327df767a415"
 BENCHMARK_COMMIT_2="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8" # protobuf dep
@@ -124,6 +126,7 @@ GOOGLETEST_COMMIT_6="aee0f9d9b5b87796ee8a0ab26b7587ec30e8858e" # tensorpipe dep
 EIGEN_COMMIT="3147391d946bb4b6c68edd901f2add6ac1f31f8c"
 HIPIFY_TORCH_COMMIT="23f53b025b466d8ec3c45d52290d3442f7fbe6b1" # fbgemm dep
 IDEEP_COMMIT="8a6cc4e09dc509f04f83c085e38786b1fb44e14d"
+INCBIN_COMMIT="6e576cae5ab5810f25e2631f2e0b80cbe7dc8cbf" # aotriton dep
 IOS_CMAKE_COMMIT="8abaed637d56f1337d6e1d2c4026e25c1eade724"
 ITTAPI_COMMIT="5b8a7d7422611c3a0d799fb5fc5dd4abfae35b42"
 KINETO_COMMIT="3f30237e868ca92b46b309da17d84b37be373a6e"
@@ -154,6 +157,7 @@ PYBIND11_COMMIT_1="3e9dfa2866941655c56877882565e7577de6fc7b"
 PYBIND11_COMMIT_2="5b0a6fc2017fcc176545afe3e09c9f9885283242" # onnx dep
 PYBIND11_COMMIT_3="a1041190c8b8ff0cd9e2f0752248ad5e3789ea0c" # onnx-tensorrt/third_party/onnx dep
 PYBIND11_COMMIT_4="a23996fce38ff6ccfbcdc09f1e63f2c4be5ea2ef" # tensorpipe dep
+PYBIND11_COMMIT_5="8a099e44b3d5f85b20f05828d919d2332a8de841" # aotriton dep
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
 QNNPACK_COMMIT="7d2a4e9931a82adc3814275b6219a03e24e36b4c"
 inherit hip-versions
@@ -174,6 +178,8 @@ ROCM_SLOTS2=( $(gen_rocm_slots) )
 SLEEF_COMMIT="e0a003ee838b75d11763aa9c3ef17bf71a725bff"
 TBB_COMMIT="a51a90bc609bb73db8ea13841b5cf7aa4344d4a9"
 TENSORPIPE_COMMIT="52791a2fd214b2a9dc5759d36725909c1daa7f2e"
+TRITON_COMMIT="9b73a543a5545960bcaf2830900b0560eec443c5" # aotriton dep
+TRITON_SHARED_COMMIT="450e6be65f99a0b15fd130892594b85e0897574c" # aotriton/third_party/triton dep
 VULKANMEMORYALLOCATOR_COMMIT="a6bfc237255a6bac1513f7c1ebde6d8aed6b5191"
 XNNPACK_COMMIT="fcbf55af6cf28a4627bcd1f703ab7ad843f0f3a2"
 ZSTD_COMMIT="aec56a52fbab207fc639a1937d1e708a282edca8"
@@ -237,6 +243,8 @@ https://github.com/google/XNNPACK/archive/${XNNPACK_COMMIT}.tar.gz
 	-> XNNPACK-${XNNPACK_COMMIT:0:7}.tar.gz
 https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archive/${VULKANMEMORYALLOCATOR_COMMIT}.tar.gz
 	-> VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_COMMIT:0:7}.tar.gz
+https://github.com/graphitemaster/incbin/archive/${INCBIN_COMMIT}.tar.gz
+	-> incbin-${INCBIN_COMMIT:0:7}.tar.gz
 https://github.com/houseroad/foxi/archive/${FOXI_COMMIT}.tar.gz
 	-> foxi-${FOXI_COMMIT:0:7}.tar.gz
 https://github.com/intel/ARM_NEON_2_x86_SSE/archive/${NEON2SSE_COMMIT}.tar.gz
@@ -263,6 +271,8 @@ https://github.com/Maratyszcza/pthreadpool/archive/${PTHREADPOOL_COMMIT}.tar.gz
 	-> pthreadpool-${PTHREADPOOL_COMMIT:0:7}.tar.gz
 https://github.com/microsoft/mimalloc/archive/${MIMALLOC_COMMIT}.tar.gz
 	-> mimalloc-${MIMALLOC_COMMIT:0:7}.tar.gz
+https://github.com/microsoft/triton-shared/archive/${TRITON_SHARED_COMMIT}.tar.gz
+	-> triton-shared-${TRITON_SHARED_COMMIT:0:7}.tar.gz
 https://github.com/mreineck/pocketfft/archive/${POCKETFFT_COMMIT}.tar.gz
 	-> pocketfft-${POCKETFFT_COMMIT:0:7}.tar.gz
 https://github.com/nlohmann/json/archive/${NLOHMANN_COMMIT_1}.tar.gz
@@ -299,6 +309,8 @@ https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_3}.tar.gz
 	-> pybind11-${PYBIND11_COMMIT_3:0:7}.tar.gz
 https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_4}.tar.gz
 	-> pybind11-${PYBIND11_COMMIT_4:0:7}.tar.gz
+https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_5}.tar.gz
+	-> pybind11-${PYBIND11_COMMIT_5:0:7}.tar.gz
 https://github.com/pytorch/cpuinfo/archive/${CPUINFO_COMMIT_1}.tar.gz
 	-> pytorch-cpuinfo-${CPUINFO_COMMIT_1:0:7}.tar.gz
 https://github.com/pytorch/cpuinfo/archive/${CPUINFO_COMMIT_2}.tar.gz
@@ -311,8 +323,12 @@ https://github.com/pytorch/QNNPACK/archive/${QNNPACK_COMMIT}.tar.gz
 	-> QNNPACK-${QNNPACK_COMMIT:0:7}.tar.gz
 https://github.com/pytorch/tensorpipe/archive/${TENSORPIPE_COMMIT}.tar.gz
 	-> tensorpipe-${TENSORPIPE_COMMIT:0:7}.tar.gz
+https://github.com/ROCm/aotriton/archive/${AOTRITON_COMMIT}.tar.gz
+	-> aotriton-${AOTRITON_COMMIT:0:7}.tar.gz
 https://github.com/ROCm/hipify_torch/archive/${HIPIFY_TORCH_COMMIT}.tar.gz
 	-> hipify_torch-${HIPIFY_TORCH_COMMIT:0:7}.tar.gz
+https://github.com/ROCm/triton/archive/${TRITON_COMMIT}.tar.gz
+	-> ROCm-triton-${TRITON_COMMIT:0:7}.tar.gz
 https://github.com/shibatch/sleef/archive/${SLEEF_COMMIT}.tar.gz
 	-> sleef-${SLEEF_COMMIT:0:7}.tar.gz
 https://github.com/wjakob/clang-cindex-python3/archive/${CLANG_CINDEX_PYTHON3_COMMIT}.tar.gz
@@ -321,6 +337,11 @@ https://github.com/Yangqing/ios-cmake/archive/${IOS_CMAKE_COMMIT}.tar.gz
 	-> ios-cmake-${IOS_CMAKE_COMMIT:0:7}.tar.gz
 https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_COMMIT}/eigen-${EIGEN_COMMIT}.tar.gz
 	-> eigen-${EIGEN_COMMIT:0:7}.tar.gz
+
+
+
+
+
 	)
 "
 
@@ -445,6 +466,9 @@ REQUIRED_USE="
 		cuda
 		rocm
 	)
+	amdgpu_targets_gfx942? (
+		rocm_6_0
+	)
 	cuda? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -461,6 +485,20 @@ REQUIRED_USE="
 	)
 	ffmpeg? (
 		opencv
+	)
+	flash-attention? (
+		cuda? (
+			|| (
+				cuda_targets_sm_80
+				cuda_targets_sm_90
+			)
+		)
+		rocm? (
+			|| (
+				amdgpu_targets_gfx90a
+				amdgpu_targets_gfx942
+			)
+		)
 	)
 	gloo? (
 		distributed
@@ -524,6 +562,9 @@ gen_rocm_depends() {
 				~sci-libs/rocRAND-${pv}:${s}$(get_rocm_usedep ROCRAND)
 				~sci-libs/rocPRIM-${pv}:${s}$(get_rocm_usedep ROCPRIM)
 				~sci-libs/rocThrust-${pv}:${s}$(get_rocm_usedep ROCTHRUST)
+				flash-attention? (
+					sci-libs/aiotriton:${s}
+				)
 				magma? (
 					=sci-libs/magma-2.8*:${s}$(get_rocm_usedep MAGMA_2_8)
 				)
@@ -762,7 +803,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.3.0-rocm-fix-std-cpp17.patch"
 	"${FILESDIR}/${PN}-2.2.2-musl.patch"
 	"${FILESDIR}/${PN}-2.3.0-CMakeFix.patch"
-	"${FILESDIR}/${PN}-2.3.0-exclude-aotriton.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-rocm-gcc14-clamp.patch"
 	"${FILESDIR}/${PN}-2.3.0-optional-hipblaslt.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-libcpp.patch"
@@ -807,6 +847,7 @@ pkg_setup() {
 
 src_prepare() {
 	if use system-libs ; then
+		eapply "${FILESDIR}/${PN}-2.3.0-exclude-aotriton.patch"
 		eapply "${FILESDIR}/${PN}-1.13.1-tensorpipe.patch"
 		sed -i \
 			-e "/third_party\/gloo/d" \
@@ -814,6 +855,12 @@ src_prepare() {
 			|| die
 	else
 		dep_prepare_mv "${WORKDIR}/ARM_NEON_2_x86_SSE-${NEON2SSE_COMMIT}" "${S}/third_party/neon2sse"
+
+		dep_prepare_mv "${WORKDIR}/aotriton-${AOTRITON_COMMIT}" "${S}/third_party/aotriton"
+		dep_prepare_mv "${WORKDIR}/incbin-${INCBIN_COMMIT}" "${S}/third_party/aotriton/third_party/incbin"
+		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND_COMMIT_5}" "${S}/third_party/aotriton/third_party/pybind11"
+		dep_prepare_mv "${WORKDIR}/triton-${TRITON_COMMIT}" "${S}/third_party/aotriton/third_party/triton"
+
 		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/third_party/benchmark"
 		dep_prepare_mv "${WORKDIR}/cpuinfo-${CPUINFO_COMMIT_1}" "${S}/third_party/cpuinfo"
 		dep_prepare_mv "${WORKDIR}/cudnn-frontend-${CUDNN_FRONTEND_COMMIT}" "${S}/third_party/cudnn_frontend"
@@ -981,7 +1028,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DUSE_FAKELOWP=OFF
 		-DUSE_FBGEMM=$(usex fbgemm)
 		-DUSE_FFMPEG=$(usex ffmpeg)
-		-DUSE_FLASH_ATTENTION=$(usex flash-attention $(usex cuda ON $(usex rocm OFF OFF) OFF) OFF)
+		-DUSE_FLASH_ATTENTION=$(usex flash-attention $(usex cuda ON $(usex rocm OFF OFF) OFF) OFF) # Will enable for rocm after aotriton.cmake is patched.
 		-DUSE_GFLAGS=ON
 		-DUSE_GLOG=ON
 		-DUSE_GLOO=$(usex gloo)
