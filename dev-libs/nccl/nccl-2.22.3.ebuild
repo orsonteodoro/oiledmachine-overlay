@@ -4,6 +4,21 @@
 
 EAPI=8
 
+CUDA_TARGETS_COMPAT=(
+	sm_35
+	sm_50
+	sm_60
+	sm_61
+	sm_70
+	sm_80
+	sm_90
+
+	sm_61_ptx
+	sm_70_ptx
+	sm_80_ptx
+	sm_90_ptx
+)
+
 inherit autotools flag-o-matic
 
 S="${WORKDIR}/${P}-1"
@@ -30,13 +45,72 @@ LICENSE="
 # Apache-2.0-with-LLVM-exceptions - NVTX/LICENSE.txt
 # Apache-2.0-with-LLVM-exceptions - src/include/nvtx3/nvtxDetail/nvtxExtPayloadHelperInternal.h
 SLOT="0"
-IUSE="ebuild-revision-0"
+IUSE="
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+ebuild-revision-0
+"
+REQUIRED_USE="
+	|| (
+		${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+	)
+"
 RDEPEND="
 	|| (
 		=dev-util/nvidia-cuda-toolkit-12.5*
 		=dev-util/nvidia-cuda-toolkit-12.4*
 		=dev-util/nvidia-cuda-toolkit-12.3*
 		=dev-util/nvidia-cuda-toolkit-11.8*
+	)
+	cuda_targets_sm_35? (
+		=dev-util/nvidia-cuda-toolkit-11.8*
+	)
+	cuda_targets_sm_50? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12.5*
+			=dev-util/nvidia-cuda-toolkit-12.4*
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
+	)
+	cuda_targets_sm_60? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12.5*
+			=dev-util/nvidia-cuda-toolkit-12.4*
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
+	)
+	cuda_targets_sm_61? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12.5*
+			=dev-util/nvidia-cuda-toolkit-12.4*
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
+	)
+	cuda_targets_sm_70? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12.5*
+			=dev-util/nvidia-cuda-toolkit-12.4*
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
+	)
+	cuda_targets_sm_80? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12.5*
+			=dev-util/nvidia-cuda-toolkit-12.4*
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
+	)
+	cuda_targets_sm_90? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12.5*
+			=dev-util/nvidia-cuda-toolkit-12.4*
+			=dev-util/nvidia-cuda-toolkit-12.3*
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
 	)
 	dev-util/nvidia-cuda-toolkit:=
 	sys-libs/glibc
@@ -88,6 +162,39 @@ eerror "Unsupported cuda version."
 		die
 	fi
 	export CUDA_HOME="/opt/cuda"
+	local list=()
+	if use cuda_targets_sm_35 ; then
+		list+=( -gencode=arch=compute_35,code=sm_35 )
+	fi
+	if use cuda_targets_sm_50 ; then
+		list+=( -gencode=arch=compute_50,code=sm_50 )
+	fi
+	if use cuda_targets_sm_60 ; then
+		list+=( -gencode=arch=compute_60,code=sm_60 )
+	fi
+	if use cuda_targets_sm_70 ; then
+		list+=( -gencode=arch=compute_70,code=sm_70 )
+	fi
+	if use cuda_targets_sm_80 ; then
+		list+=( -gencode=arch=compute_80,code=sm_80 )
+	fi
+	if use cuda_targets_sm_90 ; then
+		list+=( -gencode=arch=compute_90,code=sm_90 )
+	fi
+
+	if use cuda_targets_sm_61_ptx ; then
+		list+=( -gencode=arch=compute_61,code=compute_61 )
+	fi
+	if use cuda_targets_sm_70_ptx ; then
+		list+=( -gencode=arch=compute_70,code=compute_70 )
+	fi
+	if use cuda_targets_sm_80_ptx ; then
+		list+=( -gencode=arch=compute_80,code=compute_80 )
+	fi
+	if use cuda_targets_sm_90_ptx ; then
+		list+=( -gencode=arch=compute_90,code=compute_90 )
+	fi
+	export NVCC_GENCODE="${list[@]}"
 }
 
 src_install() {
