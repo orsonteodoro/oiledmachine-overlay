@@ -62,12 +62,12 @@ CUDA_TARGETS_COMPAT=(
 
 # Observed:
 	#sm_35 # Dropped based on RELEASE.md:  Release Compatibility Matrix
-	sm_50_plus_ptx
+	compute_50
+	compute_70
 	sm_52
 	sm_60
 	sm_61
 	sm_70
-	sm_70_plus_ptx
 	sm_75
 	sm_80
 	sm_86

@@ -76,15 +76,15 @@ CUDA_TARGETS_COMPAT=(
 
 # Observed:
 #	sm_35 # Dropped based on RELEASE.md:  Release Compatibility Matrix
-	sm_50_plus_ptx
 	sm_52
 	sm_60
 	sm_61
 	sm_70
-	sm_70_plus_ptx
 	sm_75
 	sm_80
 	sm_86
+	compute_50
+	compute_70
 )
 CUB_COMMIT="d106ddb991a56c3df1b6d51b2409e36ba8181ce4"
 CUDNN_FRONTEND_COMMIT="171a7a986f7fbd9ed71bd0cf3c7ad4f55843d6b3"
@@ -540,7 +540,15 @@ RDEPEND="
 				${CUDA_11_7_RDEPEND}
 			)
 		)
-		cuda_targets_sm_50_plus_ptx? (
+		cuda_targets_compute_50? (
+			|| (
+				${CUDA_10_2_RDEPEND}
+				${CUDA_11_3_RDEPEND}
+				${CUDA_11_6_RDEPEND}
+				${CUDA_11_7_RDEPEND}
+			)
+		)
+		cuda_targets_compute_70? (
 			|| (
 				${CUDA_10_2_RDEPEND}
 				${CUDA_11_3_RDEPEND}
@@ -573,14 +581,6 @@ RDEPEND="
 			)
 		)
 		cuda_targets_sm_70? (
-			|| (
-				${CUDA_10_2_RDEPEND}
-				${CUDA_11_3_RDEPEND}
-				${CUDA_11_6_RDEPEND}
-				${CUDA_11_7_RDEPEND}
-			)
-		)
-		cuda_targets_sm_70_plus_ptx? (
 			|| (
 				${CUDA_10_2_RDEPEND}
 				${CUDA_11_3_RDEPEND}
@@ -893,9 +893,9 @@ gen_cuda_arch_list() {
 				local gen
 				local ver
 				local suffix=""
-				if [[ "${x}" =~ "plus_ptx" ]] ; then
+				if [[ "${x}" =~ "compute" ]] ; then
 					suffix="+PTX"
-					x="${x/_plus_ptx/}"
+					x="${x/_ptx/}"
 				fi
 				local val=",${x#*_}"
 				if (( "${#val}" == 2 )) ; then
