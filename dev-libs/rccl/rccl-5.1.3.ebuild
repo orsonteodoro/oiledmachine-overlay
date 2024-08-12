@@ -74,12 +74,14 @@ check_kernel_setup() {
 		~NUMA
 
 		~PCI
+		~PCIEPORTBUS
 	"
 	WARNING_DRM="CONFIG_DRM=y is needed for driver support."
 	WARNING_DMI="CONFIG_DMI=y is needed for InfiniBand checks."
 	WARNING_PROC_FS="CONFIG_PROC_FS=y is needed for acquiring system details."
 	WARNING_PROC_SYSCTL="CONFIG_PROC_SYSCTL=y is needed for Host ID generation."
-	WARNING_PCI="CONFIG_PCI=y is required for"
+	WARNING_PCI="CONFIG_PCI=y is required for PCIe support."
+	WARNING_PCIEPORTBUS="CONFIG_PCIEPORTBUS=y is required for PCIe support."
 	WARNING_NUMA="CONFIG_NUMA is required for tools or NUMA CPU identification."
 	check_extra_config
 
@@ -109,9 +111,9 @@ check_kernel_setup() {
 		~INET
 		~IPV6
 	"
-	WARNING_NET="CONFIG_NET=y is required for socket support."
-	WARNING_INET="CONFIG_INET=y is required for socket support."
-	WARNING_IPV6="CONFIG_IPV6=y is required for socket support."
+	WARNING_NET="CONFIG_NET=y is required for TCP/IP socket support."
+	WARNING_INET="CONFIG_INET=y is required for TCP/IP socket support."
+	WARNING_IPV6="CONFIG_IPV6=y is optional for TCP/IP IPv6 socket support."
 	check_extra_config
 
 	if use infiniband ; then
