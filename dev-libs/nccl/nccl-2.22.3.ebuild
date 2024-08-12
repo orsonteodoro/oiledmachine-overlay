@@ -164,7 +164,11 @@ RDEPEND="
 	gpudirect? (
 		>=x11-drivers/nvidia-drivers-470[modules]
 		dev-util/nvidia-cuda-toolkit:=
-		net-misc/MLNX_OFED
+		|| (
+			net-misc/MLNX_DOCA
+			net-misc/MLNX_NETWORKING
+			net-misc/MLNX_OFED
+		)
 	)
 	verbs? (
 		sys-cluster/rdma-core
