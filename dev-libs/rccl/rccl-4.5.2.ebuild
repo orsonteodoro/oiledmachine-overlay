@@ -36,12 +36,12 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ibv test ebuild-revision-7"
+IUSE="test verbs ebuild-revision-7"
 RDEPEND="
 	!dev-libs/rccl:0
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
-	ibv? (
+	verbs? (
 		sys-cluster/rdma-core
 	)
 "
@@ -115,7 +115,7 @@ check_kernel_setup() {
 	WARNING_IPV6="CONFIG_IPV6=y is optional for TCP/IP IPv6 socket support."
 	check_extra_config
 
-	if use ibv ; then
+	if use verbs ; then
 		CONFIG_CHECK="
 			~NET
 			~INET

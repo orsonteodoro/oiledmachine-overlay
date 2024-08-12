@@ -51,7 +51,7 @@ RESTRICT="mirror test"
 SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
--ibv test
+test -verbs
 ebuild-revision-2
 "
 REQUIRED_USE="
@@ -149,7 +149,7 @@ RDEPEND="
 			=dev-util/nvidia-cuda-toolkit-11.8*
 		)
 	)
-	ibv? (
+	verbs? (
 		sys-cluster/rdma-core
 	)
 	dev-util/nvidia-cuda-toolkit:=
@@ -163,7 +163,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-2.22.3-libdir.patch"
-	"${FILESDIR}/${PN}-2.22.3-link-ibverbs-nccl.patch"
+	"${FILESDIR}/${PN}-2.22.3-link-verbserbs-nccl.patch"
 )
 
 check_kernel_setup() {
@@ -218,7 +218,7 @@ check_kernel_setup() {
 	WARNING_IPV6="CONFIG_IPV6=y is optional for TCP/IP IPv6 socket support."
 	check_extra_config
 
-	if use ibv ; then
+	if use verbs ; then
 		CONFIG_CHECK="
 			~NET
 			~INET
@@ -256,7 +256,7 @@ eerror
 src_prepare() {
 	default
 	pushd "${S_TESTS}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-2.22.3-link-ibverbs-tests.patch"
+		eapply "${FILESDIR}/${PN}-2.22.3-link-verbserbs-tests.patch"
 	popd >/dev/null 2>&1 || die
 
 }
@@ -318,7 +318,7 @@ eerror "Unsupported cuda version."
 		list+=( -gencode=arch=compute_90,code=compute_90 )
 	fi
 	export NVCC_GENCODE="${list[@]}"
-	export RDMA_CORE=$(usex ibv "1" "0")
+	export RDMA_CORE=$(usex verbs "1" "0")
 }
 
 src_compile() {

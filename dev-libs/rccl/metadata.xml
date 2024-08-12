@@ -20,7 +20,7 @@
     <remote-id type="github">ROCm-Developer-Tools/rccl</remote-id>
   </upstream>
   <use>
-    <flag name="ibv">
+    <flag name="verbs">
       Support for RoCE or InfiniBand™.
     </flag>
   </use>
