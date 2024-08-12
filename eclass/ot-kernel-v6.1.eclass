@@ -205,7 +205,7 @@ ZEN_KV="6.1.0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 IUSE+="
 bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
--genpatches_1510 kcfi kpgo-utils lto nest orca pgo prjc rt -rust shadowcallstack
+-genpatches_1510 kcfi lto nest orca pgo prjc rt -rust shadowcallstack
 symlink tresor tresor_prompt tresor_sysfs zen-sauce
 "
 
@@ -234,20 +234,6 @@ if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 	"
 fi
 
-
-DESCRIPTION="\
-A customizable kernel package with \
-BBRv2, \
-C2TCP, \
-DeepCC, \
-genpatches, \
-kernel_compiler_patch, \
-Orca, \
-Project C (BMQ, PDS-mq), \
-RT_PREEMPT (-rt), \
-zen-sauce. \
-"
-
 inherit ot-kernel
 
 LICENSE+=" GPL-2" # kernel_compiler_patch
@@ -262,7 +248,6 @@ LICENSE+="
 		)
 	)
 "
-# A gcc pgo patch in 2014 exists but not listed for license reasons.
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
 	# third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" deepcc? ( MIT )"
@@ -273,7 +258,6 @@ LICENSE+=" prjc? ( GPL-3 )" # see \
 	# https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" orca? ( MIT )"
-LICENSE+=" pgo? ( GPL-2 GPL-2+ )" # GCC_PGO kernel patch only
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" zen-sauce? ( GPL-2 )"
@@ -448,9 +432,6 @@ CDEPEND+="
 	)
 
 	${KCP_RDEPEND}
-	kpgo-utils? (
-		sys-kernel/kpgo-utils
-	)
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
@@ -495,8 +476,16 @@ CDEPEND+="
 		)
 	)
 "
-# Re-add to pgo? section above if -Os gcc-kpgo changes implemented.
-# >=sys-devel/gcc-kpgo-${GCC_PV}
+
+GCC_MIN_KCP_HPPA=12
+GCC_MIN_KCP=11
+LLVM_MIN_CLANG_PGO_S390=15
+LLVM_MIN_KCFI_ARM64=16
+LLVM_MIN_KCFI_AMD64=16
+LLVM_MIN_KCP=12
+LLVM_MIN_LTO=12
+LLVM_MIN_PGO=13
+LLVM_MIN_SHADOWCALLSTACK_ARM64=10
 
 RDEPEND+="
 	!build? (
@@ -982,4 +971,68 @@ ot-kernel_check_versions() {
 	_ot-kernel_check_versions "sys-fs/xfsprogs" "2.6.0" "CONFIG_XFS_FS"
 	_ot-kernel_check_versions "sys-process/procps" "3.2.0" ""
 	_ot-kernel_check_versions "virtual/udev" "081" ""
+}
+
+# @FUNCTION: ot-kernel_get_llvm_min_slot
+# @DESCRIPTION:
+# Get the min slot for clang
+ot-kernel_get_llvm_min_slot() {
+	local _llvm_min_slot
+
+	local wants_kcp=0
+	local wants_kcp_rpi=0
+
+	if [[ "${CFLAGS}" =~ "-march" ]] ; then
+		wants_kcp=1
+	fi
+	if [[ -n "${X86_MICROARCH_OVERRIDE}" ]] ; then
+		wants_kcp=1
+	fi
+	if [[ "${CFLAGS}" =~ "-mcpu=cortex-a72" ]] ; then
+		wants_kcp_rpi=1
+	fi
+
+	local kcp_provider=$(ot-kernel_get_kcp_provider)
+
+	# Descending sort
+	if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "arm64" ]] ; then
+		_llvm_min_slot=${LLVM_MIN_KCFI_ARM64} # 16
+	elif has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "amd64" ]] ; then
+		_llvm_min_slot=${LLVM_MIN_KCFI_AMD64} # 16
+	elif has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo && [[ "${arch}" == "s390" ]] ; then
+		_llvm_min_slot=${LLVM_MIN_CLANG_PGO_S390} # 15
+	elif has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
+		_llvm_min_slot=${LLVM_MIN_PGO} # 13
+	elif has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
+		_llvm_min_slot=${LLVM_MIN_LTO} # 12
+	elif (( ${wants_kcp} == 1 )) ; then
+		_llvm_min_slot=${LLVM_MIN_KCP} # 12
+	elif has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack && [[ "${arch}" == "amd64" ]] ; then
+		_llvm_min_slot=${LLVM_MIN_SHADOWCALLSTACK_ARM64} # 10
+	else
+		_llvm_min_slot=${LLVM_MIN_SLOT} # 11
+	fi
+	echo "${_llvm_min_slot}"
+}
+
+# @FUNCTION: ot-kernel_get_gcc_min_slot
+# @DESCRIPTION:
+# Get the min slot for gcc
+ot-kernel_get_gcc_min_slot() {
+	local _gcc_min_slot
+	local kcp_provider=$(ot-kernel_get_kcp_provider)
+	if [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "parisc" || "${arch}" == "parisc64" ]] ; then
+		# hppa
+		_gcc_min_slot=${GCC_MIN_KCP_HPPA} # 12
+	elif grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
+	# Prevent:
+	# <redacted>-pc-linux-gnu-gcc-11: error: unrecognized command-line option '-ftrivial-auto-var-init=zero'
+		_gcc_min_slot=12
+	elif [[ "${kcp_provider}" == "graysky2" ]] ; then
+		# hppa
+		_gcc_min_slot=${GCC_MIN_KCP} # 11
+	else
+		_gcc_min_slot=${GCC_MIN_SLOT} # 5
+	fi
+	echo "${_gcc_min_slot}"
 }

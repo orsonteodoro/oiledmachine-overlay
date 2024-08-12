@@ -13,6 +13,16 @@
 # The ot-kernel eclass defines common patching steps for any linux
 # kernel version.
 
+# -rt patchset:
+#	https://wiki.linuxfoundation.org/realtime/start
+#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/
+#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
+#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
+#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
+#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
+#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.6/
+#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.9/
+#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.10/
 # BBR v2:
 #	https://github.com/google/bbr/compare/2c85ebc...v2alpha-2021-07-07
 #	https://github.com/google/bbr/compare/f428e49...v2alpha-2021-08-21
@@ -21,6 +31,8 @@
 # BBR v3:
 #       https://github.com/google/bbr/tree/v3
 #       https://github.com/google/bbr/compare/ba2274dcfda859b8a27193e68ad37bfe4da28ddc...v3					# 6.4 to v3 tip
+# BFQ:
+#	https://algo.ing.unimo.it/people/paolo/disk_sched/
 # BMQ CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/BMQ
 #	https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
@@ -33,6 +45,7 @@
 # DeepCC:
 #	https://github.com/Soheil-ab/DeepCC.v1.0
 # genpatches:
+#	https://dev.gentoo.org/~mpagano/genpatches/
 #	https://gitweb.gentoo.org/proj/linux-patches.git/
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=4.19
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.4
@@ -50,6 +63,7 @@
 #	https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/lru
 #	https://github.com/torvalds/linux/compare/v6.0...zen-kernel:6.0/mglru
 # MUQSS CPU Scheduler (official, EOL 5.12):
+#	https://ck-hack.blogspot.com/
 #	https://github.com/torvalds/linux/compare/v4.19...ckolivas:4.19-ck
 #	https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
 #	https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
@@ -75,9 +89,6 @@
 #       https://patchwork.kernel.org/project/linux-kbuild/patch/20210407211704.367039-1-morbo@google.com/#24246189		# Context of above patch
 #	https://lore.kernel.org/all/20210621231822.2848305-1-ndesaulniers@google.com/T/#u					# Add __no_profile
 #       https://github.com/ClangBuiltLinux/linux/issues/1405
-# PGO (gcc) support:
-#	https://wiki.gentoo.org/wiki/Kernel/Optimization#GCC_PGO
-#       http://coolypf.com/kpgo.htm
 # PREEMPT_RT:
 #	https://wiki.linuxfoundation.org/realtime/start
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/
@@ -96,6 +107,7 @@
 # UKSM:
 #	https://github.com/dolohow/uksm
 # zen-sauce, zen-tune:
+#	https://liquorix.net/
 #	https://github.com/torvalds/linux/compare/v4.19...zen-kernel:zen-kernel:4.19/zen-tune	# aka part 1 of zen-sauce
 #	https://github.com/torvalds/linux/compare/v4.19...zen-kernel:zen-kernel:4.19/misc	# aka part 2 of zen-sauce
 #	https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
@@ -106,6 +118,7 @@
 #	https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.9...zen-kernel:6.9/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.10...zen-kernel:6.10/zen-sauce
+#
 
 case ${EAPI:-0} in
 	[78]) ;;
@@ -513,18 +526,12 @@ fi
 
 S="${WORKDIR}/linux-${UPSTREAM_PV}-${EXTRAVERSION}"
 
+DESCRIPTION="The ot-kernel package is a package consisting of community \
+supported patches; eclass assisted profiles and environment variable \
+tweakables; reproducible performance, security, stability; auto-configured \
+kernel config based on installed ebuild-packages."
 HOMEPAGE+="
-https://algo.ing.unimo.it/people/paolo/disk_sched/
-https://cchalpha.blogspot.com/search/label/BMQ
-https://cchalpha.blogspot.com/search/label/PDS
-https://cchalpha.blogspot.com/search/label/Project%20C
-https://ck-hack.blogspot.com/
-https://dev.gentoo.org/~mpagano/genpatches/
-https://github.com/dolohow/uksm
-https://github.com/graysky2/kernel_compiler_patch
-https://liquorix.net/
-https://wiki.linuxfoundation.org/realtime/start
-https://www1.informatik.uni-erlangen.de/tresor
+https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/sys-kernel/ot-sources
 "
 
 # I did a grep -i -r -e "SPDX" ./ | cut -f 3 -d ":" | sort | uniq
@@ -1319,35 +1326,6 @@ eerror
 	dump_gcda
 
 	export PATH_ORIG="${PATH}"
-
-# TODO: place in build context
-	if [[ "${OT_KERNEL_USE_GCC_KPGO}" == "1" ]] ; then
-		if has_version "sys-devel/gcc-kpgo" && use pgo ; then
-einfo "Detected sys-devel/gcc-kpgo"
-			export PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin:${PATH}"
-			if [[ "${FEATURES}" =~ "ccache" ]] ; then
-				export CCACHE_PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin"
-			fi
-			GCC_PKG="sys-devel/gcc-kpgo"
-		else
-			GCC_PKG="sys-devel/gcc"
-		fi
-
-		if ( has ccache ${FEATURES} && use pgo && has clang ${IUSE_EFFECTIVE} && ! use clang ) \
-			|| ( has ccache ${FEATURES} && use pgo && ! has clang ${IUSE_EFFECTIVE} ) ; then
-ewarn
-ewarn "ccache is not supported in FEATURES with GCC PGO."
-ewarn "Trying to disable."
-ewarn
-einfo "PATH=${PATH} (before)"
-			export PATH=$(echo "${PATH}" \
-				| tr ":" "\n" \
-				| sed -E -e "/ccache/d" \
-				| tr "\n" ":" \
-				| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_MAX_SLOT}/bin:${PWD}/install/bin|g")
-einfo "PATH=${PATH} (after)"
-		fi
-	fi
 }
 
 # @FUNCTION: dump_profraw
@@ -2139,8 +2117,14 @@ einfo "Applying the C2TCP / DeepCC / Orca patch"
 # @DESCRIPTION:
 # Show user all the gcc_slot_<#> vertically.
 _print_gcc_slots() {
+	if ! declare -f ot-kernel_get_gcc_min_slot >/dev/null ; then
+eerror "QA:  Missing ot-kernel_get_gcc_min_slot() for this series."
+		die
+	fi
+	local _gcc_min_slot=$(ot-kernel_get_gcc_min_slot)
+
 	local gcc_slot
-	for gcc_slot in $(seq ${GCC_MAX_SLOT} -1 ${GCC_MIN_SLOT}) ; do
+	for gcc_slot in $(seq ${GCC_MAX_SLOT} -1 ${_gcc_min_slot}) ; do
 eerror "  sys-devel/gcc:${gcc_slot}"
 	done
 }
@@ -2149,8 +2133,13 @@ eerror "  sys-devel/gcc:${gcc_slot}"
 # @DESCRIPTION:
 # Show user all the llvm_slot_<#> vertically.
 _print_llvm_slots() {
+	if ! declare -f ot-kernel_get_llvm_min_slot >/dev/null ; then
+eerror "QA:  Missing ot-kernel_get_llvm_min_slot() for this series."
+		die
+	fi
+	local _llvm_min_slot=$(ot-kernel_get_llvm_min_slot)
 	local llvm_slot
-	for llvm_slot in $(seq ${LLVM_MAX_SLOT} -1 ${LLVM_MIN_SLOT}) ; do
+	for llvm_slot in $(seq ${LLVM_MAX_SLOT} -1 ${_llvm_min_slot}) ; do
 eerror "  sys-devel/clang:${llvm_slot}"
 	done
 }
@@ -2346,34 +2335,6 @@ einfo "Done unpacking."
 	verify_point_release
 }
 
-# @FUNCTION: apply_gcc_full_pgo
-# @DESCRIPTION:
-# Applies a patchset for Full PGO with GCC.
-apply_gcc_full_pgo() {
-eerror
-eerror "GCC full pgo is on hold indefinitely.  See metadata.xml"
-eerror "(or \`epkginfo -x ${PN}::oiledmachine-overlay\`)."
-eerror
-eerror "Change OT_KERNEL_PGO_FLAVOR to either GCC_PGO_CFG, GCC_PDO, or"
-eerror "CLANG_PGO or disable the pgo USE flag."
-eerror
-	die
-einfo "Applying patchset for Full PGO with GCC"
-	if ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
-		eapply "${FILESDIR}/gcc-pgo-6.5.7.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
-		eapply "${FILESDIR}/gcc-pgo-6.5.7.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
-		eapply "${FILESDIR}/gcc-pgo-6.5.7.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
-		eapply "${FILESDIR}/gcc-pgo-5.4.258.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
-		eapply "${FILESDIR}/gcc-pgo-4.19.296.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
-		eapply "${FILESDIR}/gcc-pgo-4.14.327.patch"
-	fi
-}
-
 # @FUNCTION: apply_clear_linux_patches
 # @DESCRIPTION:
 # Applies Clear Linux patches
@@ -2491,12 +2452,6 @@ apply_all_patchsets() {
 	if has clear ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use clear ; then
 			apply_clear_linux_patches
-		fi
-	fi
-
-	if has pgo ${IUSE_EFFECTIVE} ; then
-		if ot-kernel_use pgo && [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" ]] ; then
-			apply_gcc_full_pgo
 		fi
 	fi
 
@@ -7074,11 +7029,12 @@ eerror
 # @DESCRIPTION:
 # Show LLVM toolchain requirements and quit
 ot-kernel_show_llvm_requirement() {
-	local msg="${1}"
+	local _llvm_min_slot=${1}
+	local msg="${2}"
 eerror
 eerror "Make sure the following valid slots is installed:"
 eerror
-eerror "LLVM_MIN_SLOT: ${LLVM_MIN_SLOT}"
+eerror "LLVM_MIN_SLOT: ${_llvm_min_slot}"
 eerror "LLVM_MAX_SLOT: ${LLVM_MAX_SLOT}"
 eerror
 eerror "Reason:  ${msg}"
@@ -7094,9 +7050,9 @@ ot-kernel_set_kconfig_lto() {
 	if has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
 		if (( ${llvm_slot} < 11 )) ; then
 			if [[ ! -e "/usr/lib/llvm/${slot}/bin/clang" ]] ; then
-				ot-kernel_show_llvm_requirement "Missing clang"
+				ot-kernel_show_llvm_requirement 11 "Missing clang"
 			fi
-			ot-kernel_show_llvm_requirement "LTO requires clang:\${SLOT} == llvm:\${SLOT} and \${SLOT} >= 11"
+			ot-kernel_show_llvm_requirement 11 "LTO requires clang:\${SLOT} == llvm:\${SLOT} and \${SLOT} >= 11"
 		fi
 einfo "Enabling LTO"
 		ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_LTO_CLANG"
@@ -11876,12 +11832,20 @@ eerror
 	done
 }
 
+
+
+
 # @FUNCTION: get_llvm_slot
 # @DESCRIPTION:
 # Gets the clang compiler that the user want to use.
 get_llvm_slot() {
+	if ! declare -f ot-kernel_get_llvm_min_slot >/dev/null ; then
+eerror "QA:  Missing ot-kernel_get_llvm_min_slot() for this series."
+		die
+	fi
+	local _llvm_min_slot=$(get_llvm_min_slot)
 	local llvm_slot
-	for llvm_slot in $(seq ${LLVM_MAX_SLOT} -1 ${LLVM_MIN_SLOT}) ; do
+	for llvm_slot in $(seq ${LLVM_MAX_SLOT} -1 ${_llvm_min_slot}) ; do
 		ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" && is_clang_ready && break
 	done
 	echo "${llvm_slot}"
@@ -11891,16 +11855,11 @@ get_llvm_slot() {
 # @DESCRIPTION:
 # Gets the gcc compiler that the user want to use.
 get_gcc_slot() {
-	local _gcc_min_slot
-
-	if grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
-	# Prevent
-		# <redacted>-pc-linux-gnu-gcc-11: error: unrecognized command-line option '-ftrivial-auto-var-init=zero'
-		_gcc_min_slot=12
-	else
-		_gcc_min_slot=${GCC_MIN_SLOT}
+	if ! declare -f ot-kernel_get_gcc_min_slot >/dev/null ; then
+eerror "QA:  Missing ot-kernel_get_gcc_min_slot() for this series."
+		die
 	fi
-
+	local _gcc_min_slot=$(ot-kernel_get_gcc_min_slot)
 	local gcc_slot
 	for gcc_slot in $(seq ${GCC_MAX_SLOT} -1 ${_gcc_min_slot}) ; do
 		ot-kernel_has_version "${GCC_PKG}:${gcc_slot}" && is_gcc_ready && break
@@ -11985,14 +11944,6 @@ einfo "PATH=${PATH} (before)"
 				| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${llvm_slot}/bin:${PWD}/install/bin|g")
 einfo "PATH=${PATH} (after)"
 	else
-#		if has_version "sys-devel/gcc-kpgo" && use pgo ; then
-#einfo "Detected sys-devel/gcc-kpgo"
-#			export PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin:${PATH}"
-#			if [[ "${FEATURES}" =~ "ccache" ]] ; then
-#				export CCACHE_PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin"
-#			fi
-#		fi
-
 		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for gcc"
 		args+=(
 			"CC=${CHOST}-gcc-${gcc_slot}"
@@ -12483,8 +12434,8 @@ einfo "Resuming as PGI since no profile generated"
 
 			if [[ -z "${OT_KERNEL_PGO_FLAVOR}" ]] ; then
 eerror
-eerror "OT_KERNEL_PGO_FLAVOR needs to be defined as either GCC_PDO, GCC_PGO,"
-eerror "GCC_PGO_CFG for GCC PGO support."
+eerror "OT_KERNEL_PGO_FLAVOR needs to be defined as either GCC_PDO for GCC PGO"
+eerror "support."
 eerror
 				die
 			fi
@@ -12504,10 +12455,6 @@ einfo "GCC PATH:  "$(which ${CHOST}-gcc-${gcc_slot})
 			if [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGI}") ]] ; then
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" ]] ; then
 					makefile_pgo_phase="GCC_PDI"
-				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" ]] ; then
-					makefile_pgo_phase="GCC_PGI"
-				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
-					makefile_pgo_phase="GCC_PGI_CFG"
 				fi
 einfo "Building ${pgo_phase}"
 				local gcc_slot=$(gcc-major-version)
@@ -12550,28 +12497,6 @@ eerror
 				pgo_phase="PGO"
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" ]] ; then
 					makefile_pgo_phase="GCC_PDO"
-				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" ]] ; then
-					makefile_pgo_phase="GCC_PGO"
-
-# FIXME?:  This may trigger a sandbox violation.  This is why we dump the profile in pkg_setup() outside the sandbox.
-					if ! use "kpgo-utils" ; then
-eerror
-eerror "The kpgo-utils USE flag must be enabled in order to complete the"
-eerror "PGO profile."
-eerror
-eerror "Alternatively, you may switch to another PGO method and start at the"
-eerror "beginning or disable PGO."
-eerror
-					fi
-					cp -a "/usr/$(get_libdir)/kpgo-utils" "${WORKDIR}" || die
-					pushd "${WORKDIR}/kpgo-utils" >/dev/null 2>&1 || die
-einfo "Gathering initial PGO profile"
-						./gather.sh profile.tar.gz || die
-einfo "Generating counter summary and histogram and adding to the PGO profile"
-						./process.sh profile.tar.gz || die
-					popd >/dev/null 2>&1 || die
-				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
-					makefile_pgo_phase="GCC_PGO_CFG"
 				fi
 				echo "${pgo_phase}" > "${pgo_phase_statefile}" || die
 einfo "Building ${pgo_phase}"
@@ -12583,17 +12508,9 @@ ewarn "If you see \"profile count data file not found\" that is a bug in gcc wit
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" && "${PGO_PHASE_PGO}" == "PGO" ]] ; then
 					makefile_pgo_phase="GCC_PDO"
-				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" && "${PGO_PHASE_PGO}" == "PGO" ]] ; then
-					makefile_pgo_phase="GCC_PGO"
-				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" && "${PGO_PHASE_PGO}" == "PGO" ]] ; then
-					makefile_pgo_phase="GCC_PGO_CFG"
 
 				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" && "${PGO_PHASE_PGO}" == "DONE" ]] ; then
 					makefile_pgo_phase="GCC_PDO"
-				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" && "${PGO_PHASE_PGO}" == "DONE" ]] ; then
-					makefile_pgo_phase="GCC_PGO"
-				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" && "${PGO_PHASE_PGO}" == "DONE" ]] ; then
-					makefile_pgo_phase="GCC_PGO_CFG"
 				fi
 # For resuming or rebuilding as PDO phase
 einfo "Building ${pgo_phase}"
@@ -12605,10 +12522,6 @@ ewarn "If you see \"profile count data file not found\" that is a bug in gcc wit
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}") ]] && (( ${n_gcda} == 0 )) ; then
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" ]] ; then
 					makefile_pgo_phase="GCC_PDI"
-				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" ]] ; then
-					makefile_pgo_phase="GCC_PGI"
-				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
-					makefile_pgo_phase="GCC_PGI_CFG"
 				fi
 				echo "${PGO_PHASE_PGI}" > "${pgo_phase_statefile}" || die
 				ot-kernel_set_kconfig_pgo

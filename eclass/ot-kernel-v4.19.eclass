@@ -168,7 +168,7 @@ ZEN_KV="4.19.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
-build c2tcp +cfs deepcc disable_debug +genpatches -genpatches_1510 kpgo-utils
+build c2tcp +cfs deepcc disable_debug +genpatches -genpatches_1510
 muqss orca pds pgo rt symlink tresor tresor_prompt tresor_sysfs uksm zen-sauce
 "
 REQUIRED_USE+="
@@ -181,21 +181,6 @@ REQUIRED_USE+="
 	tresor_sysfs? (
 		tresor
 	)
-"
-
-
-DESCRIPTION="\
-A customizable kernel package with \
-C2TCP, \
-DeepCC, \
-genpatches, \
-kernel_compiler_patch, \
-MuQSS, \
-Orca, \
-PDS, \
-RT_PREEMPT (-rt), \
-UKSM, \
-zen-sauce. \
 "
 
 inherit ot-kernel
@@ -211,7 +196,6 @@ LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" orca? ( MIT )"
 LICENSE+=" pds? ( GPL-3 )" # \
 	# See https://gitlab.com/alfredchen/PDS-mq/-/blob/master/LICENSE
-LICENSE+=" pgo? ( GPL-2 GPL-2+ )" # GCC_PGO kernel patch only
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
@@ -283,9 +267,6 @@ CDEPEND+="
 	)
 
 	${KCP_RDEPEND}
-	kpgo-utils? (
-		sys-kernel/kpgo-utils
-	)
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
@@ -294,8 +275,16 @@ CDEPEND+="
 		sys-libs/libunwind[static-libs]
 	)
 "
-# Re-add to pgo? section above if -Os gcc-kpgo changes implemented.
-# >=sys-devel/gcc-kpgo-${GCC_PV}
+
+GCC_MIN_KCP_HPPA=12
+GCC_MIN_KCP=11
+LLVM_MIN_CLANG_PGO_S390="not supported"
+LLVM_MIN_KCFI_ARM64="not supported"
+LLVM_MIN_KCFI_AMD64="not supported"
+LLVM_MIN_KCP=12
+LLVM_MIN_LTO="not supported"
+LLVM_MIN_PGO="not supported"
+LLVM_MIN_SHADOWCALLSTACK_ARM64="not supported"
 
 RDEPEND+="
 	!build? (
@@ -639,4 +628,75 @@ ot-kernel_check_versions() {
 	_ot-kernel_check_versions "sys-fs/xfsprogs" "2.6.0" "CONFIG_XFS_FS"
 	_ot-kernel_check_versions "sys-process/procps" "3.2.0" ""
 	_ot-kernel_check_versions "virtual/udev" "081" ""
+}
+
+# @FUNCTION: ot-kernel_get_llvm_min_slot
+# @DESCRIPTION:
+# Get the min slot for clang
+ot-kernel_get_llvm_min_slot() {
+	local _llvm_min_slot
+
+	local wants_kcp=0
+	local wants_kcp_rpi=0
+
+	if [[ "${CFLAGS}" =~ "-march" ]] ; then
+		wants_kcp=1
+	fi
+	if [[ -n "${X86_MICROARCH_OVERRIDE}" ]] ; then
+		wants_kcp=1
+	fi
+	if [[ "${CFLAGS}" =~ "-mcpu=cortex-a72" ]] ; then
+		wants_kcp_rpi=1
+	fi
+
+	local kcp_provider=$(ot-kernel_get_kcp_provider)
+
+	# Descending sort
+	if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo && [[ "${arch}" == "s390" ]] ; then
+		die "Clang PGO is not supported for this series."
+	fi
+	if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
+		die "Clang PGO is not supported for this series."
+	fi
+	if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "arm64" ]] ; then
+		die "KCFI is not supported for this series."
+	fi
+	if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "amd64" ]] ; then
+		die "KCFI is not supported for this series."
+	fi
+	if has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
+		die "LTO is not supported for this series."
+	fi
+	if has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack && [[ "${arch}" == "amd64" ]] ; then
+		die "ShadowCallStack is not supported for this series."
+	fi
+
+	if (( ${wants_kcp} == 1 )) ; then
+		_llvm_min_slot=${LLVM_MIN_KCP} # 12
+	else
+		_llvm_min_slot=${LLVM_MIN_SLOT} # 10
+	fi
+	echo "${_llvm_min_slot}"
+}
+
+# @FUNCTION: ot-kernel_get_gcc_min_slot
+# @DESCRIPTION:
+# Get the min slot for gcc
+ot-kernel_get_gcc_min_slot() {
+	local _gcc_min_slot
+	local kcp_provider=$(ot-kernel_get_kcp_provider)
+	if [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "parisc" || "${arch}" == "parisc64" ]] ; then
+		# hppa
+		_gcc_min_slot=${GCC_MIN_KCP_HPPA} # 12
+	elif grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
+	# Prevent:
+	# <redacted>-pc-linux-gnu-gcc-11: error: unrecognized command-line option '-ftrivial-auto-var-init=zero'
+		_gcc_min_slot=12
+	elif [[ "${kcp_provider}" == "graysky2" ]] ; then
+		# hppa
+		_gcc_min_slot=${GCC_MIN_KCP} # 11
+	else
+		_gcc_min_slot=${GCC_MIN_SLOT} # 4
+	fi
+	echo "${_gcc_min_slot}"
 }
