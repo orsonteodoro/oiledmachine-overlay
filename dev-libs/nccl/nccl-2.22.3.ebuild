@@ -253,7 +253,7 @@ check_kernel_setup() {
 		WARNING_IPV6="CONFIG_IPV6=y is required for InfiniBand or RoCE support."
 		WARNING_INFINIBAND="CONFIG_INFINIBAND=y is required for InfiniBand or RoCE support."
 		WARNING_INFINIBAND_USER_ACCESS="CONFIG_INFINIBAND_USER_ACCESS=y is required for InfiniBand or RoCE support."
-		WARNING_ETHERNET="CONFIG_ETHERNET=y is required for RoCE support."
+		WARNING_ETHERNET="CONFIG_ETHERNET=y is required for ConnectX-4 or later support."
 		WARNING_MLX5_CORE="CONFIG_MLX5_CORE=y is required for ConnectX-4 or later support."
 		WARNING_MLX5_INFINIBAND="CONFIG_MLX5_INFINIBAND=y is required for ConnectX-4 or later support."
 		check_extra_config
