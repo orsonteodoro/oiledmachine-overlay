@@ -114,6 +114,7 @@ RDEPEND="
 	)
 	communication? (
 		~dev-libs/rccl-${PV}:${ROCM_SLOT}$(get_rocm_usedep RCCL)
+		~dev-libs/rccl-rdma-sharp-plugins-${PV}:${ROCM_SLOT}
 	)
 	cv? (
 		~sci-libs/MIVisionX-${PV}:${ROCM_SLOT}[rocm]
