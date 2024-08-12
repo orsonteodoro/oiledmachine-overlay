@@ -51,7 +51,7 @@ RESTRICT="mirror test"
 SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
--infiniband test
+-ibv test
 ebuild-revision-2
 "
 REQUIRED_USE="
@@ -149,7 +149,7 @@ RDEPEND="
 			=dev-util/nvidia-cuda-toolkit-11.8*
 		)
 	)
-	infiniband? (
+	ibv? (
 		sys-cluster/rdma-core
 	)
 	dev-util/nvidia-cuda-toolkit:=
@@ -218,7 +218,7 @@ check_kernel_setup() {
 	WARNING_IPV6="CONFIG_IPV6=y is optional for TCP/IP IPv6 socket support."
 	check_extra_config
 
-	if use infiniband ; then
+	if use ibv ; then
 		CONFIG_CHECK="
 			~NET
 			~INET
@@ -318,7 +318,7 @@ eerror "Unsupported cuda version."
 		list+=( -gencode=arch=compute_90,code=compute_90 )
 	fi
 	export NVCC_GENCODE="${list[@]}"
-	export RDMA_CORE=$(usex infiniband "1" "0")
+	export RDMA_CORE=$(usex ibv "1" "0")
 }
 
 src_compile() {

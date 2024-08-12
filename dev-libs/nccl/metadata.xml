@@ -10,8 +10,8 @@
     <remote-id type="github">NVIDIA/nccl</remote-id>
   </upstream>
   <use>
-    <flag name="infiniband">
-      Support RDMA over InfiniBand™.
+    <flag name="ivb">
+      Support for RoCE or InfiniBand™.
     </flag>
   </use>
 </pkgmetadata>

@@ -44,13 +44,13 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="infiniband test ebuild-revision-7"
+IUSE="ibv test ebuild-revision-7"
 RDEPEND="
 	!dev-libs/rccl:0
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
-	infiniband? (
+	ibv? (
 		sys-cluster/rdma-core
 	)
 "
@@ -131,7 +131,7 @@ check_kernel_setup() {
 	WARNING_IPV6="CONFIG_IPV6=y is optional for TCP/IP IPv6 socket support."
 	check_extra_config
 
-	if use infiniband ; then
+	if use ibv ; then
 		CONFIG_CHECK="
 			~NET
 			~INET
