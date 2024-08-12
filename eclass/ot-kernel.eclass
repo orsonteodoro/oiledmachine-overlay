@@ -1187,6 +1187,8 @@ ot-kernel_use() {
 # @DESCRIPTION:
 # Check and avoid header incompatibility
 verify_gcc_header_compat_with_clang() {
+# TODO:  re-evaluate keep/delete status.
+# The issue is about libstdcxx header compatibility of MB_LEN_MAX and the clang/llvm build discussed below.
 	local gcc_current_profile=$(gcc-config -c)
 	local gcc_current_profile_slot=${gcc_current_profile##*-}
 	local GCC_SLOT_PGO_MAX="12"
@@ -2133,6 +2135,26 @@ einfo "Applying the C2TCP / DeepCC / Orca patch"
 	_fpatch "${EDISTDIR}/${C2TCP_FN}"
 }
 
+# @FUNCTION: _print_gcc_slots
+# @DESCRIPTION:
+# Show user all the gcc_slot_<#> vertically.
+_print_gcc_slots() {
+	local gcc_slot
+	for gcc_slot in $(seq ${GCC_MAX_SLOT} -1 ${GCC_MIN_SLOT}) ; do
+eerror "  sys-devel/gcc:${gcc_slot}"
+	done
+}
+
+# @FUNCTION: _print_llvm_slots
+# @DESCRIPTION:
+# Show user all the llvm_slot_<#> vertically.
+_print_llvm_slots() {
+	local llvm_slot
+	for llvm_slot in $(seq ${LLVM_MAX_SLOT} -1 ${LLVM_MIN_SLOT}) ; do
+eerror "  sys-devel/clang:${llvm_slot}"
+	done
+}
+
 # @FUNCTION: ot-kernel_compiler_not_found
 # @DESCRIPTION:
 # Show compiler is not found message
@@ -2141,13 +2163,8 @@ ot-kernel_compiler_not_found() {
 eerror
 eerror "These are the required slot ranges.  Either choose..."
 eerror
-eerror "GCC_MIN_SLOT: ${GCC_MIN_SLOT}"
-eerror "GCC_MAX_SLOT: ${GCC_MAX_SLOT}"
-eerror
-eerror "  or"
-eerror
-eerror "LLVM_MIN_SLOT: ${LLVM_MIN_SLOT}"
-eerror "LLVM_MAX_SLOT: ${LLVM_MAX_SLOT}"
+	$(_print_gcc_slots)
+	$(_print_llvm_slots)
 eerror
 eerror "You should re-emerge the one of the allowed compiler slots."
 eerror
@@ -4751,7 +4768,7 @@ ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-			ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+			ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO" # Needs >= GCC 12
 		fi
 		ot-kernel_y_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
 		ot-kernel_y_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"	# Production symbol.  The option's help does mention cold boot attacks.
@@ -6049,7 +6066,7 @@ eerror
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO=y" "${path_config}" ; then
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO" # Needs >= GCC 12
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
@@ -6290,7 +6307,7 @@ eerror
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO=y" "${path_config}" ; then
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO" # Needs >= GCC 12
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
@@ -6324,7 +6341,7 @@ eerror
 		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
 			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN=y" "${path_config}" ; then
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO" # Needs >= GCC 12
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
@@ -11861,7 +11878,7 @@ eerror
 
 # @FUNCTION: get_llvm_slot
 # @DESCRIPTION:
-# Gets a ready to use clang compiler
+# Gets the clang compiler that the user want to use.
 get_llvm_slot() {
 	local llvm_slot
 	for llvm_slot in $(seq ${LLVM_MAX_SLOT} -1 ${LLVM_MIN_SLOT}) ; do
@@ -11872,10 +11889,20 @@ get_llvm_slot() {
 
 # @FUNCTION: get_llvm_slot
 # @DESCRIPTION:
-# Gets a ready to use gcc compiler
+# Gets the gcc compiler that the user want to use.
 get_gcc_slot() {
+	local _gcc_min_slot
+
+	if grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
+	# Prevent
+		# <redacted>-pc-linux-gnu-gcc-11: error: unrecognized command-line option '-ftrivial-auto-var-init=zero'
+		_gcc_min_slot=12
+	else
+		_gcc_min_slot=${GCC_MIN_SLOT}
+	fi
+
 	local gcc_slot
-	for gcc_slot in $(seq ${GCC_MAX_SLOT} -1 ${GCC_MIN_SLOT}) ; do
+	for gcc_slot in $(seq ${GCC_MAX_SLOT} -1 ${_gcc_min_slot}) ; do
 		ot-kernel_has_version "${GCC_PKG}:${gcc_slot}" && is_gcc_ready && break
 	done
 	echo "${gcc_slot}"

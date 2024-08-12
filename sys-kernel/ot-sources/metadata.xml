@@ -242,7 +242,7 @@
     package.
 
 
-    
+
     CFLAGS and HOSTCFLAGS
 
     CFLAGS, CXXFLAGS, LDFLAGS are applied to the kernel CHOST or target machine.
@@ -4225,9 +4225,6 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="fallback-commit">
       Rewind the commit backwards for live ebuilds to when patches were working.
     </flag>
-    <flag name="gost">
-      Add support for GOST (Kuznyechik block cipher)
-    </flag>
     <flag name="genpatches">
       Applies the genkernel patch set.
     </flag>
@@ -4239,6 +4236,9 @@ unset OT_KERNEL_PRIVATE_KEY
 
         https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd415
 
+    </flag>
+    <flag name="gost">
+      Add support for GOST (Kuznyechik block cipher)
     </flag>
     <flag name="gtk">
       Add support for gconfig, the GTK+2 kernel config editor
