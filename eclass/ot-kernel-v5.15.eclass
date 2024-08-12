@@ -1014,10 +1014,10 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=15
 	elif has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
 		_llvm_min_slot=${LLVM_MIN_PGO} # 13
-	elif has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
-		_llvm_min_slot=${LLVM_MIN_LTO} # 11
 	elif (( ${wants_kcp} == 1 )) ; then
 		_llvm_min_slot=${LLVM_MIN_KCP} # 12
+	elif has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
+		_llvm_min_slot=${LLVM_MIN_LTO} # 11
 	elif has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack && [[ "${arch}" == "amd64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_SHADOWCALLSTACK_ARM64} # 10
 	else
