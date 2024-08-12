@@ -685,6 +685,12 @@ ot-kernel_get_llvm_min_slot() {
 ot-kernel_get_gcc_min_slot() {
 	local _gcc_min_slot
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
+
+	local wants_kcp_rpi=0
+	if [[ "${CFLAGS}" =~ "-mcpu=cortex-a72" ]] ; then
+		wants_kcp_rpi=1
+	fi
+
 	if [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "parisc" || "${arch}" == "parisc64" ]] ; then
 		# hppa
 		_gcc_min_slot=${GCC_MIN_KCP_HPPA} # 12
@@ -695,6 +701,8 @@ ot-kernel_get_gcc_min_slot() {
 	elif [[ "${kcp_provider}" == "graysky2" ]] ; then
 		# hppa
 		_gcc_min_slot=${GCC_MIN_KCP} # 11
+	elif (( ${wants_kcp_rpi} == 1 )) ; then
+		_gcc_min_slot=5
 	else
 		_gcc_min_slot=${GCC_MIN_SLOT} # 4
 	fi
