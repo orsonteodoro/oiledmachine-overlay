@@ -124,11 +124,15 @@ check_kernel_setup() {
 			~INET
 			~IPV6
 			~INFINIBAND
+			~INFINIBAND_USER_ACCESS
+			~ETHERNET
 		"
-		WARNING_NET="CONFIG_NET=y is required for RDMA with InfiniBand support."
-		WARNING_INET="CONFIG_INET=y is required for RDMA with InfiniBand support."
-		WARNING_IPV6="CONFIG_IPV6=y is required for RDMA with InfiniBand support."
-		WARNING_INFINIBAND="CONFIG_INFINIBAND=y is required for RDMA with InfiniBand support."
+		WARNING_NET="CONFIG_NET=y is required for InfiniBand or RoCE support."
+		WARNING_INET="CONFIG_INET=y is required for InfiniBand or RoCE support."
+		WARNING_IPV6="CONFIG_IPV6=y is required for InfiniBand or RoCE support."
+		WARNING_INFINIBAND="CONFIG_INFINIBAND=y is required for InfiniBand or RoCE support."
+		WARNING_INFINIBAND_USER_ACCESS="CONFIG_INFINIBAND_USER_ACCESS=y is required for InfiniBand or RoCE support."
+		WARNING_ETHERNET="CONFIG_ETHERNET=y is required for RoCE support."
 		check_extra_config
 	fi
 }
