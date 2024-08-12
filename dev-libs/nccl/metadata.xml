@@ -11,7 +11,7 @@
   </upstream>
   <use>
     <flag name="infiniband">
-      Support RDMA over InfiniBand™
+      Support RDMA over InfiniBand™.
     </flag>
   </use>
 </pkgmetadata>
