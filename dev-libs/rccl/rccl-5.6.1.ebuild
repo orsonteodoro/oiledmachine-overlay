@@ -123,9 +123,9 @@ check_kernel_setup() {
 		~INET
 		~IPV6
 	"
-	WARNING_NET="CONFIG_NET=y is required for TCP/IP socket support."
-	WARNING_INET="CONFIG_INET=y is required for TCP/IP socket support."
-	WARNING_IPV6="CONFIG_IPV6=y is optional for TCP/IP IPv6 socket support."
+	WARNING_NET="CONFIG_NET=y is required for RoCE TCP/IP socket support."
+	WARNING_INET="CONFIG_INET=y is required for RoCE TCP/IP socket support."
+	WARNING_IPV6="CONFIG_IPV6=y is optional for RoCE TCP/IP IPv6 socket support."
 	check_extra_config
 
 	if use infiniband ; then
