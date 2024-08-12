@@ -19,7 +19,7 @@ CHECKREQS_MEMORY=25G # Tested with 34.3G total memory
 LLVM_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit check-reqs cmake edo flag-o-matic rocm
+inherit check-reqs cmake edo flag-o-matic linux-info rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/rccl-rocm-${PV}"
@@ -41,12 +41,15 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-7"
+IUSE="infiniband test ebuild-revision-7"
 RDEPEND="
 	!dev-libs/rccl:0
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
+	infiniband? (
+		sys-cluster/rdma-core
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -71,7 +74,75 @@ ewarn "Set CHECKREQS_DONOTHING=1 to bypass build requirements not met check at y
 	check-reqs_pkg_pretend
 }
 
+check_kernel_setup() {
+	linux-info_pkg_setup
+#		~DRM # Referenced but not used
+	CONFIG_CHECK="
+		~DMI
+		~PROC_FS
+		~PROC_SYSCTL
+
+		~SYSFS
+		~NUMA
+
+		~PCI
+	"
+	WARNING_DRM="CONFIG_DRM=y is needed for driver support."
+	WARNING_DMI="CONFIG_DMI=y is needed for InfiniBand checks."
+	WARNING_PROC_FS="CONFIG_PROC_FS=y is needed for acquiring system details."
+	WARNING_PROC_SYSCTL="CONFIG_PROC_SYSCTL=y is needed for Host ID generation."
+	WARNING_PCI="CONFIG_PCI=y is required for"
+	WARNING_NUMA="CONFIG_NUMA is required for tools or NUMA CPU identification."
+	check_extra_config
+
+	CONFIG_CHECK="
+		~DMA_SHARED_BUFFER
+		~DMABUF_MOVE_NOTIFY
+
+		~ZONE_DEVICE
+		~64BIT
+		~PCI_P2PDMA
+	"
+	WARNING_DMA_SHARED_BUFFER="CONFIG_DMA_SHARED_BUFFER=y is required for DMA-BUF support."
+	WARNING_DMABUF_MOVE_NOTIFY="CONFIG_DMABUF_MOVE_NOTIFY=y is required for DMA-BUF support."
+	WARNING_ZONE_DEVICE="CONFIG_ZONE_DEVICE=y is required for DMA-BUF support."
+	WARNING_64BIT="CONFIG_64BIT=y is required for DMA-BUF support."
+	WARNING_PCI_P2PDMA="CONFIG_PCI_P2PDMA=y is required for DMA-BUF support."
+	check_extra_config
+
+	CONFIG_CHECK="
+		~SHMEM
+	"
+	WARNING_SHMEM="CONFIG_SHMEM=y is required for shared memory transport support."
+	check_extra_config
+
+	CONFIG_CHECK="
+		~NET
+		~INET
+		~IPV6
+	"
+	WARNING_NET="CONFIG_NET=y is required for socket support."
+	WARNING_INET="CONFIG_INET=y is required for socket support."
+	WARNING_IPV6="CONFIG_IPV6=y is required for socket support."
+	check_extra_config
+
+	if use infiniband ; then
+		CONFIG_CHECK="
+			~NET
+			~INET
+			~IPV6
+			~INFINIBAND
+		"
+		WARNING_NET="CONFIG_NET=y is required for RDMA with InfiniBand support."
+		WARNING_INET="CONFIG_INET=y is required for RDMA with InfiniBand support."
+		WARNING_IPV6="CONFIG_IPV6=y is required for RDMA with InfiniBand support."
+		WARNING_INFINIBAND="CONFIG_INFINIBAND=y is required for RDMA with InfiniBand support."
+		check_extra_config
+	fi
+}
+
 pkg_setup() {
+	check_kernel_setup
 	check-reqs_pkg_setup
 
 	rocm_pkg_setup

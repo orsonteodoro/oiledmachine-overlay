@@ -19,4 +19,18 @@
   <upstream>
     <remote-id type="github">ROCm-Developer-Tools/rccl</remote-id>
   </upstream>
+  <use>
+    <flag name="ipv6">
+      Check support for IPv6.
+    </flag>
+    <flag name="infiniband">
+      Support RDMA over InfiniBand™.
+    </flag>
+    <flag name="socket">
+      Check support for shared memory.
+    </flag>
+    <flag name="socket">
+      Check support for TCP/IP.
+    </flag>
+  <use>
 </pkgmetadata>
