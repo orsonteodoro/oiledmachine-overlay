@@ -10,6 +10,9 @@
     <remote-id type="github">NVIDIA/nccl</remote-id>
   </upstream>
   <use>
+    <flag name="gpudirect">
+      Add support for GPUDirect® RDMA.
+    </flag>
     <flag name="verbs">
       Support for RoCE or InfiniBand™.
     </flag>

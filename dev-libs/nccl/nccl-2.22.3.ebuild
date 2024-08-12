@@ -51,7 +51,7 @@ RESTRICT="mirror test"
 SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-test -verbs
+gpudirect test -verbs
 ebuild-revision-2
 "
 REQUIRED_USE="
@@ -59,95 +59,112 @@ REQUIRED_USE="
 		${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 	)
 "
+CUDA_TOOLKIT_11_8="
+	=dev-util/nvidia-cuda-toolkit-11.8*[rdma]
+"
+CUDA_TOOLKIT_12_3="
+	=dev-util/nvidia-cuda-toolkit-12.3*[rdma]
+"
+CUDA_TOOLKIT_12_4="
+	=dev-util/nvidia-cuda-toolkit-12.4*[rdma]
+"
+CUDA_TOOLKIT_12_5="
+	=dev-util/nvidia-cuda-toolkit-12.5*[rdma]
+"
 RDEPEND="
 	|| (
-		=dev-util/nvidia-cuda-toolkit-12.5*
-		=dev-util/nvidia-cuda-toolkit-12.4*
-		=dev-util/nvidia-cuda-toolkit-12.3*
-		=dev-util/nvidia-cuda-toolkit-11.8*
+		${CUDA_TOOLKIT_12_5}
+		${CUDA_TOOLKIT_12_4}
+		${CUDA_TOOLKIT_12_3}
+		${CUDA_TOOLKIT_11_8}
 	)
 	cuda_targets_compute_61? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12.5*
-			=dev-util/nvidia-cuda-toolkit-12.4*
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-11.8*
+			${CUDA_TOOLKIT_12_5}
+			${CUDA_TOOLKIT_12_4}
+			${CUDA_TOOLKIT_12_3}
+			${CUDA_TOOLKIT_11_8}
 		)
 	)
 	cuda_targets_compute_70? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12.5*
-			=dev-util/nvidia-cuda-toolkit-12.4*
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-11.8*
+			${CUDA_TOOLKIT_12_5}
+			${CUDA_TOOLKIT_12_4}
+			${CUDA_TOOLKIT_12_3}
+			${CUDA_TOOLKIT_11_8}
 		)
 	)
 	cuda_targets_compute_80? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12.5*
-			=dev-util/nvidia-cuda-toolkit-12.4*
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-11.8*
+			${CUDA_TOOLKIT_12_5}
+			${CUDA_TOOLKIT_12_4}
+			${CUDA_TOOLKIT_12_3}
+			${CUDA_TOOLKIT_11_8}
 		)
 	)
 	cuda_targets_compute_90? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12.5*
-			=dev-util/nvidia-cuda-toolkit-12.4*
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-11.8*
+			${CUDA_TOOLKIT_12_5}
+			${CUDA_TOOLKIT_12_4}
+			${CUDA_TOOLKIT_12_3}
+			${CUDA_TOOLKIT_11_8}
 		)
 	)
 	cuda_targets_sm_35? (
-		=dev-util/nvidia-cuda-toolkit-11.8*
+		${CUDA_TOOLKIT_11_8}
 	)
 	cuda_targets_sm_50? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12.5*
-			=dev-util/nvidia-cuda-toolkit-12.4*
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-11.8*
+			${CUDA_TOOLKIT_12_5}
+			${CUDA_TOOLKIT_12_4}
+			${CUDA_TOOLKIT_12_3}
+			${CUDA_TOOLKIT_11_8}
 		)
 	)
 	cuda_targets_sm_60? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12.5*
-			=dev-util/nvidia-cuda-toolkit-12.4*
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-11.8*
+			${CUDA_TOOLKIT_12_5}
+			${CUDA_TOOLKIT_12_4}
+			${CUDA_TOOLKIT_12_3}
+			${CUDA_TOOLKIT_11_8}
 		)
 	)
 	cuda_targets_sm_61? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12.5*
-			=dev-util/nvidia-cuda-toolkit-12.4*
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-11.8*
+			${CUDA_TOOLKIT_12_5}
+			${CUDA_TOOLKIT_12_4}
+			${CUDA_TOOLKIT_12_3}
+			${CUDA_TOOLKIT_11_8}
 		)
 	)
 	cuda_targets_sm_70? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12.5*
-			=dev-util/nvidia-cuda-toolkit-12.4*
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-11.8*
+			${CUDA_TOOLKIT_12_5}
+			${CUDA_TOOLKIT_12_4}
+			${CUDA_TOOLKIT_12_3}
+			${CUDA_TOOLKIT_11_8}
 		)
 	)
 	cuda_targets_sm_80? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12.5*
-			=dev-util/nvidia-cuda-toolkit-12.4*
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-11.8*
+			${CUDA_TOOLKIT_12_5}
+			${CUDA_TOOLKIT_12_4}
+			${CUDA_TOOLKIT_12_3}
+			${CUDA_TOOLKIT_11_8}
 		)
 	)
 	cuda_targets_sm_90? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12.5*
-			=dev-util/nvidia-cuda-toolkit-12.4*
-			=dev-util/nvidia-cuda-toolkit-12.3*
-			=dev-util/nvidia-cuda-toolkit-11.8*
+			${CUDA_TOOLKIT_12_5}
+			${CUDA_TOOLKIT_12_4}
+			${CUDA_TOOLKIT_12_3}
+			${CUDA_TOOLKIT_11_8}
 		)
+	)
+	gpudirect? (
+		>=x11-drivers/nvidia-drivers-470[modules]
+		dev-util/nvidia-cuda-toolkit:=
+		net-misc/MLNX_OFED
 	)
 	verbs? (
 		sys-cluster/rdma-core
