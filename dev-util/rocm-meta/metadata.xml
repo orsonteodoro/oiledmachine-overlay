@@ -17,7 +17,7 @@
       Install tools to convert source code to binary/machine format.
     </flag>
     <flag name="communication">
-      Install communication support.
+      Install multigpu support.
     </flag>
     <flag name="cv">
       Install Computer Vision (CV) support.
