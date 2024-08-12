@@ -1001,6 +1001,10 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=${LLVM_MIN_KCFI_AMD64} # 16
 	elif has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo && [[ "${arch}" == "s390" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_CLANG_PGO_S390} # 15
+	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
+		_llvm_min_slot=15
+	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		_llvm_min_slot=14
 	elif has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
 		_llvm_min_slot=${LLVM_MIN_PGO} # 13
 	elif has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
@@ -1031,6 +1035,14 @@ ot-kernel_get_gcc_min_slot() {
 	elif [[ "${kcp_provider}" == "graysky2" ]] ; then
 		# hppa
 		_gcc_min_slot=${GCC_MIN_KCP} # 11
+	elif has cpu_flags_x86_tpause ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_tpause ; then
+		_gcc_min_slot=9
+	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		_gcc_min_slot=9
+	elif grep -q -E -e "^CONFIG_RETPOLINE=y" "${path_config}" ; then
+		_gcc_min_slot=8
+	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
+		_gcc_min_slot=8
 	else
 		_gcc_min_slot=${GCC_MIN_SLOT} # 5
 	fi

@@ -701,6 +701,8 @@ ot-kernel_get_gcc_min_slot() {
 	elif [[ "${kcp_provider}" == "graysky2" ]] ; then
 		# hppa
 		_gcc_min_slot=${GCC_MIN_KCP} # 11
+	elif grep -q -E -e "^CONFIG_RETPOLINE=y" "${path_config}" ; then
+		_gcc_min_slot=8
 	elif (( ${wants_kcp_rpi} == 1 )) ; then
 		_gcc_min_slot=5
 	else

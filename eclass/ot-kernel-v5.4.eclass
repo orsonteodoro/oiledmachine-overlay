@@ -806,6 +806,10 @@ ot-kernel_get_gcc_min_slot() {
 	# Prevent:
 	# <redacted>-pc-linux-gnu-gcc-11: error: unrecognized command-line option '-ftrivial-auto-var-init=zero'
 		_gcc_min_slot=12
+	elif grep -q -E -e "^CONFIG_RETPOLINE=y" "${path_config}" ; then
+		_gcc_min_slot=8
+	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
+		_gcc_min_slot=8
 	elif [[ "${kcp_provider}" == "graysky2" ]] ; then
 		# hppa
 		_gcc_min_slot=${GCC_MIN_KCP} # 6
