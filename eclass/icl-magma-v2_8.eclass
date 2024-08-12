@@ -69,7 +69,7 @@ LICENSE="BSD"
 KEYWORDS="~amd64"
 IUSE+="
 atlas doc examples -ilp64 mkl openblas tbb openmp test
-ebuild-revision-4
+ebuild-revision-5
 "
 if ! [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	IUSE+="
