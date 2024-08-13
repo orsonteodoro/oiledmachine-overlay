@@ -407,6 +407,7 @@ CDEPEND+="
 
 GCC_MIN_KCP_GRAYSKY2_AMD64=11
 GCC_MIN_KCP_GRAYSKY2_ARM64=3
+GCC_MIN_KCP_ZEN_SAUCE_AMD64=10
 LLVM_MIN_CLANG_PGO_S390="not supported"
 LLVM_MIN_KCFI_ARM64="not supported"
 LLVM_MIN_KCFI_AMD64="not supported"
@@ -844,6 +845,10 @@ ot-kernel_get_llvm_min_slot() {
 		die "ShadowCallStack is not supported for this series."
 	fi
 
+	if tc-is-clang && [[ "${kcp_provider}" =~ "zen-sauce" ]] ; then
+		die "kernel_compiler_patch was not released for llvm for zen-sauce for this series."
+	fi
+
 	if grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 		_llvm_min_slot=15
 	elif [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
@@ -872,6 +877,8 @@ ot-kernel_get_gcc_min_slot() {
 		_gcc_min_slot=12
 	elif [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 11
+	elif [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
+		_gcc_min_slot=${GCC_MIN_KCP_ZEN_SAUCE_AMD64} # 10
 	elif has cpu_flags_x86_tpause ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_tpause ; then
 		_gcc_min_slot=9
 	elif grep -q -E -e "^CONFIG_RETPOLINE=y" "${path_config}" ; then

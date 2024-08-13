@@ -1025,7 +1025,7 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=15
 	elif has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
 		_llvm_min_slot=${LLVM_MIN_PGO} # 13
-	elif [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
+	elif [[ "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 12
 	elif has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
 		_llvm_min_slot=${LLVM_MIN_LTO} # 11
@@ -1043,11 +1043,13 @@ ot-kernel_get_llvm_min_slot() {
 ot-kernel_get_gcc_min_slot() {
 	local _gcc_min_slot
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
+
+	# Descending sort
 	if grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
 	# Prevent:
 	# <redacted>-pc-linux-gnu-gcc-11: error: unrecognized command-line option '-ftrivial-auto-var-init=zero'
 		_gcc_min_slot=12
-	elif [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
+	elif [[ "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 11
 	elif has cpu_flags_x86_tpause ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_tpause ; then
 		_gcc_min_slot=9

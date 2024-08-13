@@ -1133,7 +1133,7 @@ ot-kernel_get_llvm_min_slot() {
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
 
 	# Descending sort
-	if [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
+	if [[ "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 18
 	elif has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "arm64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCFI_ARM64} # 16
@@ -1163,7 +1163,11 @@ ot-kernel_get_llvm_min_slot() {
 ot-kernel_get_gcc_min_slot() {
 	local _gcc_min_slot
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
-	if grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
+
+	# Descending sort
+	if [[ "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
+		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 14
+	elif grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
 	# Prevent:
 	# <redacted>-pc-linux-gnu-gcc-11: error: unrecognized command-line option '-ftrivial-auto-var-init=zero'
 		_gcc_min_slot=12
@@ -1173,8 +1177,6 @@ ot-kernel_get_gcc_min_slot() {
 		_gcc_min_slot=9
 	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=9
-	elif [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
-		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 14
 	elif grep -q -E -e "^CONFIG_MITIGATION_RETPOLINE=y" "${path_config}" ; then
 		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_X86_USER_SHADOW_STACK=y" "${path_config}" && [[ "${arch}" == "x86_64" ]] ; then

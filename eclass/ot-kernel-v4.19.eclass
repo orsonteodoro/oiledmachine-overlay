@@ -716,6 +716,10 @@ ot-kernel_get_llvm_min_slot() {
 		die "ShadowCallStack is not supported for this series."
 	fi
 
+	if tc-is-clang && [[ "${kcp_provider}" =~ "zen-sauce" ]] ; then
+		die "kernel_compiler_patch was not released for zen-sauce for this series."
+	fi
+
 	if [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 12
 	else
@@ -734,6 +738,10 @@ ot-kernel_get_gcc_min_slot() {
 	local wants_kcp_rpi=0
 	if [[ "${CFLAGS}" =~ "-mcpu=cortex-a72" ]] ; then
 		wants_kcp_rpi=1
+	fi
+
+	if tc-is-gcc && [[ "${kcp_provider}" =~ "zen-sauce" ]] ; then
+		die "kernel_compiler_patch was not released for zen-sauce for this series."
 	fi
 
 	if grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
