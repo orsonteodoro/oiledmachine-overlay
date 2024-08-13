@@ -320,13 +320,17 @@ CDEPEND+="
 	)
 "
 
+GCC_MIN_KCP_GENPATCHES_AMD64=11
 GCC_MIN_KCP_GRAYSKY2_AMD64=11
 GCC_MIN_KCP_GRAYSKY2_ARM64=3
+GCC_MIN_KCP_ZEN_SAUCE_AMD64="not supported"
 LLVM_MIN_CLANG_PGO_S390="not supported"
 LLVM_MIN_KCFI_ARM64="not supported"
 LLVM_MIN_KCFI_AMD64="not supported"
+LLVM_MIN_KCP_GENPATCHES_AMD64=12
 LLVM_MIN_KCP_GRAYSKY2_AMD64=12
 LLVM_MIN_KCP_GRAYSKY2_ARM64=4
+LLVM_MIN_KCP_ZEN_SAUCE_AMD64="not supported"
 LLVM_MIN_LTO="not supported"
 LLVM_MIN_PGO="not supported"
 LLVM_MIN_SHADOWCALLSTACK_ARM64="not supported"
@@ -698,29 +702,33 @@ ot-kernel_get_llvm_min_slot() {
 
 	# Descending sort
 	if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo && [[ "${arch}" == "s390" ]] ; then
-		die "Clang PGO is not supported for this series."
+		die "Clang PGO is not supported for this series.  Disable either the clang or pgo USE flag."
 	fi
 	if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
-		die "Clang PGO is not supported for this series."
+		die "Clang PGO is not supported for this series.  Disable either the clang or pgo USE flag."
 	fi
 	if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "arm64" ]] ; then
-		die "KCFI is not supported for this series."
+		die "KCFI is not supported for this series.  Disable the kcfi USE flag."
 	fi
 	if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "x86_64" ]] ; then
-		die "KCFI is not supported for this series."
+		die "KCFI is not supported for this series.  Disable the kcfi USE flag."
 	fi
 	if has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
-		die "LTO is not supported for this series."
+		die "LTO is not supported for this series.  Disable the lto USE flag."
 	fi
 	if has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack && [[ "${arch}" == "x86_64" ]] ; then
-		die "ShadowCallStack is not supported for this series."
+		die "ShadowCallStack is not supported for this series.  Disable the shadowcallstack USE flag."
 	fi
 
 	if tc-is-clang && [[ "${kcp_provider}" =~ "zen-sauce" ]] ; then
-		die "kernel_compiler_patch was not released for zen-sauce for this series."
+eerror
+eerror "The kernel_compiler_patch was not released for this series for zen-sauce."
+eerror "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER needs to be updated."
+eerror
+		die
 	fi
 
-	if [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
+	if [[ "${kcp_provider}" == "genpatches" || "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 12
 	else
 		_llvm_min_slot=${LLVM_MIN_SLOT} # 10
@@ -741,14 +749,18 @@ ot-kernel_get_gcc_min_slot() {
 	fi
 
 	if tc-is-gcc && [[ "${kcp_provider}" =~ "zen-sauce" ]] ; then
-		die "kernel_compiler_patch was not released for zen-sauce for this series."
+eerror
+eerror "The kernel_compiler_patch was not released for this series for zen-sauce."
+eerror "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER needs to be updated."
+eerror
+		die
 	fi
 
 	if grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
 	# Prevent:
 	# <redacted>-pc-linux-gnu-gcc-11: error: unrecognized command-line option '-ftrivial-auto-var-init=zero'
 		_gcc_min_slot=12
-	elif [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
+	elif [[ "${kcp_provider}" == "genpatches" || "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 11
 	elif grep -q -E -e "^CONFIG_RETPOLINE=y" "${path_config}" ; then
 		_gcc_min_slot=8

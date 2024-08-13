@@ -544,13 +544,17 @@ CDEPEND+="
 	)
 "
 
+GCC_MIN_KCP_GENPATCHES_AMD64=13
 GCC_MIN_KCP_GRAYSKY2_AMD64=13
 GCC_MIN_KCP_GRAYSKY2_ARM64=3
+GCC_MIN_KCP_ZEN_SAUCE_AMD64=13
 LLVM_MIN_CLANG_PGO_S390=15
 LLVM_MIN_KCFI_ARM64=16
 LLVM_MIN_KCFI_AMD64=16
+LLVM_MIN_KCP_GENPATCHES_AMD64=15
 LLVM_MIN_KCP_GRAYSKY2_AMD64=15
 LLVM_MIN_KCP_GRAYSKY2_ARM64=4
+LLVM_MIN_KCP_ZEN_SAUCE_AMD64=15
 LLVM_MIN_LTO=12
 LLVM_MIN_PGO=13
 LLVM_MIN_SHADOWCALLSTACK_ARM64=10
@@ -1131,7 +1135,7 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=${LLVM_MIN_CLANG_PGO_S390} # 15
 	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 		_llvm_min_slot=15
-	elif [[ "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
+	elif [[ "${kcp_provider}" == "genpatches" || "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 15
 	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=14
@@ -1155,7 +1159,7 @@ ot-kernel_get_gcc_min_slot() {
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
 
 	# Descending sort
-	if [[ "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
+	if [[ "${kcp_provider}" == "genpatches" || "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 13
 	elif grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
 	# Prevent:

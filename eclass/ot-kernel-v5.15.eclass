@@ -521,13 +521,17 @@ CDEPEND+="
 	)
 "
 
+GCC_MIN_KCP_GENPATCHES_AMD64="not supported"
 GCC_MIN_KCP_GRAYSKY2_AMD64=11
 GCC_MIN_KCP_GRAYSKY2_ARM64=3
+GCC_MIN_KCP_ZEN_SAUCE_AMD64=11
 LLVM_MIN_CLANG_PGO_S390=15
 LLVM_MIN_KCFI_ARM64="not supported"
 LLVM_MIN_KCFI_AMD64="not supported"
+LLVM_MIN_KCP_GENPATCHES_AMD64="not supported"
 LLVM_MIN_KCP_GRAYSKY2_AMD64=12
 LLVM_MIN_KCP_GRAYSKY2_ARM64=4
+LLVM_MIN_KCP_ZEN_SAUCE_AMD64=12
 LLVM_MIN_LTO=11
 LLVM_MIN_PGO=13
 LLVM_MIN_SHADOWCALLSTACK_ARM64=10
@@ -1012,10 +1016,18 @@ ot-kernel_get_llvm_min_slot() {
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
 
 	if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "arm64" ]] ; then
-		die "KCFI is not supported for this series."
+		die "KCFI is not supported for this series.  Disable the kcfi USE flag."
 	fi
 	if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "x86_64" ]] ; then
-		die "KCFI is not supported for this series."
+		die "KCFI is not supported for this series.  Disable the kcfi USE flag."
+	fi
+
+	if tc-is-clang && [[ "${kcp_provider}" == "genpatches" ]] ; then
+eerror
+eerror "The kernel_compiler_patch was not released for this series for genpatches."
+eerror "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER needs to be updated."
+eerror
+		die
 	fi
 
 	# Descending sort
@@ -1043,6 +1055,14 @@ ot-kernel_get_llvm_min_slot() {
 ot-kernel_get_gcc_min_slot() {
 	local _gcc_min_slot
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
+
+	if tc-is-gcc && [[ "${kcp_provider}" == "genpatches" ]] ; then
+eerror
+eerror "The kernel_compiler_patch was not released for this series for genpatches."
+eerror "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER needs to be updated."
+eerror
+		die
+	fi
 
 	# Descending sort
 	if grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
