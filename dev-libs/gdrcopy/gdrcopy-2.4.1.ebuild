@@ -146,11 +146,15 @@ eerror
 		die
 	fi
 
-	# Check if the driver module matches
-	local kver=$(uname -r)
+	local kver=""
 	if [[ -n "${KVER}" ]] ; then
-		:
-	elif [[ ! -f "/lib/modules/${kver}/video/nvidia.ko" ]] ; then
+		kver="${KVER}"
+	else
+		kver=$(uname -r)
+	fi
+
+	# Check if the driver module matches
+	if [[ ! -f "/lib/modules/${kver}/video/nvidia.ko" ]] ; then
 eerror
 eerror "Inconsistent kernel module install path"
 eerror
