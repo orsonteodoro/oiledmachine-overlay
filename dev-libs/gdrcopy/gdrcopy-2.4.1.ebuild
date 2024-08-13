@@ -179,6 +179,20 @@ eerror
 eerror "Path to kernel source is unreachable.  The correct path is required for"
 eerror "updating module dependencies in during post-install."
 eerror
+eerror "Expected:"
+eerror
+eerror "  /usr/src/linux-${k}"
+eerror
+eerror "Solutions:"
+eerror
+eerror "  (1) Install a kernel source at the correct location"
+eerror "  (e.g. /usr/src/linux-4.14.164-gentoo and symlink from /usr/src/linux)"
+eerror "  (2) Change KVER environment variable so that it corresponds to the"
+eerror "  path /lib/modules/\$KVER"
+eerror "  (3) Use a kernel source that uses correct install path syntax to"
+eerror "  sources not your own manually installed one installed directly in"
+eerror "  /usr/src/linux.  (i.e. emerge the gentoo-sources package)"
+eerror
 		die
 	fi
 }
