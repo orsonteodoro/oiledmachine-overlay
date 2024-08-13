@@ -230,7 +230,7 @@ _pkg_postinst_one() {
 pkg_postinst() {
 	local k
 	if [[ -n "${KVER}" ]] ; then
-		local k="${KVER%-*}"
+		local k=$(echo "${KVER}" | cut -f 1-2 -d "-")
 	else
 		local k=$(uname -r | cut -f 1-2 -d "-")
 	fi
