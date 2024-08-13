@@ -52,7 +52,7 @@ SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 -gdrcopy test -verbs
-ebuild-revision-3
+ebuild-revision-4
 "
 REQUIRED_USE="
 	|| (
@@ -161,6 +161,9 @@ RDEPEND="
 			${CUDA_TOOLKIT_12_3}
 			${CUDA_TOOLKIT_11_8}
 		)
+	)
+	gdrcopy? (
+		dev-libs/gdrcopy
 	)
 	verbs? (
 		sys-cluster/rdma-core
