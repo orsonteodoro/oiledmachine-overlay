@@ -168,7 +168,7 @@ ZEN_KV="4.19.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
-build c2tcp +cfs deepcc disable_debug +genpatches -genpatches_1510
+build c2tcp +cfs clang deepcc disable_debug +genpatches -genpatches_1510
 muqss orca pds pgo rt symlink tresor tresor_prompt tresor_sysfs uksm zen-sauce
 "
 REQUIRED_USE+="
@@ -205,8 +205,52 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
 	#   from public universities.)
 LICENSE+=" zen-sauce? ( GPL-2 )"
 
+_seq() {
+	local min=${1}
+	local max=${2}
+	local i=${min}
+	while (( ${i} <= ${max} )) ; do
+		echo "${i}"
+		i=$(( ${i} + 1 ))
+	done
+}
+
+gen_clang_llvm_pair() {
+	local min=${1}
+	local max=${2}
+	local s
+	for s in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${s}
+			sys-devel/llvm:${s}
+		)
+		     "
+	done
+}
+
 KCP_RDEPEND="
-	>=sys-devel/gcc-6.5.0
+	clang? (
+		amd64? (
+			|| (
+				$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+			)
+		)
+		arm64? (
+			|| (
+				$(gen_clang_llvm_pair 3 ${LLVM_MAX_SLOT})
+			)
+		)
+	)
+	|| (
+		amd64? (
+			>=sys-devel/gcc-11.1
+		)
+		arm64? (
+			>=sys-devel/gcc-4.0.0
+		)
+		$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+	)
 "
 
 GCC_PV="4.6"
@@ -276,12 +320,13 @@ CDEPEND+="
 	)
 "
 
-GCC_MIN_KCP_HPPA=12
-GCC_MIN_KCP=11
+GCC_MIN_KCP_GRAYSKY2_AMD64=11
+GCC_MIN_KCP_GRAYSKY2_ARM64=3
 LLVM_MIN_CLANG_PGO_S390="not supported"
 LLVM_MIN_KCFI_ARM64="not supported"
 LLVM_MIN_KCFI_AMD64="not supported"
-LLVM_MIN_KCP=12
+LLVM_MIN_KCP_GRAYSKY2_AMD64=12
+LLVM_MIN_KCP_GRAYSKY2_ARM64=4
 LLVM_MIN_LTO="not supported"
 LLVM_MIN_PGO="not supported"
 LLVM_MIN_SHADOWCALLSTACK_ARM64="not supported"
@@ -671,8 +716,8 @@ ot-kernel_get_llvm_min_slot() {
 		die "ShadowCallStack is not supported for this series."
 	fi
 
-	if (( ${wants_kcp} == 1 )) ; then
-		_llvm_min_slot=${LLVM_MIN_KCP} # 12
+	if [[ "${kcp_provider}" == "graysky2" && "${arch}" == "amd64" ]] ; then
+		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 12
 	else
 		_llvm_min_slot=${LLVM_MIN_SLOT} # 10
 	fi
@@ -691,20 +736,14 @@ ot-kernel_get_gcc_min_slot() {
 		wants_kcp_rpi=1
 	fi
 
-	if [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "parisc" || "${arch}" == "parisc64" ]] ; then
-		# hppa
-		_gcc_min_slot=${GCC_MIN_KCP_HPPA} # 12
-	elif grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
+	if grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
 	# Prevent:
 	# <redacted>-pc-linux-gnu-gcc-11: error: unrecognized command-line option '-ftrivial-auto-var-init=zero'
 		_gcc_min_slot=12
-	elif [[ "${kcp_provider}" == "graysky2" ]] ; then
-		# hppa
-		_gcc_min_slot=${GCC_MIN_KCP} # 11
+	elif [[ "${kcp_provider}" == "graysky2" && "${arch}" == "amd64" ]] ; then
+		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 11
 	elif grep -q -E -e "^CONFIG_RETPOLINE=y" "${path_config}" ; then
 		_gcc_min_slot=8
-	elif (( ${wants_kcp_rpi} == 1 )) ; then
-		_gcc_min_slot=5
 	else
 		_gcc_min_slot=${GCC_MIN_SLOT} # 4
 	fi

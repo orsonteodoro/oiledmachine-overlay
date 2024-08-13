@@ -351,15 +351,25 @@ gen_clang_llvm_pair() {
 
 KCP_RDEPEND="
 	clang? (
-		|| (
-			$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+		amd64? (
+			|| (
+				$(gen_clang_llvm_pair 15 ${LLVM_MAX_SLOT})
+			)
+		)
+		arm64? (
+			|| (
+				$(gen_clang_llvm_pair 3 ${LLVM_MAX_SLOT})
+			)
 		)
 	)
 	|| (
-		(
-			>=sys-devel/gcc-11.1
+		amd64? (
+			>=sys-devel/gcc-13.9
 		)
-		$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+		arm64? (
+			>=sys-devel/gcc-4.0.0
+		)
+		$(gen_clang_llvm_pair 15 ${LLVM_MAX_SLOT})
 	)
 "
 
@@ -477,12 +487,13 @@ CDEPEND+="
 	)
 "
 
-GCC_MIN_KCP_HPPA=12
-GCC_MIN_KCP=11
+GCC_MIN_KCP_GRAYSKY2_AMD64=13
+GCC_MIN_KCP_GRAYSKY2_ARM64=3
 LLVM_MIN_CLANG_PGO_S390=15
 LLVM_MIN_KCFI_ARM64=16
 LLVM_MIN_KCFI_AMD64=16
-LLVM_MIN_KCP=12
+LLVM_MIN_KCP_GRAYSKY2_AMD64=15
+LLVM_MIN_KCP_GRAYSKY2_ARM64=4
 LLVM_MIN_LTO=12
 LLVM_MIN_PGO=13
 LLVM_MIN_SHADOWCALLSTACK_ARM64=10
@@ -1003,14 +1014,14 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=${LLVM_MIN_CLANG_PGO_S390} # 15
 	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 		_llvm_min_slot=15
+	elif [[ "${kcp_provider}" == "graysky2" && "${arch}" == "amd64" ]] ; then
+		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 15
 	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=14
 	elif has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
 		_llvm_min_slot=${LLVM_MIN_PGO} # 13
 	elif has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
 		_llvm_min_slot=${LLVM_MIN_LTO} # 12
-	elif (( ${wants_kcp} == 1 )) ; then
-		_llvm_min_slot=${LLVM_MIN_KCP} # 12
 	elif has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack && [[ "${arch}" == "amd64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_SHADOWCALLSTACK_ARM64} # 10
 	else
@@ -1025,16 +1036,12 @@ ot-kernel_get_llvm_min_slot() {
 ot-kernel_get_gcc_min_slot() {
 	local _gcc_min_slot
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
-	if [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "parisc" || "${arch}" == "parisc64" ]] ; then
-		# hppa
-		_gcc_min_slot=${GCC_MIN_KCP_HPPA} # 12
+	if [[ "${kcp_provider}" == "graysky2" && "${arch}" == "amd64" ]] ; then
+		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 13
 	elif grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
 	# Prevent:
 	# <redacted>-pc-linux-gnu-gcc-11: error: unrecognized command-line option '-ftrivial-auto-var-init=zero'
 		_gcc_min_slot=12
-	elif [[ "${kcp_provider}" == "graysky2" ]] ; then
-		# hppa
-		_gcc_min_slot=${GCC_MIN_KCP} # 11
 	elif has cpu_flags_x86_tpause ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_tpause ; then
 		_gcc_min_slot=9
 	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then

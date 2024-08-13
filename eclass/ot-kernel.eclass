@@ -174,7 +174,7 @@ IPD_RAW_VER=5 # < llvm-13 Dec 28, 2020
 IPD_RAW_VER_MIN=6
 IPD_RAW_VER_MAX=9
 KCP_COMMIT_SNAPSHOT="30db2170d3ddefa13a3dcffd05db66efff2fea7d" # 20240430
-KCP_CORTEX_A72_BN="build-with-mcpu-for-cortex-a72"
+KCP_CORTEX_A72_BN="build-with-mcpu-for-cortex-a72" # >= clang 3.8.0, >= gcc 4.0.0
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 KERNEL_SERIES_TARBALL_FN="linux-${KV_MAJOR_MINOR}.tar.xz"
 KERNEL_INC_BASE_URI=\
@@ -193,6 +193,8 @@ elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 elif ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
 	KCP_9_1_BN="more-uarches-for-kernel-5.8-5.14"
 elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+	KCP_9_1_BN="more-uarches-for-kernel-4.19-5.4"
+elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
 	KCP_9_1_BN="more-uarches-for-kernel-4.19-5.4"
 elif ver_test "${KV_MAJOR_MINOR}" -ge "4.13" ; then
 	KCP_8_1_BN="enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
@@ -2313,6 +2315,9 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 
 	if (( ${#patches[@]} > 0 )) ; then
 		eapply ${patches[@]}
+
+		# Hint for determining toolchain minimum slot requirements.
+		KCP_PATH["${KV_MAJOR_MINOR}-${extraversion}"]="${patches[@]}"
 	fi
 }
 
@@ -11870,6 +11875,8 @@ eerror "QA:  Missing ot-kernel_get_gcc_min_slot() for this series."
 # @FUNCTION: ot-kernel_setup_tc
 # @DESCRIPTION:
 # Setup toolchain args to pass to make
+# Called in ot-kernel_src_configure().
+# Called in ot-kernel_src_compile().
 ot-kernel_setup_tc() {
 	# The make command likes to complain before the build when trying to make menuconfig.
 einfo "Setting up the build toolchain"

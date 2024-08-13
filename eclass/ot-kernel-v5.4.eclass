@@ -249,13 +249,25 @@ gen_clang_llvm_pair() {
 
 KCP_RDEPEND="
 	clang? (
-		|| (
-			$(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT})
+		amd64? (
+			|| (
+				$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+			)
+		)
+		arm64? (
+			|| (
+				$(gen_clang_llvm_pair 3 ${LLVM_MAX_SLOT})
+			)
 		)
 	)
 	|| (
-		>=sys-devel/gcc-6.5.0
-		$(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT})
+		amd64? (
+			>=sys-devel/gcc-11.1
+		)
+		arm64? (
+			>=sys-devel/gcc-4.0.0
+		)
+		$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
 	)
 "
 
@@ -326,12 +338,13 @@ CDEPEND+="
 	)
 "
 
-GCC_MIN_KCP_HPPA=12
-GCC_MIN_KCP=6
+GCC_MIN_KCP_GRAYSKY2_AMD64=11
+GCC_MIN_KCP_GRAYSKY2_ARM64=3
 LLVM_MIN_CLANG_PGO_S390="not supported"
 LLVM_MIN_KCFI_ARM64="not supported"
 LLVM_MIN_KCFI_AMD64="not supported"
-LLVM_MIN_KCP=10
+LLVM_MIN_KCP_GRAYSKY2_AMD64=12
+LLVM_MIN_KCP_GRAYSKY2_ARM64=4
 LLVM_MIN_LTO="not supported"
 LLVM_MIN_PGO="not supported"
 LLVM_MIN_SHADOWCALLSTACK_ARM64="not supported"
@@ -779,8 +792,8 @@ ot-kernel_get_llvm_min_slot() {
 		die "ShadowCallStack is not supported for this series."
 	fi
 
-	if (( ${wants_kcp} == 1 )) ; then
-		_llvm_min_slot=${LLVM_MIN_KCP} # 10
+	if [[ "${kcp_provider}" == "graysky2" && "${arch}" == "amd64" ]] ; then
+		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 12
 	else
 		_llvm_min_slot=${LLVM_MIN_SLOT} # 10
 	fi
@@ -799,22 +812,16 @@ ot-kernel_get_gcc_min_slot() {
 		wants_kcp_rpi=1
 	fi
 
-	if [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "parisc" || "${arch}" == "parisc64" ]] ; then
-		# hppa
-		_gcc_min_slot=${GCC_MIN_KCP_HPPA} # 12
-	elif grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
+	if grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
 	# Prevent:
 	# <redacted>-pc-linux-gnu-gcc-11: error: unrecognized command-line option '-ftrivial-auto-var-init=zero'
 		_gcc_min_slot=12
+	elif [[ "${kcp_provider}" == "graysky2" && "${arch}" == "amd64" ]] ; then
+		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 11
 	elif grep -q -E -e "^CONFIG_RETPOLINE=y" "${path_config}" ; then
 		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 		_gcc_min_slot=8
-	elif [[ "${kcp_provider}" == "graysky2" ]] ; then
-		# hppa
-		_gcc_min_slot=${GCC_MIN_KCP} # 6
-	elif (( ${wants_kcp_rpi} == 1 )) ; then
-		_gcc_min_slot=5
 	else
 		_gcc_min_slot=${GCC_MIN_SLOT} # 4
 	fi
