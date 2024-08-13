@@ -68,6 +68,7 @@ RDEPEND="
 	|| (
 		$(gen_driver_versions)
 	)
+	x11-drivers/nvidia-drivers:=
 "
 DEPEND="
 	${RDEPEND}
