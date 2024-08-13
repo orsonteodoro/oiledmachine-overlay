@@ -146,12 +146,12 @@ eerror
 
 get_config() {
 	local myconf=(
-		prefix="/usr"
-		libdir="/usr/$(get_libdir)"
+		ARCH=$(get_arch)
 		CUDA="/opt/cuda"
+		libdir="/usr/$(get_libdir)"
 		NVIDIA_IS_OPENSOURCE=1 # Fix nv-frontend.c spam and detection
 		NVIDIA_SRC_DIR="${WORKDIR}/open-gpu-kernel-modules-${DRIVER_VERSION}/kernel-open/nvidia"
-		ARCH=$(get_arch)
+		prefix="/usr"
 		V=1
 		VERBOSE=1
 	)
