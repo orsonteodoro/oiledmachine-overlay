@@ -22,7 +22,7 @@ declare -A CUDA_GCC_SLOT=(
 	["11.8"]="11"
 )
 
-inherit
+inherit linux-mod-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -54,7 +54,7 @@ LICENSE="
 # BSD - open-gpu-kernel-modules-550.100/src/common/softfloat/COPYING.txt
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0"
-IUSE="ebuild-revision-0"
+IUSE="ebuild-revision-1"
 gen_driver_versions() {
 	local ver
 	for ver in ${VERSIONS[@]} ; do
@@ -101,6 +101,9 @@ eerror
         fi
 }
 
+pkg_setup() {
+	linux-mod-r1_pkg_setup
+}
 
 src_unpack() {
 	unpack "${P}.tar.gz"
@@ -142,6 +145,37 @@ eerror "Acceptable major-minor versions:  ${!CUDA_GCC_SLOT[@]}"
 eerror
 		die
 	fi
+
+	# Check if the driver module matches
+	local kver=$(uname -r)
+	if [[ -n "${KVER}" ]] ; then
+		:
+	elif [[ ! -f "/lib/modules/${kver}/video/nvidia.ko" ]] ; then
+eerror
+eerror "Inconsistent kernel module install path"
+eerror
+eerror "Expected:  /lib/modules/${kver}/video/nvidia.ko"
+eerror "Actual:  "$(realpath "/lib/modules/"*"/video/nvidia.ko")
+eerror
+eerror "Rebuild x11-drivers/nvidia-drivers or you may also set the KVER"
+eerror "environment variable corresponding to /lib/modules/KVER to change the"
+eerror "module install path.  See metadata.xml for details."
+eerror
+		die
+	fi
+
+	if [[ -n "${KVER}" ]] ; then
+		local k=$(echo "${KVER}" | cut -f 1-2 -d "-")
+	else
+		local k=$(uname -r | cut -f 1-2 -d "-")
+	fi
+	if [[ -f "/usr/src/linux-${k}" ]] ; then
+eerror
+eerror "Path to kernel source is unreachable."
+eerror "This is required for postinst."
+eerror
+		die
+	fi
 }
 
 get_config() {
@@ -155,6 +189,11 @@ get_config() {
 		V=1
 		VERBOSE=1
 	)
+	if [[ -n "${KVER}" ]] ; then
+		myconf=(
+			KVER="${KVER}"
+		)
+	fi
 	echo ${myconf[@]}
 }
 
@@ -169,6 +208,32 @@ src_install() {
 		install
 	docinto license
 	dodoc "LICENSE"
+
+	# The script is eagerly wrong.
+	if [[ -n "${KVER}" ]] ; then
+		insinto "/lib/modules/${KVER}/kernel/drivers/misc/"
+		doins "src/gdrdrv/gdrdrv.ko"
+	else
+		insinto "/lib/modules/$(uname -r)/kernel/drivers/misc/"
+		doins "src/gdrdrv/gdrdrv.ko"
+	fi
+}
+
+_pkg_postinst_one() {
+        local k="${1}"
+        KERNEL_DIR="/usr/src/linux-${k}"
+        KV_FULL=$(cat "${KERNEL_DIR}/include/config/kernel.release")
+	linux-mod-r1_pkg_postinst
+}
+
+pkg_postinst() {
+	if [[ -n "${KVER}" ]] ; then
+		local k=$(echo "${KVER}" | cut -f 1-2 -d "-")
+		_pkg_postinst_one "${k}"
+	else
+		local k=$(uname -r | cut -f 1-2 -d "-")
+		_pkg_postinst_one "${k}"
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

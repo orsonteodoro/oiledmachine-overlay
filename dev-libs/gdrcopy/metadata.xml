@@ -6,6 +6,15 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Build time environment variables:
+
+  KVER - Override KVER in /lib/modules/KVER module install reference.
+
+  -->
   <upstream>
     <remote-id type="github">NVIDIA/gdrcopy</remote-id>
   </upstream>
