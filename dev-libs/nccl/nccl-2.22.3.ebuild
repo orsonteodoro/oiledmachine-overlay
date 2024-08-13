@@ -208,11 +208,11 @@ check_kernel_setup() {
 		~64BIT
 		~PCI_P2PDMA
 	"
-	WARNING_DMA_SHARED_BUFFER="CONFIG_DMA_SHARED_BUFFER=y is required for DMA-BUF support and GPUDirect RDMA."
-	WARNING_DMABUF_MOVE_NOTIFY="CONFIG_DMABUF_MOVE_NOTIFY=y is required for DMA-BUF support and GPUDirect RDMA."
-	WARNING_ZONE_DEVICE="CONFIG_ZONE_DEVICE=y is required for DMA-BUF support support and GPUDirect RDMA."
-	WARNING_64BIT="CONFIG_64BIT=y is required for DMA-BUF support support and GPUDirect RDMA."
-	WARNING_PCI_P2PDMA="CONFIG_PCI_P2PDMA=y is required for DMA-BUF support support and GPUDirect RDMA."
+	WARNING_DMA_SHARED_BUFFER="CONFIG_DMA_SHARED_BUFFER=y is required for DMA-BUF and GPUDirect RDMA support."
+	WARNING_DMABUF_MOVE_NOTIFY="CONFIG_DMABUF_MOVE_NOTIFY=y is required for DMA-BUF and GPUDirect RDMA support."
+	WARNING_ZONE_DEVICE="CONFIG_ZONE_DEVICE=y is required for DMA-BUF and GPUDirect RDMA support."
+	WARNING_64BIT="CONFIG_64BIT=y is required for DMA-BUF and GPUDirect RDMA support."
+	WARNING_PCI_P2PDMA="CONFIG_PCI_P2PDMA=y is required for DMA-BUF and GPUDirect RDMA support."
 	check_extra_config
 
 	CONFIG_CHECK="
