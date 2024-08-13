@@ -54,7 +54,7 @@ LICENSE="
 # BSD - open-gpu-kernel-modules-550.100/src/common/softfloat/COPYING.txt
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0"
-IUSE="ebuild-revision-1"
+IUSE="ebuild-revision-2"
 gen_driver_versions() {
 	local ver
 	for ver in ${VERSIONS[@]} ; do
@@ -174,7 +174,7 @@ eerror
 	else
 		local k=$(uname -r | cut -f 1-2 -d "-")
 	fi
-	if [[ -f "/usr/src/linux-${k}" ]] ; then
+	if [[ ! -f "/usr/src/linux-${k}" ]] ; then
 eerror
 eerror "Path to kernel source is unreachable."
 eerror "This is required for postinst."
