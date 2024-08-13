@@ -210,13 +210,14 @@ src_install() {
 	dodoc "LICENSE"
 
 	# The script is eagerly wrong.
+	local kver
 	if [[ -n "${KVER}" ]] ; then
-		insinto "/lib/modules/${KVER}/kernel/drivers/misc/"
-		doins "src/gdrdrv/gdrdrv.ko"
+		kver="${KVER}"
 	else
-		insinto "/lib/modules/$(uname -r)/kernel/drivers/misc/"
-		doins "src/gdrdrv/gdrdrv.ko"
+		kver=$(uname -r)
 	fi
+	insinto "/lib/modules/${KVER}/kernel/drivers/misc/"
+	doins "src/gdrdrv/gdrdrv.ko"
 }
 
 _pkg_postinst_one() {
@@ -227,13 +228,13 @@ _pkg_postinst_one() {
 }
 
 pkg_postinst() {
+	local k
 	if [[ -n "${KVER}" ]] ; then
-		local k=$(echo "${KVER}" | cut -f 1-2 -d "-")
-		_pkg_postinst_one "${k}"
+		local k="${KVER%-*}"
 	else
 		local k=$(uname -r | cut -f 1-2 -d "-")
-		_pkg_postinst_one "${k}"
 	fi
+	_pkg_postinst_one "${k}"
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
