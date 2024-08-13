@@ -174,7 +174,7 @@ eerror
 	else
 		local k=$(uname -r | cut -f 1-2 -d "-")
 	fi
-	if [[ ! -f "/usr/src/linux-${k}" ]] ; then
+	if [[ ! -d "/usr/src/linux-${k}" ]] ; then
 eerror
 eerror "Path to kernel source is unreachable.  The correct path is required for"
 eerror "updating module dependencies in during post-install."
