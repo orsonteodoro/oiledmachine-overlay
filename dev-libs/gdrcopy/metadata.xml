@@ -10,6 +10,9 @@
 
   oiledmachine-overlay notes:
 
+  The gdrcopy kernel driver is built against open source driver for easier
+  deployment of GPUDirect® RDMA on the distro.
+
   Build time environment variables:
 
   KVER - Override KVER in /lib/modules/KVER module install reference.
