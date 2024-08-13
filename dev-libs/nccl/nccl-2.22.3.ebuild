@@ -51,8 +51,8 @@ RESTRICT="mirror test"
 SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-test -verbs
-ebuild-revision-2
+-gdrcopy test -verbs
+ebuild-revision-3
 "
 REQUIRED_USE="
 	|| (
@@ -360,16 +360,37 @@ src_test() {
 	popd
 }
 
+gen_enable_gdrcopy_flush_enable() {
+# Discussed in closed issue #683
+# It avoids a NIC round trip penalty.
+cat <<EOF > "${T}/99-nccl-gdrcopy-flush-enable"
+NCCL_GDRCOPY_ENABLE=1
+NCCL_GDRCOPY_FLUSH_ENABLE=1
+EOF
+	doenvd "${T}/99-nccl-gdrcopy-flush-enable"
+}
+
 src_install() {
 	emake \
 		INSTALL_LIBDIR="$(get_libdir)" \
 		PREFIX="${ED}/usr" \
 		install
 	dodoc "LICENSE.txt"
+	if use gdrcopy && [[ "${NCCL_GDRCOPY_FLUSH_ENABLE:-1}" == "1" ]] ; then
+einfo "Setting NCCL_GDRCOPY_FLUSH_ENABLE=1.  Set build time per-package environment variable to change it."
+		gen_enable_gdrcopy_flush_enable
+	fi
 }
 
 pkg_postinst() {
 ewarn "GPUDirect RDMA support requires a >= 5.12 Linux Kernel."
+einfo
+einfo "There are more environment variable tweakables.  Search NCCL_PARAM in"
+einfo
+einfo "  https://github.com/search?q=repo%3ANVIDIA%2Fnccl%20NCCL_PARAM&type=code"
+einfo
+einfo "They should be prefixed with NCCL_."
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

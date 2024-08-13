@@ -9,7 +9,21 @@
   <upstream>
     <remote-id type="github">NVIDIA/nccl</remote-id>
   </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Build time environment variables:
+
+  NCCL_GDRCOPY_FLUSH_ENABLE - Avoids NIC round trip penalty during received
+  flushes.  1 to enable (default if gdrcopy USE flag is enabled),
+  0 to disable.
+
+  -->
   <use>
+    <flag name="gdrcopy">
+      Use gdrcopy for faster flushes on received data.
+    </flag>
     <flag name="verbs">
       Support for RoCE or InfiniBand™.
     </flag>
