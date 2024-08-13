@@ -11,7 +11,7 @@
   oiledmachine-overlay notes:
 
   The gdrcopy kernel driver is built against open source driver for easier
-  deployment of GPUDirect® RDMA on the distro.
+  deployment of GPUDirect® RDMA support on the distro.
 
   Build time environment variables:
 
