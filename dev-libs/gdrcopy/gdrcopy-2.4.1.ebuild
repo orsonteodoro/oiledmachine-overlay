@@ -1,0 +1,174 @@
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+# Based on distro's list:
+VERSIONS=(
+	560.31.02
+	555.58.02
+	555.58
+	550.107.02
+	550.100
+	550.40.67
+	535.183.01
+	525.147.05
+	# 515.43.04 is the last tag
+)
+declare -A CUDA_GCC_SLOT=(
+	["12.5"]="13"
+	["12.4"]="13"
+	["12.3"]="12"
+	["11.8"]="11"
+)
+
+inherit
+
+KEYWORDS="~amd64"
+S="${WORKDIR}/${P}"
+gen_src_uri() {
+	local ver
+	for ver in ${VERSIONS[@]} ; do
+		echo "
+https://github.com/NVIDIA/open-gpu-kernel-modules/archive/refs/tags/${ver}.tar.gz
+	-> open-gpu-kernel-modules-${ver}.tar.gz
+		"
+	done
+}
+SRC_URI="
+	$(gen_src_uri)
+https://github.com/NVIDIA/gdrcopy/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+DESCRIPTION="A fast GPU memory copy library based on NVIDIA GPUDirect RDMA technology"
+HOMEPAGE="https://github.com/NVIDIA/gdrcopy"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+	BSD
+	GPL-2
+"
+# ( all-rights-reserved MIT ) GPL-2 - open-gpu-kernel-modules-550.100/COPYING
+# BSD - open-gpu-kernel-modules-550.100/src/common/softfloat/COPYING.txt
+# The distro's MIT license template does not contain all rights reserved.
+SLOT="0"
+IUSE="ebuild-revision-0"
+gen_driver_versions() {
+	local ver
+	for ver in ${VERSIONS[@]} ; do
+		echo "
+			~x11-drivers/nvidia-drivers-${ver}[kernel-open]
+		"
+	done
+}
+RDEPEND="
+	dev-util/nvidia-cuda-toolkit:=
+	|| (
+		$(gen_driver_versions)
+	)
+"
+DEPEND="
+	${RDEPEND}
+"
+BDEPEND="
+	dev-build/make
+"
+PATCHES=(
+)
+
+get_arch() {
+	if use amd64 ; then
+		echo "x86"
+	elif use arm64 ; then
+		echo "arm64"
+	fi
+}
+
+libstdcxx_check() {
+	local required_gcc_slot="${1}"
+        local gcc_current_profile=$(gcc-config -c)
+        local gcc_current_profile_slot=${gcc_current_profile##*-}
+        if ver_test "${gcc_current_profile_slot}" -ne "${required_gcc_slot}" ; then
+eerror
+eerror "You must switch to =sys-devel/gcc-${required_gcc_slot}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${required_gcc_slot}"
+eerror "  source /etc/profile"
+eerror
+                die
+        fi
+}
+
+
+src_unpack() {
+	unpack "${P}.tar.gz"
+	local found=0
+	local ver
+	for ver in ${VERSIONS[@]} ; do
+		if has_version "~x11-drivers/nvidia-drivers-${ver}" ; then
+			found=1
+export DRIVER_VERSION="${ver}"
+einfo "Detected ${ver}"
+			unpack "open-gpu-kernel-modules-${ver}.tar.gz"
+			break
+		fi
+	done
+	if (( ${found} == 0 )) ; then
+eerror
+eerror "A compatible x11-drivers/nvidia-drivers is not installed."
+eerror "Acceptable versions:  ${VERSIONS[@]}"
+eerror
+		die
+	fi
+}
+
+src_configure() {
+	local found=0
+	local ver
+	for ver in ${!CUDA_GCC_SLOT[@]} ; do
+		if has_version "=dev-util/nvidia-cuda-toolkit-${ver}*" ; then
+			found=1
+			local gcc_slot=${CUDA_GCC_SLOT["${ver}"]}
+			libstdcxx_check ${gcc_slot}
+			break
+		fi
+	done
+	if (( ${found} == 0 )) ; then
+eerror
+eerror "A compatible dev-util/nvidia-cuda-toolkit is not installed."
+eerror "Acceptable major-minor versions:  ${!CUDA_GCC_SLOT[@]}"
+eerror
+		die
+	fi
+}
+
+get_config() {
+	local myconf=(
+		prefix="/usr"
+		libdir="/usr/$(get_libdir)"
+		CUDA="/opt/cuda"
+		NVIDIA_IS_OPENSOURCE=1 # Fix nv-frontend.c spam and detection
+		NVIDIA_SRC_DIR="${WORKDIR}/open-gpu-kernel-modules-${DRIVER_VERSION}/kernel-open/nvidia"
+		ARCH=$(get_arch)
+		V=1
+		VERBOSE=1
+	)
+	echo ${myconf[@]}
+}
+
+src_compile() {
+	emake $(get_config)
+}
+
+src_install() {
+	emake \
+		$(get_config) \
+		DESTDIR="${D}" \
+		install
+	docinto license
+	dodoc "LICENSE"
+}
+
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
