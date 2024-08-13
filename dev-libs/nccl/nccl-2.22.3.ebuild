@@ -51,7 +51,7 @@ RESTRICT="mirror test"
 SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-gpudirect test -verbs
+test -verbs
 ebuild-revision-2
 "
 REQUIRED_USE="
@@ -72,6 +72,7 @@ CUDA_TOOLKIT_12_5="
 	=dev-util/nvidia-cuda-toolkit-12.5*[rdma]
 "
 RDEPEND="
+	>=x11-drivers/nvidia-drivers-470[kernel-open,modules]
 	|| (
 		${CUDA_TOOLKIT_12_5}
 		${CUDA_TOOLKIT_12_4}
@@ -161,15 +162,6 @@ RDEPEND="
 			${CUDA_TOOLKIT_11_8}
 		)
 	)
-	gpudirect? (
-		>=x11-drivers/nvidia-drivers-470[modules]
-		dev-util/nvidia-cuda-toolkit:=
-		|| (
-			net-misc/MLNX_DOCA
-			net-misc/MLNX_NETWORKING
-			net-misc/MLNX_OFED
-		)
-	)
 	verbs? (
 		sys-cluster/rdma-core
 	)
@@ -216,11 +208,11 @@ check_kernel_setup() {
 		~64BIT
 		~PCI_P2PDMA
 	"
-	WARNING_DMA_SHARED_BUFFER="CONFIG_DMA_SHARED_BUFFER=y is required for DMA-BUF support."
-	WARNING_DMABUF_MOVE_NOTIFY="CONFIG_DMABUF_MOVE_NOTIFY=y is required for DMA-BUF support."
-	WARNING_ZONE_DEVICE="CONFIG_ZONE_DEVICE=y is required for DMA-BUF support."
-	WARNING_64BIT="CONFIG_64BIT=y is required for DMA-BUF support."
-	WARNING_PCI_P2PDMA="CONFIG_PCI_P2PDMA=y is required for DMA-BUF support."
+	WARNING_DMA_SHARED_BUFFER="CONFIG_DMA_SHARED_BUFFER=y is required for DMA-BUF support and GPUDirect RDMA."
+	WARNING_DMABUF_MOVE_NOTIFY="CONFIG_DMABUF_MOVE_NOTIFY=y is required for DMA-BUF support and GPUDirect RDMA."
+	WARNING_ZONE_DEVICE="CONFIG_ZONE_DEVICE=y is required for DMA-BUF support support and GPUDirect RDMA."
+	WARNING_64BIT="CONFIG_64BIT=y is required for DMA-BUF support support and GPUDirect RDMA."
+	WARNING_PCI_P2PDMA="CONFIG_PCI_P2PDMA=y is required for DMA-BUF support support and GPUDirect RDMA."
 	check_extra_config
 
 	CONFIG_CHECK="
@@ -374,6 +366,10 @@ src_install() {
 		PREFIX="${ED}/usr" \
 		install
 	dodoc "LICENSE.txt"
+}
+
+pkg_postinst() {
+ewarn "GPUDirect RDMA support requires a >= 5.12 Linux Kernel."
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
