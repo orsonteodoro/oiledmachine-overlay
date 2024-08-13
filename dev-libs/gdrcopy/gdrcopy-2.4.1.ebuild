@@ -176,8 +176,8 @@ eerror
 	fi
 	if [[ ! -f "/usr/src/linux-${k}" ]] ; then
 eerror
-eerror "Path to kernel source is unreachable."
-eerror "This is required for postinst."
+eerror "Path to kernel source is unreachable.  The correct path is required for"
+eerror "updating module dependencies in during post-install."
 eerror
 		die
 	fi
