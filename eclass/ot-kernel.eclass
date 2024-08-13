@@ -11848,7 +11848,7 @@ get_llvm_slot() {
 eerror "QA:  Missing ot-kernel_get_llvm_min_slot() for this series."
 		die
 	fi
-	local _llvm_min_slot=$(get_llvm_min_slot)
+	local _llvm_min_slot=$(ot-kernel_get_llvm_min_slot)
 	local llvm_slot
 	for llvm_slot in $(seq ${LLVM_MAX_SLOT} -1 ${_llvm_min_slot}) ; do
 		ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" && is_clang_ready && break
