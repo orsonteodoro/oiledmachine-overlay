@@ -4,7 +4,7 @@
 EAPI=8
 
 # Based on distro's list:
-VERSIONS=(
+DRIVER_VERSIONS=(
 	560.31.02
 	555.58.02
 	555.58
@@ -28,7 +28,7 @@ KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
 gen_src_uri() {
 	local ver
-	for ver in ${VERSIONS[@]} ; do
+	for ver in ${DRIVER_VERSIONS[@]} ; do
 		echo "
 https://github.com/NVIDIA/open-gpu-kernel-modules/archive/refs/tags/${ver}.tar.gz
 	-> open-gpu-kernel-modules-${ver}.tar.gz
@@ -57,7 +57,7 @@ SLOT="0"
 IUSE="ebuild-revision-2"
 gen_driver_versions() {
 	local ver
-	for ver in ${VERSIONS[@]} ; do
+	for ver in ${DRIVER_VERSIONS[@]} ; do
 		echo "
 			~x11-drivers/nvidia-drivers-${ver}[kernel-open]
 		"
@@ -110,7 +110,7 @@ src_unpack() {
 	unpack "${P}.tar.gz"
 	local found=0
 	local ver
-	for ver in ${VERSIONS[@]} ; do
+	for ver in ${DRIVER_VERSIONS[@]} ; do
 		if has_version "~x11-drivers/nvidia-drivers-${ver}" ; then
 			found=1
 export DRIVER_VERSION="${ver}"
@@ -122,7 +122,7 @@ einfo "Detected ${ver}"
 	if (( ${found} == 0 )) ; then
 eerror
 eerror "A compatible x11-drivers/nvidia-drivers is not installed."
-eerror "Acceptable versions:  ${VERSIONS[@]}"
+eerror "Acceptable versions:  ${DRIVER_VERSIONS[@]}"
 eerror
 		die
 	fi
