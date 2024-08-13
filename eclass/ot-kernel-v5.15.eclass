@@ -1014,7 +1014,7 @@ ot-kernel_get_llvm_min_slot() {
 	if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "arm64" ]] ; then
 		die "KCFI is not supported for this series."
 	fi
-	if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "amd64" ]] ; then
+	if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "x86_64" ]] ; then
 		die "KCFI is not supported for this series."
 	fi
 
@@ -1025,11 +1025,11 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=15
 	elif has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
 		_llvm_min_slot=${LLVM_MIN_PGO} # 13
-	elif [[ "${kcp_provider}" == "graysky2" && "${arch}" == "amd64" ]] ; then
+	elif [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 12
 	elif has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
 		_llvm_min_slot=${LLVM_MIN_LTO} # 11
-	elif has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack && [[ "${arch}" == "amd64" ]] ; then
+	elif has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack && [[ "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_SHADOWCALLSTACK_ARM64} # 10
 	else
 		_llvm_min_slot=${LLVM_MIN_SLOT} # 10
@@ -1047,7 +1047,7 @@ ot-kernel_get_gcc_min_slot() {
 	# Prevent:
 	# <redacted>-pc-linux-gnu-gcc-11: error: unrecognized command-line option '-ftrivial-auto-var-init=zero'
 		_gcc_min_slot=12
-	elif [[ "${kcp_provider}" == "graysky2" && "${arch}" == "amd64" ]] ; then
+	elif [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 11
 	elif has cpu_flags_x86_tpause ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_tpause ; then
 		_gcc_min_slot=9

@@ -1125,7 +1125,7 @@ ot-kernel_get_llvm_min_slot() {
 	# Descending sort
 	if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "arm64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCFI_ARM64} # 16
-	elif has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "amd64" ]] ; then
+	elif has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCFI_AMD64} # 16
 	elif has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo && [[ "${arch}" == "s390" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_CLANG_PGO_S390} # 15
@@ -1137,9 +1137,9 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=${LLVM_MIN_PGO} # 13
 	elif has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
 		_llvm_min_slot=${LLVM_MIN_LTO} # 12
-	elif [[ "${kcp_provider}" == "graysky2" && "${arch}" == "amd64" ]] ; then
+	elif [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 15
-	elif has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack && [[ "${arch}" == "amd64" ]] ; then
+	elif has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack && [[ "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_SHADOWCALLSTACK_ARM64} # 10
 	else
 		_llvm_min_slot=${LLVM_MIN_SLOT} # 10
@@ -1163,7 +1163,7 @@ ot-kernel_get_gcc_min_slot() {
 		_gcc_min_slot=9
 	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=9
-	elif [[ "${kcp_provider}" == "graysky2" && "${arch}" == "amd64" ]] ; then
+	elif [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 13
 	elif grep -q -E -e "^CONFIG_X86_USER_SHADOW_STACK=y" "${path_config}" && [[ "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=8
