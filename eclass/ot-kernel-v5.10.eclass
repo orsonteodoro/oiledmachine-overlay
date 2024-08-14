@@ -830,7 +830,6 @@ ot-kernel_get_llvm_min_slot() {
 
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
 
-	# Descending sort
 	if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo && [[ "${arch}" == "s390" ]] ; then
 		die "Clang PGO is not supported for this series.  Disable either the clang or pgo USE flag."
 	fi
@@ -866,6 +865,7 @@ eerror
 		die
 	fi
 
+	# Descending sort
 	if grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 		_llvm_min_slot=15
 	elif [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
@@ -898,6 +898,7 @@ eerror
 		die
 	fi
 
+	# Descending sort
 	if grep -q -E -e "^CONFIG_DEBUG_INFO_SPLIT=y" "${path_config}" ; then
 		_gcc_min_slot=12
 	elif grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
