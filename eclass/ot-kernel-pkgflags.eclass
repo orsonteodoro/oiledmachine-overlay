@@ -588,6 +588,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_musl
 	ot-kernel-pkgflags_mysql
 	ot-kernel-pkgflags_nbfc
+	ot-kernel-pkgflags_nccl
 	ot-kernel-pkgflags_nemu
 	ot-kernel-pkgflags_networkmanager
 	ot-kernel-pkgflags_nfs_utils
@@ -663,6 +664,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_r8152
 	ot-kernel-pkgflags_r8168
 	ot-kernel-pkgflags_rasdaemon
+	ot-kernel-pkgflags_rccl
 	ot-kernel-pkgflags_read_edid
 	ot-kernel-pkgflags_recoil
 	ot-kernel-pkgflags_redis
@@ -6821,6 +6823,37 @@ ot-kernel-pkgflags_nbfc() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_nccl
+# @DESCRIPTION:
+# Applies kernel config flags for the nccl package
+ot-kernel-pkgflags_nccl() { # DONE
+	local pkg="dev-libs/nccl"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
+		ot-kernel_y_configopt "CONFIG_SYSFS"
+		ot-kernel_y_configopt "CONFIG_NUMA"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_PCIEPORTBUS"
+		ot-kernel_y_configopt "CONFIG_DMA_SHARED_BUFFER"
+		ot-kernel_y_configopt "CONFIG_DMABUF_MOVE_NOTIFY"
+		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
+		ot-kernel_y_configopt "CONFIG_64BIT"
+		ot-kernel_y_configopt "CONFIG_PCI_P2PDMA"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_INET"
+		ot-kernel_y_configopt "CONFIG_IPV6"
+		ot-kernel_y_configopt "CONFIG_INFINIBAND"
+		ot-kernel_y_configopt "CONFIG_INFINIBAND_USER_ACCESS"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_ETHERNET"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_MELLANOX"
+		ot-kernel_y_configopt "CONFIG_MLX5_CORE"
+		ot-kernel_y_configopt "CONFIG_MLX5_INFINIBAND"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_nemu
 # @DESCRIPTION:
 # Applies kernel config flags for the nemu package
@@ -8639,6 +8672,38 @@ ot-kernel-pkgflags_rasdaemon() { # DONE
 		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_ACPI_EXTLOG"
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_rccl
+# @DESCRIPTION:
+# Applies kernel config flags for the rccl package
+ot-kernel-pkgflags_rccl() { # DONE
+	local pkg="dev-libs/rccl"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ot-kernel_y_configopt "CONFIG_DMI"
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
+		ot-kernel_y_configopt "CONFIG_SYSFS"
+		ot-kernel_y_configopt "CONFIG_NUMA"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_PCIEPORTBUS"
+		ot-kernel_y_configopt "CONFIG_DMA_SHARED_BUFFER"
+		ot-kernel_y_configopt "CONFIG_DMABUF_MOVE_NOTIFY"
+		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
+		ot-kernel_y_configopt "CONFIG_64BIT"
+		ot-kernel_y_configopt "CONFIG_PCI_P2PDMA"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_INET"
+		ot-kernel_y_configopt "CONFIG_IPV6"
+		ot-kernel_y_configopt "CONFIG_INFINIBAND"
+		ot-kernel_y_configopt "CONFIG_INFINIBAND_USER_ACCESS"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_ETHERNET"
+		ot-kernel_y_configopt "CONFIG_NET_VENDOR_MELLANOX"
+		ot-kernel_y_configopt "CONFIG_MLX5_CORE"
+		ot-kernel_y_configopt "CONFIG_MLX5_INFINIBAND"
 	fi
 }
 
