@@ -164,7 +164,8 @@ eerror "Actual:  "$(realpath "/lib/modules/"*"/video/nvidia.ko")
 eerror
 eerror "Rebuild x11-drivers/nvidia-drivers or you may also set the KVER"
 eerror "environment variable corresponding to /lib/modules/KVER to change the"
-eerror "module install path.  See metadata.xml for details."
+eerror "module install path so that the to be built gdrdrv.ko will be under"
+eerror "the same driver root as nvidia.ko.  See metadata.xml for details."
 eerror
 		die
 	fi
