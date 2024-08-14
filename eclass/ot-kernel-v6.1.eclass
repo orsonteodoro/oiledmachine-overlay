@@ -408,6 +408,12 @@ CDEPEND+="
 	bzip2? (
 		app-arch/bzip2
 	)
+	cpu_flags_x86_gfni? (
+		!clang? (
+			>=sys-devel/binutils-2.30
+			>=sys-devel/gcc-6
+		)
+	)
 	cpu_flags_x86_tpause? (
 		!clang? (
 			>=sys-devel/binutils-2.31.1
@@ -1080,7 +1086,11 @@ ot-kernel_get_gcc_min_slot() {
 		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_RETPOLINE=y" "${path_config}" ; then
 		_gcc_min_slot=8
+	elif ot-kernel_use cpu_flags_x86_clmul_ni ; then
+		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_ARCH_RPC=y" "${path_config}" && [[ "${arch}" == "arm" ]] ; then
+		_gcc_min_slot=6
+	elif has cpu_flags_x86_gfni ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_gfni ; then
 		_gcc_min_slot=6
 	else
 		_gcc_min_slot=${GCC_MIN_SLOT} # 5

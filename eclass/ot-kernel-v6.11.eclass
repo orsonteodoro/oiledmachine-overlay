@@ -492,6 +492,12 @@ CDEPEND+="
 			>=sys-devel/gcc-6
 		)
 	)
+	cpu_flags_x86_tpause? (
+		!clang? (
+			>=sys-devel/binutils-2.31.1
+			>=sys-devel/gcc-9
+		)
+	)
 	gtk? (
 		dev-libs/glib:2
 		gnome-base/libglade:2.0
@@ -1210,6 +1216,8 @@ ot-kernel_get_gcc_min_slot() {
 	elif grep -q -E -e "^CONFIG_UBSAN_SIGNED_WRAP=y" "${path_config}" ; then
 		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_X86_USER_SHADOW_STACK=y" "${path_config}" && [[ "${arch}" == "x86_64" ]] ; then
+		_gcc_min_slot=8
+	elif ot-kernel_use cpu_flags_x86_clmul_ni ; then
 		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_ARCH_RPC=y" "${path_config}" && [[ "${arch}" == "arm" ]] ; then
 		_gcc_min_slot=6

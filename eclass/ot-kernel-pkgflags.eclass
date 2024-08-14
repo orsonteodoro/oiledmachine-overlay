@@ -42,19 +42,20 @@ inherit ot-kernel-kutils toolchain-funcs
 #CONFIG_CHECK="!MTRR" # Example of fatal ; required
 #CONFIG_CHECK="~!MTRR" # Example of non fatal error ; optional
 
-
+# See also arch/x86/Kconfig.assembler
 X86_FLAGS=(
 	aes
 	avx
 	avx2
-	avx512vl
-	clmul_ni
-	gfni
+	avx512vl # kernel 5.7, gcc 5.1, llvm 3.7
+	#clmul # (CRYPTO_GHASH_CLMUL_NI_INTEL) pclmulqdq - kernel 2.6, gcc 4.4, llvm 3.2 ; 2010
+	clmul_ni # (CRYPTO_POLYVAL_CLMUL_NI) vpclmulqdq - kernel 6.0, gcc 8.1, llvm 6 ; 2017
+	gfni # kernel 6.1, gcc 8, llvm 6
 	sha
 	sse2
 	sse4_2
 	ssse3
-	tpause
+	tpause # kernel 5.8, gcc 6.5, llvm 7
 )
 
 ARM_FLAGS=(
@@ -2429,7 +2430,7 @@ _ot-kernel-pkgflags_aria() {
 	[[ -z "${modes}" ]] && modes="ECB CTR"
 	if [[ "${arch}" == "x86_64" ]] ; then
 		if [[ "${modes}" =~ ("ECB"|"CTR") ]] ; then
-			if ver_test "${KV_MAJOR_MINOR}" -ge "6.3" ; then
+			if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
 				if \
 					   ot-kernel_use cpu_flags_x86_avx \
 					&& ot-kernel_use cpu_flags_x86_avx2 \

@@ -843,6 +843,10 @@ ot-kernel_get_gcc_min_slot() {
 		_gcc_min_slot=8
 	elif (( ${wants_kcp_rpi} == 1 )) ; then
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_ARM64} # 5
+	elif grep -q -E -e "^CONFIG_AS_AVX512=y" "${path_config}" ; then
+		_gcc_min_slot=5
+	elif has cpu_flags_x86_avx512vl ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_avx512vl ; then
+		_gcc_min_slot=5
 	else
 		_gcc_min_slot=${GCC_MIN_SLOT} # 4
 	fi
