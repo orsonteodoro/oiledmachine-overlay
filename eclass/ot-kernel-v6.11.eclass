@@ -157,11 +157,25 @@ EXTRAVERSION="-ot"
 GCC_COMPAT=( {14..5} )
 GCC_MAX_SLOT=${GCC_COMPAT[0]}
 GCC_MIN_SLOT=${GCC_COMPAT[-1]}
+GCC_MIN_KCP_GENPATCHES_AMD64="not released"
+GCC_MIN_KCP_GRAYSKY2_AMD64=14
+GCC_MIN_KCP_GRAYSKY2_ARM64=5
+GCC_MIN_KCP_ZEN_SAUCE_AMD64="not released"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 # llvm slot originally 16, testing 18
 LLVM_COMPAT=( {18..13} ) # KCP wants 19 but previous test may had failure
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
+LLVM_MIN_KCFI_ARM64=16
+LLVM_MIN_KCFI_AMD64=16
+LLVM_MIN_KCP_GENPATCHES_AMD64="not released"
+LLVM_MIN_KCP_GRAYSKY2_AMD64=18 # It should be 19 but downgraded to 18.
+LLVM_MIN_KCP_GRAYSKY2_ARM64=3
+LLVM_MIN_KCP_ZEN_SAUCE_AMD64="not released"
+LLVM_MIN_LTO=17
+LLVM_MIN_PGO=13
+LLVM_MIN_PGO_S390=15
+LLVM_MIN_SHADOWCALLSTACK_ARM64=10
 PATCH_ALLOW_O3_COMMIT="4a69dce0c0a5bc21732a8bc0b34f7ff2900ee8ce" # id from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor ~ oldest
@@ -425,12 +439,12 @@ KCP_RDEPEND="
 	clang? (
 		amd64? (
 			|| (
-				$(gen_clang_llvm_pair 18 ${LLVM_MAX_SLOT})
+				$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_AMD64} ${LLVM_MAX_SLOT})
 			)
 		)
 		arm64? (
 			|| (
-				$(gen_clang_llvm_pair 3 ${LLVM_MAX_SLOT})
+				$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_ARM64} ${LLVM_MAX_SLOT})
 			)
 		)
 	)
@@ -439,9 +453,10 @@ KCP_RDEPEND="
 			>=sys-devel/gcc-14.1
 		)
 		arm64? (
-			>=sys-devel/gcc-4.0.0
+			>=sys-devel/gcc-5.1.0
 		)
-		$(gen_clang_llvm_pair 19 ${LLVM_MAX_SLOT})
+		$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_AMD64} ${LLVM_MAX_SLOT})
+		$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_ARM64} ${LLVM_MAX_SLOT})
 	)
 "
 
@@ -525,56 +540,41 @@ CDEPEND+="
 	)
 	lto? (
 		|| (
-			$(gen_lto_rdepend 11 ${LLVM_MAX_SLOT})
+			$(gen_lto_rdepend ${LLVM_MIN_LTO} ${LLVM_MAX_SLOT})
 		)
 	)
 	kcfi? (
 		arm64? (
 			|| (
-				$(gen_kcfi_rdepend 16 ${LLVM_MAX_SLOT})
+				$(gen_kcfi_rdepend ${LLVM_MIN_KCFI_ARM64} ${LLVM_MAX_SLOT})
 			)
 		)
 		amd64? (
 			|| (
-				$(gen_kcfi_rdepend 16 ${LLVM_MAX_SLOT})
+				$(gen_kcfi_rdepend ${LLVM_MIN_KCFI_AMD64} ${LLVM_MAX_SLOT})
 			)
 		)
 	)
 	pgo? (
 		clang? (
 			|| (
-				$(gen_clang_pgo_rdepend 13 ${LLVM_MAX_SLOT})
+				$(gen_clang_pgo_rdepend ${LLVM_MIN_PGO} ${LLVM_MAX_SLOT})
 			)
 		)
 	)
 	s390? (
 		|| (
-			$(gen_clang_pgo_rdepend 15 ${LLVM_MAX_SLOT})
+			$(gen_clang_pgo_rdepend ${LLVM_MIN_PGO_S390} ${LLVM_MAX_SLOT})
 		)
 	)
 	shadowcallstack? (
 		arm64? (
 			|| (
-				$(gen_shadowcallstack_rdepend 10 ${LLVM_MAX_SLOT})
+				$(gen_shadowcallstack_rdepend ${LLVM_MIN_SHADOWCALLSTACK_ARM64} ${LLVM_MAX_SLOT})
 			)
 		)
 	)
 "
-
-GCC_MIN_KCP_GENPATCHES_AMD64="not released"
-GCC_MIN_KCP_GRAYSKY2_AMD64=14
-GCC_MIN_KCP_GRAYSKY2_ARM64=3
-GCC_MIN_KCP_ZEN_SAUCE_AMD64="not released"
-LLVM_MIN_CLANG_PGO_S390=15
-LLVM_MIN_KCFI_ARM64=16
-LLVM_MIN_KCFI_AMD64=16
-LLVM_MIN_KCP_GENPATCHES_AMD64="not released"
-LLVM_MIN_KCP_GRAYSKY2_AMD64=18 # It should be 19 but downgraded to 18.
-LLVM_MIN_KCP_GRAYSKY2_ARM64=4
-LLVM_MIN_KCP_ZEN_SAUCE_AMD64="not released"
-LLVM_MIN_LTO=12
-LLVM_MIN_PGO=13
-LLVM_MIN_SHADOWCALLSTACK_ARM64=10
 
 RDEPEND+="
 	!build? (
@@ -1117,7 +1117,7 @@ ot-kernel_check_versions() {
 
 # @FUNCTION: ot-kernel_get_llvm_min_slot
 # @DESCRIPTION:
-# Get the min slot for clang
+# Get the inclusive min slot for clang
 ot-kernel_get_llvm_min_slot() {
 	local _llvm_min_slot
 
@@ -1139,14 +1139,30 @@ ot-kernel_get_llvm_min_slot() {
 	# Descending sort
 	if [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 18
+	elif grep -q -E -e "^CONFIG_HAS_LTO_CLANG=y" "${path_config}" ; then
+		_llvm_min_slot=17
+	elif grep -q -E -e "^CONFIG_CC_HAS_RANDSTRUCT=y" "${path_config}" ; then
+		_llvm_min_slot=16
+	elif grep -q -E -e "^CONFIG_CC_HAS_ZERO_CALL_USED_REGS=y" "${path_config}" ; then
+		_llvm_min_slot=16
 	elif has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "arm64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCFI_ARM64} # 16
 	elif has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCFI_AMD64} # 16
-	elif has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo && [[ "${arch}" == "s390" ]] ; then
-		_llvm_min_slot=${LLVM_MIN_CLANG_PGO_S390} # 15
 	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 		_llvm_min_slot=15
+	elif grep -q -E -e "^CONFIG_UNWIND_PATCH_PAC_INTO_SCS=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
+		_llvm_min_slot=15
+	elif has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo && [[ "${arch}" == "s390" ]] ; then
+		_llvm_min_slot=${LLVM_MIN_PGO_S390} # 15
+	elif grep -q -E -e "^CONFIG_CC_HAS_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		_llvm_min_slot=14
+	elif grep -q -E -e "^CONFIG_HAVE_KMSAN_COMPILER=y" "${path_config}" ; then
+		_llvm_min_slot=14
+	elif grep -q -E -e "^CONFIG_KCSAN_WEAK_MEMORY=y" "${path_config}" ; then
+		_llvm_min_slot=14
+	elif grep -q -E -e "^CONFIG_RANDOMIZE_KSTACK_OFFSET=y" "${path_config}" ; then
+		_llvm_min_slot=14
 	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=14
 	elif has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
@@ -1159,7 +1175,7 @@ ot-kernel_get_llvm_min_slot() {
 
 # @FUNCTION: ot-kernel_get_gcc_min_slot
 # @DESCRIPTION:
-# Get the min slot for gcc
+# Get the inclusive min slot for gcc
 ot-kernel_get_gcc_min_slot() {
 	local _gcc_min_slot
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
@@ -1167,26 +1183,76 @@ ot-kernel_get_gcc_min_slot() {
 	# Descending sort
 	if [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 14
+	elif grep -q -E -e "^CONFIG_DEBUG_INFO_SPLIT=y" "${path_config}" ; then
+		_gcc_min_slot=12
 	elif grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
 	# Prevent:
 	# <redacted>-pc-linux-gnu-gcc-11: error: unrecognized command-line option '-ftrivial-auto-var-init=zero'
 		_gcc_min_slot=12
+	elif grep -q -E -e "^CONFIG_KCOV=y" "${path_config}" ; then
+		_gcc_min_slot=12
+	elif grep -q -E -e "^CONFIG_EXPOLINE_EXTERN=y" "${path_config}" && [[ "${arch}" == "s390" ]] ; then
+		_gcc_min_slot=11
+	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
+		_gcc_min_slot=10
+	elif grep -q -E -e "^CONFIG_CC_HAS_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		_gcc_min_slot=9
+	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		_gcc_min_slot=9
 	elif has cet ${IUSE_EFFECTIVE} && ot-kernel_use cet ; then
 		_gcc_min_slot=9
 	elif has cpu_flags_x86_tpause ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_tpause ; then
 		_gcc_min_slot=9
-	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-		_gcc_min_slot=9
 	elif grep -q -E -e "^CONFIG_MITIGATION_RETPOLINE=y" "${path_config}" ; then
-		_gcc_min_slot=8
-	elif grep -q -E -e "^CONFIG_X86_USER_SHADOW_STACK=y" "${path_config}" && [[ "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 		_gcc_min_slot=8
+	elif grep -q -E -e "^CONFIG_UBSAN_SIGNED_WRAP=y" "${path_config}" ; then
+		_gcc_min_slot=8
+	elif grep -q -E -e "^CONFIG_X86_USER_SHADOW_STACK=y" "${path_config}" && [[ "${arch}" == "x86_64" ]] ; then
+		_gcc_min_slot=8
+	elif grep -q -E -e "^CONFIG_ARCH_RPC=y" "${path_config}" && [[ "${arch}" == "arm" ]] ; then
+		_gcc_min_slot=6
 	elif has cpu_flags_x86_gfni ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_gfni ; then
 		_gcc_min_slot=6
 	else
 		_gcc_min_slot=${GCC_MIN_SLOT} # 5
 	fi
 	echo "${_gcc_min_slot}"
+}
+
+# @FUNCTION: ot-kernel_get_llvm_max_slot
+# @DESCRIPTION:
+# Get the inclusive max slot for llvm
+ot-kernel_get_llvm_max_slot() {
+	local _llvm_max_slot
+
+	# Ascending sort
+	if grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y" "${path_config}" ; then
+		_llvm_max_slot=13
+	elif grep -q -E -e "^CONFIG_TOOLCHAIN_NEEDS_OLD_ISA_SPEC=y" "${path_config}" && [[ "${arch}" == "riscv" ]] ; then
+		_llvm_max_slot=16
+	else
+		_llvm_max_slot=${LLVM_MAX_SLOT} # 18
+	fi
+	echo "${_llvm_max_slot}"
+}
+
+# @FUNCTION: ot-kernel_get_gcc_max_slot
+# @DESCRIPTION:
+# Get the inclusive max slot for gcc
+ot-kernel_get_gcc_max_slot() {
+	local _gcc_max_slot
+
+	# Ascending sort
+	if grep -q -E -e "^CONFIG_ARCH_RPC=y" "${path_config}" && [[ "${arch}" == "arm" ]] ; then
+		_gcc_max_slot=8
+	elif grep -q -E -e "^CONFIG_ARM64_PTR_AUTH_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
+		_gcc_max_slot=8
+	elif grep -q -E -e "^CONFIG_TOOLCHAIN_NEEDS_OLD_ISA_SPEC=y" "${path_config}" && [[ "${arch}" == "riscv" ]] ; then
+		_gcc_max_slot=10
+	else
+		_gcc_max_slot=${GCC_MAX_SLOT} # 14
+	fi
+	echo "${_gcc_max_slot}"
 }

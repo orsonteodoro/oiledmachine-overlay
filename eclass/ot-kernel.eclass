@@ -118,7 +118,6 @@
 #	https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.9...zen-kernel:6.9/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.10...zen-kernel:6.10/zen-sauce
-#
 
 case ${EAPI:-0} in
 	[78]) ;;
@@ -174,7 +173,7 @@ IPD_RAW_VER=5 # < llvm-13 Dec 28, 2020
 IPD_RAW_VER_MIN=6
 IPD_RAW_VER_MAX=9
 KCP_COMMIT_SNAPSHOT="30db2170d3ddefa13a3dcffd05db66efff2fea7d" # 20240430
-KCP_CORTEX_A72_BN="build-with-mcpu-for-cortex-a72" # >= clang 3.8.0, >= gcc 4.0.0
+KCP_CORTEX_A72_BN="build-with-mcpu-for-cortex-a72" # >= clang 3.8.0, >= gcc 5.1.0
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 KERNEL_SERIES_TARBALL_FN="linux-${KV_MAJOR_MINOR}.tar.xz"
 KERNEL_INC_BASE_URI=\
@@ -2123,10 +2122,12 @@ _print_gcc_slots() {
 eerror "QA:  Missing ot-kernel_get_gcc_min_slot() for this series."
 		die
 	fi
+
 	local _gcc_min_slot=$(ot-kernel_get_gcc_min_slot)
+	local _gcc_max_slot=$(ot-kernel_get_gcc_max_slot)
 
 	local gcc_slot
-	for gcc_slot in $(seq ${GCC_MAX_SLOT} -1 ${_gcc_min_slot}) ; do
+	for gcc_slot in $(seq ${_gcc_max_slot} -1 ${_gcc_min_slot}) ; do
 eerror "  sys-devel/gcc:${gcc_slot}"
 	done
 }
@@ -2139,9 +2140,12 @@ _print_llvm_slots() {
 eerror "QA:  Missing ot-kernel_get_llvm_min_slot() for this series."
 		die
 	fi
+
 	local _llvm_min_slot=$(ot-kernel_get_llvm_min_slot)
+	local _llvm_max_slot=$(ot-kernel_get_llvm_max_slot)
+
 	local llvm_slot
-	for llvm_slot in $(seq ${LLVM_MAX_SLOT} -1 ${_llvm_min_slot}) ; do
+	for llvm_slot in $(seq ${_llvm_max_slot} -1 ${_llvm_min_slot}) ; do
 eerror "  sys-devel/clang:${llvm_slot}"
 	done
 }
@@ -7035,12 +7039,13 @@ eerror
 # Show LLVM toolchain requirements and quit
 ot-kernel_show_llvm_requirement() {
 	local _llvm_min_slot=${1}
+	local _llvm_max_slot=$(ot-kernel_get_llvm_max_slot)
 	local msg="${2}"
 eerror
 eerror "Make sure the following valid slots is installed:"
 eerror
 eerror "LLVM_MIN_SLOT: ${_llvm_min_slot}"
-eerror "LLVM_MAX_SLOT: ${LLVM_MAX_SLOT}"
+eerror "LLVM_MAX_SLOT: ${_llvm_max_slot}"
 eerror
 eerror "Reason:  ${msg}"
 eerror
@@ -11848,9 +11853,12 @@ get_llvm_slot() {
 eerror "QA:  Missing ot-kernel_get_llvm_min_slot() for this series."
 		die
 	fi
+
 	local _llvm_min_slot=$(ot-kernel_get_llvm_min_slot)
+	local _llvm_max_slot=$(ot-kernel_get_llvm_max_slot)
+
 	local llvm_slot
-	for llvm_slot in $(seq ${LLVM_MAX_SLOT} -1 ${_llvm_min_slot}) ; do
+	for llvm_slot in $(seq ${_llvm_max_slot} -1 ${_llvm_min_slot}) ; do
 		ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" && is_clang_ready && break
 	done
 	echo "${llvm_slot}"
@@ -11864,9 +11872,12 @@ get_gcc_slot() {
 eerror "QA:  Missing ot-kernel_get_gcc_min_slot() for this series."
 		die
 	fi
+
 	local _gcc_min_slot=$(ot-kernel_get_gcc_min_slot)
+	local _gcc_max_slot=$(ot-kernel_get_gcc_max_slot)
+
 	local gcc_slot
-	for gcc_slot in $(seq ${GCC_MAX_SLOT} -1 ${_gcc_min_slot}) ; do
+	for gcc_slot in $(seq ${_gcc_max_slot} -1 ${_gcc_min_slot}) ; do
 		ot-kernel_has_version "${GCC_PKG}:${gcc_slot}" && is_gcc_ready && break
 	done
 	echo "${gcc_slot}"
@@ -11886,8 +11897,12 @@ einfo "Setting up the build toolchain"
 		"INSTALL_MOD_PATH=${ED}"
 		"INSTALL_PATH=${ED}${kernel_dir}"
 	)
+
+	# Automagic sources
+	# It could produce a negative consequence if missing important conditional min/max.
 	local llvm_slot=$(get_llvm_slot)
 	local gcc_slot=$(get_gcc_slot)
+
 	if [[ -n "${cross_compile_target}" ]] ; then
 		args+=(
 			"CROSS_COMPILE=${target_triple}-"
