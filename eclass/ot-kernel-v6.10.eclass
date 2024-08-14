@@ -1153,6 +1153,8 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=16
 	elif grep -q -E -e "^CONFIG_CC_HAS_ZERO_CALL_USED_REGS=y" "${path_config}" ; then
 		_llvm_min_slot=16
+	elif grep -q -E -e "^CONFIG_DEBUG_INFO_COMPRESSED_ZSTD=y" "${path_config}" ; then
+		_llvm_min_slot=16
 	elif has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "arm64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCFI_ARM64} # 16
 	elif has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "x86_64" ]] ; then
@@ -1177,8 +1179,8 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=${LLVM_MIN_PGO} # 13
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
 		_llvm_min_slot=12
-	elif has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
-		_llvm_min_slot=${LLVM_MIN_LTO} # 12
+	elif grep -q -E -e "^CONFIG_KASAN_HW_TAGS=y" "${path_config}" ; then
+		_llvm_min_slot=12
 	else
 		_llvm_min_slot=${LLVM_MIN_SLOT} # 13
 	fi
@@ -1195,6 +1197,8 @@ ot-kernel_get_gcc_min_slot() {
 	# Descending sort
 	if [[ "${kcp_provider}" == "genpatches" || "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 14
+	elif grep -q -E -e "^CONFIG_DEBUG_INFO_COMPRESSED_ZSTD=y" "${path_config}" ; then
+		_gcc_min_slot=13
 	elif grep -q -E -e "^CONFIG_DEBUG_INFO_SPLIT=y" "${path_config}" ; then
 		_gcc_min_slot=12
 	elif grep -q -E -e "^CONFIG_INIT_STACK_ALL_ZERO=y" "${path_config}" ; then
@@ -1205,7 +1209,11 @@ ot-kernel_get_gcc_min_slot() {
 		_gcc_min_slot=12
 	elif grep -q -E -e "^CONFIG_EXPOLINE_EXTERN=y" "${path_config}" && [[ "${arch}" == "s390" ]] ; then
 		_gcc_min_slot=11
+	elif grep -q -E -e "^CONFIG_KASAN_SW_TAGS=y" "${path_config}" ; then
+		_gcc_min_slot=11
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
+		_gcc_min_slot=10
+	elif grep -q -E -e "^CONFIG_KASAN_HW_TAGS=y" "${path_config}" ; then
 		_gcc_min_slot=10
 	elif grep -q -E -e "^CONFIG_CC_HAS_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=9
@@ -1215,6 +1223,8 @@ ot-kernel_get_gcc_min_slot() {
 		_gcc_min_slot=9
 	elif has cpu_flags_x86_tpause ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_tpause ; then
 		_gcc_min_slot=9
+	elif grep -q -E -e "^CONFIG_KASAN_GENERIC=y" "${path_config}" ; then
+		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_MITIGATION_RETPOLINE=y" "${path_config}" ; then
 		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then

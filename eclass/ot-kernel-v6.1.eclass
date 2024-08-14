@@ -1046,6 +1046,8 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=${LLVM_MIN_PGO} # 13
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
 		_llvm_min_slot=12
+	elif grep -q -E -e "^CONFIG_KASAN_HW_TAGS=y" "${path_config}" ; then
+		_llvm_min_slot=12
 	elif has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
 		_llvm_min_slot=${LLVM_MIN_LTO} # 12
 	elif has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack && [[ "${arch}" == "x86_64" ]] ; then
@@ -1076,7 +1078,11 @@ ot-kernel_get_gcc_min_slot() {
 		_gcc_min_slot=12
 	elif grep -q -E -e "^CONFIG_EXPOLINE_EXTERN=y" "${path_config}" && [[ "${arch}" == "s390" ]] ; then
 		_gcc_min_slot=11
+	elif grep -q -E -e "^CONFIG_KASAN_SW_TAGS=y" "${path_config}" ; then
+		_gcc_min_slot=11
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
+		_gcc_min_slot=10
+	elif grep -q -E -e "^CONFIG_KASAN_HW_TAGS=y" "${path_config}" ; then
 		_gcc_min_slot=10
 	elif grep -q -E -e "^CONFIG_CC_HAS_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=9
@@ -1084,6 +1090,8 @@ ot-kernel_get_gcc_min_slot() {
 		_gcc_min_slot=9
 	elif has cpu_flags_x86_tpause ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_tpause ; then
 		_gcc_min_slot=9
+	elif grep -q -E -e "^CONFIG_KASAN_GENERIC=y" "${path_config}" ; then
+		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_RETPOLINE=y" "${path_config}" ; then
