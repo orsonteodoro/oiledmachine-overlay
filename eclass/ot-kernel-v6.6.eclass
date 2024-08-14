@@ -441,8 +441,9 @@ KCP_RDEPEND="
 
 # KCFI requires https://reviews.llvm.org/D119296 patch
 # We can eagerly prune the gcc dep from cpu_flag_x86_* but we want to handle
-# both inline assembly and .S cases.
+# both inline assembly (.c) and assembler file (.S) cases.
 CDEPEND+="
+	${KCP_RDEPEND}
 	>=app-shells/bash-4.2
 	>=dev-lang/perl-5
 	>=sys-apps/util-linux-2.10o
@@ -519,7 +520,6 @@ CDEPEND+="
 		app-arch/zstd
 	)
 
-	${KCP_RDEPEND}
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)

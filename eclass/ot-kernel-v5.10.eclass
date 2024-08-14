@@ -350,8 +350,9 @@ KCP_RDEPEND="
 "
 
 # We can eagerly prune the gcc dep from cpu_flag_x86_* but we want to handle
-# both inline assembly and .S cases.
+# both inline assembly (.c) and assembler file (.S) cases.
 CDEPEND+="
+	${KCP_RDEPEND}
 	>=dev-lang/perl-5
 	>=sys-apps/util-linux-2.10o
 	>=sys-devel/bc-1.06.95
@@ -412,7 +413,6 @@ CDEPEND+="
 		app-arch/zstd
 	)
 
-	${KCP_RDEPEND}
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
