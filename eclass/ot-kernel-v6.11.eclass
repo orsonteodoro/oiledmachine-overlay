@@ -568,11 +568,11 @@ CDEPEND+="
 			|| (
 				$(gen_clang_pgo_rdepend ${LLVM_MIN_PGO} ${LLVM_MAX_SLOT})
 			)
-		)
-	)
-	s390? (
-		|| (
-			$(gen_clang_pgo_rdepend ${LLVM_MIN_PGO_S390} ${LLVM_MAX_SLOT})
+			s390? (
+				|| (
+					$(gen_clang_pgo_rdepend ${LLVM_MIN_PGO_S390} ${LLVM_MAX_SLOT})
+				)
+			)
 		)
 	)
 	shadowcallstack? (

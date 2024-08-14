@@ -454,6 +454,18 @@ CDEPEND+="
 	bzip2? (
 		app-arch/bzip2
 	)
+	cfi? (
+		amd64? (
+			|| (
+				$(gen_cfi_rdepend 13 ${LLVM_MAX_SLOT})
+			)
+		)
+		arm64? (
+			|| (
+				$(gen_cfi_rdepend 12 ${LLVM_MAX_SLOT})
+			)
+		)
+	)
 	cpu_flags_x86_tpause? (
 		!clang? (
 			>=sys-devel/binutils-2.31.1
@@ -468,6 +480,14 @@ CDEPEND+="
 	gzip? (
 		>=sys-apps/kmod-${KMOD_PV}[zlib]
 		app-arch/gzip
+	)
+	linux-firmware? (
+		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
+	)
+	lto? (
+		|| (
+			$(gen_lto_rdepend ${LLVM_MIN_LTO} ${LLVM_MAX_SLOT})
+		)
 	)
 	lz4? (
 		app-arch/lz4
@@ -484,35 +504,6 @@ CDEPEND+="
 	openssl? (
 		>=dev-libs/openssl-1.0.0
 	)
-	qt5? (
-		dev-qt/qtcore:5
-		dev-qt/qtgui:5
-		dev-qt/qtwidgets:5
-	)
-	xz? (
-		>=sys-apps/kmod-${KMOD_PV}[lzma]
-		app-arch/xz-utils
-	)
-	zstd? (
-		>=sys-apps/kmod-${KMOD_PV}[zstd]
-		app-arch/zstd
-	)
-
-	cfi? (
-		amd64? (
-			|| (
-				$(gen_cfi_rdepend 13 ${LLVM_MAX_SLOT})
-			)
-		)
-		arm64? (
-			|| (
-				$(gen_cfi_rdepend 12 ${LLVM_MAX_SLOT})
-			)
-		)
-	)
-	linux-firmware? (
-		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
-	)
 	pgo? (
 		(
 			sys-devel/binutils[static-libs]
@@ -522,12 +513,17 @@ CDEPEND+="
 			|| (
 				$(gen_clang_pgo_rdepend ${LLVM_MIN_PGO} ${LLVM_MAX_SLOT})
 			)
+			s390? (
+				|| (
+					$(gen_clang_pgo_rdepend ${LLVM_MIN_PGO_S390} ${LLVM_MAX_SLOT})
+				)
+			)
 		)
 	)
-	lto? (
-		|| (
-			$(gen_lto_rdepend ${LLVM_MIN_LTO} ${LLVM_MAX_SLOT})
-		)
+	qt5? (
+		dev-qt/qtcore:5
+		dev-qt/qtgui:5
+		dev-qt/qtwidgets:5
 	)
 	shadowcallstack? (
 		arm64? (
@@ -535,6 +531,14 @@ CDEPEND+="
 				$(gen_shadowcallstack_rdepend ${LLVM_MIN_SHADOWCALLSTACK_ARM64} ${LLVM_MAX_SLOT})
 			)
 		)
+	)
+	xz? (
+		>=sys-apps/kmod-${KMOD_PV}[lzma]
+		app-arch/xz-utils
+	)
+	zstd? (
+		>=sys-apps/kmod-${KMOD_PV}[zstd]
+		app-arch/zstd
 	)
 "
 

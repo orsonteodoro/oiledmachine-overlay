@@ -299,6 +299,9 @@ CDEPEND+="
 		>=sys-apps/kmod-${KMOD_PV}[zlib]
 		app-arch/gzip
 	)
+	linux-firmware? (
+		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
+	)
 	lz4? (
 		app-arch/lz4
 	)
@@ -314,6 +317,10 @@ CDEPEND+="
 	openssl? (
 		>=dev-libs/openssl-1.0.0
 	)
+	pgo? (
+		sys-devel/binutils[static-libs]
+		sys-libs/libunwind[static-libs]
+	)
 	qt5? (
 		dev-qt/qtcore:5
 		dev-qt/qtgui:5
@@ -326,14 +333,6 @@ CDEPEND+="
 	zstd? (
 		>=sys-apps/kmod-${KMOD_PV}[zstd]
 		app-arch/zstd
-	)
-
-	linux-firmware? (
-		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
-	)
-	pgo? (
-		sys-devel/binutils[static-libs]
-		sys-libs/libunwind[static-libs]
 	)
 "
 
