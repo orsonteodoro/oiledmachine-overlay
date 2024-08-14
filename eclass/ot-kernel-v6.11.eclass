@@ -154,6 +154,7 @@ EXCLUDE_SCS=(
 	x86
 )
 EXTRAVERSION="-ot"
+GCC_PV="5.1"
 GCC_COMPAT=( {14..5} )
 GCC_MAX_SLOT=${GCC_COMPAT[0]}
 GCC_MIN_SLOT=${GCC_COMPAT[-1]}
@@ -162,6 +163,7 @@ GCC_MIN_KCP_GRAYSKY2_AMD64=14
 GCC_MIN_KCP_GRAYSKY2_ARM64=5
 GCC_MIN_KCP_ZEN_SAUCE_AMD64="not released"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
+KMOD_PV="13"
 # llvm slot originally 16, testing 18
 LLVM_COMPAT=( {18..13} ) # KCP wants 19 but previous test may had failure
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
@@ -461,8 +463,8 @@ KCP_RDEPEND="
 "
 
 # KCFI requires https://reviews.llvm.org/D119296 patch
-GCC_PV="5.1"
-KMOD_PV="13"
+# We can eagerly prune the gcc dep from cpu_flag_x86_* but we want to handle
+# both inline assembly and .S cases.
 CDEPEND+="
 	>=app-shells/bash-4.2
 	>=dev-lang/perl-5

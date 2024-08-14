@@ -81,6 +81,7 @@ DISABLE_DEBUG_PV="1.4.2"
 EXTRAVERSION="-ot"
 GENPATCHES_BLACKLIST=" 2400"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
+GCC_PV="4.6"
 GCC_COMPAT=( {13..4} )
 GCC_MAX_SLOT=${GCC_COMPAT[0]}
 GCC_MIN_SLOT=${GCC_COMPAT[-1]}
@@ -90,6 +91,7 @@ GCC_MIN_KCP_GENPATCHES_AMD64=11
 GCC_MIN_KCP_GRAYSKY2_AMD64=11
 GCC_MIN_KCP_GRAYSKY2_ARM64=5
 GCC_MIN_KCP_ZEN_SAUCE_AMD64=9
+KMOD_PV="13"
 LLVM_COMPAT=( {18..10} )
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
@@ -286,8 +288,8 @@ KCP_RDEPEND="
 	)
 "
 
-GCC_PV="4.6"
-KMOD_PV="13"
+# We can eagerly prune the gcc dep from cpu_flag_x86_* but we want to handle
+# both inline assembly and .S cases.
 CDEPEND+="
 	>=dev-lang/perl-5
 	>=sys-apps/util-linux-2.10o
@@ -843,8 +845,6 @@ ot-kernel_get_gcc_min_slot() {
 		_gcc_min_slot=8
 	elif (( ${wants_kcp_rpi} == 1 )) ; then
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_ARM64} # 5
-	elif grep -q -E -e "^CONFIG_AS_AVX512=y" "${path_config}" ; then
-		_gcc_min_slot=5
 	elif has cpu_flags_x86_avx512vl ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_avx512vl ; then
 		_gcc_min_slot=5
 	else

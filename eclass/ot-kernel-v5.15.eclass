@@ -130,6 +130,7 @@ EXCLUDE_SCS=(
 	x86
 )
 EXTRAVERSION="-ot"
+GCC_PV="5.1"
 GCC_COMPAT=( {13..5} )
 GCC_MAX_SLOT=${GCC_COMPAT[0]}
 GCC_MIN_SLOT=${GCC_COMPAT[-1]}
@@ -138,6 +139,7 @@ GCC_MIN_KCP_GRAYSKY2_AMD64=11
 GCC_MIN_KCP_GRAYSKY2_ARM64=5
 GCC_MIN_KCP_ZEN_SAUCE_AMD64=11
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
+KMOD_PV="13"
 LLVM_COMPAT=( {18..10} )
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
@@ -432,8 +434,8 @@ KCP_RDEPEND="
 	)
 "
 
-GCC_PV="5.1"
-KMOD_PV="13"
+# We can eagerly prune the gcc dep from cpu_flag_x86_* but we want to handle
+# both inline assembly and .S cases.
 CDEPEND+="
 	>=dev-lang/perl-5
 	>=sys-apps/util-linux-2.10o
