@@ -307,7 +307,7 @@ https://github.com/openxla/triton/archive/${TRITON_TAG}.tar.gz -> trition-${TRIT
 	)
 "
 
-KEYWORDS="~amd64 ~arm64"
+KEYWORDS="~amd64 ~arm64" # Install check passed
 SRC_URI="
 ${bazel_external_uris}
 https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz
