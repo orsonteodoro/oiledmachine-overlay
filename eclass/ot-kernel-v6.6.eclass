@@ -1203,7 +1203,7 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_UNWIND_PATCH_PAC_INTO_SCS=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
 		_llvm_min_slot=15
-	elif has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo && [[ "${arch}" == "s390" ]] ; then
+	elif ot-kernel_use pgo && [[ "${arch}" == "s390" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_PGO_S390} # 15
 	elif grep -q -E -e "^CONFIG_CC_HAS_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=14
@@ -1215,7 +1215,7 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=14
 	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=14
-	elif has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
+	elif ot-kernel_use pgo ; then
 		_llvm_min_slot=${LLVM_MIN_PGO} # 13
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
 		_llvm_min_slot=12
