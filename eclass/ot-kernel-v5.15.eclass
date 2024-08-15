@@ -245,10 +245,10 @@ ZEN_KV="5.15.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
-bbrv2 build c2tcp cfi +cfs clang deepcc debug dwarf4 dwarf5 dwarf-auto
--exfat gdb +genpatches -genpatches_1510 lto nest multigen_lru orca pgo prjc
-rock-dkms rt shadowcallstack symlink tresor tresor_prompt tresor_sysfs uksm
-zen-multigen_lru zen-sauce
+bbrv2 +bti build c2tcp cfi +cfs clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
+-exfat -expoline gdb +genpatches -genpatches_1510 -lto nest multigen_lru orca
+pgo prjc +retpoline rock-dkms rt shadowcallstack symlink tresor tresor_prompt
+tresor_sysfs uksm zen-multigen_lru zen-sauce
 "
 REQUIRED_USE+="
 	dwarf4? (
@@ -262,6 +262,10 @@ REQUIRED_USE+="
 	dwarf-auto? (
 		debug
 		gdb
+	)
+	expoline? (
+		!clang
+		s390
 	)
 	gdb? (
 		debug
@@ -472,6 +476,16 @@ CDEPEND+="
 	sys-apps/grep[pcre]
 	virtual/libelf
 	virtual/pkgconfig
+	bti? (
+		arm64? (
+			!clang? (
+				>=sys-devel/gcc-10.1
+			)
+			clang? (
+				$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+			)
+		)
+	)
 	bzip2? (
 		app-arch/bzip2
 	)
@@ -553,6 +567,13 @@ CDEPEND+="
 		)
 		>=dev-debug/gdb-8.0
 	)
+	expoline? (
+		!clang? (
+			s390? (
+				>=sys-devel/gcc-7.4.0
+			)
+		)
+	)
 	gtk? (
 		dev-libs/glib:2
 		gnome-base/libglade:2.0
@@ -605,6 +626,16 @@ CDEPEND+="
 		dev-qt/qtcore:5
 		dev-qt/qtgui:5
 		dev-qt/qtwidgets:5
+	)
+	retpoline? (
+		!clang? (
+			>=sys-devel/gcc-7.3.0
+		)
+		clang? (
+			|| (
+				$(gen_clang_llvm_pair 5 ${LLVM_MAX_SLOT})
+			)
+		)
 	)
 	shadowcallstack? (
 		arm64? (
@@ -1121,7 +1152,7 @@ eerror
 	if grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF5=y" "${path_config}" ; then
 		_llvm_min_slot=16
 	elif grep -q -E -e "^CONFIG_CC_HAS_ZERO_CALL_USED_REGS=y" "${path_config}" ; then
-		_llvm_min_slot=16
+		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF4=y" "${path_config}" ; then
 		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF5=y" "${path_config}" ; then
@@ -1137,6 +1168,8 @@ eerror
 	elif [[ "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 12
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
+		_llvm_min_slot=12
+	elif grep -q -E -e "^CONFIG_COMPAT=y" "${path_config}" && [[ "${arch}" == "powerpc" ]] ; then
 		_llvm_min_slot=12
 	elif grep -q -E -e "^CONFIG_DEBUG_INFO_COMPRESSED=y" "${path_config}" ; then
 		_llvm_min_slot=12
@@ -1195,7 +1228,7 @@ eerror
 	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_RETPOLINE=y" "${path_config}" ; then
-		_gcc_min_slot=8
+		_gcc_min_slot=7
 	else
 		_gcc_min_slot=${GCC_MIN_SLOT} # 5
 	fi

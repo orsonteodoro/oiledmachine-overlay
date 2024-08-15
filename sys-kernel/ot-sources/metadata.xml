@@ -4150,6 +4150,9 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="bmq-quick-fix">
       Patches the kernel with fixes to BMQ.
     </flag>
+    <flag name="bti">
+      Install dependencies for (Branch Target Identification) BTI support.
+    </flag>
     <flag name="bzip2">
       Add support for bzip compression
     </flag>
@@ -4189,6 +4192,9 @@ unset OT_KERNEL_PRIVATE_KEY
 
       This patchset is only applied when the versions are exactly the same.
     </flag>
+    <flag name="cpu_flags_arm_mte">
+      Install dependencies for MTE (Memory Tagging Extension) support.
+    </flag>
     <flag name="cpu_flags_x86_clmul_ni">
       Add support for CLMUL-NI for faster hashing.
     </flag>
@@ -4196,7 +4202,7 @@ unset OT_KERNEL_PRIVATE_KEY
       Enables support for GFNI support for the ARIA block cipher.
     </flag>
     <flag name="cpu_flags_x86_tpause">
-      Check dependencies for support for the TPAUSE instruction.
+      Install dependencies for support for the TPAUSE instruction.
     </flag>
     <flag name="debug">
       If enabled, it will install the package dependencies and USE dependencies
@@ -4391,6 +4397,9 @@ unset OT_KERNEL_PRIVATE_KEY
       Disable to cancel both ReiserFS and Reiser4 references.
 
       (EXPERIMENTAL)
+    </flag>
+    <flag name="retpoline">
+      Installs dependencies for retpoline support.
     </flag>
     <flag name="rock-dkms">
       Build the amdgpu DRM driver in this kernel package as a module so that the

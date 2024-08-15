@@ -201,15 +201,19 @@ ZEN_KV="5.4.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
-bmq build c2tcp +cfs clang deepcc debug dwarf4 gdb +genpatches
--genpatches_1510 muqss orca pgo rock-dkms rt symlink tresor tresor_prompt
-tresor_sysfs uksm zen-muqss zen-sauce
+bmq build c2tcp +cfs clang deepcc -debug -dwarf4 -expoline gdb +genpatches
+-genpatches_1510 muqss orca pgo +retpoline rock-dkms rt symlink tresor
+tresor_prompt tresor_sysfs uksm zen-muqss zen-sauce
 "
 
 REQUIRED_USE+="
 	dwarf4? (
 		debug
 		gdb
+	)
+	expoline? (
+		!clang
+		s390
 	)
 	gdb? (
 		debug
@@ -328,6 +332,13 @@ CDEPEND+="
 		)
 		>=dev-debug/gdb-7.0
 	)
+	expoline? (
+		!clang? (
+			s390? (
+				>=sys-devel/gcc-7.4.0
+			)
+		)
+	)
 	gtk? (
 		dev-libs/glib:2
 		gnome-base/libglade:2.0
@@ -363,6 +374,16 @@ CDEPEND+="
 		dev-qt/qtcore:5
 		dev-qt/qtgui:5
 		dev-qt/qtwidgets:5
+	)
+	retpoline? (
+		!clang? (
+			>=sys-devel/gcc-7.3.0
+		)
+		clang? (
+			|| (
+				$(gen_clang_llvm_pair 5 ${LLVM_MAX_SLOT})
+			)
+		)
 	)
 	xz? (
 		>=sys-apps/kmod-${KMOD_PV}[lzma]
@@ -867,7 +888,7 @@ ot-kernel_get_gcc_min_slot() {
 	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_RETPOLINE=y" "${path_config}" ; then
-		_gcc_min_slot=8
+		_gcc_min_slot=7
 	elif (( ${wants_kcp_rpi} == 1 )) ; then
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_ARM64} # 5
 	elif has cpu_flags_x86_avx512vl ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_avx512vl ; then

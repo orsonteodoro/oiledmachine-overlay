@@ -258,14 +258,18 @@ ZEN_KV="5.10.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
-bbrv2 build c2tcp +cfs clang deepcc debug dwarf4 -exfat gdb +genpatches
--genpatches_1510 muqss orca pgo prjc rt symlink tresor tresor_prompt
-tresor_sysfs uksm zen-muqss zen-sauce
+bbrv2 +bti build c2tcp +cfs clang deepcc -debug -dwarf4 -exfat -expoline gdb
++genpatches -genpatches_1510 muqss orca pgo prjc +retpoline rt symlink tresor
+tresor_prompt tresor_sysfs uksm zen-muqss zen-sauce
 "
 REQUIRED_USE+="
 	dwarf4? (
 		debug
 		gdb
+	)
+	expoline? (
+		!clang
+		s390
 	)
 	gdb? (
 		debug
@@ -375,6 +379,16 @@ CDEPEND+="
 	sys-apps/grep[pcre]
 	virtual/libelf
 	virtual/pkgconfig
+	bti? (
+		arm64? (
+			!clang? (
+				>=sys-devel/gcc-10.1
+			)
+			clang? (
+				$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+			)
+		)
+	)
 	bzip2? (
 		app-arch/bzip2
 	)
@@ -420,6 +434,13 @@ CDEPEND+="
 		)
 		>=dev-debug/gdb-7.0
 	)
+	expoline? (
+		!clang? (
+			s390? (
+				>=sys-devel/gcc-7.4.0
+			)
+		)
+	)
 	gtk? (
 		dev-libs/glib:2
 		gnome-base/libglade:2.0
@@ -455,6 +476,16 @@ CDEPEND+="
 		dev-qt/qtcore:5
 		dev-qt/qtgui:5
 		dev-qt/qtwidgets:5
+	)
+	retpoline? (
+		!clang? (
+			>=sys-devel/gcc-7.3.0
+		)
+		clang? (
+			|| (
+				$(gen_clang_llvm_pair 5 ${LLVM_MAX_SLOT})
+			)
+		)
 	)
 	xz? (
 		>=sys-apps/kmod-${KMOD_PV}[lzma]
@@ -972,7 +1003,7 @@ eerror
 	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_RETPOLINE=y" "${path_config}" ; then
-		_gcc_min_slot=8
+		_gcc_min_slot=7
 	elif (( ${wants_kcp_rpi} == 1 )) ; then
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_ARM64} # 5
 	elif has cpu_flags_x86_avx512vl ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_avx512vl ; then

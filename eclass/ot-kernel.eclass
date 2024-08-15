@@ -119,11 +119,19 @@
 #	https://github.com/torvalds/linux/compare/v6.9...zen-kernel:6.9/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.10...zen-kernel:6.10/zen-sauce
 
+# CI
+# vanilla-sources, 2024-08-15:  gcc 12.2, llvm 17.0.6; kernel versions 5.10, 6.6, 6.11
+# https://kernelci.org/
+# https://linux.kernelci.org/
+
+# gentoo-sources (vanilla sources + genpatches), 2024-08-14:  gcc 9.4.0 ; kernel versions 5.15, 6.1, 5.10
+# https://wiki.gentoo.org/wiki/GKernelCI
+# https://gkernelci.gentoo.org/#/
+
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
-
 
 # For firmware security update availability, see
 # https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/blob/main/releasenote.md
@@ -5680,19 +5688,21 @@ einfo "Using ${hardening_level} hardening level"
 			ot-kernel_y_configopt "CONFIG_RETPOLINE"
 		fi
 		local ready=0
-		if tc-is-gcc && ver_test $(gcc-version) -ge "8.1" ; then
+		if tc-is-gcc && ver_test $(gcc-version) -ge "7.3" ; then
 			ready=1
-		elif tc-is-clang && ver_test $(clang-version) -ge "7" ; then
+		elif tc-is-clang && ver_test $(clang-fullversion) -ge "5.0.2" ; then
 			ready=1
 		fi
 		if (( ${ready} == 0 )) ; then
 			local gcc_version=$(gcc-version)
 			local clang_version=$(clang-version)
 eerror
-eerror "Switch to >=gcc-8.1 or >=clang-7 for retpoline support"
+eerror "Switch to >=gcc-7.3 or >=clang-5.0.2 for retpoline support"
 eerror
 eerror "Actual GCC version:  ${gcc_version}"
 eerror "Actual Clang version:  ${clang_version}"
+eerror
+eerror "Tip:  Add/remove clang in OT_KERNEL_USE and in USE."
 eerror
 			die
 		fi
@@ -5712,7 +5722,7 @@ eerror
 eerror
 eerror "For CET-IBT (Indirect Branch Tracking) support for hardware forward edge CFI, switch to"
 eerror
-eerror "  >=gcc-9 with >=binutils-2.2.9"
+eerror "  >=gcc-9 with >=binutils-2.29"
 eerror
 eerror "    or"
 eerror
@@ -5720,6 +5730,8 @@ eerror "  >=clang-14 with >=lld-14"
 eerror
 eerror "Actual GCC version:  ${gcc_version}"
 eerror "Actual Clang version:  ${clang_version}"
+eerror
+eerror "Tip:  Add/remove clang in OT_KERNEL_USE and in USE."
 eerror
 			if has cet ${IUSE_EFFECTIVE} && ot-kernel_use cet ; then
 				die
@@ -5750,6 +5762,8 @@ eerror "  >=clang-6 with >=lld-6"
 eerror
 eerror "Actual GCC version:  ${gcc_version}"
 eerror "Actual Clang version:  ${clang_version}"
+eerror
+eerror "Tip:  Add/remove clang in OT_KERNEL_USE and in USE."
 eerror
 			if has cet ${IUSE_EFFECTIVE} && ot-kernel_use cet ; then
 				die
@@ -6499,6 +6513,8 @@ eerror "Please rebuild =clang-15.0.0.9999 or switch to >= gcc-8.1"
 eerror
 eerror "Actual GCC version:  ${gcc_version}"
 eerror "Actual Clang version:  ${clang_version}"
+eerror
+eerror "Tip:  Add/remove clang in OT_KERNEL_USE and in USE."
 eerror
 				die
 			fi
@@ -11905,6 +11921,9 @@ eerror
 
 		if declare -f ot-kernel_check_versions >/dev/null ; then
 			ot-kernel_check_versions
+		fi
+		if declare -f ot-kernel_check_usedeps >/dev/null ; then
+			ot-kernel_check_usedeps
 		fi
 	done
 }

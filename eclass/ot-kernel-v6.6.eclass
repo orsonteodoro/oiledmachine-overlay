@@ -262,10 +262,13 @@ ZEN_KV="6.6.0"
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
+# CET default ON based on CI.
+# kcfi default OFF based on CI using clang 17.
 IUSE+="
-bbrv2 bbrv3 build c2tcp cet +cfs clang clear deepcc debug dwarf4 dwarf5
-dwarf-auto -exfat gdb +genpatches -genpatches_1510 kcfi lto nest orca pgo prjc
-rt -rust shadowcallstack symlink tresor tresor_prompt tresor_sysfs zen-sauce
+bbrv2 bbrv3 +bti build c2tcp +cet +cfs clang clear -deepcc -debug -dwarf4
+-dwarf5 dwarf-auto -exfat -expoline gdb +genpatches -genpatches_1510 -kcfi -lto
+nest orca pgo prjc +retpoline rt -rust shadowcallstack symlink tresor
+tresor_prompt tresor_sysfs zen-sauce
 "
 
 REQUIRED_USE+="
@@ -286,6 +289,10 @@ REQUIRED_USE+="
 	dwarf-auto? (
 		debug
 		gdb
+	)
+	expoline? (
+		!clang
+		s390
 	)
 	gdb? (
 		debug
@@ -436,6 +443,21 @@ gen_clang_llvm_pair() {
 	done
 }
 
+gen_clang_cet() {
+	local min=${1}
+	local max=${2}
+	local s
+	for s in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${s}
+			sys-devel/lld:${s}
+			sys-devel/llvm:${s}
+		)
+		     "
+	done
+}
+
 gen_clang_debug_zstd_pair() {
 	local min=${1}
 	local max=${2}
@@ -478,6 +500,8 @@ KCP_RDEPEND="
 # We can eagerly prune the gcc dep from cpu_flag_x86_* but we want to handle
 # both inline assembly (.c) and assembler file (.S) cases.
 # The unlabeled debug section below partly refers to zlib compression of debug info.
+# CET-IBT: gcc 8.1, llvm 7, binutils 2.27
+# CET-SS: gcc 8.1, llvm 6, binutils 2.29
 CDEPEND+="
 	${KCP_RDEPEND}
 	>=app-shells/bash-4.2
@@ -493,13 +517,28 @@ CDEPEND+="
 	sys-apps/grep[pcre]
 	virtual/libelf
 	virtual/pkgconfig
+	bti? (
+		arm64? (
+			!clang? (
+				>=sys-devel/gcc-10.1
+			)
+			clang? (
+				$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+			)
+		)
+	)
 	bzip2? (
 		app-arch/bzip2
 	)
 	cet? (
 		!clang? (
-			>=sys-devel/binutils-2.31
+			>=sys-devel/binutils-2.29
 			>=sys-devel/gcc-9
+		)
+		clang? (
+			|| (
+				$(gen_clang_cet 14 ${LLVM_MAX_SLOT})
+			)
 		)
 	)
 	cpu_flags_arm_v8_3? (
@@ -584,6 +623,13 @@ CDEPEND+="
 		)
 		>=dev-debug/gdb-8.0
 	)
+	expoline? (
+		!clang? (
+			s390? (
+				>=sys-devel/gcc-7.4.0
+			)
+		)
+	)
 	gtk? (
 		dev-libs/glib:2
 		gnome-base/libglade:2.0
@@ -655,6 +701,16 @@ CDEPEND+="
 				|| (
 					$(gen_clang_pgo_rdepend ${LLVM_MIN_PGO_S390} ${LLVM_MAX_SLOT})
 				)
+			)
+		)
+	)
+	retpoline? (
+		!clang? (
+			>=sys-devel/gcc-7.3.0
+		)
+		clang? (
+			|| (
+				$(gen_clang_llvm_pair 5 ${LLVM_MAX_SLOT})
 			)
 		)
 	)
@@ -1213,6 +1269,13 @@ ot-kernel_check_versions() {
 	_ot-kernel_check_versions "virtual/udev" "081" ""
 }
 
+# @FUNCTION: ot-kernel_check_usedeps
+# @DESCRIPTION:
+# Check the USEDEP of the dependency.
+ot-kernel_check_usedeps() {
+	:
+}
+
 # @FUNCTION: ot-kernel_get_llvm_min_slot
 # @DESCRIPTION:
 # Get the inclusive min slot for clang
@@ -1239,8 +1302,6 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=17
 	elif grep -q -E -e "^CONFIG_CC_HAS_RANDSTRUCT=y" "${path_config}" ; then
 		_llvm_min_slot=16
-	elif grep -q -E -e "^CONFIG_CC_HAS_ZERO_CALL_USED_REGS=y" "${path_config}" ; then
-		_llvm_min_slot=16
 	elif grep -q -E -e "^CONFIG_DEBUG_INFO_COMPRESSED_ZSTD=y" "${path_config}" ; then
 		_llvm_min_slot=16
 	elif has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "arm64" ]] ; then
@@ -1249,6 +1310,8 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=${LLVM_MIN_KCFI_AMD64} # 16
 	elif [[ "${kcp_provider}" == "genpatches" || "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 15
+	elif grep -q -E -e "^CONFIG_CC_HAS_ZERO_CALL_USED_REGS=y" "${path_config}" ; then
+		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF4=y" "${path_config}" ; then
 		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF5=y" "${path_config}" ; then
@@ -1272,6 +1335,8 @@ ot-kernel_get_llvm_min_slot() {
 	elif ot-kernel_use pgo ; then
 		_llvm_min_slot=${LLVM_MIN_PGO} # 13
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
+		_llvm_min_slot=12
+	elif grep -q -E -e "^CONFIG_COMPAT=y" "${path_config}" && [[ "${arch}" == "powerpc" ]] ; then
 		_llvm_min_slot=12
 	elif grep -q -E -e "^CONFIG_DEBUG_INFO_COMPRESSED_ZLIB=y" "${path_config}" ; then
 		_llvm_min_slot=12
@@ -1316,10 +1381,8 @@ ot-kernel_get_gcc_min_slot() {
 	elif grep -q -E -e "^CONFIG_ARM64_MTE=y" "${path_config}" ; then
 		_gcc_min_slot=10
 	elif grep -q -E -e "^CONFIG_CC_HAS_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-		_gcc_min_slot=9
+		_gcc_min_slot=9 # CET-IBT
 	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-		_gcc_min_slot=9
-	elif has cet ${IUSE_EFFECTIVE} && ot-kernel_use cet ; then
 		_gcc_min_slot=9
 	elif has cpu_flags_x86_tpause ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_tpause ; then
 		_gcc_min_slot=9
@@ -1328,7 +1391,7 @@ ot-kernel_get_gcc_min_slot() {
 	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_X86_USER_SHADOW_STACK=y" "${path_config}" && [[ "${arch}" == "x86_64" ]] ; then
-		_gcc_min_slot=8
+		_gcc_min_slot=8 # CET-SS
 	elif ot-kernel_use cpu_flags_x86_clmul_ni ; then
 		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_ARCH_RPC=y" "${path_config}" && [[ "${arch}" == "arm" ]] ; then
@@ -1374,6 +1437,4 @@ ot-kernel_get_gcc_max_slot() {
 	fi
 	echo "${_gcc_max_slot}"
 }
-
-
 

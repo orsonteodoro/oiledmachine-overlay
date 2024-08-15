@@ -184,14 +184,19 @@ ZEN_KV="4.19.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
-build c2tcp +cfs clang deepcc debug dwarf4 +genpatches gdb
--genpatches_1510 muqss orca pds pgo rt symlink tresor tresor_prompt tresor_sysfs
-uksm zen-sauce
+build c2tcp +cfs clang deepcc -debug -dwarf4 -expoline +genpatches gdb
+-genpatches_1510 muqss orca pds pgo +retpoline rt symlink tresor tresor_prompt
+tresor_sysfs uksm zen-sauce
 "
 REQUIRED_USE+="
 	dwarf4? (
 		debug
 		gdb
+	)
+	expoline? (
+		s390? (
+			!clang
+		)
 	)
 	gdb? (
 		debug
@@ -311,6 +316,13 @@ CDEPEND+="
 		)
 		>=dev-debug/gdb-7.0
 	)
+	expoline? (
+		!clang? (
+			s390? (
+				>=sys-devel/gcc-7.4.0
+			)
+		)
+	)
 	gtk? (
 		dev-libs/glib:2
 		gnome-base/libglade:2.0
@@ -346,6 +358,16 @@ CDEPEND+="
 		dev-qt/qtcore:5
 		dev-qt/qtgui:5
 		dev-qt/qtwidgets:5
+	)
+	retpoline? (
+		!clang? (
+			>=sys-devel/gcc-7.3.0
+		)
+		clang? (
+			|| (
+				$(gen_clang_llvm_pair 5 ${LLVM_MAX_SLOT})
+			)
+		)
 	)
 	xz? (
 		>=sys-apps/kmod-${KMOD_PV}[lzma]
@@ -791,7 +813,7 @@ eerror
 	elif [[ "${kcp_provider}" == "genpatches" || "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_AMD64} # 11
 	elif grep -q -E -e "^CONFIG_RETPOLINE=y" "${path_config}" ; then
-		_gcc_min_slot=8
+		_gcc_min_slot=7
 	elif (( ${wants_kcp_rpi} == 1 )) ; then
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_ARM64} # 5
 	else
