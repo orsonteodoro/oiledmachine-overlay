@@ -4220,13 +4220,14 @@ unset OT_KERNEL_PRIVATE_KEY
       code paths.
     </flag>
     <flag name="dwarf4">
-      Uses and tells the compiler to embeds the DWARF4 debugging format for gdb.
+      Uses and tells the compiler to embed the DWARF4 debugging format for gdb.
     </flag>
     <flag name="dwarf5">
-      Uses and tells the compiler to embeds the DWARF5 debugging format for gdb.
+      Uses and tells the compiler to embed the DWARF5 debugging format for gdb.
     </flag>
     <flag name="dwarf-auto">
-      Support either DWARF4, DWARF5 debugging format based on the compiler default.
+      Support either DWARF4, DWARF5 debugging format based on the compiler
+      default.
 
       It will default to one following:
 
