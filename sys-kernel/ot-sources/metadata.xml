@@ -247,17 +247,18 @@
 
     1. Menuconfig - This is primarily available to enable/disable drivers or for
     users that prefer a menuconfig only experience.   Menuconfig allows for
-    editing kernel settings.
-    2. Environment variables - This is a collection of tweakables that can be
-    used to modify the default kernel config or an existing kernel config.
-    Mostly useful in assist mode.  Most will be ignored in non-assist mode.  It
-    will override menuconfig edited kernel config settings in some cases.
+    editing kernel settings with buttons and windows.
+    2. Environment variables (aka envars) - This is a collection of tweakables
+    that can be used to modify the default kernel config or an existing kernel
+    config.  It is mostly useful in assist mode.  Most envars will be ignored in
+    non-assist mode.  It will override menuconfig edited kernel config settings
+    in some cases.
     3. USE flags - This is primarily to install dependencies or download
     patches.
     4. OT_KERNEL_USE - This is primarily to apply patches per extraversion
-    profile.  Only useful in assist mode.
+    profile.  It is only useful in assist mode.
     5. env file - Used to store the per extraversion environment variables.
-    These are typically stored in
+    These env files are typically stored in
     /etc/portage/ot-sources/${KV_MAJOR_MINOR}/${EXTRAVERSION}/${ARCH}/env
     The /etc/portage/ot-sources/${KV_MAJOR_MINOR}/${EXTRAVERSION}/${ARCH}/ folder
     can be used to store assets like logos.
