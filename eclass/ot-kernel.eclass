@@ -13,16 +13,6 @@
 # The ot-kernel eclass defines common patching steps for any linux
 # kernel version.
 
-# -rt patchset:
-#	https://wiki.linuxfoundation.org/realtime/start
-#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/
-#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
-#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
-#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
-#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
-#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.6/
-#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.9/
-#	https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.10/
 # BBR v2:
 #	https://github.com/google/bbr/compare/2c85ebc...v2alpha-2021-07-07
 #	https://github.com/google/bbr/compare/f428e49...v2alpha-2021-08-21
@@ -89,7 +79,7 @@
 #       https://patchwork.kernel.org/project/linux-kbuild/patch/20210407211704.367039-1-morbo@google.com/#24246189		# Context of above patch
 #	https://lore.kernel.org/all/20210621231822.2848305-1-ndesaulniers@google.com/T/#u					# Add __no_profile
 #       https://github.com/ClangBuiltLinux/linux/issues/1405
-# PREEMPT_RT:
+# PREEMPT_RT (-rt):
 #	https://wiki.linuxfoundation.org/realtime/start
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
@@ -99,6 +89,7 @@
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.6/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.9/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.10/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.11/
 # Project C CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/Project%20C
 #	https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -114,7 +105,6 @@
 #	https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 #	https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
-#	https://github.com/torvalds/linux/compare/v6.5...zen-kernel:6.5/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.9...zen-kernel:6.9/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.10...zen-kernel:6.10/zen-sauce
