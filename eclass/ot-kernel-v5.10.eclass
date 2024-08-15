@@ -378,6 +378,17 @@ CDEPEND+="
 	bzip2? (
 		app-arch/bzip2
 	)
+	cpu_flags_arm_v8_3? (
+		!clang? (
+			>=sys-devel/gcc-10.1
+		)
+		clang? (
+			|| (
+				$(gen_clang_llvm_pair 8 ${LLVM_MAX_SLOT})
+			)
+		)
+		>=sys-devel/binutils-2.33
+	)
 	cpu_flags_x86_tpause? (
 		!clang? (
 			>=sys-devel/binutils-2.31.1
@@ -951,6 +962,8 @@ eerror
 	elif [[ "${kcp_provider}" == "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=${GCC_MIN_KCP_ZEN_SAUCE_AMD64} # 10
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
+		_gcc_min_slot=10
+	elif grep -q -E -e "^CONFIG_ARM64_MTE=y" "${path_config}" ; then
 		_gcc_min_slot=10
 	elif has cpu_flags_x86_tpause ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_tpause ; then
 		_gcc_min_slot=9

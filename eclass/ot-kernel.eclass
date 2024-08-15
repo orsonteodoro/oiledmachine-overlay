@@ -11577,6 +11577,20 @@ ot-kernel-debugger() {
 	fi
 }
 
+# @FUNCTION: _ot-kernel_enable_ppc_476fpe_workaround
+# @DESCRIPTION:
+# Apply workaround for errata 46 after auto enabling external modules
+# support in ot-kernel-pkgflags or when user requests external modules.
+# See https://github.com/torvalds/linux/blob/v6.10/arch/powerpc/platforms/44x/Kconfig#L302
+# Binutils 2.25 or later required.
+_ot-kernel_enable_ppc_476fpe_workaround() {
+	if grep -q -E -e "^CONFIG_MODULES=y" "${path_config}" ; then
+		if [[ "${arch}" == "powerpc" ]] && grep -q -E -e "^CONFIG_476FPE=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_476FPE_ERR46"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -11755,6 +11769,8 @@ einfo "Disabling all debug and shortening logging buffers"
 
 	_ot-kernel-pkgflags_csprng
 	_ot-kernel_toggle_fips_mode
+
+	_ot-kernel_enable_ppc_476fpe_workaround
 
 	ot-kernel_set_kconfig_from_envvar_array # Final user override
 	ot-kernel_print_thp_status

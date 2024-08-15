@@ -60,6 +60,8 @@ X86_FLAGS=(
 )
 
 ARM_FLAGS=(
+	v8_3
+	#mte # kernel 5.10, gcc 10.1, llvm 8 ; Disabled this and used v8_3 instead.
 	neon
 )
 

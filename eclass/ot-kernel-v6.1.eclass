@@ -432,6 +432,17 @@ CDEPEND+="
 	bzip2? (
 		app-arch/bzip2
 	)
+	cpu_flags_arm_v8_3? (
+		!clang? (
+			>=sys-devel/gcc-10.1
+		)
+		clang? (
+			|| (
+				$(gen_clang_llvm_pair 8 ${LLVM_MAX_SLOT})
+			)
+		)
+		>=sys-devel/binutils-2.33
+	)
 	cpu_flags_x86_gfni? (
 		!clang? (
 			>=sys-devel/binutils-2.30
@@ -1159,6 +1170,8 @@ ot-kernel_get_gcc_min_slot() {
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
 		_gcc_min_slot=10
 	elif grep -q -E -e "^CONFIG_KASAN_HW_TAGS=y" "${path_config}" ; then
+		_gcc_min_slot=10
+	elif grep -q -E -e "^CONFIG_ARM64_MTE=y" "${path_config}" ; then
 		_gcc_min_slot=10
 	elif grep -q -E -e "^CONFIG_CC_HAS_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=9
