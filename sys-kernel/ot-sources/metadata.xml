@@ -243,6 +243,24 @@
 
 
 
+    Design choices and walk-through of the configuration user interfaces for ebuild
+
+    1. Menuconfig - This is primarily available to enable/disable drivers or for
+    users that prefer a menuconfig only experience.   Menuconfig allows for
+    editing kernel settings.
+    2. Environment variables - This is a collection of tweakables that can be
+    used to modify the default kernel config or an existing kernel config.
+    Mostly useful in assist mode.  Most will be ignored in non-assist mode.  It
+    will override menuconfig edited kernel config settings in some cases.
+    3. USE flags - This is primarily to install dependencies or download
+    patches.
+    4. OT_KERNEL_USE - This is primarily to apply patches per extraversion
+    profile.  Only useful in assist mode.
+    5. env file - Used to store the per extraversion environment variables.
+    6. /etc/kernels/... - A collection of files used to store the kernel config.
+
+
+
     CFLAGS and HOSTCFLAGS
 
     CFLAGS, CXXFLAGS, LDFLAGS are applied to the kernel CHOST or target machine.
@@ -655,6 +673,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
 
     To generate the kernel config, you may set OT_KERNEL_MENUCONFIG_UI to
     menuconfig then emerge, then change it back to disabled then emerge.
+    The menuconfig can be used to enable drivers.
 
 
 
@@ -2407,7 +2426,8 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     OT_KERNEL_MENUCONFIG_UI - Select the menu to use when running the
     wrapper.  When this value is set to a UI, the emerge will prematurely quit
     to allow to configure it using a wrapper script.  Due to interactive bugs,
-    this workaround is used instead.
+    this workaround is used instead.  The menuconfig access in the ebuild
+    was provided primarily to enable drivers.
 
     Valid values:
 
