@@ -1571,8 +1571,6 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     Acceptable values:
 
       CLANG_PGO   - Full PGO
-      GCC_PGO     - CFG + value profiling, Full PGO
-      GCC_PGO_CFG - CFG only, Partial PGO
       GCC_PDO     - CFG only
 
 
