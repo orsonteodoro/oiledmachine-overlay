@@ -847,10 +847,10 @@ ot-kernel_get_llvm_min_slot() {
 
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
 
-	if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo && [[ "${arch}" == "s390" ]] ; then
+	if ot-kernel_use pgo && [[ "${arch}" == "s390" ]] ; then
 		die "Clang PGO is not supported for this series.  Disable either the clang or pgo USE flag."
 	fi
-	if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
+	if ot-kernel_use clang && ot-kernel_use pgo ; then
 		die "Clang PGO is not supported for this series.  Disable either the clang or pgo USE flag."
 	fi
 	if has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "arm64" ]] ; then
