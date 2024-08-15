@@ -12549,8 +12549,8 @@ einfo "Resuming as PGI since no profile generated"
 
 			if [[ -z "${OT_KERNEL_PGO_FLAVOR}" ]] ; then
 eerror
-eerror "OT_KERNEL_PGO_FLAVOR needs to be defined as either GCC_PDO for GCC PGO"
-eerror "support."
+eerror "OT_KERNEL_PGO_FLAVOR needs to be defined as either GCC_PDO or"
+eerror "GCC_PGO_CFG for GCC PGO support."
 eerror
 				die
 			fi
@@ -12570,6 +12570,8 @@ einfo "GCC PATH:  "$(which ${CHOST}-gcc-${gcc_slot})
 			if [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGI}") ]] ; then
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" ]] ; then
 					makefile_pgo_phase="GCC_PDI"
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
+					makefile_pgo_phase="GCC_PGI_CFG"
 				fi
 einfo "Building ${pgo_phase}"
 				local gcc_slot=$(gcc-major-version)
@@ -12612,6 +12614,8 @@ eerror
 				pgo_phase="PGO"
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" ]] ; then
 					makefile_pgo_phase="GCC_PDO"
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
+					makefile_pgo_phase="GCC_PGO_CFG"
 				fi
 				echo "${pgo_phase}" > "${pgo_phase_statefile}" || die
 einfo "Building ${pgo_phase}"
@@ -12623,9 +12627,13 @@ ewarn "If you see \"profile count data file not found\" that is a bug in gcc wit
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" && "${PGO_PHASE_PGO}" == "PGO" ]] ; then
 					makefile_pgo_phase="GCC_PDO"
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" && "${PGO_PHASE_PGO}" == "PGO" ]] ; then
+					makefile_pgo_phase="GCC_PGO_CFG"
 
 				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" && "${PGO_PHASE_PGO}" == "DONE" ]] ; then
 					makefile_pgo_phase="GCC_PDO"
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" && "${PGO_PHASE_PGO}" == "DONE" ]] ; then
+					makefile_pgo_phase="GCC_PGO_CFG"
 				fi
 # For resuming or rebuilding as PDO phase
 einfo "Building ${pgo_phase}"
@@ -12637,6 +12645,8 @@ ewarn "If you see \"profile count data file not found\" that is a bug in gcc wit
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}") ]] && (( ${n_gcda} == 0 )) ; then
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" ]] ; then
 					makefile_pgo_phase="GCC_PDI"
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
+					makefile_pgo_phase="GCC_PGI_CFG"
 				fi
 				echo "${PGO_PHASE_PGI}" > "${pgo_phase_statefile}" || die
 				ot-kernel_set_kconfig_pgo

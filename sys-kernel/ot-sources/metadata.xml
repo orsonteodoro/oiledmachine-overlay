@@ -428,7 +428,7 @@
     GCC PGO (CFG + value) | No/Dropped                   | Yes incomplete with build time failures  | ~10%                  | It will use -fprofile-generate and -fprofile-use.
                           |                              |                                          |                       | It also requires the sys-kernel/kpgo-utils package.
                           |                              |                                          |                       |
-    GCC PGO (CFG only)    | No/Dropped                   | No known problems                        | ~5%                   | -fprofile-arcs and -fprofile-use only.  Use PDO instead since -fprofile-use
+    GCC PGO (CFG only)    | Yes                          | No known problems                        | ~5%                   | -fprofile-arcs and -fprofile-use only.  Use PDO instead since -fprofile-use
                           |                              |                                          |                       | may rely on undefined behavior from incomplete profile, but reports claim
                           |                              |                                          |                       | benefit without documented problems.
     GCC PDO               | Yes                          | No                                       | 5% or less            | -fprofile-arcs and -fbranch-probabilities only
@@ -1571,6 +1571,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     Acceptable values:
 
       CLANG_PGO   - Full PGO
+      GCC_PGO_CFG - CFG only, Partial PGO
       GCC_PDO     - CFG only
 
 
