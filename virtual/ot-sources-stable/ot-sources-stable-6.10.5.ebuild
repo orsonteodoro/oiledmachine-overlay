@@ -7,7 +7,7 @@
 EAPI=8
 DESCRIPTION="Virtual for the ot-sources stable ebuilds"
 KEYWORDS="
-~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
+~alpha ~amd64 ~arm ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
 "
 IUSE=""
 RDEPEND="
