@@ -220,9 +220,10 @@ ZEN_KV="6.1.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 # CET default ON based on CI.
+# clang is default OFF based on https://github.com/torvalds/linux/blob/v6.1/Documentation/process/changes.rst
 # kcfi default OFF based on CI using clang 17.
 IUSE+="
-bbrv2 +bti build c2tcp +cet +cfs clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
+bbrv2 +bti build c2tcp +cet +cfs -clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
 -exfat -expoline gdb +genpatches -genpatches_1510 -kcfi -lto nest orca pgo prjc
 +retpoline rt -rust shadowcallstack symlink tresor tresor_prompt tresor_sysfs
 zen-sauce

@@ -263,9 +263,10 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
 # CET default ON based on CI.
+# clang is default OFF based on https://github.com/torvalds/linux/blob/v6.6/Documentation/process/changes.rst
 # kcfi default OFF based on CI using clang 17.
 IUSE+="
-bbrv2 bbrv3 +bti build c2tcp +cet +cfs clang clear -deepcc -debug -dwarf4
+bbrv2 bbrv3 +bti build c2tcp +cet +cfs -clang clear -deepcc -debug -dwarf4
 -dwarf5 dwarf-auto -exfat -expoline gdb +genpatches -genpatches_1510 -kcfi -lto
 nest orca pgo prjc +retpoline rt -rust shadowcallstack symlink tresor
 tresor_prompt tresor_sysfs zen-sauce

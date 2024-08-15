@@ -183,8 +183,9 @@ f468511a824c557ced1be2fed1b4ba923a067bcc
 ZEN_KV="4.19.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
+# clang is default OFF based on https://github.com/torvalds/linux/blob/v4.19/Documentation/process/changes.rst
 IUSE+="
-build c2tcp +cfs clang deepcc -debug -dwarf4 -expoline +genpatches gdb
+build c2tcp +cfs -clang deepcc -debug -dwarf4 -expoline +genpatches gdb
 -genpatches_1510 muqss orca pds pgo +retpoline rt symlink tresor tresor_prompt
 tresor_sysfs uksm zen-sauce
 "

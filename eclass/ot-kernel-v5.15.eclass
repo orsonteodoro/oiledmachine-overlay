@@ -244,8 +244,9 @@ be5ba234ca0a5aabe74bfc7e1f636f085bd3823c
 ZEN_KV="5.15.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
+# clang is default OFF based on https://github.com/torvalds/linux/blob/v5.15/Documentation/process/changes.rst
 IUSE+="
-bbrv2 +bti build c2tcp cfi +cfs clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
+bbrv2 +bti build c2tcp cfi +cfs -clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
 -exfat -expoline gdb +genpatches -genpatches_1510 -lto nest multigen_lru orca
 pgo prjc +retpoline rock-dkms rt shadowcallstack symlink tresor tresor_prompt
 tresor_sysfs uksm zen-multigen_lru zen-sauce

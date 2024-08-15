@@ -257,8 +257,9 @@ PATCH_ZEN_TUNE_COMMITS_DEPS_ZEN_SAUCE="
 ZEN_KV="5.10.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
+# clang is default OFF based on https://github.com/torvalds/linux/blob/v5.10/Documentation/process/changes.rst
 IUSE+="
-bbrv2 +bti build c2tcp +cfs clang deepcc -debug -dwarf4 -exfat -expoline gdb
+bbrv2 +bti build c2tcp +cfs -clang deepcc -debug -dwarf4 -exfat -expoline gdb
 +genpatches -genpatches_1510 muqss orca pgo prjc +retpoline rt symlink tresor
 tresor_prompt tresor_sysfs uksm zen-muqss zen-sauce
 "
