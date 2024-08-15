@@ -257,7 +257,12 @@
     4. OT_KERNEL_USE - This is primarily to apply patches per extraversion
     profile.  Only useful in assist mode.
     5. env file - Used to store the per extraversion environment variables.
-    6. /etc/kernels/... - A collection of files used to store the kernel config.
+    These are typically stored in
+    /etc/portage/ot-sources/${KV_MAJOR_MINOR}/${EXTRAVERSION}/${ARCH}/env
+    The /etc/portage/ot-sources/${KV_MAJOR_MINOR}/${EXTRAVERSION}/${ARCH}/ folder
+    can be used to store assets like logos.
+    6. kernel config file - A file that stores the kernel config.  These are
+    typically stored in the /etc/kernels/ folder.
 
 
 
