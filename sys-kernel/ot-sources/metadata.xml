@@ -391,8 +391,8 @@
 
     LLVM versions supported for Clang PGO:
 
-    * 18.0.0.9999 - with the latest commit ; not used
-    * 17.0.0.9999 - with the latest commit ; not used
+    * 18.x
+    * 17.x
     * 16.x
     * 15.x
     * 14.x
