@@ -263,9 +263,9 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
 IUSE+="
-bbrv2 bbrv3 build c2tcp cet +cfs clang clear deepcc disable_debug -exfat
-+genpatches -genpatches_1510 kcfi lto nest orca pgo prjc rt -rust
-shadowcallstack symlink tresor tresor_prompt tresor_sysfs zen-sauce
+bbrv2 bbrv3 build c2tcp cet +cfs clang clear deepcc disable_debug dwarf4 dwarf5
+dwarf-auto -exfat gdb +genpatches -genpatches_1510 kcfi lto nest orca pgo prjc
+rt -rust shadowcallstack symlink tresor tresor_prompt tresor_sysfs zen-sauce
 "
 
 REQUIRED_USE+="
@@ -274,6 +274,22 @@ REQUIRED_USE+="
 	)
 	bbrv3? (
 		!bbrv2
+	)
+	dwarf4? (
+		gdb
+	)
+	dwarf5? (
+		gdb
+	)
+	dwarf-auto? (
+		gdb
+	)
+	gdb? (
+		|| (
+			dwarf-auto
+			dwarf5
+			dwarf4
+		)
 	)
 	genpatches_1510? (
 		genpatches
@@ -477,6 +493,42 @@ CDEPEND+="
 			>=sys-devel/binutils-2.31.1
 			>=sys-devel/gcc-9
 		)
+	)
+	dwarf4? (
+		!clang? (
+			>=sys-devel/binutils-2.35.2
+			>=sys-devel/gcc-4.5
+		)
+		clang? (
+			|| (
+				$(gen_clang_llvm_pair 16 ${LLVM_MAX_SLOT})
+			)
+		)
+		>=dev-debug/gdb-7.0
+	)
+	dwarf5? (
+		!clang? (
+			>=sys-devel/binutils-2.35.2
+			>=sys-devel/gcc-5
+			riscv? (
+				>=sys-devel/binutils-2.42
+			)
+		)
+		clang? (
+			|| (
+				$(gen_clang_llvm_pair 16 ${LLVM_MAX_SLOT})
+			)
+		)
+		>=dev-debug/gdb-8.0
+	)
+	dwarf-auto? (
+		!clang? (
+			>=sys-devel/binutils-2.35.2
+			riscv? (
+				>=sys-devel/binutils-2.42
+			)
+		)
+		>=dev-debug/gdb-8.0
 	)
 	gtk? (
 		dev-libs/glib:2
@@ -1143,6 +1195,10 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=${LLVM_MIN_KCFI_AMD64} # 16
 	elif [[ "${kcp_provider}" == "genpatches" || "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 15
+	elif grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF4=y" "${path_config}" ; then
+		_llvm_min_slot=15
+	elif grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF5=y" "${path_config}" ; then
+		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_UNWIND_PATCH_PAC_INTO_SCS=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
@@ -1236,9 +1292,7 @@ ot-kernel_get_llvm_max_slot() {
 	local _llvm_max_slot
 
 	# Ascending sort
-	if grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y" "${path_config}" ; then
-		_llvm_max_slot=13
-	elif grep -q -E -e "^CONFIG_TOOLCHAIN_NEEDS_OLD_ISA_SPEC=y" "${path_config}" && [[ "${arch}" == "riscv" ]] ; then
+	if grep -q -E -e "^CONFIG_TOOLCHAIN_NEEDS_OLD_ISA_SPEC=y" "${path_config}" && [[ "${arch}" == "riscv" ]] ; then
 		_llvm_max_slot=16
 	else
 		_llvm_max_slot=${LLVM_MAX_SLOT} # 18

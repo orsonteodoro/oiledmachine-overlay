@@ -56,6 +56,7 @@ X86_FLAGS=(
 	sse4_2
 	ssse3
 	tpause # kernel 5.8, gcc 6.5, llvm 7
+	vaes # kernel 6.10
 )
 
 ARM_FLAGS=(

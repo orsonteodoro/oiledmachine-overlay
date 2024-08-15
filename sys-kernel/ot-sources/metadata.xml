@@ -4219,11 +4219,28 @@ unset OT_KERNEL_PRIVATE_KEY
       Installs scripts to disable debugging, tracing, verbose output or related
       code paths.
     </flag>
+    <flag name="dwarf4">
+      Uses and tells the compiler to embeds the DWARF4 debugging format for gdb.
+    </flag>
+    <flag name="dwarf5">
+      Uses and tells the compiler to embeds the DWARF5 debugging format for gdb.
+    </flag>
+    <flag name="dwarf-auto">
+      Support either DWARF4, DWARF5 debugging format based on the compiler default.
+
+      It will default to one following:
+
+      DWARF5 - llvm 14 or later, gcc 11 or later
+      DWARF4 - llvm 13 or earlier, gcc 4.8 to 10.5
+    </flag>
     <flag name="exfat">
       Enables or removes exFAT
     </flag>
     <flag name="fallback-commit">
       Rewind the commit backwards for live ebuilds to when patches were working.
+    </flag>
+    <flag name="gdb">
+      Install gdb for debug info support.
     </flag>
     <flag name="genpatches">
       Applies the genkernel patch set.

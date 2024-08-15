@@ -184,10 +184,17 @@ ZEN_KV="4.19.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
-build c2tcp +cfs clang deepcc disable_debug +genpatches -genpatches_1510
-muqss orca pds pgo rt symlink tresor tresor_prompt tresor_sysfs uksm zen-sauce
+build c2tcp +cfs clang deepcc disable_debug dwarf4 +genpatches gdb
+-genpatches_1510 muqss orca pds pgo rt symlink tresor tresor_prompt tresor_sysfs
+uksm zen-sauce
 "
 REQUIRED_USE+="
+	dwarf4? (
+		gdb
+	)
+	gdb? (
+		dwarf4
+	)
 	genpatches_1510? (
 		genpatches
 	)
@@ -289,6 +296,18 @@ CDEPEND+="
 	virtual/pkgconfig
 	bzip2? (
 		app-arch/bzip2
+	)
+	dwarf4? (
+		!clang? (
+			>=sys-devel/binutils-2.35.2
+			>=sys-devel/gcc-4.5
+		)
+		clang? (
+			|| (
+				$(gen_clang_llvm_pair 16 ${LLVM_MAX_SLOT})
+			)
+		)
+		>=dev-debug/gdb-7.0
 	)
 	gtk? (
 		dev-libs/glib:2
@@ -729,7 +748,9 @@ eerror
 		die
 	fi
 
-	if [[ "${kcp_provider}" == "genpatches" || "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
+	if grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF4=y" "${path_config}" ; then
+		_llvm_min_slot=15
+	elif [[ "${kcp_provider}" == "genpatches" || "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 12
 	else
 		_llvm_min_slot=${LLVM_MIN_SLOT} # 10

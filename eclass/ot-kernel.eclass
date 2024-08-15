@@ -11527,6 +11527,48 @@ _ot-kernel_toggle_fips_mode() {
 	fi
 }
 
+# @FUNCTION: ot-kernel-debugger
+# @DESCRIPTION:
+# Add debugger support
+ot-kernel-debugger() {
+	local picked=0
+	ot-kernel_unset_configopt "CONFIG_DEBUG_KERNEL"
+	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO"
+	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT"
+	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_DWARF4"
+	ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_DWARF5"
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_NONE"
+	fi
+	if has dwarf4 ${IUSE_EFFECTIVE} && ot-kernel_use dwarf4 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+			ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_NONE"
+		fi
+		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_DWARF4"
+		picked=1
+	fi
+	if has dwarf5 ${IUSE_EFFECTIVE} && ot-kernel_use dwarf5 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+			ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_NONE"
+		fi
+		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_DWARF5"
+		picked=1
+	fi
+	if has dwarf-auto ${IUSE_EFFECTIVE} && ot-kernel_use dwarf-auto ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+			ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_NONE"
+		fi
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
+		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT"
+		picked=1
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -11647,6 +11689,7 @@ einfo "Forcing the default hardening level for maximum uptime"
 
 	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
 	ot-kernel-pkgflags_apply # Sets PREEMPT*, uses hardening_level
+	ot-kernel-debugger
 	ot-kernel_set_kconfig_fallback_preempt
 	ot-kernel_optimize_realtime
 	ot-kernel_set_kconfig_swap
