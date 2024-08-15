@@ -2823,29 +2823,36 @@ ot-kernel_src_prepare() {
 		fi
 	fi
 
-	if use disable_debug ; then
+	if ! use debug ; then
 		cat "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_PV}" \
-			> "disable_debug" || die
+			> "disable_debug" \
+			|| die
 	fi
 
 	cat "${FILESDIR}/all-kernel-options-as-modules" \
-		> "all-kernel-options-as-modules" || die
+		> "all-kernel-options-as-modules" \
+		|| die
 	cat "${FILESDIR}/all-kernel-options-as-yes" \
-		> "all-kernel-options-as-yes" || die
+		> "all-kernel-options-as-yes" \
+		|| die
 
 	if use pgo ; then
 		cat "${FILESDIR}/pgo-trainer.sh" \
-			> "pgo-trainer.sh" || die
+			> "pgo-trainer.sh" \
+			|| die
 	fi
 
 	cat "${FILESDIR}/ep800/ep800.c" \
-		> "drivers/media/usb/gspca/ep800.c" || die
+		> "drivers/media/usb/gspca/ep800.c" \
+		|| die
 	cat "${FILESDIR}/ep800/ep800.h" \
-		> "drivers/media/usb/gspca/ep800.h" || die
+		> "drivers/media/usb/gspca/ep800.h" \
+		|| die
 
 	# Patch for the nv driver.
 	sed -i -e "s|select FB_CMDLINE|select FB_CMDLINE\n\tselect DRM_KMS_HELPER|" \
-		"drivers/gpu/drm/Kconfig" || die
+		"drivers/gpu/drm/Kconfig" \
+		|| die
 
 	if ver_test "${KV_MAJOR_MINOR}" -ge "5.7" \
 		&& [[ "${IUSE_EFFECTIVE}" =~ "exfat" ]] \
@@ -2971,7 +2978,7 @@ einfo "Setting the extra version for the -${extraversion} build"
 			sed -i -e "s|EXTRAVERSION =\$|EXTRAVERSION = -${extraversion}|g" \
 				"Makefile" || die
 		fi
-		if ot-kernel_use disable_debug ; then
+		if ! ot-kernel_use debug ; then
 			chmod +x "disable_debug" || die
 		fi
 		if [[ -n "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
@@ -9699,10 +9706,11 @@ einfo "Changed .config to use the ${work_profile} work profile"
 		|| "${work_profile}" =~ "solar" \
 	]] \
 		&& \
-	! use disable_debug ; then
+	use debug \
+	; then
 ewarn
 ewarn "OT_KERNEL_WORK_PROFILE=${OT_KERNEL_WORK_PROFILE} should use"
-ewarn "USE=disable_debug to improve energy reduction."
+ewarn "disable/remove USE=debug to improve energy reduction."
 ewarn
 	fi
 
@@ -11701,7 +11709,7 @@ einfo "Forcing the default hardening level for maximum uptime"
 
 	is_firmware_ready
 
-	if ot-kernel_use disable_debug ; then
+	if ! ot-kernel_use debug ; then
 einfo "Disabling all debug and shortening logging buffers"
 		./disable_debug || die
 		rm "${BUILD_DIR}/.config.dd_backup" 2>/dev/null
@@ -14324,7 +14332,7 @@ ewarn
 # @DESCRIPTION:
 # Send user mesage about disable_debug
 ot-kernel_postinst_disable_debug() {
-	if use disable_debug ; then
+	if ! use debug ; then
 einfo
 einfo "The disable debug scripts have been placed in the root folder of the"
 einfo "kernel folder."

@@ -258,15 +258,17 @@ ZEN_KV="5.10.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
-bbrv2 build c2tcp +cfs clang deepcc disable_debug dwarf4 -exfat gdb +genpatches
+bbrv2 build c2tcp +cfs clang deepcc debug dwarf4 -exfat gdb +genpatches
 -genpatches_1510 muqss orca pgo prjc rt symlink tresor tresor_prompt
 tresor_sysfs uksm zen-muqss zen-sauce
 "
 REQUIRED_USE+="
 	dwarf4? (
+		debug
 		gdb
 	)
 	gdb? (
+		debug
 		dwarf4
 	)
 	genpatches_1510? (
@@ -357,6 +359,7 @@ KCP_RDEPEND="
 
 # We can eagerly prune the gcc dep from cpu_flag_x86_* but we want to handle
 # both inline assembly (.c) and assembler file (.S) cases.
+# The unlabeled debug section below refers to zlib compression of debug info.
 CDEPEND+="
 	${KCP_RDEPEND}
 	>=dev-lang/perl-5
@@ -379,6 +382,19 @@ CDEPEND+="
 		!clang? (
 			>=sys-devel/binutils-2.31.1
 			>=sys-devel/gcc-9
+		)
+	)
+	debug? (
+		(
+			!clang? (
+				>=sys-devel/gcc-5
+			)
+			clang? (
+				|| (
+					$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+				)
+			)
+			>=sys-devel/binutils-2.26
 		)
 	)
 	dwarf4? (
@@ -891,6 +907,8 @@ eerror
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 12
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
 		_llvm_min_slot=12
+	elif grep -q -E -e "^CONFIG_DEBUG_INFO_COMPRESSED=y" "${path_config}" ; then
+		_llvm_min_slot=12
 	else
 		_llvm_min_slot=${LLVM_MIN_SLOT} # 10
 	fi
@@ -945,6 +963,8 @@ eerror
 	elif (( ${wants_kcp_rpi} == 1 )) ; then
 		_gcc_min_slot=${GCC_MIN_KCP_GRAYSKY2_ARM64} # 5
 	elif has cpu_flags_x86_avx512vl ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_avx512vl ; then
+		_gcc_min_slot=5
+	elif grep -q -E -e "^CONFIG_DEBUG_INFO_COMPRESSED=y" "${path_config}" ; then
 		_gcc_min_slot=5
 	else
 		_gcc_min_slot=${GCC_MIN_SLOT} # 4

@@ -263,7 +263,7 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
 IUSE+="
-bbrv2 bbrv3 build c2tcp cet +cfs clang clear deepcc disable_debug dwarf4 dwarf5
+bbrv2 bbrv3 build c2tcp cet +cfs clang clear deepcc debug dwarf4 dwarf5
 dwarf-auto -exfat gdb +genpatches -genpatches_1510 kcfi lto nest orca pgo prjc
 rt -rust shadowcallstack symlink tresor tresor_prompt tresor_sysfs zen-sauce
 "
@@ -276,15 +276,19 @@ REQUIRED_USE+="
 		!bbrv2
 	)
 	dwarf4? (
+		debug
 		gdb
 	)
 	dwarf5? (
+		debug
 		gdb
 	)
 	dwarf-auto? (
+		debug
 		gdb
 	)
 	gdb? (
+		debug
 		|| (
 			dwarf-auto
 			dwarf5
@@ -432,6 +436,21 @@ gen_clang_llvm_pair() {
 	done
 }
 
+gen_clang_debug_zstd_pair() {
+	local min=${1}
+	local max=${2}
+	local usedep="${3}"
+	local s
+	for s in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${s}
+			sys-devel/llvm:${s}[zstd]
+		)
+		     "
+	done
+}
+
 KCP_RDEPEND="
 	clang? (
 		amd64? (
@@ -458,6 +477,7 @@ KCP_RDEPEND="
 # KCFI requires https://reviews.llvm.org/D119296 patch
 # We can eagerly prune the gcc dep from cpu_flag_x86_* but we want to handle
 # both inline assembly (.c) and assembler file (.S) cases.
+# The unlabeled debug section below partly refers to zlib compression of debug info.
 CDEPEND+="
 	${KCP_RDEPEND}
 	>=app-shells/bash-4.2
@@ -492,6 +512,29 @@ CDEPEND+="
 		!clang? (
 			>=sys-devel/binutils-2.31.1
 			>=sys-devel/gcc-9
+		)
+	)
+	debug? (
+		(
+			!clang? (
+				>=sys-devel/gcc-5
+			)
+			clang? (
+				|| (
+					$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+				)
+			)
+			>=sys-devel/binutils-2.26
+		)
+		zstd? (
+			!clang? (
+				>=sys-devel/gcc-13[zstd]
+			)
+			clang? (
+				|| (
+					$(gen_clang_debug_zstd_pair 16 ${LLVM_MAX_SLOT})
+				)
+			)
 		)
 	)
 	dwarf4? (
@@ -1219,12 +1262,12 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=${LLVM_MIN_PGO} # 13
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
 		_llvm_min_slot=12
+	elif grep -q -E -e "^CONFIG_DEBUG_INFO_COMPRESSED_ZLIB=y" "${path_config}" ; then
+		_llvm_min_slot=12
 	elif grep -q -E -e "^CONFIG_KASAN_HW_TAGS=y" "${path_config}" ; then
 		_llvm_min_slot=12
 	elif has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
 		_llvm_min_slot=${LLVM_MIN_LTO} # 12
-	elif has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack && [[ "${arch}" == "x86_64" ]] ; then
-		_llvm_min_slot=${LLVM_MIN_SHADOWCALLSTACK_ARM64} # 10
 	else
 		_llvm_min_slot=${LLVM_MIN_SLOT} # 10
 	fi

@@ -4198,6 +4198,13 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="cpu_flags_x86_tpause">
       Check dependencies for support for the TPAUSE instruction.
     </flag>
+    <flag name="debug">
+      If enabled, it will install the package dependencies and USE dependencies
+      required for zlib compression.
+
+      If disabled, installs or allows use of scripts to disable debugging,
+      tracing, verbose output or related code paths.
+    </flag>
     <flag name="deepcc">
       (WORK IN PROGRESS / DRAFT)
       DeepCC uses Deep Reinforced Learning (DRL) AI to improve existing
@@ -4214,10 +4221,6 @@ unset OT_KERNEL_PRIVATE_KEY
 
       Installing the <pkg>sys-apps/deepcc</pkg> package is required for the DRL
       Agent and the learned model(s).
-    </flag>
-    <flag name="disable_debug">
-      Installs scripts to disable debugging, tracing, verbose output or related
-      code paths.
     </flag>
     <flag name="dwarf4">
       Uses and tells the compiler to embed the DWARF4 debugging format for gdb.
@@ -4441,7 +4444,7 @@ unset OT_KERNEL_PRIVATE_KEY
       [Using this patchset *may* result in more IO or performance degradation.]
     </flag>
     <flag name="xz">
-      Add support for xz compression
+      Add support for xz compression.
     </flag>
     <flag name="zen-multigen_lru">
       Enables and sets default time interval between 0.1 to 1 second [based on
@@ -4466,7 +4469,7 @@ unset OT_KERNEL_PRIVATE_KEY
       particularly those marked INTERACTIVE.
     </flag>
     <flag name="zstd">
-      Add support for zstd compression
+      Add support for zstd compression.
     </flag>
   </use>
 </pkgmetadata>

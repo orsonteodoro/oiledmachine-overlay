@@ -280,7 +280,7 @@ IUSE+="
 "
 fi
 IUSE+="
-bbrv2 bbrv3 build c2tcp cet +cfs clang deepcc disable_debug dwarf4 dwarf5
+bbrv2 bbrv3 build c2tcp cet +cfs clang deepcc debug dwarf4 dwarf5
 dwarf-auto -exfat gdb +genpatches -genpatches_1510 kcfi lto nest orca pgo prjc
 rt -rust shadowcallstack symlink tresor tresor_prompt tresor_sysfs zen-sauce
 "
@@ -295,15 +295,19 @@ REQUIRED_USE+="
 		!bbrv2
 	)
 	dwarf4? (
+		debug
 		gdb
 	)
 	dwarf5? (
+		debug
 		gdb
 	)
 	dwarf-auto? (
+		debug
 		gdb
 	)
 	gdb? (
+		debug
 		|| (
 			dwarf-auto
 			dwarf5
@@ -441,12 +445,28 @@ gen_clang_pgo_rdepend() {
 gen_clang_llvm_pair() {
 	local min=${1}
 	local max=${2}
+	local usedep="${3}"
 	local s
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		(
 			sys-devel/clang:${s}
 			sys-devel/llvm:${s}
+		)
+		     "
+	done
+}
+
+gen_clang_debug_zstd_pair() {
+	local min=${1}
+	local max=${2}
+	local usedep="${3}"
+	local s
+	for s in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${s}
+			sys-devel/llvm:${s}[zstd]
 		)
 		     "
 	done
@@ -481,6 +501,7 @@ KCP_RDEPEND="
 # KCFI requires https://reviews.llvm.org/D119296 patch
 # We can eagerly prune the gcc dep from cpu_flag_x86_* but we want to handle
 # both inline assembly (.c) and assembler file (.S) cases.
+# The unlabeled debug section below partly refers to zlib compression of debug info.
 CDEPEND+="
 	${KCP_RDEPEND}
 	>=app-shells/bash-4.2
@@ -520,6 +541,29 @@ CDEPEND+="
 	cpu_flags_x86_vaes? (
 		!clang? (
 			>=sys-devel/binutils-2.30
+		)
+	)
+	debug? (
+		(
+			!clang? (
+				>=sys-devel/gcc-5
+			)
+			clang? (
+				|| (
+					$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+				)
+			)
+			>=sys-devel/binutils-2.26
+		)
+		zstd? (
+			!clang? (
+				>=sys-devel/gcc-13[zstd]
+			)
+			clang? (
+				|| (
+					$(gen_clang_debug_zstd_pair 16 ${LLVM_MAX_SLOT})
+				)
+			)
 		)
 	)
 	dwarf4? (

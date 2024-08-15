@@ -245,22 +245,26 @@ ZEN_KV="5.15.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
-bbrv2 build c2tcp cfi +cfs clang deepcc disable_debug dwarf4 dwarf5 dwarf-auto
+bbrv2 build c2tcp cfi +cfs clang deepcc debug dwarf4 dwarf5 dwarf-auto
 -exfat gdb +genpatches -genpatches_1510 lto nest multigen_lru orca pgo prjc
 rock-dkms rt shadowcallstack symlink tresor tresor_prompt tresor_sysfs uksm
 zen-multigen_lru zen-sauce
 "
 REQUIRED_USE+="
 	dwarf4? (
+		debug
 		gdb
 	)
 	dwarf5? (
+		debug
 		gdb
 	)
 	dwarf-auto? (
+		debug
 		gdb
 	)
 	gdb? (
+		debug
 		|| (
 			dwarf-auto
 			dwarf5
@@ -452,6 +456,7 @@ KCP_RDEPEND="
 
 # We can eagerly prune the gcc dep from cpu_flag_x86_* but we want to handle
 # both inline assembly (.c) and assembler file (.S) cases.
+# The unlabeled debug section below refers to zlib compression of debug info.
 CDEPEND+="
 	${KCP_RDEPEND}
 	>=dev-lang/perl-5
@@ -486,6 +491,19 @@ CDEPEND+="
 		!clang? (
 			>=sys-devel/binutils-2.31.1
 			>=sys-devel/gcc-9
+		)
+	)
+	debug? (
+		(
+			!clang? (
+				>=sys-devel/gcc-5
+			)
+			clang? (
+				|| (
+					$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+				)
+			)
+			>=sys-devel/binutils-2.26
 		)
 	)
 	dwarf4? (
@@ -1108,6 +1126,8 @@ eerror
 	elif [[ "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 12
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
+		_llvm_min_slot=12
+	elif grep -q -E -e "^CONFIG_DEBUG_INFO_COMPRESSED=y" "${path_config}" ; then
 		_llvm_min_slot=12
 	elif grep -q -E -e "^CONFIG_KASAN_HW_TAGS=y" "${path_config}" ; then
 		_llvm_min_slot=12
