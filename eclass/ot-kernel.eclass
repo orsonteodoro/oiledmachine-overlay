@@ -8522,15 +8522,22 @@ ot-kernel_set_kconfig_scs() {
 			&& \
 		[[ "${arch}" == "arm64" ]] \
 	; then
-		if (( ${llvm_slot} < 10 )) ; then
+		if (( ${llvm_slot} < 10 )) && tc-is-clang ; then
 eerror
-eerror "Shadow call stack (SCS) requires LLVM >= 10"
+eerror "Shadow Call Stack (SCS) requires LLVM >= 10"
+eerror
+			die
+		elif (( ${gcc_slot} < 12 )) && tc-is-gcc && ver_test "${KV_MAJOR_MINOR}" -ge "6.0" ; then
+eerror
+eerror "Shadow Call Stack (SCS) requires GCC >= 12.1"
 eerror
 			die
 		fi
 einfo "Enabling SCS support in the in the .config."
-		ot-kernel_y_configopt "CONFIG_CFI_CLANG_SHADOW"
-		ot-kernel_y_configopt "CONFIG_MODULES"
+		if tc-is-clang && ver_test "${KV_MAJOR_MINOR}" -ge "5.13" && ver_test "${KV_MAJOR_MINOR}" -le "6.0" ; then
+			ot-kernel_y_configopt "CONFIG_CFI_CLANG_SHADOW"
+			ot-kernel_y_configopt "CONFIG_MODULES"
+		fi
 	elif \
 		[[ \
 			   "${hardening_level}" == "fast" \

@@ -97,6 +97,7 @@ EXCLUDE_SCS=(
 	arm
 	hppa
 	ia64
+	loong
 	mips
 	ppc
 	ppc64
@@ -224,7 +225,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv 
 # kcfi default OFF based on CI using clang 17.
 IUSE+="
 bbrv2 +bti build c2tcp +cet +cfs -clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
--exfat -expoline gdb +genpatches -genpatches_1510 -kcfi -lto nest orca pgo prjc
+-exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto nest orca pgo prjc
 +retpoline rt -rust shadowcallstack symlink tresor tresor_prompt tresor_sysfs
 zen-sauce
 "
@@ -646,8 +647,13 @@ CDEPEND+="
 	)
 	shadowcallstack? (
 		arm64? (
-			|| (
-				$(gen_shadowcallstack_rdepend ${LLVM_MIN_SHADOWCALLSTACK_ARM64} ${LLVM_MAX_SLOT})
+			!clang? (
+				>=sys-devel/gcc-12.1
+			)
+			clang? (
+				|| (
+					$(gen_shadowcallstack_rdepend ${LLVM_MIN_SHADOWCALLSTACK_ARM64} ${LLVM_MAX_SLOT})
+				)
 			)
 		)
 	)
@@ -1226,6 +1232,8 @@ ot-kernel_get_gcc_min_slot() {
 	# <redacted>-pc-linux-gnu-gcc-11: error: unrecognized command-line option '-ftrivial-auto-var-init=zero'
 		_gcc_min_slot=12
 	elif grep -q -E -e "^CONFIG_KCOV=y" "${path_config}" ; then
+		_gcc_min_slot=12
+	elif grep -q -E -e "^CONFIG_SHADOW_CALL_STACK=y" "${path_config}" ; then
 		_gcc_min_slot=12
 	elif grep -q -E -e "^CONFIG_EXPOLINE_EXTERN=y" "${path_config}" && [[ "${arch}" == "s390" ]] ; then
 		_gcc_min_slot=11

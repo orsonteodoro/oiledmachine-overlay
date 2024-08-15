@@ -202,7 +202,7 @@ ZEN_KV="5.4.0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 # clang is default OFF based on https://github.com/torvalds/linux/blob/v5.4/Documentation/process/changes.rst
 IUSE+="
-bmq build c2tcp +cfs -clang deepcc -debug -dwarf4 -expoline gdb +genpatches
+bmq build c2tcp +cfs -clang deepcc -debug -dwarf4 -expoline -gdb +genpatches
 -genpatches_1510 muqss orca pgo +retpoline rock-dkms rt symlink tresor
 tresor_prompt tresor_sysfs uksm zen-muqss zen-sauce
 "

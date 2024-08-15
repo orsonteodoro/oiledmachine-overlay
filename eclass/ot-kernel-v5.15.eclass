@@ -121,6 +121,7 @@ EXCLUDE_SCS=(
 	arm
 	hppa
 	ia64
+	loong
 	mips
 	ppc
 	ppc64
@@ -247,7 +248,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~
 # clang is default OFF based on https://github.com/torvalds/linux/blob/v5.15/Documentation/process/changes.rst
 IUSE+="
 bbrv2 +bti build c2tcp cfi +cfs -clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
--exfat -expoline gdb +genpatches -genpatches_1510 -lto nest multigen_lru orca
+-exfat -expoline -gdb +genpatches -genpatches_1510 -lto nest multigen_lru orca
 pgo prjc +retpoline rock-dkms rt shadowcallstack symlink tresor tresor_prompt
 tresor_sysfs uksm zen-multigen_lru zen-sauce
 "
@@ -284,6 +285,7 @@ REQUIRED_USE+="
 	)
 	shadowcallstack? (
 		cfi
+		clang
 	)
 	tresor_prompt? (
 		tresor
@@ -640,8 +642,10 @@ CDEPEND+="
 	)
 	shadowcallstack? (
 		arm64? (
-			|| (
-				$(gen_shadowcallstack_rdepend ${LLVM_MIN_SHADOWCALLSTACK_ARM64} ${LLVM_MAX_SLOT})
+			clang? (
+				|| (
+					$(gen_shadowcallstack_rdepend ${LLVM_MIN_SHADOWCALLSTACK_ARM64} ${LLVM_MAX_SLOT})
+				)
 			)
 		)
 	)
