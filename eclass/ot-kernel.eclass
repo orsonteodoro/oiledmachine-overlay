@@ -584,7 +584,7 @@ IUSE+="
 ${EBUILD_REV}
 ${PGT_TRAINERS[@]/#/ot_kernel_pgt_}
 bzip2 cpu_flags_arm_thumb gost graphicsmagick gtk gzip imagemagick
-intel-microcode linux-firmware lz4 lzma lzo +ncurses openssl pcc +reiserfs qt5
+intel-microcode linux-firmware lz4 lzma lzo +ncurses openssl pcc +reiserfs
 xz zstd
 "
 

@@ -2440,7 +2440,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       menuconfig - Use lxdialog menu frontend using ncurses
       nconfig - Use ncurses frontend
       gconfig - Use GTK+2 frontend
-      xconfig - Use Qt5 frontend
+      xconfig - Use Qt5/Qt6 frontend
       disable - disables menuconfig
       none - disables menuconfig
 
@@ -4443,6 +4443,9 @@ unset OT_KERNEL_PRIVATE_KEY
     </flag>
     <flag name="qt5">
       Add support for xconfig, the Qt5 kernel config editor
+    </flag>
+    <flag name="qt6">
+      Add support for xconfig, the Qt6 kernel config editor
     </flag>
     <flag name="reiserfs">
       Enable to keep, but not necessarily enabling it.

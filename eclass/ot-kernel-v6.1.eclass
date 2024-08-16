@@ -226,7 +226,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv 
 IUSE+="
 bbrv2 build c2tcp +cet +cfs -clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
 -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto nest orca pgo prjc
-+retpoline rt -rust shadowcallstack symlink tresor tresor_prompt tresor_sysfs
+qt5 +retpoline rt -rust shadowcallstack symlink tresor tresor_prompt tresor_sysfs
 zen-sauce
 "
 

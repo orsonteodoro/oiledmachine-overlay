@@ -260,7 +260,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~
 # clang is default OFF based on https://github.com/torvalds/linux/blob/v5.10/Documentation/process/changes.rst
 IUSE+="
 bbrv2 build c2tcp +cfs -clang deepcc -debug -dwarf4 -exfat -expoline -gdb
-+genpatches -genpatches_1510 muqss orca pgo prjc +retpoline rt symlink tresor
++genpatches -genpatches_1510 muqss orca pgo prjc qt5 +retpoline rt symlink tresor
 tresor_prompt tresor_sysfs uksm zen-muqss zen-sauce
 "
 REQUIRED_USE+="

@@ -286,13 +286,17 @@ fi
 IUSE+="
 bbrv2 bbrv3 build c2tcp +cet +cfs -clang deepcc -debug -dwarf4 -dwarf5
 -dwarf-auto -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto nest
-orca pgo prjc +retpoline rt -rust shadowcallstack symlink tresor tresor_prompt
+orca pgo prjc qt5 qt6 +retpoline rt -rust shadowcallstack symlink tresor tresor_prompt
 tresor_sysfs zen-sauce
 "
 
 REQUIRED_USE+="
 	!prjc
 	!zen-sauce
+	?? (
+		qt5
+		qt6
+	)
 	bbrv2? (
 		!bbrv3
 	)
@@ -721,6 +725,11 @@ CDEPEND+="
 		dev-qt/qtcore:5
 		dev-qt/qtgui:5
 		dev-qt/qtwidgets:5
+	)
+	qt6? (
+		dev-qt/qtcore:6
+		dev-qt/qtgui:6
+		dev-qt/qtwidgets:6
 	)
 	retpoline? (
 		!clang? (
