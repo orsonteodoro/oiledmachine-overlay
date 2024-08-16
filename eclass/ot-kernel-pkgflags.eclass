@@ -8240,10 +8240,14 @@ ot-kernel-pkgflags_qtgreet() { # DONE
 ot-kernel-pkgflags_portage() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-apps/portage" ; then
 
+	# These are not required.  It's only used for sandboxing.
+	# Portage will still function if you disable them from FEATURES.
 		_ot-kernel_set_ipc_ns
 		_ot-kernel_set_net_ns
 		_ot-kernel_set_pid_ns
+		_ot-kernel_set_uts_ns
 
+	# Required for USER portage
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	fi
