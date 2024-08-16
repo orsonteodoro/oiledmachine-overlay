@@ -11852,6 +11852,38 @@ ewarn ">=${_p} is maybe required by the kernel."
 	fi
 }
 
+# @FUNCTION: ot-kernel_check_qt_versions
+# @DESCRIPTION:
+# Check qtversion is the same
+ot-kernel_check_qt_versions() {
+	if has qt5 ${IUSE_EFFECTIVE} && ot-kernel_use qt5 ; then
+		local QTCORE_PV=$(pkg-config --modversion Qt5Core)
+		local QTGUI_PV=$(pkg-config --modversion Qt5Gui)
+		local QTWIDGETS_PV=$(pkg-config --modversion Qt5Widgets)
+		if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
+eerror "QTCORE_PV is not the same version as Qt5Gui"
+			die
+		fi
+		if ver_test ${QTCORE_PV} -ne ${QTWIDGETS_PV} ; then
+eerror "QTCORE_PV is not the same version as Qt5Widgets"
+			die
+		fi
+	fi
+	if has qt6 ${IUSE_EFFECTIVE} && ot-kernel_use qt6 ; then
+		local QTCORE_PV=$(pkg-config --modversion Qt6Core)
+		local QTGUI_PV=$(pkg-config --modversion Qt6Gui)
+		local QTWIDGETS_PV=$(pkg-config --modversion Qt6Widgets)
+		if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
+eerror "QTCORE_PV is not the same version as Qt5Gui"
+			die
+		fi
+		if ver_test ${QTCORE_PV} -ne ${QTWIDGETS_PV} ; then
+eerror "QTCORE_PV is not the same version as Qt5Widgets"
+			die
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure
 # @DESCRIPTION:
 # Run menuconfig
@@ -11915,6 +11947,8 @@ eerror
 		else
 			ot-kernel_src_configure_custom
 		fi
+
+		ot-kernel_check_qt_versions
 
 		if declare -f ot-kernel_check_versions >/dev/null ; then
 			ot-kernel_check_versions
