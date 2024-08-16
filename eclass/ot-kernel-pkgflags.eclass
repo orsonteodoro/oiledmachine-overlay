@@ -7224,9 +7224,9 @@ ot-kernel-pkgflags_nv() { # DONE
 		fi
 
 		if \
-			   ot-kernel_has_version "=${pkg}-535.183*" \
-			|| ot-kernel_has_version "=${pkg}-525.147*" \
-			|| ot-kernel_has_version "=${pkg}-515.86*" \
+			   ot-kernel_has_version "=${pkg}-535.183*[-kernel-open]" \
+			|| ot-kernel_has_version "=${pkg}-525.147*[-kernel-open]" \
+			|| ot-kernel_has_version "=${pkg}-515.86*[-kernel-open]" \
 			|| ot-kernel_has_version "=${pkg}-510.108*" \
 			|| ot-kernel_has_version "=${pkg}-470.256*" \
 			|| ot-kernel_has_version "=${pkg}-470.161*" \
