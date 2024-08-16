@@ -447,27 +447,27 @@ gen_clang_lld() {
 }
 
 KCP_RDEPEND="
-	clang? (
-		amd64? (
+	amd64? (
+		!clang? (
+			>=sys-devel/gcc-13.9
+		)
+		clang? (
 			|| (
 				$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_AMD64} ${LLVM_MAX_SLOT})
 			)
 		)
-		arm64? (
+		|| (
+		)
+	)
+	arm64? (
+		!clang? (
+			>=sys-devel/gcc-5.1.0
+		)
+		clang? (
 			|| (
 				$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_ARM64} ${LLVM_MAX_SLOT})
 			)
 		)
-	)
-	|| (
-		amd64? (
-			>=sys-devel/gcc-13.9
-		)
-		arm64? (
-			>=sys-devel/gcc-5.1.0
-		)
-		$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_AMD64} ${LLVM_MAX_SLOT})
-		$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_ARM64} ${LLVM_MAX_SLOT})
 	)
 "
 

@@ -545,27 +545,25 @@ gen_clang_debug_zstd_pair() {
 
 # It should be llvm 19 but downgraded to 18 based on experience.
 KCP_RDEPEND="
-	clang? (
-		amd64? (
+	amd64? (
+		!clang? (
+			>=sys-devel/gcc-14.1
+		)
+		clang? (
 			|| (
 				$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_AMD64} ${LLVM_MAX_SLOT})
 			)
 		)
-		arm64? (
+	)
+	arm64? (
+		!clang? (
+			>=sys-devel/gcc-5.1.0
+		)
+		clang? (
 			|| (
 				$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_ARM64} ${LLVM_MAX_SLOT})
 			)
 		)
-	)
-	|| (
-		amd64? (
-			>=sys-devel/gcc-14.1
-		)
-		arm64? (
-			>=sys-devel/gcc-5.1.0
-		)
-		$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_AMD64} ${LLVM_MAX_SLOT})
-		$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_ARM64} ${LLVM_MAX_SLOT})
 	)
 "
 
