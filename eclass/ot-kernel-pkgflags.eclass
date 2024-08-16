@@ -26,6 +26,9 @@ esac
 
 inherit ot-kernel-kutils toolchain-funcs
 
+# To find missing package use:
+# for x in $(grep -E -r --exclude-dir=.git --exclude-dir=metadata --exclude=Manifest.gz -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" /usr/portage  | sort | cut -f 1 -d ":" | cut -f 4-5 -d "/") ; do grep -q -e "${x}" ot-kernel-pkgflags.eclass || echo  "Missing ${x}" ; done
+
 # These are discovered by doing one of the following:
 # grep -E -r --exclude-dir=.git --exclude-dir=metadata --exclude=Manifest.gz -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" /usr/portage | sort
 
@@ -492,6 +495,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_inception
 	ot-kernel-pkgflags_incron
 	ot-kernel-pkgflags_incus
+	ot-kernel-pkgflags_installkernel
 	ot-kernel-pkgflags_iodine
 	ot-kernel-pkgflags_iotop
 	ot-kernel-pkgflags_ipcm
@@ -547,6 +551,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_libvirt
 	ot-kernel-pkgflags_lightdm
 	ot-kernel-pkgflags_likwid
+	ot-kernel-pkgflags_linux_apfs_rw
 	ot-kernel-pkgflags_linux_atm
 	ot-kernel-pkgflags_linux_enable_ir_emitter
 	ot-kernel-pkgflags_linux_smaps
@@ -559,6 +564,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_llvm
 	ot-kernel-pkgflags_lm_sensors
 	ot-kernel-pkgflags_lmms
+	ot-kernel-pkgflags_logiops
 	ot-kernel-pkgflags_longrun
 	ot-kernel-pkgflags_loopaes
 	ot-kernel-pkgflags_lttng_modules
@@ -752,6 +758,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_tvheadend
 	ot-kernel-pkgflags_udev
 	ot-kernel-pkgflags_udisks
+	ot-kernel-pkgflags_uefi_mkconfig
 	ot-kernel-pkgflags_ufw
 	ot-kernel-pkgflags_uksmd
 	ot-kernel-pkgflags_undervolt
@@ -5048,6 +5055,16 @@ ot-kernel-pkgflags_incron() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_installkernel
+# @DESCRIPTION:
+# Applies kernel config flags for the installkernel package
+ot-kernel-pkgflags_installkernel() { # DONE
+	if ot-kernel_has_version_pkgflags "sys-kernel/installkernel" ; then
+		ot-kernel_y_configopt "CONFIG_EFI"
+		ot-kernel_y_configopt "CONFIG_EFI_STUB"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_incus
 # @DESCRIPTION:
 # Applies kernel config flags for the incus package
@@ -5765,6 +5782,15 @@ ot-kernel-pkgflags_libmtp() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_linux_apfs_rw
+# @DESCRIPTION:
+# Applies kernel config flags for the linux-apfs-rw package
+ot-kernel-pkgflags_linux_apfs_rw() { # DONE
+	if ot-kernel_has_version_pkgflags "sys-fs/linux-apfs-rw" ; then
+		ot-kernel_y_configopt "CONFIG_LIBCRC32C"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_linux_atm
 # @DESCRIPTION:
 # Applies kernel config flags for the linux-atm package
@@ -6292,6 +6318,20 @@ einfo "Adding referenced modules for the lm-sensors package."
 		if (( ${found} == 0 )) ; then
 ewarn "You may need to have at least one CONFIG_SENSOR_... for lm-sensors."
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_logiops
+# @DESCRIPTION:
+# Applies kernel config flags for the logiops package
+ot-kernel-pkgflags_logiops() { # DONE
+	if ot-kernel_has_version_pkgflags "app-misc/logiops" ; then
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+		ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+		ot-kernel_y_configopt "CONFIG_HID_LOGITECH"
+		ot-kernel_y_configopt "CONFIG_HID_LOGITECH_HIDPP"
 	fi
 }
 
@@ -8253,6 +8293,7 @@ ot-kernel-pkgflags_pesign() { # DONE
 	if ot-kernel_has_version_pkgflags "app-crypt/pesign" ; then
 		ot-kernel_y_configopt "CONFIG_EFI"
 		ot-kernel_unset_configopt "CONFIG_X86_USE_3DNOW"
+		ot-kernel_y_configopt "CONFIG_EFI"
 		ot-kernel_y_configopt "CONFIG_EFI_STUB"
 
 		ot-kernel_y_configopt "CONFIG_ASYMMETRIC_KEY_TYPE"
@@ -9933,12 +9974,36 @@ ot-kernel-pkgflags_udisks() { # DONE
 		|| "${arch}" == "x86" \
 		|| "${arch}" == "x86_64" \
 	]] ; then
-		ot-kernel_unset_configopt "CONFIG_IDE"
+		if grep -q -E -e "^CONFIG_IDE=y" "${path_config}" ; then
+ewarn
+ewarn "Detected CONFIG_IDE associated with legacy hardware.  The following are"
+ewarn "required to fix DVD-RW issues:"
+ewarn
+ewarn "(1) [Required] CONFIG_IDE needs to be disabled in kernel config by commenting it out."
+ewarn "(2) Enable one of CONFIG_PATA_ instead.  You must manually set it."
+ewarn "(3) Change system config from /dev/hdX to /dev/sdX in your /etc/fstab and/or bootloader config files."
+ewarn
+ewarn "No automatic changes will be performed to CONFIG_IDE to avoid boot failure."
+ewarn
+			#ot-kernel_unset_configopt "CONFIG_IDE"
+			die
+		fi
 		ot-kernel_y_configopt "CONFIG_TMPFS_POSIX_ACL"
 		ot-kernel_y_configopt "CONFIG_NLS_UTF8"
 		if ver_test "${KV_MAJOR_MINOR}" -lt "3.10" ; then
 			ot-kernel_y_configopt "CONFIG_USB_SUSPEND"
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_uefi_mkconfig
+# @DESCRIPTION:
+# Applies kernel config flags for the uefi-mkconfig package
+ot-kernel-pkgflags_uefi_mkconfig() { # DONE
+	local pkg="sys-boot/uefi-mkconfig"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ot-kernel_y_configopt "CONFIG_EFI"
+		ot-kernel_y_configopt "CONFIG_EFI_STUB"
 	fi
 }
 
