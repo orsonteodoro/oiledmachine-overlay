@@ -1423,6 +1423,15 @@ ot-kernel_check_versions() {
 	_ot-kernel_check_versions "virtual/udev" "081" ""
 }
 
+# @FUNCTION: ot-kernel_check_usedeps
+# @DESCRIPTION:
+# Check the USEDEP of the dependency.
+ot-kernel_check_usedeps() {
+	if tc-is-clang && grep -q -E -e "^CONFIG_ARCH_RPC=y" "${path_config}" && [[ "${arch}" == "arm" ]] ; then
+		die "Disable the clang USE flag or in OT_KERNEL_USE."
+	fi
+}
+
 # @FUNCTION: ot-kernel_get_llvm_min_slot
 # @DESCRIPTION:
 # Get the inclusive min slot for clang

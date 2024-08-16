@@ -11959,9 +11959,6 @@ eerror
 	done
 }
 
-
-
-
 # @FUNCTION: get_llvm_slot
 # @DESCRIPTION:
 # Gets the clang compiler that the user want to use.
