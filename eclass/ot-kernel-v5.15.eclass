@@ -40,6 +40,16 @@ else
 	UPSTREAM_PV="${MY_PV/_/-}" # file context
 fi
 
+ARM_FLAGS=(
+# Some are default ON for security reasons or bug avoidance.
+	+cpu_flags_arm_bti
+	+cpu_flags_arm_lse # 8.1
+	+cpu_flags_arm_mte # 8.3, kernel 5.10, gcc 10.1, llvm 8 ; Disabled this and used v8_3 instead.
+	cpu_flags_arm_neon
+	+cpu_flags_arm_ptrauth # 8.3-A
+	+cpu_flags_arm_tlbi # 8.4
+)
+
 BBRV2_KV="5.13.12"
 BBRV2_VERSION="v2alpha-2022-08-28"
 BBRV2_COMMITS=( # oldest
@@ -242,11 +252,36 @@ be5ba234ca0a5aabe74bfc7e1f636f085bd3823c
 16b72839cb862810bbf976e223f85ff4d1959ebd
 96c43bfad5c8dcb116ab2088e46228707aaeca9f
 )
+PPC_FLAGS=(
+	cpu_flags_ppc_476fpe
+	cpu_flags_ppc_altivec
+)
+X86_FLAGS=(
+# See also
+# arch/x86/Kconfig.assembler
+# arch/x86/Makefile
+# include/opcode/i386.h from binutils <= 2.17.x
+# opcodes/i386-opc.tbl from binutils >= 2.18.x
+	cpu_flags_x86_aes
+	cpu_flags_x86_avx
+	cpu_flags_x86_avx2
+	cpu_flags_x86_avx512bw
+	cpu_flags_x86_avx512vl # kernel 5.7, gcc 5.1, llvm 3.7
+	cpu_flags_x86_pclmul # (CRYPTO_GHASH_CLMUL_NI_INTEL) pclmulqdq - kernel 2.6, gcc 4.4, llvm 3.2 ; 2010
+	cpu_flags_x86_sha
+	cpu_flags_x86_sha256
+	cpu_flags_x86_sse2
+	cpu_flags_x86_sse4_2 # crc32
+	cpu_flags_x86_ssse3
+)
 ZEN_KV="5.15.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 # clang is default OFF based on https://github.com/torvalds/linux/blob/v5.15/Documentation/process/changes.rst
 IUSE+="
+${ARM_FLAGS[@]}
+${PPC_FLAGS[@]}
+${X86_FLAGS[@]}
 bbrv2 build c2tcp cfi +cfs -clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
 -exfat -expoline -gdb +genpatches -genpatches_1510 -lto nest multigen_lru orca
 pgo prjc qt5 +retpoline rock-dkms rt shadowcallstack symlink tresor tresor_prompt
@@ -422,6 +457,21 @@ gen_clang_pgo_rdepend() {
 	done
 }
 
+gen_clang_lld() {
+	local min=${1}
+	local max=${2}
+	local s
+	for s in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${s}
+			sys-devel/lld:${s}
+			sys-devel/llvm:${s}
+		)
+		     "
+	done
+}
+
 gen_clang_llvm_pair() {
 	local min=${1}
 	local max=${2}
@@ -483,6 +533,16 @@ CDEPEND+="
 	sys-apps/grep[pcre]
 	virtual/libelf
 	virtual/pkgconfig
+	arm64? (
+		big-endian? (
+			!clang? (
+				>=sys-devel/binutils-1.50
+			)
+			clang? (
+				$(gen_clang_lld 13 ${LLVM_MAX_SLOT})
+			)
+		)
+	)
 	bzip2? (
 		app-arch/bzip2
 	)
@@ -528,14 +588,35 @@ CDEPEND+="
 	cpu_flags_ppc_476fpe? (
 		>=sys-devel/binutils-2.25
 	)
+	cpu_flags_x86_aes? (
+		>=sys-devel/binutils-2.19
+	)
+	cpu_flags_x86_avx? (
+		>=sys-devel/binutils-2.19
+	)
+	cpu_flags_x86_avx2? (
+		>=sys-devel/binutils-2.22
+	)
 	cpu_flags_x86_avx512bw? (
 		>=sys-devel/binutils-2.25
+	)
+	cpu_flags_x86_pclmul? (
+		>=sys-devel/binutils-2.19
 	)
 	cpu_flags_x86_sha? (
 		>=sys-devel/binutils-2.24
 	)
 	cpu_flags_x86_sha256? (
 		>=sys-devel/binutils-2.24
+	)
+	cpu_flags_x86_sse2? (
+		>=sys-devel/binutils-2.11
+	)
+	cpu_flags_x86_sse4_2? (
+		>=sys-devel/binutils-2.18
+	)
+	cpu_flags_x86_ssse3? (
+		>=sys-devel/binutils-2.17
 	)
 	cpu_flags_x86_tpause? (
 		!clang? (

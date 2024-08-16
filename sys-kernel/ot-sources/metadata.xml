@@ -4152,6 +4152,9 @@ unset OT_KERNEL_PRIVATE_KEY
     <remote-id type="cpe">cpe:/o:linux:linux_kernel</remote-id>
   </upstream>
   <use>
+    <flag name="big-endian">
+      Install dependencies needed to build big-endian support.
+    </flag>
     <flag name="bbrv2">
       Patches the kernel with BBRv2 TCP congestion control for improved goodput,
       which is the actual useful data over time alone, than its predecessor with
@@ -4228,6 +4231,12 @@ unset OT_KERNEL_PRIVATE_KEY
     </flag>
     <flag name="cpu_flags_arm_tlbi">
       Install dependencies for TLB range invalation support.
+    </flag>
+    <flag name="cpu_flags_arm_v4">
+      Install dependencies for ARMv4 support.
+    </flag>
+    <flag name="cpu_flags_arm_v4">
+      Install dependencies for ARMv4T support.
     </flag>
     <flag name="cpu_flags_ppc_476fpe">
       Install dependencies for fixing for the 476FPE bug.

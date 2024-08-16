@@ -58,6 +58,16 @@ else
 	UPSTREAM_PV="${MY_PV/_/-}" # file context
 fi
 
+ARM_FLAGS=(
+# Some are default ON for security reasons or bug avoidance.
+	+cpu_flags_arm_bti
+	+cpu_flags_arm_lse # 8.1
+	+cpu_flags_arm_mte # 8.3, kernel 5.10, gcc 10.1, llvm 8 ; Disabled this and used v8_3 instead.
+	cpu_flags_arm_neon
+	+cpu_flags_arm_ptrauth # 8.3-A
+	+cpu_flags_arm_tlbi # 8.4
+)
+
 BBRV2_COMMITS=( # oldest
 1ca5498fa4c6d4d8d634b1245d41f1427482824f
 #46ddceed8f8dad02a97e79c40893c385b859d1c8 # already applied
@@ -266,9 +276,35 @@ e33a55b58006b8c58d478f8cdfcce297e736a1d8
 7f9e9a768c808fa90feba8df3451ff63918fd3a7
 7ce95ff3a6f65b25e12e3b06e5e79b8c7d28a62e
 )
+PPC_FLAGS=(
+	cpu_flags_ppc_476fpe
+	cpu_flags_ppc_altivec
+)
 QT5_PV="5.15"
 QT6_PV="6.4"
 RUST_PV="1.78.0"
+X86_FLAGS=(
+# See also
+# arch/x86/Kconfig.assembler
+# arch/x86/Makefile
+# include/opcode/i386.h from binutils <= 2.17.x
+# opcodes/i386-opc.tbl from binutils >= 2.18.x
+	cpu_flags_x86_aes
+	cpu_flags_x86_avx
+	cpu_flags_x86_avx2
+	cpu_flags_x86_avx512bw
+	cpu_flags_x86_avx512vl # kernel 5.7, gcc 5.1, llvm 3.7
+	cpu_flags_x86_gfni # kernel 6.1, gcc 8, llvm 6
+	cpu_flags_x86_pclmul # (CRYPTO_GHASH_CLMUL_NI_INTEL) pclmulqdq - kernel 2.6, gcc 4.4, llvm 3.2 ; 2010
+	cpu_flags_x86_sha
+	cpu_flags_x86_sha256
+	cpu_flags_x86_sse2
+	cpu_flags_x86_sse4_2 # crc32
+	cpu_flags_x86_ssse3
+	cpu_flags_x86_tpause # kernel 5.8, gcc 6.5, llvm 7
+	cpu_flags_x86_vaes # kernel 6.10
+	cpu_flags_x86_vpclmulqdq # (CRYPTO_POLYVAL_CLMUL_NI) vpclmulqdq - kernel 6.0, gcc 8.1, llvm 6 ; 2017
+)
 ZEN_KV="6.11.0"
 
 if ! [[ "${PV}" =~ "9999" ]] ; then
@@ -285,6 +321,9 @@ fi
 # clang is default OFF based on https://github.com/torvalds/linux/blob/v6.11/Documentation/process/changes.rst
 # kcfi default OFF based on CI using clang 17.
 IUSE+="
+${ARM_FLAGS[@]}
+${PPC_FLAGS[@]}
+${X86_FLAGS[@]}
 bbrv2 bbrv3 build c2tcp +cet +cfs -clang deepcc -debug -dwarf4 -dwarf5
 -dwarf-auto -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto nest
 orca pgo prjc qt5 qt6 +retpoline rt -rust shadowcallstack symlink tresor tresor_prompt
@@ -470,7 +509,7 @@ gen_clang_llvm_pair() {
 	done
 }
 
-gen_clang_cet() {
+gen_clang_lld() {
 	local min=${1}
 	local max=${2}
 	local s
@@ -551,6 +590,16 @@ CDEPEND+="
 	sys-apps/grep[pcre]
 	virtual/libelf
 	virtual/pkgconfig
+	arm64? (
+		big-endian? (
+			!clang? (
+				>=sys-devel/binutils-1.50
+			)
+			clang? (
+				$(gen_clang_lld 13 ${LLVM_MAX_SLOT})
+			)
+		)
+	)
 	bzip2? (
 		app-arch/bzip2
 	)
@@ -561,7 +610,7 @@ CDEPEND+="
 		)
 		clang? (
 			|| (
-				$(gen_clang_cet 14 ${LLVM_MAX_SLOT})
+				$(gen_clang_lld 14 ${LLVM_MAX_SLOT})
 			)
 		)
 	)
@@ -606,6 +655,15 @@ CDEPEND+="
 	cpu_flags_ppc_476fpe? (
 		>=sys-devel/binutils-2.25
 	)
+	cpu_flags_x86_aes? (
+		>=sys-devel/binutils-2.19
+	)
+	cpu_flags_x86_avx? (
+		>=sys-devel/binutils-2.19
+	)
+	cpu_flags_x86_avx2? (
+		>=sys-devel/binutils-2.22
+	)
 	cpu_flags_x86_avx512bw? (
 		>=sys-devel/binutils-2.25
 	)
@@ -615,11 +673,23 @@ CDEPEND+="
 			>=sys-devel/gcc-6
 		)
 	)
+	cpu_flags_x86_pclmul? (
+		>=sys-devel/binutils-2.19
+	)
 	cpu_flags_x86_sha? (
 		>=sys-devel/binutils-2.24
 	)
 	cpu_flags_x86_sha256? (
 		>=sys-devel/binutils-2.24
+	)
+	cpu_flags_x86_sse2? (
+		>=sys-devel/binutils-2.11
+	)
+	cpu_flags_x86_sse4_2? (
+		>=sys-devel/binutils-2.18
+	)
+	cpu_flags_x86_ssse3? (
+		>=sys-devel/binutils-2.17
 	)
 	cpu_flags_x86_tpause? (
 		!clang? (
@@ -631,6 +701,9 @@ CDEPEND+="
 		!clang? (
 			>=sys-devel/binutils-2.30
 		)
+	)
+	cpu_flags_x86_vpclmulqdq? (
+		>=sys-devel/binutils-2.19
 	)
 	debug? (
 		(
@@ -1454,7 +1527,7 @@ ot-kernel_get_gcc_min_slot() {
 		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_X86_USER_SHADOW_STACK=y" "${path_config}" && [[ "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=8 # CET-SS
-	elif ot-kernel_use cpu_flags_x86_clmul_ni ; then
+	elif ot-kernel_use cpu_flags_x86_vpclmulqdq ; then
 		_gcc_min_slot=8
 	elif grep -q -E -e "^CONFIG_MITIGATION_RETPOLINE=y" "${path_config}" ; then
 		_gcc_min_slot=7

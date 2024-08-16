@@ -40,6 +40,12 @@ else
 	UPSTREAM_PV="${MY_PV/_/-}" # file context
 fi
 
+ARM_FLAGS=(
+# Some are default ON for security reasons or bug avoidance.
+	+cpu_flags_arm_lse # 8.1
+	cpu_flags_arm_neon
+)
+
 C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
 C2TCP_EXTRA="0521"
 C2TCP_KV="4.13.1"
@@ -179,12 +185,35 @@ f468511a824c557ced1be2fed1b4ba923a067bcc
 59617f4466958b9031ccf51946f004f9ef8f6f0d
 78fb15ac04bff56dfeb0b6fe692fb6e0ccf4e56b
 )
-
+PPC_FLAGS=(
+	cpu_flags_ppc_476fpe
+	cpu_flags_ppc_altivec
+)
+X86_FLAGS=(
+# See also
+# arch/x86/Kconfig.assembler
+# arch/x86/Makefile
+# include/opcode/i386.h from binutils <= 2.17.x
+# opcodes/i386-opc.tbl from binutils >= 2.18.x
+	cpu_flags_x86_aes
+	cpu_flags_x86_avx
+	cpu_flags_x86_avx2
+	cpu_flags_x86_avx512bw # raid6
+	cpu_flags_x86_pclmul # (CRYPTO_GHASH_CLMUL_NI_INTEL) pclmulqdq - kernel 2.6, gcc 4.4, llvm 3.2 ; 2010
+	cpu_flags_x86_sha
+	cpu_flags_x86_sha256
+	cpu_flags_x86_sse2
+	cpu_flags_x86_sse4_2 # crc32
+	cpu_flags_x86_ssse3
+)
 ZEN_KV="4.19.0"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 # clang is default OFF based on https://github.com/torvalds/linux/blob/v4.19/Documentation/process/changes.rst
 IUSE+="
+${ARM_FLAGS[@]}
+${PPC_FLAGS[@]}
+${X86_FLAGS[@]}
 build c2tcp +cfs -clang deepcc -debug -dwarf4 -expoline +genpatches -gdb
 -genpatches_1510 muqss orca pds pgo qt5 +retpoline rt symlink tresor tresor_prompt
 tresor_sysfs uksm zen-sauce
@@ -314,6 +343,36 @@ CDEPEND+="
 	)
 	cpu_flags_ppc_476fpe? (
 		>=sys-devel/binutils-2.25
+	)
+	cpu_flags_x86_aes? (
+		>=sys-devel/binutils-2.19
+	)
+	cpu_flags_x86_avx? (
+		>=sys-devel/binutils-2.19
+	)
+	cpu_flags_x86_avx2? (
+		>=sys-devel/binutils-2.22
+	)
+	cpu_flags_x86_avx512bw? (
+		>=sys-devel/binutils-2.25
+	)
+	cpu_flags_x86_pclmul? (
+		>=sys-devel/binutils-2.19
+	)
+	cpu_flags_x86_sha? (
+		>=sys-devel/binutils-2.24
+	)
+	cpu_flags_x86_sha256? (
+		>=sys-devel/binutils-2.24
+	)
+	cpu_flags_x86_sse2? (
+		>=sys-devel/binutils-2.11
+	)
+	cpu_flags_x86_sse4_2? (
+		>=sys-devel/binutils-2.18
+	)
+	cpu_flags_x86_ssse3? (
+		>=sys-devel/binutils-2.17
 	)
 	dwarf4? (
 		!clang? (
