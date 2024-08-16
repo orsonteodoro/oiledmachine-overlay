@@ -274,6 +274,9 @@ PPC_FLAGS=(
 )
 QT5_PV="5.15"
 QT6_PV="6.4"
+RISCV_FLAGS=(
+	+cpu_flags_riscv_rvv
+)
 RUST_PV="1.71.1"
 X86_FLAGS=(
 # See also
@@ -307,6 +310,7 @@ fi
 IUSE+="
 ${ARM_FLAGS[@]}
 ${PPC_FLAGS[@]}
+${RISCV_FLAGS[@]}
 ${X86_FLAGS[@]}
 bbrv2 bbrv3 build c2tcp +cet +cfs -clang clear -deepcc -debug -dwarf4
 -dwarf5 dwarf-auto -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto
@@ -642,6 +646,14 @@ CDEPEND+="
 	)
 	cpu_flags_ppc_476fpe? (
 		>=sys-devel/binutils-2.25
+	)
+	cpu_flags_riscv_rvv? (
+		!clang? (
+			>=sys-devel/binutils-2.38
+		)
+		clang? (
+			$(gen_clang_lld 14 ${LLVM_MAX_SLOT})
+		)
 	)
 	cpu_flags_x86_aes? (
 		>=sys-devel/binutils-2.19
@@ -1467,6 +1479,8 @@ ot-kernel_get_llvm_min_slot() {
 	elif grep -q -E -e "^CONFIG_KCSAN_WEAK_MEMORY=y" "${path_config}" ; then
 		_llvm_min_slot=14
 	elif grep -q -E -e "^CONFIG_RANDOMIZE_KSTACK_OFFSET=y" "${path_config}" ; then
+		_llvm_min_slot=14
+	elif grep -q -E -e "^CONFIG_RISCV_ISA_V=y" "${path_config}" && [[ "${arch}" == "riscv" ]] ; then
 		_llvm_min_slot=14
 	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=14
