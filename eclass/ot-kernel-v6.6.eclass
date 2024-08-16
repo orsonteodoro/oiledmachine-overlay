@@ -256,7 +256,8 @@ b774e19c2b9336cecdbc4a38bbc1d2a6addd9143
 f0d1b5037d24ee5b94bb79b790597ecf6897c447
 4deded679db72f26a78e8134688c20f9289367df
 )
-
+QT5_PV="5.15"
+QT6_PV="6.4"
 RUST_PV="1.71.1"
 ZEN_KV="6.6.0"
 
@@ -694,14 +695,14 @@ CDEPEND+="
 		>=dev-libs/openssl-1.0.0
 	)
 	qt5? (
-		dev-qt/qtcore:5
-		dev-qt/qtgui:5
-		dev-qt/qtwidgets:5
+		>=dev-qt/qtcore-${QT5_PV}:5
+		>=dev-qt/qtgui-${QT5_PV}:5
+		>=dev-qt/qtwidgets-${QT5_PV}:5
 	)
 	qt6? (
-		dev-qt/qtcore:6
-		dev-qt/qtgui:6
-		dev-qt/qtwidgets:6
+		>=dev-qt/qtcore-${QT6_PV}:6
+		>=dev-qt/qtgui-${QT6_PV}:6
+		>=dev-qt/qtwidgets-${QT6_PV}:6
 	)
 	rust? (
 		>=dev-util/cbindgen-0.65.1

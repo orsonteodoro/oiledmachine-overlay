@@ -266,7 +266,8 @@ e33a55b58006b8c58d478f8cdfcce297e736a1d8
 7f9e9a768c808fa90feba8df3451ff63918fd3a7
 7ce95ff3a6f65b25e12e3b06e5e79b8c7d28a62e
 )
-
+QT5_PV="5.15"
+QT6_PV="6.4"
 RUST_PV="1.78.0"
 ZEN_KV="6.10.0"
 
@@ -722,14 +723,14 @@ CDEPEND+="
 		>=dev-libs/openssl-1.0.0
 	)
 	qt5? (
-		dev-qt/qtcore:5
-		dev-qt/qtgui:5
-		dev-qt/qtwidgets:5
+		>=dev-qt/qtcore-${QT5_PV}:5
+		>=dev-qt/qtgui-${QT5_PV}:5
+		>=dev-qt/qtwidgets-${QT5_PV}:5
 	)
 	qt6? (
-		dev-qt/qtcore:6
-		dev-qt/qtgui:6
-		dev-qt/qtwidgets:6
+		>=dev-qt/qtcore-${QT6_PV}:6
+		>=dev-qt/qtgui-${QT6_PV}:6
+		>=dev-qt/qtwidgets-${QT6_PV}:6
 	)
 	retpoline? (
 		!clang? (
