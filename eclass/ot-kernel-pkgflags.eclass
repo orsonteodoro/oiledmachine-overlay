@@ -8424,7 +8424,7 @@ ot-kernel-pkgflags_perl() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the pf_ring-kmod package
 ot-kernel-pkgflags_pf_ring_kmod() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-kernel/pf_ring_kmod" ; then
+	if ot-kernel_has_version_pkgflags "sys-kernel/pf_ring-kmod" ; then
 		ot-kernel_y_configopt "CONFIG_NET"
 	fi
 }
