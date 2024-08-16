@@ -10456,7 +10456,14 @@ ot-kernel-pkgflags_waydroid() { # DONE
 		ot-kernel_y_configopt "CONFIG_MMU"
 		ot-kernel_y_configopt "CONFIG_ANDROID_BINDER_IPC"
 		ot-kernel_y_configopt "CONFIG_ANDROID_BINDERFS"
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_MEMFD_CREATE"
+
+		ot-kernel_y_configopt "CONFIG_NF_NAT"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_MASQUERADE"
+		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_NAT"
 	fi
 }
 
