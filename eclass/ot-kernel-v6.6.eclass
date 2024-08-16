@@ -1438,13 +1438,13 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=16
 	elif grep -q -E -e "^CONFIG_DEBUG_INFO_COMPRESSED_ZSTD=y" "${path_config}" ; then
 		_llvm_min_slot=16
-	elif has cpu_flags_arm_v4 && ot-kernel_use cpu_flags_arm_v4 ; then
+	elif grep -q -E -e "^CONFIG_ARCH_MULTI_V4=y" "${path_config}" ; then
 		_llvm_min_slot=16
-	elif has cpu_flags_arm_v4t && ot-kernel_use cpu_flags_arm_v4t ; then
+	elif grep -q -E -e "^CONFIG_ARCH_MULTI_V4T=y" "${path_config}" ; then
 		_llvm_min_slot=16
-	elif has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "arm64" ]] ; then
+	elif grep -q -E -e "^CONFIG_CFI_CLANG=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCFI_ARM64} # 16
-	elif has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi && [[ "${arch}" == "x86_64" ]] ; then
+	elif grep -q -E -e "^CONFIG_CFI_CLANG=y" "${path_config}" && [[ "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCFI_AMD64} # 16
 	elif [[ "${kcp_provider}" == "genpatches" || "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 15
