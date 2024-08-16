@@ -4215,19 +4215,19 @@ unset OT_KERNEL_PRIVATE_KEY
       This patchset is only applied when the versions are exactly the same.
     </flag>
     <flag name="cpu_flags_arm_bti">
-      Install dependencies for (Branch Target Identification) BTI support. (Default ON upstream.)
+      Install dependencies for (Branch Target Identification) BTI support.
     </flag>
     <flag name="cpu_flags_arm_lse">
-      Install dependencies for LSE (Large System Extensions) atomics support.  (Default ON upstream.)
+      Install dependencies for LSE (Large System Extensions) atomics support.
     </flag>
     <flag name="cpu_flags_arm_mte">
-      Install dependencies for MTE (Memory Tagging Extension) support.  (Default ON upstream.)
+      Install dependencies for MTE (Memory Tagging Extension) support.
     </flag>
     <flag name="cpu_flags_arm_ptrauth">
-      Install dependencies for Pointer Authentication.  (Default ON upstream.)
+      Install dependencies for Pointer Authentication.
     </flag>
     <flag name="cpu_flags_arm_tlbi">
-      Install dependencies for TLB range invalation support.  (Default ON upstream.)
+      Install dependencies for TLB range invalation support.
     </flag>
     <flag name="cpu_flags_ppc_476fpe">
       Install dependencies for fixing for the 476FPE bug.
