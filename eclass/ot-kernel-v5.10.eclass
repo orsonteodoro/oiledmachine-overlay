@@ -436,10 +436,10 @@ CDEPEND+="
 	arm64? (
 		big-endian? (
 			!clang? (
-				>=sys-devel/binutils-1.50
+				sys-devel/binutils
 			)
 			clang? (
-				$(gen_clang_lld 13 ${LLVM_MAX_SLOT})
+				$(gen_clang_lld 15 ${LLVM_MAX_SLOT})
 			)
 		)
 	)
@@ -1047,12 +1047,12 @@ eerror
 	fi
 
 	# Descending sort
-	if grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF4=y" "${path_config}" ; then
+	if grep -q -E -e "^CONFIG_CPU_BIG_ENDIAN=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
+		_llvm_min_slot=15
+	elif grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF4=y" "${path_config}" ; then
 		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 		_llvm_min_slot=15
-	elif grep -q -E -e "^CONFIG_CPU_BIG_ENDIAN=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
-		_llvm_min_slot=13
 	elif [[ "${kcp_provider}" == "graysky2" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 12
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then

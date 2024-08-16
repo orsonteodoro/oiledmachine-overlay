@@ -534,10 +534,10 @@ CDEPEND+="
 	arm64? (
 		big-endian? (
 			!clang? (
-				>=sys-devel/binutils-1.50
+				sys-devel/binutils
 			)
 			clang? (
-				$(gen_clang_lld 13 ${LLVM_MAX_SLOT})
+				$(gen_clang_lld 15 ${LLVM_MAX_SLOT})
 			)
 		)
 	)
@@ -1262,6 +1262,8 @@ eerror
 		_llvm_min_slot=16
 	elif grep -q -E -e "^CONFIG_CC_HAS_ZERO_CALL_USED_REGS=y" "${path_config}" ; then
 		_llvm_min_slot=15
+	elif grep -q -E -e "^CONFIG_CPU_BIG_ENDIAN=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
+		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF4=y" "${path_config}" ; then
 		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF5=y" "${path_config}" ; then
@@ -1272,8 +1274,6 @@ eerror
 		_llvm_min_slot=${LLVM_MIN_PGO_S390} # 15
 	elif grep -q -E -e "^CONFIG_RANDOMIZE_KSTACK_OFFSET=y" "${path_config}" ; then
 		_llvm_min_slot=14
-	elif grep -q -E -e "^CONFIG_CPU_BIG_ENDIAN=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
-		_llvm_min_slot=13
 	elif ot-kernel_use pgo ; then
 		_llvm_min_slot=${LLVM_MIN_PGO} # 13
 	elif [[ "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then

@@ -498,10 +498,10 @@ CDEPEND+="
 	arm64? (
 		big-endian? (
 			!clang? (
-				>=sys-devel/binutils-1.50
+				sys-devel/binutils
 			)
 			clang? (
-				$(gen_clang_lld 13 ${LLVM_MAX_SLOT})
+				$(gen_clang_lld 15 ${LLVM_MAX_SLOT})
 			)
 		)
 	)
@@ -1281,6 +1281,8 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 15
 	elif grep -q -E -e "^CONFIG_CC_HAS_ZERO_CALL_USED_REGS=y" "${path_config}" ; then
 		_llvm_min_slot=15
+	elif grep -q -E -e "^CONFIG_CPU_BIG_ENDIAN=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
+		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF4=y" "${path_config}" ; then
 		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF5=y" "${path_config}" ; then
@@ -1301,8 +1303,6 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=14
 	elif has cpu_flags_arm_ptrauth ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_ptrauth && [[ "${auth}" == "arm64" ]] ; then
 		_llvm_min_slot=14
-	elif grep -q -E -e "^CONFIG_CPU_BIG_ENDIAN=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
-		_llvm_min_slot=13
 	elif ot-kernel_use clang && ot-kernel_use pgo ; then
 		_llvm_min_slot=${LLVM_MIN_PGO} # 13
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
