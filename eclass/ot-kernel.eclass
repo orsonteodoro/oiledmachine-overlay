@@ -110,7 +110,7 @@
 #	https://github.com/torvalds/linux/compare/v6.10...zen-kernel:6.10/zen-sauce
 
 # CI
-# vanilla-sources, 2024-08-15:  gcc 12.2, llvm 17.0.6; kernel versions 5.10, 6.6, 6.11
+# branch tip or live, 2024-08-15:  gcc 12.2, llvm 17.0.6; kernel versions 5.10, 6.6, 6.11
 # https://kernelci.org/
 # https://linux.kernelci.org/
 
