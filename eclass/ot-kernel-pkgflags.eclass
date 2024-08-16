@@ -335,6 +335,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_aic8800
 	ot-kernel-pkgflags_alsa
 	ot-kernel-pkgflags_amt_check
+	ot-kernel-pkgflags_ananicy_cpp
 	ot-kernel-pkgflags_apache
 	ot-kernel-pkgflags_apcupsd
 	ot-kernel-pkgflags_appimage
@@ -386,6 +387,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_collectd
 	ot-kernel-pkgflags_compiler_rt_sanitizers
 	ot-kernel-pkgflags_conky
+	ot-kernel-pkgflags_conty
 	ot-kernel-pkgflags_conntrack_tools
 	ot-kernel-pkgflags_corefreq
 	ot-kernel-pkgflags_coreutils
@@ -434,6 +436,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_epoch
 	ot-kernel-pkgflags_espeakup
 	ot-kernel-pkgflags_eudev
+	ot-kernel-pkgflags_evdi
 	ot-kernel-pkgflags_eventd
 	ot-kernel-pkgflags_ext4_crypt
 	ot-kernel-pkgflags_external_modules
@@ -471,6 +474,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_gstreamer
 	ot-kernel-pkgflags_gtkgreet
 	ot-kernel-pkgflags_guestfs
+	ot-kernel-pkgflags_guilded_bin
 	ot-kernel-pkgflags_gvrpcd
 	ot-kernel-pkgflags_hamachi
 	ot-kernel-pkgflags_haproxy
@@ -697,6 +701,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_scaphandre
 	ot-kernel-pkgflags_sddm
 	ot-kernel-pkgflags_shadow
+	ot-kernel-pkgflags_session_desktop_bin
 	ot-kernel-pkgflags_simplevirt
 	ot-kernel-pkgflags_singularity
 	ot-kernel-pkgflags_skopeo
@@ -730,6 +735,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_thermald
 	ot-kernel-pkgflags_thinkfinger
 	ot-kernel-pkgflags_throttled
+	ot-kernel-pkgflags_tidal_hifi_bin
 	ot-kernel-pkgflags_tiny_dfr
 	ot-kernel-pkgflags_torque
 	ot-kernel-pkgflags_tp_smapi
@@ -764,6 +770,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_vcrypt
 	ot-kernel-pkgflags_vdr_imonlcd
 	ot-kernel-pkgflags_vendor_reset
+	ot-kernel-pkgflags_vesktop_bin
 	ot-kernel-pkgflags_vhba
 	ot-kernel-pkgflags_vim
 	ot-kernel-pkgflags_vivaldi
@@ -906,6 +913,22 @@ ot-kernel-pkgflags_alsa() { # DONE
 ot-kernel-pkgflags_amt_check() { # DONE
 	if ot-kernel_has_version_pkgflags "app-admin/mei-amt-check" ; then
 		ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_ananicy_cpp
+# @DESCRIPTION:
+# Applies kernel config flags for the ananicy-cpp package
+ot-kernel-pkgflags_ananicy_cpp() { # DONE
+	local pkg="app-admin/ananicy-cpp"
+	if \
+		ot-kernel_has_version_pkgflags "${pkg}" \
+		&& ot-kernel_has_version "${pkg}[bpf]" \
+	; then
+		ot-kernel_y_configopt "CONFIG_BPF"
+		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
+		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		ot-kernel_y_configopt "CONFIG_HAVE_EBPF_JIT"
 	fi
 }
 
@@ -1989,6 +2012,17 @@ ot-kernel-pkgflags_conky() { # DONE
 	if ot-kernel_has_version_pkgflags "app-admin/conky" ; then
 	        _ot-kernel-pkgflags_tcpip
 	        ot-kernel_y_configopt "CONFIG_IPV6"
+	fi
+}
+
+
+# @FUNCTION: ot-kernel-pkgflags_conty
+# @DESCRIPTION:
+# Applies kernel config flags for the conty package
+ot-kernel-pkgflags_conty() { # DONE
+	if ot-kernel_has_version_pkgflags "games-emulation/conty" ; then
+	        ot-kernel_y_configopt "CONFIG_IA32_EMULATION"
+		_ot-kernel_set_net_ns
 	fi
 }
 
@@ -4194,6 +4228,20 @@ ot-kernel-pkgflags_eudev() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_evdi
+# @DESCRIPTION:
+# Applies kernel config flags for the evdi package
+ot-kernel-pkgflags_evdi() { # DONE
+	if ot-kernel_has_version_pkgflags "x11-drivers/evdi" ; then
+		ot-kernel_y_configopt "CONFIG_FB_VIRTUAL"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB_ARCH_HAS_HCD"
+		ot-kernel_y_configopt "CONFIG_MODULES"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_eventd
 # @DESCRIPTION:
 # Applies kernel config flags for the eventd package
@@ -4740,6 +4788,15 @@ ot-kernel-pkgflags_gtkgreet() { # DONE
 	if ot-kernel_has_version_pkgflags "gui-apps/gtkgreet" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_guilded_bin
+# @DESCRIPTION:
+# Applies kernel config flags for the guilded-bin package(s)
+ot-kernel-pkgflags_guilded_bin() { # DONE
+	if ot-kernel_has_version_pkgflags "net-im/guilded-bin" ; then
+		_ot-kernel_set_net_ns
 	fi
 }
 
@@ -7337,6 +7394,7 @@ app-forensics/prochunter
 app-laptop/tp_smapi
 app-laptop/tuxedo-keyboard
 bluetooth-drivers/rtbth
+dev-libs/gdrcopy
 dev-libs/libgpiod
 dev-util/lttng-modules
 dev-util/sysdig-kmod
@@ -7406,6 +7464,7 @@ sys-power/phc-intel
 sys-power/tuxedo-cc-wmi
 sys-process/atop
 sys-process/falco-bin
+x11-drivers/evdi
 x11-drivers/nvidia-drivers
 x11-misc/openrazer
 	)
@@ -9292,6 +9351,15 @@ ot-kernel-pkgflags_sddm() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_session_desktop_bin
+# @DESCRIPTION:
+# Applies kernel config flags for the session-desktop-bin package
+ot-kernel-pkgflags_session_desktop_bin() { # DONE
+	if ot-kernel_has_version_pkgflags "net-im/session-desktop-bin" ; then
+		_ot-kernel_set_net_ns
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_shadow
 # @DESCRIPTION:
 # Applies kernel config flags for the shadow package
@@ -9664,6 +9732,17 @@ ot-kernel-pkgflags_throttled() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-power/throttled" ; then
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
 		ot-kernel_y_configopt "CONFIG_DEVMEM"
+	fi
+}
+
+ot-kernel-pkgflags_tidal_hifi_bin
+
+# @FUNCTION: ot-kernel-pkgflags_tidal_hifi_bin
+# @DESCRIPTION:
+# Applies kernel config flags for the tidal-hifi-bin package
+ot-kernel-pkgflags_tidal_hifi_bin() { # DONE
+	if ot-kernel_has_version_pkgflags "media-sound/tidal-hifi-bin" ; then
+		_ot-kernel_set_net_ns
 	fi
 }
 
@@ -10136,6 +10215,15 @@ ot-kernel-pkgflags_vendor_reset() { # DONE
 		ban_dma_attack "${pkg}" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_FUNCTION_TRACER"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_vesktop_bin
+# @DESCRIPTION:
+# Applies kernel config flags for the vesktop-bin package
+ot-kernel-pkgflags_vesktop_bin() { # DONE
+	if ot-kernel_has_version_pkgflags "net-im/vesktop-bin" ; then
+		_ot-kernel_set_net_ns
 	fi
 }
 
