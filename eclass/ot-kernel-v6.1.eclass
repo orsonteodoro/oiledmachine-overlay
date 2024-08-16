@@ -224,7 +224,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv 
 # clang is default OFF based on https://github.com/torvalds/linux/blob/v6.1/Documentation/process/changes.rst
 # kcfi default OFF based on CI using clang 17.
 IUSE+="
-bbrv2 +bti build c2tcp +cet +cfs -clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
+bbrv2 build c2tcp +cet +cfs -clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
 -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto nest orca pgo prjc
 +retpoline rt -rust shadowcallstack symlink tresor tresor_prompt tresor_sysfs
 zen-sauce
@@ -439,6 +439,10 @@ KCP_RDEPEND="
 # both inline assembly (.c) and assembler file (.S) cases.
 # The unlabeled debug section below refers to zlib compression of debug info.
 # CET-IBT: gcc 8.1, llvm 7, binutils 2.27
+#
+# We add more binutils/llvm/gcc checks because the distro and other popular
+# overlays don't delete their older ebuilds.
+#
 CDEPEND+="
 	${KCP_RDEPEND}
 	>=app-shells/bash-4.2
@@ -454,16 +458,6 @@ CDEPEND+="
 	sys-apps/grep[pcre]
 	virtual/libelf
 	virtual/pkgconfig
-	bti? (
-		arm64? (
-			!clang? (
-				>=sys-devel/gcc-10.1
-			)
-			clang? (
-				$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
-			)
-		)
-	)
 	bzip2? (
 		app-arch/bzip2
 	)
@@ -478,22 +472,61 @@ CDEPEND+="
 			)
 		)
 	)
-	cpu_flags_arm_v8_3? (
+	cpu_flags_arm_bti? (
+		arm64? (
+			!clang? (
+				>=sys-devel/gcc-10.1
+			)
+			clang? (
+				$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+			)
+		)
+	)
+	cpu_flags_arm_lse? (
+		>=sys-devel/binutils-2.25
+	)
+	cpu_flags_arm_mte? (
+		>=sys-devel/binutils-2.33
 		!clang? (
 			>=sys-devel/gcc-10.1
 		)
 		clang? (
 			|| (
-				$(gen_clang_llvm_pair 8 ${LLVM_MAX_SLOT})
+				$(gen_clang_llvm_pair 9 ${LLVM_MAX_SLOT})
 			)
 		)
-		>=sys-devel/binutils-2.33
+	)
+	cpu_flags_arm_ptrauth? (
+		>=sys-devel/binutils-2.33.1
+		!clang? (
+			>=sys-devel/gcc-9.1
+		)
+		clang? (
+			|| (
+				$(gen_clang_llvm_pair 14 ${LLVM_MAX_SLOT})
+			)
+		)
+	)
+	cpu_flags_arm_tlbi? (
+		>=sys-devel/binutils-2.30
+	)
+	cpu_flags_ppc_476fpe? (
+		>=sys-devel/binutils-2.25
+	)
+	cpu_flags_x86_avx512bw? (
+		>=sys-devel/binutils-2.25
 	)
 	cpu_flags_x86_gfni? (
 		!clang? (
 			>=sys-devel/binutils-2.30
 			>=sys-devel/gcc-6
 		)
+	)
+	cpu_flags_x86_sha? (
+		>=sys-devel/binutils-2.24
+	)
+	cpu_flags_x86_sha256? (
+		>=sys-devel/binutils-2.24
 	)
 	cpu_flags_x86_tpause? (
 		!clang? (
@@ -1195,6 +1228,8 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=14
 	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=14
+	elif has cpu_flags_arm_ptrauth ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_ptrauth && [[ "${auth}" == "arm64" ]] ; then
+		_llvm_min_slot=14
 	elif ot-kernel_use clang && ot-kernel_use pgo ; then
 		_llvm_min_slot=${LLVM_MIN_PGO} # 13
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
@@ -1248,6 +1283,8 @@ ot-kernel_get_gcc_min_slot() {
 	elif grep -q -E -e "^CONFIG_CC_HAS_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=9
 	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		_gcc_min_slot=9
+	elif has cpu_flags_arm_ptrauth ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_ptrauth && [[ "${auth}" == "arm64" ]] ; then
 		_gcc_min_slot=9
 	elif has cpu_flags_x86_tpause ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_tpause ; then
 		_gcc_min_slot=9

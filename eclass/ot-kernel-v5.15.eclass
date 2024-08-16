@@ -247,7 +247,7 @@ ZEN_KV="5.15.0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 # clang is default OFF based on https://github.com/torvalds/linux/blob/v5.15/Documentation/process/changes.rst
 IUSE+="
-bbrv2 +bti build c2tcp cfi +cfs -clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
+bbrv2 build c2tcp cfi +cfs -clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
 -exfat -expoline -gdb +genpatches -genpatches_1510 -lto nest multigen_lru orca
 pgo prjc +retpoline rock-dkms rt shadowcallstack symlink tresor tresor_prompt
 tresor_sysfs uksm zen-multigen_lru zen-sauce
@@ -464,6 +464,10 @@ KCP_RDEPEND="
 # We can eagerly prune the gcc dep from cpu_flag_x86_* but we want to handle
 # both inline assembly (.c) and assembler file (.S) cases.
 # The unlabeled debug section below refers to zlib compression of debug info.
+#
+# We add more binutils/llvm/gcc checks because the distro and other popular
+# overlays don't delete their older ebuilds.
+#
 CDEPEND+="
 	${KCP_RDEPEND}
 	>=dev-lang/perl-5
@@ -479,16 +483,6 @@ CDEPEND+="
 	sys-apps/grep[pcre]
 	virtual/libelf
 	virtual/pkgconfig
-	bti? (
-		arm64? (
-			!clang? (
-				>=sys-devel/gcc-10.1
-			)
-			clang? (
-				$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
-			)
-		)
-	)
 	bzip2? (
 		app-arch/bzip2
 	)
@@ -504,7 +498,20 @@ CDEPEND+="
 			)
 		)
 	)
-	cpu_flags_arm_v8_3? (
+	cpu_flags_arm_bti? (
+		arm64? (
+			!clang? (
+				>=sys-devel/gcc-10.1
+			)
+			clang? (
+				$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+			)
+		)
+	)
+	cpu_flags_arm_lse? (
+		>=sys-devel/binutils-2.25
+	)
+	cpu_flags_arm_mte? (
 		!clang? (
 			>=sys-devel/gcc-10.1
 		)
@@ -515,11 +522,29 @@ CDEPEND+="
 		)
 		>=sys-devel/binutils-2.33
 	)
+	cpu_flags_arm_tlbi? (
+		>=sys-devel/binutils-2.30
+	)
+	cpu_flags_ppc_476fpe? (
+		>=sys-devel/binutils-2.25
+	)
+	cpu_flags_x86_avx512bw? (
+		>=sys-devel/binutils-2.25
+	)
+	cpu_flags_x86_sha? (
+		>=sys-devel/binutils-2.24
+	)
+	cpu_flags_x86_sha256? (
+		>=sys-devel/binutils-2.24
+	)
 	cpu_flags_x86_tpause? (
 		!clang? (
 			>=sys-devel/binutils-2.31.1
 			>=sys-devel/gcc-9
 		)
+	)
+	cpu_flags_x86_vaes? (
+		>=sys-devel/binutils-2.31.1
 	)
 	debug? (
 		(

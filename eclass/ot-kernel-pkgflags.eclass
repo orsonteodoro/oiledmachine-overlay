@@ -46,32 +46,44 @@ inherit ot-kernel-kutils toolchain-funcs
 #CONFIG_CHECK="!MTRR" # Example of fatal ; required
 #CONFIG_CHECK="~!MTRR" # Example of non fatal error ; optional
 
-# See also arch/x86/Kconfig.assembler
-X86_FLAGS=(
-	aes
-	avx
-	avx2
-	avx512vl # kernel 5.7, gcc 5.1, llvm 3.7
-	#clmul # (CRYPTO_GHASH_CLMUL_NI_INTEL) pclmulqdq - kernel 2.6, gcc 4.4, llvm 3.2 ; 2010
-	clmul_ni # (CRYPTO_POLYVAL_CLMUL_NI) vpclmulqdq - kernel 6.0, gcc 8.1, llvm 6 ; 2017
-	gfni # kernel 6.1, gcc 8, llvm 6
-	sha
-	sse2
-	sse4_2
-	ssse3
-	tpause # kernel 5.8, gcc 6.5, llvm 7
-	vaes # kernel 6.10
+# Some are default ON for security reasons or bug avoidance.
+ARM_FLAGS=(
+	+cpu_flags_arm_bti
+	+cpu_flags_arm_lse # 8.1
+	+cpu_flags_arm_mte # 8.3, kernel 5.10, gcc 10.1, llvm 8 ; Disabled this and used v8_3 instead.
+	cpu_flags_arm_neon
+	+cpu_flags_arm_ptrauth # 8.3-A
+	+cpu_flags_arm_tlbi # 8.4
 )
 
-ARM_FLAGS=(
-	#mte # kernel 5.10, gcc 10.1, llvm 8 ; Disabled this and used v8_3 instead.
-	neon
-	v8_3 # For binutils requirements for MTE and kernel pointer authentication on arm64.
+PPC_FLAGS=(
+	cpu_flags_ppc_476fpe
+)
+
+# See also arch/x86/Kconfig.assembler
+X86_FLAGS=(
+	cpu_flags_x86_aes
+	cpu_flags_x86_sha
+	cpu_flags_x86_sha256
+	cpu_flags_x86_avx
+	cpu_flags_x86_avx2
+	cpu_flags_x86_avx512bw
+	cpu_flags_x86_avx512vl # kernel 5.7, gcc 5.1, llvm 3.7
+	#cpu_flags_x86_clmul # (CRYPTO_GHASH_CLMUL_NI_INTEL) pclmulqdq - kernel 2.6, gcc 4.4, llvm 3.2 ; 2010
+	cpu_flags_x86_clmul_ni # (CRYPTO_POLYVAL_CLMUL_NI) vpclmulqdq - kernel 6.0, gcc 8.1, llvm 6 ; 2017
+	cpu_flags_x86_gfni # kernel 6.1, gcc 8, llvm 6
+	cpu_flags_x86_sha
+	cpu_flags_x86_sse2
+	cpu_flags_x86_sse4_2
+	cpu_flags_x86_ssse3
+	cpu_flags_x86_tpause # kernel 5.8, gcc 6.5, llvm 7
+	cpu_flags_x86_vaes # kernel 6.10
 )
 
 IUSE+="
-	${X86_FLAGS[@]/#/cpu_flags_x86_}
-	${ARM_FLAGS[@]/#/cpu_flags_arm_}
+	${ARM_FLAGS[@]}
+	${PPC_FLAGS[@]}
+	${X86_FLAGS[@]}
 	cpu_flags_ppc_altivec
 "
 
@@ -9776,8 +9788,6 @@ ot-kernel-pkgflags_throttled() { # DONE
 		ot-kernel_y_configopt "CONFIG_DEVMEM"
 	fi
 }
-
-ot-kernel-pkgflags_tidal_hifi_bin
 
 # @FUNCTION: ot-kernel-pkgflags_tidal_hifi_bin
 # @DESCRIPTION:

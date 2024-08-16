@@ -4175,9 +4175,6 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="bmq-quick-fix">
       Patches the kernel with fixes to BMQ.
     </flag>
-    <flag name="bti">
-      Install dependencies for (Branch Target Identification) BTI support.
-    </flag>
     <flag name="bzip2">
       Add support for bzip compression
     </flag>
@@ -4217,8 +4214,32 @@ unset OT_KERNEL_PRIVATE_KEY
 
       This patchset is only applied when the versions are exactly the same.
     </flag>
+    <flag name="cpu_flags_arm_bti">
+      Install dependencies for (Branch Target Identification) BTI support. (Default ON upstream.)
+    </flag>
+    <flag name="cpu_flags_arm_lse">
+      Install dependencies for LSE (Large System Extensions) atomics support.  (Default ON upstream.)
+    </flag>
     <flag name="cpu_flags_arm_mte">
-      Install dependencies for MTE (Memory Tagging Extension) support.
+      Install dependencies for MTE (Memory Tagging Extension) support.  (Default ON upstream.)
+    </flag>
+    <flag name="cpu_flags_arm_ptrauth">
+      Install dependencies for Pointer Authentication.  (Default ON upstream.)
+    </flag>
+    <flag name="cpu_flags_arm_tlbi">
+      Install dependencies for TLB range invalation support.  (Default ON upstream.)
+    </flag>
+    <flag name="cpu_flags_ppc_476fpe">
+      Install dependencies for fixing for the 476FPE bug.
+    </flag>
+    <flag name="cpu_flags_x86_aes">
+      Install dependencies for support for the AES-NI instruction.
+    </flag>
+    <flag name="cpu_flags_x86_avx512bw">
+      Install dependencies for support for the AVX512-BW instructions.
+    </flag>
+    <flag name="cpu_flags_x86_avx512vl">
+      Install dependencies for support for the AVX512-VL instructions.
     </flag>
     <flag name="cpu_flags_x86_clmul_ni">
       Add support for CLMUL-NI for faster hashing.
@@ -4226,8 +4247,14 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="cpu_flags_x86_gfni">
       Enables support for GFNI support for the ARIA block cipher.
     </flag>
+    <flag name="cpu_flags_x86_sha256">
+      Install dependencies for support for the SHA256-NI instruction.
+    </flag>
     <flag name="cpu_flags_x86_tpause">
       Install dependencies for support for the TPAUSE instruction.
+    </flag>
+    <flag name="cpu_flags_x86_vaes">
+      Install dependencies for support for the VAES instruction.
     </flag>
     <flag name="debug">
       If enabled, it will install the package dependencies and USE dependencies

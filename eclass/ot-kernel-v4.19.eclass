@@ -287,6 +287,10 @@ KCP_RDEPEND="
 
 # We can eagerly prune the gcc dep from cpu_flag_x86_* but we want to handle
 # both inline assembly (.c) and assembler file (.S) cases.
+#
+# We add more binutils/llvm/gcc checks because the distro and other popular
+# overlays don't delete their older ebuilds.
+#
 CDEPEND+="
 	${KCP_RDEPEND}
 	>=dev-lang/perl-5
@@ -304,6 +308,12 @@ CDEPEND+="
 	virtual/pkgconfig
 	bzip2? (
 		app-arch/bzip2
+	)
+	cpu_flags_arm_lse? (
+		>=sys-devel/binutils-2.25
+	)
+	cpu_flags_ppc_476fpe? (
+		>=sys-devel/binutils-2.25
 	)
 	dwarf4? (
 		!clang? (
