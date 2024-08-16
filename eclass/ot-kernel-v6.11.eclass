@@ -1579,8 +1579,6 @@ ot-kernel_get_gcc_max_slot() {
 	# Ascending sort
 	if grep -q -E -e "^CONFIG_ARCH_RPC=y" "${path_config}" && [[ "${arch}" == "arm" ]] ; then
 		_gcc_max_slot=8
-	elif grep -q -E -e "^CONFIG_ARM64_PTR_AUTH_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
-		_gcc_max_slot=8
 	elif grep -q -E -e "^CONFIG_TOOLCHAIN_NEEDS_OLD_ISA_SPEC=y" "${path_config}" && [[ "${arch}" == "riscv" ]] ; then
 		_gcc_max_slot=10
 	else
