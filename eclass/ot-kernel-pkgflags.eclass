@@ -27,7 +27,8 @@ esac
 inherit ot-kernel-kutils toolchain-funcs
 
 # To find missing package use:
-# for x in $(grep -E -r --exclude-dir=.git --exclude-dir=metadata --exclude=Manifest.gz -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" /usr/portage  | sort | cut -f 1 -d ":" | cut -f 4-5 -d "/") ; do grep -q -e "${x}" ot-kernel-pkgflags.eclass || echo  "Missing ${x}" ; done
+# for x in $(grep -E -r --exclude-dir=.git --exclude-dir=metadata --exclude=Manifest.gz -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" /usr/portage  | sort | cut -f 1 -d ":" | cut -f 4-5 -d "/") ; do grep -q -e "${x}" ot-kernel-pkgflags.eclass || echo "Missing ${x}" ; done
+# for x in $(grep -E -r --exclude-dir=.git --exclude-dir=metadata --exclude=Manifest.gz -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" /var/db/repos/*  | sort | cut -f 1 -d ":" | cut -f 6-7 -d "/") ; do grep -q -e "${x}" ot-kernel-pkgflags.eclass || echo "Missing ${x}" ; done
 
 # These are discovered by doing one of the following:
 # grep -E -r --exclude-dir=.git --exclude-dir=metadata --exclude=Manifest.gz -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" /usr/portage | sort
@@ -726,7 +727,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_squid
 	ot-kernel-pkgflags_sssd
 	ot-kernel-pkgflags_sstp_client
-	ot-kernel-pkgflags_steam
+	ot-kernel-pkgflags_steam_launcher
 	ot-kernel-pkgflags_stress_ng
 	ot-kernel-pkgflags_sudo
 	ot-kernel-pkgflags_suricata
@@ -9536,11 +9537,11 @@ ot-kernel-pkgflags_speedtouch_usb() { # DONE
 	fi
 }
 
-# @FUNCTION: ot-kernel-pkgflags_steam
+# @FUNCTION: ot-kernel-pkgflags_steam_launcher
 # @DESCRIPTION:
-# Applies kernel config flags for the steam-meta package
-ot-kernel-pkgflags_steam() { # DONE
-	if ot-kernel_has_version_pkgflags "games-utils/steam-meta" ; then
+# Applies kernel config flags for the steam-launcher package
+ot-kernel-pkgflags_steam_launcher() { # DONE
+	if ot-kernel_has_version_pkgflags "games-util/steam-launcher" ; then
 		ot-kernel_y_configopt "CONFIG_COMPAT_32BIT_TIME"
 
 		# Device
