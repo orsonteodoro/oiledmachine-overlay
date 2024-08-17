@@ -456,8 +456,6 @@ KCP_RDEPEND="
 				$(gen_clang_llvm_pair ${LLVM_MIN_KCP_GRAYSKY2_AMD64} ${LLVM_MAX_SLOT})
 			)
 		)
-		|| (
-		)
 	)
 	arm64? (
 		!clang? (
