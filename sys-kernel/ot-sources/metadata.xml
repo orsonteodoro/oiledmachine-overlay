@@ -3962,6 +3962,14 @@ unset OT_KERNEL_PRIVATE_KEY
     auto will judge based on threads per core (TPC) inspection.
     Use manual selection when porting to other machines.
 
+    SYSTEMD_SIGNED_VERITY_IMAGES_SUPPORT - Support DM signed verity images.
+      1 - support
+      0 - unsupport (default)
+
+    SYSTEMD_UEFI - Support UEFI systems
+      1 - support (default)
+      0 - unsupport
+
     TRESOR_MAX_KEY_SIZE - The maximum key size for the cipher.
     Valid values:
     256 - acceptable on x86_64 arch only

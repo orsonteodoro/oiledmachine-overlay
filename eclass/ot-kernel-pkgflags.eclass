@@ -182,16 +182,15 @@ _ot-kernel_set_init() {
 	local init="${OT_KERNEL_INIT:-custom}"
 
 	#
-	# TODO:  eventually we want to unset these two kconfig options when
-	# ot-kernel-pkgflags_openrc or ot-kernel-pkgflags_systemd can fully be
-	# verified self-sufficient and not rely on these two so that alternative
-	# init managers do not have increase kernel config bloat.
-	#
 	# We also want to eventually delete the 4567_distro-Gentoo-Kconfig.patch
 	# patch from genpatches and rely on autoconfig of these eclasses.
 	#
-	#ot-kernel_unset_configopt "CONFIG_GENTOO_LINUX_INIT_SYSTEMD"
+	# We disable the CONFIG_GENTOO_LINUX_INIT_SYSTEMD in a scenario where
+	# the user forgets to disable it when switching between init systems.
+	#
+	ot-kernel_unset_configopt "CONFIG_GENTOO_LINUX_INIT_SYSTEMD"
 	ot-kernel_unset_configopt "CONFIG_GENTOO_LINUX_INIT_SCRIPT"
+	ot-kernel_unset_configopt "CONFIG_GENTOO_LINUX_UDEV"
 
 	if [[ "${init}" == "auto" ]] ; then
 		if ot-kernel_has_version "sys-process/dinit" ; then
@@ -3580,9 +3579,9 @@ ot-kernel-pkgflags_dinit() { # DONE
 		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
 		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
 		_ot-kernel_set_shmem # For mounting /dev/shm needed for glibc
-		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_PROC_FS" # For /proc
 		ot-kernel_y_configopt "CONFIG_UNIX" # For socket(AF_UNIX, ...)
-		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
+		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # For #! scripts
 		ot-kernel_y_configopt "CONFIG_SYSFS" # For /sys
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
 		ot-kernel_y_configopt "CONFIG_DEVPTS_FS" # For /dev/pts
@@ -4211,8 +4210,8 @@ ot-kernel-pkgflags_epoch() { # DONE
 		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
 		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
 		_ot-kernel_set_shmem # For mounting /dev/shm needed for glibc
-		ot-kernel_y_configopt "CONFIG_PROC_FS"
-		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
+		ot-kernel_y_configopt "CONFIG_PROC_FS" # For /proc
+		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # For #! scripts
 		ot-kernel_y_configopt "CONFIG_SYSFS" # For /sys
 		ot-kernel_y_configopt "CONFIG_DEVPTS_FS" # For /dev/pts
 	fi
@@ -4232,10 +4231,11 @@ ot-kernel-pkgflags_espeakup() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the eudev package
 ot-kernel-pkgflags_eudev() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-fs/eudev" ; then
+	local pkg="sys-fs/eudev"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_BSG"
 		ot-kernel_y_configopt "CONFIG_DEVTMPFS"
-		ot-kernel_unset_configopt "CONFIG_IDE"
+		_ot-kernel-pkgflags_disable_ide "${pkg}"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED"
 		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED_V2"
@@ -4397,11 +4397,12 @@ ot-kernel-pkgflags_finit() { # DONE
 		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
 		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
 		_ot-kernel_set_shmem # For mounting /dev/shm needed for glibc
-		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_PROC_FS" # For /proc
 		ot-kernel_y_configopt "CONFIG_UNIX" # For socket(AF_UNIX, ...)
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
 		ot-kernel_y_configopt "CONFIG_SYSFS" # For /sys
 		ot-kernel_y_configopt "CONFIG_DEVPTS_FS" # For /dev/pts
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 	fi
 }
 
@@ -7723,12 +7724,12 @@ ot-kernel-pkgflags_openrc() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-apps/openrc" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		_ot-kernel_set_shmem
-		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_PROC_FS" # For /proc
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
-		ot-kernel_y_configopt "CONFIG_SYSFS"
-		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
+		ot-kernel_y_configopt "CONFIG_SYSFS" # For /sys
+		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # For #! scripts
 		ot-kernel_y_configopt "CONFIG_FILE_LOCKING"
-		ot-kernel_y_configopt "CONFIG_TMPFS"
+		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
 	fi
 }
 
@@ -8959,7 +8960,7 @@ ot-kernel-pkgflags_runit() { # DONE
 		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
 		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
 		_ot-kernel_set_shmem # For mounting /dev/shm needed for glibc
-		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
+		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # For #! scripts
 		ot-kernel_y_configopt "CONFIG_FILE_LOCKING"
 	fi
 }
@@ -9092,7 +9093,7 @@ ot-kernel-pkgflags_s6() { # DONE
 		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
 		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
 		_ot-kernel_set_shmem # For mounting /dev/shm needed for glibc
-		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
+		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # For #! scripts
 	fi
 }
 
@@ -9662,81 +9663,213 @@ ot-kernel-pkgflags_sysdig_kmod() { # DONE
 	fi
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_disable_ide
+# @DESCRIPTION:
+# Warn user that package recommends it disabled.
+_ot-kernel-pkgflags_disable_ide() {
+	local pkg="${1}"
+	if grep -q -E -e "^CONFIG_IDE=y" "${path_config}" ; then
+ewarn
+ewarn "Detected CONFIG_IDE=y"
+ewarn "You should disable CONFIG_IDE for proper ${pkg} support."
+ewarn
+	# We don't auto disable to avoid broken boot in legacy systems.
+		#ot-kernel_unset_configopt "CONFIG_IDE"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_systemd
 # @DESCRIPTION:
 # Applies kernel config flags for the systemd package
 ot-kernel-pkgflags_systemd() { # DONE
 	local pkg="sys-apps/systemd"
 	if ot-kernel_has_version_pkgflags_slow "${pkg}" ; then
-		ot-kernel_y_configopt "CONFIG_AUTOFS4_FS"
-		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
-		ot-kernel_y_configopt "CONFIG_BLK_DEV_BSG"
-		ot-kernel_y_configopt "CONFIG_CGROUPS"
+# See also https://github.com/systemd/systemd/blob/main/README
+
 		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_EPOLL"
-		ot-kernel_y_configopt "CONFIG_FANOTIFY"
-		ot-kernel_y_configopt "CONFIG_FHANDLE"
+		ot-kernel_y_configopt "CONFIG_CGROUPS"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-	        _ot-kernel-pkgflags_tcpip
-	        ot-kernel_y_configopt "CONFIG_IPV6"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_SIGNALFD"
+		ot-kernel_y_configopt "CONFIG_TIMERFD"
+		ot-kernel_y_configopt "CONFIG_EPOLL"
+		ot-kernel_y_configopt "CONFIG_UNIX" # For socket(AF_UNIX, ...)
+		ot-kernel_y_configopt "CONFIG_SYSFS" # For /sys
+		ot-kernel_y_configopt "CONFIG_PROC_FS" # For /proc
+		ot-kernel_y_configopt "CONFIG_FHANDLE"
+
+		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED"
+
+		ot-kernel_set_configopt "CONFIG_UEVENT_HELPER_PATH" "\"\""
+
+		ot-kernel_unset_configopt "CONFIG_FW_LOADER_USER_HELPER"
+
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			ot-kernel_y_configopt "CONFIG_DMI"
+			ot-kernel_y_configopt "CONFIG_DMIID"
+		fi
+
+		ot-kernel_y_configopt "CONFIG_BLK_DEV_BSG"
 
 		_ot-kernel_set_net_ns
 		_ot-kernel_set_user_ns
 
-		ot-kernel_y_configopt "CONFIG_PROC_FS"
-		ot-kernel_y_configopt "CONFIG_SIGNALFD"
-		ot-kernel_y_configopt "CONFIG_SYSFS" # For /sys
-		ot-kernel_y_configopt "CONFIG_TIMERFD"
+		# Optional but recommended upstream
+	        ot-kernel_y_configopt "CONFIG_IPV6"
+		if ver_test "${KV_MAJOR_MINOR}" -lt "4.18" ; then
+			ot-kernel_y_configopt "CONFIG_AUTOFS_FS"
+		else
+			ot-kernel_y_configopt "CONFIG_AUTOFS4_FS"
+		fi
+		ot-kernel_y_configopt "CONFIG_TMPFS" # [W]
 		ot-kernel_y_configopt "CONFIG_TMPFS_XATTR"
-		ot-kernel_y_configopt "CONFIG_UNIX" # For socket(AF_UNIX, ...)
-		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
-		_ot-kernel-pkgflags_sha256
-		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_HASH"
-		warn_lowered_security "${pkg}"
-		ot-kernel_unset_configopt "CONFIG_GRKERNSEC_PROC"
-		ot-kernel_unset_configopt "CONFIG_IDE"
-		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED"
-		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED_V2"
-
 		if ot-kernel_has_version "${pkg}[acl]" ; then
-			ot-kernel_y_configopt "CONFIG_TMPFS_POSIX_ACL"
+			__ot-kernel_set_acl_one_package
 		fi
 		if ot-kernel_has_version "${pkg}[seccomp]" ; then
 			ot-kernel_y_configopt "CONFIG_SECCOMP"
 			ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
 		fi
-
-		if ver_test "${KV_MAJOR_MINOR}" -lt "3.7" ; then
-			ot-kernel_y_configopt "CONFIG_HOTPLUG"
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+			ot-kernel_y_configopt "CONFIG_KCMP" # >= 5.10.20
+		else
+			ot-kernel_y_configopt "CONFIG_CHECKPOINT_RESTORE"
 		fi
+		ot-kernel_y_configopt "CONFIG_NET_SCHED"
+		ot-kernel_y_configopt "CONFIG_NET_SCH_FQ_CODEL"
+
+		ot-kernel_y_configopt "CONFIG_CGROUP_SCHED"
+		ot-kernel_y_configopt "CONFIG_FAIR_GROUP_SCHED"
+
+		ot-kernel_y_configopt "CONFIG_CFS_BANDWIDTH"
+
+		ot-kernel_y_configopt "CONFIG_BPF"
+		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		ot-kernel_y_configopt "CONFIG_BPF_JIT"
+		ot-kernel_y_configopt "CONFIG_HAVE_EBPF_JIT"
+		if ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
+			ot-kernel_y_configopt "CONFIG_CGROUP_BPF"
+		fi
+
+		if [[ "${SYSTEMD_UEFI:-1}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_BLOCK"
+			ot-kernel_y_configopt "CONFIG_PARTITION_ADVANCED"
+			ot-kernel_y_configopt "CONFIG_EFI"
+			ot-kernel_y_configopt "CONFIG_EFIVAR_FS"
+			ot-kernel_y_configopt "CONFIG_EFI_PARTITION"
+		fi
+
+	# We don't auto enable these security options because these are not
+	# mainstream features and it would be difficult to debug boot failure
+	# for new users.
+		if [[ "${SYSTEMD_SIGNED_VERITY_IMAGES_SUPPORT:-0}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_DM_VERITY"
+			ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG"
+			ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_SECONDARY_KEYRING"
+			ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_PLATFORM_KEYRING"
+
+			ot-kernel_y_configopt "CONFIG_INTEGRITY_SIGNATURE"
+			ot-kernel_y_configopt "CONFIG_INTEGRITY_ASYMMETRIC_KEYS"
+
+			if [[ -n "${OT_KERNEL_IMA}" ]] ; then
+				ot-kernel_y_configopt "CONFIG_IMA"
+
+				# These two below or CONFIG_KEXEC_SIG
+				ot-kernel_y_configopt "CONFIG_IMA_APPRAISE"
+				ot-kernel_y_configopt "CONFIG_IMA_ARCH_POLICY"
+			fi
+
+			ot-kernel_y_configopt "CONFIG_KEYS"
+			ot-kernel_y_configopt "CONFIG_ASYMMETRIC_KEY_TYPE"
+			ot-kernel_y_configopt "CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE"
+			ot-kernel_y_configopt "CONFIG_X509_CERTIFICATE_PARSER"
+			ot-kernel_y_configopt "CONFIG_SYSTEM_TRUSTED_KEYRING"
+			ot-kernel_y_configopt "CONFIG_SECONDARY_TRUSTED_KEYRING"
+			ot-kernel_y_configopt "CONFIG_SYSTEM_BLACKLIST_KEYRING"
+			if [[ "${arch}" == "powerpc" ]] ; then
+				ot-kernel_y_configopt "CONFIG_LOAD_PPC_KEYS"
+			else
+				ot-kernel_y_configopt "CONFIG_LOAD_UEFI_KEYS"
+			fi
+			ot-kernel_y_configopt "CONFIG_INTEGRITY_MACHINE_KEYRING"
+		fi
+
+		ot-kernel_y_configopt "CONFIG_DMI"
+		ot-kernel_y_configopt "CONFIG_DMI_SYSFS"
+
+		ot-kernel_y_configopt "CONFIG_BPF_LSM"
+		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"
+
+		local lsms
+		lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
+einfo "LSMS:  ${lsm}"
+		if [[ "${lsms}" =~ "bpf" ]] ; then
+			:
+		else
+			if [[ -z "${lsms}" ]] ; then
+	# EX:  "" -> "bpf"
+				lsms="bpf"
+			else
+	# EX:  "foo" -> "foo,bpf"
+	# EX:  "foo,bar" -> "foo,bar,bpf"
+				lsms="${lsms},bpf"
+			fi
+		fi
+		lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
+einfo "LSMS:  ${lsm}"
+		ot-kernel_set_configopt "CONFIG_LSM" "\"${lsms}\""
+
+		ot-kernel_unset_configopt "CONFIG_RT_GROUP_SCHED"
 
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.7" ; then
 			ot-kernel_y_configopt "CONFIG_DEVPTS_MULTIPLE_INSTANCES"
 		fi
 
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
-			ot-kernel_y_configopt "CONFIG_CGROUP_BPF"
-		fi
-		ot-kernel_set_configopt "CONFIG_UEVENT_HELPER_PATH" "\"\""
+		ot-kernel_y_configopt "CONFIG_PSI"
+		ot-kernel_y_configopt "CONFIG_MEMCG"
 
-		if grep -q -e "^CONFIG_X86=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_KCMP"
-		fi
+		ot-kernel_unset_configopt "CONFIG_AUDIT"
 
-		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+		# Settings undocumented by upstream.
 
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
-		#ot-kernel_y_configopt "CONFIG_FHANDLE"
-		#ot-kernel_y_configopt "CONFIG_TIMERFD"
-		#ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		_ot-kernel_set_io_uring
+		# Distro recommended, verified through search
+		ot-kernel_y_configopt "CONFIG_FANOTIFY" # [EP]
+	        _ot-kernel-pkgflags_tcpip # [EP]
+		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC" # [EP]
+		_ot-kernel-pkgflags_sha256 # [EP]
+		ot-kernel_y_configopt "CONFIG_FILE_LOCKING" # [P]
 		_ot-kernel_set_shmem  # For mounting /dev/shm needed for glibc
+		ot-kernel_y_configopt "CONFIG_EVENTFD" # [P]
+		ot-kernel_y_configopt "CONFIG_BLOCK" # [P] References block filesystems (e.g. ext4)
 
-		ot-kernel_y_configopt "CONFIG_FILE_LOCKING"
-		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
-		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
+		# Distro recommended, not verified through search
+		ot-kernel_unset_configopt "CONFIG_GRKERNSEC_PROC" # [EN]
+		warn_lowered_security "${pkg}"
+		#ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_HASH" # [EP] Disabled.  API not being used, but contains reference to AF_ALG.
+		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED_V2" # [EN] Misnomer option.  It should be CONFIG_SYSFS_DEFAULT_ENABLE_DEPRECATED.
+		_ot-kernel-pkgflags_disable_ide "${pkg}"
+		# These are auto enabled during `make olddefconfig` found in ot-kernel_src_configure_assisted
+		#ot-kernel_y_configopt "CONFIG_ANON_INODES" # [P] Selected by EPOLL, TIMERFD, SIGNALFD
+		#ot-kernel_y_configopt "CONFIG_FSNOTIFY" # [P] Selected by FANOTIFY
+		#ot-kernel_y_configopt "CONFIG_NLATTR" # [P] Selected by NET
+		if [[ "${SYSTEMD_UEFI:-1}" == "1" ]] ; then
+			if ver_test "${KV_MAJOR_MINOR}" -lt "6.0" ; then
+				if [[ "${arch}" == "x86" || "${arch}" == "x86_64" || "${arch}" == "ia64" ]] ; then
+					ot-kernel_y_configopt "CONFIG_EFI_VARS" # [W]
+				fi
+			fi
+		fi
+		#ot-kernel_y_configopt "CONFIG_BFQ_GROUP_IOSCHED" # [W] Did not find recommendedation in repo.
+
+		# [P] - Found in Genpatches 4567
+		# [E] - Found in ebuild
+		# [W] - Found in wiki
+		# [N] - No reason given by ebuild/patch contributor.  These undocumented recommendations could lead to unintended consequences (i.e. bugs).
+
+		# Recommended by eclass packager
+		ot-kernel_y_configopt "CONFIG_SYSVIPC" # For msgctl
+		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # [P] For #! scripts
+		ot-kernel_y_configopt "CONFIG_TMPFS" # [P] For /dev/shm, /run
 		ot-kernel_y_configopt "CONFIG_DEVPTS_FS" # For /dev/pts
 
 		# LDT referended in sys-apps/systemd
@@ -9775,11 +9908,10 @@ ot-kernel-pkgflags_systemtap() { # DONE
 ot-kernel-pkgflags_sysvinit() { # DONE
 	local pkg="sys-apps/sysvinit"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
-		# Provide the minimal needed for alternative init systems.
 		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
 		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
 		_ot-kernel_set_shmem # For mounting /dev/shm needed for glibc
-		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_PROC_FS" # For /proc
 		ot-kernel_y_configopt "CONFIG_SYSFS" # For /sys
 	fi
 }
@@ -10020,7 +10152,8 @@ ot-kernel-pkgflags_tvheadend() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the udev package
 ot-kernel-pkgflags_udev() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-fs/udev" ; then
+	local pkg="sys-fs/udev"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_UNIX"
@@ -10029,7 +10162,7 @@ ot-kernel-pkgflags_udev() { # DONE
 
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_BSG"
 		ot-kernel_y_configopt "CONFIG_DEVTMPFS"
-		ot-kernel_unset_configopt "CONFIG_IDE"
+		_ot-kernel-pkgflags_disable_ide "${pkg}"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED"
 		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED_V2"
@@ -10047,7 +10180,8 @@ ot-kernel-pkgflags_udev() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the udisks package
 ot-kernel-pkgflags_udisks() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-fs/udisks" \
+	local pkg="sys-fs/udisks"
+	if ot-kernel_has_version_pkgflags "${pkg}" \
 		&& \
 	[[ \
 		   "${arch}" == "arm" \
@@ -10058,19 +10192,9 @@ ot-kernel-pkgflags_udisks() { # DONE
 		|| "${arch}" == "x86_64" \
 	]] ; then
 		if grep -q -E -e "^CONFIG_IDE=y" "${path_config}" ; then
-ewarn
-ewarn "Detected CONFIG_IDE associated with legacy hardware.  The following are"
-ewarn "required to fix DVD-RW issues:"
-ewarn
-ewarn "(1) [Required] CONFIG_IDE needs to be disabled in kernel config by commenting it out."
-ewarn "(2) Enable one of CONFIG_PATA_ instead.  You must manually set it."
-ewarn "(3) Change system config from /dev/hdX to /dev/sdX in your /etc/fstab and/or bootloader config files."
-ewarn
-ewarn "No automatic changes will be performed to CONFIG_IDE to avoid boot failure."
-ewarn
-			#ot-kernel_unset_configopt "CONFIG_IDE"
-			die
+ewarn "Please change by hand CONFIG_IDE to CONFIG_PATA_ for proper DVD-RW support.  Explicitly disable CONFIG_IDE also."
 		fi
+		_ot-kernel-pkgflags_disable_ide "${pkg}"
 		ot-kernel_y_configopt "CONFIG_TMPFS_POSIX_ACL"
 		ot-kernel_y_configopt "CONFIG_NLS_UTF8"
 		if ver_test "${KV_MAJOR_MINOR}" -lt "3.10" ; then
@@ -12796,6 +12920,9 @@ __ot-kernel_set_acl_one_package() {
 	if grep -q -E -e "^CONFIG_REISERFS_FS=(y|m)" "${path_config}" ; then
 		ot-kernel_y_configopt "CONFIG_REISERFS_FS_XATTR"
 		ot-kernel_y_configopt "CONFIG_REISERFS_FS_POSIX_ACL"
+	fi
+	if grep -q -E -e "^CONFIG_TMPFS_POSIX_ACL=(y|m)" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_TMPFS_POSIX_ACL"
 	fi
 }
 
