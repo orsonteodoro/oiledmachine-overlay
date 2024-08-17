@@ -191,7 +191,7 @@ _ot-kernel_set_init() {
 	# patch from genpatches and rely on autoconfig of these eclasses.
 	#
 	#ot-kernel_unset_configopt "CONFIG_GENTOO_LINUX_INIT_SYSTEMD"
-	#ot-kernel_unset_configopt "CONFIG_GENTOO_LINUX_INIT_SCRIPT"
+	ot-kernel_unset_configopt "CONFIG_GENTOO_LINUX_INIT_SCRIPT"
 
 	if [[ "${init}" == "auto" ]] ; then
 		if ot-kernel_has_version "sys-process/dinit" ; then
@@ -396,6 +396,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_ddlm
 	ot-kernel-pkgflags_deepcc
 	ot-kernel-pkgflags_dietlibc
+	ot-kernel-pkgflags_dinit
 	ot-kernel-pkgflags_discord
 	ot-kernel-pkgflags_distrobuilder
 	ot-kernel-pkgflags_docker
@@ -433,6 +434,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_fastd
 	ot-kernel-pkgflags_ff
 	ot-kernel-pkgflags_ffmpeg
+	ot-kernel-pkgflags_finit
 	ot-kernel-pkgflags_firecracker_bin
 	ot-kernel-pkgflags_firehol
 	ot-kernel-pkgflags_firewalld
@@ -671,6 +673,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_rocksdb
 	ot-kernel-pkgflags_rr
 	ot-kernel-pkgflags_ruby
+	ot-kernel-pkgflags_runit
 	ot-kernel-pkgflags_rstudio_desktop_bin
 	ot-kernel-pkgflags_rsyslog
 	ot-kernel-pkgflags_rtirq
@@ -680,6 +683,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_rtsp_conntrack
 	ot-kernel-pkgflags_runc
 	ot-kernel-pkgflags_rust
+	ot-kernel-pkgflags_s6
 	ot-kernel-pkgflags_safeclib
 	ot-kernel-pkgflags_samba
 	ot-kernel-pkgflags_sandbox
@@ -719,6 +723,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_systemd
 	ot-kernel-pkgflags_systemd_bootchart
 	ot-kernel-pkgflags_systemtap
+	ot-kernel-pkgflags_sysvinit
 	ot-kernel-pkgflags_tas
 	ot-kernel-pkgflags_tb_us
 	ot-kernel-pkgflags_tbb
@@ -2223,7 +2228,7 @@ _ot-kernel-pkgflags_apply_cr_kconfig() {
 	_ot-kernel_set_io_uring
 	ot-kernel_y_configopt "CONFIG_MEMBARRIER"
 	ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
-	ot-kernel_y_configopt "CONFIG_SHMEM"
+	_ot-kernel_set_shmem
 	ot-kernel_y_configopt "CONFIG_SIGNALFD"
 	ot-kernel_y_configopt "CONFIG_TIMERFD"
 
@@ -3567,6 +3572,22 @@ ot-kernel-pkgflags_dietlibc() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_dinit
+# @DESCRIPTION:
+# Applies kernel config flags for dinit
+ot-kernel-pkgflags_dinit() { # DONE
+	if ot-kernel_has_version_pkgflags "sys-process/dinit " ; then
+		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
+		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
+		_ot-kernel_set_shmem # For mounting /dev/shm needed for glibc
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_UNIX"
+		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
+		ot-kernel_y_configopt "CONFIG_SYSFS"
+		ot-kernel_y_configopt "CONFIG_CGROUPS"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_discord
 # @DESCRIPTION:
 # Applies kernel config flags for discord
@@ -3877,7 +3898,7 @@ ot-kernel-pkgflags_docker() { # DONE
 			ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
 		fi
 
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 #		# _ot-kernel_y_thp # References it but no madvise/fadvise
 		# LDT referenced
@@ -4186,7 +4207,11 @@ ot-kernel-pkgflags_encfs() { # DONE
 # Applies kernel config flags for the epoch package
 ot-kernel-pkgflags_epoch() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-apps/epoch" ; then
+		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
+		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
+		_ot-kernel_set_shmem # For mounting /dev/shm needed for glibc
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
 	fi
 }
 
@@ -4329,7 +4354,7 @@ _ot-kernel-pkgflags_apply_ff_kconfig() {
 	_ot-kernel_set_io_uring
 	ot-kernel_y_configopt "CONFIG_MEMBARRIER"
 	ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
-	ot-kernel_y_configopt "CONFIG_SHMEM"
+	_ot-kernel_set_shmem
 	ot-kernel_y_configopt "CONFIG_SIGNALFD"
 	ot-kernel_y_configopt "CONFIG_TIMERFD"
 
@@ -4358,6 +4383,20 @@ ot-kernel-pkgflags_ffmpeg() { # DONE
 		&& ot-kernel_has_version "${pkg}[X]" \
 	; then
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_finit
+# @DESCRIPTION:
+# Applies kernel config flags for the finit package
+ot-kernel-pkgflags_finit() { # DONE
+	if ot-kernel_has_version_pkgflags "sys-apps/finit" ; then
+		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
+		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
+		_ot-kernel_set_shmem # For mounting /dev/shm needed for glibc
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_UNIX"
+		ot-kernel_y_configopt "CONFIG_CGROUPS"
 	fi
 }
 
@@ -4588,7 +4627,7 @@ ot-kernel-pkgflags_gcc() { # DONE
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 		# _ot-kernel_y_thp # Referenced but no noted performance gain/loss
 	fi
 }
@@ -4648,7 +4687,7 @@ ot-kernel-pkgflags_glib() { # DONE
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 	fi
 }
 
@@ -5422,7 +5461,7 @@ ot-kernel-pkgflags_jack_audio_connection_kit() { # DONE
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 	fi
 }
 
@@ -5435,7 +5474,7 @@ ot-kernel-pkgflags_jack2() { # DONE
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 	fi
 }
 
@@ -6013,8 +6052,7 @@ ewarn
 ot-kernel-pkgflags_libpulse() { # DONE
 	if ot-kernel_has_version_pkgflags "media-libs/libpulse" ; then
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 	fi
 }
 
@@ -6073,7 +6111,7 @@ ot-kernel-pkgflags_libugpio() { # DONE
 ot-kernel-pkgflags_libv4l() { # DONE
 	if ot-kernel_has_version_pkgflags "media-libs/libv4l" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 	fi
 }
 
@@ -6513,7 +6551,7 @@ ot-kernel-pkgflags_mariadb() { # DONE
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 	fi
 }
 
@@ -6889,7 +6927,7 @@ ot-kernel-pkgflags_mysql() { # DONE
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 		if ot-kernel_has_version "${pkg}[numa]" ; then
 			ot-kernel_y_configopt "CONFIG_NUMA"
 		fi
@@ -6926,7 +6964,7 @@ ot-kernel-pkgflags_nccl() { # DONE
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
 		ot-kernel_y_configopt "CONFIG_64BIT"
 		ot-kernel_y_configopt "CONFIG_PCI_P2PDMA"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
 		ot-kernel_y_configopt "CONFIG_IPV6"
@@ -7029,8 +7067,7 @@ ot-kernel-pkgflags_nodejs() { # DONE
 		fi
 
 		if [[ "${arch}" =~ "ppc" ]]; then
-			ot-kernel_y_configopt "CONFIG_EXPERT"
-			ot-kernel_y_configopt "CONFIG_SHMEM"
+			_ot-kernel_set_shmem
 		fi
 	fi
 }
@@ -7680,7 +7717,13 @@ ot-kernel-pkgflags_openfortivpn() { # DONE
 ot-kernel-pkgflags_openrc() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-apps/openrc" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_CGROUPS"
+		ot-kernel_y_configopt "CONFIG_SYSFS"
+		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
+		ot-kernel_y_configopt "CONFIG_FILE_LOCKING"
+		ot-kernel_y_configopt "CONFIG_TMPFS"
 	fi
 }
 
@@ -8133,7 +8176,7 @@ ot-kernel-pkgflags_qemu() { # DONE
 		ot-kernel_y_configopt "CONFIG_DNOTIFY"
 
 		if ot-kernel_has_version "${pkg}[test]" ; then
-			ot-kernel_y_configopt "CONFIG_SHMEM"
+			_ot-kernel_set_shmem
 		fi
 
 		# _ot-kernel_y_thp # slower but supported
@@ -8233,7 +8276,7 @@ ot-kernel-pkgflags_qtcore() { # DONE
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 	fi
 }
 
@@ -8458,7 +8501,7 @@ ot-kernel-pkgflags_pipewire() { # DONE
 	if ot-kernel_has_version_pkgflags "media-video/pipewire" ; then
 		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 	fi
 }
@@ -8579,8 +8622,7 @@ ot-kernel-pkgflags_pulseaudio() { # DONE
 ot-kernel-pkgflags_pulseaudio_daemon() { # DONE
 	if ot-kernel_has_version_pkgflags "media-sound/pulseaudio-daemon" ; then
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 	fi
 }
 
@@ -8609,7 +8651,7 @@ ot-kernel-pkgflags_python() { # DONE
 	local pkg="dev-lang/python"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 		ot-kernel_y_configopt "CONFIG_DNOTIFY"
 		if ot-kernel_has_version ">=${pkg}-3.8" ; then
 			_ot-kernel_y_thp # Has symbol but not used
@@ -8793,7 +8835,7 @@ ot-kernel-pkgflags_rccl() { # DONE
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
 		ot-kernel_y_configopt "CONFIG_64BIT"
 		ot-kernel_y_configopt "CONFIG_PCI_P2PDMA"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
 		ot-kernel_y_configopt "CONFIG_IPV6"
@@ -8897,8 +8939,21 @@ ot-kernel-pkgflags_ruby() { # DONE
 	if ot-kernel_has_version_pkgflags "dev-lang/ruby" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 		# ot-kernel_y_configopt "CONFIG_DNOTIFY" # Not really used
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_runit
+# @DESCRIPTION:
+# Applies kernel config flags for the runit package
+ot-kernel-pkgflags_runit() { # DONE
+	if ot-kernel_has_version_pkgflags "sys-process/runit" ; then
+		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
+		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
+		_ot-kernel_set_shmem # For mounting /dev/shm needed for glibc
+		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
+		ot-kernel_y_configopt "CONFIG_FILE_LOCKING"
 	fi
 }
 
@@ -9022,6 +9077,18 @@ ot-kernel-pkgflags_rust() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_s6
+# @DESCRIPTION:
+# Applies kernel config flags for the s6 package
+ot-kernel-pkgflags_s6() { # DONE
+	if ot-kernel_has_version_pkgflags "sys-apps/s6-linux-init" ; then
+		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
+		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
+		_ot-kernel_set_shmem # For mounting /dev/shm needed for glibc
+		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_safeclib
 # @DESCRIPTION:
 # Applies kernel config flags for the safeclib package
@@ -9056,8 +9123,7 @@ ot-kernel-pkgflags_samba() { # DONE
 # Applies kernel config flags for the sandbox package
 ot-kernel-pkgflags_sandbox() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-apps/sandbox" ; then
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 	fi
 }
 
@@ -9596,7 +9662,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 	local pkg="sys-apps/systemd"
 	if ot-kernel_has_version_pkgflags_slow "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_AUTOFS4_FS"
-		ot-kernel_y_configopt "CONFIG_BINFMT_MISC"
+		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_BSG"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
 		ot-kernel_y_configopt "CONFIG_DEVTMPFS"
@@ -9616,7 +9682,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 		ot-kernel_y_configopt "CONFIG_SYSFS"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
 		ot-kernel_y_configopt "CONFIG_TMPFS_XATTR"
-		ot-kernel_y_configopt "CONFIG_UNIX"
+		ot-kernel_y_configopt "CONFIG_UNIX" # For socket(AF_UNIX, ...)
 		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
 		_ot-kernel-pkgflags_sha256
 		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_HASH"
@@ -9659,7 +9725,11 @@ ot-kernel-pkgflags_systemd() { # DONE
 		#ot-kernel_y_configopt "CONFIG_TIMERFD"
 		#ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		_ot-kernel_set_io_uring
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
+
+		ot-kernel_y_configopt "CONFIG_FILE_LOCKING"
+		ot-kernel_y_configopt "CONFIG_TMPFS"
+		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
 
 		# LDT referended in sys-apps/systemd
 	fi
@@ -9688,6 +9758,20 @@ ot-kernel-pkgflags_systemtap() { # DONE
 		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 		needs_debugfs "${pkg}"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_sysvinit
+# @DESCRIPTION:
+# Applies kernel config flags for the sysvinit package
+ot-kernel-pkgflags_sysvinit() { # DONE
+	local pkg="sys-apps/sysvinit"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		# Provide the minimal needed for alternative init systems.
+		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
+		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
+		_ot-kernel_set_shmem # For mounting /dev/shm needed for glibc
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
 	fi
 }
 
@@ -10789,7 +10873,7 @@ eerror "Both ZEN_DOM0 or ZEN_DOMU cannot be enabled at the same time."
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SECCOMP"
 		ot-kernel_y_configopt "CONFIG_SIGNALFD"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
+		_ot-kernel_set_shmem
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
 		# _ot-kernel_y_thp # References it but unknown apparent performance gain/loss
@@ -11911,6 +11995,15 @@ _ot-kernel_set_uts_ns() {
 _ot-kernel_set_posix_mqueue() {
 	ot-kernel_y_configopt "CONFIG_NET"
 	ot-kernel_y_configopt "CONFIG_POSIX_MQUEUE"
+}
+
+# @FUNCTION: _ot-kernel_set_shmem
+# @DESCRIPTION:
+# Enable SHMEM and flag dependencies
+_ot-kernel_set_shmem() {
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_MMU"
+	ot-kernel_y_configopt "CONFIG_SHMEM"
 }
 
 # @FUNCTION: _ot-kernel_set_io_uring
