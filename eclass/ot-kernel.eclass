@@ -1788,6 +1788,7 @@ _filter_genpatches() {
 	# Possibly locks up computer during OOM tests
 		P_GENPATCHES_BLACKLIST+=" 1510"
 	fi
+
 	# Already applied since 5.13.14
 	P_GENPATCHES_BLACKLIST+=" 2700"
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
@@ -5602,6 +5603,20 @@ ot-kernel_set_kconfig_l1tf_mitigations() {
 
 # @FUNCTION: ot-kernel_set_kconfig_hardening_level
 # @DESCRIPTION:
+# Disable flags that may interfere with OT_KERNEL_HARDENING_LEVEL or
+# OT_KERNEL_MAX_UPTIME.
+ot-kernel_disable_gentoo_self_protection() {
+	# Disabled for fine grained customization.
+	ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION"
+	ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION_COMMON"
+	ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION_X86_64"
+	ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION_X86_32"
+	ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION_ARM64"
+	ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION_ARM"
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_hardening_level
+# @DESCRIPTION:
 # Sets the kernel config related to kernel hardening
 ot-kernel_set_kconfig_hardening_level() {
 	_ot-kernel_validate_hardening_level
@@ -5781,7 +5796,7 @@ eerror
 	# CFI and SCS handled later
 		ot-kernel_y_configopt "CONFIG_COMPAT_BRK"
 		ot-kernel_unset_configopt "CONFIG_FORTIFY_SOURCE"
-		ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION" # Disabled for customization
+		ot-kernel_disable_gentoo_self_protection
 		ot-kernel_unset_configopt "CONFIG_HARDENED_USERCOPY"
 		ot-kernel_unset_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
 		ot-kernel_unset_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"
@@ -6019,7 +6034,7 @@ eerror
 
 		ot-kernel_y_configopt "CONFIG_COMPAT_BRK"
 		ot-kernel_unset_configopt "CONFIG_FORTIFY_SOURCE"
-		ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION" # Disabled for customization
+		ot-kernel_disable_gentoo_self_protection
 		ot-kernel_unset_configopt "CONFIG_HARDENED_USERCOPY"
 		ot-kernel_unset_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
 		ot-kernel_unset_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"
@@ -6260,7 +6275,7 @@ eerror
 
 		ot-kernel_unset_configopt "CONFIG_COMPAT_BRK"
 		ot-kernel_y_configopt "CONFIG_FORTIFY_SOURCE"
-		ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION" # Disabled for customization
+		ot-kernel_disable_gentoo_self_protection
 		ot-kernel_y_configopt "CONFIG_HARDENED_USERCOPY"
 		ot-kernel_y_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
 		ot-kernel_y_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"
@@ -6837,7 +6852,7 @@ einfo
 # Sets the kernel config for the init systems
 ot-kernel_set_kconfig_init_systems() {
 	if has genpatches ${IUSE_EFFECTIVE} && ot-kernel_use genpatches ; then
-		ot-kernel_unset_configopt "CONFIG_GENTOO_PRINT_FIRMWARE_INFO" # Debug
+		ot-kernel_unset_configopt "CONFIG_GENTOO_PRINT_FIRMWARE_INFO" # For debug only not production.
 		if ot-kernel_has_version "sys-apps/openrc" ; then
 			ot-kernel_y_configopt "CONFIG_GENTOO_LINUX_INIT_SCRIPT"
 		else

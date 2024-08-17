@@ -180,6 +180,19 @@ __ot-kernel_set_init() {
 # Add the init to the internal kernel command line.
 _ot-kernel_set_init() {
 	local init="${OT_KERNEL_INIT:-custom}"
+
+	#
+	# TODO:  eventually we want to unset these two kconfig options when
+	# ot-kernel-pkgflags_openrc or ot-kernel-pkgflags_systemd can fully be
+	# verified self-sufficient and not rely on these two so that alternative
+	# init managers do not have increase kernel config bloat.
+	#
+	# We also want to eventually delete the 4567_distro-Gentoo-Kconfig.patch
+	# patch from genpatches and rely on autoconfig of these eclasses.
+	#
+	#ot-kernel_unset_configopt "CONFIG_GENTOO_LINUX_INIT_SYSTEMD"
+	#ot-kernel_unset_configopt "CONFIG_GENTOO_LINUX_INIT_SCRIPT"
+
 	if [[ "${init}" == "auto" ]] ; then
 		if ot-kernel_has_version "sys-process/dinit" ; then
 einfo "init:  dinit"
