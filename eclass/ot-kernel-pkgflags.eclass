@@ -8828,7 +8828,9 @@ ot-kernel-pkgflags_rasdaemon() { # DONE
 ot-kernel-pkgflags_rccl() { # DONE
 	local pkg="dev-libs/rccl"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_DMI"
+		ot-kernel_y_configopt "CONFIG_DMIID"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
 		ot-kernel_y_configopt "CONFIG_SYSFS"
