@@ -13702,20 +13702,32 @@ ewarn
 # It always applies shebang support.
 _ot-kernel-set_shebang_support() { # DONE
 	local pkgs=(
+	# List actively used for now
 		app-shells/bash
 		app-shells/dash
-		app-shells/ksh
-		app-shells/mksh
+		app-shells/pwsh-bin
 		dev-lang/perl
 		dev-lang/python
+		dev-lang/ruby
 		sys-apps/busybox
 	)
-	local pkg
-	for pkg in ${pkgs[@]} ; do
-		if ot-kernel_has_version_pkgflags "${pkg}" ; then
-			ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # For #! support
-		fi
-	done
+	local shebang="${SHEBANG:-auto}"
+	if [[ "${shebang}" == "1" ]] ; then
+einfo "#! shebang support:  ON"
+		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # For #! support
+	elif [[ "${shebang}" == "auto" ]] ; then
+		local pkg
+		for pkg in ${pkgs[@]} ; do
+			if ot-kernel_has_version_pkgflags "${pkg}" ; then
+einfo "#! shebang support:  ON for ${pkg}"
+				ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # For #! support
+				break
+			fi
+		done
+	else
+einfo "#! shebang support:  OFF"
+		ot-kernel_unset_configopt "CONFIG_BINFMT_SCRIPT"
+	fi
 }
 
 # CONFIG_ADVISE_SYSCALLS search keywords:  madvise, fadvise
