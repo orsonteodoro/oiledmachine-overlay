@@ -3585,6 +3585,7 @@ ot-kernel-pkgflags_dinit() { # DONE
 		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
 		ot-kernel_y_configopt "CONFIG_SYSFS"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
+		ot-kernel_y_configopt "CONFIG_DEVPTS_FS" # For /dev/pts
 	fi
 }
 
@@ -4212,6 +4213,8 @@ ot-kernel-pkgflags_epoch() { # DONE
 		_ot-kernel_set_shmem # For mounting /dev/shm needed for glibc
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
+		ot-kernel_y_configopt "CONFIG_SYSFS"
+		ot-kernel_y_configopt "CONFIG_DEVPTS_FS" # For /dev/pts
 	fi
 }
 
@@ -4397,6 +4400,8 @@ ot-kernel-pkgflags_finit() { # DONE
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		ot-kernel_y_configopt "CONFIG_UNIX"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
+		ot-kernel_y_configopt "CONFIG_SYSFS"
+		ot-kernel_y_configopt "CONFIG_DEVPTS_FS" # For /dev/pts
 	fi
 }
 
@@ -9665,7 +9670,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_BSG"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
-		ot-kernel_y_configopt "CONFIG_DEVTMPFS"
+		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_EPOLL"
 		ot-kernel_y_configopt "CONFIG_FANOTIFY"
@@ -9725,11 +9730,12 @@ ot-kernel-pkgflags_systemd() { # DONE
 		#ot-kernel_y_configopt "CONFIG_TIMERFD"
 		#ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		_ot-kernel_set_io_uring
-		_ot-kernel_set_shmem
+		_ot-kernel_set_shmem  # For mounting /dev/shm needed for glibc
 
 		ot-kernel_y_configopt "CONFIG_FILE_LOCKING"
-		ot-kernel_y_configopt "CONFIG_TMPFS"
+		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
 		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
+		ot-kernel_y_configopt "CONFIG_DEVPTS_FS" # For /dev/pts
 
 		# LDT referended in sys-apps/systemd
 	fi
@@ -9772,6 +9778,7 @@ ot-kernel-pkgflags_sysvinit() { # DONE
 		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
 		_ot-kernel_set_shmem # For mounting /dev/shm needed for glibc
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_SYSFS"
 	fi
 }
 
