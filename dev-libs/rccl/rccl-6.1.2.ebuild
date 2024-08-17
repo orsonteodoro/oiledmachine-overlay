@@ -81,8 +81,6 @@ check_kernel_setup() {
 	linux-info_pkg_setup
 #		~DRM # Referenced but not used
 	CONFIG_CHECK="
-		~DMI
-		~DMIID
 		~PROC_FS
 		~PROC_SYSCTL
 
@@ -92,9 +90,19 @@ check_kernel_setup() {
 		~PCI
 		~PCIEPORTBUS
 	"
+	if \
+		   use amdgpu_targets_gfx940 \
+		|| use amdgpu_targets_gfx941 \
+		|| use amdgpu_targets_gfx942 \
+	; then
+		+="
+			~DMI
+			~DMIID
+		"
+		WARNING_DMI="CONFIG_DMI=y is needed for gfx94x special cases."
+		WARNING_DMIID="CONFIG_DMIID=y is needed for gfx94x special cases."
+	fi
 	WARNING_DRM="CONFIG_DRM=y is needed for driver support."
-	WARNING_DMI="CONFIG_DMI=y is needed for gfx94x special cases."
-	WARNING_DMIID="CONFIG_DMIID=y is needed for gfx94x special cases."
 	WARNING_PROC_FS="CONFIG_PROC_FS=y is needed for acquiring system details."
 	WARNING_PROC_SYSCTL="CONFIG_PROC_SYSCTL=y is needed for Host ID generation."
 	WARNING_PCI="CONFIG_PCI=y is required for PCIe support."
