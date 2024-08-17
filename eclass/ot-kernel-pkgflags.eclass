@@ -825,6 +825,7 @@ ot-kernel-pkgflags_apply() {
 	_ot-kernel_realtime_packages
 	_ot-kernel_set_init
 	_ot-kernel_set_acl
+	_ot-kernel-set_shebang_support
 
 	# Out of source modules
 }
@@ -13694,6 +13695,27 @@ ewarn
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_DEV_SAFEXCEL"
 		ot-kernel_unset_configopt "CONFIG_CRYPTO_HW"
 	fi
+}
+
+# @FUNCTION: _ot-kernel-set_shebang_support
+# @DESCRIPTION:
+# It always applies shebang support.
+_ot-kernel-set_shebang_support() { # DONE
+	local pkgs=(
+		app-shells/bash
+		app-shells/dash
+		app-shells/ksh
+		app-shells/mksh
+		dev-lang/perl
+		dev-lang/python
+		sys-apps/busybox
+	)
+	local pkg
+	for pkg in ${pkgs[@]} ; do
+		if ot-kernel_has_version_pkgflags "${pkg}" ; then
+			ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # For #! support
+		fi
+	done
 }
 
 # CONFIG_ADVISE_SYSCALLS search keywords:  madvise, fadvise
