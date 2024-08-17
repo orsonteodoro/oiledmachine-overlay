@@ -13713,20 +13713,24 @@ _ot-kernel-set_shebang_support() { # DONE
 	)
 	local shebang="${SHEBANG:-auto}"
 	if [[ "${shebang}" == "custom" ]] ; then
-einfo "#! shebang support:  custom (Determined by kernel .config file.)"
+einfo "#! shebang support:  Determined by kernel .config file."
 	elif [[ "${shebang}" == "1" ]] ; then
 einfo "#! shebang support:  ON"
 		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # For #! support
 	elif [[ "${shebang}" == "auto" ]] ; then
-		ot-kernel_unset_configopt "CONFIG_BINFMT_SCRIPT"
 		local pkg
+		ot-kernel_unset_configopt "CONFIG_BINFMT_SCRIPT"
 		for pkg in ${pkgs[@]} ; do
 			if ot-kernel_has_version_pkgflags "${pkg}" ; then
-einfo "#! shebang support:  ON for ${pkg}"
 				ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # For #! support
 				break
 			fi
 		done
+		if grep -q -E -e "^CONFIG_BINFMT_SCRIPT=y" "${path_config}" ; then
+einfo "#! shebang support:  ON for ${pkg}"
+		else
+einfo "#! shebang support:  OFF"
+		fi
 	else
 einfo "#! shebang support:  OFF"
 		ot-kernel_unset_configopt "CONFIG_BINFMT_SCRIPT"
