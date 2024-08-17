@@ -9701,7 +9701,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 		ot-kernel_y_configopt "CONFIG_PROC_FS" # For /proc
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
 
-		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED"
+		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED" # bug #652272
 
 		ot-kernel_set_configopt "CONFIG_UEVENT_HELPER_PATH" "\"\""
 
@@ -9849,7 +9849,7 @@ einfo "LSMS:  ${lsm}"
 		ot-kernel_unset_configopt "CONFIG_GRKERNSEC_PROC" # [EN]
 		warn_lowered_security "${pkg}"
 		#ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_HASH" # [EP] Disabled.  API not being used, but contains reference to AF_ALG.
-		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED_V2" # [EN] Misnomer option.  It should be CONFIG_SYSFS_DEFAULT_ENABLE_DEPRECATED.
+		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED_V2" # bug #652272 [EN] Misnomer option.  It should be CONFIG_SYSFS_DEFAULT_ENABLE_DEPRECATED.
 		_ot-kernel-pkgflags_disable_ide "${pkg}"
 		# These are auto enabled during `make olddefconfig` found in ot-kernel_src_configure_assisted
 		#ot-kernel_y_configopt "CONFIG_ANON_INODES" # [P] Selected by EPOLL, TIMERFD, SIGNALFD
