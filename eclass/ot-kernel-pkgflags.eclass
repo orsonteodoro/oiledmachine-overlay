@@ -9719,7 +9719,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 
 		# Optional but recommended upstream
 	        ot-kernel_y_configopt "CONFIG_IPV6"
-		if ver_test "${KV_MAJOR_MINOR}" -lt "4.18" ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "4.18" ; then
 			ot-kernel_y_configopt "CONFIG_AUTOFS_FS"
 		else
 			ot-kernel_y_configopt "CONFIG_AUTOFS4_FS"
