@@ -8247,6 +8247,9 @@ ot-kernel-pkgflags_portage() { # DONE
 		_ot-kernel_set_pid_ns
 		_ot-kernel_set_uts_ns
 
+	# The 4567_distro-Gentoo-Kconfig.patch will enable cgroups but it was
+	# dropped and FEATURES=pid-sandbox was recommended instead.
+
 	# Required for USER portage
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_MULTIUSER"
