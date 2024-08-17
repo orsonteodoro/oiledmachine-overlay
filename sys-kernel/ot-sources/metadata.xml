@@ -3938,6 +3938,7 @@ unset OT_KERNEL_PRIVATE_KEY
     auto - enable based on packages installed.  (default)
     1 - enable
     0 - disable
+    custom - let the .config kernel config decide
 
     SQUASHFS_4K_BLOCK_SIZE - Operate in 4k blocks instead of 1k blocks
     Valid values: 0 (upstream default; optimizes for lower latency),

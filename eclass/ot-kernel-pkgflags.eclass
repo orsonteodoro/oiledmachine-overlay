@@ -13712,10 +13712,13 @@ _ot-kernel-set_shebang_support() { # DONE
 		sys-apps/busybox
 	)
 	local shebang="${SHEBANG:-auto}"
-	if [[ "${shebang}" == "1" ]] ; then
+	if [[ "${shebang}" == "custom" ]] ; then
+einfo "#! shebang support:  custom (Determined by kernel .config file.)"
+	elif [[ "${shebang}" == "1" ]] ; then
 einfo "#! shebang support:  ON"
 		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # For #! support
 	elif [[ "${shebang}" == "auto" ]] ; then
+		ot-kernel_unset_configopt "CONFIG_BINFMT_SCRIPT"
 		local pkg
 		for pkg in ${pkgs[@]} ; do
 			if ot-kernel_has_version_pkgflags "${pkg}" ; then
