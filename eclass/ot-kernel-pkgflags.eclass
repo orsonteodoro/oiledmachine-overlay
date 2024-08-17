@@ -7729,7 +7729,9 @@ ot-kernel-pkgflags_openrc() { # DONE
 		ot-kernel_y_configopt "CONFIG_SYSFS" # For /sys
 		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # For #! scripts
 		ot-kernel_y_configopt "CONFIG_FILE_LOCKING"
+		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
 		ot-kernel_y_configopt "CONFIG_TMPFS" # For /dev/shm, /run
+		ot-kernel_y_configopt "CONFIG_DEVPTS_FS" # For /dev/pts
 	fi
 }
 
