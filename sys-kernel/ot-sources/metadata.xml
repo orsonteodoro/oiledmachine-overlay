@@ -247,7 +247,8 @@
 
     1. Menuconfig - This is primarily available to enable/disable drivers or for
     users that prefer a menuconfig only experience.   Menuconfig allows for
-    editing kernel settings with buttons and windows.
+    editing kernel settings with buttons and windows.  The menuconfig is still
+    the preferred way to decrapify the kernel config versus automated means.
     2. Environment variables (aka envars) - This is a collection of tweakables
     that can be used to modify the default kernel config or an existing kernel
     config.  It is mostly useful in assist mode.  Most envars will be ignored in
