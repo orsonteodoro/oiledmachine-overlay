@@ -3427,6 +3427,34 @@ ewarn "AEAD cryptsetup support is experimental"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ADIANTUM" # Adds the generic versions of chacha20 and nhpoly1305.
 		fi
+
+		if [[ "${CRYPTSETUP_VERITY}" == "1" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+			ot-kernel_y_configopt "CONFIG_MD"
+			ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
+			ot-kernel_y_configopt "CONFIG_DM_VERITY"
+			ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG"
+			if ver_test "${KV_MAJOR_MINOR}" -ge "6.11" ; then
+				ot-kernel_y_configopt "CONFIG_KEYS"
+				ot-kernel_y_configopt "CONFIG_SIGNATURE"
+				ot-kernel_y_configopt "CONFIG_SYSTEM_BLACKLIST_KEYRING"
+				ot-kernel_y_configopt "CONFIG_INTEGRITY_ASYMMETRIC_KEYS"
+
+				ot-kernel_y_configopt "CONFIG_ASYMMETRIC_KEY_TYPE"
+				ot-kernel_y_configopt "CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE"
+				ot-kernel_y_configopt "CONFIG_X509_CERTIFICATE_PARSER"
+				ot-kernel_y_configopt "CONFIG_SYSTEM_TRUSTED_KEYRING"
+				ot-kernel_y_configopt "CONFIG_SECONDARY_TRUSTED_KEYRING"
+				ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_SECONDARY_KEYRING"
+
+				ot-kernel_y_configopt "CONFIG_SYSFS"
+				ot-kernel_y_configopt "CONFIG_MULTIUSER"
+				ot-kernel_y_configopt "CONFIG_SECURITY"
+				ot-kernel_y_configopt "CONFIG_INTEGRITY"
+				ot-kernel_y_configopt "CONFIG_INTEGRITY_SIGNATURE"
+				ot-kernel_y_configopt "CONFIG_INTEGRITY_PLATFORM_KEYRING"
+				ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_PLATFORM_KEYRING"
+			fi
+		fi
 	fi
 }
 
@@ -9793,39 +9821,8 @@ ot-kernel-pkgflags_systemd() { # DONE
 	# mainstream features and it would be difficult to debug boot failure
 	# for new users.
 	# See commit a79b6dc for use scenario.
-		if [[ "${SYSTEMD_FEATURE_SIGNED_DM_VERITY:-0}" == "1" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
-			ot-kernel_y_configopt "CONFIG_DM_VERITY"
-			ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG"
-			if ver_test "${KV_MAJOR_MINOR}" -ge "6.11" ; then
-				ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_SECONDARY_KEYRING"
-				ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_PLATFORM_KEYRING"
-			fi
 
-			ot-kernel_y_configopt "CONFIG_INTEGRITY_SIGNATURE"
-			ot-kernel_y_configopt "CONFIG_INTEGRITY_ASYMMETRIC_KEYS"
-
-			if [[ -n "${OT_KERNEL_IMA}" ]] ; then
-				ot-kernel_y_configopt "CONFIG_IMA"
-
-				# These two below or CONFIG_KEXEC_SIG
-				ot-kernel_y_configopt "CONFIG_IMA_APPRAISE"
-				ot-kernel_y_configopt "CONFIG_IMA_ARCH_POLICY"
-			fi
-
-			ot-kernel_y_configopt "CONFIG_KEYS"
-			ot-kernel_y_configopt "CONFIG_ASYMMETRIC_KEY_TYPE"
-			ot-kernel_y_configopt "CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE"
-			ot-kernel_y_configopt "CONFIG_X509_CERTIFICATE_PARSER"
-			ot-kernel_y_configopt "CONFIG_SYSTEM_TRUSTED_KEYRING"
-			ot-kernel_y_configopt "CONFIG_SECONDARY_TRUSTED_KEYRING"
-			ot-kernel_y_configopt "CONFIG_SYSTEM_BLACKLIST_KEYRING"
-			if [[ "${arch}" == "powerpc" ]] ; then
-				ot-kernel_y_configopt "CONFIG_LOAD_PPC_KEYS"
-			else
-				ot-kernel_y_configopt "CONFIG_LOAD_UEFI_KEYS"
-			fi
-			ot-kernel_y_configopt "CONFIG_INTEGRITY_MACHINE_KEYRING"
-		fi
+	# For SYSTEMD_FEATURE_SIGNED_DM_VERITY use CRYPTSETUP_VERITY instead.
 
 		if [[ "${SYSTEMD_FEATURE_SMBIOS:-0}" == "1" ]] ; then
 			ot-kernel_y_configopt "CONFIG_DMI"

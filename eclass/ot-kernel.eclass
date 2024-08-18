@@ -3286,6 +3286,10 @@ eerror
 		die
 	fi
 
+	if [[ -n "${SYSTEMD_FEATURE_SIGNED_DM_VERITY}" ]] ; then
+eerror "SYSTEMD_FEATURE_SIGNED_DM_VERITY has been renamed to CRYPTSETUP_VERITY"
+	fi
+
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD has been removed."
 	fi

@@ -3747,6 +3747,8 @@ unset OT_KERNEL_PRIVATE_KEY
     CRYPTSETUP_TCRYPT - Add support for tcrypt.
     Valid values:  0, 1 (default).
 
+    CRYPTSETUP_VERITY - Add support for integrity checking using another device.
+
     DSS_DISK_ENCRYPTION - Set the preferred way to protect sensitive data in non
     database contexts.
     Valid values:  ext4-encryption, fs-encryption, cryptsetup,
@@ -4025,9 +4027,7 @@ unset OT_KERNEL_PRIVATE_KEY
       1 - enable
       0 - disable (default)
 
-    SYSTEMD_FEATURE_SIGNED_DM_VERITY - Support for signed dm-verity.
-      1 - enable
-      0 - disable (default)
+    For SYSTEMD_FEATURE_SIGNED_DM_VERITY, use CRYPTSETUP_VERITY instead.
 
     SYSTEMD_FEATURE_SMBIOS - Allow the importation of credentials/parameters
     through mostly virtual machine (VM) SMBIOSes.
