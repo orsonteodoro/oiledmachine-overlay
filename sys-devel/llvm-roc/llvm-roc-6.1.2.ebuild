@@ -4,10 +4,6 @@
 
 EAPI=8
 
-# FIXME:
-# llvm-dwarfdump.cpp.o: undefined reference to symbol '_ZN4llvm5dwarf18AddressSpaceStringEjNS_6TripleE'
-# libLLVMBinaryFormat.so.17git: error adding symbols: DSO missing from command line
-
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 LLVM_SLOT=17
 LLVM_TARGETS=(
@@ -330,5 +326,5 @@ pkg_postinst() {
 	uopts_pkg_postinst
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-STATUS:  build-without-problems
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
