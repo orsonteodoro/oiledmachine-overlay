@@ -4,21 +4,6 @@
 
 EAPI=8
 
-# FIXME:
-# mlir/lib/Target/LLVMIR/DebugTranslation.cpp:171:36: error: no matching function for call to 'llvm::DILocalVariable::get(llvm::LLVMContext&, llvm::DIScope*, llvm::MDString*, llvm::DIFile*, unsigned int, llvm::DIType*, unsigned int, llvm::DINode::DIFlags, unsigned int, std::nullptr_t)'
-#  171 |   return llvm::DILocalVariable::get(
-#      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~^
-#  172 |       llvmCtx, translate(attr.getScope()), getMDStringOrNull(attr.getName()),
-#      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#  173 |       translate(attr.getFile()), attr.getLine(), translate(attr.getType()),
-#      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#  174 |       attr.getArg(),
-#      |       ~~~~~~~~~~~~~~                
-#  175 |       /*Flags=*/llvm::DINode::FlagZero, attr.getAlignInBits(),
-#      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#  176 |       /*Annotations=*/nullptr);
-#      |       ~~~~~~~~~~~~~~~~~~~~~~~~ 
-
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 LLVM_SLOT=17
 LLVM_TARGETS=(
@@ -44,7 +29,26 @@ S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 SRC_URI="
 https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 	-> llvm-project-rocm-${PV}.tar.gz
+https://github.com/ROCm/llvm-project/commit/f16babf6e63890e8dde4a5f78ba29a484b08f42f.patch
+	-> ROCm-llvm-project-f16babf.patch
 "
+# f16babf - [HeterogeneousDWARF] Update MLIR DI Metadata handling
+# Fixes:
+# Error with USE=mlir:
+# mlir/lib/Target/LLVMIR/DebugTranslation.cpp:171:36: error: no matching function for call to 'llvm::DILocalVariable::get(llvm::LLVMContext&, llvm::DIScope*, llvm::MDString*, llvm::DIFile*, unsigned int, llvm::DIType*, unsigned int, llvm::DINode::DIFlags, unsigned int, std::nullptr_t)'
+#  171 |   return llvm::DILocalVariable::get(
+#      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+#  172 |       llvmCtx, translate(attr.getScope()), getMDStringOrNull(attr.getName()),
+#      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  173 |       translate(attr.getFile()), attr.getLine(), translate(attr.getType()),
+#      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  174 |       attr.getArg(),
+#      |       ~~~~~~~~~~~~~~
+#  175 |       /*Flags=*/llvm::DINode::FlagZero, attr.getAlignInBits(),
+#      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  176 |       /*Annotations=*/nullptr);
+#      |       ~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 DESCRIPTION="The ROCm™ fork of the LLVM project"
 HOMEPAGE="
@@ -145,6 +149,7 @@ einfo "See comments of metadata.xml for documentation on ebolt/epgo."
 src_prepare() {
 	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
 		eapply "${FILESDIR}/${PN}-5.7.1-hardcoded-paths.patch"
+		eapply "${DISTDIR}/ROCm-llvm-project-f16babf.patch"
 	popd >/dev/null 2>&1 || die
 
 	cmake_src_prepare
