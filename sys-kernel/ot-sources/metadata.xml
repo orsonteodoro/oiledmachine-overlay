@@ -2833,7 +2833,7 @@ unset OT_KERNEL_PRIVATE_KEY
       pfifo_fast - the alternative kernel default when QoS is enabled
       fq_codel   - the systemd default to combat bufferbloat
       disable    - Disable QoS (the vanilla kernel default)
-      custom     - Do not make changes.
+      custom     - Do not make changes but rely on the kernel .config file setting.
 
     Example:
 
