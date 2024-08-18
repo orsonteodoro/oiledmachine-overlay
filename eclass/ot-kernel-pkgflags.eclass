@@ -9922,13 +9922,7 @@ einfo "LSMS:  ${lsm}"
 			ot-kernel_y_configopt "CONFIG_DEVPTS_MULTIPLE_INSTANCES"
 		fi
 
-		local oomd=${SYSTEMD_FEATURE_OOMD:-0}
-		if (( ${rt} == 1 )) ; then
-	# Remove overhead
-			oomd=0
-		fi
-
-		if [[ "${oomd}" == "1" ]] ; then
+		if [[ "${SYSTEMD_FEATURE_OOMD:-0}" == "1" ]] ; then
 			ot-kernel_y_configopt "CONFIG_PSI"
 			ot-kernel_y_configopt "CONFIG_MEMCG"
 		fi

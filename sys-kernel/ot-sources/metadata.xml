@@ -4028,10 +4028,8 @@ unset OT_KERNEL_PRIVATE_KEY
       0 - disable (default)
 
     SYSTEMD_FEATURE_OOMD - Support systemd-oomd
-    Support is conditional:
-      1 - enable (default for non-realtime)
-      0 - disable (default for realtime)
-    Note:
+      1 - enable
+      0 - disable (default)
 
     SYSTEMD_FEATURE_PRIVATENETWORK - Enable PrivateNetwork= support
       1 - enable
