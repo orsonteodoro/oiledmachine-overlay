@@ -3747,7 +3747,9 @@ unset OT_KERNEL_PRIVATE_KEY
     CRYPTSETUP_TCRYPT - Add support for tcrypt.
     Valid values:  0, 1 (default).
 
-    CRYPTSETUP_VERITY - Add support for integrity checking using another device.
+    CRYPTSETUP_VERITY - Add support for dm-verity integrity checking using
+    another device.
+    Valid values:  0 (default), 1
 
     DSS_DISK_ENCRYPTION - Set the preferred way to protect sensitive data in non
     database contexts.
