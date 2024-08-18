@@ -3978,7 +3978,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     SYSTEMD_CONTAINER - Apply fix for systemd in a container:
       1 - apply fix for systemd used in a container
-      0 - don't apply fix for systemd used in a container
+      0 - don't apply fix for systemd used in a container (default)
 
     SYSTEMD_FEATURE_AUTOFS - Support access/insertion based automounting.
       1 - enable
