@@ -3991,15 +3991,15 @@ unset OT_KERNEL_PRIVATE_KEY
       1 - enable
       0 - disable (default)
 
-    SYSTEMD_FEATURE_QDISC - Adds the Codel QoS discipline to avoid bufferbloat
+    SYSTEMD_FEATURE_QDISC - Add/remove the Codel QoS discipline to avoid bufferbloat
     since systemd uses it as the default QoS discipline.
       codel      - adds codel so that systemd can switch to it as the default to combat bufferbloat
       disable    - revert to QoS disabled (the vanilla kernel default)
       pfifo-fast - revert to the the alternative vanilla kernel default with QoS enabled in addition remove the codel option
       custom     - don't change anything
     See https://github.com/systemd/systemd/blob/v256/src/network/tc/qdisc.h#L12
-    and fill out OT_KERNEL_NET_QOS_SCHEDULERS instead for QoS support in addition the
-    systemd.network man page.
+    and fill out OT_KERNEL_NET_QOS_SCHEDULERS instead for QoS support in addition
+    check out the systemd.network man page for additional configuration.
 
     Examples:
 
