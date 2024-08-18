@@ -3608,6 +3608,17 @@ ot-kernel_clear_env() {
 	unset SQUASHFS_XATTR
 	unset SQUASHFS_ZLIB
 	unset STD_PC_SPEAKER
+	unset SYSTEMD_FEATURE_CPUSHARES
+	unset SYSTEMD_FEATURE_CPUQUOTA
+	unset SYSTEMD_FEATURE_IPV6
+	unset SYSTEMD_FEATURE_NET
+	unset SYSTEMD_FEATURE_PRIVATENETWORK
+	unset SYSTEMD_FEATURE_PRIVATEUSERS
+	unset SYSTEMD_FEATURE_RESTRICT_FS
+	unset SYSTEMD_FEATURE_QDISC
+	unset SYSTEMD_FEATURE_SCSI
+	unset SYSTEMD_FEATURE_SMBIOS
+	unset SYSTEMD_OPTIONAL
 	unset SYSTEMD_SIGNED_VERITY_IMAGES_SUPPORT
 	unset SYSTEMD_UEFI
 	unset TRESOR_MAX_KEY_SIZE
@@ -4172,6 +4183,7 @@ ot-kernel_set_kconfig_set_net_qos_classifiers() {
 # Setup network QoS to reduce jitter or latency classification
 ot-kernel_set_kconfig_set_net_qos_schedulers() {
 	[[ -z "${OT_KERNEL_NET_QOS_SCHEDULERS}" ]] && return
+	[[ "${OT_KERNEL_NET_QOS_SCHEDULERS}" == "custom" ]] && return
 	local DEFAULT_ALGS=(
 		FQ
 		CODEL
@@ -4223,9 +4235,14 @@ ot-kernel_set_kconfig_set_net_qos_schedulers() {
 		ot-kernel_unset_configopt "NET_SCH_${alg^^}"
 	done
 
-	# clear is for configurations without network.
+	if [[ "${OT_KERNEL_NET_QOS_SCHEDULERS}" == "clear" ]] ; then
+eerror "The value clear for OT_KERNEL_NET_QOS_SCHEDULERS has been changed to disable."
+		die
+	fi
 
-	if [[ "${OT_KERNEL_NET_QOS_SCHEDULERS}" != "clear" ]] ; then
+	if [[ "${OT_KERNEL_NET_QOS_SCHEDULERS}" == "disable" ]] ; then
+		ot-kernel_unset_configopt "CONFIG_NET_SCHED"
+	else
 		for alg in ${OT_KERNEL_NET_QOS_SCHEDULERS} ; do
 			[[ "${alg,,}" == "pfifo_fast" ]] && continue
 			ot-kernel_y_configopt "CONFIG_${alg^^}"
@@ -6964,6 +6981,9 @@ einfo "Using the custom LSM settings:  ${ot_kernel_lsms}"
 			[apparmor]="APPARMOR"
 			[bpf]="DAC"
 		)
+
+		# FIXME:
+		#CONFIG_BPF_LSM
 
 		ot-kernel_unset_configopt "CONFIG_LSM"
 

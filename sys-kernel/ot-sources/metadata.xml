@@ -2827,12 +2827,27 @@ unset OT_KERNEL_PRIVATE_KEY
 
         https://github.com/torvalds/linux/blob/master/net/sched/Kconfig#L457
 
-      pfifo_fast (default)
-      clear - Do not add any (Ebuild only)
+    Notable values:
+
+      pfifo-fast - the alternative kernel default when QoS is enabled
+      codel      - the systemd default to combat bufferbloat
+      disable    - Disable QoS (the vanilla kernel default)
+      custom     - Do not make changes.
 
     Example:
 
       OT_KERNEL_NET_QOS_SCHEDULERS="fq pfifo_fast"
+      OT_KERNEL_NET_QOS_SCHEDULERS="disable"
+
+      Use SYSTEMD_FEATURE_QDISC=codel and OT_KERNEL_NET_QOS_SCHEDULERS=custom for codel.
+      Use SYSTEMD_FEATURE_QDISC=custom and OT_KERNEL_NET_QOS_SCHEDULERS="htb" for htb.
+      Use SYSTEMD_FEATURE_QDISC=disable and OT_KERNEL_NET_QOS_SCHEDULERS=disable to disable QoS
+      Use SYSTEMD_FEATURE_QDISC=custom and OT_KERNEL_NET_QOS_SCHEDULERS=pfifo-fast for pfifo-fast.
+      Use SYSTEMD_FEATURE_QDISC=pfifo-fast and OT_KERNEL_NET_QOS_SCHEDULERS=custom for pfifo-fast.
+
+    See also:
+
+      SYSTEMD_FEATURE_QDISC
 
 
     OT_KERNEL_REISUB - allow the use of REISUB, the equivalent to Ctrl+Alt+Del.  It allows access to
@@ -3968,13 +3983,95 @@ unset OT_KERNEL_PRIVATE_KEY
     auto will judge based on threads per core (TPC) inspection.
     Use manual selection when porting to other machines.
 
+    SYSTEMD_CONTAINER - Apply fix for systemd in a container:
+      1 - apply fix for systemd used in a container
+      0 - don't apply fix for systemd used in a container
+
+    SYSTEMD_FEATURE_QDISC - Adds the Codel QoS discipline to avoid bufferbloat
+    since systemd uses it as the default QoS discipline.
+      codel      - adds codel so that systemd can switch to it as the default to combat bufferbloat
+      disable    - revert to QoS disabled (the vanilla kernel default)
+      pfifo-fast - revert to the the alternative vanilla kernel default with QoS enabled in addition remove the codel option
+      custom     - don't change anything
+    See https://github.com/systemd/systemd/blob/v256/src/network/tc/qdisc.h#L12
+    and fill out OT_KERNEL_NET_QOS_SCHEDULERS instead.
+
+    Examples:
+
+      Use SYSTEMD_FEATURE_QDISC=codel and OT_KERNEL_NET_QOS_SCHEDULERS=custom for codel.
+      Use SYSTEMD_FEATURE_QDISC=custom and OT_KERNEL_NET_QOS_SCHEDULERS="htb" for htb.
+      Use SYSTEMD_FEATURE_QDISC=disable and OT_KERNEL_NET_QOS_SCHEDULERS=disable to disable QoS
+      Use SYSTEMD_FEATURE_QDISC=custom and OT_KERNEL_NET_QOS_SCHEDULERS=pfifo-fast for pfifo-fast.
+      Use SYSTEMD_FEATURE_QDISC=pfifo-fast and OT_KERNEL_NET_QOS_SCHEDULERS=custom for pfifo-fast.
+
+    SYSTEMD_FEATURE_CPUSHARES - Enable CPUShares= support
+      1 - enable
+      0 - disable (default)
+
+    SYSTEMD_FEATURE_CPUQUOTA - Enable CPUQuota= support
+      1 - enable
+      0 - disable (default)
+
+    SYSTEMD_FEATURE_IPV6 - Support IPv6
+      1 - enable
+      0 - disable (default)
+
+    SYSTEMD_FEATURE_NET - Enable support for IPAddressDeny=,
+    IPAddressAllow=, IPIngressFilterPath=, IPEgressFilterPath=,
+    SocketBind{Allow|Deny}=, RestrictNetworkInterfaces=
+      1 - enable
+      0 - disable (default)
+
+    SYSTEMD_FEATURE_OOMD - Support systemd-oomd
+    Support is conditional:
+      1 - enable (default for non-realtime)
+      0 - disable (default for realtime)
+    Note:
+
+    SYSTEMD_FEATURE_PRIVATENETWORK - Enable PrivateNetwork=
+      1 - enable
+      0 - disable (default)
+
+    SYSTEMD_FEATURE_PRIVATEUSERS - Enable PrivateUsers= 
+      1 - enable
+      0 - disable (default)
+
+    SYSTEMD_FEATURE_RESTRICT_FS - Enable RestrictFileSystems= support
+      1 - enable
+      0 - disable (default)
+
+    SYSTEMD_FEATURE_SCSI - Support SCSI serial number retrival
+      1 - enable
+      0 - disable (default)
+
+    SYSTEMD_FEATURE_SMBIOS - Allow the importation of credentials/parameters
+    through VM SMBIOS.
+      1 - enable
+      0 - disable (default)
+
+    SYSTEMD_FEATURE_TRAFFIC_CONTROL - Support the
+    [TrafficControlQueueingDiscipline] section and Parent=,
+    NetworkEmulatorDelaySec=, NetworkEmulatorDelayJitterSec=,
+    NetworkEmulatorPacketLimit=, NetworkEmulatorLossRate=
+      1 - enable
+      0 - disable (default)
+
+    SYSTEMD_OPTIONAL - Activate optional settings with unknown purpose.  These
+    settings are possibly applied to unbreak non CI configurations.
+      1 - enable (default)
+      0 - disable
+
     SYSTEMD_SIGNED_VERITY_IMAGES_SUPPORT - Support DM signed verity images.
-      1 - support
-      0 - unsupport (default)
+      1 - enable
+      0 - disable (default)
 
     SYSTEMD_UEFI - Support UEFI systems
-      1 - support (default)
-      0 - unsupport
+      1 - enable (default)
+      0 - disable
+
+    SYSTEMD_FEATURE_FD_COMPARE - Compares file descriptors for duplicates base
+    on the selected function.
+    Valid values:  kcmp (default), fstat
 
     TRESOR_MAX_KEY_SIZE - The maximum key size for the cipher.
     Valid values:

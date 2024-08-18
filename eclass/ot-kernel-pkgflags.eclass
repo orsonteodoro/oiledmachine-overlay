@@ -9687,7 +9687,7 @@ ewarn
 ot-kernel-pkgflags_systemd() { # DONE
 	local pkg="sys-apps/systemd"
 	if ot-kernel_has_version_pkgflags_slow "${pkg}" ; then
-# See also https://github.com/systemd/systemd/blob/main/README
+	# See also https://github.com/systemd/systemd/blob/main/README
 
 		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
@@ -9712,18 +9712,23 @@ ot-kernel-pkgflags_systemd() { # DONE
 			ot-kernel_y_configopt "CONFIG_DMIID"
 		fi
 
-		ot-kernel_y_configopt "CONFIG_BLK_DEV_BSG"
-
-		_ot-kernel_set_net_ns
-		_ot-kernel_set_user_ns
-
-		# Optional but recommended upstream
-	        ot-kernel_y_configopt "CONFIG_IPV6"
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.18" ; then
-			ot-kernel_y_configopt "CONFIG_AUTOFS_FS"
-		else
-			ot-kernel_y_configopt "CONFIG_AUTOFS4_FS"
+		if [[ "${SYSTEMD_FEATURE_SCSI:-0}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SCSI"
+			ot-kernel_y_configopt "CONFIG_BLK_DEV_BSG"
 		fi
+
+		if [[ "${SYSTEMD_FEATURE_PRIVATENETWORK:-1}" == "1" ]] ; then
+			_ot-kernel_set_net_ns
+		fi
+		if [[ "${SYSTEMD_FEATURE_PRIVATEUSERS:-1}" == "1" ]] ; then
+			_ot-kernel_set_user_ns
+		fi
+
+	# Optional but recommended upstream
+		if [[ "${SYSTEMD_FEATURE_IPV6:-1}" == "1" ]] ; then
+		        ot-kernel_y_configopt "CONFIG_IPV6"
+		fi
+
 		ot-kernel_y_configopt "CONFIG_TMPFS" # [W]
 		ot-kernel_y_configopt "CONFIG_TMPFS_XATTR"
 		if ot-kernel_has_version "${pkg}[acl]" ; then
@@ -9733,25 +9738,84 @@ ot-kernel-pkgflags_systemd() { # DONE
 			ot-kernel_y_configopt "CONFIG_SECCOMP"
 			ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
-			ot-kernel_y_configopt "CONFIG_KCMP" # >= 5.10.20
-		else
-			ot-kernel_y_configopt "CONFIG_CHECKPOINT_RESTORE"
+
+		if [[ "${SYSTEMD_FEATURE_FD_COMPARE:-kcmp}" == "kcmp" ]] ; then
+			if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+				ot-kernel_y_configopt "CONFIG_KCMP" # >= 5.10.20
+			else
+				ot-kernel_y_configopt "CONFIG_CHECKPOINT_RESTORE"
+			fi
 		fi
-		ot-kernel_y_configopt "CONFIG_NET_SCHED"
-		ot-kernel_y_configopt "CONFIG_NET_SCH_FQ_CODEL"
 
-		ot-kernel_y_configopt "CONFIG_CGROUP_SCHED"
-		ot-kernel_y_configopt "CONFIG_FAIR_GROUP_SCHED"
+		if [[ "${SYSTEMD_FEATURE_TRAFFIC_CONTROL:-0}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NET_SCHED"
+		fi
 
-		ot-kernel_y_configopt "CONFIG_CFS_BANDWIDTH"
+		local qdisc="${SYSTEMD_FEATURE_QDISC:-custom}"
+		if [[ "${qdisc}" == "codel" ]] ; then
+	# See also https://github.com/systemd/systemd/blob/main/sysctl.d/50-default.conf#L48
+	# See issue #7744, bug #642192, commit 755fdff
+			ot-kernel_y_configopt "CONFIG_NET_SCHED"
+			ot-kernel_y_configopt "CONFIG_NET_SCH_FQ_CODEL"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_CODEL"
+			ot-kernel_y_configopt "CONFIG_DEFAULT_FQ_CODEL"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ_PIE"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_SFQ"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_PFIFO_FAST"
+		elif [[ "${qdisc}" == "disable" ]] ; then
+			ot-kernel_unset_configopt "CONFIG_NET_SCHED"
+			ot-kernel_unset_configopt "CONFIG_NET_SCH_FQ"
+			ot-kernel_unset_configopt "CONFIG_NET_SCH_CODEL"
+			ot-kernel_unset_configopt "CONFIG_NET_SCH_FQ_CODEL"
+			ot-kernel_unset_configopt "CONFIG_NET_SCH_FQ_PIE"
+			ot-kernel_unset_configopt "CONFIG_NET_SCH_SFQ"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_CODEL"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ_CODEL"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ_PIE"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_SFQ"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_PFIFO_FAST"
+		elif [[ "${qdisc}" == "pfifo-fast" ]] ; then
+			ot-kernel_y_configopt "CONFIG_NET_SCHED"
+			ot-kernel_unset_configopt "CONFIG_NET_SCH_FQ"
+			ot-kernel_unset_configopt "CONFIG_NET_SCH_CODEL"
+			ot-kernel_unset_configopt "CONFIG_NET_SCH_FQ_CODEL"
+			ot-kernel_unset_configopt "CONFIG_NET_SCH_FQ_PIE"
+			ot-kernel_unset_configopt "CONFIG_NET_SCH_SFQ"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_CODEL"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ_CODEL"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ_PIE"
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_SFQ"
+			ot-kernel_y_configopt "CONFIG_DEFAULT_PFIFO_FAST"
+		fi
 
-		ot-kernel_y_configopt "CONFIG_BPF"
-		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
-		ot-kernel_y_configopt "CONFIG_BPF_JIT"
-		ot-kernel_y_configopt "CONFIG_HAVE_EBPF_JIT"
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
-			ot-kernel_y_configopt "CONFIG_CGROUP_BPF"
+		if [[ "${SYSTEMD_OPTIONAL:-1}" == "1" ]] ; then
+			if ver_test "${KV_MAJOR_MINOR}" -ge "4.18" ; then
+				ot-kernel_y_configopt "CONFIG_AUTOFS_FS"
+			else
+				ot-kernel_y_configopt "CONFIG_AUTOFS4_FS"
+			fi
+		fi
+
+		if [[ "${SYSTEMD_FEATURE_CPUSHARES:-0}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_CGROUP_SCHED"
+			ot-kernel_y_configopt "CONFIG_FAIR_GROUP_SCHED"
+		fi
+
+		if [[ "${SYSTEMD_FEATURE_CPUQUOTA:-0}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_CFS_BANDWIDTH"
+		fi
+
+		if [[ "${SYSTEMD_FEATURE_NET:-0}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_BPF"
+			ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+			ot-kernel_y_configopt "CONFIG_BPF_JIT"
+			ot-kernel_y_configopt "CONFIG_HAVE_EBPF_JIT"
+			if ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
+				ot-kernel_y_configopt "CONFIG_CGROUP_BPF"
+			fi
 		fi
 
 		if [[ "${SYSTEMD_UEFI:-1}" == "1" ]] ; then
@@ -9797,47 +9861,88 @@ ot-kernel-pkgflags_systemd() { # DONE
 			ot-kernel_y_configopt "CONFIG_INTEGRITY_MACHINE_KEYRING"
 		fi
 
-		ot-kernel_y_configopt "CONFIG_DMI"
-		ot-kernel_y_configopt "CONFIG_DMI_SYSFS"
+		if [[ "${SYSTEMD_FEATURE_SMBIOS:-0}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_DMI"
+			ot-kernel_y_configopt "CONFIG_DMI_SYSFS"
+		fi
 
-		ot-kernel_y_configopt "CONFIG_BPF_LSM"
-		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"
+		if [[ "${SYSTEMD_FEATURE_RESTRICT_FS:-0}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_BPF"
+			ot-kernel_y_configopt "CONFIG_BPF_LSM"
+			ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+			ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"
 
-		local lsms
-		lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
+			local lsms
+			lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
 einfo "LSMS:  ${lsm}"
-		if [[ "${lsms}" =~ "bpf" ]] ; then
-			:
-		else
-			if [[ -z "${lsms}" ]] ; then
-	# EX:  "" -> "bpf"
-				lsms="bpf"
+			if [[ "${lsms}" =~ "bpf" ]] ; then
+				:
 			else
+				if [[ -z "${lsms}" ]] ; then
+	# EX:  "" -> "bpf"
+					lsms="bpf"
+				else
 	# EX:  "foo" -> "foo,bpf"
 	# EX:  "foo,bar" -> "foo,bar,bpf"
-				lsms="${lsms},bpf"
+					lsms="${lsms},bpf"
+				fi
 			fi
-		fi
-		lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
+			lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
 einfo "LSMS:  ${lsm}"
-		ot-kernel_set_configopt "CONFIG_LSM" "\"${lsms}\""
+			ot-kernel_set_configopt "CONFIG_LSM" "\"${lsms}\""
+		fi
 
-		ot-kernel_unset_configopt "CONFIG_RT_GROUP_SCHED"
+		local rt=0
+
+		if [[ \
+			   "${work_profile}" == "digital-audio-workstation" \
+			|| "${work_profile}" == "musical-live-performance" \
+			|| "${work_profile}" == "pi-deep-learning" \
+			|| "${work_profile}" == "pi-music-production" \
+			|| "${work_profile}" == "radio-broadcaster" \
+			|| "${work_profile}" == "realtime-hpc" \
+			|| "${work_profile}" == "ros" \
+			|| "${work_profile}" == "voip" \
+		]] ; then
+			rt=1
+		fi
+
+		if \
+			   grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" \
+			|| grep -q -e "^CONFIG_PREEMPT_RT_BASE=y" "${path_config}" \
+			|| grep -q -e "^CONFIG_PREEMPT_RT_FULL=y" "${path_config}" \
+		; then
+			rt=1
+		fi
+
+		if (( ${rt} == 1 )) ; then
+			ot-kernel_unset_configopt "CONFIG_RT_GROUP_SCHED"
+		fi
 
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.7" ; then
 			ot-kernel_y_configopt "CONFIG_DEVPTS_MULTIPLE_INSTANCES"
 		fi
 
-		ot-kernel_y_configopt "CONFIG_PSI"
-		ot-kernel_y_configopt "CONFIG_MEMCG"
+		local oomd=${SYSTEMD_FEATURE_OOMD:-0}
+		if (( ${rt} == 1 )) ; then
+	# Remove overhead
+			oomd=0
+		fi
 
-		ot-kernel_unset_configopt "CONFIG_AUDIT"
+		if [[ "${oomd}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_PSI"
+			ot-kernel_y_configopt "CONFIG_MEMCG"
+		fi
 
-		# Settings undocumented by upstream.
+		if [[ "${SYSTEMD_CONTAINER:-0}" == "1" ]] ; then
+			ot-kernel_unset_configopt "CONFIG_AUDIT"
+		fi
 
-		# Distro recommended, verified through search
+	# Settings undocumented by upstream for the remaining settings.
+
+	# Distro recommended, verified through search
 		ot-kernel_y_configopt "CONFIG_FANOTIFY" # [EP]
-	        _ot-kernel-pkgflags_tcpip # [EP]
+	        _ot-kernel-pkgflags_tcpip # [EP] Used also for QoS + Codel
 		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC" # [EP]
 		_ot-kernel-pkgflags_sha256 # [EP]
 		ot-kernel_y_configopt "CONFIG_FILE_LOCKING" # [P]
@@ -9845,13 +9950,13 @@ einfo "LSMS:  ${lsm}"
 		ot-kernel_y_configopt "CONFIG_EVENTFD" # [P]
 		ot-kernel_y_configopt "CONFIG_BLOCK" # [P] References block filesystems (e.g. ext4)
 
-		# Distro recommended, not verified through search
+	# Distro recommended, not verified through search
 		ot-kernel_unset_configopt "CONFIG_GRKERNSEC_PROC" # [EN]
 		warn_lowered_security "${pkg}"
 		#ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_HASH" # [EP] Disabled.  API not being used, but contains reference to AF_ALG.
 		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED_V2" # bug #652272 [EN] Misnomer option.  It should be CONFIG_SYSFS_DEFAULT_ENABLE_DEPRECATED.
 		_ot-kernel-pkgflags_disable_ide "${pkg}"
-		# These are auto enabled during `make olddefconfig` found in ot-kernel_src_configure_assisted
+	# These are auto enabled during `make olddefconfig` found in ot-kernel_src_configure_assisted
 		#ot-kernel_y_configopt "CONFIG_ANON_INODES" # [P] Selected by EPOLL, TIMERFD, SIGNALFD
 		#ot-kernel_y_configopt "CONFIG_FSNOTIFY" # [P] Selected by FANOTIFY
 		#ot-kernel_y_configopt "CONFIG_NLATTR" # [P] Selected by NET
@@ -9869,13 +9974,14 @@ einfo "LSMS:  ${lsm}"
 		# [W] - Found in wiki
 		# [N] - No reason given by ebuild/patch contributor.  These undocumented recommendations could lead to unintended consequences (i.e. bugs).
 
-		# Recommended by eclass packager
+	# Recommended by eclass packager
 		ot-kernel_y_configopt "CONFIG_SYSVIPC" # For msgctl
 		ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT" # [P] For #! scripts
 		ot-kernel_y_configopt "CONFIG_TMPFS" # [P] For /dev/shm, /run
 		ot-kernel_y_configopt "CONFIG_DEVPTS_FS" # For /dev/pts
+		ot-kernel_y_configopt "CONFIG_SYSCTL" # For sysctl.d/50-default.conf
 
-		# LDT referended in sys-apps/systemd
+	# LDT referended in sys-apps/systemd
 	fi
 }
 
