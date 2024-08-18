@@ -1,0 +1,10 @@
+--- a/llvm/tools/llvm-split/CMakeLists.txt.orig	2024-08-18 00:43:28.424934871 -0700
++++ b/llvm/tools/llvm-split/CMakeLists.txt	2024-08-18 01:21:52.103604655 -0700
+@@ -8,6 +8,7 @@ set(LLVM_LINK_COMPONENTS
+   CodeGen
+   Core
+   IRReader
++  TargetParser
+   MC
+   Support
+   Target
