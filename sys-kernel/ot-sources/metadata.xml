@@ -4060,11 +4060,6 @@ unset OT_KERNEL_PRIVATE_KEY
       1 - enable
       0 - disable (default)
 
-    SYSTEMD_OPTIONAL - Activate optional settings with unknown purpose.  These
-    settings are possibly applied to unbreak non CI configurations.
-      1 - enable (default)
-      0 - disable
-
     SYSTEMD_SIGNED_VERITY_IMAGES_SUPPORT - Support DM signed verity images.
       1 - enable
       0 - disable (default)
