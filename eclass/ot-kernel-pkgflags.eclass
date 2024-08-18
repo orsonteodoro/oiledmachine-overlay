@@ -9724,7 +9724,6 @@ ot-kernel-pkgflags_systemd() { # DONE
 			_ot-kernel_set_user_ns
 		fi
 
-	# Optional but recommended upstream
 		if [[ "${SYSTEMD_FEATURE_IPV6:-1}" == "1" ]] ; then
 		        ot-kernel_y_configopt "CONFIG_IPV6"
 		fi
