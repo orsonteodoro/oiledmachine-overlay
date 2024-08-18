@@ -3225,6 +3225,7 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 	if [[ "${DSS_DISK_ENCRYPTION}" == "cryptsetup" ]] ; then
 ewarn "Detected DSS_DISK_ENCRYPTION=\"cryptsetup\".  Using default settings and industry standard ciphers only."
 		ot-kernel_y_configopt "CONFIG_MODULES"
+		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_MD"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
 		ot-kernel_y_configopt "CONFIG_DM_CRYPT"
@@ -3311,6 +3312,7 @@ eerror
 			die
 		fi
 		ot-kernel_y_configopt "CONFIG_MODULES"
+		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_MD"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
 		ot-kernel_y_configopt "CONFIG_DM_CRYPT"
@@ -3429,8 +3431,6 @@ ewarn "AEAD cryptsetup support is experimental"
 		fi
 
 		if [[ "${CRYPTSETUP_VERITY}" == "1" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
-			ot-kernel_y_configopt "CONFIG_MD"
-			ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
 			ot-kernel_y_configopt "CONFIG_DM_VERITY"
 			ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG"
 			if ver_test "${KV_MAJOR_MINOR}" -ge "6.11" ; then
