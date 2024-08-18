@@ -9750,45 +9750,9 @@ ot-kernel-pkgflags_systemd() { # DONE
 			ot-kernel_y_configopt "CONFIG_NET_SCHED"
 		fi
 
-		local qdisc="${SYSTEMD_FEATURE_QDISC:-custom}"
-		if [[ "${qdisc}" == "codel" ]] ; then
+	# For fq-codel, see
 	# See also https://github.com/systemd/systemd/blob/main/sysctl.d/50-default.conf#L48
 	# See issue #7744, bug #642192, commit 755fdff
-			ot-kernel_y_configopt "CONFIG_NET_SCHED"
-			ot-kernel_y_configopt "CONFIG_NET_SCH_FQ_CODEL"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_CODEL"
-			ot-kernel_y_configopt "CONFIG_DEFAULT_FQ_CODEL"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ_PIE"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_SFQ"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_PFIFO_FAST"
-		elif [[ "${qdisc}" == "disable" ]] ; then
-			ot-kernel_unset_configopt "CONFIG_NET_SCHED"
-			ot-kernel_unset_configopt "CONFIG_NET_SCH_FQ"
-			ot-kernel_unset_configopt "CONFIG_NET_SCH_CODEL"
-			ot-kernel_unset_configopt "CONFIG_NET_SCH_FQ_CODEL"
-			ot-kernel_unset_configopt "CONFIG_NET_SCH_FQ_PIE"
-			ot-kernel_unset_configopt "CONFIG_NET_SCH_SFQ"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_CODEL"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ_CODEL"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ_PIE"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_SFQ"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_PFIFO_FAST"
-		elif [[ "${qdisc}" == "pfifo-fast" ]] ; then
-			ot-kernel_y_configopt "CONFIG_NET_SCHED"
-			ot-kernel_unset_configopt "CONFIG_NET_SCH_FQ"
-			ot-kernel_unset_configopt "CONFIG_NET_SCH_CODEL"
-			ot-kernel_unset_configopt "CONFIG_NET_SCH_FQ_CODEL"
-			ot-kernel_unset_configopt "CONFIG_NET_SCH_FQ_PIE"
-			ot-kernel_unset_configopt "CONFIG_NET_SCH_SFQ"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_CODEL"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ_CODEL"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_FQ_PIE"
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_SFQ"
-			ot-kernel_y_configopt "CONFIG_DEFAULT_PFIFO_FAST"
-		fi
 
 		if [[ "${SYSTEMD_FEATURE_AUTOFS:-0}" == "1" ]] ; then
 			if ver_test "${KV_MAJOR_MINOR}" -ge "4.18" ; then

@@ -2839,15 +2839,6 @@ unset OT_KERNEL_PRIVATE_KEY
       OT_KERNEL_NET_QOS_SCHEDULERS="fq pfifo_fast"
       OT_KERNEL_NET_QOS_SCHEDULERS="disable"
 
-      Use SYSTEMD_FEATURE_QDISC=codel and OT_KERNEL_NET_QOS_SCHEDULERS=custom for codel.
-      Use SYSTEMD_FEATURE_QDISC=custom and OT_KERNEL_NET_QOS_SCHEDULERS="htb" for htb.
-      Use SYSTEMD_FEATURE_QDISC=disable and OT_KERNEL_NET_QOS_SCHEDULERS=disable to disable QoS
-      Use SYSTEMD_FEATURE_QDISC=custom and OT_KERNEL_NET_QOS_SCHEDULERS=pfifo-fast for pfifo-fast.
-      Use SYSTEMD_FEATURE_QDISC=pfifo-fast and OT_KERNEL_NET_QOS_SCHEDULERS=custom for pfifo-fast.
-
-    See also:
-
-      SYSTEMD_FEATURE_QDISC
 
 
     OT_KERNEL_REISUB - allow the use of REISUB, the equivalent to Ctrl+Alt+Del.  It allows access to
@@ -3991,23 +3982,7 @@ unset OT_KERNEL_PRIVATE_KEY
       1 - enable
       0 - disable (default)
 
-    SYSTEMD_FEATURE_QDISC - Add/remove the Codel QoS discipline to avoid bufferbloat
-    since systemd uses it as the default QoS discipline.
-      codel      - adds codel so that systemd can switch to it as the default to combat bufferbloat
-      disable    - revert to QoS disabled (the vanilla kernel default)
-      pfifo-fast - revert to the the alternative vanilla kernel default with QoS enabled in addition remove the codel option
-      custom     - don't change anything
-    See https://github.com/systemd/systemd/blob/v256/src/network/tc/qdisc.h#L12
-    and fill out OT_KERNEL_NET_QOS_SCHEDULERS instead for QoS support in addition
-    check out the systemd.network man page for additional configuration.
-
-    Examples:
-
-      Use SYSTEMD_FEATURE_QDISC=codel and OT_KERNEL_NET_QOS_SCHEDULERS=custom for codel.
-      Use SYSTEMD_FEATURE_QDISC=custom and OT_KERNEL_NET_QOS_SCHEDULERS="htb" for htb.
-      Use SYSTEMD_FEATURE_QDISC=disable and OT_KERNEL_NET_QOS_SCHEDULERS=disable to disable QoS
-      Use SYSTEMD_FEATURE_QDISC=custom and OT_KERNEL_NET_QOS_SCHEDULERS=pfifo-fast for pfifo-fast.
-      Use SYSTEMD_FEATURE_QDISC=pfifo-fast and OT_KERNEL_NET_QOS_SCHEDULERS=custom for pfifo-fast.
+    For QoS Codel for systemd, use OT_KERNEL_NET_QOS_SCHEDULERS instead.
 
     SYSTEMD_FEATURE_CPUSHARES - Enable CPUShares= support
       1 - enable
