@@ -2829,8 +2829,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Notable values:
 
-      pfifo-fast - the alternative kernel default when QoS is enabled
-      codel      - the systemd default to combat bufferbloat
+      pfifo_fast - the alternative kernel default when QoS is enabled
+      fq_codel   - the systemd default to combat bufferbloat
       disable    - Disable QoS (the vanilla kernel default)
       custom     - Do not make changes.
 
@@ -2838,6 +2838,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
       OT_KERNEL_NET_QOS_SCHEDULERS="fq pfifo_fast"
       OT_KERNEL_NET_QOS_SCHEDULERS="disable"
+      OT_KERNEL_NET_QOS_SCHEDULERS="fq_codel"
 
 
 
