@@ -9792,11 +9792,14 @@ ot-kernel-pkgflags_systemd() { # DONE
 	# We don't auto enable these security options because these are not
 	# mainstream features and it would be difficult to debug boot failure
 	# for new users.
-		if [[ "${SYSTEMD_SIGNED_VERITY_IMAGES_SUPPORT:-0}" == "1" ]] ; then
+	# See commit a79b6dc for use scenario.
+		if [[ "${SYSTEMD_FEATURE_SIGNED_DM_VERITY:-0}" == "1" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 			ot-kernel_y_configopt "CONFIG_DM_VERITY"
 			ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG"
-			ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_SECONDARY_KEYRING"
-			ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_PLATFORM_KEYRING"
+			if ver_test "${KV_MAJOR_MINOR}" -ge "6.11" ; then
+				ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_SECONDARY_KEYRING"
+				ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_PLATFORM_KEYRING"
+			fi
 
 			ot-kernel_y_configopt "CONFIG_INTEGRITY_SIGNATURE"
 			ot-kernel_y_configopt "CONFIG_INTEGRITY_ASYMMETRIC_KEYS"

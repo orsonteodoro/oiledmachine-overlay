@@ -3976,7 +3976,7 @@ unset OT_KERNEL_PRIVATE_KEY
     auto will judge based on threads per core (TPC) inspection.
     Use manual selection when porting to other machines.
 
-    SYSTEMD_CONTAINER - Apply fix for systemd in a container:
+    SYSTEMD_CONTAINER - Apply fix for systemd in a container.
       1 - apply fix for systemd used in a container
       0 - don't apply fix for systemd used in a container (default)
 
@@ -3992,6 +3992,10 @@ unset OT_KERNEL_PRIVATE_KEY
       0 - disable (default)
 
     SYSTEMD_FEATURE_CPUQUOTA - Enable CPUQuota= support
+      1 - enable
+      0 - disable (default)
+
+    SYSTEMD_FEATURE_SIGNED_DM_VERITY - Support for signed dm-verity.
       1 - enable
       0 - disable (default)
 
@@ -4021,12 +4025,12 @@ unset OT_KERNEL_PRIVATE_KEY
       1 - enable
       0 - disable (default)
 
-    SYSTEMD_FEATURE_SCSI - Support SCSI serial number retrival
+    SYSTEMD_FEATURE_SCSI - Support SCSI serial number retrieval
       1 - enable
       0 - disable (default)
 
     SYSTEMD_FEATURE_SMBIOS - Allow the importation of credentials/parameters
-    through VM SMBIOS.
+    through mostly virtual machine (VM) SMBIOSes.
       1 - enable
       0 - disable (default)
 
@@ -4034,10 +4038,6 @@ unset OT_KERNEL_PRIVATE_KEY
     [TrafficControlQueueingDiscipline] section and Parent=,
     NetworkEmulatorDelaySec=, NetworkEmulatorDelayJitterSec=,
     NetworkEmulatorPacketLimit=, NetworkEmulatorLossRate=
-      1 - enable
-      0 - disable (default)
-
-    SYSTEMD_SIGNED_VERITY_IMAGES_SUPPORT - Support DM signed verity images.
       1 - enable
       0 - disable (default)
 
