@@ -1059,8 +1059,8 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       5.15: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.1: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.6: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
-      6.7: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
-      6.8: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
+      6.10: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
+      6.11: cfs, cfs-throughput, cfs-interactive, cfs-autogroup
 
       The reason why for this flexibility is to allow for multiple
       configurations that are not mutual exclusive, meaning you can use the rt
