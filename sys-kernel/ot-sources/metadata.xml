@@ -3984,7 +3984,8 @@ unset OT_KERNEL_PRIVATE_KEY
       1 - enable
       0 - disable (default)
 
-    For QoS Codel for systemd, use OT_KERNEL_NET_QOS_SCHEDULERS instead.
+    To use FQ-CoDel as a QoS queue discipline for systemd's default setting and
+    mitigation against bufferbloat, use OT_KERNEL_NET_QOS_SCHEDULERS instead.
 
     SYSTEMD_FEATURE_CPUSHARES - Enable CPUShares= support
       1 - enable
