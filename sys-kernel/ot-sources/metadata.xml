@@ -3987,6 +3987,10 @@ unset OT_KERNEL_PRIVATE_KEY
       1 - apply fix for systemd used in a container
       0 - don't apply fix for systemd used in a container
 
+    SYSTEMD_FEATURE_AUTOFS - Support access/insertion based automounting.
+      1 - enable
+      0 - disable (default)
+
     SYSTEMD_FEATURE_QDISC - Adds the Codel QoS discipline to avoid bufferbloat
     since systemd uses it as the default QoS discipline.
       codel      - adds codel so that systemd can switch to it as the default to combat bufferbloat

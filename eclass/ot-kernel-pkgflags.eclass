@@ -9790,7 +9790,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 			ot-kernel_y_configopt "CONFIG_DEFAULT_PFIFO_FAST"
 		fi
 
-		if [[ "${SYSTEMD_OPTIONAL:-1}" == "1" ]] ; then
+		if [[ "${SYSTEMD_FEATURE_AUTOFS:-0}" == "1" ]] ; then
 			if ver_test "${KV_MAJOR_MINOR}" -ge "4.18" ; then
 				ot-kernel_y_configopt "CONFIG_AUTOFS_FS"
 			else
