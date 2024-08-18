@@ -4,10 +4,6 @@
 
 EAPI=8
 
-# FIXME:
-# ld.bfd: lib/Target/AMDGPU/Disassembler/CMakeFiles/LLVMAMDGPUDisassembler.dir/CodeObject.cpp.o: in function `llvm::object::defaultWarningHandler(llvm::Twine const&)':
-#CodeObject.cpp:(.text._ZN4llvm6objectL21defaultWarningHandlerERKNS_5TwineE+0x18): undefined reference to `llvm::object::object_category()'
-
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 LLVM_SLOT=13
 LLVM_TARGETS=(
@@ -313,5 +309,5 @@ pkg_postinst() {
 	uopts_pkg_postinst
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
