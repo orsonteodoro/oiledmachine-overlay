@@ -3286,6 +3286,10 @@ eerror
 		die
 	fi
 
+	if [[ -n "${SYSTEMD_FEATURE_TRAFFIC_CONTROL}" ]] ; then
+eerror "SYSTEMD_FEATURE_TRAFFIC_CONTROL has removed."
+	fi
+
 	if [[ -n "${SYSTEMD_FEATURE_SIGNED_DM_VERITY}" ]] ; then
 eerror "SYSTEMD_FEATURE_SIGNED_DM_VERITY has been renamed to CRYPTSETUP_VERITY"
 	fi

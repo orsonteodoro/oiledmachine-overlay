@@ -9774,10 +9774,6 @@ ot-kernel-pkgflags_systemd() { # DONE
 			fi
 		fi
 
-		if [[ "${SYSTEMD_FEATURE_TRAFFIC_CONTROL:-0}" == "1" ]] ; then
-			ot-kernel_y_configopt "CONFIG_NET_SCHED"
-		fi
-
 	# For fq-codel, see
 	# See also https://github.com/systemd/systemd/blob/main/sysctl.d/50-default.conf#L48
 	# See issue #7744, bug #642192, commit 755fdff

@@ -3990,6 +3990,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
     To use FQ-CoDel as a QoS queue discipline for systemd's default setting and
     mitigation against bufferbloat, use OT_KERNEL_NET_QOS_SCHEDULERS instead.
+    Other queue discipline can be added through the same variable to enable
+    sections supported in the systemd.network man page.
 
     SYSTEMD_FEATURE_CPUSHARES - Enable CPUShares= support
       1 - enable
@@ -4033,13 +4035,6 @@ unset OT_KERNEL_PRIVATE_KEY
 
     SYSTEMD_FEATURE_SMBIOS - Allow the importation of credentials/parameters
     through mostly virtual machine (VM) SMBIOSes.
-      1 - enable
-      0 - disable (default)
-
-    SYSTEMD_FEATURE_TRAFFIC_CONTROL - Support the
-    [TrafficControlQueueingDiscipline] section and Parent=,
-    NetworkEmulatorDelaySec=, NetworkEmulatorDelayJitterSec=,
-    NetworkEmulatorPacketLimit=, NetworkEmulatorLossRate=
       1 - enable
       0 - disable (default)
 
