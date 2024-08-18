@@ -3995,10 +3995,6 @@ unset OT_KERNEL_PRIVATE_KEY
       1 - enable
       0 - disable (default)
 
-    SYSTEMD_FEATURE_SIGNED_DM_VERITY - Support for signed dm-verity.
-      1 - enable
-      0 - disable (default)
-
     SYSTEMD_FEATURE_IPV6 - Support IPv6
       1 - enable
       0 - disable (default)
@@ -4026,6 +4022,10 @@ unset OT_KERNEL_PRIVATE_KEY
       0 - disable (default)
 
     SYSTEMD_FEATURE_SCSI - Support SCSI serial number retrieval
+      1 - enable
+      0 - disable (default)
+
+    SYSTEMD_FEATURE_SIGNED_DM_VERITY - Support for signed dm-verity.
       1 - enable
       0 - disable (default)
 
