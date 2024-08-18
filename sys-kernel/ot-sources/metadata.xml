@@ -3998,7 +3998,8 @@ unset OT_KERNEL_PRIVATE_KEY
       pfifo-fast - revert to the the alternative vanilla kernel default with QoS enabled in addition remove the codel option
       custom     - don't change anything
     See https://github.com/systemd/systemd/blob/v256/src/network/tc/qdisc.h#L12
-    and fill out OT_KERNEL_NET_QOS_SCHEDULERS instead.
+    and fill out OT_KERNEL_NET_QOS_SCHEDULERS instead for QoS support in addition the
+    systemd.network man page.
 
     Examples:
 
@@ -4032,11 +4033,11 @@ unset OT_KERNEL_PRIVATE_KEY
       0 - disable (default for realtime)
     Note:
 
-    SYSTEMD_FEATURE_PRIVATENETWORK - Enable PrivateNetwork=
+    SYSTEMD_FEATURE_PRIVATENETWORK - Enable PrivateNetwork= support
       1 - enable
       0 - disable (default)
 
-    SYSTEMD_FEATURE_PRIVATEUSERS - Enable PrivateUsers= 
+    SYSTEMD_FEATURE_PRIVATEUSERS - Enable PrivateUsers= support
       1 - enable
       0 - disable (default)
 
