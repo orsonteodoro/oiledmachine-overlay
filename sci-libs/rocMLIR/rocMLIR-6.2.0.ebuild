@@ -3,7 +3,8 @@
 
 EAPI=8
 
-LLVM_SLOT=15
+CMAKE_MAKEFILE_GENERATOR="ninja"
+LLVM_SLOT=18
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -41,6 +42,7 @@ LICENSE="
 	ISC
 	LGPL-3+
 	MIT
+	NCSA-AMD
 	rc
 	UoI-NCSA
 "
@@ -57,6 +59,7 @@ LICENSE="
 # GPL-2+-with-autoconf-exception - external/llvm-project/llvm/cmake/config.guess
 # ISC - external/llvm-project/lldb/third_party/Python/module/pexpect-4.6/LICENSE
 # LGPL-3+ - external/llvm-project/polly/www/video-js/video.js
+# NCSA-AMD - external/llvm-project/amd/device-libs/LICENSE.TXT
 # The distro Apache-2.0 license template does not have all rights reserved
 # The distro MIT license template does not have all rights reserved
 SLOT="${ROCM_SLOT}/${PV}"
@@ -67,7 +70,16 @@ RDEPEND="
 	>=dev-python/pybind11-2.8[${PYTHON_USEDEP}]
 	media-libs/vulkan-loader
 	virtual/libc
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	|| (
+		(
+			~dev-util/hip-${PV}:${ROCM_SLOT}
+			~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
+		)
+		(
+			>=dev-util/hip-${PV}:${ROCM_SLOT}
+			>=sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
+		)
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -82,8 +94,8 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.4.3-fix-so-suffix.patch"
-	"${FILESDIR}/${PN}-5.2.3-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-5.5.0-fix-so-suffix.patch"
+	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
 )
 
 ccmake() {
@@ -108,10 +120,6 @@ pkg_setup() {
 
 src_prepare() {
 ewarn "Patching may take a long time.  Please wait..."
-	sed -i -e "s|FATAL_ERROR|WARNING|g" \
-		"external/llvm-project/llvm/cmake/modules/CheckCompilerVersion.cmake" \
-		"external/llvm-project/llvm/cmake/modules/CheckAtomic.cmake" \
-		|| die
 	sed -i -e "s|LLVM_VERSION_SUFFIX git|LLVM_VERSION_SUFFIX roc|g" \
 		"external/llvm-project/llvm/CMakeLists.txt" \
 		|| die
@@ -180,7 +188,6 @@ build_rocmlir() {
 
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
-		-DHIP_ROOT_DIR="${ESYSROOT}/${EROCM_PATH}"
 		-DHIP_RUNTIME="rocclr"
 
 		# From additional settings in HEAD
@@ -198,13 +205,8 @@ build_rocmlir() {
 		-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/${EROCM_LLVM_PATH}/llvm/include"
 		-DLLVM_LIBDIR_SUFFIX="${libdir_suffix}"
 
-		-DCMAKE_THREAD_LIBS_INIT="-lpthread"
-		-DCMAKE_HAVE_THREADS_LIBRARY=1
-		-DCMAKE_USE_PTHREADS_INIT=1
-		-DCMAKE_USE_WIN32_THREADS_INIT=0
-		-DTHREADS_PREFER_PTHREAD_FLAG=ON
-
-		-DHAVE_SYSEXITS_H=1
+		-DLLVM_CMAKE_DIR="${WORKDIR}/${PN}-rocm-${PV}/external/llvm-project"
+		-DLIB_INSTALL_DIR="$(rocm_get_libdir)"
 	)
 
 	rocm_set_default_clang
@@ -254,6 +256,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
-# works
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
