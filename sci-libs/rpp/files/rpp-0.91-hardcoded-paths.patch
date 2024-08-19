@@ -1,6 +1,6 @@
 diff '--color=auto' -urp rpp-0.91.orig/CMakeLists.txt rpp-0.91/CMakeLists.txt
 --- rpp-0.91.orig/CMakeLists.txt	2021-09-27 11:28:04.000000000 -0700
-+++ rpp-0.91/CMakeLists.txt	2024-07-20 16:30:47.027383438 -0700
++++ rpp-0.91/CMakeLists.txt	2024-08-19 12:04:16.516037421 -0700
 @@ -28,7 +28,7 @@ find_program(DPKG_EXE dpkg)
  
  # ROCm Path
@@ -14,7 +14,7 @@ Only in rpp-0.91: CMakeLists.txt.orig
 Only in rpp-0.91: CMakeLists.txt.rej
 diff '--color=auto' -urp rpp-0.91.orig/cmake/ClangTidy.cmake rpp-0.91/cmake/ClangTidy.cmake
 --- rpp-0.91.orig/cmake/ClangTidy.cmake	2021-09-27 11:28:04.000000000 -0700
-+++ rpp-0.91/cmake/ClangTidy.cmake	2024-07-20 16:30:24.071775395 -0700
++++ rpp-0.91/cmake/ClangTidy.cmake	2024-08-19 12:03:56.900361399 -0700
 @@ -39,8 +39,8 @@ find_program(CLANG_TIDY_EXE
      PATH_SUFFIXES
          compiler/bin
@@ -28,7 +28,7 @@ diff '--color=auto' -urp rpp-0.91.orig/cmake/ClangTidy.cmake rpp-0.91/cmake/Clan
  function(find_clang_tidy_version VAR)
 diff '--color=auto' -urp rpp-0.91.orig/cmake/CppCheck.cmake rpp-0.91/cmake/CppCheck.cmake
 --- rpp-0.91.orig/cmake/CppCheck.cmake	2021-09-27 11:28:04.000000000 -0700
-+++ rpp-0.91/cmake/CppCheck.cmake	2024-07-20 16:30:24.071775395 -0700
++++ rpp-0.91/cmake/CppCheck.cmake	2024-08-19 12:03:56.904361334 -0700
 @@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
      NAMES 
          cppcheck
@@ -40,7 +40,7 @@ diff '--color=auto' -urp rpp-0.91.orig/cmake/CppCheck.cmake rpp-0.91/cmake/CppCh
  ProcessorCount(CPPCHECK_JOBS)
 diff '--color=auto' -urp rpp-0.91.orig/cmake/FindHIP.cmake rpp-0.91/cmake/FindHIP.cmake
 --- rpp-0.91.orig/cmake/FindHIP.cmake	2021-09-27 11:28:04.000000000 -0700
-+++ rpp-0.91/cmake/FindHIP.cmake	2024-07-20 16:30:24.071775395 -0700
++++ rpp-0.91/cmake/FindHIP.cmake	2024-08-19 12:03:56.904361334 -0700
 @@ -67,8 +67,8 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN)
              HIP_ROOT_DIR
              NAMES hipconfig
@@ -96,7 +96,7 @@ diff '--color=auto' -urp rpp-0.91.orig/cmake/FindHIP.cmake rpp-0.91/cmake/FindHI
      add_executable(${hip_target} ${_cmake_options} ${_generated_files} ${_sources})
 diff '--color=auto' -urp rpp-0.91.orig/cmake/FindOpenCL.cmake rpp-0.91/cmake/FindOpenCL.cmake
 --- rpp-0.91.orig/cmake/FindOpenCL.cmake	2021-09-27 11:28:04.000000000 -0700
-+++ rpp-0.91/cmake/FindOpenCL.cmake	2024-07-20 16:30:24.071775395 -0700
++++ rpp-0.91/cmake/FindOpenCL.cmake	2024-08-19 12:03:56.908361267 -0700
 @@ -1,12 +1,12 @@
  find_path(OPENCL_INCLUDE_DIRS
      NAMES OpenCL/cl.h CL/cl.h CL/cl.hpp
@@ -112,18 +112,28 @@ diff '--color=auto' -urp rpp-0.91.orig/cmake/FindOpenCL.cmake rpp-0.91/cmake/Fin
      /usr/include
      /usr/local/include
      /usr/local/cuda/include
-@@ -28,7 +28,7 @@ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
-         /usr/lib
+@@ -21,14 +21,14 @@ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+         HINTS
+         ${OPENCL_ROOT}/lib
+         $ENV{AMDAPPSDKROOT}/lib
+-        $ENV{CUDA_PATH}/lib
++        $ENV{CUDA_PATH}/lib64
+         DOC "OpenCL dynamic library path"
+         PATH_SUFFIXES x86_64 x64 x86_64/sdk
+         PATHS
+-        /usr/lib
++        /usr/lib64
          /usr/local/cuda/lib
-         /opt/cuda/lib
+-        /opt/cuda/lib
 -        /opt/rocm/opencl/lib
++        /opt/cuda/lib64
 +        /opt/rocm-@ROCM_VERSION@/opencl/lib
          )
  else( )
      find_library( OPENCL_LIBRARIES
 diff '--color=auto' -urp rpp-0.91.orig/src/modules/CMakeLists.txt rpp-0.91/src/modules/CMakeLists.txt
 --- rpp-0.91.orig/src/modules/CMakeLists.txt	2021-09-27 11:28:04.000000000 -0700
-+++ rpp-0.91/src/modules/CMakeLists.txt	2024-07-20 16:30:24.071775395 -0700
++++ rpp-0.91/src/modules/CMakeLists.txt	2024-08-19 12:03:56.908361267 -0700
 @@ -81,7 +81,7 @@ if( "${BACKEND}" STREQUAL "HIP")
      add_definitions(-DRPP_BACKEND_HIP)
  
@@ -151,7 +161,7 @@ diff '--color=auto' -urp rpp-0.91.orig/src/modules/CMakeLists.txt rpp-0.91/src/m
 +)
 diff '--color=auto' -urp rpp-0.91.orig/src/modules/cl/hip_build_utils.cpp rpp-0.91/src/modules/cl/hip_build_utils.cpp
 --- rpp-0.91.orig/src/modules/cl/hip_build_utils.cpp	2021-09-27 11:28:04.000000000 -0700
-+++ rpp-0.91/src/modules/cl/hip_build_utils.cpp	2024-07-20 16:30:24.075775326 -0700
++++ rpp-0.91/src/modules/cl/hip_build_utils.cpp	2024-08-19 12:03:56.908361267 -0700
 @@ -62,7 +62,7 @@ boost::filesystem::path HipBuild(boost::
      auto bin_file = tmp_dir->path / (filename + ".o");
      // compile with hcc
@@ -163,7 +173,7 @@ diff '--color=auto' -urp rpp-0.91.orig/src/modules/cl/hip_build_utils.cpp rpp-0.
          RPP_THROW(filename + " failed to compile");
 diff '--color=auto' -urp rpp-0.91.orig/src/modules/hip/hip_build_utils.cpp rpp-0.91/src/modules/hip/hip_build_utils.cpp
 --- rpp-0.91.orig/src/modules/hip/hip_build_utils.cpp	2021-09-27 11:28:04.000000000 -0700
-+++ rpp-0.91/src/modules/hip/hip_build_utils.cpp	2024-07-20 16:30:24.075775326 -0700
++++ rpp-0.91/src/modules/hip/hip_build_utils.cpp	2024-08-19 12:03:56.908361267 -0700
 @@ -62,7 +62,7 @@ boost::filesystem::path HipBuild(boost::
      auto bin_file = tmp_dir->path / (filename + ".o");
      // compile with hcc
@@ -173,9 +183,40 @@ diff '--color=auto' -urp rpp-0.91.orig/src/modules/hip/hip_build_utils.cpp rpp-0
                       params + filename + " -o " + bin_file.string());
      if(!boost::filesystem::exists(bin_file))
          RPP_THROW(filename + " failed to compile");
+diff '--color=auto' -urp rpp-0.91.orig/utilities/rpp-performancetests/HIP/CMakeLists.txt rpp-0.91/utilities/rpp-performancetests/HIP/CMakeLists.txt
+--- rpp-0.91.orig/utilities/rpp-performancetests/HIP/CMakeLists.txt	2021-09-27 11:28:04.000000000 -0700
++++ rpp-0.91/utilities/rpp-performancetests/HIP/CMakeLists.txt	2024-08-19 12:05:14.787074904 -0700
+@@ -4,19 +4,19 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_
+ find_package(OpenCV REQUIRED )
+ 
+ include_directories (${OpenCV_INCLUDE_DIRS})
+-include_directories (/opt/rocm/opencl/include/)
+-include_directories (/opt/rocm/include)
+-include_directories (/opt/rocm/rpp/include)
+-link_directories    (/opt/rocm/lib)
+-link_directories    (/opt/rocm/rpp/lib/)
++include_directories (/opt/rocm-@ROCM_VERSION@/opencl/include/)
++include_directories (/opt/rocm-@ROCM_VERSION@/include)
++include_directories (/opt/rocm-@ROCM_VERSION@/rpp/include)
++link_directories    (/opt/rocm-@ROCM_VERSION@/lib)
++link_directories    (/opt/rocm-@ROCM_VERSION@/rpp/lib/)
+ 
+ add_executable(BatchPD_hip BatchPD_hip.cpp)
+ add_executable(Single_hip Single_hip.cpp)
+-set(COMPILER_FOR_HIP /opt/rocm/bin/hipcc)
++set(COMPILER_FOR_HIP /opt/rocm-@ROCM_VERSION@/bin/hipcc)
+ 
+ set(CMAKE_CXX_COMPILER ${COMPILER_FOR_HIP})
+ 
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHIP_COMPILE=1 -DRPP_BACKEND_HIP=1 -fopenmp -std=c++14") 
+ 
+-target_link_libraries(BatchPD_hip ${OpenCV_LIBS} -I/opt/rocm/rpp/include/ -I/opt/rocm/opencl/include/ -I/opt/rocm/include/ -L/opt/rocm/rpp/lib/ -lamd_rpp -lboost_filesystem -lboost_system -L/opt/rocm/hip/lib/ -lamdhip64)
+-target_link_libraries(Single_hip ${OpenCV_LIBS} -I/opt/rocm/rpp/include/ -I/opt/rocm/opencl/include/ -I/opt/rocm/include/ -L/opt/rocm/rpp/lib/ -lamd_rpp -lboost_filesystem -lboost_system -L/opt/rocm/hip/lib/ -lamdhip64)
++target_link_libraries(BatchPD_hip ${OpenCV_LIBS} -I/opt/rocm-@ROCM_VERSION@/rpp/include/ -I/opt/rocm-@ROCM_VERSION@/opencl/include/ -I/opt/rocm-@ROCM_VERSION@/include/ -L/opt/rocm-@ROCM_VERSION@/rpp/lib/ -lamd_rpp -lboost_filesystem -lboost_system -L/opt/rocm-@ROCM_VERSION@/hip/lib/ -lamdhip64)
++target_link_libraries(Single_hip ${OpenCV_LIBS} -I/opt/rocm-@ROCM_VERSION@/rpp/include/ -I/opt/rocm-@ROCM_VERSION@/opencl/include/ -I/opt/rocm-@ROCM_VERSION@/include/ -L/opt/rocm-@ROCM_VERSION@/rpp/lib/ -lamd_rpp -lboost_filesystem -lboost_system -L/opt/rocm-@ROCM_VERSION@/hip/lib/ -lamdhip64)
 diff '--color=auto' -urp rpp-0.91.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt rpp-0.91/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt
 --- rpp-0.91.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2021-09-27 11:28:04.000000000 -0700
-+++ rpp-0.91/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2024-07-20 16:30:24.075775326 -0700
++++ rpp-0.91/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2024-08-19 12:03:56.912361202 -0700
 @@ -1,7 +1,7 @@
  cmake_minimum_required(VERSION 3.0)
  project(Rpp_test)
@@ -194,7 +235,7 @@ diff '--color=auto' -urp rpp-0.91.orig/utilities/rpp-performancetests/HIP_NEW/CM
 +endif()
 diff '--color=auto' -urp rpp-0.91.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt rpp-0.91/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt
 --- rpp-0.91.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2021-09-27 11:28:04.000000000 -0700
-+++ rpp-0.91/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2024-07-20 16:30:24.075775326 -0700
++++ rpp-0.91/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2024-08-19 12:03:56.912361202 -0700
 @@ -1,7 +1,7 @@
  cmake_minimum_required(VERSION 3.0)
  project(Rpp_test)
@@ -211,9 +252,40 @@ diff '--color=auto' -urp rpp-0.91.orig/utilities/rpp-performancetests/HOST_NEW/C
 -endif()
 \ No newline at end of file
 +endif()
+diff '--color=auto' -urp rpp-0.91.orig/utilities/rpp-performancetests/OCL/CMakeLists.txt rpp-0.91/utilities/rpp-performancetests/OCL/CMakeLists.txt
+--- rpp-0.91.orig/utilities/rpp-performancetests/OCL/CMakeLists.txt	2021-09-27 11:28:04.000000000 -0700
++++ rpp-0.91/utilities/rpp-performancetests/OCL/CMakeLists.txt	2024-08-19 12:05:44.642581698 -0700
+@@ -4,19 +4,19 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_
+ find_package(OpenCV REQUIRED )
+ 
+ include_directories (${OpenCV_INCLUDE_DIRS})
+-include_directories (/opt/rocm/opencl/include/)
+-include_directories (/opt/rocm/include)
+-include_directories (/opt/rocm/rpp/include)
+-link_directories    (/opt/rocm/lib)
+-link_directories    (/opt/rocm/rpp/lib/)
++include_directories (/opt/rocm-@ROCM_VERSION@/opencl/include/)
++include_directories (/opt/rocm-@ROCM_VERSION@/include)
++include_directories (/opt/rocm-@ROCM_VERSION@/rpp/include)
++link_directories    (/opt/rocm-@ROCM_VERSION@/lib)
++link_directories    (/opt/rocm-@ROCM_VERSION@/rpp/lib/)
+ 
+ add_executable(BatchPD_ocl BatchPD_ocl.cpp)
+ add_executable(Single_ocl Single_ocl.cpp)
+-set(COMPILER_FOR_HIP /opt/rocm/bin/hipcc)
++set(COMPILER_FOR_HIP /opt/rocm-@ROCM_VERSION@/bin/hipcc)
+ 
+ set(CMAKE_CXX_COMPILER ${COMPILER_FOR_OCL})
+ 
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DOCL_COMPILE=1 -DRPP_BACKEND_OPENCL=1 ")
+ 
+-target_link_libraries(BatchPD_ocl ${OpenCV_LIBS} -I/opt/rocm/rpp/include -L/opt/rocm/rpp/lib/ -lamd_rpp -L/opt/rocm/opencl/lib/x86_64/ -lOpenCL pthread  -lboost_filesystem -lboost_system )
+-target_link_libraries(Single_ocl ${OpenCV_LIBS} -I/opt/rocm/rpp/include -L/opt/rocm/rpp/lib/ -lamd_rpp -L/opt/rocm/opencl/lib/x86_64/ -lOpenCL pthread  -lboost_filesystem -lboost_system )
++target_link_libraries(BatchPD_ocl ${OpenCV_LIBS} -I/opt/rocm-@ROCM_VERSION@/rpp/include -L/opt/rocm-@ROCM_VERSION@/rpp/lib/ -lamd_rpp -L/opt/rocm-@ROCM_VERSION@/opencl/lib/x86_64/ -lOpenCL pthread  -lboost_filesystem -lboost_system )
++target_link_libraries(Single_ocl ${OpenCV_LIBS} -I/opt/rocm-@ROCM_VERSION@/rpp/include -L/opt/rocm-@ROCM_VERSION@/rpp/lib/ -lamd_rpp -L/opt/rocm-@ROCM_VERSION@/opencl/lib/x86_64/ -lOpenCL pthread  -lboost_filesystem -lboost_system )
 diff '--color=auto' -urp rpp-0.91.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt rpp-0.91/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt
 --- rpp-0.91.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2021-09-27 11:28:04.000000000 -0700
-+++ rpp-0.91/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2024-07-20 16:30:24.075775326 -0700
++++ rpp-0.91/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2024-08-19 12:03:56.912361202 -0700
 @@ -1,7 +1,7 @@
  cmake_minimum_required(VERSION 3.0)
  project(Rpp_test)
@@ -232,7 +304,7 @@ diff '--color=auto' -urp rpp-0.91.orig/utilities/rpp-performancetests/OCL_NEW/CM
 +endif()
 diff '--color=auto' -urp rpp-0.91.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt rpp-0.91/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt
 --- rpp-0.91.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2021-09-27 11:28:04.000000000 -0700
-+++ rpp-0.91/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2024-07-20 16:30:24.075775326 -0700
++++ rpp-0.91/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2024-08-19 12:03:56.912361202 -0700
 @@ -1,7 +1,7 @@
  cmake_minimum_required(VERSION 3.0)
  project(Rpp_test)
@@ -251,7 +323,7 @@ diff '--color=auto' -urp rpp-0.91.orig/utilities/rpp-unittests/HIP_NEW/CMakeList
 +endif()
 diff '--color=auto' -urp rpp-0.91.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt rpp-0.91/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt
 --- rpp-0.91.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2021-09-27 11:28:04.000000000 -0700
-+++ rpp-0.91/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2024-07-20 16:30:24.075775326 -0700
++++ rpp-0.91/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2024-08-19 12:03:56.912361202 -0700
 @@ -1,7 +1,7 @@
  cmake_minimum_required(VERSION 3.0)
  project(Rpp_test)
@@ -270,7 +342,7 @@ diff '--color=auto' -urp rpp-0.91.orig/utilities/rpp-unittests/HOST_NEW/CMakeLis
 +endif()
 diff '--color=auto' -urp rpp-0.91.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt rpp-0.91/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt
 --- rpp-0.91.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2021-09-27 11:28:04.000000000 -0700
-+++ rpp-0.91/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2024-07-20 16:30:24.075775326 -0700
++++ rpp-0.91/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2024-08-19 12:03:56.912361202 -0700
 @@ -1,7 +1,7 @@
  cmake_minimum_required(VERSION 3.0)
  project(Rpp_test)

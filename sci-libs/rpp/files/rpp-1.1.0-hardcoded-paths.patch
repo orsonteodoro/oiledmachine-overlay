@@ -1,6 +1,6 @@
 diff '--color=auto' -urp rpp-1.1.0.orig/CMakeLists.txt rpp-1.1.0/CMakeLists.txt
 --- rpp-1.1.0.orig/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
-+++ rpp-1.1.0/CMakeLists.txt	2024-07-09 15:26:24.477143337 -0700
++++ rpp-1.1.0/CMakeLists.txt	2024-08-19 11:36:16.511459573 -0700
 @@ -39,7 +39,7 @@ find_program(RPMBUILD_EXE rpmbuild)
  find_program(DPKG_EXE dpkg)
  
@@ -12,7 +12,7 @@ diff '--color=auto' -urp rpp-1.1.0.orig/CMakeLists.txt rpp-1.1.0/CMakeLists.txt
    set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "RPP default ROCm installation path" FORCE)
 diff '--color=auto' -urp rpp-1.1.0.orig/cmake/CppCheck.cmake rpp-1.1.0/cmake/CppCheck.cmake
 --- rpp-1.1.0.orig/cmake/CppCheck.cmake	2023-05-02 14:13:17.000000000 -0700
-+++ rpp-1.1.0/cmake/CppCheck.cmake	2024-07-09 15:26:24.477143337 -0700
++++ rpp-1.1.0/cmake/CppCheck.cmake	2024-08-19 11:36:16.515459509 -0700
 @@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
      NAMES 
          cppcheck
@@ -22,9 +22,38 @@ diff '--color=auto' -urp rpp-1.1.0.orig/cmake/CppCheck.cmake rpp-1.1.0/cmake/Cpp
  )
  
  ProcessorCount(CPPCHECK_JOBS)
+diff '--color=auto' -urp rpp-1.1.0.orig/cmake/FindOpenCL.cmake rpp-1.1.0/cmake/FindOpenCL.cmake
+--- rpp-1.1.0.orig/cmake/FindOpenCL.cmake	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/cmake/FindOpenCL.cmake	2024-08-19 11:36:41.931048691 -0700
+@@ -62,15 +62,15 @@ else()
+             HINTS
+             $ENV{OPENCL_ROOT}/lib
+             $ENV{AMDAPPSDKROOT}/lib
+-            $ENV{CUDA_PATH}/lib
++            $ENV{CUDA_PATH}/lib64
+             $ENV{OCL_ROOT}/lib
+             DOC "OpenCL dynamic library path"
+             PATH_SUFFIXES x86_64 x64 x86_64/sdk
+             PATHS
+             ${ROCM_PATH}/lib/
+-            /usr/lib
++            /usr/lib64
+             /usr/local/cuda/lib
+-            /opt/cuda/lib
++            /opt/cuda/lib64
+         )
+     else( )
+         find_library( OPENCL_LIBRARIES
+@@ -140,4 +140,4 @@ else()
+     if( NOT OpenCL_FOUND )
+         message( "-- ${Yellow}NOTE: FindOpenCL failed to find -- OpenCL${ColourReset}" )
+     endif()
+-endif()
+\ No newline at end of file
++endif()
 diff '--color=auto' -urp rpp-1.1.0.orig/src/modules/cl/hip_build_utils.cpp rpp-1.1.0/src/modules/cl/hip_build_utils.cpp
 --- rpp-1.1.0.orig/src/modules/cl/hip_build_utils.cpp	2023-05-02 14:13:17.000000000 -0700
-+++ rpp-1.1.0/src/modules/cl/hip_build_utils.cpp	2024-07-09 15:26:24.477143337 -0700
++++ rpp-1.1.0/src/modules/cl/hip_build_utils.cpp	2024-08-19 11:36:16.515459509 -0700
 @@ -59,7 +59,7 @@ boost::filesystem::path HipBuild(boost::
      auto bin_file = tmp_dir->path / (filename + ".o");
      // compile with hcc
@@ -36,7 +65,7 @@ diff '--color=auto' -urp rpp-1.1.0.orig/src/modules/cl/hip_build_utils.cpp rpp-1
          RPP_THROW(filename + " failed to compile");
 diff '--color=auto' -urp rpp-1.1.0.orig/src/modules/hip/hip_build_utils.cpp rpp-1.1.0/src/modules/hip/hip_build_utils.cpp
 --- rpp-1.1.0.orig/src/modules/hip/hip_build_utils.cpp	2023-05-02 14:13:17.000000000 -0700
-+++ rpp-1.1.0/src/modules/hip/hip_build_utils.cpp	2024-07-09 15:26:24.477143337 -0700
++++ rpp-1.1.0/src/modules/hip/hip_build_utils.cpp	2024-08-19 11:36:16.515459509 -0700
 @@ -59,7 +59,7 @@ boost::filesystem::path HipBuild(boost::
      auto bin_file = tmp_dir->path / (filename + ".o");
      // compile with hcc
@@ -48,7 +77,7 @@ diff '--color=auto' -urp rpp-1.1.0.orig/src/modules/hip/hip_build_utils.cpp rpp-
          RPP_THROW(filename + " failed to compile");
 diff '--color=auto' -urp rpp-1.1.0.orig/utilities/examples/brightness/CMakeLists.txt rpp-1.1.0/utilities/examples/brightness/CMakeLists.txt
 --- rpp-1.1.0.orig/utilities/examples/brightness/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
-+++ rpp-1.1.0/utilities/examples/brightness/CMakeLists.txt	2024-07-09 15:27:23.880198530 -0700
++++ rpp-1.1.0/utilities/examples/brightness/CMakeLists.txt	2024-08-19 11:36:16.515459509 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(examples/brightness)
@@ -67,7 +96,7 @@ diff '--color=auto' -urp rpp-1.1.0.orig/utilities/examples/brightness/CMakeLists
 +endif()
 diff '--color=auto' -urp rpp-1.1.0.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt rpp-1.1.0/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt
 --- rpp-1.1.0.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
-+++ rpp-1.1.0/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2024-07-09 15:26:24.477143337 -0700
++++ rpp-1.1.0/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2024-08-19 11:36:16.519459444 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_performancetests/HIP_NEW)
@@ -84,10 +113,9 @@ diff '--color=auto' -urp rpp-1.1.0.orig/utilities/rpp-performancetests/HIP_NEW/C
 -endif()
 \ No newline at end of file
 +endif()
-Only in rpp-1.1.0/utilities/rpp-performancetests/HIP_NEW: CMakeLists.txt.orig
 diff '--color=auto' -urp rpp-1.1.0.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt rpp-1.1.0/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt
 --- rpp-1.1.0.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
-+++ rpp-1.1.0/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2024-07-09 15:26:24.477143337 -0700
++++ rpp-1.1.0/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2024-08-19 11:36:16.519459444 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_performancetests/HOST_NEW)
@@ -104,10 +132,9 @@ diff '--color=auto' -urp rpp-1.1.0.orig/utilities/rpp-performancetests/HOST_NEW/
 -endif()
 \ No newline at end of file
 +endif()
-Only in rpp-1.1.0/utilities/rpp-performancetests/HOST_NEW: CMakeLists.txt.orig
 diff '--color=auto' -urp rpp-1.1.0.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt rpp-1.1.0/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt
 --- rpp-1.1.0.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
-+++ rpp-1.1.0/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2024-07-09 15:26:24.477143337 -0700
++++ rpp-1.1.0/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2024-08-19 11:36:16.519459444 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(Rpp_test)
@@ -124,10 +151,9 @@ diff '--color=auto' -urp rpp-1.1.0.orig/utilities/rpp-performancetests/OCL_NEW/C
 -endif()
 \ No newline at end of file
 +endif()
-Only in rpp-1.1.0/utilities/rpp-performancetests/OCL_NEW: CMakeLists.txt.orig
 diff '--color=auto' -urp rpp-1.1.0.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt rpp-1.1.0/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt
 --- rpp-1.1.0.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
-+++ rpp-1.1.0/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2024-07-09 15:26:24.477143337 -0700
++++ rpp-1.1.0/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2024-08-19 11:36:16.519459444 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_unittests/HIP_NEW)
@@ -144,10 +170,9 @@ diff '--color=auto' -urp rpp-1.1.0.orig/utilities/rpp-unittests/HIP_NEW/CMakeLis
 -endif()
 \ No newline at end of file
 +endif()
-Only in rpp-1.1.0/utilities/rpp-unittests/HIP_NEW: CMakeLists.txt.orig
 diff '--color=auto' -urp rpp-1.1.0.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt rpp-1.1.0/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt
 --- rpp-1.1.0.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
-+++ rpp-1.1.0/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2024-07-09 15:26:24.477143337 -0700
++++ rpp-1.1.0/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2024-08-19 11:36:16.519459444 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_unittests/HOST_NEW)
@@ -164,10 +189,9 @@ diff '--color=auto' -urp rpp-1.1.0.orig/utilities/rpp-unittests/HOST_NEW/CMakeLi
 -endif()
 \ No newline at end of file
 +endif()
-Only in rpp-1.1.0/utilities/rpp-unittests/HOST_NEW: CMakeLists.txt.orig
 diff '--color=auto' -urp rpp-1.1.0.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt rpp-1.1.0/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt
 --- rpp-1.1.0.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
-+++ rpp-1.1.0/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2024-07-09 15:26:24.477143337 -0700
++++ rpp-1.1.0/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2024-08-19 11:36:16.519459444 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_unittests/OCL_NEW)
@@ -184,10 +208,9 @@ diff '--color=auto' -urp rpp-1.1.0.orig/utilities/rpp-unittests/OCL_NEW/CMakeLis
 -endif()
 \ No newline at end of file
 +endif()
-Only in rpp-1.1.0/utilities/rpp-unittests/OCL_NEW: CMakeLists.txt.orig
 diff '--color=auto' -urp rpp-1.1.0.orig/utilities/test_suite/HIP/CMakeLists.txt rpp-1.1.0/utilities/test_suite/HIP/CMakeLists.txt
 --- rpp-1.1.0.orig/utilities/test_suite/HIP/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
-+++ rpp-1.1.0/utilities/test_suite/HIP/CMakeLists.txt	2024-07-09 15:26:39.896898023 -0700
++++ rpp-1.1.0/utilities/test_suite/HIP/CMakeLists.txt	2024-08-19 11:36:16.519459444 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(test_suite/HIP)
@@ -206,7 +229,7 @@ diff '--color=auto' -urp rpp-1.1.0.orig/utilities/test_suite/HIP/CMakeLists.txt 
 +endif()
 diff '--color=auto' -urp rpp-1.1.0.orig/utilities/test_suite/HOST/CMakeLists.txt rpp-1.1.0/utilities/test_suite/HOST/CMakeLists.txt
 --- rpp-1.1.0.orig/utilities/test_suite/HOST/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
-+++ rpp-1.1.0/utilities/test_suite/HOST/CMakeLists.txt	2024-07-09 15:26:49.240749394 -0700
++++ rpp-1.1.0/utilities/test_suite/HOST/CMakeLists.txt	2024-08-19 11:36:16.519459444 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(test_suite/HOST)

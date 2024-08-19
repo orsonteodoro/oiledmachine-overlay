@@ -1,6 +1,6 @@
 diff '--color=auto' -urp rpp-0.96.orig/CMakeLists.txt rpp-0.96/CMakeLists.txt
 --- rpp-0.96.orig/CMakeLists.txt	2022-08-03 15:34:16.000000000 -0700
-+++ rpp-0.96/CMakeLists.txt	2024-07-09 15:08:11.610333055 -0700
++++ rpp-0.96/CMakeLists.txt	2024-08-19 11:32:18.227307073 -0700
 @@ -39,7 +39,7 @@ find_program(RPMBUILD_EXE rpmbuild)
  find_program(DPKG_EXE dpkg)
  
@@ -12,7 +12,7 @@ diff '--color=auto' -urp rpp-0.96.orig/CMakeLists.txt rpp-0.96/CMakeLists.txt
    set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "RPP default ROCm installation path" FORCE)
 diff '--color=auto' -urp rpp-0.96.orig/cmake/ClangTidy.cmake rpp-0.96/cmake/ClangTidy.cmake
 --- rpp-0.96.orig/cmake/ClangTidy.cmake	2022-08-03 15:34:16.000000000 -0700
-+++ rpp-0.96/cmake/ClangTidy.cmake	2024-07-09 15:07:12.147253373 -0700
++++ rpp-0.96/cmake/ClangTidy.cmake	2024-08-19 11:32:18.227307073 -0700
 @@ -39,7 +39,8 @@ find_program(CLANG_TIDY_EXE
      PATH_SUFFIXES
          compiler/bin
@@ -25,7 +25,7 @@ diff '--color=auto' -urp rpp-0.96.orig/cmake/ClangTidy.cmake rpp-0.96/cmake/Clan
  
 diff '--color=auto' -urp rpp-0.96.orig/cmake/CppCheck.cmake rpp-0.96/cmake/CppCheck.cmake
 --- rpp-0.96.orig/cmake/CppCheck.cmake	2022-08-03 15:34:16.000000000 -0700
-+++ rpp-0.96/cmake/CppCheck.cmake	2024-07-09 15:07:12.147253373 -0700
++++ rpp-0.96/cmake/CppCheck.cmake	2024-08-19 11:32:18.227307073 -0700
 @@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
      NAMES 
          cppcheck
@@ -35,9 +35,38 @@ diff '--color=auto' -urp rpp-0.96.orig/cmake/CppCheck.cmake rpp-0.96/cmake/CppCh
  )
  
  ProcessorCount(CPPCHECK_JOBS)
+diff '--color=auto' -urp rpp-0.96.orig/cmake/FindOpenCL.cmake rpp-0.96/cmake/FindOpenCL.cmake
+--- rpp-0.96.orig/cmake/FindOpenCL.cmake	2022-08-03 15:34:16.000000000 -0700
++++ rpp-0.96/cmake/FindOpenCL.cmake	2024-08-19 11:33:08.782491408 -0700
+@@ -62,15 +62,15 @@ else()
+             HINTS
+             $ENV{OPENCL_ROOT}/lib
+             $ENV{AMDAPPSDKROOT}/lib
+-            $ENV{CUDA_PATH}/lib
++            $ENV{CUDA_PATH}/lib64
+             $ENV{OCL_ROOT}/lib
+             DOC "OpenCL dynamic library path"
+             PATH_SUFFIXES x86_64 x64 x86_64/sdk
+             PATHS
+             ${ROCM_PATH}/lib/
+-            /usr/lib
++            /usr/lib64
+             /usr/local/cuda/lib
+-            /opt/cuda/lib
++            /opt/cuda/lib64
+         )
+     else( )
+         find_library( OPENCL_LIBRARIES
+@@ -140,4 +140,4 @@ else()
+     if( NOT OpenCL_FOUND )
+         message( "-- ${Yellow}NOTE: FindOpenCL failed to find -- OpenCL${ColourReset}" )
+     endif()
+-endif()
+\ No newline at end of file
++endif()
 diff '--color=auto' -urp rpp-0.96.orig/src/modules/cl/hip_build_utils.cpp rpp-0.96/src/modules/cl/hip_build_utils.cpp
 --- rpp-0.96.orig/src/modules/cl/hip_build_utils.cpp	2022-08-03 15:34:16.000000000 -0700
-+++ rpp-0.96/src/modules/cl/hip_build_utils.cpp	2024-07-09 15:07:12.147253373 -0700
++++ rpp-0.96/src/modules/cl/hip_build_utils.cpp	2024-08-19 11:32:18.231307009 -0700
 @@ -59,7 +59,7 @@ boost::filesystem::path HipBuild(boost::
      auto bin_file = tmp_dir->path / (filename + ".o");
      // compile with hcc
@@ -49,7 +78,7 @@ diff '--color=auto' -urp rpp-0.96.orig/src/modules/cl/hip_build_utils.cpp rpp-0.
          RPP_THROW(filename + " failed to compile");
 diff '--color=auto' -urp rpp-0.96.orig/src/modules/hip/hip_build_utils.cpp rpp-0.96/src/modules/hip/hip_build_utils.cpp
 --- rpp-0.96.orig/src/modules/hip/hip_build_utils.cpp	2022-08-03 15:34:16.000000000 -0700
-+++ rpp-0.96/src/modules/hip/hip_build_utils.cpp	2024-07-09 15:07:12.147253373 -0700
++++ rpp-0.96/src/modules/hip/hip_build_utils.cpp	2024-08-19 11:32:18.231307009 -0700
 @@ -59,7 +59,7 @@ boost::filesystem::path HipBuild(boost::
      auto bin_file = tmp_dir->path / (filename + ".o");
      // compile with hcc
@@ -61,7 +90,7 @@ diff '--color=auto' -urp rpp-0.96.orig/src/modules/hip/hip_build_utils.cpp rpp-0
          RPP_THROW(filename + " failed to compile");
 diff '--color=auto' -urp rpp-0.96.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt rpp-0.96/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt
 --- rpp-0.96.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2022-08-03 15:34:16.000000000 -0700
-+++ rpp-0.96/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2024-07-09 15:08:12.714315975 -0700
++++ rpp-0.96/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2024-08-19 11:32:18.231307009 -0700
 @@ -1,7 +1,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_performancetests/HIP_NEW)
@@ -80,7 +109,7 @@ diff '--color=auto' -urp rpp-0.96.orig/utilities/rpp-performancetests/HIP_NEW/CM
 +endif()
 diff '--color=auto' -urp rpp-0.96.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt rpp-0.96/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt
 --- rpp-0.96.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2022-08-03 15:34:16.000000000 -0700
-+++ rpp-0.96/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2024-07-09 15:08:14.426289489 -0700
++++ rpp-0.96/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2024-08-19 11:32:18.231307009 -0700
 @@ -1,7 +1,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_performancetests/HOST_NEW)
@@ -99,7 +128,7 @@ diff '--color=auto' -urp rpp-0.96.orig/utilities/rpp-performancetests/HOST_NEW/C
 +endif()
 diff '--color=auto' -urp rpp-0.96.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt rpp-0.96/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt
 --- rpp-0.96.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2022-08-03 15:34:16.000000000 -0700
-+++ rpp-0.96/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2024-07-09 15:08:13.578302608 -0700
++++ rpp-0.96/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2024-08-19 11:32:18.231307009 -0700
 @@ -1,7 +1,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(Rpp_test)
@@ -118,7 +147,7 @@ diff '--color=auto' -urp rpp-0.96.orig/utilities/rpp-performancetests/OCL_NEW/CM
 +endif()
 diff '--color=auto' -urp rpp-0.96.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt rpp-0.96/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt
 --- rpp-0.96.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2022-08-03 15:34:16.000000000 -0700
-+++ rpp-0.96/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2024-07-09 15:08:15.646270616 -0700
++++ rpp-0.96/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2024-08-19 11:32:18.231307009 -0700
 @@ -1,7 +1,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_unittests/HIP_NEW)
@@ -137,7 +166,7 @@ diff '--color=auto' -urp rpp-0.96.orig/utilities/rpp-unittests/HIP_NEW/CMakeList
 +endif()
 diff '--color=auto' -urp rpp-0.96.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt rpp-0.96/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt
 --- rpp-0.96.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2022-08-03 15:34:16.000000000 -0700
-+++ rpp-0.96/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2024-07-09 15:08:17.822236952 -0700
++++ rpp-0.96/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2024-08-19 11:32:18.231307009 -0700
 @@ -1,7 +1,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_unittests/HOST_NEW)
@@ -156,7 +185,7 @@ diff '--color=auto' -urp rpp-0.96.orig/utilities/rpp-unittests/HOST_NEW/CMakeLis
 +endif()
 diff '--color=auto' -urp rpp-0.96.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt rpp-0.96/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt
 --- rpp-0.96.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2022-08-03 15:34:16.000000000 -0700
-+++ rpp-0.96/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2024-07-09 15:08:16.558256507 -0700
++++ rpp-0.96/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2024-08-19 11:32:18.231307009 -0700
 @@ -1,7 +1,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_unittests/OCL_NEW)

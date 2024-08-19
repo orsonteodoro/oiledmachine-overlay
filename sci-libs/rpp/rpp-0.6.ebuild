@@ -8,22 +8,20 @@ EAPI=8
 inherit hip-versions
 
 AMDGPU_TARGETS_COMPAT=(
-# Based on commit 189c648
 	gfx803
 	gfx900
 	gfx906
-# See https://github.com/ROCm/rpp/blob/0.97/.jenkins/precheckin.groovy
-	gfx908
 )
 AMDGPU_UNTESTED_TARGETS=(
 	gfx803
 	gfx900
+	gfx906
 )
 # See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/1.2.0/docs/release.md?plain=1#L18
-LLVM_COMPAT=( 15 )
+LLVM_COMPAT=( 12 )
 LLVM_SLOT=${LLVM_COMPAT[0]}
-ROCM_SLOT="5.3"
-ROCM_VERSION="${HIP_5_3_VERSION}"
+ROCM_SLOT="4.1"
+ROCM_VERSION="${HIP_4_1_VERSION}"
 
 inherit cmake flag-o-matic rocm toolchain-funcs
 
@@ -77,7 +75,7 @@ RDEPEND="
 	!sci-libs/rpp:0
 	>=dev-libs/boost-1.72:=
 	dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
-	~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_3_AMDGPU_USEDEP}]
+	~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_4_1_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 	opencl? (
 		virtual/opencl
@@ -102,7 +100,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.97-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-0.6-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
@@ -121,13 +119,6 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-	IFS=$'\n'
-	sed \
-		-i \
-		-e "s|half/half.hpp|half.hpp|g" \
-		$(grep -l -r -e "half/half.hpp" "${S}") \
-		|| die
-	IFS=$' \t\n'
 
 	# Unbreak rocm builds:
 	sed \
@@ -156,7 +147,7 @@ src_configure() {
 		-DROCM_PATH="${ESYSROOT}${EROCM_PATH}"
 	)
 
-	rocm_set_default_clang
+	rocm_set_default_hipcc
 
 ewarn
 ewarn "If the build fails, use either -O0 or the systemwide optimization level."
@@ -165,6 +156,7 @@ ewarn
 	if use opencl ; then
 		mycmakeargs+=(
 			-DBACKEND="OCL"
+			-DOPENCL_ROOT="${EROCM_PATH}/opencl"
 		)
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"

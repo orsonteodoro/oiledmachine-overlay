@@ -27,7 +27,7 @@ ROCM_VERSION="${HIP_4_5_VERSION}"
 
 inherit cmake flag-o-matic rocm toolchain-funcs
 
-if [[ ${PV} == *9999 ]] ; then
+if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/"
 	inherit git-r3
 else
@@ -50,7 +50,7 @@ IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
 cpu opencl rocm test
-ebuild-revision-10
+ebuild-revision-12
 "
 gen_rocm_required_use() {
 	local x

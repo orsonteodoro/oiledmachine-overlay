@@ -225,12 +225,9 @@ LLVM_ROC_LIBOMP_4_1_AMDGPU_TARGETS_COMPAT=(
 LLVM_ROC_LIBOMP_4_1_AMDGPU_USEDEP=$(gen_x_usedep "LLVM_ROC_LIBOMP_4_1_AMDGPU_TARGETS_COMPAT")
 
 RPP_4_1_AMDGPU_TARGETS_COMPAT=(
-# Based on commit 189c648
 	gfx803
 	gfx900
 	gfx906
-# See https://github.com/ROCm/rpp/blob/0.91/.jenkins/precheckin.groovy
-	gfx908
 )
 RPP_4_1_AMDGPU_USEDEP=$(gen_x_usedep "RPP_4_1_AMDGPU_TARGETS_COMPAT")
 

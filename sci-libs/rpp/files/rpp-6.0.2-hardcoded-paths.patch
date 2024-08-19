@@ -1,6 +1,6 @@
 diff '--color=auto' -urp rpp-rocm-6.0.2.orig/CMakeLists.txt rpp-rocm-6.0.2/CMakeLists.txt
 --- rpp-rocm-6.0.2.orig/CMakeLists.txt	2023-11-01 14:03:12.000000000 -0700
-+++ rpp-rocm-6.0.2/CMakeLists.txt	2024-07-09 15:15:52.143227230 -0700
++++ rpp-rocm-6.0.2/CMakeLists.txt	2024-08-19 11:38:05.581695978 -0700
 @@ -45,7 +45,7 @@ if(DEFINED ENV{ROCM_PATH})
  elseif(ROCM_PATH)
    message("-- INFO:ROCM_PATH Set -- ${ROCM_PATH}")
@@ -10,11 +10,9 @@ diff '--color=auto' -urp rpp-rocm-6.0.2.orig/CMakeLists.txt rpp-rocm-6.0.2/CMake
  endif()
  # Avoid setting the default path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-Only in rpp-rocm-6.0.2: CMakeLists.txt.orig
-Only in rpp-rocm-6.0.2: CMakeLists.txt.rej
 diff '--color=auto' -urp rpp-rocm-6.0.2.orig/cmake/CppCheck.cmake rpp-rocm-6.0.2/cmake/CppCheck.cmake
 --- rpp-rocm-6.0.2.orig/cmake/CppCheck.cmake	2023-11-01 14:03:12.000000000 -0700
-+++ rpp-rocm-6.0.2/cmake/CppCheck.cmake	2024-07-09 15:15:34.543498103 -0700
++++ rpp-rocm-6.0.2/cmake/CppCheck.cmake	2024-08-19 11:38:05.581695978 -0700
 @@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
      NAMES 
          cppcheck
@@ -24,9 +22,38 @@ diff '--color=auto' -urp rpp-rocm-6.0.2.orig/cmake/CppCheck.cmake rpp-rocm-6.0.2
  )
  
  ProcessorCount(CPPCHECK_JOBS)
+diff '--color=auto' -urp rpp-rocm-6.0.2.orig/cmake/FindOpenCL.cmake rpp-rocm-6.0.2/cmake/FindOpenCL.cmake
+--- rpp-rocm-6.0.2.orig/cmake/FindOpenCL.cmake	2023-11-01 14:03:12.000000000 -0700
++++ rpp-rocm-6.0.2/cmake/FindOpenCL.cmake	2024-08-19 11:38:19.353473190 -0700
+@@ -62,15 +62,15 @@ else()
+             HINTS
+             $ENV{OPENCL_ROOT}/lib
+             $ENV{AMDAPPSDKROOT}/lib
+-            $ENV{CUDA_PATH}/lib
++            $ENV{CUDA_PATH}/lib64
+             $ENV{OCL_ROOT}/lib
+             DOC "OpenCL dynamic library path"
+             PATH_SUFFIXES x86_64 x64 x86_64/sdk
+             PATHS
+             ${ROCM_PATH}/lib/
+-            /usr/lib
++            /usr/lib64
+             /usr/local/cuda/lib
+-            /opt/cuda/lib
++            /opt/cuda/lib64
+         )
+     else( )
+         find_library( OPENCL_LIBRARIES
+@@ -140,4 +140,4 @@ else()
+     if( NOT OpenCL_FOUND )
+         message( "-- ${Yellow}NOTE: FindOpenCL failed to find -- OpenCL${ColourReset}" )
+     endif()
+-endif()
+\ No newline at end of file
++endif()
 diff '--color=auto' -urp rpp-rocm-6.0.2.orig/src/modules/cl/hip_build_utils.cpp rpp-rocm-6.0.2/src/modules/cl/hip_build_utils.cpp
 --- rpp-rocm-6.0.2.orig/src/modules/cl/hip_build_utils.cpp	2023-11-01 14:03:12.000000000 -0700
-+++ rpp-rocm-6.0.2/src/modules/cl/hip_build_utils.cpp	2024-07-09 15:15:34.543498103 -0700
++++ rpp-rocm-6.0.2/src/modules/cl/hip_build_utils.cpp	2024-08-19 11:38:05.585695913 -0700
 @@ -59,7 +59,7 @@ fs::path HipBuild(std::optional<TmpDir>&
      auto bin_file = tmp_dir->path / (filename + ".o");
      // compile with hcc
@@ -36,10 +63,9 @@ diff '--color=auto' -urp rpp-rocm-6.0.2.orig/src/modules/cl/hip_build_utils.cpp 
                       params + filename + " -o " + bin_file.string());
      if(!fs::exists(bin_file))
          RPP_THROW(filename + " failed to compile");
-Only in rpp-rocm-6.0.2/src/modules/cl: hip_build_utils.cpp.orig
 diff '--color=auto' -urp rpp-rocm-6.0.2.orig/src/modules/hip/hip_build_utils.cpp rpp-rocm-6.0.2/src/modules/hip/hip_build_utils.cpp
 --- rpp-rocm-6.0.2.orig/src/modules/hip/hip_build_utils.cpp	2023-11-01 14:03:12.000000000 -0700
-+++ rpp-rocm-6.0.2/src/modules/hip/hip_build_utils.cpp	2024-07-09 15:15:34.543498103 -0700
++++ rpp-rocm-6.0.2/src/modules/hip/hip_build_utils.cpp	2024-08-19 11:38:05.585695913 -0700
 @@ -59,7 +59,7 @@ fs::path HipBuild(std::optional<TmpDir>&
      auto bin_file = tmp_dir->path / (filename + ".o");
      // compile with hcc
@@ -49,10 +75,9 @@ diff '--color=auto' -urp rpp-rocm-6.0.2.orig/src/modules/hip/hip_build_utils.cpp
                       params + filename + " -o " + bin_file.string());
      if(!fs::exists(bin_file))
          RPP_THROW(filename + " failed to compile");
-Only in rpp-rocm-6.0.2/src/modules/hip: hip_build_utils.cpp.orig
 diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/examples/brightness/CMakeLists.txt rpp-rocm-6.0.2/utilities/examples/brightness/CMakeLists.txt
 --- rpp-rocm-6.0.2.orig/utilities/examples/brightness/CMakeLists.txt	2023-11-01 14:03:12.000000000 -0700
-+++ rpp-rocm-6.0.2/utilities/examples/brightness/CMakeLists.txt	2024-07-09 15:17:10.477987410 -0700
++++ rpp-rocm-6.0.2/utilities/examples/brightness/CMakeLists.txt	2024-08-19 11:38:05.585695913 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(examples/brightness)
@@ -71,7 +96,7 @@ diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/examples/brightness/CMake
 +endif()
 diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt rpp-rocm-6.0.2/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt
 --- rpp-rocm-6.0.2.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2023-11-01 14:03:12.000000000 -0700
-+++ rpp-rocm-6.0.2/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2024-07-09 15:15:34.543498103 -0700
++++ rpp-rocm-6.0.2/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2024-08-19 11:38:05.585695913 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_performancetests/HIP_NEW)
@@ -88,10 +113,9 @@ diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/rpp-performancetests/HIP_
 -endif()
 \ No newline at end of file
 +endif()
-Only in rpp-rocm-6.0.2/utilities/rpp-performancetests/HIP_NEW: CMakeLists.txt.orig
 diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt rpp-rocm-6.0.2/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt
 --- rpp-rocm-6.0.2.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2023-11-01 14:03:12.000000000 -0700
-+++ rpp-rocm-6.0.2/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2024-07-09 15:15:34.543498103 -0700
++++ rpp-rocm-6.0.2/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2024-08-19 11:38:05.589695848 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_performancetests/HOST_NEW)
@@ -108,10 +132,9 @@ diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/rpp-performancetests/HOST
 -endif()
 \ No newline at end of file
 +endif()
-Only in rpp-rocm-6.0.2/utilities/rpp-performancetests/HOST_NEW: CMakeLists.txt.orig
 diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt rpp-rocm-6.0.2/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt
 --- rpp-rocm-6.0.2.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2023-11-01 14:03:12.000000000 -0700
-+++ rpp-rocm-6.0.2/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2024-07-09 15:15:34.543498103 -0700
++++ rpp-rocm-6.0.2/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2024-08-19 11:38:05.589695848 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(Rpp_test)
@@ -128,10 +151,9 @@ diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/rpp-performancetests/OCL_
 -endif()
 \ No newline at end of file
 +endif()
-Only in rpp-rocm-6.0.2/utilities/rpp-performancetests/OCL_NEW: CMakeLists.txt.orig
 diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt rpp-rocm-6.0.2/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt
 --- rpp-rocm-6.0.2.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2023-11-01 14:03:12.000000000 -0700
-+++ rpp-rocm-6.0.2/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2024-07-09 15:15:34.543498103 -0700
++++ rpp-rocm-6.0.2/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2024-08-19 11:38:05.589695848 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_unittests/HIP_NEW)
@@ -148,10 +170,9 @@ diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/rpp-unittests/HIP_NEW/CMa
 -endif()
 \ No newline at end of file
 +endif()
-Only in rpp-rocm-6.0.2/utilities/rpp-unittests/HIP_NEW: CMakeLists.txt.orig
 diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt rpp-rocm-6.0.2/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt
 --- rpp-rocm-6.0.2.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2023-11-01 14:03:12.000000000 -0700
-+++ rpp-rocm-6.0.2/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2024-07-09 15:15:34.543498103 -0700
++++ rpp-rocm-6.0.2/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2024-08-19 11:38:05.589695848 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_unittests/HOST_NEW)
@@ -168,10 +189,9 @@ diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/rpp-unittests/HOST_NEW/CM
 -endif()
 \ No newline at end of file
 +endif()
-Only in rpp-rocm-6.0.2/utilities/rpp-unittests/HOST_NEW: CMakeLists.txt.orig
 diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt rpp-rocm-6.0.2/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt
 --- rpp-rocm-6.0.2.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2023-11-01 14:03:12.000000000 -0700
-+++ rpp-rocm-6.0.2/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2024-07-09 15:15:34.543498103 -0700
++++ rpp-rocm-6.0.2/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2024-08-19 11:38:05.589695848 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_unittests/OCL_NEW)
@@ -188,10 +208,9 @@ diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/rpp-unittests/OCL_NEW/CMa
 -endif()
 \ No newline at end of file
 +endif()
-Only in rpp-rocm-6.0.2/utilities/rpp-unittests/OCL_NEW: CMakeLists.txt.orig
 diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/test_suite/HIP/CMakeLists.txt rpp-rocm-6.0.2/utilities/test_suite/HIP/CMakeLists.txt
 --- rpp-rocm-6.0.2.orig/utilities/test_suite/HIP/CMakeLists.txt	2023-11-01 14:03:12.000000000 -0700
-+++ rpp-rocm-6.0.2/utilities/test_suite/HIP/CMakeLists.txt	2024-07-09 15:17:03.982091479 -0700
++++ rpp-rocm-6.0.2/utilities/test_suite/HIP/CMakeLists.txt	2024-08-19 11:38:05.589695848 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(test_suite/HIP)
@@ -210,7 +229,7 @@ diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/test_suite/HIP/CMakeLists
 +endif()
 diff '--color=auto' -urp rpp-rocm-6.0.2.orig/utilities/test_suite/HOST/CMakeLists.txt rpp-rocm-6.0.2/utilities/test_suite/HOST/CMakeLists.txt
 --- rpp-rocm-6.0.2.orig/utilities/test_suite/HOST/CMakeLists.txt	2023-11-01 14:03:12.000000000 -0700
-+++ rpp-rocm-6.0.2/utilities/test_suite/HOST/CMakeLists.txt	2024-07-09 15:17:06.942044057 -0700
++++ rpp-rocm-6.0.2/utilities/test_suite/HOST/CMakeLists.txt	2024-08-19 11:38:05.589695848 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(test_suite/HOST)

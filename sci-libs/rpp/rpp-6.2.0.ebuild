@@ -5,25 +5,37 @@ EAPI=8
 
 # TODO:  review the install prefix
 
-inherit hip-versions
-
 AMDGPU_TARGETS_COMPAT=(
-# Based on commit 189c648
-	gfx803
-	gfx900
-	gfx906
-# See https://github.com/ROCm/rpp/blob/0.97/.jenkins/precheckin.groovy
 	gfx908
+	gfx90a
+	gfx940
+	gfx941
+	gfx942
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1100
+	gfx1101
+	gfx1102
 )
 AMDGPU_UNTESTED_TARGETS=(
-	gfx803
-	gfx900
+#	gfx908
+#	gfx90a
+	gfx940
+	gfx941
+	gfx942
+#	gfx1030
+	gfx1031
+	gfx1032
+	gfx1100
+#	gfx1101
+	gfx1102
 )
-# See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/1.2.0/docs/release.md?plain=1#L18
-LLVM_COMPAT=( 15 )
+# See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/rocm-6.2.0/docs/release.md?plain=1#L18
+LLVM_COMPAT=( 18 )
 LLVM_SLOT=${LLVM_COMPAT[0]}
-ROCM_SLOT="5.3"
-ROCM_VERSION="${HIP_5_3_VERSION}"
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic rocm toolchain-funcs
 
@@ -32,9 +44,9 @@ if [[ ${PV} == *"9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${P}"
+	S="${WORKDIR}/${PN}-rocm-${PV}"
 	SRC_URI="
-https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/archive/refs/tags/${PV}.tar.gz
+https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
@@ -77,14 +89,14 @@ RDEPEND="
 	!sci-libs/rpp:0
 	>=dev-libs/boost-1.72:=
 	dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
-	~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_3_AMDGPU_USEDEP}]
+	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 	opencl? (
 		virtual/opencl
 	)
 	rocm? (
 		dev-libs/rocm-device-libs:${ROCM_SLOT}
-		~dev-util/hip-${ROCM_VERSION}:${ROCM_SLOT}[rocm]
+		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 		dev-util/hip:=
 	)
 "
@@ -102,7 +114,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.97-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
