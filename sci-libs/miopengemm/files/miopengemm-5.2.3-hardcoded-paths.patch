@@ -1,6 +1,6 @@
 diff '--color=auto' -urp MIOpenGEMM-rocm-5.2.3.orig/CMakeLists.txt MIOpenGEMM-rocm-5.2.3/CMakeLists.txt
 --- MIOpenGEMM-rocm-5.2.3.orig/CMakeLists.txt	2022-03-16 13:37:18.000000000 -0700
-+++ MIOpenGEMM-rocm-5.2.3/CMakeLists.txt	2024-07-09 19:52:23.508847475 -0700
++++ MIOpenGEMM-rocm-5.2.3/CMakeLists.txt	2024-08-19 12:38:32.502134286 -0700
 @@ -8,14 +8,14 @@ cmake_minimum_required(VERSION 3.0)
  if(WIN32)
      set(CMAKE_INSTALL_PREFIX "/opt/rocm/x86_64-w64-mingw32" CACHE PATH "Installation path")
@@ -19,11 +19,9 @@ diff '--color=auto' -urp MIOpenGEMM-rocm-5.2.3.orig/CMakeLists.txt MIOpenGEMM-ro
  if(NOT ROCM_FOUND)
    set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
    set(rocm_cmake_url "https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip")
-Only in MIOpenGEMM-rocm-5.2.3: CMakeLists.txt.orig
-Only in MIOpenGEMM-rocm-5.2.3: CMakeLists.txt.rej
 diff '--color=auto' -urp MIOpenGEMM-rocm-5.2.3.orig/cmake/FindOpenCL.cmake MIOpenGEMM-rocm-5.2.3/cmake/FindOpenCL.cmake
---- MIOpenGEMM-rocm-5.2.3.orig/cmake/FindOpenCL.cmake	2024-07-09 19:51:41.733378042 -0700
-+++ MIOpenGEMM-rocm-5.2.3/cmake/FindOpenCL.cmake	2024-07-09 19:51:56.365192303 -0700
+--- MIOpenGEMM-rocm-5.2.3.orig/cmake/FindOpenCL.cmake	2024-08-19 12:38:12.206469467 -0700
++++ MIOpenGEMM-rocm-5.2.3/cmake/FindOpenCL.cmake	2024-08-19 12:38:52.533803449 -0700
 @@ -13,7 +13,7 @@ find_path(OPENCL_INCLUDE_DIRS
  	/usr/local/include
  	/usr/local/cuda/include
@@ -33,11 +31,21 @@ diff '--color=auto' -urp MIOpenGEMM-rocm-5.2.3.orig/cmake/FindOpenCL.cmake MIOpe
  	DOC "OpenCL header file path"
  	)
  mark_as_advanced( OPENCL_INCLUDE_DIRS )
-@@ -31,7 +31,7 @@ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
- 		/usr/lib
+@@ -24,14 +24,14 @@ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+ 		HINTS
+ 		${OPENCL_ROOT}/lib
+ 		$ENV{AMDAPPSDKROOT}/lib
+-		$ENV{CUDA_PATH}/lib
++		$ENV{CUDA_PATH}/lib64
+ 		DOC "OpenCL dynamic library path"
+ 		PATH_SUFFIXES x86_64 x64 x86_64/sdk
+ 		PATHS
+-		/usr/lib
++		/usr/lib64
  		/usr/local/cuda/lib
- 		/opt/cuda/lib
+-		/opt/cuda/lib
 -		/opt/rocm/opencl/lib
++		/opt/cuda/lib64
 +		/opt/rocm-@ROCM_VERSION@/opencl/lib
  		)
  else( )

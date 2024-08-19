@@ -25,7 +25,7 @@ LICENSE="
 "
 # The distro MIT license template does not contain All rights Reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="-benchmark ebuild-revision-4"
+IUSE="-benchmark ebuild-revision-5"
 RDEPEND="
 	virtual/blas
 	virtual/opencl
@@ -54,7 +54,7 @@ src_prepare() {
 
 src_configure() {
 	strip-flags
-	filter-flags '*march*'
+	filter-flags '-march*'
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	)

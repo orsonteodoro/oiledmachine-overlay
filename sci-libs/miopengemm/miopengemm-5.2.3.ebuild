@@ -19,7 +19,7 @@ DESCRIPTION="An OpenCL general matrix multiplication (GEMM) API and kernel gener
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpenGEMM"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="-benchmark ebuild-revision-4"
+IUSE="-benchmark ebuild-revision-5"
 RDEPEND="
 	virtual/blas
 	virtual/opencl
@@ -48,7 +48,7 @@ src_prepare() {
 
 src_configure() {
 	strip-flags
-	filter-flags '*march*'
+	filter-flags '-march*'
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	)

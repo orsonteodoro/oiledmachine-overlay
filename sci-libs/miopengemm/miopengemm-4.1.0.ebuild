@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=15
+LLVM_SLOT=12
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic rocm
@@ -17,13 +17,7 @@ https://github.com/ROCmSoftwarePlatform/MIOpenGEMM/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="An OpenCL general matrix multiplication (GEMM) API and kernel generator"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpenGEMM"
-LICENSE="
-	(
-		all-rights-reserved
-		MIT
-	)
-"
-# The distro MIT license template does not contain All rights Reserved.
+LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="-benchmark ebuild-revision-5"
 RDEPEND="
@@ -39,8 +33,8 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-v5.3.3-gentoo-rocm-overlay-fixes.patch"
-	"${FILESDIR}/${PN}-5.2.3-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-v4.3.0-gentoo-rocm-overlay-fixes.patch"
+	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -74,4 +68,5 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
