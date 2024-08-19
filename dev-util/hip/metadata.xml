@@ -49,5 +49,8 @@
     <flag name="pal">
       Support PAL compute kernels with the PAL runtime.
     </flag>
+    <flag name="rocprofiler-register">
+      Support rocprofiler-register
+    </flag>
   </use>
 </pkgmetadata>

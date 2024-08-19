@@ -71,7 +71,7 @@ LICENSE="
 # UoI-NCSA - llvm-project-rocm-6.1.2/amd/device-libs/LICENSE.TXT
 
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-35"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test ebuild-revision-35"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -128,6 +128,9 @@ RDEPEND="
 		${ROCM_CLANG_DEPEND}
 		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
+	)
+	rocprofiler-register? (
+		~dev-libs/rocprofiler-register-${PV}:${ROCM_SLOT}
 	)
 "
 DEPEND="
@@ -371,6 +374,7 @@ src_configure() {
 			-DAMD_OPENCL_PATH="${OCL_S}"
 			-DCLR_PATH="${CLR_S}"
 			-DHIP_COMPILER="clang"
+			-DHIP_ENABLE_ROCPROFILER_REGISTER=$(usex rocprofiler-register ON OFF)
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 			-DROCCLR_ENABLE_LC=$(usex lc ON OFF)
