@@ -153,6 +153,9 @@ RDEPEND="
 		amdgpu_targets_gfx942? (
 			~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPBLASLT)
 		)
+		amdgpu_targets_gfx1100? (
+			~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPBLASLT)
+		)
 		fortran? (
 			~dev-util/hipfort-${PV}:${ROCM_SLOT}
 		)
