@@ -58,7 +58,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test ebuild-revision-11"
+IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test ebuild-revision-12"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -102,13 +102,13 @@ RDEPEND="
 		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	)
 	composable-kernel? (
-		sci-libs/composable_kernel:${ROCM_SLOT}[${COMPOSABLE_KERNEL_6_1_AMDGPU_USEDEP}]
+		sci-libs/composable_kernel:${ROCM_SLOT}[${COMPOSABLE_KERNEL_6_2_AMDGPU_USEDEP}]
 	)
 	kernels? (
-		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}[${MIOPENKERNELS_6_1_AMDGPU_USEDEP}]
+		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}[${MIOPENKERNELS_6_2_AMDGPU_USEDEP}]
 	)
 	opencl? (
-		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_1_AMDGPU_USEDEP}]
+		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
 	)
 	rocm? (
 		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]

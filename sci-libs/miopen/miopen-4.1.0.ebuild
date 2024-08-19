@@ -38,7 +38,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="comgr debug hiprtc kernels opencl +rocm test ebuild-revision-11"
+IUSE="comgr debug hiprtc kernels opencl +rocm test ebuild-revision-12"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -77,10 +77,10 @@ RDEPEND="
 		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	)
 	kernels? (
-		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}[${MIOPENKERNELS_4_5_AMDGPU_USEDEP}]
+		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}[${MIOPENKERNELS_4_1_AMDGPU_USEDEP}]
 	)
 	opencl? (
-		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_4_5_AMDGPU_USEDEP}]
+		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_4_1_AMDGPU_USEDEP}]
 		~sci-libs/miopengemm-${PV}:${ROCM_SLOT}
 	)
 	rocm? (
