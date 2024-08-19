@@ -8,7 +8,7 @@ DOCS_BUILDER="doxygen"
 DOCS_CONFIG_NAME="doxy.cfg"
 DOCS_DEPEND="media-gfx/graphviz"
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=13 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-4.5.2/llvm/CMakeLists.txt
+LLVM_SLOT=12 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-4.5.2/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -65,7 +65,7 @@ LICENSE="
 # MIT - hipamd-rocm-4.5.2/LICENSE.txt
 
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test ebuild-revision-36"
+IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test ebuild-revision-37"
 REQUIRED_USE="
 	hsa? (
 		rocm
