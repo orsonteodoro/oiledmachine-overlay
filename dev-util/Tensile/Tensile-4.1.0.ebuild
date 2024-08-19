@@ -49,7 +49,7 @@ LICENSE="
 # Not compatible with recent versions of pytest \
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="client cuda +opencl +openmp +rocm ebuild-revision-17"
+IUSE="client cuda +opencl +openmp +rocm ebuild-revision-18"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -80,7 +80,7 @@ RDEPEND="
 			dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
 		)
 		openmp? (
-			sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_4_5_AMDGPU_USEDEP}]
+			sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_4_1_AMDGPU_USEDEP}]
 		)
 	)
 "
