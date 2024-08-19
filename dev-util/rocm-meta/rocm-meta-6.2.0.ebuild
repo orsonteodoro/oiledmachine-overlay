@@ -143,15 +143,13 @@ RDEPEND="
 		~sci-libs/rocRAND-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCRAND)
 		~sci-libs/rocSOLVER-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCSOLVER)
 		~sci-libs/rocSPARSE-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCSPARSE)
-		~sci-libs/rocWMMA-${PV}:${ROCM_SLOT}
-		amdgpu_targets_gfx942? (
-			~sci-libs/hipSPARSELt-${PV}:${ROCM_SLOT}[rocm]
-		)
+		~sci-libs/rocWMMA-${PV}:${ROCM_SLOT}$(get_rocm_usedep ROCWMMA)
 		amdgpu_targets_gfx90a? (
 			~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPBLASLT)
 		)
 		amdgpu_targets_gfx942? (
 			~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPBLASLT)
+			~sci-libs/hipSPARSELt-${PV}:${ROCM_SLOT}[rocm]
 		)
 		amdgpu_targets_gfx1100? (
 			~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPBLASLT)

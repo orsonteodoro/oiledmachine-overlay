@@ -148,8 +148,6 @@ RDEPEND="
 		)
 		amdgpu_targets_gfx942? (
 			~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}$(get_rocm_usedep HIPBLASLT)
-		)
-		amdgpu_targets_gfx942? (
 			~sci-libs/hipSPARSELt-${PV}:${ROCM_SLOT}[rocm]
 		)
 		fortran? (
