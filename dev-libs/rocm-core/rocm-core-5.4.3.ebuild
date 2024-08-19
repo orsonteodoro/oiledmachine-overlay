@@ -15,12 +15,12 @@ if [[ ${PV} == *"9999" ]] ; then
 	inherit git-r3
 else
 # No tagged release, but we will try a workaround for 5.1.3 to 5.4.3
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/${PN}-rocm-${PV}"
 	SRC_URI="
 https://github.com/ROCm/rocm-core/archive/refs/tags/rocm-${MY_PV}.tar.gz
 	-> ${PN}-${MY_PV}.tar.gz
 	"
-	KEYWORDS="~amd64"
-	S="${WORKDIR}/rocm-core-rocm-${MY_PV}"
 fi
 
 DESCRIPTION="rocm-core is a utility which can be used to get ROCm release version. "
