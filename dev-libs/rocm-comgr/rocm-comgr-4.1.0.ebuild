@@ -4,7 +4,7 @@
 EAPI=8
 
 CMAKE_BUILD_TYPE="Release"
-LLVM_SLOT=17 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.7.1/llvm/CMakeLists.txt
+LLVM_SLOT=13 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-4.1.0/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic prefix rocm
@@ -26,18 +26,17 @@ DESCRIPTION="Radeon Open Compute Code Object Manager"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport"
 LICENSE="
 	(
-		all-rights-reserved
+		BSD
 		MIT
 	)
 	BSD
 	UoI-NCSA
 "
 # BSD - lib/comgr/LICENSE.txt
-# all-rights-reserved MIT - lib/comgr/comgr-backward-compat.cmake
-# UoI-NCSA - lib/comgr/test/disasm_options_test.c
-# The distro's MIT license template does not contain all rights reserved.
+# UoI-NCSA BSD MIT - lib/comgr/NOTICES.txt
+# UoI-NCSA - lib/comgr/include/amd_comgr.h.in
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-12"
+IUSE="ebuild-revision-13"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	!dev-libs/rocm-comgr:0
@@ -46,21 +45,19 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	>=dev-build/cmake-3.13.4
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-4.5.2-dependencies.patch"
+	"${FILESDIR}/${PN}-5.1.3-clang-link.patch"
 	"${FILESDIR}/${PN}-5.1.3-clang-fix-include.patch"
-#	"${FILESDIR}/${PN}-5.3.3-fix-tests.patch"
+#	"${FILESDIR}/${PN}-5.1.3-llvm-15-remove-zlib-gnu"
+#	"${FILESDIR}/${PN}-5.1.3-llvm-15-args-changed"
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
-	"${FILESDIR}/${PN}-5.6.1-llvm-not-dylib-add-libs.patch"
+	"${FILESDIR}/${PN}-5.1.3-llvm-not-dylib-add-libs.patch"
 	"${FILESDIR}/${PN}-5.6.1-rpath.patch"
 )
 
@@ -77,7 +74,6 @@ src_configure() {
 	rocm_set_default_clang
 
 	local mycmakeargs=(
-		-DBUILD_TESTING=$(usex test ON OFF)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	# Disable stripping defined at lib/comgr/CMakeLists.txt:58
 		-DCMAKE_STRIP=""
