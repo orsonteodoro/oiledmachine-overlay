@@ -11,7 +11,6 @@ EAPI=8
 # plotille
 
 LLVM_SLOT=18
-DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
