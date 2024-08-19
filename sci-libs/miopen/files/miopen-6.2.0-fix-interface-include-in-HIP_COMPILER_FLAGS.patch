@@ -1,0 +1,14 @@
+diff '--color=auto' -urp MIOpen-rocm-6.2.0.orig/cmake/TargetFlags.cmake MIOpen-rocm-6.2.0/cmake/TargetFlags.cmake
+--- MIOpen-rocm-6.2.0.orig/cmake/TargetFlags.cmake	2024-07-17 15:13:32.000000000 -0700
++++ MIOpen-rocm-6.2.0/cmake/TargetFlags.cmake	2024-08-19 08:01:35.651941880 -0700
+@@ -77,7 +77,7 @@ function(target_flags FLAGS TARGET)
+     append_flags(_flags ${TARGET} "INTERFACE_COMPILE_OPTIONS" "")
+     append_flags(_flags ${TARGET} "INTERFACE_COMPILE_DEFINITIONS" "-D")
+ if(MIOPEN_HIP_COMPILER_USE_SYSTEM_INCLUDE_DIRECTORIES)
+-    append_flags(_flags ${TARGET} "INTERFACE_INCLUDE_DIRECTORIES" "-isystem ")
++    append_flags(_flags ${TARGET} "INTERFACE_INCLUDE_DIRECTORIES" "-I ")
+ endif()
+     append_flags(_flags ${TARGET} "INTERFACE_LINK_DIRECTORIES" "-L ")
+     append_flags(_flags ${TARGET} "INTERFACE_LINK_OPTIONS" "")
+Only in MIOpen-rocm-6.2.0/cmake: TargetFlags.cmake.orig
+Only in MIOpen-rocm-6.2.0/cmake: TargetFlags.cmake.rej

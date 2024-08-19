@@ -40,7 +40,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="comgr debug hiprtc kernels opencl +rocm test ebuild-revision-8"
+IUSE="comgr debug hiprtc kernels opencl +rocm test ebuild-revision-9"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -164,6 +164,7 @@ ewarn "Please wait... Patching may take longer than usual."
 		"${S}/src/composable_kernel/cmake/CppCheck.cmake"
 		"${S}/src/hipoc/hipoc_program.cpp"
 		"${S}/src/include/miopen/float_equal.hpp"
+		"${S}/src/include/miopen/lock_file.hpp"
 		"${S}/src/kernels/Conv_Winograd_v13_3_12_epilogue.inc"
 		"${S}/src/kernels/Conv_Winograd_v16_5_0_epilogue.inc"
 		"${S}/src/kernels/Conv_Winograd_v21_1_2_metadata.inc"

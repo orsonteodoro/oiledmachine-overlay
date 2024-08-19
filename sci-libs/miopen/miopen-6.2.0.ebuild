@@ -4,7 +4,7 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
-# https://github.com/ROCm/MIOpen/blob/rocm-6.1.2/test/CMakeLists.txt#L121
+# https://github.com/ROCm/MIOpen/blob/rocm-6.2.0/test/CMakeLists.txt#L121
 	gfx803
 	gfx900
 	gfx906
@@ -22,17 +22,16 @@ AMDGPU_TARGETS_COMPAT=(
 AMDGPU_UNTESTED_TARGETS=(
 	gfx803
 )
-FIN_COMMIT="0e597645a57df36993baf8f21d0a57e7293ae1c6"
+FIN_COMMIT="8c40a3c3b41a7d2fb31a8e747155fde4223919b9"
 MIOPENKERNELS_TARGETS_COMPAT=(
 	gfx900
 	gfx906
 	gfx908
 	gfx90a
-	gfx942
 	gfx1030
 )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-LLVM_SLOT=17
+LLVM_SLOT=18
 inherit cmake flag-o-matic rocm
 
 KEYWORDS="~amd64"
@@ -135,12 +134,12 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-6.1.2-disable-no-inline-boost.patch" # Build time testing
 	"${FILESDIR}/${PN}-5.6.0-strip-xnack-in-flags.patch"
-	"${FILESDIR}/${PN}-4.3.0-fix-interface-include-in-HIP_COMPILER_FLAGS.patch"
+	"${FILESDIR}/${PN}-6.2.0-fix-interface-include-in-HIP_COMPILER_FLAGS.patch"
 	"${FILESDIR}/${PN}-5.1.3-no-strip.patch"
 	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
 #	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # Fixed in pr #1830
 	"${FILESDIR}/${PN}-6.1.2-bzcat-path.patch"
-	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {

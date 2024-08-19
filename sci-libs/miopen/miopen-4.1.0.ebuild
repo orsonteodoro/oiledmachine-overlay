@@ -4,35 +4,22 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
-# https://github.com/ROCm/MIOpen/blob/rocm-6.1.2/test/CMakeLists.txt#L121
-	gfx803
+# https://github.com/ROCm/MIOpen/blob/rocm-4.1.0/test/CMakeLists.txt#L99
 	gfx900
 	gfx906
 	gfx908
-	gfx90a
-	gfx940
-	gfx941
-	gfx942
-	gfx1030
-	gfx1031
-	gfx1100
-	gfx1101
-	gfx1102
 )
 AMDGPU_UNTESTED_TARGETS=(
-	gfx803
+	gfx900
+	gfx906
 )
-FIN_COMMIT="0e597645a57df36993baf8f21d0a57e7293ae1c6"
 MIOPENKERNELS_TARGETS_COMPAT=(
 	gfx900
 	gfx906
 	gfx908
-	gfx90a
-	gfx942
-	gfx1030
 )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-LLVM_SLOT=17
+LLVM_SLOT=12
 inherit cmake flag-o-matic rocm
 
 KEYWORDS="~amd64"
@@ -40,26 +27,18 @@ S="${WORKDIR}/MIOpen-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/MIOpen/archive/rocm-${PV}.tar.gz
 	-> MIOpen-${PV}.tar.gz
-https://github.com/ROCmSoftwarePlatform/MIFin/archive/${FIN_COMMIT}.tar.gz
-	-> MIFin-${FIN_COMMIT:0:7}.tar.gz
 "
 
 DESCRIPTION="AMD's Machine Intelligence Library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen"
-LICENSE="
-	(
-		all-rights-reserved
-		MIT
-	)
-"
-# The distro's MIT license template does not contain All rights Reserved.
+LICENSE="MIT"
 RESTRICT="
 	!test? (
 		test
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test ebuild-revision-9"
+IUSE="comgr debug hiprtc kernels opencl +rocm test ebuild-revision-9"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -72,10 +51,6 @@ gen_amdgpu_required_use() {
 }
 REQUIRED_USE="
 	$(gen_amdgpu_required_use)
-	composable-kernel? (
-		!amdgpu_targets_gfx1031
-		rocm
-	)
 	hiprtc? (
 		comgr
 		rocm
@@ -87,7 +62,6 @@ REQUIRED_USE="
 	)
 	opencl? (
 		!comgr
-		!composable-kernel
 	)
 	^^ (
 		rocm
@@ -102,45 +76,42 @@ RDEPEND="
 	comgr? (
 		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	)
-	composable-kernel? (
-		sci-libs/composable_kernel:${ROCM_SLOT}[${COMPOSABLE_KERNEL_6_1_AMDGPU_USEDEP}]
-	)
 	kernels? (
-		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}[${MIOPENKERNELS_6_1_AMDGPU_USEDEP}]
+		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}[${MIOPENKERNELS_4_5_AMDGPU_USEDEP}]
 	)
 	opencl? (
-		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_1_AMDGPU_USEDEP}]
+		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_4_5_AMDGPU_USEDEP}]
+		~sci-libs/miopengemm-${PV}:${ROCM_SLOT}
 	)
 	rocm? (
 		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
-		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_6_1_AMDGPU_USEDEP},rocm]
+		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_4_5_AMDGPU_USEDEP},rocm]
 	)
 "
 DEPEND="
 	${RDEPEND}
 	>=dev-libs/half-1.12.0:=
-	>=dev-cpp/eigen-3.4.0:3=
-	>=dev-cpp/frugally-deep-0.15.20:=
 	>=dev-cpp/nlohmann_json-3.10.4:=
 "
 #	sys-devel/binutils[gold,plugins]
 BDEPEND="
-	${HIP_CLANG_DEPEND}
+	${ROCM_CLANG_DEPEND}
 	virtual/pkgconfig
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
-	mlir? (
-		=sci-libs/rocMLIR-${ROCM_SLOT}*:${ROCM_SLOT}[fat-librockcompiler(+)]
-	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.1.2-disable-no-inline-boost.patch" # Build time testing
-	"${FILESDIR}/${PN}-5.6.0-strip-xnack-in-flags.patch"
+	"${FILESDIR}/${PN}-4.2.0-disable-no-inline-boost.patch"
+	"${FILESDIR}/${PN}-4.2.0-gcc11-numeric_limits.patch"
+	"${FILESDIR}/${PN}-4.1.0-strip-xnack-in-flags.patch"
 	"${FILESDIR}/${PN}-4.3.0-fix-interface-include-in-HIP_COMPILER_FLAGS.patch"
+	"${FILESDIR}/${PN}-4.3.0-enable-test.patch"
+	"${FILESDIR}/${PN}-4.1.0-deprecate-clang-ocl.patch"
 	"${FILESDIR}/${PN}-5.1.3-no-strip.patch"
 	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
-#	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # Fixed in pr #1830
-	"${FILESDIR}/${PN}-6.1.2-bzcat-path.patch"
-	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-4.5.2-avoid-metadata-error-for-vanilla-clang.patch" # See also pr #1830
+	"${FILESDIR}/${PN}-4.1.0-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-4.5.2-fix-clang++-detection.patch"
+	"${FILESDIR}/${PN}-4.5.2-include-filesystem-exception.patch"
 )
 
 warn_untested_gpu() {
@@ -157,18 +128,10 @@ pkg_setup() {
 	warn_untested_gpu
 }
 
-src_unpack() {
-	unpack ${A}
-	rm -rf "${S}/fin" || true
-	mv \
-		"${WORKDIR}/MIFin-${FIN_COMMIT}" \
-		"${S}/fin" \
-		|| die
-}
-
 src_prepare() {
 ewarn "Please wait... Patching may take longer than usual."
 	cmake_src_prepare
+
 	hipconfig --help >/dev/null || die
 	sed \
 		-e '/MIOPEN_TIDY_ERRORS ALL/d' \
@@ -240,19 +203,15 @@ ewarn "Please wait... Patching may take longer than usual."
 einfo "Copying kernels"
 		local ma
 		for ma in ${MA[@]} ; do
-			ls "${ma}"*".kdb.bz2" >/dev/null || continue
-			cp -av "${ma}"*".kdb.bz2" "${S}/src/kernels" || die
+			ls "${ma}"*".kdb" >/dev/null || continue
+			cp -av "${ma}"*".kdb" "${S}/src/kernels" || die
 		done
 	fi
 }
 
 filter_test_gpus() {
-	if use "${gpu_target}" && [[ "${gputarget}" =~ "gfx103" ]] ; then
-		echo "-DMIOPEN_TEST_GFX103X=ON"
-	elif use "${gpu_target}" && [[ "${gputarget}" =~ "gfx110" ]] ; then
-		echo "-DMIOPEN_TEST_GFX110X=ON"
-	elif use "${gpu_target}" && [[ "${gputarget}" =~ "gfx94" ]] ; then
-		echo "-DMIOPEN_TEST_GFX94X=ON"
+	if use "${gpu_target}" && [[ "${gputarget}" =~ "gfx1030" ]] ; then
+		echo "-DMIOPEN_TEST_GFX1030=ON"
 	elif use "amdgpu_targets_${gpu_target}" ; then
 		echo "-DMIOPEN_TEST_${gpu_target^^}=ON"
 	fi
@@ -276,23 +235,15 @@ src_configure() {
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBoost_USE_STATIC_LIBS=OFF
-		-DBUILD_TESTING=$(usex test ON OFF)
+		-DBUILD_TESTS=$(usex test ON OFF)
 	# Removed double slash (//) to fix error "file called with network path DESTINATION."
 		-DCMAKE_INSTALL_PREFIX=$(realpath -m "${EPREFIX}/${EROCM_PATH}")
 		-DCMAKE_SKIP_RPATH=ON
 		-DMIOPEN_BACKEND=HIP
 		-DMIOPEN_TEST_ALL=$(usex test ON OFF)
 		-DMIOPEN_USE_COMGR=$(usex comgr ON OFF)
-		-DMIOPEN_USE_COMPOSABLEKERNEL=$(usex composable-kernel ON OFF)
 		-DMIOPEN_USE_HIPRTC=$(usex hiprtc ON OFF)
-		-DMIOPEN_USE_MLIR=$(usex mlir ON OFF)
 	)
-
-	if use mlir ; then
-		mycmakeargs+=(
-			-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/cmake/rocMLIR"
-		)
-	fi
 
 	if use test ; then
 		local gpu_target
@@ -330,4 +281,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

@@ -157,7 +157,7 @@ HIPTENSOR_6_2_AMDGPU_TARGETS_COMPAT=(
 HIPTENSOR_6_2_AMDGPU_USEDEP=$(gen_x_usedep "HIPTENSOR_6_2_AMDGPU_TARGETS_COMPAT")
 
 MIOPEN_6_2_AMDGPU_TARGETS_COMPAT=(
-# https://github.com/ROCm/MIOpen/blob/rocm-6.1.2/test/CMakeLists.txt#L121
+# https://github.com/ROCm/MIOpen/blob/rocm-6.2.0/test/CMakeLists.txt#L121
 	gfx803
 	gfx900
 	gfx906
