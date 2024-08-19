@@ -1,0 +1,57 @@
+diff '--color=auto' -urp Tensile-rocm-4.1.0.orig/Tensile/Source/FindHCC.cmake Tensile-rocm-4.1.0/Tensile/Source/FindHCC.cmake
+--- Tensile-rocm-4.1.0.orig/Tensile/Source/FindHCC.cmake	2021-01-18 18:59:59.000000000 -0800
++++ Tensile-rocm-4.1.0/Tensile/Source/FindHCC.cmake	2024-08-19 02:09:53.523635711 -0700
+@@ -24,18 +24,18 @@
+ # Also, supported only on UNIX 64 bit systems.
+ 
+ if( NOT DEFINED ENV{HSA_PATH} )
+-    set( ENV{HSA_PATH} /opt/rocm/hsa)
++    set( ENV{HSA_PATH} /opt/rocm-@ROCM_VERSION@/hsa)
+ endif()
+ 
+ if( NOT DEFINED  ENV{HCC_PATH} )
+-    set( ENV{HCC_PATH} /opt/rocm/hcc)
++    set( ENV{HCC_PATH} /opt/rocm-@ROCM_VERSION@/hcc)
+ endif()
+ 
+ find_library(HSA_LIBRARY
+     NAMES  hsa-runtime64
+     PATHS
+       ENV HSA_PATH
+-      /opt/rocm
++      /opt/rocm-@ROCM_VERSION@
+     PATH_SUFFIXES
+       lib)
+ 
+@@ -43,7 +43,7 @@ find_program(HCC
+     NAMES  hcc
+     PATHS
+         ENV HCC_PATH
+-        /opt/rocm
++        /opt/rocm-@ROCM_VERSION@
+     PATH_SUFFIXES
+         /bin)
+ 
+@@ -52,7 +52,7 @@ find_path(HCC_INCLUDE_DIR
+         hc.hpp
+     PATHS
+         ENV HCC_PATH
+-        /opt/rocm
++        /opt/rocm-@ROCM_VERSION@
+     PATH_SUFFIXES
+         /include/hcc
+         /include
+diff '--color=auto' -urp Tensile-rocm-4.1.0.orig/Tensile/Source/lib/source/hip/CMakeLists.txt Tensile-rocm-4.1.0/Tensile/Source/lib/source/hip/CMakeLists.txt
+--- Tensile-rocm-4.1.0.orig/Tensile/Source/lib/source/hip/CMakeLists.txt	2021-01-18 18:59:59.000000000 -0800
++++ Tensile-rocm-4.1.0/Tensile/Source/lib/source/hip/CMakeLists.txt	2024-08-19 02:09:34.835944131 -0700
+@@ -2,8 +2,8 @@
+ set(CMAKE_CXX_COMPILER ${HIP_HIPCC_EXECUTABLE})
+ 
+ #add_definitions(-D__HIP_PLATFORM_HCC__)
+-#set(HIP_INCLUDE_DIRS /opt/rocm/hip/include)
+-#set(HIP_LIBRARIES /opt/rocm/hip/lib/libhip_hcc.so)
++#set(HIP_INCLUDE_DIRS /opt/rocm-@ROCM_VERSION@/hip/include)
++#set(HIP_LIBRARIES /opt/rocm-@ROCM_VERSION@/hip/lib/libhip_hcc.so)
+ 
+ add_library(TensileHip STATIC
+             HipSolutionAdapter.cpp
