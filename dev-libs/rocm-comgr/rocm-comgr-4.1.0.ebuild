@@ -4,7 +4,7 @@
 EAPI=8
 
 CMAKE_BUILD_TYPE="Release"
-LLVM_SLOT=13 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-4.1.0/llvm/CMakeLists.txt
+LLVM_SLOT=12 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-4.1.0/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic prefix rocm
@@ -36,7 +36,7 @@ LICENSE="
 # UoI-NCSA BSD MIT - lib/comgr/NOTICES.txt
 # UoI-NCSA - lib/comgr/include/amd_comgr.h.in
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-13"
+IUSE="ebuild-revision-12"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	!dev-libs/rocm-comgr:0
