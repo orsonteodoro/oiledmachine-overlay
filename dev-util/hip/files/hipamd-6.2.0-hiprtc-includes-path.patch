@@ -27,11 +27,12 @@ diff '--color=auto' -urp hipamd.orig/src/hiprtc/CMakeLists.txt hipamd/src/hiprtc
    $<BUILD_INTERFACE:${HIP_COMMON_INCLUDE_DIR}>
    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
-@@ -102,7 +108,7 @@ if(WIN32)
+@@ -102,7 +108,8 @@ if(WIN32)
    target_link_libraries(hiprtc PRIVATE Dbghelp.lib)
  endif()
  
 -target_link_libraries(hiprtc PUBLIC ${CMAKE_DL_LIBS})
++target_link_directories(hiprtc PRIVATE ${CLR_PATH}/rocclr_build)
 +target_link_libraries(hiprtc PUBLIC ${CLR_PATH}/rocclr_build)
  # Add link to comgr, hsa-runtime and other required libraries in target files
  # This is required for static libraries

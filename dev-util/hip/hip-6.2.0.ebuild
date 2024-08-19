@@ -150,7 +150,7 @@ BDEPEND="
 	)
 "
 CLR_PATCHES=(
-	"${FILESDIR}/rocclr-5.7.0-include-path.patch"
+	"${FILESDIR}/rocclr-6.2.0-include-path.patch"
 #	"${FILESDIR}/rocclr-5.7.0-opencl-header.patch"
 )
 ROCCLR_PATCHES=(
