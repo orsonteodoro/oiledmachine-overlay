@@ -53,6 +53,8 @@ needs_debugfs() {
 	local pkg_raw="${1}"
 	local pkg=$(echo "${pkgname}" | sed -e "s|\[.*\]||g")
 	local pkgid=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
+# The conditional is commented out because multiple settings are involved.
+#	if has debug ${IUSE_EFFECTIVE} && ot-kernel_use debug ; then
 ewarn
 ewarn "${pkg_raw} uses debugfs and is a developer only config option.  It"
 ewarn "should be disabled to prevent abuse and a possible prerequisite for"
@@ -60,8 +62,9 @@ ewarn "attacks."
 ewarn
 ewarn "To remove this warning disable the relevant USE flag or add ${pkgid}"
 ewarn "to OT_KERNEL_PKGFLAGS_REJECT.  In addition, edit the CONFIG_DEBUG_FS"
-ewarn "to unset or use the disable_debug USE flag."
+ewarn "and remove the debug USE flag from USE or from OT_KERNEL_USE."
 ewarn
+#	fi
 	export _OT_KERNEL_NEEDS_DEBUGFS=1
 }
 
@@ -114,7 +117,8 @@ eerror
 
 # @FUNCTION: ban_disable_debug
 # @DESCRIPTION:
-# Makes disable_debug mutually exclusive with kernel pkgflags
+# It makes the disable_debug script mutually exclusive with a certain kernel
+# option enabled.
 #
 # Any function that uses the following keywords (DEBUG, TRACE, VERBOSE, LOG,
 # PRINT) in kernel flags should be checked in addition to netfilter log
@@ -146,15 +150,15 @@ ban_disable_debug() {
 		]] \
 	; then
 		: # No feature conflict
-	elif ot-kernel_use disable_debug ; then
+	elif ! ot-kernel_use debug ; then
 eerror
-eerror "Using OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS with the disable_debug"
-eerror "USE flag are in conflict with a package with certain set of kernel"
-eerror "flags."
+eerror "Using OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS with the disabled debug"
+eerror "USE flag which will run the disable_debug script are in conflict with a"
+eerror "package with certain set of kernel flags."
 eerror
 eerror "Choices:"
 eerror
-eerror "1. Disable the disable_debug USE flag."
+eerror "1. Hard unmask the debug USE flag first.  Then, enable the debug USE flag."
 eerror "2. Add OT_KERNEL_PKGFLAGS_REJECT[S${pkgid}]=1."
 eerror "3. Add OT_KERNEL_PKGFLAGS_ACCEPT[S${pkgid}]=1."
 eerror
@@ -3302,6 +3306,13 @@ ewarn "Do not use CBC for disk encryption."
 	# Ciphers changed unconditionally at the end of
 	# ot-kernel_src_configure_assisted in the _ot-kernel-pkgflags_dss_*
 	# section.
+
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.16" ; then
+			ot-kernel_y_configopt "CONFIG_NET"
+			ot-kernel_y_configopt "CONFIG_AUDIT"
+			ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
+			ot-kernel_y_configopt "CONFIG_DM_AUDIT"
+		fi
 
 	elif ot-kernel_has_version_pkgflags "sys-fs/cryptsetup" ; then
 		if [[ "${work_profile}" == "dss" ]] ; then
@@ -12870,9 +12881,9 @@ ewarn "app-forensics/aide should be added for integrity verification for dss wor
 # Check for audit logs support.
 _ot-kernel_checkpoint_dss_audit_logs_requirement() {
 	if [[ "${work_profile}" == "dss" ]] ; then
-		if ot-kernel_use disable_debug ; then
+		if ! ot-kernel_use debug ; then
 eerror
-eerror "The disable_debug USE flag should be disabled for the dss work profile"
+eerror "The debug USE flag should be enabled for the dss work profile"
 eerror "to enable logging."
 eerror
 			die
