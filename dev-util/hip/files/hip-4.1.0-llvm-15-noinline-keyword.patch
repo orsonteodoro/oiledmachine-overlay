@@ -1,0 +1,16 @@
+diff '--color=auto' -urp HIP-rocm-4.1.0.orig/include/hip/hcc_detail/host_defines.h HIP-rocm-4.1.0/include/hip/hcc_detail/host_defines.h
+--- HIP-rocm-4.1.0.orig/include/hip/hcc_detail/host_defines.h	2021-02-16 09:25:34.000000000 -0800
++++ HIP-rocm-4.1.0/include/hip/hcc_detail/host_defines.h	2024-08-18 16:14:31.760450479 -0700
+@@ -72,7 +72,11 @@ THE SOFTWARE.
+ #define __constant__ __attribute__((constant))
+ #endif // !__CLANG_HIP_RUNTIME_WRAPPER_INCLUDED__
+ 
++#if defined(__GNUC__)
++#define __noinline__ __noinline__
++#elif !defined(__has_feature) || !__has_feature(cuda_noinline_keyword)
+ #define __noinline__ __attribute__((noinline))
++#endif
+ #define __forceinline__ inline __attribute__((always_inline))
+ 
+ #else
+Only in HIP-rocm-4.1.0/include/hip/hcc_detail: host_defines.h.orig

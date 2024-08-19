@@ -1,0 +1,23 @@
+diff '--color=auto' -urp HIP-rocm-4.1.0.orig/hip-config.cmake.in HIP-rocm-4.1.0/hip-config.cmake.in
+--- HIP-rocm-4.1.0.orig/hip-config.cmake.in	2024-08-18 16:20:13.826801813 -0700
++++ HIP-rocm-4.1.0/hip-config.cmake.in	2024-08-18 16:22:12.408779389 -0700
+@@ -121,12 +121,12 @@ if (HSA_HEADER-NOTFOUND)
+   message (FATAL_ERROR "HSA header not found! ROCM_PATH environment not set")
+ endif()
+ 
+-# Right now this is only supported for amd platforms
+-set_target_properties(hip::host PROPERTIES
+-  INTERFACE_COMPILE_DEFINITIONS "__HIP_PLATFORM_HCC__=1"
+-)
+-
+ if(HIP_RUNTIME MATCHES "rocclr")
++  # Right now this is only supported for amd platforms
++  set_target_properties(hip::host PROPERTIES
++    INTERFACE_COMPILE_DEFINITIONS "__HIP_PLATFORM_HCC__=1"
++  )
++
+   set_target_properties(hip::amdhip64 PROPERTIES
+     INTERFACE_COMPILE_DEFINITIONS "__HIP_ROCclr__=1"
+     INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include;${HSA_HEADER}"
+Only in HIP-rocm-4.1.0: hip-config.cmake.in.orig
+Only in HIP-rocm-4.1.0: hip-config.cmake.in.rej

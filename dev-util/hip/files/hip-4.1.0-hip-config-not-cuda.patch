@@ -1,0 +1,15 @@
+diff '--color=auto' -urp HIP-rocm-4.1.0.orig/hip-config.cmake.in HIP-rocm-4.1.0/hip-config.cmake.in
+--- HIP-rocm-4.1.0.orig/hip-config.cmake.in	2021-02-16 09:25:34.000000000 -0800
++++ HIP-rocm-4.1.0/hip-config.cmake.in	2024-08-18 16:16:44.322276748 -0700
+@@ -94,7 +94,9 @@ endif()
+ 
+ find_dependency(amd_comgr)
+ 
+-include( "${CMAKE_CURRENT_LIST_DIR}/hip-targets.cmake" )
++if(HIP_RUNTIME MATCHES "rocclr")
++  include( "${CMAKE_CURRENT_LIST_DIR}/hip-targets.cmake" )
++endif()
+ 
+ #Using find_dependecy to locate the dependency for the packagaes
+ #This makes the cmake generated file xxxx-targets to supply the linker libraries
+Only in HIP-rocm-4.1.0: hip-config.cmake.in.orig

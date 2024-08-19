@@ -1,0 +1,13 @@
+diff '--color=auto' -urp HIP-rocm-4.1.0.orig/CMakeLists.txt HIP-rocm-4.1.0/CMakeLists.txt
+--- HIP-rocm-4.1.0.orig/CMakeLists.txt	2024-08-18 16:02:31.468247685 -0700
++++ HIP-rocm-4.1.0/CMakeLists.txt	2024-08-18 16:03:53.418906741 -0700
+@@ -298,6 +298,7 @@ file(WRITE "${PROJECT_BINARY_DIR}/.hipVe
+ if(NOT DEFINED HIP_VERSION_GITDATE)
+     set(HIP_VERSION_GITDATE 0)
+ endif()
++set(HIP_VERSION_BUILD_ID 0)
+ 
+ # Build doxygen documentation
+ find_program(DOXYGEN_EXE doxygen)
+Only in HIP-rocm-4.1.0: CMakeLists.txt.orig
+Only in HIP-rocm-4.1.0: CMakeLists.txt.rej

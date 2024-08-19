@@ -15,15 +15,14 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 inherit cmake docs prefix python-any-r1 rocm
 
 KEYWORDS="~amd64"
-S="${WORKDIR}/hipamd-rocm-${PV}"
+#S="${WORKDIR}/hipamd-rocm-${PV}"
 HIP_S="${WORKDIR}/HIP-rocm-${PV}"
+S="${WORKDIR}/HIP-rocm-${PV}"
 OCL_S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
 ROCCLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
 RTC_S="${WORKDIR}/roctracer-rocm-${PV}"
 DOCS_DIR="${HIP_S}/docs/doxygen-input"
 SRC_URI="
-https://github.com/ROCm-Developer-Tools/hipamd/archive/rocm-${PV}.tar.gz
-	-> rocm-hipamd-${PV}.tar.gz
 https://github.com/ROCm-Developer-Tools/HIP/archive/rocm-${PV}.tar.gz
 	-> rocm-hip-${PV}.tar.gz
 	profile? (
@@ -151,16 +150,16 @@ HIP_PATCHES=(
 	"${FILESDIR}/${PN}-4.5.2-fno-stack-protector.patch"
 )
 HIPAMD_PATCHES=(
-	"${FILESDIR}/${PN}-4.5.2-DisableTest.patch"
-	"${FILESDIR}/${PN}-5.0.1-hip_vector_types.patch"
-	"${FILESDIR}/${PN}-4.2.0-cancel-hcc-header-removal.patch"
-	"${FILESDIR}/${PN}-4.5.2-set-build-id.patch"
-	"${FILESDIR}/${PN}-5.1.3-fix-hip_prof_gen.patch"
-	"${FILESDIR}/${PN}-5.1.3-llvm-15-noinline-keyword.patch"
-	"${FILESDIR}/${PN}-5.6.0-hip-config-not-cuda.patch"
-	"${FILESDIR}/${PN}-5.6.0-hip-host-not-cuda.patch"
-	"${FILESDIR}/hipamd-5.1.3-link-hsa-runtime64.patch"
-	"${FILESDIR}/hipamd-4.5.2-fix-hip-lang-device-interface-path.patch"
+#	"${FILESDIR}/${PN}-4.5.2-DisableTest.patch"
+#	"${FILESDIR}/${PN}-5.0.1-hip_vector_types.patch"
+#	"${FILESDIR}/${PN}-4.2.0-cancel-hcc-header-removal.patch"
+	"${FILESDIR}/${PN}-4.1.0-set-build-id.patch"
+	"${FILESDIR}/${PN}-4.1.0-fix-hip_prof_gen.patch"
+	"${FILESDIR}/${PN}-4.1.0-llvm-15-noinline-keyword.patch"
+	"${FILESDIR}/${PN}-4.1.0-hip-config-not-cuda.patch"
+	"${FILESDIR}/${PN}-4.1.0-hip-host-not-cuda.patch"
+#	"${FILESDIR}/hipamd-5.1.3-link-hsa-runtime64.patch"
+	"${FILESDIR}/hipamd-4.1.0-fix-hip-lang-device-interface-path.patch"
 	"${FILESDIR}/hipamd-4.5.2-fix-hip-clang-root.patch"
 )
 OCL_PATCHES=(
@@ -175,7 +174,7 @@ python_check_deps() {
 }
 
 pkg_setup() {
-ewarn "The 4.5.x series may require a compiler switch to gcc:12"
+ewarn "The 4.1.x series may require a compiler switch to gcc:12"
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
 }
@@ -255,7 +254,7 @@ src_prepare() {
 	fi
 
 	pushd "${WORKDIR}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-4.5.2-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-4.1.0-hardcoded-paths.patch"
 	popd >/dev/null 2>&1 || die
 
 	rocm_src_prepare

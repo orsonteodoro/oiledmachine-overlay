@@ -1,0 +1,52 @@
+diff '--color=auto' -urp hipamd.orig/packaging/CMakeLists.txt hipamd/packaging/CMakeLists.txt
+--- hipamd.orig/packaging/CMakeLists.txt	2024-08-18 15:00:03.409074155 -0700
++++ hipamd/packaging/CMakeLists.txt	2024-08-18 15:01:55.087247730 -0700
+@@ -71,14 +71,14 @@ if(HIP_PLATFORM STREQUAL "amd" )
+ 
+ #TODO:This do not belong in BINARY package.
+ #Keeping it as is for now
+-install(FILES ${CMAKE_BINARY_DIR}/hipamd/share/hip/.hipInfo DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT binary)
++install(FILES ${CMAKE_BINARY_DIR}/share/hip/.hipInfo DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT binary)
+ 
+ install ( EXPORT hip-targets  FILE hip-targets.cmake NAMESPACE hip:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hip  COMPONENT dev)
+ 
+-install(FILES ${CMAKE_BINARY_DIR}/hipamd/src/hip-lang-config.cmake ${CMAKE_BINARY_DIR}/hipamd/src/hip-lang-config-version.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hip-lang COMPONENT dev)
++install(FILES ${CMAKE_BINARY_DIR}/src/hip-lang-config.cmake ${CMAKE_BINARY_DIR}/src/hip-lang-config-version.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hip-lang COMPONENT dev)
+ install ( EXPORT hip-lang-targets  FILE hip-lang-targets.cmake NAMESPACE hip-lang:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hip-lang  COMPONENT dev)
+ 
+-install(FILES ${CMAKE_BINARY_DIR}/hipamd/hiprtc-config.cmake ${CMAKE_BINARY_DIR}/hipamd/hiprtc-config-version.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hiprtc COMPONENT dev)
++install(FILES ${CMAKE_BINARY_DIR}/hiprtc-config.cmake ${CMAKE_BINARY_DIR}/hiprtc-config-version.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hiprtc COMPONENT dev)
+ install ( EXPORT hiprtc-targets  FILE hiprtc-targets.cmake NAMESPACE hiprtc:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hiprtc  COMPONENT dev)
+ 
+ endif()#End HIP_PLATFORM = "amd"
+@@ -112,21 +112,21 @@ if(DEFINED HIPNV_DIR)
+         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hip COMPONENT dev)
+ endif()
+ if(HIP_PLATFORM STREQUAL "amd" )
+-install(FILES ${CMAKE_BINARY_DIR}/hipamd/include/hip/amd_detail/hip_prof_str.h
++install(FILES ${CMAKE_BINARY_DIR}/include/hip/amd_detail/hip_prof_str.h
+         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hip/amd_detail COMPONENT dev)
+ endif()
+-install(FILES ${CMAKE_BINARY_DIR}/hipamd/include/hip/hip_version.h
++install(FILES ${CMAKE_BINARY_DIR}/include/hip/hip_version.h
+         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/hip COMPONENT dev)
+-install(FILES ${CMAKE_BINARY_DIR}/hipamd/share/hip/version DESTINATION ${CMAKE_INSTALL_DATADIR}/hip COMPONENT dev)
++install(FILES ${CMAKE_BINARY_DIR}/share/hip/version DESTINATION ${CMAKE_INSTALL_DATADIR}/hip COMPONENT dev)
+ # .hipVersion is added to satisfy Windows compute build.
+ #TODO to be removed
+ if(WIN32)
+-    install(FILES ${CMAKE_BINARY_DIR}/hipamd/share/hip/version DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME .hipVersion COMPONENT dev)
++    install(FILES ${CMAKE_BINARY_DIR}/share/hip/version DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME .hipVersion COMPONENT dev)
+ endif()
+ install(DIRECTORY ${HIP_COMMON_DIR}/cmake/ DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hip COMPONENT dev)
+-install(FILES ${CMAKE_BINARY_DIR}/hipamd/hip-config.cmake ${CMAKE_BINARY_DIR}/hipamd/hip-config-version.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hip COMPONENT dev)
+-install(FILES ${CMAKE_BINARY_DIR}/hipamd/hip-config-amd.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hip COMPONENT dev)
+-install(FILES ${CMAKE_BINARY_DIR}/hipamd/hip-config-nvidia.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hip COMPONENT dev)
++install(FILES ${CMAKE_BINARY_DIR}/hip-config.cmake ${CMAKE_BINARY_DIR}/hip-config-version.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hip COMPONENT dev)
++install(FILES ${CMAKE_BINARY_DIR}/hip-config-amd.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hip COMPONENT dev)
++install(FILES ${CMAKE_BINARY_DIR}/hip-config-nvidia.cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/hip COMPONENT dev)
+ #End dev files install
+ 
+ ##################################
+Only in hipamd/packaging: CMakeLists.txt.orig
+Only in hipamd/packaging: CMakeLists.txt.rej
