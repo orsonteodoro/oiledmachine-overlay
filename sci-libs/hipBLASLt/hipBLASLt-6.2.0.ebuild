@@ -6,10 +6,15 @@ EAPI=8
 AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
+	gfx940
+	gfx941
+	gfx942
+	gfx1100
+	gfx1101
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=16
+LLVM_SLOT=17
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -38,9 +43,8 @@ LICENSE="
 	)
 	MIT
 "
-# tensilelite/Tensile/ClientWriter.py
+# all-rights-reserved MIT - utilities/find_exact.py
 # MIT - LICENSE.md
-# The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
 ${ROCM_IUSE}
@@ -72,6 +76,7 @@ RDEPEND="
 	dev-libs/msgpack
 	virtual/blas
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[amdgpu_targets_gfx940?,amdgpu_targets_gfx941?,amdgpu_targets_gfx942?,amdgpu_targets_gfx1100?,amdgpu_targets_gfx1101?]
 	amdgpu_targets_gfx90a_xnack_minus? (
 		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[amdgpu_targets_gfx90a]
 	)
@@ -102,7 +107,7 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-set-CMP0074-NEW.patch"
-	"${FILESDIR}/${PN}-5.5.1-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -179,7 +184,6 @@ ewarn
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="cuda"
-			-DOPENCL_ROOT="/opt/cuda"
 		)
 		if use tensile ; then
 			mycmakeargs+=(
@@ -203,7 +207,7 @@ ewarn
 			export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"
 			mycmakeargs+=(
 				-DOPENCL_ROOT="${EROCM_PATH}/opencl"
-				-DTensile_CODE_OBJECT_VERSION="V3" # Avoid V2 build error with with xnack-
+				-DTensile_CODE_OBJECT_VERSION="V3" # Avoid V2 build error with xnack-
 				-DTensile_CPU_THREADS="${nprocs}"
 #				-DTensile_ROOT="${ESYSROOT}${EROCM_PATH}"
 				-DTensile_ROOT="${S}/tensilelite"
@@ -243,5 +247,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test

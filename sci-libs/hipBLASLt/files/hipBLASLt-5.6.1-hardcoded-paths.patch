@@ -1,6 +1,6 @@
 diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/CMakeLists.txt hipBLASLt-rocm-5.6.1/CMakeLists.txt
---- hipBLASLt-rocm-5.6.1.orig/CMakeLists.txt	2024-07-09 16:56:17.774369355 -0700
-+++ hipBLASLt-rocm-5.6.1/CMakeLists.txt	2024-07-09 16:57:19.929353669 -0700
+--- hipBLASLt-rocm-5.6.1.orig/CMakeLists.txt	2024-08-19 13:08:46.316057632 -0700
++++ hipBLASLt-rocm-5.6.1/CMakeLists.txt	2024-08-19 13:09:05.535745447 -0700
 @@ -35,16 +35,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
  if(WIN32)
    set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
@@ -66,11 +66,9 @@ diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/CMakeLists.txt hipBLASLt-rocm
      COMMAND chmod +x llvm-gcov.sh
      )
  
-Only in hipBLASLt-rocm-5.6.1: CMakeLists.txt.orig
-Only in hipBLASLt-rocm-5.6.1: CMakeLists.txt.rej
 diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/clients/CMakeLists.txt hipBLASLt-rocm-5.6.1/clients/CMakeLists.txt
 --- hipBLASLt-rocm-5.6.1.orig/clients/CMakeLists.txt	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.1/clients/CMakeLists.txt	2024-07-09 16:56:39.390016048 -0700
++++ hipBLASLt-rocm-5.6.1/clients/CMakeLists.txt	2024-08-19 13:09:05.535745447 -0700
 @@ -68,11 +68,11 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_C
  set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
  
@@ -87,7 +85,7 @@ diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/clients/CMakeLists.txt hipBLA
  endif( )
 diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/cmake/Dependencies.cmake hipBLASLt-rocm-5.6.1/cmake/Dependencies.cmake
 --- hipBLASLt-rocm-5.6.1.orig/cmake/Dependencies.cmake	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.1/cmake/Dependencies.cmake	2024-07-09 16:56:39.390016048 -0700
++++ hipBLASLt-rocm-5.6.1/cmake/Dependencies.cmake	2024-08-19 13:09:05.535745447 -0700
 @@ -28,7 +28,7 @@ find_package(Git REQUIRED)
  
  # Workaround until hcc & hip cmake modules fixes symlink logic in their config files.
@@ -99,7 +97,7 @@ diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/cmake/Dependencies.cmake hipB
  find_package(ROCM 0.6 QUIET CONFIG PATHS ${CMAKE_PREFIX_PATH})
 diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/library/src/amd_detail/rocblaslt/src/tensile_host.cpp hipBLASLt-rocm-5.6.1/library/src/amd_detail/rocblaslt/src/tensile_host.cpp
 --- hipBLASLt-rocm-5.6.1.orig/library/src/amd_detail/rocblaslt/src/tensile_host.cpp	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.1/library/src/amd_detail/rocblaslt/src/tensile_host.cpp	2024-07-09 16:56:39.394015984 -0700
++++ hipBLASLt-rocm-5.6.1/library/src/amd_detail/rocblaslt/src/tensile_host.cpp	2024-08-19 13:09:05.535745447 -0700
 @@ -63,7 +63,7 @@
  #include <link.h>
  #include <unistd.h>
@@ -111,7 +109,7 @@ diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/library/src/amd_detail/rocbla
  {
 diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Common.py hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Common.py
 --- hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Common.py	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Common.py	2024-07-09 16:56:39.394015984 -0700
++++ hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Common.py	2024-08-19 13:09:05.539745382 -0700
 @@ -1361,7 +1361,7 @@ def assignGlobalParameters( config ):
      else:
        print2(" %24s: %8s (unspecified)" % (key, defaultValue))
@@ -121,10 +119,9 @@ diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Common.py
    if "ROCM_PATH" in os.environ:
      globalParameters["ROCmPath"] = os.environ.get("ROCM_PATH")
    if "TENSILE_ROCM_PATH" in os.environ:
-Only in hipBLASLt-rocm-5.6.1/tensilelite/Tensile: Common.py.orig
 diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Source/CMakeLists.txt hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source/CMakeLists.txt
 --- hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Source/CMakeLists.txt	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source/CMakeLists.txt	2024-07-09 16:56:39.398015918 -0700
++++ hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source/CMakeLists.txt	2024-08-19 13:09:05.547745252 -0700
 @@ -26,7 +26,7 @@ cmake_minimum_required(VERSION 3.13)
  
  # Override all paths arguments as they do not work properly
@@ -143,10 +140,9 @@ diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Source/CM
  endif()
  
  if(TENSILE_USE_OPENMP)
-Only in hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source: CMakeLists.txt.orig
 diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Source/FindHIP.cmake hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source/FindHIP.cmake
 --- hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Source/FindHIP.cmake	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source/FindHIP.cmake	2024-07-09 16:56:39.398015918 -0700
++++ hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source/FindHIP.cmake	2024-08-19 13:09:05.547745252 -0700
 @@ -79,7 +79,7 @@ else()
          hip/hip_runtime.h
        PATHS
@@ -165,28 +161,34 @@ diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Source/Fi
      PATH_SUFFIXES
            /bin
        )
-Only in hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source: FindHIP.cmake.orig
 diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Source/FindOpenCL.cmake hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source/FindOpenCL.cmake
 --- hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Source/FindOpenCL.cmake	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source/FindOpenCL.cmake	2024-07-09 16:56:39.398015918 -0700
++++ hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source/FindOpenCL.cmake	2024-08-19 13:09:05.547745252 -0700
 @@ -71,8 +71,8 @@ find_path(OPENCL_INCLUDE_DIRS
    PATHS
      /usr/include
      /usr/local/include
 -    /usr/local/cuda/include
 -    /opt/rocm/opencl/include
-+    /usr/cuda/include
++    /opt/cuda/include
 +    /opt/rocm-@ROCM_VERSION@/opencl/include
    DOC "OpenCL header file path"
  )
  mark_as_advanced( OPENCL_INCLUDE_DIRS )
-@@ -130,8 +130,8 @@ if( LIB64 )
+@@ -125,13 +125,13 @@ if( LIB64 )
+       ${OPENCL_ROOT}/lib
+       $ENV{OPENCL_ROOT}/lib
+       $ENV{AMDAPPSDKROOT}/lib
+-      $ENV{CUDA_PATH}/lib
++      $ENV{CUDA_PATH}/lib64
+     DOC "OpenCL dynamic library path"
      PATH_SUFFIXES x86_64 x64
      PATHS
-     /usr/lib
+-    /usr/lib
 -    /usr/local/cuda/lib
 -    /opt/rocm/opencl/lib
-+    /usr/cuda/lib
++    /usr/lib64
++    /opt/cuda/lib64
 +    /opt/rocm-@ROCM_VERSION@/opencl/lib
    )
  else( )
@@ -197,15 +199,14 @@ diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Source/Fi
      /usr/lib
 -    /usr/local/cuda/lib
 -    /opt/rocm/opencl/lib
-+    /usr/cuda/lib
++    /opt/cuda/lib
 +    /opt/rocm-@ROCM_VERSION@/opencl/lib
    )
  endif( )
  mark_as_advanced( OPENCL_LIBRARIES )
-Only in hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source: FindOpenCL.cmake.orig
 diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake
 --- hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake	2024-07-09 16:56:39.398015918 -0700
++++ hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake	2024-08-19 13:09:05.547745252 -0700
 @@ -24,7 +24,7 @@
  
  if(NOT ROCM_ROOT)
@@ -215,4 +216,15 @@ diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Source/cm
      else()
          set(ROCM_DIR "${ROCM_DIR}/../../..")
      endif()
-Only in hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Source/cmake: FindROCmSMI.cmake.orig
+diff '--color=auto' -urp hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Tests/common/test_config.py hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Tests/common/test_config.py
+--- hipBLASLt-rocm-5.6.1.orig/tensilelite/Tensile/Tests/common/test_config.py	2023-05-28 21:19:48.000000000 -0700
++++ hipBLASLt-rocm-5.6.1/tensilelite/Tensile/Tests/common/test_config.py	2024-08-19 13:09:56.122923567 -0700
+@@ -157,7 +157,7 @@ def configMarks(filepath, rootDir, avail
+ 
+ def findAvailableArchs():
+     availableArchs = []
+-    rocmpath = "/opt/rocm"
++    rocmpath = "/opt/rocm-@ROCM_VERSION@"
+     if "ROCM_PATH" in os.environ:
+         rocmpath = os.environ.get("ROCM_PATH")
+     if "TENSILE_ROCM_PATH" in os.environ:

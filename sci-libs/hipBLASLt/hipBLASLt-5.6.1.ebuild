@@ -42,7 +42,7 @@ LICENSE="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
 ${ROCM_IUSE}
-benchmark cuda +rocm +tensile ebuild-revision-9
+benchmark cuda +rocm +tensile ebuild-revision-10
 "
 gen_rocm_required_use() {
 	local x
