@@ -19,8 +19,13 @@ else
 	SRC_URI="
 https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/ROCm/ROCT-Thunk-Interface/commit/372b4c17440b76f63b20ed351dda10306e5804c0.patch
+	-> ROCT-Thunk-Interface-372b4c1.patch
 	"
 fi
+# 372b4c1 - Treat link flags as a string, rather than a list
+#   Fixes:  undefined reference to `main'
+
 
 DESCRIPTION="Radeon Open Compute Thunk Interface"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface"
@@ -61,6 +66,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-4.1.0-hardcoded-paths.patch"
+	"${DISTDIR}/ROCT-Thunk-Interface-372b4c1.patch"
 )
 
 pkg_setup() {
