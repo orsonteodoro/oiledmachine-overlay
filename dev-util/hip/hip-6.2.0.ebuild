@@ -98,6 +98,9 @@ REQUIRED_USE="
 			pal
 		)
 	)
+	rocprofiler-register? (
+		rocm
+	)
 	test? (
 		rocm? (
 			hsa
@@ -360,6 +363,7 @@ src_configure() {
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
 			-DHIP_COMPILER="nvcc"
+			-DHIP_ENABLE_ROCPROFILER_REGISTER=OFF
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="cuda" # There's a typo in the HIP faq.
 		)
