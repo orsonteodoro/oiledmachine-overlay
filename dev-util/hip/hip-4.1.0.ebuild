@@ -20,6 +20,7 @@ HIP_S="${WORKDIR}/HIP-rocm-${PV}"
 S="${WORKDIR}/HIP-rocm-${PV}"
 OCL_S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
 ROCCLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
+# HIP-rocm-4.1.0/rocclr
 RTC_S="${WORKDIR}/roctracer-rocm-${PV}"
 DOCS_DIR="${HIP_S}/docs/doxygen-input"
 SRC_URI="
@@ -65,42 +66,14 @@ LICENSE="
 # MIT - hipamd-rocm-4.5.2/LICENSE.txt
 
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test ebuild-revision-37"
+IUSE="cuda debug numa -pal profile +rocm test ebuild-revision-37"
 REQUIRED_USE="
-	hsa? (
-		rocm
-	)
-	hsail? (
-		rocm
-	)
-	lc? (
-		rocm
-	)
-	numa? (
-		hsa
-	)
 	pal? (
 		rocm
 	)
 	profile? (
 		!cuda
 		rocm
-	)
-	rocm? (
-		|| (
-			hsail
-			lc
-		)
-		|| (
-			hsa
-			pal
-		)
-	)
-	test? (
-		rocm? (
-			hsa
-			lc
-		)
 	)
 	^^ (
 		cuda
@@ -114,14 +87,12 @@ RDEPEND="
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
-	lc? (
-		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
-	)
 	numa? (
 		sys-process/numactl
 	)
 	rocm? (
 		${ROCM_CLANG_DEPEND}
+		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 	)
@@ -161,6 +132,7 @@ HIPAMD_PATCHES=(
 #	"${FILESDIR}/hipamd-5.1.3-link-hsa-runtime64.patch"
 	"${FILESDIR}/hipamd-4.1.0-fix-hip-lang-device-interface-path.patch"
 	"${FILESDIR}/hipamd-4.5.2-fix-hip-clang-root.patch"
+	"${FILESDIR}/hip-4.1.0-hip-architectures.patch"
 )
 OCL_PATCHES=(
 )
@@ -260,7 +232,9 @@ src_prepare() {
 	rocm_src_prepare
 }
 
-src_configure() {
+src_configure() { :; }
+
+src_compile() {
 	rocm_set_default_gcc
 	use debug && CMAKE_BUILD_TYPE="Debug"
 
@@ -288,6 +262,7 @@ src_configure() {
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="cuda"
+			-DUSE_COMGR_LIBRARY=OFF
 		)
 		if ! has_version "sys-devel/clang:${LLVM_SLOT}" ; then
 			mycmakeargs+=(
@@ -297,15 +272,14 @@ src_configure() {
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
-			-DAMD_OPENCL_PATH="${OCL_S}"
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
-			-DROCCLR_ENABLE_LC=$(usex lc ON OFF)
-			-DROCCLR_ENABLE_HSA=$(usex hsa ON OFF)
-			-DROCCLR_ENABLE_HSAIL=$(usex hsail ON OFF)
-			-DROCCLR_ENABLE_PAL=$(usex pal ON OFF)
+			-DOPENCL_DIR="${OCL_S}"
+			-DROCclr_DIR="${ROCCLR_S}_build/lib/cmake/rocclr"
+			-DBUILD_PAL=$(usex pal ON OFF)
 			-DROCCLR_PATH="${ROCCLR_S}"
+			-DUSE_COMGR_LIBRARY=ON
 		)
 	fi
 
@@ -313,23 +287,38 @@ src_configure() {
 		-DPROF_API_HEADER_PATH="${RTC_S}/inc/ext"
 	)
 
-	rocm_src_configure
-}
+	einfo "Building ROCClr"
+	pushd "${ROCCLR_S}" >/dev/null 2>&1 || die
+		CMAKE_USE_DIR="${ROCCLR_S}" \
+		BUILD_DIR="${ROCCLR_S}_build" \
+		rocm_src_configure
 
-src_compile() {
-	HIP_PATH="${HIP_S}" \
-	docs_compile
-	cmake_src_compile
+		CMAKE_USE_DIR="${ROCCLR_S}" \
+		BUILD_DIR="${ROCCLR_S}_build" \
+		cmake_src_compile
+	popd >/dev/null 2>&1 || die
+
+	einfo "Building HIP"
+	pushd "${S}" >/dev/null 2>&1 || die
+		CMAKE_USE_DIR="${S}" \
+		BUILD_DIR="${S}_build" \
+		rocm_src_configure
+
+		HIP_PATH="${HIP_S}" \
+		docs_compile
+
+		CMAKE_USE_DIR="${S}" \
+		BUILD_DIR="${S}_build" \
+		cmake_src_compile
+	popd >/dev/null 2>&1 || die
 }
 
 src_install() {
 	cmake_src_install
-
-	rm "${ED}${EROCM_PATH}/include/hip/hcc_detail" || die
 
 	# Don't install .hipInfo and .hipVersion to bin/lib
 #	rm "${ED}${EROCM_PATH}/lib/.hipInfo" "${ED}/usr/bin/.hipVersion" || die
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without problems
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

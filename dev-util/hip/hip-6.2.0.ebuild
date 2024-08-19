@@ -406,6 +406,7 @@ src_configure() {
 }
 
 src_compile() {
+	einfo "Building ROCclr"
 	pushd "${ROCCLR_S}" >/dev/null 2>&1 || die
 		CMAKE_USE_DIR="${ROCCLR_S}" \
 		BUILD_DIR="${ROCCLR_S}_build" \
@@ -417,6 +418,7 @@ src_compile() {
 	cmake_src_compile
 
 
+	einfo "Building HIP"
 	pushd "${HIPCC_S}_build" >/dev/null 2>&1 || die
 		CMAKE_USE_DIR="${HIPCC_S}" \
 		BUILD_DIR="${HIPCC_S}_build" \
@@ -443,4 +445,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  needs test
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

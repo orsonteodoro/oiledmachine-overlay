@@ -348,4 +348,5 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  needs test
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+
