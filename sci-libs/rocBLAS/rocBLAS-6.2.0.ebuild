@@ -51,7 +51,7 @@ DOCS_DEPEND="
 	media-gfx/graphviz
 "
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=17 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.0.2/llvm/CMakeLists.txt
+LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.0/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -110,16 +110,16 @@ RDEPEND="
 	>=dev-libs/msgpack-3.0.1
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	benchmark? (
-		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_0_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_1_AMDGPU_USEDEP}]
 		virtual/blas
 	)
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		~dev-util/Tensile-${PV}:${ROCM_SLOT}[${TENSILE_6_0_AMDGPU_USEDEP},rocm]
+		~dev-util/Tensile-${PV}:${ROCM_SLOT}[${TENSILE_6_1_AMDGPU_USEDEP},rocm]
 		$(python_gen_cond_dep '
-			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_0_AMDGPU_USEDEP}"',rocm]
+			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_1_AMDGPU_USEDEP}"',rocm]
 		')
 	)
 "
@@ -127,7 +127,7 @@ DEPEND="
 	${RDEPEND}
 	test? (
 		dev-cpp/gtest
-		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_0_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_1_AMDGPU_USEDEP}]
 		virtual/blas
 	)
 "
@@ -144,7 +144,7 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	rocm? (
 		$(python_gen_cond_dep '
-			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_0_AMDGPU_USEDEP}"',${PYTHON_USEDEP},client,rocm]
+			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_1_AMDGPU_USEDEP}"',${PYTHON_USEDEP},client,rocm]
 		')
 	)
 "
@@ -153,7 +153,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.7.0-unbundle-Tensile.patch"
 	"${FILESDIR}/${PN}-5.4.2-add-missing-header.patch"
 	"${FILESDIR}/${PN}-5.4.2-link-cblas.patch"
-	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
 )
 
 pkg_setup() {
@@ -171,6 +171,7 @@ src_prepare() {
 	PATCH_PATHS=(
 		"${S}/CMakeLists.txt"
 		"${S}/clients/CMakeLists.txt"
+		"${S}/clients/cmake/FindROCmSMI.cmake"
 		"${S}/clients/common/utility.cpp"
 		"${S}/clients/gtest/rocblas_test.cpp"
 		"${S}/clients/include/host_alloc.hpp"
@@ -225,7 +226,7 @@ src_configure() {
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DBUILD_WITH_TENSILE=ON
-			-DCMAKE_CXX_COMPILER="hipcc" # Required to not call /opt/rocm-6.0.2/bin/hipcc.bat
+			-DCMAKE_CXX_COMPILER="hipcc" # Required to not call //usr/lib64/rocm/5.7/bin/hipcc.bat
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"

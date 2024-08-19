@@ -149,11 +149,6 @@ ROCBLAS_4_1_AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906_xnack_minus
 	gfx908_xnack_minus
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus
-	gfx1010
-	gfx1012
-	gfx1030
 )
 ROCBLAS_4_1_AMDGPU_USEDEP=$(gen_x_usedep "ROCBLAS_4_1_AMDGPU_TARGETS_COMPAT")
 
