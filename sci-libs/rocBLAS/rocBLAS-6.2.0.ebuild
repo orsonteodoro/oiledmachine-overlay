@@ -81,7 +81,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark cuda +rocm test ebuild-revision-19
+benchmark cuda +rocm test ebuild-revision-20
 "
 gen_rocm_required_use() {
 	local x
@@ -110,14 +110,14 @@ RDEPEND="
 	>=dev-libs/msgpack-3.0.1
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	benchmark? (
-		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_1_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
 		virtual/blas
 	)
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
 	rocm? (
-		~dev-util/Tensile-${PV}:${ROCM_SLOT}[${TENSILE_6_1_AMDGPU_USEDEP},rocm]
+		~dev-util/Tensile-${PV}:${ROCM_SLOT}[${TENSILE_6_2_AMDGPU_USEDEP},rocm]
 		$(python_gen_cond_dep '
 			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_1_AMDGPU_USEDEP}"',rocm]
 		')
@@ -127,7 +127,7 @@ DEPEND="
 	${RDEPEND}
 	test? (
 		dev-cpp/gtest
-		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_1_AMDGPU_USEDEP}]
+		sys-libs/llvm-roc-libomp:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
 		virtual/blas
 	)
 "
