@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.4.3/llvm/CMakeLists.txt
+LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.0/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic rocm
@@ -52,10 +52,9 @@ BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	>=app-editors/vim-core-9.0.1378
 	>=dev-build/cmake-3.7
-	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.7.1-link-hsakmt.patch"
+	"${FILESDIR}/${PN}-6.2.0-link-hsakmt.patch"
 )
 
 pkg_setup() {
@@ -64,7 +63,7 @@ pkg_setup() {
 
 src_prepare() {
 	pushd "${WORKDIR}/ROCR-Runtime-rocm-${PV}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-5.3.3-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
 	popd >/dev/null 2>&1 || die
 	cmake_src_prepare
 	rocm_src_prepare
@@ -87,4 +86,4 @@ src_install() {
 	rocm_fix_rpath
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  needs install test

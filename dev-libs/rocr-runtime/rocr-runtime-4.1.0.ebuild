@@ -3,7 +3,8 @@
 
 EAPI=8
 
-LLVM_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.4.3/llvm/CMakeLists.txt
+CMAKE_BUILD_TYPE="Release"
+LLVM_SLOT=12 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-4.1.0/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic rocm
@@ -44,15 +45,14 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 	~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
+	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 "
 # vim-core is needed for "xxd"
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
-	>=app-editors/vim-core-9.0.1378
 	>=dev-build/cmake-3.7
-	virtual/pkgconfig
+	app-editors/vim-core
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.7.1-link-hsakmt.patch"
@@ -64,10 +64,11 @@ pkg_setup() {
 
 src_prepare() {
 	pushd "${WORKDIR}/ROCR-Runtime-rocm-${PV}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-5.3.3-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 	popd >/dev/null 2>&1 || die
 	cmake_src_prepare
 	rocm_src_prepare
+	sed -i -e "s|-Werror||g" "CMakeLists.txt" || die
 }
 
 src_configure() {
