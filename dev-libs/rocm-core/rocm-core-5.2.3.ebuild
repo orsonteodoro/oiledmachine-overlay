@@ -10,7 +10,7 @@ ROCM_VERSION="${PV}"
 
 inherit cmake rocm
 
-if [[ ${PV} == *9999 ]] ; then
+if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rocm-core/"
 	inherit git-r3
 else
@@ -74,4 +74,3 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

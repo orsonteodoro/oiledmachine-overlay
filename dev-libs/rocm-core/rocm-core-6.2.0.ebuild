@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=17
+LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
