@@ -1,6 +1,6 @@
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/CMakeLists.txt MIOpen-rocm-5.6.1/CMakeLists.txt
---- MIOpen-rocm-5.6.1.orig/CMakeLists.txt	2024-08-19 08:39:00.410324272 -0700
-+++ MIOpen-rocm-5.6.1/CMakeLists.txt	2024-08-19 08:40:29.052845552 -0700
+--- MIOpen-rocm-5.6.1.orig/CMakeLists.txt	2024-08-19 10:16:09.642294217 -0700
++++ MIOpen-rocm-5.6.1/CMakeLists.txt	2024-08-19 10:16:31.693925804 -0700
 @@ -47,14 +47,14 @@ endif()
  if(WIN32)
      set(CMAKE_INSTALL_PREFIX "/opt/rocm/x86_64-w64-mingw32" CACHE PATH "")
@@ -94,7 +94,7 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/CMakeLists.txt MIOpen-rocm-5.6.1
      endif()
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/cmake/ClangTidy.cmake MIOpen-rocm-5.6.1/cmake/ClangTidy.cmake
 --- MIOpen-rocm-5.6.1.orig/cmake/ClangTidy.cmake	2023-08-17 12:30:14.000000000 -0700
-+++ MIOpen-rocm-5.6.1/cmake/ClangTidy.cmake	2024-08-19 08:40:29.056845485 -0700
++++ MIOpen-rocm-5.6.1/cmake/ClangTidy.cmake	2024-08-19 10:16:32.161917985 -0700
 @@ -43,7 +43,7 @@ find_program(CLANG_TIDY_EXE
      PATH_SUFFIXES
          compiler/bin
@@ -106,7 +106,7 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/cmake/ClangTidy.cmake MIOpen-roc
  
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/cmake/CppCheck.cmake MIOpen-rocm-5.6.1/cmake/CppCheck.cmake
 --- MIOpen-rocm-5.6.1.orig/cmake/CppCheck.cmake	2023-08-17 12:30:14.000000000 -0700
-+++ MIOpen-rocm-5.6.1/cmake/CppCheck.cmake	2024-08-19 08:40:29.056845485 -0700
++++ MIOpen-rocm-5.6.1/cmake/CppCheck.cmake	2024-08-19 10:16:32.161917985 -0700
 @@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
      NAMES 
          cppcheck
@@ -118,7 +118,7 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/cmake/CppCheck.cmake MIOpen-rocm
  ProcessorCount(CPPCHECK_JOBS)
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/cmake/FindOpenCL.cmake MIOpen-rocm-5.6.1/cmake/FindOpenCL.cmake
 --- MIOpen-rocm-5.6.1.orig/cmake/FindOpenCL.cmake	2023-08-17 12:30:14.000000000 -0700
-+++ MIOpen-rocm-5.6.1/cmake/FindOpenCL.cmake	2024-08-19 08:40:50.368490070 -0700
++++ MIOpen-rocm-5.6.1/cmake/FindOpenCL.cmake	2024-08-19 10:17:01.197432832 -0700
 @@ -34,7 +34,7 @@ find_path(OPENCL_INCLUDE_DIRS
      /usr/local/include
      /usr/local/cuda/include
@@ -128,9 +128,17 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/cmake/FindOpenCL.cmake MIOpen-ro
      ${CMAKE_INSTALL_PREFIX}/opencl/include
      DOC "OpenCL header file path"
      )
-@@ -52,8 +52,8 @@ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+@@ -46,14 +46,14 @@ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+         HINTS
+         ${OPENCL_ROOT}/lib
+         $ENV{AMDAPPSDKROOT}/lib
+-        $ENV{CUDA_PATH}/lib
++        $ENV{CUDA_PATH}/lib64
+         DOC "OpenCL dynamic library path"
+         PATH_SUFFIXES x86_64 x64 x86_64/sdk
          PATHS
-         /usr/lib
+-        /usr/lib
++        /usr/lib64
          /usr/local/cuda/lib
 -        /opt/cuda/lib
 -        /opt/rocm/opencl/lib
@@ -141,7 +149,7 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/cmake/FindOpenCL.cmake MIOpen-ro
  else( )
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/cmake/rocm-path.cmake MIOpen-rocm-5.6.1/cmake/rocm-path.cmake
 --- MIOpen-rocm-5.6.1.orig/cmake/rocm-path.cmake	2023-08-17 12:30:14.000000000 -0700
-+++ MIOpen-rocm-5.6.1/cmake/rocm-path.cmake	2024-08-19 08:40:29.056845485 -0700
++++ MIOpen-rocm-5.6.1/cmake/rocm-path.cmake	2024-08-19 10:16:32.165917919 -0700
 @@ -25,5 +25,5 @@
  ################################################################################
  
@@ -151,7 +159,7 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/cmake/rocm-path.cmake MIOpen-roc
  
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/fin/CMakeLists.txt MIOpen-rocm-5.6.1/fin/CMakeLists.txt
 --- MIOpen-rocm-5.6.1.orig/fin/CMakeLists.txt	2023-06-08 14:14:00.000000000 -0700
-+++ MIOpen-rocm-5.6.1/fin/CMakeLists.txt	2024-08-19 08:40:29.056845485 -0700
++++ MIOpen-rocm-5.6.1/fin/CMakeLists.txt	2024-08-19 10:16:32.165917919 -0700
 @@ -35,12 +35,12 @@ endif()
  if(WIN32)
      set(CMAKE_INSTALL_PREFIX "/opt/rocm/x86_64-w64-mingw32" CACHE PATH "")
@@ -217,7 +225,7 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/fin/CMakeLists.txt MIOpen-rocm-5
      if(EXTRACTKERNEL_BIN)
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/fin/cmake/ClangTidy.cmake MIOpen-rocm-5.6.1/fin/cmake/ClangTidy.cmake
 --- MIOpen-rocm-5.6.1.orig/fin/cmake/ClangTidy.cmake	2023-06-08 14:14:00.000000000 -0700
-+++ MIOpen-rocm-5.6.1/fin/cmake/ClangTidy.cmake	2024-08-19 08:40:29.056845485 -0700
++++ MIOpen-rocm-5.6.1/fin/cmake/ClangTidy.cmake	2024-08-19 10:16:32.165917919 -0700
 @@ -43,8 +43,8 @@ find_program(CLANG_TIDY_EXE
      PATH_SUFFIXES
          compiler/bin
@@ -231,7 +239,7 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/fin/cmake/ClangTidy.cmake MIOpen
  
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/fin/cmake/CppCheck.cmake MIOpen-rocm-5.6.1/fin/cmake/CppCheck.cmake
 --- MIOpen-rocm-5.6.1.orig/fin/cmake/CppCheck.cmake	2023-06-08 14:14:00.000000000 -0700
-+++ MIOpen-rocm-5.6.1/fin/cmake/CppCheck.cmake	2024-08-19 08:40:29.056845485 -0700
++++ MIOpen-rocm-5.6.1/fin/cmake/CppCheck.cmake	2024-08-19 10:16:32.185917584 -0700
 @@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
      NAMES 
          cppcheck
@@ -243,7 +251,7 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/fin/cmake/CppCheck.cmake MIOpen-
  ProcessorCount(CPPCHECK_JOBS)
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/fin/cmake/FindOpenCL.cmake MIOpen-rocm-5.6.1/fin/cmake/FindOpenCL.cmake
 --- MIOpen-rocm-5.6.1.orig/fin/cmake/FindOpenCL.cmake	2023-06-08 14:14:00.000000000 -0700
-+++ MIOpen-rocm-5.6.1/fin/cmake/FindOpenCL.cmake	2024-08-19 08:40:41.904631217 -0700
++++ MIOpen-rocm-5.6.1/fin/cmake/FindOpenCL.cmake	2024-08-19 10:17:08.285314392 -0700
 @@ -34,7 +34,7 @@ find_path(OPENCL_INCLUDE_DIRS
      /usr/local/include
      /usr/local/cuda/include
@@ -253,9 +261,17 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/fin/cmake/FindOpenCL.cmake MIOpe
      ${CMAKE_INSTALL_PREFIX}/opencl/include
      DOC "OpenCL header file path"
      )
-@@ -52,8 +52,8 @@ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+@@ -46,14 +46,14 @@ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+         HINTS
+         ${OPENCL_ROOT}/lib
+         $ENV{AMDAPPSDKROOT}/lib
+-        $ENV{CUDA_PATH}/lib
++        $ENV{CUDA_PATH}/lib64
+         DOC "OpenCL dynamic library path"
+         PATH_SUFFIXES x86_64 x64 x86_64/sdk
          PATHS
-         /usr/lib
+-        /usr/lib
++        /usr/lib64
          /usr/local/cuda/lib
 -        /opt/cuda/lib
 -        /opt/rocm/opencl/lib
@@ -266,7 +282,7 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/fin/cmake/FindOpenCL.cmake MIOpe
  else( )
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/fin/cmake/rocm-path.cmake MIOpen-rocm-5.6.1/fin/cmake/rocm-path.cmake
 --- MIOpen-rocm-5.6.1.orig/fin/cmake/rocm-path.cmake	2023-06-08 14:14:00.000000000 -0700
-+++ MIOpen-rocm-5.6.1/fin/cmake/rocm-path.cmake	2024-08-19 08:40:29.060845418 -0700
++++ MIOpen-rocm-5.6.1/fin/cmake/rocm-path.cmake	2024-08-19 10:16:32.185917584 -0700
 @@ -25,5 +25,5 @@
  ################################################################################
  
@@ -276,7 +292,7 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/fin/cmake/rocm-path.cmake MIOpen
  
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/fin/install_deps.cmake MIOpen-rocm-5.6.1/fin/install_deps.cmake
 --- MIOpen-rocm-5.6.1.orig/fin/install_deps.cmake	2023-06-08 14:14:00.000000000 -0700
-+++ MIOpen-rocm-5.6.1/fin/install_deps.cmake	2024-08-19 08:40:29.060845418 -0700
++++ MIOpen-rocm-5.6.1/fin/install_deps.cmake	2024-08-19 10:16:32.185917584 -0700
 @@ -53,8 +53,8 @@ endif()
  if(NOT DEFINED ENV{CXX} AND NOT DEFINED CMAKE_CXX_COMPILER AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
      find_program(HCC hcc
@@ -301,7 +317,7 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/fin/install_deps.cmake MIOpen-ro
  	)
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/fin/src/CMakeLists.txt MIOpen-rocm-5.6.1/fin/src/CMakeLists.txt
 --- MIOpen-rocm-5.6.1.orig/fin/src/CMakeLists.txt	2023-06-08 14:14:00.000000000 -0700
-+++ MIOpen-rocm-5.6.1/fin/src/CMakeLists.txt	2024-08-19 08:40:29.060845418 -0700
++++ MIOpen-rocm-5.6.1/fin/src/CMakeLists.txt	2024-08-19 10:16:32.185917584 -0700
 @@ -24,7 +24,7 @@
  # 
  ################################################################################
@@ -313,7 +329,7 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/fin/src/CMakeLists.txt MIOpen-ro
  
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/install_deps.cmake MIOpen-rocm-5.6.1/install_deps.cmake
 --- MIOpen-rocm-5.6.1.orig/install_deps.cmake	2023-08-17 12:30:14.000000000 -0700
-+++ MIOpen-rocm-5.6.1/install_deps.cmake	2024-08-19 08:40:29.060845418 -0700
++++ MIOpen-rocm-5.6.1/install_deps.cmake	2024-08-19 10:16:32.217917050 -0700
 @@ -68,8 +68,8 @@ virtualenv_install(cget)
  if(NOT DEFINED ENV{CXX} AND NOT DEFINED CMAKE_CXX_COMPILER AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
      find_program(CLANGXX clang++
@@ -338,7 +354,7 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/install_deps.cmake MIOpen-rocm-5
      )
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/src/composable_kernel/cmake/ClangTidy.cmake MIOpen-rocm-5.6.1/src/composable_kernel/cmake/ClangTidy.cmake
 --- MIOpen-rocm-5.6.1.orig/src/composable_kernel/cmake/ClangTidy.cmake	2023-08-17 12:30:14.000000000 -0700
-+++ MIOpen-rocm-5.6.1/src/composable_kernel/cmake/ClangTidy.cmake	2024-08-19 08:40:29.060845418 -0700
++++ MIOpen-rocm-5.6.1/src/composable_kernel/cmake/ClangTidy.cmake	2024-08-19 10:16:32.221916983 -0700
 @@ -43,8 +43,8 @@ find_program(CLANG_TIDY_EXE
      PATH_SUFFIXES
          compiler/bin
@@ -352,7 +368,7 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/src/composable_kernel/cmake/Clan
  
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/src/composable_kernel/cmake/CppCheck.cmake MIOpen-rocm-5.6.1/src/composable_kernel/cmake/CppCheck.cmake
 --- MIOpen-rocm-5.6.1.orig/src/composable_kernel/cmake/CppCheck.cmake	2023-08-17 12:30:14.000000000 -0700
-+++ MIOpen-rocm-5.6.1/src/composable_kernel/cmake/CppCheck.cmake	2024-08-19 08:40:29.060845418 -0700
++++ MIOpen-rocm-5.6.1/src/composable_kernel/cmake/CppCheck.cmake	2024-08-19 10:16:32.225916915 -0700
 @@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
      NAMES 
          cppcheck
@@ -363,8 +379,8 @@ diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/src/composable_kernel/cmake/CppC
  
  ProcessorCount(CPPCHECK_JOBS)
 diff '--color=auto' -urp MIOpen-rocm-5.6.1.orig/test/CMakeLists.txt MIOpen-rocm-5.6.1/test/CMakeLists.txt
---- MIOpen-rocm-5.6.1.orig/test/CMakeLists.txt	2024-08-19 08:39:00.222327410 -0700
-+++ MIOpen-rocm-5.6.1/test/CMakeLists.txt	2024-08-19 08:40:29.060845418 -0700
+--- MIOpen-rocm-5.6.1.orig/test/CMakeLists.txt	2024-08-19 10:16:09.626294484 -0700
++++ MIOpen-rocm-5.6.1/test/CMakeLists.txt	2024-08-19 10:16:32.225916915 -0700
 @@ -97,7 +97,7 @@ if(NOT (MIOPEN_TEST_GFX900 OR MIOPEN_TES
      find_program(ROCMINFO
          NAMES rocminfo

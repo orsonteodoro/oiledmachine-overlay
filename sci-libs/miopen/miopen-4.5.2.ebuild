@@ -40,7 +40,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="comgr debug hiprtc kernels opencl +rocm test ebuild-revision-9"
+IUSE="comgr debug hiprtc kernels opencl +rocm test ebuild-revision-11"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do

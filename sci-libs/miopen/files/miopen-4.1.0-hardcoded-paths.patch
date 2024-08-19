@@ -1,6 +1,6 @@
 diff '--color=auto' -urp MIOpen-rocm-4.1.0.orig/CMakeLists.txt MIOpen-rocm-4.1.0/CMakeLists.txt
---- MIOpen-rocm-4.1.0.orig/CMakeLists.txt	2024-08-19 08:19:46.757638296 -0700
-+++ MIOpen-rocm-4.1.0/CMakeLists.txt	2024-08-19 08:21:27.379948122 -0700
+--- MIOpen-rocm-4.1.0.orig/CMakeLists.txt	2024-08-19 09:40:35.694171563 -0700
++++ MIOpen-rocm-4.1.0/CMakeLists.txt	2024-08-19 09:41:28.973254039 -0700
 @@ -35,14 +35,14 @@ endif()
  if(WIN32)
      set(CMAKE_INSTALL_PREFIX "/opt/rocm/x86_64-w64-mingw32" CACHE PATH "")
@@ -116,11 +116,9 @@ diff '--color=auto' -urp MIOpen-rocm-4.1.0.orig/CMakeLists.txt MIOpen-rocm-4.1.0
      if(miopengemm_FOUND)
          message(STATUS "Build with miopengemm")
          set(MIOPEN_USE_MIOPENGEMM 1)
-Only in MIOpen-rocm-4.1.0: CMakeLists.txt.orig
-Only in MIOpen-rocm-4.1.0: CMakeLists.txt.rej
 diff '--color=auto' -urp MIOpen-rocm-4.1.0.orig/cmake/ClangTidy.cmake MIOpen-rocm-4.1.0/cmake/ClangTidy.cmake
 --- MIOpen-rocm-4.1.0.orig/cmake/ClangTidy.cmake	2021-03-15 07:45:17.000000000 -0700
-+++ MIOpen-rocm-4.1.0/cmake/ClangTidy.cmake	2024-08-19 08:20:08.417274376 -0700
++++ MIOpen-rocm-4.1.0/cmake/ClangTidy.cmake	2024-08-19 09:41:28.973254039 -0700
 @@ -43,8 +43,8 @@ find_program(CLANG_TIDY_EXE
      PATH_SUFFIXES
          compiler/bin
@@ -134,7 +132,7 @@ diff '--color=auto' -urp MIOpen-rocm-4.1.0.orig/cmake/ClangTidy.cmake MIOpen-roc
  
 diff '--color=auto' -urp MIOpen-rocm-4.1.0.orig/cmake/CppCheck.cmake MIOpen-rocm-4.1.0/cmake/CppCheck.cmake
 --- MIOpen-rocm-4.1.0.orig/cmake/CppCheck.cmake	2021-03-15 07:45:17.000000000 -0700
-+++ MIOpen-rocm-4.1.0/cmake/CppCheck.cmake	2024-08-19 08:20:08.417274376 -0700
++++ MIOpen-rocm-4.1.0/cmake/CppCheck.cmake	2024-08-19 09:41:28.973254039 -0700
 @@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
      NAMES 
          cppcheck
@@ -146,7 +144,7 @@ diff '--color=auto' -urp MIOpen-rocm-4.1.0.orig/cmake/CppCheck.cmake MIOpen-rocm
  ProcessorCount(CPPCHECK_JOBS)
 diff '--color=auto' -urp MIOpen-rocm-4.1.0.orig/cmake/FindOpenCL.cmake MIOpen-rocm-4.1.0/cmake/FindOpenCL.cmake
 --- MIOpen-rocm-4.1.0.orig/cmake/FindOpenCL.cmake	2021-03-15 07:45:17.000000000 -0700
-+++ MIOpen-rocm-4.1.0/cmake/FindOpenCL.cmake	2024-08-19 08:23:02.094358238 -0700
++++ MIOpen-rocm-4.1.0/cmake/FindOpenCL.cmake	2024-08-19 09:41:44.924979357 -0700
 @@ -34,7 +34,7 @@ find_path(OPENCL_INCLUDE_DIRS
      /usr/local/include
      /usr/local/cuda/include
@@ -156,9 +154,17 @@ diff '--color=auto' -urp MIOpen-rocm-4.1.0.orig/cmake/FindOpenCL.cmake MIOpen-ro
      ${CMAKE_INSTALL_PREFIX}/opencl/include
      DOC "OpenCL header file path"
      )
-@@ -52,8 +52,8 @@ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+@@ -46,14 +46,14 @@ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+         HINTS
+         ${OPENCL_ROOT}/lib
+         $ENV{AMDAPPSDKROOT}/lib
+-        $ENV{CUDA_PATH}/lib
++        $ENV{CUDA_PATH}/lib64
+         DOC "OpenCL dynamic library path"
+         PATH_SUFFIXES x86_64 x64 x86_64/sdk
          PATHS
-         /usr/lib
+-        /usr/lib
++        /usr/lib64
          /usr/local/cuda/lib
 -        /opt/cuda/lib
 -        /opt/rocm/opencl/lib
@@ -169,7 +175,7 @@ diff '--color=auto' -urp MIOpen-rocm-4.1.0.orig/cmake/FindOpenCL.cmake MIOpen-ro
  else( )
 diff '--color=auto' -urp MIOpen-rocm-4.1.0.orig/cmake/rocm-path.cmake MIOpen-rocm-4.1.0/cmake/rocm-path.cmake
 --- MIOpen-rocm-4.1.0.orig/cmake/rocm-path.cmake	2021-03-15 07:45:17.000000000 -0700
-+++ MIOpen-rocm-4.1.0/cmake/rocm-path.cmake	2024-08-19 08:20:08.441273973 -0700
++++ MIOpen-rocm-4.1.0/cmake/rocm-path.cmake	2024-08-19 09:41:28.973254039 -0700
 @@ -25,5 +25,5 @@
  ################################################################################
  
@@ -179,7 +185,7 @@ diff '--color=auto' -urp MIOpen-rocm-4.1.0.orig/cmake/rocm-path.cmake MIOpen-roc
  
 diff '--color=auto' -urp MIOpen-rocm-4.1.0.orig/install_deps.cmake MIOpen-rocm-4.1.0/install_deps.cmake
 --- MIOpen-rocm-4.1.0.orig/install_deps.cmake	2021-03-15 07:45:17.000000000 -0700
-+++ MIOpen-rocm-4.1.0/install_deps.cmake	2024-08-19 08:21:39.779739921 -0700
++++ MIOpen-rocm-4.1.0/install_deps.cmake	2024-08-19 09:41:28.973254039 -0700
 @@ -53,8 +53,8 @@ endif()
  if(NOT DEFINED ENV{CXX} AND NOT DEFINED CMAKE_CXX_COMPILER AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
      find_program(HCC hcc
@@ -213,7 +219,3 @@ diff '--color=auto' -urp MIOpen-rocm-4.1.0.orig/install_deps.cmake MIOpen-rocm-4
  	    PATH_SUFFIXES
  	        bin
  	)
-Only in MIOpen-rocm-4.1.0: install_deps.cmake.orig
-Only in MIOpen-rocm-4.1.0: install_deps.cmake.rej
-Only in MIOpen-rocm-4.1.0/test: CMakeLists.txt.orig
-Only in MIOpen-rocm-4.1.0/test: CMakeLists.txt.rej
