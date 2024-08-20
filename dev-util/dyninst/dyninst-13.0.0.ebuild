@@ -117,13 +117,13 @@ src_configure() {
 		-DUSE_OpenMP=$(usex openmp)
 	)
 
-	if use clang ; then
+	if use openmp && use clang ; then
 		LLVM_SLOT=$(get_llvm_slot)
 		append-flags -I"${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/include" -fopenmp=libomp
 		append-flags -Wl,-L"${ESYSROOT}//usr/lib/llvm/${LLVM_SLOT}/$(get_libdir)"
 	fi
 
-	if use hip-clang ; then
+	if use openmp && use hip-clang ; then
 		if use rocm_6_2 ; then
 			ROCM_SLOT="6.2"
 			ROCM_VERSION="6.2.0"
