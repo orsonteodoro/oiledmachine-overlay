@@ -1,41 +1,196 @@
 diff '--color=auto' -urp omnitrace-rocm-6.2.0.orig/cmake/ElfUtils.cmake omnitrace-rocm-6.2.0/cmake/ElfUtils.cmake
 --- omnitrace-rocm-6.2.0.orig/cmake/ElfUtils.cmake	2024-06-07 12:23:18.000000000 -0700
-+++ omnitrace-rocm-6.2.0/cmake/ElfUtils.cmake	2024-08-19 21:27:24.664371231 -0700
-@@ -91,6 +91,14 @@ if(NOT ElfUtils_C_COMPILER OR NOT ElfUti
++++ omnitrace-rocm-6.2.0/cmake/ElfUtils.cmake	2024-08-20 13:32:49.725529308 -0700
+@@ -91,36 +91,45 @@ if(NOT ElfUtils_C_COMPILER OR NOT ElfUti
          )
  endif()
  
-+option(OFFLINE_INSTALL "Offline install?" ON)
-+if(OFFLINE_INSTALL)
-+set(_eu_root ${PROJECT_BINARY_DIR}/external/elfutils)
-+set(_eu_inc_dirs $<BUILD_INTERFACE:/usr/include>)
-+set(_eu_lib_dirs $<BUILD_INTERFACE:/usr/$ENV{GET_LIBDIR}>)
-+set(_eu_libs $<BUILD_INTERFACE:libdw${CMAKE_SHARED_LIBRARY_SUFFIX}>
-+             $<BUILD_INTERFACE:libelf${CMAKE_SHARED_LIBRARY_SUFFIX}>)
+-set(_eu_root ${PROJECT_BINARY_DIR}/external/elfutils)
+-set(_eu_inc_dirs $<BUILD_INTERFACE:${_eu_root}/include>)
+-set(_eu_lib_dirs $<BUILD_INTERFACE:${_eu_root}/lib>)
+-set(_eu_libs $<BUILD_INTERFACE:${_eu_root}/lib/libdw${CMAKE_STATIC_LIBRARY_SUFFIX}>
++
++if(STERILE_BUILD)
++    set(_eu_root ${PROJECT_BINARY_DIR}/external/elfutils)
++    set(_eu_inc_dirs $<BUILD_INTERFACE:/usr/include>)
++    set(_eu_lib_dirs $<BUILD_INTERFACE:/usr/$ENV{GET_LIBDIR}>)
++    set(_eu_libs $<BUILD_INTERFACE:libdw${CMAKE_SHARED_LIBRARY_SUFFIX}>
++                 $<BUILD_INTERFACE:libelf${CMAKE_SHARED_LIBRARY_SUFFIX}>)
 +else()
- set(_eu_root ${PROJECT_BINARY_DIR}/external/elfutils)
- set(_eu_inc_dirs $<BUILD_INTERFACE:${_eu_root}/include>)
- set(_eu_lib_dirs $<BUILD_INTERFACE:${_eu_root}/lib>)
-@@ -121,6 +129,7 @@ add_custom_target(
-     COMMAND ${MAKE_COMMAND} install -s
-     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/external/elfutils/src/ElfUtils-External
-     COMMENT "Installing ElfUtils...")
++    set(_eu_root ${PROJECT_BINARY_DIR}/external/elfutils)
++    set(_eu_inc_dirs $<BUILD_INTERFACE:${_eu_root}/include>)
++    set(_eu_lib_dirs $<BUILD_INTERFACE:${_eu_root}/lib>)
++    set(_eu_libs $<BUILD_INTERFACE:${_eu_root}/lib/libdw${CMAKE_STATIC_LIBRARY_SUFFIX}>
+              $<BUILD_INTERFACE:${_eu_root}/lib/libelf${CMAKE_STATIC_LIBRARY_SUFFIX}>)
+-set(_eu_build_byproducts "${_eu_root}/lib/libdw${CMAKE_STATIC_LIBRARY_SUFFIX}"
+-                         "${_eu_root}/lib/libelf${CMAKE_STATIC_LIBRARY_SUFFIX}")
++    set(_eu_build_byproducts "${_eu_root}/lib/libdw${CMAKE_STATIC_LIBRARY_SUFFIX}"
++                             "${_eu_root}/lib/libelf${CMAKE_STATIC_LIBRARY_SUFFIX}")
++
++    externalproject_add(
++        omnitrace-elfutils-build
++        PREFIX ${PROJECT_BINARY_DIR}/external/elfutils
++        URL https://sourceware.org/elfutils/ftp/${ElfUtils_DOWNLOAD_VERSION}/elfutils-${ElfUtils_DOWNLOAD_VERSION}.tar.bz2
++        BUILD_IN_SOURCE 1
++        CONFIGURE_COMMAND
++            ${CMAKE_COMMAND} -E env CC=${ElfUtils_C_COMPILER}
++            CFLAGS=-fPIC\ -O3\ -Wno-error=null-dereference CXX=${ElfUtils_CXX_COMPILER}
++            CXXFLAGS=-fPIC\ -O3\ -Wno-error=null-dereference
++            [=[LDFLAGS=-Wl,-rpath='$$ORIGIN']=] <SOURCE_DIR>/configure --enable-install-elfh
++            --prefix=${_eu_root} --disable-libdebuginfod --disable-debuginfod --disable-nls
++            --enable-thread-safety --enable-silent-rules
++        BUILD_COMMAND ${MAKE_COMMAND} install -s
++        BUILD_BYPRODUCTS "${_eu_build_byproducts}"
++        INSTALL_COMMAND "")
+ 
+-externalproject_add(
+-    omnitrace-elfutils-build
+-    PREFIX ${PROJECT_BINARY_DIR}/external/elfutils
+-    URL https://sourceware.org/elfutils/ftp/${ElfUtils_DOWNLOAD_VERSION}/elfutils-${ElfUtils_DOWNLOAD_VERSION}.tar.bz2
+-    BUILD_IN_SOURCE 1
+-    CONFIGURE_COMMAND
+-        ${CMAKE_COMMAND} -E env CC=${ElfUtils_C_COMPILER}
+-        CFLAGS=-fPIC\ -O3\ -Wno-error=null-dereference CXX=${ElfUtils_CXX_COMPILER}
+-        CXXFLAGS=-fPIC\ -O3\ -Wno-error=null-dereference
+-        [=[LDFLAGS=-Wl,-rpath='$$ORIGIN']=] <SOURCE_DIR>/configure --enable-install-elfh
+-        --prefix=${_eu_root} --disable-libdebuginfod --disable-debuginfod --disable-nls
+-        --enable-thread-safety --enable-silent-rules
+-    BUILD_COMMAND ${MAKE_COMMAND} install -s
+-    BUILD_BYPRODUCTS "${_eu_build_byproducts}"
+-    INSTALL_COMMAND "")
+-
+-# target for re-executing the installation
+-add_custom_target(
+-    omnitrace-elfutils-install
+-    COMMAND ${MAKE_COMMAND} install -s
+-    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/external/elfutils/src/ElfUtils-External
+-    COMMENT "Installing ElfUtils...")
++    # target for re-executing the installation
++    add_custom_target(
++        omnitrace-elfutils-install
++        COMMAND ${MAKE_COMMAND} install -s
++        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/external/elfutils/src/ElfUtils-External
++        COMMENT "Installing ElfUtils...")
 +endif()
  
  # -------------- EXPORT VARIABLES ---------------------------------------------
  
 diff '--color=auto' -urp omnitrace-rocm-6.2.0.orig/cmake/MacroUtilities.cmake omnitrace-rocm-6.2.0/cmake/MacroUtilities.cmake
 --- omnitrace-rocm-6.2.0.orig/cmake/MacroUtilities.cmake	2024-06-07 12:23:18.000000000 -0700
-+++ omnitrace-rocm-6.2.0/cmake/MacroUtilities.cmake	2024-08-19 21:23:58.659679277 -0700
++++ omnitrace-rocm-6.2.0/cmake/MacroUtilities.cmake	2024-08-20 13:32:49.729529241 -0700
 @@ -188,7 +188,11 @@ endfunction()
  # value) -- (default: PROJECT_SOURCE_DIR) TEST_FILE (one value) -- file to check for
  # (default: CMakeLists.txt) ADDITIONAL_CMDS (many value) -- any addition commands to pass
  #
-+option(OFFLINE_INSTALL "Offline install?" ON)
++
  function(OMNITRACE_CHECKOUT_GIT_SUBMODULE)
-+    if(OFFLINE_INSTALL)
++    if(STERILE_BUILD)
 +        return()
 +    endif()
      # parse args
      cmake_parse_arguments(
          CHECKOUT "RECURSIVE"
+diff '--color=auto' -urp omnitrace-rocm-6.2.0.orig/external/timemory/cmake/Modules/ConfigBinutils.cmake omnitrace-rocm-6.2.0/external/timemory/cmake/Modules/ConfigBinutils.cmake
+--- omnitrace-rocm-6.2.0.orig/external/timemory/cmake/Modules/ConfigBinutils.cmake	2023-11-27 22:11:56.000000000 -0800
++++ omnitrace-rocm-6.2.0/external/timemory/cmake/Modules/ConfigBinutils.cmake	2024-08-20 13:35:45.918569788 -0700
+@@ -63,19 +63,62 @@ mark_as_advanced(binutils_CONFIG_FLAGS)
+ string(REPLACE " " ";" _binutils_CONFIG_FLAGS "${binutils_CONFIG_FLAGS}")
+ 
+ include(ExternalProject)
+-externalproject_add(
+-    binutils-external
+-    PREFIX ${PROJECT_BINARY_DIR}/external/binutils
+-    URL http://ftp.gnu.org/gnu/binutils/binutils-2.40.tar.gz
+-    BUILD_IN_SOURCE 1
+-    CONFIGURE_COMMAND
+-        ${CMAKE_COMMAND} -E env CC=${CMAKE_C_COMPILER} CFLAGS=-fPIC\ -O3
+-        CXX=${CMAKE_CXX_COMPILER} CXXFLAGS=-fPIC\ -O3 <SOURCE_DIR>/configure
+-        --prefix=${TPL_STAGING_PREFIX} ${_binutils_CONFIG_FLAGS}
+-    BUILD_COMMAND ${MAKE_COMMAND} all-libiberty all-bfd all-opcodes all-libelf
+-                  all-libsframe
+-    INSTALL_COMMAND ""
+-    BUILD_BYPRODUCTS "${_TIMEMORY_BINUTILS_BUILD_BYPRODUCTS}")
++if(STERILE_BUILD)
++    externalproject_add(
++        binutils-external
++        BINARY_DIR ${CMAKE_BINARY_DIR}/external/binutils
++        SOURCE_DIR ${CMAKE_SOURCE_DIR}/external/binutils
++        #BUILD_IN_SOURCE 1
++        UPDATE_DISCONNECTED OFF
++        CONFIGURE_COMMAND
++            ${CMAKE_COMMAND} -E env CC=${CMAKE_C_COMPILER} CFLAGS=-fPIC\ -O3
++            CXX=${CMAKE_CXX_COMPILER} CXXFLAGS=-fPIC\ -O3 <SOURCE_DIR>/configure
++            --prefix=${TPL_STAGING_PREFIX} ${_binutils_CONFIG_FLAGS}
++        BUILD_COMMAND ${MAKE_COMMAND} all-libiberty all-bfd all-opcodes all-libelf
++                      all-libsframe
++        INSTALL_COMMAND ""
++        BUILD_BYPRODUCTS "${_TIMEMORY_BINUTILS_BUILD_BYPRODUCTS}")
++    set(_binutils_libs
++        $ENV{S}_build/external/binutils/bfd/libbfd.a
++        $ENV{S}_build/external/binutils/opcodes/libopcodes.a
++        $ENV{S}_build/external/binutils/libiberty/libiberty.a
++        $ENV{S}_build/external/binutils/libsframe/.libs/libsframe.a
++        )
++    set(_binutils_includes
++        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/external/binutils>
++        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/external/binutils/include>
++        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/external/binutils/bfd>
++        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/external/binutils/opcodes>
++        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/external/binutils/libiberty>
++        )
++else()
++    externalproject_add(
++        binutils-external
++        PREFIX ${PROJECT_BINARY_DIR}/external/binutils
++        URL http://ftp.gnu.org/gnu/binutils/binutils-2.40.tar.gz
++        BUILD_IN_SOURCE 1
++        CONFIGURE_COMMAND
++            ${CMAKE_COMMAND} -E env CC=${CMAKE_C_COMPILER} CFLAGS=-fPIC\ -O3
++            CXX=${CMAKE_CXX_COMPILER} CXXFLAGS=-fPIC\ -O3 <SOURCE_DIR>/configure
++            --prefix=${TPL_STAGING_PREFIX} ${_binutils_CONFIG_FLAGS}
++        BUILD_COMMAND ${MAKE_COMMAND} all-libiberty all-bfd all-opcodes all-libelf
++                      all-libsframe
++        INSTALL_COMMAND ""
++        BUILD_BYPRODUCTS "${_TIMEMORY_BINUTILS_BUILD_BYPRODUCTS}")
++    set(_binutils_libs
++        ${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/bfd/libbfd.a
++        ${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/opcodes/libopcodes.a
++        ${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/libiberty/libiberty.a
++        ${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/libsframe/.libs/libsframe.a
++        )
++    set(_binutils_includes
++        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external>
++        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/include>
++        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/bfd>
++        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/opcodes>
++        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/libiberty>
++        )
++endif()
+ 
+ add_custom_command(
+     TARGET binutils-external
+@@ -83,10 +125,7 @@ add_custom_command(
+     COMMAND ${CMAKE_COMMAND} ARGS -E make_directory ${TPL_STAGING_PREFIX}/lib
+     COMMAND
+         install ARGS -C
+-        ${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/bfd/libbfd.a
+-        ${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/opcodes/libopcodes.a
+-        ${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/libiberty/libiberty.a
+-        ${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/libsframe/.libs/libsframe.a
++        ${_binutils_libs}
+         ${TPL_STAGING_PREFIX}/lib/
+     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external
+     COMMENT "Installing binutils...")
+@@ -106,11 +145,7 @@ find_package(ZLIB)
+ target_include_directories(
+     binutils::binutils
+     INTERFACE
+-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external>
+-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/include>
+-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/bfd>
+-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/opcodes>
+-        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/external/binutils/src/binutils-external/libiberty>
++        ${_binutils_includes}
+     )
+ target_link_libraries(
+     binutils::binutils

@@ -8,6 +8,7 @@ EAPI=8
 # For requirements, see
 # https://github.com/ROCm/omnitrace/blob/rocm-6.2.0/source/docs/installation.md
 
+BINUTILS_PV="2.40"
 CALIPER_COMMIT="7e66987f0d9af19dcaa13fb78197cdc8437d8a3f"
 DYNINST_COMMIT_1="d3ab0a71e925bd01b20c6362f14006d34ece7112"
 DYNINST_COMMIT_2="076d8bdef4f22639d16ca65cda9b909b6c726047"
@@ -82,6 +83,7 @@ https://android.googlesource.com/platform/external/perfetto/+archive/${PERFETTO_
 	-> perfetto-${PERFETTO_COMMIT_2:0:7}.tar.gz
 https://github.com/dyninst/testsuite/archive/${DYNINST_TESTSUITE_COMMIT}.tar.gz
 	-> dyninst-testsuite-${DYNINST_TESTSUITE_COMMIT:0:7}.tar.gz
+http://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_PV}.tar.gz
 	"
 fi
 
@@ -101,8 +103,8 @@ RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 # TODO: Prune one of gcc or hip-clang.  Keep the one that is verified working to minimize annoyance.
 IUSE="
-examples gcc hip-clang -mpi +papi -python +rccl +rocprofiler +roctracer test system-dyninst
-system-libunwind system-papi rocm-smi
+-debuginfod examples gcc hip-clang -mpi +openmp +papi -python +rccl +rocprofiler
++roctracer test system-dyninst system-libunwind system-papi rocm-smi
 ebuild-revision-0
 "
 # The vendored dyninst is build-time broken.
@@ -124,10 +126,12 @@ RDEPEND="
 	!system-dyninst? (
 		!hip-clang? (
 			=dev-cpp/tbb-2019*:2
-			sys-devel/gcc[openmp]
+			sys-devel/gcc[openmp?]
 		)
 		hip-clang? (
-			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+			openmp? (
+				~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+			)
 			|| (
 				=dev-cpp/tbb-2019*:2
 				=dev-cpp/tbb-2018*:2
@@ -152,7 +156,7 @@ RDEPEND="
 		~dev-util/roctracer-${PV}:${ROCM_SLOT}
 	)
 	system-dyninst? (
-		>=dev-util/dyninst-12.0
+		>=dev-util/dyninst-12.0[openmp?]
 	)
 	system-libunwind? (
 		sys-libs/libunwind
@@ -224,6 +228,7 @@ src_unpack() {
 	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/external/timemory/external/pybind11"
 	dep_prepare_cp "${WORKDIR}/testsuite-${DYNINST_TESTSUITE_COMMIT}" "${S}/external/timemory/external/dyninst/testsuite"
 	dep_prepare_mv "${WORKDIR}/yaml-cpp-${YAML_CPP_COMMIT}" "${S}/external/timemory/external/yaml-cpp"
+	dep_prepare_mv "${WORKDIR}/binutils-${BINUTILS_PV}" "${S}/external/binutils"
 }
 
 src_prepare() {
@@ -242,6 +247,7 @@ eerror "Compiler not supported"
 	fi
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
+		-DENABLE_DEBUGINFOD=$(usex debuginfod)
 		-DOMNITRACE_USE_BFD=ON
 		-DOMNITRACE_USE_HIP=ON
 		-DOMNITRACE_USE_MPI=$(usex mpi)
@@ -257,9 +263,11 @@ eerror "Compiler not supported"
 		-DOMNITRACE_BUILD_PAPI=$(usex !system-papi)
 		-DOMNITRACE_BUILD_TESTING=$(usex test)
 		-DOMNITRACE_INSTALL_PERFETTO_TOOLS=OFF
+		-DUSE_OpenMP=$(usex openmp)
+		-DSTERILE_BUILD=ON
 	)
 
-	if use hip-clang ; then
+	if use openmp && use hip-clang ; then
 		append-flags -I"${ESYSROOT}${EROCM_LLVM_PATH}/include" -fopenmp=libomp
 		append-flags -Wl,-L"${ESYSROOT}${EROCM_LLVM_PATH}/lib"
 	fi
