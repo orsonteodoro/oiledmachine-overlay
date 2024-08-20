@@ -192,6 +192,9 @@ multilib_src_install() {
 	popd >/dev/null 2>&1 || die
 }
 
+# Fix for
+# ldd /usr/lib64/tbb/2/libtbbmalloc_proxy.so.2
+#	libtbbmalloc.so.2 => /usr/lib64/libtbbmalloc.so.2 (0x00007f423f1a7000)
 fix_rpath() {
 	local x
 	for x in $(find "${ED}" -name "*.so*") ; do
