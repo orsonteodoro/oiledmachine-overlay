@@ -1,0 +1,16 @@
+diff '--color=auto' -urp dyninst-13.0.0.orig/cmake/tpls/DyninstElfUtils.cmake dyninst-13.0.0/cmake/tpls/DyninstElfUtils.cmake
+--- dyninst-13.0.0.orig/cmake/tpls/DyninstElfUtils.cmake	2024-02-29 15:12:39.000000000 -0800
++++ dyninst-13.0.0/cmake/tpls/DyninstElfUtils.cmake	2024-08-20 11:57:06.420715933 -0700
+@@ -32,9 +32,9 @@ if(ENABLE_DEBUGINFOD)
+   set(_components debuginfod)
+ endif()
+ 
+-if(ElfUtils_ROOT_DIR)
+-  set(ElfUtils_NO_SYSTEM_PATHS ON)
+-endif()
++#if(ElfUtils_ROOT_DIR)
++#  set(ElfUtils_NO_SYSTEM_PATHS ON)
++#endif()
+ 
+ find_package(Elfutils ${_min_version} REQUIRED COMPONENTS ${_components})
+ unset(_components)

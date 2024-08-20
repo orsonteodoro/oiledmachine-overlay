@@ -28,7 +28,7 @@ SLOT="0"
 IUSE="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang -debuginfod +gcc hip-clang +openmp rocm_6_2 -valgrind
-ebuild-revision-1
+ebuild-revision-2
 "
 REQUIRED_USE="
 	clang? (
@@ -93,6 +93,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-13.0.0-disable-exact-version-elfutils.patch"
+	"${FILESDIR}/${PN}-13.0.0-use-system-elfutils.patch"
 )
 DOCS=( "CHANGELOG.md" )
 
