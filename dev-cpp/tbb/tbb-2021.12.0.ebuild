@@ -67,7 +67,7 @@ LICENSE="Apache-2.0"
 RESTRICT="mirror"
 SLOT="${SLOT_MAJOR}/${SOVER_TBB}-${SOVER_TBBMALLOC}-${SOVER_TBBBIND}"
 # Upstream enables tests by default.
-IUSE+=" -X debug doc -examples -python +tbbmalloc -test"
+IUSE+=" -X debug doc -examples -python +tbbmalloc -test ebuild-revision-1"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	X? (
@@ -419,8 +419,8 @@ _install_examples() {
 			doexe cholesky
 		fi
 	popd
-	insinto /usr/share/doc/${PF}
-	doins -r examples
+	insinto "/usr/share/doc/${PF}"
+	doins -r "examples"
 	find "${ED}/usr/share/doc/${PF}/examples/" -name "*.o" -delete || die
 	docompress -x "/usr/share/doc/${PF}/examples"
 }
@@ -428,11 +428,11 @@ _install_examples() {
 _install_docs() {
 	pushd "${S}" || die
 		einstalldocs
-		insinto /usr/share/${P}
+		insinto "/usr/share/${P}"
 		if use test ; then
-			doins -r doc/test_spec
+			doins -r "doc/test_spec"
 		fi
-		doins -r doc/html
+		doins -r "doc/html"
 	popd
 }
 
@@ -443,6 +443,15 @@ _src_install() {
 		use doc && _install_docs
 		use examples && _install_examples
 	fi
+}
+
+fix_rpath() {
+	local x
+	for x in $(find "${ED}" -name "*.so*") ; do
+		[[ -L "${x}" ]] && continue
+einfo "Fixing RPATH for ${x}"
+		patchelf --set-rpath '$ORIGIN' "${x}" || die
+	done
 }
 
 src_install()
@@ -465,6 +474,7 @@ src_install()
 		multilib_check_headers
 	}
 	multilib_foreach_abi src_install_abi
+	fix_rpath
 }
 
 pkg_postinst()

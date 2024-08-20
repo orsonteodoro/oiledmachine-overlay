@@ -27,8 +27,9 @@ https://github.com/intel/${PN}/archive/${MY_PV}.tar.gz
 DESCRIPTION="High level abstract threading library"
 HOMEPAGE="https://www.threadingbuildingblocks.org"
 LICENSE="Apache-2.0"
+RESTRICT="mirror"
 SLOT="${SLOT_MAJOR}/${SOVER_TBB}-${SOVER_TBBMALLOC}-${SOVER_TBBBIND}"
-IUSE+=" debug examples numa rml ebuild-revision-7"
+IUSE+=" debug examples numa rml ebuild-revision-8"
 DEPEND+="
 	!<dev-cpp/tbb-2021:0
 "
@@ -40,6 +41,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	dev-build/cmake
+	dev-util/patchelf
 "
 DOCS=( "CHANGES" "README" "README.md" "doc/Release_Notes.txt" )
 PATCHES=(
@@ -169,10 +171,11 @@ multilib_src_install() {
 		cd "${BUILD_DIR}_${bt}" || die
 		local l
 		for l in $(find . -name lib\*$(get_libname \*)); do
-			doexe ${l}
+			doexe "${l}"
 			local bl=$(basename ${l})
-			dosym ${bl} \
-/usr/$(get_libdir)/${PN}/${SLOT_MAJOR}/${bl%%.*}$(get_libname)
+			dosym \
+				"${bl}" \
+				"/usr/$(get_libdir)/${PN}/${SLOT_MAJOR}/${bl%%.*}$(get_libname)"
 		done
 	done
 
@@ -181,24 +184,34 @@ multilib_src_install() {
 	doins *.pc
 
 	pushd "${S}" >/dev/null 2>&1 || die
-		insinto /usr/include/${PN}/${SLOT_MAJOR}
-		doins -r include/*
+		insinto "/usr/include/${PN}/${SLOT_MAJOR}"
+		doins -r "include/"*
 
 		export LIBDIR=$(get_libdir)
 		cmake -DTBB_ROOT="${ED}/usr" -DTBB_OS="Linux" -P "cmake/tbb_config_generator.cmake" || die
 	popd >/dev/null 2>&1 || die
 }
 
+fix_rpath() {
+	local x
+	for x in $(find "${ED}" -name "*.so*") ; do
+		[[ -L "${x}" ]] && continue
+einfo "Fixing RPATH for ${x}"
+		patchelf --set-rpath '$ORIGIN' "${x}" || die
+	done
+}
+
 multilib_src_install_all() {
 	einstalldocs
 
 	if use examples ; then
-		insinto /usr/share/doc/${PF}/examples/build
-		doins build/*.inc
-		insinto /usr/share/doc/${PF}/examples
-		doins -r examples
+		insinto "/usr/share/doc/${PF}/examples/build"
+		doins "build/"*".inc"
+		insinto "/usr/share/doc/${PF}/examples"
+		doins -r "examples"
 		docompress -x "/usr/share/doc/${PF}/examples"
 	fi
+	fix_rpath
 }
 
 pkg_postinst()
