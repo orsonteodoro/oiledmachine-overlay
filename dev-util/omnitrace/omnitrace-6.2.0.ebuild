@@ -100,9 +100,12 @@ RESTRICT="test"
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-examples -mpi +papi -python +rccl +rocprofiler +roctracer test system-dyninst
+clang examples -mpi +papi -python +rccl +rocprofiler +roctracer test system-dyninst
 system-libunwind system-papi rocm-smi
 ebuild-revision-0
+"
+REQUIRED_USE="
+	clang
 "
 RDEPEND="
 	~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
@@ -113,9 +116,14 @@ RDEPEND="
 		)
 	)
 	!system-dyninst? (
-		|| (
+		!clang? (
 			=dev-cpp/tbb-2019*
-			=dev-cpp/tbb-2018*
+		)
+		clang? (
+			|| (
+				=dev-cpp/tbb-2019*
+				=dev-cpp/tbb-2018*
+			)
 		)
 		>=dev-libs/elfutils-0.178
 		>=dev-libs/boost-1.67.0
