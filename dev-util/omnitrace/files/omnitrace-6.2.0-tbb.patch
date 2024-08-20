@@ -1,0 +1,38 @@
+diff '--color=auto' -urp omnitrace-rocm-6.2.0.orig/external/dyninst/cmake/tpls/DyninstTBB.cmake omnitrace-rocm-6.2.0/external/dyninst/cmake/tpls/DyninstTBB.cmake
+--- omnitrace-rocm-6.2.0.orig/external/dyninst/cmake/tpls/DyninstTBB.cmake	2023-03-09 14:23:03.000000000 -0800
++++ omnitrace-rocm-6.2.0/external/dyninst/cmake/tpls/DyninstTBB.cmake	2024-08-19 20:15:50.539420321 -0700
+@@ -73,24 +73,24 @@ set(TBB_ROOT_DIR
+     CACHE PATH "TBB root directory")
+ 
+ # TBB include directory hint
+-set(TBB_INCLUDEDIR
+-    "${TBB_ROOT_DIR}/include"
+-    CACHE INTERNAL "TBB include directory")
++#set(TBB_INCLUDEDIR
++#    "${TBB_ROOT_DIR}/include"
++#    CACHE INTERNAL "TBB include directory")
+ 
+ # TBB library directory hint
+-set(TBB_LIBRARYDIR
+-    "${TBB_ROOT_DIR}/lib"
+-    CACHE INTERNAL "TBB library directory")
++#set(TBB_LIBRARYDIR
++#    "${TBB_ROOT_DIR}/lib"
++#    CACHE INTERNAL "TBB library directory")
+ 
+ # Translate to FindTBB names
+-set(TBB_LIBRARY ${TBB_LIBRARYDIR})
+-set(TBB_INCLUDE_DIR ${TBB_INCLUDEDIR})
++#set(TBB_LIBRARY ${TBB_LIBRARYDIR})
++#set(TBB_INCLUDE_DIR ${TBB_INCLUDEDIR})
+ 
+ # The specific TBB libraries we need NB: This should _NOT_ be a cache variable
+-set(_tbb_components tbb tbbmalloc_proxy tbbmalloc)
++set(_tbb_components tbb tbbmalloc_proxy tbbmalloc )
+ 
+ if(NOT BUILD_TBB)
+-    find_package(TBB ${TBB_MIN_VERSION} COMPONENTS ${_tbb_components})
++    find_package(TBB ${TBB_MIN_VERSION} COMPONENTS ${_tbb_components} HINTS ${TBB_PATH})
+ endif()
+ 
+ # -------------- SOURCE BUILD -------------------------------------------------

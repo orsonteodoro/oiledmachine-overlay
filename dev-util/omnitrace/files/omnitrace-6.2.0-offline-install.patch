@@ -1,0 +1,41 @@
+diff '--color=auto' -urp omnitrace-rocm-6.2.0.orig/cmake/ElfUtils.cmake omnitrace-rocm-6.2.0/cmake/ElfUtils.cmake
+--- omnitrace-rocm-6.2.0.orig/cmake/ElfUtils.cmake	2024-06-07 12:23:18.000000000 -0700
++++ omnitrace-rocm-6.2.0/cmake/ElfUtils.cmake	2024-08-19 21:27:24.664371231 -0700
+@@ -91,6 +91,14 @@ if(NOT ElfUtils_C_COMPILER OR NOT ElfUti
+         )
+ endif()
+ 
++option(OFFLINE_INSTALL "Offline install?" ON)
++if(OFFLINE_INSTALL)
++set(_eu_root ${PROJECT_BINARY_DIR}/external/elfutils)
++set(_eu_inc_dirs $<BUILD_INTERFACE:/usr/include>)
++set(_eu_lib_dirs $<BUILD_INTERFACE:/usr/$ENV{GET_LIBDIR}>)
++set(_eu_libs $<BUILD_INTERFACE:libdw${CMAKE_SHARED_LIBRARY_SUFFIX}>
++             $<BUILD_INTERFACE:libelf${CMAKE_SHARED_LIBRARY_SUFFIX}>)
++else()
+ set(_eu_root ${PROJECT_BINARY_DIR}/external/elfutils)
+ set(_eu_inc_dirs $<BUILD_INTERFACE:${_eu_root}/include>)
+ set(_eu_lib_dirs $<BUILD_INTERFACE:${_eu_root}/lib>)
+@@ -121,6 +129,7 @@ add_custom_target(
+     COMMAND ${MAKE_COMMAND} install -s
+     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/external/elfutils/src/ElfUtils-External
+     COMMENT "Installing ElfUtils...")
++endif()
+ 
+ # -------------- EXPORT VARIABLES ---------------------------------------------
+ 
+diff '--color=auto' -urp omnitrace-rocm-6.2.0.orig/cmake/MacroUtilities.cmake omnitrace-rocm-6.2.0/cmake/MacroUtilities.cmake
+--- omnitrace-rocm-6.2.0.orig/cmake/MacroUtilities.cmake	2024-06-07 12:23:18.000000000 -0700
++++ omnitrace-rocm-6.2.0/cmake/MacroUtilities.cmake	2024-08-19 21:23:58.659679277 -0700
+@@ -188,7 +188,11 @@ endfunction()
+ # value) -- (default: PROJECT_SOURCE_DIR) TEST_FILE (one value) -- file to check for
+ # (default: CMakeLists.txt) ADDITIONAL_CMDS (many value) -- any addition commands to pass
+ #
++option(OFFLINE_INSTALL "Offline install?" ON)
+ function(OMNITRACE_CHECKOUT_GIT_SUBMODULE)
++    if(OFFLINE_INSTALL)
++        return()
++    endif()
+     # parse args
+     cmake_parse_arguments(
+         CHECKOUT "RECURSIVE"

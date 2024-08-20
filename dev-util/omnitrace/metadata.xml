@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">ROCm/omnitrace</remote-id>
+  </upstream>
+  <use>
+    <flag name="examples">
+      Build examples.
+    </flag>
+    <flag name="mpi">
+      Enable MPI support.
+    </flag>
+    <flag name="papi">
+      Enable hardware counter support.
+    </flag>
+    <flag name="python">
+      Enable python support.
+    </flag>
+    <flag name="rccl">
+      Enable rccl support.
+    </flag>
+    <flag name="rocprofiler">
+      Enable rocprofiler support.
+    </flag>
+    <flag name="roctracer">
+      Enable roctracer support.
+    </flag>
+    <flag name="rocm-smi">
+      Enable rocm-smi for sampling power, temp, and other vitals.
+    </flag>
+    <flag name="system-dyninst">
+      Use dyninst from system package.
+    </flag>
+    <flag name="system-libunwind">
+      Use libunwind from system package.
+    </flag>
+    <flag name="system-papi">
+      Use PAPI from system package.
+    </flag>
+  </use>
+</pkgmetadata>
