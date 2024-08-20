@@ -156,7 +156,10 @@ RDEPEND="
 		~dev-util/roctracer-${PV}:${ROCM_SLOT}
 	)
 	system-dyninst? (
-		>=dev-util/dyninst-12.0[openmp?]
+		(
+			>=dev-util/dyninst-12.0[openmp?]
+			<dev-util/dyninst-13.0[openmp?]
+		)
 	)
 	system-libunwind? (
 		sys-libs/libunwind
