@@ -118,8 +118,10 @@ RDEPEND="
 	!system-dyninst? (
 		!clang? (
 			=dev-cpp/tbb-2019*:2
+			sys-devel/gcc[openmp]
 		)
 		clang? (
+			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 			|| (
 				=dev-cpp/tbb-2019*:2
 				=dev-cpp/tbb-2018*:2
@@ -241,8 +243,10 @@ src_configure() {
 		-DOMNITRACE_INSTALL_PERFETTO_TOOLS=OFF
 	)
 
-	append-flags -I"${ESYSROOT}${EROCM_LLVM_PATH}/include" -fopenmp=libomp
-	append-flags -Wl,-L"${ESYSROOT}${EROCM_LLVM_PATH}/lib"
+	if ! tc-is-gcc ; then
+		append-flags -I"${ESYSROOT}${EROCM_LLVM_PATH}/include" -fopenmp=libomp
+		append-flags -Wl,-L"${ESYSROOT}${EROCM_LLVM_PATH}/lib"
+	fi
 
 	replace-flags '-O*' '-O2'
 
