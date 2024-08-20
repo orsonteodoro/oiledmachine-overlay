@@ -117,12 +117,12 @@ RDEPEND="
 	)
 	!system-dyninst? (
 		!clang? (
-			=dev-cpp/tbb-2019*
+			=dev-cpp/tbb-2019*:2
 		)
 		clang? (
 			|| (
-				=dev-cpp/tbb-2019*
-				=dev-cpp/tbb-2018*
+				=dev-cpp/tbb-2019*:2
+				=dev-cpp/tbb-2018*:2
 			)
 		)
 		>=dev-libs/elfutils-0.178
