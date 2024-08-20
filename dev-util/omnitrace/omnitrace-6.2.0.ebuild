@@ -108,6 +108,10 @@ ebuild-revision-0
 # The vendored dyninst is build-time broken.
 REQUIRED_USE="
 	system-dyninst
+	^^ (
+		gcc
+		hip-clang
+	)
 "
 RDEPEND="
 	~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
@@ -230,7 +234,7 @@ src_prepare() {
 src_configure() {
 	if use gcc ; then
 		rocm_set_default_gcc
-	elif use hip-clang; then
+	elif use hip-clang ; then
 		rocm_set_default_clang
 	else
 eerror "Compiler not supported"
