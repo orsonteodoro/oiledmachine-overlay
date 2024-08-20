@@ -105,7 +105,9 @@ examples gcc hip-clang -mpi +papi -python +rccl +rocprofiler +roctracer test sys
 system-libunwind system-papi rocm-smi
 ebuild-revision-0
 "
+# The vendored dyninst is build-time broken.
 REQUIRED_USE="
+	system-dyninst
 "
 RDEPEND="
 	~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
