@@ -246,7 +246,7 @@ src_configure() {
 
 	replace-flags '-O*' '-O2'
 
-	if has_version "dev-cpp/tbb:0" ; then
+	if false && has_version "dev-cpp/tbb:0" ; then
 einfo "Using TBB:0 (current)"
 		mycmakeargs+=(
 			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include"
