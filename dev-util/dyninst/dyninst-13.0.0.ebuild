@@ -36,9 +36,12 @@ REQUIRED_USE="
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)
+	rocm_6_2? (
+		hip-clang
+	)
 	^^ (
-		gcc
 		clang
+		gcc
 		hip-clang
 	)
 "
@@ -48,7 +51,9 @@ gen_clang_rdepend() {
 		echo "
 			llvm_slot_${s}? (
 				sys-devel/clang:${s}
-				sys-libs/libomp:${s}
+				openmp? (
+					sys-libs/libomp:${s}
+				)
 			)
 		"
 	done
@@ -59,7 +64,7 @@ RDEPEND="
 	=dev-cpp/tbb-2019*
 	dev-cpp/tbb:=
 	gcc? (
-		sys-devel/gcc[openmp]
+		sys-devel/gcc[openmp?]
 	)
 	clang? (
 		$(gen_clang_rdepend)
@@ -70,7 +75,9 @@ RDEPEND="
 	hip-clang? (
 		rocm_6_2? (
 			~sys-devel/llvm-roc-6.2.0:6.2
-			~sys-libs/llvm-roc-libomp-6.2.0:6.2
+			openmp? (
+				~sys-libs/llvm-roc-libomp-6.2.0:6.2
+			)
 		)
 	)
 	valgrind? (

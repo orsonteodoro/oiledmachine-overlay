@@ -9,4 +9,27 @@
   <upstream>
     <remote-id type="github">dyninst/dyninst</remote-id>
   </upstream>
+  <use>
+    <flag name="clang">
+      Use Clang as the OpenMP provider.
+    </flag>
+    <flag name="gcc">
+      Use GCC as the OpenMP provider.
+    </flag>
+    <flag name="debuginfod">
+      Enable support for debuginfod.
+    </flag>
+    <flag name="hip-clang">
+      Use HIP-clang as the OpenMP provider.
+    </flag>
+    <flag name="openmp">
+      Use OpenMP for parallel parsing.
+    </flag>
+    <flag name="rocm_6_2">
+      Use the HIP-clang compiler for ROCm 6.2
+    </flag>
+    <flag name="valgrind">
+      Enable valgrind annotations
+    </flag>
+  </use>
 </pkgmetadata>
