@@ -1,0 +1,22 @@
+diff '--color=auto' -urp dyninst-13.0.0.orig/cmake/Modules/FindElfutils.cmake dyninst-13.0.0/cmake/Modules/FindElfutils.cmake
+--- dyninst-13.0.0.orig/cmake/Modules/FindElfutils.cmake	2024-02-29 15:12:39.000000000 -0800
++++ dyninst-13.0.0/cmake/Modules/FindElfutils.cmake	2024-08-20 08:18:19.348884625 -0700
+@@ -64,15 +64,15 @@ foreach(_n "LibELF" "LibDW" "LibDebuginf
+   endif()
+ endforeach()
+ 
+-find_package(LibELF ${Elfutils_FIND_VERSION} ${_exact} ${_required} ${_quiet})
+-find_package(LibDW ${Elfutils_FIND_VERSION} ${_exact} ${_required} ${_quiet})
++find_package(LibELF ${Elfutils_FIND_VERSION} ${_required} ${_quiet})
++find_package(LibDW ${Elfutils_FIND_VERSION} ${_required} ${_quiet})
+ 
+ if(NOT "x${Elfutils_FIND_COMPONENTS}" STREQUAL "x")
+   string(TOUPPER ${Elfutils_FIND_COMPONENTS} _tmp)
+   if(NOT ${_tmp} STREQUAL "DEBUGINFOD")
+     message(FATAL "Unknown component: '${Elfutils_FIND_COMPONENTS}'")
+   endif()
+-  find_package(LibDebuginfod ${Elfutils_FIND_VERSION} ${_exact} ${_required} ${_quiet})
++  find_package(LibDebuginfod ${Elfutils_FIND_VERSION} ${_required} ${_quiet})
+   set(_need_debuginfod TRUE)
+   unset(_tmp)
+ endif()

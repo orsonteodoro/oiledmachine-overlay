@@ -27,7 +27,8 @@ LICENSE="
 SLOT="0"
 IUSE="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-clang -debuginfod +gcc hip-clang +openmp rocm_6_2 -valgrind ebuild-revision-0
+clang -debuginfod +gcc hip-clang +openmp rocm_6_2 -valgrind
+ebuild-revision-1
 "
 REQUIRED_USE="
 	clang? (
@@ -84,6 +85,7 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-13.0.0-disable-exact-version-elfutils.patch"
 )
 DOCS=( "CHANGELOG.md" )
 
