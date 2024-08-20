@@ -99,13 +99,13 @@ LICENSE="
 RESTRICT="test"
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
+# TODO: Prune one of gcc or hip-clang.  Keep the one that is verified working to minimize annoyance.
 IUSE="
-clang examples -mpi +papi -python +rccl +rocprofiler +roctracer test system-dyninst
+examples gcc hip-clang -mpi +papi -python +rccl +rocprofiler +roctracer test system-dyninst
 system-libunwind system-papi rocm-smi
 ebuild-revision-0
 "
 REQUIRED_USE="
-	clang
 "
 RDEPEND="
 	~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
@@ -116,11 +116,11 @@ RDEPEND="
 		)
 	)
 	!system-dyninst? (
-		!clang? (
+		!hip-clang? (
 			=dev-cpp/tbb-2019*:2
 			sys-devel/gcc[openmp]
 		)
-		clang? (
+		hip-clang? (
 			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 			|| (
 				=dev-cpp/tbb-2019*:2
@@ -129,7 +129,6 @@ RDEPEND="
 		)
 		>=dev-libs/elfutils-0.178
 		>=dev-libs/boost-1.67.0
-		sys-devel/gcc[openmp]
 	)
 	mpi? (
 		virtual/mpi
@@ -157,13 +156,18 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	${HIP_CLANG_DEPEND}
 	>=dev-build/cmake-3.16
 	$(python_gen_cond_dep '
 		>=dev-python/setuptools-40.0.4[${PYTHON_USEDEP}]
 		>=dev-python/setuptools-scm-2.0.0[${PYTHON_USEDEP}]
 		>=dev-python/wheel-0.29.0[${PYTHON_USEDEP}]
 	')
+	gcc? (
+		${ROCM_GCC_DEPEND}
+	)
+	hip-clang? (
+		${HIP_CLANG_DEPEND}
+	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
@@ -222,9 +226,15 @@ src_prepare() {
 }
 
 src_configure() {
-	rocm_set_default_clang
+	if use gcc ; then
+		rocm_set_default_gcc
+	elif use hip-clang; then
+		rocm_set_default_clang
+	else
+eerror "Compiler not supported"
+		die
+	fi
 	local mycmakeargs=(
-		-DBUILD_TBB=ON # Both 2020.3 and 2021.12 do not work
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DOMNITRACE_USE_BFD=ON
 		-DOMNITRACE_USE_HIP=ON
@@ -243,24 +253,35 @@ src_configure() {
 		-DOMNITRACE_INSTALL_PERFETTO_TOOLS=OFF
 	)
 
-	if ! tc-is-gcc ; then
+	if use hip-clang ; then
 		append-flags -I"${ESYSROOT}${EROCM_LLVM_PATH}/include" -fopenmp=libomp
 		append-flags -Wl,-L"${ESYSROOT}${EROCM_LLVM_PATH}/lib"
 	fi
 
 	replace-flags '-O*' '-O2'
 
-	if false && has_version "dev-cpp/tbb:0" ; then
-einfo "Using TBB:0 (current)"
+	if ! use system-dyninst ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include"
-			-DTBB_LIBRARY="${ESYSROOT}/usr/$(get_libdir)"
+	# The vendored version has a build time failure on 2020.3, 2021.12, 2019.7, 2018.6.
+	# It is obviously bugged.  In the issues, they admit is is outdated.
+			-DBUILD_TBB=ON
 		)
-	else
+		if false && has_version "dev-cpp/tbb:0" ; then
+einfo "Using TBB:0 (current)"
+			mycmakeargs+=(
+				-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include"
+				-DTBB_LIBRARY="${ESYSROOT}/usr/$(get_libdir)"
+			)
+		else
 einfo "Using TBB:2 (legacy)"
+			mycmakeargs+=(
+				-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}"
+				-DTBB_LIBRARY="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
+			)
+		fi
+	else
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}"
-			-DTBB_LIBRARY="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
+			-DBUILD_TBB=OFF
 		)
 	fi
 	rocm_src_configure
