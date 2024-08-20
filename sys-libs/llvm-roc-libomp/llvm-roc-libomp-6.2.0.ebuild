@@ -406,6 +406,8 @@ src_configure() {
 	append-ldflags -fuse-ld=lld
 	strip-unsupported-flags # Filter LDFLAGS
 
+	append-flags -I"/usr/$(get_libdir)/libffi/include"
+
 # Fix
 # /usr/bin/python3.12: No module named pip
 	export PYTHONPATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/:${PYTHONPATH}"
