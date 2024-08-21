@@ -1,3 +1,4 @@
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -156,10 +157,7 @@ RDEPEND="
 		~dev-util/roctracer-${PV}:${ROCM_SLOT}
 	)
 	system-dyninst? (
-		(
-			>=dev-util/dyninst-12.0[openmp?]
-			<dev-util/dyninst-13.0[openmp?]
-		)
+		>=dev-util/dyninst-12.0[openmp?]
 	)
 	system-libunwind? (
 		sys-libs/libunwind
@@ -198,14 +196,14 @@ src_unpack() {
 	for x in ${A} ; do
 		if [[ "${x}" =~ "perfetto-${PERFETTO_COMMIT_1:0:7}" ]] ; then
 			mkdir -p "${WORKDIR}/perfetto-${PERFETTO_COMMIT_1}"
-			pushd "${WORKDIR}/perfetto-${PERFETTO_COMMIT_1}" || die
+			pushd "${WORKDIR}/perfetto-${PERFETTO_COMMIT_1}" >/dev/null 2>&1 || die
 				unpack "${x}"
-			popd
+			popd >/dev/null 2>&1 || die
 		elif [[ "${x}" =~ "perfetto-${PERFETTO_COMMIT_2:0:7}" ]] ; then
 			mkdir -p "${WORKDIR}/perfetto-${PERFETTO_COMMIT_2}"
-			pushd "${WORKDIR}/perfetto-${PERFETTO_COMMIT_2}" || die
+			pushd "${WORKDIR}/perfetto-${PERFETTO_COMMIT_2}" >/dev/null 2>&1 || die
 				unpack "${x}"
-			popd
+			popd >/dev/null 2>&1 || die
 		else
 			unpack "${x}"
 		fi
@@ -237,6 +235,9 @@ src_unpack() {
 src_prepare() {
 	cmake_src_prepare
 	rocm_src_prepare
+	if has_version ">=dev-util/dyninst-13" ; then
+		eapply "${FILESDIR}/${PN}-6.2.0-dyninst-13-compat.patch"
+	fi
 }
 
 src_configure() {

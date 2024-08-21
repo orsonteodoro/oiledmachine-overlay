@@ -1,0 +1,27 @@
+diff '--color=auto' -urp omnitrace-rocm-6.2.0.orig/source/bin/omnitrace-instrument/details.cpp omnitrace-rocm-6.2.0/source/bin/omnitrace-instrument/details.cpp
+--- omnitrace-rocm-6.2.0.orig/source/bin/omnitrace-instrument/details.cpp	2024-06-07 12:23:18.000000000 -0700
++++ omnitrace-rocm-6.2.0/source/bin/omnitrace-instrument/details.cpp	2024-08-20 17:25:36.710394643 -0700
+@@ -812,7 +812,9 @@ process_modules(const std::vector<module
+         }
+ 
+         symtab_data.functions.emplace(itr, std::vector<symtab_func_t*>{});
+-        if(!itr->getAllFunctions(symtab_data.functions.at(itr))) continue;
++        std::vector<symtab_func_t*> _funcs = itr->getAllFunctions();
++        symtab_data.functions.at(itr) = _funcs;
++        if(!_funcs.empty()) continue;
+         _erase_nullptrs(symtab_data.functions.at(itr));
+ 
+         for(auto* fitr : symtab_data.functions.at(itr))
+diff '--color=auto' -urp omnitrace-rocm-6.2.0.orig/source/bin/omnitrace-instrument/internal_libs.cpp omnitrace-rocm-6.2.0/source/bin/omnitrace-instrument/internal_libs.cpp
+--- omnitrace-rocm-6.2.0.orig/source/bin/omnitrace-instrument/internal_libs.cpp	2024-06-07 12:23:18.000000000 -0700
++++ omnitrace-rocm-6.2.0/source/bin/omnitrace-instrument/internal_libs.cpp	2024-08-20 17:21:39.562089400 -0700
+@@ -473,8 +473,7 @@ get_internal_libs_data_impl()
+             _data[itr.first].emplace(_mpath, func_set_t{});
+             _data[itr.first].emplace(_mname, func_set_t{});
+ 
+-            auto _funcs = std::vector<symtab_func_t*>{};
+-            mitr->getAllFunctions(_funcs);
++            std::vector<symtab_func_t*> _funcs = mitr->getAllFunctions(_funcs);
+ 
+             for(const auto& fitr : _funcs)
+             {
