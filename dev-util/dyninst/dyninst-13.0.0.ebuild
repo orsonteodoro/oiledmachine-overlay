@@ -26,59 +26,19 @@ LICENSE="
 "
 SLOT="0"
 IUSE="
-${LLVM_COMPAT[@]/#/llvm_slot_}
-clang -debuginfod +gcc hip-clang +openmp rocm_6_2 -valgrind
+-debuginfod +openmp -valgrind
 ebuild-revision-2
 "
 REQUIRED_USE="
-	clang? (
-		^^ (
-			${LLVM_COMPAT[@]/#/llvm_slot_}
-		)
-	)
-	rocm_6_2? (
-		hip-clang
-	)
-	^^ (
-		clang
-		gcc
-		hip-clang
-	)
 "
-gen_clang_rdepend() {
-	local s
-	for s in ${LLVM_COMPAT[@]} ; do
-		echo "
-			llvm_slot_${s}? (
-				sys-devel/clang:${s}
-				openmp? (
-					sys-libs/libomp:${s}
-				)
-			)
-		"
-	done
-}
 RDEPEND="
 	>=dev-libs/boost-1.71.0
 	>=dev-libs/elfutils-0.186
 	=dev-cpp/tbb-2019*
 	dev-cpp/tbb:=
-	gcc? (
-		sys-devel/gcc[openmp?]
-	)
-	clang? (
-		$(gen_clang_rdepend)
-	)
+	sys-devel/gcc[openmp?]
 	debuginfod? (
 		dev-libs/elfutils[debuginfod(-)]
-	)
-	hip-clang? (
-		rocm_6_2? (
-			~sys-devel/llvm-roc-6.2.0:6.2
-			openmp? (
-				~sys-libs/llvm-roc-libomp-6.2.0:6.2
-			)
-		)
 	)
 	valgrind? (
 		dev-debug/valgrind
@@ -118,26 +78,12 @@ src_configure() {
 		-DUSE_OpenMP=$(usex openmp)
 	)
 
-	if use openmp && use clang ; then
-		LLVM_SLOT=$(get_llvm_slot)
-		append-flags -I"${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/include" -fopenmp=libomp
-		append-flags -Wl,-L"${ESYSROOT}//usr/lib/llvm/${LLVM_SLOT}/$(get_libdir)"
-	fi
-
-	if use openmp && use hip-clang ; then
-		if use rocm_6_2 ; then
-			ROCM_SLOT="6.2"
-			ROCM_VERSION="6.2.0"
-		fi
-		append-flags -I"${ESYSROOT}/opt/rocm-${ROCM_VERSION}/include" -fopenmp=libomp
-		append-flags -Wl,-L"${ESYSROOT}/opt/rocm-${ROCM_VERSION}/lib"
-	fi
-
 	cmake_src_configure
 }
 
 src_install() {
 	cmake_src_install
+	docinto "licenses"
 	dodoc "COPYRIGHT"
 }
 
