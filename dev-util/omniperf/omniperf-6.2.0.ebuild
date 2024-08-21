@@ -28,7 +28,10 @@ https://github.com/ROCm/omniperf/archive/refs/tags/rocm-${PV}.tar.gz
 fi
 
 DESCRIPTION="Advanced Profiling and Analytics for AMD Hardware"
-HOMEPAGE="https://github.com/ROCm/omniperf"
+HOMEPAGE="
+	https://rocm.docs.amd.com/projects/omniperf/en/latest/
+	https://github.com/ROCm/omniperf
+"
 LICENSE="
 	(
 		all-rights-reserved
