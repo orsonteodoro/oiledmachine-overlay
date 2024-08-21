@@ -115,11 +115,6 @@ REQUIRED_USE="
 RDEPEND="
 	~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}
-	papi? (
-		system-papi? (
-			dev-libs/papi
-		)
-	)
 	!system-dyninst? (
 		=dev-cpp/tbb-2019*:2
 		sys-devel/gcc[openmp?]
@@ -128,6 +123,11 @@ RDEPEND="
 	)
 	mpi? (
 		virtual/mpi
+	)
+	papi? (
+		system-papi? (
+			dev-libs/papi
+		)
 	)
 	rccl? (
 		~dev-libs/rccl-${PV}:${ROCM_SLOT}
