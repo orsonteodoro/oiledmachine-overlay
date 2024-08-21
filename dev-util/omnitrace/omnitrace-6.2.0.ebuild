@@ -102,19 +102,14 @@ LICENSE="
 RESTRICT="test"
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-# TODO: Prune one of gcc or hip-clang.  Keep the one that is verified working to minimize annoyance.
 IUSE="
--debuginfod examples gcc hip-clang -mpi +openmp +papi -python +rccl +rocprofiler
+-debuginfod examples -mpi +openmp +papi -python +rccl +rocprofiler
 +roctracer test system-dyninst system-libunwind system-papi rocm-smi
 ebuild-revision-0
 "
 # The vendored dyninst is build-time broken.
 REQUIRED_USE="
 	system-dyninst
-	^^ (
-		gcc
-		hip-clang
-	)
 "
 RDEPEND="
 	~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
@@ -125,19 +120,8 @@ RDEPEND="
 		)
 	)
 	!system-dyninst? (
-		!hip-clang? (
-			=dev-cpp/tbb-2019*:2
-			sys-devel/gcc[openmp?]
-		)
-		hip-clang? (
-			openmp? (
-				~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
-			)
-			|| (
-				=dev-cpp/tbb-2019*:2
-				=dev-cpp/tbb-2018*:2
-			)
-		)
+		=dev-cpp/tbb-2019*:2
+		sys-devel/gcc[openmp?]
 		>=dev-libs/elfutils-0.178
 		>=dev-libs/boost-1.67.0
 	)
@@ -173,12 +157,7 @@ BDEPEND="
 		>=dev-python/setuptools-scm-2.0.0[${PYTHON_USEDEP}]
 		>=dev-python/wheel-0.29.0[${PYTHON_USEDEP}]
 	')
-	gcc? (
-		${ROCM_GCC_DEPEND}
-	)
-	hip-clang? (
-		${HIP_CLANG_DEPEND}
-	)
+	${ROCM_GCC_DEPEND}
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
@@ -241,14 +220,7 @@ src_prepare() {
 }
 
 src_configure() {
-	if use gcc ; then
-		rocm_set_default_gcc
-	elif use hip-clang ; then
-		rocm_set_default_clang
-	else
-eerror "Compiler not supported"
-		die
-	fi
+	rocm_set_default_gcc
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DENABLE_DEBUGINFOD=$(usex debuginfod)
@@ -312,4 +284,4 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
