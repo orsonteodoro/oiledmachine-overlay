@@ -104,7 +104,7 @@ RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 -debuginfod examples -mpi +openmp +papi -python +rccl +rocprofiler
-+roctracer test system-dyninst system-libunwind system-papi rocm-smi
++roctracer test system-dyninst system-libunwind system-papi +rocm-smi
 ebuild-revision-0
 "
 # The vendored dyninst is build-time broken.
@@ -285,3 +285,4 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# USE="system-dyninst -debuginfod -ebuild-revision-0 -examples -mpi -openmp -papi -python -rccl -rocm-smi -rocprofiler -roctracer -system-libunwind -system-papi -test (-gcc%*) (-hip-clang%)" PYTHON_SINGLE_TARGET="python3_10 -python3_11"
