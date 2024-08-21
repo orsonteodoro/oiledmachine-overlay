@@ -1107,7 +1107,7 @@ https://github.com/stevej2608/dash-svg
 https://pypi.org/project/dash-svg/
 "
 LICENSE="MIT" # https://github.com/stevej2608/dash-svg/blob/0.0.12/DESCRIPTION#L8
-RESTRICT="mirror test" # Did not test
+RESTRICT="mirror test ebuild-revision-1" # Did not test
 SLOT="0"
 IUSE=""
 RDEPEND+="
@@ -1135,6 +1135,7 @@ src_unpack() {
 }
 
 src_compile() {
+	npm_hydrate
 	enpm run build
 	distutils-r1_src_compile
 }

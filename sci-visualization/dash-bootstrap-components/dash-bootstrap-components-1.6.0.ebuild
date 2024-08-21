@@ -1106,7 +1106,7 @@ https://pypi.org/project/dash-bootstrap-components/
 LICENSE="Apache-2.0"
 RESTRICT="mirror test" # Did not test
 SLOT="0"
-IUSE="dev pandas"
+IUSE="dev pandas ebuild-revision-1"
 RDEPEND+="
 	>=sci-visualization/dash-2.0.0[${PYTHON_USEDEP},dev(+)]
 	pandas? (
@@ -1144,6 +1144,7 @@ src_unpack() {
 }
 
 src_compile() {
+	npm_hydrate
 	enpm run build
 	distutils-r1_src_compile
 }
