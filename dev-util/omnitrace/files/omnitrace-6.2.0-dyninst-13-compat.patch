@@ -21,7 +21,7 @@ diff '--color=auto' -urp omnitrace-rocm-6.2.0.orig/source/bin/omnitrace-instrume
  
 -            auto _funcs = std::vector<symtab_func_t*>{};
 -            mitr->getAllFunctions(_funcs);
-+            std::vector<symtab_func_t*> _funcs = mitr->getAllFunctions(_funcs);
++            std::vector<symtab_func_t*> _funcs = mitr->getAllFunctions();
  
              for(const auto& fitr : _funcs)
              {
