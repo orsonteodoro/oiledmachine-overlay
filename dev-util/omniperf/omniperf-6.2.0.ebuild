@@ -4,8 +4,6 @@
 EAPI=8
 
 # TODO package:
-# astunparse
-# colorlover
 # dash-bootstrap-components
 # dash-svg
 # plotille
