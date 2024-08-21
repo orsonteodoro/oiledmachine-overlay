@@ -1109,7 +1109,7 @@ https://pypi.org/project/dash-svg/
 LICENSE="MIT" # https://github.com/stevej2608/dash-svg/blob/0.0.12/DESCRIPTION#L8
 RESTRICT="mirror test ebuild-revision-1" # Did not test
 SLOT="0"
-IUSE=""
+IUSE="ebuild-revision-1"
 RDEPEND+="
 	>=dev-python/twine-3.7.1[${PYTHON_USEDEP}]
 	>=dev-python/keyrings-alt-4.1.0[${PYTHON_USEDEP}]
