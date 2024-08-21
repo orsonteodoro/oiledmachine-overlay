@@ -39,7 +39,7 @@ HOMEPAGE="
 LICENSE="
 	MIT
 "
-RESTRICT="mirror"
+RESTRICT="mirror test" # Not tested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
 RDEPEND+="
