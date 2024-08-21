@@ -1,0 +1,11 @@
+diff '--color=auto' -urp plotille-6e13ed9bdb9a0fad818c6aa17b649e0e76ce15ca.orig/pyproject.toml plotille-6e13ed9bdb9a0fad818c6aa17b649e0e76ce15ca/pyproject.toml
+--- plotille-6e13ed9bdb9a0fad818c6aa17b649e0e76ce15ca.orig/pyproject.toml	2024-05-06 13:14:42.000000000 -0700
++++ plotille-6e13ed9bdb9a0fad818c6aa17b649e0e76ce15ca/pyproject.toml	2024-08-20 20:09:52.031532887 -0700
+@@ -1,3 +1,7 @@
++[build-system]
++requires = ["poetry-core>=1.0.0"]
++build-backend = "poetry.core.masonry.api"
++
+ [tool.poetry]
+ 
+ name = "plotille"

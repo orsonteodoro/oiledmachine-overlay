@@ -18,17 +18,17 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/tammoippen/plotille.git"
-	FALLBACK_COMMIT="6e13ed9bdb9a0fad818c6aa17b649e0e76ce15ca" # May 6, 2024
+	FALLBACK_COMMIT="2d91a7bdb12e9dc3009ef415b30fc5ee55458571" # Dec 1, 2022
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	EGIT_COMMIT="6e13ed9bdb9a0fad818c6aa17b649e0e76ce15ca" # May 6, 2024
+	EGIT_COMMIT="2d91a7bdb12e9dc3009ef415b30fc5ee55458571" # Dec 1, 2022
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+	S="${WORKDIR}/${P}"
 	SRC_URI="
-https://github.com/tammoippen/plotille/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz
+https://github.com/tammoippen/plotille/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
 	"
 fi
 
