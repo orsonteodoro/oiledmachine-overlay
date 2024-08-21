@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This is a ebuild fork to meet version requirements.
+
+  -->
+  <upstream>
+    <bugs-to>https://github.com/stevej2608/dash-svg/issues</bugs-to>
+    <remote-id type="github">stevej2608/dash-svg</remote-id>
+    <remote-id type="pypi">dash-svg</remote-id>
+  </upstream>
+</pkgmetadata>
