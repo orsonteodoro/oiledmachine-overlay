@@ -5,7 +5,6 @@ EAPI=8
 
 # TODO package:
 # dash-bootstrap-components
-# dash-svg
 # kaleido
 
 LLVM_SLOT=18
