@@ -3,9 +3,6 @@
 
 EAPI=8
 
-# TODO package:
-# kaleido
-
 LLVM_SLOT=18
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -46,6 +43,7 @@ RDEPEND="
 		>=dev-python/pandas-1.4.3[${PYTHON_USEDEP}]
 		>=sci-visualization/dash-1.12.0[${PYTHON_USEDEP}]
 		dev-python/colorlover[${PYTHON_USEDEP}]
+		dev-python/kaleido[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
 		dev-python/plotille[${PYTHON_USEDEP}]
 		dev-python/pymongo[${PYTHON_USEDEP}]
@@ -54,10 +52,6 @@ RDEPEND="
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		sci-visualization/dash-bootstrap-components[${PYTHON_USEDEP}]
 		sci-visualization/dash-svg[${PYTHON_USEDEP}]
-		|| (
-			dev-python/kaleido[${PYTHON_USEDEP}]
-			dev-python/kaleido-bin[${PYTHON_USEDEP}]
-		)
 	')
 "
 DEPEND="
