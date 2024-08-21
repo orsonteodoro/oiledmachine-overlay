@@ -90,6 +90,7 @@ src_install() {
 	cmake_src_install
 	docinto "licenses"
 	dodoc "COPYRIGHT"
+	dodoc "LICENSE.md"
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
