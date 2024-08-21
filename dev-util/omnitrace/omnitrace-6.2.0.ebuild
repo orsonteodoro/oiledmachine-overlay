@@ -4,7 +4,8 @@
 
 EAPI=8
 
-# FIXME:
+# TODO:
+# Check if bindings uses the correct python.
 
 # For requirements, see
 # https://github.com/ROCm/omnitrace/blob/rocm-6.2.0/source/docs/installation.md
