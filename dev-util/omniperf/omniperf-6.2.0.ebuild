@@ -6,7 +6,7 @@ EAPI=8
 # TODO package:
 # dash-bootstrap-components
 # dash-svg
-# plotille
+# kaleido
 
 LLVM_SLOT=18
 PYTHON_COMPAT=( "python3_"{10..11} )
