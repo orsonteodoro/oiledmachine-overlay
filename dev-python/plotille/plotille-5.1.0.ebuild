@@ -74,7 +74,7 @@ BDEPEND+="
 		' python3_12)
 	)
 "
-DOCS=( "CHANGELOG" "README.md" )
+DOCS=( "README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
