@@ -1106,7 +1106,7 @@ https://pypi.org/project/dash-bootstrap-components/
 LICENSE="Apache-2.0"
 RESTRICT="mirror test" # Did not test
 SLOT="0"
-IUSE="dev pandas ebuild-revision-1"
+IUSE="dev pandas ebuild-revision-2"
 RDEPEND+="
 	>=sci-visualization/dash-2.0.0[${PYTHON_USEDEP},dev(+)]
 	pandas? (
@@ -1119,6 +1119,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
+	dev-python/invoke[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	dev? (
 		>=sci-visualization/dash-2.0.0[dev(+)]
