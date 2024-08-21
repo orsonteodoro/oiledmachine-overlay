@@ -20,8 +20,10 @@ fi
 DESCRIPTION="DyninstAPI: Tools for binary instrumentation, analysis, and modification."
 HOMEPAGE="https://github.com/dyninst/dyninst"
 LICENSE="
+	custom
 	LGPL-2.1+
 "
+# custom LGPL-2.1+ - dwarf/src/dwarfResult.C
 SLOT="0"
 IUSE="
 -debuginfod +openmp -valgrind
