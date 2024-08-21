@@ -3,9 +3,7 @@
 
 EAPI=8
 
-LLVM_COMPAT=( {18..15} )
-
-inherit cmake flag-o-matic llvm
+inherit cmake flag-o-matic
 
 if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/dyninst/dyninst/"
@@ -58,7 +56,7 @@ PATCHES=(
 DOCS=( "CHANGELOG.md" )
 
 pkg_setup() {
-	llvm_pkg_setup
+	:
 }
 
 src_prepare() {
@@ -67,6 +65,11 @@ src_prepare() {
 }
 
 src_configure() {
+	# It is forced so we can use OpenMP without adding more flags.
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
+	strip-unsupported-flags
+
 	strip-flags
 	filter-flags '-O0' '-pipe'
 
