@@ -35,7 +35,7 @@ LICENSE="
 "
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-0"
+IUSE="test ebuild-revision-1"
 RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/astunparse-1.6.2[${PYTHON_USEDEP}]
@@ -72,8 +72,9 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-6.2.0-conditional-version-sha-install.patch"
 )
-DOCS=( "AUTHORS" "CHANGELOG.md" )
+DOCS=( "AUTHORS" "CHANGES" )
 
 pkg_setup() {
 	rocm_pkg_setup

@@ -1,0 +1,22 @@
+diff '--color=auto' -urp omniperf-rocm-6.2.0.orig/CMakeLists.txt omniperf-rocm-6.2.0/CMakeLists.txt
+--- omniperf-rocm-6.2.0.orig/CMakeLists.txt	2024-08-21 07:49:01.726159452 -0700
++++ omniperf-rocm-6.2.0/CMakeLists.txt	2024-08-21 07:52:14.706954475 -0700
+@@ -276,11 +276,13 @@ install(
+     DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}
+     COMPONENT main)
+ # support files and version info
+-install(
+-    FILES src/argparser.py src/config.py src/omniperf_base.py src/roofline.py VERSION
+-          VERSION.sha
+-    DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}
+-    COMPONENT main)
++if(${GIT_CLONE})
++    install(
++        FILES src/argparser.py src/config.py src/omniperf_base.py src/roofline.py VERSION
++              VERSION.sha
++        DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}
++        COMPONENT main)
++endif()
+ # src/omniperf_analyze
+ install(
+     DIRECTORY src/omniperf_analyze

@@ -1120,12 +1120,11 @@ DEPEND+="
 BDEPEND+="
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
 	dev-python/invoke[${PYTHON_USEDEP}]
+	dev-python/semver[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	dev? (
 		>=sci-visualization/dash-2.0.0[dev(+)]
 		dev-python/build[${PYTHON_USEDEP}]
-		dev-python/invoke[${PYTHON_USEDEP}]
-		dev-python/semver[${PYTHON_USEDEP}]
 		dev-python/termcolor[${PYTHON_USEDEP}]
 
 		>=dev-python/pytest-6.0[${PYTHON_USEDEP}]
@@ -1148,6 +1147,8 @@ src_compile() {
 	npm_hydrate
 	enpm run build
 	distutils-r1_src_compile
+	grep -q -e "WARNING warning: no files found matching" "${T}/build.log" && die "Detected error"
+	grep -q -e "ModuleNotFoundError: No module named" "${T}/build.log" && die "Detected error"
 }
 
 src_install() {
