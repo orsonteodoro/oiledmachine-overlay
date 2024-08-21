@@ -253,10 +253,10 @@ src_configure() {
 	if ! use system-dyninst ; then
 		mycmakeargs+=(
 	# The vendored version has a build time failure on 2020.3, 2021.12, 2019.7, 2018.6.
-	# It is obviously bugged.  In the issues, they admit is is outdated.
+	# It is obviously bugged.  In the issues, they admit it is outdated.
 			-DBUILD_TBB=ON
 		)
-		if false && has_version "dev-cpp/tbb:0" ; then
+		if has_version "dev-cpp/tbb:0" ; then
 einfo "Using TBB:0 (current)"
 			mycmakeargs+=(
 				-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include"
