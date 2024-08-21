@@ -66,7 +66,7 @@ LICENSE="
 # MIT - hipamd-rocm-4.5.2/LICENSE.txt
 
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test ebuild-revision-36"
+IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test ebuild-revision-38"
 REQUIRED_USE="
 	hsa? (
 		rocm

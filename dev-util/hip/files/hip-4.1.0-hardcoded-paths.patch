@@ -1,7 +1,16 @@
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/CMakeLists.txt work/HIP-rocm-4.1.0/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/CMakeLists.txt	2024-08-18 16:33:00.605751386 -0700
-+++ work/HIP-rocm-4.1.0/CMakeLists.txt	2024-08-18 16:36:00.658695595 -0700
-@@ -199,7 +199,7 @@ if(HIP_PLATFORM STREQUAL "amd")
++++ work/HIP-rocm-4.1.0/CMakeLists.txt	2024-08-21 13:49:42.095599732 -0700
+@@ -14,6 +14,8 @@ project(hip)
+ #      cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/opt/rocm/" -DCMAKE_INSTALL_PREFIX=</where/to/install/hip> ..
+ #  If you don't specify CMAKE_INSTALL_PREFIX, hip-rocclr runtime will be installed to "/opt/rocm/hip".
+ 
++set(CMAKE_HIP_ARCHITECTURES OFF)
++
+ set(BUILD_SHARED_LIBS ON  CACHE BOOL "Build shared library (.so) or static lib (.a) ")
+ 
+ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+@@ -199,7 +201,7 @@ if(HIP_PLATFORM STREQUAL "amd")
      # Determine HSA_PATH
      if(NOT DEFINED HSA_PATH)
          if(NOT DEFINED ENV{HSA_PATH})
@@ -10,7 +19,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/CMakeLists.txt work/HIP-rocm-4
          else()
              set(HSA_PATH $ENV{HSA_PATH} CACHE PATH "Path to which HSA runtime has been installed")
          endif()
-@@ -219,7 +219,7 @@ endif()
+@@ -219,7 +221,7 @@ endif()
  
  # Determine HIP install path
  if (UNIX)
@@ -19,7 +28,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/CMakeLists.txt work/HIP-rocm-4
  endif()
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  #_cmake_modify_IGNORE     set(CMAKE_INSTALL_PREFIX ${HIP_DEFAULT_INSTALL_PREFIX} CACHE PATH "Installation path for HIP" FORCE)
-@@ -239,14 +239,14 @@ else()
+@@ -239,14 +241,14 @@ else()
  endif()
  
  if (NOT DEFINED ROCM_PATH )
@@ -36,7 +45,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/CMakeLists.txt work/HIP-rocm-4
  endif (NOT CPACK_SET_DESTDIR)
  
  #############################
-@@ -455,7 +455,7 @@ endif()
+@@ -455,7 +457,7 @@ endif()
  # Target: cppcheck
  find_program(CPPCHECK_EXE cppcheck)
  if(CPPCHECK_EXE)
@@ -45,7 +54,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/CMakeLists.txt work/HIP-rocm-4
      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
  endif()
  
-@@ -496,7 +496,7 @@ endif()
+@@ -496,7 +498,7 @@ endif()
  # Target: clang
  if(HIP_HIPCC_EXECUTABLE)
      add_custom_target(analyze
@@ -54,9 +63,22 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/CMakeLists.txt work/HIP-rocm-4
      WORKING_DIRECTORY ${HIP_SRC_PATH})
      if(CPPCHECK_EXE)
          add_dependencies(analyze cppcheck)
+Only in work/HIP-rocm-4.1.0: CMakeLists.txt.orig
+diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/bin/hipcc work/HIP-rocm-4.1.0/bin/hipcc
+--- work.orig/HIP-rocm-4.1.0/bin/hipcc	2024-08-18 16:33:00.617751183 -0700
++++ work/HIP-rocm-4.1.0/bin/hipcc	2024-08-21 13:49:55.323380062 -0700
+@@ -207,7 +207,7 @@ if ($HIP_PLATFORM eq "amd") {
+     $HIPCFLAGS .= " -D__HIP_ROCclr__";
+ 
+ } elsif ($HIP_PLATFORM eq "nvidia") {
+-    $CUDA_PATH=$ENV{'CUDA_PATH'} // '/usr/local/cuda';
++    $CUDA_PATH=$ENV{'CUDA_PATH'} // '/opt/cuda';
+     $HIP_INCLUDE_PATH = "$HIP_PATH/include";
+     if ($verbose & 0x2) {
+         print ("CUDA_PATH=$CUDA_PATH\n");
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/cmake/FindHIP.cmake work/HIP-rocm-4.1.0/cmake/FindHIP.cmake
 --- work.orig/HIP-rocm-4.1.0/cmake/FindHIP.cmake	2021-02-16 09:25:34.000000000 -0800
-+++ work/HIP-rocm-4.1.0/cmake/FindHIP.cmake	2024-08-18 16:37:02.029654724 -0700
++++ work/HIP-rocm-4.1.0/cmake/FindHIP.cmake	2024-08-21 13:49:42.095599732 -0700
 @@ -44,7 +44,7 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN)
              "$ENV{ROCM_PATH}/hip"
              ENV HIP_PATH
@@ -119,7 +141,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/cmake/FindHIP.cmake work/HIP-r
          set(CMAKE_HIP_LINK_EXECUTABLE "${HIP_HIPCC_CMAKE_LINKER_HELPER} ${HIP_CLANG_PATH} ${HIP_CLANG_PARALLEL_BUILD_LINK_OPTIONS} <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/cmake/FindROCR.cmake work/HIP-rocm-4.1.0/cmake/FindROCR.cmake
 --- work.orig/HIP-rocm-4.1.0/cmake/FindROCR.cmake	2021-02-16 09:25:34.000000000 -0800
-+++ work/HIP-rocm-4.1.0/cmake/FindROCR.cmake	2024-08-18 16:37:14.957435507 -0700
++++ work/HIP-rocm-4.1.0/cmake/FindROCR.cmake	2024-08-21 13:49:42.099599665 -0700
 @@ -4,8 +4,8 @@
  #   - ROCR_FOUND     - ROCR status (found or not found)
  #   - ROCR_INCLUDES  - Required ROCR include directories
@@ -133,7 +155,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/cmake/FindROCR.cmake work/HIP-
  find_package_handle_standard_args(ROCR DEFAULT_MSG
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/cmake/FindROCT.cmake work/HIP-rocm-4.1.0/cmake/FindROCT.cmake
 --- work.orig/HIP-rocm-4.1.0/cmake/FindROCT.cmake	2021-02-16 09:25:34.000000000 -0800
-+++ work/HIP-rocm-4.1.0/cmake/FindROCT.cmake	2024-08-18 16:36:38.702050327 -0700
++++ work/HIP-rocm-4.1.0/cmake/FindROCT.cmake	2024-08-21 13:49:42.099599665 -0700
 @@ -4,8 +4,8 @@
  #   - ROCT_FOUND     - ROCT status (found or not found)
  #   - ROCT_INCLUDES  - Required ROCT include directories
@@ -147,7 +169,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/cmake/FindROCT.cmake work/HIP-
  find_package_handle_standard_args(ROCT DEFAULT_MSG
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/lpl_ca/CMakeLists.txt work/HIP-rocm-4.1.0/lpl_ca/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/lpl_ca/CMakeLists.txt	2024-08-18 16:33:00.245757500 -0700
-+++ work/HIP-rocm-4.1.0/lpl_ca/CMakeLists.txt	2024-08-18 16:39:43.582916358 -0700
++++ work/HIP-rocm-4.1.0/lpl_ca/CMakeLists.txt	2024-08-21 13:49:42.099599665 -0700
 @@ -2,8 +2,8 @@
  # Look for ROCclr which contains elfio
  find_package(ROCclr REQUIRED CONFIG
@@ -170,7 +192,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/lpl_ca/CMakeLists.txt work/HIP
  
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/rocclr/CMakeLists.txt work/HIP-rocm-4.1.0/rocclr/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/rocclr/CMakeLists.txt	2024-08-18 16:33:00.237757635 -0700
-+++ work/HIP-rocm-4.1.0/rocclr/CMakeLists.txt	2024-08-18 16:36:31.806167280 -0700
++++ work/HIP-rocm-4.1.0/rocclr/CMakeLists.txt	2024-08-21 13:49:42.099599665 -0700
 @@ -39,7 +39,7 @@ set(USE_PROF_API "1")
  # Need to add /opt/rocm/llvm to package search path since ROCclr will
  # find package amd_comgr and amd_comgr will find package llvm/clang.
@@ -209,7 +231,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/rocclr/CMakeLists.txt work/HIP
  
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/0_Intro/bit_extract/CMakeLists.txt work/HIP-rocm-4.1.0/samples/0_Intro/bit_extract/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/0_Intro/bit_extract/CMakeLists.txt	2024-08-18 16:33:00.245757500 -0700
-+++ work/HIP-rocm-4.1.0/samples/0_Intro/bit_extract/CMakeLists.txt	2024-08-18 16:39:10.159482701 -0700
++++ work/HIP-rocm-4.1.0/samples/0_Intro/bit_extract/CMakeLists.txt	2024-08-21 13:49:42.099599665 -0700
 @@ -11,7 +11,7 @@ if(${__HIP_ENABLE_PCH})
  endif()
  
@@ -228,7 +250,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/0_Intro/bit_extract/CM
 +target_link_libraries(bit_extract hip::host)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/0_Intro/module_api/CMakeLists.txt work/HIP-rocm-4.1.0/samples/0_Intro/module_api/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/0_Intro/module_api/CMakeLists.txt	2024-08-18 16:33:00.245757500 -0700
-+++ work/HIP-rocm-4.1.0/samples/0_Intro/module_api/CMakeLists.txt	2024-08-18 16:39:22.271277462 -0700
++++ work/HIP-rocm-4.1.0/samples/0_Intro/module_api/CMakeLists.txt	2024-08-21 13:49:42.099599665 -0700
 @@ -3,7 +3,7 @@ project(module_api)
  cmake_minimum_required(VERSION 3.10)
  
@@ -240,7 +262,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/0_Intro/module_api/CMa
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/0_Intro/module_api_global/CMakeLists.txt work/HIP-rocm-4.1.0/samples/0_Intro/module_api_global/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/0_Intro/module_api_global/CMakeLists.txt	2024-08-18 16:33:00.245757500 -0700
-+++ work/HIP-rocm-4.1.0/samples/0_Intro/module_api_global/CMakeLists.txt	2024-08-18 16:39:16.287378860 -0700
++++ work/HIP-rocm-4.1.0/samples/0_Intro/module_api_global/CMakeLists.txt	2024-08-21 13:49:42.099599665 -0700
 @@ -3,7 +3,7 @@ project(modile_api_global)
  cmake_minimum_required(VERSION 3.10)
  
@@ -259,7 +281,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/0_Intro/module_api_glo
 +target_link_libraries(runKernel.hip.out hip::host)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/0_Intro/square/CMakeLists.txt work/HIP-rocm-4.1.0/samples/0_Intro/square/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/0_Intro/square/CMakeLists.txt	2024-08-18 16:33:00.245757500 -0700
-+++ work/HIP-rocm-4.1.0/samples/0_Intro/square/CMakeLists.txt	2024-08-18 16:39:33.807081994 -0700
++++ work/HIP-rocm-4.1.0/samples/0_Intro/square/CMakeLists.txt	2024-08-21 13:49:42.099599665 -0700
 @@ -5,10 +5,10 @@ project(square)
  cmake_minimum_required(VERSION 3.10)
  
@@ -282,7 +304,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/0_Intro/square/CMakeLi
 +target_link_libraries(square hip::host)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/1_Utils/hipBusBandwidth/CMakeLists.txt work/HIP-rocm-4.1.0/samples/1_Utils/hipBusBandwidth/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/1_Utils/hipBusBandwidth/CMakeLists.txt	2024-08-18 16:33:00.245757500 -0700
-+++ work/HIP-rocm-4.1.0/samples/1_Utils/hipBusBandwidth/CMakeLists.txt	2024-08-18 16:38:58.447681176 -0700
++++ work/HIP-rocm-4.1.0/samples/1_Utils/hipBusBandwidth/CMakeLists.txt	2024-08-21 13:49:42.099599665 -0700
 @@ -3,7 +3,7 @@ project(hipBusBandwidth)
  cmake_minimum_required(VERSION 3.10)
  
@@ -301,7 +323,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/1_Utils/hipBusBandwidt
 +target_link_libraries(hipBusBandwidth hip::host)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/1_Utils/hipCommander/CMakeLists.txt work/HIP-rocm-4.1.0/samples/1_Utils/hipCommander/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/1_Utils/hipCommander/CMakeLists.txt	2024-08-18 16:33:00.245757500 -0700
-+++ work/HIP-rocm-4.1.0/samples/1_Utils/hipCommander/CMakeLists.txt	2024-08-18 16:39:02.559611491 -0700
++++ work/HIP-rocm-4.1.0/samples/1_Utils/hipCommander/CMakeLists.txt	2024-08-21 13:49:42.099599665 -0700
 @@ -3,7 +3,7 @@ project(hipCommander)
  cmake_minimum_required(VERSION 3.10)
  
@@ -313,7 +335,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/1_Utils/hipCommander/C
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/1_Utils/hipDispatchLatency/CMakeLists.txt work/HIP-rocm-4.1.0/samples/1_Utils/hipDispatchLatency/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/1_Utils/hipDispatchLatency/CMakeLists.txt	2024-08-18 16:33:00.241757568 -0700
-+++ work/HIP-rocm-4.1.0/samples/1_Utils/hipDispatchLatency/CMakeLists.txt	2024-08-18 16:38:52.607780146 -0700
++++ work/HIP-rocm-4.1.0/samples/1_Utils/hipDispatchLatency/CMakeLists.txt	2024-08-21 13:49:42.099599665 -0700
 @@ -3,7 +3,7 @@ project(hipDispatchLatency)
  cmake_minimum_required(VERSION 3.10)
  
@@ -325,7 +347,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/1_Utils/hipDispatchLat
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/1_Utils/hipInfo/CMakeLists.txt work/HIP-rocm-4.1.0/samples/1_Utils/hipInfo/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/1_Utils/hipInfo/CMakeLists.txt	2024-08-18 16:33:00.241757568 -0700
-+++ work/HIP-rocm-4.1.0/samples/1_Utils/hipInfo/CMakeLists.txt	2024-08-18 16:38:46.191888882 -0700
++++ work/HIP-rocm-4.1.0/samples/1_Utils/hipInfo/CMakeLists.txt	2024-08-21 13:49:42.099599665 -0700
 @@ -3,7 +3,7 @@ project(hipInfo)
  cmake_minimum_required(VERSION 3.10)
  
@@ -337,7 +359,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/1_Utils/hipInfo/CMakeL
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt work/HIP-rocm-4.1.0/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt	2024-08-18 16:33:00.241757568 -0700
-+++ work/HIP-rocm-4.1.0/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt	2024-08-18 16:38:06.364563952 -0700
++++ work/HIP-rocm-4.1.0/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt	2024-08-21 13:49:42.099599665 -0700
 @@ -3,7 +3,7 @@ project(MatrixTranspose)
  cmake_minimum_required(VERSION 3.10)
  
@@ -349,7 +371,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/0_MatrixTra
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/10_inline_asm/CMakeLists.txt work/HIP-rocm-4.1.0/samples/2_Cookbook/10_inline_asm/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/10_inline_asm/CMakeLists.txt	2024-08-18 16:33:00.241757568 -0700
-+++ work/HIP-rocm-4.1.0/samples/2_Cookbook/10_inline_asm/CMakeLists.txt	2024-08-18 16:38:29.120178228 -0700
++++ work/HIP-rocm-4.1.0/samples/2_Cookbook/10_inline_asm/CMakeLists.txt	2024-08-21 13:49:42.099599665 -0700
 @@ -3,7 +3,7 @@ project(inline_asm)
  cmake_minimum_required(VERSION 3.10)
  
@@ -361,7 +383,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/10_inline_a
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/11_texture_driver/CMakeLists.txt work/HIP-rocm-4.1.0/samples/2_Cookbook/11_texture_driver/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/11_texture_driver/CMakeLists.txt	2024-08-18 16:33:00.237757635 -0700
-+++ work/HIP-rocm-4.1.0/samples/2_Cookbook/11_texture_driver/CMakeLists.txt	2024-08-18 16:37:52.748794770 -0700
++++ work/HIP-rocm-4.1.0/samples/2_Cookbook/11_texture_driver/CMakeLists.txt	2024-08-21 13:49:42.103599599 -0700
 @@ -3,7 +3,7 @@ project(texture2dDrv)
  cmake_minimum_required(VERSION 3.10)
  
@@ -373,7 +395,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/11_texture_
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt work/HIP-rocm-4.1.0/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt	2024-08-18 16:33:00.237757635 -0700
-+++ work/HIP-rocm-4.1.0/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt	2024-08-18 16:37:30.221176702 -0700
++++ work/HIP-rocm-4.1.0/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt	2024-08-21 13:49:42.103599599 -0700
 @@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
  
  if(NOT DEFINED HIP_PATH)
@@ -407,7 +429,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/12_cmake_hi
 +endif()
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/13_occupancy/CMakeLists.txt work/HIP-rocm-4.1.0/samples/2_Cookbook/13_occupancy/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/13_occupancy/CMakeLists.txt	2024-08-18 16:33:00.237757635 -0700
-+++ work/HIP-rocm-4.1.0/samples/2_Cookbook/13_occupancy/CMakeLists.txt	2024-08-18 16:37:47.292887264 -0700
++++ work/HIP-rocm-4.1.0/samples/2_Cookbook/13_occupancy/CMakeLists.txt	2024-08-21 13:49:42.103599599 -0700
 @@ -3,7 +3,7 @@ project(occupancy)
  cmake_minimum_required(VERSION 3.10)
  
@@ -419,7 +441,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/13_occupanc
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt work/HIP-rocm-4.1.0/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt	2024-08-18 16:33:00.241757568 -0700
-+++ work/HIP-rocm-4.1.0/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt	2024-08-18 16:37:59.596678681 -0700
++++ work/HIP-rocm-4.1.0/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt	2024-08-21 13:49:42.103599599 -0700
 @@ -3,7 +3,7 @@ project(gpuarch)
  cmake_minimum_required(VERSION 3.10)
  
@@ -431,7 +453,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/14_gpu_arch
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/1_hipEvent/CMakeLists.txt work/HIP-rocm-4.1.0/samples/2_Cookbook/1_hipEvent/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/1_hipEvent/CMakeLists.txt	2024-08-18 16:33:00.241757568 -0700
-+++ work/HIP-rocm-4.1.0/samples/2_Cookbook/1_hipEvent/CMakeLists.txt	2024-08-18 16:38:16.524391729 -0700
++++ work/HIP-rocm-4.1.0/samples/2_Cookbook/1_hipEvent/CMakeLists.txt	2024-08-21 13:49:42.103599599 -0700
 @@ -3,7 +3,7 @@ project(hipEvent)
  cmake_minimum_required(VERSION 3.10)
  
@@ -443,7 +465,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/1_hipEvent/
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/3_shared_memory/CMakeLists.txt work/HIP-rocm-4.1.0/samples/2_Cookbook/3_shared_memory/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/3_shared_memory/CMakeLists.txt	2024-08-18 16:33:00.241757568 -0700
-+++ work/HIP-rocm-4.1.0/samples/2_Cookbook/3_shared_memory/CMakeLists.txt	2024-08-18 16:38:40.319988401 -0700
++++ work/HIP-rocm-4.1.0/samples/2_Cookbook/3_shared_memory/CMakeLists.txt	2024-08-21 13:49:42.103599599 -0700
 @@ -3,7 +3,7 @@ project(sharedMemory)
  cmake_minimum_required(VERSION 3.10)
  
@@ -455,7 +477,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/3_shared_me
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/4_shfl/CMakeLists.txt work/HIP-rocm-4.1.0/samples/2_Cookbook/4_shfl/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/4_shfl/CMakeLists.txt	2024-08-18 16:33:00.241757568 -0700
-+++ work/HIP-rocm-4.1.0/samples/2_Cookbook/4_shfl/CMakeLists.txt	2024-08-18 16:38:34.240091448 -0700
++++ work/HIP-rocm-4.1.0/samples/2_Cookbook/4_shfl/CMakeLists.txt	2024-08-21 13:49:42.103599599 -0700
 @@ -3,7 +3,7 @@ project(shfl)
  cmake_minimum_required(VERSION 3.10)
  
@@ -467,7 +489,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/4_shfl/CMak
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/5_2dshfl/CMakeLists.txt work/HIP-rocm-4.1.0/samples/2_Cookbook/5_2dshfl/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/5_2dshfl/CMakeLists.txt	2024-08-18 16:33:00.241757568 -0700
-+++ work/HIP-rocm-4.1.0/samples/2_Cookbook/5_2dshfl/CMakeLists.txt	2024-08-18 16:38:23.884266977 -0700
++++ work/HIP-rocm-4.1.0/samples/2_Cookbook/5_2dshfl/CMakeLists.txt	2024-08-21 13:49:42.103599599 -0700
 @@ -3,7 +3,7 @@ project(2dshfl)
  cmake_minimum_required(VERSION 3.10)
  
@@ -479,7 +501,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/5_2dshfl/CM
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt work/HIP-rocm-4.1.0/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt	2024-08-18 16:33:00.237757635 -0700
-+++ work/HIP-rocm-4.1.0/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt	2024-08-18 16:37:20.829335944 -0700
++++ work/HIP-rocm-4.1.0/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt	2024-08-21 13:49:42.103599599 -0700
 @@ -3,7 +3,7 @@ project(dynamic_shared)
  cmake_minimum_required(VERSION 3.10)
  
@@ -491,7 +513,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/6_dynamic_s
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/7_streams/CMakeLists.txt work/HIP-rocm-4.1.0/samples/2_Cookbook/7_streams/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/7_streams/CMakeLists.txt	2024-08-18 16:33:00.237757635 -0700
-+++ work/HIP-rocm-4.1.0/samples/2_Cookbook/7_streams/CMakeLists.txt	2024-08-18 16:37:41.660982747 -0700
++++ work/HIP-rocm-4.1.0/samples/2_Cookbook/7_streams/CMakeLists.txt	2024-08-21 13:49:42.103599599 -0700
 @@ -3,7 +3,7 @@ project(stream)
  cmake_minimum_required(VERSION 3.10)
  
@@ -503,7 +525,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/7_streams/C
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/8_peer2peer/CMakeLists.txt work/HIP-rocm-4.1.0/samples/2_Cookbook/8_peer2peer/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/8_peer2peer/CMakeLists.txt	2024-08-18 16:33:00.237757635 -0700
-+++ work/HIP-rocm-4.1.0/samples/2_Cookbook/8_peer2peer/CMakeLists.txt	2024-08-18 16:37:37.101060056 -0700
++++ work/HIP-rocm-4.1.0/samples/2_Cookbook/8_peer2peer/CMakeLists.txt	2024-08-21 13:49:42.103599599 -0700
 @@ -3,7 +3,7 @@ project(peer2peer)
  cmake_minimum_required(VERSION 3.10)
  
@@ -515,7 +537,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/8_peer2peer
  find_package(hip)
 diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/9_unroll/CMakeLists.txt work/HIP-rocm-4.1.0/samples/2_Cookbook/9_unroll/CMakeLists.txt
 --- work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/9_unroll/CMakeLists.txt	2024-08-18 16:33:00.241757568 -0700
-+++ work/HIP-rocm-4.1.0/samples/2_Cookbook/9_unroll/CMakeLists.txt	2024-08-18 16:38:10.348496418 -0700
++++ work/HIP-rocm-4.1.0/samples/2_Cookbook/9_unroll/CMakeLists.txt	2024-08-21 13:49:42.103599599 -0700
 @@ -3,7 +3,7 @@ project(unroll)
  cmake_minimum_required(VERSION 3.10)
  
@@ -527,7 +549,7 @@ diff '--color=auto' -urp work.orig/HIP-rocm-4.1.0/samples/2_Cookbook/9_unroll/CM
  find_package(hip)
 diff '--color=auto' -urp work.orig/ROCclr-rocm-4.1.0/CMakeLists.txt work/ROCclr-rocm-4.1.0/CMakeLists.txt
 --- work.orig/ROCclr-rocm-4.1.0/CMakeLists.txt	2021-02-16 14:17:07.000000000 -0800
-+++ work/ROCclr-rocm-4.1.0/CMakeLists.txt	2024-08-18 16:34:26.256297374 -0700
++++ work/ROCclr-rocm-4.1.0/CMakeLists.txt	2024-08-21 13:49:42.103599599 -0700
 @@ -45,7 +45,7 @@ option(USE_COMGR_LIBRARY "Use comgr libr
  
  find_package(amd_comgr REQUIRED CONFIG
@@ -566,7 +588,7 @@ diff '--color=auto' -urp work.orig/ROCclr-rocm-4.1.0/CMakeLists.txt work/ROCclr-
      if (LIBRT)
 diff '--color=auto' -urp work.orig/ROCclr-rocm-4.1.0/cmake/modules/FindROCR.cmake work/ROCclr-rocm-4.1.0/cmake/modules/FindROCR.cmake
 --- work.orig/ROCclr-rocm-4.1.0/cmake/modules/FindROCR.cmake	2021-02-16 14:17:07.000000000 -0800
-+++ work/ROCclr-rocm-4.1.0/cmake/modules/FindROCR.cmake	2024-08-18 16:34:55.139807202 -0700
++++ work/ROCclr-rocm-4.1.0/cmake/modules/FindROCR.cmake	2024-08-21 13:49:42.103599599 -0700
 @@ -4,8 +4,8 @@
  #   - ROCR_FOUND     - ROCR status (found or not found)
  #   - ROCR_INCLUDES  - Required ROCR include directories
@@ -580,7 +602,7 @@ diff '--color=auto' -urp work.orig/ROCclr-rocm-4.1.0/cmake/modules/FindROCR.cmak
  find_package_handle_standard_args(ROCR DEFAULT_MSG
 diff '--color=auto' -urp work.orig/ROCclr-rocm-4.1.0/cmake/modules/FindROCT.cmake work/ROCclr-rocm-4.1.0/cmake/modules/FindROCT.cmake
 --- work.orig/ROCclr-rocm-4.1.0/cmake/modules/FindROCT.cmake	2021-02-16 14:17:07.000000000 -0800
-+++ work/ROCclr-rocm-4.1.0/cmake/modules/FindROCT.cmake	2024-08-18 16:34:41.300042062 -0700
++++ work/ROCclr-rocm-4.1.0/cmake/modules/FindROCT.cmake	2024-08-21 13:49:42.103599599 -0700
 @@ -4,8 +4,8 @@
  #   - ROCT_FOUND     - ROCT status (found or not found)
  #   - ROCT_INCLUDES  - Required ROCT include directories
@@ -594,7 +616,7 @@ diff '--color=auto' -urp work.orig/ROCclr-rocm-4.1.0/cmake/modules/FindROCT.cmak
  find_package_handle_standard_args(ROCT DEFAULT_MSG
 diff '--color=auto' -urp work.orig/ROCclr-rocm-4.1.0/elf/test/CMakeLists.txt work/ROCclr-rocm-4.1.0/elf/test/CMakeLists.txt
 --- work.orig/ROCclr-rocm-4.1.0/elf/test/CMakeLists.txt	2021-02-16 14:17:07.000000000 -0800
-+++ work/ROCclr-rocm-4.1.0/elf/test/CMakeLists.txt	2024-08-18 16:34:35.028148502 -0700
++++ work/ROCclr-rocm-4.1.0/elf/test/CMakeLists.txt	2024-08-21 13:49:42.103599599 -0700
 @@ -6,14 +6,14 @@ cmake_minimum_required(VERSION 3.5.1)
  
  find_package(amd_comgr REQUIRED CONFIG
@@ -632,7 +654,7 @@ diff '--color=auto' -urp work.orig/ROCclr-rocm-4.1.0/elf/test/CMakeLists.txt wor
 +#-------------------------------------elf_test--------------------------------------#
 diff '--color=auto' -urp work.orig/ROCm-OpenCL-Runtime-rocm-4.1.0/CMakeLists.txt work/ROCm-OpenCL-Runtime-rocm-4.1.0/CMakeLists.txt
 --- work.orig/ROCm-OpenCL-Runtime-rocm-4.1.0/CMakeLists.txt	2021-02-02 10:01:38.000000000 -0800
-+++ work/ROCm-OpenCL-Runtime-rocm-4.1.0/CMakeLists.txt	2024-08-18 16:35:04.835642675 -0700
++++ work/ROCm-OpenCL-Runtime-rocm-4.1.0/CMakeLists.txt	2024-08-21 13:49:42.107599532 -0700
 @@ -55,7 +55,7 @@ if(USE_COMGR_LIBRARY)
    endif()
    find_package(amd_comgr REQUIRED CONFIG
@@ -662,7 +684,7 @@ diff '--color=auto' -urp work.orig/ROCm-OpenCL-Runtime-rocm-4.1.0/CMakeLists.txt
  if (NOT DEFINED ROCM_PATH )
 diff '--color=auto' -urp work.orig/ROCm-OpenCL-Runtime-rocm-4.1.0/amdocl/cmake/modules/FindROCR.cmake work/ROCm-OpenCL-Runtime-rocm-4.1.0/amdocl/cmake/modules/FindROCR.cmake
 --- work.orig/ROCm-OpenCL-Runtime-rocm-4.1.0/amdocl/cmake/modules/FindROCR.cmake	2021-02-02 10:01:38.000000000 -0800
-+++ work/ROCm-OpenCL-Runtime-rocm-4.1.0/amdocl/cmake/modules/FindROCR.cmake	2024-08-18 16:35:23.295329461 -0700
++++ work/ROCm-OpenCL-Runtime-rocm-4.1.0/amdocl/cmake/modules/FindROCR.cmake	2024-08-21 13:49:42.107599532 -0700
 @@ -4,8 +4,8 @@
  #   - ROCR_FOUND     - ROCR status (found or not found)
  #   - ROCR_INCLUDES  - Required ROCR include directories
@@ -676,7 +698,7 @@ diff '--color=auto' -urp work.orig/ROCm-OpenCL-Runtime-rocm-4.1.0/amdocl/cmake/m
  find_package_handle_standard_args(ROCR DEFAULT_MSG
 diff '--color=auto' -urp work.orig/ROCm-OpenCL-Runtime-rocm-4.1.0/amdocl/cmake/modules/FindROCT.cmake work/ROCm-OpenCL-Runtime-rocm-4.1.0/amdocl/cmake/modules/FindROCT.cmake
 --- work.orig/ROCm-OpenCL-Runtime-rocm-4.1.0/amdocl/cmake/modules/FindROCT.cmake	2021-02-02 10:01:38.000000000 -0800
-+++ work/ROCm-OpenCL-Runtime-rocm-4.1.0/amdocl/cmake/modules/FindROCT.cmake	2024-08-18 16:35:10.739542498 -0700
++++ work/ROCm-OpenCL-Runtime-rocm-4.1.0/amdocl/cmake/modules/FindROCT.cmake	2024-08-21 13:49:42.107599532 -0700
 @@ -4,8 +4,8 @@
  #   - ROCT_FOUND     - ROCT status (found or not found)
  #   - ROCT_INCLUDES  - Required ROCT include directories
@@ -688,3 +710,4 @@ diff '--color=auto' -urp work.orig/ROCm-OpenCL-Runtime-rocm-4.1.0/amdocl/cmake/m
  
  include(FindPackageHandleStandardArgs)
  find_package_handle_standard_args(ROCT DEFAULT_MSG
+Only in work.orig: work

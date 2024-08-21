@@ -1,6 +1,18 @@
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/0_Intro/bit_extract/CMakeLists.txt work/HIP-rocm-5.4.3/samples/0_Intro/bit_extract/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/bin/hipcc.pl work/HIP-rocm-5.4.3/bin/hipcc.pl
+--- work.orig/HIP-rocm-5.4.3/bin/hipcc.pl	2024-07-10 21:21:34.559962094 -0700
++++ work/HIP-rocm-5.4.3/bin/hipcc.pl	2024-08-21 13:42:57.022323356 -0700
+@@ -224,7 +224,7 @@ if ($HIP_PLATFORM eq "amd") {
+     }
+ 
+ } elsif ($HIP_PLATFORM eq "nvidia") {
+-    $CUDA_PATH=$ENV{'CUDA_PATH'} // '/usr/local/cuda';
++    $CUDA_PATH=$ENV{'CUDA_PATH'} // '/opt/cuda';
+     $HIP_INCLUDE_PATH = "$HIP_PATH/include";
+     if ($verbose & 0x2) {
+         print ("CUDA_PATH=$CUDA_PATH\n");
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/0_Intro/bit_extract/CMakeLists.txt work/HIP-rocm-5.4.3/samples/0_Intro/bit_extract/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/0_Intro/bit_extract/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/0_Intro/bit_extract/CMakeLists.txt	2024-07-10 21:23:47.765986871 -0700
++++ work/HIP-rocm-5.4.3/samples/0_Intro/bit_extract/CMakeLists.txt	2024-08-21 13:42:40.818592176 -0700
 @@ -27,7 +27,7 @@ if(NOT WIN32 AND NOT DEFINED __HIP_ENABL
  endif()
  
@@ -10,9 +22,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/0_Intro/bit_extract/CM
  endif ()
  
  if(${__HIP_ENABLE_PCH})
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/0_Intro/module_api/CMakeLists.txt work/HIP-rocm-5.4.3/samples/0_Intro/module_api/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/0_Intro/module_api/CMakeLists.txt work/HIP-rocm-5.4.3/samples/0_Intro/module_api/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/0_Intro/module_api/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/0_Intro/module_api/CMakeLists.txt	2024-07-10 21:23:56.773853341 -0700
++++ work/HIP-rocm-5.4.3/samples/0_Intro/module_api/CMakeLists.txt	2024-08-21 13:42:40.818592176 -0700
 @@ -23,7 +23,7 @@ project(module_api)
  cmake_minimum_required(VERSION 3.10)
  
@@ -22,9 +34,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/0_Intro/module_api/CMa
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/0_Intro/module_api_global/CMakeLists.txt work/HIP-rocm-5.4.3/samples/0_Intro/module_api_global/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/0_Intro/module_api_global/CMakeLists.txt work/HIP-rocm-5.4.3/samples/0_Intro/module_api_global/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/0_Intro/module_api_global/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/0_Intro/module_api_global/CMakeLists.txt	2024-07-10 21:23:52.373918564 -0700
++++ work/HIP-rocm-5.4.3/samples/0_Intro/module_api_global/CMakeLists.txt	2024-08-21 13:42:40.818592176 -0700
 @@ -23,7 +23,7 @@ project(modile_api_global)
  cmake_minimum_required(VERSION 3.10)
  
@@ -41,9 +53,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/0_Intro/module_api_glo
 -target_link_libraries(runKernel.hip.out hip::host)
 \ No newline at end of file
 +target_link_libraries(runKernel.hip.out hip::host)
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/0_Intro/square/CMakeLists.txt work/HIP-rocm-5.4.3/samples/0_Intro/square/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/0_Intro/square/CMakeLists.txt work/HIP-rocm-5.4.3/samples/0_Intro/square/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/0_Intro/square/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/0_Intro/square/CMakeLists.txt	2024-07-10 21:24:01.221787408 -0700
++++ work/HIP-rocm-5.4.3/samples/0_Intro/square/CMakeLists.txt	2024-08-21 13:42:40.822592110 -0700
 @@ -25,7 +25,7 @@ project(square)
  cmake_minimum_required(VERSION 3.10)
  
@@ -60,9 +72,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/0_Intro/square/CMakeLi
 -target_link_libraries(square hip::host)
 \ No newline at end of file
 +target_link_libraries(square hip::host)
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipBusBandwidth/CMakeLists.txt work/HIP-rocm-5.4.3/samples/1_Utils/hipBusBandwidth/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipBusBandwidth/CMakeLists.txt work/HIP-rocm-5.4.3/samples/1_Utils/hipBusBandwidth/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipBusBandwidth/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/1_Utils/hipBusBandwidth/CMakeLists.txt	2024-07-10 21:23:38.982117086 -0700
++++ work/HIP-rocm-5.4.3/samples/1_Utils/hipBusBandwidth/CMakeLists.txt	2024-08-21 13:42:40.822592110 -0700
 @@ -23,7 +23,7 @@ project(hipBusBandwidth)
  cmake_minimum_required(VERSION 3.10)
  
@@ -79,9 +91,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipBusBandwidt
 -target_link_libraries(hipBusBandwidth hip::host)
 \ No newline at end of file
 +target_link_libraries(hipBusBandwidth hip::host)
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipCommander/CMakeLists.txt work/HIP-rocm-5.4.3/samples/1_Utils/hipCommander/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipCommander/CMakeLists.txt work/HIP-rocm-5.4.3/samples/1_Utils/hipCommander/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipCommander/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/1_Utils/hipCommander/CMakeLists.txt	2024-07-10 21:23:43.254053757 -0700
++++ work/HIP-rocm-5.4.3/samples/1_Utils/hipCommander/CMakeLists.txt	2024-08-21 13:42:40.822592110 -0700
 @@ -23,7 +23,7 @@ project(hipCommander)
  cmake_minimum_required(VERSION 3.10)
  
@@ -91,9 +103,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipCommander/C
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipDispatchLatency/CMakeLists.txt work/HIP-rocm-5.4.3/samples/1_Utils/hipDispatchLatency/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipDispatchLatency/CMakeLists.txt work/HIP-rocm-5.4.3/samples/1_Utils/hipDispatchLatency/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipDispatchLatency/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/1_Utils/hipDispatchLatency/CMakeLists.txt	2024-07-10 21:23:34.998176146 -0700
++++ work/HIP-rocm-5.4.3/samples/1_Utils/hipDispatchLatency/CMakeLists.txt	2024-08-21 13:42:40.822592110 -0700
 @@ -23,7 +23,7 @@ project(hipDispatchLatency)
  cmake_minimum_required(VERSION 3.10)
  
@@ -103,9 +115,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipDispatchLat
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipInfo/CMakeLists.txt work/HIP-rocm-5.4.3/samples/1_Utils/hipInfo/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipInfo/CMakeLists.txt work/HIP-rocm-5.4.3/samples/1_Utils/hipInfo/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipInfo/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/1_Utils/hipInfo/CMakeLists.txt	2024-07-10 21:23:30.278246120 -0700
++++ work/HIP-rocm-5.4.3/samples/1_Utils/hipInfo/CMakeLists.txt	2024-08-21 13:42:40.826592043 -0700
 @@ -31,7 +31,7 @@ cmake_minimum_required(VERSION 3.10)
  option(HIPINFO_INTERNAL_BUILD "Enable building hipInfo from compute" OFF)
  
@@ -115,9 +127,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/1_Utils/hipInfo/CMakeL
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt	2024-07-10 21:22:40.338986550 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt	2024-08-21 13:42:40.826592043 -0700
 @@ -23,7 +23,7 @@ project(MatrixTranspose)
  cmake_minimum_required(VERSION 3.10)
  
@@ -127,9 +139,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/0_MatrixTra
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/10_inline_asm/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/10_inline_asm/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/10_inline_asm/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/10_inline_asm/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/10_inline_asm/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/10_inline_asm/CMakeLists.txt	2024-07-10 21:23:03.826638283 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/10_inline_asm/CMakeLists.txt	2024-08-21 13:42:40.826592043 -0700
 @@ -23,7 +23,7 @@ project(inline_asm)
  cmake_minimum_required(VERSION 3.10)
  
@@ -139,9 +151,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/10_inline_a
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/11_texture_driver/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/11_texture_driver/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/11_texture_driver/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/11_texture_driver/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/11_texture_driver/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/11_texture_driver/CMakeLists.txt	2024-07-10 21:22:31.587116329 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/11_texture_driver/CMakeLists.txt	2024-08-21 13:42:40.826592043 -0700
 @@ -23,7 +23,7 @@ project(texture2dDrv)
  cmake_minimum_required(VERSION 3.10)
  
@@ -151,9 +163,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/11_texture_
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt	2024-07-10 21:22:13.395386106 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt	2024-08-21 13:42:40.826592043 -0700
 @@ -20,7 +20,7 @@
  
  cmake_minimum_required(VERSION 2.8.3)
@@ -163,9 +175,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/12_cmake_hi
  endif ()
  
  if(NOT DEFINED HIP_PATH)
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/13_occupancy/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/13_occupancy/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/13_occupancy/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/13_occupancy/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/13_occupancy/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/13_occupancy/CMakeLists.txt	2024-07-10 21:22:26.467192253 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/13_occupancy/CMakeLists.txt	2024-08-21 13:42:40.826592043 -0700
 @@ -23,7 +23,7 @@ project(occupancy)
  cmake_minimum_required(VERSION 3.10)
  
@@ -175,9 +187,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/13_occupanc
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt	2024-07-10 21:22:35.843053218 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt	2024-08-21 13:42:40.826592043 -0700
 @@ -23,7 +23,7 @@ project(gpuarch)
  cmake_minimum_required(VERSION 3.10)
  
@@ -187,9 +199,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/14_gpu_arch
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt	2024-07-10 21:23:07.634581824 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt	2024-08-21 13:42:40.826592043 -0700
 @@ -3,7 +3,7 @@ project(static_lib)
  cmake_minimum_required(VERSION 3.10)
  
@@ -199,9 +211,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_l
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt	2024-07-10 21:23:16.306453251 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt	2024-08-21 13:42:40.826592043 -0700
 @@ -3,7 +3,7 @@ project(static_lib)
  cmake_minimum_required(VERSION 3.10)
  
@@ -220,9 +232,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/15_static_l
  
  # Create test executable that uses libHipOptLibrary.a
  set(TEST_SOURCES ${CMAKE_SOURCE_DIR}/hipMain1.cpp)
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/1_hipEvent/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/1_hipEvent/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/1_hipEvent/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/1_hipEvent/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/1_hipEvent/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/1_hipEvent/CMakeLists.txt	2024-07-10 21:22:54.034783469 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/1_hipEvent/CMakeLists.txt	2024-08-21 13:42:40.826592043 -0700
 @@ -23,7 +23,7 @@ project(hipEvent)
  cmake_minimum_required(VERSION 3.10)
  
@@ -232,9 +244,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/1_hipEvent/
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/20_hip_vulkan/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/20_hip_vulkan/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/20_hip_vulkan/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/20_hip_vulkan/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/20_hip_vulkan/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/20_hip_vulkan/CMakeLists.txt	2024-07-10 21:22:50.626834001 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/20_hip_vulkan/CMakeLists.txt	2024-08-21 13:42:40.826592043 -0700
 @@ -30,7 +30,7 @@ cmake_minimum_required(VERSION 3.10)
  set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
  
@@ -244,9 +256,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/20_hip_vulk
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/3_shared_memory/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/3_shared_memory/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/3_shared_memory/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/3_shared_memory/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/3_shared_memory/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/3_shared_memory/CMakeLists.txt	2024-07-10 21:23:26.402303573 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/3_shared_memory/CMakeLists.txt	2024-08-21 13:42:40.826592043 -0700
 @@ -23,7 +23,7 @@ project(sharedMemory)
  cmake_minimum_required(VERSION 3.10)
  
@@ -256,9 +268,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/3_shared_me
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/4_shfl/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/4_shfl/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/4_shfl/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/4_shfl/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/4_shfl/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/4_shfl/CMakeLists.txt	2024-07-10 21:23:21.138381613 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/4_shfl/CMakeLists.txt	2024-08-21 13:42:40.826592043 -0700
 @@ -23,7 +23,7 @@ project(shfl)
  cmake_minimum_required(VERSION 3.10)
  
@@ -268,9 +280,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/4_shfl/CMak
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/5_2dshfl/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/5_2dshfl/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/5_2dshfl/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/5_2dshfl/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/5_2dshfl/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/5_2dshfl/CMakeLists.txt	2024-07-10 21:22:58.754713485 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/5_2dshfl/CMakeLists.txt	2024-08-21 13:42:40.826592043 -0700
 @@ -23,7 +23,7 @@ project(2dshfl)
  cmake_minimum_required(VERSION 3.10)
  
@@ -280,9 +292,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/5_2dshfl/CM
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt	2024-07-10 21:22:09.683441155 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt	2024-08-21 13:42:40.826592043 -0700
 @@ -23,7 +23,7 @@ project(dynamic_shared)
  cmake_minimum_required(VERSION 3.10)
  
@@ -292,9 +304,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/6_dynamic_s
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/7_streams/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/7_streams/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/7_streams/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/7_streams/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/7_streams/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/7_streams/CMakeLists.txt	2024-07-10 21:22:22.259254655 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/7_streams/CMakeLists.txt	2024-08-21 13:42:40.830591977 -0700
 @@ -23,7 +23,7 @@ project(stream)
  cmake_minimum_required(VERSION 3.10)
  
@@ -304,9 +316,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/7_streams/C
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/8_peer2peer/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/8_peer2peer/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/8_peer2peer/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/8_peer2peer/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/8_peer2peer/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/8_peer2peer/CMakeLists.txt	2024-07-10 21:22:18.371312313 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/8_peer2peer/CMakeLists.txt	2024-08-21 13:42:40.830591977 -0700
 @@ -23,7 +23,7 @@ project(peer2peer)
  cmake_minimum_required(VERSION 3.10)
  
@@ -316,9 +328,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/8_peer2peer
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/9_unroll/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/9_unroll/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/9_unroll/CMakeLists.txt work/HIP-rocm-5.4.3/samples/2_Cookbook/9_unroll/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/9_unroll/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/samples/2_Cookbook/9_unroll/CMakeLists.txt	2024-07-10 21:22:45.458910630 -0700
++++ work/HIP-rocm-5.4.3/samples/2_Cookbook/9_unroll/CMakeLists.txt	2024-08-21 13:42:40.830591977 -0700
 @@ -23,7 +23,7 @@ project(unroll)
  cmake_minimum_required(VERSION 3.10)
  
@@ -328,9 +340,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/samples/2_Cookbook/9_unroll/CM
  endif ()
  
  # Search for rocm in common locations
-diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/tests/catch/CMakeLists.txt work/HIP-rocm-5.4.3/tests/catch/CMakeLists.txt
+diff '--color=auto' -upr work.orig/HIP-rocm-5.4.3/tests/catch/CMakeLists.txt work/HIP-rocm-5.4.3/tests/catch/CMakeLists.txt
 --- work.orig/HIP-rocm-5.4.3/tests/catch/CMakeLists.txt	2023-01-20 09:05:06.000000000 -0800
-+++ work/HIP-rocm-5.4.3/tests/catch/CMakeLists.txt	2024-07-10 21:22:05.991495909 -0700
++++ work/HIP-rocm-5.4.3/tests/catch/CMakeLists.txt	2024-08-21 13:42:40.830591977 -0700
 @@ -37,7 +37,7 @@ if(NOT DEFINED ROCM_PATH)
      else()
          cmake_path(GET HIP_PATH PARENT_PATH ROCM_PATH)
@@ -340,9 +352,9 @@ diff '--color=auto' -urp work.orig/HIP-rocm-5.4.3/tests/catch/CMakeLists.txt wor
          endif()
      endif()
  endif()
-diff '--color=auto' -urp work.orig/ROCclr-rocm-5.4.3/cmake/ROCclrHSA.cmake work/ROCclr-rocm-5.4.3/cmake/ROCclrHSA.cmake
+diff '--color=auto' -upr work.orig/ROCclr-rocm-5.4.3/cmake/ROCclrHSA.cmake work/ROCclr-rocm-5.4.3/cmake/ROCclrHSA.cmake
 --- work.orig/ROCclr-rocm-5.4.3/cmake/ROCclrHSA.cmake	2023-01-16 08:23:20.000000000 -0800
-+++ work/ROCclr-rocm-5.4.3/cmake/ROCclrHSA.cmake	2024-07-10 21:24:41.701187429 -0700
++++ work/ROCclr-rocm-5.4.3/cmake/ROCclrHSA.cmake	2024-08-21 13:42:40.830591977 -0700
 @@ -20,7 +20,7 @@
  
  find_package(hsa-runtime64 1.6 REQUIRED CONFIG
@@ -352,9 +364,9 @@ diff '--color=auto' -urp work.orig/ROCclr-rocm-5.4.3/cmake/ROCclrHSA.cmake work/
    PATH_SUFFIXES
      cmake/hsa-runtime64
      lib/cmake/hsa-runtime64
-diff '--color=auto' -urp work.orig/ROCclr-rocm-5.4.3/cmake/ROCclrLC.cmake work/ROCclr-rocm-5.4.3/cmake/ROCclrLC.cmake
+diff '--color=auto' -upr work.orig/ROCclr-rocm-5.4.3/cmake/ROCclrLC.cmake work/ROCclr-rocm-5.4.3/cmake/ROCclrLC.cmake
 --- work.orig/ROCclr-rocm-5.4.3/cmake/ROCclrLC.cmake	2023-01-16 08:23:20.000000000 -0800
-+++ work/ROCclr-rocm-5.4.3/cmake/ROCclrLC.cmake	2024-07-10 21:24:38.293237936 -0700
++++ work/ROCclr-rocm-5.4.3/cmake/ROCclrLC.cmake	2024-08-21 13:42:40.830591977 -0700
 @@ -20,7 +20,7 @@
  
  find_package(amd_comgr REQUIRED CONFIG
@@ -364,9 +376,9 @@ diff '--color=auto' -urp work.orig/ROCclr-rocm-5.4.3/cmake/ROCclrLC.cmake work/R
    PATH_SUFFIXES
      cmake/amd_comgr
      lib/cmake/amd_comgr)
-diff '--color=auto' -urp work.orig/ROCclr-rocm-5.4.3/elf/test/CMakeLists.txt work/ROCclr-rocm-5.4.3/elf/test/CMakeLists.txt
+diff '--color=auto' -upr work.orig/ROCclr-rocm-5.4.3/elf/test/CMakeLists.txt work/ROCclr-rocm-5.4.3/elf/test/CMakeLists.txt
 --- work.orig/ROCclr-rocm-5.4.3/elf/test/CMakeLists.txt	2023-01-16 08:23:20.000000000 -0800
-+++ work/ROCclr-rocm-5.4.3/elf/test/CMakeLists.txt	2024-07-10 21:24:34.309296982 -0700
++++ work/ROCclr-rocm-5.4.3/elf/test/CMakeLists.txt	2024-08-21 13:42:40.830591977 -0700
 @@ -26,14 +26,14 @@ cmake_minimum_required(VERSION 3.5.1)
  
  find_package(amd_comgr REQUIRED CONFIG
@@ -402,9 +414,9 @@ diff '--color=auto' -urp work.orig/ROCclr-rocm-5.4.3/elf/test/CMakeLists.txt wor
 -#-------------------------------------elf_test--------------------------------------#
 \ No newline at end of file
 +#-------------------------------------elf_test--------------------------------------#
-diff '--color=auto' -urp work.orig/ROCm-OpenCL-Runtime-rocm-5.4.3/CMakeLists.txt work/ROCm-OpenCL-Runtime-rocm-5.4.3/CMakeLists.txt
+diff '--color=auto' -upr work.orig/ROCm-OpenCL-Runtime-rocm-5.4.3/CMakeLists.txt work/ROCm-OpenCL-Runtime-rocm-5.4.3/CMakeLists.txt
 --- work.orig/ROCm-OpenCL-Runtime-rocm-5.4.3/CMakeLists.txt	2022-10-19 18:40:57.000000000 -0700
-+++ work/ROCm-OpenCL-Runtime-rocm-5.4.3/CMakeLists.txt	2024-07-10 21:24:11.925628747 -0700
++++ work/ROCm-OpenCL-Runtime-rocm-5.4.3/CMakeLists.txt	2024-08-21 13:42:40.830591977 -0700
 @@ -49,7 +49,7 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURC
  # Packaging steps
  #############################
@@ -423,9 +435,9 @@ diff '--color=auto' -urp work.orig/ROCm-OpenCL-Runtime-rocm-5.4.3/CMakeLists.txt
  #ROCM_PATH is needed to create symlink of libraries
  if(NOT DEFINED ROCM_PATH)
    string(REPLACE "/opencl" "" ROCM_PATH ${CPACK_PACKAGING_INSTALL_PREFIX})
-diff '--color=auto' -urp work.orig/hipamd-rocm-5.4.3/CMakeLists.txt work/hipamd-rocm-5.4.3/CMakeLists.txt
+diff '--color=auto' -upr work.orig/hipamd-rocm-5.4.3/CMakeLists.txt work/hipamd-rocm-5.4.3/CMakeLists.txt
 --- work.orig/hipamd-rocm-5.4.3/CMakeLists.txt	2024-07-10 21:21:34.543962331 -0700
-+++ work/hipamd-rocm-5.4.3/CMakeLists.txt	2024-07-10 21:24:17.461546692 -0700
++++ work/hipamd-rocm-5.4.3/CMakeLists.txt	2024-08-21 13:42:40.830591977 -0700
 @@ -244,7 +244,7 @@ if(NOT CMAKE_BUILD_TYPE)
  endif()
  
@@ -435,3 +447,16 @@ diff '--color=auto' -urp work.orig/hipamd-rocm-5.4.3/CMakeLists.txt work/hipamd-
  endif ()
  message (STATUS "ROCM Installation path(ROCM_PATH): ${ROCM_PATH}")
  
+diff '--color=auto' -upr work.orig/hipamd-rocm-5.4.3/packaging/CMakeLists.txt work/hipamd-rocm-5.4.3/packaging/CMakeLists.txt
+--- work.orig/hipamd-rocm-5.4.3/packaging/CMakeLists.txt	2024-07-10 21:21:34.547962272 -0700
++++ work/hipamd-rocm-5.4.3/packaging/CMakeLists.txt	2024-08-21 13:41:57.767306345 -0700
+@@ -34,6 +34,8 @@ set(CPACK_RPM_COMPONENT_INSTALL ON)
+ set(CPACK_DEB_COMPONENT_INSTALL ON)
+ 
+ ###Set License####
++set(CPACK_RESOURCE_FILE_LICENSE ${hip_SOURCE_DIR}/LICENSE.txt)
++install(FILES ${CPACK_RESOURCE_FILE_LICENSE} DESTINATION ${CMAKE_INSTALL_DOCDIR} COMPONENT binary)
+ set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+ 
+ #Begin binary files install
+Only in work.orig: work

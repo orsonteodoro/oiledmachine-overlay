@@ -1,6 +1,30 @@
+diff '--color=auto' -urp work.orig/HIPCC-rocm-6.0.2/bin/hipcc.pl work/HIPCC-rocm-6.0.2/bin/hipcc.pl
+--- work.orig/HIPCC-rocm-6.0.2/bin/hipcc.pl	2024-07-12 03:32:42.557266722 -0700
++++ work/HIPCC-rocm-6.0.2/bin/hipcc.pl	2024-08-21 13:30:58.874226306 -0700
+@@ -200,7 +200,7 @@ if ($HIP_PLATFORM eq "amd") {
+         $HIPCXXFLAGS .= " -Xclang -fallow-half-arguments-and-returns -D__HIP_HCC_COMPAT_MODE__=1";
+     }
+ } elsif ($HIP_PLATFORM eq "nvidia") {
+-    $CUDA_PATH=$ENV{'CUDA_PATH'} // '/usr/local/cuda';
++    $CUDA_PATH=$ENV{'CUDA_PATH'} // '/opt/cuda';
+     $HIP_INCLUDE_PATH = "$HIP_PATH/include";
+     if ($verbose & 0x2) {
+         print ("CUDA_PATH=$CUDA_PATH\n");
+diff '--color=auto' -urp work.orig/HIPCC-rocm-6.0.2/src/hipBin_nvidia.h work/HIPCC-rocm-6.0.2/src/hipBin_nvidia.h
+--- work.orig/HIPCC-rocm-6.0.2/src/hipBin_nvidia.h	2023-08-03 05:18:46.000000000 -0700
++++ work/HIPCC-rocm-6.0.2/src/hipBin_nvidia.h	2024-08-21 13:31:06.362102323 -0700
+@@ -233,7 +233,7 @@ void HipBinNvidia::constructCompilerPath
+   const EnvVariables& envVariables = getEnvVariables();
+   if (envVariables.cudaPathEnv_.empty()) {
+     fs::path cudaPathfs;
+-    cudaPathfs = "/usr/local/cuda";
++    cudaPathfs = "/opt/cuda";
+     complierPath = cudaPathfs.string();
+   } else {
+     complierPath = envVariables.cudaPathEnv_;
 diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/CMakeLists.txt work/clr-rocm-6.0.2/CMakeLists.txt
 --- work.orig/clr-rocm-6.0.2/CMakeLists.txt	2024-01-04 19:16:33.000000000 -0800
-+++ work/clr-rocm-6.0.2/CMakeLists.txt	2024-07-12 03:34:26.959765081 -0700
++++ work/clr-rocm-6.0.2/CMakeLists.txt	2024-08-21 13:30:37.978574167 -0700
 @@ -43,7 +43,7 @@ endif()
  if(CLR_BUILD_HIP)
      # Set default HIPCC_BIN_DIR to /opt/rocm/bin
@@ -12,7 +36,7 @@ diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/CMakeLists.txt work/clr-rocm-6
  
 diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/hipamd/CMakeLists.txt work/clr-rocm-6.0.2/hipamd/CMakeLists.txt
 --- work.orig/clr-rocm-6.0.2/hipamd/CMakeLists.txt	2024-07-12 03:32:42.541266952 -0700
-+++ work/clr-rocm-6.0.2/hipamd/CMakeLists.txt	2024-07-12 03:35:00.431283649 -0700
++++ work/clr-rocm-6.0.2/hipamd/CMakeLists.txt	2024-08-21 13:30:37.982574101 -0700
 @@ -229,7 +229,7 @@ add_to_config(_buildInfo HIP_RUNTIME)
  add_to_config(_buildInfo HIP_COMPILER)
  
@@ -22,9 +46,23 @@ diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/hipamd/CMakeLists.txt work/clr
  endif ()
  message (STATUS "ROCM Installation path(ROCM_PATH): ${ROCM_PATH}")
  
+diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/hipamd/packaging/CMakeLists.txt work/clr-rocm-6.0.2/hipamd/packaging/CMakeLists.txt
+--- work.orig/clr-rocm-6.0.2/hipamd/packaging/CMakeLists.txt	2024-07-12 03:32:42.545266894 -0700
++++ work/clr-rocm-6.0.2/hipamd/packaging/CMakeLists.txt	2024-08-21 13:30:08.815059911 -0700
+@@ -34,7 +34,10 @@ set(CPACK_RPM_COMPONENT_INSTALL ON)
+ set(CPACK_DEB_COMPONENT_INSTALL ON)
+ 
+ ###Set License####
++set(CPACK_RESOURCE_FILE_LICENSE ${hip_SOURCE_DIR}/LICENSE.txt)
++install(FILES ${CPACK_RESOURCE_FILE_LICENSE} DESTINATION ${CMAKE_INSTALL_DOCDIR} COMPONENT binary)
+ # install license file in share/doc/hip-asan folder
++install(FILES ${CPACK_RESOURCE_FILE_LICENSE} DESTINATION ${CMAKE_INSTALL_DOCDIR}-asan COMPONENT asan)
+ set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+ #Begin binary files install
+ if(HIP_PLATFORM STREQUAL "amd" )
 diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/opencl/CMakeLists.txt work/clr-rocm-6.0.2/opencl/CMakeLists.txt
 --- work.orig/clr-rocm-6.0.2/opencl/CMakeLists.txt	2024-01-04 19:16:33.000000000 -0800
-+++ work/clr-rocm-6.0.2/opencl/CMakeLists.txt	2024-07-12 03:34:49.979433982 -0700
++++ work/clr-rocm-6.0.2/opencl/CMakeLists.txt	2024-08-21 13:30:37.982574101 -0700
 @@ -54,7 +54,7 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURC
  # Packaging steps
  #############################
@@ -45,7 +83,7 @@ diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/opencl/CMakeLists.txt work/clr
    string(REPLACE "/opencl" "" ROCM_PATH ${CPACK_PACKAGING_INSTALL_PREFIX})
 diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/rocclr/cmake/ROCclrHSA.cmake work/clr-rocm-6.0.2/rocclr/cmake/ROCclrHSA.cmake
 --- work.orig/clr-rocm-6.0.2/rocclr/cmake/ROCclrHSA.cmake	2024-01-04 19:16:33.000000000 -0800
-+++ work/clr-rocm-6.0.2/rocclr/cmake/ROCclrHSA.cmake	2024-07-12 03:34:43.371529025 -0700
++++ work/clr-rocm-6.0.2/rocclr/cmake/ROCclrHSA.cmake	2024-08-21 13:30:37.986574033 -0700
 @@ -20,7 +20,7 @@
  
  find_package(hsa-runtime64 1.11 REQUIRED CONFIG
@@ -57,7 +95,7 @@ diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/rocclr/cmake/ROCclrHSA.cmake w
      cmake/hsa-runtime64
 diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/rocclr/cmake/ROCclrLC.cmake work/clr-rocm-6.0.2/rocclr/cmake/ROCclrLC.cmake
 --- work.orig/clr-rocm-6.0.2/rocclr/cmake/ROCclrLC.cmake	2024-01-04 19:16:33.000000000 -0800
-+++ work/clr-rocm-6.0.2/rocclr/cmake/ROCclrLC.cmake	2024-07-12 03:34:39.515584487 -0700
++++ work/clr-rocm-6.0.2/rocclr/cmake/ROCclrLC.cmake	2024-08-21 13:30:37.986574033 -0700
 @@ -20,7 +20,7 @@
  
  find_package(amd_comgr REQUIRED CONFIG
@@ -69,7 +107,7 @@ diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/rocclr/cmake/ROCclrLC.cmake wo
      cmake/amd_comgr
 diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/rocclr/elf/test/CMakeLists.txt work/clr-rocm-6.0.2/rocclr/elf/test/CMakeLists.txt
 --- work.orig/clr-rocm-6.0.2/rocclr/elf/test/CMakeLists.txt	2024-01-04 19:16:33.000000000 -0800
-+++ work/clr-rocm-6.0.2/rocclr/elf/test/CMakeLists.txt	2024-07-12 03:34:35.595640868 -0700
++++ work/clr-rocm-6.0.2/rocclr/elf/test/CMakeLists.txt	2024-08-21 13:30:37.986574033 -0700
 @@ -26,14 +26,14 @@ cmake_minimum_required(VERSION 3.5.1)
  
  find_package(amd_comgr REQUIRED CONFIG
@@ -105,3 +143,4 @@ diff '--color=auto' -urp work.orig/clr-rocm-6.0.2/rocclr/elf/test/CMakeLists.txt
 -#-------------------------------------elf_test--------------------------------------#
 \ No newline at end of file
 +#-------------------------------------elf_test--------------------------------------#
+Only in work.orig: work

@@ -71,7 +71,7 @@ LICENSE="
 # UoI-NCSA - llvm-project-rocm-6.1.2/amd/device-libs/LICENSE.TXT
 
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test ebuild-revision-35"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test ebuild-revision-38"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -310,11 +310,14 @@ src_prepare() {
 		"${WORKDIR}/clr-rocm-6.2.0/CMakeLists.txt"
 		"${WORKDIR}/clr-rocm-6.2.0/hipamd/CMakeLists.txt"
 		"${WORKDIR}/clr-rocm-6.2.0/hipamd/src/CMakeLists.txt"
+		"${WORKDIR}/clr-rocm-6.2.0/hipamd/src/hiprtc/CMakeLists.txt"
 		"${WORKDIR}/clr-rocm-6.2.0/opencl/CMakeLists.txt"
 		"${WORKDIR}/clr-rocm-6.2.0/opencl/cmake/FindAMD_ICD.cmake"
 		"${WORKDIR}/clr-rocm-6.2.0/rocclr/cmake/ROCclrHSA.cmake"
 		"${WORKDIR}/clr-rocm-6.2.0/rocclr/cmake/ROCclrLC.cmake"
 		"${WORKDIR}/clr-rocm-6.2.0/rocclr/elf/test/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.2.0/amd/hipcc/bin/hipcc.pl"
+		"${WORKDIR}/llvm-project-rocm-6.2.0/amd/hipcc/src/hipBin_nvidia.h"
 		"${WORKDIR}/llvm-project-rocm-6.2.0/clang/tools/amdgpu-arch/CMakeLists.txt"
 		"${WORKDIR}/llvm-project-rocm-6.2.0/compiler-rt/CMakeLists.txt"
 		"${WORKDIR}/llvm-project-rocm-6.2.0/libc/cmake/modules/prepare_libc_gpu_build.cmake"
