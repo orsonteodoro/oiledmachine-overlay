@@ -8,7 +8,7 @@ diff '--color=auto' -urp omnitrace-rocm-6.2.0.orig/source/bin/omnitrace-instrume
 -        if(!itr->getAllFunctions(symtab_data.functions.at(itr))) continue;
 +        std::vector<symtab_func_t*> _funcs = itr->getAllFunctions();
 +        symtab_data.functions.at(itr) = _funcs;
-+        if(!_funcs.empty()) continue;
++        if(_funcs.empty()) continue;
          _erase_nullptrs(symtab_data.functions.at(itr));
  
          for(auto* fitr : symtab_data.functions.at(itr))
