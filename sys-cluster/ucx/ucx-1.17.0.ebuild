@@ -1,3 +1,4 @@
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -42,7 +43,7 @@ ROCM_IUSE=(
 )
 UCG_COMMIT="aaa65c30af52115aa601c9b17529cb295797864f"
 
-inherit autotools dep-prepare flag-o-matic toolchain-funcs
+inherit autotools dep-prepare flag-o-matic linux-info toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64 -riscv ~ppc64 ~x86 ~amd64-linux ~x86-linux"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -60,8 +61,8 @@ IUSE="
 ${CLANG_COMPAT[@]/#/llvm_slot_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE[@]}
-clang cma cuda dc debug devx dm gcc examples gdrcopy hip-clang mlx5-dv +numa
-+openmp rc rocm threads tm ud verbs video_cards_intel
+clang cma cuda custom-kernel dc debug devx dm dmabuf fuse3 gcc examples gdrcopy hip-clang mlx5-dv
++numa +openmp rc rocm rdma threads tm ud verbs video_cards_intel
 ebuild-revision-1
 "
 get_cuda_targets_required_use() {
@@ -111,6 +112,9 @@ REQUIRED_USE="
 		^^ (
 			${ROCM_IUSE[@]}
 		)
+		rdma? (
+			verbs
+		)
 	)
 "
 gen_rocm_rdepend() {
@@ -122,6 +126,9 @@ gen_rocm_rdepend() {
 		echo "
 			${u}? (
 				dev-util/hip:${s}
+				rdma? (
+					virtual/kfd[rock-dkms]
+				)
 			)
 		"
 	done
@@ -192,6 +199,10 @@ RDEPEND="
 	)
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-8.0
+		dmabuf? (
+			>=dev-util/nvidia-cuda-toolkit-11.7[rdma]
+			x11-drivers/nvidia-drivers[kernel-open]
+		)
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	dc? (
@@ -206,8 +217,31 @@ RDEPEND="
 	dm? (
 		sys-cluster/rdma-core
 	)
+	dmabuf? (
+		!custom-kernel? (
+			|| (
+				>=sys-kernel/gentoo-sources-5.12
+				>=sys-kernel/vanilla-sources-5.12
+				>=sys-kernel/git-sources-5.12
+				>=sys-kernel/mips-sources-5.12
+				>=sys-kernel/pf-sources-5.12
+				>=sys-kernel/rt-sources-5.12
+				>=sys-kernel/zen-sources-5.12
+				>=sys-kernel/raspberrypi-sources-5.12
+				>=sys-kernel/gentoo-kernel-5.12
+				>=sys-kernel/gentoo-kernel-bin-5.12
+				>=sys-kernel/vanilla-kernel-5.12
+				>=sys-kernel/linux-next-5.12
+				>=sys-kernel/asahi-sources-5.12
+				>=sys-kernel/ot-sources-5.12
+			)
+		)
+	)
 	gdrcopy? (
 		dev-libs/gdrcopy
+	)
+	fuse3? (
+		sys-fs/fuse
 	)
 	mlx5-dv? (
 		sys-cluster/rdma-core
@@ -350,6 +384,49 @@ pkg_setup() {
 			| tr "\n" ":" \
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/opt/rocm-${ROCM_VERSION}/bin:/opt/rocm-${ROCM_VERSION}/llvm-bin|g")
 	fi
+	linux-info_pkg_setup
+
+	if use dmabuf ; then
+		CONFIG_CHECK="
+			~DMA_SHARED_BUFFER
+			~DMABUF_MOVE_NOTIFY
+
+			~ZONE_DEVICE
+			~64BIT
+			~PCI_P2PDMA
+		"
+		WARNING_DMA_SHARED_BUFFER="CONFIG_DMA_SHARED_BUFFER=y is required for zero-copy RDMA via DMA-BUF."
+		WARNING_DMABUF_MOVE_NOTIFY="CONFIG_DMABUF_MOVE_NOTIFY=y is required for zero-copy RDMA via DMA-BUF."
+		WARNING_ZONE_DEVICE="CONFIG_ZONE_DEVICE=y is required for zero-copy RDMA via DMA-BUF."
+		WARNING_64BIT="CONFIG_64BIT=y is required for zero-copy RDMA via DMA-BUF."
+		WARNING_PCI_P2PDMA="CONFIG_PCI_P2PDMA=y is required for zero-copy RDMA via DMA-BUF."
+		check_extra_config
+	fi
+
+	if use verbs ; then
+		CONFIG_CHECK="
+			~NET
+			~INET
+			~IPV6
+			~INFINIBAND
+			~INFINIBAND_USER_ACCESS
+			~NETDEVICES
+			~ETHERNET
+			~NET_VENDOR_MELLANOX
+			~MLX5_CORE
+			~MLX5_INFINIBAND
+		"
+		WARNING_NET="CONFIG_NET=y is required for InfiniBand or RoCE support."
+		WARNING_INET="CONFIG_INET=y is required for InfiniBand or RoCE support."
+		WARNING_IPV6="CONFIG_IPV6=y is required for InfiniBand or RoCE support."
+		WARNING_INFINIBAND="CONFIG_INFINIBAND=y is required for InfiniBand or RoCE support."
+		WARNING_INFINIBAND_USER_ACCESS="CONFIG_INFINIBAND_USER_ACCESS=y is required for InfiniBand or RoCE support."
+		WARNING_NETDEVICES="CONFIG_NETDEVICES=y is required for ConnectX-4 or later support."
+		WARNING_ETHERNET="CONFIG_ETHERNET=y is required for ConnectX-4 or later support."
+		WARNING_MLX5_CORE="CONFIG_MLX5_CORE=y is required for ConnectX-4 or later support."
+		WARNING_MLX5_INFINIBAND="CONFIG_MLX5_INFINIBAND=y is required for ConnectX-4 or later support."
+		check_extra_config
+	fi
 }
 
 src_unpack() {
@@ -399,7 +476,6 @@ src_configure() {
 	local myconf=(
 		--disable-doxygen-doc
 		--disable-compiler-opt
-		--without-fuse3
 		--without-go
 		--without-java
 		$(use_enable examples)
@@ -410,6 +486,7 @@ src_configure() {
 		$(use_with debug bfd)
 		$(use_with devx)
 		$(use_with dm)
+		$(use_with fuse3)
 		$(use_with mlx5-dv)
 		$(use_with rc)
 		$(use_with ud)

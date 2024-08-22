@@ -28,8 +28,16 @@
     <flag name="cuda">
       Support CUDA® for NVIDIA GPUs
     </flag>
+    <flag name="custom-kernel">
+      Allow for custom kernels.
+      (If dmabuf is enabled, you are responsible for providing a 5.12 or
+      later kernel)
+    </flag>
     <flag name="dc">
       Support IB DC (Dynamically Connected) transport
+    </flag>
+    <flag name="dmabuf">
+      Support zero-copy RDMA
     </flag>
     <flag name="devx">
       Support DEVX
@@ -39,6 +47,9 @@
     </flag>
     <flag name="examples">
       Build examples
+    </flag>
+    <flag name="fuse3">
+      Support instrumentation and monitoring at runtime via FUSE 3
     </flag>
     <flag name="gcc">
       Use GCC for OpenMP support
@@ -61,6 +72,9 @@
     <flag name="rc">
       Support IB RC (Reliable Connected) transport
     </flag>
+    <flag name="rdma">
+      Support RDMA
+    </flag>
     <flag name="rocm">
       Support ROCm™ for AMD GPUs.
     </flag>
@@ -81,6 +95,10 @@
     </flag>
   </use>
   <upstream>
+    <doc>
+      https://openucx.org/documentation/
+      https://github.com/openucx/ucx/wiki/Instrumentation-and-monitoring-tool
+    </doc>
     <remote-id type="github">openucx/ucx</remote-id>
   </upstream>
 </pkgmetadata>
