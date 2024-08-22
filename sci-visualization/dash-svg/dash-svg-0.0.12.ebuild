@@ -15,13 +15,13 @@ inherit distutils-r1 npm
 NPM_EXTERNAL_URIS="
 https://registry.npmjs.org/@ampproject/remapping/-/remapping-2.3.0.tgz -> npmpkg-@ampproject-remapping-2.3.0.tgz
 https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.24.7.tgz -> npmpkg-@babel-code-frame-7.24.7.tgz
-https://registry.npmjs.org/@babel/compat-data/-/compat-data-7.25.2.tgz -> npmpkg-@babel-compat-data-7.25.2.tgz
+https://registry.npmjs.org/@babel/compat-data/-/compat-data-7.25.4.tgz -> npmpkg-@babel-compat-data-7.25.4.tgz
 https://registry.npmjs.org/@babel/core/-/core-7.25.2.tgz -> npmpkg-@babel-core-7.25.2.tgz
-https://registry.npmjs.org/@babel/generator/-/generator-7.25.0.tgz -> npmpkg-@babel-generator-7.25.0.tgz
+https://registry.npmjs.org/@babel/generator/-/generator-7.25.4.tgz -> npmpkg-@babel-generator-7.25.4.tgz
 https://registry.npmjs.org/@babel/helper-annotate-as-pure/-/helper-annotate-as-pure-7.24.7.tgz -> npmpkg-@babel-helper-annotate-as-pure-7.24.7.tgz
 https://registry.npmjs.org/@babel/helper-builder-binary-assignment-operator-visitor/-/helper-builder-binary-assignment-operator-visitor-7.24.7.tgz -> npmpkg-@babel-helper-builder-binary-assignment-operator-visitor-7.24.7.tgz
 https://registry.npmjs.org/@babel/helper-compilation-targets/-/helper-compilation-targets-7.25.2.tgz -> npmpkg-@babel-helper-compilation-targets-7.25.2.tgz
-https://registry.npmjs.org/@babel/helper-create-class-features-plugin/-/helper-create-class-features-plugin-7.25.0.tgz -> npmpkg-@babel-helper-create-class-features-plugin-7.25.0.tgz
+https://registry.npmjs.org/@babel/helper-create-class-features-plugin/-/helper-create-class-features-plugin-7.25.4.tgz -> npmpkg-@babel-helper-create-class-features-plugin-7.25.4.tgz
 https://registry.npmjs.org/@babel/helper-create-regexp-features-plugin/-/helper-create-regexp-features-plugin-7.25.2.tgz -> npmpkg-@babel-helper-create-regexp-features-plugin-7.25.2.tgz
 https://registry.npmjs.org/@babel/helper-define-polyfill-provider/-/helper-define-polyfill-provider-0.6.2.tgz -> npmpkg-@babel-helper-define-polyfill-provider-0.6.2.tgz
 https://registry.npmjs.org/@babel/helper-member-expression-to-functions/-/helper-member-expression-to-functions-7.24.8.tgz -> npmpkg-@babel-helper-member-expression-to-functions-7.24.8.tgz
@@ -39,7 +39,7 @@ https://registry.npmjs.org/@babel/helper-validator-option/-/helper-validator-opt
 https://registry.npmjs.org/@babel/helper-wrap-function/-/helper-wrap-function-7.25.0.tgz -> npmpkg-@babel-helper-wrap-function-7.25.0.tgz
 https://registry.npmjs.org/@babel/helpers/-/helpers-7.25.0.tgz -> npmpkg-@babel-helpers-7.25.0.tgz
 https://registry.npmjs.org/@babel/highlight/-/highlight-7.24.7.tgz -> npmpkg-@babel-highlight-7.24.7.tgz
-https://registry.npmjs.org/@babel/parser/-/parser-7.25.3.tgz -> npmpkg-@babel-parser-7.25.3.tgz
+https://registry.npmjs.org/@babel/parser/-/parser-7.25.4.tgz -> npmpkg-@babel-parser-7.25.4.tgz
 https://registry.npmjs.org/@babel/plugin-bugfix-firefox-class-in-computed-class-key/-/plugin-bugfix-firefox-class-in-computed-class-key-7.25.3.tgz -> npmpkg-@babel-plugin-bugfix-firefox-class-in-computed-class-key-7.25.3.tgz
 https://registry.npmjs.org/@babel/plugin-bugfix-safari-class-field-initializer-scope/-/plugin-bugfix-safari-class-field-initializer-scope-7.25.0.tgz -> npmpkg-@babel-plugin-bugfix-safari-class-field-initializer-scope-7.25.0.tgz
 https://registry.npmjs.org/@babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression/-/plugin-bugfix-safari-id-destructuring-collision-in-function-expression-7.25.0.tgz -> npmpkg-@babel-plugin-bugfix-safari-id-destructuring-collision-in-function-expression-7.25.0.tgz
@@ -67,13 +67,13 @@ https://registry.npmjs.org/@babel/plugin-syntax-private-property-in-object/-/plu
 https://registry.npmjs.org/@babel/plugin-syntax-top-level-await/-/plugin-syntax-top-level-await-7.14.5.tgz -> npmpkg-@babel-plugin-syntax-top-level-await-7.14.5.tgz
 https://registry.npmjs.org/@babel/plugin-syntax-unicode-sets-regex/-/plugin-syntax-unicode-sets-regex-7.18.6.tgz -> npmpkg-@babel-plugin-syntax-unicode-sets-regex-7.18.6.tgz
 https://registry.npmjs.org/@babel/plugin-transform-arrow-functions/-/plugin-transform-arrow-functions-7.24.7.tgz -> npmpkg-@babel-plugin-transform-arrow-functions-7.24.7.tgz
-https://registry.npmjs.org/@babel/plugin-transform-async-generator-functions/-/plugin-transform-async-generator-functions-7.25.0.tgz -> npmpkg-@babel-plugin-transform-async-generator-functions-7.25.0.tgz
+https://registry.npmjs.org/@babel/plugin-transform-async-generator-functions/-/plugin-transform-async-generator-functions-7.25.4.tgz -> npmpkg-@babel-plugin-transform-async-generator-functions-7.25.4.tgz
 https://registry.npmjs.org/@babel/plugin-transform-async-to-generator/-/plugin-transform-async-to-generator-7.24.7.tgz -> npmpkg-@babel-plugin-transform-async-to-generator-7.24.7.tgz
 https://registry.npmjs.org/@babel/plugin-transform-block-scoped-functions/-/plugin-transform-block-scoped-functions-7.24.7.tgz -> npmpkg-@babel-plugin-transform-block-scoped-functions-7.24.7.tgz
 https://registry.npmjs.org/@babel/plugin-transform-block-scoping/-/plugin-transform-block-scoping-7.25.0.tgz -> npmpkg-@babel-plugin-transform-block-scoping-7.25.0.tgz
-https://registry.npmjs.org/@babel/plugin-transform-class-properties/-/plugin-transform-class-properties-7.24.7.tgz -> npmpkg-@babel-plugin-transform-class-properties-7.24.7.tgz
+https://registry.npmjs.org/@babel/plugin-transform-class-properties/-/plugin-transform-class-properties-7.25.4.tgz -> npmpkg-@babel-plugin-transform-class-properties-7.25.4.tgz
 https://registry.npmjs.org/@babel/plugin-transform-class-static-block/-/plugin-transform-class-static-block-7.24.7.tgz -> npmpkg-@babel-plugin-transform-class-static-block-7.24.7.tgz
-https://registry.npmjs.org/@babel/plugin-transform-classes/-/plugin-transform-classes-7.25.0.tgz -> npmpkg-@babel-plugin-transform-classes-7.25.0.tgz
+https://registry.npmjs.org/@babel/plugin-transform-classes/-/plugin-transform-classes-7.25.4.tgz -> npmpkg-@babel-plugin-transform-classes-7.25.4.tgz
 https://registry.npmjs.org/@babel/plugin-transform-computed-properties/-/plugin-transform-computed-properties-7.24.7.tgz -> npmpkg-@babel-plugin-transform-computed-properties-7.24.7.tgz
 https://registry.npmjs.org/@babel/plugin-transform-destructuring/-/plugin-transform-destructuring-7.24.8.tgz -> npmpkg-@babel-plugin-transform-destructuring-7.24.8.tgz
 https://registry.npmjs.org/@babel/plugin-transform-dotall-regex/-/plugin-transform-dotall-regex-7.24.7.tgz -> npmpkg-@babel-plugin-transform-dotall-regex-7.24.7.tgz
@@ -101,7 +101,7 @@ https://registry.npmjs.org/@babel/plugin-transform-object-super/-/plugin-transfo
 https://registry.npmjs.org/@babel/plugin-transform-optional-catch-binding/-/plugin-transform-optional-catch-binding-7.24.7.tgz -> npmpkg-@babel-plugin-transform-optional-catch-binding-7.24.7.tgz
 https://registry.npmjs.org/@babel/plugin-transform-optional-chaining/-/plugin-transform-optional-chaining-7.24.8.tgz -> npmpkg-@babel-plugin-transform-optional-chaining-7.24.8.tgz
 https://registry.npmjs.org/@babel/plugin-transform-parameters/-/plugin-transform-parameters-7.24.7.tgz -> npmpkg-@babel-plugin-transform-parameters-7.24.7.tgz
-https://registry.npmjs.org/@babel/plugin-transform-private-methods/-/plugin-transform-private-methods-7.24.7.tgz -> npmpkg-@babel-plugin-transform-private-methods-7.24.7.tgz
+https://registry.npmjs.org/@babel/plugin-transform-private-methods/-/plugin-transform-private-methods-7.25.4.tgz -> npmpkg-@babel-plugin-transform-private-methods-7.25.4.tgz
 https://registry.npmjs.org/@babel/plugin-transform-private-property-in-object/-/plugin-transform-private-property-in-object-7.24.7.tgz -> npmpkg-@babel-plugin-transform-private-property-in-object-7.24.7.tgz
 https://registry.npmjs.org/@babel/plugin-transform-property-literals/-/plugin-transform-property-literals-7.24.7.tgz -> npmpkg-@babel-plugin-transform-property-literals-7.24.7.tgz
 https://registry.npmjs.org/@babel/plugin-transform-react-display-name/-/plugin-transform-react-display-name-7.24.7.tgz -> npmpkg-@babel-plugin-transform-react-display-name-7.24.7.tgz
@@ -118,16 +118,16 @@ https://registry.npmjs.org/@babel/plugin-transform-typeof-symbol/-/plugin-transf
 https://registry.npmjs.org/@babel/plugin-transform-unicode-escapes/-/plugin-transform-unicode-escapes-7.24.7.tgz -> npmpkg-@babel-plugin-transform-unicode-escapes-7.24.7.tgz
 https://registry.npmjs.org/@babel/plugin-transform-unicode-property-regex/-/plugin-transform-unicode-property-regex-7.24.7.tgz -> npmpkg-@babel-plugin-transform-unicode-property-regex-7.24.7.tgz
 https://registry.npmjs.org/@babel/plugin-transform-unicode-regex/-/plugin-transform-unicode-regex-7.24.7.tgz -> npmpkg-@babel-plugin-transform-unicode-regex-7.24.7.tgz
-https://registry.npmjs.org/@babel/plugin-transform-unicode-sets-regex/-/plugin-transform-unicode-sets-regex-7.24.7.tgz -> npmpkg-@babel-plugin-transform-unicode-sets-regex-7.24.7.tgz
-https://registry.npmjs.org/@babel/preset-env/-/preset-env-7.25.3.tgz -> npmpkg-@babel-preset-env-7.25.3.tgz
+https://registry.npmjs.org/@babel/plugin-transform-unicode-sets-regex/-/plugin-transform-unicode-sets-regex-7.25.4.tgz -> npmpkg-@babel-plugin-transform-unicode-sets-regex-7.25.4.tgz
+https://registry.npmjs.org/@babel/preset-env/-/preset-env-7.25.4.tgz -> npmpkg-@babel-preset-env-7.25.4.tgz
 https://registry.npmjs.org/@babel/preset-modules/-/preset-modules-0.1.6-no-external-plugins.tgz -> npmpkg-@babel-preset-modules-0.1.6-no-external-plugins.tgz
 https://registry.npmjs.org/@babel/preset-react/-/preset-react-7.24.7.tgz -> npmpkg-@babel-preset-react-7.24.7.tgz
 https://registry.npmjs.org/@babel/regjsgen/-/regjsgen-0.8.0.tgz -> npmpkg-@babel-regjsgen-0.8.0.tgz
-https://registry.npmjs.org/@babel/runtime/-/runtime-7.25.0.tgz -> npmpkg-@babel-runtime-7.25.0.tgz
+https://registry.npmjs.org/@babel/runtime/-/runtime-7.25.4.tgz -> npmpkg-@babel-runtime-7.25.4.tgz
 https://registry.npmjs.org/@babel/runtime-corejs3/-/runtime-corejs3-7.25.0.tgz -> npmpkg-@babel-runtime-corejs3-7.25.0.tgz
 https://registry.npmjs.org/@babel/template/-/template-7.25.0.tgz -> npmpkg-@babel-template-7.25.0.tgz
-https://registry.npmjs.org/@babel/traverse/-/traverse-7.25.3.tgz -> npmpkg-@babel-traverse-7.25.3.tgz
-https://registry.npmjs.org/@babel/types/-/types-7.25.2.tgz -> npmpkg-@babel-types-7.25.2.tgz
+https://registry.npmjs.org/@babel/traverse/-/traverse-7.25.4.tgz -> npmpkg-@babel-traverse-7.25.4.tgz
+https://registry.npmjs.org/@babel/types/-/types-7.25.4.tgz -> npmpkg-@babel-types-7.25.4.tgz
 https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.5.tgz -> npmpkg-@jridgewell-gen-mapping-0.3.5.tgz
 https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.2.tgz -> npmpkg-@jridgewell-resolve-uri-3.1.2.tgz
 https://registry.npmjs.org/@jridgewell/set-array/-/set-array-1.2.1.tgz -> npmpkg-@jridgewell-set-array-1.2.1.tgz
@@ -347,7 +347,7 @@ https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.1.2.tgz -> npmpkg-safe-bu
 https://registry.npmjs.org/string_decoder/-/string_decoder-1.1.1.tgz -> npmpkg-string_decoder-1.1.1.tgz
 https://registry.npmjs.org/ecc-jsbn/-/ecc-jsbn-0.1.2.tgz -> npmpkg-ecc-jsbn-0.1.2.tgz
 https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz -> npmpkg-ee-first-1.1.1.tgz
-https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.12.tgz -> npmpkg-electron-to-chromium-1.5.12.tgz
+https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.13.tgz -> npmpkg-electron-to-chromium-1.5.13.tgz
 https://registry.npmjs.org/elliptic/-/elliptic-6.5.7.tgz -> npmpkg-elliptic-6.5.7.tgz
 https://registry.npmjs.org/bn.js/-/bn.js-4.12.0.tgz -> npmpkg-bn.js-4.12.0.tgz
 https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz -> npmpkg-emoji-regex-8.0.0.tgz
@@ -546,7 +546,7 @@ https://registry.npmjs.org/is-binary-path/-/is-binary-path-2.1.0.tgz -> npmpkg-i
 https://registry.npmjs.org/is-boolean-object/-/is-boolean-object-1.1.2.tgz -> npmpkg-is-boolean-object-1.1.2.tgz
 https://registry.npmjs.org/is-buffer/-/is-buffer-1.1.6.tgz -> npmpkg-is-buffer-1.1.6.tgz
 https://registry.npmjs.org/is-callable/-/is-callable-1.2.7.tgz -> npmpkg-is-callable-1.2.7.tgz
-https://registry.npmjs.org/is-core-module/-/is-core-module-2.15.0.tgz -> npmpkg-is-core-module-2.15.0.tgz
+https://registry.npmjs.org/is-core-module/-/is-core-module-2.15.1.tgz -> npmpkg-is-core-module-2.15.1.tgz
 https://registry.npmjs.org/is-data-descriptor/-/is-data-descriptor-1.0.1.tgz -> npmpkg-is-data-descriptor-1.0.1.tgz
 https://registry.npmjs.org/is-data-view/-/is-data-view-1.0.1.tgz -> npmpkg-is-data-view-1.0.1.tgz
 https://registry.npmjs.org/is-date-object/-/is-date-object-1.0.5.tgz -> npmpkg-is-date-object-1.0.5.tgz
@@ -1138,6 +1138,8 @@ src_compile() {
 	npm_hydrate
 	enpm run build
 	distutils-r1_src_compile
+	find "${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install" -name "dash_svg.dev.js" | grep -q "dash_svg.dev.js" || die
+	find "${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install" -name "dash_svg.min.js" | grep -q "dash_svg.min.js" || die
 }
 
 src_install() {
