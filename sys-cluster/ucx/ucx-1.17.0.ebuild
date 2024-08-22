@@ -45,7 +45,7 @@ ROCM_IUSE=(
 )
 UCG_COMMIT="aaa65c30af52115aa601c9b17529cb295797864f"
 
-inherit autotools dep-prepare flag-o-matic linux-info toolchain-funcs
+inherit autotools dep-prepare flag-o-matic rocm linux-info toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64 -riscv ~ppc64 ~x86 ~amd64-linux ~x86-linux"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -339,9 +339,14 @@ _init_rocm_variables() {
 				export ROCM_SLOT="${ver%.*}"
 				local n="HIP_${s}_VERSION"
 				export ROCM_VERSION="${!n}"
+				local m="HIP_${s}_LLVM_SLOT"
+				export LLVM_SLOT="${!m}"
 				break
 			fi
 		done
+einfo "ROCM_SLOT:  ${ROCM_SLOT}"
+einfo "ROCM_VERSION:  ${ROCM_VERSION}"
+einfo "LLVM_SLOT:  ${LLVM_SLOT}"
 	fi
 }
 
@@ -386,11 +391,7 @@ pkg_setup() {
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
 	fi
 	if use hip-clang ; then
-		export PATH=$(echo "${PATH}" \
-			| tr ":" "\n" \
-			| sed -E -e "/llvm\/[0-9]+/d" \
-			| tr "\n" ":" \
-			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/opt/rocm-${ROCM_VERSION}/bin:/opt/rocm-${ROCM_VERSION}/llvm-bin|g")
+		rocm_pkg_setup
 	fi
 	linux-info_pkg_setup
 
@@ -469,8 +470,8 @@ src_configure() {
 		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 		filter-flags '-fuse-ld=lld'
 	elif use hip-clang ; then
-		export CC="hipcc"
-		export CXX="hipcc"
+		export CC="amdclang"
+		export CXX="amdclang++"
 		filter-flags '-fuse-ld=lld'
 	fi
 	${CC} --version || die
@@ -616,4 +617,7 @@ src_compile() {
 src_install() {
 	default
 	find "${ED}" -type f -name '*.la' -delete || die
+	if use rocm ; then
+		rocm_fix_rpath
+	fi
 }
