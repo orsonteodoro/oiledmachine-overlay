@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# See also https://openucx.readthedocs.io/en/master/faq.html?highlight=cuda#what-stuff-should-i-have-on-my-machine-to-use-ucx
+
 CUDA_TARGETS_COMPAT=(
 	sm_35
 	sm_60
@@ -14,6 +16,7 @@ CUDA_TARGETS_COMPAT=(
 CLANG_COMPAT=( {18..15} )
 MY_PV="${PV/_/-}"
 inherit hip-versions
+RDMA_CORE_PV="28.0"
 ROCM_VERSIONS=(
 	"${HIP_6_2_VERSION}"
 	"${HIP_6_1_VERSION}"
@@ -27,7 +30,6 @@ ROCM_VERSIONS=(
 	"${HIP_5_1_VERSION}"
 	"${HIP_4_5_VERSION}"
 	"${HIP_4_1_VERSION}"
-	# 3.7 inclusive
 )
 gen_rocm_iuse() {
 	for ver in ${ROCM_VERSIONS[@]} ; do
@@ -61,8 +63,9 @@ IUSE="
 ${CLANG_COMPAT[@]/#/llvm_slot_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE[@]}
-clang cma cuda custom-kernel dc debug devx dm dmabuf fuse3 gcc examples gdrcopy hip-clang mlx5-dv
-+numa +openmp rc rocm rdma threads tm ud verbs video_cards_intel
+clang cma cuda custom-kernel dc debug devx dm dmabuf fuse3 gcc examples gdrcopy
+hip-clang knem mlx5-dv +numa +openmp rc rocm rdma threads tm ud verbs
+video_cards_intel
 ebuild-revision-1
 "
 get_cuda_targets_required_use() {
@@ -206,16 +209,16 @@ RDEPEND="
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	dc? (
-		sys-cluster/rdma-core
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
 	)
 	debug? (
 		sys-libs/binutils-libs:=
 	)
 	devx? (
-		sys-cluster/rdma-core
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
 	)
 	dm? (
-		sys-cluster/rdma-core
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
 	)
 	dmabuf? (
 		!custom-kernel? (
@@ -243,30 +246,34 @@ RDEPEND="
 	fuse3? (
 		sys-fs/fuse:3
 	)
+	knem? (
+		sys-cluster/knem
+	)
 	mlx5-dv? (
-		sys-cluster/rdma-core
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
 	)
 	numa? (
 		sys-process/numactl
 	)
 	rc? (
-		sys-cluster/rdma-core
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
 	)
 	rocm? (
+		>=dev-util/hip-4.0
 		dev-util/hip:=
 	)
 	ud? (
-		sys-cluster/rdma-core
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
 	)
 	tm? (
-		sys-cluster/rdma-core
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
 	)
 	video_cards_intel? (
 		dev-libs/intel-compute-runtime[l0]
 		dev-libs/level-zero:=
 	)
 	verbs? (
-		sys-cluster/rdma-core
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
 	)
 "
 DEPEND="
@@ -301,6 +308,7 @@ BDEPEND="
 	dev-build/autoconf
 	dev-build/automake
 	dev-build/libtool
+	virtual/pkgconfig
 	gcc? (
 		sys-devel/gcc[openmp?]
 		sys-devel/binutils
@@ -474,10 +482,6 @@ src_configure() {
 
 	BASE_CFLAGS="" \
 	local myconf=(
-		--disable-doxygen-doc
-		--disable-compiler-opt
-		--without-go
-		--without-java
 		$(use_enable examples)
 		$(use_enable numa)
 		$(use_enable openmp)
@@ -490,10 +494,15 @@ src_configure() {
 		$(use_with mlx5-dv)
 		$(use_with rc)
 		$(use_with ud)
+		--disable-doxygen-doc
+		--disable-compiler-opt
+		--without-go
+		--without-java
 	)
 
 	if use cuda ; then
 		myconf+=(
+			$(use_with examples iodemo-cuda)
 			--with-cuda="${ESYSROOT}/opt/cuda"
 		)
 	else
@@ -517,6 +526,16 @@ src_configure() {
 	else
 		myconf+=(
 			--without-gdrcopy
+		)
+	fi
+
+	if use knem ; then
+		myconf+=(
+			--with-knem="${ESYSROOT}/usr"
+		)
+	else
+		myconf+=(
+			--without-knem
 		)
 	fi
 
@@ -568,6 +587,22 @@ src_configure() {
 		check_libstdcxx 13
 	elif use rocm ; then
 		check_libstdcxx 12
+	fi
+
+	if use cuda_targets_sm_35 ; then
+		export NVCC_APPEND_FLAGS+=" -arch=sm_35"
+	fi
+	if use cuda_targets_sm_60 ; then
+		export NVCC_APPEND_FLAGS+=" -arch=sm_60"
+	fi
+	if use cuda_targets_sm_70 ; then
+		export NVCC_APPEND_FLAGS+=" -arch=sm_70"
+	fi
+	if use cuda_targets_sm_72 ; then
+		export NVCC_APPEND_FLAGS+=" -arch=sm_72"
+	fi
+	if use cuda_targets_sm_75 ; then
+		export NVCC_APPEND_FLAGS+=" -arch=sm_75"
 	fi
 
 	econf ${myconf[@]}

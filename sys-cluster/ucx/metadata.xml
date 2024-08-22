@@ -57,6 +57,9 @@
     <flag name="gdrcopy">
       Support gdrcopy for CUDA®
     </flag>
+    <flag name="knem">
+      Use the KNEM driver for optimized shared memory
+    </flag>
     <flag name="hip-clang">
       Use HIP-Clang for OpenMP support
     </flag>
