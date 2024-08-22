@@ -66,7 +66,7 @@ ${ROCM_IUSE[@]}
 clang cma cuda custom-kernel dc debug devx dm dmabuf fuse3 gcc examples gdrcopy
 hip-clang knem mlx5-dv +numa +openmp rc rocm rdma threads tm ud verbs
 video_cards_intel
-ebuild-revision-1
+ebuild-revision-3
 "
 get_cuda_targets_required_use() {
 	local x
@@ -112,7 +112,7 @@ REQUIRED_USE="
 		cuda
 	)
 	rocm? (
-		^^ (
+		|| (
 			${ROCM_IUSE[@]}
 		)
 		rdma? (
@@ -446,9 +446,22 @@ src_unpack() {
 src_prepare() {
 	default
 	eautoreconf
+	if use rocm ; then
+		local pv
+		for pv in ${ROCM_VERSIONS[@]} ; do
+			local s="${pv}"
+			s="${s%.*}"
+			s="${s/./_}"
+			if use "rocm_${s}" ; then
+einfo "Copying sources for ROCm ${pv}"
+				local ROCM_SLOT="${pv%.*}"
+				cp -a "${S}" "${S}_rocm_${s}" || die
+			fi
+		done
+	fi
 }
 
-src_configure() {
+_configure() {
 	if use gcc ; then
 		local gcc_slot=12
 		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
@@ -501,7 +514,7 @@ src_configure() {
 		--without-java
 	)
 
-	if use cuda ; then
+	if [[ "${USE_ROCM}" != "1" ]] && use cuda ; then
 		myconf+=(
 			$(use_with examples iodemo-cuda)
 			--with-cuda="${ESYSROOT}/opt/cuda"
@@ -511,16 +524,7 @@ src_configure() {
 			--without-cuda
 		)
 	fi
-	if use rocm ; then
-		myconf+=(
-			--with-rocm="${ESYSROOT}/opt/rocm-${ROCM_VERSION}"
-		)
-	else
-		myconf+=(
-			--without-rocm
-		)
-	fi
-	if use gdrcopy ; then
+	if [[ "${USE_ROCM}" != "1" ]] && use gdrcopy ; then
 		myconf+=(
 			--with-gdrcopy="${ESYSROOT}/usr"
 		)
@@ -568,7 +572,7 @@ src_configure() {
 		)
 	fi
 
-	if use video_cards_intel ; then
+	if [[ "${USE_ROCM}" != "1" ]] && use video_cards_intel ; then
 		myconf+=(
 			--with-ze="${ESYSROOT}/usr"
 		)
@@ -578,18 +582,19 @@ src_configure() {
 		)
 	fi
 
-	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
+	if [[ "${USE_ROCM}" != "1" ]] && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
 		check_libstdcxx 12
-	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.3*" ; then
+	elif [[ "${USE_ROCM}" != "1" ]] && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.3*" ; then
 		check_libstdcxx 12
-	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.4*" ; then
+	elif [[ "${USE_ROCM}" != "1" ]] && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.4*" ; then
 		check_libstdcxx 13
-	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.5*" ; then
+	elif [[ "${USE_ROCM}" != "1" ]] && use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.5*" ; then
 		check_libstdcxx 13
-	elif use rocm ; then
+	elif [[ "${USE_ROCM}" == "1" ]] && use rocm ; then
 		check_libstdcxx 12
 	fi
 
+	NVCC_APPEND_FLAGS=""
 	if use cuda_targets_sm_35 ; then
 		export NVCC_APPEND_FLAGS+=" -arch=sm_35"
 	fi
@@ -606,18 +611,98 @@ src_configure() {
 		export NVCC_APPEND_FLAGS+=" -arch=sm_75"
 	fi
 
+	if [[ "${USE_ROCM}" == "1" ]] ; then
+		myconf+=(
+			--libdir="/opt/rocm-${ROCM_VERSION}/lib"
+			--prefix="/opt/rocm-${ROCM_VERSION}"
+			--with-rocm="${ESYSROOT}/opt/rocm-${ROCM_VERSION}"
+		)
+
+# Fix for:
+# checking for hsa_amd_portable_export_dmabuf... no
+# checking for hip_runtime.h... no
+# configure: WARNING: HIP Runtime not found
+		filter-flags \
+			'-fuse-ld=*' \
+			'-Wl,-fuse-ld=lld'
+		append-flags \
+			'-Wl,-fuse-ld=lld' \
+			-Wl,-L"${ESYSROOT}${EROCM_PATH}/lib" \
+			-Wl,-lhsa-runtime64 \
+			-Wl,-lhsakmt
+	else
+		myconf+=(
+			--libdir="/usr/$(get_libdir)"
+			--prefix="/usr"
+			--without-rocm
+		)
+	fi
+
 	econf ${myconf[@]}
 }
 
-src_compile() {
+_compile() {
 	BASE_CFLAGS="" \
 	emake
 }
 
+src_configure() {
+	:
+}
+
+src_compile() {
+einfo "Building system ucx"
+	_configure
+	_compile
+	if use rocm ; then
+		local USE_ROCM=1
+		local pv
+		for pv in ${ROCM_VERSIONS[@]} ; do
+			local s="${pv}"
+			s="${s%.*}"
+			s="${s/./_}"
+			if use "rocm_${s}" ; then
+				local ROCM_SLOT="${pv%.*}"
+				local rocm_version="HIP_${s}_VERSION"
+				local ROCM_VERSION="${!rocm_version}"
+				local llvm_slot="HIP_${s}_LLVM_SLOT"
+				LLVM_SLOT="${!llvm_slot}"
+				pushd "${S}_rocm_${s}" >/dev/null 2>&1 || die
+einfo "Building for ROCm ${pv}"
+					rocm_pkg_setup
+					_configure
+					_compile
+				popd >/dev/null 2>&1 || die
+			fi
+		done
+		USE_ROCM=0
+	fi
+}
+
 src_install() {
 	default
-	find "${ED}" -type f -name '*.la' -delete || die
 	if use rocm ; then
-		rocm_fix_rpath
+		local USE_ROCM=1
+		local pv
+		for pv in ${ROCM_VERSIONS[@]} ; do
+			local s="${pv}"
+			s="${s%.*}"
+			s="${s/./_}"
+			if use "rocm_${s}" ; then
+einfo "Installing for ROCm ${pv}"
+				local ROCM_SLOT="${pv%.*}"
+				local rocm_version="HIP_${s}_VERSION"
+				local ROCM_VERSION="${!rocm_version}"
+				pushd "${S}_rocm_${s}" >/dev/null 2>&1 || die
+					default
+				popd >/dev/null 2>&1 || die
+				EROCM_PATH="/opt/rocm-${ROCM_VERSION}"
+				EROCM_CLANG_PATH="/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)/clang/${CLANG_SLOT}"
+				EROCM_LLVM_PATH="/opt/rocm-${ROCM_VERSION}/llvm"
+				rocm_fix_rpath "${ED}/opt/rocm-${ROCM_VERSION}"
+			fi
+		done
+		USE_ROCM=0
 	fi
+	find "${ED}" -type f -name '*.la' -delete || die
 }
