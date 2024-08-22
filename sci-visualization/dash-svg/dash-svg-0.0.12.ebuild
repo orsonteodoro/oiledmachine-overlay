@@ -1107,7 +1107,7 @@ https://github.com/stevej2608/dash-svg
 https://pypi.org/project/dash-svg/
 "
 LICENSE="MIT" # https://github.com/stevej2608/dash-svg/blob/0.0.12/DESCRIPTION#L8
-RESTRICT="mirror test ebuild-revision-1" # Did not test
+RESTRICT="mirror test ebuild-revision-2" # Did not test
 SLOT="0"
 IUSE="ebuild-revision-1"
 RDEPEND+="
