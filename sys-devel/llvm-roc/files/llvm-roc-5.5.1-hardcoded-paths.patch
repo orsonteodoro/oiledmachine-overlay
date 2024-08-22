@@ -1,6 +1,6 @@
 diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/clang/lib/Driver/ToolChains/AMDGPU.cpp llvm-project-rocm-5.5.1/clang/lib/Driver/ToolChains/AMDGPU.cpp
 --- llvm-project-rocm-5.5.1.orig/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/clang/lib/Driver/ToolChains/AMDGPU.cpp	2024-07-24 02:34:43.808632231 -0700
++++ llvm-project-rocm-5.5.1/clang/lib/Driver/ToolChains/AMDGPU.cpp	2024-08-21 16:39:30.584685400 -0700
 @@ -272,7 +272,7 @@ RocmInstallationDetector::getInstallatio
    ROCmSearchDirs.emplace_back(D.ResourceDir,
                                /*StrictChecking=*/true);
@@ -10,10 +10,21 @@ diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/clang/lib/Driver/ToolChain
                                /*StrictChecking=*/true);
  
    // Find the latest /opt/rocm-{release} directory.
-Only in llvm-project-rocm-5.5.1/clang/lib/Driver/ToolChains: AMDGPU.cpp.orig
+diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/clang/lib/Driver/ToolChains/Cuda.cpp llvm-project-rocm-5.5.1/clang/lib/Driver/ToolChains/Cuda.cpp
+--- llvm-project-rocm-5.5.1.orig/clang/lib/Driver/ToolChains/Cuda.cpp	2023-05-11 11:50:45.000000000 -0700
++++ llvm-project-rocm-5.5.1/clang/lib/Driver/ToolChains/Cuda.cpp	2024-08-21 16:41:23.142844336 -0700
+@@ -179,6 +179,8 @@ CudaInstallationDetector::CudaInstallati
+       // Special case for Debian to have nvidia-cuda-toolkit work
+       // out of the box. More info on http://bugs.debian.org/882505
+       Candidates.emplace_back(D.SysRoot + "/usr/lib/cuda");
++    if (Dist.IsGentoo())
++      Candidates.emplace_back(D.SysRoot + "/opt/cuda");
+   }
+ 
+   bool NoCudaLib = Args.hasArg(options::OPT_nogpulib);
 diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/clang/tools/amdgpu-arch/CMakeLists.txt llvm-project-rocm-5.5.1/clang/tools/amdgpu-arch/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/clang/tools/amdgpu-arch/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/clang/tools/amdgpu-arch/CMakeLists.txt	2024-07-24 02:34:43.824631965 -0700
++++ llvm-project-rocm-5.5.1/clang/tools/amdgpu-arch/CMakeLists.txt	2024-08-21 16:39:30.592685270 -0700
 @@ -8,7 +8,7 @@
  # //
  # //===----------------------------------------------------------------------===//
@@ -25,7 +36,7 @@ diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/clang/tools/amdgpu-arch/CM
  option(AMDGPU_ARCH_FORCE_DLOPEN_LIBHSA "Build with dlopened libhsa" ${AMDGPU_ARCH_DLOPEN_LIBHSA})
 diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/compiler-rt/CMakeLists.txt llvm-project-rocm-5.5.1/compiler-rt/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/compiler-rt/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/compiler-rt/CMakeLists.txt	2024-07-24 02:35:12.472155896 -0700
++++ llvm-project-rocm-5.5.1/compiler-rt/CMakeLists.txt	2024-08-21 16:39:30.592685270 -0700
 @@ -481,12 +481,12 @@ endif()
  
  if(SANITIZER_AMDGPU)
@@ -41,11 +52,9 @@ diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/compiler-rt/CMakeLists.txt
    endif()
    include_directories(${COMgr_INCLUDE})
  endif()
-Only in llvm-project-rocm-5.5.1/compiler-rt: CMakeLists.txt.orig
-Only in llvm-project-rocm-5.5.1/compiler-rt: CMakeLists.txt.rej
 diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/mlir/lib/Dialect/GPU/CMakeLists.txt llvm-project-rocm-5.5.1/mlir/lib/Dialect/GPU/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/mlir/lib/Dialect/GPU/CMakeLists.txt	2024-07-24 02:34:43.952629838 -0700
++++ llvm-project-rocm-5.5.1/mlir/lib/Dialect/GPU/CMakeLists.txt	2024-08-21 16:39:30.608685008 -0700
 @@ -129,7 +129,7 @@ if(MLIR_ENABLE_ROCM_CONVERSIONS)
        "Building mlir with ROCm support requires the AMDGPU backend")
    endif()
@@ -57,7 +66,7 @@ diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/mlir/lib/Dialect/GPU/CMake
      __DEFAULT_ROCM_PATH__="${DEFAULT_ROCM_PATH}"
 diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/mlir/lib/ExecutionEngine/CMakeLists.txt llvm-project-rocm-5.5.1/mlir/lib/ExecutionEngine/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/mlir/lib/ExecutionEngine/CMakeLists.txt	2024-07-24 02:34:43.972629506 -0700
++++ llvm-project-rocm-5.5.1/mlir/lib/ExecutionEngine/CMakeLists.txt	2024-08-21 16:39:30.616684877 -0700
 @@ -200,7 +200,7 @@ if(MLIR_ENABLE_ROCM_RUNNER)
    # Configure ROCm support.
    if (NOT DEFINED ROCM_PATH)
@@ -69,7 +78,7 @@ diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/mlir/lib/ExecutionEngine/C
      endif()
 diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/DeviceRTL/CMakeLists.txt llvm-project-rocm-5.5.1/openmp/libomptarget/DeviceRTL/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/openmp/libomptarget/DeviceRTL/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/openmp/libomptarget/DeviceRTL/CMakeLists.txt	2024-07-24 02:34:43.976629440 -0700
++++ llvm-project-rocm-5.5.1/openmp/libomptarget/DeviceRTL/CMakeLists.txt	2024-08-21 16:39:30.616684877 -0700
 @@ -198,7 +198,7 @@ function(compileDeviceRTLLibrary target_
          HINTS
          ${CMAKE_INSTALL_PREFIX}
@@ -81,7 +90,7 @@ diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/Device
          libomptarget_say("DeviceRTLs ${target_cpu}: Getting ROCm device libs from ${AMDDeviceLibs_DIR}")
 diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt llvm-project-rocm-5.5.1/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt	2024-07-24 02:34:43.976629440 -0700
++++ llvm-project-rocm-5.5.1/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt	2024-08-21 16:39:30.620684812 -0700
 @@ -17,7 +17,7 @@ endif()
  find_package(AMDDeviceLibs REQUIRED CONFIG PATHS
  	${CMAKE_BINARY_DIR}/../../tools/ROCMDEVLIBS
@@ -93,7 +102,7 @@ diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/device
  else()
 diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/hostrpc/services/CMakeLists.txt llvm-project-rocm-5.5.1/openmp/libomptarget/hostrpc/services/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/openmp/libomptarget/hostrpc/services/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/openmp/libomptarget/hostrpc/services/CMakeLists.txt	2024-07-24 02:34:43.976629440 -0700
++++ llvm-project-rocm-5.5.1/openmp/libomptarget/hostrpc/services/CMakeLists.txt	2024-08-21 16:39:30.620684812 -0700
 @@ -1,5 +1,5 @@
  
 -find_package(hsa-runtime64 1.2.0 REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
@@ -103,7 +112,7 @@ diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/hostrp
  if(SANITIZER_AMDGPU)
 diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt llvm-project-rocm-5.5.1/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2024-07-24 02:34:43.976629440 -0700
++++ llvm-project-rocm-5.5.1/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2024-08-21 16:39:30.624684746 -0700
 @@ -23,7 +23,7 @@ endif()
  
  # as of rocm-3.7, hsa is installed with cmake packages and kmt is found via hsa
@@ -113,3 +122,15 @@ diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/plugin
  
  if(hsa-runtime64_DIR)
    message("FOUND hsa-runtime64 at ${hsa-runtime64_DIR}")
+diff '--color=auto' -urp llvm-project-rocm-5.5.1.orig/polly/lib/CodeGen/PPCGCodeGeneration.cpp llvm-project-rocm-5.5.1/polly/lib/CodeGen/PPCGCodeGeneration.cpp
+--- llvm-project-rocm-5.5.1.orig/polly/lib/CodeGen/PPCGCodeGeneration.cpp	2023-05-11 11:50:45.000000000 -0700
++++ llvm-project-rocm-5.5.1/polly/lib/CodeGen/PPCGCodeGeneration.cpp	2024-08-21 16:41:32.618689320 -0700
+@@ -98,7 +98,7 @@ static cl::opt<bool>
+ 
+ static cl::opt<std::string> CUDALibDevice(
+     "polly-acc-libdevice", cl::desc("Path to CUDA libdevice"), cl::Hidden,
+-    cl::init("/usr/local/cuda/nvvm/libdevice/libdevice.compute_20.10.ll"),
++    cl::init("/opt/cuda/nvvm/libdevice/libdevice.compute_20.10.ll"),
+     cl::cat(PollyCategory));
+ 
+ static cl::opt<std::string>
