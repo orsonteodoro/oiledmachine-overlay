@@ -1014,6 +1014,10 @@ rocm_get_libdir() {
 # @DESCRIPTION:
 # Fix multislot issues
 rocm_fix_rpath() {
+	local scan_path="${1}"
+	if [[ -z "${scan_path}" ]] ; then
+		scan_path="${ED}"
+	fi
 	IFS=$'\n'
 	local rocm_libs=(
 		"libamdhip64.so"
@@ -1048,7 +1052,7 @@ rocm_fix_rpath() {
 	)
 	local l
 	local path
-	for path in $(find "${ED}" -type f) ; do
+	for path in $(find "${scan_path}" -type f) ; do
 		local is_exe=0
 		local is_so=0
 		if file "${path}" | grep -q "shared object" ; then

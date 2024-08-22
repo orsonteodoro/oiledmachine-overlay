@@ -5,8 +5,34 @@ EAPI=8
 
 FORTRAN_NEEDED="fortran"
 MY_P="${P/-mpi}"
+inherit hip-versions
+ROCM_VERSIONS=(
+	"${HIP_6_2_VERSION}"
+	"${HIP_6_1_VERSION}"
+	"${HIP_6_0_VERSION}"
+	"${HIP_5_7_VERSION}"
+	"${HIP_5_6_VERSION}"
+	"${HIP_5_5_VERSION}"
+	"${HIP_5_4_VERSION}"
+	"${HIP_5_3_VERSION}"
+	"${HIP_5_2_VERSION}"
+	"${HIP_5_1_VERSION}"
+	"${HIP_4_5_VERSION}"
+	"${HIP_4_1_VERSION}"
+)
+gen_rocm_iuse() {
+	local pv
+	for pv in ${ROCM_VERSIONS[@]} ; do
+		local s="${pv%.*}"
+		s="${s/./_}"
+		echo " rocm_${s}"
+	done
+}
+ROCM_IUSE=(
+	$(gen_rocm_iuse)
+)
 
-inherit cuda flag-o-matic fortran-2 libtool
+inherit cuda flag-o-matic fortran-2 libtool rocm
 
 IUSE_OPENMPI_FABRICS="
 	openmpi_fabrics_knem
@@ -29,15 +55,35 @@ SLOT="0"
 IUSE="
 ${IUSE_OPENMPI_FABRICS}
 ${IUSE_OPENMPI_RM}
-cma cuda fortran ipv6 peruse romio valgrind
+${ROCM_IUSE[@]}
+cma cuda custom-kernel fortran ipv6 peruse rocm romio system-ucx ucx valgrind
+ebuild-revision-1
 "
 
+gen_rocm_iuse_required_use() {
+	local pv
+	for pv in ${ROCM_VERSIONS[@]} ; do
+		local s="${pv%.*}"
+		s="${s/./_}"
+		echo "
+			rocm_${s}? (
+				rocm
+			)
+		"
+	done
+
+}
+
 REQUIRED_USE="
+	$(gen_rocm_iuse_required_use)
+	openmpi_rm_pbs? (
+		!openmpi_rm_slurm
+	)
 	openmpi_rm_slurm? (
 		!openmpi_rm_pbs
 	)
-	openmpi_rm_pbs? (
-		!openmpi_rm_slurm
+	system-ucx? (
+		ucx
 	)
 "
 
@@ -50,8 +96,30 @@ RDEPEND="
 	>=sys-apps/hwloc-2.0.2:=
 	>=sys-libs/zlib-1.2.8-r1
 	sys-cluster/pmix:=
+	cma? (
+		>=sys-libs/glibc-2.15
+		!custom-kernel? (
+			|| (
+				>=sys-kernel/gentoo-sources-3.2
+				>=sys-kernel/vanilla-sources-3.2
+				>=sys-kernel/git-sources-3.2
+				>=sys-kernel/mips-sources-3.2
+				>=sys-kernel/pf-sources-3.2
+				>=sys-kernel/rt-sources-3.2
+				>=sys-kernel/zen-sources-3.2
+				>=sys-kernel/raspberrypi-sources-3.2
+				>=sys-kernel/gentoo-kernel-3.2
+				>=sys-kernel/gentoo-kernel-bin-3.2
+				>=sys-kernel/vanilla-kernel-3.2
+				>=sys-kernel/linux-next-3.2
+				>=sys-kernel/asahi-sources-3.2
+				>=sys-kernel/ot-sources-3.2
+			)
+		)
+	)
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-6.5.19-r1:=
+		dev-util/nvidia-cuda-toolkit:=
 	)
 	openmpi_fabrics_knem? (
 		sys-cluster/knem
@@ -64,6 +132,9 @@ RDEPEND="
 	)
 	openmpi_rm_slurm? (
 		sys-cluster/slurm
+	)
+	system-ucx? (
+		sys-cluster/ucx
 	)
 "
 DEPEND="
@@ -101,9 +172,24 @@ src_prepare() {
 		>> \
 		"opal/etc/openmpi-mca-params.conf" \
 		|| die
+	if use rocm ; then
+		local pv
+		for pv in ${ROCM_VERSIONS[@]} ; do
+			local s="${pv}"
+			s="${s%.*}"
+			s="${s/./_}"
+			if use "rocm_${s}" ; then
+einfo "Copying sources for ROCm ${pv}"
+				local ROCM_SLOT="${pv%.*}"
+				cp -a "${S}" "${S}_rocm_${s}" || die
+			fi
+		done
+	fi
 }
 
-src_configure() {
+_configure() {
+einfo "ABI:  ${ABI}"
+einfo "get_libdir:  $(get_libdir)"
 	# -Werror=lto-type-mismatch, -Werror=strict-aliasing
 	# The former even prevents successfully running ./configure, but both appear
 	# at `make` time as well.
@@ -118,8 +204,8 @@ src_configure() {
 		$(use_enable peruse)
 		$(use_enable romio io-romio)
 		$(use_with cma)
-		$(use_with cuda cuda "${EPREFIX}/opt/cuda")
-		$(use_with openmpi_fabrics_knem knem "${EPREFIX}/usr")
+		$(use_with cuda cuda "${ESYSROOT}/opt/cuda")
+		$(use_with openmpi_fabrics_knem knem "${ESYSROOT}/usr")
 		$(use_with openmpi_rm_pbs tm)
 		$(use_with openmpi_rm_slurm slurm)
 		$(use_with valgrind)
@@ -132,7 +218,7 @@ src_configure() {
 		--enable-mpi-fortran=$(usex fortran all no)
 		--enable-prte-prefix-by-default
 		--enable-pretty-print-stacktrace
-		--sysconfdir="${EPREFIX}/etc/${PN}"
+		--sysconfdir="${ESYSROOT}/etc/${PN}"
 		--with-hwloc=external
 		--with-libevent=external
 	#
@@ -155,12 +241,84 @@ src_configure() {
 		--disable-heterogeneous
 	)
 
+	if use ucx ; then
+		if use system-ucx ; then
+			myconf+=(
+				--with-ucx="${ESYSROOT}/usr"
+			)
+		else
+			myconf+=(
+				--with-ucx
+			)
+		fi
+	else
+		myconf+=(
+			--without-ucx
+		)
+	fi
+
+	if [[ "${USE_ROCM}" == "1" ]] ; then
+		myconf+=(
+			--libdir="/opt/rocm-${ROCM_VERSION}/lib"
+			--prefix="/opt/rocm-${ROCM_VERSION}"
+			--with-rocm="${ESYSROOT}/opt/rocm-${ROCM_VERSION}"
+		)
+
+		local EROCM_PATH="/opt/rocm-${ROCM_VERSION}"
+		filter-flags \
+			'-fuse-ld=*' \
+			'-Wl,-fuse-ld=lld'
+		append-flags \
+			'-Wl,-fuse-ld=lld'
+			-Wl,-L"${ESYSROOT}${EROCM_PATH}/lib" \
+			-Wl,-lhsa-runtime64 \
+			-Wl,-lhsakmt
+	else
+		myconf+=(
+			--prefix="/usr"
+			--without-rocm
+		)
+	fi
+
 	CONFIG_SHELL="${BROOT}/bin/bash" \
-	econf "${myconf[@]}"
+	econf ${myconf[@]}
+}
+
+_compile() {
+	emake V=1
+}
+
+src_configure() {
+	:
 }
 
 src_compile() {
-	emake V=1
+einfo "Building for system"
+	_configure
+	_compile
+	if use rocm ; then
+		local USE_ROCM=1
+		local pv
+		for pv in ${ROCM_VERSIONS[@]} ; do
+			local s="${pv}"
+			s="${s%.*}"
+			s="${s/./_}"
+			if use "rocm_${s}" ; then
+				local ROCM_SLOT="${pv%.*}"
+				local rocm_version="HIP_${s}_VERSION"
+				local ROCM_VERSION="${!rocm_version}"
+				local llvm_slot="HIP_${s}_LLVM_SLOT"
+				LLVM_SLOT="${!llvm_slot}"
+				pushd "${S}_rocm_${s}" >/dev/null 2>&1 || die
+einfo "Building for ROCm ${pv}"
+					rocm_pkg_setup
+					_configure
+					_compile
+				popd >/dev/null 2>&1 || die
+			fi
+		done
+		USE_ROCM=0
+	fi
 }
 
 src_test() {
@@ -169,6 +327,29 @@ src_test() {
 
 src_install() {
 	default
+	if use rocm ; then
+		local USE_ROCM=1
+		local pv
+		for pv in ${ROCM_VERSIONS[@]} ; do
+			local s="${pv}"
+			s="${s%.*}"
+			s="${s/./_}"
+			if use "rocm_${s}" ; then
+einfo "Installing for ROCm ${pv}"
+				local ROCM_SLOT="${pv%.*}"
+				local rocm_version="HIP_${s}_VERSION"
+				local ROCM_VERSION="${!rocm_version}"
+				pushd "${S}_rocm_${s}" >/dev/null 2>&1 || die
+					default
+				popd >/dev/null 2>&1 || die
+				EROCM_PATH="/opt/rocm-${ROCM_VERSION}"
+				EROCM_CLANG_PATH="/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)/clang/${CLANG_SLOT}"
+				EROCM_LLVM_PATH="/opt/rocm-${ROCM_VERSION}/llvm"
+				rocm_fix_rpath "${ED}/opt/rocm-${ROCM_VERSION}"
+			fi
+		done
+		USE_ROCM=0
+	fi
 
 	# Remove la files, no static libs are installed and we have pkg-config
 	find "${ED}" -name '*.la' -delete || die
