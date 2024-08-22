@@ -62,6 +62,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE[@]}
 clang cma cuda dc debug devx dm gcc examples gdrcopy hip-clang mlx5-dv +numa
 +openmp rc rocm threads tm ud verbs video_cards_intel
+ebuild-revision-1
 "
 get_cuda_targets_required_use() {
 	local x
@@ -443,11 +444,11 @@ src_configure() {
 	fi
 
 	if use clang && use openmp ; then
-		append-cxxflags -I"${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/include" -fopenmp=libomp
+		append-flags -I"${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/include" -fopenmp=libomp
 	fi
 
 	if use hip-clang && use openmp ; then
-		append-cxxflags -I"${ESYSROOT}/opt/rocm-${ROCM_VERSION}/llvm/include" -fopenmp=libomp
+		append-flags -I"${ESYSROOT}/opt/rocm-${ROCM_VERSION}/llvm/include" -fopenmp=libomp
 	fi
 
 	if use tm ; then
