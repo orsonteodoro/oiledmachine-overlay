@@ -57,7 +57,7 @@ ${IUSE_OPENMPI_FABRICS}
 ${IUSE_OPENMPI_RM}
 ${ROCM_IUSE[@]}
 cma cuda custom-kernel fortran ipv6 peruse rocm romio system-ucx ucx valgrind
-ebuild-revision-1
+ebuild-revision-2
 "
 
 gen_rocm_iuse_required_use() {
@@ -274,7 +274,7 @@ einfo "get_libdir:  $(get_libdir)"
 			'-fuse-ld=*' \
 			'-Wl,-fuse-ld=lld'
 		append-flags \
-			'-Wl,-fuse-ld=lld'
+			'-Wl,-fuse-ld=lld' \
 			-Wl,-L"${ESYSROOT}${EROCM_PATH}/lib" \
 			-Wl,-lhsa-runtime64 \
 			-Wl,-lhsakmt
