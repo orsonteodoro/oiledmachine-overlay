@@ -247,7 +247,7 @@ RDEPEND="
 		sys-fs/fuse:3
 	)
 	knem? (
-		sys-cluster/knem
+		sys-cluster/knem[modules]
 	)
 	mlx5-dv? (
 		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
