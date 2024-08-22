@@ -82,6 +82,11 @@ REQUIRED_USE="
 	openmpi_rm_slurm? (
 		!openmpi_rm_pbs
 	)
+	rocm? (
+		|| (
+			${ROCM_IUSE[@]}
+		)
+	)
 	system-ucx? (
 		ucx
 	)

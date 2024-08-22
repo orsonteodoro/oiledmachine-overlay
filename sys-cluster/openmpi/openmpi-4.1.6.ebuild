@@ -110,6 +110,11 @@ REQUIRED_USE="
 	openmpi_ofed_features_rdmacm? (
 		openmpi_fabrics_ofed
 	)
+	rocm? (
+		|| (
+			${ROCM_IUSE[@]}
+		)
+	)
 	system-ucx? (
 		ucx
 	)
