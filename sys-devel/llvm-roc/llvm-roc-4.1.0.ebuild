@@ -134,7 +134,7 @@ einfo "See comments of metadata.xml for documentation on epgo."
 
 src_prepare() {
 	pushd "${WORKDIR}/llvm-project-rocm-${PV}" >/dev/null 2>&1 || die
-		eapply "A${FILESDIR}/${PN}-4.1.0-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-4.1.0-hardcoded-paths.patch"
 	popd >/dev/null 2>&1 || die
 
 	cmake_src_prepare
