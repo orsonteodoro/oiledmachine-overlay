@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+    <email>alexxy@gentoo.org</email>
+    <name>Alexey Shvetsov</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- Ebuild originators -->
+    <email>cluster@gentoo.org</email>
+    <name>Gentoo Cluster Project</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay TODO:
+
+  Fix build time problem.
+  Security issue - Add kernel signing.
+
+  -->
+</pkgmetadata>
