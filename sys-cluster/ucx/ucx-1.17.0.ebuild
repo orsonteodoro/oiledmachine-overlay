@@ -241,7 +241,7 @@ RDEPEND="
 		dev-libs/gdrcopy
 	)
 	fuse3? (
-		sys-fs/fuse
+		sys-fs/fuse:3
 	)
 	mlx5-dv? (
 		sys-cluster/rdma-core
