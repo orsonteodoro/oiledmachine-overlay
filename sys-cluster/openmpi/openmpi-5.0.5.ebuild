@@ -57,7 +57,7 @@ ${IUSE_OPENMPI_FABRICS}
 ${IUSE_OPENMPI_RM}
 ${ROCM_IUSE[@]}
 cma cuda custom-kernel fortran ipv6 peruse rocm romio system-ucx ucx valgrind
-ebuild-revision-2
+ebuild-revision-4
 "
 
 gen_rocm_iuse_required_use() {
@@ -209,7 +209,6 @@ einfo "get_libdir:  $(get_libdir)"
 		$(use_enable peruse)
 		$(use_enable romio io-romio)
 		$(use_with cma)
-		$(use_with cuda cuda "${ESYSROOT}/opt/cuda")
 		$(use_with openmpi_fabrics_knem knem "${ESYSROOT}/usr")
 		$(use_with openmpi_rm_pbs tm)
 		$(use_with openmpi_rm_slurm slurm)
@@ -277,6 +276,7 @@ einfo "get_libdir:  $(get_libdir)"
 			'-Wl,-fuse-ld=lld'
 	else
 		myconf+=(
+			$(use_with cuda cuda "${ESYSROOT}/opt/cuda")
 			--prefix="/usr"
 			--without-rocm
 		)

@@ -73,7 +73,7 @@ ${IUSE_OPENMPI_RM}
 ${ROCM_IUSE[@]}
 cma cuda custom-kernel cxx fortran ipv6 libompitrace peruse rocm romio
 system-ucx ucx valgrind
-ebuild-revision-2
+ebuild-revision-4
 "
 
 gen_rocm_iuse_required_use() {
@@ -249,7 +249,6 @@ einfo "get_libdir:  $(get_libdir)"
 		$(multilib_native_use_enable openmpi_ofed_features_dynamic-sl openib-dynamic-sl)
 		$(multilib_native_use_enable openmpi_ofed_features_rdmacm openib-rdmacm)
 		$(multilib_native_use_enable openmpi_ofed_features_udcm openib-udcm)
-		$(multilib_native_use_with cuda cuda "${ESYSROOT}/opt/cuda")
 		$(multilib_native_use_with valgrind)
 		$(multilib_native_use_with openmpi_fabrics_ofed verbs "${ESYSROOT}/usr")
 		$(multilib_native_use_with openmpi_fabrics_knem knem "${ESYSROOT}/usr")
@@ -318,6 +317,7 @@ einfo "get_libdir:  $(get_libdir)"
 		_econf_source="${S}_rocm_${s}"
 	else
 		myconf+=(
+			$(multilib_native_use_with cuda cuda "${ESYSROOT}/opt/cuda")
 			--prefix="/usr"
 			--without-rocm
 		)
