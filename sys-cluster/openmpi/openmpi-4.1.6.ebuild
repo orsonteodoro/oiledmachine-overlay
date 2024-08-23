@@ -57,7 +57,7 @@ inherit cuda flag-o-matic fortran-2 libtool multilib-minimal rocm
 
 KEYWORDS="~alpha amd64 arm arm64 ~ia64 ~loong ~ppc ppc64 ~riscv sparc x86 ~amd64-linux"
 S="${WORKDIR}/${MY_P}"
-SRC_URI="https://download.open-mpi.org/release/open-mpi/v$(ver_cut 1-2)/${P}.tar.bz2"
+SRC_URI="https://www.open-mpi.org/software/ompi/v$(ver_cut 1-2)/downloads/${MY_P}.tar.bz2"
 
 DESCRIPTION="A high-performance message passing library (MPI)"
 HOMEPAGE="
@@ -176,8 +176,14 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	valgrind? (
-		dev-debug/valgrind
+		>=dev-debug/valgrind-3.2.0
 	)
+"
+BDEPEND="
+	>=dev-build/automake-1.15
+	>=dev-build/autoconf-2.69.0
+	>=dev-build/libtool-2.4.6
+	>=sys-devel/flex-2.5.4
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-4.1.6-incompatible-pointers.patch"

@@ -97,8 +97,8 @@ RDEPEND="
 	!sys-cluster/mpich2
 	!sys-cluster/nullmpi
 	!sys-cluster/prrte
-	>=dev-libs/libevent-2.0.22:=[threads(+)]
-	>=sys-apps/hwloc-2.0.2:=
+	>=dev-libs/libevent-2.1.12:=[threads(+)]
+	>=sys-apps/hwloc-2.7.1:=
 	>=sys-libs/zlib-1.2.8-r1
 	sys-cluster/pmix:=
 	cma? (
@@ -145,8 +145,14 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	valgrind? (
-		dev-debug/valgrind
+		>=dev-debug/valgrind-3.2.0
 	)
+"
+BDEPEND="
+	>=dev-build/automake-1.16.5
+	>=dev-build/autoconf-2.69.0
+	>=dev-build/libtool-2.4.6
+	>=sys-devel/flex-2.5.4
 "
 
 pkg_setup() {
