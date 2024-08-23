@@ -23,9 +23,12 @@ LICENSE="
 	BSD
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="verbs ebuild-revision-0"
+IUSE="ucx verbs ebuild-revision-0"
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}
+	ucx? (
+		sys-cluster/ucx[rocm,rocm_6_2]
+	)
 	verbs? (
 		sys-cluster/rdma-core
 	)
@@ -56,9 +59,23 @@ src_configure() {
 		--prefix="${EROCM_PATH}"
 		--with-hip="${EROCM_PATH}"
 	)
+	if use ucx ; then
+		myconf+=(
+			--with-ucx="${ESYSROOT}/opt/rocm-${ROCM_VERSION}"
+		)
+	else
+		myconf+=(
+			--without-ucx
+		)
+	fi
+	# TODO: --with-sharp=
 	if use verbs ; then
 		myconf+=(
 			--with-verbs="${ESYSROOT}/usr"
+		)
+	else
+		myconf+=(
+			--without-verbs
 		)
 	fi
 	econf ${myconf[@]}
