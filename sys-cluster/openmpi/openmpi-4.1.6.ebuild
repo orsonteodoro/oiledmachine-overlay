@@ -72,7 +72,7 @@ ${IUSE_OPENMPI_OFED_FEATURES}
 ${IUSE_OPENMPI_RM}
 ${ROCM_IUSE[@]}
 cma cuda custom-kernel cxx fortran ipv6 libompitrace peruse rocm romio
-system-ucx ucx valgrind
+sharp system-ucx ucx valgrind
 ebuild-revision-4
 "
 
@@ -168,6 +168,9 @@ RDEPEND="
 	)
 	openmpi_ofed_features_rdmacm? (
 		sys-cluster/rdma-core
+	)
+	sharp? (
+		dev-util/DOCA-Host[hcoll]
 	)
 	system-ucx? (
 		sys-cluster/ucx
@@ -289,6 +292,16 @@ einfo "get_libdir:  $(get_libdir)"
 	#
 		--disable-heterogeneous
 	)
+
+	if use sharp ; then
+		myconf+=(
+			--with-hcoll="${ESYSROOT}/opt/mellanox/hcoll"
+		)
+	else
+		myconf+=(
+			--without-hcoll
+		)
+	fi
 
 	if use ucx ; then
 		if use system-ucx ; then

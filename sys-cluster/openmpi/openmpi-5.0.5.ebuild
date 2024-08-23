@@ -56,7 +56,7 @@ IUSE="
 ${IUSE_OPENMPI_FABRICS}
 ${IUSE_OPENMPI_RM}
 ${ROCM_IUSE[@]}
-cma cuda custom-kernel fortran ipv6 peruse rocm romio system-ucx ucx valgrind
+cma cuda custom-kernel fortran ipv6 peruse rocm romio sharp system-ucx ucx valgrind
 ebuild-revision-4
 "
 
@@ -137,6 +137,9 @@ RDEPEND="
 	)
 	openmpi_rm_slurm? (
 		sys-cluster/slurm
+	)
+	sharp? (
+		dev-util/DOCA-Host[hcoll]
 	)
 	system-ucx? (
 		sys-cluster/ucx
@@ -250,6 +253,16 @@ einfo "get_libdir:  $(get_libdir)"
 	#
 		--disable-heterogeneous
 	)
+
+	if use sharp ; then
+		myconf+=(
+			--with-hcoll="${ESYSROOT}/opt/mellanox/hcoll"
+		)
+	else
+		myconf+=(
+			--without-hcoll
+		)
+	fi
 
 	if use ucx ; then
 		if use system-ucx ; then

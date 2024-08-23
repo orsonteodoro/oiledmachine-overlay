@@ -26,6 +26,9 @@
     <flag name="romio">
       Build the ROMIO MPI-IO component
     </flag>
+    <flag name="sharp">
+      Add SHArP support
+    </flag>
   </use>
   <upstream>
     <remote-id type="github">open-mpi/ompi</remote-id>
