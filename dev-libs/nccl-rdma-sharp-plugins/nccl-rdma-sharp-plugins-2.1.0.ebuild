@@ -22,10 +22,7 @@ IUSE="sharp ucx verbs ebuild-revision-0"
 RDEPEND="
 	dev-util/nvidia-cuda-toolkit:=
 	sharp? (
-		|| (
-			dev-util/DOCA-Host
-			net-misc/MLNX_OFED
-		)
+		dev-util/DOCA-Host[sharp]
 	)
 	ucx? (
 		sys-cluster/ucx[cuda]

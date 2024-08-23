@@ -27,10 +27,7 @@ IUSE="sharp ucx verbs ebuild-revision-0"
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	sharp? (
-		|| (
-			dev-util/DOCA-Host
-			net-misc/MLNX_OFED
-		)
+		dev-util/DOCA-Host[sharp]
 	)
 	ucx? (
 		sys-cluster/ucx[rocm,rocm_6_1]
