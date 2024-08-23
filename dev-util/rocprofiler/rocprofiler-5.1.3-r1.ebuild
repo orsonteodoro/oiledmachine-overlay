@@ -41,7 +41,7 @@ LICENSE="
 "
 # BSD-2 - test/util/hsa_rsrc_factory.h
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-15"
+IUSE=" test ebuild-revision-16"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -120,6 +120,10 @@ src_install() {
 	cmake_src_install
 	rocm_mv_docs
 	rocm_fix_rpath
+	patchelf \
+		--add-rpath "/opt/rocm-${PV}/rocprofiler/lib" \
+		"${ED}/opt/rocm-${PV}/rocprofiler/tool/libtool.so" \
+		|| die
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
