@@ -63,7 +63,7 @@ LICENSE="
 # The distro Apache-2.0 license template does not have all rights reserved
 # The distro MIT license template does not have all rights reserved
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-13"
+IUSE="ebuild-revision-14"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
@@ -203,7 +203,7 @@ build_rocmlir() {
 		-DELLVM_VERSION_SUFFIX=roc
 		# -DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/include" # Originally this
 		-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/${EROCM_LLVM_PATH}/llvm/include"
-		-DLLVM_LIBDIR_SUFFIX="${libdir_suffix}"
+		#-DLLVM_LIBDIR_SUFFIX="${libdir_suffix}"
 	)
 
 	rocm_set_default_clang
