@@ -56,7 +56,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test" # Not tested
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" doc +esmi test ebuild-revision-0"
+IUSE+=" doc +esmi test ebuild-revision-1"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -118,6 +118,7 @@ src_configure() {
 	rocm_set_default_gcc
 	local mycmakeargs=(
 		-DBUILD_TESTS=$(usex test)
+		-DCMAKE_INSTALL_LIBDIR=$(rocm_get_libdir)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_PREFIX_PATH="${ESYSROOT}${EROCM_PATH}"
 		-DENABLE_ESMI_LIB=$(usex esmi)
