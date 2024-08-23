@@ -6,6 +6,7 @@ EAPI=8
 DOWNLOAD_FILE_AMD64="doca-host_2.8.0-204000-24.07-ubuntu2204_amd64.deb"
 DOWNLOAD_HOMEPAGE="https://developer.nvidia.com/doca-downloads"
 POOL_DIR="${WORKDIR}/usr/share/doca-host-2.8.0-204000-24.07-ubuntu2204/repo/pool"
+RDMA_CORE_PV="52"
 
 inherit unpacker
 
@@ -29,15 +30,24 @@ LICENSE="
 	)
 "
 SLOT="0"
-IUSE+=" sharp ebuild-revision-0"
+IUSE+=" hcoll sharp ebuild-revision-0"
 REQUIRED_USE="
+	hcoll? (
+		sharp
+	)
 	|| (
+		hcoll
 		sharp
 	)
 "
 RDEPEND="
+	hcoll? (
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
+		>=sys-libs/glibc-2.34
+		sys-cluster/ucx
+	)
 	sharp? (
-		>=sys-cluster/rdma-core-34
+		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
 		>=sys-devel/gcc-11
 		>=sys-libs/glibc-2.3.4
 		sys-cluster/ucx
@@ -72,7 +82,15 @@ einfo "Filename:  ${DOWNLOAD_FILE_AMD64}"
 einfo
 }
 
+unpack_hcoll_amd64() {
+	use hcoll || return
+	pushd "${d}" >/dev/null 2>&1 || die
+		unpack_deb "${POOL_DIR}/hcoll_4.8.3228-1.2407061_amd64.deb"
+	popd >/dev/null 2>&1 || die
+}
+
 unpack_sharp_amd64() {
+	use sharp || return
 	pushd "${d}" >/dev/null 2>&1 || die
 		unpack_deb "${POOL_DIR}/sharp_3.8.0.MLNX20240804.aaa5caab-1.2407061_amd64.deb"
 	popd >/dev/null 2>&1 || die
@@ -80,9 +98,10 @@ unpack_sharp_amd64() {
 
 src_unpack() {
         unpack_deb ${A}
-	local d="${WORKDIR}/staging-area"
+	local d="${T}/staging-area"
 	mkdir -p "${d}"
 	if use amd64 ; then
+		unpack_hcoll_amd64
 		unpack_sharp_amd64
 	fi
 }
@@ -117,7 +136,7 @@ einfo "Sanitizing file/folder permissions"
 }
 
 src_install() {
-	cd "${WORKDIR}/staging-area"
+	cd "${T}/staging-area"
 	doins -r *
 	insinto "/usr/share/doc/doca-host"
 	doins "${WORKDIR}/usr/share/doc/doca-host/"*

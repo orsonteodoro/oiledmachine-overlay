@@ -2,6 +2,9 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <use>
+    <flag name="hcoll">
+      Install Hierarchical collectives (HCOLL) support.
+    </flag>
     <flag name="sharp">
       Install SHArP switch collectives support.
     </flag>
