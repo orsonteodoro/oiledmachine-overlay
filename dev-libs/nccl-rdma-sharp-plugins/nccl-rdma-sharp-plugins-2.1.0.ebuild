@@ -85,7 +85,7 @@ check_kernel_setup() {
 	check_extra_config
 
 	if use verbs ; then
-		WARNING_INFINIBAND_USER_ACCESS="CONFIG_INFINIBAND_USER_ACCESS=y is required for InfiniBand or RoCE support."
+		WARNING_INFINIBAND_USER_ACCESS="CONFIG_INFINIBAND_USER_ACCESS=y is required for InfiniBand Verbs support."
 		check_extra_config
 	fi
 }
