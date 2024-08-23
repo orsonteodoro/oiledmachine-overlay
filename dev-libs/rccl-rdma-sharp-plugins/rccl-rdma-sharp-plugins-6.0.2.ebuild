@@ -28,7 +28,7 @@ RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	sharp? (
 		|| (
-			net-misc/DOCA-Host
+			dev-util/DOCA-Host
 			net-misc/MLNX_OFED
 		)
 	)

@@ -23,7 +23,7 @@ RDEPEND="
 	dev-util/nvidia-cuda-toolkit:=
 	sharp? (
 		|| (
-			net-misc/DOCA-Host
+			dev-util/DOCA-Host
 			net-misc/MLNX_OFED
 		)
 	)
