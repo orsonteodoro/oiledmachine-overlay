@@ -7,7 +7,7 @@ LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit autotools rocm
+inherit autotools linux-info rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -23,9 +23,15 @@ LICENSE="
 	BSD
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ucx verbs ebuild-revision-0"
+IUSE="sharp ucx verbs ebuild-revision-0"
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}
+	sharp? (
+		|| (
+			net-misc/DOCA-Host
+			net-misc/MLNX_OFED
+		)
+	)
 	ucx? (
 		sys-cluster/ucx[rocm,rocm_6_1]
 	)
@@ -43,7 +49,25 @@ PATCHES=(
 	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
 )
 
+check_kernel_setup() {
+	linux-info_pkg_setup
+	CONFIG_CHECK="
+		~NET
+		~INET
+		~MLXSW_CORE
+		~NET_SWITCHDEV
+		~MLXSW_SWITCHIB
+	"
+	WARNING_NET="CONFIG_NET is required for SwitchIB-2 support."
+	WARNING_INET="CONFIG_INET is required for SwitchIB-2 support."
+	WARNING_MLXSW_CORE="CONFIG_MLXSW_CORE is required for SwitchIB-2 support."
+	WARNING_NET_SWITCHDEV="CONFIG_NET_SWITCHDEV is required for SwitchIB-2 support."
+	WARNING_MLXSW_SWITCHIB="CONFIG_MLXSW_SWITCHIB is required for SwitchIB-2 support." # Kernel 5.4
+	check_extra_config
+}
+
 pkg_setup() {
+	check_kernel_setup
 	rocm_pkg_setup
 }
 
@@ -68,7 +92,15 @@ src_configure() {
 			--without-ucx
 		)
 	fi
-	# TODO: --with-sharp=
+	if use sharp ; then
+		myconf+=(
+			--with-sharp="${ESYSROOT}/opt/mellanox/sharp"
+		)
+	else
+		myconf+=(
+			--without-sharp
+		)
+	fi
 	if use verbs ; then
 		myconf+=(
 			--with-verbs="${ESYSROOT}/usr"
