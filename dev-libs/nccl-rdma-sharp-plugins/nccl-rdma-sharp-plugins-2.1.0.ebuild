@@ -20,6 +20,7 @@ LICENSE="
 SLOT="0"
 IUSE="sharp ucx verbs ebuild-revision-0"
 RDEPEND="
+	dev-util/nvidia-cuda-toolkit:=
 	sharp? (
 		|| (
 			net-misc/DOCA-Host
