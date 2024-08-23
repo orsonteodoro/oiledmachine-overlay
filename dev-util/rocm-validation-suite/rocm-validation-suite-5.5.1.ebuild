@@ -45,7 +45,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test" # Needs SRC_URI changes for offline install.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" doc test ebuild-revision-0"
+IUSE+=" doc test ebuild-revision-1"
 RDEPEND="
 	dev-cpp/yaml-cpp
 	sys-apps/pciutils
@@ -101,6 +101,10 @@ src_configure() {
 
 src_install() {
 	cmake_src_install
+	# Fix missing ldd rows
+	insinto "${EROCM_PATH}"
+	doexe "rvslib/librvslib.so"
+	doexe "rvs/librvshelper.so"
 	rocm_mv_docs
 	rocm_fix_rpath
 ewarn "RCQT (ROCm Configuration Qualification Tool) does not support portage."
