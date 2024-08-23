@@ -119,5 +119,7 @@ einfo "Sanitizing file/folder permissions"
 src_install() {
 	cd "${WORKDIR}/staging-area"
 	doins -r *
+	insinto "/usr/share/doc/doca-host"
+	doins "${WORKDIR}/usr/share/doc/doca-host/"*
 	sanitize_permissions
 }
