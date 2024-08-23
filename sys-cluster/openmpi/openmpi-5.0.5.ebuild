@@ -56,7 +56,7 @@ IUSE="
 ${IUSE_OPENMPI_FABRICS}
 ${IUSE_OPENMPI_RM}
 ${ROCM_IUSE[@]}
-cma cuda custom-kernel fortran ipv6 peruse rocm romio sharp system-ucx ucx valgrind
+cma cuda custom-kernel fortran hcoll ipv6 peruse rocm romio system-ucx ucx valgrind
 ebuild-revision-4
 "
 
@@ -126,6 +126,9 @@ RDEPEND="
 		>=dev-util/nvidia-cuda-toolkit-6.5.19-r1:=
 		dev-util/nvidia-cuda-toolkit:=
 	)
+	hcoll? (
+		dev-util/DOCA-Host[hcoll]
+	)
 	openmpi_fabrics_knem? (
 		sys-cluster/knem
 	)
@@ -137,9 +140,6 @@ RDEPEND="
 	)
 	openmpi_rm_slurm? (
 		sys-cluster/slurm
-	)
-	sharp? (
-		dev-util/DOCA-Host[hcoll]
 	)
 	system-ucx? (
 		sys-cluster/ucx
@@ -254,7 +254,7 @@ einfo "get_libdir:  $(get_libdir)"
 		--disable-heterogeneous
 	)
 
-	if use sharp ; then
+	if use hcoll ; then
 		myconf+=(
 			--with-hcoll="${ESYSROOT}/opt/mellanox/hcoll"
 		)

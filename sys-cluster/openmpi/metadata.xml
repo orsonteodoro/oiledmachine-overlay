@@ -17,6 +17,9 @@
     <flag name="cma">
       Enable the CMA (Cross Memory Attach) MCA
     </flag>
+    <flag name="hcoll">
+      Add SHARP™ support to offload collective operations
+    </flag>
     <flag name="libompitrace">
       Enable support for contributed package libompitrace
     </flag>
@@ -25,9 +28,6 @@
     </flag>
     <flag name="romio">
       Build the ROMIO MPI-IO component
-    </flag>
-    <flag name="sharp">
-      Add SHArP support
     </flag>
   </use>
   <upstream>
