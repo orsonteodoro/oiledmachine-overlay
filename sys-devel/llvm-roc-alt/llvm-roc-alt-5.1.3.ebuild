@@ -51,7 +51,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-	ebuild-revision-0
+	ebuild-revision-1
 "
 REQUIRED_USE="
 "
@@ -65,7 +65,7 @@ RDEPEND="
 	dev-libs/libffi
 	dev-libs/libxml2
 	sys-apps/texinfo
-	sys-libs/ncurses
+	sys-libs/ncurses-compat:5
 	sys-libs/zlib
 	virtual/libelf
 	~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
