@@ -314,10 +314,7 @@ einfo "get_libdir:  $(get_libdir)"
 			'-fuse-ld=*' \
 			'-Wl,-fuse-ld=lld'
 		append-flags \
-			'-Wl,-fuse-ld=lld' \
-			-Wl,-L"${ESYSROOT}${EROCM_PATH}/lib" \
-			-Wl,-lhsa-runtime64 \
-			-Wl,-lhsakmt
+			'-Wl,-fuse-ld=lld'
 		_econf_source="${S}_rocm_${s}"
 	else
 		myconf+=(
