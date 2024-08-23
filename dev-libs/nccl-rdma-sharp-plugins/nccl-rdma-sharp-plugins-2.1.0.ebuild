@@ -3,29 +3,23 @@
 
 EAPI=8
 
-LLVM_SLOT=17
-ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_VERSION="${PV}"
-
-inherit autotools linux-info rocm
+inherit autotools linux-info
 
 KEYWORDS="~amd64"
-S="${WORKDIR}/${PN}-rocm-${PV}"
+S="${WORKDIR}/${P}"
 SRC_URI="
-https://github.com/ROCm/rccl-rdma-sharp-plugins/archive/refs/tags/rocm-${PV}.tar.gz
+https://github.com/Mellanox/nccl-rdma-sharp-plugins/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="rccl-rdma-sharp plugin enables RDMA and Switch based collectives \
-(SHARP) with AMD's RCCL library"
-HOMEPAGE="https://github.com/ROCm/rccl-rdma-sharp-plugins"
+DESCRIPTION="RDMA and SHARP plugins for nccl library"
+HOMEPAGE="https://github.com/Mellanox/nccl-rdma-sharp-plugins"
 LICENSE="
 	BSD
 "
-SLOT="${ROCM_SLOT}/${PV}"
+SLOT="0"
 IUSE="sharp ucx verbs ebuild-revision-0"
 RDEPEND="
-	~dev-util/hip-${PV}:${ROCM_SLOT}
 	sharp? (
 		|| (
 			net-misc/DOCA-Host
@@ -33,7 +27,7 @@ RDEPEND="
 		)
 	)
 	ucx? (
-		sys-cluster/ucx[rocm,rocm_6_0]
+		sys-cluster/ucx[cuda]
 	)
 	verbs? (
 		sys-cluster/rdma-core
@@ -43,10 +37,8 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	${HIPCC_DEPEND}
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
 )
 
 check_kernel_setup() {
@@ -99,24 +91,21 @@ check_kernel_setup() {
 
 pkg_setup() {
 	check_kernel_setup
-	rocm_pkg_setup
 }
 
 src_prepare() {
 	default
-	rocm_src_prepare
 	eautoreconf
 }
 
 src_configure() {
-	rocm_set_default_hipcc
 	local myconf=(
-		--prefix="${EROCM_PATH}"
-		--with-hip="${EROCM_PATH}"
+		--prefix="/usr"
+		--with-cuda="${ESYSROOT}/opt/cuda"
 	)
 	if use ucx ; then
 		myconf+=(
-			--with-ucx="${ESYSROOT}/opt/rocm-${ROCM_VERSION}"
+			--with-ucx="${ESYSROOT}/usr"
 		)
 	else
 		myconf+=(
@@ -152,7 +141,6 @@ src_install() {
 	emake DESTDIR="${D}" install
 	docinto "licenses"
 	dodoc "LICENSE"
-	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

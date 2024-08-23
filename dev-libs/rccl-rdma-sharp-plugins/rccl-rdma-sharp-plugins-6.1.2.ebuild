@@ -64,6 +64,37 @@ check_kernel_setup() {
 	WARNING_NET_SWITCHDEV="CONFIG_NET_SWITCHDEV is required for SwitchIB-2 support."
 	WARNING_MLXSW_SWITCHIB="CONFIG_MLXSW_SWITCHIB is required for SwitchIB-2 support." # Kernel 5.4
 	check_extra_config
+
+	CONFIG_CHECK="
+		~NETDEVICES
+		~ETHERNET
+		~NET_VENDOR_MELLANOX
+		~MLX5_CORE
+		~MLX5_INFINIBAND
+	"
+	WARNING_NETDEVICES="CONFIG_NETDEVICES=y is required for ConnectX-5 or later support."
+	WARNING_ETHERNET="CONFIG_ETHERNET=y is required for ConnectX-5 or later support."
+	WARNING_MLX5_CORE="CONFIG_MLX5_CORE=y is required for ConnectX-5 or later support."
+	WARNING_MLX5_INFINIBAND="CONFIG_MLX5_INFINIBAND=y is required for ConnectX-5 or later support."
+	check_extra_config
+
+	CONFIG_CHECK="
+		~NET
+		~INET
+		~IPV6
+		~INFINIBAND
+		~INFINIBAND_USER_ACCESS
+	"
+	WARNING_NET="CONFIG_NET=y is required for InfiniBand or RoCE support."
+	WARNING_INET="CONFIG_INET=y is required for InfiniBand or RoCE support."
+	WARNING_IPV6="CONFIG_IPV6=y is required for InfiniBand or RoCE support."
+	WARNING_INFINIBAND="CONFIG_INFINIBAND=y is required for InfiniBand or RoCE support."
+	check_extra_config
+
+	if use verbs ; then
+		WARNING_INFINIBAND_USER_ACCESS="CONFIG_INFINIBAND_USER_ACCESS=y is required for InfiniBand or RoCE support."
+		check_extra_config
+	fi
 }
 
 pkg_setup() {
