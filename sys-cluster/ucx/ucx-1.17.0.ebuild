@@ -622,14 +622,22 @@ _configure() {
 # checking for hsa_amd_portable_export_dmabuf... no
 # checking for hip_runtime.h... no
 # configure: WARNING: HIP Runtime not found
+		replace-flags '-O*' '-O2'
 		filter-flags \
 			'-fuse-ld=*' \
-			'-Wl,-fuse-ld=lld'
-		append-flags \
-			'-Wl,-fuse-ld=lld' \
-			-Wl,-L"${ESYSROOT}${EROCM_PATH}/lib" \
-			-Wl,-lhsa-runtime64 \
-			-Wl,-lhsakmt
+			'-Wl,-fuse-ld=*' \
+			'-Wl,--as-needed'
+		if [[ "${s/_/.}" == "6.2" ]] ; then
+			append-flags \
+				'-Wl,-fuse-ld=lld' \
+				-Wl,-L"${ESYSROOT}${EROCM_PATH}/lib" \
+				-Wl,-lhsakmt-staticdrm \
+				-Wl,-ldrm
+		else
+# Fix:  libhsa-runtime64.so: undefined reference to `hsaKmtWaitOnMultipleEvents_Ext'
+			append-flags \
+				'-Wl,-fuse-ld=lld'
+		fi
 	else
 		myconf+=(
 			--libdir="/usr/$(get_libdir)"
