@@ -1081,7 +1081,7 @@ rocm_fix_rpath() {
 		if (( ${is_so} || ${is_exe} )) ; then
 			for l in "${rocm_libs[@]}" ; do
 				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
-					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
+					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm-[0-9]\.[0-9]\.[0-9]/" ; then
 						:
 					else
 						needs_rpath_patch_rocm=1
@@ -1094,7 +1094,7 @@ rocm_fix_rpath() {
 			else
 				for l in "${llvm_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
-						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
+						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm-[0-9]\.[0-9]\.[0-9]/" ; then
 							:
 						else
 							needs_rpath_patch_llvm=1
@@ -1104,7 +1104,7 @@ rocm_fix_rpath() {
 
 				for l in "${clang_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
-						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
+						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm-[0-9]\.[0-9]\.[0-9]/" ; then
 							:
 						else
 							needs_rpath_patch_clang=1
@@ -1114,7 +1114,7 @@ rocm_fix_rpath() {
 
 				for l in "${libomp_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
-						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
+						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm-[0-9]\.[0-9]\.[0-9]/" ; then
 							:
 						else
 							needs_rpath_patch_libomp=1
@@ -1286,7 +1286,7 @@ rocm_verify_rpath_correctness() {
 		if (( ${is_so} || ${is_exe} )) ; then
 			for l in "${rocm_libs[@]}" ; do
 				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
-					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
+					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm-[0-9]\.[0-9]\.[0-9]/" ; then
 						:
 					else
 						reason_rocm="${l}"
@@ -1300,7 +1300,7 @@ rocm_verify_rpath_correctness() {
 			else
 				for l in "${llvm_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
-						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
+						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm-[0-9]\.[0-9]\.[0-9]/" ; then
 							:
 						else
 							reason_llvm="${l}"
@@ -1311,7 +1311,7 @@ rocm_verify_rpath_correctness() {
 
 				for l in "${clang_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
-						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
+						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm-[0-9]\.[0-9]\.[0-9]/" ; then
 							:
 						else
 							reason_clang="${l}"
@@ -1322,7 +1322,7 @@ rocm_verify_rpath_correctness() {
 
 				for l in "${libomp_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
-						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
+						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm-[0-9]\.[0-9]\.[0-9]/" ; then
 							:
 						else
 							reason_libomp="${l}"

@@ -39,12 +39,11 @@ main() {
 	for path in $(find /opt/rocm-* 2>/dev/null) ; do
 		local is_so=0
 		local is_exe=0
+		[[ -L "${path}" ]] && continue
 		if file "${path}" | grep -q "shared object" ; then
 			is_so=1
 		elif file "${path}" | grep -q "ELF.*executable" ; then
 			is_exe=1
-		elif file "${path}" | grep -q "symbolic link" ; then
-			continue
 		fi
 
 		if (( ${is_so} || ${is_exe} )) ; then
@@ -58,8 +57,8 @@ main() {
 			local needs_rpath_patch_rocm=0
 			for l in "${rocm_libs[@]}" ; do
 				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
-					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
-						:;
+					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm-[0-9]\.[0-9]\.[0-9]/" ; then
+						:
 					else
 						reason_rocm="${l}"
 						needs_rpath_patch_rocm=1
@@ -70,8 +69,8 @@ main() {
 			if [[ "${USE_SYSTEM_LLVM}" != "1" ]] ; then
 				for l in "${llvm_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
-						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
-							:;
+						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm-[0-9]\.[0-9]\.[0-9]/" ; then
+							:
 						else
 							reason_llvm="${l}"
 							needs_rpath_patch_llvm=1
@@ -81,8 +80,8 @@ main() {
 
 				for l in "${clang_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
-						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
-							:;
+						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm-[0-9]\.[0-9]\.[0-9]/" ; then
+							:
 						else
 							reason_clang="${l}"
 							needs_rpath_patch_clang=1
@@ -92,8 +91,8 @@ main() {
 
 				for l in "${libomp_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
-						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
-							:;
+						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm-[0-9]\.[0-9]\.[0-9]/" ; then
+							:
 						else
 							reason_libomp="${l}"
 							needs_rpath_patch_libomp=1
@@ -106,7 +105,7 @@ main() {
 				for l in "${llvm_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "lib/llvm" ; then
-							:;
+							:
 						else
 							reason_llvm="${l}"
 							needs_rpath_patch_llvm=1
@@ -117,7 +116,7 @@ main() {
 				for l in "${clang_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "lib/llvm" ; then
-							:;
+							:
 						else
 							reason_clang="${l}"
 							needs_rpath_patch_clang=1
@@ -128,7 +127,7 @@ main() {
 				for l in "${libomp_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "lib/llvm" ; then
-							:;
+							:
 						else
 							reason_libomp="${l}"
 							needs_rpath_patch_libomp=1
