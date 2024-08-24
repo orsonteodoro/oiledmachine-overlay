@@ -44,12 +44,20 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test verbs ebuild-revision-7"
+IUSE="test peermem verbs ebuild-revision-7"
 RDEPEND="
 	!dev-libs/rccl:0
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
+	peermem? (
+		dev-util/DOCA-Host[mlnx-ofed-kernel]
+		|| (
+			virtual/kfd:6.2
+			virtual/kfd:6.1
+			virtual/kfd:6.0
+		)
+	)
 	verbs? (
 		sys-cluster/rdma-core
 	)
@@ -99,8 +107,8 @@ check_kernel_setup() {
 			~DMI
 			~DMIID
 		"
-		WARNING_DMI="CONFIG_DMI=y is needed for gfx94x special cases or for GDR."
-		WARNING_DMIID="CONFIG_DMIID=y is needed for gfx94x special cases."
+		WARNING_DMI="CONFIG_DMI=y is needed for gfx94x special cases or for disabing GPUDirect RDMA (GDR) in virtual machine."
+		WARNING_DMIID="CONFIG_DMIID=y is needed for gfx94x special cases or for for disabing GPUDirect RDMA (GDR) in virtual machine."
 	fi
 	WARNING_DRM="CONFIG_DRM=y is needed for driver support."
 	WARNING_PROC_FS="CONFIG_PROC_FS=y is needed for acquiring system details."

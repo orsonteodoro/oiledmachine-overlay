@@ -38,6 +38,10 @@ RDEPEND="
 	!dev-libs/rccl:0
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
+	peermem? (
+		dev-util/DOCA-Host[mlnx-ofed-kernel]
+		virtual/kfd:4.1
+	)
 	verbs? (
 		sys-cluster/rdma-core
 	)

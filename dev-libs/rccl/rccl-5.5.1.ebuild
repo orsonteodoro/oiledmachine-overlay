@@ -39,12 +39,22 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test verbs ebuild-revision-7"
+IUSE="test peermem verbs ebuild-revision-7"
 RDEPEND="
 	!dev-libs/rccl:0
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
+	peermem? (
+		dev-util/DOCA-Host[mlnx-ofed-kernel]
+		|| (
+			virtual/kfd:5.7
+			virtual/kfd:5.6
+			virtual/kfd:5.5
+			virtual/kfd:5.4
+			virtual/kfd:5.3
+		)
+	)
 	verbs? (
 		sys-cluster/rdma-core
 	)
