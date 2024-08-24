@@ -3,12 +3,14 @@
 
 EAPI=8
 
-DOWNLOAD_FILE_AMD64="doca-host_2.8.0-204000-24.07-ubuntu2204_amd64.deb"
+DOWNLOAD_FILE_AMD64="doca-host_2.8.0-204000-24.07-ubuntu2404_amd64.deb"
 DOWNLOAD_HOMEPAGE="https://developer.nvidia.com/doca-downloads"
-POOL_DIR="${WORKDIR}/usr/share/doca-host-2.8.0-204000-24.07-ubuntu2204/repo/pool"
+GLIBC_PV="2.38"
+POOL_DIR="${WORKDIR}/usr/share/doca-host-2.8.0-204000-24.07-ubuntu2404/repo/pool"
 RDMA_CORE_PV="52"
+PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit unpacker
+inherit unpacker python-any-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
@@ -25,31 +27,64 @@ https://developer.nvidia.com/networking/doca
 "
 LICENSE="
 	DOCA-EULA
+	mlnx-ofed-kernel? (
+		GPL-2
+		|| (
+			GPL-2
+			BSD
+		)
+	)
 	sharp? (
 		BSD
 	)
 "
 SLOT="0"
-IUSE+=" hcoll sharp ebuild-revision-0"
+IUSE+=" hcoll mlnx-ofed-kernel sharp ebuild-revision-0"
 REQUIRED_USE="
 	hcoll? (
 		sharp
 	)
 	|| (
 		hcoll
+		mlnx-ofed-kernel
 		sharp
 	)
 "
+
+MLNX_TOOLS_DEPEND="
+	${PYTHON_DEPS}
+	sys-apps/pciutils
+	sys-process/procps
+"
+MLNX_OFED_KERNEL_DKMS_DEPEND="
+	>=sys-libs/glibc-${GLIBC_PV}
+	sys-devel/gcc
+	sys-kernel/dkms
+	sys-kernel/linux-headers
+"
+MLNX_OFED_KERNEL_UTILS_DEPEND="
+	sys-apps/coreutils
+	sys-apps/grep
+	sys-apps/kmod
+	sys-apps/pciutils
+	sys-process/lsof
+	sys-process/procps
+"
 RDEPEND="
+	mlnx-ofed-kernel? (
+		${MLNX_OFED_KERNEL_DKMS_DEPEND}
+		${MLNX_OFED_KERNEL_UTILS_DEPEND}
+		${MLNX_TOOLS_DEPEND}
+	)
 	hcoll? (
 		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
-		>=sys-libs/glibc-2.34
+		>=sys-libs/glibc-${GLIBC_PV}
 		sys-cluster/ucx
 	)
 	sharp? (
 		>=sys-cluster/rdma-core-${RDMA_CORE_PV}
 		>=sys-devel/gcc-11
-		>=sys-libs/glibc-2.3.4
+		>=sys-libs/glibc-${GLIBC_PV}
 		sys-cluster/ucx
 	)
 "
@@ -63,9 +98,11 @@ PATCHES=(
 
 pkg_nofetch() {
 einfo
-einfo "To download, please visit:  ${DOWNLOAD_HOMEPAGE}"
+einfo "(1) To download, please visit:  ${DOWNLOAD_HOMEPAGE}"
 einfo
-einfo "The download is EULA restricted (4d).  This ebuild is compatible with"
+einfo "(2) Read and agree to the ${PV} DOCA EULA:  https://docs.nvidia.com/doca/sdk/nvidia+doca+eula/index.html"
+einfo
+einfo "(3) The download is EULA restricted (4d).  This ebuild is compatible with"
 einfo "the following package config:"
 einfo
 einfo "DOCA-Server"
@@ -74,36 +111,59 @@ einfo "Linux"
 einfo "x86_64"
 einfo "doca-all"
 einfo "Ubuntu"
-einfo "22.04"
+einfo "24.04"
 einfo "deb (local)"
 einfo
 einfo "Version:  ${PV}"
 einfo "Filename:  ${DOWNLOAD_FILE_AMD64}"
 einfo
+einfo "(4) Sanitize the file permissions of the downloaded files:"
+einfo "    chmod 664 ${distdir}/${DOWNLOAD_FILE_AMD64}"
+einfo "    chown portage:portage ${distdir}/${DOWNLOAD_FILE_AMD64}"
+einfo "(5) Do the following to tell the package manager you accept the licenses:"
+einfo "    mkdir -p /usr/portage/package.license"
+einfo "    echo \"${CATEGORY}/${PN} DOCA-EULA\" >> /usr/portage/package.license/${PN}"
 }
 
-unpack_hcoll_amd64() {
-	use hcoll || return
-	pushd "${d}" >/dev/null 2>&1 || die
-		unpack_deb "${POOL_DIR}/hcoll_4.8.3228-1.2407061_amd64.deb"
-	popd >/dev/null 2>&1 || die
+unpack_amd64() {
+	use hcoll && L+=(
+		"hcoll;hcoll_4.8.3228-1.2407061_amd64.deb"
+	)
+	use mlnx-ofed-kernel && L+=(
+	# dkms
+		"mlnx-ofed-kernel;mlnx-ofed-kernel-dkms_24.07.OFED.24.07.0.6.1.1-1_all.deb"
+
+	# utils
+		"mlnx-ofed-kernel;mlnx-tools_24.07.0-1.2407061_amd64.deb"
+		"mlnx-ofed-kernel;mlnx-ofed-kernel-utils_24.07.OFED.24.07.0.6.1.1-1_amd64.deb"
+	)
+	use sharp && L+=(
+		"sharp;sharp_3.8.0.MLNX20240804.aaa5caab-1.2407061_amd64.deb"
+	)
 }
 
-unpack_sharp_amd64() {
-	use sharp || return
-	pushd "${d}" >/dev/null 2>&1 || die
-		unpack_deb "${POOL_DIR}/sharp_3.8.0.MLNX20240804.aaa5caab-1.2407061_amd64.deb"
-	popd >/dev/null 2>&1 || die
+__unpack_deb() {
+	local pair="${1}"
+	local use_flag="${pair%;*}"
+	local path="${pair#*;}"
+einfo "Unpacking ${path} for USE=${use_flag}"
+	unpack_deb "${POOL_DIR}/${path}"
 }
 
 src_unpack() {
         unpack_deb ${A}
 	local d="${T}/staging-area"
+	local L=()
 	mkdir -p "${d}"
-	if use amd64 ; then
-		unpack_hcoll_amd64
-		unpack_sharp_amd64
-	fi
+
+	use amd64 && unpack_amd64
+
+	local x
+	for x in ${L[@]} ; do
+		pushd "${d}" >/dev/null 2>&1 || die
+			__unpack_deb "${x}"
+		popd >/dev/null 2>&1 || die
+	done
 }
 
 src_prepare() {

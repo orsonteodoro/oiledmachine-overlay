@@ -5,8 +5,12 @@
     <flag name="hcoll">
       Install Hierarchical collectives (HCOLL) support.
     </flag>
+    <flag name="mlnx-ofed-kernel">
+      Install the DKMS driver sources and utils for InfiniBand (IB),
+      ConnectX®-4 or later.
+    </flag>
     <flag name="sharp">
-      Install SHArP switch collectives support.
+      Install SHARP™ switch collectives support.
     </flag>
   </use>
 </pkgmetadata>
