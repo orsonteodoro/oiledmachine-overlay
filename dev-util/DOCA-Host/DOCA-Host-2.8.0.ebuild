@@ -33,6 +33,10 @@ LICENSE="
 			GPL-2
 			BSD
 		)
+		|| (
+			GPL-2
+			Linux-OpenIB
+		)
 	)
 	sharp? (
 		BSD
