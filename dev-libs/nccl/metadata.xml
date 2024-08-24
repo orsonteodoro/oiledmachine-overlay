@@ -25,7 +25,8 @@
       Use gdrcopy for faster flushes on received data.
     </flag>
     <flag name="peermem">
-      Support for the legacy peer memory interface for older kernels.
+      Support for GPUDirect RDMA (GDR) via the legacy peer memory interface for
+      typically for older kernels.
     </flag>
     <flag name="verbs">
       Support for RoCE or InfiniBand™.
