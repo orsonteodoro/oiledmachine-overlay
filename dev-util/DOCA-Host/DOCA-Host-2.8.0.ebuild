@@ -12,7 +12,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit unpacker python-any-r1
 
-KEYWORDS="~amd64"
+KEYWORDS="~amd64" # It can support arm64.
 S="${WORKDIR}"
 SRC_URI="
 	amd64? (
@@ -117,9 +117,11 @@ einfo
 einfo "Version:  ${PV}"
 einfo "Filename:  ${DOWNLOAD_FILE_AMD64}"
 einfo
+	if use amd64 ; then
 einfo "(4) Sanitize the file permissions of the downloaded files:"
 einfo "    chmod 664 ${distdir}/${DOWNLOAD_FILE_AMD64}"
 einfo "    chown portage:portage ${distdir}/${DOWNLOAD_FILE_AMD64}"
+	fi
 einfo "(5) Do the following to tell the package manager you accept the licenses:"
 einfo "    mkdir -p /usr/portage/package.license"
 einfo "    echo \"${CATEGORY}/${PN} DOCA-EULA\" >> /usr/portage/package.license/${PN}"
