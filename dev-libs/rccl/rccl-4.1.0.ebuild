@@ -33,7 +33,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test verbs ebuild-revision-7"
+IUSE="test peermem verbs ebuild-revision-7"
 RDEPEND="
 	!dev-libs/rccl:0
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]

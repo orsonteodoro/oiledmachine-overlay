@@ -21,7 +21,7 @@
   </upstream>
   <use>
     <flag name="peermem">
-      Support for GPUDirect RDMA (GDR) via Peer Memory and PeerDirect.
+      Support for GDR (GPUDirect® RDMA) via Peer Memory and PeerDirect®.
     </flag>
     <flag name="verbs">
       Support for RoCE or InfiniBand™.

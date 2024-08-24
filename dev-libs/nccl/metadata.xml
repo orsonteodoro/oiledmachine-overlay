@@ -25,8 +25,8 @@
       Use gdrcopy for faster flushes on received data.
     </flag>
     <flag name="peermem">
-      Support for GPUDirect RDMA (GDR) via the legacy peer memory interface for
-      typically older kernels with PeerDirect with the nvidia-peermem.ko kernel
+      Support for GDR (GPUDirect® RDMA) via the legacy peer memory interface for
+      typically older kernels with PeerDirect® with the nvidia-peermem.ko kernel
       module.
     </flag>
     <flag name="verbs">
