@@ -139,7 +139,7 @@ gen_rocm_rdepend() {
 			${u}? (
 				dev-util/hip:${s}
 				rdma? (
-					virtual/kfd[rock-dkms]
+					virtual/kfd
 				)
 			)
 		"
