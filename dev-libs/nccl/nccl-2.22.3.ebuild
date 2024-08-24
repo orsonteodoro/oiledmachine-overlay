@@ -167,6 +167,7 @@ RDEPEND="
 	)
 	peermem? (
 		dev-util/DOCA-Host[mlnx-ofed-kernel]
+		x11-drivers/nvidia-drivers
 	)
 	verbs? (
 		sys-cluster/rdma-core

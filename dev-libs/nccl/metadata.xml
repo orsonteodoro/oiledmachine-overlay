@@ -26,7 +26,8 @@
     </flag>
     <flag name="peermem">
       Support for GPUDirect RDMA (GDR) via the legacy peer memory interface for
-      typically older kernels.
+      typically older kernels with PeerDirect with the nvidia-peermem.ko kernel
+      module.
     </flag>
     <flag name="verbs">
       Support for RoCE or InfiniBand™.
