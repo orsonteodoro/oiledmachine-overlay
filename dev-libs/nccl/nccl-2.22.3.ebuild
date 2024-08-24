@@ -51,7 +51,7 @@ RESTRICT="mirror test"
 SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
--gdrcopy test -verbs
+-gdrcopy peermem test -verbs
 ebuild-revision-4
 "
 REQUIRED_USE="
@@ -164,6 +164,9 @@ RDEPEND="
 	)
 	gdrcopy? (
 		dev-libs/gdrcopy
+	)
+	peermem? (
+		dev-util/DOCA-Host[mlnx-ofed-kernel]
 	)
 	verbs? (
 		sys-cluster/rdma-core

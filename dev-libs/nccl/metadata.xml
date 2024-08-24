@@ -24,6 +24,9 @@
     <flag name="gdrcopy">
       Use gdrcopy for faster flushes on received data.
     </flag>
+    <flag name="peermem">
+      Support for the legacy peer memory interface for older kernels.
+    </flag>
     <flag name="verbs">
       Support for RoCE or InfiniBand™.
     </flag>
