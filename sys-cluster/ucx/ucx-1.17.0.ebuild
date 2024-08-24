@@ -138,9 +138,6 @@ gen_rocm_rdepend() {
 		echo "
 			${u}? (
 				dev-util/hip:${s}
-				rdma? (
-					virtual/kfd
-				)
 			)
 		"
 	done
@@ -169,7 +166,115 @@ CUDA_TOOLKIT_12_5_DEPENDS="
 		=sys-devel/gcc-13*
 	)
 "
+ROCM_KFD_DEPEND="
+	rocm_6_2? (
+		rdma? (
+			|| (
+				virtual/kfd:6.2
+				virtual/kfd:6.1
+				virtual/kfd:6.0
+			)
+		)
+	)
+	rocm_6_1? (
+		rdma? (
+			|| (
+				virtual/kfd:6.2
+				virtual/kfd:6.1
+				virtual/kfd:6.0
+				virtual/kfd:5.7
+			)
+		)
+	)
+	rocm_6_0? (
+		rdma? (
+			|| (
+				virtual/kfd:6.2
+				virtual/kfd:6.1
+				virtual/kfd:6.0
+				virtual/kfd:5.7
+				virtual/kfd:5.6
+			)
+		)
+	)
+	rocm_5_7? (
+		rdma? (
+			|| (
+				virtual/kfd:6.1
+				virtual/kfd:6.0
+				virtual/kfd:5.7
+				virtual/kfd:5.6
+				virtual/kfd:5.5
+			)
+		)
+	)
+	rocm_5_6? (
+		rdma? (
+			|| (
+				virtual/kfd:6.0
+				virtual/kfd:5.7
+				virtual/kfd:5.6
+				virtual/kfd:5.5
+				virtual/kfd:5.4
+			)
+		)
+	)
+	rocm_5_5? (
+		rdma? (
+			|| (
+				virtual/kfd:5.7
+				virtual/kfd:5.6
+				virtual/kfd:5.5
+				virtual/kfd:5.4
+				virtual/kfd:5.3
+			)
+		)
+	)
+	rocm_5_4? (
+		rdma? (
+			|| (
+				virtual/kfd:5.6
+				virtual/kfd:5.5
+				virtual/kfd:5.4
+				virtual/kfd:5.3
+				virtual/kfd:5.2
+			)
+		)
+	)
+	rocm_5_3? (
+		rdma? (
+			|| (
+				virtual/kfd:5.5
+				virtual/kfd:5.4
+				virtual/kfd:5.3
+				virtual/kfd:5.2
+				virtual/kfd:5.1
+			)
+		)
+	)
+	rocm_5_2? (
+		rdma? (
+			virtual/kfd:5.2
+		)
+	)
+	rocm_5_1? (
+		rdma? (
+			virtual/kfd:5.1
+		)
+	)
+	rocm_4_5? (
+		rdma? (
+			virtual/kfd:4.5
+		)
+	)
+	rocm_4_1? (
+		rdma? (
+			virtual/kfd:4.1
+		)
+	)
+"
 RDEPEND="
+	${ROCM_KFD_DEPEND}
 	$(gen_rocm_rdepend)
 	cma? (
 		>=sys-libs/glibc-2.15
