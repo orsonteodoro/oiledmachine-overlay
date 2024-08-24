@@ -67,6 +67,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-glibc-2.34.patch"
 	"${FILESDIR}/${PN}-5.0.2-Werror.patch"
 	"${FILESDIR}/${PN}-4.5.2-python-path.patch"
+	"${FILESDIR}/${PN}-4.5.2-prefix-HsaRsrcFactory-with-util-namespace.patch"
 )
 
 python_check_deps() {
@@ -118,7 +119,6 @@ src_configure() {
 	addpredict "/dev/kfd"
 
 	rocm_set_default_clang
-	export MAKEOPTS="-j1"
 
 	hipconfig --help >/dev/null || die
 	export HIP_PLATFORM="amd"

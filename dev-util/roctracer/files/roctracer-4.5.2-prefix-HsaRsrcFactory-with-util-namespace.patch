@@ -1,0 +1,11 @@
+--- a/test/tool/tracer_tool.cpp.orig	2021-10-09 16:14:44.000000000 -0700
++++ b/test/tool/tracer_tool.cpp	2024-08-24 16:28:06.696420070 -0700
+@@ -1078,7 +1078,7 @@ extern "C" PUBLIC_API bool OnLoad(HsaApi
+ 
+   // Dumping HSA handles for agents and pools
+   FILE* handles_file_handle = open_output_file(output_prefix, "hsa_handles.txt");
+-  HsaRsrcFactory::Instance().DumpHandles(handles_file_handle);
++  util::HsaRsrcFactory::Instance().DumpHandles(handles_file_handle);
+   close_output_file(handles_file_handle);
+ 
+   ONLOAD_TRACE_END();
