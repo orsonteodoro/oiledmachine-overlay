@@ -40,7 +40,7 @@ RDEPEND="
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 	peermem? (
 		dev-util/DOCA-Host[mlnx-ofed-kernel]
-		virtual/kfd:4.1
+		virtual/kfd:4.1[rock-dkms]
 	)
 	verbs? (
 		sys-cluster/rdma-core

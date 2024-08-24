@@ -47,11 +47,11 @@ RDEPEND="
 	peermem? (
 		dev-util/DOCA-Host[mlnx-ofed-kernel]
 		|| (
-			virtual/kfd:5.6
-			virtual/kfd:5.5
-			virtual/kfd:5.4
-			virtual/kfd:5.3
-			virtual/kfd:5.2
+			virtual/kfd:5.6[rock-dkms]
+			virtual/kfd:5.5[rock-dkms]
+			virtual/kfd:5.4[rock-dkms]
+			virtual/kfd:5.3[rock-dkms]
+			virtual/kfd:5.2[rock-dkms]
 		)
 	)
 	verbs? (
