@@ -55,7 +55,8 @@
       Use GCC for OpenMP support
     </flag>
     <flag name="gdrcopy">
-      Support gdrcopy for CUDA®
+      Support gdrcopy for NVIDIA® GPUs to enable low latency CPU to GPU data
+      transfer capability for small data transfers.
     </flag>
     <flag name="knem">
       Use the KNEM driver for optimized shared memory
@@ -76,7 +77,10 @@
       Support IB RC (Reliable Connected) transport
     </flag>
     <flag name="rdma">
-      Support RDMA
+      Support GDR (GPUDirect® RDMA)
+    </flag>
+    <flag name="roce">
+      Support for RoCE/IBoE.
     </flag>
     <flag name="rocm">
       Support ROCm™ for AMD GPUs.
@@ -94,7 +98,7 @@
       Support Intel® GPUs
     </flag>
     <flag name="verbs">
-      Support InfiniBand verbs
+      Support InfiniBand™ Verbs
     </flag>
   </use>
   <upstream>

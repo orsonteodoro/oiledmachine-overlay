@@ -23,8 +23,14 @@
     <flag name="peermem">
       Support for GDR (GPUDirect® RDMA) via Peer Memory and PeerDirect®.
     </flag>
+    <flag name="rdma">
+      Support for RDMA.
+    </flag>
+    <flag name="roce">
+      Support for RoCE/IBoE.
+    </flag>
     <flag name="verbs">
-      Support for RoCE or InfiniBand™.
+      Support for InfiniBand™ Verbs.
     </flag>
   </use>
 </pkgmetadata>

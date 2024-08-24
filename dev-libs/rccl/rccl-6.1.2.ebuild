@@ -44,7 +44,15 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test peermem verbs ebuild-revision-7"
+IUSE="test peermem rdma roce verbs ebuild-revision-7"
+REQUIRED_USE="
+	rdma? (
+		|| (
+			roce
+			verbs
+		)
+	)
+"
 RDEPEND="
 	!dev-libs/rccl:0
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
@@ -151,6 +159,22 @@ check_kernel_setup() {
 	WARNING_IPV6="CONFIG_IPV6=y is optional for TCP/IP IPv6 socket support."
 	check_extra_config
 
+	if use roce ; then
+		CONFIG_CHECK="
+			~NET
+			~INET
+			~IPV6
+			~INFINIBAND
+			~INFINIBAND_ADDR_TRANS
+		"
+		WARNING_NET="CONFIG_NET=y is required for RoCE support."
+		WARNING_INET="CONFIG_INET=y is required for RoCE support."
+		WARNING_IPV6="CONFIG_IPV6=y is required for RoCE support."
+		WARNING_INFINIBAND="CONFIG_INFINIBAND=y is required for RoCE support."
+		WARNING_INFINIBAND_ADDR_TRANS="CONFIG_INFINIBAND_ADDR_TRANS=y is required for RoCE support."
+		check_extra_config
+	fi
+
 	if use verbs ; then
 		CONFIG_CHECK="
 			~NET
@@ -158,22 +182,27 @@ check_kernel_setup() {
 			~IPV6
 			~INFINIBAND
 			~INFINIBAND_USER_ACCESS
+		"
+		WARNING_NET="CONFIG_NET=y is required for InfiniBand support."
+		WARNING_INET="CONFIG_INET=y is required for InfiniBand support."
+		WARNING_IPV6="CONFIG_IPV6=y is required for InfiniBand support."
+		WARNING_INFINIBAND="CONFIG_INFINIBAND=y is required for InfiniBand support."
+		WARNING_INFINIBAND_USER_ACCESS="CONFIG_INFINIBAND_USER_ACCESS=y is required for InfiniBand Verbs support."
+		check_extra_config
+	fi
+
+	if use rdma ; then
+		CONFIG_CHECK="
 			~NETDEVICES
 			~ETHERNET
 			~NET_VENDOR_MELLANOX
 			~MLX5_CORE
 			~MLX5_INFINIBAND
 		"
-		WARNING_NET="CONFIG_NET=y is required for InfiniBand or RoCE support."
-		WARNING_INET="CONFIG_INET=y is required for InfiniBand or RoCE support."
-		WARNING_IPV6="CONFIG_IPV6=y is required for InfiniBand or RoCE support."
-		WARNING_INFINIBAND="CONFIG_INFINIBAND=y is required for InfiniBand or RoCE support."
-		WARNING_INFINIBAND_USER_ACCESS="CONFIG_INFINIBAND_USER_ACCESS=y is required for InfiniBand or RoCE support."
 		WARNING_NETDEVICES="CONFIG_NETDEVICES=y is required for ConnectX-4 or later support."
 		WARNING_ETHERNET="CONFIG_ETHERNET=y is required for ConnectX-4 or later support."
 		WARNING_MLX5_CORE="CONFIG_MLX5_CORE=y is required for ConnectX-4 or later support."
 		WARNING_MLX5_INFINIBAND="CONFIG_MLX5_INFINIBAND=y is required for ConnectX-4 or later support."
-		check_extra_config
 	fi
 }
 

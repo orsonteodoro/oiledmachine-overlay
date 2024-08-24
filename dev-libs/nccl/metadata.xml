@@ -30,8 +30,14 @@
       preferred DMA-BUF instead.  It requires loading the nvidia-peermem.ko
       kernel module.)
     </flag>
+    <flag name="rdma">
+      Support for RDMA.
+    </flag>
+    <flag name="roce">
+      Support for RoCE/IBoE.
+    </flag>
     <flag name="verbs">
-      Support for RoCE or InfiniBand™.
+      Support for InfiniBand™ Verbs.
     </flag>
   </use>
 </pkgmetadata>
