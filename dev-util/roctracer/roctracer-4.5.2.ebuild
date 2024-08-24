@@ -24,6 +24,7 @@ https://github.com/ROCmSoftwarePlatform/hsa-class/archive/${HSA_CLASS_COMMIT}.ta
 	-> hsa-class-${HSA_CLASS_COMMIT:0:7}.tar.gz
 "
 
+
 DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="
@@ -65,6 +66,7 @@ PATCHES=(
 	# https://github.com/ROCm-Developer-Tools/roctracer/pull/63
 	"${FILESDIR}/${PN}-4.3.0-glibc-2.34.patch"
 	"${FILESDIR}/${PN}-5.0.2-Werror.patch"
+	"${FILESDIR}/${PN}-4.5.2-python-path.patch"
 )
 
 python_check_deps() {
@@ -116,6 +118,7 @@ src_configure() {
 	addpredict "/dev/kfd"
 
 	rocm_set_default_clang
+	export MAKEOPTS="-j1"
 
 	hipconfig --help >/dev/null || die
 	export HIP_PLATFORM="amd"

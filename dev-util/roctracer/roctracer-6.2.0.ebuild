@@ -79,6 +79,7 @@ src_prepare() {
 
 	hprefixify "script/"*".py"
 	rocm_src_prepare
+
 }
 
 src_configure() {

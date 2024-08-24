@@ -63,6 +63,7 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-5.3.3-do-not-install-test-files.patch"
 	"${FILESDIR}/${PN}-5.2.3-Werror.patch"
 #	"${DISTDIR}/${PN}-c95d5dd.patch"
+	"${FILESDIR}/${PN}-4.5.2-python-path.patch"
 )
 
 python_check_deps() {

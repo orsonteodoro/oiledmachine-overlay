@@ -61,6 +61,7 @@ PATCHES=(
 	# https://github.com/ROCm-Developer-Tools/roctracer/pull/63
 	"${FILESDIR}/${PN}-4.3.0-glibc-2.34.patch"
 	"${FILESDIR}/${PN}-5.0.2-Werror.patch"
+	"${FILESDIR}/${PN}-4.5.2-python-path.patch"
 )
 
 python_check_deps() {
