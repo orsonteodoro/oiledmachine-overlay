@@ -392,7 +392,9 @@ einfo "Setting NCCL_GDRCOPY_FLUSH_ENABLE=1.  Set build time per-package environm
 }
 
 pkg_postinst() {
-ewarn "GPUDirect RDMA support requires a >= 5.12 Linux Kernel."
+	if ! use peermem ; then
+ewarn "GPUDirect RDMA support via DMA-BUF requires a >= 5.12 Linux Kernel."
+	fi
 einfo
 einfo "There are more environment variable tweakables.  Search NCCL_PARAM in"
 einfo
