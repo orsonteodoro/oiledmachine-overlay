@@ -63,7 +63,7 @@ IUSE="
 ${CLANG_COMPAT[@]/#/llvm_slot_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE[@]}
-clang cma cuda custom-kernel dc debug devx dm dmabuf fuse3 gcc examples gdrcopy
+clang +cma cuda custom-kernel dc debug devx dm dmabuf fuse3 gcc examples gdrcopy
 hip-clang knem mlx5-dv +numa +openmp rc rdma rocm roce threads tm ud verbs
 video_cards_intel
 ebuild-revision-3
@@ -127,6 +127,10 @@ REQUIRED_USE="
 		|| (
 			${ROCM_IUSE[@]}
 		)
+	)
+	|| (
+		cma
+		knem
 	)
 "
 gen_rocm_rdepend() {
@@ -643,8 +647,8 @@ _configure() {
 		$(use_with mlx5-dv)
 		$(use_with rc)
 		$(use_with ud)
-		--disable-doxygen-doc
 		--disable-compiler-opt
+		--disable-doxygen-doc
 		--without-go
 		--without-java
 	)

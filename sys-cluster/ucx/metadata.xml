@@ -23,7 +23,8 @@
       Use Clang for OpenMP support
     </flag>
     <flag name="cma">
-      Support Cross Memory Attach optimization
+      Support the less performant Cross Memory Attach optimization for
+      single-copy shared memory transfers.
     </flag>
     <flag name="cuda">
       Support CUDA® for NVIDIA GPUs
@@ -59,7 +60,8 @@
       transfer capability for small data transfers.
     </flag>
     <flag name="knem">
-      Use the KNEM driver for optimized shared memory
+      Use the more performant KNEM driver for optimized shared memory
+      single-copy shared memory transfers.
     </flag>
     <flag name="hip-clang">
       Use HIP-Clang for OpenMP support
