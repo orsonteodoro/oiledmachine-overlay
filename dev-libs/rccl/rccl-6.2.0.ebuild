@@ -99,7 +99,7 @@ check_kernel_setup() {
 			~DMI
 			~DMIID
 		"
-		WARNING_DMI="CONFIG_DMI=y is needed for gfx94x special cases."
+		WARNING_DMI="CONFIG_DMI=y is needed for gfx94x special cases or for GDR."
 		WARNING_DMIID="CONFIG_DMIID=y is needed for gfx94x special cases."
 	fi
 	WARNING_DRM="CONFIG_DRM=y is needed for driver support."
@@ -108,6 +108,7 @@ check_kernel_setup() {
 	WARNING_PCI="CONFIG_PCI=y is required for PCIe support."
 	WARNING_PCIEPORTBUS="CONFIG_PCIEPORTBUS=y is required for PCIe support."
 	WARNING_NUMA="CONFIG_NUMA is required for tools or NUMA CPU identification."
+	WARNING_SYSFS="CONFIG_SYSFS is required for GPUDirect RDMA (GDR) detection."
 	check_extra_config
 
 	CONFIG_CHECK="

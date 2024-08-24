@@ -77,6 +77,7 @@ check_kernel_setup() {
 	WARNING_PCI="CONFIG_PCI=y is required for PCIe support"
 	WARNING_PCIEPORTBUS="CONFIG_PCIEPORTBUS=y is required for PCIe support."
 	WARNING_NUMA="CONFIG_NUMA is required for tools or NUMA CPU identification."
+	WARNING_SYSFS="CONFIG_SYSFS is required for GPUDirect RDMA (GDR) detection."
 	check_extra_config
 
 	CONFIG_CHECK="
