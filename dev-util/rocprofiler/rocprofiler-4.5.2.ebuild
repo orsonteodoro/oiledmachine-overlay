@@ -69,6 +69,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-nostrip.patch"
 	"${FILESDIR}/${PN}-5.1.3-remove-Werror.patch"
 	"${FILESDIR}/${PN}-4.5.2-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-4.5.2-includes-test_kernel-header.patch"
 )
 
 python_check_deps() {
@@ -120,6 +121,10 @@ src_install() {
 	cmake_src_install
 	rocm_mv_docs
 	rocm_fix_rpath
+	patchelf \
+		--add-rpath "/opt/rocm-${PV}/rocprofiler/lib" \
+		"${ED}/opt/rocm-${PV}/rocprofiler/tool/libtool.so" \
+		|| die
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

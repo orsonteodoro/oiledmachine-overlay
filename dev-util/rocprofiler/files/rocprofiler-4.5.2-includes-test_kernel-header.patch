@@ -1,0 +1,16 @@
+diff '--color=auto' -urp rocprofiler-rocm-4.5.2.orig/test/ctrl/test_kernel.h rocprofiler-rocm-4.5.2/test/ctrl/test_kernel.h
+--- rocprofiler-rocm-4.5.2.orig/test/ctrl/test_kernel.h	2021-11-15 15:56:52.000000000 -0800
++++ rocprofiler-rocm-4.5.2/test/ctrl/test_kernel.h	2024-08-24 16:40:16.560003546 -0700
+@@ -23,8 +23,10 @@ THE SOFTWARE.
+ #ifndef TEST_CTRL_TEST_KERNEL_H_
+ #define TEST_CTRL_TEST_KERNEL_H_
+ 
+-#include <string.h>
+-#include <stdint.h>
++
++#include <cstdlib>
++#include <string>
++#include <stdint.h>
+ #include <map>
+ 
+ // Class implements kernel test
