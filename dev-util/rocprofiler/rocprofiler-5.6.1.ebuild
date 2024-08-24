@@ -141,6 +141,8 @@ src_configure() {
 		-DHIP_ROOT_DIR="${ESYSROOT}${EROCM_PATH}"
 		-DHIP_RUNTIME="rocclr"
 		-DPROF_API_HEADER_PATH="${ESYSROOT}${EROCM_PATH}/include/roctracer/ext"
+	# Fix:  Could NOT find Python3 (missing: Interpreter) \
+		-DPython3_EXECUTABLE="${PYTHON}"
 		-DROCPROFILER_BUILD_PLUGIN_ATT=$(usex plugins)
 		-DROCPROFILER_BUILD_PLUGIN_CTF=$(usex plugins)
 		-DROCPROFILER_BUILD_PLUGIN_PERFETTO=$(usex plugins)
