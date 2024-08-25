@@ -60,7 +60,6 @@ if [[ "${PV}" =~ "9999" ]] ; then
 else
 	KEYWORDS="~amd64 ~x86"
 	SRC_URI="
-
 https://github.com/akheron/jansson/archive/${JANSSON_COMMIT}.tar.gz
 	-> jansson-${JANSSON_COMMIT:0:7}.tar.gz
 https://github.com/curl/curl/archive/${CURL_COMMIT}.tar.gz
@@ -69,10 +68,10 @@ https://github.com/elgatosf/capture-device-support/archive/${CAPTURE_DEVICE_SUPP
 	-> capture-device-support-${CAPTURE_DEVICE_SUPPORT_COMMIT:0:7}.tar.gz
 https://github.com/microsoft/ftl-sdk/archive/${FTL_SDK_COMMIT}.tar.gz
 	-> ftl-sdk-${FTL_SDK_COMMIT:0:7}.tar.gz
-https://github.com/obsproject/obs-browser/archive/${OBS_BROWSER_COMMIT}.tar.gz
-	-> obs-browser-${OBS_BROWSER_COMMIT:0:7}.tar.gz
 https://github.com/obsproject/libdshowcapture/archive/${LIBDSHOWCAPTURE_COMMIT}.tar.gz
 	-> libdshowcapture-${LIBDSHOWCAPTURE_COMMIT:0:7}.tar.gz
+https://github.com/obsproject/obs-browser/archive/${OBS_BROWSER_COMMIT}.tar.gz
+	-> obs-browser-${OBS_BROWSER_COMMIT:0:7}.tar.gz
 https://github.com/obsproject/obs-studio/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 https://github.com/obsproject/obs-websocket/archive/${OBS_WEBSOCKET_COMMIT}.tar.gz
