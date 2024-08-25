@@ -11,11 +11,11 @@ EAPI=8
 # https://www.spotify.com/us/download/linux/
 # https://community.spotify.com/t5/Desktop-Linux/Linux-Spotify-client-1-x-now-in-stable/m-p/1300404
 #
-# CEF_DEPENDS_VERSION="122.0.6261.130"
-# CEF_DEPENDS_VERSION_A="122"
+# CEF_DEPENDS_VERSION="125.0.6422.112"
+# CEF_DEPENDS_VERSION_A="125"
 # CEF_DEPENDS_VERSION_B="0"
-# CEF_DEPENDS_VERSION_C="6261"
-# CEF_DEPENDS_VERSION_D="130"
+# CEF_DEPENDS_VERSION_C="6422"
+# CEF_DEPENDS_VERSION_D="112"
 #
 # Third party licenses:
 #
@@ -45,23 +45,23 @@ EAPI=8
 #
 # For Chromium *DEPENDs and versioning see:
 #
-# https://github.com/chromium/chromium/tree/122.0.6261.130/build/linux/sysroot_scripts/generated_package_lists
-# https://github.com/chromium/chromium/blob/122.0.6261.130/build/install-build-deps.py
-# https://github.com/chromium/chromium/blob/122.0.6261.130/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/tree/125.0.6422.112/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/125.0.6422.112/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/125.0.6422.112/tools/clang/scripts/update.py#L42
 #
 # For vendored Chromium third party *DEPENDs versioning see:
 #
-# https://github.com/chromium/chromium/blob/122.0.6261.130/third_party/fontconfig/include/config.h#L290
-# https://github.com/chromium/chromium/blob/122.0.6261.130/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/125.0.6422.112/third_party/fontconfig/include/config.h#L290
+# https://github.com/chromium/chromium/blob/125.0.6422.112/third_party/zlib/zlib.h#L40
 #
 # Versions only obtainable through tarball:
 #
-# /var/tmp/portage/www-client/chromium-122.0.6261.130/work/chromium-122.0.6261.130/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-122.0.6261.130/work/chromium-122.0.6261.130/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-122.0.6261.130/work/chromium-122.0.6261.130/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-122.0.6261.130/work/chromium-122.0.6261.130/third_party/ffmpeg/libavutil/version.h               ; do not use
-# /var/tmp/portage/www-client/chromium-122.0.6261.130/work/chromium-122.0.6261.130/third_party/ffmpeg/libavcodec/version*.h             ; do not use
-# /var/tmp/portage/www-client/chromium-122.0.6261.130/work/chromium-122.0.6261.130/third_party/ffmpeg/libavformat/version*.h            ; do not use
+# /var/tmp/portage/www-client/chromium-125.0.6422.112/work/chromium-125.0.6422.112/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-125.0.6422.112/work/chromium-125.0.6422.112/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-125.0.6422.112/work/chromium-125.0.6422.112/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-125.0.6422.112/work/chromium-125.0.6422.112/third_party/ffmpeg/libavutil/version.h               ; do not use
+# /var/tmp/portage/www-client/chromium-125.0.6422.112/work/chromium-125.0.6422.112/third_party/ffmpeg/libavcodec/version*.h             ; do not use
+# /var/tmp/portage/www-client/chromium-125.0.6422.112/work/chromium-125.0.6422.112/third_party/ffmpeg/libavformat/version*.h            ; do not use
 #
 
 # Dropped pax-kernel USE flag because of the license plus the CEF version used
@@ -71,32 +71,34 @@ EAPI=8
 
 # Found in Recommends: section of stable requirements.
 # For ffmpeg:0/x.y.z, y must be <= 59.
-ALSA_LIB="1.2.4"
-ATK_PV="2.38.0"
-BUILD_ID_AMD64="ge66eb7bc" # Change this after every bump
+ALSA_LIB="1.1.3"
+ATK_PV="2.26.2"
+BUILD_ID_AMD64="g242057a2" # Change this after every bump
 CAIRO_PV="1.16.0"
 CLANG_PV="17"
 DEFAULT_CONFIGURATION="stable"
 EXPECTED_DEPENDS_FINGERPRINT="\
-66f65b594d1f2ec6a090d02b1a12178eb92925f9121b59517f8ef9338b0dda1d\
-1833b1792d29d10312a8463597ac2478c744d6555fb32f0bdd617cbdf5687ef0\
+fd58cdd53a8053f5409d059776d9356e26a621bf8753f3e9d6887814769a2eab\
+83d57ce65c17167fa95d373912ecbe057f08a6d73b17a6a7e6b00c507e1f1529\
 " # Packages fingerprint for client
 EXPECTED_CR_DEPENDS_FINGERPRINT="\
 27ee98a40fe37c9897bb941d98535b999543c44eae9c2460513379387621ce6e\
 89ce438d5e3c3df6230912b1eebf3c45c70bd9def0deb9fb047ed13256019a7c\
 " # Packages fingerprint of internal dependency Chromium for CEF
 FFMPEG_COMPAT=(
+#	List based on Packages file
+#	"0/avutil.avcodec.avformat" # compare the middle
 	"0/56.58.58" # 4.4
 	"0/55.57.57" # 3.4
 	"0/54.56.56" # 2.4
 	"0/52.54.54" # 0.11, 1.0, 1.1, 1.2
 )
-FFMPEG_SLOT="0/58.60.60" # Same as 6.0 in chromium tarball [do not use] ; 0/libavutil_major.libavcodec_major.libavformat_major
-FONTCONFIG_PV="2.14.2" # Use vendored list for versioning
+FFMPEG_SLOT="0/58.60.60" # Same as 6.0 in chromium tarball [do not use]
+FONTCONFIG_PV="2.15.0" # Use vendored list for versioning
 FREETYPE_PV="2.13.2" # Use vendored list for versioning
 GCC_PV="10.2.1"
-GLIB_PV="2.66.8"
-GLIBC_PV="2.31"
+GLIB_PV="2.56.4"
+GLIBC_PV="2.30"
 # Details of the repo public key itself \
 GPG_KEY_ID="63CBEEC9006602088F9B19326224F9941A8AA6D1" # RSA Key
 GPG_EXPECTED_UID="Spotify Public Repository Signing Key <tux@spotify.com>"
@@ -114,13 +116,13 @@ GPG_PUBLIC_KEY_BLAKE2B="\
 686ae0164cb787fee7d0064d7a770ee5357992aad8651f1207e8b5dc7ba0b490\
 571f52905218a9ec0664906d722069899783c4fed5974c4833252f85a6a8d977\
 "
-GTK3_PV="3.24.24"
+GTK3_PV="3.22.30"
 GTK4_PV="4.8.3"
 LIBXI_PV="1.7.10"
 LIBXSCRNSAVER_PV="1.2.3" # Same as libxss1
 LIBXTST_PV="1.2.3"
 MESA_PV="20.3.5"
-NSS_PV="3.61"
+NSS_PV="3.35"
 PKG_ARCH="amd64" # It can be amd64, i386, all.
 QA_PREBUILT="
 	opt/${PN}/${PN}-client/${PN}
@@ -233,7 +235,7 @@ OPTIONAL_RDEPENDS_LISTED="
 		$(gen_ffmpeg_depends)
 	)
 	libnotify? (
-		>=x11-libs/libnotify-0.7.6
+		>=x11-libs/libnotify-0.7.7
 	)
 "
 
@@ -269,7 +271,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 # *DEPENDs based on install-build-deps.sh's common_lib_list and lib_list variables.
 
 # For details see:
-# https://github.com/chromium/chromium/blob/122.0.6261.130/build/install-build-deps.py#L329
+# https://github.com/chromium/chromium/blob/125.0.6422.112/build/install-build-deps.py#L329
 
 # The version is obtained in src_prepare
 
@@ -329,7 +331,7 @@ UNLISTED_RDEPEND="
 
 #UNLISTED_SP_RDEPEND_DROPPED="
 #	>=x11-libs/libxshmfence-1.3
-#
+#"
 
 OPTIONAL_RDEPEND="
 	>=media-libs/vulkan-loader-1.3.224.0
