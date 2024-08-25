@@ -33,10 +33,13 @@ HOMEPAGE="
 "
 LICENSE="
 	all-rights-reserved
+	BSD
 	LGPL-2
 	GPL-2
 "
-# all-rights-reserved GPL-2 kernel/xpmem_attach.c
+# all-rights-reserved GPL-2 - kernel/xpmem_attach.c
+# BSD - NEWS.  The LICENSE file is likely from the ucx project but missing from xpmem project.
+# BSD - test/gtest/common/googletest/src/gtest-all.cc
 # The distro's GPL-2 license template does not contain all rights reserved.
 SLOT="0"
 IUSE="
