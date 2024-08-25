@@ -395,7 +395,7 @@ src_unpack() {
 
 	# Uncomment before running convert-cargo-lock.sh
 	# Readd comment when done generating cargo list.
-	die
+	#die
 
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		_lockfile_gen_unpack
