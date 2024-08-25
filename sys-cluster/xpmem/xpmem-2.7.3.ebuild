@@ -152,10 +152,6 @@ signing_modules() {
 		fi
 		local cert_path="${kernel_path}/certs/signing_key.x509"
 
-		# If you get No such file or directory:  crypto/bio/bss_file.c,
-		# This means that the kernel module location changed.  Set below
-		# paths in amd/dkms/dkms.conf.
-
 		IFS=$'\n'
 		local x
 		for x in ${DKMS_MODULES[@]} ; do
