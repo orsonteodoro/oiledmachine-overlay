@@ -6,6 +6,8 @@ EAPI="8"
 
 BUILD_PARAMS="KDIR=${KERNEL_DIR}"
 BUILD_TARGETS="all"
+MAX_KERNEL_VER="6.4"
+MAX_KERNEL_COMMIT="4b4ebc6b"
 MODULE_NAMES="knem(misc:${S}/driver/linux)"
 DKMS_MODULES=(
 	"knem driver/linux /kernel/../updates/"
@@ -13,8 +15,12 @@ DKMS_MODULES=(
 
 inherit autotools linux-mod linux-info toolchain-funcs udev
 
-if [[ ${PV} =~ "9999" ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="master"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://gitlab.inria.fr/knem/knem.git"
+	FALLBACK_COMMIT="4b4ebc6bfacbb28552cff17a2408f0390fa280af"
+	IUSE+=" fallback-commit"
 	inherit git-r3
 else
 	KEYWORDS="~amd64 ~x86"
@@ -194,10 +200,28 @@ pkg_setup() {
 
 	einfo "KERNEL_DIR:  ${KERNEL_DIR}"
 	einfo "KERNEL_VERSION:  ${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}${KV_EXTRA}"
+	if ver_test "${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}" -gt "${MAX_KERNEL_VER}" ; then
+eerror
+eerror "${PV} support only up to ${MAX_KERNEL_VER} inclusive for commit"
+eerror "${MAX_KERNEL_COMMIT}.  Change /usr/src/linux to point to an earlier"
+eerror "version."
+eerror
+		die
+	fi
 
 	linux-mod_pkg_setup
 	ARCH="$(tc-arch-kernel)"
 	ABI="${KERNEL_ABI}"
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {
