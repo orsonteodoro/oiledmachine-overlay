@@ -170,7 +170,7 @@ _compress_modules() {
 		local built_location=$(echo "${x}" | cut -f 2 -d " ")
 		local dest_location=$(echo "${x}" | cut -f 3 -d " ")
 		pushd "${modules_path}${dest_location}" || die
-			rm -f "${built_name}.ko"{.gz,.xz,.zst}
+			rm -f "${built_name}.ko"{".gz",".xz",".zst"}
 			if linux_chkconfig_present "MODULE_COMPRESS_ZSTD" && has_version "sys-apps/kmod[zstd]" && has_version "app-arch/zstd" ; then
 				# .ko.zst
 				zstd -T0 --rm -f -q "${built_name}.ko"
@@ -225,7 +225,7 @@ einfo "KERNEL_DIR_SUFFIX:  ${KERNEL_DIR_SUFFIX}"
 
 src_compile() {
 	default
-	if use modules; then
+	if use modules ; then
 		cd "${S}/driver/linux"
 		linux-mod_src_compile || die "failed to build driver"
 	fi
@@ -233,7 +233,7 @@ src_compile() {
 
 src_install() {
 	default
-	if use modules; then
+	if use modules ; then
 		cd "${S}/driver/linux"
 		linux-mod_src_install || die "failed to install driver"
 		use sign-modules && signing_modules "${KERNEL_DIR_SUFFIX}"
