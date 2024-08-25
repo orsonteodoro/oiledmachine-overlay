@@ -22,7 +22,16 @@ https://github.com/ROCm-Developer-Tools/rocprofiler/archive/rocm-${PV}.tar.gz
 	-> rocprofiler-${PV}.tar.gz
 https://github.com/ROCmSoftwarePlatform/hsa-class/archive/${HSA_CLASS_COMMIT}.tar.gz
 	-> hsa-class-${HSA_CLASS_COMMIT:0:7}.tar.gz
+https://github.com/ROCm/roctracer/commit/4baffc8e53ece3c7261685fbf933dc6fc0269921.patch
+	-> roctracer-commit-4baffc8.patch
 "
+# 4baffc8 - SWDEV-264282 : fixing tracer_tool linking
+#   Fix error:
+# CMake Error at test/CMakeLists.txt:85 (add_subdirectory):
+#   add_subdirectory given source
+#   "/var/tmp/portage/dev-util/roctracer-4.1.0/work/roctracer-rocm-4.1.0/test/hsa/test"
+#   which is not an existing directory.
+
 
 DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
@@ -65,6 +74,7 @@ PATCHES=(
 	# https://github.com/ROCm-Developer-Tools/roctracer/pull/63
 	"${FILESDIR}/${PN}-4.3.0-glibc-2.34.patch"
 	"${FILESDIR}/${PN}-4.1.0-Werror.patch"
+	"${DISTDIR}/${PN}-commit-4baffc8.patch"
 )
 
 python_check_deps() {
@@ -126,6 +136,7 @@ src_configure() {
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
+		-DHIP_VDI=1
 		-DPython3_EXECUTABLE="/usr/bin/${EPYTHON}"
 	)
 	rocm_src_configure
