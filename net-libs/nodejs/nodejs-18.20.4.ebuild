@@ -9,14 +9,13 @@ EAPI=8
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  May 23, 2024
+# Last deps commit date:  May 16, 2024
 
 ACORN_PV="8.11.3"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 TRAINER_TYPES=(
 	assert
 	async_hooks
-	blob
 	buffers
 	child_process
 	cluster
@@ -56,11 +55,11 @@ TRAINER_TYPES=(
 	zlib
 )
 CONFIG_CHECK="~ADVISE_SYSCALLS"
-COREPACK_PV="0.28.1"
+COREPACK_PV="0.28.0"
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
-NGHTTP2_PV="1.60.0"
-NPM_PV="10.7.0" # See https://github.com/nodejs/node/blob/v20.15.1/deps/npm/package.json
+NGHTTP2_PV="1.61.0"
+NPM_PV="10.7.0" # See https://github.com/nodejs/node/blob/v18.20.4/deps/npm/package.json
 PYTHON_COMPAT=( "python3_"{8..12} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -104,6 +103,7 @@ RESTRICT="
 "
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
+
 gen_iuse_pgo() {
 	local t
 	for t in ${TRAINER_TYPES[@]} ; do
@@ -113,11 +113,12 @@ gen_iuse_pgo() {
 
 IUSE+="
 acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
-+npm mold pax-kernel +snapshot +ssl system-icu +system-ssl test
+npm mold pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
-man pgo ebuild-revision-6
+man pgo ebuild-revision-12
 "
+
 gen_required_use_pgo() {
 	local t
 	for t in ${TRAINER_TYPES[@]} ; do
@@ -146,14 +147,14 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	!net-libs/nodejs:0
-	>=app-arch/brotli-1.1.0
+	>=app-arch/brotli-1.0.9
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.47.0:=
+	>=dev-libs/libuv-1.44.2:=
 	>=net-dns/c-ares-1.28.1
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3
 	system-icu? (
-		>=dev-libs/icu-75.1:=
+		>=dev-libs/icu-74.2:=
 	)
 	system-ssl? (
 		>=dev-libs/openssl-3.0.13:0=
@@ -178,6 +179,9 @@ BDEPEND+="
 			>=net-libs/nghttp2-${NGHTTP2_PV}[utils]
 		)
 	)
+	systemtap? (
+		dev-debug/systemtap
+	)
 	test? (
 		net-misc/curl
 	)
@@ -192,7 +196,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-12.22.5-shared_c-ares_nameser_h.patch"
 	"${FILESDIR}/${PN}-22.2.0-global-npm-config.patch"
 	"${FILESDIR}/${PN}-16.13.2-lto-update.patch"
-	"${FILESDIR}/${PN}-20.1.0-support-clang-pgo.patch"
+	"${FILESDIR}/${PN}-18.17.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
 )
 
@@ -240,7 +244,7 @@ pkg_setup() {
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2026-04-30."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2025-04-30."
 
 	# Prevent merge conflicts
 	if use man && (( $(_count_useflag_slots "man") > 1 ))
@@ -537,6 +541,7 @@ ewarn "If moldlto fails for gcc, try clang."
 	"${EPYTHON}" configure.py \
 		--prefix="${EPREFIX}/usr" \
 		--dest-cpu="${myarch}" \
+		$(use_with systemtap dtrace) \
 		${myconf[@]} || die
 
 	# Prevent double build on install.
@@ -715,10 +720,7 @@ src_install() {
 	local D_BASE="/${REL_D_BASE}"
 	local ED_BASE="${ED}/${REL_D_BASE}"
 
-	${EPYTHON} tools/install.py install \
-		--dest-dir "${D}" \
-		--prefix "${EPREFIX}/usr" \
-		|| die
+	${EPYTHON} tools/install.py install "${D}" "${EPREFIX}/usr" || die
 
 	mv "${ED}/usr/bin/node"{"","${SLOT_MAJOR}"} || die
 	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
@@ -757,6 +759,13 @@ src_install() {
 		"${ED}/usr/share/doc/node" \
 		"${ED}/usr/share/doc/${PF}" \
 		|| die
+
+	if use systemtap ; then
+		# Move tapset to avoid conflict
+		mv "${ED}/usr/share/systemtap/tapset/node${,${SLOT_MAJOR}}.stp" || die
+	else
+		rm "${ED}/usr/share/systemtap/tapset/node.stp" || die
+	fi
 
 	# Let eselect-nodejs handle switching corepack
 	dodir "/usr/$(get_libdir)/corepack"
