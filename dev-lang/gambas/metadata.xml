@@ -126,6 +126,9 @@
     <flag name="qt5">
       Adds support for QT5
     </flag>
+    <flag name="qt6">
+      Adds support for QT6
+    </flag>
     <flag name="remove_deprecated">
       Deletes components if marked deprecated meaning that they are marked for
       removal or indicate that newer projects should not use these components or

@@ -5,23 +5,23 @@ EAPI=8
 
 inherit autotools desktop flag-o-matic toolchain-funcs xdg
 
+KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
+S="${WORKDIR}/${PN}-${PV}"
 SRC_URI="
 https://gitlab.com/gambas/gambas/-/archive/${PV}/gambas-${PV}.tar.bz2
 "
-S="${WORKDIR}/${PN}-${PV}"
 
 DESCRIPTION="Gambas is a free development environment and a full powerful \
 development platform based on a Basic interpreter with object extensionsand form \
 designer."
 HOMEPAGE="http://gambas.sourceforge.net/en/main.html"
 LICENSE="GPL-2"
-KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 RESTRICT="mirror"
 SLOT="0"
 GAMBAS_MODULES=(
 bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer gtk3 htmlview httpd
 imlib2 jit mime mixer mysql ncurses network odbc openal opengl openssl pcre pdf
-pixbuf poppler postgresql qt5 sdl sdl2 sqlite v4l wayland X xml xslt zlib zstd
+pixbuf poppler postgresql qt5 qt6 sdl sdl2 sqlite v4l wayland X xml xslt zlib zstd
 )
 LIBSDL_PV="1.2.8"
 LIBSDL2_PV="2.0.2"
@@ -223,9 +223,6 @@ DEPEND+="
 	opengl? (
 		media-libs/glew
 		media-libs/mesa
-		gtk3? (
-			x11-libs/gtkglext
-		)
 	)
 	openssl? (
 		>=dev-libs/openssl-1
@@ -246,20 +243,38 @@ DEPEND+="
 		dev-db/postgresql
 	)
 	qt5? (
-		>=dev-qt/qtcore-${QT_MIN_PV}:5=
-		>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland?,X?]
-		>=dev-qt/qtprintsupport-${QT_MIN_PV}:5=
-		>=dev-qt/qtsvg-${QT_MIN_PV}:5=
-		>=dev-qt/qtwidgets-${QT_MIN_PV}:5=[X?]
+		>=dev-qt/qtcore-${QT_MIN_PV}:5
+		dev-qt/qtcore:=
+		>=dev-qt/qtgui-${QT_MIN_PV}:5[wayland?,X?]
+		dev-qt/qtgui:=
+		>=dev-qt/qtprintsupport-${QT_MIN_PV}:5
+		dev-qt/qtprintsupport:=
+		>=dev-qt/qtsvg-${QT_MIN_PV}:5
+		dev-qt/qtsvg:=
+		>=dev-qt/qtwidgets-${QT_MIN_PV}:5[X?]
+		dev-qt/qtwidgets:=
 		opengl? (
-			>=dev-qt/qtopengl-${QT_MIN_PV}:5=
+			>=dev-qt/qtopengl-${QT_MIN_PV}:5
+			dev-qt/qtopengl:=
 		)
 		webview? (
-			>=dev-qt/qtwebengine-5:5=[widgets]
+			>=dev-qt/qtwebengine-5:5[widgets]
+			dev-qt/qtwebengine:=
 		)
 		X? (
-			>=dev-qt/qtx11extras-${QT_MIN_PV}:5=
+			>=dev-qt/qtx11extras-${QT_MIN_PV}:5
+			dev-qt/qtx11extras:=
 			x11-libs/libX11
+		)
+	)
+	qt6? (
+		dev-qt/qtbase:6[gui,opengl?,wayland?,widgets,X?]
+		dev-qt/qtbase:=
+		dev-qt/qtsvg:6
+		dev-qt/qtsvg:=
+		webview? (
+			>=dev-qt/qtwebengine-6:6[widgets]
+			dev-qt/qtwebengine:=
 		)
 	)
 	sdl? (
@@ -316,7 +331,7 @@ BDEPEND+="
 	>=dev-build/automake-1.11.1
 	>=dev-build/libtool-2.4
 "
-DOCS=( AUTHORS ChangeLog README )
+DOCS=( "AUTHORS" "ChangeLog" "README" )
 
 declare -Ax USE_FLAG_TO_MODULE_NAME=(
 	[bzip2]="bzlib2"
