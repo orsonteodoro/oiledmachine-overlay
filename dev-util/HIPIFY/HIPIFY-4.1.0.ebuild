@@ -95,9 +95,7 @@ src_install() {
 		"${ED}/opt/rocm-${PV}/hip/bin/" \
 		|| die
 	mv \
-		"${ED}/opt/rocm-${PV}/"*".sh" \
 		"${ED}/opt/rocm-${PV}/hipify-clang" \
-		"${ED}/opt/rocm-${PV}/hipify-perl" \
 		"${ED}/opt/rocm-${PV}/hip/bin" \
 		|| die
 }
