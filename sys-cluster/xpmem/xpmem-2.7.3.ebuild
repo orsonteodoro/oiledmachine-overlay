@@ -90,12 +90,11 @@ check_module() {
 	CONFIG_CHECK="
 		~DMA_ENGINE
 		~MODULES
-		~MULTIUSER
 		~DEVTMPFS
 		~PROC_FS
 	"
 	WARNING_MODULES="CONFIG_MODULES is needed to load the xpmem module."
-	WARNING_MULTIUSER="CONFIG_MULTIUSER is needed for xpmem user"
+	#WARNING_MULTIUSER="CONFIG_MULTIUSER is needed for xpmem user"
 	WARNING_DEVTMPFS="CONFIG_DEVTMPFS is needed for /dev support"
 	WARNING_PROC_FS="CONFIG_PROC_FS is needed for /proc support"
 	check_extra_config
