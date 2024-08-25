@@ -141,7 +141,7 @@ nvenc nvvfx oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-r6
+ebuild-revision-7
 "
 REQUIRED_USE+="
 	!nvafx
@@ -276,7 +276,8 @@ DEPEND_PLUGINS_AJA="
 		${DEPEND_LIBX11}
 		media-libs/ntv2
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui,widgets,X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[gui,widgets,X]
+			dev-qt/qtbase:=
 		)
 	)
 "
@@ -300,7 +301,8 @@ DEPEND_PLUGINS_DECKLINK_CAPTIONS="
 	decklink? (
 		${DEPEND_LIBX11}
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[widgets,X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[widgets,X]
+			dev-qt/qtbase:=
 		)
 	)
 "
@@ -310,7 +312,8 @@ DEPEND_PLUGINS_DECKLINK_OUTPUT_UI="
 	decklink? (
 		${DEPEND_LIBX11}
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui,widgets,X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[gui,widgets,X]
+			dev-qt/qtbase:=
 		)
 	)
 "
@@ -327,7 +330,8 @@ DEPEND_PLUGINS_DECKLINK="
 DEPEND_PLUGINS_FRONTEND_TOOLS="
 	${DEPEND_LIBX11}
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui,widgets,X]
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[gui,widgets,X]
+		dev-qt/qtbase:=
 	)
 "
 
@@ -380,7 +384,8 @@ DEPEND_CURL="
 DEPEND_PLUGINS_OBS_OUTPUTS="
 	${DEPEND_LIBOBS}
 	${DEPEND_ZLIB}
-	>=net-libs/mbedtls-2.28.0:=
+	>=net-libs/mbedtls-2.28.0
+	net-libs/mbedtls:=
 	ftl? (
 		${DEPEND_CURL}
 		${DEPEND_JANSSON}
@@ -390,11 +395,18 @@ DEPEND_PLUGINS_OBS_OUTPUTS="
 DEPEND_PLUGINS_OBS_BROWSER="
 	browser? (
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[widgets,X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[widgets,X]
+			dev-qt/qtbase:=
 		)
 		|| (
-			>=net-libs/cef-bin-${CEF_PV}:=
-			>=net-libs/cef-${CEF_PV}:=
+			(
+				>=net-libs/cef-bin-${CEF_PV}
+				net-libs/cef-bin:=
+			)
+			(
+				>=net-libs/cef-${CEF_PV}
+				net-libs/cef:=
+			)
 		)
 	)
 "
@@ -426,7 +438,8 @@ DEPEND_PLUGINS_VST="
 	vst? (
 		${DEPEND_LIBOBS}
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[widgets,X]
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[widgets,X]
+			dev-qt/qtbase:=
 		)
 	)
 "
@@ -438,8 +451,10 @@ DEPEND_PLUGINS_WEBSOCKET="
 		>=dev-cpp/websocketpp-0.8.2
 		>=dev-libs/qr-code-generator-1.7.0
 		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[network,widgets]
-			>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[network,widgets]
+			dev-qt/qtbase:=
+			>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}
+			dev-qt/qtsvg:=
 		)
 	)
 "
@@ -490,7 +505,8 @@ DEPEND_PLUGINS="
 		>=media-libs/alsa-lib-1.2.6.1
 	)
 	fdk? (
-		>=media-libs/fdk-aac-2.0.2:=
+		>=media-libs/fdk-aac-2.0.2
+		media-libs/fdk-aac:=
 	)
 	freetype? (
 		>=media-libs/fontconfig-2.13.1
@@ -509,7 +525,8 @@ DEPEND_PLUGINS="
 		virtual/udev
 	)
 	vlc? (
-		>=media-video/vlc-3.0.16:=
+		>=media-video/vlc-3.0.16
+		media-video/vlc:=
 	)
 "
 
@@ -518,9 +535,12 @@ DEPEND_PLUGINS="
 # They were mentioned in the original ebuild.
 DEPEND_UNSOURCED="
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[sql]
-		>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}=
-		>=dev-qt/qtmultimedia-${QT6_PV}:${QT6_SLOT}=
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[sql]
+		dev-qt/qtbase:=
+		>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}
+		dev-qt/qtdeclarative:=
+		>=dev-qt/qtmultimedia-${QT6_PV}:${QT6_SLOT}
+		dev-qt/qtmultimedia:=
 	)
 "
 
@@ -554,11 +574,15 @@ DEPEND_UI="
 	${DEPEND_LIBOBS}
 	${DEPEND_WHATSNEW}
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[dbus,gui,network,wayland?,widgets,X,xml]
-		>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[dbus,gui,network,wayland?,widgets,X,xml]
+		dev-qt/qtbase:=
+		>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}
+		dev-qt/qtsvg:=
 		wayland? (
-			>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}=[opengl]
-			>=dev-qt/qtwayland-${QT6_PV}:${QT6_SLOT}=
+			>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}[opengl]
+			dev-qt/qtdeclarative:=
+			>=dev-qt/qtwayland-${QT6_PV}:${QT6_SLOT}
+			dev-qt/qtwayland:=
 		)
 	)
 "
