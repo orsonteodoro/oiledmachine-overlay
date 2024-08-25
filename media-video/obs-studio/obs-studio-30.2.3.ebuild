@@ -9,8 +9,8 @@ EAPI=8
 #
 # To find differences between release use:
 #
-# S1="/var/tmp/portage/media-video/obs-studio-28.1.2/work/obs-studio-28.1.2" \
-# S2="/var/tmp/portage/media-video/obs-studio-29.1.1/work/obs-studio-29.1.1" ; \
+# S1="/var/tmp/portage/media-video/obs-studio-30.1.2/work/obs-studio-30.1.2" \
+# S2="/var/tmp/portage/media-video/obs-studio-30.2.3/work/obs-studio-30.2.3" ; \
 # for x in $(find ${S2} -name "CMakeLists.txt" -o -name "*.cmake" | cut -f 9- -d "/" | sort) ; do \
 #   diff -urp "${S1}/${x}" "${S2}/${x}" ; \
 # done
@@ -21,33 +21,61 @@ EAPI=8
 # https://github.com/obsproject/obs-studio/blob/30.1.0/build-aux/modules/99-cef.json
 # https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 # https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
+CAPTURE_DEVICE_SUPPORT_COMMIT="81c94fb13dfddb412fcb17f1ba031917ec24be64"
 CEF_PV="103"
 CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
+CURL_COMMIT="44b9b4d4f56d6f6de92c89636994c03984e9cd01"
 FFMPEG_COMPAT=(
 	"0/58.60.60" # 6.1
 	"0/56.58.58" # 4.4
 )
+FTL_SDK_COMMIT="d0c8469f66806b5ea738d607f7d2b000af8b1129"
+JANSSON_COMMIT="bc5741fb1ac730ead24e9bd08977fc6c248e04b0"
+LIBDSHOWCAPTURE_COMMIT="ef8c1d2e19c93e664100dd41e1a0df4f8ad45430"
 LIBVA_PV="2.14.0"
 LIBX11_PV="1.7.5"
 LUA_COMPAT=( luajit )
 MAKEOPTS="-j1"
 MESA_PV="22.0.1"
+OBS_BROWSER_COMMIT="c710222ec9d7ef9aa5d7099e9019d636e2c89f00"
+OBS_WEBSOCKET_COMMIT="0548c7798a323fe5296c150e13b898a5ee62fc1e"
 PYTHON_COMPAT=( python3_{8..11} )
 QT6_PV="6.2.4"
 QT6_SLOT="$(ver_cut 1 ${QT6_PV})"
 SWIG_PV="4.0.2"
 
-inherit cmake flag-o-matic git-r3 lcnr lua-single python-single-r1 xdg-utils
+inherit cmake dep-prepare flag-o-matic git-r3 lcnr lua-single python-single-r1 xdg-utils
 
-EGIT_COMMIT="${PV}"
-EGIT_REPO_URI="https://github.com/obsproject/obs-studio.git"
-EGIT_SUBMODULES=(
-	'*'
-	'-plugins/win-dshow'
-	'-plugins/enc-amf'
-)
-KEYWORDS="~amd64 ~x86"
-SRC_URI=""
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_COMMIT="${PV}"
+	EGIT_REPO_URI="https://github.com/obsproject/obs-studio.git"
+	EGIT_SUBMODULES=(
+		'*'
+		'-plugins/win-dshow'
+		'-plugins/enc-amf'
+	)
+else
+	KEYWORDS="~amd64 ~x86"
+	SRC_URI="
+
+https://github.com/akheron/jansson/archive/${JANSSON_COMMIT}.tar.gz
+	-> jansson-${JANSSON_COMMIT:0:7}.tar.gz
+https://github.com/curl/curl/archive/${CURL_COMMIT}.tar.gz
+	-> curl-${CURL_COMMIT:0:7}.tar.gz
+https://github.com/elgatosf/capture-device-support/archive/${CAPTURE_DEVICE_SUPPORT_COMMIT}.tar.gz
+	-> capture-device-support-${CAPTURE_DEVICE_SUPPORT_COMMIT:0:7}.tar.gz
+https://github.com/microsoft/ftl-sdk/archive/${FTL_SDK_COMMIT}.tar.gz
+	-> ftl-sdk-${FTL_SDK_COMMIT:0:7}.tar.gz
+https://github.com/obsproject/obs-browser/archive/${OBS_BROWSER_COMMIT}.tar.gz
+	-> obs-browser-${OBS_BROWSER_COMMIT:0:7}.tar.gz
+https://github.com/obsproject/libdshowcapture/archive/${LIBDSHOWCAPTURE_COMMIT}.tar.gz
+	-> libdshowcapture-${LIBDSHOWCAPTURE_COMMIT:0:7}.tar.gz
+https://github.com/obsproject/obs-studio/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/obsproject/obs-websocket/archive/${OBS_WEBSOCKET_COMMIT}.tar.gz
+	-> obs-websocket-${OBS_WEBSOCKET_COMMIT:0:7}.tar.gz
+	"
+fi
 
 DESCRIPTION="Software for live streaming and screen recording"
 HOMEPAGE="https://obsproject.com"
@@ -118,6 +146,8 @@ REQUIRED_USE+="
 	!oss
 	!win-dshow
 	!win-mf
+	qt6
+	vaapi
 	!kernel_Darwin? (
 		!coreaudio-encoder
 		!mac-syphon
@@ -135,7 +165,6 @@ REQUIRED_USE+="
 		!vaapi
 		!wayland
 	)
-	qt6
 	ftl? (
 		|| (
 			amf
@@ -322,12 +351,17 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
 # encode.  This is why it is omitted below in the vaapi driver section.
 DEPEND_PLUGINS_OBS_FFMPEG="
 	>=sys-apps/pciutils-3.7.0
+	x11-libs/libdrm
 	new-mpegts-output? (
 		>=net-libs/librist-0.2.7
 		>=net-libs/srt-1.4.4
 	)
 	nvenc? (
 		$(gen_ffmpeg_depend '[nvenc]')
+		(
+			>=media-libs/nv-codec-headers-12
+			<media-libs/nv-codec-headers-12.2.0.0
+		)
 	)
 	vaapi? (
 		$(gen_ffmpeg_depend '[vaapi]')
@@ -495,8 +529,17 @@ DEPEND_LIBOBS="
 	${DEPEND_LIBXCB}
 	${DEPEND_ZLIB}
 	>=sys-apps/dbus-1.12.20
+	dev-libs/uthash
+	sys-libs/libuuid
 	pulseaudio? (
 		>=media-sound/pulseaudio-15.99.1
+	)
+"
+
+DEPEND_WHATSNEW="
+	whatsnew? (
+		dev-cpp/nlohmann_json
+		net-libs/mbedtls
 	)
 "
 
@@ -506,8 +549,9 @@ DEPEND_UI="
 	${DEPEND_CURL}
 	${DEPEND_FFMPEG}
 	${DEPEND_LIBOBS}
+	${DEPEND_WHATSNEW}
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui,network,wayland?,widgets,X,xml]
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[dbus,gui,network,wayland?,widgets,X,xml]
 		>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=
 		wayland? (
 			>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}=[opengl]
@@ -711,7 +755,7 @@ ewarn
 ewarn "After being built, this information provided via package.env or"
 ewarn "by patch should be sanitized with shred from forensics attacks."
 ewarn
-	sleep 30
+	sleep 15
 
 	if ! use browser || \
 		[[ -z "${RESTREAM_CLIENTID}" || -z "${RESTREAM_HASH}" ]] ; then
@@ -768,8 +812,19 @@ einfo
 }
 
 src_unpack() {
-	git-r3_fetch
-	git-r3_checkout
+	if [[ "${PV}" =~ "9999" ]] ; then
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+		dep_prepare_mv "${WORKDIR}/libdshowcapture-${LIBDSHOWCAPTURE_COMMIT}" "${S}/plugins/win-dshow/libdshowcapture"
+		dep_prepare_mv "${WORKDIR}/capture-device-support-${CAPTURE_DEVICE_SUPPORT_COMMIT}" "${S}/plugins/win-dshow/libdshowcapture/external/capture-device-support"
+		dep_prepare_mv "${WORKDIR}/ftl-sdk-${FTL_SDK_COMMIT}" "${S}/plugins/obs-outputs/ftl-sdk"
+		dep_prepare_mv "${WORKDIR}/curl-${CURL_COMMIT}" "${S}/plugins/obs-outputs/ftl-sdk/libcurl"
+		dep_prepare_mv "${WORKDIR}/jansson-${JANSSON_COMMIT}" "${S}/plugins/obs-outputs/ftl-sdk/libjansson"
+		dep_prepare_mv "${WORKDIR}/obs-browser-${OBS_BROWSER_COMMIT}" "${S}/plugins/obs-browser"
+		dep_prepare_mv "${WORKDIR}/obs-websocket-${OBS_WEBSOCKET_COMMIT}" "${S}/plugins/obs-websocket"
+	fi
 }
 
 src_prepare() {
@@ -854,6 +909,7 @@ einfo
 		-DENABLE_JACK=$(usex jack)
 		-DENABLE_LIBFDK=$(usex fdk)
 		-DENABLE_NEW_MPEGTS_OUTPUT=$(usex new-mpegts-output)
+		-DENABLE_NATIVE_NVENC=$(usex nvenc)
 		-DENABLE_OSS=$(usex oss)
 		-DENABLE_PIPEWIRE=$(usex pipewire)
 		-DENABLE_PLUGINS=ON
