@@ -16,7 +16,7 @@
   oiledmachine-overlay TODO:
 
   Fix build time problem.
-  Add missing knem user, rdma group for udev rule
+  Add missing rdma group for udev rule
 
   -->
   <use>
