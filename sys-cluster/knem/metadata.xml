@@ -16,7 +16,18 @@
   oiledmachine-overlay TODO:
 
   Fix build time problem.
-  Security issue - Add kernel signing.
+  Add missing knem user, rdma group for udev rule
 
   -->
+  <use>
+    <flag name="compress">
+      Compress module
+    </flag>
+    <flag name="module">
+      Build the module.  (REQUIRED but can be deferred later.)
+    </flag>
+    <flag name="sign-modules">
+      Sign the module to prevent loading of the compromised version.
+    </flag>
+  </use>
 </pkgmetadata>
