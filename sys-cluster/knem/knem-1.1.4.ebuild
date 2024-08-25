@@ -201,9 +201,9 @@ pkg_setup() {
 	einfo "KERNEL_VERSION:  ${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}${KV_EXTRA}"
 	if ver_test "${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}" -gt "${MAX_KERNEL_VER}" ; then
 eerror
-eerror "${PV} supports only up to ${MAX_KERNEL_VER} inclusive.  Use"
-eerror "=${CATEGORY}/${PN}-9999 instead or change /usr/src/linux to point to an"
-eerror "earlier version."
+eerror "=${CATEGORY}/${PN}-${PV} supports only up to ${MAX_KERNEL_VER}"
+eerror "inclusive.  Use =${CATEGORY}/${PN}-9999 instead or change"
+eerror "/usr/src/linux to point to an earlier version."
 eerror
 		die
 	fi

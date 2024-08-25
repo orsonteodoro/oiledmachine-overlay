@@ -202,9 +202,9 @@ pkg_setup() {
 	einfo "KERNEL_VERSION:  ${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}${KV_EXTRA}"
 	if ver_test "${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}" -gt "${MAX_KERNEL_VER}" ; then
 eerror
-eerror "${PV} support only up to ${MAX_KERNEL_VER} inclusive for commit"
-eerror "${MAX_KERNEL_COMMIT}.  Change /usr/src/linux to point to an earlier"
-eerror "version."
+eerror "=${CATEGORY}/${PN}-${PV} supports only up to ${MAX_KERNEL_VER}"
+eerror "inclusive for commit ${MAX_KERNEL_COMMIT}.  Change /usr/src/linux to"
+eerror "point to an earlier version."
 eerror
 		die
 	fi
