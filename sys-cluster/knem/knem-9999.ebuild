@@ -7,6 +7,9 @@ EAPI="8"
 BUILD_PARAMS="KDIR=${KERNEL_DIR}"
 BUILD_TARGETS="all"
 MODULE_NAMES="knem(misc:${S}/driver/linux)"
+DKMS_MODULES=(
+	"knem driver/linux /kernel/../updates/"
+)
 
 inherit autotools linux-mod linux-info toolchain-funcs udev
 
