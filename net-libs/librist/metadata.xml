@@ -6,7 +6,11 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
+
     Temporary fork.  Removal ASAP when added to distro overlay.
-  </longdescription>
+
+  -->
 </pkgmetadata>
