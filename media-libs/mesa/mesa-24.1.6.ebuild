@@ -22,7 +22,7 @@ video_cards_vc4?,\
 video_cards_vivante?,\
 video_cards_vmware?,\
 "
-LLVM_COMPAT=( {17..15} )
+LLVM_COMPAT=( {18..15} )
 MY_P="${P/_/-}"
 PYTHON_COMPAT=( python3_{10..12} )
 RADEON_CARDS=(
