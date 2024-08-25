@@ -21,7 +21,7 @@
 
     The project is rolling release.  No LTS versions.
 
-    LLVM 19 (dev) - 3.1.61 (Upstream supports live)
+    LLVM 19 (dev) - 3.1.64 (Upstream supports live)
     LLVM 18 (dev) - 3.1.52 (EOL)
     LLVM 17 (dev) - 3.1.44 (EOL)
     LLVM 16 (dev) - 3.1.30 (EOL)
