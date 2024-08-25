@@ -64,7 +64,7 @@ ${CLANG_COMPAT[@]/#/llvm_slot_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE[@]}
 clang +cma cuda custom-kernel dc debug devx dm dmabuf fuse3 gcc examples gdrcopy
-hip-clang knem mlx5-dv +numa +openmp rc rdma rocm roce threads tm ud verbs
+hip-clang knem mlx5-dv +numa +openmp rc rdma rocm roce threads tm ud verbs xpmem
 video_cards_intel
 ebuild-revision-3
 "
@@ -131,6 +131,7 @@ REQUIRED_USE="
 	|| (
 		cma
 		knem
+		xpmem
 	)
 "
 gen_rocm_rdepend() {
@@ -635,6 +636,7 @@ _configure() {
 
 	BASE_CFLAGS="" \
 	local myconf=(
+		$(use_enable cma)
 		$(use_enable examples)
 		$(use_enable numa)
 		$(use_enable openmp)
@@ -708,6 +710,16 @@ _configure() {
 	else
 		myconf+=(
 			--without-verbs
+		)
+	fi
+
+	if use xpmem ; then
+		myconf+=(
+			--with-xpmem="${ESYSROOT}/usr"
+		)
+	else
+		myconf+=(
+			--without-xpmem
 		)
 	fi
 
