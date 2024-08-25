@@ -128,11 +128,6 @@ REQUIRED_USE="
 			${ROCM_IUSE[@]}
 		)
 	)
-	|| (
-		cma
-		knem
-		xpmem
-	)
 "
 gen_rocm_rdepend() {
 	local u
