@@ -206,7 +206,6 @@ eerror "=${CATEGORY}/${PN}-${PV} supports only up to ${MAX_KERNEL_VER}"
 eerror "inclusive for commit ${MAX_KERNEL_COMMIT}.  Change /usr/src/linux to"
 eerror "point to an earlier version."
 eerror
-		die
 	fi
 
 	linux-mod_pkg_setup

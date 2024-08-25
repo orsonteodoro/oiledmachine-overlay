@@ -205,7 +205,6 @@ eerror "=${CATEGORY}/${PN}-${PV} supports only up to ${MAX_KERNEL_VER}"
 eerror "inclusive.  Use =${CATEGORY}/${PN}-9999 instead or change"
 eerror "/usr/src/linux to point to an earlier version."
 eerror
-		die
 	fi
 
 	linux-mod_pkg_setup
