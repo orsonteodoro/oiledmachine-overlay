@@ -49,11 +49,14 @@ inherit cmake dep-prepare flag-o-matic git-r3 lcnr lua-single python-single-r1 x
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_COMMIT="${PV}"
 	EGIT_REPO_URI="https://github.com/obsproject/obs-studio.git"
-	EGIT_SUBMODULES=(
-		'*'
-		'-plugins/win-dshow'
-		'-plugins/enc-amf'
-	)
+	#EGIT_SUBMODULES=(
+	#	'*'
+	#	'-plugins/win-dshow'
+	#	'-plugins/enc-amf'
+	#)
+	FALLBACK_COMMIT="144599fbff18e348652ccadfc3ca08794a03d970"
+	IUSE+=" fallback-commit"
+	inherit git
 else
 	KEYWORDS="~amd64 ~x86"
 	SRC_URI="
@@ -813,6 +816,7 @@ einfo
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 	else
