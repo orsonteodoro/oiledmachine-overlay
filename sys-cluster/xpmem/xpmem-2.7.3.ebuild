@@ -251,7 +251,16 @@ src_install() {
 		"${ED}/etc/init.d"
 }
 
+# Update module dependencies
+_pkg_postinst_one() {
+	local k="${1}"
+	KERNEL_DIR="/usr/src/linux-${k}"
+	KV_FULL=$(cat "${KERNEL_DIR}/include/config/kernel.release")
+	linux-mod-r1_pkg_postinst
+}
+
 pkg_postinst() {
+	_pkg_postinst_one "${KERNEL_DIR_SUFFIX}"
 	udev_reload
 }
 
