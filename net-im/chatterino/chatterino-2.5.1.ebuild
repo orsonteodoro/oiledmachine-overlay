@@ -6,11 +6,80 @@ EAPI=8
 
 # U20, U22
 
+# For deps, see
+# https://github.com/Chatterino/chatterino2/blob/v2.4.6/.CI/CreateUbuntuDeb.sh
+# https://github.com/Chatterino/chatterino2/blob/v2.4.6/.github/workflows/build.yml#L204
+# https://github.com/Chatterino/chatterino2/blob/v2.4.6/BUILDING_ON_LINUX.md
+# Deps based on U 20.04 + CI override
+
 CHECKREQS_DISK_BUILD="483M"
 CHECKREQS_DISK_USR="33M"
-
 CXXSTD="20"
-inherit check-reqs cmake git-r3 toolchain-funcs xdg-utils
+GOOGLETEST_COMMIT_1="8d51dc50eb7e7698427fed81b85edad0e032112e"
+GOOGLETEST_COMMIT_2="ba96d0b1161f540656efdaed035b3c062b60e006"
+GOOGLETEST_COMMIT_3="9dce5e5d878176dc0054ef381f5c6e705f43ef99"
+GOOGLETEST_COMMIT_4="ffc477e705589a697b062c366480d80fe6124e9b"
+GOOGLETEST_COMMIT_5="e8512bc38c4c0060858c3306b0660a3f126aee30"
+MAGIC_ENUM_COMMIT="e55b9b54d5cf61f8e117cafb17846d7d742dd3b4"
+MINIAUDIO_COMMIT="4a5b74bef029b3592c54b6048650ee5f972c1a48"
+LIBCOMMUNI_COMMIT="030710ad53dda1541601ccabbad36a12a9e90c78"
+QT5_PV="5.12.12" # Based on CI
+QT6_PV="6.2.4" # Based on CI
+QTKEYCHAIN_COMMIT="e5b070831cf1ea3cb98c95f97fcb7439f8d79bd6"
+RAPIDJSON_COMMIT="d87b698d0fcc10a5f632ecbc80a9cb2a8fa094a5"
+SERIALIZE_COMMIT_1="17946d65a41a72b447da37df6e314cded9650c32"
+SETTINGS_COMMIT="70fbc7236aa8bcf5db4748e7f56dad132d6fd402"
+SIGNALS_COMMIT="d06770649a7e83db780865d09c313a876bf0f4eb"
+WEBSOCKETPP_COMMIT="b9aeec6eaf3d5610503439b4fae3581d9aff08e8"
+WINTOAST_COMMIT="821c4818ade1aa4da56ac753285c159ce26fd597"
+
+inherit check-reqs cmake dep-prepare toolchain-funcs xdg-utils
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="master"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+	EGIT_REPO_URI="https://github.com/Chatterino/chatterino2.git"
+	FALLBACK_COMMIT="eafcb941f57011358d63c76de6bee38ca1ba97ec"
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
+	inherit git-r3
+else
+	S="${WORKDIR}/${P}"
+	SRC_URI="
+https://github.com/Chatterino/chatterino2/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/Chatterino/libcommuni/archive/${LIBCOMMUNI_COMMIT}.tar.gz
+	-> Chatterino-libcommuni-${LIBCOMMUNI_COMMIT:0:7}.tar.gz
+https://github.com/Chatterino/qtkeychain/archive/${QTKEYCHAIN_COMMIT}.tar.gz
+	-> Chatterino-qtkeychain-${QTKEYCHAIN_COMMIT:0:7}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_1}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_1:0:7}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_2}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_2:0:7}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_3}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_3:0:7}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_4}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_4:0:7}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_5}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_5:0:7}.tar.gz
+https://github.com/mackron/miniaudio/archive/${MINIAUDIO_COMMIT}.tar.gz
+	-> miniaudio-${MINIAUDIO_COMMIT:0:7}.tar.gz
+https://github.com/mohabouje/WinToast/archive/${WINTOAST_COMMIT}.tar.gz
+	-> WinToast-${WINTOAST_COMMIT:0:7}.tar.gz
+https://github.com/Neargye/magic_enum/archive/${MAGIC_ENUM_COMMIT}.tar.gz
+	-> magic_enum-${MAGIC_ENUM_COMMIT:0:7}.tar.gz
+https://github.com/pajlada/serialize/archive/${SERIALIZE_COMMIT_1}.tar.gz
+	-> pajlada-serialize-${SERIALIZE_COMMIT_1:0:7}.tar.gz
+https://github.com/pajlada/settings/archive/${SETTINGS_COMMIT}.tar.gz
+	-> pajlada-settings-${SETTINGS_COMMIT:0:7}.tar.gz
+https://github.com/pajlada/signals/archive/${SIGNALS_COMMIT}.tar.gz
+	-> pajlada-signals-${SIGNALS_COMMIT:0:7}.tar.gz
+https://github.com/Tencent/rapidjson/archive/${RAPIDJSON_COMMIT}.tar.gz
+	-> rapidjson-${RAPIDJSON_COMMIT:0:7}.tar.gz
+https://github.com/zaphoyd/websocketpp/archive/${WEBSOCKETPP_COMMIT}.tar.gz
+	-> websocketpp-${WEBSOCKETPP_COMMIT:0:7}.tar.gz
+	"
+fi
 
 DESCRIPTION="Chat client for https://twitch.tv"
 HOMEPAGE="
@@ -78,14 +147,6 @@ REQUIRED_USE="
 		wayland
 	)
 "
-# For deps, see
-# https://github.com/Chatterino/chatterino2/blob/v2.4.6/.CI/CreateUbuntuDeb.sh
-# https://github.com/Chatterino/chatterino2/blob/v2.4.6/.github/workflows/build.yml#L204
-# https://github.com/Chatterino/chatterino2/blob/v2.4.6/BUILDING_ON_LINUX.md
-# Deps based on U 20.04 + CI override
-SRC_URI=""
-QT5_PV="5.12.12" # Based on CI
-QT6_PV="6.2.4" # Based on CI
 # Upstream uses a live version for qtkeychain but downgraded in this ebuild with
 # the system-qtkeychain USE flag to test if it works.
 # qtwayland needs opengl
@@ -145,7 +206,6 @@ BDEPEND="
 	>=sys-devel/gcc-9.4.0
 	virtual/pkgconfig
 "
-S="${WORKDIR}/${P}"
 
 verify_qt_consistency() {
 	local QT_SLOT
@@ -244,29 +304,52 @@ pkg_setup() {
 }
 
 src_unpack() {
-	# The repos have nested dependencies.  Using tarballs on GH doesn't
-        # usually pick them up.
-	EGIT_REPO_URI="https://github.com/Chatterino/chatterino2.git"
-	EGIT_BRANCH="master"
-	EGIT_COMMIT="v${PV}"
-	EGIT_SUBMODULES=( '*' )
-	EGIT_SUBMODULES+=( '-*WinToast*' )
-	if ! use crashpad ; then
-		EGIT_SUBMODULES+=( '-*crashpad*' )
+	if [[ "${PV}" =~ "9999" ]] ; then
+		# The repos have nested dependencies.  Using tarballs on GH doesn't
+	        # usually pick them up.
+		EGIT_SUBMODULES=( '*' )
+		EGIT_SUBMODULES+=( '-*WinToast*' )
+		if ! use crashpad ; then
+			EGIT_SUBMODULES+=( '-*crashpad*' )
+		fi
+		if ! use test ; then
+			EGIT_SUBMODULES+=(
+				'-*googletest*'
+			)
+		fi
+		if use system-qtkeychain ; then
+			EGIT_SUBMODULES+=( '-*qtkeychain*' )
+		fi
+		if use system-libcommuni ; then
+			EGIT_SUBMODULES+=( '-*libcommuni*' )
+		fi
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_1}" "${S}/lib/googletest"
+		dep_prepare_mv "${WORKDIR}/libcommuni-${LIBCOMMUNI_COMMIT}" "${S}/lib/libcommuni"
+		dep_prepare_mv "${WORKDIR}/magic_enum-${MAGIC_ENUM_COMMIT}" "${S}/lib/magic_enum"
+		dep_prepare_mv "${WORKDIR}/miniaudio-${MINIAUDIO_COMMIT}" "${S}/lib/miniaudio"
+		dep_prepare_mv "${WORKDIR}/qtkeychain-${QTKEYCHAIN_COMMIT}" "${S}/lib/qtkeychain"
+		dep_prepare_mv "${WORKDIR}/WinToast-${WINTOAST_COMMIT}" "${S}/lib/WinToast"
+
+		dep_prepare_mv "${WORKDIR}/rapidjson-${RAPIDJSON_COMMIT}" "${S}/rapidjson"
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_2}" "${S}/lib/rapidjson/thirdparty/gtest"
+
+		dep_prepare_cp "${WORKDIR}/serialize-${SERIALIZE_COMMIT_1}" "${S}/lib/serialize"
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_3}" "${S}/lib/serialize/external/googletest"
+
+		dep_prepare_mv "${WORKDIR}/pajlada-settings-${SETTINGS_COMMIT}" "${S}/lib/settings"
+		dep_prepare_cp "${WORKDIR}/signals-${SIGNALS_COMMIT}" "${S}/lib/settings/external/signals"
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_5}" "${S}/lib/settings/external/signals/external/googletest"
+		dep_prepare_cp "${WORKDIR}/serialize-${SERIALIZE_COMMIT_1}" "${S}/lib/settings/external/serialize"
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_4}" "${S}/lib/settings/external/googletest"
+
+		dep_prepare_cp "${WORKDIR}/signals-${SIGNALS_COMMIT}" "${S}/lib/signals"
+		dep_prepare_mv "${WORKDIR}/websocketpp-${WEBSOCKETPP_COMMIT}" "${S}/lib/websocketpp"
 	fi
-	if ! use test ; then
-		EGIT_SUBMODULES+=(
-			'-*googletest*'
-		)
-	fi
-	if use system-qtkeychain ; then
-		EGIT_SUBMODULES+=( '-*qtkeychain*' )
-	fi
-	if use system-libcommuni ; then
-		EGIT_SUBMODULES+=( '-*libcommuni*' )
-	fi
-	git-r3_fetch
-	git-r3_checkout
 }
 
 src_configure() {
