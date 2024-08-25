@@ -23,8 +23,8 @@
       Use Clang for OpenMP support
     </flag>
     <flag name="cma">
-      Support the low performant Cross Memory Attach for single-copy shared
-      memory transfers.
+      Use CMA (Cross Memory Attach) for shared memory transport betweeen
+      intra-nodes.
     </flag>
     <flag name="cuda">
       Support CUDA® for NVIDIA GPUs
@@ -59,12 +59,11 @@
       Support gdrcopy for NVIDIA® GPUs to enable low latency CPU to GPU data
       transfer capability for small data transfers.
     </flag>
-    <flag name="knem">
-      Use the moderate performant KNEM driver for shared memory single-copy
-      shared memory transfers in the ~32KB BTL range.
-    </flag>
     <flag name="hip-clang">
       Use HIP-Clang for OpenMP support
+    </flag>
+    <flag name="kmem">
+      Use kmem for shared memory transport betweeen intra-nodes.
     </flag>
     <flag name="mlx5-dv">
       Add support for mlx5 Direct Verbs support
@@ -103,8 +102,7 @@
       Support InfiniBand™ Verbs
     </flag>
     <flag name="xpmem">
-      Use the higher bandwidth performant xpmem driver for shared memory
-      single-copy shared memory transfers.
+      Use xpmem for shared memory transport betweeen intra-nodes.
     </flag>
   </use>
   <upstream>

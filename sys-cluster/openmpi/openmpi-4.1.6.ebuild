@@ -71,8 +71,8 @@ ${IUSE_OPENMPI_FABRICS}
 ${IUSE_OPENMPI_OFED_FEATURES}
 ${IUSE_OPENMPI_RM}
 ${ROCM_IUSE[@]}
-cma cuda custom-kernel cxx fortran hcoll ipv6 libompitrace peruse rocm romio
-system-ucx ucx valgrind
+cma cuda custom-kernel cxx fortran hcoll ipv6 knem libompitrace peruse rocm romio
+system-ucx ucx valgrind xpmem
 ebuild-revision-4
 "
 
@@ -303,6 +303,16 @@ einfo "get_libdir:  $(get_libdir)"
 		)
 	fi
 
+	if use knem ; then
+		myconf+=(
+			--with-knem="${ESYSROOT}/usr"
+		)
+	else
+		myconf+=(
+			--without-knem
+		)
+	fi
+
 	if use ucx ; then
 		if use system-ucx ; then
 			myconf+=(
@@ -316,6 +326,17 @@ einfo "get_libdir:  $(get_libdir)"
 	else
 		myconf+=(
 			--without-ucx
+		)
+	fi
+
+	if use xpmem ; then
+		myconf+=(
+			--with-xpmem="${ESYSROOT}/usr/include"
+			--with-xpmem-libdir="${ESYSROOT}/usr/$(get_libdir)"
+		)
+	else
+		myconf+=(
+			--without-xpmem
 		)
 	fi
 

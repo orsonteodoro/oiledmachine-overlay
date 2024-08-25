@@ -15,10 +15,15 @@
   -->
   <use>
     <flag name="cma">
-      Enable the CMA (Cross Memory Attach) MCA
+      Support the low performant Cross Memory Attach for single-copy shared
+      memory transfers.
     </flag>
     <flag name="hcoll">
       Add SHARP™ support to offload collective operations
+    </flag>
+    <flag name="knem">
+      Use the moderate performant KNEM driver for shared memory single-copy
+      shared memory transfers in the ~32KB BTL range.
     </flag>
     <flag name="libompitrace">
       Enable support for contributed package libompitrace
@@ -28,6 +33,10 @@
     </flag>
     <flag name="romio">
       Build the ROMIO MPI-IO component
+    </flag>
+    <flag name="xpmem">
+      Use the higher bandwidth performant xpmem driver for shared memory
+      single-copy shared memory transfers.
     </flag>
   </use>
   <upstream>
