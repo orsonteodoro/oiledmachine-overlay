@@ -84,7 +84,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 cpu_flags_x86_sse2 d3d9 debug gles1 +gles2 +llvm lm-sensors opencl osmesa
 +proprietary-codecs selinux test unwind vaapi valgrind vdpau vulkan
 vulkan-overlay wayland +X xa zink +zstd
-r1
+ebuild-revision-1
 "
 REQUIRED_USE="
 	d3d9? (
