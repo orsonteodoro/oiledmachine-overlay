@@ -246,6 +246,7 @@ src_install() {
 		use compress && _compress_modules "/lib/modules/${KERNEL_RELEASE}"
 	fi
 	udev_dorules "${S}/56-xpmem.rules"
+	rm -rf "${ED}/etc/init.d"
 }
 
 pkg_postinst() {

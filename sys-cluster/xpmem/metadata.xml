@@ -11,8 +11,6 @@
   oiledmachine-overlay notes:
 
   TODO:
-  Redo init script for systemd
-  Redo init script for openrc
   Rebuild for all kernels variations not just /usr/src/linux
 
   -->
