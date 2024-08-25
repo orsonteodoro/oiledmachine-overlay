@@ -165,13 +165,13 @@ _compress_modules() {
 		local dest_location=$(echo "${x}" | cut -f 3 -d " ")
 		pushd "${modules_path}${dest_location}" || die
 			rm -f "${built_name}.ko"{.gz,.xz,.zst}
-			if [[ "${CONFIG_MODULE_COMPRESS_ZSTD}" == "y" ]] && has_version "sys-apps/kmod[zstd]" && has_version "app-arch/zstd" ; then
+			if linux_chkconfig_present "MODULE_COMPRESS_ZSTD" && has_version "sys-apps/kmod[zstd]" && has_version "app-arch/zstd" ; then
 				# .ko.zst
 				zstd -T0 --rm -f -q "${built_name}.ko"
-			elif [[ "${CONFIG_MODULE_COMPRESS_XZ}" == "y" ]] && has_version "sys-apps/kmod[lzma]" && has_version "app-arch/xz-utils" ; then
+			elif linux_chkconfig_present "MODULE_COMPRESS_XZ" && has_version "sys-apps/kmod[lzma]" && has_version "app-arch/xz-utils" ; then
 				# .ko.xz
 				xz --lzma2=dict=2MiB -f "${built_name}.ko"
-			elif [[ "${CONFIG_MODULE_COMPRESS_GZIP}" == "y" ]] && has_version "sys-apps/kmod[zlib]" && has_version "app-arch/gzip" ; then
+			elif linux_chkconfig_present "MODULE_COMPRESS_GZIP" && has_version "sys-apps/kmod[zlib]" && has_version "app-arch/gzip" ; then
 				# .ko.gz
 				gzip -n -f "${built_name}.ko"
 			fi
