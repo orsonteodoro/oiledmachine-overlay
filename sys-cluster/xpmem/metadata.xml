@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  TODO:
+  Redo init script for systemd
+  Redo init script for openrc
+  Rebuild for all kernels variations not just /usr/src/linux
+
+  -->
+  <use>
+    <flag name="compress">
+      Compress module
+    </flag>
+    <flag name="module">
+      Build the module.  (REQUIRED but can be deferred later.)
+    </flag>
+    <flag name="sign-modules">
+      Sign the module to prevent loading of the compromised version.
+    </flag>
+  </use>
+</pkgmetadata>
