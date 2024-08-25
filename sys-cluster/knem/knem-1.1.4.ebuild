@@ -28,7 +28,10 @@ LICENSE="
 "
 # all-rights-reserved - driver/linux/knem_hal.h
 SLOT="0"
-IUSE="compress debug modules sign-modules"
+IUSE="
+compress debug modules sign-modules
+ebuild-revision-1
+"
 DEPEND="
 	sys-apps/hwloc:=
 	virtual/linux-sources
@@ -83,11 +86,25 @@ check_module() {
 		~MULTIUSER
 		~DEVTMPFS
 		~PROC_FS
+		~!TRIM_UNUSED_KSYMS
 	"
 	WARNING_MODULES="CONFIG_MODULES is needed to load the knem module."
-	WARNING_MULTIUSER="CONFIG_MULTIUSER is needed for the rdma group"
-	WARNING_DEVTMPFS="CONFIG_DEVTMPFS is needed for /dev support"
-	WARNING_PROC_FS="CONFIG_PROC_FS is needed for /proc support"
+	WARNING_MULTIUSER="CONFIG_MULTIUSER is needed for the rdma group."
+	WARNING_DEVTMPFS="CONFIG_DEVTMPFS is needed for /dev support."
+	WARNING_PROC_FS="CONFIG_PROC_FS is needed for /proc support."
+	WARNING_TRIM_UNUSED_KSYMS="CONFIG_TRIM_UNUSED_KSYMS should be disabled for external modules support."
+	check_extra_config
+}
+
+check_sign_module() {
+	if use sign-modules ; then
+		CONFIG_CHECK="
+			~MODULE_SIG
+			~MODULE_SIG_FORCE
+		"
+	fi
+	WARNING_MODULE_SIG="CONFIG_MODULE_SIG is needed for module signature support."
+	WARNING_MODULE_SIG_FORCE="CONFIG_MODULE_SIG_FORCE is needed for module signature support in production."
 	check_extra_config
 }
 
@@ -173,6 +190,7 @@ _compress_modules() {
 pkg_setup() {
 	linux-info_pkg_setup
 	check_module
+	check_sign_module
 	check_udev
 
 	einfo "KERNEL_DIR:  ${KERNEL_DIR}"
