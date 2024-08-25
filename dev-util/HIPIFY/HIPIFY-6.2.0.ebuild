@@ -114,22 +114,6 @@ src_install() {
 	dodir "/opt/rocm-${PV}/include/hipify"
 	dodir "/opt/rocm-${PV}/bin"
 	dodir "/opt/rocm-${PV}/hip/bin"
-	mv \
-		"${ED}/opt/rocm-${PV}/include/"*".h" \
-		"${ED}/opt/rocm-${PV}/include/cuda_wrappers" \
-		"${ED}/opt/rocm-${PV}/include/fuzzer" \
-		"${ED}/opt/rocm-${PV}/include/module.modulemap" \
-		"${ED}/opt/rocm-${PV}/include/orc" \
-		"${ED}/opt/rocm-${PV}/include/profile" \
-		"${ED}/opt/rocm-${PV}/include/sanitizer" \
-		"${ED}/opt/rocm-${PV}/include/xray" \
-		"${ED}/opt/rocm-${PV}/include/hipify" \
-		|| die
-	mv \
-		"${ED}/opt/rocm-${PV}/bin/findcode.sh" \
-		"${ED}/opt/rocm-${PV}/bin/finduncodep.sh" \
-		"${ED}/opt/rocm-${PV}/libexec/hipify" \
-		|| die
 }
 
 # OILEDMACHINE-OVERLAY-META:  created-ebuild
