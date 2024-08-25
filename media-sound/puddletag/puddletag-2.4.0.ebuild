@@ -50,11 +50,11 @@ RDEPEND+="
 	>=dev-python/PyQt5-5.15.10[${PYTHON_USEDEP},svg,gui,widgets]
 	>=dev-python/PyQt5-sip-12.13.0[${PYTHON_USEDEP}]
 	>=dev-python/PyRSS2Gen-1.1[${PYTHON_USEDEP}]
-	>=dev-python/pyparsing-3.1.1[${PYTHON_USEDEP}]
+	>=dev-python/pyparsing-3.1.2[${PYTHON_USEDEP}]
 	>=dev-python/unidecode-1.3.8[${PYTHON_USEDEP}]
 	>=media-libs/mutagen-1.47.0[${PYTHON_USEDEP}]
 	amg? (
-		>=dev-python/lxml-5.1.0[${PYTHON_USEDEP}]
+		>=dev-python/lxml-5.2.2[${PYTHON_USEDEP}]
 	)
 	audioread? (
 		>=dev-python/audioread-3.0.1[${PYTHON_USEDEP},gstreamer]
@@ -70,8 +70,8 @@ RDEPEND+="
 		>=media-libs/chromaprint-0.5[tools]
 	)
 	fuzz-matching? (
-		>=dev-python/Levenshtein-0.25.0[${PYTHON_USEDEP}]
-		>=dev-python/RapidFuzz-3.4.0[${PYTHON_USEDEP}]
+		>=dev-python/Levenshtein-0.25.1[${PYTHON_USEDEP}]
+		>=dev-python/RapidFuzz-3.8.1[${PYTHON_USEDEP}]
 	)
 	pyacoustid? (
 		>=dev-python/pyacoustid-1.3.0[${PYTHON_USEDEP}]
