@@ -4,6 +4,14 @@
 
 EAPI=8
 
+CARGO_OPTIONAL=1
+CRATES="
+	syn@2.0.39
+	proc-macro2@1.0.70
+	quote@1.0.33
+	unicode-ident@1.0.12
+	paste@1.0.14
+"
 GCC_SLOT=12
 LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.119"
 LIBDRM_USEDEP="\
@@ -16,18 +24,13 @@ video_cards_vmware?,\
 "
 LLVM_COMPAT=( {17..15} )
 MY_P="${P/_/-}"
-PASTE_PV="1.0.14"
-PROC_MACRO2_PV="1.0.70"
 PYTHON_COMPAT=( python3_{10..12} )
-QUOTE_PV="1.0.33"
 RADEON_CARDS=(
 	r300
 	r600
 	radeon
 	radeonsi
 )
-SYN_PV="2.0.39"
-UNICODE_IDENT_PV="1.0.12"
 UOPTS_BOLT_EXCLUDE_BINS="libglapi.so.0.0.0"
 UOPTS_BOLT_EXCLUDE_FLAGS=( -hugify ) # Broken
 UOPTS_SUPPORT_EBOLT=1
@@ -53,6 +56,7 @@ VIDEO_CARDS=(
 )
 
 # Bug
+inherit cargo
 inherit flag-o-matic llvm-r1 python-any-r1 linux-info meson multilib-build toolchain-funcs uopts
 
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
@@ -64,36 +68,27 @@ for card in ${VIDEO_CARDS[@]} ; do
 done
 unset card
 
-NAK_URI="
-	https://github.com/dtolnay/syn/archive/refs/tags/${SYN_PV}.tar.gz
-		-> syn-${SYN_PV}.tar.gz
-	https://github.com/dtolnay/proc-macro2/archive/refs/tags/${PROC_MACRO2_PV}.tar.gz
-		-> proc-macro2-${PROC_MACRO2_PV}.tar.gz
-	https://github.com/dtolnay/quote/archive/refs/tags/${QUOTE_PV}.tar.gz
-		-> quote-${QUOTE_PV}.tar.gz
-	https://github.com/dtolnay/unicode-ident/archive/refs/tags/${UNICODE_IDENT_PV}.tar.gz
-		-> unicode-ident-${UNICODE_IDENT_PV}.tar.gz
-	https://github.com/dtolnay/paste/archive/refs/tags/${PASTE_PV}.tar.gz
-		-> paste-${PASTE_PV}.tar.gz
-"
 if [[ "${PV}" == "9999" ]] ; then
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/mesa/mesa.git"
-	SRC_URI="
-		${NAK_URI}
-	"
 	inherit git-r3
 else
-	SRC_URI="
-		${NAK_URI}
-		https://archive.mesa3d.org/${MY_P}.tar.xz
-	"
 	KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
 ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-solaris
 	"
+	SRC_URI="
+		https://archive.mesa3d.org/${MY_P}.tar.xz
+	"
 fi
 S="${WORKDIR}/${MY_P}"
 EGIT_CHECKOUT_DIR="${S}"
+
+# This should be {CARGO_CRATE_URIS//.crate/.tar.gz} to correspond to the wrap files,
+# but there are "stale" distfiles on the mirrors with the wrong names.
+# export MESON_PACKAGE_CACHE_DIR="${DISTDIR}"
+SRC_URI+="
+	${CARGO_CRATE_URIS}
+"
 
 DESCRIPTION="OpenGL-like graphic library for Linux"
 HOMEPAGE="https://www.mesa3d.org/ https://mesa.freedesktop.org/"
@@ -486,8 +481,23 @@ einfo "PATH=${PATH} (after)"
 }
 
 src_unpack() {
-	[[ "${PV}" == "9999" ]] && git-r3_src_unpack
-	unpack ${A}
+	if [[ "${PV}" == "9999" ]] ; then
+		git-r3_src_unpack
+	else
+		unpack "${MY_P}.tar.xz"
+	fi
+
+	# We need this because we cannot tell meson to use DISTDIR yet
+	pushd "${DISTDIR}" >/dev/null 2>&1 || die
+		mkdir -p "${S}/subprojects/packagecache" || die
+		local i
+		for i in *".crate" ; do
+			ln -s \
+				"${PWD}/${i}" \
+				"${S}/subprojects/packagecache/${i/.crate/}.tar.gz" \
+				|| die
+		done
+	popd >/dev/null 2>&1 || die
 }
 
 src_prepare() {
@@ -496,20 +506,6 @@ src_prepare() {
 		-e "/^PLATFORM_SYMBOLS/a '__gentoo_check_ldflags__'," \
 		bin/symbols-check.py \
 		|| die # bug #830728
-
-	if use video_cards_nvk; then
-	# NVK subproject handling
-		pushd "${S}" >/dev/null || die
-		for subpkg in proc-macro2-${PROC_MACRO2_PV} syn-${SYN_PV} quote-${QUOTE_PV} unicode-ident-${UNICODE_IDENT_PV} paste-${PASTE_PV}; do
-	# Copy the subprojects folder
-			cp -r ../${subpkg} subprojects || die
-	# Copy the meson.build
-			cp subprojects/packagefiles/${subpkg%-*}/meson.build subprojects/${subpkg} || die
-	# Overwrite the subpkg version when needed
-			sed -i -e "s/directory = \S\+/directory = ${subpkg}/" subprojects/${subpkg%-*}.wrap || die
-		done
-		popd >/dev/null || die
-	fi
 
 	prepare_abi() {
 		uopts_src_prepare
