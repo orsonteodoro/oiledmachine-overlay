@@ -1967,9 +1967,9 @@ check_security_expire() {
 	local _day=$((60*60*24))
 	local now=$(date +%s)
 	local days_passed=$(python -c "print( (${now} - ${MITIGATION_LAST_UPDATE}) / ${_day} )")
-	local hours_passed=$(python -c "print( 24 * ${days_passed#*.} )")
-	local minutes_passed=$(python -c "print( 60 * ${hours_passed#*.} )")
-	local seconds_passed=$(python -c "print( 60 * ${minutes_passed#*.} )")
+	local hours_passed=$(python -c "print( 24 * 0.${days_passed#*.} )")
+	local minutes_passed=$(python -c "print( 60 * 0.${hours_passed#*.} )")
+	local seconds_passed=$(python -c "print( 60 * 0.${minutes_passed#*.} )")
 	local dhms_passed="${days_passed%.*} days, ${hours_passed%.*} hrs, ${minutes_passed%.*} mins, ${seconds_passed%.*} secs"
 	local channel="stable"
 	if (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_60_days} )) ; then
