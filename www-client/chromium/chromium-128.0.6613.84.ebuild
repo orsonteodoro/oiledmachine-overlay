@@ -1783,7 +1783,10 @@ src_unpack() {
 	# system package by just not unpacking it unless we're using the bundled
 	# toolchain.
 	unpack "${P}.tar.xz"
-	unpack "gn-${GN_COMMIT:0:7}.tar.gz"
+	mkdir -p "${WORKDIR}/gn-${GN_COMMIT}" || die
+	pushd "${WORKDIR}/gn-${GN_COMMIT}" >/dev/null 2>&1 || popd
+		unpack "gn-${GN_COMMIT:0:7}.tar.gz"
+	popd >/dev/null 2>&1 || popd
 
 	if use system-toolchain ; then
 		unpack "chromium-patches-${PATCH_VER}.tar.bz2"
@@ -2646,13 +2649,12 @@ _src_configure_compiler() {
 }
 
 build_gn() {
-
+# Sync with gn ebuild:
 	pushd "${WORKDIR}/gn-${GN_COMMIT}" >/dev/null 2>&1 || die
 		if use elibc_musl ; then # bug 906362
 			append-cflags -D_LARGEFILE64_SOURCE
 			append-cxxflags -D_LARGEFILE64_SOURCE
 		fi
-# Sync with gn ebuild:
 einfo "Configuring gn"
 		set -- ${EPYTHON} build/gen.py --no-last-commit-position --no-strip --no-static-libstdc++ --allow-warnings
 		edo "$@"
