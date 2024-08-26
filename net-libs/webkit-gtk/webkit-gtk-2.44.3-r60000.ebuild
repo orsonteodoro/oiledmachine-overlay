@@ -2007,8 +2007,8 @@ ewarn "It is currently not recommended due to rendering bug(s)."
 ewarn
 einfo "This is the stable branch."
 	if [[ -n "${MITIGATION_URI}" ]] ; then
-einfo "Latest security advisory:  ${MITIGATION_URI}"
 einfo "Security advisory date:  ${MITIGATION_DATE}"
+einfo "Latest security advisory:  ${MITIGATION_URI}"
 	fi
 	_set_cxx
 	if [[ ${MERGE_TYPE} != "binary" ]] \
