@@ -1076,15 +1076,15 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=app-arch/gzip-1.7
 	>=dev-build/gn-${GN_PV}
-	>=dev-util/gperf-3.0.3
 	>=dev-build/ninja-1.7.2
+	>=dev-util/gperf-3.0.3
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=net-libs/nodejs-20.11.0:${NODE_VERSION}[inspector]
 	>=sys-devel/bison-2.4.3
+	app-alternatives/lex
 	app-eselect/eselect-nodejs
 	dev-lang/perl
 	dev-vcs/git
-	app-alternatives/lex
 	vaapi? (
 		media-video/libva-utils
 	)
