@@ -103,6 +103,7 @@ LLVM_COMPAT=( 14 )
 LLVM_MAX_SLOT="${LLVM_COMPAT[-1]}"
 MESA_PV="18.0.0_rc5"
 MITIGATION_DATE="Aug 17, 2024"
+MITIGATION_LAST_UPDATE=1723878000 # From `date +%s -d "2024-08-17"` date from last mitigation date
 MITIGATION_URI="https://webkitgtk.org/security/WSA-2024-0004.html" # Shown if minor version matches in report.
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( python3_{10..12} )
@@ -1959,6 +1960,45 @@ ewarn
 	WK_PAGE_SIZE=${page_size}
 }
 
+check_security_expire() {
+	local _60_days=$((60*60*24*60))
+	local _30_days=$((60*60*24*30))
+	local _14_days=$((60*60*24*14))
+	local _day=$((60*60*24))
+	local now=$(date +%s)
+	local days_passed=$(python -c "print( (${now} - ${MITIGATION_LAST_UPDATE}) / ${_day} )")
+	local channel="stable"
+	if (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_60_days} )) ; then
+eerror
+eerror "This ebuild release period is past 60 days since release."
+eerror "It is considered insecure.  As a precaution, this particular point"
+eerror "release will not install."
+eerror
+eerror "Days past last security annoucement:  ${days_passed}"
+eerror
+eerror "Solutions:"
+eerror
+eerror "1.  Use a newer ${channel} release from the overlay."
+eerror "2.  Use the latest ${channel} distro release."
+eerror
+		die
+	elif (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_30_days} )) ; then
+ewarn
+ewarn "This ebuild is more than 30 days old and may have a vulnerability."
+ewarn "Please consider a newer release."
+ewarn
+ewarn "Suggestions:"
+ewarn
+ewarn "1.  Use a newer ${channel} release from the overlay."
+ewarn "2.  Use the latest ${channel} distro release."
+ewarn
+ewarn "Days past last security annoucement:  ${days_passed}"
+ewarn
+	else
+einfo "Days past last security annoucement:  ${days_passed}"
+	fi
+}
+
 pkg_setup() {
 einfo "This is the stable branch."
 	if [[ -n "${MITIGATION_URI}" ]] ; then
@@ -2051,6 +2091,7 @@ einfo
 	check_page_size
 	verify_codecs
 	uopts_setup
+	check_security_expire
 }
 
 _check_langs() {
