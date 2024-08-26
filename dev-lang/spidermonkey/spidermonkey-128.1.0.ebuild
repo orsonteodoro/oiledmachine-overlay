@@ -9,13 +9,14 @@ EAPI="8"
 
 # 115.12.0 -> 128.1.0
 
-EBUILD_LAST_UPDATE=1724653875 # From `date +%s`
 LLVM_COMPAT=( 18 17 ) # Limited by virtual/rust
 
 MY_MAJOR=$(ver_cut 1)
 MY_PN="mozjs"
 MY_PV="${PV/_pre*}" # Handle Gentoo pre-releases
 
+# MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
+MITIGATION_LAST_UPDATE=1722927600 # From `date +%s -d "2024-08-06"` date from last mitigation date
 MOZ_ESR="yes"
 MOZ_PN="firefox"
 MOZ_PV="${PV}"
@@ -349,30 +350,35 @@ check_security_expire() {
 	local _14_days=$((60*60*24*14))
 	local _day=$((60*60*24))
 	local now=$(date +%s)
-	local days_passed=$(python -c "print( (${now} - ${EBUILD_LAST_UPDATE}) / ${_day} )")
-	if (( ${now} > ${EBUILD_LAST_UPDATE} + ${_30_days} )) ; then
+	local days_passed=$(python -c "print( (${now} - ${MITIGATION_LAST_UPDATE}) / ${_day} )")
+	if (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_30_days} )) ; then
 eerror
 eerror "This ebuild release period is past 30 days since release."
 eerror "It is considered insecure.  As a precaution, this particular point"
 eerror "release will not install."
 eerror
-eerror "Days past ebuild update:  ${days_passed}"
+eerror "Days past last security update:  ${days_passed}"
 eerror
 eerror "Solutions:"
 eerror
-eerror "1.  Use a newer release."
-eerror "2.  Use the distro release."
+eerror "1.  Use a newer release from this overlay."
+eerror "2.  Use the latest distro release."
 eerror
 		die
-	elif (( ${now} > ${EBUILD_LAST_UPDATE} + ${_14_days} )) ; then
+	elif (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_14_days} )) ; then
 ewarn
 ewarn "This ebuild is more than 2 weeks old and may have a vulnerability."
 ewarn "Please consider a newer release."
 ewarn
-ewarn "Days past ebuild update:  ${days_passed}"
+ewarn "Suggestions:"
+ewarn
+ewarn "1.  Use a newer release from this overlay."
+ewarn "2.  Use the latest distro release."
+ewarn
+ewarn "Days past last security update:  ${days_passed}"
 ewarn
 	else
-einfo "Days past ebuild update:  ${days_passed}"
+einfo "Days past last security update:  ${days_passed}"
 	fi
 }
 

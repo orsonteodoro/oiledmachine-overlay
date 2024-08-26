@@ -141,6 +141,7 @@ LLVM_COMPAT=( 18 17 ) # Limited based on virtual/rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MITIGATION_DATE="Aug 6, 2024"
+MITIGATION_LAST_UPDATE=1722927600 # From `date +%s -d "2024-08-06"` date from last mitigation date
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-35/"
 MOZ_ESR="yes"
 MOZ_LANGS=(
@@ -1266,8 +1267,8 @@ eerror
 pkg_setup() {
 einfo "Release type:  ESR (Extended Service Release)"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
-einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
 einfo "Security announcement date:  ${MITIGATION_DATE}"
+einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
 	fi
 	if [[ "${MERGE_TYPE}" != "binary" ]] ; then
 		if use pgo ; then
@@ -1464,6 +1465,7 @@ ewarn "Speech recognition (USE=webspeech) has not been confirmed working."
 	fi
 	verify_codecs
 	node_pkg_setup
+	check_security_expire
 }
 
 src_unpack() {
@@ -1535,6 +1537,45 @@ _eapply_oiledmachine_set() {
 	local path="${1}"
 	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
 		eapply "${path}"
+	fi
+}
+
+check_security_expire() {
+	local _30_days=$((60*60*24*30))
+	local _14_days=$((60*60*24*14))
+	local _day=$((60*60*24))
+	local now=$(date +%s)
+	local days_passed=$(python -c "print( (${now} - ${MITIGATION_LAST_UPDATE}) / ${_day} )")
+	if (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_30_days} )) ; then
+eerror
+eerror "This ebuild release period is past 30 days since release."
+eerror "It is considered insecure.  As a precaution, this particular point"
+eerror "release will not install."
+eerror
+eerror "Days past last security annoucement:  ${days_passed}"
+eerror
+eerror "Solutions:"
+eerror
+eerror "1.  Use a newer ESR release from the overlay."
+eerror "2.  Use the latest ESR distro release."
+eerror "3.  Use the latest www-client/firefox-bin release, temporarily."
+eerror
+		die
+	elif (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_14_days} )) ; then
+ewarn
+ewarn "This ebuild is more than 2 weeks old and may have a vulnerability."
+ewarn "Please consider a newer release."
+ewarn
+ewarn "Suggestions:"
+ewarn
+ewarn "1.  Use a newer ESR release from the overlay."
+ewarn "2.  Use the latest ESR distro release."
+ewarn "3.  Use the latest www-client/firefox-bin release, temporarily."
+ewarn
+ewarn "Days past last security annoucement:  ${days_passed}"
+ewarn
+	else
+einfo "Days past last security annoucement:  ${days_passed}"
 	fi
 }
 
