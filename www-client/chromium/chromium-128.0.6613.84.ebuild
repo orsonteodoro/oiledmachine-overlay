@@ -51,7 +51,11 @@ EAPI=8
 # /var/tmp/portage/www-client/chromium-128.0.6613.84/work/chromium-128.0.6613.84/third_party/zstd/README.chromium			; live version
 #   https://github.com/facebook/zstd/commit/0ff651dd876823b99fa5c5f53292be28381aee9b							; check if commit part of tag
 #   https://github.com/facebook/zstd/blob/0ff651dd876823b99fa5c5f53292be28381aee9b/lib/zstd.h#L107					; version
-#
+# https://github.com/chromium/chromium/blob/128.0.6613.84/DEPS#L512									; live
+#   git clone https://gn.googlesource.com/gn
+#   git checkout <commit-id>
+#   v=$(git describe HEAD --abbrev=12 | cut -f 3 -d "-")
+#   python -c "print(${v}/10000)" or echo "0.${v}"
 
 APPLY_OILEDMACHINE_OVERLAY_PATCHSET=0
 CHROMIUM_EBUILD_MAINTAINER=1 # See also GEN_ABOUT_CREDITS
@@ -126,7 +130,7 @@ FFMPEG_SLOT="0/59.61.61" # Same as ffmpeg 7.0 ; 0/libavutil_sover_maj.libavcodec
 GCC_COMPAT=( {14..10} )
 GCC_PV="10.2.1" # Minimum
 GCC_SLOT="" # Global variable
-GN_PV="0.2165"
+GN_PV="0.2175"
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
