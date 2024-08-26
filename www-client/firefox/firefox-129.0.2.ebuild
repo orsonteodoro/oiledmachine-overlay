@@ -1511,6 +1511,10 @@ src_prepare() {
 		rm -v "${WORKDIR}/firefox-patches/"*"bgo-748849-RUST_TARGET_override.patch" || die
 	fi
 
+	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" != "1" ]] ; then
+ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
+	fi
+
 	eapply "${WORKDIR}/firefox-patches"
 	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-122.0-disallow-store-data-races.patch"
 

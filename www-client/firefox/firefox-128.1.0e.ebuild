@@ -1543,6 +1543,10 @@ src_prepare() {
 		rm -fv "${WORKDIR}/firefox-patches/"*"-LTO-Only-enable-LTO-"*".patch"
 	fi
 
+	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" != "1" ]] ; then
+ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
+	fi
+
 	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-106.0.2-disallow-store-data-races.patch"
 
 	# Flicker prevention with -Ofast
