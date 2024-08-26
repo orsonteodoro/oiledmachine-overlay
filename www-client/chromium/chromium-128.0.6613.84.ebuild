@@ -10,8 +10,6 @@
 EAPI=8
 
 # Ebuild diff or sync update notes:
-# 125.0.6422.141 -> 126.0.6478.114
-
 # 126.0.6478.114 -> 128.0.6613.84
 
 # For depends see:
@@ -51,8 +49,8 @@ EAPI=8
 # /var/tmp/portage/www-client/chromium-128.0.6613.84/work/chromium-128.0.6613.84/third_party/opus/README.chromium		L3	; newer than generated_package_lists, live
 #   https://gitlab.xiph.org/xiph/opus/-/commit/8cf872a1											; see tag
 # /var/tmp/portage/www-client/chromium-128.0.6613.84/work/chromium-128.0.6613.84/third_party/zstd/README.chromium			; live version
-#   https://github.com/facebook/zstd/commit/ff7a151f2e6c009b657d9f798c2d9962b0e3feb5							; check if commit part of tag
-#   https://github.com/facebook/zstd/blob/ff7a151f2e6c009b657d9f798c2d9962b0e3feb5/lib/zstd.h#L107					; version
+#   https://github.com/facebook/zstd/commit/0ff651dd876823b99fa5c5f53292be28381aee9b							; check if commit part of tag
+#   https://github.com/facebook/zstd/blob/0ff651dd876823b99fa5c5f53292be28381aee9b/lib/zstd.h#L107					; version
 #
 
 APPLY_OILEDMACHINE_OVERLAY_PATCHSET=0
@@ -99,15 +97,15 @@ te th tr uk ur vi zh-CN zh-TW
 # chrome/build/pgo_profiles/*.profdata.
 #
 # Profdata versioning:
-# https://github.com/llvm/llvm-project/blob/0c545a44/llvm/include/llvm/ProfileData/InstrProf.h#L1024
+# https://github.com/llvm/llvm-project/blob/ecea8371/llvm/include/llvm/ProfileData/InstrProf.h#L1024
 # LLVM version:
-# https://github.com/llvm/llvm-project/blob/0c545a44/llvm/CMakeLists.txt#L14
+# https://github.com/llvm/llvm-project/blob/ecea8371/llvm/CMakeLists.txt#L14
 
 # LLVM 19
-CR_CLANG_USED="76ea5feb" # Obtained from \
+CR_CLANG_USED="ecea8371" # Obtained from \
 # https://github.com/chromium/chromium/blob/128.0.6613.84/tools/clang/scripts/update.py#L42 \
-# https://github.com/llvm/llvm-project/commit/76ea5feb
-CR_CLANG_USED_UNIX_TIMESTAMP="1714043569" # Cached.  Use below to obtain this. \
+# https://github.com/llvm/llvm-project/commit/ecea8371
+CR_CLANG_USED_UNIX_TIMESTAMP="1718485362" # Cached.  Use below to obtain this. \
 # TIMESTAMP=$(wget -q -O - https://github.com/llvm/llvm-project/commit/${CR_CLANG_USED}.patch \
 #	| grep -F -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
 # Change also LLVM_OFFICIAL_SLOT
@@ -137,9 +135,9 @@ LICENSE_FINGERPRINT="\
 de68d0a03cb9119b32b8f51735500a7ba2d62a00f481d6800e562781292147fb\
 0a2b4f7e2f3d4b84445d68bdfb3d01ec283043eae05343c42d995f3355e37816\
 "
-LLVM_COMPAT=( {19..18} ) # [inclusive, inclusive] high to low
+LLVM_COMPAT=( 19 ) # [inclusive, inclusive] high to low
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is the same slot listed in https://github.com/chromium/chromium/blob/128.0.6613.84/tools/clang/scripts/update.py#L42
-LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}" # Min is the pregenerated PGO profile needs INSTR_PROF_INDEX_VERSION version 11 for profdata file format.
+LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}" # Min is the pregenerated PGO profile needs INSTR_PROF_INDEX_VERSION version 12 for profdata file format.
 LLVM_OFFICIAL_SLOT="${LLVM_MAX_SLOT}" # Cr official slot
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
@@ -856,7 +854,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/freetype:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-8.3.0:0[${MULTILIB_USEDEP},icu(-)]
+		>=media-libs/harfbuzz-8.5.0:0[${MULTILIB_USEDEP},icu(-)]
 		media-libs/harfbuzz:=
 	)
 	system-icu? (
