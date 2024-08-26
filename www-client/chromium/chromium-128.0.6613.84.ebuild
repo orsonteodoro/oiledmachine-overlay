@@ -56,13 +56,13 @@ EAPI=8
 #
 
 APPLY_OILEDMACHINE_OVERLAY_PATCHSET=0
-CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
+CHROMIUM_EBUILD_MAINTAINER=1 # See also GEN_ABOUT_CREDITS
 
 #
 # Set to 1 below to generate an about_credits.html including bundled internal
 # dependencies.
 #
-GEN_ABOUT_CREDITS=0
+GEN_ABOUT_CREDITS=1
 #
 
 # One of the major sources of lag comes from dependencies
@@ -145,6 +145,7 @@ LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
 MESA_PV="20.3.5"
 MITIGATION_DATE="Aug 21, 2024"
+MITIGATION_LAST_UPDATE=1724223600 # From `date +%s -d "2024-08-21"` date from last mitigation date
 MITIGATION_URI="https://chromereleases.googleblog.com/2024/08/stable-channel-update-for-desktop_21.html"
 NABIS=0 # Global variable
 NODE_VERSION=20
@@ -1619,11 +1620,51 @@ eerror "Failed to determine the rust version.  Check the 'eselect rust' output."
 	echo "${rustc_version}"
 }
 
+check_security_expire() {
+	local _30_days=$((60*60*24*30))
+	local _14_days=$((60*60*24*14))
+	local _day=$((60*60*24))
+	local now=$(date +%s)
+	local days_passed=$(python -c "print( (${now} - ${MITIGATION_LAST_UPDATE}) / ${_day} )")
+	local channel="${SLOT#*/}"
+	if (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_30_days} )) ; then
+eerror
+eerror "This ebuild release period is past 30 days since release."
+eerror "It is considered insecure.  As a precaution, this particular point"
+eerror "release will not install."
+eerror
+eerror "Days past last security annoucement:  ${days_passed}"
+eerror
+eerror "Solutions:"
+eerror
+eerror "1.  Use a newer ${channel} release from the overlay."
+eerror "2.  Use the latest ${channel} distro release."
+eerror "3.  Use the latest www-client/google-chrome release, temporarily."
+eerror
+		die
+	elif (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_14_days} )) ; then
+ewarn
+ewarn "This ebuild is more than 2 weeks old and may have a vulnerability."
+ewarn "Please consider a newer release."
+ewarn
+ewarn "Suggestions:"
+ewarn
+ewarn "1.  Use a newer ${channel} release from the overlay."
+ewarn "2.  Use the latest ${channel} distro release."
+ewarn "3.  Use the latest www-client/google-chrome release, temporarily."
+ewarn
+ewarn "Days past last security annoucement:  ${days_passed}"
+ewarn
+	else
+einfo "Days past last security annoucement:  ${days_passed}"
+	fi
+}
+
 pkg_setup() {
 einfo "Release channel:  ${SLOT#*/}"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
-einfo "Security fixes applied:  ${MITIGATION_URI}"
 einfo "Security announcement date:  ${MITIGATION_DATE}"
+einfo "Security fixes applied:  ${MITIGATION_URI}"
 	fi
 	pre_build_checks
 
@@ -1743,6 +1784,7 @@ einfo
 
 	( use system-dav1d || use system-libaom ) && cflags-depends_check
 	node_pkg_setup
+	check_security_expire
 }
 
 src_unpack() {
@@ -1822,10 +1864,14 @@ apply_distro_patchset() {
 	fi
 
         if use ppc64 ; then
-		local p
-		for p in $(grep -v "^#" "${WORKDIR}/debian/patches/series" \
+		local paths=(
+			$(grep -v "^#" "${WORKDIR}/debian/patches/series" \
 				| grep "^ppc64le" \
-				|| die); do
+				|| die)
+		)
+
+		local p
+		for p in ${paths[@]} ; do
 			if [[ ! ${p} =~ "fix-breakpad-compile.patch" ]]; then
 				PATCHES+=(
 					"${WORKDIR}/debian/patches/${p}"
@@ -1942,8 +1988,7 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 
 	default
 
-	if (( ${#PATCHES[@]} > 0 )) \
-		|| [[ -f "${T}/epatch_user.log" ]] ; then
+	if (( ${#PATCHES[@]} > 0 )) || [[ -f "${T}/epatch_user.log" ]] ; then
 		if use official ; then
 ewarn "The use of unofficial patches is not endorsed upstream."
 		fi
@@ -1960,7 +2005,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		|| die
 
 	# Adjust the python interpreter version
-	sed -i -e "s|\(^script_executable = \).*|\1\"${EPYTHON}\"|g" .gn || die
+	sed -i -e "s|\(^script_executable = \).*|\1\"${EPYTHON}\"|g" ".gn" || die
 
 	local keeplibs=(
 		base/third_party/cityhash
