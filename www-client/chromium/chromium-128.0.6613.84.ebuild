@@ -1694,14 +1694,7 @@ ewarn
 		export CPP="clang++ -E"
 	fi
 
-	if ver_test ${PV##*.} -ge 41 \
-		&& ver_test ${PV##*.} -lt 107 \
-		&& [[ "${SLOT}" =~ "beta" ]] ; then
-# After two releases of stable and d=[41-107) in a.b.c.d, it may happen.
-ewarn "QA:  Bump ebuild for major release.  Stable soon."
-	fi
-
-	if ver_test ${PV##*.} -lt 120 ; then
+	if ver_test ${PV%%.*} -ne ${PATCH_VER%%.*} ; then
 		if tc-is-gcc ; then
 eerror
 eerror "GCC is disallowed.  Still waiting for the GCC patchset."
@@ -1710,13 +1703,15 @@ eerror "Switch to clang, or use the older ebuild if GCC is preferred at the"
 eerror "cost of security."
 eerror
 eerror "Using GCC will be allowed for this build when minor version is"
-eerror ">= expected."
+eerror "== expected."
 eerror
 eerror "Current minor version:   ${PV##*.}"
-eerror "Expected minor version:  >= 120"
+eerror "Expected minor version:  == ${PATCH_VER%%.*}"
 eerror
 			die
 		fi
+	fi
+	if ver_test ${PV%%.*} -lt ${PATCHSET_PPC64%%.*} ; then
 		if use ppc64 ; then
 eerror
 eerror "PPC64 is disallowed.  Still waiting for the PPC64 patchset."
@@ -1727,7 +1722,7 @@ eerror "Using PPC64 will be allowed for this build when minor version is"
 eerror ">= expected."
 eerror
 eerror "Current minor version:   ${PV##*.}"
-eerror "Expected minor version:  >= 120"
+eerror "Expected minor version:  >= ${PATCHSET_PPC64%%.*}"
 eerror
 		fi
 	fi
