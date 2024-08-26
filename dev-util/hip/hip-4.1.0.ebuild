@@ -230,9 +230,15 @@ src_prepare() {
 	popd >/dev/null 2>&1 || die
 
 	rocm_src_prepare
+
+	# Fix for:
+	# python3: no python-exec wrapped executable found in /opt/rocm-4.1.0/lib/python-exec.
+	sed -i -e "/PYTHON_EXECUTABLE/d" "${WORKDIR}/ROCclr-rocm-${PV}/device/pal/CMakeLists.txt" || die
 }
 
-src_configure() { :; }
+src_configure() {
+	:
+}
 
 src_compile() {
 	rocm_set_default_gcc
@@ -253,6 +259,11 @@ src_compile() {
 		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
 		-DUSE_PROF_API=$(usex profile 1 0)
 		-DUSE_SYSTEM_LLVM=OFF
+
+	# Fix for:
+	# python3: no python-exec wrapped executable found in /opt/rocm-4.1.0/lib/python-exec.
+		-DPython_EXECUTABLE="${PYTHON}"
+		-DPYTHON_EXECUTABLE="${PYTHON}"
 	)
 
 	if use cuda ; then
