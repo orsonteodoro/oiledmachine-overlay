@@ -135,10 +135,10 @@ LICENSE_FINGERPRINT="\
 de68d0a03cb9119b32b8f51735500a7ba2d62a00f481d6800e562781292147fb\
 0a2b4f7e2f3d4b84445d68bdfb3d01ec283043eae05343c42d995f3355e37816\
 "
-LLVM_COMPAT=( 19 ) # [inclusive, inclusive] high to low
+LLVM_COMPAT=( 20 19 ) # [inclusive, inclusive] high to low ; +1 or -1 major version allowed.
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is the same slot listed in https://github.com/chromium/chromium/blob/128.0.6613.84/tools/clang/scripts/update.py#L42
 LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}" # Min is the pregenerated PGO profile needs INSTR_PROF_INDEX_VERSION version 12 for profdata file format.
-LLVM_OFFICIAL_SLOT="${LLVM_MAX_SLOT}" # Cr official slot
+LLVM_OFFICIAL_SLOT="19" # Cr official slot
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
 MESA_PV="20.3.5"
@@ -148,6 +148,8 @@ MITIGATION_URI="https://chromereleases.googleblog.com/2024/08/stable-channel-upd
 NABIS=0 # Global variable
 NODE_VERSION=20
 PGO_LLVM_SUPPORTED_VERSIONS=(
+	20.0.0.9999
+	20.0.0
 	"${LLVM_OFFICIAL_SLOT}.0.0.9999"
 	"${LLVM_OFFICIAL_SLOT}.0.0"
 )
