@@ -130,7 +130,7 @@ FFMPEG_SLOT="0/59.61.61" # Same as ffmpeg 7.0 ; 0/libavutil_sover_maj.libavcodec
 GCC_COMPAT=( {14..10} )
 GCC_PV="10.2.1" # Minimum
 GCC_SLOT="" # Global variable
-GN_PV="0.2175"
+GN_COMMIT="b2afae122eeb6ce09c52d63f67dc53fc517dbdc8"
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
@@ -180,10 +180,10 @@ RUST_SUB_REV="3"
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 ZLIB_PV="1.3"
 
-inherit cflags-depends check-linker check-reqs chromium-2 desktop flag-o-matic
-inherit flag-o-matic-om lcnr llvm multilib-minimal ninja-utils pax-utils
-inherit python-any-r1 qmake-utils readme.gentoo-r1 systemd toolchain-funcs uopts
-inherit xdg-utils
+inherit cflags-depends check-linker check-reqs chromium-2 desktop edo
+inherit flag-o-matic flag-o-matic-om lcnr llvm multilib-minimal ninja-utils
+inherit pax-utils python-any-r1 qmake-utils readme.gentoo-r1 systemd
+inherit toolchain-funcs uopts xdg-utils
 
 PATCHSET_PPC64="127.0.6533.88-1raptor0~deb12u2"
 PATCH_REVISION=""
@@ -192,18 +192,20 @@ PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 KEYWORDS="amd64 arm64 ~ppc64"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
+	https://gn.googlesource.com/gn/+archive/${GN_COMMIT}.tar.gz
+		-> gn-${GN_COMMIT:0:7}.tar.gz
 	!system-toolchain? (
 		https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-${VENDORED_CLANG_VER}.tar.xz
 			-> chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang.tar.xz
 		https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%?????}.tar.xz
 			-> chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust.tar.xz
 	)
-	system-toolchain? (
-		https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
-	)
 	ppc64? (
 		https://quickbuild.io/~raptor-engineering-public/+archive/ubuntu/chromium/+files/chromium_${PATCHSET_PPC64}.debian.tar.xz
 		https://deps.gentoo.zip/chromium-ppc64le-gentoo-patches-1.tar.xz
+	)
+	system-toolchain? (
+		https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
 	)
 "
 
@@ -1079,7 +1081,6 @@ BDEPEND+="
 	${COMMON_SNAPSHOT_DEPEND}
 	${PYTHON_DEPS}
 	>=app-arch/gzip-1.7
-	>=dev-build/gn-${GN_PV}
 	>=dev-build/ninja-1.7.2
 	>=dev-util/gperf-3.0.3
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -1232,14 +1233,6 @@ eerror
 eerror
 				die
 			fi
-		fi
-
-		# Users should never hit this, it's purely a development convenience
-		if ver_test $(gn --version || die) -lt ${GN_PV}; then
-eerror
-eerror "dev-build/gn >= ${GN_PV} is required to build this Chromium"
-eerror
-#			die # FIXME
 		fi
 	fi
 }
@@ -1621,6 +1614,10 @@ check_security_expire() {
 	local _day=$((60*60*24))
 	local now=$(date +%s)
 	local days_passed=$(python -c "print( (${now} - ${MITIGATION_LAST_UPDATE}) / ${_day} )")
+	local hours_passed=$(python -c "print( 24 * ${days_passed#*.} )")
+	local minutes_passed=$(python -c "print( 60 * ${hours_passed#*.} )")
+	local seconds_passed=$(python -c "print( 60 * ${minutes_passed#*.} )")
+	local dhms_passed="${days_passed%.*} days, ${hours_passed%.*} hrs, ${minutes_passed%.*} mins, ${seconds_passed%.*} secs"
 	local channel="${SLOT#*/}"
 	if (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_30_days} )) ; then
 eerror
@@ -1628,7 +1625,7 @@ eerror "This ebuild release period is past 30 days since release."
 eerror "It is considered insecure.  As a precaution, this particular point"
 eerror "release will not install."
 eerror
-eerror "Days past last security annoucement:  ${days_passed}"
+eerror "Time passed since the last security update:  ${dhms_passed}"
 eerror
 eerror "Solutions:"
 eerror
@@ -1648,10 +1645,10 @@ ewarn "1.  Use a newer ${channel} release from the overlay."
 ewarn "2.  Use the latest ${channel} distro release."
 ewarn "3.  Use the latest www-client/google-chrome release, temporarily."
 ewarn
-ewarn "Days past last security annoucement:  ${days_passed}"
+ewarn "Time passed since the last security update:  ${dhms_passed}"
 ewarn
 	else
-einfo "Days past last security annoucement:  ${days_passed}"
+einfo "Time passed since the last security update:  ${dhms_passed}"
 	fi
 }
 
@@ -1786,6 +1783,7 @@ src_unpack() {
 	# system package by just not unpacking it unless we're using the bundled
 	# toolchain.
 	unpack "${P}.tar.xz"
+	unpack "gn-${GN_COMMIT:0:7}.tar.gz"
 
 	if use system-toolchain ; then
 		unpack "chromium-patches-${PATCH_VER}.tar.bz2"
@@ -2647,6 +2645,26 @@ _src_configure_compiler() {
 	fi
 }
 
+build_gn() {
+
+	pushd "${WORKDIR}/gn-${GN_COMMIT}" >/dev/null 2>&1 || die
+		if use elibc_musl ; then # bug 906362
+			append-cflags -D_LARGEFILE64_SOURCE
+			append-cxxflags -D_LARGEFILE64_SOURCE
+		fi
+# Sync with gn ebuild:
+einfo "Configuring gn"
+		set -- ${EPYTHON} build/gen.py --no-last-commit-position --no-strip --no-static-libstdc++ --allow-warnings
+		edo "$@"
+
+einfo "Building gn"
+		eninja -C out gn
+		export PATH="${WORKDIR}/gn-${GN_COMMIT}/out:${PATH}"
+		gn --version || die
+		filter-flags -D_LARGEFILE64_SOURCE
+	popd >/dev/null 2>&1 || die
+}
+
 src_configure() {
 	:
 }
@@ -2660,6 +2678,8 @@ _src_configure() {
 	python_setup
 
 	local myconf_gn=""
+
+	build_gn
 
 if use system-toolchain ; then #################################################
 einfo "Using the system toolchain"

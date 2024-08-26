@@ -1546,13 +1546,17 @@ check_security_expire() {
 	local _day=$((60*60*24))
 	local now=$(date +%s)
 	local days_passed=$(python -c "print( (${now} - ${MITIGATION_LAST_UPDATE}) / ${_day} )")
+	local hours_passed=$(python -c "print( 24 * ${days_passed#*.} )")
+	local minutes_passed=$(python -c "print( 60 * ${hours_passed#*.} )")
+	local seconds_passed=$(python -c "print( 60 * ${minutes_passed#*.} )")
+	local dhms_passed="${days_passed%.*} days, ${hours_passed%.*} hrs, ${minutes_passed%.*} mins, ${seconds_passed%.*} secs"
 	if (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_30_days} )) ; then
 eerror
 eerror "This ebuild release period is past 30 days since release."
 eerror "It is considered insecure.  As a precaution, this particular point"
 eerror "release will not install."
 eerror
-eerror "Days past last security annoucement:  ${days_passed}"
+eerror "Time passed since the last security update:  ${dhms_passed}"
 eerror
 eerror "Solutions:"
 eerror
@@ -1572,10 +1576,10 @@ ewarn "1.  Use a newer ESR release from the overlay."
 ewarn "2.  Use the latest ESR distro release."
 ewarn "3.  Use the latest www-client/firefox-bin release, temporarily."
 ewarn
-ewarn "Days past last security annoucement:  ${days_passed}"
+ewarn "Time passed since the last security update:  ${dhms_passed}"
 ewarn
 	else
-einfo "Days past last security annoucement:  ${days_passed}"
+einfo "Time passed since the last security update:  ${dhms_passed}"
 	fi
 }
 
