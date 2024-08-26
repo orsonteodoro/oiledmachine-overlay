@@ -7,7 +7,9 @@ EAPI="8"
 
 # 115.11.0 -> 115.12.0
 
-LLVM_COMPAT=( 16 ) # Limited by virtual/rust
+# 115.12.0 -> 128.1.0
+
+LLVM_COMPAT=( 18 17 ) # Limited by virtual/rust
 
 MY_MAJOR=$(ver_cut 1)
 MY_PN="mozjs"
@@ -17,7 +19,7 @@ MOZ_ESR="yes"
 MOZ_PN="firefox"
 MOZ_PV="${PV}"
 MOZ_PV_SUFFIX=
-if [[ "${PV}" =~ (_(alpha|beta|rc).*)$ ]] ; then
+if [[ "${PV}" =~ ("_"("alpha"|"beta"|"rc").*)$ ]] ; then
 	MOZ_PV_SUFFIX="${BASH_REMATCH[1]}"
 	# Convert the ebuild version to the upstream Mozilla version
 	MOZ_PV="${MOZ_PV/_alpha/a}" # Handle alpha for SRC_URI
@@ -37,14 +39,15 @@ if [[ "${PV}" == *"_rc"* ]] ; then
 fi
 
 # Patch version
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-10.tar.xz"
-SPIDERMONKEY_PATCHSET="spidermonkey-${PV%%.*}-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-02.tar.xz"
+#SPIDERMONKEY_PATCHSET="spidermonkey-${PV%%.*}-patches-01.tar.xz"
+SPIDERMONKEY_PATCHSET="spidermonkey-115-patches-01.tar.xz"
 PATCH_URIS=(
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${FIREFOX_PATCHSET}
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${SPIDERMONKEY_PATCHSET}
 )
 
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 PYTHON_REQ_USE="ncurses,ssl,xml(+)"
 
 WANT_AUTOCONF="2.1"
@@ -64,7 +67,7 @@ HOMEPAGE="
 	https://firefox-source-docs.mozilla.org/js/index.html
 "
 LICENSE="MPL-2.0"
-#RESTRICT="test"
+RESTRICT="test" # Not tested
 RESTRICT="
 	!test? (
 		test
@@ -89,10 +92,12 @@ gen_clang_bdepend() {
 
 }
 RDEPEND="
-	>=dev-libs/icu-73.1:=
-	dev-libs/nspr
-	sys-libs/readline:0=
-	sys-libs/zlib
+	>=dev-libs/icu-73.1
+	dev-libs/icu:=
+	>=dev-libs/nspr-4.35
+	sys-libs/readline:0
+	sys-libs/readline:=
+	>=sys-libs/zlib-1.2.13
 "
 DEPEND="
 	${RDEPEND}
@@ -101,7 +106,7 @@ BDEPEND="
 	${PYTHON_DEPS}
 	virtual/pkgconfig
 	!clang? (
-		virtual/rust
+		>=virtual/rust-0.77.1
 	)
 	test? (
 		$(python_gen_any_dep '
@@ -269,9 +274,9 @@ src_prepare() {
 
 	use lto && rm -v "${WORKDIR}/firefox-patches/"*"-LTO-Only-enable-LTO-"*".patch"
 
-	if ! use ppc64; then
-		rm -v "${WORKDIR}/firefox-patches/"*"ppc64"*".patch" || die
-	fi
+#	if ! use ppc64; then
+#		rm -v "${WORKDIR}/firefox-patches/"*"ppc64"*".patch" || die
+#	fi
 
 	# Workaround for bgo #915651, 915651, 929013 on musl.
 	if use elibc_glibc ; then
@@ -279,6 +284,7 @@ src_prepare() {
 	fi
 
 	eapply "${WORKDIR}/firefox-patches"
+	rm "${WORKDIR}/spidermonkey-patches/0003-tests-Increase-the-test-timeout-for-slower-builds.patch" || die
 	eapply "${WORKDIR}/spidermonkey-patches"
 
 	default
@@ -476,6 +482,12 @@ einfo "Smoke-test successful, continuing with full test suite"
 	else
 eerror "Smoke-test failed: did interpreter initialization fail?"
 		die
+	fi
+
+	if use sparc ; then
+		echo "non262/Array/regress-157652.js" >> "${T}"/known_failures.list
+		echo "non262/regress/regress-422348.js" >> "${T}"/known_failures.list
+		echo "test262/built-ins/TypedArray/prototype/set/typedarray-arg-set-values-same-buffer-other-type.js" >> "${T}"/known_failures.list
 	fi
 
 	cp \

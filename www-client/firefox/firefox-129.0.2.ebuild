@@ -1,19 +1,14 @@
-# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2022-2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-# 115.11.0 -> 115.12.0
-
-# SECURITY:  If this gets bumped, then dev-lang/spidermonkey should be bumped too with the same ESR version.
+# 127.0.1 -> 129.0.2
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
 # Revisions may change in the oiledmachine-overlay.
-
-# Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates it will have an esr suffix.
-# For security advisories, see https://www.mozilla.org/en-US/security/advisories/
 
 # Version announcements can be found here also:
 # https://wiki.mozilla.org/Release_Management/Calendar
@@ -24,48 +19,51 @@ EAPI=8
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/115.12.0/system-requirements/
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/moz.configure
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/build/moz.configure/nss.configure L12
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/gfx/harfbuzz/configure.ac L3
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/media/libaom/config/aom_version.h L7 [old]
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/media/libwebp/moz.yaml L16
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/modules/freetype2/include/freetype/freetype.h L4943
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/taskcluster/ci/fetch/toolchains.yml
+# https://www.mozilla.org/en-US/firefox/129.0.2/system-requirements/
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/moz.configure
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/build/moz.configure/nss.configure L12
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/gfx/harfbuzz/configure.ac L3
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/media/libaom/config/aom_version.h L7 [old]
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/media/libwebp/moz.yaml L16
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/modules/freetype2/include/freetype/freetype.h L5223
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/taskcluster/kinds/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, pkgconf-, rust-
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/taskcluster/ci/packages/
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/taskcluster/kinds/packages/
 #   Keyword search:  gtk
-# /var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0/taskcluster/ci/toolchain/
+# /var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2/taskcluster/kinds/toolchain/
 #   Keyword search:  nasm, nodejs, zlib
 
-# Due to versioning conflicts and ebuild assumptions, you cannot have stable and esr be the same version
+# Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
+# For security advisories, see https://www.mozilla.org/en-US/security/advisories/
 
 # The latest release version can be found with:
 __='
 curl -l http://ftp.mozilla.org/pub/firefox/releases/ \
 	| cut -f 3 -d ">" \
 	| cut -f 1 -d "<" \
-	| grep "esr" \
+	| grep -v "esr" \
+	| grep -v "b" \
 	| sed -e "s|/||g" \
 	| grep "^[0-9]" \
-	| sort -V
+	| sort -V \
+	| tail -n 1
 '
 unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="115.12.0"
-wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}esr/linux-x86_64/xpi/" \
+PV="129.0.2"
+wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
 	| cut -f 1 -d "<" \
@@ -81,7 +79,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-115.12.0e/work/firefox-115.12.0"
+SRC="/var/tmp/portage/www-client/firefox-129.0.2/work/firefox-129.0.2"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -102,19 +100,20 @@ grep -E \
 	| grep -F -v "/zero/"
 '
 unset __
-#   Keyword search:  aom, dbus, dbus-glib, fontconfig, pango, perl, pixman, xkbcommon
+#   Keyword search:  aom, dbus, fontconfig, pango, perl, pixman, xkbcommon, xrandr
 
+APPLY_OILEDMACHINE_OVERLAY_PATCHSET="0"
 BUILD_OBJ_DIR="" # global var not const
+DBUS_PV="0.60"
 # One of the major sources of lag comes from dependencies.  These are strict to
 # match performance to competition or normal builds.
 declare -A CFLAGS_RDEPEND=(
 	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
-DBUS_PV="0.60"
-DBUS_GLIB_PV="0.60"
 EBUILD_MAINTAINER_MODE=0
 FFMPEG_COMPAT=(
+	"0/59.61.61" # 7.0
 	"0/58.60.60" # 6.0
 	"0/57.59.59" # 5.0
 	"0/56.58.58" # 4.0
@@ -126,29 +125,30 @@ FFMPEG_COMPAT=(
 	"0/51.53.53" # 0.10
 	"0/50.53.53" # 0.8
 )
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-09.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-02.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
-LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-ESR-THIRD-PARTY-LICENSES.html"
+LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES.html"
 LICENSE_FINGERPRINT="\
-ed7ef4de89840f20482d43f47149d993b5280de787a017114730e0d296ee5035\
-e6ce73d176e405d1dab64151a7787bc3190692df5ba72f552039a61883d0e273\
+5f4a4f2092ef8c400e625fe4becb533420375298e7fc5b577ac954896348f44f\
+514cec962cc574ba62390b266fef34b73a2f3cba805e61d83a0996f95a130989\
 " # SHA512
-LLVM_COMPAT=( 16 ) # Limited based on virtual/rust
+LLVM_COMPAT=( 18 ) # Limited based on virtual/rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MITIGATION_DATE="Jun 13, 2024"
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-28/"
-MOZ_ESR="yes"
+MITIGATION_DATE="Aug 6, 2024"
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-33/"
+MOZ_ESR=
 MOZ_LANGS=(
 ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
 en-GB en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fur fy-NL ga-IE gd gl
 gn gu-IN he hi-IN hr hsb hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv
-mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sc sco si sk
-sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
+mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sat sc sco si
+sk skr sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
 )
-MOZ_PV="${PV/e}"
+
+MOZ_PV="${PV}"
 MOZ_PV_SUFFIX=
 if [[ "${PV}" =~ (_(alpha|beta|rc).*)$ ]] ; then
 	MOZ_PV_SUFFIX=${BASH_REMATCH[1]}
@@ -161,6 +161,11 @@ fi
 if [[ -n "${MOZ_ESR}" ]] ; then
 	# ESR releases have slightly different version numbers
 	MOZ_PV="${MOZ_PV}esr"
+	HOMEPAGE="https://www.mozilla.com/firefox https://www.mozilla.org/firefox/enterprise/"
+	SLOT="esr"
+else
+	HOMEPAGE="https://www.mozilla.com/firefox"
+	SLOT="rapid"
 fi
 MOZ_PN="${PN%-bin}"
 MOZ_P="${MOZ_PN}-${MOZ_PV}"
@@ -169,11 +174,11 @@ MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 MOZILLA_FIVE_HOME="" # Global variable
 NABIS=0 # Global variable
 NASM_PV="2.14.02"
-NODE_VERSION=16
+NODE_VERSION=18
 OFLAG="" # Global variable
 PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_PV="1.69.0"
+RUST_PV="1.79.0"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
 UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_EPGO=0 # Recheck if allowed
@@ -181,20 +186,20 @@ UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 WANT_AUTOCONF="2.1"
 XKBCOMMON_PV="0.4.1"
-VIRTUALX_REQUIRED="manual"
+VIRTUALX_REQUIRED="pgo"
 
 inherit autotools cflags-depends check-linker check-reqs desktop flag-o-matic
 inherit gnome2-utils lcnr linux-info llvm multilib-minimal multiprocessing
 inherit pax-utils python-any-r1 readme.gentoo-r1 rust-toolchain toolchain-funcs
 inherit uopts virtualx xdg
 
-KEYWORDS="amd64 arm64 ~ppc64 ~riscv x86"
-MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
-if [[ ${PV} == *_rc* ]] ; then
-	MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/candidates/${MOZ_PV}-candidates/build${PV##*e}"
-fi
-if [[ ${PV} == *e* ]] ; then
-	MOZ_SRC_BASE_URI="http://ftp.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
+S="${WORKDIR}/${PN}-${PV%_*}"
+S_BAK="${WORKDIR}/${PN}-${PV%_*}"
+if [[ "${PV}" == *"_rc"* ]] ; then
+	MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/candidates/${MOZ_PV}-candidates/build${PV##*_rc}"
+else
+	MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 fi
 PATCH_URIS=(
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${FIREFOX_PATCHSET}
@@ -203,17 +208,12 @@ SRC_URI="
 	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
 	${PATCH_URIS[@]}
 "
-#https://github.com/mozilla/gecko-dev/commit/d4f5769a01531070eb401fd0b78bbd0ce22c4b1f.patch
-#	-> ${PN}-d4f5769.patch
-# d4f5769 - Bug 1746462 - add support for --enable-linker=mold on linux.
-S="${WORKDIR}/${PN}-${PV/e}"
-S_BAK="${WORKDIR}/${PN}-${PV/e}"
 
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 # llvm_gen_dep is broken for ${MULTILIB_USEDEP} if inserted directly.
 RESTRICT="mirror"
-SLOT="esr"
+SLOT="rapid"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
 # FF-XX.YY-THIRD-PARTY-LICENSES should be updated per new feature or if the \
@@ -400,21 +400,23 @@ CODEC_IUSE="
 +opus
 +vpx
 "
+# Distro enables telemetry by default.
 IUSE+="
 ${CODEC_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alsa cpu_flags_arm_neon cups +dbus debug eme-free +ffvpx +hardened -hwaccel jack
--jemalloc libcanberra libnotify libproxy libsecret mold +openh264 +pgo
-proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+pulseaudio sndio selinux speech +system-av1 +system-ffmpeg +system-harfbuzz
-+system-icu +system-jpeg +system-libevent +system-libvpx system-png
-system-python-libs +system-webp +vaapi +wayland +webrtc wifi webspeech +X
+-jemalloc +jumbo-build libcanberra libnotify libproxy libsecret mold +openh264
++pgo +pulseaudio proprietary-codecs proprietary-codecs-disable
+proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user selinux sndio
+speech +system-av1 +system-ffmpeg +system-harfbuzz +system-icu
++system-jpeg +system-libevent +system-libvpx system-png +system-webp -telemetry
++vaapi -valgrind +wayland +webrtc wifi webspeech
 "
+# telemetry disabled for crypto/security reasons
 
 # Firefox-only IUSE
 IUSE+="
-geckodriver +gmp-autoupdate screencast
++gmp-autoupdate screencast +X
 "
 
 # The wayland flag actually allows vaapi, but upstream lazy to make it
@@ -457,7 +459,6 @@ NON_FREE_REQUIRED_USE="
 "
 REQUIRED_USE="
 	${NON_FREE_REQUIRED_USE}
-	X
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
@@ -469,6 +470,9 @@ REQUIRED_USE="
 			ffvpx
 			system-ffmpeg
 		)
+	)
+	debug? (
+		!system-av1
 	)
 	h264? (
 		system-ffmpeg
@@ -497,6 +501,9 @@ REQUIRED_USE="
 			system-ffmpeg
 		)
 	)
+	wayland? (
+		dbus
+	)
 	wifi? (
 		dbus
 	)
@@ -512,10 +519,6 @@ REQUIRED_USE="
 
 FF_ONLY_DEPEND="
 	!www-client/firefox:0
-	!www-client/firefox:rapid
-	screencast? (
-		>=media-video/pipewire-0.3.52:=[${MULTILIB_USEDEP}]
-	)
 	selinux? (
 		sec-policy/selinux-mozilla
 	)
@@ -526,8 +529,8 @@ GAMEPAD_BDEPEND="
 	)
 "
 
-# Same as virtual/udev-217-r5 but with multilib changes.
-# Required for gamepad, or WebAuthn roaming authenticators (e.g. USB security key)
+# Same as virtual/udev-217-r5 but with multilib changes.  Udev is required for
+# gamepad, or WebAuthn roaming authenticators (e.g. USB security key)
 UDEV_RDEPEND="
 	kernel_linux? (
 		|| (
@@ -631,33 +634,30 @@ NON_FREE_CDEPENDS="
 		)
 	)
 "
+# ZLIB relaxed
 CDEPEND="
 	${FF_ONLY_DEPEND}
 	${NON_FREE_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.90.0[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.102[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.13.0[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.13.2[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.3.1[${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
-	>=x11-libs/pixman-0.36.0[${MULTILIB_USEDEP}]
+	>=x11-libs/pixman-0.40.0[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=[${MULTILIB_USEDEP}]
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	virtual/freedesktop-icon-theme
-	x11-libs/cairo
-	x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
+	x11-libs/cairo[${MULTILIB_USEDEP}]
+	x11-libs/gdk-pixbuf:2[${MULTILIB_USEDEP}]
 	dbus? (
-		>=dev-libs/dbus-glib-${DBUS_GLIB_PV}[${MULTILIB_USEDEP}]
 		>=sys-apps/dbus-${DBUS_PV}[${MULTILIB_USEDEP}]
 	)
 	jack? (
 		virtual/jack[${MULTILIB_USEDEP}]
-	)
-	libproxy? (
-		>=net-libs/libproxy-1[${MULTILIB_USEDEP}]
 	)
 	pulseaudio? (
 		|| (
@@ -665,8 +665,8 @@ CDEPEND="
 			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP},sdk]
 		)
 	)
-	screencast? (
-		media-video/pipewire:=
+	libproxy? (
+		>=net-libs/libproxy-1[${MULTILIB_USEDEP}]
 	)
 	selinux? (
 		sec-policy/selinux-mozilla
@@ -675,48 +675,52 @@ CDEPEND="
 		>=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}]
 	)
 	system-av1? (
-		>=media-libs/dav1d-1.1.0:=[${MULTILIB_USEDEP},8bit]
+		>=media-libs/dav1d-1.4.2:=[${MULTILIB_USEDEP},8bit]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
 		>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
-		>=media-libs/harfbuzz-7.3.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-9.0.0:0=[${MULTILIB_USEDEP}]
 	)
 	system-icu? (
 		>=dev-libs/icu-73.1:=[${MULTILIB_USEDEP}]
 	)
 	system-jpeg? (
-		>=media-libs/libjpeg-turbo-2.1.5.1[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-3.0.3[${MULTILIB_USEDEP}]
+		media-libs/libjpeg-turbo:=
 	)
 	system-libevent? (
 		>=dev-libs/libevent-2.1.12:0=[${MULTILIB_USEDEP},threads(+)]
 	)
 	system-libvpx? (
-		>=media-libs/libvpx-1.13.0:0=[${MULTILIB_USEDEP},postproc]
+		>=media-libs/libvpx-1.14.1:0=[${MULTILIB_USEDEP},postproc]
 	)
 	system-png? (
-		>=media-libs/libpng-1.6.39:0=[${MULTILIB_USEDEP},apng]
+		>=media-libs/libpng-1.6.43:0=[${MULTILIB_USEDEP},apng]
 	)
 	system-webp? (
-		>=media-libs/libwebp-1.3.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-1.4.0:0=[${MULTILIB_USEDEP}]
+	)
+	valgrind? (
+		dev-debug/valgrind
 	)
 	wayland? (
-		>=media-libs/libepoxy-1.5.10-r1
+		>=media-libs/libepoxy-1.5.10-r1[${MULTILIB_USEDEP}]
 		>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland]
-		>=x11-libs/libxkbcommon-${XKBCOMMON_PV}[${MULTILIB_USEDEP},wayland]
+		>=x11-libs/libdrm-2.4[${MULTILIB_USEDEP}]
 	)
 	wifi? (
 		kernel_linux? (
-			>=dev-libs/dbus-glib-${DBUS_GLIB_PV}[${MULTILIB_USEDEP}]
-			>=net-misc/networkmanager-0.7[${MULTILIB_USEDEP}]
+			|| (
+				>=net-misc/networkmanager-0.7[${MULTILIB_USEDEP}]
+				net-misc/connman[networkmanager]
+			)
 			>=sys-apps/dbus-${DBUS_PV}[${MULTILIB_USEDEP}]
 		)
 	)
 	X? (
 		>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},X]
-		>=x11-libs/libxkbcommon-${XKBCOMMON_PV}[${MULTILIB_USEDEP},X]
 		>=x11-libs/libXrandr-1.4.0[${MULTILIB_USEDEP}]
-		>=x11-libs/libXtst-1.2.3[${MULTILIB_USEDEP}]
 		virtual/opengl[${MULTILIB_USEDEP}]
 		x11-libs/cairo[${MULTILIB_USEDEP},X]
 		x11-libs/libX11[${MULTILIB_USEDEP}]
@@ -789,18 +793,19 @@ RDEPEND+="
 
 DEPEND+="
 	${CDEPEND}
-	pulseaudio? (
-		|| (
-			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP},sdk]
-			media-sound/pulseaudio[${MULTILIB_USEDEP}]
-		)
-	)
 	X? (
 		x11-base/xorg-proto
 		x11-libs/libICE[${MULTILIB_USEDEP}]
 		x11-libs/libSM[${MULTILIB_USEDEP}]
 	)
 "
+
+# ESR and rapid dependencies.
+if [[ -n ${MOZ_ESR} ]] ; then
+	RDEPEND+=" !www-client/firefox:rapid"
+else
+	RDEPEND+=" !www-client/firefox:esr"
+fi
 
 gen_llvm_bdepend() {
 	local LLVM_SLOT
@@ -820,35 +825,29 @@ gen_llvm_bdepend() {
 }
 BDEPEND+="
 	$(gen_llvm_bdepend)
-	${PYTHON_DEPS}
 	${GAMEPAD_BDEPEND}
+	${PYTHON_DEPS}
 	=net-libs/nodejs-${NODE_VERSION}*
 	>=dev-lang/perl-5.006
-	>=dev-util/cbindgen-0.24.3
+	>=dev-util/cbindgen-0.26.0
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
-	>=virtual/rust-${RUST_PV}[${MULTILIB_USEDEP}]
 	app-alternatives/awk
 	app-arch/unzip
 	app-arch/zip
 	app-eselect/eselect-nodejs
 	!elibc_glibc? (
-		|| (
-			dev-lang/rust
-			<dev-lang/rust-bin-1.73
-		)
+		dev-lang/rust[${MULTILIB_USEDEP}]
 	)
 	amd64? (
 		>=dev-lang/nasm-${NASM_PV}
+	)
+	elibc_glibc? (
+		>=virtual/rust-${RUST_PV}[${MULTILIB_USEDEP}]
 	)
 	mold? (
 		sys-devel/mold
 	)
 	pgo? (
-		X? (
-			sys-devel/gettext
-			x11-base/xorg-server[xvfb]
-			x11-apps/xhost
-		)
 		wayland? (
 			|| (
 				gui-wm/tinywl
@@ -856,15 +855,25 @@ BDEPEND+="
 			)
 			x11-misc/xkeyboard-config
 		)
-
+		X? (
+			sys-devel/gettext
+			x11-base/xorg-server[xvfb]
+			x11-apps/xhost
+		)
 	)
 	x86? (
 		>=dev-lang/nasm-${NASM_PV}
 	)
 "
+PDEPEND+="
+	screencast? (
+		>=media-video/pipewire-0.3.52[${MULTILIB_USEDEP}]
+		sys-apps/xdg-desktop-portal
+	)
+"
 
 # Allow MOZ_GMP_PLUGIN_LIST to be set in an eclass or overridden in the
-# enviromnent.  (For advanced hackers only)
+# enviromnent. (For advanced hackers only)
 if [[ -z "${MOZ_GMP_PLUGIN_LIST+set}" ]] ; then
 	MOZ_GMP_PLUGIN_LIST=(
 		gmp-gmpopenh264
@@ -878,7 +887,7 @@ einfo "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT
 		return 1
 	fi
 
-	if tc-is-clang && ! tc-ld-is-mold ; then
+	if tc-is-clang ; then
 		if ! has_version -b "sys-devel/lld:${LLVM_SLOT}" ; then
 einfo "sys-devel/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
@@ -886,7 +895,8 @@ einfo "sys-devel/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} 
 
 		if use pgo ; then
 			if ! has_version -b "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*" ; then
-einfo "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}* is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+einfo "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}* is missing! Cannot" >&2
+einfo "use LLVM slot ${LLVM_SLOT} ..." >&2
 				return 1
 			fi
 		fi
@@ -898,21 +908,31 @@ einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 mozilla_set_globals() {
 	# https://bugs.gentoo.org/587334
 	local MOZ_TOO_REGIONALIZED_FOR_L10N=(
-		fy-NL ga-IE gu-IN hi-IN hy-AM nb-NO ne-NP nn-NO pa-IN sv-SE
+		"fy-NL"
+		"ga-IE"
+		"gu-IN"
+		"hi-IN"
+		"hy-AM"
+		"nb-NO"
+		"ne-NP"
+		"nn-NO"
+		"pa-IN"
+		"sv-SE"
 	)
 
-	local lang xflag
+	local lang
+	local xflag
 	for lang in "${MOZ_LANGS[@]}" ; do
-		if [[ ${lang} == en || ${lang} == en-US ]] ; then
+		if [[ "${lang}" == "en" || "${lang}" == "en-US" ]] ; then
 	# Both are handled internally
 			continue
 		fi
 
 	# Strip region subtag if $lang is in the list
-		if has ${lang} "${MOZ_TOO_REGIONALIZED_FOR_L10N[@]}" ; then
-			xflag=${lang%%-*}
+		if has "${lang}" "${MOZ_TOO_REGIONALIZED_FOR_L10N[@]}" ; then
+			xflag="${lang%%-*}"
 		else
-			xflag=${lang}
+			xflag="${lang}"
 		fi
 
 		SRC_URI+="
@@ -927,7 +947,7 @@ mozilla_set_globals() {
 mozilla_set_globals
 
 moz_clear_vendor_checksums() {
-	debug-print-function ${FUNCNAME} "$@"
+	debug-print-function "${FUNCNAME}" "$@"
 
 	if [[ ${#} -ne 1 ]] ; then
 		die "${FUNCNAME} requires exact one argument"
@@ -942,9 +962,9 @@ einfo "Clearing cargo checksums for ${1} ..."
 }
 
 moz_install_xpi() {
-	debug-print-function ${FUNCNAME} "$@"
+	debug-print-function "${FUNCNAME}" "$@"
 
-	if [[ ${#} -lt 2 ]] ; then
+	if (( ${#} < 2 )) ; then
 		die "${FUNCNAME} requires at least two arguments"
 	fi
 
@@ -958,10 +978,10 @@ moz_install_xpi() {
 		emid=
 		xpi_tmp_dir=$(mktemp -d --tmpdir="${T}")
 
-	# Unpack XPI
+		# Unpack XPI
 		unzip -qq "${xpi_file}" -d "${xpi_tmp_dir}" || die
 
-	# Determine extension ID
+		# Determine extension ID
 		if [[ -f "${xpi_tmp_dir}/install.rdf" ]] ; then
 			emid=$(sed -n \
 -e '/install-manifest/,$ { /em:id/!d; s/.*[\">]\([^\"<>]*\)[\"<].*/\1/; p; q }' \
@@ -995,9 +1015,9 @@ einfo "Installing ${emid}.xpi into ${ED}${DESTDIR} ..."
 }
 
 mozconfig_add_options_ac() {
-	debug-print-function ${FUNCNAME} "$@"
+	debug-print-function "${FUNCNAME}" "$@"
 
-	if [[ ${#} -lt 2 ]] ; then
+	if (( ${#} < 2 )) ; then
 		die "${FUNCNAME} requires at least two arguments"
 	fi
 
@@ -1011,9 +1031,9 @@ mozconfig_add_options_ac() {
 }
 
 mozconfig_add_options_mk() {
-	debug-print-function ${FUNCNAME} "$@"
+	debug-print-function "${FUNCNAME}" "$@"
 
-	if [[ ${#} -lt 2 ]] ; then
+	if (( ${#} < 2 )) ; then
 		die "${FUNCNAME} requires at least two arguments"
 	fi
 
@@ -1027,9 +1047,9 @@ mozconfig_add_options_mk() {
 }
 
 mozconfig_use_enable() {
-	debug-print-function ${FUNCNAME} "$@"
+	debug-print-function "${FUNCNAME}" "$@"
 
-	if [[ ${#} -lt 1 ]] ; then
+	if (( ${#} < 1 )) ; then
 		die "${FUNCNAME} requires at least one arguments"
 	fi
 
@@ -1039,9 +1059,9 @@ mozconfig_use_enable() {
 }
 
 mozconfig_use_with() {
-	debug-print-function ${FUNCNAME} "$@"
+	debug-print-function "${FUNCNAME}" "$@"
 
-	if [[ ${#} -lt 1 ]] ; then
+	if (( ${#} < 1 )) ; then
 		die "${FUNCNAME} requires at least one arguments"
 	fi
 
@@ -1050,49 +1070,11 @@ mozconfig_use_with() {
 	mozconfig_add_options_ac "${t}" "${flag}"
 }
 
-# Please see:
-# https://github.com/gentoo/gentoo/pull/28366 ||
-# https://github.com/gentoo/gentoo/pull/28355
-tc-ld-is-mold() {
-	local out
-
-	# Ensure ld output is in English.
-	local -x LC_ALL=C
-
-	# First check the linker directly.
-	out=$($(tc-getLD "$@") --version 2>&1)
-	if [[ ${out} == *"mold"* ]] ; then
-		return 0
-	fi
-
-	# Then see if they're selecting mold via compiler flags.
-	# Note: We're assuming they're using LDFLAGS to hold the
-	# options and not CFLAGS/CXXFLAGS.
-	local base="${T}/test-tc-linker"
-	cat <<-EOF > "${base}.c"
-	int main() { return 0; }
-	EOF
-	out=$($(tc-getCC "$@") \
-		${CFLAGS} \
-		${CPPFLAGS} \
-		${LDFLAGS} \
-		-Wl,--version "${base}.c" \
-		-o "${base}" \
-		2>&1)
-	rm -f "${base}"*
-	if [[ ${out} == *"mold"* ]] ; then
-		return 0
-	fi
-
-	# No mold here!
-	return 1
-}
-
 virtwl() {
-	debug-print-function ${FUNCNAME} "$@"
+	debug-print-function "${FUNCNAME}" "$@"
 
-	[[ $# -lt 1 ]] && die "${FUNCNAME} needs at least one argument"
-	if [[ -n $XDG_RUNTIME_DIR ]] ; then
+	(( ${#} < 1 )) && die "${FUNCNAME} needs at least one argument"
+	if [[ -z "${XDG_RUNTIME_DIR}" ]] ; then
 eerror
 eerror "${FUNCNAME} needs XDG_RUNTIME_DIR to be set; try xdg_environment_reset"
 eerror
@@ -1100,33 +1082,29 @@ eerror
 	fi
 	tinywl -h >/dev/null || die 'tinywl -h failed'
 
-	# TODO: don't run addpredict in utility function. WLR_RENDERER=pixman
-	# doesn't work
-	addpredict "/dev/dri"
 	local VIRTWL
 	local VIRTWL_PID
 	coproc VIRTWL { \
 		WLR_BACKENDS="headless" \
-		exec tinywl \
-		-s 'echo $WAYLAND_DISPLAY; read _; kill $PPID'; \
+		exec tinywl -s 'echo $WAYLAND_DISPLAY; read _; kill $PPID'; \
 	}
 	local -x WAYLAND_DISPLAY
 	read WAYLAND_DISPLAY <&${VIRTWL[0]}
 
 	debug-print "${FUNCNAME}: $@"
 	"$@"
-	local r=$?
+	local r=${?}
 
 	[[ -n "$VIRTWL_PID" ]] || die "tinywl exited unexpectedly"
 	exec {VIRTWL[0]}<&- {VIRTWL[1]}>&-
-	return $r
+	return ${r}
 }
 
 pkg_pretend() {
 	if [[ "${MERGE_TYPE}" != "binary" ]] ; then
 		if use pgo ; then
 			if ! has usersandbox $FEATURES ; then
-	# Generally speaking, PGO doesn't require usersandbox dropped.
+	# PGO doesn't require usersandbox dropped in general.
 eerror
 eerror "You must enable usersandbox as X server can not run as root!"
 eerror
@@ -1237,7 +1215,7 @@ eerror
 }
 
 pkg_setup() {
-einfo "Release type:  ESR (Extended Service Release)"
+einfo "Release type:  rapid"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
 einfo "Security announcement date:  ${MITIGATION_DATE}"
@@ -1338,42 +1316,11 @@ eerror
 		if use pgo ; then
 	# Update 105.0: "/proc/self/oom_score_adj" isn't enough anymore with
 	# pgo, but not sure whether that's due to better OOM handling by Firefox
-	# (bmo#1771712), or portage
-	# (PORTAGE_SCHEDULING_POLICY) update...
+	# (bmo#1771712), or portage (PORTAGE_SCHEDULING_POLICY) update...
 			addpredict "/proc"
 
-	# May need a wider addpredict when using wayland+pgo.
-			addpredict "/dev/dri"
-
-
-	# Allow access to GPU during PGO run
-			shopt -s nullglob
-
-			local ati_cards=$(echo -n "/dev/ati/card"* \
-				| sed 's/ /:/g')
-			if [[ -n "${ati_cards}" ]] ; then
-				addpredict "${ati_cards}"
-			fi
-
-			local mesa_cards=$(echo -n "/dev/dri/card"* \
-				| sed 's/ /:/g')
-			if [[ -n "${mesa_cards}" ]] ; then
-				addpredict "${mesa_cards}"
-			fi
-
-			local nvidia_cards=$(echo -n "/dev/nvidia"* \
-				| sed 's/ /:/g')
-			if [[ -n "${nvidia_cards}" ]] ; then
-				addpredict "${nvidia_cards}"
-			fi
-
-			local render_cards=$(echo -n "/dev/dri/renderD128"* \
-				| sed 's/ /:/g')
-			if [[ -n "${render_cards}" ]] ; then
-				addpredict "${render_cards}"
-			fi
-
-			shopt -u nullglob
+	# Clear tons of conditions, since PGO is hardware-dependant.
+			addpredict /dev
 		fi
 
 		if ! mountpoint -q "/dev/shm" ; then
@@ -1535,52 +1482,29 @@ _get_s() {
 	fi
 }
 
+drop_patch() {
+	local path="${1}"
+ewarn "Dropping broken ${path} because patchset is either already applied or the patchset has not been updated."
+	rm -rf "${path}"
+}
+
+_eapply_oiledmachine_set() {
+	local path="${1}"
+	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
+		eapply "${path}"
+	fi
+}
+
 src_prepare() {
 	if is-flagq '-flto*' ; then
 		rm -fv "${WORKDIR}/firefox-patches/"*"-LTO-Only-enable-LTO-"*".patch"
 	fi
 
-	if ! use ppc64 ; then
-		rm -v "${WORKDIR}/firefox-patches/"*"ppc64"*".patch" || die
-	fi
-
-	if use x86 && use elibc_glibc ; then
-		rm -v "${WORKDIR}/firefox-patches/"*"-musl-non-lfs64-api-on-audio_thread_priority-crate.patch" || die
-	fi
-
-	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disallow-store-data-races.patch"
-
-	# Flicker prevention with -Ofast
-	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-gfx-layers.patch"
-
-	# Prevent YT stall prevention with clang with -Ofast.
-	# Prevent audio perma mute with gcc with -Ofast.
-	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-js.patch"
-
-	# Only partial patching was done because the distro doesn't support
-	# multilib Python.  Only native ABI is supported.  This means cbindgen
-	# cannot load the 32-bit clang.  It will build the cargo parts.  When it
-	# links it, it fails because of cbindings is 64-bit and the dependencies
-	# use the build information for 64-bit linking, which should be 32-bit.
-
-#	eapply "${DISTDIR}/${PN}-d4f5769.patch"
-
-	# Allow to use system-ffmpeg completely.
-	eapply "${FILESDIR}/extra-patches/${PN}-115e-allow-ffmpeg-decode-av1.patch"
-	eapply "${FILESDIR}/extra-patches/${PN}-115e-disable-ffvpx.patch"
-
-	# Prevent tab crash
-	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-dom-bindings.patch"
-
-	# Prevent video seek bug
-	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-ipc-chromium-chromium-config.patch"
-
 	# Workaround for bgo#917599
 	if has_version ">=dev-libs/icu-74.1" && use system-icu ; then
-		eapply "${WORKDIR}/firefox-patches/0029-bmo-1862601-system-icu-74.patch"
+		eapply "${WORKDIR}/firefox-patches/"*"-bmo-1862601-system-icu-74.patch"
 	fi
-
-	rm -v "${WORKDIR}/firefox-patches/0029-bmo-1862601-system-icu-74.patch" || die
+	rm -v "${WORKDIR}/firefox-patches/"*"-bmo-1862601-system-icu-74.patch" || die
 
 	# Workaround for bgo#915651 on musl
 	if use elibc_glibc ; then
@@ -1588,6 +1512,30 @@ src_prepare() {
 	fi
 
 	eapply "${WORKDIR}/firefox-patches"
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-122.0-disallow-store-data-races.patch"
+
+	# Flicker prevention with -Ofast
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-gfx-layers.patch"
+
+	# Prevent YT stall prevention with clang with -Ofast.
+	# Prevent audio perma mute with gcc with -Ofast.
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-122.0-disable-broken-flags-js.patch"
+
+	# Only partial patching was done because the distro doesn't support
+	# multilib Python.  Only native ABI is supported.  This means cbindgen
+	# cannot load the 32-bit clang.  It will build the cargo parts.  When it
+	# links it, it fails because of cbindings is 64-bit and the dependencies
+	# use the build information for 64-bit linking, which should be 32-bit.
+
+	# Allow to use system-ffmpeg completely.
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-127-allow-ffmpeg-decode-av1.patch"
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-125-disable-ffvpx.patch"
+
+	# Prevent tab crash
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-dom-bindings.patch"
+
+	# Prevent video seek bug
+	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-122.0-disable-broken-flags-ipc-chromium-chromium-config.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -1600,25 +1548,31 @@ src_prepare() {
 		if use amd64 ; then
 			export RUST_TARGET="x86_64-unknown-linux-musl"
 		elif use x86 ; then
-			export RUST_TARGET="i686-unknown-linux-musl"
+			export RUST_TARGET="x86-unknown-linux-musl"
+		elif use arm64 ; then
+			export RUST_TARGET="aarch64-unknown-linux-musl"
+		elif use ppc64 ; then
+			export RUST_TARGET="powerpc64le-unknown-linux-musl"
 		else
-eerror
-eerror "Unknown musl chost, please post your rustc -vV along with"
-eerror "\`emerge --info\` on Gentoo's bug #915651"
-eerror
-			die
+			die "Unknown musl chost, please post your rustc -vV along with emerge --info on Gentoo's bug #915651"
 		fi
 	fi
 
 	# Make LTO respect MAKEOPTS
 	# Make ICU respect MAKEOPTS
+	# Respect MAKEOPTS all around (maybe some find+sed is better)
 	sed -i \
 		-e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
 		"${S}/build/moz.configure/lto-pgo.configure" \
 		"${S}/intl/icu_sources_data.py" \
-		|| die "sed failed to set num_cores"
+		"${S}/python/mozbuild/mozbuild/base.py" \
+		"${S}/third_party/libwebrtc/build/toolchain/get_cpu_count.py" \
+		"${S}/third_party/libwebrtc/build/toolchain/get_concurrent_links.py" \
+		"${S}/third_party/python/gyp/pylib/gyp/input.py" \
+		"${S}/python/mozbuild/mozbuild/code_analysis/mach_commands.py" \
+		|| die "Failed sedding multiprocessing.cpu_count"
 
-	# The toolchain prefix section was moved to the function below.
+	# sed-in toolchain prefix section was moved to the function below.
 	#
 	# Moved down
 	#
@@ -1640,9 +1594,26 @@ einfo "Removing pre-built binaries ..."
 		-print -delete \
 		|| die
 
-	# Clear cargo checksums from crates we have patched
-	# moz_clear_vendor_checksums crate
-	moz_clear_vendor_checksums audio_thread_priority
+	# Clear checksums from cargo crates we've manually patched.
+	# moz_clear_vendor_checksums xyz
+
+	# Respect choice for "jumbo-build"
+	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
+	if [[ -n "${FILES_PER_UNIFIED_FILE}" ]] && use jumbo-build ; then
+		local my_files_per_unified_file=${FILES_PER_UNIFIED_FILE:=16}
+ewarn
+ewarn "jumbo-build defaults modified to ${my_files_per_unified_file}."
+ewarn "if you get a build failure, try undefining FILES_PER_UNIFIED_FILE,"
+ewarn "if that fails try -jumbo-build before opening a bug report."
+ewarn
+
+		sed -i -e "s/\"FILES_PER_UNIFIED_FILE\", 16/\"FILES_PER_UNIFIED_FILE\", "${my_files_per_unified_file}"/" \
+			python/mozbuild/mozbuild/frontend/data.py \
+			|| die "Failed to adjust FILES_PER_UNIFIED_FILE in python/mozbuild/mozbuild/frontend/data.py"
+		sed -i -e "s/FILES_PER_UNIFIED_FILE = 6/FILES_PER_UNIFIED_FILE = "${my_files_per_unified_file}"/" \
+			js/src/moz.build \
+			|| die "Failed to adjust FILES_PER_UNIFIED_FILE in js/src/moz.build"
+	fi
 
 	# Removed creation of a single build dir
 	#
@@ -1879,7 +1850,10 @@ eerror
 
 _set_cc() {
 	local have_switched_compiler=
-	if tc-is-clang ; then
+	if tc-is-clang || use jumbo-build ; then
+	# The logic is inverted in the commit below.
+	# https://gitweb.gentoo.org/repo/gentoo.git/commit/www-client/firefox?id=bbf20ce6d62985723c948f5dcb5d0d23b975ac01
+
 	# Force clang
 einfo "Switching to clang"
 		local version_clang=$(clang --version 2>/dev/null \
@@ -1916,6 +1890,7 @@ eerror
 	else
 	# Force gcc
 ewarn "GCC is not the upstream default"
+		# Force gcc
 		have_switched_compiler="yes"
 einfo "Switching to gcc"
 		AR="gcc-ar"
@@ -1925,8 +1900,8 @@ einfo "Switching to gcc"
 		RANLIB="gcc-ranlib"
 	fi
 	if [[ -n "${have_switched_compiler}" ]] ; then
-	# Because we switched active compiler, we have to ensure that no
-	# unsupported flags are set.
+	# Because we switched active compiler we have to ensure that no
+	# unsupported flags are set
 		strip-unsupported-flags
 	fi
 }
@@ -1957,11 +1932,14 @@ einfo
 	uopts_src_configure
 	check_speech_dispatcher
 
-	# Ensure we use correct toolchain,
-	# AS is used in a non-standard way by upstream, #bmo1654031
+	# Ensure we use correct toolchain
 	export HOST_CC="$(tc-getBUILD_CC)"
 	export HOST_CXX="$(tc-getBUILD_CXX)"
-	tc-export CC CXX LD AR NM OBJDUMP RANLIB PKG_CONFIG
+
+	# Configuration tests expect llvm-readelf output, bug 913130
+	READELF="llvm-readelf"
+
+	tc-export CC CXX LD AR NM OBJDUMP RANLIB READELF PKG_CONFIG
 	_fix_paths
 	# Pass the correct toolchain paths through cbindgen
 	if tc-is-cross-compiler ; then
@@ -1989,19 +1967,28 @@ einfo
 	mozconfig_add_options_ac '' --enable-application="browser"
 	mozconfig_add_options_ac '' --enable-project="browser"
 
+	# Set distro defaults
+	if use telemetry; then
+		export MOZILLA_OFFICIAL=1
+	fi
+
 	mozconfig_add_options_ac \
 		'Gentoo default' \
 		--allow-addon-sideload \
 		--disable-cargo-incremental \
 		--disable-crashreporter \
+		--disable-disk-remnant-avoidance \
+		--disable-geckodriver \
 		--disable-gpsd \
 		--disable-install-strip \
+		--disable-legacy-profile-creation \
 		--disable-parental-controls \
 		--disable-strip \
 		--disable-tests \
 		--disable-updater \
+		--disable-wasm-function-references \
+		--disable-wasm-gc \
 		--disable-wmf \
-		--enable-legacy-profile-creation \
 		--enable-negotiateauth \
 		--enable-new-pass-manager \
 		--enable-official-branding \
@@ -2035,7 +2022,9 @@ einfo
 			--disable-ffmpeg
 	fi
 
-	if use ffvpx ; then
+	if true ; then
+		:
+	elif use ffvpx ; then
 		mozconfig_add_options_ac \
 			'ffvpx=default' \
 			--with-ffvpx="default"
@@ -2048,7 +2037,7 @@ einfo
 	# mozconfig_add_options_ac \
 	#	'' \
 	#	--with-libclang-path="$(${CHOST}-llvm-config --libdir)"
-	# Disabled the lines above because the distro doesn't support multilib
+	# Disabled lines above because the distro doesn't support multilib
 	# python, so full cross-compile is not supported.
 
 	# The commented lines above are mutually exclusive with this line below.
@@ -2061,7 +2050,7 @@ einfo
 	[[ -n ${MOZ_ESR} ]] && update_channel=esr
 	mozconfig_add_options_ac '' --update-channel=${update_channel}
 
-	if ! use x86 && [[ ${CHOST} != armv*h* ]] ; then
+	if ! use x86 ; then
 		mozconfig_add_options_ac '' --enable-rust-simd
 	fi
 
@@ -2069,17 +2058,12 @@ einfo
 	# amd64, arm, arm64, and x86.
 	# You might want to flip the logic around if Firefox is to support more
 	# arches.
-	# bug 833001, bug 903411#c8
-	if use ppc64 || use riscv ; then
+	if use ppc64; then
 		mozconfig_add_options_ac '' --disable-sandbox
+	elif use valgrind; then
+		mozconfig_add_options_ac 'valgrind requirement' --disable-sandbox
 	else
 		mozconfig_add_options_ac '' --enable-sandbox
-	fi
-
-	# Enable JIT on riscv64 explicitly
-	# Can be removed once upstream enable it by default in the future.
-	if use riscv ; then
-		 mozconfig_add_options_ac 'Enable JIT for RISC-V 64' --enable-jit
 	fi
 
 	if [[ -s "${s}/api-google.key" ]] ; then
@@ -2145,6 +2129,7 @@ einfo "Building without Mozilla API key ..."
 
 	mozconfig_use_enable dbus
 	mozconfig_use_enable libproxy
+	mozconfig_use_enable valgrind
 	mozconfig_use_enable cups printing
 	multilib_is_native_abi && mozconfig_use_enable speech synth-speechd
 	mozconfig_use_enable webrtc
@@ -2152,12 +2137,17 @@ einfo "Building without Mozilla API key ..."
 
 	use eme-free && mozconfig_add_options_ac '+eme-free' --disable-eme
 
-	mozconfig_use_enable geckodriver
-
 	# The upstream default is hardening on even if unset.
 	if use hardened ; then
 		mozconfig_add_options_ac "+hardened" --enable-hardening
 		append-ldflags "-Wl,-z,relro -Wl,-z,now" # Full Relro
+
+		# Increase the FORTIFY_SOURCE value, #910071.
+		sed \
+			-i \
+			-e '/-D_FORTIFY_SOURCE=/s:2:3:' \
+			"${S}/build/moz.configure/toolchain.configure" \
+			|| die
 	else
 		mozconfig_add_options_ac "-hardened" --disable-hardening
 	fi
@@ -2174,6 +2164,11 @@ einfo "Building without Mozilla API key ..."
 			| sed -e "s|,$||g") # Cannot be empty
 
 	mozconfig_use_enable wifi necko-wifi
+
+	! use jumbo-build && \
+		mozconfig_add_options_ac \
+			'--disable-unified-build' \
+			--disable-unified-build
 
 	if use X && use wayland ; then
 		mozconfig_add_options_ac \
@@ -2218,7 +2213,7 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 				--enable-lto="cross"
 
 		elif tc-is-clang && [[ "${LTO_TYPE}" == "thinlto" ]] ; then
-	# Upstream only supports lld or mold when using clang.
+	# Upstream only supports lld when using clang
 			mozconfig_add_options_ac \
 				"forcing ld=lld" \
 				--enable-linker="lld"
@@ -2229,7 +2224,6 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 
 		else
 	# ThinLTO is currently broken, see bmo#1644409
-	# mold does not support gcc+lto combination.
 			mozconfig_add_options_ac \
 				'+lto' \
 				--enable-lto="full"
@@ -2242,7 +2236,7 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 			mozconfig_add_options_ac '+pgo' MOZ_PGO=1
 
 			if tc-is-clang ; then
-	# Used in build/pgo/profileserver.py
+				# Used in build/pgo/profileserver.py
 				export LLVM_PROFDATA="llvm-profdata"
 			fi
 		fi
@@ -2279,7 +2273,7 @@ ewarn
 		fi
 	fi
 
-	# Linker flags are set from above.
+	# Set above
 	filter-flags '-fuse-ld=*'
 
 	# LTO flag was handled via configure
@@ -2292,24 +2286,35 @@ ewarn
 	# but dav1d's FPS + image quality is only acceptable at >= -O2.
 	mozconfig_use_enable debug
 	if use debug ; then
-		mozconfig_add_options_ac \
-			'+debug' \
-			--disable-optimize
-		mozconfig_add_options_ac \
-			'+debug' \
-			--enable-real-time-tracing
+		mozconfig_add_options_ac '+debug' --disable-optimize
+		mozconfig_add_options_ac '+debug' --enable-jemalloc
+		mozconfig_add_options_ac '+debug' --enable-real-time-tracing
 	else
 		mozconfig_add_options_ac \
 			'Gentoo defaults' \
 			--disable-real-time-tracing
 
-		mozconfig_add_options_ac \
-			'Gentoo default' \
-			--disable-debug-symbols
+		if is-flag '-g*' ; then
+			if use clang ; then
+				mozconfig_add_options_ac 'from CFLAGS' --enable-debug-symbols=$(get-flag '-g*')
+			else
+				mozconfig_add_options_ac 'from CFLAGS' --enable-debug-symbols
+			fi
+		else
+			mozconfig_add_options_ac 'Gentoo default' --disable-debug-symbols
+		fi
 
-	# Fork ebuild or set USE=debug if you want -Og
+		if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" != "1" ]] ; then
+ewarn "APPLY_OILEDMACHINE_OVERLAY_PATCHSET is currently disabled."
+			if is_flagq_last '-Ofast' ; then
+ewarn "-Ofast -> -O3"
+				OFLAG="-O3"
+			fi
+ewarn "-ffast-math is removed"
+			filter-flags '-ffast-math'
+		fi
+
 		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
-einfo "Using -Ofast"
 			OFLAG="-Ofast"
 			mozconfig_add_options_ac \
 				"from CFLAGS" \
@@ -2337,6 +2342,7 @@ einfo "Using -Ofast"
 				"Upstream default" \
 				--enable-optimize="-O3"
 		fi
+einfo "Using ${OFLAG}"
 	fi
 
 	local oflag_safe
@@ -2355,13 +2361,15 @@ einfo "oflag_safe:\t${oflag_safe}"
 		"js/src/js-cxxflags.mozbuild"
 	)
 
-	local f
-	for f in ${L[@]} ; do
+	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
+		local f
+		for f in ${L[@]} ; do
 einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${oflag_safe}"
-		sed -i -e "s|__OFLAG_SAFE__|${oflag_safe}|g" \
-			"${f}" \
-			|| die
-	done
+			sed -i -e "s|__OFLAG_SAFE__|${oflag_safe}|g" \
+				"${f}" \
+				|| die
+		done
+	fi
 
 	# Debug flag was handled via configure
 	filter-flags '-g*'
@@ -2369,7 +2377,9 @@ einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${oflag_safe}"
 	# Optimization flag was handled via configure
 	filter-flags '-O*'
 
-	if is-flagq '-ffast-math' || [[ "${OFLAG}" == "-Ofast" ]] ; then
+	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" != "1" ]] ; then
+		:
+	elif is-flagq '-ffast-math' || [[ "${OFLAG}" == "-Ofast" ]] ; then
 		local pos=$(grep -n "#define OPUS_DEFINES_H" \
 			"${s}/media/libopus/include/opus_defines.h" \
 			| cut -f 1 -d ":")
@@ -2377,48 +2387,22 @@ einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${oflag_safe}"
 			"${s}/media/libopus/include/opus_defines.h" || die
 	fi
 
-	# Modifications to better support ARM, bug #553364
-	if use cpu_flags_arm_neon ; then
-		mozconfig_add_options_ac '+cpu_flags_arm_neon' --with-fpu="neon"
-
-		if tc-is-gcc ; then
-	# Thumb options aren't supported when using clang, bug 666966
-			mozconfig_add_options_ac \
-				'+cpu_flags_arm_neon' \
-				--with-thumb=yes \
-				--with-thumb-interwork=no
+	# elf-hack
+	# Filter "-z,pack-relative-relocs" and let the build system handle it instead.
+	if use amd64 || use x86 ; then
+		filter-flags "-z,pack-relative-relocs"
+		if tc-ld-is-mold ; then
+			# relr-elf-hack is currently broken with mold, bgo#916259
+			mozconfig_add_options_ac 'disable elf-hack with mold linker' --disable-elf-hack
+		else
+			mozconfig_add_options_ac 'relr elf-hack with clang' --enable-elf-hack=relr
 		fi
-	fi
-
-	if [[ ${CHOST} == armv*h* ]] ; then
-		mozconfig_add_options_ac 'CHOST=armv*h*' --with-float-abi="hard"
-
-		if ! use system-libvpx ; then
-			sed -i \
-				-e "s|softfp|hard|" \
-				"${s}/media/libvpx/moz.build" \
-				|| die
-		fi
-	fi
-
-	if tc-is-clang ; then
-	# https://bugzilla.mozilla.org/show_bug.cgi?id=1482204
-	# https://bugzilla.mozilla.org/show_bug.cgi?id=1483822
-	# toolkit/moz.configure Elfhack section: target.cpu in ('arm', 'x86', 'x86_64')
-		local disable_elf_hack=
-		if use amd64 ; then
-			disable_elf_hack="yes"
-		elif use x86 ; then
-			disable_elf_hack="yes"
-		elif use arm ; then
-			disable_elf_hack="yes"
-		fi
-
-		if [[ -n ${disable_elf_hack} ]] ; then
-			mozconfig_add_options_ac \
-				'elf-hack is broken when using Clang' \
-				--disable-elf-hack
-		fi
+	elif use ppc64 || use riscv ; then
+		# '--disable-elf-hack' is not recognized on ppc64/riscv.
+		# See bgo #917049, #930046.
+		:
+	else
+		mozconfig_add_options_ac 'disable elf-hack on non-supported arches' --disable-elf-hack
 	fi
 
 	if ( is_flagq_last "-O3" || is_flagq_last "-Ofast" ) \
@@ -2444,6 +2428,10 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 		mozconfig_add_options_ac '+jemalloc' --enable-jemalloc
 	fi
 
+	if use valgrind ; then
+		mozconfig_add_options_ac 'valgrind requirement' --disable-jemalloc
+	fi
+
 	# Allow elfhack to work in combination with unstripped binaries
 	# when they would normally be larger than 2GiB.
 	append-ldflags "-Wl,--compress-debug-sections=zlib"
@@ -2457,10 +2445,13 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 	# Use system's Python environment
 	export PIP_NETWORK_INSTALL_RESTRICTED_VIRTUALENVS="mach"
 
-	if use system-python-libs; then
-		export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="system"
-	else
-		export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="none"
+	export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="none"
+
+	if ! use telemetry; then
+		mozconfig_add_options_mk '-telemetry setting' "MOZ_CRASHREPORTER=0"
+		mozconfig_add_options_mk '-telemetry setting' "MOZ_DATA_REPORTING=0"
+		mozconfig_add_options_mk '-telemetry setting' "MOZ_SERVICES_HEALTHREPORT=0"
+		mozconfig_add_options_mk '-telemetry setting' "MOZ_TELEMETRY_REPORTING=0"
 	fi
 
 	# Disable notification when build system has finished
@@ -2518,23 +2509,16 @@ einfo "Build RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 	echo "=========================================================="
 	echo
 
+	if use valgrind; then
+		sed -i -e 's/--enable-optimize=-O[0-9s]/--enable-optimize="-g -O2"/' .mozconfig || die
+	fi
+
 	./mach configure || die
 }
 
 _src_compile() {
 	local s=$(_get_s)
 	cd "${s}" || die
-
-	if tc-ld-is-mold && use lto; then
-		# increase ulimit with mold+lto, bugs #892641, #907485
-		if ! ulimit -n 16384 1>/dev/null 2>&1 ; then
-ewarn "Unable to modify ulimits - building with mold+lto might fail due to low"
-ewarn "ulimit -n resources."
-#ewarn "Please see bugs #892641 & #907485."
-		else
-			ulimit -n 16384
-		fi
-	fi
 
 	local CDEFAULT=$(get_abi_CHOST "${DEFAULT_ABI}")
 	_fix_paths
@@ -2553,7 +2537,7 @@ ewarn "ulimit -n resources."
 		fi
 	fi
 
-	if ! use X; then
+	if ! use X && use wayland; then
 		local -x GDK_BACKEND="wayland"
 	else
 		local -x GDK_BACKEND="x11"
@@ -2706,7 +2690,7 @@ _src_install() {
 
 	# Set dictionary path to use system hunspell
 cat >>"${GENTOO_PREFS}" <<-EOF || die "Failed to set spellchecker.dictionary_path pref"
-pref("spellchecker.dictionary_path",       "${EPREFIX}/usr/share/myspell");
+pref("spellchecker.dictionary_path", "${EPREFIX}/usr/share/myspell");
 EOF
 
 	# Force hwaccel prefs if USE=hwaccel is enabled
@@ -2717,12 +2701,22 @@ EOF
 
 		if use wayland; then
 cat >>"${GENTOO_PREFS}" <<-EOF || die "Failed to set hwaccel wayland prefs"
-pref("gfx.x11-egl.force-enabled",          false);
+pref("gfx.x11-egl.force-enabled", false);
 EOF
 		else
 cat >>"${GENTOO_PREFS}" <<-EOF || die "Failed to set hwaccel x11 prefs"
-pref("gfx.x11-egl.force-enabled",          true);
+pref("gfx.x11-egl.force-enabled", true);
 EOF
+		fi
+
+		# Install the vaapitest binary on supported arches (+arm when keyworded)
+		exeinto "${MOZILLA_FIVE_HOME}"
+		doexe "${BUILD_DIR}"/dist/bin/vaapitest
+
+		# Install the v4l2test on supported arches (+ arm, + riscv64 when keyworded)
+		if use arm64 ; then
+			exeinto "${MOZILLA_FIVE_HOME}"
+			doexe "${BUILD_DIR}"/dist/bin/v4l2test
 		fi
 	fi
 
@@ -2732,7 +2726,7 @@ EOF
 einfo "Disabling auto-update for ${plugin} plugin ..."
 cat >>"${GENTOO_PREFS}" <<-EOF || \
 die "failed to disable autoupdate for ${plugin} media plugin"
-pref("media.${plugin}.autoupdate",   false);
+pref("media.${plugin}.autoupdate", false);
 EOF
 		done
 	fi
@@ -2756,14 +2750,14 @@ EOF
 			"${langpacks[@]}"
 	fi
 
-	# Install geckodriver
-	if use geckodriver ; then
-einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
-		pax-mark m "${BUILD_OBJ_DIR}/dist/bin/geckodriver"
-		exeinto "${MOZILLA_FIVE_HOME}"
-		doexe "${BUILD_OBJ_DIR}/dist/bin/geckodriver"
-
-		dosym "${MOZILLA_FIVE_HOME}/geckodriver" "/usr/bin/geckodriver"
+	# Add telemetry config prefs, just in case something happens in future and telemetry build
+	# options stop working.
+	if ! use telemetry ; then
+		cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set telemetry prefs"
+		sticky_pref("toolkit.telemetry.dap_enabled", false);
+		pref("toolkit.telemetry.dap_helper", "");
+		pref("toolkit.telemetry.dap_leader", "");
+		EOF
 	fi
 
 	# Install icons
@@ -2788,13 +2782,19 @@ einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
 	# Install menu
 	local app_name="Mozilla ${MOZ_PN^} (${ABI})"
 	local desktop_file="${FILESDIR}/icon/${PN}-r3.desktop"
-	local desktop_filename="${PN}-esr-${ABI}.desktop"
+	local desktop_filename
 	local exec_command="${PN}-${ABI}"
 	local icon="${PN}"
 	local use_wayland="false"
 
 	if use wayland ; then
 		use_wayland="true"
+	fi
+
+	if [[ -n "${MOZ_ESR}" ]] ; then
+		local desktop_filename="${PN}-esr.desktop"
+	else
+		local desktop_filename="${PN}.desktop"
 	fi
 
 	cp "${desktop_file}" "${WORKDIR}/${PN}.desktop-template" || die
@@ -2809,6 +2809,19 @@ einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
 	newmenu "${WORKDIR}/${PN}.desktop-template" "${desktop_filename}"
 
 	rm "${WORKDIR}/${PN}.desktop-template" || die
+
+	# Install search provider for Gnome
+	insinto "/usr/share/gnome-shell/search-providers/"
+	doins "browser/components/shell/search-provider-files/org.mozilla.firefox.search-provider.ini"
+
+	insinto "/usr/share/dbus-1/services/"
+	doins "browser/components/shell/search-provider-files/org.mozilla.firefox.SearchProvider.service"
+
+	sed \
+		-i \
+		-e "s/firefox.desktop/${desktop_filename}/g" \
+		"${ED}/usr/share/gnome-shell/search-providers/org.mozilla.firefox.search-provider.ini" \
+		|| die "Failed to sed search-provider file."
 
 	# Install wrapper script
 	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
@@ -2882,11 +2895,22 @@ einfo
 
 	local show_doh_information
 	local show_normandy_information
+	local show_shortcut_information
 
 	if [[ -z "${REPLACING_VERSIONS}" ]] ; then
 	# New install; Tell user that DoH is disabled by default
 		show_doh_information="yes"
 		show_normandy_information="yes"
+		show_shortcut_information="no"
+	else
+		local replacing_version
+		for replacing_version in ${REPLACING_VERSIONS} ; do
+			if ver_test "${replacing_version}" -lt "91.0" ; then
+	# Tell user that we no longer install a shortcut per supported display
+	# protocol
+				show_shortcut_information="yes"
+			fi
+		done
 	fi
 
 	if [[ -n "${show_doh_information}" ]] ; then
@@ -2916,6 +2940,16 @@ ewarn "    app.normandy.enabled=true"
 ewarn
 ewarn "in about:config."
 ewarn
+	fi
+
+	if [[ -n "${show_shortcut_information}" ]] ; then
+einfo
+einfo "Since ${PN}-91.0 we no longer install multiple shortcuts for"
+einfo "each supported display protocol.  Instead we will only install"
+einfo "one generic Mozilla ${PN^} shortcut."
+einfo "If you still want to be able to select between running Mozilla ${PN^}"
+einfo "on X11 or Wayland, you have to re-create these shortcuts on your own."
+einfo
 	fi
 
 	# Bug 835078
@@ -2964,6 +2998,7 @@ ewarn
 ewarn "For details, see https://support.mozilla.org/en-US/kb/performance-settings"
 ewarn
 	fi
+
 	if use libcanberra ; then
 		if has_version "media-libs/libcanberra[-sound]" ; then
 ewarn
@@ -3007,27 +3042,62 @@ ewarn
 	optfeature_header "Optional programs for extra features:"
 	optfeature "desktop notifications" "x11-libs/libnotify"
 	optfeature "fallback mouse cursor theme e.g. on WMs" "gnome-base/gsettings-desktop-schemas"
+	optfeature "screencasting with pipewire" "sys-apps/xdg-desktop-portal"
 	if use hwaccel && has_version "x11-drivers/nvidia-drivers" ; then
 		optfeature "hardware acceleration with NVIDIA cards" "media-libs/nvidia-vaapi-driver"
 	fi
 
-	if ! has_version "sys-libs/glibc" ; then
+	if ! has_version "sys-libs/glibc"; then
 ewarn
 ewarn "glibc not found! You won't be able to play DRM content."
 ewarn "See Gentoo bug #910309 or upstream bug #1843683."
 ewarn
-	fi
-
-	if use geckodriver ; then
-		ewarn "You have enabled the 'geckodriver' USE flag. Geckodriver is now"
-		ewarn "packaged separately as net-misc/geckodriver and the use flag will be"
-		ewarn "dropped from main Firefox package by Firefox 128.0 release."
 	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild, new-patches
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, license-completness, license-transparency
+# OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 113.0.1 (May 15, 2023)
+# USE="X dav1d dbus eme-free jemalloc jumbo-build libcanberra opus
+# proprietary-codecs-disable-nc-user pulseaudio speech system-ffmpeg vaapi vpx
+# wayland webspeech -aac -alsa -cups (-debug) -ebolt -ffvpx -geckodriver
+# -gmp-autoupdate -h264 -hardened -hwaccel -jack -libproxy -libsecret -mold
+# -openh264 -pgo -proprietary-codecs -proprietary-codecs-disable
+# -proprietary-codecs-disable-nc-developer -screencast (-selinux) -sndio
+# -system-av1 -system-harfbuzz -system-icu -system-jpeg -system-libevent
+# -system-libvpx -system-png (-system-python-libs) -system-webp (-telemetry)
+# -webrtc -wifi"
+# L10N="-ach -af -an -ar -ast -az -be -bg -bn -br -bs -ca -ca-valencia -cak -cs
+# -cy -da -de -dsb -el -en-CA -en-GB -eo -es-AR -es-CL -es-ES -es-MX -et -eu -fa
+# -ff -fi -fr -fur -fy -ga -gd -gl -gn -gu -he -hi -hr -hsb -hu -hy -ia -id -is
+# -it -ja -ka -kab -kk -km -kn -ko -lij -lt -lv -mk -mr -ms -my -nb -ne -nl -nn
+# -oc -pa -pl -pt-BR -pt-PT -rm -ro -ru -sc -sco -si -sk -sl -son -sq -sr -sv
+# -szl -ta -te -th -tl -tr -trs -uk -ur -uz -vi -xh -zh-CN -zh-TW"
+# Last build timestamp - 116:59.03 (first run)
+# CFLAGS: -O2 -pipe (PASS [interactive testing])
+# CFLAGS: -Ofast -pipe (PASS [interactive testing])
+# OILEDMACHINE-OVERLAY-TEST-TOOLCHAIN:
+#   rust 1.69.0
+#   gcc 12.2.1_p20230428-r1
+#   sccache 0.3.0
+#   gold/binutils - 2.39-r5
+# OILEDMACHINE-OVERLAY-TEST-RESULTS:
+#   browsing - pass
+#   video on demand - pass
+#     dav1d - pass
+#     video/avc (H.264) - expected fail
+#   audio streaming
+#     mp3 (shoutcast v1) - pass with random fails
+#     aac - expected fail
+#   audio on demand
+#     mp3 - pass
+#     aac - expected fail
+#     wav - pass/fail - only one sample played
+#  WebGL Aquarium - pass, ~62 FPS
+#  CanvasMark 2013 - passed
+#  GPU Shader Experiments (https://www.kevs3d.co.uk/dev/shaders) - passed, randomly selected
+# TODO: retest with aac USE flag on
 
 # = Ebuild fork checklist =
 # Bump to latest release every week

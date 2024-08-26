@@ -4,11 +4,13 @@
 
 EAPI=8
 
-DEPENDS_VERSION="126.0.6478.114"
-# DEPENDS_VER_A="126"
+# D11, U20, U22, U24
+
+DEPENDS_VERSION="128.0.6613.84"
+# DEPENDS_VER_A="128"
 # DEPENDS_VER_B="0"
-# DEPENDS_VER_C="6478"
-# DEPENDS_VER_D="114"
+# DEPENDS_VER_C="6613"
+# DEPENDS_VER_D="84"
 
 # Third party licenses:
 #
@@ -73,7 +75,7 @@ REQUIRED_USE+="
 "
 
 # For *DEPENDs see:
-# https://github.com/chromium/chromium/tree/125.0.6422.141/build/linux/sysroot_scripts/generated_package_lists				; 20231117
+# https://github.com/chromium/chromium/tree/128.0.6613.84/build/linux/sysroot_scripts/generated_package_lists				; 20231117
 #   alsa-lib, at-spi2-core, bluez (bluetooth), cairo, cups, curl, expat,
 #   flac [older], fontconfig [older], freetype [older], gcc, gdk-pixbuf, glib,
 #   glibc, gtk+3, gtk4, harfbuzz [older], libdrm [older], libffi, libglvnd,
@@ -87,21 +89,22 @@ REQUIRED_USE+="
 #   libxau, libXtst, util-linux, pam, libcap, libevdev, sqlite3,
 #   speech-dispatcher
 #
-# https://github.com/chromium/chromium/blob/125.0.6422.141/build/install-build-deps.py
-# https://github.com/chromiumembedded/cef/blob/5993/CMakeLists.txt.in
+# https://github.com/chromium/chromium/blob/128.0.6613.84/build/install-build-deps.py
+# https://github.com/chromiumembedded/cef/blob/6613/CMakeLists.txt.in   # Same as 3rd component c in a.b.c.d versioning.
+#   For version correspondance see https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 
 #
 # Additional *DEPENDs versioning info:
 #
-# https://github.com/chromium/chromium/blob/125.0.6422.141/third_party/libpng/png.h#L288
-# https://github.com/chromium/chromium/blob/125.0.6422.141/third_party/zlib/zlib.h#L40
-# https://github.com/chromium/chromium/blob/125.0.6422.141/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/blob/128.0.6613.84/third_party/libpng/png.h#L288
+# https://github.com/chromium/chromium/blob/128.0.6613.84/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/128.0.6613.84/tools/clang/scripts/update.py#L42
 #
 
-# /var/tmp/portage/www-client/chromium-125.0.6422.141/work/chromium-125.0.6422.141/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-125.0.6422.141/work/chromium-125.0.6422.141/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-125.0.6422.141/work/chromium-125.0.6422.141/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-125.0.6422.141/work/chromium-125.0.6422.141/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-128.0.6613.84/work/chromium-128.0.6613.84/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-128.0.6613.84/work/chromium-128.0.6613.84/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-128.0.6613.84/work/chromium-128.0.6613.84/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-128.0.6613.84/work/chromium-128.0.6613.84/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
 
 # gnome-keyring, vulkan-loader, gtkglext, libappindicator versioning from U 16.06
 

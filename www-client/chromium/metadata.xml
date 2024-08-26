@@ -163,6 +163,15 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       the most from memory use effiency.  It's the default in 92 and later.
       There is no current way to switch back to the OS allocator.
 
+
+    Build time environment variables:
+
+      APPLY_OILEDMACHINE_OVERLAY_PATCHSET - Apply the following patches:
+      - Allow for Qt6 build without Qt5.
+      - Allow to disable SIMD for zlib.
+      Valid values:  1 - apply (default), 0 - do not apply
+
+
     References:
       --lto-O2 is too large - https://github.com/chromium/chromium/commit/da072d13b2a1cc8459c29aa4e52584a4491a4ad6
       CFI - https://www.chromium.org/developers/testing/control-flow-integrity
