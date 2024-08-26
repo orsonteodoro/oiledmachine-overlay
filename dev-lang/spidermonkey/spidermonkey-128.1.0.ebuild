@@ -9,6 +9,7 @@ EAPI="8"
 
 # 115.12.0 -> 128.1.0
 
+EBUILD_LAST_UPDATE=1724653875 # From `date +%s`
 LLVM_COMPAT=( 18 17 ) # Limited by virtual/rust
 
 MY_MAJOR=$(ver_cut 1)
@@ -284,8 +285,17 @@ src_prepare() {
 	fi
 
 	eapply "${WORKDIR}/firefox-patches"
-	rm "${WORKDIR}/spidermonkey-patches/0003-tests-Increase-the-test-timeout-for-slower-builds.patch" || die
-	eapply "${WORKDIR}/spidermonkey-patches"
+	pushd "${WORKDIR}/firefox-${MY_PV}" >/dev/null 2>&1 || die
+		rm "${WORKDIR}/spidermonkey-patches/0003-tests-Increase-the-test-timeout-for-slower-builds.patch" || die
+		local x
+		for x in $(ls "${WORKDIR}/spidermonkey-patches") ; do
+			if [[ "${x}" =~ "0008" ]] ; then
+				eapply --fuzz=1 "${FILESDIR}/spidermonkey-128.1.0-0008-spidermonkey-91.5.0-dont-fail-gcc-sanity-checks.patch"
+				continue
+			fi
+			eapply "${WORKDIR}/spidermonkey-patches/${x}"
+		done
+	popd >/dev/null 2>&1 || die
 
 	default
 
@@ -333,7 +343,41 @@ einfo "Removing pre-built binaries ..."
 	popd &>/dev/null || die
 }
 
+check_security_expire() {
+	local _hour=$((60*60))
+	local _30_days=$((60*60*24*30))
+	local _14_days=$((60*60*24*14))
+	local _day=$((60*60*24))
+	local now=$(date +%s)
+	local days_passed=$(python -c "print( (${now} - ${EBUILD_LAST_UPDATE}) / ${_day} )")
+	if (( ${now} > ${EBUILD_LAST_UPDATE} + ${_30_days} )) ; then
+eerror
+eerror "This ebuild release period is past 30 days since release."
+eerror "It is considered insecure.  As a precaution, this particular point"
+eerror "release will not install."
+eerror
+eerror "Days past ebuild update:  ${days_passed}"
+eerror
+eerror "Solutions:"
+eerror
+eerror "1.  Use a newer release."
+eerror "2.  Use the distro release."
+eerror
+		die
+	elif (( ${now} > ${EBUILD_LAST_UPDATE} + ${_14_days} )) ; then
+ewarn
+ewarn "This ebuild is more than 2 weeks old and may have a vulnerability."
+ewarn "Please consider a newer release."
+ewarn
+ewarn "Days past ebuild update:  ${days_passed}"
+ewarn
+	else
+einfo "Days past ebuild update:  ${days_passed}"
+	fi
+}
+
 src_configure() {
+	check_security_expire
 	# Show flags set at the beginning
 einfo "Current CFLAGS:    ${CFLAGS}"
 einfo "Current CXXFLAGS:  ${CXXFLAGS}"

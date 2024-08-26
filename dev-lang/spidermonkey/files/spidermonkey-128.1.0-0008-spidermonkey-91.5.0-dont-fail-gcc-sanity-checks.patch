@@ -1,0 +1,31 @@
+--- firefox-128.1.0/python/mozbuild/mozbuild/action/check_binary.py.orig	2024-08-01 13:00:09.000000000 -0700
++++ firefox-128.1.0/python/mozbuild/mozbuild/action/check_binary.py	2024-08-26 01:24:41.409384958 -0700
+@@ -263,8 +263,8 @@ def check_networking(binary):
+             ),
+             file=sys.stderr,
+         )
+-        retcode = 1
+-    elif buildconfig.substs.get("MOZ_AUTOMATION"):
++        retcode = 0
++    elif buildconfig.substs.get("MACH_USE_SYSTEM_PYTHON"):
+         print("TEST-PASS | check_networking | {}".format(basename))
+     return retcode
+ 
+@@ -290,7 +290,7 @@ def checks(binary):
+         try:
+             name = c.__name__
+             c(binary)
+-            if buildconfig.substs.get("MOZ_AUTOMATION"):
++            if buildconfig.substs.get("MACH_USE_SYSTEM_PYTHON"):
+                 print("TEST-PASS | {} | {}".format(name, basename))
+         except Skip:
+             pass
+@@ -299,7 +299,7 @@ def checks(binary):
+                 "TEST-UNEXPECTED-FAIL | {} | {} | {}".format(name, basename, str(e)),
+                 file=sys.stderr,
+             )
+-            retcode = 1
++            retcode = 0
+     return retcode
+ 
+ 
