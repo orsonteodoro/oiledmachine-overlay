@@ -189,7 +189,8 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
   </upstream>
   <use>
     <flag name="bluetooth">
-      Adds support for GATT (Generic Attribute Profile) for the Web Bluetooth
+      Adds support for websites to communicate with Bluetooth wireless devices
+      and support for GATT (Generic Attribute Profile) for the Web Bluetooth
       API.
     </flag>
     <flag name="branch-protection">
