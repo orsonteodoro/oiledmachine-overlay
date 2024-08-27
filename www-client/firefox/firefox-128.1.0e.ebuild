@@ -1544,12 +1544,20 @@ check_security_expire() {
 	local _30_days=$((60*60*24*30))
 	local _14_days=$((60*60*24*14))
 	local _day=$((60*60*24))
+	local _hour=$((60*60))
+	local _minute=60
 	local now=$(date +%s)
-	local days_passed=$(python -c "print( (${now} - ${MITIGATION_LAST_UPDATE}) / ${_day} )")
-	local hours_passed=$(python -c "print( 24 * 0.${days_passed#*.} )")
-	local minutes_passed=$(python -c "print( 60 * 0.${hours_passed#*.} )")
-	local seconds_passed=$(python -c "print( 60 * 0.${minutes_passed#*.} )")
-	local dhms_passed="${days_passed%.*} days, ${hours_passed%.*} hrs, ${minutes_passed%.*} mins, ${seconds_passed%.*} secs"
+	local t
+	t=$((${now} - ${MITIGATION_LAST_UPDATE})) # Seconds elapsed
+	local days_passed=$(( ${t} / ${_day} ))
+	local hours_passed=$(( ${t} % ${_day} ))
+	t=${hours_passed}
+	hours_passed=$(( ${t} / ${_hour} ))
+	local minutes_passed=$(( ${t} % ${_hour} ))
+	t=${minutes_passed}
+	minutes_passed=$(( ${t} / ${_minute} ))
+	local seconds_passed=$(( ${t} % ${_minute} ))
+	local dhms_passed="${days_passed} days, ${hours_passed} hrs, ${minutes_passed} mins, ${seconds_passed} secs"
 	if (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_30_days} )) ; then
 eerror
 eerror "This ebuild release period is past 30 days since release."
