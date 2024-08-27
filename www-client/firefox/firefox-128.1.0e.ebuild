@@ -825,7 +825,7 @@ gen_llvm_bdepend() {
 GCC_BDEPEND="
 	>=virtual/rust-1.76
 "
-# Used mold 2.0 for legal reasons.
+# The >=2.0 of mold is used for legal reasons.
 BDEPEND+="
 	$(gen_llvm_bdepend)
 	${GAMEPAD_BDEPEND}
