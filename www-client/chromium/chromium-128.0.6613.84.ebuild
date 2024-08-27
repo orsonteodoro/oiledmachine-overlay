@@ -607,6 +607,7 @@ REQUIRED_USE+="
 		arm64
 	)
 	cfi? (
+		!mold
 		!system-dav1d
 		!system-ffmpeg
 		!system-flac
