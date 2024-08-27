@@ -169,6 +169,7 @@ UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
+USE_MOLD=0 # Global var
 # https://github.com/chromium/chromium/blob/128.0.6613.84/tools/clang/scripts/update.py#L38C41-L38C49 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
 LLVM_COMMIT="ecea8371"
@@ -1929,6 +1930,7 @@ apply_oiledmachine_overlay_patchset() {
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/chromium-123.0.6312.58-zlib-selective-simd.patch"
 		"${FILESDIR}/extra-patches/chromium-125.0.6422.76-qt6-split.patch"
+		"${FILESDIR}/extra-patches/chromium-128.0.6613.84-mold.patch"
 	)
 
 	if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then
@@ -3273,6 +3275,18 @@ einfo "Configuring bundled ffmpeg..."
 	#
 	#
 
+	local use_lto=0
+	local use_thinlto=0
+	local use_mold=0
+
+	if is-flagq '-flto' || is-flagq '-flto=*' ; then
+		use_lto=1
+	fi
+
+	if is-flagq '-fuse-ld=mold' && has_version "sys-devel/mold" ; then
+		use_mold=1
+	fi
+
 	myconf_gn+=" is_official_build=$(usex official true false)"
 	if [[ -z "${LTO_TYPE}" ]] ; then
 		LTO_TYPE=$(check-linker_get_lto_type)
@@ -3296,10 +3310,27 @@ einfo "Using ThinLTO"
 		filter-flags '-fuse-ld=*'
 		filter-flags '-Wl,--lto-O*'
 		use thinlto-opt && myconf_gn+=" thin_lto_enable_optimizations=true"
+		use_thinlto=1
 	else
-	# gcc with never use ThinLTO.
+	# gcc will never use ThinLTO.
 	# gcc doesn't like -fsplit-lto-unit and -fwhole-program-vtables
+	# This will try bfdlto.
 		myconf_gn+=" use_thin_lto=false "
+	fi
+
+	# See https://github.com/rui314/mold/issues/336
+	# Allow mold in non-lto cases for now.
+	if (( ${use_thinlto} == 0 && ${use_lto} == 0 && ${use_mold} == 1 )) ; then
+einfo "Using Mold without LTO"
+		myconf_gn+=" use_mold=true"
+		export USE_MOLD=1
+	elif (( ${use_thinlto} == 0 && ${use_lto} == 1 && ${use_mold} == 1 )) ; then
+einfo
+einfo "Mold with LTO is not supported.  Using bfdlto instead."
+einfo "To use -fuse-ld=mold, remove -flto."
+einfo
+		replace-flags '-fuse-ld=mold' '-fuse-ld=bfd'
+		export USE_MOLD=1
 	fi
 
 	# 936673: Updater (which we don't use) depends on libsystemd
@@ -3617,8 +3648,13 @@ _src_compile() {
 	export s=$(_get_s)
 	cd "${s}" || die
 
-	# Final link uses lots of file descriptors.
-	ulimit -n 2048
+	if (( ${USE_MOLD} == 1 )) ; then
+einfo "File descriptors limit for Mold"
+		ulimit -n
+	else
+		# Final link uses lots of file descriptors.
+		ulimit -n 2048
+	fi
 
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
