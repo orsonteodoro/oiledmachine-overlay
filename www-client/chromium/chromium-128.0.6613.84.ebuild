@@ -169,7 +169,6 @@ UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
-USE_MOLD=0 # Global var
 # https://github.com/chromium/chromium/blob/128.0.6613.84/tools/clang/scripts/update.py#L38C41-L38C49 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
 LLVM_COMMIT="ecea8371"
@@ -495,7 +494,7 @@ ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 bindist bluetooth +bundled-libcxx branch-protection +cfi +cups -debug +encode
-ffmpeg-chromium -gtk4 -hangouts -headless +js-type-check +kerberos +official
+ffmpeg-chromium -gtk4 -hangouts -headless +js-type-check +kerberos mold +official
 pax-kernel pic +pgo +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio qt5 qt6 +screencast selinux
@@ -640,6 +639,7 @@ REQUIRED_USE+="
 		!debug
 		!epgo
 		!hangouts
+		!mold
 		!system-dav1d
 		!system-ffmpeg
 		!system-flac
@@ -1076,6 +1076,7 @@ gen_rust_bdepend() {
 		)
 	"
 }
+# Mold was relicensed as MIT in 2.0.  The min is 2.0 to avoid legal issues.
 BDEPEND+="
 	$(gen_rust_bdepend)
 	$(python_gen_any_dep '
@@ -1094,6 +1095,9 @@ BDEPEND+="
 	app-eselect/eselect-nodejs
 	dev-lang/perl
 	dev-vcs/git
+	mold? (
+		>=sys-devel/mold-2.0
+	)
 	vaapi? (
 		media-video/libva-utils
 	)
@@ -1329,7 +1333,8 @@ get_pregenerated_profdata_index_version()
 {
 	local s
 	s=$(_get_s)
-	test -e "${s}/chrome/build/pgo_profiles/chrome-linux-"*".profdata" || die
+	test -e "${s}/chrome/build/pgo_profiles/chrome-linux-"*".profdata" \
+		|| die
 	echo $(od -An -j 8 -N 1 -t d1 \
 		"${s}/chrome/build/pgo_profiles/chrome-linux-"*".profdata" \
 		| grep -E -o -e "[0-9]+")
@@ -1986,7 +1991,7 @@ ewarn "Applying the distro patchset."
 
 	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
 		apply_oiledmachine_overlay_patchset
-	einfo
+	else
 ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 	fi
 
@@ -3280,14 +3285,19 @@ einfo "Configuring bundled ffmpeg..."
 
 	local use_lto=0
 	local use_thinlto=0
-	local use_mold=0
 
 	if is-flagq '-flto' || is-flagq '-flto=*' ; then
 		use_lto=1
 	fi
 
-	if is-flagq '-fuse-ld=mold' && has_version "sys-devel/mold" ; then
-		use_mold=1
+	if ! use mold && is-flagq '-fuse-ld=mold' && has_version "sys-devel/mold" ; then
+eerror "To use mold, enable the mold USE flag."
+		die
+	fi
+
+	if use mold ; then
+	# Handled by build scripts
+		filter-flags '-fuse-ld=*'
 	fi
 
 	myconf_gn+=" is_official_build=$(usex official true false)"
@@ -3322,18 +3332,18 @@ einfo "Using ThinLTO"
 	fi
 
 	# See https://github.com/rui314/mold/issues/336
-	# Allow mold in non-lto cases for now.
-	if (( ${use_thinlto} == 0 && ${use_lto} == 0 && ${use_mold} == 1 )) ; then
+	if use mold && (( ${use_thinlto} == 0 && ${use_lto} == 1 )) ; then
+		if tc-is-clang ; then
+einfo "Using Clang MoldLTO"
+			myconf_gn+=" use_mold=true"
+		else
+ewarn "Forcing use of GCC Mold without LTO."
+ewarn "To use LTO, switch to either ThinLTO or BFDLTO."
+			filter-flags '-flto*'
+		fi
+	elif use mold && (( ${use_thinlto} == 0 && ${use_lto} == 0 )) ; then
 einfo "Using Mold without LTO"
 		myconf_gn+=" use_mold=true"
-		export USE_MOLD=1
-	elif (( ${use_thinlto} == 0 && ${use_lto} == 1 && ${use_mold} == 1 )) ; then
-einfo
-einfo "Mold with LTO is not supported.  Using bfdlto instead."
-einfo "To use -fuse-ld=mold, remove -flto."
-einfo
-		replace-flags '-fuse-ld=mold' '-fuse-ld=bfd'
-		export USE_MOLD=1
 	fi
 
 	# 936673: Updater (which we don't use) depends on libsystemd
@@ -3651,13 +3661,21 @@ _src_compile() {
 	export s=$(_get_s)
 	cd "${s}" || die
 
-	if (( ${USE_MOLD} == 1 )) ; then
-einfo "File descriptors limit for Mold"
-		ulimit -n
+	local ulimit
+ewarn "Current ulimit -n (before):"
+	ulimit -n
+	if use mold ; then
+		# See issue #336 in the mold repo.
+		ulimit="${ULIMIT:-16384}"
 	else
-		# Final link uses lots of file descriptors.
-		ulimit -n 2048
+		# The final link uses lots of file descriptors.
+		ulimit="${ULIMIT:-2048}"
 	fi
+	if ! ulimit -n ${ulimit} >/dev/null 2>&1 ; then
+ewarn "Unable to modify ulimits.  Linking problems may occur."
+	fi
+ewarn "Current ulimit -n (after):"
+	ulimit -n
 
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup

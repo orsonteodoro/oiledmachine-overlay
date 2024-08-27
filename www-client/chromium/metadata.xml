@@ -171,6 +171,8 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       - Allow to disable SIMD for zlib.
       Valid values:  1 - apply (default), 0 - do not apply
 
+      ULIMIT - Sets the max number of open file descriptors.
+      Defaults:  Mold - 16384,  BFD/LLD - 2048
 
     References:
       --lto-O2 is too large - https://github.com/chromium/chromium/commit/da072d13b2a1cc8459c29aa4e52584a4491a4ad6
