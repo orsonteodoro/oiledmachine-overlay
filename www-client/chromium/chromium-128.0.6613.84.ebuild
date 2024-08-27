@@ -3337,8 +3337,8 @@ einfo "Using ThinLTO"
 einfo "Using Clang MoldLTO"
 			myconf_gn+=" use_mold=true"
 		else
-ewarn "Forcing use of GCC Mold without LTO."
-ewarn "To use LTO, switch to either ThinLTO or BFDLTO."
+ewarn "Forcing use of GCC Mold without LTO.  GCC MoldLTO is not supported."
+ewarn "To use LTO, use either Clang MoldLTO, Clang ThinLTO, GCC BFDLTO."
 			filter-flags '-flto*'
 		fi
 	elif use mold && (( ${use_thinlto} == 0 && ${use_lto} == 0 )) ; then
