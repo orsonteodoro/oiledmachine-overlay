@@ -635,8 +635,7 @@
     Enables lv2 audio filter wrapper.
   </flag>
   <flag name="mold">
-    (EXPERIMENTAL / IN DEVELOPMENT)
-    Link with mold and setup preconditions for non-commericial use.
+    Use mold to reduce linking time.
   </flag>
   <flag name="mipsdspr1">
     Enables MIPS DSP ASE R1 optimizations.

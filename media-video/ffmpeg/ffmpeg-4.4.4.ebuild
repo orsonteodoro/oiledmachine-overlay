@@ -919,11 +919,6 @@ REQUIRED_USE+="
 	glslang? (
 		vulkan
 	)
-	mold? (
-		!nonfree
-		!re-codecs
-		proprietary-codecs-disable
-	)
 	nvdec? (
 		cuda
 	)
@@ -1354,6 +1349,7 @@ DEPEND+="
 	)
 "
 # += for verify-sig above
+# >= 2.0 mold is used to avoid licensing/legal issues.
 BDEPEND+="
 	>=dev-build/make-3.81
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -1370,7 +1366,7 @@ BDEPEND+="
 		sys-apps/texinfo
 	)
 	mold? (
-		sys-devel/mold
+		>=sys-devel/mold-2.0
 	)
 	test? (
 		app-alternatives/bc
