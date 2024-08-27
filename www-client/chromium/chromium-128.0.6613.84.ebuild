@@ -1158,7 +1158,7 @@ For native file dialogs in KDE, install kde-apps/kdialog.
 To make password storage work with your desktop environment you may have install
 one of the supported credentials management applications:
 
-  - app-crypt/libsecret (GNOME)
+  - app-crypt/libsecret    (GNOME)
   - kde-frameworks/kwallet (KDE)
 
 If you have one of above packages installed, but don't want to use them in
@@ -2340,8 +2340,8 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 	# We need to generate ppc64 stuff because upstream does not ship it yet
 	# it has to be done before unbundling.
 	if use ppc64 ; then
-		pushd third_party/libvpx > /dev/null || die
-			mkdir -p source/config/linux/ppc64 || die
+		pushd "third_party/libvpx" >/dev/null 2>&1 || die
+			mkdir -p "source/config/linux/ppc64" || die
 	# The script requires git and clang, bug #832803
 	# Revert https://chromium.googlesource.com/chromium/src/+/b463d0f40b08b4e896e7f458d89ae58ce2a27165%5E%21/third_party/libvpx/generate_gni.sh
 	# and https://chromium.googlesource.com/chromium/src/+/71ebcbce867dd31da5f8b405a28fcb0de0657d91%5E%21/third_party/libvpx/generate_gni.sh
@@ -2352,27 +2352,27 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 				-e "/^git -C/d"
 				-e "/git cl/d"
 				-e "/cd \$BASE_DIR\/\$LIBVPX_SRC_DIR/ign format --in-place \$BASE_DIR\/BUILD.gn\ngn format --in-place \$BASE_DIR\/libvpx_srcs.gni" \
-				generate_gni.sh \
+				"generate_gni.sh" \
 				|| die
-			./generate_gni.sh || die
-		popd > /dev/null || die
+			"./generate_gni.sh" || die
+		popd >/dev/null 2>&1 || die
 
-		pushd third_party/ffmpeg >/dev/null || die
+		pushd "third_party/ffmpeg" >/dev/null 2>&1 || die
 			cp \
-				libavcodec/ppc/h264dsp.c \
-				libavcodec/ppc/h264dsp_ppc.c \
+				"libavcodec/ppc/h264dsp.c" \
+				"libavcodec/ppc/h264dsp_ppc.c" \
 				|| die
 			cp \
-				libavcodec/ppc/h264qpel.c \
-				libavcodec/ppc/h264qpel_ppc.c \
+				"libavcodec/ppc/h264qpel.c" \
+				"libavcodec/ppc/h264qpel_ppc.c" \
 				|| die
-		popd >/dev/null || die
+		popd >/dev/null 2>&1 || die
 	fi
 
 	if ! is_generating_credits ; then
 einfo "Unbundling third party internal libraries and packages"
 	# Remove most bundled libraries. Some are still needed.
-		build/linux/unbundle/remove_bundled_libraries.py \
+		"build/linux/unbundle/remove_bundled_libraries.py" \
 			"${keeplibs[@]}" \
 			--do-remove \
 			|| die
@@ -2381,7 +2381,7 @@ einfo "Unbundling third party internal libraries and packages"
 	if ! is_generating_credits ; then
 	# The bundled eu-strip is for amd64 only and we don't want to pre-strip
 	# binaries.
-		mkdir -p buildtools/third_party/eu-strip/bin || die
+		mkdir -p "buildtools/third_party/eu-strip/bin" || die
 		ln -s \
 			"${BROOT}/bin/true" \
 			"buildtools/third_party/eu-strip/bin/eu-strip" \
@@ -2666,7 +2666,7 @@ build_gn() {
 			append-cxxflags -D_LARGEFILE64_SOURCE
 		fi
 einfo "Configuring gn"
-		set -- ${EPYTHON} build/gen.py --no-last-commit-position --no-strip --no-static-libstdc++ --allow-warnings
+		set -- ${EPYTHON} "build/gen.py" --no-last-commit-position --no-strip --no-static-libstdc++ --allow-warnings
 		edo "$@"
 
 # Fixes
@@ -2958,7 +2958,7 @@ ewarn
 ewarn "Unbundling libs and disabling hardening (CFI, SSP, noexecstack,"
 ewarn "Full RELRO)."
 ewarn
-			build/linux/unbundle/replace_gn_files.py \
+			"build/linux/unbundle/replace_gn_files.py" \
 				--system-libraries \
 				"${gn_system_libraries[@]}" \
 				|| die
@@ -3178,7 +3178,7 @@ ewarn
 	mkdir -p -m 755 "${TMPDIR}" || die
 
 	# https://bugs.gentoo.org/654216
-	addpredict /dev/dri/ #nowarn
+	addpredict "/dev/dri/" #nowarn
 
 	if use system-ffmpeg ; then
 		local build_ffmpeg_args=""
@@ -3188,16 +3188,16 @@ ewarn
 
 	# Re-configure bundled ffmpeg. See bug #491378 for example reasons.
 einfo "Configuring bundled ffmpeg..."
-		pushd third_party/ffmpeg > /dev/null || die
-			chromium/scripts/build_ffmpeg.py \
+		pushd "third_party/ffmpeg" >/dev/null 2>&1 || die
+			"chromium/scripts/build_ffmpeg.py" \
 				linux ${ffmpeg_target_arch} \
 				--branding ${ffmpeg_branding} \
 				-- \
 				${build_ffmpeg_args} \
 				|| die
-			chromium/scripts/copy_config.sh || die
-			chromium/scripts/generate_gn.py || die
-		popd > /dev/null || die
+			"chromium/scripts/copy_config.sh" || die
+			"chromium/scripts/generate_gn.py" || die
+		popd >/dev/null 2>&1 || die
 	fi
 
 	# We don't use the same clang version as upstream, and with -Werror
@@ -3310,7 +3310,7 @@ einfo "Using ThinLTO"
 	# Allow building against system libraries in official builds
 		sed -i \
 			's/OFFICIAL_BUILD/GOOGLE_CHROME_BUILD/' \
-			tools/generate_shim_headers/generate_shim_headers.py \
+			"tools/generate_shim_headers/generate_shim_headers.py" \
 			|| die
 	fi
 
@@ -3538,7 +3538,7 @@ einfo
 	uopts_src_configure
 
 einfo "Configuring Chromium..."
-	set -- gn gen --args="${myconf_gn} ${EXTRA_GN}" out/Release
+	set -- gn gen --args="${myconf_gn} ${EXTRA_GN}" "out/Release"
 	echo "$@"
 	"$@" || die
 }
@@ -3564,18 +3564,17 @@ _update_licenses() {
 		&& "${GEN_ABOUT_CREDITS}" == "1" \
 	]] ; then
 einfo "Generating license and copyright notice file"
-		eninja -C out/Release about_credits
+		eninja -C "out/Release" "about_credits"
 		# It should be updated when the major.minor.build.x changes
 		# because of new features.
-		local license_file_name="${PN}-"$(ver_cut 1-3 ${PV})".x.html"
+		local license_file_name="${PN}-"$(ver_cut 1-3 "${PV}")".x.html"
 		local fp=$(sha512sum \
 "${s}/out/Release/gen/components/resources/about_credits.html" \
 			| cut -f 1 -d " ")
 einfo
 einfo "Update the license file with"
 einfo
-einfo "  \`cp -a ${s}/out/Release/gen/components/resources/about_credits.html \
-${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
+einfo "  \`cp -a ${s}/out/Release/gen/components/resources/about_credits.html ${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
 einfo
 einfo "Update ebuild with"
 einfo
@@ -3589,17 +3588,19 @@ einfo
 }
 
 __clean_build() {
-	if [[ -f out/Release/chromedriver ]] ; then
-		rm -f out/Release/chromedriver || die
+	if [[ -f "out/Release/chromedriver" ]] ; then
+		rm -f "out/Release/chromedriver" \
+			|| die
 	fi
-	if [[ -f out/Release/chromedriver.unstripped ]] ; then
-		rm -f out/Release/chromedriver.unstripped || die
+	if [[ -f "out/Release/chromedriver.unstripped" ]] ; then
+		rm -f "out/Release/chromedriver.unstripped" \
+			|| die
 	fi
-	if [[ -f out/Release/build.ninja ]] ; then
-		pushd out/Release > /dev/null || die
+	if [[ -f "out/Release/build.ninja" ]] ; then
+		pushd "out/Release" >/dev/null 2>&1 || die
 einfo "Cleaning out build"
 			eninja -t clean
-		popd > /dev/null || die
+		popd >/dev/null 2>&1 || die
 	fi
 }
 
@@ -3636,7 +3637,7 @@ _src_compile() {
 
 	# Build mksnapshot and pax-mark it.
 	local x
-	for x in mksnapshot v8_context_snapshot_generator; do
+	for x in "mksnapshot" "v8_context_snapshot_generator" ; do
 		if tc-is-cross-compiler ; then
 			_eninja \
 				"out/Release" \
@@ -3681,8 +3682,9 @@ _src_compile() {
 		s|@@PACKAGE@@|chromium-browser|g;
 		s|@@MENUNAME@@|Chromium|g;
 		' \
-		chrome/app/resources/manpage.1.in \
-		> out/Release/chromium-browser.1 \
+		"chrome/app/resources/manpage.1.in" \
+		> \
+		"out/Release/chromium-browser.1" \
 		|| die
 
 	# Build desktop file; bug #706786
@@ -3695,27 +3697,29 @@ _src_compile() {
 		s|@@PACKAGE@@|chromium-browser|g;
 		s|\(^Exec=\)/usr/bin/|\1|g;
 		' \
-		chrome/installer/linux/common/desktop.template \
-		> out/Release/chromium-browser-chromium.desktop \
+		"chrome/installer/linux/common/desktop.template" \
+		> \
+		"out/Release/chromium-browser-chromium.desktop" \
 		|| die
 
 	# Build vk_swiftshader_icd.json; bug #827861
 	sed -e 's|${ICD_LIBRARY_PATH}|./libvk_swiftshader.so|g' \
-		third_party/swiftshader/src/Vulkan/vk_swiftshader_icd.json.tmpl \
-		> out/Release/vk_swiftshader_icd.json \
+		"third_party/swiftshader/src/Vulkan/vk_swiftshader_icd.json.tmpl" \
+		> \
+		"out/Release/vk_swiftshader_icd.json" \
 		|| die
 }
 
 _src_install() {
 	local CHROMIUM_HOME="/usr/$(get_libdir)/chromium-browser"
 	exeinto "${CHROMIUM_HOME}"
-	doexe out/Release/chrome
+	doexe "out/Release/chrome"
 
-	newexe out/Release/chrome_sandbox chrome-sandbox
+	newexe "out/Release/chrome_sandbox" "chrome-sandbox"
 	fperms 4755 "${CHROMIUM_HOME}/chrome-sandbox"
 
-	newexe out/Release/chromedriver chromedriver-${ABI}
-	doexe out/Release/chrome_crashpad_handler
+	newexe "out/Release/chromedriver" "chromedriver-${ABI}"
+	doexe "out/Release/chrome_crashpad_handler"
 
 	ozone_auto_session=$(\
 		 ! use headless \
@@ -3729,38 +3733,47 @@ _src_install() {
 		s:@@OZONE_AUTO_SESSION@@:${ozone_auto_session}:g;
 		" \
 		"${FILESDIR}/chromium-launcher-r7.sh" \
-		> chromium-launcher.sh \
+		> \
+		"chromium-launcher.sh" \
 		|| die
-	newexe chromium-launcher.sh chromium-launcher-${ABI}.sh
+	newexe \
+		"chromium-launcher.sh" \
+		"chromium-launcher-${ABI}.sh"
 
 	# It is important that we name the target "chromium-browser",
 	# xdg-utils expect it; bug #355517.
-	dosym "${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
-		/usr/bin/chromium-browser-${ABI}
-	dosym "${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
-		/usr/bin/chromium-browser
+	dosym \
+		"${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
+		"/usr/bin/chromium-browser-${ABI}"
+	dosym \
+		"${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
+		"/usr/bin/chromium-browser"
 	# Keep the old symlink around for consistency
-	dosym "${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
-		/usr/bin/chromium-${ABI}
-	dosym "${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
-		/usr/bin/chromium
+	dosym \
+		"${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
+		"/usr/bin/chromium-${ABI}"
+	dosym \
+		"${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
+		"/usr/bin/chromium"
 
-	dosym "${CHROMIUM_HOME}/chromedriver-${ABI}" \
-		/usr/bin/chromedriver-${ABI}
-	dosym "${CHROMIUM_HOME}/chromedriver-${ABI}" \
-		/usr/bin/chromedriver
+	dosym \
+		"${CHROMIUM_HOME}/chromedriver-${ABI}" \
+		"/usr/bin/chromedriver-${ABI}"
+	dosym \
+		"${CHROMIUM_HOME}/chromedriver-${ABI}" \
+		"/usr/bin/chromedriver"
 
 	# Allow users to override command-line options, bug #357629.
-	insinto /etc/chromium
+	insinto "/etc/chromium"
 	newins "${FILESDIR}/chromium.default" "default"
 
-	pushd out/Release/locales > /dev/null || die
+	pushd "out/Release/locales" >/dev/null 2>&1 || die
 		chromium_remove_language_paks
-	popd > /dev/null || die
+	popd >/dev/null 2>&1 || die
 
 	insinto "${CHROMIUM_HOME}"
-	doins out/Release/*.bin
-	doins out/Release/*.pak
+	doins "out/Release/"*".bin"
+	doins "out/Release/"*".pak"
 
 	if use bindist; then
 	# We built libffmpeg as a component library, but we can't distribute it
@@ -3775,36 +3788,36 @@ eerror "Failed to remove bundled libffmpeg.so (with proprietary codecs)"
 	local symlink_loc=$(usex ffmpeg-chromium "ffmpeg-chromium" "ffmpeg[chromium]")
 einfo "Creating symlink to libffmpeg.so from ${symlink_loc}..."
 		dosym \
-			../chromium/libffmpeg.so$(usex ffmpeg-chromium .${PV%%\.*} "") \
-			/usr/$(get_libdir)/chromium-browser/libffmpeg.so
+			"../chromium/libffmpeg.so"$(usex ffmpeg-chromium ".${PV%%\.*}" "") \
+			"/usr/$(get_libdir)/chromium-browser/libffmpeg.so"
 	fi
 
 	(
 		shopt -s nullglob
 		local files=(
-			out/Release/*.so
-			out/Release/*.so.[0-9]
+			"out/Release/"*".so"
+			"out/Release/"*".so."[0-9]
 		)
-		[[ ${#files[@]} -gt 0 ]] && doins "${files[@]}"
+		(( ${#files[@]} > 0 )) && doins "${files[@]}"
 	)
 
 	# Install bundled xdg-utils, avoids installing X11 libraries with
 	# USE="-X wayland"
-	doins out/Release/xdg-{settings,mime}
+	doins "out/Release/xdg-"{"settings","mime"}
 
 	if ! use system-icu && ! use headless; then
-		doins out/Release/icudtl.dat
+		doins "out/Release/icudtl.dat"
 	fi
 
-	doins -r out/Release/locales
-	doins -r out/Release/MEIPreload
+	doins -r "out/Release/locales"
+	doins -r "out/Release/MEIPreload"
 
 	# Install vk_swiftshader_icd.json; bug #827861
-	doins out/Release/vk_swiftshader_icd.json
+	doins "out/Release/vk_swiftshader_icd.json"
 
-	if [[ -d out/Release/swiftshader ]] ; then
+	if [[ -d "out/Release/swiftshader" ]] ; then
 		insinto "${CHROMIUM_HOME}/swiftshader"
-		doins out/Release/swiftshader/*.so
+		doins "out/Release/swiftshader/"*".so"
 	fi
 
 	# Install icons
@@ -3817,20 +3830,25 @@ einfo "Creating symlink to libffmpeg.so from ${symlink_loc}..."
 		newicon \
 			-s ${size} \
 			"${branding}/product_logo_${size}.png" \
-			chromium-browser.png
+			"chromium-browser.png"
 	done
 
 	# Install desktop entry
-	newmenu out/Release/chromium-browser-chromium.desktop \
-		chromium-browser-chromium-${ABI}.desktop
+	newmenu \
+		"out/Release/chromium-browser-chromium.desktop" \
+		"chromium-browser-chromium-${ABI}.desktop"
 
 	# Install GNOME default application entry (bug #303100).
-	insinto /usr/share/gnome-control-center/default-apps
-	newins "${FILESDIR}"/chromium-browser.xml chromium-browser.xml
+	insinto "/usr/share/gnome-control-center/default-apps"
+	newins \
+		"${FILESDIR}/chromium-browser.xml" \
+		"chromium-browser.xml"
 
 	# Install manpage; bug #684550
-	doman out/Release/chromium-browser.1
-	dosym chromium-browser.1 /usr/share/man/man1/chromium.1
+	doman "out/Release/chromium-browser.1"
+	dosym \
+		"chromium-browser.1" \
+		"/usr/share/man/man1/chromium.1"
 
 	readme.gentoo_create_doc
 
