@@ -19,7 +19,7 @@
 -    if (use_thin_lto) {
 +    if (use_mold) {
 +      # Pass
-+    elif (use_thin_lto) {
++    } else if (use_thin_lto) {
        if (is_win) {
          ldflags = [ "-mllvm:-enable-ext-tsp-block-placement=1" ]
        } else {
