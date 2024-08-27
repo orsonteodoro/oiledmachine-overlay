@@ -830,7 +830,7 @@ COMMON_SNAPSHOT_DEPEND="
 			x11-libs/libXext:=
 		)
 	)
-	>=dev-libs/nss-4.29[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.61[${MULTILIB_USEDEP}]
 	dev-libs/nss:=
 	>=dev-libs/nspr-4.29[${MULTILIB_USEDEP}]
 	dev-libs/nspr:=
