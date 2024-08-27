@@ -502,7 +502,7 @@ proprietary-codecs-disable-nc-user +pulseaudio qt5 qt6 +screencast selinux
 -system-harfbuzz -system-icu -system-libaom -system-libdrm
 -system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
 -system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
--system-zlib +system-zstd +thinlto-opt +vaapi +wayland -widevine +X
+-system-zlib +system-zstd systemd +thinlto-opt +vaapi +wayland -widevine +X
 "
 
 # What is considered a proprietary codec can be found at:
@@ -906,10 +906,11 @@ COMMON_SNAPSHOT_DEPEND="
 
 # No multilib for this virtual/udev when it should be.
 VIRTUAL_UDEV="
-	|| (
+	systemd? (
 		>=sys-apps/systemd-252.5[${MULTILIB_USEDEP}]
-		>=sys-fs/eudev-2.1.1[${MULTILIB_USEDEP}]
-		>=sys-fs/udev-252.5[${MULTILIB_USEDEP}]
+	)
+	!systemd? (
+		>=sys-apps/systemd-utils-252.5[${MULTILIB_USEDEP},udev]
 	)
 "
 
