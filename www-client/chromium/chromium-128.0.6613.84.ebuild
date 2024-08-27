@@ -173,7 +173,8 @@ UOPTS_SUPPORT_TPGO=0
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
 LLVM_COMMIT="ecea8371"
 LLVM_SUB_REV="3000"
-VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-14561-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
+NUM_COMMITS="14561"
+VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${NUM_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
 # https://github.com/chromium/chromium/blob/128.0.6613.84/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_COMMIT="3cf924b934322fd7b514600a7dc84fc517515346"
@@ -1742,7 +1743,7 @@ eerror
 	fi
 
 	if use vaapi && ( use x86 || use amd64 ) ; then
-		:;
+		:
 	elif use vaapi ; then
 ewarn
 ewarn "VA-API is not enabled by default for this arch.  Please disable it if"
@@ -3439,7 +3440,7 @@ eerror
 				myconf_gn+=" arm_control_flow_integrity=pac"
 			elif is-flagq "-mbranch-protection=*" ; then
 				# Allow for a different option
-				:;
+				:
 			elif use branch-protection ; then
 				myconf_gn+=" arm_control_flow_integrity=standard"
 			else
@@ -3460,7 +3461,7 @@ eerror
 	fi
 
 	if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then # Disable annoying check
-		:;
+		:
 	elif use pgo ; then
 
 		if ! tc-is-clang ; then
@@ -3517,7 +3518,7 @@ einfo
 	fi
 
 	if ! use epgo || tc-is-cross-compiler ; then
-		:;
+		:
 	else
 		[[ "${PGO_PHASE}" == "PGI" ]] && myconf_gn+=" gcc_pgi=true"
 	fi
