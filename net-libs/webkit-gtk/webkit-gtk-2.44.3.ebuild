@@ -591,9 +591,6 @@ NON_FREE_REQUIRED_USE="
 	libde265? (
 		proprietary-codecs
 	)
-	mold? (
-		proprietary-codecs-disable
-	)
 	openh264? (
 		proprietary-codecs
 	)
@@ -846,8 +843,6 @@ gen_depend_llvm() {
 		"
 	done
 }
-# Reasons for restrictions with mold section are due to the the patent status
-# if not expired or not granted free.
 RDEPEND+="
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-61.2:=[${MULTILIB_USEDEP}]
@@ -1029,7 +1024,7 @@ DEPEND+="
 	${RDEPEND}
 "
 # paxctl is needed for bug #407085
-
+# The >= 2.0 version of mold is used for legal reasons.
 BDEPEND+="
 	${PYTHON_DEPS}
 	${RUBY_DEPS}
@@ -1052,7 +1047,7 @@ BDEPEND+="
 		>=dev-util/gdbus-codegen-${GLIB_PV}
 	)
 	mold? (
-		sys-devel/mold
+		>=sys-devel/mold-2.0
 	)
 	thunder? (
 		net-libs/thunder
