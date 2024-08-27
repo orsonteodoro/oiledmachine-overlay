@@ -439,9 +439,6 @@ NON_FREE_REQUIRED_USE="
 	h264? (
 		proprietary-codecs
 	)
-	mold? (
-		proprietary-codecs-disable
-	)
 	openh264? (
 		proprietary-codecs
 		system-ffmpeg
@@ -828,6 +825,7 @@ gen_llvm_bdepend() {
 GCC_BDEPEND="
 	>=virtual/rust-1.76
 "
+# Used mold 2.0 for legal reasons.
 BDEPEND+="
 	$(gen_llvm_bdepend)
 	${GAMEPAD_BDEPEND}
@@ -849,7 +847,7 @@ BDEPEND+="
 		>=dev-lang/nasm-${NASM_PV}
 	)
 	mold? (
-		sys-devel/mold
+		>=sys-devel/mold-2.0
 	)
 	pgo? (
 		X? (
