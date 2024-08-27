@@ -57,14 +57,14 @@ EAPI=8
 #   v=$(git describe HEAD --abbrev=12 | cut -f 3 -d "-")
 #   python -c "print(${v}/10000)" or echo "0.${v}"
 
-APPLY_OILEDMACHINE_OVERLAY_PATCHSET=0
-CHROMIUM_EBUILD_MAINTAINER=1 # See also GEN_ABOUT_CREDITS
+APPLY_OILEDMACHINE_OVERLAY_PATCHSET=1
+CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 
 #
 # Set to 1 below to generate an about_credits.html including bundled internal
 # dependencies.
 #
-GEN_ABOUT_CREDITS=1
+GEN_ABOUT_CREDITS=0
 #
 
 # One of the major sources of lag comes from dependencies
@@ -137,8 +137,8 @@ GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-de68d0a03cb9119b32b8f51735500a7ba2d62a00f481d6800e562781292147fb\
-0a2b4f7e2f3d4b84445d68bdfb3d01ec283043eae05343c42d995f3355e37816\
+d01637900cb776f6dd08651928a4bebf8633b5ff65f59c9731905883aa3388de\
+fd83a5d9749492a11e6ef1ba1294c92b46b8d6bbd5c4347a2d7f8fb2c1ecab3a\
 "
 LLVM_COMPAT=( 20 19 ) # [inclusive, inclusive] high to low ; LLVM_OFFICIAL_SLOT+1 or LLVM_OFFICIAL_SLOT-1 major version allowed.
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is the same slot listed in https://github.com/chromium/chromium/blob/128.0.6613.84/tools/clang/scripts/update.py#L42
@@ -1959,7 +1959,7 @@ apply_oiledmachine_overlay_patchset() {
 # Did you run "gclient sync"?
 			"${FILESDIR}/extra-patches/chromium-117.0.5938.92-skip-rust-check.patch"
 
-			"${FILESDIR}/extra-patches/chromium-118.0.5993.117-clang-paths.patch"
+			"${FILESDIR}/extra-patches/chromium-128.0.6613.84-clang-paths.patch"
 		)
 	fi
 }
@@ -3523,7 +3523,9 @@ einfo
 		[[ "${PGO_PHASE}" == "PGI" ]] && myconf_gn+=" gcc_pgi=true"
 	fi
 
-	myconf_gn+=" llvm_libdir=\"$(get_libdir)\""
+	if use system-toolchain ; then
+		myconf_gn+=" llvm_libdir=\"$(get_libdir)\""
+	fi
 
 	if tc-is-clang ; then
 		if ver_test $(clang-major-version) -ge 16 ; then

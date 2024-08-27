@@ -1,0 +1,10 @@
+--- build/toolchain/toolchain.gni.orig	2024-08-21 15:46:05.046065300 -0700
++++ build/toolchain/toolchain.gni	2024-08-26 22:34:46.726704225 -0700
+@@ -53,6 +53,7 @@ declare_args() {
+   } else {
+     clang_version = "19"
+   }
++  llvm_libdir = "lib64" # /usr/lib/llvm/18/lib64, the 6 component with / as delimiter.
+ }
+ 
+ # Extension for shared library files (including leading dot).
