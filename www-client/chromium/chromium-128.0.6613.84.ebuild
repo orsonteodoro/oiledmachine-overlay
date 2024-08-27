@@ -1076,7 +1076,7 @@ gen_rust_bdepend() {
 		)
 	"
 }
-# Mold was relicensed as MIT in 2.0.  The min is 2.0 to avoid legal issues.
+# Mold was relicensed as MIT in 2.0.  >=2.0 was used to avoid legal issues.
 BDEPEND+="
 	$(gen_rust_bdepend)
 	$(python_gen_any_dep '
