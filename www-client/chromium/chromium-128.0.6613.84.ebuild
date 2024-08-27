@@ -2652,6 +2652,7 @@ _src_configure_compiler() {
 		export OBJDUMP="llvm-objdump"
 		export READELF="llvm-readelf"
 		export STRIP="llvm-strip"
+		LLVM_SLOT=$(clang-major-version)
 	fi
 	strip-unsupported-flags
 	if use official ; then
@@ -2659,6 +2660,7 @@ _src_configure_compiler() {
 		filter-flags '-O*'
 		strip-flags
 	fi
+	${CC} --version || die
 }
 
 build_gn() {
