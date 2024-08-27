@@ -2453,6 +2453,18 @@ einfo "CPPFLAGS:  ${CPPFLAGS}"
 		-DUSE_LD_LLD=OFF
 	)
 
+	local ulimit
+	if use mold ; then
+	# See issue #851 in mold repo.
+		ulimit=${ULIMIT:-16384}
+	else
+	# The default
+		ulimit=${ULIMIT:-1024}
+	fi
+
+einfo "Current ulimit -n (before):"
+	ulimit -n
+
 einfo "Add -flto to CFLAGS/CXXFLAGS and -fuse-ld=<bfd|gold|lld|mold> to LDFLAGS for LTO optimization."
 	local linker_type=$(check-linker_get_lto_type)
 	if [[ \
@@ -2499,6 +2511,13 @@ einfo "Add -flto to CFLAGS/CXXFLAGS and -fuse-ld=<bfd|gold|lld|mold> to LDFLAGS 
 	filter-flags \
 		'-flto*' \
 		'-fuse-ld=*'
+
+	if ! ulimit -n ${ulimit} >/dev/null 2>&1 ; then
+ewarn "The ulimit could not be changed.  Build failures may occur."
+	fi
+
+einfo "Current ulimit -n (after):"
+	ulimit -n
 
 	if use mediastream ; then
 		sed -i -e "s|ENABLE_MEDIA_STREAM PRIVATE|ENABLE_MEDIA_STREAM PUBLIC|g" \

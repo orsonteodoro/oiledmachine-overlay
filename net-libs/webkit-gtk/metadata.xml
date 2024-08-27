@@ -57,6 +57,9 @@
 
         Increasing the memory page size may also decrease security.
 
+    ULIMIT - Sets the maximum open file limit.
+    Default values:  Mold - 16384, BFD/LLD - 1024
+
 
     EPGO (Event Based PGO)
 
