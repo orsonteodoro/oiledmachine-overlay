@@ -545,9 +545,10 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       (w/o Clang CFI).
     </flag>
     <flag name="system-toolchain">
-      Use the system toolchain instead of the bundled one (if possible).
+      Use the system-clang and system-rust instead of the bundled one.
 
-      If disabled, it will build with a snapshot build of Clang and Rust.
+      If disabled, it will build with a pre-stable build of Clang and a post
+      snapshot of Rust.
     </flag>
     <flag name="system-zlib">
       Use system zlib instead of the bundled one

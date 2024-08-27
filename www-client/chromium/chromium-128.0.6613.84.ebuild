@@ -1827,42 +1827,58 @@ is_generating_credits() {
 }
 
 apply_distro_patchset() {
+	if use system-libstdcxx ; then
 	# Disable global media controls, crashes with libstdc++
-	sed -i \
-		-e "/\"GlobalMediaControlsCastStartStop\"/,+4{s/ENABLED/DISABLED/;}" \
-		"chrome/browser/media/router/media_router_feature.cc" \
-		|| die
+		sed -i \
+			-e "/\"GlobalMediaControlsCastStartStop\"/,+4{s/ENABLED/DISABLED/;}" \
+			"chrome/browser/media/router/media_router_feature.cc" \
+			|| die
+	fi
 
-	local PATCHES=(
+	PATCHES+=(
 		"${FILESDIR}/chromium-cross-compile.patch"
 		$(use system-zlib && echo "${FILESDIR}/chromium-109-system-zlib.patch")
 		"${FILESDIR}/chromium-111-InkDropHost-crash.patch"
 		"${FILESDIR}/chromium-126-oauth2-client-switches.patch"
 		"${FILESDIR}/chromium-127-bindgen-custom-toolchain.patch"
-		"${FILESDIR}/chromium-127-updater-systemd.patch"
+		"${FILESDIR}/chromium-127-updater-systemd.patch" # Moved into common set
 	)
 
+	if use system-icu ; then
 	# 127: test deps are broken for ui/lens with system ICU "//third_party/icu:icuuc_public"
-	sed -i '/source_set("unit_tests") {/,/}/d' \
-		"chrome/browser/ui/lens/BUILD.gn" \
-		|| die "Failed to remove bad test target"
-	sed -i '/lens:unit_tests/d' \
-		"chrome/test/BUILD.gn" \
-		"components/BUILD.gn" \
-		|| die "Failed to remove dependencies on bad target"
+		sed -i '/source_set("unit_tests") {/,/}/d' \
+			"chrome/browser/ui/lens/BUILD.gn" \
+			|| die "Failed to remove bad test target"
+		sed -i '/lens:unit_tests/d' \
+			"chrome/test/BUILD.gn" \
+			"components/BUILD.gn" \
+			|| die "Failed to remove dependencies on bad target"
+	fi
 
 	if use system-toolchain ; then
+	# system-toolchain means system-clang, system-rust
 	# The patchset is really only required if we're using the
 	# system-toolchain.
 		PATCHES+=(
 			"${WORKDIR}/chromium-patches-${PATCH_V}"
 		)
 	# We can't use the bundled compiler builtins.
-		sed -i -e \
-			"/if (is_clang && toolchain_has_rust) {/,+2d" \
+		sed -i \
+			-e "/if (is_clang && toolchain_has_rust) {/,+2d" \
 			"build/config/compiler/BUILD.gn" \
 			|| die "Failed to disable bundled compiler builtins"
+	else
+		echo \
+			"${VENDORED_CLANG_VER}" \
+			> \
+			"${S}/third_party/llvm-build/Release+Asserts/cr_build_revision" \
+			|| die "Failed to set clang version"
+		cp \
+			"${S}/third_party/rust-toolchain/VERSION" \
+			"${S}/third_party/rust-toolchain/INSTALLED_VERSION" \
+			|| die "Failed to set rust version"
 	fi
+
 
         if use ppc64 ; then
 		local paths=(
@@ -1956,7 +1972,6 @@ src_prepare() {
 
 	local PATCHES=()
 
-	if use system-libstdcxx ; then
 ewarn "Applying the distro patchset."
 	# Proper CFI requires static linkage.
 	# You can use Cross DSO CFI (aka dynamic .so linkage) but the attack
@@ -1964,22 +1979,7 @@ ewarn "Applying the distro patchset."
 	# cfi-icall with static linkage may have less breakage than dynamic,
 	# which will force user to disable cfi-icall in Cross DSO CFI unvendored
 	# lib.
-		apply_distro_patchset
-	else
-ewarn "Disabling the distro patchset."
-	fi
-
-	if ! use system-toolchain ; then
-		echo \
-			"${VENDORED_CLANG_VER}" \
-			> \
-			"${S}/third_party/llvm-build/Release+Asserts/cr_build_revision" \
-			|| die "Failed to set clang version"
-		cp \
-			"${S}/third_party/rust-toolchain/VERSION" \
-			"${S}/third_party/rust-toolchain/INSTALLED_VERSION" \
-			|| die "Failed to set rust version"
-	fi
+	apply_distro_patchset
 
 	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
 		apply_oiledmachine_overlay_patchset
