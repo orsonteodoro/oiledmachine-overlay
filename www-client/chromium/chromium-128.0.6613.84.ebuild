@@ -3715,10 +3715,14 @@ _src_install() {
 	exeinto "${CHROMIUM_HOME}"
 	doexe "out/Release/chrome"
 
-	newexe "out/Release/chrome_sandbox" "chrome-sandbox"
+	newexe \
+		"out/Release/chrome_sandbox" \
+		"chrome-sandbox"
 	fperms 4755 "${CHROMIUM_HOME}/chrome-sandbox"
 
-	newexe "out/Release/chromedriver" "chromedriver-${ABI}"
+	newexe \
+		"out/Release/chromedriver" \
+		"chromedriver-${ABI}"
 	doexe "out/Release/chrome_crashpad_handler"
 
 	ozone_auto_session=$(\
