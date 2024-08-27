@@ -410,7 +410,7 @@ alsa cpu_flags_arm_neon cups +dbus debug eme-free +ffvpx +hardened -hwaccel jack
 +pgo +pulseaudio proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user selinux sndio
 speech +system-av1 +system-ffmpeg +system-harfbuzz +system-icu
-+system-jpeg +system-libevent +system-libvpx system-png +system-webp -telemetry
++system-jpeg +system-libevent +system-libvpx system-png +system-webp systemd -telemetry
 +vaapi -valgrind +wayland +webrtc wifi webspeech
 "
 # telemetry disabled for crypto/security reasons
@@ -534,11 +534,11 @@ GAMEPAD_BDEPEND="
 # gamepad, or WebAuthn roaming authenticators (e.g. USB security key)
 UDEV_RDEPEND="
 	kernel_linux? (
-		|| (
+		systemd? (
 			>=sys-apps/systemd-217[${MULTILIB_USEDEP}]
-			>=sys-fs/eudev-2.1.1[${MULTILIB_USEDEP}]
-			sys-apps/systemd-utils[${MULTILIB_USEDEP},udev]
-			sys-fs/udev[${MULTILIB_USEDEP}]
+		)
+		!systemd? (
+			>=sys-apps/systemd-utils-217[${MULTILIB_USEDEP},udev]
 		)
 	)
 "

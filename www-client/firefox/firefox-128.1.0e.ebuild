@@ -413,7 +413,7 @@ proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 +pulseaudio selinux sndio speech +system-av1 +system-ffmpeg +system-harfbuzz
 +system-icu +system-jpeg +system-libevent +system-libvpx system-png
-+system-webp -telemetry +vaapi +wayland +webrtc wifi webspeech +X
++system-webp systemd -telemetry +vaapi +wayland +webrtc wifi webspeech +X
 "
 
 # Firefox-only IUSE
@@ -534,11 +534,11 @@ GAMEPAD_BDEPEND="
 # Required for gamepad, or WebAuthn roaming authenticators (e.g. USB security key)
 UDEV_RDEPEND="
 	kernel_linux? (
-		|| (
+		systemd? (
 			>=sys-apps/systemd-217[${MULTILIB_USEDEP}]
-			>=sys-fs/eudev-2.1.1[${MULTILIB_USEDEP}]
-			sys-apps/systemd-utils[${MULTILIB_USEDEP},udev]
-			sys-fs/udev[${MULTILIB_USEDEP}]
+		)
+		!systemd? (
+			>=sys-apps/systemd-utils-217[${MULTILIB_USEDEP},udev]
 		)
 	)
 "
