@@ -2667,6 +2667,19 @@ einfo "Configuring gn"
 		set -- ${EPYTHON} build/gen.py --no-last-commit-position --no-strip --no-static-libstdc++ --allow-warnings
 		edo "$@"
 
+# Fixes
+#../src/gn/scope_per_file_provider.cc:15:10: fatal error: 'last_commit_position.h' file not found
+#   15 | #include "last_commit_position.h"
+#      |          ^~~~~~~~~~~~~~~~~~~~~~~~
+#1 error generated.
+cat >out/last_commit_position.h <<-EOF || die
+#ifndef OUT_LAST_COMMIT_POSITION_H_
+#define OUT_LAST_COMMIT_POSITION_H_
+#define LAST_COMMIT_POSITION_NUM ${PV##0.}
+#define LAST_COMMIT_POSITION "${PV}"
+#endif  // OUT_LAST_COMMIT_POSITION_H_
+EOF
+
 einfo "Building gn"
 		eninja -C out gn
 		export PATH="${WORKDIR}/gn-${GN_COMMIT}/out:${PATH}"
