@@ -2653,6 +2653,7 @@ _src_configure_compiler() {
 		export READELF="llvm-readelf"
 		export STRIP="llvm-strip"
 		LLVM_SLOT=$(clang-major-version)
+		[[ "${LLVM_OFFICIAL_SLOT}" != "${LLVM_SLOT}" ]] && die "Fix LLVM_OFFICIAL_SLOT or VENDORED_CLANG_VER"
 	fi
 	strip-unsupported-flags
 	if use official ; then
