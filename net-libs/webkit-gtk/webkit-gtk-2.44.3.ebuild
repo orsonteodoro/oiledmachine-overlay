@@ -1074,7 +1074,7 @@ BDEPEND+="
 #		)
 #	)
 _PATCHES=(
-	"${FILESDIR}/webkit-gtk-2.43.2-CaptionUserPreferencesDisplayMode-conditional.patch"
+#	"${FILESDIR}/webkit-gtk-2.43.2-CaptionUserPreferencesDisplayMode-conditional.patch"
 	"${FILESDIR}/webkit-gtk-2.43.2-custom-page-size.patch"
 )
 
