@@ -131,6 +131,7 @@ GCC_COMPAT=( {14..10} )
 GCC_PV="10.2.1" # Minimum
 GCC_SLOT="" # Global variable
 GN_COMMIT="b2afae122eeb6ce09c52d63f67dc53fc517dbdc8"
+GN_PV="0.2175"
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
@@ -2675,8 +2676,8 @@ einfo "Configuring gn"
 cat >out/last_commit_position.h <<-EOF || die
 #ifndef OUT_LAST_COMMIT_POSITION_H_
 #define OUT_LAST_COMMIT_POSITION_H_
-#define LAST_COMMIT_POSITION_NUM ${PV##0.}
-#define LAST_COMMIT_POSITION "${PV}"
+#define LAST_COMMIT_POSITION_NUM ${GN_PV##0.}
+#define LAST_COMMIT_POSITION "${GN_PV}"
 #endif  // OUT_LAST_COMMIT_POSITION_H_
 EOF
 
