@@ -2339,7 +2339,7 @@ eerror "1.  Add/change /etc/security/limits.conf with the following lines:"
 eerror "portage         soft    nofile      ${ulimit}"
 eerror "portage         hard    nofile      ${ulimit}"
 eerror "2.  Run \`ulimit -n ${ulimit}\`"
-eerror "3.  Run \`emerge =${CATEGORY}/${P}\`"
+eerror "3.  Run \`emerge =${CATEGORY}/${PN}-${PVR}\`"
 eerror
 			die
 		fi
