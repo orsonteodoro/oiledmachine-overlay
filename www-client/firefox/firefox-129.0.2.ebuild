@@ -2292,7 +2292,7 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 			mozconfig_add_options_ac '+pgo' MOZ_PGO=1
 
 			if tc-is-clang ; then
-				# Used in build/pgo/profileserver.py
+	# Used in build/pgo/profileserver.py
 				export LLVM_PROFDATA="llvm-profdata"
 			fi
 		fi
