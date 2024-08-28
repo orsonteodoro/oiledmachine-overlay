@@ -19,10 +19,13 @@
 if [[ -z "${_DHMS_ECLASS}" ]] ; then
 _DHMS_ECLASS=1
 
-# @ECLASS_VARIABLE: DHMS_ENABLE
+# @ECLASS_VARIABLE: DHMS_OUTPUT
 # @DESCRIPTION:
-# Allow reporting of completion time at the end of the ebuild
-# Valid values: 1 to enable (default), 0 to disable.
+# Selects the output method.
+# Valid values:
+#   einfo - report it to standard output (default)
+#   elog - report it to system logs
+#   quiet - disable reporting
 
 # @ECLASS_VARIABLE: _DHMS_TIME_START
 # @INTERNAL
@@ -72,8 +75,11 @@ dhms_start() {
 dhms_end() {
 	export _DHMS_TIME_END=$(date +%s)
 	local dhms_passed=$(dhms_get ${_DHMS_TIME_START} ${_DHMS_TIME_END})
-	if [[ "${DHMS_ENABLE:-1}" == "1" ]] ; then
+	local dhms_output="${DHMS_OUTPUT:-einfo}"
+	if [[ "${dhms_output}" == "einfo" ]] ; then
 einfo "Completion time:  ${dhms_passed}"
+	elif [[ "${dhms_output}" == "elog" ]] ; then
+elog "Completion time:  ${dhms_passed}"
 	fi
 }
 
