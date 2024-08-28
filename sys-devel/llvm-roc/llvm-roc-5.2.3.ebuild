@@ -22,7 +22,7 @@ UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
-inherit cmake flag-o-matic rocm uopts
+inherit cmake dhms flag-o-matic rocm uopts
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
@@ -132,6 +132,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	dhms_start
 	rocm_pkg_setup
 	uopts_setup
 	if use epgo || use ebolt ; then
@@ -349,6 +350,7 @@ src_install() {
 }
 
 pkg_postinst() {
+	dhms_end
 	uopts_pkg_postinst
 }
 
