@@ -3586,15 +3586,18 @@ einfo
 	if [[ "${FEATURES}" =~ "icecream" && "${FEATURES}" =~ "ccache" ]] && has_version "sys-devel/icecream" && has_version "dev-util/ccache" ; then
 		myconf_gn+=" cc_wrapper=\"ccache\""
 		export CCACHE_PREFIX="icecc"
+		export CCACHE_BASEDIR="${TMPDIR}"
 	elif [[ "${FEATURES}" =~ "distcc" && "${FEATURES}" =~ "ccache" ]] && has_version "sys-devel/distcc" && has_version "dev-util/ccache" ; then
 		myconf_gn+=" cc_wrapper=\"ccache\""
 		export CCACHE_PREFIX="distcc"
+		export CCACHE_BASEDIR="${TMPDIR}"
 	elif [[ "${FEATURES}" =~ "icecream" ]] && has_version "sys-devel/icecream" ; then
 		myconf_gn+=" cc_wrapper=\"icecc\""
 	elif [[ "${FEATURES}" =~ "distcc" ]] && has_version "sys-devel/distcc" ; then
 		myconf_gn+=" cc_wrapper=\"distcc\""
 	elif [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 		myconf_gn+=" cc_wrapper=\"ccache\""
+		export CCACHE_BASEDIR="${TMPDIR}"
 	fi
 
 	uopts_src_configure
