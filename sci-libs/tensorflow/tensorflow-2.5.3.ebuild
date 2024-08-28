@@ -76,8 +76,6 @@ LLVM_COMPAT=( {16..15} 12 ) # See https://github.com/tensorflow/tensorflow/blob/
 PYTHON_COMPAT=( "python3_"{10..11} )
 # Limited by jax/flax
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
-TIME_END=0
-TIME_START=0
 
 # *seq* can only be done in the eclass.
 gen_seq_dec() {
@@ -100,7 +98,7 @@ gen_seq_inc() {
 	done
 }
 
-inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr llvm prefix
+inherit bazel check-reqs cuda distutils-r1 dhms flag-o-matic lcnr llvm prefix
 inherit rocm toolchain-funcs
 
 # For deps versioning, see
@@ -974,28 +972,8 @@ eerror
 	fi
 }
 
-get_dhms() {
-	local time_start=${1}
-	local time_end=${2}
-	local _day=$((60*60*24))
-	local _hour=$((60*60))
-	local _minute=60
-	local t
-	t=$((${time_end} - ${time_start})) # Seconds elapsed
-	local days_passed=$(( ${t} / ${_day} ))
-	local hours_passed=$(( ${t} % ${_day} ))
-	t=${hours_passed}
-	hours_passed=$(( ${t} / ${_hour} ))
-	local minutes_passed=$(( ${t} % ${_hour} ))
-	t=${minutes_passed}
-	minutes_passed=$(( ${t} / ${_minute} ))
-	local seconds_passed=$(( ${t} % ${_minute} ))
-	local dhms_passed="${days_passed} days, ${hours_passed} hrs, ${minutes_passed} mins, ${seconds_passed} secs"
-	echo "${dhms_passed}"
-}
-
 pkg_setup() {
-	export TIME_START=$(date +%s)
+	dhms_start
 die "Ebuild still in development"
 use rocm && ewarn "The rocm USE flag is currently broken"
 	export CC=$(tc-getCC)
@@ -1726,9 +1704,7 @@ einfo "Installing libs"
 	# Prevent merge conflict
 	rm -rf "${ED}/usr/bin/tensorboard"
 
-	export TIME_END=$(date +%s)
-	local dhms_passed=$(get_dhms ${TIME_START} ${TIME_END})
-einfo "Completion time:  ${dhms_passed}"
+	dhms_end
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  80 chars, dedupe literals, *DEPENDs changes, increase [third party] LICENSE transparency, preserve copyright notices, fix ccache

@@ -123,11 +123,9 @@ UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 USE_RUBY=" ruby31 ruby32 ruby33"
-TIME_END=0
-TIME_START=0
 WK_PAGE_SIZE=64 # global var not const
 
-inherit cflags-depends check-linker check-reqs cmake desktop flag-o-matic git-r3
+inherit cflags-depends check-linker check-reqs cmake desktop dhms flag-o-matic git-r3
 inherit gnome2 lcnr linux-info llvm multilib-minimal pax-utils python-any-r1
 inherit ruby-single toolchain-funcs uopts
 
@@ -1957,31 +1955,11 @@ ewarn
 	WK_PAGE_SIZE=${page_size}
 }
 
-get_dhms() {
-	local time_start=${1}
-	local time_end=${2}
-	local _day=$((60*60*24))
-	local _hour=$((60*60))
-	local _minute=60
-	local t
-	t=$((${time_end} - ${time_start})) # Seconds elapsed
-	local days_passed=$(( ${t} / ${_day} ))
-	local hours_passed=$(( ${t} % ${_day} ))
-	t=${hours_passed}
-	hours_passed=$(( ${t} / ${_hour} ))
-	local minutes_passed=$(( ${t} % ${_hour} ))
-	t=${minutes_passed}
-	minutes_passed=$(( ${t} / ${_minute} ))
-	local seconds_passed=$(( ${t} % ${_minute} ))
-	local dhms_passed="${days_passed} days, ${hours_passed} hrs, ${minutes_passed} mins, ${seconds_passed} secs"
-	echo "${dhms_passed}"
-}
-
 check_security_expire() {
 	local _60_days=$((60*60*24*60))
 	local _30_days=$((60*60*24*30))
 	local now=$(date +%s)
-	local dhms_passed=$(get_dhms ${MITIGATION_LAST_UPDATE} ${now})
+	local dhms_passed=$(dhms_get ${MITIGATION_LAST_UPDATE} ${now})
 	local channel="stable"
 	if (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_60_days} )) ; then
 eerror
@@ -2015,7 +1993,7 @@ einfo "Time passed since the last security update:  ${dhms_passed}"
 }
 
 pkg_setup() {
-	export TIME_START=$(date +%s)
+	dhms_start
 einfo "This is the stable branch."
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security advisory date:  ${MITIGATION_DATE}"
@@ -2750,9 +2728,7 @@ EOF
 }
 
 pkg_postinst() {
-	export TIME_END=$(date +%s)
-	local dhms_passed=$(get_dhms ${TIME_START} ${TIME_END})
-einfo "Completion time:  ${dhms_passed}"
+	dhms_stop
 
 	if use minibrowser ; then
 		create_minibrowser_symlink_abi() {
