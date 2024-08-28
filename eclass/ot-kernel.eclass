@@ -491,7 +491,7 @@ fi
 ZEN_MUQSS_BASE_URI="https://github.com/torvalds/linux/commit/"
 ZEN_SAUCE_BASE_URI="https://github.com/torvalds/linux/commit/"
 
-inherit check-reqs flag-o-matic python-r1 ot-kernel-kutils ot-kernel-pkgflags
+inherit check-reqs dhms flag-o-matic python-r1 ot-kernel-kutils ot-kernel-pkgflags
 inherit security-scan toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -1225,6 +1225,7 @@ ewarn
 # @DESCRIPTION:
 # Perform checks, warnings, and initialization before emerging
 ot-kernel_pkg_setup() {
+	dhms_start
 ewarn
 ewarn "The defaults use cfs (or the stock CPU scheduler) per build"
 ewarn "configuration."
@@ -14752,6 +14753,7 @@ ewarn
 # ot-kernel_pkg_postinst_cb - callback if any to handle after emerge phase
 #
 ot-kernel_pkg_postinst() {
+	dhms_end
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
