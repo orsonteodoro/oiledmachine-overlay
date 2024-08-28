@@ -66,14 +66,14 @@ dhms_get() {
 # @DESCRIPTION:
 # Start watch
 dhms_start() {
-	export _DHMS_TIME_START=$(date +%s)
+	export _DHMS_TIME_START=${EPOCHSECONDS}
 }
 
 # @FUNCTION: dhms_start
 # @DESCRIPTION:
 # End watch and report completion time
 dhms_end() {
-	export _DHMS_TIME_END=$(date +%s)
+	export _DHMS_TIME_END=${EPOCHSECONDS}
 	local dhms_passed=$(dhms_get ${_DHMS_TIME_START} ${_DHMS_TIME_END})
 	local dhms_output="${DHMS_OUTPUT:-einfo}"
 	if [[ "${dhms_output}" == "einfo" ]] ; then
