@@ -54,7 +54,7 @@ PYTHON_REQ_USE="ncurses,ssl,xml(+)"
 
 WANT_AUTOCONF="2.1"
 
-inherit autotools check-reqs flag-o-matic llvm-r1 multiprocessing prefix python-any-r1 toolchain-funcs
+inherit autotools check-reqs dhms flag-o-matic llvm-r1 multiprocessing prefix python-any-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 S="${WORKDIR}/firefox-${MY_PV}/js/src"
@@ -348,21 +348,8 @@ check_security_expire() {
 	local _hour=$((60*60))
 	local _30_days=$((60*60*24*30))
 	local _14_days=$((60*60*24*14))
-	local _day=$((60*60*24))
-	local _hour=$((60*60))
-	local _minute=60
 	local now=$(date +%s)
-	local t
-	t=$((${now} - ${MITIGATION_LAST_UPDATE})) # Seconds elapsed
-	local days_passed=$(( ${t} / ${_day} ))
-	local hours_passed=$(( ${t} % ${_day} ))
-	t=${hours_passed}
-	hours_passed=$(( ${t} / ${_hour} ))
-	local minutes_passed=$(( ${t} % ${_hour} ))
-	t=${minutes_passed}
-	minutes_passed=$(( ${t} / ${_minute} ))
-	local seconds_passed=$(( ${t} % ${_minute} ))
-	local dhms_passed="${days_passed} days, ${hours_passed} hrs, ${minutes_passed} mins, ${seconds_passed} secs"
+	local dhms_passed=$(dhms_get ${MITIGATION_LAST_UPDATE} ${now})
 	if (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_30_days} )) ; then
 eerror
 eerror "This ebuild release period is past 30 days since release."
