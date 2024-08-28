@@ -431,6 +431,32 @@ train_trainer_custom() {
 	__src_test "pgo"
 }
 
+check_ulimit() {
+	local current_ulimit=$(ulimit -n)
+	local ulimit=${1}
+	local quality="${2}"
+
+einfo "Testing with the ${quality} test coverage."
+
+	if (( ${current_ulimit} != ${ulimit} )) ; then
+eerror
+eerror "The ulimit must be exactly ${ulimit} for this test run."
+eerror
+eerror "Expected ulimit:  ${ulimit}"
+eerror "Actual ulimit:  ${current_ulimit}"
+eerror
+eerror "To fix, follow exactly these steps."
+eerror
+eerror "1.  Add/change /etc/security/limits.conf with the following lines:"
+eerror "portage         soft    nofile      ${ulimit}"
+eerror "portage         hard    nofile      ${ulimit}"
+eerror "2.  Run \`ulimit -n ${ulimit}\`"
+eerror "3.  Run \`emerge =${CATEGORY}/${PN}-${PVR}\`"
+eerror
+		die
+	fi
+}
+
 # Official test instructions:
 # ulimit -n 16500 && USE='perl server' FEATURES='test userpriv' \
 # ebuild mysql-X.X.XX.ebuild digest clean test install
@@ -450,7 +476,7 @@ ewarn "test '${rawtestname}' disabled: '${reason}' (BUG#${bug})"
 	local retstatus_tests
 
 einfo "Official test instructions:"
-einfo "ulimit -n 16500 && USE='perl server' FEATURES='test userpriv' ebuild ..."
+einfo "ulimit -n 16500 && TEST_COVERAGE=best && USE='perl server' FEATURES='test userpriv' ebuild ..."
 
 	if ! use server ; then
 ewarn "Skipping server tests due to minimal build!"
@@ -607,26 +633,10 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 	fi
 
 	# Try to increase file limits to increase test coverage
-	if ! ulimit -n 16500 1>/dev/null 2>&1 ; then
-		# Upper limit comes from parts.partition_* tests
-ewarn "Run \`ulimit -n 16500\` for medium test coverage before calling emerge."
-
-		if ! ulimit -n 4162 1>/dev/null 2>&1 ; then
-	# Medium limit comes from '[Warning] Buffered warning: Could not
-	# increase number of max_open_files to more than 3000 (request: 4162)'
-ewarn "Run \`ulimit -n 4162\` for medium test coverage before calling emerge."
-
-			if ! ulimit -n 3000 1>/dev/null 2>&1 ; then
-ewarn "Run \`ulimit -n 3000\` for minimum test coverage before calling emerge."
-			else
-einfo "Testing minimum coverage with open file limit of 3000."
-			fi
-		else
-einfo "Testing medium converage with open file limit of 4162."
-		fi
-	else
-einfo "Testing best coverage with open file limit of 16500."
-	fi
+	local test_coverage=${TEST_COVERAGE:-"best"} # 16500, 4162, 3000
+	[[ "${test_coverage}" == "best" ]] && check_ulimit 16500 "best"
+	[[ "${test_coverage}" == "medium" ]] && check_ulimit 4162 "medium"
+	[[ "${test_coverage}" == "minimum" ]] && check_ulimit 3000 "minimum"
 
 	# PGO https://github.com/mysql/mysql-server/blob/mysql-8.3.0/packaging/rpm-oel/mysql.spec.in#L929
 	# They just run the default main suite as the trainer.
