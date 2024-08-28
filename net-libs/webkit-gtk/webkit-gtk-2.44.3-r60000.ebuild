@@ -2461,6 +2461,7 @@ einfo "CPPFLAGS:  ${CPPFLAGS}"
 		-DUSE_LD_LLD=OFF
 	)
 
+	local current_ulimit=$(ulimit -n)
 	local ulimit
 	if use mold ; then
 	# See issue #851 in mold repo.
@@ -2470,8 +2471,23 @@ einfo "CPPFLAGS:  ${CPPFLAGS}"
 		ulimit=${ULIMIT:-1024}
 	fi
 
-einfo "Current ulimit -n (before):"
-	ulimit -n
+	if (( ${current_ulimit} < ${ulimit} )) ; then
+eerror
+eerror "The ulimit is too low and must be ${ulimit} or higher."
+eerror
+eerror "Expected ulimit:  ${ulimit}"
+eerror "Actual ulimit:  ${current_ulimit}"
+eerror
+eerror "To fix, follow exactly these steps."
+eerror
+eerror "1.  Add/change /etc/security/limits.conf with the following lines:"
+eerror "portage         soft    nofile      ${ulimit}"
+eerror "portage         hard    nofile      ${ulimit}"
+eerror "2.  Run \`ulimit -n ${ulimit}\`"
+eerror "3.  Run \`emerge =${CATEGORY}/${P}\`"
+eerror
+		die
+	fi
 
 einfo "Add -flto to CFLAGS/CXXFLAGS and -fuse-ld=<bfd|gold|lld|mold> to LDFLAGS for LTO optimization."
 	local linker_type=$(check-linker_get_lto_type)
@@ -2519,13 +2535,6 @@ einfo "Add -flto to CFLAGS/CXXFLAGS and -fuse-ld=<bfd|gold|lld|mold> to LDFLAGS 
 	filter-flags \
 		'-flto*' \
 		'-fuse-ld=*'
-
-	if ! ulimit -n ${ulimit} >/dev/null 2>&1 ; then
-ewarn "The ulimit could not be changed.  Build failures may occur."
-	fi
-
-einfo "Current ulimit -n (after):"
-	ulimit -n
 
 	if use mediastream ; then
 		sed -i -e "s|ENABLE_MEDIA_STREAM PRIVATE|ENABLE_MEDIA_STREAM PUBLIC|g" \
