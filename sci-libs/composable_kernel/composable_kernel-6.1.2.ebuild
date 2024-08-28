@@ -30,7 +30,7 @@ LLVM_SLOT=17
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
 
-inherit cmake flag-o-matic rocm
+inherit cmake dhms flag-o-matic rocm
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="develop"
@@ -97,6 +97,7 @@ ewarn "${gpu} is not tested upstream."
 }
 
 pkg_setup() {
+	dhms_start
 	rocm_pkg_setup
 	warn_untested_gpu
 }
@@ -179,6 +180,7 @@ src_install() {
 	cmake_src_install
 	rocm_mv_docs
 	rocm_fix_rpath
+	dhms_end
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test

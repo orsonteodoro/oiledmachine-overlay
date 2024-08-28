@@ -25,7 +25,7 @@ ROCM_VERSION="${HIP_5_5_VERSION}"
 COMPOSABLE_KERNEL_COMMIT="eef009d001b928db1bb377a105c93b75e0dccc7b" # Same as MIOpen's requirements.txt
 MY_PV=$(ver_cut 1-2)
 
-inherit cmake flag-o-matic rocm
+inherit cmake dhms flag-o-matic rocm
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="develop"
@@ -98,6 +98,7 @@ ewarn "${gpu} is not tested upstream."
 }
 
 pkg_setup() {
+	dhms_start
 	rocm_pkg_setup
 	warn_untested_gpu
 }
@@ -174,6 +175,7 @@ src_install() {
 	cmake_src_install
 	rocm_mv_docs
 	rocm_fix_rpath
+	dhms_end
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
