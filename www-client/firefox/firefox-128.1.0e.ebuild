@@ -2366,16 +2366,32 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 	fi
 
 	if tc-ld-is-mold ; then
-		# Increase ulimit with mold+lto, bugs #892641, #907485
-		if ! ulimit -n 16384 1>/dev/null 2>&1 ; then
-ewarn
-ewarn "Unable to modify ulimits - building with mold+lto might fail due to low"
-ewarn "ulimit -n resources."
-ewarn
-ewarn "Please see bugs #892641 & #907485."
-ewarn
+		local current_ulimit=$(ulimit -n)
+		local ulimit
+		if use mold ; then
+		# See bugs #892641 & #907485.
+			ulimit=${ULIMIT:-16384}
 		else
-			ulimit -n 16384
+		# The final link uses lots of file descriptors.
+			ulimit=${ULIMIT:-1024}
+		fi
+
+		if (( ${current_ulimit} < ${ulimit} )) ; then
+eerror
+eerror "The ulimit is too low and must be ${ulimit} or higher."
+eerror
+eerror "Expected ulimit:  ${ulimit}"
+eerror "Actual ulimit:  ${current_ulimit}"
+eerror
+eerror "To fix, follow exactly these steps."
+eerror
+eerror "1.  Add/change /etc/security/limits.conf with the following lines:"
+eerror "portage         soft    nofile      ${ulimit}"
+eerror "portage         hard    nofile      ${ulimit}"
+eerror "2.  Run \`ulimit -n ${ulimit}\`"
+eerror "3.  Run \`emerge =${CATEGORY}/${P}\`"
+eerror
+			die
 		fi
 	fi
 
