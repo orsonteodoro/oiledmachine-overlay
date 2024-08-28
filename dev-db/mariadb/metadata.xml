@@ -12,6 +12,12 @@
 
   This ebuild is maintained to provide PGO and BOLT optimization.
 
+
+  Build time environment variables:
+
+  TEST_COVERAGE - The quality of testing.
+  Valid values:  best, medium, minimum
+
   -->
   <upstream>
     <remote-id type="cpe">cpe:/a:mariadb:mariadb</remote-id>

@@ -8,22 +8,23 @@
   </maintainer>
   <!-- 
 
-    Please note that this list is shared between the following packages:
+  Please note that this list is shared between the following packages:
 
-    dev-db/mysql
-    dev-db/mariadb
+  dev-db/mysql
+  dev-db/mariadb
 
   -->
   <!--
 
-    oiledmachine-overlay notes:
+  oiledmachine-overlay notes:
 
-    This ebuild fork is maintained for BOLT and PGO optimization.
+  This ebuild fork is maintained for BOLT and PGO optimization.
 
-    Build time environment variables:
 
-    TEST_COVERAGE - The quality of testing.
-    Valid values:  best, medium, minimum
+  Build time environment variables:
+
+  TEST_COVERAGE - The quality of testing.
+  Valid values:  best, medium, minimum
 
   -->
   <upstream>
