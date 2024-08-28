@@ -2730,7 +2730,7 @@ EOF
 }
 
 pkg_postinst() {
-	dhms_stop
+	dhms_end
 
 	if use minibrowser ; then
 		create_minibrowser_symlink_abi() {
