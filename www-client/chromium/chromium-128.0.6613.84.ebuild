@@ -3581,6 +3581,18 @@ einfo
 		fi
 	fi
 
+	# I noticed that the vendored clang doesn't use distcc.  Let us explicitly use ccache if requested.
+	# See https://github.com/chromium/chromium/blob/128.0.6613.84/build/toolchain/cc_wrapper.gni#L36
+	if [[ "${FEATURES}" =~ "icecream" ]] && has_version "sys-devel/icecream" ; then
+		myconf_gn+=" cc_wrapper=\"icecc\""
+	elif [[ "${FEATURES}" =~ "distcc" ]] && has_version "sys-devel/distcc" ; then
+		myconf_gn+=" cc_wrapper=\"distcc\""
+	elif [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
+		myconf_gn+=" cc_wrapper=\"ccache\""
+	elif [[ "${PATH}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
+		myconf_gn+=" cc_wrapper=\"ccache\""
+	fi
+
 	uopts_src_configure
 
 einfo "Configuring Chromium..."
