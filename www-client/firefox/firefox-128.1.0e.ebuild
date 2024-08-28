@@ -2629,17 +2629,6 @@ _src_compile() {
 	local s=$(_get_s)
 	cd "${s}" || die
 
-	if tc-ld-is-mold && use lto; then
-		# increase ulimit with mold+lto, bugs #892641, #907485
-		if ! ulimit -n 16384 1>/dev/null 2>&1 ; then
-ewarn "Unable to modify ulimits - building with mold+lto might fail due to low"
-ewarn "ulimit -n resources."
-#ewarn "Please see bugs #892641 & #907485."
-		else
-			ulimit -n 16384
-		fi
-	fi
-
 	local CDEFAULT=$(get_abi_CHOST "${DEFAULT_ABI}")
 	_fix_paths
 	local virtx_cmd=
