@@ -164,7 +164,7 @@ XNNPACK_COMMIT="ae108ef49aa5623b896fc93d4298c49d1750d9ba"
 ZSTD_COMMIT="aec56a52fbab207fc639a1937d1e708a282edca8"
 
 
-inherit cmake cuda dep-prepare flag-o-matic llvm rocm python-single-r1
+inherit cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MYP}"
@@ -744,6 +744,7 @@ ewarn "${gpu} is not CI tested upstream."
 }
 
 pkg_setup() {
+	dhms_start
 	warn_untested_gpu
 # error: 'runtime_error' is not a member of 'std'
 ewarn
@@ -1116,4 +1117,5 @@ src_install() {
 	rm -rf "${ED}/var/tmp" || die
 	python_domodule python/caffe2
 	python_domodule python/torch
+	dhms_end
 }

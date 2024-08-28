@@ -175,7 +175,7 @@ XNNPACK_COMMIT="51a987591a6fc9f0fc0707077f53d763ac132cbf"
 ZSTD_COMMIT="aec56a52fbab207fc639a1937d1e708a282edca8"
 
 
-inherit cmake cuda dep-prepare flag-o-matic llvm rocm python-single-r1
+inherit cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MYP}"
@@ -779,6 +779,7 @@ ewarn "${gpu} is not CI tested upstream."
 }
 
 pkg_setup() {
+	dhms_start
 	warn_untested_gpu
 	if use rocm_5_4 ; then
 		LLVM_SLOT="15"
@@ -1140,4 +1141,5 @@ src_install() {
 	rm -rf "${ED}/var/tmp" || die
 	python_domodule python/caffe2
 	python_domodule python/torch
+	dhms_end
 }

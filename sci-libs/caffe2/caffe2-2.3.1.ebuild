@@ -186,7 +186,7 @@ XNNPACK_COMMIT="fcbf55af6cf28a4627bcd1f703ab7ad843f0f3a2"
 ZSTD_COMMIT="aec56a52fbab207fc639a1937d1e708a282edca8"
 
 
-inherit cmake cuda dep-prepare flag-o-matic llvm rocm python-single-r1
+inherit cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MYP}"
@@ -821,6 +821,7 @@ ewarn "${gpu} is not CI tested upstream."
 }
 
 pkg_setup() {
+	dhms_start
 	warn_untested_gpu
 	if use rocm_6_0 ; then
 		LLVM_SLOT="17"
@@ -1209,4 +1210,5 @@ src_install() {
 		"../../../../../include/torch" \
 		"${D}$(python_get_sitedir)/torch/include/torch" \
 		|| die # bug 923269
+	dhms_end
 }

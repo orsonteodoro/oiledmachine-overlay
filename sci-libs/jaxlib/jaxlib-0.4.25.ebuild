@@ -50,7 +50,7 @@ LLVM_COMPAT=( 17 ) # From .bazelrc
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( "python3_"{10..11} ) # Limited by Flax CI
 
-inherit bazel cuda distutils-r1 flag-o-matic git-r3 hip-versions java-pkg-opt-2
+inherit bazel cuda distutils-r1 dhms flag-o-matic git-r3 hip-versions java-pkg-opt-2
 inherit llvm rocm toolchain-funcs
 
 # DO NOT HARD WRAP
@@ -702,6 +702,7 @@ einfo
 }
 
 pkg_setup() {
+	dhms_start
 	setup_tc
 
 	if ! [[ "${BAZEL_LD_PRELOAD_IGNORED_RISKS}" =~ ("allow"|"accept") ]] ; then
@@ -1216,6 +1217,7 @@ src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "AUTHORS" "LICENSE"
+	dhms_end
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
