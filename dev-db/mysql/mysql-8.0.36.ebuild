@@ -19,7 +19,7 @@ inherit check-reqs cmake edo flag-o-matic linux-info multiprocessing prefix
 inherit toolchain-funcs uopts
 
 KEYWORDS="
-amd64 ~arm ~arm64 ~hppa ~ia64 ~mips -ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
+~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips -ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris
 "
 # Shorten the path because the socket path length must be shorter than 107 chars
@@ -84,13 +84,13 @@ COMMON_DEPEND="
 		dev-libs/libevent:=[ssl,threads(+)]
 		net-libs/libtirpc:=
 		cjk? (
-			app-text/mecab:=
+			app-text/mecab
 		)
 		jemalloc? (
 			dev-libs/jemalloc:=
 		)
 		kernel_linux? (
-			dev-libs/libaio:=
+			dev-libs/libaio
 			sys-process/procps
 		)
 		numa? (
@@ -272,6 +272,13 @@ _src_configure() {
 
 	local mycmakeargs=(
 		-Wno-dev # less noise
+
+		# Building everything as shared breaks upstream assumptions.
+		# For example bundled abseil is excpected to be static and is therefore not installed.
+		# Breaking the assumption leading the mysql to being built against bundled abseil,
+		# but then dynamically linked against system abseil once installed.
+		-DBUILD_SHARED_LIBS=OFF
+
 		-DCMAKE_POSITION_INDEPENDENT_CODE=ON
 		-DCOMPILATION_COMMENT="Gentoo Linux ${PF}"
 		-DENABLED_LOCAL_INFILE=1
@@ -373,6 +380,9 @@ ewarn "Tests will probably fail!"
 			-DWITH_LIBEVENT=system
 			-DWITH_NUMA=$(usex numa ON OFF)
 			# Cannot handle protobuf >23 bug #912797 \
+			# 05/06/2024: protobuf has been updated, \
+			# but it cannot handle abseil when building against system \
+			# Currently bundles protobuf-25.1 \
 			-DWITH_PROTOBUF=bundled
 		)
 
@@ -576,6 +586,7 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 
 	if has_version ">=dev-libs/openssl-3.2" ; then
 		# https://bugs.mysql.com/bug.php?id=113258
+		# Fails still with 8.0.37
 		disabled_tests+=(
 			"rpl.rpl_tlsv13;0;CCM8 ciphers have a lower security level with OpenSSL 3.2"
 			"auth_sec.wl15800_ciphers_tlsv13;0;CCM8 ciphers have a lower security level with OpenSSL 3.2"

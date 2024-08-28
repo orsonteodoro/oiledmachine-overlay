@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# Last update:  2024-03-21
+# Last update:  2024-08-26
 
 # EPGO (custom pgo training) disabled for simplification reasons.
 UOPTS_SUPPORT_EPGO=0
@@ -529,7 +529,7 @@ ewarn "Skipping tests due to root permissions"
 	addpredict "/ÿ.db"
 
 	if [[ "${mode}" == "default" ]] ; then
-		emake -Onone HAVE_TCL=$(usex tcl 1 "") $(usex debug 'fulltest' 'test')
+		emake -Onone $(usex debug 'fulltest' 'test')
 	elif [[ "${mode}" == "pgo" ]] ; then
 # With PGO, only common the common use cases are used.
 # This is to prevent increasing junk or wasted space in the cache.
