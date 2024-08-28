@@ -185,6 +185,8 @@ UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_EPGO=0 # Recheck if allowed
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
+TIME_END=0
+TIME_START=0
 WANT_AUTOCONF="2.1"
 XKBCOMMON_PV="0.4.1"
 VIRTUALX_REQUIRED="pgo"
@@ -1214,6 +1216,7 @@ eerror
 }
 
 pkg_setup() {
+	export TIME_START=$(date +%s)
 einfo "Release type:  rapid"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security announcement date:  ${MITIGATION_DATE}"
@@ -1495,15 +1498,14 @@ _eapply_oiledmachine_set() {
 	fi
 }
 
-check_security_expire() {
-	local _30_days=$((60*60*24*30))
-	local _14_days=$((60*60*24*14))
+get_dhms() {
+	local time_start=${1}
+	local time_end=${2}
 	local _day=$((60*60*24))
 	local _hour=$((60*60))
 	local _minute=60
-	local now=$(date +%s)
 	local t
-	t=$((${now} - ${MITIGATION_LAST_UPDATE})) # Seconds elapsed
+	t=$((${time_end} - ${time_start})) # Seconds elapsed
 	local days_passed=$(( ${t} / ${_day} ))
 	local hours_passed=$(( ${t} % ${_day} ))
 	t=${hours_passed}
@@ -1513,6 +1515,14 @@ check_security_expire() {
 	minutes_passed=$(( ${t} / ${_minute} ))
 	local seconds_passed=$(( ${t} % ${_minute} ))
 	local dhms_passed="${days_passed} days, ${hours_passed} hrs, ${minutes_passed} mins, ${seconds_passed} secs"
+	echo "${dhms_passed}"
+}
+
+check_security_expire() {
+	local _30_days=$((60*60*24*30))
+	local _14_days=$((60*60*24*14))
+	local now=$(date +%s)
+	local dhms_passed=$(get_dhms ${MITIGATION_LAST_UPDATE} ${now})
 	if (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_30_days} )) ; then
 eerror
 eerror "This ebuild release period is past 30 days since release."
@@ -2943,6 +2953,10 @@ einfo "APULSE found; Generating library symlinks for sound support ..."
 }
 
 pkg_postinst() {
+	export TIME_END=$(date +%s)
+	local dhms_passed=$(get_dhms ${TIME_START} ${TIME_END})
+einfo "Completion time:  ${dhms_passed}"
+
 	xdg_pkg_postinst
 
 	if ! use gmp-autoupdate ; then

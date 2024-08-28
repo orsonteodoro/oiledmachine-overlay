@@ -123,6 +123,8 @@ UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 USE_RUBY=" ruby31 ruby32 ruby33"
+TIME_END=0
+TIME_START=0
 WK_PAGE_SIZE=64 # global var not const
 
 inherit cflags-depends check-linker check-reqs cmake desktop flag-o-matic git-r3
@@ -1957,16 +1959,14 @@ ewarn
 	WK_PAGE_SIZE=${page_size}
 }
 
-check_security_expire() {
-	local _60_days=$((60*60*24*60))
-	local _30_days=$((60*60*24*30))
-	local _14_days=$((60*60*24*14))
+get_dhms() {
+	local time_start=${1}
+	local time_end=${2}
 	local _day=$((60*60*24))
 	local _hour=$((60*60))
 	local _minute=60
-	local now=$(date +%s)
 	local t
-	t=$((${now} - ${MITIGATION_LAST_UPDATE})) # Seconds elapsed
+	t=$((${time_end} - ${time_start})) # Seconds elapsed
 	local days_passed=$(( ${t} / ${_day} ))
 	local hours_passed=$(( ${t} % ${_day} ))
 	t=${hours_passed}
@@ -1976,6 +1976,14 @@ check_security_expire() {
 	minutes_passed=$(( ${t} / ${_minute} ))
 	local seconds_passed=$(( ${t} % ${_minute} ))
 	local dhms_passed="${days_passed} days, ${hours_passed} hrs, ${minutes_passed} mins, ${seconds_passed} secs"
+	echo "${dhms_passed}"
+}
+
+check_security_expire() {
+	local _60_days=$((60*60*24*60))
+	local _30_days=$((60*60*24*30))
+	local now=$(date +%s)
+	local dhms_passed=$(get_dhms ${MITIGATION_LAST_UPDATE} ${now})
 	local channel="stable"
 	if (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_60_days} )) ; then
 eerror
@@ -2009,6 +2017,7 @@ einfo "Time passed since the last security update:  ${dhms_passed}"
 }
 
 pkg_setup() {
+	export TIME_START=$(date +%s)
 ewarn
 ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
 ewarn "It is currently not recommended due to rendering bug(s)."
@@ -2749,6 +2758,10 @@ EOF
 }
 
 pkg_postinst() {
+	export TIME_END=$(date +%s)
+	local dhms_passed=$(get_dhms ${TIME_START} ${TIME_END})
+einfo "Completion time:  ${dhms_passed}"
+
 	if use minibrowser ; then
 		create_minibrowser_symlink_abi() {
 			ln -sf \
