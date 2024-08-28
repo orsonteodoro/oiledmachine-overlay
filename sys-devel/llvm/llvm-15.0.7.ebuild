@@ -13,7 +13,7 @@ UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
-inherit cmake llvm.org multilib-minimal pax-utils python-any-r1 toolchain-funcs
+inherit cmake dhms llvm.org multilib-minimal pax-utils python-any-r1 toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils uopts
 inherit llvm-ebuilds
 
@@ -206,6 +206,7 @@ SRC_URI+="
 #   Fixes linking problem
 
 pkg_setup() {
+	dhms_start
 	python_setup
 ewarn
 ewarn "To avoid long linking delays, close programs that produce unexpectedly"
@@ -816,6 +817,7 @@ multilib_src_install_all() {
 }
 
 pkg_postinst() {
+	dhms_end
 einfo
 einfo "You can find additional opt-viewer utility scripts in:"
 einfo

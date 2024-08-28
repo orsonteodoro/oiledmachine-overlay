@@ -14,7 +14,7 @@ UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
 inherit llvm-ebuilds
-inherit cmake flag-o-matic git-r3 hip-versions llvm llvm.org multilib
+inherit cmake dhms flag-o-matic git-r3 hip-versions llvm llvm.org multilib
 inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
 inherit uopts
 
@@ -201,6 +201,7 @@ PDEPEND+=" "$(gen_pdepend)
 # multilib clang* libraries (not runtime, not wrappers).
 
 pkg_setup() {
+	dhms_start
 	LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
 	python-single-r1_pkg_setup
 	if tc-is-gcc ; then
@@ -938,6 +939,7 @@ multilib_src_install_all() {
 }
 
 pkg_postinst() {
+	dhms_end
 	if [[ -z "${ROOT}" && -f "${EPREFIX}"/usr/share/eselect/modules/compiler-shadow.eselect ]] ; then
 		eselect compiler-shadow update all
 	fi

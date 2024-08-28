@@ -31,7 +31,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit cmake llvm.org multilib-minimal pax-utils python-any-r1 toolchain-funcs
+inherit cmake dhms llvm.org multilib-minimal pax-utils python-any-r1 toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils uopts
 
 KEYWORDS="
@@ -206,6 +206,7 @@ LLVM_USE_TARGETS="provide"
 llvm.org_set_globals
 
 pkg_setup() {
+	dhms_start
 	python_setup
 ewarn
 ewarn "To avoid long linking delays, close programs that produce unexpectedly"
@@ -832,6 +833,7 @@ multilib_src_install_all() {
 }
 
 pkg_postinst() {
+	dhms_end
 einfo
 einfo "You can find additional opt-viewer utility scripts in:"
 einfo

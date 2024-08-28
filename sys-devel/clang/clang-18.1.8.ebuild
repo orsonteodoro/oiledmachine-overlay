@@ -31,7 +31,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit cmake flag-o-matic git-r3 hip-versions llvm.org llvm-utils multilib
+inherit cmake dhms flag-o-matic git-r3 hip-versions llvm.org llvm-utils multilib
 inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
 inherit uopts
 
@@ -216,6 +216,7 @@ PDEPEND+=" "$(gen_pdepend)
 # multilib clang* libraries (not runtime, not wrappers).
 
 pkg_setup() {
+	dhms_start
 	python-single-r1_pkg_setup
 	if tc-is-gcc ; then
 		local gcc_slot=$(best_version "sys-devel/gcc" \
@@ -945,6 +946,7 @@ multilib_src_install_all() {
 }
 
 pkg_postinst() {
+	dhms_end
 	if [[ -z "${ROOT}" && -f "${EPREFIX}"/usr/share/eselect/modules/compiler-shadow.eselect ]] ; then
 		eselect compiler-shadow update all
 	fi
