@@ -29,13 +29,13 @@ EAPI=8
 #
 # https://github.com/chromium/chromium/blob/128.0.6613.113/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists *
 # https://github.com/chromium/chromium/blob/128.0.6613.113/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists *
-# https://github.com/chromium/chromium/blob/128.0.6613.113/third_party/libpng/png.h#L288							; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/128.0.6613.113/third_party/libpng/png.h#L288						; newer than generated_package_lists
 # https://github.com/chromium/chromium/blob/128.0.6613.113/third_party/libxml/linux/config.h#L160					; older than generated_package_lists
 # https://github.com/chromium/chromium/blob/128.0.6613.113/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists *
 # https://github.com/chromium/chromium/blob/128.0.6613.113/third_party/node/update_node_binaries#L18
 # https://github.com/chromium/chromium/blob/128.0.6613.113/third_party/re2/README.chromium#L4						; newer than generated_package_lists, (live) [rounded in ebuild]
 # https://github.com/chromium/chromium/blob/128.0.6613.113/third_party/zlib/zlib.h#L40
-# https://github.com/chromium/chromium/blob/128.0.6613.113/tools/rust/update_rust.py#L35							; commit
+# https://github.com/chromium/chromium/blob/128.0.6613.113/tools/rust/update_rust.py#L35						; commit
 #   https://github.com/rust-lang/rust/blob/3cf924b934322fd7b514600a7dc84fc517515346/src/version						; live version
 # /var/tmp/portage/www-client/chromium-128.0.6613.113/work/chromium-128.0.6613.113/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-128.0.6613.113/work/chromium-128.0.6613.113/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
@@ -191,7 +191,7 @@ PATCHSET_PPC64="127.0.6533.88-1raptor0~deb12u2"
 PATCH_REVISION=""
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 
-KEYWORDS="amd64 arm64 ~ppc64"
+#KEYWORDS="~amd64 ~arm64 ~ppc64"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://gn.googlesource.com/gn/+archive/${GN_COMMIT}.tar.gz
@@ -590,7 +590,8 @@ DISTRO_REQUIRE_USE="
 	system-zlib
 "
 
-# We cannot use the system-toolchain because virtual/rust highest is llvm-17.
+# The availability of the system-toolchain USE flag is based on
+# virtual/rust:${LLVM_OFFICIAL_SLOT}.
 REQUIRED_USE+="
 	${DISABLED_NON_FREE_USE_FLAGS}
 	!headless (
@@ -599,7 +600,6 @@ REQUIRED_USE+="
 			X
 		)
 	)
-	!system-toolchain
 	^^ (
 		${IUSE_LIBCXX[@]}
 	)
