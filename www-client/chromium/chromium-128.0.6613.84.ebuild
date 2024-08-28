@@ -3662,21 +3662,33 @@ _src_compile() {
 	export s=$(_get_s)
 	cd "${s}" || die
 
+	local current_ulimit=$(ulimit -n)
 	local ulimit
-ewarn "Current ulimit -n (before):"
-	ulimit -n
 	if use mold ; then
-		# See issue #336 in the mold repo.
-		ulimit="${ULIMIT:-16384}"
+	# See issue #336 in the mold repo.
+		ulimit=${ULIMIT:-16384}
 	else
-		# The final link uses lots of file descriptors.
-		ulimit="${ULIMIT:-2048}"
+	# The final link uses lots of file descriptors.
+		ulimit=${ULIMIT:-2048}
 	fi
-	if ! ulimit -n ${ulimit} >/dev/null 2>&1 ; then
-ewarn "Unable to modify ulimits.  Linking problems may occur."
+
+	if (( ${current_ulimit} < ${ulimit} )) ; then
+eerror
+eerror "The ulimit is too low and must be ${ulimit} or higher."
+eerror
+eerror "Expected ulimit:  ${ulimit}"
+eerror "Actual ulimit:  ${current_ulimit}"
+eerror
+eerror "To fix, follow exactly these steps."
+eerror
+eerror "1.  Add/change /etc/security/limits.conf with the following lines:"
+eerror "portage         soft    nofile      ${ulimit}"
+eerror "portage         hard    nofile      ${ulimit}"
+eerror "2.  Run \`ulimit -n ${ulimit}\`"
+eerror "3.  Run \`emerge =${CATEGORY}/${P}\`"
+eerror
+		die
 	fi
-ewarn "Current ulimit -n (after):"
-	ulimit -n
 
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
