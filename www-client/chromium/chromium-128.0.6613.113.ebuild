@@ -581,9 +581,24 @@ DISTRO_REQUIRE_USE="
 	system-openh264
 	system-zlib
 "
-
-# The availability of the system-toolchain USE flag is based on
-# virtual/rust:${LLVM_OFFICIAL_SLOT}.
+#
+# Generally, the availability of the system-toolchain USE flag is.
+#
+#   virtual/rust:${LLVM_OFFICIAL_SLOT} && sys-devel/clang:${LLVM_OFFICIAL_SLOT} && sys-devel/llvm:${LLVM_OFFICIAL_SLOT}.
+#
+# The community prefers only stable versioning.
+#
+# Upstream uses a customized build where they do not align.  For 128.x.x.x
+# release it should be
+#
+#   dev-lang/rust-cr:0/${PV%%.*} && sys-devel/clang:${LLVM_OFFICIAL_SLOT} && sys-devel/llvm:${LLVM_OFFICIAL_SLOT}.
+#
+# The rust-cr build is actually an older snapshot of 1.79.x that submodules llvm 18.
+# The official slot discussed here is llvm 19.  Hypothetical rust-cr, needs to be
+# built and link against llvm 19.
+#
+# Consideration will be made for building a custom rust ebuild to avoid performance penalty.
+#
 REQUIRED_USE+="
 	${DISABLED_NON_FREE_USE_FLAGS}
 	!headless (
