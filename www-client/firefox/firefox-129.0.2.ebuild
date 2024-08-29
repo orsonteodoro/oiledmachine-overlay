@@ -181,10 +181,6 @@ PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 RUST_PV="1.79.0"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
-UOPTS_SUPPORT_EBOLT=1
-UOPTS_SUPPORT_EPGO=0 # Recheck if allowed
-UOPTS_SUPPORT_TBOLT=0
-UOPTS_SUPPORT_TPGO=0
 WANT_AUTOCONF="2.1"
 XKBCOMMON_PV="0.4.1"
 VIRTUALX_REQUIRED="pgo"
@@ -192,7 +188,7 @@ VIRTUALX_REQUIRED="pgo"
 inherit autotools cflags-depends check-linker check-reqs desktop dhms flag-o-matic
 inherit gnome2-utils lcnr linux-info llvm multilib-minimal multiprocessing
 inherit pax-utils python-any-r1 readme.gentoo-r1 rust-toolchain toolchain-funcs
-inherit uopts virtualx xdg
+inherit virtualx xdg
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${PN}-${PV%_*}"
@@ -1392,7 +1388,6 @@ eerror
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
 	done
-	uopts_setup
 
 	use system-av1 && cflags-depends_check
 
@@ -1696,7 +1691,6 @@ einfo "Using ${CHOST}-objdump for CHOST"
 				|| die "sed failed to set toolchain prefix"
 ewarn "Using ${CDEFAULT}-objdump for CDEFAULT"
 		fi
-		uopts_src_prepare
 	}
 
 	multilib_foreach_abi _src_prepare
@@ -1976,7 +1970,6 @@ einfo
 
 	_set_cc
 
-	uopts_src_configure
 	check_speech_dispatcher
 
 	# Ensure we use correct toolchain
@@ -2611,7 +2604,8 @@ _src_compile() {
 
 src_compile() {
 	compile_abi() {
-		uopts_src_compile
+		_src_configure
+		_src_compile
 	}
 	multilib_foreach_abi compile_abi
 }
@@ -2901,7 +2895,6 @@ EOF
 		"${ED}/usr/bin/${PN}-${ABI}" \
 		|| die
 	_install_licenses
-	uopts_src_install
 	readme.gentoo_create_doc
 }
 
@@ -3053,7 +3046,6 @@ einfo "ln -sf /usr/lib/${PN}/${PN} /usr/bin/firefox"
 einfo "ln -sf /usr/lib32/${PN}/${PN} /usr/bin/firefox"
 einfo
 	# The FPS problem is gone in the -bin package
-	uopts_pkg_postinst
 
 	if ! use hwaccel ; then
 ewarn
