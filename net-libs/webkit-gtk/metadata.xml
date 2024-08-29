@@ -65,12 +65,13 @@
     the duration exceeds, the ebuild will not (re-)install until a newer point
     release is provided by upstream.
     Valid values:
-      shopping - 1 week
+      money     - 1 week
       donations - 1 week
-      socials - 2 weeks
-      default - 60 days
+      shopping  - 1 week
+      socials   - 2 weeks
+      default   - 60 days
     Examples:
-      MITIGATION_USE_CASE="shopping"           # The ebuild is (re-)installable for 1 week from release date.
+      MITIGATION_USE_CASE="money"              # The ebuild is (re-)installable for 1 week from release date.
       MITIGATION_USE_CASE="donations socials"  # The ebuild is (re-)installable for 1 week from release date.
       MITIGATION_USE_CASE="socials"            # The ebuild is (re-)installable for 2 weeks from release date.
       MITIGATION_USE_CASE="default"            # The ebuild is (re-)installable for 60 days from release date but may likely contain vulnerabilities.
