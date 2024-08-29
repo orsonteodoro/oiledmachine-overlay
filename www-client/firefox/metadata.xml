@@ -42,6 +42,20 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
   -Allow -ffast-math.
   Valid values:  1 - enable (default), 0 - disable
 
+  MITIGATION_USE_CASE - Sets the safety period for ebuild (re-)installs.  If
+  the duration exceeds, the ebuild will not (re-)install until a newer point
+  release is provided by upstream.
+  Valid values:
+    shopping - 1 week
+    donations - 1 week
+    socials - 2 weeks
+    default - 30 days
+  Examples:
+    MITIGATION_USE_CASE="shopping"           # The ebuild is (re-)installable for 1 week from release date.
+    MITIGATION_USE_CASE="donations socials"  # The ebuild is (re-)installable for 1 week from release date.
+    MITIGATION_USE_CASE="socials"            # The ebuild is (re-)installable for 2 weeks from release date.
+    MITIGATION_USE_CASE="default"            # The ebuild is (re-)installable for 30 days from release date but may likely contain vulnerabilities.
+
 
   References:
 

@@ -14,6 +14,16 @@
   the enable-rust-simd config option or the dependencies are fixed.
   See bug 917632.
 
+  MITIGATION_USE_CASE - Sets the safety period for ebuild (re-)installs.  If
+  the duration exceeds, the ebuild will not (re-)install until a newer point
+  release is provided by upstream.
+  Valid values:
+    socials - 2 weeks
+    default - 30 days
+  Examples:
+    MITIGATION_USE_CASE="socials"            # The ebuild is (re-)installable for 2 weeks from release date.
+    MITIGATION_USE_CASE="default"            # The ebuild is (re-)installable for 30 days from release date but may likely contain vulnerabilities.
+
   -->
   <use>
     <flag name="clang">
