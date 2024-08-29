@@ -2604,6 +2604,7 @@ _src_compile() {
 
 src_compile() {
 	compile_abi() {
+		_src_configure_compiler
 		_src_configure
 		_src_compile
 	}
