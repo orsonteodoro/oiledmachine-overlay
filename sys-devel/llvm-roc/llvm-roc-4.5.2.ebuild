@@ -15,14 +15,8 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 SANITIZER_FLAGS=(
 	cfi
 )
-UOPTS_GROUP="portage"
-UOPTS_USER="portage"
-UOPTS_SUPPORT_EBOLT=1
-UOPTS_SUPPORT_EPGO=1
-UOPTS_SUPPORT_TBOLT=0
-UOPTS_SUPPORT_TPGO=0
 
-inherit cmake dhms flag-o-matic rocm uopts
+inherit cmake dhms flag-o-matic rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
@@ -122,14 +116,6 @@ PATCHES=(
 pkg_setup() {
 	dhms_start
 	rocm_pkg_setup
-	uopts_setup
-	if use epgo ; then
-einfo "See comments of metadata.xml for documentation on epgo."
-		local path="/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}/${MULTILIB_ABI_FLAG}.${ABI}"
-		addwrite "${path}"
-		mkdir -p "${path}"
-		chown -R portage:portage "${path}" || die
-	fi
 }
 
 src_prepare() {
@@ -179,7 +165,6 @@ src_prepare() {
 		"${WORKDIR}/utils/benchmark/src/benchmark_register.h"
 	)
 	rocm_src_prepare
-	uopts_src_prepare
 }
 
 _src_configure_compiler() {
@@ -199,7 +184,6 @@ _src_configure() {
 		-DCMAKE_C_COMPILER="${CC}"
 		-DCMAKE_CXX_COMPILER="${CXX}"
 	)
-	uopts_src_configure
 	filter-flags "-fuse-ld=*"
 	#strip-unsupported-flags # Broken, strips -fprofile-use
 
@@ -210,13 +194,10 @@ _src_configure() {
 
 	# Speed up composable_kernel, rocBLAS build times
 	# -O3 may cause random ICE/segfault.
-	replace-flags '-O0' '-O2'
-	replace-flags '-O1' '-O2'
-	replace-flags '-Oz' '-O2'
-	replace-flags '-Os' '-O2'
-	replace-flags '-O3' '-O2'
-	replace-flags '-Ofast' '-O2'
-	replace-flags '-O4' '-O2'
+	replace-flags '-O*' '-O2'
+
+	# Reduce systemwide vulnerability backlog
+	filter-flags '-flto*'
 
 	# For PGO
 	if tc-is-gcc ; then
@@ -230,12 +211,6 @@ _src_configure() {
 		-DCMAKE_MODULE_LINKER_FLAGS="${LDFLAGS}"
 		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
 	)
-	if use epgo && tc-is-gcc ; then
-		local gcc_slot=$(gcc-major-version)
-		mycmakeargs+=(
-			-DCMAKE_STATIC_LINKER_FLAGS="/usr/lib/gcc/${CHOST}/${gcc_slot}/libgcov.a"
-		)
-	fi
 
 	PROJECTS="llvm;clang;lld"
 	if use runtime ; then
@@ -296,7 +271,9 @@ train_meets_requirements() {
 }
 
 src_compile() {
-	uopts_src_compile
+	_src_configure_compiler
+	_src_configure
+	_src_compile
 }
 
 _src_install() {
@@ -309,13 +286,11 @@ _src_install() {
 
 src_install() {
 	_src_install
-	uopts_src_install
 	rm -rf "${ED}/var/tmp"
 }
 
 pkg_postinst() {
 	dhms_end
-	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
