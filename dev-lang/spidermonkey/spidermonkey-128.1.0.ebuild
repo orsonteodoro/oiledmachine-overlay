@@ -350,6 +350,8 @@ check_security_expire() {
 	local dhms_passed=$(dhms_get ${MITIGATION_LAST_UPDATE} ${now})
 
 	local desc=""
+# The ideal choice is actually mitigation_use_case=${MITIGATION_USE_CASE:-email}
+# but the ESR releases tend to be less frequent compared to rapid.
 	local mitigation_use_case="${MITIGATION_USE_CASE:-user-generated-content}"
 	if [[ "${mitigation_use_case}" =~ ("email") ]] ; then
 		safe_period=$((60*60*24*7))
