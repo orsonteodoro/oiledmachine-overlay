@@ -1357,10 +1357,8 @@ einfo "To set up cross-compile for other ABIs,"
 einfo "see \`epkginfo -x firefox::oiledmachine-overlay\` or the metadata.xml"
 einfo
 
-	local jobs=$(echo "${MAKEOPTS}" \
-		| grep -P -o -e "(-j|--jobs=)\s*[0-9]+" \
-		| sed -r -e "s#(-j|--jobs=)\s*##g")
-	local cores=$(nproc)
+	local jobs=$(get_makeopts_jobs)
+	local cores=$(get_nproc)
 	if (( ${jobs} > $((${cores}/2)) )) ; then
 ewarn
 ewarn "Firefox may lock up or freeze the computer if the N value in"
