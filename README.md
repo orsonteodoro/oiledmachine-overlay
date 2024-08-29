@@ -337,8 +337,6 @@ in the metadata.xml.
 * media-gfx/blender (pgo, bolt?)
 * net-libs/nodejs (pgo)
 * sci-physics/bullet (pgo)
-* sys-devel/lld (epgo?, ebolt?)
-* sys-devel/llvm (epgo?, ebolt?)
 * sys-kernel/ot-sources (pgo)
 * sys-kernel/genkernel (provides pgo flags and training for kernel)
 * sys-libs/zlib (pgo)
