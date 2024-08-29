@@ -3066,7 +3066,7 @@ ewarn
 		| grep -E -o -e "[0-9]+")
 	if [[ -z "${nprocs}" ]] && which lscpu >/dev/null ; then
 		nprocs=$(lscpu | grep "CPU(s)" | head -n 1 | grep -o -E "[0-9]+")
-	else
+	elif [[ -z "${nprocs}" ]] ; then
 		nprocs=1
 	fi
 
