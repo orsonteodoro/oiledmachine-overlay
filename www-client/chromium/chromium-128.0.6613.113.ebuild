@@ -3069,9 +3069,18 @@ ewarn
 		replace-flags "-Ofast" "-O3" # -Ofast is broken
 		replace-flags "-O4" "-O3" # -O4 is the same as -O3
 	else
+		if [[ "${FEATURES}" =~ ("icecream"|"distcc") ]] ; then
+			replace-flags "-O0" "-O2"
+			replace-flags "-O1" "-O2"
+			replace-flags "-Os" "-O2"
+			replace-flags "-Oz" "-O2"
+			replace-flags "-Ofast" "-O3" # -Ofast is broken
+			replace-flags "-O4" "-O3" # -O4 is the same as -O3
+		else
 	# For the vendored toolchain (vendored-clang and vendored-rust),
 	# -O3 was downgraded to -O2 to reduce longer than usual build time (2 days build time) with vendored clang.
-		replace-flags "-O*" "-O2"
+			replace-flags "-O*" "-O2"
+		fi
 	fi
 
 	# Prevent crash for now
