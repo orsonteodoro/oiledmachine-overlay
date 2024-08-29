@@ -2409,7 +2409,9 @@ ewarn
 _set_system_cc() {
 	# Final CC selected
 	LLVM_SLOT=""
-	if tc-is-clang || is_using_clang ; then # Force clang either way
+	local clang_allowed=1
+	[[ "${FEATURES}" =~ "icecream" ]] && clang_allowed=0
+	if (( ${clang_allowed} == 1 )) && ( tc-is-clang || is_using_clang ) ; then # Force clang either way
 einfo "Switching to clang."
 	# See build/toolchain/linux/unbundle/BUILD.gn for allowed overridable envvars.
 	# See build/toolchain/gcc_toolchain.gni#L657 for consistency.
@@ -3507,14 +3509,24 @@ einfo
 	# See https://github.com/chromium/chromium/blob/128.0.6613.113/build/toolchain/cc_wrapper.gni#L36
 	if [[ "${FEATURES}" =~ "icecream" && "${FEATURES}" =~ "ccache" ]] && has_version "sys-devel/icecream" && has_version "dev-util/ccache" ; then
 		myconf_gn+=" cc_wrapper=\"ccache\""
+		myconf_gn+=" use_debug_fission=false"
 		export CCACHE_PREFIX="icecc"
 		export CCACHE_BASEDIR="${TMPDIR}"
+		if use official ; then
+eerror "FEATURES=icecream can only be used with GCC"
+			die
+		fi
 	elif [[ "${FEATURES}" =~ "distcc" && "${FEATURES}" =~ "ccache" ]] && has_version "sys-devel/distcc" && has_version "dev-util/ccache" ; then
 		myconf_gn+=" cc_wrapper=\"ccache\""
 		export CCACHE_PREFIX="distcc"
 		export CCACHE_BASEDIR="${TMPDIR}"
 	elif [[ "${FEATURES}" =~ "icecream" ]] && has_version "sys-devel/icecream" ; then
 		myconf_gn+=" cc_wrapper=\"icecc\""
+		myconf_gn+=" use_debug_fission=false"
+		if use official ; then
+eerror "FEATURES=icecream can only be used with GCC"
+			die
+		fi
 	elif [[ "${FEATURES}" =~ "distcc" ]] && has_version "sys-devel/distcc" ; then
 		myconf_gn+=" cc_wrapper=\"distcc\""
 	elif [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
