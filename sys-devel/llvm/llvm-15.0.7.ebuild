@@ -5,16 +5,9 @@
 EAPI=8
 
 PYTHON_COMPAT=( "python3_"{9..11} )
-UOPTS_BOLT_DISABLE_BDEPEND=1
-UOPTS_GROUP="portage"
-UOPTS_USER="portage"
-UOPTS_SUPPORT_EBOLT=1
-UOPTS_SUPPORT_EPGO=1
-UOPTS_SUPPORT_TBOLT=0
-UOPTS_SUPPORT_TPGO=0
 
 inherit cmake dhms llvm.org multilib-minimal pax-utils python-any-r1 toolchain-funcs
-inherit flag-o-matic git-r3 ninja-utils uopts
+inherit flag-o-matic git-r3 ninja-utils
 inherit llvm-ebuilds
 
 KEYWORDS="
@@ -212,7 +205,6 @@ ewarn
 ewarn "To avoid long linking delays, close programs that produce unexpectedly"
 ewarn "high disk activity (web browsers) and possibly switch to -j1."
 ewarn
-	uopts_setup
 
 # See https://bugs.gentoo.org/767700
 einfo
@@ -393,11 +385,6 @@ src_prepare() {
 			eapply "${T}/llvm-commit-61cff90.patch"
 		popd
 	fi
-
-	prepare_abi() {
-		uopts_src_prepare
-	}
-	multilib_foreach_abi prepare_abi
 }
 
 get_distribution_components() {
@@ -559,7 +546,6 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
-	uopts_src_configure
 	mkdir -p "${BUILD_DIR}" || die # strange?
 	cd "${BUILD_DIR}" || die
 
@@ -589,24 +575,12 @@ _src_configure() {
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
 	# Fix longer than usual build times when building webkit-gtk.
-	# Bump to next fastest build setting.
-	replace-flags -O0 -O1
-
 	# Fix longer than usual build times when building rocm ebuilds in sci-libs.
 	# -O3 may cause random segfaults/ICE.
-	replace-flags -O1 -O2
-	replace-flags -Oz -O2
-	replace-flags -Os -O2
-	replace-flags -O3 -O2
-	replace-flags -Ofast -O2
-	replace-flags -O4 -O2
+	replace-flags '-O*' '-O2'
 
-	# For PGO
-	if tc-is-gcc ; then
-# error: number of counters in profile data for function '...' does not match its profile data (counter 'arcs', expected 7 and have 13) [-Werror=coverage-mismatch]
-# The PGO profiles are isolated.  The Code is the same.
-		append-flags -Wno-error=coverage-mismatch
-	fi
+	# Remove unused flag.  Reduce systemwide vulnerability backlog with older hardware.
+	filter-flags '-flto*'
 
 	filter-flags -m32 -m64 -mx32 -m31 '-mabi=*'
 	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
@@ -754,7 +728,9 @@ _src_compile() {
 src_compile() {
 	_compile_abi() {
 		export BUILD_DIR="${WORKDIR}/${PN}_build-${MULTILIB_ABI_FLAG}.${ABI}"
-		uopts_src_compile
+		_src_configure_compiler
+		_src_configure
+		_src_compile
 	}
 	multilib_foreach_abi _compile_abi
 }
@@ -796,7 +772,6 @@ multilib_src_install() {
 	mv "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/include "${ED}"/usr/include || die
 
 	LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)" )
-	uopts_src_install
 }
 
 multilib_src_install_all() {
@@ -829,7 +804,6 @@ einfo
 einfo "  dev-python/pygments (for opt-viewer)"
 einfo "  dev-python/pyyaml (for all of them)"
 einfo
-	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

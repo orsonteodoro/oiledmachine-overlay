@@ -582,6 +582,7 @@ _src_configure() {
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
+	# Fix longer than usual build times when building webkit-gtk.
 	# Fix longer than usual build times when building rocm ebuilds in sci-libs.
 	# -O3 may cause random segfaults during build like in rocSPARSE.
 	replace-flags '-O*' '-O2'

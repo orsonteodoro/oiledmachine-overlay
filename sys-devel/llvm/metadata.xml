@@ -18,26 +18,10 @@
 
       * Makes available, builds, installs BOLT support.
       * Reduce spam and slowdown with -static-libstdc++.
-      * Profile Guided Optimization (PGO) build support.
 
     For this repo only, due to limited time and lack of time to verify working
     ebuilds completely, only live ebuilds and point releases will be kept.
     Release candidates and inits will be ignored.
-
-
-    PGO/BOLT optimization:
-
-    See the sys-devel/clang/metadata.xml in the oiledmachine-overlay for
-    details about PGO/BOLT training.  The sys-devel/clang ebuild now has the
-    trainer script.
-
-
-    References:
-    [1] https://llvm.org/docs/HowToBuildWithPGO.html
-
-    See also
-    https://github.com/llvm/llvm-project/blob/main/bolt/README.md#input-binary-requirements
-    https://github.com/llvm/llvm-project/blob/main/bolt/docs/OptimizingClang.md
 
   -->
   <use>
@@ -60,15 +44,6 @@
     </flag>
     <flag name="doc">
       Build and install the HTML documentation and regenerate the man pages
-    </flag>
-    <flag name="ebolt">
-      Perform 1 step BOLT.  You can re-emerge for the last step or use
-      `emerge --config sys-devel/llvm-15`, replacing 15 with the version
-      you want to complete the final step.
-    </flag>
-    <flag name="epgo">
-      Perform 1 step Event based PGO.  When 3 steps are performed to completion,
-      it may reduce compile times by 20%.
     </flag>
     <flag name="exegesis">
       Enable performance counter support for llvm-exegesis tool that can be
