@@ -65,8 +65,9 @@
     the duration exceeds, the ebuild will not (re-)install until a newer point
     release is provided by upstream.
     Valid values:
-      money     - 1 week
       donations - 1 week
+      legal     - 1 week
+      money     - 1 week
       shopping  - 1 week
       socials   - 2 weeks
       default   - 60 days

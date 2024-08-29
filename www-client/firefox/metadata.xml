@@ -47,6 +47,7 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
   release is provided by upstream.
   Valid values:
     donations - 1 week
+    legal     - 1 week
     money     - 1 week
     shopping  - 1 week
     socials   - 2 weeks
