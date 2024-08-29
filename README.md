@@ -336,15 +336,12 @@ in the metadata.xml.
 * media-video/ffmpeg (pgo, bolt)
 * media-gfx/blender (pgo, bolt?)
 * net-libs/nodejs (pgo)
-* net-libs/webkit-gtk (epgo?)
 * sci-physics/bullet (pgo)
-* sys-devel/clang (epgo?, ebolt?)
 * sys-devel/lld (epgo?, ebolt?)
 * sys-devel/llvm (epgo?, ebolt?)
 * sys-kernel/ot-sources (pgo)
 * sys-kernel/genkernel (provides pgo flags and training for kernel)
 * sys-libs/zlib (pgo)
-* www-client/chromium (pgo, epgo?, ebolt?)
 * x11-libs/cairo (pgo)
 
 Those suffixed with ? are still in testing or not confirmed yet.

@@ -50,106 +50,6 @@
     When using -stdlib=libc++, add -static-libstdc++ in front of it for a
     proper CFI build.
 
-
-
-    PGO/BOLTing
-
-    The optimize.sh script has been provided to automate PGO/BOLT training with
-    the least effort and to make it practically usable/accessible to the
-    community.
-
-    The goal of the optimize.sh script in its current form is to improve build
-    times.  Different use cases will be considered later.  The script will
-    manage PGO/BOLT optimization for the entire LLVM/Clang toolchain.  The
-    current iteration needs work and more trainers will be added as we figure
-    out which packages can be built by clang.
-
-
-    Add the following to /etc/portage/env/clang-pgo-training.conf:
-
-#ROCM_OVERLAY_DIR="/usr/local/oiledmachine-overlay" # if using older README.md instructions
-ROCM_OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # if using eselect repository
-PORTAGE_OVERLAY_DIR="/usr/portage" # if using old instructions
-CLANG_SLOTS="14 15 16 17 18"
-CLANG_EPGO="1"
-CLANG_EBOLT="0"
-CLANG_TRAINERS="lld"
-
-
-    To run the optimizer do:
-
-    CLANG_PHASES="PGI PGT PGO" \
-    CLANG_TRAINERS="lld ffmpeg mesa" \
-    ./optimize.sh
-
-
-    # Alternatively,
-    CLANG_PHASES="PGI PGT PGO BGI BGT BGO" \
-    CLANG_TRAINERS="lld ffmpeg mesa" \
-    ./optimize.sh
-
-
-    optimize.sh Environment variables:
-
-    CLANG_PHASES - A space separated list of PGO/BOLT phases, which may be used to skip over previous steps.  "PGI PGT PGO" (default).  Acceptable values:  PGI, PGT, PGO, BGI, BGT, BGO.
-    CLANG_SLOTS - A space separated list of slots to build.  "14 15 16 17 18" (default)
-    CLANG_TRAINERS - A space separated list of packages to build.  "lld" (default).  Acceptable values:  composable_kernel, ffmpeg, flac, lld, mesa, qtbase, qtcore, rocBLAS, rocMLIR, rocPRIM, rocRAND, rocSPARSE, webkit-gtk, xorg-server.
-    CLANG_WIPE_PGO_PROFILES - 1 to delete PGO/BOLT profiles, 0 or unset to use cached profiles.
-    ROCM_OVERLAY_DIR - The absolute path to the repository containing ROCm ebuilds to perform training on.
-    PORTAGE_OVERLAY_DIR - The absolute path to the distro's main repository containing ebuilds to perform training on.
-
-
-    Version override environment variables:
-
-    These are major.minor versions.  By default, the latest stable keyword are
-    chosen.
-
-    FFMPEG_PV
-    FLAC_PV
-    MESA_PV
-    QTBASE_PV
-    QTCORE_PV
-    WEBKIT_GTK_PV
-    XORG_SERVER_PV
-
-
-    Training cost:
-
-    composable_kernel - high
-    ffmpeg - medium
-    flac - low
-    lld - low
-    mesa - medium
-    rocBLAS - high
-    rocMLIR - medium
-    rocPRIM - low
-    rocRAND - low
-    rocSPARSE - medium
-    qtbase - medium
-    qtcore - medium
-    xorg-server - medium
-    webkit-gtk - very high
-
-
-    Training purpose:
-
-    composable_kernel - profile GPU build
-    ffmpeg - profile CPU build
-    flac - profile C/C++ build
-    lld - profile CPU build
-    mesa - profile CPU/GPU build
-    rocBLAS - profile GPU build
-    rocMLIR - profile CPU build
-    rocPRIM - profile GPU build
-    rocRAND - profile GPU build
-    rocSPARSE - profile GPU build
-    webkit-gtk - profile C++ build
-    xorg-server - profile CPU build
-
-
-  References:
-[1] https://research.facebook.com/publications/bolt-a-practical-binary-optimizer-for-data-centers-and-beyond/
-[2] https://llvm.org/docs/HowToBuildWithPGO.html
   -->
   <use>
     <flag name="cet">
@@ -186,18 +86,6 @@ CLANG_TRAINERS="lld"
     <flag name="default-stack-clash-protection">
       Sets Stack Clash Protection (SCP) as default ON when building all
       packages with clang.
-    </flag>
-    <flag name="ebolt">
-      Optimize code layout for better cache and branch prediction.  This may
-      improve performance by 15%.  This uses event based bolt where one
-      step is performed per emerge.  To progress to the next step you
-      re-emerge the ebuild with the BOLT training perf profile.
-    </flag>
-    <flag name="epgo">
-      Use event based Profile Guided Optimization to optimize the ebuild.
-      One PGO step per emerge is performed.  When a patch version bump
-      happens, it does only the PGO step.  It may result in 20% build
-      reduction with the optimized build.
     </flag>
     <flag name="extra">
       Build extra tools (clangd, clang-tidy and a few more)

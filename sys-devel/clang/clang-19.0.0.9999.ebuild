@@ -7,13 +7,6 @@ EAPI=8
 # Last update:  2024-06-23
 
 PYTHON_COMPAT=( "python3_"{10..13} )
-UOPTS_BOLT_DISABLE_BDEPEND=1
-UOPTS_GROUP="portage"
-UOPTS_USER="portage"
-UOPTS_SUPPORT_EBOLT=1
-UOPTS_SUPPORT_EPGO=1
-UOPTS_SUPPORT_TBOLT=0
-UOPTS_SUPPORT_TPGO=0
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -35,7 +28,6 @@ unset -f _llvm_set_globals
 
 inherit cmake dhms flag-o-matic git-r3 hip-versions llvm.org llvm-utils multilib
 inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
-inherit uopts
 
 DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="https://llvm.org/"
@@ -127,9 +119,6 @@ REQUIRED_USE="
 RDEPEND+="
 	${PYTHON_DEPS}
 	>=sys-devel/clang-common-${PV}
-	ebolt? (
-		~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[${MULTILIB_USEDEP},bolt,debug=]
-	)
 	static-analyzer? (
 		dev-lang/perl:*
 	)
@@ -285,11 +274,6 @@ ewarn "To avoid long linking delays, close programs that produce unexpectedly"
 ewarn "high disk activity (web browsers) and possibly switch to -j1."
 ewarn
 
-	# Keep in sync with
-	# https://github.com/llvm/llvm-project/blob/main/clang/CMakeLists.txt#L969
-	export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=ext-tsp -reorder-functions=hfsort+ -split-functions -split-all-cold -split-eh -dyno-stats -icf=1 -use-gnu-stack"}
-	uopts_setup
-
 # See https://bugs.gentoo.org/767700
 einfo
 einfo "To remove the hard USE mask for llvm_targets_*, do:"
@@ -426,11 +410,6 @@ src_prepare() {
 			lib/Driver/ToolChains/Linux.cpp \
 			|| die
 	fi
-
-	prepare_abi() {
-		uopts_src_prepare
-	}
-	multilib_foreach_abi prepare_abi
 }
 
 check_distribution_components() {
@@ -614,7 +593,6 @@ _src_configure_compiler() {
 _src_configure() {
 	llvm_prepend_path "${LLVM_MAJOR}"
 	llvm-ebuilds_fix_toolchain
-	uopts_src_configure
 
 	# TODO:  Add GCC-10 and below checks to add exceptions to -O* flag downgrading.
 	# Leave a note if you know the commit that fixes the internal compiler error below.
@@ -826,7 +804,9 @@ _src_compile() {
 
 src_compile() {
 	compile_abi() {
-		uopts_src_compile
+		_src_configure_compiler
+		_src_configure
+		_src_compile
 	}
 	multilib_foreach_abi compile_abi
 }
@@ -923,8 +903,6 @@ multilib_src_install() {
 		cp -aT "${ED}"/usr/include/clang-tidy "${T}/" || die
 		rm -rf "${ED}"/usr/include/clang-tidy || die
 	fi
-
-	uopts_src_install
 }
 
 multilib_src_install_all() {
@@ -960,7 +938,6 @@ einfo
 einfo "  dev-python/pyyaml"
 einfo
 	fi
-	uopts_pkg_postinst
 }
 
 pkg_postrm() {
