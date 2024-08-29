@@ -16,7 +16,7 @@ MY_PN="mozjs"
 MY_PV="${PV/_pre*}" # Handle Gentoo pre-releases
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_LAST_UPDATE=1722927600 # From `date +%s -d "2024-08-06"` date from last mitigation date
+MITIGATION_LAST_UPDATE=1722888300 # From `date +%s -d "2024-08-05 13:05"` from ftp date matching version in report
 MOZ_ESR="yes"
 MOZ_PN="firefox"
 MOZ_PV="${PV}"
