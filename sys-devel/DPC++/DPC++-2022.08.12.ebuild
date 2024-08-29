@@ -157,7 +157,7 @@ ROCM_SLOTS=(
 VC_INTR_COMMIT="abce9184b7a3a7fe1b02289b9285610d9dc45465" # Newer versions cause compile failure \
 
 inherit hip-versions
-inherit cmake flag-o-matic python-any-r1 rocm toolchain-funcs
+inherit cmake dhms flag-o-matic python-any-r1 rocm toolchain-funcs
 
 DOCS_BUILDER="doxygen"
 DOCS_DIR="build/docs"
@@ -328,6 +328,7 @@ ewarn "${gpu} is available but support is not feature complete."
 }
 
 pkg_setup() {
+	dhms_start
 	warn_untested_gpu
 	warn_partial_gpu_support
 	if tc-is-gcc ; then
@@ -544,4 +545,5 @@ src_install() {
 
 	# Do this in the ebuild instead
 	#gen_envd
+	dhms_end
 }

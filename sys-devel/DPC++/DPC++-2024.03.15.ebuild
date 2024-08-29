@@ -178,7 +178,7 @@ UR_COMMIT="ec634ff05b067d7922ec45059dda94665e5dcd9b" # \
 VC_INTR_COMMIT="da892e1982b6c25b9a133f85b4ac97142d8a3def" # Newer versions cause compile failure \
 
 inherit hip-versions
-inherit cmake flag-o-matic llvm python-any-r1 rocm toolchain-funcs
+inherit cmake dhms flag-o-matic llvm python-any-r1 rocm toolchain-funcs
 
 DOCS_BUILDER="doxygen"
 DOCS_DIR="build/docs"
@@ -416,6 +416,7 @@ ewarn "${gpu} is available but support is not feature complete."
 }
 
 pkg_setup() {
+	dhms_start
 	warn_untested_gpu
 	warn_partial_gpu_support
 	if tc-is-gcc ; then
@@ -739,4 +740,5 @@ src_install() {
 
 	# Do this in the ebuild instead
 	#gen_envd
+	dhms_end
 }
