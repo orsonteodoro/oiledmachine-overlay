@@ -13,72 +13,6 @@
 
   oiledmachine-overlay notes
 
-  This ebuild package allows the package to be optimized with PGO/BOLT for
-  purposes of speeding up compilation time.
-
-
-  Prerequisites
-
-  It is assumed that the dependencies are already installed for that slot.
-  You may use the -o emerge flag to add just the dependencies.
-
-
-
-  Add the following to /etc/portage/env/llvm-roc.conf
-
-  LLVM_ROC_TRAINERS="rocPRIM rocRAND rocSPARSE"
-  #ROCM_OVERLAY_DIR="/usr/local/oiledmachine-overlay" # if using older README.md instructions
-  ROCM_OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # if overlay was added through eselect repository
-
-
-  To get PGO working, add run each slotted opt.sh script as follows
-
-  LLVM_ROC_PHASES="PGI PGT PGO" \
-  ROCM_SLOTS="5.7" \
-  ./optimize.sh
-
-  # Alternatively,
-  LLVM_ROC_PHASES="PGI PGT PGO BGI BGT BGO" \
-  ROCM_SLOTS="5.7" \
-  ./optimize.sh
-
-
-  Environment variables
-
-  LLVM_ROC_ENV_PATH - path to the env config.  "/etc/portage/env/llvm-roc.conf" (default)
-  LLVM_ROC_TRAINERS - A space separated list of packages to build.  Acceptable values:  composable_kernel, rocBLAS, rocMLIR, rocPRIM, rocRAND, rocSPARSE
-  LLVM_ROC_WIPE_PGO_PROFILES - 1 to delete all PGO/BOLT profiles,  0 to used cached PGO profile.
-  LLVM_ROC_PHASES - A space separated list of PGO/BOLT phases to add or remove, allowing to skip if previous steps performed.  "PGI PGT PGO" (default)  Acceptable values:  PGI PGT PGO BGI BGT BGO
-  ROCM_SLOTS - A space separated list of slots to build.  "5.1 5.2 5.3 5.4 5.5 5.6 5.7" (default)
-
-
-  Training time cost
-
-  composable_kernel:  high
-  rocBLAS:  high
-  rocMLIR:  medium
-  rocRAND:  low
-  rocSPARSE:  medium
-  rocPRIM:  low
-
-
-  Training purpose
-
-  composable_kernel:  GPU compile for PGO profile generation
-  rocBLAS:  GPU compile for PGO profile generation
-  rocMLIR:  CPU based compilation for PGO profile generation
-  rocRAND:  GPU compile for PGO profile generation
-  rocSPARSE:  GPU compile for PGO profile generation
-  rocPRIM:  GPU compile for PGO profile generation
-
-
-  PGO post install instructions
-
-  When starting the ./optimize.sh, the epgo and ebolt USE flags should be
-  removed from package.use.  The script will override it.
-
-  After the process is done, you should set both epgo and ebolt in package.use.
-
 
   Package equivalence
 
@@ -91,6 +25,8 @@
   See also
 
   https://github.com/ROCm/ROCm/blob/develop/docs/conceptual/compiler-disambiguation.md
+  https://rocm.docs.amd.com/projects/HIP/en/docs-6.0.2/user_guide/hip_rtc.html#backward-compatibility-of-llvm-bitcode-ir
+  https://rocm.docs.amd.com/en/docs-5.4.3/reference/rocmcc/rocmcc.html#rocm-compiler-interfaces
 
   -->
   <use>
@@ -103,16 +39,6 @@
     </flag>
     <flag name="cuda_11_7">
       Apply proposed patch for CUDA 11.7 compatibility for HIPIFY.
-    </flag>
-    <flag name="epgo">
-      Build an optimized Clang toolchain using Profile Guided Optimization (PGO)
-      to decrease build times by maybe 20%.
-    </flag>
-    <flag name="ebolt">
-      Build an optimized build using BOLT (Binary Optimization and Layout Tool)
-      to improve CPU caching and branch prediction using execution sampling data
-      used to optimize code layout.  This may improve performance by 15%.  It
-      provides additional post build optimizations. (EXPERIMENTAL)
     </flag>
     <flag name="profile">
       Add profile support required by Clang PGO (Profile Guided Optimization).
