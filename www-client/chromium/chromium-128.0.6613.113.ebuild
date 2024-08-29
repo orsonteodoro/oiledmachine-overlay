@@ -3059,18 +3059,6 @@ ewarn
 		fi
 	fi
 
-	local nprocs=$(echo "${MAKEOPTS}" \
-		| grep -E -e "-j[ ]*[0-9]+" \
-		| grep -E -o -e "[0-9]+")
-	if [[ -z "${nprocs}" ]] && which lscpu >/dev/null ; then
-		nprocs=$(lscpu \
-			| grep "CPU(s)" \
-			| head -n 1 \
-			| grep -o -E "[0-9]+")
-	elif [[ -z "${nprocs}" ]] ; then
-		nprocs=1
-	fi
-
 	_O2_to_O3() {
 	# Boosted to -O2 for internal dav1d to avoid blurry images or < 25 FPS.
 		replace-flags "-O0" "-O2"
@@ -3092,6 +3080,8 @@ ewarn
 			replace-flags "-O*" "-O2"
 		fi
 	fi
+
+	local nprocs=$(get_nproc)
 
 	# Reduce build time but build for smooth dav1d playback.
 	if [[ "${FEATURES}" =~ ("icecream"|"distcc") ]] ; then
