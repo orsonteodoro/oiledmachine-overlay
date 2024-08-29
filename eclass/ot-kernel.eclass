@@ -491,7 +491,7 @@ fi
 ZEN_MUQSS_BASE_URI="https://github.com/torvalds/linux/commit/"
 ZEN_SAUCE_BASE_URI="https://github.com/torvalds/linux/commit/"
 
-inherit check-reqs dhms flag-o-matic python-r1 ot-kernel-kutils ot-kernel-pkgflags
+inherit check-reqs dhms flag-o-matic multiprocessing python-r1 ot-kernel-kutils ot-kernel-pkgflags
 inherit security-scan toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -12415,7 +12415,7 @@ einfo "Installing unsigned kernel"
 	cd "${ED}" || die
 	local job_list
 	local n_jobs
-	local n_procs=$(ot-kernel_get_nprocs)
+	local n_procs=$(get_nproc)
 	local f
 	for f in $(find boot -type f) ; do
 		(
@@ -12455,7 +12455,7 @@ einfo "Installing the kernel sources"
 		insinto /usr/src
 		doins -r "${BUILD_DIR}" # Sanitize file permissions
 
-		local n_procs=$(ot-kernel_get_nprocs)
+		local n_procs=$(get_nproc)
 einfo
 einfo "n_procs:  ${n_procs}"
 einfo "Restoring +x bit"
@@ -12922,18 +12922,6 @@ IOSCHED_SSD="${ssd_iosched}" # Do not change
 HW_RAID="${OT_KERNEL_HWRAID:-0}"
 EOF
 ################################################################################
-}
-
-# @FUNCTION: ot-kernel_get_nprocs
-# @INTERNAL
-# @DESCRIPTION:
-# Gets the number N from -jN defined by MAKEOPTS.
-ot-kernel_get_nprocs() {
-	local nprocs=$(echo "${MAKEOPTS}" \
-		| grep -E -e "-j[ ]*[0-9]+" \
-		| grep -E -o -e "[0-9]+")
-	[[ -z "${nprocs}" ]] && nprocs=1
-	echo "${nprocs}"
 }
 
 # @FUNCTION: ot-kernel_get_my_arch
