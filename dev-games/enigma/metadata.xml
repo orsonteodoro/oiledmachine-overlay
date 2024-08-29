@@ -15,28 +15,6 @@
   </longdescription>
   <!--
 
-    Cross build ebuild level support status:
-
-      Android - Incomplete / Untested
-      macOS - Incomplete / Untested
-      Wine - Incomplete / Untested
-
-    For android support set ANDROID_SYSROOT, ANDROID_CTARGET as environment variables.
-    For macos support set MACOS_SYSROOT, MACOS_CTARGET as environment variables.
-    For wine32 support set MINGW32_SYSROOT, MINGW32_CTARGET as environment variables.
-    For wine64 support set MINGW64_SYSROOT, MINGW64_CTARGET as environment variables.
-
-    Cross-compilers should emerge the following in the crossdev context/image NOT
-    in the native build context.
-
-      dev-games/enigma-android
-      dev-games/enigma-macos
-      dev-games/enigma-mingw32
-      dev-games/enigma-mingw64
-
-    Both enigma-mingw32 and enigma-mingw64 should be in separate monolib crossdev
-    images.
-
     Asset formats supported:
 
       (Some formats may not be supported by dialog filters, unlinked libraries,
@@ -54,22 +32,6 @@
       Project save:  egm, sog
       Project load:  egm, gm6, gm81, gmd, gmk, gmx, sog, yyp
 
-
-    Additional cross build documentation:
-    https://wiki.gentoo.org/wiki/Mingw
-    https://enigma-dev.org/docs/Wiki/Install:Android
-    https://enigma-dev.org/docs/Wiki/Mac_OS_X
-
-    All cross compiled library packages and cross toolchains must be
-    built and available in order to build for the target platform.  All
-    dependencies must have matching ABI (all 32-bit or all 64-bit) in
-    the crossdev image(s).
-
-
-    For the example Android project, see
-
-      https://github.com/enigma-dev/enigma-android
-
   -->
   <upstream>
     <bugs-to>https://github.com/enigma-dev/enigma-dev/issues</bugs-to>
@@ -81,9 +43,6 @@
     <remote-id type="github">enigma-dev/enigma-dev</remote-id>
   </upstream>
   <use>
-    <flag name="android">
-      Adds support to porting games to Android
-    </flag>
     <flag name="box2">
       Adds Box2D support for 2D physics support.
     </flag>
@@ -95,12 +54,6 @@
     </flag>
     <flag name="doc">
       Installs documents.
-    </flag>
-    <flag name="ds">
-      Adds sound support for Wine.
-    </flag>
-    <flag name="d3d">
-      Adds 3D support for Wine.
     </flag>
     <flag name="externalfuncs">
       Add support for GM ExternalFuncs to call DLL functions.
@@ -142,15 +95,6 @@
       Uses KDialog as the default widget engine if running KDE for alerts, user
       prompts, file dialogs, color picker.
     </flag>
-    <flag name="macos">
-      Apply changes for support for cross compiling for macOS.
-    </flag>
-    <flag name="mingw32">
-      Adds dependencies implied with MinGW32-w64 (32-bit) and Wine.
-    </flag>
-    <flag name="mingw64">
-      Adds dependencies implied with MinGW64-w64 (64-bit) and Wine.
-    </flag>
     <flag name="network">
       Adds dependencies for network support.
     </flag>
@@ -175,9 +119,6 @@
     </flag>
     <flag name="widgets">
       Adds widgets support for dialogs.
-    </flag>
-    <flag name="wine">
-      Adds Wine support.
     </flag>
     <flag name="X">
       Add window and input support through X11 in a platform dependent way.

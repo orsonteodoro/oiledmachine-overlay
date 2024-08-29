@@ -75,15 +75,13 @@ RESTRICT="mirror"
 SLOT="0/lateralgm-${EGIT_COMMIT:0:7}" # Required because of grpc/protobuf.
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-android box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
-gnome gtk2 gtest headless joystick kde macos mingw32 mingw64 network +openal
-+opengl +png sdl2 sound test threads vulkan widgets wine +X xrandr xtest
+box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
+gnome gtk2 gtest headless joystick kde network +openal
++opengl +png sdl2 sound test threads vulkan widgets +X xrandr xtest
 "
 REQUIRED_USE_PLATFORMS="
 	|| (
-		android
 		headless
-		macos
 		sdl2
 		X
 	)
@@ -96,20 +94,10 @@ REQUIRED_BUILD="
 REQUIRED_USE+="
 	${REQUIRED_BUILD}
 	${REQUIRED_USE_PLATFORMS}
-	android? (
-		|| (
-			gles2
-			gles3
-		)
-		sdl2
-	)
 	clang? (
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
-	)
-	ds? (
-		wine
 	)
 	gles2? (
 		sdl2
@@ -126,16 +114,6 @@ REQUIRED_USE+="
 	kde? (
 		widgets
 	)
-	macos? (
-		sdl2
-		opengl
-	)
-	mingw32? (
-		wine
-	)
-	mingw64? (
-		wine
-	)
 	opengl? (
 		|| (
 			sdl2
@@ -151,12 +129,6 @@ REQUIRED_USE+="
 		)
 	)
 	sound? (
-		android? (
-			sdl2
-		)
-		macos? (
-			openal
-		)
 		|| (
 			ds
 			openal
@@ -171,12 +143,6 @@ REQUIRED_USE+="
 			gnome
 			gtk2
 			kde
-		)
-	)
-	wine? (
-		|| (
-			d3d
-			opengl
 		)
 	)
 	X? (
@@ -261,11 +227,6 @@ DEPEND+="
 	>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 	virtual/jpeg[${MULTILIB_USEDEP}]
 	virtual/libc
-	android? (
-		>=dev-util/android-ndk-23
-		dev-util/android-sdk-update-manager
-		sys-devel/crossdev
-	)
 	box2d? (
 		|| (
 			=games-engines/box2d-2.3*:2.3[${MULTILIB_USEDEP}]
@@ -329,15 +290,6 @@ DEPEND+="
 			>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},opengl?]
 		)
 	)
-	wine? (
-		sys-devel/crossdev
-		mingw32? (
-			virtual/wine[abi_x86_32]
-		)
-		mingw64? (
-			virtual/wine[abi_x86_64]
-		)
-	)
 	X? (
 		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 		>=sys-process/procps-3.3.16[${MULTILIB_USEDEP}]
@@ -373,238 +325,6 @@ PATCHES=(
 	"${FILESDIR}/enigma-9999-fix-missing-workdir-references.patch"
 )
 
-crossdev_has_pkg_use() {
-	local p="${1}"
-	local pv="${2}"
-	local u="${3}"
-	local path=$(realpath "${CROSSDEV_SYSROOT}/var/db/pkg/${p}"*)
-
-	crossdev_has_pkg "${p}" "${pv}"
-
-	if grep -q "${u}" "${CROSSDEV_SYSROOT}/var/db/pkg/${p}"*"/USE" ]] ; then
-		return 0
-	fi
-eerror
-eerror "Missing ${p} with USE=${u}"
-eerror
-eerror "Use \`${CROSSDEV_CTARGET}-emerge \">=${p}-${pv}[${u}]\"\` to build it."
-eerror "See ebuild for full list in ${FUNC}."
-eerror
-}
-
-crossdev_has_pkg() {
-	local p="${1}"
-	local pv="${2}"
-	local path=$(realpath "${CROSSDEV_SYSROOT}/var/db/pkg/${p}"*)
-	if [[ -e "${path}" ]] ; then
-		local x_pv=$(basename "${path}" | sed -e "s|${p}-||g")
-		ver_test ${x_pv} -ge ${pv} && return 0
-	fi
-eerror
-eerror "Missing or out of date ${p}"
-eerror "Requires:  >=${p}-${pv}"
-eerror
-eerror "Use \`${CROSSDEV_CTARGET}-emerge \">=${p}-${pv}\"\` to build it"
-eerror "See ebuild for full list in ${FUNC}."
-eerror
-}
-
-# Non-fatal test
-crossdev_has_pkg_nf() {
-	local p="${1}"
-	local pv="${2}"
-	local op="${3}"
-	local path=$(realpath "${CROSSDEV_SYSROOT}/var/db/pkg/${p}"*)
-	if [[ -e "${path}" ]] ; then
-		local x_pv=$(basename "${path}" | sed -e "s|${p}-||g")
-		ver_test ${x_pv} ${op} ${pv} && return 0
-	fi
-	return 1
-}
-
-check_mingw64() {
-ewarn
-ewarn "MINGW64 support is incomplete/untested"
-ewarn
-	if [[ -z "${MINGW64_SYSROOT}" ]] ; then
-eerror
-eerror "MINGW64_SYSROOT needs to point to the crossdev image."
-eerror
-		die
-	fi
-	if [[ -z "${MINGW64_CTARGET}" ]] ; then
-eerror
-eerror "MINGW64_CTARGET needs to be defined used to build this target"
-eerror "(eg. x86_64-w64-mingw32)."
-eerror
-		die
-	fi
-	export CROSSDEV_CTARGET="${MINGW64_CTARGET}"
-	export CROSSDEV_SYSROOT="${MINGW64_SYSROOT}"
-	export FUNC="check_mingw64()"
-	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
-
-	# We ALWAYS do this because emerge is orders of magnitude slow.
-	crossdev_has_pkg "dev-games/enigma-mingw64" "0"
-	use box2d && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "box2d"
-	use bullet && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "bullet"
-	use freetype && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "freetype"
-	use gme && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "gme"
-	use gtest && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "gtest"
-	use gtk2 && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "gtk2"
-	use joystick && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "joystick"
-	use network && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "network"
-	use openal && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "openal"
-	use opengl && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "opengl"
-	use png && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "png"
-	use sdl2 && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "sdl2"
-	use sound && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "sound"
-	use threads && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "threads"
-}
-
-check_mingw32() {
-ewarn
-ewarn "MINGW32 support is incomplete/untested"
-ewarn
-	if [[ -z "${MINGW32_SYSROOT}" ]] ; then
-eerror
-eerror "MINGW32_SYSROOT needs to point to the crossdev image."
-eerror
-		die
-	fi
-	if [[ -z "${MINGW64_CTARGET}" ]] ; then
-eerror
-eerror "MINGW32_CTARGET needs to be defined used to build this target"
-eerror "(eg. i686-w64-mingw32)."
-eerror
-		die
-	fi
-	export CROSSDEV_CTARGET="${MINGW32_CTARGET}"
-	export CROSSDEV_SYSROOT="${MINGW32_SYSROOT}"
-	export FUNC="check_mingw32()"
-	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
-
-	# We ALWAYS do this because emerge is orders of magnitude slow.
-	crossdev_has_pkg "dev-games/enigma-mingw32" "0"
-	crossdev_has_pkg_use "dev-games/enigma-mingw32" "${SDL2_MIXER_PV}" ""
-
-	use box2d && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "box2d"
-	use bullet && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "bullet"
-	use freetype && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "freetype"
-	use gles1 && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "gles1"
-	use gles2 && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "gles2"
-	use gme && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "gme"
-	use gtk2 && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "gtk2"
-	use gtest && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "gtest"
-	use joystick && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "joystick"
-	use network && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "network"
-	use openal && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "openal"
-	use opengl && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "opengl"
-	use png && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "png"
-	use sdl2 && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "sdl2"
-	use sound && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "sound"
-	use threads && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "threads"
-}
-
-check_cross_android() {
-ewarn
-ewarn "Android support is incomplete/untested"
-ewarn
-	if [[ -z "${ANDROID_SYSROOT}" ]] ; then
-eerror
-eerror "ANDROID_SYSROOT needs to point to the crossdev image."
-eerror
-		die
-	fi
-	if [[ -z "${ANDROID_CTARGET}" ]] ; then
-eerror
-eerror "ANDROID_CTARGET needs to be defined used to build this target"
-eerror "(eg. armv7a-hardfloat-linux-gnueabi)."
-eerror
-		die
-	fi
-	export CROSSDEV_CTARGET="${ANDROID_CTARGET}"
-	export CROSSDEV_SYSROOT="${ANDROID_SYSROOT}"
-	export FUNC="check_cross_android()"
-	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
-	# We ALWAYS do this because emerge is orders of magnitude slow.
-	crossdev_has_pkg "dev-games/enigma-android" "0"
-	use box2d && crossdev_has_pkg_use "dev-games/enigma-android" "0" "box2d"
-	use bullet && crossdev_has_pkg_use "dev-games/enigma-android" "0" "bullet"
-	use freetype && crossdev_has_pkg_use "dev-games/enigma-android" "0" "freetype"
-	use gles1 && crossdev_has_pkg_use "dev-games/enigma-android" "0" "gles1"
-	use gles2 && crossdev_has_pkg_use "dev-games/enigma-android" "0" "gles2"
-	use gme && crossdev_has_pkg_use "dev-games/enigma-android" "0" "gme"
-	use gtest && crossdev_has_pkg_use "dev-games/enigma-android" "0" "gtest"
-	use joystick && crossdev_has_pkg_use "dev-games/enigma-android" "0" "joystick"
-	use network && crossdev_has_pkg_use "dev-games/enigma-android" "0" "network"
-	use opengl && crossdev_has_pkg_use "dev-games/enigma-android" "0" "opengl"
-	use png && crossdev_has_pkg_use "dev-games/enigma-android" "0" "png"
-	use sdl2 && crossdev_has_pkg_use "dev-games/enigma-android" "0" "sdl2"
-	use sound && crossdev_has_pkg_use "dev-games/enigma-android" "0" "sound"
-	use threads && crossdev_has_pkg_use "dev-games/enigma-android" "0" "threads"
-}
-
-MACOS_SDK_PV_MIN="10.4"
-MACOS_SDK_PV_MAX="13.0"
-check_cross_macos() {
-ewarn
-ewarn "macOS support is incomplete/untested"
-ewarn
-	if [[ -z "${MACOS_SYSROOT}" ]] ; then
-eerror
-eerror "MACOS_SYSROOT needs to point to the crossdev image."
-eerror
-		die
-	fi
-	if [[ -z "${MACOS_CTARGET}" ]] ; then
-eerror
-eerror "MACOS_CTARGET needs to be defined used to build this target"
-eerror "(eg. x86_64-apple-darwin13)."
-eerror
-		die
-	fi
-	if [[ -z "${MACOS_SDK_PV}" ]] ; then
-eerror
-eerror "MACOS_SDK_PV needs to be defined"
-eerror
-		die
-	fi
-	if ver_test ${MACOS_SDK_PV} < ${MACOS_SDK_PV_MIN} ; then
-		# CI uses 12.1 but it is relaxed in this ebuild for
-		# compatibility reasons.
-eerror
-eerror "Detected ${MACOS_SDK_PV}."
-eerror "Requires >= ${MACOS_SDK_PV_MIN}."
-eerror
-eerror "You will need to download a newer version of the SDK."
-eerror
-		die
-	fi
-	export CROSSDEV_CTARGET="${MACOS_CTARGET}"
-	export CROSSDEV_SYSROOT="${MACOS_SYSROOT}"
-	export FUNC="check_cross_macos()"
-	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
-	# We ALWAYS do this because emerge is orders of magnitude slow.
-	crossdev_has_pkg "dev-games/enigma-macos" "0"
-	use box2d && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "box2d"
-	use bullet && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "bullet"
-	use freetype && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "freetype"
-	use gles1 && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "gles1"
-	use gles2 && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "gles2"
-	use gme && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "gme"
-	use gtest && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "gtest"
-	use gtk2 && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "gtk2"
-	use joystick && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "joystick"
-	use network && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "network"
-	use openal && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "openal"
-	use opengl && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "opengl"
-	use png && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "png"
-	use sdl2 && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "sdl2"
-	use sound && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "sound"
-	use threads && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "threads"
-}
-
 pkg_setup() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
@@ -636,19 +356,10 @@ eerror "Switch the compiler."
 eerror
 		die
 	fi
-	use android && check_cross_android
-	use macos && check_cross_macos
-	use mingw32 && check_cross_mingw32
-	use mingw64 && check_cross_mingw64
 }
 
 src_prepare() {
 	default
-	# Typo?
-	sed -i \
-		-e "s|ANDROIS_LDLIBS|ANDROID_LDLIBS|g" \
-		ENIGMAsystem/SHELL/Makefile \
-		|| die
 }
 
 src_unpack() {
@@ -662,31 +373,7 @@ src_unpack() {
 }
 
 src_configure() {
-	if [[ -n "${ANDROID_CTARGET}" ]] ; then
-		sed -i \
-			-e "s|gcc|${ANDROID_CTARGET}-gcc|g" \
-			-e "s|g\+\+|${ANDROID_CTARGET}-g++|g"
-			"Compilers/Linux/Android.ey" \
-			|| die
-	fi
-	if [[ -n "${MINGW32_CTARGET}" ]] ; then
-		sed -i \
-			-e "s|i686-w64-mingw32|${MINGW32_CTARGET}|g" \
-			"Compilers/Linux/MinGW32.ey" \
-			|| die
-	fi
-	if [[ -n "${MINGW64_CTARGET}" ]] ; then
-		sed -i \
-			-e "s|x86_64-w64-mingw32|${MINGW64_CTARGET}|g" \
-			"Compilers/Linux/MinGW64.ey" \
-			|| die
-	fi
-	if [[ -n "${MACOS_CTARGET}" ]] ; then
-		sed -i \
-			-e "s|x86_64-apple-darwin13|${MACOS_CTARGET}|g" \
-			"Compilers/Linux/AppleCross64.ey" \
-			|| die
-	fi
+	:
 }
 
 src_compile() {
@@ -753,40 +440,6 @@ src_install() {
 
 pkg_postinst()
 {
-	if use android ; then
-einfo
-einfo "See https://github.com/enigma-dev/enigma-android which parts of the"
-einfo "build system uses.  The android projects require a gradle wrapper"
-einfo "when porting to android, or the build system requires modding."
-einfo
-
-einfo
-einfo "You need to modify /usr/$(get_libdir)/Compilers/Android.ey manually"
-einfo "for SYSROOT, -I, -L changes.  They should point/reference CTARGET not"
-einfo "CBUILD."
-einfo
-	fi
-	if use macos ; then
-einfo
-einfo "You need to modify /usr/$(get_libdir)/Compilers/AppleCross64.ey manually"
-einfo "for SYSROOT, -I, -L changes.  They should point/reference CTARGET not"
-einfo "CBUILD."
-einfo
-	fi
-	if use mingw32 ; then
-einfo
-einfo "You need to modify /usr/$(get_libdir)/Compilers/MinGW32.ey manually"
-einfo "for SYSROOT, -I, -L changes.  They should point/reference CTARGET not"
-einfo "CBUILD."
-einfo
-	fi
-	if use mingw64 ; then
-einfo
-einfo "You need to modify /usr/$(get_libdir)/Compilers/MinGW64.ey manually"
-einfo "for SYSROOT, -I, -L changes.  They should point/reference CTARGET not"
-einfo "CBUILD."
-einfo
-	fi
 einfo
 einfo "A build failure may happen in a simple hello world test if the"
 einfo "appropriate subsystem USE flag was disabled with building this package"
