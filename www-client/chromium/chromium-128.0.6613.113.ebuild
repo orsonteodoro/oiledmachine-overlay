@@ -3059,8 +3059,6 @@ ewarn
 		fi
 	fi
 
-	# TODO:  fix crashes for -Ofast
-	# Boost -Oflag level to -O2 for internal dav1d to avoid blurry images or < 25 FPS.
 	local nprocs=$(echo "${MAKEOPTS}" \
 		| grep -E -e "-j[ ]*[0-9]+" \
 		| grep -E -o -e "[0-9]+")
@@ -3074,11 +3072,12 @@ ewarn
 	fi
 
 	_O2_to_O3() {
+	# Boosted to -O2 for internal dav1d to avoid blurry images or < 25 FPS.
 		replace-flags "-O0" "-O2"
 		replace-flags "-O1" "-O2"
 		replace-flags "-Os" "-O2"
 		replace-flags "-Oz" "-O2"
-		replace-flags "-Ofast" "-O3" # -Ofast is broken
+		replace-flags "-Ofast" "-O3" # -Ofast is broken.  TODO: fix crashes by using O3 in some *.gn* files
 		replace-flags "-O4" "-O3" # -O4 is the same as -O3
 	}
 
