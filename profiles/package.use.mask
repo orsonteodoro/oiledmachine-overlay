@@ -55,7 +55,7 @@ www-client/firefox telemetry
 net-libs/webkit-gtk libbacktrace
 
 # Untested
-www-client/chromium qt6
+#www-client/chromium qt6
 sys-kernel/ot-sources c2tcp deepcc orca
 
 # No rocr-runtime, llvm-roc version correspondance
