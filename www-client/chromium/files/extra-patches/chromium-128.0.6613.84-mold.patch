@@ -102,3 +102,101 @@
    }
  
    asmflags = cflags
+--- a/third_party/llvm/llvm/utils/gn/build/BUILD.gn.orig	2024-08-21 15:56:56.796674000 -0700
++++ b/third_party/llvm/llvm/utils/gn/build/BUILD.gn	2024-08-28 23:31:12.573530134 -0700
+@@ -38,6 +38,8 @@ declare_args() {
+ 
+   # The version of host gcc. Ignored if is_clang is true.
+   gcc_version = 9
++
++  use_mold = false
+ }
+ 
+ assert(!llvm_build_instrumented_coverage || is_clang,
+@@ -269,7 +271,9 @@ config("compiler_defaults") {
+   }
+ 
+   # On Windows, the linker is not invoked through the compiler driver.
+-  if (use_lld && current_os != "win") {
++  if (use_mold && current_os != "win") {
++    ldflags += [ "-fuse-ld=mold" ]
++  } else if (use_lld && current_os != "win") {
+     ldflags += [ "-fuse-ld=lld" ]
+   }
+ 
+--- a/third_party/rust-src/src/llvm-project/llvm/utils/gn/build/BUILD.gn.orig	2024-08-21 16:00:28.649322300 -0700
++++ b/third_party/rust-src/src/llvm-project/llvm/utils/gn/build/BUILD.gn	2024-08-28 23:31:15.385485283 -0700
+@@ -38,6 +38,8 @@ declare_args() {
+ 
+   # The version of host gcc. Ignored if is_clang is true.
+   gcc_version = 9
++
++  use_mold = false
+ }
+ 
+ assert(!llvm_build_instrumented_coverage || is_clang,
+@@ -274,7 +276,9 @@ config("compiler_defaults") {
+   }
+ 
+   # On Windows, the linker is not invoked through the compiler driver.
+-  if (use_lld && current_os != "win") {
++  if (use_mold && current_os != "win") {
++    ldflags += [ "-fuse-ld=mold" ]
++  } else if (use_lld && current_os != "win") {
+     ldflags += [ "-fuse-ld=lld" ]
+   }
+ 
+--- a/third_party/instrumented_libs/noble/BUILD.gn.orig	2024-08-21 15:47:04.259141700 -0700
++++ b/third_party/instrumented_libs/noble/BUILD.gn	2024-08-28 23:30:49.949890977 -0700
+@@ -5,6 +5,10 @@
+ import("//build/config/python.gni")
+ import("//build/config/sanitizers/sanitizers.gni")
+ 
++declare_args() {
++  use_mold = false
++}
++
+ static_library("stat_wrapper") {
+   sources = [ "stat_wrapper.c" ]
+ }
+@@ -121,7 +125,17 @@ template("instrumented_library") {
+     ]
+     package_ldflags = [
+       "-fsanitize=memory",
+-      "-fuse-ld=lld",
++    ]
++    if (use_mold) {
++      package_ldflags += [
++        "-fuse-ld=mold",
++      ]
++    } else {
++      package_ldflags += [
++        "-fuse-ld=lld",
++      ]
++    }
++    package_ldflags += [
+       "-Wl,--wrap=stat",
+       "-Wl,--wrap=fstat",
+       "-Wl,--wrap=lstat",
+--- a/build/config/compiler/BUILD.gn.orig	2024-08-27 22:30:13.510510204 -0700
++++ b/build/config/compiler/BUILD.gn	2024-08-28 23:31:09.989571349 -0700
+@@ -200,6 +200,8 @@ declare_args() {
+   # debugging information which is required by some specialized
+   # debugging tools.
+   simple_template_names = is_clang && !is_nacl && !is_win && !is_apple
++
++  use_mold = 1
+ }
+ 
+ declare_args() {
+@@ -371,7 +373,9 @@ config("compiler") {
+       }
+     }
+ 
+-    if (use_lld) {
++    if (use_mold) {
++      ldflags += [ "-fuse-ld=mold" ]
++    } if (use_lld) {
+       ldflags += [ "-fuse-ld=lld" ]
+       if (lld_path != "") {
+         ldflags += [ "-B$lld_path" ]

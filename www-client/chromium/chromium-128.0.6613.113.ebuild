@@ -164,11 +164,6 @@ PYTHON_REQ_USE="xml(+)"
 QT5_PV="5.15.2"
 QT6_PV="6.4.2"
 RUST_PV="1.79.0"
-UOPTS_SLOT=$(ver_cut 1-3 "${PV}")
-UOPTS_SUPPORT_EBOLT=1
-UOPTS_SUPPORT_EPGO=1
-UOPTS_SUPPORT_TBOLT=0
-UOPTS_SUPPORT_TPGO=0
 # https://github.com/chromium/chromium/blob/128.0.6613.113/tools/clang/scripts/update.py#L38C41-L38C49 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
 LLVM_COMMIT="ecea8371"
@@ -185,7 +180,7 @@ ZLIB_PV="1.3"
 inherit cflags-depends check-linker check-reqs chromium-2 dhms desktop edo
 inherit flag-o-matic flag-o-matic-om lcnr llvm multilib-minimal ninja-utils
 inherit pax-utils python-any-r1 qmake-utils readme.gentoo-r1 systemd
-inherit toolchain-funcs uopts xdg-utils
+inherit toolchain-funcs xdg-utils
 
 PATCHSET_PPC64="127.0.6533.88-1raptor0~deb12u2"
 PATCH_REVISION=""
@@ -629,16 +624,12 @@ REQUIRED_USE+="
 		!system-zstd
 		bundled-libcxx
 	)
-	epgo? (
-		!pgo
-	)
 	ffmpeg-chromium? (
 		bindist
 		proprietary-codecs
 	)
 	official? (
 		!debug
-		!epgo
 		!hangouts
 		!mold
 		!system-dav1d
@@ -688,9 +679,6 @@ REQUIRED_USE+="
 		arm64? (
 			branch-protection
 		)
-	)
-	pgo? (
-		!epgo
 	)
 	pre-check-vaapi? (
 		vaapi
@@ -743,7 +731,7 @@ gen_depend_llvm() {
 			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 			sys-devel/lld:${s}
 			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
-			epgo? (
+			pgo? (
 				=sys-libs/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},profile]
 				sys-libs/compiler-rt-sanitizers:=
 			)
@@ -1204,13 +1192,6 @@ eerror
 		if use pgo && tc-is-cross-compiler; then
 eerror
 eerror "The pgo USE flag cannot be used when cross-compiling"
-eerror
-			die
-		fi
-
-		if use epgo && tc-is-cross-compiler; then
-eerror
-eerror "The epgo USE flag cannot be used when cross-compiling"
 eerror
 			die
 		fi
@@ -1771,8 +1752,6 @@ einfo "  mkdir -p \"${EROOT}/etc/portage/profile\""
 einfo "  echo \"www-client/chromium -system-ffmpeg\" >> \"${EROOT}/etc/portage/profile/package.use.mask\""
 einfo
 
-	uopts_setup
-
 	local a
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
@@ -1902,12 +1881,6 @@ apply_distro_patchset() {
 }
 
 apply_oiledmachine_overlay_patchset() {
-	if use epgo ; then
-		PATCHES+=(
-			"${FILESDIR}/extra-patches/chromium-104.0.5112.79-gcc-pgo-link-gcov.patch"
-		)
-	fi
-
 	if use system-toolchain && tc-is-clang ; then
 	# Using gcc with these patches results in this error:
 	# Two or more targets generate the same output:
@@ -2389,10 +2362,6 @@ einfo "Unbundling third party internal libraries and packages"
 	fi
 
 	(( ${NABIS} > 1 )) && multilib_copy_sources
-
-	prepare_abi() {
-		uopts_src_prepare
-	}
 
 	multilib_foreach_abi prepare_abi
 }
@@ -3093,15 +3062,12 @@ ewarn
 		fi
 	fi
 
-	# Boost Oflags for internal dav1d to avoid blurry images or < 25 FPS.
-	replace-flags "-Os" "-O2"
-	replace-flags "-O1" "-O2"
-	replace-flags "-Og" "-O2" # Fork ebuild if you want -Og ; Similar to -O1
-	replace-flags "-O0" "-O2"
+	# TODO:  fix crashes for -Ofast
+	# Boost -Oflag level for internal dav1d to avoid blurry images or < 25 FPS.
+	# -O3 downgraded to -O2 to reduce longer than usual build time (2 days build time) with clang.
+	replace-flags "-O*" "-O2"
 
 	# Prevent crash for now
-	# TODO:  fix crashes for -Ofast
-	replace-flags "-Ofast" "-O3"
 	filter-flags "-ffast-math"
 
 	if is-flagq "-Ofast" ; then
@@ -3540,10 +3506,7 @@ einfo
 	# See also https://github.com/chromium/chromium/blob/128.0.6613.113/docs/pgo.md
 	# profile-instr-use is clang which that file assumes but gcc doesn't have.
 	# chrome_pgo_phase:  0=NOP, 1=PGI, 2=PGO
-	if tc-is-cross-compiler || use epgo ; then
-	# Disallow build files choices because they only do Clang PGO.
-		myconf_gn+=" chrome_pgo_phase=0"
-	elif use pgo && tc-is-clang && ver_test $(clang-major-version) -ge ${PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT} ; then
+	if use pgo && tc-is-clang && ver_test $(clang-major-version) -ge ${PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT} ; then
 	# The profile data is already shipped so use it.
 	# PGO profile location: chrome/build/pgo_profiles/chrome-linux-*.profdata
 		myconf_gn+=" chrome_pgo_phase=2"
@@ -3552,12 +3515,6 @@ einfo
 		myconf_gn+=" chrome_pgo_phase=0"
 	# Kept symbols in build for debug reports for official
 		# myconf_gn+=" symbol_level=0"
-	fi
-
-	if ! use epgo || tc-is-cross-compiler ; then
-		:
-	else
-		[[ "${PGO_PHASE}" == "PGI" ]] && myconf_gn+=" gcc_pgi=true"
 	fi
 
 	if use system-toolchain ; then
@@ -3590,8 +3547,6 @@ einfo
 		myconf_gn+=" cc_wrapper=\"ccache\""
 		export CCACHE_BASEDIR="${TMPDIR}"
 	fi
-
-	uopts_src_configure
 
 einfo "Configuring Chromium..."
 	set -- gn gen --args="${myconf_gn} ${EXTRA_GN}" "out/Release"
@@ -3941,13 +3896,12 @@ einfo "Creating symlink to libffmpeg.so from ${symlink_loc}..."
 	# and npm micropackages copyright notices and licenses which may not
 	# have been present in the listed the the .html (about:credits) file.
 	lcnr_install_files
-
-	uopts_src_install
 }
 
 src_compile() {
 	compile_abi() {
-		uopts_src_compile
+		_src_configure
+		_src_compile
 	}
 	multilib_foreach_abi compile_abi
 }
@@ -3972,7 +3926,6 @@ pkg_postinst() {
 	xdg_desktop_database_update
 	readme.gentoo_print_elog
 
-	uopts_pkg_postinst
 	if ! use headless; then
 		if use vaapi ; then
 	# It says 3 args:
