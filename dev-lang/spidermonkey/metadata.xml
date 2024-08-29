@@ -18,13 +18,14 @@
   the duration exceeds, the ebuild will not (re-)install until a newer point
   release is provided by upstream.
   Valid values:
+    email                  - 1 week
     socials                - 2 weeks
     user-generated-content - 2 weeks (ebuild default)
     default                - 30 days
   Examples:
-    MITIGATION_USE_CASE="socials"                         # The ebuild is (re-)installable for 2 weeks from release date.
-    MITIGATION_USE_CASE="social user-generated-content"   # The ebuild is (re-)installable for 2 weeks from release date.
-    MITIGATION_USE_CASE="default"                         # The ebuild is (re-)installable for 30 days from release date but may likely contain vulnerabilities.
+    MITIGATION_USE_CASE="email socials"  # The ebuild is (re-)installable for 1 weeks from release date.
+    MITIGATION_USE_CASE="socials"        # The ebuild is (re-)installable for 2 weeks from release date.
+    MITIGATION_USE_CASE="default"        # The ebuild is (re-)installable for 30 days from release date but may likely contain vulnerabilities.
 
   -->
   <use>

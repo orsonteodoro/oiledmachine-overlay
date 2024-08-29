@@ -352,10 +352,10 @@ check_security_expire() {
 
 	local desc=""
 	local mitigation_use_case="${MITIGATION_USE_CASE:-default}"
-	if [[ "${mitigation_use_case}" =~ "socials" ]] ; then
-		safe_period=$((60*60*24*14))
-		desc="2 weeks"
-	elif [[ "${mitigation_use_case}" =~ "user-generated-content" ]] ; then
+	if [[ "${mitigation_use_case}" =~ ("email") ]] ; then
+		safe_period=$((60*60*24*7))
+		desc="1 week"
+	elif [[ "${mitigation_use_case}" =~ ("socials"|"user-generated-content") ]] ; then
 		safe_period=$((60*60*24*14))
 		desc="2 weeks"
 	else

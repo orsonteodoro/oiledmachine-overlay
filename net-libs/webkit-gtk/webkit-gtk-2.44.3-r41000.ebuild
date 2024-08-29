@@ -1963,7 +1963,7 @@ check_security_expire() {
 
 	local desc=""
 	local mitigation_use_case="${MITIGATION_USE_CASE:-default}"
-	if [[ "${mitigation_use_case}" =~ ("donations"|"legal"|"money"|"shopping") ]] ; then
+	if [[ "${mitigation_use_case}" =~ ("donations"|"email"|"legal"|"money"|"shopping") ]] ; then
 		safe_period=$((60*60*24*7))
 		desc="1 week"
 	elif [[ "${mitigation_use_case}" =~ "socials" ]] ; then

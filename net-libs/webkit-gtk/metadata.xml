@@ -66,6 +66,7 @@
     release is provided by upstream.
     Valid values:
       donations - 1 week
+      email     - 1 week
       legal     - 1 week
       money     - 1 week
       shopping  - 1 week
