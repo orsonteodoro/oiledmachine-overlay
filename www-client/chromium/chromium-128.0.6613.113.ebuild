@@ -1181,16 +1181,12 @@ _system_toolchain_checks() {
 		pre_build_checks
 
 		if tc-is-gcc && ! ver_test "$(gcc-version)" -ge "${GCC_PV}" ; then
-eerror
 eerror "At least gcc ${GCC_PV} is required"
-eerror
 			die
 		fi
 
 		if use pgo && tc-is-cross-compiler; then
-eerror
 eerror "The pgo USE flag cannot be used when cross-compiling"
-eerror
 			die
 		fi
 
@@ -1343,9 +1339,7 @@ get_llvm_profdata_version_info()
 		break
 	done
 	if [[ -z "${profdata_index_version}" ]] ; then
-eerror
 eerror "Missing INSTR_PROF_INDEX_VERSION (aka profdata_index_version)"
-eerror
 		die
 	fi
 	if (( ${profdata_index_version} == 0 )) ; then
@@ -1358,9 +1352,7 @@ eerror
 		die
 	fi
 	if [[ -z "${found_ver}" ]] ; then
-eerror
 eerror "Missing the sys-devel/llvm version (aka found_ver)"
-eerror
 		die
 	fi
 	echo "${profdata_index_version}:${found_ver}"
@@ -2548,13 +2540,18 @@ einfo "Switching to GCC"
 		export LD="ld.bfd"
 
 		if ! use system-libstdcxx ; then
-eerror
 eerror "The system-libstdcxx USE flag must be enabled for GCC builds."
-eerror
 			die
 		fi
 	fi
-	${CC} --version || die
+	# Check for missing symbols bug.
+	if ! ${CC} --version ; then
+eerror
+eerror "Failed sanity check.  Rebuild the entire compiler toolchain or unemerge"
+eerror "this slot."
+eerror
+		die
+	fi
 	_system_toolchain_checks
 
 	if \
