@@ -3060,9 +3060,19 @@ ewarn
 	fi
 
 	# TODO:  fix crashes for -Ofast
-	# Boost -Oflag level for internal dav1d to avoid blurry images or < 25 FPS.
-	# -O3 downgraded to -O2 to reduce longer than usual build time (2 days build time) with clang.
-	replace-flags "-O*" "-O2"
+	# Boost -Oflag level to -O2 for internal dav1d to avoid blurry images or < 25 FPS.
+	if use system-toolchain ; then
+		replace-flags "-O0" "-O2"
+		replace-flags "-O1" "-O2"
+		replace-flags "-Os" "-O2"
+		replace-flags "-Oz" "-O2"
+		replace-flags "-Ofast" "-O3" # -Ofast is broken
+		replace-flags "-O4" "-O3" # -O4 is the same as -O3
+	else
+	# For the vendored toolchain (vendored-clang and vendored-rust),
+	# -O3 was downgraded to -O2 to reduce longer than usual build time (2 days build time) with vendored clang.
+		replace-flags "-O*" "-O2"
+	fi
 
 	# Prevent crash for now
 	filter-flags "-ffast-math"
