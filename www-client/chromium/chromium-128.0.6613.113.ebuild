@@ -2801,6 +2801,11 @@ fi #############################################################################
 	# GN needs explicit config for Debug/Release as opposed to inferring it
 	# from the build directory.
 	myconf_gn+=" is_debug=false"
+	if ! use debug ; then
+		myconf_gn+=" symbol_level=0"
+		myconf_gn+=" blink_symbol_level=0"
+		myconf_gn+=" v8_symbol_level=0"
+	fi
 
 	# Enable DCHECK with USE=debug only, increases chrome binary size by 30%, bug #811138.
 	# DCHECK is fatal by default, make it configurable at runtime, #bug 807881.
@@ -3489,8 +3494,6 @@ einfo
 	else
 	# The pregenerated profiles are not GCC compatible.
 		myconf_gn+=" chrome_pgo_phase=0"
-	# Kept symbols in build for debug reports for official
-		# myconf_gn+=" symbol_level=0"
 	fi
 
 	if use system-toolchain ; then
