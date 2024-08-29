@@ -1350,9 +1350,11 @@ eerror
 	fi
 	if (( ${profdata_index_version} == 0 )) ; then
 eerror
-eerror "The profdata_index_version should not be 0.  Install the clang slot."
+eerror "The profdata_index_version should not be 0.  Install one of these clang"
+eerror "slots:"
 eerror
-		request_clang_switch_message
+eerror "Supported llvm/clang slots for PGO:  ${LLVM_COMPAT[@]}"
+eerror
 		die
 	fi
 	if [[ -z "${found_ver}" ]] ; then
@@ -1461,34 +1463,6 @@ einfo
 einfo "An estimated >= 37.7% (26/69) of the libraries listed should be"
 einfo "marked CFI protected."
 einfo
-}
-
-request_clang_switch_message() {
-eerror
-eerror "You must switch to the proper Clang slot."
-eerror
-eerror "Supported clang slots:\t${LLVM_COMPAT[@]}"
-eerror "Supported clang versions:\t${PGO_LLVM_SUPPORTED_VERSIONS[@]}"
-eerror
-eerror "To switch add a per-profile config file create the following files:"
-eerror
-eerror
-eerror "Contents of ${ESYSROOT}/etc/portage/env/clang-${LLVM_OFFICIAL_SLOT}.conf:"
-eerror
-eerror "CC=clang-${LLVM_OFFICIAL_SLOT}"
-eerror "CXX=clang++-${LLVM_OFFICIAL_SLOT}"
-eerror "AR=\"llvm-ar\""
-eerror "NM=\"llvm-nm\""
-eerror "OBJCOPY=\"llvm-objcopy\""
-eerror "OBJDUMP=\"llvm-objdump\""
-eerror "READELF=\"llvm-readelf\""
-eerror "STRIP=\"llvm-strip\""
-eerror
-eerror
-eerror "Contents of ${ESYSROOT}/etc/portage/package.env"
-eerror
-eerror "${CATEGORY}/${PN} clang-${LLVM_OFFICIAL_SLOT}.conf"
-eerror
 }
 
 print_use_flags_using_clang() {
@@ -2473,8 +2447,7 @@ einfo "PATH=${PATH} (before)"
 einfo "PATH=${PATH} (after)"
 
 		if [[ -z "${LLVM_SLOT}" ]] ; then
-			request_clang_switch_message
-			die
+			die "LLVM_SLOT should not be empty"
 		fi
 
 		if tc-is-cross-compiler ; then
@@ -3473,8 +3446,7 @@ eerror
 	elif use pgo ; then
 
 		if ! tc-is-clang ; then
-			request_clang_switch_message
-			die
+			die "The prebuilt PGO profile requires clang."
 		fi
 
 		local profdata_index_version=$(get_llvm_profdata_version_info)
