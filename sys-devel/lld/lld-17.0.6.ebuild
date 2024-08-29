@@ -5,13 +5,6 @@
 EAPI=8
 
 PYTHON_COMPAT=( "python3_"{10..12} )
-UOPTS_BOLT_DISABLE_BDEPEND=1
-UOPTS_GROUP="portage"
-UOPTS_USER="portage"
-UOPTS_SUPPORT_EBOLT=1
-UOPTS_SUPPORT_EPGO=1
-UOPTS_SUPPORT_TBOLT=0
-UOPTS_SUPPORT_TPGO=0
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -31,7 +24,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit cmake flag-o-matic llvm llvm.org python-any-r1 uopts
+inherit cmake flag-o-matic llvm llvm.org python-any-r1
 
 KEYWORDS="
 amd64 ~arm arm64 ~loong ~ppc ~ppc64 ~riscv x86 ~arm64-macos
@@ -115,9 +108,6 @@ DEPEND="
 "
 BDEPEND="
 	~sys-devel/llvm-${PV}:${LLVM_MAJOR}
-	ebolt? (
-		>=sys-devel/llvm-14[bolt]
-	)
 	test? (
 		>=dev-build/cmake-3.16
 		$(python_gen_any_dep ">=dev-python/lit-${PV}[\${PYTHON_USEDEP}]")
@@ -156,7 +146,6 @@ python_check_deps() {
 pkg_setup() {
 	LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
 	use test && python-any-r1_pkg_setup
-	uopts_setup
 
 # See https://bugs.gentoo.org/767700
 einfo
@@ -214,10 +203,11 @@ ewarn "The hardened USE flag and Full RELRO default ON patch is in testing."
 src_prepare() {
 	llvm.org_src_prepare
 	eapply_hardened
-	uopts_src_prepare
 }
 
-src_configure() { :; }
+src_configure() {
+	:
+}
 
 _src_configure_compiler() {
 	export CC=$(tc-getCC)
@@ -226,8 +216,6 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
-	uopts_src_configure
-
 	# ODR violations (https://github.com/llvm/llvm-project/issues/83529, bug #922353)
 	filter-lto
 
@@ -269,7 +257,9 @@ _src_compile() {
 }
 
 src_compile() {
-	uopts_src_compile
+	_src_configure_compiler
+	_src_configure
+	_src_compile
 }
 
 src_test() {
@@ -279,11 +269,6 @@ src_test() {
 
 src_install() {
 	cmake_src_install
-	uopts_src_install
-}
-
-pkg_postinst() {
-	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

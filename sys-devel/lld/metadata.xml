@@ -24,13 +24,6 @@
     needs to check the build logs to see if the program unecessarily overrides
     the default.
 
-
-    PGO/BOLT optimization:
-
-    See the sys-devel/clang/metadata.xml in the oiledmachine-overlay for
-    details about PGO/BOLT training.  The sys-devel/clang ebuild now has the
-    trainer script.
-
   -->
   <use>
     <flag name="default-full-relro">
@@ -55,12 +48,6 @@
     <flag name="hardened-compat">
       Add the version patch but allow for flexible configuration.  This is
       for ebuild compatibility in clang hardened contexts.
-    </flag>
-    <flag name="ebolt">
-      Builds with the event based BOLT strategy.
-    </flag>
-    <flag name="epgo">
-      Builds with the event based Profile Guided Optimization strategy.
     </flag>
     <flag name="ebuild-revision-N">
       Revision bump (FOR INTERNAL USE ONLY)
