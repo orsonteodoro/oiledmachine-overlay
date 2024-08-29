@@ -61,19 +61,19 @@
     Default values:  Mold - 16384, BFD/LLD - 1024
 
 
-    MITIGATION_USE_CASE - Sets the safety period for ebuild reinstalls.  If the
-    duration exceeds, the ebuild will not install until a newer point release is
-    provided by upstream.
+    MITIGATION_USE_CASE - Sets the safety period for ebuild (re-)installs.  If
+    the duration exceeds, the ebuild will not (re-)install until a newer point
+    release is provided by upstream.
     Valid values:
       shopping - 1 week
       donations - 1 week
       socials - 2 weeks
       default - 60 days
     Examples:
-      MITIGATION_USE_CASE="shopping"          # The ebuild is re-installable for 1 week from release date.
-      MITIGATION_USE_CASE="donations socials"  # The ebuild is re-installable for 1 week from release date.
-      MITIGATION_USE_CASE="socials"           # The ebuild is re-installable for 2 weeks from release date.
-      MITIGATION_USE_CASE="default"           # The ebuild is re-installable for 60 days from release date but may likely contain vulnerabilities.
+      MITIGATION_USE_CASE="shopping"           # The ebuild is (re-)installable for 1 week from release date.
+      MITIGATION_USE_CASE="donations socials"  # The ebuild is (re-)installable for 1 week from release date.
+      MITIGATION_USE_CASE="socials"            # The ebuild is (re-)installable for 2 weeks from release date.
+      MITIGATION_USE_CASE="default"            # The ebuild is (re-)installable for 60 days from release date but may likely contain vulnerabilities.
 
 
     EPGO (Event Based PGO)
