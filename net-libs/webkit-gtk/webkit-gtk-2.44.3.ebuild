@@ -2644,6 +2644,7 @@ src_compile() {
 		export CXX=$(tc-getCXX ${CTARGET:-${CHOST}})
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
+		_src_configure_compiler
 		_src_configure
 		_src_compile
 	}
