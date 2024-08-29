@@ -348,10 +348,10 @@ src_unpack() {
 
 src_prepare() {
 	# disable use of SDK on OSX, bug #568758
-	sed -i -e 's/xcrun/false/' utils/lit/lit/util.py || die
+	sed -i -e 's/xcrun/false/' "utils/lit/lit/util.py" || die
 
 	# Update config.guess to support more systems
-	cp "${BROOT}/usr/share/gnuconfig/config.guess" cmake/ || die
+	cp "${BROOT}/usr/share/gnuconfig/config.guess" "cmake/" || die
 
 	# Verify that the live ebuild is up-to-date
 	check_live_ebuild
@@ -375,7 +375,7 @@ src_prepare() {
 
 	# Remove the regressing test.
 	# https://github.com/llvm/llvm-project/issues/55761
-	rm test/Other/ChangePrinters/DotCfg/print-changed-dot-cfg.ll || die
+	rm "test/Other/ChangePrinters/DotCfg/print-changed-dot-cfg.ll" || die
 }
 
 get_distribution_components() {

@@ -368,10 +368,10 @@ src_unpack() {
 
 src_prepare() {
 	# disable use of SDK on OSX, bug #568758
-	sed -i -e 's/xcrun/false/' utils/lit/lit/util.py || die
+	sed -i -e 's/xcrun/false/' "utils/lit/lit/util.py" || die
 
 	# Update config.guess to support more systems
-	cp "${BROOT}/usr/share/gnuconfig/config.guess" cmake/ || die
+	cp "${BROOT}/usr/share/gnuconfig/config.guess" "cmake/" || die
 
 	# Verify that the live ebuild is up-to-date
 	check_live_ebuild
