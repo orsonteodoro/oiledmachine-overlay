@@ -3907,6 +3907,7 @@ einfo "Creating symlink to libffmpeg.so from ${symlink_loc}..."
 
 src_compile() {
 	compile_abi() {
+		_src_configure_compiler
 		_src_configure
 		_src_compile
 	}
