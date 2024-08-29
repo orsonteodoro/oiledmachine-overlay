@@ -23,10 +23,6 @@ IMPLS=(
 	"build_creator"
 	"build_headless"
 )
-UOPTS_SUPPORT_EPGO=1
-UOPTS_SUPPORT_EBOLT=1
-UOPTS_SUPPORT_TPGO=0
-UOPTS_SUPPORT_TBOLT=0
 
 _blender_set_globals() {
 	BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:-latest}
@@ -35,8 +31,8 @@ einfo "BLENDER_MAIN_SYMLINK_MODE:\t${BLENDER_MAIN_SYMLINK_MODE}"
 _blender_set_globals
 unset -f _blender_set_globals
 
-inherit cuda check-reqs cmake flag-o-matic hip-versions llvm pax-utils
-inherit python-single-r1 rocm toolchain-funcs xdg uopts
+inherit cuda check-reqs cmake dhms flag-o-matic hip-versions llvm pax-utils
+inherit python-single-r1 rocm toolchain-funcs xdg
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
@@ -324,6 +320,7 @@ eerror
 }
 
 blender_pkg_setup() {
+	dhms_start
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		if use "llvm_slot_${s}" ; then
@@ -338,7 +335,6 @@ blender_pkg_setup() {
 	check_optimal_compiler_for_cycles_x86
 	check_embree
 	check_compiler
-	uopts_setup
 	if declare -f _blender_pkg_setup >/dev/null 2>&1 ; then
 		_blender_pkg_setup
 	fi
@@ -717,11 +713,6 @@ einfo
 		cuda_add_sandbox -w
 		cuda_src_prepare
 	fi
-
-	local impl
-	for impl in $(_get_impls) ; do
-		uopts_src_prepare
-	done
 }
 
 blender_configure_eigen() {
@@ -1160,11 +1151,6 @@ blender_src_compile() {
 	local impl
 	for impl in $(_get_impls) ; do
 		_ORIG_PATH="${PATH}"
-		export PGO_PHASE=$(epgo_get_phase)
-einfo
-einfo "PGO_PHASE:  ${PGO_PHASE}"
-einfo
-		uopts_src_configure
 		_src_configure
 		_src_compile
 		if [[ "${impl}" == "build_creator" ]] ; then
@@ -1382,8 +1368,6 @@ fecho1
 	fi
 	install_licenses
 	use doc && install_readmes
-
-	uopts_src_install
 }
 
 blender_src_install() {
@@ -1487,8 +1471,6 @@ ewarn
 		fi
 	fi
 
-	uopts_pkg_postinst
-
 	if use openimagedenoise ; then
 ewarn
 ewarn "The CPU must support SSE4 or preview render doesn't work."
@@ -1505,6 +1487,7 @@ ewarn "You must disable Render > Cycles > Denoise in order to render if the CPU"
 ewarn "does not have SSE4.1 in order to render with cycles."
 ewarn
 	fi
+	dhms_end
 }
 
 blender_pkg_postrm() {
