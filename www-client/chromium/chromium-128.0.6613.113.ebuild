@@ -2360,8 +2360,6 @@ einfo "Unbundling third party internal libraries and packages"
 	fi
 
 	(( ${NABIS} > 1 )) && multilib_copy_sources
-
-	multilib_foreach_abi prepare_abi
 }
 
 has_sanitizer_option() {
