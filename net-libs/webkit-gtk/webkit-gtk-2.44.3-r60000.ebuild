@@ -117,17 +117,12 @@ SO_CURRENT="9"
 #SO_REVISION=""
 SO_AGE="5"
 SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
-UOPTS_IMPLS="_${API_VERSION}"
-UOPTS_SUPPORT_EBOLT=1
-UOPTS_SUPPORT_EPGO=1
-UOPTS_SUPPORT_TBOLT=0
-UOPTS_SUPPORT_TPGO=0
 USE_RUBY=" ruby31 ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
 
 inherit cflags-depends check-linker check-reqs cmake desktop dhms flag-o-matic git-r3
 inherit gnome2 lcnr linux-info llvm multilib-minimal pax-utils python-any-r1
-inherit ruby-single toolchain-funcs uopts
+inherit ruby-single toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
 #
@@ -2094,7 +2089,6 @@ einfo
 
 	check_page_size
 	verify_codecs
-	uopts_setup
 	check_security_expire
 }
 
@@ -2149,9 +2143,6 @@ ewarn
 	cmake_src_prepare
 	gnome2_src_prepare
 
-	prepare_abi() {
-		uopts_src_prepare
-	}
 	multilib_foreach_abi prepare_abi
 }
 
@@ -2631,25 +2622,13 @@ eerror
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
 
-	uopts_src_configure
-	if use epgo && tc-is-clang ; then
-		append-flags -mllvm -vp-counters-per-site=3
-	fi
-
 	# Anything less than -O2 may break rendering.
 	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
 	# Clang -Os:  slower than expected rendering.
 	# Forced >= -O3 to be about same relative performance to other browser engines.
 	# -O2 feels like C- grade relative other browser engines.
 
-	replace-flags "-O0" "-O3"
-	replace-flags "-O1" "-O3"
-	replace-flags "-Oz" "-O3"
-	replace-flags "-Os" "-O3"
-	replace-flags "-O2" "-O3"
-	replace-flags "-O3" "-O3"
-	replace-flags "-O4" "-O3"
-	replace-flags "-Ofast" "-O3"
+	replace-flags "-O*" "-O3"
 	filter-flags '-ffast-math'
 
 	if is-flagq "-Ofast" ; then
@@ -2673,7 +2652,8 @@ src_compile() {
 		export CXX=$(tc-getCXX ${CTARGET:-${CHOST}})
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
-		uopts_src_compile
+		_src_configure
+		_src_compile
 	}
 	multilib_foreach_abi compile_abi
 }
@@ -2715,7 +2695,6 @@ multilib_src_install() {
 	for l in ${L10N} ; do
 		doins -r "${T}/langs/${l}"
 	done
-	uopts_src_install
 }
 
 multilib_src_install_all() {
@@ -2759,13 +2738,6 @@ einfo "\`ln -sf /usr/lib/misc/webkitgtk-${API_VERSION}/MiniBrowser /usr/bin/mini
 einfo
 	fi
 	check_geolocation
-
-	uopts_pkg_postinst
-
-einfo
-einfo "See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"
-einfo "for proper building with PGO+BOLT"
-einfo
 
 	if ! use alsa && use pulseaudio \
 		&& has_version "media-sound/pulseaudio-daemon[-alsa]" ; then

@@ -79,151 +79,7 @@
       MITIGATION_USE_CASE="default"            # The ebuild is (re-)installable for 60 days from release date but may likely contain vulnerabilities.
 
 
-    EPGO (Event Based PGO)
-
-    PGO is event based.  You can use gcc or clang.  I call it 1 step PGO (but
-    dragged out over time).  EPGO is a more sane approach than what is promoted
-    and used by the distro when it comes to packages with very high estimated
-    lines of code of 20 EMLOC to +100 EMLOC that imply hours of build time
-    cost.
-
-    Motivations to integrate the EPGO technique again are long build times,
-    difficult to use auto trainers, vulnerabilities that force rebuilds, 
-    questionable headless training culling/cheating possibility (for maybe to
-    save battery life), etc.
-
-    The vulnerability one is the biggest one.  We do not want to overinvest time
-    on 3 step PGO to end up tossing it out on the same day.
-
-    Status: WIP (Work in Progress)
-
-
-    Basic info
-
-      PGI is an instrumented build designed to collect information.
-
-      PGT is the training step.
-
-      PGO is the optimized build.  On average 10% performance gains observed
-      in many PGOed apps, but may have 40% in some use cases like QPS (queries
-      per second) or throughput on rare cases.
-
-      1-2-3 simple right.
-
-      PGI transitions to PGT transitions to PGO.
-
-
-    PGO training
-
-      The preference is for real world training.  You can use a trainer but it
-      should reflect typical use by you.
-
-      Web benchmarks can be found on the web.  These can be used to train.  It
-      is preferred not to use them because it can mess up the use efficiency
-      of the CPU cache by enlarging code that shouldn't be.  This is why we
-      prefer event based real world PGO profiling.
-
-
-    Events or rules
-
-
-      If the compilers when entering PGO are not the same as PGI, PGI is
-      required.  The reason why is because the compiler may not recognize the
-      same profile version.
-
-      If the major and minor is the same between PGI and entering PGO, you may
-      be allowed use PGO.
-
-      The minimal required for training is opening a webkit-gtk based
-      application.
-
-      Upon re-emerging, sometimes it will say you can do PGO or sometimes it may
-      say you need to do PGI.  This means that the ebuilds are on autopilot
-      and will think it out for you when PGOing.  No rules have to be
-      remembered by you.
-
-      Immediately after every new PGI build, the existing PGI profile is
-      wiped.  This is to prevent mixing same versions in the same data profile
-      directory.
-
-      A version with a different API versions will have different PGO profiles.
-      Reason why is because of the possiblility of different codepaths enabled
-      and possibility of different USE flags.
-
-      A PGOed build cannot continue to collect and generate more PGO training
-      data.  To restart all over you must wipe the training data, see the
-      ebuild for the paths to the PGO training data.
-
-      It is recommended to emerge as normally.  This gives time to enjoy the
-      product based on WebKitGTK and at the same time passively train.  The
-      state transition period is set by you.  You can push the states
-      forward within the same day or 2, or you can wait upon each new release.
-      The idea with delayed (per new release) is to do 1 step PGO every time
-      instead of 3 step PGO every time you emerge.
-
-
-    Hypothetical training schedule
-
- Version      2.36.1    2.36.2    2.36.3    2.36.4   2.37.0   2.37.1
-
-  EPGO           i  t o*  o          o         o        i   t   o
-
- versus
-
-Traditional      i        i          i         i        i       i
-3 step PGO       t        t          t         t        t       t
-                 o        o          o         o        o       o
-
-    Key:
-
-      i=instrumented
-      t=training
-      o=optimized
-      *=optional step
-
-
-Draft training with epgo
-
-# Run trainer in non-root
-#!/bin/bash
-trainer() {
-	# We recommend the ones you visit only.  Examples only:
-	timeout 120 minibrowser url_to_search_engine
-	timeout 30 minibrowser url_to_social_media
-	timeout 30 minibrowser url_to_video_site
-	timeout 30 minibrowser url_to_streaming_with_running_video
-	timeout 30 minibrowser url_to_live_stream_video
-	timeout 30 minibrowser url_to_radio_station
-	timeout 30 minibrowser url_to_games
-	...
-	timeout 30 minibrowser urlN
-
-	# Do multi tabs also
-}
-trainer
-## DONE
-
-# How to build as if like 3 step:
-#!/bin/bash
-emerge -vuDN "webkit-gtk[epgo,-ebolt]" # PGI
-# Run trainer in limited user
-emerge -1vO "webkit-gtk[epgo,ebolt]" # PGO, bolt_pgi
-# Run trainer in limited user
-## DH means double hyphen... bug in html comments
-emerge DHconfig "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
-## DONE
-
-
-    Additional sources
-
-    For PGO trainers, see contents of
-
-      https://github.com/WebKit/WebKit/tree/main/PerformanceTests
-
-    for description for what they do.
-
-
-    For details on w32 PGO see:
+    For PGO details, see
 
       https://github.com/WebKit/WebKit/commit/790a01a3ec741d8752990a809d1ab489d9637e3d
 
@@ -259,9 +115,6 @@ emerge DHconfig "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
     </flag>
     <flag name="egl">
       Enable EGL support.
-    </flag>
-    <flag name="epgo">
-      Performs 1 step Profile Guided Optimization (PGO) per patch release.
     </flag>
     <flag name="examples">
       Install the MiniBrowser example application.
@@ -442,8 +295,8 @@ emerge DHconfig "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       Disable the webassembly USE flag to decrease the attack surface.
     </flag>
     <flag name="webdriver">
-      Enable WebDriver support for Selenium.  This allows for automated testing,
-      customized PGO training, controlling the web browser through scripting.
+      Enable WebDriver support for Selenium.  This allows for automated testing
+      or controlling the web browser through scripting.
     </flag>
     <flag name="webassembly-b3-jit">
       Enables and chooses the B3 JIT as the FTL JIT backend for faster
