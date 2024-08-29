@@ -579,25 +579,6 @@ _src_configure_compiler() {
 _src_configure() {
 	llvm-ebuilds_fix_toolchain
 
-	# TODO:  Add GCC-10 and below checks to add exceptions to -O* flag downgrading.
-	# Leave a note if you know the commit that fixes the internal compiler error below.
-	if tc-is-gcc && ( \
-		( ver_test $(_gcc_fullversion) -lt 11.2.1_p20220112 ) \
-	)
-	then
-		# Build time bug with gcc 10.3.0, 11.2.0:
-		# internal compiler error: maximum number of LRA assignment passes is achieved (30)
-
-		# Apply if using GCC
-ewarn
-ewarn "Detected <=sys-devel/gcc-11.2.1_p20220112.  Downgrading to -Os to avoid"
-ewarn "bug.  Re-emerge >=sys-devel/gcc-11.2.1_p20220112 for a more optimized"
-ewarn "build with >= -O2."
-ewarn
-		replace-flags '-O3' '-Os'
-		replace-flags '-O2' '-Os'
-	fi
-
 	# LLVM can have very high memory consumption while linking,
 	# exhausting the limit on 32-bit linker executable
 	use x86 && local -x LDFLAGS="${LDFLAGS} -Wl,--no-keep-memory"
@@ -605,18 +586,12 @@ ewarn
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
-	# Fix longer than usual build times when building webkit-gtk.
-	# Bump to next fastest build setting.
-	replace-flags -O0 -O1
-
 	# Fix longer than usual build times when building rocm ebuilds in sci-libs.
 	# -O3 may cause random segfaults during build like in rocSPARSE.
-	replace-flags -O1 -O2
-	replace-flags -Oz -O2
-	replace-flags -Os -O2
-	replace-flags -O3 -O2
-	replace-flags -Ofast -O2
-	replace-flags -O4 -O2
+	replace-flags '-O*' '-O2'
+
+	# Not used.  Disabled to reduce systemwide vulnerability backlog on older hardware.
+	filter-flags '-flto*'
 
 	# For PGO
 	if tc-is-gcc ; then
