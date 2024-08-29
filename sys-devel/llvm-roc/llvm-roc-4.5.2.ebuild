@@ -168,7 +168,6 @@ src_prepare() {
 }
 
 _src_configure_compiler() {
-	PGO_TOOLCHAIN="gcc"
 	rocm_set_default_gcc
 }
 
@@ -185,7 +184,6 @@ _src_configure() {
 		-DCMAKE_CXX_COMPILER="${CXX}"
 	)
 	filter-flags "-fuse-ld=*"
-	#strip-unsupported-flags # Broken, strips -fprofile-use
 
 # Avoid:
 #collect2: fatal error: cannot find 'ld'
@@ -205,6 +203,8 @@ _src_configure() {
 # The PGO profiles are isolated.  The Code is the same.
 		append-flags -Wno-error=coverage-mismatch
 	fi
+
+	strip-unsupported-flags
 
 	mycmakeargs+=(
 		-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"

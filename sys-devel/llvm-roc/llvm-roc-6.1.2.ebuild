@@ -174,7 +174,6 @@ src_prepare() {
 }
 
 _src_configure_compiler() {
-	PGO_TOOLCHAIN="gcc"
 	rocm_set_default_gcc
 }
 
@@ -203,8 +202,6 @@ _src_configure() {
 #compilation terminated.
 	append-ldflags -fuse-ld=bfd
 
-#	strip-unsupported-flags # Broken, strips -fprofile-use
-
 	# Speed up composable_kernel, rocBLAS build times
 	# -O3 may cause random ICE/segfault.
 	replace-flags '-O*' '-O2'
@@ -219,6 +216,8 @@ _src_configure() {
 # The PGO profiles are isolated.  The Code is the same.
 		append-flags -Wno-error=coverage-mismatch
 	fi
+
+	strip-unsupported-flags
 
 	mycmakeargs+=(
 		-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"
