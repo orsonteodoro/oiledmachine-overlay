@@ -3064,7 +3064,11 @@ ewarn
 	local nprocs=$(echo "${MAKEOPTS}" \
 		| grep -E -e "-j[ ]*[0-9]+" \
 		| grep -E -o -e "[0-9]+")
-	[[ -z "${nprocs}" ]] && nprocs=1
+	if [[ -z "${nprocs}" ]] && which lscpu >/dev/null ; then
+		nprocs=$(lscpu | grep "CPU(s)" | head -n 1 | grep -o -E "[0-9]+")
+	else
+		nprocs=1
+	fi
 
 	_O2_to_O3() {
 		replace-flags "-O0" "-O2"
