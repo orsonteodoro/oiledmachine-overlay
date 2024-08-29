@@ -597,7 +597,7 @@ DISTRO_REQUIRE_USE="
 # The official slot discussed here is llvm 19.  Hypothetical rust-cr, needs to be
 # built and link against llvm 19.
 #
-# Consideration will be made for building a custom rust ebuild to avoid performance penalty.
+# We will not consider rust-cr file situation for now because the env file situation.
 #
 REQUIRED_USE+="
 	${DISABLED_NON_FREE_USE_FLAGS}
