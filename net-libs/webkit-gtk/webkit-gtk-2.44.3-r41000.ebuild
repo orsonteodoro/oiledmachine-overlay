@@ -1956,16 +1956,29 @@ ewarn
 }
 
 check_security_expire() {
-	local _60_days=$((60*60*24*60))
-	local _30_days=$((60*60*24*30))
+	local safe_period
 	local now=$(date +%s)
 	local dhms_passed=$(dhms_get ${MITIGATION_LAST_UPDATE} ${now})
 	local channel="stable"
-	if (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_60_days} )) ; then
+
+	local desc=""
+	local mitigation_use_case="${MITIGATION_USE_CASE:-default}"
+	if [[ "${mitigation_use_case}" =~ "shopping" ]] ; then
+		safe_period=$((60*60*24*7))
+		desc="1 week"
+	elif [[ "${mitigation_use_case}" =~ "socials" ]] ; then
+		safe_period=$((60*60*24*14))
+		desc="2 weeks"
+	else
+		safe_period=$((60*60*24*60))
+		desc="60 days"
+	fi
+
+	if (( ${now} > ${MITIGATION_LAST_UPDATE} + ${safe_period} )) ; then
 eerror
-eerror "This ebuild release period is past 60 days since release."
+eerror "This ebuild release period is past ${desc} since release."
 eerror "It is considered insecure.  As a precaution, this particular point"
-eerror "release will not install."
+eerror "release will not (re-)install."
 eerror
 eerror "Time passed since the last security update:  ${dhms_passed}"
 eerror
@@ -1974,19 +1987,9 @@ eerror
 eerror "1.  Use a newer ${channel} release from the overlay."
 eerror "2.  Use the latest ${channel} distro release."
 eerror
+eerror "See metadata.xml for details to adjust MITIGATION_USE_CASE."
+eerror
 		die
-	elif (( ${now} > ${MITIGATION_LAST_UPDATE} + ${_30_days} )) ; then
-ewarn
-ewarn "This ebuild is more than 30 days old and may have a vulnerability."
-ewarn "Please consider a newer release."
-ewarn
-ewarn "Suggestions:"
-ewarn
-ewarn "1.  Use a newer ${channel} release from the overlay."
-ewarn "2.  Use the latest ${channel} distro release."
-ewarn
-ewarn "Time passed since the last security update:  ${dhms_passed}"
-ewarn
 	else
 einfo "Time passed since the last security update:  ${dhms_passed}"
 	fi
