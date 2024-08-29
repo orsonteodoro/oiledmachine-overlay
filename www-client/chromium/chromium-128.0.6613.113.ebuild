@@ -3065,7 +3065,10 @@ ewarn
 		| grep -E -e "-j[ ]*[0-9]+" \
 		| grep -E -o -e "[0-9]+")
 	if [[ -z "${nprocs}" ]] && which lscpu >/dev/null ; then
-		nprocs=$(lscpu | grep "CPU(s)" | head -n 1 | grep -o -E "[0-9]+")
+		nprocs=$(lscpu \
+			| grep "CPU(s)" \
+			| head -n 1 \
+			| grep -o -E "[0-9]+")
 	elif [[ -z "${nprocs}" ]] ; then
 		nprocs=1
 	fi
