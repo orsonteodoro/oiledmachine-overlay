@@ -47,7 +47,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 +binutils-plugin bolt bolt-heatmap +debug debuginfod doc -dump exegesis jemalloc
 libedit +libffi tcmalloc test xml z3 zstd
-ebuild-revison-6
+ebuild-revision-6
 ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 REQUIRED_USE+="
@@ -546,7 +546,9 @@ get_distribution_components() {
 	printf "%s${sep}" "${out[@]}"
 }
 
-src_configure() { :; }
+src_configure() {
+	:
+}
 
 _src_configure_compiler() {
 	export CC=$(tc-getCC)

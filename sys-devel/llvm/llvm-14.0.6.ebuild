@@ -32,7 +32,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 +binutils-plugin bolt debug doc -dump exegesis jemalloc libedit +libffi ncurses
 tcmalloc test xar xml z3
-ebuild-revison-5
+ebuild-revision-5
 "
 REQUIRED_USE+="
 	!amd64? (
@@ -533,7 +533,9 @@ get_distribution_components() {
 	printf "%s${sep}" "${out[@]}"
 }
 
-src_configure() { :; }
+src_configure() {
+	:
+}
 
 _src_configure_compiler() {
 	export CC=$(tc-getCC)
