@@ -348,10 +348,9 @@ check_security_expire() {
 	local safe_period
 	local now=$(date +%s)
 	local dhms_passed=$(dhms_get ${MITIGATION_LAST_UPDATE} ${now})
-	local channel="ESR"
 
 	local desc=""
-	local mitigation_use_case="${MITIGATION_USE_CASE:-default}"
+	local mitigation_use_case="${MITIGATION_USE_CASE:-user-generated-content}"
 	if [[ "${mitigation_use_case}" =~ ("email") ]] ; then
 		safe_period=$((60*60*24*7))
 		desc="1 week"
@@ -374,8 +373,8 @@ eerror "Mitigated use case(s):  ${mitigation_use_case}"
 eerror
 eerror "Solutions:"
 eerror
-eerror "1.  Use a newer ${channel} release from the overlay."
-eerror "2.  Use the latest ${channel} distro release."
+eerror "1.  Use a newer release from the overlay."
+eerror "2.  Use the latest distro release."
 eerror
 eerror "See metadata.xml for details to adjust MITIGATION_USE_CASE."
 eerror
