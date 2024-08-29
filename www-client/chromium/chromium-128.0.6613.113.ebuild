@@ -591,7 +591,7 @@ DISTRO_REQUIRE_USE="
 # Upstream uses a customized build where they do not align.  For 128.x.x.x
 # release it should be
 #
-#   dev-lang/rust-cr:0/${PV%%.*} && sys-devel/clang:${LLVM_OFFICIAL_SLOT} && sys-devel/llvm:${LLVM_OFFICIAL_SLOT}.
+#   dev-lang/rust-cr:${RUST_CR_PV%%.*}-${PV%%.*} && sys-devel/clang:${LLVM_OFFICIAL_SLOT} && sys-devel/llvm:${LLVM_OFFICIAL_SLOT}.
 #
 # The rust-cr build is actually an older snapshot of 1.79.x that submodules llvm 18.
 # The official slot discussed here is llvm 19.  Hypothetical rust-cr, needs to be
