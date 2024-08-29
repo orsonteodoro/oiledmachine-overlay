@@ -81,6 +81,11 @@ einfo "Completion time:  ${dhms_passed}"
 	elif [[ "${dhms_output}" == "elog" ]] ; then
 elog "Completion time:  ${dhms_passed}"
 	fi
+	local _day=$((60*60*24))
+	if (( ${_DHMS_TIME_END} > ${_DHMS_TIME_START} + ${_day} )) ; then
+ewarn "The build time for ${PN} is over 24 hrs."
+ewarn "It is assumed that critical vulnerabilities are fixed within a day."
+	fi
 }
 
 fi
