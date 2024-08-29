@@ -2136,8 +2136,6 @@ ewarn
 	eapply "${_PATCHES[@]}"
 	cmake_src_prepare
 	gnome2_src_prepare
-
-	multilib_foreach_abi prepare_abi
 }
 
 append_all() {
@@ -2149,7 +2147,9 @@ _src_configure_compiler() {
 	_set_cxx
 }
 
-src_configure() { :; }
+src_configure() {
+	 :
+}
 
 _src_configure() {
 	export CMAKE_USE_DIR="${S}"
