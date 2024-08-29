@@ -106,12 +106,9 @@ te th tr uk ur vi zh-CN zh-TW
 # https://github.com/llvm/llvm-project/blob/ecea8371/llvm/CMakeLists.txt#L14
 
 # LLVM 19
-CR_CLANG_USED="ecea8371" # Obtained from \
+# LLVM timestamp can be obtained from \
 # https://github.com/chromium/chromium/blob/128.0.6613.113/tools/clang/scripts/update.py#L42 \
 # https://github.com/llvm/llvm-project/commit/ecea8371
-CR_CLANG_USED_UNIX_TIMESTAMP="1718485362" # Cached.  Use below to obtain this. \
-# TIMESTAMP=$(wget -q -O - https://github.com/llvm/llvm-project/commit/${CR_CLANG_USED}.patch \
-#	| grep -F -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
 # Change also LLVM_OFFICIAL_SLOT
 CURRENT_PROFDATA_VERSION= # Global variable
 CURRENT_PROFDATA_LLVM_VERSION= # Global variable
@@ -657,6 +654,7 @@ REQUIRED_USE+="
 		encode
 		kerberos
 		libaom
+		llvm_slot_19
 		openh264
 		opus
 		pgo
@@ -2506,18 +2504,27 @@ einfo "PATH=${PATH} (after)"
 		if ! which llvm-ar 2>/dev/null 1>/dev/null ; then
 			die "llvm-ar is unreachable"
 		fi
-		local pv=$(best_version "sys-devel/llvm:${LLVM_SLOT}" \
-			| sed -e "s|sys-devel/llvm-||g")
-		if [[ "${pv}" =~ "9999" || "${pv}" =~ "pre" ]] ; then
-			local ts=$(date -d "@${CR_CLANG_USED_UNIX_TIMESTAMP}")
-ewarn
-ewarn "Only the commit below or newer for the latest live ebuilds having the"
-ewarn "same slot are supported for Clang."
-ewarn
-ewarn "LLVM slot:         ${LLVM_OFFICIAL_SLOT}"
-ewarn "Commit:            ${CR_CLANG_USED}"
-ewarn "Commit timestamp:  >= ${ts}"
-ewarn
+		if has_version "=sys-devel/llvm-${LLVM_SLOT}.0.9999" ; then
+			if \
+				   has_version "=sys-devel/llvm-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				|| has_version "=sys-devel/clang-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				|| has_version "=sys-devel/lld-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				|| has_version "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				|| has_version "=sys-libs/compiler-rt-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				|| has_version "=sys-devel/clang-runtime-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+			; then
+eerror
+eerror "The fallback-commit USE flag is required."
+eerror
+eerror "emerge =sys-devel/llvm-${LLVM_SLOT}.0.0.9999[fallback-commit] \\"
+eerror "       =sys-devel/clang-${LLVM_SLOT}.0.0.9999 \\"
+eerror "       =sys-devel/lld-${LLVM_SLOT}.0.0.9999 \\"
+eerror "       =sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}.0.0.9999 \\"
+eerror "       =sys-libs/compiler-rt-${LLVM_SLOT}.0.0.9999 \\"
+eerror "       =sys-devel/clang-runtime-${LLVM_SLOT}.0.0.9999"
+eerror
+				die
+			fi
 		fi
 
 		# Get the stdatomic.h from clang not from gcc.
@@ -4007,8 +4014,6 @@ ewarn
 #   Set GEN_ABOUT_CREDITS=1
 #   Copy license to license folder
 # Update the llvm commit details
-#  Update CR_CLANG_USED
-#  Update CR_CLANG_USED_UNIX_TIMESTAMP
 #  Update LLVM_COMPAT
 # Sync update keeplibs, gn_system_libraries
 # Sync update CHROMIUM_LANGS in every major version
