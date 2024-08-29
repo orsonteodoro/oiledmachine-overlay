@@ -751,11 +751,6 @@ src_test() {
 }
 
 src_install() {
-	if use ebolt ; then
-		# For BOLT requirements, see
-# https://github.com/llvm/llvm-project/tree/main/bolt#input-binary-requirements
-		export STRIP="${BROOT}/bin/true"
-	fi
 	local MULTILIB_CHOST_TOOLS=(
 		/usr/lib/llvm/${LLVM_MAJOR}/bin/llvm-config
 	)
