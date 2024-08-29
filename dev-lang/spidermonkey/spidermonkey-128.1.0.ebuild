@@ -355,6 +355,9 @@ check_security_expire() {
 	if [[ "${mitigation_use_case}" =~ "socials" ]] ; then
 		safe_period=$((60*60*24*14))
 		desc="2 weeks"
+	elif [[ "${mitigation_use_case}" =~ "user-generated-content" ]] ; then
+		safe_period=$((60*60*24*14))
+		desc="2 weeks"
 	else
 		safe_period=$((60*60*24*30))
 		desc="30 days"
@@ -367,6 +370,7 @@ eerror "It is considered insecure.  As a precaution, this particular point"
 eerror "release will not (re-)install."
 eerror
 eerror "Time passed since the last security update:  ${dhms_passed}"
+eerror "Mitigated use case(s):  ${mitigation_use_case}"
 eerror
 eerror "Solutions:"
 eerror

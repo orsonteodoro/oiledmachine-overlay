@@ -1972,6 +1972,7 @@ check_security_expire() {
 		safe_period=$((60*60*24*14))
 		desc="2 weeks"
 	else
+	# Upstream may release several months in between releases
 		safe_period=$((60*60*24*60))
 		desc="60 days"
 	fi

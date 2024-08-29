@@ -70,7 +70,7 @@
       money     - 1 week
       shopping  - 1 week
       socials   - 2 weeks
-      default   - 60 days
+      default   - 60 days (ebuild default)
     Examples:
       MITIGATION_USE_CASE="money"              # The ebuild is (re-)installable for 1 week from release date.
       MITIGATION_USE_CASE="donations socials"  # The ebuild is (re-)installable for 1 week from release date.

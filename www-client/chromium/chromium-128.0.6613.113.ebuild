@@ -1625,7 +1625,7 @@ check_security_expire() {
 	local channel="${SLOT#*/}"
 
 	local desc=""
-	local mitigation_use_case="${MITIGATION_USE_CASE:-default}"
+	local mitigation_use_case="${MITIGATION_USE_CASE:-socials}"
 	if [[ "${mitigation_use_case}" =~ ("donations"|"legal"|"money"|"shopping") ]] ; then
 		safe_period=$((60*60*24*7))
 		desc="1 week"
@@ -1644,6 +1644,7 @@ eerror "It is considered insecure.  As a precaution, this particular point"
 eerror "release will not (re-)install."
 eerror
 eerror "Time passed since the last security update:  ${dhms_passed}"
+eerror "Assumed use case(s):  ${mitigation_use_case}"
 eerror
 eerror "Solutions:"
 eerror

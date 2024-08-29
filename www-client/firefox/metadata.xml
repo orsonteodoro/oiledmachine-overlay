@@ -50,7 +50,7 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
     legal     - 1 week
     money     - 1 week
     shopping  - 1 week
-    socials   - 2 weeks
+    socials   - 2 weeks (ebuild default)
     default   - 30 days
   Examples:
     MITIGATION_USE_CASE="shopping"           # The ebuild is (re-)installable for 1 week from release date.
