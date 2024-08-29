@@ -3505,6 +3505,11 @@ einfo
 		fi
 	fi
 
+	if use official && [[ "${FEATURES}" =~ "icecream" ]] ; then
+eerror "The official USE flag is incompatible with FEATURES=icecream."
+		die
+	fi
+
 	# I noticed that the vendored clang doesn't use distcc.  Let us explicitly use ccache if requested.
 	# See https://github.com/chromium/chromium/blob/128.0.6613.113/build/toolchain/cc_wrapper.gni#L36
 	if [[ "${FEATURES}" =~ "icecream" && "${FEATURES}" =~ "ccache" ]] && has_version "sys-devel/icecream" && has_version "dev-util/ccache" ; then
@@ -3512,10 +3517,6 @@ einfo
 		myconf_gn+=" use_debug_fission=false"
 		export CCACHE_PREFIX="icecc"
 		export CCACHE_BASEDIR="${TMPDIR}"
-		if use official ; then
-eerror "FEATURES=icecream can only be used with GCC"
-			die
-		fi
 	elif [[ "${FEATURES}" =~ "distcc" && "${FEATURES}" =~ "ccache" ]] && has_version "sys-devel/distcc" && has_version "dev-util/ccache" ; then
 		myconf_gn+=" cc_wrapper=\"ccache\""
 		export CCACHE_PREFIX="distcc"
@@ -3523,10 +3524,6 @@ eerror "FEATURES=icecream can only be used with GCC"
 	elif [[ "${FEATURES}" =~ "icecream" ]] && has_version "sys-devel/icecream" ; then
 		myconf_gn+=" cc_wrapper=\"icecc\""
 		myconf_gn+=" use_debug_fission=false"
-		if use official ; then
-eerror "FEATURES=icecream can only be used with GCC"
-			die
-		fi
 	elif [[ "${FEATURES}" =~ "distcc" ]] && has_version "sys-devel/distcc" ; then
 		myconf_gn+=" cc_wrapper=\"distcc\""
 	elif [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
