@@ -272,10 +272,6 @@ _src_compile() {
 		LLVMTableGen
 }
 
-train_meets_requirements() {
-	return 0
-}
-
 src_compile() {
 	_src_configure_compiler
 	_src_configure
