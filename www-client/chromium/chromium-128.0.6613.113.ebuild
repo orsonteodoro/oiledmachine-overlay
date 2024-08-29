@@ -3505,8 +3505,12 @@ einfo
 		fi
 	fi
 
-	if use official && [[ "${FEATURES}" =~ "icecream" ]] ; then
+	if ( use bundled-libcxx || use cfi || use official || use pgo || use thinlto-opt ) && [[ "${FEATURES}" =~ "icecream" ]] ; then
+eerror "The bundled-libcxx USE flag is incompatible with FEATURES=icecream."
+eerror "The cfi USE flag is incompatible with FEATURES=icecream."
 eerror "The official USE flag is incompatible with FEATURES=icecream."
+eerror "The pgo USE flag is incompatible with FEATURES=icecream."
+eerror "The thinlto-opt USE flag is incompatible with FEATURES=icecream."
 		die
 	fi
 
