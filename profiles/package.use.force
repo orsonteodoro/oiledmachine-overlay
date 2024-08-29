@@ -22,4 +22,4 @@ media-video/sr pretrained
 dev-python/cython -python_targets_pypy3
 
 # Slower than usual to compile.  Binary packages are discourged.
-www-client/chromium system-toolchain
+#www-client/chromium system-toolchain
