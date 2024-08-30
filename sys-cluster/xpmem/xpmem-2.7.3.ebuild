@@ -93,18 +93,53 @@ check_udev() {
 }
 
 check_module() {
+	if grep -q "vendor_id.*AuthenticAMD" "/proc/cpuinfo" ; then
+einfo "Detected AMD CPU.  Additional MMU_NOTIFIER requirements may be required if listed."
+		CONFIG_CHECK="
+			~PCI
+			~ACPI
+			~AMD_IOMMU
+			~AMD_IOMMU_V2
+		"
+		WARNING_PCI="CONFIG_PCI is needed by the xpmem module for MMU_NOTIFIER."
+		WARNING_ACPI="CONFIG_ACPI is needed by the xpmem module for MMU_NOTIFIER."
+		WARNING_PCI="CONFIG_PCI is needed by the xpmem module for MMU_NOTIFIER."
+		WARNING_ACPI="CONFIG_ACPI is needed by the xpmem module for MMU_NOTIFIER."
+		check_extra_config
+	elif grep -q "vendor_id.*GenuineIntel" "/proc/cpuinfo" ; then
+einfo "Detected Intel CPU.  Additional MMU_NOTIFIER requirements may be required if listed."
+		CONFIG_CHECK="
+			~PCI
+			~ACPI
+			~PCI_MSI
+			~INTEL_IOMMU
+			~INTEL_IOMMU_SVM
+		"
+		WARNING_PCI="CONFIG_PCI is needed by the xpmem module for MMU_NOTIFIER."
+		WARNING_ACPI="CONFIG_ACPI is needed by the xpmem module for MMU_NOTIFIER."
+		WARNING_PCI_MSI="CONFIG_PCI_MSI is needed by the xpmem module for MMU_NOTIFIER."
+		WARNING_INTEL_IOMMU="CONFIG_INTEL_IOMMU is needed by the xpmem module for MMU_NOTIFIER."
+		WARNING_INTEL_IOMMU_SVM="CONFIG_INTEL_IOMMU_SVM is needed by the xpmem module for MMU_NOTIFIER."
+		check_extra_config
+	else
+ewarn "TODO:  Document MMU_NOTIFIER enablement on ARCH=${ARCH}"
+	fi
+
 	CONFIG_CHECK="
+		~MMU_NOTIFIER
 		~MODULES
 		~DEVTMPFS
 		~PROC_FS
 		~!TRIM_UNUSED_KSYMS
 	"
+	WARNING_MMU_NOTIFIER="CONFIG_MMU_NOTIFIER is needed by the xpmem module."
 	WARNING_MODULES="CONFIG_MODULES is needed to load the xpmem module."
 	#WARNING_MULTIUSER="CONFIG_MULTIUSER is needed for xpmem user"
 	WARNING_DEVTMPFS="CONFIG_DEVTMPFS is needed for /dev support"
 	WARNING_PROC_FS="CONFIG_PROC_FS is needed for /proc support"
 	WARNING_TRIM_UNUSED_KSYMS="CONFIG_TRIM_UNUSED_KSYMS should be disabled for external modules support."
 	check_extra_config
+
 }
 
 check_sign_module() {
