@@ -1274,8 +1274,13 @@ adjust_makeopts() {
 	local minimal_gib_per_core=4
 	local actual_gib_per_core=$(python -c "print(${total_mem_gib} / ${cores})")
 
+	if (( ${actual_gib_per_core%.*} >= ${minimal_gib_per_core} )) ; then
+einfo "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
+einfo "Actual GiB per core:  ${actual_gib_per_core} GiB"
+	else
 ewarn "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
 ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
+	fi
 
 	if (( ${jobs} == 1 )) ; then
 		:
