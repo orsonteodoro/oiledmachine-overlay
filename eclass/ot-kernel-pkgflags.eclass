@@ -810,6 +810,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_xorg_server
 	ot-kernel-pkgflags_xoscope
 	ot-kernel-pkgflags_xpadneo
+	ot-kernel-pkgflags_xpmem
 	ot-kernel-pkgflags_xpra
 	ot-kernel-pkgflags_xtables_addons
 	ot-kernel-pkgflags_yggdrasil_go
@@ -7258,12 +7259,10 @@ ot-kernel-pkgflags_nv() { # DONE
 		fi
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 
+	# These two selects DRM_KMS_HELPER indirectly. \
 		ot-kernel_y_configopt "CONFIG_DRM"
-	# Let's try to select MMU_NOTIFIER, DRM_KMS_HELPER directly instead of
-	# suggesting possible increases of the attack surface.
-		if ! grep -q -e "ot-kernel edit 1$" "drivers/gpu/drm/Kconfig" ; then
-			sed -i "11i \\\tselect DRM_KMS_HELPER # ot-kernel edit 1" "drivers/gpu/drm/Kconfig"
-		fi
+		ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+
 		ot-kernel_y_configopt "CONFIG_DRM_KMS_HELPER"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 		ot-kernel_unset_configopt "CONFIG_LOCKDEP"
@@ -7280,8 +7279,41 @@ ot-kernel-pkgflags_nv() { # DONE
 		fi
 
 		if ot-kernel_has_version ">=${pkg}-515.86[kernel-open]" ; then
-			if ! grep -q -e "ot-kernel edit 2$" "drivers/gpu/drm/Kconfig" ; then
-				sed -i "11i \\\tselect MMU_NOTIFIER # ot-kernel edit 2" "drivers/gpu/drm/Kconfig"
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+				ot-kernel_y_configopt "CONFIG_PCI"
+				ot-kernel_y_configopt "CONFIG_ACPI"
+				ot-kernel_y_configopt "CONFIG_AMD_IOMMU"
+				ot-kernel_y_configopt "CONFIG_AMD_IOMMU_V2"
+	# It enables the MMU_NOTIFIER indirectly.
+			elif [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				ot-kernel_y_configopt "CONFIG_PCI"
+				ot-kernel_y_configopt "CONFIG_PCI_MSI"
+				ot-kernel_y_configopt "CONFIG_ACPI"
+				ot-kernel_y_configopt "CONFIG_INTEL_IOMMU"
+				ot-kernel_y_configopt "CONFIG_INTEL_IOMMU_SVM"
+	# It enables the MMU_NOTIFIER indirectly.
+			fi
+
+			if \
+				   has_version "dev-libs/nccl[verbs]" \
+				|| has_version "sys-block/libfabric[verbs]" \
+			; then
+				ot-kernel_y_configopt "CONFIG_NET"
+				ot-kernel_y_configopt "CONFIG_INET"
+				ot-kernel_y_configopt "CONFIG_MMU"
+				ot-kernel_y_configopt "CONFIG_INFINIBAND"
+				ot-kernel_y_configopt "CONFIG_INFINIBAND_USER_ACCESS"
+				ot-kernel_y_configopt "CONFIG_INFINIBAND_USER_MEM"
+				ot-kernel_y_configopt "CONFIG_INFINIBAND_ON_DEMAND_PAGING"
+	# It enables the MMU_NOTIFIER indirectly.
+			fi
+
+			if has_version "app-emulation/qemu" ; then
+				: # See ot-kernel-pkgflags_qemu
+	# It enables the MMU_NOTIFIER indirectly.
+			elif has_version "app-emulation/xen" ; then
+				: # See ot-kernel-pkgflags_xen
+	# It enables the MMU_NOTIFIER indirectly.
 			fi
 			ot-kernel_y_configopt "CONFIG_MMU_NOTIFIER"
 		fi
@@ -8064,6 +8096,7 @@ ot-kernel-pkgflags_qdmr() { # DONE
 ot-kernel-pkgflags_kvm_host_required() {
 	ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
 	ot-kernel_y_configopt "CONFIG_VIRTUALIZATION"
+	# It enables the MMU_NOTIFIER indirectly. \
 	ot-kernel_y_configopt "CONFIG_KVM"
 	# Don't use lscpu/cpuinfo autodetect if using distcc or
 	# cross-compile but use the config itself to guestimate.
@@ -8934,6 +8967,7 @@ ot-kernel-pkgflags_roct() { # DONE
 		ot-kernel_has_version_pkgflags "dev-libs/roct-thunk-interface" \
 		|| ( has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ) \
 	; then
+	# It enables the MMU_NOTIFIER indirectly. \
 		ot-kernel_y_configopt "CONFIG_HSA_AMD"
 		ot-kernel_y_configopt "CONFIG_HMM_MIRROR"
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
@@ -11221,6 +11255,7 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DCN3_0"
 		fi
 		ot-kernel_y_configopt "CONFIG_DRM_AMD_ACP"
+	# It enables the MMU_NOTIFIER indirectly. \
 		ot-kernel_y_configopt "CONFIG_HSA_AMD"
 		ot-kernel_y_configopt "CONFIG_SND_HDA"
 		ot-kernel_y_configopt "CONFIG_SND_HDA_PATCH_LOADER"
@@ -11429,6 +11464,41 @@ ot-kernel-pkgflags_xpadneo() { # DONE
 		ot-kernel_y_configopt "CONFIG_INPUT_FF_MEMLESS"
 	fi
 }
+
+# @FUNCTION: ot-kernel-pkgflags_xpmem
+# @DESCRIPTION:
+# Applies kernel config flags for the xpmem package
+ot-kernel-pkgflags_xpmem() { # DONE
+	local pkg="sys-cluster/xpmem"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		if has_version "dev-libs/rccl" ; then
+	# It enables the MMU_NOTIFIER indirectly. \
+			: # See ot-kernel-pkgflags_roct
+		fi
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+			ot-kernel_y_configopt "CONFIG_PCI"
+			ot-kernel_y_configopt "CONFIG_ACPI"
+			ot-kernel_y_configopt "CONFIG_AMD_IOMMU"
+			ot-kernel_y_configopt "CONFIG_AMD_IOMMU_V2"
+	# It enables the MMU_NOTIFIER indirectly.
+		elif [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			ot-kernel_y_configopt "CONFIG_PCI"
+			ot-kernel_y_configopt "CONFIG_PCI_MSI"
+			ot-kernel_y_configopt "CONFIG_ACPI"
+			ot-kernel_y_configopt "CONFIG_INTEL_IOMMU"
+			ot-kernel_y_configopt "CONFIG_INTEL_IOMMU_SVM"
+	# It enables the MMU_NOTIFIER indirectly.
+		fi
+		if has_version "app-emulation/qemu" ; then
+			: # See ot-kernel-pkgflags_qemu
+	# It enables the MMU_NOTIFIER indirectly.
+		elif has_version "app-emulation/xen" ; then
+			: # See ot-kernel-pkgflags_xen
+	# It enables the MMU_NOTIFIER indirectly.
+		fi
+	fi
+}
+
 
 # @FUNCTION: ot-kernel-pkgflags_xpra
 # @DESCRIPTION:
