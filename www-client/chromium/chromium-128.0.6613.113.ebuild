@@ -3075,15 +3075,24 @@ ewarn
 	#    that the ebuild has to be completely merged within a day.
 	#
 
+	replace-flags "-O0" "-O2"
+	replace-flags "-O1" "-O2"
+	replace-flags "-Os" "-O2"
+	replace-flags "-Oz" "-O2"
+	replace-flags "-Ofast" "-O3" # -Ofast is broken.  TODO: fix crashes by using O3 in some *.gn* files
+	replace-flags "-O4" "-O3" # -O4 is the same as -O3
+
 	if [[ "${FEATURES}" =~ ("icecream"|"distcc") ]] || use system-toolchain ; then
-		replace-flags "-O0" "-O2"
-		replace-flags "-O1" "-O2"
-		replace-flags "-Os" "-O2"
-		replace-flags "-Oz" "-O2"
-		replace-flags "-Ofast" "-O3" # -Ofast is broken.  TODO: fix crashes by using O3 in some *.gn* files
-		replace-flags "-O4" "-O3" # -O4 is the same as -O3
-	elif (( ${nprocs} <= 4 )) ; then
-		replace-flags "-O*" "-O2"
+		:
+	else
+		if ! use system-toolchain ; then
+	# The vendored clang/rust is likely built for portability not performance
+	# that is why it is very slow.
+			replace-flags "-O*" "-O2"
+		fi
+		if (( ${nprocs} <= 4 )) ; then
+			replace-flags "-O*" "-O2"
+		fi
 	fi
 
 	# Prevent crash for now
