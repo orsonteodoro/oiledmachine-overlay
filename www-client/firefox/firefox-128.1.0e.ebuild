@@ -1258,6 +1258,40 @@ eerror
 	fi
 }
 
+# See https://firefox-source-docs.mozilla.org/setup/linux_build.html
+adjust_makeopts() {
+	local total_ram=$(free | grep "Mem:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	local total_ram_gib=$(( ${total_ram} / (1024*1024) ))
+	local total_swap=$(free | grep "Swap:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	[[ -z "${total_swap}" ]] && total_swap=0
+	local total_swap_gib=$(( ${total_swap} / (1024*1024) ))
+	local total_mem=$(free -t | grep "Total:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	local total_mem_gib=$(( ${total_mem} / (1024*1024) ))
+
+	local jobs=$(get_makeopts_jobs)
+	local cores=$(get_nproc)
+
+	local minimal_gib_per_core=4
+	local actual_gib_per_core=$(( ${total_mem_gib} / ${cores} ))
+
+ewarn "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
+ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
+
+	if (( ${jobs} == 1 )) ; then
+		:
+	elif (( ${total_ram_gib} <= 4 && ${total_swap} == 0 )) ; then
+ewarn "No swap detected."
+		if (( ${jobs} > 1 )) ; then
+			MAKEOPTS="-j1"
+		fi
+	elif (( ${actual_gib_per_core} <= ${minimal_gib_per_core} && ${jobs} > ${cores}/2 )) ; then
+		local njobs=$(( ${cores}/2 ))
+		(( ${njobs} == 0 )) && njobs=1
+		MAKEOPTS="-j${njobs}"
+ewarn "Downgrading MAKEOPTS=-j${njobs} to prevent lock-up"
+	fi
+}
+
 pkg_setup() {
 	dhms_start
 einfo "Release type:  ESR (Extended Service Release)"
@@ -1406,14 +1440,7 @@ einfo "To set up cross-compile for other ABIs,"
 einfo "see \`epkginfo -x firefox::oiledmachine-overlay\` or the metadata.xml"
 einfo
 
-	local jobs=$(get_makeopts_jobs)
-	local cores=$(get_nproc)
-	if (( ${jobs} > $((${cores}/2)) )) ; then
-ewarn
-ewarn "Firefox may lock up or freeze the computer if the N value in"
-ewarn "MAKEOPTS=\"-jN\" is greater than \$(nproc)/2"
-ewarn
-	fi
+	adjust_makeopts
 
 	if ! use pulseaudio ; then
 ewarn "Microphone support may be disabled when USE=-pulseaudio."
