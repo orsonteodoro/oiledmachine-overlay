@@ -94,7 +94,6 @@ check_udev() {
 
 check_module() {
 	CONFIG_CHECK="
-		~DMA_ENGINE
 		~MODULES
 		~DEVTMPFS
 		~PROC_FS
