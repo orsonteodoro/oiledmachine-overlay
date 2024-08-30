@@ -3263,9 +3263,13 @@ einfo "Configuring bundled ffmpeg..."
 		local flag="${1}"
 # A LTO required flag
 eerror
-eerror "The ${flag} USE flag is not supported for older machines.  Build with"
-eerror "FEATURES=distcc or replace this package with www-client/google-chrome"
-eerror "as a workaround."
+eerror "The ${flag} USE flag is not supported for older machines."
+eerror
+eerror "Workarounds:"
+eerror
+eerror "1.  Use FEATURES=distcc with help from multiple computers on the same LAN"
+eerror "2.  Replace this package with www-client/google-chrome"
+eerror "3.  Create a new local -bin ebuild to install to this machine."
 eerror
 		die
 	}
