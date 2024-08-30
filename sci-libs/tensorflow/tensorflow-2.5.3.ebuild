@@ -1228,6 +1228,30 @@ patch_rocm() {
 }
 
 src_prepare() {
+	local total_ram=$(free | grep "Mem:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	local total_ram_gib=$(( ${total_ram} / (1024*1024) ))
+	local total_swap=$(free | grep "Swap:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	[[ -z "${total_swap}" ]] && total_swap=0
+	local total_swap_gib=$(( ${total_swap} / (1024*1024) ))
+	local total_mem=$(free -t | grep "Total:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	local total_mem_gib=$(( ${total_mem} / (1024*1024) ))
+
+	local jobs=$(get_makeopts_jobs)
+	local cores=$(get_nproc)
+
+	local minimal_gib_per_core=8
+	local actual_gib_per_core=$(python -c "print(${total_mem_gib} / ${cores})")
+
+	if (( ${actual_gib_per_core%.*} <= ${minimal_gib_per_core} )) ; then
+ewarn "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
+ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
+		filter-flags '-flto*'
+ewarn "Disabling LTO to speed up build time."
+	else
+einfo "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
+einfo "Actual GiB per core:  ${actual_gib_per_core} GiB"
+	fi
+
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 	export TF_PYTHON_VERSION="${EPYTHON/python/}"
 
@@ -1252,10 +1276,13 @@ ewarn
 	setup_linker
 
 	# Upstream uses a mix of -O3 and -O2.
-	# In some contexts -Os causes a stall.
-	# Make _FORTIFY_SOURCE=1 work
-	# Prevent warning as error with _FORTIFY_SOURCE
+	# -Os may cause a stall during build time.
+	# >= -O1 prevents warnings related to _FORTIFY_SOURCE.
+	# -O2 is forced because it uses llvm/clang parts.  Clang/llvm breaks
+	# with -O3.
 	replace-flags '-O*' '-O2' # Prevent possible runtime breakage with llvm parts.
+
+	allow_lto
 
 	if ! use hardened ; then
 	# It has to be done this way, because the tarballs are not unpacked at
