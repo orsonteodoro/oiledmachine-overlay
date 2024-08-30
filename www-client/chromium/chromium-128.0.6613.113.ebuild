@@ -3066,10 +3066,14 @@ ewarn
 		fi
 	fi
 
-	# Oflag requirements:
-	# 1. smooth playback (>=25 FPS) for vendored codecs like dav1d
-	# 2. fast build time to prevent systemwide vulnerability backlog
-	# 3. critical vulnerabilities should be fixed in one day, which implies that ebuild has to be completely merged within a day.
+	#
+	# Oflag and or compiler flag requirements:
+	#
+	# 1. Smooth playback (>=25 FPS) for vendored codecs like dav1d.
+	# 2. Fast build time to prevent systemwide vulnerability backlog.
+	# 3. Critical vulnerabilities should be fixed in one day, which implies
+	#    that the ebuild has to be completely merged within a day.
+	#
 
 	if [[ "${FEATURES}" =~ ("icecream"|"distcc") ]] || use system-toolchain ; then
 		replace-flags "-O0" "-O2"
