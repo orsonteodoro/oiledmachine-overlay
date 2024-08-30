@@ -3082,7 +3082,7 @@ ewarn
 	replace-flags "-Ofast" "-O3" # -Ofast is broken.  TODO: fix crashes by using O3 in some *.gn* files
 	replace-flags "-O4" "-O3" # -O4 is the same as -O3
 
-	if [[ "${FEATURES}" =~ ("icecream"|"distcc") ]] || use system-toolchain ; then
+	if [[ "${FEATURES}" =~ ("icecream"|"distcc") ]] ; then
 		:
 	else
 		if ! use system-toolchain ; then
