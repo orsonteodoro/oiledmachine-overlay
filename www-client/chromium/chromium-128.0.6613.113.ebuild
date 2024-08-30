@@ -3343,7 +3343,7 @@ einfo "Using ThinLTO"
 	else
 	# gcc will never use ThinLTO.
 	# gcc doesn't like -fsplit-lto-unit and -fwhole-program-vtables
-	# This will try bfdlto.
+	# We want the faster LLD but without LTO.
 		myconf_gn+=" use_thin_lto=false "
 	fi
 
