@@ -3059,33 +3059,20 @@ ewarn
 		fi
 	fi
 
-	_O2_to_O3() {
-	# Boosted to -O2 for internal dav1d to avoid blurry images or < 25 FPS.
+	local nprocs=$(get_nproc)
+
+	# Oflag requirements:
+	# 1. smooth playback (>=25 FPS) for vendored codecs like dav1d
+	# 2. fast build time to prevent systemwide backlog
+	# 3. critical vulnerabilities should be fixed in one day, which implies that ebuild has to be completely merged within a day.
+
+	if [[ "${FEATURES}" =~ ("icecream"|"distcc") ]] || use system-toolchain ; then
 		replace-flags "-O0" "-O2"
 		replace-flags "-O1" "-O2"
 		replace-flags "-Os" "-O2"
 		replace-flags "-Oz" "-O2"
 		replace-flags "-Ofast" "-O3" # -Ofast is broken.  TODO: fix crashes by using O3 in some *.gn* files
 		replace-flags "-O4" "-O3" # -O4 is the same as -O3
-	}
-
-	if use system-toolchain ; then
-		_O2_to_O3
-	else
-		if [[ "${FEATURES}" =~ ("icecream"|"distcc") ]] ; then
-			_O2_to_O3
-		else
-	# For the vendored toolchain (vendored-clang and vendored-rust),
-	# -O3 was downgraded to -O2 to reduce longer than usual build time (2 days build time) with vendored clang.
-			replace-flags "-O*" "-O2"
-		fi
-	fi
-
-	local nprocs=$(get_nproc)
-
-	# Reduce build time but build for smooth dav1d playback.
-	if [[ "${FEATURES}" =~ ("icecream"|"distcc") ]] ; then
-		:
 	elif (( ${nprocs} <= 4 )) ; then
 		replace-flags "-O*" "-O2"
 	fi
