@@ -3269,7 +3269,10 @@ eerror "Workarounds:"
 eerror
 eerror "1.  Use FEATURES=distcc with help from multiple computers on the same LAN"
 eerror "2.  Replace this package with www-client/google-chrome"
-eerror "3.  Create a new local -bin ebuild to install to this machine."
+eerror "3.  Build this ebuild on a faster machine and install it with a local -bin ebuild"
+eerror
+eerror "https://wiki.gentoo.org/wiki/Distcc"
+eerror "https://wiki.gentoo.org/wiki/Binary_package_guide#Creating_binary_packages"
 eerror
 		die
 	}
