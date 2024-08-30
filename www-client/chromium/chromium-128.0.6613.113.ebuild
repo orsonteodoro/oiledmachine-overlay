@@ -161,6 +161,7 @@ PYTHON_REQ_USE="xml(+)"
 QT5_PV="5.15.2"
 QT6_PV="6.4.2"
 RUST_PV="1.79.0"
+USE_LTO=0 # Global variable
 # https://github.com/chromium/chromium/blob/128.0.6613.113/tools/clang/scripts/update.py#L38C41-L38C49 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
 LLVM_COMMIT="ecea8371"
@@ -2571,24 +2572,6 @@ eerror
 	fi
 	_system_toolchain_checks
 
-	if \
-		( \
-			tc-is-clang && is-flagq '-flto*' \
-		) \
-			|| \
-		( \
-			use official \
-		) \
-			|| \
-		( \
-			use cfi \
-		) \
-	; then
-	# sys-devel/lld-13 was ~20 mins for v8_context_snapshot_generator
-	# sys-devel/lld-12 was ~4 hrs for v8_context_snapshot_generator
-ewarn "Linking times may take longer than usual.  Maybe 1-12+ hour(s)."
-	fi
-
 	# Make sure the build system will use the right tools, bug #340795.
 	tc-export AR CC CXX NM READELF STRIP
 
@@ -2665,6 +2648,25 @@ _src_configure() {
 
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
+
+	local nprocs=$(get_nproc)
+
+	local total_ram=$(free | grep "Mem:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	local total_ram_gib=$(( ${total_ram} / (1024*1024) ))
+	local total_swap=$(free | grep "Swap:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	[[ -z "${total_swap}" ]] && total_swap=0
+	local total_swap_gib=$(( ${total_swap} / (1024*1024) ))
+	local total_mem=$(free -t | grep "Total:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	local total_mem_gib=$(( ${total_mem} / (1024*1024) ))
+
+	local jobs=$(get_makeopts_jobs)
+	local cores=$(get_nproc)
+
+	local minimal_gib_per_core=4
+	local actual_gib_per_core=$(python -c "print(${total_mem_gib} / ${cores})")
+
+ewarn "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
+ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 
 	local myconf_gn=""
 
@@ -3059,8 +3061,6 @@ ewarn
 		fi
 	fi
 
-	local nprocs=$(get_nproc)
-
 	# Oflag requirements:
 	# 1. smooth playback (>=25 FPS) for vendored codecs like dav1d
 	# 2. fast build time to prevent systemwide vulnerability backlog
@@ -3251,11 +3251,42 @@ einfo "Configuring bundled ffmpeg..."
 	#
 	#
 
-	local use_lto=0
 	local use_thinlto=0
 
 	if is-flagq '-flto' || is-flagq '-flto=*' ; then
-		use_lto=1
+		USE_LTO=1
+	fi
+
+	fatal_message_lto_banned() {
+# Critical vulnerabilities must be fixed within 24 hrs, which implies the ebuild
+# must be completely installed in that time.
+		local flag="${1}"
+# A LTO required flag
+eerror
+eerror "The ${flag} USE flag is not supported for older machines.  Use the"
+eerror "distcc USE flag or replace this package with www-client/google-chrome"
+eerror "as a workaround."
+eerror
+		die
+	}
+
+	if [[ "${FEATURES}" =~ ("icecream"|"distcc") ]] ; then
+		:
+	elif (( ${actual_gib_per_core%.*} <= 3 )) ; then
+	#
+	# This section assumes 4 core and 4 GiB total with 8 GiB swap as
+	# disqualified for LTO treatment.  LTO could increase build times by
+	# 5 times.
+	#
+	# One of the goals is to prevent a systemwide vulnerability backlog or
+	# a ebuild update backlog that lasts 6 months.
+	#
+ewarn "Disabling LTO for older machines."
+		USE_LTO=0
+		filter-flags '-flto*'
+		use cfi         && fatal_message_lto_banned "cfi"
+		use official    && fatal_message_lto_banned "official"
+		use thinlto-opt && fatal_message_lto_banned "thinlto-opt"
 	fi
 
 	if ! use mold && is-flagq '-fuse-ld=mold' && has_version "sys-devel/mold" ; then
@@ -3269,20 +3300,25 @@ eerror "To use mold, enable the mold USE flag."
 	fi
 
 	myconf_gn+=" is_official_build=$(usex official true false)"
+
 	if [[ -z "${LTO_TYPE}" ]] ; then
 		LTO_TYPE=$(check-linker_get_lto_type)
 	fi
 	if \
+		(( ${lto} == 1 )) \
+			&&
 		( \
-			tc-is-clang && [[ "${LTO_TYPE}" == "thinlto" ]] \
-		) \
-			|| \
-		( \
-			use cfi \
-		) \
-			|| \
-		( \
-			use official && [[ "${PGO_PHASE}" != "PGI" ]] \
+			( \
+				tc-is-clang && [[ "${LTO_TYPE}" == "thinlto" ]] \
+			) \
+				|| \
+			( \
+				use cfi \
+			) \
+				|| \
+			( \
+				use official && [[ "${PGO_PHASE}" != "PGI" ]] \
+			) \
 		) \
 	; then
 einfo "Using ThinLTO"
@@ -3300,7 +3336,7 @@ einfo "Using ThinLTO"
 	fi
 
 	# See https://github.com/rui314/mold/issues/336
-	if use mold && (( ${use_thinlto} == 0 && ${use_lto} == 1 )) ; then
+	if use mold && (( ${use_thinlto} == 0 && ${USE_LTO} == 1 )) ; then
 		if tc-is-clang ; then
 einfo "Using Clang MoldLTO"
 			myconf_gn+=" use_mold=true"
@@ -3309,7 +3345,7 @@ ewarn "Forcing use of GCC Mold without LTO.  GCC MoldLTO is not supported."
 ewarn "To use LTO, use either Clang MoldLTO, Clang ThinLTO, GCC BFDLTO."
 			filter-flags '-flto*'
 		fi
-	elif use mold && (( ${use_thinlto} == 0 && ${use_lto} == 0 )) ; then
+	elif use mold && (( ${use_thinlto} == 0 && ${USE_LTO} == 0 )) ; then
 einfo "Using Mold without LTO"
 		myconf_gn+=" use_mold=true"
 	fi
