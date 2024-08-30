@@ -1272,10 +1272,10 @@ adjust_makeopts() {
 	local cores=$(get_nproc)
 
 	local minimal_gib_per_core=4
-	local actual_gib_per_core=$(( ${total_mem_gib} / ${cores} ))
+	local actual_gib_per_core=$(python -c "print(${total_mem_gib} / ${cores})")
 
 ewarn "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
-ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
+ewarn "Actual GiB per core:  ${actual_gib_per_core%.*} GiB"
 
 	if (( ${jobs} == 1 )) ; then
 		:
@@ -1284,7 +1284,7 @@ ewarn "No swap detected."
 		if (( ${jobs} > 1 )) ; then
 			MAKEOPTS="-j1"
 		fi
-	elif (( ${actual_gib_per_core} <= ${minimal_gib_per_core} && ${jobs} > ${cores}/2 )) ; then
+	elif (( ${actual_gib_per_core%.*} <= ${minimal_gib_per_core} && ${jobs} > ${cores}/2 )) ; then
 		local njobs=$(( ${cores}/2 ))
 		(( ${njobs} == 0 )) && njobs=1
 		MAKEOPTS="-j${njobs}"
