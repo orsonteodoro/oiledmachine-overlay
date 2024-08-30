@@ -3063,7 +3063,7 @@ ewarn
 
 	# Oflag requirements:
 	# 1. smooth playback (>=25 FPS) for vendored codecs like dav1d
-	# 2. fast build time to prevent systemwide backlog
+	# 2. fast build time to prevent systemwide vulnerability backlog
 	# 3. critical vulnerabilities should be fixed in one day, which implies that ebuild has to be completely merged within a day.
 
 	if [[ "${FEATURES}" =~ ("icecream"|"distcc") ]] || use system-toolchain ; then
