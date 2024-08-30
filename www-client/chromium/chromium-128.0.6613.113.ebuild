@@ -3312,7 +3312,7 @@ eerror "To use mold, enable the mold USE flag."
 		LTO_TYPE=$(check-linker_get_lto_type)
 	fi
 	if \
-		(( ${lto} == 1 )) \
+		(( ${USE_LTO} == 1 )) \
 			&&
 		( \
 			( \
