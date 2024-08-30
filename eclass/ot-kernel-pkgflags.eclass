@@ -7547,6 +7547,7 @@ sys-apps/openrazer
 sys-apps/smc-sum
 sys-cluster/knem
 sys-cluster/lustre
+sys-cluster/xpmem
 sys-fs/exfat-nofuse
 sys-fs/loop-aes
 sys-fs/vhba
@@ -7563,7 +7564,6 @@ sys-kernel/pf_ring-kmod
 sys-kernel/rte_kni-kmod
 sys-kernel/tirdad
 sys-kernel/ummunotify
-sys-kernel/xpmem
 sys-kernel/zenpower3
 sys-libs/safeclib
 sys-power/acpi_call
