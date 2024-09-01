@@ -3625,7 +3625,7 @@ eerror
 		fi
 
 		[[ "${FEATURES}" =~ "distcc" ]] && die "FEATURES=distcc with USE=-system-toolchain is not supported by the ebuild."
-		[[ "${FEATURES}" =~ "icecream" ]] && die "FEATURES=distcc with USE=-system-toolchain is not supported by the ebuild."
+		[[ "${FEATURES}" =~ "icecream" ]] && die "FEATURES=icecream with USE=-system-toolchain is not supported by the ebuild."
 	fi
 
 einfo "Configuring Chromium..."
