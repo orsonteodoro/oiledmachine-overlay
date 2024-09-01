@@ -3282,7 +3282,6 @@ eerror
 eerror "1.  Replace this package with www-client/google-chrome"
 eerror "2.  Build this ebuild on a faster machine and install it with a local -bin ebuild you created"
 eerror
-eerror "https://wiki.gentoo.org/wiki/Distcc"
 eerror "https://wiki.gentoo.org/wiki/Binary_package_guide#Creating_binary_packages"
 eerror
 		die
