@@ -2649,8 +2649,6 @@ _src_configure() {
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
 
-	local nprocs=$(get_nproc)
-
 	local total_ram=$(free | grep "Mem:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
 	local total_ram_gib=$(( ${total_ram} / (1024*1024) ))
 	local total_swap=$(free | grep "Swap:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
@@ -2660,10 +2658,10 @@ _src_configure() {
 	local total_mem_gib=$(( ${total_mem} / (1024*1024) ))
 
 	local jobs=$(get_makeopts_jobs)
-	local cores=$(get_nproc)
+	local nprocs=$(get_nproc) # It is the same as the number of cores or the N in -jN.
 
 	local minimal_gib_per_core=4
-	local actual_gib_per_core=$(python -c "print(${total_mem_gib} / ${cores})")
+	local actual_gib_per_core=$(python -c "print(${total_mem_gib} / ${nprocs})")
 
 	if (( ${actual_gib_per_core%.*} >= ${minimal_gib_per_core} )) ; then
 einfo "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
