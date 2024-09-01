@@ -28,7 +28,7 @@ UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 WANT_AUTOMAKE="none"
 
-inherit flag-o-matic llvm multilib systemd uopts
+inherit autotools flag-o-matic llvm multilib systemd uopts
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
@@ -61,9 +61,6 @@ LICENSE="
 	fpm? (
 		BSD-2
 	)
-	gd? (
-		gd
-	)
 	unicode? (
 		BSD-2
 		LGPL-2.1
@@ -79,10 +76,10 @@ SLOT="$(ver_cut 1-2)"
 IUSE+="
 ${SAPIS_DEFAULTS}
 -acl -apparmor -argon2 -avif -bcmath -berkdb -bzip2 -calendar -capstone -cdb
--cjk +ctype -curl debug -enchant -exif -ffi +fileinfo +filter -firebird
-+flatfile -ftp -gd -gdbm +gmp +iconv imap -inifile -intl -iodbc -ipv6 +jit
++ctype -curl debug -enchant -exif -ffi +fileinfo +filter -firebird
++flatfile -ftp -gd -gdbm +gmp +iconv imap -inifile -intl -iodbc -ipv6 +jit jpeg
 -kerberos -ldap -ldap-sasl -libedit -lmdb -mhash -mssql -mysql -mysqli -nls
--odbc +opcache -pcntl +pdo +phar +posix -postgres -qdbm
+-odbc +opcache +opcache-jit -pcntl +pdo +phar png +posix -postgres -qdbm
 -readline selinux +session session-mm -sharedmem +simplexml -snmp -soap -sockets
 -sodium -spell +sqlite -ssl -sysvipc -systemd test -tidy threads +tokenizer
 -tokyocabinet -truetype -unicode valgrind -webp +xml +xmlreader +xmlwriter -xpm
@@ -127,10 +124,6 @@ REQUIRED_USE="
 			readline
 		)
 	)
-	avif? (
-		gd
-		zlib
-	)
 	bolt? (
 		cli
 		^^ (
@@ -139,19 +132,11 @@ REQUIRED_USE="
 			trainer-benchmark
 		)
 	)
-	cjk? (
-		gd
-		zlib
-	)
 	cli? (
 		^^ (
 			libedit
 			readline
 		)
-	)
-	exif? (
-		gd
-		zlib
 	)
 	firebird? (
 		pdo
@@ -241,23 +226,11 @@ REQUIRED_USE="
 	trainer-zend? (
 		trainer-basic
 	)
-	truetype? (
-		gd
-		zlib
-	)
-	webp? (
-		gd
-		zlib
-	)
 	xmlreader? (
 		xml
 	)
 	xmlwriter? (
 		xml
-	)
-	xpm? (
-		gd
-		zlib
 	)
 	xslt? (
 		xml
@@ -296,9 +269,6 @@ COMMON_DEPEND="
 	argon2? (
 		app-crypt/argon2:=
 	)
-	avif? (
-		media-libs/libavif:=
-	)
 	berkdb? (
 		|| (
 			sys-libs/db:5.3
@@ -329,8 +299,7 @@ COMMON_DEPEND="
 		dev-db/firebird
 	)
 	gd? (
-		media-libs/libjpeg-turbo:0=
-		media-libs/libpng:0=
+		>=media-libs/gd-2.3.3-r4[avif?,jpeg?,png?,truetype?,webp?,xpm?]
 	)
 	gdbm? (
 		sys-libs/gdbm:0=
@@ -418,14 +387,8 @@ COMMON_DEPEND="
 	valgrind? (
 		dev-debug/valgrind
 	)
-	webp? (
-		media-libs/libwebp:0=
-	)
 	xml? (
 		dev-libs/libxml2
-	)
-	xpm? (
-		x11-libs/libXpm
 	)
 	xslt? (
 		dev-libs/libxslt
@@ -495,6 +458,10 @@ BDEPEND="
 		)
 	)
 "
+PATCHES=(
+	"${FILESDIR}/php-8.3.10-optional-png-testfixen.patch"
+	"${FILESDIR}/php-8.3.9-gd-cachevars.patch"
+)
 
 php_install_ini() {
 	local phpsapi="${1}"
@@ -739,13 +706,40 @@ src_prepare() {
 	# be running pre-install, in my opinion. Bug 927461.
 		ext/fileinfo/tests/bug78987.phpt
 
-	# The expected warnings aren't triggered in this test because we
-	# define session.save_path on the CLI:
+	# Bug 935382, fixed eventually by
 	#
-	#   https://github.com/php/php-src/issues/14368
+	# - https://github.com/php/php-src/pull/14788
+	# - https://github.com/php/php-src/pull/14814
 	#
-		ext/session/tests/gh13856.phpt
+		ext/standard/tests/strings/chunk_split_variation1_32bit.phpt
+		ext/standard/tests/strings/wordwrap_memory_limit.phpt
+
+	# Bug 935379, not yet fixed upstream but looks harmless (ordering
+	# of keys isn't guaranteed AFAICS):
+	#
+	# - https://github.com/php/php-src/issues/14786
+	#
+		ext/dba/tests/dba_gdbm.phpt
+
+	# Most tests failing with an external libgd have been fixed,
+	# but there are a few stragglers:
+	#
+	#  * https://github.com/php/php-src/issues/11252
+	#
+		ext/gd/tests/bug43073.phpt
+		ext/gd/tests/bug48732.phpt
+		ext/gd/tests/bug48732-mb.phpt
+		ext/gd/tests/bug48801.phpt
+		ext/gd/tests/bug48801-mb.phpt
+		ext/gd/tests/bug53504.phpt
+		ext/gd/tests/bug65148.phpt
+		ext/gd/tests/bug73272.phpt
+
+	# One-off, somebody forgot to update a version constant
+		ext/reflection/tests/ReflectionZendExtension.phpt
+
 	)
+	rm -v ${deleted_files[@]} || die
 
 	for sapi in ${SAPIS} ; do
 		cp -a "${S}" "${S}_${sapi}" || die
@@ -758,6 +752,9 @@ src_prepare() {
 		fi
 		uopts_src_prepare
 	done
+
+
+	eautoconf --force
 }
 
 src_configure() { :; }
@@ -857,6 +854,7 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 		$(use_enable intl)
 		$(use_enable ipv6)
 		$(use_enable opcache)
+		$(use_enable opcache-jit)
 		$(use_enable pcntl)
 		$(use_enable phar)
 		$(use_enable pdo)
@@ -877,7 +875,6 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 		$(use_enable xmlwriter)
 		$(use_with apparmor fpm-apparmor)
 		$(use_with argon2 password-argon2 "${EPREFIX}/usr")
-		$(use_with avif)
 		$(use_with bzip2 bz2 "${EPREFIX}/usr")
 		$(use_with capstone)
 		$(use_with curl)
@@ -915,6 +912,17 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 		--with-external-libcrypt
 	)
 
+	# Override autoconf cache variables for libcrypt algorithms.These
+	# otherwise cannot be detected when cross-compiling. Bug 931884.
+	our_conf+=(
+		ac_cv_crypt_blowfish=yes
+		ac_cv_crypt_des=yes
+		ac_cv_crypt_ext_des=yes
+		ac_cv_crypt_md5=yes
+		ac_cv_crypt_sha512=yes
+		ac_cv_crypt_sha256=yes
+	)
+
 	# DBA support
 	if use_dba ; then
 		our_conf+=( "--enable-dba" )
@@ -932,16 +940,20 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 		$(use_with tokyocabinet tcadb "${EPREFIX}/usr")
 	)
 
-	# Support for the GD graphics library
+	# Use the system copy of GD. The autoconf cache variable overrides
+	# allow cross-compilation to proceed since the corresponding
+	# features cannot be detected by running a program.
 	our_conf+=(
-		$(use_enable cjk gd-jis-conv)
-		$(use_with gd jpeg)
-		$(use_with truetype freetype)
-		$(use_with webp)
-		$(use_with xpm)
+		$(use_enable gd gd)
+		$(use_with gd external-gd)
+		php_cv_lib_gd_gdImageCreateFromAvif=$(usex avif)
+		php_cv_lib_gd_gdImageCreateFromBmp=yes
+		php_cv_lib_gd_gdImageCreateFromJpeg=$(usex jpeg)
+		php_cv_lib_gd_gdImageCreateFromPng=$(usex png)
+		php_cv_lib_gd_gdImageCreateFromTga=yes
+		php_cv_lib_gd_gdImageCreateFromWebp=$(usex webp)
+		php_cv_lib_gd_gdImageCreateFromXpm=$(usex xpm)
 	)
-	# enable gd last, so configure can pick up the previous settings
-	our_conf+=( $(use_enable gd) )
 
 	# IMAP support
 	if use imap ; then

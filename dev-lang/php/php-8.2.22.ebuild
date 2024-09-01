@@ -31,8 +31,8 @@ WANT_AUTOMAKE="none"
 inherit autotools flag-o-matic llvm multilib systemd uopts
 
 KEYWORDS="
-~alpha ~amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ~ppc ppc64 ~riscv ~s390 ~sparc
-~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
+~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
 "
 SRC_URI="
 	https://www.php.net/distributions/${P}.tar.xz
@@ -692,6 +692,21 @@ src_prepare() {
 	#   https://github.com/php/php-src/issues/14368
 	#
 		ext/session/tests/gh13856.phpt
+
+	# Bug 935382, fixed eventually by
+	#
+	# - https://github.com/php/php-src/pull/14788
+	# - https://github.com/php/php-src/pull/14814
+	#
+		ext/standard/tests/strings/chunk_split_variation1_32bit.phpt
+		ext/standard/tests/strings/wordwrap_memory_limit.phpt
+
+	# Bug 935379, not yet fixed upstream but looks harmless (ordering
+	# of keys isn't guaranteed AFAICS):
+	#
+	# - https://github.com/php/php-src/issues/14786
+	#
+		ext/dba/tests/dba_gdbm.phpt
 	)
 	rm -v ${deleted_files[@]} || die
 
