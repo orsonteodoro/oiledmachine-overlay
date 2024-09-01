@@ -3082,17 +3082,13 @@ ewarn
 	replace-flags "-Ofast" "-O3" # -Ofast is broken.  TODO: fix crashes by using O3 in some *.gn* files
 	replace-flags "-O4" "-O3" # -O4 is the same as -O3
 
-	if [[ "${FEATURES}" =~ ("icecream"|"distcc") ]] ; then
-		:
-	else
-		if ! use system-toolchain ; then
+	if ! use system-toolchain ; then
 	# The vendored clang/rust is likely built for portability not performance
 	# that is why it is very slow.
-			replace-flags "-O*" "-O2"
-		fi
-		if (( ${nprocs} <= 4 )) ; then
-			replace-flags "-O*" "-O2"
-		fi
+		replace-flags "-O*" "-O2"
+	fi
+	if (( ${nprocs} <= 4 )) ; then
+		replace-flags "-O*" "-O2"
 	fi
 
 	# Prevent crash for now
@@ -3605,30 +3601,35 @@ einfo
 			&& \
 		[[ "${FEATURES}" =~ "icecream" ]] \
 	; then
-eerror "FEATURES=icecream can't be combined with either bundled-libcxx, cfi,"
-eerror "official, pgo, or thinlto-opt USE flags."
+eerror
+eerror "FEATURES=icecream can only use GCC.  It can't use USE flags that depend"
+eerror "on clang."
+eerror
+eerror "Solutions"
+eerror
+eerror "1.  Replace this package with www-client/google-chrome"
+eerror "2.  Disable bundled-libcxx, cfi, official, pgo, thinlto-opt USE flags."
+eerror "3.  Disable FEATURES=\"icecream\""
+eerror
 		die
+	fi
+
+	if [[ "${FEATURES}" =~ "icecream" && "${FEATURES}" =~ "ccache" ]] && has_version "sys-devel/icecream" && has_version "dev-util/ccache" ; then
+		myconf_gn+=" use_debug_fission=false"
+	elif [[ "${FEATURES}" =~ "icecream" ]] && has_version "sys-devel/icecream" ; then
+		myconf_gn+=" use_debug_fission=false"
 	fi
 
 	# I noticed that the vendored clang doesn't use distcc.  Let us explicitly use ccache if requested.
 	# See https://github.com/chromium/chromium/blob/128.0.6613.113/build/toolchain/cc_wrapper.gni#L36
-	if [[ "${FEATURES}" =~ "icecream" && "${FEATURES}" =~ "ccache" ]] && has_version "sys-devel/icecream" && has_version "dev-util/ccache" ; then
-		myconf_gn+=" cc_wrapper=\"ccache\""
-		myconf_gn+=" use_debug_fission=false"
-		export CCACHE_PREFIX="icecc"
-		export CCACHE_BASEDIR="${TMPDIR}"
-	elif [[ "${FEATURES}" =~ "distcc" && "${FEATURES}" =~ "ccache" ]] && has_version "sys-devel/distcc" && has_version "dev-util/ccache" ; then
-		myconf_gn+=" cc_wrapper=\"ccache\""
-		export CCACHE_PREFIX="distcc"
-		export CCACHE_BASEDIR="${TMPDIR}"
-	elif [[ "${FEATURES}" =~ "icecream" ]] && has_version "sys-devel/icecream" ; then
-		myconf_gn+=" cc_wrapper=\"icecc\""
-		myconf_gn+=" use_debug_fission=false"
-	elif [[ "${FEATURES}" =~ "distcc" ]] && has_version "sys-devel/distcc" ; then
-		myconf_gn+=" cc_wrapper=\"distcc\""
-	elif [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
-		myconf_gn+=" cc_wrapper=\"ccache\""
-		export CCACHE_BASEDIR="${TMPDIR}"
+	if ! use system-toolchain ; then
+		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
+			myconf_gn+=" cc_wrapper=\"ccache\""
+			export CCACHE_BASEDIR="${TMPDIR}"
+		fi
+
+		[[ "${FEATURES}" =~ "distcc" ]] && die "FEATURES=distcc with USE=-system-toolchain is not supported by the ebuild."
+		[[ "${FEATURES}" =~ "icecream" ]] && die "FEATURES=distcc with USE=-system-toolchain is not supported by the ebuild."
 	fi
 
 einfo "Configuring Chromium..."
