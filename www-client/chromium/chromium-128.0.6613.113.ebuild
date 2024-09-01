@@ -3616,7 +3616,7 @@ eerror
 		myconf_gn+=" use_debug_fission=false"
 	fi
 
-	# I noticed that the vendored clang doesn't use distcc.  Let us explicitly use ccache if requested.
+	# I noticed that the vendored clang doesn't use ccache.  Let us explicitly use ccache if requested.
 	# See https://github.com/chromium/chromium/blob/128.0.6613.113/build/toolchain/cc_wrapper.gni#L36
 	if ! use system-toolchain ; then
 		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
