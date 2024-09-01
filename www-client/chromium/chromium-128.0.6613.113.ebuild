@@ -58,6 +58,9 @@ EAPI=8
 #   python -c "print(${v}/10000)" or echo "0.${v}"
 
 APPLY_OILEDMACHINE_OVERLAY_PATCHSET=1
+CFI_CAST=0 # Global variable
+CFI_ICALL=0 # Global variable
+CFI_VCALL=0 # Global variable
 CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 
 #
@@ -172,6 +175,7 @@ VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${NUM_COMMITS}-g${LLVM_CO
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_COMMIT="3cf924b934322fd7b514600a7dc84fc517515346"
 RUST_SUB_REV="3"
+SHADOW_CALL_STACK=0 # Global variable
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 ZLIB_PV="1.3"
 
@@ -3400,7 +3404,6 @@ einfo "Using Mold without LTO"
 	elif use cfi ; then
 		local f
 		local F=(
-			"cfi"
 			"cfi-derived-cast"
 			"cfi-icall"
 			"cfi-underived-cast"
@@ -3411,22 +3414,37 @@ einfo "Using Mold without LTO"
 				is_cfi_custom=1
 			fi
 		done
+		(( ${CFI_VCALL} == 1 )) && is_cfi_custom=1
+		(( ${CFI_CAST} == 1 )) && is_cfi_custom=1
+		(( ${CFI_ICALL} == 1 )) && is_cfi_custom=1
 
 		if (( ${is_cfi_custom} == 1 )) ; then
 	# Change by CFLAGS
-			if has_sanitizer_option "cfi-vcall" ; then
+			if \
+				   has_sanitizer_option "cfi-vcall" \
+				|| (( ${CFI_VCALL} == 1 )) \
+			; then
 				myconf_gn+=" is_cfi=true"
+				CFI_VCALL=1
 			fi
 
-			if has_sanitizer_option "cfi-derived-cast" \
-				|| has_sanitizer_option "cfi-unrelated-cast" ; then
+			if \
+				   has_sanitizer_option "cfi-derived-cast" \
+				|| has_sanitizer_option "cfi-unrelated-cast" \
+				|| (( ${CFI_CAST} == 1 )) \
+			; then
 				myconf_gn+=" use_cfi_cast=true"
+				CFI_CAST=1
 			else
 				myconf_gn+=" use_cfi_cast=false"
 			fi
 
-			if has_sanitizer_option "cfi-icall" ; then
+			if \
+				   has_sanitizer_option "cfi-icall" \
+				|| (( ${CFI_ICALL} == 1 )) \
+			; then
 				myconf_gn+=" use_cfi_icall=true"
+				CFI_ICALL=1
 			else
 				myconf_gn+=" use_cfi_icall=false"
 			fi
@@ -3460,16 +3478,14 @@ einfo "Using Mold without LTO"
 		myconf_gn+=" use_cfi_icall=false"
 	fi
 
-	# Dedupe flags
+	# Dedupe flags which are already added by build scripts
 	strip-flag-value "cfi-vcall"
 	strip-flag-value "cfi-icall"
 	strip-flag-value "cfi-derived-cast"
 	strip-flag-value "cfi-unrelated-cast"
 
 	local expected_lto_type="thinlto"
-	if [[ "${myconf_gn}" =~ "is_cfi=true" ]] \
-		|| has_sanitizer_option "cfi" \
-		|| (( ${is_cfi_custom} == 1 )) ; then
+	if [[ "${myconf_gn}" =~ "is_cfi=true" ]] ; then
 		if ! [[ "${LTO_TYPE}" =~ ("${expected_lto_type}") ]] ; then
 		# Build scripts can only use ThinLTO for CFI.
 eerror
@@ -3518,10 +3534,17 @@ eerror
 		fi
 	fi
 
-	if use arm64 \
-		&& has_sanitizer_option "shadow-call-stack" ; then
+	if \
+		use arm64 \
+			&& \
+		( \
+			   has_sanitizer_option "shadow-call-stack" \
+			|| (( ${SHADOW_CALL_STACK} == 1 )) \
+		) \
+	; then
 		myconf_gn+=" use_shadow_call_stack=true"
 		strip-flag-value "shadow-call-stack" # Dedupe flag
+		SHADOW_CALL_STACK=1
 	fi
 
 	if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then # Disable annoying check
