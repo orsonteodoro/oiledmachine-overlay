@@ -3285,9 +3285,8 @@ eerror "The ${flag} USE flag is not supported for older machines."
 eerror
 eerror "Workarounds:"
 eerror
-eerror "1.  Use FEATURES=distcc with help from multiple computers on the same LAN"
-eerror "2.  Replace this package with www-client/google-chrome"
-eerror "3.  Build this ebuild on a faster machine and install it with a local -bin ebuild you created"
+eerror "1.  Replace this package with www-client/google-chrome"
+eerror "2.  Build this ebuild on a faster machine and install it with a local -bin ebuild you created"
 eerror
 eerror "https://wiki.gentoo.org/wiki/Distcc"
 eerror "https://wiki.gentoo.org/wiki/Binary_package_guide#Creating_binary_packages"
@@ -3295,9 +3294,7 @@ eerror
 		die
 	}
 
-	if [[ "${FEATURES}" =~ ("icecream"|"distcc") ]] ; then
-		:
-	elif (( ${actual_gib_per_core%.*} <= 3 )) ; then
+	if (( ${actual_gib_per_core%.*} <= 3 || ${nprocs} <= 4 )) ; then
 	#
 	# This section assumes 4 core and 4 GiB total with 8 GiB swap as
 	# disqualified for LTO treatment.  LTO could increase build times by
