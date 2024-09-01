@@ -1335,7 +1335,7 @@ src_prepare() {
 	local minimal_gib_per_core=8
 	local actual_gib_per_core=$(python -c "print(${total_mem_gib} / ${cores})")
 
-	if (( ${actual_gib_per_core%.*} <= ${minimal_gib_per_core} )) ; then
+	if (( ${actual_gib_per_core%.*} <= ${minimal_gib_per_core} || ${cores} <= 4 )) ; then
 ewarn "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
 ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 		filter-flags '-flto*'
