@@ -3605,9 +3605,9 @@ eerror "on clang."
 eerror
 eerror "Solutions"
 eerror
-eerror "1.  Replace this package with www-client/google-chrome"
+eerror "1.  Replace this package with www-client/google-chrome."
 eerror "2.  Disable bundled-libcxx, cfi, official, pgo, thinlto-opt USE flags."
-eerror "3.  Disable FEATURES=\"icecream\""
+eerror "3.  Disable icecream in FEATURES."
 eerror
 		die
 	fi
