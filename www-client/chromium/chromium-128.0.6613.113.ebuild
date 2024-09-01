@@ -2658,7 +2658,7 @@ _src_configure() {
 	local total_mem_gib=$(( ${total_mem} / (1024*1024) ))
 
 	local jobs=$(get_makeopts_jobs)
-	local nprocs=$(get_nproc) # It is the same as the number of cores or the N in -jN.
+	local nprocs=$(get_nproc) # It is the same as the number of cores.
 
 	local minimal_gib_per_core=4
 	local actual_gib_per_core=$(python -c "print(${total_mem_gib} / ${nprocs})")
