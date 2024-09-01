@@ -3612,9 +3612,7 @@ eerror
 		die
 	fi
 
-	if [[ "${FEATURES}" =~ "icecream" && "${FEATURES}" =~ "ccache" ]] && has_version "sys-devel/icecream" && has_version "dev-util/ccache" ; then
-		myconf_gn+=" use_debug_fission=false"
-	elif [[ "${FEATURES}" =~ "icecream" ]] && has_version "sys-devel/icecream" ; then
+	if [[ "${FEATURES}" =~ "icecream" ]] && has_version "sys-devel/icecream" ; then
 		myconf_gn+=" use_debug_fission=false"
 	fi
 
