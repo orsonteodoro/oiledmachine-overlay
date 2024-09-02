@@ -23,7 +23,7 @@ NODE_ENV="development"
 NODE_VERSION=18 # Using nodejs muxer variable name.
 NPM_INSTALL_PATH="/opt/${PN}"
 
-inherit desktop npm playwright
+inherit desktop mitigate-tecv npm playwright
 
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
 # Initially generated from:
@@ -929,6 +929,7 @@ REQUIRED_USE+="
 "
 NODEJS_PV="18"
 RDEPEND="
+	${MITIGATE_TECV_RDEPEND}
 	>=net-libs/nodejs-${NODEJS_PV}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
 	clipboard? (
@@ -1012,6 +1013,7 @@ npm_update_lock_install_pre() {
 pkg_setup() {
 	check_network_sandbox
 	npm_pkg_setup
+	mitigate-tecv_pkg_setup
 }
 
 npm_unpack_install_post() {
@@ -1119,6 +1121,10 @@ ewarn
 ewarn "This package should be re-installed every week since it uses an old browser."
 ewarn
 	fperms 0755 "${NPM_INSTALL_PATH}/dist/cli.js"
+}
+
+pkg_postinst() {
+	mitigate-tecv_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
