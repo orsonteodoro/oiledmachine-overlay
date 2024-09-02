@@ -23,5 +23,8 @@
     <flag name="benchmark">
       Build and install rocsolver-bench.
     </flag>
+    <flag name="sparse">
+      Build sparse re-factorization and solvers.
+    </flag>
   </use>
 </pkgmetadata>

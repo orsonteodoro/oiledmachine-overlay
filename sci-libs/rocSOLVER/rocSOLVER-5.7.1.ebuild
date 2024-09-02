@@ -43,7 +43,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test benchmark ebuild-revision-6"
+IUSE="+sparse test benchmark ebuild-revision-6"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -53,6 +53,9 @@ RDEPEND="
 	~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCBLAS_5_7_AMDGPU_USEDEP},rocm]
 	benchmark? (
 		virtual/blas
+	)
+	sparse? (
+		~sci-libs/rocSPARSE-${PV}:${ROCM_SLOT}[${ROCSPARSE_5_7_AMDGPU_USEDEP},rocm]
 	)
 "
 DEPEND="
@@ -91,6 +94,7 @@ src_configure() {
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=NO
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
+		-DBUILD_WITH_SPARSE=$(usex sparse ON OFF)
 		-DCMAKE_SKIP_RPATH=ON
 		-DCMAKE_INSTALL_INCLUDEDIR="${EPREFIX}${EROCM_PATH}/include/rocsolver"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
