@@ -616,15 +616,6 @@ gen_openexr_pairs() {
 	done
 }
 
-gen_openvdb_depends() {
-	local s=${OPENVDB_ABIS_MAJOR_VERS}
-	echo "
-		abi${s}-compat? (
-			=media-gfx/openvdb-${s}.0*[${PYTHON_SINGLE_USEDEP},abi${s}-compat,blosc,numpy]
-		)
-	"
-}
-
 gen_osl_depends()
 {
 	local s
@@ -1063,7 +1054,13 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		>=media-libs/opensubdiv-3.5.0:=[cuda=,opencl=,opengl(+),tbb?]
 	)
 	openvdb? (
-		$(gen_openvdb_depends)
+		abi9-abi? (
+			|| (
+				=media-gfx/openvdb-12*[${PYTHON_SINGLE_USEDEP},abi10-compat,blosc,numpy]
+				=media-gfx/openvdb-11*[${PYTHON_SINGLE_USEDEP},abi10-compat,blosc,numpy]
+				=media-gfx/openvdb-10*[${PYTHON_SINGLE_USEDEP},abi10-compat,blosc,numpy]
+			)
+		)
 		>=dev-libs/c-blosc-1.21.1[zlib]
 		nanovdb? (
 			~media-gfx/nanovdb-32.4.2_p20221027:0=

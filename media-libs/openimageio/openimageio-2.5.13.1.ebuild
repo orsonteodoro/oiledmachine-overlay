@@ -158,17 +158,6 @@ REQUIRED_USE="
 		openvdb
 	)
 "
-gen_openvdb_depends() {
-	local s
-	for s in ${OPENVDB_APIS[@]} ; do
-		echo "
-			abi${s}-compat? (
-				>=media-gfx/openvdb-${s}[abi${s}-compat]
-			)
-		"
-	done
-}
-
 gen_openexr_pairs() {
 	local pv
 	for pv in ${OPENEXR_V3_PV} ; do
@@ -244,7 +233,69 @@ RDEPEND+="
 		virtual/opengl
 	)
 	openvdb? (
-		$(gen_openvdb_depends)
+		abi11-compat? (
+			|| (
+				=media-gfx/openvdb-13[abi11-compat]
+
+				=media-gfx/openvdb-12[abi11-compat]
+
+				=media-gfx/openvdb-11[abi11-compat]
+			)
+		)
+		abi10-compat? (
+			|| (
+				=media-gfx/openvdb-12[abi10-compat]
+
+				=media-gfx/openvdb-11[abi10-compat]
+
+				=media-gfx/openvdb-10[abi10-compat]
+			)
+		)
+		abi9-compat? (
+			|| (
+				=media-gfx/openvdb-11[abi9-compat]
+
+				=media-gfx/openvdb-10[abi9-compat]
+
+				=media-gfx/openvdb-9[abi9-compat]
+			)
+		)
+		abi8-compat? (
+			|| (
+				=media-gfx/openvdb-10[abi8-compat]
+
+				=media-gfx/openvdb-9[abi8-compat]
+
+				=media-gfx/openvdb-8[abi8-compat]
+			)
+		)
+		abi7-compat? (
+			|| (
+				=media-gfx/openvdb-9[abi7-compat]
+
+				=media-gfx/openvdb-8[abi7-compat]
+
+				=media-gfx/openvdb-7[abi7-compat]
+			)
+		)
+		abi6-compat? (
+			|| (
+				=media-gfx/openvdb-8[abi6-compat]
+
+				=media-gfx/openvdb-7[abi6-compat]
+
+				=media-gfx/openvdb-6[abi6-compat]
+			)
+		)
+		abi5-compat? (
+			|| (
+				=media-gfx/openvdb-7[abi5-compat]
+
+				=media-gfx/openvdb-6[abi5-compat]
+
+				=media-gfx/openvdb-5[abi5-compat]
+			)
+		)
 		tbb? (
 			|| (
 				(
