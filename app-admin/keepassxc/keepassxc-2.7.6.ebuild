@@ -4,7 +4,7 @@
 EAPI=8
 
 VIRTUALX_REQUIRED="manual"
-inherit cmake flag-o-matic virtualx xdg
+inherit cmake flag-o-matic mitigate-tecv virtualx xdg
 
 QT6_PV="6.6.1"
 QT5_PV="5.2.0"
@@ -68,6 +68,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	${MITIGATE_PKG_POSTINST}
 	app-crypt/argon2:=
 	dev-libs/botan:3=
 	media-gfx/qrencode:=
@@ -228,6 +229,7 @@ eerror
 pkg_setup() {
 	use qt5 && verify_qt_consistency 5
 	use qt6 && verify_qt_consistency 6
+	mitigate-tecv_pkg_setup
 }
 
 src_prepare() {
@@ -310,6 +312,10 @@ src_test() {
 	if use wayland ; then
 		virtwl ctest -j 1 --test-load 4
 	fi
+}
+
+pkg_postinst() {
+	mitigate-tecv_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO autotype timer and topLevelDomains() are unfinished

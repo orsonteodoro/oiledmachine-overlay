@@ -7,7 +7,7 @@ QT5_PV="5.2.0"
 QT6_PV="6.6.1"
 VIRTUALX_REQUIRED="manual"
 
-inherit cmake flag-o-matic toolchain-funcs virtualx xdg
+inherit cmake flag-o-matic mitigate-tecv toolchain-funcs virtualx xdg
 
 # Time to convert to Qt6
 # patch start time:  1705819601 (Sat Jan 20 10:46:41 PM PST 2024)
@@ -238,6 +238,7 @@ pkg_setup() {
 	if ver_test $(gcc-major-version) -lt "13" ; then
 ewarn "You must switch your gcc to 13 to avoid build time error(s)."
 	fi
+	mitigate-tecv_pkg_setup
 }
 
 src_prepare() {
@@ -321,6 +322,10 @@ src_test() {
 	if use wayland ; then
 		virtwl ctest -j 1 --test-load 4
 	fi
+}
+
+pkg_postinst() {
+	mitigate-tecv_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO autotype timer and topLevelDomains() are unfinished
