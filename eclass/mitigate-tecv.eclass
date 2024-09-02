@@ -220,11 +220,9 @@ ewarn "You are responsible for using only Linux Kernel >= 5.10."
 		fi
 		if [[ "${ARCH}" == "x86" ]] ; then
 eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead."
-			die
 		fi
 		if has abi_x86_32 ${IUSE_EFFECTIVE} && use abi_x86_32 ; then
 eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead."
-			die
 		fi
 	fi
 }
