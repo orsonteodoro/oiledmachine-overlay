@@ -126,7 +126,7 @@ MITIGATE_TECV_RDEPEND="
 _mitigate-tecv_check_kernel_flags() {
 	einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
-		if use amd64 ; then
+		if [[ "${ARCH}" == "amd64" ]] ; then
 			CONFIG_CHECK="
 				MITIGATION_PAGE_TABLE_ISOLATION
 			"
@@ -134,7 +134,7 @@ _mitigate-tecv_check_kernel_flags() {
 			check_extra_config
 		fi
 
-		if use amd64 || use x86 ; then
+		if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
 			CONFIG_CHECK="
 				MITIGATION_RETPOLINE
 			"
@@ -142,7 +142,7 @@ _mitigate-tecv_check_kernel_flags() {
 			check_extra_config
 		fi
 
-		if use s390 ; then
+		if [[ "${ARCH}" == "s390" ]] ; then
 			CONFIG_CHECK="
 				EXPOLINE
 			"
@@ -150,7 +150,7 @@ _mitigate-tecv_check_kernel_flags() {
 			check_extra_config
 		fi
 	elif ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.10" ; then
-		if use amd64 ; then
+		if [[ "${ARCH}" == "amd64" ]] ; then
 			CONFIG_CHECK="
 				PAGE_TABLE_ISOLATION
 			"
@@ -158,7 +158,7 @@ _mitigate-tecv_check_kernel_flags() {
 			check_extra_config
 		fi
 
-		if use amd64 || use x86 ; then
+		if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
 			CONFIG_CHECK="
 				RETPOLINE
 			"
@@ -166,7 +166,7 @@ _mitigate-tecv_check_kernel_flags() {
 			check_extra_config
 		fi
 
-		if use s390 ; then
+		if [[ "${ARCH}" == "s390" ]] ; then
 			CONFIG_CHECK="
 				EXPOLINE
 			"
