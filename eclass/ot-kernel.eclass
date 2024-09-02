@@ -5717,8 +5717,11 @@ einfo "Using ${hardening_level} hardening level"
 	_y_retpoline() {
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
 			ot-kernel_y_configopt "CONFIG_MITIGATION_RETPOLINE"
-		else
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.15" ; then
 			ot-kernel_y_configopt "CONFIG_RETPOLINE"
+		else
+ewarn "Retpoline not supported for < 4.15"
+			return
 		fi
 		local ready=0
 		if tc-is-gcc && ver_test $(gcc-version) -ge "7.3" ; then
@@ -5941,13 +5944,18 @@ eerror
 				fi
 			fi
 		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "4.15" ; then
+			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
+				ot-kernel_unset_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+			fi
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+			fi
+		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
 			ot-kernel_unset_configopt "CONFIG_CPU_MITIGATIONS"
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_RFDS"
-			fi
-			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
-				ot-kernel_unset_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 			fi
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
@@ -5956,7 +5964,6 @@ eerror
 					ot-kernel_set_kconfig_kernel_cmdline "spec_rstack_overflow=off"
 				fi
 				ot-kernel_unset_configopt "CONFIG_SPECULATION_MITIGATIONS"
-				ot-kernel_unset_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 				ot-kernel_unset_configopt "CONFIG_SLS"
 			fi
 			ot-kernel_unset_configopt "CONFIG_RETHUNK"
@@ -6185,13 +6192,18 @@ eerror
 				fi
 			fi
 		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "4.15" ; then
+			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+			fi
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+			fi
+		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
 			ot-kernel_y_configopt "CONFIG_CPU_MITIGATIONS"
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
-			fi
-			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 			fi
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
@@ -6199,7 +6211,6 @@ eerror
 					ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
 					ot-kernel_set_kconfig_kernel_cmdline "spec_rstack_overflow=safe-ret"
 				fi
-				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 				ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 				ot-kernel_unset_configopt "CONFIG_SLS"
 			fi
@@ -6518,13 +6529,18 @@ ewarn
 				fi
 			fi
 		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "4.15" ; then
+			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+			fi
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+			fi
+		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
 			ot-kernel_y_configopt "CONFIG_CPU_MITIGATIONS"
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
-			fi
-			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 			fi
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
@@ -6533,7 +6549,6 @@ ewarn
 					ot-kernel_set_kconfig_kernel_cmdline "spec_rstack_overflow=safe-ret"
 				fi
 				ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
-				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 				ot-kernel_y_configopt "CONFIG_SLS"
 			fi
 			ot-kernel_y_configopt "CONFIG_RETHUNK"
