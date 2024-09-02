@@ -43,7 +43,7 @@ LICENSE="
 	)
 "
 SLOT="0"
-IUSE+=" hcoll mlnx-ofed-kernel sharp ebuild-revision-0"
+IUSE+=" hcoll mlnx-ofed-kernel sharp ebuild-revision-1"
 REQUIRED_USE="
 	hcoll? (
 		sharp
@@ -190,6 +190,10 @@ einfo "Sanitizing file/folder permissions"
 		if file "${path}" | grep -q -e "directory" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "ELF .* shared object" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "Bourne-Again shell script" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "Python script" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "symbolic link" ; then
 			:
