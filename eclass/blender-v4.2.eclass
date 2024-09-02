@@ -181,7 +181,7 @@ ${FFMPEG_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS[@]}
 ${ROCM_SLOTS[@]}
-+X +abi10-compat +alembic aot -asan +boost +bullet +collada +color-management
++X +abi11-compat +alembic aot -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles +cycles-path-guiding +dds
 -debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp -hiprt +hydra
 +jack +jemalloc +jpeg2k -llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal
@@ -619,15 +619,6 @@ gen_openexr_pairs() {
 	done
 }
 
-gen_openvdb_depends() {
-	local s=${OPENVDB_ABIS_MAJOR_VERS}
-	echo "
-		abi${s}-compat? (
-			=media-gfx/openvdb-${s}.0*[${PYTHON_SINGLE_USEDEP},abi${s}-compat,blosc,numpy]
-		)
-	"
-}
-
 gen_osl_depends()
 {
 	local s
@@ -987,7 +978,13 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		>=media-libs/opensubdiv-3.6.0:=[cuda=,opencl=,opengl(+),tbb?]
 	)
 	openvdb? (
-		$(gen_openvdb_depends)
+		abi11-compat? (
+			|| (
+				=media-gfx/openvdb-13*[${PYTHON_SINGLE_USEDEP},abi11-compat,blosc,numpy]
+				=media-gfx/openvdb-12*[${PYTHON_SINGLE_USEDEP},abi11-compat,blosc,numpy]
+				=media-gfx/openvdb-11*[${PYTHON_SINGLE_USEDEP},abi11-compat,blosc,numpy]
+			)
+		)
 		>=dev-libs/c-blosc-1.21.1[zlib]
 		nanovdb? (
 			~media-gfx/nanovdb-32.4.2_p20221027:0=

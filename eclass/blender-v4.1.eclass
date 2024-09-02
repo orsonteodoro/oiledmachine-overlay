@@ -967,7 +967,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		>=media-libs/opensubdiv-3.6.0:=[cuda=,opencl=,opengl(+),tbb?]
 	)
 	openvdb? (
-		abi11-abi? (
+		abi11-compat? (
 			|| (
 				=media-gfx/openvdb-13*[${PYTHON_SINGLE_USEDEP},abi11-compat,blosc,numpy]
 				=media-gfx/openvdb-12*[${PYTHON_SINGLE_USEDEP},abi11-compat,blosc,numpy]
