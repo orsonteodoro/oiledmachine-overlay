@@ -1,10 +1,12 @@
-# @ECLASS: tecv.eclass
+# @ECLASS: mitigate-tecv.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
 # @BLURB: Spectre and Meltdown kernel mitigation
 # @DESCRIPTION:
 # This ebuild is to perform kernel checks on Spectre and Meltdown on the kernel
 # level.
+# TECV = Transient Execution CPU Vulnerability
+# https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability
 
 case ${EAPI:-0} in
 	[78]) ;;
