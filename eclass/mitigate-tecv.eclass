@@ -20,7 +20,7 @@ inherit linux-info
 
 IUSE+=" custom-kernel"
 
-# @ECLASS_VARIABLE: _MITIGATE_TECV_RDEPEND
+# @ECLASS_VARIABLE: _MITIGATE_TECV_RDEPEND_X86
 # @INTERNAL
 # @DESCRIPTION:
 # List of kernels mitigated against Spectre and Meltdown.
@@ -29,7 +29,7 @@ IUSE+=" custom-kernel"
 # Spectre (2018)
 # Meltdown (2018)
 #
-_MITIGATE_TECV_RDEPEND="
+_MITIGATE_TECV_RDEPEND_X86="
 	|| (
 		>=sys-kernel/gentoo-kernel-bin-5.10
 		>=sys-kernel/gentoo-sources-5.10
@@ -64,6 +64,41 @@ _MITIGATE_TECV_RDEPEND="
 	!<sys-kernel/ot-sources-5.10
 "
 
+_MITIGATE_TECV_RDEPEND_S390X="
+	|| (
+		>=sys-kernel/gentoo-kernel-bin-4.19
+		>=sys-kernel/gentoo-sources-4.19
+		>=sys-kernel/vanilla-sources-4.19
+		>=sys-kernel/git-sources-4.19
+		>=sys-kernel/mips-sources-4.19
+		>=sys-kernel/pf-sources-4.19
+		>=sys-kernel/rt-sources-4.19
+		>=sys-kernel/zen-sources-4.19
+		>=sys-kernel/raspberrypi-sources-4.19
+		>=sys-kernel/gentoo-kernel-4.19
+		>=sys-kernel/gentoo-kernel-bin-4.19
+		>=sys-kernel/vanilla-kernel-4.19
+		>=sys-kernel/linux-next-4.19
+		>=sys-kernel/asahi-sources-4.19
+		>=sys-kernel/ot-sources-4.19
+	)
+	!<sys-kernel/gentoo-kernel-bin-4.19
+	!<sys-kernel/gentoo-sources-4.19
+	!<sys-kernel/vanilla-sources-4.19
+	!<sys-kernel/git-sources-4.19
+	!<sys-kernel/mips-sources-4.19
+	!<sys-kernel/pf-sources-4.19
+	!<sys-kernel/rt-sources-4.19
+	!<sys-kernel/zen-sources-4.19
+	!<sys-kernel/raspberrypi-sources-4.19
+	!<sys-kernel/gentoo-kernel-4.19
+	!<sys-kernel/gentoo-kernel-bin-4.19
+	!<sys-kernel/vanilla-kernel-4.19
+	!<sys-kernel/linux-next-4.19
+	!<sys-kernel/asahi-sources-4.19
+	!<sys-kernel/ot-sources-4.19
+"
+
 # @ECLASS_VARIABLE: MITIGATE_TECV_RDEPEND
 # @INTERNAL
 # @DESCRIPTION:
@@ -71,7 +106,15 @@ _MITIGATE_TECV_RDEPEND="
 MITIGATE_TECV_RDEPEND="
 	kernel_linux? (
 		!custom-kernel? (
-			${_MITIGATE_TECV_RDEPEND}
+			amd64? (
+				${_MITIGATE_TECV_RDEPEND_X86}
+			)
+			s390? (
+				${_MITIGATE_TECV_RDEPEND_S390X}
+			)
+			x86? (
+				${_MITIGATE_TECV_RDEPEND_X86}
+			)
 		)
 	)
 "
@@ -82,7 +125,31 @@ MITIGATE_TECV_RDEPEND="
 # Check the kernel config flags
 _mitigate-tecv_check_kernel_flags() {
 	einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
-	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.10" ; then
+	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
+		if use amd64 ; then
+			CONFIG_CHECK="
+				MITIGATION_PAGE_TABLE_ISOLATION
+			"
+			WARNING_MITIGATION_PAGE_TABLE_ISOLATION="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
+			check_extra_config
+		fi
+
+		if use amd64 || use x86 ; then
+			CONFIG_CHECK="
+				MITIGATION_RETPOLINE
+			"
+			WARNING_MITIGATION_RETPOLINE="CONFIG_MITIGATION_RETPOLINE is required for Spectre mitigation."
+			check_extra_config
+		fi
+
+		if use s390 ; then
+			CONFIG_CHECK="
+				EXPOLINE
+			"
+			WARNING_RETPOLINE="CONFIG_EXPOLINE is required for Spectre mitigation."
+			check_extra_config
+		fi
+	elif ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.10" ; then
 		if use amd64 ; then
 			CONFIG_CHECK="
 				PAGE_TABLE_ISOLATION
@@ -98,21 +165,12 @@ _mitigate-tecv_check_kernel_flags() {
 			WARNING_RETPOLINE="CONFIG_RETPOLINE is required for Spectre mitigation."
 			check_extra_config
 		fi
-	fi
-	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
-		if use amd64 ; then
-			CONFIG_CHECK="
-				MITIGATION_PAGE_TABLE_ISOLATION
-			"
-			WARNING_MITIGATION_PAGE_TABLE_ISOLATION="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
-			check_extra_config
-		fi
 
-		if use amd64 || use x86 ; then
+		if use s390 ; then
 			CONFIG_CHECK="
-				MITIGATION_RETPOLINE
+				EXPOLINE
 			"
-			WARNING_MITIGATION_RETPOLINE="CONFIG_MITIGATION_RETPOLINE is required for Spectre mitigation."
+			WARNING_RETPOLINE="CONFIG_EXPOLINE is required for Spectre mitigation."
 			check_extra_config
 		fi
 	fi
