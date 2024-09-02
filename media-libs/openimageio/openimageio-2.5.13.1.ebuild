@@ -4,7 +4,7 @@
 EAPI=8
 
 # Requirements:
-# https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v2.5.10.1/INSTALL.md
+# https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v2.5.13.1/INSTALL.md
 
 CXX_STD_MIN="14"
 FONT_PN="OpenImageIO"
@@ -14,7 +14,7 @@ LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 ONETBB_SLOT="0"
 OPENEXR_V2_PV="2.5.9 2.5.8"
 OPENEXR_V3_PV="3.2.4 3.2.3 3.2.2 3.2.1 3.2.0 3.1.13 3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4"
-OPENVDB_APIS=( {10..5} )
+OPENVDB_APIS=( {11..5} )
 OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
 OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
 PYTHON_COMPAT=( "python3_"{10..12} )
