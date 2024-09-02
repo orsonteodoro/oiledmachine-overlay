@@ -134,6 +134,15 @@ _mitigate-tecv_check_kernel_flags() {
 			check_extra_config
 		fi
 
+		if [[ "${ARCH}" == "x86" ]] ; then
+eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead."
+			die
+		fi
+		if has abi_x86_32 ${IUSE_EFFECTIVE} && use abi_x86_32 ; then
+eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead."
+			die
+		fi
+
 		if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
 			CONFIG_CHECK="
 				MITIGATION_RETPOLINE
@@ -156,6 +165,16 @@ _mitigate-tecv_check_kernel_flags() {
 			"
 			WARNING_PAGE_TABLE_ISOLATION="CONFIG_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
 			check_extra_config
+		fi
+
+		if [[ "${ARCH}" == "x86" ]] ; then
+eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead."
+			die
+		fi
+
+		if has abi_x86_32 ${IUSE_EFFECTIVE} && use abi_x86_32 ; then
+eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead."
+			die
 		fi
 
 		if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
@@ -192,12 +211,20 @@ ewarn "You are responsible for using only Linux Kernel >= 5.10."
 
 # @FUNCTION: mitigate-tecv_pkg_postinst
 # @DESCRIPTION:
-# Remind user to use only patched kernels.
+# Remind user to use only patched kernels especially for large packages.
 mitigate-tecv_pkg_postinst() {
 	# For Spectre/Meltdown
 	if use kernel_linux ; then
 		if use custom-kernel ; then
 ewarn "You are responsible for using only Linux Kernel >= 5.10."
+		fi
+		if [[ "${ARCH}" == "x86" ]] ; then
+eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead."
+			die
+		fi
+		if has abi_x86_32 ${IUSE_EFFECTIVE} && use abi_x86_32 ; then
+eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead."
+			die
 		fi
 	fi
 }
