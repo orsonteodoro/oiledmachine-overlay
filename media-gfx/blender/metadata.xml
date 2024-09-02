@@ -64,71 +64,6 @@
     defined, it will fall back to clang++, then icpc.
 
 
-    Event Based PGO (EPGO)
-
-    For CPU based algorithms, PGO can result on average 10% benefit, but certain
-    scenarios such as QPS or throughput, it may result in 40% benefit.
-
-    The PGO technique used is event based PGO not the traditional 3 step PGO per
-    emerge.  In one step PGO, we reuse PGO profiles on every point release but
-    reset back to PGI profile upon certain events.  Only 3 steps are required
-    instrumentation (PGI), training (PGT), optimization (PGO).  These state
-    transitions are are automatically handled by the eclass, but the pace is
-    set by you by re-emerging.  Some people may prefer it optimized in the
-    within the same 2 days or optimized on the next point release.
-
-    EPGO is preferred because it is real world profiling meaning that the
-    side-effects and restrictions of sandboxing are eliminated.
-
-    Event rules that trigger (re-)instrumentation:
-
-      No profile - instrument
-
-      Compiler differences in versioning - instrument
-
-      Changed minor version - instrument
-
-
-    Events that trigger optimization
-
-
-    Same compiler and version AND same minor version AND PGO profile generated
-    
-
-    Steps required:
-
-    1.  Enable the PGO use flag.
-    2.  Training is done passively.  Minimal required is to start
-        the app.
-    3.  Emerge either immediately after training or on the next upgrade.
-        The latter is preferred so that the time costs are minimized.
-
-
-    Hypothetical PGO schedule
-
-     Version     3.1.0    3.1.2    3.2.0   3.2.1   3.2.2
-
-       EPGO        i    t   o        i   t   o       o
-
-        vs
-    
-    Traditional    i        i        i       i       i
-      3 Step       t        t        t       t       t
-       PGO         o        o        o       o       o
-
-    key:   i = instrumented
-           t = train
-           o = optimized
-
-
-    PGO Training and Demos
-
-    You may use your own projects or demos.
-
-    Additional Blender assets can be found at
-    https://www.blender.org/download/demo-files/
-
-
     HIP targets:
 
     You may choose a few needed targets to speed up compile time.
@@ -257,9 +192,6 @@ https://docs.blender.org/manual/en/latest/addons/import_export/scene_gltf2.html#
     </flag>
     <flag name="elbeem">
       Adds surface fluid simulation to Blender using El'Beem library.
-    </flag>
-    <flag name="epgo">
-      Builds with PGO optimizations.  Only CPU side code will benefit.
     </flag>
     <flag name="embree">
       Build cycles renderer with Embree support as a CPU ray accelerator.
