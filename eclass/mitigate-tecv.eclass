@@ -23,10 +23,12 @@ IUSE+=" custom-kernel"
 # @ECLASS_VARIABLE: _MITIGATE_TECV_RDEPEND
 # @INTERNAL
 # @DESCRIPTION:
-# List of kernels mitigated against Spectre and Meltdown
-# Mitigation against
+# List of kernels mitigated against Spectre and Meltdown.
+#
+# The current list is a mitigation against
 # Spectre (2018)
 # Meltdown (2018)
+#
 _MITIGATE_TECV_RDEPEND="
 	|| (
 		>=sys-kernel/gentoo-kernel-bin-5.10
@@ -81,22 +83,39 @@ MITIGATE_TECV_RDEPEND="
 _mitigate-tecv_check_kernel_flags() {
 	einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.10" ; then
-		CONFIG_CHECK="
-			PAGE_TABLE_ISOLATION
-			RETPOLINE
-		"
-		WARNING_PAGE_TABLE_ISOLATION="CONFIG_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
-		WARNING_RETPOLINE="CONFIG_RETPOLINE is required for Spectre mitigation."
+		if use amd64 ; then
+			CONFIG_CHECK="
+				PAGE_TABLE_ISOLATION
+			"
+			WARNING_PAGE_TABLE_ISOLATION="CONFIG_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
+			check_extra_config
+		fi
+
+		if use amd64 || use x86 ; then
+			CONFIG_CHECK="
+				RETPOLINE
+			"
+			WARNING_RETPOLINE="CONFIG_RETPOLINE is required for Spectre mitigation."
+			check_extra_config
+		fi
 	fi
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
-		CONFIG_CHECK="
-			MITIGATION_PAGE_TABLE_ISOLATION
-			MITIGATION_RETPOLINE
-		"
-		WARNING_MITIGATION_PAGE_TABLE_ISOLATION="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
-		WARNING_MITIGATION_RETPOLINE="CONFIG_MITIGATION_RETPOLINE is required for Spectre mitigation."
+		if use amd64 ; then
+			CONFIG_CHECK="
+				MITIGATION_PAGE_TABLE_ISOLATION
+			"
+			WARNING_MITIGATION_PAGE_TABLE_ISOLATION="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
+			check_extra_config
+		fi
+
+		if use amd64 || use x86 ; then
+			CONFIG_CHECK="
+				MITIGATION_RETPOLINE
+			"
+			WARNING_MITIGATION_RETPOLINE="CONFIG_MITIGATION_RETPOLINE is required for Spectre mitigation."
+			check_extra_config
+		fi
 	fi
-	check_extra_config
 }
 
 # @FUNCTION: mitigate-tecv_pkg_setup
