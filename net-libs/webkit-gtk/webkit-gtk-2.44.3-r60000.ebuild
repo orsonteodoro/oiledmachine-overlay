@@ -121,7 +121,7 @@ USE_RUBY=" ruby31 ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
 
 inherit cflags-depends check-linker check-reqs cmake desktop dhms flag-o-matic git-r3
-inherit gnome2 lcnr linux-info llvm multilib-minimal pax-utils python-any-r1
+inherit gnome2 lcnr linux-info llvm mitigate-tecv multilib-minimal pax-utils python-any-r1
 inherit ruby-single toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
@@ -504,7 +504,7 @@ ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
 ${DEFAULT_GST_PLUGINS}
 
-aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2
+aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 custom-kernel
 dash +dfg-jit +doc -eme +ftl-jit -gamepad +gbm +geolocation gles2 gnome-keyring
 +gstreamer gstwebrtc hardened +introspection +javascriptcore +jit +journald
 +jpegxl +lcms -libbacktrace +libhyphen -libwebrtc -mediarecorder
@@ -841,6 +841,7 @@ gen_depend_llvm() {
 }
 
 RDEPEND+="
+	${MITIGATE_TECV_RDEPEND}
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-61.2:=[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-${GLIB_PV}:2[${MULTILIB_USEDEP}]
@@ -1209,6 +1210,7 @@ ewarn
 }
 
 _check_page_size_known_set() {
+	use kernel_linux || return
 	if use arm64 ; then
 		known=1
 		if (( ${page_size} == 64 )) ; then
@@ -1802,6 +1804,7 @@ eerror
 }
 
 check_page_size() {
+	use kernel_linux || return
 # See
 # https://github.com/WebKit/WebKit/blob/main/Source/WTF/wtf/PageBlock.h
 # https://github.com/WebKit/WebKit/blob/main/Source/cmake/WebKitFeatures.cmake#L76
@@ -1811,8 +1814,6 @@ check_page_size() {
 #
 	local page_size
 	local default_page_size=64
-
-	linux-info_pkg_setup
 
 	# These are based on the kernel defaults.
 	if [[ "${ARCH}" == "loong" ]] ; then
@@ -2014,6 +2015,11 @@ einfo "Latest security advisory:  ${MITIGATION_URI}"
 
 	check_geolocation
 	cflags-depends_check
+
+	if use kernel_linux ; then
+		linux-info_pkg_setup
+	fi
+	mitigate-tecv_pkg_setup
 
 	if ( use arm || use arm64 ) && ! use gles2 ; then
 ewarn "gles2 is the default on upstream."
@@ -2760,6 +2766,8 @@ ewarn "with a wrapper script or before invocation to use fallback protocol(s)"
 ewarn "requested by the site."
 ewarn
 	fi
+
+	mitigate-tecv_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

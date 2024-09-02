@@ -20,7 +20,6 @@ esac
 
 inherit chromium-2 desktop
 
-
 # ############## START Per-package environmental variables #####################
 
 # Some of these environmental variables manage the degree of consent for
@@ -57,13 +56,19 @@ ELECTRON_APP_ELECTRON_PV_SUPPORTED="29.0" # Minimum version
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:-"npm"} # can be npm, yarn
 ELECTRON_APP_ECLASS_DEBUG=${ELECTRON_APP_ECLASS_DEBUG:-"debug"} # debug or production
 
-# The recurrance interval between critical vulnerabilities in chrome is 10-14
-# days recently (worst cases), but longer interval between vulnerabilites with
-# 159 days (~5 months) and 5 days has been observed.  If the app is used like a
-# web-browser (including social media apps), the internal Chromium requires
-# weekly forced updates.
-ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP=\
-${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP:-"0"}
+# User generated content (images, audio, models, files)
+ELECTRON_APP_USES_UGC_FILES=${ELECTRON_APP_USES_UGC_FILES:-"0"}
+
+# User generated content (text, forums, javascript, email)
+ELECTRON_APP_USES_UGC_TEXT=${ELECTRON_APP_USES_UGC_TEXT:-"0"}
+
+# If application parses user generated content file with JavaScript, then check it.
+# TECV = Transient Execution CPU vulnerability
+ELECTRON_APP_REQUIRES_TECV_CHECK=${ELECTRON_APP_REQUIRES_TECV_CHECK:-"0"}
+
+if [[ "${ELECTRON_APP_USES_UGC_TEXT}" == "1" || "${ELECTRON_APP_REQUIRES_TECV_CHECK}" == "1" ]] ; then
+	inherit mitigate-tecv
+fi
 
 # Use the following example to extract the license.
 # unzip -p /var/cache/distfiles/electron-v23.3.13-linux-x64.zip LICENSES.chromium.html > electron-23.3.13-chromium.html
@@ -967,9 +972,19 @@ elif [[ -n "${ELECTRON_APP_VUE_CORE_PV}" ]] && ( \
 	COMMON_DEPEND+=" =net-libs/nodejs-16*" # ^16.4.7
 fi
 
+if [[ "${ELECTRON_APP_USES_UGC_TEXT}" == "1" || "${ELECTRON_APP_REQUIRES_TECV_CHECK}" == "1" ]] ; then
+	RDEPEND+="
+		${MITIGATE_TECV_RDEPEND}
+	"
+fi
+
 # Same packages as far back as 3.x
-RDEPEND+=" ${COMMON_DEPEND}"
-DEPEND+=" ${COMMON_DEPEND}"
+RDEPEND+="
+	${COMMON_DEPEND}
+"
+DEPEND+="
+	${COMMON_DEPEND}
+"
 
 if (( ${EAPI} == 7 )) ; then
 	BDEPEND+="
@@ -1041,6 +1056,17 @@ REQUIRED_USE+=" || ( ${_ELECTRON_APP_PACKAGING_METHODS[@]} )"
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/290569a4d3c98d225cd6576beea3bf5b6bb41b20/eclass/electron-app.eclass
 
 # ##################  END ebuild and eclass global variables ###################
+
+# @FUNCTION: electron-app_pkg_setup
+# @DESCRIPTION:
+# Checks the kernel config
+electron-app_pkg_setup() {
+	# For Spectre/Meltdown mitigation
+	# If the program parses a file with javascript, it should be checked also.
+	if use kernel_linux && [[ "${ELECTRON_APP_USES_UGC_TEXT}" == "1" || "${ELECTRON_APP_REQUIRES_TECV_CHECK}" == "1" ]] ; then
+		mitigate-tecv_pkg_setup
+	fi
+}
 
 # @FUNCTION: electron-app_gen_wrapper
 # @DESCRIPTION:
@@ -1220,5 +1246,14 @@ electron-app_set_sharp_env() {
 einfo "Using system vips for sharp"
 	else
 einfo "Using vendored vips for sharp"
+	fi
+}
+
+# @FUNCTION: electron-app_pkg_postinst
+# @DESCRIPTION:
+# Show messages
+electron-app_pkg_postinst() {
+	if [[ "${ELECTRON_APP_USES_UGC_TEXT}" == "1" || "${ELECTRON_APP_REQUIRES_TECV_CHECK}" == "1" ]] ; then
+		mitigate-tecv_pkg_postinst
 	fi
 }

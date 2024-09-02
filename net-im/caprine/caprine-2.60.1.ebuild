@@ -13,7 +13,7 @@ ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV}.AppImage"
 ELECTRON_APP_SNAP_ARCHIVE_NAME="${PN}_${PV}_amd64.snap"
 ELECTRON_APP_ELECTRON_PV="29.4.2"
 ELECTRON_APP_TYPESCRIPT_PV="5.4.4"
-ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
+ELECTRON_APP_USES_UGC_TEXT="1"
 NODE_VERSION=20 # Upstream uses 20.11.1
 NODE_ENV="development"
 
@@ -1206,6 +1206,7 @@ eerror
 pkg_setup() {
 	check_network_sandbox
 	npm_pkg_setup
+	electron-app_pkg_setup
 }
 
 get_deps() {
@@ -1293,6 +1294,7 @@ vibrancy should be equal to one of the allowed values,\""
 einfo
 einfo "then you may need to run \`rm -rf ~/.config/Caprine\`"
 einfo
+	electron-app_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

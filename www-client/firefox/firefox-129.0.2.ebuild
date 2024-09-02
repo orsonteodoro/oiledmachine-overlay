@@ -186,7 +186,7 @@ XKBCOMMON_PV="0.4.1"
 VIRTUALX_REQUIRED="pgo"
 
 inherit autotools cflags-depends check-linker check-reqs desktop dhms flag-o-matic
-inherit gnome2-utils lcnr linux-info llvm multilib-minimal multiprocessing
+inherit gnome2-utils lcnr linux-info llvm mitigate-tecv multilib-minimal multiprocessing
 inherit pax-utils python-any-r1 readme.gentoo-r1 rust-toolchain toolchain-funcs
 inherit virtualx xdg
 
@@ -401,13 +401,13 @@ CODEC_IUSE="
 IUSE+="
 ${CODEC_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-alsa cpu_flags_arm_neon cups +dbus debug eme-free +ffvpx +hardened -hwaccel jack
--jemalloc +jumbo-build libcanberra libnotify libproxy libsecret mold +openh264
-+pgo +pulseaudio proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user selinux sndio
-speech +system-av1 +system-ffmpeg +system-harfbuzz +system-icu
-+system-jpeg +system-libevent +system-libvpx system-png +system-webp systemd -telemetry
-+vaapi -valgrind +wayland +webrtc wifi webspeech
+alsa cpu_flags_arm_neon cups custom-kernel +dbus debug eme-free +ffvpx +hardened
+-hwaccel jack -jemalloc +jumbo-build libcanberra libnotify libproxy libsecret
+mold +openh264 +pgo +pulseaudio proprietary-codecs proprietary-codecs-disable
+proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
+selinux sndio speech +system-av1 +system-ffmpeg +system-harfbuzz +system-icu
++system-jpeg +system-libevent +system-libvpx system-png +system-webp systemd
+-telemetry +vaapi -valgrind +wayland +webrtc wifi webspeech
 "
 # telemetry disabled for crypto/security reasons
 
@@ -730,6 +730,7 @@ CDEPEND="
 # speech-dispatcher-0.11.3 is bugged.
 RDEPEND+="
 	${CDEPEND}
+	${MITIGATE_TECV_RDEPEND}
 	${UDEV_RDEPEND}
 	cups? (
 		net-print/cups[${MULTILIB_USEDEP}]
@@ -1248,6 +1249,14 @@ ewarn "Downgrading MAKEOPTS=-j${njobs} to prevent lock-up"
 	fi
 }
 
+check_kernel_flags() {
+	CONFIG_CHECK="
+		~SECCOMP
+	"
+	WARNING_SECCOMP="CONFIG_SECCOMP not set! This system will be unable to play DRM-protected content."
+	check_extra_config
+}
+
 pkg_setup() {
 	dhms_start
 einfo "Release type:  rapid"
@@ -1387,9 +1396,11 @@ ewarn "/dev/shm is not mounted -- expect build failures!"
 		export LC_ALL=C
 	fi
 
-	CONFIG_CHECK="~SECCOMP"
-	WARNING_SECCOMP="CONFIG_SECCOMP not set! This system will be unable to play DRM-protected content."
-	linux-info_pkg_setup
+	if use kernel_linux ; then
+		linux-info_pkg_setup
+		check_kernel_flags
+	fi
+	mitigate-tecv_pkg_setup
 
 einfo
 einfo "To set up cross-compile for other ABIs,"
@@ -3141,6 +3152,8 @@ ewarn "glibc not found! You won't be able to play DRM content."
 ewarn "See Gentoo bug #910309 or upstream bug #1843683."
 ewarn
 	fi
+
+	mitigate-tecv_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

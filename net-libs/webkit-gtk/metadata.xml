@@ -110,6 +110,10 @@
     <flag name="coverage">
       Enable code coverage support
     </flag>
+    <flag name="custom-kernel">
+      Prevent vendor/vulnerable lock-in when doing Spectre/Meltdown kernel
+      mitigation checks.
+    </flag>
     <flag name="eme">
       Enable Encrypted Media Extensions support (ClearKey CDM only).
     </flag>

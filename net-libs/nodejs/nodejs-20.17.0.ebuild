@@ -71,7 +71,7 @@ UOPTS_SUPPORT_TPGO=1
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
 inherit bash-completion-r1 flag-o-matic flag-o-matic-om linux-info ninja-utils
-inherit pax-utils python-any-r1 check-linker lcnr toolchain-funcs uopts
+inherit pax-utils python-any-r1 check-linker lcnr mitigate-tecv toolchain-funcs uopts
 inherit xdg-utils
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~s390 ~x86 ~amd64-linux ~x64-macos"
@@ -145,6 +145,7 @@ REQUIRED_USE+="
 	)
 "
 RDEPEND+="
+	${MITIGATE_TECV_RDEPEND}
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.1.0
 	>=app-eselect/eselect-nodejs-20230521
@@ -237,6 +238,7 @@ pkg_pretend() {
 pkg_setup() {
 	python-any-r1_pkg_setup
 	linux-info_pkg_setup
+	mitigate-tecv_pkg_setup
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
@@ -815,6 +817,7 @@ einfo "corresponding SLOT.  This means that you cannot compile with different"
 einfo "SLOTS simultaneously."
 einfo
 	uopts_pkg_postinst
+	mitigate-tecv_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multislot, pgo
