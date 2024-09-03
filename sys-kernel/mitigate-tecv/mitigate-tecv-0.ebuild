@@ -11,7 +11,7 @@ inherit mitigate-tecv
 # WebAssembly
 # Keychains
 # Passwords
-# Bitcoin Wallets
+# Digital currency wallets
 # Sensitive data
 
 # It is used to mitigate against cross process exfiltration.
