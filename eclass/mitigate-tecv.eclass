@@ -66,11 +66,19 @@ CPU_TARGET_ARM=(
 	cpu_target_arm_cortex_x3	# BHB
 )
 
+CPU_TARGET_PPC=(
+	cpu_target_ppc_power7
+	cpu_target_ppc_power8
+	cpu_target_ppc_power9
+)
+
 inherit linux-info
 
 IUSE+="
 	${CPU_TARGET_ARM[@]}
+	${CPU_TARGET_PPC[@]}
 	${CPU_TARGET_X86[@]}
+	bpf
 	custom-kernel
 	firmware
 	ebuild-revision-3
@@ -137,8 +145,17 @@ gen_patched_kernel_list() {
 	"
 }
 
+_MITIGATE_TECV_SPECTRE_RDEPEND_ARM64="
+	bpf? (
+		$(gen_patched_kernel_list 5.13)
+	)
+"
+
 _MITIGATE_TECV_SPECTRE_RDEPEND_X86_64="
 	$(gen_patched_kernel_list 4.15)
+	bpf? (
+		$(gen_patched_kernel_list 5.13)
+	)
 "
 _MITIGATE_TECV_SPECTRE_RDEPEND_X86_32="
 	${_MITIGATE_TECV_SPECTRE_RDEPEND_X86_64}
@@ -148,6 +165,9 @@ _MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64="
 "
 _MITIGATE_TECV_SPECTRE_RDEPEND_S390X="
 	$(gen_patched_kernel_list 4.16)
+	bpf? (
+		$(gen_patched_kernel_list 5.13)
+	)
 "
 _MITIGATE_TECV_MELTDOWN_RDEPEND_ARM64="
 	cpu_target_arm_cortex_a75? (
@@ -178,6 +198,17 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_ARM64="
 	cpu_target_arm_neoverse_n1? (
 		$(gen_patched_kernel_list 4.18)
 	)
+	bpf? (
+		$(gen_patched_kernel_list 5.13)
+	)
+"
+_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64="
+	bpf? (
+		$(gen_patched_kernel_list 5.13)
+	)
+"
+_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_32="
+	${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64}
 "
 
 _MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64="
@@ -453,6 +484,19 @@ _MITIGATE_TECV_CACHEOUT_RDEPEND_X86_32="
 	${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64}
 "
 
+# Mitigated with RFI flush not KPTI
+_MITIGATE_TECV_MELTDOWN_RDEPEND_PPC64="
+	cpu_target_ppc_power7? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_ppc_power8? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_ppc_power9? (
+		$(gen_patched_kernel_list 4.15)
+	)
+"
+
 # @ECLASS_VARIABLE: MITIGATE_TECV_RDEPEND
 # @INTERNAL
 # @DESCRIPTION:
@@ -461,8 +505,9 @@ MITIGATE_TECV_RDEPEND="
 	kernel_linux? (
 		!custom-kernel? (
 			arm64? (
-				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_ARM64}
+				${_MITIGATE_TECV_SPECTRE_RDEPEND_ARM64}
 				${_MITIGATE_TECV_MELTDOWN_RDEPEND_ARM64}
+				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_ARM64}
 				${_MITIGATE_TECV_BHB_RDEPEND_ARM64}
 			)
 			amd64? (
@@ -471,11 +516,15 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64}
 				${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64}
 				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64}
+				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64}
 				${_MITIGATE_TECV_RETBLEED_RDEPEND_X86_64}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
 				${_MITIGATE_TECV_RDFS_RDEPEND_X86_64}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
 				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_64}
+			)
+			ppc64? (
+				${_MITIGATE_TECV_MELTDOWN_RDEPEND_PPC64}
 			)
 			s390? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_S390X}
@@ -485,6 +534,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_32}
 				${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_32}
 				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_32}
+				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_32}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32}
 				${_MITIGATE_TECV_RDFS_RDEPEND_X86_32}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_32}
@@ -500,7 +550,7 @@ MITIGATE_TECV_RDEPEND="
 # Checks the kernel command line for the option.
 _check_kernel_cmdline() {
 	local option="${1}"
-	local cl=$(linux_chkconfig_string CMDLINE)
+	local cl=$(linux_chkconfig_string "CMDLINE")
 	if [[ "${cl}" =~ "${option}" ]] ; then
 		return 0
 	fi
@@ -730,6 +780,16 @@ eerror
 			die
 		fi
 	fi
+	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.13" ; then
+	# See https://lwn.net/Articles/946389/
+		if linux_chkconfig_present "BPF" ; then
+			CONFIG_CHECK="
+				BPF_JIT
+			"
+			WARNING_BPF_JIT="CONFIG_BPF_JIT=y is required for Spectre (Variant 2) mitigation."
+			check_extra_config
+		fi
+	fi
 }
 
 # @FUNCTION: _mitigate_tecv_verify_mitigation_spectre_ng
@@ -787,6 +847,16 @@ eerror "  CONFIG_CMDLINE"
 eerror
 				die
 			fi
+		fi
+	fi
+	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.13" ; then
+	# See https://lwn.net/Articles/946389/
+		if linux_chkconfig_present "BPF" ; then
+			CONFIG_CHECK="
+				BPF_UNPRIV_DEFAULT_OFF
+			"
+			WARNING_BPF_UNPRIV_DEFAULT_OFF="CONFIG_BPF_UNPRIV_DEFAULT_OFF=y is required for SpectreNG v4 mitigation."
+			check_extra_config
 		fi
 	fi
 }
@@ -1212,6 +1282,11 @@ _mitigate_tecv_verify_mitigation_cacheout() {
 # Check the kernel config flags
 _mitigate-tecv_check_kernel_flags() {
 	einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
+
+	if linux_chkconfig_present "BPF" && ! use bpf ; then
+eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
+		die
+	fi
 
 	# Notify if grub or the kernel config is incorrectly configured/tampered
 	# or a copypasta-ed workaround.

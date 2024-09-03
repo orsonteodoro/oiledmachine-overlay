@@ -18,7 +18,7 @@ inherit mitigate-tecv
 
 DESCRIPTION="Enforce Transient Execution CPU Vulnerability mitigations"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~s390 ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~s390 ~x86"
 RDEPEND="
 	${MITIGATE_TECV_RDEPEND}
 "
