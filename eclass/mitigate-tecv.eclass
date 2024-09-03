@@ -29,7 +29,13 @@ CPU_TARGET_X86=(
 )
 
 CPU_TARGET_ARM=(
-	cpu_target_arm_cortex_a75
+# See also
+# https://developer.arm.com/Arm%20Security%20Center/Speculative%20Processor%20Vulnerability
+# https://github.com/torvalds/linux/blob/v6.10/arch/arm64/kernel/cpufeature.c#L1739
+	cpu_target_arm_cortex_a15 # Variant 3a
+	# cpu_target_arm_cortex_a57 # Variant 3a
+	# cpu_target_arm_cortex_a72 # Variant 3a
+	cpu_target_arm_cortex_a75 # Variant 3
 )
 
 inherit linux-info
@@ -90,6 +96,9 @@ MITIGATE_TECV_RDEPEND="
 	kernel_linux? (
 		!custom-kernel? (
 			arm64? (
+				cpu_target_arm_cortex_a15? (
+					$(gen_patched_kernel_list 4.16)
+				)
 				cpu_target_arm_cortex_a75? (
 					$(gen_patched_kernel_list 4.16)
 				)
@@ -193,8 +202,28 @@ eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead.
 
 
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "4.16" ; then
-		if use cpu_target_arm_cortex_a75 && grep -q "kpti=off" "/proc/cmdline" ; then
-# Variant 3
+		local needs_kpti=0
+		use cpu_target_arm_cortex_a75 && needs_kpti=1
+		use cpu_target_arm_cortex_a15 && needs_kpti=1
+		if grep -q "mitigations=off" "/proc/cmdline" ; then
+eerror
+eerror "Detected mitigations=off in the kernel command line."
+eerror
+eerror "Acceptable values:"
+eerror
+eerror "  mitigations=auto"
+eerror "  mitigations=auto,nosmt"
+eerror
+eerror "Edit it from:"
+eerror
+eerror "  /etc/defaults/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+			die
+		fi
+		if (( ${needs_kpti} == 1 )) && grep -q "kpti=off" "/proc/cmdline" ; then
+# Variant 3/3a
 eerror
 eerror "Detected kpti=off in the kernel command line."
 eerror
@@ -208,8 +237,8 @@ eerror "  /etc/defaults/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
-		elif use cpu_target_arm_cortex_a75 && ! grep -q "kpti=" "/proc/cmdline" ; then
-# Variant 3
+		elif (( ${needs_kpti} == 1 )) && grep -q "kpti=off" "/proc/cmdline" ; then
+# Variant 3/3a
 eerror
 eerror "Detected no kpti= in the kernel command line which implies kpti=off."
 eerror
