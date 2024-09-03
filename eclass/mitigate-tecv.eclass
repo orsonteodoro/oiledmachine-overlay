@@ -494,7 +494,7 @@ eerror
 # Check the kernel config flags and kernel command line to mitigate against RDFS.
 _mitigate_tecv_verify_mitigation_rfds() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
-		if has_version "sys-firmware/intel-microcode-20240312" ; then
+		if has_version ">=sys-firmware/intel-microcode-20240312" ; then
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
 			"
@@ -529,7 +529,7 @@ _mitigate_tecv_verify_mitigation_downfall() {
 		cpu_target_x86_core_gen11
 	)
 	for x in ${L[@]} ; do
-		if has_version "sys-firmware/intel-microcode-20230808" ; then
+		if has_version ">=sys-firmware/intel-microcode-20230808" ; then
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
 			"
