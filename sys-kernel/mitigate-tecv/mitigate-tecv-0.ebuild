@@ -1,3 +1,4 @@
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -14,7 +15,7 @@ inherit mitigate-tecv
 
 # It is used to mitigate against cross process exfiltration.
 
-DESCRIPTION="Virtual to enforce Transient Execution CPU vulnerability mitigations"
+DESCRIPTION="Enforce Transient Execution CPU Vulnerability mitigations"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~s390 ~x86"
 RDEPEND="
