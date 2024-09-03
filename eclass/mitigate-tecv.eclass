@@ -857,7 +857,7 @@ eerror
 			CONFIG_CHECK="
 				BPF_UNPRIV_DEFAULT_OFF
 			"
-			WARNING_BPF_UNPRIV_DEFAULT_OFF="CONFIG_BPF_UNPRIV_DEFAULT_OFF=y is required for SpectreNG v4 mitigation."
+			WARNING_BPF_UNPRIV_DEFAULT_OFF="CONFIG_BPF_UNPRIV_DEFAULT_OFF=y is required for Spectre-NG v4 mitigation."
 			check_extra_config
 		fi
 	fi

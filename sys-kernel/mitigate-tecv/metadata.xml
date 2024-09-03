@@ -6,6 +6,9 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <use>
+    <flag name="bpf">
+      Apply bpf mitigations for Spectre v2 and Spectre-NG.
+    </flag>
     <flag name="custom-kernel">
       Prevent vendor lock-in when doing kernel mitigation checks.
     </flag>
