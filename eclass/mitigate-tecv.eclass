@@ -35,21 +35,21 @@ CPU_TARGET_ARM=(
 # https://github.com/torvalds/linux/blob/v6.10/arch/arm64/kernel/cpufeature.c#L1739
 	cpu_target_arm_cortex_r7 # BHB
 	cpu_target_arm_cortex_r8 # BHB
-	cpu_target_arm_cortex_a15 # Variant 3a, BHB
-	cpu_target_arm_cortex_a57 # Variant 3a, BHB
+	cpu_target_arm_cortex_a15 # BHB, Variant 3a
+	cpu_target_arm_cortex_a57 # BHB, Variant 3a, Variant 4
 	cpu_target_arm_cortex_a65 # BHB
 	cpu_target_arm_cortex_a65ae # BHB
-	cpu_target_arm_cortex_a72 # Variant 3a, BHB
-	cpu_target_arm_cortex_a73 # BHB
-	cpu_target_arm_cortex_a75 # Variant 3, BHB
-	cpu_target_arm_cortex_a76 # BHB
-	cpu_target_arm_cortex_a77 # BHB
+	cpu_target_arm_cortex_a72 # BHB, Variant 3a, Variant 4
+	cpu_target_arm_cortex_a73 # BHB, Variant 4
+	cpu_target_arm_cortex_a75 # BHB, Variant 3, Variant 4
+	cpu_target_arm_cortex_a76 # BHB, Variant 4
+	cpu_target_arm_cortex_a77 # BHB, Variant 4
 	cpu_target_arm_cortex_a78 # BHB
 	cpu_target_arm_cortex_a78c # BHB
 	cpu_target_arm_cortex_a710 # BHB
 	cpu_target_arm_cortex_a715 # BHB
 	cpu_target_arm_neoverse_e1 # BHB
-	cpu_target_arm_neoverse_n1 # BHB
+	cpu_target_arm_neoverse_n1 # BHB, Variant 4
 	cpu_target_arm_neoverse_v1 # BHB
 	cpu_target_arm_neoverse_n2 # BHB
 	cpu_target_arm_neoverse_v2 # BHB
@@ -126,9 +126,29 @@ _MITIGATE_TECV_MELTDOWN_RDEPEND_ARM64="
 		$(gen_patched_kernel_list 4.16)
 	)
 "
+# Variant 3a (4.16), Variant 4 (4.18) \
 _MITIGATE_TECV_SPECTRE_NG_RDEPEND_ARM64="
 	cpu_target_arm_cortex_a15? (
 		$(gen_patched_kernel_list 4.16)
+	)
+
+	cpu_target_arm_cortex_a57? (
+		$(gen_patched_kernel_list 4.18)
+	)
+	cpu_target_arm_cortex_a72? (
+		$(gen_patched_kernel_list 4.18)
+	)
+	cpu_target_arm_cortex_a75? (
+		$(gen_patched_kernel_list 4.18)
+	)
+	cpu_target_arm_cortex_a76? (
+		$(gen_patched_kernel_list 4.18)
+	)
+	cpu_target_arm_cortex_a77? (
+		$(gen_patched_kernel_list 4.18)
+	)
+	cpu_target_arm_neoverse_n1? (
+		$(gen_patched_kernel_list 4.18)
 	)
 "
 
