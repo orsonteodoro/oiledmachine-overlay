@@ -19,8 +19,11 @@ if [[ -z ${_MITIGATE_TECV_ECLASS} ]] ; then
 _MITIGATE_TECV_ECLASS=1
 
 CPU_TARGET_X86=(
+# For completeness, see also
+# https://www.intel.com/content/www/us/en/developer/topic-technology/software-security-guidance/processors-affected-consolidated-product-cpu-model.html
 	cpu_target_x86_atom
 	cpu_target_x86_core_gen4
+	cpu_target_x86_core_gen5
 	cpu_target_x86_core_gen6
 	cpu_target_x86_core_gen7
 	cpu_target_x86_core_gen8
@@ -75,6 +78,18 @@ IUSE+="
 REQUIRED_USE="
 	cpu_target_x86_zen_plus? (
 		cpu_target_x86_zen
+	)
+	cpu_target_x86_core_gen6? (
+		firmware
+	)
+	cpu_target_x86_core_gen7? (
+		firmware
+	)
+	cpu_target_x86_core_gen8? (
+		firmware
+	)
+	cpu_target_x86_core_gen9? (
+		firmware
 	)
 "
 
@@ -375,10 +390,67 @@ _MITIGATE_TECV_INCEPTION_RDEPEND_X86_32="
 	${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
 "
 
+# Only >= Gen6 firmware
 _MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64="
 	cpu_target_x86_core_gen4? (
 		$(gen_patched_kernel_list 5.4)
 	)
+	cpu_target_x86_core_gen5? (
+		$(gen_patched_kernel_list 5.4)
+	)
+	cpu_target_x86_core_gen6? (
+		$(gen_patched_kernel_list 5.4)
+		firmware? (
+			>=sys-firmware/intel-microcode-20191112
+		)
+	)
+	cpu_target_x86_core_gen7? (
+		$(gen_patched_kernel_list 5.4)
+		firmware? (
+			>=sys-firmware/intel-microcode-20191112
+		)
+	)
+	cpu_target_x86_core_gen8? (
+		$(gen_patched_kernel_list 5.4)
+		firmware? (
+			>=sys-firmware/intel-microcode-20191112
+		)
+	)
+	cpu_target_x86_core_gen9? (
+		$(gen_patched_kernel_list 5.4)
+		firmware? (
+			>=sys-firmware/intel-microcode-20191112
+		)
+	)
+"
+_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_32="
+	${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64}
+"
+
+_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64="
+	cpu_target_x86_core_gen6? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
+	cpu_target_x86_core_gen7? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
+	cpu_target_x86_core_gen8? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
+	cpu_target_x86_core_gen9? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
+"
+_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_32="
+	${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64}
 "
 
 # @ECLASS_VARIABLE: MITIGATE_TECV_RDEPEND
@@ -396,6 +468,8 @@ MITIGATE_TECV_RDEPEND="
 			amd64? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_X86_64}
 				${_MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64}
+				${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64}
+				${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64}
 				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64}
 				${_MITIGATE_TECV_RETBLEED_RDEPEND_X86_64}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
@@ -408,6 +482,8 @@ MITIGATE_TECV_RDEPEND="
 			)
 			x86? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_X86_32}
+				${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_32}
+				${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_32}
 				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_32}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32}
 				${_MITIGATE_TECV_RDFS_RDEPEND_X86_32}
@@ -1048,7 +1124,23 @@ _mitigate_tecv_verify_mitigation_inception() {
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_zombieload_v2
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against ZombieLoad v2.
 _mitigate_tecv_verify_mitigation_zombieload_v2() {
+	if \
+		   use cpu_target_x86_core_gen4 \
+		|| use cpu_target_x86_core_gen5 \
+		|| use cpu_target_x86_core_gen6 \
+		|| use cpu_target_x86_core_gen7 \
+		|| use cpu_target_x86_core_gen8 \
+		|| use cpu_target_x86_core_gen9 \
+	; then
+		:
+	else
+		return
+	fi
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.4" ; then
 		if _check_kernel_cmdline "mitigations=off" ; then
 eerror
@@ -1084,6 +1176,35 @@ eerror "  CONFIG_CMDLINE"
 eerror
 		fi
 	fi
+	if use cpu_target_x86_core_gen4 ; then
+ewarn "Missing firmware for Gen4 TAA mitigations"
+	fi
+	if use cpu_target_x86_core_gen5 ; then
+ewarn "Missing firmware for Gen5 TAA mitigations"
+	fi
+}
+
+# @FUNCTION: _mitigate_tecv_verify_mitigation_cacheout
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CacheOut (L1DES) and VRS.
+_mitigate_tecv_verify_mitigation_cacheout() {
+	if \
+		use cpu_target_x86_core_gen6 \
+		use cpu_target_x86_core_gen7 \
+		use cpu_target_x86_core_gen8 \
+		use cpu_target_x86_core_gen9 \
+		|| \
+	; then
+	# Microcode mitigation only
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
+			WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for CacheOut and VRS mitigation."
+			check_extra_config
+		fi
+	fi
 }
 
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
@@ -1103,11 +1224,14 @@ _mitigate-tecv_check_kernel_flags() {
 	_mitigate_tecv_verify_mitigation_crosstalk		# Mitigations against SRBDS (2020)
 	_mitigate_tecv_verify_mitigation_foreshadow		# Mitigations against Variant 5 (2018)
 	_mitigate_tecv_verify_mitigation_zombieload_v2		# Mitigations against TAA (2019)
+	_mitigate_tecv_verify_mitigation_cacheout		# Mitigations against L1DES (2020), VRS (2020)
 	_mitigate_tecv_verify_mitigation_downfall		# Mitigations against GDS (2022)
 	_mitigate_tecv_verify_mitigation_retbleed		# Mitigations against Retbleed (2022)
 	_mitigate_tecv_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023)
 	_mitigate_tecv_verify_mitigation_inception		# Mitigations against SRSO (2023)
 	_mitigate_tecv_verify_mitigation_rfds			# Mitigations against RFDS (2024)
+
+	# For SLAM, see https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability#2023
 }
 
 # @FUNCTION: _mitigate-tecv_print_required_versions
@@ -1139,6 +1263,11 @@ ewarn "You are responsible for using only Linux Kernel >= 6.5."
 			|| use cpu_target_x86_zen_plus \
 		; then
 ewarn "You are responsible for using only Linux Kernel >= 5.19."
+		elif \
+			   use cpu_target_x86_core_gen4 \
+			|| use cpu_target_x86_core_gen5 \
+		; then
+ewarn "You are responsible for using only Linux Kernel >= 5.4."
 		else
 ewarn "You are responsible for using only Linux Kernel >= 4.19."
 		fi
