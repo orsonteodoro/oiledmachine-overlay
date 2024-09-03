@@ -10,8 +10,9 @@ inherit mitigate-tecv
 # JavaScript
 # WebAssembly
 # Keychains
-# Sensitive data
+# Passwords
 # Bitcoin Wallets
+# Sensitive data
 
 # It is used to mitigate against cross process exfiltration.
 
