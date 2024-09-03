@@ -54,7 +54,7 @@ PYTHON_REQ_USE="ncurses,ssl,xml(+)"
 
 WANT_AUTOCONF="2.1"
 
-inherit autotools check-reqs dhms flag-o-matic llvm-r1 mitigate-tecv multiprocessing prefix python-any-r1 toolchain-funcs
+inherit autotools check-reqs dhms flag-o-matic llvm-r1 multiprocessing prefix python-any-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 S="${WORKDIR}/firefox-${MY_PV}/js/src"
@@ -94,13 +94,13 @@ gen_clang_bdepend() {
 
 }
 RDEPEND="
-	${MITIGATE_TECV_RDEPEND}
 	>=dev-libs/icu-73.1
 	dev-libs/icu:=
 	>=dev-libs/nspr-4.35
 	sys-libs/readline:0
 	sys-libs/readline:=
 	>=sys-libs/zlib-1.2.13
+	sys-kernel/mitigate-tecv
 "
 DEPEND="
 	${RDEPEND}
@@ -198,7 +198,6 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	mitigate-tecv_pkg_setup
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		if use test ; then
 			CHECKREQS_DISK_BUILD="4000M"
@@ -605,8 +604,4 @@ src_install() {
 		"${ED}/usr/$(get_libdir)/pkgconfig/"*".pc" \
 		"${ED}/usr/include/mozjs-${MY_MAJOR}/js-config.h" \
 		|| die
-}
-
-pkg_postinst() {
-	mitigate-tecv_pkg_postinst
 }

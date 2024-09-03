@@ -720,33 +720,33 @@ _mitigate_tecv_verify_mitigation_rfds() {
 # Check the kernel config flags and kernel command line to mitigate against GDS.
 _mitigate_tecv_verify_mitigation_downfall() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.5" ; then
-	local L=(
-		cpu_target_x86_core_gen6
-		cpu_target_x86_core_gen7
-		cpu_target_x86_core_gen8
-		cpu_target_x86_core_gen9
-		cpu_target_x86_core_gen10
-		cpu_target_x86_core_gen11
-	)
-	for x in ${L[@]} ; do
-		if has_version ">=sys-firmware/intel-microcode-20230808" ; then
-			CONFIG_CHECK="
-				CPU_SUP_INTEL
-			"
-			if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for GDS mitigation on ${x}."
-				check_extra_config
-			fi
-		elif use "${x}" ; then
-			# Default off upstream
-			CONFIG_CHECK="
-				GDS_FORCE_MITIGATION
-			"
-			if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-				WARNING_GDS_FORCE_MITIGATION="CONFIG_GDS_FORCE_MITIGATION or >=sys-firmware/intel-microcode-20230808 is required for GDS mitigation on ${x}."
-				check_extra_config
-			fi
-			if grep -q "gather_data_sampling=off" "/proc/cmdline" ; then
+		local L=(
+			cpu_target_x86_core_gen6
+			cpu_target_x86_core_gen7
+			cpu_target_x86_core_gen8
+			cpu_target_x86_core_gen9
+			cpu_target_x86_core_gen10
+			cpu_target_x86_core_gen11
+		)
+		for x in ${L[@]} ; do
+			if has_version ">=sys-firmware/intel-microcode-20230808" ; then
+				CONFIG_CHECK="
+					CPU_SUP_INTEL
+				"
+				if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
+					WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for GDS mitigation on ${x}."
+					check_extra_config
+				fi
+			elif use "${x}" ; then
+				# Default off upstream
+				CONFIG_CHECK="
+					GDS_FORCE_MITIGATION
+				"
+				if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
+					WARNING_GDS_FORCE_MITIGATION="CONFIG_GDS_FORCE_MITIGATION or >=sys-firmware/intel-microcode-20230808 is required for GDS mitigation on ${x}."
+					check_extra_config
+				fi
+				if grep -q "gather_data_sampling=off" "/proc/cmdline" ; then
 eerror
 eerror "Detected gather_data_sampling=off in the kernel command line."
 eerror "Note:  This will turn off AVX acceleration."
@@ -761,9 +761,10 @@ eerror "  /etc/defaults/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
-				die
+					die
+				fi
 			fi
-		fi
+		done
 	fi
 }
 

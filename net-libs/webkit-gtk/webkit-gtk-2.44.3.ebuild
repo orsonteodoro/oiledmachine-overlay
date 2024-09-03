@@ -121,7 +121,7 @@ USE_RUBY=" ruby31 ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
 
 inherit cflags-depends check-linker check-reqs cmake desktop dhms flag-o-matic git-r3
-inherit gnome2 lcnr linux-info llvm mitigate-tecv multilib-minimal pax-utils python-any-r1
+inherit gnome2 lcnr linux-info llvm multilib-minimal pax-utils python-any-r1
 inherit ruby-single toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
@@ -840,7 +840,6 @@ gen_depend_llvm() {
 }
 
 RDEPEND+="
-	${MITIGATE_TECV_RDEPEND}
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-61.2:=[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-${GLIB_PV}:2[${MULTILIB_USEDEP}]
@@ -860,6 +859,7 @@ RDEPEND+="
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
 	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
+	sys-kernel/mitigate-tecv
 	virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	alsa? (
 		!media-plugins/gst-plugins-pulse
@@ -2014,7 +2014,6 @@ einfo "Latest security advisory:  ${MITIGATION_URI}"
 	if use kernel_linux ; then
 		linux-info_pkg_setup
 	fi
-	mitigate-tecv_pkg_setup
 
 	if ( use arm || use arm64 ) && ! use gles2 ; then
 ewarn "gles2 is the default on upstream."
@@ -2759,8 +2758,6 @@ ewarn "with a wrapper script or before invocation to use fallback protocol(s)"
 ewarn "requested by the site."
 ewarn
 	fi
-
-	mitigate-tecv_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

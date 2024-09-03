@@ -43,7 +43,7 @@ LIBXI_PV="1.7.10"
 MESA_PV="20.3.5"
 VIRTUALX_REQUIRED="manual"
 
-inherit chromium-2 cmake flag-o-matic linux-info mitigate-tecv virtualx
+inherit chromium-2 cmake flag-o-matic linux-info virtualx
 
 KEYWORDS="~arm ~arm64 ~amd64"
 S="${WORKDIR}" # Dummy
@@ -152,43 +152,6 @@ OPTIONAL_RDEPEND="
 	>=gnome-base/gnome-keyring-3.12.0[pam]
 	>=media-libs/vulkan-loader-1.3.224.0
 "
-# Mitigation against
-# Spectre (2018)
-# Meltdown (2018)
-KERNEL_RDEPEND="
-	|| (
-		>=sys-kernel/gentoo-kernel-bin-5.10
-		>=sys-kernel/gentoo-sources-5.10
-		>=sys-kernel/vanilla-sources-5.10
-		>=sys-kernel/git-sources-5.10
-		>=sys-kernel/mips-sources-5.10
-		>=sys-kernel/pf-sources-5.10
-		>=sys-kernel/rt-sources-5.10
-		>=sys-kernel/zen-sources-5.10
-		>=sys-kernel/raspberrypi-sources-5.10
-		>=sys-kernel/gentoo-kernel-5.10
-		>=sys-kernel/gentoo-kernel-bin-5.10
-		>=sys-kernel/vanilla-kernel-5.10
-		>=sys-kernel/linux-next-5.10
-		>=sys-kernel/asahi-sources-5.10
-		>=sys-kernel/ot-sources-5.10
-	)
-	!<sys-kernel/gentoo-kernel-bin-5.10
-	!<sys-kernel/gentoo-sources-5.10
-	!<sys-kernel/vanilla-sources-5.10
-	!<sys-kernel/git-sources-5.10
-	!<sys-kernel/mips-sources-5.10
-	!<sys-kernel/pf-sources-5.10
-	!<sys-kernel/rt-sources-5.10
-	!<sys-kernel/zen-sources-5.10
-	!<sys-kernel/raspberrypi-sources-5.10
-	!<sys-kernel/gentoo-kernel-5.10
-	!<sys-kernel/gentoo-kernel-bin-5.10
-	!<sys-kernel/vanilla-kernel-5.10
-	!<sys-kernel/linux-next-5.10
-	!<sys-kernel/asahi-sources-5.10
-	!<sys-kernel/ot-sources-5.10
-"
 CHROMIUM_RDEPEND="
 	${CHROMIUM_CDEPEND}
 	${UNLISTED_RDEPEND}
@@ -219,11 +182,7 @@ CHROMIUM_RDEPEND="
 	>=x11-libs/libXrender-0.9.10
 	>=x11-libs/pango-1.46.2
 	>=x11-libs/pixman-0.40.0
-	kernel_linux? (
-		!custom-kernel? (
-			${KERNEL_RDEPEND}
-		)
-	)
+	sys-kernel/mitigate-tecv
 "
 # libcef alone uses aura not gtk
 RDEPEND+="
@@ -345,7 +304,6 @@ check_kernel_flags() {
 }
 
 pkg_setup() {
-	mitigate-tecv_pkg_setup
 	if use kernel_linux ; then
 		linux-info_pkg_setup
 		chromium_suid_sandbox_check_kernel_config
@@ -678,7 +636,6 @@ ewarn "is unknown."
 ewarn
 ewarn "For full protection, use the regular browser bin package instead."
 ewarn
-	mitigate-tecv_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

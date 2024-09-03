@@ -186,7 +186,7 @@ XKBCOMMON_PV="0.4.1"
 VIRTUALX_REQUIRED="pgo"
 
 inherit autotools cflags-depends check-linker check-reqs desktop dhms flag-o-matic
-inherit gnome2-utils lcnr linux-info llvm mitigate-tecv multilib-minimal multiprocessing
+inherit gnome2-utils lcnr linux-info llvm multilib-minimal multiprocessing
 inherit pax-utils python-any-r1 readme.gentoo-r1 rust-toolchain toolchain-funcs
 inherit virtualx xdg
 
@@ -730,8 +730,8 @@ CDEPEND="
 # speech-dispatcher-0.11.3 is bugged.
 RDEPEND+="
 	${CDEPEND}
-	${MITIGATE_TECV_RDEPEND}
 	${UDEV_RDEPEND}
+	sys-kernel/mitigate-tecv
 	cups? (
 		net-print/cups[${MULTILIB_USEDEP}]
 	)
@@ -1400,7 +1400,6 @@ ewarn "/dev/shm is not mounted -- expect build failures!"
 		linux-info_pkg_setup
 		check_kernel_flags
 	fi
-	mitigate-tecv_pkg_setup
 
 einfo
 einfo "To set up cross-compile for other ABIs,"
@@ -3152,8 +3151,6 @@ ewarn "glibc not found! You won't be able to play DRM content."
 ewarn "See Gentoo bug #910309 or upstream bug #1843683."
 ewarn
 	fi
-
-	mitigate-tecv_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

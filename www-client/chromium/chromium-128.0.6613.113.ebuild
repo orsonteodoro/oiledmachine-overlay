@@ -180,7 +180,7 @@ VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 ZLIB_PV="1.3"
 
 inherit cflags-depends check-linker check-reqs chromium-2 dhms desktop edo
-inherit flag-o-matic flag-o-matic-om linux-info lcnr llvm mitigate-tecv multilib-minimal
+inherit flag-o-matic flag-o-matic-om linux-info lcnr llvm multilib-minimal
 inherit ninja-utils pax-utils python-any-r1 qmake-utils readme.gentoo-r1 systemd
 inherit toolchain-funcs xdg-utils
 
@@ -1006,9 +1006,9 @@ CLANG_RDEPEND="
 "
 
 RDEPEND+="
-	${MITIGATE_TECV_RDEPEND}
 	${COMMON_DEPEND}
 	${CLANG_RDEPEND}
+	sys-kernel/mitigate-tecv
 	virtual/ttf-fonts
 	!headless? (
 		qt5? (
@@ -1639,7 +1639,6 @@ einfo "Security fixes applied:  ${MITIGATION_URI}"
 	if use kernel_linux ; then
 		chromium_suid_sandbox_check_kernel_config
 	fi
-	mitigate-tecv_pkg_setup
 
 	if ! use amd64 && [[ "${USE}" =~ "cfi" ]] ; then
 ewarn
@@ -4097,8 +4096,6 @@ ewarn "Chromium is known to behave unpredictably with this system configuration;
 ewarn "please complete the configuration of this system before logging any bugs."
 ewarn
 	fi
-
-	mitigate-tecv_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

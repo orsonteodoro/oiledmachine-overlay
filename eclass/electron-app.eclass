@@ -66,10 +66,6 @@ ELECTRON_APP_USES_UGC_TEXT=${ELECTRON_APP_USES_UGC_TEXT:-"0"}
 # TECV = Transient Execution CPU vulnerability
 ELECTRON_APP_REQUIRES_TECV_CHECK=${ELECTRON_APP_REQUIRES_TECV_CHECK:-"0"}
 
-if [[ "${ELECTRON_APP_USES_UGC_TEXT}" == "1" || "${ELECTRON_APP_REQUIRES_TECV_CHECK}" == "1" ]] ; then
-	inherit mitigate-tecv
-fi
-
 # Use the following example to extract the license.
 # unzip -p /var/cache/distfiles/electron-v23.3.13-linux-x64.zip LICENSES.chromium.html > electron-23.3.13-chromium.html
 
@@ -974,7 +970,7 @@ fi
 
 if [[ "${ELECTRON_APP_USES_UGC_TEXT}" == "1" || "${ELECTRON_APP_REQUIRES_TECV_CHECK}" == "1" ]] ; then
 	RDEPEND+="
-		${MITIGATE_TECV_RDEPEND}
+		sys-kernel/mitigate-tecv
 	"
 fi
 
@@ -1056,17 +1052,6 @@ REQUIRED_USE+=" || ( ${_ELECTRON_APP_PACKAGING_METHODS[@]} )"
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/290569a4d3c98d225cd6576beea3bf5b6bb41b20/eclass/electron-app.eclass
 
 # ##################  END ebuild and eclass global variables ###################
-
-# @FUNCTION: electron-app_pkg_setup
-# @DESCRIPTION:
-# Checks the kernel config
-electron-app_pkg_setup() {
-	# For Spectre/Meltdown mitigation
-	# If the program parses a file with javascript, it should be checked also.
-	if use kernel_linux && [[ "${ELECTRON_APP_USES_UGC_TEXT}" == "1" || "${ELECTRON_APP_REQUIRES_TECV_CHECK}" == "1" ]] ; then
-		mitigate-tecv_pkg_setup
-	fi
-}
 
 # @FUNCTION: electron-app_gen_wrapper
 # @DESCRIPTION:
@@ -1246,14 +1231,5 @@ electron-app_set_sharp_env() {
 einfo "Using system vips for sharp"
 	else
 einfo "Using vendored vips for sharp"
-	fi
-}
-
-# @FUNCTION: electron-app_pkg_postinst
-# @DESCRIPTION:
-# Show messages
-electron-app_pkg_postinst() {
-	if [[ "${ELECTRON_APP_USES_UGC_TEXT}" == "1" || "${ELECTRON_APP_REQUIRES_TECV_CHECK}" == "1" ]] ; then
-		mitigate-tecv_pkg_postinst
 	fi
 }
