@@ -504,7 +504,7 @@ ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
 ${DEFAULT_GST_PLUGINS}
 
-aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 custom-kernel
+aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2
 dash +dfg-jit +doc -eme +ftl-jit -gamepad +gbm +geolocation gles2 gnome-keyring
 +gstreamer gstwebrtc hardened +introspection +javascriptcore +jit +journald
 +jpegxl +lcms -libbacktrace +libhyphen -libwebrtc -mediarecorder

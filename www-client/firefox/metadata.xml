@@ -82,10 +82,6 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
     Disable official Firefox branding (icons, name) which are not
     binary-redistributable according to upstream.
   </flag>
-  <flag name="custom-kernel">
-    Prevent vendor/vulnerable lock-in when doing Spectre/Meltdown kernel
-    mitigation checks.
-  </flag>
   <flag name="eme-free">
     Disable EME (DRM plugin) cabability at build time
   </flag>

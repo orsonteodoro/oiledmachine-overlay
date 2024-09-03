@@ -61,7 +61,7 @@ https://cef-builds.spotifycdn.com/index.html
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" beta cefclient cefsimple custom-kernel debug minimal test"
+IUSE+=" beta cefclient cefsimple debug minimal test"
 REQUIRED_USE+="
 	cefclient? (
 		!minimal

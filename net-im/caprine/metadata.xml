@@ -5,10 +5,4 @@
     <bugs-to>https://github.com/sindresorhus/caprine/issues</bugs-to>
     <remote-id type="github">sindresorhus/caprine</remote-id>
   </upstream>
-  <use>
-    <flag name="custom-kernel">
-      Prevent vendor/vulnerable lock-in when doing Spectre/Meltdown kernel
-      mitigation checks.
-    </flag>
-  </use>
 </pkgmetadata>

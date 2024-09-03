@@ -403,7 +403,7 @@ CODEC_IUSE="
 IUSE+="
 ${CODEC_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-alsa cups custom-kernel +dbus debug eme-free +ffvpx +hardened -hwaccel jack
+alsa cups +dbus debug eme-free +ffvpx +hardened -hwaccel jack
 -jemalloc libcanberra libnotify libproxy libsecret mold +openh264 +pgo
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user

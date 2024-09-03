@@ -109,10 +109,6 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     <flag name="acorn">
       Install the acorn JavaScript parser.
     </flag>
-    <flag name="custom-kernel">
-      Prevent vendor/vulnerable lock-in when doing Spectre/Meltdown kernel
-      mitigation checks.
-    </flag>
     <flag name="custom-optimization">
       Override the default -O3 flag.
     </flag>

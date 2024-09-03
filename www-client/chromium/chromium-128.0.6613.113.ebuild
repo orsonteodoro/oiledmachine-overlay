@@ -490,7 +490,7 @@ ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-bindist bluetooth +bundled-libcxx branch-protection +cfi +cups custom-kernel -debug +encode
+bindist bluetooth +bundled-libcxx branch-protection +cfi +cups -debug +encode
 ffmpeg-chromium -gtk4 -hangouts -headless +js-type-check +kerberos mold +official
 pax-kernel pic +pgo +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer

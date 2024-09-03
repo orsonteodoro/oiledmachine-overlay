@@ -108,10 +108,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <remote-id type="gitlab">Matt.Jolly/chromium-patches</remote-id>
   </upstream>
   <use>
-    <flag name="custom-kernel">
-      Prevent vendor/vulnerable lock-in when doing Spectre/Meltdown kernel
-      mitigation checks.
-    </flag>
     <flag name="bluetooth">
       Adds support for websites to communicate with Bluetooth wireless devices
       and support for GATT (Generic Attribute Profile) for the Web Bluetooth

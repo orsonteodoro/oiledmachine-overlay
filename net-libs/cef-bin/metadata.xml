@@ -30,10 +30,6 @@
     <flag name="cefsimple">
       Builds and installs example browser without a menu and without an URL bar
     </flag>
-    <flag name="custom-kernel">
-      Prevent vendor/vulnerable lock-in when doing Spectre/Meltdown kernel
-      mitigation checks.
-    </flag>
     <flag name="minimal">
       Installs only the release version.  If disabled, it will install also the
       debug version.

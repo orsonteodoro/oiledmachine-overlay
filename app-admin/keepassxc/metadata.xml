@@ -32,10 +32,6 @@
     <flag name="browser">
       Enables browser plugin support
     </flag>
-    <flag name="custom-kernel">
-      Prevent vendor/vulnerable lock-in when doing Spectre/Meltdown kernel
-      mitigation checks.
-    </flag>
     <flag name="keeshare">
       Enable KeeShare sharing integration
     </flag>
