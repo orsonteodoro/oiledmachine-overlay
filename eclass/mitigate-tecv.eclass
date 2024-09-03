@@ -1190,11 +1190,10 @@ ewarn "Missing firmware for Gen5 TAA mitigations"
 # Check the kernel config flags and kernel command line to mitigate against CacheOut (L1DES) and VRS.
 _mitigate_tecv_verify_mitigation_cacheout() {
 	if \
-		use cpu_target_x86_core_gen6 \
-		use cpu_target_x86_core_gen7 \
-		use cpu_target_x86_core_gen8 \
-		use cpu_target_x86_core_gen9 \
-		|| \
+		   use cpu_target_x86_core_gen6 \
+		|| use cpu_target_x86_core_gen7 \
+		|| use cpu_target_x86_core_gen8 \
+		|| use cpu_target_x86_core_gen9 \
 	; then
 	# Microcode mitigation only
 		CONFIG_CHECK="
