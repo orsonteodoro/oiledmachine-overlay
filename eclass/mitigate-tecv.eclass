@@ -1029,23 +1029,6 @@ _mitigate_tecv_verify_mitigation_inception() {
 		return
 	fi
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "${ver}" ; then
-		if _check_kernel_cmdline "mitigations=off" ; then
-eerror
-eerror "Detected mitigations=off in the kernel command line."
-eerror
-eerror "Acceptable values:"
-eerror
-eerror "  mitigations=auto"
-eerror "  mitigations=auto,nosmt"
-eerror
-eerror "Edit it from:"
-eerror
-eerror "  /etc/defaults/grub"
-eerror "  /etc/grub.d/40_custom"
-eerror "  CONFIG_CMDLINE"
-eerror
-			die
-		fi
 		CONFIG_CHECK="
 			CPU_SRSO
 		"
