@@ -614,6 +614,43 @@ _mitigate-tecv_check_kernel_flags() {
 	_mitigate_tecv_verify_mitigation_rfds			# Mitigations against RFDS (2024)
 }
 
+# @FUNCTION: _mitigate-tecv_print_required_versions
+# @DESCRIPTION:
+# Print the required kernel versions for custom-kernel.
+_mitigate-tecv_print_required_versions() {
+	# For Spectre/Meltdown
+	if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
+		if \
+			   use cpu_target_x86_atom \
+			|| use cpu_target_x86_zen2 \
+		; then
+ewarn "You are responsible for using only Linux Kernel >= 6.9."
+		elif \
+			   use cpu_target_x86_core_gen6 \
+			|| use cpu_target_x86_core_gen7 \
+			|| use cpu_target_x86_core_gen8 \
+			|| use cpu_target_x86_core_gen9 \
+			|| use cpu_target_x86_core_gen10 \
+			|| use cpu_target_x86_core_gen11 \
+		; then
+ewarn "You are responsible for using only Linux Kernel >= 6.5."
+		else
+ewarn "You are responsible for using only Linux Kernel >= 4.19."
+		fi
+	fi
+	if [[ "${ARCH}" == "s390" ]] ; then
+ewarn "You are responsible for using only Linux Kernel >= 4.15."
+	fi
+	if [[ "${ARCH}" == "arm64" ]] ; then
+		if \
+			   use cpu_target_arm_cortex_a15 \
+			|| use cpu_target_arm_cortex_a75 \
+		; then
+ewarn "You are responsible for using only Linux Kernel >= 4.16."
+		fi
+	fi
+}
+
 # @FUNCTION: mitigate-tecv_pkg_setup
 # @DESCRIPTION:
 # Check the kernel config
@@ -622,13 +659,7 @@ mitigate-tecv_pkg_setup() {
 		linux-info_pkg_setup
 		_mitigate-tecv_check_kernel_flags
 		if use custom-kernel ; then
-	# For Spectre/Meltdown
-			if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-ewarn "You are responsible for using only Linux Kernel >= 4.19."
-			fi
-			if [[ "${ARCH}" == "s390" ]] ; then
-ewarn "You are responsible for using only Linux Kernel >= 4.19."
-			fi
+			_mitigate-tecv_print_required_versions
 		fi
 	fi
 }
@@ -640,18 +671,7 @@ mitigate-tecv_pkg_postinst() {
 	# For Spectre/Meltdown
 	if use kernel_linux ; then
 		if use custom-kernel ; then
-			if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-ewarn "You are responsible for using only Linux Kernel >= 4.19."
-			fi
-			if [[ "${ARCH}" == "s390" ]] ; then
-ewarn "You are responsible for using only Linux Kernel >= 4.19."
-			fi
-		fi
-		if [[ "${ARCH}" == "x86" ]] ; then
-eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead."
-		fi
-		if has abi_x86_32 ${IUSE_EFFECTIVE} && use abi_x86_32 ; then
-eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead."
+			_mitigate-tecv_print_required_versions
 		fi
 	fi
 }
