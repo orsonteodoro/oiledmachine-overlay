@@ -20,6 +20,7 @@ _MITIGATE_TECV_ECLASS=1
 
 CPU_TARGET_X86=(
 	cpu_target_x86_atom
+	cpu_target_x86_core_gen4
 	cpu_target_x86_core_gen6
 	cpu_target_x86_core_gen7
 	cpu_target_x86_core_gen8
@@ -86,6 +87,7 @@ gen_patched_kernel_list() {
 	echo "
 		|| (
 			>=sys-kernel/gentoo-kernel-bin-${kv}
+			>=sys-kernel/gentoo-kernel-${kv}
 			>=sys-kernel/gentoo-sources-${kv}
 			>=sys-kernel/vanilla-sources-${kv}
 			>=sys-kernel/git-sources-${kv}
@@ -102,6 +104,7 @@ gen_patched_kernel_list() {
 			>=sys-kernel/ot-sources-${kv}
 		)
 		!<sys-kernel/gentoo-kernel-bin-${kv}
+		!<sys-kernel/gentoo-kernel-${kv}
 		!<sys-kernel/gentoo-sources-${kv}
 		!<sys-kernel/vanilla-sources-${kv}
 		!<sys-kernel/git-sources-${kv}
@@ -372,6 +375,12 @@ _MITIGATE_TECV_INCEPTION_RDEPEND_X86_32="
 	${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
 "
 
+_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64="
+	cpu_target_x86_core_gen4? (
+		$(gen_patched_kernel_list 5.4)
+	)
+"
+
 # @ECLASS_VARIABLE: MITIGATE_TECV_RDEPEND
 # @INTERNAL
 # @DESCRIPTION:
@@ -481,7 +490,7 @@ eerror "Detected mitigations=off in the kernel command line."
 eerror
 eerror "Acceptable values:"
 eerror
-eerror "  mitigations=auto"
+eerror "  mitigations=auto              # The kernel default"
 eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
@@ -532,7 +541,7 @@ eerror "Detected mitigations=off in the kernel command line."
 eerror
 eerror "Acceptable values:"
 eerror
-eerror "  mitigations=auto"
+eerror "  mitigations=auto              # The kernel default"
 eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
@@ -609,7 +618,7 @@ eerror "Detected mitigations=off in the kernel command line."
 eerror
 eerror "Acceptable values:"
 eerror
-eerror "  mitigations=auto"
+eerror "  mitigations=auto              # The kernel default"
 eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
@@ -659,7 +668,7 @@ eerror "Detected mitigations=off in the kernel command line."
 eerror
 eerror "Acceptable values:"
 eerror
-eerror "  mitigations=auto"
+eerror "  mitigations=auto              # The kernel default"
 eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
@@ -718,7 +727,7 @@ eerror "Detected mitigations=off in the kernel command line."
 eerror
 eerror "Acceptable values:"
 eerror
-eerror "  mitigations=auto"
+eerror "  mitigations=auto              # The kernel default"
 eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
@@ -756,7 +765,7 @@ eerror "Detected mitigations=off in the kernel command line."
 eerror
 eerror "Acceptable values:"
 eerror
-eerror "  mitigations=auto"
+eerror "  mitigations=auto              # The kernel default"
 eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
@@ -800,7 +809,7 @@ eerror "Detected mitigations=off in the kernel command line."
 eerror
 eerror "Acceptable values:"
 eerror
-eerror "  mitigations=auto         # The Kernel default"
+eerror "  mitigations=auto              # The kernel default"
 eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
@@ -819,7 +828,7 @@ eerror "Acceptable values:"
 eerror
 eerror "  l1tf=full"
 eerror "  l1tf=full,force"
-eerror "  l1tf=flush               # The Kernel default"
+eerror "  l1tf=flush                    # The kernel default"
 eerror "  l1tf=flush,nosmt"
 eerror "  l1tf=flush,nowarn"
 eerror
@@ -989,7 +998,7 @@ eerror "Detected mitigations=off in the kernel command line."
 eerror
 eerror "Acceptable values:"
 eerror
-eerror "  mitigations=auto"
+eerror "  mitigations=auto              # The kernel default"
 eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
@@ -1039,6 +1048,44 @@ _mitigate_tecv_verify_mitigation_inception() {
 	fi
 }
 
+_mitigate_tecv_verify_mitigation_zombieload_v2() {
+	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.4" ; then
+		if _check_kernel_cmdline "mitigations=off" ; then
+eerror
+eerror "Detected mitigations=off in the kernel command line."
+eerror
+eerror "Acceptable values:"
+eerror
+eerror "  mitigations=auto              # The kernel default"
+eerror "  mitigations=auto,nosmt"
+eerror
+eerror "Edit it from:"
+eerror
+eerror "  /etc/defaults/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+			die
+		fi
+		if _check_kernel_cmdline "tsx_async_abort=off" ; then
+eerror
+eerror "Detected tsx_async_abort=off in the kernel command line."
+eerror
+eerror "Acceptable values:"
+eerror
+eerror "  tsx_async_abort=full          # The kernel default"
+eerror "  tsx_async_abort=full,nosmt"
+eerror
+eerror "Edit it from:"
+eerror
+eerror "  /etc/defaults/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+		fi
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -1055,6 +1102,7 @@ _mitigate-tecv_check_kernel_flags() {
 	_mitigate_tecv_verify_mitigation_bhi			# Mitigations against BHI (2022), X86
 	_mitigate_tecv_verify_mitigation_crosstalk		# Mitigations against SRBDS (2020)
 	_mitigate_tecv_verify_mitigation_foreshadow		# Mitigations against Variant 5 (2018)
+	_mitigate_tecv_verify_mitigation_zombieload_v2		# Mitigations against TAA (2019)
 	_mitigate_tecv_verify_mitigation_downfall		# Mitigations against GDS (2022)
 	_mitigate_tecv_verify_mitigation_retbleed		# Mitigations against Retbleed (2022)
 	_mitigate_tecv_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023)
