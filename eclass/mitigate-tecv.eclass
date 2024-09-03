@@ -523,13 +523,15 @@ _mitigate_tecv_verify_mitigation_downfall() {
 		cpu_target_x86_core_gen11
 	)
 	for x in ${L[@]} ; do
-		if use "${x}" ; then
+		if has_version "sys-firmware/intel-microcode-20230808" ; then
+			:
+		elif use "${x}" ; then
 			# Default off upstream
 			CONFIG_CHECK="
 				GDS_FORCE_MITIGATION
 			"
 			if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-				WARNING_GDS_FORCE_MITIGATION="CONFIG_GDS_FORCE_MITIGATION is required for GDS mitigation on ${x}."
+				WARNING_GDS_FORCE_MITIGATION="CONFIG_GDS_FORCE_MITIGATION or >=sys-firmware/intel-microcode-20230808 is required for GDS mitigation on ${x}."
 				check_extra_config
 			fi
 			if grep -q "gather_data_sampling=off" "/proc/cmdline" ; then
