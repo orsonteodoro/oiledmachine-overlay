@@ -64,6 +64,7 @@ IUSE+="
 	${CPU_TARGET_ARM[@]}
 	${CPU_TARGET_X86[@]}
 	custom-kernel
+	firmware
 "
 
 # @FUNCTION: gen_patched_kernel_list
@@ -206,21 +207,39 @@ _MITIGATE_TECV_BHB_RDEPEND_ARM64="
 _MITIGATE_TECV_DOWNFALL_RDEPEND_AMD64="
 	cpu_target_x86_core_gen6? (
 		$(gen_patched_kernel_list 6.5)
+		firmware? (
+			>=sys-firmware/intel-microcode-20230808
+		)
 	)
 	cpu_target_x86_core_gen7? (
 		$(gen_patched_kernel_list 6.5)
+		firmware? (
+			>=sys-firmware/intel-microcode-20230808
+		)
 	)
 	cpu_target_x86_core_gen8? (
 		$(gen_patched_kernel_list 6.5)
+		firmware? (
+			>=sys-firmware/intel-microcode-20230808
+		)
 	)
 	cpu_target_x86_core_gen9? (
 		$(gen_patched_kernel_list 6.5)
+		firmware? (
+			>=sys-firmware/intel-microcode-20230808
+		)
 	)
 	cpu_target_x86_core_gen10? (
 		$(gen_patched_kernel_list 6.5)
+		firmware? (
+			>=sys-firmware/intel-microcode-20230808
+		)
 	)
 	cpu_target_x86_core_gen11? (
 		$(gen_patched_kernel_list 6.5)
+		firmware? (
+			>=sys-firmware/intel-microcode-20230808
+		)
 	)
 
 "
@@ -231,6 +250,9 @@ _MITIGATE_TECV_DOWNFALL_RDEPEND_X86="
 _MITIGATE_TECV_RDFS_RDEPEND_AMD64="
 	cpu_target_x86_atom? (
 		$(gen_patched_kernel_list 6.9)
+		firmware? (
+			>=sys-firmware/intel-microcode-20240312
+		)
 	)
 "
 _MITIGATE_TECV_RDFS_RDEPEND_X86="
@@ -240,6 +262,9 @@ _MITIGATE_TECV_RDFS_RDEPEND_X86="
 _MITIGATE_TECV_ZENBLEED_RDEPEND_AMD64="
 	cpu_target_x86_zen2? (
 		$(gen_patched_kernel_list 6.9)
+		firmware? (
+			>=sys-kernel/linux-firmware-20231205
+		)
 	)
 
 "
@@ -694,7 +719,7 @@ eerror
 # Check the kernel config flags and kernel command line to mitigate against RDFS.
 _mitigate_tecv_verify_mitigation_rfds() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
-		if has_version ">=sys-firmware/intel-microcode-20240312" ; then
+		if use firmware ; then
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
 			"
@@ -729,7 +754,7 @@ _mitigate_tecv_verify_mitigation_downfall() {
 			cpu_target_x86_core_gen11
 		)
 		for x in ${L[@]} ; do
-			if has_version ">=sys-firmware/intel-microcode-20230808" ; then
+			if use firmware ; then
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
 				"
@@ -773,11 +798,11 @@ eerror
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Zenbleed.
 _mitigate_tecv_verify_mitigation_zenbleed() {
-	if use cpu_target_x86_zen2 && ! has_version ">=sys-kernel/linux-firmware-20231205" ; then
+	if use cpu_target_x86_zen2 && ! use firmware ; then
 eerror "You need to download >=sys-kernel/linux-firmware-20231205 for Zenbleed mitigation."
 		die
 	fi
-	if use cpu_target_x86_zen2 && has_version ">=sys-kernel/linux-firmware-20231205" ; then
+	if use cpu_target_x86_zen2 && use firmware ; then
 		if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
 			CONFIG_CHECK="
 				CPU_SUP_AMD

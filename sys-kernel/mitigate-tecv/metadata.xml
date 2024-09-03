@@ -5,4 +5,11 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <use>
+    <flag name="firmware">
+      Use firmware as mitigation.
+      (A BIOS firmware update may still be required if the firmware package
+      doesn't apply to your model.)
+    </flag>
+  </use>
 </pkgmetadata>
