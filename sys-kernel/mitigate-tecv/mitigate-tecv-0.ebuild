@@ -6,7 +6,7 @@ EAPI=8
 
 inherit mitigate-tecv
 
-# Add this if the ebuild uses:
+# Add RDEPEND+=" virtual/mitigate" to downstream package if the downstream ebuild uses:
 # JavaScript
 # WebAssembly
 # Keychains
