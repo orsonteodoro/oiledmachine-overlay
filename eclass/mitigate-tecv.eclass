@@ -1082,7 +1082,7 @@ eerror "Note:  This mitigation will turn off AVX acceleration."
 eerror
 eerror "Acceptable values:"
 eerror
-eerror "  retbleed=auto"
+eerror "  retbleed=auto                 # The kernel default"
 eerror "  retbleed=auto,nosmt"
 eerror "  retbleed=ibpb"
 eerror "  retbleed=unret"
@@ -1337,6 +1337,8 @@ ewarn "You are responsible for using only Linux Kernel >= 6.5."
 			|| use cpu_target_x86_zen_plus \
 		; then
 ewarn "You are responsible for using only Linux Kernel >= 5.19."
+		elif use bpf ; then
+ewarn "You are responsible for using only Linux Kernel >= 5.13."
 		elif \
 			   use cpu_target_x86_core_gen4 \
 			|| use cpu_target_x86_core_gen5 \
@@ -1345,6 +1347,9 @@ ewarn "You are responsible for using only Linux Kernel >= 5.4."
 		else
 ewarn "You are responsible for using only Linux Kernel >= 4.19."
 		fi
+	fi
+	if [[ "${ARCH}" == "ppc" || "${ARCH}" == "ppc64" ]] ; then
+ewarn "You are responsible for using only Linux Kernel >= 4.15."
 	fi
 	if [[ "${ARCH}" == "s390" ]] ; then
 ewarn "You are responsible for using only Linux Kernel >= 4.15."
@@ -1376,6 +1381,8 @@ ewarn "You are responsible for using only Linux Kernel >= 4.15."
 			|| use cpu_target_arm_cortex_x3 \
 		; then
 ewarn "You are responsible for using only Linux Kernel >= 6.1."
+		elif use bpf ; then
+ewarn "You are responsible for using only Linux Kernel >= 5.13."
 		elif \
 			   use cpu_target_arm_cortex_a15 \
 			|| use cpu_target_arm_cortex_a75 \
