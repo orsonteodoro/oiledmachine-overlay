@@ -70,6 +70,12 @@ CPU_TARGET_PPC=(
 	cpu_target_ppc_power7
 	cpu_target_ppc_power8
 	cpu_target_ppc_power9
+
+	cpu_target_ppc_85xx
+	cpu_target_ppc_e500mc
+
+	cpu_target_ppc_e5500
+	cpu_target_ppc_e6500
 )
 
 inherit linux-info
@@ -144,6 +150,24 @@ gen_patched_kernel_list() {
 		!<sys-kernel/ot-sources-${kv}
 	"
 }
+
+_MITIGATE_TECV_SPECTRE_RDEPEND_PPC32="
+	cpu_target_ppc_85xx? (
+		$(gen_patched_kernel_list 5.0)
+	)
+	cpu_target_ppc_e500mc? (
+		$(gen_patched_kernel_list 5.0)
+	)
+"
+
+_MITIGATE_TECV_SPECTRE_RDEPEND_PPC64="
+	cpu_target_ppc_e5500? (
+		$(gen_patched_kernel_list 5.0)
+	)
+	cpu_target_ppc_e6500? (
+		$(gen_patched_kernel_list 5.0)
+	)
+"
 
 _MITIGATE_TECV_SPECTRE_RDEPEND_ARM64="
 	bpf? (
@@ -523,8 +547,12 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
 				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_64}
 			)
+			ppc? (
+				${_MITIGATE_TECV_SPECTRE_RDEPEND_PPC32}
+			)
 			ppc64? (
 				${_MITIGATE_TECV_MELTDOWN_RDEPEND_PPC64}
+				${_MITIGATE_TECV_SPECTRE_RDEPEND_PPC64}
 			)
 			s390? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_S390X}
@@ -1385,7 +1413,16 @@ ewarn "You are responsible for using only Linux Kernel >= 4.19."
 		fi
 	fi
 	if [[ "${ARCH}" == "ppc" || "${ARCH}" == "ppc64" ]] ; then
+		if \
+			   use cpu_target_ppc_85xx \
+			|| use cpu_target_ppc_e500mc \
+			|| use cpu_target_ppc_e5500 \
+			|| use cpu_target_ppc_e6500 \
+		; then
+ewarn "You are responsible for using only Linux Kernel >= 5.0."
+		else
 ewarn "You are responsible for using only Linux Kernel >= 4.15."
+		fi
 	fi
 	if [[ "${ARCH}" == "s390" ]] ; then
 ewarn "You are responsible for using only Linux Kernel >= 4.15."
