@@ -495,7 +495,13 @@ eerror
 _mitigate_tecv_verify_mitigation_rfds() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
 		if has_version "sys-firmware/intel-microcode-20240312" ; then
-			:
+			CONFIG_CHECK="
+				CPU_SUP_INTEL
+			"
+			if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
+				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RDFS mitigation on ${x}."
+				check_extra_config
+			fi
 		elif use cpu_target_x86_atom ; then
 			CONFIG_CHECK="
 				MITIGATION_RFDS
@@ -524,7 +530,13 @@ _mitigate_tecv_verify_mitigation_downfall() {
 	)
 	for x in ${L[@]} ; do
 		if has_version "sys-firmware/intel-microcode-20230808" ; then
-			:
+			CONFIG_CHECK="
+				CPU_SUP_INTEL
+			"
+			if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
+				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for GDS mitigation on ${x}."
+				check_extra_config
+			fi
 		elif use "${x}" ; then
 			# Default off upstream
 			CONFIG_CHECK="
