@@ -785,8 +785,10 @@ eerror
 		if linux_chkconfig_present "BPF" ; then
 			CONFIG_CHECK="
 				BPF_JIT
+				BPF_JIT_ALWAYS_ON
 			"
 			WARNING_BPF_JIT="CONFIG_BPF_JIT=y is required for Spectre (Variant 2) mitigation."
+			WARNING_BPF_JIT_ALWAYS_ON="CONFIG_BPF_JIT_ALWAYS_ON=y is required for Spectre (Variant 2) mitigation."
 			check_extra_config
 		fi
 	fi
