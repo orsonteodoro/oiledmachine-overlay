@@ -499,7 +499,7 @@ _mitigate_tecv_verify_mitigation_rfds() {
 				CPU_SUP_INTEL
 			"
 			if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RDFS mitigation on ${x}."
+				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RDFS mitigation on Intel® Atom®."
 				check_extra_config
 			fi
 		elif use cpu_target_x86_atom ; then
