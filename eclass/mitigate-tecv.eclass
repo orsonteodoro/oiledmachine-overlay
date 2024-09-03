@@ -26,6 +26,7 @@ CPU_TARGET_X86=(
 	cpu_target_x86_core_gen9
 	cpu_target_x86_core_gen10
 	cpu_target_x86_core_gen11
+	cpu_target_x86_zen2
 )
 
 CPU_TARGET_ARM=(
@@ -126,6 +127,9 @@ MITIGATE_TECV_RDEPEND="
 				cpu_target_x86_core_gen11? (
 					$(gen_patched_kernel_list 6.5)
 				)
+				cpu_target_x86_zen2? (
+					$(gen_patched_kernel_list 6.9)
+				)
 			)
 			s390? (
 				$(gen_patched_kernel_list 4.16)
@@ -152,6 +156,9 @@ MITIGATE_TECV_RDEPEND="
 				)
 				cpu_target_x86_core_gen11? (
 					$(gen_patched_kernel_list 6.5)
+				)
+				cpu_target_x86_zen2? (
+					$(gen_patched_kernel_list 6.9)
 				)
 			)
 		)
@@ -567,6 +574,28 @@ eerror
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_zenbleed
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against Zenbleed.
+_mitigate_tecv_verify_mitigation_zenbleed() {
+	if use cpu_target_x86_zen2 && ! has_version ">=sys-kernel/linux-firmware-20231205" ; then
+eerror "You need to download >=sys-kernel/linux-firmware-20231205 for Zenbleed mitigation."
+		die
+	fi
+	if use cpu_target_x86_zen2 && has_version ">=sys-kernel/linux-firmware-20231205" ; then
+		if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
+			CONFIG_CHECK="
+				CPU_SUP_AMD
+			"
+			if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
+				WARNING_CPU_SUP_AMD="CONFIG_CPU_SUP_AMD is required for Zenbleed mitigation."
+				check_extra_config
+			fi
+		fi
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -580,6 +609,7 @@ _mitigate-tecv_check_kernel_flags() {
 	_mitigate_tecv_verify_mitigation_spectre		# Mitigations against Variant 1 (2017), Variant 2 (2017), Variant 4 (2018), BHB (2022), BHI (2022)
 	_mitigate_tecv_verify_mitigation_foreshadow		# Mitigations against Variant 5 (2018)
 	_mitigate_tecv_verify_mitigation_downfall		# Mitigations against GDS (2022)
+	_mitigate_tecv_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023)
 	_mitigate_tecv_verify_mitigation_rfds			# Mitigations against RFDS (2024)
 }
 
