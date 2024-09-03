@@ -459,11 +459,11 @@ eerror
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_rdfs
+# @FUNCTION: _mitigate_tecv_verify_mitigation_rfds
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against RDFS.
-_mitigate_tecv_verify_mitigation_rdfs() {
+_mitigate_tecv_verify_mitigation_rfds() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
 		if use cpu_target_x86_atom ; then
 			CONFIG_CHECK="
@@ -535,7 +535,7 @@ _mitigate-tecv_check_kernel_flags() {
 	_mitigate_tecv_verify_mitigation_spectre		# Mitigations against Variant 1 (2017), Variant 2 (2017), Variant 4 (2018), BHB (2022), BHI (2022)
 	_mitigate_tecv_verify_mitigation_foreshadow		# Mitigations against Variant 5 (2018)
 	_mitigate_tecv_verify_mitigation_downfall		# Mitigations against GDS (2022)
-	_mitigate_tecv_verify_mitigation_rdfs			# Mitigations against RFDS (2024)
+	_mitigate_tecv_verify_mitigation_rfds			# Mitigations against RFDS (2024)
 }
 
 # @FUNCTION: mitigate-tecv_pkg_setup
