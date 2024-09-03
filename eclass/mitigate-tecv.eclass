@@ -494,12 +494,14 @@ eerror
 # Check the kernel config flags and kernel command line to mitigate against RDFS.
 _mitigate_tecv_verify_mitigation_rfds() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
-		if use cpu_target_x86_atom ; then
+		if has_version "sys-firmware/intel-microcode-20240312" ; then
+			:
+		elif use cpu_target_x86_atom ; then
 			CONFIG_CHECK="
 				MITIGATION_RFDS
 			"
 			if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-				WARNING_MITIGATION_RFDS="CONFIG_MITIGATION_RFDS is required for RDFS mitigation on Intel® Atom®."
+				WARNING_MITIGATION_RFDS="CONFIG_MITIGATION_RFDS or >=sys-firmware/intel-microcode-20240312 is required for RDFS mitigation on Intel® Atom®."
 				check_extra_config
 			fi
 		fi
