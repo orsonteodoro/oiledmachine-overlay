@@ -29,35 +29,37 @@ CPU_TARGET_X86=(
 	cpu_target_x86_zen
 	cpu_target_x86_zen_plus
 	cpu_target_x86_zen_2
+	cpu_target_x86_zen_3
+	cpu_target_x86_zen_4
 )
 
 CPU_TARGET_ARM=(
 # See also
 # https://developer.arm.com/Arm%20Security%20Center/Speculative%20Processor%20Vulnerability
 # https://github.com/torvalds/linux/blob/v6.10/arch/arm64/kernel/cpufeature.c#L1739
-	cpu_target_arm_cortex_r7 # BHB
-	cpu_target_arm_cortex_r8 # BHB
-	cpu_target_arm_cortex_a15 # BHB, Variant 3a
-	cpu_target_arm_cortex_a57 # BHB, Variant 3a, Variant 4
-	cpu_target_arm_cortex_a65 # BHB
-	cpu_target_arm_cortex_a65ae # BHB
-	cpu_target_arm_cortex_a72 # BHB, Variant 3a, Variant 4
-	cpu_target_arm_cortex_a73 # BHB, Variant 4
-	cpu_target_arm_cortex_a75 # BHB, Variant 3, Variant 4
-	cpu_target_arm_cortex_a76 # BHB, Variant 4
-	cpu_target_arm_cortex_a77 # BHB, Variant 4
-	cpu_target_arm_cortex_a78 # BHB
-	cpu_target_arm_cortex_a78c # BHB
-	cpu_target_arm_cortex_a710 # BHB
-	cpu_target_arm_cortex_a715 # BHB
-	cpu_target_arm_neoverse_e1 # BHB
-	cpu_target_arm_neoverse_n1 # BHB, Variant 4
-	cpu_target_arm_neoverse_v1 # BHB
-	cpu_target_arm_neoverse_n2 # BHB
-	cpu_target_arm_neoverse_v2 # BHB
-	cpu_target_arm_cortex_x1 # BHB
-	cpu_target_arm_cortex_x2 # BHB
-	cpu_target_arm_cortex_x3 # BHB
+	cpu_target_arm_cortex_r7	# BHB
+	cpu_target_arm_cortex_r8	# BHB
+	cpu_target_arm_cortex_a15	# BHB, Variant 3a
+	cpu_target_arm_cortex_a57	# BHB, Variant 3a, Variant 4
+	cpu_target_arm_cortex_a65	# BHB
+	cpu_target_arm_cortex_a65ae	# BHB
+	cpu_target_arm_cortex_a72	# BHB, Variant 3a, Variant 4
+	cpu_target_arm_cortex_a73	# BHB, Variant 4
+	cpu_target_arm_cortex_a75	# BHB, Variant 3, Variant 4
+	cpu_target_arm_cortex_a76	# BHB, Variant 4
+	cpu_target_arm_cortex_a77	# BHB, Variant 4
+	cpu_target_arm_cortex_a78	# BHB
+	cpu_target_arm_cortex_a78c	# BHB
+	cpu_target_arm_cortex_a710	# BHB
+	cpu_target_arm_cortex_a715	# BHB
+	cpu_target_arm_neoverse_e1	# BHB
+	cpu_target_arm_neoverse_n1	# BHB, Variant 4
+	cpu_target_arm_neoverse_v1	# BHB
+	cpu_target_arm_neoverse_n2	# BHB
+	cpu_target_arm_neoverse_v2	# BHB
+	cpu_target_arm_cortex_x1	# BHB
+	cpu_target_arm_cortex_x2	# BHB
+	cpu_target_arm_cortex_x3	# BHB
 )
 
 inherit linux-info
@@ -67,7 +69,12 @@ IUSE+="
 	${CPU_TARGET_X86[@]}
 	custom-kernel
 	firmware
-	ebuild-revision-2
+	ebuild-revision-3
+"
+REQUIRED_USE="
+	cpu_target_x86_zen_plus? (
+		cpu_target_x86_zen
+	)
 "
 
 # @FUNCTION: gen_patched_kernel_list
@@ -112,13 +119,13 @@ gen_patched_kernel_list() {
 	"
 }
 
-_MITIGATE_TECV_SPECTRE_RDEPEND_AMD64="
+_MITIGATE_TECV_SPECTRE_RDEPEND_X86_64="
 	$(gen_patched_kernel_list 4.15)
 "
-_MITIGATE_TECV_SPECTRE_RDEPEND_X86="
-	${_MITIGATE_TECV_SPECTRE_RDEPEND_AMD64}
+_MITIGATE_TECV_SPECTRE_RDEPEND_X86_32="
+	${_MITIGATE_TECV_SPECTRE_RDEPEND_X86_64}
 "
-_MITIGATE_TECV_MELTDOWN_RDEPEND_AMD64="
+_MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64="
 	$(gen_patched_kernel_list 4.15)
 "
 _MITIGATE_TECV_SPECTRE_RDEPEND_S390X="
@@ -155,7 +162,37 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_ARM64="
 	)
 "
 
-_MITIGATE_TECV_RETBLEED_RDEPEND_AMD64="
+_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64="
+	cpu_target_x86_core_gen6? (
+		$(gen_patched_kernel_list 5.8)
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
+	cpu_target_x86_core_gen7? (
+		$(gen_patched_kernel_list 5.8)
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
+	cpu_target_x86_core_gen8? (
+		$(gen_patched_kernel_list 5.8)
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
+	cpu_target_x86_core_gen9? (
+		$(gen_patched_kernel_list 5.8)
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
+"
+_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_32="
+	${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64}
+"
+
+_MITIGATE_TECV_RETBLEED_RDEPEND_X86_64="
 	cpu_target_x86_core_gen6? (
 		$(gen_patched_kernel_list 5.19)
 	)
@@ -248,7 +285,7 @@ _MITIGATE_TECV_BHB_RDEPEND_ARM64="
 	)
 "
 
-_MITIGATE_TECV_DOWNFALL_RDEPEND_AMD64="
+_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64="
 	cpu_target_x86_core_gen6? (
 		$(gen_patched_kernel_list 6.5)
 		firmware? (
@@ -287,11 +324,11 @@ _MITIGATE_TECV_DOWNFALL_RDEPEND_AMD64="
 	)
 
 "
-_MITIGATE_TECV_DOWNFALL_RDEPEND_X86="
-	${_MITIGATE_TECV_DOWNFALL_RDEPEND_AMD64}
+_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32="
+	${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_RDFS_RDEPEND_AMD64="
+_MITIGATE_TECV_RDFS_RDEPEND_X86_64="
 	cpu_target_x86_atom? (
 		$(gen_patched_kernel_list 6.9)
 		firmware? (
@@ -299,12 +336,12 @@ _MITIGATE_TECV_RDFS_RDEPEND_AMD64="
 		)
 	)
 "
-_MITIGATE_TECV_RDFS_RDEPEND_X86="
-	${_MITIGATE_TECV_RDFS_RDEPEND_AMD64}
+_MITIGATE_TECV_RDFS_RDEPEND_X86_32="
+	${_MITIGATE_TECV_RDFS_RDEPEND_X86_64}
 "
 
 
-_MITIGATE_TECV_ZENBLEED_RDEPEND_AMD64="
+_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64="
 	cpu_target_x86_zen_2? (
 		$(gen_patched_kernel_list 6.9)
 		firmware? (
@@ -313,11 +350,26 @@ _MITIGATE_TECV_ZENBLEED_RDEPEND_AMD64="
 	)
 
 "
-_MITIGATE_TECV_ZENBLEED_RDEPEND_X86="
-	cpu_target_x86_zen_2? (
+_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_32="
+	${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
+"
+
+_MITIGATE_TECV_INCEPTION_RDEPEND_X86_64="
+	cpu_target_x86_zen_4? (
 		$(gen_patched_kernel_list 6.9)
 	)
-
+	cpu_target_x86_zen_3? (
+		$(gen_patched_kernel_list 6.9)
+	)
+	cpu_target_x86_zen_2? (
+		$(gen_patched_kernel_list 6.5)
+	)
+	cpu_target_x86_zen? (
+		$(gen_patched_kernel_list 6.5)
+	)
+"
+_MITIGATE_TECV_INCEPTION_RDEPEND_X86_32="
+	${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
 "
 
 # @ECLASS_VARIABLE: MITIGATE_TECV_RDEPEND
@@ -331,23 +383,27 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_ARM64}
 				${_MITIGATE_TECV_MELTDOWN_RDEPEND_ARM64}
 				${_MITIGATE_TECV_BHB_RDEPEND_ARM64}
-				${_MITIGATE_TECV_RDFS_RDEPEND_AMD64}
 			)
 			amd64? (
-				${_MITIGATE_TECV_SPECTRE_RDEPEND_AMD64}
-				${_MITIGATE_TECV_MELTDOWN_RDEPEND_AMD64}
-				${_MITIGATE_TECV_DOWNFALL_RDEPEND_AMD64}
-				${_MITIGATE_TECV_RETBLEED_RDEPEND_AMD64}
-				${_MITIGATE_TECV_ZENBLEED_RDEPEND_AMD64}
+				${_MITIGATE_TECV_SPECTRE_RDEPEND_X86_64}
+				${_MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64}
+				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64}
+				${_MITIGATE_TECV_RETBLEED_RDEPEND_X86_64}
+				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
+				${_MITIGATE_TECV_RDFS_RDEPEND_X86_64}
+				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
+				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_64}
 			)
 			s390? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_S390X}
 			)
 			x86? (
-				${_MITIGATE_TECV_SPECTRE_RDEPEND_X86}
-				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86}
-				${_MITIGATE_TECV_RDFS_RDEPEND_X86}
-				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86}
+				${_MITIGATE_TECV_SPECTRE_RDEPEND_X86_32}
+				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_32}
+				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32}
+				${_MITIGATE_TECV_RDFS_RDEPEND_X86_32}
+				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_32}
+				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_32}
 			)
 		)
 	)
@@ -784,7 +840,7 @@ eerror
 # Check the kernel config flags and kernel command line to mitigate against RDFS.
 _mitigate_tecv_verify_mitigation_rfds() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
-		if use firmware ; then
+		if use firmware && use cpu_target_x86_atom ; then
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
 			"
@@ -819,7 +875,7 @@ _mitigate_tecv_verify_mitigation_downfall() {
 			cpu_target_x86_core_gen11
 		)
 		for x in ${L[@]} ; do
-			if use firmware ; then
+			if use firmware && use "${x}" ; then
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
 				"
@@ -921,6 +977,85 @@ ewarn "A BIOS firmware update may be needed for different models and may only be
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_crosstalk
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CROSSTalk.
+_mitigate_tecv_verify_mitigation_crosstalk() {
+	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.8" ; then
+		if _check_kernel_cmdline "mitigations=off" ; then
+eerror
+eerror "Detected mitigations=off in the kernel command line."
+eerror
+eerror "Acceptable values:"
+eerror
+eerror "  mitigations=auto"
+eerror "  mitigations=auto,nosmt"
+eerror
+eerror "Edit it from:"
+eerror
+eerror "  /etc/defaults/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+			die
+		fi
+		if _check_kernel_cmdline "srbds=off" ; then
+eerror
+eerror "Detected srbds=off in the kernel command line."
+eerror
+eerror "Remove it from:"
+eerror
+eerror "  /etc/defaults/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+			die
+		fi
+	fi
+}
+
+# @FUNCTION: _mitigate_tecv_verify_mitigation_inception
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against Inception.
+_mitigate_tecv_verify_mitigation_inception() {
+	local ver
+	if use cpu_target_x86_zen_3 || use cpu_target_x86_zen_4 ; then
+		ver="6.9"
+	elif use cpu_target_x86_zen || use cpu_target_x86_zen2 ; then
+		ver="6.5"
+	else
+		return
+	fi
+	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "${ver}" ; then
+		if _check_kernel_cmdline "mitigations=off" ; then
+eerror
+eerror "Detected mitigations=off in the kernel command line."
+eerror
+eerror "Acceptable values:"
+eerror
+eerror "  mitigations=auto"
+eerror "  mitigations=auto,nosmt"
+eerror
+eerror "Edit it from:"
+eerror
+eerror "  /etc/defaults/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+			die
+		fi
+		CONFIG_CHECK="
+			CPU_SRSO
+		"
+		if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
+			WARNING_CPU_SRSO="CONFIG_CPU_SRSO is required for Inception mitigation."
+			check_extra_config
+		fi
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -932,13 +1067,15 @@ _mitigate-tecv_check_kernel_flags() {
 	# or a copypasta-ed workaround.
 	_mitigate_tecv_verify_mitigation_meltdown		# Mitigations against Variant 3 (2017)
 	_mitigate_tecv_verify_mitigation_spectre		# Mitigations against Variant 1 (2017), Variant 2 (2017)
-	_mitigate_tecv_verify_mitigation_spectre_ng		# Mitigations Variant 4 (2018)
-	_mitigate_tecv_verify_mitigation_spectre_bhb		# Mitigations BHB (2022), ARM
-	_mitigate_tecv_verify_mitigation_bhi			# Mitigations BHI (2022), X86
+	_mitigate_tecv_verify_mitigation_spectre_ng		# Mitigations against Variant 4 (2018)
+	_mitigate_tecv_verify_mitigation_spectre_bhb		# Mitigations against BHB (2022), ARM
+	_mitigate_tecv_verify_mitigation_bhi			# Mitigations against BHI (2022), X86
+	_mitigate_tecv_verify_mitigation_crosstalk		# Mitigations against SRBDS (2020)
 	_mitigate_tecv_verify_mitigation_foreshadow		# Mitigations against Variant 5 (2018)
 	_mitigate_tecv_verify_mitigation_downfall		# Mitigations against GDS (2022)
 	_mitigate_tecv_verify_mitigation_retbleed		# Mitigations against Retbleed (2022)
 	_mitigate_tecv_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023)
+	_mitigate_tecv_verify_mitigation_inception		# Mitigations against SRSO (2023)
 	_mitigate_tecv_verify_mitigation_rfds			# Mitigations against RFDS (2024)
 }
 
@@ -951,6 +1088,8 @@ _mitigate-tecv_print_required_versions() {
 		if \
 			   use cpu_target_x86_atom \
 			|| use cpu_target_x86_zen_2 \
+			|| use cpu_target_x86_zen_3 \
+			|| use cpu_target_x86_zen_4 \
 		; then
 ewarn "You are responsible for using only Linux Kernel >= 6.9."
 		elif \
@@ -960,6 +1099,8 @@ ewarn "You are responsible for using only Linux Kernel >= 6.9."
 			|| use cpu_target_x86_core_gen9 \
 			|| use cpu_target_x86_core_gen10 \
 			|| use cpu_target_x86_core_gen11 \
+			|| use cpu_target_x86_zen \
+			|| use cpu_target_x86_zen_2 \
 		; then
 ewarn "You are responsible for using only Linux Kernel >= 6.5."
 		elif \
@@ -1001,11 +1142,14 @@ ewarn "You are responsible for using only Linux Kernel >= 4.15."
 			|| use cpu_target_arm_cortex_x3 \
 		; then
 ewarn "You are responsible for using only Linux Kernel >= 6.1."
-		fi
-		if \
+		elif \
 			   use cpu_target_arm_cortex_a15 \
 			|| use cpu_target_arm_cortex_a75 \
 		; then
+ewarn "You are responsible for using only Linux Kernel >= 4.16."
+		else
+# Placeholder
+# TODO:  Verify earliest version for Variant 1 and Variant 2 mitigations
 ewarn "You are responsible for using only Linux Kernel >= 4.16."
 		fi
 	fi
