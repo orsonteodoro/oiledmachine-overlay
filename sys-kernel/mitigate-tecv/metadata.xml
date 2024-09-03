@@ -7,13 +7,12 @@
   </maintainer>
   <use>
     <flag name="custom-kernel">
-      Prevent vendor/vulnerable lock-in when doing Spectre/Meltdown kernel
-      mitigation checks.
+      Prevent vendor lock-in when doing kernel mitigation checks.
     </flag>
     <flag name="firmware">
       Use firmware as mitigation.
-      (A BIOS firmware update may still be required if the firmware package
-      doesn't apply to your model.)
+      (A BIOS firmware update from the motherboard manufacturer may still be
+      required if the firmware package doesn't apply to your model.)
     </flag>
   </use>
 </pkgmetadata>
