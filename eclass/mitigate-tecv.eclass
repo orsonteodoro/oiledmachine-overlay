@@ -1229,6 +1229,24 @@ _mitigate_tecv_verify_mitigation_zombieload_v2() {
 	else
 		return
 	fi
+
+	if use firmware ; then
+		if \
+			   use cpu_target_x86_core_gen6 \
+			|| use cpu_target_x86_core_gen7 \
+			|| use cpu_target_x86_core_gen8 \
+			|| use cpu_target_x86_core_gen9 \
+		; then
+			CONFIG_CHECK="
+				CPU_SUP_INTEL
+			"
+			if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
+				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for ZombieLoad v2 mitigation."
+				check_extra_config
+			fi
+		fi
+	fi
+
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.4" ; then
 		if _check_kernel_cmdline "mitigations=off" ; then
 eerror
