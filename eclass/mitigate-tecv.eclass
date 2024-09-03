@@ -42,6 +42,7 @@ CPU_TARGET_ARM=(
 inherit linux-info
 
 IUSE+="
+	${CPU_TARGET_ARM[@]}
 	${CPU_TARGET_X86[@]}
 	custom-kernel
 "
