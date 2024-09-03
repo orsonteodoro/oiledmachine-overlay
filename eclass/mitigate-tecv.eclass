@@ -30,6 +30,11 @@ CPU_TARGET_X86=(
 	cpu_target_x86_core_gen9
 	cpu_target_x86_core_gen10
 	cpu_target_x86_core_gen11
+	cpu_target_x86_core_gen12
+	cpu_target_x86_core_gen13
+	cpu_target_x86_core_gen14
+	cpu_target_x86_core_ultra_gen1
+	cpu_target_x86_xeon_gen6
 	cpu_target_x86_zen
 	cpu_target_x86_zen_plus
 	cpu_target_x86_zen_2
@@ -103,6 +108,9 @@ REQUIRED_USE="
 		firmware
 	)
 	cpu_target_x86_core_gen9? (
+		firmware
+	)
+	cpu_target_x86_core_gen12? (
 		firmware
 	)
 "
@@ -521,6 +529,50 @@ _MITIGATE_TECV_MELTDOWN_RDEPEND_PPC64="
 	)
 "
 
+_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64="
+	cpu_target_x86_core_gen6? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_gen7? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_gen8? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_gen9? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_gen10? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_gen12? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_gen13? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_gen14? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_ultra_gen1? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_xeon_gen6? (
+		$(gen_patched_kernel_list 4.19)
+	)
+"
+_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_32="
+	${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64}
+"
+
+# See commit 80eb5fe
+_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC64="
+	$(gen_patched_kernel_list 5.5)
+"
+_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC32="
+	${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC64}
+"
+
 # @ECLASS_VARIABLE: MITIGATE_TECV_RDEPEND
 # @INTERNAL
 # @DESCRIPTION:
@@ -541,6 +593,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64}
 				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64}
 				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64}
+				${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64}
 				${_MITIGATE_TECV_RETBLEED_RDEPEND_X86_64}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
 				${_MITIGATE_TECV_RDFS_RDEPEND_X86_64}
@@ -549,10 +602,12 @@ MITIGATE_TECV_RDEPEND="
 			)
 			ppc? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_PPC32}
+				${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC32}
 			)
 			ppc64? (
 				${_MITIGATE_TECV_MELTDOWN_RDEPEND_PPC64}
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_PPC64}
+				${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC64}
 			)
 			s390? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_S390X}
@@ -562,6 +617,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_32}
 				${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_32}
 				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_32}
+				${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_32}
 				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_32}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32}
 				${_MITIGATE_TECV_RDFS_RDEPEND_X86_32}
@@ -1340,6 +1396,23 @@ _mitigate_tecv_verify_mitigation_cacheout() {
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_spectre_rs
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against SpectreRSB, RSBU, RSBA, RRSBA.
+_mitigate_tecv_verify_mitigation_spectre_rsb() {
+	if use cpu_target_x86_core_gen12 ; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
+			WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RSBU/RRSBA mitigation."
+			check_extra_config
+		fi
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -1360,6 +1433,7 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_verify_mitigation_spectre_bhb		# Mitigations against BHB (2022), ARM
 	_mitigate_tecv_verify_mitigation_bhi			# Mitigations against BHI (2022), X86
 	_mitigate_tecv_verify_mitigation_crosstalk		# Mitigations against SRBDS (2020)
+	_mitigate_tecv_verify_mitigation_spectre_rsb		# Mitigations against SpectreRSB (2018), RSBU (2022), RSBA (2022), RRSBA (2022)
 	_mitigate_tecv_verify_mitigation_foreshadow		# Mitigations against Variant 5 (2018)
 	_mitigate_tecv_verify_mitigation_zombieload_v2		# Mitigations against TAA (2019)
 	_mitigate_tecv_verify_mitigation_cacheout		# Mitigations against L1DES (2020), VRS (2020)
@@ -1408,8 +1482,16 @@ ewarn "You are responsible for using only Linux Kernel >= 5.13."
 			|| use cpu_target_x86_core_gen5 \
 		; then
 ewarn "You are responsible for using only Linux Kernel >= 5.4."
-		else
+		elif \
+			   use cpu_target_x86_core_ultra_gen1 \
+			|| use cpu_target_x86_xeon_gen6 \
+			|| use cpu_target_x86_core_gen12 \
+			|| use cpu_target_x86_core_gen13 \
+			|| use cpu_target_x86_core_gen14 \
+		; then
 ewarn "You are responsible for using only Linux Kernel >= 4.19."
+		else
+ewarn "You are responsible for using only Linux Kernel >= 4.15."
 		fi
 	fi
 	if [[ "${ARCH}" == "ppc" || "${ARCH}" == "ppc64" ]] ; then
