@@ -6,6 +6,10 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <use>
+    <flag name="custom-kernel">
+      Prevent vendor/vulnerable lock-in when doing Spectre/Meltdown kernel
+      mitigation checks.
+    </flag>
     <flag name="firmware">
       Use firmware as mitigation.
       (A BIOS firmware update may still be required if the firmware package
