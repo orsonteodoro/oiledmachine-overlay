@@ -140,6 +140,8 @@ IUSE+="
 	firmware
 	ebuild-revision-4
 "
+# The !custom-kernel is required for RDEPEND to work properly to download the
+# proper kernel version kernel and the proper firmware.
 REQUIRED_USE="
 	?? (
 		auto
