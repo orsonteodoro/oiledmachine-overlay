@@ -2879,7 +2879,7 @@ ewarn "Mitigation coverage for cpu_target_x86_sandy_bridge may be incompletable.
 ewarn "Mitigation coverage for cpu_target_x86_ivy_bridge may be incompletable."
 		fi
 # We didn't verify yet.  Maybe it could be run in src_test().
-ewarn "Use a CPU vulnerability checker to verify complete mitigation."
+ewarn "Use a CPU vulnerability checker to verify complete mitigation or to help complete mitigation."
 	fi
 }
 
