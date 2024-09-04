@@ -118,7 +118,7 @@ IUSE+="
 	bpf
 	custom-kernel
 	firmware
-	ebuild-revision-3
+	ebuild-revision-4
 "
 REQUIRED_USE="
 	?? (
