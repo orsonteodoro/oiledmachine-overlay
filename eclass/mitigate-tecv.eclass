@@ -129,6 +129,9 @@ REQUIRED_USE="
 	cpu_target_x86_core_gen9? (
 		firmware
 	)
+	cpu_target_x86_core_gen10? (
+		firmware
+	)
 	cpu_target_x86_core_gen12? (
 		firmware
 	)
@@ -313,6 +316,7 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_ARM64="
 "
 
 # Firmware date based on D distro even though it may be removed from microcode repo.
+# List for mitigations against Variant 4 and Variant 3a
 _MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64="
 	cpu_target_x86_core_gen4? (
 		$(gen_patched_kernel_list 4.17)
@@ -346,9 +350,15 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64="
 	)
 	cpu_target_x86_core_gen9? (
 		$(gen_patched_kernel_list 4.17)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180703
+		)
 	)
 	cpu_target_x86_core_gen10? (
 		$(gen_patched_kernel_list 4.17)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180703
+		)
 	)
 	cpu_target_x86_core_gen11? (
 		$(gen_patched_kernel_list 4.17)
@@ -1098,6 +1108,8 @@ _mitigate_tecv_verify_mitigation_spectre_ng() {
 			|| use cpu_target_x86_core_gen6 \
 			|| use cpu_target_x86_core_gen7 \
 			|| use cpu_target_x86_core_gen8 \
+			|| use cpu_target_x86_core_gen9 \
+			|| use cpu_target_x86_core_gen10 \
 		; then
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
