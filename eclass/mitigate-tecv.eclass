@@ -1817,6 +1817,11 @@ _mitigate_tecv_verify_mitigation_spectre() {
 			"
 			WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Spectre mitigation."
 			check_extra_config
+			if ! has_version ">=sys-firmware/intel-microcode-20180610" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-firmware/intel-microcode-20180610 is required for Spectre mitigation."
+				die
+			fi
 		fi
 	fi
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
@@ -1938,6 +1943,11 @@ _mitigate_tecv_verify_mitigation_spectre_ng() {
 			"
 			WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Spectre-NG mitigation."
 			check_extra_config
+			if ! has_version ">=sys-firmware/intel-microcode-20180703" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-firmware/intel-microcode-20180703 is required for Spectre-NG mitigation."
+				die
+			fi
 		fi
 	fi
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "4.17" ; then
@@ -2048,17 +2058,20 @@ eerror
 # Check the kernel config flags and kernel command line to mitigate against Spectre-BHI.
 _mitigate_tecv_verify_mitigation_bhi() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
-		if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-			if use firmware ; then
-				if use cpu_target_x86_alder_lake ; then
+		if use firmware ; then
+			if use cpu_target_x86_alder_lake ; then
 	# Possibly userspace only mitigations
-					CONFIG_CHECK="
-						CPU_SUP_INTEL
-						MITIGATION_SPECTRE_BHI
-					"
-					WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Spectre-BHI mitigation."
-					WARNING_MITIGATION_SPECTRE_BHI="CONFIG_MITIGATION_SPECTRE_BHI is required for Spectre-BHI mitigation."
-					check_extra_config
+				CONFIG_CHECK="
+					CPU_SUP_INTEL
+					MITIGATION_SPECTRE_BHI
+				"
+				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Spectre-BHI mitigation."
+				WARNING_MITIGATION_SPECTRE_BHI="CONFIG_MITIGATION_SPECTRE_BHI is required for Spectre-BHI mitigation."
+				check_extra_config
+				if ! has_version ">=sys-firmware/intel-microcode-20220308" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-firmware/intel-microcode-20220308 is required for Spectre-BHI mitigation."
+					die
 				fi
 			fi
 		fi
@@ -2127,6 +2140,11 @@ _mitigate_tecv_verify_mitigation_foreshadow() {
 				"
 				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Foreshadow mitigation."
 				check_extra_config
+				if ! has_version ">=sys-firmware/intel-microcode-20180807" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-firmware/intel-microcode-20180807 is required for Foreshadow mitigation."
+					die
+				fi
 			fi
 		fi
 		if _check_kernel_cmdline "mitigations=off" ; then
@@ -2192,9 +2210,12 @@ _mitigate_tecv_verify_mitigation_rfds() {
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
 			"
-			if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RDFS mitigation on Intel® Atom®."
-				check_extra_config
+			WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RDFS mitigation on Intel® Atom®."
+			check_extra_config
+			if ! has_version ">=sys-firmware/intel-microcode-20240312" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-firmware/intel-microcode-20240312 is required for RDFS mitigation."
+				die
 			fi
 		elif \
 			   use cpu_target_x86_apollo_lake \
@@ -2209,10 +2230,8 @@ _mitigate_tecv_verify_mitigation_rfds() {
 			CONFIG_CHECK="
 				MITIGATION_RFDS
 			"
-			if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-				WARNING_MITIGATION_RFDS="CONFIG_MITIGATION_RFDS or >=sys-firmware/intel-microcode-20240312 is required for RDFS mitigation on Intel® Atom®."
-				check_extra_config
-			fi
+			WARNING_MITIGATION_RFDS="CONFIG_MITIGATION_RFDS or >=sys-firmware/intel-microcode-20240312 is required for RDFS mitigation on Intel® Atom®."
+			check_extra_config
 		fi
 	fi
 }
@@ -2243,19 +2262,20 @@ _mitigate_tecv_verify_mitigation_downfall() {
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
 				"
-				if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-					WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for GDS mitigation on ${x}."
-					check_extra_config
+				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for GDS mitigation on ${x}."
+				check_extra_config
+				if ! has_version ">=sys-firmware/intel-microcode-20230808" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-firmware/intel-microcode-20230808 is required for GDS mitigation."
+					die
 				fi
 			elif use "${x}" ; then
 				# Default off upstream
 				CONFIG_CHECK="
 					GDS_FORCE_MITIGATION
 				"
-				if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-					WARNING_GDS_FORCE_MITIGATION="CONFIG_GDS_FORCE_MITIGATION or >=sys-firmware/intel-microcode-20230808 is required for GDS mitigation on ${x}."
-					check_extra_config
-				fi
+				WARNING_GDS_FORCE_MITIGATION="CONFIG_GDS_FORCE_MITIGATION or >=sys-firmware/intel-microcode-20230808 is required for GDS mitigation on ${x}."
+				check_extra_config
 				if _check_kernel_cmdline "gather_data_sampling=off" ; then
 eerror
 eerror "Detected gather_data_sampling=off in the kernel command line."
@@ -2331,9 +2351,12 @@ eerror "The firmware USE flag needs to be turned on to continue."
 			CONFIG_CHECK="
 				CPU_SUP_AMD
 			"
-			if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-				WARNING_CPU_SUP_AMD="CONFIG_CPU_SUP_AMD is required for Zenbleed mitigation."
-				check_extra_config
+			WARNING_CPU_SUP_AMD="CONFIG_CPU_SUP_AMD is required for Zenbleed mitigation."
+			check_extra_config
+			if ! has_version ">=sys-kernel/linux-firmware-20231205" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-kernel/linux-firmware-20231205 is required for Zenbleed mitigation."
+				die
 			fi
 		fi
 	fi
@@ -2362,9 +2385,12 @@ _mitigate_tecv_verify_mitigation_crosstalk() {
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
 				"
-				if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-					WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for CROSSTalk mitigation."
-					check_extra_config
+				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for CROSSTalk mitigation."
+				check_extra_config
+				if ! has_version ">=sys-firmware/intel-microcode-20200609" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-firmware/intel-microcode-20200609 is required for CROSSTalk mitigation."
+					die
 				fi
 			fi
 		fi
@@ -2417,10 +2443,8 @@ _mitigate_tecv_verify_mitigation_inception() {
 		CONFIG_CHECK="
 			CPU_SRSO
 		"
-		if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-			WARNING_CPU_SRSO="CONFIG_CPU_SRSO is required for Inception mitigation."
-			check_extra_config
-		fi
+		WARNING_CPU_SRSO="CONFIG_CPU_SRSO is required for Inception mitigation."
+		check_extra_config
 	fi
 }
 
@@ -2429,24 +2453,6 @@ _mitigate_tecv_verify_mitigation_inception() {
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against ZombieLoad v2.
 _mitigate_tecv_verify_mitigation_zombieload_v2() {
-	if \
-		   use cpu_target_x86_haswell \
-		|| use cpu_target_x86_broadwell \
-		|| use cpu_target_x86_skylake \
-		|| use cpu_target_x86_kaby_lake_gen7 \
-		|| use cpu_target_x86_amber_lake_gen8 \
-		|| use cpu_target_x86_coffee_lake_gen8 \
-		|| use cpu_target_x86_kaby_lake_gen8 \
-		|| use cpu_target_x86_whiskey_lake \
-		|| use cpu_target_x86_coffee_lake_gen9 \
-		|| use cpu_target_x86_amber_lake_gen10 \
-		|| use cpu_target_x86_cascade_lake \
-	; then
-		:
-	else
-		return
-	fi
-
 	if use firmware ; then
 		if \
 			   use cpu_target_x86_skylake \
@@ -2462,9 +2468,12 @@ _mitigate_tecv_verify_mitigation_zombieload_v2() {
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
 			"
-			if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for ZombieLoad v2 mitigation."
-				check_extra_config
+			WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for ZombieLoad v2 mitigation."
+			check_extra_config
+			if ! has_version ">=sys-firmware/intel-microcode-20191112" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-firmware/intel-microcode-20191112 is required for ZombieLoad v2 mitigation."
+				die
 			fi
 		fi
 	fi
@@ -2532,9 +2541,12 @@ _mitigate_tecv_verify_mitigation_cacheout() {
 		CONFIG_CHECK="
 			CPU_SUP_INTEL
 		"
-		if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-			WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for CacheOut and VRS mitigation."
-			check_extra_config
+		WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for CacheOut and VRS mitigation."
+		check_extra_config
+		if ! has_version ">=sys-firmware/intel-microcode-20200609" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-firmware/intel-microcode-20200609 is required for CacheOut and VRS mitigation."
+			die
 		fi
 	fi
 }
@@ -2549,10 +2561,8 @@ _mitigate_tecv_verify_mitigation_spectre_rsb() {
 		CONFIG_CHECK="
 			CPU_SUP_INTEL
 		"
-		if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-			WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RSBU/RRSBA mitigation."
-			check_extra_config
-		fi
+		WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RSBU/RRSBA mitigation."
+		check_extra_config
 	fi
 }
 
@@ -2580,9 +2590,12 @@ _mitigate_tecv_verify_mitigation_mds() {
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
 				"
-				if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-					WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for MDS mitigation."
-					check_extra_config
+				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for MDS mitigation."
+				check_extra_config
+				if ! has_version ">=sys-firmware/intel-microcode-20190618" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-firmware/intel-microcode-20190618 is required for MDS mitigation."
+					die
 				fi
 			fi
 		fi
@@ -2654,9 +2667,12 @@ _mitigate_tecv_verify_mitigation_mmio_stale_data() {
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
 				"
-				if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
-					WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for MMIO Stale Data mitigation."
-					check_extra_config
+				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for MMIO Stale Data mitigation."
+				check_extra_config
+				if ! has_version ">=sys-firmware/intel-microcode-20220510" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-firmware/intel-microcode-20220510 is required for MMIO Stale Data mitigation."
+					die
 				fi
 			fi
 		fi
