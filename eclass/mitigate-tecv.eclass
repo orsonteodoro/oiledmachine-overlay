@@ -194,6 +194,25 @@ REQUIRED_USE="
 	cpu_target_x86_alder_lake? (
 		firmware
 	)
+
+	cpu_target_x86_cascade_lake? (
+		firmware
+	)
+	cpu_target_x86_cooper_lake? (
+		firmware
+	)
+	cpu_target_x86_sapphire_rapids? (
+		firmware
+	)
+	cpu_target_x86_sapphire_rapids_edge_enhanced? (
+		firmware
+	)
+	cpu_target_x86_granite_rapids? (
+		firmware
+	)
+	cpu_target_x86_emerald_rapids? (
+		firmware
+	)
 "
 
 # @FUNCTION: gen_patched_kernel_list
