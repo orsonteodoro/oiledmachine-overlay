@@ -22,6 +22,8 @@ CPU_TARGET_X86=(
 # For completeness, see also
 # https://www.intel.com/content/www/us/en/developer/topic-technology/software-security-guidance/processors-affected-consolidated-product-cpu-model.html
 	cpu_target_x86_atom
+	cpu_target_x86_core_gen2		# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
+	cpu_target_x86_core_gen3		# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
 	cpu_target_x86_core_gen4
 	cpu_target_x86_core_gen5
 	cpu_target_x86_core_gen6
@@ -100,6 +102,15 @@ IUSE+="
 	ebuild-revision-3
 "
 REQUIRED_USE="
+	cpu_target_x86_atom? (
+		firmware
+	)
+	cpu_target_x86_core_gen2? (
+		firmware
+	)
+	cpu_target_x86_core_gen3? (
+		firmware
+	)
 	cpu_target_x86_core_gen4? (
 		firmware
 	)
@@ -121,8 +132,8 @@ REQUIRED_USE="
 	cpu_target_x86_core_gen12? (
 		firmware
 	)
-	cpu_target_x86_zen_plus? (
-		cpu_target_x86_zen
+	cpu_target_x86_xeon_scalable_gen1? (
+		firmware
 	)
 "
 
@@ -194,8 +205,39 @@ _MITIGATE_TECV_SPECTRE_RDEPEND_ARM64="
 	)
 "
 
+# Based on D
 _MITIGATE_TECV_SPECTRE_RDEPEND_X86_64="
 	$(gen_patched_kernel_list 4.15)
+	cpu_target_x86_atom? (
+		>=sys-firmware/intel-microcode-20180312
+	)
+	cpu_target_x86_core_gen2? (
+		>=sys-firmware/intel-microcode-20180312
+	)
+	cpu_target_x86_core_gen3? (
+		>=sys-firmware/intel-microcode-20180312
+	)
+	cpu_target_x86_core_gen4? (
+		>=sys-firmware/intel-microcode-20180312
+	)
+	cpu_target_x86_core_gen5? (
+		>=sys-firmware/intel-microcode-20180312
+	)
+	cpu_target_x86_core_gen6? (
+		>=sys-firmware/intel-microcode-20180312
+	)
+	cpu_target_x86_core_gen7? (
+		>=sys-firmware/intel-microcode-20180312
+	)
+	cpu_target_x86_core_gen8? (
+		>=sys-firmware/intel-microcode-20180312
+	)
+	cpu_target_x86_core_gen9? (
+		>=sys-firmware/intel-microcode-20180610
+	)
+	cpu_target_x86_xeon_scalable_gen1? (
+		>=sys-firmware/intel-microcode-20180312
+	)
 	bpf? (
 		$(gen_patched_kernel_list 5.13)
 	)
@@ -205,6 +247,30 @@ _MITIGATE_TECV_SPECTRE_RDEPEND_X86_32="
 "
 _MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64="
 	$(gen_patched_kernel_list 4.15)
+	cpu_target_x86_core_gen2? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_core_gen3? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_core_gen4? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_core_gen5? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_core_gen6? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_core_gen7? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_core_gen8? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_xeon_scalable_gen1? (
+		$(gen_patched_kernel_list 4.15)
+	)
 "
 _MITIGATE_TECV_SPECTRE_RDEPEND_S390X="
 	$(gen_patched_kernel_list 4.16)
@@ -909,6 +975,24 @@ eerror
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Spectre.
 _mitigate_tecv_verify_mitigation_spectre() {
+	if use firmware ; then
+		if \
+			   use cpu_target_x86_atom \
+			|| use cpu_target_x86_core_gen4 \
+			|| use cpu_target_x86_core_gen5 \
+			|| use cpu_target_x86_core_gen6 \
+			|| use cpu_target_x86_core_gen7 \
+			|| use cpu_target_x86_core_gen8 \
+			|| use cpu_target_x86_core_gen9 \
+			|| use cpu_target_x86_xeon_scalable_gen1 \
+		; then
+			CONFIG_CHECK="
+				CPU_SUP_INTEL
+			"
+			WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Spectre mitigation."
+			check_extra_config
+		fi
+	fi
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
 		if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
 			CONFIG_CHECK="
