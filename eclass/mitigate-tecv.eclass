@@ -1654,7 +1654,7 @@ _mitigate_tecv_verify_mitigation_meltdown() {
 			CONFIG_CHECK="
 				MITIGATION_PAGE_TABLE_ISOLATION
 			"
-			WARNING_MITIGATION_PAGE_TABLE_ISOLATION="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
+			ERROR_MITIGATION_PAGE_TABLE_ISOLATION="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
 			check_extra_config
 		fi
 
@@ -1671,7 +1671,7 @@ eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead.
 			CONFIG_CHECK="
 				PAGE_TABLE_ISOLATION
 			"
-			WARNING_PAGE_TABLE_ISOLATION="CONFIG_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
+			ERROR_PAGE_TABLE_ISOLATION="CONFIG_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
 			check_extra_config
 		fi
 
@@ -1815,7 +1815,7 @@ _mitigate_tecv_verify_mitigation_spectre() {
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
 			"
-			WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Spectre mitigation."
+			ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Spectre mitigation."
 			check_extra_config
 			if ! has_version ">=sys-firmware/intel-microcode-20180610" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
@@ -1829,7 +1829,7 @@ eerror ">=sys-firmware/intel-microcode-20180610 is required for Spectre mitigati
 			CONFIG_CHECK="
 				MITIGATION_RETPOLINE
 			"
-			WARNING_MITIGATION_RETPOLINE="CONFIG_MITIGATION_RETPOLINE is required for Spectre mitigation."
+			ERROR_MITIGATION_RETPOLINE="CONFIG_MITIGATION_RETPOLINE is required for Spectre mitigation."
 			check_extra_config
 		fi
 
@@ -1837,7 +1837,7 @@ eerror ">=sys-firmware/intel-microcode-20180610 is required for Spectre mitigati
 			CONFIG_CHECK="
 				EXPOLINE
 			"
-			WARNING_RETPOLINE="CONFIG_EXPOLINE is required for Spectre mitigation."
+			ERROR_RETPOLINE="CONFIG_EXPOLINE is required for Spectre mitigation."
 			check_extra_config
 		fi
 
@@ -1847,7 +1847,7 @@ eerror ">=sys-firmware/intel-microcode-20180610 is required for Spectre mitigati
 			CONFIG_CHECK="
 				RETPOLINE
 			"
-			WARNING_RETPOLINE="CONFIG_RETPOLINE is required for Spectre mitigation."
+			ERROR_RETPOLINE="CONFIG_RETPOLINE is required for Spectre mitigation."
 			check_extra_config
 		fi
 
@@ -1855,7 +1855,7 @@ eerror ">=sys-firmware/intel-microcode-20180610 is required for Spectre mitigati
 			CONFIG_CHECK="
 				EXPOLINE
 			"
-			WARNING_RETPOLINE="CONFIG_EXPOLINE is required for Spectre mitigation."
+			ERROR_RETPOLINE="CONFIG_EXPOLINE is required for Spectre mitigation."
 			check_extra_config
 		fi
 	fi
@@ -1910,8 +1910,8 @@ eerror
 				BPF_JIT
 				BPF_JIT_ALWAYS_ON
 			"
-			WARNING_BPF_JIT="CONFIG_BPF_JIT=y is required for Spectre (Variant 2) mitigation."
-			WARNING_BPF_JIT_ALWAYS_ON="CONFIG_BPF_JIT_ALWAYS_ON=y is required for Spectre (Variant 2) mitigation."
+			ERROR_BPF_JIT="CONFIG_BPF_JIT=y is required for Spectre (Variant 2) mitigation."
+			ERROR_BPF_JIT_ALWAYS_ON="CONFIG_BPF_JIT_ALWAYS_ON=y is required for Spectre (Variant 2) mitigation."
 			check_extra_config
 		fi
 	fi
@@ -1941,7 +1941,7 @@ _mitigate_tecv_verify_mitigation_spectre_ng() {
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
 			"
-			WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Spectre-NG mitigation."
+			ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Spectre-NG mitigation."
 			check_extra_config
 			if ! has_version ">=sys-firmware/intel-microcode-20180703" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
@@ -2008,7 +2008,7 @@ eerror
 			CONFIG_CHECK="
 				BPF_UNPRIV_DEFAULT_OFF
 			"
-			WARNING_BPF_UNPRIV_DEFAULT_OFF="CONFIG_BPF_UNPRIV_DEFAULT_OFF=y is required for Spectre-NG v4 mitigation."
+			ERROR_BPF_UNPRIV_DEFAULT_OFF="CONFIG_BPF_UNPRIV_DEFAULT_OFF=y is required for Spectre-NG v4 mitigation."
 			check_extra_config
 		fi
 	fi
@@ -2065,8 +2065,8 @@ _mitigate_tecv_verify_mitigation_bhi() {
 					CPU_SUP_INTEL
 					MITIGATION_SPECTRE_BHI
 				"
-				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Spectre-BHI mitigation."
-				WARNING_MITIGATION_SPECTRE_BHI="CONFIG_MITIGATION_SPECTRE_BHI is required for Spectre-BHI mitigation."
+				ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Spectre-BHI mitigation."
+				ERROR_MITIGATION_SPECTRE_BHI="CONFIG_MITIGATION_SPECTRE_BHI is required for Spectre-BHI mitigation."
 				check_extra_config
 				if ! has_version ">=sys-firmware/intel-microcode-20220308" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
@@ -2138,7 +2138,7 @@ _mitigate_tecv_verify_mitigation_foreshadow() {
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
 				"
-				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Foreshadow mitigation."
+				ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Foreshadow mitigation."
 				check_extra_config
 				if ! has_version ">=sys-firmware/intel-microcode-20180807" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
@@ -2210,7 +2210,7 @@ _mitigate_tecv_verify_mitigation_rfds() {
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
 			"
-			WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RDFS mitigation on Intel® Atom®."
+			ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RDFS mitigation on Intel® Atom®."
 			check_extra_config
 			if ! has_version ">=sys-firmware/intel-microcode-20240312" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
@@ -2230,7 +2230,7 @@ eerror ">=sys-firmware/intel-microcode-20240312 is required for RDFS mitigation.
 			CONFIG_CHECK="
 				MITIGATION_RFDS
 			"
-			WARNING_MITIGATION_RFDS="CONFIG_MITIGATION_RFDS or >=sys-firmware/intel-microcode-20240312 is required for RDFS mitigation on Intel® Atom®."
+			ERROR_MITIGATION_RFDS="CONFIG_MITIGATION_RFDS or >=sys-firmware/intel-microcode-20240312 is required for RDFS mitigation on Intel® Atom®."
 			check_extra_config
 		fi
 	fi
@@ -2262,7 +2262,7 @@ _mitigate_tecv_verify_mitigation_downfall() {
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
 				"
-				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for GDS mitigation on ${x}."
+				ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for GDS mitigation on ${x}."
 				check_extra_config
 				if ! has_version ">=sys-firmware/intel-microcode-20230808" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
@@ -2274,7 +2274,7 @@ eerror ">=sys-firmware/intel-microcode-20230808 is required for GDS mitigation."
 				CONFIG_CHECK="
 					GDS_FORCE_MITIGATION
 				"
-				WARNING_GDS_FORCE_MITIGATION="CONFIG_GDS_FORCE_MITIGATION or >=sys-firmware/intel-microcode-20230808 is required for GDS mitigation on ${x}."
+				ERROR_GDS_FORCE_MITIGATION="CONFIG_GDS_FORCE_MITIGATION or >=sys-firmware/intel-microcode-20230808 is required for GDS mitigation on ${x}."
 				check_extra_config
 				if _check_kernel_cmdline "gather_data_sampling=off" ; then
 eerror
@@ -2351,7 +2351,7 @@ eerror "The firmware USE flag needs to be turned on to continue."
 			CONFIG_CHECK="
 				CPU_SUP_AMD
 			"
-			WARNING_CPU_SUP_AMD="CONFIG_CPU_SUP_AMD is required for Zenbleed mitigation."
+			ERROR_CPU_SUP_AMD="CONFIG_CPU_SUP_AMD is required for Zenbleed mitigation."
 			check_extra_config
 			if ! has_version ">=sys-kernel/linux-firmware-20231205" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
@@ -2385,7 +2385,7 @@ _mitigate_tecv_verify_mitigation_crosstalk() {
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
 				"
-				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for CROSSTalk mitigation."
+				ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for CROSSTalk mitigation."
 				check_extra_config
 				if ! has_version ">=sys-firmware/intel-microcode-20200609" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
@@ -2443,7 +2443,7 @@ _mitigate_tecv_verify_mitigation_inception() {
 		CONFIG_CHECK="
 			CPU_SRSO
 		"
-		WARNING_CPU_SRSO="CONFIG_CPU_SRSO is required for Inception mitigation."
+		ERROR_CPU_SRSO="CONFIG_CPU_SRSO is required for Inception mitigation."
 		check_extra_config
 	fi
 }
@@ -2468,7 +2468,7 @@ _mitigate_tecv_verify_mitigation_zombieload_v2() {
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
 			"
-			WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for ZombieLoad v2 mitigation."
+			ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for ZombieLoad v2 mitigation."
 			check_extra_config
 			if ! has_version ">=sys-firmware/intel-microcode-20191112" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
@@ -2541,7 +2541,7 @@ _mitigate_tecv_verify_mitigation_cacheout() {
 		CONFIG_CHECK="
 			CPU_SUP_INTEL
 		"
-		WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for CacheOut and VRS mitigation."
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for CacheOut and VRS mitigation."
 		check_extra_config
 		if ! has_version ">=sys-firmware/intel-microcode-20200609" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
@@ -2561,7 +2561,7 @@ _mitigate_tecv_verify_mitigation_spectre_rsb() {
 		CONFIG_CHECK="
 			CPU_SUP_INTEL
 		"
-		WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RSBU/RRSBA mitigation."
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RSBU/RRSBA mitigation."
 		check_extra_config
 	fi
 }
@@ -2590,7 +2590,7 @@ _mitigate_tecv_verify_mitigation_mds() {
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
 				"
-				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for MDS mitigation."
+				ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for MDS mitigation."
 				check_extra_config
 				if ! has_version ">=sys-firmware/intel-microcode-20190618" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
@@ -2667,7 +2667,7 @@ _mitigate_tecv_verify_mitigation_mmio_stale_data() {
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
 				"
-				WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for MMIO Stale Data mitigation."
+				ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for MMIO Stale Data mitigation."
 				check_extra_config
 				if ! has_version ">=sys-firmware/intel-microcode-20220510" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
@@ -2718,6 +2718,11 @@ eerror
 # Check the kernel config flags
 _mitigate-tecv_check_kernel_flags() {
 	einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
+
+	if ! linux_config_src_exists ; then
+eerror "Missing .config in /usr/src/linux"
+		die
+	fi
 
 	if linux_chkconfig_present "BPF" && ! use bpf ; then
 eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
