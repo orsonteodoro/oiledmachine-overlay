@@ -1635,7 +1635,7 @@ _check_kernel_cmdline() {
 	if [[ "${cl}" =~ "${option}" ]] ; then
 		return 0
 	fi
-	if grep -q "${option}" "/etc/defaults/grub" ; then
+	if grep -q "${option}" "/etc/default/grub" ; then
 		return 0
 	fi
 	if grep -q "${option}" "/etc/grub.d/40_custom" ; then
@@ -1702,7 +1702,7 @@ eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -1719,7 +1719,7 @@ eerror "  kpti=on"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -1734,7 +1734,7 @@ eerror "  kpti=on"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -1753,7 +1753,7 @@ eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -1766,7 +1766,7 @@ eerror "Detected nopti in the kernel command line."
 eerror
 eerror "Remove it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -1872,7 +1872,7 @@ eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -1884,7 +1884,7 @@ eerror "Detected nospectre_v1 in the kernel command line."
 eerror
 eerror "Remove it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -1896,7 +1896,7 @@ eerror "Detected nospectre_v2 in the kernel command line."
 eerror
 eerror "Remove it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -1962,7 +1962,7 @@ eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -1975,7 +1975,7 @@ eerror "Detected nospec_store_bypass_disable in the kernel command line."
 eerror
 eerror "Remove it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -1994,7 +1994,7 @@ eerror "  spec_store_bypass_disable=prctl    # x86 default"
 eerror
 eerror "Please check:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2031,7 +2031,7 @@ eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2043,7 +2043,7 @@ eerror "Detected nospectre_bhb in the kernel command line."
 eerror
 eerror "Remove it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2088,7 +2088,7 @@ eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2106,7 +2106,7 @@ eerror "  spec_store_bypass_disable=prctl    # x86 default"
 eerror
 eerror "Remove it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2158,7 +2158,7 @@ eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2178,7 +2178,7 @@ eerror "  l1tf=flush,nowarn"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2287,7 +2287,7 @@ eerror "  gather_data_sampling=force"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2319,7 +2319,7 @@ eerror "  retbleed=unret,nosmt"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2405,7 +2405,7 @@ eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2417,7 +2417,7 @@ eerror "Detected srbds=off in the kernel command line."
 eerror
 eerror "Remove it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2490,7 +2490,7 @@ eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2507,7 +2507,7 @@ eerror "  tsx_async_abort=full,nosmt"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2610,7 +2610,7 @@ eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2627,7 +2627,7 @@ eerror "  mds=full,nosmt"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2687,7 +2687,7 @@ eerror "  mitigations=auto,nosmt"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
@@ -2704,7 +2704,7 @@ eerror "  mmio_stale_data=full,nosmt"
 eerror
 eerror "Edit it from:"
 eerror
-eerror "  /etc/defaults/grub"
+eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
 eerror "  CONFIG_CMDLINE"
 eerror
