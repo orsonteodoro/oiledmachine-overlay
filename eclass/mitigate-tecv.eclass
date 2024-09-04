@@ -31,7 +31,7 @@ CPU_TARGET_X86=(
 	cpu_target_x86_jasper_lake
 	cpu_target_x86_alder_lake_n
 	cpu_target_x86_gemini_lake
-	cpu_target_x86_core
+	cpu_target_x86_core			# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
 	cpu_target_x86_nehalem
 	cpu_target_x86_westmere
 	cpu_target_x86_sandy_bridge		# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
@@ -2863,6 +2863,9 @@ mitigate-tecv_pkg_setup() {
 		fi
 # It is a common practice by hardware manufacturers to delete support or
 # historical information after a period of time.
+		if use cpu_target_x86_core ; then
+ewarn "Mitigation coverage for cpu_target_x86_nehalem may be incompletable."
+		fi
 		if use cpu_target_x86_nehalem ; then
 ewarn "Mitigation coverage for cpu_target_x86_nehalem may be incompletable."
 		fi
@@ -2875,6 +2878,8 @@ ewarn "Mitigation coverage for cpu_target_x86_sandy_bridge may be incompletable.
 		if use cpu_target_x86_ivy_bridge ; then
 ewarn "Mitigation coverage for cpu_target_x86_ivy_bridge may be incompletable."
 		fi
+# We didn't verify yet.  Maybe it could be run in src_test().
+ewarn "Use a CPU vulnerability checker to verify complete mitigation."
 	fi
 }
 
