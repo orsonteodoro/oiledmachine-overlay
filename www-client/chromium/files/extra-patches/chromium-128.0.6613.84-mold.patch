@@ -228,3 +228,25 @@
  
    # If true, optimize for size.
    # Default to favoring speed over size for platforms not listed below.
+--- a/build/config/compiler/compiler.gni.orig	2024-09-04 15:47:50.091188461 -0700
++++ b/build/config/compiler/compiler.gni	2024-09-04 16:10:20.957197926 -0700
+@@ -30,15 +30,16 @@ if (is_ios) {
+ }
+ 
+ declare_args() {
++  use_mold = false
++}
++
++declare_args() {
+   # Set to true to use lld, the LLVM linker.
+   # In late bring-up on macOS (see docs/mac_lld.md).
+   # Tentatively used on iOS.
+   # The default linker everywhere else.
+-  use_mold = false
+   use_lld = is_clang && current_os != "zos" && !use_mold
+ 
+-
+-
+   # If true, optimize for size.
+   # Default to favoring speed over size for platforms not listed below.
+   optimize_for_size =
