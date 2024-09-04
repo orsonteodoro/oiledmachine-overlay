@@ -33,7 +33,8 @@ pkg_setup() {
 # Unconditionally check
 src_compile() {
 	if lscpu | grep -q "Vulnerable" ; then
-eerror "Detected unmitigated CPU vulnerability"
+eerror "Detected an unmitigated CPU vulnerability."
+eerror "Fix issues to continue."
 		lscpu
 		die
 	fi
