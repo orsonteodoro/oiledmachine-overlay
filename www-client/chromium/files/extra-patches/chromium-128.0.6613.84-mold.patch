@@ -4,8 +4,8 @@
    # The default linker everywhere else.
    use_lld = is_clang && current_os != "zos"
  
-+  # enable together with use_lld
-+  use_mold = false
++
++  # use_mold = false
 +
    # If true, optimize for size.
    # Default to favoring speed over size for platforms not listed below.
