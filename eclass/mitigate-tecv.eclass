@@ -138,6 +138,12 @@ REQUIRED_USE="
 	cpu_target_x86_xeon_scalable_gen1? (
 		firmware
 	)
+	cpu_target_x86_xeon_scalable_gen2? (
+		firmware
+	)
+	cpu_target_x86_xeon_scalable_gen3? (
+		firmware
+	)
 "
 
 # @FUNCTION: gen_patched_kernel_list
@@ -498,6 +504,61 @@ _MITIGATE_TECV_SPECTRE_RDEPEND_PPC64="
 	)
 "
 
+# MFBDS, MLPDS, MSBDS
+_MITIGATE_TECV_MDS_RDEPEND_X86_64="
+	cpu_target_x86_core_gen4? (
+		$(gen_patched_kernel_list 5.2)
+		firmware? (
+			>=sys-firmware/intel-microcode-20190618
+		)
+	)
+	cpu_target_x86_core_gen5? (
+		$(gen_patched_kernel_list 5.2)
+		firmware? (
+			>=sys-firmware/intel-microcode-20190618
+		)
+	)
+	cpu_target_x86_core_gen6? (
+		$(gen_patched_kernel_list 5.2)
+		firmware? (
+			>=sys-firmware/intel-microcode-20190618
+		)
+	)
+	cpu_target_x86_core_gen7? (
+		$(gen_patched_kernel_list 5.2)
+		firmware? (
+			>=sys-firmware/intel-microcode-20190618
+		)
+	)
+	cpu_target_x86_core_gen8? (
+		$(gen_patched_kernel_list 5.2)
+		firmware? (
+			>=sys-firmware/intel-microcode-20190618
+		)
+	)
+	cpu_target_x86_core_gen9? (
+		$(gen_patched_kernel_list 5.2)
+		firmware? (
+			>=sys-firmware/intel-microcode-20190618
+		)
+	)
+	cpu_target_x86_core_gen10? (
+		$(gen_patched_kernel_list 5.2)
+		firmware? (
+			>=sys-firmware/intel-microcode-20190618
+		)
+	)
+	cpu_target_x86_xeon_scalable_gen1? (
+		$(gen_patched_kernel_list 5.2)
+		firmware? (
+			>=sys-firmware/intel-microcode-20190618
+		)
+	)
+"
+_MITIGATE_TECV_MDS_RDEPEND_X86_32="
+	${_MITIGATE_TECV_MDS_RDEPEND_X86_64}
+"
+
 _MITIGATE_TECV_SWAPGS_RDEPEND_X86_64="
 	cpu_target_x86_atom? (
 		$(gen_patched_kernel_list 5.3)
@@ -679,6 +740,84 @@ _MITIGATE_TECV_SPECTRE_RDEPEND_ARM64="
 	bpf? (
 		$(gen_patched_kernel_list 5.13)
 	)
+"
+
+_MITIGATE_TECV_MMIO_RDEPEND_X86_64="
+	cpu_target_x86_atom? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
+	cpu_target_x86_core_gen4? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
+	cpu_target_x86_core_gen5? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
+	cpu_target_x86_core_gen6? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
+	cpu_target_x86_core_gen7? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
+	cpu_target_x86_core_gen8? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
+	cpu_target_x86_core_gen9? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
+	cpu_target_x86_core_gen10? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
+	cpu_target_x86_core_gen11? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
+	cpu_target_x86_xeon_scalable_gen1? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
+	cpu_target_x86_xeon_scalable_gen2? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
+	cpu_target_x86_xeon_scalable_gen3? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
+"
+_MITIGATE_TECV_MMIO_RDEPEND_X86_32="
+	${_MITIGATE_TECV_MMIO_RDEPEND_X86_64}
 "
 
 _MITIGATE_TECV_RETBLEED_RDEPEND_X86_64="
@@ -914,60 +1053,7 @@ _MITIGATE_TECV_BHI_RDEPEND_X86_32="
 	${_MITIGATE_TECV_BHI_RDEPEND_X86_64}
 "
 
-# MFBDS, MLPDS, MSBDS
-_MITIGATE_TECV_MDS_RDEPEND_X86_64="
-	cpu_target_x86_core_gen4? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_core_gen5? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_core_gen6? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_core_gen7? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_core_gen8? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_core_gen9? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_core_gen10? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_xeon_scalable_gen1? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-"
-_MITIGATE_TECV_MDS_RDEPEND_X86_32="
-	${_MITIGATE_TECV_MDS_RDEPEND_X86_64}
-"
+
 
 # @ECLASS_VARIABLE: MITIGATE_TECV_RDEPEND
 # @INTERNAL
@@ -993,6 +1079,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64}
 				${_MITIGATE_TECV_FORESHADOW_RDEPEND_X86_64}
 				${_MITIGATE_TECV_BHI_RDEPEND_X86_64}
+				${_MITIGATE_TECV_MMIO_RDEPEND_X86_64}
 				${_MITIGATE_TECV_RETBLEED_RDEPEND_X86_64}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
 				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_64}
@@ -1021,6 +1108,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_FORESHADOW_RDEPEND_X86_32}
 				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_32}
 				${_MITIGATE_TECV_BHI_RDEPEND_X86_32}
+				${_MITIGATE_TECV_MMIO_RDEPEND_X86_32}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32}
 				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_32}
 				${_MITIGATE_TECV_RDFS_RDEPEND_X86_32}
@@ -1930,6 +2018,72 @@ eerror
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_mmio_stale_data
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against MMIO Stale Data.
+_mitigate_tecv_verify_mitigation_mmio_stale_data() {
+	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.19" ; then
+		if use firmware ; then
+			if \
+				   use cpu_target_x86_atom \
+				|| use cpu_target_x86_core_gen4 \
+				|| use cpu_target_x86_core_gen5 \
+				|| use cpu_target_x86_core_gen6 \
+				|| use cpu_target_x86_core_gen7 \
+				|| use cpu_target_x86_core_gen8 \
+				|| use cpu_target_x86_core_gen9 \
+				|| use cpu_target_x86_core_gen10 \
+				|| use cpu_target_x86_core_gen11 \
+				|| use cpu_target_x86_xeon_scalable_gen1 \
+				|| use cpu_target_x86_xeon_scalable_gen2 \
+				|| use cpu_target_x86_xeon_scalable_gen3 \
+			; then
+				CONFIG_CHECK="
+					CPU_SUP_INTEL
+				"
+				if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
+					WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for MMIO Stale Data mitigation."
+					check_extra_config
+				fi
+			fi
+		fi
+		if _check_kernel_cmdline "mitigations=off" ; then
+eerror
+eerror "Detected mitigations=off in the kernel command line."
+eerror
+eerror "Acceptable values:"
+eerror
+eerror "  mitigations=auto              # The kernel default"
+eerror "  mitigations=auto,nosmt"
+eerror
+eerror "Edit it from:"
+eerror
+eerror "  /etc/defaults/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+			die
+		fi
+		if _check_kernel_cmdline "mmio_stale_data=off" ; then
+eerror
+eerror "Detected mmio_stale_data=off in the kernel command line."
+eerror
+eerror "Acceptable values:"
+eerror
+eerror "  mmio_stale_data=full          # The kernel default"
+eerror "  mmio_stale_data=full,nosmt"
+eerror
+eerror "Edit it from:"
+eerror
+eerror "  /etc/defaults/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+		fi
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -1957,6 +2111,7 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_verify_mitigation_cacheout		# Mitigations against L1DES (2020), VRS (2020)
 	_mitigate_tecv_verify_mitigation_downfall		# Mitigations against GDS (2022)
 	_mitigate_tecv_verify_mitigation_retbleed		# Mitigations against Retbleed (2022)
+	_mitigate_tecv_verify_mitigation_mmio_stale_data	# Mitigations against SBDR (2022), SBDS (2022), DRPW (2022)
 	_mitigate_tecv_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023)
 	_mitigate_tecv_verify_mitigation_inception		# Mitigations against SRSO (2023)
 	_mitigate_tecv_verify_mitigation_rfds			# Mitigations against RFDS (2024)
