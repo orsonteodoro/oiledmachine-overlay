@@ -206,7 +206,7 @@
  import("//build/config/features.gni")
  import("//build/toolchain/toolchain.gni")
  
-+declare() {
++declare_args() {
 +  use_mold = false
 +}
 +
