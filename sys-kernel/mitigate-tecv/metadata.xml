@@ -6,6 +6,11 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <use>
+    <flag name="auto">
+      Auto resolves firmware and kernel version required for full mitigation,
+      instead of manually selecting microarchitecture which determines the
+      minimum requirements for those 2 items.
+    </flag>
     <flag name="bpf">
       Apply bpf mitigations for Spectre v2 and Spectre-NG.
     </flag>

@@ -18,6 +18,25 @@ esac
 if [[ -z ${_MITIGATE_TECV_ECLASS} ]] ; then
 _MITIGATE_TECV_ECLASS=1
 
+FIRMWARE_VENDOR=""
+_mitigate_tecv_set_globals() {
+	if [[ -e "/proc/cpuinfo" ]] ; then
+		while read -r line ; do
+			if [[ "${line}" =~ "AuthenticAMD" ]] ; then
+				FIRMWARE_VENDOR="amd"
+				break
+			fi
+			if [[ "${line}" =~ "GenuineIntel" ]] ; then
+				FIRMWARE_VENDOR="intel"
+				break
+			fi
+		done < "/proc/cpuinfo"
+	fi
+}
+
+_mitigate_tecv_set_globals
+unset -f _mitigate_tecv_set_globals
+
 CPU_TARGET_X86=(
 # For completeness, see also
 # https://www.intel.com/content/www/us/en/developer/topic-technology/software-security-guidance/processors-affected-consolidated-product-cpu-model.html
@@ -115,6 +134,7 @@ IUSE+="
 	${CPU_TARGET_ARM[@]}
 	${CPU_TARGET_PPC[@]}
 	${CPU_TARGET_X86[@]}
+	auto
 	bpf
 	custom-kernel
 	firmware
@@ -122,9 +142,13 @@ IUSE+="
 "
 REQUIRED_USE="
 	?? (
+		auto
 		${CPU_TARGET_ARM[@]}
 		${CPU_TARGET_PPC[@]}
 		${CPU_TARGET_X86[@]}
+	)
+	auto? (
+		firmware
 	)
 	cpu_target_x86_apollo_lake? (
 		firmware
@@ -216,6 +240,10 @@ REQUIRED_USE="
 		firmware
 	)
 	cpu_target_x86_emerald_rapids? (
+		firmware
+	)
+
+	cpu_target_x86_zen_2? (
 		firmware
 	)
 "
@@ -1560,7 +1588,20 @@ _MITIGATE_TECV_BHI_RDEPEND_X86_32="
 	${_MITIGATE_TECV_BHI_RDEPEND_X86_64}
 "
 
+_MITIGATE_TECV_AUTO="
+	$(gen_patched_kernel_list 6.9)
 
+"
+if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
+	_MITIGATE_TECV_AUTO+="
+		>=sys-kernel/linux-firmware-20240811
+	"
+fi
+if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
+	_MITIGATE_TECV_AUTO+="
+		>=sys-firmware/intel-microcode-20240813
+	"
+fi
 
 # @ECLASS_VARIABLE: MITIGATE_TECV_RDEPEND
 # @INTERNAL
@@ -1569,6 +1610,9 @@ _MITIGATE_TECV_BHI_RDEPEND_X86_32="
 MITIGATE_TECV_RDEPEND="
 	kernel_linux? (
 		!custom-kernel? (
+			auto? (
+				${_MITIGATE_TECV_AUTO}
+			)
 			arm64? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_ARM64}
 				${_MITIGATE_TECV_MELTDOWN_RDEPEND_ARM64}
@@ -1811,6 +1855,7 @@ _mitigate_tecv_verify_mitigation_spectre() {
 			|| use cpu_target_x86_sapphire_rapids_edge_enhanced \
 			|| use cpu_target_x86_granite_rapids \
 			|| use cpu_target_x86_emerald_rapids \
+			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 		; then
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
@@ -1937,6 +1982,7 @@ _mitigate_tecv_verify_mitigation_spectre_ng() {
 			|| use cpu_target_x86_comet_lake \
 			|| use cpu_target_x86_amber_lake_gen10 \
 			|| use cpu_target_x86_ice_lake \
+			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 		; then
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
@@ -2059,7 +2105,10 @@ eerror
 _mitigate_tecv_verify_mitigation_bhi() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
 		if use firmware ; then
-			if use cpu_target_x86_alder_lake ; then
+			if \
+				   use cpu_target_x86_alder_lake \
+				|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+			; then
 	# Possibly userspace only mitigations
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
@@ -2134,6 +2183,7 @@ _mitigate_tecv_verify_mitigation_foreshadow() {
 				|| use cpu_target_x86_amber_lake_gen8 \
 				|| use cpu_target_x86_coffee_lake_gen8 \
 				|| use cpu_target_x86_kaby_lake_gen8 \
+				|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 			; then
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
@@ -2206,6 +2256,7 @@ _mitigate_tecv_verify_mitigation_rfds() {
 			|| use cpu_target_x86_arizona_beach \
 			|| use cpu_target_x86_jasper_lake \
 			|| use cpu_target_x86_alder_lake_n \
+			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 		; then
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
@@ -2258,7 +2309,14 @@ _mitigate_tecv_verify_mitigation_downfall() {
 			cpu_target_x86_cooper_lake
 		)
 		for x in ${L[@]} ; do
-			if use firmware && use "${x}" ; then
+			if \
+				use firmware \
+					&& \
+				( \
+					use "${x}" \
+					|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+				) \
+			; then
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
 				"
@@ -2341,12 +2399,14 @@ eerror "No mitigation against Retbleed for 32-bit x86.  Use only 64-bit instead.
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Zenbleed.
 _mitigate_tecv_verify_mitigation_zenbleed() {
-	if use cpu_target_x86_zen_2 && ! use firmware ; then
-eerror "You need to download >=sys-kernel/linux-firmware-20231205 for Zenbleed mitigation."
-eerror "The firmware USE flag needs to be turned on to continue."
-		die
-	fi
-	if use cpu_target_x86_zen_2 && use firmware ; then
+	if \
+		use firmware \
+			&& \
+		( \
+			   use cpu_target_x86_zen_2 \
+			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "amd" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+		) \
+	; then
 		if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
 			CONFIG_CHECK="
 				CPU_SUP_AMD
@@ -2360,7 +2420,10 @@ eerror ">=sys-kernel/linux-firmware-20231205 is required for Zenbleed mitigation
 			fi
 		fi
 	fi
-	if use cpu_target_x86_zen_2 ; then
+	if \
+		   use cpu_target_x86_zen_2 \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "amd" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
 ewarn "A BIOS firmware update may be needed for Zenbleed mitigation for different models and may only be provided that way."
 	fi
 }
@@ -2381,6 +2444,7 @@ _mitigate_tecv_verify_mitigation_crosstalk() {
 				|| use cpu_target_x86_whiskey_lake \
 				|| use cpu_target_x86_coffee_lake_gen9 \
 				|| use cpu_target_x86_amber_lake_gen10 \
+				|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 			; then
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
@@ -2464,6 +2528,7 @@ _mitigate_tecv_verify_mitigation_zombieload_v2() {
 			|| use cpu_target_x86_coffee_lake_gen9 \
 			|| use cpu_target_x86_amber_lake_gen10 \
 			|| use cpu_target_x86_cascade_lake \
+			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 		; then
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
@@ -2586,6 +2651,7 @@ _mitigate_tecv_verify_mitigation_mds() {
 				|| use cpu_target_x86_coffee_lake_gen9 \
 				|| use cpu_target_x86_comet_lake \
 				|| use cpu_target_x86_ice_lake \
+				|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 			; then
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
@@ -2663,6 +2729,7 @@ _mitigate_tecv_verify_mitigation_mmio_stale_data() {
 				|| use cpu_target_x86_tiger_lake \
 				|| use cpu_target_x86_cascade_lake \
 				|| use cpu_target_x86_cooper_lake \
+				|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 			; then
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
@@ -2885,6 +2952,7 @@ mitigate-tecv_pkg_setup() {
 	if [[ "${ARCH}" == "arm" ]] ; then
 ewarn "CPU vulnerability mitigation has not been added yet for ARCH=${ARCH}."
 	fi
+	use auto && einfo "FIRMWARE_VENDOR=${FIRMWARE_VENDOR}"
 	if use kernel_linux ; then
 		linux-info_pkg_setup
 		_mitigate-tecv_check_kernel_flags
