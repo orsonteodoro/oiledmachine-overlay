@@ -32,8 +32,8 @@ CPU_TARGET_X86=(
 	cpu_target_x86_alder_lake_n
 	cpu_target_x86_gemini_lake
 	cpu_target_x86_core			# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
-	cpu_target_x86_nehalem
-	cpu_target_x86_westmere
+	cpu_target_x86_nehalem			# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
+	cpu_target_x86_westmere			# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
 	cpu_target_x86_sandy_bridge		# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
 	cpu_target_x86_ivy_bridge		# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
 	cpu_target_x86_haswell
