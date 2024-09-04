@@ -200,3 +200,16 @@
        ldflags += [ "-fuse-ld=lld" ]
        if (lld_path != "") {
          ldflags += [ "-B$lld_path" ]
+--- a/build/config/compiler/pgo/BUILD.gn.orig	2024-09-03 22:38:23.179931845 -0700
++++ b/build/config/compiler/pgo/BUILD.gn	2024-09-03 23:12:53.649305524 -0700
+@@ -9,6 +9,10 @@ import("//build/config/compiler/pgo/pgo.
+ import("//build/config/features.gni")
+ import("//build/toolchain/toolchain.gni")
+ 
++declare() {
++  use_mold = false
++}
++
+ # Configuration that enables PGO instrumentation.
+ config("pgo_instrumentation_flags") {
+   visibility = [ ":default_pgo_flags" ]
