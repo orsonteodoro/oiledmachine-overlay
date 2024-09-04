@@ -121,6 +121,11 @@ IUSE+="
 	ebuild-revision-3
 "
 REQUIRED_USE="
+	?? (
+		${CPU_TARGET_ARM[@]}
+		${CPU_TARGET_PPC[@]}
+		${CPU_TARGET_X86[@]}
+	)
 	cpu_target_x86_apollo_lake? (
 		firmware
 	)
