@@ -193,6 +193,7 @@ RDEPEND="
 	!dev-db/mysql
 	!dev-db/mysql-cluster
 	!dev-db/percona-server
+	sys-kernel/mitigate-tecv
 	selinux? (
 		sec-policy/selinux-mysql
 	)

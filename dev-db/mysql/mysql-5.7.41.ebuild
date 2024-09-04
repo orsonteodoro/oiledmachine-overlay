@@ -120,6 +120,7 @@ RDEPEND="
 	!dev-db/mysql:8.0
 	!dev-db/mysql-cluster
 	!dev-db/percona-server
+	sys-kernel/mitigate-tecv
 	client-libs? (
 		!dev-db/mariadb-connector-c[mysqlcompat]
 		!dev-db/mysql-connector-c
