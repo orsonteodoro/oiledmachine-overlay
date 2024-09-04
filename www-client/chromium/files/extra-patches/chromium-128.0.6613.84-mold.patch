@@ -5,7 +5,7 @@
    use_lld = is_clang && current_os != "zos"
  
 +
-+  # use_mold = false
++  use_mold = false
 +
    # If true, optimize for size.
    # Default to favoring speed over size for platforms not listed below.
@@ -185,7 +185,7 @@
    # debugging tools.
    simple_template_names = is_clang && !is_nacl && !is_win && !is_apple
 +
-+  use_mold = 1
++  #use_mold = false
  }
  
  declare_args() {
@@ -196,7 +196,7 @@
 -    if (use_lld) {
 +    if (use_mold) {
 +      ldflags += [ "-fuse-ld=mold" ]
-+    } if (use_lld) {
++    } else if (use_lld) {
        ldflags += [ "-fuse-ld=lld" ]
        if (lld_path != "") {
          ldflags += [ "-B$lld_path" ]
@@ -207,7 +207,7 @@
  import("//build/toolchain/toolchain.gni")
  
 +declare_args() {
-+  use_mold = false
++  #use_mold = false
 +}
 +
  # Configuration that enables PGO instrumentation.
