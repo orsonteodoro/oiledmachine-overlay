@@ -22,6 +22,7 @@ CPU_TARGET_X86=(
 # For completeness, see also
 # https://www.intel.com/content/www/us/en/developer/topic-technology/software-security-guidance/processors-affected-consolidated-product-cpu-model.html
 	cpu_target_x86_atom
+	cpu_target_x86_core_gen1
 	cpu_target_x86_core_gen2		# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
 	cpu_target_x86_core_gen3		# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
 	cpu_target_x86_core_gen4
@@ -444,6 +445,24 @@ _MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_32="
 "
 
 _MITIGATE_TECV_FORESHADOW_RDEPEND_X86_64="
+	cpu_target_x86_core_gen1? (
+		$(gen_patched_kernel_list 4.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180807
+		)
+	)
+	cpu_target_x86_core_gen2? (
+		$(gen_patched_kernel_list 4.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180807
+		)
+	)
+	cpu_target_x86_core_gen3? (
+		$(gen_patched_kernel_list 4.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180807
+		)
+	)
 	cpu_target_x86_core_gen4? (
 		$(gen_patched_kernel_list 4.19)
 		firmware? (
@@ -2167,6 +2186,12 @@ ewarn "You are responsible for using only Linux Kernel >= 5.4."
 			|| use cpu_target_x86_xeon_scalable_gen2 \
 		; then
 ewarn "You are responsible for using only Linux Kernel >= 5.3."
+		elif \
+			   use cpu_target_x86_core_gen1 \
+			|| use cpu_target_x86_core_gen2 \
+			|| use cpu_target_x86_core_gen3 \
+		; then
+ewarn "You are responsible for using only Linux Kernel >= 4.19."
 		else
 ewarn "You are responsible for using only Linux Kernel >= 4.15."
 		fi
