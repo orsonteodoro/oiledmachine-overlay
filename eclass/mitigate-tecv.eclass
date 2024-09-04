@@ -2263,6 +2263,17 @@ mitigate-tecv_pkg_setup() {
 		if use custom-kernel ; then
 			_mitigate-tecv_print_required_versions
 		fi
+# It is a common practice by hardware manufacturers to delete support or
+# historical information after a period of time.
+		if use cpu_target_x86_core_gen1 ; then
+ewarn "Mitigation coverage for cpu_target_x86_core_gen1 may be incompletable."
+		fi
+		if use cpu_target_x86_core_gen2 ; then
+ewarn "Mitigation coverage for cpu_target_x86_core_gen2 may be incompletable."
+		fi
+		if use cpu_target_x86_core_gen3 ; then
+ewarn "Mitigation coverage for cpu_target_x86_core_gen3 may be incompletable."
+		fi
 	fi
 }
 
