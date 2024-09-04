@@ -2318,6 +2318,7 @@ eerror "No mitigation against Retbleed for 32-bit x86.  Use only 64-bit instead.
 _mitigate_tecv_verify_mitigation_zenbleed() {
 	if use cpu_target_x86_zen_2 && ! use firmware ; then
 eerror "You need to download >=sys-kernel/linux-firmware-20231205 for Zenbleed mitigation."
+eerror "The firmware USE flag needs to be turned on to continue."
 		die
 	fi
 	if use cpu_target_x86_zen_2 && use firmware ; then
