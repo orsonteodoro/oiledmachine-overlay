@@ -4,7 +4,7 @@
 
 EAPI=8
 
-inherit mitigate-tecv
+inherit mitigate-tecv toolchain-funcs
 
 # Add RDEPEND+=" virtual/mitigate-tecv" to downstream package if the downstream ebuild uses:
 # JavaScript
@@ -32,6 +32,7 @@ pkg_setup() {
 
 # Unconditionally check
 src_compile() {
+	tc-is-cross-compiler && return
 	if lscpu | grep -q "Vulnerable" ; then
 eerror "Detected an unmitigated CPU vulnerability."
 eerror "Fix issues to continue."

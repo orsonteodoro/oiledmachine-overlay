@@ -2912,7 +2912,6 @@ ewarn "Use a CPU vulnerability checker to verify complete mitigation or to help 
 # @DESCRIPTION:
 # Remind user to use only patched kernels especially for large packages.
 mitigate-tecv_pkg_postinst() {
-	# For Spectre/Meltdown
 	if use kernel_linux ; then
 		if use custom-kernel ; then
 			_mitigate-tecv_print_required_versions
