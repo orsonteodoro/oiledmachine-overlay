@@ -22,7 +22,19 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~s390 ~x86"
 RDEPEND="
 	${MITIGATE_TECV_RDEPEND}
 "
+BDEPEND="
+	sys-apps/util-linux
+"
 
 pkg_setup() {
 	mitigate-tecv_pkg_setup
+}
+
+# Unconditionally check
+src_compile() {
+	if lscpu | grep -q "Vulnerable" ; then
+eerror "Detected unmitigated CPU vulnerability"
+		lscpu
+		die
+	fi
 }
