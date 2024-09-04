@@ -12,7 +12,7 @@ inherit mitigate-tecv
 # Keychains
 # Passwords
 # Digital currency wallets
-# Sensitive data
+# Databases that that typically store sensitive data
 
 # It is used to mitigate against cross process exfiltration.
 
