@@ -2332,7 +2332,7 @@ eerror "You need to download >=sys-kernel/linux-firmware-20231205 for Zenbleed m
 		fi
 	fi
 	if use cpu_target_x86_zen_2 ; then
-ewarn "A BIOS firmware update may be needed for different models and may only be provided that way."
+ewarn "A BIOS firmware update may be needed for Zenbleed mitigation for different models and may only be provided that way."
 	fi
 }
 
