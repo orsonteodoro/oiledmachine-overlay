@@ -11677,13 +11677,23 @@ ot-kernel_set_kconfig_bpf_spectre_mitigation() {
 	]] ; then
 		return
 	fi
-	# For context see https://lwn.net/Articles/946389/
+	# For context, see
+	# https://lwn.net/Articles/946389/
+	# https://www.gentoo.org/support/security/vulnerability-treatment-policy.html
+	# https://en.wikipedia.org/wiki/JIT_spraying
 	# It is currently set this way for hardening_level=default to make the virtual/mitigate-tecv package happy.
+	# The option on article is kind of wrong and so is the distro article when weighing severity.
+	# For me intuitively, there are more deaths or suffering from data theft than remote attacker control of a computer.
+	# There are more rubberhose deaths (aka filtration camp deaths) than either remote attacker and data theft.
 	if grep -q -E -e "^CONFIG_BPF=y" "${path_config}" ; then
+	# Spectre (Variant 2) mitigation
+		ot-kernel_y_configopt "BPF_JIT"
+		ot-kernel_y_configopt "BPF_JIT_ALWAYS_ON"
+
 	# The JIT always on option requirement is dropped.
 	# It is explained in the above article.
 
-	# Variant 4 mitigation
+	# Spectre-NG (Variant 4) mitigation
 		ot-kernel_y_configopt "BPF_UNPRIV_DEFAULT_OFF"		# Upstream puts it default ON ; For hardening it is ON
 	fi
 }
