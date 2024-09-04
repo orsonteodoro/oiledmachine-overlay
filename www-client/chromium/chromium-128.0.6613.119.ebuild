@@ -184,7 +184,7 @@ inherit flag-o-matic flag-o-matic-om linux-info lcnr llvm multilib-minimal
 inherit ninja-utils pax-utils python-any-r1 qmake-utils readme.gentoo-r1 systemd
 inherit toolchain-funcs xdg-utils
 
-PATCHSET_PPC64="127.0.6533.88-1raptor0~deb12u2"
+PATCHSET_PPC64="128.0.6613.84-1raptor0~deb12u1"
 PATCH_REVISION=""
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 
