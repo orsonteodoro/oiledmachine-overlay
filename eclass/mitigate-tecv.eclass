@@ -31,6 +31,7 @@ CPU_TARGET_X86=(
 	cpu_target_x86_jasper_lake
 	cpu_target_x86_alder_lake_n
 	cpu_target_x86_gemini_lake
+	cpu_target_x86_core
 	cpu_target_x86_nehalem
 	cpu_target_x86_westmere
 	cpu_target_x86_sandy_bridge		# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
@@ -52,6 +53,14 @@ CPU_TARGET_X86=(
 	cpu_target_x86_raptor_lake_gen13
 	cpu_target_x86_raptor_lake_gen14
 	cpu_target_x86_meteor_lake
+
+	cpu_target_x86_cascade_lake
+	cpu_target_x86_cooper_lake
+	cpu_target_x86_sapphire_rapids
+	cpu_target_x86_sapphire_rapids_edge_enhanced
+	cpu_target_x86_granite_rapids
+	cpu_target_x86_emerald_rapids
+
 	cpu_target_x86_zen
 	cpu_target_x86_zen_plus
 	cpu_target_x86_zen_2
@@ -292,6 +301,26 @@ _MITIGATE_TECV_SPECTRE_RDEPEND_X86_64="
 	cpu_target_x86_coffee_lake_gen9? (
 		>=sys-firmware/intel-microcode-20180610
 	)
+
+	cpu_target_x86_cascade_lake? (
+		>=sys-firmware/intel-microcode-20180610
+	)
+	cpu_target_x86_cooper_lake? (
+		>=sys-firmware/intel-microcode-20180610
+	)
+	cpu_target_x86_sapphire_rapids? (
+		>=sys-firmware/intel-microcode-20180610
+	)
+	cpu_target_x86_sapphire_rapids_edge_enhanced? (
+		>=sys-firmware/intel-microcode-20180610
+	)
+	cpu_target_x86_granite_rapids? (
+		>=sys-firmware/intel-microcode-20180610
+	)
+	cpu_target_x86_emerald_rapids? (
+		>=sys-firmware/intel-microcode-20180610
+	)
+
 	bpf? (
 		$(gen_patched_kernel_list 5.13)
 	)
@@ -465,6 +494,26 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64="
 	cpu_target_x86_meteor_lake? (
 		$(gen_patched_kernel_list 4.17)
 	)
+
+	cpu_target_x86_cascade_lake? (
+		$(gen_patched_kernel_list 4.17)
+	)
+	cpu_target_x86_cooper_lake? (
+		$(gen_patched_kernel_list 4.17)
+	)
+	cpu_target_x86_sapphire_rapids? (
+		$(gen_patched_kernel_list 4.17)
+	)
+	cpu_target_x86_sapphire_rapids_edge_enhanced? (
+		$(gen_patched_kernel_list 4.17)
+	)
+	cpu_target_x86_granite_rapids? (
+		$(gen_patched_kernel_list 4.17)
+	)
+	cpu_target_x86_emerald_rapids? (
+		$(gen_patched_kernel_list 4.17)
+	)
+
 	bpf? (
 		$(gen_patched_kernel_list 5.13)
 	)
@@ -523,6 +572,26 @@ _MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64="
 	cpu_target_x86_meteor_lake? (
 		$(gen_patched_kernel_list 4.19)
 	)
+
+	cpu_target_x86_cascade_lake? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_cooper_lake? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_sapphire_rapids? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_sapphire_rapids_edge_enhanced? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_granite_rapids? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_emerald_rapids? (
+		$(gen_patched_kernel_list 4.19)
+	)
+
 "
 _MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_32="
 	${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64}
@@ -530,6 +599,12 @@ _MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_32="
 
 
 _MITIGATE_TECV_FORESHADOW_RDEPEND_X86_64="
+	cpu_target_x86_core? (
+		$(gen_patched_kernel_list 4.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180807
+		)
+	)
 	cpu_target_x86_nehalem? (
 		$(gen_patched_kernel_list 4.19)
 		firmware? (
@@ -775,6 +850,26 @@ _MITIGATE_TECV_SWAPGS_RDEPEND_X86_64="
 	cpu_target_x86_meteor_lake? (
 		$(gen_patched_kernel_list 5.3)
 	)
+
+	cpu_target_x86_cascade_lake? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_cooper_lake? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_sapphire_rapids? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_sapphire_rapids_edge_enhanced? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_granite_rapids? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_emerald_rapids? (
+		$(gen_patched_kernel_list 5.3)
+	)
+
 "
 _MITIGATE_TECV_SWAPGS_RDEPEND_X86_32="
 	${_MITIGATE_TECV_SWAPGS_RDEPEND_X86_64}
@@ -836,6 +931,13 @@ _MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64="
 			>=sys-firmware/intel-microcode-20191112
 		)
 	)
+
+	cpu_target_x86_cascade_lake? (
+		$(gen_patched_kernel_list 5.4)
+		firmware? (
+			>=sys-firmware/intel-microcode-20191112
+		)
+	)
 "
 _MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_32="
 	${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64}
@@ -878,6 +980,12 @@ _MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64="
 		)
 	)
 	cpu_target_x86_ice_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
+
+	cpu_target_x86_cascade_lake? (
 		firmware? (
 			>=sys-firmware/intel-microcode-20200609
 		)
@@ -1066,6 +1174,19 @@ _MITIGATE_TECV_MMIO_RDEPEND_X86_64="
 			>=sys-firmware/intel-microcode-20220510
 		)
 	)
+
+	cpu_target_x86_cascade_lake? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
+	cpu_target_x86_cooper_lake? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
 "
 _MITIGATE_TECV_MMIO_RDEPEND_X86_32="
 	${_MITIGATE_TECV_MMIO_RDEPEND_X86_64}
@@ -1244,6 +1365,19 @@ _MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64="
 		)
 	)
 
+	cpu_target_x86_cascade_lake? (
+		$(gen_patched_kernel_list 6.5)
+		firmware? (
+			>=sys-firmware/intel-microcode-20230808
+		)
+	)
+	cpu_target_x86_cooper_lake? (
+		$(gen_patched_kernel_list 6.5)
+		firmware? (
+			>=sys-firmware/intel-microcode-20230808
+		)
+	)
+
 "
 _MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32="
 	${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
@@ -1377,6 +1511,26 @@ _MITIGATE_TECV_BHI_RDEPEND_X86_64="
 	cpu_target_x86_meteor_lake? (
 		$(gen_patched_kernel_list 6.9)
 	)
+
+	cpu_target_x86_cascade_lake? (
+		$(gen_patched_kernel_list 6.9)
+	)
+	cpu_target_x86_cooper_lake? (
+		$(gen_patched_kernel_list 6.9)
+	)
+	cpu_target_x86_sapphire_rapids? (
+		$(gen_patched_kernel_list 6.9)
+	)
+	cpu_target_x86_sapphire_rapids_edge_enhanced? (
+		$(gen_patched_kernel_list 6.9)
+	)
+	cpu_target_x86_granite_rapids? (
+		$(gen_patched_kernel_list 6.9)
+	)
+	cpu_target_x86_emerald_rapids? (
+		$(gen_patched_kernel_list 6.9)
+	)
+
 "
 _MITIGATE_TECV_BHI_RDEPEND_X86_32="
 	${_MITIGATE_TECV_BHI_RDEPEND_X86_64}
@@ -1627,6 +1781,12 @@ _mitigate_tecv_verify_mitigation_spectre() {
 			|| use cpu_target_x86_kaby_lake_gen8 \
 			|| use cpu_target_x86_whiskey_lake \
 			|| use cpu_target_x86_coffee_lake_gen9 \
+			|| use cpu_target_x86_cascade_lake \
+			|| use cpu_target_x86_cooper_lake \
+			|| use cpu_target_x86_sapphire_rapids \
+			|| use cpu_target_x86_sapphire_rapids_edge_enhanced \
+			|| use cpu_target_x86_granite_rapids \
+			|| use cpu_target_x86_emerald_rapids \
 		; then
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
@@ -2051,6 +2211,8 @@ _mitigate_tecv_verify_mitigation_downfall() {
 			cpu_target_x86_amber_lake_gen10
 			cpu_target_x86_ice_lake
 			cpu_target_x86_tiger_lake
+			cpu_target_x86_cascade_lake
+			cpu_target_x86_cooper_lake
 		)
 		for x in ${L[@]} ; do
 			if use firmware && use "${x}" ; then
@@ -2253,6 +2415,7 @@ _mitigate_tecv_verify_mitigation_zombieload_v2() {
 		|| use cpu_target_x86_whiskey_lake \
 		|| use cpu_target_x86_coffee_lake_gen9 \
 		|| use cpu_target_x86_amber_lake_gen10 \
+		|| use cpu_target_x86_cascade_lake \
 	; then
 		:
 	else
@@ -2269,6 +2432,7 @@ _mitigate_tecv_verify_mitigation_zombieload_v2() {
 			|| use cpu_target_x86_whiskey_lake \
 			|| use cpu_target_x86_coffee_lake_gen9 \
 			|| use cpu_target_x86_amber_lake_gen10 \
+			|| use cpu_target_x86_cascade_lake \
 		; then
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
@@ -2337,6 +2501,7 @@ _mitigate_tecv_verify_mitigation_cacheout() {
 		|| use cpu_target_x86_coffee_lake_gen9 \
 		|| use cpu_target_x86_comet_lake \
 		|| use cpu_target_x86_ice_lake \
+		|| use cpu_target_x86_cascade_lake \
 	; then
 	# Microcode mitigation only
 		CONFIG_CHECK="
@@ -2458,6 +2623,8 @@ _mitigate_tecv_verify_mitigation_mmio_stale_data() {
 				|| use cpu_target_x86_amber_lake_gen10 \
 				|| use cpu_target_x86_ice_lake \
 				|| use cpu_target_x86_tiger_lake \
+				|| use cpu_target_x86_cascade_lake \
+				|| use cpu_target_x86_cooper_lake \
 			; then
 				CONFIG_CHECK="
 					CPU_SUP_INTEL
@@ -2570,6 +2737,12 @@ _mitigate-tecv_print_required_versions() {
 			|| use cpu_target_x86_raptor_lake_gen13 \
 			|| use cpu_target_x86_raptor_lake_gen14 \
 			|| use cpu_target_x86_meteor_lake \
+			|| use cpu_target_x86_cascade_lake \
+			|| use cpu_target_x86_cooper_lake \
+			|| use cpu_target_x86_sapphire_rapids \
+			|| use cpu_target_x86_sapphire_rapids_edge_enhanced \
+			|| use cpu_target_x86_granite_rapids \
+			|| use cpu_target_x86_emerald_rapids \
 		; then
 ewarn "You are responsible for using only Linux Kernel >= 6.9."
 		elif \
