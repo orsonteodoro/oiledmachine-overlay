@@ -213,3 +213,18 @@
  # Configuration that enables PGO instrumentation.
  config("pgo_instrumentation_flags") {
    visibility = [ ":default_pgo_flags" ]
+--- a/build/config/compiler/compiler.gni.orig	2024-09-04 14:15:54.594301843 -0700
++++ b/build/config/compiler/compiler.gni	2024-09-04 15:06:27.279810925 -0700
+@@ -34,10 +34,10 @@ declare_args() {
+   # In late bring-up on macOS (see docs/mac_lld.md).
+   # Tentatively used on iOS.
+   # The default linker everywhere else.
+-  use_lld = is_clang && current_os != "zos"
++  use_mold = false
++  use_lld = is_clang && current_os != "zos" && !use_mold
+ 
+ 
+-  use_mold = false
+ 
+   # If true, optimize for size.
+   # Default to favoring speed over size for platforms not listed below.
