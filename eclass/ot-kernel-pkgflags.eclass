@@ -822,7 +822,7 @@ ot-kernel-pkgflags_apply() {
 
 	# Post apply
 	# General commonly used kernel features goes here.
-	_ot-kernel-pkgflags_squashfs
+	_ot-kernel_pkgflags_squashfs
 	_ot-kernel_set_futex
 	_ot-kernel_set_futex2
 	_ot-kernel_set_ldt
@@ -830,7 +830,7 @@ ot-kernel-pkgflags_apply() {
 	_ot-kernel_realtime_packages
 	_ot-kernel_set_init
 	_ot-kernel_set_acl
-	_ot-kernel-set_shebang_support
+	_ot-kernel_set_shebang_support
 
 	# Out of source modules
 }
@@ -9383,10 +9383,10 @@ ot-kernel-pkgflags_spice_vdagent() { # DONE
 	fi
 }
 
-# @FUNCTION: _ot-kernel-pkgflags_squashfs
+# @FUNCTION: _ot-kernel_pkgflags_squashfs
 # @DESCRIPTION:
 # Applies kernel config flags for the squashfs packages
-_ot-kernel-pkgflags_squashfs() {
+_ot-kernel_pkgflags_squashfs() {
 	if grep -q -e "^CONFIG_SQUASHFS=y" "${path_config}" ; then
 		if [[ "${SQUASHFS_ZLIB:-1}" == "1" ]] ; then
 einfo "Added SquashFS ZLIB decompression support (for fallback and compatibility reasons)"
@@ -13837,10 +13837,10 @@ ewarn
 	fi
 }
 
-# @FUNCTION: _ot-kernel-set_shebang_support
+# @FUNCTION: _ot-kernel_set_shebang_support
 # @DESCRIPTION:
 # It always applies shebang support.
-_ot-kernel-set_shebang_support() { # DONE
+_ot-kernel_set_shebang_support() { # DONE
 	local pkgs=(
 	# List actively used for now
 		app-shells/bash

@@ -11665,6 +11665,29 @@ _ot-kernel_enable_ppc_476fpe_workaround() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_kconfig_bpf_spectre_mitigation
+# @DESCRIPTION:
+# Apply mitigations against Spectre-NG (Variant 4).
+ot-kernel_set_kconfig_bpf_spectre_mitigation() {
+	if [[ \
+		   "${hardening_level}" == "fast" \
+		|| "${hardening_level}" == "fast-af" \
+		|| "${hardening_level}" == "fast-as-fuck" \
+		|| "${hardening_level}" == "performance" \
+	]] ; then
+		return
+	fi
+	# For context see https://lwn.net/Articles/946389/
+	# It is currently set this way for hardening_level=default to make the virtual/mitigate-tecv package happy.
+	if grep -q -E -e "^CONFIG_BPF=y" "${path_config}" ; then
+	# The JIT always on option requirement is dropped.
+	# It is explained in the above article.
+
+	# Variant 4 mitigation
+		ot-kernel_y_configopt "BPF_UNPRIV_DEFAULT_OFF"		# Upstream puts it default ON ; For hardening it is ON
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -11813,6 +11836,7 @@ einfo "Disabling all debug and shortening logging buffers"
 		ot-kernel_set_kconfig_scs # Uses llvm_slot
 		ot-kernel_set_kconfig_cfi # Uses llvm_slot
 		ot-kernel_set_kconfig_kcfi # Uses llvm_slot
+		ot-kernel_set_kconfig_bpf_spectre_mitigation # This call goes after the call to ot-kernel-pkgflags_apply.
 	ot-kernel_set_kconfig_iommu_domain_type
 	ot-kernel-pkgflags_cipher_optional
 	ot-kernel_set_kconfig_cold_boot_mitigation
