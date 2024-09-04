@@ -148,6 +148,7 @@ REQUIRED_USE="
 		${CPU_TARGET_X86[@]}
 	)
 	auto? (
+		!custom-kernel
 		firmware
 	)
 	cpu_target_x86_apollo_lake? (
