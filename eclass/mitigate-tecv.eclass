@@ -2877,6 +2877,9 @@ ewarn "You are responsible for using only Linux Kernel >= 4.16."
 # @DESCRIPTION:
 # Check the kernel config
 mitigate-tecv_pkg_setup() {
+	if [[ "${ARCH}" == "arm" ]] ; then
+ewarn "CPU vulnerability mitigation has not been added yet for ARCH=${ARCH}."
+	fi
 	if use kernel_linux ; then
 		linux-info_pkg_setup
 		_mitigate-tecv_check_kernel_flags
