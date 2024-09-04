@@ -2864,7 +2864,7 @@ mitigate-tecv_pkg_setup() {
 # It is a common practice by hardware manufacturers to delete support or
 # historical information after a period of time.
 		if use cpu_target_x86_core ; then
-ewarn "Mitigation coverage for cpu_target_x86_nehalem may be incompletable."
+ewarn "Mitigation coverage for cpu_target_x86_core may be incompletable."
 		fi
 		if use cpu_target_x86_nehalem ; then
 ewarn "Mitigation coverage for cpu_target_x86_nehalem may be incompletable."
