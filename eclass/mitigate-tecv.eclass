@@ -184,27 +184,17 @@ gen_patched_kernel_list() {
 	"
 }
 
-_MITIGATE_TECV_SPECTRE_RDEPEND_PPC32="
-	cpu_target_ppc_85xx? (
-		$(gen_patched_kernel_list 5.0)
-	)
-	cpu_target_ppc_e500mc? (
-		$(gen_patched_kernel_list 5.0)
-	)
-"
 
-_MITIGATE_TECV_SPECTRE_RDEPEND_PPC64="
-	cpu_target_ppc_e5500? (
-		$(gen_patched_kernel_list 5.0)
+# Mitigated with RFI flush not KPTI
+_MITIGATE_TECV_MELTDOWN_RDEPEND_PPC64="
+	cpu_target_ppc_power7? (
+		$(gen_patched_kernel_list 4.15)
 	)
-	cpu_target_ppc_e6500? (
-		$(gen_patched_kernel_list 5.0)
+	cpu_target_ppc_power8? (
+		$(gen_patched_kernel_list 4.15)
 	)
-"
-
-_MITIGATE_TECV_SPECTRE_RDEPEND_ARM64="
-	bpf? (
-		$(gen_patched_kernel_list 5.13)
+	cpu_target_ppc_power9? (
+		$(gen_patched_kernel_list 4.15)
 	)
 "
 
@@ -273,12 +263,6 @@ _MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64="
 	)
 	cpu_target_x86_xeon_scalable_gen1? (
 		$(gen_patched_kernel_list 4.15)
-	)
-"
-_MITIGATE_TECV_SPECTRE_RDEPEND_S390X="
-	$(gen_patched_kernel_list 4.16)
-	bpf? (
-		$(gen_patched_kernel_list 5.13)
 	)
 "
 _MITIGATE_TECV_MELTDOWN_RDEPEND_ARM64="
@@ -398,6 +382,210 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_32="
 	${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64}
 "
 
+_MITIGATE_TECV_SPECTRE_RDEPEND_S390X="
+	$(gen_patched_kernel_list 4.16)
+	bpf? (
+		$(gen_patched_kernel_list 5.13)
+	)
+"
+
+_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64="
+	cpu_target_x86_core_gen6? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_gen7? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_gen8? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_gen9? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_gen10? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_gen12? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_gen13? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_gen14? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_core_ultra_gen1? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_xeon_scalable_gen1? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_xeon_scalable_gen3? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_xeon_scalable_gen4? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_xeon_scalable_gen5? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_x86_xeon_scalable_gen6? (
+		$(gen_patched_kernel_list 4.19)
+	)
+"
+_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_32="
+	${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64}
+"
+
+_MITIGATE_TECV_SPECTRE_RDEPEND_PPC32="
+	cpu_target_ppc_85xx? (
+		$(gen_patched_kernel_list 5.0)
+	)
+	cpu_target_ppc_e500mc? (
+		$(gen_patched_kernel_list 5.0)
+	)
+"
+
+_MITIGATE_TECV_SPECTRE_RDEPEND_PPC64="
+	cpu_target_ppc_e5500? (
+		$(gen_patched_kernel_list 5.0)
+	)
+	cpu_target_ppc_e6500? (
+		$(gen_patched_kernel_list 5.0)
+	)
+"
+
+_MITIGATE_TECV_SWAPGS_RDEPEND_X86_64="
+	cpu_target_x86_atom? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_core_gen4? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_core_gen5? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_core_gen6? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_core_gen7? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_core_gen8? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_core_gen9? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_core_gen10? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_core_gen11? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_core_gen12? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_core_gen13? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_core_gen14? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_core_ultra_gen1? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_xeon_scalable_gen1? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_xeon_scalable_gen2? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_xeon_scalable_gen3? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_xeon_scalable_gen4? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_xeon_scalable_gen5? (
+		$(gen_patched_kernel_list 5.3)
+	)
+"
+_MITIGATE_TECV_SWAPGS_RDEPEND_X86_32="
+	${_MITIGATE_TECV_SWAPGS_RDEPEND_X86_64}
+"
+
+# Only >= Gen6 firmware
+_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64="
+	cpu_target_x86_core_gen4? (
+		$(gen_patched_kernel_list 5.4)
+	)
+	cpu_target_x86_core_gen5? (
+		$(gen_patched_kernel_list 5.4)
+	)
+	cpu_target_x86_core_gen6? (
+		$(gen_patched_kernel_list 5.4)
+		firmware? (
+			>=sys-firmware/intel-microcode-20191112
+		)
+	)
+	cpu_target_x86_core_gen7? (
+		$(gen_patched_kernel_list 5.4)
+		firmware? (
+			>=sys-firmware/intel-microcode-20191112
+		)
+	)
+	cpu_target_x86_core_gen8? (
+		$(gen_patched_kernel_list 5.4)
+		firmware? (
+			>=sys-firmware/intel-microcode-20191112
+		)
+	)
+	cpu_target_x86_core_gen9? (
+		$(gen_patched_kernel_list 5.4)
+		firmware? (
+			>=sys-firmware/intel-microcode-20191112
+		)
+	)
+"
+_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_32="
+	${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64}
+"
+
+_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64="
+	cpu_target_x86_core_gen6? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
+	cpu_target_x86_core_gen7? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
+	cpu_target_x86_core_gen8? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
+	cpu_target_x86_core_gen9? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
+"
+_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_32="
+	${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64}
+"
+
+# See commit 80eb5fe
+_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC64="
+	$(gen_patched_kernel_list 5.5)
+"
+_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC32="
+	${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC64}
+"
+
 _MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64="
 	cpu_target_x86_core_gen6? (
 		$(gen_patched_kernel_list 5.8)
@@ -426,6 +614,12 @@ _MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64="
 "
 _MITIGATE_TECV_CROSSTALK_RDEPEND_X86_32="
 	${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64}
+"
+
+_MITIGATE_TECV_SPECTRE_RDEPEND_ARM64="
+	bpf? (
+		$(gen_patched_kernel_list 5.13)
+	)
 "
 
 _MITIGATE_TECV_RETBLEED_RDEPEND_X86_64="
@@ -570,6 +764,24 @@ _MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32="
 	${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
 "
 
+_MITIGATE_TECV_INCEPTION_RDEPEND_X86_64="
+	cpu_target_x86_zen_4? (
+		$(gen_patched_kernel_list 6.9)
+	)
+	cpu_target_x86_zen_3? (
+		$(gen_patched_kernel_list 6.9)
+	)
+	cpu_target_x86_zen_2? (
+		$(gen_patched_kernel_list 6.5)
+	)
+	cpu_target_x86_zen? (
+		$(gen_patched_kernel_list 6.5)
+	)
+"
+_MITIGATE_TECV_INCEPTION_RDEPEND_X86_32="
+	${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
+"
+
 _MITIGATE_TECV_RDFS_RDEPEND_X86_64="
 	cpu_target_x86_atom? (
 		$(gen_patched_kernel_list 6.9)
@@ -596,158 +808,28 @@ _MITIGATE_TECV_ZENBLEED_RDEPEND_X86_32="
 	${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_INCEPTION_RDEPEND_X86_64="
-	cpu_target_x86_zen_4? (
+# The 12th Gen needs microcode but it is not documented for the version
+# requirement.  The date of the advisory is used as a placeholder.
+_MITIGATE_TECV_BHI_RDEPEND_X86_64="
+	cpu_target_x86_core_gen8? (
 		$(gen_patched_kernel_list 6.9)
 	)
-	cpu_target_x86_zen_3? (
+	cpu_target_x86_core_gen9? (
 		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_zen_2? (
-		$(gen_patched_kernel_list 6.5)
-	)
-	cpu_target_x86_zen? (
-		$(gen_patched_kernel_list 6.5)
-	)
-"
-_MITIGATE_TECV_INCEPTION_RDEPEND_X86_32="
-	${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
-"
-
-# Only >= Gen6 firmware
-_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64="
-	cpu_target_x86_core_gen4? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_core_gen5? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_core_gen6? (
-		$(gen_patched_kernel_list 5.4)
-		firmware? (
-			>=sys-firmware/intel-microcode-20191112
-		)
-	)
-	cpu_target_x86_core_gen7? (
-		$(gen_patched_kernel_list 5.4)
-		firmware? (
-			>=sys-firmware/intel-microcode-20191112
-		)
-	)
-	cpu_target_x86_core_gen8? (
-		$(gen_patched_kernel_list 5.4)
-		firmware? (
-			>=sys-firmware/intel-microcode-20191112
-		)
-	)
-	cpu_target_x86_core_gen9? (
-		$(gen_patched_kernel_list 5.4)
-		firmware? (
-			>=sys-firmware/intel-microcode-20191112
-		)
-	)
-"
-_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_32="
-	${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64}
-"
-
-_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64="
-	cpu_target_x86_core_gen6? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_core_gen7? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_core_gen8? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_core_gen9? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-"
-_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_32="
-	${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64}
-"
-
-# Mitigated with RFI flush not KPTI
-_MITIGATE_TECV_MELTDOWN_RDEPEND_PPC64="
-	cpu_target_ppc_power7? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_ppc_power8? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_ppc_power9? (
-		$(gen_patched_kernel_list 4.15)
-	)
-"
-
-_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64="
-	cpu_target_x86_core_gen6? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_core_gen7? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_core_gen8? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_core_gen9? (
-		$(gen_patched_kernel_list 4.19)
 	)
 	cpu_target_x86_core_gen10? (
-		$(gen_patched_kernel_list 4.19)
+		$(gen_patched_kernel_list 6.9)
+	)
+	cpu_target_x86_core_gen11? (
+		$(gen_patched_kernel_list 6.9)
 	)
 	cpu_target_x86_core_gen12? (
-		$(gen_patched_kernel_list 4.19)
+		$(gen_patched_kernel_list 6.9)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220308
+		)
 	)
 	cpu_target_x86_core_gen13? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_core_gen14? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_core_ultra_gen1? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_xeon_scalable_gen1? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_xeon_scalable_gen3? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_xeon_scalable_gen4? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_xeon_scalable_gen5? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_xeon_scalable_gen6? (
-		$(gen_patched_kernel_list 4.19)
-	)
-"
-_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_32="
-	${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64}
-"
-
-# See commit 80eb5fe
-_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC64="
-	$(gen_patched_kernel_list 5.5)
-"
-_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC32="
-	${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC64}
-"
-
-_MITIGATE_TECV_BHI_RDEPEND_X86_64="
-	cpu_target_x86_core_gen6? (
 		$(gen_patched_kernel_list 6.9)
 	)
 	cpu_target_x86_core_gen14? (
@@ -773,6 +855,7 @@ _MITIGATE_TECV_BHI_RDEPEND_X86_32="
 	${_MITIGATE_TECV_BHI_RDEPEND_X86_64}
 "
 
+
 # @ECLASS_VARIABLE: MITIGATE_TECV_RDEPEND
 # @INTERNAL
 # @DESCRIPTION:
@@ -789,6 +872,7 @@ MITIGATE_TECV_RDEPEND="
 			amd64? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_X86_64}
 				${_MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64}
+				${_MITIGATE_TECV_SWAPGS_RDEPEND_X86_64}
 				${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64}
 				${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64}
 				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64}
@@ -797,9 +881,9 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_BHI_RDEPEND_X86_64}
 				${_MITIGATE_TECV_RETBLEED_RDEPEND_X86_64}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
+				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_64}
 				${_MITIGATE_TECV_RDFS_RDEPEND_X86_64}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
-				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_64}
 			)
 			ppc? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_PPC32}
@@ -815,6 +899,7 @@ MITIGATE_TECV_RDEPEND="
 			)
 			x86? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_X86_32}
+				${_MITIGATE_TECV_SWAPGS_RDEPEND_X86_32}
 				${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_32}
 				${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_32}
 				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_32}
@@ -822,9 +907,9 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_32}
 				${_MITIGATE_TECV_BHI_RDEPEND_X86_32}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32}
+				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_32}
 				${_MITIGATE_TECV_RDFS_RDEPEND_X86_32}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_32}
-				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_32}
 			)
 		)
 	)
@@ -1227,14 +1312,18 @@ eerror
 _mitigate_tecv_verify_mitigation_bhi() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
 		if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
+			if use firmware ; then
+				if use cpu_target_x86_core_gen12 ; then
 	# Possibly userspace only mitigations
-			CONFIG_CHECK="
-				CPU_SUP_INTEL
-				MITIGATION_SPECTRE_BHI
-			"
-			WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Spectre-BHI mitigation."
-			WARNING_MITIGATION_SPECTRE_BHI="CONFIG_MITIGATION_SPECTRE_BHI is required for Spectre-BHI mitigation."
-			check_extra_config
+					CONFIG_CHECK="
+						CPU_SUP_INTEL
+						MITIGATION_SPECTRE_BHI
+					"
+					WARNING_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Spectre-BHI mitigation."
+					WARNING_MITIGATION_SPECTRE_BHI="CONFIG_MITIGATION_SPECTRE_BHI is required for Spectre-BHI mitigation."
+					check_extra_config
+				fi
+			fi
 		fi
 	fi
 	if [[ "${ARCH}" == "x86" || "${ARCH}" == "amd64" ]] && ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
@@ -1675,7 +1764,7 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	# Notify if grub or the kernel config is incorrectly configured/tampered
 	# or a copypasta-ed workaround.
 	_mitigate_tecv_verify_mitigation_meltdown		# Mitigations against Variant 3 (2017)
-	_mitigate_tecv_verify_mitigation_spectre		# Mitigations against Variant 1 (2017), Variant 2 (2017)
+	_mitigate_tecv_verify_mitigation_spectre		# Mitigations against Variant 1 (2017), Variant 2 (2017), SWAPGS (2019)
 	_mitigate_tecv_verify_mitigation_spectre_ng		# Mitigations against Variant 4 (2018)
 	_mitigate_tecv_verify_mitigation_spectre_bhb		# Mitigations against BHB (2022), ARM
 	_mitigate_tecv_verify_mitigation_bhi			# Mitigations against BHI (2022), X86
@@ -1703,6 +1792,13 @@ _mitigate-tecv_print_required_versions() {
 			|| use cpu_target_x86_zen_2 \
 			|| use cpu_target_x86_zen_3 \
 			|| use cpu_target_x86_zen_4 \
+			|| use cpu_target_x86_core_gen8 \
+			|| use cpu_target_x86_core_gen9 \
+			|| use cpu_target_x86_core_gen10 \
+			|| use cpu_target_x86_core_gen11 \
+			|| use cpu_target_x86_core_gen12 \
+			|| use cpu_target_x86_core_gen13 \
+			|| use cpu_target_x86_core_gen14 \
 			|| use cpu_target_x86_core_ultra_gen1 \
 			|| use cpu_target_x86_xeon_scalable_gen3 \
 			|| use cpu_target_x86_xeon_scalable_gen4 \
@@ -1713,10 +1809,6 @@ ewarn "You are responsible for using only Linux Kernel >= 6.9."
 		elif \
 			   use cpu_target_x86_core_gen6 \
 			|| use cpu_target_x86_core_gen7 \
-			|| use cpu_target_x86_core_gen8 \
-			|| use cpu_target_x86_core_gen9 \
-			|| use cpu_target_x86_core_gen10 \
-			|| use cpu_target_x86_core_gen11 \
 			|| use cpu_target_x86_zen \
 			|| use cpu_target_x86_zen_2 \
 		; then
@@ -1734,16 +1826,10 @@ ewarn "You are responsible for using only Linux Kernel >= 5.13."
 		; then
 ewarn "You are responsible for using only Linux Kernel >= 5.4."
 		elif \
-			   use cpu_target_x86_core_gen12 \
-			|| use cpu_target_x86_core_gen13 \
-			|| use cpu_target_x86_core_gen14 \
-			|| use cpu_target_x86_xeon_scalable_gen1 \
+			   use cpu_target_x86_xeon_scalable_gen1 \
+			|| use cpu_target_x86_xeon_scalable_gen2 \
 		; then
-ewarn "You are responsible for using only Linux Kernel >= 4.19."
-		elif \
-			   use cpu_target_x86_xeon_scalable_gen2 \
-		; then
-ewarn "You are responsible for using only Linux Kernel >= 4.17."
+ewarn "You are responsible for using only Linux Kernel >= 5.3."
 		else
 ewarn "You are responsible for using only Linux Kernel >= 4.15."
 		fi
