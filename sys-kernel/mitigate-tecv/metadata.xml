@@ -33,7 +33,7 @@
       minimum requirements for those 2 items.
     </flag>
     <flag name="bpf">
-      Apply bpf mitigations for Spectre (Variant 2) or Spectre-NG.
+      Apply BPF mitigations for Spectre (Variant 2) or Spectre-NG.
     </flag>
     <flag name="custom-kernel">
       Prevent vendor lock-in when doing kernel mitigation checks.

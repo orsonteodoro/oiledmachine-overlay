@@ -2501,7 +2501,7 @@ _mitigate_tecv_verify_mitigation_inception() {
 	local ver
 	if use cpu_target_x86_zen_3 || use cpu_target_x86_zen_4 ; then
 		ver="6.9"
-	elif use cpu_target_x86_zen || use cpu_target_x86_zen2 ; then
+	elif use cpu_target_x86_zen || use cpu_target_x86_zen_2 ; then
 		ver="6.5"
 	else
 		return

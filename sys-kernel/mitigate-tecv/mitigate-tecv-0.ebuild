@@ -16,6 +16,8 @@ inherit mitigate-tecv toolchain-funcs
 
 # It is used to mitigate against cross process exfiltration.
 
+S="${WORKDIR}"
+
 DESCRIPTION="Enforce Transient Execution CPU Vulnerability mitigations"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~s390 ~x86"
@@ -33,10 +35,13 @@ pkg_setup() {
 # Unconditionally check
 src_compile() {
 	tc-is-cross-compiler && return
+einfo "Checking for mitigations against Transient Execution CPU Vulnerabilities (e.g. Meltdown/Spectre)"
 	if lscpu | grep -q "Vulnerable" ; then
-eerror "Detected an unmitigated CPU vulnerability."
+eerror "FAIL:  Detected an unmitigated CPU vulnerability."
 eerror "Fix issues to continue."
 		lscpu
 		die
+	else
+einfo "PASS"
 	fi
 }
