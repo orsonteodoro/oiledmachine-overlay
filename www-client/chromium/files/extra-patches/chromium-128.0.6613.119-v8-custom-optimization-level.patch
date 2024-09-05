@@ -4,7 +4,7 @@
    simple_template_names = is_clang && !is_nacl && !is_win && !is_apple
  
    #use_mold = false
-+  custom_optimization_level = ""
++  #custom_optimization_level = ""
  }
  
  declare_args() {
@@ -54,3 +54,16 @@
    }
  }
  
+--- a/build_overrides/build.gni.orig	2024-09-02 14:02:01.095592300 -0700
++++ b/build_overrides/build.gni	2024-09-04 22:59:04.737982987 -0700
+@@ -29,6 +29,10 @@ build_with_v8_embedder = build_with_chro
+ # `use_custom_libcxx = true`.
+ enable_safe_libcxx = true
+ 
++declare_args() {
++	custom_optimization_level = ""
++}
++
+ # Features used by //base/trace_event and //services/tracing.
+ declare_args() {
+   # Tracing support requires //third_party/perfetto, which is not available in

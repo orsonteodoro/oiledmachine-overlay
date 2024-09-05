@@ -3109,7 +3109,9 @@ ewarn
 		append_all $(test-flags -fno-allow-store-data-races)
 	fi
 
-	if is-flagq "-Ofast" ; then
+	if use official ; then
+		:
+	elif is-flagq "-Ofast" ; then
 		myconf_gn+=" custom_optimization_level=fast"
 	elif is-flagq "-O4" ; then
 		myconf_gn+=" custom_optimization_level=4"
