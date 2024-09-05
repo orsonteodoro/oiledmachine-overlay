@@ -129,7 +129,7 @@ FFMPEG_COMPAT=(
 	"0/51.53.53" # 0.10
 	"0/50.53.53" # 0.8
 )
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-03.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
@@ -709,7 +709,10 @@ CDEPEND="
 	)
 	wifi? (
 		kernel_linux? (
-			>=net-misc/networkmanager-0.7[${MULTILIB_USEDEP}]
+			|| (
+				>=net-misc/networkmanager-0.7[${MULTILIB_USEDEP}]
+				net-misc/connman[networkmanager]
+			)
 			>=sys-apps/dbus-${DBUS_PV}[${MULTILIB_USEDEP}]
 		)
 	)
@@ -1075,44 +1078,6 @@ mozconfig_use_with() {
 	local flag=$(use_with "${@}")
 	local t=$(use ${1} && echo +${1} || echo -${1})
 	mozconfig_add_options_ac "${t}" "${flag}"
-}
-
-# Please see:
-# https://github.com/gentoo/gentoo/pull/28366 ||
-# https://github.com/gentoo/gentoo/pull/28355
-tc-ld-is-mold() {
-	local out
-
-	# Ensure ld output is in English.
-	local -x LC_ALL=C
-
-	# First check the linker directly.
-	out=$($(tc-getLD "$@") --version 2>&1)
-	if [[ ${out} == *"mold"* ]] ; then
-		return 0
-	fi
-
-	# Then see if they're selecting mold via compiler flags.
-	# Note: We're assuming they're using LDFLAGS to hold the
-	# options and not CFLAGS/CXXFLAGS.
-	local base="${T}/test-tc-linker"
-	cat <<-EOF > "${base}.c"
-	int main() { return 0; }
-	EOF
-	out=$($(tc-getCC "$@") \
-		${CFLAGS} \
-		${CPPFLAGS} \
-		${LDFLAGS} \
-		-Wl,--version "${base}.c" \
-		-o "${base}" \
-		2>&1)
-	rm -f "${base}"*
-	if [[ ${out} == *"mold"* ]] ; then
-		return 0
-	fi
-
-	# No mold here!
-	return 1
 }
 
 virtwl() {
@@ -2936,7 +2901,10 @@ EOF
 		use_wayland="true"
 	fi
 
-	cp "${desktop_file}" "${WORKDIR}/${PN}.desktop-template" || die
+	cp \
+		"${desktop_file}" \
+		"${WORKDIR}/${PN}.desktop-template" \
+		|| die
 
 	sed -i \
 		-e "s:@NAME@:${app_name}:" \
@@ -2945,9 +2913,22 @@ EOF
 		"${WORKDIR}/${PN}.desktop-template" \
 		|| die
 
-	newmenu "${WORKDIR}/${PN}.desktop-template" "${desktop_filename}"
+	newmenu \
+		"${WORKDIR}/${PN}.desktop-template" \
+		"${desktop_filename}"
 
 	rm "${WORKDIR}/${PN}.desktop-template" || die
+
+	# Install search provider for Gnome
+	insinto "/usr/share/gnome-shell/search-providers/"
+	doins "browser/components/shell/search-provider-files/org.mozilla.firefox.search-provider.ini"
+
+	insinto "/usr/share/dbus-1/services/"
+	doins "browser/components/shell/search-provider-files/org.mozilla.firefox.SearchProvider.service"
+
+	sed -e "s/firefox.desktop/${desktop_filename}/g" \
+		-i "${ED}/usr/share/gnome-shell/search-providers/org.mozilla.firefox.search-provider.ini" ||
+			die "Failed to sed search-provider file."
 
 	# Install wrapper script
 	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"

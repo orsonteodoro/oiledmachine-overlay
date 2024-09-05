@@ -126,7 +126,7 @@ FFMPEG_COMPAT=(
 	"0/51.53.53" # 0.10
 	"0/50.53.53" # 0.8
 )
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
@@ -635,7 +635,7 @@ CDEPEND="
 	${NON_FREE_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.102[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.103[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.2[${MULTILIB_USEDEP}]
@@ -2896,7 +2896,10 @@ EOF
 		local desktop_filename="${PN}.desktop"
 	fi
 
-	cp "${desktop_file}" "${WORKDIR}/${PN}.desktop-template" || die
+	cp \
+		"${desktop_file}" \
+		"${WORKDIR}/${PN}.desktop-template" \
+		|| die
 
 	sed -i \
 		-e "s:@NAME@:${app_name}:" \
@@ -2905,7 +2908,9 @@ EOF
 		"${WORKDIR}/${PN}.desktop-template" \
 		|| die
 
-	newmenu "${WORKDIR}/${PN}.desktop-template" "${desktop_filename}"
+	newmenu \
+		"${WORKDIR}/${PN}.desktop-template" \
+		"${desktop_filename}"
 
 	rm "${WORKDIR}/${PN}.desktop-template" || die
 
