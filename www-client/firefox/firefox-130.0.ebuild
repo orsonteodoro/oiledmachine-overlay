@@ -132,8 +132,8 @@ GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
 LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES.html"
 LICENSE_FINGERPRINT="\
-5f4a4f2092ef8c400e625fe4becb533420375298e7fc5b577ac954896348f44f\
-514cec962cc574ba62390b266fef34b73a2f3cba805e61d83a0996f95a130989\
+4574b0ac29361587a70e7c0f91430b1e37a4fe0ef55124342b55fe15568089ee\
+dc1afca43c831599efbf77a78d39faf70b24f823cd9cfec75cfbb2773684d928\
 " # SHA512
 LLVM_COMPAT=( 18 ) # Limited based on virtual/rust
 LTO_TYPE="" # Global variable
@@ -1691,10 +1691,10 @@ ewarn "if that fails try -jumbo-build before opening a bug report."
 ewarn
 
 		sed -i -e "s/\"FILES_PER_UNIFIED_FILE\", 16/\"FILES_PER_UNIFIED_FILE\", "${my_files_per_unified_file}"/" \
-			python/mozbuild/mozbuild/frontend/data.py \
+			"python/mozbuild/mozbuild/frontend/data.py" \
 			|| die "Failed to adjust FILES_PER_UNIFIED_FILE in python/mozbuild/mozbuild/frontend/data.py"
 		sed -i -e "s/FILES_PER_UNIFIED_FILE = 6/FILES_PER_UNIFIED_FILE = "${my_files_per_unified_file}"/" \
-			js/src/moz.build \
+			"js/src/moz.build" \
 			|| die "Failed to adjust FILES_PER_UNIFIED_FILE in js/src/moz.build"
 	fi
 
