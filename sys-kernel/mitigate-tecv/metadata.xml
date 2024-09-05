@@ -15,8 +15,8 @@
   not to enable BPF JIT when BPF is enabled.  Enabling JIT will mitigate against
   Spectre (Variant 2) but decreases security with JIT spray attack, which
   circumvents ASLR.  Disabling JIT will prevent the circumvention of ASLR.
-  Faust allows you to use BPF but the price of this bargain that you must choose
-  a negative.
+  Faust allows you to use BPF but the price of this bargain is that you must
+  choose a negative.
 
   This bargain can be avoided by disabling BPF in the kernel.
 
