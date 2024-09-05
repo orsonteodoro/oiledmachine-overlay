@@ -4,7 +4,7 @@
    simple_template_names = is_clang && !is_nacl && !is_win && !is_apple
  
    #use_mold = false
-+  custom_optimization_level = ""
++  #custom_optimization_level = ""
  }
  
  declare_args() {
