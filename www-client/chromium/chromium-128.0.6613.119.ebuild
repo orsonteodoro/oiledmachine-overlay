@@ -1923,6 +1923,10 @@ apply_oiledmachine_overlay_patchset() {
 			"${FILESDIR}/extra-patches/chromium-128.0.6613.84-clang-paths.patch"
 		)
 	fi
+
+	PATCHES+=(
+		"${FILESDIR}/extra-patches/chromium-128.0.6613.119-v8-custom-optimization-level.patch"
+	)
 }
 
 src_prepare() {
@@ -3103,6 +3107,20 @@ ewarn
 	if is-flagq "-Ofast" ; then
 	# Precaution
 		append_all $(test-flags -fno-allow-store-data-races)
+	fi
+
+	if is-flagq "-Ofast" ; then
+		myconf_gn+=" custom_optimization_level=fast"
+	elif is-flagq "-O4" ; then
+		myconf_gn+=" custom_optimization_level=4"
+	elif is-flagq "-O3" ; then
+		myconf_gn+=" custom_optimization_level=3"
+	elif is-flagq "-O2" ; then
+		myconf_gn+=" custom_optimization_level=2"
+	elif is-flagq "-O1" ; then
+		myconf_gn+=" custom_optimization_level=1"
+	elif is-flagq "-O0" ; then
+		myconf_gn+=" custom_optimization_level=0"
 	fi
 
 	local ffmpeg_target_arch

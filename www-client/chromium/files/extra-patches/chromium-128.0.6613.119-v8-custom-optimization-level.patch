@@ -1,0 +1,56 @@
+--- a/build/config/compiler/BUILD.gn.orig	2024-09-04 16:47:46.583794516 -0700
++++ b/build/config/compiler/BUILD.gn	2024-09-04 19:36:00.983003960 -0700
+@@ -202,6 +202,7 @@ declare_args() {
+   simple_template_names = is_clang && !is_nacl && !is_win && !is_apple
+ 
+   #use_mold = false
++  custom_optimization_level = ""
+ }
+ 
+ declare_args() {
+@@ -3103,3 +3104,14 @@ config("cet_shadow_stack") {
+     ldflags = [ "/CETCOMPAT" ]
+   }
+ }
++
++config("optimize_custom") {
++  if ($custom_optimization_level != "") {
++    cflags += [
++      "-O$custom_optimization_level"
++    ]
++    rustflags += [
++      "-Copt-level=$custom_optimization_level"
++    ]
++  }
++}
+--- a/v8/BUILD.gn.orig	2024-09-02 14:05:15.081257300 -0700
++++ b/v8/BUILD.gn	2024-09-04 19:37:14.701791852 -0700
+@@ -436,6 +436,8 @@ declare_args() {
+   v8_enable_experimental_tsa_builtins = false
+ 
+   v8_dcheck_always_on = dcheck_always_on
++
++  custom_optimization_level = ""
+ }
+ 
+ # Derived defaults.
+@@ -1767,6 +1769,9 @@ config("always_turbofanimize") {
+   } else {
+     configs += [ "//build/config/compiler:optimize_max" ]
+   }
++  if ($custom_optimization_level != "") {
++    configs += [ "//build/config/compiler:optimize_custom" ]
++  }
+ }
+ 
+ ###############################################################################
+@@ -6703,6 +6708,9 @@ if (v8_use_libm_trig_functions) {
+       # Build code using -O3, see: crbug.com/1084371.
+       configs += [ "//build/config/compiler:optimize_speed" ]
+     }
++    if ($custom_optimization_level != "") {
++      configs += [ "//build/config/compiler:optimize_custom" ]
++    }
+   }
+ }
+ 
