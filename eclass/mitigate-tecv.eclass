@@ -128,7 +128,7 @@ CPU_TARGET_PPC=(
 	cpu_target_ppc_e6500
 )
 
-inherit linux-info
+inherit linux-info toolchain-funcs
 
 IUSE+="
 	${CPU_TARGET_ARM[@]}
@@ -138,7 +138,7 @@ IUSE+="
 	bpf
 	custom-kernel
 	firmware
-	ebuild-revision-4
+	ebuild-revision-5
 "
 # The !custom-kernel is required for RDEPEND to work properly to download the
 # proper kernel version kernel and the proper firmware.
@@ -2952,6 +2952,10 @@ ewarn "You are responsible for using only Linux Kernel >= 4.16."
 # @DESCRIPTION:
 # Check the kernel config
 mitigate-tecv_pkg_setup() {
+	if tc-is-cross-compiler && use auto ; then
+eerror "The auto USE flag can only be used in native builds."
+		die
+	fi
 	if [[ "${ARCH}" == "arm" ]] ; then
 ewarn "CPU vulnerability mitigation has not been added yet for ARCH=${ARCH}."
 	fi
