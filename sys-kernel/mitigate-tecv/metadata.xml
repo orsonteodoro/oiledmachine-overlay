@@ -5,6 +5,25 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Environment variables:
+
+  BPF_SPECTRE_V2_FAUSTIAN_BARGAIN - This concerns a Faustian bargan whether or
+  not to enable BPF JIT when BPF is enabled.  Enabling JIT will mitigate against
+  Spectre (Variant 2) but decreases security with JIT spray attack, which
+  circumvents ASLR.  Disabling JIT will prevent the circumvention of ASLR.
+  Faust allows you to use BPF but the price of this bargain that you choose.
+  This bargain can be avoided by disabling BPF in the kernel.
+
+  Valid values
+
+    interpreter - Use the interpreter for BPF (the kernel default).
+    jit         - Use JIT for BPF.
+
+  -->
   <use>
     <flag name="auto">
       Auto resolves firmware and kernel version required for full mitigation,
@@ -12,7 +31,7 @@
       minimum requirements for those 2 items.
     </flag>
     <flag name="bpf">
-      Apply bpf mitigations for Spectre v2 and Spectre-NG.
+      Apply bpf mitigations for Spectre (Variant 2) or Spectre-NG.
     </flag>
     <flag name="custom-kernel">
       Prevent vendor lock-in when doing kernel mitigation checks.

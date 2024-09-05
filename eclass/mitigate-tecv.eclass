@@ -1953,7 +1953,7 @@ eerror
 	fi
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.13" ; then
 	# See https://lwn.net/Articles/946389/
-		if linux_chkconfig_present "BPF" ; then
+		if linux_chkconfig_present "BPF" && [[ "${BPF_SPECTRE_V2_FAUSTIAN_BARGAIN:-interpreter}" == "jit" ]] ; then
 			CONFIG_CHECK="
 				BPF_JIT
 				BPF_JIT_ALWAYS_ON
