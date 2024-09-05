@@ -14,7 +14,7 @@
  }
 +
 +config("optimize_custom") {
-+  if ($custom_optimization_level != "") {
++  if (custom_optimization_level != "") {
 +    cflags += [
 +      "-O$custom_optimization_level"
 +    ]
@@ -38,7 +38,7 @@
    } else {
      configs += [ "//build/config/compiler:optimize_max" ]
    }
-+  if ($custom_optimization_level != "") {
++  if (custom_optimization_level != "") {
 +    configs += [ "//build/config/compiler:optimize_custom" ]
 +  }
  }
@@ -48,7 +48,7 @@
        # Build code using -O3, see: crbug.com/1084371.
        configs += [ "//build/config/compiler:optimize_speed" ]
      }
-+    if ($custom_optimization_level != "") {
++    if (custom_optimization_level != "") {
 +      configs += [ "//build/config/compiler:optimize_custom" ]
 +    }
    }
