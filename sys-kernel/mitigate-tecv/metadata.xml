@@ -22,7 +22,7 @@
 
   Valid values
 
-    interpreter - Use the interpreter for BPF (the kernel default).
+    interpreter - Use the interpreter for BPF (the kernel default and ebuild default).
     jit         - Use JIT for BPF.
 
   -->
