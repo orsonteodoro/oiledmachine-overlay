@@ -4,7 +4,7 @@
    simple_template_names = is_clang && !is_nacl && !is_win && !is_apple
  
    #use_mold = false
-+  #custom_optimization_level = ""
++  custom_optimization_level = ""
  }
  
  declare_args() {
@@ -30,7 +30,7 @@
  
    v8_dcheck_always_on = dcheck_always_on
 +
-+  custom_optimization_level = ""
++  #custom_optimization_level = ""
  }
  
  # Derived defaults.
