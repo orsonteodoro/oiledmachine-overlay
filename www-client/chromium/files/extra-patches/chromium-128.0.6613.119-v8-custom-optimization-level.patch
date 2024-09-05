@@ -1,3 +1,16 @@
+--- a/build_overrides/build.gni.orig	2024-09-02 14:02:01.095592300 -0700
++++ b/build_overrides/build.gni	2024-09-05 11:11:03.465903542 -0700
+@@ -29,6 +29,10 @@ build_with_v8_embedder = build_with_chro
+ # `use_custom_libcxx = true`.
+ enable_safe_libcxx = true
+ 
++declare_args() {
++  custom_optimization_level=""
++}
++
+ # Features used by //base/trace_event and //services/tracing.
+ declare_args() {
+   # Tracing support requires //third_party/perfetto, which is not available in
 --- a/build/config/compiler/BUILD.gn.orig	2024-09-05 09:54:07.627681077 -0700
 +++ b/build/config/compiler/BUILD.gn	2024-09-05 10:26:37.579904114 -0700
 @@ -202,6 +202,7 @@ declare_args() {
