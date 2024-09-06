@@ -3574,7 +3574,6 @@ ot-kernel_clear_env() {
 	unset AMDGPU_OVERDRIVE
 	unset AMDGPU_VM_FRAGMENT_SIZE
 	unset ALSA_PC_SPEAKER
-	unset BPF_JIT
 	unset CAMERAS
 	unset CAMERAS_SNAPSHOT_BUTTON
 	unset CRYPTSETUP_CIPHERS
@@ -11745,7 +11744,6 @@ _ot-kernel_set_bpf_jit() { # DONE
 # @DESCRIPTION:
 # Apply mitigations against Spectre-NG (Variant 4).
 ot-kernel_set_kconfig_bpf_spectre_mitigation() {
-	local bpf_jit="${BPF_JIT:-0}"
 	if [[ \
 		   "${hardening_level}" == "fast" \
 		|| "${hardening_level}" == "fast-af" \

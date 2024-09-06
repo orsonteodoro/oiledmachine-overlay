@@ -3659,22 +3659,6 @@ unset OT_KERNEL_PRIVATE_KEY
     ALSA_PC_SPEAKER - Use the ALSA speaker driver for PC speaker.
     Valid values:  0 (default), 1
 
-    BPF_JIT - Support for BPF JIT used in network packet filtering or
-    wine-staging improving long run runtime performance but increasing initial
-    runtime.
-    Valid values:
-      0 - uses interpreter (default)
-      1 - uses JIT
-      unset - same as 0
-
-    Using BPF lowers security.  Choosing JIT or interpreter is a Faustian
-    bargain where both choices are bad after having the wish granted for using
-    BPF.  BPF can be avoided being auto added by auto configured pkgflags
-    (OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1) by removing packages that use
-    BPF.
-
-    See also metadata.xml in virtual/mitigate-tecv.
-
     CAMERAS - Add camera support.  Multiple drivers are space separated.
     Valid values:
       all - support all USB or I2C based cameras.
