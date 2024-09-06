@@ -1955,7 +1955,7 @@ eerror
 	# See https://lwn.net/Articles/946389/
 	# The current decision is based on the rate of exfiltration (data per second) and attacker control.
 	# Compromised ASLR would exfiltrate more data than a Spectre 2 attack.
-		if false && linux_chkconfig_present "BPF" ; then
+		if false ; then # && linux_chkconfig_present "BPF"
 	# Dead code but left as a historical note based on link above.
 			CONFIG_CHECK="
 				!BPF_JIT
