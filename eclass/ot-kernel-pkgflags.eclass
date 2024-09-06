@@ -9153,12 +9153,17 @@ ot-kernel-pkgflags_runc() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the rust package
 ot-kernel-pkgflags_rust() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-lang/rust" \
-		|| ot-kernel_has_version "dev-lang/rust-bin" ; then
+	local pkg=""
+	if ot-kernel_has_version_pkgflags "dev-lang/rust" ; then
+		pkg="dev-lang/rust"
+	elif ot-kernel_has_version "dev-lang/rust-bin" ; then
+		pkg="dev-lang/rust-bin"
+	fi
+	if [[ -n "${pkg}" ]] ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 		ot-kernel_y_configopt "CONFIG_AIO"
-		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		# _ot-kernel_set_bpf "${pkg}" # Referenced but not used explicitly
 		ot-kernel_y_configopt "CONFIG_EPOLL"
 		ot-kernel_y_configopt "CONFIG_EVENTFD"
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
