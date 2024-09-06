@@ -11703,17 +11703,18 @@ ot-kernel_set_kconfig_bpf_spectre_mitigation() {
 	# https://lwn.net/Articles/946389/
 	# See the metadata.xml for sys-kernel/mitigate-tecv for details.
 	if grep -q -E -e "^CONFIG_BPF=y" "${path_config}" ; then
-	# Spectre (Variant 2) mitigation
-		if [[ "${BPF_JIT}" == "1" ]] ; then
+	# For most people, this is impractical. \
+	ewarn "BPF may lower security.  Disable CONFIG_NET to disable BPF."
+
+		if [[ "${BPF_JIT:-0}" == "1" ]] ; then
+	ewarn "BPF_JIT may lower security."
+	# Spectre (Variant 2) mitigation trade off with possible ASLR circumvention
 			_ot-kernel_set_bpf_jit
 			ot-kernel_y_configopt "BPF_JIT_ALWAYS_ON"
 		else
 			ot-kernel_unset_configopt "BPF_JIT"
 			ot-kernel_unset_configopt "BPF_JIT_ALWAYS_ON"
 		fi
-
-	# The JIT always on option requirement is dropped.
-	# It is explained in the above article.
 
 	# Spectre-NG (Variant 4) mitigation
 		ot-kernel_y_configopt "BPF_UNPRIV_DEFAULT_OFF"		# Upstream puts it default ON ; For hardening it is ON
