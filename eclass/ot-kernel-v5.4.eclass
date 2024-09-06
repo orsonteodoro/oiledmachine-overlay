@@ -44,7 +44,7 @@ ARM_FLAGS=(
 # Some are default ON for security reasons or bug avoidance.
 	+cpu_flags_arm_lse # 8.1
 	cpu_flags_arm_neon
-	+cpu_flags_arm_ptrauth # 8.3-A
+	+cpu_flags_arm_pac # 8.3-A
 )
 
 C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020

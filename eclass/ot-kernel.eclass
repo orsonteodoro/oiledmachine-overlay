@@ -6221,17 +6221,17 @@ eerror
 				ot-kernel_unset_configopt "CONFIG_GCOV_KERNEL"
 				ot-kernel_unset_configopt "CONFIG_FUNCTION_GRAPH_TRACER"
 				ot-kernel_y_configopt "CONFIG_ARM64_BTI"
-			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_ptrauth ; then
+			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_pac ; then
 # TODO:  Make it a fatal errror based on /proc/cpuinfo or lscpu.
 ewarn "cpu_flags_arm_bti is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags_arm_bti and USE=cpu_flags_arm_bti."
 			fi
-			if [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_ptrauth ; then
+			if [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_pac ; then
 				ot-kernel_unset_configopt "CONFIG_FUNCTION_GRAPH_TRACER"
 				ot-kernel_y_configopt "CONFIG_ARM64_VHE"
 				ot-kernel_y_configopt "CONFIG_ARM64_PTR_AUTH"
-			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_ptrauth ; then
+			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_pac ; then
 # TODO:  Make it a fatal errror based on /proc/cpuinfo or lscpu.
-ewarn "cpu_flags_arm_ptrauth is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags_arm_ptrauth and USE=cpu_flags_arm_ptrauth."
+ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags_arm_pac and USE=cpu_flags_arm_pac."
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
@@ -6352,16 +6352,16 @@ ewarn "cpu_flags_arm_ptrauth is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_f
 		elif has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ; then
 			: # Software based
 		elif has cpu_flags_arm_bti ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_bti ; then
-			: # JOP mitigation, but implies use of ptrauth
+			: # JOP mitigation, but implies use of pac
 	# For reassurance, see https://github.com/torvalds/linux/blob/v6.10/arch/arm64/Makefile#L77
-		elif has cpu_flags_arm_ptrauth ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_ptrauth ; then
+		elif has cpu_flags_arm_pac ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_pac ; then
 			: # ROP mitigation
 		else
 			if [[ "${arch}" == "x86_64" ]] && ( has cet ${IUSE_EFFECTIVE} || has cfi ${IUSE_EFFECTIVE} ) ; then
 eerror "Enable either cet, cfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
 				die
-			elif [[ "${arch}" == "arm64" ]] && ( has cpu_flags_arm_bti ${IUSE_EFFECTIVE} || has cpu_flags_arm_ptrauth ${IUSE_EFFECTIVE} || has cfi ${IUSE_EFFECTIVE} ) ; then
-eerror "Enable either cpu_flags_arm_bti, cpu_flags_arm_ptrauth, cfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
+			elif [[ "${arch}" == "arm64" ]] && ( has cpu_flags_arm_bti ${IUSE_EFFECTIVE} || has cpu_flags_arm_pac ${IUSE_EFFECTIVE} || has cfi ${IUSE_EFFECTIVE} ) ; then
+eerror "Enable either cpu_flags_arm_bti, cpu_flags_arm_pac, cfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
 				die
 			elif [[ "${arch}" == "arm" ]] && has cfi ${IUSE_EFFECTIVE} ; then
 eerror "Enable cfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
@@ -6613,7 +6613,7 @@ ewarn
 				ot-kernel_unset_configopt "CONFIG_GCOV_KERNEL"
 				ot-kernel_unset_configopt "CONFIG_FUNCTION_GRAPH_TRACER"
 				ot-kernel_y_configopt "CONFIG_ARM64_BTI"
-			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_ptrauth ; then
+			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_pac ; then
 # TODO:  Make it a fatal errror based on /proc/cpuinfo or lscpu.
 ewarn "cpu_flags_arm_bti is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags_arm_bti and USE=cpu_flags_arm_bti."
 			fi
@@ -6621,9 +6621,9 @@ ewarn "cpu_flags_arm_bti is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 				ot-kernel_unset_configopt "CONFIG_FUNCTION_GRAPH_TRACER"
 				ot-kernel_y_configopt "CONFIG_ARM64_VHE"
 				ot-kernel_y_configopt "CONFIG_ARM64_PTR_AUTH"
-			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_ptrauth ; then
+			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_pac ; then
 # TODO:  Make it a fatal errror based on /proc/cpuinfo or lscpu.
-ewarn "cpu_flags_arm_ptrauth is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags_arm_ptrauth and USE=cpu_flags_arm_ptrauth."
+ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags_arm_pac and USE=cpu_flags_arm_pac."
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then

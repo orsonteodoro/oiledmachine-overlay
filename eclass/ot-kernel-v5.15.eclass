@@ -46,7 +46,7 @@ ARM_FLAGS=(
 	+cpu_flags_arm_lse # 8.1
 	+cpu_flags_arm_mte # 8.3, kernel 5.10, gcc 10.1, llvm 8 ; Disabled this and used v8_3 instead.
 	cpu_flags_arm_neon
-	+cpu_flags_arm_ptrauth # 8.3-A
+	+cpu_flags_arm_pac # 8.3-A
 	+cpu_flags_arm_tlbi # 8.4
 )
 

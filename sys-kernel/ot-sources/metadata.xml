@@ -4337,7 +4337,7 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="cpu_flags_arm_mte">
       Install dependencies for MTE (Memory Tagging Extension) support.
     </flag>
-    <flag name="cpu_flags_arm_ptrauth">
+    <flag name="cpu_flags_arm_pac">
       Install dependencies for Pointer Authentication for ROP mitigation.
     </flag>
     <flag name="cpu_flags_arm_tlbi">

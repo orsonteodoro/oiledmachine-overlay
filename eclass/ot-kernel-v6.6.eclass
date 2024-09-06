@@ -51,7 +51,7 @@ ARM_FLAGS=(
 	+cpu_flags_arm_lse # 8.1
 	+cpu_flags_arm_mte # 8.3, kernel 5.10, gcc 10.1, llvm 8 ; Disabled this and used v8_3 instead.
 	cpu_flags_arm_neon
-	+cpu_flags_arm_ptrauth # 8.3-A
+	+cpu_flags_arm_pac # 8.3-A
 	+cpu_flags_arm_tlbi # 8.4
 	cpu_flags_arm_v4
 	cpu_flags_arm_v4t
@@ -622,7 +622,7 @@ CDEPEND+="
 			)
 		)
 	)
-	cpu_flags_arm_ptrauth? (
+	cpu_flags_arm_pac? (
 		arm64? (
 			>=sys-devel/binutils-2.33.1
 			!clang? (
@@ -1503,7 +1503,7 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=14
 	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=14
-	elif has cpu_flags_arm_ptrauth ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_ptrauth && [[ "${auth}" == "arm64" ]] ; then
+	elif has cpu_flags_arm_pac ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_pac && [[ "${auth}" == "arm64" ]] ; then
 		_llvm_min_slot=14
 	elif ot-kernel_use pgo ; then
 		_llvm_min_slot=${LLVM_MIN_PGO} # 13
@@ -1559,7 +1559,7 @@ ot-kernel_get_gcc_min_slot() {
 		_gcc_min_slot=9 # CET-IBT
 	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=9
-	elif has cpu_flags_arm_ptrauth ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_ptrauth && [[ "${auth}" == "arm64" ]] ; then
+	elif has cpu_flags_arm_pac ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_pac && [[ "${auth}" == "arm64" ]] ; then
 		_gcc_min_slot=9
 	elif has cpu_flags_x86_tpause ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_x86_tpause ; then
 		_gcc_min_slot=9
