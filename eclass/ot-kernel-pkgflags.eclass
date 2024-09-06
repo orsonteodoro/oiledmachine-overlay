@@ -2122,7 +2122,7 @@ _ot-kernel-pkgflags_cr_suid_sandbox_settings() { # DONE
 	_ot-kernel_set_net_ns
 	_ot-kernel_set_pid_ns
 	_ot-kernel_set_user_ns
-	ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
+	_ot-kernel_set_seccomp_bpf
 	ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 	ot-kernel_unset_configopt "CONFIG_COMPAT_VDSO"
 	if grep -q -e "^CONFIG_GRKERNSEC=y" "${path_config}" ; then
@@ -2227,7 +2227,6 @@ _ot-kernel-pkgflags_apply_cr_kconfig() {
 	ot-kernel_y_configopt "CONFIG_EXPERT"
 	ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 	ot-kernel_y_configopt "CONFIG_AIO"
-	_ot-kernel_set_seccomp_bpf
 	ot-kernel_y_configopt "CONFIG_EPOLL"
 	ot-kernel_y_configopt "CONFIG_EVENTFD"
 	ot-kernel_y_configopt "CONFIG_FUTEX"
