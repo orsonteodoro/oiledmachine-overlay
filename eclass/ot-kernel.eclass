@@ -3295,6 +3295,10 @@ eerror "SYSTEMD_FEATURE_TRAFFIC_CONTROL has removed."
 eerror "SYSTEMD_FEATURE_SIGNED_DM_VERITY has been renamed to CRYPTSETUP_VERITY"
 	fi
 
+	if [[ -n "${SYSTEMD_FEATURE_NET}" ]] ; then
+eerror "SYSTEMD_FEATURE_NET has been renamed to SYSTEMD_FEATURE_BPF"
+	fi
+
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD has been removed."
 	fi
@@ -3618,11 +3622,11 @@ ot-kernel_clear_env() {
 	unset SQUASHFS_ZLIB
 	unset STD_PC_SPEAKER
 	unset SYSTEMD_FEATURE_AUTOFS
+	unset SYSTEMD_FEATURE_BPF
 	unset SYSTEMD_FEATURE_CPUSHARES
 	unset SYSTEMD_FEATURE_CPUQUOTA
 	unset SYSTEMD_FEATURE_SIGNED_DM_VERITY
 	unset SYSTEMD_FEATURE_IPV6
-	unset SYSTEMD_FEATURE_NET
 	unset SYSTEMD_FEATURE_PRIVATENETWORK
 	unset SYSTEMD_FEATURE_PRIVATEUSERS
 	unset SYSTEMD_FEATURE_RESTRICT_FS
@@ -11665,6 +11669,24 @@ _ot-kernel_enable_ppc_476fpe_workaround() {
 	fi
 }
 
+# @FUNCTION: _ot-kernel_set_bpf_jit
+# @DESCRIPTION:
+# Enable BPF JIT
+_ot-kernel_set_bpf_jit() { # DONE
+	# Mutually exclusive
+	# The flavor should be automagic.
+	# CBPF used for 32-bit, EBPF used for 64-bit
+	ot-kernel_unset_configopt "CONFIG_HAVE_EBPF_JIT"
+	ot-kernel_unset_configopt "CONFIG_HAVE_CBPF_JIT"
+	ot-kernel_unset_configopt "CONFIG_HAVE_BPF_JIT"
+	# The automagic happens when `make olddefconfig` is called in ot-kernel_src_configure_assisted
+
+	ot-kernel_y_configopt "CONFIG_BPF_JIT"
+	if ver_test "${KV_MAJOR_MINOR}" -lt "6.10" ; then
+		ot-kernel_y_configopt "CONFIG_MODULES"
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_bpf_spectre_mitigation
 # @DESCRIPTION:
 # Apply mitigations against Spectre-NG (Variant 4).
@@ -11683,7 +11705,7 @@ ot-kernel_set_kconfig_bpf_spectre_mitigation() {
 	if grep -q -E -e "^CONFIG_BPF=y" "${path_config}" ; then
 	# Spectre (Variant 2) mitigation
 		if [[ "${BPF_JIT}" == "1" ]] ; then
-			ot-kernel_y_configopt "BPF_JIT"
+			_ot-kernel_set_bpf_jit
 			ot-kernel_y_configopt "BPF_JIT_ALWAYS_ON"
 		else
 			ot-kernel_unset_configopt "BPF_JIT"

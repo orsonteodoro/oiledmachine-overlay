@@ -13,7 +13,7 @@ RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
 
 CLEAR_LINUX_PATCHES_VER="6.10.7-1460"
 EBUILD_REV="ebuild-revision-6"
-GENPATCHES_VER="10" # can be live only when 9999
+GENPATCHES_VER="11" # can be live only when 9999
 PATCH_PROJC_VER="6.10-r2"
 PATCH_RT_VER="6.10.2-rt14"
 

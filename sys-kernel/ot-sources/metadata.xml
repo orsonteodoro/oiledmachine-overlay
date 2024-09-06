@@ -3998,6 +3998,12 @@ unset OT_KERNEL_PRIVATE_KEY
       1 - enable
       0 - disable (default)
 
+    SYSTEMD_FEATURE_BPF - Enable support for IPAddressDeny=,
+    IPAddressAllow=, IPIngressFilterPath=, IPEgressFilterPath=,
+    SocketBind{Allow|Deny}=, RestrictNetworkInterfaces=
+      1 - enable
+      0 - disable (default)
+
     To use FQ-CoDel as a QoS queue discipline for systemd's default setting and
     mitigation against bufferbloat, use OT_KERNEL_NET_QOS_SCHEDULERS instead.
     Other queue discipline can be added through the same variable to enable
@@ -4012,12 +4018,6 @@ unset OT_KERNEL_PRIVATE_KEY
       0 - disable (default)
 
     SYSTEMD_FEATURE_IPV6 - Support IPv6
-      1 - enable
-      0 - disable (default)
-
-    SYSTEMD_FEATURE_NET - Enable support for IPAddressDeny=,
-    IPAddressAllow=, IPIngressFilterPath=, IPEgressFilterPath=,
-    SocketBind{Allow|Deny}=, RestrictNetworkInterfaces=
       1 - enable
       0 - disable (default)
 
