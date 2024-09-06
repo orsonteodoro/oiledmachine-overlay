@@ -6129,6 +6129,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
+			# CONFIG_COMPILE_TEST is not default ON.
 			ot-kernel_y_configopt "CONFIG_RANDSTRUCT_NONE"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_FULL"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
@@ -6453,7 +6454,12 @@ ewarn "ROP mitigations are available on arm, arm64, riscv, x86_64 arches."
 		fi
 
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
+			ot-kernel_y_configopt "CONFIG_COMPILE_TEST"
 			if tc-is-gcc && grep -q -E -e "^CONFIG_GCC_PLUGINS=y" "${path_config}" ; then
+				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_NONE"
+				ot-kernel_y_configopt "CONFIG_RANDSTRUCT_FULL"
+				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
+			elif tc-is-clang && ver_test $(clang-major-version) -ge "16" ; then
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_NONE"
 				ot-kernel_y_configopt "CONFIG_RANDSTRUCT_FULL"
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
