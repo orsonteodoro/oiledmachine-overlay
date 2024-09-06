@@ -6326,7 +6326,7 @@ eerror
 		elif has cpu_flags_arm_ptrauth ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_ptrauth ; then
 			: # ROP mitigation
 		else
-			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] && ( has cet ${IUSE_EFFECTIVE} || has cfi ${IUSE_EFFECTIVE} ) ; then
+			if [[ "${arch}" == "x86_64" ]] && ( has cet ${IUSE_EFFECTIVE} || has cfi ${IUSE_EFFECTIVE} ) ; then
 eerror "Enable either cet, cfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
 				die
 			elif [[ "${arch}" == "arm64" ]] && ( has cpu_flags_arm_bti || has cpu_flags_arm_ptrauth ) ; then
