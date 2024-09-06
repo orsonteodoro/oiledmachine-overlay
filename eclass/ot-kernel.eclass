@@ -6325,6 +6325,7 @@ eerror
 			: # Software based
 		elif has cpu_flags_arm_bti ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_bti ; then
 			: # JOP mitigation, but implies use of ptrauth
+	# For reassurance, see https://github.com/torvalds/linux/blob/v6.10/arch/arm64/Makefile#L77
 		elif has cpu_flags_arm_ptrauth ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_ptrauth ; then
 			: # ROP mitigation
 		else
