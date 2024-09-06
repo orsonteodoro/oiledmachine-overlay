@@ -5957,6 +5957,13 @@ eerror
 				ot-kernel_unset_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 			fi
 		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
+			if [[ "${arch}" == "amd64" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_ARM64_BTI_KERNEL"
+				ot-kernel_unset_configopt "CONFIG_ARM64_BTI"
+				ot-kernel_unset_configopt "CONFIG_ARM64_PTR_AUTH"
+			fi
+		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
 			ot-kernel_unset_configopt "CONFIG_CPU_MITIGATIONS"
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
@@ -6204,6 +6211,27 @@ eerror
 			fi
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+			fi
+		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
+			if [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_bti ; then
+				ot-kernel_y_configopt "CONFIG_ARM64_VHE"
+				ot-kernel_y_configopt "CONFIG_ARM64_PTR_AUTH"
+				ot-kernel_y_configopt "CONFIG_ARM64_BTI_KERNEL"
+				ot-kernel_unset_configopt "CONFIG_GCOV_KERNEL"
+				ot-kernel_unset_configopt "CONFIG_FUNCTION_GRAPH_TRACER"
+				ot-kernel_y_configopt "CONFIG_ARM64_BTI"
+			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_ptrauth ; then
+# TODO:  Make it a fatal errror based on /proc/cpuinfo or lscpu.
+ewarn "cpu_flags_arm_bti is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags_arm_bti and USE=cpu_flags_arm_bti."
+			fi
+			if [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_ptrauth ; then
+				ot-kernel_unset_configopt "CONFIG_FUNCTION_GRAPH_TRACER"
+				ot-kernel_y_configopt "CONFIG_ARM64_VHE"
+				ot-kernel_y_configopt "CONFIG_ARM64_PTR_AUTH"
+			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_ptrauth ; then
+# TODO:  Make it a fatal errror based on /proc/cpuinfo or lscpu.
+ewarn "cpu_flags_arm_ptrauth is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags_arm_ptrauth and USE=cpu_flags_arm_ptrauth."
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
@@ -6575,6 +6603,27 @@ ewarn
 			fi
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+			fi
+		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
+			if [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_bti ; then
+				ot-kernel_y_configopt "CONFIG_ARM64_VHE"
+				ot-kernel_y_configopt "CONFIG_ARM64_PTR_AUTH"
+				ot-kernel_y_configopt "CONFIG_ARM64_BTI_KERNEL"
+				ot-kernel_unset_configopt "CONFIG_GCOV_KERNEL"
+				ot-kernel_unset_configopt "CONFIG_FUNCTION_GRAPH_TRACER"
+				ot-kernel_y_configopt "CONFIG_ARM64_BTI"
+			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_ptrauth ; then
+# TODO:  Make it a fatal errror based on /proc/cpuinfo or lscpu.
+ewarn "cpu_flags_arm_bti is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags_arm_bti and USE=cpu_flags_arm_bti."
+			fi
+			if [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_bti ; then
+				ot-kernel_unset_configopt "CONFIG_FUNCTION_GRAPH_TRACER"
+				ot-kernel_y_configopt "CONFIG_ARM64_VHE"
+				ot-kernel_y_configopt "CONFIG_ARM64_PTR_AUTH"
+			elif [[ "${arch}" == "arm64" ]] && ot-kernel_use cpu_flags_arm_ptrauth ; then
+# TODO:  Make it a fatal errror based on /proc/cpuinfo or lscpu.
+ewarn "cpu_flags_arm_ptrauth is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags_arm_ptrauth and USE=cpu_flags_arm_ptrauth."
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
