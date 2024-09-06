@@ -11356,6 +11356,24 @@ ot-kernel_set_rust() {
 		ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
 		ot-kernel_unset_configopt "CONFIG_RANDSTRUCT"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_BTF"
+		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_BTF"
+		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
+		ot-kernel_unset_configopt "CONFIG_SHADOW_CALL_STACK"
+		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_BTF"
+		if \
+			[[ \
+				   "${hardening_level}" == "fast" \
+				|| "${hardening_level}" == "fast-af" \
+				|| "${hardening_level}" == "fast-as-fuck" \
+				|| "${hardening_level}" == "performance" \
+			]] \
+		; then
+			:
+		else
+eerror "OT_KERNEL_HARDENING_LEVEL=fast-af are only supported for OT_KERNEL_USE=rust with USE=rust."
+			die
+		fi
+ewarn "CONFIG_RUST=y lowers security."
 	fi
 }
 

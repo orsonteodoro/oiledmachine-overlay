@@ -806,7 +806,14 @@ CDEPEND+="
 	)
 	rust? (
 		>=dev-util/cbindgen-0.65.1
+		>=dev-util/pahole-1.16
 		~virtual/rust-${RUST_PV}
+		!clang? (
+			>=sys-devel/gcc-4.5
+		)
+		clang? (
+			$(gen_clang_llvm_pair 16 ${LLVM_MAX_SLOT})
+		)
 	)
 	xz? (
 		>=sys-apps/kmod-${KMOD_PV}[lzma]
@@ -1459,6 +1466,8 @@ ot-kernel_get_llvm_min_slot() {
 	elif grep -q -E -e "^CONFIG_ARCH_MULTI_V4=y" "${path_config}" ; then
 		_llvm_min_slot=16
 	elif grep -q -E -e "^CONFIG_ARCH_MULTI_V4T=y" "${path_config}" ; then
+		_llvm_min_slot=16
+	elif grep -q -E -e "^CONFIG_RUST=y" "${path_config}" ; then
 		_llvm_min_slot=16
 	elif grep -q -E -e "^CONFIG_CFI_CLANG=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCFI_ARM64} # 16

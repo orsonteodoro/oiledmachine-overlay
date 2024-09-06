@@ -702,7 +702,14 @@ CDEPEND+="
 	)
 	rust? (
 		>=dev-util/cbindgen-0.56.0
+		>=dev-util/pahole-1.16
 		~virtual/rust-${RUST_PV}
+		!clang? (
+			>=sys-devel/gcc-4.5
+		)
+		clang? (
+			$(gen_clang_llvm_pair 16 ${LLVM_MAX_SLOT})
+		)
 	)
 	xz? (
 		>=sys-apps/kmod-${KMOD_PV}[lzma]
@@ -1286,6 +1293,8 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=${LLVM_MIN_KCFI_ARM64} # 16
 	elif grep -q -E -e "^CONFIG_CFI_CLANG=y" "${path_config}" && [[ "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCFI_AMD64} # 16
+	elif grep -q -E -e "^CONFIG_RUST=y" "${path_config}" ; then
+		_llvm_min_slot=16
 	elif [[ "${kcp_provider}" == "genpatches" || "${kcp_provider}" == "graysky2" || "${kcp_provider}" =~ "zen-sauce" ]] && [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 		_llvm_min_slot=${LLVM_MIN_KCP_GRAYSKY2_AMD64} # 15
 	elif grep -q -E -e "^CONFIG_CC_HAS_ZERO_CALL_USED_REGS=y" "${path_config}" ; then
