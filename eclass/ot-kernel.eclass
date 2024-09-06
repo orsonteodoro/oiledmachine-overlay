@@ -11707,7 +11707,7 @@ ot-kernel_set_kconfig_bpf_spectre_mitigation() {
 	ewarn "BPF may lower security.  Disable CONFIG_NET to disable BPF."
 
 		if [[ "${BPF_JIT:-0}" == "1" ]] ; then
-	ewarn "BPF_JIT may lower security."
+	ewarn "BPF_JIT may lower security or increase the capabilities of the attacker."
 	# Spectre (Variant 2) mitigation trade off with possible ASLR circumvention
 			_ot-kernel_set_bpf_jit
 			ot-kernel_y_configopt "BPF_JIT_ALWAYS_ON"
