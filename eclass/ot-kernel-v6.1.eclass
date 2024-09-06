@@ -701,8 +701,10 @@ CDEPEND+="
 		)
 	)
 	rust? (
+		$(python_gen_any_dep '
+			>=dev-util/pahole-1.16[${PYTHON_SINGLE_USEDEP}]
+		')
 		>=dev-util/cbindgen-0.56.0
-		>=dev-util/pahole-1.16
 		~virtual/rust-${RUST_PV}
 		!clang? (
 			>=sys-devel/gcc-4.5

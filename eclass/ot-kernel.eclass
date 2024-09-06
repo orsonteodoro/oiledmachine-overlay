@@ -756,7 +756,9 @@ PDEPEND+="
 	)
 	ot_kernel_pgt_yt? (
 		${PYTHON_DEPS}
-		$(python_gen_cond_dep 'dev-python/selenium[${PYTHON_USEDEP}]')
+		$(python_gen_cond_dep '
+			dev-python/selenium[${PYTHON_USEDEP}]
+		')
 		|| (
 			(
 				www-client/chromium
@@ -6343,8 +6345,6 @@ ewarn "No mitigation for ROP applied.  Consider either using a newer kernel, usi
 ewarn "ROP mitigations are available on arm, arm64, riscv, x86_64 arches."
 			fi
 		fi
-
-		if [[ "${CET}"
 
 		ot-kernel_unset_configopt "CONFIG_COMPAT_BRK"
 		ot-kernel_y_configopt "CONFIG_FORTIFY_SOURCE"
