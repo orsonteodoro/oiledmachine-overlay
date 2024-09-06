@@ -6316,6 +6316,30 @@ eerror
 	]] ; then
 	# CFI and SCS handled later
 
+	# Mitigate against ROP attack.
+		if has cet ${IUSE_EFFECTIVE} && ot-kernel_use cet ; then
+			: # Hardware based
+		elif has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ; then
+			: # Software based
+		elif has cpu_flags_arm_bti ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_bti ; then
+			: # JOP mitigation, but implies use of ptrauth
+		elif has cpu_flags_arm_ptrauth ${IUSE_EFFECTIVE} && ot-kernel_use cpu_flags_arm_ptrauth ; then
+			: # ROP mitigation
+		else
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+eerror "Enable either cet, cfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
+				die
+			elif [[ "${arch}" == "arm64" ]] ; then
+eerror "Enable either cpu_flags_arm_bti, cpu_flags_arm_ptrauth in OT_KERNEL_USE and USE to mitigate against ROP attacks."
+				die
+			else
+ewarn "No mitigation for ROP applied.  Consider using a newer kernel and/or using only 64-bit mode."
+ewarn "ROP mitigations are available on x86_64 and arm64 arches."
+			fi
+		fi
+
+		if [[ "${CET}"
+
 		ot-kernel_unset_configopt "CONFIG_COMPAT_BRK"
 		ot-kernel_y_configopt "CONFIG_FORTIFY_SOURCE"
 		ot-kernel_disable_gentoo_self_protection
@@ -11699,14 +11723,27 @@ ot-kernel_set_kconfig_bpf_spectre_mitigation() {
 	]] ; then
 		return
 	fi
+
+
 	# For context, see
 	# https://lwn.net/Articles/946389/
 	# See the metadata.xml for sys-kernel/mitigate-tecv for details.
 	if grep -q -E -e "^CONFIG_BPF=y" "${path_config}" ; then
 	# For most people, this is impractical. \
+	# You could compute without the net in the 1990s but not 2020s. \
 	ewarn "BPF may lower security.  Disable CONFIG_NET to disable BPF."
 
-		if [[ "${BPF_JIT:-0}" == "1" ]] ; then
+		local bpf_jit="${BPF_JIT:-0}"
+
+		if [[ \
+			   "${hardening_level}" == "secure-af" \
+			|| "${hardening_level}" == "secure-as-fuck" \
+		]] ; then
+	# Mitigate against attacker gaining control.
+			bpf_jit=0
+		fi
+
+		if [[ "${bpf_jit}" == "1" ]] ; then
 	ewarn "BPF_JIT may lower security or increase the capabilities of the attacker."
 	# Spectre (Variant 2) mitigation trade off with possible ASLR circumvention
 			_ot-kernel_set_bpf_jit

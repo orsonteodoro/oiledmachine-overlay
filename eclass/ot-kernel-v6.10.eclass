@@ -641,13 +641,15 @@ CDEPEND+="
 		)
 	)
 	cpu_flags_arm_ptrauth? (
-		>=sys-devel/binutils-2.33.1
-		!clang? (
-			>=sys-devel/gcc-9.1
-		)
-		clang? (
-			|| (
-				$(gen_clang_llvm_pair 14 ${LLVM_MAX_SLOT})
+		arm64? (
+			>=sys-devel/binutils-2.33.1
+			!clang? (
+				>=sys-devel/gcc-9.1
+			)
+			clang? (
+				|| (
+					$(gen_clang_llvm_pair 14 ${LLVM_MAX_SLOT})
+				)
 			)
 		)
 	)
