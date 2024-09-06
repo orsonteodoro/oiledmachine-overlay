@@ -11745,15 +11745,20 @@ _ot-kernel_set_bpf_jit() { # DONE
 # @DESCRIPTION:
 # Apply mitigations against Spectre-NG (Variant 4).
 ot-kernel_set_kconfig_bpf_spectre_mitigation() {
+	local bpf_jit="${BPF_JIT:-0}"
 	if [[ \
 		   "${hardening_level}" == "fast" \
 		|| "${hardening_level}" == "fast-af" \
 		|| "${hardening_level}" == "fast-as-fuck" \
 		|| "${hardening_level}" == "performance" \
 	]] ; then
-		return
+	# fast-af:  bpf_jit only allowed in this case
+		bpf_jit=1
+	else
+	# default:  bpf_jit is off
+	# secure-af:  Mitigate against attacker gaining control.
+		bpf_jit=0
 	fi
-
 
 	# For context, see
 	# https://lwn.net/Articles/946389/
@@ -11762,16 +11767,6 @@ ot-kernel_set_kconfig_bpf_spectre_mitigation() {
 	# For most people, this is impractical. \
 	# You could compute without the net in the 1990s but not 2020s. \
 	ewarn "BPF may lower security.  Disable CONFIG_NET to disable BPF."
-
-		local bpf_jit="${BPF_JIT:-0}"
-
-		if [[ \
-			   "${hardening_level}" == "secure-af" \
-			|| "${hardening_level}" == "secure-as-fuck" \
-		]] ; then
-	# Mitigate against attacker gaining control.
-			bpf_jit=0
-		fi
 
 		if [[ "${bpf_jit}" == "1" ]] ; then
 	ewarn "BPF_JIT may lower security or increase the capabilities of the attacker."
