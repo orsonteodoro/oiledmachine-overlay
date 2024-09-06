@@ -6329,12 +6329,18 @@ eerror
 			if [[ "${arch}" == "x86_64" ]] && ( has cet ${IUSE_EFFECTIVE} || has cfi ${IUSE_EFFECTIVE} ) ; then
 eerror "Enable either cet, cfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
 				die
-			elif [[ "${arch}" == "arm64" ]] && ( has cpu_flags_arm_bti || has cpu_flags_arm_ptrauth ) ; then
-eerror "Enable either cpu_flags_arm_bti, cpu_flags_arm_ptrauth in OT_KERNEL_USE and USE to mitigate against ROP attacks."
+			elif [[ "${arch}" == "arm64" ]] && ( has cpu_flags_arm_bti ${IUSE_EFFECTIVE} || has cpu_flags_arm_ptrauth ${IUSE_EFFECTIVE} || has cfi ${IUSE_EFFECTIVE} ) ; then
+eerror "Enable either cpu_flags_arm_bti, cpu_flags_arm_ptrauth, cfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
+				die
+			elif [[ "${arch}" == "arm" ]] && has cfi ${IUSE_EFFECTIVE} ; then
+eerror "Enable cfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
+				die
+			elif [[ "${arch}" == "riscv" ]] && has cfi ${IUSE_EFFECTIVE} ; then
+eerror "Enable cfi in OT_KERNEL_USE and USE to mitigate against ROP attacks."
 				die
 			else
-ewarn "No mitigation for ROP applied.  Consider using a newer kernel and/or using only 64-bit mode."
-ewarn "ROP mitigations are available on x86_64 and arm64 arches."
+ewarn "No mitigation for ROP applied.  Consider either using a newer kernel, using only 64-bit mode, or moving services to ROP mitigated arches."
+ewarn "ROP mitigations are available on arm, arm64, riscv, x86_64 arches."
 			fi
 		fi
 
