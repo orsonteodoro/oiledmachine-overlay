@@ -1009,9 +1009,7 @@ ot-kernel-pkgflags_aqtion() { # DONE
 ot-kernel-pkgflags_arcconf() { # DONE
 	local pkg="sys-block/arcconf"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
-		warn_lowered_security "${pkg}" # BPF
 		ot-kernel_unset_configopt "CONFIG_HARDENED_USERCOPY_PAGESPAN"
-		ot-kernel_unset_configopt "CONFIG_LEGACY_VSYSCALL_NONE"
 	fi
 }
 
@@ -1100,7 +1098,7 @@ ot-kernel-pkgflags_bcache_tools() { # DONE
 ot-kernel-pkgflags_bcc() { # DONE
 	local pkg="dev-util/bcc"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
-		_ot-kernel_set_bpf
+		_ot-kernel_set_bpf "${pkg}"
 		ot-kernel_y_configopt "CONFIG_NET_CLS_BPF"
 		ot-kernel_y_configopt "CONFIG_NET_ACT_BPF"
 		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
@@ -1999,7 +1997,7 @@ ot-kernel-pkgflags_compiler_rt_sanitizers() { # DONE
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 	        ot-kernel_y_configopt "CONFIG_SYSVIPC"
 		if ot-kernel_has_version "${pkg}[test]" ; then
-			_ot-kernel_set_seccomp_bpf
+			_ot-kernel_set_seccomp_bpf "${pkg}"
 		fi
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
@@ -2122,7 +2120,7 @@ _ot-kernel-pkgflags_cr_suid_sandbox_settings() { # DONE
 	_ot-kernel_set_net_ns
 	_ot-kernel_set_pid_ns
 	_ot-kernel_set_user_ns
-	_ot-kernel_set_seccomp_bpf
+	_ot-kernel_set_seccomp_bpf "${pkg}"
 	ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 	ot-kernel_unset_configopt "CONFIG_COMPAT_VDSO"
 	if grep -q -e "^CONFIG_GRKERNSEC=y" "${path_config}" ; then
@@ -3594,11 +3592,12 @@ ot-kernel-pkgflags_deepcc() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for dietlibc
 ot-kernel-pkgflags_dietlibc() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-libs/dietlibc" ; then
+	local pkg="dev-libs/dietlibc"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 		ot-kernel_y_configopt "CONFIG_AIO"
-		#_ot-kernel_set_seccomp_bpf # Referenced but not used.
+		#_ot-kernel_set_seccomp_bpf "${pkg}" # Referenced but not used.
 		ot-kernel_y_configopt "CONFIG_EPOLL"
 		ot-kernel_y_configopt "CONFIG_EVENTFD"
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
@@ -3812,7 +3811,7 @@ ot-kernel-pkgflags_latencytop() { # DONE
 ot-kernel-pkgflags_libbpf() { # DONE
 	local pkg="dev-libs/libbpf"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
-		_ot-kernel_set_bpf
+		_ot-kernel_set_bpf "${pkg}"
 	fi
 }
 
@@ -3966,7 +3965,7 @@ ot-kernel-pkgflags_docker() { # DONE
 
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.15" ; then
 			ot-kernel_y_configopt "CONFIG_CGROUP_BPF"
-			_ot-kernel_set_seccomp_bpf # I think the the distro wiki is wrong.
+			_ot-kernel_set_seccomp_bpf "${pkg}" # I think the the distro wiki is wrong.
 		fi
 
 		if ver_test "${KV_MAJOR_MINOR}" -lt "6.1" ; then
@@ -4393,6 +4392,7 @@ ot-kernel-pkgflags_fastd() { # DONE
 # @DESCRIPTION:
 # Apply kernel config for ff package
 _ot-kernel-pkgflags_apply_ff_kconfig() {
+	local pkg="${1}"
 	ot-kernel_y_configopt "CONFIG_DNOTIFY"
 	ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 	ot-kernel_y_configopt "CONFIG_FANOTIFY"
@@ -4402,7 +4402,7 @@ _ot-kernel-pkgflags_apply_ff_kconfig() {
 
 	ot-kernel_y_configopt "CONFIG_EXPERT"
 	ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
-	_ot-kernel_set_seccomp_bpf
+	_ot-kernel_set_seccomp_bpf "${pkg}"
 	ot-kernel_y_configopt "CONFIG_EPOLL"
 	ot-kernel_y_configopt "CONFIG_EVENTFD"
 	ot-kernel_y_configopt "CONFIG_FHANDLE"
@@ -4424,7 +4424,7 @@ ot-kernel-pkgflags_ff() { # DONE
 	local pkg
 	for pkg in ${FF_PKGS[@]} ; do
 		if ot-kernel_has_version_pkgflags_slow "${pkg}" ; then
-			_ot-kernel-pkgflags_apply_ff_kconfig
+			_ot-kernel-pkgflags_apply_ff_kconfig "${pkg}"
 		fi
 	done
 }
@@ -5290,7 +5290,7 @@ ewarn
 ot-kernel-pkgflags_llvm() { # DONE
 	local pkg="sys-devel/llvm"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
-		_ot-kernel_set_bpf # Uses syscall with number
+		_ot-kernel_set_bpf "${pkg}" # Uses syscall with number
 		if ot-kernel_has_version "${pkg}[bolt]" ; then
 			_ot-kernel_y_thp # for bolt --hugify
 		fi
@@ -7878,7 +7878,7 @@ ot-kernel-pkgflags_opensnitch() { # DONE
 ot-kernel-pkgflags_opensnitch_ebpf_module() { # DONE
 	local pkg="app-admin/opensnitch-ebpf-module"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
-		_ot-kernel_set_bpf # Uses syscall with number
+		_ot-kernel_set_bpf "${pkg}" # Uses syscall with number
 		ot-kernel_y_configopt "CONFIG_CGROUP_BPF"
 		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
 		ban_disable_debug "${pkg}"
@@ -8591,7 +8591,8 @@ ot-kernel-pkgflags_php() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the pipewire package
 ot-kernel-pkgflags_pipewire() { # DONE
-	if ot-kernel_has_version_pkgflags "media-video/pipewire" ; then
+	local pkg="media-video/pipewire"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		_ot-kernel_set_so_attach_filter "${pkg}" # SO_ATTACH_FILTER, BPF_STMT, cBPF
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		_ot-kernel_set_shmem
@@ -8617,8 +8618,9 @@ ot-kernel-pkgflags_plocate() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ply package
 ot-kernel-pkgflags_ply() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-util/ply" ; then
-		_ot-kernel_set_bpf
+	local pkg="dev-util/ply"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		_ot-kernel_set_bpf "${pkg}"
 		ot-kernel_y_configopt "CONFIG_NET_CLS_BPF"
 		ot-kernel_y_configopt "CONFIG_NET_ACT_BPF"
 		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
@@ -9816,7 +9818,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 			__ot-kernel_set_acl_one_package
 		fi
 		if ot-kernel_has_version "${pkg}[seccomp]" ; then
-			_ot-kernel_set_seccomp_bpf
+			_ot-kernel_set_seccomp_bpf "${pkg}"
 		fi
 
 		if [[ "${SYSTEMD_FEATURE_FD_COMPARE:-kcmp}" == "kcmp" ]] ; then
@@ -9849,7 +9851,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 		fi
 
 		if [[ "${SYSTEMD_FEATURE_BPF:-0}" == "1" ]] ; then
-			_ot-kernel_set_bpf
+			_ot-kernel_set_bpf "${pkg}"
 			if ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
 				ot-kernel_y_configopt "CONFIG_CGROUP_BPF"
 			fi
@@ -9876,7 +9878,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 		fi
 
 		if [[ "${SYSTEMD_FEATURE_RESTRICT_FS:-0}" == "1" ]] ; then
-			_ot-kernel_set_bpf
+			_ot-kernel_set_bpf "${pkg}"
 			ot-kernel_y_configopt "CONFIG_BPF_LSM"
 			ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"
 
@@ -10835,7 +10837,7 @@ ot-kernel-pkgflags_wine() { # DONE
 		if ot-kernel_has_version "app-emulation/wine-staging" ; then
 	# Fix for a game
 	# See https://github.com/wine-staging/wine-staging/blob/v9.16/patches/ntdll-Syscall_Emulation/definition
-			_ot-kernel_set_seccomp_bpf
+			_ot-kernel_set_seccomp_bpf "${pkg}"
 		fi
 		if ot-kernel_has_version ">=app-emulation/wine-proton-6" ; then
 			ot-kernel_y_configopt "CONFIG_EXPERT"
