@@ -138,7 +138,7 @@ IUSE+="
 	bpf
 	custom-kernel
 	firmware
-	ebuild-revision-5
+	ebuild-revision-6
 "
 # The !custom-kernel is required for RDEPEND to work properly to download the
 # proper kernel version kernel and the proper firmware.
