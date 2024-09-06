@@ -13886,7 +13886,7 @@ einfo "#! shebang support:  OFF"
 
 # @FUNCTION: _ot-kernel_set_seccomp_bpf
 # @DESCRIPTION:
-# Enable Seccomp BPF.  It is kind of a misnomer.  It doesn't require BPF.
+# Enable Seccomp BPF
 _ot-kernel_set_seccomp_bpf() { # DONE
 	# The userland program will have SECCOMP_MODE_FILTER symbol..
 	ot-kernel_y_configopt "CONFIG_NET" # Enables BPF implicitly
