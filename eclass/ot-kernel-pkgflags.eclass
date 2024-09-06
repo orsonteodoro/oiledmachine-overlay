@@ -3945,8 +3945,8 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 
 		if ot-kernel_has_version_slow "${pkg}[seccomp]" ; then
-			ot-kernel_y_configopt "CONFIG_SECCOMP" # Referenced in file path but not in code ; requested by ebuild
-			ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
+	# Referenced in file path but not in code ; requested by ebuild
+			_ot-kernel_set_seccomp_bpf
 		fi
 
 		_ot-kernel_set_shmem
@@ -4397,7 +4397,6 @@ _ot-kernel-pkgflags_apply_ff_kconfig() {
 	ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 	ot-kernel_y_configopt "CONFIG_FANOTIFY"
 
-	ot-kernel_y_configopt "CONFIG_SECCOMP"
 	ot-kernel_y_configopt "CONFIG_SYSVIPC"
 
 	ot-kernel_y_configopt "CONFIG_EXPERT"
@@ -6787,7 +6786,8 @@ ot-kernel-pkgflags_minidlna() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the minijail package
 ot-kernel-pkgflags_minijail() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-apps/minijail" ; then
+	local pkg="sys-apps/minijail"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 
 		_ot-kernel_set_ipc_ns
 		_ot-kernel_set_net_ns
@@ -6795,8 +6795,7 @@ ot-kernel-pkgflags_minijail() { # DONE
 		_ot-kernel_set_user_ns
 		_ot-kernel_set_uts_ns
 
-		ot-kernel_y_configopt "CONFIG_SECCOMP"
-		ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
+		_ot-kernel_set_seccomp_bpf "${pkg}"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
 	fi
 }
@@ -6871,8 +6870,10 @@ ot-kernel-pkgflags_mplayer() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the mpm_itk package
 ot-kernel-pkgflags_mpm_itk() { # DONE
-	if ot-kernel_has_version_pkgflags "www-apache/mpm_itk" ; then
-		ot-kernel_y_configopt "CONFIG_SECCOMP"
+	local pkg="www-apache/mpm_itk"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+	# The distro is missing seccomp-bpf flags.
+		_ot-kernel_set_seccomp_bpf "${pkg}"
 	fi
 }
 
@@ -9022,8 +9023,9 @@ ot-kernel-pkgflags_rocksdb() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for rr
 ot-kernel-pkgflags_rr() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-util/rr" ; then
-		ot-kernel_y_configopt "CONFIG_SECCOMP"
+	local pkg="dev-util/rr"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		_ot-kernel_set_seccomp_bpf "${pkg}"
 	fi
 }
 
@@ -9355,8 +9357,7 @@ ot-kernel-pkgflags_snapd() { # DONE
 		ot-kernel_y_configopt "CONFIG_SQUASHFS_LZO"
 		ot-kernel_y_configopt "CONFIG_SQUASHFS_XZ"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
-		ot-kernel_y_configopt "CONFIG_SECCOMP"
-		ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
+		_ot-kernel_set_seccomp_bpf "${pkg}"
 		if ot-kernel_has_version "${pkg}[apparmord]" ; then
 			ot-kernel_y_configopt "CONFIG_SECURITY_APPARMOR"
 		fi
@@ -11615,12 +11616,12 @@ ot-kernel-pkgflags_zfs_kmod() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the zoom package
 ot-kernel-pkgflags_zoom() { # DONE
-	if ot-kernel_has_version_pkgflags "net-im/zoom" ; then
+	local pkg="net-im/zoom"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		_ot-kernel_set_net_ns
 		_ot-kernel_set_pid_ns
 		_ot-kernel_set_user_ns
-		ot-kernel_unset_configopt "CONFIG_NET"
-		ot-kernel_unset_configopt "CONFIG_SECCOMP_FILTER"
+		_ot-kernel_set_seccomp_bpf "${pkg}"
 	fi
 }
 
