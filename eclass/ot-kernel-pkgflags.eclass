@@ -6872,7 +6872,7 @@ ot-kernel-pkgflags_mplayer() { # DONE
 ot-kernel-pkgflags_mpm_itk() { # DONE
 	local pkg="www-apache/mpm_itk"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
-	# The distro is missing seccomp-bpf flags.
+	# The distro ebuild is missing seccomp-bpf flags.
 		_ot-kernel_set_seccomp_bpf "${pkg}"
 	fi
 }
@@ -9025,6 +9025,7 @@ ot-kernel-pkgflags_rocksdb() { # DONE
 ot-kernel-pkgflags_rr() { # DONE
 	local pkg="dev-util/rr"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+	# The distro ebuild is missing seccomp-bpf flags.
 		_ot-kernel_set_seccomp_bpf "${pkg}"
 	fi
 }
