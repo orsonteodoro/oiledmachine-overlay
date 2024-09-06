@@ -9,6 +9,8 @@ EAPI="8"
 
 # 115.12.0 -> 128.1.0
 
+# 128.1.0 -> 128.2.0
+
 LLVM_COMPAT=( 18 17 ) # Limited by virtual/rust
 
 MY_MAJOR=$(ver_cut 1)
@@ -16,7 +18,7 @@ MY_PN="mozjs"
 MY_PV="${PV/_pre*}" # Handle Gentoo pre-releases
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_LAST_UPDATE=1722888300 # From `date +%s -d "2024-08-05 13:05"` from ftp date matching version in report
+MITIGATION_LAST_UPDATE=1725303480 # From `date +%s -d "2024-09-02 11:58"` from ftp date matching version in report
 MOZ_ESR="yes"
 MOZ_PN="firefox"
 MOZ_PV="${PV}"
@@ -41,7 +43,7 @@ if [[ "${PV}" == *"_rc"* ]] ; then
 fi
 
 # Patch version
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-03.tar.xz"
 #SPIDERMONKEY_PATCHSET="spidermonkey-${PV%%.*}-patches-01.tar.xz"
 SPIDERMONKEY_PATCHSET="spidermonkey-115-patches-01.tar.xz"
 PATCH_URIS=(
