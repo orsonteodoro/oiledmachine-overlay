@@ -1953,13 +1953,25 @@ eerror
 	fi
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.13" ; then
 	# See https://lwn.net/Articles/946389/
-		if linux_chkconfig_present "BPF" && [[ "${BPF_SPECTRE_V2_FAUSTIAN_BARGAIN:-interpreter}" == "jit" ]] ; then
+	# The current decision is based on the rate of exfiltration (data per second) and attacker control.
+	# Compromised ASLR would exfiltrate more data than a Spectre 2 attack.
+		if false && linux_chkconfig_present "BPF" ; then
+	# Dead code but left as a historical note based on link above.
 			CONFIG_CHECK="
-				BPF_JIT
-				BPF_JIT_ALWAYS_ON
+				!BPF_JIT
+				!BPF_JIT_ALWAYS_ON
 			"
 			ERROR_BPF_JIT="CONFIG_BPF_JIT=y is required for Spectre (Variant 2) mitigation."
 			ERROR_BPF_JIT_ALWAYS_ON="CONFIG_BPF_JIT_ALWAYS_ON=y is required for Spectre (Variant 2) mitigation."
+			check_extra_config
+		elif linux_chkconfig_present "BPF" ; then
+			CONFIG_CHECK="
+				!BPF_JIT
+				!BPF_JIT_ALWAYS_ON
+			"
+	# For example, a user forgets to disable BPF JIT after use.
+			ERROR_BPF_JIT="CONFIG_BPF_JIT unset is required for JIT spray (circumvented ASLR) mitigation."
+			ERROR_BPF_JIT_ALWAYS_ON="CONFIG_BPF_JIT_ALWAYS_ON is required for JIT spray (circumvented ASLR) mitigation."
 			check_extra_config
 		fi
 	fi

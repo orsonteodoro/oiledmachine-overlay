@@ -9,22 +9,6 @@
 
   oiledmachine-overlay notes:
 
-  Environment variables:
-
-  BPF_SPECTRE_V2_FAUSTIAN_BARGAIN - This concerns a Faustian bargan whether or
-  not to enable BPF JIT when BPF is enabled.  Enabling JIT will mitigate against
-  Spectre (Variant 2) but decreases security with JIT spray attack, which
-  circumvents ASLR.  Disabling JIT will prevent the circumvention of ASLR.
-  Faust allows you to use BPF but the price of this bargain is that you must
-  choose a negative.
-
-  This bargain can be avoided by disabling BPF in the kernel.
-
-  Valid values
-
-    interpreter - Use the interpreter for BPF (the kernel default and ebuild default).
-    jit         - Use JIT for BPF.
-
   -->
   <use>
     <flag name="auto">
