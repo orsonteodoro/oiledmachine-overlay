@@ -138,7 +138,7 @@ IUSE+="
 	bpf
 	custom-kernel
 	firmware
-	ebuild-revision-6
+	ebuild-revision-7
 "
 # The !custom-kernel is required for RDEPEND to work properly to download the
 # proper kernel version kernel and the proper firmware.
@@ -1971,7 +1971,7 @@ eerror
 			"
 	# For example, a user forgets to disable BPF JIT after use.
 			ERROR_BPF_JIT="CONFIG_BPF_JIT unset is required for JIT spray (circumvented ASLR) mitigation."
-			ERROR_BPF_JIT_ALWAYS_ON="CONFIG_BPF_JIT_ALWAYS_ON is required for JIT spray (circumvented ASLR) mitigation."
+			ERROR_BPF_JIT_ALWAYS_ON="CONFIG_BPF_JIT_ALWAYS_ON unset is required for JIT spray (circumvented ASLR) mitigation."
 			check_extra_config
 		fi
 	fi
