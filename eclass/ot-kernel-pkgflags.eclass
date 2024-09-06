@@ -3946,7 +3946,7 @@ ot-kernel-pkgflags_docker() { # DONE
 
 		if ot-kernel_has_version_slow "${pkg}[seccomp]" ; then
 	# Referenced in file path but not in code ; requested by ebuild
-			_ot-kernel_set_seccomp_bpf
+			_ot-kernel_set_seccomp_bpf "${pkg}"
 		fi
 
 		_ot-kernel_set_shmem
