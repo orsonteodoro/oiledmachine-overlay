@@ -3037,7 +3037,12 @@ ewarn
 		if use headless ; then
 			myconf_gn+=" enable_print_preview=false"
 		else
-			myconf_gn+=" enable_print_preview=true"
+			local print_preview="${PRINT_PREVIEW:-1}"
+			if [[ "${print_preview}" == "1" ]] ; then
+				myconf_gn+=" enable_print_preview=true"
+			else
+				myconf_gn+=" enable_print_preview=false"
+			fi
 		fi
 		myconf_gn+=" enable_printing=true"
 	else
