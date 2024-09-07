@@ -366,8 +366,11 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       violations.  If running an ad-blocker, it may self-snitch.
     </flag>
     <flag name="screencast">
-      Enable support for remote desktop and screen cast using
+      Enable support for remote desktop and screencast using
       <pkg>media-video/pipewire</pkg>
+    </flag>
+    <flag name="screen-capture">
+      Enable screen capture support.
     </flag>
     <flag name="suid">
       Build the SUID sandbox, which is only needed on CONFIG_USER_NS=n kernels

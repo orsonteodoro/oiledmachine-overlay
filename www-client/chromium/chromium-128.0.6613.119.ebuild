@@ -495,9 +495,9 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 +official pax-kernel +pdf pic +pgo +plugins +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio +reporting-api qt5 qt6
-+screencast selinux -system-dav1d +system-ffmpeg -system-flac -system-fontconfig
--system-freetype -system-harfbuzz -system-icu -system-libaom -system-libdrm
--system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
++screencast +screen-capture selinux -system-dav1d +system-ffmpeg -system-flac
+-system-fontconfig -system-freetype -system-harfbuzz -system-icu -system-libaom
+-system-libdrm -system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
 -system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
 -system-zlib +system-zstd systemd +thinlto-opt +vaapi +wayland +websockets
 -widevine +X
@@ -691,6 +691,7 @@ REQUIRED_USE+="
 		proprietary-codecs
 		reporting-api
 		screencast
+		screen-capture
 		thinlto-opt
 		vaapi
 		vaapi-hevc
@@ -3002,6 +3003,7 @@ ewarn
 	myconf_gn+=" enable_plugins=$(usex plugins true false)"
 	myconf_gn+=" enable_ppapi=false"
 	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
+	myconf_gn+=" enable_screen_capture=$(usex screen-capture true false)"
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
 	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/128.0.6613.119/device/vr#platform-support
 	myconf_gn+=" enable_vr=false"		# https://github.com/chromium/chromium/blob/128.0.6613.119/device/vr/buildflags/buildflags.gni#L32
