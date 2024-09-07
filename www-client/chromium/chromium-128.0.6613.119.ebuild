@@ -489,7 +489,7 @@ ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-accessibility
++accessibility
 bindist bluetooth +bundled-libcxx branch-protection +cfi +cups -debug +encode
 +extensions ffmpeg-chromium -gtk4 -hangouts -headless +js-type-check +kerberos
 +ml mold +official pax-kernel +pdf pic +pgo +pre-check-vaapi +proprietary-codecs
@@ -668,6 +668,7 @@ REQUIRED_USE+="
 		!system-re2
 		!system-zlib
 		!system-zstd
+		accessibility
 		bundled-libcxx
 		dav1d
 		cups
