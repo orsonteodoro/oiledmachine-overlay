@@ -4153,7 +4153,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
 # OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 128.0.6613.119 (20240907)
 # Oflag = -O2
-# Build Completion time:  1 days, 17 hrs, 11 mins, 53 secs - fail, did not pass 24 hrs fix standard for critical vulnerabilities.  Package not built and installed within in 24 hrs.
+# Build Completion time:  1 days, 17 hrs, 11 mins, 53 secs - fail, did not pass 24 hrs fix standard for critical vulnerabilities.  Package not built and installed within 24 hrs.
 # Tests performed (on wayland):
 #   video playback - pass
 #     opus - untested
