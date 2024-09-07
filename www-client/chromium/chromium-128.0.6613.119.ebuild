@@ -2984,6 +2984,14 @@ ewarn
 		myconf_gn+=" gtk_version=$(usex gtk4 4 3)"
 	fi
 
+	if use headless ; then
+		myconf_gn+=" enable_printing=false"
+	elif use pdf || use cups ; then
+		myconf_gn+=" enable_printing=true"
+	else
+		myconf_gn+=" enable_printing=false"
+	fi
+
 	# Allows distributions to link pulseaudio directly (DT_NEEDED) instead of
 	# using dlopen. This helps with automated detection of ABI mismatches and
 	# prevents silent errors.
