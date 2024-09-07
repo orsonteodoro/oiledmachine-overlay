@@ -2990,11 +2990,12 @@ ewarn
 		myconf_gn+=" rtc_use_pipewire=$(usex screencast true false)"
 	fi
 
-	if use headless ; then
-		myconf_gn+=" enable_print_preview=false"
-		myconf_gn+=" enable_printing=false"
-	elif use pdf || use cups ; then
-		myconf_gn+=" enable_print_preview=true"
+	if use pdf || use cups ; then
+		if use headless ; then
+			myconf_gn+=" enable_print_preview=false"
+		else
+			myconf_gn+=" enable_print_preview=true"
+		fi
 		myconf_gn+=" enable_printing=true"
 	else
 		myconf_gn+=" enable_print_preview=false"
