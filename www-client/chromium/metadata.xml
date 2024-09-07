@@ -402,7 +402,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Enable screen capture support.
     </flag>
     <flag name="spell">
-      Enable support for spelling dictionaries.
+      Enable support for spelling dictionaries.  For the dictionary it will
+      use either a vendored local copy of Hunspell or the remote spelling
+      service.
     </flag>
     <flag name="spelling-service">
       Allow to outsource spelling suggestions over the Internet, which may
