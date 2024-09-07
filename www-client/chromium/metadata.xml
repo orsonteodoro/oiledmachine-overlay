@@ -175,6 +175,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Enable JavaScript type-checking for Chrome's web technology-based UI.
       Requires Java.
     </flag>
+    <flag name="ml">
+      Build and enable Artificial Intelligence (AI) or Machine Learning (MI)
+      with tflite and components that use it.
+    </flag>
     <flag name="mold">
       Use the mold linker to decrease linking times.
     </flag>
@@ -191,6 +195,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     </flag>
     <flag name="pax-kernel">
       Allow building on a PaX-enabled kernel
+    </flag>
+    <flag name="pdf">
+      Build and enable the pdf viewer for legal docs, ebooks, tech whitepapers, etc.
     </flag>
     <flag name="pic">
       Disable optimized assembly code that is not PIC friendly

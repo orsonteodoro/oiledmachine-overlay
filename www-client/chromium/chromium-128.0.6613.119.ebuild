@@ -491,15 +491,15 @@ ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 bindist bluetooth +bundled-libcxx branch-protection +cfi +cups -debug +encode
-ffmpeg-chromium -gtk4 -hangouts -headless +js-type-check +kerberos mold +official
-pax-kernel pic +pgo +pre-check-vaapi +proprietary-codecs
+ffmpeg-chromium -gtk4 -hangouts -headless +js-type-check +kerberos +ml mold
++official pax-kernel +pdf pic +pgo +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio qt5 qt6 +screencast selinux
 -system-dav1d +system-ffmpeg -system-flac -system-fontconfig -system-freetype
--system-harfbuzz -system-icu -system-libaom -system-libdrm
--system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
--system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
--system-zlib +system-zstd systemd +thinlto-opt +vaapi +wayland -widevine +X
+-system-harfbuzz -system-icu -system-libaom -system-libdrm -system-libjpeg-turbo
+-system-libpng -system-libwebp -system-libxml -system-libxslt -system-openh264
+-system-opus -system-re2 -system-toolchain -system-zlib +system-zstd systemd
++thinlto-opt +vaapi +wayland -widevine +X
 "
 
 # What is considered a proprietary codec can be found at:
@@ -675,8 +675,10 @@ REQUIRED_USE+="
 		kerberos
 		libaom
 		llvm_slot_19
+		ml
 		openh264
 		opus
+		pdf
 		pgo
 		proprietary-codecs
 		screencast
@@ -2928,9 +2930,11 @@ fi #############################################################################
 
 	)
 	# [C]
-	if use bundled-libcxx \
+	if \
+		   use bundled-libcxx \
 		|| use cfi \
-		|| use official ; then
+		|| use official \
+	; then
 	# Unbundling breaks cfi-icall and cfi-cast.
 	# Unbundling weakens the security because it removes noexecstack,
 	# full RELRO, SSP.
@@ -2959,12 +2963,16 @@ ewarn
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
 
 	if use headless ; then
+		myconf_gn+=" build_with_tflite_lib=false"
+		myconf_gn+=" enable_pdf=false"
 		myconf_gn+=" use_cups=false"
 		myconf_gn+=" use_kerberos=false"
 		myconf_gn+=" use_pulseaudio=false"
 		myconf_gn+=" use_vaapi=false"
 		myconf_gn+=" rtc_use_pipewire=false"
 	else
+		myconf_gn+=" build_with_tflite_lib=$(usex ml true false)"
+		myconf_gn+=" enable_pdf=$(usex pdf true false)"
 		myconf_gn+=" use_cups=$(usex cups true false)"
 		myconf_gn+=" use_kerberos=$(usex kerberos true false)"
 		myconf_gn+=" use_pulseaudio=$(usex pulseaudio true false)"
@@ -3184,7 +3192,7 @@ ewarn
 	# Disable external code space for V8 for ppc64. It is disabled for ppc64
 	# by default, but cross-compiling on amd64 enables it again.
 	if tc-is-cross-compiler ; then
-		if ! use amd64 && ! use arm64; then
+		if ! use amd64 && ! use arm64 ; then
 			myconf_gn+=" v8_enable_external_code_space=false"
 		fi
 	fi
@@ -3228,7 +3236,7 @@ einfo "Configuring bundled ffmpeg..."
 	fi
 
 	# Explicitly disable ICU data file support for system-icu/headless builds.
-	if use system-icu || use headless; then
+	if use system-icu || use headless ; then
 		myconf_gn+=" icu_use_data_file=false"
 	fi
 
