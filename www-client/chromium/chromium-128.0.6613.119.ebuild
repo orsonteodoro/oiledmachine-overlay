@@ -2985,10 +2985,13 @@ ewarn
 	fi
 
 	if use headless ; then
+		myconf_gn+=" enable_print_preview=false"
 		myconf_gn+=" enable_printing=false"
 	elif use pdf || use cups ; then
+		myconf_gn+=" enable_print_preview=true"
 		myconf_gn+=" enable_printing=true"
 	else
+		myconf_gn+=" enable_print_preview=false"
 		myconf_gn+=" enable_printing=false"
 	fi
 
