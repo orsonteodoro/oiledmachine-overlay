@@ -4175,7 +4175,7 @@ ewarn
 #     ptrace protection - no
 # Custom patches/edits:
 # v8 Custom Oflag level - pass
-# Qt6 without Qt5 passed - pass
+# Qt6 without Qt5 - pass
 # Mold linking - pass (mold 2.33.0)
 # Ccache with vendored clang - pass
 # USE="X bundled-libcxx custom-cflags dav1d mold openh264 opus pgo
