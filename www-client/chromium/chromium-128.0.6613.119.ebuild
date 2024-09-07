@@ -1651,6 +1651,26 @@ einfo "Security fixes applied:  ${MITIGATION_URI}"
 
 	if use kernel_linux ; then
 		chromium_suid_sandbox_check_kernel_config
+		CONFIG_CHECK="
+			~SECURITY
+			~SECURITY_YAMA
+		"
+		WARNING_SECURITY="CONFIG_SECURITY could be added for ptrace sandbox protection"
+		WARNING_SECURITY_YAMA="CONFIG_SECURITY_YAMA could be added for ptrace sandbox protection"
+		check_extra_config
+
+		if ! linux_config_exists ; then
+ewarn "Missing kernel .config file."
+		fi
+
+		if linux_chkconfig_present "SECURITY_YAMA" ; then
+			local lsm=$(linux_chkconfig_string LSM)
+			if [[ "${lsm}" =~ "yama" ]] ; then
+				:
+			else
+ewarn "Missing yama in CONFIG_LSM.  Add yama to CONFIG_LSM for ptrace sandbox protection."
+			fi
+		fi
 	fi
 
 	if ! use amd64 && [[ "${USE}" =~ "cfi" ]] ; then
