@@ -176,7 +176,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Requires Java.
     </flag>
     <flag name="ml">
-      Build and enable Artificial Intelligence (AI) or Machine Learning (MI)
+      Build and enable Artificial Intelligence (AI) or Machine Learning (ML)
       with tflite and components that use it.
     </flag>
     <flag name="mold">
