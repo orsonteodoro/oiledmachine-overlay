@@ -457,7 +457,9 @@ SLOT="0/stable"
 #   https://github.com/chromium/chromium/blob/128.0.6613.119/sandbox/linux/BUILD.gn
 #
 CPU_FLAGS_ARM=(
+	bti
 	neon
+	pac
 )
 CPU_FLAGS_X86=(
 	avx2
@@ -489,18 +491,18 @@ ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-+accessibility bindist bluetooth +bundled-libcxx branch-protection +cfi
-+cups +css-hyphen -debug +encode +extensions ffmpeg-chromium -gtk4 -hangouts
--headless +hidpi +js-type-check +kerberos +mdns +message-center +ml mold
-+official pax-kernel +pdf pic +pgo +plugins +pre-check-vaapi +proprietary-codecs
++accessibility bindist bluetooth +bundled-libcxx +cfi +cups
++css-hyphen -debug +encode +extensions ffmpeg-chromium -gtk4 -hangouts -headless
++hidpi +js-type-check +kerberos +mdns +message-center +ml mold +official
+pax-kernel +pdf pic +pgo +plugins +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio +reporting-api qt5 qt6
-+screencast +screen-capture selinux -system-dav1d +system-ffmpeg -system-flac
--system-fontconfig -system-freetype -system-harfbuzz -system-icu -system-libaom
--system-libdrm -system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
--system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
--system-zlib +system-zstd systemd +thinlto-opt +vaapi +wayland +websockets
--widevine +X
++screencast +screen-capture selinux +spell +spelling-service -system-dav1d
++system-ffmpeg -system-flac -system-fontconfig -system-freetype -system-harfbuzz
+-system-icu -system-libaom -system-libdrm -system-libjpeg-turbo -system-libpng
+-system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
+-system-re2 -system-toolchain -system-zlib +system-zstd systemd +thinlto-opt
++vaapi +wayland +websockets -widevine +X
 "
 
 # What is considered a proprietary codec can be found at:
@@ -616,9 +618,6 @@ REQUIRED_USE+="
 	^^ (
 		${IUSE_LIBCXX[@]}
 	)
-	branch-protection? (
-		arm64
-	)
 	cfi? (
 		!mold
 		!system-dav1d
@@ -692,6 +691,8 @@ REQUIRED_USE+="
 		reporting-api
 		screencast
 		screen-capture
+		spell
+		spelling-service
 		thinlto-opt
 		vaapi
 		vaapi-hevc
@@ -708,7 +709,8 @@ REQUIRED_USE+="
 			cfi
 		)
 		arm64? (
-			branch-protection
+			cpu_flags_arm_bti
+			cpu_flags_arm_pac
 		)
 	)
 	plugins? (
@@ -3004,10 +3006,13 @@ ewarn
 	myconf_gn+=" enable_ppapi=false"
 	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
 	myconf_gn+=" enable_screen_capture=$(usex screen-capture true false)"
+	myconf_gn+=" enable_spellcheck=$(usex spell true false)"
+	myconf_gn+=" enable_spelling_service=$(usex spelling-service true false)"
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
 	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/128.0.6613.119/device/vr#platform-support
 	myconf_gn+=" enable_vr=false"		# https://github.com/chromium/chromium/blob/128.0.6613.119/device/vr/buildflags/buildflags.gni#L32
 	myconf_gn+=" enable_websockets=$(usex websockets true false)"
+	myconf_gn+=" enable_spelling_service=$(usex )"
 	myconf_gn+=" use_minikin_hyphenation=$(usex css-hyphen true false)"
 
 	if use headless ; then
@@ -3614,22 +3619,17 @@ eerror
 		if use official ; then
 			myconf_gn+=" arm_control_flow_integrity=standard"
 		else
-			if is-flagq "-mbranch-protection=standard" ; then
+			if use cpu_flags_arm_pac && use cpu_flags_arm_bti ; then
+	# ROP + JOP mitigation
 				myconf_gn+=" arm_control_flow_integrity=standard"
-			elif is-flagq "-mbranch-protection=pac-ret" ; then
+			elif use cpu_flags_arm_pac ; then
+	# ROP mitigation
 				myconf_gn+=" arm_control_flow_integrity=pac"
-			elif is-flagq "-mbranch-protection=*" ; then
-				# Allow for a different option
-				:
-			elif use branch-protection ; then
-				myconf_gn+=" arm_control_flow_integrity=standard"
-			else
-				myconf_gn+=" arm_control_flow_integrity=none"
 			fi
 		fi
 	# Dedupe flags
 		filter-flags '-mbranch-protection=*'
-		if use branch-protection || use official ; then
+		if use cpu_flags_arm_bti || use official ; then
 			filter-flags '-Wl,-z,force-bti'
 		fi
 	fi

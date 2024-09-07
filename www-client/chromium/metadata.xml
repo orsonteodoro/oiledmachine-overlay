@@ -219,6 +219,12 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Split build into more shared libraries to speed up linking. Mostly
       intended for debugging and development, NOT RECOMMENDED for general use.
     </flag>
+    <flag name="cpu_flags_arm_pac">
+      Mitigate against ROP attacks
+    </flag>
+    <flag name="cpu_flags_arm_bti">
+      Mitigate against JOP attacks
+    </flag>
     <flag name="css-hyphen">
       Add support for auto hyphenization of words "hyphens: auto" for CSS
       styled elements.
@@ -390,6 +396,12 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     </flag>
     <flag name="screen-capture">
       Enable screen capture support.
+    </flag>
+    <flag name="spell">
+      Enable support for spelling dictionaries.
+    </flag>
+    <flag name="spell-service">
+      Allow to send spelling suggestions over the net service.
     </flag>
     <flag name="suid">
       Build the SUID sandbox, which is only needed on CONFIG_USER_NS=n kernels
