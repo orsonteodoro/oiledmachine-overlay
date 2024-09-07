@@ -492,7 +492,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 +accessibility
 bindist bluetooth +bundled-libcxx branch-protection +cfi +cups -debug +encode
 +extensions ffmpeg-chromium -gtk4 -hangouts -headless +js-type-check +kerberos
-+ml mold +official pax-kernel +pdf pic +pgo +pre-check-vaapi +proprietary-codecs
++ml mold +official pax-kernel +pdf pic +pgo +plugins +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio qt5 qt6 +screencast selinux
 -system-dav1d +system-ffmpeg -system-flac -system-fontconfig -system-freetype
@@ -682,6 +682,7 @@ REQUIRED_USE+="
 		opus
 		pdf
 		pgo
+		plugins
 		proprietary-codecs
 		screencast
 		thinlto-opt
@@ -701,6 +702,9 @@ REQUIRED_USE+="
 		arm64? (
 			branch-protection
 		)
+	)
+	plugins? (
+		pdf
 	)
 	pre-check-vaapi? (
 		vaapi
@@ -2965,6 +2969,8 @@ ewarn
 
 	# Optional dependencies.
 	myconf_gn+=" enable_hangout_services_extension=$(usex hangouts true false)"
+	myconf_gn+=" enable_plugins=$(usex plugins true false)"
+	myconf_gn+=" enable_ppapi=false"
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
 
 	if use headless ; then
