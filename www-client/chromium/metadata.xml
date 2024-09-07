@@ -404,8 +404,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="spell">
       Enable support for spelling dictionaries.
     </flag>
-    <flag name="spell-service">
-      Allow to send spelling suggestions over the net service.
+    <flag name="spelling-service">
+      Allow to outsource spelling suggestions over the Internet, which may
+      include sensitive information.
     </flag>
     <flag name="suid">
       Build the SUID sandbox, which is only needed on CONFIG_USER_NS=n kernels
