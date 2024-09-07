@@ -66,9 +66,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     USE flag quality status:
 
       cfi - production ready
-      mold - testing
+      mold - production ready
       official - production ready previously but undergoing retesting
       pgo - production ready
+      qt6 - production ready
       shadowcallstack - needs testing... not tested due to lack of hardware
         (report back if it works)
       thinlto-opt - works if enough total memory
