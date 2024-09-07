@@ -138,8 +138,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
     New environment flag examples:
      
-    OSHIT_OPT_LEVEL_DAV1D=2 - Build vendored dav1d with -O2.  Only -O2 and -O3 allowed.
-    OSHIT_OPT_LEVEL_LIBVPX=2 - Build vendored libvpx with -O2.  Only -O2 and -O3 allowed.
+    OSHIT_OPT_LEVEL_DAV1D=fast - Build vendored dav1d with -Ofast.  Only -O2, -O3, -Ofast allowed.
+    OSHIT_OPT_LEVEL_LIBVPX=fast - Build vendored libvpx with -Ofast.  Only -O2, -O3, -Ofast allowed.
     OSHIT_OPT_LEVEL_TFLITE=3 - Build vendored tflite at -O3.  It accepts -O1, -O2, -O3.
     OSHIT_OPT_LEVEL_V8=2 - Build v8 with -O2.  Only -O2 and -O3 allowed.
 
@@ -153,7 +153,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     variables.
 
     Investigate -pgo USE flag should be a greater than 4 cpu core requirement.
-    The next build will measure the build time of -pgo disabled.
+    The next build will measure the build time of pgo disabled.
 
   -->
   <upstream>
