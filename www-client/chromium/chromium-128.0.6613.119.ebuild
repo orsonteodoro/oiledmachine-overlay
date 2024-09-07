@@ -491,15 +491,15 @@ ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +accessibility bindist bluetooth +bundled-libcxx branch-protection +cfi +cups
 -debug +encode +extensions ffmpeg-chromium -gtk4 -hangouts -headless
-+js-type-check +kerberos +mdns +ml mold +official pax-kernel +pdf pic +pgo
-+plugins +pre-check-vaapi +proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+pulseaudio +reporting-api qt5 qt6 +screencast selinux -system-dav1d
-+system-ffmpeg -system-flac -system-fontconfig -system-freetype -system-harfbuzz
--system-icu -system-libaom -system-libdrm -system-libjpeg-turbo -system-libpng
--system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
--system-re2 -system-toolchain -system-zlib +system-zstd systemd +thinlto-opt
-+vaapi +wayland -widevine +X
++js-type-check +kerberos +mdns +message-center +ml mold +official pax-kernel
++pdf pic +pgo +plugins +pre-check-vaapi +proprietary-codecs
+proprietary-codecs-disable proprietary-codecs-disable-nc-developer
+proprietary-codecs-disable-nc-user +pulseaudio +reporting-api qt5 qt6
++screencast selinux -system-dav1d +system-ffmpeg -system-flac -system-fontconfig
+-system-freetype -system-harfbuzz -system-icu -system-libaom -system-libdrm
+-system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
+-system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
+-system-zlib +system-zstd systemd +thinlto-opt +vaapi +wayland -widevine +X
 "
 
 # What is considered a proprietary codec can be found at:
@@ -677,6 +677,7 @@ REQUIRED_USE+="
 		kerberos
 		libaom
 		llvm_slot_19
+		message-center
 		mdns
 		ml
 		openh264
@@ -2992,6 +2993,7 @@ ewarn
 	# Optional dependencies.
 	myconf_gn+=" enable_hangout_services_extension=$(usex hangouts true false)"
 	myconf_gn+=" enable_mdns=$(usex mdns true false)"
+	myconf_gn+=" enable_message_center=$(usex message-center true false)"
 	myconf_gn+=" enable_plugins=$(usex plugins true false)"
 	myconf_gn+=" enable_ppapi=false"
 	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
