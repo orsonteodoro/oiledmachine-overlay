@@ -499,7 +499,8 @@ proprietary-codecs-disable-nc-user +pulseaudio +reporting-api qt5 qt6
 -system-freetype -system-harfbuzz -system-icu -system-libaom -system-libdrm
 -system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
 -system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
--system-zlib +system-zstd systemd +thinlto-opt +vaapi +wayland -widevine +X
+-system-zlib +system-zstd systemd +thinlto-opt +vaapi +wayland +websockets
+-widevine +X
 "
 
 # What is considered a proprietary codec can be found at:
@@ -695,6 +696,7 @@ REQUIRED_USE+="
 		vorbis
 		vpx
 		wayland
+		websockets
 		X
 		!amd64? (
 			!cfi
@@ -3002,6 +3004,7 @@ ewarn
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
 	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/128.0.6613.119/device/vr#platform-support
 	myconf_gn+=" enable_vr=false"		# https://github.com/chromium/chromium/blob/128.0.6613.119/device/vr/buildflags/buildflags.gni#L32
+	myconf_gn+=" enable_websockets=$(usex websockets true false)"
 
 	if use headless ; then
 		myconf_gn+=" build_with_tflite_lib=false"
