@@ -489,6 +489,7 @@ ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
+accessibility
 bindist bluetooth +bundled-libcxx branch-protection +cfi +cups -debug +encode
 +extensions ffmpeg-chromium -gtk4 -hangouts -headless +js-type-check +kerberos
 +ml mold +official pax-kernel +pdf pic +pgo +pre-check-vaapi +proprietary-codecs
@@ -2967,6 +2968,7 @@ ewarn
 		myconf_gn+=" build_with_tflite_lib=false"
 		myconf_gn+=" enable_extensions=false"
 		myconf_gn+=" enable_pdf=false"
+		myconf_gn+=" use_atk=false"
 		myconf_gn+=" use_cups=false"
 		myconf_gn+=" use_kerberos=false"
 		myconf_gn+=" use_pulseaudio=false"
@@ -2976,12 +2978,13 @@ ewarn
 		myconf_gn+=" build_with_tflite_lib=$(usex ml true false)"
 		myconf_gn+=" enable_extensions=$(usex extensions true false)"
 		myconf_gn+=" enable_pdf=$(usex pdf true false)"
+		myconf_gn+=" gtk_version=$(usex gtk4 4 3)"
+		myconf_gn+=" use_atk=$(usex accessibility true false)"
 		myconf_gn+=" use_cups=$(usex cups true false)"
 		myconf_gn+=" use_kerberos=$(usex kerberos true false)"
 		myconf_gn+=" use_pulseaudio=$(usex pulseaudio true false)"
 		myconf_gn+=" use_vaapi=$(usex vaapi true false)"
 		myconf_gn+=" rtc_use_pipewire=$(usex screencast true false)"
-		myconf_gn+=" gtk_version=$(usex gtk4 4 3)"
 	fi
 
 	if use headless ; then
