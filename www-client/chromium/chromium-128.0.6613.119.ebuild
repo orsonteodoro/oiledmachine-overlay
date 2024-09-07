@@ -489,10 +489,10 @@ ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-+accessibility bindist bluetooth +bundled-libcxx branch-protection +cfi +cups
--debug +encode +extensions ffmpeg-chromium -gtk4 -hangouts -headless +hidpi
-+js-type-check +kerberos +mdns +message-center +ml mold +official pax-kernel
-+pdf pic +pgo +plugins +pre-check-vaapi +proprietary-codecs
++accessibility bindist bluetooth +bundled-libcxx branch-protection +cfi
++css-hyphen +cups -debug +encode +extensions ffmpeg-chromium -gtk4 -hangouts
+-headless +hidpi +js-type-check +kerberos +mdns +message-center +ml mold
++official pax-kernel +pdf pic +pgo +plugins +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio +reporting-api qt5 qt6
 +screencast selinux -system-dav1d +system-ffmpeg -system-flac -system-fontconfig
@@ -671,8 +671,9 @@ REQUIRED_USE+="
 		!system-zstd
 		accessibility
 		bundled-libcxx
-		dav1d
+		css-hyphen
 		cups
+		dav1d
 		encode
 		extensions
 		hidpi
@@ -3005,6 +3006,7 @@ ewarn
 	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/128.0.6613.119/device/vr#platform-support
 	myconf_gn+=" enable_vr=false"		# https://github.com/chromium/chromium/blob/128.0.6613.119/device/vr/buildflags/buildflags.gni#L32
 	myconf_gn+=" enable_websockets=$(usex websockets true false)"
+	myconf_gn+=" use_minikin_hyphenation=$(usex css-hyphen true false)"
 
 	if use headless ; then
 		myconf_gn+=" build_with_tflite_lib=false"
