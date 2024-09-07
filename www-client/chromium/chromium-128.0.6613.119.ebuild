@@ -4143,16 +4143,64 @@ ewarn
 #
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
+# OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 128.0.6613.119 (20240907)
+# Oflag = -O2
+# Build Completion time:  1 days, 17 hrs, 11 mins, 53 secs - fail, did not pass 24 hrs fix standard for critical vulnerabilities.  Package not build+installed within in 24 hrs.
+# Tests performed (on wayland):
+#   video playback - pass
+#     opus - untested
+#     av1 - pass
+#     vpx - pass
+#     h264 - pass
+#   audio streaming - pass
+#     US radio website(s) - pass
+#     UK websites - untested
+#     aac streams (shoutcast v1 / HTTP 0.9) - untested, expected fail, some links will work with v2
+#     mp3 streams (shoutcast v1 / HTTP 0.9) - untested, expected fail, some links will work with v2
+#   audio on demand - pass
+#     aac - pass
+#     mp3 - pass
+#     vorbis - pass
+#     wav - pass
+#   browsing - pass
+#     vertical scrolling - smooth and fast
+#   WebGL Aquarium - pass, ~60 fps with default settings
+#   CanvasMark 2013 (html5 canvas tests) - pass (Score: 12854)
+#   GPU Shader Experiments (https://www.kevs3d.co.uk/dev/shaders/) - pass, randomly selected
+#   HTML5 test - 523/555
+#   sandbox - passed
+#     pid - passed
+#     network - passed
+#     seccomp-bpf - passed
+#     ptrace protection - no
+# Custom patches/edits:
+# v8 Custom Oflag level - pass
+# Qt6 without Qt5 passed - pass
+# Mold linking - pass (mold 2.33.0)
+# Ccache with vendored clang - pass
+# USE="X bundled-libcxx custom-cflags dav1d mold openh264 opus pgo
+# proprietary-codecs pulseaudio qt6 vaapi vpx wayland -bindist
+# -bluetooth -branch-protection -cfi -cups (-debug) -encode -ffmpeg-chromium
+# -gtk4 -hangouts (-headless) -js-type-check -kerberos -libaom -official
+# -pax-kernel -pic -pre-check-vaapi -proprietary-codecs-disable
+# -proprietary-codecs-disable-nc-developer -proprietary-codecs-disable-nc-user
+# (-qt5) -screencast (-selinux) -system-dav1d -system-ffmpeg -system-flac
+# -system-fontconfig -system-freetype -system-harfbuzz -system-icu
+# -system-libaom -system-libdrm -system-libjpeg-turbo -system-libpng
+# -system-libstdcxx -system-libwebp -system-libxml -system-libxslt
+# -system-openh264 -system-opus -system-re2 (-system-toolchain) -system-zlib
+# -system-zstd -systemd -thinlto-opt -vaapi-hevc -widevine -vorbis"
+# LLVM_SLOT="(-19) -20"
+
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 114.0.5735.90 (20230601)
 # Tests performed (on wayland):
-#   video on demand - pass
+#   video playback - pass
 #     opus - pass
 #     av1 - pass
 #     vpx - pass
 #     h264 - pass
 #   audio streaming - pass
 #     US radio website(s) - pass
-#     MX radio website(s) - pass
 #     UK websites - pass
 #     aac streams (shoutcast v1 / HTTP 0.9) - expected fail, some links will work with v2
 #     mp3 streams (shoutcast v1 / HTTP 0.9) - expected fail, some links will work with v2
@@ -4180,9 +4228,9 @@ ewarn
 # -system-libstdcxx -system-libwebp -system-libxml -system-libxslt
 # -system-openh264 -system-opus -system-re2 -system-zlib -thinlto-opt -vaapi
 # -vaapi-hevc -vorbis -widevine"
-
 # OILEDMACHINE-OVERLAY-TEST:  FAILED (interactive) 115.0.5790.40 (20230601)
 # C{,XX}FLAGS:  -Ofast -pipe ; TODO:  Fix -Ofast crashes
 # LDFLAGS:  -fuse-ld=thin
 # gl-aquarium test - stuck non-moving fishes
 # tab crash when watching music videos
+
