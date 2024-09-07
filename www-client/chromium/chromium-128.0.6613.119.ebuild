@@ -934,12 +934,14 @@ COMMON_DEPEND="
 			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},wayland?,X?]
 			media-libs/mesa:=
 		)
-		>=app-accessibility/at-spi2-core-2.44.1:2[${MULTILIB_USEDEP}]
 		>=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}]
 		x11-libs/cairo:=
 		>=x11-libs/gdk-pixbuf-2.42.2:2[${MULTILIB_USEDEP}]
 		>=x11-libs/pango-1.46.2[${MULTILIB_USEDEP}]
 		x11-libs/pango:=
+		accessibility? (
+			>=app-accessibility/at-spi2-core-2.44.1:2[${MULTILIB_USEDEP}]
+		)
 		cups? (
 			>=net-print/cups-2.3.3[${MULTILIB_USEDEP}]
 			net-print/cups:=
