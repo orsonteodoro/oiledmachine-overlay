@@ -4226,7 +4226,7 @@ ewarn
 # Build Completion time:  1 days, 17 hrs, 11 mins, 53 secs - fail, did not pass 24 hrs fix standard for critical vulnerabilities.  Package not built and installed within 24 hrs.
 # Tests performed (on wayland):
 #   video playback - pass
-#     opus - untested
+#     opus - pass
 #     av1 - pass
 #     vpx - pass
 #     h264 - pass
