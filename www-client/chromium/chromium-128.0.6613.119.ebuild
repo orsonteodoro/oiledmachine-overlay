@@ -57,7 +57,6 @@ EAPI=8
 #   v=$(git describe HEAD --abbrev=12 | cut -f 3 -d "-")
 #   python -c "print(${v}/10000)" or echo "0.${v}"
 
-APPLY_OILEDMACHINE_OVERLAY_PATCHSET=1
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
@@ -1298,6 +1297,7 @@ einfo
 	# This is a nice idea but doesn't help noobs.
 ewarn "Set CHECKREQS_DONOTHING=1 to bypass build requirements not met check"
 	check-reqs_pkg_setup
+	APPLY_OILEDMACHINE_OVERLAY_PATCHSET=${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}
 }
 
 pkg_pretend() {
