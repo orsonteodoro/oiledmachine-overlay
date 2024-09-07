@@ -493,7 +493,7 @@ ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +accessibility bindist bluetooth +bundled-libcxx +cfi +cups
 +css-hyphen -debug +encode +extensions ffmpeg-chromium -gtk4 -hangouts -headless
-+hidpi +js-type-check +kerberos +mdns +message-center +ml mold +official
++hidpi +js-type-check +kerberos +mdns +message-center +ml mold +mpris +official
 pax-kernel +pdf pic +pgo +plugins +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio +reporting-api qt5 qt6
@@ -682,6 +682,7 @@ REQUIRED_USE+="
 		message-center
 		mdns
 		ml
+		mpris
 		openh264
 		opus
 		pdf
@@ -3014,6 +3015,7 @@ ewarn
 	myconf_gn+=" enable_websockets=$(usex websockets true false)"
 	myconf_gn+=" enable_spelling_service=$(usex )"
 	myconf_gn+=" use_minikin_hyphenation=$(usex css-hyphen true false)"
+	myconf_gn+=" use_mpris=$(usex mpris true false)"
 
 	if use headless ; then
 		myconf_gn+=" build_with_tflite_lib=false"

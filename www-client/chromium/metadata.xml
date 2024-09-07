@@ -258,6 +258,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="mold">
       Use the mold linker to decrease linking times.
     </flag>
+    <flag name="mpris">
+      Enable support for MPRIS to control playback and view information about
+      the currently playing song/video.
+    </flag>
     <flag name="official">
       Enable the use of official build settings [similar to the official bin but
       without branding] instead of the developer build settings.  Enables
