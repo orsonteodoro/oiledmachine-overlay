@@ -102,6 +102,40 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       https://github.com/chromium/chromium/blob/master/build/config/sanitizers/BUILD.gn#L204
       [1] https://github.com/chromium/chromium/tree/master/tools/perf/benchmarks
       [2] https://chromium.googlesource.com/catapult/+/HEAD/telemetry/README.md
+
+
+    Proposals for next ebuild change(s):
+
+    The next edits will address the unacceptable build times.
+
+    The introduction of the -Oshit compiler metaflag, which only exists in this
+    ebuild.
+
+    -Oshit will build mostly everything with -O1 for _FORTIFY_SOURCE and faster
+    build speed but will have extra environment variables to customize the
+    optimization level of those that have a perceived performance drop or
+    are possibly performance sensitive.  These will be prefixed with
+    OSHIT_OPT_LEVEL_.
+
+    New environment flag examples:
+     
+    OSHIT_OPT_LEVEL_DAV1D=2 - Build vendored dav1d with -O2.  Only -O2 and -O3 allowed.
+    OSHIT_OPT_LEVEL_LIBVPX=2 - Build vendored libvpx with -O2.  Only -O2 and -O3 allowed.
+    OSHIT_OPT_LEVEL_TFLITE=3 - Build vendored tflite at -O3.  It accepts -O1, -O2, -O3.
+    OSHIT_OPT_LEVEL_V8=2 - Build v8 with -O2.  Only -O2 and -O3 allowed.
+
+    Investigate the disablement of compiler plugins (Xclang) that should only
+    be enabled during development but disabled in production.  There are
+    compiler plugins that are labeled check but possibly only check but not
+    modify or add anything.
+
+    Investigate USE flags additions that could help debloat in order to reduce
+    build time.  These are related to enable_, disable_, build_, use_ gn
+    variables.
+
+    Investigate -pgo USE flag should be a greater than 4 cpu core requirement.  The next
+    build will measure the build time of -pgo disabled.
+    
   -->
   <upstream>
     <bugs-to>https://www.chromium.org/for-testers/bug-reporting-guidelines</bugs-to>
