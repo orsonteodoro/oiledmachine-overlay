@@ -490,8 +490,8 @@ ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 bindist bluetooth +bundled-libcxx branch-protection +cfi +cups -debug +encode
-ffmpeg-chromium -gtk4 -hangouts -headless +js-type-check +kerberos +ml mold
-+official pax-kernel +pdf pic +pgo +pre-check-vaapi +proprietary-codecs
++extensions ffmpeg-chromium -gtk4 -hangouts -headless +js-type-check +kerberos
++ml mold +official pax-kernel +pdf pic +pgo +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio qt5 qt6 +screencast selinux
 -system-dav1d +system-ffmpeg -system-flac -system-fontconfig -system-freetype
@@ -671,6 +671,7 @@ REQUIRED_USE+="
 		dav1d
 		cups
 		encode
+		extensions
 		kerberos
 		libaom
 		llvm_slot_19
@@ -2964,6 +2965,7 @@ ewarn
 
 	if use headless ; then
 		myconf_gn+=" build_with_tflite_lib=false"
+		myconf_gn+=" enable_extensions=false"
 		myconf_gn+=" enable_pdf=false"
 		myconf_gn+=" use_cups=false"
 		myconf_gn+=" use_kerberos=false"
@@ -2972,6 +2974,7 @@ ewarn
 		myconf_gn+=" rtc_use_pipewire=false"
 	else
 		myconf_gn+=" build_with_tflite_lib=$(usex ml true false)"
+		myconf_gn+=" enable_extensions=$(usex extensions true false)"
 		myconf_gn+=" enable_pdf=$(usex pdf true false)"
 		myconf_gn+=" use_cups=$(usex cups true false)"
 		myconf_gn+=" use_kerberos=$(usex kerberos true false)"

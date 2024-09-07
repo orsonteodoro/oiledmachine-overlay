@@ -200,6 +200,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Split build into more shared libraries to speed up linking. Mostly
       intended for debugging and development, NOT RECOMMENDED for general use.
     </flag>
+    <flag name="extensions">
+      Enable support for browser extensions.
+    </flag>
     <flag name="hangouts">
       Enable support for Hangouts and features such as screen sharing
     </flag>
