@@ -2996,6 +2996,8 @@ ewarn
 	myconf_gn+=" enable_ppapi=false"
 	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
+	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/128.0.6613.119/device/vr#platform-support
+	myconf_gn+=" enable_vr=false"		# https://github.com/chromium/chromium/blob/128.0.6613.119/device/vr/buildflags/buildflags.gni#L32
 
 	if use headless ; then
 		myconf_gn+=" build_with_tflite_lib=false"
