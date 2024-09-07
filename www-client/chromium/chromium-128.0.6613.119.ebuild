@@ -490,7 +490,7 @@ ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +accessibility bindist bluetooth +bundled-libcxx branch-protection +cfi +cups
--debug +encode +extensions ffmpeg-chromium -gtk4 -hangouts -headless
+-debug +encode +extensions ffmpeg-chromium -gtk4 -hangouts -headless +hidpi
 +js-type-check +kerberos +mdns +message-center +ml mold +official pax-kernel
 +pdf pic +pgo +plugins +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
@@ -674,6 +674,7 @@ REQUIRED_USE+="
 		cups
 		encode
 		extensions
+		hidpi
 		kerberos
 		libaom
 		llvm_slot_19
@@ -2992,6 +2993,7 @@ ewarn
 
 	# Optional dependencies.
 	myconf_gn+=" enable_hangout_services_extension=$(usex hangouts true false)"
+	myconf_gn+=" enable_hidpi=$(usex hidpi true false)"
 	myconf_gn+=" enable_mdns=$(usex mdns true false)"
 	myconf_gn+=" enable_message_center=$(usex message-center true false)"
 	myconf_gn+=" enable_plugins=$(usex plugins true false)"

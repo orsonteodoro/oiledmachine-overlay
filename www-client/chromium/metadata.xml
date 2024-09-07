@@ -209,6 +209,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="headless">
       Build Ozone only with headless backend, NOT RECOMMENDED for general use.
     </flag>
+    <flag name="hidpi">
+      Add support for HiDPI or 200% scale factor.
+    </flag>
     <flag name="js-type-check">
       Enable JavaScript type-checking for Chrome's web technology-based UI.
       Requires Java.
