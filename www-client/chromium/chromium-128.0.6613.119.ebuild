@@ -4165,7 +4165,7 @@ ewarn
 #     h264 - pass
 #   audio streaming - pass
 #     US radio website(s) - pass
-#     UK websites - untested
+#     UK websites - pass
 #     aac streams (shoutcast v1 / HTTP 0.9) - untested, expected fail, some links will work with v2
 #     mp3 streams (shoutcast v1 / HTTP 0.9) - untested, expected fail, some links will work with v2
 #   audio on demand - pass
