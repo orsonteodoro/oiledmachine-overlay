@@ -3316,7 +3316,6 @@ einfo "Configuring bundled ffmpeg..."
 		myconf_gn+=" use_alsa=false"
 		myconf_gn+=" use_libpci=false"
 		myconf_gn+=" use_udev=false"
-		myconf_gn+=" enable_print_preview=false"
 		myconf_gn+=" enable_remoting=false"
 	else
 		myconf_gn+=" use_system_libdrm=true"
