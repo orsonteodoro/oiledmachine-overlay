@@ -187,7 +187,7 @@ PATCHSET_PPC64="128.0.6613.84-1raptor0~deb12u1"
 PATCH_REVISION=""
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 
-#KEYWORDS="~amd64 ~arm64 ~ppc64"
+KEYWORDS="~amd64 ~arm64 ~ppc64"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://gn.googlesource.com/gn/+archive/${GN_COMMIT}.tar.gz
