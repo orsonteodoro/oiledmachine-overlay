@@ -1638,7 +1638,7 @@ get_dotted_fn() {
 	echo ""
 }
 
-_src_install() {
+_install_one_profile() {
 	default
 
 	if use contrib ; then
@@ -1732,7 +1732,7 @@ src_install() {
 		# Test does not get installed due to modifications
 		[[ "${impl}" == "test" ]] && continue
 
-		_src_install
+		_install_one_profile
 	done
 
 	if ! use vanilla ; then
