@@ -3216,9 +3216,9 @@ if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
 		:
 	else
 		oshit_opt_level_dav1d=${OSHIT_OPT_LEVEL_DAV1D:-"2"}
-		oshit_opt_level_libaom=${OSHIT_OPT_LEVEL_LIBAOM:-"1"}
+		oshit_opt_level_libaom=${OSHIT_OPT_LEVEL_LIBAOM:-"2"}
 		oshit_opt_level_libvpx=${OSHIT_OPT_LEVEL_LIBVPX:-"2"}
-		oshit_opt_level_openh264=${OSHIT_OPT_LEVEL_OPENH264:-"1"}
+		oshit_opt_level_openh264=${OSHIT_OPT_LEVEL_OPENH264:-"2"}
 		oshit_opt_level_rnnoise=${OSHIT_OPT_LEVEL_RNNOISE:-"2"}
 		oshit_opt_level_ruy=${OSHIT_OPT_LEVEL_RUY:-"2"}
 		oshit_opt_level_tflite=${OSHIT_OPT_LEVEL_TFLITE:-"2"}
@@ -3247,7 +3247,7 @@ if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
 	# If you have a lot of CPU cores, use Ofast.
 		:
 	else
-		oshit_opt_level_libaom="1" # I don't use, and it is too slow for realtime encoding.
+		oshit_opt_level_libaom="2" # I don't use, and it is too slow for realtime encoding.
 	fi
 
 	if [[ "${oshit_opt_level_libvpx}" =~ ("2"|"3"|"fast") ]] ; then
@@ -3260,7 +3260,7 @@ if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
 	# If you have hardware acceleration or don't use it, then just use -O1.
 		:
 	else
-		oshit_opt_level_openh264="1"
+		oshit_opt_level_openh264="2"
 	fi
 
 	if [[ "${oshit_opt_level_rnnoise}" =~ ("1"|"2"|"3"|"fast") ]] ; then
