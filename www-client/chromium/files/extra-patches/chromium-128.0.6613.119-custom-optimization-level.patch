@@ -66,7 +66,7 @@
        # Build code using -O3, see: crbug.com/1084371.
 -      configs += [ "//build/config/compiler:optimize_speed" ]
 +      configs += [
-+        "//build/config/compiler:optimize_speed"
++        "//build/config/compiler:optimize_speed",
 +        ":custom_optimization_config"
 +      ]
      }
