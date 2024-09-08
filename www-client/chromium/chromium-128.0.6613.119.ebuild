@@ -3238,7 +3238,7 @@ if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
 	if [[ "${oshit_opt_level_dav1d}" =~ ("2"|"3"|"fast") ]] ; then
 		:
 	else
-		oshit_opt_level_dav1d=2
+		oshit_opt_level_dav1d="2"
 	fi
 
 	if [[ "${oshit_opt_level_libaom}" =~ ("1"|"2"|"3"|"fast") ]] ; then
@@ -3247,54 +3247,54 @@ if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
 	# If you have a lot of CPU cores, use Ofast.
 		:
 	else
-		oshit_opt_level_libaom=3
+		oshit_opt_level_libaom="1" # I don't use, and it is too slow for realtime encoding.
 	fi
 
 	if [[ "${oshit_opt_level_libvpx}" =~ ("2"|"3"|"fast") ]] ; then
 		:
 	else
-		oshit_opt_level_libvpx=2
+		oshit_opt_level_libvpx="2"
 	fi
 
 	if [[ "${oshit_opt_level_openh264}" =~ ("1"|"2"|"3"|"fast") ]] ; then
 	# If you have hardware acceleration or don't use it, then just use -O1.
 		:
 	else
-		oshit_opt_level_openh264=2
+		oshit_opt_level_openh264="1"
 	fi
 
 	if [[ "${oshit_opt_level_rnnoise}" =~ ("1"|"2"|"3"|"fast") ]] ; then
 	# If you don't care about AI/ML or noise reduction, then just use -O1.
 		:
 	else
-		oshit_opt_level_rnnoise=2
+		oshit_opt_level_rnnoise="2"
 	fi
 
 	if [[ "${oshit_opt_level_ruy}" =~ ("1"|"2"|"3"|"fast") ]] ; then
 	# If you don't care about AI/ML, then just use -O1.
 		:
 	else
-		oshit_opt_level_ruy=2
+		oshit_opt_level_ruy="2"
 	fi
 
 	if [[ "${oshit_opt_level_tflite}" =~ ("1"|"2"|"3") ]] ; then
 	# If you don't care, then just use -O1.
 		:
 	else
-		oshit_opt_level_tflite=2
+		oshit_opt_level_tflite="2"
 	fi
 
 	if [[ "${oshit_opt_level_v8}" =~ ("2"|"3") ]] ; then
 		:
 	else
-		oshit_opt_level_v8=2
+		oshit_opt_level_v8="2"
 	fi
 
 	if [[ "${oshit_opt_level_xnnpack}" =~ ("1"|"2"|"3") ]] ; then
 	# If you don't care, then just use -O1.
 		:
 	else
-		oshit_opt_level_xnnpack=2
+		oshit_opt_level_xnnpack="2"
 	fi
 
 	if (( ${OSHIT_OPTIMIZED} == 1 )) && ! use official ; then
