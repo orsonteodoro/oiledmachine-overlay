@@ -3051,6 +3051,7 @@ ewarn
 	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
 	myconf_gn+=" enable_screen_ai_service=$(usex ml true false)"
 	myconf_gn+=" enable_screen_capture=$(usex screen-capture true false)"
+	myconf_gn+=" enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
 	myconf_gn+=" enable_spellcheck=$(usex spell true false)"
 	myconf_gn+=" enable_spelling_service=$(usex spelling-service true false)"
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
