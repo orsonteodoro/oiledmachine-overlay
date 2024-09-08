@@ -3226,7 +3226,7 @@ if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
 		oshit_opt_level_xnnpack=${OSHIT_OPT_LEVEL_XNNPACK:-"2"}
 	fi
 # gemmlowp ML (not used)
-# xnnpack ML (used in arm64)
+# xnnpack ML (used in amd64)
 # ruy ML (used in arm64)
 # sentencepiece ML
 # rnnoise ML
