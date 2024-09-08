@@ -218,7 +218,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <remote-id type="gitlab">Matt.Jolly/chromium-patches</remote-id>
   </upstream>
   <use>
-    <flag name="asyncdns">
+    <flag name="async-dns">
       Enable the Async DNS feature.
     </flag>
     <flag name="bluetooth">
