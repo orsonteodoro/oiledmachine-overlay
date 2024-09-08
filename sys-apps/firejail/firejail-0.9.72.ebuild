@@ -1596,14 +1596,14 @@ einfo "Adding ${u} profile"
 			mv "${src}" "${dest}" || die
 			if use symlink && ! [[ "${u}" =~ "-common" ]] ; then
 				local fn
-				if [[ -n "${FIREJAIL_SYMLINK_CORRECTIONS[${u}]}" ]] ; then
-					fn="${FIREJAIL_SYMLINK_CORRECTIONS[${u}]}"
-				elif is_use_dotted "${u}" ; then
+# FIXME:  Correct symlink with abnormal names.
+				if is_use_dotted "${u}" ; then
 					fn=$(get_dotted_fn "${u}")
+					dosym "/usr/bin/firejail" "/usr/local/bin/${fn}"
 				else
 					fn="${u}"
+					dosym "/usr/bin/firejail" "/usr/local/bin/${fn}"
 				fi
-				dosym "/usr/bin/firejail" "/usr/local/bin/${fn}"
 			fi
 		else
 einfo "Rejecting ${u} profile"
