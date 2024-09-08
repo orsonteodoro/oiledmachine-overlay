@@ -5,7 +5,7 @@
  enable_safe_libcxx = true
  
 +declare_args() {
-+  custom_optimization_level=""
++  v8_custom_optimization_level=""
 +}
 +
  # Features used by //base/trace_event and //services/tracing.
@@ -17,7 +17,7 @@
    simple_template_names = is_clang && !is_nacl && !is_win && !is_apple
  
    #use_mold = false
-+  #custom_optimization_level = ""
++  #v8_custom_optimization_level = ""
  }
  
  declare_args() {
@@ -26,14 +26,14 @@
        cflags = [ "-O1" ] + common_optimize_on_cflags
      } else {
 -      cflags = [ "-O2" ] + common_optimize_on_cflags
-+      if (custom_optimization_level != "") {
-+        cflags = [ "-O$custom_optimization_level" ] + common_optimize_on_cflags
++      if (v8_custom_optimization_level != "") {
++        cflags = [ "-O$v8_custom_optimization_level" ] + common_optimize_on_cflags
 +      } else {
 +        cflags = [ "-O2" ] + common_optimize_on_cflags
 +      }
 +    }
-+    if (custom_optimization_level != "") {
-+      rustflags = [ "-Copt-level=$custom_optimization_level" ]
++    if (v8_custom_optimization_level != "") {
++      rustflags = [ "-Copt-level=$v8_custom_optimization_level" ]
 +    } else {
 +      rustflags = [ "-Copt-level=3" ]
      }
@@ -46,14 +46,14 @@
        cflags = [ "-O1" ] + common_optimize_on_cflags
      } else {
 -      cflags = [ "-O3" ] + common_optimize_on_cflags
-+      if (custom_optimization_level != "") {
-+        cflags = [ "-O$custom_optimization_level" ] + common_optimize_on_cflags
++      if (v8_custom_optimization_level != "") {
++        cflags = [ "-O$v8_custom_optimization_level" ] + common_optimize_on_cflags
 +      } else {
 +        cflags = [ "-O3" ] + common_optimize_on_cflags
 +      }
 +    }
-+    if (custom_optimization_level != "") {
-+      rustflags = [ "-Copt-level=$custom_optimization_level" ]
++    if (v8_custom_optimization_level != "") {
++      rustflags = [ "-Copt-level=$v8_custom_optimization_level" ]
 +    } else {
 +      rustflags = [ "-Copt-level=3" ]
      }
