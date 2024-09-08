@@ -2689,7 +2689,7 @@ build_gn() {
 			gn_opt_level="-O2"
 		fi
 		sed -i -e \
-			"s|-O3|${gn_opt_level}|g"
+			"s|-O3|${gn_opt_level}|g" \
 			"build/gen.py" \
 			|| die
 		if use elibc_musl ; then # bug 906362
