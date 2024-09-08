@@ -1658,14 +1658,16 @@ einfo "Security fixes applied:  ${MITIGATION_URI}"
 	fi
 	pre_build_checks
 
-if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == 1 ]] ; then
 	if is-flagq '-Oshit' ; then
 		OSHIT_OPTIMIZED=1
 		replace-flags '-Oshit' '-O1'
 	else
 		OSHIT_OPTIMIZED=0
 	fi
-fi
+
+	if use official ; then
+		filter-flags '-Oshit'
+	fi
 
 	if use kernel_linux ; then
 		chromium_suid_sandbox_check_kernel_config
@@ -1976,7 +1978,7 @@ apply_oiledmachine_overlay_patchset() {
 	fi
 
 	PATCHES+=(
-		"${FILESDIR}/extra-patches/chromium-128.0.6613.119-v8-custom-optimization-level.patch"
+		"${FILESDIR}/extra-patches/chromium-128.0.6613.119-custom-optimization-level.patch"
 	)
 }
 
@@ -2736,6 +2738,38 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 
 	local myconf_gn=""
 
+	#
+	# Oflag and or compiler flag requirements:
+	#
+	# 1. Smooth playback (>=25 FPS) for vendored codecs like dav1d.
+	# 2. Fast build time to prevent systemwide vulnerability backlog.
+	# 3. Critical vulnerabilities should be fixed in one day, which implies
+	#    that the ebuild has to be completely merged within a day.
+	#
+
+	replace-flags "-O0" "-O2"
+	replace-flags "-O1" "-O2"
+	replace-flags "-Os" "-O2"
+	replace-flags "-Oz" "-O2"
+	replace-flags "-Ofast" "-O3" # -Ofast is broken.  TODO: fix crashes by using O3 in some *.gn* files
+	replace-flags "-O4" "-O3" # -O4 is the same as -O3
+
+	if ! use system-toolchain ; then
+	# The vendored clang/rust is likely built for portability not performance
+	# that is why it is very slow.
+		replace-flags "-O*" "-O2"
+	fi
+	if (( ${nprocs} <= 4 )) ; then
+		replace-flags "-O*" "-O2"
+	fi
+
+	# Prevent crash for now
+	filter-flags "-ffast-math"
+
+	if (( ${OSHIT_OPTIMIZED} == 1 )) ; then
+		replace-flags "-O*" "-O1"
+	fi
+
 	build_gn
 
 if use system-toolchain ; then #################################################
@@ -3022,7 +3056,6 @@ ewarn
 	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/128.0.6613.119/device/vr#platform-support
 	myconf_gn+=" enable_vr=false"		# https://github.com/chromium/chromium/blob/128.0.6613.119/device/vr/buildflags/buildflags.gni#L32
 	myconf_gn+=" enable_websockets=$(usex websockets true false)"
-	myconf_gn+=" enable_spelling_service=$(usex )"
 	myconf_gn+=" use_minikin_hyphenation=$(usex css-hyphen true false)"
 	myconf_gn+=" use_mpris=$(usex mpris true false)"
 
@@ -3169,40 +3202,11 @@ ewarn
 		fi
 	fi
 
-	#
-	# Oflag and or compiler flag requirements:
-	#
-	# 1. Smooth playback (>=25 FPS) for vendored codecs like dav1d.
-	# 2. Fast build time to prevent systemwide vulnerability backlog.
-	# 3. Critical vulnerabilities should be fixed in one day, which implies
-	#    that the ebuild has to be completely merged within a day.
-	#
-
-	replace-flags "-O0" "-O2"
-	replace-flags "-O1" "-O2"
-	replace-flags "-Os" "-O2"
-	replace-flags "-Oz" "-O2"
-	replace-flags "-Ofast" "-O3" # -Ofast is broken.  TODO: fix crashes by using O3 in some *.gn* files
-	replace-flags "-O4" "-O3" # -O4 is the same as -O3
-
-	if ! use system-toolchain ; then
-	# The vendored clang/rust is likely built for portability not performance
-	# that is why it is very slow.
-		replace-flags "-O*" "-O2"
-	fi
-	if (( ${nprocs} <= 4 )) ; then
-		replace-flags "-O*" "-O2"
-	fi
-
-	# Prevent crash for now
-	filter-flags "-ffast-math"
-
 	if is-flagq "-Ofast" ; then
 	# Precaution
 		append_all $(test-flags -fno-allow-store-data-races)
 	fi
 
-if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
 	local oshit_opt_level_dav1d
 	local oshit_opt_level_libaom
 	local oshit_opt_level_libvpx
@@ -3225,6 +3229,10 @@ if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
 		oshit_opt_level_v8=${OSHIT_OPT_LEVEL_V8:-"2"}
 		oshit_opt_level_xnnpack=${OSHIT_OPT_LEVEL_XNNPACK:-"2"}
 	fi
+# For more subprojects to optimize, see also
+# IMO, some are premature-optimized.
+# grep -E -e "build/config/compiler:(optimize_max|optimize_speed)" $(find . -name "*.gn*")
+
 # gemmlowp ML (not used)
 # xnnpack ML (used in amd64)
 # ruy ML (used in arm64)
@@ -3297,7 +3305,9 @@ if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
 		oshit_opt_level_xnnpack="2"
 	fi
 
-	if (( ${OSHIT_OPTIMIZED} == 1 )) && ! use official ; then
+	if use official ; then
+		:
+	elif (( ${OSHIT_OPTIMIZED} == 1 )) ; then
 einfo "OSHIT_OPT_LEVEL_DAV1D=${oshit_opt_level_dav1d}"
 einfo "OSHIT_OPT_LEVEL_LIBAOM=${oshit_opt_level_libaom}"
 einfo "OSHIT_OPT_LEVEL_LIBVPX=${oshit_opt_level_libvpx}"
@@ -3307,7 +3317,6 @@ einfo "OSHIT_OPT_LEVEL_RUY=${oshit_opt_level_ruy}"
 einfo "OSHIT_OPT_LEVEL_TFLITE=${oshit_opt_level_tflite}"
 einfo "OSHIT_OPT_LEVEL_V8=${oshit_opt_level_v8}"
 einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
-	else
 		myconf_gn+=" dav1d_custom_optimization_level=${oshit_opt_level_dav1d}"
 		myconf_gn+=" libaom_custom_optimization_level=${oshit_opt_level_libaom}"
 		myconf_gn+=" libvpx_custom_optimization_level=${oshit_opt_level_libvpx}"
@@ -3318,24 +3327,23 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 		myconf_gn+=" v8_custom_optimization_level=${oshit_opt_level_v8}"
 		myconf_gn+=" xnnpack_custom_optimization_level=${oshit_opt_level_xnnpack}"
 	fi
-fi
 
 	if use official ; then
 		:
 	elif is-flagq "-Ofast" ; then
 # DO NOT USE
-		myconf_gn+=" v8_custom_optimization_level=fast"
+		myconf_gn+=" custom_optimization_level=fast"
 	elif is-flagq "-O4" ; then
-		myconf_gn+=" v8_custom_optimization_level=4"
+		myconf_gn+=" custom_optimization_level=4"
 	elif is-flagq "-O3" ; then
-		myconf_gn+=" v8_custom_optimization_level=3"
+		myconf_gn+=" custom_optimization_level=3"
 	elif is-flagq "-O2" ; then
-		myconf_gn+=" v8_custom_optimization_level=2"
+		myconf_gn+=" custom_optimization_level=2"
 	elif is-flagq "-O1" ; then
-		myconf_gn+=" v8_custom_optimization_level=1"
+		myconf_gn+=" custom_optimization_level=1"
 	elif is-flagq "-O0" ; then
 # DO NOT USE
-		myconf_gn+=" v8_custom_optimization_level=0"
+		myconf_gn+=" custom_optimization_level=0"
 	fi
 
 	local ffmpeg_target_arch
