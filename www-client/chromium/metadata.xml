@@ -171,7 +171,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Note:  May be set to 1 if disinterested in AI/ML.
 
 
-      OSHIT_OPT_LEVEL_TFLITE="1" - Optimize tflite build speed at -O1
+      OSHIT_OPT_LEVEL_TFLITE="1" - Optimize TFLite build speed at -O1
       Valid values:  1, 2, 3
       Note:  May be set to 1 if disinterested in AI/ML.
 
@@ -312,7 +312,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     </flag>
     <flag name="ml">
       Build and enable Artificial Intelligence (AI) or Machine Learning (ML)
-      with ScreenAI or tflite and components that use them.
+      with ScreenAI or TFLite and components that use them.
     </flag>
     <flag name="mold">
       Use the mold linker to decrease linking times.

@@ -22,7 +22,7 @@
  }
  
  # Derived defaults.
-@@ -740,6 +742,32 @@ v8_toolset_for_shell = "host"
+@@ -740,6 +742,38 @@ v8_toolset_for_shell = "host"
  # Configurations
  #
  
@@ -44,10 +44,18 @@
 +        cflags += [ "/Od" ]
 +      }
 +      if (is_clang) {
-+        cflags += [ "/clang:-O$v8_custom_optimization_level" ]
++        if (v8_custom_optimization_level == "fast") {
++          cflags += [ "/clang:-O$v8_custom_optimization_level", "/clang:-fno-allow-store-data-races" ]
++        } else {
++          cflags += [ "/clang:-O$v8_custom_optimization_level" ]
++        }
 +      }
 +    } else {
-+      cflags += [ "-O$v8_custom_optimization_level" ]
++      if (v8_custom_optimization_level == "fast") {
++        cflags += [ "-O$v8_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$v8_custom_optimization_level" ]
++      }
 +    }
 +  }
 +}
@@ -95,12 +103,14 @@
  }
  
  declare_args() {
-@@ -2589,9 +2590,19 @@ config("optimize_max") {
+@@ -2589,9 +2590,21 @@ config("optimize_max") {
      } else if (optimize_for_fuzzing) {
        cflags = [ "-O1" ] + common_optimize_on_cflags
      } else {
 -      cflags = [ "-O2" ] + common_optimize_on_cflags
-+      if (custom_optimization_level != "") {
++      if (custom_optimization_level != "" && custom_optimization_level == "fast") {
++        cflags = [ "-O$custom_optimization_level", "-fno-allow-store-data-races" ] + common_optimize_on_cflags
++      } else if (custom_optimization_level != "") {
 +        cflags = [ "-O$custom_optimization_level" ] + common_optimize_on_cflags
 +      } else {
 +        cflags = [ "-O2" ] + common_optimize_on_cflags
@@ -117,12 +127,14 @@
    }
  }
  
-@@ -2625,9 +2636,19 @@ config("optimize_speed") {
+@@ -2625,9 +2636,21 @@ config("optimize_speed") {
      } else if (optimize_for_fuzzing) {
        cflags = [ "-O1" ] + common_optimize_on_cflags
      } else {
 -      cflags = [ "-O3" ] + common_optimize_on_cflags
-+      if (custom_optimization_level != "") {
++      if (custom_optimization_level != "" && custom_optimization_level == "fast") {
++        cflags = [ "-O$custom_optimization_level", "-fno-allow-store-data-races" ] + common_optimize_on_cflags
++      } else if (custom_optimization_level != "") {
 +        cflags = [ "-O$custom_optimization_level" ] + common_optimize_on_cflags
 +      } else {
 +        cflags = [ "-O3" ] + common_optimize_on_cflags
@@ -152,12 +164,12 @@
  # Sets the architecture name for building libvpx.
  if (current_cpu == "x86") {
    cpu_arch_full = "ia32"
-@@ -85,8 +89,31 @@ config("libvpx_config") {
+@@ -85,8 +89,37 @@ config("libvpx_config") {
    # gn orders flags on a target before flags from configs. The default config
    # adds -Wall, and these flags have to be after -Wall -- so they need to come
    # from a config and can't be on the target directly.
 +  cflags = []
-+  if (libvpx_custom_optimization_level) {
++  if (libvpx_custom_optimization_level != "") {
 +    if (is_win) {
 +      if (libvpx_custom_optimization_level == "fast" || libvpx_custom_optimization_level == "3") {
 +        cflags += [ "/O2" ]
@@ -173,10 +185,18 @@
 +        cflags += [ "/Od" ]
 +      }
 +      if (is_clang) {
-+        cflags += [ "/clang:-O$libvpx_custom_optimization_level" ]
++        if (libvpx_custom_optimization_level == "fast") {
++          cflags += [ "/clang:-O$libvpx_custom_optimization_level", "/clang:-fno-allow-store-data-races" ]
++        } else {
++          cflags += [ "/clang:-O$libvpx_custom_optimization_level" ]
++        }
 +      }
 +    } else {
-+      cflags += [ "-O$libvpx_custom_optimization_level" ]
++      if (libvpx_custom_optimization_level == "fast") {
++        cflags += [ "-O$libvpx_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$libvpx_custom_optimization_level" ]
++      }
 +    }
 +  }
    if (is_clang) {
@@ -196,7 +216,7 @@
      ]
 --- a/third_party/openh264/BUILD.gn.orig	2024-09-02 14:02:42.386928800 -0700
 +++ b/third_party/openh264/BUILD.gn	2024-09-07 21:26:30.145373002 -0700
-@@ -7,11 +7,38 @@ import("//build/config/sanitizers/saniti
+@@ -7,11 +7,44 @@ import("//build/config/sanitizers/saniti
  import("//third_party/nasm/nasm_assemble.gni")
  import("//third_party/openh264/openh264_sources.gni")
  
@@ -225,10 +245,18 @@
 +        cflags += [ "/Od" ]
 +      }
 +      if (is_clang) {
-+        cflags += [ "/clang:-O$openh264_custom_optimization_level" ]
++        if (openh264_custom_optimization_level == "fast") {
++          cflags += [ "/clang:-O$openh264_custom_optimization_level", "/clang:-fno-allow-store-data-races" ]
++        } else {
++          cflags += [ "/clang:-O$openh264_custom_optimization_level" ]
++        }
 +      }
 +    } else {
-+      cflags += [ "-O$openh264_custom_optimization_level" ]
++      if (openh264_custom_optimization_level == "fast") {
++        cflags += [ "-O$openh264_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$openh264_custom_optimization_level" ]
++      }
 +    }
 +  }
 +
@@ -237,7 +265,7 @@
      # devices.
 --- a/third_party/rnnoise/BUILD.gn.orig	2024-09-02 14:02:43.041982000 -0700
 +++ b/third_party/rnnoise/BUILD.gn	2024-09-07 21:26:31.349353245 -0700
-@@ -4,11 +4,42 @@
+@@ -4,11 +4,48 @@
  
  import("//testing/test.gni")
  
@@ -247,7 +275,7 @@
 +
 +config("rnnoise_config") {
 +  cflags = []
-+  if (rnnoise_custom_optimization_level) {
++  if (rnnoise_custom_optimization_level != "") {
 +    if (is_win) {
 +      if (rnnoise_custom_optimization_level == "fast" || rnnoise_custom_optimization_level == "3") {
 +        cflags += [ "/O2" ]
@@ -263,10 +291,18 @@
 +        cflags += [ "/Od" ]
 +      }
 +      if (is_clang) {
-+        cflags += [ "/clang:-O$rnnoise_custom_optimization_level" ]
++        if (rnnoise_custom_optimization_level == "fast") {
++          cflags += [ "/clang:-O$rnnoise_custom_optimization_level", "/clang:-fno-allow-store-data-races" ]
++        } else {
++          cflags += [ "/clang:-O$rnnoise_custom_optimization_level" ]
++        }
 +      }
 +    } else {
-+      cflags += [ "-O$rnnoise_custom_optimization_level" ]
++      if (rnnoise_custom_optimization_level == "fast") {
++        cflags += [ "-O$rnnoise_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$rnnoise_custom_optimization_level" ]
++      }
 +    }
 +  }
 +}
@@ -293,7 +329,7 @@
  proto_library("tflite_proto") {
    proto_in_dir = "src"
    sources = [
-@@ -47,7 +51,30 @@ config("tflite_config") {
+@@ -47,7 +51,36 @@ config("tflite_config") {
  }
  
  config("tflite_flags") {
@@ -315,10 +351,18 @@
 +        cflags += [ "/Od" ]
 +      }
 +      if (is_clang) {
-+        cflags += [ "/clang:-O$tflite_custom_optimization_level" ]
++        if (tflite_custom_optimization_level == "fast") {
++          cflags += [ "/clang:-O$tflite_custom_optimization_level", "/clang:-fno-allow-store-data-races" ]
++        } else {
++          cflags += [ "/clang:-O$tflite_custom_optimization_level" ]
++        }
 +      }
 +    } else {
-+      cflags += [ "-O$tflite_custom_optimization_level" ]
++      if (tflite_custom_optimization_level == "fast") {
++        cflags += [ "/clang:-O$tflite_custom_optimization_level", "/clang:-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$tflite_custom_optimization_level" ]
++      }
 +    }
 +  }
 +  cflags += [
@@ -338,7 +382,7 @@
  # MemorySanitizer can't handle assembly, https://crbug.com/928357.
  enable_nasm = (current_cpu == "x86" || current_cpu == "x64") && !is_msan
  
-@@ -83,7 +87,33 @@ config("dav1d_config") {
+@@ -83,7 +87,39 @@ config("dav1d_config") {
    }
  }
  
@@ -361,10 +405,18 @@
 +        dav1d_copts += [ "/Od" ]
 +      }
 +      if (is_clang) {
-+        dav1d_copts += [ "/clang:-O$dav1d_custom_optimization_level" ]
++        if (dav1d_custom_optimization_level == "fast") {
++          cflags += [ "/clang:-O$dav1d_custom_optimization_level", "/clang:-fno-allow-store-data-races" ]
++        } else {
++          dav1d_copts += [ "/clang:-O$dav1d_custom_optimization_level" ]
++        }
 +      }
 +    } else {
-+      dav1d_copts += [ "-O$dav1d_custom_optimization_level" ]
++      if (dav1d_custom_optimization_level == "fast") {
++        cflags += [ "-O$dav1d_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        dav1d_copts += [ "-O$dav1d_custom_optimization_level" ]
++      }
 +    }
 +  }
 +}
@@ -386,12 +438,12 @@
  buildflag_header("libaom_buildflags") {
    header = "libaom_buildflags.h"
  
-@@ -68,6 +72,29 @@ libaom_include_dirs = [
+@@ -68,6 +72,35 @@ libaom_include_dirs = [
  # Private configuration used in building libaom.
  config("libaom_config") {
    include_dirs = libaom_include_dirs
 +  cflags = []
-+  if (libaom_custom_optimization_level) {
++  if (libaom_custom_optimization_level != "") {
 +    if (is_win) {
 +      if (libaom_custom_optimization_level == "fast" || libaom_custom_optimization_level == "3") {
 +        cflags += [ "/O2" ]
@@ -407,10 +459,18 @@
 +        cflags += [ "/Od" ]
 +      }
 +      if (is_clang) {
-+        cflags += [ "/clang:-O$libaom_custom_optimization_level" ]
++        if (libaom_custom_optimization_level == "fast") {
++          cflags += [ "/clang:-O$libaom_custom_optimization_level", "/clang:-fno-allow-store-data-races" ]
++        } else {
++          cflags += [ "/clang:-O$libaom_custom_optimization_level" ]
++        }
 +      }
 +    } else {
-+      cflags += [ "-O$libaom_custom_optimization_level" ]
++      if (libaom_custom_optimization_level == "fast") {
++        cflags += [ "-O$libaom_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$libaom_custom_optimization_level" ]
++      }
 +    }
 +  }
  }
@@ -429,7 +489,7 @@
  config("ruy_include") {
    include_dirs = [ "src" ]
  }
-@@ -12,9 +16,32 @@ config("ruy_include") {
+@@ -12,9 +16,38 @@ config("ruy_include") {
  config("ruy_shared_config") {
    include_dirs = [ "src" ]
  
@@ -450,10 +510,18 @@
 +        cflags += [ "/Od" ]
 +      }
 +      if (is_clang) {
-+        cflags += [ "/clang:-O$ruy_custom_optimization_level" ]
++        if (ruy_custom_optimization_level == "fast") {
++          cflags += [ "/clang:-O$ruy_custom_optimization_level", "/clang:-fno-allow-store-data-races" ]
++        } else {
++          cflags += [ "/clang:-O$ruy_custom_optimization_level" ]
++        }
 +      }
 +    } else {
-+      cflags += [ "-O$ruy_custom_optimization_level" ]
++      if (ruy_custom_optimization_level == "fast") {
++        cflags += [ "-O$ruy_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$ruy_custom_optimization_level" ]
++      }
 +    }
 +  }
    if (current_cpu == "arm" || current_cpu == "arm64") {
@@ -476,7 +544,7 @@
  config("xnnpack_config") {
    include_dirs = [
      "//third_party/pthreadpool/src/include",
-@@ -24,7 +28,30 @@ config("xnnpack_config") {
+@@ -24,7 +28,36 @@ config("xnnpack_config") {
      "src/src",
    ]
  
@@ -498,10 +566,18 @@
 +        cflags += [ "/Od" ]
 +      }
 +      if (is_clang) {
-+        cflags += [ "/clang:-O$xnnpack_custom_optimization_level" ]
++        if (xnnpack_custom_optimization_level == "fast") {
++          cflags += [ "/clang:-O$xnnpack_custom_optimization_level", "/clang:-fno-allow-store-data-races" ]
++        } else {
++          cflags += [ "/clang:-O$xnnpack_custom_optimization_level" ]
++        }
 +      }
 +    } else {
-+      cflags += [ "-O$xnnpack_custom_optimization_level" ]
++      if (xnnpack_custom_optimization_level == "fast") {
++        cflags += [ "-O$xnnpack_custom_optimization_level", "-fno-allow-store-data-races" ]
++      } else {
++        cflags += [ "-O$xnnpack_custom_optimization_level" ]
++      }
 +    }
 +  }
 +  cflags += [
