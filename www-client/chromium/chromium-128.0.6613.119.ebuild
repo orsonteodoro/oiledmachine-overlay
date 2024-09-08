@@ -609,6 +609,7 @@ DISTRO_REQUIRE_USE="
 #
 REQUIRED_USE+="
 	${DISABLED_NON_FREE_USE_FLAGS}
+	extensions
 	!headless (
 		|| (
 			wayland
