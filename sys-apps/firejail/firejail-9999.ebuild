@@ -263,7 +263,7 @@ IUSE+="
 ${FIREJAIL_PROFILES_IUSE[@]}
 apparmor +chroot contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server  +globalcfg landlock +network +private-home selinux
-+suid test-profiles test-x11 +userns vanilla xpra X
++suid symlink test-profiles test-x11 +userns vanilla xpra X
 "
 RDEPEND+="
 	!sys-apps/firejail-lts
@@ -1681,6 +1681,15 @@ eerror
 		if use ${pf} ; then
 einfo "Adding ${u} profile"
 			mv "${src}" "${dest}" || die
+			if use symlink ; then
+				local fn
+				if is_use_dotted "${u}" ; then
+					fn=$(get_dotted_fn "${u}")
+				else
+					fn="${u}"
+				fi
+				dosym "/usr/bin/firejail" "/usr/local/bin/${fn}"
+			fi
 		else
 einfo "Rejecting ${u} profile"
 			local dest="${T}/profiles_processed"

@@ -71,6 +71,9 @@
     <flag name="selinux">
       Enable SELinux labeling support
     </flag>
+    <flag name="symlink">
+      Add symlinks to /etc/local/bin
+    </flag>
     <flag name="tests">
       Performs basic testing
     </flag>
