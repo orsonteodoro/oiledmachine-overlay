@@ -225,6 +225,11 @@ zim zless zlib-flate zmore znew zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt
 zulip
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
+declare -A FIREJAIL_SYMLINK_CORRECTIONS=(
+# TODO:  add more
+	["Cheese"]="cheese"
+	["Thunar"]="thunar"
+)
 # GEN_EBUILD=1 # Uncomment to regen ebuild parts
 LLVM_COMPAT=( 14 )
 PYTHON_COMPAT=( python3_{9..11} )
@@ -1683,7 +1688,9 @@ einfo "Adding ${u} profile"
 			mv "${src}" "${dest}" || die
 			if use symlink && ! [[ "${u}" =~ "-common" ]] ; then
 				local fn
-				if is_use_dotted "${u}" ; then
+				if [[ -n "${FIREJAIL_SYMLINK_CORRECTIONS[${u}]}" ]] ; then
+					fn="${FIREJAIL_SYMLINK_CORRECTIONS[${u}]}"
+				elif is_use_dotted "${u}" ; then
 					fn=$(get_dotted_fn "${u}")
 				else
 					fn="${u}"
@@ -1799,6 +1806,14 @@ einfo "  firejail_profiles_rtv? ( firejail_profiles_rtv-addons )"
 einfo
 	if ! use firejail_profiles_server ; then
 ewarn "Disabling firejail_profiles_server disables default sandboxing for the root user"
+	fi
+	if use symlink ; then
+ewarn
+ewarn "The symlink USE flag is experimental and may break for profiles that do"
+ewarn "not match the case or use an abnormal name in association with"
+ewarn "/usr/bin/<program_name>.  Corrections can be submitted as a issue report"
+ewarn "on repo."
+ewarn
 	fi
 }
 

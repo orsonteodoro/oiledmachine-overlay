@@ -28,6 +28,12 @@
 
       -Improved xpra support
       -Enable or disable sound forwarding
+      -/usr/local/bin symlink auto generation
+
+    Ebuild fork goals:
+
+      -Minimize install bloat
+      -Make it easier to use program sandboxed.
 
   -->
   <upstream>
@@ -73,7 +79,7 @@
     </flag>
     <flag name="symlink">
       Add USE enabled symlinks to /etc/local/bin to immediately use the program
-      sandboxed.
+      sandboxed. (EXPERIMENTAL)
     </flag>
     <flag name="tests">
       Performs basic testing
