@@ -225,12 +225,12 @@ zim zless zlib-flate zmore znew zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt
 zulip
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
-declare -A FIREJAIL_SYMLINK_CORRECTIONS=(
-# TODO:  add more
+declare -A FIREJAIL_EXE_CORRECTIONS=(
+# This was meant to be customizable not hard static data.
 	["Cheese"]="cheese"
 	["Thunar"]="thunar"
 )
-# GEN_EBUILD=1 # Uncomment to regen ebuild parts
+#GEN_EBUILD=1 # Uncomment to regen ebuild parts
 LLVM_COMPAT=( 14 )
 PYTHON_COMPAT=( python3_{9..11} )
 TEST_SET="distro" # distro or full
@@ -268,7 +268,7 @@ IUSE+="
 ${FIREJAIL_PROFILES_IUSE[@]}
 apparmor +chroot contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server  +globalcfg landlock +network +private-home selinux
-+suid symlink test-profiles test-x11 +userns vanilla xpra X
++suid symlink test-profiles test-x11 +userns vanilla wrapper xpra X
 "
 RDEPEND+="
 	!sys-apps/firejail-lts
@@ -1643,6 +1643,21 @@ get_dotted_fn() {
 	echo ""
 }
 
+gen_wrapper() {
+	local profile_name="${1}"
+	local exe_name="${1}"
+einfo "Generating wrapper for ${profile_name}"
+	if [[ -n "${FIREJAIL_EXE_CORRECTIONS[${profile_name}]}" ]] ; then
+		exe_name="${FIREJAIL_EXE_CORRECTIONS[${profile_name}]}"
+	fi
+cat <<EOF > "${ED}/usr/local/bin/${exe_name}"
+#!/bin/bash
+exec firejail --profile=\"${n}\" \"${exe_name}\" \"\$@\"
+EOF
+	fowners "root:root" "/usr/local/bin/${exe_name}"
+	fperms 0755 "/usr/local/bin/${exe_name}"
+}
+
 _install_one_profile() {
 	default
 
@@ -1686,16 +1701,8 @@ eerror
 		if use ${pf} ; then
 einfo "Adding ${u} profile"
 			mv "${src}" "${dest}" || die
-			if use symlink && ! [[ "${u}" =~ "-common" ]] ; then
-				local fn
-# FIXME:  Correct symlink with abnormal names.
-				if is_use_dotted "${u}" ; then
-					fn=$(get_dotted_fn "${u}")
-					dosym "/usr/bin/firejail" "/usr/local/bin/${fn}"
-				else
-					fn="${u}"
-					dosym "/usr/bin/firejail" "/usr/local/bin/${fn}"
-				fi
+			if use wrapper && ! [[ "${u}" =~ "-common" ]] && ! [[ "${u}" =~ "-wrapper" ]] ; then
+				gen_wrapper "${u}"
 			fi
 		else
 einfo "Rejecting ${u} profile"
@@ -1731,6 +1738,7 @@ eerror
 }
 
 src_install() {
+	use wrapper && dodir "/usr/local/bin"
 	local impl
 	for impl in $(get_impls) ; do
 		export BUILD_DIR="${S}_${impl}"
