@@ -3049,6 +3049,7 @@ ewarn
 	myconf_gn+=" enable_plugins=$(usex plugins true false)"
 	myconf_gn+=" enable_ppapi=false"
 	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
+	myconf_gn+=" enable_screen_ai_service=$(usex ml true false)"
 	myconf_gn+=" enable_screen_capture=$(usex screen-capture true false)"
 	myconf_gn+=" enable_spellcheck=$(usex spell true false)"
 	myconf_gn+=" enable_spelling_service=$(usex spelling-service true false)"
