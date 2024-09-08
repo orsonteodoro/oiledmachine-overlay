@@ -24,7 +24,7 @@
 +      } else if (v8_custom_optimization_level == "s") {
 +        cflags += [ "/Os", "/Oy" ]
 +      } else if (v8_custom_optimization_level == "1") {
-+        cflags += [ "/Ot", "/Oy" ]
++        cflags += [ "/Ot" ]
 +      } else if (v8_custom_optimization_level == "z") {
 +        cflags += [ "/O1" ]
 +      } else if (v8_custom_optimization_level == "0") {
@@ -153,7 +153,7 @@
 +      } else if (libvpx_custom_optimization_level == "s") {
 +        cflags += [ "/Os", "/Oy" ]
 +      } else if (libvpx_custom_optimization_level == "1") {
-+        cflags += [ "/Ot", "/Oy" ]
++        cflags += [ "/Ot" ]
 +      } else if (libvpx_custom_optimization_level == "z") {
 +        cflags += [ "/O1" ]
 +      } else if (libvpx_custom_optimization_level == "0") {
@@ -205,7 +205,7 @@
 +      } else if (openh264_custom_optimization_level == "s") {
 +        cflags += [ "/Os", "/Oy" ]
 +      } else if (openh264_custom_optimization_level == "1") {
-+        cflags += [ "/Ot", "/Oy" ]
++        cflags += [ "/Ot" ]
 +      } else if (openh264_custom_optimization_level == "z") {
 +        cflags += [ "/O1" ]
 +      } else if (openh264_custom_optimization_level == "0") {
@@ -243,7 +243,7 @@
 +      } else if (rnnoise_custom_optimization_level == "s") {
 +        cflags += [ "/Os", "/Oy" ]
 +      } else if (rnnoise_custom_optimization_level == "1") {
-+        cflags += [ "/Ot", "/Oy" ]
++        cflags += [ "/Ot" ]
 +      } else if (rnnoise_custom_optimization_level == "z") {
 +        cflags += [ "/O1" ]
 +      } else if (rnnoise_custom_optimization_level == "0") {
@@ -295,7 +295,7 @@
 +      } else if (tflite_custom_optimization_level == "s") {
 +        cflags += [ "/Os", "/Oy" ]
 +      } else if (tflite_custom_optimization_level == "1") {
-+        cflags += [ "/Ot", "/Oy" ]
++        cflags += [ "/Ot" ]
 +      } else if (tflite_custom_optimization_level == "z") {
 +        cflags += [ "/O1" ]
 +      } else if (tflite_custom_optimization_level == "0") {
@@ -341,7 +341,7 @@
 +      } else if (dav1d_custom_optimization_level == "s") {
 +        dav1d_copts += [ "/Os", "/Oy" ]
 +      } else if (dav1d_custom_optimization_level == "1") {
-+        dav1d_copts += [ "/Ot", "/Oy" ]
++        dav1d_copts += [ "/Ot" ]
 +      } else if (dav1d_custom_optimization_level == "z") {
 +        dav1d_copts += [ "/O1" ]
 +      } else if (dav1d_custom_optimization_level == "0") {
@@ -387,7 +387,7 @@
 +      } else if (libaom_custom_optimization_level == "s") {
 +        cflags += [ "/Os", "/Oy" ]
 +      } else if (libaom_custom_optimization_level == "1") {
-+        cflags += [ "/Ot", "/Oy" ]
++        cflags += [ "/Ot" ]
 +      } else if (libaom_custom_optimization_level == "z") {
 +        cflags += [ "/O1" ]
 +      } else if (libaom_custom_optimization_level == "0") {
@@ -430,7 +430,7 @@
 +      } else if (ruy_custom_optimization_level == "s") {
 +        cflags += [ "/Os", "/Oy" ]
 +      } else if (ruy_custom_optimization_level == "1") {
-+        cflags += [ "/Ot", "/Oy" ]
++        cflags += [ "/Ot" ]
 +      } else if (ruy_custom_optimization_level == "z") {
 +        cflags += [ "/O1" ]
 +      } else if (ruy_custom_optimization_level == "0") {
@@ -478,7 +478,7 @@
 +      } else if (xnnpack_custom_optimization_level == "s") {
 +        cflags += [ "/Os", "/Oy" ]
 +      } else if (xnnpack_custom_optimization_level == "1") {
-+        cflags += [ "/Ot", "/Oy" ]
++        cflags += [ "/Ot" ]
 +      } else if (xnnpack_custom_optimization_level == "z" ) {
 +        cflags += [ "/O1" ]
 +      } else if (xnnpack_custom_optimization_level == "0") {
