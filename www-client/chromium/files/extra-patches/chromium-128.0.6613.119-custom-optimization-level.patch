@@ -9,7 +9,7 @@
  }
  
  # Derived defaults.
-@@ -740,6 +742,30 @@ v8_toolset_for_shell = "host"
+@@ -740,6 +742,32 @@ v8_toolset_for_shell = "host"
  # Configurations
  #
  
@@ -19,12 +19,14 @@
 +    if (is_win) {
 +      if (v8_custom_optimization_level == "fast" || v8_custom_optimization_level == "3") {
 +        cflags += [ "/O2" ]
++      } else if (v8_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
 +      } else if (v8_custom_optimization_level == "s") {
 +        cflags += [ "/Os" ]
++      } else if (v8_custom_optimization_level == "1") {
++        cflags += [ "/Ot" ]
 +      } else if (v8_custom_optimization_level == "z") {
 +        cflags += [ "/O1" ]
-+      } else if (v8_custom_optimization_level == "1" || v8_custom_optimization_level == "2") {
-+        cflags += [ "/Ot" ]
 +      } else if (v8_custom_optimization_level == "0") {
 +        cflags += [ "/Od" ]
 +      }
@@ -137,7 +139,7 @@
  # Sets the architecture name for building libvpx.
  if (current_cpu == "x86") {
    cpu_arch_full = "ia32"
-@@ -85,8 +89,29 @@ config("libvpx_config") {
+@@ -85,8 +89,31 @@ config("libvpx_config") {
    # gn orders flags on a target before flags from configs. The default config
    # adds -Wall, and these flags have to be after -Wall -- so they need to come
    # from a config and can't be on the target directly.
@@ -146,12 +148,14 @@
 +    if (is_win) {
 +      if (libvpx_custom_optimization_level == "fast" || libvpx_custom_optimization_level == "3") {
 +        cflags += [ "/O2" ]
++      } else if (libvpx_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
 +      } else if (libvpx_custom_optimization_level == "s") {
 +        cflags += [ "/Os" ]
++      } else if (libvpx_custom_optimization_level == "1") {
++        cflags += [ "/Ot" ]
 +      } else if (libvpx_custom_optimization_level == "z") {
 +        cflags += [ "/O1" ]
-+      } else if (libvpx_custom_optimization_level == "1" || libvpx_custom_optimization_level == "2") {
-+        cflags += [ "/Ot" ]
 +      } else if (libvpx_custom_optimization_level == "0") {
 +        cflags += [ "/Od" ]
 +      }
@@ -179,7 +183,7 @@
      ]
 --- a/third_party/openh264/BUILD.gn.orig	2024-09-02 14:02:42.386928800 -0700
 +++ b/third_party/openh264/BUILD.gn	2024-09-07 21:26:30.145373002 -0700
-@@ -7,11 +7,36 @@ import("//build/config/sanitizers/saniti
+@@ -7,11 +7,38 @@ import("//build/config/sanitizers/saniti
  import("//third_party/nasm/nasm_assemble.gni")
  import("//third_party/openh264/openh264_sources.gni")
  
@@ -196,12 +200,14 @@
 +    if (is_win) {
 +      if (openh264_custom_optimization_level == "fast" || openh264_custom_optimization_level == "3") {
 +        cflags += [ "/O2" ]
++      } else if (openh264_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
 +      } else if (openh264_custom_optimization_level == "s") {
 +        cflags += [ "/Os" ]
++      } else if (openh264_custom_optimization_level == "1") {
++        cflags += [ "/Ot" ]
 +      } else if (openh264_custom_optimization_level == "z") {
 +        cflags += [ "/O1" ]
-+      } else if (openh264_custom_optimization_level == "1" || openh264_custom_optimization_level == "2") {
-+        cflags += [ "/Ot" ]
 +      } else if (openh264_custom_optimization_level == "0") {
 +        cflags += [ "/Od" ]
 +      }
@@ -218,7 +224,7 @@
      # devices.
 --- a/third_party/rnnoise/BUILD.gn.orig	2024-09-02 14:02:43.041982000 -0700
 +++ b/third_party/rnnoise/BUILD.gn	2024-09-07 21:26:31.349353245 -0700
-@@ -4,11 +4,40 @@
+@@ -4,11 +4,42 @@
  
  import("//testing/test.gni")
  
@@ -232,12 +238,14 @@
 +    if (is_win) {
 +      if (rnnoise_custom_optimization_level == "fast" || rnnoise_custom_optimization_level == "3") {
 +        cflags += [ "/O2" ]
++      } else if (rnnoise_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
 +      } else if (rnnoise_custom_optimization_level == "s") {
 +        cflags += [ "/Os" ]
++      } else if (rnnoise_custom_optimization_level == "1") {
++        cflags += [ "/Ot" ]
 +      } else if (rnnoise_custom_optimization_level == "z") {
 +        cflags += [ "/O1" ]
-+      } else if (rnnoise_custom_optimization_level == "1" || rnnoise_custom_optimization_level == "2") {
-+        cflags += [ "/Ot" ]
 +      } else if (rnnoise_custom_optimization_level == "0") {
 +        cflags += [ "/Od" ]
 +      }
@@ -272,7 +280,7 @@
  proto_library("tflite_proto") {
    proto_in_dir = "src"
    sources = [
-@@ -47,7 +51,28 @@ config("tflite_config") {
+@@ -47,7 +51,30 @@ config("tflite_config") {
  }
  
  config("tflite_flags") {
@@ -282,12 +290,14 @@
 +    if (is_win) {
 +      if (tflite_custom_optimization_level == "fast" || tflite_custom_optimization_level == "3") {
 +        cflags += [ "/O2" ]
++      } else if (tflite_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
 +      } else if (tflite_custom_optimization_level == "s") {
 +        cflags += [ "/Os" ]
++      } else if (tflite_custom_optimization_level == "1") {
++        cflags += [ "/Ot" ]
 +      } else if (tflite_custom_optimization_level == "z") {
 +        cflags += [ "/O1" ]
-+      } else if (tflite_custom_optimization_level == "1" || tflite_custom_optimization_level == "2") {
-+        cflags += [ "/Ot" ]
 +      } else if (tflite_custom_optimization_level == "0") {
 +        cflags += [ "/Od" ]
 +      }
@@ -315,7 +325,7 @@
  # MemorySanitizer can't handle assembly, https://crbug.com/928357.
  enable_nasm = (current_cpu == "x86" || current_cpu == "x64") && !is_msan
  
-@@ -83,7 +87,31 @@ config("dav1d_config") {
+@@ -83,7 +87,33 @@ config("dav1d_config") {
    }
  }
  
@@ -326,12 +336,14 @@
 +    if (is_win) {
 +      if (dav1d_custom_optimization_level == "fast" || dav1d_custom_optimization_level == "3") {
 +        dav1d_copts += [ "/O2" ]
++      } else if (dav1d_custom_optimization_level == "2") {
++        dav1d_copts += [ "/Ox" ]
 +      } else if (dav1d_custom_optimization_level == "s") {
 +        dav1d_copts += [ "/Os" ]
++      } else if (dav1d_custom_optimization_level == "1") {
++        dav1d_copts += [ "/Ot" ]
 +      } else if (dav1d_custom_optimization_level == "z") {
 +        dav1d_copts += [ "/O1" ]
-+      } else if (dav1d_custom_optimization_level == "1" || dav1d_custom_optimization_level == "2") {
-+        dav1d_copts += [ "/Ot" ]
 +      } else if (dav1d_custom_optimization_level == "0") {
 +        dav1d_copts += [ "/Od" ]
 +      }
@@ -361,7 +373,7 @@
  buildflag_header("libaom_buildflags") {
    header = "libaom_buildflags.h"
  
-@@ -68,6 +72,27 @@ libaom_include_dirs = [
+@@ -68,6 +72,29 @@ libaom_include_dirs = [
  # Private configuration used in building libaom.
  config("libaom_config") {
    include_dirs = libaom_include_dirs
@@ -370,12 +382,14 @@
 +    if (is_win) {
 +      if (libaom_custom_optimization_level == "fast" || libaom_custom_optimization_level == "3") {
 +        cflags += [ "/O2" ]
++      } else if (libaom_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
 +      } else if (libaom_custom_optimization_level == "s") {
 +        cflags += [ "/Os" ]
++      } else if (libaom_custom_optimization_level == "1") {
++        cflags += [ "/Ot" ]
 +      } else if (libaom_custom_optimization_level == "z") {
 +        cflags += [ "/O1" ]
-+      } else if (libaom_custom_optimization_level == "1" || libaom_custom_optimization_level == "2") {
-+        cflags += [ "/Ot" ]
 +      } else if (libaom_custom_optimization_level == "0") {
 +        cflags += [ "/Od" ]
 +      }
@@ -402,7 +416,7 @@
  config("ruy_include") {
    include_dirs = [ "src" ]
  }
-@@ -12,9 +16,30 @@ config("ruy_include") {
+@@ -12,9 +16,32 @@ config("ruy_include") {
  config("ruy_shared_config") {
    include_dirs = [ "src" ]
  
@@ -411,12 +425,14 @@
 +    if (is_win) {
 +      if (ruy_custom_optimization_level == "fast" || ruy_custom_optimization_level == "3") {
 +        cflags += [ "/O2" ]
++      } else if (ruy_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
 +      } else if (ruy_custom_optimization_level == "s") {
 +        cflags += [ "/Os" ]
++      } else if (ruy_custom_optimization_level == "1") {
++        cflags += [ "/Ot" ]
 +      } else if (ruy_custom_optimization_level == "z") {
 +        cflags += [ "/O1" ]
-+      } else if (ruy_custom_optimization_level == "1" || ruy_custom_optimization_level == "2") {
-+        cflags += [ "/Ot" ]
 +      } else if (ruy_custom_optimization_level == "0") {
 +        cflags += [ "/Od" ]
 +      }
@@ -447,7 +463,7 @@
  config("xnnpack_config") {
    include_dirs = [
      "//third_party/pthreadpool/src/include",
-@@ -24,7 +28,28 @@ config("xnnpack_config") {
+@@ -24,7 +28,30 @@ config("xnnpack_config") {
      "src/src",
    ]
  
@@ -457,12 +473,14 @@
 +    if (is_win) {
 +      if (xnnpack_custom_optimization_level == "fast" || xnnpack_custom_optimization_level == "3") {
 +        cflags += [ "/O2" ]
++      } else if (xnnpack_custom_optimization_level == "2") {
++        cflags += [ "/Ox" ]
 +      } else if (xnnpack_custom_optimization_level == "s") {
 +        cflags += [ "/Os" ]
++      } else if (xnnpack_custom_optimization_level == "1") {
++        cflags += [ "/Ot" ]
 +      } else if (xnnpack_custom_optimization_level == "z" ) {
 +        cflags += [ "/O1" ]
-+      } else if (xnnpack_custom_optimization_level == "1" || xnnpack_custom_optimization_level == "2") {
-+        cflags += [ "/Ot" ]
 +      } else if (xnnpack_custom_optimization_level == "0") {
 +        cflags += [ "/Od" ]
 +      }
