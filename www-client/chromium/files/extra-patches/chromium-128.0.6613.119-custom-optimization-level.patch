@@ -22,7 +22,7 @@
 +      } else if (v8_custom_optimization_level == "2") {
 +        cflags += [ "/Ox" ]
 +      } else if (v8_custom_optimization_level == "s") {
-+        cflags += [ "/Os", "/Oy" ]
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
 +      } else if (v8_custom_optimization_level == "1") {
 +        cflags += [ "/Ot", "/Oy" ]
 +      } else if (v8_custom_optimization_level == "z") {
@@ -151,7 +151,7 @@
 +      } else if (libvpx_custom_optimization_level == "2") {
 +        cflags += [ "/Ox" ]
 +      } else if (libvpx_custom_optimization_level == "s") {
-+        cflags += [ "/Os", "/Oy" ]
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
 +      } else if (libvpx_custom_optimization_level == "1") {
 +        cflags += [ "/Ot", "/Oy" ]
 +      } else if (libvpx_custom_optimization_level == "z") {
@@ -203,7 +203,7 @@
 +      } else if (openh264_custom_optimization_level == "2") {
 +        cflags += [ "/Ox" ]
 +      } else if (openh264_custom_optimization_level == "s") {
-+        cflags += [ "/Os", "/Oy" ]
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
 +      } else if (openh264_custom_optimization_level == "1") {
 +        cflags += [ "/Ot", "/Oy" ]
 +      } else if (openh264_custom_optimization_level == "z") {
@@ -241,7 +241,7 @@
 +      } else if (rnnoise_custom_optimization_level == "2") {
 +        cflags += [ "/Ox" ]
 +      } else if (rnnoise_custom_optimization_level == "s") {
-+        cflags += [ "/Os", "/Oy" ]
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
 +      } else if (rnnoise_custom_optimization_level == "1") {
 +        cflags += [ "/Ot", "/Oy" ]
 +      } else if (rnnoise_custom_optimization_level == "z") {
@@ -293,7 +293,7 @@
 +      } else if (tflite_custom_optimization_level == "2") {
 +        cflags += [ "/Ox" ]
 +      } else if (tflite_custom_optimization_level == "s") {
-+        cflags += [ "/Os", "/Oy" ]
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
 +      } else if (tflite_custom_optimization_level == "1") {
 +        cflags += [ "/Ot", "/Oy" ]
 +      } else if (tflite_custom_optimization_level == "z") {
@@ -339,7 +339,7 @@
 +      } else if (dav1d_custom_optimization_level == "2") {
 +        dav1d_copts += [ "/Ox" ]
 +      } else if (dav1d_custom_optimization_level == "s") {
-+        dav1d_copts += [ "/Os", "/Oy" ]
++        dav1d_copts += [ "/Os", "/Oy", "/Og", "/GF" ]
 +      } else if (dav1d_custom_optimization_level == "1") {
 +        dav1d_copts += [ "/Ot", "/Oy" ]
 +      } else if (dav1d_custom_optimization_level == "z") {
@@ -385,7 +385,7 @@
 +      } else if (libaom_custom_optimization_level == "2") {
 +        cflags += [ "/Ox" ]
 +      } else if (libaom_custom_optimization_level == "s") {
-+        cflags += [ "/Os", "/Oy" ]
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
 +      } else if (libaom_custom_optimization_level == "1") {
 +        cflags += [ "/Ot", "/Oy" ]
 +      } else if (libaom_custom_optimization_level == "z") {
@@ -428,7 +428,7 @@
 +      } else if (ruy_custom_optimization_level == "2") {
 +        cflags += [ "/Ox" ]
 +      } else if (ruy_custom_optimization_level == "s") {
-+        cflags += [ "/Os", "/Oy" ]
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
 +      } else if (ruy_custom_optimization_level == "1") {
 +        cflags += [ "/Ot", "/Oy" ]
 +      } else if (ruy_custom_optimization_level == "z") {
@@ -476,7 +476,7 @@
 +      } else if (xnnpack_custom_optimization_level == "2") {
 +        cflags += [ "/Ox" ]
 +      } else if (xnnpack_custom_optimization_level == "s") {
-+        cflags += [ "/Os", "/Oy" ]
++        cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
 +      } else if (xnnpack_custom_optimization_level == "1") {
 +        cflags += [ "/Ot", "/Oy" ]
 +      } else if (xnnpack_custom_optimization_level == "z" ) {
