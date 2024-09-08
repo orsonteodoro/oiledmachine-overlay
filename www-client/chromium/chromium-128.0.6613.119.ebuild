@@ -491,7 +491,7 @@ ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-+accessibility bindist bluetooth +bundled-libcxx +cfi +cups
++accessibility +asyncdns bindist bluetooth +bundled-libcxx +cfi +cups
 +css-hyphen -debug +encode +extensions ffmpeg-chromium -gtk4 -hangouts -headless
 +hidpi +js-type-check +kerberos +mdns +message-center +ml mold +mpris +official
 pax-kernel +pdf pic +pgo +plugins +pre-check-vaapi +proprietary-codecs
@@ -669,6 +669,7 @@ REQUIRED_USE+="
 		!system-zlib
 		!system-zstd
 		accessibility
+		asyncdns
 		bundled-libcxx
 		css-hyphen
 		cups
@@ -3060,6 +3061,7 @@ ewarn
 	myconf_gn+=" use_system_harfbuzz=$(usex system-harfbuzz true false)"
 
 	# Optional dependencies.
+	myconf_gn+=" enable_built_in_dns=$(usex asyncdns true false)"
 	myconf_gn+=" enable_hangout_services_extension=$(usex hangouts true false)"
 	myconf_gn+=" enable_hidpi=$(usex hidpi true false)"
 	myconf_gn+=" enable_mdns=$(usex mdns true false)"
