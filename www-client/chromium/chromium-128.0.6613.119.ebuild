@@ -3072,7 +3072,6 @@ ewarn
 	myconf_gn+=" enable_plugins=$(usex plugins true false)"
 	myconf_gn+=" enable_ppapi=false"
 	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
-	myconf_gn+=" enable_screen_ai_service=$(usex ml true false)"
 	myconf_gn+=" enable_screen_capture=$(usex screen-capture true false)"
 	myconf_gn+=" enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
 	myconf_gn+=" enable_spellcheck=$(usex spell true false)"
@@ -3083,6 +3082,9 @@ ewarn
 	myconf_gn+=" enable_websockets=$(usex websockets true false)"
 	myconf_gn+=" use_minikin_hyphenation=$(usex css-hyphen true false)"
 	myconf_gn+=" use_mpris=$(usex mpris true false)"
+
+	# Forced because of asserts
+	myconf_gn+=" enable_screen_ai_service=true"
 
 	if use headless ; then
 		myconf_gn+=" build_with_tflite_lib=false"

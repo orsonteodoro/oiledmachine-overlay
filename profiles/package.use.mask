@@ -96,3 +96,5 @@ sci-libs/jaxlib clang
 
 # No virtual/rust:0/llvm-19 yet
 www-client/chromium system-toolchain
+
+sys-apps/firejail -suid
