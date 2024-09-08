@@ -217,6 +217,34 @@ declare -A FIREJAIL_EXE_CORRECTIONS=(
 LLVM_COMPAT=( 14 )
 PYTHON_COMPAT=( python3_{9..11} )
 TEST_SET="distro" # distro or full
+X11_COMPAT=(
+PCSX2 Viber abiword alacarte alienarena alienblaster alpine anki apostrophe
+audacity authenticator-rs bijiben blobby cawbird celluloid chatterino cheese
+com_github_bleakgrey_tootle com_github_dahenson_agenda
+com_github_johnfactotum_Foliate com_github_phase1geo_minder
+com_github_tchx84_Flatseal crow dconf-editor dconf devhelp dolphin-emu
+electron-cash electron-mail electrum email-common eo-common ephemeral equalx
+etr falkon file-roller firefox-common fractal freetube frozen-bubble gajim
+geary geki2 geki3 gfeeds ghostwriter gimp git-cola gl-117 glaxium gnome-boxes
+gnome-calculator gnome-calendar gnome-characters gnome-chess gnome-clocks
+gnome_games-common gnome-latex gnome-maps gnome-music gnome-passwordsafe
+gnome-pomodoro gnome-screenshot gnome-sound-recorder gnome-todo gnote gnubik
+godot gradio green-recoder gucharmap guvcview gwenview homebank i2prouter iagno
+inkscape io_github_lainsce_Notejot jerry jitsi-meet-desktop kazam kdiff3 kid3
+ktouch kube kwin_x11 kwrite lbreakouthd ledger-live-desktop lettura libreoffice
+lifeograph linuxqq lollypop loupe lyx man marker mate-calc mcomix menulibre
+metadata-cleaner minecraft-launcher minitube mirage mp3splt-gtk musictube mutt
+mypaint neochat neomutt newsflash nextcloud nheko nitroshare nodejs-common
+nomacs nuclear ocenaudio okular onboard openarena open-invaders openmw
+otter-browser pcsxr pdfchain peek photoflare ppsspp pragha psi pybitmessage
+qcomicbook qgis quaternion quodlibet raincat rednotebook rhythmbox rssguard rtv
+rymdport seahorse session-desktop shortwave simutrans smuxi-frontend-gnome
+spectral standardnotes-desktop steam supertuxkart telegram terasology tiny-rdm
+totem transgui transmission-common trojita tuxtype twitch typespeed udiskie
+virt-manager virtualbox vmware vmware-view warzone2100 xfce4-screenshooter
+xonotic yelp youtube-dl-gui youtubemusic-nativefier youtube
+youtube-viewers-common ytmdesktop zeal zim
+)
 
 inherit flag-o-matic linux-info python-single-r1 toolchain-funcs virtualx
 
@@ -289,8 +317,191 @@ BDEPEND+="
 		x11-apps/xhost
 	)
 "
+GUI_REQUIRED_USE="
+firejail_profiles_PCSX2? ( || ( X xpra ) )
+firejail_profiles_Viber? ( || ( X xpra ) )
+firejail_profiles_abiword? ( || ( X xpra ) )
+firejail_profiles_alacarte? ( || ( X xpra ) )
+firejail_profiles_alienarena? ( || ( X xpra ) )
+firejail_profiles_alienblaster? ( || ( X xpra ) )
+firejail_profiles_alpine? ( || ( X xpra ) )
+firejail_profiles_anki? ( || ( X xpra ) )
+firejail_profiles_apostrophe? ( || ( X xpra ) )
+firejail_profiles_audacity? ( || ( X xpra ) )
+firejail_profiles_authenticator-rs? ( || ( X xpra ) )
+firejail_profiles_bijiben? ( || ( X xpra ) )
+firejail_profiles_blobby? ( || ( X xpra ) )
+firejail_profiles_cawbird? ( || ( X xpra ) )
+firejail_profiles_celluloid? ( || ( X xpra ) )
+firejail_profiles_chatterino? ( || ( X xpra ) )
+firejail_profiles_cheese? ( || ( X xpra ) )
+firejail_profiles_com_github_bleakgrey_tootle? ( || ( X xpra ) )
+firejail_profiles_com_github_dahenson_agenda? ( || ( X xpra ) )
+firejail_profiles_com_github_johnfactotum_Foliate? ( || ( X xpra ) )
+firejail_profiles_com_github_phase1geo_minder? ( || ( X xpra ) )
+firejail_profiles_com_github_tchx84_Flatseal? ( || ( X xpra ) )
+firejail_profiles_crow? ( || ( X xpra ) )
+firejail_profiles_dconf-editor? ( || ( X xpra ) )
+firejail_profiles_dconf? ( || ( X xpra ) )
+firejail_profiles_devhelp? ( || ( X xpra ) )
+firejail_profiles_dolphin-emu? ( || ( X xpra ) )
+firejail_profiles_electron-cash? ( || ( X xpra ) )
+firejail_profiles_electron-mail? ( || ( X xpra ) )
+firejail_profiles_electrum? ( || ( X xpra ) )
+firejail_profiles_email-common? ( || ( X xpra ) )
+firejail_profiles_eo-common? ( || ( X xpra ) )
+firejail_profiles_ephemeral? ( || ( X xpra ) )
+firejail_profiles_equalx? ( || ( X xpra ) )
+firejail_profiles_etr? ( || ( X xpra ) )
+firejail_profiles_falkon? ( || ( X xpra ) )
+firejail_profiles_file-roller? ( || ( X xpra ) )
+firejail_profiles_firefox-common? ( || ( X xpra ) )
+firejail_profiles_fractal? ( || ( X xpra ) )
+firejail_profiles_freetube? ( || ( X xpra ) )
+firejail_profiles_frozen-bubble? ( || ( X xpra ) )
+firejail_profiles_gajim? ( || ( X xpra ) )
+firejail_profiles_geary? ( || ( X xpra ) )
+firejail_profiles_geki2? ( || ( X xpra ) )
+firejail_profiles_geki3? ( || ( X xpra ) )
+firejail_profiles_gfeeds? ( || ( X xpra ) )
+firejail_profiles_ghostwriter? ( || ( X xpra ) )
+firejail_profiles_gimp? ( || ( X xpra ) )
+firejail_profiles_git-cola? ( || ( X xpra ) )
+firejail_profiles_gl-117? ( || ( X xpra ) )
+firejail_profiles_glaxium? ( || ( X xpra ) )
+firejail_profiles_gnome-boxes? ( || ( X xpra ) )
+firejail_profiles_gnome-calculator? ( || ( X xpra ) )
+firejail_profiles_gnome-calendar? ( || ( X xpra ) )
+firejail_profiles_gnome-characters? ( || ( X xpra ) )
+firejail_profiles_gnome-chess? ( || ( X xpra ) )
+firejail_profiles_gnome-clocks? ( || ( X xpra ) )
+firejail_profiles_gnome_games-common? ( || ( X xpra ) )
+firejail_profiles_gnome-latex? ( || ( X xpra ) )
+firejail_profiles_gnome-maps? ( || ( X xpra ) )
+firejail_profiles_gnome-music? ( || ( X xpra ) )
+firejail_profiles_gnome-passwordsafe? ( || ( X xpra ) )
+firejail_profiles_gnome-pomodoro? ( || ( X xpra ) )
+firejail_profiles_gnome-screenshot? ( || ( X xpra ) )
+firejail_profiles_gnome-sound-recorder? ( || ( X xpra ) )
+firejail_profiles_gnome-todo? ( || ( X xpra ) )
+firejail_profiles_gnote? ( || ( X xpra ) )
+firejail_profiles_gnubik? ( || ( X xpra ) )
+firejail_profiles_godot? ( || ( X xpra ) )
+firejail_profiles_gradio? ( || ( X xpra ) )
+firejail_profiles_green-recoder? ( || ( X xpra ) )
+firejail_profiles_gucharmap? ( || ( X xpra ) )
+firejail_profiles_guvcview? ( || ( X xpra ) )
+firejail_profiles_gwenview? ( || ( X xpra ) )
+firejail_profiles_homebank? ( || ( X xpra ) )
+firejail_profiles_i2prouter? ( || ( X xpra ) )
+firejail_profiles_iagno? ( || ( X xpra ) )
+firejail_profiles_inkscape? ( || ( X xpra ) )
+firejail_profiles_io_github_lainsce_Notejot? ( || ( X xpra ) )
+firejail_profiles_jerry? ( || ( X xpra ) )
+firejail_profiles_jitsi-meet-desktop? ( || ( X xpra ) )
+firejail_profiles_kazam? ( || ( X xpra ) )
+firejail_profiles_kdiff3? ( || ( X xpra ) )
+firejail_profiles_kid3? ( || ( X xpra ) )
+firejail_profiles_ktouch? ( || ( X xpra ) )
+firejail_profiles_kube? ( || ( X xpra ) )
+firejail_profiles_kwin_x11? ( || ( X xpra ) )
+firejail_profiles_kwrite? ( || ( X xpra ) )
+firejail_profiles_lbreakouthd? ( || ( X xpra ) )
+firejail_profiles_ledger-live-desktop? ( || ( X xpra ) )
+firejail_profiles_lettura? ( || ( X xpra ) )
+firejail_profiles_libreoffice? ( || ( X xpra ) )
+firejail_profiles_lifeograph? ( || ( X xpra ) )
+firejail_profiles_linuxqq? ( || ( X xpra ) )
+firejail_profiles_lollypop? ( || ( X xpra ) )
+firejail_profiles_loupe? ( || ( X xpra ) )
+firejail_profiles_lyx? ( || ( X xpra ) )
+firejail_profiles_man? ( || ( X xpra ) )
+firejail_profiles_marker? ( || ( X xpra ) )
+firejail_profiles_mate-calc? ( || ( X xpra ) )
+firejail_profiles_mcomix? ( || ( X xpra ) )
+firejail_profiles_menulibre? ( || ( X xpra ) )
+firejail_profiles_metadata-cleaner? ( || ( X xpra ) )
+firejail_profiles_minecraft-launcher? ( || ( X xpra ) )
+firejail_profiles_minitube? ( || ( X xpra ) )
+firejail_profiles_mirage? ( || ( X xpra ) )
+firejail_profiles_mp3splt-gtk? ( || ( X xpra ) )
+firejail_profiles_musictube? ( || ( X xpra ) )
+firejail_profiles_mutt? ( || ( X xpra ) )
+firejail_profiles_mypaint? ( || ( X xpra ) )
+firejail_profiles_neochat? ( || ( X xpra ) )
+firejail_profiles_neomutt? ( || ( X xpra ) )
+firejail_profiles_newsflash? ( || ( X xpra ) )
+firejail_profiles_nextcloud? ( || ( X xpra ) )
+firejail_profiles_nheko? ( || ( X xpra ) )
+firejail_profiles_nitroshare? ( || ( X xpra ) )
+firejail_profiles_nodejs-common? ( || ( X xpra ) )
+firejail_profiles_nomacs? ( || ( X xpra ) )
+firejail_profiles_nuclear? ( || ( X xpra ) )
+firejail_profiles_ocenaudio? ( || ( X xpra ) )
+firejail_profiles_okular? ( || ( X xpra ) )
+firejail_profiles_onboard? ( || ( X xpra ) )
+firejail_profiles_openarena? ( || ( X xpra ) )
+firejail_profiles_open-invaders? ( || ( X xpra ) )
+firejail_profiles_openmw? ( || ( X xpra ) )
+firejail_profiles_otter-browser? ( || ( X xpra ) )
+firejail_profiles_pcsxr? ( || ( X xpra ) )
+firejail_profiles_pdfchain? ( || ( X xpra ) )
+firejail_profiles_peek? ( || ( X xpra ) )
+firejail_profiles_photoflare? ( || ( X xpra ) )
+firejail_profiles_ppsspp? ( || ( X xpra ) )
+firejail_profiles_pragha? ( || ( X xpra ) )
+firejail_profiles_psi? ( || ( X xpra ) )
+firejail_profiles_pybitmessage? ( || ( X xpra ) )
+firejail_profiles_qcomicbook? ( || ( X xpra ) )
+firejail_profiles_qgis? ( || ( X xpra ) )
+firejail_profiles_quaternion? ( || ( X xpra ) )
+firejail_profiles_quodlibet? ( || ( X xpra ) )
+firejail_profiles_raincat? ( || ( X xpra ) )
+firejail_profiles_rednotebook? ( || ( X xpra ) )
+firejail_profiles_rhythmbox? ( || ( X xpra ) )
+firejail_profiles_rssguard? ( || ( X xpra ) )
+firejail_profiles_rtv? ( || ( X xpra ) )
+firejail_profiles_rymdport? ( || ( X xpra ) )
+firejail_profiles_seahorse? ( || ( X xpra ) )
+firejail_profiles_session-desktop? ( || ( X xpra ) )
+firejail_profiles_shortwave? ( || ( X xpra ) )
+firejail_profiles_simutrans? ( || ( X xpra ) )
+firejail_profiles_smuxi-frontend-gnome? ( || ( X xpra ) )
+firejail_profiles_spectral? ( || ( X xpra ) )
+firejail_profiles_standardnotes-desktop? ( || ( X xpra ) )
+firejail_profiles_steam? ( || ( X xpra ) )
+firejail_profiles_supertuxkart? ( || ( X xpra ) )
+firejail_profiles_telegram? ( || ( X xpra ) )
+firejail_profiles_terasology? ( || ( X xpra ) )
+firejail_profiles_tiny-rdm? ( || ( X xpra ) )
+firejail_profiles_totem? ( || ( X xpra ) )
+firejail_profiles_transgui? ( || ( X xpra ) )
+firejail_profiles_transmission-common? ( || ( X xpra ) )
+firejail_profiles_trojita? ( || ( X xpra ) )
+firejail_profiles_tuxtype? ( || ( X xpra ) )
+firejail_profiles_twitch? ( || ( X xpra ) )
+firejail_profiles_typespeed? ( || ( X xpra ) )
+firejail_profiles_udiskie? ( || ( X xpra ) )
+firejail_profiles_virt-manager? ( || ( X xpra ) )
+firejail_profiles_virtualbox? ( || ( X xpra ) )
+firejail_profiles_vmware? ( || ( X xpra ) )
+firejail_profiles_vmware-view? ( || ( X xpra ) )
+firejail_profiles_warzone2100? ( || ( X xpra ) )
+firejail_profiles_xfce4-screenshooter? ( || ( X xpra ) )
+firejail_profiles_xonotic? ( || ( X xpra ) )
+firejail_profiles_yelp? ( || ( X xpra ) )
+firejail_profiles_youtube-dl-gui? ( || ( X xpra ) )
+firejail_profiles_youtubemusic-nativefier? ( || ( X xpra ) )
+firejail_profiles_youtube? ( || ( X xpra ) )
+firejail_profiles_youtube-viewers-common? ( || ( X xpra ) )
+firejail_profiles_ytmdesktop? ( || ( X xpra ) )
+firejail_profiles_zeal? ( || ( X xpra ) )
+firejail_profiles_zim? ( || ( X xpra ) )
+"
 REQUIRED_USE+="
+	${GUI_REQUIRED_USE}
 	!test
+	suid
 	contrib? (
 		${PYTHON_REQUIRED_USE}
 	)
@@ -299,6 +510,9 @@ REQUIRED_USE+="
 	)
 	test-profiles? (
 		test
+	)
+	xpra? (
+		X
 	)
 "
 
@@ -944,9 +1158,41 @@ einfo "Replace REQUIRED_USE with the following:"
 	echo
 }
 
+gen_x11_compat() {
+einfo
+einfo "Place the following in the X11_COMPAT array:"
+einfo
+	local x
+	for x in $(grep -l  -r -e "@x11" "${S}/etc/profile"*) ; do \
+		basename "${x}"; \
+	done \
+		| sort -d \
+		| sed -e "s|\.profile||g" \
+		| tr "\n" " " \
+		| fold -s -w 80 \
+		| sed -e "s| $||g" \
+		| sed -e "s|\.|_|g"
+einfo
+einfo "Add the following REQUIRED_USE:"
+einfo
+	local L=$(for x in $(grep -l  -r -e "@x11" "${S}/etc/profile"*) ; do \
+		basename "${x}"; \
+	done \
+		| sort -d \
+		| sed -e "s|\.profile||g" \
+		| tr "\n" " " \
+		| fold -s -w 80 \
+		| sed -e "s| $||g" \
+		| sed -e "s|\.|_|g")
+	for x in ${L[@]} ; do
+echo "firejail_profiles_${x}? ( || ( X xpra ) )"
+	done
+}
+
 gen_ebuild() {
 	gen_profile_array
 	gen_required_use
+	#gen_x11_compat
 eerror
 eerror "Comment out GEN_EBUILD when you are done."
 eerror
@@ -1560,7 +1806,7 @@ einfo "Generating wrapper for ${profile_name}"
 	fi
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}"
 #!/bin/bash
-exec firejail --profile=\"${n}\" \"${exe_name}\" \"\$@\"
+exec firejail --profile="${profile_name}" "${exe_name}" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}"
 	fperms 0755 "/usr/local/bin/${exe_name}"
@@ -1673,6 +1919,10 @@ SANDBOX_WRITE="/run/firejail"
 EOF
 	insinto "/etc/sandbox.d"
 	doins "${T}/99firejail"
+	if use suid ; then
+einfo "Setting suid bit for /usr/bin/firejail"
+#		fperms u+s "/usr/bin/firejail"
+	fi
 }
 
 pkg_postinst() {
@@ -1722,9 +1972,9 @@ einfo
 	if ! use firejail_profiles_server ; then
 ewarn "Disabling firejail_profiles_server disables default sandboxing for the root user"
 	fi
-	if use symlink ; then
+	if use wrapper ; then
 ewarn
-ewarn "The symlink USE flag is experimental and may break for profiles that do"
+ewarn "The wrapper USE flag is experimental and may break for profiles that do"
 ewarn "not match the case or use an abnormal name in association with"
 ewarn "/usr/bin/<program_name>.  Corrections can be submitted as a issue report"
 ewarn "on repo."
