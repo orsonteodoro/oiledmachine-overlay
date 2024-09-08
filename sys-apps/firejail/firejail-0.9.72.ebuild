@@ -1589,7 +1589,7 @@ eerror
 		if use ${pf} ; then
 einfo "Adding ${u} profile"
 			mv "${src}" "${dest}" || die
-			if use symlink ; then
+			if use symlink && ! [[ "${u}" =~ "-common" ]] ; then
 				local fn
 				if is_use_dotted "${u}" ; then
 					fn=$(get_dotted_fn "${u}")
