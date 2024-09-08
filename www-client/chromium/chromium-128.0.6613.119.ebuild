@@ -3062,6 +3062,7 @@ ewarn
 
 	# Optional dependencies.
 	myconf_gn+=" enable_built_in_dns=$(usex async-dns true false)"
+	myconf_gn+=" enable_chrome_notifications=$(usex message-center true false)"
 	myconf_gn+=" enable_hangout_services_extension=$(usex hangouts true false)"
 	myconf_gn+=" enable_hidpi=$(usex hidpi true false)"
 	myconf_gn+=" enable_mdns=$(usex mdns true false)"
