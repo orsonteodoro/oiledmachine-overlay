@@ -45,38 +45,39 @@ XMind Xephyr Xvfb ZeGrapher abiword abrowser acat adiff agetpkg akonadi_control
 akregator alacarte alienarena alienarena-wrapper alienblaster alpine alpinef
 als amarok amule amuled android-studio ani-cli anki anydesk aosp apack apktool
 apostrophe ar arch-audit archaudit-report archiver-common ardour4 ardour5
-arduino arepack aria2c ark arm artha assogiate asunder atom atom-beta atool
-atril atril-previewer atril-thumbnailer audacious audacity audio-recorder
+arduino arepack aria2c ark arm armcord artha assogiate asunder atom atom-beta
+atool atril atril-previewer atril-thumbnailer audacious audacity audio-recorder
 aunpack authenticator authenticator-rs autokey-common autokey-gtk autokey-qt
 autokey-run autokey-shell avidemux avidemux3_cli avidemux3_jobs_qt5
 avidemux3_qt5 aweather awesome axel b2sum ballbuster ballbuster-wrapper
 baloo_file baloo_filemetadata_temp_extractor balsa baobab barrier basilisk
-bcompare beaker bibletime bibtex bijiben bitcoin-qt bitlbee bitwarden blackbox
-bleachbit blender blender-2_8 blender-3_6 bless blink-common
-blink-common-hardened_inc blobby blobwars bluefish bnox bpftop brackets brasero
-brave brave-browser brave-browser-beta brave-browser-dev brave-browser-nightly
-brave-browser-stable brz bsdcat bsdcpio bsdtar build-systems-common bundle
-bunzip2 bzcat bzflag bzip2 bzr cachy-browser caja calibre calligra
-calligraauthor calligraconverter calligraflow calligragemini calligraplan
-calligraplanwork calligrasheets calligrastage calligrawords cameramonitor
-cantata cargo catfish cawbird celluloid chafa chatterino checkbashisms cheese
-cherrytree chromium chromium-browser chromium-browser-privacy chromium-common
-chromium-common-hardened_inc chromium-freeworld cin cinelerra cinelerra-gg
-cksum clac clamav clamdscan clamdtop clamscan clamtk claws-mail clawsker
-clementine clion clion-eap clipgrab clipit cliqz clocks cloneit cmake cmus code
-code-oss codium cointop cola colorful colorful-wrapper
-com_github_bleakgrey_tootle com_github_dahenson_agenda
-com_github_johnfactotum_Foliate com_github_phase1geo_minder
-com_github_tchx84_Flatseal com_gitlab_newsflash conkeror conky conplay corebird
-cower coyim cpio crawl crawl-tiles crow cryptocat curl cvlc cyberfox d-feet
-d-spy daisy darktable dbus-send dconf dconf-editor ddgr ddgtk deadbeef deadlink
-default deluge desktopeditors devhelp devilspie devilspie2 dex2jar dexios dia
-dig digikam dillo dino dino-im discord discord-canary discord-common
-discord-ptb display display-im6_q16 dnox dnscrypt-proxy dnsmasq dolphin
-dolphin-emu dooble dooble-qt4 dosbox dragon drawio drill dropbox easystroke
-ebook-convert ebook-edit ebook-meta ebook-polish ebook-viewer editorconfiger
-electron-cash electron-common electron-common-hardened_inc electron-mail
-electrum element-desktop elinks emacs email-common empathy enchant enchant-2
+bcompare beaker bibletime bibtex bijiben bitcoin-qt bitlbee bitwarden
+bitwarden-desktop blackbox bleachbit blender blender-2_8 blender-3_6 bless
+blink-common blink-common-hardened_inc blobby blobwars bluefish bnox bpftop
+brackets brasero brave brave-browser brave-browser-beta brave-browser-dev
+brave-browser-nightly brave-browser-stable brz bsdcat bsdcpio bsdtar
+build-systems-common bundle bunzip2 bzcat bzflag bzip2 bzr cachy-browser caja
+calibre calligra calligraauthor calligraconverter calligraflow calligragemini
+calligraplan calligraplanwork calligrasheets calligrastage calligrawords
+cameramonitor cantata cargo catfish cawbird celluloid chafa chatterino
+checkbashisms cheese cherrytree chromium chromium-browser
+chromium-browser-privacy chromium-common chromium-common-hardened_inc
+chromium-freeworld cin cinelerra cinelerra-gg cksum clac clamav clamdscan
+clamdtop clamscan clamtk claws-mail clawsker clementine clion clion-eap
+clipgrab clipit cliqz clocks cloneit cmake cmus code code-oss codium cointop
+cola colorful colorful-wrapper com_github_bleakgrey_tootle
+com_github_dahenson_agenda com_github_johnfactotum_Foliate
+com_github_phase1geo_minder com_github_tchx84_Flatseal com_gitlab_newsflash
+conkeror conky conplay corebird cower coyim cpio crawl crawl-tiles crow
+cryptocat curl cvlc cyberfox d-feet d-spy daisy darktable dbus-debug-common
+dbus-send dconf dconf-editor ddgr ddgtk deadbeef deadlink default deluge
+desktopeditors devhelp devilspie devilspie2 dex2jar dexios dia dig digikam
+dillo dino dino-im discord discord-canary discord-common discord-ptb display
+display-im6_q16 dnox dnscrypt-proxy dnsmasq dolphin dolphin-emu dooble
+dooble-qt4 dosbox dragon drawio drill dropbox dtui easystroke ebook-convert
+ebook-edit ebook-meta ebook-polish ebook-viewer editorconfiger electron-cash
+electron-common electron-common-hardened_inc electron-mail electrum
+element-desktop elinks emacs email-common empathy enchant enchant-2
 enchant-lsmod enchant-lsmod-2 engrampa enox enpass eo-common eog eom ephemeral
 epiphany equalx erd et etr etr-wrapper evince evince-previewer
 evince-thumbnailer evolution exfalso exiftool falkon fbreader fdns feedreader
@@ -145,7 +146,7 @@ mupdf-x11 mupdf-x11-curl mupen64plus muraster musescore musictube musixmatch
 mutool mutt mypaint mypaint-ora-thumbnailer nano natron nautilus ncdu ncdu2
 nemo neochat neomutt netactview nethack nethack-vultures netsurf neverball
 neverball-wrapper neverputt neverputt-wrapper newsbeuter newsboat newsflash
-nextcloud nextcloud-desktop nheko nicotine nitroshare nitroshare-cli
+nextcloud nextcloud-desktop nheko nhex nicotine nitroshare nitroshare-cli
 nitroshare-nmh nitroshare-send nitroshare-ui node node-gyp nodejs-common nomacs
 noprofile notable notify-send npm npx nslookup nuclear nvim nylas nyx obs
 ocenaudio odt2txt oggsplt okular onboard onionshare onionshare-cli
@@ -247,7 +248,7 @@ if [[ "${PV}" =~ "9999" ]]; then
 	inherit git-r3
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/netblue30/firejail.git"
-	FALLBACK_COMMIT="550f15d0e062b0a6ac0efb642637ffb395edc5d6" # May 1, 2024
+	FALLBACK_COMMIT="897f12dd88c1add667ecb211b61b6126a49c7065" # Sep 1, 2024
 	IUSE+=" fallback-commit"
 else
 	KEYWORDS="amd64 ~arm ~arm64 ~x86"
@@ -359,6 +360,7 @@ REQUIRED_USE+="
 	firejail_profiles_ar? ( firejail_profiles_archiver-common )
 	firejail_profiles_ardour4? ( firejail_profiles_ardour5 )
 	firejail_profiles_arepack? ( firejail_profiles_atool )
+	firejail_profiles_armcord? ( firejail_profiles_electron-common )
 	firejail_profiles_atom? ( firejail_profiles_electron-common )
 	firejail_profiles_atom-beta? ( firejail_profiles_atom )
 	firejail_profiles_atool? ( firejail_profiles_archiver-common )
@@ -380,6 +382,7 @@ REQUIRED_USE+="
 	firejail_profiles_beaker? ( firejail_profiles_electron-common )
 	firejail_profiles_bibtex? ( firejail_profiles_latex-common )
 	firejail_profiles_bitwarden? ( firejail_profiles_electron-common )
+	firejail_profiles_bitwarden-desktop? ( firejail_profiles_bitwarden )
 	firejail_profiles_bnox? ( firejail_profiles_chromium-common )
 	firejail_profiles_brave? ( firejail_profiles_chromium-common )
 	firejail_profiles_brave-browser? ( firejail_profiles_brave )
@@ -435,6 +438,8 @@ REQUIRED_USE+="
 	firejail_profiles_cryptocat? ( firejail_profiles_Cryptocat )
 	firejail_profiles_cvlc? ( firejail_profiles_vlc )
 	firejail_profiles_cyberfox? ( firejail_profiles_firefox-common )
+	firejail_profiles_d-feet? ( firejail_profiles_dbus-debug-common )
+	firejail_profiles_d-spy? ( firejail_profiles_dbus-debug-common )
 	firejail_profiles_ddgr? ( firejail_profiles_googler-common )
 	firejail_profiles_devilspie2? ( firejail_profiles_devilspie )
 	firejail_profiles_dino-im? ( firejail_profiles_dino )
@@ -445,6 +450,7 @@ REQUIRED_USE+="
 	firejail_profiles_dnox? ( firejail_profiles_chromium-common )
 	firejail_profiles_dolphin? ( firejail_profiles_file-manager-common )
 	firejail_profiles_dooble-qt4? ( firejail_profiles_dooble )
+	firejail_profiles_dtui? ( firejail_profiles_dbus-debug-common )
 	firejail_profiles_ebook-convert? ( firejail_profiles_calibre )
 	firejail_profiles_ebook-edit? ( firejail_profiles_calibre )
 	firejail_profiles_ebook-meta? ( firejail_profiles_calibre )
