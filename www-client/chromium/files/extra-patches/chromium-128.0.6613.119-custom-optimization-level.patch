@@ -48,13 +48,13 @@
    if (((is_posix && !is_android) || is_fuchsia || is_win) && !using_sanitizer) {
 -    configs += [ "//build/config/compiler:optimize_speed" ]
 +    configs += [
-+      "//build/config/compiler:optimize_speed"
++      "//build/config/compiler:optimize_speed",
 +      ":custom_optimization_config"
 +    ]
    } else {
 -    configs += [ "//build/config/compiler:optimize_max" ]
 +    configs += [
-+      "//build/config/compiler:optimize_max"
++      "//build/config/compiler:optimize_max",
 +      ":custom_optimization_config"
 +    ]
    }

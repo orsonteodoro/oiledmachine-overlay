@@ -2673,6 +2673,24 @@ _src_configure_compiler() {
 build_gn() {
 # Sync with gn ebuild:
 	pushd "${WORKDIR}/gn-${GN_COMMIT}" >/dev/null 2>&1 || die
+		local gn_opt_level="-O2"
+		if is-flagq "-Ofast" ; then
+			gn_opt_level="-O3"
+		elif is-flagq "-O4" ; then
+			gn_opt_level="-O3"
+		elif is-flagq "-O3" ; then
+			gn_opt_level="-O3"
+		elif is-flagq "-O2" ; then
+			gn_opt_level="-O2"
+		elif is-flagq "-O1" ; then
+			gn_opt_level="-O1"
+		elif is-flagq "-O0" ; then
+			gn_opt_level="-O2"
+		fi
+		sed -i -e \
+			"s|-O3|${gn_opt_level}|g"
+			"build/gen.py" \
+			|| die
 		if use elibc_musl ; then # bug 906362
 			append-cflags -D_LARGEFILE64_SOURCE
 			append-cxxflags -D_LARGEFILE64_SOURCE
@@ -3046,6 +3064,7 @@ ewarn
 	myconf_gn+=" enable_hidpi=$(usex hidpi true false)"
 	myconf_gn+=" enable_mdns=$(usex mdns true false)"
 	myconf_gn+=" enable_message_center=$(usex message-center true false)"
+	myconf_gn+=" enable_ml_internal=false"	# components/optimization_guide/internal is empty.  It is default disabled for unbranded.
 	myconf_gn+=" enable_plugins=$(usex plugins true false)"
 	myconf_gn+=" enable_ppapi=false"
 	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
