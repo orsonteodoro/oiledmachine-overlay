@@ -887,10 +887,6 @@ REQUIRED_USE+="
 	xvfb? (
 		X
 	)
-	|| (
-		mimalloc
-		scudo
-	)
 "
 RDEPEND+="
 	!sys-apps/firejail-lts
