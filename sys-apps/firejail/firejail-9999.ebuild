@@ -2535,7 +2535,7 @@ EOF
 einfo "Generating wrapper for firefox-bin"
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}-bin" || die
 #!/bin/bash
-exec firejail ${x11_arg} ${allocator_args} ${wh_harg} --profile="${profile_name}" "/usr/bin/${exe_name}-bin" "\$@"
+exec firejail ${x11_arg} ${allocator_args} ${wh_arg} --profile="${profile_name}" "/usr/bin/${exe_name}-bin" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}-bin"
 	fperms 0755 "/usr/local/bin/${exe_name}-bin"
