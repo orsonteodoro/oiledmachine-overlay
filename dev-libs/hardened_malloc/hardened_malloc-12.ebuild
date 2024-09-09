@@ -6,7 +6,7 @@ EAPI=8
 
 LLVM_COMPAT=( {18..14} )
 
-inherit toolchain-funcs
+inherit flag-o-matic toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${P}"
@@ -29,12 +29,35 @@ LICENSE="
 "
 # third_party/libdivide.h - || ( Boost-1.0 ZLIB )
 # chacha.c - public-domain
+# See https://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html
+MTE_COMPAT=(
+	8_5-a
+	8_6-a
+	8_7-a
+	8_8-a
+	8_9-a
+	9-a
+	9_1-a
+	9_2-a
+	9_3-a
+	9_4-a
+)
+CPU_FLAGS_ARM=(
+	cpu_flags_arm_mte
+	${MTE_COMPAT[@]/#/cpu_flags_arm_v}
+)
 SLOT="0"
 IUSE="
+${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 bindist clang custom-kernel test
 "
 REQUIRED_USE="
+	cpu_flags_arm_mte? (
+		^^ (
+			${MTE_COMPAT[@]/#/cpu_flags_arm_v}
+		)
+	)
 	clang? (
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -129,6 +152,17 @@ src_compile() {
 	local myconf=(
 		CONFIG_NATIVE=$(usex bindist false true)
 	)
+	if use cpu_flags_arm_mte ; then
+		append-cppflags -DHAS_ARM_MTE
+		local x
+		for x in ${MTE_COMPAT[@]} ; do
+			if use "cpu_flags_arm_v${x}" ; then
+				filter-flags '-march=*'
+				append-flags -march=armv${x/_/.}+memtag
+				break
+			fi
+		done
+	fi
 	emake ${myconf[@]}
 }
 
