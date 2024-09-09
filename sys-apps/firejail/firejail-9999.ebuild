@@ -2452,7 +2452,9 @@ einfo "Generating wrapper for ${profile_name}"
 		return 1
 	}
 
-	if [[ "${X_BACKEND[${profile_name}]}" == "xpra" ]] ; then
+	if ! use X ; then
+		:
+	elif [[ "${X_BACKEND[${profile_name}]}" == "xpra" ]] ; then
 		x11_arg="--x11=xpra"
 	elif [[ "${X_BACKEND[${profile_name}]}" == "xephyr" ]] ; then
 		x11_arg="--x11=xephyr"
