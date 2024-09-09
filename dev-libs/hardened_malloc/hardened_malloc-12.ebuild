@@ -175,3 +175,9 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 }
+
+pkg_postinst() {
+	if use custom-kernel ; then
+ewarn "You are responsible for using/providing a >= 6.1 Linux kernel."
+	fi
+}

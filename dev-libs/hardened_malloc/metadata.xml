@@ -6,4 +6,12 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <use>
+    <flag name="custom-kernel">
+      Free yourself from vendor lock-in.  Allow to use your own custom kernel.
+    </flag>
+    <flag name="cpu_flags_arm_mte">
+      Add support for MTE (Memory Tag Extentions)
+    </flag>
+  </use>
 </pkgmetadata>
