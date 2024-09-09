@@ -2493,10 +2493,10 @@ einfo "Generating wrapper for ${profile_name}"
 	fi
 
 	local exe_path=""
-	if [[ -n "${_PATH_CORRECTION[${profile_name}]}" ]] ; then
-		exe_path="${_PATH_CORRECTION[${profile_name}]}"
-	elif [[ -n "${PATH_CORRECTION[${profile_name}]}" ]] ; then
+	if [[ -n "${PATH_CORRECTION[${profile_name}]}" ]] ; then
 		exe_path="${PATH_CORRECTION[${profile_name}]}"
+	elif [[ -n "${_PATH_CORRECTION[${profile_name}]}" ]] ; then
+		exe_path="${_PATH_CORRECTION[${profile_name}]}"
 	else
 		exe_path="/usr/bin/${exe_name}"
 	fi
