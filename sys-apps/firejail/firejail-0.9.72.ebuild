@@ -771,6 +771,9 @@ REQUIRED_USE+="
 	xpra? (
 		X
 	)
+	xvfb? (
+		X
+	)
 "
 
 #	Not required until uncommented
