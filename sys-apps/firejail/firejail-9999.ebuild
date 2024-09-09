@@ -295,6 +295,7 @@ zeal zim zoom
 hexchat
 obs
 pidgin
+pitivi
 qbittorrent
 xchat
 )
@@ -781,6 +782,7 @@ firejail_profiles_zoom? ( || ( X xpra ) )
 firejail_profiles_hexchat? ( || ( X xpra ) )
 firejail_profiles_obs? ( || ( X xpra ) )
 firejail_profiles_pidgin? ( || ( X xpra ) )
+firejail_profiles_pitivi? ( || ( X xpra ) )
 firejail_profiles_qbittorrent? ( || ( X xpra ) )
 firejail_profiles_xchat? ( || ( X xpra ) )
 "
@@ -1530,6 +1532,7 @@ einfo
 		obs
 		pcmanfm
 		pidgin
+		pitivi
 		qbittorrent
 		thunar
 		thunderbird
