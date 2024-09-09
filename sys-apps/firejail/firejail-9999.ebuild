@@ -292,7 +292,10 @@ xonotic xonotic-sdl xonotic-sdl-wrapper yandex-browser yelp youtube
 youtube-dl-gui youtube-viewer-gtk youtubemusic-nativefier ytmdesktop zathura
 zeal zim zoom
 
+hexchat
+pidgin
 qbittorrent
+xchat
 )
 
 inherit flag-o-matic linux-info python-single-r1 toolchain-funcs virtualx
@@ -774,7 +777,10 @@ firejail_profiles_zeal? ( || ( X xpra ) )
 firejail_profiles_zim? ( || ( X xpra ) )
 firejail_profiles_zoom? ( || ( X xpra ) )
 
+firejail_profiles_hexchat? ( || ( X xpra ) )
+firejail_profiles_pidgin? ( || ( X xpra ) )
 firejail_profiles_qbittorrent? ( || ( X xpra ) )
+firejail_profiles_xchat? ( || ( X xpra ) )
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -1517,14 +1523,17 @@ einfo
 		google-chrome
 		eog
 		gramps
+		hexchat
 		nautilus
 		pcmanfm
+		pidgin
 		qbittorrent
 		thunar
 		thunderbird
 		uzbl-browser
 		vivaldi
 		vmware-player
+		xchat
 		xmms
 		wireshark
 		wireshark-gtk
