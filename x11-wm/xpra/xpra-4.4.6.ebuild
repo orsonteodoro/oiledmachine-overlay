@@ -892,7 +892,7 @@ eerror
 	export UDEVDIR=$(get_udevdir)
 	export DISTUTILS_ARGS
 	einfo "DISTUTILS_ARGS:  ${DISTUTILS_ARGS[@]}"
-	addpredict /var/lib/rpm/Index.db
+	addpredict "/var/lib/rpm/Index.db"
 }
 
 python_install_all() {
