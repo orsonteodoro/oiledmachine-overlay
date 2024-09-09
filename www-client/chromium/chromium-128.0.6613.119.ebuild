@@ -1116,7 +1116,7 @@ BDEPEND+="
 	${CLANG_BDEPEND}
 	${COMMON_SNAPSHOT_DEPEND}
 	${PYTHON_DEPS}
-	www-client/chromium-toolchain:0/${PV}[gn]
+	www-client/chromium-toolchain:0/${PV}[clang,gn,rust]
 	www-client/chromium-sources:0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_PV}
 	>=app-arch/gzip-1.7
 	>=dev-build/ninja-1.7.2
@@ -1821,11 +1821,11 @@ src_unpack() {
 	if use system-toolchain ; then
 		unpack "chromium-patches-${PATCH_VER}.tar.bz2"
 	else
-		mkdir -p "${S}/third_party/llvm-build/Release+Asserts" || die
-		cp -aT "/usr/share/chromium/toolchain/llvm" "${S}/third_party/llvm-build/Release+Asserts" || die
+		rm -rf "${S}/third_party/llvm-build/Release+Asserts" || true
+		ln -s "/usr/share/chromium/toolchain/llvm" "${S}/third_party/llvm-build/Release+Asserts" || die
 
-		mkdir -p "${S}/third_party/rust-toolchain" || die
-		cp -aT "/usr/share/chromium/toolchain/llvm" "${S}/third_party/rust-toolchain" || die
+		rm -rf "${S}/third_party/rust-toolchain" || true
+		ln -s "/usr/share/chromium/toolchain/rust" "${S}/third_party/rust-toolchain" || die
 	fi
 
 	if use ppc64 ; then
