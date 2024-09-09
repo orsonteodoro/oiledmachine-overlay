@@ -492,7 +492,7 @@ ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +accessibility +async-dns bindist bluetooth +bundled-libcxx +cfi +cups
-+css-hyphen -debug +encode +extensions ffmpeg-chromium -gtk4 -hangouts -headless
++css-hyphen -debug +encode +extensions ffmpeg-chromium firejail -gtk4 -hangouts -headless
 +hidpi +js-type-check +kerberos +mdns +message-center +ml mold +mpris +official
 pax-kernel +pdf pic +pgo +plugins +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
@@ -1071,6 +1071,11 @@ DEPEND+="
 		gtk4? (
 			>=gui-libs/gtk-${GTK4_PV}:4[wayland?,X?]
 		)
+	)
+"
+PDEPEND+="
+	firejail? (
+		sys-apps/firejail[X,chromium]
 	)
 "
 CLANG_BDEPEND="
