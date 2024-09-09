@@ -75,6 +75,9 @@
 
     Analysis and explanations:
 
+    /etc/portage/env/firejail.conf is a fixed path.  It should not be
+    customizable.  This is to make associative arrays work.
+
     By default in this ebuild, scudo will free memory blocks with a delay.  This
     delay is to mitigate against use-after-free.  This delay is dangerous for
     cold boot attacks or maybe Spectre based ones since freeing blocks is not

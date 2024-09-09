@@ -6,6 +6,12 @@ EAPI=8
 
 # U 22.04
 
+declare -A MALLOC_BACKEND
+declare -A PATH_CORRECTION
+declare -A SCUDO_FREE_IMMEDIATE
+declare -A XEPHYR_WH
+declare -A X_BACKEND
+
 DOTTED_FILENAMES=(
 blender-2.8
 blender-3.6
@@ -1738,6 +1744,9 @@ eerror
 }
 
 pkg_setup() {
+	if [[ -e "/etc/portage/env/firejail.conf" ]] ; then
+		source "/etc/portage/env/firejail.conf"
+	fi
 	python-single-r1_pkg_setup
 	CONFIG_CHECK="
 		~SQUASHFS
