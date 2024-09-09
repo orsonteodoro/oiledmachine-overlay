@@ -720,8 +720,16 @@ firejail_profiles_zathura? ( || ( xephyr xpra ) )
 firejail_profiles_zeal? ( || ( xephyr xpra ) )
 firejail_profiles_zim? ( || ( xephyr xpra ) )
 firejail_profiles_zoom? ( || ( xephyr xpra ) )
+firejail_profiles_spotify? ( || ( xephyr xpra ) )
 "
+HARDENED_ALLOCATORS_IUSE=(
+	mimalloc
+	scudo
+)
 LLVM_COMPAT=( {18..16} )
+declare -A _PATH_CORRECTION=(
+	["spotify"]="/opt/spotify/spotify-client/spotify"
+)
 PYTHON_COMPAT=( python3_{9..12} )
 TEST_SET="distro" # distro or full
 X11_COMPAT=(
@@ -803,10 +811,7 @@ warzone2100 waterfox whalebird wire-desktop wireshark wireshark-gtk
 wireshark-qt x2goclient xchat xfce4-notes xfce4-screenshooter xmms xonotic
 xonotic-sdl xonotic-sdl-wrapper yandex-browser yelp youtube youtube-dl-gui
 youtube-viewer-gtk youtubemusic-nativefier ytmdesktop zathura zeal zim zoom
-)
-HARDENED_ALLOCATORS_IUSE=(
-	mimalloc
-	scudo
+spotify
 )
 
 inherit flag-o-matic linux-info python-single-r1 toolchain-funcs virtualx
@@ -856,10 +861,6 @@ REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
 	!test
 	suid
-	?? (
-		mimalloc
-		scudo
-	)
 	clang? (
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -885,6 +886,10 @@ REQUIRED_USE+="
 	)
 	xvfb? (
 		X
+	)
+	|| (
+		mimalloc
+		scudo
 	)
 "
 RDEPEND+="
@@ -1660,6 +1665,7 @@ einfo
 		pidgin
 		pitivi
 		qbittorrent
+		spotify
 		thunar
 		thunderbird
 		uzbl-browser
@@ -2450,20 +2456,37 @@ einfo "Generating wrapper for ${profile_name}"
 		x11_arg="--x11=xpra"
 	elif [[ "${X_BACKEND[${profile_name}]}" == "xephyr" ]] ; then
 		x11_arg="--x11=xephyr"
+	elif [[ "${X_BACKEND[${profile_name}]}" == "auto" ]] ; then
+		x11_arg="--x11"
 	elif is_x11_compat "${profile_name}" ; then
 		x11_arg="--x11" # autodetect
 	fi
 
 	local allocator_args=""
+	local allocator_args_scudo=""
+	local allocator_args_mimalloc=""
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		if use "llvm_slot_${s}" && has_version "sys-libs/compiler-rt-sanitizers:${s}[scudo]" ; then
-			allocator_args="--env=SCUDO_OPTIONS='quarantine_size_kb=256:quarantine_max_chunk_size=2048:thread_local_quarantine_size_kb=64' --env=LD_PRELOAD=/usr/lib/clang/${s}/lib/linux/libclang_rt.scudo_standalone-$(get_llvm_arch).so"
+			if [[ "${SCUDO_FREE_IMMEDIATE[${profile_name}]}" != "1" ]] ; then
+				allocator_args_scudo+=" --env=SCUDO_OPTIONS='quarantine_size_kb=256:quarantine_max_chunk_size=2048:thread_local_quarantine_size_kb=64' "
+			fi
+			allocator_args_scudo+=" --env=LD_PRELOAD=/usr/lib/clang/${s}/lib/linux/libclang_rt.scudo_standalone-$(get_llvm_arch).so"
 			break
 		fi
 	done
-	if [[ -z "${allocator_arg}" ]] && use mimalloc ; then
-		allocator_args="--env=LD_PRELOAD=/usr/$(get_libdir)/libmimalloc-secure.so"
+	if use mimalloc ; then
+		allocator_args_mimalloc="--env=LD_PRELOAD=/usr/$(get_libdir)/libmimalloc-secure.so"
+	fi
+
+	if [[ "${MALLOC_BACKEND[${profile_name}]}" == "mimalloc" ]] && use mimalloc ; then
+		allocator_args="${allocator_args_mimalloc}"
+	elif [[ "${MALLOC_BACKEND[${profile_name}]}" == "scudo" ]] && use scudo ; then
+		allocator_args="${allocator_args_scudo}"
+	elif use mimalloc ; then
+		allocator_args="${allocator_args_mimalloc}"
+	elif use scudo ; then
+		allocator_args="${allocator_args_scudo}"
 	fi
 
 	local wh_arg=""
@@ -2471,9 +2494,18 @@ einfo "Generating wrapper for ${profile_name}"
 		wh_arg="${XEPHYR_WH[${profile_name}]}"
 	fi
 
+	local exe_path=""
+	if [[ -n "${_PATH_CORRECTION[${profile_name}]}" ]] ; then
+		exe_path="${_PATH_CORRECTION[${profile_name}]}"
+	elif [[ -n "${PATH_CORRECTION[${profile_name}]}" ]] ; then
+		exe_path="${PATH_CORRECTION[${profile_name}]}"
+	else
+		exe_path="/usr/bin/${exe_name}"
+	fi
+
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}" || die
 #!/bin/bash
-exec firejail ${x11_arg} ${allocator_args} ${wh_arg} --profile="${profile_name}" "/usr/bin/${exe_name}" "\$@"
+exec firejail ${x11_arg} ${allocator_args} ${wh_arg} --profile="${profile_name}" "${exe_path}" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}"
 	fperms 0755 "/usr/local/bin/${exe_name}"
@@ -2649,13 +2681,6 @@ einfo "  firejail_profiles_rtv? ( firejail_profiles_rtv-addons )"
 einfo
 	if ! use firejail_profiles_server ; then
 ewarn "Disabling firejail_profiles_server disables default sandboxing for the root user"
-	fi
-	if use wrapper && use X ; then
-ewarn
-ewarn "The wrapper should auto add --x11, but some wrappers are missing it."
-ewarn "If you would like to see --x11 support in the wrapper for that program,"
-ewarn "send and issue request at the repo."
-ewarn
 	fi
 }
 

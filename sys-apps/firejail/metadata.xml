@@ -54,17 +54,38 @@
 
     XEPHYR_WH["chromium"]="1920x1080" - Set the default window size for chromium.
     The default is 800x600 for xephyr.
+    SCUDO_FREE_IMMEDIATE["keepassx"]=1 - Free the keys in the heap immediately.
 
     Examples:
 
     Contents of /etc/portage/env/firejail.conf:
+    SCUDO_FREE_IMMEDIATE["keepassx"]=1
     XEPHYR_WH["chromium"]="1920x1080"
     XEPHYR_WH["firefox"]="1920x1080"
     X_BACKEND["chromium"]="xephyr"
     X_BACKEND["firefox"]="xpra"
+    X_BACKEND["xchat"]="auto"
+    MALLOC_BACKEND["keepassxc"]="mimalloc"
+    MALLOC_BACKEND["chromium"]="scudo"
+    PATH_CORRECTION["spotify"]="/opt/spotify/spotify-client/spotify"
 
     Contents of /etc/portage/package.env:
     sys-apps/firejail firejail.conf
+
+
+    Analysis and explanations:
+
+    By default in this ebuild, scudo will free memory blocks with a delay.  This
+    delay is to mitigate against use-after-free.  This delay is dangerous for
+    cold boot attacks or maybe Spectre based ones since freeing blocks is not
+    eager but event based on size.
+
+    This is why we choose the mimalloc which does eager free.  The keychain has
+    to be purged ASAP after the program has been killed without a chance of
+    calling it's graceful cleaner routine.
+
+    By default, paths are assumed to be /usr/bin/PROGRAM_NAME.  You may want
+    to fix the profile name paring with PATH_CORRECTION for binary packages.
 
   -->
   <upstream>
