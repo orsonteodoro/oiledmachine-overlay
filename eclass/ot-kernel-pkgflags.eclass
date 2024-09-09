@@ -4609,6 +4609,7 @@ ot-kernel-pkgflags_flatpak() { # DONE
 ot-kernel-pkgflags_firejail() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-apps/firejail" ; then
 		_ot-kernel_set_user_ns
+		_ot-kernel_set_seccomp_bpf
 	fi
 }
 
