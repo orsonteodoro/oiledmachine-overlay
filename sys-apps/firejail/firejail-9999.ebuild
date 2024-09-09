@@ -2283,12 +2283,22 @@ einfo "Generating wrapper for ${profile_name}"
 		x11_flag="--x11"
 	fi
 
-cat <<EOF > "${ED}/usr/local/bin/${exe_name}"
+cat <<EOF > "${ED}/usr/local/bin/${exe_name}" || die
 #!/bin/bash
 exec firejail ${x11_flag} --profile="${profile_name}" "${exe_name}" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}"
 	fperms 0755 "/usr/local/bin/${exe_name}"
+
+	if [[ "${u}" == "firefox" && -e "/usr/bin/firefox-bin" ]] ; then
+einfo "Generating wrapper for firefox-bin"
+cat <<EOF > "${ED}/usr/local/bin/${exe_name}-bin" || die
+#!/bin/bash
+exec firejail ${x11_flag} --profile="${profile_name}" "${exe_name}-bin" "\$@"
+EOF
+	fowners "root:root" "/usr/local/bin/${exe_name}-bin"
+	fperms 0755 "/usr/local/bin/${exe_name}-bin"
+	fi
 }
 
 _install_one_profile() {
