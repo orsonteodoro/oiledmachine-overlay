@@ -104,10 +104,14 @@
       Enable attaching a new user namespace to a sandbox (--noroot option)
     </flag>
     <flag name="x11">
-      Enable X11 sandboxing
+      Enable X11 sandboxing for GUIs in restricted untrusted mode.
+      (It may crash programs or programs may not prefer untrusted mode.)
     </flag>
     <flag name="xpra">
-      Enables proper xpra support
+      Enable xpra support for GUIs.
+    </flag>
+    <flag name="xvfb">
+      Enable xvfb support for sandboxing remote access or headless servers.
     </flag>
     <flag name="wrapper">
       Add USE enabled wrappers to /etc/local/bin to immediately use the program
