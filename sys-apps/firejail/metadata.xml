@@ -59,7 +59,7 @@
     Examples:
 
     Contents of /etc/portage/env/firejail.conf:
-    SCUDO_FREE_IMMEDIATE["keepassx"]=1
+    SCUDO_FREE_IMMEDIATE["keepassxc"]=1
     XEPHYR_WH["chromium"]="1920x1080"
     XEPHYR_WH["firefox"]="1920x1080"
     X_BACKEND["chromium"]="xephyr"
