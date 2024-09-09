@@ -447,7 +447,7 @@ RDEPEND+="
 	opengl? (
 		x11-base/xorg-drivers[video_cards_dummy]
 		client? (
-			>=dev-python/pyopengl_accelerate-3.1.5[${PYTHON_USEDEP}]
+			>=dev-python/pyopengl_accelerate-3.1.5[${PYTHON_USEDEP},numpy]
 		)
 		server? (
 			media-libs/mesa[osmesa?]
