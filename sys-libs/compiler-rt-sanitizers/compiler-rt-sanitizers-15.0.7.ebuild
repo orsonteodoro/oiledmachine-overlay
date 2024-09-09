@@ -6,7 +6,7 @@ EAPI=8
 
 PYTHON_COMPAT=( "python3_"{9..11} )
 
-inherit check-reqs cmake flag-o-matic llvm llvm.org python-any-r1
+inherit check-reqs cmake flag-o-matic linux-info llvm llvm.org python-any-r1
 inherit llvm-ebuilds
 
 LLVM_MAX_SLOT=${LLVM_MAJOR}
@@ -347,6 +347,17 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	if use scudo ; then
+		linux-info_pkg_setup
+# See https://llvm.org/docs/ScudoHardenedAllocator.html#randomness
+		CONFIG_CHECK="
+			~RELOCATABLE
+			~RANDOMIZE_BASE
+		"
+		WARNING_RELOCATABLE="CONFIG_RELOCATABLE is required by Scudo."
+		WARNING_RANDOMIZE_BASE="CONFIG_RANDOMIZE_BASE (KASLR) is required by Scudo."
+		check_extra_config
+	fi
 	check_space
 	LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
 	python-any-r1_pkg_setup

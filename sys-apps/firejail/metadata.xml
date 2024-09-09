@@ -76,6 +76,9 @@
     <flag name="landlock">
       Enable support for the kernel's Landlock Linux Security Module (LSM).
     </flag>
+    <flag name="mimalloc">
+      Enable support for mimalloc as a hardened allocator.
+    </flag>
     <flag name="network">
       Enable networking features
     </flag>
@@ -84,6 +87,9 @@
     </flag>
     <flag name="private-home">
       Enable private home feature
+    </flag>
+    <flag name="scudo">
+      Enable support for Scudo as a hardened allocator.
     </flag>
     <flag name="seccomp">
       Enable system call filtering

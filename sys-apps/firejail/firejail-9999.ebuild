@@ -226,169 +226,6 @@ zulip
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
 #GEN_EBUILD=1 # Uncomment to regen ebuild parts
-LLVM_COMPAT=( {18..14} )
-PYTHON_COMPAT=( python3_{9..12} )
-TEST_SET="distro" # distro or full
-X11_COMPAT=(
-1password 2048-qt Books Builder Documents Fritzing Logs Maps PCSX2
-QMediathekView Screenshot Viber abiword abrowser akregator alacarte alienarena
-alienarena-wrapper alienblaster alpine amarok anki apostrophe ark armcord artha
-assogiate atom atril audacious audacity authenticator-rs autokey-gtk autokey-qt
-avidemux avidemux3_jobs_qt5 avidemux3_qt5 ballbuster-wrapper baloo_file balsa
-basilisk beaker bijiben bitcoin-qt bitwarden blobby bnox brasero brave
-brave-browser cachy-browser calligra cantata cawbird celluloid chatterino
-cheese chromium chromium-browser chromium-browser-privacy chromium-freeworld
-cinelerra clamtk claws-mail clawsker clementine cliqz clocks code
-colorful-wrapper com_github_bleakgrey_tootle com_github_dahenson_agenda
-com_github_johnfactotum_Foliate com_github_phase1geo_minder
-com_github_tchx84_Flatseal crow cyberfox dconf dconf-editor ddgtk deluge
-devhelp digikam dillo dnox dolphin-emu dooble dooble-qt4 electron-cash
-electron-mail electrum enox eog ephemeral equalx etr etr-wrapper evince
-evince-previewer evince-thumbnailer exfalso falkon feedreader ffmpeg
-file-roller firedragon firefox firefox-beta firefox-developer-edition
-firefox-esr firefox-nightly firefox-wayland firefox-x11 five-or-more flameshot
-flashpeak-slimjet floorp fluffychat fossamail four-in-a-row fractal freeciv
-freeciv-gtk3 freeciv-mp-gtk3 freetube frozen-bubble gajim gapplication gcalccmd
-geary gedit geki2 geki3 gfeeds ghostwriter gimp git-cola gitg github-desktop
-gjs gl-117 gl-117-wrapper glaxium glaxium-wrapper gnome-2048 gnome-books
-gnome-boxes gnome-builder gnome-calculator gnome-calendar gnome-character-map
-gnome-characters gnome-chess gnome-clocks gnome-contacts gnome-documents
-gnome-font-viewer gnome-hexgl gnome-keyring gnome-keyring-3
-gnome-keyring-daemon gnome-klotski gnome-latex gnome-logs gnome-mahjongg
-gnome-maps gnome-mines gnome-mplayer gnome-mpv gnome-music gnome-nettool
-gnome-nibbles gnome-passwordsafe gnome-photos gnome-pie gnome-pomodoro
-gnome-recipes gnome-ring gnome-robots gnome-schedule gnome-screenshot
-gnome-sound-recorder gnome-sudoku gnome-system-log gnome-taquin gnome-tetravex
-gnome-todo gnome-twitch gnome-weather gnote gnubik godot google-chrome
-google-chrome-beta google-chrome-unstable gradio gramps green-recoder
-gtk-lbry-viewer gtk-pipe-viewer gtk-straw-viewer gtk-update-icon-cache
-gtk-youtube-viewer gtk2-youtube-viewer gtk3-youtube-viewer gucharmap guvcview
-gwenview handbrake-gtk hexchat hitori homebank i2prouter iagno icecat icedove
-iceweasel impressive inkscape inox io_github_lainsce_Notejot iridium jami
-jami-gnome jerry jitsi-meet-desktop journal-viewer k3b kaffeine kate kazam
-kcalc kdeinit4 kdenlive kdiff3 keepassxc kfind kget kid3 kid3-qt klatexformula
-kmplayer konversation kopete krunner ktorrent ktouch kube kwin_x11 kwrite
-lbreakouthd lbry-viewer-gtk ledger-live-desktop lettura libreoffice librewolf
-lifeograph lightsoff linuxqq lollypop loupe lximage-qt lyx man marker mate-calc
-mattermost-desktop mcomix menulibre metadata-cleaner meteo-qt microsoft-edge
-microsoft-edge-beta microsoft-edge-dev midori min minecraft-launcher minitube
-mirage mp3splt-gtk musictube mutt mypaint nautilus neochat neomutt
-neverball-wrapper neverputt-wrapper newsflash nextcloud nheko nitroshare nomacs
-notable nuclear obs ocenaudio okular onboard onionshare-gui open-invaders
-openarena openmw openshot openshot-qt opera opera-beta opera-developer
-org_gnome_NautilusPreviewer otter-browser palemoon pavucontrol pavucontrol-qt
-pcmanfm pcsxr pdfchain peek photoflare pidgin pinball-wrapper pipe-viewer-gtk
-pitivi postman ppsspp pragha psi pybitmessage qbittorrent qcomicbook qgis
-qt-faststart qt5ct qt6ct qtox quadrapassel quaternion quodlibet qutebrowser
-raincat rambox rednotebook rhythmbox riot-web rocketchat rssguard rtv rymdport
-scorched3d-wrapper scribus seahorse seamonkey secret-tool session-desktop
-shortwave shotwell signal-desktop simutrans skanlite skypeforlinux slack
-smuxi-frontend-gnome snox spectacle spectral standardnotes-desktop
-start-tor-browser_desktop steam supertuxkart supertuxkart-wrapper swell-foop
-sylpheed sysprof tb-starter-wrapper teams teams-for-linux telegram terasology
-thunar thunderbird tidal-hifi tiny-rdm tor-browser tor-browser-ar
-tor-browser-ca tor-browser-cs tor-browser-da tor-browser-de tor-browser-el
-tor-browser-en tor-browser-en-us tor-browser-es tor-browser-es-es
-tor-browser-fa tor-browser-fr tor-browser-ga-ie tor-browser-he tor-browser-hu
-tor-browser-id tor-browser-is tor-browser-it tor-browser-ja tor-browser-ka
-tor-browser-ko tor-browser-nb tor-browser-nl tor-browser-pl tor-browser-pt-br
-tor-browser-ru tor-browser-sv-se tor-browser-tr tor-browser-vi
-tor-browser-zh-cn tor-browser-zh-tw tor-browser_ar tor-browser_ca
-tor-browser_cs tor-browser_da tor-browser_de tor-browser_el tor-browser_en
-tor-browser_en-US tor-browser_es tor-browser_es-ES tor-browser_fa
-tor-browser_fr tor-browser_ga-IE tor-browser_he tor-browser_hu tor-browser_id
-tor-browser_is tor-browser_it tor-browser_ja tor-browser_ka tor-browser_ko
-tor-browser_nb tor-browser_nl tor-browser_pl tor-browser_pt-BR tor-browser_ru
-tor-browser_sv-SE tor-browser_tr tor-browser_vi tor-browser_zh-CN
-tor-browser_zh-TW torbrowser torbrowser-launcher totem transgui
-transmission-gtk transmission-qt transmission-remote-gtk trojita
-tutanota-desktop tuxtype twitch typespeed udiskie uget-gtk unzip uzbl-browser
-virt-manager virtualbox vivaldi vlc vmware vmware-player vmware-view
-warzone2100 waterfox whalebird wire-desktop wireshark wireshark-gtk
-wireshark-qt x2goclient xchat xfce4-notes xfce4-screenshooter xmms xonotic
-xonotic-sdl xonotic-sdl-wrapper yandex-browser yelp youtube youtube-dl-gui
-youtube-viewer-gtk youtubemusic-nativefier ytmdesktop zathura zeal zim zoom
-)
-
-inherit flag-o-matic linux-info python-single-r1 toolchain-funcs virtualx
-
-gen_clang_bdepend() {
-	local s
-	for s in ${LLVM_COMPAT[@]} ; do
-		echo "
-		(
-			sys-devel/clang:${s}
-			sys-devel/lld:${s}
-			sys-devel/llvm:${s}
-		)
-		"
-	done
-}
-
-if [[ "${PV}" =~ "9999" ]]; then
-	inherit git-r3
-	EGIT_BRANCH="master"
-	EGIT_REPO_URI="https://github.com/netblue30/firejail.git"
-	FALLBACK_COMMIT="897f12dd88c1add667ecb211b61b6126a49c7065" # Sep 1, 2024
-	IUSE+=" fallback-commit"
-else
-	KEYWORDS="amd64 ~arm ~arm64 ~x86"
-	SRC_URI="https://github.com/netblue30/${PN}/releases/download/${PV}/${P}.tar.xz"
-fi
-
-DESCRIPTION="Security sandbox for any type of processes"
-HOMEPAGE="https://firejail.wordpress.com/"
-LICENSE="GPL-2"
-SLOT="0"
-IUSE+="
-${FIREJAIL_PROFILES_IUSE[@]}
-apparmor +chroot contrib +dbusproxy +file-transfer +firejail_profiles_default
-+firejail_profiles_server  +globalcfg landlock +network +private-home selinux
-+suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
-"
-RDEPEND+="
-	!sys-apps/firejail-lts
-	apparmor? (
-		>=sys-libs/libapparmor-2.13.3
-	)
-	contrib? (
-		${PYTHON_DEPS}
-	)
-	dbusproxy? (
-		>=sys-apps/xdg-dbus-proxy-0.1.2
-	)
-	selinux? (
-		>=sys-libs/libselinux-8.1.0
-	)
-	X? (
-		x11-base/xorg-server[xvfb?]
-	)
-	xpra? (
-		x11-base/xorg-server
-		>=x11-wm/xpra-3.0.6[firejail]
-	)
-	xpra? (
-		x11-base/xorg-server[xephyr?]
-	)
-"
-DEPEND+="
-	${RDEPEND}
-	>=sys-libs/libseccomp-2.4.3
-"
-BDEPEND+="
-	|| (
-		>=sys-devel/gcc-12
-		$(gen_clang_bdepend)
-	)
-	test? (
-		>=app-arch/xz-utils-5.2.4
-		>=dev-tcltk/expect-5.45.4
-	)
-	test-x11? (
-		x11-base/xorg-server[xvfb]
-		x11-apps/xhost
-	)
-"
 GUI_REQUIRED_USE="
 firejail_profiles_1password? ( || ( xephyr xpra ) )
 firejail_profiles_2048-qt? ( || ( xephyr xpra ) )
@@ -884,12 +721,155 @@ firejail_profiles_zeal? ( || ( xephyr xpra ) )
 firejail_profiles_zim? ( || ( xephyr xpra ) )
 firejail_profiles_zoom? ( || ( xephyr xpra ) )
 "
+LLVM_COMPAT=( {18..16} )
+PYTHON_COMPAT=( python3_{9..12} )
+TEST_SET="distro" # distro or full
+X11_COMPAT=(
+1password 2048-qt Books Builder Documents Fritzing Logs Maps PCSX2
+QMediathekView Screenshot Viber abiword abrowser akregator alacarte alienarena
+alienarena-wrapper alienblaster alpine amarok anki apostrophe ark armcord artha
+assogiate atom atril audacious audacity authenticator-rs autokey-gtk autokey-qt
+avidemux avidemux3_jobs_qt5 avidemux3_qt5 ballbuster-wrapper baloo_file balsa
+basilisk beaker bijiben bitcoin-qt bitwarden blobby bnox brasero brave
+brave-browser cachy-browser calligra cantata cawbird celluloid chatterino
+cheese chromium chromium-browser chromium-browser-privacy chromium-freeworld
+cinelerra clamtk claws-mail clawsker clementine cliqz clocks code
+colorful-wrapper com_github_bleakgrey_tootle com_github_dahenson_agenda
+com_github_johnfactotum_Foliate com_github_phase1geo_minder
+com_github_tchx84_Flatseal crow cyberfox dconf dconf-editor ddgtk deluge
+devhelp digikam dillo dnox dolphin-emu dooble dooble-qt4 electron-cash
+electron-mail electrum enox eog ephemeral equalx etr etr-wrapper evince
+evince-previewer evince-thumbnailer exfalso falkon feedreader ffmpeg
+file-roller firedragon firefox firefox-beta firefox-developer-edition
+firefox-esr firefox-nightly firefox-wayland firefox-x11 five-or-more flameshot
+flashpeak-slimjet floorp fluffychat fossamail four-in-a-row fractal freeciv
+freeciv-gtk3 freeciv-mp-gtk3 freetube frozen-bubble gajim gapplication gcalccmd
+geary gedit geki2 geki3 gfeeds ghostwriter gimp git-cola gitg github-desktop
+gjs gl-117 gl-117-wrapper glaxium glaxium-wrapper gnome-2048 gnome-books
+gnome-boxes gnome-builder gnome-calculator gnome-calendar gnome-character-map
+gnome-characters gnome-chess gnome-clocks gnome-contacts gnome-documents
+gnome-font-viewer gnome-hexgl gnome-keyring gnome-keyring-3
+gnome-keyring-daemon gnome-klotski gnome-latex gnome-logs gnome-mahjongg
+gnome-maps gnome-mines gnome-mplayer gnome-mpv gnome-music gnome-nettool
+gnome-nibbles gnome-passwordsafe gnome-photos gnome-pie gnome-pomodoro
+gnome-recipes gnome-ring gnome-robots gnome-schedule gnome-screenshot
+gnome-sound-recorder gnome-sudoku gnome-system-log gnome-taquin gnome-tetravex
+gnome-todo gnome-twitch gnome-weather gnote gnubik godot google-chrome
+google-chrome-beta google-chrome-unstable gradio gramps green-recoder
+gtk-lbry-viewer gtk-pipe-viewer gtk-straw-viewer gtk-update-icon-cache
+gtk-youtube-viewer gtk2-youtube-viewer gtk3-youtube-viewer gucharmap guvcview
+gwenview handbrake-gtk hexchat hitori homebank i2prouter iagno icecat icedove
+iceweasel impressive inkscape inox io_github_lainsce_Notejot iridium jami
+jami-gnome jerry jitsi-meet-desktop journal-viewer k3b kaffeine kate kazam
+kcalc kdeinit4 kdenlive kdiff3 keepassxc kfind kget kid3 kid3-qt klatexformula
+kmplayer konversation kopete krunner ktorrent ktouch kube kwin_x11 kwrite
+lbreakouthd lbry-viewer-gtk ledger-live-desktop lettura libreoffice librewolf
+lifeograph lightsoff linuxqq lollypop loupe lximage-qt lyx man marker mate-calc
+mattermost-desktop mcomix menulibre metadata-cleaner meteo-qt microsoft-edge
+microsoft-edge-beta microsoft-edge-dev midori min minecraft-launcher minitube
+mirage mp3splt-gtk musictube mutt mypaint nautilus neochat neomutt
+neverball-wrapper neverputt-wrapper newsflash nextcloud nheko nitroshare nomacs
+notable nuclear obs ocenaudio okular onboard onionshare-gui open-invaders
+openarena openmw openshot openshot-qt opera opera-beta opera-developer
+org_gnome_NautilusPreviewer otter-browser palemoon pavucontrol pavucontrol-qt
+pcmanfm pcsxr pdfchain peek photoflare pidgin pinball-wrapper pipe-viewer-gtk
+pitivi postman ppsspp pragha psi pybitmessage qbittorrent qcomicbook qgis
+qt-faststart qt5ct qt6ct qtox quadrapassel quaternion quodlibet qutebrowser
+raincat rambox rednotebook rhythmbox riot-web rocketchat rssguard rtv rymdport
+scorched3d-wrapper scribus seahorse seamonkey secret-tool session-desktop
+shortwave shotwell signal-desktop simutrans skanlite skypeforlinux slack
+smuxi-frontend-gnome snox spectacle spectral standardnotes-desktop
+start-tor-browser_desktop steam supertuxkart supertuxkart-wrapper swell-foop
+sylpheed sysprof tb-starter-wrapper teams teams-for-linux telegram terasology
+thunar thunderbird tidal-hifi tiny-rdm tor-browser tor-browser-ar
+tor-browser-ca tor-browser-cs tor-browser-da tor-browser-de tor-browser-el
+tor-browser-en tor-browser-en-us tor-browser-es tor-browser-es-es
+tor-browser-fa tor-browser-fr tor-browser-ga-ie tor-browser-he tor-browser-hu
+tor-browser-id tor-browser-is tor-browser-it tor-browser-ja tor-browser-ka
+tor-browser-ko tor-browser-nb tor-browser-nl tor-browser-pl tor-browser-pt-br
+tor-browser-ru tor-browser-sv-se tor-browser-tr tor-browser-vi
+tor-browser-zh-cn tor-browser-zh-tw tor-browser_ar tor-browser_ca
+tor-browser_cs tor-browser_da tor-browser_de tor-browser_el tor-browser_en
+tor-browser_en-US tor-browser_es tor-browser_es-ES tor-browser_fa
+tor-browser_fr tor-browser_ga-IE tor-browser_he tor-browser_hu tor-browser_id
+tor-browser_is tor-browser_it tor-browser_ja tor-browser_ka tor-browser_ko
+tor-browser_nb tor-browser_nl tor-browser_pl tor-browser_pt-BR tor-browser_ru
+tor-browser_sv-SE tor-browser_tr tor-browser_vi tor-browser_zh-CN
+tor-browser_zh-TW torbrowser torbrowser-launcher totem transgui
+transmission-gtk transmission-qt transmission-remote-gtk trojita
+tutanota-desktop tuxtype twitch typespeed udiskie uget-gtk unzip uzbl-browser
+virt-manager virtualbox vivaldi vlc vmware vmware-player vmware-view
+warzone2100 waterfox whalebird wire-desktop wireshark wireshark-gtk
+wireshark-qt x2goclient xchat xfce4-notes xfce4-screenshooter xmms xonotic
+xonotic-sdl xonotic-sdl-wrapper yandex-browser yelp youtube youtube-dl-gui
+youtube-viewer-gtk youtubemusic-nativefier ytmdesktop zathura zeal zim zoom
+)
+HARDENED_ALLOCATORS_IUSE=(
+	mimalloc
+	scudo
+)
+
+inherit flag-o-matic linux-info python-single-r1 toolchain-funcs virtualx
+
+gen_clang_bdepend() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+		llvm_slot_${s}? (
+			sys-devel/clang:${s}
+			sys-devel/lld:${s}
+			sys-devel/llvm:${s}
+			scudo? (
+				sys-libs/compiler-rt-sanitizers[scudo]
+			)
+		)
+		"
+	done
+}
+
+if [[ "${PV}" =~ "9999" ]]; then
+	inherit git-r3
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/netblue30/firejail.git"
+	FIREJAIL_FALLBACK_COMMIT="897f12dd88c1add667ecb211b61b6126a49c7065" # Sep 1, 2024
+	IUSE+=" fallback-commit"
+else
+	KEYWORDS="amd64 ~arm ~arm64 ~x86"
+	SRC_URI="
+https://github.com/netblue30/${PN}/releases/download/${PV}/${P}.tar.xz
+	"
+fi
+
+DESCRIPTION="Security sandbox for any type of processes"
+HOMEPAGE="https://firejail.wordpress.com/"
+LICENSE="GPL-2"
+SLOT="0"
+IUSE+="
+${FIREJAIL_PROFILES_IUSE[@]}
+${HARDENED_ALLOCATORS_IUSE[@]}
+${LLVM_COMPAT[@]/#/llvm_slot_}
+apparmor +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
++firejail_profiles_server  +globalcfg landlock +network +private-home selinux
++suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
+"
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
 	!test
+	?? (
+		mimalloc
+		scudo
+	)
+	clang? (
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
+	)
 	suid
 	contrib? (
 		${PYTHON_REQUIRED_USE}
+	)
+	scudo? (
+		clang
 	)
 	test-x11? (
 		test
@@ -905,6 +885,50 @@ REQUIRED_USE+="
 	)
 	xvfb? (
 		X
+	)
+"
+RDEPEND+="
+	!sys-apps/firejail-lts
+	apparmor? (
+		>=sys-libs/libapparmor-2.13.3
+	)
+	contrib? (
+		${PYTHON_DEPS}
+	)
+	dbusproxy? (
+		>=sys-apps/xdg-dbus-proxy-0.1.2
+	)
+	mimalloc? (
+		dev-libs/mimalloc[hardened]
+	)
+	selinux? (
+		>=sys-libs/libselinux-8.1.0
+	)
+	X? (
+		x11-base/xorg-server[xvfb?]
+	)
+	xpra? (
+		x11-base/xorg-server
+		>=x11-wm/xpra-3.0.6[firejail]
+	)
+	xpra? (
+		x11-base/xorg-server[xephyr?]
+	)
+"
+DEPEND+="
+	${RDEPEND}
+	>=sys-libs/libseccomp-2.4.3
+"
+BDEPEND+="
+	$(gen_clang_bdepend)
+	>=sys-devel/gcc-12
+	test? (
+		>=app-arch/xz-utils-5.2.4
+		>=dev-tcltk/expect-5.45.4
+	)
+	test-x11? (
+		x11-base/xorg-server[xvfb]
+		x11-apps/xhost
 	)
 "
 
@@ -1713,8 +1737,11 @@ eerror
 
 pkg_setup() {
 	python-single-r1_pkg_setup
-	CONFIG_CHECK="~SQUASHFS"
-	local WARNING_SQUASHFS="CONFIG_SQUASHFS: required for firejail --appimage mode"
+	CONFIG_CHECK="
+		~SQUASHFS
+	"
+	WARNING_SQUASHFS="CONFIG_SQUASHFS: required for firejail --appimage mode"
+	check_extra_config
 
 	linux-info_pkg_setup
 	local config_path=$(linux_config_path)
@@ -1722,26 +1749,44 @@ einfo "config_path:  ${config_path}"
 	local lsm_list=$(grep -e "CONFIG_LSM" "${config_path}" \
 		| cut -f 2 -d '"')
 	if use apparmor ; then
-		CONFIG_CHECK+=" ~SECURITY ~NET ~SECURITY_APPARMOR"
+		CONFIG_CHECK="
+			~SECURITY
+			~NET
+			~SECURITY_APPARMOR
+		"
 		if ! [[ "${lsm_list}" =~ "apparmor" ]] ; then
 ewarn
 ewarn "Missing apparmor in kernel .config CONFIG_LSM list."
 ewarn "See also https://github.com/torvalds/linux/blob/v6.6/security/Kconfig#L234"
 ewarn
 		fi
+		check_extra_config
 	fi
 
 	if use landlock ; then
-		CONFIG_CHECK+=" ~SECURITY ~SECURITY_LANDLOCK"
+		CONFIG_CHECK="
+			~SECURITY
+			~SECURITY_LANDLOCK
+		"
 		if ! [[ "${lsm_list}" =~ "landlock" ]] ; then
 ewarn
 ewarn "Missing landlock in kernel .config CONFIG_LSM list."
 ewarn "See also https://github.com/torvalds/linux/blob/v6.6/security/Kconfig#L234"
 ewarn
 		fi
+		check_extra_config
 	fi
 
-	check_extra_config
+	if use scudo ; then
+# See https://llvm.org/docs/ScudoHardenedAllocator.html#randomness
+		CONFIG_CHECK="
+			~RELOCATABLE
+			~RANDOMIZE_BASE
+		"
+		WARNING_RELOCATABLE="CONFIG_RELOCATABLE is required by Scudo."
+		WARNING_RANDOMIZE_BASE="CONFIG_RANDOMIZE_BASE (KASLR) is required by Scudo."
+		check_extra_config
+	fi
 
 	if use test && [[ "${TEST_SET}" == "full" ]] ; then
 		if has userpriv $FEATURES ; then
@@ -1795,7 +1840,7 @@ einfo "Editing ${f}:  /usr/share/doc/firejail -> ${ED}/usr/share/doc/firejail-${
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		use fallback-commit && EGIT_COMMIT="${FIREJAIL_FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 	else
@@ -2347,12 +2392,41 @@ get_dotted_fn() {
 	echo ""
 }
 
+# See also https://github.com/llvm/llvm-project/blob/llvmorg-18.1.8/compiler-rt/cmake/Modules/AllSupportedArchDefs.cmake
+get_llvm_arch() {
+	if [[ "${ARCH}" == "amd64" ]] ; then
+		echo "x86_64"
+	elif [[ "${ARCH}" == "x86" ]] ; then
+		echo "i386"
+	elif [[ "${ARCH}" == "arm64" ]] ; then
+		echo "aarch64"
+	elif [[ "${ARCH}" == "arm" ]] ; then
+		echo "arm"
+	elif [[ "${ARCH}" == "loong" ]] ; then
+		echo "loongarch64"
+	elif [[ "${CHOST}" =~ "mips64" ]] ; then
+		echo "mips64"
+	elif [[ "${CHOST}" =~ "mips" ]] ; then
+		echo "mips"
+	elif [[ "${ARCH}" == "ppc64" ]] ; then
+		echo "ppc"
+	elif [[ "${CHOST}" =~ "riscv64" ]] ; then
+		echo "riscv64"
+	elif [[ "${CHOST}" =~ "riscv32" ]] ; then
+		echo "riscv32"
+	elif [[ "${CHOST}" == "sparc" ]] ; then
+		echo "sparc"
+	elif [[ "${CHOST}" == "s390x" ]] ; then
+		echo "s390x"
+	fi
+}
+
 gen_wrapper() {
 	local profile_name="${1}"
 	local exe_name="${1}"
 einfo "Generating wrapper for ${profile_name}"
 
-	local x11_flag=""
+	local x11_arg=""
 
 	is_x11_compat() {
 		local arg="${1}"
@@ -2366,12 +2440,24 @@ einfo "Generating wrapper for ${profile_name}"
 	}
 
 	if is_x11_compat "${profile_name}" ; then
-		x11_flag="--x11"
+		x11_arg="--x11"
+	fi
+
+	local allocator_args=""
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		if use "llvm_slot_${s}" && has_version "sys-libs/compiler-rt-sanitizers:${s}[scudo]" ; then
+			allocator_args="--env=SCUDO_OPTIONS='quarantine_size_kb=256:quarantine_max_chunk_size=2048:thread_local_quarantine_size_kb=64' --env=LD_PRELOAD=/usr/lib/clang/${s}/lib/linux/libclang_rt.scudo_standalone-$(get_llvm_arch).so"
+			break
+		fi
+	done
+	if [[ -z "${allocator_arg}" ]] && use mimalloc ; then
+		allocator_args="--env=LD_PRELOAD=/usr/$(get_libdir)/libmimalloc-secure.so"
 	fi
 
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}" || die
 #!/bin/bash
-exec firejail ${x11_flag} --profile="${profile_name}" "${exe_name}" "\$@"
+exec firejail ${x11_arg} ${allocator_args} --profile="${profile_name}" "${exe_name}" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}"
 	fperms 0755 "/usr/local/bin/${exe_name}"
@@ -2380,7 +2466,7 @@ EOF
 einfo "Generating wrapper for firefox-bin"
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}-bin" || die
 #!/bin/bash
-exec firejail ${x11_flag} --profile="${profile_name}" "${exe_name}-bin" "\$@"
+exec firejail ${x11_arg} ${allocator_args} --profile="${profile_name}" "${exe_name}-bin" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}-bin"
 	fperms 0755 "/usr/local/bin/${exe_name}-bin"
