@@ -226,12 +226,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       and support for GATT (Generic Attribute Profile) for the Web Bluetooth
       API.
     </flag>
-    <flag name="branch-protection">
-      Enables branch protection features (available on armv8.5 [arm64] and above
-      only) which are enabled by default.  If you disable the official USE flag,
-      you may customize it via CFLAGS with your preference prioritized more than
-      the official settings.
-    </flag>
     <flag name="bundled-libcxx">
       Build against the internal libc++ for proper cfi-icall and cfi-icast
       protection.  This also builds libcxx with CFI, Full RELRO, noexecstack,
@@ -290,6 +284,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     </flag>
     <flag name="extensions">
       Enable support for browser extensions.
+    </flag>
+    <flag name="firejail">
+      Use Firejail for sandboxing.
     </flag>
     <flag name="hangouts">
       Enable support for Hangouts and features such as screen sharing
