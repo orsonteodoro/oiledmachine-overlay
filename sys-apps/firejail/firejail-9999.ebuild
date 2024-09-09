@@ -225,79 +225,75 @@ zim zless zlib-flate zmore znew zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt
 zulip
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
-#GEN_EBUILD=1 # Uncomment to regen ebuild parts
+GEN_EBUILD=1 # Uncomment to regen ebuild parts
 LLVM_COMPAT=( {18..14} )
 PYTHON_COMPAT=( python3_{9..12} )
 TEST_SET="distro" # distro or full
 X11_COMPAT=(
 1password 2048-qt Books Builder Documents Fritzing Logs Maps PCSX2
-QMediathekView Screenshot Viber abiword akregator alacarte alienarena
+QMediathekView Screenshot Viber abiword abrowser akregator alacarte alienarena
 alienarena-wrapper alienblaster alpine amarok anki apostrophe ark armcord artha
 assogiate atom atril audacious audacity authenticator-rs autokey-gtk autokey-qt
 avidemux avidemux3_jobs_qt5 avidemux3_qt5 ballbuster-wrapper baloo_file balsa
-beaker bijiben bitcoin-qt bitwarden blobby bnox brasero brave brave-browser
-cachy-browser calligra cantata cawbird celluloid chatterino cheese chromium
-chromium-browser chromium-browser-privacy chromium-freeworld clamtk claws-mail
-clawsker clementine clocks code colorful-wrapper com_github_bleakgrey_tootle
-com_github_dahenson_agenda com_github_johnfactotum_Foliate
-com_github_phase1geo_minder com_github_tchx84_Flatseal crow dconf dconf-editor
-ddgtk deluge devhelp digikam dillo dnox dolphin-emu dooble dooble-qt4
-electron-cash electron-mail electrum enox eog ephemeral equalx etr etr-wrapper
-evince evince-previewer evince-thumbnailer exfalso falkon feedreader ffmpeg
-file-roller firefox five-or-more flameshot flashpeak-slimjet floorp fluffychat
-four-in-a-row fractal freeciv freeciv-gtk3 freeciv-mp-gtk3 freetube
-frozen-bubble gajim gapplication gcalccmd geary gedit geki2 geki3 gfeeds
-ghostwriter gimp git-cola gitg github-desktop gjs gl-117 gl-117-wrapper glaxium
-glaxium-wrapper gnome-2048 gnome-books gnome-boxes gnome-builder
-gnome-calculator gnome-calendar gnome-character-map gnome-characters
-gnome-chess gnome-clocks gnome-contacts gnome-documents gnome-font-viewer
-gnome-hexgl gnome-keyring gnome-keyring-3 gnome-keyring-daemon gnome-klotski
-gnome-latex gnome-logs gnome-mahjongg gnome-maps gnome-mines gnome-mplayer
-gnome-mpv gnome-music gnome-nettool gnome-nibbles gnome-passwordsafe
-gnome-photos gnome-pie gnome-pomodoro gnome-recipes gnome-ring gnome-robots
-gnome-schedule gnome-screenshot gnome-sound-recorder gnome-sudoku
-gnome-system-log gnome-taquin gnome-tetravex gnome-todo gnome-twitch
-gnome-weather gnote gnubik godot google-chrome google-chrome-beta
-google-chrome-unstable gradio gramps green-recoder gtk-lbry-viewer
-gtk-pipe-viewer gtk-straw-viewer gtk-update-icon-cache gtk-youtube-viewer
-gtk2-youtube-viewer gtk3-youtube-viewer gucharmap guvcview gwenview
-handbrake-gtk hitori homebank i2prouter iagno impressive inkscape inox
-io_github_lainsce_Notejot iridium jami jami-gnome jerry jitsi-meet-desktop
-journal-viewer k3b kaffeine kate kazam kcalc kdeinit4 kdenlive kdiff3 keepassxc
-kfind kget kid3 kid3-qt klatexformula kmplayer konversation kopete krunner
-ktorrent ktouch kube kwin_x11 kwrite lbreakouthd lbry-viewer-gtk
-ledger-live-desktop lettura libreoffice librewolf lifeograph lightsoff linuxqq
-lollypop loupe lximage-qt lyx man marker mate-calc mattermost-desktop mcomix
-menulibre metadata-cleaner meteo-qt microsoft-edge microsoft-edge-beta
-microsoft-edge-dev midori min minecraft-launcher minitube mirage mp3splt-gtk
-musictube mutt mypaint nautilus neochat neomutt neverball-wrapper
-neverputt-wrapper newsflash nextcloud nheko nitroshare nomacs notable nuclear
-ocenaudio okular onboard onionshare-gui open-invaders openarena openmw openshot
-openshot-qt opera opera-beta opera-developer org_gnome_NautilusPreviewer
-otter-browser pavucontrol pavucontrol-qt pcmanfm pcsxr pdfchain peek photoflare
-pinball-wrapper pipe-viewer-gtk postman ppsspp pragha psi pybitmessage
-qcomicbook qgis qt-faststart qt5ct qt6ct qtox quadrapassel quaternion quodlibet
-qutebrowser raincat rambox rednotebook rhythmbox riot-web rocketchat rssguard
-rtv rymdport scorched3d-wrapper scribus seahorse seamonkey secret-tool
-session-desktop shortwave shotwell signal-desktop simutrans skanlite
-skypeforlinux slack smuxi-frontend-gnome snox spectacle spectral
-standardnotes-desktop steam supertuxkart supertuxkart-wrapper swell-foop
-sylpheed sysprof teams teams-for-linux telegram terasology thunar thunderbird
-tidal-hifi tiny-rdm totem transgui transmission-gtk transmission-qt
+basilisk beaker bijiben bitcoin-qt bitwarden blobby bnox brasero brave
+brave-browser cachy-browser calligra cantata cawbird celluloid chatterino
+cheese chromium chromium-browser chromium-browser-privacy chromium-freeworld
+cinelerra clamtk claws-mail clawsker clementine cliqz clocks code
+colorful-wrapper com_github_bleakgrey_tootle com_github_dahenson_agenda
+com_github_johnfactotum_Foliate com_github_phase1geo_minder
+com_github_tchx84_Flatseal crow cyberfox dconf dconf-editor ddgtk deluge
+devhelp digikam dillo dnox dolphin-emu dooble dooble-qt4 electron-cash
+electron-mail electrum enox eog ephemeral equalx etr etr-wrapper evince
+evince-previewer evince-thumbnailer exfalso falkon feedreader ffmpeg
+file-roller firedragon firefox firefox-beta firefox-developer-edition
+firefox-esr firefox-nightly firefox-wayland firefox-x11 five-or-more flameshot
+flashpeak-slimjet floorp fluffychat fossamail four-in-a-row fractal freeciv
+freeciv-gtk3 freeciv-mp-gtk3 freetube frozen-bubble gajim gapplication gcalccmd
+geary gedit geki2 geki3 gfeeds ghostwriter gimp git-cola gitg github-desktop
+gjs gl-117 gl-117-wrapper glaxium glaxium-wrapper gnome-2048 gnome-books
+gnome-boxes gnome-builder gnome-calculator gnome-calendar gnome-character-map
+gnome-characters gnome-chess gnome-clocks gnome-contacts gnome-documents
+gnome-font-viewer gnome-hexgl gnome-keyring gnome-keyring-3
+gnome-keyring-daemon gnome-klotski gnome-latex gnome-logs gnome-mahjongg
+gnome-maps gnome-mines gnome-mplayer gnome-mpv gnome-music gnome-nettool
+gnome-nibbles gnome-passwordsafe gnome-photos gnome-pie gnome-pomodoro
+gnome-recipes gnome-ring gnome-robots gnome-schedule gnome-screenshot
+gnome-sound-recorder gnome-sudoku gnome-system-log gnome-taquin gnome-tetravex
+gnome-todo gnome-twitch gnome-weather gnote gnubik godot google-chrome
+google-chrome-beta google-chrome-unstable gradio gramps green-recoder
+gtk-lbry-viewer gtk-pipe-viewer gtk-straw-viewer gtk-update-icon-cache
+gtk-youtube-viewer gtk2-youtube-viewer gtk3-youtube-viewer gucharmap guvcview
+gwenview handbrake-gtk hexchat hitori homebank i2prouter iagno icecat icedove
+iceweasel impressive inkscape inox io_github_lainsce_Notejot iridium jami
+jami-gnome jerry jitsi-meet-desktop journal-viewer k3b kaffeine kate kazam
+kcalc kdeinit4 kdenlive kdiff3 keepassxc kfind kget kid3 kid3-qt klatexformula
+kmplayer konversation kopete krunner ktorrent ktouch kube kwin_x11 kwrite
+lbreakouthd lbry-viewer-gtk ledger-live-desktop lettura libreoffice librewolf
+lifeograph lightsoff linuxqq lollypop loupe lximage-qt lyx man marker mate-calc
+mattermost-desktop mcomix menulibre metadata-cleaner meteo-qt microsoft-edge
+microsoft-edge-beta microsoft-edge-dev midori min minecraft-launcher minitube
+mirage mp3splt-gtk musictube mutt mypaint nautilus neochat neomutt
+neverball-wrapper neverputt-wrapper newsflash nextcloud nheko nitroshare nomacs
+notable nuclear obs ocenaudio okular onboard onionshare-gui open-invaders
+openarena openmw openshot openshot-qt opera opera-beta opera-developer
+org_gnome_NautilusPreviewer otter-browser palemoon pavucontrol pavucontrol-qt
+pcmanfm pcsxr pdfchain peek photoflare pidgin pinball-wrapper pipe-viewer-gtk
+pitivi postman ppsspp pragha psi pybitmessage qbittorrent qcomicbook qgis
+qt-faststart qt5ct qt6ct qtox quadrapassel quaternion quodlibet qutebrowser
+raincat rambox rednotebook rhythmbox riot-web rocketchat rssguard rtv rymdport
+scorched3d-wrapper scribus seahorse seamonkey secret-tool session-desktop
+shortwave shotwell signal-desktop simutrans skanlite skypeforlinux slack
+smuxi-frontend-gnome snox spectacle spectral standardnotes-desktop steam
+supertuxkart supertuxkart-wrapper swell-foop sylpheed sysprof teams
+teams-for-linux telegram terasology thunar thunderbird tidal-hifi tiny-rdm
+torbrowser totem transgui transmission-gtk transmission-qt
 transmission-remote-gtk trojita tutanota-desktop tuxtype twitch typespeed
 udiskie uget-gtk unzip uzbl-browser virt-manager virtualbox vivaldi vlc vmware
-vmware-player vmware-view warzone2100 whalebird wire-desktop wireshark
-wireshark-gtk wireshark-qt x2goclient xfce4-notes xfce4-screenshooter xmms
-xonotic xonotic-sdl xonotic-sdl-wrapper yandex-browser yelp youtube
+vmware-player vmware-view warzone2100 waterfox whalebird wire-desktop wireshark
+wireshark-gtk wireshark-qt x2goclient xchat xfce4-notes xfce4-screenshooter
+xmms xonotic xonotic-sdl xonotic-sdl-wrapper yandex-browser yelp youtube
 youtube-dl-gui youtube-viewer-gtk youtubemusic-nativefier ytmdesktop zathura
 zeal zim zoom
-
-hexchat
-obs
-pidgin
-pitivi
-qbittorrent
-xchat
 )
 
 inherit flag-o-matic linux-info python-single-r1 toolchain-funcs virtualx
@@ -389,6 +385,7 @@ firejail_profiles_QMediathekView? ( || ( X xpra ) )
 firejail_profiles_Screenshot? ( || ( X xpra ) )
 firejail_profiles_Viber? ( || ( X xpra ) )
 firejail_profiles_abiword? ( || ( X xpra ) )
+firejail_profiles_abrowser? ( || ( X xpra ) )
 firejail_profiles_akregator? ( || ( X xpra ) )
 firejail_profiles_alacarte? ( || ( X xpra ) )
 firejail_profiles_alienarena? ( || ( X xpra ) )
@@ -415,6 +412,7 @@ firejail_profiles_avidemux3_qt5? ( || ( X xpra ) )
 firejail_profiles_ballbuster-wrapper? ( || ( X xpra ) )
 firejail_profiles_baloo_file? ( || ( X xpra ) )
 firejail_profiles_balsa? ( || ( X xpra ) )
+firejail_profiles_basilisk? ( || ( X xpra ) )
 firejail_profiles_beaker? ( || ( X xpra ) )
 firejail_profiles_bijiben? ( || ( X xpra ) )
 firejail_profiles_bitcoin-qt? ( || ( X xpra ) )
@@ -435,10 +433,12 @@ firejail_profiles_chromium? ( || ( X xpra ) )
 firejail_profiles_chromium-browser? ( || ( X xpra ) )
 firejail_profiles_chromium-browser-privacy? ( || ( X xpra ) )
 firejail_profiles_chromium-freeworld? ( || ( X xpra ) )
+firejail_profiles_cinelerra? ( || ( X xpra ) )
 firejail_profiles_clamtk? ( || ( X xpra ) )
 firejail_profiles_claws-mail? ( || ( X xpra ) )
 firejail_profiles_clawsker? ( || ( X xpra ) )
 firejail_profiles_clementine? ( || ( X xpra ) )
+firejail_profiles_cliqz? ( || ( X xpra ) )
 firejail_profiles_clocks? ( || ( X xpra ) )
 firejail_profiles_code? ( || ( X xpra ) )
 firejail_profiles_colorful-wrapper? ( || ( X xpra ) )
@@ -448,6 +448,7 @@ firejail_profiles_com_github_johnfactotum_Foliate? ( || ( X xpra ) )
 firejail_profiles_com_github_phase1geo_minder? ( || ( X xpra ) )
 firejail_profiles_com_github_tchx84_Flatseal? ( || ( X xpra ) )
 firejail_profiles_crow? ( || ( X xpra ) )
+firejail_profiles_cyberfox? ( || ( X xpra ) )
 firejail_profiles_dconf? ( || ( X xpra ) )
 firejail_profiles_dconf-editor? ( || ( X xpra ) )
 firejail_profiles_ddgtk? ( || ( X xpra ) )
@@ -476,12 +477,20 @@ firejail_profiles_falkon? ( || ( X xpra ) )
 firejail_profiles_feedreader? ( || ( X xpra ) )
 firejail_profiles_ffmpeg? ( || ( X xpra ) )
 firejail_profiles_file-roller? ( || ( X xpra ) )
+firejail_profiles_firedragon? ( || ( X xpra ) )
 firejail_profiles_firefox? ( || ( X xpra ) )
+firejail_profiles_firefox-beta? ( || ( X xpra ) )
+firejail_profiles_firefox-developer-edition? ( || ( X xpra ) )
+firejail_profiles_firefox-esr? ( || ( X xpra ) )
+firejail_profiles_firefox-nightly? ( || ( X xpra ) )
+firejail_profiles_firefox-wayland? ( || ( X xpra ) )
+firejail_profiles_firefox-x11? ( || ( X xpra ) )
 firejail_profiles_five-or-more? ( || ( X xpra ) )
 firejail_profiles_flameshot? ( || ( X xpra ) )
 firejail_profiles_flashpeak-slimjet? ( || ( X xpra ) )
 firejail_profiles_floorp? ( || ( X xpra ) )
 firejail_profiles_fluffychat? ( || ( X xpra ) )
+firejail_profiles_fossamail? ( || ( X xpra ) )
 firejail_profiles_four-in-a-row? ( || ( X xpra ) )
 firejail_profiles_fractal? ( || ( X xpra ) )
 firejail_profiles_freeciv? ( || ( X xpra ) )
@@ -572,10 +581,14 @@ firejail_profiles_gucharmap? ( || ( X xpra ) )
 firejail_profiles_guvcview? ( || ( X xpra ) )
 firejail_profiles_gwenview? ( || ( X xpra ) )
 firejail_profiles_handbrake-gtk? ( || ( X xpra ) )
+firejail_profiles_hexchat? ( || ( X xpra ) )
 firejail_profiles_hitori? ( || ( X xpra ) )
 firejail_profiles_homebank? ( || ( X xpra ) )
 firejail_profiles_i2prouter? ( || ( X xpra ) )
 firejail_profiles_iagno? ( || ( X xpra ) )
+firejail_profiles_icecat? ( || ( X xpra ) )
+firejail_profiles_icedove? ( || ( X xpra ) )
+firejail_profiles_iceweasel? ( || ( X xpra ) )
 firejail_profiles_impressive? ( || ( X xpra ) )
 firejail_profiles_inkscape? ( || ( X xpra ) )
 firejail_profiles_inox? ( || ( X xpra ) )
@@ -654,6 +667,7 @@ firejail_profiles_nitroshare? ( || ( X xpra ) )
 firejail_profiles_nomacs? ( || ( X xpra ) )
 firejail_profiles_notable? ( || ( X xpra ) )
 firejail_profiles_nuclear? ( || ( X xpra ) )
+firejail_profiles_obs? ( || ( X xpra ) )
 firejail_profiles_ocenaudio? ( || ( X xpra ) )
 firejail_profiles_okular? ( || ( X xpra ) )
 firejail_profiles_onboard? ( || ( X xpra ) )
@@ -668,6 +682,7 @@ firejail_profiles_opera-beta? ( || ( X xpra ) )
 firejail_profiles_opera-developer? ( || ( X xpra ) )
 firejail_profiles_org_gnome_NautilusPreviewer? ( || ( X xpra ) )
 firejail_profiles_otter-browser? ( || ( X xpra ) )
+firejail_profiles_palemoon? ( || ( X xpra ) )
 firejail_profiles_pavucontrol? ( || ( X xpra ) )
 firejail_profiles_pavucontrol-qt? ( || ( X xpra ) )
 firejail_profiles_pcmanfm? ( || ( X xpra ) )
@@ -675,13 +690,16 @@ firejail_profiles_pcsxr? ( || ( X xpra ) )
 firejail_profiles_pdfchain? ( || ( X xpra ) )
 firejail_profiles_peek? ( || ( X xpra ) )
 firejail_profiles_photoflare? ( || ( X xpra ) )
+firejail_profiles_pidgin? ( || ( X xpra ) )
 firejail_profiles_pinball-wrapper? ( || ( X xpra ) )
 firejail_profiles_pipe-viewer-gtk? ( || ( X xpra ) )
+firejail_profiles_pitivi? ( || ( X xpra ) )
 firejail_profiles_postman? ( || ( X xpra ) )
 firejail_profiles_ppsspp? ( || ( X xpra ) )
 firejail_profiles_pragha? ( || ( X xpra ) )
 firejail_profiles_psi? ( || ( X xpra ) )
 firejail_profiles_pybitmessage? ( || ( X xpra ) )
+firejail_profiles_qbittorrent? ( || ( X xpra ) )
 firejail_profiles_qcomicbook? ( || ( X xpra ) )
 firejail_profiles_qgis? ( || ( X xpra ) )
 firejail_profiles_qt-faststart? ( || ( X xpra ) )
@@ -733,6 +751,7 @@ firejail_profiles_thunar? ( || ( X xpra ) )
 firejail_profiles_thunderbird? ( || ( X xpra ) )
 firejail_profiles_tidal-hifi? ( || ( X xpra ) )
 firejail_profiles_tiny-rdm? ( || ( X xpra ) )
+firejail_profiles_torbrowser? ( || ( X xpra ) )
 firejail_profiles_totem? ( || ( X xpra ) )
 firejail_profiles_transgui? ( || ( X xpra ) )
 firejail_profiles_transmission-gtk? ( || ( X xpra ) )
@@ -755,12 +774,14 @@ firejail_profiles_vmware? ( || ( X xpra xvfb ) )
 firejail_profiles_vmware-player? ( || ( X xpra ) )
 firejail_profiles_vmware-view? ( || ( X xpra ) )
 firejail_profiles_warzone2100? ( || ( X xpra ) )
+firejail_profiles_waterfox? ( || ( X xpra ) )
 firejail_profiles_whalebird? ( || ( X xpra ) )
 firejail_profiles_wire-desktop? ( || ( X xpra ) )
 firejail_profiles_wireshark? ( || ( X xpra ) )
 firejail_profiles_wireshark-gtk? ( || ( X xpra ) )
 firejail_profiles_wireshark-qt? ( || ( X xpra ) )
 firejail_profiles_x2goclient? ( || ( X xpra ) )
+firejail_profiles_xchat? ( || ( X xpra ) )
 firejail_profiles_xfce4-notes? ( || ( X xpra ) )
 firejail_profiles_xfce4-screenshooter? ( || ( X xpra ) )
 firejail_profiles_xmms? ( || ( X xpra ) )
@@ -778,13 +799,6 @@ firejail_profiles_zathura? ( || ( X xpra ) )
 firejail_profiles_zeal? ( || ( X xpra ) )
 firejail_profiles_zim? ( || ( X xpra ) )
 firejail_profiles_zoom? ( || ( X xpra ) )
-
-firejail_profiles_hexchat? ( || ( X xpra ) )
-firejail_profiles_obs? ( || ( X xpra ) )
-firejail_profiles_pidgin? ( || ( X xpra ) )
-firejail_profiles_pitivi? ( || ( X xpra ) )
-firejail_profiles_qbittorrent? ( || ( X xpra ) )
-firejail_profiles_xchat? ( || ( X xpra ) )
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -1518,6 +1532,7 @@ einfo
 		brave-browser
 		brasero
 		chromium
+		cinelerra
 		clementine
 		dillo
 		firefox
@@ -1541,6 +1556,7 @@ einfo
 		vmware-player
 		xchat
 		xmms
+		waterfox
 		wireshark
 		wireshark-gtk
 		wireshark-qt
@@ -1562,7 +1578,7 @@ einfo
 	}
 
 	local x
-	for x in $(grep -l -r -E -e "(tauri|electron|chromium|opengl|@x11|gtk|gnome|kde|sdl|qt|opengl|vulkan)" "${S}/etc/profile"*) ${MISSING_NAMES[@]} ; do \
+	for x in $(grep -l -r -E -e "(tauri|electron|chromium|firefox|opengl|@x11|gtk|gnome|kde|sdl|qt|opengl|vulkan)" "${S}/etc/profile"*) ${MISSING_NAMES[@]} ; do \
 		basename "${x}"; \
 	done \
 		| tr " " "\n" \
@@ -1577,7 +1593,7 @@ einfo
 einfo
 einfo "Replace GUI_REQUIRED_USE with the following:"
 einfo
-	local L=$(for x in $(grep -l -r -E -e "(tauri|electron|chromium|opengl|@x11|gtk|gnome|kde|sdl|qt|opengl|vulkan)" "${S}/etc/profile"*) ${MISSING_NAMES[@]} ; do \
+	local L=$(for x in $(grep -l -r -E -e "(tauri|electron|chromium|firefox|opengl|@x11|gtk|gnome|kde|sdl|qt|opengl|vulkan)" "${S}/etc/profile"*) ${MISSING_NAMES[@]} ; do \
 		basename "${x}"; \
 	done \
 		| tr " " "\n" \
