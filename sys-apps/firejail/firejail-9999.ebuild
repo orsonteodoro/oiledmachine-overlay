@@ -225,7 +225,7 @@ zim zless zlib-flate zmore znew zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt
 zulip
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
-GEN_EBUILD=1 # Uncomment to regen ebuild parts
+#GEN_EBUILD=1 # Uncomment to regen ebuild parts
 LLVM_COMPAT=( {18..14} )
 PYTHON_COMPAT=( python3_{9..12} )
 TEST_SET="distro" # distro or full
@@ -304,6 +304,7 @@ gen_clang_bdepend() {
 		echo "
 		(
 			sys-devel/clang:${s}
+			sys-devel/lld:${s}
 			sys-devel/llvm:${s}
 		)
 		"
@@ -1733,7 +1734,25 @@ src_prepare() {
 	sed -i \
 		-e 's:-fstack-protector-all::' \
 		-e 's:-D_FORTIFY_SOURCE=2::' \
-		src/so.mk src/prog.mk || die
+		"src/so.mk" \
+		"src/prog.mk" \
+		|| die
+
+	local ldflags=""
+	if tc-ld-is-lld ; then
+		ldflags="-Wl,--shuffle-sections=0"
+	elif tc-ld-is-mold ; then
+		ldflags="-Wl,--shuffle-sections"
+	else
+ewarn "Use LLD or mold for ROP mitigation"
+	fi
+
+	sed -i \
+		-e "s:-ggdb::g" \
+		-e "s:-Wall:-ffunction-sections -Wall:g" \
+		-e "s:-Wl,-z,relro:-Wl,-z,relro ${ldflags}:g" \
+		"config.mk.in" \
+		|| die
 
 	find \
 		-type f \
