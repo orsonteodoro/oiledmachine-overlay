@@ -291,6 +291,8 @@ wireshark-gtk wireshark-qt x2goclient xfce4-notes xfce4-screenshooter xmms
 xonotic xonotic-sdl xonotic-sdl-wrapper yandex-browser yelp youtube
 youtube-dl-gui youtube-viewer-gtk youtubemusic-nativefier ytmdesktop zathura
 zeal zim zoom
+
+qbittorrent
 )
 
 inherit flag-o-matic linux-info python-single-r1 toolchain-funcs virtualx
@@ -771,6 +773,8 @@ firejail_profiles_zathura? ( || ( X xpra ) )
 firejail_profiles_zeal? ( || ( X xpra ) )
 firejail_profiles_zim? ( || ( X xpra ) )
 firejail_profiles_zoom? ( || ( X xpra ) )
+
+firejail_profiles_qbittorrent? ( || ( X xpra ) )
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -1515,6 +1519,7 @@ einfo
 		gramps
 		nautilus
 		pcmanfm
+		qbittorrent
 		thunar
 		thunderbird
 		uzbl-browser
