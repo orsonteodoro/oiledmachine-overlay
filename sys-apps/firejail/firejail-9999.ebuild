@@ -1,4 +1,4 @@
-# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2022-2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -2512,7 +2512,7 @@ einfo "Generating wrapper for ${profile_name}"
 
 	local wh_arg=""
 	if [[ -n "${XEPHYR_WH[${profile_name}]}" ]] ; then
-		wh_arg="${XEPHYR_WH[${profile_name}]}"
+		wh_arg="--xephyr-screen=${XEPHYR_WH[${profile_name}]}"
 	fi
 
 	local exe_path=""
@@ -2524,9 +2524,21 @@ einfo "Generating wrapper for ${profile_name}"
 		exe_path="/usr/bin/${exe_name}"
 	fi
 
+	local apparmor_arg=""
+	if [[ "${APPARMOR_PROFILE[${profile_name}]}" == "default" ]] ; then
+		apparmor_arg="--apparmor"
+	elif [[ -n "${APPARMOR_PROFILE[${profile_name}]}" ]] ; then
+		apparmor_arg="--apparmor=${APPARMOR_PROFILE[${profile_name}]}"
+	fi
+
+	local seccomp_arg=""
+	if [[ -n "${SECCOMP[${profile_name}]}" ]] ; then
+		seccomp_arg="--seccomp"
+	fi
+
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}" || die
 #!/bin/bash
-exec firejail ${x11_arg} ${allocator_args} ${wh_arg} --profile="${profile_name}" "${exe_path}" "\$@"
+exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} --profile="${profile_name}" "${exe_path}" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}"
 	fperms 0755 "/usr/local/bin/${exe_name}"
@@ -2535,7 +2547,7 @@ EOF
 einfo "Generating wrapper for firefox-bin"
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}-bin" || die
 #!/bin/bash
-exec firejail ${x11_arg} ${allocator_args} ${wh_arg} --profile="${profile_name}" "/usr/bin/${exe_name}-bin" "\$@"
+exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} --profile="${profile_name}" "/usr/bin/${exe_name}-bin" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}-bin"
 	fperms 0755 "/usr/local/bin/${exe_name}-bin"

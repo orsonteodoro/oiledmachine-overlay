@@ -52,25 +52,30 @@
 
     Build time environment variables
 
+    SCUDO_FREE_IMMEDIATE["keepassx"]=1 - Free the keys in the heap immediately.
     XEPHYR_WH["chromium"]="1920x1080" - Set the default window size for chromium.
     The default is 800x600 for xephyr.
-    SCUDO_FREE_IMMEDIATE["keepassx"]=1 - Free the keys in the heap immediately.
 
     Examples:
 
     Contents of /etc/portage/env/firejail.conf:
-    SCUDO_FREE_IMMEDIATE["keepassxc"]=1
-    XEPHYR_WH["chromium"]="1920x1080"
-    XEPHYR_WH["firefox"]="1920x1080"
-    X_BACKEND["chromium"]="xephyr"
-    X_BACKEND["firefox"]="xpra"
-    X_BACKEND["xchat"]="auto"
-    MALLOC_BACKEND["keepassxc"]="mimalloc"
-    MALLOC_BACKEND["chromium"]="scudo"
-    PATH_CORRECTION["spotify"]="/opt/spotify/spotify-client/spotify"
+
+      APPARMOR_PROFILE["chromium"]="chromium-browser"
+      APPARMOR_PROFILE["firefox"]="default"
+      SCUDO_FREE_IMMEDIATE["keepassxc"]=1
+      SECCOMP["dillo"]="1"
+      MALLOC_BACKEND["keepassxc"]="mimalloc"
+      MALLOC_BACKEND["chromium"]="scudo"
+      PATH_CORRECTION["spotify"]="/opt/spotify/spotify-client/spotify"
+      XEPHYR_WH["chromium"]="1920x1080"
+      XEPHYR_WH["firefox"]="1920x1080"
+      X_BACKEND["chromium"]="xephyr"
+      X_BACKEND["firefox"]="xpra"
+      X_BACKEND["xchat"]="auto"
 
     Contents of /etc/portage/package.env:
-    sys-apps/firejail firejail.conf
+
+      sys-apps/firejail firejail.conf
 
 
     Analysis and explanations:
