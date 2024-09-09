@@ -276,6 +276,7 @@ youtube-dl-gui youtubemusic-nativefier ytmdesktop zathura
 zeal zim zoom
 
 hexchat
+obs
 pidgin
 qbittorrent
 xchat
@@ -730,6 +731,7 @@ firejail_profiles_zim? ( || ( X xpra ) )
 firejail_profiles_zoom? ( || ( X xpra ) )
 
 firejail_profiles_hexchat? ( || ( X xpra ) )
+firejail_profiles_obs? ( || ( X xpra ) )
 firejail_profiles_pidgin? ( || ( X xpra ) )
 firejail_profiles_qbittorrent? ( || ( X xpra ) )
 firejail_profiles_xchat? ( || ( X xpra ) )
@@ -1422,6 +1424,7 @@ einfo
 		gramps
 		hexchat
 		nautilus
+		obs
 		pcmanfm
 		pidgin
 		qbittorrent
