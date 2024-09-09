@@ -52,9 +52,29 @@
 
     Build time environment variables
 
-    SCUDO_FREE_IMMEDIATE["keepassx"]=1 - Free the keys in the heap immediately.
-    XEPHYR_WH["chromium"]="1920x1080" - Set the default window size for chromium.
-    The default is 800x600 for xephyr.
+    APPARMOR_PROFILE[PROFILE_NAME] - Set app armor protection.
+    Valid values - default, APPARMOR_PROFILE_NAME
+
+    MALLOC_BACKEND[PROFILE_NAME] - Set the hardened allocator
+    Valid values - hardened_malloc, mimalloc, scudo
+
+    PATH_CORRECTION[PROFILE_NAME] - Set the correct path to the binary package.
+
+    SCUDO_FREE_IMMEDIATE[PROFILE_NAME] - Free the keys in the heap immediately.
+    Valid values:
+    1 (clear immediately for mitigation against cold-boot-attack and Spectre based attacks.)
+    0 (delayed free for mitigation against use-after-free heap attacks.)
+
+    SECCOMP[PROFILE_NAME] - Enable seccomp sandboxing.
+
+    XEPHYR_WH[PROFILE_NAME] - Set the default window size for x11 apps that
+    are sandboxed with the zephyr backend.
+    Valid values:  WIDTHxHEIGHT, 800x600 (default)
+
+    X_BACKEND[PROFILE_NAME] - Select the x11 sandbox backend.
+    Valid values:  xephyr, xpra, auto, unset
+
+    Variables are in all capitals.
 
     Examples:
 

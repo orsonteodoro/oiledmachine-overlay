@@ -729,6 +729,7 @@ firejail_profiles_zoom? ( || ( xephyr xpra ) )
 firejail_profiles_spotify? ( || ( xephyr xpra ) )
 "
 HARDENED_ALLOCATORS_IUSE=(
+	hardened_malloc
 	mimalloc
 	scudo
 )
@@ -862,6 +863,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server  +globalcfg landlock +network +private-home selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
+ebuild-revision-1
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -904,6 +906,9 @@ RDEPEND+="
 	)
 	dbusproxy? (
 		>=sys-apps/xdg-dbus-proxy-0.1.2
+	)
+	hardened_malloc? (
+		dev-libs/hardened_malloc
 	)
 	mimalloc? (
 		dev-libs/mimalloc[hardened]
@@ -1809,8 +1814,14 @@ ewarn
 			~RELOCATABLE
 			~RANDOMIZE_BASE
 		"
+		if [[ "${ARCH}" == "amd64" ]] ; then
+			CONFIG_CHECK+="
+				~RANDOMIZE_MEMORY
+			"
+		fi
 		WARNING_RELOCATABLE="CONFIG_RELOCATABLE is required by Scudo."
 		WARNING_RANDOMIZE_BASE="CONFIG_RANDOMIZE_BASE (KASLR) is required by Scudo."
+		WARNING_RANDOMIZE_MEMORY="CONFIG_RANDOMIZE_MEMORY is required by Scudo."
 		check_extra_config
 	fi
 
@@ -2487,6 +2498,7 @@ einfo "Generating wrapper for ${profile_name}"
 	local allocator_args=""
 	local allocator_args_scudo=""
 	local allocator_args_mimalloc=""
+	local allocator_args_hardened_malloc=""
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		if use "llvm_slot_${s}" && has_version "sys-libs/compiler-rt-sanitizers:${s}[scudo]" ; then
@@ -2500,15 +2512,23 @@ einfo "Generating wrapper for ${profile_name}"
 	if use mimalloc ; then
 		allocator_args_mimalloc="--env=LD_PRELOAD=/usr/$(get_libdir)/libmimalloc-secure.so"
 	fi
+	if use hardened_malloc ; then
+		allocator_args_hardened_malloc="--env=LD_PRELOAD=/usr/$(get_libdir)/libhardened_malloc.so"
+	fi
 
+	# Sort by data remittance policy (most scrambled on top, least scrambled bottom)
 	if [[ "${MALLOC_BACKEND[${profile_name}]}" == "mimalloc" ]] && use mimalloc ; then
 		allocator_args="${allocator_args_mimalloc}"
 	elif [[ "${MALLOC_BACKEND[${profile_name}]}" == "scudo" ]] && use scudo ; then
 		allocator_args="${allocator_args_scudo}"
+	elif [[ "${MALLOC_BACKEND[${profile_name}]}" == "hardened_malloc" ]] && use hardened_malloc ; then
+		allocator_args="${allocator_args_hardened_malloc}"
 	elif use mimalloc ; then
 		allocator_args="${allocator_args_mimalloc}"
 	elif use scudo ; then
 		allocator_args="${allocator_args_scudo}"
+	elif use hardened_malloc ; then
+		allocator_args="${allocator_args_hardened_malloc}"
 	fi
 
 	local wh_arg=""

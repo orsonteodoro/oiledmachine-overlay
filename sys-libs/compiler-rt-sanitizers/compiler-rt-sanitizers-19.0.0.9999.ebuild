@@ -43,7 +43,7 @@ SLOT="${LLVM_MAJOR}"
 IUSE+="
 +abi_x86_32 abi_x86_64 +clang +ctx-profile +debug hexagon +libfuzzer +memprof
 +orc +profile test +xray
-ebuild-revision-3
+ebuild-revision-4
 ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 # sanitizer targets, keep in sync with config-ix.cmake
@@ -371,8 +371,14 @@ pkg_setup() {
 			~RELOCATABLE
 			~RANDOMIZE_BASE
 		"
+		if [[ "${ARCH}" == "amd64" ]] ; then
+			CONFIG_CHECK+="
+				~RANDOMIZE_MEMORY
+			"
+		fi
 		WARNING_RELOCATABLE="CONFIG_RELOCATABLE is required by Scudo."
 		WARNING_RANDOMIZE_BASE="CONFIG_RANDOMIZE_BASE (KASLR) is required by Scudo."
+		WARNING_RANDOMIZE_MEMORY="CONFIG_RANDOMIZE_MEMORY is required by Scudo."
 		check_extra_config
 	fi
 	check_space
