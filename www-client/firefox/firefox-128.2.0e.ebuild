@@ -404,7 +404,7 @@ CODEC_IUSE="
 IUSE+="
 ${CODEC_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-alsa cups +dbus debug eme-free +ffvpx +hardened -hwaccel jack
+alsa cups +dbus debug eme-free +ffvpx firejail +hardened -hwaccel jack
 -jemalloc +jumbo-build libcanberra libnotify libproxy libsecret mold +openh264 +pgo
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
@@ -870,6 +870,9 @@ BDEPEND+="
 	)
 "
 PDEPEND+="
+	firejail? (
+		sys-apps/firejail[X,firefox]
+	)
 	screencast? (
 		>=media-video/pipewire-0.3.52[${MULTILIB_USEDEP}]
 		sys-apps/xdg-desktop-portal
