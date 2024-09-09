@@ -58,11 +58,26 @@
     MALLOC_BACKEND[PROFILE_NAME] - Set the hardened allocator
     Valid values - hardened_malloc, mimalloc, scudo
 
+                        | ASLR   | freed data remittance policy[7]            | ARM64 MTE[3]
+    hardened_malloc     | yes[6] | small allocs zeroed, large allocs unerased | optional
+    mimalloc            | yes[8] | eager cryptographic erase                  | no
+    scudo               | yes[2] | zeroed immediate or zeroed when full delay | optional
+    unset (ptmalloc[5]) | [1]    | left unsanitized                           | no[4]
+
+    [1] Only if RANDOMIZE_BASE (KALSR) is enabled in the kernel config and active.  Otherwise, it does not perform proactive mixing.
+    [2] Depends on KALSR and may use linear function
+    [3] Buffer overflow and use-after-free protection
+    [4] MTE is default on in the Linux Kernel
+    [5] glibc implementation
+    [6] Proactive via chacha8
+    [7] Using zeros for erasing makes it easier to find keys or sensitive data strings.
+    [8] Proactive via chacha20
+
     PATH_CORRECTION[PROFILE_NAME] - Set the correct path to the binary package.
 
     SCUDO_FREE_IMMEDIATE[PROFILE_NAME] - Free the keys in the heap immediately.
     Valid values:
-    1 (clear immediately for mitigation against cold-boot-attack and Spectre based attacks.)
+    1 (clear immediately for mitigation against cold-boot-attack and DMA based attacks.)
     0 (delayed free for mitigation against use-after-free heap attacks.)
 
     SECCOMP[PROFILE_NAME] - Enable seccomp sandboxing.
@@ -105,7 +120,7 @@
 
     By default in this ebuild, scudo will free memory blocks with a delay.  This
     delay is to mitigate against use-after-free.  This delay is dangerous for
-    cold boot attacks or maybe Spectre based ones since freeing blocks is not
+    cold boot attacks or maybe DMA based ones since freeing blocks is not
     eager but event based on size.
 
     This is why we choose the mimalloc which does eager free.  The keychain has
