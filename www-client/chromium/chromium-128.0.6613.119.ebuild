@@ -189,15 +189,6 @@ PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 
 KEYWORDS="~amd64 ~arm64 ~ppc64"
 SRC_URI="
-	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
-	https://gn.googlesource.com/gn/+archive/${GN_COMMIT}.tar.gz
-		-> gn-${GN_COMMIT:0:7}.tar.gz
-	!system-toolchain? (
-		https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-${VENDORED_CLANG_VER}.tar.xz
-			-> chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang.tar.xz
-		https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%?????}.tar.xz
-			-> chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust.tar.xz
-	)
 	ppc64? (
 		https://quickbuild.io/~raptor-engineering-public/+archive/ubuntu/chromium/+files/chromium_${PATCHSET_PPC64}.debian.tar.xz
 		https://deps.gentoo.zip/chromium-ppc64le-gentoo-patches-1.tar.xz
@@ -607,9 +598,9 @@ DISTRO_REQUIRE_USE="
 #
 # We will not consider rust-cr file situation for now because the env file situation.
 #
+#	extensions
 REQUIRED_USE+="
 	${DISABLED_NON_FREE_USE_FLAGS}
-	extensions
 	!headless (
 		|| (
 			wayland
@@ -641,6 +632,9 @@ REQUIRED_USE+="
 		!system-zlib
 		!system-zstd
 		bundled-libcxx
+	)
+	cups? (
+		pdf
 	)
 	ffmpeg-chromium? (
 		bindist
@@ -1122,6 +1116,8 @@ BDEPEND+="
 	${CLANG_BDEPEND}
 	${COMMON_SNAPSHOT_DEPEND}
 	${PYTHON_DEPS}
+	www-client/chromium-toolchain:0/${PV}[gn]
+	www-client/chromium-sources:0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_PV}
 	>=app-arch/gzip-1.7
 	>=dev-build/ninja-1.7.2
 	>=dev-util/gperf-3.0.3
@@ -1818,24 +1814,18 @@ src_unpack() {
 	# doesn't try and use some bundled tool (like bindgen) instead of the
 	# system package by just not unpacking it unless we're using the bundled
 	# toolchain.
-	unpack "${P}.tar.xz"
-	mkdir -p "${WORKDIR}/gn-${GN_COMMIT}" || die
-	pushd "${WORKDIR}/gn-${GN_COMMIT}" >/dev/null 2>&1 || popd
-		unpack "gn-${GN_COMMIT:0:7}.tar.gz"
-	popd >/dev/null 2>&1 || popd
+	mkdir -p "${S}" || die
+	cp -aT "/usr/share/chromium/sources" "${S}" || die
+	export PATH="/usr/share/chromium/toolchain/gn/out:${PATH}"
 
 	if use system-toolchain ; then
 		unpack "chromium-patches-${PATCH_VER}.tar.bz2"
 	else
 		mkdir -p "${S}/third_party/llvm-build/Release+Asserts" || die
-		pushd "${S}/third_party/llvm-build/Release+Asserts" >/dev/null 2>&1 || die
-			unpack "chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang.tar.xz"
-		popd >/dev/null 2>&1 || die
+		cp -aT "/usr/share/chromium/toolchain/llvm" "${S}/third_party/llvm-build/Release+Asserts" || die
 
 		mkdir -p "${S}/third_party/rust-toolchain" || die
-		pushd "${S}/third_party/rust-toolchain" >/dev/null 2>&1 || die
-			unpack "chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust.tar.xz"
-		popd >/dev/null 2>&1 || die
+		cp -aT "/usr/share/chromium/toolchain/llvm" "${S}/third_party/rust-toolchain" || die
 	fi
 
 	if use ppc64 ; then
@@ -2677,56 +2667,6 @@ _src_configure_compiler() {
 	${CC} --version || die
 }
 
-build_gn() {
-# Sync with gn ebuild:
-	pushd "${WORKDIR}/gn-${GN_COMMIT}" >/dev/null 2>&1 || die
-		local gn_opt_level="-O2"
-		if is-flagq "-Ofast" ; then
-			gn_opt_level="-O3"
-		elif is-flagq "-O4" ; then
-			gn_opt_level="-O3"
-		elif is-flagq "-O3" ; then
-			gn_opt_level="-O3"
-		elif is-flagq "-O2" ; then
-			gn_opt_level="-O2"
-		elif is-flagq "-O1" ; then
-			gn_opt_level="-O1"
-		elif is-flagq "-O0" ; then
-			gn_opt_level="-O2"
-		fi
-		sed -i -e \
-			"s|-O3|${gn_opt_level}|g" \
-			"build/gen.py" \
-			|| die
-		if use elibc_musl ; then # bug 906362
-			append-cflags -D_LARGEFILE64_SOURCE
-			append-cxxflags -D_LARGEFILE64_SOURCE
-		fi
-einfo "Configuring gn"
-		set -- ${EPYTHON} "build/gen.py" --no-last-commit-position --no-strip --no-static-libstdc++ --allow-warnings
-		edo "$@"
-
-# Fixes
-#../src/gn/scope_per_file_provider.cc:15:10: fatal error: 'last_commit_position.h' file not found
-#   15 | #include "last_commit_position.h"
-#      |          ^~~~~~~~~~~~~~~~~~~~~~~~
-#1 error generated.
-cat >out/last_commit_position.h <<-EOF || die
-#ifndef OUT_LAST_COMMIT_POSITION_H_
-#define OUT_LAST_COMMIT_POSITION_H_
-#define LAST_COMMIT_POSITION_NUM ${GN_PV##0.}
-#define LAST_COMMIT_POSITION "${GN_PV}"
-#endif  // OUT_LAST_COMMIT_POSITION_H_
-EOF
-
-einfo "Building gn"
-		eninja -C out gn
-		export PATH="${WORKDIR}/gn-${GN_COMMIT}/out:${PATH}"
-		gn --version || die
-		filter-flags -D_LARGEFILE64_SOURCE
-	popd >/dev/null 2>&1 || die
-}
-
 src_configure() {
 	:
 }
@@ -2762,40 +2702,6 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	fi
 
 	local myconf_gn=""
-
-	#
-	# Oflag and or compiler flag requirements:
-	#
-	# 1. Smooth playback (>=25 FPS) for vendored codecs like dav1d.
-	# 2. Fast build time to prevent systemwide vulnerability backlog.
-	# 3. Critical vulnerabilities should be fixed in one day, which implies
-	#    that the ebuild has to be completely merged within a day.
-	#
-
-	replace-flags "-O0" "-O2"
-	replace-flags "-O1" "-O2"
-	replace-flags "-Os" "-O2"
-	replace-flags "-Oz" "-O2"
-	replace-flags "-Ofast" "-O3" # -Ofast is broken.  TODO: fix crashes by using O3 in some *.gn* files
-	replace-flags "-O4" "-O3" # -O4 is the same as -O3
-
-	if ! use system-toolchain ; then
-	# The vendored clang/rust is likely built for portability not performance
-	# that is why it is very slow.
-		replace-flags "-O*" "-O2"
-	fi
-	if (( ${nprocs} <= 4 )) ; then
-		replace-flags "-O*" "-O2"
-	fi
-
-	# Prevent crash for now
-	filter-flags "-ffast-math"
-
-	if (( ${OSHIT_OPTIMIZED} == 1 )) ; then
-		replace-flags "-O*" "-O1"
-	fi
-
-	build_gn
 
 if use system-toolchain ; then #################################################
 einfo "Using the system toolchain"
@@ -3089,7 +2995,7 @@ ewarn
 	myconf_gn+=" use_mpris=$(usex mpris true false)"
 
 	# Forced because of asserts
-	myconf_gn+=" enable_screen_ai_service=true"
+	myconf_gn+=" enable_screen_ai_service=$(usex ml true false)"
 
 	if use headless ; then
 		myconf_gn+=" build_with_tflite_lib=false"
@@ -3358,6 +3264,38 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 		myconf_gn+=" tflite_custom_optimization_level=${oshit_opt_level_tflite}"
 		myconf_gn+=" v8_custom_optimization_level=${oshit_opt_level_v8}"
 		myconf_gn+=" xnnpack_custom_optimization_level=${oshit_opt_level_xnnpack}"
+	fi
+
+	#
+	# Oflag and or compiler flag requirements:
+	#
+	# 1. Smooth playback (>=25 FPS) for vendored codecs like dav1d.
+	# 2. Fast build time to prevent systemwide vulnerability backlog.
+	# 3. Critical vulnerabilities should be fixed in one day, which implies
+	#    that the ebuild has to be completely merged within a day.
+	#
+
+	replace-flags "-O0" "-O2"
+	replace-flags "-O1" "-O2"
+	replace-flags "-Os" "-O2"
+	replace-flags "-Oz" "-O2"
+	replace-flags "-Ofast" "-O3" # -Ofast is broken.  TODO: fix crashes by using O3 in some *.gn* files
+	replace-flags "-O4" "-O3" # -O4 is the same as -O3
+
+	if ! use system-toolchain ; then
+	# The vendored clang/rust is likely built for portability not performance
+	# that is why it is very slow.
+		replace-flags "-O*" "-O2"
+	fi
+	if (( ${nprocs} <= 4 )) ; then
+		replace-flags "-O*" "-O2"
+	fi
+
+	# Prevent crash for now
+	filter-flags "-ffast-math"
+
+	if (( ${OSHIT_OPTIMIZED} == 1 )) ; then
+		replace-flags "-O*" "-O1"
 	fi
 
 	if use official ; then
