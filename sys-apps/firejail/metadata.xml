@@ -97,14 +97,14 @@
     <flag name="selinux">
       Enable SELinux labeling support
     </flag>
-    <flag name="tests">
+    <flag name="test">
       Performs basic testing
     </flag>
-    <flag name="tests">
-      Performs testing on the x11 portions
-    </flag>
-    <flag name="tests">
+    <flag name="test-profiles">
       Performs testing on the FireJail profiles.  Expect longer testing time.
+    </flag>
+    <flag name="test-x11">
+      Performs testing on the x11 portions
     </flag>
     <flag name="userns">
       Enable attaching a new user namespace to a sandbox (--noroot option)
@@ -114,10 +114,13 @@
       (It may crash programs or programs may not prefer untrusted mode.)
     </flag>
     <flag name="xpra">
-      Enable xpra support for GUIs.
+      Enable xpra support for windowed apps and better OpenGL support.
     </flag>
     <flag name="xvfb">
       Enable xvfb support for sandboxing remote access or headless servers.
+    </flag>
+    <flag name="xephyr">
+      Enable xephyr support for windowed apps.
     </flag>
     <flag name="wrapper">
       Add USE enabled wrappers to /etc/local/bin to immediately use the program

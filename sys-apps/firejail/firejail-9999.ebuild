@@ -855,6 +855,7 @@ apparmor +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_defa
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
 	!test
+	suid
 	?? (
 		mimalloc
 		scudo
@@ -864,7 +865,6 @@ REQUIRED_USE+="
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)
-	suid
 	contrib? (
 		${PYTHON_REQUIRED_USE}
 	)
