@@ -1195,15 +1195,14 @@ einfo
 		vmware-player
 	# If it is uppercase, it is assumed is is a win port of that app.
 	)
-	local HEADLESS_COMPAT=(
-		i2prouter
+	local X_HEADLESS_COMPAT=(
 		vmware
 	)
 
-	is_headless_compat() {
+	is_x_headless_compat() {
 		local arg="${1}"
 		local y
-		for y in ${HEADLESS_COMPAT[@]} ; do
+		for y in ${X_HEADLESS_COMPAT[@]} ; do
 			if [[ "${arg}" == "${y}" ]] ; then
 				return 0
 			fi
@@ -1234,7 +1233,7 @@ einfo
 		| sed -e "s| $||g" \
 		| sed -e "s|\.|_|g")
 	for x in ${L[@]} ; do
-		if is_headless_compat "${x}" ; then
+		if is_x_headless_compat "${x}" ; then
 echo "firejail_profiles_${x}? ( || ( X xpra xvfb ) )"
 		else
 echo "firejail_profiles_${x}? ( || ( X xpra ) )"
