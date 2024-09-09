@@ -15,7 +15,7 @@ HOMEPAGE="https://www.chromium.org/"
 LICENSE="
 	chromium-$(ver_cut 1-3 ${PV}).x.html
 "
-RESTRICT="mirror"
+RESTRICT="binchecks mirror strip test"
 SLOT="0/${PV}"
 IUSE+=" ebuild-revision-1"
 RDEPEND+="

@@ -48,7 +48,7 @@ HOMEPAGE="https://www.chromium.org/"
 LICENSE="
 	chromium-$(ver_cut 1-3 ${PV}).x.html
 "
-RESTRICT="binchecks mirror strip"
+RESTRICT="binchecks mirror strip test"
 SLOT="0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_PV}"
 IUSE+=" +clang +gn +rust"
 REQUIRED_USE="
