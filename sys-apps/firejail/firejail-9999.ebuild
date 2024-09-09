@@ -2446,8 +2446,12 @@ einfo "Generating wrapper for ${profile_name}"
 		return 1
 	}
 
-	if is_x11_compat "${profile_name}" ; then
-		x11_arg="--x11"
+	if [[ "${X_BACKEND[${profile_name}]}" == "xpra" ]] ; then
+		x11_arg="--x11=xpra"
+	elif [[ "${X_BACKEND[${profile_name}]}" == "xephyr" ]] ; then
+		x11_arg="--x11=xephyr"
+	elif is_x11_compat "${profile_name}" ; then
+		x11_arg="--x11" # autodetect
 	fi
 
 	local allocator_args=""
@@ -2462,9 +2466,14 @@ einfo "Generating wrapper for ${profile_name}"
 		allocator_args="--env=LD_PRELOAD=/usr/$(get_libdir)/libmimalloc-secure.so"
 	fi
 
+	local wh_arg=""
+	if [[ -n "${XEPHYR_WH[${profile_name}]}" ]] ; then
+		wh_arg="${XEPHYR_WH[${profile_name}]}"
+	fi
+
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}" || die
 #!/bin/bash
-exec firejail ${x11_arg} ${allocator_args} --profile="${profile_name}" "/usr/bin/${exe_name}" "\$@"
+exec firejail ${x11_arg} ${allocator_args} ${wh_arg} --profile="${profile_name}" "/usr/bin/${exe_name}" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}"
 	fperms 0755 "/usr/local/bin/${exe_name}"
@@ -2473,7 +2482,7 @@ EOF
 einfo "Generating wrapper for firefox-bin"
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}-bin" || die
 #!/bin/bash
-exec firejail ${x11_arg} ${allocator_args} --profile="${profile_name}" "/usr/bin/${exe_name}-bin" "\$@"
+exec firejail ${x11_arg} ${allocator_args} ${wh_harg} --profile="${profile_name}" "/usr/bin/${exe_name}-bin" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}-bin"
 	fperms 0755 "/usr/local/bin/${exe_name}-bin"

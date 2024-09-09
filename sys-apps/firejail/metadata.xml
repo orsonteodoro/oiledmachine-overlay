@@ -49,6 +49,23 @@
     increases but the startup latency will decrease a little because of the
     shell script startup cost.
 
+
+    Build time environment variables
+
+    XEPHYR_WH["chromium"]="1920x1080" - Set the default window size for chromium.
+    The default is 800x600 for xephyr.
+
+    Examples:
+
+    Contents of /etc/portage/env/firejail.conf:
+    XEPHYR_WH["chromium"]="1920x1080"
+    XEPHYR_WH["firefox"]="1920x1080"
+    X_BACKEND["chromium"]="xephyr"
+    X_BACKEND["firefox"]="xpra"
+
+    Contents of /etc/portage/package.env:
+    sys-apps/firejail firejail.conf
+
   -->
   <upstream>
     <remote-id type="cpe">cpe:/a:firejail_project:firejail</remote-id>
