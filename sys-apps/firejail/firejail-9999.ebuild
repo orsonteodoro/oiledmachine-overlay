@@ -225,7 +225,7 @@ zim zless zlib-flate zmore znew zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt
 zulip
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
-GEN_EBUILD=1 # Uncomment to regen ebuild parts
+#GEN_EBUILD=1 # Uncomment to regen ebuild parts
 LLVM_COMPAT=( {18..14} )
 PYTHON_COMPAT=( python3_{9..12} )
 TEST_SET="distro" # distro or full
