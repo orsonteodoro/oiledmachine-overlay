@@ -82,7 +82,7 @@
 
     This is why we choose the mimalloc which does eager free.  The keychain has
     to be purged ASAP after the program has been killed without a chance of
-    calling it's graceful cleaner routine.
+    calling its graceful cleaner routine.
 
     By default, paths are assumed to be /usr/bin/PROGRAM_NAME.  You may want
     to fix the profile name paring with PATH_CORRECTION for binary packages.
