@@ -4335,7 +4335,8 @@ unset OT_KERNEL_PRIVATE_KEY
       Install dependencies for LSE (Large System Extensions) atomics support.
     </flag>
     <flag name="cpu_flags_arm_mte">
-      Install dependencies for MTE (Memory Tagging Extension) support.
+      Install dependencies for MTE (Memory Tagging Extension) support for
+      buffer overflow and use-after-free mitigations.
     </flag>
     <flag name="cpu_flags_arm_pac">
       Install dependencies for Pointer Authentication for ROP mitigation.

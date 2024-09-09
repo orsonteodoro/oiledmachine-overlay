@@ -11,7 +11,8 @@
       Free yourself from vendor lock-in.  Allow to use your own custom kernel.
     </flag>
     <flag name="cpu_flags_arm_mte">
-      Add support for MTE (Memory Tag Extentions)
+      Add support for MTE (Memory Tag Extentions) for buffer overflow and
+      use-after-free mitigations.
     </flag>
   </use>
 </pkgmetadata>
