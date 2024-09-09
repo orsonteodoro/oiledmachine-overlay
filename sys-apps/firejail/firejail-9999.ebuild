@@ -1745,6 +1745,20 @@ eerror
 
 pkg_setup() {
 	if [[ -e "/etc/portage/env/firejail.conf" ]] ; then
+		local owner=$(stat -c "%U:%G" "/etc/portage/env/firejail.conf")
+		local perms=$(stat -c "%a" "/etc/portage/env/firejail.conf")
+		if [[ "${owner}" != "root:root" ]] ; then
+eerror "Check contents for tampering and change owner to root:root for /etc/portage/env/firejail.conf"
+			die
+		fi
+		if [[ "${perms}" == "640" ]] ; then
+			:
+		elif [[ "${perms}" == "644" ]] ; then
+			:
+		else
+eerror "Check contents for tampering and change file permissions to 644 or 640 for /etc/portage/env/firejail.conf"
+			die
+		fi
 		source "/etc/portage/env/firejail.conf"
 	fi
 	python-single-r1_pkg_setup
