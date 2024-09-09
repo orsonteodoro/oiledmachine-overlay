@@ -726,9 +726,9 @@ src_prepare() {
 	if use nvenc || use nvfbc || use nvjpeg ; then
 		cuda_src_prepare
 	fi
-	if use firejail ; then
-		eapply "${FILESDIR}/${PN}-4.1.3-envar-sound-override-on-start.patch"
-	fi
+#	if use firejail ; then
+#		eapply "${FILESDIR}/${PN}-4.1.3-envar-sound-override-on-start.patch"
+#	fi
 	if use pam ; then
 		if ! use selinux ; then
 			sed -r -i \
@@ -892,6 +892,7 @@ eerror
 	export UDEVDIR=$(get_udevdir)
 	export DISTUTILS_ARGS
 	einfo "DISTUTILS_ARGS:  ${DISTUTILS_ARGS[@]}"
+	addpredict /var/lib/rpm/Index.db
 }
 
 python_install_all() {
