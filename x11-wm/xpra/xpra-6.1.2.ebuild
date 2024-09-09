@@ -8,10 +8,9 @@ EAPI=8
 
 MY_PV="$(ver_cut 1-4)"
 
-DISTUTILS_USE_PEP517="setuptools"
+unset DISTUTILS_USE_PEP517
 DISTUTILS_EXT=1
-FFMPEG_SLOT="0/56.58.58"
-PYTHON_COMPAT=( python3_10 ) # Upstream only tests with 3.10
+PYTHON_COMPAT=( python3_{10..12} )
 
 inherit cuda distutils-r1 flag-o-matic linux-info prefix tmpfiles udev
 inherit user-info xdg
@@ -64,27 +63,24 @@ IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${GSTREAMER_IUSE}
 
-aes appindicator +avahi avif brotli +client +clipboard cpu-percent +csc_cython
-csc_libyuv cuda +cuda_rebuild +cups cups-forwarding +cython +dbus +doc -drm
-ffmpeg evdi firejail gnome-shell +gtk3 gssapi html5-client html5_gzip
-html5_brotli ibus jpeg kerberos +keyboard-layout keycloak ldap ldap3 +lz4 lzo
-+mdns mysql +netdev +notifications nvenc nvfbc nvjpeg +opengl openrc osmesa +pam
-pinentry png proc +proxy pyinotify qrencode -rencode +rencodeplus +rfb sd_listen
-selinux +server +socks +sound sound-forwarding spng sqlite ssh sshpass +ssl
-systemd +tcp-wrappers test tiff u2f -uinput +v4l2 vaapi vpx vsock -wayland
-+webcam webcam-forwarding webp +websockets +X x264 -x265 +xdg +xinput yaml
-zeroconf zlib
+aes appindicator +audio +avahi avif brotli +client +clipboard cpu-percent
++csc_cython csc_libyuv cuda +cuda_rebuild +cups cups-forwarding +cython
+-cythonize-more +dbus +doc -drm evdi firejail gnome-shell +gtk3 gssapi
+html5-client html5_gzip html5_brotli +http ibus jpeg kerberos +keyboard-layout
+keycloak ldap ldap3 +lz4 lzo +mdns mysql +netdev +notifications -nvdec nvenc nvfbc
+nvjpeg +opengl +openh264 openrc osmesa +pam pinentry png proc +proxy pyinotify
+qrencode +quic -rencode +rencodeplus +rfb sd_listen selinux +server +socks
+sound-forwarding spng sqlite +ssh sshpass +ssl systemd +tcp-wrappers test tiff
+u2f -uinput +v4l2 vaapi vpx vsock -wayland +webcam webcam-forwarding webp
++websockets +X x264 +xdg +xinput yaml zeroconf zlib
 
 ebuild-revision-1
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
 
-# See https://github.com/Xpra-org/xpra/blob/v4.4.6/docs/Build/Dependencies.md
+# See https://github.com/Xpra-org/xpra/blob/v5.0.4/docs/Build/Dependencies.md
 CLIENT_OPTIONS="
-	ffmpeg? (
-		client
-	)
 	opengl? (
 		client
 	)
@@ -156,6 +152,9 @@ REQUIRED_USE+="
 	${SERVER_OPTIONS}
 	doc
 	gtk3
+	audio? (
+		pulseaudio
+	)
 	avahi? (
 		dbus
 		mdns
@@ -252,9 +251,6 @@ REQUIRED_USE+="
 	sd_listen? (
 		systemd
 	)
-	sound? (
-		pulseaudio
-	)
 	sound-forwarding? (
 		pulseaudio
 	)
@@ -265,17 +261,8 @@ REQUIRED_USE+="
 		aes
 		rencode
 	)
-	vpx? (
-		ffmpeg
-	)
 	X? (
 		gtk3
-	)
-	x264? (
-		ffmpeg
-	)
-	x265? (
-		ffmpeg
 	)
 	zeroconf? (
 		mdns
@@ -298,7 +285,7 @@ PILLOW_DEPEND="
 
 # The media-video/nvidia-video-codec-sdk is a placeholder.  You need to package
 # it yourself locally.  See also
-# https://github.com/Xpra-org/xpra/blob/v4.4.6/docs/Usage/NVENC.md?plain=1
+# https://github.com/Xpra-org/xpra/blob/v6.0/docs/Usage/NVENC.md?plain=1
 # https://developer.nvidia.com/nvidia-video-codec-sdk/download
 # https://developer.nvidia.com/video-codec-sdk-archive
 RDEPEND+="
@@ -314,6 +301,27 @@ RDEPEND+="
 	appindicator? (
 		dev-libs/libappindicator[introspection]
 		gnome-base/librsvg[introspection]
+	)
+	audio? (
+		dev-python/gst-python:1.0[${PYTHON_USEDEP}]
+		media-libs/gst-plugins-bad:1.0[introspection]
+		media-libs/gst-plugins-base:1.0[introspection]
+		media-libs/gstreamer:1.0[introspection]
+		media-plugins/gst-plugins-meta:1.0\
+[aac?,alsa?,flac?,jack?,lame?,ogg?,opus?,oss?,pulseaudio?,vorbis?,wavpack?]
+		aac? (
+			media-plugins/gst-plugins-faac:1.0
+			media-plugins/gst-plugins-faad:1.0
+		)
+		matroska? (
+			media-libs/gst-plugins-good:1.0
+		)
+		speex? (
+			media-plugins/gst-plugins-speex:1.0
+		)
+		twolame? (
+			media-plugins/gst-plugins-twolame:1.0
+		)
 	)
 	avif? (
 		>=media-libs/libavif-0.9
@@ -378,9 +386,6 @@ RDEPEND+="
 	)
 	evdi? (
 		>=x11-drivers/evdi-1.9
-	)
-	ffmpeg? (
-		media-video/ffmpeg:${FFMPEG_SLOT}[vpx?,x264?,x265?]
 	)
 	gnome-shell? (
 		gnome-extra/gnome-shell-extension-appindicator
@@ -453,6 +458,9 @@ RDEPEND+="
 			media-libs/mesa[osmesa?]
 		)
 	)
+	openh264? (
+		media-libs/openh264
+	)
 	openrc? (
 		sys-apps/net-tools
 		sys-apps/openrc[bash]
@@ -478,6 +486,9 @@ RDEPEND+="
 	qrencode? (
 		media-gfx/qrencode[${PYTHON_USEDEP}]
 	)
+	quic? (
+		dev-python/aioquic[${PYTHON_USEDEP}]
+	)
 	rencode? (
 		>=dev-python/rencode-${RENCODE_PV}[${PYTHON_USEDEP}]
 	)
@@ -500,33 +511,16 @@ RDEPEND+="
 	spng? (
 		>=media-libs/libspng-0.7
 	)
-	sound? (
-		dev-python/gst-python:1.0[${PYTHON_USEDEP}]
-		media-libs/gst-plugins-base:1.0[introspection]
-		media-libs/gstreamer:1.0[introspection]
-		media-plugins/gst-plugins-meta:1.0\
-[aac?,alsa?,flac?,jack?,lame?,ogg?,opus?,oss?,pulseaudio?,vorbis?,wavpack?]
-		aac? (
-			media-plugins/gst-plugins-faac:1.0
-			media-plugins/gst-plugins-faad:1.0
-		)
-		matroska? (
-			media-libs/gst-plugins-good:1.0
-		)
-		speex? (
-			media-plugins/gst-plugins-speex:1.0
-		)
-		twolame? (
-			media-plugins/gst-plugins-twolame:1.0
-		)
-	)
 	ssh? (
 		dev-python/dnspython[${PYTHON_USEDEP}]
 		sshpass? (
 			net-misc/sshpass
 		)
 		|| (
-			dev-python/paramiko[${PYTHON_USEDEP}]
+			(
+				dev-python/bcrypt[${PYTHON_USEDEP}]
+				dev-python/paramiko[${PYTHON_USEDEP}]
+			)
 			virtual/ssh
 		)
 	)
@@ -551,11 +545,10 @@ RDEPEND+="
 	)
 	vaapi? (
 		>=media-libs/libva-2.1.0[drm(+),X?,wayland?]
-		media-video/ffmpeg:${FFMPEG_SLOT}[vaapi]
 		media-libs/vaapi-drivers
 	)
 	vpx? (
-		>=media-libs/libvpx-1.4
+		>=media-libs/libvpx-1.7
 	)
 	vsock? (
 		sys-kernel/linux-headers
@@ -632,11 +625,12 @@ BDEPEND+="
 RESTRICT="mirror"
 S="${WORKDIR}/${P}"
 PATCHES=(
-	"${FILESDIR}/${PN}-3.0.2_ignore-gentoo-no-compile.patch"
+	"${FILESDIR}/${PN}-5.0.4_ignore-gentoo-no-compile.patch"
 	"${FILESDIR}/${PN}-4.3-openrc-init-fix-v3.patch"
 	"${FILESDIR}/${PN}-4.1.3-change-init-config-path.patch"
-	"${FILESDIR}/${PN}-4.2-udev-path.patch"
-	"${FILESDIR}/${PN}-4.4.3-translate-flags.patch"
+	"${FILESDIR}/${PN}-5.0.4-udev-path.patch"
+	"${FILESDIR}/${PN}-6.0-translate-flags.patch"
+	"${FILESDIR}/${PN}-6.0-pkgconfig-warn.patch"
 )
 
 check_cython() {
@@ -728,6 +722,7 @@ src_prepare() {
 	fi
 #	if use firejail ; then
 #		eapply "${FILESDIR}/${PN}-4.1.3-envar-sound-override-on-start.patch"
+#		:
 #	fi
 	if use pam ; then
 		if ! use selinux ; then
@@ -759,7 +754,8 @@ python_prepare_all() {
 		"setup.py" \
 		|| die
 
-	sed -i -e "s|^opengl =|#opengl =|g" \
+	sed -i \
+		-e "s|^opengl =|#opengl =|g" \
 		"fs/etc/xpra/conf.d/40_client.conf.in" \
 		|| die
 	if use opengl ; then
@@ -768,12 +764,10 @@ python_prepare_all() {
 			"fs/etc/xpra/conf.d/40_client.conf.in" \
 			|| die
 	else
-		sed -i \
-			-e "s|#opengl = no|opengl = no|g" \
+		sed -i -e "s|#opengl = no|opengl = no|g" \
 			"fs/etc/xpra/conf.d/40_client.conf.in" \
 			|| die
-		sed -i \
-			-e 's|"+extension", "GLX"|"-extension", "GLX"|g' \
+		sed -i -e 's|"+extension", "GLX"|"-extension", "GLX"|g' \
 			"xpra/scripts/config.py" \
 			|| die
 	fi
@@ -799,12 +793,15 @@ eerror
 		|| die
 
 	DISTUTILS_ARGS=(
+		$(use_with audio)
+		$(use_with audio gstreamer_audio)
 		$(use_with avif)
 		$(use_with brotli)
 		$(use_with client)
 		$(use_with clipboard)
 		$(use_with cython)
 		$(use_with doc docs)
+		$(use_with doc pandoc_lua)
 		$(use_with drm)
 		$(use_with netdev)
 		$(use_with nvenc cuda_kernels)
@@ -816,15 +813,13 @@ eerror
 		$(use_with cups printing)
 		$(use_with dbus)
 		$(use_with evdi)
-		$(use_with ffmpeg csc_swscale)
-		$(use_with ffmpeg dec_avcodec2)
-		$(use_with ffmpeg enc_ffmpeg)
 		$(use_with jpeg jpeg_decoder)
 		$(use_with jpeg jpeg_encoder)
 		$(use_with keyboard-layout keyboard)
 		$(use_with lz4)
 		$(use_with mdns)
 		$(use_with notifications)
+		$(use_with nvdec)
 		$(use_with nvenc)
 		$(use_with nvfbc)
 		$(use_with opengl)
@@ -837,7 +832,6 @@ eerror
 		$(use_with server)
 		$(use_with server service)
 		$(use_with server shadow)
-		$(use_with sound)
 		$(use_with spng spng_decoder)
 		$(use_with spng spng_encoder)
 		$(use_with sd_listen)
@@ -847,9 +841,9 @@ eerror
 		$(use_with v4l2)
 		$(use_with webcam)
 		$(use_with webp)
+		$(use_with X argb)
 		$(use_with X x11)
 		$(use_with x264 enc_x264)
-		$(use_with x265 enc_x265)
 		$(use_with xdg xdg_open)
 		$(use_with xinput)
 		--with-keyboard
@@ -861,6 +855,12 @@ eerror
 		--without-PIC
 		--without-Xdummy
 	)
+
+	if use cythonize-more ; then
+		DISTUTILS_ARGS+=(
+			--with-cythonize_more
+		)
+	fi
 
 	if use jpeg || use png || use tiff || use webp || use test ; then
 		DISTUTILS_ARGS+=(
@@ -898,10 +898,6 @@ eerror
 
 python_install_all() {
 	distutils-r1_python_install_all
-	mv \
-		"${ED}/usr/etc" \
-		"${ED}/etc" \
-		|| die
 	mv \
 		"${ED}/usr/share/doc/xpra" \
 		"${ED}/usr/share/doc/${PN}-${PVR}" \

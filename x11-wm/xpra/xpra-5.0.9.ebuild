@@ -864,6 +864,7 @@ eerror
 		$(use_with x264 enc_x264)
 		$(use_with xdg xdg_open)
 		$(use_with xinput)
+		--with-keyboard
 #		--with-strict
 		--with-verbose
 		--without-warn
