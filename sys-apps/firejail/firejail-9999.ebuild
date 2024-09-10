@@ -2664,6 +2664,44 @@ einfo "Generating wrapper for ${profile_name}"
 		allocator_args="${allocator_args_hardened_malloc}"
 	fi
 
+	local landlock_arg=""
+	if use landlock ; then
+		if [[ -n "${LANDLOCK[${profile_name}]}" ]] ; then
+			landlock_arg="--landlock"
+		fi
+		if [[ -n "${LANDLOCK_READ[${profile_name}]}" ]] ; then
+			local L=(
+				echo
+			)
+			local p
+			while IFS=, read p ; do
+				landlock_arg+=" --landlock.read=${p}"
+			done <<< ${LANDLOCK_READ[${profile_name}]}
+		fi
+		if [[ -n "${LANDLOCK_WRITE[${profile_name}]}" ]] ; then
+			local p
+			while IFS=, read p ; do
+				landlock_arg+=" --landlock.write=${p}"
+			done <<< ${LANDLOCK_WRITE[${profile_name}]}
+		fi
+		if [[ -n "${LANDLOCK_SPECIAL[${profile_name}]}" ]] ; then
+			local p
+			while IFS=, read p ; do
+				landlock_arg+=" --landlock.special=${p}"
+			done <<< ${LANDLOCK_SPECIAL[${profile_name}]}
+		fi
+		if [[ -n "${LANDLOCK_EXECUTE[${profile_name}]}" ]] ; then
+			local p
+			while IFS=, read p ; do
+				landlock_arg+=" --landlock.execute=${p}"
+			done <<< ${LANDLOCK_EXECUTE[${profile_name}]}
+		fi
+		if [[ -n "${LANDLOCK_PROC[${profile_name}]}" ]] ; then
+			local x="${LANDLOCK_PROC[${profile_name}]}"
+			landlock_arg+=" --landlock.proc=${x}"
+		fi
+	fi
+
 	local wh_arg=""
 	if [[ -n "${XEPHYR_WH[${profile_name}]}" ]] ; then
 		wh_arg="--xephyr-screen=${XEPHYR_WH[${profile_name}]}"
@@ -2687,12 +2725,20 @@ einfo "Generating wrapper for ${profile_name}"
 
 	local seccomp_arg=""
 	if [[ -n "${SECCOMP[${profile_name}]}" ]] ; then
-		seccomp_arg="--seccomp"
+		seccomp_arg+=" --seccomp"
+	fi
+
+	if [[ -n "${SECCOMP_BLOCK[${profile_name}]}" ]] ; then
+		seccomp_arg+=" --seccomp.drop=${SECCOMP_BLOCK[${profile_name}]}"
+	fi
+
+	if [[ -n "${SECCOMP_KEEP[${profile_name}]}" ]] ; then
+		seccomp_arg=+" --seccomp.keep=${SECCOMP_KEEP[${profile_name}]}"
 	fi
 
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}" || die
 #!/bin/bash
-exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} --profile="${profile_name}" "${exe_path}" "\$@"
+exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} --profile="${profile_name}" "${exe_path}" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}"
 	fperms 0755 "/usr/local/bin/${exe_name}"
@@ -2701,7 +2747,7 @@ EOF
 einfo "Generating wrapper for firefox-bin"
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}-bin" || die
 #!/bin/bash
-exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} --profile="${profile_name}" "/usr/bin/${exe_name}-bin" "\$@"
+exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} --profile="${profile_name}" "/usr/bin/${exe_name}-bin" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}-bin"
 	fperms 0755 "/usr/local/bin/${exe_name}-bin"

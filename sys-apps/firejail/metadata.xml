@@ -58,6 +58,21 @@
     BLACKLIST[PROFILE_NAME] - Disable auto adding wrapper to /usr/local/bin. (UNIMPLEMENTED)
     Valid values - 1 (disallow app), 0 (permit app), unset (permit app)
 
+    LANDLOCK[PROFILE_NAME] - Restrict app file access.
+    Valid values - 1 (restrict), 0 (unrestrict), unset (unrestrict)
+
+    LANDLOCK_PROC[PROFILE_NAME] - Restrict proc
+    Valid values - no, ro, rw, unset (don't apply)
+
+    LANDLOCK_READ[PROFILE_NAME] - Add read rule path is comma separated
+    Valid values - PATH1; PATH1,PATH2; PATH1,PATH2,...; unset (don't apply)
+
+    LANDLOCK_WRITE[PROFILE_NAME] - Add write rule path is comma separated
+    Valid values - PATH1; PATH1,PATH2; PATH1,PATH2,...; unset (don't apply)
+
+    LANDLOCK_EXECUTE[PROFILE_NAME] - Add execute rule path is comma separated
+    Valid values - PATH1; PATH1,PATH2; PATH1,PATH2,...; unset (don't apply)
+
     MALLOC_BACKEND[PROFILE_NAME] - Set the hardened allocator
     Valid values - hardened_malloc, mimalloc, scudo, unset (ptmalloc default since none are endorsed upstream)
 
@@ -83,8 +98,14 @@
     1 (clear immediately for mitigation against cold-boot-attack and DMA based attacks.)
     0 (delayed free for mitigation against use-after-free heap attacks.)
 
-    SECCOMP[PROFILE_NAME] - Enable seccomp sandboxing.
+    SECCOMP[PROFILE_NAME] - Enable seccomp sandboxing with defaults
     Valid values:  1 (enable), 0 (disable/default), unset (disable)
+
+    SECCOMP_BLOCK[PROFILE_NAME] - Enable seccomp with blacklisted syscalls separated with comma
+    Valid values:  SYSCALL1; SYSCALL1,SYSCALL2; SYSCALL1,SYSCALL2,...; unset (don't apply)
+
+    SECCOMP_KEEP[PROFILE_NAME] - Enable seccomp with whitelisted syscalls separated with comma
+    Valid values:  SYSCALL1; SYSCALL1,SYSCALL2; SYSCALL1,SYSCALL2,...; unset (don't apply)
 
     XEPHYR_WH[PROFILE_NAME] - Set the default window size for x11 apps that
     are sandboxed with the zephyr backend.
@@ -101,11 +122,13 @@
 
       APPARMOR_PROFILE["chromium"]="chromium-browser"
       APPARMOR_PROFILE["firefox"]="default"
-      SCUDO_FREE_IMMEDIATE["keepassxc"]=1
-      SECCOMP["dillo"]="1"
+      LANDLOCK["chromium"]=1
+      LANDLOCK["firefox"]=1
       MALLOC_BACKEND["keepassxc"]="mimalloc"
       MALLOC_BACKEND["chromium"]="scudo"
       PATH_CORRECTION["spotify"]="/opt/spotify/spotify-client/spotify"
+      SCUDO_FREE_IMMEDIATE["keepassxc"]=1
+      SECCOMP["dillo"]=1
       XEPHYR_WH["chromium"]="1920x1080"
       XEPHYR_WH["firefox"]="1920x1080"
       X_BACKEND["chromium"]="xephyr"
