@@ -1883,16 +1883,6 @@ apply_distro_patchset() {
 			-e "/if (is_clang && toolchain_has_rust) {/,+2d" \
 			"build/config/compiler/BUILD.gn" \
 			|| die "Failed to disable bundled compiler builtins"
-	else
-		echo \
-			"${VENDORED_CLANG_VER}" \
-			> \
-			"${S}/third_party/llvm-build/Release+Asserts/cr_build_revision" \
-			|| die "Failed to set clang version"
-		cp \
-			"${S}/third_party/rust-toolchain/VERSION" \
-			"${S}/third_party/rust-toolchain/INSTALLED_VERSION" \
-			|| die "Failed to set rust version"
 	fi
 
 

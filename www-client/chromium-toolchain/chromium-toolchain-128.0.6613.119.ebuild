@@ -160,7 +160,7 @@ LICENSE="
 
 RESTRICT="binchecks mirror strip test"
 SLOT="0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_PV}"
-IUSE+=" +clang +gn +rust"
+IUSE+=" +clang +gn +rust ebuild-revision-1"
 REQUIRED_USE="
 	gn? (
 		clang
@@ -264,6 +264,21 @@ src_compile() {
 		export CC="clang"
 		export CXX="clang++"
 		build_gn
+	fi
+	if use clang ; then
+		cd "${WORKDIR}/clang" || die
+		echo \
+			"${VENDORED_CLANG_VER}" \
+			> \
+			"cr_build_revision" \
+			|| die "Failed to set clang version"
+	fi
+	if use rust ; then
+		cd "${WORKDIR}/rust" || die
+		cp \
+			"VERSION" \
+			"INSTALLED_VERSION" \
+			|| die "Failed to set rust version"
 	fi
 }
 
