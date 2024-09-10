@@ -906,7 +906,7 @@ ${FIREJAIL_PROFILES_IUSE[@]}
 ${HARDENED_ALLOCATORS_IUSE[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
-+firejail_profiles_server +globalcfg landlock +network +private-home selinux
++firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
 ebuild-revision-2
 "
@@ -957,6 +957,9 @@ RDEPEND+="
 	)
 	mimalloc? (
 		dev-libs/mimalloc[hardened]
+	)
+	selfrando? (
+		dev-cpp/selfrando
 	)
 	selinux? (
 		>=sys-libs/libselinux-8.1.0
@@ -1986,6 +1989,16 @@ src_unpack() {
 	fi
 }
 
+get_selfrando_arch() {
+	if [[ "${ARCH}" == "amd64" ]] ; then
+		echo "x86_64"
+	elif [[ "${ARCH}" == "arm64" ]] ; then
+		echo "arm64"
+	else
+		die "ARCH=${ARCH} is not supported by Selfrando"
+	fi
+}
+
 src_prepare() {
 	default
 
@@ -2008,17 +2021,36 @@ src_prepare() {
 		|| die
 
 	local ldflags=""
-	if tc-ld-is-lld ; then
-		ldflags="-Wl,--shuffle-sections=0"
-	elif tc-ld-is-mold ; then
-		ldflags="-Wl,--shuffle-sections"
+	local cflags=""
+	if use selfrando ; then
+		filter-flags '-fuse-ld=*'
+einfo "Adding Selfrando flags"
+		export SR_CFLAGS="-ffunction-sections -fPIC -fuse-ld=bfd"
+		export SR_CXXFLAGS="${SR_CFLAGS}"
+		SR_BIN="/usr/lib/selfrando/bin"
+		SR_LIBDIR="/usr/lib/selfrando/bin/$(get_selfrando_arch)"
+	# Never add SR_BIN to PATH.  Only do it with -B arg.
+		[[ -e "${SR_BIN}/traplinker" ]] || die
+		export SR_LDFLAGS="-B${SR_BIN} -Wl,-rpath,${SR_LIBDIR} -Wl,--gc-sections -Wl,-fuse-ld=bfd"
+		cflags="${SR_CFLAGS}"
+		ldflags="${SR_LDFLAGS}"
+		append-flags ${cflags}
+		append-ldflags ${ldflags}
 	else
+einfo "Adding shuffle-sections ROP mitigation flags"
+		cflags="-ffunction-sections"
+		if tc-ld-is-lld ; then
+			ldflags="-Wl,--shuffle-sections=0"
+		elif tc-ld-is-mold ; then
+			ldflags="-Wl,--shuffle-sections"
+		else
 ewarn "Use LLD or mold for ROP mitigation"
+		fi
 	fi
 
 	sed -i \
 		-e "s:-ggdb::g" \
-		-e "s:-Wall:-ffunction-sections -Wall:g" \
+		-e "s:-Wall:${cflags} -Wall:g" \
 		-e "s:-Wl,-z,relro:-Wl,-z,relro ${ldflags}:g" \
 		"config.mk.in" \
 		|| die
@@ -2158,6 +2190,13 @@ _src_compile() {
 	emake CC="$(tc-getCC)"
 	if [[ "${impl}" == "test" ]] ; then
 		DESTDIR="${D}" emake install
+	fi
+	if use selfrando ; then
+		grep -e "-static" "${T}/build.log" && die "Add -Wl,-z,norelro to SR_LDFLAGS"
+		if readelf -x .txtrp "${S}_release/src/firejail/firejail" | grep -q "was not dumped" ; then
+eerror "Selfrando verification failed"
+			die
+		fi
 	fi
 }
 

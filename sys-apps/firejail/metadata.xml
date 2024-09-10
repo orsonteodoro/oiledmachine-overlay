@@ -191,6 +191,18 @@
     <flag name="seccomp">
       Enable system call filtering
     </flag>
+    <flag name="selfrando">
+      Enable Selfrando to shuffle functions which may contain ROP gadgets to
+      mitigate against ROP attack using Chacha20 as the PSRNG (Pseudo Random
+      Number Generator).
+
+      If the USE flag is disabled, it will do ROP mitigations using
+      shuffle-sections linker option.
+        - For mold, it will use fisher-yates with Xorshift PSRNG with modulo
+          math.
+        - For lld, it will use std::shuffle with Mersenne Twister (mt19937)
+          PSRNG.
+    </flag>
     <flag name="selinux">
       Enable SELinux labeling support
     </flag>
