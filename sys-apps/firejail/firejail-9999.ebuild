@@ -6,12 +6,156 @@ EAPI=8
 
 # U 22.04
 
+declare -A APPARMOR_PROFILE
+declare -A ARGS
+declare -A BLACKLIST
+declare -A LANDLOCK
+declare -A LANDLOCK_PROC
+declare -A LANDLOCK_READ
+declare -A LANDLOCK_WRITE
+declare -A LANDLOCK_EXECUTE
+declare -A SECCOMP
+declare -A SECCOMP_BLOCK
+declare -A SECCOMP_KEEP
 declare -A MALLOC_BACKEND
 declare -A PATH_CORRECTION
 declare -A SCUDO_FREE_IMMEDIATE
 declare -A XEPHYR_WH
 declare -A X_BACKEND
 
+_AUTO_BLACKLIST=(
+# These could break emerge build system, system, or cause damage
+	_7z
+	_7za
+	_7zr
+	ar
+	b2sum
+	bsdcat
+	bsdcpio
+	bsdtar
+	bunzip2
+	bzcat
+	bzip2
+#	cargo
+	cksum
+#	clamav
+#	clamdscan
+#	clamdtop
+#	clamscan
+#	clamtk
+	cmake
+	curl
+	emacs
+	file
+#	freshclam
+	gpg
+	gpg-agent
+	gpg2
+	dconf
+	gconf
+	gconf-editor
+	gconf-merge-schema
+	gconf-merge-tree
+	gconfpkg
+	gconftool-2
+#	git
+	gunzip
+	gsettings
+	gsettings-data-convert
+	gsettings-schema-convert
+	gtk-update-icon-cache
+	gzexe
+	gzip
+#	latex
+	lbunzip2
+	lbzcat
+	lbzip2
+#	less
+	lrunzip
+	lrz
+	lrzcat
+	lrzip
+	lrztar
+	lrzuntar
+	lz4
+	lz4c
+	lz4cat
+	lzcat
+	lzcmp
+	lzdiff
+	lzegrep
+	lzfgrep
+	lzgrep
+	lzip
+#	lzless
+	lzma
+	lzmadec
+	lzmainfo
+#	lzmore
+	lzop
+	make
+#	man
+	md5sum
+	meson
+#	more
+	nano
+#	node
+	p7zip
+#	pandoc
+	patch
+#	pdflatex
+#	pdftotext
+	pip
+	pzstd
+	sum
+	sha1sum
+	sha224sum
+	sha256sum
+	sha384sum
+	sha512sum
+	ssh
+	ssh-agent
+	strings
+#	tex
+	uncompress
+	unlz4
+	unlzma
+	unrar
+	unxz
+	unzip
+	unzstd
+	vim
+	wget
+	wget2
+#	xpra
+	xxd
+	xz
+	xzcat
+	xzcmp
+	xzdec
+	xzdiff
+	xzegrep
+	xzfgrep
+	xzgrep
+#	xzless
+#	xzmore
+	zcat
+	zcmp
+	zdiff
+	zegrep
+	zfgrep
+#	zforce
+	zgrep
+	zless
+	zlib-flate
+#	zmore
+#	znew
+	zstd
+	zstdcat
+	zstdgrep
+#	zstdless
+	zstdmt
+)
 DOTTED_FILENAMES=(
 blender-2.8
 blender-3.6
@@ -2599,9 +2743,14 @@ get_llvm_arch() {
 }
 
 gen_wrapper() {
+	local raw_profile_name="${1}"
 	local profile_name="${1}"
 	local exe_name="${1}"
 einfo "Generating wrapper for ${profile_name}"
+	if [[ "${profile_name:0:1}" =~ ^[0-9] ]] ; then
+# You cannot use a number as the prefix to associative array.
+		profile_name="_${1}"
+	fi
 
 	local x11_arg=""
 
@@ -2617,6 +2766,8 @@ einfo "Generating wrapper for ${profile_name}"
 	}
 
 	if ! use X ; then
+		:
+	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("disable"|"none") ]] ; then
 		:
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("game"|"gaming"|"opengl"|"xpra") ]] ; then
 		x11_arg="--x11=xpra"
@@ -2745,7 +2896,7 @@ einfo "Generating wrapper for ${profile_name}"
 
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}" || die
 #!/bin/bash
-exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} --profile="${profile_name}" "${exe_path}" "\$@"
+exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} --profile="${raw_profile_name}" "${exe_path}" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}"
 	fperms 0755 "/usr/local/bin/${exe_name}"
@@ -2754,7 +2905,7 @@ EOF
 einfo "Generating wrapper for firefox-bin"
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}-bin" || die
 #!/bin/bash
-exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} --profile="${profile_name}" "/usr/bin/${exe_name}-bin" "\$@"
+exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} --profile="${raw_profile_name}" "/usr/bin/${exe_name}-bin" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}-bin"
 	fperms 0755 "/usr/local/bin/${exe_name}-bin"
@@ -2776,6 +2927,26 @@ _install_one_profile() {
 		"${T}/profiles" || die
 
 	mkdir -p "${T}/profiles_processed" || die
+
+	is_auto_blacklisted() {
+		local arg="${1}"
+		local x
+
+		# Ebuild auto blacklist
+		for x in ${_AUTO_BLACKLIST[@]} ; do
+			if [[ "${arg}" == "${x}" ]] ; then
+				return 0
+			fi
+		done
+
+		# User auto blacklist
+		for x in ${AUTO_BLACKLIST[@]} ; do
+			if [[ "${arg}" == "${x}" ]] ; then
+				return 0
+			fi
+		done
+		return 1
+	}
 
 	local pf
 	for pf in ${FIREJAIL_PROFILES_IUSE} ; do
@@ -2801,7 +2972,29 @@ eerror "adding to DOTTED_FILENAMES."
 eerror
 			die
 		fi
-		if use ${pf} ; then
+
+		local raw_profile_name="${u}"
+		local profile_name="${u}"
+		if [[ "${profile_name:0:1}" =~ ^[0-9] ]] ; then
+# You cannot use a number as the prefix to associative array.
+			profile_name="_${u}"
+		fi
+
+		local exe_path=""
+		local exe_name="${u}"
+		if [[ -n "${PATH_CORRECTION[${profile_name}]}" ]] ; then
+			exe_path="${PATH_CORRECTION[${profile_name}]}"
+		elif [[ -n "${_PATH_CORRECTION[${profile_name}]}" ]] ; then
+			exe_path="${_PATH_CORRECTION[${profile_name}]}"
+		else
+			exe_path="/usr/bin/${exe_name}"
+		fi
+
+		if use auto && use wrapper && [[ -e "${exe_path}" ]] && ! [[ "${u}" =~ "-common" ]] && ! [[ "${u}" =~ "-wrapper" ]] && ! is_auto_blacklisted "${u}" ; then
+einfo "Auto adding ${u} profile"
+			mv "${src}" "${dest}" || die
+			gen_wrapper "${u}"
+		elif use ${pf} ; then
 einfo "Adding ${u} profile"
 			mv "${src}" "${dest}" || die
 			if use wrapper && ! [[ "${u}" =~ "-common" ]] && ! [[ "${u}" =~ "-wrapper" ]] ; then
