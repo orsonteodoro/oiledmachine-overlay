@@ -160,7 +160,7 @@ LICENSE="
 
 RESTRICT="binchecks mirror strip test"
 SLOT="0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_PV}"
-IUSE+=" +clang +gn +rust ebuild-revision-1"
+IUSE+=" +clang +gn +rust ebuild-revision-2"
 REQUIRED_USE="
 	gn? (
 		clang
@@ -284,7 +284,7 @@ src_compile() {
 
 src_install() {
 	dodir "/usr/share/chromium/toolchain"
-	cp -a "${WORKDIR}/"* "${ED}/usr/share/chromium/toolchain" || die
+	cp -aT "${WORKDIR}" "${ED}/usr/share/chromium/toolchain" || die
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
