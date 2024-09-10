@@ -923,7 +923,7 @@ RDEPEND+="
 		x11-base/xorg-server
 		>=x11-wm/xpra-3.0.6[firejail]
 	)
-	xpra? (
+	xephyr? (
 		x11-base/xorg-server[xephyr?]
 	)
 "
@@ -1835,11 +1835,18 @@ eerror
 		fi
 	fi
 
-	if ! use scudo && ! use mimalloc ; then
+	if ! use scudo && ! use mimalloc && ! use hardened_malloc ; then
 ewarn
 ewarn "You are not using a hardened allocator for heap protection."
-ewarn "USE=scudo or USE=mimalloc can provide a hardened malloc."
+ewarn "USE=scudo, USE=mimalloc, USE=hardened_malloc can provide for a hardened"
+ewarn "malloc."
 ewarn
+	fi
+	if [[ "${ARCH}" == "arm64" ]] && ! use hardened_malloc ; then
+einfo
+einfo "You may use hardened_malloc for MTE support for arm64 to mitigate"
+einfo "against buffer overflows and use-after-free."
+einfo
 	fi
 }
 
