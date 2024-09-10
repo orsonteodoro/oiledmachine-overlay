@@ -289,7 +289,6 @@ src_compile() {
 }
 
 src_install() {
-	keepdir "/usr/share/chromium/toolchain"
 	addwrite "/usr/share/chromium/toolchain"
 	rm -rf "/usr/share/chromium/toolchain"
 	mkdir -p "/usr/share/chromium/toolchain" || die
