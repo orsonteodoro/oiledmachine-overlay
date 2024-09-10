@@ -29,6 +29,8 @@
       -Improved xpra support
       -Enable or disable sound forwarding
       -/usr/local/bin wrapper auto generation
+      ROP attack mitigations
+      Support for hardened mallocs
 
     Ebuild fork goals:
 
