@@ -24,7 +24,7 @@
   </longdescription>
   <!--
 
-    oiledmachine-overlay additions:
+    oiledmachine-overlay ebuild changes and ebuild additions:
 
       -Improved xpra support
       -Enable or disable sound forwarding
