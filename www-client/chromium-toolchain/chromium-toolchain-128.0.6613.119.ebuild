@@ -98,10 +98,10 @@ LICENSE="
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
 	Boost-1.0
-	CC-BY-3.0
-	custom
 	BSD
 	BSD-2
+	CC-BY-3.0
+	custom
 	GPL-2.0
 	GPL-2.0
 	GPL-3.0
@@ -116,12 +116,12 @@ LICENSE="
 		GPL-2+
 	)
 	|| (
-		Unlicense
 		MIT
+		Unlicense
 	)
 	|| (
-		UoI-NCSA
 		MIT
+		UoI-NCSA
 	)
 "
 
@@ -132,10 +132,10 @@ LICENSE="
 #Apache-2.0 MIT public-domain - rust/lib/rustlib/src/rust/vendor/parse-zoneinfo-0.3.1/LICENSE
 #Apache-2.0 MIT - rust/lib/rustlib/src/rust/vendor/chrono-0.4.38/LICENSE.txt
 #Boost-1.0 - rust/lib/rustlib/src/rust/vendor/ryu-1.0.18/LICENSE-BOOST
-#CC-BY-3.0 - rust/lib/rustlib/src/rust/vendor/crossbeam-channel-0.5.13/LICENSE-THIRD-PARTY
 #BSD - rust/lib/rustlib/src/rust/vendor/instant-0.1.13/LICENSE
 #BSD custom curl LGPL-2.1 GPL-2 openssl Unlicense ZLIB - rust/share/doc/cargo/LICENSE-THIRD-PARTY
 #BSD-2 - rust/lib/rustlib/src/rust/vendor/jemalloc-sys-0.5.4+5.3.0-patched/jemalloc/COPYING
+#CC-BY-3.0 - rust/lib/rustlib/src/rust/vendor/crossbeam-channel-0.5.13/LICENSE-THIRD-PARTY
 #GPL-2+ LGPL-2.1+ public-domain || ( GPL-2+ GPL-3+ ) - rust/lib/rustlib/src/rust/vendor/lzma-sys-0.1.20/xz-5.2/COPYING
 #GPL-2.0 - rust/lib/rustlib/src/rust/vendor/libffi-sys-2.3.0/libffi/LICENSE-BUILDTOOLS
 #GPL-2.0 - rust/lib/rustlib/src/rust/vendor/lzma-sys-0.1.20/xz-5.2/COPYING.GPLv2
