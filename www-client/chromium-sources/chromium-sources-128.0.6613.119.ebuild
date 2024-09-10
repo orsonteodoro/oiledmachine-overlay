@@ -4,6 +4,8 @@
 
 EAPI=8
 
+inherit dhms
+
 KEYWORDS="~amd64 ~arm64 ~ppc64"
 S="${WORKDIR}"
 SRC_URI="
@@ -27,6 +29,10 @@ BDEPEND+="
 "
 DOCS=( )
 
+pkg_setup() {
+	dhms_start
+}
+
 src_unpack() {
 	unpack ${A}
 }
@@ -34,6 +40,10 @@ src_unpack() {
 src_install() {
 	dodir "/usr/share/chromium/sources"
 	cp -aT "${WORKDIR}/chromium-${PV}" "${ED}/usr/share/chromium/sources" || die
+}
+
+pkg_postinst() {
+	dhms_end
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
