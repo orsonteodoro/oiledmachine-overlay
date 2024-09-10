@@ -75,6 +75,9 @@ PATCHES=(
 	"${FILESDIR}/${PN}-fe47bc0-scons-print.patch"
 	"${FILESDIR}/${PN}-fe47bc0-test-machine-path.patch"
 	"${FILESDIR}/${PN}-fe47bc0-https-test.patch"
+#	"${FILESDIR}/${PN}-fe47bc0-nginx-apply-ngx_user-fix.patch"
+	"${FILESDIR}/${PN}-fe47bc0-nginx-1.27.1.patch"
+	"${FILESDIR}/${PN}-fe47bc0-nginx-fPIC.patch"
 )
 
 unpack_live() {
@@ -165,6 +168,7 @@ src_test() {
 		tests/posix/lua.sh || die
 	fi
 	if [[ "${TESTS_NGINX:-1}" == "1" ]] ; then
+	append-cppflags -fPIC
 		tests/posix/nginx.sh || die
 	fi
 }

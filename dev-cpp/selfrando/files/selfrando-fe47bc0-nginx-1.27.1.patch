@@ -1,0 +1,11 @@
+--- a/tests/posix/nginx.sh.orig	2024-09-10 01:10:33.940658637 -0700
++++ b/tests/posix/nginx.sh	2024-09-10 01:24:12.967012243 -0700
+@@ -16,7 +16,7 @@ if [ ! -e "$SELFRANDO_BIN/traplinker" ];
+ fi
+ WORK_DIR=`mktemp -d` && cd $WORK_DIR
+ PREFIX=$WORK_DIR/local/nginx
+-VERSION=1.9.15
++VERSION=1.27.1
+ SR_OPT="-g -O2 -fPIE -fstack-protector -ffunction-sections"
+ LD_OPT="-B$SELFRANDO_BIN -Wl,-rpath,$SELFRANDO_BIN -Wl,--gc-sections"
+ NUM_PROCS=`nproc --all`

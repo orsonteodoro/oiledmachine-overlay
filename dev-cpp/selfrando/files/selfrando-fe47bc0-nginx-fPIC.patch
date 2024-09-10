@@ -1,0 +1,11 @@
+--- a/tests/posix/nginx.sh.orig	2024-09-10 01:49:51.821462174 -0700
++++ b/tests/posix/nginx.sh	2024-09-10 01:56:27.602725888 -0700
+@@ -17,7 +17,7 @@ fi
+ WORK_DIR=`mktemp -d` && cd $WORK_DIR
+ PREFIX=$WORK_DIR/local/nginx
+ VERSION=1.27.1
+-SR_OPT="-g -O2 -fPIE -fstack-protector -ffunction-sections"
++SR_OPT="-g -O2 -fPIE -fstack-protector -ffunction-sections -fPIC"
+ LD_OPT="-B$SELFRANDO_BIN -Wl,-rpath,$SELFRANDO_BIN -Wl,--gc-sections"
+ NUM_PROCS=`nproc --all`
+ 

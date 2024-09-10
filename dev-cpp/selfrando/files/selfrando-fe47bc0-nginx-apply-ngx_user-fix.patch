@@ -1,0 +1,11 @@
+--- a/tests/posix/nginx.sh.orig	2024-09-10 00:48:53.718189306 -0700
++++ b/tests/posix/nginx.sh	2024-09-10 01:08:29.582730625 -0700
+@@ -80,6 +80,8 @@ fi
+ 
+ cd $WORK_DIR/nginx-$VERSION
+ 
++patch -p1 -i "${FILESDIR}/0001-unix-ngx_user-Apply-fix-for-really-old-bug-in-glibc-.patch" || exit 1
++
+ ./configure $OPTIONS --with-cc-opt="$SR_OPT" --with-ld-opt="$LD_OPT" ||  { echo >&2 -e "${WARNING}configure failed.${NORMAL}"; exit 1; }
+ echo -e "\n${INFO}Compiling nginx...${NORMAL}"
+ make -j$NUM_PROCS CCOPT="-w" --quiet  ||  { echo >&2 -e "${WARNING}make failed.${NORMAL}"; exit 1; }
