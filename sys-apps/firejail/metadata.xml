@@ -53,13 +53,13 @@
     Build time environment variables
 
     APPARMOR_PROFILE[PROFILE_NAME] - Set app armor protection.
-    Valid values - default, APPARMOR_PROFILE_NAME
+    Valid values - default, APPARMOR_PROFILE_NAME, unset (default off)
 
-    BLACKLIST[PROFILE_NAME] - Disable auto adding wrapper to /usr/local/bin.
-    Valid values - 1 (disallow app),  0 (permit app), unset (permit app)
+    BLACKLIST[PROFILE_NAME] - Disable auto adding wrapper to /usr/local/bin. (UNIMPLEMENTED)
+    Valid values - 1 (disallow app), 0 (permit app), unset (permit app)
 
     MALLOC_BACKEND[PROFILE_NAME] - Set the hardened allocator
-    Valid values - hardened_malloc, mimalloc, scudo
+    Valid values - hardened_malloc, mimalloc, scudo, unset (ptmalloc default since none are endorsed upstream)
 
                         | ASLR   | freed data remittance policy[7]            | ARM64 MTE[3]
     hardened_malloc     | yes[6] | small allocs zeroed, large allocs unerased | optional
@@ -84,13 +84,14 @@
     0 (delayed free for mitigation against use-after-free heap attacks.)
 
     SECCOMP[PROFILE_NAME] - Enable seccomp sandboxing.
+    Valid values:  1 (enable), 0 (disable/default), unset (disable)
 
     XEPHYR_WH[PROFILE_NAME] - Set the default window size for x11 apps that
     are sandboxed with the zephyr backend.
     Valid values:  WIDTHxHEIGHT, 800x600 (default)
 
     X_BACKEND[PROFILE_NAME] - Select the x11 sandbox backend.
-    Valid values:  xephyr, xpra, auto, unset
+    Valid values:  xephyr, xpra, auto, unset (default auto)
 
     Variables are in all capitals.
 
