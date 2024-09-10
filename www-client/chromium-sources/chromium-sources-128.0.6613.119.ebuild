@@ -17,7 +17,7 @@ LICENSE="
 "
 RESTRICT="binchecks mirror strip test"
 SLOT="0/${PV}"
-IUSE+=" ebuild-revision-1"
+IUSE+=" ebuild-revision-2"
 RDEPEND+="
 "
 DEPEND+="
@@ -33,7 +33,7 @@ src_unpack() {
 
 src_install() {
 	dodir "/usr/share/chromium/sources"
-	cp -a "${WORKDIR}/chromium-${PV}/"* "${ED}/usr/share/chromium/sources" || die
+	cp -aT "${WORKDIR}/chromium-${PV}" "${ED}/usr/share/chromium/sources" || die
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
