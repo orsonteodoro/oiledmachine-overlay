@@ -53,10 +53,13 @@ src_install() {
 	# Use filesystem tricks (pointer change) to speed up merge time.
 	mv "${WORKDIR}/chromium-${PV}/"* "/usr/share/chromium/sources" || die
 	mv "${WORKDIR}/chromium-${PV}/."* "/usr/share/chromium/sources" || true
+# After modifications:
+# 0 days, 0 hrs, 59 mins, 55 secs
 }
 
 pkg_postinst() {
 	dhms_end
+ewarn "When emerge runs after the speedup changes it will wipe some files.  Please re-emerge again."
 }
 
 pkg_postrm() {

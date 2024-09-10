@@ -295,6 +295,8 @@ src_install() {
 	# Bypass scanelf and writing to /var/pkg/db
 	# Use filesystem tricks (pointer change) to speed up merge time.
 	mv "${WORKDIR}/"* "/usr/share/chromium/toolchain" || die
+# With speed up changes:
+# Completion time:  0 days, 0 hrs, 5 mins, 17 secs
 }
 
 pkg_preinst() {

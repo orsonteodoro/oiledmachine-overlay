@@ -1653,6 +1653,34 @@ einfo "Time passed since the last security update:  ${dhms_passed}"
 }
 
 pkg_setup() {
+	# The emerge package system will over prune when it should not when it
+	# uses the mv merge technique with sandbox disabled.
+
+	local tc_count_expected=29403
+	local tc_count_actual=$(find "/usr/share/chromium/toolchain" -type f | wc -l)
+	if (( ${tc_count_actual} != ${tc_count_expected} )) ; then
+ewarn
+ewarn "The emerge package system may have overpruned."
+ewarn
+ewarn "The chromium-toolchain file count is not the same.  Please re-emerge the chromium-toolchain package."
+ewarn "Actual file count:  ${tc_count_actual}"
+ewarn "Expected file count:  ${tc_count_expected}"
+ewarn
+	fi
+
+	local sources_count_expected=29403
+	local sources_count_actual=$(find "/usr/share/chromium/sources" -type f | wc -l)
+	if (( ${sources_count_actual} != ${sources_count_expected} )) ; then
+ewarn
+ewarn "The emerge package system may have overpruned."
+ewarn
+ewarn "The chromium-sources file count is not the same.  Please re-emerge the chromium-sources package."
+ewarn "Actual file count:  ${sources_count_actual}"
+ewarn "Expected file count:  ${sources_count_expected}"
+ewarn
+	fi
+
+
 	dhms_start
 einfo "Release channel:  ${SLOT#*/}"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
