@@ -1822,7 +1822,7 @@ src_unpack() {
 		unpack "chromium-patches-${PATCH_VER}.tar.bz2"
 	else
 		rm -rf "${S}/third_party/llvm-build/Release+Asserts" || true
-		ln -s "/usr/share/chromium/toolchain/llvm" "${S}/third_party/llvm-build/Release+Asserts" || die
+		ln -s "/usr/share/chromium/toolchain/clang" "${S}/third_party/llvm-build/Release+Asserts" || die
 
 		rm -rf "${S}/third_party/rust-toolchain" || true
 		ln -s "/usr/share/chromium/toolchain/rust" "${S}/third_party/rust-toolchain" || die
