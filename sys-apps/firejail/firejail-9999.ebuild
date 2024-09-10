@@ -44,6 +44,7 @@ _AUTO_BLACKLIST=(
 #	clamscan
 #	clamtk
 	cmake
+	cpio
 	curl
 	emacs
 	file
