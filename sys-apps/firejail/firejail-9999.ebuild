@@ -727,6 +727,8 @@ firejail_profiles_zeal? ( || ( xephyr xpra ) )
 firejail_profiles_zim? ( || ( xephyr xpra ) )
 firejail_profiles_zoom? ( || ( xephyr xpra ) )
 firejail_profiles_spotify? ( || ( xephyr xpra ) )
+firejail_profiles_surf? ( || ( xephyr xpra ) )
+firejail_profiles_netsurf? ( || ( xephyr xpra ) )
 "
 HARDENED_ALLOCATORS_IUSE=(
 	hardened_malloc
@@ -819,6 +821,8 @@ wireshark-qt x2goclient xchat xfce4-notes xfce4-screenshooter xmms xonotic
 xonotic-sdl xonotic-sdl-wrapper yandex-browser yelp youtube youtube-dl-gui
 youtube-viewer-gtk youtubemusic-nativefier ytmdesktop zathura zeal zim zoom
 spotify
+surf
+netsurf
 )
 
 inherit flag-o-matic linux-info python-single-r1 toolchain-funcs virtualx
@@ -1667,12 +1671,14 @@ einfo
 		gramps
 		hexchat
 		nautilus
+		netsurf
 		obs
 		pcmanfm
 		pidgin
 		pitivi
 		qbittorrent
 		spotify
+		surf
 		thunar
 		thunderbird
 		uzbl-browser
