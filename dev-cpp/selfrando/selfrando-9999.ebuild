@@ -46,7 +46,7 @@ LICENSE="
 #   custom keywords: "To the extent it has a right to do so,"
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" doc"
+IUSE+=" doc test"
 CDEPEND="
 	>=sys-libs/zlib-1.2.11
 	sys-devel/gcc[cxx(+)]
