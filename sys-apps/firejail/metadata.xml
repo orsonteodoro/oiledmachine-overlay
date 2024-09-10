@@ -52,6 +52,8 @@
 
     Build time environment variables for USE=wrapper
 
+    ARGS[PROFILE_NAME] - Add the raw list of args to the wrapper for full control
+
     APPARMOR_PROFILE[PROFILE_NAME] - Set app armor protection.
     Valid values - default, APPARMOR_PROFILE_NAME, unset (default off)
 

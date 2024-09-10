@@ -2738,9 +2738,14 @@ einfo "Generating wrapper for ${profile_name}"
 		seccomp_arg=+" --seccomp.keep=${SECCOMP_KEEP[${profile_name}]}"
 	fi
 
+	local args=""
+	if [[ -n "${ARGS[${profile_name}]}" ]] ; then
+		args="${args}"
+	fi
+
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}" || die
 #!/bin/bash
-exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} --profile="${profile_name}" "${exe_path}" "\$@"
+exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} --profile="${profile_name}" "${exe_path}" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}"
 	fperms 0755 "/usr/local/bin/${exe_name}"
@@ -2749,7 +2754,7 @@ EOF
 einfo "Generating wrapper for firefox-bin"
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}-bin" || die
 #!/bin/bash
-exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} --profile="${profile_name}" "/usr/bin/${exe_name}-bin" "\$@"
+exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} --profile="${profile_name}" "/usr/bin/${exe_name}-bin" "\$@"
 EOF
 	fowners "root:root" "/usr/local/bin/${exe_name}-bin"
 	fperms 0755 "/usr/local/bin/${exe_name}-bin"
