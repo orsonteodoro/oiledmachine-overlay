@@ -44,7 +44,7 @@ LICENSE="
 # Apache-2.0 BSD BSD-2 BSD-4 custom ISC SunPro  - src/RandoLib/posix/bionic/NOTICE
 #   custom keywords: "You may redistribute unmodified or modified versions of this source"
 #   custom keywords: "To the extent it has a right to do so,"
-RESTRICT="mirror test"
+RESTRICT="mirror"
 SLOT="0"
 IUSE+=" doc"
 CDEPEND="
@@ -99,6 +99,15 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+	if use test ; then
+		if has network-sandbox $FEATURES ; then
+eerror
+eerror "${PN} requires network-sandbox to be disabled in FEATURES to be able to"
+eerror "conduct testing."
+eerror
+			die
+		fi
+	fi
 }
 
 src_prepare() {
@@ -133,6 +142,23 @@ src_configure() {
 		-G "Unix Makefiles"
 	)
 	cmake_src_configure
+}
+
+src_test() {
+	[[ "${ARCH}" == "amd64" ]] && export SR_ARCH="x86_64"
+	[[ "${ARCH}" == "arm64" ]] && export SR_ARCH="arm64"
+
+	sh "scripts/build_libelf.sh" "${PWD}/libelf" || die
+	scons -Q arch="x86_64" LIBELF_PATH="${PWD}/libelf/libelf-prefix" FORCE_INPLACE=1 || die
+	if [[ "${TESTS_THTTPD:-1}" == "1" ]] ; then
+		tests/posix/thttpd.sh || die
+	fi
+	if [[ "${TESTS_LUA:-1}" == "1" ]] ; then
+		tests/posix/lua.sh || die
+	fi
+	if [[ "${TESTS_NGINX:-1}" == "1" ]] ; then
+		tests/posix/nginx.sh || die
+	fi
 }
 
 src_install() {
