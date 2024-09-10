@@ -198,8 +198,8 @@
 
       If the USE flag is disabled, it will do ROP mitigations using
       shuffle-sections linker option.
-        - For mold, it will use fisher-yates with Xorshift PSRNG with modulo
-          math.
+        - For mold, it will use fisher-yates with Xorshift with modulo
+          math PSRNG.
         - For lld, it will use std::shuffle with Mersenne Twister (mt19937)
           PSRNG.
     </flag>
