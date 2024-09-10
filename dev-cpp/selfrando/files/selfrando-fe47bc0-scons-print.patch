@@ -1,0 +1,20 @@
+diff '--color=auto' -urp selfrando-9999.orig/SConstruct selfrando-9999/SConstruct
+--- selfrando-9999.orig/SConstruct	2024-09-10 00:02:49.814933171 -0700
++++ selfrando-9999/SConstruct	2024-09-10 00:03:35.794175834 -0700
+@@ -30,14 +30,14 @@ def decode_debug_level(var):
+     try:
+         return int(var)
+     except ValueError:
+-        print "DEBUG_LEVEL value must be a number!"
++        print("DEBUG_LEVEL value must be a number!")
+         raise
+ 
+ # Top build file for scons
+ env = Environment(variables=vars,
+                   ENV = {'PATH': os.environ['PATH']})
+                   #CXX = 'clang++')
+-print "Building self-rando for platform '%s' on '%s'" % (env['PLATFORM'], env['TARGET_ARCH'])
++print("Building self-rando for platform '%s' on '%s'" % (env['PLATFORM'], env['TARGET_ARCH']))
+ 
+ SUBDIRS = ['Support', 'RandoLib', 'TrapLinker', 'TrapInfo', 'TrapLibs']
+ OUTDIR = 'out' # TODO: make this into an option

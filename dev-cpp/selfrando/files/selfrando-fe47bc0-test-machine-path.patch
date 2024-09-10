@@ -1,0 +1,36 @@
+diff '--color=auto' -urp selfrando-9999.orig/tests/posix/lua.sh selfrando-9999/tests/posix/lua.sh
+--- selfrando-9999.orig/tests/posix/lua.sh	2024-09-10 00:04:31.341260858 -0700
++++ selfrando-9999/tests/posix/lua.sh	2024-09-10 00:12:29.993565782 -0700
+@@ -1,7 +1,7 @@
+ #! /bin/bash
+ 
+ SCRIPT_DIR="$(cd "$(dirname "$0" )" && pwd)"
+-SELFRANDO_BIN=$SCRIPT_DIR/../../out/$(uname -p)/bin
++SELFRANDO_BIN=$SCRIPT_DIR/../../out/$(uname -m)/bin
+ if [ ! -e "$SELFRANDO_BIN/traplinker" ]; then
+   echo "Build selfrando before running this script"
+   exit 1
+diff '--color=auto' -urp selfrando-9999.orig/tests/posix/nginx.sh selfrando-9999/tests/posix/nginx.sh
+--- selfrando-9999.orig/tests/posix/nginx.sh	2024-09-10 00:04:31.341260858 -0700
++++ selfrando-9999/tests/posix/nginx.sh	2024-09-10 00:12:22.809679855 -0700
+@@ -9,7 +9,7 @@ NORMAL='\e[0;m'
+ 
+ 
+ SCRIPT_DIR="$(cd "$(dirname "$0" )" && pwd)"
+-SELFRANDO_BIN=$SCRIPT_DIR/../../out/$(uname -p)/bin
++SELFRANDO_BIN=$SCRIPT_DIR/../../out/$(uname -m)/bin
+ if [ ! -e "$SELFRANDO_BIN/traplinker" ]; then
+   echo "Build selfrando before running this script"
+   exit 1
+diff '--color=auto' -urp selfrando-9999.orig/tests/posix/thttpd.sh selfrando-9999/tests/posix/thttpd.sh
+--- selfrando-9999.orig/tests/posix/thttpd.sh	2024-09-10 00:04:31.341260858 -0700
++++ selfrando-9999/tests/posix/thttpd.sh	2024-09-10 00:12:27.645603066 -0700
+@@ -1,7 +1,7 @@
+ #! /bin/bash
+ 
+ SCRIPT_DIR="$(cd "$(dirname "$0" )" && pwd)"
+-SELFRANDO_BIN=$SCRIPT_DIR/../../out/$(uname -p)/bin
++SELFRANDO_BIN=$SCRIPT_DIR/../../out/$(uname -m)/bin
+ if [ ! -e "$SELFRANDO_BIN/traplinker" ]; then
+   echo "Build selfrando before running this script"
+   exit 1

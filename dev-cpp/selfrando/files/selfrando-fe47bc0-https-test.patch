@@ -1,0 +1,38 @@
+diff '--color=auto' -urp selfrando-9999.orig/tests/posix/lua.sh selfrando-9999/tests/posix/lua.sh
+--- selfrando-9999.orig/tests/posix/lua.sh	2024-09-10 00:31:24.051364629 -0700
++++ selfrando-9999/tests/posix/lua.sh	2024-09-10 00:31:57.142824735 -0700
+@@ -17,8 +17,8 @@ function cleanup {
+ # register cleanup function to be called on the EXIT signal
+ trap cleanup EXIT
+ 
+-curl -s http://www.lua.org/ftp/lua-5.3.3.tar.gz | tar xz
+-curl -s http://www.lua.org/tests/lua-5.3.3-tests.tar.gz | tar xz
++curl -s https://www.lua.org/ftp/lua-5.3.3.tar.gz | tar xz
++curl -s https://www.lua.org/tests/lua-5.3.3-tests.tar.gz | tar xz
+ 
+ LUA_HOME=$WORK_DIR/lua-5.3.3
+ LUA_TEST_HOME=$WORK_DIR/lua-5.3.3-tests
+diff '--color=auto' -urp selfrando-9999.orig/tests/posix/nginx.sh selfrando-9999/tests/posix/nginx.sh
+--- selfrando-9999.orig/tests/posix/nginx.sh	2024-09-10 00:31:24.051364629 -0700
++++ selfrando-9999/tests/posix/nginx.sh	2024-09-10 00:32:44.694048933 -0700
+@@ -70,7 +70,7 @@ command -v ab >/dev/null 2>&1 || { echo
+ 
+ if [ ! -d $WORK_DIR/nginx-$VERSION ];then
+   echo -e "\n${INFO}Download source code in progress...${NORMAL}"
+-  curl -s http://nginx.org/download/nginx-$VERSION.tar.gz | tar xz
++  curl -s https://nginx.org/download/nginx-$VERSION.tar.gz | tar xz
+ fi
+ 
+ if [ ! -d $WORK_DIR/nginx-$VERSION ];then
+diff '--color=auto' -urp selfrando-9999.orig/tests/posix/thttpd.sh selfrando-9999/tests/posix/thttpd.sh
+--- selfrando-9999.orig/tests/posix/thttpd.sh	2024-09-10 00:31:24.051364629 -0700
++++ selfrando-9999/tests/posix/thttpd.sh	2024-09-10 00:33:36.321206642 -0700
+@@ -17,7 +17,7 @@ function cleanup {
+ # register cleanup function to be called on the EXIT signal
+ trap cleanup EXIT
+ 
+-curl --silent http://acme.com/software/thttpd/thttpd-2.27.tar.gz | tar xz
++curl --silent https://acme.com/software/thttpd/thttpd-2.27.tar.gz | tar xz
+ 
+ command -v ab >/dev/null 2>&1 || { echo >&2 "Apache bench (ab) not found.  Aborting."; exit 1; }
+ 

@@ -10,7 +10,7 @@ EXPECTED_BUILD_FINGERPRINT="\
 34d5dd4c2f2fcd708ca826714e1a4bc0fc331ae48d20883c47d0a2fca62fb413\
 20f00fd42c2232881b8532530fa8ccfdabed6e30107a082ee5c9f300155c1f68"
 
-inherit cmake git-r3 python-any-r1
+inherit cmake flag-o-matic git-r3 python-any-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -71,6 +71,11 @@ BDEPEND+="
 	>=dev-build/make-4.2.1
 	>=virtual/libelf-3
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-fe47bc0-scons-print.patch"
+	"${FILESDIR}/${PN}-fe47bc0-test-machine-path.patch"
+	"${FILESDIR}/${PN}-fe47bc0-https-test.patch"
+)
 
 unpack_live() {
 	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -148,8 +153,11 @@ src_test() {
 	[[ "${ARCH}" == "amd64" ]] && export SR_ARCH="x86_64"
 	[[ "${ARCH}" == "arm64" ]] && export SR_ARCH="arm64"
 
+	append-cppflags -Wno-error=array-parameter
+
 	sh "scripts/build_libelf.sh" "${PWD}/libelf" || die
-	scons -Q arch="x86_64" LIBELF_PATH="${PWD}/libelf/libelf-prefix" FORCE_INPLACE=1 || die
+	export DEBUG_LEVEL=0
+	scons -Q arch="x86_64" LIBELF_PATH="${PWD}/libelf/libelf-prefix" FORCE_INPLACE=1 DEBUG_LEVEL=env || die
 	if [[ "${TESTS_THTTPD:-1}" == "1" ]] ; then
 		tests/posix/thttpd.sh || die
 	fi
