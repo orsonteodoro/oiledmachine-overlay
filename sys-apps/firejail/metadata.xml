@@ -59,7 +59,7 @@
 
     ARGS[PROFILE_NAME] - Add the raw list of args to the wrapper for full control
 
-    BLACKLIST[PROFILE_NAME] - Disable auto adding wrapper to /usr/local/bin. (UNIMPLEMENTED)
+    AUTO_BLACKLIST[PROFILE_NAME] - Disable auto adding wrapper to /usr/local/bin. (UNIMPLEMENTED)
     Valid values - 1 (disallow app), 0 (permit app), unset (permit app)
 
     LANDLOCK[PROFILE_NAME] - Restrict app file access.
@@ -178,7 +178,7 @@
     (WIP/Experimental) Auto adding/generating wrappers with USE=auto with USE=wrapper
 
     The auto USE flag can be used add wrappers to /usr/local/bin with
-    BLACKLIST[PROFILE_NAME].  This will sandbox more X apps for more cautious
+    AUTO_BLACKLIST[PROFILE_NAME].  This will sandbox more X apps for more cautious
     people but increase protection and decrease data theft from biased programs.
     The BLACKLIST is to prevent an unbootable system or those those prefer some
     games/apps to be more performant.  Note will require that profile

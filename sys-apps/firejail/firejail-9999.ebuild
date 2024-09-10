@@ -8,6 +8,7 @@ EAPI=8
 
 declare -A APPARMOR_PROFILE
 declare -A ARGS
+declare -A AUTO_BLACKLIST
 declare -A BLACKLIST
 declare -A LANDLOCK
 declare -A LANDLOCK_PROC
