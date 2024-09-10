@@ -55,6 +55,9 @@
     APPARMOR_PROFILE[PROFILE_NAME] - Set app armor protection.
     Valid values - default, APPARMOR_PROFILE_NAME
 
+    BLACKLIST[PROFILE_NAME] - Disable auto adding wrapper to /usr/local/bin.
+    Valid values - 1 (disallow app),  0 (permit app), unset (permit app)
+
     MALLOC_BACKEND[PROFILE_NAME] - Set the hardened allocator
     Valid values - hardened_malloc, mimalloc, scudo
 
@@ -129,6 +132,15 @@
 
     By default, paths are assumed to be /usr/bin/PROGRAM_NAME.  You may want
     to fix the profile name paring with PATH_CORRECTION for binary packages.
+
+
+    Proposed changes to ebuild
+
+    Introduce the auto USE flag to auto add wrappers to /usr/local/bin with
+    BLACKLIST[PROFILE_NAME].  This will sandbox more X apps for more cautious
+    people but increase protection and decrease data theft from biased programs.
+    The BLACKLIST is to prevent an unbootable system or those those prefer some
+    games/apps to be more performant.
 
   -->
   <upstream>
