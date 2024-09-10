@@ -2618,10 +2618,12 @@ einfo "Generating wrapper for ${profile_name}"
 
 	if ! use X ; then
 		:
-	elif [[ "${X_BACKEND[${profile_name}]}" == "xpra" ]] ; then
+	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("game"|"gaming"|"opengl"|"xpra") ]] ; then
 		x11_arg="--x11=xpra"
 	elif [[ "${X_BACKEND[${profile_name}]}" == "xephyr" ]] ; then
 		x11_arg="--x11=xephyr"
+	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("/dev/null"|"headless"|"xvfb") ]] ; then
+		x11_arg="--x11=xvfb"
 	elif [[ "${X_BACKEND[${profile_name}]}" == "auto" ]] ; then
 		x11_arg="--x11"
 	elif is_x11_compat "${profile_name}" ; then

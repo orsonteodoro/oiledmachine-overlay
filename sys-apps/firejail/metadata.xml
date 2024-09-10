@@ -112,7 +112,17 @@
     Valid values:  WIDTHxHEIGHT, 800x600 (default)
 
     X_BACKEND[PROFILE_NAME] - Select the x11 sandbox backend.
-    Valid values:  xephyr, xpra, auto, unset (default auto)
+    Valid values:
+    /dev/null - uses xvfb
+    auto - tries xpra first, xephyr second
+    headless - uses the xvfb
+    game - uses xpra
+    gaming - uses xpra
+    opengl - uses xpra
+    xephyr - runs the program using xephyr
+    xpra - runs the program using xpra
+    xvfb - runs the program using xvfb
+    unset (default auto)
 
     Variables are in all capitals.
 
