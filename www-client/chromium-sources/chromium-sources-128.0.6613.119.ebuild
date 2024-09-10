@@ -54,7 +54,7 @@ src_install() {
 	mv "${WORKDIR}/chromium-${PV}/"* "/usr/share/chromium/sources" || die
 	mv "${WORKDIR}/chromium-${PV}/."* "/usr/share/chromium/sources" || true
 # After modifications:
-# 0 days, 0 hrs, 59 mins, 55 secs
+# Completion time:  0 days, 0 hrs, 26 mins, 22 secs
 }
 
 pkg_postinst() {

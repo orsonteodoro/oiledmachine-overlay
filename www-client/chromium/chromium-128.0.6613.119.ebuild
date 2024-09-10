@@ -1668,7 +1668,7 @@ ewarn "Expected file count:  ${tc_count_expected}"
 ewarn
 	fi
 
-	local sources_count_expected=29403
+	local sources_count_expected=1124175
 	local sources_count_actual=$(find "/usr/share/chromium/sources" -type f | wc -l)
 	if (( ${sources_count_actual} != ${sources_count_expected} )) ; then
 ewarn
