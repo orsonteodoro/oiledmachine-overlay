@@ -50,7 +50,7 @@
     shell script startup cost.
 
 
-    Build time environment variables
+    Build time environment variables for USE=wrapper
 
     APPARMOR_PROFILE[PROFILE_NAME] - Set app armor protection.
     Valid values - default, APPARMOR_PROFILE_NAME, unset (default off)
