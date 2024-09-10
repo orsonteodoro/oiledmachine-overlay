@@ -154,6 +154,9 @@
     <flag name="globalcfg">
       Enable global config file
     </flag>
+    <flag name="hardened_malloc">
+      Enable support for hardened_malloc as a hardened allocator.
+    </flag>
     <flag name="landlock">
       Enable support for the kernel's Landlock Linux Security Module (LSM).
     </flag>
