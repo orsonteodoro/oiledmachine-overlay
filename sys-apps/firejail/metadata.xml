@@ -122,7 +122,7 @@
     xephyr - runs the program using xephyr
     xpra - runs the program using xpra
     xvfb - runs the program using xvfb
-    unset (default auto)
+    unset - default as auto
 
     Variables are in all capitals.
 
