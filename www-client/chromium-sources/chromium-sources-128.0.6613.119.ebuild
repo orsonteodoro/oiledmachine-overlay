@@ -19,7 +19,7 @@ LICENSE="
 "
 RESTRICT="binchecks mirror strip test"
 SLOT="0/${PV}"
-IUSE+=" ebuild-revision-2"
+IUSE+=" ebuild-revision-3"
 RDEPEND+="
 "
 DEPEND+="
@@ -38,12 +38,31 @@ src_unpack() {
 }
 
 src_install() {
-	dodir "/usr/share/chromium/sources"
-	cp -aT "${WORKDIR}/chromium-${PV}" "${ED}/usr/share/chromium/sources" || die
+# Completion time:  0 days, 6 hrs, 46 mins, 52 secs
+# Reasons for slowdown:
+# 1. Output in console
+# 2. cp -aT
+# 3. scanelf
+# 4. write to /var/db/pkg/.../CONTENTS
+# 5. md5sum for each file for CONTENTS
+
+	addwrite "/usr/share/chromium/sources"
+	rm -rf "/usr/share/chromium/sources"
+	mkdir -p "/usr/share/chromium/sources"
+	# Bypass scanelf and writing to /var/pkg/db
+	# Use filesystem tricks (pointer change) to speed up merge time.
+	mv "${WORKDIR}/chromium-${PV}/"* "/usr/share/chromium/sources" || die
+	mv "${WORKDIR}/chromium-${PV}/."* "/usr/share/chromium/sources" || true
 }
 
 pkg_postinst() {
 	dhms_end
+}
+
+pkg_postrm() {
+	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
+		rm -rf "/usr/share/chromium/sources"
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

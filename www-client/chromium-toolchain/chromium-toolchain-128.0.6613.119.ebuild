@@ -4,6 +4,8 @@
 
 EAPI=8
 
+inherit dhms
+
 # https://github.com/chromium/chromium/blob/128.0.6613.119/tools/clang/scripts/update.py#L38C41-L38C49 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
 GN_PV="0.2175"
@@ -160,7 +162,7 @@ LICENSE="
 
 RESTRICT="binchecks mirror strip test"
 SLOT="0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_PV}"
-IUSE+=" +clang +gn +rust ebuild-revision-2"
+IUSE+=" +clang +gn +rust ebuild-revision-3"
 REQUIRED_USE="
 	gn? (
 		clang
@@ -179,6 +181,10 @@ DEPEND+="
 BDEPEND+="
 "
 DOCS=( )
+
+pkg_setup() {
+	dhms_start
+}
 
 src_unpack() {
 	if use gn ; then
@@ -283,8 +289,23 @@ src_compile() {
 }
 
 src_install() {
-	dodir "/usr/share/chromium/toolchain"
-	cp -aT "${WORKDIR}" "${ED}/usr/share/chromium/toolchain" || die
+	keepdir "/usr/share/chromium/toolchain"
+	addwrite "/usr/share/chromium/toolchain"
+	rm -rf "/usr/share/chromium/toolchain"
+	mkdir -p "/usr/share/chromium/toolchain" || die
+	# Bypass scanelf and writing to /var/pkg/db
+	# Use filesystem tricks (pointer change) to speed up merge time.
+	mv "${WORKDIR}/"* "/usr/share/chromium/toolchain" || die
+}
+
+pkg_preinst() {
+	dhms_end
+}
+
+pkg_postrm() {
+	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
+		rm -rf "/usr/share/chromium/toolchain"
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
