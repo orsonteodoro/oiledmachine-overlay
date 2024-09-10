@@ -47,7 +47,117 @@ DESCRIPTION="The Chromium toolchain (Clang + Rust + gn)"
 HOMEPAGE="https://www.chromium.org/"
 LICENSE="
 	chromium-$(ver_cut 1-3 ${PV}).x.html
+
+	(
+		all-rights-reserved
+		OFL-1.1
+	)
+	(
+		Apache-2.0
+		BSD
+		CC-BY-3.0
+		MIT
+	)
+	(
+		Apache-2.0
+		MIT
+		public-domain
+	)
+	(
+		Apache-2.0
+		MIT
+	)
+	(
+		BSD
+		custom
+		curl
+		LGPL-2.1
+		GPL-2
+		openssl
+		Unlicense
+		ZLIB
+	)
+	(
+		GPL-2+
+		LGPL-2.1+
+		public-domain
+		|| (
+			GPL-2+
+			GPL-3+
+		)
+	)
+	(
+		icu
+		Unicode-DFS-2016
+	)
+	(
+		BSD
+		public-domain
+	)
+	0BSD
+	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
+	Boost-1.0
+	CC-BY-3.0
+	custom
+	BSD
+	BSD-2
+	GPL-2.0
+	GPL-2.0
+	GPL-3.0
+	MIT
+	MPL-2.0
+	Unicode-3.0
+	Unicode-DFS-2016
+	Unlicense
+	ZLIB
+	|| (
+		AFL-2.1
+		GPL-2+
+	)
+	|| (
+		Unlicense
+		MIT
+	)
+	|| (
+		UoI-NCSA
+		MIT
+	)
 "
+
+#( all-rights-reserved OFL-1.1 ) - rust/lib/rustlib/src/rust/vendor/mdbook-0.4.40/src/theme/fonts/SOURCE-CODE-PRO-LICENSE.txt
+#0BSD - rust/lib/rustlib/src/rust/vendor/adler-1.0.2/LICENSE-0BSD
+#Apache-2.0 - rust/lib/rustlib/src/rust/vendor/windows_x86_64_msvc-0.52.5/license-apache-2.0
+#Apache-2.0 BSD CC-BY-3.0 MIT  - rust/lib/rustlib/src/rust/vendor/crossbeam-channel-0.5.13/LICENSE-THIRD-PARTY
+#Apache-2.0 MIT public-domain - rust/lib/rustlib/src/rust/vendor/parse-zoneinfo-0.3.1/LICENSE
+#Apache-2.0 MIT - rust/lib/rustlib/src/rust/vendor/chrono-0.4.38/LICENSE.txt
+#Boost-1.0 - rust/lib/rustlib/src/rust/vendor/ryu-1.0.18/LICENSE-BOOST
+#CC-BY-3.0 - rust/lib/rustlib/src/rust/vendor/crossbeam-channel-0.5.13/LICENSE-THIRD-PARTY
+#BSD - rust/lib/rustlib/src/rust/vendor/instant-0.1.13/LICENSE
+#BSD custom curl LGPL-2.1 GPL-2 openssl Unlicense ZLIB - rust/share/doc/cargo/LICENSE-THIRD-PARTY
+#BSD-2 - rust/lib/rustlib/src/rust/vendor/jemalloc-sys-0.5.4+5.3.0-patched/jemalloc/COPYING
+#GPL-2+ LGPL-2.1+ public-domain || ( GPL-2+ GPL-3+ ) - rust/lib/rustlib/src/rust/vendor/lzma-sys-0.1.20/xz-5.2/COPYING
+#GPL-2.0 - rust/lib/rustlib/src/rust/vendor/libffi-sys-2.3.0/libffi/LICENSE-BUILDTOOLS
+#GPL-2.0 - rust/lib/rustlib/src/rust/vendor/lzma-sys-0.1.20/xz-5.2/COPYING.GPLv2
+#GPL-3.0 - rust/lib/rustlib/src/rust/vendor/lzma-sys-0.1.20/xz-5.2/COPYING.GPLv3
+#MIT - rust/lib/rustlib/src/rust/vendor/windows_x86_64_msvc-0.52.5/license-mit
+#MPL-2.0 - rust/lib/rustlib/src/rust/vendor/colored-2.1.0/LICENSE
+#public-domain BSD - rust/lib/rustlib/src/rust/vendor/chrono-tz-0.9.0/tz/LICENSE
+#Unicode-3.0 - rust/lib/rustlib/src/rust/vendor/yoke-0.7.4/LICENSE
+#Unicode-DFS-2016 - rust/lib/rustlib/src/rust/vendor/regex-syntax-0.8.3/src/unicode_tables/LICENSE-UNICODE
+#Unlicense - rust/lib/rustlib/src/rust/vendor/aho-corasick-1.1.3/UNLICENSE
+#ZLIB - rust/lib/rustlib/src/rust/vendor/miniz_oxide-0.7.3/LICENSE-ZLIB.md
+#|| ( AFL-2.1 GPL-2+ ) rust/lib/rustlib/src/rust/vendor/libdbus-sys-0.2.5/vendor/dbus/COPYING
+#|| ( Unlicense MIT ) - rust/lib/rustlib/src/rust/vendor/byteorder-1.5.0/COPYING
+#|| ( UoI-NCSA MIT ) - rust/lib/rustlib/src/rust/vendor/compiler_builtins-0.1.109/LICENSE.txt
+#The distro's OFL-1.1 license template does not contain all rights reserved.
+#custom - rust/lib/rustlib/src/rust/vendor/regex-automata-0.1.10/data/tests/fowler/LICENSE
+
+#BSD - gn/LICENSE
+#icu-2017 or icu-58 Unicode-DFS-2016 - gn/src/base/third_party/icu/LICENSE
+
+#Apache-2.0-with-LLVM-exceptions - clang/lib/clang/19/include/__stdarg_va_copy.h
+
 RESTRICT="binchecks mirror strip test"
 SLOT="0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_PV}"
 IUSE+=" +clang +gn +rust"
