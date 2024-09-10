@@ -908,7 +908,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
-ebuild-revision-2
+ebuild-revision-3
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -2034,8 +2034,6 @@ einfo "Adding Selfrando flags"
 		export SR_LDFLAGS="-B${SR_BIN} -Wl,-rpath,${SR_LIBDIR} -Wl,--gc-sections -Wl,-fuse-ld=bfd"
 		cflags="${SR_CFLAGS}"
 		ldflags="${SR_LDFLAGS}"
-		append-flags ${cflags}
-		append-ldflags ${ldflags}
 	else
 einfo "Adding shuffle-sections ROP mitigation flags"
 		cflags="-ffunction-sections"
@@ -2047,6 +2045,8 @@ einfo "Adding shuffle-sections ROP mitigation flags"
 ewarn "Use LLD or mold for ROP mitigation"
 		fi
 	fi
+	[[ -n "${cflags}" ]] && append-flags ${cflags}
+	[[ -n "${ldflags}" ]] && append-flags ${ldflags}
 
 	sed -i \
 		-e "s:-ggdb::g" \
