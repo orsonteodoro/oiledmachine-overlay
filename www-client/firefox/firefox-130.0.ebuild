@@ -1261,6 +1261,38 @@ check_kernel_flags() {
 	check_extra_config
 }
 
+check_ulimit() {
+	if use mold ; then
+		local current_ulimit=$(ulimit -n)
+		local ulimit
+		if use mold ; then
+		# See bugs #892641 & #907485.
+			ulimit=${ULIMIT:-16384}
+		else
+		# The final link uses lots of file descriptors.
+			ulimit=${ULIMIT:-1024}
+		fi
+
+		if (( ${current_ulimit} < ${ulimit} )) ; then
+eerror
+eerror "The ulimit is too low and must be ${ulimit} or higher."
+eerror
+eerror "Expected ulimit:  ${ulimit}"
+eerror "Actual ulimit:  ${current_ulimit}"
+eerror
+eerror "To fix, follow exactly these steps."
+eerror
+eerror "1.  Add/change /etc/security/limits.conf with the following lines:"
+eerror "portage         soft    nofile      ${ulimit}"
+eerror "portage         hard    nofile      ${ulimit}"
+eerror "2.  Run \`ulimit -n ${ulimit}\`"
+eerror "3.  Run \`emerge =${CATEGORY}/${PN}-${PVR}\`"
+eerror
+			die
+		fi
+	fi
+}
+
 pkg_setup() {
 	dhms_start
 einfo "Release type:  rapid"
@@ -1455,6 +1487,7 @@ ewarn "Speech recognition (USE=webspeech) has not been confirmed working."
 	verify_codecs
 	node_pkg_setup
 	check_security_expire
+	check_ulimit
 }
 
 src_unpack() {
@@ -2340,36 +2373,6 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 			mozconfig_add_options_ac \
 				"linker is set to bfd" \
 				--enable-linker="bfd"
-		fi
-	fi
-
-	if tc-ld-is-mold ; then
-		local current_ulimit=$(ulimit -n)
-		local ulimit
-		if use mold ; then
-		# See bugs #892641 & #907485.
-			ulimit=${ULIMIT:-16384}
-		else
-		# The final link uses lots of file descriptors.
-			ulimit=${ULIMIT:-1024}
-		fi
-
-		if (( ${current_ulimit} < ${ulimit} )) ; then
-eerror
-eerror "The ulimit is too low and must be ${ulimit} or higher."
-eerror
-eerror "Expected ulimit:  ${ulimit}"
-eerror "Actual ulimit:  ${current_ulimit}"
-eerror
-eerror "To fix, follow exactly these steps."
-eerror
-eerror "1.  Add/change /etc/security/limits.conf with the following lines:"
-eerror "portage         soft    nofile      ${ulimit}"
-eerror "portage         hard    nofile      ${ulimit}"
-eerror "2.  Run \`ulimit -n ${ulimit}\`"
-eerror "3.  Run \`emerge =${CATEGORY}/${PN}-${PVR}\`"
-eerror
-			die
 		fi
 	fi
 
