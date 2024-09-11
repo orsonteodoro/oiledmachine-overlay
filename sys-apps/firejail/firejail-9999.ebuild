@@ -983,7 +983,7 @@ zim zless zlib-flate zmore znew zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt
 zulip
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
-GEN_EBUILD=1 # Uncomment to regen ebuild parts
+#GEN_EBUILD=1 # Uncomment to regen ebuild parts
 GUI_REQUIRED_USE="
 firejail_profiles_1password? ( || ( xephyr xpra ) )
 firejail_profiles_2048-qt? ( || ( xephyr xpra ) )
@@ -3576,6 +3576,17 @@ EOF
 	fi
 }
 
+# recursive
+get_profile_deps() {
+	local nodes=( ${@} )
+	(( ${#nodes[@]} == 0 )) && return
+	local node
+	for node in ${nodes[@]} ; do
+		echo "${node}"
+		get_profile_deps ${_PROFILE_GRAPH[${node}]}
+	done
+}
+
 _install_one_profile() {
 	default
 
@@ -3656,6 +3667,9 @@ eerror
 
 		if use auto && use wrapper && [[ -e "${exe_path}" ]] && ! [[ "${u}" =~ "-common" ]] && ! [[ "${u}" =~ "-wrapper" ]] && ! is_auto_blacklisted "${u}" ; then
 einfo "Auto adding ${u} profile"
+			local deps=( $(get_profile_deps ${_PROFILE_GRAPH[${profile_name}]}) )
+			queued_profile_deps+=( ${deps[@]} )
+			#einfo "deps for ${u}:  ${deps[@]}"
 			mv "${src}" "${dest}" || die
 			gen_wrapper "${u}"
 		elif use ${pf} ; then
@@ -3698,6 +3712,7 @@ eerror
 }
 
 src_install() {
+	local queued_profile_deps=()
 	use wrapper && dodir "/usr/local/bin"
 	local impl
 	for impl in $(get_impls) ; do
@@ -3709,6 +3724,29 @@ src_install() {
 
 		_install_one_profile
 	done
+
+	if use auto && use wrapper ; then
+		mv "${T}/profiles_processed/"* "${T}/profiles"
+		local pf
+		for pf in ${queued_profile_deps[@]} ; do
+			local u="${pf/firejail_profiles_/}"
+			local src
+			local dest
+			if is_use_dotted "${u}" ; then
+				src=$(find "${T}/profiles" -name $(get_dotted_fn "${u}")".profile" \
+					| sed -r -e "s|[ ]+||g")
+				dest="${ED}/etc/firejail/"$(get_dotted_fn "${u}")".profile"
+			else
+				src=$(find "${T}/profiles" -name "${u}.profile" \
+					| sed -r -e "s|[ ]+||g")
+				dest="${ED}/etc/firejail/${u}.profile"
+			fi
+			if [[ ! -e "${dest}" && -e "${src}" ]] ; then
+einfo "Auto copying ${u} as a missing profile dependency"
+				mv "${src}" "${dest}" || die
+			fi
+		done
+	fi
 
 	if ! use vanilla ; then
 		# Gentoo-specific profile customizations
