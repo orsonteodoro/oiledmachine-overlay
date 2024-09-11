@@ -67,6 +67,11 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
   Updates for these ebuilds fork are planned when security updates or
   advisories are announced.
 
+
+  Proposed ebuild changes
+
+  Investigate shuffle-sections linker option for ROP mitigation.
+
 -->
 <upstream>
   <changelog>
