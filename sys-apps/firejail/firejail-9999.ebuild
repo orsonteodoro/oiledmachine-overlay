@@ -31,6 +31,8 @@ _AUTO_BLACKLIST=(
 	_7z
 	_7za
 	_7zr
+	Xephyr
+	Xvfb
 	ar
 	b2sum
 	bsdcat
@@ -39,19 +41,19 @@ _AUTO_BLACKLIST=(
 	bunzip2
 	bzcat
 	bzip2
-#	cargo
+	cargo
 	cksum
-#	clamav
-#	clamdscan
-#	clamdtop
-#	clamscan
-#	clamtk
+	clamav
+	clamdscan
+	clamdtop
+	clamscan
+	clamtk
 	cmake
 	cpio
 	curl
 	emacs
 	file
-#	freshclam
+	freshclam
 	gpg
 	gpg-agent
 	gpg2
@@ -70,7 +72,7 @@ _AUTO_BLACKLIST=(
 	gtk-update-icon-cache
 	gzexe
 	gzip
-#	latex
+	latex
 	lbunzip2
 	lbzcat
 	lbzip2
@@ -103,12 +105,12 @@ _AUTO_BLACKLIST=(
 	meson
 #	more
 	nano
-#	node
+	node
 	p7zip
-#	pandoc
+	pandoc
 	patch
-#	pdflatex
-#	pdftotext
+	pdflatex
+	pdftotext
 	pip
 	pzstd
 	sum
@@ -120,7 +122,7 @@ _AUTO_BLACKLIST=(
 	ssh
 	ssh-agent
 	strings
-#	tex
+	tex
 	uncompress
 	unlz4
 	unlzma
