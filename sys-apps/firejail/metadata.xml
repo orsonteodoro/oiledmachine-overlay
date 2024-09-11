@@ -207,6 +207,9 @@
     3. Binary only programs
     4. Network based programs
     5. Programs that are capable of loading user generated content
+    6. Programs that are statically linked to vulnerable libraries
+    7. Programs that have a unpatched vulnerability
+    8. Doubious programs
 
     If a program does not have a PROFILE_NAME.profile, you should either
     make a .profile which is preferred or use the COMMAND environment
