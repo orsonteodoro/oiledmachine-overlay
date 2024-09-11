@@ -640,6 +640,9 @@ REQUIRED_USE+="
 		bindist
 		proprietary-codecs
 	)
+	!headless? (
+		pdf
+	)
 	official? (
 		!debug
 		!hangouts
@@ -710,8 +713,8 @@ REQUIRED_USE+="
 			cpu_flags_arm_pac
 		)
 	)
-	plugins? (
-		pdf
+	pdf? (
+		plugins
 	)
 	pre-check-vaapi? (
 		vaapi
@@ -3013,7 +3016,7 @@ ewarn
 	myconf_gn+=" use_mpris=$(usex mpris true false)"
 
 	# Forced because of asserts
-	myconf_gn+=" enable_screen_ai_service=$(usex ml true false)"
+	myconf_gn+=" enable_screen_ai_service=true" # Required by chrome/renderer:renderer
 
 	if use headless ; then
 		myconf_gn+=" build_with_tflite_lib=false"
@@ -3025,10 +3028,11 @@ ewarn
 		myconf_gn+=" use_pulseaudio=false"
 		myconf_gn+=" use_vaapi=false"
 		myconf_gn+=" rtc_use_pipewire=false"
+		myconf_gn+=" toolkit_views=false"
 	else
 		myconf_gn+=" build_with_tflite_lib=$(usex ml true false)"
 		myconf_gn+=" enable_extensions=$(usex extensions true false)"
-		myconf_gn+=" enable_pdf=$(usex pdf true false)"
+		myconf_gn+=" enable_pdf=true" # required by chrome/browser/ui/lens:browser_tests and toolkit_views=true
 		myconf_gn+=" gtk_version=$(usex gtk4 4 3)"
 		myconf_gn+=" use_atk=$(usex accessibility true false)"
 		myconf_gn+=" use_cups=$(usex cups true false)"
@@ -3036,6 +3040,7 @@ ewarn
 		myconf_gn+=" use_pulseaudio=$(usex pulseaudio true false)"
 		myconf_gn+=" use_vaapi=$(usex vaapi true false)"
 		myconf_gn+=" rtc_use_pipewire=$(usex screencast true false)"
+		myconf_gn+=" toolkit_views=true"
 	fi
 
 	if use pdf || use cups ; then
