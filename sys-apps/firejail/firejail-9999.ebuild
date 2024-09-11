@@ -133,7 +133,7 @@ _AUTO_BLACKLIST=(
 	vim
 	wget
 	wget2
-#	xpra
+	xpra
 	xxd
 	xz
 	xzcat
