@@ -182,8 +182,8 @@
     The auto USE flag can be used add wrappers to /usr/local/bin with
     AUTO_BLACKLIST[PROFILE_NAME].  This will sandbox more X apps for more cautious
     people but increase protection and decrease data theft from biased programs.
-    The BLACKLIST is to prevent an unbootable system or those those prefer some
-    games/apps to be more performant.
+    The BLACKLIST is to prevent an unbootable system, prevent a broken package
+    manager, or those those prefer some games/apps to be more performant.
 
 
     Next round of proposals.
