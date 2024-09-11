@@ -200,9 +200,20 @@
     manager, or those those prefer some games/apps to be more performant.
 
 
-    Next round of proposals.
+    What should be sandboxed?
 
-    
+    1. Proprietary programs which are considered untrusted
+    2. End of Life programs/versions
+    3. Binary only programs
+    4. Network based programs
+    5. Programs that are capable of loading user generated content
+
+    If a program does not have a PROFILE_NAME.profile, you should either
+    make a .profile which is preferred or use the COMMAND environment
+    variable.
+
+
+    Next round of proposals.
 
   -->
   <upstream>
