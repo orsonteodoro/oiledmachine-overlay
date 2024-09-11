@@ -1662,7 +1662,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
-ebuild-revision-6
+ebuild-revision-7
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -3446,6 +3446,18 @@ einfo "Generating wrapper for ${profile_name}"
 		x11_arg="--x11"
 	elif is_x11_compat "${profile_name}" ; then
 		x11_arg="--x11" # autodetect
+	fi
+
+	local profile_path
+	if is_use_dotted "${u}" ; then
+		profile_path=$(find "${T}/profiles" "${T}/profiles_processed" "${S}/etc/profile"* -name $(get_dotted_fn "${u}")".profile")
+	else
+		profile_path=$(find "${T}/profiles" "${T}/profiles_processed" "${S}/etc/profile"* -name "${u}.profile")
+	fi
+
+	if [[ -n "${x11_arg}" ]] && grep -q -e "x11 none" "${profile_path}" ; then
+	# False positive
+		x11_arg=""
 	fi
 
 	local allocator_args=""
