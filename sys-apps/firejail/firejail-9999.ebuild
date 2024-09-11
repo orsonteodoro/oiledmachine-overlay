@@ -25,7 +25,7 @@ declare -A XEPHYR_WH
 declare -A X_BACKEND
 
 _AUTO_BLACKLIST=(
-# These could break emerge build system, system, or cause damage
+# These could break the emerge build system, the system login or console, or cause damage if firejailed.
 # Those that require root user should be added here.
 	_7z
 	_7za
