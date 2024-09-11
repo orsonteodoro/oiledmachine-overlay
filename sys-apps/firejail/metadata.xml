@@ -61,8 +61,8 @@
 
     ARGS[PROFILE_NAME] - Add the raw list of args to the wrapper for full control
 
-    AUTO_BLACKLIST[PROFILE_NAME] - Disable auto adding wrapper to /usr/local/bin. (UNIMPLEMENTED)
-    Valid values - 1 (disallow app), 0 (permit app), unset (permit app)
+    AUTO_BLACKLIST - Disable auto adding wrapper to /usr/local/bin as a space delimited list
+    Valid values - PROFILE_NAME, unset (permit app)
 
     LANDLOCK[PROFILE_NAME] - Restrict app file access.
     Valid values - 1 (restrict), 0 (unrestrict), unset (unrestrict)
@@ -141,6 +141,7 @@
       APPARMOR_PROFILE["chromium"]="chromium-browser"
       APPARMOR_PROFILE["firefox"]="default"
       ARGS[_7z]="--noprinters"
+      AUTO_BLACKLIST="node cargo"
       LANDLOCK["chromium"]=1
       LANDLOCK["firefox"]=1
       MALLOC_BACKEND["keepassxc"]="mimalloc"

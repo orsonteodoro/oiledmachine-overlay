@@ -9,7 +9,6 @@ EAPI=8
 declare -A _PROFILE_GRAPH
 declare -A APPARMOR_PROFILE
 declare -A ARGS
-declare -A AUTO_BLACKLIST
 declare -A BLACKLIST
 declare -A LANDLOCK
 declare -A LANDLOCK_PROC
@@ -1660,7 +1659,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
-ebuild-revision-4
+ebuild-revision-5
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -3615,7 +3614,7 @@ _install_one_profile() {
 		done
 
 		# User auto blacklist
-		for x in ${AUTO_BLACKLIST[@]} ; do
+		for x in ${AUTO_BLACKLIST} ; do
 			if [[ "${arg}" == "${x}" ]] ; then
 				return 0
 			fi
