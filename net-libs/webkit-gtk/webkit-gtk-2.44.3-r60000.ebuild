@@ -1994,6 +1994,36 @@ einfo "Time passed since the last security update:  ${dhms_passed}"
 	fi
 }
 
+check_ulimit() {
+	local current_ulimit=$(ulimit -n)
+	local ulimit
+	if use mold ; then
+	# See issue #851 in mold repo.
+		ulimit=${ULIMIT:-16384}
+	else
+	# The default
+		ulimit=${ULIMIT:-1024}
+	fi
+
+	if (( ${current_ulimit} < ${ulimit} )) ; then
+eerror
+eerror "The ulimit is too low and must be ${ulimit} or higher."
+eerror
+eerror "Expected ulimit:  ${ulimit}"
+eerror "Actual ulimit:  ${current_ulimit}"
+eerror
+eerror "To fix, follow exactly these steps."
+eerror
+eerror "1.  Add/change /etc/security/limits.conf with the following lines:"
+eerror "portage         soft    nofile      ${ulimit}"
+eerror "portage         hard    nofile      ${ulimit}"
+eerror "2.  Run \`ulimit -n ${ulimit}\`"
+eerror "3.  Run \`emerge =${CATEGORY}/${PN}-${PVR}\`"
+eerror
+		die
+	fi
+}
+
 pkg_setup() {
 	dhms_start
 ewarn
@@ -2073,9 +2103,7 @@ ewarn
 	fi
 
 	if ! use mold && is-flagq '-fuse-ld=mold' ; then
-eerror
 eerror "-fuse-ld=mold requires the mold USE flag."
-eerror
 		die
 	fi
 
@@ -2095,6 +2123,7 @@ einfo
 	check_page_size
 	verify_codecs
 	check_security_expire
+	check_ulimit
 }
 
 _check_langs() {
@@ -2447,34 +2476,6 @@ einfo "CPPFLAGS:  ${CPPFLAGS}"
 		-DUSE_LD_MOLD=OFF
 		-DUSE_LD_LLD=OFF
 	)
-
-	local current_ulimit=$(ulimit -n)
-	local ulimit
-	if use mold ; then
-	# See issue #851 in mold repo.
-		ulimit=${ULIMIT:-16384}
-	else
-	# The default
-		ulimit=${ULIMIT:-1024}
-	fi
-
-	if (( ${current_ulimit} < ${ulimit} )) ; then
-eerror
-eerror "The ulimit is too low and must be ${ulimit} or higher."
-eerror
-eerror "Expected ulimit:  ${ulimit}"
-eerror "Actual ulimit:  ${current_ulimit}"
-eerror
-eerror "To fix, follow exactly these steps."
-eerror
-eerror "1.  Add/change /etc/security/limits.conf with the following lines:"
-eerror "portage         soft    nofile      ${ulimit}"
-eerror "portage         hard    nofile      ${ulimit}"
-eerror "2.  Run \`ulimit -n ${ulimit}\`"
-eerror "3.  Run \`emerge =${CATEGORY}/${PN}-${PVR}\`"
-eerror
-		die
-	fi
 
 einfo "Add -flto to CFLAGS/CXXFLAGS and -fuse-ld=<bfd|gold|lld|mold> to LDFLAGS for LTO optimization."
 	local linker_type=$(check-linker_get_lto_type)
