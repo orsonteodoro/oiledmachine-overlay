@@ -232,8 +232,8 @@
     4. Anything that prevents access or the loading of the root user account.
     5. Anything that interferes with updating bootloader/initramfs/kernel.
 
-    Like was mentioned above, limited users should try to increase the coverage
-    by building links/wrappers within the user's home dir.
+    Like was mentioned above, limited users should try to increase the sandbox
+    coverage by building links/wrappers within the user's home dir.
     
 
     Next round of proposals.
