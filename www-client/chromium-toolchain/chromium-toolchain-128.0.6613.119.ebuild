@@ -11,15 +11,15 @@ inherit dhms
 GN_PV="0.2175"
 GN_COMMIT="b2afae122eeb6ce09c52d63f67dc53fc517dbdc8"
 LLVM_COMMIT="ecea8371"
+LLVM_N_COMMITS="14561"
 LLVM_OFFICIAL_SLOT="19" # Cr official slot
 LLVM_SUB_REV="3000"
-NUM_COMMITS="14561"
 # https://github.com/chromium/chromium/blob/128.0.6613.119/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_COMMIT="3cf924b934322fd7b514600a7dc84fc517515346"
 RUST_SUB_REV="3"
 RUST_PV="1.79.0" # Based on changelog
-VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${NUM_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
+VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${LLVM_N_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 
 inherit edo flag-o-matic ninja-utils
