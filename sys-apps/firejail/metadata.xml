@@ -26,16 +26,16 @@
 
     oiledmachine-overlay ebuild changes and ebuild additions:
 
-      -Improved Xpra support
-      -Enable or disable sound forwarding
-      -/usr/local/bin wrapper auto generation
-      ROP attack mitigations
-      Support for hardened mallocs
+      - Improved Xpra support
+      - Enable or disable sound forwarding
+      - /usr/local/bin wrapper auto generation
+      - ROP attack mitigations
+      - Support for hardened mallocs
 
     Ebuild fork goals:
 
-      -Minimize install bloat
-      -Make it easier to use program sandboxed.
+      - Minimize install bloat
+      - Make it easier to use program sandboxed
 
     Wrapper versus symlink
 
