@@ -231,6 +231,7 @@
     3. Programs that use the root user
     4. Anything that prevents access or the loading of the root user account
     5. Anything that interferes with updating bootloader/initramfs/kernel
+    6. Programs that may be used in ebuilds or build scripts
 
     Like was mentioned above, limited users should try to increase the sandbox
     coverage by building links/wrappers within the user's home dir.

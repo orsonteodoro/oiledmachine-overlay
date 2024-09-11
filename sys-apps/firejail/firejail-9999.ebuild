@@ -9,7 +9,6 @@ EAPI=8
 declare -A _PROFILE_GRAPH
 declare -A APPARMOR_PROFILE
 declare -A ARGS
-declare -A BLACKLIST
 declare -A COMMAND
 declare -A LANDLOCK
 declare -A LANDLOCK_PROC
@@ -28,6 +27,7 @@ declare -A X_BACKEND
 _AUTO_BLACKLIST=(
 # These could break the emerge build system, the system login or console, or cause damage if firejailed.
 # Those cli apps that require root user should be added here.
+# Commands that might be used in ebuilds or build scripts should be added.
 	_7z
 	_7za
 	_7zr
@@ -35,6 +35,7 @@ _AUTO_BLACKLIST=(
 	Xvfb
 	ar
 	b2sum
+	bibtex
 	bsdcat
 	bsdcpio
 	bsdtar
@@ -106,12 +107,15 @@ _AUTO_BLACKLIST=(
 #	more
 	nano
 	node
+	npm
 	p7zip
 	pandoc
 	patch
 	pdflatex
 	pdftotext
 	pip
+	pnpm
+	pnpx
 	pzstd
 	sum
 	sha1sum
@@ -145,6 +149,7 @@ _AUTO_BLACKLIST=(
 	xzgrep
 #	xzless
 #	xzmore
+	yarn
 	zcat
 	zcmp
 	zdiff
@@ -1665,7 +1670,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
-ebuild-revision-8
+ebuild-revision-9
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -3583,9 +3588,25 @@ einfo "Generating wrapper for ${profile_name}"
 
 	local args=""
 	if [[ -n "${ARGS[${profile_name}]}" ]] ; then
-		args="${args}"
+		args="${ARGS[${profile_name}]}"
 	fi
 
+	is_allowed_wrapper() {
+		local arg="${1}"
+		local blacklisted=(
+	# Any metaprofiles should go here
+			"x-terminal-emulator"
+		)
+		local x
+		for x in ${blacklisted[@]} ; do
+			if [[ "${arg}" == "${x}" ]] ; then
+				return 1
+			fi
+		done
+		return 0
+	}
+
+	if is_allowed_wrapper "${profile_name}" ; then
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}" || die
 #!/bin/bash
 if test -n "\${DISPLAY}" ; then
@@ -3594,8 +3615,9 @@ else
 	exec firejail ${apparmor_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} --profile="${raw_profile_name}" "${exe_path}" "\$@"
 fi
 EOF
-	fowners "root:root" "/usr/local/bin/${exe_name}"
-	fperms 0755 "/usr/local/bin/${exe_name}"
+		fowners "root:root" "/usr/local/bin/${exe_name}"
+		fperms 0755 "/usr/local/bin/${exe_name}"
+	fi
 
 	if [[ "${u}" == "firefox" && -e "/usr/bin/firefox-bin" ]] ; then
 einfo "Generating wrapper for firefox-bin"
@@ -3749,7 +3771,7 @@ eerror
 			exe_path="/usr/bin/${exe_name}"
 		fi
 
-		if use auto && use wrapper && [[ -e "${exe_path}" || "${u}" =~ "x-terminal-emulator" ]] && ! [[ "${u}" =~ "-common" ]] && ! [[ "${u}" =~ "-wrapper" ]] && ! is_auto_blacklisted "${u}" ; then
+		if use auto && use wrapper && [[ -e "${exe_path}" || "${u}" =~ "x-terminal-emulator" ]] && ! [[ "${u}" =~ "-common" ]] && ! [[ "${u}" =~ "-wrapper" ]] && ! is_auto_blacklisted "${profile_name}" ; then
 einfo "Auto adding ${u} profile"
 			local deps=( $(get_profile_deps ${_PROFILE_GRAPH[${profile_name}]}) )
 			queued_profile_deps+=( ${deps[@]} )
