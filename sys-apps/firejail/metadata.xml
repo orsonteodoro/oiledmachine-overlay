@@ -163,7 +163,7 @@
       X_BACKEND["xchat"]="auto"
 
       COMMAND["upscayl"]=1
-      ARGS["upscayl"]="--nosound --noprinters --noprofile --noprinters"
+      ARGS["upscayl"]="--nosound --noprinters --noprofile"
       MALLOC_BACKEND["upscayl"]="mimalloc"
       PATH_CORRECTION["upscayl"]="/usr/bin/upscayl"
       X_BACKEND["upscayl"]="xpra"
