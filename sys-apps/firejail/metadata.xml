@@ -130,7 +130,7 @@
     xephyr - runs the program using xephyr
     xpra - runs the program using xpra
     xvfb - runs the program using xvfb
-    unset - default as auto
+    unset - default as auto if x11 app.  otherwise, it will default to none for cli apps.
 
     Variables are in all capitals.
 
