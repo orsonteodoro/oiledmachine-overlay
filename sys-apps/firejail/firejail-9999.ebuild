@@ -26,7 +26,7 @@ declare -A X_BACKEND
 
 _AUTO_BLACKLIST=(
 # These could break the emerge build system, the system login or console, or cause damage if firejailed.
-# Those that require root user should be added here.
+# Those cli apps that require root user should be added here.
 	_7z
 	_7za
 	_7zr
