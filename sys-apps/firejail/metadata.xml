@@ -199,8 +199,13 @@
     The BLACKLIST is to prevent an unbootable system, prevent a broken package
     manager, or those those prefer some games/apps to be more performant.
 
+    When a program is AUTO_BLACKLIST, it means that it cannot be a
+    wrapper/symlink to /usr/share/bin/PROGRAM_NAME, but it is maybe
+    recommened to add a wrapper/symlink to some location in the home dir
+    so the non-root user can increase their sandbox coverage.
 
-    What should be sandboxed?
+
+    What should be sandboxed or wrapped/symlinked to /usr/share/bin/PROGRAM_NAME?
 
     1. Proprietary programs which are considered untrusted
     2. End of Life programs/versions
@@ -210,6 +215,17 @@
     6. Programs that are statically linked to vulnerable libraries
     7. Programs that have a unpatched vulnerability
     8. Doubious programs
+
+
+    What should NOT be sandboxed or NOT wrapped/symlinked to /usr/share/bin/PROGRAM_NAME?
+
+    1a. Anything that could interfere with portage.
+    1b. Anything that prevents emerge @system
+    2a. Anything that could break init.
+    2b. Anything that could break the display manager or login.
+    3. Programs that use the root user.
+    4. Anything that prevents access or the loading of the root user account.
+    
 
     If a program does not have a PROFILE_NAME.profile, you should either
     make a .profile which is preferred or use the COMMAND environment
