@@ -10,6 +10,7 @@ declare -A _PROFILE_GRAPH
 declare -A APPARMOR_PROFILE
 declare -A ARGS
 declare -A BLACKLIST
+declare -A COMMAND
 declare -A LANDLOCK
 declare -A LANDLOCK_PROC
 declare -A LANDLOCK_READ
@@ -3449,13 +3450,17 @@ einfo "Generating wrapper for ${profile_name}"
 	fi
 
 	local profile_path
-	if is_use_dotted "${u}" ; then
+	if [[ "${COMMAND[${exe_name}]}" == "1" ]] ; then
+		:
+	elif is_use_dotted "${u}" ; then
 		profile_path=$(find "${T}/profiles" "${T}/profiles_processed" "${S}/etc/profile"* -name $(get_dotted_fn "${u}")".profile")
 	else
 		profile_path=$(find "${T}/profiles" "${T}/profiles_processed" "${S}/etc/profile"* -name "${u}.profile")
 	fi
 
-	if [[ -n "${x11_arg}" ]] && grep -q -e "x11 none" "${profile_path}" ; then
+	if [[ "${COMMAND[${exe_name}]}" == "1" ]] ; then
+		:
+	elif [[ -n "${x11_arg}" ]] && grep -q -e "x11 none" "${profile_path}" ; then
 	# False positive
 		x11_arg=""
 	fi
@@ -3808,6 +3813,14 @@ src_install() {
 einfo "Auto copying ${u} as a missing profile dependency"
 				mv "${src}" "${dest}" || die
 			fi
+		done
+	fi
+
+	if (( "${#COMMAND[@]}" >= "1" )) ; then
+		local x
+		for x in ${!COMMAND[@]} ; do
+			local exe_name="${x}"
+			gen_wrapper "${exe_name}"
 		done
 	fi
 

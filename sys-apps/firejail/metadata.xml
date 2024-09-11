@@ -64,6 +64,13 @@
     AUTO_BLACKLIST - Disable auto adding wrapper to /usr/local/bin as a space delimited list
     Valid values - PROFILE_NAME, unset (permit app)
 
+    COMMAND[PROGRAM_NAME] - Create a wrapper without a profile.
+    Valid values - 1 (create), 0 (don't create)
+
+    The COMMAND[PROGRAM_NAME]="1" can be used to increase coverage of
+    sandboxed programs typically those without a PROFILE_NAME.  This
+    can use all the VAR_NAME[PROFILE_NAME] environment variables.
+
     LANDLOCK[PROFILE_NAME] - Restrict app file access.
     Valid values - 1 (restrict), 0 (unrestrict), unset (unrestrict)
 
@@ -155,6 +162,12 @@
       X_BACKEND["firefox"]="xpra"
       X_BACKEND["xchat"]="auto"
 
+      COMMAND["upscayl"]=1
+      ARGS["upscayl"]="--nosound --noprinters --noprofile --noprinters"
+      MALLOC_BACKEND["upscayl"]="mimalloc"
+      PATH_CORRECTION["upscayl"]="/usr/bin/upscayl"
+      X_BACKEND["upscayl"]="xpra"
+
     Contents of /etc/portage/package.env:
 
       sys-apps/firejail firejail.conf
@@ -189,10 +202,7 @@
 
     Next round of proposals.
 
-    Proposed environment variable for custom commands.
-
-    Introduce the COMMAND[PROGRAM_NAME]="ARGS" to increase coverage of
-    sandboxed programs typically those without a PROFILE_NAME.
+    
 
   -->
   <upstream>
