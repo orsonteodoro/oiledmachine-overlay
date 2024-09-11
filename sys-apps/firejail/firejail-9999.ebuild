@@ -1518,6 +1518,7 @@ firejail_profiles_zathura? ( || ( xephyr xpra ) )
 firejail_profiles_zeal? ( || ( xephyr xpra ) )
 firejail_profiles_zim? ( || ( xephyr xpra ) )
 firejail_profiles_zoom? ( || ( xephyr xpra ) )
+firejail_profiles_x-terminal-emulator? ( || ( xephyr xpra ) )
 "
 HARDENED_ALLOCATORS_IUSE=(
 	hardened_malloc
@@ -1615,6 +1616,7 @@ wireshark wireshark-gtk wireshark-qt x2goclient xchat xfburn xfce4-notes
 xfce4-screenshooter xmms xonotic xonotic-sdl xonotic-sdl-wrapper xpdf
 yandex-browser yelp youtube youtube-dl-gui youtube-viewer-gtk
 youtubemusic-nativefier ytmdesktop zathura zeal zim zoom
+x-terminal-emulator
 )
 
 inherit flag-o-matic linux-info python-single-r1 toolchain-funcs virtualx
@@ -2571,6 +2573,7 @@ einfo
 		vivaldi
 		vmware-player
 		vscodium
+		x-terminal-emulator
 		xchat
 		xfburn
 		xmms
@@ -3570,8 +3573,56 @@ cat <<EOF > "${ED}/usr/local/bin/${exe_name}-bin" || die
 #!/bin/bash
 exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} --profile="${raw_profile_name}" "/usr/bin/${exe_name}-bin" "\$@"
 EOF
-	fowners "root:root" "/usr/local/bin/${exe_name}-bin"
-	fperms 0755 "/usr/local/bin/${exe_name}-bin"
+		fowners "root:root" "/usr/local/bin/${exe_name}-bin"
+		fperms 0755 "/usr/local/bin/${exe_name}-bin"
+	elif [[ "${u}" == "x-terminal-emulator" ]] ; then
+		local terms=(
+			alacritty
+			aterm
+			cool-retro-term
+			gnome-terminal
+			guake
+			kitty
+			kterm
+			konsole
+			lxterminal
+			mate-terminal
+			ptyxis
+			qterminal
+			roxterm
+			rxvt-unicode
+			sakura
+			st
+			terminator
+			terminology
+			tilda
+			wezterm
+			xfce4-terminal
+			xterm
+			yakuake
+			yeahconsole
+			zutty
+		)
+		local exe_name
+		for exe_name in ${terms[@]} ; do
+			local exe_path=""
+			if [[ -n "${PATH_CORRECTION[${exe_name}]}" ]] ; then
+				exe_path="${PATH_CORRECTION[${exe_name}]}"
+			elif [[ -n "${_PATH_CORRECTION[${exe_name}]}" ]] ; then
+				exe_path="${_PATH_CORRECTION[${exe_name}]}"
+			elif [[ -e "/usr/bin/${exe_name}" ]] ; then
+				exe_path="/usr/bin/${exe_name}"
+			fi
+			if [[ -e "${exe_path}" && -n "${exe_name}" ]] ; then
+einfo "Generating wrapper for ${exe_name}"
+cat <<EOF > "${ED}/usr/local/bin/${exe_name}" || die
+#!/bin/bash
+exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} --profile="${raw_profile_name}" "${exe_path}" "\$@"
+EOF
+				fowners "root:root" "/usr/local/bin/${exe_name}"
+				fperms 0755 "/usr/local/bin/${exe_name}"
+			fi
+		done
 	fi
 }
 
@@ -3664,7 +3715,7 @@ eerror
 			exe_path="/usr/bin/${exe_name}"
 		fi
 
-		if use auto && use wrapper && [[ -e "${exe_path}" ]] && ! [[ "${u}" =~ "-common" ]] && ! [[ "${u}" =~ "-wrapper" ]] && ! is_auto_blacklisted "${u}" ; then
+		if use auto && use wrapper && [[ -e "${exe_path}" || "${u}" =~ "x-terminal-emulator" ]] && ! [[ "${u}" =~ "-common" ]] && ! [[ "${u}" =~ "-wrapper" ]] && ! is_auto_blacklisted "${u}" ; then
 einfo "Auto adding ${u} profile"
 			local deps=( $(get_profile_deps ${_PROFILE_GRAPH[${profile_name}]}) )
 			queued_profile_deps+=( ${deps[@]} )
