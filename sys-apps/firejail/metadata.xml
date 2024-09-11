@@ -234,6 +234,9 @@
 
     Like was mentioned above, limited users should try to increase the sandbox
     coverage by building links/wrappers within the user's home dir.
+
+    You can use the AUTO_BLACKLIST or delete /usr/local/bin/PROGRAM_NAME
+    if you suspect breakage in your configuration.
     
 
     Next round of proposals.
