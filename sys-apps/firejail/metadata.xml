@@ -26,7 +26,7 @@
 
     oiledmachine-overlay ebuild changes and ebuild additions:
 
-      -Improved xpra support
+      -Improved Xpra support
       -Enable or disable sound forwarding
       -/usr/local/bin wrapper auto generation
       ROP attack mitigations
@@ -120,24 +120,24 @@
     SECCOMP_KEEP[PROFILE_NAME] - Enable seccomp with whitelisted syscalls separated with comma
     Valid values:  SYSCALL1; SYSCALL1,SYSCALL2; SYSCALL1,SYSCALL2,...; unset (don't apply)
 
-    XEPHYR_WH[PROFILE_NAME] - Set the default window size for x11 apps that
+    XEPHYR_WH[PROFILE_NAME] - Set the default window size for X11 apps that
     are sandboxed with the zephyr backend.
     Valid values:  WIDTHxHEIGHT, 800x600 (default)
 
-    X_BACKEND[PROFILE_NAME] - Select the x11 sandbox backend.
+    X_BACKEND[PROFILE_NAME] - Select the X11 sandbox backend.
     Valid values:
-    /dev/null - uses xvfb
-    auto - tries xpra first, xephyr second
+    /dev/null - uses Xvfb
+    auto - tries Xpra first, Xephyr second, X11 security extension third
     disable - do not add any flags
-    headless - uses the xvfb
-    game - uses xpra
-    gaming - uses xpra
+    headless - uses the Xvfb
+    game - uses Xpra
+    gaming - uses Xpra
     none - do not add any flags
-    opengl - uses xpra
-    xephyr - runs the program using xephyr
-    xpra - runs the program using xpra
-    xvfb - runs the program using xvfb
-    unset - default as auto if x11 app.  otherwise, it will default to none for cli apps.
+    opengl - uses Xpra
+    xephyr - runs the program using Xephyr
+    xpra - runs the program using Xpra
+    xvfb - runs the program using Xvfb
+    unset - default as auto if X11 app.  otherwise, it will default to none for cli apps.
 
     Variables are in all capitals.
 
@@ -311,7 +311,7 @@
       Performs testing on the FireJail profiles.  Expect longer testing time.
     </flag>
     <flag name="test-x11">
-      Performs testing on the x11 portions
+      Performs testing on the X11 portions
     </flag>
     <flag name="userns">
       Enable attaching a new user namespace to a sandbox (--noroot option)
@@ -321,13 +321,13 @@
       (It may crash programs or programs may not prefer untrusted mode.)
     </flag>
     <flag name="xpra">
-      Enable xpra support for windowed apps and better OpenGL support.
+      Enable Xpra support for windowed apps and better OpenGL support.
     </flag>
     <flag name="xvfb">
-      Enable xvfb support for sandboxing remote access or headless servers.
+      Enable Xvfb support for sandboxing remote access or headless servers.
     </flag>
     <flag name="xephyr">
-      Enable xephyr support for windowed apps.
+      Enable Xephyr support for windowed apps.
     </flag>
     <flag name="wrapper">
       Add USE enabled wrappers to /etc/local/bin to immediately use the program

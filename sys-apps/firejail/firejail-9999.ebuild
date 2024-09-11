@@ -3447,8 +3447,14 @@ einfo "Generating wrapper for ${profile_name}"
 		x11_arg="--x11=xvfb"
 	elif [[ "${X_BACKEND[${profile_name}]}" == "auto" ]] ; then
 		x11_arg="--x11"
-	elif is_x11_compat "${profile_name}" ; then
+	elif is_x11_compat "${profile_name}" && use xephyr && use xpra ; then
 		x11_arg="--x11" # autodetect
+	elif is_x11_compat "${profile_name}" && use xephyr ; then
+		x11_arg="--x11=xephyr"
+	elif is_x11_compat "${profile_name}" && use xpra ; then
+		x11_arg="--x11=xpra"
+	elif is_x11_compat "${profile_name}" ; then
+		x11_arg="--x11=xorg"
 	fi
 
 	local profile_path
