@@ -534,6 +534,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_libnftnl
 	ot-kernel-pkgflags_libomp
 	ot-kernel-pkgflags_libpulse
+	ot-kernel-pkgflags_libseccomp
 	ot-kernel-pkgflags_libsdl2
 	ot-kernel-pkgflags_libteam
 	ot-kernel-pkgflags_libu2f_host
@@ -6112,6 +6113,17 @@ ot-kernel-pkgflags_libpulse() { # DONE
 	if ot-kernel_has_version_pkgflags "media-libs/libpulse" ; then
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		_ot-kernel_set_shmem
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_libseccomp
+# @DESCRIPTION:
+# Applies kernel config flags for the libseccomp package
+ot-kernel-pkgflags_libseccomp() { # DONE
+	local pkg="sys-libs/libseccomp"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+	# This was not checked in the distro's ebuild.
+		_ot-kernel_set_seccomp_bpf "${pkg}"
 	fi
 }
 
@@ -13889,6 +13901,7 @@ einfo "#! shebang support:  OFF"
 # @DESCRIPTION:
 # Enable Seccomp BPF
 _ot-kernel_set_seccomp_bpf() { # DONE
+	local pkg="${1}"
 	# The userland program will have SECCOMP_MODE_FILTER symbol..
 	ot-kernel_y_configopt "CONFIG_NET" # Enables BPF implicitly
 	ot-kernel_y_configopt "CONFIG_SECCOMP"
