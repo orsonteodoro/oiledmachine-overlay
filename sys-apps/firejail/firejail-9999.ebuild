@@ -26,6 +26,7 @@ declare -A X_BACKEND
 
 _AUTO_BLACKLIST=(
 # These could break emerge build system, system, or cause damage
+# Those that require root user should be added here.
 	_7z
 	_7za
 	_7zr
@@ -60,7 +61,7 @@ _AUTO_BLACKLIST=(
 	gconf-merge-tree
 	gconfpkg
 	gconftool-2
-#	git
+	git
 	gunzip
 	gsettings
 	gsettings-data-convert
@@ -1661,7 +1662,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
-ebuild-revision-5
+ebuild-revision-6
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
