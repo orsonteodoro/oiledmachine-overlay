@@ -216,6 +216,10 @@
     7. Programs that have a unpatched vulnerability
     8. Doubious programs
 
+    If a program does not have a PROFILE_NAME.profile, you should either
+    make a .profile which is preferred or use the COMMAND environment
+    variable.
+
 
     What should NOT be sandboxed or NOT wrapped/symlinked to /usr/share/bin/PROGRAM_NAME?
 
@@ -226,11 +230,6 @@
     3. Programs that use the root user.
     4. Anything that prevents access or the loading of the root user account.
     
-
-    If a program does not have a PROFILE_NAME.profile, you should either
-    make a .profile which is preferred or use the COMMAND environment
-    variable.
-
 
     Next round of proposals.
 
