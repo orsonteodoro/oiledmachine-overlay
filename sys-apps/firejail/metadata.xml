@@ -200,13 +200,13 @@
     manager, or those those prefer some games/apps to be more performant.
 
     When a program is AUTO_BLACKLIST, it means that it cannot be a
-    wrapper/symlink to /usr/share/bin/PROGRAM_NAME, but it is maybe
+    wrapper/symlink to /usr/local/bin/PROGRAM_NAME, but it is maybe
     recommened to add a wrapper/symlink to some location in the home dir
     so the non-root user can increase their sandbox coverage.
 
 
     What should be sandboxed or wrapped/symlinked to
-    /usr/share/bin/PROGRAM_NAME?
+    /usr/local/bin/PROGRAM_NAME?
 
     1. Proprietary programs which are considered untrusted
     2. End of Life programs/versions
@@ -222,7 +222,7 @@
 
 
     What should NOT be sandboxed or NOT wrapped/symlinked to
-    /usr/share/bin/PROGRAM_NAME?
+    /usr/local/bin/PROGRAM_NAME?
 
     1a. Anything that could interfere with portage.
     1b. Anything that prevents emerge @system
