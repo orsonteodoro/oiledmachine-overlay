@@ -3321,6 +3321,23 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 		replace-flags "-O*" "-O1"
 	fi
 
+	#
+	# Turn off all the static checker stuff, linter stuff, style formatting
+	# stuff that is supposed to be only enabled in upstream and dev
+	# branches.
+	#
+	# These are assumed to only do fatal checks but do not actually
+	# fix/modify anything.
+	#
+	# See
+	# build/config/clang/BUILD.gn
+	# build/config/clang/clang.gni
+	#
+	myconf_gn+=" clang_use_chrome_plugins=false"
+	myconf_gn+=" clang_use_raw_ptr_plugin=false"
+	myconf_gn+=" enable_check_raw_ptr_fields=false"
+	myconf_gn+=" enable_check_raw_ref_fields=false"
+
 	if use official ; then
 		:
 	elif is-flagq "-Ofast" ; then
