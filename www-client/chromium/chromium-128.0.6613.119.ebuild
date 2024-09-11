@@ -1655,6 +1655,36 @@ einfo "Time passed since the last security update:  ${dhms_passed}"
 	fi
 }
 
+check_ulimit() {
+	local current_ulimit=$(ulimit -n)
+	local ulimit
+	if use mold ; then
+	# See issue #336 in the mold repo.
+		ulimit=${ULIMIT:-16384}
+	else
+	# The final link uses lots of file descriptors.
+		ulimit=${ULIMIT:-2048}
+	fi
+
+	if (( ${current_ulimit} < ${ulimit} )) ; then
+eerror
+eerror "The ulimit is too low and must be ${ulimit} or higher."
+eerror
+eerror "Expected ulimit:  ${ulimit}"
+eerror "Actual ulimit:  ${current_ulimit}"
+eerror
+eerror "To fix, follow exactly these steps."
+eerror
+eerror "1.  Add/change /etc/security/limits.conf with the following lines:"
+eerror "portage         soft    nofile      ${ulimit}"
+eerror "portage         hard    nofile      ${ulimit}"
+eerror "2.  Run \`ulimit -n ${ulimit}\`"
+eerror "3.  Run \`emerge =${CATEGORY}/${PN}-${PVR}\`"
+eerror
+		die
+	fi
+}
+
 pkg_setup() {
 	# The emerge package system will over prune when it should not when it
 	# uses the mv merge technique with sandbox disabled.
@@ -1837,6 +1867,7 @@ einfo
 	( use system-dav1d || use system-libaom ) && cflags-depends_check
 	node_pkg_setup
 	check_security_expire
+	check_ulimit
 }
 
 src_unpack() {
@@ -3979,34 +4010,6 @@ _get_s() {
 _src_compile() {
 	export s=$(_get_s)
 	cd "${s}" || die
-
-	local current_ulimit=$(ulimit -n)
-	local ulimit
-	if use mold ; then
-	# See issue #336 in the mold repo.
-		ulimit=${ULIMIT:-16384}
-	else
-	# The final link uses lots of file descriptors.
-		ulimit=${ULIMIT:-2048}
-	fi
-
-	if (( ${current_ulimit} < ${ulimit} )) ; then
-eerror
-eerror "The ulimit is too low and must be ${ulimit} or higher."
-eerror
-eerror "Expected ulimit:  ${ulimit}"
-eerror "Actual ulimit:  ${current_ulimit}"
-eerror
-eerror "To fix, follow exactly these steps."
-eerror
-eerror "1.  Add/change /etc/security/limits.conf with the following lines:"
-eerror "portage         soft    nofile      ${ulimit}"
-eerror "portage         hard    nofile      ${ulimit}"
-eerror "2.  Run \`ulimit -n ${ulimit}\`"
-eerror "3.  Run \`emerge =${CATEGORY}/${PN}-${PVR}\`"
-eerror
-		die
-	fi
 
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
