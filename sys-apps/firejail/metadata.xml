@@ -205,7 +205,8 @@
     so the non-root user can increase their sandbox coverage.
 
 
-    What should be sandboxed or wrapped/symlinked to /usr/share/bin/PROGRAM_NAME?
+    What should be sandboxed or wrapped/symlinked to
+    /usr/share/bin/PROGRAM_NAME?
 
     1. Proprietary programs which are considered untrusted
     2. End of Life programs/versions
@@ -216,12 +217,12 @@
     7. Programs that have a unpatched vulnerability
     8. Doubious programs
 
-    If a program does not have a PROFILE_NAME.profile, you should either
-    make a .profile which is preferred or use the COMMAND environment
-    variable.
+    If a program does not have a PROFILE_NAME.profile, you should either make a
+    .profile which is preferred or use the COMMAND environment variable.
 
 
-    What should NOT be sandboxed or NOT wrapped/symlinked to /usr/share/bin/PROGRAM_NAME?
+    What should NOT be sandboxed or NOT wrapped/symlinked to
+    /usr/share/bin/PROGRAM_NAME?
 
     1a. Anything that could interfere with portage.
     1b. Anything that prevents emerge @system
@@ -229,6 +230,10 @@
     2b. Anything that could break the display manager or login.
     3. Programs that use the root user.
     4. Anything that prevents access or the loading of the root user account.
+    5. Anything that interferes with updating bootloader/initramfs/kernel.
+
+    Like was mentioned above, limited users should try to increase the coverage
+    by building links/wrappers within the user's home dir.
     
 
     Next round of proposals.
