@@ -1,11 +1,12 @@
 --- a/build_overrides/build.gni.orig	2024-09-02 14:02:01.095592300 -0700
 +++ b/build_overrides/build.gni	2024-09-11 13:08:56.363204503 -0700
-@@ -29,6 +29,10 @@ build_with_v8_embedder = build_with_chro
+@@ -29,6 +29,11 @@ build_with_v8_embedder = build_with_chro
  # `use_custom_libcxx = true`.
  enable_safe_libcxx = true
  
 +declare_args() {
 +  custom_optimization_level = ""
++  v8_custom_optimization_level = ""
 +}
 +
  # Features used by //base/trace_event and //services/tracing.
@@ -579,7 +580,7 @@
    # Emit CET IBT landing pad instructions in JIT generated code (experimental).
    v8_enable_cet_ibt = false
 +
-+  v8_custom_optimization_level = ""
++  #v8_custom_optimization_level = ""
  }
  
  if (v8_use_external_startup_data == "") {
