@@ -293,9 +293,9 @@
       Enable system call filtering
     </flag>
     <flag name="selfrando">
-      Enable Selfrando to shuffle functions which may contain ROP gadgets to
-      mitigate against ROP attack using ChaCha20 as the PSRNG (Pseudo Random
-      Number Generator).
+      Enable Selfrando to mitigate against ROP attacks by shuffling functions,
+      which may contain ROP gadgets, using ChaCha20 as the PSRNG (Pseudo
+      Random Number Generator).
 
       If the USE flag is disabled, it will do ROP mitigations using
       shuffle-sections linker option.
