@@ -224,13 +224,13 @@
     What should NOT be sandboxed or NOT wrapped/symlinked to
     /usr/local/bin/PROGRAM_NAME?
 
-    1a. Anything that could interfere with portage.
+    1a. Anything that could interfere with portage
     1b. Anything that prevents emerge @system or the unemerging of Firejail
-    2a. Anything that could break init.
-    2b. Anything that could break the display manager or login.
-    3. Programs that use the root user.
-    4. Anything that prevents access or the loading of the root user account.
-    5. Anything that interferes with updating bootloader/initramfs/kernel.
+    2a. Anything that could break init
+    2b. Anything that could break the display manager or login
+    3. Programs that use the root user
+    4. Anything that prevents access or the loading of the root user account
+    5. Anything that interferes with updating bootloader/initramfs/kernel
 
     Like was mentioned above, limited users should try to increase the sandbox
     coverage by building links/wrappers within the user's home dir.
