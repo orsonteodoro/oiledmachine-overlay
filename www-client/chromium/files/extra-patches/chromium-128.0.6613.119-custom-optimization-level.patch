@@ -1,5 +1,5 @@
 --- a/build_overrides/build.gni.orig	2024-09-02 14:02:01.095592300 -0700
-+++ b/build_overrides/build.gni	2024-09-08 11:41:32.802134094 -0700
++++ b/build_overrides/build.gni	2024-09-11 13:08:56.363204503 -0700
 @@ -29,6 +29,10 @@ build_with_v8_embedder = build_with_chro
  # `use_custom_libcxx = true`.
  enable_safe_libcxx = true
@@ -12,21 +12,137 @@
  declare_args() {
    # Tracing support requires //third_party/perfetto, which is not available in
 --- a/v8/BUILD.gn.orig	2024-09-02 14:05:15.081257300 -0700
-+++ b/v8/BUILD.gn	2024-09-07 21:37:32.238519079 -0700
-@@ -436,6 +436,8 @@ declare_args() {
-   v8_enable_experimental_tsa_builtins = false
- 
-   v8_dcheck_always_on = dcheck_always_on
-+
-+  v8_custom_optimization_level = ""
++++ b/v8/BUILD.gn	2024-09-11 13:25:04.023165188 -0700
+@@ -1763,9 +1763,15 @@ config("always_turbofanimize") {
+   # TODO(crbug.com/621335) Rework this so that we don't have the confusion
+   # between "optimize_speed" and "optimize_max".
+   if (((is_posix && !is_android) || is_fuchsia || is_win) && !using_sanitizer) {
+-    configs += [ "//build/config/compiler:optimize_speed" ]
++    configs += [
++      "//build/config/compiler:optimize_speed",
++      "//build/config/compiler:v8_custom_optimization_config"
++    ]
+   } else {
+-    configs += [ "//build/config/compiler:optimize_max" ]
++    configs += [
++      "//build/config/compiler:optimize_max",
++      "//build/config/compiler:v8_custom_optimization_config"
++    ]
+   }
  }
  
- # Derived defaults.
-@@ -740,6 +742,36 @@ v8_toolset_for_shell = "host"
- # Configurations
- #
+@@ -6701,7 +6707,10 @@ if (v8_use_libm_trig_functions) {
+     configs -= [ "//build/config/compiler:chromium_code" ]
+     if (!is_debug) {
+       # Build code using -O3, see: crbug.com/1084371.
+-      configs += [ "//build/config/compiler:optimize_speed" ]
++      configs += [
++        "//build/config/compiler:optimize_speed",
++        "//build/config/compiler:v8_custom_optimization_config"
++      ]
+     }
+   }
+ }
+--- a/build/config/compiler/BUILD.gn.orig	2024-09-11 12:58:15.321775876 -0700
++++ b/build/config/compiler/BUILD.gn	2024-09-11 13:24:22.771850707 -0700
+@@ -202,6 +202,7 @@ declare_args() {
+   simple_template_names = is_clang && !is_nacl && !is_win && !is_apple
  
-+config("custom_optimization_config") {
+   #use_mold = false
++  #custom_optimization_level = ""
+ }
+ 
+ declare_args() {
+@@ -2496,7 +2497,7 @@ config("optimize") {
+     # `-O2`. But for rust, `-Copt-level=3` is the default and is thus reliable
+     # to use.
+     rustflags = [ "-Copt-level=3" ]
+-  } else if (optimize_for_size || is_chromeos) {
++  } else if ((optimize_for_size || is_chromeos) && custom_optimization_level == "") {
+     # Favor size over speed.
+     # -Os in clang is more of a size-conscious -O2 than "size at any cost"
+     # (AKA -Oz).
+@@ -2518,12 +2519,24 @@ config("optimize") {
+     # vectorization while otherwise optimizing for size.
+     rustflags = [ "-Copt-level=s" ]
+   } else {
+-    cflags = [ "-O2" ] + common_optimize_on_cflags
++    if (custom_optimization_level != "" && custom_optimization_level == "fast" && !is_clang) {
++      cflags = [ "-O$custom_optimization_level", "-fno-allow-store-data-races" ] + common_optimize_on_cflags
++    } else if (custom_optimization_level != "") {
++      cflags = [ "-O$custom_optimization_level" ] + common_optimize_on_cflags
++    } else {
++      cflags = [ "-O2" ] + common_optimize_on_cflags
++    }
+ 
+     # The `-O3` for clang turns on extra optimizations compared to the standard
+     # `-O2`. But for rust, `-Copt-level=3` is the default and is thus reliable
+     # to use.
+-    rustflags = [ "-Copt-level=3" ]
++    if (custom_optimization_level != "" && custom_optimization_level == "fast") {
++      rustflags = [ "-Copt-level=3" ]
++    } else if (custom_optimization_level != "" && custom_optimization_level == "fast") {
++      rustflags = [ "-Copt-level=$custom_optimization_level" ]
++    } else {
++      rustflags = [ "-Copt-level=3" ]
++    }
+   }
+   ldflags = common_optimize_on_ldflags
+ }
+@@ -2589,9 +2602,21 @@ config("optimize_max") {
+     } else if (optimize_for_fuzzing) {
+       cflags = [ "-O1" ] + common_optimize_on_cflags
+     } else {
+-      cflags = [ "-O2" ] + common_optimize_on_cflags
++      if (custom_optimization_level != "" && custom_optimization_level == "fast" && !is_clang) {
++        cflags = [ "-O$custom_optimization_level", "-fno-allow-store-data-races" ] + common_optimize_on_cflags
++      } else if (custom_optimization_level != "") {
++        cflags = [ "-O$custom_optimization_level" ] + common_optimize_on_cflags
++      } else {
++        cflags = [ "-O2" ] + common_optimize_on_cflags
++      }
++    }
++    if (custom_optimization_level != "" && custom_optimization_level == "fast") {
++      rustflags = [ "-Copt-level=3" ]
++    } else if (custom_optimization_level != "" && custom_optimization_level == "fast") {
++      rustflags = [ "-Copt-level=$custom_optimization_level" ]
++    } else {
++      rustflags = [ "-Copt-level=3" ]
+     }
+-    rustflags = [ "-Copt-level=3" ]
+   }
+ }
+ 
+@@ -2625,9 +2650,21 @@ config("optimize_speed") {
+     } else if (optimize_for_fuzzing) {
+       cflags = [ "-O1" ] + common_optimize_on_cflags
+     } else {
+-      cflags = [ "-O3" ] + common_optimize_on_cflags
++      if (custom_optimization_level != "" && custom_optimization_level == "fast" && !is_clang) {
++        cflags = [ "-O$custom_optimization_level", "-fno-allow-store-data-races" ] + common_optimize_on_cflags
++      } else if (custom_optimization_level != "") {
++        cflags = [ "-O$custom_optimization_level" ] + common_optimize_on_cflags
++      } else {
++        cflags = [ "-O3" ] + common_optimize_on_cflags
++      }
++    }
++    if (custom_optimization_level != "" && custom_optimization_level == "fast") {
++      rustflags = [ "-Copt-level=3" ]
++    } else if (custom_optimization_level != "") {
++      rustflags = [ "-Copt-level=$custom_optimization_level" ]
++    } else {
++      rustflags = [ "-Copt-level=3" ]
+     }
+-    rustflags = [ "-Copt-level=3" ]
+   }
+ }
+ 
+@@ -3103,3 +3140,33 @@ config("cet_shadow_stack") {
+     ldflags = [ "/CETCOMPAT" ]
+   }
+ }
++
++config("v8_custom_optimization_config") {
 +  cflags = []
 +  if (v8_custom_optimization_level != "") {
 +    if (is_win) {
@@ -55,100 +171,8 @@
 +    }
 +  }
 +}
-+
- config("internal_config_base") {
-   # Only targets in this file and its subdirs can depend on this.
-   visibility = [ "./*" ]
-@@ -1763,9 +1785,15 @@ config("always_turbofanimize") {
-   # TODO(crbug.com/621335) Rework this so that we don't have the confusion
-   # between "optimize_speed" and "optimize_max".
-   if (((is_posix && !is_android) || is_fuchsia || is_win) && !using_sanitizer) {
--    configs += [ "//build/config/compiler:optimize_speed" ]
-+    configs += [
-+      "//build/config/compiler:optimize_speed",
-+      ":custom_optimization_config"
-+    ]
-   } else {
--    configs += [ "//build/config/compiler:optimize_max" ]
-+    configs += [
-+      "//build/config/compiler:optimize_max",
-+      ":custom_optimization_config"
-+    ]
-   }
- }
- 
-@@ -6701,7 +6729,10 @@ if (v8_use_libm_trig_functions) {
-     configs -= [ "//build/config/compiler:chromium_code" ]
-     if (!is_debug) {
-       # Build code using -O3, see: crbug.com/1084371.
--      configs += [ "//build/config/compiler:optimize_speed" ]
-+      configs += [
-+        "//build/config/compiler:optimize_speed",
-+        ":custom_optimization_config"
-+      ]
-     }
-   }
- }
---- a/build/config/compiler/BUILD.gn.orig	2024-09-07 19:42:17.996694206 -0700
-+++ b/build/config/compiler/BUILD.gn	2024-09-07 20:25:46.204713977 -0700
-@@ -202,6 +202,7 @@ declare_args() {
-   simple_template_names = is_clang && !is_nacl && !is_win && !is_apple
- 
-   #use_mold = false
-+  #custom_optimization_level = ""
- }
- 
- declare_args() {
-@@ -2589,9 +2590,21 @@ config("optimize_max") {
-     } else if (optimize_for_fuzzing) {
-       cflags = [ "-O1" ] + common_optimize_on_cflags
-     } else {
--      cflags = [ "-O2" ] + common_optimize_on_cflags
-+      if (custom_optimization_level != "" && custom_optimization_level == "fast" && !is_clang) {
-+        cflags = [ "-O$custom_optimization_level", "-fno-allow-store-data-races" ] + common_optimize_on_cflags
-+      } else if (custom_optimization_level != "") {
-+        cflags = [ "-O$custom_optimization_level" ] + common_optimize_on_cflags
-+      } else {
-+        cflags = [ "-O2" ] + common_optimize_on_cflags
-+      }
-+    }
-+    if (custom_optimization_level != "" && custom_optimization_level == "fast") {
-+      rustflags = [ "-Copt-level=3" ]
-+    } else if (custom_optimization_level != "" && custom_optimization_level == "fast") {
-+      rustflags = [ "-Copt-level=$custom_optimization_level" ]
-+    } else {
-+      rustflags = [ "-Copt-level=3" ]
-     }
--    rustflags = [ "-Copt-level=3" ]
-   }
- }
- 
-@@ -2625,9 +2636,21 @@ config("optimize_speed") {
-     } else if (optimize_for_fuzzing) {
-       cflags = [ "-O1" ] + common_optimize_on_cflags
-     } else {
--      cflags = [ "-O3" ] + common_optimize_on_cflags
-+      if (custom_optimization_level != "" && custom_optimization_level == "fast" && !is_clang) {
-+        cflags = [ "-O$custom_optimization_level", "-fno-allow-store-data-races" ] + common_optimize_on_cflags
-+      } else if (custom_optimization_level != "") {
-+        cflags = [ "-O$custom_optimization_level" ] + common_optimize_on_cflags
-+      } else {
-+        cflags = [ "-O3" ] + common_optimize_on_cflags
-+      }
-+    }
-+    if (custom_optimization_level != "" && custom_optimization_level == "fast") {
-+      rustflags = [ "-Copt-level=3" ]
-+    } else if (custom_optimization_level != "") {
-+      rustflags = [ "-Copt-level=$custom_optimization_level" ]
-+    } else {
-+      rustflags = [ "-Copt-level=3" ]
-     }
--    rustflags = [ "-Copt-level=3" ]
-   }
- }
- 
 --- a/third_party/libvpx/BUILD.gn.orig	2024-09-02 14:02:41.906890200 -0700
-+++ b/third_party/libvpx/BUILD.gn	2024-09-07 21:31:33.376399297 -0700
++++ b/third_party/libvpx/BUILD.gn	2024-09-11 13:08:56.391204041 -0700
 @@ -10,6 +10,10 @@ import("//third_party/libvpx/libvpx_srcs
  import("//third_party/libvpx/libvpx_test_srcs.gni")
  import("//third_party/nasm/nasm_assemble.gni")
@@ -197,7 +221,7 @@
        # libvpx heavily relies on implicit enum casting.
        "-Wno-conversion",
  
-@@ -97,7 +118,7 @@ config("libvpx_config") {
+@@ -97,7 +128,7 @@ config("libvpx_config") {
        "-Wno-unused-function",
      ]
    } else if (!is_win) {
@@ -207,7 +231,7 @@
        "-Wno-sign-compare",
      ]
 --- a/third_party/openh264/BUILD.gn.orig	2024-09-02 14:02:42.386928800 -0700
-+++ b/third_party/openh264/BUILD.gn	2024-09-07 21:26:30.145373002 -0700
++++ b/third_party/openh264/BUILD.gn	2024-09-11 13:08:56.407203777 -0700
 @@ -7,11 +7,42 @@ import("//build/config/sanitizers/saniti
  import("//third_party/nasm/nasm_assemble.gni")
  import("//third_party/openh264/openh264_sources.gni")
@@ -252,7 +276,7 @@
      # HAVE_NEON and __chromeos__ are needed for enabling NEON on ChromeOS
      # devices.
 --- a/third_party/rnnoise/BUILD.gn.orig	2024-09-02 14:02:43.041982000 -0700
-+++ b/third_party/rnnoise/BUILD.gn	2024-09-07 21:26:31.349353245 -0700
++++ b/third_party/rnnoise/BUILD.gn	2024-09-11 13:08:56.407203777 -0700
 @@ -4,11 +4,46 @@
  
  import("//testing/test.gni")
@@ -301,7 +325,7 @@
      "src/rnn_activations.h",
      "src/rnn_vad_weights.cc",
 --- a/third_party/tflite/BUILD.gn.orig	2024-09-02 14:02:44.181074000 -0700
-+++ b/third_party/tflite/BUILD.gn	2024-09-07 21:26:34.069308610 -0700
++++ b/third_party/tflite/BUILD.gn	2024-09-11 13:08:56.443203181 -0700
 @@ -13,6 +13,10 @@ import("//third_party/protobuf/proto_lib
  import("//third_party/tflite/features.gni")
  import("//third_party/tflite/tflite_target.gni")
@@ -350,7 +374,7 @@
      "-Wno-comment",
      "-Wno-extern-c-compat",
 --- a/third_party/dav1d/BUILD.gn.orig	2024-09-02 14:02:41.062821900 -0700
-+++ b/third_party/dav1d/BUILD.gn	2024-09-07 21:31:31.488430249 -0700
++++ b/third_party/dav1d/BUILD.gn	2024-09-11 13:08:56.447203116 -0700
 @@ -8,6 +8,10 @@ import("//build/config/compiler/compiler
  import("//build/config/sanitizers/sanitizers.gni")
  import("//third_party/nasm/nasm_assemble.gni")
@@ -402,7 +426,7 @@
    "-D_POSIX_C_SOURCE=200112L",
  ]
 --- a/third_party/libaom/BUILD.gn.orig	2024-09-02 14:02:41.793881000 -0700
-+++ b/third_party/libaom/BUILD.gn	2024-09-07 21:29:39.938259389 -0700
++++ b/third_party/libaom/BUILD.gn	2024-09-11 13:08:56.487202455 -0700
 @@ -12,6 +12,10 @@ import("//third_party/libaom/libaom_test
  import("//third_party/libaom/options.gni")
  import("//third_party/nasm/nasm_assemble.gni")
@@ -449,7 +473,7 @@
  
  # This config is applied to targets that depend on libaom.
 --- a/third_party/ruy/BUILD.gn.orig	2024-09-02 14:02:43.878049400 -0700
-+++ b/third_party/ruy/BUILD.gn	2024-09-07 21:32:24.035568828 -0700
++++ b/third_party/ruy/BUILD.gn	2024-09-11 13:08:56.507202124 -0700
 @@ -5,6 +5,10 @@
  import("//build/config/arm.gni")
  import("//third_party/cpuinfo/cpuinfo.gni")
@@ -500,7 +524,7 @@
  }
  
 --- a/third_party/xnnpack/BUILD.gn.orig	2024-09-02 14:02:45.288163200 -0700
-+++ b/third_party/xnnpack/BUILD.gn	2024-09-07 21:33:28.294515598 -0700
++++ b/third_party/xnnpack/BUILD.gn	2024-09-11 13:08:56.511202058 -0700
 @@ -16,6 +16,10 @@
  
  import("//build/config/android/config.gni")
@@ -548,3 +572,23 @@
      "-Wno-unused-function",
      "-Wno-deprecated-comma-subscript",
    ]
+--- a/v8/gni/v8.gni.orig	2024-09-02 14:05:15.085257500 -0700
++++ b/v8/gni/v8.gni	2024-09-11 13:25:05.775136071 -0700
+@@ -172,6 +172,8 @@ declare_args() {
+ 
+   # Emit CET IBT landing pad instructions in JIT generated code (experimental).
+   v8_enable_cet_ibt = false
++
++  v8_custom_optimization_level = ""
+ }
+ 
+ if (v8_use_external_startup_data == "") {
+@@ -259,6 +261,8 @@ if (is_debug && !v8_optimized_debug) {
+   }
+ }
+ 
++v8_add_configs += [ "//build/config/compiler:v8_custom_optimization_config" ]
++
+ if (!is_debug) {
+   v8_remove_configs += [
+     # Too much performance impact, unclear security benefit.

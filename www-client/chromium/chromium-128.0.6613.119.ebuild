@@ -1693,9 +1693,11 @@ einfo "Security fixes applied:  ${MITIGATION_URI}"
 	pre_build_checks
 
 	if is-flagq '-Oshit' ; then
+einfo "Detected -Oshit in cflags."
 		OSHIT_OPTIMIZED=1
 		replace-flags '-Oshit' '-O1'
 	else
+ewarn "-Oshit is missing in cflags for build speed optimized build.  See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\` for details."
 		OSHIT_OPTIMIZED=0
 	fi
 

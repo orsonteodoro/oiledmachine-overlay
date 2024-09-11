@@ -29,14 +29,14 @@
 
     You need to add the following in /etc/portage/profile/package.use.force
     in order to select a non-native ABI.  Tweak below to add your masked ABI.
-    ----- CUT BELOW HERE -----
+    - CUT BELOW HERE -
 www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
-    ----- CUT ABOVE HERE -----
+    - CUT ABOVE HERE -
 
     To override the distro hard mask for ffmpeg5 do the following:
 
       mkdir -p /etc/portage/profile
-      echo "www-client/chromium -system-ffmpeg" >> /etc/portage/profile/package.use.mask
+      Add "www-client/chromium -system-ffmpeg" to /etc/portage/profile/package.use.mask
 
 
     Per-package environment variables:
@@ -187,7 +187,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
 
     References:
-      --lto-O2 is too large - https://github.com/chromium/chromium/commit/da072d13b2a1cc8459c29aa4e52584a4491a4ad6
+      lto-O2 is too large - https://github.com/chromium/chromium/commit/da072d13b2a1cc8459c29aa4e52584a4491a4ad6
       CFI - https://www.chromium.org/developers/testing/control-flow-integrity
       CFI ldflags - https://clang.llvm.org/docs/ControlFlowIntegrity.html
       PartitionAlloc - https://chromium.googlesource.com/chromium/src/+/refs/heads/main/base/allocator/partition_allocator/PartitionAlloc.md
