@@ -7036,7 +7036,7 @@ ewarn "You must manually add yama to CONFIG_LSM which was requested by an app by
 	elif [[ "${ot_kernel_lsms_choice}" == "default" ]] ; then
 einfo "Using the default LSM settings"
 		OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
-		ot_kernel_lsms="integrity,selinux,bpf" # Equivalent upstream settings
+		ot_kernel_lsms="selinux,bpf" # Equivalent upstream settings
 
 # It is assume that user wanted full control.
 		if [[ "${_OT_KERNEL_LSM_ADD_APPARMOR}" == "1" ]] ; then
@@ -7084,7 +7084,6 @@ ewarn
 	# This section adds auto-discovered lsms before order selection.
 einfo "Using the auto LSM settings"
 		OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
-		ot_kernel_lsms="integrity" # Default enabled upstream
 		# yama is not default enabled upstream but in major distros
 		# landlock is not diefault enabled upstream
 
@@ -7156,7 +7155,6 @@ einfo "Using the custom LSM settings:  ${ot_kernel_lsms}"
 			[apparmor]="CONFIG_SECURITY_APPARMOR"
 			[bpf]="CONFIG_BPF_LSM"
 			[selinux]="CONFIG_SECURITY_SELINUX"
-			[integrity]="CONFIG_INTEGRITY"
 			[landlock]="CONFIG_SECURITY_LANDLOCK"
 			[loadpin]="CONFIG_SECURITY_LOADPIN"
 			[lockdown]="CONFIG_SECURITY_LOCKDOWN_LSM"
@@ -7252,7 +7250,6 @@ einfo "Default LSM: ${l}"
 		[[ "${ot_kernel_lsms}" =~ "yama" ]] && lsms+=( "yama" )
 		[[ "${ot_kernel_lsms}" =~ "loadpin" ]] && lsms+=( "loadpin" )
 		[[ "${ot_kernel_lsms}" =~ "safesetid" ]] && lsms+=( "safesetid" )
-		[[ "${ot_kernel_lsms}" =~ "integrity" ]] && lsms+=( "integrity" )
 		if [[ "${ot_kernel_lsms}" =~ "selinux" ]] ; then
 			lsms+=( "selinux" )
 			[[ "${ot_kernel_lsms}" =~ "smack" ]] && lsms+=( "smack" )
@@ -7288,17 +7285,6 @@ einfo "LSMs:  ${ot_kernel_lsms}"
 		fi
 	fi
 
-	if [[ "${OT_KERNEL_IMA}" =~ ("fix"|"enforce") ]] ; then
-		local lsms_=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
-		if [[ "${lsms_}" =~ "integrity" ]] ; then
-			:
-		else
-eerror
-eerror "integrity must be added to OT_KERNEL_LSMS or CONFIG_LSM"
-eerror
-			die
-		fi
-	fi
 	unset _OT_KERNEL_ADD_LSM
 }
 
