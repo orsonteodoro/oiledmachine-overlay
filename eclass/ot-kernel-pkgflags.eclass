@@ -13179,7 +13179,7 @@ eerror
 		local is_auto=0
 		if [[ -z "${OT_KERNEL_LSMS}" ]] ; then
 			: # Auto
-		elif [[ "${OT_KERNEL_LSMS}" =~ ("auto"|"default"|"selinux") ]] ; then
+		elif [[ "${OT_KERNEL_LSMS}" =~ ("auto"|"default"|"apparmor"|"selinux"|"smack"|"tomoyo") ]] ; then
 			:
 		else
 ewarn
