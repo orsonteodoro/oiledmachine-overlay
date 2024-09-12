@@ -2388,6 +2388,7 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
     * default - Uses "integrity,selinux,bpf" with default subsettings
       equivalent to upstream defaults
     * manual - Uses previously manually set settings
+    * a custom list
 
     The "acceptable multi values" and "acceptable general values" are mutually
     exclusive.  In acceptable multi values listing, the LSMs needs to be comma
@@ -2398,6 +2399,14 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
     For a newly generated kernel .config with not set OT_KERNEL_LSMS, it will
     apply auto setting.  For previous installs with OT_KERNEL_LSMS is not set,
     it will apply manual.
+
+    It is recommended to use auto if you are using
+    OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1.  Otherwise, it assumes that
+    the user wants exact and full control over the LSM inclusion and ordering.
+
+    Example:
+
+      OT_KERNEL_LSMS="integrity,lockdown,yama,selinux"
 
 
 
