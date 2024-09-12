@@ -37,7 +37,7 @@ src_unpack() {
 	unpack ${A}
 }
 
-src_install() {
+# _method0() {
 # Completion time:  0 days, 6 hrs, 46 mins, 52 secs
 # Reasons for slowdown:
 # 1. Output in console
@@ -45,16 +45,21 @@ src_install() {
 # 3. scanelf
 # 4. write to /var/db/pkg/.../CONTENTS
 # 5. md5sum for each file for CONTENTS
+# }
 
-	addwrite "/usr/share/chromium/sources"
+_method1() {
 	rm -rf "/usr/share/chromium/sources"
 	mkdir -p "/usr/share/chromium/sources"
 	# Bypass scanelf and writing to /var/pkg/db
 	# Use filesystem tricks (pointer change) to speed up merge time.
 	mv "${WORKDIR}/chromium-${PV}/"* "/usr/share/chromium/sources" || die
 	mv "${WORKDIR}/chromium-${PV}/."* "/usr/share/chromium/sources" || true
-# After modifications:
 # Completion time:  0 days, 0 hrs, 26 mins, 22 secs
+}
+
+src_install() {
+	addwrite "/usr/share/chromium/sources"
+	_method1
 }
 
 pkg_postinst() {

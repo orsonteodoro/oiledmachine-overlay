@@ -305,13 +305,13 @@ _method2() {
 
 _method3() {
 	mkdir -p "/usr/share/chromium/toolchain" || die
-	rsync -avu "${WORKDIR}/" "/usr/share/chromium/toolchain" || die
-# Completion time:  0 days, 0 hrs, 4 mins, 6 secs
+	rsync -avu --delete "${WORKDIR}/" "/usr/share/chromium/toolchain" || die
+# Completion time:  0 days, 0 hrs, 5 mins, 41 secs
 }
 
 src_install() {
 	addwrite "/usr/share/chromium/toolchain"
-	_method3
+	_method1
 }
 
 pkg_preinst() {
