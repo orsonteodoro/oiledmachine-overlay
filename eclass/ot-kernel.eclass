@@ -7170,7 +7170,6 @@ einfo "Using the custom LSM settings:  ${ot_kernel_lsms}"
 
 		unset LSM_LEGACY
 		declare -A LSM_LEGACY=(
-CONFIG_DEFAULT_SECURITY_
 			[apparmor]="CONFIG_DEFAULT_SECURITY_APPARMOR"
 			[dac]="CONFIG_DEFAULT_SECURITY_DAC"
 			[smack]="CONFIG_DEFAULT_SECURITY_SMACK"
