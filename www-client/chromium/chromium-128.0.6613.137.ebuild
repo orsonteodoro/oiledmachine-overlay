@@ -1739,11 +1739,15 @@ ewarn "-Oshit is missing in cflags for build speed optimized build.  See metadat
 	if use kernel_linux ; then
 		chromium_suid_sandbox_check_kernel_config
 		CONFIG_CHECK="
+			~SYSFS
+			~MULTIUSER
 			~SECURITY
 			~SECURITY_YAMA
 		"
+		WARNING_SYSFS="CONFIG_SYSFS could be added for ptrace sandbox protection"
+		WARNING_MULTIUSER="CONFIG_MULTIUSER could be added for ptrace sandbox protection"
 		WARNING_SECURITY="CONFIG_SECURITY could be added for ptrace sandbox protection"
-		WARNING_SECURITY_YAMA="CONFIG_SECURITY_YAMA could be added for ptrace sandbox protection"
+		WARNING_SECURITY_YAMA="CONFIG_SECURITY_YAMA could be added for ptrace sandbox protection to mitigate against credential theft"
 		check_extra_config
 
 		if ! linux_config_exists ; then
