@@ -288,15 +288,24 @@ src_compile() {
 	fi
 }
 
-src_install() {
-	addwrite "/usr/share/chromium/toolchain"
+_method1() {
 	rm -rf "/usr/share/chromium/toolchain"
 	mkdir -p "/usr/share/chromium/toolchain" || die
 	# Bypass scanelf and writing to /var/pkg/db
 	# Use filesystem tricks (pointer change) to speed up merge time.
 	mv "${WORKDIR}/"* "/usr/share/chromium/toolchain" || die
-# With speed up changes:
 # Completion time:  0 days, 0 hrs, 5 mins, 17 secs
+}
+
+_method2() {
+	mkdir -p "/usr/share/chromium/toolchain" || die
+	rsync -cavu "${WORKDIR}/" "/usr/share/chromium/toolchain" || die
+# Completion time:  0 days, 0 hrs, 12 mins, 11 secs
+}
+
+src_install() {
+	addwrite "/usr/share/chromium/toolchain"
+	_method1
 }
 
 pkg_preinst() {

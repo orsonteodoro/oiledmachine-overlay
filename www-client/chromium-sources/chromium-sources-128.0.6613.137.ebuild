@@ -6,7 +6,7 @@ EAPI=8
 
 inherit dhms
 
-#KEYWORDS="~amd64 ~arm64 ~ppc64"
+KEYWORDS="~amd64 ~arm64 ~ppc64"
 S="${WORKDIR}"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/chromium-${PV}.tar.xz
