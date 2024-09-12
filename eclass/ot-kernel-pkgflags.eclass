@@ -7667,15 +7667,18 @@ einfo "Detected external kernel module"
 	fi
 
 	if \
-	[[ \
-		"${work_profile}" == "dss" \
-	]] \
-		||
-	[[ \
-		   "${hardening_level}" == "secure-af" \
-		|| "${hardening_level}" == "secure-as-fuck" \
-	]] ; then
+		[[ \
+			"${work_profile}" == "dss" \
+		]] \
+			||
+		[[ \
+			   "${hardening_level}" == "secure-af" \
+			|| "${hardening_level}" == "secure-as-fuck" \
+		]] \
+	; then
 		if grep -q -E -e "^CONFIG_MODULES=y" "${path_config}" ; then
+	# Prevent loading of unsigned modules.
+	# The upstream default is that lockdown is disabled.
 			ot-kernel_y_configopt "CONFIG_MODULE_SIG"
 			_OT_KERNEL_LSM_ADD_LOCKDOWN=1
 		fi
@@ -13984,19 +13987,6 @@ _ot-kernel_set_so_attach_filter() { # DONE
 	# The userland program must have SO_ATTACH_FILTER.
 	ot-kernel_y_configopt "CONFIG_NET"
 	warn_lowered_security "${pkg}" # BPF, Spectre Variant 2
-}
-
-# @FUNCTION: _ot-kernel_enable_selinux()
-ot-kernel-pkgflags_selinux()
-# Generated from:
-# grep -l --exclude-dir=metadata --exclude-dir=md5-cache --exclude-dir=.git -r -E -e "(sys-libs/libselinux|sec-policy/selinux)" /usr/portage | cut -f 4-5 -d "/" | sort |uniq
-	local PKGS=(
-	)
-	local pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}[selinux]" ; then
-			_OT_KERNEL_LSM_ADD_SELINUX=1
-		fi
-	done
 }
 
 # CONFIG_ADVISE_SYSCALLS search keywords:  madvise, fadvise

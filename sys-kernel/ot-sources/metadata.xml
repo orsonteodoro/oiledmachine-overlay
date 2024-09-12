@@ -2379,14 +2379,15 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
 
     OT_KERNEL_LSMS - Enable and set the order for LSM (Linux Security Modules)
 
-    Acceptable multi values: apparmor, bpf, landlock, loadpin,
-    lockdown, safesetid, selinux, smack, tomoyo, yama.
+    Acceptable multi values: apparmor, bpf, capability, integrity, landlock,
+    loadpin, lockdown, safesetid, selinux, smack, tomoyo, yama.
 
     Acceptable general values:  auto, default, manual
 
     * auto - Adds LSMs based on packages installed with default subsettings
     * default - Uses "integrity,selinux,bpf" with default subsettings
-      equivalent to upstream defaults
+      equivalent to upstream defaults.  It is implied capability and
+      integrity are loaded.
     * manual - Uses previously manually set settings
     * a custom list
 

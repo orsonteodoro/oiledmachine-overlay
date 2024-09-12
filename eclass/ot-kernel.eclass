@@ -7052,7 +7052,12 @@ einfo "LSMs:  ${lsms}"
 	elif [[ "${ot_kernel_lsms_choice}" == "default" ]] ; then
 einfo "OT_KERNEL_LSMS=default"
 		OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
-		ot_kernel_lsms="selinux,bpf" # Equivalent upstream settings
+
+	# Equivalent to upstream settings
+		ot_kernel_lsms="selinux,bpf"
+		ot-kernel_y_configopt "CONFIG_SECURITY"
+		ot-kernel_y_configopt "CONFIG_INTEGRITY"
+
 		warn_lsm_changes
 	elif [[ "${ot_kernel_lsms_choice}" == "auto" ]] ; then
 	# This section adds auto-discovered lsms before order selection.
@@ -7061,8 +7066,29 @@ einfo "OT_KERNEL_LSMS=auto"
 		# yama is not default enabled upstream but in major distros
 		# landlock is not diefault enabled upstream
 
+		ot-kernel_y_configopt "CONFIG_SECURITY"
+
 		if [[ "${_OT_KERNEL_LSM_ADD_LANDLOCK}" == "1" ]] ; then
 			ot_kernel_lsms+=",landlock"
+		fi
+
+	# Repeated when OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=0.
+		if \
+			[[ \
+				"${work_profile}" == "dss" \
+			]] \
+				||
+			[[ \
+				   "${hardening_level}" == "secure-af" \
+				|| "${hardening_level}" == "secure-as-fuck" \
+			]] \
+		; then
+	# Prevent loading of unsigned modules.
+	# The upstream default is that lockdown is disabled.
+			if grep -q -E -e "^CONFIG_MODULES=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_MODULE_SIG"
+				_OT_KERNEL_LSM_ADD_LOCKDOWN=1
+			fi
 		fi
 
 		if [[ "${_OT_KERNEL_LSM_ADD_LOCKDOWN}" == "1" ]] ; then
@@ -7120,6 +7146,8 @@ einfo "OT_KERNEL_LSMS=auto"
 			ot_kernel_lsms+=",bpf"
 		fi
 
+		ot-kernel_y_configopt "CONFIG_INTEGRITY"
+
 		if [[ "${_OT_KERNEL_LSM_ADD_APPARMOR}" == "1" ]] && ! has_version "sys-apps/apparmor" ; then
 ewarn "Adding apparmor was skipped but requested by a ebuild-package.  Install sys-apps/apparmor to add the AppArmor LSM and re-emerge again."
 		fi
@@ -7141,19 +7169,20 @@ einfo "OT_KERNEL_LSMS:  ${ot_kernel_lsms}"
 	if [[ -n "${ot_kernel_lsms}" ]] ; then
 		unset LSM_MODULES
 		declare -A LSM_MODULES=(
-		# [ebuild_name]="CONFIG_SECURITY_X"
+		# These are marked with DEFINE_LSM()
+		# [ebuild_name]="CONFIG_SECURITY_${X}"
 			[apparmor]="CONFIG_SECURITY_APPARMOR"
+			[capability]="CONFIG_SECURITY" # Loaded first
 			[bpf]="CONFIG_BPF_LSM"
-			[selinux]="CONFIG_SECURITY_SELINUX"
+			[integrity]="CONFIG_INTEGRITY" # Loaded last
 			[landlock]="CONFIG_SECURITY_LANDLOCK"
 			[loadpin]="CONFIG_SECURITY_LOADPIN"
 			[lockdown]="CONFIG_SECURITY_LOCKDOWN_LSM"
 			[safesetid]="CONFIG_SECURITY_SAFESETID"
 			[selinux]="CONFIG_SECURITY_SELINUX"
-			[smack]="CONFIG_SECURITY_SMACK"
+			[selinux]="CONFIG_SECURITY_SELINUX"
 			[tomoyo]="CONFIG_SECURITY_TOMOYO"
 			[yama]="CONFIG_SECURITY_YAMA"
-
 		)
 
 		unset LSM_LEGACY
@@ -7169,12 +7198,15 @@ einfo "OT_KERNEL_LSMS:  ${ot_kernel_lsms}"
 
 		local l
 		for l in ${LSM_MODULES[@]} ; do
+	# Skip over LSMs that are kernel config dependencies.
+			[[ "${l^^}" =~ ("capability"|"integrity") ]] && continue
+
 			ot-kernel_unset_configopt "${l^^}" # Reset
 		done
 
 		ot-kernel_y_configopt "CONFIG_SYSFS"
 		ot-kernel_y_configopt "CONFIG_MULTIUSER"
-		ot-kernel_y_configopt "CONFIG_SECURITY"
+		ot-kernel_y_configopt "CONFIG_SECURITY" # Same as capability LSM
 
 		IFS=','
 		for l in ${ot_kernel_lsms[@]} ; do
