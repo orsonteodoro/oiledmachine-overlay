@@ -2659,8 +2659,37 @@ eerror
 	die
 }
 
-pkg_setup() {
+check_kernel_config() {
 	linux-info_pkg_setup
+
+	CONFIG_CHECK="
+		~PROC_FS
+		~DEVTMPFS
+		~TMPFS
+		~UNIX
+		~SYSFS
+		~FILE_LOCKING
+		~BINFMT_SCRIPT
+	"
+	WARNING_PROC_FS="CONFIG_PROC_FS is required by ${PN} for /proc support."
+	WARNING_DEVTMPFS="CONFIG_DEVTMPFS is required by ${PN} for /dev support and chroot."
+	WARNING_TMPFS="CONFIG_TMPFS is required by ${PN} for /run, testing /dev/shm, dbus support."
+	WARNING_UNIX="CONFIG_UNIX is required by ${PN} for socket(AF_UNIX,...) support."
+	WARNING_SYSFS="CONFIG_SYSFS may be required by ${PN} for ipvlan support."
+	WARNING_DEVPTS_FS="CONFIG_DEVPTS_FS may be required by ${PN} for testing or private-dev sandboxing."
+	WARNING_FILE_LOCKING="CONFIG_FILE_LOCKING is required by ${PN} for chroot and pid sandboxing."
+	WARNING_BINFMT_SCRIPT="CONFIG_BINFMT_SCRIPT is required by ${PN} for contrib, tools, testing scripts."
+	check_extra_config
+
+	if has_version "virtual/jack" ; then
+		CONFIG_CHECK="
+			~MMU
+			~SHMEM
+		"
+		WARNING_MMU="CONFIG_MMU is required by ${PN} for sound support for jack."
+		WARNING_SHMEM="CONFIG_SHMEM is required by ${PN} for sound sound support for jack."
+		check_extra_config
+	fi
 
 	use xpra "xpra support may be broken.  Use xephyr instead."
 	if [[ -e "/etc/portage/env/firejail.conf" ]] ; then
@@ -2682,9 +2711,13 @@ eerror "Check contents for tampering and change file permissions to 644 or 640 f
 	fi
 	python-single-r1_pkg_setup
 	CONFIG_CHECK="
+		~BLOCK
+		~MISC_FILESYSTEMS
 		~SQUASHFS
 	"
-	WARNING_SQUASHFS="CONFIG_SQUASHFS is required for firejail --appimage mode"
+	WARNING_BLOCK="CONFIG_BLOCK is required for firejail --appimage mode."
+	WARNING_MISC_FILESYSTEMS="CONFIG_MISC_FILESYSTEMS is required for firejail --appimage mode."
+	WARNING_SQUASHFS="CONFIG_SQUASHFS is required for firejail --appimage mode."
 	check_extra_config
 
 	CONFIG_CHECK="
@@ -2701,23 +2734,61 @@ eerror "Check contents for tampering and change file permissions to 644 or 640 f
 einfo "config_path:  ${config_path}"
 	local lsm_list=$(grep -e "CONFIG_LSM" "${config_path}" \
 		| cut -f 2 -d '"')
+
+	if use selinux ; then
+		CONFIG_CHECK="
+			~AUDIT
+			~NET
+			~INET
+			~SYSFS
+			~MULTIUSER
+			~SECURITY
+			~SECURITY_NETWORK
+			~SECURITY_SELINUX
+		"
+		if ! [[ "${lsm_list}" =~ "selinux" ]] ; then
+ewarn
+ewarn "Missing  selinux  in kernel .config CONFIG_LSM list."
+ewarn "See also https://github.com/torvalds/linux/blob/v6.6/security/Kconfig#L234"
+ewarn
+		fi
+		WARNING_AUDIT="CONFIG_AUDIT is required for SELinux LSM support."
+		WARNING_NET="CONFIG_NET is required for SELinux LSM support."
+		WARNING_INET="CONFIG_INET is required for SELinux LSM support."
+		WARNING_SYSFS="CONFIG_SYSFS is required for SELinux LSM support."
+		WARNING_MULTIUSER="CONFIG_MULTIUSER is required for SELinux LSM support."
+		WARNING_SECURITY="CONFIG_SECURITY is required for SELinux LSM support."
+		WARNING_SECURITY_NETWORK="CONFIG_SECURITY_NETWORK is required for SELinux LSM support."
+		WARNING_SECURITY_SELINUX="CONFIG_SECURITY_SELINUX is required for SELinux LSM support."
+		check_extra_config
+	fi
+
 	if use apparmor ; then
 		CONFIG_CHECK="
+			~SYSFS
+			~MULTIUSER
 			~SECURITY
 			~NET
 			~SECURITY_APPARMOR
 		"
 		if ! [[ "${lsm_list}" =~ "apparmor" ]] ; then
 ewarn
-ewarn "Missing apparmor in kernel .config CONFIG_LSM list."
+ewarn "Missing  apparmor  in kernel .config CONFIG_LSM list."
 ewarn "See also https://github.com/torvalds/linux/blob/v6.6/security/Kconfig#L234"
 ewarn
 		fi
+		WARNING_SYSFS="CONFIG_SYSFS is required for AppArmor LSM support."
+		WARNING_MULTIUSER="CONFIG_MULTIUSER is required for AppArmor LSM support."
+		WARNING_SECURITY="CONFIG_NET is required for AppArmor LSM."
+		WARNING_SECURITY="CONFIG_SECURITY is required for AppArmor LSM."
+		WARNING_SECURITY_APPARMOR="CONFIG_SECURITY_LANDLOCK is required for AppArmor LSM for profile based MAC (Mandatory Access Control)."
 		check_extra_config
 	fi
 
 	if use landlock ; then
 		CONFIG_CHECK="
+			~SYSFS
+			~MULTIUSER
 			~SECURITY
 			~SECURITY_LANDLOCK
 		"
@@ -2727,6 +2798,10 @@ ewarn "Missing landlock in kernel .config CONFIG_LSM list."
 ewarn "See also https://github.com/torvalds/linux/blob/v6.6/security/Kconfig#L234"
 ewarn
 		fi
+		WARNING_SYSFS="CONFIG_SYSFS is required for Landlock LSM support."
+		WARNING_MULTIUSER="CONFIG_MULTIUSER is required for Landlock LSM support."
+		WARNING_SECURITY="CONFIG_SECURITY is required for Landlock LSM support."
+		WARNING_SECURITY_LANDLOCK="CONFIG_SECURITY_LANDLOCK is required for Landlock LSM to impose filesystem restrictions to sandboxed processes and their children."
 		check_extra_config
 	fi
 
@@ -2746,7 +2821,10 @@ ewarn
 		WARNING_RANDOMIZE_MEMORY="CONFIG_RANDOMIZE_MEMORY is required by Scudo."
 		check_extra_config
 	fi
+}
 
+pkg_setup() {
+	check_kernel_config
 	if use test && [[ "${TEST_SET}" == "full" ]] ; then
 		if has userpriv $FEATURES ; then
 eerror
