@@ -13154,6 +13154,7 @@ _ot-kernel_checkpoint_dss_acl_requirement() {
 # @DESCRIPTION:
 # Check for LSM (Linux Security Modules) support.
 _ot-kernel_checkpoint_dss_lsm_requirement() {
+	# See warn_lsm_changes() section in ot-kernel eclass for reason this is diversified.
 	if [[ "${work_profile}" == "dss" ]] ; then
 		if ot-kernel_has_version "sys-apps/apparmor" ; then
 			:

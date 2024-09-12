@@ -7012,12 +7012,15 @@ ot-kernel_set_kconfig_lsms() {
 		ot_kernel_lsms_choice="${OT_KERNEL_LSMS:-manual}"
 	fi
 	local ot_kernel_lsms=()
-	local is_manual=0
-	if [[ "${ot_kernel_lsms_choice}" == "manual" ]] ; then
-einfo "Using the manual LSM settings"
-		local lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
-einfo "LSMs:  ${lsms}"
-		is_manual=1
+
+	#
+	# warn_lsm_changes is used when not OT_KERNEL_LSMS=auto.
+	#
+	# manual/default/custom assume full control or value integrity for
+	# preferences to a developer's background, or to avoid compromised
+	# or backdoored LSMs.
+	#
+	warn_lsm_changes() {
 		if [[ "${_OT_KERNEL_LSM_ADD_APPARMOR}" == "1" ]] && ! [[ "${lsms}" =~ "apparmor" ]] ; then
 ewarn "You must manually add apparmor to CONFIG_LSM which was requested by an app by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
 		fi
@@ -7033,56 +7036,21 @@ ewarn "You must manually add selinux to CONFIG_LSM which was requested by an app
 		if [[ "${_OT_KERNEL_LSM_ADD_YAMA}" == "1" ]] && ! [[ "${lsms}" =~ "yama" ]] ; then
 ewarn "You must manually add yama to CONFIG_LSM which was requested by an app by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
 		fi
+	}
+
+	local lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
+	if [[ "${ot_kernel_lsms_choice}" == "manual" ]] ; then
+einfo "OT_KERNEL_LSMS=manual (From kernel .config)"
+einfo "LSMs:  ${lsms}"
+		warn_lsm_changes
 	elif [[ "${ot_kernel_lsms_choice}" == "default" ]] ; then
-einfo "Using the default LSM settings"
+einfo "OT_KERNEL_LSMS=default"
 		OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
 		ot_kernel_lsms="selinux,bpf" # Equivalent upstream settings
-
-# It is assume that user wanted full control.
-		if [[ "${_OT_KERNEL_LSM_ADD_APPARMOR}" == "1" ]] ; then
-ewarn
-ewarn "An app wanted AppArmor LSM but you chose OT_KERNEL_LSMS=default,"
-ewarn "which is assumed to be a minimal LSM configuration."
-ewarn "To make the app work, you must either..."
-ewarn
-ewarn "1.  Use OT_KERNEL_LSMS=auto"
-ewarn "2.  Manually add apparmor to OT_KERNEL_LSMS"
-ewarn
-		fi
-		if [[ "${_OT_KERNEL_LSM_ADD_LANDLOCK}" == "1" ]] ; then
-ewarn
-ewarn "An app wanted Landlock LSM but you chose OT_KERNEL_LSMS=default,"
-ewarn "which is assumed to be a minimal LSM configuration."
-ewarn "To make the app work, you must either..."
-ewarn
-ewarn "1.  Use OT_KERNEL_LSMS=auto"
-ewarn "2.  Manually add landlock to OT_KERNEL_LSMS"
-ewarn
-		fi
-		if [[ "${_OT_KERNEL_LSM_ADD_LOCKDOWN}" == "1" ]] ; then
-ewarn
-ewarn "An app wanted Lockdown LSM but you chose OT_KERNEL_LSMS=default,"
-ewarn "which is assumed to be a minimal LSM configuration."
-ewarn "To make the app work or to prevent the loading of unsigned modules, you must either..."
-ewarn
-ewarn "1.  Use OT_KERNEL_LSMS=auto"
-ewarn "2.  Manually add lockdown to OT_KERNEL_LSMS"
-ewarn
-		fi
-		if [[ "${_OT_KERNEL_LSM_ADD_YAMA}" == "1" ]] ; then
-ewarn
-ewarn "An app wanted Yama LSM but you chose OT_KERNEL_LSMS=default,"
-ewarn "which is assumed to be a minimal LSM configuration."
-ewarn "To make the app work, you must either..."
-ewarn
-ewarn "1.  Use OT_KERNEL_LSMS=auto"
-ewarn "2.  Manually add yama to OT_KERNEL_LSMS"
-ewarn
-		fi
-
+		warn_lsm_changes
 	elif [[ "${ot_kernel_lsms_choice}" == "auto" ]] ; then
 	# This section adds auto-discovered lsms before order selection.
-einfo "Using the auto LSM settings"
+einfo "OT_KERNEL_LSMS=auto"
 		OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
 		# yama is not default enabled upstream but in major distros
 		# landlock is not diefault enabled upstream
@@ -7153,7 +7121,8 @@ ewarn "Adding selinux was skipped but requested by a program.  Install sec-polic
 		ot_kernel_lsms="${OT_KERNEL_LSMS}"
 		ot_kernel_lsms="${ot_kernel_lsms,,}"
 		ot_kernel_lsms="${ot_kernel_lsms// /}"
-einfo "Using the custom LSM settings:  ${ot_kernel_lsms}"
+einfo "OT_KERNEL_LSMS:  ${ot_kernel_lsms}"
+		warn_lsm_changes
 	fi
 
 	if [[ -n "${ot_kernel_lsms}" ]] ; then
@@ -7251,7 +7220,7 @@ einfo "ot_kernel_lsms=${ot_kernel_lsms,,}"
 einfo "Default LSM: ${l}"
 		ot-kernel_y_configopt "${LSM_LEGACY[${l}]}" # Implied
 
-		local lsms=()
+		lsms=()
 		# This is the upstream order but allow user to customize it
 		[[ "${ot_kernel_lsms}" =~ "landlock" ]] && lsms+=( "landlock" )
 		[[ "${ot_kernel_lsms}" =~ "lockdown" ]] && lsms+=( "lockdown" )
