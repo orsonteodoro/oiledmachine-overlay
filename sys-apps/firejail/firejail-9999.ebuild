@@ -2759,7 +2759,7 @@ ewarn
 		WARNING_MULTIUSER="CONFIG_MULTIUSER is required for SELinux LSM support."
 		WARNING_SECURITY="CONFIG_SECURITY is required for SELinux LSM support."
 		WARNING_SECURITY_NETWORK="CONFIG_SECURITY_NETWORK is required for SELinux LSM support."
-		WARNING_SECURITY_SELINUX="CONFIG_SECURITY_SELINUX is required for SELinux LSM support."
+		WARNING_SECURITY_SELINUX="CONFIG_SECURITY_SELINUX is required for SELinux LSM for access control."
 		check_extra_config
 	fi
 
@@ -2781,7 +2781,7 @@ ewarn
 		WARNING_MULTIUSER="CONFIG_MULTIUSER is required for AppArmor LSM support."
 		WARNING_SECURITY="CONFIG_NET is required for AppArmor LSM."
 		WARNING_SECURITY="CONFIG_SECURITY is required for AppArmor LSM."
-		WARNING_SECURITY_APPARMOR="CONFIG_SECURITY_LANDLOCK is required for AppArmor LSM for profile based MAC (Mandatory Access Control)."
+		WARNING_SECURITY_APPARMOR="CONFIG_SECURITY_LANDLOCK is required for AppArmor LSM for access control."
 		check_extra_config
 	fi
 
