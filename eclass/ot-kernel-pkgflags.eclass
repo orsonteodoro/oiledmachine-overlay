@@ -2237,6 +2237,8 @@ _ot-kernel-pkgflags_apply_cr_kconfig() {
 	ot-kernel_y_configopt "CONFIG_SIGNALFD"
 	ot-kernel_y_configopt "CONFIG_TIMERFD"
 
+	_OT_KERNEL_LSM_ADD_YAMA=1
+
 	# _ot-kernel_y_thp # References it but unknown apparent performance gain/loss
 	# LDT referenced
 }
@@ -4608,9 +4610,17 @@ ot-kernel-pkgflags_flatpak() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the firejail package
 ot-kernel-pkgflags_firejail() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-apps/firejail" ; then
+	local pkg="sys-apps/firejail"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		_ot-kernel_set_user_ns
 		_ot-kernel_set_seccomp_bpf
+
+		if ot-kernel_has_version "${pkg}[landlock]" ; then
+			_OT_KERNEL_LSM_ADD_LANDLOCK=1
+		fi
+		if ot-kernel_has_version "${pkg}[selinux]" ; then
+			_OT_KERNEL_LSM_ADD_SELINUX=1
+		fi
 	fi
 }
 
@@ -7675,38 +7685,7 @@ einfo "Detected external kernel module"
 	]] ; then
 		if grep -q -E -e "^CONFIG_MODULES=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_MODULE_SIG"
-
-			if [[ "${OT_KERNEL_LSMS}" =~ "lockdown" ]] ; then
-	# Already configured
-				:
-			else
-	# Prevent loading of unsigned/spoofed kernel modules.
-				local lsms
-				lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
-einfo "LSMS:  ${lsm}"
-				if [[ "${lsms}" =~ "lockdown" ]] ; then
-					:
-				else
-					if [[ -z "${lsms}" ]] ; then
-	# EX:  "" -> "lockdown"
-						lsms="lockdown"
-					elif [[ "${lsms}" =~ "landlock," ]] ; then
-	# EX:  "landlock,bpf" -> "landlock,lockdown,bpf"
-						lsms=$(echo "${lsms}" | sed -e "s|landlock,|landlock,lockdown,|")
-					elif [[ "${lsms}" =~ "landlock" ]] ; then
-	# EX:  "landlock" -> "landlock,lockdown"
-						lsms=$(echo "${lsms}" | sed -e "s|landlock|landlock,lockdown|")
-					else
-	# EX:  "bpf" -> "lockdown,bpf"
-						lsms="lockdown,${lsms}"
-					fi
-				fi
-				lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
-einfo "LSMS:  ${lsm}"
-				ot-kernel_set_configopt "CONFIG_LSM" "\"${lsms}\""
-				ot-kernel_y_configopt "CONFIG_SECURITY"
-				ot-kernel_y_configopt "CONFIG_SECURITY_LOCKDOWN_LSM"
-			fi
+			_OT_KERNEL_LSM_ADD_LOCKDOWN=1
 		fi
 	fi
 }
@@ -9901,25 +9880,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 			_ot-kernel_set_bpf "${pkg}"
 			ot-kernel_y_configopt "CONFIG_BPF_LSM"
 			ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"
-
-			local lsms
-			lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
-einfo "LSMS:  ${lsm}"
-			if [[ "${lsms}" =~ "bpf" ]] ; then
-				:
-			else
-				if [[ -z "${lsms}" ]] ; then
-	# EX:  "" -> "bpf"
-					lsms="bpf"
-				else
-	# EX:  "foo" -> "foo,bpf"
-	# EX:  "foo,bar" -> "foo,bar,bpf"
-					lsms="${lsms},bpf"
-				fi
-			fi
-			lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
-einfo "LSMS:  ${lsm}"
-			ot-kernel_set_configopt "CONFIG_LSM" "\"${lsms}\""
+			_OT_KERNEL_LSM_ADD_BPF=1
 		fi
 
 		local rt=0
@@ -13205,22 +13166,21 @@ _ot-kernel_checkpoint_dss_acl_requirement() {
 # Check for LSM (Linux Security Modules) support.
 _ot-kernel_checkpoint_dss_lsm_requirement() {
 	if [[ "${work_profile}" == "dss" ]] ; then
-		if ot-kernel_has_version "sys-apps/apparmor" ; then
-			:
-		elif ot-kernel_has_version "sec-policy/selinux-base" ; then
+		if ot-kernel_has_version "sec-policy/selinux-base" ; then
 			:
 		else
-ewarn
-ewarn "You are missing an access control model implementation for the dss work"
-ewarn "profile.  Install one of the following to silence this error:"
-ewarn
-ewarn "sys-apps/apparmor"
-ewarn "sec-policy/selinux-base"
-ewarn
+eerror
+eerror "You are missing an access control model implementation for the dss work"
+eerror "profile.  Install one of the following to silence this error:"
+eerror
+eerror "sec-policy/selinux-base"
+eerror
+			die
 		fi
+		local is_auto=0
 		if [[ -z "${OT_KERNEL_LSMS}" ]] ; then
 			: # Auto
-		elif [[ "${OT_KERNEL_LSMS}" =~ ("apparmor"|"auto"|"default"|"selinux") ]] ; then
+		elif [[ "${OT_KERNEL_LSMS}" =~ ("auto"|"default"|"selinux") ]] ; then
 			:
 		else
 ewarn
@@ -13230,8 +13190,7 @@ ewarn "OT_KERNEL_LSMS of the following rows to silence this error:"
 ewarn
 ewarn "OT_KERNEL_LSMS=\"auto\""
 ewarn "OT_KERNEL_LSMS=\"default\""
-ewarn "OT_KERNEL_LSMS=\"integrity,selinux,bpf\""
-ewarn "OT_KERNEL_LSMS=\"integrity,apparmor,bpf\""
+ewarn "OT_KERNEL_LSMS=\"integrity,selinux\""
 ewarn
 		fi
 	fi
@@ -13930,7 +13889,6 @@ _ot-kernel_set_so_attach_filter() { # DONE
 	ot-kernel_y_configopt "CONFIG_NET"
 	warn_lowered_security "${pkg}" # BPF, Spectre Variant 2
 }
-
 
 # CONFIG_ADVISE_SYSCALLS search keywords:  madvise, fadvise
 

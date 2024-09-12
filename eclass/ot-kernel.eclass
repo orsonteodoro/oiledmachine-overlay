@@ -7006,21 +7006,100 @@ ot-kernel_set_kconfig_lsms() {
 	local ot_kernel_lsms_choice
 	if (( ${is_default_config} == 1 )) && [[ -z "${OT_KERNEL_LSMS}" ]] ; then
 		ot_kernel_lsms_choice="auto"
+	elif [[ "${OT_KERNEL_LSMS}" == "auto" ]] ; then
+		ot_kernel_lsms_choice="auto"
 	else
 		ot_kernel_lsms_choice="${OT_KERNEL_LSMS:-manual}"
 	fi
 	local ot_kernel_lsms=()
+	local is_manual=0
 	if [[ "${ot_kernel_lsms_choice}" == "manual" ]] ; then
 einfo "Using the manual LSM settings"
-einfo "LSMs:  "$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
+		local lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
+einfo "LSMs:  ${lsms}"
+		is_manual=1
+		if [[ "${_OT_KERNEL_LSM_ADD_APPARMOR}" == "1" ]] && ! [[ "${lsms}" =~ "apparmor" ]] ; then
+ewarn "You must manually add apparmor to CONFIG_LSM which was requested by an app by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
+		fi
+		if [[ "${_OT_KERNEL_LSM_ADD_LANDLOCK}" == "1" ]] && ! [[ "${lsms}" =~ "landlock" ]] ; then
+ewarn "You must manually add landlock to CONFIG_LSM which was requested by an app by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
+		fi
+		if [[ "${_OT_KERNEL_LSM_ADD_LOCKDOWN}" == "1" ]] && ! [[ "${lsms}" =~ "lockdown" ]] ; then
+ewarn "You must manually add lockdown to CONFIG_LSM which was requested by an app or required by signed external modules by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
+		fi
+		if [[ "${_OT_KERNEL_LSM_ADD_YAMA}" == "1" ]] && ! [[ "${lsms}" =~ "selinux" ]] ; then
+ewarn "You must manually add selinux to CONFIG_LSM which was requested by an app by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
+		fi
+		if [[ "${_OT_KERNEL_LSM_ADD_YAMA}" == "1" ]] && ! [[ "${lsms}" =~ "yama" ]] ; then
+ewarn "You must manually add yama to CONFIG_LSM which was requested by an app by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
+		fi
 	elif [[ "${ot_kernel_lsms_choice}" == "default" ]] ; then
 einfo "Using the default LSM settings"
 		OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
 		ot_kernel_lsms="integrity,selinux,bpf" # Equivalent upstream settings
+
+# It is assume that user wanted full control.
+		if [[ "${_OT_KERNEL_LSM_ADD_APPARMOR}" == "1" ]] ; then
+ewarn
+ewarn "An app wanted LSMS=apparmor but you chose OT_KERNEL_LSMS=default,"
+ewarn "which is assumed to be a minimal LSM configuration."
+ewarn "To make the app work, you must either..."
+ewarn
+ewarn "1.  Use OT_KERNEL_LSMS=auto"
+ewarn "2.  Manually add apparmor to OT_KERNEL_LSMS"
+ewarn
+		fi
+		if [[ "${_OT_KERNEL_LSM_ADD_LANDLOCK}" == "1" ]] ; then
+ewarn
+ewarn "An app wanted LSMS=landlock but you chose OT_KERNEL_LSMS=default,"
+ewarn "which is assumed to be a minimal LSM configuration."
+ewarn "To make the app work, you must either..."
+ewarn
+ewarn "1.  Use OT_KERNEL_LSMS=auto"
+ewarn "2.  Manually add landlock to OT_KERNEL_LSMS"
+ewarn
+		fi
+		if [[ "${_OT_KERNEL_LSM_ADD_LOCKDOWN}" == "1" ]] ; then
+ewarn
+ewarn "An app wanted LSMS=lockdown but you chose OT_KERNEL_LSMS=default,"
+ewarn "which is assumed to be a minimal LSM configuration."
+ewarn "To make the app work, you must either..."
+ewarn
+ewarn "1.  Use OT_KERNEL_LSMS=auto"
+ewarn "2.  Manually add lockdown to OT_KERNEL_LSMS"
+ewarn
+		fi
+		if [[ "${_OT_KERNEL_LSM_ADD_YAMA}" == "1" ]] ; then
+ewarn
+ewarn "An app wanted LSMS=yama but you chose OT_KERNEL_LSMS=default,"
+ewarn "which is assumed to be a minimal LSM configuration."
+ewarn "To make the app work, you must either..."
+ewarn
+ewarn "1.  Use OT_KERNEL_LSMS=auto"
+ewarn "2.  Manually add yama to OT_KERNEL_LSMS"
+ewarn
+		fi
+
 	elif [[ "${ot_kernel_lsms_choice}" == "auto" ]] ; then
+	# This section adds auto-discovered lsms before order selection.
 einfo "Using the auto LSM settings"
 		OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
-		ot_kernel_lsms="integrity"
+		ot_kernel_lsms="integrity" # Default enabled upstream
+		# yama is not default enabled upstream but in major distros
+		# landlock is not diefault enabled upstream
+
+		if [[ "${_OT_KERNEL_LSM_ADD_LANDLOCK}" == "1" ]] ; then
+			ot_kernel_lsms+=",landlock"
+		fi
+
+		if [[ "${_OT_KERNEL_LSM_ADD_LOCKDOWN}" == "1" ]] ; then
+			ot_kernel_lsms+=",lockdown"
+		fi
+
+		if [[ "${_OT_KERNEL_LSM_ADD_YAMA}" == "1" ]] ; then
+			ot_kernel_lsms+=",yama"
+		fi
+
 		if ot-kernel_has_version "sec-policy/selinux-base" ; then
 			ot_kernel_lsms+=",selinux"
 			if ot-kernel_has_version "sys-apps/smack-utils" ; then
@@ -7073,86 +7152,131 @@ einfo "Using the custom LSM settings:  ${ot_kernel_lsms}"
 	if [[ -n "${ot_kernel_lsms}" ]] ; then
 		unset LSM_MODULES
 		declare -A LSM_MODULES=(
-			[landlock]="LANDLOCK"
-			[lockdown]="LOCKDOWN_LSM"
-			[yama]="YAMA"
-			[loadpin]="LOADPIN"
-			[safesetid]="SAFESETID"
-			[integrity]="INTEGRITY"
-			[smack]="SMACK"
-			[bpf]="DAC"
-			[apparmor]="APPARMOR"
-			[tomoyo]="TOMOYO"
-			[selinux]="SELINUX"
+		# [ebuild_name]="CONFIG_SECURITY_X"
+			[apparmor]="CONFIG_SECURITY_APPARMOR"
+			[bpf]="CONFIG_BPF_LSM"
+			[selinux]="CONFIG_SECURITY_SELINUX"
+			[integrity]="CONFIG_INTEGRITY"
+			[landlock]="CONFIG_SECURITY_LANDLOCK"
+			[loadpin]="CONFIG_SECURITY_LOADPIN"
+			[lockdown]="CONFIG_SECURITY_LOCKDOWN_LSM"
+			[safesetid]="CONFIG_SECURITY_SAFESETID"
+			[selinux]="CONFIG_SECURITY_SELINUX"
+			[smack]="CONFIG_SECURITY_SMACK"
+			[tomoyo]="CONFIG_SECURITY_TOMOYO"
+			[yama]="CONFIG_SECURITY_YAMA"
+
 		)
 
 		unset LSM_LEGACY
 		declare -A LSM_LEGACY=(
-			[selinux]="SELINUX"
-			[smack]="SMACK"
-			[tomoyo]="TOMOYO"
-			[apparmor]="APPARMOR"
-			[bpf]="DAC"
+CONFIG_DEFAULT_SECURITY_
+			[apparmor]="CONFIG_DEFAULT_SECURITY_APPARMOR"
+			[dac]="CONFIG_DEFAULT_SECURITY_DAC"
+			[smack]="CONFIG_DEFAULT_SECURITY_SMACK"
+			[selinux]="CONFIGDEFAULT_SECURITY_SELINUX"
+			[tomoyo]="CONFIG_DEFAULT_SECURITY_TOMOYO"
 		)
-
-		# FIXME:
-		#CONFIG_BPF_LSM
 
 		ot-kernel_unset_configopt "CONFIG_LSM"
 
-		# Enable modules
 		local l
 		for l in ${LSM_MODULES[@]} ; do
-			ot-kernel_unset_configopt "CONFIG_SECURITY_${l^^}" # Reset
+			ot-kernel_unset_configopt "${l^^}" # Reset
 		done
+
+		ot-kernel_y_configopt "CONFIG_SYSFS"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+		ot-kernel_y_configopt "CONFIG_SECURITY"
+
 		IFS=','
 		for l in ${ot_kernel_lsms[@]} ; do
 			local k="${LSM_MODULES[${l}]}"
-			ot-kernel_y_configopt "CONFIG_SECURITY_${k^^}" # Add requested
+
+			if [[ "${l}" == "apparmor" ]] ; then
+				ot-kernel_y_configopt "CONFIG_NET"
+				ot-kernel_y_configopt "CONFIG_SECURITY_APPARMOR"
+			elif [[ "${l}" == "bpf" ]] ; then
+			# Use automagic, 32-bit with cbpf, 64-bit with ebpf
+				ot-kernel_unset_configopt "CONFIG_HAVE_CBPF_JIT"
+				ot-kernel_unset_configopt "CONFIG_HAVE_EBPF_JIT"
+
+				ot-kernel_y_configopt "CONFIG_NET" # Enables BPF
+				ot-kernel_y_configopt "CONFIG_BPF" # Not enabled directly
+				ot-kernel_y_configopt "CONFIG_BPF_JIT"
+				ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+				ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
+				ot-kernel_y_configopt "CONFIG_BPF_LSM"
+			elif [[ "${l}" == "loadpin" ]] ; then
+				ot-kernel_y_configopt "CONFIG_BLOCK"
+				ot-kernel_y_configopt "CONFIG_SECURITY_LOADPIN"
+			elif [[ "${l}" == "lockdown" ]] ; then
+				ot-kernel_y_configopt "CONFIG_SECURITY_LOCKDOWN_LSM"
+			elif [[ "${l}" == "landlock" ]] ; then
+				ot-kernel_y_configopt "CONFIG_SECURITY_LANDLOCK"
+			elif [[ "${l}" == "safesetid" ]] ; then
+				ot-kernel_y_configopt "CONFIG_SECURITY_SAFESETID"
+			elif [[ "${l}" == "selinux" ]] ; then
+				ot-kernel_y_configopt "CONFIG_SECURITY_NETWORK"
+				ot-kernel_y_configopt "CONFIG_AUDIT"
+				ot-kernel_y_configopt "CONFIG_NET"
+				ot-kernel_y_configopt "CONFIG_INET"
+				ot-kernel_y_configopt "CONFIG_SECURITY_SELINUX"
+			elif [[ "${l}" == "smack" ]] ; then
+				ot-kernel_y_configopt "CONFIG_NET"
+				ot-kernel_y_configopt "CONFIG_INET"
+				ot-kernel_y_configopt "CONFIG_SECURITY_SMACK"
+			elif [[ "${l}" == "tomoyo" ]] ; then
+				ot-kernel_y_configopt "CONFIG_NET"
+				ot-kernel_y_configopt "CONFIG_SECURITY_TOMOYO"
+			elif [[ "${l}" == "yama" ]] ; then
+				ot-kernel_y_configopt "CONFIG_SECURITY_YAMA"
+			fi
 		done
 		IFS=$' \t\n'
 
 		for l in ${LSM_LEGACY[@]} ; do
-			ot-kernel_unset_configopt "CONFIG_DEFAULT_SECURITY_${l}" # Reset
+			ot-kernel_unset_configopt "${l}" # Reset
 		done
 
 		# Pick the default legacy
-		l=$(echo "${ot_kernel_lsms,,}" | sed -e "s| ||g" | grep -E -o -e "(selinux|smack|tomoyo|apparmor|bpf)" | head -n 1)
+		l=$(echo "${ot_kernel_lsms,,}" | sed -e "s| ||g" | grep -E -o -e "(selinux|smack|tomoyo|apparmor)" | head -n 1)
+		[[ -z "${l}" ]] && l="dac"
 einfo "ot_kernel_lsms=${ot_kernel_lsms,,}"
 einfo "Default LSM: ${l}"
-		ot-kernel_y_configopt "CONFIG_DEFAULT_SECURITY_${LSM_LEGACY[${l}]}" # Implied
+		ot-kernel_y_configopt "${LSM_LEGACY[${l}]}" # Implied
 
 		local lsms=()
 		# This is the upstream order but allow user to customize it
-		[[ "${ot_kernel_lsms}" =~ "landlock" ]] && lsms+=( landlock )
-		[[ "${ot_kernel_lsms}" =~ "lockdown" ]] && lsms+=( lockdown )
-		[[ "${ot_kernel_lsms}" =~ "yama" ]] && lsms+=( yama )
-		[[ "${ot_kernel_lsms}" =~ "loadpin" ]] && lsms+=( loadpin )
-		[[ "${ot_kernel_lsms}" =~ "safesetid" ]] && lsms+=( safesetid )
-		[[ "${ot_kernel_lsms}" =~ "integrity" ]] && lsms+=( integrity )
+		[[ "${ot_kernel_lsms}" =~ "landlock" ]] && lsms+=( "landlock" )
+		[[ "${ot_kernel_lsms}" =~ "lockdown" ]] && lsms+=( "lockdown" )
+		[[ "${ot_kernel_lsms}" =~ "yama" ]] && lsms+=( "yama" )
+		[[ "${ot_kernel_lsms}" =~ "loadpin" ]] && lsms+=( "loadpin" )
+		[[ "${ot_kernel_lsms}" =~ "safesetid" ]] && lsms+=( "safesetid" )
+		[[ "${ot_kernel_lsms}" =~ "integrity" ]] && lsms+=( "integrity" )
 		if [[ "${ot_kernel_lsms}" =~ "selinux" ]] ; then
-			lsms+=( selinux )
-			[[ "${ot_kernel_lsms}" =~ "smack" ]] && lsms+=( smack )
-			[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( tomoyo )
-			[[ "${ot_kernel_lsms}" =~ "apparmor" ]] && lsms+=( apparmor )
-			lsms+=( bpf )
+			lsms+=( "selinux" )
+			[[ "${ot_kernel_lsms}" =~ "smack" ]] && lsms+=( "smack" )
+			[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( "tomoyo" )
+			[[ "${ot_kernel_lsms}" =~ "apparmor" ]] && lsms+=( "apparmor" )
+			lsms+=( "bpf" )
 		elif [[ "${ot_kernel_lsms}" =~ "smack" ]] ; then
-			lsms+=( smack )
-			[[ "${ot_kernel_lsms}" =~ "selinux" ]] && lsms+=( selinux )
-			[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( tomoyo )
-			[[ "${ot_kernel_lsms}" =~ "apparmor" ]] && lsms+=( apparmor )
-			lsms+=( bpf )
+			lsms+=( "smack" )
+			[[ "${ot_kernel_lsms}" =~ "selinux" ]] && lsms+=( "selinux" )
+			[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( "tomoyo" )
+			[[ "${ot_kernel_lsms}" =~ "apparmor" ]] && lsms+=( "apparmor" )
+			lsms+=( "bpf" )
 		elif [[ "${ot_kernel_lsms}" =~ "tomoyo" ]] ; then
-			lsms+=( tomoyo )
-			lsms+=( bpf )
+			lsms+=( "tomoyo" )
+			lsms+=( "bpf" )
 		elif [[ "${ot_kernel_lsms}" =~ "apparmor" ]] ; then
-			lsms+=( apparmor )
-			[[ "${ot_kernel_lsms}" =~ "selinux" ]] && lsms+=( selinux )
-			[[ "${ot_kernel_lsms}" =~ "smack" ]] && lsms+=( smack )
-			[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( tomoyo )
-			lsms+=( bpf )
+			lsms+=( "apparmor" )
+			[[ "${ot_kernel_lsms}" =~ "selinux" ]] && lsms+=( "selinux" )
+			[[ "${ot_kernel_lsms}" =~ "smack" ]] && lsms+=( "smack" )
+			[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( "tomoyo" )
+			lsms+=( "bpf" )
 		elif [[ "${ot_kernel_lsms}" =~ "bpf" ]] ; then
-			lsms+=( bpf )
+			lsms+=( "bpf" )
 		fi
 
 		if [[ "${OT_KERNEL_USE_LSM_UPSTREAM_ORDER}" == "1" ]] ; then
@@ -7176,6 +7300,7 @@ eerror
 			die
 		fi
 	fi
+	unset _OT_KERNEL_ADD_LSM
 }
 
 # @FUNCTION: ban_dma_attack_use
@@ -11950,6 +12075,12 @@ einfo "Forcing the default hardening level for maximum uptime"
 	ot-kernel_set_mobile_camera
 
 	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
+	local _OT_KERNEL_LSM_ADD_APPARMOR=0
+	local _OT_KERNEL_LSM_ADD_BPF=0
+	local _OT_KERNEL_LSM_ADD_SELINUX=0
+	local _OT_KERNEL_LSM_ADD_LANDLOCK=0
+	local _OT_KERNEL_LSM_ADD_LOCKDOWN=0
+	local _OT_KERNEL_LSM_ADD_YAMA=0
 	ot-kernel-pkgflags_apply # Sets PREEMPT*, uses hardening_level
 	ot-kernel-debugger
 	ot-kernel_set_kconfig_fallback_preempt
