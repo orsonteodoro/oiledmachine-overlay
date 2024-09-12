@@ -485,7 +485,7 @@ ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +accessibility +async-dns bindist bluetooth +bundled-libcxx +cfi +cups
 +css-hyphen -debug +encode +extensions ffmpeg-chromium firejail -gtk4 -hangouts -headless
-+hidpi +js-type-check +kerberos +mdns +message-center +ml mold +mpris +official
++hidpi +js-type-check +kerberos +mdns +ml mold +mpris +official
 pax-kernel +pdf pic +pgo +plugins +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio +reporting-api qt5 qt6
@@ -679,7 +679,6 @@ REQUIRED_USE+="
 		kerberos
 		libaom
 		llvm_slot_19
-		message-center
 		mdns
 		ml
 		mpris
@@ -3033,11 +3032,11 @@ ewarn
 
 	# Optional dependencies.
 	myconf_gn+=" enable_built_in_dns=$(usex async-dns true false)"
-	myconf_gn+=" enable_chrome_notifications=$(usex message-center true false)"
+	myconf_gn+=" enable_chrome_notifications=true" # Depends on enable_message_center?
 	myconf_gn+=" enable_hangout_services_extension=$(usex hangouts true false)"
 	myconf_gn+=" enable_hidpi=$(usex hidpi true false)"
 	myconf_gn+=" enable_mdns=$(usex mdns true false)"
-	myconf_gn+=" enable_message_center=$(usex message-center true false)"
+	myconf_gn+=" enable_message_center=true" # Required for linux, but not Fucshia and Android
 	myconf_gn+=" enable_ml_internal=false"	# components/optimization_guide/internal is empty.  It is default disabled for unbranded.
 	myconf_gn+=" enable_plugins=$(usex plugins true false)"
 	myconf_gn+=" enable_ppapi=false"
