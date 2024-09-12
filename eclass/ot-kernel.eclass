@@ -7040,7 +7040,7 @@ ewarn "You must manually add yama to CONFIG_LSM which was requested by an app by
 
 	local lsms=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
 	if [[ "${ot_kernel_lsms_choice}" == "manual" ]] ; then
-einfo "OT_KERNEL_LSMS=manual (From kernel .config)"
+einfo "OT_KERNEL_LSMS=manual (from kernel .config)"
 einfo "LSMs:  ${lsms}"
 		warn_lsm_changes
 	elif [[ "${ot_kernel_lsms_choice}" == "default" ]] ; then
