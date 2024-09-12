@@ -7141,6 +7141,14 @@ einfo "Using the auto LSM settings"
 		else
 			ot_kernel_lsms+=",bpf"
 		fi
+
+		if [[ "${_OT_KERNEL_LSM_ADD_APPARMOR}" == "1" ]] && ! has_version "sys-apps/apparmor" ; then
+ewarn "Adding apparmor was skipped but requested by a program.  Install sys-apps/apparmor to add the selinux LSM and re-emerge again."
+		fi
+		if [[ "${_OT_KERNEL_LSM_ADD_SELINUX}" == "1" ]] && ! has_version "sec-policy/selinux-base" ; then
+ewarn "Adding selinux was skipped but requested by a program.  Install sec-policy/selinux-base to add the selinux LSM and re-emerge again."
+		fi
+
 	else
 		ot_kernel_lsms="${OT_KERNEL_LSMS}"
 		ot_kernel_lsms="${ot_kernel_lsms,,}"
@@ -7284,8 +7292,6 @@ einfo "LSMs:  ${arg}"
 einfo "LSMs:  ${ot_kernel_lsms}"
 		fi
 	fi
-
-	unset _OT_KERNEL_ADD_LSM
 }
 
 # @FUNCTION: ban_dma_attack_use
