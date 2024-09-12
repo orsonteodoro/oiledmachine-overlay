@@ -7025,7 +7025,7 @@ ewarn "You must manually add apparmor to CONFIG_LSM which was requested by an ap
 ewarn "You must manually add landlock to CONFIG_LSM which was requested by an app by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
 		fi
 		if [[ "${_OT_KERNEL_LSM_ADD_LOCKDOWN}" == "1" ]] && ! [[ "${lsms}" =~ "lockdown" ]] ; then
-ewarn "You must manually add lockdown to CONFIG_LSM which was requested by an app or required by signed external modules by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
+ewarn "You must manually add lockdown to CONFIG_LSM which was requested by an app or to prevent loading unsigned modules by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
 		fi
 		if [[ "${_OT_KERNEL_LSM_ADD_SELINUX}" == "1" ]] && ! [[ "${lsms}" =~ "selinux" ]] ; then
 ewarn "You must manually add selinux to CONFIG_LSM which was requested by an app by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
@@ -7041,7 +7041,7 @@ einfo "Using the default LSM settings"
 # It is assume that user wanted full control.
 		if [[ "${_OT_KERNEL_LSM_ADD_APPARMOR}" == "1" ]] ; then
 ewarn
-ewarn "An app wanted LSMS=apparmor but you chose OT_KERNEL_LSMS=default,"
+ewarn "An app wanted AppArmor LSM but you chose OT_KERNEL_LSMS=default,"
 ewarn "which is assumed to be a minimal LSM configuration."
 ewarn "To make the app work, you must either..."
 ewarn
@@ -7051,7 +7051,7 @@ ewarn
 		fi
 		if [[ "${_OT_KERNEL_LSM_ADD_LANDLOCK}" == "1" ]] ; then
 ewarn
-ewarn "An app wanted LSMS=landlock but you chose OT_KERNEL_LSMS=default,"
+ewarn "An app wanted Landlock LSM but you chose OT_KERNEL_LSMS=default,"
 ewarn "which is assumed to be a minimal LSM configuration."
 ewarn "To make the app work, you must either..."
 ewarn
@@ -7061,9 +7061,9 @@ ewarn
 		fi
 		if [[ "${_OT_KERNEL_LSM_ADD_LOCKDOWN}" == "1" ]] ; then
 ewarn
-ewarn "An app wanted LSMS=lockdown but you chose OT_KERNEL_LSMS=default,"
+ewarn "An app wanted Lockdown LSM but you chose OT_KERNEL_LSMS=default,"
 ewarn "which is assumed to be a minimal LSM configuration."
-ewarn "To make the app work, you must either..."
+ewarn "To make the app work or to prevent the loading of unsigned modules, you must either..."
 ewarn
 ewarn "1.  Use OT_KERNEL_LSMS=auto"
 ewarn "2.  Manually add lockdown to OT_KERNEL_LSMS"
@@ -7071,7 +7071,7 @@ ewarn
 		fi
 		if [[ "${_OT_KERNEL_LSM_ADD_YAMA}" == "1" ]] ; then
 ewarn
-ewarn "An app wanted LSMS=yama but you chose OT_KERNEL_LSMS=default,"
+ewarn "An app wanted Yama LSM but you chose OT_KERNEL_LSMS=default,"
 ewarn "which is assumed to be a minimal LSM configuration."
 ewarn "To make the app work, you must either..."
 ewarn
@@ -7143,10 +7143,10 @@ einfo "Using the auto LSM settings"
 		fi
 
 		if [[ "${_OT_KERNEL_LSM_ADD_APPARMOR}" == "1" ]] && ! has_version "sys-apps/apparmor" ; then
-ewarn "Adding apparmor was skipped but requested by a program.  Install sys-apps/apparmor to add the selinux LSM and re-emerge again."
+ewarn "Adding apparmor was skipped but requested by a program.  Install sys-apps/apparmor to add the AppArmor LSM and re-emerge again."
 		fi
 		if [[ "${_OT_KERNEL_LSM_ADD_SELINUX}" == "1" ]] && ! has_version "sec-policy/selinux-base" ; then
-ewarn "Adding selinux was skipped but requested by a program.  Install sec-policy/selinux-base to add the selinux LSM and re-emerge again."
+ewarn "Adding selinux was skipped but requested by a program.  Install sec-policy/selinux-base to add the SELinux LSM and re-emerge again."
 		fi
 
 	else
