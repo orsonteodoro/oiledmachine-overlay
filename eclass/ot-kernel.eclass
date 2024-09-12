@@ -7214,7 +7214,10 @@ einfo "OT_KERNEL_LSMS:  ${ot_kernel_lsms}"
 		done
 
 		# Pick the default legacy
-		l=$(echo "${ot_kernel_lsms,,}" | sed -e "s| ||g" | grep -E -o -e "(selinux|smack|tomoyo|apparmor)" | head -n 1)
+		l=$(echo "${ot_kernel_lsms,,}" \
+			| sed -e "s| ||g" \
+			| grep -E -o -e "(selinux|smack|tomoyo|apparmor)" \
+			| head -n 1)
 		[[ -z "${l}" ]] && l="dac"
 einfo "ot_kernel_lsms=${ot_kernel_lsms,,}"
 einfo "Default LSM: ${l}"
@@ -7252,14 +7255,15 @@ einfo "Default LSM: ${l}"
 			lsms+=( "bpf" )
 		fi
 
+		local arg
 		if [[ "${OT_KERNEL_USE_LSM_UPSTREAM_ORDER}" == "1" ]] ; then
-			local arg=$(echo "${lsms[@]}" | tr " " ",")
+			arg=$(echo "${lsms[@]}" | tr " " ",")
 			ot-kernel_set_configopt "CONFIG_LSM" "\"${arg}\""
-einfo "LSMs:  ${arg}"
 		else
-			ot-kernel_set_configopt "CONFIG_LSM" "\"${ot_kernel_lsms}\""
-einfo "LSMs:  ${ot_kernel_lsms}"
+			arg="${ot_kernel_lsms}"
+			ot-kernel_set_configopt "CONFIG_LSM" "\"${arg}\""
 		fi
+einfo "LSMs:  ${arg}"
 	fi
 }
 
