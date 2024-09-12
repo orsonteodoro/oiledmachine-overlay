@@ -7022,19 +7022,25 @@ ot-kernel_set_kconfig_lsms() {
 	#
 	warn_lsm_changes() {
 		if [[ "${_OT_KERNEL_LSM_ADD_APPARMOR}" == "1" ]] && ! [[ "${lsms}" =~ "apparmor" ]] ; then
-ewarn "You must manually add apparmor to CONFIG_LSM which was requested by an app by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
+ewarn "You must manually add apparmor to CONFIG_LSM which was requested by an ebuild-package by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
 		fi
 		if [[ "${_OT_KERNEL_LSM_ADD_LANDLOCK}" == "1" ]] && ! [[ "${lsms}" =~ "landlock" ]] ; then
-ewarn "You must manually add landlock to CONFIG_LSM which was requested by an app by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
+ewarn "You must manually add landlock to CONFIG_LSM which was requested by an ebuild-package by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
 		fi
 		if [[ "${_OT_KERNEL_LSM_ADD_LOCKDOWN}" == "1" ]] && ! [[ "${lsms}" =~ "lockdown" ]] ; then
-ewarn "You must manually add lockdown to CONFIG_LSM which was requested by an app or to prevent loading unsigned modules by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
+ewarn "You must manually add lockdown to CONFIG_LSM which was requested by an ebuild-package or to prevent loading unsigned modules by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
 		fi
 		if [[ "${_OT_KERNEL_LSM_ADD_SELINUX}" == "1" ]] && ! [[ "${lsms}" =~ "selinux" ]] ; then
-ewarn "You must manually add selinux to CONFIG_LSM which was requested by an app by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
+ewarn "You must manually add selinux to CONFIG_LSM which was requested by an ebuild-package by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
+		fi
+		if [[ "${_OT_KERNEL_LSM_ADD_SAFESETID}" == "1" ]] && ! [[ "${lsms}" =~ "safesetid" ]] ; then
+ewarn "You must manually add safesetid to CONFIG_LSM which was requested by an ebuild-package by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
+		fi
+		if [[ "${_OT_KERNEL_LSM_ADD_SMACK}" == "1" ]] && ! [[ "${lsms}" =~ "smack" ]] ; then
+ewarn "You must manually add smack to CONFIG_LSM which was requested by an ebuild-package by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
 		fi
 		if [[ "${_OT_KERNEL_LSM_ADD_YAMA}" == "1" ]] && ! [[ "${lsms}" =~ "yama" ]] ; then
-ewarn "You must manually add yama to CONFIG_LSM which was requested by an app by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
+ewarn "You must manually add yama to CONFIG_LSM which was requested by an ebuild-package by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
 		fi
 	}
 
@@ -7065,6 +7071,10 @@ einfo "OT_KERNEL_LSMS=auto"
 
 		if [[ "${_OT_KERNEL_LSM_ADD_YAMA}" == "1" ]] ; then
 			ot_kernel_lsms+=",yama"
+		fi
+
+		if [[ "${_OT_KERNEL_LSM_ADD_SAFESETID}" == "1" ]] ; then
+			ot_kernel_lsms+=",safesetid"
 		fi
 
 		if ot-kernel_has_version "sec-policy/selinux-base" ; then
@@ -7111,10 +7121,13 @@ einfo "OT_KERNEL_LSMS=auto"
 		fi
 
 		if [[ "${_OT_KERNEL_LSM_ADD_APPARMOR}" == "1" ]] && ! has_version "sys-apps/apparmor" ; then
-ewarn "Adding apparmor was skipped but requested by a program.  Install sys-apps/apparmor to add the AppArmor LSM and re-emerge again."
+ewarn "Adding apparmor was skipped but requested by a ebuild-package.  Install sys-apps/apparmor to add the AppArmor LSM and re-emerge again."
 		fi
 		if [[ "${_OT_KERNEL_LSM_ADD_SELINUX}" == "1" ]] && ! has_version "sec-policy/selinux-base" ; then
-ewarn "Adding selinux was skipped but requested by a program.  Install sec-policy/selinux-base to add the SELinux LSM and re-emerge again."
+ewarn "Adding selinux was skipped but requested by a ebuild-package.  Install sec-policy/selinux-base to add the SELinux LSM and re-emerge again."
+		fi
+		if [[ "${_OT_KERNEL_LSM_ADD_SMACK}" == "1" ]] && ! has_version "sys-apps/smack-utils" ; then
+ewarn "Adding smack was skipped but requested by a ebuild-package.  Install sys-apps/smack-utils to add the SMACK LSM and re-emerge again."
 		fi
 
 	else
@@ -12044,6 +12057,8 @@ einfo "Forcing the default hardening level for maximum uptime"
 	local _OT_KERNEL_LSM_ADD_SELINUX=0
 	local _OT_KERNEL_LSM_ADD_LANDLOCK=0
 	local _OT_KERNEL_LSM_ADD_LOCKDOWN=0
+	local _OT_KERNEL_LSM_ADD_SAFESETID=0
+	local _OT_KERNEL_LSM_ADD_SMACK=0
 	local _OT_KERNEL_LSM_ADD_YAMA=0
 	ot-kernel-pkgflags_apply # Sets PREEMPT*, uses hardening_level
 	ot-kernel-debugger

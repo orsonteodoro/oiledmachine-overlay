@@ -724,6 +724,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_stress_ng
 	ot-kernel-pkgflags_sudo
 	ot-kernel-pkgflags_suricata
+	ot-kernel-pkgflags_syd
 	ot-kernel-pkgflags_sysdig_kmod
 	ot-kernel-pkgflags_systemd
 	ot-kernel-pkgflags_systemd_bootchart
@@ -1046,6 +1047,7 @@ ot-kernel-pkgflags_audacity() { # DONE
 # Applies kernel config flags for the audit package
 ot-kernel-pkgflags_audit() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-process/audit" ; then
+		ot-kernel_y_configopt "CONFIG_NET" # CONFIG_AUDIT dep
 		ot-kernel_y_configopt "CONFIG_AUDIT"
 	fi
 }
@@ -3311,7 +3313,7 @@ ewarn "Do not use CBC for disk encryption."
 	# section.
 
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.16" ; then
-			ot-kernel_y_configopt "CONFIG_NET"
+			ot-kernel_y_configopt "CONFIG_NET" # CONFIG_AUDIT dep
 			ot-kernel_y_configopt "CONFIG_AUDIT"
 			ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
 			ot-kernel_y_configopt "CONFIG_DM_AUDIT"
@@ -4200,6 +4202,7 @@ ot-kernel-pkgflags_elogind() { # DONE
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_y_configopt "CONFIG_SIGNALFD"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
+		_OT_KERNEL_LSM_ADD_SMACK=1 # It is forced enabled.
 	fi
 }
 
@@ -7841,6 +7844,7 @@ ot-kernel-pkgflags_opensnitch() { # DONE
 		ot-kernel_y_configopt "CONFIG_NF_CT_NETLINK"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		if ot-kernel_has_version_pkgflags "${pkg}[audit]" ; then
+			ot-kernel_y_configopt "CONFIG_NET" # CONFIG_AUDIT dep
 			ot-kernel_y_configopt "CONFIG_AUDIT"
 		fi
 		if ot-kernel_has_version_pkgflags "${pkg}[iptables]" ; then
@@ -9333,6 +9337,7 @@ ot-kernel-pkgflags_snapd() { # DONE
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
 		ot-kernel_y_configopt "CONFIG_CGROUP_DEVICE"
 		ot-kernel_y_configopt "CONFIG_CGROUP_FREEZER"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 		ot-kernel_y_configopt "CONFIG_NAMESPACES"
 		ot-kernel_y_configopt "CONFIG_SQUASHFS"
 		ot-kernel_y_configopt "CONFIG_SQUASHFS_ZLIB"
@@ -9726,6 +9731,75 @@ ot-kernel-pkgflags_suricata() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_syd
+# @DESCRIPTION:
+# Applies kernel config flags for the syd package
+ot-kernel-pkgflags_syd() { # FIXME
+	if ot-kernel_has_version_pkgflags "sys-apps/syd" ; then
+		ot-kernel_y_configopt "CONFIG_DEVTMPFS" # For /dev and checking sandbox status, ghost_mode
+		ot-kernel_y_configopt "CONFIG_PROC_FS" # For /proc
+		ot-kernel_y_configopt "CONFIG_SYSFS" # For /sys
+		ot-kernel_y_configopt "CONFIG_FILE_LOCKING" # For flock
+		ot-kernel_y_configopt "CONFIG_UNIX" # For socket(AF_UNIX, ...)
+		ot-kernel_y_configopt "CONFIG_TMPFS" # For /run
+
+	# See also https://gitlab.exherbo.org/sydbox/sydbox/-/tree/main
+	# It is unknown if these capabilities are a hard requirement.
+
+	# Seccomp kernel config already applied.
+	# See ot-kernel-pkgflags_libseccomp
+
+		_OT_KERNEL_LSM_ADD_LANDLOCK=1
+		_OT_KERNEL_LSM_ADD_SAFESETID=1
+	# For namespace requirements, see
+	# https://gitlab.exherbo.org/sydbox/sydbox/-/blob/main/src/unshare/namespace.rs
+
+	#
+	# The kernel flags coverage/progress per sandbox capability:
+	# If a line is blank, it may not be finished.
+	# See http://man.exherbolinux.org/syd.7.html for description of capability
+	#
+	# 1. ot-kernel-pkgflags_libseccomp
+	# 2. ot-kernel-pkgflags_libseccomp
+	# 3. ot-kernel-pkgflags_libseccomp
+	# 4. ot-kernel-pkgflags_libseccomp CONFIG_MEMFD_CREATE=y, _ot-kernel_set_pid_ns
+	# 5. ot-kernel-pkgflags_libseccomp
+	# 6.
+	# 7. Passed... It requires grsecurity
+	# 8. ot-kernel-pkgflags_libseccomp, CONFIG_UNIX=y [unix sockets], CONFIG_INET=y [ipv4], CONFIG_IPV6=y [ipv6], [netlink], CONFIG_CRYPTO_USER_API_SKCIPHER=y [kcapi]
+	# 9. _OT_KERNEL_LSM_ADD_LANDLOCK=1
+	# 10. CONFIG_CRYPTO_CBC=y, CONFIG_CRYPTO_CTR=y, CONFIG_CRYPTO_AES=y, CONFIG_MEMFD_CREATE=y, _ot-kernel_set_pid_ns
+	# 11. _ot-kernel_set_net_ns
+	# 12. CONFIG_PROC_FS=y
+	# 13. _ot-kernel_set_pid_ns
+	# 14. _OT_KERNEL_LSM_ADD_SAFESETID=1
+	# 15.
+	#
+
+		# Netlink is enabled unconditionally
+		ot-kernel_y_configopt "CONFIG_NET" # Dep of INET
+		ot-kernel_y_configopt "CONFIG_INET" # ipv4
+		ot-kernel_y_configopt "CONFIG_IPV6"
+		ot-kernel_y_configopt "CONFIG_CRYPTO"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_SKCIPHER" # kcapi
+
+		ot-kernel_y_configopt "CONFIG_MEMFD_CREATE"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC" # It needs CONFIG_SKCIPHER
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CTR" # It needs CONFIG_SKCIPHER
+		_ot-kernel-pkgflags_aes CBC CTR
+
+	# These are disabed by default in the sandbox but a user may want to whitelist.
+		# Missing mount ns
+		_ot-kernel_set_uts_ns
+		_ot-kernel_set_ipc_ns
+		_ot-kernel_set_user_ns
+		_ot-kernel_set_pid_ns
+		_ot-kernel_set_net_ns
+		_ot-kernel_set_cgroup_ns
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_sysdig_kmod
 # @DESCRIPTION:
 # Applies kernel config flags for the sysdig-kmod package
@@ -9909,6 +9983,11 @@ ot-kernel-pkgflags_systemd() { # DONE
 		fi
 
 		if [[ "${SYSTEMD_CONTAINER:-0}" == "1" ]] ; then
+			if [[ "${work_profile}" == "dss" ]] ; then
+eerror "Audit is required for dss profile to generate logs.  Set SYSTEMD_CONTAINER=0"
+				die
+			fi
+			ot-kernel_set_kconfig_kernel_cmdline "audit=0"
 			ot-kernel_unset_configopt "CONFIG_AUDIT"
 		fi
 
@@ -10197,6 +10276,7 @@ ot-kernel-pkgflags_tuigreet() { # DONE
 ot-kernel-pkgflags_tup() { # DONE
 	if ot-kernel_has_version_pkgflags "dev-build/tup" ; then
 		ot-kernel_y_configopt "CONFIG_FUSE_FS"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 		ot-kernel_y_configopt "CONFIG_NAMESPACES"
 	fi
 }
@@ -11849,6 +11929,7 @@ einfo "Added ${opt_raw}"
 					ot-kernel_y_configopt "CONFIG_IP_SET"
 				fi
 				if [[ "${opt}" == "NETFILTER_XT_TARGET_AUDIT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NET" # CONFIG_AUDIT dep
 					ot-kernel_y_configopt "CONFIG_AUDIT"
 				fi
 				if [[ "${opt}" == "NETFILTER_XT_TARGET_CHECKSUM" ]] ; then
@@ -12182,10 +12263,18 @@ einfo "Enabling multiuser / multigroup support"
 	fi
 }
 
+# @FUNCTION: _ot-kernel_set_cgroup_ns
+# @DESCRIPTION:
+# Enable CGROUP_NS and flag dependencies
+_ot-kernel_set_cgroup_ns() {
+	ot-kernel_y_configopt "CONFIG_CGROUPS"
+}
+
 # @FUNCTION: _ot-kernel_set_ipc_ns
 # @DESCRIPTION:
 # Enable IPC_NS and flag dependencies
 _ot-kernel_set_ipc_ns() {
+	ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	ot-kernel_y_configopt "CONFIG_NAMESPACES"
 	ot-kernel_y_configopt "CONFIG_SYSVIPC"
 	_ot-kernel_set_posix_mqueue
@@ -12196,6 +12285,7 @@ _ot-kernel_set_ipc_ns() {
 # @DESCRIPTION:
 # Enable PID_NS and flag dependencies
 _ot-kernel_set_pid_ns() {
+	ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	ot-kernel_y_configopt "CONFIG_NAMESPACES"
 	ot-kernel_y_configopt "CONFIG_PID_NS"
 }
@@ -12204,6 +12294,7 @@ _ot-kernel_set_pid_ns() {
 # @DESCRIPTION:
 # Enable NET_NS and flag dependencies
 _ot-kernel_set_net_ns() {
+	ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	ot-kernel_y_configopt "CONFIG_NAMESPACES"
 	ot-kernel_y_configopt "CONFIG_NET"
 	ot-kernel_y_configopt "CONFIG_NET_NS"
@@ -12213,6 +12304,7 @@ _ot-kernel_set_net_ns() {
 # @DESCRIPTION:
 # Enable TIME_NS and flag dependencies
 _ot-kernel_set_time_ns() {
+	ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	ot-kernel_y_configopt "CONFIG_NAMESPACES"
 	ot-kernel_y_configopt "CONFIG_GENERIC_VDSO_TIME_NS"
 	ot-kernel_y_configopt "CONFIG_TIME_NS"
@@ -12222,6 +12314,7 @@ _ot-kernel_set_time_ns() {
 # @DESCRIPTION:
 # Enable USER_NS and flag dependencies
 _ot-kernel_set_user_ns() {
+	ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	ot-kernel_y_configopt "CONFIG_NAMESPACES"
 	ot-kernel_y_configopt "CONFIG_USER_NS"
 }
@@ -12230,6 +12323,7 @@ _ot-kernel_set_user_ns() {
 # @DESCRIPTION:
 # Enable UTS_NS and flag dependencies
 _ot-kernel_set_uts_ns() {
+	ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	ot-kernel_y_configopt "CONFIG_NAMESPACES"
 	ot-kernel_y_configopt "CONFIG_UTS_NS"
 }
@@ -13890,6 +13984,19 @@ _ot-kernel_set_so_attach_filter() { # DONE
 	# The userland program must have SO_ATTACH_FILTER.
 	ot-kernel_y_configopt "CONFIG_NET"
 	warn_lowered_security "${pkg}" # BPF, Spectre Variant 2
+}
+
+# @FUNCTION: _ot-kernel_enable_selinux()
+ot-kernel-pkgflags_selinux()
+# Generated from:
+# grep -l --exclude-dir=metadata --exclude-dir=md5-cache --exclude-dir=.git -r -E -e "(sys-libs/libselinux|sec-policy/selinux)" /usr/portage | cut -f 4-5 -d "/" | sort |uniq
+	local PKGS=(
+	)
+	local pkg in ${PKGS[@]} ; do
+		if ot-kernel_has_version "${pkg}[selinux]" ; then
+			_OT_KERNEL_LSM_ADD_SELINUX=1
+		fi
+	done
 }
 
 # CONFIG_ADVISE_SYSCALLS search keywords:  madvise, fadvise
