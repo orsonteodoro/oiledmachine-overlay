@@ -7027,7 +7027,7 @@ ewarn "You must manually add landlock to CONFIG_LSM which was requested by an ap
 		if [[ "${_OT_KERNEL_LSM_ADD_LOCKDOWN}" == "1" ]] && ! [[ "${lsms}" =~ "lockdown" ]] ; then
 ewarn "You must manually add lockdown to CONFIG_LSM which was requested by an app or required by signed external modules by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
 		fi
-		if [[ "${_OT_KERNEL_LSM_ADD_YAMA}" == "1" ]] && ! [[ "${lsms}" =~ "selinux" ]] ; then
+		if [[ "${_OT_KERNEL_LSM_ADD_SELINUX}" == "1" ]] && ! [[ "${lsms}" =~ "selinux" ]] ; then
 ewarn "You must manually add selinux to CONFIG_LSM which was requested by an app by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
 		fi
 		if [[ "${_OT_KERNEL_LSM_ADD_YAMA}" == "1" ]] && ! [[ "${lsms}" =~ "yama" ]] ; then
