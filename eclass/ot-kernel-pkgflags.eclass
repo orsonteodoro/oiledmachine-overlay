@@ -3995,22 +3995,11 @@ ot-kernel-pkgflags_docker() { # DONE
 		fi
 
 		if ot-kernel_has_version_slow "${pkg}[selinux]" ; then
-			ot-kernel_y_configopt "CONFIG_SECURITY_SELINUX"
-			ot-kernel_y_configopt "CONFIG_SYSFS"
-			ot-kernel_y_configopt "CONFIG_MULTIUSER"
-			ot-kernel_y_configopt "CONFIG_SECURITY"
-			ot-kernel_y_configopt "CONFIG_SECURITY_NETWORK"
-			ot-kernel_y_configopt "CONFIG_AUDIT"
-			ot-kernel_y_configopt "CONFIG_NET"
-			ot-kernel_y_configopt "CONFIG_INET"
+			_OT_KERNEL_LSM_ADD_SELINUX=1
 		fi
 
 		if ot-kernel_has_version_slow "${pkg}[apparmor]" ; then
-			ot-kernel_y_configopt "CONFIG_SECURITY_APPARMOR"
-			ot-kernel_y_configopt "CONFIG_SYSFS"
-			ot-kernel_y_configopt "CONFIG_MULTIUSER"
-			ot-kernel_y_configopt "CONFIG_SECURITY"
-			ot-kernel_y_configopt "CONFIG_NET"
+			_OT_KERNEL_LSM_ADD_APPARMOR=1
 		fi
 
 		ot-kernel_y_configopt "CONFIG_EXT4_FS"
@@ -9352,7 +9341,7 @@ ot-kernel-pkgflags_snapd() { # DONE
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
 		_ot-kernel_set_seccomp_bpf "${pkg}"
 		if ot-kernel_has_version "${pkg}[apparmord]" ; then
-			ot-kernel_y_configopt "CONFIG_SECURITY_APPARMOR"
+			_OT_KERNEL_LSM_ADD_APPARMOR=1
 		fi
 	fi
 }
@@ -9714,7 +9703,7 @@ ot-kernel-pkgflags_stress_ng() { # DONE
 		   ot-kernel_has_version_pkgflags "${pkg}" \
 		&& ot-kernel_has_version "${pkg}[apparmor]" \
 	; then
-		ot-kernel_y_configopt "CONFIG_SECURITY_APPARMOR"
+		_OT_KERNEL_LSM_ADD_APPARMOR=1
 	fi
 }
 
@@ -13166,14 +13155,23 @@ _ot-kernel_checkpoint_dss_acl_requirement() {
 # Check for LSM (Linux Security Modules) support.
 _ot-kernel_checkpoint_dss_lsm_requirement() {
 	if [[ "${work_profile}" == "dss" ]] ; then
-		if ot-kernel_has_version "sec-policy/selinux-base" ; then
+		if ot-kernel_has_version "sys-apps/apparmor" ; then
+			:
+		elif ot-kernel_has_version "sys-apps/smack-utils" ; then
+			:
+		elif ot-kernel_has_version "sys-apps/tomoyo-tools" ; then
+			:
+		elif ot-kernel_has_version "sec-policy/selinux-base" ; then
 			:
 		else
 eerror
 eerror "You are missing an access control model implementation for the dss work"
 eerror "profile.  Install one of the following to silence this error:"
 eerror
-eerror "sec-policy/selinux-base"
+eerror "  sys-apps/apparmor"
+eerror "  sys-apps/smack-utils"
+eerror "  sys-apps/tomoyo-tools"
+eerror "  sec-policy/selinux-base"
 eerror
 			die
 		fi
@@ -13188,9 +13186,12 @@ ewarn "Your access control model implementation in OT_KERNEL_LSMS for the dss"
 ewarn "work profile is weak while the specification hinted strong.  Set"
 ewarn "OT_KERNEL_LSMS of the following rows to silence this error:"
 ewarn
-ewarn "OT_KERNEL_LSMS=\"auto\""
-ewarn "OT_KERNEL_LSMS=\"default\""
-ewarn "OT_KERNEL_LSMS=\"integrity,selinux\""
+ewarn "  OT_KERNEL_LSMS=\"auto\""
+ewarn "  OT_KERNEL_LSMS=\"default\""
+ewarn "  OT_KERNEL_LSMS=\"apparmor\""
+ewarn "  OT_KERNEL_LSMS=\"selinux\""
+ewarn "  OT_KERNEL_LSMS=\"smack\""
+ewarn "  OT_KERNEL_LSMS=\"tomoyo\""
 ewarn
 		fi
 	fi
