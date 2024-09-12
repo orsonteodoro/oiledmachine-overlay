@@ -2660,6 +2660,8 @@ eerror
 }
 
 pkg_setup() {
+	linux-info_pkg_setup
+
 	use xpra "xpra support may be broken.  Use xephyr instead."
 	if [[ -e "/etc/portage/env/firejail.conf" ]] ; then
 		local owner=$(stat -c "%U:%G" "/etc/portage/env/firejail.conf")
@@ -2685,7 +2687,16 @@ eerror "Check contents for tampering and change file permissions to 644 or 640 f
 	WARNING_SQUASHFS="CONFIG_SQUASHFS: required for firejail --appimage mode"
 	check_extra_config
 
-	linux-info_pkg_setup
+	CONFIG_CHECK="
+		~NET
+		~SECCOMP
+		~SECCOMP_FILTER
+	"
+	WARNING_NET="CONFIG_NET is required for seccomp-bpf for sandboxing or limiting the capabilities of the attacker."
+	WARNING_SECCOMP="CONFIG_SECCOMP is required for seccomp-bpf for sandboxing or limiting the capabilities of the attacker."
+	WARNING_SECCOMP_FILTER="CONFIG_SECCOMP_FILTER is required for seccomp-bpf for sandboxing or limiting the capabilities of the attacker."
+	check_extra_config
+
 	local config_path=$(linux_config_path)
 einfo "config_path:  ${config_path}"
 	local lsm_list=$(grep -e "CONFIG_LSM" "${config_path}" \
