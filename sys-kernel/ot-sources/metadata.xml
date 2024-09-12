@@ -2384,7 +2384,9 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
 
     Acceptable general values:  auto, default, manual
 
-    * auto - Adds LSMs based on packages installed with default subsettings
+    * auto - Auto adds LSMs based on packages installed and OT_KERNEL_HARDENING_LEVEL.
+      - If OT_KERNEL_HARDENING_LEVEL=fast-af or similar it will disable LSMs.
+      - If OT_KERNEL_HARDENING_LEVEL=secure or above it will enable and auto-detect LSMs.
     * default - Uses "integrity,selinux,bpf" with default subsettings
       equivalent to upstream defaults.  It is implied capability and
       integrity are loaded.

@@ -7013,6 +7013,33 @@ ot-kernel_set_kconfig_lsms() {
 	fi
 	local ot_kernel_lsms=()
 
+	unset LSM_MODULES
+	declare -A LSM_MODULES=(
+	# These are marked with DEFINE_LSM()
+	# [ebuild_name]="CONFIG_SECURITY_${X}"
+		[apparmor]="CONFIG_SECURITY_APPARMOR"
+		[capability]="CONFIG_SECURITY" # Loaded first
+		[bpf]="CONFIG_BPF_LSM"
+		[integrity]="CONFIG_INTEGRITY" # Loaded last
+		[landlock]="CONFIG_SECURITY_LANDLOCK"
+		[loadpin]="CONFIG_SECURITY_LOADPIN"
+		[lockdown]="CONFIG_SECURITY_LOCKDOWN_LSM"
+		[safesetid]="CONFIG_SECURITY_SAFESETID"
+		[selinux]="CONFIG_SECURITY_SELINUX"
+		[selinux]="CONFIG_SECURITY_SELINUX"
+		[tomoyo]="CONFIG_SECURITY_TOMOYO"
+		[yama]="CONFIG_SECURITY_YAMA"
+	)
+
+	unset LSM_LEGACY
+	declare -A LSM_LEGACY=(
+		[apparmor]="CONFIG_DEFAULT_SECURITY_APPARMOR"
+		[dac]="CONFIG_DEFAULT_SECURITY_DAC"
+		[smack]="CONFIG_DEFAULT_SECURITY_SMACK"
+		[selinux]="CONFIGDEFAULT_SECURITY_SELINUX"
+		[tomoyo]="CONFIG_DEFAULT_SECURITY_TOMOYO"
+	)
+
 	#
 	# warn_lsm_changes is used when not OT_KERNEL_LSMS=auto.
 	#
@@ -7059,9 +7086,25 @@ einfo "OT_KERNEL_LSMS=default"
 		ot-kernel_y_configopt "CONFIG_INTEGRITY"
 
 		warn_lsm_changes
+	elif [[ "${ot_kernel_lsms_choice}" == "auto" && "${hardening_level}" =~ ("fast"|"fast-af"|"fast-as-fuck"|"performance") ]] ; then
+einfo "OT_KERNEL_LSMS=auto (fast mode)"
+		ot_kernel_lsms=""
+		ot-kernel_set_configopt "CONFIG_LSM" "\"\""
+
+		local l
+		for l in ${LSM_MODULES[@]} ; do
+			ot-kernel_unset_configopt "${l}" # Reset
+		done
+
+		for l in ${LSM_LEGACY[@]} ; do
+			ot-kernel_unset_configopt "${l}" # Reset
+		done
+
+		ot-kernel_y_configopt "CONFIG_DEFAULT_SECURITY_DAC"
+
 	elif [[ "${ot_kernel_lsms_choice}" == "auto" ]] ; then
 	# This section adds auto-discovered lsms before order selection.
-einfo "OT_KERNEL_LSMS=auto"
+einfo "OT_KERNEL_LSMS=auto (secure mode)"
 		OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
 		# yama is not default enabled upstream but in major distros
 		# landlock is not diefault enabled upstream
@@ -7167,32 +7210,6 @@ einfo "OT_KERNEL_LSMS:  ${ot_kernel_lsms}"
 	fi
 
 	if [[ -n "${ot_kernel_lsms}" ]] ; then
-		unset LSM_MODULES
-		declare -A LSM_MODULES=(
-		# These are marked with DEFINE_LSM()
-		# [ebuild_name]="CONFIG_SECURITY_${X}"
-			[apparmor]="CONFIG_SECURITY_APPARMOR"
-			[capability]="CONFIG_SECURITY" # Loaded first
-			[bpf]="CONFIG_BPF_LSM"
-			[integrity]="CONFIG_INTEGRITY" # Loaded last
-			[landlock]="CONFIG_SECURITY_LANDLOCK"
-			[loadpin]="CONFIG_SECURITY_LOADPIN"
-			[lockdown]="CONFIG_SECURITY_LOCKDOWN_LSM"
-			[safesetid]="CONFIG_SECURITY_SAFESETID"
-			[selinux]="CONFIG_SECURITY_SELINUX"
-			[selinux]="CONFIG_SECURITY_SELINUX"
-			[tomoyo]="CONFIG_SECURITY_TOMOYO"
-			[yama]="CONFIG_SECURITY_YAMA"
-		)
-
-		unset LSM_LEGACY
-		declare -A LSM_LEGACY=(
-			[apparmor]="CONFIG_DEFAULT_SECURITY_APPARMOR"
-			[dac]="CONFIG_DEFAULT_SECURITY_DAC"
-			[smack]="CONFIG_DEFAULT_SECURITY_SMACK"
-			[selinux]="CONFIGDEFAULT_SECURITY_SELINUX"
-			[tomoyo]="CONFIG_DEFAULT_SECURITY_TOMOYO"
-		)
 
 		ot-kernel_unset_configopt "CONFIG_LSM"
 
@@ -7201,7 +7218,7 @@ einfo "OT_KERNEL_LSMS:  ${ot_kernel_lsms}"
 	# Skip over LSMs that are kernel config dependencies.
 			[[ "${l^^}" =~ ("capability"|"integrity") ]] && continue
 
-			ot-kernel_unset_configopt "${l^^}" # Reset
+			ot-kernel_unset_configopt "${l}" # Reset
 		done
 
 		ot-kernel_y_configopt "CONFIG_SYSFS"
