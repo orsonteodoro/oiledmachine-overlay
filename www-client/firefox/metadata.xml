@@ -68,9 +68,13 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
   advisories are announced.
 
 
-  Proposed ebuild changes
+  Next round of proposed ebuild changes
 
   Investigate shuffle-sections linker option for ROP mitigation.
+
+  Investigate the -Oshit compiler metaflag to speed up build time
+  AND to maintain performance minimums or max performance for
+  performance sensitive vendor libs or modules/subfolders.
 
 -->
 <upstream>
