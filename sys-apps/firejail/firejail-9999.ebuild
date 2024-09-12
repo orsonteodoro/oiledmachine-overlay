@@ -2684,7 +2684,7 @@ eerror "Check contents for tampering and change file permissions to 644 or 640 f
 	CONFIG_CHECK="
 		~SQUASHFS
 	"
-	WARNING_SQUASHFS="CONFIG_SQUASHFS: required for firejail --appimage mode"
+	WARNING_SQUASHFS="CONFIG_SQUASHFS is required for firejail --appimage mode"
 	check_extra_config
 
 	CONFIG_CHECK="
