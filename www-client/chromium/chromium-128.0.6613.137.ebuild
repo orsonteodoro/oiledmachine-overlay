@@ -603,6 +603,9 @@ DISTRO_REQUIRE_USE="
 REQUIRED_USE+="
 	${DISABLED_NON_FREE_USE_FLAGS}
 	!headless (
+		extensions
+		pdf
+		plugins
 		|| (
 			wayland
 			X
