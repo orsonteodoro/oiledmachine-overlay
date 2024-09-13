@@ -1,0 +1,61 @@
+--- a/services/passage_embeddings/public/mojom/passage_embeddings.mojom.orig	2024-09-10 11:42:20.354285500 -0700
++++ b/services/passage_embeddings/public/mojom/passage_embeddings.mojom	2024-09-13 07:59:26.301360699 -0700
+@@ -54,7 +54,7 @@ interface PassageEmbedder {
+  RequireContext=sandbox.mojom.Context.kBrowser]
+ interface PassageEmbeddingsService {
+   // Load the given models for generating embeddings.
+-  [AllowedContext=sandbox.mojom.Context.kBrowser]
++  [EnableIf=build_with_tflite_lib, AllowedContext=sandbox.mojom.Context.kBrowser]
+   LoadModels(
+       PassageEmbeddingsLoadModelsParams params,
+       pending_receiver<PassageEmbedder> model) => (bool success);
+--- a/services/passage_embeddings/passage_embeddings_service.cc.orig	2024-09-10 11:42:20.354285500 -0700
++++ b/services/passage_embeddings/passage_embeddings_service.cc	2024-09-13 08:01:38.507194353 -0700
+@@ -6,7 +6,9 @@
+ 
+ #include "base/files/file.h"
+ #include "components/optimization_guide/machine_learning_tflite_buildflags.h"
++#if BUILDFLAG(BUILD_WITH_TFLITE_LIB)
+ #include "services/passage_embeddings/passage_embedder.h"
++#endif
+ 
+ namespace passage_embeddings {
+ 
+@@ -16,11 +18,11 @@ PassageEmbeddingsService::PassageEmbeddi
+ 
+ PassageEmbeddingsService::~PassageEmbeddingsService() = default;
+ 
++#if BUILDFLAG(BUILD_WITH_TFLITE_LIB)
+ void PassageEmbeddingsService::LoadModels(
+     mojom::PassageEmbeddingsLoadModelsParamsPtr params,
+     mojo::PendingReceiver<mojom::PassageEmbedder> model,
+     LoadModelsCallback callback) {
+-#if BUILDFLAG(BUILD_WITH_TFLITE_LIB)
+   embedder_ = std::make_unique<PassageEmbedder>(std::move(model));
+ 
+   // Load the model files.
+@@ -33,9 +35,7 @@ void PassageEmbeddingsService::LoadModel
+   embedder_->SetEmbeddingsModelInputWindowSize(params->input_window_size);
+ 
+   std::move(callback).Run(true);
+-#else
+-  std::move(callback).Run(false);
+-#endif
+ }
++#endif
+ 
+ }  // namespace passage_embeddings
+--- a/services/passage_embeddings/passage_embeddings_service.h.orig	2024-09-10 11:42:20.354285500 -0700
++++ b/services/passage_embeddings/passage_embeddings_service.h	2024-09-13 07:51:06.181549757 -0700
+@@ -24,9 +24,11 @@ class PassageEmbeddingsService : public
+ 
+  private:
+   // mojom::PassageEmbeddingsService:
++#if BUILDFLAG(BUILD_WITH_TFLITE_LIB)
+   void LoadModels(mojom::PassageEmbeddingsLoadModelsParamsPtr params,
+                   mojo::PendingReceiver<mojom::PassageEmbedder> model,
+                   LoadModelsCallback callback) override;
++#endif
+ 
+   mojo::Receiver<mojom::PassageEmbeddingsService> receiver_;
+ 

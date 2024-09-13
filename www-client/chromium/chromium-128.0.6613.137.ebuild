@@ -2037,6 +2037,8 @@ apply_oiledmachine_overlay_patchset() {
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/chromium-128.0.6613.119-custom-optimization-level.patch"
+		"${FILESDIR}/extra-patches/chromium-128.0.6613.137-disable-tflite.patch"
+		"${FILESDIR}/extra-patches/chromium-128.0.6613.137-disable-perfetto.patch"
 	)
 }
 
