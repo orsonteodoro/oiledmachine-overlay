@@ -136,7 +136,10 @@
     xvfb             - Runs the program using Xvfb
                        (headless, /dev/null are an acceptable aliases)
     unset            - Default as xpra or xephyr if X11 app.  Otherwise, it will
-                       default to unsandboxed X11 for CLI apps.
+                       default to unsandboxed X11 for CLI apps.  If the CLI app
+                       is running under x-terminal-emulator profile, it will be
+                       X11 isolated.  However, the tabs might not have
+                       isolation among each other.
 
     X Backend      | Status     | Flaws                       | Benefits                   | OpenGL support
     unsandboxed    | works      | no frame grab isolation and | fastest fps, fastest start | yes, fast
