@@ -126,17 +126,17 @@
 
     X_BACKEND[PROFILE_NAME] - Select the X11 sandbox backend.
     Valid values:
-    unsandboxed      - do not add any flags.  hardware accelerated OpenGL
+    unsandboxed      - Do not add any flags.  Hardware accelerated OpenGL
                        (gaming-unsandbox, opengl-unsandboxed, none, disable are
                        acceptable aliases)
-    xephyr           - runs the program using Xephyr
-    xpra             - runs the program using Xpra
+    xephyr           - Runs the program using Xephyr
+    xpra             - Runs the program using Xpra
                        (gaming-sandboxed, opengl-sandboxed are acceptable
                        aliases)
-    xvfb             - runs the program using Xvfb
+    xvfb             - Runs the program using Xvfb
                        (headless, /dev/null are an acceptable aliases)
-    unset            - default as auto if X11 app.  otherwise, it will default
-                       to none for cli apps.
+    unset            - Default as xpra or xephyr if X11 app.  Otherwise, it will
+                       default to unsandboxed X11 for CLI apps.
 
     X Backend      | Status     | Flaws                       | Benefits                   | OpenGL support
     unsandboxed    | works      | no frame grab isolation and | fastest fps, fastest start | yes, fast
