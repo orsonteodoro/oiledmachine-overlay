@@ -3565,7 +3565,7 @@ eerror
 
 	if ! use X ; then
 		:
-	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("disable"|"none"|"unsandboxed") ]] ; then
+	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("disable"|"none"|"unsandboxed"|"gaming-unsandboxed"|"opengl-unsandboxed") ]] ; then
 		:
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("gaming-sandboxed"|"opengl-sandboxed") ]] ; then
 		x11_arg="--x11=xpra"
