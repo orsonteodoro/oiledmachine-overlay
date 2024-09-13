@@ -134,9 +134,11 @@
     gaming - uses Xpra
     none - do not add any flags
     opengl - uses Xpra
+    xcsecurity - runs with the X11 security extension
     xephyr - runs the program using Xephyr
     xpra - runs the program using Xpra
     xvfb - runs the program using Xvfb
+    xorg - runs with the X11 security extension
     unset - default as auto if X11 app.  otherwise, it will default to none for cli apps.
 
     Variables are in all capitals.
@@ -320,9 +322,12 @@
     <flag name="userns">
       Enable attaching a new user namespace to a sandbox (--noroot option)
     </flag>
-    <flag name="x11">
+    <flag name="X">
       Enable X11 sandboxing for GUIs in restricted untrusted mode.
       (It may crash programs or programs may not prefer untrusted mode.)
+    </flag>
+    <flag name="xcsecurity">
+      Enable X security extension support for windowed apps.
     </flag>
     <flag name="xpra">
       Enable Xpra support for windowed apps and better OpenGL support.
