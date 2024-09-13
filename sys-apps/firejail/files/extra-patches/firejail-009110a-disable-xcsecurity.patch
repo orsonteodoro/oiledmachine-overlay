@@ -1,0 +1,24 @@
+diff '--color=auto' -urp firejail-9999.orig/src/firejail/main.c firejail-9999/src/firejail/main.c
+--- firejail-9999.orig/src/firejail/main.c	2024-09-13 11:47:54.721987695 -0700
++++ firejail-9999/src/firejail/main.c	2024-09-13 12:01:58.915749582 -0700
+@@ -2776,7 +2776,7 @@ int main(int argc, char **argv, char **e
+ #ifdef HAVE_X11
+ 		else if (strcmp(argv[i], "--x11=xorg") == 0) {
+ 			if (checkcfg(CFG_X11))
+-				arg_x11_xorg = 1;
++				arg_x11_xorg = 0;
+ 			else
+ 				exit_err_feature("x11");
+ 		}
+diff '--color=auto' -urp firejail-9999.orig/src/firejail/profile.c firejail-9999/src/firejail/profile.c
+--- firejail-9999.orig/src/firejail/profile.c	2024-09-13 11:47:54.725987627 -0700
++++ firejail-9999/src/firejail/profile.c	2024-09-13 12:01:57.231777978 -0700
+@@ -1332,7 +1332,7 @@ int profile_check_line(char *ptr, int li
+ 	if (strcmp(ptr, "x11 xorg") == 0) {
+ #ifdef HAVE_X11
+ 		if (checkcfg(CFG_X11))
+-			arg_x11_xorg = 1;
++			arg_x11_xorg = 0;
+ 		else
+ 			warning_feature_disabled("x11");
+ #endif

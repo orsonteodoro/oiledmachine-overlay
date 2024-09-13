@@ -129,24 +129,24 @@
     /dev/null - uses Xvfb
     disable - do not add any flags
     headless - uses the Xvfb
-    game - uses Xpra with software OpenGL
-    gaming - uses Xpra with software OpenGL
+    game - uses Xpra with software OpenGL rendering
+    gaming - uses Xpra with software OpenGL rendering
     none - do not add any flags
-    opengl - uses Xpra with software OpenGL
+    opengl - uses Xpra with software OpenGL rendering
     xephyr - runs the program using Xephyr
     xpra - runs the program using Xpra
     xvfb - runs the program using Xvfb
     unset - default as auto if X11 app.  otherwise, it will default to none for cli apps.
 
-    Backend        | Status    | Flaws                         | Benefits                | OpenGL support
-    xpra           | works     | slow start, popups            | no window size problems | software only
-    xpra-virtualgl | works [2] | slow start, popups            | no window size problems | software only
-    xvfb           | untested  |                               | hidden                  | software only
-    xephyr         | works     | window size inconsistencies   | fast start              | software only
-    xorg [1][3]    | broken    |                               |                         | 
+    Backend        | Status     | Flaws                         | Benefits                | OpenGL support
+    xpra           | works      | slow start, popups            | no window size problems | software only
+    xpra-virtualgl | works [2]  | slow start, popups            | no window size problems | software only
+    xvfb           | untested   |                               | hidden                  | software only
+    xephyr         | works      | window size inconsistencies   | fast start              | software only
+    xorg [1][3]    | broken [2] |                               |                         | 
 
     [1] Workarounds may compromise security.  Issue 1741
-    [2] Patch disabled
+    [2] Disabled
     [3] Known as xcsecurity, x11 security extension
 
     Variables are in all capitals.
