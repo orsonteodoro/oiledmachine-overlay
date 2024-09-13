@@ -1,5 +1,5 @@
---- v8/gni/v8.gni.orig	2024-09-13 10:38:56.572267440 -0700
-+++ v8/gni/v8.gni	2024-09-13 11:13:08.929293690 -0700
+--- a/v8/gni/v8.gni.orig	2024-09-13 10:38:56.572267440 -0700
++++ b/v8/gni/v8.gni	2024-09-13 11:13:08.929293690 -0700
 @@ -189,7 +189,7 @@ if (v8_enable_backtrace == "") {
  # Chromium is configured to use the perfetto client library, v8 should also
  # use perfetto for tracing.
@@ -9,3 +9,14 @@
  }
  
  # Includes profiles to optimize builtins if
+--- a/third_party/webrtc/webrtc.gni.orig	2024-09-10 11:46:52.430369600 -0700
++++ b/third_party/webrtc/webrtc.gni	2024-09-13 11:13:05.097358691 -0700
+@@ -386,7 +386,7 @@ if (is_mac || is_ios) {
+ }
+ 
+ if (build_with_chromium) {
+-  rtc_use_perfetto = true
++  rtc_use_perfetto = false
+ }
+ 
+ # Global public configuration that should be applied to all WebRTC targets. You

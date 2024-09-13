@@ -126,28 +126,40 @@
 
     X_BACKEND[PROFILE_NAME] - Select the X11 sandbox backend.
     Valid values:
-    /dev/null - uses Xvfb
-    disable - do not add any flags
-    headless - uses the Xvfb
-    game - uses Xpra with software OpenGL rendering
-    gaming - uses Xpra with software OpenGL rendering
-    none - do not add any flags
-    opengl - uses Xpra with software OpenGL rendering
-    xephyr - runs the program using Xephyr
-    xpra - runs the program using Xpra
-    xvfb - runs the program using Xvfb
-    unset - default as auto if X11 app.  otherwise, it will default to none for cli apps.
+    /dev/null   - uses Xvfb
+    disable     - [unsandboxed] do not add any flags.  hardware accelerated OpenGL
+    headless    - uses the Xvfb
+    game        - uses Xpra with OpenGL
+    gaming      - uses Xpra with OpenGL
+    none        - [unsandboxed] do not add any flags.  hardware accelerated OpenGL
+    opengl      - uses Xpra with OpenGL
+    unsandboxed - do not add any flags.  hardware accelerated OpenGL
+    xephyr      - runs the program using Xephyr
+    xpra        - runs the program using Xpra
+    xvfb        - runs the program using Xvfb
+    unset       - default as auto if X11 app.  otherwise, it will default to none for cli apps.
 
-    Backend        | Status     | Flaws                         | Benefits                | OpenGL support
-    xpra           | works      | slow start, popups            | no window size problems | software only
-    xpra-virtualgl | works [2]  | slow start, popups            | no window size problems | software only
-    xvfb           | untested   |                               | hidden                  | software only
-    xephyr         | works      | window size inconsistencies   | fast start              | software only
-    xorg [1][3]    | broken [2] |                               |                         | 
+    X Backend      | Status     | Flaws                          | Benefits                   | OpenGL support
+    unsandboxed    | works      | no frame grab protection and   | fastest fps, fastest start |
+                   |            | no input protection            |                            | yes, fast
+    xephyr         | works      | window size inconsistencies    | fast start                 | yes, but slow
+    xpra           | works      | slow start, popups             | no window size problems    | yes, but slow
+    xpra-virtualgl | works [2]  | slow start, popups             | no window size problems    | yes, but slow
+    xorg [1][3]    | broken [2] |                                |                            | 
+    xvfb           | untested   |                                | hidden                     | untested
 
     [1] Workarounds may compromise security.  Issue 1741
     [2] Disabled
     [3] Known as xcsecurity, x11 security extension
+
+    chromium --disable-gpu no firejail:  2 fps
+    chromium no firejail:  60 fps
+    chromium with firejail --x11=xephyr:  11 fps
+    chromium with firejail --x11=xpra and opengl=yes:  7 fps
+    chromium with firejail --x11=xpra and opengl=no:  7 fps
+    chromium with firejail --x11=xpra-virtualgl and opengl=no:  7 fps
+    chromium with firejail --x11=xpra-virtualgl and opengl=yes:  7 fps
+    chromium with firejail without --x11 (same as X_BACKEND[PROFILE_NAME]=unsanboxed|disable|none):  60 fps
 
     Variables are in all capitals.
 

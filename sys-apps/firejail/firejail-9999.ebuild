@@ -2917,10 +2917,10 @@ src_prepare() {
 		gen_ebuild
 	fi
 
-#	if use xpra ; then
+	if use xpra ; then
 #		eapply "${FILESDIR}/extra-patches/${PN}-0.9.64-xpra-speaker-override.patch"
-#		eapply "${FILESDIR}/extra-patches/${PN}-009110a-xpra-opengl.patch"
-#	fi
+		eapply "${FILESDIR}/extra-patches/${PN}-009110a-xpra-opengl.patch"
+	fi
 
 	# Our toolchain already sets SSP by default but forcing it causes problems
 	# on arches which don't support it. As for F_S, we again set it by defualt
@@ -3533,11 +3533,41 @@ einfo "Generating wrapper for ${profile_name}"
 		return 1
 	}
 
+# We must send a deprecation notice or removal notice because
+# the security will be severely lowered.
+	if \
+		[[ \
+			   "${X_BACKEND[${profile_name}]}" == "xorg" \
+			|| "${X_BACKEND[${profile_name}]}" == "auto" \
+		]] \
+	; then
+eerror
+eerror "X_BACKEND[PROFILE]=xorg|auto has been removed."
+eerror "Use X_BACKEND[PROFILE]=xpra|xephyr to continue."
+eerror
+	fi
+
+	if \
+		[[ \
+			   "${X_BACKEND[${profile_name}]}" == "game" \
+			|| "${X_BACKEND[${profile_name}]}" == "gaming" \
+			|| "${X_BACKEND[${profile_name}]}" == "opengl" \
+		]] \
+	; then
+eerror
+eerror "X_BACKEND[PROFILE]=game|gaming|opengl has been renamed to"
+eerror "X_BACKEND[PROFILE]=gaming-sandboxed|opengl-sandboxed"
+eerror
+eerror "Convert to the new values to continue."
+eerror
+		die
+	fi
+
 	if ! use X ; then
 		:
-	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("disable"|"none") ]] ; then
+	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("disable"|"none"|"unsandboxed") ]] ; then
 		:
-	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("game"|"gaming"|"opengl") ]] ; then
+	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("gaming-sandboxed"|"opengl-sandboxed") ]] ; then
 		x11_arg="--x11=xpra"
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("xpra") ]] ; then
 		x11_arg="--x11=xpra"

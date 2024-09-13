@@ -5,6 +5,11 @@ It was suggested by one of the xpra developers.
 It does not do hardware acceleration.
 Provided for those that want to test or fix it but the patch should not be used since no benefit.
 
+This patch address the server side.
+For required client side changes for hw acceleration, see https://github.com/Xpra-org/xpra/blob/master/docs/Usage/Client-OpenGL.md
+For alternative server side changes, see https://github.com/Xpra-org/xpra/blob/master/docs/Usage/OpenGL.md
+See also issue 640 at https://github.com/netblue30/firejail/issues/640
+
 diff '--color=auto' -urp firejail-9999.orig/src/firejail/firejail.h firejail-9999/src/firejail/firejail.h
 --- firejail-9999.orig/src/firejail/firejail.h	2024-09-13 08:11:18.857696913 -0700
 +++ firejail-9999/src/firejail/firejail.h	2024-09-13 08:19:48.525657013 -0700
@@ -56,12 +61,12 @@ diff '--color=auto' -urp firejail-9999.orig/src/firejail/x11.c firejail-9999/src
 +	char *_server_argv[256] = {		  // rest initialized to NULL
  		"xpra", "start", display_str, "--no-daemon",
  	};
-+	char *_server_argv_opengl[256] = {		  // rest initialized to NULL
++	char *_server_argv_virtualgl[256] = {		  // rest initialized to NULL
 +		"xpra", "start", "--exec-wrapper=vglrun", display_str, "--no-daemon",
 +	};
  	unsigned pos = 0;
 +	if (xpra_virtualgl) {
-+		memcpy(server_argv, _server_argv_opengl, 256);
++		memcpy(server_argv, _server_argv_virtualgl, 256);
 +	} else {
 +		memcpy(server_argv, _server_argv, 256);
 +	}
@@ -77,13 +82,13 @@ diff '--color=auto' -urp firejail-9999.orig/src/firejail/x11.c firejail-9999/src
 +	char *_server_argv[256] = {		  // rest initialized to NULL
  		"xpra", "start", display_str, "--daemon=no", "--attach=yes", "--exit-with-children=yes"
  	};
-+	char *_server_argv_opengl[256] = {		  // rest initialized to NULL
++	char *_server_argv_virtualgl[256] = {		  // rest initialized to NULL
 +		"xpra", "start", "--exec-wrapper=vglrun", display_str, "--daemon=no", "--attach=yes", "--exit-with-children=yes"
 +	};
  	unsigned spos = 0;
  	unsigned fpos = 0;
 +	if (xpra_virtualgl) {
-+		memcpy(server_argv, _server_argv_opengl, 256);
++		memcpy(server_argv, _server_argv_virtualgl, 256);
 +	} else {
 +		memcpy(server_argv, _server_argv, 256);
 +	}
