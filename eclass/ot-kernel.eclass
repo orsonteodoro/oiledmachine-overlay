@@ -7101,15 +7101,18 @@ eerror "  3. OT_KERNEL_HARDENING_LEVEL=secure-af"
 eerror
 			die
 		fi
-		if grep -q -E -e "^CONFIG_IMA=y" "${path_config}" ; then
+		if [[ "${OT_KERNEL_IMA}" == "off" ]] ; then
+			:
+		elif grep -q -E -e "^CONFIG_IMA=y" "${path_config}" ; then
 eerror
 eerror "CONFIG_INTEGRITY=y will be disabled.  This may break IMA."
 eerror
 eerror "To continue, choose one of the following:"
 eerror
 eerror "  1. Disable CONFIG_IMA"
-eerror "  2. OT_KERNEL_HARDENING_LEVEL=secure"
-eerror "  3. OT_KERNEL_HARDENING_LEVEL=secure-af"
+eerror "  2. OT_KERNEL_IMA=off"
+eerror "  3. OT_KERNEL_HARDENING_LEVEL=secure"
+eerror "  4. OT_KERNEL_HARDENING_LEVEL=secure-af"
 eerror
 			die
 		fi
