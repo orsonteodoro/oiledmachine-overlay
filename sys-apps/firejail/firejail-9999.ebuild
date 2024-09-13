@@ -2383,7 +2383,8 @@ firejail_profiles_youtube-viewer )
 PATCHES=(
 	"${FILESDIR}/${PN}-0.9.70-envlimits.patch"
 	"${FILESDIR}/${PN}-3f4d6df-firecfg.config.patch"
-	"${FILESDIR}/${PN}-009110a-disable-xcsecurity.patch"
+	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity.patch"
+	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
 )
 
 get_impls() {
