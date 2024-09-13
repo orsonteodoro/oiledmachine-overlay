@@ -136,10 +136,11 @@
     xvfb             - Runs the program using Xvfb
                        (headless, /dev/null are an acceptable aliases)
     unset            - Default as Xpra or Xephyr if X11 app.  Otherwise, it will
-                       default to unsandboxed X11 for CLI/TUI apps.  If the
-                       CLI/TUI app is running under the x-terminal-emulator
-                       profile, it will be X11 isolated.  However, the tabs
-                       might not have isolation among each other.
+                       default to unsandboxed X11 for CLI/TUI apps in a virtual
+                       terminal.  If the CLI/TUI app is running under a virtual
+                       terminal emulator with the x-terminal-emulator profile,
+                       it will be X11 isolated.  However, the tabs might not
+                       have isolation among each other.
 
     X Backend      | Status     | Flaws                       | Benefits                   | OpenGL support
     unsandboxed    | works      | no frame grab isolation and | fastest fps, fastest start | yes, fast
