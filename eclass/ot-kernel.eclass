@@ -7088,6 +7088,31 @@ einfo "OT_KERNEL_LSMS=default"
 		warn_lsm_changes
 	elif [[ "${ot_kernel_lsms_choice}" == "auto" && "${hardening_level}" =~ ("fast"|"fast-af"|"fast-as-fuck"|"performance") ]] ; then
 einfo "OT_KERNEL_LSMS=auto (fast mode)"
+		if grep -q -E -e "^CONFIG_SECURITY=y" "${path_config}" ; then
+eerror
+eerror "CONFIG_SECURITY=y will be disabled.  This may break dm-verity or"
+eerror "netfilter."
+eerror
+eerror "To continue, choose one of the following:"
+eerror
+eerror "  1. Disable CONFIG_SECURITY"
+eerror "  2. OT_KERNEL_HARDENING_LEVEL=secure"
+eerror "  3. OT_KERNEL_HARDENING_LEVEL=secure-af"
+eerror
+			die
+		fi
+		if grep -q -E -e "^CONFIG_IMA=y" "${path_config}" ; then
+eerror
+eerror "CONFIG_INTEGRITY=y will be disabled.  This may break IMA."
+eerror
+eerror "To continue, choose one of the following:"
+eerror
+eerror "  1. Disable CONFIG_IMA"
+eerror "  2. OT_KERNEL_HARDENING_LEVEL=secure"
+eerror "  3. OT_KERNEL_HARDENING_LEVEL=secure-af"
+eerror
+			die
+		fi
 		ot_kernel_lsms=""
 		ot-kernel_set_configopt "CONFIG_LSM" "\"\""
 

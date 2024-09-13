@@ -109,8 +109,10 @@ eerror
 eerror "The ${kopt} kernel option may be used as a possible prerequisite for"
 eerror "DMA side-channel attacks."
 eerror
-eerror "Set OT_KERNEL_DMA_ATTACK_MITIGATIONS=0 to continue or"
-eerror "set OT_KERNEL_PKGFLAGS_REJECT[S${pkgid}]=1."
+eerror "To continue, choose one of the following:"
+eerror
+eerror "  1. Set OT_KERNEL_DMA_ATTACK_MITIGATIONS=0"
+eerror "  2. Set OT_KERNEL_PKGFLAGS_REJECT[S${pkgid}]=1"
 eerror
 	die
 }
@@ -3461,6 +3463,27 @@ ewarn "AEAD cryptsetup support is experimental"
 				ot-kernel_y_configopt "CONFIG_SYSTEM_TRUSTED_KEYRING"
 				ot-kernel_y_configopt "CONFIG_SECONDARY_TRUSTED_KEYRING"
 				ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_SECONDARY_KEYRING"
+
+				if \
+					[[ \
+						   "${hardening_level}" == "fast" \
+						|| "${hardening_level}" == "fast-af" \
+						|| "${hardening_level}" == "fast-as-fuck" \
+						|| "${hardening_level}" == "performance" \
+					]] \
+				; then
+eerror
+eerror "CRYPTSETUP_VERITY=1 conflicts with"
+eerror "OT_KERNEL_HARDENING_LEVEL=fast|fast-af|fast-as-fuck|performance"
+eerror
+eerror "To continue, change to one of these"
+eerror
+eerror "  1. OT_KERNEL_HARDENING_LEVEL=secure"
+eerror "  2. OT_KERNEL_HARDENING_LEVEL=secure-af"
+eerror "  3. CRYPTSETUP_VERITY=0"
+eerror
+					die
+				fi
 
 				ot-kernel_y_configopt "CONFIG_SYSFS"
 				ot-kernel_y_configopt "CONFIG_MULTIUSER"
@@ -11760,6 +11783,27 @@ einfo "Added ${opt_raw}"
 					ot-kernel_y_configopt "CONFIG_IP_NF_MANGLE"
 				fi
 				if [[ "${opt}" == "IP_NF_SECURITY" ]] ; then
+					if \
+						[[ \
+							   "${hardening_level}" == "fast" \
+							|| "${hardening_level}" == "fast-af" \
+							|| "${hardening_level}" == "fast-as-fuck" \
+							|| "${hardening_level}" == "performance" \
+						]] \
+					; then
+eerror
+eerror "OT_KERNEL_NETFILTER=IP_NF_SECURITY conflicts with"
+eerror "OT_KERNEL_HARDENING_LEVEL=fast|fast-af|fast-as-fuck|performance"
+eerror
+eerror "To continue, change to one of these"
+eerror
+eerror "  1. OT_KERNEL_HARDENING_LEVEL=secure"
+eerror "  2. OT_KERNEL_HARDENING_LEVEL=secure-af"
+eerror "  3. Remove OT_KERNEL_NETFILTER=IP_NF_SECURITY"
+eerror
+						die
+					fi
+
 					ot-kernel_y_configopt "CONFIG_SECURITY"
 				fi
 			fi
@@ -11786,6 +11830,27 @@ einfo "Added ${opt_raw}"
 					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
 				fi
 				if [[ "${opt}" == "IP6_NF_SECURITY" ]] ; then
+					if \
+						[[ \
+							   "${hardening_level}" == "fast" \
+							|| "${hardening_level}" == "fast-af" \
+							|| "${hardening_level}" == "fast-as-fuck" \
+							|| "${hardening_level}" == "performance" \
+						]] \
+					; then
+eerror
+eerror "OT_KERNEL_NETFILTER=IP6_NF_SECURITY conflicts with"
+eerror "OT_KERNEL_HARDENING_LEVEL=fast|fast-af|fast-as-fuck|performance"
+eerror
+eerror "To continue, change to one of these"
+eerror
+eerror "  1. OT_KERNEL_HARDENING_LEVEL=secure"
+eerror "  2. OT_KERNEL_HARDENING_LEVEL=secure-af"
+eerror "  3. Remove OT_KERNEL_NETFILTER=IP6_NF_SECURITY"
+eerror
+						die
+					fi
+
 					ot-kernel_y_configopt "CONFIG_SECURITY"
 				fi
 				if [[ "${opt}" == "IP6_NF_NAT" ]] ; then
