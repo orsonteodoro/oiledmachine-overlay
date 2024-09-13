@@ -2694,7 +2694,6 @@ check_kernel_config() {
 		check_extra_config
 	fi
 
-	use xpra "xpra support may be broken.  Use xephyr instead."
 	if [[ -e "/etc/portage/env/firejail.conf" ]] ; then
 		local owner=$(stat -c "%U:%G" "/etc/portage/env/firejail.conf")
 		local perms=$(stat -c "%a" "/etc/portage/env/firejail.conf")
@@ -4042,7 +4041,6 @@ einfo
 	if ! use firejail_profiles_server ; then
 ewarn "Disabling firejail_profiles_server disables default sandboxing for the root user"
 	fi
-	use xpra "xpra support may be broken.  Use xephyr instead"
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
