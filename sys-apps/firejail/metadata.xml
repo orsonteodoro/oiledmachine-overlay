@@ -151,6 +151,8 @@
     [2] Disabled
     [3] Known as xcsecurity, x11 security extension
 
+    Tests performed with WebGL Aquarium and software rendering override
+
     chromium --disable-gpu no firejail:  2 fps
     chromium no firejail:  60 fps
     chromium with firejail --x11=xephyr:  11 fps
