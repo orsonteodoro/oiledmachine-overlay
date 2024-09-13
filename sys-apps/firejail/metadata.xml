@@ -135,7 +135,7 @@
                        aliases)
     xvfb             - Runs the program using Xvfb
                        (headless, /dev/null are an acceptable aliases)
-    unset            - Default as xpra or xephyr if X11 app.  Otherwise, it will
+    unset            - Default as Xpra or Xephyr if X11 app.  Otherwise, it will
                        default to unsandboxed X11 for CLI/TUI apps.  If the
                        CLI/TUI app is running under the x-terminal-emulator
                        profile, it will be X11 isolated.  However, the tabs
