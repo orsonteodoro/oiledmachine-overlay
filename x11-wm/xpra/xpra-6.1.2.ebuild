@@ -145,13 +145,13 @@ gen_required_use_cuda_targets() {
 # LIMD # ATM, GEN 5-12
 # LID # C2M, GEN 5-9
 REQUIRED_USE+="
-	avif
-
 	$(gen_required_use_cuda_targets)
 	${CLIENT_OPTIONS}
 	${SERVER_OPTIONS}
-	doc
+	avif
+	cython
 	gtk3
+	rencodeplus
 	audio? (
 		pulseaudio
 	)
@@ -184,6 +184,8 @@ REQUIRED_USE+="
 	)
 	firejail? (
 		client
+		cython
+		rencodeplus
 		server
 	)
 	gnome-shell? (
@@ -898,10 +900,12 @@ eerror
 
 python_install_all() {
 	distutils-r1_python_install_all
-	mv \
-		"${ED}/usr/share/doc/xpra" \
-		"${ED}/usr/share/doc/${PN}-${PVR}" \
-		|| die
+	if use doc ; then
+		mv \
+			"${ED}/usr/share/doc/xpra" \
+			"${ED}/usr/share/doc/${PN}-${PVR}" \
+			|| die
+	fi
 	if use openrc ; then
 		fperms 0750 "/etc/init.d/xpra"
 	fi

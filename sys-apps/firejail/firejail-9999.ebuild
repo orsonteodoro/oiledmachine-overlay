@@ -1735,8 +1735,8 @@ RDEPEND+="
 		x11-base/xorg-server[xcsecurity?,xvfb?]
 	)
 	xpra? (
+		>=x11-wm/xpra-6.0.2[X,avif,client,cython,firejail,gtk3,jpeg,rencodeplus,server,webp]
 		x11-base/xorg-server
-		>=x11-wm/xpra-3.0.6[firejail]
 	)
 	xephyr? (
 		x11-base/xorg-server[xephyr?]
@@ -3560,7 +3560,7 @@ einfo "Generating wrapper for ${profile_name}"
 		x11_arg="--x11"
 	fi
 
-	local profile_path
+	local profile_path=""
 	if [[ "${COMMAND[${exe_name}]}" == "1" ]] ; then
 		:
 	elif is_use_dotted "${u}" ; then
@@ -3704,13 +3704,20 @@ einfo "Generating wrapper for ${profile_name}"
 		return 0
 	}
 
+	local profile_arg=""
+	if [[ -e "${profile_path}" ]] ; then
+		profile_arg="--profile=${raw_profile_name}"
+	else
+		profile_arg="--noprofile"
+	fi
+
 	if is_allowed_wrapper "${profile_name}" ; then
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}" || die
 #!/bin/bash
 if test -n "\${DISPLAY}" ; then
-	exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} --profile="${raw_profile_name}" "${exe_path}" "\$@"
+	exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "${exe_path}" "\$@"
 else
-	exec firejail ${apparmor_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} --profile="${raw_profile_name}" "${exe_path}" "\$@"
+	exec firejail ${apparmor_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "${exe_path}" "\$@"
 fi
 EOF
 		fowners "root:root" "/usr/local/bin/${exe_name}"
@@ -3722,9 +3729,9 @@ einfo "Generating wrapper for firefox-bin"
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}-bin" || die
 #!/bin/bash
 if test -n "\${DISPLAY}" ; then
-	exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} --profile="${raw_profile_name}" "/usr/bin/${exe_name}-bin" "\$@"
+	exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "/usr/bin/${exe_name}-bin" "\$@"
 else
-	exec firejail ${apparmor_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} --profile="${raw_profile_name}" "/usr/bin/${exe_name}-bin" "\$@"
+	exec firejail ${apparmor_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "/usr/bin/${exe_name}-bin" "\$@"
 fi
 EOF
 		fowners "root:root" "/usr/local/bin/${exe_name}-bin"
@@ -3771,7 +3778,11 @@ EOF
 einfo "Generating wrapper for ${exe_name}"
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}" || die
 #!/bin/bash
-exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} --profile="${raw_profile_name}" "${exe_path}" "\$@"
+if test -n "\${DISPLAY}" ; then
+	exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "${exe_path}" "\$@"
+else
+	exec firejail ${apparmor_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "${exe_path}" "\$@"
+fi
 EOF
 				fowners "root:root" "/usr/local/bin/${exe_name}"
 				fperms 0755 "/usr/local/bin/${exe_name}"
@@ -3876,6 +3887,8 @@ einfo "Auto adding ${u} profile"
 			#einfo "deps for ${u}:  ${deps[@]}"
 			mv "${src}" "${dest}" || die
 			gen_wrapper "${u}"
+		elif ( use auto || use ${pv} ) && [[ "${u}" =~ ("default"|"server") ]] ; then
+			mv "${src}" "${dest}" || die
 		elif use ${pf} ; then
 einfo "Adding ${u} profile"
 			mv "${src}" "${dest}" || die
