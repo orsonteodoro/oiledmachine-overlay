@@ -141,6 +141,13 @@
     xorg - runs with the X11 security extension
     unset - default as auto if X11 app.  otherwise, it will default to none for cli apps.
 
+    Backend  | Status    | Flaws                         | Benefit                 | OpenGL support
+    xpra     | works     | slow start                    | no window size problems | software only, no hardware acceleration.  Needs modding to support hardware acceleration.
+    xvfb     | untested  |                               | hidden                  | software only
+    xephyr   | works     | window size inconsistencies   | fast start              | software only
+    xorg     | broken    |                               |                         | 
+
+
     Variables are in all capitals.
 
     Examples:
