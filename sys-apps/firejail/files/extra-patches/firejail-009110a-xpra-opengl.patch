@@ -1,0 +1,92 @@
+Subject:       xpra with vglrun
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+
+It was suggested by one of the xpra developers.
+It does not do hardware acceleration.
+Provided for those that want to test or fix it but the patch should not be used since no benefit.
+
+diff '--color=auto' -urp firejail-9999.orig/src/firejail/firejail.h firejail-9999/src/firejail/firejail.h
+--- firejail-9999.orig/src/firejail/firejail.h	2024-09-13 08:11:18.857696913 -0700
++++ firejail-9999/src/firejail/firejail.h	2024-09-13 08:19:48.525657013 -0700
+@@ -376,6 +376,7 @@ extern int arg_deterministic_shutdown;	/
+ extern int arg_keep_fd_all;	// inherit all file descriptors to sandbox
+ extern int arg_netlock;	// netlocker
+ extern int arg_restrict_namespaces;
++extern bool xpra_virtualgl;
+ 
+ typedef enum {
+ 	DBUS_POLICY_ALLOW,	// Allow unrestricted access to the bus
+diff '--color=auto' -urp firejail-9999.orig/src/firejail/main.c firejail-9999/src/firejail/main.c
+--- firejail-9999.orig/src/firejail/main.c	2024-09-13 08:11:18.865696787 -0700
++++ firejail-9999/src/firejail/main.c	2024-09-13 08:20:52.448646508 -0700
+@@ -171,6 +171,7 @@ int login_shell = 0;
+ int just_run_the_shell = 0;
+ int arg_netlock = 0;
+ int arg_restrict_namespaces = 0;
++bool xpra_virtualgl = false;
+ 
+ int parent_to_child_fds[2];
+ int child_to_parent_fds[2];
+@@ -402,6 +403,16 @@ static void run_cmd_and_exit(int i, int
+ 	}
+ 	else if (strcmp(argv[i], "--x11=xpra") == 0) {
+ 		if (checkcfg(CFG_X11)) {
++			xpra_virtualgl = false;
++			x11_start_xpra(argc, argv);
++			exit(0);
++		}
++		else
++			exit_err_feature("x11");
++	}
++	else if (strcmp(argv[i], "--x11=xpra-virtualgl") == 0) {
++		if (checkcfg(CFG_X11)) {
++			xpra_virtualgl = true;
+ 			x11_start_xpra(argc, argv);
+ 			exit(0);
+ 		}
+diff '--color=auto' -urp firejail-9999.orig/src/firejail/x11.c firejail-9999/src/firejail/x11.c
+--- firejail-9999.orig/src/firejail/x11.c	2024-09-13 08:11:18.873696661 -0700
++++ firejail-9999/src/firejail/x11.c	2024-09-13 08:32:27.969562819 -0700
+@@ -703,10 +703,19 @@ static void __attribute__((noreturn)) x1
+ 	pid_t server = 0;
+ 
+ 	// build the start command
+-	char *server_argv[256] = {		  // rest initialized to NULL
++	char *server_argv[256];
++	char *_server_argv[256] = {		  // rest initialized to NULL
+ 		"xpra", "start", display_str, "--no-daemon",
+ 	};
++	char *_server_argv_opengl[256] = {		  // rest initialized to NULL
++		"xpra", "start", "--exec-wrapper=vglrun", display_str, "--no-daemon",
++	};
+ 	unsigned pos = 0;
++	if (xpra_virtualgl) {
++		memcpy(server_argv, _server_argv_opengl, 256);
++	} else {
++		memcpy(server_argv, _server_argv, 256);
++	}
+ 	while (server_argv[pos] != NULL) pos++;
+ 
+ 	assert(xpra_extra_params);		  // should be "" if empty
+@@ -958,11 +967,20 @@ static void __attribute__((noreturn)) x1
+ 	pid_t server = 0;
+ 
+ 	// build the start command
+-	char *server_argv[256] = {		  // rest initialized to NULL
++	char *server_argv[256];
++	char *_server_argv[256] = {		  // rest initialized to NULL
+ 		"xpra", "start", display_str, "--daemon=no", "--attach=yes", "--exit-with-children=yes"
+ 	};
++	char *_server_argv_opengl[256] = {		  // rest initialized to NULL
++		"xpra", "start", "--exec-wrapper=vglrun", display_str, "--daemon=no", "--attach=yes", "--exit-with-children=yes"
++	};
+ 	unsigned spos = 0;
+ 	unsigned fpos = 0;
++	if (xpra_virtualgl) {
++		memcpy(server_argv, _server_argv_opengl, 256);
++	} else {
++		memcpy(server_argv, _server_argv, 256);
++	}
+ 	while (server_argv[spos] != NULL) spos++;
+ 
+ 	// build jail command

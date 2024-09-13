@@ -2915,9 +2915,10 @@ src_prepare() {
 		gen_ebuild
 	fi
 
-	if use xpra ; then
-		eapply "${FILESDIR}/${PN}-0.9.64-xpra-speaker-override.patch"
-	fi
+#	if use xpra ; then
+#		eapply "${FILESDIR}/extra-patches/${PN}-0.9.64-xpra-speaker-override.patch"
+#		eapply "${FILESDIR}/extra-patches/${PN}-009110a-xpra-opengl.patch"
+#	fi
 
 	# Our toolchain already sets SSP by default but forcing it causes problems
 	# on arches which don't support it. As for F_S, we again set it by defualt
@@ -3534,27 +3535,21 @@ einfo "Generating wrapper for ${profile_name}"
 		:
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("disable"|"none") ]] ; then
 		:
-	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("game"|"gaming"|"opengl"|"xpra") ]] ; then
+	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("game"|"gaming"|"opengl") ]] ; then
+		x11_arg="--x11=xpra"
+	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("xpra") ]] ; then
 		x11_arg="--x11=xpra"
 	elif [[ "${X_BACKEND[${profile_name}]}" == "xephyr" ]] ; then
 		x11_arg="--x11=xephyr"
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("/dev/null"|"headless"|"xvfb") ]] ; then
 		x11_arg="--x11=xvfb"
-	#elif [[ "${X_BACKEND[${profile_name}]}" =~ ("xorg"|"xcsecurity") ]] ; then
-	#	x11_arg="--x11=xorg"
 	elif [[ "${X_BACKEND[${profile_name}]}" == "auto" ]] ; then
 		x11_arg="--x11"
-	elif is_x11_compat "${profile_name}" && use xephyr && use xpra ; then
-		x11_arg="--x11" # autodetect
-	elif is_x11_compat "${profile_name}" && use xephyr ; then
-		x11_arg="--x11=xephyr"
 	elif is_x11_compat "${profile_name}" && use xpra ; then
 		x11_arg="--x11=xpra"
-	#elif is_x11_compat "${profile_name}" && use xcsecurity ; then
-	# See issue 1741 in firejail repo
-	#	x11_arg="--x11=xorg"
-	elif is_x11_compat "${profile_name}" ; then
-		x11_arg="--x11"
+	elif is_x11_compat "${profile_name}" && use xephyr ; then
+		x11_arg="--x11=xephyr"
+	# For --x11=org, see issue 1741 in firejail repo
 	fi
 
 	local profile_path=""
