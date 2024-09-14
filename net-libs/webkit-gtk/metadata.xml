@@ -79,7 +79,7 @@
       MITIGATION_USE_CASE="default"            # The ebuild is (re-)installable for 60 days from release date but may likely contain vulnerabilities.
 
 
-    WASM_SUPPORT_OVERRIDE - Force build WASM support for slow computers
+    WASM_SUPPORT_OVERRIDE - Force build WASM support for slow computers (e.g. unicore, 1 GiB per core or less)
     Valid values:  1 - enable, 0 - disable, unset - (disable/default)
 
 
