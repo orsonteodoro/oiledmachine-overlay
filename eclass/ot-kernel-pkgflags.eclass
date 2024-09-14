@@ -2243,7 +2243,7 @@ _ot-kernel-pkgflags_apply_cr_kconfig() {
 
 	_OT_KERNEL_LSM_ADD_YAMA=1
 
-	# _ot-kernel_y_thp # References it but unknown apparent performance gain/loss
+	_ot-kernel_y_thp # lowers memory access times
 	# LDT referenced
 }
 
