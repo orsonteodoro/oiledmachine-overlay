@@ -2341,9 +2341,17 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		system_malloc=1
 	}
 
+	local nproc=$(get_nproc)
+
+	local _64_bit_early_adopter=0
+	if [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} <= 1 )) ; then
+	# Treat like 32-bit
+		_64_bit_early_adopter=1
+	fi
+
 	if (( ${WK_PAGE_SIZE} == 64 )) ; then
 		_jit_off
-	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] ; then
+	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} >= 2 )) ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
@@ -2355,7 +2363,10 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
-	elif [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ; then
+	elif \
+		( [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ) \
+		|| ${_64_bit_early_adopter} \
+	; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
@@ -2367,9 +2378,11 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
-	elif [[ "${ARCH}" == "mips" || "${ARCH}" == "mipsel" || "${ARCH}" == "mips64" || "${ARCH}" == "mips64el" ]] \
+	elif \
+		[[ "${ARCH}" == "mips" || "${ARCH}" == "mipsel" || "${ARCH}" == "mips64" || "${ARCH}" == "mips64el" ]] \
 			&& \
-		(( ${pointer_size} == 4 )) ; then
+		(( ${pointer_size} == 4 )) \
+	; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
