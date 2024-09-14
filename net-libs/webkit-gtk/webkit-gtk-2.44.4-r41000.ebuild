@@ -2407,7 +2407,11 @@ einfo "Disabling JIT for ${ABI}."
 		_jit_off
 	fi
 
-	if (( ${pointer_size} != 8 )) ; then
+	if (( ${_64_bit_early_adopter} == 1 )) ; then
+# Early 2000s x86-64, a time without WASM.
+ewarn "WASM not supported for 64-bit earlier adopters"
+		webassembly_allowed=0
+	elif (( ${pointer_size} != 8 )) ; then
 ewarn "WASM not supported for ABI=${ABI}"
 		webassembly_allowed=0
 	fi
@@ -2424,6 +2428,8 @@ ewarn
 ewarn "(1) Enable the jit USE flag."
 ewarn "(2) Change the kernel config to use memory page sizes less than 64 KB."
 ewarn "(3) Set CUSTOM_PAGE_SIZE environment variable less than 64 KB."
+ewarn
+ewarn "This suggestion applies to newer arches."
 ewarn
 		mycmakeargs+=(
 			-DENABLE_WEBASSEMBLY=OFF
