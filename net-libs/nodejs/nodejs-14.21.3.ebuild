@@ -529,6 +529,9 @@ _src_configure() {
 	fi
 
 	use jit || myconf+=( --v8-lite-mode )
+	if use jit && use debug && has_version "dev-debug/gdb" ; then
+		myconf+=( --gdb )
+	fi
 	use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
 
 	local myarch
