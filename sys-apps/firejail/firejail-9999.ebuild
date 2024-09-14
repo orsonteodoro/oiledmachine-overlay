@@ -128,6 +128,7 @@ _AUTO_BLACKLIST=(
 	ssh
 	ssh-agent
 	strings
+	tar
 	tex
 	uncompress
 	unlz4
