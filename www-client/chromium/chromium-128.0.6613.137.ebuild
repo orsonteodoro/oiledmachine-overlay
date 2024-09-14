@@ -1993,19 +1993,19 @@ apply_oiledmachine_overlay_patchset() {
 
 	if use arm64 && has_sanitizer_option "shadow-call-stack" ; then
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/chromium-94-arm64-shadow-call-stack.patch"
+			"${FILESDIR}/extra-patches/${PN}-94-arm64-shadow-call-stack.patch"
 		)
 	fi
 
 	PATCHES+=(
-		"${FILESDIR}/extra-patches/chromium-123.0.6312.58-zlib-selective-simd.patch"
-		"${FILESDIR}/extra-patches/chromium-125.0.6422.76-qt6-split.patch"
-		"${FILESDIR}/extra-patches/chromium-128.0.6613.84-mold.patch"
+		"${FILESDIR}/extra-patches/${PN}-123.0.6312.58-zlib-selective-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-125.0.6422.76-qt6-split.patch"
+		"${FILESDIR}/extra-patches/${PN}-128.0.6613.84-mold.patch"
 	)
 
 	if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/chromium-114.0.5735.133-fast-math.patch"
+			"${FILESDIR}/extra-patches/${PN}-114.0.5735.133-fast-math.patch"
 		)
 	fi
 
@@ -2030,21 +2030,27 @@ apply_oiledmachine_overlay_patchset() {
 #
 # The expected Rust version is 17c11672167827b0dd92c88ef69f24346d1286dd-1-llvmorg-17-init-8029-g27f27d15-3 (or fallback 17c11672167827b0dd92c88ef69f24346d1286dd-1-llvmorg-17-init-8029-g27f27d15-1 but the actual version is None
 # Did you run "gclient sync"?
-			"${FILESDIR}/extra-patches/chromium-117.0.5938.92-skip-rust-check.patch"
+			"${FILESDIR}/extra-patches/${PN}-117.0.5938.92-skip-rust-check.patch"
 
-			"${FILESDIR}/extra-patches/chromium-128.0.6613.84-clang-paths.patch"
+			"${FILESDIR}/extra-patches/${PN}-128.0.6613.84-clang-paths.patch"
 		)
 	fi
 
 	PATCHES+=(
-		"${FILESDIR}/extra-patches/chromium-128.0.6613.119-custom-optimization-level.patch"
+		"${FILESDIR}/extra-patches/${PN}-128.0.6613.119-custom-optimization-level.patch"
 	)
 	if ! use official ; then
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/chromium-128.0.6613.137-disable-tflite.patch"
-			"${FILESDIR}/extra-patches/chromium-128.0.6613.137-disable-perfetto.patch"
-			"${FILESDIR}/extra-patches/chromium-128.0.6613.137-disable-icu-tracing.patch"
+			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-tflite.patch"
+			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-perfetto.patch"
+			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-icu-tracing.patch"
 		)
+
+		if ! use async-dns ; then
+			PATCHES+=(
+				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-built-in-dns.patch"
+			)
+		fi
 	fi
 }
 
@@ -3046,7 +3052,6 @@ ewarn
 	myconf_gn+=" use_system_harfbuzz=$(usex system-harfbuzz true false)"
 
 	# Optional dependencies.
-	myconf_gn+=" enable_built_in_dns=$(usex async-dns true false)"
 	myconf_gn+=" enable_chrome_notifications=true" # Depends on enable_message_center?
 	myconf_gn+=" enable_hangout_services_extension=$(usex hangouts true false)"
 	myconf_gn+=" enable_hidpi=$(usex hidpi true false)"
