@@ -157,6 +157,14 @@
       Enables JIT support for JavaScriptCore for significantly faster code
       execution.  Disable for increased compatibility on alternative ARCHs and
       ABIs.
+
+      Older machines get a JIT build with only earlier tiers for decent
+      optimization, for reasons to reduce build time and runtime memory use.
+
+      Newer machines get a JIT build containing later tiers for most optimized
+      code.
+
+      Disable JIT for mitigation against JIT class of vulnerabilties.
     </flag>
     <flag name="libbacktrace">
       Enables backtracing to list what last function(s) may caused the crash.
