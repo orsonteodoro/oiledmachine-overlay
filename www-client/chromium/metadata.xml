@@ -228,6 +228,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       protection.  This also builds libcxx with CFI, Full RELRO, noexecstack,
       SSP security features.  This is the upstream default.
     </flag>
+    <flag name="cet">
+      Provide some CET protection to the V8 JavaScript engine.  (EXPERIMENTAL)
+    </flag>
     <flag name="cfi">
       cfi-cast:
       Compile the build with mitigation against possible bad casting

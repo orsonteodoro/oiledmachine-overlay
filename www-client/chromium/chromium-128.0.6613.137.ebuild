@@ -483,7 +483,7 @@ ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-+accessibility +async-dns bindist bluetooth +bundled-libcxx +cfi +cups
++accessibility +async-dns bindist bluetooth +bundled-libcxx +cfi -cet +cups
 +css-hyphen -debug +encode +extensions ffmpeg-chromium firejail -gtk4 -hangouts
 -headless +hidpi +jit +js-type-check +kerberos +mdns +ml mold +mpris +official
 pax-kernel +pdf pic +pgo +plugins +pre-check-vaapi +proprietary-codecs
@@ -651,6 +651,7 @@ REQUIRED_USE+="
 		pdf
 	)
 	official? (
+		!cet
 		!debug
 		!hangouts
 		!mold
@@ -1785,7 +1786,7 @@ ewarn "Missing yama in CONFIG_LSM.  Add yama to CONFIG_LSM for ptrace sandbox pr
 		CONFIG_CHECK="
 			~TRANSPARENT_HUGEPAGE
 		"
-		WARNING_TRANSPARENT_HUGEPAGE="CONFIG_TRANSPARENT_HUGEPAGE could be enabled for v8 memory access time reduction.  For webservers and music production, it should be kept disabled."
+		WARNING_TRANSPARENT_HUGEPAGE="CONFIG_TRANSPARENT_HUGEPAGE could be enabled for V8 [JavaScript engine] memory access time reduction.  For webservers and music production, it should be kept disabled."
 		check_extra_config
 	# In the current build files, they had went against their original decision.
 	fi
@@ -3872,6 +3873,11 @@ eerror "Actual LTO type:    ${LTO_TYPE}"
 eerror
 			die
 		fi
+	fi
+
+	if use cet ; then
+		myconf_gn+=" v8_enable_cet_ibt=$(usex cet true false)"
+		myconf_gn+=" v8_enable_cet_shadow_stack=false" # unfinished, windows only
 	fi
 
 	if use arm64 ; then
