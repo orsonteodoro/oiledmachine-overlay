@@ -32,6 +32,10 @@
     <flag name="clang">
       Use Clang compiler instead of GCC
     </flag>
+    <flag name="jit">
+      Use JavaScript JIT compilation for faster runtime performance.
+      Disable to mitigate against JIT based vulnerabilities.
+    </flag>
     <flag name="simd">
       Enable explicit SIMD in Rust code (BUGGY DURING BUILDTIME / EXPERIMENTAL)
     </flag>
