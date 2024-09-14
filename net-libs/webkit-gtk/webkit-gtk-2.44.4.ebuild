@@ -2372,7 +2372,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 
 	if (( ${WK_PAGE_SIZE} == 64 )) ; then
 		_jit_off
-	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} > 2 )) || [[ "${WASM_SUPPORT_OVERRIDE}" == "1" ]] ; then
+	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} >= 2 && ${actual_gib_per_core%.*} > 2 )) || [[ "${WASM_SUPPORT_OVERRIDE}" == "1" ]] ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
