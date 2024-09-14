@@ -2165,6 +2165,28 @@ src_configure() {
 }
 
 _src_configure() {
+	local total_ram=$(free | grep "Mem:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	local total_ram_gib=$(( ${total_ram} / (1024*1024) ))
+	local total_swap=$(free | grep "Swap:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	[[ -z "${total_swap}" ]] && total_swap=0
+	local total_swap_gib=$(( ${total_swap} / (1024*1024) ))
+	local total_mem=$(free -t | grep "Total:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	local total_mem_gib=$(( ${total_mem} / (1024*1024) ))
+
+	local jobs=$(get_makeopts_jobs)
+	local cores=$(get_nproc)
+
+	local minimal_gib_per_core=2
+	local actual_gib_per_core=$(python -c "print(${total_mem_gib} / ${cores})")
+
+	if (( ${actual_gib_per_core%.*} >= ${minimal_gib_per_core} )) ; then
+einfo "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
+einfo "Actual GiB per core:  ${actual_gib_per_core} GiB"
+	else
+ewarn "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
+ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
+	fi
+
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 	if [[ -e "${BUILD_DIR}" ]] ; then
@@ -2344,14 +2366,14 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 	local nproc=$(get_nproc)
 
 	local _64_bit_early_adopter=0
-	if [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} <= 1 )) ; then
+	if [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} <= 1 || ${actual_gib_per_core%.*} <= 2 )) ; then
 	# Treat like 32-bit
 		_64_bit_early_adopter=1
 	fi
 
 	if (( ${WK_PAGE_SIZE} == 64 )) ; then
 		_jit_off
-	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} >= 2 )) ; then
+	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} >= 2 )) || [[ "${WASM_SUPPORT_OVERRIDE}" == "1" ]] ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
@@ -2411,8 +2433,11 @@ einfo "Disabling JIT for ${ABI}."
 		_jit_off
 	fi
 
-	if (( ${nproc} <= 1 )) ; then
-ewarn "WASM is not supported for unicore"
+	if [[ "${WASM_SUPPORT_OVERRIDE}" == "1" ]] && (( ${_64_bit_early_adopter} == 1 )) ; then
+		:
+	elif (( ${nproc} <= 1 || ${actual_gib_per_core%.*} <= 2 )) ; then
+# This concerns building.  If prebuilt, it may likely work.
+ewarn "WASM is not supported for unicore or <= 2 GiB"
 		webassembly_allowed=0
 	elif (( ${pointer_size} != 8 )) ; then
 ewarn "WASM is not supported for ABI=${ABI}"
