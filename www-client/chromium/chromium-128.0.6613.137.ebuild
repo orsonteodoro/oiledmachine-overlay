@@ -3141,7 +3141,7 @@ ewarn "JIT is off when -Os or -Oz"
 	if use official ; then
 		: # Use automagic
 	else
-		myconf_gn+=" v8_enable_sandbox=true" # It will be off if pointer compression off.
+		# The V8 Sandbox needs pointer compression.
 		if [[ "${ARCH}" =~ ("amd64"|"arm64") ]] ; then
 			myconf_gn+=" v8_enable_pointer_compression=$(usex pointer-compression false true)"
 			if (( ${total_ram_gib} >= 8 )) ; then
@@ -3150,6 +3150,7 @@ ewarn "JIT is off when -Os or -Oz"
 				myconf_gn+=" v8_enable_pointer_compression_8gb=false"
 			fi
 		else
+ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be turned off.  Consider enabling the pointer-compression USE flag to enable the sandbox."
 			myconf_gn+=" v8_enable_pointer_compression=false"
 			myconf_gn+=" v8_enable_pointer_compression_8gb=false"
 		fi
@@ -3157,7 +3158,7 @@ ewarn "JIT is off when -Os or -Oz"
 
 	# Still testing when pointer compression is off
 	if ! [[ "${ARCH}" =~ ("amd64"|"arm64") ]] ; then
-ewarn "The new V8 [JavaScript engine] sandbox (2024) will be automagic off.  Consider using 64-bit only."
+ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic off.  Consider using 64-bit only."
 	fi
 
 	# Forced because of asserts
