@@ -1735,7 +1735,7 @@ einfo "Detected -Oshit in cflags."
 		replace-flags '-Oshit' '-O1'
 	else
 		if use official ; then
-eerror "-Oshit is only available for disable USE official."
+eerror "-Oshit is only available for official USE flag disabled."
 eerror "Either remove the official USE flag or remove the -Oshit CFLAG."
 			die
 		fi
