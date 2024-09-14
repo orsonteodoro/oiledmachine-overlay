@@ -212,7 +212,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
   </upstream>
   <use>
     <flag name="async-dns">
-      Enable the Async DNS feature.
+      Enable the Async DNS feature.  Enabling may bypass the system's DNS
+      resolver and DNS filtering packages.  (DISABLING IS EXPERIMENTAL OR
+      UNDER RESEARCH)
     </flag>
     <flag name="bluetooth">
       Adds support for websites to communicate with Bluetooth wireless devices
