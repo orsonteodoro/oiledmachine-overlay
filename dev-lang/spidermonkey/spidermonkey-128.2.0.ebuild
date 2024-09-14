@@ -450,6 +450,13 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 	# ../python/mach/mach/mixin/process.py fails to detect SHELL
 	export SHELL="${EPREFIX}/bin/bash"
 
+	# Forced JIT on for slower computers
+	local nprocs=$(get_nproc)
+	if use jit && (( ${nprocs} <= 1 )) ; then
+eerror "JIT must be turned on"
+		die
+	fi
+
 	# Modifications to better support ARM, bug 717344
 	# Tell build system that we want to use LTO
 	# Thumb options aren't supported when using clang, bug 666966
