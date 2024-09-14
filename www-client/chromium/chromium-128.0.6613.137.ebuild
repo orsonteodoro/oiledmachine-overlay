@@ -496,6 +496,7 @@ proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 -system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
 -system-zlib +system-zstd systemd +thinlto-opt +vaapi +wayland +webassembly
 +websockets -widevine +X
+ebuild-revision-1
 "
 
 # What is considered a proprietary codec can be found at:
@@ -3143,9 +3144,9 @@ ewarn "JIT is off when -Os or -Oz"
 	else
 		# The V8 Sandbox needs pointer compression.
 		if [[ "${ARCH}" =~ ("amd64"|"arm64") ]] ; then
-			myconf_gn+=" v8_enable_pointer_compression=$(usex pointer-compression false true)"
+			myconf_gn+=" v8_enable_pointer_compression=$(usex pointer-compression true false)"
 			if (( ${total_ram_gib} >= 8 )) ; then
-				myconf_gn+=" v8_enable_pointer_compression_8gb=$(usex pointer-compression false true)"
+				myconf_gn+=" v8_enable_pointer_compression_8gb=$(usex pointer-compression true false)"
 			else
 				myconf_gn+=" v8_enable_pointer_compression_8gb=false"
 			fi
