@@ -739,6 +739,9 @@ REQUIRED_USE+="
 	vaapi-hevc? (
 		vaapi
 	)
+	webassembly? (
+		jit
+	)
 	widevine? (
 		!arm64
 		!ppc64
@@ -3095,16 +3098,25 @@ ewarn
 ewarn "WebAssembly is off when -Os or -Oz"
 ewarn "JIT is off when -Os or -Oz"
 		myconf_gn+=" v8_enable_lite_mode=true"
+	# Automagic the rest
 	else
 		myconf_gn+=" v8_enable_lite_mode=false"
 		if use jit ; then
+	# Compiler based
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
+			myconf_gn+=" v8_enable_turbofan=true"
+			myconf_gn+=" v8_enable_maglev=true"
+			myconf_gn+=" v8_enable_sparkplug=true"
+			myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)"
 			myconf_gn+=" v8_jitless=false"
 		else
 			myconf_gn+=" v8_enable_gdbjit=false"
+			myconf_gn+=" v8_enable_maglev=false"
+			myconf_gn+=" v8_enable_turbofan=false"
+			myconf_gn+=" v8_enable_sparkplug=false"
+			myconf_gn+=" v8_enable_webassembly=false" # Requires turbofan
 			myconf_gn+=" v8_jitless=true"
 		fi
-		myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)"
 	fi
 	myconf_gn+=" v8_enable_vtunejit=false"
 	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
