@@ -1729,11 +1729,16 @@ einfo "Security fixes applied:  ${MITIGATION_URI}"
 	fi
 	pre_build_checks
 
-	if is-flagq '-Oshit' ; then
+	if is-flagq '-Oshit' && ! use official ; then
 einfo "Detected -Oshit in cflags."
 		OSHIT_OPTIMIZED=1
 		replace-flags '-Oshit' '-O1'
 	else
+		if use official ; then
+eerror "-Oshit is only available for disable USE official."
+eerror "Either remove the official USE flag or remove the -Oshit CFLAG."
+			die
+		fi
 ewarn "-Oshit is missing in cflags for build speed optimized build.  See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\` for details."
 		OSHIT_OPTIMIZED=0
 	fi
