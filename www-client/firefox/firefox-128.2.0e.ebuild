@@ -2229,10 +2229,14 @@ einfo
 		mozconfig_add_options_ac '' --enable-sandbox
 	fi
 
-	# Enable JIT on riscv64 explicitly, since it's not activated automatically via "known arches" list.
-	# Update 128.1.0: Disable jit on riscv (this line can be blanked to disable by default),
-	# bgo#937867.
-	use riscv && mozconfig_add_options_ac 'Disable JIT for RISC-V 64' --disable-jit
+	# Disabling JIT is very slow.  It should only be done on recent multicore.
+	local nproc=$(get_nproc)
+	if use riscv ; then
+eerror "ARCH=${ARCH} is not supported for ESR.  Use the ${CATEGORY}/${PN}:rapid slot instead."
+		die
+	elif ! use jit && (( "${nproc}" <= 1 )) ; then
+		die "The jit USE flag must be on."
+	fi
 
 	if [[ -s "${s}/api-google.key" ]] ; then
 		local key_origin="Gentoo default"

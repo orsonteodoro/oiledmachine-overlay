@@ -2183,6 +2183,12 @@ einfo
 		mozconfig_add_options_ac '' --enable-sandbox
 	fi
 
+	# Disabling JIT is very slow.  It should only be done on recent multicore.
+	local nproc=$(get_nproc)
+	if ! use jit && (( "${nproc}" <= 1 )) ; then
+		die "The jit USE flag must be on."
+	fi
+
 	if [[ -s "${s}/api-google.key" ]] ; then
 		local key_origin="Gentoo default"
 		if [[ $(cat "${s}/api-google.key" \
