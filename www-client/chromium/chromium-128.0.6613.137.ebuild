@@ -602,6 +602,9 @@ DISTRO_REQUIRE_USE="
 #	extensions
 REQUIRED_USE+="
 	${DISABLED_NON_FREE_USE_FLAGS}
+	!async-dns? (
+		!official
+	)
 	!headless (
 		extensions
 		pdf
