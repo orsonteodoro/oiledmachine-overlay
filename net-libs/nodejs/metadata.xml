@@ -118,6 +118,10 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     <flag name="inspector">
       Enable the V8 inspector.
     </flag>
+    <flag name="jit">
+      Enable JIT compilation for faster runtime performance.
+      Disable to mitigate against JIT based vulnerabilities.
+    </flag>
     <flag name="man">
       It installs man pages.  It should only be enabled for the highest request
       slot.
@@ -131,6 +135,13 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     </flag>
     <flag name="pax-kernel">
       Enable building under a PaX enabled kernel.
+    </flag>
+    <flag name="pointer-compression">
+      Enable pointer compression to gain more free memory but will break ABI
+      compatibility.  Enabling pointer compression enables the V8 Sandbox in
+      Node 20+.
+
+      Disabling may save battery life.
     </flag>
     <flag name="pgo">
       Enable profile guided optimization.  It will double build times.

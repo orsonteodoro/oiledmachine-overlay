@@ -117,8 +117,9 @@ gen_iuse_pgo() {
 }
 
 IUSE+="
-acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
-npm mold pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
+acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu +jit
+inspector +jit npm mold pax-kernel -pointer-compression +snapshot +ssl
+system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
 man pgo ebuild-revision-12
@@ -524,6 +525,9 @@ _src_configure() {
 	else
 		myconf+=( --without-ssl )
 	fi
+
+	use jit || myconf+=( --v8-lite-mode )
+	use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
 
 	local myarch
 	myarch="${ABI/amd64/x64}"
