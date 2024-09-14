@@ -484,8 +484,8 @@ ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +accessibility +async-dns bindist bluetooth +bundled-libcxx +cfi +cups
-+css-hyphen -debug +encode +extensions ffmpeg-chromium firejail -gtk4 -hangouts -headless
-+hidpi +js-type-check +kerberos +mdns +ml mold +mpris +official
++css-hyphen -debug +encode +extensions ffmpeg-chromium firejail -gtk4 -hangouts
+-headless +hidpi +jit +js-type-check +kerberos +mdns +ml mold +mpris +official
 pax-kernel +pdf pic +pgo +plugins +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio +reporting-api qt5 qt6
@@ -682,6 +682,7 @@ REQUIRED_USE+="
 		encode
 		extensions
 		hidpi
+		jit
 		kerberos
 		libaom
 		llvm_slot_19
@@ -1773,6 +1774,16 @@ ewarn "Missing kernel .config file."
 ewarn "Missing yama in CONFIG_LSM.  Add yama to CONFIG_LSM for ptrace sandbox protection."
 			fi
 		fi
+
+	# The history of the commit can be found on
+	# https://community.intel.com/t5/Blogs/Tech-Innovation/Client/A-Journey-for-Landing-The-V8-Heap-Layout-Visualization-Tool/post/1368855
+	# I've seen this first in the nodejs repo but never understood the benefit.
+	# The same article discusses the unintended consequences.
+		CONFIG_CHECK="
+			~TRANSPARENT_HUGEPAGE
+		"
+		WARNING_TRANSPARENT_HUGEPAGE="CONFIG_TRANSPARENT_HUGEPAGE could be enabled for v8 memory access reduction.  For webservers and music production, it should be kept disabled."
+	# In the current build files, they had went against their original rejection.
 	fi
 
 	if ! use amd64 && [[ "${USE}" =~ "cfi" ]] ; then
@@ -3079,7 +3090,27 @@ ewarn
 	myconf_gn+=" enable_websockets=$(usex websockets true false)"
 	myconf_gn+=" use_minikin_hyphenation=$(usex css-hyphen true false)"
 	myconf_gn+=" use_mpris=$(usex mpris true false)"
-	myconf_gn+=" v8_enable_lite_mode=$(usex webassembly false true)"
+	if is-flagq "-Os" || is-flagq "-Oz" ; then
+ewarn "WebAssembly is off when -Os or -Oz"
+ewarn "JIT is off when -Os or -Oz"
+		myconf_gn+=" v8_enable_lite_mode=true"
+	else
+		myconf_gn+=" v8_enable_lite_mode=false"
+		if use jit ; then
+			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
+			myconf_gn+=" v8_jitless=false"
+		else
+			myconf_gn+=" v8_enable_gdbjit=false"
+			myconf_gn+=" v8_jitless=true"
+		fi
+		myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)"
+	fi
+	myconf_gn+=" v8_enable_vtunejit=false"
+	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
+		myconf_gn+=" v8_enable_hugepage=true"
+	else
+		myconf_gn+=" v8_enable_hugepage=false"
+	fi
 
 	# Forced because of asserts
 	myconf_gn+=" enable_screen_ai_service=true" # Required by chrome/renderer:renderer
