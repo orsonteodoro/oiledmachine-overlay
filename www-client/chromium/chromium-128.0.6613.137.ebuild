@@ -3141,6 +3141,7 @@ ewarn "JIT is off when -Os or -Oz"
 	if use official ; then
 		: # Use automagic
 	else
+		myconf_gn+=" v8_enable_sandbox=true" # It will be off if pointer compression off.
 		if [[ "${ARCH}" =~ ("amd64"|"arm64") ]] ; then
 			myconf_gn+=" v8_enable_pointer_compression=$(usex pointer-compression false true)"
 			if (( ${total_ram_gib} >= 8 )) ; then
