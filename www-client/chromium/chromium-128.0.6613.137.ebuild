@@ -1783,7 +1783,7 @@ ewarn "Missing yama in CONFIG_LSM.  Add yama to CONFIG_LSM for ptrace sandbox pr
 			~TRANSPARENT_HUGEPAGE
 		"
 		WARNING_TRANSPARENT_HUGEPAGE="CONFIG_TRANSPARENT_HUGEPAGE could be enabled for v8 memory access time reduction.  For webservers and music production, it should be kept disabled."
-	# In the current build files, they had went against their original rejection.
+	# In the current build files, they had went against their original decision.
 	fi
 
 	if ! use amd64 && [[ "${USE}" =~ "cfi" ]] ; then
