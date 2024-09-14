@@ -2231,9 +2231,7 @@ einfo
 
 	# Disabling JIT is very slow.  It should only be done on recent multicore.
 	local nproc=$(get_nproc)
-	if use riscv ; then
-		use riscv && mozconfig_add_options_ac 'Enable JIT for RISC-V 64' --enable-jit
-	elif ! use jit && (( "${nproc}" <= 1 )) ; then
+	if ! use jit && (( "${nproc}" <= 1 )) ; then
 		die "The jit USE flag must be on."
 	elif use jit ; then
 		mozconfig_add_options_ac 'Enabling JIT' --enable-jit
