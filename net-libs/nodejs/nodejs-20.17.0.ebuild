@@ -1,4 +1,5 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -55,7 +56,6 @@ TRAINER_TYPES=(
 	worker
 	zlib
 )
-CONFIG_CHECK="~ADVISE_SYSCALLS"
 COREPACK_PV="0.29.3"
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
@@ -236,9 +236,23 @@ pkg_pretend() {
 	# Already applied 6ca785b
 }
 
+check_kernel_config() {
+	use kernel_linux || return
+	linux-info_pkg_setup
+	CONFIG_CHECK="~ADVISE_SYSCALLS"
+	WARNING_ADVISE_SYSCALLS="CONFIG_ADVISE_SYSCALLS is required for madvise() support."
+	check_extra_config
+
+	CONFIG_CHECK="
+		~TRANSPARENT_HUGEPAGE
+	"
+	WARNING_TRANSPARENT_HUGEPAGE="CONFIG_TRANSPARENT_HUGEPAGE could be enabled for V8 [JavaScript engine] memory access time reduction.  For webservers, music production, realtime; it should be kept disabled."
+	check_extra_config
+}
+
 pkg_setup() {
 	python-any-r1_pkg_setup
-	linux-info_pkg_setup
+	check_kernel_config
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
@@ -532,6 +546,9 @@ ewarn "If moldlto fails for gcc, try clang."
 		myconf+=( --gdb )
 	fi
 	use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
+	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
+		myconf+=( --v8-enable-hugepage )
+	fi
 
 	local myarch
 	myarch="${ABI/amd64/x64}"
