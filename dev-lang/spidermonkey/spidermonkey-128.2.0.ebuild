@@ -452,7 +452,7 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 
 	# Forced JIT on for slower computers
 	local nprocs=$(get_nproc)
-	if use jit && (( ${nprocs} <= 1 )) ; then
+	if ! use jit && (( ${nprocs} <= 1 )) ; then
 eerror "JIT must be turned on"
 		die
 	fi
