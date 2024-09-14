@@ -80,7 +80,7 @@
 
 
     WASM_SUPPORT_OVERRIDE - Force build WASM support for slow computers (e.g. unicore, 1 GiB per core or less)
-    Valid values:  1 - add wasm, 0 - skip wasm, unset - (skip wasm/default)
+    Valid values:  1 - get omg-bbq, 0 - skip omg-bbq, unset - (skip omg-bbq/default)
 
 
     For PGO details, see
