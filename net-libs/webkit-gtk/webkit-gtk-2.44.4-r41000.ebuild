@@ -2407,12 +2407,11 @@ einfo "Disabling JIT for ${ABI}."
 		_jit_off
 	fi
 
-	if (( ${_64_bit_early_adopter} == 1 )) ; then
-# Early 2000s x86-64, a time without WASM.
-ewarn "WASM not supported for 64-bit earlier adopters"
+	if (( ${nproc} <= 1 )) ; then
+ewarn "WASM is not supported for unicore"
 		webassembly_allowed=0
 	elif (( ${pointer_size} != 8 )) ; then
-ewarn "WASM not supported for ABI=${ABI}"
+ewarn "WASM is not supported for ABI=${ABI}"
 		webassembly_allowed=0
 	fi
 
