@@ -3155,6 +3155,11 @@ ewarn "JIT is off when -Os or -Oz"
 		fi
 	fi
 
+	# Still testing when pointer compression is off
+	if ! [[ "${ARCH}" =~ ("amd64"|"arm64") ]] ; then
+ewarn "The new V8 [JavaScript engine] sandbox (2024) will be automagic off.  Consider using 64-bit only."
+	fi
+
 	# Forced because of asserts
 	myconf_gn+=" enable_screen_ai_service=true" # Required by chrome/renderer:renderer
 
