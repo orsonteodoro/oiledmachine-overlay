@@ -70,9 +70,9 @@ UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
-inherit bash-completion-r1 flag-o-matic flag-o-matic-om linux-info ninja-utils
-inherit pax-utils python-any-r1 check-linker lcnr toolchain-funcs uopts
-inherit xdg-utils
+inherit bash-completion-r1 flag-o-matic flag-o-matic-om linux-info
+inherit multiprocessing ninja-utils pax-utils python-any-r1 check-linker lcnr
+inherit toolchain-funcs uopts xdg-utils
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~s390 ~x86 ~amd64-linux ~x64-macos"
 S="${WORKDIR}/node-v${PV}"
@@ -546,6 +546,10 @@ ewarn "If moldlto fails for gcc, try clang."
 		myconf+=( --without-ssl )
 	fi
 
+	local nproc=$(get_nproc)
+	if ! use jit && (( "${nproc}" <= 1 )) ; then
+		die "The jit USE flag must be on."
+	fi
 	use jit || myconf+=( --v8-lite-mode )
 	if use jit && use debug && has_version "dev-debug/gdb" ; then
 		myconf+=( --gdb )
