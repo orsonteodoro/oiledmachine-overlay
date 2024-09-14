@@ -353,6 +353,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="plugins">
       Builds support for plugins.
     </flag>
+    <!--
+    See https://www.energystar.gov/products/data_center_equipment/16-more-ways-cut-energy-waste-data-center/implement-efficient-data
+    -->
     <flag name="pointer-compression">
       Enable to reclaim more memory with pointer-compression in JavaScript context.
       Disabling may increase battery life.
