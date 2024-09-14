@@ -109,6 +109,10 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
     recommended to turn jemalloc off as it may be more stable in the worst case
     high memory usage case.
   </flag>
+  <flag name="jit">
+    Enable JavaScript JIT compilation for faster runtime performance.
+    Disable JIT compilation to mitigate against JIT based attacks.
+  </flag>
   <flag name="geckodriver">
     Enable WebDriver support
   </flag>

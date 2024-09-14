@@ -405,7 +405,7 @@ IUSE+="
 ${CODEC_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alsa cups +dbus debug eme-free +ffvpx firejail +hardened -hwaccel jack
--jemalloc +jumbo-build libcanberra libnotify libproxy libsecret mold +openh264 +pgo
+-jemalloc +jit +jumbo-build libcanberra libnotify libproxy libsecret mold +openh264 +pgo
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 +pulseaudio selinux sndio speech +system-av1 +system-ffmpeg +system-harfbuzz
@@ -2232,10 +2232,13 @@ einfo
 	# Disabling JIT is very slow.  It should only be done on recent multicore.
 	local nproc=$(get_nproc)
 	if use riscv ; then
-eerror "ARCH=${ARCH} is not supported for ESR.  Use the ${CATEGORY}/${PN}:rapid slot instead."
-		die
+		use riscv && mozconfig_add_options_ac 'Enable JIT for RISC-V 64' --enable-jit
 	elif ! use jit && (( "${nproc}" <= 1 )) ; then
 		die "The jit USE flag must be on."
+	elif use jit ; then
+		mozconfig_add_options_ac 'Enabling JIT' --enable-jit
+	else
+		mozconfig_add_options_ac 'Disabling JIT' --disable-jit
 	fi
 
 	if [[ -s "${s}/api-google.key" ]] ; then

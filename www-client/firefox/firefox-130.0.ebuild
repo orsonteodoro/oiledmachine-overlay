@@ -403,7 +403,7 @@ IUSE+="
 ${CODEC_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alsa cpu_flags_arm_neon cups +dbus debug eme-free +ffvpx firejail +hardened
--hwaccel jack -jemalloc +jumbo-build libcanberra libnotify libproxy libsecret
+-hwaccel jack -jemalloc +jit +jumbo-build libcanberra libnotify libproxy libsecret
 mold +openh264 +pgo +pulseaudio proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 selinux sndio speech +system-av1 +system-ffmpeg +system-harfbuzz +system-icu
@@ -2185,8 +2185,14 @@ einfo
 
 	# Disabling JIT is very slow.  It should only be done on recent multicore.
 	local nproc=$(get_nproc)
-	if ! use jit && (( "${nproc}" <= 1 )) ; then
+	if use riscv ; then
+		use riscv && mozconfig_add_options_ac 'Enable JIT for RISC-V 64' --enable-jit
+	elif ! use jit && (( "${nproc}" <= 1 )) ; then
 		die "The jit USE flag must be on."
+	elif use jit ; then
+		mozconfig_add_options_ac 'Enabling JIT' --enable-jit
+	else
+		mozconfig_add_options_ac 'Disabling JIT' --disable-jit
 	fi
 
 	if [[ -s "${s}/api-google.key" ]] ; then
