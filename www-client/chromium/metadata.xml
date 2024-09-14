@@ -103,13 +103,15 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     Example:
 
     Contents of /etc/portage/env/chromium.conf:
-    CFLAGS="${CFLAGS} -Oshit"
-    CXXFLAGS="${CXXFLAGS} -Oshit"
-    FEATURES="${FEATURES} ccache"
-    OSHIT_OPT_LEVEL_DAV1D="2"
+
+      CFLAGS="${CFLAGS} -Oshit"
+      CXXFLAGS="${CXXFLAGS} -Oshit"
+      FEATURES="${FEATURES} ccache"
+      OSHIT_OPT_LEVEL_DAV1D="2"
 
     Contents of /etc/portage/package.env:
-    www-client/chromium chromium.conf
+
+      www-client/chromium chromium.conf
     
 
 
