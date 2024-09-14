@@ -93,7 +93,7 @@
     Investigate shuffle-sections linker option for ROP mitigation.
 
     Investigate the -Oshit compiler metaflag to build most as -O1 and
-    performance sensitive at O2 and higher.  Since most libs are unvendored,
+    performance sensitive at O2 or higher.  Since most libs are unvendored,
     only a few subprojects may be considered.
 
     OSHIT_OPT_LEVEL_JSC="2" - Optimize JSC/JIT at -O2
