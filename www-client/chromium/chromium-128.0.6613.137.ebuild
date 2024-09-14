@@ -3145,7 +3145,7 @@ ewarn "JIT is off when -Os or -Oz"
 		if [[ "${ARCH}" =~ ("amd64"|"arm64") ]] ; then
 			myconf_gn+=" v8_enable_pointer_compression=$(usex pointer-compression false true)"
 			if (( ${total_ram_gib} >= 8 )) ; then
-				myconf_gn+=" v8_enable_pointer_compression_8gb=true"
+				myconf_gn+=" v8_enable_pointer_compression_8gb=$(usex pointer-compression false true)"
 			else
 				myconf_gn+=" v8_enable_pointer_compression_8gb=false"
 			fi
