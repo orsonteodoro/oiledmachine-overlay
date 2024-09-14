@@ -20,3 +20,13 @@
  }
  
  # Global public configuration that should be applied to all WebRTC targets. You
+--- a/third_party/webrtc_overrides/init_webrtc.cc.orig	2024-09-10 11:42:44.059301000 -0700
++++ b/third_party/webrtc_overrides/init_webrtc.cc	2024-09-14 07:15:54.931465290 -0700
+@@ -16,5 +16,7 @@ bool InitializeWebRtcModuleBeforeSandbox
+ }
+ 
+ void InitializeWebRtcModule() {
++#if defined(RTC_USE_PERFETTO)
+   webrtc::RegisterPerfettoTrackEvents();
++#endif
+ }
