@@ -698,6 +698,9 @@ REQUIRED_USE+="
 		gstreamer
 		mediastream
 	)
+	webassembly? (
+		jit
+	)
 	webgl? (
 		gbm
 		|| (
