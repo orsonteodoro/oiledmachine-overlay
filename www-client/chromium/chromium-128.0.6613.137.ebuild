@@ -494,7 +494,7 @@ proprietary-codecs-disable-nc-user +pulseaudio +reporting-api qt5 qt6
 -system-icu -system-libaom -system-libdrm -system-libjpeg-turbo -system-libpng
 -system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
 -system-re2 -system-toolchain -system-zlib +system-zstd systemd +thinlto-opt
-+vaapi +wayland +websockets -widevine +X
++vaapi +wayland +webassembly +websockets -widevine +X
 "
 
 # What is considered a proprietary codec can be found at:
@@ -702,6 +702,7 @@ REQUIRED_USE+="
 		vorbis
 		vpx
 		wayland
+		webassembly
 		websockets
 		X
 		!amd64? (
@@ -2039,6 +2040,7 @@ apply_oiledmachine_overlay_patchset() {
 		"${FILESDIR}/extra-patches/chromium-128.0.6613.119-custom-optimization-level.patch"
 		"${FILESDIR}/extra-patches/chromium-128.0.6613.137-disable-tflite.patch"
 		"${FILESDIR}/extra-patches/chromium-128.0.6613.137-disable-perfetto.patch"
+		"${FILESDIR}/extra-patches/chromium-128.0.6613.137-disable-icu-tracing.patch"
 	)
 }
 
@@ -3060,6 +3062,7 @@ ewarn
 	myconf_gn+=" enable_websockets=$(usex websockets true false)"
 	myconf_gn+=" use_minikin_hyphenation=$(usex css-hyphen true false)"
 	myconf_gn+=" use_mpris=$(usex mpris true false)"
+	myconf_gn+=" v8_enable_lite_mode=$(usex webassembly false true)"
 
 	# Forced because of asserts
 	myconf_gn+=" enable_screen_ai_service=true" # Required by chrome/renderer:renderer
