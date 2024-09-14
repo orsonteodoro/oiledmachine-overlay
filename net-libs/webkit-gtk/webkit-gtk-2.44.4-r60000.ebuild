@@ -120,9 +120,9 @@ SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
 USE_RUBY=" ruby31 ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
 
-inherit cflags-depends check-linker check-reqs cmake desktop dhms flag-o-matic git-r3
-inherit gnome2 lcnr linux-info llvm multilib-minimal pax-utils python-any-r1
-inherit ruby-single toolchain-funcs
+inherit cflags-depends check-linker check-reqs cmake desktop dhms flag-o-matic
+inherit git-r3 gnome2 lcnr linux-info llvm multilib-minimal multiprocessing
+inherit pax-utils python-any-r1 ruby-single toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
 #
@@ -2326,6 +2326,11 @@ eerror
 
 	if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
 		append-cppflags -DCUSTOM_PAGE_SIZE=${CUSTOM_PAGE_SIZE}
+	fi
+
+	local nproc=$(get_nproc)
+	if ! use jit && (( "${nproc}" <= 1 )) ; then
+		die "The jit USE flag must be on."
 	fi
 
 	# See Source/cmake/WebKitFeatures.cmake
