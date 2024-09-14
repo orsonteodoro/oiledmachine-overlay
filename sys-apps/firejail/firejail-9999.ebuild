@@ -2385,6 +2385,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3f4d6df-firecfg.config.patch"
 	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity.patch"
 	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
+	"${FILESDIR}/extra-patches/${PN}-f9ddf2f-profile-fixes.patch"
 )
 
 get_impls() {
@@ -3006,16 +3007,6 @@ ewarn "Use LLD or mold for ROP mitigation"
 	if use contrib; then
 		python_fix_shebang -f "contrib/"*".py"
 	fi
-
-	# Profile fixes:
-	sed -i \
-		-e "s|#private-lib|private-lib|g" \
-		"etc/profile-a-l/file.profile" \
-		|| die
-	sed -i \
-		-e "s|#private-lib|private|g" \
-		"etc/profile-m-z/tar.profile" \
-		|| die
 
 	if use test ; then
 		if [[ "${TEST_SET}" == "full" ]] ; then

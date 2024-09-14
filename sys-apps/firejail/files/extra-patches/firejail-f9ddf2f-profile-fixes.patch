@@ -1,0 +1,36 @@
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/file.profile firejail-9999/etc/profile-a-l/file.profile
+--- firejail-9999.orig/etc/profile-a-l/file.profile	2024-09-14 08:42:39.441300103 -0700
++++ firejail-9999/etc/profile-a-l/file.profile	2024-09-14 08:43:45.724207325 -0700
+@@ -36,7 +36,7 @@ x11 none
+ private-cache
+ private-dev
+ #private-etc alternatives,localtime,magic,magic.mgc
+-#private-lib file,libarchive.so.*,libfakeroot,libmagic.so.*,libseccomp.so.*
++private-lib file,libarchive.so.*,libfakeroot,libmagic.so.*,libseccomp.so.*
+ 
+ dbus-user none
+ dbus-system none
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/mpv.profile firejail-9999/etc/profile-m-z/mpv.profile
+--- firejail-9999.orig/etc/profile-m-z/mpv.profile	2024-09-14 08:42:39.505299047 -0700
++++ firejail-9999/etc/profile-m-z/mpv.profile	2024-09-14 08:43:14.684719052 -0700
+@@ -76,7 +76,7 @@ include whitelist-var-common.inc
+ apparmor
+ caps.drop all
+ netfilter
+-nogroups
++#nogroups
+ noinput
+ nonewprivs
+ noroot
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/tar.profile firejail-9999/etc/profile-m-z/tar.profile
+--- firejail-9999.orig/etc/profile-m-z/tar.profile	2024-09-14 08:42:39.569297992 -0700
++++ firejail-9999/etc/profile-m-z/tar.profile	2024-09-14 08:44:26.983527126 -0700
+@@ -17,7 +17,7 @@ ignore include disable-shell.inc
+ # all capabilities this is automatically read-only.
+ noblacklist /var/lib/pacman
+ 
+-#private-lib libfakeroot,liblzma.so.*,libreadline.so.*
++private libfakeroot,liblzma.so.*,libreadline.so.*
+ # Debian based distributions need this for 'dpkg --unpack' (incl. synaptic)
+ writable-var
+ 
