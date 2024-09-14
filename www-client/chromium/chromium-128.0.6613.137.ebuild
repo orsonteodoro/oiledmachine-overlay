@@ -484,17 +484,18 @@ ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +accessibility +async-dns bindist bluetooth +bundled-libcxx +cfi -cet +cups
-+css-hyphen -debug +encode +extensions ffmpeg-chromium firejail -gtk4 -hangouts
--headless +hidpi +jit +js-type-check +kerberos +mdns +ml mold +mpris +official
-pax-kernel +pdf pic +pgo +plugins +pre-check-vaapi +proprietary-codecs
-proprietary-codecs-disable proprietary-codecs-disable-nc-developer
-proprietary-codecs-disable-nc-user +pulseaudio +reporting-api qt5 qt6
-+screencast +screen-capture selinux +spell +spelling-service -system-dav1d
-+system-ffmpeg -system-flac -system-fontconfig -system-freetype -system-harfbuzz
--system-icu -system-libaom -system-libdrm -system-libjpeg-turbo -system-libpng
--system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
--system-re2 -system-toolchain -system-zlib +system-zstd systemd +thinlto-opt
-+vaapi +wayland +webassembly +websockets -widevine +X
++css-hyphen -debug +drumbrake +encode +extensions ffmpeg-chromium firejail
+-gtk4 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns +ml mold
++mpris +official pax-kernel +pdf pic +pgo +plugins +pre-check-vaapi
++proprietary-codecs proprietary-codecs-disable
+proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
++pulseaudio +reporting-api qt5 qt6 +screencast +screen-capture selinux +spell
++spelling-service -system-dav1d +system-ffmpeg -system-flac -system-fontconfig
+-system-freetype -system-harfbuzz -system-icu -system-libaom -system-libdrm
+-system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
+-system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
+-system-zlib +system-zstd systemd +thinlto-opt +vaapi +wayland +webassembly
++websockets -widevine +X
 "
 
 # What is considered a proprietary codec can be found at:
@@ -605,6 +606,7 @@ REQUIRED_USE+="
 	!async-dns? (
 		!official
 	)
+	!drumbrake
 	!headless (
 		extensions
 		pdf
@@ -643,6 +645,9 @@ REQUIRED_USE+="
 	cups? (
 		pdf
 	)
+	drumbrake? (
+		webassembly
+	)
 	ffmpeg-chromium? (
 		bindist
 		proprietary-codecs
@@ -653,6 +658,7 @@ REQUIRED_USE+="
 	official? (
 		!cet
 		!debug
+		!drumbrake
 		!hangouts
 		!mold
 		!system-dav1d
@@ -739,9 +745,6 @@ REQUIRED_USE+="
 	)
 	vaapi-hevc? (
 		vaapi
-	)
-	webassembly? (
-		jit
 	)
 	widevine? (
 		!arm64
@@ -3104,13 +3107,15 @@ ewarn "JIT is off when -Os or -Oz"
 		myconf_gn+=" v8_enable_lite_mode=false"
 		if use jit ; then
 	# Compiler based
+			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
 			myconf_gn+=" v8_enable_turbofan=true"
 			myconf_gn+=" v8_enable_maglev=true"
 			myconf_gn+=" v8_enable_sparkplug=true"
-			myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)"
+			myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)" # webassembly compiler
 			myconf_gn+=" v8_jitless=false"
 		else
+			#myconf_gn+=" v8_enable_drumbrake=false"
 			myconf_gn+=" v8_enable_gdbjit=false"
 			myconf_gn+=" v8_enable_maglev=false"
 			myconf_gn+=" v8_enable_turbofan=false"
