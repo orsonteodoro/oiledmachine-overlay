@@ -486,8 +486,8 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 +accessibility +async-dns bindist bluetooth +bundled-libcxx +cfi -cet +cups
 +css-hyphen -debug +drumbrake +encode +extensions ffmpeg-chromium firejail
 -gtk4 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns +ml mold
-+mpris +official pax-kernel +pdf pic +pgo +plugins +pre-check-vaapi
-+proprietary-codecs proprietary-codecs-disable
++mpris +official pax-kernel +pdf pic +pgo +plugins +pointer-compression
++pre-check-vaapi +proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 +pulseaudio +reporting-api qt5 qt6 +screencast +screen-capture selinux +spell
 +spelling-service -system-dav1d +system-ffmpeg -system-flac -system-fontconfig
@@ -2078,6 +2078,12 @@ apply_oiledmachine_overlay_patchset() {
 				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-built-in-dns.patch"
 			)
 		fi
+
+		if ! use screen-capture ; then
+			PATCHES+=(
+				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-screen-capture.patch"
+			)
+		fi
 	fi
 }
 
@@ -3088,7 +3094,6 @@ ewarn
 	myconf_gn+=" enable_plugins=$(usex plugins true false)"
 	myconf_gn+=" enable_ppapi=false"
 	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
-	myconf_gn+=" enable_screen_capture=$(usex screen-capture true false)"
 	myconf_gn+=" enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
 	myconf_gn+=" enable_spellcheck=$(usex spell true false)"
 	myconf_gn+=" enable_spelling_service=$(usex spelling-service true false)"
@@ -3125,10 +3130,28 @@ ewarn "JIT is off when -Os or -Oz"
 		fi
 	fi
 	myconf_gn+=" v8_enable_vtunejit=false"
-	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
+	if use official ; then
+		: # Use automagic
+	elif use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
 		myconf_gn+=" v8_enable_hugepage=true"
 	else
 		myconf_gn+=" v8_enable_hugepage=false"
+	fi
+
+	if use official ; then
+		: # Use automagic
+	else
+		if [[ "${ARCH}" =~ ("amd64"|"arm64") ]] ; then
+			myconf_gn+=" v8_enable_pointer_compression=$(usex pointer-compression false true)"
+			if (( ${total_ram_gib} >= 8 )) ; then
+				myconf_gn+=" v8_enable_pointer_compression_8gb=true"
+			else
+				myconf_gn+=" v8_enable_pointer_compression_8gb=false"
+			fi
+		else
+			myconf_gn+=" v8_enable_pointer_compression=false"
+			myconf_gn+=" v8_enable_pointer_compression_8gb=false"
+		fi
 	fi
 
 	# Forced because of asserts
