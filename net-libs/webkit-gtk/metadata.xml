@@ -124,13 +124,6 @@
     <flag name="examples">
       Install the MiniBrowser example application.
     </flag>
-    <flag name="dfg-jit">
-      Builds with the teir that does the bulk of the optimizing.
-    </flag>
-    <flag name="ftl-jit">
-      Builds an additional tier for JIT used for optimizing run-time performance
-      marginally at the expense of faster load times or delayed execution time.
-    </flag>
     <flag name="gamepad">
       Enable gamepad input support via <pkg>dev-libs/libmanette</pkg>.
     </flag>
@@ -303,17 +296,6 @@
       Enable WebDriver support for Selenium.  This allows for automated testing
       or controlling the web browser through scripting.
     </flag>
-    <flag name="webassembly-b3-jit">
-      Enables and chooses the B3 JIT as the FTL JIT backend for faster
-      compilation with additional optimizations for WebAssembly.
-    </flag>
-    <flag name="webassembly-bbq-jit">
-      Enables the BBQ JIT for initial quick code generation, reduced startup
-      latency, decent runtime execution for WebAssembly.
-    </flag>
-    <flag name="webassembly-omg-jit">
-      Enables the OMG JIT for optimized runtime throughput for WebAssembly.
-    </flag>
     <flag name="webcrypto">
       Enables WebCrypto SubtleCrypto API support for low level cryptographic
       fuctions.
@@ -335,9 +317,6 @@
     </flag>
     <flag name="woff2">
       Builds support for WOFF2 Web Fonts
-    </flag>
-    <flag name="yarr-jit">
-      Enables JIT regex support.  Otherwise, it falls back to interpretive.
     </flag>
 
     <!-- Protocols -->

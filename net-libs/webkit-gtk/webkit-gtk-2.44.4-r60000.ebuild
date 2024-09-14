@@ -495,25 +495,28 @@ DEFAULT_GST_PLUGINS="
 # Using dav1d because aom is slow for decoding.
 # libbacktrace is enabled upstream but disabled for security reasons.
 
+CPU_FLAGS_ARM=(
+	cpu_flags_arm_thumb2
+)
 IUSE+="
-${LANGS[@]/#/l10n_}
+${CPU_FLAGS_ARM[@]}
+${DEFAULT_GST_PLUGINS}
 ${GST_ACODECS_IUSE}
 ${GST_CONTAINERS_IUSE}
 ${GST_VCODECS_IUSE}
+${LANGS[@]/#/l10n_}
 ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
-${DEFAULT_GST_PLUGINS}
 
-aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2
-dash +dfg-jit +doc -eme +ftl-jit -gamepad +gbm +geolocation gles2 gnome-keyring
-+gstreamer gstwebrtc hardened +introspection +javascriptcore +jit +journald
-+jpegxl +lcms -libbacktrace +libhyphen -libwebrtc -mediarecorder
--mediastream +minibrowser mold +opengl openmp proprietary-codecs
+aqua +avif +bmalloc -cache-partitioning dash +doc -eme -gamepad +gbm
++geolocation gles2 gnome-keyring +gstreamer gstwebrtc hardened +introspection
++javascript +jit +journald +jpegxl +lcms -libbacktrace +libhyphen -libwebrtc
+-mediarecorder -mediastream +minibrowser mold +opengl openmp proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user -seccomp speech-synthesis -spell test thunder
-+unified-builds +variation-fonts wayland +webassembly +webassembly-b3-jit
-+webassembly-bbq-jit +webassembly-omg-jit +webcore -webdriver +webgl
-webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
++unified-builds +variation-fonts wayland +webassembly
++webcore -webdriver +webgl
+webm-eme -webrtc webvtt -webxr +woff2 +X
 "
 
 gen_gst_plugins_duse() {
@@ -650,18 +653,8 @@ REQUIRED_USE+="
 		!pulseaudio
 		gstreamer
 	)
-	cpu_flags_arm_thumb2? (
-		!ftl-jit
-	)
 	dash? (
 		gstreamer
-	)
-	dfg-jit? (
-		jit
-		yarr-jit
-	)
-	ftl-jit? (
-		jit
 	)
 	gbm? (
 		|| (
@@ -685,15 +678,11 @@ REQUIRED_USE+="
 		gstreamer
 		webrtc
 	)
-
 	hardened? (
 		!jit
 	)
 	hls? (
 		gstreamer
-	)
-	jit? (
-		dfg-jit
 	)
 	opengl? (
 		!gles2
@@ -708,19 +697,6 @@ REQUIRED_USE+="
 	v4l? (
 		gstreamer
 		mediastream
-	)
-	webassembly-b3-jit? (
-		ftl-jit
-		webassembly
-		webassembly-omg-jit
-	)
-	webassembly-bbq-jit? (
-		webassembly
-		webassembly-b3-jit
-	)
-	webassembly-omg-jit? (
-		webassembly
-		webassembly-b3-jit
 	)
 	webgl? (
 		gbm
@@ -746,9 +722,6 @@ REQUIRED_USE+="
 	)
 	webxr? (
 		webgl
-	)
-	yarr-jit? (
-		jit
 	)
 	|| (
 		aqua
@@ -2095,7 +2068,7 @@ ewarn "Only disable if you want JavaScript support."
 ewarn
 	fi
 
-	if ! use javascriptcore ; then
+	if ! use javascript ; then
 ewarn
 ewarn "Disabling webcore disables website scripts completely"
 ewarn "or any contemporary websites."
@@ -2275,7 +2248,7 @@ eerror
 		-DENABLE_GEOLOCATION=$(multilib_native_usex geolocation) # \
 # Runtime optional (talks over dbus service)
 		-DENABLE_INTROSPECTION=$(multilib_native_usex introspection)
-		-DENABLE_JAVASCRIPTCORE=$(usex javascriptcore)
+		-DENABLE_JAVASCRIPTCORE=$(usex javascript)
 		-DENABLE_JOURNALD_LOG=$(usex journald)
 		-DENABLE_MEDIA_RECORDER=$(usex mediarecorder)
 		-DENABLE_MEDIA_STREAM=$(usex mediastream)
@@ -2374,19 +2347,19 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
-			-DENABLE_DFG_JIT=$(usex dfg-jit)
-			-DENABLE_FTL_JIT=$(usex ftl-jit)
+			-DENABLE_DFG_JIT=$(usex jit)
+			-DENABLE_FTL_JIT=$(usex jit)
 			-DENABLE_SAMPLING_PROFILER=$(usex jit)
-			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
-			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
-			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly-omg-jit)
+			-DENABLE_WEBASSEMBLY_B3JIT=$(usex jit)
+			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex jit)
+			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	elif [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
-			-DENABLE_DFG_JIT=$(usex dfg-jit)
+			-DENABLE_DFG_JIT=$(usex jit)
 			-DENABLE_FTL_JIT=OFF
 			-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=OFF
@@ -2400,7 +2373,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
-			-DENABLE_DFG_JIT=$(usex dfg-jit)
+			-DENABLE_DFG_JIT=$(usex jit)
 			-DENABLE_FTL_JIT=OFF
 			-DENABLE_SAMPLING_PROFILER=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=OFF
@@ -2412,12 +2385,12 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
-			-DENABLE_DFG_JIT=$(usex dfg-jit)
-			-DENABLE_FTL_JIT=$(usex ftl-jit)
+			-DENABLE_DFG_JIT=$(usex jit)
+			-DENABLE_FTL_JIT=$(usex jit)
 			-DENABLE_SAMPLING_PROFILER=OFF
-			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
-			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
-			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly-omg-jit)
+			-DENABLE_WEBASSEMBLY_B3JIT=$(usex jit)
+			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex jit)
+			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	else
@@ -2452,7 +2425,7 @@ ewarn
 ewarn "Disabling bmalloc for ABI=${ABI} may lower security."
 	fi
 
-	if (( ${jit_enabled} == 1 )) || use yarr-jit ; then
+	if (( ${jit_enabled} == 1 )) || use jit ; then
 		append-cppflags \
 			-DENABLE_ASSEMBLER=1
 	else
@@ -2460,7 +2433,7 @@ ewarn "Disabling bmalloc for ABI=${ABI} may lower security."
 			-DENABLE_ASSEMBLER=0
 	fi
 
-	if use yarr-jit ; then
+	if use jit ; then
 einfo "Enabled YARR JIT (aka RegEx JIT)" # default
 	else
 einfo "Disabled YARR JIT (aka RegEx JIT)"
