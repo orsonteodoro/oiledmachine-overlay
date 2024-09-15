@@ -117,10 +117,11 @@
     </flag>
     <flag name="bmalloc">
       Prefer the built-in dynamic memory allocator improve overall performance
-      and per type isolation and type confusion mitigation.
+      and type confusion mitigation against arbitrary code execution.
 
       Disable to use the less secure system memory allocator or possibly
-      an alternative hardened allocator.
+      an alternative hardened allocator.  The external hardened allocators
+      do not protect against type confusion.
     </flag>
     <flag name="cache-partitioning">
       Enable cache parititioning to block third party tracking
