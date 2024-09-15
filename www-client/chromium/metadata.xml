@@ -333,6 +333,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="partition-alloc">
       Use the built in allocator mitigating against underflows, overflows,
       type confusion (and consequently against arbitrary code execution).
+      Benefits include better storage efficiency and lowered latency.
 
       Disabling may allow access to hardened allocators, but external allocators
       typically do not have type confusion mitigation.
