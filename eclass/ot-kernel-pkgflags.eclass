@@ -736,6 +736,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_tb_us
 	ot-kernel-pkgflags_tbb
 	ot-kernel-pkgflags_tboot
+	ot-kernel-pkgflags_tcmalloc
 	ot-kernel-pkgflags_thermald
 	ot-kernel-pkgflags_thinkfinger
 	ot-kernel-pkgflags_throttled
@@ -10142,6 +10143,19 @@ ot-kernel-pkgflags_tbb() { # DONE
 ot-kernel-pkgflags_tboot() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-boot/tboot" ; then
 		ot-kernel_y_configopt "CONFIG_INTEL_TXT"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_tcmalloc
+# @DESCRIPTION:
+# Applies kernel config flags for the tcmalloc package
+ot-kernel-pkgflags_tcmalloc() { # DONE
+	if ot-kernel_has_version_pkgflags "dev-util/google-perftools" ; then
+	# The distro ebuild is missing the check.
+	# It is assume to be on
+	# See https://github.com/google/tcmalloc/blob/master/docs/tuning.md?plain=1#L153
+		_ot-kernel_y_thp
+		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS" # For madvise()
 	fi
 }
 
