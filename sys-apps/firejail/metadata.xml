@@ -92,7 +92,7 @@
                         | ASLR   | freed data remittance policy[7]            | ARM64 MTE[3] | type confusion mitigation[9]
     hardened_malloc     | yes[6] | small allocs zeroed, large allocs unerased | optional     | based on size not type
     mimalloc            | yes[8] | eager cryptographic erase                  | no           | no
-    scudo               | yes[2] | zeroed immediate or zeroed when full delay | optional     | reporting only, no enforcement
+    scudo               | yes[2] | zeroed immediate or zeroed when full delay | optional     | reporting and enforcement as error
     unset (ptmalloc[5]) | [1]    | left unsanitized                           | no[4]        | no
 
     [1] Only if RANDOMIZE_BASE (KALSR) is enabled in the kernel config and active.  Otherwise, it does not perform proactive mixing.
