@@ -179,7 +179,8 @@
       LANDLOCK["chromium"]=1
       LANDLOCK["firefox"]=1
       MALLOC_BACKEND["keepassxc"]="mimalloc"
-      MALLOC_BACKEND["chromium"]="scudo"
+      MALLOC_BACKEND["mpv"]="scudo"
+      MALLOC_BACKEND["surf"]="hardened_malloc"   # webkit-gtk ebuild may require to build with bmalloc disabled
       PATH_CORRECTION["spotify"]="/opt/spotify/spotify-client/spotify"
       SCUDO_FREE_IMMEDIATE["keepassxc"]=1
       SECCOMP["dillo"]=1
