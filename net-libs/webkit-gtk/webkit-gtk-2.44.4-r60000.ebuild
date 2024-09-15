@@ -1110,7 +1110,7 @@ verify_codecs() {
 		|| use proprietary-codecs-disable-nc-developer \
 		|| use proprietary-codecs-disable-nc-user \
 	; then
-		:;
+		:
 	else
 		return
 	fi
@@ -1581,7 +1581,7 @@ eerror
 	if use amd64 || use arm ; then
 		known=1
 		if (( ${page_size} == 4 )) ; then
-			:;
+			:
 		else
 			if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
 eerror
@@ -1877,7 +1877,7 @@ ewarn
 	fi
 
 	if (( ${known} == 1 )) ; then
-		:;
+		:
 	else
 		if ! tc-is-cross-compiler ; then
 			local actual_page_size=$(($(getconf PAGE_SIZE)/1024))
