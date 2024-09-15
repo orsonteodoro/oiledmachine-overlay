@@ -175,6 +175,9 @@ BDEPEND+="
 	dev-build/ninja
 	sys-apps/coreutils
 	virtual/pkgconfig
+	mold? (
+		>=sys-devel/mold-2.0
+	)
 	pax-kernel? (
 		sys-apps/elfix
 	)
