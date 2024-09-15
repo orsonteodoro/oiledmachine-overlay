@@ -116,8 +116,8 @@
       Enables AVIF image support.
     </flag>
     <flag name="bmalloc">
-      Prefer the built in dynamic memory allocator improve overall performance
-      and security isolation, and type confusion mitigation.
+      Prefer the built-in dynamic memory allocator improve overall performance
+      and per type isolation and type confusion mitigation.
 
       Disable to use the system dynamic memory allocaton that is less secure.
     </flag>
