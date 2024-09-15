@@ -2455,11 +2455,10 @@ einfo "Disabling JIT for ${ABI}."
 	if (( ${pointer_size} != 8 )) ; then
 ewarn "WASM is not supported for ABI=${ABI}"
 		webassembly_allowed=0
-	elif use webassembly ; then
+	elif use webassembly && (( ${webassembly_allowed} == 1 )) ; then
 einfo "WASM is on"
 	else
 einfo "WASM is off"
-		webassembly_allowed=0
 	fi
 
 	if (( ${webassembly_allowed} == 1 )) ; then
