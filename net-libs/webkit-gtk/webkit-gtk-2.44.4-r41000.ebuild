@@ -1268,7 +1268,7 @@ eerror
 			fi
 		elif (( ${page_size} == 16 )) ; then
 			CONFIG_CHECK="
-				~IA64_PAGE_SIZE_64KB
+				~!IA64_PAGE_SIZE_64KB
 				~IA64_PAGE_SIZE_16KB
 				~!IA64_PAGE_SIZE_8KB
 				~!IA64_PAGE_SIZE_4KB
