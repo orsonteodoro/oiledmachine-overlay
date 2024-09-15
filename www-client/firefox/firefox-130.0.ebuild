@@ -138,7 +138,7 @@ dc1afca43c831599efbf77a78d39faf70b24f823cd9cfec75cfbb2773684d928\
 LLVM_COMPAT=( 18 ) # Limited based on virtual/rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MEETS_JUMBOBUILD_MEMORY_REQ=0
+MEETS_JUMBO_BUILD_MEMORY_REQ=0
 MITIGATION_DATE="Sep 3, 2024"
 MITIGATION_LAST_UPDATE=1725303540 # From `date +%s -d "2024-09-02 11:59"` from ftp date matching version in report
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-39/"
@@ -1256,12 +1256,12 @@ ewarn "Downgrading MAKEOPTS=-j${njobs} to prevent lock-up"
 
 	if (( ${ram_gib_per_core%.*} >= 2 )) ; then # 4 core, 8 GiB RAM total
 	# Only allow if not swappy
-		MEETS_JUMBOBUILD_MEMORY_REQ=1
+		MEETS_JUMBO_BUILD_MEMORY_REQ=1
 	fi
 }
 
 _is_jumbo_build_ready() {
-	if use jumbo-build && (( ${MEETS_JUMBOBUILD_MEMORY_REQ} == 1 )) ; then
+	if use jumbo-build && (( ${MEETS_JUMBO_BUILD_MEMORY_REQ} == 1 )) ; then
 		return 0
 	fi
 	return 1
