@@ -2073,12 +2073,17 @@ apply_oiledmachine_overlay_patchset() {
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-tflite.patch"
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-perfetto.patch"
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-icu-tracing.patch"
-			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-spellcheck-declare-args.patch"
 		)
 
 		if ! use async-dns ; then
 			PATCHES+=(
 				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-built-in-dns.patch"
+			)
+		fi
+
+		if ! use spell ; then
+			PATCHES+=(
+				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-spellchecker.patch"
 			)
 		fi
 

@@ -508,15 +508,15 @@ ${LANGS[@]/#/l10n_}
 ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
 
-aqua +avif +bmalloc -cache-partitioning dash +doc -eme -gamepad +gbm
+aqua +avif -bmalloc -cache-partitioning dash +doc -eme -gamepad +gbm
 +geolocation gles2 gnome-keyring +gstreamer gstwebrtc hardened +introspection
-+javascript +jit +journald +jpegxl +lcms -libbacktrace +libhyphen -libwebrtc
--mediarecorder -mediastream +minibrowser mold +opengl openmp proprietary-codecs
-proprietary-codecs-disable proprietary-codecs-disable-nc-developer
-proprietary-codecs-disable-nc-user -seccomp speech-synthesis -spell test thunder
-+unified-builds +variation-fonts wayland +webassembly
-+webcore -webdriver +webgl
-webm-eme -webrtc webvtt -webxr +woff2 +X
++javascript +jit +journald +jpegxl +libpas +lcms -libbacktrace +libhyphen
+-libwebrtc -mediarecorder -mediastream +minibrowser mold +opengl openmp
+proprietary-codecs proprietary-codecs-disable
+proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
+-seccomp speech-synthesis -spell -system-malloc test thunder +unified-builds
++variation-fonts wayland +webassembly +webcore -webdriver +webgl webm-eme
+-webrtc webvtt -webxr +woff2 +X
 "
 
 gen_gst_plugins_duse() {
@@ -649,6 +649,11 @@ NON_FREE_REQUIRED_USE="
 
 REQUIRED_USE+="
 	${NON_FREE_REQUIRED_USE}
+	^^ (
+		bmalloc
+		libpas
+		system-malloc
+	)
 	alsa? (
 		!pulseaudio
 		gstreamer
@@ -2272,6 +2277,20 @@ eerror
 		die
 	fi
 
+	local system_malloc=$(usex system-malloc "ON" "OFF")
+	if [[ "${system_malloc}" == "ON" ]] ; then
+ewarn "Disabling bmalloc for ABI=${ABI} may lower security."
+	fi
+	if use libpas ; then
+		if [[ "${ABI}" =~ ("amd64"|"arm64") ]] ; then
+			append-cppflags -DBENABLE_LIBPAS=1
+		else
+			append-cppflags -DBENABLE_LIBPAS=0
+		fi
+	else
+		append-cppflags -DBENABLE_LIBPAS=0
+	fi
+
 	# TODO: Check Web Audio support
 	# should somehow let user select between them?
 	# opengl needs to be explictly handled, bug #576634
@@ -2334,6 +2353,7 @@ eerror
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENMP=$(usex openmp)
 		-DUSE_SOUP2=OFF
+		-DUSE_SYSTEM_MALLOC=${system_malloc}
 		-DUSE_WOFF2=$(usex woff2)
 		$(cmake_use_find_package gles2 OpenGLES2)
 		$(cmake_use_find_package opengl OpenGL)
@@ -2372,7 +2392,6 @@ eerror
 	# See Source/cmake/WebKitFeatures.cmake
 	local jit_enabled=$(usex jit "1" "0")
 	local pointer_size=$(tc-get-ptr-size)
-	local system_malloc=$(usex !bmalloc "1" "0")
 	local webassembly_allowed=$(usex jit "1" "0")
 
 einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
@@ -2385,7 +2404,6 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_WEBASSEMBLY_B3JIT=OFF
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
 			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
-			-DUSE_SYSTEM_MALLOC=ON
 		)
 		if [[ "${ABI}" == "arm64" ]] && (( ${WK_PAGE_SIZE} == 64 )) ; then
 			mycmakeargs+=(
@@ -2399,7 +2417,6 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			)
 		fi
 		jit_enabled=0
-		system_malloc=1
 		webassembly_allowed=0
 	}
 
@@ -2423,7 +2440,6 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex jit)
 			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex jit)
-			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 		if [[ "${ARCH}" == "riscv" ]] ; then
 			mycmakeargs+=(
@@ -2467,7 +2483,6 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_WEBASSEMBLY_B3JIT=OFF
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
 			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
-			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 		if [[ "${ARCH}" =~ "mips" || "${ARCH}" == "riscv" ]] ; then
 			mycmakeargs+=(
@@ -2509,10 +2524,6 @@ ewarn
 		mycmakeargs+=(
 			-DENABLE_WEBASSEMBLY=OFF
 		)
-	fi
-
-	if (( ${system_malloc} == 1 )) ; then
-ewarn "Disabling bmalloc for ABI=${ABI} may lower security."
 	fi
 
 	if (( ${jit_enabled} == 1 )) || use jit ; then

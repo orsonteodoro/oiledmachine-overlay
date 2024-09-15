@@ -187,6 +187,13 @@
     <flag name="libbacktrace">
       Enables backtracing to list what last function(s) may caused the crash.
     </flag>
+    <flag name="libpas">
+      Use libpas as the new allocator which is compatible with amd64 and arm64.
+      This allocator is design performance based.  JIT contexts get compact
+      storage, no isoheap (no type confusion protection).  Non JIT will get
+      fast storage to segregated isoheap with type confusion protection.  See
+      commit b6d532a.
+    </flag>
     <flag name="libsoup3">
       Link to libsoup3.  It consequently enables HTTP/2 by default when libsoup3
       is 2.99.8 or newer.
@@ -297,6 +304,11 @@
       Adds PulseAudio and microphone support.
 
       You may need <pkg>media-sound/pulseaudio-daemon[alsa]</pkg> to hear sound.
+    </flag>
+    <flag name="system-malloc">
+      Use the system allocator associated with the libc.
+      For glibc, it is ptmalloc.
+      For musl, it is mallocng.
     </flag>
     <flag name="thunder">
       Links to a framework with pluginable CDM (content decryption module) support.
