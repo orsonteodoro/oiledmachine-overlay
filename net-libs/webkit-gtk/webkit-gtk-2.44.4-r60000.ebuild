@@ -1848,6 +1848,19 @@ check_page_size() {
 		page_size=${CUSTOM_PAGE_SIZE}
 	fi
 
+	if (( ${page_size} == 4 || ${page_size} == 16 || ${page_size} == 64 )) ; then
+		:
+	else
+ewarn
+ewarn "You are using a page size not documented in the source code."
+ewarn "The chosen page size may result in runtime bugs or startup failure."
+ewarn
+ewarn "Upstream assumed page sizes:  4, 16, 64"
+ewarn "Chosen page size:  ${page_size}"
+ewarn
+	fi
+
+
 	if ! tc-is-cross-compiler && [[ "${page_size}" == "kconfig" ]] ; then
 		# Use the exact page size
 		page_size=$(_get_actual_page_size)
