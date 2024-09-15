@@ -141,6 +141,7 @@ dcda5b12dce8c42c9a09e28f5320679d1d6bb506a0c429005046b5606a341ab2\
 LLVM_COMPAT=( 18 17 ) # Limited based on virtual/rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
+MEETS_JUMBOBUILD_MEMORY_REQ=0
 MITIGATION_DATE="Sep 3, 2024"
 MITIGATION_LAST_UPDATE=1725303480 # From `date +%s -d "2024-09-02 11:58"` from ftp date matching version in report
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-40/"
@@ -1300,6 +1301,17 @@ ewarn "No swap detected."
 		MAKEOPTS="-j${njobs}"
 ewarn "Downgrading MAKEOPTS=-j${njobs} to prevent lock-up"
 	fi
+
+	if (( ${actual_gib_per_core%.*} >= 3 )) ; then
+		MEETS_JUMBOBUILD_MEMORY_REQ=1
+	fi
+}
+
+_is_jumbo_build_ready() {
+	if use jumbo-build && (( ${MEETS_JUMBOBUILD_MEMORY_REQ} == 1 )) ; then
+		return 0
+	fi
+	return 1
 }
 
 check_kernel_flags() {
@@ -1767,7 +1779,7 @@ einfo "Removing pre-built binaries ..."
 
 	# Respect choice for "jumbo-build"
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
-	if [[ -n "${FILES_PER_UNIFIED_FILE}" ]] && use jumbo-build ; then
+	if [[ -n "${FILES_PER_UNIFIED_FILE}" ]] && _is_jumbo_build_ready ; then
 		local my_files_per_unified_file=${FILES_PER_UNIFIED_FILE:=16}
 ewarn
 ewarn "jumbo-build defaults modified to ${my_files_per_unified_file}."
@@ -2336,7 +2348,7 @@ einfo "Building without Mozilla API key ..."
 
 	mozconfig_use_enable wifi necko-wifi
 
-	! use jumbo-build && \
+	! _is_jumbo_build_ready && \
 	mozconfig_add_options_ac '--disable-unified-build' --disable-unified-build
 
 	if use X && use wayland ; then
