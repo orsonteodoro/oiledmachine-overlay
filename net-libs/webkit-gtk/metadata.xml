@@ -119,7 +119,7 @@
       Prefer the built-in dynamic memory allocator improve overall performance
       and per type isolation and type confusion mitigation.
 
-      Disable to use the system's dynamic memory allocator that is less secure.
+      Disable to use the less secure system memory allocator.
     </flag>
     <flag name="cache-partitioning">
       Enable cache parititioning to block third party tracking
