@@ -24,9 +24,9 @@
 
     Release branches
 
-    2.42.x - Stable branch (A new minor version every 6 months for even minor versions)
-    2.43.x - Unstable branch (Preview for odd minor versions)
-    2.43.90+ - Unstable branch (Undergoing stabilization)
+    2.44.x - Stable branch (A new minor version every 6 months for even minor versions)
+    2.44.90+ - Unstable branch (Undergoing stabilization)
+    2.45.x - Unstable branch (Preview for odd minor versions)
 
 
     Build time environment variables:
