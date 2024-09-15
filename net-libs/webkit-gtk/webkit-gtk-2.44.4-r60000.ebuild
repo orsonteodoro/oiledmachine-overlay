@@ -2472,7 +2472,7 @@ einfo "WebAssembly is off"
 	else
 		if (( ${pointer_size} == 8 )) ; then
 ewarn
-ewarn "If you want to use webassembly, the following steps are required:"
+ewarn "If you want to use WebAssembly, the following steps are required:"
 ewarn
 ewarn "(1) Enable the jit USE flag."
 ewarn "(2) Change the kernel config to use memory page sizes less than 64 KB."
