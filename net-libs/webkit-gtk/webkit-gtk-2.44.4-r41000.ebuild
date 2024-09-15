@@ -2307,7 +2307,8 @@ eerror
 		$(cmake_use_find_package opengl OpenGL)
 	)
 
-	if (( ${actual_gib_per_core%.*} >= 3 )) ; then
+	if (( ${actual_gib_per_core%.*} >= 8 )) ; then
+	# Only allow if not swappy
 		mycmakeargs+=(
 			-DENABLE_UNIFIED_BUILDS=$(usex unified-builds)
 		)
