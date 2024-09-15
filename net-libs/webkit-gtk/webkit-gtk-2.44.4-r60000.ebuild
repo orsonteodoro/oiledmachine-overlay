@@ -2442,7 +2442,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
-		if [[ "${ARCH}" =~ "mips" ]] ; then
+		if [[ "${ARCH}" =~ "mips" || "${ARCH}" == "riscv" ]] ; then
 			mycmakeargs+=(
 				-DENABLE_SAMPLING_PROFILER=OFF
 			)
