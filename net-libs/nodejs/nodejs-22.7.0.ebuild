@@ -524,6 +524,11 @@ ewarn "If moldlto fails for gcc, try clang."
 		append-ldflags -fuse-ld=mold
 	fi
 
+	if ! use mold && is-flagq '-fuse-ld=mold' && has_version "sys-devel/mold" ; then
+eerror "To use mold, enable the mold USE flag."
+		die
+	fi
+
 	use debug && myconf+=( --debug )
 	if use system-icu; then
 		myconf+=( --with-intl=system-icu )
