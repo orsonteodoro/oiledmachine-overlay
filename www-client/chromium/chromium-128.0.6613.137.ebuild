@@ -3124,10 +3124,10 @@ ewarn "JIT is off when -Os or -Oz"
 			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
 			myconf_gn+=" v8_enable_maglev=true" # Subset of -O1
-			myconf_gn+=" v8_enable_sparkplug=true" # 5%
+			myconf_gn+=" v8_enable_sparkplug=true" # +5% benefit
 			if use webassembly ; then
 				myconf_gn+=" v8_enable_turbofan=true" # Subset of -O1, -O2, -O3
-				myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)" # webassembly compiler
+				myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)"
 			else
 	# Disable the more powerful JIT for older machines to speed up build time.
 				myconf_gn+=" v8_enable_turbofan=false"
