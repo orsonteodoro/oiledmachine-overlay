@@ -1791,7 +1791,7 @@ ewarn "Missing yama in CONFIG_LSM.  Add yama to CONFIG_LSM for ptrace sandbox pr
 		CONFIG_CHECK="
 			~TRANSPARENT_HUGEPAGE
 		"
-		WARNING_TRANSPARENT_HUGEPAGE="CONFIG_TRANSPARENT_HUGEPAGE could be enabled for V8 [JavaScript engine] memory access time reduction.  For webservers and music production, it should be kept disabled."
+		WARNING_TRANSPARENT_HUGEPAGE="CONFIG_TRANSPARENT_HUGEPAGE could be enabled for V8 [JavaScript engine] memory access time reduction.  For webservers, music production, realtime, it should be kept disabled."
 		check_extra_config
 	# In the current build files, they had went against their original decision.
 	fi
