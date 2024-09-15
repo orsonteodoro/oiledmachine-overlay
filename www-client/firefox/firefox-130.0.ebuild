@@ -1253,7 +1253,8 @@ ewarn "No swap detected."
 ewarn "Downgrading MAKEOPTS=-j${njobs} to prevent lock-up"
 	fi
 
-	if (( ${actual_gib_per_core%.*} >= 3 )) ; then
+	if (( ${actual_gib_per_core%.*} >= 8 )) ; then
+	# Only allow if not swappy
 		MEETS_JUMBOBUILD_MEMORY_REQ=1
 	fi
 }
