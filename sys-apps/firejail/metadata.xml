@@ -90,9 +90,9 @@
     Valid values - hardened_malloc, mimalloc, scudo, unset (ptmalloc default since none are endorsed upstream)
 
                         | ASLR   | freed data remittance policy[7]            | ARM64 MTE[3] | type confusion mitigation[9]
-    hardened_malloc     | yes[6] | small allocs zeroed, large allocs unerased | optional     | based on size not type
+    hardened_malloc     | yes[6] | small allocs zeroed, large allocs unerased | optional     | no.  based on size not type
     mimalloc            | yes[8] | eager cryptographic erase                  | no           | no
-    scudo               | yes[2] | zeroed immediate or zeroed when full delay | optional     | reporting and enforcement as error
+    scudo               | yes[2] | zeroed immediate or zeroed when full delay | optional     | no.  based on array size or not type
     unset (ptmalloc[5]) | [1]    | left unsanitized                           | no[4]        | no
 
     [1] Only if RANDOMIZE_BASE (KALSR) is enabled in the kernel config and active.  Otherwise, it does not perform proactive mixing.
@@ -103,7 +103,7 @@
     [6] Proactive via ChaCha8
     [7] Using zeros for erasing makes it easier to find keys or sensitive data strings.
     [8] Proactive via ChaCha20
-    [9] Allocator is suited for dynamically typed scripting languages (e.g. JavaScript)
+    [9] Allocator is suited for dynamically typed scripting languages (e.g. JavaScript).  It is preferred to use the vendored allocator.
 
     PATH_CORRECTION[PROFILE_NAME] - Set the correct path to the binary package.
 
