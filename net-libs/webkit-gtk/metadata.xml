@@ -55,7 +55,7 @@
           https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.2/Source/WTF/wtf/PageBlock.cpp#L65
           https://wiki.gentoo.org/wiki//etc/portage/package.env
 
-        Increasing the memory page size may also decrease security.
+        Using a 64k page size will disable JIT which mitigates against JIT attacks.
 
     ULIMIT - Sets the maximum open file limit.
     Default values:  Mold - 16384, BFD/LLD - 1024
@@ -103,10 +103,6 @@
     <remote-id type="cpe">cpe:/a:webkitgtk:webkitgtk</remote-id>
   </upstream>
   <use>
-    <flag name="64kb-page-block">
-      Enables support for 64 KB page block systems with a big penalty on
-      JavaScript performance.
-    </flag>
     <flag name="alsa">
       Enables ALSA sound support.
     </flag>
