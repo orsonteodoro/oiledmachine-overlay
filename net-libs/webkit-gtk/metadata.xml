@@ -180,6 +180,9 @@
       code.  [A subset of -O1, -O2, PDO/PGO.]
 
       Disable JIT for mitigation against JIT class of vulnerabilties.
+
+      Disabling could reduce performance to 97% relative to the best
+      optimization (FTL-B3).
     </flag>
     <flag name="libbacktrace">
       Enables backtracing to list what last function(s) may caused the crash.
