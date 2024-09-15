@@ -21,5 +21,8 @@ media-video/sr pretrained
 
 dev-python/cython -python_targets_pypy3
 
-# Slower than usual to compile.  Binary packages are discourged.
-#www-client/chromium system-toolchain
+# Prevent type confustion, arbitrary code execution, high vulnerabilities
+net-libs/webkit-gtk bmalloc
+
+# Prevent type confustion, arbitrary code execution, high vulnerabilities
+www-client/chromium partition-alloc partitionalloc

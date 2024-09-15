@@ -98,3 +98,4 @@ sci-libs/jaxlib clang
 www-client/chromium system-toolchain
 
 sys-apps/firejail -suid
+
