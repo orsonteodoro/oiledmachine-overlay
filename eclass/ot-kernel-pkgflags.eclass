@@ -5570,6 +5570,7 @@ ot-kernel-pkgflags_jack2() { # DONE
 ot-kernel-pkgflags_jemalloc() { # DONE
 	if ot-kernel_has_version_pkgflags "dev-libs/jemalloc" ; then
 		_ot-kernel_y_thp # Supported but not on by default.
+		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS" # For madvise()
 	fi
 }
 
