@@ -5569,6 +5569,7 @@ ot-kernel-pkgflags_jack2() { # DONE
 # Applies kernel config flags for the jemalloc package
 ot-kernel-pkgflags_jemalloc() { # DONE
 	if ot-kernel_has_version_pkgflags "dev-libs/jemalloc" ; then
+	# Missing kernel config checks in distro ebuild.
 		_ot-kernel_y_thp # Supported but not on by default.
 		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS" # For madvise()
 	fi
