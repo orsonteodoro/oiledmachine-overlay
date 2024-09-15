@@ -486,7 +486,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 +accessibility +async-dns bindist bluetooth +bundled-libcxx +cfi -cet +cups
 +css-hyphen -debug +drumbrake +encode +extensions ffmpeg-chromium firejail
 -gtk4 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns +ml mold
-+mpris +official +partition-alloc pax-kernel +pdf pic +pgo +plugins +pointer-compression
++mpris +official +partitionalloc pax-kernel +pdf pic +pgo +plugins +pointer-compression
 +pre-check-vaapi +proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 +pulseaudio +reporting-api qt5 qt6 +screencast +screen-capture selinux +spell
@@ -699,7 +699,7 @@ REQUIRED_USE+="
 		mpris
 		openh264
 		opus
-		partition-alloc
+		partitionalloc
 		pdf
 		pgo
 		plugins
@@ -3111,7 +3111,7 @@ ewarn
 	myconf_gn+=" enable_websockets=$(usex websockets true false)"
 	myconf_gn+=" use_minikin_hyphenation=$(usex css-hyphen true false)"
 	myconf_gn+=" use_mpris=$(usex mpris true false)"
-	myconf_gn+=" use_partition_alloc=$(usex partition-alloc true false)"
+	myconf_gn+=" use_partition_alloc=$(usex partitionalloc true false)"
 	if is-flagq "-Os" || is-flagq "-Oz" ; then
 ewarn "WebAssembly is off when -Os or -Oz"
 ewarn "JIT is off when -Os or -Oz"
