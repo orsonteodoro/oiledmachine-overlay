@@ -89,11 +89,11 @@
     MALLOC_BACKEND[PROFILE_NAME] - Set the hardened allocator
     Valid values - hardened_malloc, mimalloc, scudo, unset (ptmalloc default since none are endorsed upstream)
 
-                        | ASLR   | freed data remittance policy[7]            | ARM64 MTE[3]
-    hardened_malloc     | yes[6] | small allocs zeroed, large allocs unerased | optional
-    mimalloc            | yes[8] | eager cryptographic erase                  | no
-    scudo               | yes[2] | zeroed immediate or zeroed when full delay | optional
-    unset (ptmalloc[5]) | [1]    | left unsanitized                           | no[4]
+                        | ASLR   | freed data remittance policy[7]            | ARM64 MTE[3] | type confusion mitigation[9]
+    hardened_malloc     | yes[6] | small allocs zeroed, large allocs unerased | optional     | based on size not type
+    mimalloc            | yes[8] | eager cryptographic erase                  | no           | no
+    scudo               | yes[2] | zeroed immediate or zeroed when full delay | optional     | reporting only, no enforcement
+    unset (ptmalloc[5]) | [1]    | left unsanitized                           | no[4]        | no
 
     [1] Only if RANDOMIZE_BASE (KALSR) is enabled in the kernel config and active.  Otherwise, it does not perform proactive mixing.
     [2] Depends on KALSR and may use linear function
@@ -103,6 +103,7 @@
     [6] Proactive via ChaCha8
     [7] Using zeros for erasing makes it easier to find keys or sensitive data strings.
     [8] Proactive via ChaCha20
+    [9] Allocator is suited for dynamically typed scripting languages (e.g. JavaScript)
 
     PATH_CORRECTION[PROFILE_NAME] - Set the correct path to the binary package.
 
@@ -180,7 +181,7 @@
       LANDLOCK["firefox"]=1
       MALLOC_BACKEND["keepassxc"]="mimalloc"
       MALLOC_BACKEND["mpv"]="scudo"
-      MALLOC_BACKEND["surf"]="hardened_malloc"   # webkit-gtk ebuild may require to build with bmalloc disabled
+      MALLOC_BACKEND["mplayer"]="hardened_malloc"
       PATH_CORRECTION["spotify"]="/opt/spotify/spotify-client/spotify"
       SCUDO_FREE_IMMEDIATE["keepassxc"]=1
       SECCOMP["dillo"]=1
