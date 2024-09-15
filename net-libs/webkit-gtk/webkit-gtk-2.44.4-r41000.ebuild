@@ -2284,6 +2284,7 @@ ewarn "Disabling bmalloc for ABI=${ABI} may lower security."
 	if use libpas ; then
 		if [[ "${ABI}" =~ ("amd64"|"arm64") ]] ; then
 			append-cppflags -DBENABLE_LIBPAS=1
+			append-cppflags -DPAS_BMALLOC=1
 		else
 			append-cppflags -DBENABLE_LIBPAS=0
 		fi
