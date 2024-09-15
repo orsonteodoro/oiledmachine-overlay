@@ -486,7 +486,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 +accessibility +async-dns bindist bluetooth +bundled-libcxx +cfi -cet +cups
 +css-hyphen -debug +drumbrake +encode +extensions ffmpeg-chromium firejail
 -gtk4 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns +ml mold
-+mpris +official pax-kernel +pdf pic +pgo +plugins +pointer-compression
++mpris +official +partition-alloc pax-kernel +pdf pic +pgo +plugins +pointer-compression
 +pre-check-vaapi +proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 +pulseaudio +reporting-api qt5 qt6 +screencast +screen-capture selinux +spell
@@ -699,6 +699,7 @@ REQUIRED_USE+="
 		mpris
 		openh264
 		opus
+		partition-alloc
 		pdf
 		pgo
 		plugins
@@ -2072,6 +2073,7 @@ apply_oiledmachine_overlay_patchset() {
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-tflite.patch"
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-perfetto.patch"
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-icu-tracing.patch"
+			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-spellcheck-declare-args.patch"
 		)
 
 		if ! use async-dns ; then
@@ -3104,6 +3106,7 @@ ewarn
 	myconf_gn+=" enable_websockets=$(usex websockets true false)"
 	myconf_gn+=" use_minikin_hyphenation=$(usex css-hyphen true false)"
 	myconf_gn+=" use_mpris=$(usex mpris true false)"
+	myconf_gn+=" use_partition_alloc=$(usex partition-alloc true false)"
 	if is-flagq "-Os" || is-flagq "-Oz" ; then
 ewarn "WebAssembly is off when -Os or -Oz"
 ewarn "JIT is off when -Os or -Oz"
@@ -3115,10 +3118,16 @@ ewarn "JIT is off when -Os or -Oz"
 	# Compiler based
 			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
-			myconf_gn+=" v8_enable_turbofan=true"
-			myconf_gn+=" v8_enable_maglev=true"
-			myconf_gn+=" v8_enable_sparkplug=true"
-			myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)" # webassembly compiler
+			myconf_gn+=" v8_enable_maglev=true" # Subset of -O1
+			myconf_gn+=" v8_enable_sparkplug=true" # 5%
+			if use webassembly ; then
+				myconf_gn+=" v8_enable_turbofan=true" # Subset of -O1, -O2, -O3
+				myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)" # webassembly compiler
+			else
+	# Disable the more powerful JIT for older machines to speed up build time.
+				myconf_gn+=" v8_enable_turbofan=false"
+				myconf_gn+=" v8_enable_webassembly=false"
+			fi
 			myconf_gn+=" v8_jitless=false"
 		else
 			#myconf_gn+=" v8_enable_drumbrake=false"

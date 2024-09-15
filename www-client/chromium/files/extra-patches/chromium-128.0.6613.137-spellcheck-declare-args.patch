@@ -1,0 +1,44 @@
+--- a/components/spellcheck/spellcheck_build_features.gni.orig	2024-09-10 11:42:11.329518300 -0700
++++ b/components/spellcheck/spellcheck_build_features.gni	2024-09-15 14:26:41.941575569 -0700
+@@ -4,21 +4,23 @@
+ 
+ import("//build/config/features.gni")
+ 
+-# Enable the spell checker.
+-enable_spellcheck = use_blink
+-
+-# Use the operating system's spellchecker rather than hunspell. This does
+-# not affect the "red underline" spellchecker which can consult Google's
+-# server-based spellcheck service.
+-use_browser_spellchecker = is_android || is_mac || is_win
+-
+-# Use Hunspell. Windows can use both the OS's spellchecker and Hunspell.
+-# Therefore, include Windows in both build flags.
+-use_renderer_spellchecker = !use_browser_spellchecker || is_win
+-
+-# Whether the enhanced spellcheck service is available on the platform. This is
+-# effectively equal to all desktop platforms.
+-enable_spelling_service = use_renderer_spellchecker || is_mac
+-
+-# Only Mac has a spellcheck panel.
+-has_spellcheck_panel = is_mac
++declare_args() {
++  # Enable the spell checker.
++  enable_spellcheck = use_blink
++
++  # Use the operating system's spellchecker rather than hunspell. This does
++  # not affect the "red underline" spellchecker which can consult Google's
++  # server-based spellcheck service.
++  use_browser_spellchecker = is_android || is_mac || is_win
++
++  # Use Hunspell. Windows can use both the OS's spellchecker and Hunspell.
++  # Therefore, include Windows in both build flags.
++  use_renderer_spellchecker = !use_browser_spellchecker || is_win
++
++  # Whether the enhanced spellcheck service is available on the platform. This is
++  # effectively equal to all desktop platforms.
++  enable_spelling_service = use_renderer_spellchecker || is_mac
++
++  # Only Mac has a spellcheck panel.
++  has_spellcheck_panel = is_mac
++}
