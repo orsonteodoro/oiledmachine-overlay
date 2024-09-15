@@ -2361,96 +2361,104 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 				-DENABLE_C_LOOP=OFF
 				-DENABLE_SAMPLING_PROFILER=ON
 			)
-			webassembly_allowed=1
 		else
 			mycmakeargs+=(
 				-DENABLE_C_LOOP=ON
 				-DENABLE_SAMPLING_PROFILER=OFF
 			)
-			webassembly_allowed=0
 		fi
 		jit_enabled=0
 		system_malloc=1
+		webassembly_allowed=0
 	}
-
-	local nproc=$(get_nproc)
-
-	local _early_64_bit=0
-	if [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} <= 1 )) ; then
-	# Treat it like 32-bit.
-		_early_64_bit=1
-	fi
 
 	if (( ${WK_PAGE_SIZE} == 64 )) ; then
 		_jit_off
-	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} >= 2 || ${WASM_SUPPORT_OVERRIDE} == 1 )) ; then
+	elif \
+		[[ \
+			   "${ABI}" == "amd64" \
+			|| "${ABI}" == "arm64" \
+			|| ( "${ARCH}" == "riscv" && "${pointer_size}" == "8" ) \
+		]] \
+			&& \
+		use webassembly \
+	; then
+	# Full JIT
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
 			-DENABLE_DFG_JIT=$(usex jit)
 			-DENABLE_FTL_JIT=$(usex jit)
-			-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex jit)
 			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
+		if [[ "${ARCH}" == "riscv" ]] ; then
+			mycmakeargs+=(
+				-DENABLE_SAMPLING_PROFILER=OFF
+			)
+		else
+			mycmakeargs+=(
+				-DENABLE_SAMPLING_PROFILER=$(usex jit)
+			)
+		fi
 	elif \
 		( [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ) \
-		|| ${_early_64_bit} \
+			|| \
+		( \
+			[[ \
+				   "${ARCH}" == "mips" \
+				|| "${ARCH}" == "mipsel" \
+				|| "${ARCH}" == "mips64" \
+				|| "${ARCH}" == "mips64el" \
+			]] \
+				&& \
+			(( ${pointer_size} == 4 )) \
+		) \
+			|| \
+		( \
+			[[ \
+				   "${ABI}" == "amd64" \
+				|| "${ABI}" == "arm64" \
+				|| ( "${ABI}" == "riscv" && "${pointer_size}" == "8" ) \
+			]] \
+				&& \
+			! use webassembly \
+		) \
 	; then
+	# Mid JIT
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
 			-DENABLE_DFG_JIT=$(usex jit)
 			-DENABLE_FTL_JIT=OFF
-			-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=OFF
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
 			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
-	elif \
-		[[ "${ARCH}" == "mips" || "${ARCH}" == "mipsel" || "${ARCH}" == "mips64" || "${ARCH}" == "mips64el" ]] \
-			&& \
-		(( ${pointer_size} == 4 )) \
-	; then
-		mycmakeargs+=(
-			-DENABLE_C_LOOP=$(usex !jit)
-			-DENABLE_JIT=$(usex jit)
-			-DENABLE_DFG_JIT=$(usex jit)
-			-DENABLE_FTL_JIT=OFF
-			-DENABLE_SAMPLING_PROFILER=OFF
-			-DENABLE_WEBASSEMBLY_B3JIT=OFF
-			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
-			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
-			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
-		)
-	elif [[ "${ARCH}" == "riscv" ]] && (( ${pointer_size} == 8 || ( ${WASM_SUPPORT_OVERRIDE} == 1 && ${pointer_size} == 8 ) )) ; then
-		mycmakeargs+=(
-			-DENABLE_C_LOOP=$(usex !jit)
-			-DENABLE_JIT=$(usex jit)
-			-DENABLE_DFG_JIT=$(usex jit)
-			-DENABLE_FTL_JIT=$(usex jit)
-			-DENABLE_SAMPLING_PROFILER=OFF
-			-DENABLE_WEBASSEMBLY_B3JIT=$(usex jit)
-			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex jit)
-			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex jit)
-			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
-		)
+		if [[ "${ARCH}" =~ "mips" ]] ; then
+			mycmakeargs+=(
+				-DENABLE_SAMPLING_PROFILER=OFF
+			)
+		else
+			mycmakeargs+=(
+				-DENABLE_SAMPLING_PROFILER=$(usex jit)
+			)
+		fi
 	else
 einfo "Disabling JIT for ${ABI}."
 		_jit_off
 	fi
 
-	if [[ "${WASM_SUPPORT_OVERRIDE}" == "1" ]] && (( ${_early_64_bit} == 1 || ${pointer_size} == 8 )) ; then
-		:
-	elif (( ${nproc} <= 1 )) ; then
-ewarn "WASM and late teir JIT is disabled for 64-bit unicore to shorten build times."
-ewarn "For JIT capable 64-bit, you may set WASM_SUPPORT_OVERRIDE=1 to force build WASM."
-		webassembly_allowed=0
-	elif (( ${pointer_size} != 8 )) ; then
+	if (( ${pointer_size} != 8 )) ; then
 ewarn "WASM is not supported for ABI=${ABI}"
+		webassembly_allowed=0
+	elif use webassembly ; then
+einfo "WASM is on"
+	else
+einfo "WASM is off"
 		webassembly_allowed=0
 	fi
 
@@ -2467,7 +2475,7 @@ ewarn "(1) Enable the jit USE flag."
 ewarn "(2) Change the kernel config to use memory page sizes less than 64 KB."
 ewarn "(3) Set CUSTOM_PAGE_SIZE environment variable less than 64 KB."
 ewarn
-ewarn "This suggestion applies to newer arches."
+ewarn "This suggestion applies to 64-bit arches only."
 ewarn
 		mycmakeargs+=(
 			-DENABLE_WEBASSEMBLY=OFF

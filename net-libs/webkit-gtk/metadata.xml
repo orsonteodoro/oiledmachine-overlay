@@ -79,10 +79,6 @@
       MITIGATION_USE_CASE="default"            # The ebuild is (re-)installable for 60 days from release date but may likely contain vulnerabilities.
 
 
-    WASM_SUPPORT_OVERRIDE - Force build WASM support for slow computers (e.g. unicore, 1 GiB per core or less)
-    Valid values:  1 - get omg-bbq, 0 - skip omg-bbq, unset - (skip omg-bbq/default)
-
-
     For PGO details, see
 
       https://github.com/WebKit/WebKit/commit/790a01a3ec741d8752990a809d1ab489d9637e3d
