@@ -113,3 +113,17 @@
  
  namespace {
  
+--- a/components/history_embeddings/passage_embeddings_service_controller.cc.orig	2024-09-15 01:10:01.084103275 -0700
++++ b/components/history_embeddings/passage_embeddings_service_controller.cc	2024-09-15 07:38:22.324776952 -0700
+@@ -154,9 +154,11 @@ void PassageEmbeddingsServiceController:
+         FROM_HERE, {base::MayBlock()},
+         base::BindOnce(&MakeModelParams, embeddings_model_path_, sp_model_path_,
+                        model_metadata_->input_window_size()),
++#if BUILDFLAG(BUILD_WITH_TFLITE_LIB)
+         base::BindOnce(&PassageEmbeddingsServiceController::LoadModelsToService,
+                        weak_ptr_factory_.GetWeakPtr(),
+                        embedder_remote_.BindNewPipeAndPassReceiver()));
++#endif
+     embedder_remote_.set_disconnect_handler(
+         base::BindOnce(&PassageEmbeddingsServiceController::OnDisconnected,
+                        weak_ptr_factory_.GetWeakPtr()));
