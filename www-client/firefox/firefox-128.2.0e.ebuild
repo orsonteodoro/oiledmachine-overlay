@@ -1779,7 +1779,6 @@ einfo "Removing pre-built binaries ..."
 	# Clear checksums from cargo crates we've manually patched.
 	# moz_clear_vendor_checksums xyz
 
-	# Respect choice for "jumbo-build"
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
 	if [[ -n "${FILES_PER_UNIFIED_FILE}" ]] && _is_jumbo_build_ready ; then
 		local my_files_per_unified_file=${FILES_PER_UNIFIED_FILE:=16}
