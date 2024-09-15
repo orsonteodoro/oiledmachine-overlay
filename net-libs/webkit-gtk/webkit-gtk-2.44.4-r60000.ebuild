@@ -2283,7 +2283,6 @@ eerror
 		-DENABLE_SPEECH_SYNTHESIS=$(usex speech-synthesis)
 		-DENABLE_SPELLCHECK=$(usex spell)
 		-DENABLE_THUNDER=$(usex thunder)
-		-DENABLE_UNIFIED_BUILDS=$(usex unified-builds)
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
@@ -2311,6 +2310,16 @@ eerror
 		$(cmake_use_find_package gles2 OpenGLES2)
 		$(cmake_use_find_package opengl OpenGL)
 	)
+
+	if (( ${actual_gib_per_core%.*} <= 1 )) ; then
+		mycmakeargs+=(
+			-DENABLE_UNIFIED_BUILDS=OFF
+		)
+	else
+		mycmakeargs+=(
+			-DENABLE_UNIFIED_BUILDS=$(usex unified-builds)
+		)
+	fi
 
 	if ( use gles2 || use opengl || use wayland ) ; then
 		mycmakeargs+=(
