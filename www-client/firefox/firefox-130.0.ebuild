@@ -1230,6 +1230,7 @@ adjust_makeopts() {
 
 	local minimal_gib_per_core=4
 	local actual_gib_per_core=$(python -c "print(${total_mem_gib} / ${cores})")
+	local ram_gib_per_core=$(python -c "print(${total_ram_gib} / ${cores})")
 
 	if (( ${actual_gib_per_core%.*} >= ${minimal_gib_per_core} )) ; then
 einfo "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
@@ -1253,7 +1254,7 @@ ewarn "No swap detected."
 ewarn "Downgrading MAKEOPTS=-j${njobs} to prevent lock-up"
 	fi
 
-	if (( ${actual_gib_per_core%.*} >= 8 )) ; then
+	if (( ${ram_gib_per_core%.*} >= 2 )) ; then # 4 core, 8 GiB RAM total
 	# Only allow if not swappy
 		MEETS_JUMBOBUILD_MEMORY_REQ=1
 	fi
