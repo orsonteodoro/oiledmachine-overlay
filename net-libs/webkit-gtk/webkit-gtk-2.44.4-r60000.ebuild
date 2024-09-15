@@ -2181,6 +2181,7 @@ _src_configure() {
 
 	local minimal_gib_per_core=2
 	local actual_gib_per_core=$(python -c "print(${total_mem_gib} / ${cores})")
+	local ram_gib_per_core=$(python -c "print(${total_ram_gib} / ${cores})")
 
 	if (( ${actual_gib_per_core%.*} >= ${minimal_gib_per_core} )) ; then
 einfo "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
@@ -2311,7 +2312,7 @@ eerror
 		$(cmake_use_find_package opengl OpenGL)
 	)
 
-	if (( ${actual_gib_per_core%.*} >= 8 )) ; then
+	if (( ${ram_gib_per_core%.*} >= 2 )) ; then # 4 core, 8 GiB RAM total
 	# Only allow if not swappy
 		mycmakeargs+=(
 			-DENABLE_UNIFIED_BUILDS=$(usex unified-builds)
