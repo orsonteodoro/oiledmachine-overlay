@@ -2379,15 +2379,15 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 
 	local nproc=$(get_nproc)
 
-	local _64_bit_early_adopter=0
+	local _early_64_bit=0
 	if [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} <= 1 )) ; then
-	# Treat like 32-bit
-		_64_bit_early_adopter=1
+	# Treat it like 32-bit.
+		_early_64_bit=1
 	fi
 
 	if (( ${WK_PAGE_SIZE} == 64 )) ; then
 		_jit_off
-	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} >= 2 )) || [[ "${WASM_SUPPORT_OVERRIDE}" == "1" ]] ; then
+	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} >= 2 || ${WASM_SUPPORT_OVERRIDE} == 1 )) ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
@@ -2401,7 +2401,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		)
 	elif \
 		( [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ) \
-		|| ${_64_bit_early_adopter} \
+		|| ${_early_64_bit} \
 	; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
@@ -2430,7 +2430,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
-	elif [[ "${ARCH}" == "riscv" ]] && (( ${pointer_size} == 8 )) ; then
+	elif [[ "${ARCH}" == "riscv" ]] && (( ${pointer_size} == 8 || ( ${WASM_SUPPORT_OVERRIDE} == 1 && ${pointer_size} == 8 ) )) ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
@@ -2447,7 +2447,7 @@ einfo "Disabling JIT for ${ABI}."
 		_jit_off
 	fi
 
-	if [[ "${WASM_SUPPORT_OVERRIDE}" == "1" ]] && (( ${_64_bit_early_adopter} == 1 )) ; then
+	if [[ "${WASM_SUPPORT_OVERRIDE}" == "1" ]] && (( ${_early_64_bit} == 1 || ${pointer_size} == 8 )) ; then
 		:
 	elif (( ${nproc} <= 1 )) ; then
 ewarn "WASM and late teir JIT is disabled for 64-bit unicore to shorten build times."
