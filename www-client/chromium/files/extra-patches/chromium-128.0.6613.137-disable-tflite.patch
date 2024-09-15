@@ -93,3 +93,23 @@
  
  void PassageEmbeddingsServiceController::OnLoadModelsResult(bool success) {
    if (!success) {
+--- a/components//history_embeddings/passage_embeddings_service_controller.h.orig	2024-09-14 21:49:38.939760136 -0700
++++ b/components//history_embeddings/passage_embeddings_service_controller.h	2024-09-14 23:56:10.116692152 -0700
+@@ -8,6 +8,7 @@
+ #include "components/history_embeddings/embedder.h"
+ #include "components/history_embeddings/proto/passage_embeddings_model_metadata.pb.h"
+ #include "components/optimization_guide/core/model_info.h"
++#include "components/optimization_guide/machine_learning_tflite_buildflags.h"
+ #include "mojo/public/cpp/bindings/remote.h"
+ #include "services/passage_embeddings/public/mojom/passage_embeddings.mojom.h"
+ 
+--- a/components//history_embeddings/passage_embeddings_service_controller.cc.orig	2024-09-14 21:49:38.967759668 -0700
++++ b/components//history_embeddings/passage_embeddings_service_controller.cc	2024-09-14 23:56:22.052497267 -0700
+@@ -10,6 +10,7 @@
+ #include "components/history_embeddings/history_embeddings_features.h"
+ #include "components/history_embeddings/vector_database.h"
+ #include "components/optimization_guide/core/optimization_guide_util.h"
++#include "components/optimization_guide/machine_learning_tflite_buildflags.h"
+ 
+ namespace {
+ 
