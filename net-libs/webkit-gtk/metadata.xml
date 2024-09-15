@@ -168,12 +168,12 @@
       execution, RegEx JIT, WASM JIT, CSS JIT.  Disable for increased
       compatibility on alternative ARCHs and ABIs.
 
-      Older machines get a JIT build with only earlier tiers for decent
-      optimization, for reasons to reduce build time and runtime memory use.
-      [A subset of -O1, -O2.]
+      Older machines get a mid teir JIT build, for decent optimization and a
+      subset of -O1 and -O2.  This is to reduce build time and runtime memory
+      use.
 
-      Newer machines get a JIT build containing later tiers for most optimized
-      code.  [A subset of -O1, -O2, PDO/PGO.]
+      Newer machines get a top teir JIT build for most optimized code, a subset
+      of -O1, -O2, PDO/PGO.
 
       Disable JIT for mitigation against JIT class of vulnerabilties.
 
