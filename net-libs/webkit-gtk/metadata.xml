@@ -55,7 +55,13 @@
           https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.2/Source/WTF/wtf/PageBlock.cpp#L65
           https://wiki.gentoo.org/wiki//etc/portage/package.env
 
-        Using a 64k page size will disable JIT which mitigates against JIT attacks.
+        Using a 64k page size will disable JIT which mitigates against JIT
+        attacks.
+
+        Using values othern than 4, 16, 64 for page size is not supported
+        upstream or may result in undefined behavior.  These undocumented
+        values are experimental values for testing.
+
 
     ULIMIT - Sets the maximum open file limit.
     Default values:  Mold - 16384, BFD/LLD - 1024
