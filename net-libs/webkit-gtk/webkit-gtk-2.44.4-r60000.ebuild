@@ -2369,14 +2369,14 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 	local nproc=$(get_nproc)
 
 	local _64_bit_early_adopter=0
-	if [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} <= 1 || ${actual_gib_per_core%.*} <= 2 )) ; then
+	if [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} <= 1 )) ; then
 	# Treat like 32-bit
 		_64_bit_early_adopter=1
 	fi
 
 	if (( ${WK_PAGE_SIZE} == 64 )) ; then
 		_jit_off
-	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} >= 2 && ${actual_gib_per_core%.*} > 2 )) || [[ "${WASM_SUPPORT_OVERRIDE}" == "1" ]] ; then
+	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && (( ${nproc} >= 2 )) || [[ "${WASM_SUPPORT_OVERRIDE}" == "1" ]] ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
@@ -2438,9 +2438,9 @@ einfo "Disabling JIT for ${ABI}."
 
 	if [[ "${WASM_SUPPORT_OVERRIDE}" == "1" ]] && (( ${_64_bit_early_adopter} == 1 )) ; then
 		:
-	elif (( ${nproc} <= 1 || ${actual_gib_per_core%.*} <= 2 )) ; then
-# This concerns building.  If prebuilt, it may likely work.
-ewarn "WASM is not supported for unicore or <= 2 GiB"
+	elif (( ${nproc} <= 1 )) ; then
+ewarn "WASM and late teir JIT is disabled for 64-bit unicore to shorten build times."
+ewarn "For 64-bit early adopters on amd64 or arm64, you may set WASM_SUPPORT_OVERRIDE=1 to force build WASM."
 		webassembly_allowed=0
 	elif (( ${pointer_size} != 8 )) ; then
 ewarn "WASM is not supported for ABI=${ABI}"
