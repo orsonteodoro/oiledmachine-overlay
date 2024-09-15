@@ -169,14 +169,15 @@
     </flag>
     <flag name="jit">
       Enables JIT support for JavaScriptCore for significantly faster code
-      execution.  Disable for increased compatibility on alternative ARCHs and
-      ABIs.
+      execution, RegEx JIT, WASM JIT,  Disable for increased compatibility on
+      alternative ARCHs and ABIs.
 
       Older machines get a JIT build with only earlier tiers for decent
       optimization, for reasons to reduce build time and runtime memory use.
+      [A subset of -O1, -O2.]
 
       Newer machines get a JIT build containing later tiers for most optimized
-      code.
+      code.  [A subset of -O1, -O2, PDO/PGO.]
 
       Disable JIT for mitigation against JIT class of vulnerabilties.
     </flag>
