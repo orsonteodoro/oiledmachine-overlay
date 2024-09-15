@@ -58,7 +58,7 @@
         Using a 64k page size will disable JIT which mitigates against JIT
         attacks.
 
-        Using values othern than 4, 16, 64 for page size is not supported
+        Using values other than 4, 16, 64 for page size is not supported
         upstream or may result in undefined behavior.  These undocumented
         values are experimental values for testing.
 
