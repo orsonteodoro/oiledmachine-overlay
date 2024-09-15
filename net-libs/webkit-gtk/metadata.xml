@@ -310,7 +310,7 @@
       Build support for the WebGL HTML API using <pkg>virtual/opengl</pkg>.
     </flag>
     <flag name="webassembly">
-      Enables support for WebAssembly used for example in web games.
+      Enables support for WebAssembly used for web games.
 
       Disable the webassembly USE flag to decrease the attack surface.
     </flag>

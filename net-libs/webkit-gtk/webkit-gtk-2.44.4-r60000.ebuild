@@ -2457,12 +2457,12 @@ einfo "Disabling JIT for ${ABI}."
 	fi
 
 	if (( ${pointer_size} != 8 )) ; then
-ewarn "WASM is not supported for ABI=${ABI}"
+ewarn "WebAssembly is not supported for ABI=${ABI}"
 		webassembly_allowed=0
 	elif use webassembly && (( ${webassembly_allowed} == 1 )) ; then
-einfo "WASM is on"
+einfo "WebAssembly is on"
 	else
-einfo "WASM is off"
+einfo "WebAssembly is off"
 	fi
 
 	if (( ${webassembly_allowed} == 1 )) ; then
@@ -2470,16 +2470,15 @@ einfo "WASM is off"
 			-DENABLE_WEBASSEMBLY=$(usex webassembly)
 		)
 	else
+		if (( ${pointer_size} == 8 )) ; then
 ewarn
-ewarn "WebAssembly disabled.  The following steps are required to easily enable"
-ewarn "it:"
+ewarn "If you want to use webassembly, the following steps are required:"
 ewarn
 ewarn "(1) Enable the jit USE flag."
 ewarn "(2) Change the kernel config to use memory page sizes less than 64 KB."
 ewarn "(3) Set CUSTOM_PAGE_SIZE environment variable less than 64 KB."
 ewarn
-ewarn "This suggestion applies to 64-bit arches only."
-ewarn
+		fi
 		mycmakeargs+=(
 			-DENABLE_WEBASSEMBLY=OFF
 		)
