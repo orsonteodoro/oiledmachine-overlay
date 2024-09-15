@@ -2436,7 +2436,7 @@ einfo "Disabling JIT for ${ABI}."
 		:
 	elif (( ${nproc} <= 1 )) ; then
 ewarn "WASM and late teir JIT is disabled for 64-bit unicore to shorten build times."
-ewarn "For 64-bit early adopters on amd64 or arm64, you may set WASM_SUPPORT_OVERRIDE=1 to force build WASM."
+ewarn "For JIT capable 64-bit, you may set WASM_SUPPORT_OVERRIDE=1 to force build WASM."
 		webassembly_allowed=0
 	elif (( ${pointer_size} != 8 )) ; then
 ewarn "WASM is not supported for ABI=${ABI}"
