@@ -2407,9 +2407,7 @@ ewarn
 	fi
 
 	# See Source/cmake/WebKitFeatures.cmake
-	local jit_enabled=$(usex jit "1" "0")
 	local pointer_size=$(tc-get-ptr-size)
-	local webassembly_allowed=$(usex jit "1" "0")
 
 einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 
@@ -2418,6 +2416,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_JIT=OFF
 			-DENABLE_DFG_JIT=OFF
 			-DENABLE_FTL_JIT=OFF
+			-DENABLE_WEBASSEMBLY=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=OFF
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
 			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
@@ -2433,8 +2432,6 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 				-DENABLE_SAMPLING_PROFILER=OFF
 			)
 		fi
-		jit_enabled=0
-		webassembly_allowed=0
 	}
 
 	_jit_level_3() {
@@ -2447,11 +2444,13 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		)
 		if [[ "${ARCH}" =~ "amd64" || "${ARCH}" =~ "arm64" || "${ARCH}" =~ "riscv" ]] ; then
 			mycmakeargs+=(
-				-DENABLE_WEBASSEMBLY_B3JIT=$(use jit "ON" "OFF")
-				-DENABLE_WEBASSEMBLY_BBQJIT=$(use jit)
+				-DENABLE_WEBASSEMBLY=$(usex webassembly "ON" "OFF")
+				-DENABLE_WEBASSEMBLY_B3JIT=$(use jit)
+				-DENABLE_WEBASSEMBLY_BBQJIT=$(use webassembly)
 			)
 		else
 			mycmakeargs+=(
+				-DENABLE_WEBASSEMBLY=OFF
 				-DENABLE_WEBASSEMBLY_B3JIT=OFF
 				-DENABLE_WEBASSEMBLY_BBQJIT=OFF
 			)
@@ -2474,9 +2473,10 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_JIT=$(usex jit)
 			-DENABLE_DFG_JIT=$(usex jit)
 			-DENABLE_FTL_JIT=$(usex jit)
+			-DENABLE_WEBASSEMBLY=$(usex webassembly "ON" "OFF")
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex jit)
-			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex jit) # -O0 build speed
-			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex jit) # -O2 runtime speed + PGO
+			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly) # -O0 build speed
+			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly) # -O2 runtime speed + PGO
 		)
 		if [[ "${ARCH}" == "riscv" ]] ; then
 			mycmakeargs+=(
@@ -2540,6 +2540,8 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		jit_level=${max_jit_level}
 	fi
 
+	use jit || jit_level=0
+
 	if [[ -n "${JIT_LEVEL_OVERRIDE}" ]] ; then
 		jit_level=${JIT_LEVEL_OVERRIDE}
 	fi
@@ -2571,21 +2573,17 @@ einfo "JIT is similar to -O${jit_level}."
 		_jit_level_0
 	fi
 
+	local webassembly=0
 	if (( ${pointer_size} != 8 )) ; then
 ewarn "WebAssembly is not supported for ABI=${ABI}"
-		webassembly_allowed=0
-	elif use webassembly && [[ "${mycmakeargs[@]}" =~ "-DENABLE_WEBASSEMBLY_BBQJIT=ON" ]] ; then
+	elif [[ "${mycmakeargs[@]}" =~ "-DENABLE_WEBASSEMBLY=ON" ]] ; then
 einfo "WebAssembly is on"
+		webassembly=1
 	else
 einfo "WebAssembly is off"
-		webassembly_allowed=0
 	fi
 
-	if (( ${webassembly_allowed} == 1 )) ; then
-		mycmakeargs+=(
-			-DENABLE_WEBASSEMBLY=$(usex webassembly)
-		)
-	else
+	if (( ${webassembly} == 0 )) ; then
 		if (( ${pointer_size} == 8 )) ; then
 ewarn
 ewarn "If you want to use WebAssembly, the following steps are required:"
@@ -2596,12 +2594,9 @@ ewarn "(3) Set CUSTOM_PAGE_SIZE environment variable less than 64 KB."
 ewarn "(4) Set to at least -O1 or JIT_LEVEL_OVERRIDE=1"
 ewarn
 		fi
-		mycmakeargs+=(
-			-DENABLE_WEBASSEMBLY=OFF
-		)
 	fi
 
-	if (( ${jit_enabled} == 1 )) || use jit ; then
+	if (( ${jit_level} >= 1 )) ; then
 		append-cppflags \
 			-DENABLE_ASSEMBLER=1
 	else
