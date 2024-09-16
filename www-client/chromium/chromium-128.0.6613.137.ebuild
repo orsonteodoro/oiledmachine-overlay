@@ -3146,7 +3146,24 @@ ewarn "JIT is off when -Os or -Oz"
 			myconf_gn+=" v8_enable_webassembly=false"
 		}
 
+		_jit_level_1() {
+			# > 75% performance
+			myconf_gn+=" v8_enable_maglev=false"
+			myconf_gn+=" v8_enable_sparkplug=false"
+			myconf_gn+=" v8_enable_turbofan=true"
+			myconf_gn+=" v8_enable_webassembly=false"
+		}
+
+		_jit_level_4() {
+			# > 90% performance
+			myconf_gn+=" v8_enable_maglev=false"
+			myconf_gn+=" v8_enable_sparkplug=true"
+			myconf_gn+=" v8_enable_turbofan=true"
+			myconf_gn+=" v8_enable_webassembly=false"
+		}
+
 		_jit_level_5() {
+			# 100% performance
 			myconf_gn+=" v8_enable_maglev=true" # %5 runtime benefit
 			myconf_gn+=" v8_enable_sparkplug=true" # 5% benefit
 			myconf_gn+=" v8_enable_turbofan=true" # Subset of -O1, -O2, -O3; 100% performance
@@ -3193,9 +3210,15 @@ ewarn "JIT is off when -Os or -Oz"
 	# Compiler based
 			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 
-			if [[ "${jit_level}" =~ ("1"|"z"|"s"|"2"|"3"|"fast") ]] ; then
+			if [[ "${jit_level}" =~ ("3"|"fast") ]] ; then
 einfo "JIT is similar to -O${jit_level}."
 				_jit_level_5
+			elif [[ "${jit_level}" =~ ("z"|"s"|"2") ]] ; then
+einfo "JIT is similar to -O${jit_level}."
+				_jit_level_4
+			elif [[ "${jit_level}" =~ ("1") ]] ; then
+einfo "JIT is similar to -O${jit_level}."
+				_jit_level_1
 			elif [[ "${jit_level}" =~ ("0") ]] ; then
 einfo "JIT is similar to -O${jit_level}."
 				_jit_level_0
