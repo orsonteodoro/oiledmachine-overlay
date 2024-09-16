@@ -3140,34 +3140,46 @@ ewarn "JIT is off when -Os or -Oz"
 		myconf_gn+=" v8_enable_lite_mode=false"
 
 		_jit_level_0() {
+			#myconf_gn+=" v8_enable_drumbrake=false"
+			myconf_gn+=" v8_enable_gdbjit=false"
 			myconf_gn+=" v8_enable_maglev=false"
 			myconf_gn+=" v8_enable_sparkplug=false"
 			myconf_gn+=" v8_enable_turbofan=false"
 			myconf_gn+=" v8_enable_webassembly=false"
+			myconf_gn+=" v8_jitless=true"
 		}
 
 		_jit_level_1() {
 			# > 75% performance
+			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
+			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
 			myconf_gn+=" v8_enable_maglev=false"
 			myconf_gn+=" v8_enable_sparkplug=false"
 			myconf_gn+=" v8_enable_turbofan=true"
 			myconf_gn+=" v8_enable_webassembly=false"
+			myconf_gn+=" v8_jitless=false"
 		}
 
 		_jit_level_4() {
 			# > 90% performance
+			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
+			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
 			myconf_gn+=" v8_enable_maglev=false"
 			myconf_gn+=" v8_enable_sparkplug=true"
 			myconf_gn+=" v8_enable_turbofan=true"
 			myconf_gn+=" v8_enable_webassembly=false"
+			myconf_gn+=" v8_jitless=false"
 		}
 
 		_jit_level_5() {
 			# 100% performance
+			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
+			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
 			myconf_gn+=" v8_enable_maglev=true" # %5 runtime benefit
 			myconf_gn+=" v8_enable_sparkplug=true" # 5% benefit
 			myconf_gn+=" v8_enable_turbofan=true" # Subset of -O1, -O2, -O3; 100% performance
 			myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)" # Requires it turbofan
+			myconf_gn+=" v8_jitless=false"
 		}
 
 		local olast=$(get_olast)
@@ -3189,6 +3201,7 @@ ewarn "JIT is off when -Os or -Oz"
 
 		# Place hardware limits here
 		# Disable the more powerful JIT for older machines to speed up build time.
+		use jit || jit_level=0
 
 		if [[ -n "${JIT_LEVEL_OVERRIDE}" ]] ; then
 			jit_level=${JIT_LEVEL_OVERRIDE}
@@ -3210,38 +3223,22 @@ ewarn "JIT is off when -Os or -Oz"
 			jit_level="0" # 5%
 		fi
 
-		if use jit ; then
-	# Compiler based
-			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
+		if [[ "${jit_level}" =~ ("3"|"fast") ]] ; then
+einfo "JIT is similar to -O${jit_level}."
+			_jit_level_5
+		elif [[ "${jit_level}" =~ ("z"|"s"|"2") ]] ; then
+einfo "JIT is similar to -O${jit_level}."
+			_jit_level_4
+		elif [[ "${jit_level}" =~ ("1") ]] ; then
+einfo "JIT is similar to -O${jit_level}."
+			_jit_level_1
+		elif [[ "${jit_level}" =~ ("0") ]] ; then
+einfo "JIT is similar to -O${jit_level}."
+			_jit_level_0
+		fi
 
-			if [[ "${jit_level}" =~ ("3"|"fast") ]] ; then
-einfo "JIT is similar to -O${jit_level}."
-				_jit_level_5
-			elif [[ "${jit_level}" =~ ("z"|"s"|"2") ]] ; then
-einfo "JIT is similar to -O${jit_level}."
-				_jit_level_4
-			elif [[ "${jit_level}" =~ ("1") ]] ; then
-einfo "JIT is similar to -O${jit_level}."
-				_jit_level_1
-			elif [[ "${jit_level}" =~ ("0") ]] ; then
-einfo "JIT is similar to -O${jit_level}."
-				_jit_level_0
-			fi
-
-			if use webassembly && [[ "${myconf_gn}" =~ "v8_enable_webassembly=false" ]] ; then
+		if use webassembly && [[ "${myconf_gn}" =~ "v8_enable_webassembly=false" ]] ; then
 ewarn "WebAssembly enablement needs >= -O1."
-			fi
-
-			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
-			myconf_gn+=" v8_jitless=false"
-		else
-			#myconf_gn+=" v8_enable_drumbrake=false"
-			myconf_gn+=" v8_enable_gdbjit=false"
-			myconf_gn+=" v8_enable_maglev=false"
-			myconf_gn+=" v8_enable_turbofan=false"
-			myconf_gn+=" v8_enable_sparkplug=false"
-			myconf_gn+=" v8_enable_webassembly=false"
-			myconf_gn+=" v8_jitless=true"
 		fi
 	fi
 	myconf_gn+=" v8_enable_vtunejit=false"
