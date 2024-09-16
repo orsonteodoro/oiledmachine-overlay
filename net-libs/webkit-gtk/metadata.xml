@@ -84,10 +84,22 @@
       MITIGATION_USE_CASE="socials"            # The ebuild is (re-)installable for 2 weeks from release date.
       MITIGATION_USE_CASE="default"            # The ebuild is (re-)installable for 60 days from release date but may likely contain vulnerabilities.
 
-
     For PGO details, see
 
       https://github.com/WebKit/WebKit/commit/790a01a3ec741d8752990a809d1ab489d9637e3d
+
+
+    JIT -Oflags consistency
+
+    If -Oshit was not added to CFLAGS, JIT tier selection will be tuned based on
+    -Oflag.  This means the following:
+
+    -O0, translates to LLInt and WASM OFF; ~5% performance
+    -O1, -Os, -Oz translates to DFG JIT and BBQ JIT; ~75% performance
+    -O2, -O3, -Ofast translates to FTL-B3 JIT and OMG JIT ; 100% performance
+
+    The top teirs include the bottom teirs.
+    The performance measurement is relative to the best teir.
 
 
     Proposed ebuild changes
@@ -103,6 +115,15 @@
 
     OSHIT_OPT_LEVEL_WEBCORE="2" - Optimize WebCore rendering engine at -O2
     Valid values:  2, 3
+
+    OSHIT_OPT_JIT="3" - Select teir for JIT based on -Oflag performance equivalence.
+    Valid values:  0, s, 3
+    0 - LLInt (~5% performance) and WASM OFF
+    s - DFG JIT (~75% performance) and BBQ
+    3 - FTL-B3 JIT (100% performance) and OMG
+
+    The top teirs include the bottom teirs.
+    The performance measurement is relative to the best teir.
 
   -->
   <upstream>
@@ -172,12 +193,8 @@
       execution, RegEx JIT, WASM JIT, CSS JIT.  Disable for increased
       compatibility on alternative ARCHs and ABIs.
 
-      Older machines get a mid teir JIT build, for decent optimization and a
-      subset of -O1 and -O2.  This is to reduce build time and runtime memory
-      use.
-
-      Newer machines get a top teir JIT build for most optimized code, a subset
-      of -O1, -O2, PDO/PGO.
+      JIT tier enablement is based on CFLAGS or OSHIT_OPT_JIT environment
+      variable.
 
       Disable JIT for mitigation against JIT class of vulnerabilties.
 

@@ -2400,7 +2400,7 @@ ewarn
 
 einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 
-	_jit_off() {
+	_jit_level_0() {
 		mycmakeargs+=(
 			-DENABLE_JIT=OFF
 			-DENABLE_DFG_JIT=OFF
@@ -2424,26 +2424,46 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		webassembly_allowed=0
 	}
 
-	if (( ${WK_PAGE_SIZE} == 64 )) ; then
-		_jit_off
-	elif \
-		[[ \
-			   "${ABI}" == "amd64" \
-			|| "${ABI}" == "arm64" \
-			|| ( "${ARCH}" == "riscv" && "${pointer_size}" == "8" ) \
-		]] \
-			&& \
-		use webassembly \
-	; then
-	# Full JIT
+	_jit_level_3() {
+		mycmakeargs+=(
+			-DENABLE_C_LOOP=$(usex !jit)
+			-DENABLE_JIT=$(usex jit)
+			-DENABLE_DFG_JIT=$(usex jit)
+			-DENABLE_FTL_JIT=OFF
+			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
+		)
+		if [[ "${ARCH}" =~ "amd64" || "${ARCH}" =~ "arm64" || "${ARCH}" =~ "riscv" ]] ; then
+			mycmakeargs+=(
+				-DENABLE_WEBASSEMBLY_B3JIT=$(use jit "ON" "OFF")
+				-DENABLE_WEBASSEMBLY_BBQJIT=$(use jit)
+			)
+		else
+			mycmakeargs+=(
+				-DENABLE_WEBASSEMBLY_B3JIT=OFF
+				-DENABLE_WEBASSEMBLY_BBQJIT=OFF
+			)
+		fi
+
+		if [[ "${ARCH}" =~ "mips" || "${ARCH}" == "riscv" ]] ; then
+			mycmakeargs+=(
+				-DENABLE_SAMPLING_PROFILER=OFF
+			)
+		else
+			mycmakeargs+=(
+				-DENABLE_SAMPLING_PROFILER=$(usex jit)
+			)
+		fi
+	}
+
+	_jit_level_4() {
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
 			-DENABLE_DFG_JIT=$(usex jit)
 			-DENABLE_FTL_JIT=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex jit)
-			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex jit)
-			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex jit)
+			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex jit) # -O0 build speed
+			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex jit) # -O2 runtime speed + PGO
 		)
 		if [[ "${ARCH}" == "riscv" ]] ; then
 			mycmakeargs+=(
@@ -2454,6 +2474,36 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 				-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			)
 		fi
+	}
+
+	local olast=$(get_olast)
+	if [[ "${olast}" =~ "-Ofast" ]] ; then
+		jit_level=6
+	elif [[ "${olast}" =~ "-O3" ]] ; then
+		jit_level=5
+	elif [[ "${olast}" =~ "-O2" ]] ; then
+		jit_level=4
+	elif [[ "${olast}" =~ "-Os" ]] ; then
+		jit_level=3
+	elif [[ "${olast}" =~ "-Oz" ]] ; then
+		jit_level=2
+	elif [[ "${olast}" =~ "-O1" ]] ; then
+		jit_level=1
+	elif [[ "${olast}" =~ "-O0" ]] ; then
+		jit_level=0
+	fi
+
+	local max_jit_level=6
+	if (( ${WK_PAGE_SIZE} == 64 )) ; then
+		max_jit_level=0
+	elif \
+		[[ \
+			   "${ABI}" == "amd64" \
+			|| "${ABI}" == "arm64" \
+			|| ( "${ARCH}" == "riscv" && "${pointer_size}" == "8" ) \
+		]] \
+	; then
+		max_jit_level=6
 	elif \
 		( [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ) \
 			|| \
@@ -2467,48 +2517,51 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 				&& \
 			(( ${pointer_size} == 4 )) \
 		) \
-			|| \
-		( \
-			[[ \
-				   "${ABI}" == "amd64" \
-				|| "${ABI}" == "arm64" \
-				|| ( "${ABI}" == "riscv" && "${pointer_size}" == "8" ) \
-			]] \
-				&& \
-			! use webassembly \
-		) \
 	; then
-	# Mid JIT
-		mycmakeargs+=(
-			-DENABLE_C_LOOP=$(usex !jit)
-			-DENABLE_JIT=$(usex jit)
-			-DENABLE_DFG_JIT=$(usex jit)
-			-DENABLE_FTL_JIT=OFF
-			-DENABLE_WEBASSEMBLY_B3JIT=OFF
-			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
-			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
-		)
-		if [[ "${ARCH}" =~ "mips" || "${ARCH}" == "riscv" ]] ; then
-			mycmakeargs+=(
-				-DENABLE_SAMPLING_PROFILER=OFF
-			)
-		else
-			mycmakeargs+=(
-				-DENABLE_SAMPLING_PROFILER=$(usex jit)
-			)
-		fi
+		max_jit_level=3
 	else
-einfo "Disabling JIT for ${ABI}."
-		_jit_off
+		max_jit_level=0
+	fi
+
+	if (( ${jit_level} > ${max_jit_level} )) ; then
+		jit_level=${max_jit_level}
+	fi
+
+	if (( ${jit_level} == 6 )) ; then
+		jit_level="fast" # 100%
+	elif (( ${jit_level} == 5 )) ; then
+		jit_level="3" # 95%
+	elif (( ${jit_level} == 4 )) ; then
+		jit_level="2" # 90%
+	elif (( ${jit_level} == 3 )) ; then
+		jit_level="s" # 75%
+	elif (( ${jit_level} == 2 )) ; then
+		jit_level="z"
+	elif (( ${jit_level} == 1 )) ; then
+		jit_level="1" # 60 %
+	elif (( ${jit_level} == 0 )) ; then
+		jit_level="0" # 5%
+	fi
+
+	if [[ "${jit_level}" =~ ("2"|"3"|"fast") ]] ; then
+einfo "JIT is similar to -O${jit_level} + PDO/PGO."
+		_jit_level_4
+	elif [[ "${jit_level}" =~ ("1"|"z"|"s") ]] ; then
+einfo "JIT is similar to -O${jit_level}."
+		_jit_level_3
+	elif [[ "${jit_level}" =~ ("0") ]] ; then
+einfo "JIT is similar to -O${jit_level}."
+		_jit_level_0
 	fi
 
 	if (( ${pointer_size} != 8 )) ; then
 ewarn "WebAssembly is not supported for ABI=${ABI}"
 		webassembly_allowed=0
-	elif use webassembly && (( ${webassembly_allowed} == 1 )) ; then
+	elif use webassembly && [[ "${mycmakeargs[@]}" =~ "-DENABLE_WEBASSEMBLY_BBQJIT=ON" ]] ; then
 einfo "WebAssembly is on"
 	else
 einfo "WebAssembly is off"
+		webassembly_allowed=0
 	fi
 
 	if (( ${webassembly_allowed} == 1 )) ; then
