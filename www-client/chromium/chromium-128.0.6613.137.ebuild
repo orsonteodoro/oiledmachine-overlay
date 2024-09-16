@@ -3140,6 +3140,7 @@ ewarn "JIT is off when -Os or -Oz"
 		myconf_gn+=" v8_enable_lite_mode=false"
 
 		_jit_level_0() {
+			# ~20%/~50% performance
 			#myconf_gn+=" v8_enable_drumbrake=false"
 			myconf_gn+=" v8_enable_gdbjit=false"
 			myconf_gn+=" v8_enable_maglev=false"
