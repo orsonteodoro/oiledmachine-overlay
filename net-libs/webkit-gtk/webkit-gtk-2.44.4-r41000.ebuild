@@ -2597,7 +2597,7 @@ ewarn
 			-DENABLE_ASSEMBLER=0
 	fi
 
-	if use jit ; then
+	if (( ${jit_level} >= 1 )) ; then
 einfo "Enabled YARR JIT (aka RegEx JIT)" # default
 	else
 einfo "Disabled YARR JIT (aka RegEx JIT)"
