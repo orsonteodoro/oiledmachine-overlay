@@ -3190,6 +3190,10 @@ ewarn "JIT is off when -Os or -Oz"
 		# Place hardware limits here
 		# Disable the more powerful JIT for older machines to speed up build time.
 
+		if [[ -n "${JIT_LEVEL_OVERRIDE}" ]] ; then
+			jit_level=${JIT_LEVEL_OVERRIDE}
+		fi
+
 		if (( ${jit_level} == 6 )) ; then
 			jit_level="fast" # 100%
 		elif (( ${jit_level} == 5 )) ; then
