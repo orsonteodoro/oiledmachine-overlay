@@ -2607,14 +2607,14 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 	if (( ${jit_level} >= 5 )) ; then
 einfo "JIT is similar to -O${jit_level_desc} + PDO/PGO."
 		_jit_level_5
-	elif (( ${jit_level} >= 3 )) ; then
+	elif (( ${jit_level} >= 2 )) ; then
 einfo "JIT is similar to -O${jit_level_desc}."
 		_jit_level_4
 	elif (( ${jit_level} >= 1 )) ; then
-einfo "JIT is similar to -O${jit_level_desc}."
+einfo "JIT is similar to -O${jit_level_desc} best case."
 		_jit_level_1
 	else
-einfo "JIT off is similar to -O${jit_level_desc}."
+einfo "JIT off is similar to -O${jit_level_desc} worst case."
 		_jit_level_0
 	fi
 
