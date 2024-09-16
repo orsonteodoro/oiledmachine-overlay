@@ -602,6 +602,7 @@ DISTRO_REQUIRE_USE="
 # We will not consider rust-cr file situation for now because the env file situation.
 #
 #	extensions
+#	!partitionalloc
 REQUIRED_USE+="
 	${DISABLED_NON_FREE_USE_FLAGS}
 	!async-dns? (
@@ -2092,6 +2093,11 @@ apply_oiledmachine_overlay_patchset() {
 				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-screen-capture.patch"
 			)
 		fi
+		if ! use partitionalloc ; then
+			PATCHES+=(
+				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-partitionalloc-false.patch"
+			)
+		fi
 	fi
 }
 
@@ -3111,7 +3117,7 @@ ewarn
 	myconf_gn+=" enable_websockets=$(usex websockets true false)"
 	myconf_gn+=" use_minikin_hyphenation=$(usex css-hyphen true false)"
 	myconf_gn+=" use_mpris=$(usex mpris true false)"
-	myconf_gn+=" use_partition_alloc=$(usex partitionalloc true false)"
+	myconf_gn+=" use_partition_alloc=$(usex partitionalloc true false)" # See issue 40277359
 	if is-flagq "-Os" || is-flagq "-Oz" ; then
 ewarn "WebAssembly is off when -Os or -Oz"
 ewarn "JIT is off when -Os or -Oz"
