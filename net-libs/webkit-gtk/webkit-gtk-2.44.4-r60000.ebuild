@@ -2574,7 +2574,7 @@ einfo "JIT is similar to -O${jit_level_desc} + PDO/PGO."
 	elif (( ${jit_level} >= 1 )) ; then
 einfo "JIT is similar to -O${jit_level_desc}."
 		_jit_level_3
-	elif (( ${jit_level} == 0 )) ; then
+	else
 einfo "JIT is similar to -O${jit_level_desc}."
 		_jit_level_0
 	fi
