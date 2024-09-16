@@ -110,7 +110,7 @@
 
     -O0 with USE=-jit, translates to LLInt and WASM OFF; ~2% performance
     -O0 with USE=jit, translates to LLInt+JIT Baseline and WASM OFF; ~25% performance
-    -O1, -Os, -Oz translates to DFG JIT and BBQ JIT; ~75% performance
+    -O1, -Os, -Oz translates to DFG JIT and OMG+BBQ JIT; ~75% performance
     -O2, -O3, -Ofast translates to DFG+FTL-B3 JIT and OMG+BBQ JIT ; 100% performance
 
     The top teirs include the bottom teirs.

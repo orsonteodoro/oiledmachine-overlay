@@ -2476,19 +2476,20 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_JIT=$(usex jit)
 			-DENABLE_DFG_JIT=$(usex jit)
 			-DENABLE_FTL_JIT=OFF
-			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
 		)
 		if [[ "${ARCH}" =~ "amd64" || "${ARCH}" =~ "arm64" || "${ARCH}" =~ "riscv" ]] ; then
 			mycmakeargs+=(
 				-DENABLE_WEBASSEMBLY=$(usex webassembly "ON" "OFF")
 				-DENABLE_WEBASSEMBLY_B3JIT=$(use jit)
 				-DENABLE_WEBASSEMBLY_BBQJIT=$(use webassembly)
+				-DENABLE_WEBASSEMBLY_OMGJIT=$(use webassembly)
 			)
 		else
 			mycmakeargs+=(
 				-DENABLE_WEBASSEMBLY=OFF
 				-DENABLE_WEBASSEMBLY_B3JIT=OFF
 				-DENABLE_WEBASSEMBLY_BBQJIT=OFF
+				-DENABLE_WEBASSEMBLY_OMGJIT=OFF
 			)
 		fi
 
