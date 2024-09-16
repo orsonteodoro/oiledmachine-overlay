@@ -109,7 +109,7 @@
 
     -O0, translates to LLInt and WASM OFF; ~5% performance
     -O1, -Os, -Oz translates to DFG JIT and BBQ JIT; ~75% performance
-    -O2, -O3, -Ofast translates to FTL-B3 JIT and OMG JIT ; 100% performance
+    -O2, -O3, -Ofast translates to DFG+FTL-B3 JIT and OMG+BBQ JIT ; 100% performance
 
     The top teirs include the bottom teirs.
     The performance measurement is relative to the best teir.
