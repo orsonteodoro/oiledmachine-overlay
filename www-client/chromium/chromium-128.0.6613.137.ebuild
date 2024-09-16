@@ -3146,18 +3146,11 @@ ewarn "JIT is off when -Os or -Oz"
 			myconf_gn+=" v8_enable_webassembly=false"
 		}
 
-		_jit_level_1() {
-			myconf_gn+=" v8_enable_maglev=true"
-			myconf_gn+=" v8_enable_sparkplug=true"
-			myconf_gn+=" v8_enable_turbofan=false"
-			myconf_gn+=" v8_enable_webassembly=false"
-		}
-
 		_jit_level_5() {
-			myconf_gn+=" v8_enable_maglev=true" # Subset of -O1
+			myconf_gn+=" v8_enable_maglev=true" # %5 runtime benefit
 			myconf_gn+=" v8_enable_sparkplug=true" # 5% benefit
-			myconf_gn+=" v8_enable_turbofan=true" # Subset of -O1, -O2, -O3
-			myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)"
+			myconf_gn+=" v8_enable_turbofan=true" # Subset of -O1, -O2, -O3; 100% performance
+			myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)" # Requires it turbofan
 		}
 
 		local olast=$(get_olast)
@@ -3200,15 +3193,16 @@ ewarn "JIT is off when -Os or -Oz"
 	# Compiler based
 			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 
-			if [[ "${jit_level}" =~ ("2"|"3"|"fast") ]] ; then
+			if [[ "${jit_level}" =~ ("1"|"z"|"s"|"2"|"3"|"fast") ]] ; then
 einfo "JIT is similar to -O${jit_level}."
 				_jit_level_5
-			elif [[ "${jit_level}" =~ ("1"|"z"|"s") ]] ; then
-einfo "JIT is similar to -O${jit_level}."
-				_jit_level_1
 			elif [[ "${jit_level}" =~ ("0") ]] ; then
 einfo "JIT is similar to -O${jit_level}."
 				_jit_level_0
+			fi
+
+			if use webassembly && [[ "${myconf_gn}" =~ "v8_enable_webassembly=false" ]] ; then
+ewarn "WebAssembly enablement needs >= -O1."
 			fi
 
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
@@ -3219,7 +3213,7 @@ einfo "JIT is similar to -O${jit_level}."
 			myconf_gn+=" v8_enable_maglev=false"
 			myconf_gn+=" v8_enable_turbofan=false"
 			myconf_gn+=" v8_enable_sparkplug=false"
-			myconf_gn+=" v8_enable_webassembly=false" # Requires turbofan
+			myconf_gn+=" v8_enable_webassembly=false"
 			myconf_gn+=" v8_jitless=true"
 		fi
 	fi
