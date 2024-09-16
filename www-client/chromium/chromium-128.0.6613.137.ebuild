@@ -3131,14 +3131,9 @@ ewarn
 	myconf_gn+=" use_minikin_hyphenation=$(usex css-hyphen true false)"
 	myconf_gn+=" use_mpris=$(usex mpris true false)"
 	myconf_gn+=" use_partition_alloc=$(usex partitionalloc true false)" # See issue 40277359
-	if is-flagq "-Os" || is-flagq "-Oz" ; then
-ewarn "WebAssembly is off when -Os or -Oz"
-ewarn "JIT is off when -Os or -Oz"
-		myconf_gn+=" v8_enable_lite_mode=true"
-	# Automagic the rest
+	if use official ; then
+		: # Automagic
 	else
-		myconf_gn+=" v8_enable_lite_mode=false"
-
 		_jit_level_0() {
 			# ~20%/~50% performance
 			#myconf_gn+=" v8_enable_drumbrake=false"
@@ -3154,6 +3149,7 @@ ewarn "JIT is off when -Os or -Oz"
 			# > 75% performance
 			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
+			myconf_gn+=" v8_enable_lite_mode=true"
 			myconf_gn+=" v8_enable_maglev=false"
 			myconf_gn+=" v8_enable_sparkplug=false"
 			myconf_gn+=" v8_enable_turbofan=true"
@@ -3165,6 +3161,7 @@ ewarn "JIT is off when -Os or -Oz"
 			# > 90% performance
 			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
+			myconf_gn+=" v8_enable_lite_mode=false"
 			myconf_gn+=" v8_enable_maglev=false"
 			myconf_gn+=" v8_enable_sparkplug=true"
 			myconf_gn+=" v8_enable_turbofan=true"
@@ -3176,6 +3173,7 @@ ewarn "JIT is off when -Os or -Oz"
 			# 100% performance
 			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
+			myconf_gn+=" v8_enable_lite_mode=false"
 			myconf_gn+=" v8_enable_maglev=true" # %5 runtime benefit
 			myconf_gn+=" v8_enable_sparkplug=true" # 5% benefit
 			myconf_gn+=" v8_enable_turbofan=true" # Subset of -O1, -O2, -O3; 100% performance
