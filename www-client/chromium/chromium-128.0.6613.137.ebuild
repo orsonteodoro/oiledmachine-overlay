@@ -1344,6 +1344,19 @@ ewarn "Set CHECKREQS_DONOTHING=1 to bypass build requirements not met check"
 	APPLY_OILEDMACHINE_OVERLAY_PATCHSET=${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}
 }
 
+get_olast() {
+	local olast=$(echo "${CFLAGS}" \
+		| grep -o -E -e "-O(0|g|1|z|s|2|3|4|fast)" \
+		| tr " " "\n" \
+		| tail -n 1)
+	if [[ -n "${olast}" ]] ; then
+		echo "${olast}"
+	else
+		# Upstream default
+		echo "-O3"
+	fi
+}
+
 pkg_pretend() {
 	pre_build_checks
 	if [[ "${MERGE_TYPE}" != "binary" ]]; then
@@ -3125,20 +3138,80 @@ ewarn "JIT is off when -Os or -Oz"
 	# Automagic the rest
 	else
 		myconf_gn+=" v8_enable_lite_mode=false"
+
+		_jit_level_0() {
+			myconf_gn+=" v8_enable_maglev=false"
+			myconf_gn+=" v8_enable_sparkplug=false"
+			myconf_gn+=" v8_enable_turbofan=false"
+			myconf_gn+=" v8_enable_webassembly=false"
+		}
+
+		_jit_level_1() {
+			myconf_gn+=" v8_enable_maglev=true"
+			myconf_gn+=" v8_enable_sparkplug=true"
+			myconf_gn+=" v8_enable_turbofan=false"
+			myconf_gn+=" v8_enable_webassembly=false"
+		}
+
+		_jit_level_5() {
+			myconf_gn+=" v8_enable_maglev=true" # Subset of -O1
+			myconf_gn+=" v8_enable_sparkplug=true" # 5% benefit
+			myconf_gn+=" v8_enable_turbofan=true" # Subset of -O1, -O2, -O3
+			myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)"
+		}
+
+		local olast=$(get_olast)
+		if [[ "${olast}" =~ "-Ofast" ]] ; then
+			jit_level=6
+		elif [[ "${olast}" =~ "-O3" ]] ; then
+			jit_level=5
+		elif [[ "${olast}" =~ "-O2" ]] ; then
+			jit_level=4
+		elif [[ "${olast}" =~ "-Os" ]] ; then
+			jit_level=3
+		elif [[ "${olast}" =~ "-Oz" ]] ; then
+			jit_level=2
+		elif [[ "${olast}" =~ "-O1" ]] ; then
+			jit_level=1
+		elif [[ "${olast}" =~ "-O0" ]] ; then
+			jit_level=0
+		fi
+
+		# Place hardware limits here
+		# Disable the more powerful JIT for older machines to speed up build time.
+
+		if (( ${jit_level} == 6 )) ; then
+			jit_level="fast" # 100%
+		elif (( ${jit_level} == 5 )) ; then
+			jit_level="3" # 95%
+		elif (( ${jit_level} == 4 )) ; then
+			jit_level="2" # 90%
+		elif (( ${jit_level} == 3 )) ; then
+			jit_level="s" # 75%
+		elif (( ${jit_level} == 2 )) ; then
+			jit_level="z"
+		elif (( ${jit_level} == 1 )) ; then
+			jit_level="1" # 60 %
+		elif (( ${jit_level} == 0 )) ; then
+			jit_level="0" # 5%
+		fi
+
 		if use jit ; then
 	# Compiler based
 			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
-			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
-			myconf_gn+=" v8_enable_maglev=true" # Subset of -O1
-			myconf_gn+=" v8_enable_sparkplug=true" # +5% benefit
-			if use webassembly ; then
-				myconf_gn+=" v8_enable_turbofan=true" # Subset of -O1, -O2, -O3
-				myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)"
-			else
-	# Disable the more powerful JIT for older machines to speed up build time.
-				myconf_gn+=" v8_enable_turbofan=false"
-				myconf_gn+=" v8_enable_webassembly=false"
+
+			if [[ "${jit_level}" =~ ("2"|"3"|"fast") ]] ; then
+einfo "JIT is similar to -O${jit_level}."
+				_jit_level_5
+			elif [[ "${jit_level}" =~ ("1"|"z"|"s") ]] ; then
+einfo "JIT is similar to -O${jit_level}."
+				_jit_level_1
+			elif [[ "${jit_level}" =~ ("0") ]] ; then
+einfo "JIT is similar to -O${jit_level}."
+				_jit_level_0
 			fi
+
+			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
 			myconf_gn+=" v8_jitless=false"
 		else
 			#myconf_gn+=" v8_enable_drumbrake=false"
