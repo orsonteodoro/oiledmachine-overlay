@@ -2277,9 +2277,12 @@ eerror
 		die
 	fi
 
-	local system_malloc=$(usex system-malloc "ON" "OFF")
-	if [[ "${system_malloc}" == "ON" ]] ; then
-ewarn "Disabling bmalloc for ABI=${ABI} may lower security."
+	if use system-alloc ; then
+ewarn
+ewarn "Disabling bmalloc for ABI=${ABI} may lower security.  Consider using an"
+ewarn "LD_PRELOAD wrapper script to a hardened allocator library instead when"
+ewarn "calling your ${PN} based app."
+ewarn
 	fi
 	if use libpas ; then
 		if [[ "${ABI}" =~ ("amd64"|"arm64") ]] ; then
@@ -2354,7 +2357,7 @@ ewarn "Disabling bmalloc for ABI=${ABI} may lower security."
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENMP=$(usex openmp)
 		-DUSE_SOUP2=OFF
-		-DUSE_SYSTEM_MALLOC=${system_malloc}
+		-DUSE_SYSTEM_MALLOC=$(usex system-malloc)
 		-DUSE_WOFF2=$(usex woff2)
 		$(cmake_use_find_package gles2 OpenGLES2)
 		$(cmake_use_find_package opengl OpenGL)
