@@ -3154,7 +3154,7 @@ ewarn
 			myconf_gn+=" v8_enable_maglev=false"
 			myconf_gn+=" v8_enable_sparkplug=false"
 			myconf_gn+=" v8_enable_turbofan=true"
-			myconf_gn+=" v8_enable_webassembly=false"
+			myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)"
 			myconf_gn+=" v8_jitless=false"
 		}
 
@@ -3166,7 +3166,7 @@ ewarn
 			myconf_gn+=" v8_enable_maglev=false"
 			myconf_gn+=" v8_enable_sparkplug=true"
 			myconf_gn+=" v8_enable_turbofan=true"
-			myconf_gn+=" v8_enable_webassembly=false"
+			myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)"
 			myconf_gn+=" v8_jitless=false"
 		}
 
