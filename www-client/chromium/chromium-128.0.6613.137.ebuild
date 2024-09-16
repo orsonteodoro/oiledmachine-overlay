@@ -3253,7 +3253,7 @@ einfo "JIT is similar to -O${jit_level_desc}."
 einfo "JIT is similar to -O${jit_level_desc} best case."
 			_jit_level_1
 		else
-einfo "JIT off is similar to -O${jit_level_desc} worst cast."
+einfo "JIT off is similar to -O${jit_level_desc} worst case."
 			_jit_level_0
 		fi
 
