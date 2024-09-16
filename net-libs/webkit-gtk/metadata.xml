@@ -188,10 +188,10 @@
     </flag>
     <flag name="libpas">
       Use libpas as the new allocator which is compatible with amd64 and arm64.
-      This allocator is design is performance based.  JIT contexts get compact
-      storage with no isoheap (no type confusion protection).  Non JIT will get
-      fast storage to segregated isoheap with type confusion protection.  See
-      commit b6d532a.
+      This allocator is design is performance and storage efficiency based.  JIT
+      contexts get compact storage with no isoheap (no type confusion
+      protection).  Non JIT will get fast storage to segregated isoheap with
+      type confusion protection.  See commit b6d532a.
     </flag>
     <flag name="libsoup3">
       Link to libsoup3.  It consequently enables HTTP/2 by default when libsoup3
