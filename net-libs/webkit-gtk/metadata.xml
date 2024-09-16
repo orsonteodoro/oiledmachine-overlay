@@ -64,7 +64,7 @@
 
 
     JIT_LEVEL_OVERRIDE - Set the JIT level similar to -Oflag.
-    Valid values:  0, 1, ..., 6, unset (default)
+    Valid values:  0, 1, ..., 7, unset (default)
 
       7 - -Ofast [do not use]
       6 - -O3
