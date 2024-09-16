@@ -2435,7 +2435,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		fi
 	}
 
-	_jit_level_1() { # _jit_level_0.5
+	_jit_level_1() {
 		# ~ 23% performance, similar to light swap and a feeling of progress
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
