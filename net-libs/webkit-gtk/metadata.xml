@@ -188,8 +188,8 @@
     </flag>
     <flag name="libpas">
       Use libpas as the new allocator which is compatible with amd64 and arm64.
-      This allocator is design is performance and storage efficiency based.  JIT
-      contexts get compact storage with no isoheap (no type confusion
+      This allocator is designed to be performance and storage efficiency based.
+      JIT contexts get compact storage with no isoheap (no type confusion
       protection).  Non JIT will get fast storage to segregated isoheap with
       type confusion protection.  See commit b6d532a.
     </flag>
