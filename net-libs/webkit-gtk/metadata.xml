@@ -63,6 +63,18 @@
         values are experimental values for testing.
 
 
+    JIT_LEVEL_OVERRIDE - Set the JIT level similar to -Oflag.
+    Valid values:  0, 1, ..., 6
+
+      6 - -Ofast [do not use]
+      5 - -O3
+      4 - -O2
+      3 - -Os
+      2 - -Oz
+      1 - -O1
+      0 - -O0
+
+
     ULIMIT - Sets the maximum open file limit.
     Default values:  Mold - 16384, BFD/LLD - 1024
 
@@ -116,11 +128,7 @@
     OSHIT_OPT_LEVEL_WEBCORE="2" - Optimize WebCore rendering engine at -O2
     Valid values:  2, 3
 
-    OSHIT_OPT_JIT="3" - Select teir for JIT based on -Oflag performance equivalence.
-    Valid values:  0, s, 3
-    0 - LLInt (~5% performance) and WASM OFF
-    s - DFG JIT (~75% performance) and BBQ
-    3 - FTL-B3 JIT (100% performance) and OMG
+    Use JIT_LEVEL_OVERRIDE to change the preferred JIT teir when using -Oshit.
 
     The top teirs include the bottom teirs.
     The performance measurement is relative to the best teir.

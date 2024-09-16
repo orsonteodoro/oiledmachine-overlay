@@ -2540,6 +2540,10 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		jit_level=${max_jit_level}
 	fi
 
+	if [[ -n "${JIT_LEVEL_OVERRIDE}" ]] ; then
+		jit_level=${JIT_LEVEL_OVERRIDE}
+	fi
+
 	if (( ${jit_level} == 6 )) ; then
 		jit_level="fast" # 100%
 	elif (( ${jit_level} == 5 )) ; then
@@ -2589,7 +2593,7 @@ ewarn
 ewarn "(1) Enable the jit USE flag."
 ewarn "(2) Change the kernel config to use memory page sizes less than 64 KB."
 ewarn "(3) Set CUSTOM_PAGE_SIZE environment variable less than 64 KB."
-ewarn "(4) Set to at least -O1 or OSHIT_OPT_JIT=1"
+ewarn "(4) Set to at least -O1 or JIT_LEVEL_OVERRIDE=1"
 ewarn
 		fi
 		mycmakeargs+=(
