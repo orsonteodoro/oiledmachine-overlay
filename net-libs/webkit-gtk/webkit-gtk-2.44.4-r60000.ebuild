@@ -2635,7 +2635,7 @@ ewarn
 ewarn "(1) Enable the jit USE flag."
 ewarn "(2) Change the kernel config to use memory page sizes less than 64 KB."
 ewarn "(3) Set CUSTOM_PAGE_SIZE environment variable less than 64 KB."
-ewarn "(4) Set to at least -O1 or JIT_LEVEL_OVERRIDE=1"
+ewarn "(4) Set to at least -O1 or JIT_LEVEL_OVERRIDE=2 or higher."
 ewarn
 	fi
 
