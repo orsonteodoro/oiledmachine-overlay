@@ -1077,7 +1077,7 @@ ewarn "Building for clang may be broken.  Use gcc instead by changing CC=gcc CXX
 
 get_olast() {
 	local olast=$(echo "${CFLAGS}" \
-		| grep -o -E -e "-O(0|g|1|z|s|2|3|4|fast)" \
+		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
 		| tr " " "\n" \
 		| tail -n 1)
 	if [[ -n "${olast}" ]] ; then

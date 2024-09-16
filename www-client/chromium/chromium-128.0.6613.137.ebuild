@@ -1346,7 +1346,7 @@ ewarn "Set CHECKREQS_DONOTHING=1 to bypass build requirements not met check"
 
 get_olast() {
 	local olast=$(echo "${CFLAGS}" \
-		| grep -o -E -e "-O(0|g|1|z|s|2|3|4|fast)" \
+		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
 		| tr " " "\n" \
 		| tail -n 1)
 	if [[ -n "${olast}" ]] ; then

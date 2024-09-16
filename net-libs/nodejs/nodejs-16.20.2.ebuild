@@ -222,7 +222,7 @@ _count_useflag_slots() {
 _is_flagq_last() {
 	local flag="${1}"
 	local olast=$(echo "${CFLAGS}" \
-		| grep -o -E -e "-O(0|g|1|z|s|2|3|4|fast)" \
+		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
 		| tr " " "\n" \
 		| tail -n 1)
 einfo "CFLAGS:\t${CFLAGS}"
