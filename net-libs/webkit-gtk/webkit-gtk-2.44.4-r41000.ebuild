@@ -2570,7 +2570,7 @@ einfo "JIT is similar to -O${jit_level_desc} + PDO/PGO."
 einfo "JIT is similar to -O${jit_level_desc}."
 		_jit_level_3
 	else
-einfo "JIT is similar to -O${jit_level_desc}."
+einfo "JIT off is similar to -O${jit_level_desc}."
 		_jit_level_0
 	fi
 
