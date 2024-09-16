@@ -72,8 +72,8 @@
       4 - -Os
       3 - -Oz
       2 - -O1
-      1 - -O0 [with JIT]
-      0 - -O0 [without JIT]
+      1 - -O0 [with JIT, best case -O0]
+      0 - -O0 [without JIT, worst case -O0]
       unset - It automatically changes based on -Oflag level.
 
 

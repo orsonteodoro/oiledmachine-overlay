@@ -2435,7 +2435,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		fi
 	}
 
-	_jit_level_0_5() { # _jit_level_0.5
+	_jit_level_1() {
 		# ~ 23% performance, similar to light swap and a feeling of progress
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
@@ -2469,7 +2469,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		fi
 	}
 
-	_jit_level_3() {
+	_jit_level_4() {
 		# ~ 72% performance
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
@@ -2503,7 +2503,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		fi
 	}
 
-	_jit_level_4() {
+	_jit_level_5() {
 		# ~ 100% performance
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
@@ -2604,15 +2604,15 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		jit_level_desc="0" # 5%
 	fi
 
-	if (( ${jit_level} >= 4 )) ; then
+	if (( ${jit_level} >= 5 )) ; then
 einfo "JIT is similar to -O${jit_level_desc} + PDO/PGO."
-		_jit_level_4
-	elif (( ${jit_level} >= 2 )) ; then
+		_jit_level_5
+	elif (( ${jit_level} >= 3 )) ; then
 einfo "JIT is similar to -O${jit_level_desc}."
-		_jit_level_3
+		_jit_level_4
 	elif (( ${jit_level} >= 1 )) ; then
 einfo "JIT is similar to -O${jit_level_desc}."
-		_jit_level_0_5
+		_jit_level_1
 	else
 einfo "JIT off is similar to -O${jit_level_desc}."
 		_jit_level_0
