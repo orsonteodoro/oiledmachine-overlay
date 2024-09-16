@@ -2412,6 +2412,7 @@ ewarn
 einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 
 	_jit_level_0() {
+		# ~ 2% performance, similar to hard swap
 		mycmakeargs+=(
 			-DENABLE_JIT=OFF
 			-DENABLE_DFG_JIT=OFF
@@ -2434,7 +2435,42 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		fi
 	}
 
+	_jit_level_0_5() { # _jit_level_0.5
+		# ~ 23% performance, similar to light swap and a feeling of progress
+		mycmakeargs+=(
+			-DENABLE_C_LOOP=$(usex !jit)
+			-DENABLE_JIT=$(usex jit)
+			-DENABLE_DFG_JIT=OFF
+			-DENABLE_FTL_JIT=OFF
+			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
+		)
+		if [[ "${ARCH}" =~ "amd64" || "${ARCH}" =~ "arm64" || "${ARCH}" =~ "riscv" ]] ; then
+			mycmakeargs+=(
+				-DENABLE_WEBASSEMBLY=OFF
+				-DENABLE_WEBASSEMBLY_B3JIT=OFF
+				-DENABLE_WEBASSEMBLY_BBQJIT=OFF
+			)
+		else
+			mycmakeargs+=(
+				-DENABLE_WEBASSEMBLY=OFF
+				-DENABLE_WEBASSEMBLY_B3JIT=OFF
+				-DENABLE_WEBASSEMBLY_BBQJIT=OFF
+			)
+		fi
+
+		if [[ "${ARCH}" =~ "mips" || "${ARCH}" == "riscv" ]] ; then
+			mycmakeargs+=(
+				-DENABLE_SAMPLING_PROFILER=OFF
+			)
+		else
+			mycmakeargs+=(
+				-DENABLE_SAMPLING_PROFILER=$(usex jit)
+			)
+		fi
+	}
+
 	_jit_level_3() {
+		# ~ 72% performance
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
@@ -2468,6 +2504,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 	}
 
 	_jit_level_4() {
+		# ~ 100% performance
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
@@ -2491,16 +2528,18 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 
 	local olast=$(get_olast)
 	if [[ "${olast}" =~ "-Ofast" ]] ; then
-		jit_level=6
+		jit_level=7
 	elif [[ "${olast}" =~ "-O3" ]] ; then
-		jit_level=5
+		jit_level=6
 	elif [[ "${olast}" =~ "-O2" ]] ; then
-		jit_level=4
+		jit_level=5
 	elif [[ "${olast}" =~ "-Os" ]] ; then
-		jit_level=3
+		jit_level=4
 	elif [[ "${olast}" =~ "-Oz" ]] ; then
-		jit_level=2
+		jit_level=3
 	elif [[ "${olast}" =~ "-O1" ]] ; then
+		jit_level=2
+	elif [[ "${olast}" =~ "-O0" ]] && use jit ; then
 		jit_level=1
 	elif [[ "${olast}" =~ "-O0" ]] ; then
 		jit_level=0
@@ -2516,7 +2555,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			|| ( "${ARCH}" == "riscv" && "${pointer_size}" == "8" ) \
 		]] \
 	; then
-		max_jit_level=6
+		max_jit_level=7
 	elif \
 		( [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ) \
 			|| \
@@ -2531,7 +2570,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			(( ${pointer_size} == 4 )) \
 		) \
 	; then
-		max_jit_level=3
+		max_jit_level=4
 	else
 		max_jit_level=0
 	fi
@@ -2547,18 +2586,20 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 	fi
 
 	local jit_level_desc
-	if (( ${jit_level} == 6 )) ; then
+	if (( ${jit_level} == 7 )) ; then
 		jit_level_desc="fast" # 100%
+	elif (( ${jit_level} == 6 )) ; then
+		jit_level_desc="3" # 100%
 	elif (( ${jit_level} == 5 )) ; then
-		jit_level_desc="3" # 95%
+		jit_level_desc="2" # 95%
 	elif (( ${jit_level} == 4 )) ; then
-		jit_level_desc="2" # 90%
+		jit_level_desc="s" # 90%
 	elif (( ${jit_level} == 3 )) ; then
-		jit_level_desc="s" # 75%
+		jit_level_desc="z" # 75%
 	elif (( ${jit_level} == 2 )) ; then
-		jit_level_desc="z"
-	elif (( ${jit_level} == 1 )) ; then
 		jit_level_desc="1" # 60 %
+	elif (( ${jit_level} == 1 )) ; then
+		jit_level_desc="0"
 	elif (( ${jit_level} == 0 )) ; then
 		jit_level_desc="0" # 5%
 	fi
@@ -2566,9 +2607,12 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 	if (( ${jit_level} >= 4 )) ; then
 einfo "JIT is similar to -O${jit_level_desc} + PDO/PGO."
 		_jit_level_4
-	elif (( ${jit_level} >= 1 )) ; then
+	elif (( ${jit_level} >= 2 )) ; then
 einfo "JIT is similar to -O${jit_level_desc}."
 		_jit_level_3
+	elif (( ${jit_level} >= 1 )) ; then
+einfo "JIT is similar to -O${jit_level_desc}."
+		_jit_level_0_5
 	else
 einfo "JIT off is similar to -O${jit_level_desc}."
 		_jit_level_0

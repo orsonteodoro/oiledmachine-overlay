@@ -66,13 +66,14 @@
     JIT_LEVEL_OVERRIDE - Set the JIT level similar to -Oflag.
     Valid values:  0, 1, ..., 6, unset (default)
 
-      6 - -Ofast [do not use]
-      5 - -O3
-      4 - -O2
-      3 - -Os
-      2 - -Oz
-      1 - -O1
-      0 - -O0
+      7 - -Ofast [do not use]
+      6 - -O3
+      5 - -O2
+      4 - -Os
+      3 - -Oz
+      2 - -O1
+      1 - -O0 [with JIT]
+      0 - -O0 [without JIT]
       unset - It automatically changes based on -Oflag level.
 
 
@@ -107,7 +108,8 @@
     If -Oshit was not added to CFLAGS, JIT tier selection will be tuned based on
     -Oflag.  This means the following:
 
-    -O0, translates to LLInt and WASM OFF; ~5% performance
+    -O0 with USE=-jit, translates to LLInt and WASM OFF; ~2% performance
+    -O0 with USE=jit, translates to LLInt+JIT Baseline and WASM OFF; ~25% performance
     -O1, -Os, -Oz translates to DFG JIT and BBQ JIT; ~75% performance
     -O2, -O3, -Ofast translates to DFG+FTL-B3 JIT and OMG+BBQ JIT ; 100% performance
 
