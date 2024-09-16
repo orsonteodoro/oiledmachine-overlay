@@ -3135,7 +3135,7 @@ ewarn
 		: # Automagic
 	else
 		_jit_level_0() {
-			# ~20%/~50% performance
+			# ~20%/~50% performance similar to light swap, but a feeling of less progress (20-25%)
 			#myconf_gn+=" v8_enable_drumbrake=false"
 			myconf_gn+=" v8_enable_gdbjit=false"
 			myconf_gn+=" v8_enable_lite_mode=true"
@@ -3147,6 +3147,18 @@ ewarn
 		}
 
 		_jit_level_1() {
+			# 28%/71% performance similar to light swap, but a feeling of more progress (33%)
+			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
+			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
+			myconf_gn+=" v8_enable_lite_mode=false"
+			myconf_gn+=" v8_enable_maglev=true"
+			myconf_gn+=" v8_enable_sparkplug=true"
+			myconf_gn+=" v8_enable_turbofan=false"
+			myconf_gn+=" v8_enable_webassembly=false"
+			myconf_gn+=" v8_jitless=false"
+		}
+
+		_jit_level_2() {
 			# > 75% performance
 			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
@@ -3158,7 +3170,7 @@ ewarn
 			myconf_gn+=" v8_jitless=false"
 		}
 
-		_jit_level_4() {
+		_jit_level_5() {
 			# > 90% performance
 			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
@@ -3170,7 +3182,7 @@ ewarn
 			myconf_gn+=" v8_jitless=false"
 		}
 
-		_jit_level_5() {
+		_jit_level_6() {
 			# 100% performance
 			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
@@ -3184,16 +3196,18 @@ ewarn
 
 		local olast=$(get_olast)
 		if [[ "${olast}" =~ "-Ofast" ]] ; then
-			jit_level=6
+			jit_level=7
 		elif [[ "${olast}" =~ "-O3" ]] ; then
-			jit_level=5
+			jit_level=6
 		elif [[ "${olast}" =~ "-O2" ]] ; then
-			jit_level=4
+			jit_level=5
 		elif [[ "${olast}" =~ "-Os" ]] ; then
-			jit_level=3
+			jit_level=4
 		elif [[ "${olast}" =~ "-Oz" ]] ; then
-			jit_level=2
+			jit_level=3
 		elif [[ "${olast}" =~ "-O1" ]] ; then
+			jit_level=2
+		elif [[ "${olast}" =~ "-O0" ]] && use jit ; then
 			jit_level=1
 		elif [[ "${olast}" =~ "-O0" ]] ; then
 			jit_level=0
@@ -3208,33 +3222,38 @@ ewarn
 		fi
 
 		local jit_level_desc
-		if (( ${jit_level} == 6 )) ; then
+		if (( ${jit_level} == 7 )) ; then
 			jit_level_desc="fast" # 100%
-		elif (( ${jit_level} == 5 )) ; then
+		elif (( ${jit_level} == 6 )) ; then
 			jit_level_desc="3" # 95%
-		elif (( ${jit_level} == 4 )) ; then
+		elif (( ${jit_level} == 5 )) ; then
 			jit_level_desc="2" # 90%
-		elif (( ${jit_level} == 3 )) ; then
+		elif (( ${jit_level} == 4 )) ; then
 			jit_level_desc="s" # 75%
-		elif (( ${jit_level} == 2 )) ; then
+		elif (( ${jit_level} == 3 )) ; then
 			jit_level_desc="z"
-		elif (( ${jit_level} == 1 )) ; then
+		elif (( ${jit_level} == 2 )) ; then
 			jit_level_desc="1" # 60 %
+		elif (( ${jit_level} == 1 )) ; then
+			jit_level_desc="0"
 		elif (( ${jit_level} == 0 )) ; then
 			jit_level_desc="0" # 5%
 		fi
 
-		if (( ${jit_level} >= 5 )) ; then
+		if (( ${jit_level} >= 6 )) ; then
+einfo "JIT is similar to -O${jit_level_desc}."
+			_jit_level_6
+		elif (( ${jit_level} >= 3 )) ; then
 einfo "JIT is similar to -O${jit_level_desc}."
 			_jit_level_5
 		elif (( ${jit_level} >= 2 )) ; then
 einfo "JIT is similar to -O${jit_level_desc}."
-			_jit_level_4
+			_jit_level_2
 		elif (( ${jit_level} >= 1 )) ; then
 einfo "JIT is similar to -O${jit_level_desc}."
 			_jit_level_1
 		else
-einfo "JIT is similar to -O${jit_level_desc}."
+einfo "JIT off is similar to -O${jit_level_desc}."
 			_jit_level_0
 		fi
 
