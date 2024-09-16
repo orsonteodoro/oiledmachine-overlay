@@ -172,21 +172,6 @@ index ecb688e..70fadd4 100644
  
    run_loop.Run();
  
-diff --git a/gin/v8_platform.cc b/gin/v8_platform.cc
-index a31b05d..1bef0d05 100644
---- a/gin/v8_platform.cc
-+++ b/gin/v8_platform.cc
-@@ -355,6 +355,10 @@
-   } allocator;
-   return &allocator;
- }
-+#else   // BUILDFLAG(USE_PARTITION_ALLOC)
-+v8::PageAllocator* V8Platform::GetPageAllocator() {
-+  return nullptr;
-+}
- #endif  // BUILDFLAG(USE_PARTITION_ALLOC)
- 
- std::shared_ptr<v8::TaskRunner> V8Platform::GetForegroundTaskRunner(
 diff --git a/third_party/blink/renderer/platform/instrumentation/partition_alloc_memory_dump_provider.cc b/third_party/blink/renderer/platform/instrumentation/partition_alloc_memory_dump_provider.cc
 index 644aefb..a2f53015 100644
 --- a/third_party/blink/renderer/platform/instrumentation/partition_alloc_memory_dump_provider.cc
@@ -329,3 +314,16 @@ index 644aefb..a2f53015 100644
  
  // static
 
+--- a/gin/v8_platform.cc.orig	2024-09-10 11:42:15.384863100 -0700
++++ b/gin/v8_platform.cc	2024-09-15 20:51:10.587867032 -0700
+@@ -222,6 +222,10 @@ v8::ZoneBackingAllocator* V8Platform::Ge
+   } allocator;
+   return &allocator;
+ }
++#else   // PA_BUILDFLAG(USE_PARTITION_ALLOC)
++v8::PageAllocator* V8Platform::GetPageAllocator() {
++  return nullptr;
++}
+ #endif  // PA_BUILDFLAG(USE_PARTITION_ALLOC)
+ 
+ std::shared_ptr<v8::TaskRunner> V8Platform::GetForegroundTaskRunner(
