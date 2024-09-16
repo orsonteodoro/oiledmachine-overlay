@@ -2546,30 +2546,31 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		jit_level=${JIT_LEVEL_OVERRIDE}
 	fi
 
+	local jit_level_desc
 	if (( ${jit_level} == 6 )) ; then
-		jit_level="fast" # 100%
+		jit_level_desc="fast" # 100%
 	elif (( ${jit_level} == 5 )) ; then
-		jit_level="3" # 95%
+		jit_level_desc="3" # 95%
 	elif (( ${jit_level} == 4 )) ; then
-		jit_level="2" # 90%
+		jit_level_desc="2" # 90%
 	elif (( ${jit_level} == 3 )) ; then
-		jit_level="s" # 75%
+		jit_level_desc="s" # 75%
 	elif (( ${jit_level} == 2 )) ; then
-		jit_level="z"
+		jit_level_desc="z"
 	elif (( ${jit_level} == 1 )) ; then
-		jit_level="1" # 60 %
+		jit_level_desc="1" # 60 %
 	elif (( ${jit_level} == 0 )) ; then
-		jit_level="0" # 5%
+		jit_level_desc="0" # 5%
 	fi
 
-	if [[ "${jit_level}" =~ ("2"|"3"|"fast") ]] ; then
-einfo "JIT is similar to -O${jit_level} + PDO/PGO."
+	if (( ${jit_level} >= 4 )) ; then
+einfo "JIT is similar to -O${jit_level_desc} + PDO/PGO."
 		_jit_level_4
-	elif [[ "${jit_level}" =~ ("1"|"z"|"s") ]] ; then
-einfo "JIT is similar to -O${jit_level}."
+	elif (( ${jit_level} >= 1 )) ; then
+einfo "JIT is similar to -O${jit_level_desc}."
 		_jit_level_3
-	elif [[ "${jit_level}" =~ ("0") ]] ; then
-einfo "JIT is similar to -O${jit_level}."
+	elif (( ${jit_level} == 0 )) ; then
+einfo "JIT is similar to -O${jit_level_desc}."
 		_jit_level_0
 	fi
 
@@ -2589,7 +2590,7 @@ ewarn "(4) Set to at least -O1 or JIT_LEVEL_OVERRIDE=1"
 ewarn
 	fi
 
-	if use jit ; then
+	if (( ${jit_level} >= 1 )) ; then
 		append-cppflags \
 			-DENABLE_ASSEMBLER=1
 	else
@@ -2597,7 +2598,7 @@ ewarn
 			-DENABLE_ASSEMBLER=0
 	fi
 
-	if use jit ; then
+	if (( ${jit_level} >= 1 )) ; then
 einfo "Enabled YARR JIT (aka RegEx JIT)" # default
 	else
 einfo "Disabled YARR JIT (aka RegEx JIT)"
