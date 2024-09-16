@@ -3207,37 +3207,38 @@ ewarn
 			jit_level=${JIT_LEVEL_OVERRIDE}
 		fi
 
+		local jit_level_desc
 		if (( ${jit_level} == 6 )) ; then
-			jit_level="fast" # 100%
+			jit_level_desc="fast" # 100%
 		elif (( ${jit_level} == 5 )) ; then
-			jit_level="3" # 95%
+			jit_level_desc="3" # 95%
 		elif (( ${jit_level} == 4 )) ; then
-			jit_level="2" # 90%
+			jit_level_desc="2" # 90%
 		elif (( ${jit_level} == 3 )) ; then
-			jit_level="s" # 75%
+			jit_level_desc="s" # 75%
 		elif (( ${jit_level} == 2 )) ; then
-			jit_level="z"
+			jit_level_desc="z"
 		elif (( ${jit_level} == 1 )) ; then
-			jit_level="1" # 60 %
+			jit_level_desc="1" # 60 %
 		elif (( ${jit_level} == 0 )) ; then
-			jit_level="0" # 5%
+			jit_level_desc="0" # 5%
 		fi
 
-		if [[ "${jit_level}" =~ ("3"|"fast") ]] ; then
-einfo "JIT is similar to -O${jit_level}."
+		if (( ${jit_level} >= 5 )) ; then
+einfo "JIT is similar to -O${jit_level_desc}."
 			_jit_level_5
-		elif [[ "${jit_level}" =~ ("z"|"s"|"2") ]] ; then
-einfo "JIT is similar to -O${jit_level}."
+		elif (( ${jit_level} >= 2 )) ; then
+einfo "JIT is similar to -O${jit_level_desc}."
 			_jit_level_4
-		elif [[ "${jit_level}" =~ ("1") ]] ; then
-einfo "JIT is similar to -O${jit_level}."
+		elif (( ${jit_level} >= 1 )) ; then
+einfo "JIT is similar to -O${jit_level_desc}."
 			_jit_level_1
-		elif [[ "${jit_level}" =~ ("0") ]] ; then
-einfo "JIT is similar to -O${jit_level}."
+		else
+einfo "JIT is similar to -O${jit_level_desc}."
 			_jit_level_0
 		fi
 
-		if use webassembly && [[ "${myconf_gn}" =~ "v8_enable_webassembly=false" ]] ; then
+		if use webassembly && (( ${jit_level} == 0 )) ; then
 ewarn "WebAssembly enablement needs >= -O1."
 		fi
 	fi
