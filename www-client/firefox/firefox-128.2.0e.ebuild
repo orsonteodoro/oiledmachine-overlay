@@ -405,8 +405,8 @@ CODEC_IUSE="
 IUSE+="
 ${CODEC_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-alsa cups +dbus debug eme-free +ffvpx firejail +hardened -hwaccel jack
--jemalloc +jit +jumbo-build libcanberra libnotify libproxy libsecret mold +openh264 +pgo
+alsa cups +dbus debug eme-free +ffvpx firejail +hardened -hwaccel jack +jemalloc
++jit +jumbo-build libcanberra libnotify libproxy libsecret mold +openh264 +pgo
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 +pulseaudio selinux sndio speech +system-av1 +system-ffmpeg +system-harfbuzz
@@ -2583,12 +2583,12 @@ einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${oflag_safe}"
 	# Use the O(1) algorithm linker algorithm and add more swap instead.
 ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 
-	if ! use elibc_glibc; then
-		mozconfig_add_options_ac '!elibc_glibc' --disable-jemalloc
-	fi
-
 	if ! use elibc_glibc ; then
 		mozconfig_add_options_ac '!elibc_glibc' --disable-jemalloc
+	elif ! use jemalloc ; then
+		mozconfig_add_options_ac '-jemalloc' --disable-jemalloc
+	else
+		mozconfig_add_options_ac '+jemalloc' --enable-jemalloc
 	fi
 
 	# System-av1 fix

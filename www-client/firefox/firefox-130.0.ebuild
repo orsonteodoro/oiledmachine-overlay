@@ -404,12 +404,13 @@ IUSE+="
 ${CODEC_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alsa cpu_flags_arm_neon cups +dbus debug eme-free +ffvpx firejail +hardened
--hwaccel jack -jemalloc +jit +jumbo-build libcanberra libnotify libproxy libsecret
-mold +openh264 +pgo +pulseaudio proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-selinux sndio speech +system-av1 +system-ffmpeg +system-harfbuzz +system-icu
-+system-jpeg +system-libevent +system-libvpx system-png +system-webp systemd
--telemetry +vaapi -valgrind +wayland +webrtc wifi webspeech
+-hwaccel jack +jemalloc +jit +jumbo-build libcanberra libnotify libproxy
+libsecret mold +openh264 +pgo +pulseaudio proprietary-codecs
+proprietary-codecs-disable proprietary-codecs-disable-nc-developer
+proprietary-codecs-disable-nc-user selinux sndio speech +system-av1
++system-ffmpeg +system-harfbuzz +system-icu +system-jpeg +system-libevent
++system-libvpx system-png +system-webp systemd -telemetry +vaapi -valgrind
++wayland +webrtc wifi webspeech
 "
 # telemetry disabled for crypto/security reasons
 
