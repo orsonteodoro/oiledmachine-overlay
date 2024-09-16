@@ -93,7 +93,7 @@
     hardened_malloc     | yes[6] | small allocs zeroed, large allocs unerased | optional     | size classes in dedicated region with random base, PartitionAlloc inspired
     mimalloc            | yes[8] | eager cryptographic erase                  | no           | size classes associated with page/segment 
     scudo               | yes[2] | zeroed immediate or zeroed when full delay | optional     | size classes associated with same region of the same size class
-    unset (ptmalloc[5]) | [1]    | left unsanitized                           | no[4]        | size grouping via arena bins
+    unset [5]           | [1]    | left unsanitized                           | no[4]        | size grouping via arena bins
     bmalloc [11]        |        |                                            |              | yes, a page of same object type
     PartitionAlloc [11] |        |                                            |              | yes, a page containing objects of the same bucket
 
@@ -101,7 +101,7 @@
     [2] Depends on KALSR and may use linear function
     [3] Buffer overflow and use-after-free protection
     [4] MTE is default on in the Linux Kernel
-    [5] glibc implementation
+    [5] ptmalloc for glibc; mallocng for musl
     [6] Proactive via ChaCha8
     [7] Using zeros for erasing makes it easier to find keys or sensitive data strings.
     [8] Proactive via ChaCha20
