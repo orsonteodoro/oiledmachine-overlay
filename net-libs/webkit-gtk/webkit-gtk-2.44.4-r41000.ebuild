@@ -2589,7 +2589,7 @@ ewarn "(4) Set to at least -O1 or JIT_LEVEL_OVERRIDE=1"
 ewarn
 	fi
 
-	if (( ${jit_level} >= 1 )) ; then
+	if use jit ; then
 		append-cppflags \
 			-DENABLE_ASSEMBLER=1
 	else
@@ -2597,7 +2597,7 @@ ewarn
 			-DENABLE_ASSEMBLER=0
 	fi
 
-	if (( ${jit_level} >= 1 )) ; then
+	if use jit ; then
 einfo "Enabled YARR JIT (aka RegEx JIT)" # default
 	else
 einfo "Disabled YARR JIT (aka RegEx JIT)"
