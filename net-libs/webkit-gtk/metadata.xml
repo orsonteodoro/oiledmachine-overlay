@@ -64,7 +64,7 @@
 
 
     JIT_LEVEL_OVERRIDE - Set the JIT level similar to -Oflag.
-    Valid values:  0, 1, ..., 6
+    Valid values:  0, 1, ..., 6, unset (default)
 
       6 - -Ofast [do not use]
       5 - -O3
@@ -73,6 +73,7 @@
       2 - -Oz
       1 - -O1
       0 - -O0
+      unset - It automatically changes based on -Oflag level.
 
 
     ULIMIT - Sets the maximum open file limit.
