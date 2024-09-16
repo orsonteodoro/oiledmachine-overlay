@@ -2573,18 +2573,12 @@ einfo "JIT is similar to -O${jit_level}."
 		_jit_level_0
 	fi
 
-	local webassembly=0
 	if (( ${pointer_size} != 8 )) ; then
 ewarn "WebAssembly is not supported for ABI=${ABI}"
 	elif [[ "${mycmakeargs[@]}" =~ "-DENABLE_WEBASSEMBLY=ON" ]] ; then
 einfo "WebAssembly is on"
-		webassembly=1
 	else
 einfo "WebAssembly is off"
-	fi
-
-	if (( ${webassembly} == 0 )) ; then
-		if (( ${pointer_size} == 8 )) ; then
 ewarn
 ewarn "If you want to use WebAssembly, the following steps are required:"
 ewarn
@@ -2593,7 +2587,6 @@ ewarn "(2) Change the kernel config to use memory page sizes less than 64 KB."
 ewarn "(3) Set CUSTOM_PAGE_SIZE environment variable less than 64 KB."
 ewarn "(4) Set to at least -O1 or JIT_LEVEL_OVERRIDE=1"
 ewarn
-		fi
 	fi
 
 	if (( ${jit_level} >= 1 )) ; then
