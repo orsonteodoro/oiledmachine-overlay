@@ -3138,6 +3138,7 @@ ewarn
 			# ~20%/~50% performance
 			#myconf_gn+=" v8_enable_drumbrake=false"
 			myconf_gn+=" v8_enable_gdbjit=false"
+			myconf_gn+=" v8_enable_lite_mode=true"
 			myconf_gn+=" v8_enable_maglev=false"
 			myconf_gn+=" v8_enable_sparkplug=false"
 			myconf_gn+=" v8_enable_turbofan=false"
@@ -3149,7 +3150,7 @@ ewarn
 			# > 75% performance
 			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
-			myconf_gn+=" v8_enable_lite_mode=true"
+			myconf_gn+=" v8_enable_lite_mode=false"
 			myconf_gn+=" v8_enable_maglev=false"
 			myconf_gn+=" v8_enable_sparkplug=false"
 			myconf_gn+=" v8_enable_turbofan=true"
