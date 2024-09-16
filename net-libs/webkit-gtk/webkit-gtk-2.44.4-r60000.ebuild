@@ -2599,9 +2599,9 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 	elif (( ${jit_level} == 5 )) ; then
 		jit_level_desc="2" # 95%
 	elif (( ${jit_level} == 4 )) ; then
-		jit_level_desc="s" # 90%
+		jit_level_desc="s" # 75%
 	elif (( ${jit_level} == 3 )) ; then
-		jit_level_desc="z" # 75%
+		jit_level_desc="z"
 	elif (( ${jit_level} == 2 )) ; then
 		jit_level_desc="1" # 60 %
 	elif (( ${jit_level} == 1 )) ; then
