@@ -202,7 +202,7 @@
       execution, RegEx JIT, WASM JIT, CSS JIT.  Disable for increased
       compatibility on alternative ARCHs and ABIs.
 
-      JIT tier enablement is based on CFLAGS or OSHIT_OPT_JIT environment
+      JIT tier enablement is based on CFLAGS or JIT_LEVEL_OVERRIDE environment
       variable.
 
       Disable JIT for mitigation against JIT class of vulnerabilties.
