@@ -3250,15 +3250,15 @@ einfo "JIT is similar to -O${jit_level_desc}."
 einfo "JIT is similar to -O${jit_level_desc}."
 			_jit_level_2
 		elif (( ${jit_level} >= 1 )) ; then
-einfo "JIT is similar to -O${jit_level_desc}."
+einfo "JIT is similar to -O${jit_level_desc} best case."
 			_jit_level_1
 		else
-einfo "JIT off is similar to -O${jit_level_desc}."
+einfo "JIT off is similar to -O${jit_level_desc} worst cast."
 			_jit_level_0
 		fi
 
-		if use webassembly && (( ${jit_level} == 0 )) ; then
-ewarn "WebAssembly enablement needs >= -O1."
+		if use webassembly && (( ${jit_level} < 2 )) ; then
+ewarn "WebAssembly enablement needs >= -O1 or JIT_LEVEL_OVERRIDE=2 or higher."
 		fi
 	fi
 	myconf_gn+=" v8_enable_vtunejit=false"
