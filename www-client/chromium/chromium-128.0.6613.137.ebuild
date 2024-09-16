@@ -3151,7 +3151,7 @@ ewarn
 			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
 			myconf_gn+=" v8_enable_lite_mode=false"
-			myconf_gn+=" v8_enable_maglev=true"
+			myconf_gn+=" v8_enable_maglev=false" # Requires turbofan
 			myconf_gn+=" v8_enable_sparkplug=true"
 			myconf_gn+=" v8_enable_turbofan=false"
 			myconf_gn+=" v8_enable_webassembly=false"
