@@ -3224,6 +3224,8 @@ ewarn "CPU vulnerability mitigation has not been added yet for ARCH=${ARCH}."
 		linux-info_pkg_setup
 		_mitigate-tecv_check_kernel_flags
 		if use custom-kernel ; then
+ewarn "You are responsible for using only Linux Kernel >= 6.9."
+		else
 			_mitigate-tecv_print_required_versions
 		fi
 # It is a common practice by hardware manufacturers to delete support or
