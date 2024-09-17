@@ -1,0 +1,15 @@
+diff '--color=auto' -urp firejail-9999.orig/etc/firejail.config firejail-9999/etc/firejail.config
+--- firejail-9999.orig/etc/firejail.config	2024-09-16 17:07:22.990791666 -0700
++++ firejail-9999/etc/firejail.config	2024-09-16 17:09:38.796559156 -0700
+@@ -86,8 +86,9 @@
+ # Enable or disable private-bin feature, default enabled.
+ # private-bin yes
+ 
+-# Remove /usr/local directories from private-bin list, default disabled.
+-# private-bin-no-local no
++# Remove /usr/local directories from private-bin list, default disabled upstream.
++# yes is required for the mpv wrapper.
++private-bin-no-local yes
+ 
+ # Enable or disable private-cache feature, default enabled
+ # private-cache yes
