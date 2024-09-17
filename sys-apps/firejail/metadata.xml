@@ -98,7 +98,7 @@
     PartitionAlloc [11] |        |                                            |              | yes, a page containing objects of the same bucket
 
     [1] Only if RANDOMIZE_BASE (KALSR) is enabled in the kernel config and active.  Otherwise, it does not perform proactive mixing.
-    [2] Depends on KALSR and may use linear function
+    [2] Depends on KASLR and may use linear function
     [3] Buffer overflow and use-after-free protection
     [4] MTE is default on in the Linux Kernel
     [5] ptmalloc for glibc; mallocng for musl
