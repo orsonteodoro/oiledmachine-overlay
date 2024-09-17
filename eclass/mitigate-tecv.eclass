@@ -3087,8 +3087,8 @@ eerror "Actual version:  ${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion}"
 
 	if ! tc-is-cross-compiler && use custom-kernel ; then
 		local required_version=$(_mitigate-tecv_get_required_version)
-		[[ -z "${required_version}" ]] && required_version="${AUTO_KERNEL_VERSION}" # Fallback version
-		is_microarch_selected || required_version="${AUTO_KERNEL_VERSION}" # Fallback version
+		[[ -z "${required_version}" ]] && required_version=$(_mitigate-tecv_get_fallback_version) # Fallback version
+		is_microarch_selected || required_version=$(_mitigate-tecv_get_fallback_version) # Fallback version
 einfo "The required Linux Kernel version is >= ${required_version}."
 		local prev_kernel_dir="${KERNEL_DIR}"
 		local L=(
@@ -3137,6 +3137,23 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_verify_mitigation_rfds			# Mitigations against RFDS (2024)
 
 	# For SLAM, see https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability#2023
+}
+
+# @FUNCTION: _mitigate-tecv_get_fallback_version
+# @DESCRIPTION:
+# Get the fallback version when no microarches selected
+_mitigate-tecv_get_fallback_version() {
+	if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
+		echo "6.9"
+	elif [[ "${ARCH}" == "ppc" || "${ARCH}" == "ppc64" ]] ; then
+		echo "5.0"
+	elif [[ "${ARCH}" == "s390" ]] ; then
+		echo "4.15"
+	elif [[ "${ARCH}" == "arm64" ]] ; then
+		echo "6.1"
+	else
+		echo "4.16"
+	fi
 }
 
 # @FUNCTION: _mitigate-tecv_get_required_version
