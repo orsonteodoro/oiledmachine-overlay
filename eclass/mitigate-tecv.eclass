@@ -3087,8 +3087,8 @@ eerror "Actual version:  ${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion}"
 
 	if ! tc-is-cross-compiler && use custom-kernel ; then
 		local required_version=$(_mitigate-tecv_get_required_version)
-		[[ -z "${required_version}" ]] && required_version=$(_mitigate-tecv_get_fallback_version) # Fallback version
-		is_microarch_selected || required_version=$(_mitigate-tecv_get_fallback_version) # Fallback version
+		[[ -z "${required_version}" ]] && required_version=$(_mitigate-tecv_get_fallback_version)
+		is_microarch_selected || required_version=$(_mitigate-tecv_get_fallback_version)
 einfo "The required Linux Kernel version is >= ${required_version}."
 		local prev_kernel_dir="${KERNEL_DIR}"
 		local L=(
