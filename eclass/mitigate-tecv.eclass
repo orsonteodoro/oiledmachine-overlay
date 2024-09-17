@@ -18,7 +18,6 @@ esac
 if [[ -z ${_MITIGATE_TECV_ECLASS} ]] ; then
 _MITIGATE_TECV_ECLASS=1
 
-AUTO_KERNEL_VERSION="6.9"
 FIRMWARE_VENDOR=""
 _mitigate_tecv_set_globals() {
 	if [[ -e "/proc/cpuinfo" ]] ; then
@@ -1808,8 +1807,24 @@ _MITIGATE_TECV_REPTAR_RDEPEND_X86_32="
 
 
 _MITIGATE_TECV_AUTO="
-	$(gen_patched_kernel_list ${AUTO_KERNEL_VERSION})
-
+	arm64? (
+		$(gen_patched_kernel_list 6.1)
+	)
+	amd64? (
+		$(gen_patched_kernel_list 6.9)
+	)
+	ppc? (
+		$(gen_patched_kernel_list 5.0)
+	)
+	ppc64? (
+		$(gen_patched_kernel_list 5.0)
+	)
+	s390? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	x86? (
+		$(gen_patched_kernel_list 6.9)
+	)
 "
 if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
 	_MITIGATE_TECV_AUTO+="
@@ -3075,11 +3090,12 @@ eerror "Missing .config in /usr/src/linux"
 	local pv_minor=$(grep "PATCHLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
 	local pv_patch=$(grep "SUBLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
 	local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
-	if use auto && ver_test "${pv_major}.${pv_minor}" -lt "${AUTO_KERNEL_VERSION}" ; then
+	local auto_version=$(_mitigate-tecv_get_fallback_version)
+	if use auto && ver_test "${pv_major}.${pv_minor}" -lt "${auto_version}" ; then
 		if [[ -L "${KERNEL_DIR}" ]] ; then
-eerror "You need to switch the /usr/src/linux symlink to Linux Kernel >= ${AUTO_KERNEL_VERSION} for USE=auto."
+eerror "You need to switch the /usr/src/linux symlink to Linux Kernel >= ${auto_version} for USE=auto."
 		else
-eerror "You need to replace the kernel sources to Linux Kernel >= ${AUTO_KERNEL_VERSION} for USE=auto."
+eerror "You need to replace the kernel sources to Linux Kernel >= ${auto_version} for USE=auto."
 		fi
 eerror "Actual version:  ${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion}"
 		die
