@@ -47,6 +47,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     FORCE_LLVM_SLOT - Manually choose the LLVM slot to build with
 
     JIT_LEVEL_OVERRIDE - Set the JIT runtime performance similar to -Oflags.
+    It controls the JIT teir enablement and consequently build time, the runtime
+    performance possibilities of JITed hot functions similar to the -Oflag
+    level.
     Valid values:  0, 1, 2, ..., 7, unset (default)
 
       7 - -Ofast [do not use]

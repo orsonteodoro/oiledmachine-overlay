@@ -64,6 +64,9 @@
 
 
     JIT_LEVEL_OVERRIDE - Set the JIT level similar to -Oflag.
+    It controls the JIT teir enablement and consequently build time, the runtime
+    performance possibilities of JITed hot functions similar to the -Oflag
+    level.
     Valid values:  0, 1, ..., 7, unset (default)
 
       7 - -Ofast [do not use]
