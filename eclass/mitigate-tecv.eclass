@@ -232,7 +232,19 @@ REQUIRED_USE="
 	cpu_target_x86_ice_lake? (
 		firmware
 	)
+	cpu_target_x86_rocket_lake? (
+		firmware
+	)
+	cpu_target_x86_tiger_lake? (
+		firmware
+	)
 	cpu_target_x86_alder_lake? (
+		firmware
+	)
+	cpu_target_x86_raptor_lake_gen13? (
+		firmware
+	)
+	cpu_target_x86_raptor_lake_gen14? (
 		firmware
 	)
 
@@ -1716,6 +1728,53 @@ _MITIGATE_TECV_BHI_RDEPEND_X86_32="
 	${_MITIGATE_TECV_BHI_RDEPEND_X86_64}
 "
 
+_MITIGATE_TECV_REPTAR_RDEPEND_X86_64="
+	cpu_target_x86_ice_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20231114
+		)
+	)
+	cpu_target_x86_tiger_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20231114
+		)
+	)
+	cpu_target_x86_sapphire_rapids? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20231114
+		)
+	)
+	cpu_target_x86_alder_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20231114
+		)
+	)
+	cpu_target_x86_catlow_golden_cove? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20231114
+		)
+	)
+	cpu_target_x86_rocket_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20231114
+		)
+	)
+	cpu_target_x86_raptor_lake_gen13? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20231114
+		)
+	)
+	cpu_target_x86_raptor_lake_gen14? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20231114
+		)
+	)
+"
+_MITIGATE_TECV_REPTAR_RDEPEND_X86_32="
+	${_MITIGATE_TECV_REPTAR_RDEPEND_X86_64}
+"
+
+
 _MITIGATE_TECV_AUTO="
 	$(gen_patched_kernel_list 6.9)
 
@@ -2927,6 +2986,37 @@ eerror
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_reptar
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against Reptar.
+_mitigate_tecv_verify_mitigation_reptar() {
+	if use firmware ; then
+		if \
+			   use cpu_target_x86_ice_lake \
+			|| use cpu_target_x86_tiger_lake \
+			|| use cpu_target_x86_sapphire_rapids \
+			|| use cpu_target_x86_alder_lake \
+			|| use cpu_target_x86_catlow_golden_cove \
+			|| use cpu_target_x86_rocket_lake \
+			|| use cpu_target_x86_raptor_lake_gen13 \
+			|| use cpu_target_x86_raptor_lake_gen14 \
+			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+		; then
+			CONFIG_CHECK="
+				CPU_SUP_INTEL
+			"
+			ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Reptar mitigation."
+			check_extra_config
+			if ! has_version ">=sys-firmware/intel-microcode-20220510" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-firmware/intel-microcode-20231114 is required for Reptar mitigation."
+				die
+			fi
+		fi
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -2960,6 +3050,7 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_verify_mitigation_downfall		# Mitigations against GDS (2022)
 	_mitigate_tecv_verify_mitigation_retbleed		# Mitigations against Retbleed (2022)
 	_mitigate_tecv_verify_mitigation_mmio_stale_data	# Mitigations against SBDR (2022), SBDS (2022), DRPW (2022)
+	_mitigate_tecv_verify_mitigation_reptar			# Mitigations against Reptar (2023)
 	_mitigate_tecv_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023)
 	_mitigate_tecv_verify_mitigation_inception		# Mitigations against SRSO (2023)
 	_mitigate_tecv_verify_mitigation_rfds			# Mitigations against RFDS (2024)
