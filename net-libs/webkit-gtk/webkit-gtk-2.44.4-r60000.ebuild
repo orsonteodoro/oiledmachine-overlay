@@ -2553,6 +2553,10 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		jit_level=0
 	fi
 
+	if [[ -n "${JIT_LEVEL_OVERRIDE}" ]] ; then
+		jit_level=${JIT_LEVEL_OVERRIDE}
+	fi
+
 	local max_jit_level=6
 	if (( ${WK_PAGE_SIZE} == 64 )) ; then
 		max_jit_level=0
@@ -2579,10 +2583,6 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 	fi
 
 	use jit || jit_level=0
-
-	if [[ -n "${JIT_LEVEL_OVERRIDE}" ]] ; then
-		jit_level=${JIT_LEVEL_OVERRIDE}
-	fi
 
 	local jit_level_desc
 	if (( ${jit_level} == 7 )) ; then
