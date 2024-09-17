@@ -9,6 +9,18 @@
 
   oiledmachine-overlay notes:
 
+  This ebuild currently is focused on mitigation of CPU hardware vulnerabilties
+  focused on data theft mitigation and may also include data leak mitigation.
+  It also verifies for some vulnerabilies that the mitigation has been applied.
+  
+  It was created as a reaction to cryptocurrency thefts for users of the distro.
+
+  A different ebuild may be considered to verify mitigation against
+  denial of services for mission critical servers.
+
+  A parent ebuild may be considered to verify larger mitigation coverage
+  against data theft to verify that X sandboxes and LSM are installed.
+
   -->
   <use>
     <flag name="auto">
