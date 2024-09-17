@@ -2458,13 +2458,13 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			)
 		fi
 
-		if [[ "${ARCH}" =~ "mips" || "${ARCH}" == "riscv" ]] ; then
+		if [[ "${ABI}" == "amd64" || "${ABI}" == "amd64" ]] && ( [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ) ; then
 			mycmakeargs+=(
-				-DENABLE_SAMPLING_PROFILER=OFF
+				-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			)
 		else
 			mycmakeargs+=(
-				-DENABLE_SAMPLING_PROFILER=$(usex jit)
+				-DENABLE_SAMPLING_PROFILER=OFF
 			)
 		fi
 	}
@@ -2493,13 +2493,14 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			)
 		fi
 
-		if [[ "${ARCH}" =~ "mips" || "${ARCH}" == "riscv" ]] ; then
+
+		if [[ "${ABI}" == "amd64" || "${ABI}" == "amd64" ]] && ( [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ) ; then
 			mycmakeargs+=(
-				-DENABLE_SAMPLING_PROFILER=OFF
+				-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			)
 		else
 			mycmakeargs+=(
-				-DENABLE_SAMPLING_PROFILER=$(usex jit)
+				-DENABLE_SAMPLING_PROFILER=OFF
 			)
 		fi
 	}
@@ -2516,13 +2517,14 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly) # -O0 build speed
 			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly) # -O2 runtime speed + PGO
 		)
-		if [[ "${ARCH}" == "riscv" ]] ; then
+
+		if [[ "${ABI}" == "amd64" || "${ABI}" == "amd64" ]] && ( [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ) ; then
 			mycmakeargs+=(
-				-DENABLE_SAMPLING_PROFILER=OFF
+				-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			)
 		else
 			mycmakeargs+=(
-				-DENABLE_SAMPLING_PROFILER=$(usex jit)
+				-DENABLE_SAMPLING_PROFILER=OFF
 			)
 		fi
 	}
