@@ -3008,7 +3008,7 @@ _mitigate_tecv_verify_mitigation_reptar() {
 			"
 			ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Reptar mitigation."
 			check_extra_config
-			if ! has_version ">=sys-firmware/intel-microcode-20220510" ; then
+			if ! has_version ">=sys-firmware/intel-microcode-20231114" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
 eerror ">=sys-firmware/intel-microcode-20231114 is required for Reptar mitigation."
 				die
