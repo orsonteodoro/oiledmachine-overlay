@@ -57,6 +57,7 @@ CPU_TARGET_X86=(
 	cpu_target_x86_ivy_bridge		# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
 	cpu_target_x86_haswell
 	cpu_target_x86_broadwell
+	cpu_target_x86_hewitt_lake
 	cpu_target_x86_skylake
 	cpu_target_x86_kaby_lake_gen7
 	cpu_target_x86_amber_lake_gen8
@@ -67,6 +68,7 @@ CPU_TARGET_X86=(
 	cpu_target_x86_comet_lake
 	cpu_target_x86_amber_lake_gen10
 	cpu_target_x86_ice_lake
+	cpu_target_x86_rocket_lake
 	cpu_target_x86_tiger_lake
 	cpu_target_x86_alder_lake
 	cpu_target_x86_raptor_lake_gen13
@@ -79,6 +81,10 @@ CPU_TARGET_X86=(
 	cpu_target_x86_sapphire_rapids_edge_enhanced
 	cpu_target_x86_granite_rapids
 	cpu_target_x86_emerald_rapids
+	cpu_target_x86_sierra_forest
+
+	cpu_target_x86_catlow_golden_cove
+	cpu_target_x86_catlow_raptor_cove
 
 	cpu_target_x86_zen
 	cpu_target_x86_zen_plus
@@ -193,6 +199,9 @@ REQUIRED_USE="
 	cpu_target_x86_broadwell? (
 		firmware
 	)
+	cpu_target_x86_hewitt_lake? (
+		firmware
+	)
 	cpu_target_x86_skylake? (
 		firmware
 	)
@@ -243,6 +252,10 @@ REQUIRED_USE="
 		firmware
 	)
 	cpu_target_x86_emerald_rapids? (
+		firmware
+	)
+
+	cpu_target_x86_catlow_golden_cove? (
 		firmware
 	)
 
@@ -335,6 +348,9 @@ _MITIGATE_TECV_SPECTRE_RDEPEND_X86_64="
 	cpu_target_x86_broadwell? (
 		>=sys-firmware/intel-microcode-20180312
 	)
+	cpu_target_x86_hewitt_lake? (
+		>=sys-firmware/intel-microcode-20180312
+	)
 	cpu_target_x86_skylake? (
 		>=sys-firmware/intel-microcode-20180312
 	)
@@ -395,6 +411,9 @@ _MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 4.15)
 	)
 	cpu_target_x86_broadwell? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_hewitt_lake? (
 		$(gen_patched_kernel_list 4.15)
 	)
 	cpu_target_x86_skylake? (
@@ -474,6 +493,12 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64="
 			>=sys-firmware/intel-microcode-20180703
 		)
 	)
+	cpu_target_x86_hewitt_lake? (
+		$(gen_patched_kernel_list 4.17)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180703
+		)
+	)
 	cpu_target_x86_skylake? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
@@ -534,6 +559,9 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64="
 			>=sys-firmware/intel-microcode-20180703
 		)
 	)
+	cpu_target_x86_rocket_lake? (
+		$(gen_patched_kernel_list 4.17)
+	)
 	cpu_target_x86_tiger_lake? (
 		$(gen_patched_kernel_list 4.17)
 	)
@@ -566,6 +594,19 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 4.17)
 	)
 	cpu_target_x86_emerald_rapids? (
+		$(gen_patched_kernel_list 4.17)
+	)
+	cpu_target_x86_sierra_forest? (
+		$(gen_patched_kernel_list 4.17)
+	)
+
+	cpu_target_x86_catlow_golden_cove? (
+		$(gen_patched_kernel_list 4.17)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180703
+		)
+	)
+	cpu_target_x86_catlow_raptor_cove? (
 		$(gen_patched_kernel_list 4.17)
 	)
 
@@ -646,6 +687,14 @@ _MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64="
 	cpu_target_x86_emerald_rapids? (
 		$(gen_patched_kernel_list 4.19)
 	)
+	cpu_target_x86_sierra_forest? (
+		$(gen_patched_kernel_list 4.19)
+	)
+
+	cpu_target_x86_catlow_raptor_cove? (
+		$(gen_patched_kernel_list 4.19)
+	)
+
 
 "
 _MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_32="
@@ -691,6 +740,12 @@ _MITIGATE_TECV_FORESHADOW_RDEPEND_X86_64="
 		)
 	)
 	cpu_target_x86_broadwell? (
+		$(gen_patched_kernel_list 4.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180807
+		)
+	)
+	cpu_target_x86_hewitt_lake? (
 		$(gen_patched_kernel_list 4.19)
 		firmware? (
 			>=sys-firmware/intel-microcode-20180807
@@ -759,6 +814,12 @@ _MITIGATE_TECV_MDS_RDEPEND_X86_64="
 		)
 	)
 	cpu_target_x86_broadwell? (
+		$(gen_patched_kernel_list 5.2)
+		firmware? (
+			>=sys-firmware/intel-microcode-20190618
+		)
+	)
+	cpu_target_x86_hewitt_lake? (
 		$(gen_patched_kernel_list 5.2)
 		firmware? (
 			>=sys-firmware/intel-microcode-20190618
@@ -860,6 +921,9 @@ _MITIGATE_TECV_SWAPGS_RDEPEND_X86_64="
 	cpu_target_x86_broadwell? (
 		$(gen_patched_kernel_list 5.3)
 	)
+	cpu_target_x86_hewitt_lake? (
+		$(gen_patched_kernel_list 5.3)
+	)
 	cpu_target_x86_skylake? (
 		$(gen_patched_kernel_list 5.3)
 	)
@@ -888,6 +952,9 @@ _MITIGATE_TECV_SWAPGS_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 5.3)
 	)
 	cpu_target_x86_ice_lake? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_rocket_lake? (
 		$(gen_patched_kernel_list 5.3)
 	)
 	cpu_target_x86_tiger_lake? (
@@ -924,6 +991,9 @@ _MITIGATE_TECV_SWAPGS_RDEPEND_X86_64="
 	cpu_target_x86_emerald_rapids? (
 		$(gen_patched_kernel_list 5.3)
 	)
+	cpu_target_x86_sierra_forest? (
+		$(gen_patched_kernel_list 5.3)
+	)
 
 "
 _MITIGATE_TECV_SWAPGS_RDEPEND_X86_32="
@@ -936,6 +1006,9 @@ _MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 5.4)
 	)
 	cpu_target_x86_broadwell? (
+		$(gen_patched_kernel_list 5.4)
+	)
+	cpu_target_x86_hewitt_lake? (
 		$(gen_patched_kernel_list 5.4)
 	)
 	cpu_target_x86_skylake? (
@@ -1163,6 +1236,12 @@ _MITIGATE_TECV_MMIO_RDEPEND_X86_64="
 			>=sys-firmware/intel-microcode-20220510
 		)
 	)
+	cpu_target_x86_hewitt_lake? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
 	cpu_target_x86_skylake? (
 		$(gen_patched_kernel_list 5.19)
 		firmware? (
@@ -1218,6 +1297,12 @@ _MITIGATE_TECV_MMIO_RDEPEND_X86_64="
 		)
 	)
 	cpu_target_x86_ice_lake? (
+		$(gen_patched_kernel_list 5.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220510
+		)
+	)
+	cpu_target_x86_rocket_lake? (
 		$(gen_patched_kernel_list 5.19)
 		firmware? (
 			>=sys-firmware/intel-microcode-20220510
@@ -1413,6 +1498,12 @@ _MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64="
 			>=sys-firmware/intel-microcode-20230808
 		)
 	)
+	cpu_target_x86_rocket_lake? (
+		$(gen_patched_kernel_list 6.5)
+		firmware? (
+			>=sys-firmware/intel-microcode-20230808
+		)
+	)
 	cpu_target_x86_tiger_lake? (
 		$(gen_patched_kernel_list 6.5)
 		firmware? (
@@ -1456,7 +1547,7 @@ _MITIGATE_TECV_INCEPTION_RDEPEND_X86_32="
 	${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_RDFS_RDEPEND_X86_64="
+_MITIGATE_TECV_RFDS_RDEPEND_X86_64="
 	cpu_target_x86_apollo_lake? (
 		$(gen_patched_kernel_list 6.9)
 		firmware? (
@@ -1499,15 +1590,33 @@ _MITIGATE_TECV_RDFS_RDEPEND_X86_64="
 			>=sys-firmware/intel-microcode-20240312
 		)
 	)
+	cpu_target_x86_alder_lake? (
+		$(gen_patched_kernel_list 6.9)
+		firmware? (
+			>=sys-firmware/intel-microcode-20240312
+		)
+	)
 	cpu_target_x86_alder_lake_n? (
 		$(gen_patched_kernel_list 6.9)
 		firmware? (
 			>=sys-firmware/intel-microcode-20240312
 		)
 	)
+	cpu_target_x86_raptor_lake_gen13? (
+		$(gen_patched_kernel_list 6.9)
+		firmware? (
+			>=sys-firmware/intel-microcode-20240312
+		)
+	)
+	cpu_target_x86_raptor_lake_gen14? (
+		$(gen_patched_kernel_list 6.9)
+		firmware? (
+			>=sys-firmware/intel-microcode-20240312
+		)
+	)
 "
-_MITIGATE_TECV_RDFS_RDEPEND_X86_32="
-	${_MITIGATE_TECV_RDFS_RDEPEND_X86_64}
+_MITIGATE_TECV_RFDS_RDEPEND_X86_32="
+	${_MITIGATE_TECV_RFDS_RDEPEND_X86_64}
 "
 
 
@@ -1548,6 +1657,9 @@ _MITIGATE_TECV_BHI_RDEPEND_X86_64="
 	cpu_target_x86_ice_lake? (
 		$(gen_patched_kernel_list 6.9)
 	)
+	cpu_target_x86_rocket_lake? (
+		$(gen_patched_kernel_list 6.9)
+	)
 	cpu_target_x86_tiger_lake? (
 		$(gen_patched_kernel_list 6.9)
 	)
@@ -1583,6 +1695,19 @@ _MITIGATE_TECV_BHI_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 6.9)
 	)
 	cpu_target_x86_emerald_rapids? (
+		$(gen_patched_kernel_list 6.9)
+	)
+	cpu_target_x86_sierra_forest? (
+		$(gen_patched_kernel_list 6.9)
+	)
+
+	cpu_target_x86_catlow_golden_cove? (
+		$(gen_patched_kernel_list 6.9)
+		firmware? (
+			>=sys-firmware/intel-microcode-20220308
+		)
+	)
+	cpu_target_x86_catlow_raptor_cove? (
 		$(gen_patched_kernel_list 6.9)
 	)
 
@@ -1637,7 +1762,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_RETBLEED_RDEPEND_X86_64}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
 				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_64}
-				${_MITIGATE_TECV_RDFS_RDEPEND_X86_64}
+				${_MITIGATE_TECV_RFDS_RDEPEND_X86_64}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
 			)
 			ppc? (
@@ -1665,7 +1790,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_MMIO_RDEPEND_X86_32}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32}
 				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_32}
-				${_MITIGATE_TECV_RDFS_RDEPEND_X86_32}
+				${_MITIGATE_TECV_RFDS_RDEPEND_X86_32}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_32}
 			)
 		)
@@ -1831,20 +1956,12 @@ _mitigate_tecv_verify_mitigation_spectre() {
 		if \
 			   use cpu_target_x86_apollo_lake \
 			|| use cpu_target_x86_denverton \
-			|| use cpu_target_x86_haswell \
-			|| use cpu_target_x86_broadwell \
-			|| use cpu_target_x86_skylake \
-			|| use cpu_target_x86_kaby_lake_gen7 \
-			|| use cpu_target_x86_amber_lake_gen8 \
-			|| use cpu_target_x86_coffee_lake_gen8 \
-			|| use cpu_target_x86_kaby_lake_gen8 \
-			|| use cpu_target_x86_whiskey_lake \
-			|| use cpu_target_x86_coffee_lake_gen9 \
 			|| use cpu_target_x86_gemini_lake \
 			|| use cpu_target_x86_sandy_bridge \
 			|| use cpu_target_x86_ivy_bridge \
 			|| use cpu_target_x86_haswell \
 			|| use cpu_target_x86_broadwell \
+			|| use cpu_target_x86_hewitt_lake \
 			|| use cpu_target_x86_skylake \
 			|| use cpu_target_x86_kaby_lake_gen7 \
 			|| use cpu_target_x86_amber_lake_gen8 \
@@ -2255,9 +2372,9 @@ eerror
 # @FUNCTION: _mitigate_tecv_verify_mitigation_rfds
 # @INTERNAL
 # @DESCRIPTION:
-# Check the kernel config flags and kernel command line to mitigate against RDFS.
+# Check the kernel config flags and kernel command line to mitigate against RFDS.
 _mitigate_tecv_verify_mitigation_rfds() {
-	use cpu_target_x86_snow_ridge_bts && eerror "No planned mitigation for RDFS."
+	use cpu_target_x86_snow_ridge_bts && eerror "No planned mitigation for RFDS."
 	use cpu_target_x86_gemini_lake && ewarn "cpu_target_x86_gemini_lake requires a BIOS firmware update."
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
 		if \
@@ -2270,17 +2387,20 @@ _mitigate_tecv_verify_mitigation_rfds() {
 			|| use cpu_target_x86_elkhart_lake \
 			|| use cpu_target_x86_arizona_beach \
 			|| use cpu_target_x86_jasper_lake \
+			|| use cpu_target_x86_alder_lake \
 			|| use cpu_target_x86_alder_lake_n \
+			|| use cpu_target_x86_raptor_lake_gen13 \
+			|| use cpu_target_x86_raptor_lake_gen14 \
 			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 		; then
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
 			"
-			ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RDFS mitigation on Intel® Atom®."
+			ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RFDS mitigation."
 			check_extra_config
 			if ! has_version ">=sys-firmware/intel-microcode-20240312" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
-eerror ">=sys-firmware/intel-microcode-20240312 is required for RDFS mitigation."
+eerror ">=sys-firmware/intel-microcode-20240312 is required for RFDS mitigation."
 				die
 			fi
 		elif \
@@ -2291,12 +2411,15 @@ eerror ">=sys-firmware/intel-microcode-20240312 is required for RDFS mitigation.
 			|| use cpu_target_x86_elkhart_lake \
 			|| use cpu_target_x86_arizona_beach \
 			|| use cpu_target_x86_jasper_lake \
+			|| use cpu_target_x86_alder_lake \
 			|| use cpu_target_x86_alder_lake_n \
+			|| use cpu_target_x86_raptor_lake_gen13 \
+			|| use cpu_target_x86_raptor_lake_gen14 \
 		; then
 			CONFIG_CHECK="
 				MITIGATION_RFDS
 			"
-			ERROR_MITIGATION_RFDS="CONFIG_MITIGATION_RFDS or >=sys-firmware/intel-microcode-20240312 is required for RDFS mitigation on Intel® Atom®."
+			ERROR_MITIGATION_RFDS="CONFIG_MITIGATION_RFDS or >=sys-firmware/intel-microcode-20240312 is required for RFDS mitigation."
 			check_extra_config
 		fi
 	fi
@@ -2319,6 +2442,7 @@ _mitigate_tecv_verify_mitigation_downfall() {
 			cpu_target_x86_comet_lake
 			cpu_target_x86_amber_lake_gen10
 			cpu_target_x86_ice_lake
+			cpu_target_x86_rocket_lake
 			cpu_target_x86_tiger_lake
 			cpu_target_x86_cascade_lake
 			cpu_target_x86_cooper_lake
@@ -2731,6 +2855,7 @@ _mitigate_tecv_verify_mitigation_mmio_stale_data() {
 				|| use cpu_target_x86_jasper_lake \
 				|| use cpu_target_x86_haswell \
 				|| use cpu_target_x86_broadwell \
+				|| use cpu_target_x86_hewitt_lake \
 				|| use cpu_target_x86_skylake \
 				|| use cpu_target_x86_kaby_lake_gen7 \
 				|| use cpu_target_x86_amber_lake_gen8 \
@@ -2741,6 +2866,7 @@ _mitigate_tecv_verify_mitigation_mmio_stale_data() {
 				|| use cpu_target_x86_comet_lake \
 				|| use cpu_target_x86_amber_lake_gen10 \
 				|| use cpu_target_x86_ice_lake \
+				|| use cpu_target_x86_rocket_lake \
 				|| use cpu_target_x86_tiger_lake \
 				|| use cpu_target_x86_cascade_lake \
 				|| use cpu_target_x86_cooper_lake \
@@ -2860,6 +2986,7 @@ _mitigate-tecv_print_required_versions() {
 			|| use cpu_target_x86_comet_lake \
 			|| use cpu_target_x86_amber_lake_gen10 \
 			|| use cpu_target_x86_ice_lake \
+			|| use cpu_target_x86_rocket_lake \
 			|| use cpu_target_x86_tiger_lake \
 			|| use cpu_target_x86_alder_lake \
 			|| use cpu_target_x86_raptor_lake_gen13 \
@@ -2871,6 +2998,9 @@ _mitigate-tecv_print_required_versions() {
 			|| use cpu_target_x86_sapphire_rapids_edge_enhanced \
 			|| use cpu_target_x86_granite_rapids \
 			|| use cpu_target_x86_emerald_rapids \
+			|| use cpu_target_x86_sierra_forest \
+			|| use cpu_target_x86_catlow_golden_cove \
+			|| use cpu_target_x86_catlow_raptor_cove \
 		; then
 ewarn "You are responsible for using only Linux Kernel >= 6.9."
 		elif \
@@ -2883,13 +3013,14 @@ ewarn "You are responsible for using only Linux Kernel >= 6.5."
 		elif \
 			   use cpu_target_x86_zen \
 			|| use cpu_target_x86_zen_plus \
+			|| use cpu_target_x86_broadwell \
+			|| use cpu_target_x86_hewitt_lake \
 		; then
 ewarn "You are responsible for using only Linux Kernel >= 5.19."
 		elif use bpf ; then
 ewarn "You are responsible for using only Linux Kernel >= 5.13."
 		elif \
 			   use cpu_target_x86_haswell \
-			|| use cpu_target_x86_broadwell \
 		; then
 ewarn "You are responsible for using only Linux Kernel >= 5.4."
 		elif \
