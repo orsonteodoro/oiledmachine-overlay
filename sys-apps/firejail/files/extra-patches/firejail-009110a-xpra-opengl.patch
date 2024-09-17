@@ -62,7 +62,7 @@ diff '--color=auto' -urp firejail-9999.orig/src/firejail/x11.c firejail-9999/src
  		"xpra", "start", display_str, "--no-daemon",
  	};
 +	char *_server_argv_virtualgl[256] = {		  // rest initialized to NULL
-+		"xpra", "start", "--exec-wrapper=vglrun", display_str, "--no-daemon",
++		"xpra", "start", display_str, "--exec-wrapper=vglrun", "--no-daemon",
 +	};
  	unsigned pos = 0;
 +	if (xpra_virtualgl) {
@@ -83,7 +83,7 @@ diff '--color=auto' -urp firejail-9999.orig/src/firejail/x11.c firejail-9999/src
  		"xpra", "start", display_str, "--daemon=no", "--attach=yes", "--exit-with-children=yes"
  	};
 +	char *_server_argv_virtualgl[256] = {		  // rest initialized to NULL
-+		"xpra", "start", "--exec-wrapper=vglrun", display_str, "--daemon=no", "--attach=yes", "--exit-with-children=yes"
++		"xpra", "start", display_str, "--exec-wrapper=vglrun", "--daemon=no", "--attach=yes", "--exit-with-children=yes"
 +	};
  	unsigned spos = 0;
  	unsigned fpos = 0;

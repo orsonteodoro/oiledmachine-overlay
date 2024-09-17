@@ -2923,6 +2923,7 @@ src_prepare() {
 	if use xpra ; then
 #		eapply "${FILESDIR}/extra-patches/${PN}-0.9.64-xpra-speaker-override.patch"
 		eapply "${FILESDIR}/extra-patches/${PN}-009110a-xpra-opengl.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-3bbc6b5-disable-xpra-splash.patch"
 	fi
 
 	# Our toolchain already sets SSP by default but forcing it causes problems
