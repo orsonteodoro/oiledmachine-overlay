@@ -1110,6 +1110,11 @@ _MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64="
 			>=sys-firmware/intel-microcode-20200609
 		)
 	)
+	cpu_target_x86_amber_lake_gen8? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
 	cpu_target_x86_coffee_lake_gen8? (
 		firmware? (
 			>=sys-firmware/intel-microcode-20200609
@@ -1131,6 +1136,11 @@ _MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64="
 		)
 	)
 	cpu_target_x86_comet_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
+	cpu_target_x86_amber_lake_gen10? (
 		firmware? (
 			>=sys-firmware/intel-microcode-20200609
 		)
@@ -2828,11 +2838,13 @@ _mitigate_tecv_verify_mitigation_cacheout() {
 	if \
 		   use cpu_target_x86_skylake \
 		|| use cpu_target_x86_kaby_lake_gen7 \
+		|| use cpu_target_x86_amber_lake_gen8 \
 		|| use cpu_target_x86_coffee_lake_gen8 \
 		|| use cpu_target_x86_kaby_lake_gen8 \
 		|| use cpu_target_x86_whiskey_lake \
 		|| use cpu_target_x86_coffee_lake_gen9 \
 		|| use cpu_target_x86_comet_lake \
+		|| use cpu_target_x86_amber_lake_gen10 \
 		|| use cpu_target_x86_ice_lake \
 		|| use cpu_target_x86_cascade_lake \
 	; then
