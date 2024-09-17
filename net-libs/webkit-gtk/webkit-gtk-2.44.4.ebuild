@@ -2552,6 +2552,8 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		jit_level=${JIT_LEVEL_OVERRIDE}
 	fi
 
+	use jit || jit_level=0
+
 	local max_jit_level=6
 	if (( ${WK_PAGE_SIZE} == 64 )) ; then
 		max_jit_level=0
@@ -2576,8 +2578,6 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 	if (( ${jit_level} > ${max_jit_level} )) ; then
 		jit_level=${max_jit_level}
 	fi
-
-	use jit || jit_level=0
 
 	local jit_level_desc
 	if (( ${jit_level} == 7 )) ; then
