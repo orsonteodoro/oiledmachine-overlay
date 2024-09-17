@@ -2385,18 +2385,20 @@ ewarn "Gemini Lake requires a BIOS firmware update for RFDS mitigiation."
 		if \
 			use firmware \
 				&& \
-			   use cpu_target_x86_apollo_lake \
-			|| use cpu_target_x86_denverton \
-			|| use cpu_target_x86_snow_ridge \
-			|| use cpu_target_x86_parker_ridge \
-			|| use cpu_target_x86_elkhart_lake \
-			|| use cpu_target_x86_arizona_beach \
-			|| use cpu_target_x86_jasper_lake \
-			|| use cpu_target_x86_alder_lake \
-			|| use cpu_target_x86_alder_lake_n \
-			|| use cpu_target_x86_raptor_lake_gen13 \
-			|| use cpu_target_x86_raptor_lake_gen14 \
-			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+			( \
+				   use cpu_target_x86_apollo_lake \
+				|| use cpu_target_x86_denverton \
+				|| use cpu_target_x86_snow_ridge \
+					|| use cpu_target_x86_parker_ridge \
+				|| use cpu_target_x86_elkhart_lake \
+				|| use cpu_target_x86_arizona_beach \
+				|| use cpu_target_x86_jasper_lake \
+				|| use cpu_target_x86_alder_lake \
+				|| use cpu_target_x86_alder_lake_n \
+				|| use cpu_target_x86_raptor_lake_gen13 \
+				|| use cpu_target_x86_raptor_lake_gen14 \
+				|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+			) \
 		; then
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
