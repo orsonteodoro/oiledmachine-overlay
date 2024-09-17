@@ -18,6 +18,7 @@ esac
 if [[ -z ${_MITIGATE_TECV_ECLASS} ]] ; then
 _MITIGATE_TECV_ECLASS=1
 
+AUTO_KERNEL_VERSION="6.9"
 FIRMWARE_VENDOR=""
 _mitigate_tecv_set_globals() {
 	if [[ -e "/proc/cpuinfo" ]] ; then
@@ -133,6 +134,15 @@ CPU_TARGET_PPC=(
 	cpu_target_ppc_e5500
 	cpu_target_ppc_e6500
 )
+
+is_microarch_selected() {
+	local selected=1
+	local x
+	for x in ${CPU_TARGET_X86[@]} ${CPU_TARGET_ARM[@]} ${CPU_TARGET_PPC[@]} ; do
+		use "${x}" && selected=0
+	done
+	return ${selected}
+}
 
 inherit linux-info toolchain-funcs
 
@@ -1788,7 +1798,7 @@ _MITIGATE_TECV_REPTAR_RDEPEND_X86_32="
 
 
 _MITIGATE_TECV_AUTO="
-	$(gen_patched_kernel_list 6.9)
+	$(gen_patched_kernel_list ${AUTO_KERNEL_VERSION})
 
 "
 if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
@@ -3048,6 +3058,46 @@ eerror "Missing .config in /usr/src/linux"
 		die
 	fi
 
+	local x="${KERNEL_DIR}/Makefile"
+	local pv_major=$(grep "VERSION =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+	local pv_minor=$(grep "PATCHLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+	local pv_patch=$(grep "SUBLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+	local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
+	if use auto && ver_test "${pv_major}.${pv_minor}" -lt "${AUTO_KERNEL_VERSION}" ; then
+		if [[ -L "${KERNEL_DIR}" ]] ; then
+eerror "You need to switch the /usr/src/linux symlink to Linux Kernel >= ${AUTO_KERNEL_VERSION} for USE=auto."
+		else
+eerror "You need to replace the kernel sources to Linux Kernel >= ${AUTO_KERNEL_VERSION} for USE=auto."
+		fi
+eerror "Actual version:  ${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion}"
+		die
+	fi
+
+	if ! tc-is-cross-compiler && use custom-kernel ; then
+		local required_version=$(_mitigate-tecv_get_required_version)
+		[[ -z "${required_version}" ]] && required_version="${AUTO_KERNEL_VERSION}" # Fallback version
+		required_version="${AUTO_KERNEL_VERSION}" # Fallback version
+einfo "The required Linux Kernel version is >= ${required_version}."
+		local prev_kernel_dir="${KERNEL_DIR}"
+		local L=(
+			$(grep -l "EXTRAVERSION" $(ls "/usr/src/"*"/Makefile"))
+		)
+		local x
+		for x in ${L[@]} ; do
+			unset KV_FULL
+			local pv_major=$(grep "VERSION =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+			local pv_minor=$(grep "PATCHLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+			local pv_patch=$(grep "SUBLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+			local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
+	# linux-info's get_version() is spammy.
+			if ver_test "${pv_major}.${pv_minor}" -lt "${required_version}" ; then
+ewarn "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} does not have mitigations."
+			else
+einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
+			fi
+		done
+	fi
+
 	if linux_chkconfig_present "BPF" && ! use bpf ; then
 eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 		die
@@ -3077,10 +3127,10 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	# For SLAM, see https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability#2023
 }
 
-# @FUNCTION: _mitigate-tecv_print_required_versions
+# @FUNCTION: _mitigate-tecv_get_required_version
 # @DESCRIPTION:
-# Print the required kernel versions for custom-kernel.
-_mitigate-tecv_print_required_versions() {
+# Get the required kernel version for custom-kernel.
+_mitigate-tecv_get_required_version() {
 	if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
 		if \
 			   use cpu_target_x86_apollo_lake \
@@ -3119,36 +3169,36 @@ _mitigate-tecv_print_required_versions() {
 			|| use cpu_target_x86_catlow_golden_cove \
 			|| use cpu_target_x86_catlow_raptor_cove \
 		; then
-ewarn "You are responsible for using only Linux Kernel >= 6.9."
+			echo "6.9"
 		elif \
 			   use cpu_target_x86_skylake \
 			|| use cpu_target_x86_kaby_lake_gen7 \
 			|| use cpu_target_x86_zen \
 			|| use cpu_target_x86_zen_2 \
 		; then
-ewarn "You are responsible for using only Linux Kernel >= 6.5."
+			echo "6.5"
 		elif \
 			   use cpu_target_x86_zen \
 			|| use cpu_target_x86_zen_plus \
 			|| use cpu_target_x86_broadwell \
 			|| use cpu_target_x86_hewitt_lake \
 		; then
-ewarn "You are responsible for using only Linux Kernel >= 5.19."
+			echo "5.19"
 		elif use bpf ; then
-ewarn "You are responsible for using only Linux Kernel >= 5.13."
+			echo "5.13"
 		elif \
 			   use cpu_target_x86_haswell \
 		; then
-ewarn "You are responsible for using only Linux Kernel >= 5.4."
+			echo "5.4"
 		elif \
 			   use cpu_target_x86_nehalem \
 			|| use cpu_target_x86_westmere \
 			|| use cpu_target_x86_sandy_bridge \
 			|| use cpu_target_x86_ivy_bridge \
 		; then
-ewarn "You are responsible for using only Linux Kernel >= 4.19."
+			echo "4.19"
 		else
-ewarn "You are responsible for using only Linux Kernel >= 4.15."
+			echo "4.15"
 		fi
 	fi
 	if [[ "${ARCH}" == "ppc" || "${ARCH}" == "ppc64" ]] ; then
@@ -3158,13 +3208,13 @@ ewarn "You are responsible for using only Linux Kernel >= 4.15."
 			|| use cpu_target_ppc_e5500 \
 			|| use cpu_target_ppc_e6500 \
 		; then
-ewarn "You are responsible for using only Linux Kernel >= 5.0."
+			echo "5.0"
 		else
-ewarn "You are responsible for using only Linux Kernel >= 4.15."
+			echo "4.15"
 		fi
 	fi
 	if [[ "${ARCH}" == "s390" ]] ; then
-ewarn "You are responsible for using only Linux Kernel >= 4.15."
+		echo "4.15"
 	fi
 	if [[ "${ARCH}" == "arm64" ]] ; then
 		if \
@@ -3192,18 +3242,18 @@ ewarn "You are responsible for using only Linux Kernel >= 4.15."
 			|| use cpu_target_arm_cortex_x2 \
 			|| use cpu_target_arm_cortex_x3 \
 		; then
-ewarn "You are responsible for using only Linux Kernel >= 6.1."
+			echo "6.1"
 		elif use bpf ; then
-ewarn "You are responsible for using only Linux Kernel >= 5.13."
+			echo "5.13"
 		elif \
 			   use cpu_target_arm_cortex_a15 \
 			|| use cpu_target_arm_cortex_a75 \
 		; then
-ewarn "You are responsible for using only Linux Kernel >= 4.16."
+			echo "4.16"
 		else
 # Placeholder
 # TODO:  Verify earliest version for Variant 1 and Variant 2 mitigations
-ewarn "You are responsible for using only Linux Kernel >= 4.16."
+			echo "4.16"
 		fi
 	fi
 }
@@ -3223,11 +3273,6 @@ ewarn "CPU vulnerability mitigation has not been added yet for ARCH=${ARCH}."
 	if use kernel_linux ; then
 		linux-info_pkg_setup
 		_mitigate-tecv_check_kernel_flags
-		if use custom-kernel ; then
-ewarn "You are responsible for using only Linux Kernel >= 6.9."
-		else
-			_mitigate-tecv_print_required_versions
-		fi
 # It is a common practice by hardware manufacturers to delete support or
 # historical information after a period of time.
 		if use cpu_target_x86_core ; then
@@ -3254,11 +3299,7 @@ ewarn "Use a CPU vulnerability checker to verify complete mitigation or to help 
 # @DESCRIPTION:
 # Remind user to use only patched kernels especially for large packages.
 mitigate-tecv_pkg_postinst() {
-	if use kernel_linux ; then
-		if use custom-kernel ; then
-			_mitigate-tecv_print_required_versions
-		fi
-	fi
+	:
 }
 
 fi
