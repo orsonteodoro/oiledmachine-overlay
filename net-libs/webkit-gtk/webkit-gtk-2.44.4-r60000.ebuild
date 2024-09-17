@@ -2406,11 +2406,6 @@ ewarn
 		append-cppflags -DCUSTOM_PAGE_SIZE=${CUSTOM_PAGE_SIZE}
 	fi
 
-	local nproc=$(get_nproc)
-	if ! use jit && (( "${nproc}" <= 1 )) ; then
-		die "The jit USE flag must be on."
-	fi
-
 	# See Source/cmake/WebKitFeatures.cmake
 	local pointer_size=$(tc-get-ptr-size)
 
@@ -2481,23 +2476,11 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_JIT=$(usex jit)
 			-DENABLE_DFG_JIT=$(usex jit)
 			-DENABLE_FTL_JIT=OFF
+			-DENABLE_WEBASSEMBLY=OFF
+			-DENABLE_WEBASSEMBLY_B3JIT=OFF
+			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
+			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
 		)
-		if [[ "${ARCH}" =~ "amd64" || "${ARCH}" =~ "arm64" || "${ARCH}" =~ "riscv" ]] ; then
-			mycmakeargs+=(
-				-DENABLE_WEBASSEMBLY=$(usex webassembly "ON" "OFF")
-				-DENABLE_WEBASSEMBLY_B3JIT=$(use jit)
-				-DENABLE_WEBASSEMBLY_BBQJIT=$(use webassembly)
-				-DENABLE_WEBASSEMBLY_OMGJIT=$(use webassembly)
-			)
-		else
-			mycmakeargs+=(
-				-DENABLE_WEBASSEMBLY=OFF
-				-DENABLE_WEBASSEMBLY_B3JIT=OFF
-				-DENABLE_WEBASSEMBLY_BBQJIT=OFF
-				-DENABLE_WEBASSEMBLY_OMGJIT=OFF
-			)
-		fi
-
 
 		if [[ "${ABI}" == "amd64" || "${ABI}" == "amd64" ]] && ( [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ) ; then
 			mycmakeargs+=(
@@ -2518,10 +2501,27 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_DFG_JIT=$(usex jit)
 			-DENABLE_FTL_JIT=$(usex jit)
 			-DENABLE_WEBASSEMBLY=$(usex webassembly "ON" "OFF")
-			-DENABLE_WEBASSEMBLY_B3JIT=$(usex jit)
-			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly) # -O0 build speed
-			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly) # -O2 runtime speed + PGO
 		)
+
+		if [[ "${ABI}" == "arm" ]] ; then
+			mycmakeargs+=(
+				-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly)
+				-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly)
+				-DENABLE_WEBASSEMBLY_OMGJIT=OFF
+			)
+		elif [[ "${ABI}" == "riscv" ]] ; then
+			mycmakeargs+=(
+				-DENABLE_WEBASSEMBLY_B3JIT=OFF
+				-DENABLE_WEBASSEMBLY_BBQJIT=OFF
+				-DENABLE_WEBASSEMBLY_OMGJIT=OFF
+			)
+		else
+			mycmakeargs+=(
+				-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly)
+				-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly) # -O0 build speed
+				-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly) # -O2 runtime speed + PGO
+			)
+		fi
 
 		if [[ "${ABI}" == "amd64" || "${ABI}" == "amd64" ]] && ( [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ) ; then
 			mycmakeargs+=(
@@ -2638,7 +2638,7 @@ ewarn
 ewarn "(1) Enable the jit USE flag."
 ewarn "(2) Change the kernel config to use memory page sizes less than 64 KB."
 ewarn "(3) Set CUSTOM_PAGE_SIZE environment variable less than 64 KB."
-ewarn "(4) Set to at least -O1 or JIT_LEVEL_OVERRIDE=2 or higher."
+ewarn "(4) Set to at least -O2 or JIT_LEVEL_OVERRIDE=5 or higher."
 ewarn
 	fi
 
