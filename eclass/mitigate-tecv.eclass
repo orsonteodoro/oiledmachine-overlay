@@ -1065,6 +1065,12 @@ _MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64="
 			>=sys-firmware/intel-microcode-20191112
 		)
 	)
+	cpu_target_x86_comet_lake? (
+		$(gen_patched_kernel_list 5.4)
+		firmware? (
+			>=sys-firmware/intel-microcode-20191112
+		)
+	)
 	cpu_target_x86_amber_lake_gen10? (
 		$(gen_patched_kernel_list 5.4)
 		firmware? (
@@ -2740,6 +2746,7 @@ _mitigate_tecv_verify_mitigation_zombieload_v2() {
 			|| use cpu_target_x86_kaby_lake_gen8 \
 			|| use cpu_target_x86_whiskey_lake \
 			|| use cpu_target_x86_coffee_lake_gen9 \
+			|| use cpu_target_x86_comet_lake \
 			|| use cpu_target_x86_amber_lake_gen10 \
 			|| use cpu_target_x86_cascade_lake \
 			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
@@ -2796,6 +2803,9 @@ eerror
 ewarn "Missing firmware for Gen4 TAA mitigations"
 	fi
 	if use cpu_target_x86_broadwell ; then
+ewarn "Missing firmware for Gen5 TAA mitigations"
+	fi
+	if use cpu_target_x86_hewitt_lake ; then
 ewarn "Missing firmware for Gen5 TAA mitigations"
 	fi
 }
