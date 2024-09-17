@@ -1181,6 +1181,12 @@ _MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64="
 			>=sys-firmware/intel-microcode-20200609
 		)
 	)
+	cpu_target_x86_comet_lake? (
+		$(gen_patched_kernel_list 5.8)
+		firmware? (
+			>=sys-firmware/intel-microcode-20200609
+		)
+	)
 	cpu_target_x86_coffee_lake_gen9? (
 		$(gen_patched_kernel_list 5.8)
 		firmware? (
@@ -2649,6 +2655,7 @@ _mitigate_tecv_verify_mitigation_crosstalk() {
 				|| use cpu_target_x86_coffee_lake_gen8 \
 				|| use cpu_target_x86_kaby_lake_gen8 \
 				|| use cpu_target_x86_whiskey_lake \
+				|| use cpu_target_x86_comet_lake \
 				|| use cpu_target_x86_coffee_lake_gen9 \
 				|| use cpu_target_x86_amber_lake_gen10 \
 				|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
