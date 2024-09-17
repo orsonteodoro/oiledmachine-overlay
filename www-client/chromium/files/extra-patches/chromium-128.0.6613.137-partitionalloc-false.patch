@@ -327,3 +327,33 @@ index 644aefb..a2f53015 100644
  #endif  // PA_BUILDFLAG(USE_PARTITION_ALLOC)
  
  std::shared_ptr<v8::TaskRunner> V8Platform::GetForegroundTaskRunner(
+--- a/base/allocator/partition_allocator/src/partition_alloc/BUILD.gn.orig	2024-09-10 11:41:56.323242700 -0700
++++ b/base/allocator/partition_allocator/src/partition_alloc/BUILD.gn	2024-09-17 07:46:49.708201668 -0700
+@@ -19,9 +19,9 @@ if (!defined(partition_alloc_remove_conf
+ # carry out runtime evaluation of PartitionAlloc's two freelist
+ # implementations: the existing encoded-next freelist and the new
+ # pool offset freelist. When false, the latter is not built.
+-use_freelist_dispatcher = has_64_bit_pointers
++use_freelist_dispatcher = use_partition_alloc && has_64_bit_pointers
+ 
+-assert(has_64_bit_pointers || !use_freelist_dispatcher,
++assert(!use_partition_alloc || has_64_bit_pointers || !use_freelist_dispatcher,
+        "freelist dispatcher can't be used without 64-bit pointers")
+ 
+ record_alloc_info = false
+--- a/third_party/blink/renderer/platform/wtf/allocator/partitions.cc.orig	2024-09-17 02:28:55.256360465 -0700
++++ b/third_party/blink/renderer/platform/wtf/allocator/partitions.cc	2024-09-17 07:49:23.571227720 -0700
+@@ -122,11 +122,13 @@ partition_alloc::PartitionOptions Partit
+   opts.backup_ref_ptr = brp_setting;
+   opts.memory_tagging = {.enabled = memory_tagging};
+   opts.use_pool_offset_freelists = use_pool_offset_freelists;
++#if PA_BUILDFLAG(USE_PARTITION_ALLOC)
+   opts.use_small_single_slot_spans =
+       base::FeatureList::IsEnabled(
+           base::features::kPartitionAllocUseSmallSingleSlotSpans)
+           ? partition_alloc::PartitionOptions::kEnabled
+           : partition_alloc::PartitionOptions::kDisabled;
++#endif
+   return opts;
+ }
+ 
