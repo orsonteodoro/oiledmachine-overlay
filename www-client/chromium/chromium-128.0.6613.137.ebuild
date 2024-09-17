@@ -3213,13 +3213,13 @@ ewarn
 			jit_level=0
 		fi
 
-		# Place hardware limits here
-		# Disable the more powerful JIT for older machines to speed up build time.
-		use jit || jit_level=0
-
 		if [[ -n "${JIT_LEVEL_OVERRIDE}" ]] ; then
 			jit_level=${JIT_LEVEL_OVERRIDE}
 		fi
+
+		# Place hardware limits here
+		# Disable the more powerful JIT for older machines to speed up build time.
+		use jit || jit_level=0
 
 		local jit_level_desc
 		if (( ${jit_level} == 7 )) ; then
