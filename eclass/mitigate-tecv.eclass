@@ -2374,8 +2374,13 @@ eerror
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against RFDS.
 _mitigate_tecv_verify_mitigation_rfds() {
-	use cpu_target_x86_snow_ridge_bts && eerror "No planned mitigation for RFDS."
-	use cpu_target_x86_gemini_lake && ewarn "cpu_target_x86_gemini_lake requires a BIOS firmware update."
+	if use auto ; then
+eerror "No planned mitigation for RFDS for Snow Ridge BTS."
+ewarn "Gemini Lake requires a BIOS firmware update for RFDS mitigiation."
+	else
+		use cpu_target_x86_snow_ridge_bts && eerror "No planned mitigation for RFDS for Snow Ridge BTS."
+		use cpu_target_x86_gemini_lake && ewarn "Gemini Lake requires a BIOS firmware update for RFDS mitigation."
+	fi
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
 		if \
 			use firmware \
