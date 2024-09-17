@@ -2562,16 +2562,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 	elif \
 		( [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ) \
 			|| \
-		( \
-			[[ \
-				   "${ARCH}" == "mips" \
-				|| "${ARCH}" == "mipsel" \
-				|| "${ARCH}" == "mips64" \
-				|| "${ARCH}" == "mips64el" \
-			]] \
-				&& \
-			(( ${pointer_size} == 4 )) \
-		) \
+		[[ "${ARCH}" =~ "mips" && "${ABI}" =~ ("n32"|"o32") ]] \
 	; then
 		max_jit_level=4
 	else
