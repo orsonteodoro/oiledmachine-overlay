@@ -2069,6 +2069,27 @@ _MITIGATE_TECV_MPF_RDEPEND_X86_32="
 	${_MITIGATE_TECV_MPF_RDEPEND_X86_64}
 "
 
+_MITIGATE_TECV_FSFPCD_RDEPEND_X86_64="
+	cpu_target_x86_ice_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20220207
+		)
+	)
+	cpu_target_x86_tiger_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20220207
+		)
+	)
+	cpu_target_x86_rocket_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20220207
+		)
+	)
+"
+_MITIGATE_TECV_FSFPCD_RDEPEND_X86_32="
+	${_MITIGATE_TECV_FSFPCD_RDEPEND_X86_64}
+"
+
 _MITIGATE_TECV_AUTO="
 	arm? (
 		$(gen_patched_kernel_list 6.1)
@@ -2138,6 +2159,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_MMIO_RDEPEND_X86_64}
 				${_MITIGATE_TECV_RETBLEED_RDEPEND_X86_64}
 				${_MITIGATE_TECV_MPF_RDEPEND_X86_64}
+				${_MITIGATE_TECV_FSFPCD_RDEPEND_X86_64}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
 				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_64}
 				${_MITIGATE_TECV_IBPB_RDEPEND_X86_64}
@@ -2169,6 +2191,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_BHI_RDEPEND_X86_32}
 				${_MITIGATE_TECV_MMIO_RDEPEND_X86_32}
 				${_MITIGATE_TECV_MPF_RDEPEND_X86_32}
+				${_MITIGATE_TECV_FSFPCD_RDEPEND_X86_32}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32}
 				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_32}
 				${_MITIGATE_TECV_IBPB_RDEPEND_X86_32}
@@ -3591,6 +3614,26 @@ _mitigate_tecv_verify_mitigation_mpf() {
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_fsfpcd
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2021-0145, also known as the Fast Store Forwarding: Cross Domain (FSFPCD) vulnerability.
+_mitigate_tecv_verify_mitigation_fsfpcd() {
+	if \
+		   use cpu_target_x86_ice_lake
+		|| use cpu_target_x86_tiger_lake
+		|| use cpu_target_x86_rocket_lake
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2021-0145, also known as the Fast Store Forwarding: Cross Domain (FSFPCD) vulnerability."
+		check_extra_config
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -3672,6 +3715,7 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_verify_mitigation_mds			# Mitigations against ZombieLoad/MFBDS (2028), MLPDS (2028), MSBDS (2018), MDSUM (2019)
 	_mitigate_tecv_verify_mitigation_cacheout		# Mitigations against L1DES (2020), VRS (2020)
 	_mitigate_tecv_verify_mitigation_mpf			# Mitigations against MPF (2021)
+	_mitigate_tecv_verify_mitigation_fsfpcd			# Mitigations against FSFPCD (2021)
 	_mitigate_tecv_verify_mitigation_downfall		# Mitigations against GDS (2022)
 	_mitigate_tecv_verify_mitigation_retbleed		# Mitigations against Retbleed (2022)
 	_mitigate_tecv_verify_mitigation_mmio_stale_data	# Mitigations against SBDR (2022), SBDS (2022), DRPW (2022)
