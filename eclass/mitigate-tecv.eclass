@@ -3410,7 +3410,7 @@ _mitigate_tecv_mitigate_privilege_escalation_with_ssp() {
 	CONFIG_CHECK="
 		STACKPROTECTOR
 	"
-	ERROR_RELOCATABLE="CONFIG_STACKPROTECTOR is required for SSP to mitigate against privilege escalation which could lead to data theft."
+	ERROR_STACKPROTECTOR="CONFIG_STACKPROTECTOR is required for SSP to mitigate against privilege escalation which could lead to data theft."
 }
 
 # @FUNCTION: _mitigate_tecv_mitigate_privilege_escalation_with_aslr
