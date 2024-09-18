@@ -118,6 +118,7 @@ CPU_TARGET_ARM=(
 	cpu_target_arm_cortex_a78	# BHB
 	cpu_target_arm_cortex_a78c	# BHB
 	cpu_target_arm_cortex_x1	# BHB
+	cpu_target_arm_cortex_x1c
 	cpu_target_arm_neoverse_n1	# BHB, Variant 4
 
 # 64-bit
@@ -126,12 +127,17 @@ CPU_TARGET_ARM=(
 	cpu_target_arm_cortex_a78ae	# BHB
 	cpu_target_arm_cortex_a710	# BHB
 	cpu_target_arm_cortex_a715	# BHB
+	cpu_target_arm_cortex_a720
+	 cpu_target_arm_cortex_a725
 	cpu_target_arm_cortex_x2	# BHB
 	cpu_target_arm_cortex_x3	# BHB
+	 cpu_target_arm_cortex_x4
+	 cpu_target_arm_cortex_x925
 	cpu_target_arm_neoverse_e1	# BHB
 	cpu_target_arm_neoverse_n2	# BHB
 	cpu_target_arm_neoverse_v1	# BHB
 	cpu_target_arm_neoverse_v2	# BHB
+	 cpu_target_arm_neoverse_v3
 	cpu_target_arm_ampereone	# BHB
 	cpu_target_arm_thunderx2	# Spectre v2
 	cpu_target_arm_falkor		# Spectre v2
@@ -1893,6 +1899,62 @@ _MITIGATE_TECV_REPTAR_RDEPEND_X86_32="
 	${_MITIGATE_TECV_REPTAR_RDEPEND_X86_64}
 "
 
+_MITIGATE_TECV_USSB_RDEPEND_ARM64="
+	cpu_target_arm_cortex_a76? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_cortex_a77? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_cortex_a78? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_cortex_a78c? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_cortex_a710? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_cortex_a720? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_cortex_a725? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_cortex_x1? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_cortex_x1c? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_cortex_x2? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_cortex_x3? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_cortex_x4? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_cortex_x925? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_neoverse_n1? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_neoverse_n2? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_neoverse_v1? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_neoverse_v2? (
+		$(gen_patched_kernel_list 6.11)
+	)
+	cpu_target_arm_neoverse_v3? (
+		$(gen_patched_kernel_list 6.11)
+	)
+"
 
 _MITIGATE_TECV_AUTO="
 	arm? (
@@ -1947,6 +2009,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_MELTDOWN_RDEPEND_ARM64}
 				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_ARM64}
 				${_MITIGATE_TECV_BHB_RDEPEND_ARM64}
+				${_MITIGATE_TECV_USSB_RDEPEND_ARM64}
 			)
 			amd64? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_X86_64}
@@ -3252,6 +3315,43 @@ eerror ">=sys-firmware/intel-microcode-20231114 is required for Reptar mitigatio
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_ussb
+# @INTERNAL
+# @DESCRIPTION:
+# See commit adeec61
+# Check the kernel config flags and kernel command line to mitigate against Unexpected Speculative Store Bypass (USSB).
+_mitigate_tecv_verify_mitigation_ussb() {
+	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.11" ; then
+		if \
+			   use cpu_target_arm_cortex_a76 \
+			|| use cpu_target_arm_cortex_a77 \
+			|| use cpu_target_arm_cortex_a78 \
+			|| use cpu_target_arm_cortex_a78c \
+			|| use cpu_target_arm_cortex_710 \
+			|| use cpu_target_arm_cortex_720 \
+			|| use cpu_target_arm_cortex_725 \
+			|| use cpu_target_arm_cortex_x1 \
+			|| use cpu_target_arm_cortex_x1c \
+			|| use cpu_target_arm_cortex_x2 \
+			|| use cpu_target_arm_cortex_x3 \
+			|| use cpu_target_arm_cortex_x4 \
+			|| use cpu_target_arm_cortex_x925 \
+			|| use cpu_target_arm_neoverse_n1 \
+			|| use cpu_target_arm_neoverse_n2 \
+			|| use cpu_target_arm_neoverse_v1 \
+			|| use cpu_target_arm_neoverse_v2 \
+			|| use cpu_target_arm_neoverse_v3 \
+			|| use auto \
+		; then
+			CONFIG_CHECK="
+				ARM64_ERRATUM_3194386
+			"
+			ERROR_ARM64_ERRATUM_3194386="CONFIG_ARM64_ERRATUM_3194386 is required for Unexpected Speculative Store Bypass mitigation."
+			check_extra_config
+		fi
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -3331,6 +3431,7 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023)
 	_mitigate_tecv_verify_mitigation_inception		# Mitigations against SRSO (2023)
 	_mitigate_tecv_verify_mitigation_rfds			# Mitigations against RFDS (2024)
+	_mitigate_tecv_verify_mitigation_ussb			# Mitigations against USSB (2024)
 
 	# For SLAM, see https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability#2023
 }
@@ -3346,7 +3447,7 @@ _mitigate-tecv_get_fallback_version() {
 	elif [[ "${ARCH}" == "s390" ]] ; then
 		echo "4.16"
 	elif [[ "${ARCH}" == "arm64" ]] ; then
-		echo "5.18"
+		echo "6.11"
 	elif [[ "${ARCH}" == "arm" ]] ; then
 		echo "6.1"
 	else
@@ -3445,8 +3546,28 @@ _mitigate-tecv_get_required_version() {
 	fi
 	if [[ "${ARCH}" == "arm64" ]] ; then
 # TODO: Spectre v4/v3a
-
 		if \
+			   use cpu_target_arm_cortex_a76 \
+			|| use cpu_target_arm_cortex_a77 \
+			|| use cpu_target_arm_cortex_a78 \
+			|| use cpu_target_arm_cortex_a78c \
+			|| use cpu_target_arm_cortex_a710 \
+			|| use cpu_target_arm_cortex_a720 \
+			|| use cpu_target_arm_cortex_a725 \
+			|| use cpu_target_arm_cortex_x1 \
+			|| use cpu_target_arm_cortex_x1c \
+			|| use cpu_target_arm_cortex_x2 \
+			|| use cpu_target_arm_cortex_x3 \
+			|| use cpu_target_arm_cortex_x4 \
+			|| use cpu_target_arm_cortex_x925 \
+			|| use cpu_target_arm_neoverse_n1 \
+			|| use cpu_target_arm_neoverse_n2 \
+			|| use cpu_target_arm_neoverse_v1 \
+			|| use cpu_target_arm_neoverse_v2 \
+			|| use cpu_target_arm_neoverse_v3 \
+		; then
+			echo "6.11" # USSB
+		elif \
 			   use cpu_target_arm_cortex_a78ae \
 		; then
 			echo "5.18" # BHB
@@ -3455,16 +3576,6 @@ _mitigate-tecv_get_required_version() {
 			|| use cpu_target_arm_cortex_a72 \
 			|| use cpu_target_arm_cortex_a73 \
 			|| use cpu_target_arm_cortex_a75 \
-			|| use cpu_target_arm_cortex_a76 \
-			|| use cpu_target_arm_cortex_a77 \
-			|| use cpu_target_arm_cortex_a78 \
-			|| use cpu_target_arm_cortex_a78c \
-			|| use cpu_target_arm_cortex_a710 \
-			|| use cpu_target_arm_cortex_x1 \
-			|| use cpu_target_arm_cortex_x2 \
-			|| use cpu_target_arm_neoverse_n1 \
-			|| use cpu_target_arm_neoverse_n2 \
-			|| use cpu_target_arm_neoverse_v1 \
 							\
 			|| use cpu_target_arm_cortex_a75 \
 							\
@@ -3472,8 +3583,6 @@ _mitigate-tecv_get_required_version() {
 			|| use cpu_target_arm_cortex_a65ae \
 			|| use cpu_target_arm_cortex_a715 \
 			|| use cpu_target_arm_neoverse_e1 \
-			|| use cpu_target_arm_neoverse_v2 \
-			|| use cpu_target_arm_cortex_x3 \
 		; then
 # Missing explicit recognition of BHB fix in kernel for subgroup above.  In the docs it says yes.
 			echo "5.17"
