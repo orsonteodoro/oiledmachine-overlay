@@ -97,12 +97,16 @@ CPU_TARGET_ARM=(
 # See also
 # https://developer.arm.com/Arm%20Security%20Center/Speculative%20Processor%20Vulnerability
 # https://github.com/torvalds/linux/blob/v6.10/arch/arm64/kernel/cpufeature.c#L1739
+
+
+# 32-bit
+	cpu_target_arm_cortex_a15	# BHB, Variant 3a
 	cpu_target_arm_cortex_r7	# BHB
 	cpu_target_arm_cortex_r8	# BHB
-	cpu_target_arm_cortex_a15	# BHB, Variant 3a
+	cpu_target_arm_brahma_b15	# BHB
+
+# 32-/64-bit
 	cpu_target_arm_cortex_a57	# BHB, Variant 3a, Variant 4
-	cpu_target_arm_cortex_a65	# BHB
-	cpu_target_arm_cortex_a65ae	# BHB
 	cpu_target_arm_cortex_a72	# BHB, Variant 3a, Variant 4
 	cpu_target_arm_cortex_a73	# BHB, Variant 4
 	cpu_target_arm_cortex_a75	# BHB, Variant 3, Variant 4
@@ -110,16 +114,22 @@ CPU_TARGET_ARM=(
 	cpu_target_arm_cortex_a77	# BHB, Variant 4
 	cpu_target_arm_cortex_a78	# BHB
 	cpu_target_arm_cortex_a78c	# BHB
+	cpu_target_arm_cortex_x1	# BHB
+	cpu_target_arm_neoverse_n1	# BHB, Variant 4
+
+# 64-bit
+	cpu_target_arm_cortex_a65	# BHB
+	cpu_target_arm_cortex_a65ae	# BHB
+	cpu_target_arm_cortex_a78ae	# BHB
 	cpu_target_arm_cortex_a710	# BHB
 	cpu_target_arm_cortex_a715	# BHB
-	cpu_target_arm_neoverse_e1	# BHB
-	cpu_target_arm_neoverse_n1	# BHB, Variant 4
-	cpu_target_arm_neoverse_v1	# BHB
-	cpu_target_arm_neoverse_n2	# BHB
-	cpu_target_arm_neoverse_v2	# BHB
-	cpu_target_arm_cortex_x1	# BHB
 	cpu_target_arm_cortex_x2	# BHB
 	cpu_target_arm_cortex_x3	# BHB
+	cpu_target_arm_neoverse_e1	# BHB
+	cpu_target_arm_neoverse_n2	# BHB
+	cpu_target_arm_neoverse_v1	# BHB
+	cpu_target_arm_neoverse_v2	# BHB
+	cpu_target_arm_ampereone	# BHB
 )
 
 CPU_TARGET_PPC=(
@@ -1807,8 +1817,11 @@ _MITIGATE_TECV_REPTAR_RDEPEND_X86_32="
 
 
 _MITIGATE_TECV_AUTO="
-	arm64? (
+	arm? (
 		$(gen_patched_kernel_list 6.1)
+	)
+	arm64? (
+		$(gen_patched_kernel_list 5.18)
 	)
 	amd64? (
 		$(gen_patched_kernel_list 6.9)
@@ -2305,7 +2318,36 @@ eerror
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Spectre-BHB.
 _mitigate_tecv_verify_mitigation_spectre_bhb() {
+	if [[ "${ARCH}" == "arm" ]] && ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.17" ; then
+		if \
+			   use cpu_target_arm_brahma_b15 \
+			|| use cpu_target_arm_cortex_a15 \
+			|| use cpu_target_arm_cortex_a57 \
+			|| use cpu_target_arm_cortex_a72 \
+			|| use cpu_target_arm_cortex_a73 \
+			|| use cpu_target_arm_cortex_a75 \
+		; then
+			CONFIG_CHECK="
+				HARDEN_BRANCH_HISTORY
+			"
+			ERROR_HARDEN_BRANCH_HISTORY="CONFIG_HARDEN_BRANCH_HISTORY=y is required for Spectre BHB mitigation."
+			check_extra_config
+		fi
+	fi
 	if [[ "${ARCH}" == "arm64" ]] && ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.1" ; then
+		if \
+			   use cpu_target_arm_cortex_a57 \
+			|| use cpu_target_arm_cortex_a72 \
+			|| use cpu_target_arm_cortex_a73 \
+			|| use cpu_target_arm_cortex_a75 \
+		; then
+			CONFIG_CHECK="
+				HARDEN_BRANCH_HISTORY
+			"
+			ERROR_HARDEN_BRANCH_HISTORY="CONFIG_HARDEN_BRANCH_HISTORY=y is required for Spectre BHB mitigation."
+			check_extra_config
+		fi
+
 		if _check_kernel_cmdline "mitigations=off" ; then
 eerror
 eerror "Detected mitigations=off in the kernel command line."
@@ -3164,8 +3206,10 @@ _mitigate-tecv_get_fallback_version() {
 	elif [[ "${ARCH}" == "ppc" || "${ARCH}" == "ppc64" ]] ; then
 		echo "5.0"
 	elif [[ "${ARCH}" == "s390" ]] ; then
-		echo "4.15"
+		echo "4.16"
 	elif [[ "${ARCH}" == "arm64" ]] ; then
+		echo "5.18"
+	elif [[ "${ARCH}" == "arm" ]] ; then
 		echo "6.1"
 	else
 		echo "4.16"
@@ -3259,16 +3303,24 @@ _mitigate-tecv_get_required_version() {
 		fi
 	fi
 	if [[ "${ARCH}" == "s390" ]] ; then
-		echo "4.15"
+		echo "4.16"
 	fi
 	if [[ "${ARCH}" == "arm64" ]] ; then
+# TODO: Spectre v4/v3a
+
+# Missing explicit recognition of BHB fix in kernel.  In the docs it says yes.
+#			|| use cpu_target_arm_cortex_a65 \
+#			|| use cpu_target_arm_cortex_a65ae \
+#			|| use cpu_target_arm_cortex_a715 \
+#			|| use cpu_target_arm_neoverse_e1 \
+#			|| use cpu_target_arm_neoverse_v2 \
+#			|| use cpu_target_arm_cortex_x3 \
 		if \
-			   use cpu_target_arm_cortex_r7 \
-			|| use cpu_target_arm_cortex_r8 \
-			|| use cpu_target_arm_cortex_a15 \
-			|| use cpu_target_arm_cortex_a57 \
-			|| use cpu_target_arm_cortex_a65 \
-			|| use cpu_target_arm_cortex_a65ae \
+			   use cpu_target_arm_cortex_a78ae \
+		; then
+			echo "5.18" # BHB
+		elif \
+			   use cpu_target_arm_cortex_a57 \
 			|| use cpu_target_arm_cortex_a72 \
 			|| use cpu_target_arm_cortex_a73 \
 			|| use cpu_target_arm_cortex_a75 \
@@ -3277,28 +3329,54 @@ _mitigate-tecv_get_required_version() {
 			|| use cpu_target_arm_cortex_a78 \
 			|| use cpu_target_arm_cortex_a78c \
 			|| use cpu_target_arm_cortex_a710 \
-			|| use cpu_target_arm_cortex_a715 \
-			|| use cpu_target_arm_neoverse_e1 \
-			|| use cpu_target_arm_neoverse_n1 \
-			|| use cpu_target_arm_neoverse_v1 \
-			|| use cpu_target_arm_neoverse_n2 \
-			|| use cpu_target_arm_neoverse_v2 \
 			|| use cpu_target_arm_cortex_x1 \
 			|| use cpu_target_arm_cortex_x2 \
-			|| use cpu_target_arm_cortex_x3 \
-		; then
-			echo "6.1"
-		elif use bpf ; then
-			echo "5.13"
-		elif \
-			   use cpu_target_arm_cortex_a15 \
+			|| use cpu_target_arm_neoverse_n1 \
+			|| use cpu_target_arm_neoverse_n2 \
+			|| use cpu_target_arm_neoverse_v1 \
+							\
 			|| use cpu_target_arm_cortex_a75 \
 		; then
-			echo "4.16"
+			echo "5.17"
+		elif use bpf ; then
+			echo "5.13"
 		else
 # Placeholder
 # TODO:  Verify earliest version for Variant 1 and Variant 2 mitigations
 			echo "4.16"
+		fi
+	fi
+	if [[ "${ARCH}" == "arm" ]] ; then
+
+		if \
+			   use cpu_target_arm_ampereone \
+		; then
+			echo "6.1" # BHB
+		elif \
+			   use cpu_target_arm_brahma_b15 \
+			|| use cpu_target_arm_cortex_a15 \
+			|| use cpu_target_arm_cortex_a57 \
+			|| use cpu_target_arm_cortex_a72 \
+			|| use cpu_target_arm_cortex_a73 \
+			|| use cpu_target_arm_cortex_a75 \
+		; then
+			echo "5.18" # BHB # See commit 0dc14aa
+		elif \
+			   use cpu_target_arm_cortex_a76 \
+			|| use cpu_target_arm_cortex_a77 \
+			|| use cpu_target_arm_cortex_a78 \
+			|| use cpu_target_arm_cortex_a78c \
+			|| use cpu_target_arm_neoverse_n1 \
+			|| use cpu_target_arm_cortex_x1 \
+		; then
+			echo "5.17" # BHB
+		elif use bpf ; then
+			echo "5.13"
+		elif \
+			   use cpu_target_arm_cortex_r7 \
+			|| use cpu_target_arm_cortex_r8 \
+		; then
+			echo "4.19" # Spectre
 		fi
 	fi
 }
