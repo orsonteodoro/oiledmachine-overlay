@@ -2005,42 +2005,68 @@ _MITIGATE_TECV_USSB_RDEPEND_ARM64="
 _MITIGATE_TECV_IBPB_RDEPEND_X86_64="
 	cpu_target_x86_sapphire_rapids? (
 		firmware? (
-			>=sys-firmware/intel-microcode-20240813
+			>=sys-firmware/intel-microcode-20240312
 		)
 	)
 	cpu_target_x86_sapphire_rapids_edge_enhanced? (
 		firmware? (
-			>=sys-firmware/intel-microcode-20240813
+			>=sys-firmware/intel-microcode-20240312
 		)
 	)
 	cpu_target_x86_alder_lake? (
 		firmware? (
-			>=sys-firmware/intel-microcode-20240813
+			>=sys-firmware/intel-microcode-20240312
 		)
 	)
 	cpu_target_x86_catlow_golden_cove? (
 		firmware? (
-			>=sys-firmware/intel-microcode-20240813
+			>=sys-firmware/intel-microcode-20240312
 		)
 	)
 	cpu_target_x86_catlow_raptor_cove? (
 		firmware? (
-			>=sys-firmware/intel-microcode-20240813
+			>=sys-firmware/intel-microcode-20240312
 		)
 	)
 	cpu_target_x86_raptor_lake_gen13? (
 		firmware? (
-			>=sys-firmware/intel-microcode-20240813
+			>=sys-firmware/intel-microcode-20240312
 		)
 	)
 	cpu_target_x86_raptor_lake_gen14? (
 		firmware? (
-			>=sys-firmware/intel-microcode-20240813
+			>=sys-firmware/intel-microcode-20240312
 		)
 	)
 "
 _MITIGATE_TECV_IBPB_RDEPEND_X86_32="
 	${_MITIGATE_TECV_IBPB_RDEPEND_X86_64}
+"
+
+_MITIGATE_TECV_MPF_RDEPEND_X86_64="
+	cpu_target_x86_snow_ridge? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20220207
+		)
+	)
+	cpu_target_x86_parker_ridge? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20220207
+		)
+	)
+	cpu_target_x86_elkhart_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20220207
+		)
+	)
+	cpu_target_x86_jasper_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20220207
+		)
+	)
+"
+_MITIGATE_TECV_MPF_RDEPEND_X86_32="
+	${_MITIGATE_TECV_MPF_RDEPEND_X86_64}
 "
 
 _MITIGATE_TECV_AUTO="
@@ -2111,12 +2137,13 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_BHI_RDEPEND_X86_64}
 				${_MITIGATE_TECV_MMIO_RDEPEND_X86_64}
 				${_MITIGATE_TECV_RETBLEED_RDEPEND_X86_64}
+				${_MITIGATE_TECV_MPF_RDEPEND_X86_64}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
 				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_64}
+				${_MITIGATE_TECV_IBPB_RDEPEND_X86_64}
 				${_MITIGATE_TECV_RFDS_RDEPEND_X86_64}
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_64}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
-				${_MITIGATE_TECV_IBPB_RDEPEND_X86_64}
 			)
 			ppc? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_PPC32}
@@ -2141,12 +2168,13 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_32}
 				${_MITIGATE_TECV_BHI_RDEPEND_X86_32}
 				${_MITIGATE_TECV_MMIO_RDEPEND_X86_32}
+				${_MITIGATE_TECV_MPF_RDEPEND_X86_32}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32}
 				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_32}
+				${_MITIGATE_TECV_IBPB_RDEPEND_X86_32}
 				${_MITIGATE_TECV_RFDS_RDEPEND_X86_32}
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_32}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_32}
-				${_MITIGATE_TECV_IBPB_RDEPEND_X86_32}
 			)
 		)
 	)
@@ -2192,7 +2220,7 @@ _mitigate_tecv_verify_mitigation_meltdown() {
 			check_extra_config
 		fi
 
-		if [[ "${ARCH}" == "x86" && && "${pae}" != "1" ]] ; then
+		if [[ "${ARCH}" == "x86" && "${pae}" != "1" ]] ; then
 eerror "No mitigation against Meltdown for 32-bit x86 without PAE.  Upgrade to 64-bit instead."
 		fi
 	elif ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "4.15" ; then
@@ -2204,7 +2232,7 @@ eerror "No mitigation against Meltdown for 32-bit x86 without PAE.  Upgrade to 6
 			check_extra_config
 		fi
 
-		if [[ "${ARCH}" == "x86" && && "${pae}" != "1" ]] ; then
+		if [[ "${ARCH}" == "x86" && "${pae}" != "1" ]] ; then
 eerror "No mitigation against Meltdown for 32-bit x86 without PAE.  Upgrade to 64-bit instead."
 		fi
 	fi
@@ -3521,7 +3549,7 @@ _mitigate_tecv_mitigate_privilege_escalation_with_aslr() {
 # @FUNCTION: _mitigate_tecv_verify_mitigation_ibpb
 # @INTERNAL
 # @DESCRIPTION:
-# Check the kernel config flags and kernel command line to mitigate against CVE-2023-38575, also known as Incomplete Branch Prediction Barrier (IBPB).
+# Check the kernel config flags and kernel command line to mitigate against CVE-2023-38575, also known as the Incomplete Branch Prediction Barrier (IBPB) vulnerability.
 _mitigate_tecv_verify_mitigation_ibpb() {
 	if \
 		   use cpu_target_x86_sapphire_rapids \
@@ -3537,7 +3565,28 @@ _mitigate_tecv_verify_mitigation_ibpb() {
 		CONFIG_CHECK="
 			CPU_SUP_INTEL
 		"
-		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for CVE-2023-38575 (IBPB) mitigation."
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2023-38575, also known as the Incomplete Branch Prediction Barrier (IBPB) vulnerability."
+		check_extra_config
+	fi
+}
+
+# @FUNCTION: _mitigate_tecv_verify_mitigation_mpf
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2021-33120, also known as the Missing Page Fault (MPF) vulnerability.
+_mitigate_tecv_verify_mitigation_mpf() {
+	if \
+		   use cpu_target_x86_snow_ridge \
+		|| use cpu_target_x86_parker_ridge \
+		|| use cpu_target_x86_elkhart_lake \
+		|| use cpu_target_x86_jasper_lake \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2021-33120, also know as the Missing Page Fault (MPF) vulnerability."
 		check_extra_config
 	fi
 }
@@ -3603,6 +3652,11 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_mitigate_privilege_escalation_with_ssp
 	_mitigate_tecv_mitigate_privilege_escalation_with_aslr
 
+	cpu_target_x86_snow_ridge
+	cpu_target_x86_parker_ridge
+	cpu_target_x86_elkhart_lake
+	cpu_target_x86_jasper_lake
+
 	# Notify if grub or the kernel config is incorrectly configured/tampered
 	# or a copypasta-ed workaround.
 	_mitigate_tecv_verify_mitigation_meltdown		# Mitigations against Variant 3 (2017)
@@ -3617,15 +3671,16 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_verify_mitigation_zombieload_v2		# Mitigations against TAA (2019)
 	_mitigate_tecv_verify_mitigation_mds			# Mitigations against ZombieLoad/MFBDS (2028), MLPDS (2028), MSBDS (2018), MDSUM (2019)
 	_mitigate_tecv_verify_mitigation_cacheout		# Mitigations against L1DES (2020), VRS (2020)
+	_mitigate_tecv_verify_mitigation_mpf			# Mitigations against MPF (2021)
 	_mitigate_tecv_verify_mitigation_downfall		# Mitigations against GDS (2022)
 	_mitigate_tecv_verify_mitigation_retbleed		# Mitigations against Retbleed (2022)
 	_mitigate_tecv_verify_mitigation_mmio_stale_data	# Mitigations against SBDR (2022), SBDS (2022), DRPW (2022)
 	_mitigate_tecv_verify_mitigation_reptar			# Mitigations against Reptar (2023)
 	_mitigate_tecv_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023)
 	_mitigate_tecv_verify_mitigation_inception		# Mitigations against SRSO (2023)
+	_mitigate_tecv_verify_mitigation_ibpb			# Mitigations against IBPB (2023)
 	_mitigate_tecv_verify_mitigation_rfds			# Mitigations against RFDS (2024)
 	_mitigate_tecv_verify_mitigation_ussb			# Mitigations against USSB (2024)
-	_mitigate_tecv_verify_mitigation_ibpb			# Mitigations against IBPB (2023)
 
 	# For SLAM, see https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability#2023
 }
