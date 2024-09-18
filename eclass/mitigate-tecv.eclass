@@ -2062,10 +2062,10 @@ eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead.
 	fi
 
 
-	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "4.16" ; then
+	if [[ "${ARCH}" == "arm64" ]] && ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "4.16" ; then
 		local needs_kpti=0
 		use cpu_target_arm_cortex_a75 && needs_kpti=1
-		use cpu_target_arm_cortex_a15 && needs_kpti=1
+		# use cpu_target_arm_cortex_a15 && needs_kpti=1
 		use auto && needs_kpti=1
 
 		if (( ${needs_kpti} == 1 )) ; then
