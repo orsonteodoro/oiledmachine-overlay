@@ -2090,6 +2090,18 @@ _MITIGATE_TECV_FSFPCD_RDEPEND_X86_32="
 	${_MITIGATE_TECV_FSFPCD_RDEPEND_X86_64}
 "
 
+_MITIGATE_TECV_AEPIC_RDEPEND_X86_64="
+	cpu_target_x86_ice_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20230214
+		)
+	)
+"
+_MITIGATE_TECV_AEPIC_RDEPEND_X86_32="
+	${_MITIGATE_TECV_AEPIC_RDEPEND_X86_64}
+"
+
+
 _MITIGATE_TECV_AUTO="
 	arm? (
 		$(gen_patched_kernel_list 6.1)
@@ -2164,6 +2176,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_64}
 				${_MITIGATE_TECV_IBPB_RDEPEND_X86_64}
 				${_MITIGATE_TECV_RFDS_RDEPEND_X86_64}
+				${_MITIGATE_TECV_AEPIC_RDEPEND_X86_64}
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_64}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
 			)
@@ -2196,6 +2209,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_32}
 				${_MITIGATE_TECV_IBPB_RDEPEND_X86_32}
 				${_MITIGATE_TECV_RFDS_RDEPEND_X86_32}
+				${_MITIGATE_TECV_AEPIC_RDEPEND_X86_32}
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_32}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_32}
 			)
@@ -3634,6 +3648,24 @@ _mitigate_tecv_verify_mitigation_fsfpcd() {
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_aepic
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2022-21233, also known as the AEPIC Leak vulnerability.
+_mitigate_tecv_verify_mitigation_aepic() {
+	if \
+		   use cpu_target_x86_ice_lake \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2022-21233, also known as the AEPIC Leak vulnerability."
+		check_extra_config
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -3719,6 +3751,7 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_verify_mitigation_downfall		# Mitigations against GDS (2022)
 	_mitigate_tecv_verify_mitigation_retbleed		# Mitigations against Retbleed (2022)
 	_mitigate_tecv_verify_mitigation_mmio_stale_data	# Mitigations against SBDR (2022), SBDS (2022), DRPW (2022)
+	_mitigate_tecv_verify_mitigation_aepic			# Mitigations against AEPIC Leak (2022)
 	_mitigate_tecv_verify_mitigation_reptar			# Mitigations against Reptar (2023)
 	_mitigate_tecv_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023)
 	_mitigate_tecv_verify_mitigation_inception		# Mitigations against SRSO (2023)
