@@ -99,6 +99,7 @@ CPU_TARGET_ARM=(
 # https://github.com/torvalds/linux/blob/v6.10/arch/arm64/kernel/cpufeature.c#L1739
 
 # 32-bit
+	cpu_target_arm_cortex_a8	# Variant 2
 	cpu_target_arm_cortex_a9	# Variant 2
 	cpu_target_arm_cortex_a12	# Variant 2
 	cpu_target_arm_cortex_a15	# BHB, Variant 2, Variant 3a
@@ -489,6 +490,9 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_ARM64="
 		$(gen_patched_kernel_list 4.18)
 	)
 	cpu_target_arm_cortex_a72? (
+		$(gen_patched_kernel_list 4.18)
+	)
+	cpu_target_arm_cortex_a73? (
 		$(gen_patched_kernel_list 4.18)
 	)
 	cpu_target_arm_cortex_a75? (
@@ -1247,6 +1251,9 @@ _MITIGATE_TECV_CROSSTALK_RDEPEND_X86_32="
 _MITIGATE_TECV_SPECTRE_RDEPEND_ARM64="
 
 	cpu_target_arm_brahma_b15? (
+		$(gen_patched_kernel_list 4.18)
+	)
+	cpu_target_arm_cortex_a8? (
 		$(gen_patched_kernel_list 4.18)
 	)
 	cpu_target_arm_cortex_a9? (
@@ -2286,6 +2293,24 @@ eerror
 	# For example, a user forgets to disable BPF JIT after use.
 			ERROR_BPF_JIT="CONFIG_BPF_JIT unset is required for JIT spray (circumvented ASLR) mitigation."
 			ERROR_BPF_JIT_ALWAYS_ON="CONFIG_BPF_JIT_ALWAYS_ON unset is required for JIT spray (circumvented ASLR) mitigation."
+			check_extra_config
+		fi
+	fi
+	if [[ "${ARCH}" == "arm" ]] && ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "4.18" ; then
+		if \
+			   use cpu_target_arm_cortex_a8 \
+			|| use cpu_target_arm_cortex_a9 \
+			|| use cpu_target_arm_cortex_a12 \
+			|| use cpu_target_arm_cortex_a15 \
+			|| use cpu_target_arm_cortex_a17 \
+			|| use cpu_target_arm_cortex_a73 \
+			|| use cpu_target_arm_cortex_a75 \
+			|| use cpu_target_arm_brahma_b15 \
+		; then
+			CONFIG_CHECK="
+				HARDEN_BRANCH_PREDICTOR
+			"
+			ERROR_HARDEN_BRANCH_PREDICTOR="CONFIG_HARDEN_BRANCH_PREDICTOR=y is required for Spectre (Variant 2) mitigation."
 			check_extra_config
 		fi
 	fi
