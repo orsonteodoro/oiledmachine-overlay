@@ -2010,6 +2010,7 @@ eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead.
 		local needs_kpti=0
 		use cpu_target_arm_cortex_a75 && needs_kpti=1
 		use cpu_target_arm_cortex_a15 && needs_kpti=1
+		use auto && needs_kpti=1
 		if _check_kernel_cmdline "mitigations=off" ; then
 eerror
 eerror "Detected mitigations=off in the kernel command line."
@@ -2352,6 +2353,7 @@ _mitigate_tecv_verify_mitigation_spectre_bhb() {
 			|| use cpu_target_arm_cortex_a72 \
 			|| use cpu_target_arm_cortex_a73 \
 			|| use cpu_target_arm_cortex_a75 \
+			|| use auto \
 		; then
 			CONFIG_CHECK="
 				HARDEN_BRANCH_HISTORY
@@ -2592,6 +2594,7 @@ eerror ">=sys-firmware/intel-microcode-20240312 is required for RFDS mitigation.
 			|| use cpu_target_x86_alder_lake_n \
 			|| use cpu_target_x86_raptor_lake_gen13 \
 			|| use cpu_target_x86_raptor_lake_gen14 \
+			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 		; then
 			CONFIG_CHECK="
 				MITIGATION_RFDS
@@ -2817,6 +2820,8 @@ _mitigate_tecv_verify_mitigation_inception() {
 		ver="6.9"
 	elif use cpu_target_x86_zen || use cpu_target_x86_zen_2 ; then
 		ver="6.5"
+	elif [[ "${FIRMWARE_VENDOR}" == "amd" && "${ARCH}" =~ ("amd64"|"x86") ]] ; then
+		ver="6.9"
 	else
 		return
 	fi
@@ -2924,6 +2929,7 @@ _mitigate_tecv_verify_mitigation_cacheout() {
 		|| use cpu_target_x86_amber_lake_gen10 \
 		|| use cpu_target_x86_ice_lake \
 		|| use cpu_target_x86_cascade_lake \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 	; then
 	# Microcode mitigation only
 		CONFIG_CHECK="
@@ -2944,7 +2950,10 @@ eerror ">=sys-firmware/intel-microcode-20200609 is required for CacheOut and VRS
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against SpectreRSB, RSBU, RSBA, RRSBA.
 _mitigate_tecv_verify_mitigation_spectre_rsb() {
-	if use cpu_target_x86_alder_lake ; then
+	if \
+		use cpu_target_x86_alder_lake \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
 	# Needs microcode mitigation
 		CONFIG_CHECK="
 			CPU_SUP_INTEL
