@@ -98,18 +98,20 @@ CPU_TARGET_ARM=(
 # https://developer.arm.com/Arm%20Security%20Center/Speculative%20Processor%20Vulnerability
 # https://github.com/torvalds/linux/blob/v6.10/arch/arm64/kernel/cpufeature.c#L1739
 
-
 # 32-bit
-	cpu_target_arm_cortex_a15	# BHB, Variant 3a
+	cpu_target_arm_cortex_a9	# Variant 2
+	cpu_target_arm_cortex_a12	# Variant 2
+	cpu_target_arm_cortex_a15	# BHB, Variant 2, Variant 3a
+	cpu_target_arm_cortex_a17	# Variant 2
 	cpu_target_arm_cortex_r7	# BHB
 	cpu_target_arm_cortex_r8	# BHB
-	cpu_target_arm_brahma_b15	# BHB
+	cpu_target_arm_brahma_b15	# BHB, Variant 2
 
 # 32-/64-bit
 	cpu_target_arm_cortex_a57	# BHB, Variant 3a, Variant 4
 	cpu_target_arm_cortex_a72	# BHB, Variant 3a, Variant 4
-	cpu_target_arm_cortex_a73	# BHB, Variant 4
-	cpu_target_arm_cortex_a75	# BHB, Variant 3, Variant 4
+	cpu_target_arm_cortex_a73	# BHB, Variant 2, Variant 4
+	cpu_target_arm_cortex_a75	# BHB, Variant 2, Variant 3, Variant 4
 	cpu_target_arm_cortex_a76	# BHB, Variant 4
 	cpu_target_arm_cortex_a77	# BHB, Variant 4
 	cpu_target_arm_cortex_a78	# BHB
@@ -130,6 +132,9 @@ CPU_TARGET_ARM=(
 	cpu_target_arm_neoverse_v1	# BHB
 	cpu_target_arm_neoverse_v2	# BHB
 	cpu_target_arm_ampereone	# BHB
+	cpu_target_arm_thunderx2	# Spectre v2
+	cpu_target_arm_falkor		# Spectre v2
+	cpu_target_arm_vulkan		# Spectre v2
 )
 
 CPU_TARGET_PPC=(
@@ -1240,11 +1245,55 @@ _MITIGATE_TECV_CROSSTALK_RDEPEND_X86_32="
 "
 
 _MITIGATE_TECV_SPECTRE_RDEPEND_ARM64="
+
+	cpu_target_arm_brahma_b15? (
+		$(gen_patched_kernel_list 4.18)
+	)
+	cpu_target_arm_cortex_a9? (
+		$(gen_patched_kernel_list 4.18)
+	)
+	cpu_target_arm_cortex_a12? (
+		$(gen_patched_kernel_list 4.18)
+	)
+	cpu_target_arm_cortex_a15? (
+		$(gen_patched_kernel_list 4.18)
+	)
+	cpu_target_arm_cortex_a17? (
+		$(gen_patched_kernel_list 4.18)
+	)
+	cpu_target_arm_cortex_a73? (
+		$(gen_patched_kernel_list 4.18)
+	)
+	cpu_target_arm_cortex_a75? (
+		$(gen_patched_kernel_list 4.18)
+	)
+
+	cpu_target_arm_cortex_a57? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_arm_cortex_a72? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_arm_cortex_a73? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_arm_cortex_a75? (
+		$(gen_patched_kernel_list 4.16)
+	)
 	cpu_target_arm_cortex_r7? (
 		$(gen_patched_kernel_list 4.19)
 	)
 	cpu_target_arm_cortex_r8? (
 		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_arm_falkor? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_arm_thunderx2? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_arm_vulkan? (
+		$(gen_patched_kernel_list 4.16)
 	)
 	bpf? (
 		$(gen_patched_kernel_list 5.13)
