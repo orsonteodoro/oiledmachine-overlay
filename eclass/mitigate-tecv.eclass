@@ -2029,7 +2029,7 @@ _mitigate_tecv_verify_mitigation_meltdown() {
 			CONFIG_CHECK="
 				MITIGATION_PAGE_TABLE_ISOLATION
 			"
-			ERROR_MITIGATION_PAGE_TABLE_ISOLATION="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
+			ERROR_MITIGATION_PAGE_TABLE_ISOLATION="CONFIG_MITIGATION_PAGE_TABLE_ISOLATION=y is required for Meltdown mitigation."
 			check_extra_config
 		fi
 
@@ -2046,7 +2046,7 @@ eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead.
 			CONFIG_CHECK="
 				PAGE_TABLE_ISOLATION
 			"
-			ERROR_PAGE_TABLE_ISOLATION="CONFIG_PAGE_TABLE_ISOLATION is required for Meltdown mitigation."
+			ERROR_PAGE_TABLE_ISOLATION="CONFIG_PAGE_TABLE_ISOLATION=y is required for Meltdown mitigation."
 			check_extra_config
 		fi
 
@@ -2067,6 +2067,15 @@ eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead.
 		use cpu_target_arm_cortex_a75 && needs_kpti=1
 		use cpu_target_arm_cortex_a15 && needs_kpti=1
 		use auto && needs_kpti=1
+
+		if (( ${needs_kpti} == 1 )) ; then
+			CONFIG_CHECK="
+				UNMAP_KERNEL_AT_EL0
+			"
+			ERROR_UNMAP_KERNEL_AT_EL0="CONFIG_UNMAP_KERNEL_AT_EL0=y (KPTI) is required for Meltdown mitigation."
+			check_extra_config
+		fi
+
 		if _check_kernel_cmdline "mitigations=off" ; then
 eerror
 eerror "Detected mitigations=off in the kernel command line."
