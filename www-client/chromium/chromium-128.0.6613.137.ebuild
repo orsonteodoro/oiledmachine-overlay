@@ -489,7 +489,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 +mpris +official +partitionalloc pax-kernel +pdf pic +pgo +plugins +pointer-compression
 +pre-check-vaapi +proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+pulseaudio +reporting-api qt5 qt6 +screencast +screen-capture selinux +spell
++pulseaudio +reporting-api qt5 qt6 +screencast +screen-capture selinux
 +spelling-service -system-dav1d +system-ffmpeg -system-flac -system-fontconfig
 -system-freetype -system-harfbuzz -system-icu -system-libaom -system-libdrm
 -system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
@@ -708,7 +708,6 @@ REQUIRED_USE+="
 		reporting-api
 		screencast
 		screen-capture
-		spell
 		spelling-service
 		thinlto-opt
 		vaapi
@@ -2095,12 +2094,6 @@ apply_oiledmachine_overlay_patchset() {
 			)
 		fi
 
-		if ! use spell ; then
-			PATCHES+=(
-				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-spellchecker.patch"
-			)
-		fi
-
 		if ! use screen-capture ; then
 			PATCHES+=(
 				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-screen-capture.patch"
@@ -3122,7 +3115,6 @@ ewarn
 	myconf_gn+=" enable_ppapi=false"
 	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
 	myconf_gn+=" enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
-	myconf_gn+=" enable_spellcheck=$(usex spell true false)"
 	myconf_gn+=" enable_spelling_service=$(usex spelling-service true false)"
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
 	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/128.0.6613.137/device/vr#platform-support
