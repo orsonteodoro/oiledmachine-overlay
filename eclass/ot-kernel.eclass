@@ -12010,6 +12010,71 @@ ot-kernel_set_kconfig_bpf_spectre_mitigation() {
 	fi
 }
 
+# @FUNCTION: _ot-kernel_set_devmem
+# @DESCRIPTION:
+# Enable and control access to /dev/mem and friends
+# Access to /dev/mem, /dev/kmem, /proc/kcore is a security topic.
+ot-kernel_set_dev_mem() {
+	if \
+		[[ \
+			"${work_profile}" == "dss" \
+		]] \
+			||
+		[[ \
+			   "${hardening_level}" == "secure-af" \
+			|| "${hardening_level}" == "secure-as-fuck" \
+		]] \
+	; then
+	# All off
+		ot-kernel_unset_configopt "CONFIG_PROC_KCORE"
+		ot-kernel_unset_configopt "CONFIG_DEVKMEM"
+		ot-kernel_unset_configopt "CONFIG_DEVMEM"
+		ot-kernel_unset_configopt "CONFIG_STRICT_DEVMEM"
+		ot-kernel_unset_configopt "CONFIG_IO_STRICT_DEVMEM"
+	elif [[ \
+		   "${hardening_level}" == "default" \
+		|| "${hardening_level}" == "practical" \
+		|| "${hardening_level}" == "secure" \
+	]] ; then
+	# Reset to upstream defaults
+		ot-kernel_y_configopt "CONFIG_DEVMEM"
+		ot-kernel_y_configopt "CONFIG_STRICT_DEVMEM"
+		ot-kernel_unset_configopt "CONFIG_IO_STRICT_DEVMEM" # It says disasterous.
+		ot-kernel_unset_configopt "CONFIG_DEVKMEM"
+		ot-kernel_unset_configopt "CONFIG_PROC_KCORE"
+	elif [[ \
+		   "${hardening_level}" == "fast" \
+		|| "${hardening_level}" == "fast-af" \
+		|| "${hardening_level}" == "fast-as-fuck" \
+		|| "${hardening_level}" == "performance" \
+	]] ; then\
+	# Enable as needed for performance profiles
+	# It should be disabled to save more CPU cycles.
+		if (( ${_OT_KERNEL_DEV_MEM} == 1 )) ; then
+			ot-kernel_y_configopt "CONFIG_DEVMEM"
+			ot-kernel_y_configopt "CONFIG_STRICT_DEVMEM"
+			ot-kernel_unset_configopt "CONFIG_IO_STRICT_DEVMEM"
+		else
+			ot-kernel_unset_configopt "CONFIG_DEVMEM"
+			ot-kernel_unset_configopt "CONFIG_STRICT_DEVMEM"
+			ot-kernel_unset_configopt "CONFIG_IO_STRICT_DEVMEM"
+		fi
+		if (( ${_OT_KERNEL_DEV_KMEM} == 1 )) && [[  "${arch}" != "arm64" ]] && ver_test "${KV_MAJOR_MINOR}" -lt "4.13" ; then
+			ot-kernel_y_configopt "CONFIG_DEVKMEM"
+		else
+			ot-kernel_unset_configopt "CONFIG_DEVKMEM"
+		fi
+		if (( ${_OT_KERNEL_PROC_KCORE} == 1 )) ; then
+			# The default is unset.
+			ot-kernel_y_configopt "CONFIG_MMU"
+			ot-kernel_y_configopt "CONFIG_PROC_FS"
+			ot-kernel_y_configopt "CONFIG_PROC_KCORE"
+		else
+			ot-kernel_unset_configopt "CONFIG_PROC_KCORE"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -12129,6 +12194,8 @@ einfo "Forcing the default hardening level for maximum uptime"
 	ot-kernel_set_mobile_camera
 
 	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
+	local _OT_KERNEL_DEV_MEM=0
+	local _OT_KERNEL_DEV_KMEM=0
 	local _OT_KERNEL_LSM_ADD_APPARMOR=0
 	local _OT_KERNEL_LSM_ADD_BPF=0
 	local _OT_KERNEL_LSM_ADD_SELINUX=0
@@ -12137,7 +12204,9 @@ einfo "Forcing the default hardening level for maximum uptime"
 	local _OT_KERNEL_LSM_ADD_SAFESETID=0
 	local _OT_KERNEL_LSM_ADD_SMACK=0
 	local _OT_KERNEL_LSM_ADD_YAMA=0
+	local _OT_KERNEL_PROC_KCORE=0
 	ot-kernel-pkgflags_apply # Sets PREEMPT*, uses hardening_level
+	ot-kernel_set_dev_mem
 	ot-kernel-debugger
 	ot-kernel_set_kconfig_fallback_preempt
 	ot-kernel_optimize_realtime

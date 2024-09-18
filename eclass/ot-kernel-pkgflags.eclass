@@ -4090,6 +4090,8 @@ ot-kernel-pkgflags_dosemu() { # DONE
 
 		warn_lowered_security "${pkg}" # Increased attack surface \
 		ot-kernel_y_configopt "CONFIG_MODIFY_LDT_SYSCALL"
+
+		_OT_KERNEL_DEV_MEM=1
 	fi
 }
 
@@ -10192,9 +10194,10 @@ ot-kernel-pkgflags_thinkfinger() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the throttled package
 ot-kernel-pkgflags_throttled() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-power/throttled" ; then
+	local pkg="sys-power/throttled"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
-		ot-kernel_y_configopt "CONFIG_DEVMEM"
+		_OT_KERNEL_DEV_MEM=1
 	fi
 }
 
@@ -11501,7 +11504,7 @@ ot-kernel-pkgflags_xf86_video_nouveau() { # DONE
 # Applies kernel config flags for the xf86-video-vesa package
 ot-kernel-pkgflags_xf86_video_vesa() { # DONE
 	if ot-kernel_has_version_pkgflags "x11-drivers/xf86-video-vesa" ; then
-		ot-kernel_y_configopt "CONFIG_DEVMEM"
+		_OT_KERNEL_DEV_MEM=1
 	fi
 }
 
