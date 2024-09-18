@@ -3321,7 +3321,7 @@ eerror ">=sys-firmware/intel-microcode-20231114 is required for Reptar mitigatio
 # See commit adeec61
 # Check the kernel config flags and kernel command line to mitigate against Unexpected Speculative Store Bypass (USSB).
 _mitigate_tecv_verify_mitigation_ussb() {
-	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.11" ; then
+	if [[ "${ARCH}" == "amd64" ]] && ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.11" ; then
 		if \
 			   use cpu_target_arm_cortex_a76 \
 			|| use cpu_target_arm_cortex_a77 \
