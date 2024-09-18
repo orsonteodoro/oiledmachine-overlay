@@ -2146,13 +2146,8 @@ _mitigate_tecv_verify_mitigation_meltdown() {
 			check_extra_config
 		fi
 
-		if [[ "${ARCH}" == "x86" ]] ; then
-eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead."
-			die
-		fi
-		if has abi_x86_32 ${IUSE_EFFECTIVE} && use abi_x86_32 ; then
-eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead."
-			die
+		if [[ "${ARCH}" == "x86" && && "${pae}" != "1" ]] ; then
+eerror "No mitigation against Meltdown for 32-bit x86 without PAE.  Upgrade to 64-bit instead."
 		fi
 	elif ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "4.15" ; then
 		if [[ "${ARCH}" == "amd64" ]] || [[ "${ARCH}" == "x86" && "${pae}" == "1" ]] ; then
@@ -2163,14 +2158,8 @@ eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead.
 			check_extra_config
 		fi
 
-		if [[ "${ARCH}" == "x86" ]] ; then
-eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead."
-			die
-		fi
-
-		if has abi_x86_32 ${IUSE_EFFECTIVE} && use abi_x86_32 ; then
-eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead."
-			die
+		if [[ "${ARCH}" == "x86" && && "${pae}" != "1" ]] ; then
+eerror "No mitigation against Meltdown for 32-bit x86 without PAE.  Upgrade to 64-bit instead."
 		fi
 	fi
 
