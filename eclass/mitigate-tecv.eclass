@@ -2624,8 +2624,8 @@ eerror
 
 			if [[ "${levels}" == "2" ]] && (( ${pae} == 1 )) ; then
 eerror
-eerror "PGTABLE_LEVELS=2.  To continue, set to one of the following for"
-eerror "Foreshadow mitigation:"
+eerror "Detected PGTABLE_LEVELS=2 with PAE support on CPU."
+eerror "To continue, set to one of the following for Foreshadow mitigation:"
 eerror
 eerror "  CONFIG_PGTABLE_LEVELS=3 with CONFIG_X86_PAE=y"
 eerror
