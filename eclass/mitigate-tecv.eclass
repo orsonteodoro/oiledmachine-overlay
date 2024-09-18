@@ -3556,9 +3556,6 @@ _mitigate-tecv_get_required_version() {
 			|| use cpu_target_x86_arizona_beach \
 			|| use cpu_target_x86_jasper_lake \
 			|| use cpu_target_x86_alder_lake_n \
-			|| use cpu_target_x86_zen_2 \
-			|| use cpu_target_x86_zen_3 \
-			|| use cpu_target_x86_zen_4 \
 			|| use cpu_target_x86_amber_lake_gen8 \
 			|| use cpu_target_x86_coffee_lake_gen8 \
 			|| use cpu_target_x86_kaby_lake_gen8 \
@@ -3582,18 +3579,20 @@ _mitigate-tecv_get_required_version() {
 			|| use cpu_target_x86_sierra_forest \
 			|| use cpu_target_x86_catlow_golden_cove \
 			|| use cpu_target_x86_catlow_raptor_cove \
+			|| use cpu_target_x86_zen_2 \
+			|| use cpu_target_x86_zen_3 \
+			|| use cpu_target_x86_zen_4 \
 		; then
-			echo "6.9"
+			echo "6.9" # Inception, RDFS, Zenbleed, BHI
 		elif \
 			   use cpu_target_x86_skylake \
 			|| use cpu_target_x86_kaby_lake_gen7 \
 			|| use cpu_target_x86_zen \
 			|| use cpu_target_x86_zen_2 \
 		; then
-			echo "6.5"
+			echo "6.5" # Inception, Downfall
 		elif \
-			   use cpu_target_x86_zen \
-			|| use cpu_target_x86_zen_plus \
+			   use cpu_target_x86_haswell \
 			|| use cpu_target_x86_broadwell \
 			|| use cpu_target_x86_hewitt_lake \
 			|| use cpu_target_x86_cannon_lake \
@@ -3603,25 +3602,23 @@ _mitigate-tecv_get_required_version() {
 			|| use cpu_target_x86_steamroller \
 			|| use cpu_target_x86_excavator \
 			|| use cpu_target_x86_jaguar \
+			|| use cpu_target_x86_zen \
+			|| use cpu_target_x86_zen_plus \
 			|| use cpu_target_x86_puma \
 			|| use cpu_target_x86_dhyana \
 		; then
-			echo "5.19"
+			echo "5.19" # MMIO
 		elif use bpf ; then
-			echo "5.13"
-		elif \
-			   use cpu_target_x86_haswell \
-		; then
-			echo "5.4"
+			echo "5.13" # Spectre v2, Spectre-NG (v4)
 		elif \
 			   use cpu_target_x86_nehalem \
 			|| use cpu_target_x86_westmere \
 			|| use cpu_target_x86_sandy_bridge \
 			|| use cpu_target_x86_ivy_bridge \
 		; then
-			echo "4.19"
+			echo "4.19" # Foreshadow
 		else
-			echo "4.15"
+			echo "4.15" # Spectre v2
 		fi
 	fi
 	if [[ "${ARCH}" == "ppc" || "${ARCH}" == "ppc64" ]] ; then
@@ -3631,13 +3628,13 @@ _mitigate-tecv_get_required_version() {
 			|| use cpu_target_ppc_e5500 \
 			|| use cpu_target_ppc_e6500 \
 		; then
-			echo "5.0"
+			echo "5.0" # Spectre v2
 		else
-			echo "4.15"
+			echo "4.15" # Spectre v2 fallback
 		fi
 	fi
 	if [[ "${ARCH}" == "s390" ]] ; then
-		echo "4.16"
+		echo "4.16" # Spectre v2
 	fi
 	if [[ "${ARCH}" == "arm64" ]] ; then
 # TODO: Spectre v4/v3a
@@ -3680,13 +3677,11 @@ _mitigate-tecv_get_required_version() {
 			|| use cpu_target_arm_neoverse_e1 \
 		; then
 # Missing explicit recognition of BHB fix in kernel for subgroup above.  In the docs it says yes.
-			echo "5.17"
+			echo "5.17" # BHB
 		elif use bpf ; then
-			echo "5.13"
+			echo "5.13" # Spectre v2, Spectre-NG (v4)
 		else
-# Placeholder
-# TODO:  Verify earliest version for Variant 1 and Variant 2 mitigations
-			echo "4.16"
+			echo "4.16" # Spectre v2
 		fi
 	fi
 	if [[ "${ARCH}" == "arm" ]] ; then
@@ -3714,7 +3709,7 @@ _mitigate-tecv_get_required_version() {
 		; then
 			echo "5.17" # BHB
 		elif use bpf ; then
-			echo "5.13"
+			echo "5.13" # Spectre v2, Spectre-NG (v4)
 		elif \
 			   use cpu_target_arm_cortex_r7 \
 			|| use cpu_target_arm_cortex_r8 \
