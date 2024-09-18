@@ -3620,9 +3620,9 @@ _mitigate_tecv_verify_mitigation_mpf() {
 # Check the kernel config flags and kernel command line to mitigate against CVE-2021-0145, also known as the Fast Store Forwarding: Cross Domain (FSFPCD) vulnerability.
 _mitigate_tecv_verify_mitigation_fsfpcd() {
 	if \
-		   use cpu_target_x86_ice_lake
-		|| use cpu_target_x86_tiger_lake
-		|| use cpu_target_x86_rocket_lake
+		   use cpu_target_x86_ice_lake \
+		|| use cpu_target_x86_tiger_lake \
+		|| use cpu_target_x86_rocket_lake \
 		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 	; then
 	# Needs microcode mitigation
