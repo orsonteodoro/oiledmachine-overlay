@@ -230,6 +230,9 @@ REQUIRED_USE="
 	cpu_target_x86_alder_lake_n? (
 		firmware
 	)
+	cpu_target_x86_gemini_lake? (
+		firmware
+	)
 
 	cpu_target_x86_sandy_bridge? (
 		firmware
@@ -2122,6 +2125,123 @@ _MITIGATE_TECV_TECRA_RDEPEND_X86_32="
 	${_MITIGATE_TECV_TECRA_RDEPEND_X86_64}
 "
 
+_MITIGATE_TECV_PLATYPUS_RDEPEND_X86_64="
+	cpu_target_x86_skylake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_cascade_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_cooper_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_apollo_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_denverton? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_ice_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_gemini_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_snow_ridge_bts? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_snow_ridge? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_parker_ridge? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_tiger_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_amber_lake_gen8? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_kaby_lake_gen7? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_whiskey_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_comet_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_amber_lake_gen10? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_alder_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_catlow_golden_cove? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_jasper_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_kaby_lake_gen8? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_coffee_lake_gen8? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+	cpu_target_x86_coffee_lake_gen9? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20201118
+		)
+	)
+"
+
+_MITIGATE_TECV_PLATYPUS_RDEPEND_X86_32="
+	${_MITIGATE_TECV_PLATYPUS_RDEPEND_X86_64}
+"
+
 
 _MITIGATE_TECV_AUTO="
 	arm? (
@@ -3732,6 +3852,101 @@ _mitigate_tecv_verify_mitigation_tecra() {
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_platypus
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2020-8694 and CVE-2020-8695, also known as the PLATYPUS side-channel attack.
+_mitigate_tecv_verify_mitigation_platypus() {
+	if \
+		use cpu_target_x86_haswell \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+		eerror "No mitigation against PLATYPUS attack for Haswell."
+	fi
+	if \
+		use cpu_target_x86_broadwell \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+		eerror "No mitigation against PLATYPUS attack for Broadwell."
+	fi
+	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
+		if \
+			use firmware \
+				&& \
+			( \
+				   use cpu_target_x86_skylake \
+				|| use cpu_target_x86_cascade_lake \
+				|| use cpu_target_x86_cooper_lake \
+				|| use cpu_target_x86_apollo_lake \
+				|| use cpu_target_x86_denverton \
+				|| use cpu_target_x86_ice_lake \
+				|| use cpu_target_x86_gemini_lake \
+				|| use cpu_target_x86_snow_ridge_bts \
+				|| use cpu_target_x86_snow_ridge \
+				|| use cpu_target_x86_parker_ridge \
+				|| use cpu_target_x86_tiger_lake \
+				|| use cpu_target_x86_amber_lake_gen8 \
+				|| use cpu_target_x86_kaby_lake_gen7 \
+				|| use cpu_target_x86_whiskey_lake \
+				|| use cpu_target_x86_comet_lake \
+				|| use cpu_target_x86_amber_lake_gen10 \
+				|| use cpu_target_x86_alder_lake \
+				|| use cpu_target_x86_catlow_golden_cove \
+				|| use cpu_target_x86_jasper_lake \
+				|| use cpu_target_x86_kaby_lake_gen8 \
+				|| use cpu_target_x86_coffee_lake_gen8 \
+				|| use cpu_target_x86_coffee_lake_gen9 \
+				|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+			) \
+		; then
+			CONFIG_CHECK="
+				CPU_SUP_INTEL
+			"
+			ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2023-22655, also known as the Trusted Execution Register Access (TECRA) vulnerability, may lead to privilege escalation."
+			check_extra_config
+		fi
+	fi
+	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
+		if \
+			   use cpu_target_x86_skylake \
+			|| use cpu_target_x86_cascade_lake \
+			|| use cpu_target_x86_cooper_lake \
+			|| use cpu_target_x86_apollo_lake \
+			|| use cpu_target_x86_denverton \
+			|| use cpu_target_x86_ice_lake \
+			|| use cpu_target_x86_gemini_lake \
+			|| use cpu_target_x86_snow_ridge_bts \
+			|| use cpu_target_x86_snow_ridge \
+			|| use cpu_target_x86_parker_ridge \
+			|| use cpu_target_x86_tiger_lake \
+			|| use cpu_target_x86_amber_lake_gen8 \
+			|| use cpu_target_x86_kaby_lake_gen7 \
+			|| use cpu_target_x86_whiskey_lake \
+			|| use cpu_target_x86_comet_lake \
+			|| use cpu_target_x86_amber_lake_gen10 \
+			|| use cpu_target_x86_alder_lake \
+			|| use cpu_target_x86_catlow_golden_cove \
+			|| use cpu_target_x86_jasper_lake \
+			|| use cpu_target_x86_kaby_lake_gen8 \
+			|| use cpu_target_x86_coffee_lake_gen8 \
+			|| use cpu_target_x86_coffee_lake_gen9 \
+			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+		; then
+			if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.10" ; then
+				:
+			else
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+				if [[ -L "${KERNEL_DIR}" ]] ; then
+eerror "You need to switch the /usr/src/linux symlink to Linux Kernel >= ${auto_version} for USE=auto."
+				else
+eerror "You need to replace the kernel sources to Linux Kernel >= ${auto_version} for USE=auto."
+				fi
+				die
+			fi
+		fi
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -3778,7 +3993,7 @@ einfo "The required Linux Kernel version is >= ${required_version}."
 			local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
 	# linux-info's get_version() is spammy.
 			if ver_test "${pv_major}.${pv_minor}" -lt "${required_version}" ; then
-ewarn "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} does not have mitigations."
+ewarn "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} does not have mitigations and should be deleted."
 			else
 einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
 			fi
@@ -3804,6 +4019,7 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_verify_mitigation_spectre		# Mitigations against Variant 1 (2017), Variant 2 (2017), SWAPGS (2019)
 	_mitigate_tecv_verify_mitigation_spectre_ng		# Mitigations against Variant 4 (2018)
 								# Lazy FP State Restore (2018); eagerfpu removed and hardcoded enabled in 4.6 (2016), eagerfpu available in 3.7 (2012)
+	_mitigate_tecv_verify_mitigation_platypus		# Mitigations against PLATYPUS (2020)
 	_mitigate_tecv_verify_mitigation_spectre_bhb		# Mitigations against BHB (2022), ARM
 	_mitigate_tecv_verify_mitigation_bhi			# Mitigations against BHI (2022), X86
 	_mitigate_tecv_verify_mitigation_crosstalk		# Mitigations against SRBDS (2020)
