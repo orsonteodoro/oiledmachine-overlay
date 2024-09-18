@@ -3548,6 +3548,14 @@ _mitigate-tecv_get_required_version() {
 			|| use cpu_target_x86_zen_plus \
 			|| use cpu_target_x86_broadwell \
 			|| use cpu_target_x86_hewitt_lake \
+			|| use cpu_target_x86_lakefield \
+			|| use cpu_target_x86_bulldozer \
+			|| use cpu_target_x86_piledriver \
+			|| use cpu_target_x86_steamroller \
+			|| use cpu_target_x86_excavator \
+			|| use cpu_target_x86_jaguar \
+			|| use cpu_target_x86_puma \
+			|| use cpu_target_x86_dhyana \
 		; then
 			echo "5.19"
 		elif use bpf ; then
