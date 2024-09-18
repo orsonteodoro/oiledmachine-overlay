@@ -2101,6 +2101,27 @@ _MITIGATE_TECV_AEPIC_RDEPEND_X86_32="
 	${_MITIGATE_TECV_AEPIC_RDEPEND_X86_64}
 "
 
+_MITIGATE_TECV_TECRA_RDEPEND_X86_64="
+	cpu_target_x86_ice_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240312
+		)
+	)
+	cpu_target_x86_sapphire_rapids? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240312
+		)
+	)
+	cpu_target_x86_sapphire_rapids_edge_enhanced? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240312
+		)
+	)
+"
+_MITIGATE_TECV_TECRA_RDEPEND_X86_32="
+	${_MITIGATE_TECV_TECRA_RDEPEND_X86_64}
+"
+
 
 _MITIGATE_TECV_AUTO="
 	arm? (
@@ -2179,6 +2200,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_AEPIC_RDEPEND_X86_64}
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_64}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
+				${_MITIGATE_TECV_TECRA_RDEPEND_X86_64}
 			)
 			ppc? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_PPC32}
@@ -2212,6 +2234,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_AEPIC_RDEPEND_X86_32}
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_32}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_32}
+				${_MITIGATE_TECV_TECRA_RDEPEND_X86_32}
 			)
 		)
 	)
@@ -3666,6 +3689,29 @@ _mitigate_tecv_verify_mitigation_aepic() {
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_tecra
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2023-22655, also known as the Trusted Execution Register Access (TECRA) vulnerability.
+_mitigate_tecv_verify_mitigation_tecra() {
+	if \
+		   use cpu_target_x86_ice_lake \
+		|| use cpu_target_x86_sapphire_rapids \
+		|| use cpu_target_x86_sapphire_rapids_edge_enhanced \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2023-22655, also known as the Trusted Execution Register Access (TECRA) vulnerability, may lead to privilege escalation."
+		check_extra_config
+	fi
+	use cpu_target_x86_ice_lake && ewarn "Ice Lake still needs a BIOS firmware update for Trusted Execution Register Access (TECRA) mitigation."
+	use cpu_target_x86_sapphire_rapids && ewarn "Sapphire Rapids still needs a BIOS firmware update for Trusted Execution Register Access (TECRA) mitigation."
+	use cpu_target_x86_sapphire_rapids_edge_enhanced && ewarn "Sapphire Rapids Edge Enhanced still needs a BIOS firmware update for Trusted Execution Register Access (TECRA) mitigation."
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -3756,6 +3802,7 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023)
 	_mitigate_tecv_verify_mitigation_inception		# Mitigations against SRSO (2023)
 	_mitigate_tecv_verify_mitigation_ibpb			# Mitigations against IBPB (2023)
+	_mitigate_tecv_verify_mitigation_tecra			# Mitigations against TECRA (2023)
 	_mitigate_tecv_verify_mitigation_rfds			# Mitigations against RFDS (2024)
 	_mitigate_tecv_verify_mitigation_ussb			# Mitigations against USSB (2024)
 
