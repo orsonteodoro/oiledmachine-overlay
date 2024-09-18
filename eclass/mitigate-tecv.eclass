@@ -2929,12 +2929,17 @@ ewarn
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against RFDS.
 _mitigate_tecv_verify_mitigation_rfds() {
-	if use auto ; then
-eerror "No planned mitigation for RFDS for Snow Ridge BTS."
-ewarn "Gemini Lake requires a BIOS firmware update for RFDS mitigiation."
-	else
-		use cpu_target_x86_snow_ridge_bts && eerror "No planned mitigation for RFDS for Snow Ridge BTS."
-		use cpu_target_x86_gemini_lake && ewarn "Gemini Lake requires a BIOS firmware update for RFDS mitigation."
+	if \
+		use cpu_target_x86_snow_ridge_bts \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+		eerror "No planned mitigation for RFDS for Snow Ridge BTS."
+	fi
+	if \
+		use cpu_target_x86_gemini_lake \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+		ewarn "Gemini Lake requires a BIOS firmware update for RFDS mitigation."
 	fi
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
 		if \
@@ -3131,7 +3136,7 @@ eerror ">=sys-kernel/linux-firmware-20231205 is required for Zenbleed mitigation
 		fi
 	fi
 	if \
-		   use cpu_target_x86_zen_2 \
+		use cpu_target_x86_zen_2 \
 		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "amd" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 	; then
 ewarn "A BIOS firmware update may be needed for Zenbleed mitigation for different models and may only be provided that way."
@@ -3707,9 +3712,24 @@ _mitigate_tecv_verify_mitigation_tecra() {
 		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2023-22655, also known as the Trusted Execution Register Access (TECRA) vulnerability, may lead to privilege escalation."
 		check_extra_config
 	fi
-	use cpu_target_x86_ice_lake && ewarn "Ice Lake still needs a BIOS firmware update for Trusted Execution Register Access (TECRA) mitigation."
-	use cpu_target_x86_sapphire_rapids && ewarn "Sapphire Rapids still needs a BIOS firmware update for Trusted Execution Register Access (TECRA) mitigation."
-	use cpu_target_x86_sapphire_rapids_edge_enhanced && ewarn "Sapphire Rapids Edge Enhanced still needs a BIOS firmware update for Trusted Execution Register Access (TECRA) mitigation."
+	if \
+		use cpu_target_x86_ice_lake \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+		ewarn "Ice Lake still needs a BIOS firmware update for Trusted Execution Register Access (TECRA) mitigation."
+	fi
+	if \
+		use cpu_target_x86_sapphire_rapids \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+		ewarn "Sapphire Rapids still needs a BIOS firmware update for Trusted Execution Register Access (TECRA) mitigation."
+	fi
+	if \
+		use cpu_target_x86_sapphire_rapids_edge_enhanced \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+		ewarn "Sapphire Rapids Edge Enhanced still needs a BIOS firmware update for Trusted Execution Register Access (TECRA) mitigation."
+	fi
 }
 
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
