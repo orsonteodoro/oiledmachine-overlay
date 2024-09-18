@@ -1240,9 +1240,18 @@ _MITIGATE_TECV_CROSSTALK_RDEPEND_X86_32="
 "
 
 _MITIGATE_TECV_SPECTRE_RDEPEND_ARM64="
+	cpu_target_arm_cortex_r7? (
+		$(gen_patched_kernel_list 4.19)
+	)
+	cpu_target_arm_cortex_r8? (
+		$(gen_patched_kernel_list 4.19)
+	)
 	bpf? (
 		$(gen_patched_kernel_list 5.13)
 	)
+"
+_MITIGATE_TECV_SPECTRE_RDEPEND_ARM="
+	${_MITIGATE_TECV_SPECTRE_RDEPEND_ARM64}
 "
 
 _MITIGATE_TECV_MMIO_RDEPEND_X86_64="
@@ -1419,75 +1428,88 @@ _MITIGATE_TECV_RETBLEED_RDEPEND_X86_64="
 "
 
 _MITIGATE_TECV_BHB_RDEPEND_ARM64="
-	cpu_target_arm_cortex_r7? (
+	cpu_target_arm_ampereone? (
 		$(gen_patched_kernel_list 6.1)
+	)
+	cpu_target_arm_brahma_b15? (
+		$(gen_patched_kernel_list 5.18)
+	)
+	cpu_target_arm_cortex_r7? (
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_cortex_r8? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_cortex_a15? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.18)
 	)
 	cpu_target_arm_cortex_a57? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.18)
 	)
 	cpu_target_arm_cortex_a65? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_cortex_a65ae? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_cortex_a72? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.18)
 	)
 	cpu_target_arm_cortex_a73? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.18)
 	)
 	cpu_target_arm_cortex_a75? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.18)
 	)
 	cpu_target_arm_cortex_a76? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_cortex_a77? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_cortex_a78? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_arm_cortex_a78ae? (
+		$(gen_patched_kernel_list 5.18)
 	)
 	cpu_target_arm_cortex_a78c? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_cortex_a710? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_cortex_a715? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_neoverse_e1? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_neoverse_n1? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_neoverse_v1? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_neoverse_n2? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_neoverse_v2? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_cortex_x1? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_cortex_x2? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
 	cpu_target_arm_cortex_x3? (
-		$(gen_patched_kernel_list 6.1)
+		$(gen_patched_kernel_list 5.17)
 	)
+"
+
+_MITIGATE_TECV_BHB_RDEPEND_ARM="
+	${_MITIGATE_TECV_BHB_RDEPEND_ARM64}
 "
 
 _MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64="
@@ -1859,6 +1881,10 @@ MITIGATE_TECV_RDEPEND="
 		!custom-kernel? (
 			auto? (
 				${_MITIGATE_TECV_AUTO}
+			)
+			arm? (
+				${_MITIGATE_TECV_SPECTRE_RDEPEND_ARM}
+				${_MITIGATE_TECV_BHB_RDEPEND_ARM}
 			)
 			arm64? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_ARM64}
