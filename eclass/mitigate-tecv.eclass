@@ -3198,6 +3198,7 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_verify_mitigation_meltdown		# Mitigations against Variant 3 (2017)
 	_mitigate_tecv_verify_mitigation_spectre		# Mitigations against Variant 1 (2017), Variant 2 (2017), SWAPGS (2019)
 	_mitigate_tecv_verify_mitigation_spectre_ng		# Mitigations against Variant 4 (2018)
+								# Lazy FP State Restore (2018); eagerfpu removed and hardcoded enabled in 4.6 (2016), eagerfpu available in 3.7 (2012)
 	_mitigate_tecv_verify_mitigation_spectre_bhb		# Mitigations against BHB (2022), ARM
 	_mitigate_tecv_verify_mitigation_bhi			# Mitigations against BHI (2022), X86
 	_mitigate_tecv_verify_mitigation_crosstalk		# Mitigations against SRBDS (2020)
