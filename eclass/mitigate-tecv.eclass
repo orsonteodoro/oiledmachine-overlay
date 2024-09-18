@@ -2613,6 +2613,30 @@ eerror "  CONFIG_CMDLINE"
 eerror
 			die
 		fi
+		if [[ "${ARCH}" == "x86" ]] ; then
+			local levels=$(linux_chkconfig_string "PGTABLE_LEVELS")
+			local pae=0
+			if tc-is-cross-compiler ; then
+				:
+			elif cat /proc/cpuinfo | grep -q  "flags.* pae " ; then
+				pae=1
+			fi
+
+			if [[ "${levels}" == "2" ]] && (( ${pae} == 1 )) ; then
+eerror
+eerror "PGTABLE_LEVELS=2.  To continue, set to one of the following for"
+eerror "Foreshadow mitigation:"
+eerror
+eerror "  CONFIG_PGTABLE_LEVELS=3 with CONFIG_X86_PAE=y"
+eerror
+				die
+			else
+ewarn
+ewarn "Foreshadow mitigation was not applied for ARCH=${ARCH}.  This could mean"
+ewarn "that your hardware was too old."
+ewarn
+			fi
+		fi
 	fi
 }
 
