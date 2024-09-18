@@ -2334,20 +2334,14 @@ _mitigate_tecv_verify_mitigation_spectre_bhb() {
 			check_extra_config
 		fi
 	fi
+	if [[ "${ARCH}" == "arm64" ]] && ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.17" ; then
+		CONFIG_CHECK="
+			MITIGATE_SPECTRE_BRANCH_HISTORY
+		"
+		ERROR_MITIGATE_SPECTRE_BRANCH_HISTORY="CONFIG_MITIGATE_SPECTRE_BRANCH_HISTORY=y is required for Spectre BHB mitigation."
+		check_extra_config
+	fi
 	if [[ "${ARCH}" == "arm64" ]] && ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.1" ; then
-		if \
-			   use cpu_target_arm_cortex_a57 \
-			|| use cpu_target_arm_cortex_a72 \
-			|| use cpu_target_arm_cortex_a73 \
-			|| use cpu_target_arm_cortex_a75 \
-		; then
-			CONFIG_CHECK="
-				HARDEN_BRANCH_HISTORY
-			"
-			ERROR_HARDEN_BRANCH_HISTORY="CONFIG_HARDEN_BRANCH_HISTORY=y is required for Spectre BHB mitigation."
-			check_extra_config
-		fi
-
 		if _check_kernel_cmdline "mitigations=off" ; then
 eerror
 eerror "Detected mitigations=off in the kernel command line."
@@ -3308,13 +3302,6 @@ _mitigate-tecv_get_required_version() {
 	if [[ "${ARCH}" == "arm64" ]] ; then
 # TODO: Spectre v4/v3a
 
-# Missing explicit recognition of BHB fix in kernel.  In the docs it says yes.
-#			|| use cpu_target_arm_cortex_a65 \
-#			|| use cpu_target_arm_cortex_a65ae \
-#			|| use cpu_target_arm_cortex_a715 \
-#			|| use cpu_target_arm_neoverse_e1 \
-#			|| use cpu_target_arm_neoverse_v2 \
-#			|| use cpu_target_arm_cortex_x3 \
 		if \
 			   use cpu_target_arm_cortex_a78ae \
 		; then
@@ -3336,7 +3323,15 @@ _mitigate-tecv_get_required_version() {
 			|| use cpu_target_arm_neoverse_v1 \
 							\
 			|| use cpu_target_arm_cortex_a75 \
+							\
+			|| use cpu_target_arm_cortex_a65 \
+			|| use cpu_target_arm_cortex_a65ae \
+			|| use cpu_target_arm_cortex_a715 \
+			|| use cpu_target_arm_neoverse_e1 \
+			|| use cpu_target_arm_neoverse_v2 \
+			|| use cpu_target_arm_cortex_x3 \
 		; then
+# Missing explicit recognition of BHB fix in kernel for subgroup above.  In the docs it says yes.
 			echo "5.17"
 		elif use bpf ; then
 			echo "5.13"
