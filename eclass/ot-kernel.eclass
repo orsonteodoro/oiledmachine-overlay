@@ -12047,7 +12047,7 @@ ot-kernel_set_dev_mem() {
 		|| "${hardening_level}" == "fast-af" \
 		|| "${hardening_level}" == "fast-as-fuck" \
 		|| "${hardening_level}" == "performance" \
-	]] ; then\
+	]] ; then
 	# Enable as needed for performance profiles
 	# It should be disabled to save more CPU cycles.
 		if (( ${_OT_KERNEL_DEV_MEM} == 1 )) ; then
