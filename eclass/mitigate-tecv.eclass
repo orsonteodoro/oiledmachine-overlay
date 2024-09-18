@@ -37,6 +37,7 @@ _mitigate_tecv_set_globals() {
 _mitigate_tecv_set_globals
 unset -f _mitigate_tecv_set_globals
 
+# lakefield is incomplete
 CPU_TARGET_X86=(
 # For completeness, see also
 # https://www.intel.com/content/www/us/en/developer/topic-technology/software-security-guidance/processors-affected-consolidated-product-cpu-model.html
@@ -86,11 +87,21 @@ CPU_TARGET_X86=(
 	cpu_target_x86_catlow_golden_cove
 	cpu_target_x86_catlow_raptor_cove
 
+	cpu_target_x86_lakefield
+
+	cpu_target_x86_bulldozer
+	cpu_target_x86_piledriver
+	cpu_target_x86_steamroller
+	cpu_target_x86_excavator
+	cpu_target_x86_jaguar
+	cpu_target_x86_puma
 	cpu_target_x86_zen
 	cpu_target_x86_zen_plus
 	cpu_target_x86_zen_2
 	cpu_target_x86_zen_3
 	cpu_target_x86_zen_4
+
+	cpu_target_x86_dhyana
 )
 
 CPU_TARGET_ARM=(
@@ -1451,6 +1462,9 @@ _MITIGATE_TECV_MMIO_RDEPEND_X86_64="
 			>=sys-firmware/intel-microcode-20220510
 		)
 	)
+	cpu_target_x86_lakefield? (
+		$(gen_patched_kernel_list 5.19)
+	)
 "
 _MITIGATE_TECV_MMIO_RDEPEND_X86_32="
 	${_MITIGATE_TECV_MMIO_RDEPEND_X86_64}
@@ -1478,6 +1492,27 @@ _MITIGATE_TECV_RETBLEED_RDEPEND_X86_64="
 	cpu_target_x86_amber_lake_gen10? (
 		$(gen_patched_kernel_list 5.19)
 	)
+	cpu_target_x86_lakefield? (
+		$(gen_patched_kernel_list 5.19)
+	)
+	cpu_target_x86_bulldozer? (
+		$(gen_patched_kernel_list 5.19)
+	)
+	cpu_target_x86_piledriver? (
+		$(gen_patched_kernel_list 5.19)
+	)
+	cpu_target_x86_steamroller? (
+		$(gen_patched_kernel_list 5.19)
+	)
+	cpu_target_x86_excavator? (
+		$(gen_patched_kernel_list 5.19)
+	)
+	cpu_target_x86_jaguar? (
+		$(gen_patched_kernel_list 5.19)
+	)
+	cpu_target_x86_puma? (
+		$(gen_patched_kernel_list 5.19)
+	)
 	cpu_target_x86_zen? (
 		$(gen_patched_kernel_list 5.19)
 	)
@@ -1485,6 +1520,9 @@ _MITIGATE_TECV_RETBLEED_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 5.19)
 	)
 	cpu_target_x86_zen_2? (
+		$(gen_patched_kernel_list 5.19)
+	)
+	cpu_target_x86_dhyana? (
 		$(gen_patched_kernel_list 5.19)
 	)
 "
