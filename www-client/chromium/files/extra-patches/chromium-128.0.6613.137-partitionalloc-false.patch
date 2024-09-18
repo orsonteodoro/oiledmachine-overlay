@@ -357,3 +357,25 @@ index 644aefb..a2f53015 100644
    return opts;
  }
  
+--- a/components/viz/service/gl/gpu_service_impl.cc.orig	2024-09-10 11:42:13.133671800 -0700
++++ b/components/viz/service/gl/gpu_service_impl.cc	2024-09-17 17:09:40.974177307 -0700
+@@ -1422,7 +1422,9 @@ void GpuServiceImpl::OnBackgroundedOnMai
+     }
+   }
+ 
++#if PA_BUILDFLAG(USE_PARTITION_ALLOC)
+   base::allocator::PartitionAllocSupport::Get()->OnBackgrounded();
++#endif
+ }
+ 
+ void GpuServiceImpl::OnForegrounded() {
+@@ -1446,7 +1448,9 @@ void GpuServiceImpl::OnForegroundedOnMai
+     }
+   }
+   gpu_channel_manager_->OnApplicationForegounded();
++#if PA_BUILDFLAG(USE_PARTITION_ALLOC)
+   base::allocator::PartitionAllocSupport::Get()->OnForegrounded();
++#endif
+ }
+ 
+ #if !BUILDFLAG(IS_ANDROID)
