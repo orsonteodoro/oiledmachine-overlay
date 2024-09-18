@@ -2133,7 +2133,7 @@ _mitigate_tecv_verify_mitigation_meltdown() {
 	local pae=0
 	if tc-is-cross-compiler ; then
 		:
-	elif cat /proc/cpuinfo | grep -q  "flags.* pae " ; then
+	elif cat "/proc/cpuinfo" | grep -q  "flags.* pae " ; then
 		pae=1
 	fi
 
@@ -2375,6 +2375,45 @@ eerror
 eerror "Detected nospectre_v2 in the kernel command line."
 eerror
 eerror "Remove it from:"
+eerror
+eerror "  /etc/default/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+			die
+		fi
+		if _check_kernel_cmdline "spectre_v2=" ; then
+eerror
+eerror "Detected spectre_v2=off in the kernel command line."
+eerror
+eerror "Acceptable values:"
+eerror
+eerror "  spectre_v2=on"
+eerror "  spectre_v2=auto"
+eerror "  spectre_v2=retpoline"
+eerror "  spectre_v2=retpoline,generic"
+			if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
+eerror "  spectre_v2=retpoline,amd"
+			fi
+			if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.17" ; then
+eerror "  spectre_v2=retpoline,lfence"
+				if tc-is-cross-compiler ; then
+					:
+				elif cat "/proc/cpuinfo" | grep -q  "flags.* ibrs_enhanced " ; then
+eerror "  spectre_v2=eibrs"
+eerror "  spectre_v2=eibrs,retpoline"
+eerror "  spectre_v2=eibrs,lfence"
+				fi
+			fi
+			if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.19" ; then
+				if tc-is-cross-compiler ; then
+					:
+				elif cat "/proc/cpuinfo" | grep -q  "flags.* ibrs " ; then
+eerror "  spectre_v2=ibrs"
+				fi
+			fi
+eerror
+eerror "Edit it from:"
 eerror
 eerror "  /etc/default/grub"
 eerror "  /etc/grub.d/40_custom"
@@ -2729,7 +2768,7 @@ eerror
 			local pae=0
 			if tc-is-cross-compiler ; then
 				:
-			elif cat /proc/cpuinfo | grep -q  "flags.* pae " ; then
+			elif cat "/proc/cpuinfo" | grep -q  "flags.* pae " ; then
 				pae=1
 			fi
 
@@ -2900,9 +2939,17 @@ eerror "Acceptable values:"
 eerror
 eerror "  retbleed=auto                 # The kernel default"
 eerror "  retbleed=auto,nosmt"
+	if tc-is-cross-compiler ; then
+		:
+	elif cat "/proc/cpuinfo" | grep -q  "flags.* ibpb " ; then
 eerror "  retbleed=ibpb"
+	fi
 eerror "  retbleed=unret"
 eerror "  retbleed=unret,nosmt"
+	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.2" ; then
+	# See commit d82a034
+eerror "  retbleed=stuff"
+	fi
 eerror
 eerror "Edit it from:"
 eerror
