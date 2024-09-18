@@ -2130,8 +2130,15 @@ _check_kernel_cmdline() {
 # @DESCRIPTION:
 # Check the kernel config flags to mitigate against Meltdown.
 _mitigate_tecv_verify_mitigation_meltdown() {
+	local pae=0
+	if tc-is-cross-compiler ; then
+		:
+	elif cat /proc/cpuinfo | grep -q  "flags.* pae " ; then
+		pae=1
+	fi
+
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
-		if [[ "${ARCH}" == "amd64" ]] ; then
+		if [[ "${ARCH}" == "amd64" ]] || [[ "${ARCH}" == "x86" && "${pae}" == "1" ]] ; then
 			CONFIG_CHECK="
 				MITIGATION_PAGE_TABLE_ISOLATION
 			"
@@ -2148,7 +2155,7 @@ eerror "No mitigation against Meltdown for 32-bit x86.  Use only 64-bit instead.
 			die
 		fi
 	elif ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "4.15" ; then
-		if [[ "${ARCH}" == "amd64" ]] ; then
+		if [[ "${ARCH}" == "amd64" ]] || [[ "${ARCH}" == "x86" && "${pae}" == "1" ]] ; then
 			CONFIG_CHECK="
 				PAGE_TABLE_ISOLATION
 			"
@@ -3395,6 +3402,39 @@ _mitigate_tecv_verify_mitigation_ussb() {
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_mitigate_privilege_escalation_with_ssp
+# @INTERNAL
+# @DESCRIPTION:
+# Check for SSP to prevent pre attack for privilege escalation which can lead to data theft.
+_mitigate_tecv_mitigate_privilege_escalation_with_ssp() {
+	CONFIG_CHECK="
+		STACKPROTECTOR
+	"
+	ERROR_RELOCATABLE="CONFIG_STACKPROTECTOR is required for SSP to mitigate against privilege escalation which could lead to data theft."
+}
+
+# @FUNCTION: _mitigate_tecv_mitigate_privilege_escalation_with_aslr
+# @INTERNAL
+# @DESCRIPTION:
+# Check for ASLR to prevent pre attack for privilege escalation which can lead to data theft.
+_mitigate_tecv_mitigate_privilege_escalation_with_aslr() {
+	if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
+		CONFIG_CHECK="
+			RELOCATABLE
+			RANDOMIZE_BASE
+		"
+		if [[ "${ARCH}" == "amd64" ]] ; then
+			CONFIG_CHECK+="
+				RANDOMIZE_MEMORY
+			"
+		fi
+		ERROR_RELOCATABLE="CONFIG_RELOCATABLE is required for KASLR to mitigate against privilege escalation which could lead to data theft."
+		ERROR_RANDOMIZE_BASE="CONFIG_RANDOMIZE_BASE is required for KASLR to mitigate against privilege escalation which could lead to data theft."
+		ERROR_RANDOMIZE_MEMORY="CONFIG_RANDOMIZE_MEMORY is required to mitigate against privilege escalation which could lead to data theft."
+		check_extra_config
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -3452,6 +3492,9 @@ einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
 eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 		die
 	fi
+
+	_mitigate_tecv_mitigate_privilege_escalation_with_ssp
+	_mitigate_tecv_mitigate_privilege_escalation_with_aslr
 
 	# Notify if grub or the kernel config is incorrectly configured/tampered
 	# or a copypasta-ed workaround.
