@@ -12012,8 +12012,12 @@ ot-kernel_set_kconfig_bpf_spectre_mitigation() {
 
 # @FUNCTION: _ot-kernel_set_devmem
 # @DESCRIPTION:
-# Enable and control access to /dev/mem and friends
+# Set and control access to /dev/mem and friends.
+#
 # Access to /dev/mem, /dev/kmem, /proc/kcore is a security topic.
+#
+# One could capture the RAM contents through these virtual files and extract
+# senstive info or keys.
 ot-kernel_set_dev_mem() {
 	if \
 		[[ \
