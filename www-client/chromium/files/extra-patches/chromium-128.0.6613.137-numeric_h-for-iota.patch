@@ -1,0 +1,10 @@
+--- a/chrome/browser/ui/browser_commands.cc.orig	2024-09-10 11:42:04.326923100 -0700
++++ b/chrome/browser/ui/browser_commands.cc	2024-09-18 08:02:45.636888420 -0700
+@@ -5,6 +5,7 @@
+ #include "chrome/browser/ui/browser_commands.h"
+ 
+ #include <memory>
++#include <numeric>
+ #include <optional>
+ #include <utility>
+ #include <vector>

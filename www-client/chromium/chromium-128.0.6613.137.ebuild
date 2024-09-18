@@ -2043,6 +2043,7 @@ apply_oiledmachine_overlay_patchset() {
 		"${FILESDIR}/extra-patches/${PN}-123.0.6312.58-zlib-selective-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-125.0.6422.76-qt6-split.patch"
 		"${FILESDIR}/extra-patches/${PN}-128.0.6613.84-mold.patch"
+		"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-numeric_h-for-iota.patch"
 	)
 
 	if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then
