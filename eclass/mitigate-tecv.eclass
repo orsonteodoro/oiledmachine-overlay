@@ -38,6 +38,7 @@ _mitigate_tecv_set_globals
 unset -f _mitigate_tecv_set_globals
 
 # lakefield is incomplete
+# cannon lake is incomplete
 CPU_TARGET_X86=(
 # For completeness, see also
 # https://www.intel.com/content/www/us/en/developer/topic-technology/software-security-guidance/processors-affected-consolidated-product-cpu-model.html
@@ -64,6 +65,7 @@ CPU_TARGET_X86=(
 	cpu_target_x86_amber_lake_gen8
 	cpu_target_x86_coffee_lake_gen8
 	cpu_target_x86_kaby_lake_gen8
+	cpu_target_x86_cannon_lake
 	cpu_target_x86_whiskey_lake
 	cpu_target_x86_coffee_lake_gen9
 	cpu_target_x86_comet_lake
@@ -1484,6 +1486,9 @@ _MITIGATE_TECV_RETBLEED_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 5.19)
 	)
 	cpu_target_x86_kaby_lake_gen8? (
+		$(gen_patched_kernel_list 5.19)
+	)
+	cpu_target_x86_cannon_lake? (
 		$(gen_patched_kernel_list 5.19)
 	)
 	cpu_target_x86_whiskey_lake? (
@@ -3548,6 +3553,7 @@ _mitigate-tecv_get_required_version() {
 			|| use cpu_target_x86_zen_plus \
 			|| use cpu_target_x86_broadwell \
 			|| use cpu_target_x86_hewitt_lake \
+			|| use cpu_target_x86_cannon_lake \
 			|| use cpu_target_x86_lakefield \
 			|| use cpu_target_x86_bulldozer \
 			|| use cpu_target_x86_piledriver \
@@ -3706,6 +3712,12 @@ ewarn "Mitigation coverage for cpu_target_x86_sandy_bridge may be incompletable.
 		fi
 		if use cpu_target_x86_ivy_bridge ; then
 ewarn "Mitigation coverage for cpu_target_x86_ivy_bridge may be incompletable."
+		fi
+		if use cpu_target_x86_cannon_lake ; then
+ewarn "Mitigation coverage for cpu_target_x86_cannon_lake may be incompletable."
+		fi
+		if use cpu_target_x86_lakefield ; then
+ewarn "Mitigation coverage for cpu_target_x86_lakefield may be incompletable."
 		fi
 # We didn't verify yet.  Maybe it could be run in src_test().
 ewarn "Use a CPU vulnerability checker to verify complete mitigation or to help complete mitigation."
