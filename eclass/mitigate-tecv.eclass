@@ -3716,9 +3716,6 @@ mitigate-tecv_pkg_setup() {
 eerror "The auto USE flag can only be used in native builds."
 		die
 	fi
-	if [[ "${ARCH}" == "arm" ]] ; then
-ewarn "CPU vulnerability mitigation has not been added yet for ARCH=${ARCH}."
-	fi
 	use auto && einfo "FIRMWARE_VENDOR=${FIRMWARE_VENDOR}"
 	if use kernel_linux ; then
 		linux-info_pkg_setup
