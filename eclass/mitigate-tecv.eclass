@@ -314,6 +314,9 @@ REQUIRED_USE="
 	cpu_target_x86_catlow_golden_cove? (
 		firmware
 	)
+	cpu_target_x86_catlow_raptor_cove? (
+		firmware
+	)
 
 	cpu_target_x86_zen_2? (
 		firmware
@@ -1999,6 +2002,47 @@ _MITIGATE_TECV_USSB_RDEPEND_ARM64="
 	)
 "
 
+_MITIGATE_TECV_IBPB_RDEPEND_X86_64="
+	cpu_target_x86_sapphire_rapids? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_sapphire_rapids_edge_enhanced? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_alder_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_catlow_golden_cove? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_catlow_raptor_cove? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_raptor_lake_gen13? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_raptor_lake_gen14? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+"
+_MITIGATE_TECV_IBPB_RDEPEND_X86_32="
+	${_MITIGATE_TECV_IBPB_RDEPEND_X86_64}
+"
+
 _MITIGATE_TECV_AUTO="
 	arm? (
 		$(gen_patched_kernel_list 6.1)
@@ -2072,6 +2116,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_RFDS_RDEPEND_X86_64}
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_64}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
+				${_MITIGATE_TECV_IBPB_RDEPEND_X86_64}
 			)
 			ppc? (
 				${_MITIGATE_TECV_SPECTRE_RDEPEND_PPC32}
@@ -2101,6 +2146,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_RFDS_RDEPEND_X86_32}
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_32}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_32}
+				${_MITIGATE_TECV_IBPB_RDEPEND_X86_32}
 			)
 		)
 	)
@@ -3472,6 +3518,30 @@ _mitigate_tecv_mitigate_privilege_escalation_with_aslr() {
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_ibpb
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2023-38575, also known as Incomplete Branch Prediction Barrier (IBPB).
+_mitigate_tecv_verify_mitigation_ibpb() {
+	if \
+		   use cpu_target_x86_sapphire_rapids \
+		|| use cpu_target_x86_sapphire_rapids_edge_enhanced \
+		|| use cpu_target_x86_alder_lake \
+		|| use cpu_target_x86_catlow_golden_cove \
+		|| use cpu_target_x86_catlow_raptor_cove \
+		|| use cpu_target_x86_raptor_lake_gen13 \
+		|| use cpu_target_x86_raptor_lake_gen14 \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for CVE-2023-38575 (IBPB) mitigation."
+		check_extra_config
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -3555,6 +3625,7 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_verify_mitigation_inception		# Mitigations against SRSO (2023)
 	_mitigate_tecv_verify_mitigation_rfds			# Mitigations against RFDS (2024)
 	_mitigate_tecv_verify_mitigation_ussb			# Mitigations against USSB (2024)
+	_mitigate_tecv_verify_mitigation_ibpb			# Mitigations against IBPB (2023)
 
 	# For SLAM, see https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability#2023
 }
