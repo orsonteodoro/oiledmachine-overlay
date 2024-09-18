@@ -2306,6 +2306,7 @@ eerror
 			|| use cpu_target_arm_cortex_a73 \
 			|| use cpu_target_arm_cortex_a75 \
 			|| use cpu_target_arm_brahma_b15 \
+			|| use auto \
 		; then
 			CONFIG_CHECK="
 				HARDEN_BRANCH_PREDICTOR
