@@ -106,3 +106,12 @@
  
  void MediaStreamManager::RegisterDispatcherHost(
      std::unique_ptr<blink::mojom::MediaStreamDispatcherHost> host,
+--- a/content/common/features.gni.orig	2024-09-10 11:42:13.871734400 -0700
++++ b/content/common/features.gni	2024-09-14 10:55:04.189211887 -0700
+@@ -24,5 +24,4 @@ declare_args() {
+   content_enable_legacy_ipc = is_android || enable_ppapi
+ }
+ 
+-enable_screen_capture =
+-    is_linux || is_chromeos || is_mac || is_win || is_android || is_fuchsia
++enable_screen_capture = false
