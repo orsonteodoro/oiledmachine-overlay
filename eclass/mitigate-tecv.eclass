@@ -691,79 +691,109 @@ _MITIGATE_TECV_SPECTRE_RDEPEND_S390X="
 "
 
 _MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64="
-	cpu_target_x86_skylake? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_ice_lake? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_alder_lake? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_raptor_lake_gen14? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_meteor_lake? (
-		$(gen_patched_kernel_list 4.19)
-	)
-
-	cpu_target_x86_cascade_lake? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_cooper_lake? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_sapphire_rapids? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_granite_rapids? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_emerald_rapids? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_x86_sierra_forest? (
-		$(gen_patched_kernel_list 4.19)
-	)
-
-	cpu_target_x86_catlow_raptor_cove? (
-		$(gen_patched_kernel_list 4.19)
-	)
-
-
+	$(gen_patched_kernel_list 4.19)
 "
 _MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_32="
 	${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64}
+"
+
+_MITIGATE_TECV_SPECTRE_RSBA_RDEPEND_X86_64="
+	cpu_target_x86_skylake? (
+		$(gen_patched_kernel_list 5.19)
+	)
+	cpu_target_x86_ice_lake? (
+		$(gen_patched_kernel_list 5.19)
+	)
+
+	cpu_target_x86_amber_lake_gen8? (
+		$(gen_patched_kernel_list 5.19)
+	)
+	cpu_target_x86_coffee_lake_gen8? (
+		$(gen_patched_kernel_list 5.19)
+	)
+
+
+	cpu_target_x86_whiskey_lake? (
+		$(gen_patched_kernel_list 5.19)
+	)
+
+	cpu_target_x86_kaby_lake_gen7? (
+		$(gen_patched_kernel_list 5.19)
+	)
+	cpu_target_x86_kaby_lake_gen8? (
+		$(gen_patched_kernel_list 5.19)
+	)
+
+	cpu_target_x86_coffee_lake_gen9? (
+		$(gen_patched_kernel_list 5.19)
+	)
+"
+_MITIGATE_TECV_SPECTRE_RSBA_RDEPEND_X86_32="
+	${_MITIGATE_TECV_SPECTRE_RSBA_RDEPEND_X86_64}
+"
+
+# The firmware is required for mitigation, but the date below is not verified
+# to contain the fix.  It is based on the monotonic numbering of the commit
+# summary.
+_MITIGATE_TECV_SPECTRE_RRSBA_RDEPEND_X86_64="
+	cpu_target_x86_cooper_lake? (
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_x86_whiskey_lake? (
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_x86_comet_lake? (
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_x86_amber_lake_gen10? (
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_x86_sapphire_rapids? (
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_x86_sapphire_rapids_edge_enhanced? (
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_x86_alder_lake? (
+		$(gen_patched_kernel_list 5.17)
+		firmware? (
+			>=sys-firmware/intel-microcode-20230214
+		)
+	)
+	cpu_target_x86_cascade_lake? (
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_x86_coffee_lake_gen9? (
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_x86_comet_lake? (
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_x86_meteor_lake? (
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_x86_granite_rapids? (
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_x86_sierra_forest? (
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_x86_raptor_lake_gen13? (
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_x86_raptor_lake_gen14? (
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_x86_catlow_raptor_cove? (
+		$(gen_patched_kernel_list 5.17)
+	)
+	cpu_target_x86_emerald_rapids? (
+		$(gen_patched_kernel_list 5.17)
+	)
+"
+
+_MITIGATE_TECV_SPECTRE_RRSBA_RDEPEND_X86_32="
+	${_MITIGATE_TECV_SPECTRE_RRSBA_RDEPEND_X86_64}
 "
 
 
@@ -2261,6 +2291,67 @@ _MITIGATE_TECV_SMT_RSB_RDEPEND_X86_32="
 "
 
 
+_MITIGATE_TECV_PBRSB_RDEPEND_X86_64="
+	cpu_target_x86_cascade_lake? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_cooper_lake? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_ice_lake? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_tiger_lake? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_whiskey_lake? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_comet_lake? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_amber_lake_gen10? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_sapphire_rapids? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_sapphire_rapids_edge_enhanced? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_alder_lake? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_catlow_golden_cove? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_coffee_lake_gen9? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_comet_lake? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_rocket_lake? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_catlow_raptor_cove? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_raptor_lake_gen13? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_raptor_lake_gen14? (
+		$(gen_patched_kernel_list 6.0)
+	)
+	cpu_target_x86_emerald_rapids? (
+		$(gen_patched_kernel_list 6.0)
+	)
+"
+_MITIGATE_TECV_PBRSB_RDEPEND_X86_32="
+	${_MITIGATE_TECV_PBRSB_RDEPEND_X86_64}
+"
+
+
 _MITIGATE_TECV_AUTO="
 	arm? (
 		$(gen_patched_kernel_list 6.1)
@@ -2325,6 +2416,8 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64}
 				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64}
 				${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64}
+				${_MITIGATE_TECV_SPECTRE_RSBA_RDEPEND_X86_64}
+				${_MITIGATE_TECV_SPECTRE_RRSBA_RDEPEND_X86_64}
 				${_MITIGATE_TECV_FORESHADOW_RDEPEND_X86_64}
 				${_MITIGATE_TECV_BHI_RDEPEND_X86_64}
 				${_MITIGATE_TECV_MMIO_RDEPEND_X86_64}
@@ -2360,6 +2453,8 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_32}
 				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_32}
 				${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_32}
+				${_MITIGATE_TECV_SPECTRE_RSBA_RDEPEND_X86_32}
+				${_MITIGATE_TECV_SPECTRE_RRSBA_RDEPEND_X86_32}
 				${_MITIGATE_TECV_FORESHADOW_RDEPEND_X86_32}
 				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_32}
 				${_MITIGATE_TECV_BHI_RDEPEND_X86_32}
@@ -3231,10 +3326,6 @@ eerror "  retbleed=ibpb"
 	fi
 eerror "  retbleed=unret"
 eerror "  retbleed=unret,nosmt"
-	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.2" ; then
-	# See commit d82a034
-eerror "  retbleed=stuff"
-	fi
 eerror
 eerror "Edit it from:"
 eerror
@@ -3490,19 +3581,9 @@ eerror ">=sys-firmware/intel-microcode-20200609 is required for CacheOut and VRS
 # @FUNCTION: _mitigate_tecv_verify_mitigation_spectre_rsb
 # @INTERNAL
 # @DESCRIPTION:
-# Check the kernel config flags and kernel command line to mitigate against SpectreRSB, RSBU, RSBA, RRSBA.
+# Check the kernel config flags and kernel command line to mitigate against SpectreRSB.
 _mitigate_tecv_verify_mitigation_spectre_rsb() {
-	if \
-		use cpu_target_x86_alder_lake \
-		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
-	; then
-	# Needs microcode mitigation
-		CONFIG_CHECK="
-			CPU_SUP_INTEL
-		"
-		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RSBU/RRSBA mitigation."
-		check_extra_config
-	fi
+	:
 }
 
 # @FUNCTION: _mitigate_tecv_verify_mitigation_mds
@@ -3981,7 +4062,264 @@ eerror "You need to replace the kernel sources to Linux Kernel >= ${auto_version
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Cross-Thread Return Address Predictions (CTRAP), also known as SMT RSB in the Linux Kernel.
 _mitigate_tecv_verify_mitigation_smt_rsb() {
+	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
+		if _check_kernel_cmdline "mitigations=off" ; then
+eerror
+eerror "Detected mitigations=off in the kernel command line."
+eerror
+eerror "Acceptable values:"
+eerror
+eerror "  mitigations=auto              # The kernel default"
+eerror "  mitigations=auto,nosmt"
+eerror
+eerror "Edit it from:"
+eerror
+eerror "  /etc/default/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+			die
+		fi
+		if _check_kernel_cmdline "nospectre_v2" ; then
+eerror
+eerror "Detected nospectre_v2 in the kernel command line."
+eerror
+eerror "Remove it from:"
+eerror
+eerror "  /etc/default/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+			die
+		fi
+		if _check_kernel_cmdline "spectre_v2=off" ; then
+# There are 2 parts to this mitigation.
+# Required:
+# https://github.com/torvalds/linux/blob/v6.11/Documentation/admin-guide/hw-vuln/cross-thread-rsb.rst#mitigation-mechanism
+eerror
+eerror "Detected mitigations=off in the kernel command line."
+eerror
+eerror "Acceptable values:"
+eerror
+eerror "  spectre_v2=on"
+eerror "  spectre_v2=off"
+eerror "  spectre_v2=auto               # The kernel default"
+eerror "  spectre_v2=retpoline"
+eerror "  spectre_v2=retpoline,generic"
+eerror "  spectre_v2=retpoline,lfence"
+			if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
+eerror "  spectre_v2=retpoline,amd"
+			fi
+			if tc-is-cross-compiler ; then
+				:
+			elif cat "/proc/cpuinfo" | grep -q  "flags.* ibrs_enhanced " ; then
+eerror "  spectre_v2=eibrs"
+eerror "  spectre_v2=eibrs,retpoline"
+eerror "  spectre_v2=eibrs,lfence"
+			fi
+			if tc-is-cross-compiler ; then
+				:
+			elif cat "/proc/cpuinfo" | grep -q  "flags.* ibrs " ; then
+eerror "  spectre_v2=ibrs"
+			fi
+eerror "  "
+eerror
+eerror "Edit it from:"
+eerror
+eerror "  /etc/default/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+			die
+		fi
+einfo
+einfo "Part II of the SMT RSB mitigation:"
+einfo "https://github.com/torvalds/linux/blob/v6.11/Documentation/admin-guide/hw-vuln/cross-thread-rsb.rst#mitigation-control-for-kvm---module-parameter"
+einfo
+	fi
+}
+
+# @FUNCTION: _mitigate_tecv_verify_mitigation_pbrsb
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against Post-Barrier Return Stack Buffer Predictions (PBRSB) vulnerability.
+_mitigate_tecv_verify_mitigation_pbrsb() {
 	:
+}
+
+# @FUNCTION: _mitigate_tecv_verify_mitigation_rsba
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against RSBA.
+_mitigate_tecv_verify_mitigation_rsba() {
+	local mitigated=0
+	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.2" ; then
+		if use cpu_target_x86_skylake ; then
+			if _check_kernel_cmdline "spectre_v2=ibrs" ; then
+				mitigated=1
+			else
+				CONFIG_CHECK="
+					CALL_DEPTH_TRACKING
+				"
+				ERROR_CALL_DEPTH_TRACKING="CONFIG_CALL_DEPTH_TRACKING is required for retbleed=stuff to proper RSB underflow mitigation."
+				check_extra_config
+
+				if ! _check_kernel_cmdline "retbleed=off" ; then
+	# See commit d82a034
+eerror
+eerror "Missing retbleed=stuffing in the kernel command line."
+eerror
+eerror "Edit it from:"
+eerror
+eerror "  /etc/default/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+					die
+				fi
+				if ! _check_kernel_cmdline "spectre_v2=retpoline" ; then
+eerror "Missing spectre_v2=retpoline required by retbleed=stuff."
+					die
+				fi
+				mitigated=1
+			fi
+		fi
+	fi
+	if (( ${mitigated} == 1 )) ; then
+		:
+	elif ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.19" ; then
+		if \
+			[[ "${ARCH}" =~ ("amd64"|"x86") ]] \
+				&& \
+			( \
+				   use cpu_target_x86_skylake \
+				|| use cpu_target_x86_ice_lake \
+				|| use cpu_target_x86_amber_lake_gen8 \
+				|| use cpu_target_x86_coffee_lake_gen8 \
+				|| use cpu_target_x86_whiskey_lake \
+				|| use cpu_target_x86_kaby_lake_gen7 \
+				|| use cpu_target_x86_kaby_lake_gen8 \
+				|| use cpu_target_x86_coffee_lake_gen9 \
+				|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+			) \
+		; then
+			if ! _check_kernel_cmdline "spectre_v2=" ; then
+				:
+			elif _check_kernel_cmdline "spectre_v2=on" ; then
+				:
+			elif _check_kernel_cmdline "spectre_v2=auto" ; then
+				:
+			else
+eerror
+eerror "Detected incorrect spectre_v2= in the kernel command line for RSBA mitigation."
+eerror
+eerror "Acceptable values:"
+eerror
+eerror "  spectre_v2=on"
+eerror "  spectre_v2=auto"
+		if tc-is-cross-compiler ; then
+			:
+		elif cat "/proc/cpuinfo" | grep -q  "flags.* ibrs " ; then
+eerror "  spectre_v2=ibrs"
+		fi
+		if tc-is-cross-compiler ; then
+			:
+		elif cat "/proc/cpuinfo" | grep -q  "flags.* ibrs_enhanced " ; then
+eerror "  spectre_v2=eibrs,retpoline"
+eerror "  spectre_v2=eibrs,lfence"
+		fi
+eerror
+eerror "Edit it from:"
+eerror
+eerror "  /etc/default/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+				die
+			fi
+		fi
+	fi
+}
+
+# @FUNCTION: _mitigate_tecv_verify_mitigation_rrsba
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against RRSBA.
+_mitigate_tecv_verify_mitigation_rrsba() {
+	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.17" ; then
+		if \
+			[[ "${ARCH}" =~ ("amd64"|"x86") ]] \
+				&& \
+			( \
+				   use cpu_target_x86_cooper_lake \
+				|| use cpu_target_x86_whiskey_lake \
+				|| use cpu_target_x86_comet_lake \
+				|| use cpu_target_x86_amber_lake_gen10 \
+				|| use cpu_target_x86_sapphire_rapids \
+				|| use cpu_target_x86_sapphire_rapids_edge_enhanced \
+				|| use cpu_target_x86_alder_lake \
+				|| use cpu_target_x86_cascade_lake \
+				|| use cpu_target_x86_coffee_lake_gen9 \
+				|| use cpu_target_x86_comet_lake \
+				|| use cpu_target_x86_meteor_lake \
+				|| use cpu_target_x86_granite_rapids \
+				|| use cpu_target_x86_sierra_forest \
+				|| use cpu_target_x86_raptor_lake_gen13 \
+				|| use cpu_target_x86_raptor_lake_gen14 \
+				|| use cpu_target_x86_catlow_raptor_cove \
+				|| use cpu_target_x86_emerald_rapids \
+				|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+			) \
+		; then
+			if ! _check_kernel_cmdline "spectre_v2=" ; then
+				:
+			elif _check_kernel_cmdline "spectre_v2=on" ; then
+				:
+			elif _check_kernel_cmdline "spectre_v2=auto" ; then
+				:
+			elif _check_kernel_cmdline "spectre_v2=eibrs" ; then
+				:
+			elif _check_kernel_cmdline "spectre_v2=eibrs,retpoline" ; then
+				:
+			elif _check_kernel_cmdline "spectre_v2=eibrs,lfence" ; then
+				:
+			else
+eerror
+eerror "Detected incorrect spectre_v2= in the kernel command line for RRSBA mitigation."
+eerror
+eerror "Acceptable values:"
+eerror
+eerror "  spectre_v2=on"
+eerror "  spectre_v2=auto"
+			if tc-is-cross-compiler ; then
+				:
+			elif cat "/proc/cpuinfo" | grep -q  "flags.* ibrs_enhanced " ; then
+eerror "  spectre_v2=eibrs"
+eerror "  spectre_v2=eibrs,retpoline"
+eerror "  spectre_v2=eibrs,lfence"
+			fi
+eerror
+eerror "Edit it from:"
+eerror
+eerror "  /etc/default/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+				die
+			fi
+		fi
+	fi
+	if \
+		use cpu_target_x86_alder_lake \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for RRSBA mitigation."
+		check_extra_config
+	fi
 }
 
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
@@ -4060,7 +4398,9 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_verify_mitigation_spectre_bhb		# Mitigations against BHB (2022), ARM
 	_mitigate_tecv_verify_mitigation_bhi			# Mitigations against BHI (2022), X86
 	_mitigate_tecv_verify_mitigation_crosstalk		# Mitigations against SRBDS (2020)
-	_mitigate_tecv_verify_mitigation_spectre_rsb		# Mitigations against SpectreRSB (2018), RSBU (2022), RSBA (2022), RRSBA (2022)
+	_mitigate_tecv_verify_mitigation_spectre_rsb		# Mitigations against SpectreRSB (2018)
+	_mitigate_tecv_verify_mitigation_rsba			# Mitigations against RSBU (2022), RSBA (2022)
+	_mitigate_tecv_verify_mitigation_rrsba			# Mitigations against RSBU (2022), RRSBA (2022)
 	_mitigate_tecv_verify_mitigation_foreshadow		# Mitigations against L1TF (2018)
 	_mitigate_tecv_verify_mitigation_zombieload_v2		# Mitigations against TAA (2019)
 	_mitigate_tecv_verify_mitigation_mds			# Mitigations against ZombieLoad/MFBDS (2028), MLPDS (2028), MSBDS (2018), MDSUM (2019)
@@ -4072,6 +4412,7 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_verify_mitigation_mmio_stale_data	# Mitigations against SBDR (2022), SBDS (2022), DRPW (2022)
 	_mitigate_tecv_verify_mitigation_aepic			# Mitigations against AEPIC Leak (2022)
 	_mitigate_tecv_verify_mitigation_smt_rsb		# Mitigations against SMT RSB (2022)
+	_mitigate_tecv_verify_mitigation_pbrsb			# Mitigations against PBRSB (2022)
 	_mitigate_tecv_verify_mitigation_reptar			# Mitigations against Reptar (2023)
 	_mitigate_tecv_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023)
 	_mitigate_tecv_verify_mitigation_inception		# Mitigations against SRSO (2023)
