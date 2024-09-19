@@ -733,8 +733,8 @@ _MITIGATE_TECV_SPECTRE_RSBA_RDEPEND_X86_32="
 "
 
 # The firmware is required for mitigation, but the date below is not verified
-# to contain the fix.  It is based on the monotonic numbering of the commit
-# summary.
+# to contain the fix.  It is based on the monotonic numbering of the advisory
+# in the commit summary.
 _MITIGATE_TECV_SPECTRE_RRSBA_RDEPEND_X86_64="
 	cpu_target_x86_cooper_lake? (
 		$(gen_patched_kernel_list 5.17)
@@ -2362,7 +2362,6 @@ _MITIGATE_TECV_PBRSB_RDEPEND_X86_64="
 _MITIGATE_TECV_PBRSB_RDEPEND_X86_32="
 	${_MITIGATE_TECV_PBRSB_RDEPEND_X86_64}
 "
-
 
 _MITIGATE_TECV_AUTO="
 	arm? (
