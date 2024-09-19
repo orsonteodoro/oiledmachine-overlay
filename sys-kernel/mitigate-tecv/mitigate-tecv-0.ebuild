@@ -32,11 +32,14 @@ ${VIDEO_CARDS[@]}
 # Now, we have these recent past drivers with vulnerabilities of the same class.
 # Security notes:
 # video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551
+#
+# Usually stable versions get security checked.
+# The betas and dev versions usually do not get security reports.
+#
 RDEPEND="
 	${MITIGATE_TECV_RDEPEND}
 	video_cards_nvidia? (
 		|| (
-			x11-drivers/nvidia-drivers:0/560
 			>=x11-drivers/nvidia-drivers-550.90.07:0/550
 			>=x11-drivers/nvidia-drivers-535.183.01:0/535
 			>=x11-drivers/nvidia-drivers-470.256.02:0/470
