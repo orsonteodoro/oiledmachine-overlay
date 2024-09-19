@@ -524,13 +524,13 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_ARM64="
 		$(gen_patched_kernel_list 4.18)
 	)
 	cpu_target_arm_cortex_a76? (
-		$(gen_patched_kernel_list 4.18)
+		$(gen_patched_kernel_list 4.20)
 	)
 	cpu_target_arm_cortex_a77? (
 		$(gen_patched_kernel_list 4.18)
 	)
 	cpu_target_arm_neoverse_n1? (
-		$(gen_patched_kernel_list 4.18)
+		$(gen_patched_kernel_list 4.20)
 	)
 	bpf? (
 		$(gen_patched_kernel_list 5.13)
@@ -2242,6 +2242,24 @@ _MITIGATE_TECV_PLATYPUS_RDEPEND_X86_32="
 	${_MITIGATE_TECV_PLATYPUS_RDEPEND_X86_64}
 "
 
+_MITIGATE_TECV_SMT_RSB_RDEPEND_X86_64="
+	cpu_target_x86_zen? (
+		$(gen_patched_kernel_list 6.2)
+	)
+	cpu_target_x86_zen_plus? (
+		$(gen_patched_kernel_list 6.2)
+	)
+	cpu_target_x86_zen_2? (
+		$(gen_patched_kernel_list 6.2)
+	)
+	cpu_target_x86_dhyana? (
+		$(gen_patched_kernel_list 6.2)
+	)
+"
+_MITIGATE_TECV_SMT_RSB_RDEPEND_X86_32="
+	${_MITIGATE_TECV_SMT_RSB_RDEPEND_X86_64}
+"
+
 
 _MITIGATE_TECV_AUTO="
 	arm? (
@@ -2318,6 +2336,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_IBPB_RDEPEND_X86_64}
 				${_MITIGATE_TECV_RFDS_RDEPEND_X86_64}
 				${_MITIGATE_TECV_AEPIC_RDEPEND_X86_64}
+				${_MITIGATE_TECV_SMT_RSB_RDEPEND_X86_64}
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_64}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
 				${_MITIGATE_TECV_TECRA_RDEPEND_X86_64}
@@ -2352,6 +2371,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_IBPB_RDEPEND_X86_32}
 				${_MITIGATE_TECV_RFDS_RDEPEND_X86_32}
 				${_MITIGATE_TECV_AEPIC_RDEPEND_X86_32}
+				${_MITIGATE_TECV_SMT_RSB_RDEPEND_X86_32}
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_32}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_32}
 				${_MITIGATE_TECV_TECRA_RDEPEND_X86_32}
@@ -2816,6 +2836,12 @@ eerror
 			ERROR_BPF_UNPRIV_DEFAULT_OFF="CONFIG_BPF_UNPRIV_DEFAULT_OFF=y is required for Spectre-NG v4 mitigation."
 			check_extra_config
 		fi
+	fi
+	if use cpu_target_arm_cortex_a76 ; then
+ewarn "Cortex A76 requires a firmware update for Spectre-NG (Variant 4) mitigation."
+	fi
+	if use cpu_target_arm_neoverse_n1 ; then
+ewarn "Neoverse N1 requires a firmware update for Spectre-NG (Variant 4) mitigation."
 	fi
 }
 
@@ -3950,6 +3976,14 @@ eerror "You need to replace the kernel sources to Linux Kernel >= ${auto_version
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_smt_rsb
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against Cross-Thread Return Address Predictions (CTRAP), also known as SMT RSB in the Linux Kernel.
+_mitigate_tecv_verify_mitigation_smt_rsb() {
+	:
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -4037,6 +4071,7 @@ eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 	_mitigate_tecv_verify_mitigation_retbleed		# Mitigations against Retbleed (2022)
 	_mitigate_tecv_verify_mitigation_mmio_stale_data	# Mitigations against SBDR (2022), SBDS (2022), DRPW (2022)
 	_mitigate_tecv_verify_mitigation_aepic			# Mitigations against AEPIC Leak (2022)
+	_mitigate_tecv_verify_mitigation_smt_rsb		# Mitigations against SMT RSB (2022)
 	_mitigate_tecv_verify_mitigation_reptar			# Mitigations against Reptar (2023)
 	_mitigate_tecv_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023)
 	_mitigate_tecv_verify_mitigation_inception		# Mitigations against SRSO (2023)
