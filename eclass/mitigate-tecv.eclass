@@ -4209,6 +4209,12 @@ eerror "Missing spectre_v2=retpoline required by retbleed=stuff."
 				:
 			elif _check_kernel_cmdline "spectre_v2=auto" ; then
 				:
+			elif _check_kernel_cmdline "spectre_v2=ibrs" ; then
+				:
+			elif _check_kernel_cmdline "spectre_v2=eibrs,retpoline" ; then
+				:
+			elif _check_kernel_cmdline "spectre_v2=eibrs,lfence" ; then
+				:
 			else
 eerror
 eerror "Detected incorrect spectre_v2= in the kernel command line for RSBA mitigation."
