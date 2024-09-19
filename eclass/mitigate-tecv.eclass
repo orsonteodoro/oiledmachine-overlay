@@ -3906,9 +3906,12 @@ _mitigate_tecv_verify_mitigation_platypus() {
 			check_extra_config
 		fi
 	fi
+	# To mitigate, either (1) CONFIG_INTEL_RAPL=n or (2) update the kernel to 5.10 and only allow root to use this feature.
 	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
 		if \
-			   use cpu_target_x86_skylake \
+			   use cpu_target_x86_haswell \
+			|| use cpu_target_x86_broadwell \
+			|| use cpu_target_x86_skylake \
 			|| use cpu_target_x86_cascade_lake \
 			|| use cpu_target_x86_cooper_lake \
 			|| use cpu_target_x86_apollo_lake \
