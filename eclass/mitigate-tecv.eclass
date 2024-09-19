@@ -4157,6 +4157,10 @@ _mitigate_tecv_verify_mitigation_rsba() {
 		if use cpu_target_x86_skylake ; then
 			if _check_kernel_cmdline "spectre_v2=ibrs" ; then
 				RSBU_MITIGATED=1
+			elif _check_kernel_cmdline "spectre_v2=auto" ; then
+				RSBU_MITIGATED=1
+			elif _check_kernel_cmdline "spectre_v2=on" ; then
+				RSBU_MITIGATED=1
 			else
 				CONFIG_CHECK="
 					CALL_DEPTH_TRACKING
@@ -4192,8 +4196,7 @@ eerror "Missing spectre_v2=retpoline required by retbleed=stuff."
 			[[ "${ARCH}" =~ ("amd64"|"x86") ]] \
 				&& \
 			( \
-				   use cpu_target_x86_skylake \
-				|| use cpu_target_x86_ice_lake \
+				   use cpu_target_x86_ice_lake \
 				|| use cpu_target_x86_amber_lake_gen8 \
 				|| use cpu_target_x86_coffee_lake_gen8 \
 				|| use cpu_target_x86_whiskey_lake \
