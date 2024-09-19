@@ -1,5 +1,5 @@
---- ./content/browser/renderer_host/media/media_stream_manager.cc.orig	2024-09-10 11:42:13.629714000 -0700
-+++ ./content/browser/renderer_host/media/media_stream_manager.cc	2024-09-19 05:19:39.790455823 -0700
+--- a/content/browser/renderer_host/media/media_stream_manager.cc.orig	2024-09-10 11:42:13.629714000 -0700
++++ b/content/browser/renderer_host/media/media_stream_manager.cc	2024-09-19 05:19:39.790455823 -0700
 @@ -106,7 +106,7 @@
  #include "chromeos/lacros/lacros_service.h"
  #endif
