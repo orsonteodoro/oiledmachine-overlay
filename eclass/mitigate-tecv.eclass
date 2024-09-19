@@ -4231,8 +4231,6 @@ _mitigate-tecv_get_required_version() {
 			|| use cpu_target_arm_cortex_a73 \
 			|| use cpu_target_arm_cortex_a75 \
 							\
-			|| use cpu_target_arm_cortex_a75 \
-							\
 			|| use cpu_target_arm_cortex_a65 \
 			|| use cpu_target_arm_cortex_a65ae \
 			|| use cpu_target_arm_cortex_a715 \
