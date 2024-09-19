@@ -607,12 +607,14 @@ DISTRO_REQUIRE_USE="
 #
 #	extensions
 #	!partitionalloc
+# websockets requires devtools/devtools_http_handler.cc which is unconditionally added.
 REQUIRED_USE+="
 	${DISABLED_NON_FREE_USE_FLAGS}
 	!async-dns? (
 		!official
 	)
 	!drumbrake
+	websockets
 	!headless (
 		extensions
 		pdf
