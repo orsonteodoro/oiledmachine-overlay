@@ -50,15 +50,8 @@ BDEPEND="
 	sys-apps/util-linux
 "
 
-check_drivers() {
-	if has_version "<x11-drivers/nvidia-drivers-390.31:0/390" ; then
-eerror "Upgrade to >=x11-drivers/nvidia-drivers-390.31 to mitigate against Spectre v1 and Spectre v2."
-	fi
-}
-
 pkg_setup() {
 	mitigate-tecv_pkg_setup
-	check_drivers
 }
 
 # Unconditionally check
