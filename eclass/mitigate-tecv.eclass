@@ -4196,7 +4196,8 @@ eerror "Missing spectre_v2=retpoline required by retbleed=stuff."
 			[[ "${ARCH}" =~ ("amd64"|"x86") ]] \
 				&& \
 			( \
-				   use cpu_target_x86_ice_lake \
+				   use cpu_target_x86_skylake \
+				|| use cpu_target_x86_ice_lake \
 				|| use cpu_target_x86_amber_lake_gen8 \
 				|| use cpu_target_x86_coffee_lake_gen8 \
 				|| use cpu_target_x86_whiskey_lake \
