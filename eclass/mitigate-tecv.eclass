@@ -4151,12 +4151,12 @@ _mitigate_tecv_verify_mitigation_pbrsb() {
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against RSBA.
+RSBU_MITIGATED=0
 _mitigate_tecv_verify_mitigation_rsba() {
-	local mitigated=0
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.2" ; then
 		if use cpu_target_x86_skylake ; then
 			if _check_kernel_cmdline "spectre_v2=ibrs" ; then
-				mitigated=1
+				RSBU_MITIGATED=1
 			else
 				CONFIG_CHECK="
 					CALL_DEPTH_TRACKING
@@ -4181,11 +4181,11 @@ eerror
 eerror "Missing spectre_v2=retpoline required by retbleed=stuff."
 					die
 				fi
-				mitigated=1
+				RSBU_MITIGATED=1
 			fi
 		fi
 	fi
-	if (( ${mitigated} == 1 )) ; then
+	if (( ${RSBU_MITIGATED} == 1 )) ; then
 		:
 	elif ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.19" ; then
 		if \
@@ -4252,7 +4252,9 @@ eerror
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against RRSBA.
 _mitigate_tecv_verify_mitigation_rrsba() {
-	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.17" ; then
+	if (( ${RSBU_MITIGATED} == 1 )) ; then
+		:
+	elif ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.17" ; then
 		if \
 			[[ "${ARCH}" =~ ("amd64"|"x86") ]] \
 				&& \
