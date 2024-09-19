@@ -3669,6 +3669,7 @@ _mitigate_tecv_verify_mitigation_downfall() {
 			cpu_target_x86_cascade_lake
 			cpu_target_x86_cooper_lake
 		)
+		local x
 		for x in ${L[@]} ; do
 			if \
 				use firmware \
@@ -5127,6 +5128,7 @@ eerror "The auto USE flag can only be used in native builds."
 			cpu_target_x86_lakefield
 			cpu_target_x86_bakerville
 		)
+		local x
 		for x in ${L[@]} ; do
 			if use "${x}" ; then
 ewarn "Mitigation coverage for ${x} may be incompletable due to a lack of information or the microarchitecture is End of Life (EOL)."
