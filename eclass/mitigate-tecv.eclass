@@ -1812,6 +1812,12 @@ _MITIGATE_TECV_RFDS_RDEPEND_X86_64="
 			>=sys-firmware/intel-microcode-20240312
 		)
 	)
+	cpu_target_x86_catlow_golden_cove? (
+		$(gen_patched_kernel_list 6.9)
+		firmware? (
+			>=sys-firmware/intel-microcode-20240312
+		)
+	)
 	cpu_target_x86_alder_lake_n? (
 		$(gen_patched_kernel_list 6.9)
 		firmware? (
@@ -1825,6 +1831,12 @@ _MITIGATE_TECV_RFDS_RDEPEND_X86_64="
 		)
 	)
 	cpu_target_x86_raptor_lake_gen14? (
+		$(gen_patched_kernel_list 6.9)
+		firmware? (
+			>=sys-firmware/intel-microcode-20240312
+		)
+	)
+	cpu_target_x86_emerald_rapids? (
 		$(gen_patched_kernel_list 6.9)
 		firmware? (
 			>=sys-firmware/intel-microcode-20240312
@@ -3190,14 +3202,16 @@ _mitigate_tecv_verify_mitigation_rfds() {
 				   use cpu_target_x86_apollo_lake \
 				|| use cpu_target_x86_denverton \
 				|| use cpu_target_x86_snow_ridge \
-					|| use cpu_target_x86_parker_ridge \
+				|| use cpu_target_x86_parker_ridge \
 				|| use cpu_target_x86_elkhart_lake \
 				|| use cpu_target_x86_arizona_beach \
 				|| use cpu_target_x86_jasper_lake \
 				|| use cpu_target_x86_alder_lake \
+				|| use cpu_target_x86_catlow_golden_cove \
 				|| use cpu_target_x86_alder_lake_n \
 				|| use cpu_target_x86_raptor_lake_gen13 \
 				|| use cpu_target_x86_raptor_lake_gen14 \
+				|| use cpu_target_x86_emerald_rapids \
 				|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 			) \
 		; then
@@ -3220,9 +3234,11 @@ eerror ">=sys-firmware/intel-microcode-20240312 is required for RFDS mitigation.
 			|| use cpu_target_x86_arizona_beach \
 			|| use cpu_target_x86_jasper_lake \
 			|| use cpu_target_x86_alder_lake \
+			|| use cpu_target_x86_catlow_golden_cove \
 			|| use cpu_target_x86_alder_lake_n \
 			|| use cpu_target_x86_raptor_lake_gen13 \
 			|| use cpu_target_x86_raptor_lake_gen14 \
+			|| use cpu_target_x86_emerald_rapids \
 			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 		; then
 			CONFIG_CHECK="
@@ -4498,7 +4514,7 @@ _mitigate-tecv_get_required_version() {
 			|| use cpu_target_x86_zen_3 \
 			|| use cpu_target_x86_zen_4 \
 		; then
-			echo "6.9" # Inception, RDFS, Zenbleed, BHI
+			echo "6.9" # Inception, RFDS, Zenbleed, BHI
 		elif \
 			   use cpu_target_x86_skylake \
 			|| use cpu_target_x86_kaby_lake_gen7 \
