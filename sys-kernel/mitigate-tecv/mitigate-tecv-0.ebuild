@@ -21,15 +21,41 @@ S="${WORKDIR}"
 DESCRIPTION="Enforce Transient Execution CPU Vulnerability mitigations"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~s390 ~x86"
+VIDEO_CARDS=(
+	video_cards_nvidia
+)
+IUSE="
+${VIDEO_CARDS[@]}
+"
+# For Spectre v1, v2 mitigations, see https://nvidia.custhelp.com/app/answers/detail/a_id/4611
+# It needs >=x11-drivers/nvidia-drivers-390.31 for V1, V2 mitigation.
+# Now, we have these recent past drivers with vulnerabilities of the same class.
+# Security notes:
+# video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551
 RDEPEND="
 	${MITIGATE_TECV_RDEPEND}
+	video_cards_nvidia? (
+		|| (
+			x11-drivers/nvidia-drivers:0/560
+			>=x11-drivers/nvidia-drivers-550.90.07:0/550
+			>=x11-drivers/nvidia-drivers-535.183.01:0/535
+			>=x11-drivers/nvidia-drivers-470.256.02:0/470
+		)
+	)
 "
 BDEPEND="
 	sys-apps/util-linux
 "
 
+check_drivers() {
+	if has_version "<x11-drivers/nvidia-drivers-390.31:0/390" ; then
+eerror "Upgrade to >=x11-drivers/nvidia-drivers-390.31 to mitigate against Spectre v1 and Spectre v2."
+	fi
+}
+
 pkg_setup() {
 	mitigate-tecv_pkg_setup
+	check_drivers
 }
 
 # Unconditionally check

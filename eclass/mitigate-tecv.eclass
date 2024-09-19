@@ -2752,6 +2752,93 @@ _MITIGATE_TECV_PBRSB_RDEPEND_X86_32="
 	${_MITIGATE_TECV_PBRSB_RDEPEND_X86_64}
 "
 
+_MITIGATE_TECV_APDB_RDEPEND_X86_64="
+	cpu_target_x86_apollo_lake? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_denverton? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_gemini_lake? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_snow_ridge_bts? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_elkhart_lake? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_jasper_lake? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+"
+_MITIGATE_TECV_APDB_RDEPEND_X86_32="
+	${_MITIGATE_TECV_APDB_RDEPEND_X86_64}
+"
+
+_MITIGATE_TECV_ITDVCP_RDEPEND_X86_64="
+	cpu_target_x86_skylake? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_ice_lake? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_tiger_lake? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_amber_lake_gen8? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_kaby_lake_gen7? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_coffee_lake_gen8? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_kaby_lake_gen8? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_comet_lake? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_amber_lake_gen10? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_coffee_lake_gen9? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+"
+_MITIGATE_TECV_ITDVCP_RDEPEND_X86_32="
+	${_MITIGATE_TECV_ITDVCP_RDEPEND_X86_64}
+"
+
+_MITIGATE_TECV_IBRS_GH_RDEPEND_X86_64="
+	cpu_target_x86_cascade_lake? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_cooper_lake? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_ice_lake? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_whiskey_lake? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_comet_lake? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_amber_lake_gen10? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+	cpu_target_x86_coffee_lake_gen9? (
+		>=sys-firmware/intel-microcode-20210608
+	)
+"
+_MITIGATE_TECV_IBRS_GH_RDEPEND_X86_32="
+	${_MITIGATE_TECV_IBRS_GH_RDEPEND_X86_64}
+"
+
 _MITIGATE_TECV_AUTO="
 	arm? (
 		$(gen_patched_kernel_list 6.1)
@@ -2823,6 +2910,8 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_BHI_RDEPEND_X86_64}
 				${_MITIGATE_TECV_MMIO_RDEPEND_X86_64}
 				${_MITIGATE_TECV_RETBLEED_RDEPEND_X86_64}
+				${_MITIGATE_TECV_APDB_RDEPEND_X86_64}
+				${_MITIGATE_TECV_ITDVCP_RDEPEND_X86_64}
 				${_MITIGATE_TECV_MPF_RDEPEND_X86_64}
 				${_MITIGATE_TECV_FSFPCD_RDEPEND_X86_64}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
@@ -2862,6 +2951,8 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_32}
 				${_MITIGATE_TECV_BHI_RDEPEND_X86_32}
 				${_MITIGATE_TECV_MMIO_RDEPEND_X86_32}
+				${_MITIGATE_TECV_APDB_RDEPEND_X86_32}
+				${_MITIGATE_TECV_ITDVCP_RDEPEND_X86_32}
 				${_MITIGATE_TECV_MPF_RDEPEND_X86_32}
 				${_MITIGATE_TECV_FSFPCD_RDEPEND_X86_32}
 				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32}
@@ -4218,11 +4309,11 @@ _mitigate_tecv_verify_mitigation_ussb() {
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_mitigate_privilege_escalation_with_ssp
+# @FUNCTION: _mitigate_tecv_mitigate_with_ssp
 # @INTERNAL
 # @DESCRIPTION:
 # Check for SSP to prevent pre attack for privilege escalation which can lead to data theft.
-_mitigate_tecv_mitigate_privilege_escalation_with_ssp() {
+_mitigate_tecv_mitigate_with_ssp() {
 	CONFIG_CHECK="
 		STACKPROTECTOR
 	"
@@ -4230,11 +4321,11 @@ _mitigate_tecv_mitigate_privilege_escalation_with_ssp() {
 	check_extra_config
 }
 
-# @FUNCTION: _mitigate_tecv_mitigate_privilege_escalation_with_aslr
+# @FUNCTION: _mitigate_tecv_mitigate_with_aslr
 # @INTERNAL
 # @DESCRIPTION:
 # Check for ASLR to prevent pre attack for privilege escalation which can lead to data theft.
-_mitigate_tecv_mitigate_privilege_escalation_with_aslr() {
+_mitigate_tecv_mitigate_with_aslr() {
 	if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
 		CONFIG_CHECK="
 			RELOCATABLE
@@ -4787,6 +4878,81 @@ eerror
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_apdb
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2020-24513, also known as Atom Processor Domain Bypass (APDB) vulnerability.
+_mitigate_tecv_verify_mitigation_apdb() {
+	if \
+		   use cpu_target_x86_apollo_lake \
+		|| use cpu_target_x86_denverton \
+		|| use cpu_target_x86_gemini_lake \
+		|| use cpu_target_x86_snow_ridge_bts \
+		|| use cpu_target_x86_elkhart_lake \
+		|| use cpu_target_x86_jasper_lake \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2020-24513, also known as the Atom Processor Domain Bypass (APDB) vulnerability."
+		check_extra_config
+	fi
+
+}
+
+# @FUNCTION: _mitigate_tecv_verify_mitigation_itdvcp
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2020-24512, also known as Influence of Trivial Data Value in Cache Policy (ITDVCP) vulnerability.
+_mitigate_tecv_verify_mitigation_itdvcp() {
+	if \
+		   use cpu_target_x86_skylake \
+		|| use cpu_target_x86_ice_lake \
+		|| use cpu_target_x86_tiger_lake \
+		|| use cpu_target_x86_amber_lake_gen8 \
+		|| use cpu_target_x86_kaby_lake_gen7 \
+		|| use cpu_target_x86_coffee_lake_gen8 \
+		|| use cpu_target_x86_kaby_lake_gen8 \
+		|| use cpu_target_x86_comet_lake \
+		|| use cpu_target_x86_amber_lake_gen10 \
+		|| use cpu_target_x86_coffee_lake_gen9 \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2020-24512, also known as the Trivial Data Value in Cache Policy (ITDVCP) vulnerability."
+		check_extra_config
+	fi
+}
+
+# @FUNCTION: _mitigate_tecv_verify_mitigation_ibrs_gh
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2020-24511, also known as IBRS Guest/Host vulnerability.
+_mitigate_tecv_verify_mitigation_ibrs_gh() {
+	if \
+		   use cpu_target_x86_cascade_lake \
+		|| use cpu_target_x86_cooper_lake \
+		|| use cpu_target_x86_ice_lake \
+		|| use cpu_target_x86_whiskey_lake \
+		|| use cpu_target_x86_comet_lake \
+		|| use cpu_target_x86_amber_lake_gen10 \
+		|| use cpu_target_x86_coffee_lake_gen9 \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2020-24511, also known as the IBRS Guest/Host vulnerability."
+		check_extra_config
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -4849,7 +5015,8 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 		die
 	fi
 
-	# 3 main vulernability classes
+	# vulnerability classes
+	# CE  - Code Execution
 	# PE  - Privilege Escalation
 	# DoS - Denial of Service
 	# ID  - Information Disclosure (aka Data Leak)
@@ -4859,8 +5026,8 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	# PE -> DoS
 	# PE -> ID + DoS
 
-	_mitigate_tecv_mitigate_privilege_escalation_with_ssp	# PE
-	_mitigate_tecv_mitigate_privilege_escalation_with_aslr	# PE
+	_mitigate_tecv_mitigate_with_ssp			# PE, CE
+	_mitigate_tecv_mitigate_with_aslr			# PE
 
 	# Notify if grub or the kernel config is incorrectly configured/tampered
 	# or a copypasta-ed workaround.
@@ -4880,6 +5047,9 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	_mitigate_tecv_verify_mitigation_zombieload_v2		# ID, Mitigations against TAA (2019)
 	_mitigate_tecv_verify_mitigation_mds			# ID, Mitigations against ZombieLoad/MFBDS (2028), MLPDS (2028), MSBDS (2018), MDSUM (2019)
 	_mitigate_tecv_verify_mitigation_cacheout		# ID, Mitigations against L1DES (2020), VRS (2020)
+	_mitigate_tecv_verify_mitigation_apdb			# ID, Mitigations against APDB (2020)
+	_mitigate_tecv_verify_mitigation_itdvcp			# ID, Mitigations against ITDVCP (2020)
+	_mitigate_tecv_verify_mitigation_ibrs_gh		# ID, Mitigations against IBRS G/H (2020)
 	_mitigate_tecv_verify_mitigation_mpf			# ID, Mitigations against MPF (2021)
 	_mitigate_tecv_verify_mitigation_fsfpcd			# ID, Mitigations against FSFPCD (2021)
 	_mitigate_tecv_verify_mitigation_downfall		# ID, Mitigations against GDS (2022)
