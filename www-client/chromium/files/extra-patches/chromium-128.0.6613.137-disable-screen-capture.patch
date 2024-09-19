@@ -1,5 +1,5 @@
 --- a/content/browser/renderer_host/media/media_stream_manager.cc.orig	2024-09-10 11:42:13.629714000 -0700
-+++ b/content/browser/renderer_host/media/media_stream_manager.cc	2024-09-19 05:19:39.790455823 -0700
++++ b/content/browser/renderer_host/media/media_stream_manager.cc	2024-09-19 06:43:39.102505540 -0700
 @@ -106,7 +106,7 @@
  #include "chromeos/lacros/lacros_service.h"
  #endif
@@ -63,15 +63,6 @@
    CHECK(!request->captured_surface_controller());
    const WebContentsMediaCaptureId captured_tab_id = request->GetCapturedTabId();
    if (!captured_tab_id.is_null()) {
-@@ -3049,7 +3049,7 @@ void MediaStreamManager::FinalizeGenerat
-             base::BindRepeating(&DeviceRequest::OnZoomLevelChange,
-                                 request->GetWeakPtr(), label)));
-   }
--#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
-+#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
- 
-   // TODO(crbug.com/40216442): Generalize to multiple streams.
-   DCHECK_EQ(1u, request->stream_devices_set.stream_devices.size());
 @@ -3718,7 +3718,7 @@ void MediaStreamManager::HandleChangeSou
                              ? request->stream_controls().audio.stream_type
                              : MediaStreamType::NO_SERVICE);
@@ -81,15 +72,6 @@
    if (CapturedSurfaceController* const captured_surface_controller =
            request->captured_surface_controller()) {
      // Either inform the controller that it's now controlling a new tab,
-@@ -3726,7 +3726,7 @@ void MediaStreamManager::HandleChangeSou
-     captured_surface_controller->UpdateCaptureTarget(
-         request->GetCapturedTabId());
-   }
--#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
-+#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
- }
- 
- void MediaStreamManager::StopMediaStreamFromBrowser(const std::string& label) {
 @@ -4033,13 +4033,13 @@ void MediaStreamManager::SetStateForTest
    requests_iterator->second->SetState(stream_type, new_state);
  }
