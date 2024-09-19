@@ -3805,7 +3805,7 @@ _mitigate_tecv_verify_mitigation_mpf() {
 # @FUNCTION: _mitigate_tecv_verify_mitigation_fsfpcd
 # @INTERNAL
 # @DESCRIPTION:
-# Check the kernel config flags and kernel command line to mitigate against CVE-2021-0145, also known as the Fast Store Forwarding: Cross Domain (FSFPCD) vulnerability.
+# Check the kernel config flags and kernel command line to mitigate against CVE-2021-0145, also known as the Fast Store Forwarding Predictor: Cross Domain (FSFPCD) vulnerability.
 _mitigate_tecv_verify_mitigation_fsfpcd() {
 	if \
 		   use cpu_target_x86_ice_lake \
@@ -3817,7 +3817,7 @@ _mitigate_tecv_verify_mitigation_fsfpcd() {
 		CONFIG_CHECK="
 			CPU_SUP_INTEL
 		"
-		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2021-0145, also known as the Fast Store Forwarding: Cross Domain (FSFPCD) vulnerability."
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2021-0145, also known as the Fast Store Forwarding Predictor: Cross Domain (FSFPCD) vulnerability."
 		check_extra_config
 	fi
 }
