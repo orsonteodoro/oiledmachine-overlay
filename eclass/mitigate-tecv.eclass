@@ -1607,11 +1607,6 @@ _MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64="
 			>=sys-firmware/intel-microcode-20200609
 		)
 	)
-	cpu_target_x86_ice_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
 
 	cpu_target_x86_cascade_lake? (
 		firmware? (
@@ -1622,6 +1617,64 @@ _MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64="
 "
 _MITIGATE_TECV_CACHEOUT_RDEPEND_X86_32="
 	${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64}
+"
+
+_MITIGATE_TECV_VRSA_RDEPEND_X86_64="
+	cpu_target_x86_skylake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20210125
+		)
+	)
+	cpu_target_x86_kaby_lake_gen7? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20210125
+		)
+	)
+	cpu_target_x86_amber_lake_gen8? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20210125
+		)
+	)
+	cpu_target_x86_coffee_lake_gen8? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20210125
+		)
+	)
+	cpu_target_x86_kaby_lake_gen8? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20210125
+		)
+	)
+	cpu_target_x86_whiskey_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20210125
+		)
+	)
+	cpu_target_x86_coffee_lake_gen9? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20210125
+		)
+	)
+	cpu_target_x86_comet_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20210125
+		)
+	)
+	cpu_target_x86_amber_lake_gen10? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20210125
+		)
+	)
+
+	cpu_target_x86_cascade_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20210125
+		)
+	)
+
+"
+_MITIGATE_TECV_VRSA_RDEPEND_X86_32="
+	${_MITIGATE_TECV_VRSA_RDEPEND_X86_64}
 "
 
 # See commit 80eb5fe
@@ -2901,6 +2954,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_SWAPGS_RDEPEND_X86_64}
 				${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64}
 				${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64}
+				${_MITIGATE_TECV_VRSA_RDEPEND_X86_64}
 				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64}
 				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64}
 				${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64}
@@ -2943,6 +2997,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_SWAPGS_RDEPEND_X86_32}
 				${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_32}
 				${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_32}
+				${_MITIGATE_TECV_VRSA_RDEPEND_X86_32}
 				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_32}
 				${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_32}
 				${_MITIGATE_TECV_SPECTRE_RSBA_RDEPEND_X86_32}
@@ -4065,7 +4120,6 @@ _mitigate_tecv_verify_mitigation_cacheout() {
 		|| use cpu_target_x86_coffee_lake_gen9 \
 		|| use cpu_target_x86_comet_lake \
 		|| use cpu_target_x86_amber_lake_gen10 \
-		|| use cpu_target_x86_ice_lake \
 		|| use cpu_target_x86_cascade_lake \
 		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 	; then
@@ -4078,6 +4132,38 @@ _mitigate_tecv_verify_mitigation_cacheout() {
 		if ! has_version ">=sys-firmware/intel-microcode-20200609" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
 eerror ">=sys-firmware/intel-microcode-20200609 is required for CacheOut and VRS mitigation."
+			die
+		fi
+	fi
+}
+
+# @FUNCTION: _mitigate_tecv_verify_mitigation_vrsa
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against VRSA.
+_mitigate_tecv_verify_mitigation_vrsa() {
+	if \
+		   use cpu_target_x86_skylake \
+		|| use cpu_target_x86_kaby_lake_gen7 \
+		|| use cpu_target_x86_amber_lake_gen8 \
+		|| use cpu_target_x86_coffee_lake_gen8 \
+		|| use cpu_target_x86_kaby_lake_gen8 \
+		|| use cpu_target_x86_whiskey_lake \
+		|| use cpu_target_x86_coffee_lake_gen9 \
+		|| use cpu_target_x86_comet_lake \
+		|| use cpu_target_x86_amber_lake_gen10 \
+		|| use cpu_target_x86_cascade_lake \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Microcode mitigation only
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for VRSA mitigation."
+		check_extra_config
+		if ! has_version ">=sys-firmware/intel-microcode-20210125" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-firmware/intel-microcode-20210125 is required for CacheOut and VRS mitigation."
 			die
 		fi
 	fi
@@ -5047,6 +5133,7 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	_mitigate_tecv_verify_mitigation_zombieload_v2		# ID, Mitigations against TAA (2019)
 	_mitigate_tecv_verify_mitigation_mds			# ID, Mitigations against ZombieLoad/MFBDS (2028), MLPDS (2028), MSBDS (2018), MDSUM (2019)
 	_mitigate_tecv_verify_mitigation_cacheout		# ID, Mitigations against L1DES (2020), VRS (2020)
+	_mitigate_tecv_verify_mitigation_vrsa			# ID, Mitigations against VRSA (2020)
 	_mitigate_tecv_verify_mitigation_apdb			# ID, Mitigations against APDB (2020)
 	_mitigate_tecv_verify_mitigation_itdvcp			# ID, Mitigations against ITDVCP (2020)
 	_mitigate_tecv_verify_mitigation_ibrs_gh		# ID, Mitigations against IBRS G/H (2020)
