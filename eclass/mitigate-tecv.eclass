@@ -2913,7 +2913,8 @@ eerror
 				die
 			fi
 			if _check_kernel_cmdline "spec_store_bypass_disable=off" ; then
-	# SSB / Spectre-NG Variant 4
+	# SSB (Spectre-NG Variant 4)
+	# SSB (CVE-2018-3639) not the same as SCSB (CVE-2021-0089)
 eerror
 eerror "Detected spec_store_bypass_disable=off."
 eerror
