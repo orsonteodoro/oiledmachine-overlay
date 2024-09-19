@@ -10,6 +10,8 @@
 # https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability
 #
 
+# ITLB_MULTIHIT, CVE-2018-12207, DoS
+
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
@@ -42,6 +44,7 @@ unset -f _mitigate_tecv_set_globals
 CPU_TARGET_X86=(
 # For completeness, see also
 # https://www.intel.com/content/www/us/en/developer/topic-technology/software-security-guidance/processors-affected-consolidated-product-cpu-model.html
+# * Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
 	cpu_target_x86_apollo_lake
 	cpu_target_x86_denverton
 	cpu_target_x86_snow_ridge_bts
@@ -52,14 +55,19 @@ CPU_TARGET_X86=(
 	cpu_target_x86_jasper_lake
 	cpu_target_x86_alder_lake_n
 	cpu_target_x86_gemini_lake
-	cpu_target_x86_core			# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
-	cpu_target_x86_nehalem			# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
-	cpu_target_x86_westmere			# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
-	cpu_target_x86_sandy_bridge		# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
-	cpu_target_x86_ivy_bridge		# Missing documentation so only Meltdown and Spectre mitigated.  Ebuild still can be fixed by user.
+	cpu_target_x86_arrandale
+	cpu_target_x86_broxton
+	cpu_target_x86_clarkdale
+	cpu_target_x86_gladden
+	cpu_target_x86_lynnfield
+	cpu_target_x86_nehalem
+	cpu_target_x86_westmere
+	cpu_target_x86_sandy_bridge
+	cpu_target_x86_ivy_bridge
 	cpu_target_x86_haswell
 	cpu_target_x86_broadwell
 	cpu_target_x86_hewitt_lake
+	cpu_target_x86_bakerville
 	cpu_target_x86_skylake
 	cpu_target_x86_kaby_lake_gen7
 	cpu_target_x86_amber_lake_gen8
@@ -188,6 +196,7 @@ IUSE+="
 	bpf
 	custom-kernel
 	firmware
+	kvm
 	ebuild-revision-7
 "
 # The !custom-kernel is required for RDEPEND to work properly to download the
@@ -203,6 +212,7 @@ REQUIRED_USE="
 		!custom-kernel
 		firmware
 	)
+
 	cpu_target_x86_apollo_lake? (
 		firmware
 	)
@@ -234,6 +244,21 @@ REQUIRED_USE="
 		firmware
 	)
 
+	cpu_target_x86_arrandale? (
+		firmware
+	)
+	cpu_target_x86_clarkdale? (
+		firmware
+	)
+	cpu_target_x86_gladden? (
+		firmware
+	)
+	cpu_target_x86_lynnfield? (
+		firmware
+	)
+	cpu_target_x86_bakerville? (
+		firmware
+	)
 	cpu_target_x86_sandy_bridge? (
 		firmware
 	)
@@ -384,91 +409,414 @@ _MITIGATE_TECV_MELTDOWN_RDEPEND_PPC64="
 	)
 "
 
-# Based on D
-_MITIGATE_TECV_SPECTRE_RDEPEND_X86_64="
-	$(gen_patched_kernel_list 4.15)
-	cpu_target_x86_apollo_lake? (
-		>=sys-firmware/intel-microcode-20180312
-	)
-	cpu_target_x86_denverton? (
-		>=sys-firmware/intel-microcode-20180312
-	)
-
-	cpu_target_x86_gemini_lake? (
-		>=sys-firmware/intel-microcode-20180312
-	)
-
-	cpu_target_x86_sandy_bridge? (
-		>=sys-firmware/intel-microcode-20180312
-	)
-	cpu_target_x86_ivy_bridge? (
-		>=sys-firmware/intel-microcode-20180312
-	)
+_MITIGATE_TECV_SPECTRE_V1_RDEPEND_X86_64="
 	cpu_target_x86_haswell? (
-		>=sys-firmware/intel-microcode-20180312
+		$(gen_patched_kernel_list 4.16)
 	)
 	cpu_target_x86_broadwell? (
-		>=sys-firmware/intel-microcode-20180312
-	)
-	cpu_target_x86_hewitt_lake? (
-		>=sys-firmware/intel-microcode-20180312
+		$(gen_patched_kernel_list 4.16)
 	)
 	cpu_target_x86_skylake? (
-		>=sys-firmware/intel-microcode-20180312
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		>=sys-firmware/intel-microcode-20180312
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		>=sys-firmware/intel-microcode-20180312
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		>=sys-firmware/intel-microcode-20180312
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		>=sys-firmware/intel-microcode-20180312
-	)
-	cpu_target_x86_whiskey_lake? (
-		>=sys-firmware/intel-microcode-20180312
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		>=sys-firmware/intel-microcode-20180610
-	)
-
-	cpu_target_x86_cascade_lake? (
-		>=sys-firmware/intel-microcode-20180610
+		$(gen_patched_kernel_list 4.16)
 	)
 	cpu_target_x86_cooper_lake? (
-		>=sys-firmware/intel-microcode-20180610
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_hewitt_lake? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_apollo_lake? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_denverton? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_ice_lake? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_gemini_lake? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_snow_ridge_bts? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_parker_ridge? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_tiger_lake? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_amber_lake_gen8? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_kaby_lake_gen7? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_coffee_lake_gen8? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_kaby_lake_gen8? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_whiskey_lake? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_comet_lake? (
+		$(gen_patched_kernel_list 4.16)
 	)
 	cpu_target_x86_sapphire_rapids? (
-		>=sys-firmware/intel-microcode-20180610
+		$(gen_patched_kernel_list 4.16)
 	)
 	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		>=sys-firmware/intel-microcode-20180610
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_elkhart_lake? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_alder_lake? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_catlow_golden_cove? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_arizona_beach? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_jasper_lake? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_kaby_lake_gen7? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_kaby_lake_gen8? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_coffee_lake_gen9? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_comet_lake? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_rocket_lake? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_meteor_lake? (
+		$(gen_patched_kernel_list 4.16)
 	)
 	cpu_target_x86_granite_rapids? (
-		>=sys-firmware/intel-microcode-20180610
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_sierra_forest? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_raptor_lake_gen13? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_raptor_lake_gen14? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_catlow_raptor_cove? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	cpu_target_x86_alder_lake_n? (
+		$(gen_patched_kernel_list 4.16)
 	)
 	cpu_target_x86_emerald_rapids? (
-		>=sys-firmware/intel-microcode-20180610
+		$(gen_patched_kernel_list 4.16)
 	)
+	cpu_target_x86_cascade_lake? (
+		$(gen_patched_kernel_list 4.16)
+	)
+	kvm? (
+		$(gen_patched_kernel_list 5.6)
+	)
+"
+if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
+	_MITIGATE_TECV_SPECTRE_V1_RDEPEND_X86_64+="
+		$(gen_patched_kernel_list 4.16)
+	"
+fi
+if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
+	_MITIGATE_TECV_SPECTRE_V1_RDEPEND_X86_64+="
+		$(gen_patched_kernel_list 4.16)
+	"
+fi
+_MITIGATE_TECV_SPECTRE_V1_RDEPEND_X86_32="
+	${_MITIGATE_TECV_SPECTRE_V1_RDEPEND_X86_64}
+"
 
+_MITIGATE_TECV_SPECTRE_V2_RDEPEND_X86_64="
+	cpu_target_x86_haswell? (
+		$(gen_patched_kernel_list 4.15)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_broadwell? (
+		$(gen_patched_kernel_list 4.15)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_skylake? (
+		$(gen_patched_kernel_list 4.15)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_cooper_lake? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_hewitt_lake? (
+		$(gen_patched_kernel_list 4.15)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_apollo_lake? (
+		$(gen_patched_kernel_list 4.15)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_denverton? (
+		$(gen_patched_kernel_list 4.15)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_ice_lake? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_gemini_lake? (
+		$(gen_patched_kernel_list 4.15)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_snow_ridge_bts? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_parker_ridge? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_tiger_lake? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_amber_lake_gen8? (
+		$(gen_patched_kernel_list 4.15)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_kaby_lake_gen7? (
+		$(gen_patched_kernel_list 4.15)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_coffee_lake_gen8? (
+		$(gen_patched_kernel_list 4.15)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_kaby_lake_gen8? (
+		$(gen_patched_kernel_list 4.15)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_whiskey_lake? (
+		$(gen_patched_kernel_list 4.15)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_comet_lake? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_amber_lake_gen10? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_sapphire_rapids? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_sapphire_rapids_edge_enhanced? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_elkhart_lake? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_alder_lake? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_catlow_golden_cove? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_arizona_beach? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_jasper_lake? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_kaby_lake_gen7? (
+		$(gen_patched_kernel_list 4.15)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_kaby_lake_gen8? (
+		$(gen_patched_kernel_list 4.15)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_coffee_lake_gen9? (
+		$(gen_patched_kernel_list 4.15)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_comet_lake? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_rocket_lake? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_meteor_lake? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_granite_rapids? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_sierra_forest? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_raptor_lake_gen13? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_raptor_lake_gen14? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_catlow_raptor_cove? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_alder_lake_n? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_emerald_rapids? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_cascade_lake? (
+		$(gen_patched_kernel_list 4.15)
+	)
+	cpu_target_x86_zen? (
+		firmware? (
+			>=sys-kernel/linux-firmware-20181128
+		)
+	)
+	cpu_target_x86_zen_plus? (
+		firmware? (
+			>=sys-kernel/linux-firmware-20181128
+		)
+	)
+	cpu_target_x86_zen_2? (
+		firmware? (
+			>=sys-kernel/linux-firmware-20181128
+		)
+	)
+	cpu_target_x86_zen_3? (
+		firmware? (
+			>=sys-kernel/linux-firmware-20181128
+		)
+	)
 	bpf? (
 		$(gen_patched_kernel_list 5.13)
 	)
 "
-_MITIGATE_TECV_SPECTRE_RDEPEND_X86_32="
-	${_MITIGATE_TECV_SPECTRE_RDEPEND_X86_64}
-"
-_MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64="
-	$(gen_patched_kernel_list 4.15)
-	cpu_target_x86_sandy_bridge? (
+# TODO: replace with family
+#	cpu_target_x86_amd_fam_0fh
+if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
+	_MITIGATE_TECV_SPECTRE_V2_RDEPEND_X86_64+="
 		$(gen_patched_kernel_list 4.15)
+	"
+fi
+if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
+	_MITIGATE_TECV_SPECTRE_V2_RDEPEND_X86_64+="
+		$(gen_patched_kernel_list 4.15)
+	"
+fi
+
+_MITIGATE_TECV_SPECTRE_V1_V2_V3_RDEPEND_X86_64="
+	cpu_target_x86_arrandale? (
+		$(gen_patched_kernel_list 4.16)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_broxton? (
+		$(gen_patched_kernel_list 4.16)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_clarkdale? (
+		$(gen_patched_kernel_list 4.16)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_gladden? (
+		$(gen_patched_kernel_list 4.16)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_lynnfield? (
+		$(gen_patched_kernel_list 4.16)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_nehalem? (
+		$(gen_patched_kernel_list 4.16)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+	cpu_target_x86_westmere? (
+		$(gen_patched_kernel_list 4.16)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+
+	cpu_target_x86_sandy_bridge? (
+		$(gen_patched_kernel_list 4.16)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
 	)
 	cpu_target_x86_ivy_bridge? (
-		$(gen_patched_kernel_list 4.15)
+		$(gen_patched_kernel_list 4.16)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
 	)
+	cpu_target_x86_bakerville? (
+		$(gen_patched_kernel_list 4.16)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180425
+		)
+	)
+"
+_MITIGATE_TECV_SPECTRE_V1_V2_V3_RDEPEND_X86_32="
+	${_MITIGATE_TECV_SPECTRE_V1_V2_V3_RDEPEND_X86_64}
+"
+
+_MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64="
+	$(gen_patched_kernel_list 4.15)
 	cpu_target_x86_haswell? (
 		$(gen_patched_kernel_list 4.15)
 	)
@@ -500,6 +848,12 @@ _MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 4.15)
 	)
 "
+
+# Only if it supports PAE
+_MITIGATE_TECV_MELTDOWN_RDEPEND_X86_32="
+	${_MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64}
+"
+
 _MITIGATE_TECV_MELTDOWN_RDEPEND_ARM64="
 	cpu_target_arm_cortex_a75? (
 		$(gen_patched_kernel_list 4.16)
@@ -543,85 +897,85 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64="
 	cpu_target_x86_gemini_lake? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
-			>=sys-firmware/intel-microcode-20180703
+			>=sys-firmware/intel-microcode-20180807
 		)
 	)
 	cpu_target_x86_haswell? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
-			>=sys-firmware/intel-microcode-20180703
+			>=sys-firmware/intel-microcode-20180807
 		)
 	)
 	cpu_target_x86_broadwell? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
-			>=sys-firmware/intel-microcode-20180703
+			>=sys-firmware/intel-microcode-20180807
 		)
 	)
 	cpu_target_x86_hewitt_lake? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
-			>=sys-firmware/intel-microcode-20180703
+			>=sys-firmware/intel-microcode-20180807
 		)
 	)
 	cpu_target_x86_skylake? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
-			>=sys-firmware/intel-microcode-20180703
+			>=sys-firmware/intel-microcode-20180807
 		)
 	)
 	cpu_target_x86_kaby_lake_gen7? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
-			>=sys-firmware/intel-microcode-20180703
+			>=sys-firmware/intel-microcode-20180807
 		)
 	)
 	cpu_target_x86_amber_lake_gen8? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
-			>=sys-firmware/intel-microcode-20180703
+			>=sys-firmware/intel-microcode-20180807
 		)
 	)
 	cpu_target_x86_coffee_lake_gen8? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
-			>=sys-firmware/intel-microcode-20180703
+			>=sys-firmware/intel-microcode-20180807
 		)
 	)
 	cpu_target_x86_kaby_lake_gen8? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
-			>=sys-firmware/intel-microcode-20180703
+			>=sys-firmware/intel-microcode-20180807
 		)
 	)
 	cpu_target_x86_whiskey_lake? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
-			>=sys-firmware/intel-microcode-20180703
+			>=sys-firmware/intel-microcode-20180807
 		)
 	)
 	cpu_target_x86_coffee_lake_gen9? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
-			>=sys-firmware/intel-microcode-20180703
+			>=sys-firmware/intel-microcode-20180807
 		)
 	)
 	cpu_target_x86_comet_lake? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
-			>=sys-firmware/intel-microcode-20180703
+			>=sys-firmware/intel-microcode-20180807
 		)
 	)
 	cpu_target_x86_amber_lake_gen10? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
-			>=sys-firmware/intel-microcode-20180703
+			>=sys-firmware/intel-microcode-20180807
 		)
 	)
 	cpu_target_x86_ice_lake? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
-			>=sys-firmware/intel-microcode-20180703
+			>=sys-firmware/intel-microcode-20180807
 		)
 	)
 	cpu_target_x86_rocket_lake? (
@@ -668,7 +1022,7 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64="
 	cpu_target_x86_catlow_golden_cove? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
-			>=sys-firmware/intel-microcode-20180703
+			>=sys-firmware/intel-microcode-20180807
 		)
 	)
 	cpu_target_x86_catlow_raptor_cove? (
@@ -683,7 +1037,7 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_32="
 	${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_SPECTRE_RDEPEND_S390X="
+_MITIGATE_TECV_SPECTRE_V2_RDEPEND_S390X="
 	$(gen_patched_kernel_list 4.16)
 	bpf? (
 		$(gen_patched_kernel_list 5.13)
@@ -796,14 +1150,39 @@ _MITIGATE_TECV_SPECTRE_RRSBA_RDEPEND_X86_32="
 	${_MITIGATE_TECV_SPECTRE_RRSBA_RDEPEND_X86_64}
 "
 
-
+# broxton needs verification
 _MITIGATE_TECV_FORESHADOW_RDEPEND_X86_64="
-	cpu_target_x86_core? (
+	cpu_target_x86_arrandale? (
 		$(gen_patched_kernel_list 4.19)
 		firmware? (
 			>=sys-firmware/intel-microcode-20180807
 		)
 	)
+	cpu_target_x86_clarkdale? (
+		$(gen_patched_kernel_list 4.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180807
+		)
+	)
+	cpu_target_x86_gladden? (
+		$(gen_patched_kernel_list 4.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180807
+		)
+	)
+	cpu_target_x86_lynnfield? (
+		$(gen_patched_kernel_list 4.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180807
+		)
+	)
+	cpu_target_x86_bakerville? (
+		$(gen_patched_kernel_list 4.19)
+		firmware? (
+			>=sys-firmware/intel-microcode-20180807
+		)
+	)
+
 	cpu_target_x86_nehalem? (
 		$(gen_patched_kernel_list 4.19)
 		firmware? (
@@ -876,13 +1255,16 @@ _MITIGATE_TECV_FORESHADOW_RDEPEND_X86_64="
 			>=sys-firmware/intel-microcode-20180807
 		)
 	)
+	kvm? (
+		$(gen_patched_kernel_list 5.6)
+	)
 "
 _MITIGATE_TECV_FORESHADOW_RDEPEND_X86_32="
 	${_MITIGATE_TECV_FORESHADOW_RDEPEND_X86_64}
 "
 
 
-_MITIGATE_TECV_SPECTRE_RDEPEND_PPC32="
+_MITIGATE_TECV_SPECTRE_V2_RDEPEND_PPC32="
 	cpu_target_ppc_85xx? (
 		$(gen_patched_kernel_list 5.0)
 	)
@@ -891,7 +1273,7 @@ _MITIGATE_TECV_SPECTRE_RDEPEND_PPC32="
 	)
 "
 
-_MITIGATE_TECV_SPECTRE_RDEPEND_PPC64="
+_MITIGATE_TECV_SPECTRE_V2_RDEPEND_PPC64="
 	cpu_target_ppc_e5500? (
 		$(gen_patched_kernel_list 5.0)
 	)
@@ -1087,6 +1469,13 @@ _MITIGATE_TECV_SWAPGS_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 5.3)
 	)
 	cpu_target_x86_sierra_forest? (
+		$(gen_patched_kernel_list 5.3)
+	)
+
+	cpu_target_x86_catlow_golden_cove? (
+		$(gen_patched_kernel_list 5.3)
+	)
+	cpu_target_x86_catlow_raptor_cove? (
 		$(gen_patched_kernel_list 5.3)
 	)
 
@@ -1303,7 +1692,7 @@ _MITIGATE_TECV_CROSSTALK_RDEPEND_X86_32="
 	${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_SPECTRE_RDEPEND_ARM64="
+_MITIGATE_TECV_SPECTRE_V2_RDEPEND_ARM64="
 
 	cpu_target_arm_brahma_b15? (
 		$(gen_patched_kernel_list 4.18)
@@ -1361,8 +1750,8 @@ _MITIGATE_TECV_SPECTRE_RDEPEND_ARM64="
 		$(gen_patched_kernel_list 5.13)
 	)
 "
-_MITIGATE_TECV_SPECTRE_RDEPEND_ARM="
-	${_MITIGATE_TECV_SPECTRE_RDEPEND_ARM64}
+_MITIGATE_TECV_SPECTRE_V2_RDEPEND_ARM="
+	${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_ARM64}
 "
 
 _MITIGATE_TECV_MMIO_RDEPEND_X86_64="
@@ -2408,18 +2797,19 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_AUTO}
 			)
 			arm? (
-				${_MITIGATE_TECV_SPECTRE_RDEPEND_ARM}
+				${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_ARM}
 				${_MITIGATE_TECV_BHB_RDEPEND_ARM}
 			)
 			arm64? (
-				${_MITIGATE_TECV_SPECTRE_RDEPEND_ARM64}
+				${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_ARM64}
 				${_MITIGATE_TECV_MELTDOWN_RDEPEND_ARM64}
 				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_ARM64}
 				${_MITIGATE_TECV_BHB_RDEPEND_ARM64}
 				${_MITIGATE_TECV_USSB_RDEPEND_ARM64}
 			)
 			amd64? (
-				${_MITIGATE_TECV_SPECTRE_RDEPEND_X86_64}
+				${_MITIGATE_TECV_SPECTRE_V1_V2_V3_RDEPEND_X86_64}
+				${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_X86_64}
 				${_MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64}
 				${_MITIGATE_TECV_SWAPGS_RDEPEND_X86_64}
 				${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64}
@@ -2446,19 +2836,21 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_TECRA_RDEPEND_X86_64}
 			)
 			ppc? (
-				${_MITIGATE_TECV_SPECTRE_RDEPEND_PPC32}
+				${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_PPC32}
 				${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC32}
 			)
 			ppc64? (
 				${_MITIGATE_TECV_MELTDOWN_RDEPEND_PPC64}
-				${_MITIGATE_TECV_SPECTRE_RDEPEND_PPC64}
+				${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_PPC64}
 				${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC64}
 			)
 			s390? (
-				${_MITIGATE_TECV_SPECTRE_RDEPEND_S390X}
+				${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_S390X}
 			)
 			x86? (
-				${_MITIGATE_TECV_SPECTRE_RDEPEND_X86_32}
+				${_MITIGATE_TECV_SPECTRE_V1_V2_V3_RDEPEND_X86_32}
+				${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_X86_32}
+				${_MITIGATE_TECV_MELTDOWN_RDEPEND_X86_32}
 				${_MITIGATE_TECV_SWAPGS_RDEPEND_X86_32}
 				${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_32}
 				${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_32}
@@ -2874,9 +3266,9 @@ _mitigate_tecv_verify_mitigation_spectre_ng() {
 			"
 			ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Spectre-NG mitigation."
 			check_extra_config
-			if ! has_version ">=sys-firmware/intel-microcode-20180703" ; then
+			if ! has_version ">=sys-firmware/intel-microcode-20180807" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
-eerror ">=sys-firmware/intel-microcode-20180703 is required for Spectre-NG mitigation."
+eerror ">=sys-firmware/intel-microcode-20180807 is required for Spectre-NG mitigation."
 				die
 			fi
 		fi
@@ -3088,7 +3480,12 @@ _mitigate_tecv_verify_mitigation_foreshadow() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "4.19" ; then
 		if use firmware ; then
 			if \
-				   use cpu_target_x86_nehalem \
+				   use cpu_target_x86_arrandale \
+				|| use cpu_target_x86_clarkdale \
+				|| use cpu_target_x86_gladden \
+				|| use cpu_target_x86_lynnfield \
+				|| use cpu_target_x86_bakerville \
+				|| use cpu_target_x86_nehalem \
 				|| use cpu_target_x86_westmere \
 				|| use cpu_target_x86_sandy_bridge \
 				|| use cpu_target_x86_ivy_bridge \
@@ -4350,6 +4747,45 @@ eerror
 	fi
 }
 
+
+# @FUNCTION: _mitigate_tecv_verify_mitigation_swapgs
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against SWAPGS.
+_mitigate_tecv_verify_mitigation_swapgs() {
+	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.3" ; then
+		if _check_kernel_cmdline "mitigations=off" ; then
+eerror
+eerror "Detected mitigations=off in the kernel command line."
+eerror
+eerror "Acceptable values:"
+eerror
+eerror "  mitigations=auto              # The kernel default"
+eerror "  mitigations=auto,nosmt"
+eerror
+eerror "Edit it from:"
+eerror
+eerror "  /etc/default/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+			die
+		fi
+		if _check_kernel_cmdline "nospectre_v1" ; then
+eerror
+eerror "Detected nospectre_v1 in the kernel command line."
+eerror
+eerror "Remove it from:"
+eerror
+eerror "  /etc/default/grub"
+eerror "  /etc/grub.d/40_custom"
+eerror "  CONFIG_CMDLINE"
+eerror
+			die
+		fi
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -4407,47 +4843,57 @@ einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
 eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
 		die
 	fi
+	if linux_chkconfig_present "KVM" && ! use kvm ; then
+eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
+		die
+	fi
 
-	_mitigate_tecv_mitigate_privilege_escalation_with_ssp
-	_mitigate_tecv_mitigate_privilege_escalation_with_aslr
+	# 3 main vulernability classes
+	# PE  - Privilege Escalation
+	# DoS - Denial of Service
+	# ID  - Information Disclosure (aka Data Leak)
 
-	cpu_target_x86_snow_ridge
-	cpu_target_x86_parker_ridge
-	cpu_target_x86_elkhart_lake
-	cpu_target_x86_jasper_lake
+	# Security implications
+	# PE -> ID
+	# PE -> DoS
+	# PE -> ID + DoS
+
+	_mitigate_tecv_mitigate_privilege_escalation_with_ssp	# PE
+	_mitigate_tecv_mitigate_privilege_escalation_with_aslr	# PE
 
 	# Notify if grub or the kernel config is incorrectly configured/tampered
 	# or a copypasta-ed workaround.
-	_mitigate_tecv_verify_mitigation_meltdown		# Mitigations against Variant 3 (2017)
-	_mitigate_tecv_verify_mitigation_spectre		# Mitigations against Variant 1 (2017), Variant 2 (2017), SWAPGS (2019)
-	_mitigate_tecv_verify_mitigation_spectre_ng		# Mitigations against Variant 4 (2018)
-								# Lazy FP State Restore (2018); eagerfpu removed and hardcoded enabled in 4.6 (2016), eagerfpu available in 3.7 (2012)
-	_mitigate_tecv_verify_mitigation_platypus		# Mitigations against PLATYPUS (2020)
-	_mitigate_tecv_verify_mitigation_spectre_bhb		# Mitigations against BHB (2022), ARM
-	_mitigate_tecv_verify_mitigation_bhi			# Mitigations against BHI (2022), X86
-	_mitigate_tecv_verify_mitigation_crosstalk		# Mitigations against SRBDS (2020)
-	_mitigate_tecv_verify_mitigation_spectre_rsb		# Mitigations against SpectreRSB (2018)
-	_mitigate_tecv_verify_mitigation_rsba			# Mitigations against RSBU (2022), RSBA (2022)
-	_mitigate_tecv_verify_mitigation_rrsba			# Mitigations against RSBU (2022), RRSBA (2022)
-	_mitigate_tecv_verify_mitigation_foreshadow		# Mitigations against L1TF (2018)
-	_mitigate_tecv_verify_mitigation_zombieload_v2		# Mitigations against TAA (2019)
-	_mitigate_tecv_verify_mitigation_mds			# Mitigations against ZombieLoad/MFBDS (2028), MLPDS (2028), MSBDS (2018), MDSUM (2019)
-	_mitigate_tecv_verify_mitigation_cacheout		# Mitigations against L1DES (2020), VRS (2020)
-	_mitigate_tecv_verify_mitigation_mpf			# Mitigations against MPF (2021)
-	_mitigate_tecv_verify_mitigation_fsfpcd			# Mitigations against FSFPCD (2021)
-	_mitigate_tecv_verify_mitigation_downfall		# Mitigations against GDS (2022)
-	_mitigate_tecv_verify_mitigation_retbleed		# Mitigations against Retbleed (2022)
-	_mitigate_tecv_verify_mitigation_mmio_stale_data	# Mitigations against SBDR (2022), SBDS (2022), DRPW (2022)
-	_mitigate_tecv_verify_mitigation_aepic			# Mitigations against AEPIC Leak (2022)
-	_mitigate_tecv_verify_mitigation_smt_rsb		# Mitigations against SMT RSB (2022)
-	_mitigate_tecv_verify_mitigation_pbrsb			# Mitigations against PBRSB (2022)
-	_mitigate_tecv_verify_mitigation_reptar			# Mitigations against Reptar (2023)
-	_mitigate_tecv_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023)
-	_mitigate_tecv_verify_mitigation_inception		# Mitigations against SRSO (2023)
-	_mitigate_tecv_verify_mitigation_ibpb			# Mitigations against IBPB (2023)
-	_mitigate_tecv_verify_mitigation_tecra			# Mitigations against TECRA (2023)
-	_mitigate_tecv_verify_mitigation_rfds			# Mitigations against RFDS (2024)
-	_mitigate_tecv_verify_mitigation_ussb			# Mitigations against USSB (2024)
+	_mitigate_tecv_verify_mitigation_meltdown		# ID, Mitigations against Variant 3 (2017)
+	_mitigate_tecv_verify_mitigation_spectre		# ID, Mitigations against Variant 1 (2017), Variant 2 (2017)
+	_mitigate_tecv_verify_mitigation_swapgs			# ID, Mitigations against SWAPGS (2019)
+	_mitigate_tecv_verify_mitigation_spectre_ng		# ID, Mitigations against Variant 4 (2018)
+								# ID, Lazy FP State Restore (2018); eagerfpu removed and hardcoded enabled in 4.6 (2016), eagerfpu available in 3.7 (2012)
+	_mitigate_tecv_verify_mitigation_platypus		# ID, Mitigations against PLATYPUS (2020)
+	_mitigate_tecv_verify_mitigation_spectre_bhb		# ID, Mitigations against BHB (2022), ARM
+	_mitigate_tecv_verify_mitigation_bhi			# ID, Mitigations against BHI (2022), X86
+	_mitigate_tecv_verify_mitigation_crosstalk		# ID, Mitigations against SRBDS (2020)
+	_mitigate_tecv_verify_mitigation_spectre_rsb		# ID, Mitigations against SpectreRSB (2018)
+	_mitigate_tecv_verify_mitigation_rsba			# ID, Mitigations against RSBU (2022), RSBA (2022)
+	_mitigate_tecv_verify_mitigation_rrsba			# ID, Mitigations against RSBU (2022), RRSBA (2022)
+	_mitigate_tecv_verify_mitigation_foreshadow		# ID, Mitigations against L1TF (2018)
+	_mitigate_tecv_verify_mitigation_zombieload_v2		# ID, Mitigations against TAA (2019)
+	_mitigate_tecv_verify_mitigation_mds			# ID, Mitigations against ZombieLoad/MFBDS (2028), MLPDS (2028), MSBDS (2018), MDSUM (2019)
+	_mitigate_tecv_verify_mitigation_cacheout		# ID, Mitigations against L1DES (2020), VRS (2020)
+	_mitigate_tecv_verify_mitigation_mpf			# ID, Mitigations against MPF (2021)
+	_mitigate_tecv_verify_mitigation_fsfpcd			# ID, Mitigations against FSFPCD (2021)
+	_mitigate_tecv_verify_mitigation_downfall		# ID, Mitigations against GDS (2022)
+	_mitigate_tecv_verify_mitigation_retbleed		# ID, Mitigations against Retbleed (2022)
+	_mitigate_tecv_verify_mitigation_mmio_stale_data	# ID, Mitigations against SBDR (2022), SBDS (2022), DRPW (2022)
+	_mitigate_tecv_verify_mitigation_aepic			# ID, Mitigations against AEPIC Leak (2022)
+	_mitigate_tecv_verify_mitigation_smt_rsb		# ID, Mitigations against SMT RSB (2022)
+	_mitigate_tecv_verify_mitigation_pbrsb			# ID, Mitigations against PBRSB (2022)
+	_mitigate_tecv_verify_mitigation_reptar			# ID, Mitigations against Reptar (2023)
+	_mitigate_tecv_verify_mitigation_zenbleed		# ID, Mitigations against Zenbleed (2023)
+	_mitigate_tecv_verify_mitigation_inception		# ID, Mitigations against SRSO (2023)
+	_mitigate_tecv_verify_mitigation_ibpb			# ID, Mitigations against IBPB (2023)
+	_mitigate_tecv_verify_mitigation_tecra			# PE, Mitigations against TECRA (2023)
+	_mitigate_tecv_verify_mitigation_rfds			# ID, Mitigations against RFDS (2024)
+	_mitigate_tecv_verify_mitigation_ussb			# ID, Mitigations against USSB (2024)
 
 	# For SLAM, see https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability#2023
 }
@@ -4542,7 +4988,12 @@ _mitigate-tecv_get_required_version() {
 		elif use bpf ; then
 			echo "5.13" # Spectre v2, Spectre-NG (v4)
 		elif \
-			   use cpu_target_x86_nehalem \
+			   use cpu_target_x86_arrandale \
+			|| use cpu_target_x86_clarkdale \
+			|| use cpu_target_x86_gladden \
+			|| use cpu_target_x86_lynnfield \
+			|| use cpu_target_x86_bakerville \
+			|| use cpu_target_x86_nehalem \
 			|| use cpu_target_x86_westmere \
 			|| use cpu_target_x86_sandy_bridge \
 			|| use cpu_target_x86_ivy_bridge \
@@ -4662,27 +5113,25 @@ eerror "The auto USE flag can only be used in native builds."
 		_mitigate-tecv_check_kernel_flags
 # It is a common practice by hardware manufacturers to delete support or
 # historical information after a period of time.
-		if use cpu_target_x86_core ; then
-ewarn "Mitigation coverage for cpu_target_x86_core may be incompletable."
-		fi
-		if use cpu_target_x86_nehalem ; then
-ewarn "Mitigation coverage for cpu_target_x86_nehalem may be incompletable."
-		fi
-		if use cpu_target_x86_westmere ; then
-ewarn "Mitigation coverage for cpu_target_x86_westmere may be incompletable."
-		fi
-		if use cpu_target_x86_sandy_bridge ; then
-ewarn "Mitigation coverage for cpu_target_x86_sandy_bridge may be incompletable."
-		fi
-		if use cpu_target_x86_ivy_bridge ; then
-ewarn "Mitigation coverage for cpu_target_x86_ivy_bridge may be incompletable."
-		fi
-		if use cpu_target_x86_cannon_lake ; then
-ewarn "Mitigation coverage for cpu_target_x86_cannon_lake may be incompletable."
-		fi
-		if use cpu_target_x86_lakefield ; then
-ewarn "Mitigation coverage for cpu_target_x86_lakefield may be incompletable."
-		fi
+		local L=(
+			cpu_target_x86_arrandale
+			cpu_target_x86_broxton
+			cpu_target_x86_clarkdale
+			cpu_target_x86_gladden
+			cpu_target_x86_lynnfield
+			cpu_target_x86_nehalem
+			cpu_target_x86_westmere
+			cpu_target_x86_sandy_bridge
+			cpu_target_x86_ivy_bridge
+			cpu_target_x86_cannon_lake
+			cpu_target_x86_lakefield
+			cpu_target_x86_bakerville
+		)
+		for x in ${L[@]} ; do
+			if use "${x}" ; then
+ewarn "Mitigation coverage for ${x} may be incompletable due to a lack of information or the microarchitecture is End of Life (EOL)."
+			fi
+		done
 # We didn't verify yet.  Maybe it could be run in src_test().
 ewarn "Use a CPU vulnerability checker to verify complete mitigation or to help complete mitigation."
 	fi
