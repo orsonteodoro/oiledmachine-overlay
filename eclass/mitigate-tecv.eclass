@@ -4079,6 +4079,7 @@ _mitigate-tecv_get_required_version() {
 			|| use cpu_target_x86_arizona_beach \
 			|| use cpu_target_x86_jasper_lake \
 			|| use cpu_target_x86_alder_lake_n \
+			|| use cpu_target_x86_gemini_lake \
 			|| use cpu_target_x86_amber_lake_gen8 \
 			|| use cpu_target_x86_coffee_lake_gen8 \
 			|| use cpu_target_x86_kaby_lake_gen8 \
