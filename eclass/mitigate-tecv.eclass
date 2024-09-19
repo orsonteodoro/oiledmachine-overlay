@@ -3902,7 +3902,7 @@ _mitigate_tecv_verify_mitigation_platypus() {
 			CONFIG_CHECK="
 				CPU_SUP_INTEL
 			"
-			ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2023-22655, also known as the Trusted Execution Register Access (TECRA) vulnerability, may lead to privilege escalation."
+			ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2020-8694 and CVE-2020-8695, also known as the PLATYPUS attack."
 			check_extra_config
 		fi
 	fi
