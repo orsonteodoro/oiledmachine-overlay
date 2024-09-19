@@ -2046,6 +2046,7 @@ apply_oiledmachine_overlay_patchset() {
 		"${FILESDIR}/extra-patches/${PN}-128.0.6613.84-mold.patch"
 		"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-numeric_h-for-iota.patch"
 		"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-include-historgram-functions.patch"
+		"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-screen-capture.patch"
 	)
 
 	if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then
