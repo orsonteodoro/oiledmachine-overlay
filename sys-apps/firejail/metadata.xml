@@ -87,7 +87,7 @@
     Valid values - PATH1; PATH1,PATH2; PATH1,PATH2,...; unset (don't apply)
 
     MALLOC_BACKEND[PROFILE_NAME] - Set the hardened allocator
-    Valid values - hardened_malloc, mimalloc, scudo, unset (ptmalloc default since none are endorsed upstream)
+    Valid values - hardened_malloc, mimalloc, scudo, system-malloc, unset (a hardened malloc followed by system-malloc)
 
                         | ASLR   | freed data remittance policy[7]            | ARM64 MTE[3] | type confusion mitigation strategy[9][10]
     hardened_malloc     | yes[6] | small allocs zeroed, large allocs unerased | optional     | size classes in dedicated region with random base, PartitionAlloc inspired
@@ -186,11 +186,12 @@
       MALLOC_BACKEND["keepassxc"]="mimalloc"
       MALLOC_BACKEND["mpv"]="scudo"
       MALLOC_BACKEND["mplayer"]="hardened_malloc"
+      MALLOC_BACKEND["spotify"]="system-malloc"
       PATH_CORRECTION["spotify"]="/opt/spotify/spotify-client/spotify"
       SCUDO_FREE_IMMEDIATE["keepassxc"]=1
       SECCOMP["dillo"]=1
-      XEPHYR_WH["chromium"]="1920x1080"
-      XEPHYR_WH["firefox"]="1920x1080"
+      XEPHYR_WH["chromium"]="1918x1058"
+      XEPHYR_WH["firefox"]="1918x1058"
       X_BACKEND["chromium"]="xephyr"
       X_BACKEND["firefox"]="xpra"
       X_BACKEND["xchat"]="auto"

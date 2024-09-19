@@ -3622,6 +3622,8 @@ eerror
 		allocator_args="${allocator_args_scudo}"
 	elif [[ "${MALLOC_BACKEND[${profile_name}]}" == "hardened_malloc" ]] && use hardened_malloc ; then
 		allocator_args="${allocator_args_hardened_malloc}"
+	elif [[ "${MALLOC_BACKEND[${profile_name}]}" == "system-malloc" ]] ; then
+		:
 	elif use mimalloc ; then
 		allocator_args="${allocator_args_mimalloc}"
 	elif use scudo ; then
