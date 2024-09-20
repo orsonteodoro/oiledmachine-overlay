@@ -13,7 +13,8 @@
   focused on DoS mitigation.  This will harden the system against client-side
   DoS or server-side DoS.
 
-  At this time, the ebuild-package is optional and ebuilds do not require it.
+  At this time, the ebuild-package is optional and ebuilds do not require it
+  in this overlay.
 
   A parent ebuild may be considered to verify larger mitigation coverage.
 
@@ -36,6 +37,9 @@
       Mitigate against Denial of Service in mlx5 kernel drivers.
     </flag>
     <flag name="video_cards_amdgpu">
+      Mitigate against Denial of Service.
+    </flag>
+    <flag name="video_cards_nouveau">
       Mitigate against Denial of Service.
     </flag>
     <flag name="video_cards_intel">

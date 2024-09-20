@@ -19,6 +19,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~s390 ~x86"
 VIDEO_CARDS=(
 	video_cards_amdgpu
 	video_cards_intel
+	video_cards_nouveau
 	video_cards_nvidia
 	video_cards_radeon
 )
@@ -39,6 +40,8 @@ mlx5
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-43903 # DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2023-52913 # DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
+# video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2024-45012 # DoS; requires >= 6.11 for fix
+# video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2024-42101 # DoS; requires >= 6.10 for fix
 # video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, CI, CE, EP
 # video_cards_radeon? https://nvd.nist.gov/vuln/detail/CVE-2024-41060 # DoS
 #
@@ -55,6 +58,9 @@ RDEPEND="
 	)
 	video_cards_intel? (
 		$(gen_patched_kernel_list 6.2)
+	)
+	video_cards_nouveau? (
+		$(gen_patched_kernel_list 6.11)
 	)
 	video_cards_nvidia? (
 		|| (
