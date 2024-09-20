@@ -26,8 +26,8 @@
       minimum requirements for those 2 items which benefits mostly LTS
       configurations.
 
-      This is recommended for Intel® CPUs since the USE flag coverage is
-      incomplete.
+      This is recommended for Intel® CPUs since the USE flag coverage for
+      microarchitectures is incomplete.
     </flag>
     <flag name="custom-kernel">
       Prevent vendor lock-in when doing kernel mitigation checks.
