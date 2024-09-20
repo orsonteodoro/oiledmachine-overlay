@@ -29,8 +29,8 @@ ${VIDEO_CARDS[@]}
 mlx5
 "
 # CE - Code Execution
-# CI - Compromisable Integrity
 # DoS - Denial of Service
+# DT - Data Tampering (aka I:H)
 # EP - Escalation of Privileges
 # ID - Information Disclosure
 
@@ -43,7 +43,7 @@ mlx5
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2024-45012 # DoS; requires >= 6.11 for fix
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2024-42101 # DoS; requires >= 6.10 for fix
-# video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, CI, CE, EP
+# video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, DT, CE, EP
 # video_cards_radeon? https://nvd.nist.gov/vuln/detail/CVE-2024-41060 # DoS
 # video_cards_vmware? https://nvd.nist.gov/vuln/detail/CVE-2024-46709 # DoS
 #

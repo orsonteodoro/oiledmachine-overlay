@@ -893,8 +893,8 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 
 	# Vulnerability classes
 	# CE  - Code Execution
-	# CI  - Compromisable Integrity (aka I:H)
 	# DoS - Denial of Service
+	# DT  - Data Tampering (aka I:H)
 	# ID  - Information Disclosure (aka Data Leak)
 	# PE  - Privilege Escalation
 

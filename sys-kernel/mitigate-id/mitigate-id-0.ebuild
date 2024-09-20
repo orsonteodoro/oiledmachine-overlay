@@ -29,8 +29,8 @@ IUSE="
 ${VIDEO_CARDS[@]}
 "
 # CE - Code Execution
-# CI - Compromisable Integrity
 # DoS - Denial of Service
+# DT - Data Tampering (aka I:H)
 # EP - Escalation of Privileges
 # ID - Information Disclosure
 
@@ -38,7 +38,7 @@ ${VIDEO_CARDS[@]}
 # The latest to near past vulnerabilities are reported below.
 #
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
-# video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, CI, CE, EP
+# video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, DT, CE, EP
 #
 
 #
