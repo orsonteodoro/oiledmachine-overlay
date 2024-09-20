@@ -105,7 +105,7 @@ check_kernel_version() {
 	local driver_name="${2}"
 	if ! tc-is-cross-compiler && use custom-kernel ; then
 		local required_version="${kv}"
-einfo "The required Linux Kernel version is >= ${required_version} for ${driver_name} driver."
+einfo "The required Linux Kernel version is >= ${required_version} for the ${driver_name} driver."
 		local prev_kernel_dir="${KERNEL_DIR}"
 		local L=(
 			$(grep -l "EXTRAVERSION" $(ls "/usr/src/"*"/Makefile"))
