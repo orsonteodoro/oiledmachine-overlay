@@ -208,7 +208,7 @@ IUSE+="
 	custom-kernel
 	firmware
 	kvm
-	ebuild-revision-8
+	ebuild-revision-9
 "
 # The !custom-kernel is required for RDEPEND to work properly to download the
 # proper kernel version kernel and the proper firmware.
@@ -2233,7 +2233,40 @@ _MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32="
 	${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
 "
 
+# Pick the top set if you have server
 _MITIGATE_TECV_INCEPTION_RDEPEND_X86_64="
+
+	cpu_target_x86_milan? (
+		$(gen_patched_kernel_list 6.9)
+		firmware? (
+			>=sys-kernel/linux-firmware-20230724
+		)
+	)
+	cpu_target_x86_milan-x? (
+		$(gen_patched_kernel_list 6.9)
+		firmware? (
+			>=sys-kernel/linux-firmware-20230724
+		)
+	)
+	cpu_target_x86_genoa? (
+		$(gen_patched_kernel_list 6.9)
+		firmware? (
+			>=sys-kernel/linux-firmware-20230809
+		)
+	)
+	cpu_target_x86_genoa-x? (
+		$(gen_patched_kernel_list 6.9)
+		firmware? (
+			>=sys-kernel/linux-firmware-20230809
+		)
+	)
+	cpu_target_x86_bergamo? (
+		$(gen_patched_kernel_list 6.9)
+		firmware? (
+			>=sys-kernel/linux-firmware-20230809
+		)
+	)
+
 	cpu_target_x86_zen_4? (
 		$(gen_patched_kernel_list 6.9)
 	)
@@ -2337,11 +2370,14 @@ _MITIGATE_TECV_RFDS_RDEPEND_X86_32="
 
 
 _MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64="
-	cpu_target_x86_zen_2? (
+	cpu_target_x86_rome? (
 		$(gen_patched_kernel_list 6.9)
 		firmware? (
 			>=sys-kernel/linux-firmware-20231205
 		)
+	)
+	cpu_target_x86_zen_2? (
+		$(gen_patched_kernel_list 6.9)
 	)
 
 "
@@ -4016,7 +4052,7 @@ _mitigate_tecv_verify_mitigation_zenbleed() {
 		use firmware \
 			&& \
 		( \
-			   use cpu_target_x86_zen_2 \
+			   use cpu_target_x86_rome \
 			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "amd" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 		) \
 	; then
@@ -4037,7 +4073,7 @@ eerror ">=sys-kernel/linux-firmware-20231205 is required for Zenbleed mitigation
 		use cpu_target_x86_zen_2 \
 		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "amd" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 	; then
-ewarn "A BIOS firmware update may be needed for Zenbleed mitigation for different models and may only be provided that way."
+ewarn "A BIOS firmware update is required for non datacenter CPU models for Zenbleed mitigation."
 	fi
 }
 
@@ -4110,9 +4146,62 @@ eerror
 # Check the kernel config flags and kernel command line to mitigate against Inception.
 _mitigate_tecv_verify_mitigation_inception() {
 	local ver
-	if use cpu_target_x86_zen_3 || use cpu_target_x86_zen_4 ; then
+	if \
+		use firmware\
+			&& \
+		( \
+			   use cpu_target_x86_milan \
+			|| use cpu_target_x86_milan-x \
+			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "amd" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+		) \
+	; then
+		CONFIG_CHECK="
+			CPU_SUP_AMD
+		"
+		ERROR_CPU_SUP_AMD="CONFIG_CPU_SUP_AMD is required for INCEPTION mitigation."
+		check_extra_config
+		if ! has_version ">=sys-kernel/linux-firmware-20230724" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-kernel/linux-firmware-20230724 is required for INCEPTION mitigation."
+			die
+		fi
+	fi
+	if \
+		use firmware\
+			&& \
+		( \
+			   use cpu_target_x86_genoa \
+			|| use cpu_target_x86_genoa-x \
+			|| use cpu_target_x86_bergamo \
+			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "amd" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+		) \
+	; then
+		CONFIG_CHECK="
+			CPU_SUP_AMD
+		"
+		ERROR_CPU_SUP_AMD="CONFIG_CPU_SUP_AMD is required for INCEPTION mitigation."
+		check_extra_config
+		if ! has_version ">=sys-kernel/linux-firmware-20230809" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-kernel/linux-firmware-20230809 is required for INCEPTION mitigation."
+			die
+		fi
+	fi
+
+	if \
+		   use cpu_target_x86_milan \
+		|| use cpu_target_x86_milan-x \
+		|| use cpu_target_x86_genoa \
+		|| use cpu_target_x86_genoa-x \
+		|| use cpu_target_x86_bergamo \
+		|| use cpu_target_x86_zen_3 \
+		|| use cpu_target_x86_zen_4 \
+	; then
 		ver="6.9"
-	elif use cpu_target_x86_zen || use cpu_target_x86_zen_2 ; then
+	elif \
+		   use cpu_target_x86_zen \
+		|| use cpu_target_x86_zen_2 \
+	; then
 		ver="6.5"
 	elif [[ "${FIRMWARE_VENDOR}" == "amd" && "${ARCH}" =~ ("amd64"|"x86") ]] ; then
 		ver="6.9"
@@ -4123,8 +4212,11 @@ _mitigate_tecv_verify_mitigation_inception() {
 		CONFIG_CHECK="
 			CPU_SRSO
 		"
-		ERROR_CPU_SRSO="CONFIG_CPU_SRSO is required for Inception mitigation."
+		ERROR_CPU_SRSO="CONFIG_CPU_SRSO is required for INCEPTION mitigation for datacenters."
 		check_extra_config
+	fi
+	if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
+ewarn "A BIOS firmware is required for non datacenters for INCEPTION mitigation."
 	fi
 }
 
@@ -5188,6 +5280,9 @@ eerror ">=sys-kernel/linux-firmware-20240710 is required for SMM Lock Bypass (SL
 			die
 		fi
 	fi
+	if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
+ewarn "A BIOS firmware update is required for non datacenter for SMM Lock Bypass mitigation for CPUs and GPUs."
+	fi
 }
 
 
@@ -5306,7 +5401,7 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	_mitigate_tecv_verify_mitigation_rfds			# ID, Mitigations against RFDS (2024)
 	_mitigate_tecv_verify_mitigation_ussb			# ID, Mitigations against USSB (2024)
 	_mitigate_tecv_verify_mitigation_cve_2024_23984		# ID (2024)
-	_mitigate_tecv_verify_mitigation_slb			# DoS, ID, CI, Mitigations against SLB (2024)
+	_mitigate_tecv_verify_mitigation_slb			# CE, DoS, ID, CI, Mitigations against SLB (2024)
 
 	# For SLAM, see https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability#2023
 }

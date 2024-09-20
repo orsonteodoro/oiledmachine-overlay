@@ -91,7 +91,7 @@ IUSE+="
 	custom-kernel
 	firmware
 	xen
-	ebuild-revision-1
+	ebuild-revision-2
 "
 REQUIRED_USE="
 	cpu_target_x86_ice_lake? (
@@ -825,6 +825,9 @@ eerror ">=sys-kernel/linux-firmware-20240710 is required for SMM Lock Bypass (SL
 			die
 		fi
 	fi
+	if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
+ewarn "A BIOS firmware update is required for non datacenter for SMM Lock Bypass mitigation for CPUs and GPUs."
+	fi
 }
 
 # @FUNCTION: _mitigate-tecv-dos_check_kernel_flags
@@ -915,7 +918,7 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	_mitigate_tecv_verify_mitigation_blr			# DoS, Mitigations against BLR (2023)
 	_mitigate_tecv_verify_mitigation_mcead			# DoS, Mitigations against MCEAD (2024)
 	_mitigate_tecv_verify_mitigation_cve_2024_24968		# DoS (2024)
-	_mitigate_tecv_verify_mitigation_slb			# DoS, ID, CI, Mitigations against SLB (2024)
+	_mitigate_tecv_verify_mitigation_slb			# CE, DoS, ID, CI, Mitigations against SLB (2024)
 }
 
 # @FUNCTION: _mitigate-tecv_get_fallback_version
