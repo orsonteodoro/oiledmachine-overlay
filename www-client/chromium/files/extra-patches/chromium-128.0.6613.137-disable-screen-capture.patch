@@ -234,6 +234,62 @@
    // Defines a window of opportunity for the Web-application to decide
    // whether a display-surface which it's capturing should be focused.
    // After |kConditionalFocusWindow| past the beginning of the capture,
+--- a/content/browser/renderer_host/media/media_stream_dispatcher_host.cc.orig	2024-09-10 11:42:13.627713700 -0700
++++ b/content/browser/renderer_host/media/media_stream_dispatcher_host.cc	2024-09-19 20:09:15.618479213 -0700
+@@ -40,7 +40,7 @@
+ #include "third_party/blink/public/mojom/mediastream/media_stream.mojom.h"
+ #include "url/origin.h"
+ 
+-#if !BUILDFLAG(IS_ANDROID)
++#if !BUILDFLAG(IS_ANDROID) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ #include "content/browser/media/capture/sub_capture_target_id_web_contents_helper.h"
+ #endif
+ 
+@@ -80,7 +80,7 @@ StartObservingWebContents(GlobalRenderFr
+   return web_contents_observer;
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ // Checks whether a track living in the WebContents indicated by
+ // (render_process_id, render_frame_id) may be cropped or restricted
+ // to the target indicated by |target|.
+@@ -139,7 +139,7 @@ WrapApplySubCaptureTarget(
+       },
+       std::move(callback), std::move(bad_message_callback));
+ }
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ 
+ bool AllowedStreamTypeCombination(
+     blink::mojom::MediaStreamType audio_stream_type,
+@@ -179,7 +179,7 @@ bool AllowedStreamTypeCombination(
+   return false;
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ bool IsValidZoomLevel(int zoom_level) {
+   if (blink::kPresetBrowserZoomFactors.size() == 0u) {
+     return false;
+@@ -199,7 +199,7 @@ bool IsValidZoomLevel(int zoom_level) {
+ 
+   return false;
+ }
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ 
+ }  // namespace
+ 
+@@ -676,7 +676,7 @@ void MediaStreamDispatcherHost::KeepDevi
+       render_frame_host_id_, requester_id_, session_id, transfer_id));
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ void MediaStreamDispatcherHost::FocusCapturedSurface(const std::string& label,
+                                                      bool focus) {
+   DCHECK_CURRENTLY_ON(BrowserThread::IO);
 --- a/content/common/features.gni.orig	2024-09-10 11:42:13.871734400 -0700
 +++ b/content/common/features.gni	2024-09-14 10:55:04.189211887 -0700
 @@ -24,5 +24,4 @@ declare_args() {
