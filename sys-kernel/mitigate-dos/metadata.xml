@@ -9,7 +9,7 @@
 
   oiledmachine-overlay notes:
 
-  This ebuild is for enforcement of Denial of Service (DoS) mitigation with
+  This ebuild is for enforcement of Denial of Service (DoS) mitigations on
   a broader scope.  It was previously focused and still continues to support
   mitigation of DoS based CPU hardware vulnerabilties.  The ebuild will
   support client-side DoS mitigation or server-side DoS mitigation.
