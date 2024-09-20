@@ -3451,13 +3451,17 @@ eerror "  spectre_v2=retpoline,generic"
 eerror "  spectre_v2=retpoline,amd"
 			fi
 			if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.17" ; then
+				if [[ "${FIRMWARE_VENDOR}" != "amd" ]] ; then
 eerror "  spectre_v2=retpoline,lfence"
+				fi
 				if tc-is-cross-compiler ; then
 					:
 				elif cat "/proc/cpuinfo" | grep -q  "flags.* ibrs_enhanced " ; then
 eerror "  spectre_v2=eibrs"
 eerror "  spectre_v2=eibrs,retpoline"
+					if [[ "${FIRMWARE_VENDOR}" != "amd" ]] ; then
 eerror "  spectre_v2=eibrs,lfence"
+					fi
 				fi
 			fi
 			if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.19" ; then
@@ -4890,7 +4894,9 @@ eerror "  spectre_v2=off"
 eerror "  spectre_v2=auto               # The kernel default"
 eerror "  spectre_v2=retpoline"
 eerror "  spectre_v2=retpoline,generic"
+			if [[ "${FIRMWARE_VENDOR}" != "amd" ]] ; then
 eerror "  spectre_v2=retpoline,lfence"
+			fi
 			if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
 eerror "  spectre_v2=retpoline,amd"
 			fi
@@ -4899,7 +4905,9 @@ eerror "  spectre_v2=retpoline,amd"
 			elif cat "/proc/cpuinfo" | grep -q  "flags.* ibrs_enhanced " ; then
 eerror "  spectre_v2=eibrs"
 eerror "  spectre_v2=eibrs,retpoline"
+				if [[ "${FIRMWARE_VENDOR}" != "amd" ]] ; then
 eerror "  spectre_v2=eibrs,lfence"
+				fi
 			fi
 			if tc-is-cross-compiler ; then
 				:
@@ -5001,7 +5009,7 @@ eerror "Missing spectre_v2=retpoline required by retbleed=stuff."
 				:
 			elif _check_kernel_cmdline "spectre_v2=eibrs,retpoline" ; then
 				:
-			elif _check_kernel_cmdline "spectre_v2=eibrs,lfence" ; then
+			elif _check_kernel_cmdline "spectre_v2=eibrs,lfence" && [[ "${FIRMWARE_VENDOR}" != "amd" ]] ; then
 				:
 			else
 eerror
@@ -5020,7 +5028,9 @@ eerror "  spectre_v2=ibrs"
 			:
 		elif cat "/proc/cpuinfo" | grep -q  "flags.* ibrs_enhanced " ; then
 eerror "  spectre_v2=eibrs,retpoline"
+			if [[ "${FIRMWARE_VENDOR}" != "amd" ]] ; then
 eerror "  spectre_v2=eibrs,lfence"
+			fi
 		fi
 eerror
 eerror "Edit it from:"
@@ -5077,7 +5087,7 @@ _mitigate_tecv_verify_mitigation_rrsba() {
 				:
 			elif _check_kernel_cmdline "spectre_v2=eibrs,retpoline" ; then
 				:
-			elif _check_kernel_cmdline "spectre_v2=eibrs,lfence" ; then
+			elif _check_kernel_cmdline "spectre_v2=eibrs,lfence" && [[ "${FIRMWARE_VENDOR}" != "amd" ]] ; then
 				:
 			else
 eerror
@@ -5092,7 +5102,9 @@ eerror "  spectre_v2=auto"
 			elif cat "/proc/cpuinfo" | grep -q  "flags.* ibrs_enhanced " ; then
 eerror "  spectre_v2=eibrs"
 eerror "  spectre_v2=eibrs,retpoline"
+				if [[ "${FIRMWARE_VENDOR}" != "amd" ]] ; then
 eerror "  spectre_v2=eibrs,lfence"
+				fi
 			fi
 eerror
 eerror "Edit it from:"
