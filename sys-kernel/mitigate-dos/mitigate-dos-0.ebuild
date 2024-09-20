@@ -36,11 +36,11 @@ mlx5
 # The latest to near past vulnerabilities are reported below.
 #
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
-# video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, CI, CE, EP
-# video_cards_radeon? https://nvd.nist.gov/vuln/detail/CVE-2024-41060 # DoS
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-43903 # DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2023-52913 # DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
+# video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, CI, CE, EP
+# video_cards_radeon? https://nvd.nist.gov/vuln/detail/CVE-2024-41060 # DoS
 #
 # Usually stable versions get security checked.
 # The betas and dev versions usually do not get security reports.
@@ -53,6 +53,9 @@ RDEPEND="
 	video_cards_amdgpu? (
 		$(gen_patched_kernel_list 6.11)
 	)
+	video_cards_intel? (
+		$(gen_patched_kernel_list 6.2)
+	)
 	video_cards_nvidia? (
 		|| (
 			>=x11-drivers/nvidia-drivers-550.90.07:0/550
@@ -62,9 +65,6 @@ RDEPEND="
 	)
 	video_cards_radeon? (
 		$(gen_patched_kernel_list 6.10)
-	)
-	video_cards_intel? (
-		$(gen_patched_kernel_list 6.2)
 	)
 "
 BDEPEND="
