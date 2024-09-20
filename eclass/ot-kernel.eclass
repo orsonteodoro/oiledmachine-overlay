@@ -295,8 +295,8 @@ else
 	)
 fi
 
-LINUX_FIRMWARE_PV="20230809" # Based on latest available patch level cross referenced to the μcode column.
-LINUX_FIRMWARE_TIMESTAMP="2023-08-09 07:59:05 -0400" # Same as above from the git log.
+LINUX_FIRMWARE_PV="20240710" # Based on latest available patch level cross referenced to the μcode column.
+LINUX_FIRMWARE_TIMESTAMP="2024-07-10 10:11:10 -0500" # Same as above from the git log.
 LINUX_REPO_URI=\
 "https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 
