@@ -32,12 +32,15 @@ mlx5
 # EP - Escalation of Privileges
 # ID - Information Disclosure
 
+#
+# The latest to near past vulnerabilities are reported below.
+#
+# mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
 # video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, CI, CE, EP
 # video_cards_radeon? https://nvd.nist.gov/vuln/detail/CVE-2024-41060 # DoS
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-43903 # DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2023-52913 # DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
-# mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
 #
 # Usually stable versions get security checked.
 # The betas and dev versions usually do not get security reports.
@@ -70,7 +73,7 @@ BDEPEND="
 
 pkg_setup() {
 	mitigate-dos_pkg_setup
-ewarn "This ebuild is a Work In Progress (WIP) and may be renamed."
+ewarn "This ebuild is a Work In Progress (WIP)."
 }
 
 # Unconditionally check

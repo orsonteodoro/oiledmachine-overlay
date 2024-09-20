@@ -33,16 +33,23 @@ ${VIDEO_CARDS[@]}
 # DoS - Denial of Service
 # EP - Escalation of Privileges
 # ID - Information Disclosure
+
+#
+# The latest to near past vulnerabilities are reported below.
+#
+# video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, CI, CE, EP
+# video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
+#
+
 #
 # For Spectre v1, v2 mitigations, see https://nvidia.custhelp.com/app/answers/detail/a_id/4611
 # It needs >=x11-drivers/nvidia-drivers-390.31 for V1, V2 mitigation.
 # Now, we have these recent past drivers with vulnerabilities of the same class.
-# Security notes:
-# video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, CI, CE, EP
-# video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
 #
 # Usually stable versions get security checked.
-# The betas and dev versions usually do not get security reports.
+# The betas and dev versions usually do not get security reports, so we prune
+# those.  The other reason why we prune them is because they may leak sensitive
+# debug info (ID) in plain text.
 #
 RDEPEND="
 	${MITIGATE_ID_RDEPEND}
