@@ -29,10 +29,10 @@ ${VIDEO_CARDS[@]}
 mlx5
 "
 # CE - Code Execution
-# DoS - Denial of Service
-# DT - Data Tampering (aka I:H)
+# DoS - Denial of Service (CVSS A:H)
+# DT - Data Tampering (CVSS I:H)
 # EP - Escalation of Privileges
-# ID - Information Disclosure
+# ID - Information Disclosure (CVSS C:H)
 
 #
 # The latest to near past vulnerabilities are reported below.
