@@ -123,7 +123,7 @@ RDEPEND="
 	!dev-db/mysql:0
 	!dev-db/mysql:5.7
 	!dev-db/percona-server
-	sys-kernel/mitigate-tecv
+	sys-kernel/mitigate-id
 	!prefix? (
 		acct-group/mysql acct-user/mysql
 		dev-db/mysql-init-scripts

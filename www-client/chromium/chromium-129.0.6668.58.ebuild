@@ -1051,7 +1051,7 @@ CLANG_RDEPEND="
 RDEPEND+="
 	${COMMON_DEPEND}
 	${CLANG_RDEPEND}
-	sys-kernel/mitigate-tecv
+	sys-kernel/mitigate-id
 	virtual/ttf-fonts
 	!headless? (
 		qt5? (

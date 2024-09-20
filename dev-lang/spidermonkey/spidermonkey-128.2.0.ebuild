@@ -102,7 +102,7 @@ RDEPEND="
 	sys-libs/readline:0
 	sys-libs/readline:=
 	>=sys-libs/zlib-1.2.13
-	sys-kernel/mitigate-tecv
+	sys-kernel/mitigate-id
 "
 DEPEND="
 	${RDEPEND}

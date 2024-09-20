@@ -4,23 +4,26 @@
 
 EAPI=8
 
-inherit mitigate-tecv-dos toolchain-funcs
+inherit mitigate-id toolchain-funcs
 
-# Add RDEPEND+=" virtual/mitigate-tecv" to downstream package if the downstream ebuild uses:
-# Server
-# Web Browser (For test taking)
-# Network Software
+# Add RDEPEND+=" virtual/mitigate-id" to downstream package if the downstream ebuild uses:
+# JavaScript
+# WebAssembly
+# Keychains
+# Passwords
+# Digital currency wallets
+# Databases that that typically store sensitive data
+
+# It is used to mitigate against cross process exfiltration.
 
 S="${WORKDIR}"
 
-DESCRIPTION="Enforce Denial of Service mitigations"
+DESCRIPTION="Enforce Information Disclosure mitigations"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~s390 ~x86"
 VIDEO_CARDS=(
-	video_cards_amdgpu
 	video_cards_intel
 	video_cards_nvidia
-	video_cards_radeon
 )
 IUSE="
 ${VIDEO_CARDS[@]}
@@ -30,20 +33,21 @@ ${VIDEO_CARDS[@]}
 # DoS - Denial of Service
 # EP - Escalation of Privileges
 # ID - Information Disclosure
-
+#
+# For Spectre v1, v2 mitigations, see https://nvidia.custhelp.com/app/answers/detail/a_id/4611
+# It needs >=x11-drivers/nvidia-drivers-390.31 for V1, V2 mitigation.
+# Now, we have these recent past drivers with vulnerabilities of the same class.
+# Security notes:
 # video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, CI, CE, EP
-# video_cards_radeon? https://nvd.nist.gov/vuln/detail/CVE-2024-41060 # DoS
-# video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-43903 # DoS
-# video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2023-52913 # DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
 #
 # Usually stable versions get security checked.
 # The betas and dev versions usually do not get security reports.
 #
 RDEPEND="
-	${MITIGATE_TECV_RDEPEND}
-	video_cards_amdgpu? (
-		$(gen_patched_kernel_list 6.11)
+	${MITIGATE_ID_RDEPEND}
+	video_cards_intel? (
+		$(gen_patched_kernel_list 6.2)
 	)
 	video_cards_nvidia? (
 		|| (
@@ -52,33 +56,26 @@ RDEPEND="
 			>=x11-drivers/nvidia-drivers-470.256.02:0/470
 		)
 	)
-	video_cards_radeon? (
-		$(gen_patched_kernel_list 6.10)
-	)
-	video_cards_intel? (
-		$(gen_patched_kernel_list 6.2)
-	)
 "
 BDEPEND="
 	sys-apps/util-linux
 "
 
 pkg_setup() {
-	mitigate-tecv-dos_pkg_setup
+	mitigate-id_pkg_setup
 ewarn "This ebuild is a Work In Progress (WIP) and may be renamed."
 }
 
 # Unconditionally check
 src_compile() {
 	tc-is-cross-compiler && return
-# TODO:  Find similar app
-#einfo "Checking for mitigations against DoS."
-#	if lscpu | grep -q "Vulnerable" ; then
-#eerror "FAIL:  Detected an unmitigated CPU vulnerability."
-#eerror "Fix issues to continue."
-#		lscpu
-#		die
-#	else
-#einfo "PASS"
-#	fi
+einfo "Checking for mitigations against Information Disclosure based Transient Execution Vulnerabilities (e.g. Meltdown/Spectre)"
+	if lscpu | grep -q "Vulnerable" ; then
+eerror "FAIL:  Detected an unmitigated CPU vulnerability."
+eerror "Fix issues to continue."
+		lscpu
+		die
+	else
+einfo "PASS"
+	fi
 }

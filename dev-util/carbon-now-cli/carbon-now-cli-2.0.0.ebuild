@@ -931,7 +931,7 @@ NODEJS_PV="18"
 RDEPEND="
 	>=net-libs/nodejs-${NODEJS_PV}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
-	sys-kernel/mitigate-tecv
+	sys-kernel/mitigate-id
 	clipboard? (
 		x11-misc/xclip
 	)

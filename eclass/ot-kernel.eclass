@@ -11989,7 +11989,7 @@ ot-kernel_set_kconfig_bpf_spectre_mitigation() {
 
 	# For context, see
 	# https://lwn.net/Articles/946389/
-	# See the metadata.xml for sys-kernel/mitigate-tecv for details.
+	# See the metadata.xml for sys-kernel/mitigate-id for details.
 	if grep -q -E -e "^CONFIG_BPF=y" "${path_config}" ; then
 	# For most people, this is impractical. \
 	# You could compute without the net in the 1990s but not 2020s. \

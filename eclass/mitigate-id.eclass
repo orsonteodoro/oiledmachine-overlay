@@ -1,4 +1,4 @@
-# @ECLASS: mitigate-tecv.eclass
+# @ECLASS: mitigate-id.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
 # @BLURB: Spectre and Meltdown kernel mitigation
@@ -6,22 +6,19 @@
 # This ebuild is to perform kernel checks on Spectre and Meltdown on the kernel
 # level.  This also covers other mitigations for hardware vulnerabilities.
 #
-# TECV = Transient Execution CPU Vulnerability
-# https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability
+# See also https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability
 #
-
-# ITLB_MULTIHIT, CVE-2018-12207, DoS
 
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-if [[ -z ${_MITIGATE_TECV_ECLASS} ]] ; then
-_MITIGATE_TECV_ECLASS=1
+if [[ -z ${_MITIGATE_ID_ECLASS} ]] ; then
+_MITIGATE_ID_ECLASS=1
 
 FIRMWARE_VENDOR=""
-_mitigate_tecv_set_globals() {
+_mitigate_id_set_globals() {
 	if [[ -e "/proc/cpuinfo" ]] ; then
 		while read -r line ; do
 			if [[ "${line}" =~ "AuthenticAMD" ]] ; then
@@ -36,8 +33,8 @@ _mitigate_tecv_set_globals() {
 	fi
 }
 
-_mitigate_tecv_set_globals
-unset -f _mitigate_tecv_set_globals
+_mitigate_id_set_globals
+unset -f _mitigate_id_set_globals
 
 # lakefield is incomplete
 # cannon lake is incomplete
@@ -443,7 +440,7 @@ gen_patched_kernel_list() {
 
 
 # Mitigated with RFI flush not KPTI
-_MITIGATE_TECV_MELTDOWN_RDEPEND_PPC64="
+_MITIGATE_ID_MELTDOWN_RDEPEND_PPC64="
 	cpu_target_ppc_power7? (
 		$(gen_patched_kernel_list 4.15)
 	)
@@ -455,7 +452,7 @@ _MITIGATE_TECV_MELTDOWN_RDEPEND_PPC64="
 	)
 "
 
-_MITIGATE_TECV_SPECTRE_V1_RDEPEND_X86_64="
+_MITIGATE_ID_SPECTRE_V1_RDEPEND_X86_64="
 	cpu_target_x86_haswell? (
 		$(gen_patched_kernel_list 4.16)
 	)
@@ -578,20 +575,20 @@ _MITIGATE_TECV_SPECTRE_V1_RDEPEND_X86_64="
 	)
 "
 if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
-	_MITIGATE_TECV_SPECTRE_V1_RDEPEND_X86_64+="
+	_MITIGATE_ID_SPECTRE_V1_RDEPEND_X86_64+="
 		$(gen_patched_kernel_list 4.16)
 	"
 fi
 if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
-	_MITIGATE_TECV_SPECTRE_V1_RDEPEND_X86_64+="
+	_MITIGATE_ID_SPECTRE_V1_RDEPEND_X86_64+="
 		$(gen_patched_kernel_list 4.16)
 	"
 fi
-_MITIGATE_TECV_SPECTRE_V1_RDEPEND_X86_32="
-	${_MITIGATE_TECV_SPECTRE_V1_RDEPEND_X86_64}
+_MITIGATE_ID_SPECTRE_V1_RDEPEND_X86_32="
+	${_MITIGATE_ID_SPECTRE_V1_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_SPECTRE_V2_RDEPEND_X86_64="
+_MITIGATE_ID_SPECTRE_V2_RDEPEND_X86_64="
 	cpu_target_x86_haswell? (
 		$(gen_patched_kernel_list 4.15)
 		firmware? (
@@ -784,17 +781,17 @@ _MITIGATE_TECV_SPECTRE_V2_RDEPEND_X86_64="
 # TODO: replace with family
 #	cpu_target_x86_amd_fam_0fh
 if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
-	_MITIGATE_TECV_SPECTRE_V2_RDEPEND_X86_64+="
+	_MITIGATE_ID_SPECTRE_V2_RDEPEND_X86_64+="
 		$(gen_patched_kernel_list 4.15)
 	"
 fi
 if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
-	_MITIGATE_TECV_SPECTRE_V2_RDEPEND_X86_64+="
+	_MITIGATE_ID_SPECTRE_V2_RDEPEND_X86_64+="
 		$(gen_patched_kernel_list 4.15)
 	"
 fi
 
-_MITIGATE_TECV_SPECTRE_V1_V2_V3_RDEPEND_X86_64="
+_MITIGATE_ID_SPECTRE_V1_V2_V3_RDEPEND_X86_64="
 	cpu_target_x86_arrandale? (
 		$(gen_patched_kernel_list 4.16)
 		firmware? (
@@ -857,11 +854,11 @@ _MITIGATE_TECV_SPECTRE_V1_V2_V3_RDEPEND_X86_64="
 		)
 	)
 "
-_MITIGATE_TECV_SPECTRE_V1_V2_V3_RDEPEND_X86_32="
-	${_MITIGATE_TECV_SPECTRE_V1_V2_V3_RDEPEND_X86_64}
+_MITIGATE_ID_SPECTRE_V1_V2_V3_RDEPEND_X86_32="
+	${_MITIGATE_ID_SPECTRE_V1_V2_V3_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64="
+_MITIGATE_ID_MELTDOWN_RDEPEND_X86_64="
 	$(gen_patched_kernel_list 4.15)
 	cpu_target_x86_haswell? (
 		$(gen_patched_kernel_list 4.15)
@@ -896,17 +893,17 @@ _MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64="
 "
 
 # Only if it supports PAE
-_MITIGATE_TECV_MELTDOWN_RDEPEND_X86_32="
-	${_MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64}
+_MITIGATE_ID_MELTDOWN_RDEPEND_X86_32="
+	${_MITIGATE_ID_MELTDOWN_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_MELTDOWN_RDEPEND_ARM64="
+_MITIGATE_ID_MELTDOWN_RDEPEND_ARM64="
 	cpu_target_arm_cortex_a75? (
 		$(gen_patched_kernel_list 4.16)
 	)
 "
 # Variant 3a (4.16), Variant 4 (4.18) \
-_MITIGATE_TECV_SPECTRE_NG_RDEPEND_ARM64="
+_MITIGATE_ID_SPECTRE_NG_RDEPEND_ARM64="
 	cpu_target_arm_cortex_a15? (
 		$(gen_patched_kernel_list 4.16)
 	)
@@ -939,7 +936,7 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_ARM64="
 
 # Firmware date based on D distro even though it may be removed from microcode repo.
 # List for mitigations against Variant 4 and Variant 3a
-_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64="
+_MITIGATE_ID_SPECTRE_NG_RDEPEND_X86_64="
 	cpu_target_x86_gemini_lake? (
 		$(gen_patched_kernel_list 4.17)
 		firmware? (
@@ -1079,25 +1076,25 @@ _MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 5.13)
 	)
 "
-_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_32="
-	${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64}
+_MITIGATE_ID_SPECTRE_NG_RDEPEND_X86_32="
+	${_MITIGATE_ID_SPECTRE_NG_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_SPECTRE_V2_RDEPEND_S390X="
+_MITIGATE_ID_SPECTRE_V2_RDEPEND_S390X="
 	$(gen_patched_kernel_list 4.16)
 	bpf? (
 		$(gen_patched_kernel_list 5.13)
 	)
 "
 
-_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64="
+_MITIGATE_ID_SPECTRE_RSB_RDEPEND_X86_64="
 	$(gen_patched_kernel_list 4.19)
 "
-_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_32="
-	${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64}
+_MITIGATE_ID_SPECTRE_RSB_RDEPEND_X86_32="
+	${_MITIGATE_ID_SPECTRE_RSB_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_SPECTRE_RSBA_RDEPEND_X86_64="
+_MITIGATE_ID_SPECTRE_RSBA_RDEPEND_X86_64="
 	cpu_target_x86_skylake? (
 		$(gen_patched_kernel_list 5.19)
 	)
@@ -1128,14 +1125,14 @@ _MITIGATE_TECV_SPECTRE_RSBA_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 5.19)
 	)
 "
-_MITIGATE_TECV_SPECTRE_RSBA_RDEPEND_X86_32="
-	${_MITIGATE_TECV_SPECTRE_RSBA_RDEPEND_X86_64}
+_MITIGATE_ID_SPECTRE_RSBA_RDEPEND_X86_32="
+	${_MITIGATE_ID_SPECTRE_RSBA_RDEPEND_X86_64}
 "
 
 # The firmware is required for mitigation, but the date below is not verified
 # to contain the fix.  It is based on the monotonic numbering of the advisory
 # in the commit summary.
-_MITIGATE_TECV_SPECTRE_RRSBA_RDEPEND_X86_64="
+_MITIGATE_ID_SPECTRE_RRSBA_RDEPEND_X86_64="
 	cpu_target_x86_cooper_lake? (
 		$(gen_patched_kernel_list 5.17)
 	)
@@ -1192,12 +1189,12 @@ _MITIGATE_TECV_SPECTRE_RRSBA_RDEPEND_X86_64="
 	)
 "
 
-_MITIGATE_TECV_SPECTRE_RRSBA_RDEPEND_X86_32="
-	${_MITIGATE_TECV_SPECTRE_RRSBA_RDEPEND_X86_64}
+_MITIGATE_ID_SPECTRE_RRSBA_RDEPEND_X86_32="
+	${_MITIGATE_ID_SPECTRE_RRSBA_RDEPEND_X86_64}
 "
 
 # broxton needs verification
-_MITIGATE_TECV_FORESHADOW_RDEPEND_X86_64="
+_MITIGATE_ID_FORESHADOW_RDEPEND_X86_64="
 	cpu_target_x86_arrandale? (
 		$(gen_patched_kernel_list 4.19)
 		firmware? (
@@ -1305,12 +1302,12 @@ _MITIGATE_TECV_FORESHADOW_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 5.6)
 	)
 "
-_MITIGATE_TECV_FORESHADOW_RDEPEND_X86_32="
-	${_MITIGATE_TECV_FORESHADOW_RDEPEND_X86_64}
+_MITIGATE_ID_FORESHADOW_RDEPEND_X86_32="
+	${_MITIGATE_ID_FORESHADOW_RDEPEND_X86_64}
 "
 
 
-_MITIGATE_TECV_SPECTRE_V2_RDEPEND_PPC32="
+_MITIGATE_ID_SPECTRE_V2_RDEPEND_PPC32="
 	cpu_target_ppc_85xx? (
 		$(gen_patched_kernel_list 5.0)
 	)
@@ -1319,7 +1316,7 @@ _MITIGATE_TECV_SPECTRE_V2_RDEPEND_PPC32="
 	)
 "
 
-_MITIGATE_TECV_SPECTRE_V2_RDEPEND_PPC64="
+_MITIGATE_ID_SPECTRE_V2_RDEPEND_PPC64="
 	cpu_target_ppc_e5500? (
 		$(gen_patched_kernel_list 5.0)
 	)
@@ -1329,7 +1326,7 @@ _MITIGATE_TECV_SPECTRE_V2_RDEPEND_PPC64="
 "
 
 # MFBDS, MLPDS, MSBDS
-_MITIGATE_TECV_MDS_RDEPEND_X86_64="
+_MITIGATE_ID_MDS_RDEPEND_X86_64="
 	cpu_target_x86_haswell? (
 		$(gen_patched_kernel_list 5.2)
 		firmware? (
@@ -1403,11 +1400,11 @@ _MITIGATE_TECV_MDS_RDEPEND_X86_64="
 		)
 	)
 "
-_MITIGATE_TECV_MDS_RDEPEND_X86_32="
-	${_MITIGATE_TECV_MDS_RDEPEND_X86_64}
+_MITIGATE_ID_MDS_RDEPEND_X86_32="
+	${_MITIGATE_ID_MDS_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_SWAPGS_RDEPEND_X86_64="
+_MITIGATE_ID_SWAPGS_RDEPEND_X86_64="
 	cpu_target_x86_apollo_lake? (
 		$(gen_patched_kernel_list 5.3)
 	)
@@ -1526,12 +1523,12 @@ _MITIGATE_TECV_SWAPGS_RDEPEND_X86_64="
 	)
 
 "
-_MITIGATE_TECV_SWAPGS_RDEPEND_X86_32="
-	${_MITIGATE_TECV_SWAPGS_RDEPEND_X86_64}
+_MITIGATE_ID_SWAPGS_RDEPEND_X86_32="
+	${_MITIGATE_ID_SWAPGS_RDEPEND_X86_64}
 "
 
 # Only >= Gen6 firmware
-_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64="
+_MITIGATE_ID_ZOMBIELOAD_V2_RDEPEND_X86_64="
 	cpu_target_x86_haswell? (
 		$(gen_patched_kernel_list 5.4)
 	)
@@ -1603,11 +1600,11 @@ _MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64="
 		)
 	)
 "
-_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_32="
-	${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64}
+_MITIGATE_ID_ZOMBIELOAD_V2_RDEPEND_X86_32="
+	${_MITIGATE_ID_ZOMBIELOAD_V2_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64="
+_MITIGATE_ID_CACHEOUT_RDEPEND_X86_64="
 	cpu_target_x86_skylake? (
 		firmware? (
 			>=sys-firmware/intel-microcode-20200609
@@ -1661,11 +1658,11 @@ _MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64="
 	)
 
 "
-_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_32="
-	${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64}
+_MITIGATE_ID_CACHEOUT_RDEPEND_X86_32="
+	${_MITIGATE_ID_CACHEOUT_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_VRSA_RDEPEND_X86_64="
+_MITIGATE_ID_VRSA_RDEPEND_X86_64="
 	cpu_target_x86_skylake? (
 		firmware? (
 			>=sys-firmware/intel-microcode-20210125
@@ -1719,19 +1716,19 @@ _MITIGATE_TECV_VRSA_RDEPEND_X86_64="
 	)
 
 "
-_MITIGATE_TECV_VRSA_RDEPEND_X86_32="
-	${_MITIGATE_TECV_VRSA_RDEPEND_X86_64}
+_MITIGATE_ID_VRSA_RDEPEND_X86_32="
+	${_MITIGATE_ID_VRSA_RDEPEND_X86_64}
 "
 
 # See commit 80eb5fe
-_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC64="
+_MITIGATE_ID_SPECTRE_RSB_RDEPEND_PPC64="
 	$(gen_patched_kernel_list 5.5)
 "
-_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC32="
-	${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC64}
+_MITIGATE_ID_SPECTRE_RSB_RDEPEND_PPC32="
+	${_MITIGATE_ID_SPECTRE_RSB_RDEPEND_PPC64}
 "
 
-_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64="
+_MITIGATE_ID_CROSSTALK_RDEPEND_X86_64="
 	cpu_target_x86_skylake? (
 		$(gen_patched_kernel_list 5.8)
 		firmware? (
@@ -1787,11 +1784,11 @@ _MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64="
 		)
 	)
 "
-_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_32="
-	${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64}
+_MITIGATE_ID_CROSSTALK_RDEPEND_X86_32="
+	${_MITIGATE_ID_CROSSTALK_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_SPECTRE_V2_RDEPEND_ARM64="
+_MITIGATE_ID_SPECTRE_V2_RDEPEND_ARM64="
 
 	cpu_target_arm_brahma_b15? (
 		$(gen_patched_kernel_list 4.18)
@@ -1849,11 +1846,11 @@ _MITIGATE_TECV_SPECTRE_V2_RDEPEND_ARM64="
 		$(gen_patched_kernel_list 5.13)
 	)
 "
-_MITIGATE_TECV_SPECTRE_V2_RDEPEND_ARM="
-	${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_ARM64}
+_MITIGATE_ID_SPECTRE_V2_RDEPEND_ARM="
+	${_MITIGATE_ID_SPECTRE_V2_RDEPEND_ARM64}
 "
 
-_MITIGATE_TECV_MMIO_RDEPEND_X86_64="
+_MITIGATE_ID_MMIO_RDEPEND_X86_64="
 	cpu_target_x86_snow_ridge_bts? (
 		$(gen_patched_kernel_list 5.19)
 		firmware? (
@@ -1992,11 +1989,11 @@ _MITIGATE_TECV_MMIO_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 5.19)
 	)
 "
-_MITIGATE_TECV_MMIO_RDEPEND_X86_32="
-	${_MITIGATE_TECV_MMIO_RDEPEND_X86_64}
+_MITIGATE_ID_MMIO_RDEPEND_X86_32="
+	${_MITIGATE_ID_MMIO_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_RETBLEED_RDEPEND_X86_64="
+_MITIGATE_ID_RETBLEED_RDEPEND_X86_64="
 	cpu_target_x86_skylake? (
 		$(gen_patched_kernel_list 5.19)
 	)
@@ -2056,7 +2053,7 @@ _MITIGATE_TECV_RETBLEED_RDEPEND_X86_64="
 	)
 "
 
-_MITIGATE_TECV_BHB_RDEPEND_ARM64="
+_MITIGATE_ID_BHB_RDEPEND_ARM64="
 	cpu_target_arm_ampereone? (
 		$(gen_patched_kernel_list 6.1)
 	)
@@ -2137,11 +2134,11 @@ _MITIGATE_TECV_BHB_RDEPEND_ARM64="
 	)
 "
 
-_MITIGATE_TECV_BHB_RDEPEND_ARM="
-	${_MITIGATE_TECV_BHB_RDEPEND_ARM64}
+_MITIGATE_ID_BHB_RDEPEND_ARM="
+	${_MITIGATE_ID_BHB_RDEPEND_ARM64}
 "
 
-_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64="
+_MITIGATE_ID_DOWNFALL_RDEPEND_X86_64="
 	cpu_target_x86_skylake? (
 		$(gen_patched_kernel_list 6.5)
 		firmware? (
@@ -2229,12 +2226,12 @@ _MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64="
 	)
 
 "
-_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32="
-	${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
+_MITIGATE_ID_DOWNFALL_RDEPEND_X86_32="
+	${_MITIGATE_ID_DOWNFALL_RDEPEND_X86_64}
 "
 
 # Pick the top set if you have server
-_MITIGATE_TECV_INCEPTION_RDEPEND_X86_64="
+_MITIGATE_ID_INCEPTION_RDEPEND_X86_64="
 
 	cpu_target_x86_milan? (
 		$(gen_patched_kernel_list 6.9)
@@ -2280,11 +2277,11 @@ _MITIGATE_TECV_INCEPTION_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 6.5)
 	)
 "
-_MITIGATE_TECV_INCEPTION_RDEPEND_X86_32="
-	${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
+_MITIGATE_ID_INCEPTION_RDEPEND_X86_32="
+	${_MITIGATE_ID_ZENBLEED_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_RFDS_RDEPEND_X86_64="
+_MITIGATE_ID_RFDS_RDEPEND_X86_64="
 	cpu_target_x86_apollo_lake? (
 		$(gen_patched_kernel_list 6.9)
 		firmware? (
@@ -2364,12 +2361,12 @@ _MITIGATE_TECV_RFDS_RDEPEND_X86_64="
 		)
 	)
 "
-_MITIGATE_TECV_RFDS_RDEPEND_X86_32="
-	${_MITIGATE_TECV_RFDS_RDEPEND_X86_64}
+_MITIGATE_ID_RFDS_RDEPEND_X86_32="
+	${_MITIGATE_ID_RFDS_RDEPEND_X86_64}
 "
 
 
-_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64="
+_MITIGATE_ID_ZENBLEED_RDEPEND_X86_64="
 	cpu_target_x86_rome? (
 		$(gen_patched_kernel_list 6.9)
 		firmware? (
@@ -2381,13 +2378,13 @@ _MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64="
 	)
 
 "
-_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_32="
-	${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
+_MITIGATE_ID_ZENBLEED_RDEPEND_X86_32="
+	${_MITIGATE_ID_ZENBLEED_RDEPEND_X86_64}
 "
 
 # The 12th Gen needs microcode but it is not documented for the version
 # requirement.  The date of the advisory is used as a placeholder.
-_MITIGATE_TECV_BHI_RDEPEND_X86_64="
+_MITIGATE_ID_BHI_RDEPEND_X86_64="
 	cpu_target_x86_gemini_lake? (
 		$(gen_patched_kernel_list 6.9)
 	)
@@ -2464,11 +2461,11 @@ _MITIGATE_TECV_BHI_RDEPEND_X86_64="
 	)
 
 "
-_MITIGATE_TECV_BHI_RDEPEND_X86_32="
-	${_MITIGATE_TECV_BHI_RDEPEND_X86_64}
+_MITIGATE_ID_BHI_RDEPEND_X86_32="
+	${_MITIGATE_ID_BHI_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_REPTAR_RDEPEND_X86_64="
+_MITIGATE_ID_REPTAR_RDEPEND_X86_64="
 	cpu_target_x86_ice_lake? (
 		firmware? (
 			>=sys-firmware/intel-microcode-20231114
@@ -2510,11 +2507,11 @@ _MITIGATE_TECV_REPTAR_RDEPEND_X86_64="
 		)
 	)
 "
-_MITIGATE_TECV_REPTAR_RDEPEND_X86_32="
-	${_MITIGATE_TECV_REPTAR_RDEPEND_X86_64}
+_MITIGATE_ID_REPTAR_RDEPEND_X86_32="
+	${_MITIGATE_ID_REPTAR_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_USSB_RDEPEND_ARM64="
+_MITIGATE_ID_USSB_RDEPEND_ARM64="
 	cpu_target_arm_cortex_a76? (
 		$(gen_patched_kernel_list 6.11)
 	)
@@ -2571,7 +2568,7 @@ _MITIGATE_TECV_USSB_RDEPEND_ARM64="
 	)
 "
 
-_MITIGATE_TECV_IBPB_RDEPEND_X86_64="
+_MITIGATE_ID_IBPB_RDEPEND_X86_64="
 	cpu_target_x86_sapphire_rapids? (
 		firmware? (
 			>=sys-firmware/intel-microcode-20240312
@@ -2608,11 +2605,11 @@ _MITIGATE_TECV_IBPB_RDEPEND_X86_64="
 		)
 	)
 "
-_MITIGATE_TECV_IBPB_RDEPEND_X86_32="
-	${_MITIGATE_TECV_IBPB_RDEPEND_X86_64}
+_MITIGATE_ID_IBPB_RDEPEND_X86_32="
+	${_MITIGATE_ID_IBPB_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_MPF_RDEPEND_X86_64="
+_MITIGATE_ID_MPF_RDEPEND_X86_64="
 	cpu_target_x86_snow_ridge? (
 		firmware? (
 			>=sys-firmware/intel-microcode-20220207
@@ -2634,11 +2631,11 @@ _MITIGATE_TECV_MPF_RDEPEND_X86_64="
 		)
 	)
 "
-_MITIGATE_TECV_MPF_RDEPEND_X86_32="
-	${_MITIGATE_TECV_MPF_RDEPEND_X86_64}
+_MITIGATE_ID_MPF_RDEPEND_X86_32="
+	${_MITIGATE_ID_MPF_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_FSFPCD_RDEPEND_X86_64="
+_MITIGATE_ID_FSFPCD_RDEPEND_X86_64="
 	cpu_target_x86_ice_lake? (
 		firmware? (
 			>=sys-firmware/intel-microcode-20220207
@@ -2655,22 +2652,22 @@ _MITIGATE_TECV_FSFPCD_RDEPEND_X86_64="
 		)
 	)
 "
-_MITIGATE_TECV_FSFPCD_RDEPEND_X86_32="
-	${_MITIGATE_TECV_FSFPCD_RDEPEND_X86_64}
+_MITIGATE_ID_FSFPCD_RDEPEND_X86_32="
+	${_MITIGATE_ID_FSFPCD_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_AEPIC_RDEPEND_X86_64="
+_MITIGATE_ID_AEPIC_RDEPEND_X86_64="
 	cpu_target_x86_ice_lake? (
 		firmware? (
 			>=sys-firmware/intel-microcode-20230214
 		)
 	)
 "
-_MITIGATE_TECV_AEPIC_RDEPEND_X86_32="
-	${_MITIGATE_TECV_AEPIC_RDEPEND_X86_64}
+_MITIGATE_ID_AEPIC_RDEPEND_X86_32="
+	${_MITIGATE_ID_AEPIC_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_TECRA_RDEPEND_X86_64="
+_MITIGATE_ID_TECRA_RDEPEND_X86_64="
 	cpu_target_x86_ice_lake? (
 		firmware? (
 			>=sys-firmware/intel-microcode-20240312
@@ -2687,11 +2684,11 @@ _MITIGATE_TECV_TECRA_RDEPEND_X86_64="
 		)
 	)
 "
-_MITIGATE_TECV_TECRA_RDEPEND_X86_32="
-	${_MITIGATE_TECV_TECRA_RDEPEND_X86_64}
+_MITIGATE_ID_TECRA_RDEPEND_X86_32="
+	${_MITIGATE_ID_TECRA_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_PLATYPUS_RDEPEND_X86_64="
+_MITIGATE_ID_PLATYPUS_RDEPEND_X86_64="
 	cpu_target_x86_skylake? (
 		firmware? (
 			>=sys-firmware/intel-microcode-20201118
@@ -2804,11 +2801,11 @@ _MITIGATE_TECV_PLATYPUS_RDEPEND_X86_64="
 	)
 "
 
-_MITIGATE_TECV_PLATYPUS_RDEPEND_X86_32="
-	${_MITIGATE_TECV_PLATYPUS_RDEPEND_X86_64}
+_MITIGATE_ID_PLATYPUS_RDEPEND_X86_32="
+	${_MITIGATE_ID_PLATYPUS_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_SMT_RSB_RDEPEND_X86_64="
+_MITIGATE_ID_SMT_RSB_RDEPEND_X86_64="
 	cpu_target_x86_zen? (
 		$(gen_patched_kernel_list 6.2)
 	)
@@ -2822,12 +2819,12 @@ _MITIGATE_TECV_SMT_RSB_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 6.2)
 	)
 "
-_MITIGATE_TECV_SMT_RSB_RDEPEND_X86_32="
-	${_MITIGATE_TECV_SMT_RSB_RDEPEND_X86_64}
+_MITIGATE_ID_SMT_RSB_RDEPEND_X86_32="
+	${_MITIGATE_ID_SMT_RSB_RDEPEND_X86_64}
 "
 
 
-_MITIGATE_TECV_PBRSB_RDEPEND_X86_64="
+_MITIGATE_ID_PBRSB_RDEPEND_X86_64="
 	cpu_target_x86_cascade_lake? (
 		$(gen_patched_kernel_list 6.0)
 	)
@@ -2883,11 +2880,11 @@ _MITIGATE_TECV_PBRSB_RDEPEND_X86_64="
 		$(gen_patched_kernel_list 6.0)
 	)
 "
-_MITIGATE_TECV_PBRSB_RDEPEND_X86_32="
-	${_MITIGATE_TECV_PBRSB_RDEPEND_X86_64}
+_MITIGATE_ID_PBRSB_RDEPEND_X86_32="
+	${_MITIGATE_ID_PBRSB_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_APDB_RDEPEND_X86_64="
+_MITIGATE_ID_APDB_RDEPEND_X86_64="
 	cpu_target_x86_apollo_lake? (
 		>=sys-firmware/intel-microcode-20210608
 	)
@@ -2907,11 +2904,11 @@ _MITIGATE_TECV_APDB_RDEPEND_X86_64="
 		>=sys-firmware/intel-microcode-20210608
 	)
 "
-_MITIGATE_TECV_APDB_RDEPEND_X86_32="
-	${_MITIGATE_TECV_APDB_RDEPEND_X86_64}
+_MITIGATE_ID_APDB_RDEPEND_X86_32="
+	${_MITIGATE_ID_APDB_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_ITDVCP_RDEPEND_X86_64="
+_MITIGATE_ID_ITDVCP_RDEPEND_X86_64="
 	cpu_target_x86_skylake? (
 		>=sys-firmware/intel-microcode-20210608
 	)
@@ -2943,11 +2940,11 @@ _MITIGATE_TECV_ITDVCP_RDEPEND_X86_64="
 		>=sys-firmware/intel-microcode-20210608
 	)
 "
-_MITIGATE_TECV_ITDVCP_RDEPEND_X86_32="
-	${_MITIGATE_TECV_ITDVCP_RDEPEND_X86_64}
+_MITIGATE_ID_ITDVCP_RDEPEND_X86_32="
+	${_MITIGATE_ID_ITDVCP_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_IBRS_GH_RDEPEND_X86_64="
+_MITIGATE_ID_IBRS_GH_RDEPEND_X86_64="
 	cpu_target_x86_cascade_lake? (
 		>=sys-firmware/intel-microcode-20210608
 	)
@@ -2970,11 +2967,11 @@ _MITIGATE_TECV_IBRS_GH_RDEPEND_X86_64="
 		>=sys-firmware/intel-microcode-20210608
 	)
 "
-_MITIGATE_TECV_IBRS_GH_RDEPEND_X86_32="
-	${_MITIGATE_TECV_IBRS_GH_RDEPEND_X86_64}
+_MITIGATE_ID_IBRS_GH_RDEPEND_X86_32="
+	${_MITIGATE_ID_IBRS_GH_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_CVE_2024_23984_RDEPEND_X86_64="
+_MITIGATE_ID_CVE_2024_23984_RDEPEND_X86_64="
 	cpu_target_x86_cedar_island? (
 		firmware? (
 			>=sys-firmware/intel-microcode-20240910
@@ -2991,11 +2988,11 @@ _MITIGATE_TECV_CVE_2024_23984_RDEPEND_X86_64="
 		)
 	)
 "
-_MITIGATE_TECV_CVE_2024_23984_RDEPEND_X86_32="
-	${_MITIGATE_TECV_CVE_2024_23984_RDEPEND_X86_64}
+_MITIGATE_ID_CVE_2024_23984_RDEPEND_X86_32="
+	${_MITIGATE_ID_CVE_2024_23984_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_SINKCLOSE_RDEPEND_X86_64="
+_MITIGATE_ID_SINKCLOSE_RDEPEND_X86_64="
 	cpu_target_x86_naples? (
 		>=sys-kernel/linux-firmware-20240710
 	)
@@ -3021,11 +3018,11 @@ _MITIGATE_TECV_SINKCLOSE_RDEPEND_X86_64="
 		>=sys-kernel/linux-firmware-20240710
 	)
 "
-_MITIGATE_TECV_SINKCLOSE_RDEPEND_X86_32="
-	${_MITIGATE_TECV_SINKCLOSE_RDEPEND_X86_64}
+_MITIGATE_ID_SINKCLOSE_RDEPEND_X86_32="
+	${_MITIGATE_ID_SINKCLOSE_RDEPEND_X86_64}
 "
 
-_MITIGATE_TECV_AUTO="
+_MITIGATE_ID_AUTO="
 	arm? (
 		$(gen_patched_kernel_list 6.1)
 	)
@@ -3049,113 +3046,113 @@ _MITIGATE_TECV_AUTO="
 	)
 "
 if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
-	_MITIGATE_TECV_AUTO+="
+	_MITIGATE_ID_AUTO+="
 		>=sys-kernel/linux-firmware-20240811
 	"
 fi
 if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
-	_MITIGATE_TECV_AUTO+="
+	_MITIGATE_ID_AUTO+="
 		>=sys-firmware/intel-microcode-20240910
 	"
 fi
 
-# @ECLASS_VARIABLE: MITIGATE_TECV_RDEPEND
+# @ECLASS_VARIABLE: MITIGATE_ID_RDEPEND
 # @INTERNAL
 # @DESCRIPTION:
 # High level RDEPEND
-MITIGATE_TECV_RDEPEND="
+MITIGATE_ID_RDEPEND="
 	kernel_linux? (
 		!custom-kernel? (
 			auto? (
-				${_MITIGATE_TECV_AUTO}
+				${_MITIGATE_ID_AUTO}
 			)
 			arm? (
-				${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_ARM}
-				${_MITIGATE_TECV_BHB_RDEPEND_ARM}
+				${_MITIGATE_ID_SPECTRE_V2_RDEPEND_ARM}
+				${_MITIGATE_ID_BHB_RDEPEND_ARM}
 			)
 			arm64? (
-				${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_ARM64}
-				${_MITIGATE_TECV_MELTDOWN_RDEPEND_ARM64}
-				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_ARM64}
-				${_MITIGATE_TECV_BHB_RDEPEND_ARM64}
-				${_MITIGATE_TECV_USSB_RDEPEND_ARM64}
+				${_MITIGATE_ID_SPECTRE_V2_RDEPEND_ARM64}
+				${_MITIGATE_ID_MELTDOWN_RDEPEND_ARM64}
+				${_MITIGATE_ID_SPECTRE_NG_RDEPEND_ARM64}
+				${_MITIGATE_ID_BHB_RDEPEND_ARM64}
+				${_MITIGATE_ID_USSB_RDEPEND_ARM64}
 			)
 			amd64? (
-				${_MITIGATE_TECV_SPECTRE_V1_V2_V3_RDEPEND_X86_64}
-				${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_X86_64}
-				${_MITIGATE_TECV_MELTDOWN_RDEPEND_X86_64}
-				${_MITIGATE_TECV_SWAPGS_RDEPEND_X86_64}
-				${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_64}
-				${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_64}
-				${_MITIGATE_TECV_VRSA_RDEPEND_X86_64}
-				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_64}
-				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_64}
-				${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_64}
-				${_MITIGATE_TECV_SPECTRE_RSBA_RDEPEND_X86_64}
-				${_MITIGATE_TECV_SPECTRE_RRSBA_RDEPEND_X86_64}
-				${_MITIGATE_TECV_FORESHADOW_RDEPEND_X86_64}
-				${_MITIGATE_TECV_BHI_RDEPEND_X86_64}
-				${_MITIGATE_TECV_MMIO_RDEPEND_X86_64}
-				${_MITIGATE_TECV_RETBLEED_RDEPEND_X86_64}
-				${_MITIGATE_TECV_APDB_RDEPEND_X86_64}
-				${_MITIGATE_TECV_ITDVCP_RDEPEND_X86_64}
-				${_MITIGATE_TECV_MPF_RDEPEND_X86_64}
-				${_MITIGATE_TECV_FSFPCD_RDEPEND_X86_64}
-				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_64}
-				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_64}
-				${_MITIGATE_TECV_IBPB_RDEPEND_X86_64}
-				${_MITIGATE_TECV_RFDS_RDEPEND_X86_64}
-				${_MITIGATE_TECV_AEPIC_RDEPEND_X86_64}
-				${_MITIGATE_TECV_SMT_RSB_RDEPEND_X86_64}
-				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_64}
-				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
-				${_MITIGATE_TECV_TECRA_RDEPEND_X86_64}
-				${_MITIGATE_TECV_CVE_2024_23984_RDEPEND_X86_64}
-				${_MITIGATE_TECV_SINKCLOSE_RDEPEND_X86_64}
+				${_MITIGATE_ID_SPECTRE_V1_V2_V3_RDEPEND_X86_64}
+				${_MITIGATE_ID_SPECTRE_V2_RDEPEND_X86_64}
+				${_MITIGATE_ID_MELTDOWN_RDEPEND_X86_64}
+				${_MITIGATE_ID_SWAPGS_RDEPEND_X86_64}
+				${_MITIGATE_ID_ZOMBIELOAD_V2_RDEPEND_X86_64}
+				${_MITIGATE_ID_CACHEOUT_RDEPEND_X86_64}
+				${_MITIGATE_ID_VRSA_RDEPEND_X86_64}
+				${_MITIGATE_ID_CROSSTALK_RDEPEND_X86_64}
+				${_MITIGATE_ID_SPECTRE_NG_RDEPEND_X86_64}
+				${_MITIGATE_ID_SPECTRE_RSB_RDEPEND_X86_64}
+				${_MITIGATE_ID_SPECTRE_RSBA_RDEPEND_X86_64}
+				${_MITIGATE_ID_SPECTRE_RRSBA_RDEPEND_X86_64}
+				${_MITIGATE_ID_FORESHADOW_RDEPEND_X86_64}
+				${_MITIGATE_ID_BHI_RDEPEND_X86_64}
+				${_MITIGATE_ID_MMIO_RDEPEND_X86_64}
+				${_MITIGATE_ID_RETBLEED_RDEPEND_X86_64}
+				${_MITIGATE_ID_APDB_RDEPEND_X86_64}
+				${_MITIGATE_ID_ITDVCP_RDEPEND_X86_64}
+				${_MITIGATE_ID_MPF_RDEPEND_X86_64}
+				${_MITIGATE_ID_FSFPCD_RDEPEND_X86_64}
+				${_MITIGATE_ID_DOWNFALL_RDEPEND_X86_64}
+				${_MITIGATE_ID_INCEPTION_RDEPEND_X86_64}
+				${_MITIGATE_ID_IBPB_RDEPEND_X86_64}
+				${_MITIGATE_ID_RFDS_RDEPEND_X86_64}
+				${_MITIGATE_ID_AEPIC_RDEPEND_X86_64}
+				${_MITIGATE_ID_SMT_RSB_RDEPEND_X86_64}
+				${_MITIGATE_ID_REPTAR_RDEPEND_X86_64}
+				${_MITIGATE_ID_ZENBLEED_RDEPEND_X86_64}
+				${_MITIGATE_ID_TECRA_RDEPEND_X86_64}
+				${_MITIGATE_ID_CVE_2024_23984_RDEPEND_X86_64}
+				${_MITIGATE_ID_SINKCLOSE_RDEPEND_X86_64}
 			)
 			ppc? (
-				${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_PPC32}
-				${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC32}
+				${_MITIGATE_ID_SPECTRE_V2_RDEPEND_PPC32}
+				${_MITIGATE_ID_SPECTRE_RSB_RDEPEND_PPC32}
 			)
 			ppc64? (
-				${_MITIGATE_TECV_MELTDOWN_RDEPEND_PPC64}
-				${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_PPC64}
-				${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_PPC64}
+				${_MITIGATE_ID_MELTDOWN_RDEPEND_PPC64}
+				${_MITIGATE_ID_SPECTRE_V2_RDEPEND_PPC64}
+				${_MITIGATE_ID_SPECTRE_RSB_RDEPEND_PPC64}
 			)
 			s390? (
-				${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_S390X}
+				${_MITIGATE_ID_SPECTRE_V2_RDEPEND_S390X}
 			)
 			x86? (
-				${_MITIGATE_TECV_SPECTRE_V1_V2_V3_RDEPEND_X86_32}
-				${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_X86_32}
-				${_MITIGATE_TECV_MELTDOWN_RDEPEND_X86_32}
-				${_MITIGATE_TECV_SWAPGS_RDEPEND_X86_32}
-				${_MITIGATE_TECV_ZOMBIELOAD_V2_RDEPEND_X86_32}
-				${_MITIGATE_TECV_CACHEOUT_RDEPEND_X86_32}
-				${_MITIGATE_TECV_VRSA_RDEPEND_X86_32}
-				${_MITIGATE_TECV_CROSSTALK_RDEPEND_X86_32}
-				${_MITIGATE_TECV_SPECTRE_RSB_RDEPEND_X86_32}
-				${_MITIGATE_TECV_SPECTRE_RSBA_RDEPEND_X86_32}
-				${_MITIGATE_TECV_SPECTRE_RRSBA_RDEPEND_X86_32}
-				${_MITIGATE_TECV_FORESHADOW_RDEPEND_X86_32}
-				${_MITIGATE_TECV_SPECTRE_NG_RDEPEND_X86_32}
-				${_MITIGATE_TECV_BHI_RDEPEND_X86_32}
-				${_MITIGATE_TECV_MMIO_RDEPEND_X86_32}
-				${_MITIGATE_TECV_APDB_RDEPEND_X86_32}
-				${_MITIGATE_TECV_ITDVCP_RDEPEND_X86_32}
-				${_MITIGATE_TECV_MPF_RDEPEND_X86_32}
-				${_MITIGATE_TECV_FSFPCD_RDEPEND_X86_32}
-				${_MITIGATE_TECV_DOWNFALL_RDEPEND_X86_32}
-				${_MITIGATE_TECV_INCEPTION_RDEPEND_X86_32}
-				${_MITIGATE_TECV_IBPB_RDEPEND_X86_32}
-				${_MITIGATE_TECV_RFDS_RDEPEND_X86_32}
-				${_MITIGATE_TECV_AEPIC_RDEPEND_X86_32}
-				${_MITIGATE_TECV_SMT_RSB_RDEPEND_X86_32}
-				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_32}
-				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_32}
-				${_MITIGATE_TECV_TECRA_RDEPEND_X86_32}
-				${_MITIGATE_TECV_CVE_2024_23984_RDEPEND_X86_32}
-				${_MITIGATE_TECV_SINKCLOSE_RDEPEND_X86_32}
+				${_MITIGATE_ID_SPECTRE_V1_V2_V3_RDEPEND_X86_32}
+				${_MITIGATE_ID_SPECTRE_V2_RDEPEND_X86_32}
+				${_MITIGATE_ID_MELTDOWN_RDEPEND_X86_32}
+				${_MITIGATE_ID_SWAPGS_RDEPEND_X86_32}
+				${_MITIGATE_ID_ZOMBIELOAD_V2_RDEPEND_X86_32}
+				${_MITIGATE_ID_CACHEOUT_RDEPEND_X86_32}
+				${_MITIGATE_ID_VRSA_RDEPEND_X86_32}
+				${_MITIGATE_ID_CROSSTALK_RDEPEND_X86_32}
+				${_MITIGATE_ID_SPECTRE_RSB_RDEPEND_X86_32}
+				${_MITIGATE_ID_SPECTRE_RSBA_RDEPEND_X86_32}
+				${_MITIGATE_ID_SPECTRE_RRSBA_RDEPEND_X86_32}
+				${_MITIGATE_ID_FORESHADOW_RDEPEND_X86_32}
+				${_MITIGATE_ID_SPECTRE_NG_RDEPEND_X86_32}
+				${_MITIGATE_ID_BHI_RDEPEND_X86_32}
+				${_MITIGATE_ID_MMIO_RDEPEND_X86_32}
+				${_MITIGATE_ID_APDB_RDEPEND_X86_32}
+				${_MITIGATE_ID_ITDVCP_RDEPEND_X86_32}
+				${_MITIGATE_ID_MPF_RDEPEND_X86_32}
+				${_MITIGATE_ID_FSFPCD_RDEPEND_X86_32}
+				${_MITIGATE_ID_DOWNFALL_RDEPEND_X86_32}
+				${_MITIGATE_ID_INCEPTION_RDEPEND_X86_32}
+				${_MITIGATE_ID_IBPB_RDEPEND_X86_32}
+				${_MITIGATE_ID_RFDS_RDEPEND_X86_32}
+				${_MITIGATE_ID_AEPIC_RDEPEND_X86_32}
+				${_MITIGATE_ID_SMT_RSB_RDEPEND_X86_32}
+				${_MITIGATE_ID_REPTAR_RDEPEND_X86_32}
+				${_MITIGATE_ID_ZENBLEED_RDEPEND_X86_32}
+				${_MITIGATE_ID_TECRA_RDEPEND_X86_32}
+				${_MITIGATE_ID_CVE_2024_23984_RDEPEND_X86_32}
+				${_MITIGATE_ID_SINKCLOSE_RDEPEND_X86_32}
 			)
 		)
 	)
@@ -3180,11 +3177,11 @@ _check_kernel_cmdline() {
 	return 1
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_meltdown
+# @FUNCTION: _mitigate_id_verify_mitigation_meltdown
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags to mitigate against Meltdown.
-_mitigate_tecv_verify_mitigation_meltdown() {
+_mitigate_id_verify_mitigation_meltdown() {
 	local pae=0
 	if tc-is-cross-compiler ; then
 		:
@@ -3317,11 +3314,11 @@ eerror
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_spectre
+# @FUNCTION: _mitigate_id_verify_mitigation_spectre
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Spectre.
-_mitigate_tecv_verify_mitigation_spectre() {
+_mitigate_id_verify_mitigation_spectre() {
 	if use firmware ; then
 		if \
 			   use cpu_target_x86_apollo_lake \
@@ -3526,11 +3523,11 @@ eerror
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_spectre_ng
+# @FUNCTION: _mitigate_id_verify_mitigation_spectre_ng
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Spectre-NG.
-_mitigate_tecv_verify_mitigation_spectre_ng() {
+_mitigate_id_verify_mitigation_spectre_ng() {
 	if use firmware ; then
 		if \
 			   use cpu_target_x86_gemini_lake \
@@ -3631,11 +3628,11 @@ ewarn "Neoverse N1 requires a firmware update for Spectre-NG (Variant 4) mitigat
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_spectre_bhb
+# @FUNCTION: _mitigate_id_verify_mitigation_spectre_bhb
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Spectre-BHB.
-_mitigate_tecv_verify_mitigation_spectre_bhb() {
+_mitigate_id_verify_mitigation_spectre_bhb() {
 	if [[ "${ARCH}" == "arm" ]] && ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.17" ; then
 		if \
 			   use cpu_target_arm_brahma_b15 \
@@ -3693,11 +3690,11 @@ eerror
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_bhi
+# @FUNCTION: _mitigate_id_verify_mitigation_bhi
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Spectre-BHI.
-_mitigate_tecv_verify_mitigation_bhi() {
+_mitigate_id_verify_mitigation_bhi() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.9" ; then
 		if use firmware ; then
 			if \
@@ -3759,11 +3756,11 @@ eerror
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_foreshadow
+# @FUNCTION: _mitigate_id_verify_mitigation_foreshadow
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Foreshadow.
-_mitigate_tecv_verify_mitigation_foreshadow() {
+_mitigate_id_verify_mitigation_foreshadow() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "4.19" ; then
 		if use firmware ; then
 			if \
@@ -3861,11 +3858,11 @@ ewarn
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_rfds
+# @FUNCTION: _mitigate_id_verify_mitigation_rfds
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against RFDS.
-_mitigate_tecv_verify_mitigation_rfds() {
+_mitigate_id_verify_mitigation_rfds() {
 	if \
 		use cpu_target_x86_snow_ridge_bts \
 		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
@@ -3934,11 +3931,11 @@ eerror ">=sys-firmware/intel-microcode-20240312 is required for RFDS mitigation.
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_downfall
+# @FUNCTION: _mitigate_id_verify_mitigation_downfall
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against GDS.
-_mitigate_tecv_verify_mitigation_downfall() {
+_mitigate_id_verify_mitigation_downfall() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.5" ; then
 		local L=(
 			cpu_target_x86_skylake
@@ -4005,11 +4002,11 @@ eerror
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_retbleed
+# @FUNCTION: _mitigate_id_verify_mitigation_retbleed
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Retbleed.
-_mitigate_tecv_verify_mitigation_retbleed() {
+_mitigate_id_verify_mitigation_retbleed() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.19" ; then
 		if _check_kernel_cmdline "retbleed=off" ; then
 eerror
@@ -4047,11 +4044,11 @@ eerror "No mitigation against Retbleed for 32-bit x86.  Use only 64-bit instead.
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_zenbleed
+# @FUNCTION: _mitigate_id_verify_mitigation_zenbleed
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Zenbleed.
-_mitigate_tecv_verify_mitigation_zenbleed() {
+_mitigate_id_verify_mitigation_zenbleed() {
 	if \
 		use firmware \
 			&& \
@@ -4081,11 +4078,11 @@ ewarn "A BIOS firmware update is required for non datacenter CPU models for Zenb
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_crosstalk
+# @FUNCTION: _mitigate_id_verify_mitigation_crosstalk
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CROSSTalk.
-_mitigate_tecv_verify_mitigation_crosstalk() {
+_mitigate_id_verify_mitigation_crosstalk() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.8" ; then
 		if use firmware ; then
 			if \
@@ -4144,11 +4141,11 @@ eerror
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_inception
+# @FUNCTION: _mitigate_id_verify_mitigation_inception
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Inception.
-_mitigate_tecv_verify_mitigation_inception() {
+_mitigate_id_verify_mitigation_inception() {
 	local ver
 	if \
 		use firmware\
@@ -4224,11 +4221,11 @@ ewarn "A BIOS firmware is required for non datacenters for INCEPTION mitigation.
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_zombieload_v2
+# @FUNCTION: _mitigate_id_verify_mitigation_zombieload_v2
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against ZombieLoad v2.
-_mitigate_tecv_verify_mitigation_zombieload_v2() {
+_mitigate_id_verify_mitigation_zombieload_v2() {
 	if use firmware ; then
 		if \
 			   use cpu_target_x86_skylake \
@@ -4302,11 +4299,11 @@ ewarn "Missing firmware for Gen5 TAA mitigations"
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_cacheout
+# @FUNCTION: _mitigate_id_verify_mitigation_cacheout
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CacheOut (L1DES) and VRS.
-_mitigate_tecv_verify_mitigation_cacheout() {
+_mitigate_id_verify_mitigation_cacheout() {
 	if \
 		   use cpu_target_x86_skylake \
 		|| use cpu_target_x86_kaby_lake_gen7 \
@@ -4334,11 +4331,11 @@ eerror ">=sys-firmware/intel-microcode-20200609 is required for CacheOut and VRS
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_vrsa
+# @FUNCTION: _mitigate_id_verify_mitigation_vrsa
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against VRSA.
-_mitigate_tecv_verify_mitigation_vrsa() {
+_mitigate_id_verify_mitigation_vrsa() {
 	if \
 		   use cpu_target_x86_skylake \
 		|| use cpu_target_x86_kaby_lake_gen7 \
@@ -4366,20 +4363,20 @@ eerror ">=sys-firmware/intel-microcode-20210125 is required for CacheOut and VRS
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_spectre_rsb
+# @FUNCTION: _mitigate_id_verify_mitigation_spectre_rsb
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against SpectreRSB.
-_mitigate_tecv_verify_mitigation_spectre_rsb() {
+_mitigate_id_verify_mitigation_spectre_rsb() {
 	:
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_mds
+# @FUNCTION: _mitigate_id_verify_mitigation_mds
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against MDS.
 # The MDSUM column was not processed and missing.
-_mitigate_tecv_verify_mitigation_mds() {
+_mitigate_id_verify_mitigation_mds() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.2" ; then
 		if use firmware ; then
 			if \
@@ -4444,11 +4441,11 @@ eerror
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_mmio_stale_data
+# @FUNCTION: _mitigate_id_verify_mitigation_mmio_stale_data
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against MMIO Stale Data.
-_mitigate_tecv_verify_mitigation_mmio_stale_data() {
+_mitigate_id_verify_mitigation_mmio_stale_data() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.19" ; then
 		if use firmware ; then
 			if \
@@ -4524,11 +4521,11 @@ eerror
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_reptar
+# @FUNCTION: _mitigate_id_verify_mitigation_reptar
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Reptar.
-_mitigate_tecv_verify_mitigation_reptar() {
+_mitigate_id_verify_mitigation_reptar() {
 	if use firmware ; then
 		if \
 			   use cpu_target_x86_ice_lake \
@@ -4555,12 +4552,12 @@ eerror ">=sys-firmware/intel-microcode-20231114 is required for Reptar mitigatio
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_ussb
+# @FUNCTION: _mitigate_id_verify_mitigation_ussb
 # @INTERNAL
 # @DESCRIPTION:
 # See commit adeec61
 # Check the kernel config flags and kernel command line to mitigate against Unexpected Speculative Store Bypass (USSB).
-_mitigate_tecv_verify_mitigation_ussb() {
+_mitigate_id_verify_mitigation_ussb() {
 	if [[ "${ARCH}" == "amd64" ]] && ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.11" ; then
 		if \
 			   use cpu_target_arm_cortex_a76 \
@@ -4592,11 +4589,11 @@ _mitigate_tecv_verify_mitigation_ussb() {
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_mitigate_with_ssp
+# @FUNCTION: _mitigate_id_mitigate_with_ssp
 # @INTERNAL
 # @DESCRIPTION:
 # Check for SSP to prevent pre attack for privilege escalation which can lead to data theft.
-_mitigate_tecv_mitigate_with_ssp() {
+_mitigate_id_mitigate_with_ssp() {
 	CONFIG_CHECK="
 		STACKPROTECTOR
 	"
@@ -4604,11 +4601,11 @@ _mitigate_tecv_mitigate_with_ssp() {
 	check_extra_config
 }
 
-# @FUNCTION: _mitigate_tecv_mitigate_with_aslr
+# @FUNCTION: _mitigate_id_mitigate_with_aslr
 # @INTERNAL
 # @DESCRIPTION:
 # Check for ASLR to prevent pre attack for privilege escalation which can lead to data theft.
-_mitigate_tecv_mitigate_with_aslr() {
+_mitigate_id_mitigate_with_aslr() {
 	if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
 		CONFIG_CHECK="
 			RELOCATABLE
@@ -4626,11 +4623,11 @@ _mitigate_tecv_mitigate_with_aslr() {
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_ibpb
+# @FUNCTION: _mitigate_id_verify_mitigation_ibpb
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CVE-2023-38575, also known as the Incomplete Branch Prediction Barrier (IBPB) vulnerability.
-_mitigate_tecv_verify_mitigation_ibpb() {
+_mitigate_id_verify_mitigation_ibpb() {
 	if \
 		   use cpu_target_x86_sapphire_rapids \
 		|| use cpu_target_x86_sapphire_rapids_edge_enhanced \
@@ -4650,11 +4647,11 @@ _mitigate_tecv_verify_mitigation_ibpb() {
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_mpf
+# @FUNCTION: _mitigate_id_verify_mitigation_mpf
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CVE-2021-33120, also known as the Missing Page Fault (MPF) vulnerability.
-_mitigate_tecv_verify_mitigation_mpf() {
+_mitigate_id_verify_mitigation_mpf() {
 	if \
 		   use cpu_target_x86_snow_ridge \
 		|| use cpu_target_x86_parker_ridge \
@@ -4671,11 +4668,11 @@ _mitigate_tecv_verify_mitigation_mpf() {
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_fsfpcd
+# @FUNCTION: _mitigate_id_verify_mitigation_fsfpcd
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CVE-2021-0145, also known as the Fast Store Forwarding Predictor: Cross Domain (FSFPCD) vulnerability.
-_mitigate_tecv_verify_mitigation_fsfpcd() {
+_mitigate_id_verify_mitigation_fsfpcd() {
 	if \
 		   use cpu_target_x86_ice_lake \
 		|| use cpu_target_x86_tiger_lake \
@@ -4691,11 +4688,11 @@ _mitigate_tecv_verify_mitigation_fsfpcd() {
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_aepic
+# @FUNCTION: _mitigate_id_verify_mitigation_aepic
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CVE-2022-21233, also known as the AEPIC Leak vulnerability.
-_mitigate_tecv_verify_mitigation_aepic() {
+_mitigate_id_verify_mitigation_aepic() {
 	if \
 		   use cpu_target_x86_ice_lake \
 		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
@@ -4709,11 +4706,11 @@ _mitigate_tecv_verify_mitigation_aepic() {
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_tecra
+# @FUNCTION: _mitigate_id_verify_mitigation_tecra
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CVE-2023-22655, also known as the Trusted Execution Register Access (TECRA) vulnerability.
-_mitigate_tecv_verify_mitigation_tecra() {
+_mitigate_id_verify_mitigation_tecra() {
 	if \
 		   use cpu_target_x86_ice_lake \
 		|| use cpu_target_x86_sapphire_rapids \
@@ -4747,11 +4744,11 @@ _mitigate_tecv_verify_mitigation_tecra() {
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_platypus
+# @FUNCTION: _mitigate_id_verify_mitigation_platypus
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CVE-2020-8694 and CVE-2020-8695, also known as the PLATYPUS side-channel attack.
-_mitigate_tecv_verify_mitigation_platypus() {
+_mitigate_id_verify_mitigation_platypus() {
 	if \
 		use cpu_target_x86_haswell \
 		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
@@ -4845,11 +4842,11 @@ eerror "You need to replace the kernel sources to Linux Kernel >= ${auto_version
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_smt_rsb
+# @FUNCTION: _mitigate_id_verify_mitigation_smt_rsb
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Cross-Thread Return Address Predictions (CTRAP), also known as SMT RSB in the Linux Kernel.
-_mitigate_tecv_verify_mitigation_smt_rsb() {
+_mitigate_id_verify_mitigation_smt_rsb() {
 	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
 		if _check_kernel_cmdline "mitigations=off" ; then
 eerror
@@ -4931,20 +4928,20 @@ einfo
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_pbrsb
+# @FUNCTION: _mitigate_id_verify_mitigation_pbrsb
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against Post-Barrier Return Stack Buffer Predictions (PBRSB) vulnerability.
-_mitigate_tecv_verify_mitigation_pbrsb() {
+_mitigate_id_verify_mitigation_pbrsb() {
 	:
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_rsba
+# @FUNCTION: _mitigate_id_verify_mitigation_rsba
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against RSBA.
 RSBU_MITIGATED=0
-_mitigate_tecv_verify_mitigation_rsba() {
+_mitigate_id_verify_mitigation_rsba() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "6.2" ; then
 		if use cpu_target_x86_skylake ; then
 			if _check_kernel_cmdline "spectre_v2=ibrs" ; then
@@ -5045,11 +5042,11 @@ eerror
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_rrsba
+# @FUNCTION: _mitigate_id_verify_mitigation_rrsba
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against RRSBA.
-_mitigate_tecv_verify_mitigation_rrsba() {
+_mitigate_id_verify_mitigation_rrsba() {
 	if (( ${RSBU_MITIGATED} == 1 )) ; then
 		:
 	elif ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.17" ; then
@@ -5131,11 +5128,11 @@ eerror
 }
 
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_swapgs
+# @FUNCTION: _mitigate_id_verify_mitigation_swapgs
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against SWAPGS.
-_mitigate_tecv_verify_mitigation_swapgs() {
+_mitigate_id_verify_mitigation_swapgs() {
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.3" ; then
 		if _check_kernel_cmdline "mitigations=off" ; then
 eerror
@@ -5169,11 +5166,11 @@ eerror
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_apdb
+# @FUNCTION: _mitigate_id_verify_mitigation_apdb
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CVE-2020-24513, also known as Atom Processor Domain Bypass (APDB) vulnerability.
-_mitigate_tecv_verify_mitigation_apdb() {
+_mitigate_id_verify_mitigation_apdb() {
 	if \
 		   use cpu_target_x86_apollo_lake \
 		|| use cpu_target_x86_denverton \
@@ -5193,11 +5190,11 @@ _mitigate_tecv_verify_mitigation_apdb() {
 
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_itdvcp
+# @FUNCTION: _mitigate_id_verify_mitigation_itdvcp
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CVE-2020-24512, also known as Influence of Trivial Data Value in Cache Policy (ITDVCP) vulnerability.
-_mitigate_tecv_verify_mitigation_itdvcp() {
+_mitigate_id_verify_mitigation_itdvcp() {
 	if \
 		   use cpu_target_x86_skylake \
 		|| use cpu_target_x86_ice_lake \
@@ -5220,11 +5217,11 @@ _mitigate_tecv_verify_mitigation_itdvcp() {
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_ibrs_gh
+# @FUNCTION: _mitigate_id_verify_mitigation_ibrs_gh
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CVE-2020-24511, also known as IBRS Guest/Host vulnerability.
-_mitigate_tecv_verify_mitigation_ibrs_gh() {
+_mitigate_id_verify_mitigation_ibrs_gh() {
 	if \
 		   use cpu_target_x86_cascade_lake \
 		|| use cpu_target_x86_cooper_lake \
@@ -5244,11 +5241,11 @@ _mitigate_tecv_verify_mitigation_ibrs_gh() {
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_cve_2024_23984
+# @FUNCTION: _mitigate_id_verify_mitigation_cve_2024_23984
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CVE-2024-23984.
-_mitigate_tecv_verify_mitigation_cve_2024_23984() {
+_mitigate_id_verify_mitigation_cve_2024_23984() {
 	if \
 		   use cpu_target_x86_cedar_island \
 		|| use cpu_target_x86_whitley \
@@ -5264,11 +5261,11 @@ _mitigate_tecv_verify_mitigation_cve_2024_23984() {
 	fi
 }
 
-# @FUNCTION: _mitigate_tecv_verify_mitigation_sinkclose
+# @FUNCTION: _mitigate_id_verify_mitigation_sinkclose
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CVE-2023-31315, also known as Sinkclose or the SMM Lock Bypass (SLB) vulnerability.
-_mitigate_tecv_verify_mitigation_sinkclose() {
+_mitigate_id_verify_mitigation_sinkclose() {
 	if \
 		   use cpu_target_x86_naples \
 		|| use cpu_target_x86_rome \
@@ -5297,11 +5294,11 @@ ewarn "A BIOS firmware update is required for non datacenter for Sinkclose mitig
 	fi
 }
 
-# @FUNCTION: _mitigate-tecv_check_kernel_flags
+# @FUNCTION: _mitigate-id_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
 # Check the kernel config flags
-_mitigate-tecv_check_kernel_flags() {
+_mitigate-id_check_kernel_flags() {
 	einfo "Kernel version:  ${KV_MAJOR}.${KV_MINOR}"
 
 	if ! linux_config_src_exists ; then
@@ -5314,7 +5311,7 @@ eerror "Missing .config in /usr/src/linux"
 	local pv_minor=$(grep "PATCHLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
 	local pv_patch=$(grep "SUBLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
 	local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
-	local auto_version=$(_mitigate-tecv_get_fallback_version)
+	local auto_version=$(_mitigate-id_get_fallback_version)
 	if use auto && ver_test "${pv_major}.${pv_minor}" -lt "${auto_version}" ; then
 		if [[ -L "${KERNEL_DIR}" ]] ; then
 eerror "You need to switch the /usr/src/linux symlink to Linux Kernel >= ${auto_version} for USE=auto."
@@ -5326,9 +5323,9 @@ eerror "Actual version:  ${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion}"
 	fi
 
 	if ! tc-is-cross-compiler && use custom-kernel ; then
-		local required_version=$(_mitigate-tecv_get_required_version)
-		[[ -z "${required_version}" ]] && required_version=$(_mitigate-tecv_get_fallback_version)
-		is_microarch_selected || required_version=$(_mitigate-tecv_get_fallback_version)
+		local required_version=$(_mitigate-id_get_required_version)
+		[[ -z "${required_version}" ]] && required_version=$(_mitigate-id_get_fallback_version)
+		is_microarch_selected || required_version=$(_mitigate-id_get_fallback_version)
 einfo "The required Linux Kernel version is >= ${required_version}."
 		local prev_kernel_dir="${KERNEL_DIR}"
 		local L=(
@@ -5371,56 +5368,56 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	# PE -> DoS
 	# PE -> ID + DoS
 
-	_mitigate_tecv_mitigate_with_ssp			# PE, CE
-	_mitigate_tecv_mitigate_with_aslr			# PE
+	_mitigate_id_mitigate_with_ssp			# PE, CE
+	_mitigate_id_mitigate_with_aslr			# PE
 
 	# Notify if grub or the kernel config is incorrectly configured/tampered
 	# or a copypasta-ed workaround.
-	_mitigate_tecv_verify_mitigation_meltdown		# ID, Mitigations against Variant 3 (2017)
-	_mitigate_tecv_verify_mitigation_spectre		# ID, Mitigations against Variant 1 (2017), Variant 2 (2017)
-	_mitigate_tecv_verify_mitigation_swapgs			# ID, Mitigations against SWAPGS (2019)
-	_mitigate_tecv_verify_mitigation_spectre_ng		# ID, Mitigations against Variant 4 (2018)
+	_mitigate_id_verify_mitigation_meltdown		# ID, Mitigations against Variant 3 (2017)
+	_mitigate_id_verify_mitigation_spectre		# ID, Mitigations against Variant 1 (2017), Variant 2 (2017)
+	_mitigate_id_verify_mitigation_swapgs			# ID, Mitigations against SWAPGS (2019)
+	_mitigate_id_verify_mitigation_spectre_ng		# ID, Mitigations against Variant 4 (2018)
 								# ID, Lazy FP State Restore (2018); eagerfpu removed and hardcoded enabled in 4.6 (2016), eagerfpu available in 3.7 (2012)
-	_mitigate_tecv_verify_mitigation_platypus		# ID, Mitigations against PLATYPUS (2020)
-	_mitigate_tecv_verify_mitigation_spectre_bhb		# ID, Mitigations against BHB (2022), ARM
-	_mitigate_tecv_verify_mitigation_bhi			# ID, Mitigations against BHI (2022), X86
-	_mitigate_tecv_verify_mitigation_crosstalk		# ID, Mitigations against SRBDS (2020)
-	_mitigate_tecv_verify_mitigation_spectre_rsb		# ID, Mitigations against SpectreRSB (2018)
-	_mitigate_tecv_verify_mitigation_rsba			# ID, Mitigations against RSBU (2022), RSBA (2022)
-	_mitigate_tecv_verify_mitigation_rrsba			# ID, Mitigations against RSBU (2022), RRSBA (2022)
-	_mitigate_tecv_verify_mitigation_foreshadow		# ID, Mitigations against L1TF (2018)
-	_mitigate_tecv_verify_mitigation_zombieload_v2		# ID, Mitigations against TAA (2019)
-	_mitigate_tecv_verify_mitigation_mds			# ID, Mitigations against ZombieLoad/MFBDS (2028), MLPDS (2028), MSBDS (2018), MDSUM (2019)
-	_mitigate_tecv_verify_mitigation_cacheout		# ID, Mitigations against L1DES (2020), VRS (2020)
-	_mitigate_tecv_verify_mitigation_vrsa			# ID, Mitigations against VRSA (2020)
-	_mitigate_tecv_verify_mitigation_apdb			# ID, Mitigations against APDB (2020)
-	_mitigate_tecv_verify_mitigation_itdvcp			# ID, Mitigations against ITDVCP (2020)
-	_mitigate_tecv_verify_mitigation_ibrs_gh		# ID, Mitigations against IBRS G/H (2020)
-	_mitigate_tecv_verify_mitigation_mpf			# ID, DoS, Mitigations against MPF (2021)
-	_mitigate_tecv_verify_mitigation_fsfpcd			# ID, Mitigations against FSFPCD (2021)
-	_mitigate_tecv_verify_mitigation_downfall		# ID, Mitigations against GDS (2022)
-	_mitigate_tecv_verify_mitigation_retbleed		# ID, Mitigations against Retbleed (2022)
-	_mitigate_tecv_verify_mitigation_mmio_stale_data	# ID, Mitigations against SBDR (2022), SBDS (2022), DRPW (2022)
-	_mitigate_tecv_verify_mitigation_aepic			# ID, Mitigations against AEPIC Leak (2022)
-	_mitigate_tecv_verify_mitigation_smt_rsb		# ID, Mitigations against SMT RSB (2022)
-	_mitigate_tecv_verify_mitigation_pbrsb			# ID, Mitigations against PBRSB (2022)
-	_mitigate_tecv_verify_mitigation_reptar			# EP, ID, DoS, Mitigations against Reptar (2023)
-	_mitigate_tecv_verify_mitigation_zenbleed		# ID, Mitigations against Zenbleed (2023)
-	_mitigate_tecv_verify_mitigation_inception		# ID, Mitigations against SRSO (2023)
-	_mitigate_tecv_verify_mitigation_ibpb			# ID, Mitigations against IBPB (2023)
-	_mitigate_tecv_verify_mitigation_tecra			# PE, Mitigations against TECRA (2023)
-	_mitigate_tecv_verify_mitigation_rfds			# ID, Mitigations against RFDS (2024)
-	_mitigate_tecv_verify_mitigation_ussb			# ID, Mitigations against USSB (2024)
-	_mitigate_tecv_verify_mitigation_cve_2024_23984		# ID (2024)
-	_mitigate_tecv_verify_mitigation_sinkclose		# CE, DoS, ID, CI, Mitigations against SLB (2024)
+	_mitigate_id_verify_mitigation_platypus		# ID, Mitigations against PLATYPUS (2020)
+	_mitigate_id_verify_mitigation_spectre_bhb		# ID, Mitigations against BHB (2022), ARM
+	_mitigate_id_verify_mitigation_bhi			# ID, Mitigations against BHI (2022), X86
+	_mitigate_id_verify_mitigation_crosstalk		# ID, Mitigations against SRBDS (2020)
+	_mitigate_id_verify_mitigation_spectre_rsb		# ID, Mitigations against SpectreRSB (2018)
+	_mitigate_id_verify_mitigation_rsba			# ID, Mitigations against RSBU (2022), RSBA (2022)
+	_mitigate_id_verify_mitigation_rrsba			# ID, Mitigations against RSBU (2022), RRSBA (2022)
+	_mitigate_id_verify_mitigation_foreshadow		# ID, Mitigations against L1TF (2018)
+	_mitigate_id_verify_mitigation_zombieload_v2		# ID, Mitigations against TAA (2019)
+	_mitigate_id_verify_mitigation_mds			# ID, Mitigations against ZombieLoad/MFBDS (2028), MLPDS (2028), MSBDS (2018), MDSUM (2019)
+	_mitigate_id_verify_mitigation_cacheout		# ID, Mitigations against L1DES (2020), VRS (2020)
+	_mitigate_id_verify_mitigation_vrsa			# ID, Mitigations against VRSA (2020)
+	_mitigate_id_verify_mitigation_apdb			# ID, Mitigations against APDB (2020)
+	_mitigate_id_verify_mitigation_itdvcp			# ID, Mitigations against ITDVCP (2020)
+	_mitigate_id_verify_mitigation_ibrs_gh		# ID, Mitigations against IBRS G/H (2020)
+	_mitigate_id_verify_mitigation_mpf			# ID, DoS, Mitigations against MPF (2021)
+	_mitigate_id_verify_mitigation_fsfpcd			# ID, Mitigations against FSFPCD (2021)
+	_mitigate_id_verify_mitigation_downfall		# ID, Mitigations against GDS (2022)
+	_mitigate_id_verify_mitigation_retbleed		# ID, Mitigations against Retbleed (2022)
+	_mitigate_id_verify_mitigation_mmio_stale_data	# ID, Mitigations against SBDR (2022), SBDS (2022), DRPW (2022)
+	_mitigate_id_verify_mitigation_aepic			# ID, Mitigations against AEPIC Leak (2022)
+	_mitigate_id_verify_mitigation_smt_rsb		# ID, Mitigations against SMT RSB (2022)
+	_mitigate_id_verify_mitigation_pbrsb			# ID, Mitigations against PBRSB (2022)
+	_mitigate_id_verify_mitigation_reptar			# EP, ID, DoS, Mitigations against Reptar (2023)
+	_mitigate_id_verify_mitigation_zenbleed		# ID, Mitigations against Zenbleed (2023)
+	_mitigate_id_verify_mitigation_inception		# ID, Mitigations against SRSO (2023)
+	_mitigate_id_verify_mitigation_ibpb			# ID, Mitigations against IBPB (2023)
+	_mitigate_id_verify_mitigation_tecra			# PE, Mitigations against TECRA (2023)
+	_mitigate_id_verify_mitigation_rfds			# ID, Mitigations against RFDS (2024)
+	_mitigate_id_verify_mitigation_ussb			# ID, Mitigations against USSB (2024)
+	_mitigate_id_verify_mitigation_cve_2024_23984		# ID (2024)
+	_mitigate_id_verify_mitigation_sinkclose		# CE, DoS, ID, CI, Mitigations against SLB (2024)
 
 	# For SLAM, see https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability#2023
 }
 
-# @FUNCTION: _mitigate-tecv_get_fallback_version
+# @FUNCTION: _mitigate-id_get_fallback_version
 # @DESCRIPTION:
 # Get the fallback version when no microarches selected
-_mitigate-tecv_get_fallback_version() {
+_mitigate-id_get_fallback_version() {
 	if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
 		echo "6.9"
 	elif [[ "${ARCH}" == "ppc" || "${ARCH}" == "ppc64" ]] ; then
@@ -5436,10 +5433,10 @@ _mitigate-tecv_get_fallback_version() {
 	fi
 }
 
-# @FUNCTION: _mitigate-tecv_get_required_version
+# @FUNCTION: _mitigate-id_get_required_version
 # @DESCRIPTION:
 # Get the required kernel version for custom-kernel.
-_mitigate-tecv_get_required_version() {
+_mitigate-id_get_required_version() {
 	if [[ "${ARCH}" == "amd64" || "${ARCH}" == "x86" ]] ; then
 		if \
 			   use cpu_target_x86_apollo_lake \
@@ -5618,10 +5615,10 @@ _mitigate-tecv_get_required_version() {
 	fi
 }
 
-# @FUNCTION: mitigate-tecv_pkg_setup
+# @FUNCTION: mitigate-id_pkg_setup
 # @DESCRIPTION:
 # Check the kernel config
-mitigate-tecv_pkg_setup() {
+mitigate-id_pkg_setup() {
 	if tc-is-cross-compiler && use auto ; then
 eerror "The auto USE flag can only be used in native builds."
 		die
@@ -5629,7 +5626,7 @@ eerror "The auto USE flag can only be used in native builds."
 	use auto && einfo "FIRMWARE_VENDOR=${FIRMWARE_VENDOR}"
 	if use kernel_linux ; then
 		linux-info_pkg_setup
-		_mitigate-tecv_check_kernel_flags
+		_mitigate-id_check_kernel_flags
 # It is a common practice by hardware manufacturers to delete support or
 # historical information after a period of time.
 		local L=(
@@ -5657,10 +5654,10 @@ ewarn "Use a CPU vulnerability checker to verify complete mitigation or to help 
 	fi
 }
 
-# @FUNCTION: mitigate-tecv_pkg_postinst
+# @FUNCTION: mitigate-id_pkg_postinst
 # @DESCRIPTION:
 # Remind user to use only patched kernels especially for large packages.
-mitigate-tecv_pkg_postinst() {
+mitigate-id_pkg_postinst() {
 	:
 }
 

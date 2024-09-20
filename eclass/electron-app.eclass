@@ -63,8 +63,8 @@ ELECTRON_APP_USES_UGC_FILES=${ELECTRON_APP_USES_UGC_FILES:-"0"}
 ELECTRON_APP_USES_UGC_TEXT=${ELECTRON_APP_USES_UGC_TEXT:-"0"}
 
 # If application parses user generated content file with JavaScript, then check it.
-# TECV = Transient Execution CPU vulnerability
-ELECTRON_APP_REQUIRES_TECV_CHECK=${ELECTRON_APP_REQUIRES_TECV_CHECK:-"0"}
+# ID = Information Disclosure
+ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK=${ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK:-"0"}
 
 # Use the following example to extract the license.
 # unzip -p /var/cache/distfiles/electron-v23.3.13-linux-x64.zip LICENSES.chromium.html > electron-23.3.13-chromium.html
@@ -968,9 +968,9 @@ elif [[ -n "${ELECTRON_APP_VUE_CORE_PV}" ]] && ( \
 	COMMON_DEPEND+=" =net-libs/nodejs-16*" # ^16.4.7
 fi
 
-if [[ "${ELECTRON_APP_USES_UGC_TEXT}" == "1" || "${ELECTRON_APP_REQUIRES_TECV_CHECK}" == "1" ]] ; then
+if [[ "${ELECTRON_APP_USES_UGC_TEXT}" == "1" || "${ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK}" == "1" ]] ; then
 	RDEPEND+="
-		sys-kernel/mitigate-tecv
+		sys-kernel/mitigate-id
 	"
 fi
 

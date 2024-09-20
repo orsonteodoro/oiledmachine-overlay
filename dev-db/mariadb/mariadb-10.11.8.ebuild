@@ -185,7 +185,7 @@ RDEPEND="
 	!dev-db/mariadb:11.4
 	!dev-db/mysql
 	!dev-db/percona-server
-	sys-kernel/mitigate-tecv
+	sys-kernel/mitigate-id
 	selinux? (
 		sec-policy/selinux-mysql
 	)

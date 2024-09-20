@@ -737,7 +737,7 @@ CDEPEND="
 RDEPEND+="
 	${CDEPEND}
 	${UDEV_RDEPEND}
-	sys-kernel/mitigate-tecv
+	sys-kernel/mitigate-id
 	cups? (
 		net-print/cups[${MULTILIB_USEDEP}]
 	)

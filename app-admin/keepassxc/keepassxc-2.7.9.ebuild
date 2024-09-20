@@ -79,7 +79,7 @@ RDEPEND="
 	app-crypt/argon2:=
 	dev-libs/botan:3=
 	media-gfx/qrencode:=
-	sys-kernel/mitigate-tecv
+	sys-kernel/mitigate-id
 	sys-libs/readline:0=
 	sys-libs/zlib:=[minizip]
 	autotype? (

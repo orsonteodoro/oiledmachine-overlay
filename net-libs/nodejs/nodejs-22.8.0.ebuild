@@ -154,7 +154,7 @@ RDEPEND+="
 	>=net-dns/c-ares-1.33.1
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3
-	sys-kernel/mitigate-tecv
+	sys-kernel/mitigate-id
 	system-icu? (
 		>=dev-libs/icu-75.1:=
 	)
