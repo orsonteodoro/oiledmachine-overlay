@@ -10,8 +10,8 @@
   oiledmachine-overlay notes:
 
   This ebuild currently is focused on mitigation of CPU hardware vulnerabilties
-  focused on DoS mitigation.  This will protect against client-side DoS or
-  server-side DoS.
+  focused on DoS mitigation.  This will harden the system against client-side
+  DoS or server-side DoS.
 
   At this time, the ebuild-package is optional and ebuilds do not require it.
 
