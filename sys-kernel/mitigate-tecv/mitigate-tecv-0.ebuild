@@ -28,11 +28,11 @@ VIDEO_CARDS=(
 IUSE="
 ${VIDEO_CARDS[@]}
 "
-# DoS - Denial of Service
-# ID - Information Disclosure
-# CI - Compromisable Integrity
 # CE - Code Execution
+# CI - Compromisable Integrity
+# DoS - Denial of Service
 # EP - Escalation of Privileges
+# ID - Information Disclosure
 #
 # For Spectre v1, v2 mitigations, see https://nvidia.custhelp.com/app/answers/detail/a_id/4611
 # It needs >=x11-drivers/nvidia-drivers-390.31 for V1, V2 mitigation.

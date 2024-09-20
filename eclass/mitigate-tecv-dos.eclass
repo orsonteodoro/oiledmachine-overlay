@@ -72,6 +72,8 @@ CPU_TARGET_X86=(
 
 	cpu_target_x86_cascade_lake
 	cpu_target_x86_cooper_lake
+
+	cpu_target_x86_naples
 )
 
 inherit linux-info toolchain-funcs
@@ -136,6 +138,9 @@ REQUIRED_USE="
 		firmware
 	)
 	cpu_target_x86_whitley? (
+		firmware
+	)
+	cpu_target_x86_naples? (
 		firmware
 	)
 "
@@ -479,6 +484,15 @@ _MITIGATE_TECV_CVE_2024_24968_RDEPEND_X86_32="
 	${_MITIGATE_TECV_CVE_2024_24968_RDEPEND_X86_64}
 "
 
+_MITIGATE_TECV_SLB_RDEPEND_X86_64="
+	cpu_target_x86_naples? (
+		>=sys-kernel/linux-firmware-20240710
+	)
+"
+_MITIGATE_TECV_SLB_RDEPEND_X86_32="
+	${_MITIGATE_TECV_SLB_RDEPEND_X86_64}
+"
+
 _MITIGATE_TECV_AUTO="
 	amd64? (
 		$(gen_patched_kernel_list 5.4)
@@ -494,7 +508,7 @@ if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
 fi
 if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
 	_MITIGATE_TECV_AUTO+="
-		>=sys-firmware/intel-microcode-20240813
+		>=sys-firmware/intel-microcode-20240910
 	"
 fi
 
@@ -515,6 +529,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_64}
 				${_MITIGATE_TECV_BLR_RDEPEND_X86_64}
 				${_MITIGATE_TECV_MCEAD_RDEPEND_X86_64}
+				${_MITIGATE_TECV_SLB_RDEPEND_X86_64}
 			)
 			x86? (
 				${_MITIGATE_TECV_TECRA_RDEPEND_X86_32}
@@ -523,6 +538,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_32}
 				${_MITIGATE_TECV_BLR_RDEPEND_X86_32}
 				${_MITIGATE_TECV_MCEAD_RDEPEND_X86_32}
+				${_MITIGATE_TECV_SLB_RDEPEND_X86_32}
 			)
 		)
 	)
@@ -731,6 +747,29 @@ _mitigate_tecv_verify_mitigation_cve_2024_24968() {
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_slb
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2023-31315, SMM Lock Bypass (SLB) vulnerability.
+_mitigate_tecv_verify_mitigation_slb() {
+	if \
+		   use cpu_target_x86_naples \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "amd" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_AMD
+		"
+		ERROR_CPU_SUP_AMD="CONFIG_CPU_SUP_AMD is required for SMM Lock Bypass (SLB) mitigation."
+		check_extra_config
+		if ! has_version ">=sys-kernel/linux-firmware-20231205" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-kernel/linux-firmware-20231205 is required for SMM Lock Bypass (SLB) mitigation."
+			die
+		fi
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv-dos_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -793,11 +832,12 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 		die
 	fi
 
-	# vulnerability classes
+	# Vulnerability classes
 	# CE  - Code Execution
-	# PE  - Privilege Escalation
+	# CI  - Compromisable Integrity (aka I:H)
 	# DoS - Denial of Service
 	# ID  - Information Disclosure (aka Data Leak)
+	# PE  - Privilege Escalation
 
 	# Security implications
 	# PE -> ID
@@ -818,6 +858,7 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	_mitigate_tecv_verify_mitigation_blr			# DoS, Mitigations against BLR (2023)
 	_mitigate_tecv_verify_mitigation_mcead			# DoS, Mitigations against MCEAD (2024)
 	_mitigate_tecv_verify_mitigation_cve_2024_24968		# DoS (2024)
+	_mitigate_tecv_verify_mitigation_slb			# DoS, ID, CI, Mitigations against SLB (2024)
 }
 
 # @FUNCTION: _mitigate-tecv_get_fallback_version

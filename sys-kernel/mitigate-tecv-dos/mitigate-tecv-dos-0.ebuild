@@ -25,11 +25,11 @@ VIDEO_CARDS=(
 IUSE="
 ${VIDEO_CARDS[@]}
 "
-# DoS - Denial of Service
-# ID - Information Disclosure
-# CI - Compromisable Integrity
 # CE - Code Execution
+# CI - Compromisable Integrity
+# DoS - Denial of Service
 # EP - Escalation of Privileges
+# ID - Information Disclosure
 
 # video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, CI, CE, EP
 # video_cards_radeon? https://nvd.nist.gov/vuln/detail/CVE-2024-41060 # DoS
