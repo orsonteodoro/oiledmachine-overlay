@@ -328,7 +328,7 @@
    // (Note that a timer exists on the browser-side, too. This message serves
    // to close the window early.)
 -  [EnableIfNot=is_android_or_ios]
-+  [EnableIfNot=enable_screen_capture]
++  [EnableIf=enable_screen_capture]
    CloseFocusWindowOfOpportunity(string label);
  
    // Mints a new ID backing a SubCaptureTarget.
@@ -337,7 +337,7 @@
    // * RestrictionTargetIds back a RestrictionTarget, which is the input type
    //   for BrowserCaptureMediaStreamTrack.restrictTo().
 -  [EnableIfNot=is_android_or_ios]
-+  [EnableIfNot=enable_screen_capture]
++  [EnableIf=enable_screen_capture]
    ProduceSubCaptureTargetId(media.mojom.SubCaptureTargetType type)
        => (string id);
  };
