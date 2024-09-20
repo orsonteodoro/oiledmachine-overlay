@@ -39,6 +39,9 @@
       (A BIOS firmware update from the motherboard manufacturer may still be
       required if the firmware package doesn't apply to your model.)
     </flag>
+    <flag name="video_cards_intel">
+      Mitigate against information disclosure.
+    </flag>
     <flag name="video_cards_nvidia">
       Mitigate against information disclosure, privelege escalation, and
       mitigate against Spectre V1, V2.

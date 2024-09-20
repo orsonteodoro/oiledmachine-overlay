@@ -29,10 +29,13 @@
       (A BIOS firmware update from the motherboard manufacturer may still be
       required if the firmware package doesn't apply to your model.)
     </flag>
-    <flag name="video_cards_nvidia">
+    <flag name="video_cards_amdgpu">
       Mitigate against Denial of Service.
     </flag>
-    <flag name="video_cards_amdgpu">
+    <flag name="video_cards_intel">
+      Mitigate against Denial of Service.
+    </flag>
+    <flag name="video_cards_nvidia">
       Mitigate against Denial of Service.
     </flag>
   </use>
