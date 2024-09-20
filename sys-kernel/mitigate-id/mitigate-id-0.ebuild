@@ -6,7 +6,7 @@ EAPI=8
 
 inherit mitigate-id toolchain-funcs
 
-# Add RDEPEND+=" virtual/mitigate-id" to downstream package if the downstream ebuild uses:
+# Add RDEPEND+=" sys-kernel/mitigate-id" to downstream package if the downstream ebuild uses:
 # JavaScript
 # WebAssembly
 # Keychains

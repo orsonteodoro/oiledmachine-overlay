@@ -6,9 +6,9 @@ EAPI=8
 
 inherit mitigate-dos toolchain-funcs
 
-# Add RDEPEND+=" virtual/mitigate-tecv" to downstream package if the downstream ebuild uses:
+# Add RDEPEND+=" sys-kernel/mitigate-dos" to downstream package if the downstream ebuild uses:
 # Server
-# Web Browser (For test taking)
+# Web Browser (For test taking, emergency service, voting)
 # Network Software
 
 S="${WORKDIR}"
