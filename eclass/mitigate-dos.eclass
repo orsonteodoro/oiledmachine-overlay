@@ -906,8 +906,8 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	_mitigate_dos_mitigate_with_ssp				# PE, CE
 	_mitigate_dos_mitigate_with_aslr			# PE
 
-	# Notify if grub or the kernel config is incorrectly configured/tampered
-	# or a copypasta-ed workaround.
+	# Notify the user if grub or the kernel config is incorrectly
+	# configured/tampered or using a copypasta-ed workaround.
 
 	_mitigate_dos_verify_mitigation_itlb_multihit		# DoS, Mitigations against iTLB multihit (2018)
 	_mitigate_dos_verify_mitigation_mpf			# ID, DoS, Mitigations against MPF (2021)

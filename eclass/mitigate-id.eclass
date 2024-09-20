@@ -5373,8 +5373,9 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	_mitigate_id_mitigate_with_ssp			# PE, CE
 	_mitigate_id_mitigate_with_aslr			# PE
 
-	# Notify if grub or the kernel config is incorrectly configured/tampered
-	# or a copypasta-ed workaround.
+	# Notify the user if grub or the kernel config is incorrectly
+	# configured/tampered or using a copypasta-ed workaround.
+
 	_mitigate_id_verify_mitigation_meltdown		# ID, Mitigations against Variant 3 (2017)
 	_mitigate_id_verify_mitigation_spectre		# ID, Mitigations against Variant 1 (2017), Variant 2 (2017)
 	_mitigate_id_verify_mitigation_spectre_ng	# ID, Mitigations against Variant 4 (2018)
