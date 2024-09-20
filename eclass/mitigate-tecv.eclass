@@ -3437,7 +3437,7 @@ eerror "  CONFIG_CMDLINE"
 eerror
 			die
 		fi
-		if _check_kernel_cmdline "spectre_v2=" ; then
+		if _check_kernel_cmdline "spectre_v2=off" ; then
 eerror
 eerror "Detected spectre_v2=off in the kernel command line."
 eerror
