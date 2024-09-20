@@ -4,6 +4,13 @@
 
 EAPI=8
 
+KERNEL_DRIVER_MLX5="6.11"
+KERNEL_DRIVER_DRM_AMDGPU="6.11"
+KERNEL_DRIVER_DRM_I915="6.2"
+KERNEL_DRIVER_DRM_NOUVEAU="6.11"
+KERNEL_DRIVER_DRM_RADEON="6.10"
+KERNEL_DRIVER_DRM_VMWGFX="6.11"
+
 inherit mitigate-dos toolchain-funcs
 
 # Add RDEPEND+=" sys-kernel/mitigate-dos" to downstream package if the downstream ebuild uses:
@@ -53,16 +60,24 @@ mlx5
 RDEPEND="
 	${MITIGATE_DOS_RDEPEND}
 	mlx5? (
-		$(gen_patched_kernel_list 6.11)
+		!custom-kernel? (
+			$(gen_patched_kernel_list ${KERNEL_DRIVER_MLX5})
+		)
 	)
 	video_cards_amdgpu? (
-		$(gen_patched_kernel_list 6.11)
+		!custom-kernel? (
+			$(gen_patched_kernel_list ${KERNEL_DRIVER_DRM_AMDGPU})
+		)
 	)
 	video_cards_intel? (
-		$(gen_patched_kernel_list 6.2)
+		!custom-kernel? (
+			$(gen_patched_kernel_list ${KERNEL_DRIVER_DRM_I915})
+		)
 	)
 	video_cards_nouveau? (
-		$(gen_patched_kernel_list 6.11)
+		!custom-kernel? (
+			$(gen_patched_kernel_list ${KERNEL_DRIVER_DRM_NOUVEAU})
+		)
 	)
 	video_cards_nvidia? (
 		|| (
@@ -72,19 +87,69 @@ RDEPEND="
 		)
 	)
 	video_cards_radeon? (
-		$(gen_patched_kernel_list 6.10)
+		!custom-kernel? (
+			$(gen_patched_kernel_list ${KERNEL_DRIVER_DRM_RADEON})
+		)
 	)
 	video_cards_vmware? (
-		$(gen_patched_kernel_list 6.11)
+		!custom-kernel? (
+			$(gen_patched_kernel_list ${KERNEL_DRIVER_DRM_VMWGFX})
+		)
 	)
 "
 BDEPEND="
 	sys-apps/util-linux
 "
 
+check_kernel_version() {
+	local kv="${1}"
+	local driver_name="${2}"
+	if ! tc-is-cross-compiler && use custom-kernel ; then
+		local required_version="${kv}"
+einfo "The required Linux Kernel version is >= ${required_version} for ${driver_name} driver."
+		local prev_kernel_dir="${KERNEL_DIR}"
+		local L=(
+			$(grep -l "EXTRAVERSION" $(ls "/usr/src/"*"/Makefile"))
+		)
+		local x
+		for x in ${L[@]} ; do
+			unset KV_FULL
+			local pv_major=$(grep "VERSION =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+			local pv_minor=$(grep "PATCHLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+			local pv_patch=$(grep "SUBLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+			local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
+	# linux-info's get_version() is spammy.
+			if ver_test "${pv_major}.${pv_minor}" -lt "${required_version}" ; then
+ewarn "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} does not have mitigations and should be deleted."
+			else
+einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
+			fi
+		done
+	fi
+}
+
+check_drivers() {
+	if use mlx5 ; then
+		check_kernel_version "${KERNEL_DRIVER_MLX5}" "mlx5 network"
+	fi
+	if use video_cards_amdgpu ; then
+		check_kernel_version "${KERNEL_DRIVER_DRM_AMDGPU}" "amdgpu video"
+	fi
+	if use video_cards_intel ; then
+		check_kernel_version "${KERNEL_DRIVER_DRM_I915}" "i915 video"
+	fi
+	if use video_cards_radeon ; then
+		check_kernel_version "${KERNEL_DRIVER_DRM_RADEON}" "radeon video"
+	fi
+	if use video_cards_vmware ; then
+		check_kernel_version "${KERNEL_DRIVER_DRM_RADEON}" "vmwgfx video"
+	fi
+}
+
 pkg_setup() {
 	mitigate-dos_pkg_setup
 ewarn "This ebuild is a Work In Progress (WIP)."
+	check_drivers
 }
 
 # Unconditionally check

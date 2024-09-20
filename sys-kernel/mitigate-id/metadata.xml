@@ -43,6 +43,9 @@
       (A BIOS firmware update from the motherboard manufacturer may still be
       required if the firmware package doesn't apply to your model.)
     </flag>
+    <flag name="mlx5">
+      Mitigate against information disclosure for the mlx5 driver.
+    </flag>
     <flag name="video_cards_amdgpu">
       Mitigate against information disclosure.
     </flag>
@@ -55,6 +58,9 @@
     <flag name="video_cards_nvidia">
       Mitigate against information disclosure, privelege escalation, Spectre V1,
       Spectre V2.
+    </flag>
+    <flag name="video_cards_vmware">
+      Mitigate against information disclosure.
     </flag>
   </use>
 </pkgmetadata>
