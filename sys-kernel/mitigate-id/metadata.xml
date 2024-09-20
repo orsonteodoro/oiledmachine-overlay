@@ -26,7 +26,11 @@
     <flag name="auto">
       Auto resolves firmware and kernel version required for full mitigation,
       instead of manually selecting microarchitecture which determines the
-      minimum requirements for those 2 items.
+      minimum requirements for those 2 items which benefits mostly LTS
+      configurations.
+
+      This is recommended for Intel® CPUs since the USE flag coverage is
+      incomplete.
     </flag>
     <flag name="bpf">
       Apply BPF mitigations for Spectre (Variant 2) or Spectre-NG.
