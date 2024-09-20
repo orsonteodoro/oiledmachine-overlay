@@ -44,10 +44,10 @@
     <flag name="video_cards_amdgpu">
       Mitigate against Denial of Service.
     </flag>
-    <flag name="video_cards_nouveau">
+    <flag name="video_cards_intel">
       Mitigate against Denial of Service.
     </flag>
-    <flag name="video_cards_intel">
+    <flag name="video_cards_nouveau">
       Mitigate against Denial of Service.
     </flag>
     <flag name="video_cards_nvidia">
