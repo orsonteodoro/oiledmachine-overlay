@@ -52,5 +52,8 @@
     <flag name="video_cards_nvidia">
       Mitigate against Denial of Service.
     </flag>
+    <flag name="video_cards_vmware">
+      Mitigate against Denial of Service.
+    </flag>
   </use>
 </pkgmetadata>

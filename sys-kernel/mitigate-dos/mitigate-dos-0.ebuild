@@ -22,6 +22,7 @@ VIDEO_CARDS=(
 	video_cards_nouveau
 	video_cards_nvidia
 	video_cards_radeon
+	video_cards_vmware
 )
 IUSE="
 ${VIDEO_CARDS[@]}
@@ -44,6 +45,7 @@ mlx5
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2024-42101 # DoS; requires >= 6.10 for fix
 # video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, CI, CE, EP
 # video_cards_radeon? https://nvd.nist.gov/vuln/detail/CVE-2024-41060 # DoS
+# video_cards_vmware? https://nvd.nist.gov/vuln/detail/CVE-2024-46709 # DoS
 #
 # Usually stable versions get security checked.
 # The betas and dev versions usually do not get security reports.
@@ -71,6 +73,9 @@ RDEPEND="
 	)
 	video_cards_radeon? (
 		$(gen_patched_kernel_list 6.10)
+	)
+	video_cards_vmware? (
+		$(gen_patched_kernel_list 6.11)
 	)
 "
 BDEPEND="
