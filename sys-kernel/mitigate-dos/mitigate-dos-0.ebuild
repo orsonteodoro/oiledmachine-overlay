@@ -15,7 +15,7 @@ S="${WORKDIR}"
 
 DESCRIPTION="Enforce Denial of Service mitigations"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~s390 ~x86"
+KEYWORDS="~amd64 ~x86"
 VIDEO_CARDS=(
 	video_cards_amdgpu
 	video_cards_intel
