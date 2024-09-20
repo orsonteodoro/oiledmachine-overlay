@@ -11,9 +11,8 @@
 
   This ebuild is for enforcement of Denial of Service (DoS) mitigation with
   a broader scope.  It was previously focused and still continues to support
-  mitigation of CPU hardware vulnerabilties focused on DoS mitigation.
-  The ebuild will support client-side DoS mitigation or server-side DoS
-  mitigation.
+  mitigation of DoS based CPU hardware vulnerabilties.  The ebuild will
+  support client-side DoS mitigation or server-side DoS mitigation.
 
   At this time, the ebuild-package is optional and ebuilds do not require it
   in this overlay.
