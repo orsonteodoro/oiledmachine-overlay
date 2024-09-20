@@ -52,6 +52,7 @@ BDEPEND="
 
 pkg_setup() {
 	mitigate-tecv_pkg_setup
+ewarn "This ebuild is a Work In Progress (WIP) and may be renamed."
 }
 
 # Unconditionally check

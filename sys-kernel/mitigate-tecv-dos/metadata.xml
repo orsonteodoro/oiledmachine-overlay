@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This ebuild currently is focused on mitigation of CPU hardware vulnerabilties
+  focused on DoS mitigation.
+
+  A parent ebuild may be considered to verify larger mitigation coverage.
+
+  -->
+  <use>
+    <flag name="auto">
+      Auto resolves firmware and kernel version required for full mitigation,
+      instead of manually selecting microarchitecture which determines the
+      minimum requirements for those 2 items.
+    </flag>
+    <flag name="custom-kernel">
+      Prevent vendor lock-in when doing kernel mitigation checks.
+    </flag>
+    <flag name="firmware">
+      Use firmware as mitigation.
+      (A BIOS firmware update from the motherboard manufacturer may still be
+      required if the firmware package doesn't apply to your model.)
+    </flag>
+    <flag name="video_cards_nvidia">
+      Mitigate against Denial of Service.
+    </flag>
+    <flag name="video_cards_amdgpu">
+      Mitigate against Denial of Service.
+    </flag>
+  </use>
+</pkgmetadata>
