@@ -22,7 +22,9 @@ DESCRIPTION="Enforce Information Disclosure mitigations"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~s390 ~x86"
 VIDEO_CARDS=(
+	video_cards_amdgpu
 	video_cards_intel
+	video_cards_nouveau
 	video_cards_nvidia
 )
 IUSE="
@@ -37,7 +39,10 @@ ${VIDEO_CARDS[@]}
 #
 # The latest to near past vulnerabilities are reported below.
 #
+# video_cargs_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-42228 # # DoS, DT, ID
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
+# video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2023-0030 # PE, ID, DoS, DT.  Fixed in >= 5.0.
+# video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2021-20292 # PE, CE, ID, DoS, DT.  Fixed in >= 5.9.
 # video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, DT, CE, EP
 #
 
@@ -53,8 +58,14 @@ ${VIDEO_CARDS[@]}
 #
 RDEPEND="
 	${MITIGATE_ID_RDEPEND}
+	video_cards_amdgpu? (
+		$(gen_patched_kernel_list 6.10)
+	)
 	video_cards_intel? (
 		$(gen_patched_kernel_list 6.2)
+	)
+	video_cards_nouveau? (
+		$(gen_patched_kernel_list 5.9)
 	)
 	video_cards_nvidia? (
 		|| (
