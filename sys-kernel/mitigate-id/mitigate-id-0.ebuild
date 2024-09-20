@@ -4,13 +4,13 @@
 
 EAPI=8
 
-inherit mitigate-id toolchain-funcs
-
 KERNEL_DRIVER_MLX5="5.17"
 KERNEL_DRIVER_DRM_AMDGPU="6.10"
 KERNEL_DRIVER_DRM_I915="6.2"
 KERNEL_DRIVER_DRM_NOUVEAU="5.9"
 KERNEL_DRIVER_DRM_VMWGFX="5.17"
+
+inherit mitigate-id toolchain-funcs
 
 # Add RDEPEND+=" sys-kernel/mitigate-id" to downstream package if the downstream ebuild uses:
 # JavaScript
