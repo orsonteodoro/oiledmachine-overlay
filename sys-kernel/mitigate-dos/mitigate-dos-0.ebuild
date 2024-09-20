@@ -37,6 +37,7 @@ mlx5
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-43903 # DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2023-52913 # DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
+# mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
 #
 # Usually stable versions get security checked.
 # The betas and dev versions usually do not get security reports.
