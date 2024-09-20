@@ -114,6 +114,13 @@ CPU_TARGET_X86=(
 	cpu_target_x86_zen_3
 	cpu_target_x86_zen_4
 	cpu_target_x86_naples
+	cpu_target_x86_rome
+	cpu_target_x86_milan
+	cpu_target_x86_milan-x
+	cpu_target_x86_genoa
+	cpu_target_x86_genoa-x
+	cpu_target_x86_bergamo
+	cpu_target_x86_siena
 
 	cpu_target_x86_dhyana
 )
@@ -201,7 +208,7 @@ IUSE+="
 	custom-kernel
 	firmware
 	kvm
-	ebuild-revision-7
+	ebuild-revision-8
 "
 # The !custom-kernel is required for RDEPEND to work properly to download the
 # proper kernel version kernel and the proper firmware.
@@ -365,6 +372,27 @@ REQUIRED_USE="
 	)
 
 	cpu_target_x86_naples? (
+		firmware
+	)
+	cpu_target_x86_rome? (
+		firmware
+	)
+	cpu_target_x86_milan? (
+		firmware
+	)
+	cpu_target_x86_milan-x? (
+		firmware
+	)
+	cpu_target_x86_genoa? (
+		firmware
+	)
+	cpu_target_x86_genoa-x? (
+		firmware
+	)
+	cpu_target_x86_bergamo? (
+		firmware
+	)
+	cpu_target_x86_siena? (
 		firmware
 	)
 "
@@ -2935,6 +2963,27 @@ _MITIGATE_TECV_SLB_RDEPEND_X86_64="
 	cpu_target_x86_naples? (
 		>=sys-kernel/linux-firmware-20240710
 	)
+	cpu_target_x86_rome? (
+		>=sys-kernel/linux-firmware-20240710
+	)
+	cpu_target_x86_milan? (
+		>=sys-kernel/linux-firmware-20240710
+	)
+	cpu_target_x86_milan-x? (
+		>=sys-kernel/linux-firmware-20240710
+	)
+	cpu_target_x86_genoa? (
+		>=sys-kernel/linux-firmware-20240710
+	)
+	cpu_target_x86_genoa-x? (
+		>=sys-kernel/linux-firmware-20240710
+	)
+	cpu_target_x86_bergamo? (
+		>=sys-kernel/linux-firmware-20240710
+	)
+	cpu_target_x86_siena? (
+		>=sys-kernel/linux-firmware-20240710
+	)
 "
 _MITIGATE_TECV_SLB_RDEPEND_X86_32="
 	${_MITIGATE_TECV_SLB_RDEPEND_X86_64}
@@ -5118,6 +5167,13 @@ _mitigate_tecv_verify_mitigation_cve_2024_23984() {
 _mitigate_tecv_verify_mitigation_slb() {
 	if \
 		   use cpu_target_x86_naples \
+		|| use cpu_target_x86_rome \
+		|| use cpu_target_x86_milan \
+		|| use cpu_target_x86_milan-x \
+		|| use cpu_target_x86_genoa \
+		|| use cpu_target_x86_genoa-x \
+		|| use cpu_target_x86_bergamo \
+		|| use cpu_target_x86_siena \
 		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "amd" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
 	; then
 	# Needs microcode mitigation
@@ -5126,9 +5182,9 @@ _mitigate_tecv_verify_mitigation_slb() {
 		"
 		ERROR_CPU_SUP_AMD="CONFIG_CPU_SUP_AMD is required for SMM Lock Bypass (SLB) mitigation."
 		check_extra_config
-		if ! has_version ">=sys-kernel/linux-firmware-20231205" ; then
+		if ! has_version ">=sys-kernel/linux-firmware-20240710" ; then
 # Needed for custom-kernel USE flag due to RDEPEND being bypassed.
-eerror ">=sys-kernel/linux-firmware-20231205 is required for SMM Lock Bypass (SLB) mitigation."
+eerror ">=sys-kernel/linux-firmware-20240710 is required for SMM Lock Bypass (SLB) mitigation."
 			die
 		fi
 	fi
