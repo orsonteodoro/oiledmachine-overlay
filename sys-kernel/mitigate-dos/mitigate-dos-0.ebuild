@@ -24,6 +24,7 @@ VIDEO_CARDS=(
 )
 IUSE="
 ${VIDEO_CARDS[@]}
+mlx5
 "
 # CE - Code Execution
 # CI - Compromisable Integrity
@@ -42,6 +43,9 @@ ${VIDEO_CARDS[@]}
 #
 RDEPEND="
 	${MITIGATE_DOS_RDEPEND}
+	mlx5? (
+		$(gen_patched_kernel_list 6.11)
+	)
 	video_cards_amdgpu? (
 		$(gen_patched_kernel_list 6.11)
 	)
