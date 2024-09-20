@@ -613,7 +613,6 @@ REQUIRED_USE+="
 	!async-dns? (
 		!official
 	)
-	!drumbrake
 	websockets
 	!headless (
 		extensions
@@ -3131,7 +3130,7 @@ ewarn
 	else
 		_jit_level_0() {
 			# ~20%/~50% performance similar to light swap, but a feeling of less progress (20-25%)
-			#myconf_gn+=" v8_enable_drumbrake=false"
+			myconf_gn+=" v8_enable_drumbrake=false"
 			myconf_gn+=" v8_enable_gdbjit=false"
 			myconf_gn+=" v8_enable_lite_mode=true"
 			myconf_gn+=" v8_enable_maglev=false"
@@ -3143,7 +3142,7 @@ ewarn
 
 		_jit_level_1() {
 			# 28%/71% performance similar to light swap, but a feeling of more progress (33%)
-			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
+			myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
 			myconf_gn+=" v8_enable_lite_mode=false"
 			myconf_gn+=" v8_enable_maglev=false" # Requires turbofan
@@ -3155,7 +3154,7 @@ ewarn
 
 		_jit_level_2() {
 			# > 75% performance
-			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
+			myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
 			myconf_gn+=" v8_enable_lite_mode=false"
 			myconf_gn+=" v8_enable_maglev=false"
@@ -3167,7 +3166,7 @@ ewarn
 
 		_jit_level_5() {
 			# > 90% performance
-			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
+			myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
 			myconf_gn+=" v8_enable_lite_mode=false"
 			myconf_gn+=" v8_enable_maglev=false"
@@ -3179,7 +3178,7 @@ ewarn
 
 		_jit_level_6() {
 			# 100% performance
-			#myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
+			myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
 			myconf_gn+=" v8_enable_lite_mode=false"
 			myconf_gn+=" v8_enable_maglev=true" # %5 runtime benefit
