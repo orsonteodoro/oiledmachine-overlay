@@ -66,6 +66,9 @@ CPU_TARGET_X86=(
 	cpu_target_x86_rocket_lake
 	cpu_target_x86_raptor_lake_gen13
 	cpu_target_x86_raptor_lake_gen14
+	cpu_target_x86_alder_lake_n
+	cpu_target_x86_idaville
+	cpu_target_x86_whitley
 
 	cpu_target_x86_cascade_lake
 	cpu_target_x86_cooper_lake
@@ -79,6 +82,62 @@ IUSE+="
 	custom-kernel
 	firmware
 	xen
+"
+REQUIRED_USE="
+	cpu_target_x86_ice_lake? (
+		firmware
+	)
+	cpu_target_x86_sapphire_rapids? (
+		firmware
+	)
+	cpu_target_x86_sapphire_rapids_edge_enhanced? (
+		firmware
+	)
+	cpu_target_x86_snow_ridge? (
+		firmware
+	)
+	cpu_target_x86_parker_ridge? (
+		firmware
+	)
+	cpu_target_x86_elkhart_lake? (
+		firmware
+	)
+	cpu_target_x86_jasper_lake? (
+		firmware
+	)
+	cpu_target_x86_skylake? (
+		firmware
+	)
+	cpu_target_x86_tiger_lake? (
+		firmware
+	)
+	cpu_target_x86_alder_lake? (
+		firmware
+	)
+	cpu_target_x86_catlow_golden_cove? (
+		firmware
+	)
+	cpu_target_x86_rocket_lake? (
+		firmware
+	)
+	cpu_target_x86_raptor_lake_gen13? (
+		firmware
+	)
+	cpu_target_x86_raptor_lake_gen14? (
+		firmware
+	)
+	cpu_target_x86_alder_lake_n? (
+		firmware
+	)
+	cpu_target_x86_cooper_lake? (
+		firmware
+	)
+	cpu_target_x86_idaville? (
+		firmware
+	)
+	cpu_target_x86_whitley? (
+		firmware
+	)
 "
 
 # @FUNCTION: gen_patched_kernel_list
@@ -332,12 +391,100 @@ _MITIGATE_TECV_REPTAR_RDEPEND_X86_32="
 	${_MITIGATE_TECV_REPTAR_RDEPEND_X86_64}
 "
 
+_MITIGATE_TECV_BLR_RDEPEND_X86_64="
+	cpu_target_x86_sapphire_rapids? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240312
+		)
+	)
+	cpu_target_x86_alder_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240312
+		)
+	)
+	cpu_target_x86_catlow_golden_cove? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240312
+		)
+	)
+	cpu_target_x86_raptor_lake_gen13? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240312
+		)
+	)
+	cpu_target_x86_raptor_lake_gen14? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240312
+		)
+	)
+	cpu_target_x86_alder_lake_n? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240312
+		)
+	)
+"
+_MITIGATE_TECV_BLR_RDEPEND_X86_32="
+	${_MITIGATE_TECV_BLR_RDEPEND_X86_64}
+"
+
+_MITIGATE_TECV_MCEAD_RDEPEND_X86_64="
+	cpu_target_x86_cooper_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+"
+_MITIGATE_TECV_MCEAD_RDEPEND_X86_32="
+	${_MITIGATE_TECV_MCEAD_RDEPEND_X86_64}
+"
+
+_MITIGATE_TECV_CVE_2024_24968_RDEPEND_X86_64="
+	cpu_target_x86_ice_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240910
+		)
+	)
+	cpu_target_x86_rocket_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240910
+		)
+	)
+	cpu_target_x86_tiger_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240910
+		)
+	)
+	cpu_target_x86_alder_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240910
+		)
+	)
+	cpu_target_x86_raptor_lake_gen13? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240910
+		)
+	)
+	cpu_target_x86_idaville? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240910
+		)
+	)
+	cpu_target_x86_whitley? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240910
+		)
+	)
+"
+_MITIGATE_TECV_CVE_2024_24968_RDEPEND_X86_32="
+	${_MITIGATE_TECV_CVE_2024_24968_RDEPEND_X86_64}
+"
+
 _MITIGATE_TECV_AUTO="
 	amd64? (
-		$(gen_patched_kernel_list 6.9)
+		$(gen_patched_kernel_list 5.4)
 	)
 	x86? (
-		$(gen_patched_kernel_list 6.9)
+		$(gen_patched_kernel_list 5.4)
 	)
 "
 if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
@@ -366,12 +513,16 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_ITLB_MULTIHIT_RDEPEND_X86_64}
 				${_MITIGATE_TECV_MPF_RDEPEND_X86_64}
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_64}
+				${_MITIGATE_TECV_BLR_RDEPEND_X86_64}
+				${_MITIGATE_TECV_MCEAD_RDEPEND_X86_64}
 			)
 			x86? (
 				${_MITIGATE_TECV_TECRA_RDEPEND_X86_32}
 				${_MITIGATE_TECV_ITLB_MULTIHIT_RDEPEND_X86_32}
 				${_MITIGATE_TECV_MPF_RDEPEND_X86_32}
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_32}
+				${_MITIGATE_TECV_BLR_RDEPEND_X86_32}
+				${_MITIGATE_TECV_MCEAD_RDEPEND_X86_32}
 			)
 		)
 	)
@@ -515,6 +666,71 @@ _mitigate_tecv_verify_mitigation_umh() {
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_blr
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2023-39368, also known as the Bus Lock Regulator (BLR) vulnerability.
+_mitigate_tecv_verify_mitigation_blr() {
+	if \
+		   use cpu_target_x86_sapphire_rapids \
+		|| use cpu_target_x86_alder_lake \
+		|| use cpu_target_x86_catlow_golden_cove \
+		|| use cpu_target_x86_raptor_lake_gen13 \
+		|| use cpu_target_x86_raptor_lake_gen14 \
+		|| use cpu_target_x86_alder_lake_n \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2023-39368, also know as the Bus Lock Regulator (BLR) vulnerability."
+		check_extra_config
+	fi
+}
+
+# @FUNCTION: _mitigate_tecv_verify_mitigation_mcead
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2024-25939, also known as the Machine Check Error Avoidance Derivative (MCEAD) vulnerability.
+_mitigate_tecv_verify_mitigation_mcead() {
+	if \
+		use cpu_target_x86_cooper_lake \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2024-25939, also know as the Machine Check Error Avoidance Derivative (MCEAD) vulnerability."
+		check_extra_config
+	fi
+}
+
+# @FUNCTION: _mitigate_tecv_verify_mitigation_mcead
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2024-24968.
+_mitigate_tecv_verify_mitigation_cve_2024_24968() {
+	if \
+		   use cpu_target_x86_ice_lake \
+		|| use cpu_target_x86_rocket_lake \
+		|| use cpu_target_x86_tiger_lake \
+		|| use cpu_target_x86_alder_lake \
+		|| use cpu_target_x86_raptor_lake_gen13 \
+		|| use cpu_target_x86_idaville \
+		|| use cpu_target_x86_whitley \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2024-24968."
+		check_extra_config
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv-dos_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -599,6 +815,9 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	_mitigate_tecv_verify_mitigation_mpf			# ID, DoS, Mitigations against MPF (2021)
 	_mitigate_tecv_verify_mitigation_umh			# DoS, Mitigations against UMH (2022)
 	_mitigate_tecv_verify_mitigation_reptar			# EP, ID, DoS, Mitigations against Reptar (2023)
+	_mitigate_tecv_verify_mitigation_blr			# DoS, Mitigations against BLR (2023)
+	_mitigate_tecv_verify_mitigation_mcead			# DoS, Mitigations against MCEAD (2024)
+	_mitigate_tecv_verify_mitigation_cve_2024_24968		# DoS (2024)
 }
 
 # @FUNCTION: _mitigate-tecv_get_fallback_version

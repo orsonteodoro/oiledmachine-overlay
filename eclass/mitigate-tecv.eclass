@@ -85,6 +85,9 @@ CPU_TARGET_X86=(
 	cpu_target_x86_raptor_lake_gen13
 	cpu_target_x86_raptor_lake_gen14
 	cpu_target_x86_meteor_lake
+	cpu_target_x86_cedar_island
+	cpu_target_x86_whitley
+	cpu_target_x86_idaville
 
 	cpu_target_x86_cascade_lake
 	cpu_target_x86_cooper_lake
@@ -343,6 +346,16 @@ REQUIRED_USE="
 		firmware
 	)
 	cpu_target_x86_catlow_raptor_cove? (
+		firmware
+	)
+
+	cpu_target_x86_cedar_island? (
+		firmware
+	)
+	cpu_target_x86_whitley? (
+		firmware
+	)
+	cpu_target_x86_idaville? (
 		firmware
 	)
 
@@ -2892,6 +2905,27 @@ _MITIGATE_TECV_IBRS_GH_RDEPEND_X86_32="
 	${_MITIGATE_TECV_IBRS_GH_RDEPEND_X86_64}
 "
 
+_MITIGATE_TECV_CVE_2024_23984_RDEPEND_X86_64="
+	cpu_target_x86_cedar_island? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240910
+		)
+	)
+	cpu_target_x86_whitley? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240910
+		)
+	)
+	cpu_target_x86_idaville? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240910
+		)
+	)
+"
+_MITIGATE_TECV_CVE_2024_23984_RDEPEND_X86_32="
+	${_MITIGATE_TECV_CVE_2024_23984_RDEPEND_X86_64}
+"
+
 _MITIGATE_TECV_AUTO="
 	arm? (
 		$(gen_patched_kernel_list 6.1)
@@ -2977,6 +3011,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_64}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_64}
 				${_MITIGATE_TECV_TECRA_RDEPEND_X86_64}
+				${_MITIGATE_TECV_CVE_2024_23984_RDEPEND_X86_64}
 			)
 			ppc? (
 				${_MITIGATE_TECV_SPECTRE_V2_RDEPEND_PPC32}
@@ -3019,6 +3054,7 @@ MITIGATE_TECV_RDEPEND="
 				${_MITIGATE_TECV_REPTAR_RDEPEND_X86_32}
 				${_MITIGATE_TECV_ZENBLEED_RDEPEND_X86_32}
 				${_MITIGATE_TECV_TECRA_RDEPEND_X86_32}
+				${_MITIGATE_TECV_CVE_2024_23984_RDEPEND_X86_32}
 			)
 		)
 	)
@@ -5039,6 +5075,26 @@ _mitigate_tecv_verify_mitigation_ibrs_gh() {
 	fi
 }
 
+# @FUNCTION: _mitigate_tecv_verify_mitigation_cve_2024_23984
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2024-23984.
+_mitigate_tecv_verify_mitigation_cve_2024_23984() {
+	if \
+		   use cpu_target_x86_cedar_island \
+		|| use cpu_target_x86_whitley \
+		|| use cpu_target_x86_idaville \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2024-23984."
+		check_extra_config
+	fi
+}
+
 # @FUNCTION: _mitigate-tecv_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -5152,6 +5208,7 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	_mitigate_tecv_verify_mitigation_tecra			# PE, Mitigations against TECRA (2023)
 	_mitigate_tecv_verify_mitigation_rfds			# ID, Mitigations against RFDS (2024)
 	_mitigate_tecv_verify_mitigation_ussb			# ID, Mitigations against USSB (2024)
+	_mitigate_tecv_verify_mitigation_cve_2024_23984		# ID (2024)
 
 	# For SLAM, see https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability#2023
 }
