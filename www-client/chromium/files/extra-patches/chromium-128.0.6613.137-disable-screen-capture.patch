@@ -471,6 +471,44 @@
    using ElementToCropTargetResolverMap =
        HeapHashMap<Member<Element>, Member<ScriptPromiseResolver<CropTarget>>>;
    using ElementToRestrictionTargetResolverMap =
+--- a/third_party/blink/public/mojom/mediastream/media_stream.mojom.orig	2024-09-10 11:42:21.803408900 -0700
++++ b/third_party/blink/public/mojom/mediastream/media_stream.mojom	2024-09-21 15:53:04.362909044 -0700
+@@ -248,7 +248,7 @@ interface MediaStreamDispatcherHost {
+   // the captured source (tab/window).
+   // It is an error to set it to |true| for anything other than
+   // a video track derived from tab/window screen-capture.
+-  [EnableIfNot=is_android_or_ios]
++  [EnableIf=enable_screen_capture]
+   FocusCapturedSurface(string label, bool focus);
+ 
+   // Cancels the request for a new media stream or opening a device.
+@@ -296,7 +296,7 @@ interface MediaStreamDispatcherHost {
+   // a higher version.)
+   //
+   // The callback reports success/failure.
+-  [EnableIfNot=is_android_or_ios]
++  [EnableIf=enable_screen_capture]
+   ApplySubCaptureTarget(mojo_base.mojom.UnguessableToken device_id,
+        media.mojom.SubCaptureTargetType type,
+        mojo_base.mojom.Token sub_capture_target,
+@@ -308,7 +308,7 @@ interface MediaStreamDispatcherHost {
+   // |device_id| identifies the captured tab.
+   // |action| is the action (mouse event) to be delivered.
+   // |callback| will be invoked with the result.
+-  [EnableIfNot=is_android_or_ios]
++  [EnableIf=enable_screen_capture]
+   SendWheel(mojo_base.mojom.UnguessableToken device_id,
+             CapturedWheelAction action) =>
+     (CapturedSurfaceControlResult result);
+@@ -321,7 +321,7 @@ interface MediaStreamDispatcherHost {
+   //
+   // TODO(crbug.com/1512609): Create a new device mojo interface to replace the
+   // use of the device_id token.
+-  [EnableIfNot=is_android_or_ios]
++  [EnableIf=enable_screen_capture]
+   SetZoomLevel(mojo_base.mojom.UnguessableToken device_id,
+                int32 zoom_level)
+            => (CapturedSurfaceControlResult result);
 --- a/content/common/features.gni.orig	2024-09-10 11:42:13.871734400 -0700
 +++ b/content/common/features.gni	2024-09-14 10:55:04.189211887 -0700
 @@ -24,5 +24,4 @@ declare_args() {
