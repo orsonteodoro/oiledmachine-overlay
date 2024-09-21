@@ -81,6 +81,7 @@ mlx5
 # those.  The other reason why we prune them is because they may leak sensitive
 # debug info (ID) in plain text.
 #
+# FIXME:  Treat gen_patched_kernel_list() as multislot (${kv_major}.${kv_minor}) not as monoslot.
 RDEPEND="
 	${MITIGATE_ID_RDEPEND}
 	video_cards_amdgpu? (

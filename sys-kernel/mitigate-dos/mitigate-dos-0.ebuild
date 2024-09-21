@@ -74,6 +74,7 @@ mlx5
 # Usually stable versions get security checked.
 # The betas and dev versions usually do not get security reports.
 #
+# FIXME:  Treat gen_patched_kernel_list() as multislot (${kv_major}.${kv_minor}) not as monoslot.
 RDEPEND="
 	${MITIGATE_DOS_RDEPEND}
 	mlx5? (
