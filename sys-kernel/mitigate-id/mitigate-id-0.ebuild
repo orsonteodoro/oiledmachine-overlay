@@ -18,13 +18,13 @@ EOL_VERSIONS=(
 )
 
 MULTISLOT_KERNEL_DRIVER_MLX5=("5.4.185" "5.10.106" "5.15.29" "5.16.15")
-MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU=("6.6.39" "6.9.9")
+MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_DRIVER_DRM_I915=("5.10.211" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
 MULTISLOT_KERNEL_DRIVER_DRM_NOUVEAU=("5.0.21" "5.4.284")
 MULTISLOT_KERNEL_DRIVER_DRM_VMWGFX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52")
 
 CVE_MLX5="CVE-2022-48858"
-CVE_DRM_AMDGPU="CVE-2024-42228"
+CVE_DRM_AMDGPU="CVE-2024-46725"
 CVE_DRM_I915="CVE-2024-41092"
 CVE_DRM_NOUVEAU="CVE-2023-0030"
 CVE_DRM_VMWGFX="CVE-2022-22942"
@@ -83,7 +83,7 @@ mlx5
 # The latest to near past vulnerabilities are reported below.
 #
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2022-48858 # DoS, DT, ID
-# video_cargs_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-42228 # # DoS, DT, ID
+# video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2023-0030 # PE, ID, DoS, DT.  Fixed in >= 5.0.
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2021-20292 # PE, CE, ID, DoS, DT.  Fixed in >= 5.9.
