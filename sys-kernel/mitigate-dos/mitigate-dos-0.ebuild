@@ -7,6 +7,15 @@ EAPI=8
 LTS_VERSIONS=("4.19" "5.4" "5.10" "5.15" "6.1" "6.6")
 ACTIVE_VERSIONS=("4.19" "5.4" "5.10" "5.15" "6.1" "6.6" "6.10" "6.11")
 STABLE_OR_MAINLINE_VERSIONS=("6.10" "6.11")
+EOL_VERSIONS=(
+	"0"
+	"1"
+	"2"
+	"3"
+	"4.0" "4.1" "4.2" "4.3" "4.4" "4.5" "4.6" "4.7" "4.8" "4.9" "4.10" "4.11" "4.12" "4.13" "4.14" "4.15" "4.16" "4.17" "4.18" "4.20"
+	"5.0" "5.1" "5.2" "5.3" "5.5" "5.6" "5.7" "5.8" "5.9" "5.11" "5.12" "5.13" "5.14" "5.16" "5.17" "5.18" "5.19"
+	"6.0" "6.2" "6.3" "6.4" "6.5" "6.7" "6.8" "6.9"
+)
 KERNEL_DRIVER_MLX5="6.11"
 KERNEL_DRIVER_DRM_AMDGPU="6.11"
 KERNEL_DRIVER_DRM_I915="6.10"
@@ -74,27 +83,26 @@ mlx5
 # Usually stable versions get security checked.
 # The betas and dev versions usually do not get security reports.
 #
-# FIXME:  Treat gen_patched_kernel_list() as multislot (${kv_major}.${kv_minor}) not as monoslot.
 RDEPEND="
 	${MITIGATE_DOS_RDEPEND}
 	mlx5? (
 		!custom-kernel? (
-			$(gen_patched_kernel_list ${KERNEL_DRIVER_MLX5})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_MLX5[@]})
 		)
 	)
 	video_cards_amdgpu? (
 		!custom-kernel? (
-			$(gen_patched_kernel_list ${KERNEL_DRIVER_DRM_AMDGPU})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU[@]})
 		)
 	)
 	video_cards_intel? (
 		!custom-kernel? (
-			$(gen_patched_kernel_list ${KERNEL_DRIVER_DRM_I915})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_DRM_I915[@]})
 		)
 	)
 	video_cards_nouveau? (
 		!custom-kernel? (
-			$(gen_patched_kernel_list ${KERNEL_DRIVER_DRM_NOUVEAU})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_DRM_NOUVEAU[@]})
 		)
 	)
 	video_cards_nvidia? (
@@ -106,57 +114,18 @@ RDEPEND="
 	)
 	video_cards_radeon? (
 		!custom-kernel? (
-			$(gen_patched_kernel_list ${KERNEL_DRIVER_DRM_RADEON})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_DRM_RADEON[@]})
 		)
 	)
 	video_cards_vmware? (
 		!custom-kernel? (
-			$(gen_patched_kernel_list ${KERNEL_DRIVER_DRM_VMWGFX})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_DRM_VMWGFX[@]})
 		)
 	)
 "
 BDEPEND="
 	sys-apps/util-linux
 "
-
-is_lts() {
-	local kv="${1}"
-	local x
-	for x in ${LTS_VERSIONS[@]} ; do
-		local s1=$(ver_cut 1-2 ${kv})
-		local s2=$(ver_cut 1-2 ${x})
-		if ver_test ${s1} -eq ${s2} ; then
-			return 0
-		fi
-	done
-	return 1
-}
-
-is_stable_or_mainline_version() {
-	local kv="${1}"
-	local x
-	for x in ${STABLE_OR_MAINLINE_VERSIONS[@]} ; do
-		local s1=$(ver_cut 1-2 ${kv})
-		local s2=$(ver_cut 1-2 ${x})
-		if ver_test ${s1} -eq ${s2} ; then
-			return 0
-		fi
-	done
-	return 1
-}
-
-is_eol() {
-	local kv="${1}"
-	local x
-	for x in ${ACTIVE_VERSIONS[@]} ; do
-		local s1=$(ver_cut 1-2 ${kv})
-		local s2=$(ver_cut 1-2 ${x})
-		if ver_test ${s1} -eq ${s2} ; then
-			return 1
-		fi
-	done
-	return 0
-}
 
 check_kernel_version() {
 	local driver_name="${1}"

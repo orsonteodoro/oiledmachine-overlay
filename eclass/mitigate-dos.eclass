@@ -228,6 +228,115 @@ gen_patched_kernel_list() {
 	"
 }
 
+is_lts() {
+	local kv="${1}"
+	local x
+	for x in ${LTS_VERSIONS[@]} ; do
+		local s1=$(ver_cut 1-2 ${kv})
+		local s2=$(ver_cut 1-2 ${x})
+		if ver_test ${s1} -eq ${s2} ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+is_stable_or_mainline_version() {
+	local kv="${1}"
+	local x
+	for x in ${STABLE_OR_MAINLINE_VERSIONS[@]} ; do
+		local s1=$(ver_cut 1-2 ${kv})
+		local s2=$(ver_cut 1-2 ${x})
+		if ver_test ${s1} -eq ${s2} ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+is_eol() {
+	local kv="${1}"
+	local x
+	for x in ${ACTIVE_VERSIONS[@]} ; do
+		local s1=$(ver_cut 1-2 ${kv})
+		local s2=$(ver_cut 1-2 ${x})
+		if ver_test ${s1} -eq ${s2} ; then
+			return 1
+		fi
+	done
+	return 0
+}
+
+
+
+# @FUNCTION: gen_patched_kernel_driver_list
+# @INTERNAL
+# @DESCRIPTION:
+# Generate the patched kernel list
+gen_patched_kernel_driver_list() {
+	local ATOMS=(
+		sys-kernel/gentoo-kernel-bin
+		sys-kernel/gentoo-kernel
+		sys-kernel/gentoo-sources
+		sys-kernel/vanilla-sources
+		sys-kernel/git-sources
+		sys-kernel/mips-sources
+		sys-kernel/pf-sources
+		sys-kernel/rt-sources
+		sys-kernel/zen-sources
+		sys-kernel/raspberrypi-sources
+		sys-kernel/gentoo-kernel
+		sys-kernel/gentoo-kernel-bin
+		sys-kernel/vanilla-kernel
+		sys-kernel/linux-next
+		sys-kernel/asahi-sources
+		sys-kernel/ot-sources
+	)
+	local PATCHED_VERSIONS=( ${@} )
+
+	local patched_version
+	patched_version=${PATCHED_VERSIONS[-1]}
+
+	echo "
+		|| (
+	"
+
+	# Add last version
+	local atom
+	for atom in ${ATOMS[@]} ; do
+		echo "
+			>=${atom}-${patched_version}
+		"
+	done
+
+	# Add LTS versions
+	for patched_version in ${PATCHED_VERSIONS[@]} ; do
+		if is_lts "${patched_version}" ; then
+			echo "
+				(
+					=${atom}-${patched_version}*
+					>=${atom}-${patched_version}
+				)
+			"
+		fi
+	done
+
+	echo "
+		)
+	"
+
+	local eol_version
+	for atom in ${ATOMS[@]} ; do
+		for eol_version in ${EOL_VERSIONS[@]} ; do
+			echo "
+				!=${atom}-${eol_version}*
+			"
+		done
+	done
+
+
+}
+
 _MITIGATE_DOS_TECRA_RDEPEND_X86_64="
 	cpu_target_x86_ice_lake? (
 		firmware? (
