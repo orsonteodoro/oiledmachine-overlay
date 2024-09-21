@@ -514,6 +514,7 @@ gen_patched_kernel_driver_list() {
 	"
 
 	# Add last version of patched kernel list
+	local active_version
 	local atom
 	for atom in ${ATOMS[@]} ; do
 		for active_version in ${ACTIVE_VERSIONS[@]} ; do
