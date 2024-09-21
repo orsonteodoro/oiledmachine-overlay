@@ -64,6 +64,22 @@ mlx5
 # PE - Privilege Escalation
 
 #
+# In the kernel changelog, you can do a common keywords search of the following
+# to look up the formulaic results:
+#
+# Arbitrary code execution, CVSS 9.8 # DoS, DT, ID
+# Buffer overflow, CVSS 6.7 # DoS, DT, ID
+# Crash CVSS, 5.5 # DoS
+# Deadlock, CVSS 5.5 # DoS
+# Double free # CVSS 7.8 # DoS, DT, ID
+# NULL pointer dereference, CVSS 5.5 # DoS
+# Out of bounds read, CVSS 7.1, # DoS, ID
+# Out of bounds write, CVSS 7.8, # DoS, ID, DT
+# Use after free, use-after-free, UAF, CVSS 7.8 # DoS, DT, ID
+# Race condition, CVSS 4.7 # DoS
+#
+
+#
 # The latest to near past vulnerabilities are reported below.
 #
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2022-48858 # DoS, DT, ID
@@ -87,6 +103,11 @@ mlx5
 #
 RDEPEND="
 	${MITIGATE_ID_RDEPEND}
+	mlx5? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_MLX5[@]})
+		)
+	)
 	video_cards_amdgpu? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU[@]})

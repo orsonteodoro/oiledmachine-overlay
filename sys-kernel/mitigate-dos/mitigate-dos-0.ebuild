@@ -18,14 +18,14 @@ EOL_VERSIONS=(
 )
 
 MULTISLOT_KERNEL_DRIVER_MLX5=("6.1.107" "6.6.48" "6.10.7")
-MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU=("6.1.105" "6.6.46" "6.10.5")
+MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_DRIVER_DRM_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
 MULTISLOT_KERNEL_DRIVER_DRM_NOUVEAU=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_DRIVER_DRM_RADEON=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_DRIVER_DRM_VMWGFX=("6.6.49" "6.9" "6.10.8")
 
 CVE_MLX5="CVE-2024-45019"
-CVE_DRM_AMDGPU="CVE-2024-43903"
+CVE_DRM_AMDGPU="CVE-2024-46725"
 CVE_DRM_I915="CVE-2024-41092"
 CVE_DRM_NOUVEAU="CVE-2024-45012"
 CVE_DRM_RADEON="CVE-2024-41060"
@@ -62,10 +62,26 @@ mlx5
 # PE - Privilege Escalation
 
 #
+# In the kernel changelog, you can do a common keywords search of the following
+# to look up the formulaic results:
+#
+# Arbitrary code execution, CVSS 9.8 # DoS, DT, ID
+# Buffer overflow, CVSS 6.7 # DoS, DT, ID
+# Crash CVSS, 5.5 # DoS
+# Deadlock, CVSS 5.5 # DoS
+# Double free # CVSS 7.8 # DoS, DT, ID
+# NULL pointer dereference, CVSS 5.5 # DoS
+# Out of bounds read, CVSS 7.1, # DoS, ID
+# Out of bounds write, CVSS 7.8, # DoS, ID, DT
+# Use after free, use-after-free, UAF, CVSS 7.8 # DoS, DT, ID
+# Race condition, CVSS 4.7 # DoS
+#
+
+#
 # The latest to near past vulnerabilities are reported below.
 #
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
-# video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-43903 # DoS
+# video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2023-52913 # DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2024-45012 # DoS; requires >= 6.11 for fix

@@ -184,50 +184,6 @@ REQUIRED_USE="
 	)
 "
 
-# @FUNCTION: gen_patched_kernel_list
-# @INTERNAL
-# @DESCRIPTION:
-# Generate the patched kernel list
-gen_patched_kernel_list() {
-	local kv="${1}"
-	echo "
-		|| (
-			>=sys-kernel/gentoo-kernel-bin-${kv}
-			>=sys-kernel/gentoo-kernel-${kv}
-			>=sys-kernel/gentoo-sources-${kv}
-			>=sys-kernel/vanilla-sources-${kv}
-			>=sys-kernel/git-sources-${kv}
-			>=sys-kernel/mips-sources-${kv}
-			>=sys-kernel/pf-sources-${kv}
-			>=sys-kernel/rt-sources-${kv}
-			>=sys-kernel/zen-sources-${kv}
-			>=sys-kernel/raspberrypi-sources-${kv}
-			>=sys-kernel/gentoo-kernel-${kv}
-			>=sys-kernel/gentoo-kernel-bin-${kv}
-			>=sys-kernel/vanilla-kernel-${kv}
-			>=sys-kernel/linux-next-${kv}
-			>=sys-kernel/asahi-sources-${kv}
-			>=sys-kernel/ot-sources-${kv}
-		)
-		!<sys-kernel/gentoo-kernel-bin-${kv}
-		!<sys-kernel/gentoo-kernel-${kv}
-		!<sys-kernel/gentoo-sources-${kv}
-		!<sys-kernel/vanilla-sources-${kv}
-		!<sys-kernel/git-sources-${kv}
-		!<sys-kernel/mips-sources-${kv}
-		!<sys-kernel/pf-sources-${kv}
-		!<sys-kernel/rt-sources-${kv}
-		!<sys-kernel/zen-sources-${kv}
-		!<sys-kernel/raspberrypi-sources-${kv}
-		!<sys-kernel/gentoo-kernel-${kv}
-		!<sys-kernel/gentoo-kernel-bin-${kv}
-		!<sys-kernel/vanilla-kernel-${kv}
-		!<sys-kernel/linux-next-${kv}
-		!<sys-kernel/asahi-sources-${kv}
-		!<sys-kernel/ot-sources-${kv}
-	"
-}
-
 is_lts() {
 	local kv="${1}"
 	local x
@@ -267,7 +223,63 @@ is_eol() {
 	return 0
 }
 
+# @FUNCTION: gen_patched_kernel_list
+# @INTERNAL
+# @DESCRIPTION:
+# Generate the patched kernel list
+gen_patched_kernel_list() {
+	local kv="${1}"
+	local ATOMS=(
+		sys-kernel/gentoo-kernel-bin
+		sys-kernel/gentoo-kernel
+		sys-kernel/gentoo-sources
+		sys-kernel/vanilla-sources
+		sys-kernel/git-sources
+		sys-kernel/mips-sources
+		sys-kernel/pf-sources
+		sys-kernel/rt-sources
+		sys-kernel/zen-sources
+		sys-kernel/raspberrypi-sources
+		sys-kernel/gentoo-kernel
+		sys-kernel/gentoo-kernel-bin
+		sys-kernel/vanilla-kernel
+		sys-kernel/linux-next
+		sys-kernel/asahi-sources
+		sys-kernel/ot-sources
+		${CUSTOM_KERNEL_ATOM}
+	)
 
+	echo "
+		|| (
+	"
+
+	local active_version
+	local atom
+	for atom in ${ATOMS[@]} ; do
+		for active_version in ${ACTIVE_VERSIONS[@]} ; do
+			local s1=$(ver_cut 1-2 ${kv})
+			local s2=$(ver_cut 1-2 ${active_version})
+			if ver_test ${s2} -ge ${s1} ; then
+				echo "
+					=${atom}-${active_version}*
+				"
+			fi
+		done
+	done
+
+	echo "
+		)
+	"
+
+	local eol_version
+	for atom in ${ATOMS[@]} ; do
+		for eol_version in ${EOL_VERSIONS[@]} ; do
+			echo "
+				!=${atom}-${eol_version}*
+			"
+		done
+	done
+}
 
 # @FUNCTION: gen_patched_kernel_driver_list
 # @INTERNAL
@@ -291,6 +303,7 @@ gen_patched_kernel_driver_list() {
 		sys-kernel/linux-next
 		sys-kernel/asahi-sources
 		sys-kernel/ot-sources
+		${CUSTOM_KERNEL_ATOM}
 	)
 	local PATCHED_VERSIONS=( ${@} )
 

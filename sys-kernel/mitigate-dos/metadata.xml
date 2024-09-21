@@ -19,6 +19,16 @@
 
   A parent ebuild may be considered to verify larger mitigation coverage.
 
+
+  Build time environment variables:
+
+  CUSTOM_KERNEL_ATOM - Name of the kernel you want to add to take advantage
+  of REDPEND updates.  If you set this, then disable USE=custom-kernel.
+
+  Example:
+
+    CUSTOM_KERNEL_ATOM="sys-kernel/ot-sources"
+
   -->
   <use>
     <flag name="auto">
