@@ -188,16 +188,16 @@
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
 		    Clear Linux patchset		D (point releases only, not live)
-		    genpatches				D
-		    kernel_compiler_patch		D
+		    genpatches				A
+		    kernel_compiler_patch		A
 		    Nest				D
-		    Project C				D
+		    Project C				A
 		    TCP BBR v2 [5]			D
 		    TCP BBR v3 [5]			D
 		    TRESOR (AES-NI) [5]			D
 		    TRESOR (x86) [5]			D
 		    TRESOR (x86-64) [5]			D
-		    zen-sauce				D
+		    zen-sauce				A
 
     [1] Kernel LTS provides security updates and bugfixes, but doesn't extend to
         third party patchsets
@@ -4260,6 +4260,10 @@ unset OT_KERNEL_PRIVATE_KEY
     For 6.10, see:
 
       https://github.com/torvalds/linux/compare/v6.10...zen-kernel:6.10/zen-sauce
+
+    For 6.11, see:
+
+      https://github.com/torvalds/linux/compare/v6.11...zen-kernel:6.11/zen-sauce
 
     Use the zen-sauce USE flags instead of passing their Zen commit IDs
     equivalents.

@@ -154,7 +154,6 @@ EXCLUDE_SCS=(
 	amd64
 	arm
 	hppa
-	ia64
 	loong
 	mips
 	ppc
@@ -311,7 +310,7 @@ X86_FLAGS=(
 ZEN_KV="6.10.0"
 
 if ! [[ "${PV}" =~ "9999" ]] ; then
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
 if [[ "${PV}" =~ "9999" ]] ; then
 	:

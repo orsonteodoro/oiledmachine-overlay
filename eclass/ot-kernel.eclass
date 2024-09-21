@@ -45,6 +45,7 @@
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.6
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.9
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.10
+#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.11
 # KCFI:
 #	https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
 # kernel_compiler_patch:
@@ -108,6 +109,7 @@
 #	https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.9...zen-kernel:6.9/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.10...zen-kernel:6.10/zen-sauce
+#	https://github.com/torvalds/linux/compare/v6.11...zen-kernel:6.11/zen-sauce
 
 # CI
 # branch tip or live, 2024-08-15:  gcc 12.2, llvm 17.0.6; kernel versions 5.10, 6.6, 6.11
@@ -170,7 +172,7 @@ INTEL_MICROCODE_PV="20240910"
 IPD_RAW_VER=5 # < llvm-13 Dec 28, 2020
 IPD_RAW_VER_MIN=6
 IPD_RAW_VER_MAX=9
-KCP_COMMIT_SNAPSHOT="c7eff097d7a0fda59c4403b9eb613ae14683cc70" # 20240911
+KCP_COMMIT_SNAPSHOT="8d4835ea80eb45256e1fd19618e6dcaf8310c22b" # 20240921
 KCP_CORTEX_A72_BN="build-with-mcpu-for-cortex-a72" # >= clang 3.8.0, >= gcc 5.1.0
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 KERNEL_SERIES_TARBALL_FN="linux-${KV_MAJOR_MINOR}.tar.xz"
@@ -180,19 +182,19 @@ KERNEL_PATCH_0_TO_1_URI=\
 "https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/patch-${KV_MAJOR_MINOR}.1.xz"
 
 if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
-	KCP_9_1_BN="more-uarches-for-kernel-6.8-rc4%2B"
+	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-6.8-rc4%2B"
 elif ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
-	KCP_9_1_BN="more-uarches-for-kernel-6.1.79-6.8-rc3"
+	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-6.1.79-6.8-rc3"
 elif ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
-	KCP_9_1_BN="more-uarches-for-kernel-5.17%2B"
+	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-5.17-6.1.78"
 elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
-	KCP_9_1_BN="more-uarches-for-kernel-5.15-5.16"
+	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-5.15-5.16"
 elif ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
-	KCP_9_1_BN="more-uarches-for-kernel-5.8-5.14"
+	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-5.8-5.14"
 elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
-	KCP_9_1_BN="more-uarches-for-kernel-4.19-5.4"
+	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-4.19-5.4"
 elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
-	KCP_9_1_BN="more-uarches-for-kernel-4.19-5.4"
+	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-4.19-5.4"
 elif ver_test "${KV_MAJOR_MINOR}" -ge "4.13" ; then
 	KCP_8_1_BN="enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
 	KCP_4_9_BN="enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
@@ -218,7 +220,7 @@ if [[ -n "${KCP_9_1_BN}" ]] ; then
 	"
 fi
 KCP_SRC_CORTEX_A72_URI="
-	${KCP_URI_BASE}${KCP_CORTEX_A72_BN}.patch
+	${KCP_URI_BASE}/other/${KCP_CORTEX_A72_BN}.patch
 		-> ${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch
 "
 
@@ -2227,7 +2229,7 @@ ot-kernel_apply_kcp() {
 	local patches=()
 
 	local wants_kcp=0
-	local wants_kcp_rpi=0
+	local wants_kcp_cortex_a72=0
 
 	if [[ "${CFLAGS}" =~ "-march" ]] ; then
 		wants_kcp=1
@@ -2236,19 +2238,19 @@ ot-kernel_apply_kcp() {
 		wants_kcp=1
 	fi
 	if [[ "${CFLAGS}" =~ "-mcpu=cortex-a72" ]] ; then
-		wants_kcp_rpi=1
+		wants_kcp_cortex_a72=1
 	fi
 
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
 einfo "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:  ${kcp_provider}"
 	if ! [[ "${kcp_provider}" =~ "graysky2" ]] ; then
 		wants_kcp=0
-		wants_kcp_rpi=0
+		wants_kcp_cortex_a72=0
 	fi
 
 	# Verify Toolchain (TC) requirement for kernel_compiler_patch (KCP)
 	# because of multislot TC.
-	if (( ${wants_kcp} == 1 || ${wants_kcp_rpi} == 1 )) ; then
+	if (( ${wants_kcp} == 1 || ${wants_kcp_cortex_a72} == 1 )) ; then
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
 		local gcc_pv=$(best_version "${GCC_PKG}:$(ver_cut 1 ${gcc_slot})" | sed -r -e "s|${GCC_PKG}-||" -e "s|-r[0-9]+||")
@@ -2306,7 +2308,7 @@ ewarn
 	fi
 
 	# KCP-RPI is applied globally
-	if (( ${wants_kcp_rpi} == 1 )) ; then
+	if (( ${wants_kcp_cortex_a72} == 1 )) ; then
 einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 		patches+=( "${EDISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 	fi
