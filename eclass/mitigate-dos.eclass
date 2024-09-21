@@ -301,12 +301,20 @@ gen_patched_kernel_driver_list() {
 		|| (
 	"
 
-	# Add last version
+	# Add last version of patched kernel list
+	local stable_or_mainline_version
 	local atom
 	for atom in ${ATOMS[@]} ; do
-		echo "
-			>=${atom}-${patched_version}
-		"
+		for active_version in ${ACTIVE_VERSIONS[@]} ; do
+			if ver_test "${patched_version}" -ge "${active_version}" ; then
+				echo "
+					(
+						=${atom}-${active_version}*
+						>=${atom}-${patched_version}
+					)
+				"
+			fi
+		done
 	done
 
 	# Add LTS versions
