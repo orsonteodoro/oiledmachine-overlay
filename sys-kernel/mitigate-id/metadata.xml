@@ -21,6 +21,17 @@
   A parent ebuild may be considered to verify larger mitigation coverage
   against data theft to verify that X sandboxes and LSM are installed.
 
+
+  Build time environment variables:
+
+  CUSTOM_KERNEL_ATOM - Name of the kernel you want to add to take advantage
+  of automatic RDEPEND updates instead of manually updating/removing kernel
+  packages.  If you set this, then disable USE=custom-kernel.
+
+  Example:
+
+    CUSTOM_KERNEL_ATOM="sys-kernel/ot-sources"
+
   -->
   <use>
     <flag name="auto">

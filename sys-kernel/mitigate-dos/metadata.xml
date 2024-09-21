@@ -23,7 +23,8 @@
   Build time environment variables:
 
   CUSTOM_KERNEL_ATOM - Name of the kernel you want to add to take advantage
-  of REDPEND updates.  If you set this, then disable USE=custom-kernel.
+  of automatic RDEPEND updates instead of manually updating/removing kernel
+  packages.  If you set this, then disable USE=custom-kernel.
 
   Example:
 
