@@ -522,15 +522,18 @@ gen_patched_kernel_driver_list() {
 	done
 
 	# Add LTS versions
-	for patched_version in ${PATCHED_VERSIONS[@]} ; do
-		if is_lts "${patched_version}" ; then
-			echo "
-				(
-					=${atom}-${patched_version}*
-					>=${atom}-${patched_version}
-				)
-			"
-		fi
+	local atom
+	for atom in ${ATOMS[@]} ; do
+		for patched_version in ${PATCHED_VERSIONS[@]} ; do
+			if is_lts "${patched_version}" ; then
+				echo "
+					(
+						=${atom}-${patched_version}*
+						>=${atom}-${patched_version}
+					)
+				"
+			fi
+		done
 	done
 
 	echo "
