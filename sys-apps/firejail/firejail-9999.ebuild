@@ -3629,7 +3629,7 @@ eerror
 	done
 
 	# Sort by data remittance policy (most scrambled on top, least scrambled bottom)
-	if (( ${force_system_alloc} == 1 )) ; then
+	if (( ${force_system_allocator} == 1 )) ; then
 		:
 	elif [[ "${MALLOC_BACKEND[${profile_name}]}" == "mimalloc" ]] && use mimalloc ; then
 		allocator_args="${allocator_args_mimalloc}"
