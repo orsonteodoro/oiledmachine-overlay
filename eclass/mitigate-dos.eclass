@@ -68,6 +68,8 @@ CPU_TARGET_X86=(
 	cpu_target_x86_alder_lake_n
 	cpu_target_x86_idaville
 	cpu_target_x86_whitley
+	cpu_target_x86_apollo_lake
+	cpu_target_x86_denverton
 
 	cpu_target_x86_cascade_lake
 	cpu_target_x86_cooper_lake
@@ -81,6 +83,15 @@ CPU_TARGET_X86=(
 	cpu_target_x86_bergamo
 	cpu_target_x86_siena
 )
+
+is_microarch_selected() {
+	local selected=1
+	local x
+	for x in ${CPU_TARGET_X86[@]} ; do
+		use "${x}" && selected=0
+	done
+	return ${selected}
+}
 
 inherit linux-info toolchain-funcs
 
@@ -829,6 +840,37 @@ ewarn "A BIOS firmware update is required for non datacenter for Sinkclose mitig
 	fi
 }
 
+# @FUNCTION: _mitigate_dos_verify_mitigation_reptar
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against Reptar.
+_mitigate_dos_verify_mitigation_reptar() {
+	if use firmware ; then
+		if \
+			   use cpu_target_x86_ice_lake \
+			|| use cpu_target_x86_tiger_lake \
+			|| use cpu_target_x86_sapphire_rapids \
+			|| use cpu_target_x86_alder_lake \
+			|| use cpu_target_x86_catlow_golden_cove \
+			|| use cpu_target_x86_rocket_lake \
+			|| use cpu_target_x86_raptor_lake_gen13 \
+			|| use cpu_target_x86_raptor_lake_gen14 \
+			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+		; then
+			CONFIG_CHECK="
+				CPU_SUP_INTEL
+			"
+			ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for Reptar mitigation."
+			check_extra_config
+			if ! has_version ">=sys-firmware/intel-microcode-20231114" ; then
+# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
+eerror ">=sys-firmware/intel-microcode-20231114 is required for Reptar mitigation."
+				die
+			fi
+		fi
+	fi
+}
+
 # @FUNCTION: _mitigate-dos_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -880,15 +922,6 @@ ewarn "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} does not have mitig
 einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
 			fi
 		done
-	fi
-
-	if linux_chkconfig_present "BPF" && ! use bpf ; then
-eerror "Detected BPF in the kernel config.  Enable the bpf USE flag."
-		die
-	fi
-	if linux_chkconfig_present "KVM" && ! use kvm ; then
-eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
-		die
 	fi
 
 	# Vulnerability classes

@@ -4,11 +4,26 @@
 
 EAPI=8
 
+LTS_VERSIONS=("4.19" "5.4" "5.10" "5.15" "6.1" "6.6")
+ACTIVE_VERSIONS=("4.19" "5.4" "5.10" "5.15" "6.1" "6.6" "6.10" "6.11")
+STABLE_OR_MAINLINE_VERSIONS=("6.10" "6.11")
 KERNEL_DRIVER_MLX5="5.17"
 KERNEL_DRIVER_DRM_AMDGPU="6.10"
 KERNEL_DRIVER_DRM_I915="6.2"
 KERNEL_DRIVER_DRM_NOUVEAU="5.9"
 KERNEL_DRIVER_DRM_VMWGFX="5.17"
+
+MULTISLOT_KERNEL_DRIVER_MLX5=("5.4.185" "5.10.106" "5.15.29" "5.16.15")
+MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU=("6.6.39" "6.9.9")
+MULTISLOT_KERNEL_DRIVER_DRM_I915=("5.10.211" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
+MULTISLOT_KERNEL_DRIVER_DRM_NOUVEAU=("5.0.21" "5.4.284")
+MULTISLOT_KERNEL_DRIVER_DRM_VMWGFX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52")
+
+CVE_MLX5="CVE-2022-48858"
+CVE_DRM_AMDGPU="CVE-2024-42228"
+CVE_DRM_I915="CVE-2024-41092"
+CVE_DRM_NOUVEAU="CVE-2023-0030"
+CVE_DRM_VMWGFX="CVE-2022-22942"
 
 inherit mitigate-id toolchain-funcs
 
@@ -100,46 +115,110 @@ BDEPEND="
 	sys-apps/util-linux
 "
 
-check_kernel_version() {
+is_lts() {
 	local kv="${1}"
-	local driver_name="${2}"
+	local x
+	for x in ${LTS_VERSIONS[@]} ; do
+		local s1=$(ver_cut 1-2 ${kv})
+		local s2=$(ver_cut 1-2 ${x})
+		if ver_test ${s1} -eq ${s2} ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+is_stable_or_mainline_version() {
+	local kv="${1}"
+	local x
+	for x in ${STABLE_OR_MAINLINE_VERSIONS[@]} ; do
+		local s1=$(ver_cut 1-2 ${kv})
+		local s2=$(ver_cut 1-2 ${x})
+		if ver_test ${s1} -eq ${s2} ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+is_eol() {
+	local kv="${1}"
+	local x
+	for x in ${ACTIVE_VERSIONS[@]} ; do
+		local s1=$(ver_cut 1-2 ${kv})
+		local s2=$(ver_cut 1-2 ${x})
+		if ver_test ${s1} -eq ${s2} ; then
+			return 1
+		fi
+	done
+	return 0
+}
+
+check_kernel_version() {
+	local driver_name="${1}"
+	shift
+	local cve="${1}"
+	shift
+	local PATCHED_VERSIONS=( ${@} )
 	if ! tc-is-cross-compiler && use custom-kernel ; then
 		local required_version="${kv}"
-einfo "The required Linux Kernel version is >= ${required_version} for the ${driver_name} driver."
 		local prev_kernel_dir="${KERNEL_DIR}"
-		local L=(
+		local FOUND_VERSIONS_MAKEFILES=(
 			$(grep -l "EXTRAVERSION" $(ls "/usr/src/"*"/Makefile"))
 		)
-		local x
-		for x in ${L[@]} ; do
+		local makefile_path
+		for makefile_path in ${FOUND_VERSIONS_MAKEFILES[@]} ; do
 			unset KV_FULL
-			local pv_major=$(grep "VERSION =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
-			local pv_minor=$(grep "PATCHLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
-			local pv_patch=$(grep "SUBLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
-			local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
+			local pv_major=$(grep "VERSION =" "${makefile_path}" | head -n 1 | grep -E -oe "[0-9]+")
+			local pv_minor=$(grep "PATCHLEVEL =" "${makefile_path}" | head -n 1 | grep -E -oe "[0-9]+")
+			local pv_patch=$(grep "SUBLEVEL =" "${makefile_path}" | head -n 1 | grep -E -oe "[0-9]+")
+			local pv_extraversion=$(grep "EXTRAVERSION =" "${makefile_path}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
+			local found_version="${pv_major}.${pv_minor}.${pv_patch}"
 	# linux-info's get_version() is spammy.
-			if ver_test "${pv_major}.${pv_minor}" -lt "${required_version}" ; then
-ewarn "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} does not have mitigations and should be deleted."
+
+			local vulnerable=1
+
+	# Last version
+			local patched_version=${PATCHED_VERSIONS[-1]}
+			if is_stable_or_mainline_version "${found_version}" && ver_test ${found_version} -ge ${patched_version} ; then
+				vulnerable=0
+			fi
+
+	# Check LTS versions
+			local patched_version
+			for patched_version in ${PATCHED_VERSIONS[@]} ; do
+				if is_lts ${patched_version} ; then
+					local s1=$(ver_cut 1-2 ${found_version})
+					local s2=$(ver_cut 1-2 ${patched_version})
+					if ver_test ${s1} -eq ${s2} && ver_test ${found_version} -ge ${patched_version} ; then
+						vulnerable=0
+						break
+					fi
+				fi
+			done
+
+			if (( ${vulnerable} == 1 )) ; then
+ewarn "${cve}:  not mitigated, driver name - ${driver_name}, found version - ${found_version}"
 			else
-einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
+einfo "${cve}:  mitigated, driver name - ${driver_name}, found version - ${found_version}"
 			fi
 		done
 	fi
 }
 
 check_drivers() {
-	use custom-drivers || return
+	use custom-kernel || return
 	if use mlx5 ; then
-		check_kernel_version "${KERNEL_DRIVER_MLX5}" "mlx5 network"
+		check_kernel_version "mlx5 network" "${CVE_MLX5}" ${MULTISLOT_KERNEL_DRIVER_MLX5[@]}
 	fi
 	if use video_cards_amdgpu ; then
-		check_kernel_version "${KERNEL_DRIVER_DRM_AMDGPU}" "amdgpu video"
+		check_kernel_version "amdgpu video" "${CVE_DRM_AMDGPU}" ${MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU[@]}
 	fi
 	if use video_cards_intel ; then
-		check_kernel_version "${KERNEL_DRIVER_DRM_I915}" "i915 video"
+		check_kernel_version "i915 video" "${CVE_DRM_I915}" ${MULTISLOT_KERNEL_DRIVER_DRM_I915[@]}
 	fi
 	if use video_cards_vmware ; then
-		check_kernel_version "${KERNEL_DRIVER_DRM_VMWGFX}" "vmwgfx video"
+		check_kernel_version "vmwgfx video" "${CVE_DRM_VMWGFX}" ${MULTISLOT_KERNEL_DRIVER_DRM_VMWGFX[@]}
 	fi
 }
 
