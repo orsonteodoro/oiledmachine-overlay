@@ -341,6 +341,136 @@
    ProduceSubCaptureTargetId(media.mojom.SubCaptureTargetType type)
        => (string id);
  };
+--- a/third_party/blink/renderer/modules/mediastream/media_devices.cc.orig	2024-09-10 11:42:22.989509600 -0700
++++ b/third_party/blink/renderer/modules/mediastream/media_devices.cc	2024-09-20 19:08:39.030421309 -0700
+@@ -181,7 +181,7 @@ enum class DisplayCapturePolicyResult {
+   kMaxValue = kAllowed
+ };
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ // These values are persisted to logs. Entries should not be renumbered and
+ // numeric values should never be reused.
+ enum class ProduceTargetFunctionResult {
+@@ -227,7 +227,7 @@ void RecordUma(SubCaptureTarget::Type ty
+   }
+ }
+ 
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ 
+ // When `blink::features::kGetDisplayMediaRequiresUserActivation` is enabled,
+ // calls to `getDisplayMedia()` will require a transient user activation. This
+@@ -283,7 +283,7 @@ bool TransientActivationRequirementSatis
+   return false;
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ bool IsExtensionScreenSharingFunctionCall(const MediaStreamConstraints* options,
+                                           ExceptionState& exception_state) {
+   DCHECK(!exception_state.HadException());
+@@ -329,7 +329,7 @@ MediaStreamConstraints* ToMediaStreamCon
+     constraints->setVideo(source->video());
+   }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   if (source->hasController()) {
+     const bool is_screen_sharing =
+         IsExtensionScreenSharingFunctionCall(constraints, exception_state);
+@@ -391,7 +391,7 @@ bool EqualDeviceForDeviceChange(const We
+          lhs.group_id == rhs.group_id && lhs.IsAvailable() == rhs.IsAvailable();
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ base::Token SubCaptureTargetIdToToken(const WTF::String& id) {
+   if (id.empty()) {
+     return base::Token();
+@@ -404,7 +404,7 @@ base::Token SubCaptureTargetIdToToken(co
+   DCHECK(!token.is_zero());
+   return token;
+ }
+-#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#endif  // !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ 
+ }  // namespace
+ 
+@@ -515,7 +515,7 @@ ScriptPromise<IDLResolvedType> MediaDevi
+ 
+   base::OnceCallback<void(const String&, CaptureController*)>
+       on_success_follow_up;
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   if (media_type == UserMediaRequestType::kDisplayMedia ||
+       IsExtensionScreenSharingFunctionCall(options, exception_state)) {
+     if (options->hasController()) {
+@@ -571,7 +571,7 @@ ScriptPromise<IDLResolvedType> MediaDevi
+     return promise;
+   }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   if (media_type == UserMediaRequestType::kDisplayMedia) {
+     window->ConsumeDisplayCaptureRequestToken();
+   }
+@@ -769,7 +769,7 @@ ScriptPromise<CropTarget> MediaDevices::
+     ScriptState* script_state,
+     Element* element,
+     ExceptionState& exception_state) {
+-#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS)
++#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   exception_state.ThrowDOMException(DOMExceptionCode::kNotSupportedError,
+                                     "Unsupported.");
+   return EmptyPromise();
+@@ -833,7 +833,7 @@ ScriptPromise<RestrictionTarget> MediaDe
+     ScriptState* script_state,
+     Element* element,
+     ExceptionState& exception_state) {
+-#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS)
++#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   exception_state.ThrowDOMException(DOMExceptionCode::kNotSupportedError,
+                                     "Unsupported.");
+   return EmptyPromise();
+@@ -1202,7 +1202,7 @@ void MediaDevices::Trace(Visitor* visito
+   visitor->Trace(receiver_);
+   visitor->Trace(scheduled_events_);
+   visitor->Trace(enumerate_device_requests_);
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   visitor->Trace(crop_target_resolvers_);
+   visitor->Trace(restriction_target_resolvers_);
+ #endif
+@@ -1211,7 +1211,7 @@ void MediaDevices::Trace(Visitor* visito
+   ExecutionContextLifecycleObserver::Trace(visitor);
+ }
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+ void MediaDevices::EnqueueMicrotaskToCloseFocusWindowOfOpportunity(
+     const String& id,
+     CaptureController* capture_controller) {
+--- a/third_party/blink/renderer/modules/mediastream/media_devices.h.orig	2024-09-10 11:42:22.989509600 -0700
++++ b/third_party/blink/renderer/modules/mediastream/media_devices.h	2024-09-20 19:09:18.374156103 -0700
+@@ -156,7 +156,7 @@ class MODULES_EXPORT MediaDevices final
+   void OnDispatcherHostConnectionError();
+   mojom::blink::MediaDevicesDispatcherHost& GetDispatcherHost(LocalFrame*);
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   // Manage the window of opportunity that occurs immediately after
+   // display-capture starts. The application can call
+   // CaptureController.setFocusBehavior() on the microtask where the
+@@ -191,7 +191,7 @@ class MODULES_EXPORT MediaDevices final
+                                               IDLSequence<MediaDeviceInfo>>>>
+       enumerate_device_requests_;
+ 
+-#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS)
++#if !BUILDFLAG(IS_ANDROID) && !BUILDFLAG(IS_IOS) && BUILDFLAG(ENABLE_SCREEN_CAPTURE)
+   using ElementToCropTargetResolverMap =
+       HeapHashMap<Member<Element>, Member<ScriptPromiseResolver<CropTarget>>>;
+   using ElementToRestrictionTargetResolverMap =
 --- a/content/common/features.gni.orig	2024-09-10 11:42:13.871734400 -0700
 +++ b/content/common/features.gni	2024-09-14 10:55:04.189211887 -0700
 @@ -24,5 +24,4 @@ declare_args() {
