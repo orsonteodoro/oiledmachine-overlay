@@ -56,8 +56,8 @@ mlx5
 # CE - Code Execution
 # DoS - Denial of Service (CVSS A:H)
 # DT - Data Tampering (CVSS I:H)
-# EP - Escalation of Privileges
 # ID - Information Disclosure (CVSS C:H)
+# PE - Privilege Escalation
 
 #
 # The latest to near past vulnerabilities are reported below.
@@ -67,8 +67,8 @@ mlx5
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2023-0030 # PE, ID, DoS, DT.  Fixed in >= 5.0.
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2021-20292 # PE, CE, ID, DoS, DT.  Fixed in >= 5.9.
-# video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, DT, CE, EP
-# video_cards_vmware? https://nvd.nist.gov/vuln/detail/CVE-2022-22942 # EP, DoS, DT, ID
+# video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, DT, CE, PE
+# video_cards_vmware? https://nvd.nist.gov/vuln/detail/CVE-2022-22942 # PE, DoS, DT, ID
 #
 
 #
