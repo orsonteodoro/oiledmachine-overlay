@@ -420,7 +420,7 @@
      Element* element,
      ExceptionState& exception_state) {
 -#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS)
-+#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
++#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS) || !defined(ENABLE_SCREEN_CAPTURE)
    exception_state.ThrowDOMException(DOMExceptionCode::kNotSupportedError,
                                      "Unsupported.");
    return EmptyPromise();
@@ -429,7 +429,7 @@
      Element* element,
      ExceptionState& exception_state) {
 -#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS)
-+#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS) && defined(ENABLE_SCREEN_CAPTURE)
++#if BUILDFLAG(IS_ANDROID) || BUILDFLAG(IS_IOS) || !defined(ENABLE_SCREEN_CAPTURE)
    exception_state.ThrowDOMException(DOMExceptionCode::kNotSupportedError,
                                      "Unsupported.");
    return EmptyPromise();
