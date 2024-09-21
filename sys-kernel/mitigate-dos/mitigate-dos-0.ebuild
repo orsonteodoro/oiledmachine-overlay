@@ -151,9 +151,9 @@ check_kernel_version() {
 
 			local vulnerable=1
 
-	# Last version
+	# Last version of patched versions
 			local patched_version=${PATCHED_VERSIONS[-1]}
-			if is_stable_or_mainline_version "${found_version}" && ver_test ${found_version} -ge ${patched_version} ; then
+			if ! is_eol "${found_version}" && ver_test ${found_version} -ge ${patched_version} ; then
 				vulnerable=0
 			fi
 
@@ -180,6 +180,7 @@ einfo "${cve}:  mitigated, driver name - ${driver_name}, found version - ${found
 }
 
 check_drivers() {
+	# Check for USE=custom-kernels only which bypass RDEPEND
 	use custom-kernel || return
 	if use mlx5 ; then
 		check_kernel_version "mlx5 network" "${CVE_MLX5}" ${MULTISLOT_KERNEL_DRIVER_MLX5[@]}
