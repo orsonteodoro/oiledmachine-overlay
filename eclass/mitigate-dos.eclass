@@ -101,6 +101,7 @@ IUSE+="
 	custom-kernel
 	firmware
 	xen
+	zero-tolerance
 	ebuild-revision-2
 "
 REQUIRED_USE="
@@ -264,6 +265,64 @@ gen_patched_kernel_list() {
 					=${atom}-${active_version}*
 				"
 			fi
+		done
+	done
+
+	echo "
+		)
+	"
+
+	local eol_version
+	for atom in ${ATOMS[@]} ; do
+		for eol_version in ${EOL_VERSIONS[@]} ; do
+			echo "
+				!=${atom}-${eol_version}*
+			"
+		done
+	done
+}
+
+# @FUNCTION: gen_zero_tolerance_kernel_list
+# @INTERNAL
+# @DESCRIPTION:
+# Generate the latest point release kernel list
+gen_zero_tolerance_kernel_list() {
+	local PATCHED_VERSIONS=( ${@} )
+	local ATOMS=(
+		sys-kernel/gentoo-kernel-bin
+		sys-kernel/gentoo-kernel
+		sys-kernel/gentoo-sources
+		sys-kernel/vanilla-sources
+		sys-kernel/git-sources
+		sys-kernel/mips-sources
+		sys-kernel/pf-sources
+		sys-kernel/rt-sources
+		sys-kernel/zen-sources
+		sys-kernel/raspberrypi-sources
+		sys-kernel/gentoo-kernel
+		sys-kernel/gentoo-kernel-bin
+		sys-kernel/vanilla-kernel
+		sys-kernel/linux-next
+		sys-kernel/asahi-sources
+		sys-kernel/ot-sources
+		${CUSTOM_KERNEL_ATOM}
+	)
+
+	echo "
+		|| (
+	"
+
+	local latest_version
+	local atom
+	for atom in ${ATOMS[@]} ; do
+		for latest_version in ${MULTISLOT_LATEST_KERNEL_RELEASE[@]} ; do
+			local s=$(ver_cut 1-2 ${latest_version})
+			echo "
+				(
+					=${atom}-${s}*
+					>=${atom}-${latest_version}
+				)
+			"
 		done
 	done
 

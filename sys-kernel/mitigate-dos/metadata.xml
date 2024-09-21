@@ -24,11 +24,12 @@
 
   CUSTOM_KERNEL_ATOM - Name of the kernel you want to add to take advantage
   of automatic RDEPEND updates instead of manually updating/removing kernel
-  packages.  If you set this, then disable USE=custom-kernel.
+  packages.  If you set this, then disable USE=custom-kernel.  Multiple
+  kernel packages may be specified.
 
   Example:
 
-    CUSTOM_KERNEL_ATOM="sys-kernel/ot-sources"
+    CUSTOM_KERNEL_ATOM="sys-kernel/ot-sources sys-kernel/xanmod-kernel"
 
   -->
   <use>
@@ -66,6 +67,12 @@
     </flag>
     <flag name="video_cards_vmware">
       Mitigate against Denial of Service.
+    </flag>
+    <flag name="zero-tolerance">
+      Bump to patched point releases when the changelog indicated fixed
+      DoS class of vulnerabilities.  This will increase the coverage
+      of DoS mitigation for the installed kernels significantly because
+      the USE flag coverage is incomplete.
     </flag>
   </use>
 </pkgmetadata>

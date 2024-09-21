@@ -17,6 +17,9 @@ EOL_VERSIONS=(
 	"6.0" "6.2" "6.3" "6.4" "6.5" "6.7" "6.8" "6.9"
 )
 
+# For zero-tolerance mode
+MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52" "6.10.11" "6.11")
+
 MULTISLOT_KERNEL_DRIVER_MLX5=("6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_DRIVER_DRM_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
@@ -95,6 +98,11 @@ mlx5
 #
 RDEPEND="
 	${MITIGATE_DOS_RDEPEND}
+	!custom-kernel? (
+		zero-tolerance? (
+			$(gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
+		)
+	)
 	mlx5? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_MLX5[@]})
