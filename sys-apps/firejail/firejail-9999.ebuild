@@ -2386,7 +2386,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3f4d6df-firecfg.config.patch"
 	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity.patch"
 	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
-	"${FILESDIR}/extra-patches/${PN}-f9ddf2f-profile-fixes.patch"
+	"${FILESDIR}/extra-patches/${PN}-1b2d18e-profile-fixes.patch"
 	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix wrappers and mpv
 )
 
@@ -3615,8 +3615,23 @@ eerror
 		allocator_args_hardened_malloc="--env=LD_PRELOAD=/usr/$(get_libdir)/libhardened_malloc.so"
 	fi
 
+	local PROFILE_NEEDS_SYSTEM_ALLOCATOR=(
+		"spotify"
+	)
+
+	local force_system_allocator=0
+	local x
+	for x in ${PROFILE_NEEDS_SYSTEM_ALLOCATOR[@]} ; do
+		if [[ "${profile_name}" == "${x}" ]] ; then
+			force_system_allocator=1
+			break
+		fi
+	done
+
 	# Sort by data remittance policy (most scrambled on top, least scrambled bottom)
-	if [[ "${MALLOC_BACKEND[${profile_name}]}" == "mimalloc" ]] && use mimalloc ; then
+	if (( ${force_system_alloc} == 1 )) ; then
+		:
+	elif [[ "${MALLOC_BACKEND[${profile_name}]}" == "mimalloc" ]] && use mimalloc ; then
 		allocator_args="${allocator_args_mimalloc}"
 	elif [[ "${MALLOC_BACKEND[${profile_name}]}" == "scudo" ]] && use scudo ; then
 		allocator_args="${allocator_args_scudo}"

@@ -1,6 +1,6 @@
 diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/file.profile firejail-9999/etc/profile-a-l/file.profile
---- firejail-9999.orig/etc/profile-a-l/file.profile	2024-09-14 08:42:39.441300103 -0700
-+++ firejail-9999/etc/profile-a-l/file.profile	2024-09-14 08:43:45.724207325 -0700
+--- firejail-9999.orig/etc/profile-a-l/file.profile	2024-09-20 19:56:39.387604582 -0700
++++ firejail-9999/etc/profile-a-l/file.profile	2024-09-20 19:56:59.903471695 -0700
 @@ -36,7 +36,7 @@ x11 none
  private-cache
  private-dev
@@ -11,8 +11,8 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/file.profile firejai
  dbus-user none
  dbus-system none
 diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/mpv.profile firejail-9999/etc/profile-m-z/mpv.profile
---- firejail-9999.orig/etc/profile-m-z/mpv.profile	2024-09-14 08:42:39.505299047 -0700
-+++ firejail-9999/etc/profile-m-z/mpv.profile	2024-09-14 08:43:14.684719052 -0700
+--- firejail-9999.orig/etc/profile-m-z/mpv.profile	2024-09-20 19:56:39.439604245 -0700
++++ firejail-9999/etc/profile-m-z/mpv.profile	2024-09-20 19:56:59.907471669 -0700
 @@ -76,7 +76,7 @@ include whitelist-var-common.inc
  apparmor
  caps.drop all
@@ -22,9 +22,21 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/mpv.profile firejail
  noinput
  nonewprivs
  noroot
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/spotify.profile firejail-9999/etc/profile-m-z/spotify.profile
+--- firejail-9999.orig/etc/profile-m-z/spotify.profile	2024-09-20 19:56:39.483603960 -0700
++++ firejail-9999/etc/profile-m-z/spotify.profile	2024-09-20 19:57:22.719323935 -0700
+@@ -50,7 +50,7 @@ private-dev
+ # If you want to see album covers or want to use the radio, add 'ignore private-etc' to your spotify.local.
+ private-etc @tls-ca,host.conf,spotify-adblock
+ private-srv none
+-private-tmp
++#private-tmp
+ 
+ dbus-user filter
+ dbus-user.own org.mpris.MediaPlayer2.spotify
 diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/tar.profile firejail-9999/etc/profile-m-z/tar.profile
---- firejail-9999.orig/etc/profile-m-z/tar.profile	2024-09-14 08:42:39.569297992 -0700
-+++ firejail-9999/etc/profile-m-z/tar.profile	2024-09-14 08:44:26.983527126 -0700
+--- firejail-9999.orig/etc/profile-m-z/tar.profile	2024-09-20 19:56:39.487603934 -0700
++++ firejail-9999/etc/profile-m-z/tar.profile	2024-09-20 19:56:59.907471669 -0700
 @@ -17,7 +17,7 @@ ignore include disable-shell.inc
  # all capabilities this is automatically read-only.
  noblacklist /var/lib/pacman
