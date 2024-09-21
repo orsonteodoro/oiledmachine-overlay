@@ -26,11 +26,12 @@
 
   CUSTOM_KERNEL_ATOM - Name of the kernel you want to add to take advantage
   of automatic RDEPEND updates instead of manually updating/removing kernel
-  packages.  If you set this, then disable USE=custom-kernel.
+  packages.  If you set this, then disable USE=custom-kernel.  Multiple
+  kernel packages may be specified.
 
   Example:
 
-    CUSTOM_KERNEL_ATOM="sys-kernel/ot-sources"
+    CUSTOM_KERNEL_ATOM="sys-kernel/ot-sources sys-kernel/xanmod-kernel"
 
   -->
   <use>

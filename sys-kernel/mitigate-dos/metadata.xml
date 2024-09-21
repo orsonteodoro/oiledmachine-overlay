@@ -15,7 +15,7 @@
   support client-side DoS mitigation or server-side DoS mitigation.
 
   At this time, the ebuild-package is optional and ebuilds do not require it
-  in this overlay.
+  in this overlay.  Admins may emerge this ebuild directly.
 
   A parent ebuild may be considered to verify larger mitigation coverage.
 

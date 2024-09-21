@@ -228,3 +228,7 @@ eerror "Fix issues to continue."
 einfo "PASS"
 	fi
 }
+
+pkg_postinst() {
+einfo "The optional sys-kernel/mitigate-dos is also provided and can be emerged directly."
+}
