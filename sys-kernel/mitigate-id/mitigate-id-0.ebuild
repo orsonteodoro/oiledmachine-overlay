@@ -197,6 +197,7 @@ ewarn "${cve}:  not mitigated, driver name - ${driver_name}, found version - ${f
 einfo "${cve}:  mitigated, driver name - ${driver_name}, found version - ${found_version}"
 			fi
 		done
+		KERNEL_DIR="${prev_kernel_dir}"
 	fi
 }
 
