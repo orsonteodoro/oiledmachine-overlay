@@ -240,6 +240,7 @@ X86_FLAGS=(
 	cpu_flags_x86_avx2
 	cpu_flags_x86_avx512bw
 	cpu_flags_x86_avx512vl # kernel 5.7, gcc 5.1, llvm 3.7
+	cpu_flags_x86_gfni
 	cpu_flags_x86_pclmul  # (CRYPTO_GHASH_CLMUL_NI_INTEL) pclmulqdq - kernel 2.6, gcc 4.4, llvm 3.2 ; 2010
 	cpu_flags_x86_sha
 	cpu_flags_x86_sha256
@@ -265,6 +266,7 @@ bbrv2 build c2tcp +cet +cfs -clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
 -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto nest orca pgo prjc
 qt5 +retpoline rt -rust shadowcallstack symlink tresor tresor_prompt tresor_sysfs
 zen-sauce
+ia64
 "
 
 REQUIRED_USE+="

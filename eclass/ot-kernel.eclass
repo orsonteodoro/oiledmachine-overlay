@@ -4454,26 +4454,12 @@ ot-kernel_set_kconfig_boot_args() {
 # Sets the kernel config for Control Flow Integrity (CFI)
 ot-kernel_set_kconfig_cfi() {
 	_ot-kernel_validate_hardening_level
-	if \
-		[[ \
-			   "${hardening_level}" == "custom" \
-			|| "${hardening_level}" == "manual" \
-		]] \
-	; then
+	if _ot-kernel_is_hardening_level_custom ; then
 		:
-	elif \
-		[[ \
-			   "${hardening_level}" == "default" \
-			|| "${hardening_level}" == "practical" \
-			|| "${hardening_level}" == "secure" \
-		]] \
-	; then
+	elif _ot-kernel_is_hardening_level_secure ; then
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	elif \
-		[[ \
-			   "${hardening_level}" == "secure-af" \
-			|| "${hardening_level}" == "secure-as-fuck" \
-		]] \
+		_ot-kernel_is_hardening_level_most_secure \
 			&&
 		has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
 			&& \
@@ -4500,21 +4486,13 @@ einfo "Enabling CFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
 		ban_dma_attack_use "cfi" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
-	elif [[ \
-		   "${hardening_level}" == "fast" \
-		|| "${hardening_level}" == "fast-af" \
-		|| "${hardening_level}" == "fast-as-fuck" \
-		|| "${hardening_level}" == "performance" \
-	]] ; then
+	elif _ot-kernel_is_hardening_level_least_secure ; then
 einfo "Disabling CFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	fi
 
 	if \
-		[[ \
-			   "${hardening_level}" == "secure-af" \
-			|| "${hardening_level}" == "secure-as-fuck" \
-		]] \
+		   _ot-kernel_is_hardening_level_most_secure \
 		&& has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
 		&& [[ "${arch}" == "arm64" ]] \
 	; then
@@ -4528,26 +4506,12 @@ ewarn "You must manually set arm64 CFI in the .config."
 # Sets the kernel config for Control Flow Integrity (CFI)
 ot-kernel_set_kconfig_kcfi() {
 	_ot-kernel_validate_hardening_level
-	if \
-		[[ \
-			   "${hardening_level}" == "custom" \
-			|| "${hardening_level}" == "manual" \
-		]] \
-	; then
+	if _ot-kernel_is_hardening_level_custom ; then
 		:
-	elif \
-		[[ \
-			   "${hardening_level}" == "default" \
-			|| "${hardening_level}" == "practical" \
-			|| "${hardening_level}" == "secure" \
-		]] \
-	; then
+	elif _ot-kernel_is_hardening_level_secure ; then
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	elif \
-		[[ \
-			   "${hardening_level}" == "secure-af" \
-			|| "${hardening_level}" == "secure-as-fuck" \
-		]] \
+		_ot-kernel_is_hardening_level_most_secure \
 			&& \
 		has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
 			&& \
@@ -4581,23 +4545,13 @@ einfo "Enabling KCFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
 		ban_dma_attack_use "cfi" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
-	elif \
-		[[ \
-			   "${hardening_level}" == "fast" \
-			|| "${hardening_level}" == "fast-af" \
-			|| "${hardening_level}" == "fast-as-fuck" \
-			|| "${hardening_level}" == "performance" \
-		]] \
-	; then
+	elif _ot-kernel_is_hardening_level_least_secure ; then
 einfo "Disabling KCFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	fi
 
 	if \
-		[[ \
-			   "${hardening_level}" == "secure-af" \
-			|| "${hardening_level}" == "secure-as-fuck" \
-		]] \
+		_ot-kernel_is_hardening_level_most_secure \
 			&& \
 		has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
 			&& \
@@ -5174,12 +5128,7 @@ einfo "Changed .config to use MuQSS"
 		|| "${work_profile}" == "voip" \
 	]] ; then
 	# Low latency
-		if [[ \
-			   "${hardening_level}" == "fast" \
-			|| "${hardening_level}" == "fast-af" \
-			|| "${hardening_level}" == "fast-as-fuck" \
-			|| "${hardening_level}" == "performance" \
-		]] ; then
+		if _ot-kernel_is_hardening_level_least_secure ; then
 			if \
 				[[ \
 					   "${smt}" == "1" \
@@ -5240,10 +5189,7 @@ einfo "Changed .config to use MuQSS"
 			elif \
 				[[ \
 					( \
-						   "${hardening_level}" == "fast" \
-						|| "${hardening_level}" == "fast-af" \
-						|| "${hardening_level}" == "fast-as-fuck" \
-						|| "${hardening_level}" == "performance" \
+						_ot-kernel_is_hardening_level_least_secure \
 					) \
 						&& \
 					( \
@@ -5677,10 +5623,7 @@ einfo "Using ${hardening_level} hardening level"
 		clang_minor_v=$(echo "${clang_pv}" | cut -f 2 -d ".")
 	fi
 
-	if [[ \
-		   "${hardening_level}" == "custom" \
-		|| "${hardening_level}" == "manual" \
-	]] ; then
+	if _ot-kernel_is_hardening_level_custom ; then
 		:
 	else
 	# See also https://github.com/torvalds/linux/blob/master/Documentation/admin-guide/kernel-parameters.txt
@@ -5817,17 +5760,9 @@ eerror
 	}
 
 
-	if [[ \
-		   "${hardening_level}" == "custom" \
-		|| "${hardening_level}" == "manual" \
-	]] ; then
+	if _ot-kernel_is_hardening_level_custom ; then
 		:
-	elif [[ \
-		   "${hardening_level}" == "fast" \
-		|| "${hardening_level}" == "fast-af" \
-		|| "${hardening_level}" == "fast-as-fuck" \
-		|| "${hardening_level}" == "performance" \
-	]] ; then
+	elif _ot-kernel_is_hardening_level_least_secure ; then
 	# Disable all hardening
 	# All randomization is disabled because it increases instruction latency
 	# or adds more noise to the pipeline.
@@ -6070,11 +6005,7 @@ eerror
 				fi
 			fi
 		fi
-	elif [[ \
-		   "${hardening_level}" == "default" \
-		|| "${hardening_level}" == "practical" \
-		|| "${hardening_level}" == "secure" \
-	]] ; then
+	elif _ot-kernel_is_hardening_level_secure ; then
 	# Resets back to upstream defaults.
 
 		ot-kernel_y_configopt "CONFIG_COMPAT_BRK"
@@ -6334,10 +6265,7 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 				fi
 			fi
 		fi
-	elif [[ \
-		   "${hardening_level}" == "secure-af" \
-		|| "${hardening_level}" == "secure-as-fuck" \
-	]] ; then
+	elif _ot-kernel_is_hardening_level_most_secure ; then
 	# CFI and SCS handled later
 
 	# Mitigate against ROP attack.
@@ -6513,7 +6441,7 @@ ewarn "ROP mitigations are available on arm, arm64, riscv, x86_64 arches."
 # mean security as well.
 #
 eerror
-eerror "Using slub-tiny is disallowed for OT_KERNEL_HARDENING_LEVEL=\"hard-af\"."
+eerror "Using slub-tiny is disallowed for OT_KERNEL_HARDENING_LEVEL=\"secure-af\"."
 eerror "Use OT_KERNEL_SLAB_ALLOCATOR=\"slub\" instead."
 eerror
 			die
@@ -7072,7 +7000,11 @@ einfo "OT_KERNEL_LSMS=default"
 		ot-kernel_y_configopt "CONFIG_INTEGRITY"
 
 		warn_lsm_changes
-	elif [[ "${ot_kernel_lsms_choice}" == "auto" && "${hardening_level}" =~ ("fast"|"fast-af"|"fast-as-fuck"|"performance") ]] ; then
+	elif \
+		[[ "${ot_kernel_lsms_choice}" == "auto" ]] \
+			&& \
+		_ot-kernel_is_hardening_level_least_secure \
+	; then
 einfo "OT_KERNEL_LSMS=auto (fast mode)"
 		if grep -q -E -e "^CONFIG_SECURITY=y" "${path_config}" ; then
 eerror
@@ -7131,14 +7063,9 @@ einfo "OT_KERNEL_LSMS=auto (secure mode)"
 
 	# Repeated when OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=0.
 		if \
-			[[ \
-				"${work_profile}" == "dss" \
-			]] \
+			[[ "${work_profile}" == "dss" ]] \
 				||
-			[[ \
-				   "${hardening_level}" == "secure-af" \
-				|| "${hardening_level}" == "secure-as-fuck" \
-			]] \
+			_ot-kernel_is_hardening_level_most_secure \
 		; then
 	# Prevent loading of unsigned modules.
 	# The upstream default is that lockdown is disabled.
@@ -7241,6 +7168,7 @@ einfo "OT_KERNEL_LSMS:  ${ot_kernel_lsms}"
 
 		IFS=','
 		for l in ${ot_kernel_lsms[@]} ; do
+			[[ -z "${l}" ]] && continue
 			local k="${LSM_MODULES[${l}]}"
 
 			if [[ "${l}" == "apparmor" ]] ; then
@@ -8751,6 +8679,73 @@ einfo "Processor class is ${processor_class}"
 einfo "Processor count maximum:  ${ncpus}"
 }
 
+# @FUNCTION: _ot-kernel_is_hardening_level_custom
+# @DESCRIPTION:
+# Check settings if the hardening is set to custom
+_ot-kernel_is_hardening_level_custom() {
+	if [[ \
+		   "${hardening_level}" == "manual" \
+		|| "${hardening_level}" == "custom" \
+	]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: _ot-kernel_is_hardening_level_least_secure
+# @DESCRIPTION:
+# Check settings if the hardening is set to performance
+_ot-kernel_is_hardening_level_least_secure() {
+	if [[ \
+		   "${hardening_level}" == "fast" \
+		|| "${hardening_level}" == "fast-af" \
+		|| "${hardening_level}" == "fast-as-fuck" \
+		|| "${hardening_level}" == "performance" \
+		|| "${hardening_level}" == "easy-boss" \
+		|| "${hardening_level}" == "dangerous" \
+		|| "${hardening_level}" == "dangerous-af" \
+		|| "${hardening_level}" == "dangerous-as-fuck" \
+	]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: _ot-kernel_is_hardening_level_secure
+# @DESCRIPTION:
+# Check settings if the hardening is set to performance
+_ot-kernel_is_hardening_level_secure() {
+	if [[ \
+		   "${hardening_level}" == "default" \
+		|| "${hardening_level}" == "secure" \
+		|| "${hardening_level}" == "practical" \
+		|| "${hardening_level}" == "hard" \
+	]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: _ot-kernel_is_hardening_level_most_secure
+# @DESCRIPTION:
+# Check settings if the hardening is set to most secure
+_ot-kernel_is_hardening_level_most_secure() {
+	if [[ \
+		   "${hardening_level}" == "secure-af" \
+		|| "${hardening_level}" == "secure-as-fuck" \
+		|| "${hardening_level}" == "hard-af" \
+		|| "${hardening_level}" == "hard-as-fuck" \
+		|| "${hardening_level}" == "epic-boss" \
+	]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 # @FUNCTION: _ot-kernel_validate_hardening_level
 # @DESCRIPTION:
 # Check settings
@@ -8761,18 +8756,11 @@ eerror "QA:  Set hardening_level from OT_KERNEL_HARDENING_LEVEL."
 eerror
 		die
 	fi
-	if [[ \
-		   "${hardening_level}" == "custom" \
-		|| "${hardening_level}" == "default" \
-		|| "${hardening_level}" == "fast" \
-		|| "${hardening_level}" == "fast-af" \
-		|| "${hardening_level}" == "fast-as-fuck" \
-		|| "${hardening_level}" == "manual" \
-		|| "${hardening_level}" == "performance" \
-		|| "${hardening_level}" == "practical" \
-		|| "${hardening_level}" == "secure" \
-		|| "${hardening_level}" == "secure-af" \
-		|| "${hardening_level}" == "secure-as-fuck" \
+	if \
+		   _ot-kernel_is_hardening_level_custom \
+		|| _ot-kernel_is_hardening_level_least_secure \
+		|| _ot-kernel_is_hardening_level_secure \
+		|| _ot-kernel_is_hardening_level_most_secure \
 	]] ; then
 		:
 	else
@@ -8801,12 +8789,7 @@ eerror
 # Sets the kernel config for ShadowCallStack (SCS)
 ot-kernel_set_kconfig_scs() {
 	_ot-kernel_validate_hardening_level
-	if \
-		[[ \
-			   "${hardening_level}" == "custom" \
-			|| "${hardening_level}" == "manual" \
-		]] \
-	; then
+	if _ot-kernel_is_hardening_level_custom ; then
 		:
 	elif \
 		[[ \
@@ -8817,11 +8800,7 @@ ot-kernel_set_kconfig_scs() {
 	; then
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG_SHADOW"
 	elif \
-		[[ \
-			   "${hardening_level}" == "secure" \
-			|| "${hardening_level}" == "secure-af" \
-			|| "${hardening_level}" == "secure-as-fuck" \
-		]] \
+		_ot-kernel_is_hardening_level_most_secure \
 			&& \
 		has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack \
 			&& \
@@ -8843,14 +8822,7 @@ einfo "Enabling SCS support in the in the .config."
 			ot-kernel_y_configopt "CONFIG_CFI_CLANG_SHADOW"
 			ot-kernel_y_configopt "CONFIG_MODULES"
 		fi
-	elif \
-		[[ \
-			   "${hardening_level}" == "fast" \
-			|| "${hardening_level}" == "fast-af" \
-			|| "${hardening_level}" == "fast-as-fuck" \
-			|| "${hardening_level}" == "performance" \
-		]] \
-	; then
+	elif _ot-kernel_is_hardening_level_least_secure ; then
 einfo "Disabling SCS support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG_SHADOW"
 	fi
@@ -9070,17 +9042,38 @@ eerror
 
 		return
 	fi
-	if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm && has rt ${IUSE_EFFECTIVE} && ot-kernel_use rt ; then
+
+	if \
+		   _ot-kernel_is_hardening_level_secure \
+		|| _ot-kernel_is_hardening_level_most_secure \
+	; then
+		if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
+ewarn "KSM/UKSM is only allowed in OT_KERNEL_HARDENING_LEVEL=fast-af"
+		fi
+		ot-kernel_unset_configopt "CONFIG_KSM"
+		ot-kernel_unset_configopt "CONFIG_UKSM"
+	elif _ot-kernel_is_hardening_level_performance ; then
+	# Allow in only performance
+		ot-kernel_unset_configopt "CONFIG_KSM"
+		ot-kernel_unset_configopt "CONFIG_UKSM"
+
+		if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm && has rt ${IUSE_EFFECTIVE} && ot-kernel_use rt ; then
 eerror
 eerror "Please remove uksm from OT_KERNEL_USE for OT_KERNEL_USE=\"rt\" for"
 eerror "OT_KERNEL_EXTRAVERSION=\"${extraversion}\"."
 eerror
-		die
-	fi
-	if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
+			die
+		fi
+		if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
 einfo "Changed .config to use UKSM"
-		ot-kernel_y_configopt "CONFIG_KSM"
-		ot-kernel_y_configopt "CONFIG_UKSM"
+			if [[ "${arch}" == "arm" ]] ; then
+				ot-kernel_y_configopt "CONFIG_MMU"
+			elif [[ "${arch}" == "riscv" ]] ; then
+				ot-kernel_y_configopt "CONFIG_MMU"
+			fi
+			ot-kernel_y_configopt "CONFIG_KSM"
+			ot-kernel_y_configopt "CONFIG_UKSM"
+		fi
 	fi
 }
 
@@ -11580,14 +11573,7 @@ ot-kernel_set_rust() {
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 		ot-kernel_unset_configopt "CONFIG_SHADOW_CALL_STACK"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_BTF"
-		if \
-			[[ \
-				   "${hardening_level}" == "fast" \
-				|| "${hardening_level}" == "fast-af" \
-				|| "${hardening_level}" == "fast-as-fuck" \
-				|| "${hardening_level}" == "performance" \
-			]] \
-		; then
+		if _ot-kernel_is_hardening_level_least_secure ; then
 			:
 		else
 eerror "OT_KERNEL_HARDENING_LEVEL=fast-af are only supported for OT_KERNEL_USE=rust with USE=rust."
@@ -11690,9 +11676,12 @@ eerror
 # @DESCRIPTION:
 # Optimize the kernel for gaming performance for max fps
 ot-kernel_optimize_gaming_fps() {
-	if [[ "${hardening_level}" =~ ("default"|"practical"|"secure"|"secure-af"|"secure-as-fuck") ]] ; then
+	if \
+		   _ot-kernel_is_hardening_level_secure \
+		|| _ot-kernel_is_hardening_level_most_secure \
+	; then
 eerror
-eerror "Please change to OT_KERNEL_HARDENING_LEVEL=\"performance\" and remove"
+eerror "Please change to OT_KERNEL_HARDENING_LEVEL=\"fast-af\" and remove"
 eerror "all hardening flags from OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
 eerror
 		die
@@ -11809,9 +11798,9 @@ ewarn "Disabling Transparent HugePage (THP) for PREEMPT_RT=y.  If you do not lik
 			ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
 		fi
 
-		if [[ "${hardening_level}" != "performance" ]] ; then
+		if ! _ot-kernel_is_hardening_level_least_secure ; then
 eerror
-eerror "Please change to OT_KERNEL_HARDENING_LEVEL=\"performance\" and remove"
+eerror "Please change to OT_KERNEL_HARDENING_LEVEL=\"fast-af\" and remove"
 eerror "all hardening flags from OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
 eerror
 			die
@@ -11959,12 +11948,7 @@ _ot-kernel_set_bpf_jit() { # DONE
 # @DESCRIPTION:
 # Apply mitigations against Spectre-NG (Variant 4).
 ot-kernel_set_kconfig_bpf_spectre_mitigation() {
-	if [[ \
-		   "${hardening_level}" == "fast" \
-		|| "${hardening_level}" == "fast-af" \
-		|| "${hardening_level}" == "fast-as-fuck" \
-		|| "${hardening_level}" == "performance" \
-	]] ; then
+	if _ot-kernel_is_hardening_level_least_secure ; then
 	# fast-af:  bpf_jit only allowed in this case
 		bpf_jit=1
 	else
@@ -12006,14 +11990,9 @@ ot-kernel_set_kconfig_bpf_spectre_mitigation() {
 # senstive info or keys.
 ot-kernel_set_dev_mem() {
 	if \
-		[[ \
-			"${work_profile}" == "dss" \
-		]] \
+		[[ "${work_profile}" == "dss" ]] \
 			||
-		[[ \
-			   "${hardening_level}" == "secure-af" \
-			|| "${hardening_level}" == "secure-as-fuck" \
-		]] \
+		_ot-kernel_is_hardening_level_most_secure \
 	; then
 	# All off
 		ot-kernel_unset_configopt "CONFIG_PROC_KCORE"
@@ -12021,23 +12000,14 @@ ot-kernel_set_dev_mem() {
 		ot-kernel_unset_configopt "CONFIG_DEVMEM"
 		ot-kernel_unset_configopt "CONFIG_STRICT_DEVMEM"
 		ot-kernel_unset_configopt "CONFIG_IO_STRICT_DEVMEM"
-	elif [[ \
-		   "${hardening_level}" == "default" \
-		|| "${hardening_level}" == "practical" \
-		|| "${hardening_level}" == "secure" \
-	]] ; then
+	elif _ot-kernel_is_hardening_level_secure ; then
 	# Reset to upstream defaults
 		ot-kernel_y_configopt "CONFIG_DEVMEM"
 		ot-kernel_y_configopt "CONFIG_STRICT_DEVMEM"
 		ot-kernel_unset_configopt "CONFIG_IO_STRICT_DEVMEM" # It says disasterous.
 		ot-kernel_unset_configopt "CONFIG_DEVKMEM"
 		ot-kernel_unset_configopt "CONFIG_PROC_KCORE"
-	elif [[ \
-		   "${hardening_level}" == "fast" \
-		|| "${hardening_level}" == "fast-af" \
-		|| "${hardening_level}" == "fast-as-fuck" \
-		|| "${hardening_level}" == "performance" \
-	]] ; then
+	elif _ot-kernel_is_hardening_level_least_secure ; then
 	# Enable as needed for performance profiles
 	# It should be disabled to save more CPU cycles.
 		if (( ${_OT_KERNEL_DEV_MEM} == 1 )) ; then
@@ -13837,30 +13807,20 @@ ot-kernel_install_tcca() {
 	# < 1% packet loss
 	# > 70% throughput for higher video bitrate access
 	# < 60ms avg RTTs
-		_tcc_low_jitter_home() { # Wired / WiFi
+		_tcc_low_jitter() {
 			local tcc
+			local requirements="${1}"
 	# Max throughput sorted
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "c2tcp" ]] ; then # Only when target delay is <= 60 ms
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "c2tcp" && ! "${requirements}" =~ "m" ]] ; then # Only when target delay is <= 60 ms
 				tcc="c2tcp"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" && "${requirements}" =~ ("a"|"m"|"v") ]] ; then
 				tcc="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cdg" ]] ; then
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cdg" && ! "${requirements}" =~ "m" ]] ; then
 				tcc="cdg"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" && ! "${requirements}" =~ "m" ]] ; then
 				tcc="pcc"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "nv" ]] ; then # For audio only
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "nv" && ! "${requirements}" =~ "m" && "${requirements}" =~ "a" ]] ; then # For audio only
 				tcc="nv"
-			else
-				tcc="${default_tcca}" # Fallback to unbreak
-			fi
-			echo "${tcc}"
-		}
-
-		_tcc_low_jitter_mobile() { # LTE
-			local tcc
-	# Max throughput sorted
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
-				tcc="bbr"
 			else
 				tcc="${default_tcca}" # Fallback to unbreak
 			fi
@@ -13917,10 +13877,10 @@ ot-kernel_install_tcca() {
 		local tcca_podcast=$(_tcc_streaming)
 		local tcca_streaming=$(_tcc_streaming)
 
-		local tcca_broadcast_home=$(_tcc_low_jitter_home)
-		local tcca_broadcast_mobile=$(_tcc_low_jitter_mobile)
-		local tcca_video_chat=$(_tcc_low_jitter)
-		local tcca_voip=$(_tcc_low_jitter)
+		local tcca_broadcast_home=$(_tcc_low_jitter "av")
+		local tcca_broadcast_mobile=$(_tcc_low_jitter "amv")
+		local tcca_video_chat=$(_tcc_low_jitter "av")
+		local tcca_voip=$(_tcc_low_jitter "a")
 
 		local tcca_gaming=$(_tcc_low_latency)
 		local tcca_social_games=$(_tcc_low_latency)
@@ -15107,19 +15067,12 @@ ewarn "with dmesg disabled."
 ewarn
 	fi
 
-
-ewarn
-ewarn "For full L1TF mitigation for HT processors, read the Wikipedia article."
-ewarn "https://en.wikipedia.org/wiki/Foreshadow"
-ewarn "https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/core-scheduling.html"
-ewarn
-
 ewarn
 ewarn "For mitigations of side-channels because of hardware flaws, see also"
 ewarn "https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/index.html"
 ewarn
 ewarn
-ewarn "Numerous CPU (or hardware) vulnerabilities have been identified recently:"
+ewarn "Numerous CPU and RAM vulnerabilities have been identified recently."
 ewarn
 ewarn "For an overview about affected processors, see"
 ewarn
@@ -15138,8 +15091,10 @@ ewarn "The mitigation fix may sometimes only be available in one of the rows abo
 ewarn
 ewarn "Requirements to mitigate:"
 ewarn
-ewarn "  (1) AMD CPUs:    USE=\"linux-firmware\""
+ewarn "  (1) AMD CPUs:    USE=\"linux-firmware\" for data center CPUs"
+ewarn "                   A BIOS firmware update is required for non data center CPUs"
 ewarn "      Intel CPUs:  USE=\"intel-microcode\""
+ewarn "                   A BIOS firmware update may be required."
 ewarn "  (2) For config assist mode, set OT_KERNEL_CPU_MICROCODE=1"
 ewarn "      For config custom mode, see"
 ewarn "      https://wiki.gentoo.org/wiki/AMD_microcode"
@@ -15148,6 +15103,24 @@ ewarn "  (3) Re-emerge this package after the changes have been made."
 ewarn "  (4) etc-update"
 ewarn "  (5) Build/update initramfs"
 ewarn "  (6) Reboot into new kernels"
+ewarn
+ewarn
+ewarn "Vulnerabily classes:"
+ewarn
+ewarn "CE - Code Execution"
+ewarn "DoS - Denial of Service"
+ewarn "ID - Information Disclosure"
+ewarn "DT - Data Dampering"
+ewarn "DoS + ID + DT = high vulnerability"
+ewarn "DoS = medium vulnerability"
+ewarn
+ewarn "Recent vulnerabilities:"
+ewarn
+ewarn "use-after-free (UAF) - DoS, ID, DT	# observed in the previous point release, fixed in this release"
+ewarn "null pointer dereference (NPD) - DoS	# observed in the previous point release, fixed in this release"
+ewarn "Sinkclose - CE, DoS, ID, DT		# this year to 2000s era, requires BIOS firmware update"
+ewarn "CVE-2024-24968 - DoS			# this year, requires microcode update"
+ewarn "CVE-2024-23984 - ID			# this year, requires microcode update"
 ewarn
 }
 

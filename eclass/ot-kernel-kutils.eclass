@@ -39,7 +39,7 @@ inherit toolchain-funcs
 # Θ (theta) is average case Big O measuring time complexity.
 #
 #
-# BUG:  If the results could ambigous and be fatal, use ot-kernel_has_version_slow instead.
+# BUG:  If the results could ambiguous and be fatal, use ot-kernel_has_version_slow instead.
 # Example sys-apps/systemd and sys-apps/systemd-utils with OpenRC.
 #
 # You may ignore this recommendation if it meets the first if conditional block

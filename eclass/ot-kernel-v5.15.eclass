@@ -273,6 +273,8 @@ X86_FLAGS=(
 	cpu_flags_x86_sse2
 	cpu_flags_x86_sse4_2 # crc32
 	cpu_flags_x86_ssse3
+	cpu_flags_x86_tpause
+	cpu_flags_x86_vaes
 )
 ZEN_KV="5.15.0"
 
@@ -286,6 +288,7 @@ bbrv2 build c2tcp cfi +cfs -clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
 -exfat -expoline -gdb +genpatches -genpatches_1510 -lto nest multigen_lru orca
 pgo prjc qt5 +retpoline rock-dkms rt shadowcallstack symlink tresor tresor_prompt
 tresor_sysfs uksm zen-multigen_lru zen-sauce
+ia64
 "
 REQUIRED_USE+="
 	dwarf4? (

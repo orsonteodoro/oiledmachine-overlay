@@ -285,6 +285,8 @@ X86_FLAGS=(
 	cpu_flags_x86_sse2
 	cpu_flags_x86_sse4_2 # crc32
 	cpu_flags_x86_ssse3
+	cpu_flags_x86_tpause
+	cpu_flags_x86_vaes
 )
 
 ZEN_KV="5.10.0"

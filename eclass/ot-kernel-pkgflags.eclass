@@ -76,7 +76,7 @@ warn_lowered_security() {
 	local pkgid=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
 	if [[ "${OT_KERNEL_HALT_ON_LOWERED_SECURITY}" == "1" ]] ; then
 eerror
-eerror "Lowered security was detected for id = ${pkgid}."
+eerror "Lowered security was detected for pkg = ${pkg}, id = ${pkgid}."
 eerror
 eerror "To permit security lowering set OT_KERNEL_HALT_ON_LOWERED_SECURITY=0."
 eerror "Search the id in the ot-kernel-pkgflags.eclass in the eclass folder for"
@@ -85,7 +85,7 @@ eerror
 		die
 	else
 ewarn
-ewarn "Security is lowered for id = ${pkgid}."
+ewarn "Security is lowered for pkg = ${pkg}, id = ${pkgid}."
 ewarn
 ewarn "To halt on lowered security, set OT_KERNEL_HALT_ON_LOWERED_SECURITY=1."
 ewarn "Search the id in the ot-kernel-pkgflags.eclass in the eclass folder for"
@@ -108,6 +108,8 @@ ban_dma_attack() {
 eerror
 eerror "The ${kopt} kernel option may be used as a possible prerequisite for"
 eerror "DMA side-channel attacks."
+eerror
+eerror "Requested by pkg = ${pkg}, id = ${pkgid}."
 eerror
 eerror "To continue, choose one of the following:"
 eerror
@@ -160,7 +162,7 @@ eerror "package with certain set of kernel flags."
 eerror
 eerror "Choices:"
 eerror
-eerror "1. Hard unmask the debug USE flag first.  Then, enable the debug USE flag."
+eerror "1. Remove the hard mask on the debug USE flag first.  Then, enable the debug USE flag."
 eerror "2. Add OT_KERNEL_PKGFLAGS_REJECT[S${pkgid}]=1."
 eerror "3. Add OT_KERNEL_PKGFLAGS_ACCEPT[S${pkgid}]=1."
 eerror
@@ -3465,14 +3467,7 @@ ewarn "AEAD cryptsetup support is experimental"
 				ot-kernel_y_configopt "CONFIG_SECONDARY_TRUSTED_KEYRING"
 				ot-kernel_y_configopt "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_SECONDARY_KEYRING"
 
-				if \
-					[[ \
-						   "${hardening_level}" == "fast" \
-						|| "${hardening_level}" == "fast-af" \
-						|| "${hardening_level}" == "fast-as-fuck" \
-						|| "${hardening_level}" == "performance" \
-					]] \
-				; then
+				if _ot-kernel_is_hardening_level_least_secure ; then
 eerror
 eerror "CRYPTSETUP_VERITY=1 conflicts with"
 eerror "OT_KERNEL_HARDENING_LEVEL=fast|fast-af|fast-as-fuck|performance"
@@ -4631,7 +4626,7 @@ ot-kernel-pkgflags_firejail() { # DONE
 	local pkg="sys-apps/firejail"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		_ot-kernel_set_user_ns
-		_ot-kernel_set_seccomp_bpf
+		_ot-kernel_set_seccomp_bpf "${pkg}"
 
 		if ot-kernel_has_version "${pkg}[landlock]" ; then
 			_OT_KERNEL_LSM_ADD_LANDLOCK=1
@@ -7695,14 +7690,9 @@ einfo "Detected external kernel module"
 	fi
 
 	if \
-		[[ \
-			"${work_profile}" == "dss" \
-		]] \
+		[[ "${work_profile}" == "dss" ]] \
 			||
-		[[ \
-			   "${hardening_level}" == "secure-af" \
-			|| "${hardening_level}" == "secure-as-fuck" \
-		]] \
+		_ot-kernel_is_hardening_level_most_secure \
 	; then
 		if grep -q -E -e "^CONFIG_MODULES=y" "${path_config}" ; then
 	# Prevent loading of unsigned modules.
@@ -8304,29 +8294,17 @@ ot-kernel-pkgflags_qemu() { # DONE
 		]] ; then
 einfo "SEV is using custom settings for KVM ${machine_type}"
 			:
-		elif [[ \
-			   "${hardening_level}" == "default" \
-			|| "${hardening_level}" == "practical" \
-			|| "${hardening_level}" == "secure" \
-		]] ; then
+		elif _ot-kernel_is_hardening_level_secure ; then
 einfo "SEV is using defaults for KVM ${machine_type}"
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "kvm_amd.sev=[01]"
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "mem_encrypt=(on|off)"
-		elif [[ \
-			   "${hardening_level}" == "fast" \
-			|| "${hardening_level}" == "fast-af" \
-			|| "${hardening_level}" == "fast-as-fuck" \
-			|| "${hardening_level}" == "performance" \
-		]] ; then
+		elif _ot-kernel_is_hardening_level_least_secure ; then
 einfo "SEV is disabled for KVM ${machine_type}"
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "kvm_amd.sev=[01]"
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "mem_encrypt=(on|off)"
 			ot-kernel_set_kconfig_kernel_cmdline "mem_encrypt=off"
 			ot-kernel_set_kconfig_kernel_cmdline "kvm_amd.sev=0"
-		elif [[ \
-			   "${hardening_level}" == "secure-af" \
-			|| "${hardening_level}" == "secure-as-fuck" \
-		]] ; then
+		elif _ot-kernel_is_hardening_level_most_secure ; then
 			local sev=0
 			for o in $(cat "${path}" | sed -e "s|^$|;|") ; do
 				echo "${o}" \
@@ -9108,23 +9086,12 @@ ot-kernel-pkgflags_rtirq() { # DONE
 # Applies kernel config flags for the rtkit package
 ot-kernel-pkgflags_rtkit() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-auth/rtkit" ; then
-		if [[ \
-			   "${hardening_level}" == "custom" \
-			|| "${hardening_level}" == "manual" \
-		]] ; then
+# FIXME: most secure
+		if _ot-kernel_is_hardening_level_custom ; then
 			:
-		elif [[ \
-			   "${hardening_level}" == "default" \
-			|| "${hardening_level}" == "practical" \
-			|| "${hardening_level}" == "secure" \
-		]] ; then
+		elif _ot-kernel_is_hardening_level_secure ; then
 			ot-kernel_unset_configopt "CONFIG_RT_GROUP_SCHED"
-		elif [[ \
-			   "${hardening_level}" == "fast" \
-			|| "${hardening_level}" == "fast-af" \
-			|| "${hardening_level}" == "fast-as-fuck" \
-			|| "${hardening_level}" == "performance" \
-		]] ; then
+		elif _ot-kernel_is_hardening_level_least_secure ; then
 			ot-kernel_unset_configopt "CONFIG_RT_GROUP_SCHED"
 		else
 			ot-kernel_y_configopt "CONFIG_RT_GROUP_SCHED"
@@ -10464,7 +10431,9 @@ ot-kernel-pkgflags_ufw() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the uksmd package
 ot-kernel-pkgflags_uksmd() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-process/uksmd" ; then
+	local pkg="sys-process/uksmd"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		warn_lowered_security "${pkg}" # KSM
 		ot-kernel_y_configopt "CONFIG_KSM"
 	fi
 }
@@ -11802,14 +11771,7 @@ einfo "Added ${opt_raw}"
 					ot-kernel_y_configopt "CONFIG_IP_NF_MANGLE"
 				fi
 				if [[ "${opt}" == "IP_NF_SECURITY" ]] ; then
-					if \
-						[[ \
-							   "${hardening_level}" == "fast" \
-							|| "${hardening_level}" == "fast-af" \
-							|| "${hardening_level}" == "fast-as-fuck" \
-							|| "${hardening_level}" == "performance" \
-						]] \
-					; then
+					if _ot-kernel_is_hardening_level_least_secure ; then
 eerror
 eerror "OT_KERNEL_NETFILTER=IP_NF_SECURITY conflicts with"
 eerror "OT_KERNEL_HARDENING_LEVEL=fast|fast-af|fast-as-fuck|performance"
@@ -11849,14 +11811,7 @@ einfo "Added ${opt_raw}"
 					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
 				fi
 				if [[ "${opt}" == "IP6_NF_SECURITY" ]] ; then
-					if \
-						[[ \
-							   "${hardening_level}" == "fast" \
-							|| "${hardening_level}" == "fast-af" \
-							|| "${hardening_level}" == "fast-as-fuck" \
-							|| "${hardening_level}" == "performance" \
-						]] \
-					; then
+					if _ot-kernel_is_hardening_level_least_secure ; then
 eerror
 eerror "OT_KERNEL_NETFILTER=IP6_NF_SECURITY conflicts with"
 eerror "OT_KERNEL_HARDENING_LEVEL=fast|fast-af|fast-as-fuck|performance"
@@ -12441,49 +12396,14 @@ _ot-kernel_set_shmem() {
 #   https://en.wikipedia.org/wiki/Io_uring#Security
 #
 _ot-kernel_set_io_uring() {
-	if [[ \
-		   "${hardening_level}" =~ "custom" \
-		|| "${hardening_level}" =~ "manual" \
-	]] ; then
+	_ot-kernel_validate_hardening_level
+	if _ot-kernel_is_hardening_level_custom ; then
 		:
-	elif [[ \
-		   "${hardening_level}" == "secure-af" \
-		|| "${hardening_level}" == "secure-as-fuck" \
-	]] ; then
+	elif _ot-kernel_is_hardening_level_most_secure ; then
 	# Increased security
 		ot-kernel_unset_configopt "CONFIG_IO_URING"
-	elif [[ \
-		   "${hardening_level}" == "custom" \
-		|| "${hardening_level}" == "default" \
-		|| "${hardening_level}" == "fast" \
-		|| "${hardening_level}" == "fast-af" \
-		|| "${hardening_level}" == "fast-as-fuck" \
-		|| "${hardening_level}" == "manual" \
-		|| "${hardening_level}" == "performance" \
-		|| "${hardening_level}" == "practical" \
-		|| "${hardening_level}" == "secure" \
-		|| "${hardening_level}" == "secure-af" \
-		|| "${hardening_level}" == "secure-as-fuck" \
-	]] ; then
-		:
 	else
-eerror
-eerror "OT_KERNEL_HARDENING_LEVEL is invalid."
-eerror
-eerror "Acceptable values:"
-eerror
-eerror "  custom       - User defined setting"
-eerror "  default      - Upstream defaults, practically secure"
-eerror "  manual       - Alias for custom"
-eerror "  performance  - All mitigations disabled"
-eerror "  practical    - Practically secure or balanced security-performance (same as upstream defaults, alias for default)"
-eerror "  secure-af    - Mitigation against theoretical attacks, difficult to achieve attacks, data exfiltration"
-eerror
-eerror "Actual value:"
-eerror
-eerror "  ${hardening_level}"
-eerror
-		die
+		ot-kernel_y_configopt "CONFIG_IO_URING"
 	fi
 }
 
