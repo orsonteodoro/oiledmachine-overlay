@@ -56,6 +56,7 @@ VIDEO_CARDS=(
 )
 IUSE="
 ${VIDEO_CARDS[@]}
+max-uptime
 mlx5
 "
 # CE - Code Execution
@@ -217,10 +218,531 @@ check_drivers() {
 	fi
 }
 
+_check_y() {
+	local kconfig_setting="${1}"
+	CONFIG_CHECK+="
+		${kconfig_setting}
+	"
+}
+
+_check_n() {
+	local kconfig_setting="${1}"
+	CONFIG_CHECK+="
+		!${kconfig_setting}
+	"
+}
+
+_disable_gentoo_self_protection() {
+	# Disabled for fine grained customization.
+	_check_n "CONFIG_GENTOO_KERNEL_SELF_PROTECTION"
+	_check_n "CONFIG_GENTOO_KERNEL_SELF_PROTECTION_COMMON"
+	_check_n "CONFIG_GENTOO_KERNEL_SELF_PROTECTION_X86_64"
+	_check_n "CONFIG_GENTOO_KERNEL_SELF_PROTECTION_X86_32"
+	_check_n "CONFIG_GENTOO_KERNEL_SELF_PROTECTION_ARM64"
+	_check_n "CONFIG_GENTOO_KERNEL_SELF_PROTECTION_ARM"
+}
+
+_check_kernel_cmdline() {
+	local arg="${1}"
+ewarn "${arg} should be added to the kernel command line for max-uptime."
+}
+
+_unset_pat_kconfig_kernel_cmdline() {
+	local arg="${1}"
+ewarn "${arg} should be unset to the kernel command line for max-uptime."
+}
+
+_y_retpoline() {
+	if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+		_check_y "MITIGATION_RETPOLINE"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.15" ; then
+		_check_y "RETPOLINE"
+	else
+ewarn "Retpoline not supported for < 4.15"
+		return
+	fi
+	local ready=0
+	if [[ "${compiler}" =~ "gcc" ]] && ver_test "${compiler_version}" -ge "7.3.0" ; then
+		ready=1
+	elif [[ "${compiler}" =~ "clang" ]] && ver_test "${compiler_version}" -ge "5.0.2" ; then
+		ready=1
+	fi
+	if (( ${ready} == 0 )) ; then
+
+		local gcc_version=$(gcc-version)
+		local clang_version=$(clang-version)
+		local compiler_name
+		if [[ "${compiler}" =~ "gcc" ]] ; then
+			compiler_name="gcc"
+		elif [[ "${compiler}" =~ "clang" ]] ; then
+			compiler_name="clang"
+		fi
+eerror
+eerror "Switch to >=gcc-7.3 or >=clang-5.0.2 for retpoline support"
+eerror
+eerror "Actual ${compiler_name} version:  ${compiler_version}"
+eerror
+eerror "Tip:  Add/remove clang in OT_KERNEL_USE and in USE."
+eerror
+#		die
+	fi
+}
+
+_y_cet_ibt() {
+	_check_y "CONFIG_X86_KERNEL_IBT"
+	local ready=0
+	if [[ "${compiler}" =~ "gcc" ]] && ver_test "${compiler_version%%.*}" -ge "9" && ot-kernel_has_version ">=sys-devel/binutils-2.29" ; then
+		ready=1
+	elif [[ "${compiler}" =~ "clang" ]] && ver_test "${compiler_version%%.*}" -ge "14" && ot-kernel_has_version ">=sys-devel/lld-${compiler_version}" ; then
+		ready=1
+	fi
+	if (( ${ready} == 0 )) ; then
+		local compiler_name
+		if [[ "${compiler}" =~ "gcc" ]] ; then
+			compiler_name="gcc"
+		elif [[ "${compiler}" =~ "clang" ]] ; then
+			compiler_name="clang"
+		fi
+eerror
+eerror "For CET-IBT (Indirect Branch Tracking) support for hardware forward edge CFI, switch to"
+eerror
+eerror "  >=gcc-9 with >=binutils-2.29"
+eerror
+eerror "    or"
+eerror
+eerror "  >=clang-14 with >=lld-14"
+eerror
+eerror "Actual ${compiler_name} version:  ${compiler_version}"
+eerror
+eerror "Tip:  Add/remove clang in OT_KERNEL_USE and in USE."
+eerror
+		if has cet ${IUSE_EFFECTIVE} && use cet ; then
+			die
+		else
+			:
+		fi
+	fi
+}
+_y_cet_ss() {
+	_check_y "CONFIG_X86_USER_SHADOW_STACK"
+	local ready=0
+	if [[ "${compiler}" =~ "gcc" ]] && ver_test "${compiler_version%%.*}" -ge "8" && ot-kernel_has_version ">=sys-devel/binutils-2.31" ; then
+		ready=1
+	elif [[ "${compiler}" =~ "clang" ]] && ver_test "${compiler_version%%.*}" -ge "6" && ot-kernel_has_version ">=sys-devel/lld-6" ; then
+		ready=1
+	fi
+	if (( ${ready} == 0 )) ; then
+		local compiler_name
+		if [[ "${compiler}" =~ "gcc" ]] ; then
+			compiler_name="gcc"
+		elif [[ "${compiler}" =~ "clang" ]] ; then
+			compiler_name="clang"
+		fi
+eerror
+eerror "For CET-SS User Shadow Stack support for hardware backward edge CFI, switch to"
+eerror
+eerror "  >=gcc-8 with >=binutils-2.31"
+eerror
+eerror "    or"
+eerror
+eerror "  >=clang-6 with >=lld-6"
+eerror
+eerror "Actual ${compiler_name} version:  ${compiler_version}"
+eerror
+eerror "Tip:  Add/remove clang in OT_KERNEL_USE and in USE."
+eerror
+		if has cet ${IUSE_EFFECTIVE} && use cet ; then
+			die
+		else
+			:
+		fi
+	fi
+}
+
+_set_kconfig_l1tf_mitigations() {
+	local mode="${1}" # 1=enable, 0=disable
+	[[ "${firmware_vendor}" != "intel" ]] && return
+	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		local family
+		if tc-is-cross-compiler ; then
+			family=6
+		else
+			family=$(cat /proc/cpuinfo \
+				| grep "cpu family" \
+				| grep -Eo "[0-9]+" \
+				| head -n 1)
+		fi
+		if (( ${family} != 6 )) ; then
+			_unset_pat_kconfig_kernel_cmdline "l1tf=off"
+			return
+		fi
+
+		if [[ "${mode}" == "1" ]] ; then
+	# SMT off, full hypervisor mitigation
+			_unset_pat_kconfig_kernel_cmdline "l1tf=full,force"
+		elif [[ "${mode}" == "0.5" ]] ; then
+	# SMT on, default hypervisor mitigation
+			_unset_pat_kconfig_kernel_cmdline "l1tf=flush"
+		else
+	# SMT on, no mitigation
+			_unset_pat_kconfig_kernel_cmdline "l1tf=off"
+		fi
+	# Upstream uses SMT on, partial hypervisor mitigation.
+	fi
+}
+
+# Keep in sync from with ot-kernel's ot-kernel_set_kconfig_hardening_level() default section.
+# My explanation why the default setting is the most reliable for max uptime.
+# 1.  Less overheating
+# 2.  More CI testing for these defaults
+# 3.  Mitigations do contribute to reducing fatal crash
+_verify_max_uptime_kernel_config_for_one_kernel() {
+	local KV_MAJOR_MINOR="${1}"
+	# Resets back to upstream defaults.
+
+	local path_config="${KERNEL_DIR}/.config"
+	if ! [[ -f "${path_config}" ]] ; then
+ewarn "Missing ${path_config}.  Skipping max-uptime verification"
+		return
+	fi
+
+	local compiler=$(linux_chkconfig_string "CC_VERSION_TEXT")
+	if ! [[ "${compiler}" =~ "gcc" ]] ; then
+		ewarn "${compiler} has not been verified for max uptime.  Rebuild with gcc to replicate the results."
+	fi
+
+	local compiler_version
+	local gcc_slot
+	if [[ "${compiler}" =~ "gcc" ]] ; then
+		compiler_version=$(grep -e "CONFIG_CC_VERSION_TEXT" "${path_config}" | cut -f 2 -d "=" | cut -f 5 -d " ")
+		gcc_slot="${compiler_version%%.*}"
+	elif [[ "${compiler}" =~ "clang" ]] ; then
+		compiler_version=$(grep -e "CONFIG_CC_VERSION_TEXT" "${path_config}" | cut -f 2 -d "=" | cut -f 3 -d " ")
+	else
+eerror "gcc or clang only supported for max-uptime in kernel .config.  Skipping check."
+		return
+	fi
+
+	CONFIG_CHECK="
+	"
+
+	local firmware_vendor="${FIRMWARE_VENDOR,,}"
+	if [[ -z "${firmware_vendor}" ]] ; then
+eerror "FIRMWARE_VENDOR is empty."
+eerror "Set FIRMWARE_VENDOR as the fallback corresponding to the CPU manufacturer.  Valid values:  intel, amd, arm, etc."
+		die
+	fi
+
+	# Force -O2 to reduce encountering bad generated code.
+	_check_n "CC_OPTIMIZE_FOR_PERFORMANCE_O3"
+	_check_y "CC_OPTIMIZE_FOR_PERFORMANCE"
+	_check_n "CC_OPTIMIZE_FOR_SIZE"
+
+	_check_y "COMPAT_BRK"
+	_check_n "FORTIFY_SOURCE"
+	_disable_gentoo_self_protection
+	_check_n "HARDENED_USERCOPY"
+	_check_n "INIT_ON_ALLOC_DEFAULT_ON"
+	_check_n "INIT_ON_FREE_DEFAULT_ON"
+
+	if \
+		[[ "${compiler}" =~ "gcc" ]] \
+			&& \
+		test -e $("${CHOST}-gcc-${gcc_slot}" -print-file-name=plugin)"/include/plugin-version.h" \
+			&& \
+		grep -q -E -e "^CONFIG_HAVE_GCC_PLUGINS=y" "${path_config}" \
+			&& \
+		! linux_chkconfig_present "RUST" \
+	; then
+		_check_y "GCC_PLUGINS"
+	else
+		_check_n "GCC_PLUGINS"
+	fi
+
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+		if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO=y" "${path_config}" ; then
+			_check_n "INIT_STACK_ALL_PATTERN"
+			_check_y "INIT_STACK_ALL_ZERO" # Needs >= GCC 12
+			_check_n "GCC_PLUGIN_STACKLEAK"
+			_check_n "GCC_PLUGIN_STRUCTLEAK_BYREF"
+			_check_n "GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
+			_check_n "GCC_PLUGIN_STRUCTLEAK_USER"
+			_check_n "INIT_STACK_NONE"
+		else
+			_check_n "INIT_STACK_ALL_PATTERN"
+			_check_n "INIT_STACK_ALL_ZERO"
+			_check_n "GCC_PLUGIN_STACKLEAK"
+			_check_n "GCC_PLUGIN_STRUCTLEAK_BYREF"
+			_check_n "GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
+			_check_n "GCC_PLUGIN_STRUCTLEAK_USER"
+			_check_y "INIT_STACK_NONE"
+		fi
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
+		_check_n "INIT_STACK_ALL_PATTERN"
+		_check_n "INIT_STACK_ALL_ZERO"
+		_check_n "GCC_PLUGIN_STACKLEAK"
+		_check_n "GCC_PLUGIN_STRUCTLEAK_BYREF"
+		_check_n "GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
+		_check_n "GCC_PLUGIN_STRUCTLEAK_USER"
+		_check_y "INIT_STACK_NONE"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+		_check_n "INIT_STACK_ALL"
+		_check_y "INIT_STACK_NONE"
+		_check_n "GCC_PLUGIN_STRUCTLEAK"
+		_check_n "GCC_PLUGIN_STRUCTLEAK_BYREF"
+		_check_n "GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
+		_check_n "GCC_PLUGIN_STRUCTLEAK_USER"
+	fi
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
+		# COMPILE_TEST is not default ON.
+		_check_y "RANDSTRUCT_NONE"
+		_check_n "RANDSTRUCT_FULL"
+		_check_n "RANDSTRUCT_PERFORMANCE"
+	fi
+	_check_y "EXPERT"
+	_check_y "MODIFY_LDT_SYSCALL"
+	_check_y "RELOCATABLE"
+	_check_y "RANDOMIZE_BASE"
+	_check_n "RANDOMIZE_KSTACK_OFFSET_DEFAULT"
+	if [[ "${arch}" == "s390" ]] ; then
+		_check_y "EXPOLINE"
+		_check_n "EXPOLINE_OFF"
+		_check_y "EXPOLINE_AUTO"
+		_check_n "EXPOLINE_ON"
+	elif [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
+		_check_y "RANDOMIZE_MEMORY"
+	fi
+	_y_retpoline
+	_check_n "SHUFFLE_PAGE_ALLOCATOR"
+	_check_n "SLAB_FREELIST_HARDENED"
+	_check_n "SLAB_FREELIST_RANDOM"
+	_check_y "SLAB_MERGE_DEFAULT"
+	_check_y "STACKPROTECTOR"
+	_check_y "STACKPROTECTOR_STRONG"
+	if tc-is-gcc ; then
+		_check_n "ZERO_CALL_USED_REGS"
+	fi
+	_check_n "SCHED_CORE"
+	if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
+		if [[ "${firmware_vendor}" == "intel" ]] ; then
+	# GDS:  Rely on automagic
+			_check_n "GDS_FORCE_MITIGATION"
+		fi
+		if [[ "${arch}" == "arm64" ]] ; then
+	# KPTI:  This assumes unforced default
+	# SSBD:  Rely on automagic
+			:
+		fi
+
+		if [[ "${arch}" == "powerpc" ]] ; then
+			_check_kernel_cmdline "spec_store_bypass_disable=auto"
+		fi
+
+		if [[ "${arch}" == "s390" ]] ; then
+			_check_n "KERNEL_NOBP"
+			#_check_kernel_cmdline "nobp=0"
+		fi
+
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			_check_kernel_cmdline "spec_store_bypass_disable=auto"
+			_check_kernel_cmdline "spectre_v2=auto"
+			_check_kernel_cmdline "spectre_v2_user=auto"
+			if grep -q -E -e "^CONFIG_KVM=y" "${path_config}" ; then
+				_check_kernel_cmdline "kvm.nx_huge_pages=auto"
+			fi
+			if [[ "${firmware_vendor}" == "intel" ]] ; then
+				_check_y "X86_INTEL_TSX_MODE_OFF"
+				_check_n "X86_INTEL_TSX_MODE_ON"
+				_check_n "X86_INTEL_TSX_MODE_AUTO"
+				_check_kernel_cmdline "mds=full"
+				_check_kernel_cmdline "mmio_stale_data=full"
+				_check_kernel_cmdline "tsx=off"
+				_check_kernel_cmdline "tsx_async_abort=full"
+				if grep -q -E -e "^CONFIG_KVM=y" "${path_config}" ; then
+					_check_kernel_cmdline "kvm-intel.vmentry_l1d_flush=cond"
+				fi
+			fi
+		fi
+	fi
+	if ver_test "${KV_MAJOR_MINOR}" -ge "4.15" ; then
+		if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
+			_check_y "PAGE_TABLE_ISOLATION"
+		fi
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			_check_y "PAGE_TABLE_ISOLATION"
+		fi
+	fi
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
+		if [[ "${arch}" == "arm64" ]] && linux_chkconfig_present "ARM64_BTI_KERNEL" ; then
+			_check_y "ARM64_VHE"
+			_check_y "ARM64_PTR_AUTH"
+			_check_y "ARM64_BTI_KERNEL"
+			_check_n "GCOV_KERNEL"
+			_check_n "FUNCTION_GRAPH_TRACER"
+			_check_y "ARM64_BTI"
+		elif [[ "${arch}" == "arm64" ]] && linux_chkconfig_present "ARM64_PTR_AUTH" ; then
+# TODO:  Make it a fatal errror based on /proc/cpuinfo or lscpu.
+ewarn "cpu_flags_arm_bti is default ON for ARMv8.5."
+		fi
+		if [[ "${arch}" == "arm64" ]] && linux_chkconfig_present "ARM64_PTR_AUTH" ; then
+			_check_n "FUNCTION_GRAPH_TRACER"
+			_check_y "ARM64_VHE"
+			_check_y "ARM64_PTR_AUTH"
+		elif [[ "${arch}" == "arm64" ]] && linux_chkconfig_present "ARM64_PTR_AUTH" ; then
+# TODO:  Make it a fatal errror based on /proc/cpuinfo or lscpu.
+ewarn "cpu_flags_arm_pac is default ON for ARMv8.5."
+		fi
+	fi
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+		_check_y "CPU_MITIGATIONS"
+		if [[ "${firmware_vendor}" == "intel" ]] ; then
+			_check_y "MITIGATION_RFDS"
+		fi
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			if [[ "${firmware_vendor}" == "amd" ]] ; then
+				_check_y "CPU_SRSO"
+				_check_y "CPU_UNRET_ENTRY"
+				_check_kernel_cmdline "spec_rstack_overflow=safe-ret"
+			fi
+			_check_y "SPECULATION_MITIGATIONS"
+			_check_n "SLS"
+		fi
+		_check_y "RETHUNK"
+		_check_y "CPU_IBPB_ENTRY"
+		_check_y "CPU_IBRS_ENTRY"
+	fi
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.14" ; then
+		_set_kconfig_l1tf_mitigations "0.5"
+	fi
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+		if [[ "${firmware_vendor}" == "intel" ]] ; then
+			_check_y "MITIGATION_SPECTRE_BHI"
+		fi
+		if [[ "${arch}" == "powerpc" ]] ; then
+			_check_kernel_cmdline "spec_store_bypass_disable=auto"
+		fi
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			_check_kernel_cmdline "retbleed=auto"
+		fi
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			_check_kernel_cmdline "spectre_bhi=on"
+			_check_kernel_cmdline "spec_store_bypass_disable=auto"
+		fi
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			_check_kernel_cmdline "retbleed=auto"
+		fi
+	fi
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
+		_check_y "SPECULATION_MITIGATIONS"
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			_y_cet_ibt
+		fi
+	fi
+	if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			if [[ "${firmware_vendor}" == "intel" ]] ; then
+				_check_kernel_cmdline "reg_file_data_sampling=on"
+				_check_y "MITIGATION_RFDS"
+			fi
+		fi
+		if [[ "${arch}" == "x86_64" ]] ; then
+			if [[ "${firmware_vendor}" == "amd" ]] ; then
+				_check_y "SRSO"
+			fi
+		fi
+	fi
+	if ver_test "${KV_MAJOR_MINOR}" -ge "6.2" ; then
+		_check_y "CALL_DEPTH_TRACKING"
+	fi
+	if ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
+		if [[ "${arch}" == "x86_64" ]] ; then
+			_check_n "ADDRESS_MASKING" # SLAM
+		fi
+	fi
+	if ver_test "${KV_MAJOR_MINOR}" -ge "6.5" ; then
+		_check_y "CPU_SRSO"
+	fi
+	if ver_test "${KV_MAJOR_MINOR}" -ge "6.6" ; then
+		if [[ "${arch}" == "x86_64" ]] ; then
+			_check_n "X86_CET"
+			_y_cet_ibt  # Forward-edge CFI
+			_y_cet_ss   # Backward-edge CFI
+		fi
+	fi
+	if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
+		if [[ "${firmware_vendor}" == "intel" ]] ; then
+			_check_y "MITIGATION_SPECTRE_BHI"
+		fi
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			_check_kernel_cmdline "spectre_bhi=on"
+		fi
+	fi
+	if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
+		if [[ "${arch}" == "x86_64" ]] ; then
+			_check_y "MITIGATION_PAGE_TABLE_ISOLATION"
+			_check_n "MITIGATION_SLS"
+			_check_y "MITIGATION_RETHUNK"
+			if [[ "${firmware_vendor}" == "amd" ]] ; then
+				_check_y "MITIGATION_SRSO"
+				_check_y "MITIGATION_UNRET_ENTRY"
+				_check_y "MITIGATION_IBPB_ENTRY"
+			fi
+			if [[ "${firmware_vendor}" == "intel" ]] ; then
+				_check_y "MITIGATION_CALL_DEPTH_TRACKING"
+				_check_y "MITIGATION_IBRS_ENTRY"
+				if has_version "sys-firmware/intel-microcode" ; then
+					_check_n "MITIGATION_GDS_FORCE"
+				#elif use cpu_flags_x86_avx ; then
+				#	_check_y "MITIGATION_GDS_FORCE"
+				fi
+			fi
+		fi
+	fi
+
+	# See https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks
+	# Rowhammer - PE, DT, PE -> ID, PE -> DoS
+	_check_n "KSM"
+	_check_n "UKSM"
+
+	check_extra_config
+}
+
+verify_max_uptime_kernel_config() {
+	if ! tc-is-cross-compiler && use max-uptime ; then
+		local prev_kernel_dir="${KERNEL_DIR}"
+		local L=(
+			$(grep -l "EXTRAVERSION" $(ls "/usr/src/"*"/Makefile"))
+		)
+		local x
+		for x in ${L[@]} ; do
+			unset KV_FULL
+			local pv_major=$(grep "VERSION =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+			local pv_minor=$(grep "PATCHLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+			local pv_patch=$(grep "SUBLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+			local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
+einfo "Verifying max-uptime settings for ${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion}"
+			_verify_max_uptime_kernel_config_for_one_kernel "${pv_major}.${pv_minor}"
+		done
+	fi
+}
+
+verify_disable_ksm() {
+	CONFIG_CHECK="
+		KSM
+		UKSM # Thrashy
+	"
+	ERROR_KSM="CONFIG_KSM=n is required to mitigate from ASLR circumvention, Information Disclosure, Rowhammer (Elevated Priveleges, Data Tampering)"
+	ERROR_UKSM="CONFIG_UKSM=n is required to mitigate against Denial of Service (DoS)"
+	check_extra_config
+}
+
 pkg_setup() {
 	mitigate-dos_pkg_setup
 ewarn "This ebuild is a Work In Progress (WIP)."
 	check_drivers
+	use max-uptime && verify_max_uptime_kernel_config
+	use zero-tolerance && verify_disable_ksm
 }
 
 # Unconditionally check

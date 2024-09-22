@@ -50,6 +50,10 @@
       (A BIOS firmware update from the motherboard manufacturer may still be
       required if the firmware package doesn't apply to your model.)
     </flag>
+    <flag name="max-uptime">
+      Verifying defaults for security and compiler settings in order mitigate
+      against deadlock  or hard reset.
+    </flag>
     <flag name="mlx5">
       Mitigate against Denial of Service in mlx5 kernel drivers.
     </flag>
@@ -69,9 +73,9 @@
       Mitigate against Denial of Service.
     </flag>
     <flag name="zero-tolerance">
-      Bump to patched point releases when the changelog indicated fixed
-      DoS class of vulnerabilities.  This will increase the coverage
-      of DoS mitigation for the installed kernels significantly because
+      Bump to the latest patched kernel point releases when the changelog
+      indicated fixed DoS class of vulnerabilities.  This will increase the
+      coverage of DoS mitigation for the installed kernels significantly because
       the USE flag coverage is incomplete.
     </flag>
   </use>
