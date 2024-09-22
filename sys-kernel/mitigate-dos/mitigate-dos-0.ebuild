@@ -428,6 +428,25 @@ eerror "gcc or clang only supported for max-uptime in kernel .config.  Skipping 
 	CONFIG_CHECK="
 	"
 
+	local arch=""
+	if grep -q -e "Linux/x86" "${path_config}" && grep -q -e "^CONFIG_X86_64=y" "${path_config}" ; then
+		arch="x86_64"
+	elif grep -q -e "Linux/x86" "${path_config}" && grep -q -e "^CONFIG_X86=y" "${path_config}" ; then
+		arch="x86"
+	elif grep -q -e "Linux/arm64" "${path_config}" ; then
+		arch="arm64"
+	elif grep -q -e "Linux/arm" "${path_config}" ; then
+		arch="arm"
+	elif grep -q -e "Linux/s390" "${path_config}" ; then
+		arch="s390"
+	elif grep -q -e "Linux/powerpc" "${path_config}" ; then
+		arch="powerpc"
+	else
+# FIXME:
+eerror "USE=max-uptime not supported for ARCH=${ARCH}"
+		die
+	fi
+
 	_check_n "CFI_CLANG"
 
 	local firmware_vendor="${FIRMWARE_VENDOR,,}"
