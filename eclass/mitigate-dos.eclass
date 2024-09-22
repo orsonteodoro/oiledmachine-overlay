@@ -19,8 +19,8 @@ esac
 if [[ -z ${_MITIGATE_DOS_ECLASS} ]] ; then
 _MITIGATE_DOS_ECLASS=1
 
-FIRMWARE_VENDOR=""
 _mitigate_dos_set_globals() {
+	FIRMWARE_VENDOR=${FIRMWARE_VENDOR:-""}
 	if [[ -e "/proc/cpuinfo" ]] ; then
 		while read -r line ; do
 			if [[ "${line}" =~ "AuthenticAMD" ]] ; then

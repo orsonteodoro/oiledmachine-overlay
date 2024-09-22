@@ -33,6 +33,10 @@
 
     CUSTOM_KERNEL_ATOM="sys-kernel/ot-sources sys-kernel/xanmod-kernel"
 
+  FIRMWARE_VENDOR - Name of the CPU manufacturer for the kernel.  It should be
+  set for cross compile builds since the builder CPU manufacturer could be
+  different.
+
   -->
   <use>
     <flag name="auto">
