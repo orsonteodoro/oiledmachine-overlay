@@ -51,8 +51,8 @@
       required if the firmware package doesn't apply to your model.)
     </flag>
     <flag name="max-uptime">
-      Verifying defaults for security and compiler settings in order mitigate
-      against deadlock  or hard reset.
+      Verifies defaults for security and compiler settings in order mitigate
+      against deadlock or hard reset.
     </flag>
     <flag name="mlx5">
       Mitigate against Denial of Service in mlx5 kernel drivers.
