@@ -727,6 +727,7 @@ verify_max_uptime_kernel_config() {
 			local pv_minor=$(grep "PATCHLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
 			local pv_patch=$(grep "SUBLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
 			local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
+einfo
 einfo "Verifying max-uptime settings for ${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion}"
 			_verify_max_uptime_kernel_config_for_one_kernel "${pv_major}.${pv_minor}"
 		done
@@ -735,8 +736,8 @@ einfo "Verifying max-uptime settings for ${pv_major}.${pv_minor}.${pv_patch}${pv
 
 verify_disable_ksm_for_one_kernel() {
 	CONFIG_CHECK="
-		KSM
-		UKSM
+		!KSM
+		!UKSM
 	"
 	ERROR_KSM="CONFIG_KSM=n is required to mitigate from ASLR circumvention, information disclosure, Rowhammer (elevated privileges, data tampering)"
 	ERROR_UKSM="CONFIG_UKSM=n is required to mitigate against denial of service" # Thrashy
@@ -757,6 +758,7 @@ verify_disable_ksm() {
 			local pv_minor=$(grep "PATCHLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
 			local pv_patch=$(grep "SUBLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
 			local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
+einfo
 einfo "Verifying max-uptime settings for ${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion}"
 			KERNEL_DIR=$(dirname "${x}")
 			verify_disable_ksm_for_one_kernel
