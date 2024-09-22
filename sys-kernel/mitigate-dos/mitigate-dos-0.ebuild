@@ -29,6 +29,7 @@ MULTISLOT_KERNEL_DRIVER_DRM_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
 MULTISLOT_KERNEL_DRIVER_DRM_NOUVEAU=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_DRIVER_DRM_RADEON=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_DRIVER_DRM_VMWGFX=("6.6.49" "6.9" "6.10.8")
+MULTISLOT_KERNEL_DRIVER_DRM_XE=("6.10.8")
 MULTISLOT_KERNEL_NETFILTER=("5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" "6.6.29" "6.8.8")
 MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
@@ -39,6 +40,7 @@ CVE_DRM_I915="CVE-2024-41092"
 CVE_DRM_NOUVEAU="CVE-2024-45012"
 CVE_DRM_RADEON="CVE-2024-41060"
 CVE_DRM_VMWGFX="CVE-2024-46709"
+CVE_DRM_XE="CVE-2024-46683"
 CVE_IWLWIFI_1="CVE-2022-48918"
 CVE_IWLWIFI_2="CVE-2022-48787"
 CVE_MLX5="CVE-2024-45019"
@@ -129,6 +131,7 @@ RDEPEND="
 		zero-tolerance? (
 			$(gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
 		)
+		$(gen_eol_kernels_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
 	)
 	apparmor? (
 		!custom-kernel? (
@@ -169,6 +172,7 @@ RDEPEND="
 	video_cards_intel? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_DRM_I915[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_DRM_XE[@]})
 		)
 	)
 	video_cards_nouveau? (
@@ -278,6 +282,7 @@ check_drivers() {
 	fi
 	if use video_cards_intel ; then
 		check_kernel_version "i915" "${CVE_DRM_I915}" ${MULTISLOT_KERNEL_DRIVER_DRM_I915[@]}
+		check_kernel_version "xe" "${CVE_DRM_XE}" ${MULTISLOT_KERNEL_DRIVER_DRM_XE[@]}
 	fi
 	if use video_cards_radeon ; then
 		check_kernel_version "radeon" "${CVE_DRM_RADEON}" ${MULTISLOT_KERNEL_DRIVER_DRM_RADEON[@]}

@@ -271,15 +271,6 @@ gen_patched_kernel_list() {
 	echo "
 		)
 	"
-
-	local eol_version
-	for atom in ${ATOMS[@]} ; do
-		for eol_version in ${EOL_VERSIONS[@]} ; do
-			echo "
-				!=${atom}-${eol_version}*
-			"
-		done
-	done
 }
 
 # @FUNCTION: gen_zero_tolerance_kernel_list
@@ -330,14 +321,6 @@ gen_zero_tolerance_kernel_list() {
 		)
 	"
 
-	local eol_version
-	for atom in ${ATOMS[@]} ; do
-		for eol_version in ${EOL_VERSIONS[@]} ; do
-			echo "
-				!=${atom}-${eol_version}*
-			"
-		done
-	done
 }
 
 # @FUNCTION: gen_patched_kernel_driver_list
@@ -408,6 +391,30 @@ gen_patched_kernel_driver_list() {
 		)
 	"
 
+
+}
+
+gen_eol_kernels_list() {
+	local ATOMS=(
+		sys-kernel/gentoo-kernel-bin
+		sys-kernel/gentoo-kernel
+		sys-kernel/gentoo-sources
+		sys-kernel/vanilla-sources
+		sys-kernel/git-sources
+		sys-kernel/mips-sources
+		sys-kernel/pf-sources
+		sys-kernel/rt-sources
+		sys-kernel/zen-sources
+		sys-kernel/raspberrypi-sources
+		sys-kernel/gentoo-kernel
+		sys-kernel/gentoo-kernel-bin
+		sys-kernel/vanilla-kernel
+		sys-kernel/linux-next
+		sys-kernel/asahi-sources
+		sys-kernel/ot-sources
+		${CUSTOM_KERNEL_ATOM}
+	)
+
 	local eol_version
 	for atom in ${ATOMS[@]} ; do
 		for eol_version in ${EOL_VERSIONS[@]} ; do
@@ -416,9 +423,8 @@ gen_patched_kernel_driver_list() {
 			"
 		done
 	done
-
-
 }
+
 
 _MITIGATE_DOS_TECRA_RDEPEND_X86_64="
 	cpu_target_x86_ice_lake? (
@@ -1134,15 +1140,15 @@ einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
 	# Notify the user if grub or the kernel config is incorrectly
 	# configured/tampered or using a copypasta-ed workaround.
 
-	_mitigate_dos_verify_mitigation_itlb_multihit		# DoS, Mitigations against iTLB multihit (2018)
-	_mitigate_dos_verify_mitigation_mpf			# ID, DoS, Mitigations against MPF (2021)
-	_mitigate_dos_verify_mitigation_umh			# DoS, Mitigations against UMH (2022)
-	_mitigate_dos_verify_mitigation_tecra			# PE, Mitigations against TECRA (2023)
-	_mitigate_dos_verify_mitigation_reptar			# EP, ID, DoS, Mitigations against Reptar (2023)
-	_mitigate_dos_verify_mitigation_blr			# DoS, Mitigations against BLR (2023)
-	_mitigate_dos_verify_mitigation_mcead			# DoS, Mitigations against MCEAD (2024)
+	_mitigate_dos_verify_mitigation_itlb_multihit		# Mitigations against iTLB multihit (2018) # DoS
+	_mitigate_dos_verify_mitigation_mpf			# Mitigations against MPF (2021) # ID, DoS
+	_mitigate_dos_verify_mitigation_umh			# Mitigations against UMH (2022) # DoS
+	_mitigate_dos_verify_mitigation_tecra			# Mitigations against TECRA (2023) # PE
+	_mitigate_dos_verify_mitigation_reptar			# Mitigations against Reptar (2023) # EP, ID, DoS
+	_mitigate_dos_verify_mitigation_blr			# Mitigations against BLR (2023) # DoS
+	_mitigate_dos_verify_mitigation_mcead			# Mitigations against MCEAD (2024) # DoS
 	_mitigate_dos_verify_mitigation_cve_2024_24968		# DoS (2024)
-	_mitigate_dos_verify_mitigation_sinkclose		# CE, DoS, ID, CI, Mitigations against SLB (2024)
+	_mitigate_dos_verify_mitigation_sinkclose		# Mitigations against SLB (2024) # CE, DoS, ID, DT
 }
 
 # @FUNCTION: _mitigate-dos_get_fallback_version

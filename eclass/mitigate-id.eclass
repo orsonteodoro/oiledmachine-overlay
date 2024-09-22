@@ -484,14 +484,6 @@ gen_patched_kernel_list() {
 		)
 	"
 
-	local eol_version
-	for atom in ${ATOMS[@]} ; do
-		for eol_version in ${EOL_VERSIONS[@]} ; do
-			echo "
-				!=${atom}-${eol_version}*
-			"
-		done
-	done
 }
 
 # @FUNCTION: gen_zero_tolerance_kernel_list
@@ -542,14 +534,6 @@ gen_zero_tolerance_kernel_list() {
 		)
 	"
 
-	local eol_version
-	for atom in ${ATOMS[@]} ; do
-		for eol_version in ${EOL_VERSIONS[@]} ; do
-			echo "
-				!=${atom}-${eol_version}*
-			"
-		done
-	done
 }
 
 # @FUNCTION: gen_patched_kernel_driver_list
@@ -620,6 +604,29 @@ gen_patched_kernel_driver_list() {
 		)
 	"
 
+}
+
+gen_eol_kernels_list() {
+	local ATOMS=(
+		sys-kernel/gentoo-kernel-bin
+		sys-kernel/gentoo-kernel
+		sys-kernel/gentoo-sources
+		sys-kernel/vanilla-sources
+		sys-kernel/git-sources
+		sys-kernel/mips-sources
+		sys-kernel/pf-sources
+		sys-kernel/rt-sources
+		sys-kernel/zen-sources
+		sys-kernel/raspberrypi-sources
+		sys-kernel/gentoo-kernel
+		sys-kernel/gentoo-kernel-bin
+		sys-kernel/vanilla-kernel
+		sys-kernel/linux-next
+		sys-kernel/asahi-sources
+		sys-kernel/ot-sources
+		${CUSTOM_KERNEL_ATOM}
+	)
+
 	local eol_version
 	for atom in ${ATOMS[@]} ; do
 		for eol_version in ${EOL_VERSIONS[@]} ; do
@@ -628,9 +635,8 @@ gen_patched_kernel_driver_list() {
 			"
 		done
 	done
-
-
 }
+
 
 
 # Mitigated with RFI flush not KPTI
@@ -5568,43 +5574,43 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	# Notify the user if grub or the kernel config is incorrectly
 	# configured/tampered or using a copypasta-ed workaround.
 
-	_mitigate_id_verify_mitigation_meltdown		# ID, Mitigations against Variant 3 (2017)
-	_mitigate_id_verify_mitigation_spectre		# ID, Mitigations against Variant 1 (2017), Variant 2 (2017)
-	_mitigate_id_verify_mitigation_spectre_ng	# ID, Mitigations against Variant 4 (2018)
-							# ID, Lazy FP State Restore (2018); eagerfpu removed and hardcoded enabled in 4.6 (2016), eagerfpu available in 3.7 (2012)
-	_mitigate_id_verify_mitigation_spectre_rsb	# ID, Mitigations against SpectreRSB (2018)
-	_mitigate_id_verify_mitigation_foreshadow	# ID, Mitigations against L1TF (2018)
-	_mitigate_id_verify_mitigation_swapgs		# ID, Mitigations against SWAPGS (2019)
-	_mitigate_id_verify_mitigation_zombieload_v2	# ID, Mitigations against TAA (2019)
-	_mitigate_id_verify_mitigation_platypus		# ID, Mitigations against PLATYPUS (2020)
-	_mitigate_id_verify_mitigation_crosstalk	# ID, Mitigations against SRBDS (2020)
-	_mitigate_id_verify_mitigation_vrsa		# ID, Mitigations against VRSA (2020)
-	_mitigate_id_verify_mitigation_apdb		# ID, Mitigations against APDB (2020)
-	_mitigate_id_verify_mitigation_itdvcp		# ID, Mitigations against ITDVCP (2020)
-	_mitigate_id_verify_mitigation_ibrs_gh		# ID, Mitigations against IBRS G/H (2020)
-	_mitigate_id_verify_mitigation_cacheout		# ID, Mitigations against L1DES (2020), VRS (2020)
-	_mitigate_id_verify_mitigation_mpf		# ID, DoS, Mitigations against MPF (2021)
-	_mitigate_id_verify_mitigation_fsfpcd		# ID, Mitigations against FSFPCD (2021)
-	_mitigate_id_verify_mitigation_spectre_bhb	# ID, Mitigations against BHB (2022), ARM
-	_mitigate_id_verify_mitigation_bhi		# ID, Mitigations against BHI (2022), X86
-	_mitigate_id_verify_mitigation_rsba		# ID, Mitigations against RSBU (2022), RSBA (2022)
-	_mitigate_id_verify_mitigation_rrsba		# ID, Mitigations against RSBU (2022), RRSBA (2022)
-	_mitigate_id_verify_mitigation_mds		# ID, Mitigations against ZombieLoad/MFBDS (2028), MLPDS (2028), MSBDS (2018), MDSUM (2019)
-	_mitigate_id_verify_mitigation_downfall		# ID, Mitigations against GDS (2022)
-	_mitigate_id_verify_mitigation_retbleed		# ID, Mitigations against Retbleed (2022)
-	_mitigate_id_verify_mitigation_mmio_stale_data	# ID, Mitigations against SBDR (2022), SBDS (2022), DRPW (2022)
-	_mitigate_id_verify_mitigation_aepic		# ID, Mitigations against AEPIC Leak (2022)
-	_mitigate_id_verify_mitigation_smt_rsb		# ID, Mitigations against SMT RSB (2022)
-	_mitigate_id_verify_mitigation_pbrsb		# ID, Mitigations against PBRSB (2022)
-	_mitigate_id_verify_mitigation_reptar		# EP, ID, DoS, Mitigations against Reptar (2023)
-	_mitigate_id_verify_mitigation_zenbleed		# ID, Mitigations against Zenbleed (2023)
-	_mitigate_id_verify_mitigation_inception	# ID, Mitigations against SRSO (2023)
-	_mitigate_id_verify_mitigation_ibpb		# ID, Mitigations against IBPB (2023)
-	_mitigate_id_verify_mitigation_tecra		# PE, Mitigations against TECRA (2023)
-	_mitigate_id_verify_mitigation_rfds		# ID, Mitigations against RFDS (2024)
-	_mitigate_id_verify_mitigation_ussb		# ID, Mitigations against USSB (2024)
+	_mitigate_id_verify_mitigation_meltdown		# Mitigations against Variant 3 (2017) # ID
+	_mitigate_id_verify_mitigation_spectre		# Mitigations against Variant 1 (2017), Variant 2 (2017) # ID
+	_mitigate_id_verify_mitigation_spectre_ng	# Mitigations against Variant 4 (2018) # ID
+							# Mitigations against Lazy FP State Restore (2018); eagerfpu removed and hardcoded enabled in 4.6 (2016), eagerfpu available in 3.7 (2012) # ID
+	_mitigate_id_verify_mitigation_spectre_rsb	# Mitigations against SpectreRSB (2018) # ID
+	_mitigate_id_verify_mitigation_foreshadow	# Mitigations against L1TF (2018) # ID
+	_mitigate_id_verify_mitigation_swapgs		# Mitigations against SWAPGS (2019) # ID
+	_mitigate_id_verify_mitigation_zombieload_v2	# Mitigations against TAA (2019) # ID
+	_mitigate_id_verify_mitigation_platypus		# Mitigations against PLATYPUS (2020) # ID
+	_mitigate_id_verify_mitigation_crosstalk	# Mitigations against SRBDS (2020) # ID
+	_mitigate_id_verify_mitigation_vrsa		# Mitigations against VRSA (2020) # ID
+	_mitigate_id_verify_mitigation_apdb		# Mitigations against APDB (2020) # ID
+	_mitigate_id_verify_mitigation_itdvcp		# Mitigations against ITDVCP (2020) # ID
+	_mitigate_id_verify_mitigation_ibrs_gh		# Mitigations against IBRS G/H (2020) # ID
+	_mitigate_id_verify_mitigation_cacheout		# Mitigations against L1DES (2020), VRS (2020) # ID
+	_mitigate_id_verify_mitigation_mpf		# Mitigations against MPF (2021) # ID, DoS
+	_mitigate_id_verify_mitigation_fsfpcd		# Mitigations against FSFPCD (2021) # ID
+	_mitigate_id_verify_mitigation_spectre_bhb	# Mitigations against BHB (2022), ARM # ID
+	_mitigate_id_verify_mitigation_bhi		# Mitigations against BHI (2022), X86 # ID
+	_mitigate_id_verify_mitigation_rsba		# Mitigations against RSBU (2022), RSBA (2022) # ID
+	_mitigate_id_verify_mitigation_rrsba		# Mitigations against RSBU (2022), RRSBA (2022) # ID
+	_mitigate_id_verify_mitigation_mds		# Mitigations against ZombieLoad/MFBDS (2028), MLPDS (2028), MSBDS (2018), MDSUM (2019) # ID
+	_mitigate_id_verify_mitigation_downfall		# Mitigations against GDS (2022) # ID
+	_mitigate_id_verify_mitigation_retbleed		# Mitigations against Retbleed (2022) # ID
+	_mitigate_id_verify_mitigation_mmio_stale_data	# Mitigations against SBDR (2022), SBDS (2022), DRPW (2022) # ID
+	_mitigate_id_verify_mitigation_aepic		# Mitigations against AEPIC Leak (2022) # ID
+	_mitigate_id_verify_mitigation_smt_rsb		# Mitigations against SMT RSB (2022) # ID
+	_mitigate_id_verify_mitigation_pbrsb		# Mitigations against PBRSB (2022) # ID
+	_mitigate_id_verify_mitigation_reptar		# Mitigations against Reptar (2023) # EP, ID, DoS
+	_mitigate_id_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023) # ID
+	_mitigate_id_verify_mitigation_inception	# Mitigations against SRSO (2023) # ID
+	_mitigate_id_verify_mitigation_ibpb		# Mitigations against IBPB (2023) # ID
+	_mitigate_id_verify_mitigation_tecra		# Mitigations against TECRA (2023) # PE
+	_mitigate_id_verify_mitigation_rfds		# Mitigations against RFDS (2024) # ID
+	_mitigate_id_verify_mitigation_ussb		# Mitigations against USSB (2024) # ID
 	_mitigate_id_verify_mitigation_cve_2024_23984	# ID (2024)
-	_mitigate_id_verify_mitigation_sinkclose	# CE, DoS, ID, CI, Mitigations against SLB (2024)
+	_mitigate_id_verify_mitigation_sinkclose	# Mitigations against SLB (2024) # CE, DoS, ID, DT
 
 	# For SLAM, see https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability#2023
 }
