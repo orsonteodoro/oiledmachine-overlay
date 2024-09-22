@@ -61,13 +61,13 @@ EAPI=8
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
-CHROMIUM_EBUILD_MAINTAINER=1 # See also GEN_ABOUT_CREDITS
+CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 
 #
 # Set to 1 below to generate an about_credits.html including bundled internal
 # dependencies.
 #
-GEN_ABOUT_CREDITS=1
+GEN_ABOUT_CREDITS=0
 #
 
 # One of the major sources of lag comes from dependencies
@@ -137,8 +137,8 @@ GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-d01637900cb776f6dd08651928a4bebf8633b5ff65f59c9731905883aa3388de\
-fd83a5d9749492a11e6ef1ba1294c92b46b8d6bbd5c4347a2d7f8fb2c1ecab3a\
+65aa2f7fe67bb4b869f365386f2244730d55b97b64d22b65cd55b6df2e7e09a9\
+fb4cc7682092c47f04655658e18270d4cd1f0a1009e9cdce61b60de95ef1b916\
 "
 LLVM_COMPAT=( 20 19 ) # [inclusive, inclusive] high to low ; LLVM_OFFICIAL_SLOT+1 or LLVM_OFFICIAL_SLOT-1 major version allowed.
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is the same slot listed in https://github.com/chromium/chromium/blob/129.0.6668.58/tools/clang/scripts/update.py#L42
@@ -499,7 +499,7 @@ proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 -system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
 -system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
 -system-zlib +system-zstd systemd +thinlto-opt +vaapi +wayland +webassembly
-+websockets -widevine +X
+-widevine +X
 ebuild-revision-1
 "
 
@@ -607,14 +607,12 @@ DISTRO_REQUIRE_USE="
 #
 #	extensions
 #	!partitionalloc
-# websockets requires devtools/devtools_http_handler.cc which is unconditionally added.
 REQUIRED_USE+="
 	${DISABLED_NON_FREE_USE_FLAGS}
 	!async-dns? (
 		!official
 	)
 	screen-capture
-	websockets
 	!headless (
 		extensions
 		pdf
@@ -722,7 +720,6 @@ REQUIRED_USE+="
 		vpx
 		wayland
 		webassembly
-		websockets
 		X
 		!amd64? (
 			!cfi
@@ -1737,7 +1734,7 @@ ewarn "Expected file count:  ${tc_count_expected}"
 ewarn
 	fi
 
-	local sources_count_expected=1124201
+	local sources_count_expected=1134267
 	local sources_count_actual=$(find "/usr/share/chromium/sources" -type f | wc -l)
 	if (( ${sources_count_actual} != ${sources_count_expected} )) ; then
 ewarn
@@ -2046,6 +2043,7 @@ apply_oiledmachine_overlay_patchset() {
 		"${FILESDIR}/extra-patches/${PN}-128.0.6613.84-mold.patch"
 		"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-numeric_h-for-iota.patch"
 		"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-include-historgram-functions.patch"
+		"${FILESDIR}/extra-patches/${PN}-129.0.6668.58-disable-speech.patch"
 	)
 
 	if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then
@@ -2104,7 +2102,7 @@ apply_oiledmachine_overlay_patchset() {
 		fi
 		if ! use partitionalloc ; then
 			PATCHES+=(
-				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-partitionalloc-false.patch"
+				"${FILESDIR}/extra-patches/${PN}-129.0.6668.58-partitionalloc-false.patch"
 			)
 		fi
 	fi
@@ -3122,7 +3120,7 @@ ewarn
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
 	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/129.0.6668.58/device/vr#platform-support
 	myconf_gn+=" enable_vr=false"		# https://github.com/chromium/chromium/blob/129.0.6668.58/device/vr/buildflags/buildflags.gni#L32
-	myconf_gn+=" enable_websockets=$(usex websockets true false)"
+	myconf_gn+=" enable_websockets=true"	# requires devtools/devtools_http_handler.cc which is unconditionally added.
 	myconf_gn+=" use_minikin_hyphenation=$(usex css-hyphen true false)"
 	myconf_gn+=" use_mpris=$(usex mpris true false)"
 	myconf_gn+=" use_partition_alloc=$(usex partitionalloc true false)" # See issue 40277359

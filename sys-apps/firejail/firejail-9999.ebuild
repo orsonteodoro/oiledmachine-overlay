@@ -2388,6 +2388,7 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-profile-fixes.patch"
 	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix wrappers and mpv
+	"${FILESDIR}/extra-patches/${PN}-1b2d18e-xephyr-first.patch" # Faster scrolling first
 )
 
 get_impls() {
@@ -3616,13 +3617,29 @@ eerror
 	fi
 
 	local PROFILE_NEEDS_SYSTEM_ALLOCATOR=(
+	# Ban if it it is statically linked.
+		"firefox"
+		"firefox-bin"
+		"google-chrome"
+		"google-chrome-beta"
+		"google-chrome-stable"
+		"google-chrome-unstable"
 		"spotify"
 	)
 
 	local force_system_allocator=0
+
+	if "${_PROFILE_GRAPH[${profile_name}]}" =~ "electron-common" ]] ; then
+		force_system_allocator=1
+	fi
+
 	local x
 	for x in ${PROFILE_NEEDS_SYSTEM_ALLOCATOR[@]} ; do
-		if [[ "${profile_name}" == "${x}" ]] ; then
+		if [[ "${profile_name}" == "firefox" ]] && has_version "www-client/firefox" && ! has_version "www-client/firefox[jemalloc]" ; then
+			:
+		elif [[ "${profile_name}" == "firefox" ]] && has_version "www-client/chromium" && ! has_version "www-client/chromium[partitionalloc]" ; then
+			:
+		elif [[ "${profile_name}" == "${x}" ]] ; then
 			force_system_allocator=1
 			break
 		fi
@@ -4076,6 +4093,9 @@ einfo "  firejail_profiles_rtv? ( firejail_profiles_rtv-addons )"
 einfo
 	if ! use firejail_profiles_server ; then
 ewarn "Disabling firejail_profiles_server disables default sandboxing for the root user"
+	fi
+	if [[ -e "/etc/firejail/firefox.profile" ]] ; then
+ewarn "You need to run the /usr/local/bin/firefox or /usr/local/bin/firefox-bin wrapper directly to avoid wrapper bypass."
 	fi
 }
 

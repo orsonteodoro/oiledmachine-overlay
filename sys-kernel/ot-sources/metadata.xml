@@ -1623,38 +1623,37 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
       manual
       fast
       fast-af
-      fast-as-fuck
       practical
       performance
       secure
       secure-af
-      secure-as-fuck
       unset
 
     Meanings:
 
-      custom - Customize hardening.  (same as manual and unset)
+      custom - Customize hardening.
+      (Acceptable aliases:  manual, unset)
 
       default - Uses upstream default security settings, practically secure,
       balanced performance-security.  However, it does have unintended benefits
       such as being less crashy and longer uptimes TBH.
+      (Acceptable aliases:  secure, hard, practical)
 
-      fast-af - Trendy alias for performance but dangerous-af.  From
-      experience, it does crash more.
+      fast-af - Trendy alias for performance but dangerous-af.  From experience,
+      it does crash more.  It will turn off all hardening to reduce overhead
+      or wasted CPU cycles.
+      (Acceptable aliases:  fast, fast-af, fast-as-fuck, easy, performance,
+      dangerous, dangerous-af, dangerous-as-fuck)
 
-      performance - Disables all hardening.
-
-      practical -  Alias for default.
-
-      secure - Alias for default.
-
-      secure-af - (Aka secure as fuck) turns on full hardening.  It increases
-      mitigation against theoretical attacks, difficult to achieve attacks,
-      data exfiltration.  The "see also" tunables below allow to apply
-      potentially problematic mitigations conditionally based on experiental
-      trial-and-error observations.  Idealistically, they should be ON by
-      default but are disabled by default due to compatibility issues.
+      secure-af - (aka secure as fuck) turns on full hardening.  It increases
+      mitigation against theoretical attacks, mitigation against difficult to
+      achieve attacks, mitigation against information disclosure.  The
+      "see also" tunables below allow to apply potentially problematic
+      mitigations conditionally based on experiental trial-and-error
+      observations.  Idealistically, they should be ON by default but are
+      disabled by default due to compatibility issues.
       The -af is intentional because it emphasizes extreme security measures.
+      (Acceptable aliases:  secure-af, secure-as-fuck, hard-af, epic-boss)
 
       unset - same as custom.
 
