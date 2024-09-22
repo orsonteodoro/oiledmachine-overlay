@@ -708,7 +708,10 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5."
 
 	if ! linux_chkconfig_present "SWAP" ; then
 # See https://github.com/facebookincubator/oomd/blob/v0.5.0/docs/production_setup.md#swap
+ewarn
 ewarn "CONFIG_SWAP is recommended with 4x the RAM or at least 32 GiB total memory.  Tested with 28 GiB Swap and 8 GiB ram for 62 days of uptime."
+ewarn "The CONFIG_SWAP=y recommendation does NOT apply to realtime, music production, or hardcore gameplay."
+ewarn
 	fi
 
 	check_extra_config
