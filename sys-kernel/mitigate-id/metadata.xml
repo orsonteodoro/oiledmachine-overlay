@@ -62,6 +62,9 @@
     <flag name="mlx5">
       Mitigate against information disclosure for the mlx5 driver.
     </flag>
+    <flag name="selinux">
+      Mitigate against information disclosure.
+    </flag>
     <flag name="video_cards_amdgpu">
       Mitigate against information disclosure.
     </flag>

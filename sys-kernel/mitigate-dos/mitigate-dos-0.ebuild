@@ -20,20 +20,23 @@ EOL_VERSIONS=(
 # For zero-tolerance mode
 MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52" "6.10.11" "6.11")
 
-MULTISLOT_KERNEL_DRIVER_APPARMOR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
+MULTISLOT_KERNEL_APPARMOR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_DRIVER_MLX5=("6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_DRIVER_DRM_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
 MULTISLOT_KERNEL_DRIVER_DRM_NOUVEAU=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_DRIVER_DRM_RADEON=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_DRIVER_DRM_VMWGFX=("6.6.49" "6.9" "6.10.8")
+MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
 
-CVE_MLX5="CVE-2024-45019"
+CVE_APPARMOR="CVE-2024-46721"
 CVE_DRM_AMDGPU="CVE-2024-46725"
 CVE_DRM_I915="CVE-2024-41092"
 CVE_DRM_NOUVEAU="CVE-2024-45012"
 CVE_DRM_RADEON="CVE-2024-41060"
 CVE_DRM_VMWGFX="CVE-2024-46709"
+CVE_MLX5="CVE-2024-45019"
+CVE_SELINUX="CVE-2022-48740"
 
 inherit mitigate-dos toolchain-funcs
 
@@ -60,6 +63,7 @@ ${VIDEO_CARDS[@]}
 apparmor
 max-uptime
 mlx5
+selinux
 "
 # CE - Code Execution
 # DoS - Denial of Service (CVSS A:H)
@@ -86,7 +90,9 @@ mlx5
 #
 # The latest to near past vulnerabilities are reported below.
 #
+# apparmor? https://nvd.nist.gov/vuln/detail/CVE-2024-46721 # DoS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
+# selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2023-52913 # DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
@@ -108,12 +114,17 @@ RDEPEND="
 	)
 	apparmor? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_APPARMOR[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_APPARMOR[@]})
 		)
 	)
 	mlx5? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_MLX5[@]})
+		)
+	)
+	selinux? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SELINUX[@]})
 		)
 	)
 	video_cards_amdgpu? (
@@ -210,10 +221,13 @@ check_drivers() {
 	# Check for USE=custom-kernels only which bypass RDEPEND
 	use custom-kernel || return
 	if use apparmor ; then
-		check_kernel_version "apparmor" "${CVE_MLX5}" ${MULTISLOT_KERNEL_DRIVER_MLX5[@]}
+		check_kernel_version "apparmor" "${CVE_APPARMOR}" ${MULTISLOT_KERNEL_APPARMOR[@]}
 	fi
 	if use mlx5 ; then
 		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_DRIVER_MLX5[@]}
+	fi
+	if use selinux ; then
+		check_kernel_version "selinux" "${CVE_SELINUX}" ${MULTISLOT_KERNEL_SELINUX[@]}
 	fi
 	if use video_cards_amdgpu ; then
 		check_kernel_version "amdgpu" "${CVE_DRM_AMDGPU}" ${MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU[@]}

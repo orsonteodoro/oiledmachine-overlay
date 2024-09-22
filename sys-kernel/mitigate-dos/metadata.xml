@@ -64,6 +64,9 @@
     <flag name="mlx5">
       Mitigate against Denial of Service in mlx5 kernel drivers.
     </flag>
+    <flag name="selinux">
+      Mitigate against Denial of Service
+    </flag>
     <flag name="video_cards_amdgpu">
       Mitigate against Denial of Service.
     </flag>
