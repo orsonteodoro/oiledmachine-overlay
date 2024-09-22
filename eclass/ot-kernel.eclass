@@ -6066,11 +6066,7 @@ eerror
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 					ot-kernel_unset_configopt "CONFIG_MITIGATION_CALL_DEPTH_TRACKING"
 					ot-kernel_unset_configopt "CONFIG_MITIGATION_IBRS_ENTRY"
-					if ot-kernel_has_version "sys-firmware/intel-microcode" ; then
-						ot-kernel_unset_configopt "CONFIG_CONFIG_MITIGATION_GDS_FORCE"
-					elif ot-kernel_use cpu_flags_x86_avx ; then
-						ot-kernel_y_configopt "CONFIG_CONFIG_MITIGATION_GDS_FORCE"
-					fi
+					ot-kernel_unset_configopt "CONFIG_MITIGATION_GDS_FORCE"
 				fi
 			fi
 		fi
@@ -6334,11 +6330,7 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 					ot-kernel_y_configopt "CONFIG_MITIGATION_CALL_DEPTH_TRACKING"
 					ot-kernel_y_configopt "CONFIG_MITIGATION_IBRS_ENTRY"
-					if ot-kernel_has_version "sys-firmware/intel-microcode" ; then
-						ot-kernel_unset_configopt "CONFIG_CONFIG_MITIGATION_GDS_FORCE"
-					elif ot-kernel_use cpu_flags_x86_avx ; then
-						ot-kernel_y_configopt "CONFIG_CONFIG_MITIGATION_GDS_FORCE"
-					fi
+					ot-kernel_unset_configopt "CONFIG_MITIGATION_GDS_FORCE"
 				fi
 			fi
 		fi
@@ -6558,11 +6550,7 @@ ewarn
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
-				if ot-kernel_has_version "sys-firmware/intel-microcode" ; then
-					ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
-				elif ot-kernel_use cpu_flags_x86_avx ; then
-					ot-kernel_y_configopt "CONFIG_GDS_FORCE_MITIGATION"
-				fi
+				ot-kernel_y_configopt "CONFIG_GDS_FORCE_MITIGATION"
 			fi
 			if [[ "${arch}" == "arm64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "kpti=1"
@@ -6750,11 +6738,7 @@ eerror
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 					ot-kernel_y_configopt "CONFIG_MITIGATION_CALL_DEPTH_TRACKING"
 					ot-kernel_y_configopt "CONFIG_MITIGATION_IBRS_ENTRY"
-					if ot-kernel_has_version "sys-firmware/intel-microcode" ; then
-						ot-kernel_unset_configopt "CONFIG_CONFIG_MITIGATION_GDS_FORCE"
-					elif ot-kernel_use cpu_flags_x86_avx ; then
-						ot-kernel_y_configopt "CONFIG_CONFIG_MITIGATION_GDS_FORCE"
-					fi
+					ot-kernel_unset_configopt "CONFIG_MITIGATION_GDS_FORCE"
 				fi
 			fi
 		fi
