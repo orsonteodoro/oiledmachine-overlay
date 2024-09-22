@@ -61,7 +61,7 @@ EAPI=8
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
-CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
+CHROMIUM_EBUILD_MAINTAINER=1 # See also GEN_ABOUT_CREDITS
 
 #
 # Set to 1 below to generate an about_credits.html including bundled internal
@@ -147,9 +147,9 @@ LLVM_OFFICIAL_SLOT="20" # Cr official slot
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
 MESA_PV="20.3.5"
-MITIGATION_DATE="Sep 9, 2024"
-MITIGATION_LAST_UPDATE=1725914340 # From `date +%s -d "2024-09-09 1:39 PM PDT"` from tag in GH
-MITIGATION_URI="https://chromereleases.googleblog.com/2024/09/stable-channel-update-for-desktop_10.html"
+MITIGATION_DATE="Sep 17, 2024"
+MITIGATION_LAST_UPDATE=1726513140 # From `date +%s -d "2024-09-16 11:59 AM PDT"` from tag in GH
+MITIGATION_URI="https://chromereleases.googleblog.com/2024/09/stable-channel-update-for-desktop_17.html"
 NABIS=0 # Global variable
 NODE_VERSION=20
 PGO_LLVM_SUPPORTED_VERSIONS=(
@@ -613,6 +613,7 @@ REQUIRED_USE+="
 	!async-dns? (
 		!official
 	)
+	screen-capture
 	websockets
 	!headless (
 		extensions
@@ -1724,7 +1725,7 @@ pkg_setup() {
 	# The emerge package system will over prune when it should not when it
 	# uses the mv merge technique with sandbox disabled.
 
-	local tc_count_expected=29403
+	local tc_count_expected=30487
 	local tc_count_actual=$(find "/usr/share/chromium/toolchain" -type f | wc -l)
 	if (( ${tc_count_actual} != ${tc_count_expected} )) ; then
 ewarn
@@ -2098,7 +2099,7 @@ apply_oiledmachine_overlay_patchset() {
 
 		if ! use screen-capture ; then
 			PATCHES+=(
-				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-screen-capture.patch"
+#				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-screen-capture.patch"
 			)
 		fi
 		if ! use partitionalloc ; then

@@ -26,6 +26,8 @@ MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.
 MULTISLOT_KERNEL_DRIVER_DRM_I915=("5.10.211" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
 MULTISLOT_KERNEL_DRIVER_DRM_NOUVEAU=("5.0.21" "5.4.284")
 MULTISLOT_KERNEL_DRIVER_DRM_VMWGFX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52")
+MULTISLOT_KERNEL_NETFILTER=("5.15" "6.1.107" "6.6.48" "6.10.7")
+MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" "6.6.29" "6.8.8")
 MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
 
 CVE_DRM_AMDGPU="CVE-2024-46725"
@@ -34,6 +36,8 @@ CVE_DRM_NOUVEAU="CVE-2023-0030"
 CVE_DRM_VMWGFX="CVE-2022-22942"
 CVE_IWLWIFI="CVE-2022-48787"
 CVE_MLX5="CVE-2022-48858"
+CVE_NETFILTER="CVE-2024-44983"
+CVE_NF_TABLES="CVE-2024-27020"
 CVE_SELINUX="CVE-2022-48740"
 
 inherit mitigate-id toolchain-funcs
@@ -64,6 +68,8 @@ IUSE="
 ${VIDEO_CARDS[@]}
 iwlwifi
 mlx5
+netfilter
+nftables
 selinux
 "
 # CE - Code Execution
@@ -79,8 +85,11 @@ selinux
 # Arbitrary code execution, CVSS 9.8 # DoS, DT, ID
 # Buffer overflow, CVSS 6.7 # DoS, DT, ID
 # Crash, CVSS 5.5 # DoS
+# Data race, CVSS 7.0 # DoS, DT, ID
 # Deadlock, CVSS 5.5 # DoS
 # Double free # CVSS 7.8 # DoS, DT, ID
+# Local privilege escalation, CVSS 7.8 # DoS, DT, ID
+# Memory leak, CVSS 5.5 # DoS
 # NULL pointer dereference, NPD, CVSS 5.5 # DoS
 # Out of bounds read, CVSS 7.1, # DoS, ID
 # Out of bounds write, CVSS 7.8, # DoS, ID, DT
@@ -93,6 +102,7 @@ selinux
 #
 # iwlwifi? https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2022-48858 # DoS, DT, ID
+# netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-44983 # DoS, ID
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
@@ -122,6 +132,16 @@ RDEPEND="
 	mlx5? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_MLX5[@]})
+		)
+	)
+	netfilter? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NETFILTER[@]})
+		)
+	)
+	nftables? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NF_TABLES[@]})
 		)
 	)
 	selinux? (
@@ -222,6 +242,12 @@ check_drivers() {
 	fi
 	if use mlx5 ; then
 		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_DRIVER_MLX5[@]}
+	fi
+	if use netfilter ; then
+		check_kernel_version "netfilter" "${CVE_NETFILTER}" ${MULTISLOT_KERNEL_NETFILTER[@]}
+	fi
+	if use nftables ; then
+		check_kernel_version "nftables" "${CVE_NF_TABLES}" ${MULTISLOT_KERNEL_NF_TABLES[@]}
 	fi
 	if use selinux ; then
 		check_kernel_version "selinux" "${CVE_SELINUX}" ${MULTISLOT_KERNEL_SELINUX[@]}

@@ -67,6 +67,12 @@
     <flag name="mlx5">
       Mitigate against Denial of Service.
     </flag>
+    <flag name="netfilter">
+      Mitigate against Denial of Service.
+    </flag>
+    <flag name="nf_tables">
+      Mitigate against Denial of Service.
+    </flag>
     <flag name="selinux">
       Mitigate against Denial of Service
     </flag>

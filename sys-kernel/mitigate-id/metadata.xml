@@ -60,7 +60,13 @@
       required if the firmware package doesn't apply to your model.)
     </flag>
     <flag name="mlx5">
-      Mitigate against information disclosure for the mlx5 driver.
+      Mitigate against information disclosure.
+    </flag>
+    <flag name="netfilter">
+      Mitigate against information disclosure.
+    </flag>
+    <flag name="nftables">
+      Mitigate against information disclosure.
     </flag>
     <flag name="selinux">
       Mitigate against information disclosure.
