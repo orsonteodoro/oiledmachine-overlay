@@ -441,8 +441,23 @@ eerror "gcc or clang only supported for max-uptime in kernel .config.  Skipping 
 		arch="s390"
 	elif grep -q -e "Linux/powerpc" "${path_config}" ; then
 		arch="powerpc"
+	elif grep -q -e "Linux/sparc" "${path_config}" ; then
+		arch="sparc"
+	elif grep -q -e "Linux/mips" "${path_config}" ; then
+		arch="mips"
+	elif grep -q -e "Linux/riscv" "${path_config}" ; then
+		arch="riscv"
+	elif grep -q -e "Linux/mips" "${path_config}" ; then
+		arch="mips"
+	elif grep -q -e "Linux/loongarch" "${path_config}" ; then
+		arch="loongarch"
+	elif grep -q -e "Linux/alpha" "${path_config}" ; then
+		arch="alpha"
+	elif grep -q -e "Linux/parisc" "${path_config}" ; then
+		arch="parisc" # HPPA
+	elif grep -q -e "Linux/ia64" "${path_config}" ; then
+		arch="ia64"
 	else
-# FIXME:
 eerror "USE=max-uptime not supported for ARCH=${ARCH}"
 		die
 	fi
