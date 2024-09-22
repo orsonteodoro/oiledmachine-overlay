@@ -192,9 +192,9 @@ check_kernel_version() {
 			done
 
 			if (( ${vulnerable} == 1 )) ; then
-ewarn "${cve}:  not mitigated, driver name - ${driver_name}, found version - ${found_version}"
+ewarn "${cve}:  not mitigated, component name - ${driver_name}, found version - ${found_version}"
 			else
-einfo "${cve}:  mitigated, driver name - ${driver_name}, found version - ${found_version}"
+einfo "${cve}:  mitigated, component name - ${driver_name}, found version - ${found_version}"
 			fi
 		done
 		KERNEL_DIR="${prev_kernel_dir}"
@@ -205,16 +205,16 @@ check_drivers() {
 	# Check for USE=custom-kernels only which bypass RDEPEND
 	use custom-kernel || return
 	if use mlx5 ; then
-		check_kernel_version "mlx5 network" "${CVE_MLX5}" ${MULTISLOT_KERNEL_DRIVER_MLX5[@]}
+		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_DRIVER_MLX5[@]}
 	fi
 	if use video_cards_amdgpu ; then
-		check_kernel_version "amdgpu video" "${CVE_DRM_AMDGPU}" ${MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU[@]}
+		check_kernel_version "amdgpu" "${CVE_DRM_AMDGPU}" ${MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU[@]}
 	fi
 	if use video_cards_intel ; then
-		check_kernel_version "i915 video" "${CVE_DRM_I915}" ${MULTISLOT_KERNEL_DRIVER_DRM_I915[@]}
+		check_kernel_version "i915" "${CVE_DRM_I915}" ${MULTISLOT_KERNEL_DRIVER_DRM_I915[@]}
 	fi
 	if use video_cards_vmware ; then
-		check_kernel_version "vmwgfx video" "${CVE_DRM_VMWGFX}" ${MULTISLOT_KERNEL_DRIVER_DRM_VMWGFX[@]}
+		check_kernel_version "vmwgfx" "${CVE_DRM_VMWGFX}" ${MULTISLOT_KERNEL_DRIVER_DRM_VMWGFX[@]}
 	fi
 }
 
