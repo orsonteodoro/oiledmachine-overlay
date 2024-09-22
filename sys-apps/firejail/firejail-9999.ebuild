@@ -3558,20 +3558,42 @@ eerror
 		die
 	fi
 
+	# Avoid broken resolution issue
+	local x11_fallbacks=(
+		"leafpad:xephyr"
+	)
+
+	local preferred_fallback=""
+	local x
+	for x in ${x11_fallbacks[@]} ; do
+		local left=${x%:*}
+		local right:${x#*:}
+		if [[ "${profile_name}" =~ "${left}" ]] ; then
+			preferred_fallback="${right}"
+			break
+		fi
+	done
+
 	if ! use X ; then
 		:
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("disable"|"none"|"unsandboxed"|"gaming-unsandboxed"|"opengl-unsandboxed") ]] ; then
 		:
-	elif [[ "${X_BACKEND[${profile_name}]}" == "xephyr" ]] ; then
-		x11_arg="--x11=xephyr"
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("gaming-sandboxed"|"opengl-sandboxed") ]] ; then
 		x11_arg="--x11=xpra"
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("xpra") ]] ; then
 		x11_arg="--x11=xpra"
+	elif [[ "${X_BACKEND[${profile_name}]}" == "xephyr" ]] ; then
+		x11_arg="--x11=xephyr"
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("/dev/null"|"headless"|"xvfb") ]] ; then
 		x11_arg="--x11=xvfb"
 	elif [[ "${X_BACKEND[${profile_name}]}" == "auto" ]] ; then
 		x11_arg="--x11"
+	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xephyr" ]] && use xephyr ; then
+		x11_arg="--x11=xephyr"
+	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xpra" ]] && use xpra ; then
+		x11_arg="--x11=xephyr"
+	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xvfb" ]] && use xvfb ; then
+		x11_arg="--x11=xvfb"
 	elif is_x11_compat "${profile_name}" && use xephyr ; then
 		x11_arg="--x11=xephyr"
 	elif is_x11_compat "${profile_name}" && use xpra ; then
