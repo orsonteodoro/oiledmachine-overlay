@@ -396,6 +396,7 @@ _set_kconfig_l1tf_mitigations() {
 # 1.  Less overheating
 # 2.  More CI testing for these defaults
 # 3.  Mitigations do contribute to reducing fatal crash
+# Tested with 62 days uptime with heavy compilation.
 _verify_max_uptime_kernel_config_for_one_kernel() {
 	local KV_MAJOR_MINOR="${1}"
 	# Resets back to upstream defaults.
@@ -705,6 +706,11 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5."
 	_check_n "KSM"
 	_check_n "UKSM"
 
+	if ! linux_chkconfig_present "SWAP" ; then
+# See https://github.com/facebookincubator/oomd/blob/v0.5.0/docs/production_setup.md#swap
+ewarn "CONFIG_SWAP is recommended with 4x the RAM or at least 32 GiB total memory.  Tested with 28 GiB Swap and 8 GiB ram for 62 days of uptime."
+	fi
+
 	check_extra_config
 }
 
@@ -727,14 +733,36 @@ einfo "Verifying max-uptime settings for ${pv_major}.${pv_minor}.${pv_patch}${pv
 	fi
 }
 
-verify_disable_ksm() {
+verify_disable_ksm_for_one_kernel() {
 	CONFIG_CHECK="
 		KSM
-		UKSM # Thrashy
+		UKSM
 	"
-	ERROR_KSM="CONFIG_KSM=n is required to mitigate from ASLR circumvention, Information Disclosure, Rowhammer (Elevated Priveleges, Data Tampering)"
-	ERROR_UKSM="CONFIG_UKSM=n is required to mitigate against Denial of Service (DoS)"
+	ERROR_KSM="CONFIG_KSM=n is required to mitigate from ASLR circumvention, information disclosure, Rowhammer (elevated privileges, data tampering)"
+	ERROR_UKSM="CONFIG_UKSM=n is required to mitigate against denial of service" # Thrashy
 	check_extra_config
+}
+
+verify_disable_ksm() {
+	if use zero-tolerance ; then
+		local ORIG_KERNEL_DIR="${KERNEL_DIR}"
+		local prev_kernel_dir="${KERNEL_DIR}"
+		local L=(
+			$(grep -l "EXTRAVERSION" $(ls "/usr/src/"*"/Makefile"))
+		)
+		local x
+		for x in ${L[@]} ; do
+			unset KV_FULL
+			local pv_major=$(grep "VERSION =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+			local pv_minor=$(grep "PATCHLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+			local pv_patch=$(grep "SUBLEVEL =" "${x}" | head -n 1 | grep -E -oe "[0-9]+")
+			local pv_extraversion=$(grep "EXTRAVERSION =" "${x}" | head -n 1 | cut -f 2 -d "=" | sed -E -e "s|[ ]+||g")
+einfo "Verifying max-uptime settings for ${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion}"
+			KERNEL_DIR=$(dirname "${x}")
+			verify_disable_ksm_for_one_kernel
+		done
+		KERNEL_DIR="${ORIG_KERNEL_DIR}"
+	fi
 }
 
 pkg_setup() {
@@ -742,7 +770,7 @@ pkg_setup() {
 ewarn "This ebuild is a Work In Progress (WIP)."
 	check_drivers
 	use max-uptime && verify_max_uptime_kernel_config
-	use zero-tolerance && verify_disable_ksm
+	verify_disable_ksm
 }
 
 # Unconditionally check
