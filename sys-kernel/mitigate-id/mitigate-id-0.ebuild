@@ -20,6 +20,7 @@ EOL_VERSIONS=(
 # For zero-tolerance mode
 MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52" "6.10.11" "6.11")
 
+MULTISLOT_KERNEL_DRIVER_IWLWIFI=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
 MULTISLOT_KERNEL_DRIVER_MLX5=("5.4.185" "5.10.106" "5.15.29" "5.16.15")
 MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_DRIVER_DRM_I915=("5.10.211" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
@@ -31,6 +32,7 @@ CVE_DRM_AMDGPU="CVE-2024-46725"
 CVE_DRM_I915="CVE-2024-41092"
 CVE_DRM_NOUVEAU="CVE-2023-0030"
 CVE_DRM_VMWGFX="CVE-2022-22942"
+CVE_IWLWIFI="CVE-2022-48787"
 CVE_MLX5="CVE-2022-48858"
 CVE_SELINUX="CVE-2022-48740"
 
@@ -60,6 +62,7 @@ VIDEO_CARDS=(
 )
 IUSE="
 ${VIDEO_CARDS[@]}
+iwlwifi
 mlx5
 selinux
 "
@@ -88,6 +91,7 @@ selinux
 #
 # The latest to near past vulnerabilities are reported below.
 #
+# iwlwifi? https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2022-48858 # DoS, DT, ID
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
@@ -213,6 +217,9 @@ einfo "${cve}:  mitigated, component name - ${driver_name}, found version - ${fo
 check_drivers() {
 	# Check for USE=custom-kernels only which bypass RDEPEND
 	use custom-kernel || return
+	if use iwlwifi ; then
+		check_kernel_version "iwlwifi" "${CVE_IWLWIFI}" ${MULTISLOT_KERNEL_DRIVER_IWLWIFI[@]}
+	fi
 	if use mlx5 ; then
 		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_DRIVER_MLX5[@]}
 	fi

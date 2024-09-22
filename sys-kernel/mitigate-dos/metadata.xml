@@ -61,8 +61,11 @@
       Verifies defaults for security and compiler settings in order mitigate
       against deadlock or hard reset.
     </flag>
+    <flag name="iwlwifi">
+      Mitigate against Denial of Service.
+    </flag>
     <flag name="mlx5">
-      Mitigate against Denial of Service in mlx5 kernel drivers.
+      Mitigate against Denial of Service.
     </flag>
     <flag name="selinux">
       Mitigate against Denial of Service
