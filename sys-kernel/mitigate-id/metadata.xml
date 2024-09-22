@@ -78,5 +78,11 @@
     <flag name="video_cards_vmware">
       Mitigate against information disclosure.
     </flag>
+    <flag name="zero-tolerance">
+      Bump to the latest patched kernel point releases when the changelog
+      indicated fixed information disclosure (ID) class of vulnerabilities.
+      This will increase the coverage of DoS mitigation for the installed
+      kernels significantly because the USE flag coverage is incomplete.
+    </flag>
   </use>
 </pkgmetadata>

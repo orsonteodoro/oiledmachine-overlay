@@ -17,6 +17,9 @@ EOL_VERSIONS=(
 	"6.0" "6.2" "6.3" "6.4" "6.5" "6.7" "6.8" "6.9"
 )
 
+# For zero-tolerance mode
+MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52" "6.10.11" "6.11")
+
 MULTISLOT_KERNEL_DRIVER_MLX5=("5.4.185" "5.10.106" "5.15.29" "5.16.15")
 MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_DRIVER_DRM_I915=("5.10.211" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
@@ -72,7 +75,7 @@ mlx5
 # Crash, CVSS 5.5 # DoS
 # Deadlock, CVSS 5.5 # DoS
 # Double free # CVSS 7.8 # DoS, DT, ID
-# NULL pointer dereference, CVSS 5.5 # DoS
+# NULL pointer dereference, NPD, CVSS 5.5 # DoS
 # Out of bounds read, CVSS 7.1, # DoS, ID
 # Out of bounds write, CVSS 7.8, # DoS, ID, DT
 # Race condition, CVSS 4.7 # DoS
@@ -103,6 +106,11 @@ mlx5
 #
 RDEPEND="
 	${MITIGATE_ID_RDEPEND}
+	!custom-kernel? (
+		zero-tolerance? (
+			$(gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
+		)
+	)
 	mlx5? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_MLX5[@]})
