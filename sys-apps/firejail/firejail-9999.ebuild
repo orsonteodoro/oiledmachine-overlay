@@ -3629,7 +3629,7 @@ eerror
 
 	local force_system_allocator=0
 
-	if "${_PROFILE_GRAPH[${profile_name}]}" =~ "electron-common" ]] ; then
+	if [[ "${_PROFILE_GRAPH[${profile_name}]}" =~ "electron-common" ]] ; then
 		force_system_allocator=1
 	fi
 
