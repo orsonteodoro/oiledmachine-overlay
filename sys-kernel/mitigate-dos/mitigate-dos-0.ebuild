@@ -399,7 +399,8 @@ _set_kconfig_l1tf_mitigations() {
 # Tested with 62 days uptime with heavy compilation.
 _verify_max_uptime_kernel_config_for_one_kernel() {
 	local KV_MAJOR_MINOR="${1}"
-	# Resets back to upstream defaults.
+
+	# This function resets the .config back to upstream defaults.
 
 	local path_config="${KERNEL_DIR}/.config"
 	if ! [[ -f "${path_config}" ]] ; then
@@ -426,6 +427,8 @@ eerror "gcc or clang only supported for max-uptime in kernel .config.  Skipping 
 
 	CONFIG_CHECK="
 	"
+
+	_check_n "CFI_CLANG"
 
 	local firmware_vendor="${FIRMWARE_VENDOR,,}"
 	if [[ -z "${firmware_vendor}" ]] ; then
