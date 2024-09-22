@@ -3560,7 +3560,7 @@ eerror
 
 	# Avoid broken resolution issue
 	local x11_fallbacks=(
-		"leafpad:xephyr"
+		"leafpad:xpra"
 	)
 
 	local preferred_fallback=""
