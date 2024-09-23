@@ -3532,8 +3532,9 @@ get_llvm_arch() {
 _gen_one_wrapper() {
 	local raw_profile_name="${1}"
 	local profile_name="${1}"
-	local exe_path="${2}"
-einfo "Generating wrapper for ${profile_name}"
+	local wrapper_name="${2}"
+	local exe_path="${3}"
+einfo "Generating wrapper for ${wrapper_name}"
 	if [[ "${profile_name:0:1}" =~ ^[0-9] ]] ; then
 # You cannot use a number as the prefix to associative array.
 		profile_name="_${1}"
@@ -3834,7 +3835,7 @@ eerror
 	fi
 
 	if is_allowed_wrapper "${profile_name}" ; then
-cat <<EOF > "${ED}/usr/local/bin/${exe_name}" || die
+cat <<EOF > "${ED}/usr/local/bin/${wrapper_name}" || die
 #!/bin/bash
 if [[ -n "\${DISPLAY}" ]] ; then
 	exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} ${extra_args} "${exe_path}" "\$@"
@@ -3866,10 +3867,10 @@ gen_wrapper() {
 
 	if [[ "${u}" == "firefox" ]] ; then
 		if has_version "www-client/firefox" ; then
-			_gen_one_wrapper "${u}" "${exe_path}"
+			_gen_one_wrapper "${u}" "firefox" "${exe_path}"
 		fi
 		if has_version "www-client/firefox-bin" ; then
-			_gen_one_wrapper "${u}" "/usr/bin/firefox-bin"
+			_gen_one_wrapper "${u}" "firefox-bin" "/usr/bin/firefox-bin"
 		fi
 	elif [[ "${u}" == "x-terminal-emulator" ]] ; then
 		local terms=(
@@ -3910,11 +3911,11 @@ gen_wrapper() {
 				exe_path="/usr/bin/${exe_name}"
 			fi
 			if [[ -e "${exe_path}" ]] ; then
-				_gen_one_wrapper "${u}" "${exe_path}"
+				_gen_one_wrapper "${u}" "${exe_name}" "${exe_path}"
 			fi
 		done
 	elif [[ -e "${exe_path}" ]] ; then
-		_gen_one_wrapper "${u}" "${exe_path}"
+		_gen_one_wrapper "${u}" "${u}" "${exe_path}"
 	fi
 }
 
