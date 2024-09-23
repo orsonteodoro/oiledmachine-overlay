@@ -3611,12 +3611,23 @@ eerror
 		fi
 	done
 
-
+	is_xpra_only() {
+		local arg="${1}"
+		local y
+		for y in ${X_XPRA_ONLY[@]} ; do
+			if [[ "${arg}" == "${y}" ]] ; then
+				return 0
+			fi
+		done
+		return 1
+	}
 
 	if ! use X ; then
 		:
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("disable"|"none"|"unsandboxed"|"gaming-unsandboxed"|"opengl-unsandboxed") ]] ; then
 		:
+	elif is_xpra_only "${profile_name}" ; then
+		x11_arg="--x11=xpra"
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("gaming-sandboxed"|"opengl-sandboxed") ]] ; then
 		x11_arg="--x11=xpra"
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("xpra") ]] ; then
