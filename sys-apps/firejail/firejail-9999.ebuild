@@ -3560,6 +3560,7 @@ eerror
 	# Avoid broken resolution issue
 	local x11_fallbacks=(
 		"leafpad:xpra"
+		"x-terminal-emulator:xpra"
 	)
 
 	local preferred_fallback=""
@@ -3587,16 +3588,16 @@ eerror
 		x11_arg="--x11=xvfb"
 	elif [[ "${X_BACKEND[${profile_name}]}" == "auto" ]] ; then
 		x11_arg="--x11"
-	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xephyr" ]] && use xephyr ; then
-		x11_arg="--x11=xephyr"
 	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xpra" ]] && use xpra ; then
+		x11_arg="--x11=xephyr"
+	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xephyr" ]] && use xephyr ; then
 		x11_arg="--x11=xephyr"
 	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xvfb" ]] && use xvfb ; then
 		x11_arg="--x11=xvfb"
-	elif is_x11_compat "${profile_name}" && use xephyr ; then
-		x11_arg="--x11=xephyr"
 	elif is_x11_compat "${profile_name}" && use xpra ; then
 		x11_arg="--x11=xpra"
+	elif is_x11_compat "${profile_name}" && use xephyr ; then
+		x11_arg="--x11=xephyr"
 	# For --x11=org, see issue 1741 in firejail repo
 	fi
 
