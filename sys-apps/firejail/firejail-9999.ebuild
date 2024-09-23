@@ -2617,6 +2617,7 @@ einfo
 	)
 
 	local X_BLACKLIST=(
+	# False positives for X support.
 		"gjs"
 	)
 
