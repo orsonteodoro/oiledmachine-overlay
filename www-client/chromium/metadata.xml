@@ -197,6 +197,12 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Note:  May be set to 1 if disinterested in AI/ML.
 
 
+      THINLTO_OPT - Add aggressive ThinLTO optimizations
+      Valid values:
+      1 - explicitly optimize
+      0 - linker defaults
+      unset - explicitly optimize if USE=official
+
 
     References:
       lto-O2 is too large - https://github.com/chromium/chromium/commit/da072d13b2a1cc8459c29aa4e52584a4491a4ad6

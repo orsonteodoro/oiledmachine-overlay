@@ -498,7 +498,7 @@ proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 -system-freetype -system-harfbuzz -system-icu -system-libaom -system-libdrm
 -system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
 -system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
--system-zlib +system-zstd systemd +thinlto-opt +vaapi +wayland +webassembly
+-system-zlib +system-zstd systemd +vaapi +wayland +webassembly
 -widevine +X
 ebuild-revision-1
 "
@@ -713,7 +713,6 @@ REQUIRED_USE+="
 		screencast
 		screen-capture
 		spelling-service
-		thinlto-opt
 		vaapi
 		vaapi-hevc
 		vorbis
@@ -1106,9 +1105,6 @@ CLANG_BDEPEND="
 		$(gen_depend_llvm)
 	)
 	pgo? (
-		$(gen_depend_llvm)
-	)
-	thinlto-opt? (
 		$(gen_depend_llvm)
 	)
 "
@@ -1546,7 +1542,6 @@ print_use_flags_using_clang() {
 		"cfi"
 		"official"
 		"pgo"
-		"thinlto-opt"
 	)
 
 	local u
@@ -1564,7 +1559,6 @@ is_using_clang() {
 		"cfi"
 		"official"
 		"pgo"
-		"thinlto-opt"
 	)
 
 	local u
@@ -2857,13 +2851,6 @@ einfo "Using the system toolchain"
 	# Handled by build scripts
 	filter-flags '-fuse-ld=*'
 
-	if ! tc-is-clang && use thinlto-opt ; then
-eerror
-eerror "The thinlto-opt USE flag needs CC=${CHOST}-clang CXX=${CHOST}-clang++."
-eerror
-		die
-	fi
-
 	if tc-is-clang ; then
 	# https://bugs.gentoo.org/918897#c32
 		append-ldflags -Wl,--undefined-version
@@ -3830,7 +3817,6 @@ ewarn "Disabling LTO for older machines."
 		filter-flags '-flto*'
 		use cfi         && fatal_message_lto_banned "cfi"
 		use official    && fatal_message_lto_banned "official"
-		use thinlto-opt && fatal_message_lto_banned "thinlto-opt"
 	fi
 
 	if ! use mold && is-flagq '-fuse-ld=mold' && has_version "sys-devel/mold" ; then
@@ -3870,13 +3856,16 @@ einfo "Using ThinLTO"
 		filter-flags '-flto*'
 		filter-flags '-fuse-ld=*'
 		filter-flags '-Wl,--lto-O*'
-		use thinlto-opt && myconf_gn+=" thin_lto_enable_optimizations=true"
+		if [[ "${THINLTO_OPT:-1}" == "1" ]] ; then
+			myconf_gn+=" thin_lto_enable_optimizations=true"
+		fi
 		use_thinlto=1
 	else
 	# gcc will never use ThinLTO.
 	# gcc doesn't like -fsplit-lto-unit and -fwhole-program-vtables
 	# We want the faster LLD but without LTO.
-		myconf_gn+=" use_thin_lto=false "
+		myconf_gn+=" thin_lto_enable_optimizations=false"
+		myconf_gn+=" use_thin_lto=false"
 	fi
 
 	# See https://github.com/rui314/mold/issues/336
@@ -4145,7 +4134,6 @@ einfo
 			|| use cfi \
 			|| use official \
 			|| use pgo \
-			|| use thinlto-opt \
 		) \
 			&& \
 		[[ "${FEATURES}" =~ "icecream" ]] \
@@ -4157,7 +4145,7 @@ eerror
 eerror "Solutions"
 eerror
 eerror "1.  Replace this package with www-client/google-chrome."
-eerror "2.  Disable bundled-libcxx, cfi, official, pgo, thinlto-opt USE flags."
+eerror "2.  Disable bundled-libcxx, cfi, official, pgo USE flags."
 eerror "3.  Disable icecream in FEATURES."
 eerror
 		die
