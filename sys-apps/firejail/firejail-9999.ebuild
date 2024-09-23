@@ -3566,7 +3566,7 @@ eerror
 	local x
 	for x in ${x11_fallbacks[@]} ; do
 		local left=${x%:*}
-		local right:${x#*:}
+		local right=${x#*:}
 		if [[ "${profile_name}" =~ "${left}" ]] ; then
 			preferred_fallback="${right}"
 			break
