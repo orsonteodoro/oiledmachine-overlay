@@ -125,8 +125,8 @@
     changes to PATH.
 
     nonroot - add conflicting wrappers to /usr/local/nonroot-bin so that the
-    user can add PATH="/usr/local/nonroot-bin:${PATH}" to ~/.bashrc for full
-    sandbox coverage.
+    non-root user can add PATH="/usr/local/nonroot-bin:${PATH}" to ~/.bashrc
+    for full sandbox coverage.
 
     ban - do not generate wrapper (Aliases:  blacklist, blacklisted)
 
@@ -136,6 +136,8 @@
       and adding it in global scope would break emerge.
     * Non conflicting means that the build system or root never uses that
       command.
+    * The SCOPE[PROFILE_NAME] can override the ebuild defaults for ebuilds that
+      use commands that should be in the conflicting set.
 
 
     SCUDO_FREE_IMMEDIATE[PROFILE_NAME] - Free the keys in the heap immediately.
