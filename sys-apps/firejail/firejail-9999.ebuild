@@ -1115,13 +1115,13 @@ firejail_profiles_ferdi? ( || ( xephyr xpra ) )
 firejail_profiles_ffmpeg? ( || ( xephyr xpra ) )
 firejail_profiles_file-roller? ( || ( xephyr xpra ) )
 firejail_profiles_firedragon? ( || ( xephyr xpra ) )
-firejail_profiles_firefox? ( || ( xephyr xpra ) )
-firejail_profiles_firefox-beta? ( || ( xephyr xpra ) )
-firejail_profiles_firefox-developer-edition? ( || ( xephyr xpra ) )
-firejail_profiles_firefox-esr? ( || ( xephyr xpra ) )
-firejail_profiles_firefox-nightly? ( || ( xephyr xpra ) )
-firejail_profiles_firefox-wayland? ( || ( xephyr xpra ) )
-firejail_profiles_firefox-x11? ( || ( xephyr xpra ) )
+firejail_profiles_firefox? ( || ( xpra ) )
+firejail_profiles_firefox-beta? ( || ( xpra ) )
+firejail_profiles_firefox-developer-edition? ( || ( xpra ) )
+firejail_profiles_firefox-esr? ( || ( xpra ) )
+firejail_profiles_firefox-nightly? ( || ( xpra ) )
+firejail_profiles_firefox-wayland? ( || ( xpra ) )
+firejail_profiles_firefox-x11? ( || ( xpra ) )
 firejail_profiles_five-or-more? ( || ( xephyr xpra ) )
 firejail_profiles_flameshot? ( || ( xephyr xpra ) )
 firejail_profiles_flashpeak-slimjet? ( || ( xephyr xpra ) )
@@ -2519,96 +2519,119 @@ einfo "Place the following in the X11_COMPAT array:"
 einfo
 	local CURSES_COMPAT=(
 # This list are apps that may run in the console but are organized like a GUI.
-		weechat
-		weechat-curses
+		"weechat"
+		"weechat-curses"
 	)
 	local X_APPS_MISSING_REQUIRED_USE=(
-		amarok
-		amule
-		bluefish
-		brave
-		brave-browser
-		brasero
-		calligraauthor
-		calligraconverter
-		calligraflow
-		calligragemini
-		calligraplan
-		calligraplanwork
-		calligrasheets
-		calligrastage
-		calligrawords
-		chromium
-		cinelerra
-		clementine
-		dillo
-		ferdi
-		firefox
-		freecad
-		geany
-		geeqie
-		gitter
-		epiphany
-		evince
-		evince-previewer
-		evince-thumbnailer
-		godot3
-		google-chrome
-		eog
-		google-earth
-		google-earth-pro
-		gramps
-		hexchat
-		hugin
-		kodi
-		leafpad
-		mousepad
-		mumble
-		nautilus
-		netsurf
-		obs
-		pcmanfm
-		pidgin
-		pinta
-		pitivi
-		qbittorrent
-		rawtherapee
-		ripperx
-		ristretto
-		qupzilla
-		seamonkey-bin
-		shotcut
-		spotify
-		surf
-		synfigstudio
-		teamspeak3
-		telegram-desktop
-		thunar
-		thunderbird
-		uzbl-browser
-		vivaldi
-		vmware-player
-		vscodium
-		x-terminal-emulator
-		xchat
-		xfburn
-		xmms
-		waterfox
-		wireshark
-		wireshark-gtk
-		wireshark-qt
-		xpdf
+		"amarok"
+		"amule"
+		"bluefish"
+		"brave"
+		"brave-browser"
+		"brasero"
+		"calligraauthor"
+		"calligraconverter"
+		"calligraflow"
+		"calligragemini"
+		"calligraplan"
+		"calligraplanwork"
+		"calligrasheets"
+		"calligrastage"
+		"calligrawords"
+		"chromium"
+		"cinelerra"
+		"clementine"
+		"dillo"
+		"ferdi"
+		"firefox"
+		"freecad"
+		"geany"
+		"geeqie"
+		"gitter"
+		"epiphany"
+		"evince"
+		"evince-previewer"
+		"evince-thumbnailer"
+		"godot3"
+		"google-chrome"
+		"eog"
+		"google-earth"
+		"google-earth-pro"
+		"gramps"
+		"hexchat"
+		"hugin"
+		"kodi"
+		"leafpad"
+		"mousepad"
+		"mumble"
+		"nautilus"
+		"netsurf"
+		"obs"
+		"pcmanfm"
+		"pidgin"
+		"pinta"
+		"pitivi"
+		"qbittorrent"
+		"rawtherapee"
+		"ripperx"
+		"ristretto"
+		"qupzilla"
+		"seamonkey-bin"
+		"shotcut"
+		"spotify"
+		"surf"
+		"synfigstudio"
+		"teamspeak3"
+		"telegram-desktop"
+		"thunar"
+		"thunderbird"
+		"uzbl-browser"
+		"vivaldi"
+		"vmware-player"
+		"vscodium"
+		"x-terminal-emulator"
+		"xchat"
+		"xfburn"
+		"xmms"
+		"waterfox"
+		"wireshark"
+		"wireshark-gtk"
+		"wireshark-qt"
+		"xpdf"
 	# If it is uppercase, it is assumed is is a win port of that app.
 	)
 	local X_HEADLESS_COMPAT=(
-# These are x11 sandboxed apps that could be headless and may use xvfb.
-		vmware
+	# These are x11 sandboxed apps that could be headless and may use xvfb.
+		"vmware"
+	)
+
+	local X_XPRA_ONLY=(
+	# Ban those that perform unexpected behavior like eager window close
+	# with xephyr.
+		"firefox"
+		"firefox-beta"
+		"firefox-developer-edition"
+		"firefox-esr"
+		"firefox-nightly"
+		"firefox-wayland"
+		"firefox-x11"
 	)
 
 	is_x_headless_compat() {
 		local arg="${1}"
 		local y
 		for y in ${X_HEADLESS_COMPAT[@]} ; do
+			if [[ "${arg}" == "${y}" ]] ; then
+				return 0
+			fi
+		done
+		return 1
+	}
+
+	is_xpra_only() {
+		local arg="${1}"
+		local y
+		for y in ${X_XPRA_ONLY[@]} ; do
 			if [[ "${arg}" == "${y}" ]] ; then
 				return 0
 			fi
@@ -2645,7 +2668,9 @@ einfo
 		| sed -e "s| $||g" \
 		| sed -e "s|\.|_|g")
 	for x in ${L[@]} ; do
-		if is_x_headless_compat "${x}" ; then
+		if is_x_headless_compat "${x}" && is_xpra_only "${x}" ; then
+echo "firejail_profiles_${x}? ( || ( xpra ) )"
+		elif is_x_headless_compat "${x}" ; then
 echo "firejail_profiles_${x}? ( || ( xephyr xpra xvfb ) )"
 		else
 echo "firejail_profiles_${x}? ( || ( xephyr xpra ) )"
@@ -3558,14 +3583,26 @@ eerror
 	fi
 
 	# Avoid broken resolution issue
-	local x11_fallbacks=(
+	local X_FALLBACKS=(
 		"leafpad:xpra"
 		"x-terminal-emulator:xpra"
 	)
 
+	local X_XPRA_ONLY=(
+	# Ban those that perform unexpected behavior like eager window close
+	# with xephyr.
+		"firefox"
+		"firefox-beta"
+		"firefox-developer-edition"
+		"firefox-esr"
+		"firefox-nightly"
+		"firefox-wayland"
+		"firefox-x11"
+	)
+
 	local preferred_fallback=""
 	local x
-	for x in ${x11_fallbacks[@]} ; do
+	for x in ${X_FALLBACKS[@]} ; do
 		local fallback_profile=${x%:*}
 		local x_backend=${x#*:}
 		if [[ "${profile_name}" =~ "${fallback_profile}" ]] ; then
@@ -3573,6 +3610,8 @@ eerror
 			break
 		fi
 	done
+
+
 
 	if ! use X ; then
 		:
@@ -3785,13 +3824,18 @@ eerror
 		profile_arg="--noprofile"
 	fi
 
+	local extra_args=()
+	if [[ "${profile_name}" == "pavucontrol" ]] ; then
+		extra_args+=( --keep-config-pulse )
+	fi
+
 	if is_allowed_wrapper "${profile_name}" ; then
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}" || die
 #!/bin/bash
 if [[ -n "\${DISPLAY}" ]] ; then
-	exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "${exe_path}" "\$@"
+	exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} ${extra_args} "${exe_path}" "\$@"
 else
-	exec firejail ${apparmor_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "${exe_path}" "\$@"
+	exec firejail ${apparmor_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} ${extra_args} "${exe_path}" "\$@"
 fi
 EOF
 		fowners "root:root" "/usr/local/bin/${exe_name}"
