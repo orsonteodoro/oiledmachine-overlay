@@ -2388,7 +2388,6 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-profile-fixes.patch"
 	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix wrappers and mpv
-	"${FILESDIR}/extra-patches/${PN}-1b2d18e-xephyr-first.patch" # Faster scrolling first
 )
 
 get_impls() {
