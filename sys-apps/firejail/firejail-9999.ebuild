@@ -3566,10 +3566,10 @@ eerror
 	local preferred_fallback=""
 	local x
 	for x in ${x11_fallbacks[@]} ; do
-		local left=${x%:*}
-		local right=${x#*:}
-		if [[ "${profile_name}" =~ "${left}" ]] ; then
-			preferred_fallback="${right}"
+		local fallback_profile=${x%:*}
+		local x_backend=${x#*:}
+		if [[ "${profile_name}" =~ "${fallback_profile}" ]] ; then
+			preferred_fallback="${x_backend}"
 			break
 		fi
 	done
@@ -3589,7 +3589,7 @@ eerror
 	elif [[ "${X_BACKEND[${profile_name}]}" == "auto" ]] ; then
 		x11_arg="--x11"
 	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xpra" ]] && use xpra ; then
-		x11_arg="--x11=xephyr"
+		x11_arg="--x11=xpra"
 	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xephyr" ]] && use xephyr ; then
 		x11_arg="--x11=xephyr"
 	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xvfb" ]] && use xvfb ; then
