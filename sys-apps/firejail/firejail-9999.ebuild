@@ -3803,9 +3803,9 @@ einfo "Generating wrapper for firefox-bin"
 cat <<EOF > "${ED}/usr/local/bin/${exe_name}-bin" || die
 #!/bin/bash
 if [[ -n "\${DISPLAY}" ]] ; then
-	exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "/usr/bin/${exe_name}-bin" "\$@"
+	exec firejail ${apparmor_arg} ${x11_arg} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "/usr/bin/${exe_name}-bin" "\$@"
 else
-	exec firejail ${apparmor_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "/usr/bin/${exe_name}-bin" "\$@"
+	exec firejail ${apparmor_arg} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "/usr/bin/${exe_name}-bin" "\$@"
 fi
 EOF
 		fowners "root:root" "/usr/local/bin/${exe_name}-bin"
