@@ -3843,8 +3843,8 @@ else
 	exec firejail ${apparmor_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} ${extra_args} "${exe_path}" "\$@"
 fi
 EOF
-		fowners "root:root" "/usr/local/bin/${exe_name}"
-		fperms 0755 "/usr/local/bin/${exe_name}"
+		fowners "root:root" "/usr/local/bin/${wrapper_name}"
+		fperms 0755 "/usr/local/bin/${wrapper_name}"
 	fi
 }
 
