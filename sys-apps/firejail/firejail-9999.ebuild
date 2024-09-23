@@ -4189,9 +4189,15 @@ einfo "  firejail_profiles_firefox-common? ( firejail_profiles_firefox-common-ad
 einfo "  firejail_profiles_rtv? ( firejail_profiles_rtv-addons )"
 einfo
 	if ! use firejail_profiles_server ; then
-ewarn "Disabling firejail_profiles_server disables default sandboxing for the root user"
+ewarn
+ewarn "Disabling firejail_profiles_server disables default sandboxing for the"
+ewarn "root user"
+ewarn
 	fi
-ewarn "You need to manually add PATH=\"/usr/local/firejail-bin:\${PATH}\" to non-root ~/.bashrc to increase firejail sandbox coverage."
+ewarn
+ewarn "You need to manually add PATH=\"/usr/local/firejail-bin:\${PATH}\" to"
+ewarn "non-root ~/.bashrc to the increase firejail sandbox coverage."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
