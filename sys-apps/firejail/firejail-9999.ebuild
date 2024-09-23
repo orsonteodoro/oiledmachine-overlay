@@ -3529,10 +3529,10 @@ get_llvm_arch() {
 	fi
 }
 
-gen_wrapper() {
+_gen_one_wrapper() {
 	local raw_profile_name="${1}"
 	local profile_name="${1}"
-	local exe_name="${1}"
+	local exe_path="${2}"
 einfo "Generating wrapper for ${profile_name}"
 	if [[ "${profile_name:0:1}" =~ ^[0-9] ]] ; then
 # You cannot use a number as the prefix to associative array.
@@ -3703,13 +3703,15 @@ eerror
 
 	if [[ "${_PROFILE_GRAPH[${profile_name}]}" =~ "electron-common" ]] ; then
 		force_system_allocator=1
+	elif [[ "${exe_path}" =~ "firefox-bin" ]] ; then
+		force_system_allocator=1
 	fi
 
 	local x
 	for x in ${PROFILE_NEEDS_SYSTEM_ALLOCATOR[@]} ; do
 		if [[ "${profile_name}" == "firefox" ]] && has_version "www-client/firefox" && ! has_version "www-client/firefox[jemalloc]" ; then
 			:
-		elif [[ "${profile_name}" == "firefox" ]] && has_version "www-client/chromium" && ! has_version "www-client/chromium[partitionalloc]" ; then
+		elif [[ "${profile_name}" == "chromium" ]] && has_version "www-client/chromium" && ! has_version "www-client/chromium[partitionalloc]" ; then
 			:
 		elif [[ "${profile_name}" == "${x}" ]] ; then
 			force_system_allocator=1
@@ -3779,15 +3781,6 @@ eerror
 		wh_arg="--xephyr-screen=${XEPHYR_WH[${profile_name}]}"
 	fi
 
-	local exe_path=""
-	if [[ -n "${PATH_CORRECTION[${profile_name}]}" ]] ; then
-		exe_path="${PATH_CORRECTION[${profile_name}]}"
-	elif [[ -n "${_PATH_CORRECTION[${profile_name}]}" ]] ; then
-		exe_path="${_PATH_CORRECTION[${profile_name}]}"
-	else
-		exe_path="/usr/bin/${exe_name}"
-	fi
-
 	local apparmor_arg=""
 	if [[ "${APPARMOR_PROFILE[${profile_name}]}" == "default" ]] ; then
 		apparmor_arg="--apparmor"
@@ -3852,19 +3845,27 @@ EOF
 		fowners "root:root" "/usr/local/bin/${exe_name}"
 		fperms 0755 "/usr/local/bin/${exe_name}"
 	fi
+}
 
-	if [[ "${u}" == "firefox" && -e "/usr/bin/firefox-bin" ]] ; then
-einfo "Generating wrapper for firefox-bin"
-cat <<EOF > "${ED}/usr/local/bin/${exe_name}-bin" || die
-#!/bin/bash
-if [[ -n "\${DISPLAY}" ]] ; then
-	exec firejail ${apparmor_arg} ${x11_arg} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "/usr/bin/${exe_name}-bin" "\$@"
-else
-	exec firejail ${apparmor_arg} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "/usr/bin/${exe_name}-bin" "\$@"
-fi
-EOF
-		fowners "root:root" "/usr/local/bin/${exe_name}-bin"
-		fperms 0755 "/usr/local/bin/${exe_name}-bin"
+gen_wrapper() {
+	local u="${1}"
+
+	local exe_path=""
+	if [[ -n "${PATH_CORRECTION[${profile_name}]}" ]] ; then
+		exe_path="${PATH_CORRECTION[${profile_name}]}"
+	elif [[ -n "${_PATH_CORRECTION[${profile_name}]}" ]] ; then
+		exe_path="${_PATH_CORRECTION[${profile_name}]}"
+	else
+		exe_path="/usr/bin/${exe_name}"
+	fi
+
+	if [[ "${u}" == "firefox" ]] ; then
+		if has_version "www-client/firefox" ; then
+			_gen_one_wrapper "${u}" "${exe_path}"
+		fi
+		if has_version "www-client/firefox-bin" ; then
+			_gen_one_wrapper "${u}" "/usr/bin/firefox-bin"
+		fi
 	elif [[ "${u}" == "x-terminal-emulator" ]] ; then
 		local terms=(
 			alacritty
@@ -3903,20 +3904,12 @@ EOF
 			elif [[ -e "/usr/bin/${exe_name}" ]] ; then
 				exe_path="/usr/bin/${exe_name}"
 			fi
-			if [[ -e "${exe_path}" && -n "${exe_name}" ]] ; then
-einfo "Generating wrapper for ${exe_name}"
-cat <<EOF > "${ED}/usr/local/bin/${exe_name}" || die
-#!/bin/bash
-if [[ -n "\${DISPLAY}" ]] ; then
-	exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "${exe_path}" "\$@"
-else
-	exec firejail ${apparmor_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} "${exe_path}" "\$@"
-fi
-EOF
-				fowners "root:root" "/usr/local/bin/${exe_name}"
-				fperms 0755 "/usr/local/bin/${exe_name}"
+			if [[ -e "${exe_path}" ]] ; then
+				_gen_one_wrapper "${u}" "${exe_path}"
 			fi
 		done
+	elif [[ -e "${exe_path}" ]] ; then
+		_gen_one_wrapper "${u}" "${exe_path}"
 	fi
 }
 
