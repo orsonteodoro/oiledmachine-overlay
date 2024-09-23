@@ -3849,6 +3849,11 @@ EOF
 
 gen_wrapper() {
 	local u="${1}"
+	local profile_name="${1}"
+	if [[ "${profile_name:0:1}" =~ ^[0-9] ]] ; then
+# You cannot use a number as the prefix to associative array.
+		profile_name="_${1}"
+	fi
 
 	local exe_path=""
 	if [[ -n "${PATH_CORRECTION[${profile_name}]}" ]] ; then
