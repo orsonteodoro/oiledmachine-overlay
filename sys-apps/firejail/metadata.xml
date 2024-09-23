@@ -121,10 +121,11 @@
     SCOPE[PROFILE_NAME] - Scope of the wrapper.
     Valid values
 
-    global - add non conflicting wrappers globally in /usr/local/bin
+    global - add non conflicting wrappers globally in /usr/local/bin without
+    changes to PATH.
 
-    nonroot - add conflicting wrappers to /usr/local/nonroot-bin so that user
-    can add PATH="/usr/local/nonroot-bin:${PATH}" to ~/.bashrc for full
+    nonroot - add conflicting wrappers to /usr/local/nonroot-bin so that the
+    user can add PATH="/usr/local/nonroot-bin:${PATH}" to ~/.bashrc for full
     sandbox coverage.
 
     ban - do not generate wrapper (Aliases:  blacklist, blacklisted)
