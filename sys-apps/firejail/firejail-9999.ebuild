@@ -1152,7 +1152,6 @@ firejail_profiles_git-cola? ( || ( xephyr xpra ) )
 firejail_profiles_gitg? ( || ( xephyr xpra ) )
 firejail_profiles_github-desktop? ( || ( xephyr xpra ) )
 firejail_profiles_gitter? ( || ( xephyr xpra ) )
-firejail_profiles_gjs? ( || ( xephyr xpra ) )
 firejail_profiles_gl-117? ( || ( xephyr xpra ) )
 firejail_profiles_gl-117-wrapper? ( || ( xephyr xpra ) )
 firejail_profiles_glaxium? ( || ( xephyr xpra ) )
@@ -1566,7 +1565,7 @@ firefox-esr firefox-nightly firefox-wayland firefox-x11 five-or-more flameshot
 flashpeak-slimjet floorp fluffychat fossamail four-in-a-row fractal freecad
 freeciv freeciv-gtk3 freeciv-mp-gtk3 freetube frozen-bubble gajim gapplication
 gcalccmd geany geary gedit geeqie geki2 geki3 gfeeds ghostwriter gimp git-cola
-gitg github-desktop gitter gjs gl-117 gl-117-wrapper glaxium glaxium-wrapper
+gitg github-desktop gitter gl-117 gl-117-wrapper glaxium glaxium-wrapper
 gnome-2048 gnome-books gnome-boxes gnome-builder gnome-calculator
 gnome-calendar gnome-character-map gnome-characters gnome-chess gnome-clocks
 gnome-contacts gnome-documents gnome-font-viewer gnome-hexgl gnome-keyring
@@ -2617,6 +2616,21 @@ einfo
 		"firefox-x11"
 	)
 
+	local X_BLACKLIST=(
+		"gjs"
+	)
+
+	is_x_blacklisted() {
+		local arg="${1}"
+		local y
+		for y in ${X_BLACKLIST[@]} ; do
+			if [[ "${arg}" == "${y}" ]] ; then
+				return 0
+			fi
+		done
+		return 1
+	}
+
 	is_x_headless_compat() {
 		local arg="${1}"
 		local y
@@ -2668,7 +2682,9 @@ einfo
 		| sed -e "s| $||g" \
 		| sed -e "s|\.|_|g")
 	for x in ${L[@]} ; do
-		if is_x_headless_compat "${x}" && is_xpra_only "${x}" ; then
+		if is_x_blacklisted "${x}" ; then
+			:
+		elif is_x_headless_compat "${x}" && is_xpra_only "${x}" ; then
 echo "firejail_profiles_${x}? ( || ( xpra ) )"
 		elif is_x_headless_compat "${x}" ; then
 echo "firejail_profiles_${x}? ( || ( xephyr xpra xvfb ) )"
