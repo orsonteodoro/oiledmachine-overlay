@@ -36,6 +36,8 @@
 
       - Minimize install bloat
       - Make it easier to use program sandboxed
+      - Sandboxed on install without user intervention
+      - Least privileges corrections
 
     Wrapper versus symlink
 
