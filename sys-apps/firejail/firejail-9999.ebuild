@@ -9,6 +9,7 @@ EAPI=8
 declare -A _PROFILE_GRAPH
 declare -A APPARMOR_PROFILE
 declare -A ARGS
+declare -A AUTO_BLACKLIST
 declare -A COMMAND
 declare -A LANDLOCK
 declare -A LANDLOCK_PROC
@@ -20,155 +21,157 @@ declare -A SECCOMP_BLOCK
 declare -A SECCOMP_KEEP
 declare -A MALLOC_BACKEND
 declare -A PATH_CORRECTION
+declare -A SCOPE
 declare -A SCUDO_FREE_IMMEDIATE
 declare -A XEPHYR_WH
 declare -A X_BACKEND
 
-_AUTO_BLACKLIST=(
+declare -A _SCOPE=(
 # These could break the emerge build system, the system login or console, or cause damage if firejailed.
 # Those cli apps that require root user should be added here.
 # Commands that might be used in ebuilds or build scripts should be added.
-	_7z
-	_7za
-	_7zr
-	Xephyr
-	Xvfb
-	ar
-	b2sum
-	bibtex
-	brz
-	bsdcat
-	bsdcpio
-	bsdtar
-	bunzip2
-	bzcat
-	bzip2
-	cargo
-	cksum
-	clamav
-	clamdscan
-	clamdtop
-	clamscan
-	clamtk
-	cmake
-	cpio
-	curl
-	emacs
-	file
-	freshclam
-	gpg
-	gpg-agent
-	gpg2
-	dconf
-	gconf
-	gconf-editor
-	gconf-merge-schema
-	gconf-merge-tree
-	gconfpkg
-	gconftool-2
-	git
-	gunzip
-	gsettings
-	gsettings-data-convert
-	gsettings-schema-convert
-	gtk-update-icon-cache
-	gzexe
-	gzip
-	latex
-	lbunzip2
-	lbzcat
-	lbzip2
-#	less
-	lrunzip
-	lrz
-	lrzcat
-	lrzip
-	lrztar
-	lrzuntar
-	lz4
-	lz4c
-	lz4cat
-	lzcat
-	lzcmp
-	lzdiff
-	lzegrep
-	lzfgrep
-	lzgrep
-	lzip
-#	lzless
-	lzma
-	lzmadec
-	lzmainfo
-#	lzmore
-	lzop
-	make
-#	man
-	md5sum
-	meson
-#	more
-	nano
-	node
-	npm
-	p7zip
-	pandoc
-	patch
-	pdflatex
-	pdftotext
-	ping
-	pip
-	pnpm
-	pnpx
-	pzstd
-	sum
-	sha1sum
-	sha224sum
-	sha256sum
-	sha384sum
-	sha512sum
-	ssh
-	ssh-agent
-	strings
-	tar
-	tex
-	uncompress
-	unlz4
-	unlzma
-	unrar
-	unxz
-	unzip
-	unzstd
-	vim
-	wget
-	wget2
-	xpra
-	xxd
-	xz
-	xzcat
-	xzcmp
-	xzdec
-	xzdiff
-	xzegrep
-	xzfgrep
-	xzgrep
-#	xzless
-#	xzmore
-	yarn
-	zcat
-	zcmp
-	zdiff
-	zegrep
-	zfgrep
-#	zforce
-	zgrep
-	zless
-	zlib-flate
-#	zmore
-#	znew
-	zstd
-	zstdcat
-	zstdgrep
-#	zstdless
-	zstdmt
+	["_7z"]="local"
+	["_7za"]="local"
+	["_7zr"]="local"
+	["Xephyr"]="local"
+	["Xvfb"]="local"
+	["ar"]="local"
+	["b2sum"]="local"
+	["bibtex"]="local"
+	["brz"]="local"
+	["bsdcat"]="local"
+	["bsdcpio"]="local"
+	["bsdtar"]="local"
+	["bunzip2"]="local"
+	["bzcat"]="local"
+	["bzip2"]="local"
+	["cargo"]="local"
+	["cksum"]="local"
+	["clamav"]="local"
+	["clamdscan"]="local"
+	["clamdtop"]="local"
+	["clamscan"]="local"
+	["clamtk"]="local"
+	["cmake"]="local"
+	["cpio"]="local"
+	["curl"]="local"
+	["emacs"]="local"
+	["file"]="local"
+	["freshclam"]="local"
+	["gpg"]="local"
+	["gpg-agent"]="local"
+	["gpg2"]="local"
+	["dconf"]="local"
+	["gconf"]="local"
+	["gconf-editor"]="local"
+	["gconf-merge-schema"]="local"
+	["gconf-merge-tree"]="local"
+	["gconfpkg"]="local"
+	["gconftool-2"]="local"
+	["git"]="local"
+	["gunzip"]="local"
+	["gsettings"]="local"
+	["gsettings-data-convert"]="local"
+	["gsettings-schema-convert"]="local"
+	["gtk-update-icon-cache"]="local"
+	["gzexe"]="local"
+	["gzip"]="local"
+	["latex"]="local"
+	["lbunzip2"]="local"
+	["lbzcat"]="local"
+	["lbzip2"]="local"
+#	["less"]="local"
+	["lrunzip"]="local"
+	["lrz"]="local"
+	["lrzcat"]="local"
+	["lrzip"]="local"
+	["lrztar"]="local"
+	["lrzuntar"]="local"
+	["lz4"]="local"
+	["lz4c"]="local"
+	["lz4cat"]="local"
+	["lzcat"]="local"
+	["lzcmp"]="local"
+	["lzdiff"]="local"
+	["lzegrep"]="local"
+	["lzfgrep"]="local"
+	["lzgrep"]="local"
+	["lzip"]="local"
+#	["lzless"]="local"
+	["lzma"]="local"
+	["lzmadec"]="local"
+	["lzmainfo"]="local"
+#	["lzmore"]="local"
+	["lzop"]="local"
+	["make"]="local"
+#	["man"]="local"
+	["md5sum"]="local"
+	["meson"]="local"
+#	["more"]="local"
+	["nano"]="local"
+	["node"]="local"
+	["npm"]="local"
+	["p7zip"]="local"
+	["pandoc"]="local"
+	["patch"]="local"
+	["pdflatex"]="local"
+	["pdftotext"]="local"
+	["ping"]="local"
+	["pip"]="local"
+	["pnpm"]="local"
+	["pnpx"]="local"
+	["pzstd"]="local"
+	["sum"]="local"
+	["sha1sum"]="local"
+	["sha224sum"]="local"
+	["sha256sum"]="local"
+	["sha384sum"]="local"
+	["sha512sum"]="local"
+	["ssh"]="local"
+	["ssh-agent"]="local"
+	["strings"]="local"
+	["tar"]="local"
+	["tex"]="local"
+	["uncompress"]="local"
+	["unlz4"]="local"
+	["unlzma"]="local"
+	["unrar"]="local"
+	["unxz"]="local"
+	["unzip"]="local"
+	["unzstd"]="local"
+	["vim"]="local"
+	["wget"]="local"
+	["wget2"]="local"
+	["x-terminal-emulator"]="ban"
+	["xpra"]="local"
+	["xxd"]="local"
+	["xz"]="local"
+	["xzcat"]="local"
+	["xzcmp"]="local"
+	["xzdec"]="local"
+	["xzdiff"]="local"
+	["xzegrep"]="local"
+	["xzfgrep"]="local"
+	["xzgrep"]="local"
+#	["xzless"]="local"
+#	["xzmore"]="local"
+	["yarn"]="local"
+	["zcat"]="local"
+	["zcmp"]="local"
+	["zdiff"]="local"
+	["zegrep"]="local"
+	["zfgrep"]="local"
+#	["zforce"]="local"
+	["zgrep"]="local"
+	["zless"]="local"
+	["zlib-flate"]="local"
+#	["zmore"]="local"
+#	["znew"]="local"
+	["zstd"]="local"
+	["zstdcat"]="local"
+	["zstdgrep"]="local"
+#	["zstdless"]="local"
+	["zstdmt"]="local"
 )
 _PROFILE_GRAPH["_1password"]="electron-common"
 _PROFILE_GRAPH["_7z"]="archiver-common"
@@ -2867,6 +2870,11 @@ ewarn
 		WARNING_RANDOMIZE_MEMORY="CONFIG_RANDOMIZE_MEMORY is required by Scudo."
 		check_extra_config
 	fi
+
+	if [[ -n "${AUTO_BLACKLIST[@]}" ]] ; then
+eerror "The AUTO_BLACKLIST has been changed to SCOPE[@].  See metadata.xml or \`epkginfo -x sys-apps/firejail::oiledmachine-overlay\` for details."
+		die
+	fi
 }
 
 pkg_setup() {
@@ -3824,21 +3832,6 @@ eerror
 		args="${ARGS[${profile_name}]}"
 	fi
 
-	is_allowed_wrapper() {
-		local arg="${1}"
-		local blacklisted=(
-	# Any metaprofiles should go here
-			"x-terminal-emulator"
-		)
-		local x
-		for x in ${blacklisted[@]} ; do
-			if [[ "${arg}" == "${x}" ]] ; then
-				return 1
-			fi
-		done
-		return 0
-	}
-
 	local profile_arg=""
 	if [[ -e "${profile_path}" ]] ; then
 		profile_arg="--profile=${raw_profile_name}"
@@ -3851,8 +3844,21 @@ eerror
 		extra_args+=( --keep-config-pulse )
 	fi
 
-	if is_allowed_wrapper "${profile_name}" ; then
-cat <<EOF > "${ED}/usr/local/bin/${wrapper_name}" || die
+	local folder
+	if [[ "${scope}" == "global" ]] ; then
+		folder="bin"
+	else
+		folder="nonroot-bin"
+	fi
+
+	local is_allowed_wrapper=1
+
+	if [[ "${scope}" =~ ("ban"|"blacklist"|"blacklisted") ]] ; then
+		is_allowed_wrapper=0
+	fi
+
+	if (( ${is_allowed_wrapper} == 1 )) ; then
+cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
 #!/bin/bash
 if [[ -n "\${DISPLAY}" ]] ; then
 	exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} ${extra_args} "${exe_path}" "\$@"
@@ -3860,8 +3866,8 @@ else
 	exec firejail ${apparmor_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} ${extra_args} "${exe_path}" "\$@"
 fi
 EOF
-		fowners "root:root" "/usr/local/bin/${wrapper_name}"
-		fperms 0755 "/usr/local/bin/${wrapper_name}"
+		fowners "root:root" "/usr/local/${folder}/${wrapper_name}"
+		fperms 0755 "/usr/local/${folder}/${wrapper_name}"
 	fi
 }
 
@@ -3963,24 +3969,18 @@ _install_one_profile() {
 
 	mkdir -p "${T}/profiles_processed" || die
 
-	is_auto_blacklisted() {
+	get_scope() {
 		local arg="${1}"
-		local x
 
-		# Ebuild auto blacklist
-		for x in ${_AUTO_BLACKLIST[@]} ; do
-			if [[ "${arg}" == "${x}" ]] ; then
-				return 0
-			fi
-		done
-
-		# User auto blacklist
-		for x in ${AUTO_BLACKLIST} ; do
-			if [[ "${arg}" == "${x}" ]] ; then
-				return 0
-			fi
-		done
-		return 1
+		if [[ "${SCOPE[${arg}]}" ]] ; then
+			# User scope override
+			echo "${SCOPE[${arg}]}"
+		elif [[ -n "${_SCOPE[${arg}]}" ]] ; then
+			# Ebuild scope
+			echo "${_SCOPE[${arg}]}"
+		else
+			echo "global"
+		fi
 	}
 
 	local pf
@@ -4025,7 +4025,10 @@ eerror
 			exe_path="/usr/bin/${exe_name}"
 		fi
 
-		if use auto && use wrapper && [[ -e "${exe_path}" || "${u}" =~ "x-terminal-emulator" ]] && ! [[ "${u}" =~ "-common" ]] && ! [[ "${u}" =~ "-wrapper" ]] && ! is_auto_blacklisted "${profile_name}" ; then
+		local scope
+		scope=$(get_scope "${profile_name}")
+
+		if use auto && use wrapper && [[ -e "${exe_path}" || "${u}" =~ "x-terminal-emulator" ]] && ! [[ "${u}" =~ "-common" ]] && ! [[ "${u}" =~ "-wrapper" ]] && ! [[ "${scope}" =~ ("ban"|"blacklist"|"blacklisted") ]] ; then
 einfo "Auto adding ${u} profile"
 			local deps=( $(get_profile_deps ${_PROFILE_GRAPH[${profile_name}]}) )
 			queued_profile_deps+=( ${deps[@]} )
@@ -4076,6 +4079,7 @@ eerror
 src_install() {
 	local queued_profile_deps=()
 	use wrapper && dodir "/usr/local/bin"
+	use wrapper && dodir "/usr/local/nonroot-bin"
 	local impl
 	for impl in $(get_impls) ; do
 		export BUILD_DIR="${S}_${impl}"
@@ -4187,6 +4191,7 @@ einfo
 	if ! use firejail_profiles_server ; then
 ewarn "Disabling firejail_profiles_server disables default sandboxing for the root user"
 	fi
+ewarn "You need to manually add PATH=\"/usr/local/nonroot-bin:\${PATH}\" to non-root ~/.bashrc to increase firejail sandbox coverage."
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

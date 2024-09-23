@@ -22,8 +22,8 @@
     This is the regular version. For a long term support version see
     sys-apps/firejail-lts.
   </longdescription>
-  <!--
-
+  <ebuild-documentation>
+  <![CDATA[
     oiledmachine-overlay ebuild changes and ebuild additions:
 
       - Improved Xpra support
@@ -117,6 +117,26 @@
 
     PATH_CORRECTION[PROFILE_NAME] - Set the correct path to the binary package.
 
+
+    SCOPE[PROFILE_NAME] - Scope of the wrapper.
+    Valid values
+
+    global - add non conflicting wrappers globally in /usr/local/bin
+
+    nonroot - add conflicting wrappers to /usr/local/nonroot-bin so that user
+    can add PATH="/usr/local/nonroot-bin:${PATH}" to ~/.bashrc for full
+    sandbox coverage.
+
+    ban - do not generate wrapper (Aliases:  blacklist, blacklisted)
+
+    Note:
+
+    * Conflicting means that the the build system may use that command
+      and adding it in global scope would break emerge.
+    * Non conflicting means that the build system or root never uses that
+      command.
+
+
     SCUDO_FREE_IMMEDIATE[PROFILE_NAME] - Free the keys in the heap immediately.
     Valid values:
     1 (clear immediately for mitigation against cold-boot-attack and DMA based attacks.)
@@ -194,6 +214,8 @@
       MALLOC_BACKEND["mplayer"]="hardened_malloc"
       MALLOC_BACKEND["spotify"]="system-malloc"
       PATH_CORRECTION["spotify"]="/opt/spotify/spotify-client/spotify"
+      SCOPE[cargo]="ban"
+      SCOPE[node]="local"
       SCUDO_FREE_IMMEDIATE["keepassxc"]=1
       SECCOMP["dillo"]=1
       XEPHYR_WH["chromium"]="1918x1058"
@@ -283,8 +305,8 @@
     
 
     Next round of proposals.
-
-  -->
+  ]]>
+  </ebuild-documentation>
   <upstream>
     <remote-id type="cpe">cpe:/a:firejail_project:firejail</remote-id>
     <remote-id type="github">netblue30/firejail</remote-id>
@@ -292,7 +314,7 @@
   <use>
     <flag name="auto">
       Auto add wrappers to /usr/local/bin if the program exists.
-    </auto>
+    </flag>
     <flag name="apparmor">
       Enable support for custom AppArmor profiles
     </flag>
