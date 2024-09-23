@@ -4115,9 +4115,6 @@ einfo
 	if ! use firejail_profiles_server ; then
 ewarn "Disabling firejail_profiles_server disables default sandboxing for the root user"
 	fi
-	if [[ -e "/etc/firejail/firefox.profile" ]] ; then
-ewarn "You need to run the /usr/local/bin/firefox or /usr/local/bin/firefox-bin wrapper directly to avoid wrapper bypass."
-	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

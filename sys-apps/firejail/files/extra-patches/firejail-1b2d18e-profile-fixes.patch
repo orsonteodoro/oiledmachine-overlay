@@ -1,6 +1,6 @@
 diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/file.profile firejail-9999/etc/profile-a-l/file.profile
---- firejail-9999.orig/etc/profile-a-l/file.profile	2024-09-20 20:15:52.524164842 -0700
-+++ firejail-9999/etc/profile-a-l/file.profile	2024-09-20 20:16:09.168057860 -0700
+--- firejail-9999.orig/etc/profile-a-l/file.profile	2024-09-22 17:28:46.077275492 -0700
++++ firejail-9999/etc/profile-a-l/file.profile	2024-09-22 17:29:04.021160380 -0700
 @@ -36,7 +36,7 @@ x11 none
  private-cache
  private-dev
@@ -11,8 +11,8 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/file.profile firejai
  dbus-user none
  dbus-system none
 diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/mpv.profile firejail-9999/etc/profile-m-z/mpv.profile
---- firejail-9999.orig/etc/profile-m-z/mpv.profile	2024-09-20 20:15:52.564164585 -0700
-+++ firejail-9999/etc/profile-m-z/mpv.profile	2024-09-20 20:16:09.168057860 -0700
+--- firejail-9999.orig/etc/profile-m-z/mpv.profile	2024-09-22 17:28:46.117275235 -0700
++++ firejail-9999/etc/profile-m-z/mpv.profile	2024-09-22 17:29:04.021160380 -0700
 @@ -76,7 +76,7 @@ include whitelist-var-common.inc
  apparmor
  caps.drop all
@@ -23,8 +23,8 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/mpv.profile firejail
  nonewprivs
  noroot
 diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/spotify.profile firejail-9999/etc/profile-m-z/spotify.profile
---- firejail-9999.orig/etc/profile-m-z/spotify.profile	2024-09-20 20:15:52.588164431 -0700
-+++ firejail-9999/etc/profile-m-z/spotify.profile	2024-09-20 20:16:15.808015183 -0700
+--- firejail-9999.orig/etc/profile-m-z/spotify.profile	2024-09-22 17:28:46.141275081 -0700
++++ firejail-9999/etc/profile-m-z/spotify.profile	2024-09-22 17:29:04.021160380 -0700
 @@ -33,7 +33,7 @@ include whitelist-var-common.inc
  caps.drop all
  netfilter
@@ -44,8 +44,8 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/spotify.profile fire
  dbus-user filter
  dbus-user.own org.mpris.MediaPlayer2.spotify
 diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/tar.profile firejail-9999/etc/profile-m-z/tar.profile
---- firejail-9999.orig/etc/profile-m-z/tar.profile	2024-09-20 20:15:52.592164406 -0700
-+++ firejail-9999/etc/profile-m-z/tar.profile	2024-09-20 20:16:09.168057860 -0700
+--- firejail-9999.orig/etc/profile-m-z/tar.profile	2024-09-22 17:28:46.145275055 -0700
++++ firejail-9999/etc/profile-m-z/tar.profile	2024-09-22 17:29:04.021160380 -0700
 @@ -17,7 +17,7 @@ ignore include disable-shell.inc
  # all capabilities this is automatically read-only.
  noblacklist /var/lib/pacman
@@ -55,3 +55,15 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/tar.profile firejail
  # Debian based distributions need this for 'dpkg --unpack' (incl. synaptic)
  writable-var
  
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/x-terminal-emulator.profile firejail-9999/etc/profile-m-z/x-terminal-emulator.profile
+--- firejail-9999.orig/etc/profile-m-z/x-terminal-emulator.profile	2024-09-22 17:28:46.161274953 -0700
++++ firejail-9999/etc/profile-m-z/x-terminal-emulator.profile	2024-09-22 17:29:29.952994027 -0700
+@@ -6,7 +6,7 @@ include x-terminal-emulator.local
+ include globals.local
+ 
+ caps.drop all
+-ipc-namespace
++#ipc-namespace # Breaks xfce4-terminal
+ net none
+ nogroups
+ noinput
