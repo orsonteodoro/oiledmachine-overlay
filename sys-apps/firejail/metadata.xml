@@ -54,14 +54,17 @@
 
     Build time environment variables for USE=wrapper
 
-    If the PROFILE_NAME starts with a number, it must be prefixed with the _ character.
+    If the PROFILE_NAME starts with a number, it must be prefixed with the _
+    character.
 
     APPARMOR_PROFILE[PROFILE_NAME] - Set app armor protection.
     Valid values - default, APPARMOR_PROFILE_NAME, unset (default off)
 
-    ARGS[PROFILE_NAME] - Add the raw list of args to the wrapper for full control
+    ARGS[PROFILE_NAME] - Add the raw list of args to the wrapper for full
+    control
 
-    AUTO_BLACKLIST - Disable auto adding wrapper to /usr/local/bin as a space delimited list
+    AUTO_BLACKLIST - Disable auto adding wrapper to /usr/local/bin as a space
+    delimited list
     Valid values - PROFILE_NAME, unset (permit app)
 
     COMMAND[PROGRAM_NAME] - Create a wrapper without a profile.
@@ -87,7 +90,8 @@
     Valid values - PATH1; PATH1,PATH2; PATH1,PATH2,...; unset (don't apply)
 
     MALLOC_BACKEND[PROFILE_NAME] - Set the hardened allocator
-    Valid values - hardened_malloc, mimalloc, scudo, system-malloc, unset (a hardened malloc followed by system-malloc)
+    Valid values - hardened_malloc, mimalloc, scudo, system-malloc,
+    unset (a hardened malloc followed by system-malloc)
 
                         | ASLR   | freed data remittance policy[7]            | ARM64 MTE[3] | type confusion mitigation strategy[9][10]
     hardened_malloc     | yes[6] | small allocs zeroed, large allocs unerased | optional     | size classes in dedicated region with random base, PartitionAlloc inspired
@@ -229,10 +233,11 @@
     Auto adding/generating wrappers with USE=auto with USE=wrapper
 
     The auto USE flag can be used to auto add wrappers to /usr/local/bin with
-    AUTO_BLACKLIST[PROFILE_NAME].  This will sandbox more X apps for more cautious
-    people but increase protection and decrease data theft from biased programs.
-    The BLACKLIST is to prevent an unbootable system, prevent a broken package
-    manager, or those those prefer some games/apps to be more performant.
+    AUTO_BLACKLIST[PROFILE_NAME].  This will sandbox more X apps for more
+    cautious people but increase protection and decrease data theft from biased
+    programs.  The BLACKLIST is to prevent an unbootable system, prevent a
+    broken package manager, or those those prefer some games/apps to be more
+    performant.
 
     When a program is AUTO_BLACKLIST, it means that it cannot be a
     wrapper/symlink to /usr/local/bin/PROGRAM_NAME, but it is maybe
