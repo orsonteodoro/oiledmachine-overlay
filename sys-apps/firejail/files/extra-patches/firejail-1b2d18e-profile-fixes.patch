@@ -1,6 +1,6 @@
 diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/eo-common.profile firejail-9999/etc/profile-a-l/eo-common.profile
---- firejail-9999.orig/etc/profile-a-l/eo-common.profile	2024-09-22 18:01:37.064631495 -0700
-+++ firejail-9999/etc/profile-a-l/eo-common.profile	2024-09-22 18:02:12.708402838 -0700
+--- firejail-9999.orig/etc/profile-a-l/eo-common.profile	2024-09-22 18:12:15.964532921 -0700
++++ firejail-9999/etc/profile-a-l/eo-common.profile	2024-09-22 18:12:33.572419965 -0700
 @@ -26,7 +26,7 @@ include whitelist-var-common.inc
  
  apparmor
@@ -11,8 +11,8 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/eo-common.profile fi
  net none
  no3d
 diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/file.profile firejail-9999/etc/profile-a-l/file.profile
---- firejail-9999.orig/etc/profile-a-l/file.profile	2024-09-22 18:01:37.068631469 -0700
-+++ firejail-9999/etc/profile-a-l/file.profile	2024-09-22 18:01:57.496500423 -0700
+--- firejail-9999.orig/etc/profile-a-l/file.profile	2024-09-22 18:12:15.968532895 -0700
++++ firejail-9999/etc/profile-a-l/file.profile	2024-09-22 18:12:33.572419965 -0700
 @@ -36,7 +36,7 @@ x11 none
  private-cache
  private-dev
@@ -22,9 +22,21 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/file.profile firejai
  
  dbus-user none
  dbus-system none
+diff '--color=auto' -urp firejail-9999.orig/etc/profile-a-l/inkscape.profile firejail-9999/etc/profile-a-l/inkscape.profile
+--- firejail-9999.orig/etc/profile-a-l/inkscape.profile	2024-09-22 18:12:15.996532715 -0700
++++ firejail-9999/etc/profile-a-l/inkscape.profile	2024-09-22 18:12:57.264267981 -0700
+@@ -45,7 +45,7 @@ include whitelist-var-common.inc
+ 
+ apparmor
+ caps.drop all
+-ipc-namespace
++#ipc-namespace
+ machine-id
+ net none
+ nodvd
 diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/mpv.profile firejail-9999/etc/profile-m-z/mpv.profile
---- firejail-9999.orig/etc/profile-m-z/mpv.profile	2024-09-22 18:01:37.108631213 -0700
-+++ firejail-9999/etc/profile-m-z/mpv.profile	2024-09-22 18:01:57.496500423 -0700
+--- firejail-9999.orig/etc/profile-m-z/mpv.profile	2024-09-22 18:12:16.016532587 -0700
++++ firejail-9999/etc/profile-m-z/mpv.profile	2024-09-22 18:12:33.572419965 -0700
 @@ -76,7 +76,7 @@ include whitelist-var-common.inc
  apparmor
  caps.drop all
@@ -35,8 +47,8 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/mpv.profile firejail
  nonewprivs
  noroot
 diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/spotify.profile firejail-9999/etc/profile-m-z/spotify.profile
---- firejail-9999.orig/etc/profile-m-z/spotify.profile	2024-09-22 18:01:37.132631059 -0700
-+++ firejail-9999/etc/profile-m-z/spotify.profile	2024-09-22 18:01:57.496500423 -0700
+--- firejail-9999.orig/etc/profile-m-z/spotify.profile	2024-09-22 18:12:16.044532408 -0700
++++ firejail-9999/etc/profile-m-z/spotify.profile	2024-09-22 18:12:33.572419965 -0700
 @@ -33,7 +33,7 @@ include whitelist-var-common.inc
  caps.drop all
  netfilter
@@ -56,8 +68,8 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/spotify.profile fire
  dbus-user filter
  dbus-user.own org.mpris.MediaPlayer2.spotify
 diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/tar.profile firejail-9999/etc/profile-m-z/tar.profile
---- firejail-9999.orig/etc/profile-m-z/tar.profile	2024-09-22 18:01:37.136631033 -0700
-+++ firejail-9999/etc/profile-m-z/tar.profile	2024-09-22 18:01:57.496500423 -0700
+--- firejail-9999.orig/etc/profile-m-z/tar.profile	2024-09-22 18:12:16.044532408 -0700
++++ firejail-9999/etc/profile-m-z/tar.profile	2024-09-22 18:12:33.572419965 -0700
 @@ -17,7 +17,7 @@ ignore include disable-shell.inc
  # all capabilities this is automatically read-only.
  noblacklist /var/lib/pacman
@@ -68,8 +80,8 @@ diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/tar.profile firejail
  writable-var
  
 diff '--color=auto' -urp firejail-9999.orig/etc/profile-m-z/x-terminal-emulator.profile firejail-9999/etc/profile-m-z/x-terminal-emulator.profile
---- firejail-9999.orig/etc/profile-m-z/x-terminal-emulator.profile	2024-09-22 18:01:37.152630931 -0700
-+++ firejail-9999/etc/profile-m-z/x-terminal-emulator.profile	2024-09-22 18:01:57.496500423 -0700
+--- firejail-9999.orig/etc/profile-m-z/x-terminal-emulator.profile	2024-09-22 18:12:16.064532279 -0700
++++ firejail-9999/etc/profile-m-z/x-terminal-emulator.profile	2024-09-22 18:12:33.572419965 -0700
 @@ -6,7 +6,7 @@ include x-terminal-emulator.local
  include globals.local
  
