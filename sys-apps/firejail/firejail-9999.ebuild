@@ -2622,6 +2622,7 @@ einfo
 
 	local X_XEPHYR_ONLY=(
 		"upscayl"
+		"virt-manager"
 	)
 
 	local X_XPRA_ONLY=(
