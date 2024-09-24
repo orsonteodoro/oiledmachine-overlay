@@ -607,12 +607,14 @@ DISTRO_REQUIRE_USE="
 #
 #	extensions
 #	!partitionalloc
+#	disabling async-dns causes debug crash/spam.
 REQUIRED_USE+="
 	${DISABLED_NON_FREE_USE_FLAGS}
+	async-dns
+	screen-capture
 	!async-dns? (
 		!official
 	)
-	screen-capture
 	!headless (
 		extensions
 		pdf
@@ -2038,6 +2040,7 @@ apply_oiledmachine_overlay_patchset() {
 		"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-numeric_h-for-iota.patch"
 		"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-include-historgram-functions.patch"
 		"${FILESDIR}/extra-patches/${PN}-129.0.6668.58-disable-speech.patch"
+		"${FILESDIR}/extra-patches/${PN}-129.0.6668.58-include-thread-pool.patch"
 	)
 
 	if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then

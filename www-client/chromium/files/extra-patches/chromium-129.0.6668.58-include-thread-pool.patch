@@ -1,0 +1,10 @@
+--- a/chrome/browser/ui/lens/lens_overlay_controller.cc.orig	2024-09-17 15:00:00.575462800 -0700
++++ b/chrome/browser/ui/lens/lens_overlay_controller.cc	2024-09-23 13:58:07.752090046 -0700
+@@ -11,6 +11,7 @@
+ #include "base/system/sys_info.h"
+ #include "base/task/bind_post_task.h"
+ #include "base/task/sequenced_task_runner.h"
++#include "base/task/thread_pool.h"
+ #include "chrome/browser/feedback/show_feedback_page.h"
+ #include "chrome/browser/lens/core/mojom/geometry.mojom.h"
+ #include "chrome/browser/lens/core/mojom/overlay_object.mojom.h"
