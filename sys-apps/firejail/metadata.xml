@@ -138,7 +138,9 @@
 
     conflict - add conflicting wrappers to /usr/local/nonroot-bin so that the
     non-root user can add PATH="/usr/local/nonroot-bin:${PATH}" to ~/.bashrc
-    for full sandbox coverage.  (Aliases:  conflicting)
+    for full sandbox coverage.  Do not add it to the root's .bashrc.
+    (Aliases:  conflicting)
+
 
     ban - do not generate wrapper (Aliases:  blacklist, blacklisted)
 

@@ -4258,6 +4258,7 @@ ewarn
 ewarn
 ewarn "You need to manually add PATH=\"/usr/local/firejail-bin:\${PATH}\" to"
 ewarn "non-root ~/.bashrc to the increase firejail sandbox coverage."
+ewarn "Do not add it to the root's .bashrc."
 ewarn
 }
 
