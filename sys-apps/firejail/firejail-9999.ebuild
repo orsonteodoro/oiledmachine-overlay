@@ -145,7 +145,7 @@ declare -A _SCOPE=(
 	["wget"]="conflict"
 	["wget2"]="conflict"
 	["x-terminal-emulator"]="ban"
-	["xpra"]="conflict"
+	["xpra"]="ban" # Causes Authorization required, but no authorization protocol specified
 	["xxd"]="conflict"
 	["xz"]="conflict"
 	["xzcat"]="conflict"
@@ -1706,7 +1706,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
-ebuild-revision-13
+ebuild-revision-14
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
