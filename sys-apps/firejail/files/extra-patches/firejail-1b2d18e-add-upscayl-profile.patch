@@ -1,0 +1,23 @@
+diff '--color=auto' -urpN firejail-9999.orig/etc/profile-m-z/upscayl.profile firejail-9999/etc/profile-m-z/upscayl.profile
+--- firejail-9999.orig/etc/profile-m-z/upscayl.profile	1969-12-31 16:00:00.000000000 -0800
++++ firejail-9999/etc/profile-m-z/upscayl.profile	2024-09-23 21:16:01.607541786 -0700
+@@ -0,0 +1,19 @@
++# Firejail profile for twitch
++# Description: Unofficial electron based desktop wrapper for Upscayl
++# This file is overwritten after every install/update
++# Persistent local customizations
++include upscayl.local
++# Persistent global definitions
++include globals.local
++
++noblacklist ${HOME}/.config/Upscayl
++
++mkdir ${HOME}/.config/Upscayl
++whitelist ${HOME}/.config/Upscayl
++whitelist /opt/upscayl
++
++private-bin electron,electron[0-9],electron[0-9][0-9],upscayl,bash
++private-etc @tls-ca
++
++# Redirect
++include electron-common.profile

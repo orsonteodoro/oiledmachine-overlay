@@ -780,6 +780,8 @@ _PROFILE_GRAPH["zstdcat"]="zstd"
 _PROFILE_GRAPH["zstdgrep"]="zstd"
 _PROFILE_GRAPH["zstdless"]="zstd"
 _PROFILE_GRAPH["zstdmt"]="zstd"
+_PROFILE_GRAPH["rhash"]="hasher-common"
+_PROFILE_GRAPH["upscayl"]="electron-common"
 DOTTED_FILENAMES=(
 blender-2.8
 blender-3.6
@@ -998,6 +1000,7 @@ ytmdesktop zaproxy zart zathura zcat zcmp zdiff zeal zegrep zfgrep zforce zgrep
 zim zless zlib-flate zmore znew zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt
 zulip
 rhash
+upscayl
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
 #GEN_EBUILD=1 # Uncomment to regen ebuild parts
@@ -1536,6 +1539,7 @@ firejail_profiles_zeal? ( || ( xephyr xpra ) )
 firejail_profiles_zim? ( || ( xephyr xpra ) )
 firejail_profiles_zoom? ( || ( xephyr xpra ) )
 firejail_profiles_x-terminal-emulator? ( || ( xephyr xpra ) )
+firejail_profiles_upscayl? ( || ( xephyr ) )
 "
 HARDENED_ALLOCATORS_IUSE=(
 	hardened_malloc
@@ -1634,6 +1638,7 @@ xfce4-screenshooter xmms xonotic xonotic-sdl xonotic-sdl-wrapper xpdf
 yandex-browser yelp youtube youtube-dl-gui youtube-viewer-gtk
 youtubemusic-nativefier ytmdesktop zathura zeal zim zoom
 x-terminal-emulator
+upscayl
 )
 
 inherit flag-o-matic linux-info python-single-r1 toolchain-funcs virtualx
@@ -2386,6 +2391,7 @@ firejail_profiles_youtube-viewer )
 	firejail_profiles_zstdless? ( firejail_profiles_zstd )
 	firejail_profiles_zstdmt? ( firejail_profiles_zstd )
 	firejail_profiles_rhash? ( firejail_profiles_hasher-common )
+	firejail_profiles_upscayl? ( firejail_profiles_electron-common )
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-0.9.70-envlimits.patch"
@@ -2395,6 +2401,8 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-profile-fixes.patch"
 	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix wrappers and mpv
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-rhash-profile.patch"
+	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-upscayl-profile.patch"
+	"${FILESDIR}/extra-patches/${PN}-1b2d18e-default-1080p.patch"
 )
 
 get_impls() {
@@ -2612,6 +2620,10 @@ einfo
 		"vmware"
 	)
 
+	local X_XEPHYR_ONLY=(
+		"upscayl"
+	)
+
 	local X_XPRA_ONLY=(
 	# Ban those that perform unexpected behavior like eager window close
 	# with xephyr.
@@ -2644,6 +2656,17 @@ einfo
 		local arg="${1}"
 		local y
 		for y in ${X_HEADLESS_COMPAT[@]} ; do
+			if [[ "${arg}" == "${y}" ]] ; then
+				return 0
+			fi
+		done
+		return 1
+	}
+
+	is_xephyr_only() {
+		local arg="${1}"
+		local y
+		for y in ${X_XEPHYR_ONLY[@]} ; do
 			if [[ "${arg}" == "${y}" ]] ; then
 				return 0
 			fi
@@ -2693,6 +2716,8 @@ einfo
 	for x in ${L[@]} ; do
 		if is_x_blacklisted "${x}" ; then
 			:
+		elif is_x_headless_compat "${x}" && is_xephyr_only "${x}" ; then
+echo "firejail_profiles_${x}? ( || ( xephyr ) )"
 		elif is_x_headless_compat "${x}" && is_xpra_only "${x}" ; then
 echo "firejail_profiles_${x}? ( || ( xpra ) )"
 		elif is_x_headless_compat "${x}" ; then
@@ -3619,6 +3644,10 @@ eerror
 		"x-terminal-emulator:xpra"
 	)
 
+	local X_XEPHYR_ONLY=(
+		"upscayl"
+	)
+
 	local X_XPRA_ONLY=(
 	# Ban those that perform unexpected behavior like eager window close
 	# with xephyr.
@@ -3642,6 +3671,17 @@ eerror
 		fi
 	done
 
+	is_xephyr_only() {
+		local arg="${1}"
+		local y
+		for y in ${X_XEPHYR_ONLY[@]} ; do
+			if [[ "${arg}" == "${y}" ]] ; then
+				return 0
+			fi
+		done
+		return 1
+	}
+
 	is_xpra_only() {
 		local arg="${1}"
 		local y
@@ -3653,17 +3693,22 @@ eerror
 		return 1
 	}
 
+	local picked_xephyr=0
 	if ! use X ; then
 		:
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("disable"|"none"|"unsandboxed"|"gaming-unsandboxed"|"opengl-unsandboxed") ]] ; then
 		:
 	elif is_xpra_only "${profile_name}" ; then
 		x11_arg="--x11=xpra"
+	elif is_xephyr_only "${profile_name}" ; then
+		picked_xephyr=1
+		x11_arg="--x11=xephyr"
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("gaming-sandboxed"|"opengl-sandboxed") ]] ; then
 		x11_arg="--x11=xpra"
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("xpra") ]] ; then
 		x11_arg="--x11=xpra"
 	elif [[ "${X_BACKEND[${profile_name}]}" == "xephyr" ]] ; then
+		picked_xephyr=1
 		x11_arg="--x11=xephyr"
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("/dev/null"|"headless"|"xvfb") ]] ; then
 		x11_arg="--x11=xvfb"
@@ -3672,14 +3717,22 @@ eerror
 	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xpra" ]] && use xpra ; then
 		x11_arg="--x11=xpra"
 	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xephyr" ]] && use xephyr ; then
+		picked_xephyr=1
 		x11_arg="--x11=xephyr"
 	elif is_x11_compat "${profile_name}" && [[ "${preferred_fallback}" == "xvfb" ]] && use xvfb ; then
 		x11_arg="--x11=xvfb"
 	elif is_x11_compat "${profile_name}" && use xpra ; then
 		x11_arg="--x11=xpra"
 	elif is_x11_compat "${profile_name}" && use xephyr ; then
+		picked_xephyr=1
 		x11_arg="--x11=xephyr"
 	# For --x11=org, see issue 1741 in firejail repo
+	fi
+
+	if (( ${picked_xephyr} == 1 )) ; then
+		if [[ -z "${XEPHYR_WH[${profile_name}]}" ]] ; then
+ewarn "XEPHYR_WH[${profile_name}] is unset.  The default 800x600 will be used.  Consider setting it to either 1280x720, 1920x1080, 2560x1440, 3840x2160 instead."
+		fi
 	fi
 
 	local profile_path=""
