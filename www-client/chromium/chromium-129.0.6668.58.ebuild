@@ -4614,7 +4614,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 128.0.6613.119 (20240907)
 # Oflag = -O2
 # Build Completion time:  1 days, 17 hrs, 11 mins, 53 secs - fail, did not pass 24 hrs fix standard for critical vulnerabilities.  Package not built and installed within 24 hrs.
-# Tests performed (on wayland):
+# Tests performed:
 #   video playback - pass
 #     opus - pass
 #     av1 - pass
@@ -4661,7 +4661,7 @@ ewarn
 # LLVM_SLOT="(-19) -20"
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 114.0.5735.90 (20230601)
-# Tests performed (on wayland):
+# Tests performed:
 #   video playback - pass
 #     opus - pass
 #     av1 - pass
@@ -4703,6 +4703,8 @@ ewarn
 # tab crash when watching music videos
 
 # OILEDMACHINE-OVERLAY-TEST:  129.0.6668.58 (build test passed)
+# Tests performed:
+# sandbox check - passed
 # USE="X async-dns bundled-libcxx custom-cflags dav1d extensions mold openh264
 # opus pdf plugins pointer-compression proprietary-codecs pulseaudio qt6
 # screen-capture vaapi vpx wayland -accessibility -bindist -bluetooth
