@@ -147,7 +147,7 @@
     Note:
 
     * Conflicting means that the the build system may use that command
-      and adding it in global scope would break emerge.
+      and adding it in global scope would break emerge and break root.
     * Non conflicting means that the build system or root never uses that
       command.
     * The SCOPE[PROFILE_NAME] can override the ebuild defaults for ebuilds that
