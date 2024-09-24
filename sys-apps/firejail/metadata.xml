@@ -124,7 +124,7 @@
     For non-root:  0 to 1000 
     -value - deduct the badness score by this amount.
     
-    base_value = task_total_memory_kib / total_system_memory_kib
+    base_value = task_total_memory_kib / total_system_memory_kib * 100
     badness_value = clamp(adjust_value + base_value, 0, 1000)
 
     PATH_CORRECTION[PROFILE_NAME] - Set the correct path to the binary package.
