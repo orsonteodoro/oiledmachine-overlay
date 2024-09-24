@@ -3839,9 +3839,9 @@ eerror
 		profile_arg="--noprofile"
 	fi
 
-	local extra_args=()
+	local pulse_arg=""
 	if [[ "${profile_name}" == "pavucontrol" ]] ; then
-		extra_args+=( --keep-config-pulse )
+		pulse_arg+="--keep-config-pulse"
 	fi
 
 	local folder
@@ -3857,13 +3857,31 @@ eerror
 		is_allowed_wrapper=0
 	fi
 
+	local oom_arg=""
+	if [[ -n "${OOM[${profile_name}]}" ]] ; then
+		oom_arg="--oom=${OOM[${profile_name}]}"
+	fi
+
+	local all_args=(
+		${apparmor_arg}
+		${x11_arg}
+		${allocator_args}
+		${wh_arg}
+		${seccomp_arg}
+		${landlock_arg}
+		${profile_arg}
+		${pulse_arg}
+		${oom_arg}
+		${args}
+	)
+
 	if (( ${is_allowed_wrapper} == 1 )) ; then
 cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
 #!/bin/bash
 if [[ -n "\${DISPLAY}" ]] ; then
-	exec firejail ${apparmor_arg} ${x11_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} ${extra_args} "${exe_path}" "\$@"
+	exec firejail ${all_args} "${exe_path}" "\$@"
 else
-	exec firejail ${apparmor_arg} ${allocator_args} ${wh_arg} ${seccomp_arg} ${landlock_arg} ${args} ${profile_arg} ${extra_args} "${exe_path}" "\$@"
+	exec firejail ${all_args} "${exe_path}" "\$@"
 fi
 EOF
 		fowners "root:root" "/usr/local/${folder}/${wrapper_name}"
