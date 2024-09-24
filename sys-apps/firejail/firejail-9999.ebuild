@@ -4254,6 +4254,10 @@ ewarn "You need to manually add PATH=\"/usr/local/firejail-bin:\${PATH}\" to"
 ewarn "non-root ~/.bashrc to the increase firejail sandbox coverage."
 ewarn "Do not add it to the root's .bashrc."
 ewarn
+ewarn "If you mistakenly sourced ~/.bashrc with PATH change as root or run into"
+ewarn "strange missing /usr/local/firejail-bin references as root, do"
+ewarn "\`source /etc/profile\` to undo it."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
