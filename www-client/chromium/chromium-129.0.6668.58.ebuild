@@ -4702,3 +4702,19 @@ ewarn
 # gl-aquarium test - stuck non-moving fishes
 # tab crash when watching music videos
 
+# OILEDMACHINE-OVERLAY-TEST:  129.0.6668.58 (build test passed)
+# USE="X async-dns bundled-libcxx custom-cflags dav1d extensions mold openh264
+# opus pdf plugins pointer-compression proprietary-codecs pulseaudio qt6
+# screen-capture vaapi vpx wayland -accessibility -bindist -bluetooth
+# -cet -cfi -css-hyphen -cups (-debug) -drumbrake -ebuild-revision-1 -encode
+# -ffmpeg-chromium -firejail -gtk4 -hangouts (-headless) -hidpi -jit
+# -js-type-check -kerberos -libaom -mdns -ml -mpris -official -partitionalloc
+# -pax-kernel -pgo -pic -pre-check-vaapi -proprietary-codecs-disable
+# -proprietary-codecs-disable-nc-developer -proprietary-codecs-disable-nc-user
+# (-qt5) -reporting-api -screencast (-selinux) -spelling-service -system-dav1d
+# -system-ffmpeg -system-flac -system-fontconfig -system-freetype
+# -system-harfbuzz -system-icu -system-libaom -system-libdrm
+# -system-libjpeg-turbo -system-libpng -system-libstdcxx -system-libwebp
+# -system-libxml -system-libxslt -system-openh264 -system-opus -system-re2
+# (-system-toolchain) -system-zlib -system-zstd -systemd -vaapi-hevc -vorbis
+# -webassembly -widevine"
