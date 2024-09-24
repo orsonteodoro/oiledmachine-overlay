@@ -4704,7 +4704,25 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-TEST:  129.0.6668.58 (build test passed)
 # Tests performed:
-# sandbox check - passed
+#   browsing - pass
+#   GPU Shader Experiments (https://www.kevs3d.co.uk/dev/shaders/) - pass, randomly selected
+#   sandbox check - passed
+#   video playback - pass
+#     av1 - pass
+#     h264 - pass
+#     opus - pass
+#     vpx - pass
+#   WebGL Aquarium - pass, ~60 fps with default settings
+# Oflag = -Oshit
+# OSHIT_OPT_LEVEL_DAV1D="2"
+# OSHIT_OPT_LEVEL_LIBAOM="1"
+# OSHIT_OPT_LEVEL_LIBVPX="2"
+# OSHIT_OPT_LEVEL_OPENH264="1"
+# OSHIT_OPT_LEVEL_RNNOISE="1"
+# OSHIT_OPT_LEVEL_RUY="1"
+# OSHIT_OPT_LEVEL_TFLITE="1"
+# OSHIT_OPT_LEVEL_V8="2"
+# OSHIT_OPT_LEVEL_XNNPACK="1"
 # USE="X async-dns bundled-libcxx custom-cflags dav1d extensions mold openh264
 # opus pdf plugins pointer-compression proprietary-codecs pulseaudio qt6
 # screen-capture vaapi vpx wayland -accessibility -bindist -bluetooth
