@@ -117,15 +117,15 @@
     [11] Not provided as external lib but listed as an example for comparison of a model allocator designed to mitigate against type confusion
 
 
-    OOM[PROFILE_NAME] - Set the adjust value for the OOM (Out Of Memory) killer.
+    OOM[PROFILE_NAME] - Set the normalized number of pages for the OOM (Out Of Memory) killer.
     Higher values mean likely killed based on OOM killer context.
     Valid values:
     For root: -1000 to 1000
     For non-root:  0 to 1000 
     -value - deduct the badness score by this amount.
     
-    base_value = task_total_memory_kib / total_system_memory_kib * 100
-    badness_value = clamp(adjust_value + base_value, 0, 1000)
+    base_score = n_task_ram_pages + n_task_swap_pages + n_page_table_pages # typically < 100 per task
+    badness_value = base_score + ( n_normalized_pages / 1000 )
 
     PATH_CORRECTION[PROFILE_NAME] - Set the correct path to the binary package.
 
