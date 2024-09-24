@@ -3709,7 +3709,7 @@ ot-kernel-pkgflags_discord() { # DONE
 	pkg="net-im/discord"
 	if ot-kernel_has_version_slow "${pkg}" ; then
 		local pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
-		local expected_pv="0.0.44" # 20240307 ; yes the distro ebuild is behind
+		local expected_pv="0.0.69" # 20240924
 		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild manually in local repo or"
@@ -3726,7 +3726,7 @@ ewarn
 	if ot-kernel_has_version "${pkg}" ; then
 # The ebuild should be deleted.
 		local pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
-		local expected_pv="0.0.294" # 20240307
+		local expected_pv="0.0.492" # 20240924
 		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
@@ -3745,7 +3745,7 @@ ewarn
 	if ot-kernel_has_version "${pkg}" ; then
 # The ebuild should be deleted.
 		local actual_pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
-		local expected_pv="0.0.72" # 20240307
+		local expected_pv="0.0.106" # 20240924
 		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
@@ -3763,18 +3763,9 @@ ewarn
 	pkg="net-im/discord-wayland"
 	if ot-kernel_has_version "${pkg}" ; then
 # The ebuild should be deleted.
-		local actual_pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
-		local expected_pv="0.0.44" # 20240307
-		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
-ewarn
-ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
-ewarn "instead."
-ewarn
-ewarn "Actual PV:  ${actual_pv}"
-ewarn "Expected PV:  ${expected_pv}"
-ewarn
+ewarn "Detected older ${pkg} ebuild.  Use the distro ebuild instead."
 			warn_lowered_security "${pkg}" "Old ebuild with vulnerabilities" "DoS, DT, ID"
-		fi
+		die
 	fi
 }
 
