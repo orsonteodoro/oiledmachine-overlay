@@ -1640,6 +1640,35 @@ youtubemusic-nativefier ytmdesktop zathura zeal zim zoom
 x-terminal-emulator
 upscayl
 )
+X_BLACKLIST=(
+# False positives for X support.
+	"gjs"
+)
+# Avoid broken resolution issue
+X_FALLBACKS=(
+	"leafpad:xpra"
+	"x-terminal-emulator:xpra"
+)
+X_HEADLESS_COMPAT=(
+# These are x11 sandboxed apps that could be headless and may use xvfb.
+	"vmware"
+)
+X_XEPHYR_ONLY=(
+	"upscayl"
+	"virt-manager"
+)
+X_XPRA_ONLY=(
+	# Ban those that perform unexpected behavior like eager window close
+	# with xephyr.
+	"firefox"
+	"firefox-beta"
+	"firefox-developer-edition"
+	"firefox-esr"
+	"firefox-nightly"
+	"firefox-wayland"
+	"firefox-x11"
+)
+
 
 inherit flag-o-matic linux-info python-single-r1 toolchain-funcs virtualx
 
@@ -2614,32 +2643,6 @@ einfo
 		"wireshark-qt"
 		"xpdf"
 	# If it is uppercase, it is assumed is is a win port of that app.
-	)
-	local X_HEADLESS_COMPAT=(
-	# These are x11 sandboxed apps that could be headless and may use xvfb.
-		"vmware"
-	)
-
-	local X_XEPHYR_ONLY=(
-		"upscayl"
-		"virt-manager"
-	)
-
-	local X_XPRA_ONLY=(
-	# Ban those that perform unexpected behavior like eager window close
-	# with xephyr.
-		"firefox"
-		"firefox-beta"
-		"firefox-developer-edition"
-		"firefox-esr"
-		"firefox-nightly"
-		"firefox-wayland"
-		"firefox-x11"
-	)
-
-	local X_BLACKLIST=(
-	# False positives for X support.
-		"gjs"
 	)
 
 	is_x_blacklisted() {
@@ -3639,28 +3642,6 @@ eerror
 		die
 	fi
 
-	# Avoid broken resolution issue
-	local X_FALLBACKS=(
-		"leafpad:xpra"
-		"x-terminal-emulator:xpra"
-	)
-
-	local X_XEPHYR_ONLY=(
-		"upscayl"
-	)
-
-	local X_XPRA_ONLY=(
-	# Ban those that perform unexpected behavior like eager window close
-	# with xephyr.
-		"firefox"
-		"firefox-beta"
-		"firefox-developer-edition"
-		"firefox-esr"
-		"firefox-nightly"
-		"firefox-wayland"
-		"firefox-x11"
-	)
-
 	local preferred_fallback=""
 	local x
 	for x in ${X_FALLBACKS[@]} ; do
@@ -3700,8 +3681,10 @@ eerror
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("disable"|"none"|"unsandboxed"|"gaming-unsandboxed"|"opengl-unsandboxed") ]] ; then
 		:
 	elif is_xpra_only "${profile_name}" ; then
+einfo "Forcing xpra for ${profile_name}"
 		x11_arg="--x11=xpra"
 	elif is_xephyr_only "${profile_name}" ; then
+einfo "Forcing xephyr for ${profile_name}"
 		picked_xephyr=1
 		x11_arg="--x11=xephyr"
 	elif [[ "${X_BACKEND[${profile_name}]}" =~ ("gaming-sandboxed"|"opengl-sandboxed") ]] ; then
@@ -3732,7 +3715,8 @@ eerror
 
 	if (( ${picked_xephyr} == 1 )) ; then
 		if [[ -z "${XEPHYR_WH[${profile_name}]}" ]] ; then
-ewarn "XEPHYR_WH[${profile_name}] is unset.  The default 800x600 will be used.  Consider setting it to either 1280x720, 1920x1080, 2560x1440, 3840x2160 instead."
+ewarn "XEPHYR_WH[${profile_name}] is unset.  The default 1920x1080 will be used.  Consider setting it to either 1280x720, 1920x1080, 2560x1440, 3840x2160 instead."
+ewarn "See metadata.xml or \`epkginfo -x sys-apps/firejail::oiledmachine-overlay\` for details."
 		fi
 	fi
 
@@ -3938,9 +3922,9 @@ ewarn "XEPHYR_WH[${profile_name}] is unset.  The default 800x600 will be used.  
 cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
 #!/bin/bash
 if [[ -n "\${DISPLAY}" ]] ; then
-	exec firejail ${all_args} "${exe_path}" "\$@"
+	exec firejail ${all_args[@]} "${exe_path}" "\$@"
 else
-	exec firejail ${all_args} "${exe_path}" "\$@"
+	exec firejail ${all_args[@]} "${exe_path}" "\$@"
 fi
 EOF
 		fowners "root:root" "/usr/local/${folder}/${wrapper_name}"
