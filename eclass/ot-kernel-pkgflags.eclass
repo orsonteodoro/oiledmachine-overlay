@@ -3763,7 +3763,7 @@ ewarn
 	pkg="net-im/discord-wayland"
 	if ot-kernel_has_version "${pkg}" ; then
 # The ebuild should be deleted.
-ewarn "Detected older ${pkg} ebuild.  Use the distro ebuild instead."
+eerror "Detected older ${pkg} ebuild.  Use the distro ebuild instead."
 			warn_lowered_security "${pkg}" "Old ebuild with vulnerabilities" "DoS, DT, ID"
 		die
 	fi
