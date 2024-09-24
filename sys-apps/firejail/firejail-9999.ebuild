@@ -16,6 +16,7 @@ declare -A LANDLOCK_PROC
 declare -A LANDLOCK_READ
 declare -A LANDLOCK_WRITE
 declare -A LANDLOCK_EXECUTE
+declare -A OOM
 declare -A SECCOMP
 declare -A SECCOMP_BLOCK
 declare -A SECCOMP_KEEP
@@ -121,6 +122,7 @@ declare -A _SCOPE=(
 	["pnpm"]="conflict"
 	["pnpx"]="conflict"
 	["pzstd"]="conflict"
+	["rhash"]="conflict"
 	["sum"]="conflict"
 	["sha1sum"]="conflict"
 	["sha224sum"]="conflict"
@@ -995,6 +997,7 @@ youtube-viewer-gtk youtube-viewers-common youtubemusic-nativefier yt-dlp
 ytmdesktop zaproxy zart zathura zcat zcmp zdiff zeal zegrep zfgrep zforce zgrep
 zim zless zlib-flate zmore znew zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt
 zulip
+rhash
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
 #GEN_EBUILD=1 # Uncomment to regen ebuild parts
@@ -2382,6 +2385,7 @@ firejail_profiles_youtube-viewer )
 	firejail_profiles_zstdgrep? ( firejail_profiles_zstd )
 	firejail_profiles_zstdless? ( firejail_profiles_zstd )
 	firejail_profiles_zstdmt? ( firejail_profiles_zstd )
+	firejail_profiles_rhash? ( firejail_profiles_hasher-common )
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-0.9.70-envlimits.patch"
@@ -2390,6 +2394,7 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-profile-fixes.patch"
 	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix wrappers and mpv
+	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-rhash-profile.patch"
 )
 
 get_impls() {
