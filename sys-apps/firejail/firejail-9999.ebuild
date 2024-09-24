@@ -569,6 +569,7 @@ _PROFILE_GRAPH["qt-faststart"]="ffmpeg"
 _PROFILE_GRAPH["quadrapassel"]="gnome_games-common"
 _PROFILE_GRAPH["qupzilla"]="falkon"
 _PROFILE_GRAPH["ranger"]="file-manager-common"
+_PROFILE_GRAPH["rhash"]="hasher-common"
 _PROFILE_GRAPH["rhythmbox-client"]="rhythmbox"
 _PROFILE_GRAPH["riot-desktop"]="riot-web"
 _PROFILE_GRAPH["riot-web"]="electron-common"
@@ -708,6 +709,7 @@ _PROFILE_GRAPH["unrar"]="archiver-common"
 _PROFILE_GRAPH["unxz"]="cpio"
 _PROFILE_GRAPH["unzip"]="archiver-common"
 _PROFILE_GRAPH["unzstd"]="zstd"
+_PROFILE_GRAPH["upscayl"]="electron-common"
 _PROFILE_GRAPH["vimcat"]="vim"
 _PROFILE_GRAPH["vimdiff"]="vim"
 _PROFILE_GRAPH["vimpager"]="vim"
@@ -780,8 +782,6 @@ _PROFILE_GRAPH["zstdcat"]="zstd"
 _PROFILE_GRAPH["zstdgrep"]="zstd"
 _PROFILE_GRAPH["zstdless"]="zstd"
 _PROFILE_GRAPH["zstdmt"]="zstd"
-_PROFILE_GRAPH["rhash"]="hasher-common"
-_PROFILE_GRAPH["upscayl"]="electron-common"
 DOTTED_FILENAMES=(
 blender-2.8
 blender-3.6
@@ -940,7 +940,7 @@ pycharm-community pycharm-professional pzstd qbittorrent qcomicbook qemu-common
 qemu-launcher qemu-system-x86_64 qgis qlipper qmmp qnapi qpdf qpdfview qq
 qrencode qt-faststart qt5ct qt6ct qtox quadrapassel quassel quaternion quiterss
 quodlibet qupzilla qutebrowser raincat rambox ranger rawtherapee reader
-redeclipse rednotebook redshift regextester remmina retroarch rhythmbox
+redeclipse rednotebook redshift regextester remmina retroarch rhash rhythmbox
 rhythmbox-client ricochet riot-desktop riot-web ripperx ristretto rnano
 rocketchat rpcs3 rssguard rsync-download_only rtin rtorrent rtv rtv-addons
 runenpass_sh rview rvim rymdport sayonara scallion scorched3d
@@ -981,29 +981,27 @@ transmission-gtk transmission-qt transmission-remote transmission-remote-cli
 transmission-remote-gtk transmission-show tremulous trojita truecraft
 ts3client_runscript_sh tshark tuir tutanota-desktop tuxguitar tuxtype tvbrowser
 tvnamer twitch typespeed udiskie uefitool uget-gtk unar unbound uncompress unf
-unknown-horizons unlz4 unlzma unrar unxz unzip unzstd url-eater utox uudeview
-uzbl-browser viewnior viking vim vimcat vimdiff vimpager vimtutor virt-manager
-virtualbox vivaldi vivaldi-beta vivaldi-snapshot vivaldi-stable vlc vmplayer
-vmware vmware-player vmware-view vmware-workstation vscodium vulturesclaw
-vultureseye vym w3m warmux warsow warzone2100 waterfox waterfox-classic
-waterfox-current webstorm webui-aria2 weechat weechat-curses wesnoth wget wget2
-whalebird whois widelands wine wire-desktop wireshark wireshark-gtk
-wireshark-qt wordwarvi wpp wps wpspdf x-terminal-emulator x2goclient xbill
-xcalc xchat xed xfburn xfce4-dict xfce4-mixer xfce4-notes xfce4-screenshooter
-xiphos xlinks xlinks2 xmms xmr-stak xonotic xonotic-glx xonotic-sdl
-xonotic-sdl-wrapper xournal xournalpp xpdf xplayer xplayer-audio-preview
-xplayer-video-thumbnailer xpra xreader xreader-previewer xreader-thumbnailer
-xviewer xxd xz xzcat xzcmp xzdec xzdiff xzegrep xzfgrep xzgrep xzless xzmore
-yandex-browser yarn yelp youtube youtube-dl youtube-dl-gui youtube-viewer
-youtube-viewer-gtk youtube-viewers-common youtubemusic-nativefier yt-dlp
-ytmdesktop zaproxy zart zathura zcat zcmp zdiff zeal zegrep zfgrep zforce zgrep
-zim zless zlib-flate zmore znew zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt
-zulip
-rhash
-upscayl
+unknown-horizons unlz4 unlzma unrar unxz unzip unzstd upscayl url-eater utox
+uudeview uzbl-browser viewnior viking vim vimcat vimdiff vimpager vimtutor
+virt-manager virtualbox vivaldi vivaldi-beta vivaldi-snapshot vivaldi-stable
+vlc vmplayer vmware vmware-player vmware-view vmware-workstation vscodium
+vulturesclaw vultureseye vym w3m warmux warsow warzone2100 waterfox
+waterfox-classic waterfox-current webstorm webui-aria2 weechat weechat-curses
+wesnoth wget wget2 whalebird whois widelands wine wire-desktop wireshark
+wireshark-gtk wireshark-qt wordwarvi wpp wps wpspdf x-terminal-emulator
+x2goclient xbill xcalc xchat xed xfburn xfce4-dict xfce4-mixer xfce4-notes
+xfce4-screenshooter xiphos xlinks xlinks2 xmms xmr-stak xonotic xonotic-glx
+xonotic-sdl xonotic-sdl-wrapper xournal xournalpp xpdf xplayer
+xplayer-audio-preview xplayer-video-thumbnailer xpra xreader xreader-previewer
+xreader-thumbnailer xviewer xxd xz xzcat xzcmp xzdec xzdiff xzegrep xzfgrep
+xzgrep xzless xzmore yandex-browser yarn yelp youtube youtube-dl youtube-dl-gui
+youtube-viewer youtube-viewer-gtk youtube-viewers-common
+youtubemusic-nativefier yt-dlp ytmdesktop zaproxy zart zathura zcat zcmp zdiff
+zeal zegrep zfgrep zforce zgrep zim zless zlib-flate zmore znew zoom zpaq zstd
+zstdcat zstdgrep zstdless zstdmt zulip
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
-#GEN_EBUILD=1 # Uncomment to regen ebuild parts
+GEN_EBUILD=0 # Uncomment to regen ebuild parts
 GUI_REQUIRED_USE="
 firejail_profiles_1password? ( || ( xephyr xpra ) )
 firejail_profiles_2048-qt? ( || ( xephyr xpra ) )
@@ -1124,13 +1122,13 @@ firejail_profiles_ferdi? ( || ( xephyr xpra ) )
 firejail_profiles_ffmpeg? ( || ( xephyr xpra ) )
 firejail_profiles_file-roller? ( || ( xephyr xpra ) )
 firejail_profiles_firedragon? ( || ( xephyr xpra ) )
-firejail_profiles_firefox? ( || ( xpra ) )
-firejail_profiles_firefox-beta? ( || ( xpra ) )
-firejail_profiles_firefox-developer-edition? ( || ( xpra ) )
-firejail_profiles_firefox-esr? ( || ( xpra ) )
-firejail_profiles_firefox-nightly? ( || ( xpra ) )
-firejail_profiles_firefox-wayland? ( || ( xpra ) )
-firejail_profiles_firefox-x11? ( || ( xpra ) )
+firejail_profiles_firefox? ( || ( xephyr xpra ) )
+firejail_profiles_firefox-beta? ( || ( xephyr xpra ) )
+firejail_profiles_firefox-developer-edition? ( || ( xephyr xpra ) )
+firejail_profiles_firefox-esr? ( || ( xephyr xpra ) )
+firejail_profiles_firefox-nightly? ( || ( xephyr xpra ) )
+firejail_profiles_firefox-wayland? ( || ( xephyr xpra ) )
+firejail_profiles_firefox-x11? ( || ( xephyr xpra ) )
 firejail_profiles_five-or-more? ( || ( xephyr xpra ) )
 firejail_profiles_flameshot? ( || ( xephyr xpra ) )
 firejail_profiles_flashpeak-slimjet? ( || ( xephyr xpra ) )
@@ -1501,6 +1499,7 @@ firejail_profiles_typespeed? ( || ( xephyr xpra ) )
 firejail_profiles_udiskie? ( || ( xephyr xpra ) )
 firejail_profiles_uget-gtk? ( || ( xephyr xpra ) )
 firejail_profiles_unzip? ( || ( xephyr xpra ) )
+firejail_profiles_upscayl? ( || ( xephyr xpra ) )
 firejail_profiles_uzbl-browser? ( || ( xephyr xpra ) )
 firejail_profiles_virt-manager? ( || ( xephyr xpra ) )
 firejail_profiles_virtualbox? ( || ( xephyr xpra ) )
@@ -1517,6 +1516,7 @@ firejail_profiles_wire-desktop? ( || ( xephyr xpra ) )
 firejail_profiles_wireshark? ( || ( xephyr xpra ) )
 firejail_profiles_wireshark-gtk? ( || ( xephyr xpra ) )
 firejail_profiles_wireshark-qt? ( || ( xephyr xpra ) )
+firejail_profiles_x-terminal-emulator? ( || ( xephyr xpra ) )
 firejail_profiles_x2goclient? ( || ( xephyr xpra ) )
 firejail_profiles_xchat? ( || ( xephyr xpra ) )
 firejail_profiles_xfburn? ( || ( xephyr xpra ) )
@@ -1538,8 +1538,6 @@ firejail_profiles_zathura? ( || ( xephyr xpra ) )
 firejail_profiles_zeal? ( || ( xephyr xpra ) )
 firejail_profiles_zim? ( || ( xephyr xpra ) )
 firejail_profiles_zoom? ( || ( xephyr xpra ) )
-firejail_profiles_x-terminal-emulator? ( || ( xephyr xpra ) )
-firejail_profiles_upscayl? ( || ( xephyr ) )
 "
 HARDENED_ALLOCATORS_IUSE=(
 	hardened_malloc
@@ -1575,7 +1573,7 @@ firefox-esr firefox-nightly firefox-wayland firefox-x11 five-or-more flameshot
 flashpeak-slimjet floorp fluffychat fossamail four-in-a-row fractal freecad
 freeciv freeciv-gtk3 freeciv-mp-gtk3 freetube frozen-bubble gajim gapplication
 gcalccmd geany geary gedit geeqie geki2 geki3 gfeeds ghostwriter gimp git-cola
-gitg github-desktop gitter gl-117 gl-117-wrapper glaxium glaxium-wrapper
+gitg github-desktop gitter gjs gl-117 gl-117-wrapper glaxium glaxium-wrapper
 gnome-2048 gnome-books gnome-boxes gnome-builder gnome-calculator
 gnome-calendar gnome-character-map gnome-characters gnome-chess gnome-clocks
 gnome-contacts gnome-documents gnome-font-viewer gnome-hexgl gnome-keyring
@@ -1631,14 +1629,12 @@ tor-browser_pl tor-browser_pt-BR tor-browser_ru tor-browser_sv-SE
 tor-browser_tr tor-browser_vi tor-browser_zh-CN tor-browser_zh-TW torbrowser
 torbrowser-launcher totem transgui transmission-gtk transmission-qt
 transmission-remote-gtk trojita tutanota-desktop tuxtype twitch typespeed
-udiskie uget-gtk unzip uzbl-browser virt-manager virtualbox vivaldi vlc vmware
-vmware-player vmware-view vscodium warzone2100 waterfox whalebird wire-desktop
-wireshark wireshark-gtk wireshark-qt x2goclient xchat xfburn xfce4-notes
-xfce4-screenshooter xmms xonotic xonotic-sdl xonotic-sdl-wrapper xpdf
-yandex-browser yelp youtube youtube-dl-gui youtube-viewer-gtk
-youtubemusic-nativefier ytmdesktop zathura zeal zim zoom
-x-terminal-emulator
-upscayl
+udiskie uget-gtk unzip upscayl uzbl-browser virt-manager virtualbox vivaldi vlc
+vmware vmware-player vmware-view vscodium warzone2100 waterfox whalebird
+wire-desktop wireshark wireshark-gtk wireshark-qt x-terminal-emulator
+x2goclient xchat xfburn xfce4-notes xfce4-screenshooter xmms xonotic
+xonotic-sdl xonotic-sdl-wrapper xpdf yandex-browser yelp youtube youtube-dl-gui
+youtube-viewer-gtk youtubemusic-nativefier ytmdesktop zathura zeal zim zoom
 )
 X_BLACKLIST=(
 # False positives for X support.
@@ -1654,8 +1650,6 @@ X_HEADLESS_COMPAT=(
 	"vmware"
 )
 X_XEPHYR_ONLY=(
-	"upscayl"
-	"virt-manager"
 )
 X_XPRA_ONLY=(
 	# Ban those that perform unexpected behavior like eager window close
@@ -1712,7 +1706,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
-ebuild-revision-11
+ebuild-revision-12
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -2207,6 +2201,7 @@ firejail_profiles_pipe-viewer )
 	firejail_profiles_quadrapassel? ( firejail_profiles_gnome_games-common )
 	firejail_profiles_qupzilla? ( firejail_profiles_falkon )
 	firejail_profiles_ranger? ( firejail_profiles_file-manager-common )
+	firejail_profiles_rhash? ( firejail_profiles_hasher-common )
 	firejail_profiles_rhythmbox-client? ( firejail_profiles_rhythmbox )
 	firejail_profiles_riot-desktop? ( firejail_profiles_riot-web )
 	firejail_profiles_riot-web? ( firejail_profiles_electron-common )
@@ -2346,6 +2341,7 @@ firejail_profiles_pipe-viewer )
 	firejail_profiles_unxz? ( firejail_profiles_cpio )
 	firejail_profiles_unzip? ( firejail_profiles_archiver-common )
 	firejail_profiles_unzstd? ( firejail_profiles_zstd )
+	firejail_profiles_upscayl? ( firejail_profiles_electron-common )
 	firejail_profiles_vimcat? ( firejail_profiles_vim )
 	firejail_profiles_vimdiff? ( firejail_profiles_vim )
 	firejail_profiles_vimpager? ( firejail_profiles_vim )
@@ -2419,8 +2415,6 @@ firejail_profiles_youtube-viewer )
 	firejail_profiles_zstdgrep? ( firejail_profiles_zstd )
 	firejail_profiles_zstdless? ( firejail_profiles_zstd )
 	firejail_profiles_zstdmt? ( firejail_profiles_zstd )
-	firejail_profiles_rhash? ( firejail_profiles_hasher-common )
-	firejail_profiles_upscayl? ( firejail_profiles_electron-common )
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-0.9.70-envlimits.patch"
