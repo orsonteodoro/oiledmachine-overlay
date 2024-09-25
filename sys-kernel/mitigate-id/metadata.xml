@@ -15,12 +15,11 @@
   
   It was created as a reaction to cryptocurrency thefts for users of the distro.
 
-  A different ebuild may be considered to verify mitigation against
-  denial of services for mission critical servers.
-
   A parent ebuild may be considered to verify larger mitigation coverage
   against data theft to verify that X sandboxes and LSM are installed.
 
+  The optional sys-kernel/mitigate-dos can be used to verify mitigation against
+  denial of services for mission critical servers.
 
   Build time environment variables:
 
@@ -74,11 +73,15 @@
     <flag name="fuse">
       Mitigate against information disclosure for FUSE based filesystems.
     </flag>
+    <flag name="ice">
+      Mitigate against information disclosure for the
+      Intel® Ethernet Connection E800 Series Support network driver.
+    </flag>
     <flag name="ipv6">
-      Mitigate against Denial of Service in ipv6.
+      Mitigate against information disclosure in ipv6.
     </flag>
     <flag name="kvm">
-      Mitigate against Denial of Service in KVM.
+      Mitigate against information disclosure in KVM.
     </flag>
     <flag name="mcast">
       Mitigate against information disclosure for multicast (mcast) network

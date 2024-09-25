@@ -30,6 +30,7 @@ MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FUSE=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_I915=("5.10.211" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
+MULTISLOT_KERNEL_ICE=("6.10.10")
 MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IWLWIFI=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
 MULTISLOT_KERNEL_MLX5=("5.4.185" "5.10.106" "5.15.29" "5.16.15")
@@ -53,6 +54,7 @@ CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
 CVE_FUSE="CVE-2024-44947"
 CVE_I915="CVE-2024-41092"
+CVE_ICE="CVE-2024-46766"
 CVE_IPV6="CVE-2024-44987"
 CVE_IWLWIFI="CVE-2022-48787"
 CVE_MLX5="CVE-2022-48858"
@@ -101,6 +103,7 @@ btrfs
 ext4
 f2fs
 fuse
+ice
 ipv6
 iwlwifi
 mlx5
@@ -150,6 +153,7 @@ REQUIRED_USE="
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
 # fuse? https://nvd.nist.gov/vuln/detail/CVE-2024-44947 # ID
+# ice? https://nvd.nist.gov/vuln/detail/CVE-2024-46766 # DoS, DT, ID
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
 # nfsd? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
@@ -219,6 +223,11 @@ RDEPEND="
 		!custom-kernel? (
 			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FUSE[@]})
+		)
+	)
+	ice? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_ICE[@]})
 		)
 	)
 	mlx5? (
@@ -372,6 +381,9 @@ check_drivers() {
 	if use fuse ; then
 		fs=1
 		check_kernel_version "fuse" "${CVE_FUSE}" ${MULTISLOT_KERNEL_FUSE[@]}
+	fi
+	if use ice ; then
+		check_kernel_version "net/ethernet/intel/ice" "${CVE_ICE}" ${MULTISLOT_KERNEL_ICE[@]}
 	fi
 	if use ipv6 ; then
 		check_kernel_version "ipv6" "${CVE_IPV6}" ${MULTISLOT_KERNEL_IPV6[@]}

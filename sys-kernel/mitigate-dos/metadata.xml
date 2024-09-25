@@ -85,6 +85,10 @@
     <flag name="md-raid5">
       Mitigate against Denial of Service for the md/raid5 driver.
     </flag>
+    <flag name="ice">
+      Mitigate against Denial of Service for the
+      Intel® Ethernet Connection E800 Series Support network driver.
+    </flag>
     <flag name="iwlwifi">
       Mitigate against Denial of Service for the iwlwifi network driver.
     </flag>
@@ -98,7 +102,7 @@
       Mitigate against Denial of Service for the netfilter firewall.
     </flag>
     <flag name="nfsd">
-      Mitigate against information disclosure for the NFS server network
+      Mitigate against Denial of Service for the NFS server network
       filesystem driver.
     </flag>
     <flag name="nf_tables">
