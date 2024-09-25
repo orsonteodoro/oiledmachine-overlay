@@ -10043,7 +10043,7 @@ eerror "Audit is required for dss profile to generate logs.  Set SYSTEMD_CONTAIN
 		ot-kernel_y_configopt "CONFIG_BLOCK" # [P] References block filesystems (e.g. ext4)
 
 	# Distro recommended, not verified through search
-		warn_lowered_security "${pkg}" # For below \
+		warn_lowered_security "${pkg}" "Reconnaissance, vulnerability pre attack scan" # For below \
 		ot-kernel_unset_configopt "CONFIG_GRKERNSEC_PROC" # [EN]
 
 		#ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_HASH" # [EP] Disabled.  API not being used, but contains reference to AF_ALG.
