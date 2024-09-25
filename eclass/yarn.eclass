@@ -676,6 +676,7 @@ einfo "Hydrating yarn..."
 	corepack hydrate --activate "${ESYSROOT}/usr/share/yarn/yarn-${yarn_slot}.tgz" || die
 	__npm_patch
 	local npm_pv
+	local yarn_pv
 	if [[ -e "${HOME}/.cache/node/corepack/v1/npm" ]] ; then
 		npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/v1/npm/"*))
 		export PATH=".:${HOME}/.cache/node/corepack/v1/npm/${npm_pv}/bin:${PATH}"
@@ -684,8 +685,14 @@ einfo "Hydrating yarn..."
 		export PATH=".:${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
 	fi
 
-	local yarn_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/yarn/"*))
-	export PATH="${HOME}/.cache/node/corepack/yarn/${yarn_pv}/bin:${PATH}"
+	if [[ -e "${HOME}/.cache/node/corepack/v1/yarn" ]] ; then
+		yarn_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/v1/yarn/"*))
+		export PATH="${HOME}/.cache/node/corepack/v1/yarn/${yarn_pv}/bin:${PATH}"
+	else
+		yarn_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/yarn/"*))
+		export PATH="${HOME}/.cache/node/corepack/yarn/${yarn_pv}/bin:${PATH}"
+	fi
+
 	npm_network_settings
 }
 
