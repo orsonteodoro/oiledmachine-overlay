@@ -84,7 +84,7 @@
       Mitigate against information disclosure for the amdgpu driver.
     </flag>
     <flag name="video_cards_intel">
-      Mitigate against information disclosure for Xe and 915 driver.
+      Mitigate against information disclosure for the Xe and i915 video drivers.
     </flag>
     <flag name="video_cards_nouveau">
       Mitigate against information disclosure for the nouveau video driver.

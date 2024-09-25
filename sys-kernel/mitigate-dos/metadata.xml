@@ -98,7 +98,7 @@
       Mitigate against Denial of Service for the amdgpu driver.
     </flag>
     <flag name="video_cards_intel">
-      Mitigate against Denial of Service for Xe and i915.
+      Mitigate against Denial of Service for the Xe and i915 video drivers.
     </flag>
     <flag name="video_cards_nouveau">
       Mitigate against Denial of Service for the nouveau video driver.
