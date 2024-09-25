@@ -866,7 +866,7 @@ BDEPEND+="
 "
 PDEPEND+="
 	firejail? (
-		sys-apps/firejail[X,firefox]
+		sys-apps/firejail[X?,firejail_profiles_firefox]
 	)
 	screencast? (
 		>=media-video/pipewire-0.3.52[${MULTILIB_USEDEP}]
