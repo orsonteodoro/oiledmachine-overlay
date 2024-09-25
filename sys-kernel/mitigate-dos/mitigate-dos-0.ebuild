@@ -438,12 +438,12 @@ _check_n() {
 
 _disable_gentoo_self_protection() {
 	# Disabled for fine grained customization.
-	_check_n "CONFIG_GENTOO_KERNEL_SELF_PROTECTION"
-	_check_n "CONFIG_GENTOO_KERNEL_SELF_PROTECTION_COMMON"
-	_check_n "CONFIG_GENTOO_KERNEL_SELF_PROTECTION_X86_64"
-	_check_n "CONFIG_GENTOO_KERNEL_SELF_PROTECTION_X86_32"
-	_check_n "CONFIG_GENTOO_KERNEL_SELF_PROTECTION_ARM64"
-	_check_n "CONFIG_GENTOO_KERNEL_SELF_PROTECTION_ARM"
+	_check_n "GENTOO_KERNEL_SELF_PROTECTION"
+	_check_n "GENTOO_KERNEL_SELF_PROTECTION_COMMON"
+	_check_n "GENTOO_KERNEL_SELF_PROTECTION_X86_64"
+	_check_n "GENTOO_KERNEL_SELF_PROTECTION_X86_32"
+	_check_n "GENTOO_KERNEL_SELF_PROTECTION_ARM64"
+	_check_n "GENTOO_KERNEL_SELF_PROTECTION_ARM"
 }
 
 _check_kernel_cmdline() {
@@ -493,7 +493,7 @@ eerror
 }
 
 _y_cet_ibt() {
-	_check_y "CONFIG_X86_KERNEL_IBT"
+	_check_y "X86_KERNEL_IBT"
 	local ready=0
 	if [[ "${compiler}" =~ "gcc" ]] && ver_test "${compiler_version%%.*}" -ge "9" && ot-kernel_has_version ">=sys-devel/binutils-2.29" ; then
 		ready=1
@@ -528,7 +528,7 @@ eerror
 	fi
 }
 _y_cet_ss() {
-	_check_y "CONFIG_X86_USER_SHADOW_STACK"
+	_check_y "X86_USER_SHADOW_STACK"
 	local ready=0
 	if [[ "${compiler}" =~ "gcc" ]] && ver_test "${compiler_version%%.*}" -ge "8" && ot-kernel_has_version ">=sys-devel/binutils-2.31" ; then
 		ready=1
