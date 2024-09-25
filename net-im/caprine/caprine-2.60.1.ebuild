@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Security bump electron every week
+
 MY_PN="${PN^}"
 
 NPM_INSTALL_PATH="/opt/${PN}"
