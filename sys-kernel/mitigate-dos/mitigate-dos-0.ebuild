@@ -34,6 +34,7 @@ MULTISLOT_KERNEL_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
 MULTISLOT_KERNEL_IWLWIFI_1=("5.15.27" "5.16.13")
 MULTISLOT_KERNEL_IWLWIFI_2=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
 MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
+MULTISLOT_KERNEL_MD_RAID5=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_MLX5=("6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_NOUVEAU=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_RADEON=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
@@ -60,6 +61,7 @@ CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
 CVE_I915="CVE-2024-41092"
 CVE_MD_RAID1="CVE-2024-45023"
+CVE_MD_RAID5="CVE-2024-43914"
 CVE_NOUVEAU="CVE-2024-45012"
 CVE_RADEON="CVE-2024-41060"
 CVE_IWLWIFI_1="CVE-2022-48918"
@@ -105,6 +107,7 @@ f2fs
 iwlwifi
 max-uptime
 md-raid1
+md-raid5
 mlx5
 netfilter
 nftables
@@ -158,7 +161,8 @@ REQUIRED_USE="
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787
 # mac80211? https://nvd.nist.gov/vuln/detail/CVE-2024-43911 # DoS
-# md-raid1? https://nvd.nist.gov/vuln/detail/CVE-2024-45023 # DT, ID
+# md-raid1? https://nvd.nist.gov/vuln/detail/CVE-2024-45023 # DT, DoS
+# md-raid5? https://nvd.nist.gov/vuln/detail/CVE-2024-43914 # DOS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-45018 # DoS
 # nf_tables? https://nvd.nist.gov/vuln/detail/CVE-2022-48935 # DoS UAF
@@ -237,6 +241,11 @@ RDEPEND="
 	md-raid1? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MD_RAID1[@]})
+		)
+	)
+	md-raid5? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MD_RAID5[@]})
 		)
 	)
 	mlx5? (
@@ -401,6 +410,9 @@ check_drivers() {
 	fi
 	if use md-raid1 ; then
 		check_kernel_version "md/raid1" "${CVE_MD_RADI1}" ${MULTISLOT_KERNEL_MD_RAID1[@]}
+	fi
+	if use md-raid5 ; then
+		check_kernel_version "md/raid5" "${CVE_MD_RADI1}" ${MULTISLOT_KERNEL_MD_RAID5[@]}
 	fi
 	if use netfilter ; then
 		check_kernel_version "netfilter" "${CVE_NETFILTER}" ${MULTISLOT_KERNEL_NETFILTER[@]}
