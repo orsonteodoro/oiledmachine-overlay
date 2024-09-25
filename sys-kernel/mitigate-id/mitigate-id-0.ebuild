@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Security:  update every kernel version bump
+
 LTS_VERSIONS=("4.19" "5.4" "5.10" "5.15" "6.1" "6.6")
 ACTIVE_VERSIONS=("4.19" "5.4" "5.10" "5.15" "6.1" "6.6" "6.10" "6.11")
 STABLE_OR_MAINLINE_VERSIONS=("6.10" "6.11")
@@ -20,37 +22,37 @@ EOL_VERSIONS=(
 # For zero-tolerance mode
 MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52" "6.10.11" "6.11")
 
+MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_BLUETOOTH=("5.10.165" "5.15.90" "6.1.8")
 MULTISLOT_KERNEL_BTRFS=("6.6.49" "6.10.8")
-MULTISLOT_KERNEL_DRM_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
-MULTISLOT_KERNEL_DRM_I915=("5.10.211" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
-MULTISLOT_KERNEL_DRM_NOUVEAU=("5.0.21" "5.4.284")
-MULTISLOT_KERNEL_DRM_VMWGFX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52")
-MULTISLOT_KERNEL_DRM_XE=("6.10.8")
 MULTISLOT_KERNEL_EXT4=("6.10.1")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
+MULTISLOT_KERNEL_I915=("5.10.211" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
 MULTISLOT_KERNEL_IWLWIFI=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
 MULTISLOT_KERNEL_MLX5=("5.4.185" "5.10.106" "5.15.29" "5.16.15")
 MULTISLOT_KERNEL_NETFILTER=("5.15" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" "6.6.29" "6.8.8")
+MULTISLOT_KERNEL_NOUVEAU=("5.0.21" "5.4.284")
 MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
+MULTISLOT_KERNEL_XE=("6.10.8")
+MULTISLOT_KERNEL_VMWGFX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52")
 
+CVE_AMDGPU="CVE-2024-46725"
 CVE_BLUETOOTH="CVE-2022-48878"
 CVE_BTRFS="CVE-2024-46687"
 CVE_EXT4="CVE-2024-42257"
 CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
-CVE_DRM_AMDGPU="CVE-2024-46725"
-CVE_DRM_I915="CVE-2024-41092"
-CVE_DRM_NOUVEAU="CVE-2023-0030"
-CVE_DRM_VMWGFX="CVE-2022-22942"
-CVE_DRM_XE="CVE-2024-46683"
+CVE_I915="CVE-2024-41092"
 CVE_IWLWIFI="CVE-2022-48787"
 CVE_MLX5="CVE-2022-48858"
 CVE_NETFILTER="CVE-2024-44983"
 CVE_NF_TABLES="CVE-2024-27020"
+CVE_NOUVEAU="CVE-2023-0030"
 CVE_SELINUX="CVE-2022-48740"
+CVE_VMWGFX="CVE-2022-22942"
+CVE_XE="CVE-2024-46683"
 
 inherit mitigate-id toolchain-funcs
 
@@ -114,7 +116,7 @@ REQUIRED_USE="
 # Race condition, CVSS 4.7 # DoS
 # ToCToU race, CVSS 7.0 # PE, DoS, DT, ID
 # Use after free, use-after-free, UAF, CVSS 7.8 # DoS, DT, ID
-# VM guest makes host slow and reponsive, CVSS 6.0 # DoS
+# VM guest makes host slow and responsive, CVSS 6.0 # DoS
 #
 
 #
@@ -203,18 +205,18 @@ RDEPEND="
 	)
 	video_cards_amdgpu? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRM_AMDGPU[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU[@]})
 		)
 	)
 	video_cards_intel? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRM_I915[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRM_XE[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_I915[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XE[@]})
 		)
 	)
 	video_cards_nouveau? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRM_NOUVEAU[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NOUVEAU[@]})
 		)
 	)
 	video_cards_nvidia? (
@@ -226,7 +228,7 @@ RDEPEND="
 	)
 	video_cards_vmware? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRM_VMWGFX[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMWGFX[@]})
 		)
 	)
 "
@@ -322,14 +324,14 @@ check_drivers() {
 		check_kernel_version "selinux" "${CVE_SELINUX}" ${MULTISLOT_KERNEL_SELINUX[@]}
 	fi
 	if use video_cards_amdgpu ; then
-		check_kernel_version "amdgpu" "${CVE_DRM_AMDGPU}" ${MULTISLOT_KERNEL_DRM_AMDGPU[@]}
+		check_kernel_version "amdgpu" "${CVE_AMDGPU}" ${MULTISLOT_KERNEL_AMDGPU[@]}
 	fi
 	if use video_cards_intel ; then
-		check_kernel_version "i915" "${CVE_DRM_I915}" ${MULTISLOT_KERNEL_DRM_I915[@]}
-		check_kernel_version "xe" "${CVE_DRM_XE}" ${MULTISLOT_KERNEL_DRM_XE[@]}
+		check_kernel_version "i915" "${CVE_I915}" ${MULTISLOT_KERNEL_I915[@]}
+		check_kernel_version "xe" "${CVE_XE}" ${MULTISLOT_KERNEL_XE[@]}
 	fi
 	if use video_cards_vmware ; then
-		check_kernel_version "vmwgfx" "${CVE_DRM_VMWGFX}" ${MULTISLOT_KERNEL_DRM_VMWGFX[@]}
+		check_kernel_version "vmwgfx" "${CVE_VMWGFX}" ${MULTISLOT_KERNEL_VMWGFX[@]}
 	fi
 	if (( ${fs} == 1 )) ; then
 		check_kernel_version "fs" "${CVE_FS}" ${MULTISLOT_KERNEL_FS[@]}
