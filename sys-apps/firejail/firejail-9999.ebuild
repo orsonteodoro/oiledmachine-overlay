@@ -175,6 +175,7 @@ declare -A _SCOPE=(
 	["zstdless"]="global"
 	["zstdmt"]="conflict"
 )
+
 _PROFILE_GRAPH["_1password"]="electron-common"
 _PROFILE_GRAPH["_7z"]="archiver-common"
 _PROFILE_GRAPH["_7za"]="7z"
@@ -782,6 +783,7 @@ _PROFILE_GRAPH["zstdcat"]="zstd"
 _PROFILE_GRAPH["zstdgrep"]="zstd"
 _PROFILE_GRAPH["zstdless"]="zstd"
 _PROFILE_GRAPH["zstdmt"]="zstd"
+_PROFILE_GRAPH["caprine"]="electron-common"
 DOTTED_FILENAMES=(
 blender-2.8
 blender-3.6
@@ -999,6 +1001,7 @@ youtube-viewer youtube-viewer-gtk youtube-viewers-common
 youtubemusic-nativefier yt-dlp ytmdesktop zaproxy zart zathura zcat zcmp zdiff
 zeal zegrep zfgrep zforce zgrep zim zless zlib-flate zmore znew zoom zpaq zstd
 zstdcat zstdgrep zstdless zstdmt zulip
+caprine
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
 GEN_EBUILD=0 # Uncomment to regen ebuild parts
@@ -1538,6 +1541,7 @@ firejail_profiles_zathura? ( || ( xephyr xpra ) )
 firejail_profiles_zeal? ( || ( xephyr xpra ) )
 firejail_profiles_zim? ( || ( xephyr xpra ) )
 firejail_profiles_zoom? ( || ( xephyr xpra ) )
+firejail_profiles_caprine? ( || ( xephyr xpra ) )
 "
 HARDENED_ALLOCATORS_IUSE=(
 	hardened_malloc
@@ -1635,6 +1639,7 @@ wire-desktop wireshark wireshark-gtk wireshark-qt x-terminal-emulator
 x2goclient xchat xfburn xfce4-notes xfce4-screenshooter xmms xonotic
 xonotic-sdl xonotic-sdl-wrapper xpdf yandex-browser yelp youtube youtube-dl-gui
 youtube-viewer-gtk youtubemusic-nativefier ytmdesktop zathura zeal zim zoom
+caprine
 )
 X_BLACKLIST=(
 # False positives for X support.
@@ -2415,6 +2420,7 @@ firejail_profiles_youtube-viewer )
 	firejail_profiles_zstdgrep? ( firejail_profiles_zstd )
 	firejail_profiles_zstdless? ( firejail_profiles_zstd )
 	firejail_profiles_zstdmt? ( firejail_profiles_zstd )
+	firejail_profiles_caprine? ( firejail_profiles_electron-common )
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-0.9.70-envlimits.patch"
@@ -2426,6 +2432,7 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-rhash-profile.patch"
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-upscayl-profile.patch"
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-default-1080p.patch"
+	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-caprine-profile.patch"
 )
 
 get_impls() {

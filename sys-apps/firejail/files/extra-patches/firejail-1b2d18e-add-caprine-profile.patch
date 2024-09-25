@@ -1,0 +1,23 @@
+diff '--color=auto' -Nurp firejail-9999.orig/etc/profile-a-l/caprine.profile firejail-9999/etc/profile-a-l/caprine.profile
+--- firejail-9999.orig/etc/profile-a-l/caprine.profile	1969-12-31 16:00:00.000000000 -0800
++++ firejail-9999/etc/profile-a-l/caprine.profile	2024-09-24 18:55:29.687620553 -0700
+@@ -0,0 +1,19 @@
++# Firejail profile for caprine
++# Description: Unofficial electron based desktop wrapper for Caprine
++# This file is overwritten after every install/update
++# Persistent local customizations
++include caprine.local
++# Persistent global definitions
++include globals.local
++
++noblacklist ${HOME}/.config/Twitch
++
++mkdir ${HOME}/.config/Caprine
++whitelist ${HOME}/.config/Caprine
++whitelist /opt/caprine
++
++private-bin electron,electron[0-9],electron[0-9][0-9],caprine,bash
++private-etc @tls-ca
++
++# Redirect
++include electron-common.profile
