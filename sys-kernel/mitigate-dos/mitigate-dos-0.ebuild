@@ -100,7 +100,7 @@ selinux
 # Out of bounds read, CVSS 7.1, # DoS, ID
 # Out of bounds write, CVSS 7.8, # DoS, ID, DT
 # Race condition, CVSS 4.7 # DoS
-# ToCToU race, CVSS 7.0 # EP, DoS, DT, ID
+# ToCToU race, CVSS 7.0 # PE, DoS, DT, ID
 # Use after free, use-after-free, UAF, CVSS 7.8 # DoS, DT, ID
 #
 
