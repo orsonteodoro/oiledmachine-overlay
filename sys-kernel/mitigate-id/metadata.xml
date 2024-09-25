@@ -90,7 +90,7 @@
       Mitigate against information disclosure for the nouveau video driver.
     </flag>
     <flag name="video_cards_nvidia">
-      Mitigate against information disclosure, privelege escalation, Spectre V1,
+      Mitigate against information disclosure, privilege escalation, Spectre V1,
       Spectre V2 for the NVIDIA® video driver.
     </flag>
     <flag name="video_cards_vmware">
