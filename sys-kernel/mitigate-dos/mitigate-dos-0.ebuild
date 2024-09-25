@@ -33,6 +33,7 @@ MULTISLOT_KERNEL_EXT4=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
 MULTISLOT_KERNEL_IWLWIFI_1=("5.15.27" "5.16.13")
 MULTISLOT_KERNEL_IWLWIFI_2=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
+MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
 MULTISLOT_KERNEL_MLX5=("6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_NOUVEAU=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_RADEON=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
@@ -58,6 +59,7 @@ CVE_EXT4="CVE-2024-43828"
 CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
 CVE_I915="CVE-2024-41092"
+CVE_MD_RAID1="CVE-2024-45023"
 CVE_NOUVEAU="CVE-2024-45012"
 CVE_RADEON="CVE-2024-41060"
 CVE_IWLWIFI_1="CVE-2022-48918"
@@ -102,6 +104,7 @@ ext4
 f2fs
 iwlwifi
 max-uptime
+md-raid1
 mlx5
 netfilter
 nftables
@@ -124,6 +127,7 @@ REQUIRED_USE="
 # Arbitrary code execution, CVSS 9.8 # DoS, DT, ID
 # Buffer overflow, CVSS 6.7 # DoS, DT, ID
 # Crash, CVSS 5.5 # DoS
+# Data corruption, CVSS 7.1 # DT, DoS
 # Data race, CVSS 7.0 # DoS, DT, ID
 # Deadlock, CVSS 5.5 # DoS
 # Double free, CVSS 7.8 # DoS, DT, ID
@@ -154,6 +158,7 @@ REQUIRED_USE="
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787
 # mac80211? https://nvd.nist.gov/vuln/detail/CVE-2024-43911 # DoS
+# md-raid1? https://nvd.nist.gov/vuln/detail/CVE-2024-45023 # DT, ID
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-45018 # DoS
 # nf_tables? https://nvd.nist.gov/vuln/detail/CVE-2022-48935 # DoS UAF
@@ -227,6 +232,11 @@ RDEPEND="
 			${WIFI_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_1[@]})
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_2[@]})
+		)
+	)
+	md-raid1? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MD_RAID1[@]})
 		)
 	)
 	mlx5? (
@@ -388,6 +398,9 @@ check_drivers() {
 	fi
 	if use selinux ; then
 		check_kernel_version "selinux" "${CVE_SELINUX}" ${MULTISLOT_KERNEL_SELINUX[@]}
+	fi
+	if use md-raid1 ; then
+		check_kernel_version "md/raid1" "${CVE_MD_RADI1}" ${MULTISLOT_KERNEL_MD_RAID1[@]}
 	fi
 	if use netfilter ; then
 		check_kernel_version "netfilter" "${CVE_NETFILTER}" ${MULTISLOT_KERNEL_NETFILTER[@]}

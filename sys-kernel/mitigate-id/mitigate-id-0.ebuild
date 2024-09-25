@@ -105,6 +105,7 @@ REQUIRED_USE="
 # Arbitrary code execution, CVSS 9.8 # DoS, DT, ID
 # Buffer overflow, CVSS 6.7 # DoS, DT, ID
 # Crash, CVSS 5.5 # DoS
+# Data corruption, CVSS 7.1 # DT, DoS
 # Data race, CVSS 7.0 # DoS, DT, ID
 # Deadlock, CVSS 5.5 # DoS
 # Double free # CVSS 7.8 # DoS, DT, ID
