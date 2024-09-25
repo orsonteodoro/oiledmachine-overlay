@@ -24,15 +24,16 @@ MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1
 
 MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_APPARMOR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
-MULTISLOT_KERNEL_BLUETOOTH_1=("6.6.51" "6.10.10")
-MULTISLOT_KERNEL_BLUETOOTH_2=("5.10.165" "5.15.90" "6.1.8")
-MULTISLOT_KERNEL_BTRFS=("6.6.49" "6.10.8")
+MULTISLOT_KERNEL_BLUETOOTH_46749=("6.6.51" "6.10.10")
+MULTISLOT_KERNEL_BLUETOOTH_48878=("5.10.165" "5.15.90" "6.1.8")
+MULTISLOT_KERNEL_BTRFS_46687=("6.6.49" "6.10.8")
+MULTISLOT_KERNEL_BTRFS_46749=("6.10.10")
 MULTISLOT_KERNEL_BRCM80211=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_CFG80211=("5.10.244" "5.15.165" "6.1.106" "6.6.47" "6.9.9")
 MULTISLOT_KERNEL_EXT4=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
-MULTISLOT_KERNEL_IWLWIFI_1=("5.15.27" "5.16.13")
-MULTISLOT_KERNEL_IWLWIFI_2=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
+MULTISLOT_KERNEL_IWLWIFI_48918=("5.15.27" "5.16.13")
+MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
 MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
 MULTISLOT_KERNEL_MD_RAID5=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_MLX5=("6.1.107" "6.6.48" "6.10.7")
@@ -51,9 +52,10 @@ MULTISLOT_KERNEL_XEN=("6.6.51" "6.10.10")
 
 CVE_AMDGPU="CVE-2024-46725"
 CVE_APPARMOR="CVE-2024-46721"
-CVE_BLUETOOTH_1="CVE-2024-46749"
-CVE_BLUETOOTH_2="CVE-2022-48878"
-CVE_BTRFS="CVE-2024-46687"
+CVE_BLUETOOTH_46749="CVE-2024-46749"
+CVE_BLUETOOTH_48878="CVE-2022-48878"
+CVE_BTRFS_46687="CVE-2024-46687"
+CVE_BTRFS_46749="CVE-2024-46749"
 CVE_BRCM80211="CVE-2024-46672"
 CVE_CFG80211="CVE-2024-42114"
 CVE_EXT4="CVE-2024-43828"
@@ -64,8 +66,8 @@ CVE_MD_RAID1="CVE-2024-45023"
 CVE_MD_RAID5="CVE-2024-43914"
 CVE_NOUVEAU="CVE-2024-45012"
 CVE_RADEON="CVE-2024-41060"
-CVE_IWLWIFI_1="CVE-2022-48918"
-CVE_IWLWIFI_2="CVE-2022-48787"
+CVE_IWLWIFI_48918="CVE-2022-48918"
+CVE_IWLWIFI_48787="CVE-2022-48787"
 CVE_MAC80211="CVE-2024-43911"
 CVE_MLX5="CVE-2024-45019"
 CVE_NETFILTER="CVE-2024-45018"
@@ -209,14 +211,15 @@ RDEPEND="
 	)
 	bluetooth? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH_1[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH_2[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH_46749[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH_48878[@]})
 		)
 	)
 	btrfs? (
 		!custom-kernel? (
 			${FS_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS_46687[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS_46749[@]})
 		)
 	)
 	ext4? (
@@ -234,8 +237,8 @@ RDEPEND="
 	iwlwifi? (
 		!custom-kernel? (
 			${WIFI_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_1[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_2[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_48918[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_48787[@]})
 		)
 	)
 	md-raid1? (
@@ -383,12 +386,13 @@ check_drivers() {
 		check_kernel_version "bcrm80211" "${CVE_BRCM80211}" ${MULTISLOT_KERNEL_BRCM80211[@]}
 	fi
 	if use bluetooth ; then
-		check_kernel_version "bluetooth" "${CVE_BLUETOOTH_1}" ${MULTISLOT_KERNEL_BLUETOOTH_1[@]}
-		check_kernel_version "bluetooth" "${CVE_BLUETOOTH_2}" ${MULTISLOT_KERNEL_BLUETOOTH_2[@]}
+		check_kernel_version "bluetooth" "${CVE_BLUETOOTH_46749}" ${MULTISLOT_KERNEL_BLUETOOTH_46749[@]}
+		check_kernel_version "bluetooth" "${CVE_BLUETOOTH_48878}" ${MULTISLOT_KERNEL_BLUETOOTH_48878[@]}
 	fi
 	if use btrfs ; then
 		fs=1
-		check_kernel_version "btrfs" "${CVE_BTRFS}" ${MULTISLOT_KERNEL_BTRFS[@]}
+		check_kernel_version "btrfs" "${CVE_BTRFS}" ${MULTISLOT_KERNEL_BTRFS_46687[@]}
+		check_kernel_version "btrfs" "${CVE_BTRFS}" ${MULTISLOT_KERNEL_BTRFS_46749[@]}
 	fi
 	if use ext4 ; then
 		fs=1
@@ -399,8 +403,8 @@ check_drivers() {
 	fi
 	if use iwlwifi ; then
 		wifi=1
-		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_1}" ${MULTISLOT_KERNEL_IWLWIFI_1[@]}
-		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_2}" ${MULTISLOT_KERNEL_IWLWIFI_2[@]}
+		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_48918}" ${MULTISLOT_KERNEL_IWLWIFI_48918[@]}
+		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_48787}" ${MULTISLOT_KERNEL_IWLWIFI_48787[@]}
 	fi
 	if use mlx5 ; then
 		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_MLX5[@]}
