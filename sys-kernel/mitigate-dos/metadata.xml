@@ -49,6 +49,9 @@
       This is recommended for Intel® CPUs since the USE flag coverage for
       microarchitectures is incomplete.
     </flag>
+    <flag name="bcrm80211">
+      Mitigate against Denial of Service for the bcrm80211 network driver.
+    </flag>
     <flag name="bluetooth">
       Mitigate against Denial of Service for the Bluetooth® subsystem.
     </flag>
@@ -69,9 +72,6 @@
     <flag name="f2fs">
       Mitigate against Denial of Service for the F2FS filesystem.
     </flag>
-    <flag name="fs">
-      Mitigate against Denial of Service for the kernel filesystem subsystem
-    </flag>
     <flag name="max-uptime">
       Verifies defaults for security and compiler settings in order mitigate
       against deadlock or hard reset.
@@ -87,6 +87,9 @@
     </flag>
     <flag name="nf_tables">
       Mitigate against Denial of Service for the nftables firewall.
+    </flag>
+    <flag name="rtw88">
+      Mitigate against Denial of Service for the rtw88 network driver.
     </flag>
     <flag name="selinux">
       Mitigate against Denial of Service for the SELinux security moule.

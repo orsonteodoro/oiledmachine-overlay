@@ -483,7 +483,6 @@ gen_patched_kernel_list() {
 	echo "
 		)
 	"
-
 }
 
 # @FUNCTION: gen_zero_tolerance_kernel_list

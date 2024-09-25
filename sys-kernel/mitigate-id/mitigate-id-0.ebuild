@@ -80,8 +80,8 @@ IUSE="
 ${VIDEO_CARDS[@]}
 bluetooth
 btrfs
+ext4
 f2fs
-fs
 iwlwifi
 mlx5
 netfilter
@@ -89,12 +89,6 @@ nftables
 selinux
 "
 REQUIRED_USE="
-	btrfs? (
-		fs
-	)
-	f2fs? (
-		fs
-	)
 "
 # CE - Code Execution
 # DoS - Denial of Service (CVSS A:H)
@@ -120,6 +114,7 @@ REQUIRED_USE="
 # Race condition, CVSS 4.7 # DoS
 # ToCToU race, CVSS 7.0 # PE, DoS, DT, ID
 # Use after free, use-after-free, UAF, CVSS 7.8 # DoS, DT, ID
+# VM guest makes host slow and reponsive, CVSS 6.0 # DoS
 #
 
 #
@@ -152,6 +147,9 @@ REQUIRED_USE="
 # those.  The other reason why we prune them is because they may leak sensitive
 # debug info (ID) in plain text.
 #
+FS_RDEPEND="
+	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS[@]})
+"
 RDEPEND="
 	${MITIGATE_ID_RDEPEND}
 	!custom-kernel? (
@@ -167,17 +165,20 @@ RDEPEND="
 	)
 	btrfs? (
 		!custom-kernel? (
+			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS[@]})
+		)
+	)
+	ext4? (
+		!custom-kernel? (
+			${FS_RDEPEND}
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4[@]})
 		)
 	)
 	f2fs? (
 		!custom-kernel? (
+			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_F2FS[@]})
-		)
-	)
-	fs? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS[@]})
 		)
 	)
 	mlx5? (
@@ -289,17 +290,21 @@ einfo "${cve}:  mitigated, component name - ${driver_name}, found version - ${fo
 check_drivers() {
 	# Check for USE=custom-kernels only which bypass RDEPEND
 	use custom-kernel || return
+	local fs=0
 	if use bluetooth ; then
-		check_kernel_version "bluetooth" "${CVE_BLUETOOTH_2}" ${MULTISLOT_KERNEL_BLUETOOTH[@]}
+		check_kernel_version "bluetooth" "${CVE_BLUETOOTH}" ${MULTISLOT_KERNEL_BLUETOOTH[@]}
 	fi
 	if use btrfs ; then
+		fs=1
 		check_kernel_version "btrfs" "${CVE_BTRFS}" ${MULTISLOT_KERNEL_BTRFS[@]}
 	fi
-	if use f2fs ; then
-		check_kernel_version "f2fs" "${CVE_F2FS}" ${MULTISLOT_KERNEL_F2FS[@]}
+	if use ext4 ; then
+		fs=1
+		check_kernel_version "ext4" "${CVE_EXT4}" ${MULTISLOT_KERNEL_EXT4[@]}
 	fi
-	if use fs ; then
-		check_kernel_version "fs" "${CVE_FS}" ${MULTISLOT_KERNEL_FS[@]}
+	if use f2fs ; then
+		fs=1
+		check_kernel_version "f2fs" "${CVE_F2FS}" ${MULTISLOT_KERNEL_F2FS[@]}
 	fi
 	if use iwlwifi ; then
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI}" ${MULTISLOT_KERNEL_IWLWIFI[@]}
@@ -325,6 +330,9 @@ check_drivers() {
 	fi
 	if use video_cards_vmware ; then
 		check_kernel_version "vmwgfx" "${CVE_DRM_VMWGFX}" ${MULTISLOT_KERNEL_DRM_VMWGFX[@]}
+	fi
+	if (( ${fs} == 1 )) ; then
+		check_kernel_version "fs" "${CVE_FS}" ${MULTISLOT_KERNEL_FS[@]}
 	fi
 }
 

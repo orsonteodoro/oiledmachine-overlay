@@ -24,6 +24,8 @@ MULTISLOT_KERNEL_APPARMOR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.109" 
 MULTISLOT_KERNEL_BLUETOOTH_1=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_BLUETOOTH_2=("5.10.165" "5.15.90" "6.1.8")
 MULTISLOT_KERNEL_BTRFS=("6.6.49" "6.10.8")
+MULTISLOT_KERNEL_BRCM80211=("6.6.48" "6.10.7")
+MULTISLOT_KERNEL_CFG80211=("5.10.244" "5.15.165" "6.1.106" "6.6.47" "6.9.9")
 MULTISLOT_KERNEL_IWLWIFI_1=("5.15.27" "5.16.13")
 MULTISLOT_KERNEL_IWLWIFI_2=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
 MULTISLOT_KERNEL_MLX5=("6.1.107" "6.6.48" "6.10.7")
@@ -36,14 +38,19 @@ MULTISLOT_KERNEL_DRM_XE=("6.10.8")
 MULTISLOT_KERNEL_EXT4=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
+MULTISLOT_KERNEL_MAC80211=("6.10.5")
 MULTISLOT_KERNEL_NETFILTER=("5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" "6.6.29" "6.8.8")
+MULTISLOT_KERNEL_RTW88=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
+MULTISLOT_KERNEL_XEN=("6.6.51" "6.10.10")
 
 CVE_APPARMOR="CVE-2024-46721"
 CVE_BLUETOOTH_1="CVE-2024-46749"
 CVE_BLUETOOTH_2="CVE-2022-48878"
 CVE_BTRFS="CVE-2024-46687"
+CVE_BRCM80211="CVE-2024-46672"
+CVE_CFG80211="CVE-2024-42114"
 CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
 CVE_DRM_AMDGPU="CVE-2024-46725"
@@ -55,10 +62,13 @@ CVE_DRM_XE="CVE-2024-46683"
 CVE_EXT4="CVE-2024-43828"
 CVE_IWLWIFI_1="CVE-2022-48918"
 CVE_IWLWIFI_2="CVE-2022-48787"
+CVE_MAC80211="CVE-2024-43911"
 CVE_MLX5="CVE-2024-45019"
 CVE_NETFILTER="CVE-2024-45018"
 CVE_NF_TABLES="CVE-2024-27020"
+CVE_RTW88="CVE-2024-46760"
 CVE_SELINUX="CVE-2022-48740"
+CVE_XEN="CVE-2024-46762"
 
 inherit mitigate-dos toolchain-funcs
 
@@ -83,28 +93,21 @@ VIDEO_CARDS=(
 IUSE="
 ${VIDEO_CARDS[@]}
 apparmor
+bcrm80211
 bluetooth
 btrfs
 ext4
 f2fs
-fs
 iwlwifi
 max-uptime
 mlx5
 netfilter
 nftables
+rtw88
 selinux
+xen
 "
 REQUIRED_USE="
-	btrfs? (
-		fs
-	)
-	ext4? (
-		fs
-	)
-	f2fs? (
-		fs
-	)
 "
 # CE - Code Execution
 # DoS - Denial of Service (CVSS A:H)
@@ -130,6 +133,7 @@ REQUIRED_USE="
 # Race condition, CVSS 4.7 # DoS
 # ToCToU race, CVSS 7.0 # PE, DoS, DT, ID
 # Use after free, use-after-free, UAF, CVSS 7.8 # DoS, DT, ID
+# VM guest makes host slow and reponsive, CVSS 6.0 # DoS
 #
 
 #
@@ -140,14 +144,18 @@ REQUIRED_USE="
 # bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2022-48878 # DoS, DT, ID
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46749 # DoS
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46687 # DoS, DT, ID
+# bcrm80211? https://nvd.nist.gov/vuln/detail/CVE-2024-46672 # DoS
+# cfg80211? https://nvd.nist.gov/vuln/detail/CVE-2024-42114 # DoS
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-43828 # DoS
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787
+# mac80211? https://nvd.nist.gov/vuln/detail/CVE-2024-43911 # DoS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-45018 # DoS
 # nf_tables? https://nvd.nist.gov/vuln/detail/CVE-2022-48935 # DoS UAF
+# rtw88? https://nvd.nist.gov/vuln/detail/CVE-2024-46760 # DoS
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2023-52913 # DoS
@@ -157,10 +165,18 @@ REQUIRED_USE="
 # video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, DT, CE, PE
 # video_cards_radeon? https://nvd.nist.gov/vuln/detail/CVE-2024-41060 # DoS
 # video_cards_vmware? https://nvd.nist.gov/vuln/detail/CVE-2024-46709 # DoS
+# xen? https://nvd.nist.gov/vuln/detail/CVE-2024-46762 # DoS
 #
 # Usually stable versions get security checked.
 # The betas and dev versions usually do not get security reports.
 #
+FS_RDEPEND="
+	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS[@]})
+"
+WIFI_RDEPEND="
+	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_CFG80211[@]})
+	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MAC80211[@]})
+"
 RDEPEND="
 	${MITIGATE_DOS_RDEPEND}
 	!custom-kernel? (
@@ -174,6 +190,12 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_APPARMOR[@]})
 		)
 	)
+	bcrm80211? (
+		!custom-kernel? (
+			${WIFI_RDEPEND}
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BRCM80211[@]})
+		)
+	)
 	bluetooth? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH_1[@]})
@@ -182,26 +204,25 @@ RDEPEND="
 	)
 	btrfs? (
 		!custom-kernel? (
+			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS[@]})
 		)
 	)
 	ext4? (
 		!custom-kernel? (
+			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4[@]})
 		)
 	)
 	f2fs? (
 		!custom-kernel? (
+			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_F2FS[@]})
-		)
-	)
-	fs? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS[@]})
 		)
 	)
 	iwlwifi? (
 		!custom-kernel? (
+			${WIFI_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_1[@]})
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_2[@]})
 		)
@@ -219,6 +240,12 @@ RDEPEND="
 	nftables? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NF_TABLES[@]})
+		)
+	)
+	rtw88? (
+		!custom-kernel? (
+			${WIFI_RDEPEND}
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_RTW88[@]})
 		)
 	)
 	selinux? (
@@ -257,6 +284,11 @@ RDEPEND="
 	video_cards_vmware? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRM_VMWGFX[@]})
+		)
+	)
+	xen? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XEN[@]})
 		)
 	)
 "
@@ -320,26 +352,32 @@ einfo "${cve}:  mitigated, component name - ${driver_name}, found version - ${fo
 check_drivers() {
 	# Check for USE=custom-kernels only which bypass RDEPEND
 	use custom-kernel || return
+	local wifi=0
+	local fs=0
 	if use apparmor ; then
 		check_kernel_version "apparmor" "${CVE_APPARMOR}" ${MULTISLOT_KERNEL_APPARMOR[@]}
+	fi
+	if use bcrm80211 ; then
+		wifi=1
+		check_kernel_version "bcrm80211" "${CVE_BRCM80211}" ${MULTISLOT_KERNEL_BRCM80211[@]}
 	fi
 	if use bluetooth ; then
 		check_kernel_version "bluetooth" "${CVE_BLUETOOTH_1}" ${MULTISLOT_KERNEL_BLUETOOTH_1[@]}
 		check_kernel_version "bluetooth" "${CVE_BLUETOOTH_2}" ${MULTISLOT_KERNEL_BLUETOOTH_2[@]}
 	fi
 	if use btrfs ; then
+		fs=1
 		check_kernel_version "btrfs" "${CVE_BTRFS}" ${MULTISLOT_KERNEL_BTRFS[@]}
 	fi
 	if use ext4 ; then
+		fs=1
 		check_kernel_version "ext4" "${CVE_EXT4}" ${MULTISLOT_KERNEL_EXT4[@]}
 	fi
 	if use f2fs ; then
 		check_kernel_version "f2fs" "${CVE_F2FS}" ${MULTISLOT_KERNEL_F2FS[@]}
 	fi
-	if use fs ; then
-		check_kernel_version "fs" "${CVE_FS}" ${MULTISLOT_KERNEL_FS[@]}
-	fi
 	if use iwlwifi ; then
+		wifi=1
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_1}" ${MULTISLOT_KERNEL_IWLWIFI_1[@]}
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_2}" ${MULTISLOT_KERNEL_IWLWIFI_2[@]}
 	fi
@@ -355,6 +393,10 @@ check_drivers() {
 	if use nftables ; then
 		check_kernel_version "nf_tables" "${CVE_NF_TABLES}" ${MULTISLOT_KERNEL_NF_TABLES[@]}
 	fi
+	if use rtw88 ; then
+		wifi=1
+		check_kernel_version "rtw88" "${CVE_RTW88}" ${MULTISLOT_KERNEL_RTW88[@]}
+	fi
 	if use video_cards_amdgpu ; then
 		check_kernel_version "amdgpu" "${CVE_DRM_AMDGPU}" ${MULTISLOT_KERNEL_DRM_AMDGPU[@]}
 	fi
@@ -366,7 +408,17 @@ check_drivers() {
 		check_kernel_version "radeon" "${CVE_DRM_RADEON}" ${MULTISLOT_KERNEL_DRM_RADEON[@]}
 	fi
 	if use video_cards_vmware ; then
-		check_kernel_version "vmwgfx" "${CVE_DRM_VMWGFX}" ${MULTISLOT_KERNEL_DRM_RADEON[@]}
+		check_kernel_version "vmwgfx" "${CVE_DRM_VMWGFX}" ${MULTISLOT_KERNEL_DRM_VMWGFX[@]}
+	fi
+	if use xen ; then
+		check_kernel_version "xen" "${CVE_XEN}" ${MULTISLOT_KERNEL_XEN[@]}
+	fi
+	if (( ${wifi} == 1 )) ; then
+		check_kernel_version "cfg80211" "${CVE_CFG80211}" ${MULTISLOT_KERNEL_CFG80211[@]}
+		check_kernel_version "mac80211" "${CVE_MAC80211}" ${MULTISLOT_KERNEL_MAC80211[@]}
+	fi
+	if (( ${fs} == 1 )) ; then
+		check_kernel_version "fs" "${CVE_FS}" ${MULTISLOT_KERNEL_FS[@]}
 	fi
 }
 

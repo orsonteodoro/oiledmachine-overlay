@@ -68,9 +68,6 @@
       (A BIOS firmware update from the motherboard manufacturer may still be
       required if the firmware package doesn't apply to your model.)
     </flag>
-    <flag name="fs">
-      Mitigate against information disclosure for the filesystem subsystem.
-    </flag>
     <flag name="mlx5">
       Mitigate against information disclosure for the mlx5 network driver.
     </flag>
