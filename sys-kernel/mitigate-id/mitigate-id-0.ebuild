@@ -29,14 +29,18 @@ MULTISLOT_KERNEL_EXT4=("6.10.1")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
 MULTISLOT_KERNEL_I915=("5.10.211" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
+MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IWLWIFI=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
 MULTISLOT_KERNEL_MLX5=("5.4.185" "5.10.106" "5.15.29" "5.16.15")
+MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_NETFILTER=("5.15" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" "6.6.29" "6.8.8")
 MULTISLOT_KERNEL_NOUVEAU=("5.0.21" "5.4.284")
 MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
 MULTISLOT_KERNEL_SMB=("6.6.51" "6.10.10")
+MULTISLOT_KERNEL_V3D=("6.10.8")
 MULTISLOT_KERNEL_XE=("6.10.8")
+MULTISLOT_KERNEL_VMCI=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_VMWGFX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52")
 
 CVE_AMDGPU="CVE-2024-46725"
@@ -46,13 +50,17 @@ CVE_EXT4="CVE-2024-42257"
 CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
 CVE_I915="CVE-2024-41092"
+CVE_IPV6="CVE-2024-44987"
 CVE_IWLWIFI="CVE-2022-48787"
 CVE_MLX5="CVE-2022-48858"
+CVE_NET_BRIDGE="CVE-2024-44934"
 CVE_NETFILTER="CVE-2024-44983"
 CVE_NF_TABLES="CVE-2024-27020"
 CVE_NOUVEAU="CVE-2023-0030"
 CVE_SELINUX="CVE-2022-48740"
 CVE_SMB="CVE-2024-46796"
+CVE_V3D="CVE-2024-46699"
+CVE_VMCI="CVE-2024-46738"
 CVE_VMWGFX="CVE-2022-22942"
 CVE_XE="CVE-2024-46683"
 
@@ -78,20 +86,24 @@ VIDEO_CARDS=(
 	video_cards_intel
 	video_cards_nouveau
 	video_cards_nvidia
+	video_cards_v3d
 	video_cards_vmware
 )
 IUSE="
 ${VIDEO_CARDS[@]}
 bluetooth
+bridge
 btrfs
 ext4
 f2fs
+ipv6
 iwlwifi
 mlx5
 netfilter
 nftables
 samba
 selinux
+vmware
 "
 REQUIRED_USE="
 "
@@ -126,10 +138,12 @@ REQUIRED_USE="
 #
 # The latest to near past vulnerabilities are reported below.
 #
+# bridge? https://nvd.nist.gov/vuln/detail/CVE-2024-44934 # DoS, DT, ID
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46687 # DoS, DT, ID
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-42257 # DoS, DT, ID
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
+# ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2022-48858 # DoS, DT, ID
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-44983 # DoS, ID
@@ -140,6 +154,7 @@ REQUIRED_USE="
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2023-0030 # PE, ID, DoS, DT.  Fixed in >= 5.0.
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2021-20292 # PE, CE, ID, DoS, DT.  Fixed in >= 5.9.
 # video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, DT, CE, PE
+# video_cards_v3d? https://nvd.nist.gov/vuln/detail/CVE-2024-46699 # DoS, DT, ID
 # video_cards_vmware? https://nvd.nist.gov/vuln/detail/CVE-2022-22942 # PE, DoS, DT, ID
 #
 
@@ -167,6 +182,11 @@ RDEPEND="
 	bluetooth? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH[@]})
+		)
+	)
+	bridge? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NET_BRIDGE[@]})
 		)
 	)
 	btrfs? (
@@ -235,9 +255,19 @@ RDEPEND="
 			>=x11-drivers/nvidia-drivers-470.256.02:0/470
 		)
 	)
+	video_cards_v3d? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_V3D[@]})
+		)
+	)
 	video_cards_vmware? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMWGFX[@]})
+		)
+	)
+	vmware? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMCI[@]})
 		)
 	)
 "
@@ -305,6 +335,9 @@ check_drivers() {
 	if use bluetooth ; then
 		check_kernel_version "bluetooth" "${CVE_BLUETOOTH}" ${MULTISLOT_KERNEL_BLUETOOTH[@]}
 	fi
+	if use bridge ; then
+		check_kernel_version "net/bridge" "${CVE_NET_BRIDGE}" ${MULTISLOT_KERNEL_NET_BRIDGE[@]}
+	fi
 	if use btrfs ; then
 		fs=1
 		check_kernel_version "btrfs" "${CVE_BTRFS}" ${MULTISLOT_KERNEL_BTRFS[@]}
@@ -316,6 +349,9 @@ check_drivers() {
 	if use f2fs ; then
 		fs=1
 		check_kernel_version "f2fs" "${CVE_F2FS}" ${MULTISLOT_KERNEL_F2FS[@]}
+	fi
+	if use ipv6 ; then
+		check_kernel_version "ipv6" "${CVE_IPV6}" ${MULTISLOT_KERNEL_IPV6[@]}
 	fi
 	if use iwlwifi ; then
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI}" ${MULTISLOT_KERNEL_IWLWIFI[@]}
@@ -342,8 +378,14 @@ check_drivers() {
 		check_kernel_version "i915" "${CVE_I915}" ${MULTISLOT_KERNEL_I915[@]}
 		check_kernel_version "xe" "${CVE_XE}" ${MULTISLOT_KERNEL_XE[@]}
 	fi
+	if use video_cards_v3d ; then
+		check_kernel_version "v3d" "${CVE_V3D}" ${MULTISLOT_KERNEL_V3D[@]}
+	fi
 	if use video_cards_vmware ; then
 		check_kernel_version "vmwgfx" "${CVE_VMWGFX}" ${MULTISLOT_KERNEL_VMWGFX[@]}
+	fi
+	if use vmware ; then
+		check_kernel_version "vmci" "${CVE_VMCI}" ${MULTISLOT_KERNEL_VMCI[@]}
 	fi
 	if (( ${fs} == 1 )) ; then
 		check_kernel_version "fs" "${CVE_FS}" ${MULTISLOT_KERNEL_FS[@]}

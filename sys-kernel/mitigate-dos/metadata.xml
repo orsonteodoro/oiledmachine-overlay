@@ -55,6 +55,9 @@
     <flag name="bluetooth">
       Mitigate against Denial of Service for the Bluetooth® subsystem.
     </flag>
+    <flag name="bridge">
+      Mitigate against Denial of Service for Ethernet bridge support.
+    </flag>
     <flag name="btrfs">
       Mitigate against Denial of Service for the Btrfs filesystem.
     </flag>
@@ -84,6 +87,9 @@
     </flag>
     <flag name="iwlwifi">
       Mitigate against Denial of Service for the iwlwifi network driver.
+    </flag>
+    <flag name="ipv6">
+      Mitigate against Denial of Service in ipv6.
     </flag>
     <flag name="mlx5">
       Mitigate against Denial of Service for the mlx5 network driver.
@@ -115,8 +121,14 @@
     <flag name="video_cards_nvidia">
       Mitigate against Denial of Service for the NVIDIA® video driver.
     </flag>
+    <flag name="video_cards_v3d">
+      Mitigate against Denial of Service for the v3d video driver.
+    </flag>
     <flag name="video_cards_vmware">
       Mitigate against Denial of Service for the wmwgfx video driver.
+    </flag>
+    <flag name="vmware">
+      Mitigate against Denial of Service for VMware support.
     </flag>
     <flag name="zero-tolerance">
       Bump to the latest patched kernel point releases when the changelog

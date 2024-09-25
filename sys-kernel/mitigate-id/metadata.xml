@@ -51,6 +51,9 @@
     <flag name="bluetooth">
       Mitigate against information disclosure for the Bluetooth® subsystem.
     </flag>
+    <flag name="bridge">
+      Mitigate against information disclosure for Ethernet bridge support.
+    </flag>
     <flag name="btrfs">
       Mitigate against information disclosure for the Btrfs filesystem.
     </flag>
@@ -67,6 +70,13 @@
       Use firmware as mitigation.
       (A BIOS firmware update from the motherboard manufacturer may still be
       required if the firmware package doesn't apply to your model.)
+    </flag>
+    <flag name="ipv6">
+      Mitigate against Denial of Service in ipv6.
+    </flag>
+    <flag name="mcast">
+      Mitigate against information disclosure for multicast (mcast) network
+      support.
     </flag>
     <flag name="mlx5">
       Mitigate against information disclosure for the mlx5 network driver.
@@ -96,8 +106,14 @@
       Mitigate against information disclosure, privilege escalation, Spectre V1,
       Spectre V2 for the NVIDIA® video driver.
     </flag>
+    <flag name="video_cards_v3d">
+      Mitigate against information disclosure for the v3d video driver.
+    </flag>
     <flag name="video_cards_vmware">
       Mitigate against information disclosure for the vmwgfx video driver.
+    </flag>
+    <flag name="vmware">
+      Mitigate against information disclosure for VMware support.
     </flag>
     <flag name="zero-tolerance">
       Bump to the latest patched kernel point releases when the changelog

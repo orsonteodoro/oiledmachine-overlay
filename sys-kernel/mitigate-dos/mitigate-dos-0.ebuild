@@ -32,11 +32,13 @@ MULTISLOT_KERNEL_BRCM80211=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_CFG80211=("5.10.244" "5.15.165" "6.1.106" "6.6.47" "6.9.9")
 MULTISLOT_KERNEL_EXT4=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
+MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IWLWIFI_48918=("5.15.27" "5.16.13")
 MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
 MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
 MULTISLOT_KERNEL_MD_RAID5=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_MLX5=("6.1.107" "6.6.48" "6.10.7")
+MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_NOUVEAU=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_RADEON=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
@@ -47,6 +49,8 @@ MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" 
 MULTISLOT_KERNEL_RTW88=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
 MULTISLOT_KERNEL_SMB=("6.6.51" "6.10.10")
+MULTISLOT_KERNEL_V3D=("6.10.8")
+MULTISLOT_KERNEL_VMCI=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_VMWGFX=("6.6.49" "6.9" "6.10.8")
 MULTISLOT_KERNEL_XE=("6.10.8")
 MULTISLOT_KERNEL_XEN=("6.6.51" "6.10.10")
@@ -65,8 +69,10 @@ CVE_FS="CVE-2024-43882"
 CVE_I915="CVE-2024-41092"
 CVE_MD_RAID1="CVE-2024-45023"
 CVE_MD_RAID5="CVE-2024-43914"
+CVE_NET_BRIDGE="CVE-2024-44934"
 CVE_NOUVEAU="CVE-2024-45012"
 CVE_RADEON="CVE-2024-41060"
+CVE_IPV6="CVE-2024-44987"
 CVE_IWLWIFI_48918="CVE-2022-48918"
 CVE_IWLWIFI_48787="CVE-2022-48787"
 CVE_MAC80211="CVE-2024-43911"
@@ -76,6 +82,8 @@ CVE_NF_TABLES="CVE-2024-27020"
 CVE_RTW88="CVE-2024-46760"
 CVE_SELINUX="CVE-2022-48740"
 CVE_SMB="CVE-2024-46796"
+CVE_V3D="CVE-2024-46699"
+CVE_VMCI="CVE-2024-46738"
 CVE_VMWGFX="CVE-2024-46709"
 CVE_XE="CVE-2024-46683"
 CVE_XEN="CVE-2024-46762"
@@ -98,6 +106,7 @@ VIDEO_CARDS=(
 	video_cards_nouveau
 	video_cards_nvidia
 	video_cards_radeon
+	video_cards_v3d
 	video_cards_vmware
 )
 IUSE="
@@ -105,9 +114,11 @@ ${VIDEO_CARDS[@]}
 apparmor
 bcrm80211
 bluetooth
+bridge
 btrfs
 ext4
 f2fs
+ipv6
 iwlwifi
 samba
 max-uptime
@@ -118,6 +129,7 @@ netfilter
 nftables
 rtw88
 selinux
+vmware
 xen
 "
 REQUIRED_USE="
@@ -156,6 +168,7 @@ REQUIRED_USE="
 # apparmor? https://nvd.nist.gov/vuln/detail/CVE-2024-46721 # DoS
 # bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2024-46749 # DoS
 # bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2022-48878 # DoS, DT, ID
+# bridge? https://nvd.nist.gov/vuln/detail/CVE-2024-44934 # DoS, DT, ID
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46749 # DoS
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46687 # DoS, DT, ID
 # bcrm80211? https://nvd.nist.gov/vuln/detail/CVE-2024-46672 # DoS
@@ -163,6 +176,7 @@ REQUIRED_USE="
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-43828 # DoS
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
+# ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787
 # mac80211? https://nvd.nist.gov/vuln/detail/CVE-2024-43911 # DoS
@@ -181,7 +195,9 @@ REQUIRED_USE="
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2024-42101 # DoS; requires >= 6.10 for fix
 # video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, DT, CE, PE
 # video_cards_radeon? https://nvd.nist.gov/vuln/detail/CVE-2024-41060 # DoS
+# video_cards_v3d? https://nvd.nist.gov/vuln/detail/CVE-2024-46699 # DoS, DT, ID
 # video_cards_vmware? https://nvd.nist.gov/vuln/detail/CVE-2024-46709 # DoS
+# vmware? https://nvd.nist.gov/vuln/detail/CVE-2024-46738 # DoS, DT, ID
 # xen? https://nvd.nist.gov/vuln/detail/CVE-2024-46762 # DoS
 #
 # Usually stable versions get security checked.
@@ -217,6 +233,11 @@ RDEPEND="
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH_46749[@]})
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH_48878[@]})
+		)
+	)
+	bridge? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NET_BRIDGE[@]})
 		)
 	)
 	btrfs? (
@@ -314,9 +335,19 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_RADEON[@]})
 		)
 	)
+	video_cards_v3d? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_V3D[@]})
+		)
+	)
 	video_cards_vmware? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMWGFX[@]})
+		)
+	)
+	vmware? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMCI[@]})
 		)
 	)
 	xen? (
@@ -398,6 +429,9 @@ check_drivers() {
 		check_kernel_version "bluetooth" "${CVE_BLUETOOTH_46749}" ${MULTISLOT_KERNEL_BLUETOOTH_46749[@]}
 		check_kernel_version "bluetooth" "${CVE_BLUETOOTH_48878}" ${MULTISLOT_KERNEL_BLUETOOTH_48878[@]}
 	fi
+	if use bridge ; then
+		check_kernel_version "net/bridge" "${CVE_NET_BRIDGE}" ${MULTISLOT_KERNEL_NET_BRIDGE[@]}
+	fi
 	if use btrfs ; then
 		fs=1
 		check_kernel_version "btrfs" "${CVE_BTRFS}" ${MULTISLOT_KERNEL_BTRFS_46687[@]}
@@ -410,6 +444,9 @@ check_drivers() {
 	if use f2fs ; then
 		check_kernel_version "f2fs" "${CVE_F2FS}" ${MULTISLOT_KERNEL_F2FS[@]}
 	fi
+	if use ipv6 ; then
+		check_kernel_version "ipv6" "${CVE_IPV6}" ${MULTISLOT_KERNEL_IPV6[@]}
+	fi
 	if use iwlwifi ; then
 		wifi=1
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_48918}" ${MULTISLOT_KERNEL_IWLWIFI_48918[@]}
@@ -417,9 +454,6 @@ check_drivers() {
 	fi
 	if use mlx5 ; then
 		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_MLX5[@]}
-	fi
-	if use selinux ; then
-		check_kernel_version "selinux" "${CVE_SELINUX}" ${MULTISLOT_KERNEL_SELINUX[@]}
 	fi
 	if use md-raid1 ; then
 		check_kernel_version "md/raid1" "${CVE_MD_RADI1}" ${MULTISLOT_KERNEL_MD_RAID1[@]}
@@ -440,6 +474,9 @@ check_drivers() {
 	if use samba ; then
 		check_kernel_version "smb" "${CVE_SMB}" ${MULTISLOT_KERNEL_SMB[@]}
 	fi
+	if use selinux ; then
+		check_kernel_version "selinux" "${CVE_SELINUX}" ${MULTISLOT_KERNEL_SELINUX[@]}
+	fi
 	if use video_cards_amdgpu ; then
 		check_kernel_version "amdgpu" "${CVE_AMDGPU}" ${MULTISLOT_KERNEL_AMDGPU[@]}
 	fi
@@ -450,8 +487,14 @@ check_drivers() {
 	if use video_cards_radeon ; then
 		check_kernel_version "radeon" "${CVE_RADEON}" ${MULTISLOT_KERNEL_RADEON[@]}
 	fi
+	if use video_cards_v3d ; then
+		check_kernel_version "v3d" "${CVE_V3D}" ${MULTISLOT_KERNEL_V3D[@]}
+	fi
 	if use video_cards_vmware ; then
 		check_kernel_version "vmwgfx" "${CVE_VMWGFX}" ${MULTISLOT_KERNEL_VMWGFX[@]}
+	fi
+	if use vmware ; then
+		check_kernel_version "vmci" "${CVE_VMCI}" ${MULTISLOT_KERNEL_VMCI[@]}
 	fi
 	if use xen ; then
 		check_kernel_version "xen" "${CVE_XEN}" ${MULTISLOT_KERNEL_XEN[@]}
