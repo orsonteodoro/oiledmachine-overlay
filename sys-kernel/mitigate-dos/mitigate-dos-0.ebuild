@@ -50,7 +50,8 @@ MULTISLOT_KERNEL_NETFILTER=("5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" "6.6.29" "6.8.8")
 MULTISLOT_KERNEL_RTW88=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
-MULTISLOT_KERNEL_SMB=("6.6.51" "6.10.10")
+MULTISLOT_KERNEL_SMB_46796=("6.6.51" "6.10.10")
+MULTISLOT_KERNEL_SMB_46795=("5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_V3D=("6.10.8")
 MULTISLOT_KERNEL_VMCI=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_VMWGFX=("6.6.49" "6.9" "6.10.8")
@@ -85,7 +86,8 @@ CVE_NETFILTER="CVE-2024-45018"
 CVE_NF_TABLES="CVE-2024-27020"
 CVE_RTW88="CVE-2024-46760"
 CVE_SELINUX="CVE-2022-48740"
-CVE_SMB="CVE-2024-46796"
+CVE_SMB_46796="CVE-2024-46796"
+CVE_SMB_46795="CVE-2024-46795"
 CVE_V3D="CVE-2024-46699"
 CVE_VMCI="CVE-2024-46738"
 CVE_VMWGFX="CVE-2024-46709"
@@ -317,7 +319,8 @@ RDEPEND="
 	)
 	samba? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMB[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMB_46796[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMB_46795[@]})
 		)
 	)
 	selinux? (
@@ -496,7 +499,8 @@ check_drivers() {
 		check_kernel_version "rtw88" "${CVE_RTW88}" ${MULTISLOT_KERNEL_RTW88[@]}
 	fi
 	if use samba ; then
-		check_kernel_version "smb" "${CVE_SMB}" ${MULTISLOT_KERNEL_SMB[@]}
+		check_kernel_version "smb" "${CVE_SMB_46796}" ${MULTISLOT_KERNEL_SMB_46796[@]}
+		check_kernel_version "smb" "${CVE_SMB_46795}" ${MULTISLOT_KERNEL_SMB_46795[@]}
 	fi
 	if use selinux ; then
 		check_kernel_version "selinux" "${CVE_SELINUX}" ${MULTISLOT_KERNEL_SELINUX[@]}
