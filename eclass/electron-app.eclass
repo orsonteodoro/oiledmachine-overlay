@@ -1110,6 +1110,8 @@ electron-app_get_electron_platarch() {
 	fi
 }
 
+# Nightlys are not prebuilt.  Use beta instead.
+
 # @FUNCTION: _electron-app_gen_electron_uris_prod
 # @DESCRIPTION:
 # Generate URIs for offline install of electron based apps for production.
