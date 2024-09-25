@@ -49,47 +49,62 @@
       This is recommended for Intel® CPUs since the USE flag coverage for
       microarchitectures is incomplete.
     </flag>
+    <flag name="bluetooth">
+      Mitigate against Denial of Service for the Bluetooth® subsystem.
+    </flag>
+    <flag name="btrfs">
+      Mitigate against Denial of Service for the Btrfs filesystem.
+    </flag>
     <flag name="custom-kernel">
       Prevent vendor lock-in when doing kernel mitigation checks.
+    </flag>
+    <flag name="ext4">
+      Mitigate against Denial of Service for the ext4 filesystem.
     </flag>
     <flag name="firmware">
       Use firmware as mitigation.
       (A BIOS firmware update from the motherboard manufacturer may still be
       required if the firmware package doesn't apply to your model.)
     </flag>
+    <flag name="f2fs">
+      Mitigate against Denial of Service for the F2FS filesystem.
+    </flag>
+    <flag name="fs">
+      Mitigate against Denial of Service for the kernel filesystem subsystem
+    </flag>
     <flag name="max-uptime">
       Verifies defaults for security and compiler settings in order mitigate
       against deadlock or hard reset.
     </flag>
     <flag name="iwlwifi">
-      Mitigate against Denial of Service.
+      Mitigate against Denial of Service for the iwlwifi network driver.
     </flag>
     <flag name="mlx5">
-      Mitigate against Denial of Service.
+      Mitigate against Denial of Service for the mlx5 network driver.
     </flag>
     <flag name="netfilter">
-      Mitigate against Denial of Service.
+      Mitigate against Denial of Service for the netfilter firewall.
     </flag>
     <flag name="nf_tables">
-      Mitigate against Denial of Service.
+      Mitigate against Denial of Service for the nftables firewall.
     </flag>
     <flag name="selinux">
-      Mitigate against Denial of Service
+      Mitigate against Denial of Service for the SELinux security moule.
     </flag>
     <flag name="video_cards_amdgpu">
-      Mitigate against Denial of Service.
+      Mitigate against Denial of Service for the amdgpu driver.
     </flag>
     <flag name="video_cards_intel">
-      Mitigate against Denial of Service.
+      Mitigate against Denial of Service for Xe and i915.
     </flag>
     <flag name="video_cards_nouveau">
-      Mitigate against Denial of Service.
+      Mitigate against Denial of Service for the nouveau video driver.
     </flag>
     <flag name="video_cards_nvidia">
-      Mitigate against Denial of Service.
+      Mitigate against Denial of Service for the NVIDIA® driver.
     </flag>
     <flag name="video_cards_vmware">
-      Mitigate against Denial of Service.
+      Mitigate against Denial of Service for the wmwgfx video driver.
     </flag>
     <flag name="zero-tolerance">
       Bump to the latest patched kernel point releases when the changelog

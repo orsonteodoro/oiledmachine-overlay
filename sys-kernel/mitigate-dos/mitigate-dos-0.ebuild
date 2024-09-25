@@ -21,26 +21,38 @@ EOL_VERSIONS=(
 MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52" "6.10.11" "6.11")
 
 MULTISLOT_KERNEL_APPARMOR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
-MULTISLOT_KERNEL_DRIVER_IWLWIFI_1=("5.15.27" "5.16.13")
-MULTISLOT_KERNEL_DRIVER_IWLWIFI_2=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
-MULTISLOT_KERNEL_DRIVER_MLX5=("6.1.107" "6.6.48" "6.10.7")
-MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
-MULTISLOT_KERNEL_DRIVER_DRM_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
-MULTISLOT_KERNEL_DRIVER_DRM_NOUVEAU=("6.6.48" "6.10.7")
-MULTISLOT_KERNEL_DRIVER_DRM_RADEON=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
-MULTISLOT_KERNEL_DRIVER_DRM_VMWGFX=("6.6.49" "6.9" "6.10.8")
-MULTISLOT_KERNEL_DRIVER_DRM_XE=("6.10.8")
+MULTISLOT_KERNEL_BLUETOOTH_1=("6.6.51" "6.10.10")
+MULTISLOT_KERNEL_BLUETOOTH_2=("5.10.165" "5.15.90" "6.1.8")
+MULTISLOT_KERNEL_BTRFS=("6.6.49" "6.10.8")
+MULTISLOT_KERNEL_IWLWIFI_1=("5.15.27" "5.16.13")
+MULTISLOT_KERNEL_IWLWIFI_2=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
+MULTISLOT_KERNEL_MLX5=("6.1.107" "6.6.48" "6.10.7")
+MULTISLOT_KERNEL_DRM_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
+MULTISLOT_KERNEL_DRM_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
+MULTISLOT_KERNEL_DRM_NOUVEAU=("6.6.48" "6.10.7")
+MULTISLOT_KERNEL_DRM_RADEON=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
+MULTISLOT_KERNEL_DRM_VMWGFX=("6.6.49" "6.9" "6.10.8")
+MULTISLOT_KERNEL_DRM_XE=("6.10.8")
+MULTISLOT_KERNEL_EXT4=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
+MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
+MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
 MULTISLOT_KERNEL_NETFILTER=("5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" "6.6.29" "6.8.8")
 MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
 
 CVE_APPARMOR="CVE-2024-46721"
+CVE_BLUETOOTH_1="CVE-2024-46749"
+CVE_BLUETOOTH_2="CVE-2022-48878"
+CVE_BTRFS="CVE-2024-46687"
+CVE_F2FS="CVE-2024-44942"
+CVE_FS="CVE-2024-43882"
 CVE_DRM_AMDGPU="CVE-2024-46725"
 CVE_DRM_I915="CVE-2024-41092"
 CVE_DRM_NOUVEAU="CVE-2024-45012"
 CVE_DRM_RADEON="CVE-2024-41060"
 CVE_DRM_VMWGFX="CVE-2024-46709"
 CVE_DRM_XE="CVE-2024-46683"
+CVE_EXT4="CVE-2024-43828"
 CVE_IWLWIFI_1="CVE-2022-48918"
 CVE_IWLWIFI_2="CVE-2022-48787"
 CVE_MLX5="CVE-2024-45019"
@@ -71,12 +83,28 @@ VIDEO_CARDS=(
 IUSE="
 ${VIDEO_CARDS[@]}
 apparmor
+bluetooth
+btrfs
+ext4
+f2fs
+fs
 iwlwifi
 max-uptime
 mlx5
 netfilter
 nftables
 selinux
+"
+REQUIRED_USE="
+	btrfs? (
+		fs
+	)
+	ext4? (
+		fs
+	)
+	f2fs? (
+		fs
+	)
 "
 # CE - Code Execution
 # DoS - Denial of Service (CVSS A:H)
@@ -108,6 +136,13 @@ selinux
 # The latest to near past vulnerabilities are reported below.
 #
 # apparmor? https://nvd.nist.gov/vuln/detail/CVE-2024-46721 # DoS
+# bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2024-46749 # DoS
+# bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2022-48878 # DoS, DT, ID
+# btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46749 # DoS
+# btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46687 # DoS, DT, ID
+# ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-43828 # DoS
+# f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
+# fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
@@ -139,15 +174,41 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_APPARMOR[@]})
 		)
 	)
+	bluetooth? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH_1[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH_2[@]})
+		)
+	)
+	btrfs? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS[@]})
+		)
+	)
+	ext4? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4[@]})
+		)
+	)
+	f2fs? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_F2FS[@]})
+		)
+	)
+	fs? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS[@]})
+		)
+	)
 	iwlwifi? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_IWLWIFI_1[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_IWLWIFI_2[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_1[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_2[@]})
 		)
 	)
 	mlx5? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_MLX5[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5[@]})
 		)
 	)
 	netfilter? (
@@ -167,18 +228,18 @@ RDEPEND="
 	)
 	video_cards_amdgpu? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRM_AMDGPU[@]})
 		)
 	)
 	video_cards_intel? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_DRM_I915[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_DRM_XE[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRM_I915[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRM_XE[@]})
 		)
 	)
 	video_cards_nouveau? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_DRM_NOUVEAU[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRM_NOUVEAU[@]})
 		)
 	)
 	video_cards_nvidia? (
@@ -190,12 +251,12 @@ RDEPEND="
 	)
 	video_cards_radeon? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_DRM_RADEON[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRM_RADEON[@]})
 		)
 	)
 	video_cards_vmware? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRIVER_DRM_VMWGFX[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_DRM_VMWGFX[@]})
 		)
 	)
 "
@@ -262,12 +323,28 @@ check_drivers() {
 	if use apparmor ; then
 		check_kernel_version "apparmor" "${CVE_APPARMOR}" ${MULTISLOT_KERNEL_APPARMOR[@]}
 	fi
+	if use bluetooth ; then
+		check_kernel_version "bluetooth" "${CVE_BLUETOOTH_1}" ${MULTISLOT_KERNEL_BLUETOOTH_1[@]}
+		check_kernel_version "bluetooth" "${CVE_BLUETOOTH_2}" ${MULTISLOT_KERNEL_BLUETOOTH_2[@]}
+	fi
+	if use btrfs ; then
+		check_kernel_version "btrfs" "${CVE_BTRFS}" ${MULTISLOT_KERNEL_BTRFS[@]}
+	fi
+	if use ext4 ; then
+		check_kernel_version "ext4" "${CVE_EXT4}" ${MULTISLOT_KERNEL_EXT4[@]}
+	fi
+	if use f2fs ; then
+		check_kernel_version "f2fs" "${CVE_F2FS}" ${MULTISLOT_KERNEL_F2FS[@]}
+	fi
+	if use fs ; then
+		check_kernel_version "fs" "${CVE_FS}" ${MULTISLOT_KERNEL_FS[@]}
+	fi
 	if use iwlwifi ; then
-		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_1}" ${MULTISLOT_KERNEL_DRIVER_IWLWIFI_1[@]}
-		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_2}" ${MULTISLOT_KERNEL_DRIVER_IWLWIFI_2[@]}
+		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_1}" ${MULTISLOT_KERNEL_IWLWIFI_1[@]}
+		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_2}" ${MULTISLOT_KERNEL_IWLWIFI_2[@]}
 	fi
 	if use mlx5 ; then
-		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_DRIVER_MLX5[@]}
+		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_MLX5[@]}
 	fi
 	if use selinux ; then
 		check_kernel_version "selinux" "${CVE_SELINUX}" ${MULTISLOT_KERNEL_SELINUX[@]}
@@ -279,17 +356,17 @@ check_drivers() {
 		check_kernel_version "nf_tables" "${CVE_NF_TABLES}" ${MULTISLOT_KERNEL_NF_TABLES[@]}
 	fi
 	if use video_cards_amdgpu ; then
-		check_kernel_version "amdgpu" "${CVE_DRM_AMDGPU}" ${MULTISLOT_KERNEL_DRIVER_DRM_AMDGPU[@]}
+		check_kernel_version "amdgpu" "${CVE_DRM_AMDGPU}" ${MULTISLOT_KERNEL_DRM_AMDGPU[@]}
 	fi
 	if use video_cards_intel ; then
-		check_kernel_version "i915" "${CVE_DRM_I915}" ${MULTISLOT_KERNEL_DRIVER_DRM_I915[@]}
-		check_kernel_version "xe" "${CVE_DRM_XE}" ${MULTISLOT_KERNEL_DRIVER_DRM_XE[@]}
+		check_kernel_version "i915" "${CVE_DRM_I915}" ${MULTISLOT_KERNEL_DRM_I915[@]}
+		check_kernel_version "xe" "${CVE_DRM_XE}" ${MULTISLOT_KERNEL_DRM_XE[@]}
 	fi
 	if use video_cards_radeon ; then
-		check_kernel_version "radeon" "${CVE_DRM_RADEON}" ${MULTISLOT_KERNEL_DRIVER_DRM_RADEON[@]}
+		check_kernel_version "radeon" "${CVE_DRM_RADEON}" ${MULTISLOT_KERNEL_DRM_RADEON[@]}
 	fi
 	if use video_cards_vmware ; then
-		check_kernel_version "vmwgfx" "${CVE_DRM_VMWGFX}" ${MULTISLOT_KERNEL_DRIVER_DRM_RADEON[@]}
+		check_kernel_version "vmwgfx" "${CVE_DRM_VMWGFX}" ${MULTISLOT_KERNEL_DRM_RADEON[@]}
 	fi
 }
 
