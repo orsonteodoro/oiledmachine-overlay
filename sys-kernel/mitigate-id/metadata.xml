@@ -71,6 +71,9 @@
       (A BIOS firmware update from the motherboard manufacturer may still be
       required if the firmware package doesn't apply to your model.)
     </flag>
+    <flag name="fuse">
+      Mitigate against information disclosure for FUSE based filesystems.
+    </flag>
     <flag name="ipv6">
       Mitigate against Denial of Service in ipv6.
     </flag>

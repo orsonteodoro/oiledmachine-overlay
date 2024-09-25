@@ -28,6 +28,7 @@ MULTISLOT_KERNEL_BTRFS=("6.6.49" "6.10.8")
 MULTISLOT_KERNEL_EXT4=("6.10.1")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
+MULTISLOT_KERNEL_FUSE=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_I915=("5.10.211" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
 MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IWLWIFI=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
@@ -50,6 +51,7 @@ CVE_BTRFS="CVE-2024-46687"
 CVE_EXT4="CVE-2024-42257"
 CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
+CVE_FUSE="CVE-2024-44947"
 CVE_I915="CVE-2024-41092"
 CVE_IPV6="CVE-2024-44987"
 CVE_IWLWIFI="CVE-2022-48787"
@@ -98,6 +100,7 @@ bridge
 btrfs
 ext4
 f2fs
+fuse
 ipv6
 iwlwifi
 mlx5
@@ -146,6 +149,7 @@ REQUIRED_USE="
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-42257 # DoS, DT, ID
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
+# fuse? https://nvd.nist.gov/vuln/detail/CVE-2024-44947 # ID
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
 # nfsd? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
@@ -209,6 +213,12 @@ RDEPEND="
 		!custom-kernel? (
 			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_F2FS[@]})
+		)
+	)
+	fuse? (
+		!custom-kernel? (
+			${FS_RDEPEND}
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FUSE[@]})
 		)
 	)
 	mlx5? (
@@ -358,6 +368,10 @@ check_drivers() {
 	if use f2fs ; then
 		fs=1
 		check_kernel_version "f2fs" "${CVE_F2FS}" ${MULTISLOT_KERNEL_F2FS[@]}
+	fi
+	if use fuse ; then
+		fs=1
+		check_kernel_version "fuse" "${CVE_FUSE}" ${MULTISLOT_KERNEL_FUSE[@]}
 	fi
 	if use ipv6 ; then
 		check_kernel_version "ipv6" "${CVE_IPV6}" ${MULTISLOT_KERNEL_IPV6[@]}
