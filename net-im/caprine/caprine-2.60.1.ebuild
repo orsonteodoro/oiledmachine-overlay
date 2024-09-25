@@ -16,8 +16,8 @@ ELECTRON_APP_SNAP_ARCHIVE_NAME="${PN}_${PV}_amd64.snap"
 # See https://releases.electronjs.org/releases.json
 ELECTRON_APP_ELECTRON_PV="33.0.0-beta.3" # Cr 130.0.6672.0.  Similar to nightly since nightly does not have prebuilt.
 #ELECTRON_APP_ELECTRON_PV="29.4.2" # lockfile
+ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
 ELECTRON_APP_TYPESCRIPT_PV="5.4.4"
-ELECTRON_APP_USES_UGC_TEXT="1"
 NPM_INSTALL_ARGS="--force"
 NODE_VERSION=20 # Upstream uses 20.11.1
 NODE_ENV="development"
