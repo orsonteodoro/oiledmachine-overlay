@@ -38,7 +38,7 @@
   -->
   <use>
     <flag name="apparmor">
-      Mitigate against Denial of Service
+      Mitigate against Denial of Service for the AppArmor security module.
     </flag>
     <flag name="auto">
       Auto resolves firmware and kernel version required for full mitigation,
