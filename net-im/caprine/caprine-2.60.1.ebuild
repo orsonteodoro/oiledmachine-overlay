@@ -1495,7 +1495,7 @@ BDEPEND+="
 "
 PDEPEND+="
 	firejail? (
-		sys-apps/firejail[X,firejail_profiles_caprine]
+		sys-apps/firejail[X?,firejail_profiles_caprine]
 	)
 "
 
