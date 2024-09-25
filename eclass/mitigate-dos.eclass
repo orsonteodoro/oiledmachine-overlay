@@ -306,7 +306,7 @@ gen_zero_tolerance_kernel_list() {
 	local latest_version
 	local atom
 	for atom in ${ATOMS[@]} ; do
-		for latest_version in ${MULTISLOT_LATEST_KERNEL_RELEASE[@]} ; do
+		for latest_version in ${PATCHED_VERSIONS[@]} ; do
 			local s=$(ver_cut 1-2 ${latest_version})
 			echo "
 				(
