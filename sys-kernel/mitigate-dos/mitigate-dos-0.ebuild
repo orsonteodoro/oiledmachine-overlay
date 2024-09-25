@@ -46,6 +46,7 @@ MULTISLOT_KERNEL_NETFILTER=("5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" "6.6.29" "6.8.8")
 MULTISLOT_KERNEL_RTW88=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
+MULTISLOT_KERNEL_SMB=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_VMWGFX=("6.6.49" "6.9" "6.10.8")
 MULTISLOT_KERNEL_XE=("6.10.8")
 MULTISLOT_KERNEL_XEN=("6.6.51" "6.10.10")
@@ -74,6 +75,7 @@ CVE_NETFILTER="CVE-2024-45018"
 CVE_NF_TABLES="CVE-2024-27020"
 CVE_RTW88="CVE-2024-46760"
 CVE_SELINUX="CVE-2022-48740"
+CVE_SMB="CVE-2024-46796"
 CVE_VMWGFX="CVE-2024-46709"
 CVE_XE="CVE-2024-46683"
 CVE_XEN="CVE-2024-46762"
@@ -107,6 +109,7 @@ btrfs
 ext4
 f2fs
 iwlwifi
+samba
 max-uptime
 md-raid1
 md-raid5
@@ -170,6 +173,7 @@ REQUIRED_USE="
 # nf_tables? https://nvd.nist.gov/vuln/detail/CVE-2022-48935 # DoS UAF
 # rtw88? https://nvd.nist.gov/vuln/detail/CVE-2024-46760 # DoS
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
+# samba? https://nvd.nist.gov/vuln/detail/CVE-2024-46796 # DoS, DT, ID
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2023-52913 # DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
@@ -270,6 +274,11 @@ RDEPEND="
 		!custom-kernel? (
 			${WIFI_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_RTW88[@]})
+		)
+	)
+	samba? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMB[@]})
 		)
 	)
 	selinux? (
@@ -427,6 +436,9 @@ check_drivers() {
 	if use rtw88 ; then
 		wifi=1
 		check_kernel_version "rtw88" "${CVE_RTW88}" ${MULTISLOT_KERNEL_RTW88[@]}
+	fi
+	if use samba ; then
+		check_kernel_version "smb" "${CVE_SMB}" ${MULTISLOT_KERNEL_SMB[@]}
 	fi
 	if use video_cards_amdgpu ; then
 		check_kernel_version "amdgpu" "${CVE_AMDGPU}" ${MULTISLOT_KERNEL_AMDGPU[@]}

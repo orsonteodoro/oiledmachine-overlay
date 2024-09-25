@@ -97,8 +97,11 @@
     <flag name="rtw88">
       Mitigate against Denial of Service for the rtw88 network driver.
     </flag>
+    <flag name="samba">
+      Mitigate against Denial of Service for Samba network file system.
+    </flag>
     <flag name="selinux">
-      Mitigate against Denial of Service for the SELinux security moule.
+      Mitigate against Denial of Service for the SELinux security module.
     </flag>
     <flag name="video_cards_amdgpu">
       Mitigate against Denial of Service for the amdgpu driver.
