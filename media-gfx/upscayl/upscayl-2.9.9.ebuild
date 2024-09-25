@@ -790,6 +790,7 @@ SLOT="0"
 IUSE+="
 	custom-models
 	ebuild-revision-5
+	firejail
 "
 # Upstream uses U 18.04.6 for CI
 RDEPEND+="
@@ -806,6 +807,11 @@ BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
 	virtual/pkgconfig
+"
+PDEPEND+="
+	firejail? (
+		sys-apps/firejail[firejail_profiles_upscayl]
+	)
 "
 
 pkg_setup() {

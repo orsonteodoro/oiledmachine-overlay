@@ -22,6 +22,9 @@
       Disabling requires a CPU with SSE 4.2 support.  Enabling can disable this
       hard requirement.
     </flag>
+    <flag name="firejail">
+      Add Firejail sandbox support
+    </flag>
   </use>
   <slots>
     <slot name="0">
