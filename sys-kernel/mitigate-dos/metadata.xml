@@ -104,7 +104,7 @@
       Mitigate against Denial of Service for the nouveau video driver.
     </flag>
     <flag name="video_cards_nvidia">
-      Mitigate against Denial of Service for the NVIDIA® driver.
+      Mitigate against Denial of Service for the NVIDIA® video driver.
     </flag>
     <flag name="video_cards_vmware">
       Mitigate against Denial of Service for the wmwgfx video driver.
