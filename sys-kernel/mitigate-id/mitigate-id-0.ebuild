@@ -34,6 +34,7 @@ MULTISLOT_KERNEL_IWLWIFI=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "
 MULTISLOT_KERNEL_MLX5=("5.4.185" "5.10.106" "5.15.29" "5.16.15")
 MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_NETFILTER=("5.15" "6.1.107" "6.6.48" "6.10.7")
+MULTISLOT_KERNEL_NFSD=("6.10.8")
 MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" "6.6.29" "6.8.8")
 MULTISLOT_KERNEL_NOUVEAU=("5.0.21" "5.4.284")
 MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
@@ -53,6 +54,7 @@ CVE_I915="CVE-2024-41092"
 CVE_IPV6="CVE-2024-44987"
 CVE_IWLWIFI="CVE-2022-48787"
 CVE_MLX5="CVE-2022-48858"
+CVE_NFSD="CVE-2024-46696"
 CVE_NET_BRIDGE="CVE-2024-44934"
 CVE_NETFILTER="CVE-2024-44983"
 CVE_NF_TABLES="CVE-2024-27020"
@@ -99,6 +101,7 @@ f2fs
 ipv6
 iwlwifi
 mlx5
+nfsd
 netfilter
 nftables
 samba
@@ -145,6 +148,7 @@ REQUIRED_USE="
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
+# nfsd? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2022-48858 # DoS, DT, ID
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-44983 # DoS, ID
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
@@ -215,6 +219,11 @@ RDEPEND="
 	netfilter? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NETFILTER[@]})
+		)
+	)
+	nfsd? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NFSD[@]})
 		)
 	)
 	nftables? (
@@ -358,6 +367,9 @@ check_drivers() {
 	fi
 	if use mlx5 ; then
 		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_MLX5[@]}
+	fi
+	if use nfsd ; then
+		check_kernel_version "nfsd" "${CVE_NFSD}" ${MULTISLOT_KERNEL_NFSD[@]}
 	fi
 	if use netfilter ; then
 		check_kernel_version "netfilter" "${CVE_NETFILTER}" ${MULTISLOT_KERNEL_NETFILTER[@]}

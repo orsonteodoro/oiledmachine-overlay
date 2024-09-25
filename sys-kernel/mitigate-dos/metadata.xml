@@ -97,6 +97,10 @@
     <flag name="netfilter">
       Mitigate against Denial of Service for the netfilter firewall.
     </flag>
+    <flag name="nfsd">
+      Mitigate against information disclosure for the NFS server network
+      filesystem driver.
+    </flag>
     <flag name="nf_tables">
       Mitigate against Denial of Service for the nftables firewall.
     </flag>

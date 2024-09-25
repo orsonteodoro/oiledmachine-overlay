@@ -74,6 +74,9 @@
     <flag name="ipv6">
       Mitigate against Denial of Service in ipv6.
     </flag>
+    <flag name="kvm">
+      Mitigate against Denial of Service in KVM.
+    </flag>
     <flag name="mcast">
       Mitigate against information disclosure for multicast (mcast) network
       support.
@@ -83,6 +86,10 @@
     </flag>
     <flag name="netfilter">
       Mitigate against information disclosure for the netfilter firewall.
+    </flag>
+    <flag name="nfsd">
+      Mitigate against information disclosure for the NFS server network
+      filesystem driver.
     </flag>
     <flag name="nftables">
       Mitigate against information disclosure for the nftables firewall.

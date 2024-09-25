@@ -39,6 +39,7 @@ MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
 MULTISLOT_KERNEL_MD_RAID5=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_MLX5=("6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
+MULTISLOT_KERNEL_NFSD=("6.10.8")
 MULTISLOT_KERNEL_NOUVEAU=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_RADEON=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
@@ -69,6 +70,7 @@ CVE_FS="CVE-2024-43882"
 CVE_I915="CVE-2024-41092"
 CVE_MD_RAID1="CVE-2024-45023"
 CVE_MD_RAID5="CVE-2024-43914"
+CVE_NFSD="CVE-2024-46696"
 CVE_NET_BRIDGE="CVE-2024-44934"
 CVE_NOUVEAU="CVE-2024-45012"
 CVE_RADEON="CVE-2024-41060"
@@ -126,6 +128,7 @@ md-raid1
 md-raid5
 mlx5
 netfilter
+nfsd
 nftables
 rtw88
 selinux
@@ -182,6 +185,7 @@ REQUIRED_USE="
 # mac80211? https://nvd.nist.gov/vuln/detail/CVE-2024-43911 # DoS
 # md-raid1? https://nvd.nist.gov/vuln/detail/CVE-2024-45023 # DT, DoS
 # md-raid5? https://nvd.nist.gov/vuln/detail/CVE-2024-43914 # DOS
+# nfsd? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-45018 # DoS
 # nf_tables? https://nvd.nist.gov/vuln/detail/CVE-2022-48935 # DoS UAF
@@ -279,6 +283,11 @@ RDEPEND="
 	mlx5? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5[@]})
+		)
+	)
+	nfsd? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NFSD[@]})
 		)
 	)
 	netfilter? (
@@ -460,6 +469,9 @@ check_drivers() {
 	fi
 	if use md-raid5 ; then
 		check_kernel_version "md/raid5" "${CVE_MD_RADI1}" ${MULTISLOT_KERNEL_MD_RAID5[@]}
+	fi
+	if use nfsd ; then
+		check_kernel_version "nfsd" "${CVE_NFSD}" ${MULTISLOT_KERNEL_NFSD[@]}
 	fi
 	if use netfilter ; then
 		check_kernel_version "netfilter" "${CVE_NETFILTER}" ${MULTISLOT_KERNEL_NETFILTER[@]}
