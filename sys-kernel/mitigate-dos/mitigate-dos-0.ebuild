@@ -27,6 +27,7 @@ MULTISLOT_KERNEL_APPARMOR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.109" 
 MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
 MULTISLOT_KERNEL_BLUETOOTH_46749=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_BLUETOOTH_48878=("5.10.165" "5.15.90" "6.1.8")
+MULTISLOT_KERNEL_BPF_45020=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_BTRFS_46687=("6.6.49" "6.10.8")
 MULTISLOT_KERNEL_BTRFS_46749=("6.10.10")
 MULTISLOT_KERNEL_BRCM80211=("6.6.48" "6.10.7")
@@ -66,6 +67,7 @@ CVE_APPARMOR="CVE-2024-46721"
 CVE_ATA_41087="CVE-2024-41087"
 CVE_BLUETOOTH_46749="CVE-2024-46749"
 CVE_BLUETOOTH_48878="CVE-2022-48878"
+CVE_BPF_45020=("CVE-2024-45020")
 CVE_BTRFS_46687="CVE-2024-46687"
 CVE_BTRFS_46749="CVE-2024-46749"
 CVE_BRCM80211="CVE-2024-46672"
@@ -127,6 +129,7 @@ ata
 apparmor
 bcrm80211
 bluetooth
+bpf
 bridge
 btrfs
 cougar
@@ -186,6 +189,7 @@ REQUIRED_USE="
 # ata? https://nvd.nist.gov/vuln/detail/CVE-2024-41087 # DoS, DT, ID
 # bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2024-46749 # DoS
 # bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2022-48878 # DoS, DT, ID
+# bpf? https://nvd.nist.gov/vuln/detail/CVE-2024-45020 # DoS
 # bridge? https://nvd.nist.gov/vuln/detail/CVE-2024-44934 # DoS, DT, ID
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46749 # DoS
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46687 # DoS, DT, ID
@@ -197,8 +201,8 @@ REQUIRED_USE="
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
 # ice? https://nvd.nist.gov/vuln/detail/CVE-2024-46766 # DoS, DT, ID
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
-# iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918
-# iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787
+# iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918 # DoS
+# iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
 # mac80211? https://nvd.nist.gov/vuln/detail/CVE-2024-43911 # DoS
 # md-raid1? https://nvd.nist.gov/vuln/detail/CVE-2024-45023 # DT, DoS
 # md-raid5? https://nvd.nist.gov/vuln/detail/CVE-2024-43914 # DOS
@@ -259,6 +263,11 @@ RDEPEND="
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH_46749[@]})
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH_48878[@]})
+		)
+	)
+	bpf? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BPF_45020[@]})
 		)
 	)
 	bridge? (
@@ -478,6 +487,9 @@ check_drivers() {
 	if use bluetooth ; then
 		check_kernel_version "bluetooth" "${CVE_BLUETOOTH_46749}" ${MULTISLOT_KERNEL_BLUETOOTH_46749[@]}
 		check_kernel_version "bluetooth" "${CVE_BLUETOOTH_48878}" ${MULTISLOT_KERNEL_BLUETOOTH_48878[@]}
+	fi
+	if use bpf ; then
+		check_kernel_version "bpf" "${CVE_BPF_45020}" ${MULTISLOT_KERNEL_BPF_45020[@]}
 	fi
 	if use bridge ; then
 		check_kernel_version "net/bridge" "${CVE_NET_BRIDGE}" ${MULTISLOT_KERNEL_NET_BRIDGE[@]}

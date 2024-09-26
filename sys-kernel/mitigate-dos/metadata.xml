@@ -58,6 +58,10 @@
     <flag name="bluetooth">
       Mitigate against Denial of Service for the Bluetooth® subsystem.
     </flag>
+    <flag name="bpf">
+      Mitigate against Denial of Service for BPF used in network sockets and
+      app/browser sandboxes.
+    </flag>
     <flag name="bridge">
       Mitigate against Denial of Service for Ethernet bridge support.
     </flag>
