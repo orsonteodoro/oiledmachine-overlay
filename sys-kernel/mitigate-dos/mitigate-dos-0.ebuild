@@ -163,6 +163,7 @@ netfilter
 nfs
 nftables
 rtw88
+sctp
 selinux
 tcp
 tls
@@ -394,6 +395,11 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMB_46795[@]})
 		)
 	)
+	sctp? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SCTP[@]})
+		)
+	)
 	selinux? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SELINUX[@]})
@@ -606,6 +612,9 @@ check_drivers() {
 	if use rtw88 ; then
 		wifi=1
 		check_kernel_version "rtw88" "${CVE_RTW88}" ${MULTISLOT_KERNEL_RTW88[@]}
+	fi
+	if use rtw88 ; then
+		check_kernel_version "sctp" "${CVE_SCTP}" ${MULTISLOT_KERNEL_SCTP[@]}
 	fi
 	if use samba ; then
 		fs=1

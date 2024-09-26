@@ -130,6 +130,9 @@
     <flag name="rtw88">
       Mitigate against Denial of Service for the rtw88 network driver.
     </flag>
+    <flag name="sctp">
+      Mitigate against Denial of Service for the SCTP network protocol.
+    </flag>
     <flag name="samba">
       Mitigate against Denial of Service for Samba network file system.
     </flag>
