@@ -148,7 +148,9 @@
       Bump to the latest patched kernel point releases when the changelog
       indicated fixed information disclosure (ID) class of vulnerabilities.
       This will increase the coverage of ID mitigation for the installed
-      kernels significantly because the USE flag coverage is incomplete.
+      kernels significantly because the USE flag coverage is incomplete
+      or the vulnerability report doesn't report the type of
+      vulnerability.
     </flag>
   </use>
 </pkgmetadata>
