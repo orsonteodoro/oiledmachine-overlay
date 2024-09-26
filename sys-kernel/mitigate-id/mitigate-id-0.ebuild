@@ -22,6 +22,7 @@ EOL_VERSIONS=(
 # For zero-tolerance mode
 MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52" "6.10.11" "6.11")
 
+# More than one row is added to increase LTS coverage.
 MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
 MULTISLOT_KERNEL_BLUETOOTH=("5.10.165" "5.15.90" "6.1.8")
