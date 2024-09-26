@@ -1146,9 +1146,9 @@ einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
 	# CVE-2022-21180 | UMH                          | DoS
 	# CVE-2023-22655 | TECRA                        | DT (I:H), ID (C:L)
 	# CVE-2023-23583 | Reptar                       | DoS, DT, ID
+	# CVE-2023-31315 | Sinkclose                    | ID (C:L), DT (I:H), DoS (A:L)
 	# CVE-2023-39368 | BLR                          | DoS
 	# CVE-2024-25939 | MCEAD                        | DoS (VA:H)
-	# CVE-2023-31315 | Sinkclose                    | ID (C:L), DT (I:H), DoS (A:L)
 	# CVE-2024-24968 |                              | DoS (VA:H)
 
 	_mitigate_dos_verify_mitigation_itlb_multihit		# Mitigations against iTLB multihit (2018)
@@ -1156,10 +1156,10 @@ einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
 	_mitigate_dos_verify_mitigation_umh			# Mitigations against UMH (2022)
 	_mitigate_dos_verify_mitigation_tecra			# Mitigations against TECRA (2023) # PE
 	_mitigate_dos_verify_mitigation_reptar			# Mitigations against Reptar (2023) # PE
+	_mitigate_dos_verify_mitigation_sinkclose		# Mitigations against SLB (2024) # CE
 	_mitigate_dos_verify_mitigation_blr			# Mitigations against BLR (2023)
 	_mitigate_dos_verify_mitigation_mcead			# Mitigations against MCEAD (2024)
 	_mitigate_dos_verify_mitigation_cve_2024_24968		# Mitigations against CVE-2024-24968 (2024)
-	_mitigate_dos_verify_mitigation_sinkclose		# Mitigations against SLB (2024) # CE
 }
 
 # @FUNCTION: _mitigate-dos_get_fallback_version
