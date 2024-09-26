@@ -42,6 +42,7 @@ MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15
 MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
 MULTISLOT_KERNEL_MD_RAID5=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_MLX5=("6.1.107" "6.6.48" "6.10.7")
+MULTISLOT_KERNEL_MSM=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_NFSD=("6.10.8")
 MULTISLOT_KERNEL_NOUVEAU=("6.6.48" "6.10.7")
@@ -80,6 +81,7 @@ CVE_I915="CVE-2024-41092"
 CVE_ICE="CVE-2024-46766"
 CVE_MD_RAID1="CVE-2024-45023"
 CVE_MD_RAID5="CVE-2024-43914"
+CVE_MSM="CVE-2024-45015"
 CVE_NFSD="CVE-2024-46696"
 CVE_NET_BRIDGE="CVE-2024-44934"
 CVE_NOUVEAU="CVE-2024-45012"
@@ -116,6 +118,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 VIDEO_CARDS=(
 	video_cards_amdgpu
+	video_cards_freedreno
 	video_cards_intel
 	video_cards_nouveau
 	video_cards_nvidia
@@ -206,8 +209,9 @@ REQUIRED_USE="
 # mac80211? https://nvd.nist.gov/vuln/detail/CVE-2024-43911 # DoS
 # md-raid1? https://nvd.nist.gov/vuln/detail/CVE-2024-45023 # DT, DoS
 # md-raid5? https://nvd.nist.gov/vuln/detail/CVE-2024-43914 # DOS
-# nfsd? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
+# msm? https://nvd.nist.gov/vuln/detail/CVE-2024-45015 # DoS
+# nfsd? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-45018 # DoS
 # nf_tables? https://nvd.nist.gov/vuln/detail/CVE-2022-48935 # DoS UAF
 # rtw88? https://nvd.nist.gov/vuln/detail/CVE-2024-46760 # DoS
@@ -366,6 +370,11 @@ RDEPEND="
 	video_cards_amdgpu? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU[@]})
+		)
+	)
+	video_cards_freedreno? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MSM[@]})
 		)
 	)
 	video_cards_intel? (
@@ -554,6 +563,9 @@ check_drivers() {
 	fi
 	if use video_cards_amdgpu ; then
 		check_kernel_version "amdgpu" "${CVE_AMDGPU}" ${MULTISLOT_KERNEL_AMDGPU[@]}
+	fi
+	if use video_cards_freedreno ; then
+		check_kernel_version "msm" "${CVE_MSM}" ${MULTISLOT_KERNEL_MSM[@]}
 	fi
 	if use video_cards_intel ; then
 		check_kernel_version "i915" "${CVE_I915}" ${MULTISLOT_KERNEL_I915[@]}

@@ -130,6 +130,9 @@
     <flag name="video_cards_amdgpu">
       Mitigate against Denial of Service for the amdgpu driver.
     </flag>
+    <flag name="video_cards_freedreno">
+      Mitigate against Denial of Service for the msm driver.
+    </flag>
     <flag name="video_cards_intel">
       Mitigate against Denial of Service for the Xe and i915 video drivers.
     </flag>
