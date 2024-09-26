@@ -114,7 +114,7 @@
     <flag name="netfilter">
       Mitigate against Denial of Service for the netfilter firewall.
     </flag>
-    <flag name="nfsd">
+    <flag name="nfs">
       Mitigate against Denial of Service for the NFS server network
       filesystem driver.
     </flag>

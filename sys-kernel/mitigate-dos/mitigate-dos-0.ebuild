@@ -150,7 +150,7 @@ md-raid1
 md-raid5
 mlx5
 netfilter
-nfsd
+nfs
 nftables
 rtw88
 selinux
@@ -215,7 +215,7 @@ REQUIRED_USE="
 # md-raid5? https://nvd.nist.gov/vuln/detail/CVE-2024-43914 # DOS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
 # msm? https://nvd.nist.gov/vuln/detail/CVE-2024-45015 # DoS
-# nfsd? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
+# nfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-45018 # DoS
 # nf_tables? https://nvd.nist.gov/vuln/detail/CVE-2022-48935 # DoS UAF
 # rtw88? https://nvd.nist.gov/vuln/detail/CVE-2024-46760 # DoS
@@ -339,7 +339,7 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5[@]})
 		)
 	)
-	nfsd? (
+	nfs? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NFSD[@]})
 		)
@@ -550,7 +550,7 @@ check_drivers() {
 	if use md-raid5 ; then
 		check_kernel_version "md/raid5" "${CVE_MD_RAID5}" ${MULTISLOT_KERNEL_MD_RAID5[@]}
 	fi
-	if use nfsd ; then
+	if use nfs ; then
 		check_kernel_version "nfsd" "${CVE_NFSD}" ${MULTISLOT_KERNEL_NFSD[@]}
 	fi
 	if use netfilter ; then

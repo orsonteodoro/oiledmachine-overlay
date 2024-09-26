@@ -103,7 +103,7 @@
     <flag name="netfilter">
       Mitigate against information disclosure for the netfilter firewall.
     </flag>
-    <flag name="nfsd">
+    <flag name="nfs">
       Mitigate against information disclosure for the NFS server network
       filesystem driver.
     </flag>
