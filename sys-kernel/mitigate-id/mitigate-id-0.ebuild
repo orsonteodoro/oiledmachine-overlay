@@ -283,6 +283,7 @@ RDEPEND="
 	)
 	nfs? (
 		!custom-kernel? (
+			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NFSD[@]})
 		)
 	)
@@ -293,6 +294,7 @@ RDEPEND="
 	)
 	samba? (
 		!custom-kernel? (
+			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMB[@]})
 		)
 	)
