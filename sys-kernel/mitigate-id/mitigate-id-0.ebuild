@@ -448,12 +448,14 @@ check_drivers() {
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI}" ${MULTISLOT_KERNEL_IWLWIFI[@]}
 	fi
 	if use jfs ; then
+		fs=1
 		check_kernel_version "jfs" "${CVE_JFS}" ${MULTISLOT_KERNEL_JFS[@]}
 	fi
 	if use mlx5 ; then
 		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_MLX5[@]}
 	fi
 	if use nfs ; then
+		fs=1
 		check_kernel_version "nfsd" "${CVE_NFSD}" ${MULTISLOT_KERNEL_NFSD[@]}
 	fi
 	if use netfilter ; then
@@ -463,6 +465,7 @@ check_drivers() {
 		check_kernel_version "nftables" "${CVE_NF_TABLES}" ${MULTISLOT_KERNEL_NF_TABLES[@]}
 	fi
 	if use samba ; then
+		fs=1
 		check_kernel_version "smb" "${CVE_SMB}" ${MULTISLOT_KERNEL_SMB[@]}
 	fi
 	if use selinux ; then

@@ -594,6 +594,7 @@ check_drivers() {
 		check_kernel_version "md/raid5" "${CVE_MD_RAID5}" ${MULTISLOT_KERNEL_MD_RAID5[@]}
 	fi
 	if use nfs ; then
+		fs=1
 		check_kernel_version "nfsd" "${CVE_NFSD}" ${MULTISLOT_KERNEL_NFSD[@]}
 	fi
 	if use netfilter ; then
@@ -607,6 +608,7 @@ check_drivers() {
 		check_kernel_version "rtw88" "${CVE_RTW88}" ${MULTISLOT_KERNEL_RTW88[@]}
 	fi
 	if use samba ; then
+		fs=1
 		check_kernel_version "smb" "${CVE_SMB_46796}" ${MULTISLOT_KERNEL_SMB_46796[@]}
 		check_kernel_version "smb" "${CVE_SMB_46795}" ${MULTISLOT_KERNEL_SMB_46795[@]}
 	fi
