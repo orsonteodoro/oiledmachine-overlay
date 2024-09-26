@@ -91,16 +91,6 @@
     <flag name="hfsplus">
       Mitigate against Denial of Service for the HFS+ filesystem.
     </flag>
-    <flag name="max-uptime">
-      Verifies defaults for security and compiler settings in order mitigate
-      against deadlock or hard reset.
-    </flag>
-    <flag name="md-raid1">
-      Mitigate against Denial of Service for the md/raid1 driver.
-    </flag>
-    <flag name="md-raid5">
-      Mitigate against Denial of Service for the md/raid5 driver.
-    </flag>
     <flag name="ice">
       Mitigate against Denial of Service for the
       Intel® Ethernet Connection E800 Series Support network driver.
@@ -114,8 +104,21 @@
     <flag name="jfs">
       Mitigate against Denial of Service in the JFS filesystem.
     </flag>
+    <flag name="max-uptime">
+      Verifies defaults for security and compiler settings in order mitigate
+      against deadlock or hard reset.
+    </flag>
+    <flag name="md-raid1">
+      Mitigate against Denial of Service for the md/raid1 driver.
+    </flag>
+    <flag name="md-raid5">
+      Mitigate against Denial of Service for the md/raid5 driver.
+    </flag>
     <flag name="mlx5">
       Mitigate against Denial of Service for the mlx5 network driver.
+    </flag>
+    <flag name="nvme">
+      Mitigate against Denial of Service for the NVMe driver.
     </flag>
     <flag name="netfilter">
       Mitigate against Denial of Service for the netfilter firewall.

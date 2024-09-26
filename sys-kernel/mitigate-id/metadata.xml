@@ -113,6 +113,9 @@
     <flag name="nftables">
       Mitigate against information disclosure for the nftables firewall.
     </flag>
+    <flag name="nvme">
+      Mitigate against information disclosure for the NVMe driver.
+    </flag>
     <flag name="samba">
       Mitigate against information disclosure for Samba network filesystem.
     </flag>

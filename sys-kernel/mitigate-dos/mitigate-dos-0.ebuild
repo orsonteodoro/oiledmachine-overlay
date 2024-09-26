@@ -48,6 +48,8 @@ MULTISLOT_KERNEL_MLX5=("6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_MSM=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_NFSD=("6.10.8")
+MULTISLOT_KERNEL_NVME_45013=("6.10.7")
+MULTISLOT_KERNEL_NVME_41073=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_NOUVEAU=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_RADEON=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
@@ -101,6 +103,8 @@ CVE_MAC80211="CVE-2024-43911"
 CVE_MLX5="CVE-2024-45019"
 CVE_NETFILTER="CVE-2024-45018"
 CVE_NF_TABLES="CVE-2024-27020"
+CVE_NVME_45013="CVE-2024-45013"
+CVE_NVME_41073="CVE-2024-41073"
 CVE_RTW88="CVE-2024-46760"
 CVE_SCTP="CVE-2024-44935"
 CVE_SELINUX="CVE-2022-48740"
@@ -162,6 +166,7 @@ mlx5
 netfilter
 nfs
 nftables
+nvme
 rtw88
 sctp
 selinux
@@ -232,6 +237,8 @@ REQUIRED_USE="
 # nfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-45018 # DoS
 # nf_tables? https://nvd.nist.gov/vuln/detail/CVE-2022-48935 # DoS UAF
+# nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-45013 # DoS
+# nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-41073 # DoS, DT, ID
 # rtw88? https://nvd.nist.gov/vuln/detail/CVE-2024-46760 # DoS
 # sctp? https://nvd.nist.gov/vuln/detail/CVE-2024-44935 # DoS
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
@@ -383,6 +390,12 @@ RDEPEND="
 	nftables? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NF_TABLES[@]})
+		)
+	)
+	nvme? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NVME_45013[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NVME_41073[@]})
 		)
 	)
 	rtw88? (
@@ -611,6 +624,10 @@ check_drivers() {
 	fi
 	if use nftables ; then
 		check_kernel_version "nf_tables" "${CVE_NF_TABLES}" ${MULTISLOT_KERNEL_NF_TABLES[@]}
+	fi
+	if use nvme ; then
+		check_kernel_version "nvme" "${CVE_NVME_45013}" ${MULTISLOT_KERNEL_NVME_45013[@]}
+		check_kernel_version "nvme" "${CVE_NVME_41073}" ${MULTISLOT_KERNEL_NVME_41073[@]}
 	fi
 	if use rtw88 ; then
 		wifi=1
