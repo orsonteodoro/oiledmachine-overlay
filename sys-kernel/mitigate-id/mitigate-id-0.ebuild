@@ -35,6 +35,7 @@ MULTISLOT_KERNEL_I915=("5.10.211" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
 MULTISLOT_KERNEL_ICE=("6.10.10")
 MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IWLWIFI=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
+MULTISLOT_KERNEL_JFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_MLX5=("5.4.185" "5.10.106" "5.15.29" "5.16.15")
 MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_NETFILTER=("5.15" "6.1.107" "6.6.48" "6.10.7")
@@ -61,6 +62,7 @@ CVE_I915="CVE-2024-41092"
 CVE_ICE="CVE-2024-46766"
 CVE_IPV6="CVE-2024-44987"
 CVE_IWLWIFI="CVE-2022-48787"
+CVE_JFS="CVE-2024-43858"
 CVE_MLX5="CVE-2022-48858"
 CVE_NFSD="CVE-2024-46696"
 CVE_NET_BRIDGE="CVE-2024-44934"
@@ -112,6 +114,7 @@ fuse
 ice
 ipv6
 iwlwifi
+jfs
 mlx5
 nfsd
 netfilter
@@ -164,6 +167,7 @@ REQUIRED_USE="
 # ice? https://nvd.nist.gov/vuln/detail/CVE-2024-46766 # DoS, DT, ID
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
+# jfs https://nvd.nist.gov/vuln/detail/CVE-2024-43858 # DoS, DT, ID
 # nfsd? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2022-48858 # DoS, DT, ID
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-44983 # DoS, ID
@@ -246,6 +250,11 @@ RDEPEND="
 	ice? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_ICE[@]})
+		)
+	)
+	jfs? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_JFS[@]})
 		)
 	)
 	mlx5? (
@@ -414,6 +423,9 @@ check_drivers() {
 	fi
 	if use iwlwifi ; then
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI}" ${MULTISLOT_KERNEL_IWLWIFI[@]}
+	fi
+	if use jfs ; then
+		check_kernel_version "jfs" "${CVE_JFS}" ${MULTISLOT_KERNEL_JFS[@]}
 	fi
 	if use mlx5 ; then
 		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_MLX5[@]}

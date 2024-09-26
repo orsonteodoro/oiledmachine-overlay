@@ -105,6 +105,9 @@
     <flag name="ipv6">
       Mitigate against Denial of Service in ipv6.
     </flag>
+    <flag name="jfs">
+      Mitigate against Denial of Service in the JFS filesystem.
+    </flag>
     <flag name="mlx5">
       Mitigate against Denial of Service for the mlx5 network driver.
     </flag>

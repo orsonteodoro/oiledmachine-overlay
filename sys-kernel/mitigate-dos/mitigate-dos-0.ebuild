@@ -39,6 +39,7 @@ MULTISLOT_KERNEL_ICE=("6.10.10")
 MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IWLWIFI_48918=("5.15.27" "5.16.13")
 MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
+MULTISLOT_KERNEL_JFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
 MULTISLOT_KERNEL_MD_RAID5=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_MLX5=("6.1.107" "6.6.48" "6.10.7")
@@ -79,6 +80,7 @@ CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
 CVE_I915="CVE-2024-41092"
 CVE_ICE="CVE-2024-46766"
+CVE_JFS="CVE-2024-43858"
 CVE_MD_RAID1="CVE-2024-45023"
 CVE_MD_RAID5="CVE-2024-43914"
 CVE_MSM="CVE-2024-45015"
@@ -141,6 +143,7 @@ f2fs
 ice
 ipv6
 iwlwifi
+jfs
 samba
 max-uptime
 md-raid1
@@ -206,6 +209,7 @@ REQUIRED_USE="
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918 # DoS
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
+# jfs https://nvd.nist.gov/vuln/detail/CVE-2024-43858 # DoS, DT, ID
 # mac80211? https://nvd.nist.gov/vuln/detail/CVE-2024-43911 # DoS
 # md-raid1? https://nvd.nist.gov/vuln/detail/CVE-2024-45023 # DT, DoS
 # md-raid5? https://nvd.nist.gov/vuln/detail/CVE-2024-43914 # DOS
@@ -313,6 +317,11 @@ RDEPEND="
 			${WIFI_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_48918[@]})
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_48787[@]})
+		)
+	)
+	jfs? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_JFS[@]})
 		)
 	)
 	md-raid1? (
@@ -528,6 +537,9 @@ check_drivers() {
 		wifi=1
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_48918}" ${MULTISLOT_KERNEL_IWLWIFI_48918[@]}
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_48787}" ${MULTISLOT_KERNEL_IWLWIFI_48787[@]}
+	fi
+	if use jfs ; then
+		check_kernel_version "jfs" "${CVE_JFS}" ${MULTISLOT_KERNEL_JFS[@]}
 	fi
 	if use mlx5 ; then
 		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_MLX5[@]}

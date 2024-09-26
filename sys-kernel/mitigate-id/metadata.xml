@@ -87,6 +87,9 @@
     <flag name="ipv6">
       Mitigate against information disclosure in ipv6.
     </flag>
+    <flag name="jfs">
+      Mitigate against Denial of Service in the JFS filesystem.
+    </flag>
     <flag name="kvm">
       Mitigate against information disclosure in KVM.
     </flag>
