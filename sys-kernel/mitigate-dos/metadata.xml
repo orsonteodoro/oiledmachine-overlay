@@ -61,6 +61,9 @@
     <flag name="btrfs">
       Mitigate against Denial of Service for the Btrfs filesystem.
     </flag>
+    <flag name="cougar">
+      Mitigate against Denial of Service for the Cougar 500K gaming keyboard.
+    </flag>
     <flag name="custom-kernel">
       Prevent vendor lock-in when doing kernel mitigation checks.
     </flag>

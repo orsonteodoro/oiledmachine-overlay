@@ -25,6 +25,7 @@ MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1
 MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_BLUETOOTH=("5.10.165" "5.15.90" "6.1.8")
 MULTISLOT_KERNEL_BTRFS=("6.6.49" "6.10.8")
+MULTISLOT_KERNEL_COUGAR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_EXT4=("6.10.1")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
@@ -49,6 +50,7 @@ MULTISLOT_KERNEL_VMWGFX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6
 CVE_AMDGPU="CVE-2024-46725"
 CVE_BLUETOOTH="CVE-2022-48878"
 CVE_BTRFS="CVE-2024-46687"
+CVE_COUGAR="CVE-2024-46747"
 CVE_EXT4="CVE-2024-42257"
 CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
@@ -100,6 +102,7 @@ ${VIDEO_CARDS[@]}
 bluetooth
 bridge
 btrfs
+cougar
 ext4
 f2fs
 fuse
@@ -149,6 +152,7 @@ REQUIRED_USE="
 #
 # bridge? https://nvd.nist.gov/vuln/detail/CVE-2024-44934 # DoS, DT, ID
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46687 # DoS, DT, ID
+# cougar? https://nvd.nist.gov/vuln/detail/CVE-2024-46747 # DoS, DT, ID
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-42257 # DoS, DT, ID
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
@@ -205,6 +209,11 @@ RDEPEND="
 		!custom-kernel? (
 			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS[@]})
+		)
+	)
+	cougar? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_COUGAR[@]})
 		)
 	)
 	ext4? (
@@ -369,6 +378,9 @@ check_drivers() {
 	if use btrfs ; then
 		fs=1
 		check_kernel_version "btrfs" "${CVE_BTRFS}" ${MULTISLOT_KERNEL_BTRFS[@]}
+	fi
+	if use cougar ; then
+		check_kernel_version "hid/hid-cougar" "${CVE_COUGAR}" ${MULTISLOT_KERNEL_COUGAR[@]}
 	fi
 	if use ext4 ; then
 		fs=1

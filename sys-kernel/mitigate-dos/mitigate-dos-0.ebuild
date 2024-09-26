@@ -30,6 +30,7 @@ MULTISLOT_KERNEL_BTRFS_46687=("6.6.49" "6.10.8")
 MULTISLOT_KERNEL_BTRFS_46749=("6.10.10")
 MULTISLOT_KERNEL_BRCM80211=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_CFG80211=("5.10.244" "5.15.165" "6.1.106" "6.6.47" "6.9.9")
+MULTISLOT_KERNEL_COUGAR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_EXT4=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
 MULTISLOT_KERNEL_ICE=("6.10.10")
@@ -52,6 +53,7 @@ MULTISLOT_KERNEL_RTW88=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
 MULTISLOT_KERNEL_SMB_46796=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_SMB_46795=("5.15.167" "6.1.110" "6.6.51" "6.10.10")
+MULTISLOT_KERNEL_TLS=("5.10.219" "5.15.161" "6.1.93" "6.6.33" "6.9.4")
 MULTISLOT_KERNEL_V3D=("6.10.8")
 MULTISLOT_KERNEL_VMCI=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_VMWGFX=("6.6.49" "6.9" "6.10.8")
@@ -66,6 +68,7 @@ CVE_BTRFS_46687="CVE-2024-46687"
 CVE_BTRFS_46749="CVE-2024-46749"
 CVE_BRCM80211="CVE-2024-46672"
 CVE_CFG80211="CVE-2024-42114"
+CVE_COUGAR="CVE-2024-46747"
 CVE_EXT4="CVE-2024-43828"
 CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
@@ -88,6 +91,7 @@ CVE_RTW88="CVE-2024-46760"
 CVE_SELINUX="CVE-2022-48740"
 CVE_SMB_46796="CVE-2024-46796"
 CVE_SMB_46795="CVE-2024-46795"
+CVE_TLS="CVE-2024-36489"
 CVE_V3D="CVE-2024-46699"
 CVE_VMCI="CVE-2024-46738"
 CVE_VMWGFX="CVE-2024-46709"
@@ -122,6 +126,7 @@ bcrm80211
 bluetooth
 bridge
 btrfs
+cougar
 ext4
 f2fs
 ice
@@ -137,6 +142,7 @@ nfsd
 nftables
 rtw88
 selinux
+tls
 vmware
 xen
 "
@@ -181,6 +187,7 @@ REQUIRED_USE="
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46687 # DoS, DT, ID
 # bcrm80211? https://nvd.nist.gov/vuln/detail/CVE-2024-46672 # DoS
 # cfg80211? https://nvd.nist.gov/vuln/detail/CVE-2024-42114 # DoS
+# cougar? https://nvd.nist.gov/vuln/detail/CVE-2024-46747 # DoS, DT, ID
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-43828 # DoS
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
@@ -257,6 +264,11 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS_46749[@]})
 		)
 	)
+	cougar? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_COUGAR[@]})
+		)
+	)
 	ext4? (
 		!custom-kernel? (
 			${FS_RDEPEND}
@@ -326,6 +338,11 @@ RDEPEND="
 	selinux? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SELINUX[@]})
+		)
+	)
+	tls? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_TLS[@]})
 		)
 	)
 	video_cards_amdgpu? (
@@ -455,8 +472,11 @@ check_drivers() {
 	fi
 	if use btrfs ; then
 		fs=1
-		check_kernel_version "btrfs" "${CVE_BTRFS}" ${MULTISLOT_KERNEL_BTRFS_46687[@]}
-		check_kernel_version "btrfs" "${CVE_BTRFS}" ${MULTISLOT_KERNEL_BTRFS_46749[@]}
+		check_kernel_version "btrfs" "${CVE_BTRFS_46687}" ${MULTISLOT_KERNEL_BTRFS_46687[@]}
+		check_kernel_version "btrfs" "${CVE_BTRFS_46749}" ${MULTISLOT_KERNEL_BTRFS_46749[@]}
+	fi
+	if use cougar ; then
+		check_kernel_version "hid/hid-cougar" "${CVE_COUGAR}" ${MULTISLOT_KERNEL_COUGAR[@]}
 	fi
 	if use ext4 ; then
 		fs=1
@@ -480,10 +500,10 @@ check_drivers() {
 		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_MLX5[@]}
 	fi
 	if use md-raid1 ; then
-		check_kernel_version "md/raid1" "${CVE_MD_RADI1}" ${MULTISLOT_KERNEL_MD_RAID1[@]}
+		check_kernel_version "md/raid1" "${CVE_MD_RAID1}" ${MULTISLOT_KERNEL_MD_RAID1[@]}
 	fi
 	if use md-raid5 ; then
-		check_kernel_version "md/raid5" "${CVE_MD_RADI1}" ${MULTISLOT_KERNEL_MD_RAID5[@]}
+		check_kernel_version "md/raid5" "${CVE_MD_RAID5}" ${MULTISLOT_KERNEL_MD_RAID5[@]}
 	fi
 	if use nfsd ; then
 		check_kernel_version "nfsd" "${CVE_NFSD}" ${MULTISLOT_KERNEL_NFSD[@]}
@@ -504,6 +524,9 @@ check_drivers() {
 	fi
 	if use selinux ; then
 		check_kernel_version "selinux" "${CVE_SELINUX}" ${MULTISLOT_KERNEL_SELINUX[@]}
+	fi
+	if use tls ; then
+		check_kernel_version "tls" "${CVE_TLS}" ${MULTISLOT_KERNEL_TLS[@]}
 	fi
 	if use video_cards_amdgpu ; then
 		check_kernel_version "amdgpu" "${CVE_AMDGPU}" ${MULTISLOT_KERNEL_AMDGPU[@]}

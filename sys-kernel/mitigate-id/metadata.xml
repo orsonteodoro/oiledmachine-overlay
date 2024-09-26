@@ -50,14 +50,18 @@
     <flag name="bluetooth">
       Mitigate against information disclosure for the Bluetooth® subsystem.
     </flag>
+    <flag name="bpf">
+      Apply BPF mitigations for Spectre (Variant 2) or Spectre-NG.
+    </flag>
     <flag name="bridge">
       Mitigate against information disclosure for Ethernet bridge support.
     </flag>
     <flag name="btrfs">
       Mitigate against information disclosure for the Btrfs filesystem.
     </flag>
-    <flag name="bpf">
-      Apply BPF mitigations for Spectre (Variant 2) or Spectre-NG.
+    <flag name="cougar">
+      Mitigate against information disclosure for the Cougar 500K gaming
+      keyboard.
     </flag>
     <flag name="custom-kernel">
       Prevent vendor lock-in when doing kernel mitigation checks.
