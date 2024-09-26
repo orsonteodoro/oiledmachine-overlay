@@ -33,6 +33,8 @@ MULTISLOT_KERNEL_BTRFS_46749=("6.10.10")
 MULTISLOT_KERNEL_BRCM80211=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_CFG80211=("5.10.244" "5.15.165" "6.1.106" "6.6.47" "6.9.9")
 MULTISLOT_KERNEL_COUGAR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
+MULTISLOT_KERNEL_HFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
+MULTISLOT_KERNEL_HFSPLUS=("4.19.319" "5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_EXT4=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
 MULTISLOT_KERNEL_ICE=("6.10.10")
@@ -80,6 +82,8 @@ CVE_COUGAR="CVE-2024-46747"
 CVE_EXT4="CVE-2024-43828"
 CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
+CVE_HFS="CVE-2024-42311"
+CVE_HFSPLUS="CVE-2024-41059"
 CVE_I915="CVE-2024-41092"
 CVE_ICE="CVE-2024-46766"
 CVE_JFS="CVE-2024-43858"
@@ -144,6 +148,8 @@ btrfs
 cougar
 ext4
 f2fs
+hfs
+hfsplus
 ice
 ipv6
 iwlwifi
@@ -210,6 +216,8 @@ REQUIRED_USE="
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-43828 # DoS
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
+# hfs? https://nvd.nist.gov/vuln/detail/CVE-2024-42311 # DoS
+# hfsplus? https://nvd.nist.gov/vuln/detail/CVE-2024-41059 # DoS, DT, ID
 # ice? https://nvd.nist.gov/vuln/detail/CVE-2024-46766 # DoS, DT, ID
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918 # DoS
@@ -313,6 +321,18 @@ RDEPEND="
 		!custom-kernel? (
 			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_F2FS[@]})
+		)
+	)
+	hfs? (
+		!custom-kernel? (
+			${FS_RDEPEND}
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_HFS[@]})
+		)
+	)
+	hfsplus? (
+		!custom-kernel? (
+			${FS_RDEPEND}
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_HFSPLUS[@]})
 		)
 	)
 	ice? (
@@ -538,7 +558,16 @@ check_drivers() {
 		check_kernel_version "ext4" "${CVE_EXT4}" ${MULTISLOT_KERNEL_EXT4[@]}
 	fi
 	if use f2fs ; then
+		fs=1
 		check_kernel_version "f2fs" "${CVE_F2FS}" ${MULTISLOT_KERNEL_F2FS[@]}
+	fi
+	if use hfs ; then
+		fs=1
+		check_kernel_version "hfs" "${CVE_HFS}" ${MULTISLOT_KERNEL_HFS[@]}
+	fi
+	if use hfsplus ; then
+		fs=1
+		check_kernel_version "hfsplus" "${CVE_HFSPLUS}" ${MULTISLOT_KERNEL_HFSPLUS[@]}
 	fi
 	if use ice ; then
 		check_kernel_version "net/ethernet/intel/ice" "${CVE_ICE}" ${MULTISLOT_KERNEL_ICE[@]}
@@ -552,6 +581,7 @@ check_drivers() {
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_48787}" ${MULTISLOT_KERNEL_IWLWIFI_48787[@]}
 	fi
 	if use jfs ; then
+		fs=1
 		check_kernel_version "jfs" "${CVE_JFS}" ${MULTISLOT_KERNEL_JFS[@]}
 	fi
 	if use mlx5 ; then

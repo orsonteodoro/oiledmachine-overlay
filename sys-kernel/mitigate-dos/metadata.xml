@@ -85,6 +85,12 @@
     <flag name="f2fs">
       Mitigate against Denial of Service for the F2FS filesystem.
     </flag>
+    <flag name="hfs">
+      Mitigate against Denial of Service for the HFS filesystem.
+    </flag>
+    <flag name="hfsplus">
+      Mitigate against Denial of Service for the HFS+ filesystem.
+    </flag>
     <flag name="max-uptime">
       Verifies defaults for security and compiler settings in order mitigate
       against deadlock or hard reset.
