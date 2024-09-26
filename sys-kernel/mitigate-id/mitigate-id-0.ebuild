@@ -23,6 +23,7 @@ EOL_VERSIONS=(
 MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52" "6.10.11" "6.11")
 
 MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
+MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
 MULTISLOT_KERNEL_BLUETOOTH=("5.10.165" "5.15.90" "6.1.8")
 MULTISLOT_KERNEL_BTRFS=("6.6.49" "6.10.8")
 MULTISLOT_KERNEL_COUGAR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
@@ -48,6 +49,7 @@ MULTISLOT_KERNEL_VMCI=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6
 MULTISLOT_KERNEL_VMWGFX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52")
 
 CVE_AMDGPU="CVE-2024-46725"
+CVE_ATA_41087="CVE-2024-41087"
 CVE_BLUETOOTH="CVE-2022-48878"
 CVE_BTRFS="CVE-2024-46687"
 CVE_COUGAR="CVE-2024-46747"
@@ -99,6 +101,7 @@ VIDEO_CARDS=(
 )
 IUSE="
 ${VIDEO_CARDS[@]}
+ata
 bluetooth
 bridge
 btrfs
@@ -150,6 +153,7 @@ REQUIRED_USE="
 #
 # The latest to near past vulnerabilities are reported below.
 #
+# ata? https://nvd.nist.gov/vuln/detail/CVE-2024-41087 # DoS, DT, ID
 # bridge? https://nvd.nist.gov/vuln/detail/CVE-2024-44934 # DoS, DT, ID
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46687 # DoS, DT, ID
 # cougar? https://nvd.nist.gov/vuln/detail/CVE-2024-46747 # DoS, DT, ID
@@ -194,6 +198,11 @@ RDEPEND="
 			$(gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
 		)
 		$(gen_eol_kernels_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
+	)
+	ata? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_ATA_41087[@]})
+		)
 	)
 	bluetooth? (
 		!custom-kernel? (
@@ -369,6 +378,9 @@ check_drivers() {
 	# Check for USE=custom-kernels only which bypass RDEPEND
 	use custom-kernel || return
 	local fs=0
+	if use ata ; then
+		check_kernel_version "ata" "${CVE_ATA_41087}" ${MULTISLOT_KERNEL_ATA_41087[@]}
+	fi
 	if use bluetooth ; then
 		check_kernel_version "bluetooth" "${CVE_BLUETOOTH}" ${MULTISLOT_KERNEL_BLUETOOTH[@]}
 	fi

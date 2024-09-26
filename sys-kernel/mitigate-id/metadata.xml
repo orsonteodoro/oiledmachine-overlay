@@ -47,6 +47,9 @@
       This is recommended for Intel® CPUs since the USE flag coverage for
       microarchitectures is incomplete.
     </flag>
+    <flag name="ata">
+      Mitigate against information disclosure for the ATA driver.
+    </flag>
     <flag name="bluetooth">
       Mitigate against information disclosure for the Bluetooth® subsystem.
     </flag>
