@@ -171,7 +171,7 @@
       indicated fixed DoS class of vulnerabilities.  This will increase the
       coverage of DoS mitigation for the installed kernels significantly because
       the USE flag coverage is incomplete or the vulnerability report does not
-      report the type of vulnerability.
+      clearly state the types of vulnerabilities.
     </flag>
   </use>
 </pkgmetadata>

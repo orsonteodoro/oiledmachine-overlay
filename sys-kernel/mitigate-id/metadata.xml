@@ -149,8 +149,8 @@
       indicated fixed information disclosure (ID) class of vulnerabilities.
       This will increase the coverage of ID mitigation for the installed
       kernels significantly because the USE flag coverage is incomplete
-      or the vulnerability report doesn't report the type of
-      vulnerability.
+      or the vulnerability report doesn't clearly state the types of
+      vulnerabilities.
     </flag>
   </use>
 </pkgmetadata>
