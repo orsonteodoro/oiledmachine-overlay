@@ -5663,8 +5663,8 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	_mitigate_id_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023)
 	_mitigate_id_verify_mitigation_tecra		# Mitigations against TECRA (2023) # PE
 	_mitigate_id_verify_mitigation_reptar		# Mitigations against Reptar (2023) # PE
-	_mitigate_id_verify_mitigation_rfds		# Mitigations against RFDS (2024)
-	_mitigate_id_verify_mitigation_sinkclose	# Mitigations against SLB (2024) # CE
+	_mitigate_id_verify_mitigation_rfds		# Mitigations against RFDS (2023)
+	_mitigate_id_verify_mitigation_sinkclose	# Mitigations against SLB (2023) # CE
 	_mitigate_id_verify_mitigation_ibpb		# Mitigations against IBPB (2023)
 	_mitigate_id_verify_mitigation_cve_2024_23984	# Mitigations against CVE-2024-23984 (2024)
 	_mitigate_id_verify_mitigation_ussb		# Mitigations against USSB (2024) # ID
