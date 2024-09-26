@@ -425,7 +425,6 @@ gen_eol_kernels_list() {
 	done
 }
 
-
 _MITIGATE_DOS_TECRA_RDEPEND_X86_64="
 	cpu_target_x86_ice_lake? (
 		firmware? (

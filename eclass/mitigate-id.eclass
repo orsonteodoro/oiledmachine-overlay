@@ -636,8 +636,6 @@ gen_eol_kernels_list() {
 	done
 }
 
-
-
 # Mitigated with RFI flush not KPTI
 _MITIGATE_ID_MELTDOWN_RDEPEND_PPC64="
 	cpu_target_ppc_power7? (
