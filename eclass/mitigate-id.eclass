@@ -5625,10 +5625,10 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	# CVE-2023-20592 |                              | DT # TODO add mitigate-dt
 	# CVE-2023-20593 | Zenbleed (CPIL)              | ID
 	# CVE-2023-22655 | TECRA                        | DT (I:H), ID (C:L)
-	# CVE-2023-38575 | IBPB                         | ID
 	# CVE-2023-23583 | Reptar                       | DoS, DT, ID
 	# CVE-2023-28746 | RFDS (FP/I SIMD)             | ID
 	# CVE-2023-31315 | Sinkclose                    | ID (C:L), DT (I:H), DoS (A:L)
+	# CVE-2023-38575 | IBPB                         | ID
 	# CVE-2024-23984 |                              | ID
 
 	_mitigate_id_verify_mitigation_spectre		# Mitigations against Variant 1 (2017), Variant 2 (2017)
@@ -5662,10 +5662,10 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	_mitigate_id_verify_mitigation_inception	# Mitigations against SRSO (2023)
 	_mitigate_id_verify_mitigation_zenbleed		# Mitigations against Zenbleed (2023)
 	_mitigate_id_verify_mitigation_tecra		# Mitigations against TECRA (2023) # PE
-	_mitigate_id_verify_mitigation_ibpb		# Mitigations against IBPB (2023)
 	_mitigate_id_verify_mitigation_reptar		# Mitigations against Reptar (2023) # PE
 	_mitigate_id_verify_mitigation_rfds		# Mitigations against RFDS (2024)
 	_mitigate_id_verify_mitigation_sinkclose	# Mitigations against SLB (2024) # CE
+	_mitigate_id_verify_mitigation_ibpb		# Mitigations against IBPB (2023)
 	_mitigate_id_verify_mitigation_cve_2024_23984	# Mitigations against CVE-2024-23984 (2024)
 	_mitigate_id_verify_mitigation_ussb		# Mitigations against USSB (2024) # ID
 
