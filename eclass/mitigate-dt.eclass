@@ -1375,7 +1375,7 @@ einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
 	# PE -> DoS
 	# PE -> ID + DoS
 
-	_mitigate_dt_mitigate_with_ssp				# PE, CE
+	_mitigate_dt_mitigate_with_ssp			# PE, CE
 	_mitigate_dt_mitigate_with_aslr			# PE
 
 	# Notify the user if grub or the kernel config is incorrectly

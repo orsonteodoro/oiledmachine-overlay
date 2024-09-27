@@ -5906,7 +5906,6 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	# CVE-2022-29901 | Retbleed (BTC-RET)           | ID
 	# CVE-2022-40982 | Downfall (GDS)               | ID
 	# CVE-2023-20569 | Inception (SRSO)             | ID
-	# CVE-2023-20592 |                              | DT # TODO add mitigate-dt
 	# CVE-2023-20593 | Zenbleed (CPIL)              | ID
 	# CVE-2023-22655 | TECRA                        | DT (I:H), ID (C:L)
 	# CVE-2023-23583 | Reptar                       | DoS, DT, ID
