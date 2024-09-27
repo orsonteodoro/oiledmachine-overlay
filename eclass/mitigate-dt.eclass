@@ -1123,6 +1123,16 @@ eerror ">=sys-kernel/linux-firmware-20230724 is required for CacheWarp mitigatio
 			die
 		fi
 	fi
+	if use cpu_target_x86_rome ; then
+eerror "No mitigation for CacheWarp for Rome"
+	fi
+	if use cpu_target_x86_naples ; then
+eerror "No mitigation for CacheWarp for Naples"
+	fi
+	if use auto && ( use auto && [[ "${FIRMWARE_VENDOR}" == "amd" && "${ARCH}" =~ ("amd64"|"x86") ]] ) ; then
+eerror "No mitigation for CacheWarp for Rome."
+eerror "No mitigation for CacheWarp for Naples."
+	fi
 }
 
 # @FUNCTION: _mitigate-dt_check_kernel_flags
