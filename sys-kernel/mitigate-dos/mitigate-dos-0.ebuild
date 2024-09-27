@@ -661,6 +661,9 @@ check_drivers() {
 		check_kernel_version "i915" "${CVE_I915}" ${MULTISLOT_KERNEL_I915[@]}
 		check_kernel_version "xe" "${CVE_XE}" ${MULTISLOT_KERNEL_XE[@]}
 	fi
+	if use video_cards_nouveau ; then
+		check_kernel_version "noveau" "${CVE_NOUVEAU}" ${MULTISLOT_KERNEL_NOUVEAU[@]}
+	fi
 	if use video_cards_radeon ; then
 		check_kernel_version "radeon" "${CVE_RADEON}" ${MULTISLOT_KERNEL_RADEON[@]}
 	fi
