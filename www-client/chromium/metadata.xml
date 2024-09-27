@@ -306,8 +306,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       [Using community patchsets may introduce vulnerabilities or the user
       experience may degrade.]
 
-      [The USE flag is only available when patchset version matches browser
-      version for security reasons.]
+      [The USE flag is only available when the patchset version matches the
+      browser version for security reasons.]
     </flag>
     <flag name="cpu_flags_arm_pac">
       Mitigate against ROP attacks
@@ -704,8 +704,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       [Using community patchsets may introduce vulnerabilities or the user
       experience may degrade.]
 
-      [The USE flag is only available when patchset version matches browser
-      version for security reasons.]
+      [The USE flag is only available when the patchset version matches the
+      browser version for security reasons.]
     </flag>
     <flag name="vaapi">
       Add support for hardware accelerated JPEG image decoding, hardware
