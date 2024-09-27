@@ -87,6 +87,12 @@ CPU_TARGET_X86=(
 	cpu_target_x86_cedar_island
 	cpu_target_x86_whitley
 	cpu_target_x86_idaville
+	cpu_target_x86_purley_refresh
+	cpu_target_x86_cedar_island
+	cpu_target_x86_greenlow
+	cpu_target_x86_whitley
+	cpu_target_x86_tatlow
+	cpu_target_x86_eagle_stream
 
 	cpu_target_x86_cascade_lake
 	cpu_target_x86_cooper_lake
@@ -331,6 +337,22 @@ REQUIRED_USE="
 		firmware
 	)
 
+	cpu_target_x86_purley_refresh? (
+		firmware
+	)
+	cpu_target_x86_cedar_island? (
+		firmware
+	)
+	cpu_target_x86_greenlow? (
+		firmware
+	)
+	cpu_target_x86_tatlow? (
+		firmware
+	)
+	cpu_target_x86_comet_lake? (
+		firmware
+	)
+
 	cpu_target_x86_cascade_lake? (
 		firmware
 	)
@@ -364,6 +386,9 @@ REQUIRED_USE="
 		firmware
 	)
 	cpu_target_x86_idaville? (
+		firmware
+	)
+	cpu_target_x86_meteor_lake? (
 		firmware
 	)
 
@@ -3219,6 +3244,162 @@ _MITIGATE_ID_SINKCLOSE_RDEPEND_X86_32="
 	${_MITIGATE_ID_SINKCLOSE_RDEPEND_X86_64}
 "
 
+_MITIGATE_ID_CVE_2024_24853_RDEPEND_X86_64="
+	cpu_target_x86_purley_refresh? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_cedar_island? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_greenlow? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_whitley? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_idaville? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_tatlow? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_ice_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_tiger_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_skylake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_kaby_lake_gen7? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_kaby_lake_gen8? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_whiskey_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_coffee_lake_gen8? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_coffee_lake_gen9? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_comet_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_rocket_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+"
+_MITIGATE_ID_CVE_2024_24853_RDEPEND_X86_32="
+	${_MITIGATE_ID_CVE_2024_24853_RDEPEND_X86_64}
+"
+
+_MITIGATE_ID_CVE_2024_24980_RDEPEND_X86_64="
+	cpu_target_x86_cooper_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_ice_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_sapphire_rapids? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_sapphire_rapids_edge_enhanced? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_emerald_rapids? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+"
+_MITIGATE_ID_CVE_2024_24980_RDEPEND_X86_32="
+	${_MITIGATE_ID_CVE_2024_24980_RDEPEND_X86_64}
+"
+
+_MITIGATE_ID_CVE_2024_42667_RDEPEND_X86_64="
+	cpu_target_x86_meteor_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+"
+_MITIGATE_ID_CVE_2024_42667_RDEPEND_X86_32="
+	${_MITIGATE_ID_CVE_2024_42667_RDEPEND_X86_64}
+"
+
+
+_MITIGATE_ID_CVE_2023_49141_RDEPEND_X86_64="
+	cpu_target_x86_eagle_stream? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_catlow_raptor_cove? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_alder_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_raptor_lake_gen13? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+"
+
+_MITIGATE_ID_CVE_2023_49141_RDEPEND_X86_32="
+	${_MITIGATE_ID_CVE_2023_49141_RDEPEND_X86_64}
+"
+
 _MITIGATE_ID_AUTO="
 	arm? (
 		$(gen_patched_kernel_list 6.1)
@@ -3306,6 +3487,10 @@ MITIGATE_ID_RDEPEND="
 				${_MITIGATE_ID_TECRA_RDEPEND_X86_64}
 				${_MITIGATE_ID_CVE_2024_23984_RDEPEND_X86_64}
 				${_MITIGATE_ID_SINKCLOSE_RDEPEND_X86_64}
+				${_MITIGATE_ID_CVE_2023_49141_RDEPEND_X86_64}
+				${_MITIGATE_ID_CVE_2024_24853_RDEPEND_X86_64}
+				${_MITIGATE_ID_CVE_2024_24980_RDEPEND_X86_64}
+				${_MITIGATE_ID_CVE_2024_42667_RDEPEND_X86_64}
 			)
 			ppc? (
 				${_MITIGATE_ID_SPECTRE_V2_RDEPEND_PPC32}
@@ -3350,6 +3535,10 @@ MITIGATE_ID_RDEPEND="
 				${_MITIGATE_ID_TECRA_RDEPEND_X86_32}
 				${_MITIGATE_ID_CVE_2024_23984_RDEPEND_X86_32}
 				${_MITIGATE_ID_SINKCLOSE_RDEPEND_X86_32}
+				${_MITIGATE_ID_CVE_2023_49141_RDEPEND_X86_32}
+				${_MITIGATE_ID_CVE_2024_24853_RDEPEND_X86_32}
+				${_MITIGATE_ID_CVE_2024_24980_RDEPEND_X86_32}
+				${_MITIGATE_ID_CVE_2024_42667_RDEPEND_X86_32}
 			)
 		)
 	)
@@ -5491,6 +5680,101 @@ ewarn "A BIOS firmware update is required for non datacenter for Sinkclose mitig
 	fi
 }
 
+# @FUNCTION: _mitigate_id_verify_mitigation_cve_2024_24853
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2024-24853
+_mitigate_id_verify_mitigation_cve_2024_24853() {
+	if \
+		   use cpu_target_x86_purley_refresh \
+		|| use cpu_target_x86_cedar_island \
+		|| use cpu_target_x86_greenlow \
+		|| use cpu_target_x86_whitley \
+		|| use cpu_target_x86_idaville \
+		|| use cpu_target_x86_tatlow \
+		|| use cpu_target_x86_ice_lake \
+		|| use cpu_target_x86_tiger_lake \
+		|| use cpu_target_x86_skylake \
+		|| use cpu_target_x86_kaby_lake_gen7 \
+		|| use cpu_target_x86_kaby_lake_gen8 \
+		|| use cpu_target_x86_whiskey_lake \
+		|| use cpu_target_x86_coffee_lake_gen8 \
+		|| use cpu_target_x86_coffee_lake_gen9 \
+		|| use cpu_target_x86_comet_lake \
+		|| use cpu_target_x86_rocket_lake \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2024-24853."
+		check_extra_config
+	fi
+}
+
+# @FUNCTION: _mitigate_id_verify_mitigation_cve_2024_24980
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2024-24980
+_mitigate_id_verify_mitigation_cve_2024_24980() {
+	# Gen 3-5
+	if \
+		   use cpu_target_x86_cooper_lake \
+		|| use cpu_target_x86_ice_lake \
+		|| use cpu_target_x86_sapphire_rapids \
+		|| use cpu_target_x86_sapphire_rapids_edge_enhanced \
+		|| use cpu_target_x86_emerald_rapids \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2024-24980."
+		check_extra_config
+	fi
+}
+
+# @FUNCTION: _mitigate_id_verify_mitigation_cve_2024_42667
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2024-42667
+_mitigate_id_verify_mitigation_cve_2024_42667() {
+	if \
+		use cpu_target_x86_meteor_lake \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2024-42667."
+		check_extra_config
+	fi
+}
+
+# @FUNCTION: _mitigate_id_verify_mitigation_cve_2023_49141
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2023-49141
+_mitigate_id_verify_mitigation_cve_2023_49141() {
+	if \
+		   use cpu_target_x86_eagle_stream \
+		|| use cpu_target_x86_catlow_raptor_cove \
+		|| use cpu_target_x86_alder_lake \
+		|| use cpu_target_x86_raptor_lake_gen13 \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2023-49141."
+		check_extra_config
+	fi
+}
+
 # @FUNCTION: _mitigate-id_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -5629,7 +5913,11 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	# CVE-2023-28746 | RFDS (FP/I SIMD)             | ID
 	# CVE-2023-31315 | Sinkclose                    | ID (C:L), DT (I:H), DoS (A:L)
 	# CVE-2023-38575 | IBPB                         | ID
+	# CVE-2023-49141 |                              | DoS, DT, ID
+	# CVE-2024-24853 |                              | DoS, DT, ID
 	# CVE-2024-23984 |                              | ID
+	# CVE-2024-24980 |                              | ID (C:L), DT (I:H)
+	# CVE-2024-42667 |                              | DoS, DT, ID
 
 	_mitigate_id_verify_mitigation_spectre		# Mitigations against Variant 1 (2017), Variant 2 (2017)
 	_mitigate_id_verify_mitigation_meltdown		# Mitigations against Variant 3 (2017)
@@ -5666,8 +5954,13 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	_mitigate_id_verify_mitigation_rfds		# Mitigations against RFDS (2023)
 	_mitigate_id_verify_mitigation_sinkclose	# Mitigations against SLB (2023) # CE
 	_mitigate_id_verify_mitigation_ibpb		# Mitigations against IBPB (2023)
+	_mitigate_id_verify_mitigation_cve_2023_49141   # Mitigations against CVE-2023-49141 (2023) # PE
 	_mitigate_id_verify_mitigation_cve_2024_23984	# Mitigations against CVE-2024-23984 (2024)
+	_mitigate_id_verify_mitigation_cve_2024_24980	# Mitigations against CVE-2024-24980 (2024) # PE
 	_mitigate_id_verify_mitigation_ussb		# Mitigations against USSB (2024) # ID
+	_mitigate_id_verify_mitigation_cve_2024_24853	# Mitigations against CVE-2024-24853 (2024) # PE
+	_mitigate_id_verify_mitigation_cve_2024_42667	# Mitigations against CVE-2024-42667 (2024) # PE
+
 
 	# For SLAM, see https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability#2023
 }

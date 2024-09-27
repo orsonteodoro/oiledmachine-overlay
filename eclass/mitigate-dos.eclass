@@ -46,7 +46,6 @@ CPU_TARGET_X86=(
 	cpu_target_x86_sapphire_rapids
 	cpu_target_x86_sapphire_rapids_edge_enhanced
 	cpu_target_x86_hewitt_lake
-	cpu_target_x86_ice_lake
 	cpu_target_x86_kaby_lake_gen7
 	cpu_target_x86_kaby_lake_gen8
 	cpu_target_x86_amber_lake_gen8
@@ -70,6 +69,14 @@ CPU_TARGET_X86=(
 	cpu_target_x86_whitley
 	cpu_target_x86_apollo_lake
 	cpu_target_x86_denverton
+	cpu_target_x86_purley_refresh
+	cpu_target_x86_cedar_island
+	cpu_target_x86_greenlow
+	cpu_target_x86_whitley
+	cpu_target_x86_tatlow
+	cpu_target_x86_eagle_stream
+	cpu_target_x86_catlow_raptor_cove
+	cpu_target_x86_meteor_lake
 
 	cpu_target_x86_cascade_lake
 	cpu_target_x86_cooper_lake
@@ -159,6 +166,46 @@ REQUIRED_USE="
 	cpu_target_x86_whitley? (
 		firmware
 	)
+
+
+	cpu_target_x86_purley_refresh? (
+		firmware
+	)
+	cpu_target_x86_cedar_island? (
+		firmware
+	)
+	cpu_target_x86_greenlow? (
+		firmware
+	)
+	cpu_target_x86_tatlow? (
+		firmware
+	)
+	cpu_target_x86_kaby_lake_gen7? (
+		firmware
+	)
+	cpu_target_x86_kaby_lake_gen8? (
+		firmware
+	)
+	cpu_target_x86_whiskey_lake? (
+		firmware
+	)
+	cpu_target_x86_coffee_lake_gen8? (
+		firmware
+	)
+	cpu_target_x86_coffee_lake_gen9? (
+		firmware
+	)
+	cpu_target_x86_comet_lake? (
+		firmware
+	)
+	cpu_target_x86_rocket_lake? (
+		firmware
+	)
+	cpu_target_x86_meteor_lake? (
+		firmware
+	)
+
+
 	cpu_target_x86_naples? (
 		firmware
 	)
@@ -674,6 +721,11 @@ _MITIGATE_DOS_MCEAD_RDEPEND_X86_64="
 			>=sys-firmware/intel-microcode-20240813
 		)
 	)
+	cpu_target_x86_cedar_island? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
 "
 _MITIGATE_DOS_MCEAD_RDEPEND_X86_32="
 	${_MITIGATE_DOS_MCEAD_RDEPEND_X86_64}
@@ -766,13 +818,131 @@ _MITIGATE_DOS_SINKCLOSE_RDEPEND_X86_32="
 	${_MITIGATE_DOS_SINKCLOSE_RDEPEND_X86_64}
 "
 
+_MITIGATE_DOS_CVE_2024_24853_RDEPEND_X86_64="
+	cpu_target_x86_purley_refresh? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_cedar_island? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_greenlow? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_whitley? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_idaville? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_tatlow? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_ice_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_tiger_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_skylake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_kaby_lake_gen7? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_kaby_lake_gen8? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_whiskey_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_coffee_lake_gen8? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_coffee_lake_gen9? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_comet_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_rocket_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+"
+_MITIGATE_DOS_CVE_2024_24853_RDEPEND_X86_32="
+	${_MITIGATE_DOS_CVE_2024_24853_RDEPEND_X86_64}
+"
+
+_MITIGATE_DOS_CVE_2024_42667_RDEPEND_X86_64="
+	cpu_target_x86_meteor_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+"
+_MITIGATE_DOS_CVE_2024_42667_RDEPEND_X86_32="
+	${_MITIGATE_DOS_CVE_2024_42667_RDEPEND_X86_64}
+"
+
+_MITIGATE_DOS_CVE_2023_49141_RDEPEND_X86_64="
+	cpu_target_x86_eagle_stream? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_catlow_raptor_cove? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_alder_lake? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+	cpu_target_x86_raptor_lake_gen13? (
+		firmware? (
+			>=sys-firmware/intel-microcode-20240813
+		)
+	)
+"
+
+_MITIGATE_DOS_CVE_2023_49141_RDEPEND_X86_32="
+	${_MITIGATE_DOS_CVE_2023_49141_RDEPEND_X86_64}
+"
+
 _MITIGATE_DOS_AUTO="
-	amd64? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	x86? (
-		$(gen_patched_kernel_list 5.4)
-	)
 "
 if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
 	_MITIGATE_DOS_AUTO+="
@@ -803,6 +973,9 @@ MITIGATE_DOS_RDEPEND="
 				${_MITIGATE_DOS_BLR_RDEPEND_X86_64}
 				${_MITIGATE_DOS_MCEAD_RDEPEND_X86_64}
 				${_MITIGATE_DOS_SINKCLOSE_RDEPEND_X86_64}
+				${_MITIGATE_DOS_CVE_2023_49141_RDEPEND_X86_64}
+				${_MITIGATE_DOS_CVE_2024_24853_RDEPEND_X86_64}
+				${_MITIGATE_DOS_CVE_2024_42667_RDEPEND_X86_64}
 			)
 			x86? (
 				${_MITIGATE_DOS_TECRA_RDEPEND_X86_32}
@@ -812,6 +985,9 @@ MITIGATE_DOS_RDEPEND="
 				${_MITIGATE_DOS_BLR_RDEPEND_X86_32}
 				${_MITIGATE_DOS_MCEAD_RDEPEND_X86_32}
 				${_MITIGATE_DOS_SINKCLOSE_RDEPEND_X86_32}
+				${_MITIGATE_DOS_CVE_2023_49141_RDEPEND_X86_32}
+				${_MITIGATE_DOS_CVE_2024_24853_RDEPEND_X86_32}
+				${_MITIGATE_DOS_CVE_2024_42667_RDEPEND_X86_32}
 			)
 		)
 	)
@@ -1084,6 +1260,80 @@ eerror ">=sys-firmware/intel-microcode-20231114 is required for Reptar mitigatio
 	fi
 }
 
+
+# @FUNCTION: _mitigate_dos_verify_mitigation_cve_2024_24853
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2024-24853
+_mitigate_dos_verify_mitigation_cve_2024_24853() {
+	if \
+		   use cpu_target_x86_purley_refresh \
+		|| use cpu_target_x86_cedar_island \
+		|| use cpu_target_x86_greenlow \
+		|| use cpu_target_x86_whitley \
+		|| use cpu_target_x86_idaville \
+		|| use cpu_target_x86_tatlow \
+		|| use cpu_target_x86_ice_lake \
+		|| use cpu_target_x86_tiger_lake \
+		|| use cpu_target_x86_skylake \
+		|| use cpu_target_x86_kaby_lake_gen7 \
+		|| use cpu_target_x86_kaby_lake_gen8 \
+		|| use cpu_target_x86_whiskey_lake \
+		|| use cpu_target_x86_coffee_lake_gen8 \
+		|| use cpu_target_x86_coffee_lake_gen9 \
+		|| use cpu_target_x86_comet_lake \
+		|| use cpu_target_x86_rocket_lake \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2024-24853."
+		check_extra_config
+	fi
+}
+
+
+# @FUNCTION: _mitigate_dos_verify_mitigation_cve_2024_42667
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2024-42667
+_mitigate_dos_verify_mitigation_cve_2024_42667() {
+	if \
+		use cpu_target_x86_meteor_lake \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2024-42667."
+		check_extra_config
+	fi
+}
+
+# @FUNCTION: _mitigate_dos_verify_mitigation_cve_2023_49141
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2023-49141
+_mitigate_dos_verify_mitigation_cve_2023_49141() {
+	if \
+		   use cpu_target_x86_eagle_stream \
+		|| use cpu_target_x86_catlow_raptor_cove \
+		|| use cpu_target_x86_alder_lake \
+		|| use cpu_target_x86_raptor_lake_gen13 \
+		|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "intel" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
+	; then
+	# Needs microcode mitigation
+		CONFIG_CHECK="
+			CPU_SUP_INTEL
+		"
+		ERROR_CPU_SUP_INTEL="CONFIG_CPU_SUP_INTEL is required for mitigation against CVE-2023-49141."
+		check_extra_config
+	fi
+}
+
 # @FUNCTION: _mitigate-dos_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -1164,8 +1414,11 @@ einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
 	# CVE-2023-23583 | Reptar                       | DoS, DT, ID
 	# CVE-2023-31315 | Sinkclose                    | ID (C:L), DT (I:H), DoS (A:L)
 	# CVE-2023-39368 | BLR                          | DoS
+	# CVE-2023-49141 |                              | DoS, DT, ID
+	# CVE-2024-24853 |                              | DoS, DT, ID
 	# CVE-2024-24968 |                              | DoS (VA:H)
 	# CVE-2024-25939 | MCEAD                        | DoS (VA:H)
+	# CVE-2024-42667 |                              | DoS, DT, ID
 
 	_mitigate_dos_verify_mitigation_itlb_multihit		# Mitigations against iTLB multihit (2018)
 	_mitigate_dos_verify_mitigation_mpf			# Mitigations against MPF (2021)
@@ -1174,8 +1427,13 @@ einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
 	_mitigate_dos_verify_mitigation_reptar			# Mitigations against Reptar (2023) # PE
 	_mitigate_dos_verify_mitigation_sinkclose		# Mitigations against SLB (2023) # CE
 	_mitigate_dos_verify_mitigation_blr			# Mitigations against BLR (2023)
+	_mitigate_dos_verify_mitigation_cve_2023_49141		# Mitigations against CVE-2023-49141 (2023) # PE
+	_mitigate_dos_verify_mitigation_cve_2024_24853		# Mitigations against CVE-2024-24853 (2024) # PE
 	_mitigate_dos_verify_mitigation_cve_2024_24968		# Mitigations against CVE-2024-24968 (2024)
+	_mitigate_dos_verify_mitigation_cve_2024_25939		# Mitigations against CVE-2024-25939 (2024)
+	_mitigate_dos_verify_mitigation_cve_2024_42667		# Mitigations against CVE-2024-42667 (2024) # PE
 	_mitigate_dos_verify_mitigation_mcead			# Mitigations against MCEAD (2024)
+
 }
 
 # @FUNCTION: _mitigate-dos_get_fallback_version
