@@ -192,10 +192,10 @@ inherit toolchain-funcs xdg-utils
 
 is_cromite_compatible() {
 	local c4_min=$(ver_cut 4 ${PV})
-	c4_min=$(( ${c4_min} / 10 ))
-	c4_min=$(( ${c4_min} * 10 ))
+	local c4_max=$(ver_cut 4 ${PV})
+	c4_min=$(( ${c4_min} - 10 ))
 	c4_max=$(( ${c4_min} + 10 ))
-	if ver_test "${CROMITE_PV%.*}.${c4_min}" -ge "${PV}" && ver_test "${PV}" -lt "${CROMITE_PV%.*}.${c4_max}" ; then
+	if ver_test "${CROMITE_PV%.*}.${c4_min}" -ge "${PV}" && ver_test "${PV}" -le "${CROMITE_PV%.*}.${c4_max}" ; then
 		return 0
 	else
 		return 1
