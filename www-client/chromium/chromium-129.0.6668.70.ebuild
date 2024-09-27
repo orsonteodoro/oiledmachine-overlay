@@ -196,7 +196,7 @@ is_cromite_compatible() {
 	c4_min=$(( ${c4_min} - 10 ))
 	c4_max=$(( ${c4_min} + 10 ))
 
-	if ver_test "${CROMITE_PV%.*}.${c4_min}" -le "${PV}" && ver_test "${PV}" -le "${CROMITE_PV%.*}.${c4_max}" ; then
+	if ver_test "${PV%.*}.${c4_min}" -le "${CROMITE_PV}" && ver_test "${CROMITE_PV}" -le "${PV%.*}.${c4_max}" ; then
 		return 0
 	else
 		return 1
