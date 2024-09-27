@@ -68,6 +68,9 @@
     <flag name="btrfs">
       Mitigate against Denial of Service for the Btrfs filesystem.
     </flag>
+    <flag name="cdrom">
+      Mitigate against data tampering for the cdrom driver.
+    </flag>
     <flag name="cougar">
       Mitigate against Denial of Service for the Cougar 500K gaming keyboard.
     </flag>

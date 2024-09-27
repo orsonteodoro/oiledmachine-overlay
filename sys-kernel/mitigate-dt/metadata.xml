@@ -59,6 +59,9 @@
     <flag name="btrfs">
       Mitigate against data tampering for the Btrfs filesystem.
     </flag>
+    <flag name="cdrom">
+      Mitigate against data tampering for the cdrom driver.
+    </flag>
     <flag name="cougar">
       Mitigate against data tampering for the Cougar 500K gaming
       keyboard.

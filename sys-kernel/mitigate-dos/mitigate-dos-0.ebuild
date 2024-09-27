@@ -32,6 +32,7 @@ MULTISLOT_KERNEL_BPF_45020=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_BTRFS_46687=("6.6.49" "6.10.8")
 MULTISLOT_KERNEL_BTRFS_46749=("6.10.10")
 MULTISLOT_KERNEL_BRCM80211=("6.6.48" "6.10.7")
+MULTISLOT_KERNEL_CDROM=("6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_CFG80211=("5.10.244" "5.15.165" "6.1.106" "6.6.47" "6.9.9")
 MULTISLOT_KERNEL_COUGAR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_HFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
@@ -80,6 +81,7 @@ CVE_BPF_45020="CVE-2024-45020"
 CVE_BTRFS_46687="CVE-2024-46687"
 CVE_BTRFS_46749="CVE-2024-46749"
 CVE_BRCM80211="CVE-2024-46672"
+CVE_CDROM="CVE-2024-42136"
 CVE_CFG80211="CVE-2024-42114"
 CVE_COUGAR="CVE-2024-46747"
 CVE_EXT4="CVE-2024-43828"
@@ -150,6 +152,7 @@ bluetooth
 bpf
 bridge
 btrfs
+cdrom
 cougar
 ext4
 f2fs
@@ -218,6 +221,7 @@ REQUIRED_USE="
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46749 # DoS
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46687 # DoS, DT, ID
 # bcrm80211? https://nvd.nist.gov/vuln/detail/CVE-2024-46672 # DoS
+# cdrom? https://nvd.nist.gov/vuln/detail/CVE-2024-42136 # DoS, DT, ID
 # cfg80211? https://nvd.nist.gov/vuln/detail/CVE-2024-42114 # DoS
 # cougar? https://nvd.nist.gov/vuln/detail/CVE-2024-46747 # DoS, DT, ID
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-43828 # DoS
@@ -313,6 +317,11 @@ RDEPEND="
 			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS_46687[@]})
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS_46749[@]})
+		)
+	)
+	cdrom? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_CDROM[@]})
 		)
 	)
 	cougar? (
@@ -572,6 +581,9 @@ check_drivers() {
 		fs=1
 		check_kernel_version "btrfs" "${CVE_BTRFS_46687}" ${MULTISLOT_KERNEL_BTRFS_46687[@]}
 		check_kernel_version "btrfs" "${CVE_BTRFS_46749}" ${MULTISLOT_KERNEL_BTRFS_46749[@]}
+	fi
+	if use cdrom ; then
+		check_kernel_version "cdrom" "${CVE_CDROM}" ${MULTISLOT_KERNEL_CDROM[@]}
 	fi
 	if use cougar ; then
 		check_kernel_version "hid/hid-cougar" "${CVE_COUGAR}" ${MULTISLOT_KERNEL_COUGAR[@]}
