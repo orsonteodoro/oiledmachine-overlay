@@ -107,10 +107,13 @@
       Mitigate against data tampering for the NVMe driver.
     </flag>
     <flag name="samba">
-      Mitigate against data tampering for Samba network filesystem.
+      Mitigate against data tampering for the Samba network filesystem.
     </flag>
     <flag name="selinux">
-      Mitigate against data tampering for SELinux security module.
+      Mitigate against data tampering for the SELinux security module.
+    </flag>
+    <flag name="smack">
+      Mitigate against data tampering for the SMACK security module.
     </flag>
     <flag name="tcp">
       Mitigate against data tampering for the TCP protocol.

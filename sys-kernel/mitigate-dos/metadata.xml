@@ -140,7 +140,7 @@
       Mitigate against Denial of Service for the SCTP network protocol.
     </flag>
     <flag name="samba">
-      Mitigate against Denial of Service for Samba network file system.
+      Mitigate against Denial of Service for the Samba network file system.
     </flag>
     <flag name="selinux">
       Mitigate against Denial of Service for the SELinux security module.

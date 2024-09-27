@@ -45,8 +45,10 @@ MULTISLOT_KERNEL_NOUVEAU=("5.0.21" "5.4.284")
 MULTISLOT_KERNEL_NVME_41073=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
-MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
+MULTISLOT_KERNEL_SELINUX_46695=("6.6.49" "6.10.8")
+MULTISLOT_KERNEL_SELINUX_48740=("5.10.99" "5.15.22" "5.16.8")
 MULTISLOT_KERNEL_SMB_46796=("6.6.51" "6.10.10")
+MULTISLOT_KERNEL_SMACK=("6.6.49" "6.10.8")
 MULTISLOT_KERNEL_SMB_46795=("5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_TCP_42154=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_TLS=("5.10.219" "5.15.161" "6.1.93" "6.6.33" "6.9.4")
@@ -77,7 +79,9 @@ CVE_IPV6="CVE-2024-44987"
 CVE_IWLWIFI_48787="CVE-2022-48787"
 CVE_NOUVEAU="CVE-2023-0030"
 CVE_NVME_41073="CVE-2024-41073"
-CVE_SELINUX="CVE-2022-48740"
+CVE_SELINUX_46695="CVE-2024-46695"
+CVE_SELINUX_48740="CVE-2022-48740"
+CVE_SMACK="CVE-2024-46695"
 CVE_SMB_46796="CVE-2024-46796"
 CVE_SMB_46795="CVE-2024-46795"
 CVE_TCP_42154="CVE-2024-42154"
@@ -128,6 +132,7 @@ nfs
 nvme
 samba
 selinux
+smack
 tcp
 tls
 vmware
@@ -185,7 +190,9 @@ REQUIRED_USE="
 # nfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
 # nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-41073 # DoS, DT, ID
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
+# selinux? https://nvd.nist.gov/vuln/detail/CVE-2024-46695 # DT
 # samba? https://nvd.nist.gov/vuln/detail/CVE-2024-46796 # DoS, DT, ID
+# smack? https://nvd.nist.gov/vuln/detail/CVE-2024-46695 # DT
 # tcp? https://nvd.nist.gov/vuln/detail/CVE-2024-42154 # DoS, DT, ID
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2023-0030 # PE, ID, DoS, DT.  Fixed in >= 5.0.
@@ -305,7 +312,13 @@ RDEPEND="
 	)
 	selinux? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SELINUX[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SELINUX_46695[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SELINUX_48740[@]})
+		)
+	)
+	smack? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMACK[@]})
 		)
 	)
 	tcp? (
@@ -475,7 +488,11 @@ check_drivers() {
 		check_kernel_version "smb" "${CVE_SMB_46795}" ${MULTISLOT_KERNEL_SMB_46795[@]}
 	fi
 	if use selinux ; then
-		check_kernel_version "selinux" "${CVE_SELINUX}" ${MULTISLOT_KERNEL_SELINUX[@]}
+		check_kernel_version "selinux" "${CVE_SELINUX_46695}" ${MULTISLOT_KERNEL_SELINUX_46695[@]}
+		check_kernel_version "selinux" "${CVE_SELINUX_48740}" ${MULTISLOT_KERNEL_SELINUX_48740[@]}
+	fi
+	if use smack ; then
+		check_kernel_version "smack" "${CVE_SMACK}" ${MULTISLOT_KERNEL_SMACK[@]}
 	fi
 	if use tcp ; then
 		check_kernel_version "tcp" "${CVE_TCP_42154}" ${MULTISLOT_KERNEL_TCP_42154[@]}

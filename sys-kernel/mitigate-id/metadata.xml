@@ -120,10 +120,10 @@
       Mitigate against information disclosure for the NVMe driver.
     </flag>
     <flag name="samba">
-      Mitigate against information disclosure for Samba network filesystem.
+      Mitigate against information disclosure for the Samba network filesystem.
     </flag>
     <flag name="selinux">
-      Mitigate against information disclosure for SELinux security module.
+      Mitigate against information disclosure for the SELinux security module.
     </flag>
     <flag name="tcp">
       Mitigate against information disclosure for the TCP protocol.
