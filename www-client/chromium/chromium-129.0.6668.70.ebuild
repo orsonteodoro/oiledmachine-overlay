@@ -543,13 +543,13 @@ ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-+accessibility +async-dns bindist bluetooth +bundled-libcxx +cfi -cet +cups
++accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups
 +css-hyphen -debug +drumbrake +encode +extensions ffmpeg-chromium firejail
 -gtk4 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns +ml mold
 +mpris +official +partitionalloc pax-kernel +pdf pic +pgo +plugins +pointer-compression
 +pre-check-vaapi +proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+pulseaudio +reporting-api qt5 qt6 +screencast +screen-capture selinux
++pulseaudio +reporting-api qt5 qt6 +screencast selinux
 -system-dav1d +system-ffmpeg -system-flac -system-fontconfig
 -system-freetype -system-harfbuzz -system-icu -system-libaom -system-libdrm
 -system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
@@ -663,14 +663,8 @@ DISTRO_REQUIRE_USE="
 #
 #	extensions
 #	!partitionalloc
-#	disabling async-dns causes debug crash/spam.
 REQUIRED_USE+="
 	${DISABLED_NON_FREE_USE_FLAGS}
-	async-dns
-	screen-capture
-	!async-dns? (
-		!official
-	)
 	!headless (
 		extensions
 		pdf
@@ -745,7 +739,6 @@ REQUIRED_USE+="
 		!system-zlib
 		!system-zstd
 		accessibility
-		async-dns
 		bundled-libcxx
 		css-hyphen
 		cups
@@ -769,7 +762,6 @@ REQUIRED_USE+="
 		proprietary-codecs
 		reporting-api
 		screencast
-		screen-capture
 		vaapi
 		vaapi-hevc
 		vorbis
@@ -2183,15 +2175,16 @@ apply_oiledmachine_overlay_patchset() {
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-icu-tracing.patch"
 		)
 
-		if ! use async-dns ; then
+	#	Disabling async-dns causes debug crash/spam.
+		if has async-dns ${IUSE_EFFECTIVE} && ! use async-dns ; then
 			PATCHES+=(
 				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-built-in-dns.patch"
 			)
 		fi
 
-		if ! use screen-capture ; then
+		if has screen-capture ${IUSE_EFFECTIVE} && ! use screen-capture ; then
 			PATCHES+=(
-#				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-screen-capture.patch"
+				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-screen-capture.patch"
 			)
 		fi
 		if ! use partitionalloc ; then

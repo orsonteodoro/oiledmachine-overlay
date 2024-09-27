@@ -241,11 +241,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <remote-id type="gitlab">Matt.Jolly/chromium-patches</remote-id>
   </upstream>
   <use>
-    <flag name="async-dns">
-      Enable the Async DNS feature.  Enabling may bypass the system's DNS
-      resolver and DNS filtering packages.  (DISABLING IS EXPERIMENTAL OR
-      UNDER RESEARCH)
-    </flag>
     <flag name="bluetooth">
       Adds support for websites to communicate with Bluetooth wireless devices
       and support for GATT (Generic Attribute Profile) for the Web Bluetooth
@@ -516,13 +511,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="screencast">
       Enable support for remote desktop and screencast using
       <pkg>media-video/pipewire</pkg>
-    </flag>
-    <flag name="screen-capture">
-      Enable screen capture support.
-    </flag>
-    <flag name="spelling-service">
-      Allow to outsource spelling suggestions over the Internet, which may
-      include sensitive or self-snitch information.
     </flag>
     <flag name="suid">
       Build the SUID sandbox, which is only needed on CONFIG_USER_NS=n kernels
