@@ -694,7 +694,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       builder machines.
     </flag>
     <flag name="ungoogled-chromium">
-      Unbundle upstream services with a community maintained patchset.
+      Unbundle and opt-out out of upstream web services with a community
+      maintained patchset.
 
       [It may lower security by removing DoH (DNS over HTTPS) exposing DNS
       lookups to a government firewall.  At the same time, it may avoid tracking
