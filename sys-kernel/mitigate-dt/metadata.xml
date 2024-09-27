@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadwata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This ebuild currently is focused on mitigation of CPU hardware vulnerabilties
+  focused on data tampering mitigation mitigation.
+  It also verifies for some vulnerabilies that the mitigation has been applied.
+
+  It was created as a reaction to interest in perfect copy achiving and
+  to provide a solution for archivists, legal, etc.
+
+  A parent ebuild may be considered to verify larger mitigation coverage
+  against data theft to verify that X sandboxes and LSM are installed.
+
+  The optional sys-kernel/mitigate-dos can be used to protect perfect copy
+  over network to mitigate against disruption.
+
+  Build time environment variables:
+
+  CUSTOM_KERNEL_ATOM - Name of the kernel you want to add to take advantage
+  of automatic RDEPEND updates instead of manually updating/removing kernel
+  packages.  If you set this, then disable USE=custom-kernel.  Multiple
+  kernel packages may be specified.
+
+  Example:
+
+    CUSTOM_KERNEL_ATOM="sys-kernel/ot-sources sys-kernel/xanmod-kernel"
+
+  FIRMWARE_VENDOR - Name of the CPU manufacturer for the kernel.  It should be
+  set for cross compile builds since the builder CPU manufacturer could be
+  different.
+
+  -->
+  <use>
+    <flag name="auto">
+      Auto resolves firmware and kernel version required for full mitigation,
+      instead of manually selecting microarchitecture which determines the
+      minimum requirements for those 2 items which benefits mostly LTS
+      configurations.
+
+      This is recommended for Intel® CPUs since the USE flag coverage for
+      microarchitectures is incomplete.
+    </flag>
+    <flag name="ata">
+      Mitigate against data tampering for the ATA driver.
+    </flag>
+    <flag name="bluetooth">
+      Mitigate against data tampering for the Bluetooth® subsystem.
+    </flag>
+    <flag name="bridge">
+      Mitigate against data tampering for Ethernet bridge support.
+    </flag>
+    <flag name="btrfs">
+      Mitigate against data tampering for the Btrfs filesystem.
+    </flag>
+    <flag name="cougar">
+      Mitigate against data tampering for the Cougar 500K gaming
+      keyboard.
+    </flag>
+    <flag name="custom-kernel">
+      Prevent vendor lock-in when doing kernel mitigation checks.
+    </flag>
+    <flag name="ext4">
+      Mitigate against data tampering for the ext4 filesystem.
+    </flag>
+    <flag name="firmware">
+      Use firmware as mitigation.
+      (A BIOS firmware update from the motherboard manufacturer may still be
+      required if the firmware package doesn't apply to your model.)
+    </flag>
+    <flag name="hfsplus">
+      Mitigate against Denial of Service for the HFS+ filesystem.
+    </flag>
+    <flag name="ice">
+      Mitigate against data tampering for the
+      Intel® Ethernet Connection E800 Series Support network driver.
+    </flag>
+    <flag name="ipv6">
+      Mitigate against data tampering in ipv6.
+    </flag>
+    <flag name="iwlwifi">
+      Mitigate against data tampering in the iwlwifi driver.
+    </flag>
+    <flag name="jfs">
+      Mitigate against Denial of Service in the JFS filesystem.
+    </flag>
+    <flag name="md-raid1">
+      Mitigate against data tampering for the md/raid1 driver.
+    </flag>
+    <flag name="mlx5">
+      Mitigate against data tampering for the mlx5 network driver.
+    </flag>
+    <flag name="nfs">
+      Mitigate against data tampering for the NFS server network
+      filesystem driver.
+    </flag>
+    <flag name="nvme">
+      Mitigate against data tampering for the NVMe driver.
+    </flag>
+    <flag name="samba">
+      Mitigate against data tampering for Samba network filesystem.
+    </flag>
+    <flag name="selinux">
+      Mitigate against data tampering for SELinux security module.
+    </flag>
+    <flag name="tcp">
+      Mitigate against data tampering for the TCP protocol.
+    </flag>
+    <flag name="tls">
+      Mitigate against data tampering for the TLS protocol.
+    </flag>
+    <flag name="video_cards_amdgpu">
+      Mitigate against data tampering for the amdgpu driver.
+    </flag>
+    <flag name="video_cards_nouveau">
+      Mitigate against data tampering for the nouveau video driver.
+    </flag>
+    <flag name="video_cards_nvidia">
+      Mitigate against data tampering, privilege escalation, Spectre V1,
+      Spectre V2 for the NVIDIA® video driver.
+    </flag>
+    <flag name="video_cards_v3d">
+      Mitigate against data tampering for the v3d video driver.
+    </flag>
+    <flag name="video_cards_vmware">
+      Mitigate against data tampering for the vmwgfx video driver.
+    </flag>
+    <flag name="vmware">
+      Mitigate against data tampering for VMware support.
+    </flag>
+    <flag name="zero-tolerance">
+      Bump to the latest patched kernel point releases when the changelog
+      indicated fixed data tampering (DT) class of vulnerabilities.
+      This will increase the coverage of DT mitigation for the installed
+      kernels significantly because the USE flag coverage is incomplete
+      or the vulnerability report doesn't clearly state the types of
+      vulnerabilities.
+    </flag>
+  </use>
+</pkgmetadata>

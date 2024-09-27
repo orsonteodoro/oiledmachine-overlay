@@ -722,28 +722,44 @@ _MITIGATE_DOS_CVE_2024_24968_RDEPEND_X86_32="
 
 _MITIGATE_DOS_SINKCLOSE_RDEPEND_X86_64="
 	cpu_target_x86_naples? (
-		>=sys-kernel/linux-firmware-20240710
+		firmware? (
+			>=sys-kernel/linux-firmware-20240710
+		)
 	)
 	cpu_target_x86_rome? (
-		>=sys-kernel/linux-firmware-20240710
+		firmware? (
+			>=sys-kernel/linux-firmware-20240710
+		)
 	)
 	cpu_target_x86_milan? (
-		>=sys-kernel/linux-firmware-20240710
+		firmware? (
+			>=sys-kernel/linux-firmware-20240710
+		)
 	)
 	cpu_target_x86_milan-x? (
-		>=sys-kernel/linux-firmware-20240710
+		firmware? (
+			>=sys-kernel/linux-firmware-20240710
+		)
 	)
 	cpu_target_x86_genoa? (
-		>=sys-kernel/linux-firmware-20240710
+		firmware? (
+			>=sys-kernel/linux-firmware-20240710
+		)
 	)
 	cpu_target_x86_genoa-x? (
-		>=sys-kernel/linux-firmware-20240710
+		firmware? (
+			>=sys-kernel/linux-firmware-20240710
+		)
 	)
 	cpu_target_x86_bergamo? (
-		>=sys-kernel/linux-firmware-20240710
+		firmware? (
+			>=sys-kernel/linux-firmware-20240710
+		)
 	)
 	cpu_target_x86_siena? (
-		>=sys-kernel/linux-firmware-20240710
+		firmware? (
+			>=sys-kernel/linux-firmware-20240710
+		)
 	)
 "
 _MITIGATE_DOS_SINKCLOSE_RDEPEND_X86_32="

@@ -93,8 +93,8 @@ CVE_JFS="CVE-2024-43858"
 CVE_MD_RAID1="CVE-2024-45023"
 CVE_MD_RAID5="CVE-2024-43914"
 CVE_MSM="CVE-2024-45015"
-CVE_NFSD="CVE-2024-46696"
 CVE_NET_BRIDGE="CVE-2024-44934"
+CVE_NFSD="CVE-2024-46696"
 CVE_NOUVEAU="CVE-2024-45012"
 CVE_RADEON="CVE-2024-41060"
 CVE_IPV6="CVE-2024-44987"
@@ -634,13 +634,13 @@ check_drivers() {
 		wifi=1
 		check_kernel_version "rtw88" "${CVE_RTW88}" ${MULTISLOT_KERNEL_RTW88[@]}
 	fi
-	if use rtw88 ; then
-		check_kernel_version "sctp" "${CVE_SCTP}" ${MULTISLOT_KERNEL_SCTP[@]}
-	fi
 	if use samba ; then
 		fs=1
 		check_kernel_version "smb" "${CVE_SMB_46796}" ${MULTISLOT_KERNEL_SMB_46796[@]}
 		check_kernel_version "smb" "${CVE_SMB_46795}" ${MULTISLOT_KERNEL_SMB_46795[@]}
+	fi
+	if use sctp ; then
+		check_kernel_version "sctp" "${CVE_SCTP}" ${MULTISLOT_KERNEL_SCTP[@]}
 	fi
 	if use selinux ; then
 		check_kernel_version "selinux" "${CVE_SELINUX}" ${MULTISLOT_KERNEL_SELINUX[@]}
