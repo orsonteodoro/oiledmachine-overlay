@@ -607,57 +607,6 @@ _MITIGATE_DT_FORESHADOW_RDEPEND_X86_32="
 	${_MITIGATE_DT_FORESHADOW_RDEPEND_X86_64}
 "
 
-# Pick the top set if you have server
-_MITIGATE_DT_INCEPTION_RDEPEND_X86_64="
-
-	cpu_target_x86_milan? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-kernel/linux-firmware-20230724
-		)
-	)
-	cpu_target_x86_milan-x? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-kernel/linux-firmware-20230724
-		)
-	)
-	cpu_target_x86_genoa? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-kernel/linux-firmware-20230809
-		)
-	)
-	cpu_target_x86_genoa-x? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-kernel/linux-firmware-20230809
-		)
-	)
-	cpu_target_x86_bergamo? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-kernel/linux-firmware-20230809
-		)
-	)
-
-	cpu_target_x86_zen_4? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_zen_3? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_zen_2? (
-		$(gen_patched_kernel_list 6.5)
-	)
-	cpu_target_x86_zen? (
-		$(gen_patched_kernel_list 6.5)
-	)
-"
-_MITIGATE_DT_INCEPTION_RDEPEND_X86_32="
-	${_MITIGATE_DT_INCEPTION_RDEPEND_X86_64}
-"
-
 _MITIGATE_DT_TECRA_RDEPEND_X86_64="
 	cpu_target_x86_ice_lake? (
 		firmware? (
@@ -966,7 +915,6 @@ MITIGATE_DT_RDEPEND="
 			)
 			amd64? (
 				${_MITIGATE_DT_FORESHADOW_RDEPEND_X86_64}
-				${_MITIGATE_DT_INCEPTION_RDEPEND_X86_64}
 				${_MITIGATE_DT_ZENBLEED_RDEPEND_X86_64}
 				${_MITIGATE_DT_TECRA_RDEPEND_X86_64}
 				${_MITIGATE_DT_REPTAR_RDEPEND_X86_64}
@@ -978,7 +926,6 @@ MITIGATE_DT_RDEPEND="
 			)
 			x86? (
 				${_MITIGATE_DT_FORESHADOW_RDEPEND_X86_32}
-				${_MITIGATE_DT_INCEPTION_RDEPEND_X86_32}
 				${_MITIGATE_DT_ZENBLEED_RDEPEND_X86_32}
 				${_MITIGATE_DT_TECRA_RDEPEND_X86_32}
 				${_MITIGATE_DT_REPTAR_RDEPEND_X86_32}
@@ -1125,86 +1072,6 @@ ewarn "that your hardware was too old."
 ewarn
 			fi
 		fi
-	fi
-}
-
-# @FUNCTION: _mitigate_dt_verify_mitigation_inception
-# @INTERNAL
-# @DESCRIPTION:
-# Check the kernel config flags and kernel command line to mitigate against Inception.
-_mitigate_dt_verify_mitigation_inception() {
-	local ver
-	if \
-		use firmware\
-			&& \
-		( \
-			   use cpu_target_x86_milan \
-			|| use cpu_target_x86_milan-x \
-			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "amd" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
-		) \
-	; then
-		CONFIG_CHECK="
-			CPU_SUP_AMD
-		"
-		ERROR_CPU_SUP_AMD="CONFIG_CPU_SUP_AMD is required for INCEPTION mitigation."
-		check_extra_config
-		if ! has_version ">=sys-kernel/linux-firmware-20230724" ; then
-# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
-eerror ">=sys-kernel/linux-firmware-20230724 is required for INCEPTION mitigation."
-			die
-		fi
-	fi
-	if \
-		use firmware\
-			&& \
-		( \
-			   use cpu_target_x86_genoa \
-			|| use cpu_target_x86_genoa-x \
-			|| use cpu_target_x86_bergamo \
-			|| ( use auto && [[ "${FIRMWARE_VENDOR}" == "amd" && "${ARCH}" =~ ("amd64"|"x86") ]] ) \
-		) \
-	; then
-		CONFIG_CHECK="
-			CPU_SUP_AMD
-		"
-		ERROR_CPU_SUP_AMD="CONFIG_CPU_SUP_AMD is required for INCEPTION mitigation."
-		check_extra_config
-		if ! has_version ">=sys-kernel/linux-firmware-20230809" ; then
-# Needed for custom-kernel USE flag due to RDEPEND being bypassed.
-eerror ">=sys-kernel/linux-firmware-20230809 is required for INCEPTION mitigation."
-			die
-		fi
-	fi
-
-	if \
-		   use cpu_target_x86_milan \
-		|| use cpu_target_x86_milan-x \
-		|| use cpu_target_x86_genoa \
-		|| use cpu_target_x86_genoa-x \
-		|| use cpu_target_x86_bergamo \
-		|| use cpu_target_x86_zen_3 \
-		|| use cpu_target_x86_zen_4 \
-	; then
-		ver="6.9"
-	elif \
-		   use cpu_target_x86_zen \
-		|| use cpu_target_x86_zen_2 \
-	; then
-		ver="6.5"
-	elif [[ "${FIRMWARE_VENDOR}" == "amd" && "${ARCH}" =~ ("amd64"|"x86") ]] ; then
-		ver="6.9"
-	else
-		return
-	fi
-	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "${ver}" ; then
-		CONFIG_CHECK="
-			CPU_SRSO
-		"
-		ERROR_CPU_SRSO="CONFIG_CPU_SRSO is required for INCEPTION mitigation for datacenters."
-		check_extra_config
-	fi
-	if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
-ewarn "A BIOS firmware is required for non datacenters for INCEPTION mitigation."
 	fi
 }
 
@@ -1517,7 +1384,6 @@ einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
 	# Verification
 	# CVE            | Vulnerability name           | Vulnerability classes
 	# CVE-2018-3615  | Foreshadow L1TF SGX          | ID, DT (I:L)
-	# CVE-2023-20569 | Inception (SRSO)             | ID
 	# CVE-2023-20592 | CacheWarp                    | DT
 	# CVE-2023-22655 | TECRA                        | DT (I:H), ID (C:L)
 	# CVE-2023-23583 | Reptar                       | DoS, DT, ID
@@ -1528,7 +1394,6 @@ einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
 	# CVE-2024-42667 |                              | DoS, DT, ID
 
 	_mitigate_dt_verify_mitigation_foreshadow		# Mitigations against L1TF (2018)
-	_mitigate_dt_verify_mitigation_inception		# Mitigations against SRSO (2023)
 	_mitigate_dt_verify_mitigation_cachewarp		# Mitigations against CacheWarp # DT
 	_mitigate_dt_verify_mitigation_tecra			# Mitigations against TECRA (2023) # PE
 	_mitigate_dt_verify_mitigation_reptar			# Mitigations against Reptar (2023) # PE
