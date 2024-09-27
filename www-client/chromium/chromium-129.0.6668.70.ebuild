@@ -30,13 +30,13 @@ EAPI=8
 #
 # https://github.com/chromium/chromium/blob/129.0.6668.58/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists *
 # https://github.com/chromium/chromium/blob/129.0.6668.58/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists *
-# https://github.com/chromium/chromium/blob/129.0.6668.58/third_party/libpng/png.h#L288						; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/129.0.6668.58/third_party/libpng/png.h#L288							; newer than generated_package_lists
 # https://github.com/chromium/chromium/blob/129.0.6668.58/third_party/libxml/linux/config.h#L160					; older than generated_package_lists
 # https://github.com/chromium/chromium/blob/129.0.6668.58/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists *
 # https://github.com/chromium/chromium/blob/129.0.6668.58/third_party/node/update_node_binaries#L18
 # https://github.com/chromium/chromium/blob/129.0.6668.58/third_party/re2/README.chromium#L4						; newer than generated_package_lists, (live) [rounded in ebuild]
 # https://github.com/chromium/chromium/blob/129.0.6668.58/third_party/zlib/zlib.h#L40
-# https://github.com/chromium/chromium/blob/129.0.6668.58/tools/rust/update_rust.py#L35						; commit
+# https://github.com/chromium/chromium/blob/129.0.6668.58/tools/rust/update_rust.py#L35							; commit
 #   https://github.com/rust-lang/rust/blob/3cf924b934322fd7b514600a7dc84fc517515346/src/version						; live version
 # /var/tmp/portage/www-client/chromium-129.0.6668.58/work/chromium-129.0.6668.58/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-129.0.6668.58/work/chromium-129.0.6668.58/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
@@ -93,6 +93,9 @@ af am ar bg bn ca cs da de el en-GB en-US es es-419 et fa fi fil fr gu he hi hr
 hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr sv sw ta
 te th tr uk ur vi zh-CN zh-TW
 "
+
+CROMITE_COMMIT="2e74cb0a5ae5bd682f917937dd7e55cac6f2db94" # Based on tools/under-control/src/RELEASE
+CROMITE_PV="129.0.6668.71"
 
 # About PGO version compatibility
 #
@@ -163,6 +166,7 @@ PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
 QT5_PV="5.15.2"
 QT6_PV="6.4.2"
+UNGOOGLED_CHROMIUM_PV="129.0.6668.70-1"
 USE_LTO=0 # Global variable
 # https://github.com/chromium/chromium/blob/129.0.6668.58/tools/clang/scripts/update.py#L38C41-L38C49 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
@@ -176,6 +180,8 @@ RUST_COMMIT="595316b4006932405a63862d8fe65f71a6356293"
 RUST_PV="1.80.0" # See https://github.com/rust-lang/rust/blob/595316b4006932405a63862d8fe65f71a6356293/RELEASES.md
 RUST_SUB_REV="5"
 SHADOW_CALL_STACK=0 # Global variable
+S_CROMITE="${WORKDIR}/cromite-${CROMITE_COMMIT}"
+S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 ZLIB_PV="1.3"
 
@@ -183,6 +189,18 @@ inherit cflags-depends check-linker check-reqs chromium-2 dhms desktop edo
 inherit flag-o-matic flag-o-matic-om linux-info lcnr llvm multilib-minimal
 inherit ninja-utils pax-utils python-any-r1 qmake-utils readme.gentoo-r1 systemd
 inherit toolchain-funcs xdg-utils
+
+is_cromite_compatible() {
+	local c4_min=$(ver_cut 4 ${PV})
+	c4_min=$(( ${c4_min} / 10 ))
+	c4_min=$(( ${c4_min} * 10 ))
+	c4_max=$(( ${c4_min} + 10 ))
+	if ver_test "${CROMITE_PV%.*}.${c4_min}" -ge "${PV}" && ver_test "${PV}" -lt "${CROMITE_PV%.*}.${c4_max}" ; then
+		return 0
+	else
+		return 1
+	fi
+}
 
 PATCHSET_PPC64="128.0.6613.84-1raptor0~deb12u1"
 PATCH_REVISION=""
@@ -202,6 +220,28 @@ SRC_URI="
 		https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
 	)
 "
+if is_cromite_compatible ; then
+	IUSE+="
+		cromite
+	"
+	SRC_URI+="
+		cromite? (
+			https://github.com/uazo/cromite/archive/${CROMITE_COMMIT}.tar.gz
+				-> cromite-${CROMITE_COMMIT:0:7}.tar.gz
+		)
+	"
+fi
+if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
+	IUSE+="
+		ungoogled-chromium
+	"
+	SRC_URI+="
+		ungoogled-chromium? (
+			https://github.com/ungoogled-software/ungoogled-chromium/archive/refs/tags/${UNGOOGLED_CHROMIUM_PV}.tar.gz
+				-> ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}.tar.gz
+		)
+	"
+fi
 
 DESCRIPTION="The open-source version of the Chrome web browser"
 HOMEPAGE="https://www.chromium.org/"
@@ -300,6 +340,22 @@ LICENSE="
 		MPL-2.0
 	)
 "
+if is_cromite_compatible ; then
+	LICENSE+="
+		cromite? (
+			GPL-3
+			GPL-2+
+		)
+	"
+fi
+if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
+	LICENSE+="
+		ungoogled-chromium? (
+			BSD
+		)
+	"
+fi
+
 #
 # Benchmark website licenses:
 # See the webkit-gtk ebuild
@@ -481,7 +537,7 @@ IUSE_CODECS=(
 )
 
 # Option defaults based on build files.
-IUSE="
+IUSE+="
 ${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_}
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
@@ -494,7 +550,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 +pre-check-vaapi +proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 +pulseaudio +reporting-api qt5 qt6 +screencast +screen-capture selinux
-+spelling-service -system-dav1d +system-ffmpeg -system-flac -system-fontconfig
+-system-dav1d +system-ffmpeg -system-flac -system-fontconfig
 -system-freetype -system-harfbuzz -system-icu -system-libaom -system-libdrm
 -system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
 -system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
@@ -714,7 +770,6 @@ REQUIRED_USE+="
 		reporting-api
 		screencast
 		screen-capture
-		spelling-service
 		vaapi
 		vaapi-hevc
 		vorbis
@@ -757,6 +812,40 @@ REQUIRED_USE+="
 		!ppc64
 	)
 "
+if is_cromite_compatible ; then
+	REQUIRED_USE+="
+		cromite? (
+			amd64
+			proprietary-codecs
+			dav1d
+			pdf
+			pgo
+			plugins
+			!css-hyphen
+			!hangouts
+			!official
+			!openh264
+			!mdns
+			!reporting-api
+			!system-toolchain
+			!widevine
+		)
+		official? (
+			!cromite
+		)
+	"
+fi
+if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
+	REQUIRED_USE+="
+		ungoogled-chromium? (
+			!hangouts
+			!widevine
+		)
+		official? (
+			!ungoogled-chromium
+		)
+	"
+fi
 
 LIBVA_DEPEND="
 	vaapi? (
@@ -1945,6 +2034,14 @@ src_unpack() {
 		unpack "chromium_${PATCHSET_PPC64}.debian.tar.xz"
 		unpack "chromium-ppc64le-gentoo-patches-1.tar.xz"
 	fi
+
+	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+		unpack "cromite-${CROMITE_COMMIT:0:7}.tar.gz"
+	fi
+
+	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		unpack "ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}.tar.gz"
+	fi
 }
 
 is_generating_credits() {
@@ -2105,6 +2202,69 @@ apply_oiledmachine_overlay_patchset() {
 	fi
 }
 
+apply_cromite_patchset() {
+	pushd "${S_CROMITE}" >/dev/null 2>&1 || die
+		if [[ -n "${CROMITE_PATCH_BLACKLIST}" ]] ; then
+			local x
+			for x in ${CROMITE_PATCH_BLACKLIST} ; do
+einfo "Removing ${x} from cromite"
+				rm "build/patches/${x}" || die
+			done
+		fi
+
+		# We don't hijack official.
+		sed -i \
+			-e "/is_official_build/d" \
+			"${S_CROMITE}/build/cromite.gn_args" \
+			|| die
+
+		local L=()
+		if [[ -e "build/cromite_patches_list_new.txt" ]] ; then
+			L+=(
+				$(cat "build/cromite_patches_list_new.txt" | sed -e "/^#/d")
+			)
+		else
+			L+=(
+				$(cat "build/cromite_patches_list.txt" | sed -e "/^#/d")
+			)
+		fi
+		local x
+		for x in ${L[@]} ; do
+			[[ "${x}" =~ "Automated-domain-substitution" && "${CROMITE_SKIP_AUTOGENERATED:-1}" == "1" ]] && continue
+			eapply "build/patches/${x}"
+		done
+	popd >/dev/null 2>&1 || die
+}
+
+apply_ungoogled_chromium_patchset() {
+	pushd "${S_UNGOOGLED_CHROMIUM}" >/dev/null 2>&1 || die
+		if [[ -n "${UNGOOGLED_CHROMIUM_PATCH_BLACKLIST}" ]] ; then
+			local x
+			for x in ${UNGOOGLED_CHROMIUM_PATCH_BLACKLIST} ; do
+einfo "Removing ${x} from ungoogled-chromium"
+				sed -i -e "/${x}/d" "patches/series" || die
+			done
+		fi
+
+		"utils/prune_binaries.py" \
+			"${S}" \
+			"pruning.list" \
+			|| die
+		"utils/patches.py" \
+			"apply" \
+			"${S}" \
+			"patches" \
+			|| die
+		"utils/domain_substitution.py" \
+			"apply" \
+			-r "domain_regex.list" \
+			-f "domain_substitution.list" \
+			-c "${WORKDIR}/domsubcache.tar.gz" \
+			"${S}" \
+			|| die
+	popd >/dev/null 2>&1 || die
+}
+
 src_prepare() {
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
@@ -2112,6 +2272,15 @@ src_prepare() {
 	check_deps_cfi_cross_dso
 
 	local PATCHES=()
+
+	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+einfo "Applying the Cromite patchset"
+		apply_cromite_patchset
+	fi
+	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+einfo "Applying the ungoogled-chromium patchset"
+		apply_ungoogled_chromium_patchset
+	fi
 
 ewarn "Applying the distro patchset."
 	# Proper CFI requires static linkage.
@@ -3106,7 +3275,6 @@ ewarn
 	myconf_gn+=" enable_ppapi=false"
 	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
 	myconf_gn+=" enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
-	myconf_gn+=" enable_spelling_service=$(usex spelling-service true false)"
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
 	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/129.0.6668.58/device/vr#platform-support
 	myconf_gn+=" enable_vr=false"		# https://github.com/chromium/chromium/blob/129.0.6668.58/device/vr/buildflags/buildflags.gni#L32
@@ -4170,8 +4338,29 @@ eerror
 		[[ "${FEATURES}" =~ "icecream" ]] && die "FEATURES=icecream with USE=-system-toolchain is not supported by the ebuild."
 	fi
 
+	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium && has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+einfo "Configuring Cromite + ungoogled-chromium..."
+		[[ "${ABI}" == "amd64" ]] || die "Cromite only supports ARCH=${ARCH}"
+		TARGET_ISDEBUG=$(usex debug "true" "false")
+		myconf_gn+=" target_os =\"linux\" "$(cat "${S_CROMITE}/build/cromite.gn_args")
+		myconf_gn+=" "$(cat "${S_UNGOOGLED_CHROMIUM}/flags.gn")
+		set -- gn gen --args="${myconf_gn} ${EXTRA_GN}" "out/Release"
+	elif has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+einfo "Configuring Cromite..."
+		[[ "${ABI}" == "amd64" ]] || die "Cromite only supports ARCH=${ARCH}"
+		TARGET_ISDEBUG=$(usex debug "true" "false")
+		myconf_gn+=" target_os =\"linux\" "$(cat "${S_CROMITE}/build/cromite.gn_args")
+		set -- gn gen --args="${myconf_gn} ${EXTRA_GN}" "out/Release"
+	elif has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+einfo "Configuring ungoogled-chromium..."
+		myconf_gn+=" "$(cat "${S_UNGOOGLED_CHROMIUM}/flags.gn")
+		set -- gn gen --args="${myconf_gn} ${EXTRA_GN}" "out/Release"
+	else
 einfo "Configuring Chromium..."
-	set -- gn gen --args="${myconf_gn} ${EXTRA_GN}" "out/Release"
+		set -- gn gen --args="${myconf_gn} ${EXTRA_GN}" "out/Release"
+	fi
+
+
 	echo "$@"
 	"$@" || die
 }
@@ -4490,6 +4679,30 @@ einfo "Creating symlink to libffmpeg.so from ${symlink_loc}..."
 	# and npm micropackages copyright notices and licenses which may not
 	# have been present in the listed the the .html (about:credits) file.
 	lcnr_install_files
+
+	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+		insinto "/usr/share/cromite/docs"
+		doins \
+			"${S_CROMITE}/docs/FEATURES.md" \
+			"${S_CROMITE}/docs/PRIVACY_POLICY.md" \
+			"${S_CROMITE}/README.md"
+		insinto "/usr/share/cromite/licenses"
+		doins \
+			"${S_CROMITE}/docs/PATCHES.md" \
+			"${S_CROMITE}/LICENSE"
+	fi
+
+	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		insinto "/usr/share/ungoogle-chromium/docs"
+		doins \
+			"${S_UNGOOGLED_CHROMIUM}/README.md" \
+			"${S_UNGOOGLED_CHROMIUM}/docs/flags.md" \
+			"${S_UNGOOGLED_CHROMIUM}/docs/default_settings.md" \
+			"${S_UNGOOGLED_CHROMIUM}/docs/platforms.md"
+		insinto "/usr/share/ungoogle-chromium/licenses"
+		doins \
+			"${S_UNGOOGLED_CHROMIUM}/LICENSE"
+	fi
 }
 
 src_compile() {

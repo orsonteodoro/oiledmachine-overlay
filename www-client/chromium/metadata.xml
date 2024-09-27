@@ -39,48 +39,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Add "www-client/chromium -system-ffmpeg" to /etc/portage/profile/package.use.mask
 
 
-    Per-package environment variables:
-
-    See https://wiki.gentoo.org/wiki//etc/portage/package.env to set up
-    per-package environment variables.
-
-    FORCE_LLVM_SLOT - Manually choose the LLVM slot to build with
-
-    JIT_LEVEL_OVERRIDE - Set the JIT runtime performance similar to -Oflags.
-    It controls the JIT teir enablement and consequently build time, the runtime
-    performance possibilities of JITed hot functions similar to the -Oflag
-    level.
-    Valid values:  0, 1, 2, ..., 7, unset (default)
-
-      7 - -Ofast [do not use]
-      6 - -O3
-      5 - -O2
-      4 - -Os
-      3 - -Oz
-      2 - -O1
-      1 - -O0 [with JIT, best case performance for -O0]
-      0 - -O0 [without JIT, worst case performance for -O0]
-      unset - if USE=-official, it is automatic based on -Oflag level.
-              if USE=official, it is equivalent to 6.
-
-    MITIGATION_USE_CASE - Sets the safety period for ebuild (re-)installs.  If
-    the duration exceeds, the ebuild will not (re-)install until a newer point
-    release is provided by upstream.
-    Valid values:
-      donations - 1 week
-      email     - 1 week
-      legal     - 1 week
-      money     - 1 week
-      shopping  - 1 week
-      socials   - 2 weeks (ebuild default)
-      default   - 30 days
-    Examples:
-      MITIGATION_USE_CASE="shopping"           # The ebuild is (re-)installable for 1 week from release date.
-      MITIGATION_USE_CASE="donations socials"  # The ebuild is (re-)installable for 1 week from release date.
-      MITIGATION_USE_CASE="socials"            # The ebuild is (re-)installable for 2 weeks from release date.
-      MITIGATION_USE_CASE="default"            # The ebuild is (re-)installable for 30 days from release date but may likely contain vulnerabilities.
-
-
     USE flag quality status:
 
       cfi - production ready
@@ -95,10 +53,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
     The -Oshit optimization flag:
 
-    The flag will address the unacceptable build times.
-
-    This is the introduction of the -Oshit compiler metaflag, which only exists in this
-    ebuild.
+    This flag address the unacceptable build times with -Oshit compiler
+    metaflag and OSHIT_* environment variables.
 
     -Oshit will build mostly everything with -O1 for _FORTIFY_SOURCE and faster
     build speed but will have extra environment variables to customize the
@@ -106,9 +62,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     are possibly performance sensitive.  A noticable perceived performance drop
     is where one notices jitter, studder, skipping, double processing time,
     latency larger than the 3 second rule, etc.
-    Projects that may override O1 will be prefixed with OSHIT_OPT_LEVEL_
-    environment variable listed below.  These environment variables should
-    be placed in a per-package env file.
+
+    Subprojects or third_party modules may override -O1 will be prefixed with
+    OSHIT_OPT_LEVEL_ environment variables listed below.  These environment
+    variables should be placed in a per-package env file.
 
     Example:
 
@@ -127,100 +84,155 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
     Build time environment variables:
 
-      APPLY_OILEDMACHINE_OVERLAY_PATCHSET - Apply the following patches:
-      - Allow for Qt6 build without Qt5.
-      - Allow to disable SIMD for zlib for compatibility with older CPUs.
-      - Allow to change the v8 optimization level to -O2 or -O3
-      - Add mold linker support
-
-      Valid values:
-
-        1 - apply (default)
-        0 - do not apply
+    See https://wiki.gentoo.org/wiki//etc/portage/package.env to set up
+    per-package environment variables.
 
 
-      PRINT_PREVIEW - Allow print preview
 
-      Valid values:
+    APPLY_OILEDMACHINE_OVERLAY_PATCHSET - Apply the following patches:
+    - Allow for Qt6 build without Qt5.
+    - Allow to disable SIMD for zlib for compatibility with older CPUs.
+    - Allow to change the v8 optimization level to -O2 or -O3
+    - Add mold linker support
 
-        1 - show print preview before printing (default)
-        0 - disable print preview, print immediately
+    Valid values:
 
+      1 - apply (default)
+      0 - do not apply
 
-      ULIMIT - Sets the max number of open file descriptors.
+    CROMITE_PATCH_BLACKLIST - A space separated list of patches not to apply.
 
-      Defaults:
-
-        Mold - 16384
-        BFD/LLD - 2048
-
-
-      OSHIT_OPT_LEVEL_DAV1D="2" - Optimize dav1d at -O2
-      Valid values:  2, 3, fast
-      Note:  May be set to 1 if dav1d is supported using vaapi and are using vaapi USE flag.
+    FORCE_LLVM_SLOT - Manually choose the LLVM slot to build with
 
 
-      OSHIT_OPT_LEVEL_LIBAOM="3" - Optimize libaom at -O3
-      Note:  May be set to 1 if h264 is supported using vaapi and are using vaapi USE flag.
+    JIT_LEVEL_OVERRIDE - Set the JIT runtime performance similar to -Oflags.
+    It controls the JIT teir enablement and consequently build time, the runtime
+    performance possibilities of JITed hot functions similar to the -Oflag
+    level.
+    Valid values:  0, 1, 2, ..., 7, unset (default)
+
+    7 - -Ofast [do not use]
+    6 - -O3
+    5 - -O2
+    4 - -Os
+    3 - -Oz
+    2 - -O1
+    1 - -O0 [with JIT, best case performance for -O0]
+    0 - -O0 [without JIT, worst case performance for -O0]
+    unset - if USE=-official, it is automatic based on -Oflag level.
+            if USE=official, it is equivalent to 6.
 
 
-      OSHIT_OPT_LEVEL_LIBVPX="fast" - Optimize libvpx at -Ofast
-      Valid values:  2, 3, fast
-      Note:  May be set to 1 if vpx is supported using vaapi and are using vaapi USE flag.
+    MITIGATION_USE_CASE - Sets the safety period for ebuild (re-)installs.  If
+    the duration exceeds, the ebuild will not (re-)install until a newer point
+    release is provided by upstream.
+
+    Valid values:
+      donations - 1 week
+      email     - 1 week
+      legal     - 1 week
+      money     - 1 week
+      shopping  - 1 week
+      socials   - 2 weeks (ebuild default)
+      default   - 30 days
+
+    Examples:
+      MITIGATION_USE_CASE="shopping"           # The ebuild is (re-)installable for 1 week from release date.
+      MITIGATION_USE_CASE="donations socials"  # The ebuild is (re-)installable for 1 week from release date.
+      MITIGATION_USE_CASE="socials"            # The ebuild is (re-)installable for 2 weeks from release date.
+      MITIGATION_USE_CASE="default"            # The ebuild is (re-)installable for 30 days from release date but may likely contain vulnerabilities.
 
 
-      OSHIT_OPT_LEVEL_OPENH264="2" - Optimize openh264 at -O2
-      Valid values:  1, 2, 3, fast
-      Note:  May be set to 1 if h264 is supported using vaapi and are using vaapi USE flag.
+    PRINT_PREVIEW - Allow print preview
+
+    Valid values:
+
+      1 - show print preview before printing (default)
+      0 - disable print preview, print immediately
 
 
-      OSHIT_OPT_LEVEL_RNNOISE="1" - Optimize rnnoise at -O2
-      Valid values:  1, 2, 3, fast
+    OSHIT_OPT_LEVEL_DAV1D="2" - Optimize dav1d at -O2
+    Valid values:  2, 3, fast
+    Note:  May be set to 1 if dav1d is supported using vaapi and are using
+    vaapi USE flag.
 
 
-      OSHIT_OPT_LEVEL_RUY="1" - Optimize ruy at -O1
-      Valid values:  1, 2, 3
-      Note:  May be set to 1 if disinterested in AI/ML.
+    OSHIT_OPT_LEVEL_LIBAOM="3" - Optimize libaom at -O3
+    Note:  May be set to 1 if h264 is supported using vaapi and are using
+    vaapi USE flag.
 
 
-      OSHIT_OPT_LEVEL_TFLITE="1" - Optimize TFLite build speed at -O1
-      Valid values:  1, 2, 3
-      Note:  May be set to 1 if disinterested in AI/ML.
+    OSHIT_OPT_LEVEL_LIBVPX="fast" - Optimize libvpx at -Ofast
+    Valid values:  2, 3, fast
+    Note:  May be set to 1 if vpx is supported using vaapi and are using vaapi
+    USE flag.
 
 
-      OSHIT_OPT_LEVEL_V8="2" - Optimize v8 at O2
-      Valid values:  2, 3
+    OSHIT_OPT_LEVEL_OPENH264="2" - Optimize openh264 at -O2
+    Valid values:  1, 2, 3, fast
+    Note:  May be set to 1 if h264 is supported using vaapi and are using
+    vaapi USE flag.
 
 
-      OSHIT_OPT_LEVEL_XNNPACK="1" - Optimize xnnpack build speed at at -O1
-      Valid values:  1, 2, 3
-      Note:  May be set to 1 if disinterested in AI/ML.
+    OSHIT_OPT_LEVEL_RNNOISE="1" - Optimize rnnoise at -O2
+    Valid values:  1, 2, 3, fast
 
 
-      THINLTO_OPT - Add aggressive ThinLTO optimizations
-      Valid values:
-      1 - explicitly optimize
-      0 - linker defaults
-      unset - explicitly optimize if USE=official
+    OSHIT_OPT_LEVEL_RUY="1" - Optimize ruy at -O1
+    Valid values:  1, 2, 3
+    Note:  May be set to 1 if disinterested in AI/ML.
 
 
-    References:
-      lto-O2 is too large - https://github.com/chromium/chromium/commit/da072d13b2a1cc8459c29aa4e52584a4491a4ad6
-      CFI - https://www.chromium.org/developers/testing/control-flow-integrity
-      CFI ldflags - https://clang.llvm.org/docs/ControlFlowIntegrity.html
-      PartitionAlloc - https://chromium.googlesource.com/chromium/src/+/refs/heads/main/base/allocator/partition_allocator/PartitionAlloc.md
-      PGO - https://blog.chromium.org/2020/08/chrome-just-got-faster-with-profile.html
-      https://github.com/chromium/chromium/blob/master/build/config/sanitizers/BUILD.gn#L204
-      [1] https://github.com/chromium/chromium/tree/master/tools/perf/benchmarks
-      [2] https://chromium.googlesource.com/catapult/+/HEAD/telemetry/README.md
+    OSHIT_OPT_LEVEL_TFLITE="1" - Optimize TFLite build speed at -O1
+    Valid values:  1, 2, 3
+    Note:  May be set to 1 if disinterested in AI/ML.
 
 
-    Proposals for next ebuild change(s):
+    OSHIT_OPT_LEVEL_V8="2" - Optimize v8 at O2
+    Valid values:  2, 3
 
-    Investigate -pgo USE flag should be a greater than 4 cpu core requirement.
-    The next build will measure the build time of pgo disabled.
 
-    Intestigate shuffle-sections ROP mitigation.
+    OSHIT_OPT_LEVEL_XNNPACK="1" - Optimize xnnpack build speed at at -O1
+    Valid values:  1, 2, 3
+    Note:  May be set to 1 if disinterested in AI/ML.
+
+
+    ULIMIT - Sets the max number of open file descriptors.
+
+    Defaults:
+
+      Mold - 16384
+      BFD/LLD - 2048
+
+
+    UNGOOGLED_CHROMIUM_PATCH_BLACKLIST - A space separated list of patches not
+    to apply.
+
+    THINLTO_OPT - Add aggressive ThinLTO optimizations
+    Valid values:
+    1 - explicitly optimize
+    0 - linker defaults
+    unset - explicitly optimize if USE=official
+
+
+  References:
+
+    lto-O2 is too large - https://github.com/chromium/chromium/commit/da072d13b2a1cc8459c29aa4e52584a4491a4ad6
+    CFI - https://www.chromium.org/developers/testing/control-flow-integrity
+    CFI ldflags - https://clang.llvm.org/docs/ControlFlowIntegrity.html
+    PartitionAlloc - https://chromium.googlesource.com/chromium/src/+/refs/heads/main/base/allocator/partition_allocator/PartitionAlloc.md
+    PGO - https://blog.chromium.org/2020/08/chrome-just-got-faster-with-profile.html
+    https://github.com/chromium/chromium/blob/master/build/config/sanitizers/BUILD.gn#L204
+    [1] https://github.com/chromium/chromium/tree/master/tools/perf/benchmarks
+    [2] https://chromium.googlesource.com/catapult/+/HEAD/telemetry/README.md
+
+
+  Proposals for next ebuild change(s):
+
+  Investigate -pgo USE flag should be a greater than 4 cpu core requirement.
+  The next build will measure the build time of pgo disabled.
+
+  Intestigate shuffle-sections ROP mitigation.
 
   -->
   <upstream>
@@ -287,6 +299,12 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="component-build">
       Split build into more shared libraries to speed up linking. Mostly
       intended for debugging and development, NOT RECOMMENDED for general use.
+    </flag>
+    <flag name="cromite">
+      Add adblocker and enchance privacy with a community maintained patchset.
+
+      [Using community patchsets may introduce vulnerabilities or the user
+      experience may degrade.]
     </flag>
     <flag name="cpu_flags_arm_pac">
       Mitigate against ROP attacks
@@ -671,6 +689,16 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Building may required 12 GiB total memory minimal for dedicated compile
       only machines, but 16 GiB total memory recommended for multitasking
       builder machines.
+    </flag>
+    <flag name="ungoogled-chromium">
+      Unbundle upstream services with a community maintained patchset.
+
+      [It may lower security by removing DoH (DNS over HTTP) exposing DNS
+      lookups to a government firewall.  At the same time, it may avoid tracking
+      by a government contractor.]
+
+      [Using community patchsets may introduce vulnerabilities or the user
+      experience may degrade.]
     </flag>
     <flag name="vaapi">
       Add support for hardware accelerated JPEG image decoding, hardware
