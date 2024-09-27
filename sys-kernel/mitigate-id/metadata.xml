@@ -106,6 +106,9 @@
     <flag name="mlx5">
       Mitigate against information disclosure for the mlx5 network driver.
     </flag>
+    <flag name="mt76">
+      Mitigate against information disclosure for the mt76 network driver.
+    </flag>
     <flag name="netfilter">
       Mitigate against information disclosure for the netfilter firewall.
     </flag>

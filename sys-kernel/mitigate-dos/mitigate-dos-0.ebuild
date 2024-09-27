@@ -48,6 +48,7 @@ MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
 MULTISLOT_KERNEL_MD_RAID5=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_MLX5=("6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_MSM=("6.6.48" "6.10.7")
+MULTISLOT_KERNEL_MT76=("5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_NFSD=("6.10.8")
 MULTISLOT_KERNEL_NVME_45013=("6.10.7")
@@ -95,6 +96,7 @@ CVE_JFS="CVE-2024-43858"
 CVE_MD_RAID1="CVE-2024-45023"
 CVE_MD_RAID5="CVE-2024-43914"
 CVE_MSM="CVE-2024-45015"
+CVE_MT76="CVE-2024-42225"
 CVE_NET_BRIDGE="CVE-2024-44934"
 CVE_NFSD="CVE-2024-46696"
 CVE_NOUVEAU="CVE-2024-45012"
@@ -167,6 +169,7 @@ max-uptime
 md-raid1
 md-raid5
 mlx5
+mt76
 netfilter
 nfs
 nftables
@@ -239,6 +242,7 @@ REQUIRED_USE="
 # md-raid5? https://nvd.nist.gov/vuln/detail/CVE-2024-43914 # DOS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
 # msm? https://nvd.nist.gov/vuln/detail/CVE-2024-45015 # DoS
+# mt76? https://nvd.nist.gov/vuln/detail/CVE-2024-42225 # DoS, DT, ID
 # nfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-45018 # DoS
 # nf_tables? https://nvd.nist.gov/vuln/detail/CVE-2022-48935 # DoS UAF
@@ -384,6 +388,11 @@ RDEPEND="
 	mlx5? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5[@]})
+		)
+	)
+	mt76? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MT76[@]})
 		)
 	)
 	nfs? (
@@ -627,6 +636,9 @@ check_drivers() {
 	fi
 	if use md-raid5 ; then
 		check_kernel_version "md/raid5" "${CVE_MD_RAID5}" ${MULTISLOT_KERNEL_MD_RAID5[@]}
+	fi
+	if use mt76 ; then
+		check_kernel_version "mt76" "${CVE_MT76}" ${MULTISLOT_KERNEL_MT76[@]}
 	fi
 	if use nfs ; then
 		fs=1

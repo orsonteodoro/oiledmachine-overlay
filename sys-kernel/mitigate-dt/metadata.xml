@@ -99,6 +99,9 @@
     <flag name="mlx5">
       Mitigate against data tampering for the mlx5 network driver.
     </flag>
+    <flag name="mt76">
+      Mitigate against data tampering for the mt76 network driver.
+    </flag>
     <flag name="nfs">
       Mitigate against data tampering for the NFS server network
       filesystem driver.

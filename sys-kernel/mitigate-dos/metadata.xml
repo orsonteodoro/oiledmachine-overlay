@@ -120,6 +120,9 @@
     <flag name="mlx5">
       Mitigate against Denial of Service for the mlx5 network driver.
     </flag>
+    <flag name="mt76">
+      Mitigate against Denial of Service for the mt76 network driver.
+    </flag>
     <flag name="nvme">
       Mitigate against Denial of Service for the NVMe driver.
     </flag>
