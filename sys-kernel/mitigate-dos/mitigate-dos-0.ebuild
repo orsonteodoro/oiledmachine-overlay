@@ -40,6 +40,7 @@ MULTISLOT_KERNEL_BPF_45020=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_BTRFS_46687=("6.6.49" "6.10.8")
 MULTISLOT_KERNEL_BTRFS_46749=("6.10.10")
 MULTISLOT_KERNEL_BRCM80211=("6.6.48" "6.10.7")
+MULTISLOT_KERNEL_CCP=("6.10.3")
 MULTISLOT_KERNEL_CDROM=("6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_CFG80211=("5.10.244" "5.15.165" "6.1.106" "6.6.47" "6.9.9")
 MULTISLOT_KERNEL_COUGAR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
@@ -93,6 +94,7 @@ CVE_BPF_45020="CVE-2024-45020"
 CVE_BTRFS_46687="CVE-2024-46687"
 CVE_BTRFS_46749="CVE-2024-46749"
 CVE_BRCM80211="CVE-2024-46672"
+CVE_CCP="CVE-2024-43874"
 CVE_CDROM="CVE-2024-42136"
 CVE_CFG80211="CVE-2024-42114"
 CVE_COUGAR="CVE-2024-46747"
@@ -175,6 +177,7 @@ bpf
 bridge
 btrfs
 cdrom
+ccp
 cougar
 ext4
 f2fs
@@ -248,6 +251,7 @@ REQUIRED_USE="
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46749 # DoS
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46687 # DoS, DT, ID
 # bcrm80211? https://nvd.nist.gov/vuln/detail/CVE-2024-46672 # DoS
+# ccp? https://nvd.nist.gov/vuln/detail/CVE-2024-43874 # DoS
 # cdrom? https://nvd.nist.gov/vuln/detail/CVE-2024-42136 # DoS, DT, ID
 # cfg80211? https://nvd.nist.gov/vuln/detail/CVE-2024-42114 # DoS
 # cougar? https://nvd.nist.gov/vuln/detail/CVE-2024-46747 # DoS, DT, ID
@@ -354,6 +358,11 @@ RDEPEND="
 			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS_46687[@]})
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS_46749[@]})
+		)
+	)
+	ccp? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_CCP[@]})
 		)
 	)
 	cdrom? (
@@ -670,6 +679,9 @@ check_drivers() {
 		check_kernel_version "btrfs" "${CVE_BTRFS_46687}" ${MULTISLOT_KERNEL_BTRFS_46687[@]}
 		check_kernel_version "btrfs" "${CVE_BTRFS_46749}" ${MULTISLOT_KERNEL_BTRFS_46749[@]}
 	fi
+	if use ccp ; then
+		check_kernel_version "crypto/ccp" "${CVE_CCP}" ${MULTISLOT_KERNEL_CCP[@]}
+	fi
 	if use cdrom ; then
 		check_kernel_version "cdrom" "${CVE_CDROM}" ${MULTISLOT_KERNEL_CDROM[@]}
 	fi
@@ -713,14 +725,14 @@ check_drivers() {
 	fi
 	if use kvm ; then
 		if use amd64 ; then
-			check_kernel_version "kvm" "${CVE_KVM_X86_39483}" ${MULTISLOT_KERNEL_KVM_X86_39483[@]}
+			check_kernel_version "x86/kvm" "${CVE_KVM_X86_39483}" ${MULTISLOT_KERNEL_KVM_X86_39483[@]}
 		elif use arm64 ; then
-			check_kernel_version "kvm" "${CVE_KVM_ARM64_26598}" ${MULTISLOT_KERNEL_KVM_ARM64_26598[@]}
-			check_kernel_version "kvm" "${CVE_KVM_ARM64_46707}" ${MULTISLOT_KERNEL_KVM_ARM64_46707[@]}
+			check_kernel_version "arm64/kvm" "${CVE_KVM_ARM64_26598}" ${MULTISLOT_KERNEL_KVM_ARM64_26598[@]}
+			check_kernel_version "arm64/kvm" "${CVE_KVM_ARM64_46707}" ${MULTISLOT_KERNEL_KVM_ARM64_46707[@]}
 		elif use ppc64 ; then
-			check_kernel_version "kvm" "${CVE_KVM_POWERPC_41070}" ${MULTISLOT_KERNEL_KVM_POWERPC_41070[@]}
+			check_kernel_version "powerpc/kvm" "${CVE_KVM_POWERPC_41070}" ${MULTISLOT_KERNEL_KVM_POWERPC_41070[@]}
 		elif use s390 ; then
-			check_kernel_version "kvm" "${CVE_KVM_S390_43819}" ${MULTISLOT_KERNEL_KVM_S390_43819[@]}
+			check_kernel_version "s390/kvm" "${CVE_KVM_S390_43819}" ${MULTISLOT_KERNEL_KVM_S390_43819[@]}
 		fi
 	fi
 	if use mlx5 ; then

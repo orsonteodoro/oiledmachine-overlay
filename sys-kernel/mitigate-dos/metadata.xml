@@ -68,6 +68,10 @@
     <flag name="btrfs">
       Mitigate against Denial of Service for the Btrfs filesystem.
     </flag>
+    <flag name="ccp">
+      Mitigate against Denial of Service for the AMD Cryptographic Co-Processor
+      driver.
+    </flag>
     <flag name="cdrom">
       Mitigate against Denial of Service for the cdrom driver.
     </flag>

@@ -523,9 +523,9 @@ check_drivers() {
 	fi
 	if use kvm ; then
 		if use arm64 ; then
-			check_kernel_version "kvm" "${CVE_KVM_ARM64_26598}" ${MULTISLOT_KERNEL_KVM_ARM64_26598[@]}
+			check_kernel_version "arm64/kvm" "${CVE_KVM_ARM64_26598}" ${MULTISLOT_KERNEL_KVM_ARM64_26598[@]}
 		elif use ppc64 ; then
-			check_kernel_version "kvm" "${CVE_KVM_POWERPC_41070}" ${MULTISLOT_KERNEL_KVM_POWERPC_41070[@]}
+			check_kernel_version "powerpc/kvm" "${CVE_KVM_POWERPC_41070}" ${MULTISLOT_KERNEL_KVM_POWERPC_41070[@]}
 		fi
 	fi
 	if use md-raid1 ; then
