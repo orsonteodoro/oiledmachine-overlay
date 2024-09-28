@@ -34,6 +34,7 @@ MULTISLOT_KERNEL_KVM_X86_39483=("6.4" "6.6.34" "6.9.5")
 MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_APPARMOR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
+MULTISLOT_KERNEL_ATH12K=("6.6.51" "6.10.10" "6.11")
 MULTISLOT_KERNEL_BLUETOOTH_46749=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_BLUETOOTH_48878=("5.10.165" "5.15.90" "6.1.8")
 MULTISLOT_KERNEL_BPF_45020=("6.6.48" "6.10.7")
@@ -58,6 +59,7 @@ MULTISLOT_KERNEL_MD_RAID5=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.105" 
 MULTISLOT_KERNEL_MLX5=("6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_MSM=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_MT76=("5.15.163" "6.1.98" "6.6.39" "6.9.9")
+MULTISLOT_KERNEL_MT7921=("6.6.52" "6.10.11" "6.11")
 MULTISLOT_KERNEL_MWIFIEX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_NILFS2=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
@@ -88,6 +90,7 @@ MULTISLOT_KERNEL_XEN=("6.6.51" "6.10.10")
 CVE_AMDGPU="CVE-2024-46725"
 CVE_APPARMOR="CVE-2024-46721"
 CVE_ATA_41087="CVE-2024-41087"
+CVE_ATH12K="CVE-2024-46827"
 CVE_BLUETOOTH_46749="CVE-2024-46749"
 CVE_BLUETOOTH_48878="CVE-2022-48878"
 CVE_BPF_45020="CVE-2024-45020"
@@ -123,6 +126,7 @@ CVE_NFSD="CVE-2024-46696"
 CVE_MLX5="CVE-2024-45019"
 CVE_MSM="CVE-2024-45015"
 CVE_MT76="CVE-2024-42225"
+CVE_MT7921="CVE-2024-46860"
 CVE_MWIFIEX="CVE-2024-46755"
 CVE_NETFILTER="CVE-2024-45018"
 CVE_NF_TABLES="CVE-2024-27020"
@@ -170,6 +174,7 @@ VIDEO_CARDS=(
 IUSE="
 ${VIDEO_CARDS[@]}
 ata
+ath12k
 apparmor
 bcrm80211
 bluetooth
@@ -195,6 +200,7 @@ md-raid1
 md-raid5
 mlx5
 mt76
+mt7921
 mwifiex
 netfilter
 nfs
@@ -242,6 +248,7 @@ REQUIRED_USE="
 #
 # The latest to near past vulnerabilities are reported below.
 #
+# ath12k? https://nvd.nist.gov/vuln/detail/CVE-2024-46827 # Unofficial: DoS
 # apparmor? https://nvd.nist.gov/vuln/detail/CVE-2024-46721 # DoS
 # ata? https://nvd.nist.gov/vuln/detail/CVE-2024-41087 # DoS, DT, ID
 # bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2024-46749 # DoS
@@ -276,6 +283,7 @@ REQUIRED_USE="
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
 # msm? https://nvd.nist.gov/vuln/detail/CVE-2024-45015 # DoS
 # mt76? https://nvd.nist.gov/vuln/detail/CVE-2024-42225 # DoS, DT, ID
+# mt7921? https://nvd.nist.gov/vuln/detail/CVE-2024-46860 # Unofficial: DoS
 # mwifiex? https://nvd.nist.gov/vuln/detail/CVE-2024-46755 # DoS
 # nfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-45018 # DoS
@@ -320,6 +328,12 @@ RDEPEND="
 			$(gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
 		)
 		$(gen_eol_kernels_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
+	)
+	ath12k? (
+		!custom-kernel? (
+			${WIFI_RDEPEND}
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_ATH12K[@]})
+		)
 	)
 	apparmor? (
 		!custom-kernel? (
@@ -459,6 +473,12 @@ RDEPEND="
 		!custom-kernel? (
 			${WIFI_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MT76[@]})
+		)
+	)
+	mt7921? (
+		!custom-kernel? (
+			${WIFI_RDEPEND}
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MT7921[@]})
 		)
 	)
 	mwifiex? (
@@ -654,6 +674,10 @@ check_drivers() {
 	use custom-kernel || return
 	local wifi=0
 	local fs=0
+	if use ath12k ; then
+		wifi=1
+		check_kernel_version "ath12k" "${CVE_ATH12K}" ${MULTISLOT_KERNEL_ATH12K[@]}
+	fi
 	if use apparmor ; then
 		check_kernel_version "apparmor" "${CVE_APPARMOR}" ${MULTISLOT_KERNEL_APPARMOR[@]}
 	fi
@@ -746,6 +770,9 @@ check_drivers() {
 	fi
 	if use mt76 ; then
 		check_kernel_version "mt76" "${CVE_MT76}" ${MULTISLOT_KERNEL_MT76[@]}
+	fi
+	if use mt7921 ; then
+		check_kernel_version "mt7921" "${CVE_MT7921}" ${MULTISLOT_KERNEL_MT7921[@]}
 	fi
 	if use mwifiex ; then
 		check_kernel_version "mwifiex" "${CVE_MWIFIEX}" ${MULTISLOT_KERNEL_MWIFIEX[@]}

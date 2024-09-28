@@ -40,6 +40,9 @@
     <flag name="apparmor">
       Mitigate against Denial of Service for the AppArmor security module.
     </flag>
+    <flag name="ath12k">
+      Mitigate against Denial of Service for the ath12k network driver.
+    </flag>
     <flag name="ata">
       Mitigate against Denial of Service for the ATA driver.
     </flag>
@@ -132,6 +135,9 @@
     </flag>
     <flag name="mt76">
       Mitigate against Denial of Service for the mt76 network driver.
+    </flag>
+    <flag name="mt76">
+      Mitigate against Denial of Service for the mt7921 network driver.
     </flag>
     <flag name="mwifiex">
       Mitigate against Denial of Service for the mwifiex network driver.
