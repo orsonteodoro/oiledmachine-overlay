@@ -96,6 +96,9 @@
     <flag name="jfs">
       Mitigate against data tampering in the JFS filesystem.
     </flag>
+    <flag name="kvm">
+      Mitigate against data tampering in the KVM subsystem.
+    </flag>
     <flag name="md-raid1">
       Mitigate against data tampering for the md/raid1 driver.
     </flag>

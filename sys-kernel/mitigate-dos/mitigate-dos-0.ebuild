@@ -24,6 +24,11 @@ MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1
 
 # Arch specific
 MULTISLOT_KERNEL_POWERPC_46797=("6.6.51" "6.10.10")
+MULTISLOT_KERNEL_KVM_ARM64_26598=("5.4.269" "5.10.209" "5.15.148" "6.1.75" "6.6.14" "6.7.2")
+MULTISLOT_KERNEL_KVM_ARM64_46707=("5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
+MULTISLOT_KERNEL_KVM_POWERPC_41070=("5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
+MULTISLOT_KERNEL_KVM_S390_43819=("6.10.3")
+MULTISLOT_KERNEL_KVM_X86_39483=("6.4" "6.6.34" "6.9.5")
 
 # More than one row is added to increase LTS coverage.
 MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
@@ -100,25 +105,30 @@ CVE_HFSPLUS="CVE-2024-41059"
 CVE_I915="CVE-2024-41092"
 CVE_ICE="CVE-2024-46766"
 CVE_JFS="CVE-2024-43858"
-CVE_MD_RAID1="CVE-2024-45023"
-CVE_MD_RAID5="CVE-2024-43914"
-CVE_MSM="CVE-2024-45015"
-CVE_MT76="CVE-2024-42225"
-CVE_NET_BRIDGE="CVE-2024-44934"
-CVE_NFSD="CVE-2024-46696"
-CVE_NILFS2="CVE-2024-46781"
-CVE_NOUVEAU="CVE-2024-45012"
-CVE_RADEON="CVE-2024-41060"
 CVE_IPV6="CVE-2024-44987"
 CVE_IWLWIFI_48918="CVE-2022-48918"
 CVE_IWLWIFI_48787="CVE-2022-48787"
+CVE_KVM_ARM64_26598="CVE-2024-26598"
+CVE_KVM_ARM64_46707="CVE-2024-46707"
+CVE_KVM_POWERPC_41070="CVE-2024-41070"
+CVE_KVM_S390_43819="CVE-2024-43819"
+CVE_KVM_X86_39483="CVE-2024-39483"
 CVE_MAC80211="CVE-2024-43911"
+CVE_MD_RAID1="CVE-2024-45023"
+CVE_MD_RAID5="CVE-2024-43914"
+CVE_NET_BRIDGE="CVE-2024-44934"
+CVE_NFSD="CVE-2024-46696"
 CVE_MLX5="CVE-2024-45019"
+CVE_MSM="CVE-2024-45015"
+CVE_MT76="CVE-2024-42225"
 CVE_MWIFIEX="CVE-2024-46755"
 CVE_NETFILTER="CVE-2024-45018"
 CVE_NF_TABLES="CVE-2024-27020"
+CVE_NILFS2="CVE-2024-46781"
+CVE_NOUVEAU="CVE-2024-45012"
 CVE_NVME_45013="CVE-2024-45013"
 CVE_NVME_41073="CVE-2024-41073"
+CVE_RADEON="CVE-2024-41060"
 CVE_POWERPC_46797="CVE-2024-46797"
 CVE_RTW88="CVE-2024-46760"
 CVE_SCTP="CVE-2024-44935"
@@ -174,6 +184,7 @@ hfsplus
 ice
 ipv6
 iwlwifi
+kvm
 jfs
 samba
 max-uptime
@@ -251,6 +262,10 @@ REQUIRED_USE="
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918 # DoS
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
 # jfs https://nvd.nist.gov/vuln/detail/CVE-2024-43858 # DoS, DT, ID
+# kvm https://nvd.nist.gov/vuln/detail/CVE-2024-46707 # DoS
+# kvm https://nvd.nist.gov/vuln/detail/CVE-2024-43819 # DoS
+# kvm https://nvd.nist.gov/vuln/detail/CVE-2024-41070 # DoS, DT, ID
+# kvm https://nvd.nist.gov/vuln/detail/CVE-2024-39483 # DoS
 # mac80211? https://nvd.nist.gov/vuln/detail/CVE-2024-43911 # DoS
 # md-raid1? https://nvd.nist.gov/vuln/detail/CVE-2024-45023 # DT, DoS
 # md-raid5? https://nvd.nist.gov/vuln/detail/CVE-2024-43914 # DOS
@@ -397,6 +412,23 @@ RDEPEND="
 		!custom-kernel? (
 			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_JFS[@]})
+		)
+	)
+	kvm? (
+		!custom-kernel? (
+			amd64? (
+				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_X86_39483[@]})
+			)
+			arm64? (
+				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_ARM64_26598[@]})
+				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_ARM64_46707[@]})
+			)
+			s390? (
+				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_S390_43819[@]})
+			)
+			ppc64? (
+				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_POWERPC_41070[@]})
+			)
 		)
 	)
 	md-raid1? (
@@ -678,6 +710,18 @@ check_drivers() {
 	if use jfs ; then
 		fs=1
 		check_kernel_version "jfs" "${CVE_JFS}" ${MULTISLOT_KERNEL_JFS[@]}
+	fi
+	if use kvm ; then
+		if use amd64 ; then
+			check_kernel_version "kvm" "${CVE_KVM_X86_39483}" ${MULTISLOT_KERNEL_KVM_X86_39483[@]}
+		elif use arm64 ; then
+			check_kernel_version "kvm" "${CVE_KVM_ARM64_26598}" ${MULTISLOT_KERNEL_KVM_ARM64_26598[@]}
+			check_kernel_version "kvm" "${CVE_KVM_ARM64_46707}" ${MULTISLOT_KERNEL_KVM_ARM64_46707[@]}
+		elif use ppc64 ; then
+			check_kernel_version "kvm" "${CVE_KVM_POWERPC_41070}" ${MULTISLOT_KERNEL_KVM_POWERPC_41070[@]}
+		elif use s390 ; then
+			check_kernel_version "kvm" "${CVE_KVM_S390_43819}" ${MULTISLOT_KERNEL_KVM_S390_43819[@]}
+		fi
 	fi
 	if use mlx5 ; then
 		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_MLX5[@]}

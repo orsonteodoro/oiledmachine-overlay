@@ -110,6 +110,9 @@
     <flag name="jfs">
       Mitigate against Denial of Service in the JFS filesystem.
     </flag>
+    <flag name="kvm">
+      Mitigate against Denial of Service in the KVM subsystem.
+    </flag>
     <flag name="max-uptime">
       Verifies defaults for security and compiler settings in order mitigate
       against deadlock or hard reset.

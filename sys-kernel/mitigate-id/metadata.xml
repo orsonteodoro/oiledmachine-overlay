@@ -100,7 +100,7 @@
       Mitigate against information disclosure in the JFS filesystem.
     </flag>
     <flag name="kvm">
-      Mitigate against information disclosure in KVM.
+      Mitigate against information disclosure in the KVM subsystem.
     </flag>
     <flag name="mcast">
       Mitigate against information disclosure for multicast (mcast) network

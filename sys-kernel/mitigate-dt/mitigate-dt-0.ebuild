@@ -22,6 +22,10 @@ EOL_VERSIONS=(
 # For zero-tolerance mode
 MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52" "6.10.11" "6.11")
 
+# Arch specific
+MULTISLOT_KERNEL_KVM_ARM64_26598=("5.4.269" "5.10.209" "5.15.148" "6.1.75" "6.6.14" "6.7.2")
+MULTISLOT_KERNEL_KVM_POWERPC_41070=("5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
+
 # More than one row is added to increase LTS coverage.
 MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
@@ -75,6 +79,8 @@ CVE_HFSPLUS="CVE-2024-41059"
 CVE_I915="CVE-2024-41092"
 CVE_ICE="CVE-2024-46766"
 CVE_JFS="CVE-2024-43858"
+CVE_KVM_ARM64_26598="CVE-2024-26598"
+CVE_KVM_POWERPC_41070="CVE-2024-41070"
 CVE_MD_RAID1="CVE-2024-45023"
 CVE_MLX5="CVE-2022-48858"
 CVE_MT76="CVE-2024-42225"
@@ -133,6 +139,7 @@ ice
 ipv6
 iwlwifi
 jfs
+kvm
 md-raid1
 mlx5
 mt76
@@ -195,6 +202,8 @@ REQUIRED_USE="
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
 # jfs https://nvd.nist.gov/vuln/detail/CVE-2024-43858 # DoS, DT, ID
+# kvm https://nvd.nist.gov/vuln/detail/CVE-2024-26598 # DoS, DT, ID
+# kvm https://nvd.nist.gov/vuln/detail/CVE-2024-41070 # DoS, DT, ID
 # md-raid1? https://nvd.nist.gov/vuln/detail/CVE-2024-45023 # DT, DoS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2022-48858 # DoS, DT, ID
 # mt76? https://nvd.nist.gov/vuln/detail/CVE-2024-42225 # DoS, DT, ID
@@ -299,6 +308,16 @@ RDEPEND="
 		!custom-kernel? (
 			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_JFS[@]})
+		)
+	)
+	kvm? (
+		!custom-kernel? (
+			arm64? (
+				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_ARM64_26598[@]})
+			)
+			ppc64? (
+				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_POWERPC_41070[@]})
+			)
 		)
 	)
 	md-raid1? (
@@ -501,6 +520,13 @@ check_drivers() {
 	if use jfs ; then
 		fs=1
 		check_kernel_version "jfs" "${CVE_JFS}" ${MULTISLOT_KERNEL_JFS[@]}
+	fi
+	if use kvm ; then
+		if use arm64 ; then
+			check_kernel_version "kvm" "${CVE_KVM_ARM64_26598}" ${MULTISLOT_KERNEL_KVM_ARM64_26598[@]}
+		elif use ppc64 ; then
+			check_kernel_version "kvm" "${CVE_KVM_POWERPC_41070}" ${MULTISLOT_KERNEL_KVM_POWERPC_41070[@]}
+		fi
 	fi
 	if use md-raid1 ; then
 		check_kernel_version "md/raid1" "${CVE_MD_RAID1}" ${MULTISLOT_KERNEL_MD_RAID1[@]}
