@@ -194,7 +194,7 @@ is_cromite_compatible() {
 	local c4_min=$(ver_cut 4 ${PV})
 	local c4_max=$(ver_cut 4 ${PV})
 	c4_min=$(( ${c4_min} - 10 ))
-	c4_max=$(( ${c4_min} + 10 ))
+	c4_max=$(( ${c4_max} + 10 ))
 
 	if ver_test "${PV%.*}.${c4_min}" -le "${CROMITE_PV}" && ver_test "${CROMITE_PV}" -le "${PV%.*}.${c4_max}" ; then
 		return 0
@@ -2126,12 +2126,22 @@ apply_oiledmachine_overlay_patchset() {
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-123.0.6312.58-zlib-selective-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-125.0.6422.76-qt6-split.patch"
-		"${FILESDIR}/extra-patches/${PN}-128.0.6613.84-mold.patch"
-		"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-numeric_h-for-iota.patch"
 		"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-include-historgram-functions.patch"
 		"${FILESDIR}/extra-patches/${PN}-129.0.6668.58-disable-speech.patch"
 		"${FILESDIR}/extra-patches/${PN}-129.0.6668.58-include-thread-pool.patch"
 	)
+
+	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+		PATCHES+=(
+			"A${FILESDIR}/extra-patches/${PN}-128.0.6613.137-numeric_h-for-iota.patch"
+			"A${FILESDIR}/extra-patches/${PN}-128.0.6613.84-mold.patch"
+		)
+	else
+		PATCHES+=(
+			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-numeric_h-for-iota.patch"
+			"${FILESDIR}/extra-patches/${PN}-128.0.6613.84-mold.patch"
+		)
+	fi
 
 	if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then
 		PATCHES+=(
@@ -2240,16 +2250,16 @@ einfo "Removing ${x} from ungoogled-chromium"
 			done
 		fi
 
-		"utils/prune_binaries.py" \
+		edo "utils/prune_binaries.py" \
 			"${S}" \
 			"pruning.list" \
 			|| die
-		"utils/patches.py" \
+		edo "utils/patches.py" \
 			"apply" \
 			"${S}" \
 			"patches" \
 			|| die
-		"utils/domain_substitution.py" \
+		edo "utils/domain_substitution.py" \
 			"apply" \
 			-r "domain_regex.list" \
 			-f "domain_substitution.list" \
