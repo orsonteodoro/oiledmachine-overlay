@@ -617,7 +617,13 @@ gen_patched_kernel_driver_list() {
 	local atom
 	for atom in ${ATOMS[@]} ; do
 		for patched_version in ${PATCHED_VERSIONS[@]} ; do
-			if is_lts "${patched_version}" ; then
+			if [[ "${patched_version}" =~ "V" ]] ; then
+	# Unpatched / vulnerable
+				local slot="${patched_version%.*}"
+				echo "
+					!=${atom}-${slot}*
+				"
+			elif is_lts "${patched_version}" ; then
 				echo "
 					(
 						=${atom}-${patched_version}*
