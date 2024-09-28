@@ -54,6 +54,7 @@ MULTISLOT_KERNEL_MSM=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_MT76=("5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_MWIFIEX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
+MULTISLOT_KERNEL_NILFS2=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_NFSD=("6.10.8")
 MULTISLOT_KERNEL_NVME_45013=("6.10.7")
 MULTISLOT_KERNEL_NVME_41073=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
@@ -105,6 +106,7 @@ CVE_MSM="CVE-2024-45015"
 CVE_MT76="CVE-2024-42225"
 CVE_NET_BRIDGE="CVE-2024-44934"
 CVE_NFSD="CVE-2024-46696"
+CVE_NILFS2="CVE-2024-46781"
 CVE_NOUVEAU="CVE-2024-45012"
 CVE_RADEON="CVE-2024-41060"
 CVE_IPV6="CVE-2024-44987"
@@ -183,6 +185,7 @@ mwifiex
 netfilter
 nfs
 nftables
+nilfs2
 nvme
 rtw88
 sctp
@@ -258,6 +261,7 @@ REQUIRED_USE="
 # nfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-45018 # DoS
 # nf_tables? https://nvd.nist.gov/vuln/detail/CVE-2022-48935 # DoS UAF
+# nilfs2? https://nvd.nist.gov/vuln/detail/CVE-2024-46781 # DoS
 # nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-45013 # DoS
 # nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-41073 # DoS, DT, ID
 # powerpc? https://nvd.nist.gov/vuln/detail/CVE-2024-46797 # DoS
@@ -266,6 +270,7 @@ REQUIRED_USE="
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
 # samba? https://nvd.nist.gov/vuln/detail/CVE-2024-46796 # DoS, DT, ID
 # tcp? https://nvd.nist.gov/vuln/detail/CVE-2024-42154 # DoS, DT, ID
+# tls? https://nvd.nist.gov/vuln/detail/CVE-2024-36489 # DoS
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2023-52913 # DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
@@ -435,6 +440,12 @@ RDEPEND="
 	nftables? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NF_TABLES[@]})
+		)
+	)
+	nilfs2? (
+		!custom-kernel? (
+			${FS_RDEPEND}
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NILFS2[@]})
 		)
 	)
 	nvme? (
@@ -692,6 +703,9 @@ check_drivers() {
 	fi
 	if use nftables ; then
 		check_kernel_version "nf_tables" "${CVE_NF_TABLES}" ${MULTISLOT_KERNEL_NF_TABLES[@]}
+	fi
+	if use nilfs2 ; then
+		check_kernel_version "nilfs2" "${CVE_NILFS2}" ${MULTISLOT_KERNEL_NILFS2[@]}
 	fi
 	if use nvme ; then
 		check_kernel_version "nvme" "${CVE_NVME_45013}" ${MULTISLOT_KERNEL_NVME_45013[@]}

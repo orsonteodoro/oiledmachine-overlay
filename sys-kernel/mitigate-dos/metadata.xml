@@ -139,6 +139,9 @@
       Mitigate against Denial of Service for the NFS server network
       filesystem driver.
     </flag>
+    <flag name="nilfs2">
+      Mitigate against Denial of Service for the NILFS2 filesystem driver.
+    </flag>
     <flag name="nf_tables">
       Mitigate against Denial of Service for the nftables firewall.
     </flag>
@@ -156,6 +159,9 @@
     </flag>
     <flag name="tcp">
       Mitigate against Denial of Service for the TCP protocol.
+    </flag>
+    <flag name="tls">
+      Mitigate against Denial of Service for the TLS protocol.
     </flag>
     <flag name="video_cards_amdgpu">
       Mitigate against Denial of Service for the amdgpu driver.

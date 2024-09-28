@@ -109,6 +109,9 @@
       Mitigate against data tampering for the NFS server network
       filesystem driver.
     </flag>
+    <flag name="nilfs2">
+      Mitigate against data tampering for the NILFS2 filesystem.
+    </flag>
     <flag name="nvme">
       Mitigate against data tampering for the NVMe driver.
     </flag>

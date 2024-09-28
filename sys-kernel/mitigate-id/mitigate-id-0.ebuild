@@ -45,6 +45,7 @@ MULTISLOT_KERNEL_MT76=("5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_NETFILTER=("5.15" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_NFSD=("6.10.8")
+MULTISLOT_KERNEL_NILFS2=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" "6.6.29" "6.8.8")
 MULTISLOT_KERNEL_NOUVEAU=("5.0.21" "5.4.284")
 MULTISLOT_KERNEL_NVME_41073=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
@@ -79,6 +80,7 @@ CVE_NET_BRIDGE="CVE-2024-44934"
 CVE_NETFILTER="CVE-2024-44983"
 CVE_NFSD="CVE-2024-46696"
 CVE_NF_TABLES="CVE-2024-27020"
+CVE_NILFS2="CVE-2024-42104"
 CVE_NOUVEAU="CVE-2023-0030"
 CVE_NVME_41073="CVE-2024-41073"
 CVE_SELINUX="CVE-2022-48740"
@@ -136,6 +138,7 @@ mt76
 nfs
 netfilter
 nftables
+nilfs2
 nvme
 samba
 selinux
@@ -194,6 +197,7 @@ REQUIRED_USE="
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2022-48858 # DoS, DT, ID
 # mt76? https://nvd.nist.gov/vuln/detail/CVE-2024-42225 # DoS, DT, ID
 # nfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
+# nilfs2? https://nvd.nist.gov/vuln/detail/CVE-2024-42104 # DoS, DT, ID
 # nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-41073 # DoS, DT, ID
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-44983 # DoS, ID
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
@@ -324,6 +328,11 @@ RDEPEND="
 	nftables? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NF_TABLES[@]})
+		)
+	)
+	nilfs2? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NILFS2[@]})
 		)
 	)
 	nvme? (
@@ -514,6 +523,9 @@ check_drivers() {
 	fi
 	if use nftables ; then
 		check_kernel_version "nftables" "${CVE_NF_TABLES}" ${MULTISLOT_KERNEL_NF_TABLES[@]}
+	fi
+	if use nilfs2 ; then
+		check_kernel_version "nilfs2" "${CVE_NILFS2}" ${MULTISLOT_KERNEL_NILFS2[@]}
 	fi
 	if use nvme ; then
 		check_kernel_version "nvme" "${CVE_NVME_41073}" ${MULTISLOT_KERNEL_NVME_41073[@]}

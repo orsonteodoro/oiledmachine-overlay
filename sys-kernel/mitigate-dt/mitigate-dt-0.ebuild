@@ -43,6 +43,7 @@ MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
 MULTISLOT_KERNEL_MT76=("5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_NFSD=("6.10.8")
+MULTISLOT_KERNEL_NILFS2=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_NOUVEAU=("5.0.21" "5.4.284")
 MULTISLOT_KERNEL_NVME_41073=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
@@ -53,7 +54,7 @@ MULTISLOT_KERNEL_SMB_46796=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_SMACK=("6.6.49" "6.10.8")
 MULTISLOT_KERNEL_SMB_46795=("5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_TCP_42154=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
-MULTISLOT_KERNEL_TLS=("5.10.219" "5.15.161" "6.1.93" "6.6.33" "6.9.4")
+MULTISLOT_KERNEL_TLS_0646=("5.4.267" "5.10.208" "5.15.147" "6.1.69" "6.6.7")
 MULTISLOT_KERNEL_V3D=("6.10.8")
 MULTISLOT_KERNEL_VMCI=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_VMWGFX=("6.6.49" "6.9" "6.10.8")
@@ -79,6 +80,7 @@ CVE_MLX5="CVE-2022-48858"
 CVE_MT76="CVE-2024-42225"
 CVE_NET_BRIDGE="CVE-2024-44934"
 CVE_NFSD="CVE-2024-46696"
+CVE_NILFS2="CVE-2024-42104"
 CVE_IPV6="CVE-2024-44987"
 CVE_IWLWIFI_48787="CVE-2022-48787"
 CVE_NOUVEAU="CVE-2023-0030"
@@ -89,7 +91,7 @@ CVE_SMACK="CVE-2024-46695"
 CVE_SMB_46796="CVE-2024-46796"
 CVE_SMB_46795="CVE-2024-46795"
 CVE_TCP_42154="CVE-2024-42154"
-CVE_TLS="CVE-2024-36489"
+CVE_TLS_0646="CVE-2024-0646"
 CVE_V3D="CVE-2024-46699"
 CVE_VMCI="CVE-2024-46738"
 CVE_VMWGFX="CVE-2024-46709"
@@ -135,6 +137,7 @@ md-raid1
 mlx5
 mt76
 nfs
+nilfs2
 nvme
 samba
 selinux
@@ -196,11 +199,13 @@ REQUIRED_USE="
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2022-48858 # DoS, DT, ID
 # mt76? https://nvd.nist.gov/vuln/detail/CVE-2024-42225 # DoS, DT, ID
 # nfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
+# nilfs2? https://nvd.nist.gov/vuln/detail/CVE-2024-42104 # DoS, DT, ID
 # nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-41073 # DoS, DT, ID
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2024-46695 # DT
 # samba? https://nvd.nist.gov/vuln/detail/CVE-2024-46796 # DoS, DT, ID
 # smack? https://nvd.nist.gov/vuln/detail/CVE-2024-46695 # DT
+# tls? https://nvd.nist.gov/vuln/detail/CVE-2024-0646 # DoS, DT, ID
 # tcp? https://nvd.nist.gov/vuln/detail/CVE-2024-42154 # DoS, DT, ID
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2023-0030 # PE, ID, DoS, DT.  Fixed in >= 5.0.
@@ -317,6 +322,11 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NFSD[@]})
 		)
 	)
+	nilfs2? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NILFS2[@]})
+		)
+	)
 	nvme? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NVME_41073[@]})
@@ -347,7 +357,7 @@ RDEPEND="
 	)
 	tls? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_TLS[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_TLS_0646[@]})
 		)
 	)
 	video_cards_amdgpu? (
@@ -505,6 +515,9 @@ check_drivers() {
 		fs=1
 		check_kernel_version "nfsd" "${CVE_NFSD}" ${MULTISLOT_KERNEL_NFSD[@]}
 	fi
+	if use nilfs2 ; then
+		check_kernel_version "nilfs2" "${CVE_NILFS2}" ${MULTISLOT_KERNEL_NILFS2[@]}
+	fi
 	if use nvme ; then
 		check_kernel_version "nvme" "${CVE_NVME_41073}" ${MULTISLOT_KERNEL_NVME_41073[@]}
 	fi
@@ -524,7 +537,7 @@ check_drivers() {
 		check_kernel_version "tcp" "${CVE_TCP_42154}" ${MULTISLOT_KERNEL_TCP_42154[@]}
 	fi
 	if use tls ; then
-		check_kernel_version "tls" "${CVE_TLS}" ${MULTISLOT_KERNEL_TLS[@]}
+		check_kernel_version "tls" "${CVE_TLS_0646}" ${MULTISLOT_KERNEL_TLS_0646[@]}
 	fi
 	if use video_cards_amdgpu ; then
 		check_kernel_version "amdgpu" "${CVE_AMDGPU}" ${MULTISLOT_KERNEL_AMDGPU[@]}
