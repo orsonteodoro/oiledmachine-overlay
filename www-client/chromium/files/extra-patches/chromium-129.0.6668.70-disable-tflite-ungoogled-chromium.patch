@@ -1,0 +1,123 @@
+--- a/services/passage_embeddings/public/mojom/passage_embeddings.mojom.orig	2024-09-10 11:42:20.354285500 -0700
++++ b/services/passage_embeddings/public/mojom/passage_embeddings.mojom	2024-09-13 07:59:26.301360699 -0700
+@@ -54,7 +54,7 @@ interface PassageEmbedder {
+  RequireContext=sandbox.mojom.Context.kBrowser]
+ interface PassageEmbeddingsService {
+   // Load the given models for generating embeddings.
+-  [AllowedContext=sandbox.mojom.Context.kBrowser]
++  [EnableIf=build_with_tflite_lib, AllowedContext=sandbox.mojom.Context.kBrowser]
+   LoadModels(
+       PassageEmbeddingsLoadModelsParams params,
+       pending_receiver<PassageEmbedder> model) => (bool success);
+--- a/services/passage_embeddings/passage_embeddings_service.cc.orig	2024-09-28 13:33:48.316434222 -0700
++++ b/services/passage_embeddings/passage_embeddings_service.cc	2024-09-28 13:43:21.624745934 -0700
+@@ -15,11 +15,11 @@ PassageEmbeddingsService::PassageEmbeddi
+ 
+ PassageEmbeddingsService::~PassageEmbeddingsService() = default;
+ 
++#if BUILDFLAG(BUILD_WITH_TFLITE_LIB)
+ void PassageEmbeddingsService::LoadModels(
+     mojom::PassageEmbeddingsLoadModelsParamsPtr params,
+     mojo::PendingReceiver<mojom::PassageEmbedder> model,
+     LoadModelsCallback callback) {
+-#if BUILDFLAG(BUILD_WITH_TFLITE_LIB)
+   embedder_ = std::make_unique<PassageEmbedder>(std::move(model));
+ 
+   // Load the model files.
+@@ -32,9 +32,7 @@ void PassageEmbeddingsService::LoadModel
+   embedder_->SetEmbeddingsModelInputWindowSize(params->input_window_size);
+ 
+   std::move(callback).Run(true);
+-#else
+-  std::move(callback).Run(false);
+-#endif
+ }
++#endif
+ 
+ }  // namespace passage_embeddings
+--- a/services/passage_embeddings/passage_embeddings_service.h.orig	2024-09-10 11:42:20.354285500 -0700
++++ b/services/passage_embeddings/passage_embeddings_service.h	2024-09-13 07:51:06.181549757 -0700
+@@ -24,9 +24,11 @@ class PassageEmbeddingsService : public
+ 
+  private:
+   // mojom::PassageEmbeddingsService:
++#if BUILDFLAG(BUILD_WITH_TFLITE_LIB)
+   void LoadModels(mojom::PassageEmbeddingsLoadModelsParamsPtr params,
+                   mojo::PendingReceiver<mojom::PassageEmbedder> model,
+                   LoadModelsCallback callback) override;
++#endif
+ 
+   mojo::Receiver<mojom::PassageEmbeddingsService> receiver_;
+ 
+--- a/components/history_embeddings/passage_embeddings_service_controller.h.orig	2024-09-10 11:42:09.973403000 -0700
++++ b/components/history_embeddings/passage_embeddings_service_controller.h	2024-09-14 20:37:36.638927766 -0700
+@@ -79,11 +79,13 @@ class PassageEmbeddingsServiceController
+   mojo::Remote<passage_embeddings::mojom::PassageEmbedder> embedder_remote_;
+ 
+  private:
++#if BUILDFLAG(BUILD_WITH_TFLITE_LIB)
+   // Called when the model files on disks are opened and ready to be sent to
+   // the service.
+   void LoadModelsToService(
+       mojo::PendingReceiver<passage_embeddings::mojom::PassageEmbedder> model,
+       passage_embeddings::mojom::PassageEmbeddingsLoadModelsParamsPtr params);
++#endif
+ 
+   // Called when an attempt to load models to service finishes.
+   void OnLoadModelsResult(bool success);
+--- a/components/history_embeddings/passage_embeddings_service_controller.cc.orig	2024-09-10 11:42:09.973403000 -0700
++++ b/components/history_embeddings/passage_embeddings_service_controller.cc	2024-09-14 20:37:09.583388369 -0700
+@@ -103,6 +103,7 @@ bool PassageEmbeddingsServiceController:
+   return true;
+ }
+ 
++#if BUILDFLAG(BUILD_WITH_TFLITE_LIB)
+ void PassageEmbeddingsServiceController::LoadModelsToService(
+     mojo::PendingReceiver<passage_embeddings::mojom::PassageEmbedder> model,
+     passage_embeddings::mojom::PassageEmbeddingsLoadModelsParamsPtr params) {
+@@ -118,6 +119,7 @@ void PassageEmbeddingsServiceController:
+       base::BindOnce(&PassageEmbeddingsServiceController::OnLoadModelsResult,
+                      weak_ptr_factory_.GetWeakPtr()));
+ }
++#endif
+ 
+ void PassageEmbeddingsServiceController::OnLoadModelsResult(bool success) {
+   if (!success) {
+--- a/components//history_embeddings/passage_embeddings_service_controller.h.orig	2024-09-14 21:49:38.939760136 -0700
++++ b/components//history_embeddings/passage_embeddings_service_controller.h	2024-09-14 23:56:10.116692152 -0700
+@@ -8,6 +8,7 @@
+ #include "components/history_embeddings/embedder.h"
+ #include "components/history_embeddings/proto/passage_embeddings_model_metadata.pb.h"
+ #include "components/optimization_guide/core/model_info.h"
++#include "components/optimization_guide/machine_learning_tflite_buildflags.h"
+ #include "mojo/public/cpp/bindings/remote.h"
+ #include "services/passage_embeddings/public/mojom/passage_embeddings.mojom.h"
+ 
+--- a/components//history_embeddings/passage_embeddings_service_controller.cc.orig	2024-09-14 21:49:38.967759668 -0700
++++ b/components//history_embeddings/passage_embeddings_service_controller.cc	2024-09-14 23:56:22.052497267 -0700
+@@ -10,6 +10,7 @@
+ #include "components/history_embeddings/history_embeddings_features.h"
+ #include "components/history_embeddings/vector_database.h"
+ #include "components/optimization_guide/core/optimization_guide_util.h"
++#include "components/optimization_guide/machine_learning_tflite_buildflags.h"
+ 
+ namespace {
+ 
+--- a/components/history_embeddings/passage_embeddings_service_controller.cc.orig	2024-09-15 10:41:00.256246619 -0700
++++ b/components/history_embeddings/passage_embeddings_service_controller.cc	2024-09-15 10:43:32.621742561 -0700
+@@ -150,6 +150,7 @@ void PassageEmbeddingsServiceController:
+ 
+   if (!service_remote_) {
+     LaunchService();
++#if BUILDFLAG(BUILD_WITH_TFLITE_LIB)
+     base::ThreadPool::PostTaskAndReplyWithResult(
+         FROM_HERE, {base::MayBlock()},
+         base::BindOnce(&MakeModelParams, embeddings_model_path_, sp_model_path_,
+@@ -157,6 +158,7 @@ void PassageEmbeddingsServiceController:
+         base::BindOnce(&PassageEmbeddingsServiceController::LoadModelsToService,
+                        weak_ptr_factory_.GetWeakPtr(),
+                        embedder_remote_.BindNewPipeAndPassReceiver()));
++#endif
+     embedder_remote_.set_disconnect_handler(
+         base::BindOnce(&PassageEmbeddingsServiceController::OnDisconnected,
+                        weak_ptr_factory_.GetWeakPtr()));

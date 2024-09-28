@@ -812,7 +812,6 @@ if is_cromite_compatible ; then
 			proprietary-codecs
 			dav1d
 			pdf
-			pgo
 			plugins
 			!css-hyphen
 			!hangouts
@@ -2046,6 +2045,7 @@ is_generating_credits() {
 }
 
 apply_distro_patchset() {
+einfo "Applying the distro patchset ..."
 	if use system-libstdcxx ; then
 	# Disable global media controls, crashes with libstdc++
 		sed -i \
@@ -2107,6 +2107,7 @@ apply_distro_patchset() {
 }
 
 apply_oiledmachine_overlay_patchset() {
+einfo "Applying the oiledmachine-overlay patchset ..."
 	if use system-toolchain && tc-is-clang ; then
 	# Using gcc with these patches results in this error:
 	# Two or more targets generate the same output:
@@ -2125,20 +2126,24 @@ apply_oiledmachine_overlay_patchset() {
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-123.0.6312.58-zlib-selective-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-125.0.6422.76-qt6-split.patch"
+		"${FILESDIR}/extra-patches/${PN}-129.0.6668.70-qt6-split.patch"
 		"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-include-historgram-functions.patch"
 		"${FILESDIR}/extra-patches/${PN}-129.0.6668.58-disable-speech.patch"
-		"${FILESDIR}/extra-patches/${PN}-129.0.6668.58-include-thread-pool.patch"
 	)
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
-			"A${FILESDIR}/extra-patches/${PN}-128.0.6613.137-numeric_h-for-iota.patch"
-			"A${FILESDIR}/extra-patches/${PN}-128.0.6613.84-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-129.0.6668.70-mold-ungoogled-chromium.patch"
+		)
+	elif has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+		PATCHES+=(
+			"${FILESDIR}/extra-patches/${PN}-128.0.6613.84-mold.patch"
 		)
 	else
 		PATCHES+=(
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-numeric_h-for-iota.patch"
+			"${FILESDIR}/extra-patches/${PN}-129.0.6668.58-include-thread-pool.patch"
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.84-mold.patch"
 		)
 	fi
@@ -2180,8 +2185,19 @@ apply_oiledmachine_overlay_patchset() {
 		"${FILESDIR}/extra-patches/${PN}-128.0.6613.119-custom-optimization-level.patch"
 	)
 	if ! use official ; then
+	# This section contains significant changes.  The above sections contains minor changes.
+
+		if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
+			PATCHES+=(
+				"${FILESDIR}/extra-patches/${PN}-129.0.6668.70-disable-tflite-ungoogled-chromium.patch"
+			)
+		else
+			PATCHES+=(
+				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-tflite.patch"
+			)
+		fi
+
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-tflite.patch"
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-perfetto.patch"
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-icu-tracing.patch"
 		)
@@ -2219,6 +2235,7 @@ is_cromite_patch_non_fatal() {
 }
 
 apply_cromite_patchset() {
+einfo "Applying the Cromite patchset ..."
 	pushd "${S_CROMITE}" >/dev/null 2>&1 || die
 		if [[ -n "${CROMITE_PATCH_BLACKLIST}" ]] ; then
 			local x
@@ -2231,6 +2248,19 @@ einfo "Removing ${x} from cromite"
 		# We don't hijack official.
 		sed -i \
 			-e "/is_official_build/d" \
+			"${S_CROMITE}/build/cromite.gn_args" \
+			|| die
+
+		# Remove debug
+		sed -i \
+			-e "/blink_symbol_level/d" \
+			-e "/symbol_level/d" \
+			"${S_CROMITE}/build/cromite.gn_args" \
+			|| die
+
+		# Unforce optional
+		sed -i \
+			-e "/chrome_pgo_phase/d" \
 			"${S_CROMITE}/build/cromite.gn_args" \
 			|| die
 
@@ -2251,14 +2281,14 @@ einfo "Removing ${x} from cromite"
 
 				if is_cromite_patch_non_fatal "${x}" && grep -q -e "GIT binary patch" "${S_CROMITE}/build/patches/${x}" ; then
 einfo "Applying ${x} ..."
-					#nonfatal git apply --quiet --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}"
-					nonfatal edo git apply --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}"
+					nonfatal git apply --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}" >/dev/null 2>&1
+					#nonfatal edo git apply --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}"
 				elif is_cromite_patch_non_fatal "${x}" ; then
 					nonfatal eapply "${S_CROMITE}/build/patches/${x}"
 				elif grep -q -e "GIT binary patch" "${S_CROMITE}/build/patches/${x}" ; then
 einfo "Applying ${x} ..."
-					#git apply --quiet --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}" || die
-					edo git apply --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}" || die
+					git apply --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}" >/dev/null 2>&1 || die
+					#edo git apply --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}" || die
 				else
 					eapply "${S_CROMITE}/build/patches/${x}"
 				fi
@@ -2268,6 +2298,7 @@ einfo "Applying ${x} ..."
 }
 
 apply_ungoogled_chromium_patchset() {
+einfo "Applying the ungoogled-chromium patchset ..."
 	pushd "${S_UNGOOGLED_CHROMIUM}" >/dev/null 2>&1 || die
 		if [[ -n "${UNGOOGLED_CHROMIUM_PATCH_BLACKLIST}" ]] ; then
 			local x
@@ -2279,6 +2310,7 @@ einfo "Removing ${x} from ungoogled-chromium"
 
 		sed -i -e "/llvm-build/d" "utils/prune_binaries.py" || die
 		sed -i -e "/rust-toolchain/d" "utils/prune_binaries.py" || die
+		sed -i -e "/node\/linux/d" "utils/prune_binaries.py" || die
 
 		edo "utils/prune_binaries.py" \
 			"${S}" \
@@ -2308,15 +2340,12 @@ src_prepare() {
 	local PATCHES=()
 
 	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
-einfo "Applying the Cromite patchset"
 		apply_cromite_patchset
 	fi
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
-einfo "Applying the ungoogled-chromium patchset"
 		apply_ungoogled_chromium_patchset
 	fi
 
-ewarn "Applying the distro patchset."
 	# Proper CFI requires static linkage.
 	# You can use Cross DSO CFI (aka dynamic .so linkage) but the attack
 	# surface would increase.
