@@ -5943,6 +5943,7 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	# CVE-2022-21233 | AEPIC                        | ID
 	# CVE-2022-23825 | Phantom (BTC-NOBR, BTC-DIR   | ID
 	#                | BTC-IND)                     |
+	# CVE-2022-23960 | BHB                          | ID
 	# CVE-2022-26373 | PBRSBP                       | ID
 	# CVE-2022-27672 | CTRAP (SMT RSB)              | ID
 	# CVE-2022-28693 | RRSBA                        | ID
