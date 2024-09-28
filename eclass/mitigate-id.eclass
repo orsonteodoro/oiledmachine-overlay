@@ -141,14 +141,17 @@ CPU_TARGET_ARM=(
 	cpu_target_arm_cortex_a12	# Variant 2
 	cpu_target_arm_cortex_a15	# BHB, Variant 2, Variant 3a
 	cpu_target_arm_cortex_a17	# Variant 2
+	cpu_target_arm_cortex_a32	# SLS
 	cpu_target_arm_cortex_r7	# BHB
 	cpu_target_arm_cortex_r8	# BHB
 	cpu_target_arm_brahma_b15	# BHB, Variant 2
 
 # 32-/64-bit
-	cpu_target_arm_cortex_a57	# BHB, Variant 3a, Variant 4
-	cpu_target_arm_cortex_a72	# BHB, Variant 3a, Variant 4
-	cpu_target_arm_cortex_a73	# BHB, Variant 2, Variant 4
+	cpu_target_arm_cortex_a35	# SLS
+	cpu_target_arm_cortex_a53	# SLS
+	cpu_target_arm_cortex_a57	# BHB, Variant 3a, Variant 4, SLS
+	cpu_target_arm_cortex_a72	# BHB, Variant 3a, Variant 4, SLS
+	cpu_target_arm_cortex_a73	# BHB, Variant 2, Variant 4, SLS
 	cpu_target_arm_cortex_a75	# BHB, Variant 2, Variant 3, Variant 4
 	cpu_target_arm_cortex_a76	# BHB, Variant 4
 	cpu_target_arm_cortex_a77	# BHB, Variant 4
@@ -159,6 +162,7 @@ CPU_TARGET_ARM=(
 	cpu_target_arm_neoverse_n1	# BHB, Variant 4
 
 # 64-bit
+	cpu_target_arm_cortex_a34	# SLS
 	cpu_target_arm_cortex_a65	# BHB
 	cpu_target_arm_cortex_a65ae	# BHB
 	cpu_target_arm_cortex_a78ae	# BHB
@@ -5775,6 +5779,43 @@ _mitigate_id_verify_mitigation_cve_2023_49141() {
 	fi
 }
 
+# @FUNCTION: _mitigate_id_verify_mitigation_sls
+# @INTERNAL
+# @DESCRIPTION:
+# Check the kernel config flags and kernel command line to mitigate against CVE-2020-13844
+_mitigate_id_verify_mitigation_sls() {
+# Disabled because x86 needs verification of affected cpus and no arm mitigation
+# in kernel.
+	return
+
+# NVD says a53 but the UG1186 doc disagrees
+# arm64 - harden-sls - gcc 12.1, clang 12
+# x86 - harden-sls - gcc 11.3, clang 15
+	if \
+		   use cpu_target_arm_cortex_a32 \
+		|| use cpu_target_arm_cortex_a35 \
+		|| use cpu_target_arm_cortex_a53 \
+		|| use cpu_target_arm_cortex_a57 \
+		|| use cpu_target_arm_cortex_a72 \
+		|| use cpu_target_arm_cortex_a73 \
+		|| use cpu_target_arm_cortex_a34 \
+	; then
+# TODO
+# There is SLS for x86 in the kernel but not for arm64.
+		:
+	fi
+
+# This is default off in the kernel.
+	if false && [[ "${ARCH}" =~ ("amd64"|"x86") ]] && ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.17" ; then
+		CONFIG_CHECK="
+			SLS
+		"
+		ERROR_SLS="CONFIG_SLS is required for mitigation against CVE-2020-13844."
+		check_extra_config
+
+	fi
+}
+
 # @FUNCTION: _mitigate-id_check_kernel_flags
 # @INTERNAL
 # @DESCRIPTION:
@@ -5881,6 +5922,7 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	# CVE-2020-0551  | LVI				| ID
 	# CVE-2020-8695  | PLATYPUS                     | ID
 	# CVE-2020-8698  | VRSA                         | ID
+	# CVE-2020-13844 | SLS                          | ID # TODO
 	# CVE-2020-24511 | IBRS G/H                     | ID
 	# CVE-2020-24512 | ITDVCP                       | ID (C:L)
 	# CVE-2020-24513 | APDB                         | ID
@@ -5931,6 +5973,7 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	_mitigate_id_verify_mitigation_cacheout		# Mitigations against L1DES (2020), VRS (2020)
 	_mitigate_id_verify_mitigation_platypus		# Mitigations against PLATYPUS (2020)
 	_mitigate_id_verify_mitigation_vrsa		# Mitigations against VRSA (2020)
+	_mitigate_id_verify_mitigation_sls		# Mitigations against SLS (2020)
 	_mitigate_id_verify_mitigation_ibrs_gh		# Mitigations against IBRS G/H (2020)
 	_mitigate_id_verify_mitigation_itdvcp		# Mitigations against ITDVCP (2020)
 	_mitigate_id_verify_mitigation_apdb		# Mitigations against APDB (2020)
