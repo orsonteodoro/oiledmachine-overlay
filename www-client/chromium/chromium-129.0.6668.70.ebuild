@@ -2209,7 +2209,6 @@ apply_oiledmachine_overlay_patchset() {
 is_cromite_patch_non_fatal() {
 	local arg="${1}"
 	local L=(
-#		"libjxl-0-8-2.patch"
 		"Add-support-to-jxl.patch"
 	)
 	local x
@@ -2252,17 +2251,19 @@ einfo "Removing ${x} from cromite"
 
 				if is_cromite_patch_non_fatal "${x}" && grep -q -e "GIT binary patch" "${S_CROMITE}/build/patches/${x}" ; then
 einfo "Applying ${x} ..."
-					nonfatal git apply --quiet --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}"
+					#nonfatal git apply --quiet --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}"
+					nonfatal edo git apply --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}"
 				elif is_cromite_patch_non_fatal "${x}" ; then
 					nonfatal eapply "${S_CROMITE}/build/patches/${x}"
 				elif grep -q -e "GIT binary patch" "${S_CROMITE}/build/patches/${x}" ; then
 einfo "Applying ${x} ..."
-					git apply --quiet --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}" || die
+					#git apply --quiet --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}" || die
+					edo git apply --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}" || die
 				else
 					eapply "${S_CROMITE}/build/patches/${x}"
 				fi
 			done
-		popd "${S}" >/dev/null 2>&1 || die
+		popd >/dev/null 2>&1 || die
 	popd >/dev/null 2>&1 || die
 }
 
