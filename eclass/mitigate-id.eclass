@@ -5910,6 +5910,7 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	# CVE-2018-12127 | MDS (MLPDS)                  | ID
 	# CVE-2018-12130 | MDS ZombieLoad (MFBDS)       | ID
 	# CVE-2018-15572 | SpectreRSB (RM)              | ID
+	# CVE-2019-0162  | SPOILER                      | ID (C:L)
 	# CVE-2019-1125  | SWAPGS                       | ID
 	# CVE-2019-11091 | MDS MDSUM                    | ID
 	# CVE-2019-11135 | RIDL ZombieLoad v2 (TAA)     | ID
@@ -6003,6 +6004,10 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 
 
 	# For SLAM, see https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability#2023
+
+	# For SPOILER,
+	#  - mitigation for arm64 is provided via Spectre-NG (Variant 4) mitigation and Rowhammer DRAM mitigation.
+	#  - mitigation for x86* is provided via Meltdown mitigation (KPTI) and Rowhammer DRAM mitigation.
 }
 
 # @FUNCTION: _mitigate-id_get_fallback_version
