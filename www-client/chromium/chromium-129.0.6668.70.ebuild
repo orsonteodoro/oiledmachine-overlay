@@ -2252,6 +2252,9 @@ einfo "Removing ${x} from ungoogled-chromium"
 			done
 		fi
 
+		sed -i -e "/llvm-build/d" "utils/prune_binaries.py" || die
+		sed -i -e "/rust-toolchain/d" "utils/prune_binaries.py" || die
+
 		edo "utils/prune_binaries.py" \
 			"${S}" \
 			"pruning.list" \
