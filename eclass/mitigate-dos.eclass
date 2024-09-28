@@ -1405,6 +1405,9 @@ einfo "${pv_major}.${pv_minor}.${pv_patch}${pv_extraversion} has mitigations."
 	# Notify the user if grub or the kernel config is incorrectly
 	# configured/tampered or using a copypasta-ed workaround.
 
+	# The list below reflects hardware vulnerabilities.  For software
+	# vulnerabilities, see ebuild.
+
 	# Verification
 	# CVE            | Vulnerability name           | Vulnerability classes
 	# CVE-2018-12207 | iTLB multihit                | DoS

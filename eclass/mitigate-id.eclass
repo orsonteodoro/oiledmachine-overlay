@@ -5895,6 +5895,9 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	# Notify the user if grub or the kernel config is incorrectly
 	# configured/tampered or using a copypasta-ed workaround.
 
+	# The list below reflects hardware vulnerabilities.  For software
+	# vulnerabilities, see ebuild.
+
 	# Verification
 	# CVE            | Vulnerability name           | Vulnerability classes
 	# CVE-2017-5715  | Spectre v2 (BTI)             | ID
@@ -5955,8 +5958,8 @@ eerror "Detected KVM in the kernel config.  Enable the kvm USE flag."
 	# CVE-2023-31315 | Sinkclose                    | ID (C:L), DT (I:H), DoS (A:L)
 	# CVE-2023-38575 | IBPB                         | ID
 	# CVE-2023-49141 |                              | DoS, DT, ID
-	# CVE-2024-24853 |                              | DoS, DT, ID
 	# CVE-2024-23984 |                              | ID
+	# CVE-2024-24853 |                              | DoS, DT, ID
 	# CVE-2024-24980 |                              | ID (C:L), DT (I:H)
 	# CVE-2024-42667 |                              | DoS, DT, ID
 
