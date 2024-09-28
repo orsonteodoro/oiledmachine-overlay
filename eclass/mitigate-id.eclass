@@ -5812,6 +5812,7 @@ ewarn "See CONFIG_HARDEN_SLS_ALL proposal to manually patch for SLS mitigation."
 		check_extra_config
 
 	fi
+ewarn "Rowhammer mitigation should be deployed to mitigate against a post SPOILER attack."
 }
 
 # @FUNCTION: _mitigate-id_check_kernel_flags
