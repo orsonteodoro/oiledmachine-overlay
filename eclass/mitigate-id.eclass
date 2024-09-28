@@ -5784,6 +5784,7 @@ _mitigate_id_verify_mitigation_cve_2023_49141() {
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CVE-2020-13844
 _mitigate_id_verify_mitigation_sls() {
+	use zero-tolerance || return
 # NVD says a53 but the UG1186 doc disagrees
 # arm64 - harden-sls - gcc 12.1, clang 12
 # x86 - harden-sls - gcc 11.3, clang 15
@@ -5797,14 +5798,12 @@ _mitigate_id_verify_mitigation_sls() {
 		|| use cpu_target_arm_cortex_a34 \
 	; then
 # TODO
-# There is SLS for x86 in the kernel but not for arm64.
-		if use zero-tolerance ; then
+# There is SLS mitigation for x86 in the kernel but no mitigation for arm64.
 ewarn "The kernel build files need to be modded for SLS support (-mharden-sls) for arm/arm64 support."
-		fi
 	fi
 
 # This is default off in the kernel.
-	if use zero-tolerance && [[ "${ARCH}" =~ ("amd64"|"x86") ]] && ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.17" ; then
+	if [[ "${ARCH}" =~ ("amd64"|"x86") ]] && ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.17" ; then
 		CONFIG_CHECK="
 			SLS
 		"
