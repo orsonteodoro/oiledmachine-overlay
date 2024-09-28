@@ -2210,6 +2210,7 @@ is_cromite_patch_non_fatal() {
 	local arg="${1}"
 	local L=(
 		"libjxl-0-8-2.patch"
+		"Add-support-to-jxl.patch"
 	)
 	local x
 	for x in ${L[@]} ; do
