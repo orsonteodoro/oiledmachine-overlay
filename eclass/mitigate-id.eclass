@@ -5784,10 +5784,6 @@ _mitigate_id_verify_mitigation_cve_2023_49141() {
 # @DESCRIPTION:
 # Check the kernel config flags and kernel command line to mitigate against CVE-2020-13844
 _mitigate_id_verify_mitigation_sls() {
-# Disabled because x86 needs verification of affected cpus and no arm mitigation
-# in kernel.
-	return
-
 # NVD says a53 but the UG1186 doc disagrees
 # arm64 - harden-sls - gcc 12.1, clang 12
 # x86 - harden-sls - gcc 11.3, clang 15
@@ -5802,11 +5798,13 @@ _mitigate_id_verify_mitigation_sls() {
 	; then
 # TODO
 # There is SLS for x86 in the kernel but not for arm64.
-		:
+		if use zero-tolerance ; then
+ewarn "The kernel build files need to be modded SLS support (-mharden-sls) for arm/arm64 support."
+		fi
 	fi
 
 # This is default off in the kernel.
-	if false && [[ "${ARCH}" =~ ("amd64"|"x86") ]] && ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.17" ; then
+	if use zero-tolerance && [[ "${ARCH}" =~ ("amd64"|"x86") ]] && ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "5.17" ; then
 		CONFIG_CHECK="
 			SLS
 		"
@@ -6235,6 +6233,11 @@ eerror "The auto USE flag can only be used in native builds."
 			cpu_target_x86_cannon_lake
 			cpu_target_x86_lakefield
 			cpu_target_x86_bakerville
+
+			cpu_target_arm_cortex_a32
+			cpu_target_arm_cortex_a35
+			cpu_target_arm_cortex_a53
+			cpu_target_arm_cortex_a34
 		)
 		local x
 		for x in ${L[@]} ; do

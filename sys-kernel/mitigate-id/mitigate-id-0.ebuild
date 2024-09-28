@@ -27,6 +27,7 @@ MULTISLOT_KERNEL_KVM_ARM64_26598=("5.4.269" "5.10.209" "5.15.148" "6.1.75" "6.6.
 MULTISLOT_KERNEL_KVM_POWERPC_41070=("5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
 
 # More than one row is added to increase LTS coverage.
+MULTISLOT_KERNEL_AEAD=("5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
 MULTISLOT_KERNEL_BLUETOOTH=("5.10.165" "5.15.90" "6.1.8")
@@ -61,6 +62,7 @@ MULTISLOT_KERNEL_XE=("6.10.8")
 MULTISLOT_KERNEL_VMCI=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_VMWGFX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52")
 
+CVE_AEAD="CVE-2024-42229"
 CVE_AMDGPU="CVE-2024-46725"
 CVE_ATA_41087="CVE-2024-41087"
 CVE_BLUETOOTH="CVE-2022-48878"
@@ -124,6 +126,7 @@ VIDEO_CARDS=(
 )
 IUSE="
 ${VIDEO_CARDS[@]}
+aead
 ata
 bluetooth
 bridge
@@ -185,6 +188,7 @@ REQUIRED_USE="
 #
 # The latest to near past vulnerabilities are reported below.
 #
+# aead? https://nvd.nist.gov/vuln/detail/CVE-2024-42229 # ID
 # ata? https://nvd.nist.gov/vuln/detail/CVE-2024-41087 # DoS, DT, ID
 # bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2022-48878 # DoS, DT, ID
 # bridge? https://nvd.nist.gov/vuln/detail/CVE-2024-44934 # DoS, DT, ID
@@ -240,6 +244,11 @@ RDEPEND="
 			$(gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
 		)
 		$(gen_eol_kernels_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
+	)
+	aead? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AEAD[@]})
+		)
 	)
 	ata? (
 		!custom-kernel? (
@@ -474,6 +483,9 @@ check_drivers() {
 	# Check for USE=custom-kernels only which bypass RDEPEND
 	use custom-kernel || return
 	local fs=0
+	if use aead ; then
+		check_kernel_version "crypto/aead" "${CVE_AEAD}" ${MULTISLOT_KERNEL_AEAD[@]}
+	fi
 	if use ata ; then
 		check_kernel_version "ata" "${CVE_ATA_41087}" ${MULTISLOT_KERNEL_ATA_41087[@]}
 	fi

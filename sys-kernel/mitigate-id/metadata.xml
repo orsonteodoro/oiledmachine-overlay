@@ -47,6 +47,9 @@
       This is recommended for Intel® CPUs since the USE flag coverage for
       microarchitectures is incomplete.
     </flag>
+    <flag name="aead">
+      Mitigate against information disclosure for the AEAD crypto driver.
+    </flag>
     <flag name="ata">
       Mitigate against information disclosure for the ATA driver.
     </flag>
