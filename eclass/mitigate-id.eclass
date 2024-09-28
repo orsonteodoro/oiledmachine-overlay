@@ -5799,7 +5799,8 @@ _mitigate_id_verify_mitigation_sls() {
 	; then
 # TODO
 # There is SLS mitigation for x86 in the kernel but no mitigation for arm64.
-ewarn "The kernel build files need to be modded for SLS support (-mharden-sls) for arm/arm64 support."
+ewarn "There is currently no mitigation for ARCH=${ARCH} for the kernel."
+ewarn "See CONFIG_HARDEN_SLS_ALL proposal to manually patch for SLS mitigation."
 	fi
 
 # This is default off in the kernel.
