@@ -2209,7 +2209,7 @@ apply_oiledmachine_overlay_patchset() {
 is_cromite_patch_non_fatal() {
 	local arg="${1}"
 	local L=(
-		"libjxl-0-8-2.patch"
+#		"libjxl-0-8-2.patch"
 		"Add-support-to-jxl.patch"
 	)
 	local x
