@@ -52,6 +52,7 @@ MULTISLOT_KERNEL_MD_RAID5=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.105" 
 MULTISLOT_KERNEL_MLX5=("6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_MSM=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_MT76=("5.15.163" "6.1.98" "6.6.39" "6.9.9")
+MULTISLOT_KERNEL_MWIFIEX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_NFSD=("6.10.8")
 MULTISLOT_KERNEL_NVME_45013=("6.10.7")
@@ -111,6 +112,7 @@ CVE_IWLWIFI_48918="CVE-2022-48918"
 CVE_IWLWIFI_48787="CVE-2022-48787"
 CVE_MAC80211="CVE-2024-43911"
 CVE_MLX5="CVE-2024-45019"
+CVE_MWIFIEX="CVE-2024-46755"
 CVE_NETFILTER="CVE-2024-45018"
 CVE_NF_TABLES="CVE-2024-27020"
 CVE_NVME_45013="CVE-2024-45013"
@@ -177,6 +179,7 @@ md-raid1
 md-raid5
 mlx5
 mt76
+mwifiex
 netfilter
 nfs
 nftables
@@ -251,6 +254,7 @@ REQUIRED_USE="
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
 # msm? https://nvd.nist.gov/vuln/detail/CVE-2024-45015 # DoS
 # mt76? https://nvd.nist.gov/vuln/detail/CVE-2024-42225 # DoS, DT, ID
+# mwifiex? https://nvd.nist.gov/vuln/detail/CVE-2024-46755 # DoS
 # nfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-45018 # DoS
 # nf_tables? https://nvd.nist.gov/vuln/detail/CVE-2022-48935 # DoS UAF
@@ -407,7 +411,14 @@ RDEPEND="
 	)
 	mt76? (
 		!custom-kernel? (
+			${WIFI_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MT76[@]})
+		)
+	)
+	mwifiex? (
+		!custom-kernel? (
+			${WIFI_RDEPEND}
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MWIFIEX[@]})
 		)
 	)
 	nfs? (
@@ -668,6 +679,9 @@ check_drivers() {
 	fi
 	if use mt76 ; then
 		check_kernel_version "mt76" "${CVE_MT76}" ${MULTISLOT_KERNEL_MT76[@]}
+	fi
+	if use mwifiex ; then
+		check_kernel_version "mwifiex" "${CVE_MWIFIEX}" ${MULTISLOT_KERNEL_MWIFIEX[@]}
 	fi
 	if use nfs ; then
 		fs=1
