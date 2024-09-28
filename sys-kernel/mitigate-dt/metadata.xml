@@ -77,8 +77,11 @@
       (A BIOS firmware update from the motherboard manufacturer may still be
       required if the firmware package doesn't apply to your model.)
     </flag>
+    <flag name="fscache">
+      Mitigate against data tampering for the FS-Cache filesystem.
+    </flag>
     <flag name="hfsplus">
-      Mitigate against Denial of Service for the HFS+ filesystem.
+      Mitigate against data tampering for the HFS+ filesystem.
     </flag>
     <flag name="ice">
       Mitigate against data tampering for the
@@ -91,7 +94,7 @@
       Mitigate against data tampering in the iwlwifi driver.
     </flag>
     <flag name="jfs">
-      Mitigate against Denial of Service in the JFS filesystem.
+      Mitigate against data tampering in the JFS filesystem.
     </flag>
     <flag name="md-raid1">
       Mitigate against data tampering for the md/raid1 driver.

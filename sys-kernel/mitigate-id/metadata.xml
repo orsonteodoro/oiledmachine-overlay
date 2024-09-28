@@ -84,7 +84,10 @@
       Mitigate against information disclosure for FUSE based filesystems.
     </flag>
     <flag name="hfsplus">
-      Mitigate against Denial of Service for the HFS+ filesystem.
+      Mitigate against information disclosure for the HFS+ filesystem.
+    </flag>
+    <flag name="fscache">
+      Mitigate against information disclosure for the FS-Cache filesystem.
     </flag>
     <flag name="ice">
       Mitigate against information disclosure for the
@@ -94,7 +97,7 @@
       Mitigate against information disclosure in ipv6.
     </flag>
     <flag name="jfs">
-      Mitigate against Denial of Service in the JFS filesystem.
+      Mitigate against information disclosure in the JFS filesystem.
     </flag>
     <flag name="kvm">
       Mitigate against information disclosure in KVM.

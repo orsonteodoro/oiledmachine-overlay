@@ -69,7 +69,7 @@
       Mitigate against Denial of Service for the Btrfs filesystem.
     </flag>
     <flag name="cdrom">
-      Mitigate against data tampering for the cdrom driver.
+      Mitigate against Denial of Service for the cdrom driver.
     </flag>
     <flag name="cougar">
       Mitigate against Denial of Service for the Cougar 500K gaming keyboard.
@@ -87,6 +87,9 @@
     </flag>
     <flag name="f2fs">
       Mitigate against Denial of Service for the F2FS filesystem.
+    </flag>
+    <flag name="fscache">
+      Mitigate against Denial of Service for the FS-Cache filesystem.
     </flag>
     <flag name="hfs">
       Mitigate against Denial of Service for the HFS filesystem.

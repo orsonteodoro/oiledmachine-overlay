@@ -32,6 +32,7 @@ MULTISLOT_KERNEL_COUGAR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6
 MULTISLOT_KERNEL_EXT4=("6.10.1")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
+MULTISLOT_KERNEL_FSCACHE=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_FUSE=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_HFSPLUS=("4.19.319" "5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_I915=("5.10.211" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
@@ -64,6 +65,7 @@ CVE_COUGAR="CVE-2024-46747"
 CVE_EXT4="CVE-2024-42257"
 CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
+CVE_FSCACHE="CVE-2024-46786"
 CVE_FUSE="CVE-2024-44947"
 CVE_HFSPLUS="CVE-2024-41059"
 CVE_I915="CVE-2024-41092"
@@ -122,6 +124,7 @@ cdrom
 cougar
 ext4
 f2fs
+fscache
 fuse
 hfsplus
 ice
@@ -181,6 +184,7 @@ REQUIRED_USE="
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-42257 # DoS, DT, ID
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
+# fscache? https://nvd.nist.gov/vuln/detail/CVE-2024-46786 # DoS, DT, ID UAF
 # fuse? https://nvd.nist.gov/vuln/detail/CVE-2024-44947 # ID
 # hfsplus? https://nvd.nist.gov/vuln/detail/CVE-2024-41059 # DoS, DT, ID
 # ice? https://nvd.nist.gov/vuln/detail/CVE-2024-46766 # DoS, DT, ID
@@ -266,6 +270,12 @@ RDEPEND="
 		!custom-kernel? (
 			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_F2FS[@]})
+		)
+	)
+	fscache? (
+		!custom-kernel? (
+			${FS_RDEPEND}
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FSCACHE[@]})
 		)
 	)
 	fuse? (
@@ -463,6 +473,10 @@ check_drivers() {
 	if use f2fs ; then
 		fs=1
 		check_kernel_version "f2fs" "${CVE_F2FS}" ${MULTISLOT_KERNEL_F2FS[@]}
+	fi
+	if use fscache ; then
+		fs=1
+		check_kernel_version "fscache" "${CVE_FSCACHE}" ${MULTISLOT_KERNEL_FSCACHE[@]}
 	fi
 	if use fuse ; then
 		fs=1

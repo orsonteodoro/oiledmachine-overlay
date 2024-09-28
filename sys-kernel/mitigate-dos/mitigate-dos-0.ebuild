@@ -22,6 +22,9 @@ EOL_VERSIONS=(
 # For zero-tolerance mode
 MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52" "6.10.11" "6.11")
 
+# Arch specific
+MULTISLOT_KERNEL_POWERPC_46797=("6.6.51" "6.10.10")
+
 # More than one row is added to increase LTS coverage.
 MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_APPARMOR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
@@ -57,6 +60,7 @@ MULTISLOT_KERNEL_NOUVEAU=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_RADEON=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
+MULTISLOT_KERNEL_FSCACHE=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_MAC80211=("6.10.5")
 MULTISLOT_KERNEL_NETFILTER=("5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" "6.6.29" "6.8.8")
@@ -88,6 +92,7 @@ CVE_COUGAR="CVE-2024-46747"
 CVE_EXT4="CVE-2024-43828"
 CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
+CVE_FSCACHE="CVE-2024-46786"
 CVE_HFS="CVE-2024-42311"
 CVE_HFSPLUS="CVE-2024-41059"
 CVE_I915="CVE-2024-41092"
@@ -110,6 +115,7 @@ CVE_NETFILTER="CVE-2024-45018"
 CVE_NF_TABLES="CVE-2024-27020"
 CVE_NVME_45013="CVE-2024-45013"
 CVE_NVME_41073="CVE-2024-41073"
+CVE_POWERPC_46797="CVE-2024-46797"
 CVE_RTW88="CVE-2024-46760"
 CVE_SCTP="CVE-2024-44935"
 CVE_SELINUX="CVE-2022-48740"
@@ -158,6 +164,7 @@ cdrom
 cougar
 ext4
 f2fs
+fscache
 hfs
 hfsplus
 ice
@@ -230,6 +237,7 @@ REQUIRED_USE="
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-43828 # DoS
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
+# fscache? https://nvd.nist.gov/vuln/detail/CVE-2024-46786 # DoS, DT, ID UAF
 # hfs? https://nvd.nist.gov/vuln/detail/CVE-2024-42311 # DoS
 # hfsplus? https://nvd.nist.gov/vuln/detail/CVE-2024-41059 # DoS, DT, ID
 # ice? https://nvd.nist.gov/vuln/detail/CVE-2024-46766 # DoS, DT, ID
@@ -248,6 +256,7 @@ REQUIRED_USE="
 # nf_tables? https://nvd.nist.gov/vuln/detail/CVE-2022-48935 # DoS UAF
 # nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-45013 # DoS
 # nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-41073 # DoS, DT, ID
+# powerpc? https://nvd.nist.gov/vuln/detail/CVE-2024-46797 # DoS
 # rtw88? https://nvd.nist.gov/vuln/detail/CVE-2024-46760 # DoS
 # sctp? https://nvd.nist.gov/vuln/detail/CVE-2024-44935 # DoS
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
@@ -345,6 +354,12 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_F2FS[@]})
 		)
 	)
+	fscache? (
+		!custom-kernel? (
+			${FS_RDEPEND}
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FSCACHE[@]})
+		)
+	)
 	hfs? (
 		!custom-kernel? (
 			${FS_RDEPEND}
@@ -415,6 +430,16 @@ RDEPEND="
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NVME_45013[@]})
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NVME_41073[@]})
+		)
+	)
+	ppc? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_POWERPC_46797[@]})
+		)
+	)
+	ppc64? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_POWERPC_46797[@]})
 		)
 	)
 	rtw88? (
@@ -605,6 +630,10 @@ check_drivers() {
 		fs=1
 		check_kernel_version "f2fs" "${CVE_F2FS}" ${MULTISLOT_KERNEL_F2FS[@]}
 	fi
+	if use fscache ; then
+		fs=1
+		check_kernel_version "fscache" "${CVE_FSCACHE}" ${MULTISLOT_KERNEL_FSCACHE[@]}
+	fi
 	if use hfs ; then
 		fs=1
 		check_kernel_version "hfs" "${CVE_HFS}" ${MULTISLOT_KERNEL_HFS[@]}
@@ -653,6 +682,9 @@ check_drivers() {
 	if use nvme ; then
 		check_kernel_version "nvme" "${CVE_NVME_45013}" ${MULTISLOT_KERNEL_NVME_45013[@]}
 		check_kernel_version "nvme" "${CVE_NVME_41073}" ${MULTISLOT_KERNEL_NVME_41073[@]}
+	fi
+	if use ppc64 || use ppc ; then
+		check_kernel_version "powerpc" "${CVE_POWERPC_46797}" ${MULTISLOT_KERNEL_POWERPC_46797[@]}
 	fi
 	if use rtw88 ; then
 		wifi=1
