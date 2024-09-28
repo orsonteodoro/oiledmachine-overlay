@@ -34,6 +34,7 @@ MULTISLOT_KERNEL_BLUETOOTH=("5.10.165" "5.15.90" "6.1.8")
 MULTISLOT_KERNEL_BTRFS=("6.6.49" "6.10.8")
 MULTISLOT_KERNEL_CDROM=("6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_COUGAR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
+MULTISLOT_KERNEL_ECDH=("5.15.162" "6.1.97" "6.6.37" "6.10", "6.11")
 MULTISLOT_KERNEL_EXT4=("6.10.1")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
@@ -69,6 +70,7 @@ CVE_BLUETOOTH="CVE-2022-48878"
 CVE_BTRFS="CVE-2024-46687"
 CVE_CDROM="CVE-2024-42136"
 CVE_COUGAR="CVE-2024-46747"
+CVE_ECDH="CVE-2024-42098"
 CVE_EXT4="CVE-2024-42257"
 CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
@@ -133,6 +135,7 @@ bridge
 btrfs
 cdrom
 cougar
+ecdh
 ext4
 f2fs
 fscache
@@ -195,6 +198,7 @@ REQUIRED_USE="
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46687 # DoS, DT, ID
 # cdrom? https://nvd.nist.gov/vuln/detail/CVE-2024-42136 # DoS, DT, ID
 # cougar? https://nvd.nist.gov/vuln/detail/CVE-2024-46747 # DoS, DT, ID
+# ecdh? https://nvd.nist.gov/vuln/detail/CVE-2024-46747 # Unofficial: ID
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-42257 # DoS, DT, ID
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
@@ -279,6 +283,11 @@ RDEPEND="
 	cougar? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_COUGAR[@]})
+		)
+	)
+	ecdh? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_ECDH[@]})
 		)
 	)
 	ext4? (
@@ -504,6 +513,9 @@ check_drivers() {
 	fi
 	if use cougar ; then
 		check_kernel_version "hid/hid-cougar" "${CVE_COUGAR}" ${MULTISLOT_KERNEL_COUGAR[@]}
+	fi
+	if use ecdh ; then
+		check_kernel_version "crypto/ecdh" "${CVE_ECDH}" ${MULTISLOT_KERNEL_ECDH[@]}
 	fi
 	if use ext4 ; then
 		fs=1

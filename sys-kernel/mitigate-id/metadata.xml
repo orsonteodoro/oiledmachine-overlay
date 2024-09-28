@@ -75,6 +75,9 @@
     <flag name="custom-kernel">
       Prevent vendor lock-in when doing kernel mitigation checks.
     </flag>
+    <flag name="ecdh">
+      Mitigate against information disclosure in the ecdh symmetric key exchange.
+    </flag>
     <flag name="ext4">
       Mitigate against information disclosure for the ext4 filesystem.
     </flag>
