@@ -5799,7 +5799,7 @@ _mitigate_id_verify_mitigation_sls() {
 # TODO
 # There is SLS for x86 in the kernel but not for arm64.
 		if use zero-tolerance ; then
-ewarn "The kernel build files need to be modded SLS support (-mharden-sls) for arm/arm64 support."
+ewarn "The kernel build files need to be modded for SLS support (-mharden-sls) for arm/arm64 support."
 		fi
 	fi
 
