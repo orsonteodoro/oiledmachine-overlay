@@ -22,6 +22,9 @@ EOL_VERSIONS=(
 # For zero-tolerance mode
 MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52" "6.10.11" "6.11")
 
+# Core
+MULTISLOT_KERNEL_LOCKING=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10" "6.11")
+
 # Arch specific
 MULTISLOT_KERNEL_POWERPC_46797=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_KVM_ARM64_26598=("5.4.269" "5.10.209" "5.15.148" "6.1.75" "6.6.14" "6.7.2")
@@ -118,6 +121,7 @@ CVE_KVM_ARM64_46707="CVE-2024-46707"
 CVE_KVM_POWERPC_41070="CVE-2024-41070"
 CVE_KVM_S390_43819="CVE-2024-43819"
 CVE_KVM_X86_39483="CVE-2024-39483"
+CVE_LOCKING="CVE-2024-46829"
 CVE_MAC80211="CVE-2024-43911"
 CVE_MD_RAID1="CVE-2024-45023"
 CVE_MD_RAID5="CVE-2024-43914"
@@ -248,6 +252,8 @@ REQUIRED_USE="
 #
 # The latest to near past vulnerabilities are reported below.
 #
+# locking - https://nvd.nist.gov/vuln/detail/CVE-2024-46829 # Unofficial: DoS
+#
 # ath12k? https://nvd.nist.gov/vuln/detail/CVE-2024-46827 # Unofficial: DoS
 # apparmor? https://nvd.nist.gov/vuln/detail/CVE-2024-46721 # DoS
 # ata? https://nvd.nist.gov/vuln/detail/CVE-2024-41087 # DoS, DT, ID
@@ -313,6 +319,12 @@ REQUIRED_USE="
 # Usually stable versions get security checked.
 # The betas and dev versions usually do not get security reports.
 #
+
+# From the kernel/ or mm/ subfolder
+CORE_RDEPEND="
+	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_LOCKING[@]})
+"
+
 FS_RDEPEND="
 	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS[@]})
 "
@@ -328,6 +340,7 @@ RDEPEND="
 			$(gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
 		)
 		$(gen_eol_kernels_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
+		${CORE_RDEPEND}
 	)
 	ath12k? (
 		!custom-kernel? (
