@@ -38,6 +38,12 @@
 
   -->
   <use>
+    <flag name="aacraid">
+      Mitigate against data tampering for the AAC RAID driver.
+    </flag>
+    <flag name="ata">
+      Mitigate against data tampering for the ATA driver.
+    </flag>
     <flag name="auto">
       Auto resolves firmware and kernel version required for full mitigation,
       instead of manually selecting microarchitecture which determines the
@@ -46,9 +52,6 @@
 
       This is recommended for Intel® CPUs since the USE flag coverage for
       microarchitectures is incomplete.
-    </flag>
-    <flag name="ata">
-      Mitigate against data tampering for the ATA driver.
     </flag>
     <flag name="bluetooth">
       Mitigate against data tampering for the Bluetooth® subsystem.

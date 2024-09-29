@@ -38,6 +38,15 @@
 
   -->
   <use>
+    <flag name="aacraid">
+      Mitigate against information disclosure for the AAC RAID driver.
+    </flag>
+    <flag name="aead">
+      Mitigate against information disclosure for the AEAD crypto driver.
+    </flag>
+    <flag name="ata">
+      Mitigate against information disclosure for the ATA driver.
+    </flag>
     <flag name="auto">
       Auto resolves firmware and kernel version required for full mitigation,
       instead of manually selecting microarchitecture which determines the
@@ -46,12 +55,6 @@
 
       This is recommended for Intel® CPUs since the USE flag coverage for
       microarchitectures is incomplete.
-    </flag>
-    <flag name="aead">
-      Mitigate against information disclosure for the AEAD crypto driver.
-    </flag>
-    <flag name="ata">
-      Mitigate against information disclosure for the ATA driver.
     </flag>
     <flag name="bluetooth">
       Mitigate against information disclosure for the Bluetooth® subsystem.

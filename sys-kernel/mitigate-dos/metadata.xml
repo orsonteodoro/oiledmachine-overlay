@@ -37,6 +37,9 @@
 
   -->
   <use>
+    <flag name="aacraid">
+      Mitigate against Denial of Service for the AAC RAID driver.
+    </flag>
     <flag name="apparmor">
       Mitigate against Denial of Service for the AppArmor security module.
     </flag>

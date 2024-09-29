@@ -35,8 +35,10 @@ MULTISLOT_KERNEL_KVM_S390_43819=("6.10.3")
 MULTISLOT_KERNEL_KVM_X86_39483=("6.4" "6.6.34" "6.9.5")
 
 # More than one row is added to increase LTS coverage.
+MULTISLOT_KERNEL_AACRAID=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.108" "6.6.49" "6.10.8")
 MULTISLOT_KERNEL_AMDGPU_46725=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_AMDGPU_46851=("5.10.V" "5.15.V" "6.1.109" "6.6.50" "6.10.9" "6.11")
+MULTISLOT_KERNEL_AMDGPU_46850=("6.10.11" "6.11")
 MULTISLOT_KERNEL_APPARMOR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
 MULTISLOT_KERNEL_ATH12K=("6.6.51" "6.10.10" "6.11")
@@ -60,6 +62,7 @@ MULTISLOT_KERNEL_IWLWIFI_48918=("5.15.27" "5.16.13")
 MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
 MULTISLOT_KERNEL_JFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
+MULTISLOT_KERNEL_MD_RAID456=("5.15.V" "6.1.V" "6.6.V" "6.10" "6.11")
 MULTISLOT_KERNEL_MD_RAID5=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_MLX5_45019=("6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_MLX5_46857=("6.1.111" "6.6.52" "6.10.11" "6.11")
@@ -96,6 +99,7 @@ MULTISLOT_KERNEL_XEN=("6.6.51" "6.10.10")
 
 CVE_AMDGPU_46725="CVE-2024-46725"
 CVE_AMDGPU_46851="CVE-2024-46851"
+CVE_AMDGPU_46850="CVE-2024-46850"
 CVE_APPARMOR="CVE-2024-46721"
 CVE_ATA_41087="CVE-2024-41087"
 CVE_ATH12K="CVE-2024-46827"
@@ -130,6 +134,7 @@ CVE_LOCKING="CVE-2024-46829"
 CVE_MAC80211="CVE-2024-43911"
 CVE_MD_RAID1="CVE-2024-45023"
 CVE_MD_RAID5="CVE-2024-43914"
+CVE_MD_RAID456="CVE-2024-26962"
 CVE_MM_46847="CVE-2024-46847"
 CVE_NET_BRIDGE="CVE-2024-44934"
 CVE_NFSD="CVE-2024-46696"
@@ -185,6 +190,7 @@ VIDEO_CARDS=(
 )
 IUSE="
 ${VIDEO_CARDS[@]}
+aacraid
 ata
 ath12k
 apparmor
@@ -209,6 +215,7 @@ jfs
 samba
 max-uptime
 md-raid1
+md-raid456
 md-raid5
 mlx5
 mt76
@@ -268,6 +275,7 @@ REQUIRED_USE="
 #
 # locking - https://nvd.nist.gov/vuln/detail/CVE-2024-46829 # Unofficial: DoS
 #
+# aacraid? https://nvd.nist.gov/vuln/detail/CVE-2024-46673 # DoS, DT, ID
 # ath12k? https://nvd.nist.gov/vuln/detail/CVE-2024-46827 # Unofficial: DoS
 # apparmor? https://nvd.nist.gov/vuln/detail/CVE-2024-46721 # DoS
 # ata? https://nvd.nist.gov/vuln/detail/CVE-2024-41087 # DoS, DT, ID
@@ -299,6 +307,7 @@ REQUIRED_USE="
 # kvm https://nvd.nist.gov/vuln/detail/CVE-2024-39483 # DoS
 # mac80211? https://nvd.nist.gov/vuln/detail/CVE-2024-43911 # DoS
 # md-raid1? https://nvd.nist.gov/vuln/detail/CVE-2024-45023 # DT, DoS
+# md-raid456? https://nvd.nist.gov/vuln/detail/CVE-2024-26962 # Unofficial: DoS
 # md-raid5? https://nvd.nist.gov/vuln/detail/CVE-2024-43914 # DOS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-46857 # Unofficial: DoS
@@ -321,6 +330,7 @@ REQUIRED_USE="
 # tls? https://nvd.nist.gov/vuln/detail/CVE-2024-36489 # DoS
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46851 # Unofficial: DoS
+# video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46850 # Unofficial: DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-46867 # Unofficial: DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-46683 # DoS, ID, DT
@@ -359,6 +369,11 @@ RDEPEND="
 		)
 		$(gen_eol_kernels_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
 		${CORE_RDEPEND}
+	)
+	aacraid? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AACRAID[@]})
+		)
 	)
 	ath12k? (
 		!custom-kernel? (
@@ -490,6 +505,11 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MD_RAID1[@]})
 		)
 	)
+	md-raid456? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MD_RAID456[@]})
+		)
+	)
 	md-raid5? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MD_RAID5[@]})
@@ -594,6 +614,7 @@ RDEPEND="
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU_46725[@]})
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU_46851[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU_46850[@]})
 		)
 	)
 	video_cards_freedreno? (
@@ -713,6 +734,9 @@ check_drivers() {
 	check_kernel_version "kernel/locking" "${CVE_LOCKING}" ${MULTISLOT_KERNEL_LOCKING[@]}
 	check_kernel_version "mm" "${CVE_MM_46847}" ${MULTISLOT_KERNEL_MM_46847[@]}
 
+	if use aacraid ; then
+		check_kernel_version "scsi/aacraid" "${CVE_AACRAID}" ${MULTISLOT_KERNEL_AACRAID[@]}
+	fi
 	if use ath12k ; then
 		wifi=1
 		check_kernel_version "ath12k" "${CVE_ATH12K}" ${MULTISLOT_KERNEL_ATH12K[@]}
@@ -805,6 +829,9 @@ check_drivers() {
 	if use md-raid1 ; then
 		check_kernel_version "md/raid1" "${CVE_MD_RAID1}" ${MULTISLOT_KERNEL_MD_RAID1[@]}
 	fi
+	if use md-raid456 ; then
+		check_kernel_version "md/raid456" "${CVE_MD_RAID456}" ${MULTISLOT_KERNEL_MD_RAID456[@]}
+	fi
 	if use md-raid5 ; then
 		check_kernel_version "md/raid5" "${CVE_MD_RAID5}" ${MULTISLOT_KERNEL_MD_RAID5[@]}
 	fi
@@ -861,6 +888,7 @@ check_drivers() {
 	if use video_cards_amdgpu ; then
 		check_kernel_version "amdgpu" "${CVE_AMDGPU_46725}" ${MULTISLOT_KERNEL_AMDGPU_46725[@]}
 		check_kernel_version "amdgpu" "${CVE_AMDGPU_46851}" ${MULTISLOT_KERNEL_AMDGPU_46851[@]}
+		check_kernel_version "amdgpu" "${CVE_AMDGPU_46850}" ${MULTISLOT_KERNEL_AMDGPU_46850[@]}
 	fi
 	if use video_cards_freedreno ; then
 		check_kernel_version "msm" "${CVE_MSM}" ${MULTISLOT_KERNEL_MSM[@]}

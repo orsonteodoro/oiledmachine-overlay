@@ -27,6 +27,7 @@ MULTISLOT_KERNEL_KVM_ARM64_26598=("5.4.269" "5.10.209" "5.15.148" "6.1.75" "6.6.
 MULTISLOT_KERNEL_KVM_POWERPC_41070=("5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
 
 # More than one row is added to increase LTS coverage.
+MULTISLOT_KERNEL_AACRAID=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.108" "6.6.49" "6.10.8")
 MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
 MULTISLOT_KERNEL_BLUETOOTH_48878=("5.10.165" "5.15.90" "6.1.8")
@@ -125,6 +126,7 @@ VIDEO_CARDS=(
 )
 IUSE="
 ${VIDEO_CARDS[@]}
+aacraid
 ata
 bluetooth
 bridge
@@ -193,6 +195,7 @@ REQUIRED_USE="
 #
 # The latest to near past vulnerabilities are reported below.
 #
+# aacraid? https://nvd.nist.gov/vuln/detail/CVE-2024-46673 # DoS, DT, ID
 # ata? https://nvd.nist.gov/vuln/detail/CVE-2024-41087 # DoS, DT, ID
 # bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2022-48878 # DoS, DT, ID
 # bridge? https://nvd.nist.gov/vuln/detail/CVE-2024-44934 # DoS, DT, ID
@@ -244,6 +247,11 @@ RDEPEND="
 			$(gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
 		)
 		$(gen_eol_kernels_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
+	)
+	aacraid? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AACRAID[@]})
+		)
 	)
 	ata? (
 		!custom-kernel? (
@@ -479,6 +487,9 @@ check_drivers() {
 	# Check for USE=custom-kernels only which bypass RDEPEND
 	use custom-kernel || return
 	local fs=0
+	if use aacraid ; then
+		check_kernel_version "scsi/aacraid" "${CVE_AACRAID}" ${MULTISLOT_KERNEL_AACRAID[@]}
+	fi
 	if use ata ; then
 		check_kernel_version "ata" "${CVE_ATA_41087}" ${MULTISLOT_KERNEL_ATA_41087[@]}
 	fi
