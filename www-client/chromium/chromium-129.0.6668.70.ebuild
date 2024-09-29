@@ -807,7 +807,8 @@ REQUIRED_USE+="
 "
 if is_cromite_compatible ; then
 	# USE=pgo is default ON in Chromite but dropped for user choice.
-	# USE=official is default ON in Chromite but this ebuild reserves it for authentic Chromium.
+	# USE=official is default ON in Chromite, but this ebuild reserves it
+	# for authentic Chromium.
 	#
 	# The rest are the same defaults as the patchset.
 	#
@@ -836,7 +837,9 @@ if is_cromite_compatible ; then
 	"
 fi
 if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
-	# USE=widevine is default ON in ungoogled-chromium but dropped for user choice.
+	# USE=widevine is default ON, implying that it is allowed, in
+	# ungoogled-chromium but dropped from being forced ON to allow the user
+	# to decide.
 	#
 	# The rest are the same defaults as the patchset.
 	#
