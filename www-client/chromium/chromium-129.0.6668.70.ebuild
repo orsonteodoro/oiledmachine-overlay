@@ -2265,7 +2265,11 @@ einfo "Applying the Cromite patchset ..."
 			local x
 			for x in ${CROMITE_PATCH_BLACKLIST} ; do
 einfo "Removing ${x} from cromite"
-				rm "build/patches/${x}" || die
+				if [[ -e "build/cromite_patches_list_new.txt" ]] ; then
+					sed -i -e "/${x}/d" "build/cromite_patches_list_new.txt" || die
+				else
+					sed -i -e "/${x}/d" "build/cromite_patches_list.txt" || die
+				fi
 			done
 		fi
 
@@ -2331,6 +2335,16 @@ einfo "Applying ${x} ..."
 	popd >/dev/null 2>&1 || die
 }
 
+_apply_ungoogled_chromium_patches() {
+	pushd "${S}" >/dev/null 2>&1 || die
+		local x
+		for x in $(cat "${S_UNGOOGLED_CHROMIUM}/patches/series") ; do
+#			[[ "${x}" =~ "0001-fix-building-without-safebrowsing.patch" ]] && die
+			eapply "${S_UNGOOGLED_CHROMIUM}/patches/${x}"
+		done
+	popd >/dev/null 2>&1 || die
+}
+
 apply_ungoogled_chromium_patchset() {
 einfo "Applying the ungoogled-chromium patchset ..."
 	pushd "${S_UNGOOGLED_CHROMIUM}" >/dev/null 2>&1 || die
@@ -2359,11 +2373,10 @@ einfo "Removing ${x} from ungoogled-chromium"
 			"${S}" \
 			"pruning.list" \
 			|| die
-		edo "utils/patches.py" \
-			"apply" \
-			"${S}" \
-			"patches" \
-			|| die
+
+	# Use this instead of utils/patches.py for more control
+		_apply_ungoogled_chromium_patches
+
 		edo "utils/domain_substitution.py" \
 			"apply" \
 			-r "domain_regex.list" \
@@ -2374,7 +2387,6 @@ einfo "Removing ${x} from ungoogled-chromium"
 	popd >/dev/null 2>&1 || die
 }
 
-#omt
 prepare_chromite_with_ungoogled_chromium() {
 	# Fix hunk collisions.
 	filterdiff \
@@ -2388,6 +2400,89 @@ prepare_chromite_with_ungoogled_chromium() {
 	mv \
 		"${S_CROMITE}/build/patches/Fix-chromium-build-bugs.patch"{".t",""} \
 		|| die
+
+
+	# Fixed patches
+	local L=(
+		# source;dest
+		"${FILESDIR}/ungoogled-chromium/129.0.6668.70-1/patches/core/inox-patchset/0001-fix-building-without-safebrowsing.patch;${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}/patches/core/inox-patchset"
+	)
+	local x
+	for x in ${L[@]} ; do
+		cp -a "${x%;*}" "${x#*;}" || die
+	done
+
+	# Conflicts
+	local rows=(
+#		 chromite_patch;ungoogle_chromium_patch
+#		"Chrome-web-store-protection.patch;0001-fix-building-without-safebrowsing.patch"
+		"autofill-miscellaneous.patch;0003-disable-autofill-download-manager.patch"
+		"ungoogled-chromium-no-special-hosts-domains.patch;disable-google-host-detection.patch"
+		"ungoogled-chromium-Disable-untraceable-URLs.patch;all-add-trk-prefixes-to-possibly-evil-connections.patch"
+		"ungoogled-chromium-Disable-untraceable-URLs.patch;disable-untraceable-urls.patch"
+	)
+
+	# C_VS_UC_PREFERENCE - space separated list in the format of which patch you prefer.
+	# C_VS_UC_PREFERENCE="Chrome-web-store-protection.patch autofill-miscellaneous.patch ..."
+
+	is_user_choice_cromite() {
+		local user_choices="${C_VS_UC_PREFERENCE}"
+		local user_choice
+		for user_choice in ${user_choices} ; do
+			local row
+			for row in ${rows[@]} ; do
+				local cromite_patch="${row%;*}"
+				[[ "${user_choice}" == "${cromite_patch}" ]] && return 0
+			done
+		done
+		return 1
+	}
+
+	is_user_choice_ungoogled_chromium() {
+		local user_choices="${C_VS_UC_PREFERENCE}"
+		local user_choice
+		for user_choice in ${user_choices} ; do
+			local row
+			for row in ${rows[@]} ; do
+				local ungoogled_chromium_patch="${row#*;}"
+				[[ "${user_choice}" == "${ungoogled_chromium_patch}" ]] && return 0
+			done
+		done
+		return 1
+	}
+
+	if [[ -z "${C_VS_UC_PREFERENCE}" ]] ; then
+eerror "C_VS_UC_PREFERENCE is empty defined.  See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\` for details"
+		die
+	fi
+
+	local row
+	for row in ${rows[@]} ; do
+		local cromite_patch=$(echo "${row}" | cut -f 1 -d ";")
+		local ungoogle_chromium_patch=$(echo "${row}" | cut -f 2 -d ";")
+		if is_user_choice_cromite ; then
+			local x="${ungoogle_chromium_patch}"
+			sed -i -e "/${x}/d" "${S_UNGOOGLED_CHROMIUM}/patches/series" || die
+		elif is_user_choice_ungoogled_chromium ; then
+			local x="${chromite_patch}"
+			if [[ -e "build/cromite_patches_list_new.txt" ]] ; then
+				sed -i -e "/${x}/d" "${S_CROMITE}/build/cromite_patches_list_new.txt" || die
+			else
+				sed -i -e "/${x}/d" "${S_CROMITE}/build/cromite_patches_list.txt" || die
+			fi
+		else
+eerror
+eerror "Invalid choice.  You must choose on of the patches on the right to resolve this conflict."
+eerror
+eerror "Valid values:"
+eerror
+eerror "         Chromite patch:  ${chromite_patch}"
+eerror "ungoogle-chromium patch:  ${ungoogle_chromium_patch}"
+eerror
+			die
+		fi
+	done
+
 }
 
 src_prepare() {
