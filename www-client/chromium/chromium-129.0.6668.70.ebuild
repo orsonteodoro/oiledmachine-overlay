@@ -2425,6 +2425,12 @@ prepare_chromite_with_ungoogled_chromium() {
 	# C_VS_UC_PREFERENCE - space separated list in the format of which patch you prefer.
 	# C_VS_UC_PREFERENCE="Chrome-web-store-protection.patch autofill-miscellaneous.patch ..."
 
+	if [[ -z "${C_VS_UC_PREFERENCE}" ]] ; then
+einfo "Preferring Cromite over ungoogled-chromium"
+# TODO: remove comment
+		#C_VS_UC_PREFERENCE=${C_VS_UC_PREFERENCE:-"autofill-miscellaneous.patch ungoogled-chromium-no-special-hosts-domains.patch ungoogled-chromium-Disable-untraceable-URLs.patch"}
+	fi
+
 	is_user_choice_cromite() {
 		local user_choices="${C_VS_UC_PREFERENCE}"
 		local user_choice
@@ -2450,11 +2456,6 @@ prepare_chromite_with_ungoogled_chromium() {
 		done
 		return 1
 	}
-
-	if [[ -z "${C_VS_UC_PREFERENCE}" ]] ; then
-eerror "C_VS_UC_PREFERENCE is empty defined.  See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\` for details"
-		die
-	fi
 
 	local row
 	for row in ${rows[@]} ; do
