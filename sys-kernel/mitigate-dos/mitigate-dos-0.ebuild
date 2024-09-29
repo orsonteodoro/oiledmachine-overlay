@@ -35,7 +35,8 @@ MULTISLOT_KERNEL_KVM_S390_43819=("6.10.3")
 MULTISLOT_KERNEL_KVM_X86_39483=("6.4" "6.6.34" "6.9.5")
 
 # More than one row is added to increase LTS coverage.
-MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
+MULTISLOT_KERNEL_AMDGPU_46725=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
+MULTISLOT_KERNEL_AMDGPU_46851=("5.10.V" "5.15.V" "6.1.108" "6.6.50" "6.10.9" "6.11")
 MULTISLOT_KERNEL_APPARMOR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
 MULTISLOT_KERNEL_ATH12K=("6.6.51" "6.10.10" "6.11")
@@ -93,7 +94,8 @@ MULTISLOT_KERNEL_XE_46683=("6.10.8")
 MULTISLOT_KERNEL_XE_46867=("6.10.11" "6.11")
 MULTISLOT_KERNEL_XEN=("6.6.51" "6.10.10")
 
-CVE_AMDGPU="CVE-2024-46725"
+CVE_AMDGPU_46725="CVE-2024-46725"
+CVE_AMDGPU_46851="CVE-2024-46851"
 CVE_APPARMOR="CVE-2024-46721"
 CVE_ATA_41087="CVE-2024-41087"
 CVE_ATH12K="CVE-2024-46827"
@@ -255,6 +257,12 @@ REQUIRED_USE="
 # VM guest makes host slow and responsive, CVSS 6.0 # DoS
 #
 
+# Ebuild policy for automatic classification for rows marked *unofficial*:
+#
+# Sensitive data read || incomplete sanitization : ID
+# Possible privilege escalation || data corruption || altered permissions :  DT
+# Possible crash || (!ID && !DT):  DoS
+
 #
 # The latest to near past vulnerabilities are reported below.
 #
@@ -312,6 +320,7 @@ REQUIRED_USE="
 # tcp? https://nvd.nist.gov/vuln/detail/CVE-2024-42154 # DoS, DT, ID
 # tls? https://nvd.nist.gov/vuln/detail/CVE-2024-36489 # DoS
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
+# video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46851 # Unofficial: DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-46867 # Unofficial: DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-46683 # DoS, ID, DT
@@ -583,7 +592,8 @@ RDEPEND="
 	)
 	video_cards_amdgpu? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU_46725[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU_46851[@]})
 		)
 	)
 	video_cards_freedreno? (
@@ -849,7 +859,8 @@ check_drivers() {
 		check_kernel_version "tls" "${CVE_TLS}" ${MULTISLOT_KERNEL_TLS[@]}
 	fi
 	if use video_cards_amdgpu ; then
-		check_kernel_version "amdgpu" "${CVE_AMDGPU}" ${MULTISLOT_KERNEL_AMDGPU[@]}
+		check_kernel_version "amdgpu" "${CVE_AMDGPU_46725}" ${MULTISLOT_KERNEL_AMDGPU_46725[@]}
+		check_kernel_version "amdgpu" "${CVE_AMDGPU_46851}" ${MULTISLOT_KERNEL_AMDGPU_46851[@]}
 	fi
 	if use video_cards_freedreno ; then
 		check_kernel_version "msm" "${CVE_MSM}" ${MULTISLOT_KERNEL_MSM[@]}

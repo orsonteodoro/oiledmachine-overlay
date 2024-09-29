@@ -188,6 +188,12 @@ REQUIRED_USE="
 # VM guest makes host slow and responsive, CVSS 6.0 # DoS
 #
 
+# Ebuild policy for automatic classification for rows marked *unofficial*:
+#
+# Sensitive data read || incomplete sanitization : ID
+# Possible privilege escalation || data corruption || altered permissions :  DT
+# Possible crash || (!ID && !DT):  DoS
+
 #
 # The latest to near past vulnerabilities are reported below.
 #
