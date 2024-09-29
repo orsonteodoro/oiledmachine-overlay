@@ -24,6 +24,7 @@ MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1
 
 # Core
 MULTISLOT_KERNEL_LOCKING=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10" "6.11")
+MULTISLOT_KERNEL_MM_46847=("6.6.51" "6.10.10" "6.11")
 
 # Arch specific
 MULTISLOT_KERNEL_POWERPC_46797=("6.6.51" "6.10.10")
@@ -59,7 +60,8 @@ MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15
 MULTISLOT_KERNEL_JFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
 MULTISLOT_KERNEL_MD_RAID5=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.105" "6.6.46" "6.10.5")
-MULTISLOT_KERNEL_MLX5=("6.1.107" "6.6.48" "6.10.7")
+MULTISLOT_KERNEL_MLX5_45019=("6.1.107" "6.6.48" "6.10.7")
+MULTISLOT_KERNEL_MLX5_46857=("6.1.111" "6.6.52" "6.10.11" "6.11")
 MULTISLOT_KERNEL_MSM=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_MT76=("5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_MT7921=("6.6.52" "6.10.11" "6.11")
@@ -87,7 +89,8 @@ MULTISLOT_KERNEL_TLS=("5.10.219" "5.15.161" "6.1.93" "6.6.33" "6.9.4")
 MULTISLOT_KERNEL_V3D=("6.10.8")
 MULTISLOT_KERNEL_VMCI=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_VMWGFX=("6.6.49" "6.9" "6.10.8")
-MULTISLOT_KERNEL_XE=("6.10.8")
+MULTISLOT_KERNEL_XE_46683=("6.10.8")
+MULTISLOT_KERNEL_XE_46867=("6.10.11" "6.11")
 MULTISLOT_KERNEL_XEN=("6.6.51" "6.10.10")
 
 CVE_AMDGPU="CVE-2024-46725"
@@ -125,9 +128,11 @@ CVE_LOCKING="CVE-2024-46829"
 CVE_MAC80211="CVE-2024-43911"
 CVE_MD_RAID1="CVE-2024-45023"
 CVE_MD_RAID5="CVE-2024-43914"
+CVE_MM_46847="CVE-2024-46847"
 CVE_NET_BRIDGE="CVE-2024-44934"
 CVE_NFSD="CVE-2024-46696"
-CVE_MLX5="CVE-2024-45019"
+CVE_MLX5_45019="CVE-2024-45019"
+CVE_MLX5_46857="CVE-2024-46857"
 CVE_MSM="CVE-2024-45015"
 CVE_MT76="CVE-2024-42225"
 CVE_MT7921="CVE-2024-46860"
@@ -150,7 +155,8 @@ CVE_TLS="CVE-2024-36489"
 CVE_V3D="CVE-2024-46699"
 CVE_VMCI="CVE-2024-46738"
 CVE_VMWGFX="CVE-2024-46709"
-CVE_XE="CVE-2024-46683"
+CVE_XE_46683="CVE-2024-46683"
+CVE_XE_46867="CVE-2024-46867"
 CVE_XEN="CVE-2024-46762"
 
 inherit mitigate-dos toolchain-funcs
@@ -287,6 +293,7 @@ REQUIRED_USE="
 # md-raid1? https://nvd.nist.gov/vuln/detail/CVE-2024-45023 # DT, DoS
 # md-raid5? https://nvd.nist.gov/vuln/detail/CVE-2024-43914 # DOS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
+# mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-46857 # Unofficial: DoS
 # msm? https://nvd.nist.gov/vuln/detail/CVE-2024-45015 # DoS
 # mt76? https://nvd.nist.gov/vuln/detail/CVE-2024-42225 # DoS, DT, ID
 # mt7921? https://nvd.nist.gov/vuln/detail/CVE-2024-46860 # Unofficial: DoS
@@ -305,8 +312,9 @@ REQUIRED_USE="
 # tcp? https://nvd.nist.gov/vuln/detail/CVE-2024-42154 # DoS, DT, ID
 # tls? https://nvd.nist.gov/vuln/detail/CVE-2024-36489 # DoS
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
-# video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2023-52913 # DoS
 # video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-41092 # DoS, ID
+# video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-46867 # Unofficial: DoS
+# video_cards_intel? https://nvd.nist.gov/vuln/detail/CVE-2024-46683 # DoS, ID, DT
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2024-45012 # DoS; requires >= 6.11 for fix
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2024-42101 # DoS; requires >= 6.10 for fix
 # video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, DT, CE, PE
@@ -323,6 +331,7 @@ REQUIRED_USE="
 # From the kernel/ or mm/ subfolder
 CORE_RDEPEND="
 	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_LOCKING[@]})
+	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MM_46847[@]})
 "
 
 FS_RDEPEND="
@@ -479,7 +488,8 @@ RDEPEND="
 	)
 	mlx5? (
 		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5_45019[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5_46857[@]})
 		)
 	)
 	mt76? (
@@ -584,7 +594,8 @@ RDEPEND="
 	video_cards_intel? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_I915[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XE[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XE_46683[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XE_46867[@]})
 		)
 	)
 	video_cards_nouveau? (
@@ -687,6 +698,11 @@ check_drivers() {
 	use custom-kernel || return
 	local wifi=0
 	local fs=0
+
+	# Core
+	check_kernel_version "kernel/locking" "${CVE_LOCKING}" ${MULTISLOT_KERNEL_LOCKING[@]}
+	check_kernel_version "mm" "${CVE_MM_46847}" ${MULTISLOT_KERNEL_MM_46847[@]}
+
 	if use ath12k ; then
 		wifi=1
 		check_kernel_version "ath12k" "${CVE_ATH12K}" ${MULTISLOT_KERNEL_ATH12K[@]}
@@ -773,7 +789,8 @@ check_drivers() {
 		fi
 	fi
 	if use mlx5 ; then
-		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_MLX5[@]}
+		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_MLX5_45019[@]}
+		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_MLX5_46857[@]}
 	fi
 	if use md-raid1 ; then
 		check_kernel_version "md/raid1" "${CVE_MD_RAID1}" ${MULTISLOT_KERNEL_MD_RAID1[@]}
@@ -839,7 +856,8 @@ check_drivers() {
 	fi
 	if use video_cards_intel ; then
 		check_kernel_version "i915" "${CVE_I915}" ${MULTISLOT_KERNEL_I915[@]}
-		check_kernel_version "xe" "${CVE_XE}" ${MULTISLOT_KERNEL_XE[@]}
+		check_kernel_version "xe" "${CVE_XE_46683}" ${MULTISLOT_KERNEL_XE_46683[@]}
+		check_kernel_version "xe" "${CVE_XE_46867}" ${MULTISLOT_KERNEL_XE_46867[@]}
 	fi
 	if use video_cards_nouveau ; then
 		check_kernel_version "noveau" "${CVE_NOUVEAU}" ${MULTISLOT_KERNEL_NOUVEAU[@]}
