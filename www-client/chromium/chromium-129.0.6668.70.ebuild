@@ -806,6 +806,12 @@ REQUIRED_USE+="
 	)
 "
 if is_cromite_compatible ; then
+	# USE=pgo is default ON in Chromite but dropped for user choice.
+	#
+	# The rest are the same defaults as the patchset.
+	#
+	# The reason that these USE flags are forced to match the patchset
+	# defaults is because I don't know if these were pruned by the scripts.
 	REQUIRED_USE+="
 		cromite? (
 			amd64
@@ -818,6 +824,7 @@ if is_cromite_compatible ; then
 			!official
 			!openh264
 			!mdns
+			!ml
 			!reporting-api
 			!system-toolchain
 			!widevine
@@ -828,10 +835,19 @@ if is_cromite_compatible ; then
 	"
 fi
 if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
+	# USE=widevine is default ON in ungoogled-chromium but dropped for user choice..
+	#
+	# The rest are the same defaults as the patchset.
+	#
+	# The reason that these USE flags are forced to match the patchset
+	# defaults is because I don't know if these were pruned by the scripts.
 	REQUIRED_USE+="
 		ungoogled-chromium? (
 			!hangouts
-			!widevine
+			!mdns
+			!ml
+			!pgo
+			!reporting-api
 		)
 		official? (
 			!ungoogled-chromium
@@ -2251,10 +2267,18 @@ einfo "Removing ${x} from cromite"
 			"${S_CROMITE}/build/cromite.gn_args" \
 			|| die
 
-		# Remove debug
+		# Remove or dedupe debug
 		sed -i \
 			-e "/blink_symbol_level/d" \
+			-e "/dcheck_always_on/d" \
+			-e "/is_debug/d" \
 			-e "/symbol_level/d" \
+			"${S_CROMITE}/build/cromite.gn_args" \
+			|| die
+
+		# Use previous working choice
+		sed -i \
+			-e "/use_sysroot/d" \
 			"${S_CROMITE}/build/cromite.gn_args" \
 			|| die
 
@@ -2308,9 +2332,18 @@ einfo "Removing ${x} from ungoogled-chromium"
 			done
 		fi
 
-		sed -i -e "/llvm-build/d" "utils/prune_binaries.py" || die
-		sed -i -e "/rust-toolchain/d" "utils/prune_binaries.py" || die
-		sed -i -e "/node\/linux/d" "utils/prune_binaries.py" || die
+	# Don't touch the cached toolchain
+		sed -i \
+			-e "/llvm-build/d" \
+			-e "/rust-toolchain/d" \
+			-e "/node\/linux/d" \
+			"utils/prune_binaries.py" \
+			|| die
+
+	# Allow the user to decide since it is allowed.
+		sed -i \
+			-e "/enable_widevine/d" \
+			"utils/prune_binaries.py" || die
 
 		edo "utils/prune_binaries.py" \
 			"${S}" \
