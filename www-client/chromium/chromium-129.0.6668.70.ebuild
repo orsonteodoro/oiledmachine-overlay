@@ -835,7 +835,7 @@ if is_cromite_compatible ; then
 	"
 fi
 if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
-	# USE=widevine is default ON in ungoogled-chromium but dropped for user choice..
+	# USE=widevine is default ON in ungoogled-chromium but dropped for user choice.
 	#
 	# The rest are the same defaults as the patchset.
 	#
