@@ -1238,6 +1238,7 @@ BDEPEND+="
 	${CLANG_BDEPEND}
 	${COMMON_SNAPSHOT_DEPEND}
 	${PYTHON_DEPS}
+	dev-util/patchutils
 	www-client/chromium-toolchain:0/${PV}[clang,gn,rust]
 	www-client/chromium-sources:0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_PV}
 	>=app-arch/gzip-1.7
@@ -2309,14 +2310,16 @@ einfo "Removing ${x} from cromite"
 
 				if is_cromite_patch_non_fatal "${x}" && grep -q -e "GIT binary patch" "${S_CROMITE}/build/patches/${x}" ; then
 einfo "Applying ${x} ..."
-					nonfatal git apply --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}" >/dev/null 2>&1
-					#nonfatal edo git apply --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}"
+					git apply --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}" >/dev/null 2>&1 || true
+					#git apply --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}" || true
 				elif is_cromite_patch_non_fatal "${x}" ; then
-					nonfatal eapply "${S_CROMITE}/build/patches/${x}"
+einfo "Applying ${x} ..."
+					patch -p1 -i "${S_CROMITE}/build/patches/${x}" >/dev/null 2>&1 || true
+					#edo patch -p1 -i "${S_CROMITE}/build/patches/${x}" >/dev/null 2>&1
 				elif grep -q -e "GIT binary patch" "${S_CROMITE}/build/patches/${x}" ; then
 einfo "Applying ${x} ..."
 					git apply --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}" >/dev/null 2>&1 || die
-					#edo git apply --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}" || die
+					#git apply --reject --whitespace=fix "${S_CROMITE}/build/patches/${x}" || die
 				else
 					eapply "${S_CROMITE}/build/patches/${x}"
 				fi
@@ -2368,6 +2371,22 @@ einfo "Removing ${x} from ungoogled-chromium"
 	popd >/dev/null 2>&1 || die
 }
 
+#omt
+prepare_chromite_with_ungoogled_chromium() {
+	# Fix hunk collisions.
+	filterdiff \
+		-x '*/chrome/browser/ui/browser_commands.cc' \
+		-x '*/chrome/browser/ui/lens/lens_overlay_controller.cc' \
+		-x '*/components/component_updater/installer_policies/BUILD.gn' \
+		"${S_CROMITE}/build/patches/Fix-chromium-build-bugs.patch" \
+		> \
+		"${S_CROMITE}/build/patches/Fix-chromium-build-bugs.patch.t" \
+		|| die
+	mv \
+		"${S_CROMITE}/build/patches/Fix-chromium-build-bugs.patch"{".t",""} \
+		|| die
+}
+
 src_prepare() {
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
@@ -2375,6 +2394,11 @@ src_prepare() {
 	check_deps_cfi_cross_dso
 
 	local PATCHES=()
+
+
+	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium && has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+		prepare_chromite_with_ungoogled_chromium
+	fi
 
 	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
 		apply_cromite_patchset
