@@ -2442,6 +2442,9 @@ einfo "Preferring Cromite over ungoogled-chromium"
 				[[ "${user_choice}" == "${cromite_patch}" ]] && return 0
 			done
 		done
+
+		[[ "${user_choices,,}" == "cromite" ]] && return 0
+
 		return 1
 	}
 
@@ -2455,6 +2458,9 @@ einfo "Preferring Cromite over ungoogled-chromium"
 				[[ "${user_choice}" == "${ungoogled_chromium_patch}" ]] && return 0
 			done
 		done
+
+		[[ "${user_choices,,}" == "ungoogled-chromium" ]] && return 0
+
 		return 1
 	}
 
