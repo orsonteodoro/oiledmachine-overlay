@@ -9,8 +9,11 @@
 
 EAPI=8
 
+# Patchsets
+# https://github.com/ungoogled-software/ungoogled-chromium
+# https://github.com/uazo/cromite
+
 # Ebuild diff or sync update notes:
-# 128.0.6613.113 -> 128.0.6613.119
 # 128.0.6613.119 -> 128.0.6613.137
 
 # For depends see:
