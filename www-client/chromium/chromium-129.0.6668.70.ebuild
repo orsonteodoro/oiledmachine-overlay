@@ -2744,6 +2744,13 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		")
 	)
 
+	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+		keeplibs+=(
+			cromite_flags/third_party
+			third_party/chromite
+		)
+	fi
+
 	# We need to generate ppc64 stuff because upstream does not ship it yet
 	# it has to be done before unbundling.
 	if use ppc64 ; then
