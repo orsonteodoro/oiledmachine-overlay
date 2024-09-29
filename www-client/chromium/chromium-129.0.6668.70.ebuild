@@ -2420,6 +2420,7 @@ prepare_chromite_with_ungoogled_chromium() {
 		"ungoogled-chromium-no-special-hosts-domains.patch;disable-google-host-detection.patch"
 		"ungoogled-chromium-Disable-untraceable-URLs.patch;all-add-trk-prefixes-to-possibly-evil-connections.patch"
 		"ungoogled-chromium-Disable-untraceable-URLs.patch;disable-untraceable-urls.patch"
+		"Disable-crash-reporting.patch;disable-crash-reporter.patch"
 	)
 
 	# C_VS_UC_PREFERENCE - space separated list in the format of which patch you prefer.

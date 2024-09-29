@@ -114,6 +114,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     ungoogled-chromium-no-special-hosts-domains.patch | disable-google-host-detection.patch
     ungoogled-chromium-Disable-untraceable-URLs.patch | all-add-trk-prefixes-to-possibly-evil-connections.patch
     ungoogled-chromium-Disable-untraceable-URLs.patch | disable-untraceable-urls.patch
+    Disable-crash-reporting.patch                     | disable-crash-reporter.patch
 
 
     FORCE_LLVM_SLOT - Manually choose the LLVM slot to build with
