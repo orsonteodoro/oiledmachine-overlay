@@ -807,6 +807,7 @@ REQUIRED_USE+="
 "
 if is_cromite_compatible ; then
 	# USE=pgo is default ON in Chromite but dropped for user choice.
+	# USE=official is default ON in Chromite but this ebuild reserves it for authentic Chromium.
 	#
 	# The rest are the same defaults as the patchset.
 	#
