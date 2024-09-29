@@ -2421,6 +2421,7 @@ prepare_chromite_with_ungoogled_chromium() {
 		"ungoogled-chromium-Disable-untraceable-URLs.patch;all-add-trk-prefixes-to-possibly-evil-connections.patch"
 		"ungoogled-chromium-Disable-untraceable-URLs.patch;disable-untraceable-urls.patch"
 		"Disable-crash-reporting.patch;disable-crash-reporter.patch"
+		"translate-disable-fetching-of-languages-from-server.patch;toggle-translation-via-switch.patch"
 	)
 
 	# C_VS_UC_PREFERENCE - space separated list in the format of which patch you prefer.
@@ -2429,7 +2430,7 @@ prepare_chromite_with_ungoogled_chromium() {
 	if [[ -z "${C_VS_UC_PREFERENCE}" ]] ; then
 einfo "Preferring Cromite over ungoogled-chromium"
 # TODO: remove comment
-		#C_VS_UC_PREFERENCE=${C_VS_UC_PREFERENCE:-"autofill-miscellaneous.patch ungoogled-chromium-no-special-hosts-domains.patch ungoogled-chromium-Disable-untraceable-URLs.patch"}
+		#C_VS_UC_PREFERENCE=${C_VS_UC_PREFERENCE:-"cromite"}
 	fi
 
 	is_user_choice_cromite() {
