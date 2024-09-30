@@ -65,6 +65,7 @@ MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6
 MULTISLOT_KERNEL_IWLWIFI_48918=("5.15.27" "5.16.13")
 MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
 MULTISLOT_KERNEL_JFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
+MULTISLOT_KERNEL_LANDLOCK=("6.1.95" "6.6.35" "6.9.6" "6.10")
 MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
 MULTISLOT_KERNEL_MD_RAID456=("5.15.V" "6.1.V" "6.6.V" "6.10" "6.11")
 MULTISLOT_KERNEL_MD_RAID5=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.105" "6.6.46" "6.10.5")
@@ -138,6 +139,7 @@ CVE_KVM_POWERPC_41070="CVE-2024-41070"
 CVE_KVM_S390_43819="CVE-2024-43819"
 CVE_KVM_X86_39483="CVE-2024-39483"
 CVE_LOCKING="CVE-2024-46829"
+CVE_LANDLOCK="CVE-2024-40938"
 CVE_MAC80211="CVE-2024-43911"
 CVE_MD_RAID1="CVE-2024-45023"
 CVE_MD_RAID5="CVE-2024-43914"
@@ -224,6 +226,7 @@ ipv6
 iwlwifi
 kvm
 jfs
+landlock
 samba
 max-uptime
 md-raid1
@@ -280,7 +283,7 @@ REQUIRED_USE="
 #
 # Sensitive data read || incomplete sanitization : ID
 # Possible privilege escalation || data corruption || altered permissions :  DT
-# Possible crash || (!ID && !DT):  DoS
+# Possible crash || kernel panic || (!ID && !DT):  DoS
 
 #
 # The latest to near past vulnerabilities are reported below.
@@ -318,6 +321,7 @@ REQUIRED_USE="
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918 # DoS
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
 # jfs https://nvd.nist.gov/vuln/detail/CVE-2024-43858 # DoS, DT, ID
+# landlock? https://nvd.nist.gov/vuln/detail/CVE-2024-40938 # DoS
 # kvm https://nvd.nist.gov/vuln/detail/CVE-2024-46707 # DoS
 # kvm https://nvd.nist.gov/vuln/detail/CVE-2024-43819 # DoS
 # kvm https://nvd.nist.gov/vuln/detail/CVE-2024-41070 # DoS, DT, ID
@@ -528,6 +532,11 @@ RDEPEND="
 			ppc64? (
 				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_POWERPC_41070[@]})
 			)
+		)
+	)
+	landlock? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_LANDLOCK[@]})
 		)
 	)
 	md-raid1? (
@@ -848,6 +857,9 @@ check_drivers() {
 	if use jfs ; then
 		fs=1
 		check_kernel_version "jfs" "${CVE_JFS}" ${MULTISLOT_KERNEL_JFS[@]}
+	fi
+	if use landlock ; then
+		check_kernel_version "landlock" "${CVE_LANDLOCK}" ${MULTISLOT_KERNEL_LANDLOCK[@]}
 	fi
 	if use kvm ; then
 		if use amd64 ; then

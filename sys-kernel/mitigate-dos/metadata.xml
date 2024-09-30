@@ -126,6 +126,9 @@
     <flag name="jfs">
       Mitigate against Denial of Service in the JFS filesystem.
     </flag>
+    <flag name="landlock">
+      Mitigate against Denial of Service in the Landlock security module.
+    </flag>
     <flag name="kvm">
       Mitigate against Denial of Service in the KVM subsystem.
     </flag>

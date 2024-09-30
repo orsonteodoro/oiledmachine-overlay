@@ -194,7 +194,7 @@ REQUIRED_USE="
 #
 # Sensitive data read || incomplete sanitization : ID
 # Possible privilege escalation || data corruption || altered permissions :  DT
-# Possible crash || (!ID && !DT):  DoS
+# Possible crash || kernel panic || (!ID && !DT):  DoS
 
 #
 # The latest to near past vulnerabilities are reported below.
