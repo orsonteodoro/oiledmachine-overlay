@@ -61,6 +61,7 @@ MULTISLOT_KERNEL_EXT4=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_HYPERV=("5.10.V" "5.15.V" "6.1.V" "6.6.52" "6.10.11" "6.11")
 MULTISLOT_KERNEL_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
 MULTISLOT_KERNEL_ICE=("6.10.10")
+MULTISLOT_KERNEL_IGB=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IWLWIFI_48918=("5.15.27" "5.16.13")
 MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
@@ -129,6 +130,7 @@ CVE_HFSPLUS="CVE-2024-41059"
 CVE_HYPERV="CVE-2024-46864"
 CVE_I915="CVE-2024-41092"
 CVE_ICE="CVE-2024-46766"
+CVE_IGB="CVE-2024-45030"
 CVE_JFS="CVE-2024-43858"
 CVE_IPV6="CVE-2024-44987"
 CVE_IWLWIFI_48918="CVE-2022-48918"
@@ -222,6 +224,7 @@ hfs
 hfsplus
 hyperv
 ice
+igb
 ipv6
 iwlwifi
 kvm
@@ -313,6 +316,7 @@ REQUIRED_USE="
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
 # fscache? https://nvd.nist.gov/vuln/detail/CVE-2024-46786 # DoS, DT, ID UAF
+# igb? https://nvd.nist.gov/vuln/detail/CVE-2024-45030 # DoS
 # hfs? https://nvd.nist.gov/vuln/detail/CVE-2024-42311 # DoS
 # hfsplus? https://nvd.nist.gov/vuln/detail/CVE-2024-41059 # DoS, DT, ID
 # hyperv? https://nvd.nist.gov/vuln/detail/CVE-2024-46864 # Unofficial: DoS
@@ -480,6 +484,11 @@ RDEPEND="
 		!custom-kernel? (
 			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FSCACHE[@]})
+		)
+	)
+	igb? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IGB[@]})
 		)
 	)
 	hfs? (
@@ -845,6 +854,9 @@ check_drivers() {
 	fi
 	if use ice ; then
 		check_kernel_version "net/ethernet/intel/ice" "${CVE_ICE}" ${MULTISLOT_KERNEL_ICE[@]}
+	fi
+	if use igb ; then
+		check_kernel_version "igb" "${CVE_IGB}" ${MULTISLOT_KERNEL_IGB[@]}
 	fi
 	if use ipv6 ; then
 		check_kernel_version "ipv6" "${CVE_IPV6}" ${MULTISLOT_KERNEL_IPV6[@]}

@@ -104,6 +104,10 @@
     <flag name="fscache">
       Mitigate against Denial of Service for the FS-Cache filesystem.
     </flag>
+    <flag name="igb">
+      Mitigate against Denial of Service for the
+      Intel® 82575/82576 PCI-Express Gigabit Ethernet driver.
+    </flag>
     <flag name="hfs">
       Mitigate against Denial of Service for the HFS filesystem.
     </flag>
