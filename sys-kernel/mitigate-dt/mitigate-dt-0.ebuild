@@ -322,6 +322,11 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IMA_39494[@]})
 		)
 	)
+	ipv6? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV6[@]})
+		)
+	)
 	iwlwifi? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_48787[@]})

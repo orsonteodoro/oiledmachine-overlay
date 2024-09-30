@@ -356,6 +356,11 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IMA_21505[@]})
 		)
 	)
+	ipv6? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV6[@]})
+		)
+	)
 	jfs? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_JFS[@]})

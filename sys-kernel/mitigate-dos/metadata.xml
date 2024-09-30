@@ -131,6 +131,9 @@
     <flag name="iwlwifi">
       Mitigate against Denial of Service for the iwlwifi network driver.
     </flag>
+    <flag name="ipv4">
+      Mitigate against Denial of Service in ipv4.
+    </flag>
     <flag name="ipv6">
       Mitigate against Denial of Service in ipv6.
     </flag>
