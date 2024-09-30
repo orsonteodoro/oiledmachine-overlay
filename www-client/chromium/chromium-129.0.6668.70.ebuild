@@ -2412,7 +2412,8 @@ prepare_chromite_with_ungoogled_chromium() {
 		cp -a "${x%;*}" "${x#*;}" || die
 	done
 
-	# Conflicts
+	# Listed patch conflicts
+	# Using a list generator for this will produce false positives or eager result.
 	local rows=(
 #		 chromite_patch;ungoogle_chromium_patch
 #		"Chrome-web-store-protection.patch;0001-fix-building-without-safebrowsing.patch"
