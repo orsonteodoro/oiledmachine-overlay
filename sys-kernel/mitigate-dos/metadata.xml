@@ -108,6 +108,10 @@
       Mitigate against Denial of Service for the
       Intel® 82575/82576 PCI-Express Gigabit Ethernet driver.
     </flag>
+    <flag name="igc">
+      Mitigate against Denial of Service for the
+      Intel® Ethernet Controller I225-LM/I225-V driver.
+    </flag>
     <flag name="hfs">
       Mitigate against Denial of Service for the HFS filesystem.
     </flag>
