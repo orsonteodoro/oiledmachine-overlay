@@ -68,6 +68,9 @@
       Mitigate against Denial of Service for BPF used in network socket packet
       filtering and syscall blacklist/whitelists for app/browser sandboxes.
     </flag>
+    <flag name="bpf-stream-parser">
+      Mitigate against Denial of Service for BPF Stream Parser dependency.
+    </flag>
     <flag name="bridge">
       Mitigate against Denial of Service for Ethernet bridge support.
     </flag>
@@ -89,6 +92,9 @@
     </flag>
     <flag name="custom-kernel">
       Prevent vendor lock-in when doing kernel mitigation checks.
+    </flag>
+    <flag name="esp-in-tcp">
+      Mitigate against Denial of Service for IP: ESP in TCP dependency.
     </flag>
     <flag name="ext4">
       Mitigate against Denial of Service for the ext4 filesystem.

@@ -83,6 +83,7 @@ MULTISLOT_KERNEL_MT76=("5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_MT7921=("6.6.52" "6.10.11" "6.11")
 MULTISLOT_KERNEL_MWIFIEX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
+MULTISLOT_KERNEL_NET_SOCK_MSG_46783=("5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10" "6.11")
 MULTISLOT_KERNEL_NILFS2=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_NFSD=("6.10.8")
 MULTISLOT_KERNEL_NVME_45013=("6.10.7")
@@ -171,6 +172,7 @@ CVE_MT76="CVE-2024-42225"
 CVE_MT7921="CVE-2024-46860"
 CVE_MWIFIEX="CVE-2024-46755"
 CVE_NETFILTER="CVE-2024-45018"
+CVE_NET_SOCK_MSG_46783="CVE-2024-46783"
 CVE_NF_TABLES="CVE-2024-27020"
 CVE_NILFS2="CVE-2024-46781"
 CVE_NOUVEAU="CVE-2024-45012"
@@ -229,12 +231,14 @@ apparmor
 bcrm80211
 bluetooth
 bpf
+bpf-stream-parser
 bridge
 btrfs
 cdrom
 ccp
 cougar
 cpuset
+esp-in-tcp
 ext4
 f2fs
 fscache
@@ -277,6 +281,12 @@ xen
 xfs
 "
 REQUIRED_USE="
+	bpf-stream-parser? (
+		ipv4
+	)
+	esp-in-tcp? (
+		ipv4
+	)
 "
 # CE - Code Execution
 # DoS - Denial of Service (CVSS A:H)
@@ -327,6 +337,7 @@ REQUIRED_USE="
 # bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2024-46749 # DoS
 # bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2022-48878 # DoS, DT, ID
 # bpf? https://nvd.nist.gov/vuln/detail/CVE-2024-45020 # DoS
+# bpf? https://nvd.nist.gov/vuln/detail/CVE-2024-46783 # DoS
 # bridge? https://nvd.nist.gov/vuln/detail/CVE-2024-44934 # DoS, DT, ID
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46749 # DoS
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46687 # DoS, DT, ID
@@ -570,6 +581,12 @@ RDEPEND="
 	ipv4? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_36927[@]})
+			bpf-stream-parser? (
+				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NET_SOCK_MSG_46783[@]})
+			)
+			esp-in-tcp? (
+				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NET_SOCK_MSG_46783[@]})
+			)
 		)
 	)
 	ipv6? (
@@ -948,6 +965,12 @@ check_drivers() {
 	fi
 	if use ipv4 ; then
 		check_kernel_version "ipv4" "${CVE_IPV4_36927}" ${MULTISLOT_KERNEL_IPV4_36927[@]}
+		if use bpf-stream-parser ; then
+			check_kernel_version "ipv4" "${CVE_NET_SOCK_MSG_46783}" ${MULTISLOT_KERNEL_NET_SOCK_MSG_46783[@]}
+		fi
+		if use esp-in-tcp ; then
+			check_kernel_version "ipv4" "${CVE_NET_SOCK_MSG_46783}" ${MULTISLOT_KERNEL_NET_SOCK_MSG_46783[@]}
+		fi
 	fi
 	if use ipv6 ; then
 		check_kernel_version "ipv6" "${CVE_IPV6}" ${MULTISLOT_KERNEL_IPV6[@]}
