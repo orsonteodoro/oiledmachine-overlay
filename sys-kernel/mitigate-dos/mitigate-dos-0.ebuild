@@ -78,6 +78,7 @@ MULTISLOT_KERNEL_MD_RAID456=("5.15.V" "6.1.V" "6.6.V" "6.10" "6.11")
 MULTISLOT_KERNEL_MD_RAID5=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_MLX5_45019=("6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_MLX5_46857=("6.1.111" "6.6.52" "6.10.11" "6.11")
+MULTISLOT_KERNEL_MPTCP_46858=("6.1.111" "6.6.52" "6.10.11" "6.11")
 MULTISLOT_KERNEL_MSM=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_MT76=("5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_MT7921=("6.6.52" "6.10.11" "6.11")
@@ -168,6 +169,7 @@ CVE_NFSD="CVE-2024-46696"
 CVE_MLX5_45019="CVE-2024-45019"
 CVE_MLX5_46857="CVE-2024-46857"
 CVE_MSM="CVE-2024-45015"
+CVE_MPTCP_46858="CVE-2024-46858"
 CVE_MT76="CVE-2024-42225"
 CVE_MT7921="CVE-2024-46860"
 CVE_MWIFIEX="CVE-2024-46755"
@@ -258,6 +260,7 @@ jfs
 landlock
 samba
 max-uptime
+mptcp
 md-raid1
 md-raid456
 md-raid5
@@ -377,6 +380,7 @@ REQUIRED_USE="
 # md-raid5? https://nvd.nist.gov/vuln/detail/CVE-2024-43914 # DOS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-46857 # Unofficial: DoS
+# mptcp? https://nvd.nist.gov/vuln/detail/CVE-2024-46858 # Unofficial: DoS
 # msm? https://nvd.nist.gov/vuln/detail/CVE-2024-45015 # DoS
 # mt76? https://nvd.nist.gov/vuln/detail/CVE-2024-42225 # DoS, DT, ID
 # mt7921? https://nvd.nist.gov/vuln/detail/CVE-2024-46860 # Unofficial: DoS
@@ -648,6 +652,11 @@ RDEPEND="
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5_45019[@]})
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5_46857[@]})
+		)
+	)
+	mptcp? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MPTCP_46858[@]})
 		)
 	)
 	mt76? (
@@ -1011,6 +1020,9 @@ check_drivers() {
 	fi
 	if use md-raid5 ; then
 		check_kernel_version "md/raid5" "${CVE_MD_RAID5}" ${MULTISLOT_KERNEL_MD_RAID5[@]}
+	fi
+	if use mptcp ; then
+		check_kernel_version "mptcp" "${CVE_MPTCP_46858}" ${MULTISLOT_KERNEL_MPTCP_46858[@]}
 	fi
 	if use mt76 ; then
 		check_kernel_version "mt76" "${CVE_MT76}" ${MULTISLOT_KERNEL_MT76[@]}
