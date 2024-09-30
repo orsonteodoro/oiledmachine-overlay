@@ -63,6 +63,7 @@ MULTISLOT_KERNEL_V3D=("6.10.8")
 MULTISLOT_KERNEL_XE=("6.10.8")
 MULTISLOT_KERNEL_VMCI=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_VMWGFX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52")
+MULTISLOT_KERNEL_XFS=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.V" "6.10.V" "6.11")
 
 CVE_AEAD="CVE-2024-42229"
 CVE_AMDGPU="CVE-2024-46725"
@@ -101,6 +102,7 @@ CVE_V3D="CVE-2024-46699"
 CVE_VMCI="CVE-2024-46738"
 CVE_VMWGFX="CVE-2022-22942"
 CVE_XE="CVE-2024-46683"
+CVE_XFS="CVE-2024-41014"
 
 inherit mitigate-id toolchain-funcs
 
@@ -159,6 +161,7 @@ samba
 selinux
 tcp
 vmware
+xfs
 "
 REQUIRED_USE="
 "
@@ -235,6 +238,7 @@ REQUIRED_USE="
 # video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, DT, CE, PE
 # video_cards_v3d? https://nvd.nist.gov/vuln/detail/CVE-2024-46699 # DoS, DT, ID
 # video_cards_vmware? https://nvd.nist.gov/vuln/detail/CVE-2022-22942 # PE, DoS, DT, ID
+# xfs? https://nvd.nist.gov/vuln/detail/CVE-2024-41014 # Unofficial: DoS.  RH added ID (C:L) ; Added to ID ebuild as a precaution.
 #
 
 #
@@ -444,6 +448,12 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMCI[@]})
 		)
 	)
+	xfs? (
+		!custom-kernel? (
+			${FS_RDEPEND}
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XFS[@]})
+		)
+	)
 "
 BDEPEND="
 	sys-apps/util-linux
@@ -624,6 +634,10 @@ check_drivers() {
 	fi
 	if use vmware ; then
 		check_kernel_version "vmci" "${CVE_VMCI}" ${MULTISLOT_KERNEL_VMCI[@]}
+	fi
+	if use xfs ; then
+		fs=1
+		check_kernel_version "xfs" "${CVE_XFS}" ${MULTISLOT_KERNEL_XFS[@]}
 	fi
 	if (( ${fs} == 1 )) ; then
 		check_kernel_version "fs" "${CVE_FS}" ${MULTISLOT_KERNEL_FS[@]}

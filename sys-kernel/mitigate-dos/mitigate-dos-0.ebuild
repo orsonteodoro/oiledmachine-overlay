@@ -57,7 +57,7 @@ MULTISLOT_KERNEL_COUGAR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6
 MULTISLOT_KERNEL_CPUSET=("6.10.7" "6.11")
 MULTISLOT_KERNEL_HFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_HFSPLUS=("4.19.319" "5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
-MULTISLOT_KERNEL_EXT4=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
+MULTISLOT_KERNEL_EXT4_43828=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_HYPERV=("5.10.V" "5.15.V" "6.1.V" "6.6.52" "6.10.11" "6.11")
 MULTISLOT_KERNEL_I40E=("4.19.313" "5.4.275" "5.10.216" "5.15.158" "6.1.90" "6.6.30" "6.8.9" "6.9")
 MULTISLOT_KERNEL_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
@@ -86,7 +86,8 @@ MULTISLOT_KERNEL_NVME_41073=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_NOUVEAU=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_RADEON=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
-MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
+MULTISLOT_KERNEL_FS_43882=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
+MULTISLOT_KERNEL_FS_46701=("6.10.7" "6.11")
 MULTISLOT_KERNEL_FSCACHE=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_MAC80211=("6.10.5")
 MULTISLOT_KERNEL_NETFILTER=("5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
@@ -105,6 +106,7 @@ MULTISLOT_KERNEL_VMXNET3=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.35" "6
 MULTISLOT_KERNEL_XE_46683=("6.10.8")
 MULTISLOT_KERNEL_XE_46867=("6.10.11" "6.11")
 MULTISLOT_KERNEL_XEN=("6.6.51" "6.10.10")
+MULTISLOT_KERNEL_XFS=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.V" "6.10.V" "6.11")
 
 CVE_AMDGPU_46725="CVE-2024-46725"
 CVE_AMDGPU_46851="CVE-2024-46851"
@@ -123,9 +125,10 @@ CVE_CDROM="CVE-2024-42136"
 CVE_CFG80211="CVE-2024-42114"
 CVE_COUGAR="CVE-2024-46747"
 CVE_CPUSET="CVE-2024-44975"
-CVE_EXT4="CVE-2024-43828"
+CVE_EXT4_43828="CVE-2024-43828"
 CVE_F2FS="CVE-2024-44942"
-CVE_FS="CVE-2024-43882"
+CVE_FS_43882="CVE-2024-43882"
+CVE_FS_46701="CVE-2024-46701"
 CVE_FSCACHE="CVE-2024-46786"
 CVE_HFS="CVE-2024-42311"
 CVE_HFSPLUS="CVE-2024-41059"
@@ -183,6 +186,7 @@ CVE_WORKQUEUE="CVE-2024-46839"
 CVE_XE_46683="CVE-2024-46683"
 CVE_XE_46867="CVE-2024-46867"
 CVE_XEN="CVE-2024-46762"
+CVE_XFS="CVE-2024-41014"
 
 inherit mitigate-dos toolchain-funcs
 
@@ -257,6 +261,7 @@ tcp
 tls
 vmware
 xen
+xfs
 "
 REQUIRED_USE="
 "
@@ -321,6 +326,7 @@ REQUIRED_USE="
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-43828 # DoS
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
+# fs? https://nvd.nist.gov/vuln/detail/CVE-2024-46701 # DoS
 # fscache? https://nvd.nist.gov/vuln/detail/CVE-2024-46786 # DoS, DT, ID UAF
 # i40e? https://nvd.nist.gov/vuln/detail/CVE-2024-36004 # Unofficial: DoS
 # igb? https://nvd.nist.gov/vuln/detail/CVE-2024-45030 # DoS
@@ -376,6 +382,7 @@ REQUIRED_USE="
 # vmware? https://nvd.nist.gov/vuln/detail/CVE-2024-46738 # DoS, DT, ID
 # vmware? https://nvd.nist.gov/vuln/detail/CVE-2024-40923 # Unofficial: DoS
 # xen? https://nvd.nist.gov/vuln/detail/CVE-2024-46762 # DoS
+# xfs? https://nvd.nist.gov/vuln/detail/CVE-2024-41014 # Unofficial: DoS.  RH added ID (C:L)
 #
 # Usually stable versions get security checked.
 # The betas and dev versions usually do not get security reports.
@@ -390,7 +397,8 @@ CORE_RDEPEND="
 "
 
 FS_RDEPEND="
-	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS[@]})
+	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS_43882[@]})
+	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS_46701[@]})
 "
 WIFI_RDEPEND="
 	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_CFG80211[@]})
@@ -479,7 +487,7 @@ RDEPEND="
 	ext4? (
 		!custom-kernel? (
 			${FS_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4_43828[@]})
 		)
 	)
 	f2fs? (
@@ -733,6 +741,12 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XEN[@]})
 		)
 	)
+	xfs? (
+		!custom-kernel? (
+			${FS_RDEPEND}
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XFS[@]})
+		)
+	)
 "
 BDEPEND="
 	sys-apps/util-linux
@@ -849,7 +863,7 @@ check_drivers() {
 	fi
 	if use ext4 ; then
 		fs=1
-		check_kernel_version "ext4" "${CVE_EXT4}" ${MULTISLOT_KERNEL_EXT4[@]}
+		check_kernel_version "ext4" "${CVE_EXT4_43828}" ${MULTISLOT_KERNEL_EXT4_43828[@]}
 	fi
 	if use f2fs ; then
 		fs=1
@@ -942,6 +956,7 @@ check_drivers() {
 		check_kernel_version "nf_tables" "${CVE_NF_TABLES}" ${MULTISLOT_KERNEL_NF_TABLES[@]}
 	fi
 	if use nilfs2 ; then
+		fs=1
 		check_kernel_version "nilfs2" "${CVE_NILFS2}" ${MULTISLOT_KERNEL_NILFS2[@]}
 	fi
 	if use nvme ; then
@@ -1004,12 +1019,17 @@ check_drivers() {
 	if use xen ; then
 		check_kernel_version "xen" "${CVE_XEN}" ${MULTISLOT_KERNEL_XEN[@]}
 	fi
+	if use xfs ; then
+		fs=1
+		check_kernel_version "xfs" "${CVE_XFS}" ${MULTISLOT_KERNEL_XFS[@]}
+	fi
 	if (( ${wifi} == 1 )) ; then
 		check_kernel_version "cfg80211" "${CVE_CFG80211}" ${MULTISLOT_KERNEL_CFG80211[@]}
 		check_kernel_version "mac80211" "${CVE_MAC80211}" ${MULTISLOT_KERNEL_MAC80211[@]}
 	fi
 	if (( ${fs} == 1 )) ; then
-		check_kernel_version "fs" "${CVE_FS}" ${MULTISLOT_KERNEL_FS[@]}
+		check_kernel_version "fs" "${CVE_FS_43882}" ${MULTISLOT_KERNEL_FS_43882[@]}
+		check_kernel_version "fs" "${CVE_FS_46701}" ${MULTISLOT_KERNEL_FS_46701[@]}
 	fi
 }
 

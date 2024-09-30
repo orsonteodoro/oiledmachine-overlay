@@ -167,6 +167,9 @@
     <flag name="vmware">
       Mitigate against information disclosure for VMware support.
     </flag>
+    <flag name="xfs">
+      Mitigate against information disclosure for XFS filesystem.
+    </flag>
     <flag name="zero-tolerance">
       Bump to the latest patched kernel point releases when the changelog
       indicated fixed information disclosure (ID) class of vulnerabilities.

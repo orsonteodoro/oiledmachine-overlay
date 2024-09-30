@@ -221,6 +221,9 @@
     <flag name="vmware">
       Mitigate against Denial of Service for VMware support.
     </flag>
+    <flag name="xfs">
+      Mitigate against Denial of Service for XFS filesystem.
+    </flag>
     <flag name="zero-tolerance">
       Bump to the latest patched kernel point releases when the changelog
       indicated fixed DoS class of vulnerabilities.  This will increase the
