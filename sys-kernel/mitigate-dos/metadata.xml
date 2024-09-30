@@ -126,6 +126,9 @@
     <flag name="igc">
       Mitigate against Denial of Service for the I225-LM/I225-V network driver.
     </flag>
+    <flag name="ima">
+      Mitigate against Denial of Service for the IMA security module.
+    </flag>
     <flag name="iwlwifi">
       Mitigate against Denial of Service for the iwlwifi network driver.
     </flag>

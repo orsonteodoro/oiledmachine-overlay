@@ -90,6 +90,9 @@
       Mitigate against data tampering for the
       Intel® Ethernet Connection E800 Series Support network driver.
     </flag>
+    <flag name="ima">
+      Mitigate against data tampering for the IMA security module.
+    </flag>
     <flag name="ipv6">
       Mitigate against data tampering in ipv6.
     </flag>

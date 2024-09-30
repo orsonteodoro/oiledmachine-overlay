@@ -64,6 +64,8 @@ MULTISLOT_KERNEL_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
 MULTISLOT_KERNEL_ICE=("6.10.10")
 MULTISLOT_KERNEL_IGB=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IGC=("5.15.163" "6.1.98" "6.6.39" "6.9.9" "6.10")
+MULTISLOT_KERNEL_IMA_40947=("6.1.98" "6.6.39" "6.9.7" "6.10")
+MULTISLOT_KERNEL_IMA_21505=("5.4.208" "5.15.58" "6.1" "6.6" "6.10" "6.11")
 MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IWLWIFI_48918=("5.15.27" "5.16.13")
 MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
@@ -138,6 +140,8 @@ CVE_I915="CVE-2024-41092"
 CVE_ICE="CVE-2024-46766"
 CVE_IGB="CVE-2024-45030"
 CVE_IGC="CVE-2024-42116"
+CVE_IMA_40947="CVE-2024-40947"
+CVE_IMA_21505="CVE-2022-21505"
 CVE_JFS="CVE-2024-43858"
 CVE_IPV6="CVE-2024-44987"
 CVE_IWLWIFI_48918="CVE-2022-48918"
@@ -235,6 +239,7 @@ i40e
 ice
 igb
 igc
+ima
 ipv6
 iwlwifi
 kvm
@@ -331,6 +336,8 @@ REQUIRED_USE="
 # i40e? https://nvd.nist.gov/vuln/detail/CVE-2024-36004 # Unofficial: DoS
 # igb? https://nvd.nist.gov/vuln/detail/CVE-2024-45030 # DoS
 # igc? https://nvd.nist.gov/vuln/detail/CVE-2024-42116 # Unofficial: DoS
+# ima? https://nvd.nist.gov/vuln/detail/CVE-2024-40947 # Unofficial: DoS
+# ima? https://nvd.nist.gov/vuln/detail/CVE-2022-21505 # DoS, DT, ID, PE
 # hfs? https://nvd.nist.gov/vuln/detail/CVE-2024-42311 # DoS
 # hfsplus? https://nvd.nist.gov/vuln/detail/CVE-2024-41059 # DoS, DT, ID
 # hyperv? https://nvd.nist.gov/vuln/detail/CVE-2024-46864 # Unofficial: DoS
@@ -510,6 +517,12 @@ RDEPEND="
 	igc? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IGC[@]})
+		)
+	)
+	ima? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IMA_40947[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IMA_21505[@]})
 		)
 	)
 	hfs? (
@@ -895,6 +908,10 @@ check_drivers() {
 	fi
 	if use igc ; then
 		check_kernel_version "igc" "${CVE_IGC}" ${MULTISLOT_KERNEL_IGC[@]}
+	fi
+	if use ima ; then
+		check_kernel_version "ima" "${CVE_IMA_40947}" ${MULTISLOT_KERNEL_IMA_40947[@]}
+		check_kernel_version "ima" "${CVE_IMA_21505}" ${MULTISLOT_KERNEL_IMA_21505[@]}
 	fi
 	if use ipv6 ; then
 		check_kernel_version "ipv6" "${CVE_IPV6}" ${MULTISLOT_KERNEL_IPV6[@]}

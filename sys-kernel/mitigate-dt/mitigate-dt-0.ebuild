@@ -40,6 +40,7 @@ MULTISLOT_KERNEL_FSCACHE=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_HFSPLUS=("4.19.319" "5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
 MULTISLOT_KERNEL_ICE=("6.10.10")
+MULTISLOT_KERNEL_IMA_39494=("6.1.97" "6.6.35" "6.9.6")
 MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
 MULTISLOT_KERNEL_JFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
@@ -79,6 +80,7 @@ CVE_FSCACHE="CVE-2024-46786"
 CVE_HFSPLUS="CVE-2024-41059"
 CVE_I915="CVE-2024-41092"
 CVE_ICE="CVE-2024-46766"
+CVE_IMA_39494="CVE-2024-39494"
 CVE_JFS="CVE-2024-43858"
 CVE_KVM_ARM64_26598="CVE-2024-26598"
 CVE_KVM_POWERPC_41070="CVE-2024-41070"
@@ -138,6 +140,7 @@ f2fs
 fscache
 hfsplus
 ice
+ima
 ipv6
 iwlwifi
 jfs
@@ -208,6 +211,7 @@ REQUIRED_USE="
 # fscache? https://nvd.nist.gov/vuln/detail/CVE-2024-46786 # DoS, DT, ID UAF
 # hfsplus? https://nvd.nist.gov/vuln/detail/CVE-2024-41059 # DoS, DT, ID
 # ice? https://nvd.nist.gov/vuln/detail/CVE-2024-46766 # DoS, DT, ID
+# ima? https://nvd.nist.gov/vuln/detail/CVE-2024-39494 # DoS, DT, ID
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
 # jfs https://nvd.nist.gov/vuln/detail/CVE-2024-43858 # DoS, DT, ID
@@ -311,6 +315,11 @@ RDEPEND="
 	ice? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_ICE[@]})
+		)
+	)
+	ima? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IMA_39494[@]})
 		)
 	)
 	iwlwifi? (
@@ -527,6 +536,9 @@ check_drivers() {
 	fi
 	if use ice ; then
 		check_kernel_version "net/ethernet/intel/ice" "${CVE_ICE}" ${MULTISLOT_KERNEL_ICE[@]}
+	fi
+	if use ima ; then
+		check_kernel_version "ima" "${CVE_IMA_39494}" ${MULTISLOT_KERNEL_IMA_39494[@]}
 	fi
 	if use ipv6 ; then
 		check_kernel_version "ipv6" "${CVE_IPV6}" ${MULTISLOT_KERNEL_IPV6[@]}
