@@ -25,6 +25,7 @@ MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1
 # Core
 MULTISLOT_KERNEL_LOCKING=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10" "6.11")
 MULTISLOT_KERNEL_MM_46847=("6.6.51" "6.10.10" "6.11")
+MULTISLOT_KERNEL_WORKQUEUE=("4.19.V" "5.4.V" "5.10.V" "5.15.167" "6.1.110" "6.6.51" "6.10.10" "6.11")
 
 # Arch specific
 MULTISLOT_KERNEL_POWERPC_46797=("6.6.51" "6.10.10")
@@ -162,6 +163,7 @@ CVE_TLS="CVE-2024-36489"
 CVE_V3D="CVE-2024-46699"
 CVE_VMCI="CVE-2024-46738"
 CVE_VMWGFX="CVE-2024-46709"
+CVE_WORKQUEUE="CVE-2024-46839"
 CVE_XE_46683="CVE-2024-46683"
 CVE_XE_46867="CVE-2024-46867"
 CVE_XEN="CVE-2024-46762"
@@ -274,6 +276,7 @@ REQUIRED_USE="
 # The latest to near past vulnerabilities are reported below.
 #
 # locking - https://nvd.nist.gov/vuln/detail/CVE-2024-46829 # Unofficial: DoS
+# workqueue - https://nvd.nist.gov/vuln/detail/CVE-2024-46839 # Unofficial: Dos
 #
 # aacraid? https://nvd.nist.gov/vuln/detail/CVE-2024-46673 # DoS, DT, ID
 # ath12k? https://nvd.nist.gov/vuln/detail/CVE-2024-46827 # Unofficial: DoS
@@ -351,6 +354,7 @@ REQUIRED_USE="
 CORE_RDEPEND="
 	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_LOCKING[@]})
 	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MM_46847[@]})
+	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_WORKQUEUE[@]})
 "
 
 FS_RDEPEND="
@@ -732,6 +736,7 @@ check_drivers() {
 
 	# Core
 	check_kernel_version "kernel/locking" "${CVE_LOCKING}" ${MULTISLOT_KERNEL_LOCKING[@]}
+	check_kernel_version "kernel/workqueue" "${CVE_WORKQUEUE}" ${MULTISLOT_KERNEL_WORKQUEUE[@]}
 	check_kernel_version "mm" "${CVE_MM_46847}" ${MULTISLOT_KERNEL_MM_46847[@]}
 
 	if use aacraid ; then
