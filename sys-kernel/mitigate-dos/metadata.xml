@@ -104,14 +104,6 @@
     <flag name="fscache">
       Mitigate against Denial of Service for the FS-Cache filesystem.
     </flag>
-    <flag name="igb">
-      Mitigate against Denial of Service for the
-      Intel® 82575/82576 PCI-Express Gigabit Ethernet driver.
-    </flag>
-    <flag name="igc">
-      Mitigate against Denial of Service for the
-      Intel® Ethernet Controller I225-LM/I225-V driver.
-    </flag>
     <flag name="hfs">
       Mitigate against Denial of Service for the HFS filesystem.
     </flag>
@@ -124,6 +116,14 @@
     <flag name="ice">
       Mitigate against Denial of Service for the
       Intel® Ethernet Connection E800 Series Support network driver.
+    </flag>
+    <flag name="igb">
+      Mitigate against Denial of Service for the
+      Intel® 82575/82576 PCI-Express Gigabit Ethernet driver.
+    </flag>
+    <flag name="igc">
+      Mitigate against Denial of Service for the
+      Intel® Ethernet Controller I225-LM/I225-V driver.
     </flag>
     <flag name="iwlwifi">
       Mitigate against Denial of Service for the iwlwifi network driver.
