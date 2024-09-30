@@ -2412,11 +2412,16 @@ prepare_chromite_with_ungoogled_chromium() {
 		cp -a "${x%;*}" "${x#*;}" || die
 	done
 
-	# Listed patch conflicts
-	# Using a list generator for this will produce false positives or eager result.
+	# Listed below are patch conflicts.
+	#
+	# Using a list generator for this will produce false positives or a
+	# eager result.
+	#
+	# It is possible to do a dry run but it may report failure.  You still
+	# can get a hunk dependency within the same patch which it doesn't
+	# handle well.
 	local rows=(
-#		 chromite_patch;ungoogle_chromium_patch
-#		"Chrome-web-store-protection.patch;0001-fix-building-without-safebrowsing.patch"
+#		chromite_patch;ungoogle_chromium_patch
 		"autofill-miscellaneous.patch;0003-disable-autofill-download-manager.patch"
 		"ungoogled-chromium-no-special-hosts-domains.patch;disable-google-host-detection.patch"
 		"ungoogled-chromium-Disable-untraceable-URLs.patch;all-add-trk-prefixes-to-possibly-evil-connections.patch"
@@ -2429,6 +2434,7 @@ prepare_chromite_with_ungoogled_chromium() {
 		"Disable-references-to-fonts.googleapis.com.patch;disable-fonts-googleapis-references.patch"
 		"Chrome-web-store-protection.patch;disable-webstore-urls.patch"
 		"ungoogled-chromium-Disable-webRTC-log-uploader.patch;disable-webrtc-log-uploader.patch"
+		"Fix-chromium-build-bugs.patch;fix-building-with-prunned-binaries.patch"
 	)
 
 	# C_VS_UC_PREFERENCE - space separated list in the format of which patch you prefer.
