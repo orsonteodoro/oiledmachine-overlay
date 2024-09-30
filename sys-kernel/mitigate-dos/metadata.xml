@@ -120,8 +120,7 @@
       Mitigate against Denial of Service for the E800 network driver.
     </flag>
     <flag name="igb">
-      Mitigate against Denial of Service for the
-      Intel® 82575/82576 PCI-Express Gigabit Ethernet driver.
+      Mitigate against Denial of Service for the 82575/82576 network driver.
     </flag>
     <flag name="igc">
       Mitigate against Denial of Service for the I225-LM/I225-V network driver.
