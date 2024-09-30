@@ -78,6 +78,9 @@
       Mitigate against Denial of Service for the AMD Cryptographic Co-Processor
       driver.
     </flag>
+    <flag name="cpuset">
+      Mitigate against Denial of Service for cgroup's cpuset support.
+    </flag>
     <flag name="cdrom">
       Mitigate against Denial of Service for the cdrom driver.
     </flag>
