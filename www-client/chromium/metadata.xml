@@ -130,6 +130,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     ungoogled-chromium-Disable-Network-Time-Tracker.patch     | disable-network-time-tracker.patch
     ungoogled-chromium-Disable-intranet-detector.patch        | disable-intranet-redirect-detector.patch
     Enable-native-Android-autofill.patch                      | fix-building-without-safebrowsing.patch
+    Modify-default-preferences.patch                          | remove-unused-preferences-fields.patch
     
 
 
