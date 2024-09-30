@@ -120,6 +120,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     Disable-crash-reporting.patch                             | disable-crash-reporter.patch
     translate-disable-fetching-of-languages-from-server.patch | toggle-translation-via-switch.patch
     Remove-binary-blob-integrations.patch                     | disable-gcm.patch
+    ungoogled-chromium-no-special-hosts-domains.patch         | disable-domain-reliability.patch
 
 
     FORCE_LLVM_SLOT - Manually choose the LLVM slot to build with
