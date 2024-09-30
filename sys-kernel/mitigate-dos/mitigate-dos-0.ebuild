@@ -321,7 +321,7 @@ REQUIRED_USE="
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918 # DoS
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
 # jfs https://nvd.nist.gov/vuln/detail/CVE-2024-43858 # DoS, DT, ID
-# landlock? https://nvd.nist.gov/vuln/detail/CVE-2024-40938 # DoS
+# landlock? https://nvd.nist.gov/vuln/detail/CVE-2024-40938 # Unofficial: DoS
 # kvm https://nvd.nist.gov/vuln/detail/CVE-2024-46707 # DoS
 # kvm https://nvd.nist.gov/vuln/detail/CVE-2024-43819 # DoS
 # kvm https://nvd.nist.gov/vuln/detail/CVE-2024-41070 # DoS, DT, ID
