@@ -2443,6 +2443,7 @@ prepare_chromite_with_ungoogled_chromium() {
 		"Disable-privacy-sandbox.patch;disable-privacy-sandbox.patch"
 		"Replace-DoH-probe-domain-with-RIPE-domain.patch;doh-changes.patch"
 		"Disable-fetching-of-all-field-trials.patch;disable-fetching-field-trials.patch"
+		"Modify-default-preferences.patch;0006-modify-default-prefs.patch"
 	)
 
 	# C_VS_UC_PREFERENCE - space separated list in the format of which patch you prefer.
