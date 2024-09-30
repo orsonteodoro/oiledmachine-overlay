@@ -110,6 +110,9 @@
     <flag name="mlx5">
       Mitigate against data tampering for the mlx5 network driver.
     </flag>
+    <flag name="mptcp">
+      Mitigate against data tampering for Multipath TCP (MPTCP).
+    </flag>
     <flag name="mt76">
       Mitigate against data tampering for the mt76 network driver.
     </flag>

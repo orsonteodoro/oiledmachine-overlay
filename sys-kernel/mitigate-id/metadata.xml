@@ -120,6 +120,9 @@
     <flag name="mlx5">
       Mitigate against information disclosure for the mlx5 network driver.
     </flag>
+    <flag name="mptcp">
+      Mitigate against information disclosure for Multipath TCP (MPTCP).
+    </flag>
     <flag name="mt76">
       Mitigate against information disclosure for the mt76 network driver.
     </flag>
