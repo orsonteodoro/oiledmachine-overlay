@@ -351,6 +351,7 @@ REQUIRED_USE="
 # video_cards_v3d? https://nvd.nist.gov/vuln/detail/CVE-2024-46699 # DoS, DT, ID
 # video_cards_vmware? https://nvd.nist.gov/vuln/detail/CVE-2024-46709 # DoS
 # vmware? https://nvd.nist.gov/vuln/detail/CVE-2024-46738 # DoS, DT, ID
+# vmware? https://nvd.nist.gov/vuln/detail/CVE-2024-40923 # Unofficial: DoS
 # xen? https://nvd.nist.gov/vuln/detail/CVE-2024-46762 # DoS
 #
 # Usually stable versions get security checked.
