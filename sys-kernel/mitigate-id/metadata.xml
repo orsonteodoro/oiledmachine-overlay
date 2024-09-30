@@ -99,8 +99,7 @@
       Mitigate against information disclosure for the FS-Cache filesystem.
     </flag>
     <flag name="ice">
-      Mitigate against information disclosure for the
-      Intel® Ethernet Connection E800 Series Support network driver.
+      Mitigate against information disclosure for the E800 network driver.
     </flag>
     <flag name="ipv6">
       Mitigate against information disclosure in ipv6.

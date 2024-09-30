@@ -59,6 +59,7 @@ MULTISLOT_KERNEL_HFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.
 MULTISLOT_KERNEL_HFSPLUS=("4.19.319" "5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_EXT4=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_HYPERV=("5.10.V" "5.15.V" "6.1.V" "6.6.52" "6.10.11" "6.11")
+MULTISLOT_KERNEL_I40E=("4.19.313" "5.4.275" "5.10.216" "5.15.158" "6.1.90" "6.6.30" "6.8.9" "6.9")
 MULTISLOT_KERNEL_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
 MULTISLOT_KERNEL_ICE=("6.10.10")
 MULTISLOT_KERNEL_IGB=("6.6.48" "6.10.7")
@@ -129,6 +130,7 @@ CVE_FSCACHE="CVE-2024-46786"
 CVE_HFS="CVE-2024-42311"
 CVE_HFSPLUS="CVE-2024-41059"
 CVE_HYPERV="CVE-2024-46864"
+CVE_I40E="CVE-2024-36004"
 CVE_I915="CVE-2024-41092"
 CVE_ICE="CVE-2024-46766"
 CVE_IGB="CVE-2024-45030"
@@ -225,6 +227,7 @@ fscache
 hfs
 hfsplus
 hyperv
+i40e
 ice
 igb
 igc
@@ -319,6 +322,7 @@ REQUIRED_USE="
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
 # fscache? https://nvd.nist.gov/vuln/detail/CVE-2024-46786 # DoS, DT, ID UAF
+# i40e? https://nvd.nist.gov/vuln/detail/CVE-2024-36004 # Unofficial: DoS
 # igb? https://nvd.nist.gov/vuln/detail/CVE-2024-45030 # DoS
 # igc? https://nvd.nist.gov/vuln/detail/CVE-2024-42116 # Unofficial: DoS
 # hfs? https://nvd.nist.gov/vuln/detail/CVE-2024-42311 # DoS
@@ -515,6 +519,11 @@ RDEPEND="
 	hyperv? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_HYPERV[@]})
+		)
+	)
+	i40e? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_I40E[@]})
 		)
 	)
 	ice? (
@@ -860,6 +869,9 @@ check_drivers() {
 	fi
 	if use hyperv ; then
 		check_kernel_version "x86/hyperv" "${CVE_HYPERV}" ${MULTISLOT_KERNEL_HYPERV[@]}
+	fi
+	if use i40e ; then
+		check_kernel_version "net/ethernet/intel/i40e" "${CVE_I40E}" ${MULTISLOT_KERNEL_I40E[@]}
 	fi
 	if use ice ; then
 		check_kernel_version "net/ethernet/intel/ice" "${CVE_ICE}" ${MULTISLOT_KERNEL_ICE[@]}

@@ -75,7 +75,7 @@
       Mitigate against Denial of Service for the Btrfs filesystem.
     </flag>
     <flag name="ccp">
-      Mitigate against Denial of Service for the AMD Cryptographic Co-Processor
+      Mitigate against Denial of Service for the Cryptographic Co-Processor
       driver.
     </flag>
     <flag name="cpuset">
@@ -113,17 +113,18 @@
     <flag name="hyperv">
       Mitigate against Denial of Service for Hyper-V support.
     </flag>
+    <flag name="i40e">
+      Mitigate against Denial of Service for the XL710 network driver
+    </flag>
     <flag name="ice">
-      Mitigate against Denial of Service for the
-      Intel® Ethernet Connection E800 Series Support network driver.
+      Mitigate against Denial of Service for the E800 network driver.
     </flag>
     <flag name="igb">
       Mitigate against Denial of Service for the
       Intel® 82575/82576 PCI-Express Gigabit Ethernet driver.
     </flag>
     <flag name="igc">
-      Mitigate against Denial of Service for the
-      Intel® Ethernet Controller I225-LM/I225-V driver.
+      Mitigate against Denial of Service for the I225-LM/I225-V network driver.
     </flag>
     <flag name="iwlwifi">
       Mitigate against Denial of Service for the iwlwifi network driver.
