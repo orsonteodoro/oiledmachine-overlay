@@ -2435,6 +2435,7 @@ prepare_chromite_with_ungoogled_chromium() {
 		"Chrome-web-store-protection.patch;disable-webstore-urls.patch"
 		"ungoogled-chromium-Disable-webRTC-log-uploader.patch;disable-webrtc-log-uploader.patch"
 		"Fix-chromium-build-bugs.patch;fix-building-with-prunned-binaries.patch"
+		"Fix-chromium-build-bugs.patch;disable-mei-preload.patch"
 		"ungoogled-chromium-Disable-Network-Time-Tracker.patch;disable-network-time-tracker.patch"
 		"ungoogled-chromium-Disable-intranet-detector.patch;disable-intranet-redirect-detector.patch"
 	)
