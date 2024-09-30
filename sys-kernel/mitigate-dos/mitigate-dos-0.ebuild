@@ -29,6 +29,7 @@ MULTISLOT_KERNEL_SCHED_44958=("5.15.165" "6.1.105" "6.6.46" "6.10.5" "6.11")
 MULTISLOT_KERNEL_WORKQUEUE=("4.19.V" "5.4.V" "5.10.V" "5.15.167" "6.1.110" "6.6.51" "6.10.10" "6.11")
 
 # Arch specific
+MULTISLOT_KERNEL_PARISC_40918=("6.6.35" "6.9.6" "6.10")
 MULTISLOT_KERNEL_POWERPC_46797=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_KVM_ARM64_26598=("5.4.269" "5.10.209" "5.15.148" "6.1.75" "6.6.14" "6.7.2")
 MULTISLOT_KERNEL_KVM_ARM64_46707=("5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
@@ -105,6 +106,7 @@ MULTISLOT_KERNEL_V3D=("6.10.8")
 MULTISLOT_KERNEL_VMCI=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_VMWGFX=("6.6.49" "6.9" "6.10.8")
 MULTISLOT_KERNEL_VMXNET3=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.35" "6.10" "6.11")
+MULTISLOT_KERNEL_WIREGUARD=("5.10.222" "5.15.163" "6.1.100" "6.6.41" "6.9.10")
 MULTISLOT_KERNEL_XE_46683=("6.10.8")
 MULTISLOT_KERNEL_XE_46867=("6.10.11" "6.11")
 MULTISLOT_KERNEL_XEN=("6.6.51" "6.10.10")
@@ -173,6 +175,7 @@ CVE_NOUVEAU="CVE-2024-45012"
 CVE_NVME_45013="CVE-2024-45013"
 CVE_NVME_41073="CVE-2024-41073"
 CVE_RADEON="CVE-2024-41060"
+CVE_PARISC_40918="CVE-2024-40918"
 CVE_POWERPC_46797="CVE-2024-46797"
 CVE_RTW88="CVE-2024-46760"
 CVE_SCHED_44958="CVE-2024-44958"
@@ -186,6 +189,7 @@ CVE_V3D="CVE-2024-46699"
 CVE_VMCI="CVE-2024-46738"
 CVE_VMWGFX="CVE-2024-46709"
 CVE_VMXNET3="CVE-2024-40923"
+CVE_WIREGUARD="CVE-2024-42247"
 CVE_WORKQUEUE="CVE-2024-46839"
 CVE_XE_46683="CVE-2024-46683"
 CVE_XE_46867="CVE-2024-46867"
@@ -265,6 +269,7 @@ selinux
 tcp
 tls
 vmware
+wireguard
 xen
 xfs
 "
@@ -367,6 +372,7 @@ REQUIRED_USE="
 # nilfs2? https://nvd.nist.gov/vuln/detail/CVE-2024-46781 # DoS
 # nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-45013 # DoS
 # nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-41073 # DoS, DT, ID
+# hppa? [same as parisc] (https://nvd.nist.gov/vuln/detail/CVE-2024-40918) # Unofficial: DoS
 # powerpc? https://nvd.nist.gov/vuln/detail/CVE-2024-46797 # DoS
 # rtw88? https://nvd.nist.gov/vuln/detail/CVE-2024-46760 # DoS
 # sctp? https://nvd.nist.gov/vuln/detail/CVE-2024-44935 # DoS
@@ -388,6 +394,7 @@ REQUIRED_USE="
 # video_cards_vmware? https://nvd.nist.gov/vuln/detail/CVE-2024-46709 # DoS
 # vmware? https://nvd.nist.gov/vuln/detail/CVE-2024-46738 # DoS, DT, ID
 # vmware? https://nvd.nist.gov/vuln/detail/CVE-2024-40923 # Unofficial: DoS
+# wireguard? https://nvd.nist.gov/vuln/detail/CVE-2024-42247 # DoS
 # xen? https://nvd.nist.gov/vuln/detail/CVE-2024-46762 # DoS
 # xfs? https://nvd.nist.gov/vuln/detail/CVE-2024-41014 # Unofficial: DoS.  RH added ID (C:L)
 #
@@ -401,6 +408,10 @@ CORE_RDEPEND="
 	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MM_46847[@]})
 	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SCHED_44958[@]})
 	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_WORKQUEUE[@]})
+
+	hppa? (
+		$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_PARISC_40918[@]})
+	)
 "
 
 FS_RDEPEND="
@@ -749,6 +760,11 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMXNET3[@]})
 		)
 	)
+	wireguard? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_WIREGUARD[@]})
+		)
+	)
 	xen? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XEN[@]})
@@ -894,6 +910,9 @@ check_drivers() {
 		fs=1
 		check_kernel_version "hfsplus" "${CVE_HFSPLUS}" ${MULTISLOT_KERNEL_HFSPLUS[@]}
 	fi
+	if use hppa ; then
+		check_kernel_version "parisc" "${CVE_PARISC_40918}" ${MULTISLOT_KERNEL_PARISC_40918[@]}
+	fi
 	if use hyperv ; then
 		check_kernel_version "x86/hyperv" "${CVE_HYPERV}" ${MULTISLOT_KERNEL_HYPERV[@]}
 	fi
@@ -1032,6 +1051,9 @@ check_drivers() {
 	if use vmware ; then
 		check_kernel_version "vmci" "${CVE_VMCI}" ${MULTISLOT_KERNEL_VMCI[@]}
 		check_kernel_version "vmxnet3" "${CVE_VMXNET3}" ${MULTISLOT_KERNEL_VMXNET3[@]}
+	fi
+	if use wireguard ; then
+		check_kernel_version "wireguard" "${CVE_WIREGUARD}" ${MULTISLOT_KERNEL_WIREGUARD[@]}
 	fi
 	if use xen ; then
 		check_kernel_version "xen" "${CVE_XEN}" ${MULTISLOT_KERNEL_XEN[@]}

@@ -220,6 +220,9 @@
     <flag name="video_cards_vmware">
       Mitigate against Denial of Service for the wmwgfx video driver.
     </flag>
+    <flag name="wireguard">
+      Mitigate against Denial of Service for WireGuard support.
+    </flag>
     <flag name="vmware">
       Mitigate against Denial of Service for VMware support.
     </flag>
