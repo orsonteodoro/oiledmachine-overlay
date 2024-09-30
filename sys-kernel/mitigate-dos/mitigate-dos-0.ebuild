@@ -281,9 +281,9 @@ REQUIRED_USE="
 
 # Ebuild policy for automatic classification for rows marked *unofficial*:
 #
-# Sensitive data read || incomplete sanitization : ID
-# Possible privilege escalation || data corruption || altered permissions :  DT
-# Possible crash || kernel panic || (!ID && !DT):  DoS
+# Sensitive data read || incomplete sanitization of sensitive data : ID
+# Possible privilege escalation || data corruption || altered permissions : DT
+# Possible crash || kernel panic || (!ID && !DT) : DoS
 
 #
 # The latest to near past vulnerabilities are reported below.
