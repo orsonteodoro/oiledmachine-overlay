@@ -276,7 +276,8 @@ REQUIRED_USE="
 # The latest to near past vulnerabilities are reported below.
 #
 # locking - https://nvd.nist.gov/vuln/detail/CVE-2024-46829 # Unofficial: DoS
-# workqueue - https://nvd.nist.gov/vuln/detail/CVE-2024-46839 # Unofficial: Dos
+# mm - https://nvd.nist.gov/vuln/detail/CVE-2024-46847 # Unofficial: DoS
+# workqueue - https://nvd.nist.gov/vuln/detail/CVE-2024-46839 # Unofficial: DoS
 #
 # aacraid? https://nvd.nist.gov/vuln/detail/CVE-2024-46673 # DoS, DT, ID
 # ath12k? https://nvd.nist.gov/vuln/detail/CVE-2024-46827 # Unofficial: DoS
