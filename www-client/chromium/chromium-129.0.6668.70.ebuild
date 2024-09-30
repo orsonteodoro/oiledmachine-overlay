@@ -2440,6 +2440,7 @@ prepare_chromite_with_ungoogled_chromium() {
 		"ungoogled-chromium-Disable-intranet-detector.patch;disable-intranet-redirect-detector.patch"
 		"Enable-native-Android-autofill.patch;fix-building-without-safebrowsing.patch"
 		"Modify-default-preferences.patch;remove-unused-preferences-fields.patch"
+		"Disable-privacy-sandbox.patch;disable-privacy-sandbox.patch"
 	)
 
 	# C_VS_UC_PREFERENCE - space separated list in the format of which patch you prefer.
