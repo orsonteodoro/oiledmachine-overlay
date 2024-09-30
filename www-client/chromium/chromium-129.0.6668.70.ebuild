@@ -2427,6 +2427,7 @@ prepare_chromite_with_ungoogled_chromium() {
 		"ungoogled-chromium-no-special-hosts-domains.patch;disable-domain-reliability.patch"
 		"Block-qjz9zk-or-trk-requests.patch;block-trk-and-subdomains.patch"
 		"Disable-references-to-fonts.googleapis.com.patch;disable-fonts-googleapis-references.patch"
+		"Chrome-web-store-protection.patch;disable-webstore-urls.patch"
 	)
 
 	# C_VS_UC_PREFERENCE - space separated list in the format of which patch you prefer.
