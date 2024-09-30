@@ -107,6 +107,9 @@
     <flag name="hfsplus">
       Mitigate against Denial of Service for the HFS+ filesystem.
     </flag>
+    <flag name="hyperv">
+      Mitigate against Denial of Service for Hyper-V support.
+    </flag>
     <flag name="ice">
       Mitigate against Denial of Service for the
       Intel® Ethernet Connection E800 Series Support network driver.

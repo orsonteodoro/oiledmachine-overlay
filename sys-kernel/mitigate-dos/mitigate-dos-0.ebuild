@@ -56,6 +56,7 @@ MULTISLOT_KERNEL_COUGAR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6
 MULTISLOT_KERNEL_HFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_HFSPLUS=("4.19.319" "5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_EXT4=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
+MULTISLOT_KERNEL_HYPERV=("5.10.V" "5.15.V" "6.1.V" "6.6.52" "6.10.11" "6.11")
 MULTISLOT_KERNEL_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
 MULTISLOT_KERNEL_ICE=("6.10.10")
 MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
@@ -120,6 +121,7 @@ CVE_FS="CVE-2024-43882"
 CVE_FSCACHE="CVE-2024-46786"
 CVE_HFS="CVE-2024-42311"
 CVE_HFSPLUS="CVE-2024-41059"
+CVE_HYPERV="CVE-2024-46864"
 CVE_I915="CVE-2024-41092"
 CVE_ICE="CVE-2024-46766"
 CVE_JFS="CVE-2024-43858"
@@ -209,6 +211,7 @@ f2fs
 fscache
 hfs
 hfsplus
+hyperv
 ice
 ipv6
 iwlwifi
@@ -300,6 +303,7 @@ REQUIRED_USE="
 # fscache? https://nvd.nist.gov/vuln/detail/CVE-2024-46786 # DoS, DT, ID UAF
 # hfs? https://nvd.nist.gov/vuln/detail/CVE-2024-42311 # DoS
 # hfsplus? https://nvd.nist.gov/vuln/detail/CVE-2024-41059 # DoS, DT, ID
+# hyperv? https://nvd.nist.gov/vuln/detail/CVE-2024-46864 # Unofficial: DoS
 # ice? https://nvd.nist.gov/vuln/detail/CVE-2024-46766 # DoS, DT, ID
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918 # DoS
@@ -468,6 +472,11 @@ RDEPEND="
 		!custom-kernel? (
 			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_HFSPLUS[@]})
+		)
+	)
+	hyperv? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_HYPERV[@]})
 		)
 	)
 	ice? (
@@ -800,6 +809,9 @@ check_drivers() {
 	if use hfsplus ; then
 		fs=1
 		check_kernel_version "hfsplus" "${CVE_HFSPLUS}" ${MULTISLOT_KERNEL_HFSPLUS[@]}
+	fi
+	if use hyperv ; then
+		check_kernel_version "x86/hyperv" "${CVE_HYPERV}" ${MULTISLOT_KERNEL_HYPERV[@]}
 	fi
 	if use ice ; then
 		check_kernel_version "net/ethernet/intel/ice" "${CVE_ICE}" ${MULTISLOT_KERNEL_ICE[@]}
