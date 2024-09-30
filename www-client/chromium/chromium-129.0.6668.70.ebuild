@@ -2426,6 +2426,7 @@ prepare_chromite_with_ungoogled_chromium() {
 		"Remove-binary-blob-integrations.patch;disable-gcm.patch"
 		"ungoogled-chromium-no-special-hosts-domains.patch;disable-domain-reliability.patch"
 		"Block-qjz9zk-or-trk-requests.patch;block-trk-and-subdomains.patch"
+		"Disable-references-to-fonts.googleapis.com.patch;disable-fonts-googleapis-references.patch"
 	)
 
 	# C_VS_UC_PREFERENCE - space separated list in the format of which patch you prefer.
