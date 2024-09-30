@@ -95,6 +95,7 @@ MULTISLOT_KERNEL_TLS=("5.10.219" "5.15.161" "6.1.93" "6.6.33" "6.9.4")
 MULTISLOT_KERNEL_V3D=("6.10.8")
 MULTISLOT_KERNEL_VMCI=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_VMWGFX=("6.6.49" "6.9" "6.10.8")
+MULTISLOT_KERNEL_VMXNET3=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.35" "6.10" "6.11")
 MULTISLOT_KERNEL_XE_46683=("6.10.8")
 MULTISLOT_KERNEL_XE_46867=("6.10.11" "6.11")
 MULTISLOT_KERNEL_XEN=("6.6.51" "6.10.10")
@@ -165,6 +166,7 @@ CVE_TLS="CVE-2024-36489"
 CVE_V3D="CVE-2024-46699"
 CVE_VMCI="CVE-2024-46738"
 CVE_VMWGFX="CVE-2024-46709"
+CVE_VMXNET3="CVE-2024-40923"
 CVE_WORKQUEUE="CVE-2024-46839"
 CVE_XE_46683="CVE-2024-46683"
 CVE_XE_46867="CVE-2024-46867"
@@ -673,6 +675,7 @@ RDEPEND="
 	vmware? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMCI[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMXNET3[@]})
 		)
 	)
 	xen? (
@@ -930,6 +933,7 @@ check_drivers() {
 	fi
 	if use vmware ; then
 		check_kernel_version "vmci" "${CVE_VMCI}" ${MULTISLOT_KERNEL_VMCI[@]}
+		check_kernel_version "vmxnet3" "${CVE_VMXNET3}" ${MULTISLOT_KERNEL_VMXNET3[@]}
 	fi
 	if use xen ; then
 		check_kernel_version "xen" "${CVE_XEN}" ${MULTISLOT_KERNEL_XEN[@]}
