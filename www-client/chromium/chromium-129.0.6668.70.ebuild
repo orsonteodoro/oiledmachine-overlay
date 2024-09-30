@@ -2422,6 +2422,7 @@ prepare_chromite_with_ungoogled_chromium() {
 		"ungoogled-chromium-Disable-untraceable-URLs.patch;disable-untraceable-urls.patch"
 		"Disable-crash-reporting.patch;disable-crash-reporter.patch"
 		"translate-disable-fetching-of-languages-from-server.patch;toggle-translation-via-switch.patch"
+		"Remove-binary-blob-integrations.patch;disable-gcm.patch"
 	)
 
 	# C_VS_UC_PREFERENCE - space separated list in the format of which patch you prefer.
