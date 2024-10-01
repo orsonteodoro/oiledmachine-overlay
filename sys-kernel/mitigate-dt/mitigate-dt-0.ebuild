@@ -43,6 +43,7 @@ MULTISLOT_KERNEL_ICE=("6.10.10")
 MULTISLOT_KERNEL_IMA_39494=("6.1.97" "6.6.35" "6.9.6")
 MULTISLOT_KERNEL_IPV4_42154=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
+MULTISLOT_KERNEL_IP_36971=("4.19.316" "5.4.278" "5.10.219" "5.15.161" "6.1.94" "6.6.34" "6.9.4")
 MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
 MULTISLOT_KERNEL_JFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_MLX5=("5.4.185" "5.10.106" "5.15.29" "5.16.15")
@@ -84,6 +85,7 @@ CVE_I915="CVE-2024-41092"
 CVE_ICE="CVE-2024-46766"
 CVE_IMA_39494="CVE-2024-39494"
 CVE_IPV4_42154="CVE-2024-42154"
+CVE_IP_36971="CVE-2024-36971"
 CVE_JFS="CVE-2024-43858"
 CVE_KVM_ARM64_26598="CVE-2024-26598"
 CVE_KVM_POWERPC_41070="CVE-2024-41070"
@@ -95,6 +97,7 @@ CVE_NET_BRIDGE="CVE-2024-44934"
 CVE_NFSD="CVE-2024-46696"
 CVE_NILFS2="CVE-2024-42104"
 CVE_IPV6="CVE-2024-44987"
+CVE_IP_36971="CVE-2024-36971"
 CVE_IWLWIFI_48787="CVE-2022-48787"
 CVE_NOUVEAU="CVE-2023-0030"
 CVE_NVME_41073="CVE-2024-41073"
@@ -221,6 +224,7 @@ REQUIRED_USE="
 # hfsplus? https://nvd.nist.gov/vuln/detail/CVE-2024-41059 # DoS, DT, ID
 # ice? https://nvd.nist.gov/vuln/detail/CVE-2024-46766 # DoS, DT, ID
 # ima? https://nvd.nist.gov/vuln/detail/CVE-2024-39494 # DoS, DT, ID
+# ip? https://nvd.nist.gov/vuln/detail/CVE-2024-36971 # DoS, DT, ID
 # ipv4? https://nvd.nist.gov/vuln/detail/CVE-2024-42154 # DoS, DT, ID
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
@@ -336,11 +340,13 @@ RDEPEND="
 	ipv4? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_42154[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IP_36971[@]})
 		)
 	)
 	ipv6? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV6[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IP_36971[@]})
 		)
 	)
 	iwlwifi? (
@@ -566,11 +572,17 @@ check_drivers() {
 	if use ima ; then
 		check_kernel_version "ima" "${CVE_IMA_39494}" ${MULTISLOT_KERNEL_IMA_39494[@]}
 	fi
+	local ip=0
 	if use ipv4 ; then
+		ip=1
 		check_kernel_version "ipv4" "${CVE_IPV4_42154}" ${MULTISLOT_KERNEL_IPV4_42154[@]}
 	fi
 	if use ipv6 ; then
+		ip=1
 		check_kernel_version "ipv6" "${CVE_IPV6}" ${MULTISLOT_KERNEL_IPV6[@]}
+	fi
+	if (( ${ip} == 1 )) ; then
+		check_kernel_version "ip" "${CVE_IP_36971}" ${MULTISLOT_KERNEL_IP_36971[@]}
 	fi
 	if use iwlwifi ; then
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_48787}" ${MULTISLOT_KERNEL_IWLWIFI_48787[@]}

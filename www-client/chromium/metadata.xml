@@ -137,6 +137,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     Modify-default-preferences.patch                          | 0006-modify-default-prefs.patch
     Restore-classic-new-tab-page.patch                        | 0008-restore-classic-ntp.patch
     disable-battery-status-updater.patch                      | 0019-disable-battery-status-service.patch
+    Do-not-build-API-keys-infobar.patch                       | google-api-warning.patch
     
 
 
