@@ -126,6 +126,9 @@
     <flag name="nilfs2">
       Mitigate against data tampering for the NILFS2 filesystem.
     </flag>
+    <flag name="ntfs">
+      Mitigate against data tampering for the NTFS3 filesystem driver.
+    </flag>
     <flag name="nvme">
       Mitigate against data tampering for the NVMe driver.
     </flag>

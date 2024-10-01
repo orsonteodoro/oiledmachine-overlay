@@ -193,6 +193,15 @@
     <flag name="nf_tables">
       Mitigate against Denial of Service for the nftables firewall.
     </flag>
+    <flag name="ntfs">
+      Mitigate against Denial of Service for the NTFS3 filesystem driver.
+    </flag>
+    <flag name="pci">
+      Mitigate against Denial of Service for the PCI driver.
+    </flag>
+    <flag name="pci-hotplug">
+      Mitigate against Denial of Service for the PCI Hotplug driver.
+    </flag>
     <flag name="rtw88">
       Mitigate against Denial of Service for the rtw88 network driver.
     </flag>
@@ -205,11 +214,18 @@
     <flag name="selinux">
       Mitigate against Denial of Service for the SELinux security module.
     </flag>
+    <flag name="smmu-v3-sva">
+      Mitigate against Denial of Service for the SMMUv3 Shared Virtual
+      Addressing dependency.
+    </flag>
     <flag name="tipc">
       Mitigate against Denial of Service for the TIPC protocol.
     </flag>
     <flag name="tls">
       Mitigate against Denial of Service for the TLS protocol.
+    </flag>
+    <flag name="usb">
+      Mitigate against Denial of Service for the USB driver.
     </flag>
     <flag name="video_cards_amdgpu">
       Mitigate against Denial of Service for the amdgpu driver.
@@ -234,6 +250,9 @@
     </flag>
     <flag name="wireguard">
       Mitigate against Denial of Service for WireGuard support.
+    </flag>
+    <flag name="v4l2">
+      Mitigate against Denial of Service for Video4Linux support.
     </flag>
     <flag name="vmware">
       Mitigate against Denial of Service for VMware support.

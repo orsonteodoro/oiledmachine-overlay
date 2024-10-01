@@ -46,6 +46,7 @@ MULTISLOT_KERNEL_I915=("5.10.211" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
 MULTISLOT_KERNEL_ICE=("6.10.10")
 MULTISLOT_KERNEL_IMA_39494=("6.1.97" "6.6.35" "6.9.6")
 MULTISLOT_KERNEL_IMA_21505=("5.4.208" "5.15.58" "6.1" "6.6" "6.10" "6.11")
+MULTISLOT_KERNEL_IP_36971=("4.19.316" "5.4.278" "5.10.219" "5.15.161" "6.1.94" "6.6.34" "6.9.4")
 MULTISLOT_KERNEL_IPV4_42154=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IWLWIFI=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
@@ -59,8 +60,10 @@ MULTISLOT_KERNEL_NFSD=("6.10.8")
 MULTISLOT_KERNEL_NILFS2=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" "6.6.29" "6.8.8")
 MULTISLOT_KERNEL_NOUVEAU=("5.0.21" "5.4.284")
+MULTISLOT_KERNEL_NTFS3_45896=("5.15.V" "6.1.V" "6.6" "6.10" "6.11")
 MULTISLOT_KERNEL_NVME_41073=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_NVME_41079=("6.1.101" "6.6.42" "6.10" "6.11")
+MULTISLOT_KERNEL_PCI_42302=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
 MULTISLOT_KERNEL_SMB=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_TIPC=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
@@ -90,6 +93,7 @@ CVE_IMA_39494="CVE-2024-39494"
 CVE_IMA_21505="CVE-2022-21505"
 CVE_IPV4_42154="CVE-2024-42154"
 CVE_IPV6="CVE-2024-44987"
+CVE_IP_36971="CVE-2024-36971"
 CVE_IWLWIFI="CVE-2022-48787"
 CVE_JFS="CVE-2024-43858"
 CVE_KVM_ARM64_26598="CVE-2024-26598"
@@ -103,8 +107,10 @@ CVE_NFSD="CVE-2024-46696"
 CVE_NF_TABLES="CVE-2024-27020"
 CVE_NILFS2="CVE-2024-42104"
 CVE_NOUVEAU="CVE-2023-0030"
+CVE_NTFS3_45896="CVE-2023-45896"
 CVE_NVME_41073="CVE-2024-41073"
 CVE_NVME_41079="CVE-2024-41079"
+CVE_PCI_42302="CVE-2024-42302"
 CVE_SELINUX="CVE-2022-48740"
 CVE_SMB="CVE-2024-46796"
 CVE_TIPC="CVE-2024-42284"
@@ -169,7 +175,9 @@ nfs
 netfilter
 nftables
 nilfs2
+ntfs
 nvme
+pci
 samba
 selinux
 tipc
@@ -236,6 +244,7 @@ REQUIRED_USE="
 # ice? https://nvd.nist.gov/vuln/detail/CVE-2024-46766 # DoS, DT, ID
 # ima? https://nvd.nist.gov/vuln/detail/CVE-2024-39494 # DoS, DT, ID
 # ima? https://nvd.nist.gov/vuln/detail/CVE-2022-21505 # DoS, DT, ID, PE
+# ip? https://nvd.nist.gov/vuln/detail/CVE-2024-36971 # DoS, DT, ID
 # ipv4? https://nvd.nist.gov/vuln/detail/CVE-2024-42154 # DoS, DT, ID
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
@@ -246,9 +255,11 @@ REQUIRED_USE="
 # mt76? https://nvd.nist.gov/vuln/detail/CVE-2024-42225 # DoS, DT, ID
 # nfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
 # nilfs2? https://nvd.nist.gov/vuln/detail/CVE-2024-42104 # DoS, DT, ID
+# ntfs? https://nvd.nist.gov/vuln/detail/CVE-2023-45896 # DoS, ID; RH rated it DT (I:L)
 # nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-41073 # DoS, DT, ID
 # nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-41079 # ID
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-44983 # DoS, ID
+# pci? https://nvd.nist.gov/vuln/detail/CVE-2024-42302 # DoS, DT, ID
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
 # samba? https://nvd.nist.gov/vuln/detail/CVE-2024-46796 # # DoS, DT, ID
 # tipc? https://nvd.nist.gov/vuln/detail/CVE-2024-42284 # DoS, DT, ID
@@ -373,11 +384,13 @@ RDEPEND="
 	ipv4? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_42154[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IP_36971[@]})
 		)
 	)
 	ipv6? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV6[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IP_36971[@]})
 		)
 	)
 	jfs? (
@@ -431,10 +444,21 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NILFS2[@]})
 		)
 	)
+	ntfs? (
+		!custom-kernel? (
+			${FS_RDEPEND}
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NTFS3_45896[@]})
+		)
+	)
 	nvme? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NVME_41073[@]})
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NVME_41079[@]})
+		)
+	)
+	pci? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_PCI_42302[@]})
 		)
 	)
 	samba? (
@@ -614,11 +638,17 @@ check_drivers() {
 		check_kernel_version "ima" "${CVE_IMA_39494}" ${MULTISLOT_KERNEL_IMA_39494[@]}
 		check_kernel_version "ima" "${CVE_IMA_21505}" ${MULTISLOT_KERNEL_IMA_21505[@]}
 	fi
+	local ip=0
 	if use ipv4 ; then
+		ip=1
 		check_kernel_version "ipv4" "${CVE_IPV4_42154}" ${MULTISLOT_KERNEL_IPV4_42154[@]}
 	fi
 	if use ipv6 ; then
+		ip=1
 		check_kernel_version "ipv6" "${CVE_IPV6}" ${MULTISLOT_KERNEL_IPV6[@]}
+	fi
+	if (( ${ip} == 1 )) ; then
+		check_kernel_version "ip" "${CVE_IP_36971}" ${MULTISLOT_KERNEL_IP_36971[@]}
 	fi
 	if use iwlwifi ; then
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI}" ${MULTISLOT_KERNEL_IWLWIFI[@]}
@@ -656,9 +686,16 @@ check_drivers() {
 	if use nilfs2 ; then
 		check_kernel_version "nilfs2" "${CVE_NILFS2}" ${MULTISLOT_KERNEL_NILFS2[@]}
 	fi
+	if use ntfs ; then
+		fs=1
+		check_kernel_version "ntfs3" "${CVE_NTFS3_45896}" ${MULTISLOT_KERNEL_NTFS3_45896[@]}
+	fi
 	if use nvme ; then
 		check_kernel_version "nvme" "${CVE_NVME_41073}" ${MULTISLOT_KERNEL_NVME_41073[@]}
 		check_kernel_version "nvme" "${CVE_NVME_41079}" ${MULTISLOT_KERNEL_NVME_41079[@]}
+	fi
+	if use pci ; then
+		check_kernel_version "pci" "${CVE_PCI_42302}" ${MULTISLOT_KERNEL_PCI_42302[@]}
 	fi
 	if use samba ; then
 		fs=1
