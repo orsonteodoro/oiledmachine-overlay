@@ -79,6 +79,7 @@ MULTISLOT_KERNEL_IPV4_42154=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98"
 MULTISLOT_KERNEL_IPV4_44991=("6.1.107" "6.6.48" "6.10.7" "6.11")
 MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IP_36971=("4.19.316" "5.4.278" "5.10.219" "5.15.161" "6.1.94" "6.6.34" "6.9.4")
+MULTISLOT_KERNEL_IVTV=("6.1.103" "6.6.44" "6.10.3" "6.11")
 MULTISLOT_KERNEL_IWLWIFI_48918=("5.15.27" "5.16.13")
 MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
 MULTISLOT_KERNEL_JFS_43858=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
@@ -171,6 +172,7 @@ CVE_IPV4_42154="CVE-2024-42154"
 CVE_IPV4_44991="CVE-2024-44991"
 CVE_IPV6="CVE-2024-44987"
 CVE_IP_36971="CVE-2024-36971"
+CVE_IVTV="CVE-2024-43877"
 CVE_IWLWIFI_48918="CVE-2022-48918"
 CVE_IWLWIFI_48787="CVE-2022-48787"
 CVE_KVM_ARM64_26598="CVE-2024-26598"
@@ -282,6 +284,7 @@ igc
 ima
 ipv4
 ipv6
+ivtv
 iwlwifi
 kvm
 jfs
@@ -411,6 +414,7 @@ REQUIRED_USE="
 # ipv4? https://nvd.nist.gov/vuln/detail/CVE-2024-41041 # Unofficial: DoS
 # ipv4? https://nvd.nist.gov/vuln/detail/CVE-2024-42154 # DoS, DT, ID
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
+# ivtv? https://nvd.nist.gov/vuln/detail/ # Unofficial: DoS
 # hppa? [same as parisc] (https://nvd.nist.gov/vuln/detail/CVE-2024-40918) # Unofficial: DoS
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918 # DoS
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
@@ -665,6 +669,11 @@ RDEPEND="
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV6[@]})
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IP_36971[@]})
+		)
+	)
+	ivtv? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IVTV[@]})
 		)
 	)
 	iwlwifi? (
@@ -1120,6 +1129,9 @@ check_drivers() {
 		wifi=1
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_48918}" ${MULTISLOT_KERNEL_IWLWIFI_48918[@]}
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_48787}" ${MULTISLOT_KERNEL_IWLWIFI_48787[@]}
+	fi
+	if use ivtv ; then
+		check_kernel_version "ivtv" "${CVE_IVTV}" ${MULTISLOT_KERNEL_IVTV[@]}
 	fi
 	if use jfs ; then
 		fs=1
