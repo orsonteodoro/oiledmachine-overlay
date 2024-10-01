@@ -151,6 +151,9 @@
     <flag name="tcp">
       Mitigate against information disclosure for the TCP protocol.
     </flag>
+    <flag name="tipc">
+      Mitigate against information disclosure for the TIPC protocol.
+    </flag>
     <flag name="video_cards_amdgpu">
       Mitigate against information disclosure for the amdgpu driver.
     </flag>

@@ -105,6 +105,7 @@ MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
 MULTISLOT_KERNEL_SMB_46796=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_SMB_46795=("5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_TCP_42154=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
+MULTISLOT_KERNEL_TIPC=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_TLS=("5.10.219" "5.15.161" "6.1.93" "6.6.33" "6.9.4")
 MULTISLOT_KERNEL_V3D=("6.10.8")
 MULTISLOT_KERNEL_VMCI=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
@@ -192,6 +193,7 @@ CVE_SELINUX="CVE-2022-48740"
 CVE_SMB_46796="CVE-2024-46796"
 CVE_SMB_46795="CVE-2024-46795"
 CVE_TCP_42154="CVE-2024-42154"
+CVE_TIPC="CVE-2024-42284"
 CVE_TLS="CVE-2024-36489"
 CVE_V3D="CVE-2024-46699"
 CVE_VMCI="CVE-2024-46738"
@@ -279,6 +281,7 @@ rtw88
 sctp
 selinux
 tcp
+tipc
 tls
 vmware
 wireguard
@@ -401,6 +404,7 @@ REQUIRED_USE="
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
 # samba? https://nvd.nist.gov/vuln/detail/CVE-2024-46796 # DoS, DT, ID
 # tcp? https://nvd.nist.gov/vuln/detail/CVE-2024-42154 # DoS, DT, ID
+# tipc? https://nvd.nist.gov/vuln/detail/CVE-2024-42284 # DoS, DT, ID
 # tls? https://nvd.nist.gov/vuln/detail/CVE-2024-36489 # DoS
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46851 # Unofficial: DoS
@@ -747,6 +751,11 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_TCP_42154[@]})
 		)
 	)
+	tipc? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_TIPC[@]})
+		)
+	)
 	tls? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_TLS[@]})
@@ -1076,6 +1085,9 @@ check_drivers() {
 	fi
 	if use tcp ; then
 		check_kernel_version "tcp" "${CVE_TCP_42154}" ${MULTISLOT_KERNEL_TCP_42154[@]}
+	fi
+	if use tipc ; then
+		check_kernel_version "tipc" "${CVE_TIPC}" ${MULTISLOT_KERNEL_TIPC[@]}
 	fi
 	if use tls ; then
 		check_kernel_version "tls" "${CVE_TLS}" ${MULTISLOT_KERNEL_TLS[@]}

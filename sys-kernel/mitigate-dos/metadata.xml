@@ -208,6 +208,9 @@
     <flag name="tcp">
       Mitigate against Denial of Service for the TCP protocol.
     </flag>
+    <flag name="tipc">
+      Mitigate against Denial of Service for the TIPC protocol.
+    </flag>
     <flag name="tls">
       Mitigate against Denial of Service for the TLS protocol.
     </flag>
