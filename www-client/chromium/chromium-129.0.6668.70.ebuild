@@ -2445,6 +2445,7 @@ prepare_chromite_with_ungoogled_chromium() {
 		"Disable-fetching-of-all-field-trials.patch;disable-fetching-field-trials.patch"
 		"Modify-default-preferences.patch;0006-modify-default-prefs.patch"
 		"Restore-classic-new-tab-page.patch;0008-restore-classic-ntp.patch"
+		"disable-battery-status-updater.patch;0019-disable-battery-status-service.patch"
 	)
 
 	# C_VS_UC_PREFERENCE - space separated list in the format of which patch you prefer.
