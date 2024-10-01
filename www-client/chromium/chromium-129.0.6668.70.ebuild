@@ -2444,6 +2444,7 @@ prepare_chromite_with_ungoogled_chromium() {
 		"Replace-DoH-probe-domain-with-RIPE-domain.patch;doh-changes.patch"
 		"Disable-fetching-of-all-field-trials.patch;disable-fetching-field-trials.patch"
 		"Modify-default-preferences.patch;0006-modify-default-prefs.patch"
+		"Restore-classic-new-tab-page.patch;0008-restore-classic-ntp.patch"
 	)
 
 	# C_VS_UC_PREFERENCE - space separated list in the format of which patch you prefer.
