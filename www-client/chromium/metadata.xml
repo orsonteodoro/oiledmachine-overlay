@@ -145,6 +145,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     Multiple-fingerprinting-mitigations.patch                 | flag-max-connections-per-host.patch
     Multiple-fingerprinting-mitigations.patch                 | flag-fingerprinting-canvas-image-data-noise.patch
     Disable-omission-of-URL-elements.patch                    | disable-formatting-in-omnibox.patch
+    dns-send-IPv6-connectivity-probes-to-RIPE-DNS.patch       | add-ipv6-probing-option.patch
     
 
 

@@ -2454,6 +2454,7 @@ prepare_chromite_with_ungoogled_chromium() {
 		"Multiple-fingerprinting-mitigations.patch;flag-max-connections-per-host.patch"
 		"Multiple-fingerprinting-mitigations.patch;flag-fingerprinting-canvas-image-data-noise.patch"
 		"Disable-omission-of-URL-elements.patch;disable-formatting-in-omnibox.patch"
+		"dns-send-IPv6-connectivity-probes-to-RIPE-DNS.patch;add-ipv6-probing-option.patch"
 	)
 
 	# C_VS_UC_PREFERENCE - space separated list in the format of which patch you prefer.
