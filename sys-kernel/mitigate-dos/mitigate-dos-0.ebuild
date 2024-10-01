@@ -72,7 +72,8 @@ MULTISLOT_KERNEL_IPV4_44991=("6.1.107" "6.6.48" "6.10.7" "6.11")
 MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IWLWIFI_48918=("5.15.27" "5.16.13")
 MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
-MULTISLOT_KERNEL_JFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
+MULTISLOT_KERNEL_JFS_43858=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
+MULTISLOT_KERNEL_JFS_44938=("6.6.47" "6.10.6")
 MULTISLOT_KERNEL_LANDLOCK=("6.1.95" "6.6.35" "6.9.6" "6.10")
 MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
 MULTISLOT_KERNEL_MD_RAID456=("5.15.V" "6.1.V" "6.6.V" "6.10" "6.11")
@@ -149,7 +150,8 @@ CVE_IGB="CVE-2024-45030"
 CVE_IGC="CVE-2024-42116"
 CVE_IMA_40947="CVE-2024-40947"
 CVE_IMA_21505="CVE-2022-21505"
-CVE_JFS="CVE-2024-43858"
+CVE_JFS_43858="CVE-2024-43858"
+CVE_JFS_44938="CVE-2024-44938"
 CVE_IPV4_36927="CVE-2024-36927"
 CVE_IPV4_44991="CVE-2024-44991"
 CVE_IPV6="CVE-2024-44987"
@@ -375,6 +377,7 @@ REQUIRED_USE="
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918 # DoS
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
 # jfs https://nvd.nist.gov/vuln/detail/CVE-2024-43858 # DoS, DT, ID
+# jfs https://nvd.nist.gov/vuln/detail/CVE-2024-44938 # DoS
 # landlock? https://nvd.nist.gov/vuln/detail/CVE-2024-40938 # Unofficial: DoS
 # kvm https://nvd.nist.gov/vuln/detail/CVE-2024-46707 # DoS
 # kvm https://nvd.nist.gov/vuln/detail/CVE-2024-43819 # DoS
@@ -616,7 +619,8 @@ RDEPEND="
 	jfs? (
 		!custom-kernel? (
 			${FS_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_JFS[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_JFS_43858[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_JFS_44938[@]})
 		)
 	)
 	kvm? (
@@ -1005,7 +1009,8 @@ check_drivers() {
 	fi
 	if use jfs ; then
 		fs=1
-		check_kernel_version "jfs" "${CVE_JFS}" ${MULTISLOT_KERNEL_JFS[@]}
+		check_kernel_version "jfs" "${CVE_JFS_43858}" ${MULTISLOT_KERNEL_JFS_43858[@]}
+		check_kernel_version "jfs" "${CVE_JFS_44938}" ${MULTISLOT_KERNEL_JFS_44938[@]}
 	fi
 	if use landlock ; then
 		check_kernel_version "landlock" "${CVE_LANDLOCK}" ${MULTISLOT_KERNEL_LANDLOCK[@]}
