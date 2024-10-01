@@ -104,6 +104,9 @@
     <flag name="ima">
       Mitigate against information disclosure for the IMA security module.
     </flag>
+    <flag name="ipv4">
+      Mitigate against information disclosure in ipv4.
+    </flag>
     <flag name="ipv6">
       Mitigate against information disclosure in ipv6.
     </flag>
@@ -147,9 +150,6 @@
     </flag>
     <flag name="selinux">
       Mitigate against information disclosure for the SELinux security module.
-    </flag>
-    <flag name="tcp">
-      Mitigate against information disclosure for the TCP protocol.
     </flag>
     <flag name="tipc">
       Mitigate against information disclosure for the TIPC protocol.

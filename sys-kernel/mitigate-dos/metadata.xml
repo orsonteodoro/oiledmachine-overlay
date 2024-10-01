@@ -205,9 +205,6 @@
     <flag name="selinux">
       Mitigate against Denial of Service for the SELinux security module.
     </flag>
-    <flag name="tcp">
-      Mitigate against Denial of Service for the TCP protocol.
-    </flag>
     <flag name="tipc">
       Mitigate against Denial of Service for the TIPC protocol.
     </flag>

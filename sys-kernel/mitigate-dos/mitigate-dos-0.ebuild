@@ -68,8 +68,9 @@ MULTISLOT_KERNEL_IGC=("5.15.163" "6.1.98" "6.6.39" "6.9.9" "6.10")
 MULTISLOT_KERNEL_IMA_40947=("6.1.98" "6.6.39" "6.9.7" "6.10")
 MULTISLOT_KERNEL_IMA_21505=("5.4.208" "5.15.58" "6.1" "6.6" "6.10" "6.11")
 MULTISLOT_KERNEL_IPV4_36927=("4.14.315" "4.19.283" "5.4.243" "5.10.180" "5.15.111" "6.1.28" "6.2.15" "6.3.2" "6.6.31" "6.8.10" "6.9")
-MULTISLOT_KERNEL_IPV4_44991=("6.1.107" "6.6.48" "6.10.7" "6.11")
 MULTISLOT_KERNEL_IPV4_41041=("4.19.V" "5.4.280" "5.10.222" "5.15.163" "6.1.100" "6.6.41" "6.10" "6.11")
+MULTISLOT_KERNEL_IPV4_42154=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
+MULTISLOT_KERNEL_IPV4_44991=("6.1.107" "6.6.48" "6.10.7" "6.11")
 MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IWLWIFI_48918=("5.15.27" "5.16.13")
 MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
@@ -106,7 +107,6 @@ MULTISLOT_KERNEL_SCTP=("5.4.282" "5.10.224" "5.15.165" "6.1.105" "6.6.46" "6.10.
 MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
 MULTISLOT_KERNEL_SMB_46796=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_SMB_46795=("5.15.167" "6.1.110" "6.6.51" "6.10.10")
-MULTISLOT_KERNEL_TCP_42154=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_TIPC=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_TLS=("5.10.219" "5.15.161" "6.1.93" "6.6.33" "6.9.4")
 MULTISLOT_KERNEL_V3D=("6.10.8")
@@ -154,8 +154,9 @@ CVE_IMA_21505="CVE-2022-21505"
 CVE_JFS_43858="CVE-2024-43858"
 CVE_JFS_44938="CVE-2024-44938"
 CVE_IPV4_36927="CVE-2024-36927"
-CVE_IPV4_44991="CVE-2024-44991"
 CVE_IPV4_41041="CVE-2024-41041"
+CVE_IPV4_42154="CVE-2024-42154"
+CVE_IPV4_44991="CVE-2024-44991"
 CVE_IPV6="CVE-2024-44987"
 CVE_IWLWIFI_48918="CVE-2022-48918"
 CVE_IWLWIFI_48787="CVE-2022-48787"
@@ -196,7 +197,6 @@ CVE_SCTP="CVE-2024-44935"
 CVE_SELINUX="CVE-2022-48740"
 CVE_SMB_46796="CVE-2024-46796"
 CVE_SMB_46795="CVE-2024-46795"
-CVE_TCP_42154="CVE-2024-42154"
 CVE_TIPC="CVE-2024-42284"
 CVE_TLS="CVE-2024-36489"
 CVE_V3D="CVE-2024-46699"
@@ -284,7 +284,6 @@ nvme
 rtw88
 sctp
 selinux
-tcp
 tipc
 tls
 vmware
@@ -379,6 +378,7 @@ REQUIRED_USE="
 # ipv4? https://nvd.nist.gov/vuln/detail/CVE-2024-36927 # DoS
 # ipv4? https://nvd.nist.gov/vuln/detail/CVE-2024-44991 # Unofficial: DoS
 # ipv4? https://nvd.nist.gov/vuln/detail/CVE-2024-41041 # Unofficial: DoS
+# ipv4? https://nvd.nist.gov/vuln/detail/CVE-2024-42154 # DoS, DT, ID
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918 # DoS
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
@@ -412,7 +412,6 @@ REQUIRED_USE="
 # sctp? https://nvd.nist.gov/vuln/detail/CVE-2024-44935 # DoS
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
 # samba? https://nvd.nist.gov/vuln/detail/CVE-2024-46796 # DoS, DT, ID
-# tcp? https://nvd.nist.gov/vuln/detail/CVE-2024-42154 # DoS, DT, ID
 # tipc? https://nvd.nist.gov/vuln/detail/CVE-2024-42284 # DoS, DT, ID
 # tls? https://nvd.nist.gov/vuln/detail/CVE-2024-36489 # DoS
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
@@ -603,6 +602,7 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_36927[@]})
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_44991[@]})
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_41041[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_42154[@]})
 			bpf-stream-parser? (
 				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NET_SOCK_MSG_46783[@]})
 			)
@@ -755,11 +755,6 @@ RDEPEND="
 	selinux? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SELINUX[@]})
-		)
-	)
-	tcp? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_TCP_42154[@]})
 		)
 	)
 	tipc? (
@@ -998,8 +993,9 @@ check_drivers() {
 	fi
 	if use ipv4 ; then
 		check_kernel_version "ipv4" "${CVE_IPV4_36927}" ${MULTISLOT_KERNEL_IPV4_36927[@]}
-		check_kernel_version "ipv4" "${CVE_IPV4_44991}" ${MULTISLOT_KERNEL_IPV4_44991[@]}
+		check_kernel_version "ipv4" "${CVE_IPV4_42154}" ${MULTISLOT_KERNEL_IPV4_42154[@]}
 		check_kernel_version "ipv4/udp" "${CVE_IPV4_41041}" ${MULTISLOT_KERNEL_IPV4_41041[@]}
+		check_kernel_version "ipv4" "${CVE_IPV4_44991}" ${MULTISLOT_KERNEL_IPV4_44991[@]}
 		if use bpf-stream-parser ; then
 			check_kernel_version "ipv4" "${CVE_NET_SOCK_MSG_46783}" ${MULTISLOT_KERNEL_NET_SOCK_MSG_46783[@]}
 		fi
@@ -1095,9 +1091,6 @@ check_drivers() {
 	fi
 	if use selinux ; then
 		check_kernel_version "selinux" "${CVE_SELINUX}" ${MULTISLOT_KERNEL_SELINUX[@]}
-	fi
-	if use tcp ; then
-		check_kernel_version "tcp" "${CVE_TCP_42154}" ${MULTISLOT_KERNEL_TCP_42154[@]}
 	fi
 	if use tipc ; then
 		check_kernel_version "tipc" "${CVE_TIPC}" ${MULTISLOT_KERNEL_TIPC[@]}

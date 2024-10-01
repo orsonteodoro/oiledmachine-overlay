@@ -41,6 +41,7 @@ MULTISLOT_KERNEL_HFSPLUS=("4.19.319" "5.4.281" "5.10.223" "5.15.164" "6.1.101" "
 MULTISLOT_KERNEL_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37")
 MULTISLOT_KERNEL_ICE=("6.10.10")
 MULTISLOT_KERNEL_IMA_39494=("6.1.97" "6.6.35" "6.9.6")
+MULTISLOT_KERNEL_IPV4_42154=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
 MULTISLOT_KERNEL_JFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
@@ -60,7 +61,6 @@ MULTISLOT_KERNEL_SELINUX_48740=("5.10.99" "5.15.22" "5.16.8")
 MULTISLOT_KERNEL_SMB_46796=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_SMACK=("6.6.49" "6.10.8")
 MULTISLOT_KERNEL_SMB_46795=("5.15.167" "6.1.110" "6.6.51" "6.10.10")
-MULTISLOT_KERNEL_TCP_42154=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_TIPC=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_TLS_0646=("5.4.267" "5.10.208" "5.15.147" "6.1.69" "6.6.7")
 MULTISLOT_KERNEL_V3D=("6.10.8")
@@ -83,6 +83,7 @@ CVE_HFSPLUS="CVE-2024-41059"
 CVE_I915="CVE-2024-41092"
 CVE_ICE="CVE-2024-46766"
 CVE_IMA_39494="CVE-2024-39494"
+CVE_IPV4_42154="CVE-2024-42154"
 CVE_JFS="CVE-2024-43858"
 CVE_KVM_ARM64_26598="CVE-2024-26598"
 CVE_KVM_POWERPC_41070="CVE-2024-41070"
@@ -102,7 +103,6 @@ CVE_SELINUX_48740="CVE-2022-48740"
 CVE_SMACK="CVE-2024-46695"
 CVE_SMB_46796="CVE-2024-46796"
 CVE_SMB_46795="CVE-2024-46795"
-CVE_TCP_42154="CVE-2024-42154"
 CVE_TIPC="CVE-2024-42284"
 CVE_TLS_0646="CVE-2024-0646"
 CVE_V3D="CVE-2024-46699"
@@ -145,6 +145,7 @@ fscache
 hfsplus
 ice
 ima
+ipv4
 ipv6
 iwlwifi
 jfs
@@ -159,13 +160,15 @@ nvme
 samba
 selinux
 smack
-tcp
 tipc
 tls
 vmware
 zero-tolerance
 "
 REQUIRED_USE="
+	ipv6? (
+		ipv4
+	)
 "
 # CE - Code Execution
 # DoS - Denial of Service (CVSS A:H)
@@ -218,6 +221,7 @@ REQUIRED_USE="
 # hfsplus? https://nvd.nist.gov/vuln/detail/CVE-2024-41059 # DoS, DT, ID
 # ice? https://nvd.nist.gov/vuln/detail/CVE-2024-46766 # DoS, DT, ID
 # ima? https://nvd.nist.gov/vuln/detail/CVE-2024-39494 # DoS, DT, ID
+# ipv4? https://nvd.nist.gov/vuln/detail/CVE-2024-42154 # DoS, DT, ID
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
 # jfs https://nvd.nist.gov/vuln/detail/CVE-2024-43858 # DoS, DT, ID
@@ -235,7 +239,6 @@ REQUIRED_USE="
 # samba? https://nvd.nist.gov/vuln/detail/CVE-2024-46796 # DoS, DT, ID
 # smack? https://nvd.nist.gov/vuln/detail/CVE-2024-46695 # DT
 # tls? https://nvd.nist.gov/vuln/detail/CVE-2024-0646 # DoS, DT, ID
-# tcp? https://nvd.nist.gov/vuln/detail/CVE-2024-42154 # DoS, DT, ID
 # tipc? https://nvd.nist.gov/vuln/detail/CVE-2024-42284 # DoS, DT, ID
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2023-0030 # PE, ID, DoS, DT.  Fixed in >= 5.0.
@@ -330,6 +333,11 @@ RDEPEND="
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IMA_39494[@]})
 		)
 	)
+	ipv4? (
+		!custom-kernel? (
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_42154[@]})
+		)
+	)
 	ipv6? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV6[@]})
@@ -408,11 +416,6 @@ RDEPEND="
 	smack? (
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMACK[@]})
-		)
-	)
-	tcp? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_TCP_42154[@]})
 		)
 	)
 	tipc? (
@@ -563,6 +566,9 @@ check_drivers() {
 	if use ima ; then
 		check_kernel_version "ima" "${CVE_IMA_39494}" ${MULTISLOT_KERNEL_IMA_39494[@]}
 	fi
+	if use ipv4 ; then
+		check_kernel_version "ipv4" "${CVE_IPV4_42154}" ${MULTISLOT_KERNEL_IPV4_42154[@]}
+	fi
 	if use ipv6 ; then
 		check_kernel_version "ipv6" "${CVE_IPV6}" ${MULTISLOT_KERNEL_IPV6[@]}
 	fi
@@ -613,9 +619,6 @@ check_drivers() {
 	fi
 	if use smack ; then
 		check_kernel_version "smack" "${CVE_SMACK}" ${MULTISLOT_KERNEL_SMACK[@]}
-	fi
-	if use tcp ; then
-		check_kernel_version "tcp" "${CVE_TCP_42154}" ${MULTISLOT_KERNEL_TCP_42154[@]}
 	fi
 	if use tipc ; then
 		check_kernel_version "tipc" "${CVE_TIPC}" ${MULTISLOT_KERNEL_TIPC[@]}
