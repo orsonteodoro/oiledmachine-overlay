@@ -563,6 +563,7 @@ check_kernel_version() {
 					local s1=$(ver_cut 1-2 ${found_version})
 					local s2=$(ver_cut 1-2 ${patched_version})
 					if ver_test ${s1} -eq ${s2} && [[ "${patched_version}" =~ "V" ]] ; then
+						vulnerable=1
 						break
 					elif ver_test ${s1} -eq ${s2} && ver_test ${found_version} -ge ${patched_version} ; then
 						vulnerable=0
