@@ -2447,6 +2447,13 @@ prepare_chromite_with_ungoogled_chromium() {
 		"Restore-classic-new-tab-page.patch;0008-restore-classic-ntp.patch"
 		"disable-battery-status-updater.patch;0019-disable-battery-status-service.patch"
 		"Do-not-build-API-keys-infobar.patch;google-api-warning.patch"
+		"mime_util-force-text-x-suse-ymp-to-be-downloaded.patch;mime_util-force-text-x-suse-ymp-to-be-downloaded.patch"
+		"prefs-always-prompt-for-download-directory.patch;prefs-always-prompt-for-download-directory-by-defaul.patch"
+		"Remove-EV-certificates.patch;Remove-EV-certificates.patch"
+		"Multiple-fingerprinting-mitigations.patch;fingerprinting-flags-client-rects-and-measuretext.patch"
+		"Multiple-fingerprinting-mitigations.patch;flag-max-connections-per-host.patch"
+		"Multiple-fingerprinting-mitigations.patch;flag-fingerprinting-canvas-image-data-noise.patch"
+		"Disable-omission-of-URL-elements.patch;disable-formatting-in-omnibox.patch"
 	)
 
 	# C_VS_UC_PREFERENCE - space separated list in the format of which patch you prefer.
