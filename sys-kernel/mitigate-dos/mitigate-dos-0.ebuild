@@ -299,6 +299,9 @@ REQUIRED_USE="
 	esp-in-tcp? (
 		ipv4
 	)
+	ipv6? (
+		ipv4
+	)
 "
 # CE - Code Execution
 # DoS - Denial of Service (CVSS A:H)
