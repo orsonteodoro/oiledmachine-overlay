@@ -69,6 +69,7 @@ MULTISLOT_KERNEL_IMA_40947=("6.1.98" "6.6.39" "6.9.7" "6.10")
 MULTISLOT_KERNEL_IMA_21505=("5.4.208" "5.15.58" "6.1" "6.6" "6.10" "6.11")
 MULTISLOT_KERNEL_IPV4_36927=("4.14.315" "4.19.283" "5.4.243" "5.10.180" "5.15.111" "6.1.28" "6.2.15" "6.3.2" "6.6.31" "6.8.10" "6.9")
 MULTISLOT_KERNEL_IPV4_44991=("6.1.107" "6.6.48" "6.10.7" "6.11")
+MULTISLOT_KERNEL_IPV4_41041=("4.19.V" "5.4.280" "5.10.222" "5.15.163" "6.1.100" "6.6.41" "6.10" "6.11")
 MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_IWLWIFI_48918=("5.15.27" "5.16.13")
 MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
@@ -154,6 +155,7 @@ CVE_JFS_43858="CVE-2024-43858"
 CVE_JFS_44938="CVE-2024-44938"
 CVE_IPV4_36927="CVE-2024-36927"
 CVE_IPV4_44991="CVE-2024-44991"
+CVE_IPV4_41041="CVE-2024-41041"
 CVE_IPV6="CVE-2024-44987"
 CVE_IWLWIFI_48918="CVE-2022-48918"
 CVE_IWLWIFI_48787="CVE-2022-48787"
@@ -373,6 +375,7 @@ REQUIRED_USE="
 # ice? https://nvd.nist.gov/vuln/detail/CVE-2024-46766 # DoS, DT, ID
 # ipv4? https://nvd.nist.gov/vuln/detail/CVE-2024-36927 # DoS
 # ipv4? https://nvd.nist.gov/vuln/detail/CVE-2024-44991 # Unofficial: DoS
+# ipv4? https://nvd.nist.gov/vuln/detail/CVE-2024-41041 # Unofficial: DoS
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918 # DoS
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
@@ -596,6 +599,7 @@ RDEPEND="
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_36927[@]})
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_44991[@]})
+			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_41041[@]})
 			bpf-stream-parser? (
 				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NET_SOCK_MSG_46783[@]})
 			)
@@ -992,6 +996,7 @@ check_drivers() {
 	if use ipv4 ; then
 		check_kernel_version "ipv4" "${CVE_IPV4_36927}" ${MULTISLOT_KERNEL_IPV4_36927[@]}
 		check_kernel_version "ipv4" "${CVE_IPV4_44991}" ${MULTISLOT_KERNEL_IPV4_44991[@]}
+		check_kernel_version "ipv4/udp" "${CVE_IPV4_41041}" ${MULTISLOT_KERNEL_IPV4_41041[@]}
 		if use bpf-stream-parser ; then
 			check_kernel_version "ipv4" "${CVE_NET_SOCK_MSG_46783}" ${MULTISLOT_KERNEL_NET_SOCK_MSG_46783[@]}
 		fi
