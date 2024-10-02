@@ -26,6 +26,8 @@ unset -f _llvm_set_globals
 
 inherit cmake flag-o-matic llvm.org python-any-r1 toolchain-funcs
 
+KEYWORDS="~amd64"
+
 DESCRIPTION="LLVM Flang is a continuation of F18 to replace Classic Flang"
 HOMEPAGE="
 https://github.com/llvm/llvm-project/tree/main/flang
