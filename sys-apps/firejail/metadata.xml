@@ -194,10 +194,10 @@
     unsandboxed    | works      | no frame grab isolation and | fastest fps, fastest start  | yes, fast
                    |            | no input isolation          |                             |
     xephyr         | works      | window size inconsistencies | fast start, faster scroll   | yes, but slow
-    xpra           | works      | slow start, popups          | no window size problems     | yes, but slow
-    xpra-virtualgl | works [2]  | slow start, popups          | no window size problems     | yes, but slow
+    xpra           | works      | slow start                  | no window size problems     | yes, but slow
+    xpra-virtualgl | works [2]  | slow start                  | no window size problems     | yes, but slow
     xorg [1][3]    | broken [2] |                             |                             | 
-    xvfb           | untested   |                             | hidden                      | untested
+    xvfb           | untested   |                             | hidden output               | untested
 
     [1] Workarounds may compromise security.  Issue 1741
     [2] Disabled
