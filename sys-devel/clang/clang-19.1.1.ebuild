@@ -26,6 +26,11 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
+~arm64-macos ~x64-macos
+"
+
 inherit cmake dhms flag-o-matic git-r3 hip-versions llvm.org llvm-utils multilib
 inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
 
@@ -40,7 +45,7 @@ LICENSE="
 # sorttable.js: MIT
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-cet +debug default-fortify-source-2 default-fortify-source-3 default-full-relro
+cet debug default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4 default-stack-clash-protection
 doc +extra hardened hardened-compat ieee-long-double +pie ssp +static-analyzer
 test xml
@@ -520,6 +525,7 @@ get_distribution_components() {
 			clang-format
 			clang-installapi
 			clang-linker-wrapper
+			clang-nvlink-wrapper
 			clang-offload-bundler
 			clang-offload-packager
 			clang-refactor
@@ -736,12 +742,6 @@ einfo
 	else
 		mycmakeargs+=(
 			-DLLVM_TOOL_CLANG_TOOLS_EXTRA_BUILD=OFF
-		)
-	fi
-
-	if [[ -n "${EPREFIX}" ]]; then
-		mycmakeargs+=(
-			-DGCC_INSTALL_PREFIX="${EPREFIX}/usr"
 		)
 	fi
 
