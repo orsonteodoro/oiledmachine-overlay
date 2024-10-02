@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# Last update:  2024-05-25
+# Last update:  2024-07-23
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -42,13 +42,13 @@ inherit toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-	EGIT_BRANCH="${LLVM_EBUILDS_LLVM19_BRANCH}"
+	EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
 	if [[ "${USE}" =~ "fallback-commit" ]] ; then
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
 	fi
 else
 	KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
 	"
 fi
 
@@ -71,7 +71,7 @@ IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 +debug gdb-plugin hwloc offload ompt test llvm_targets_NVPTX
 ebuild-revision-8
-${LLVM_EBUILDS_LLVM19_REVISION}
+${LLVM_EBUILDS_LLVM20_REVISION}
 "
 gen_cuda_required_use() {
 	local x
