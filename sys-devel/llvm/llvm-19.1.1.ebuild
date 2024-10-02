@@ -26,6 +26,11 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
+~arm64-macos ~ppc-macos ~x64-macos
+"
+
 inherit cmake dhms llvm.org multilib-minimal pax-utils python-any-r1 toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils
 
@@ -45,7 +50,7 @@ LICENSE="
 # 4. ConvertUTF.h: TODO.
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-+binutils-plugin bolt bolt-heatmap +debug debuginfod doc -dump exegesis jemalloc
++binutils-plugin bolt bolt-heatmap debug debuginfod doc -dump exegesis jemalloc
 libedit +libffi tcmalloc test xml z3 zstd
 ebuild-revision-6
 ${LLVM_EBUILDS_LLVM19_REVISION}
@@ -373,6 +378,12 @@ src_prepare() {
 	check_live_ebuild
 
 	llvm.org_src_prepare
+
+	if has_version ">=sys-libs/glibc-2.40"; then
+		# https://github.com/llvm/llvm-project/issues/100791
+		rm -r test/tools/llvm-exegesis/X86/latency || die
+	fi
+
 	if use bolt ; then
 		pushd "${WORKDIR}" || die
 			eapply "${FILESDIR}/llvm-16.0.5-bolt-set-cmake-libdir.patch"
