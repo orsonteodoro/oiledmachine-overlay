@@ -50,7 +50,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 +binutils-plugin bolt bolt-heatmap debug debuginfod doc -dump exegesis jemalloc
 libedit +libffi ncurses tcmalloc test xar xml z3 zstd
-ebuild-revision-6
+ebuild-revision-7
 ${LLVM_EBUILDS_LLVM17_REVISION}
 "
 REQUIRED_USE+="
@@ -194,7 +194,7 @@ LLVM_COMPONENTS=(
 	"third-party"
 )
 LLVM_MANPAGES=1
-LLVM_PATCHSET="${PV}"
+LLVM_PATCHSET="${PV}-r3"
 LLVM_USE_TARGETS="provide"
 llvm.org_set_globals
 
