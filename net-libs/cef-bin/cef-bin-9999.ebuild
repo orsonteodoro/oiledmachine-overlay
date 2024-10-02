@@ -303,11 +303,50 @@ check_kernel_flags() {
 	check_extra_config
 }
 
-pkg_setup() {
+check_kernel_config() {
 	if use kernel_linux ; then
 		linux-info_pkg_setup
 		chromium_suid_sandbox_check_kernel_config
+		CONFIG_CHECK="
+			~SYSFS
+			~MULTIUSER
+			~SECURITY
+			~SECURITY_YAMA
+		"
+		WARNING_SYSFS="CONFIG_SYSFS could be added for ptrace sandbox protection"
+		WARNING_MULTIUSER="CONFIG_MULTIUSER could be added for ptrace sandbox protection"
+		WARNING_SECURITY="CONFIG_SECURITY could be added for ptrace sandbox protection"
+		WARNING_SECURITY_YAMA="CONFIG_SECURITY_YAMA could be added for ptrace sandbox protection to mitigate against credential theft"
+		check_extra_config
+
+		if ! linux_config_exists ; then
+ewarn "Missing kernel .config file."
+		fi
+
+		if linux_chkconfig_present "SECURITY_YAMA" ; then
+			local lsm=$(linux_chkconfig_string LSM)
+			if [[ "${lsm}" =~ "yama" ]] ; then
+				:
+			else
+ewarn "Missing yama in CONFIG_LSM.  Add yama to CONFIG_LSM for ptrace sandbox protection."
+			fi
+		fi
+
+	# The history of the commit can be found on
+	# https://community.intel.com/t5/Blogs/Tech-Innovation/Client/A-Journey-for-Landing-The-V8-Heap-Layout-Visualization-Tool/post/1368855
+	# I've seen this first in the nodejs repo but never understood the benefit.
+	# The same article discusses the unintended consequences.
+		CONFIG_CHECK="
+			~TRANSPARENT_HUGEPAGE
+		"
+		WARNING_TRANSPARENT_HUGEPAGE="CONFIG_TRANSPARENT_HUGEPAGE could be enabled for V8 [JavaScript engine] memory access time reduction.  For webservers, music production, realtime, it should be kept disabled."
+		check_extra_config
+	# In the current build files in the chromium project, they had went against their original decision about supporting THP.
 	fi
+}
+
+pkg_setup() {
+	check_kernel_config
 	if use test ; then
 		if has "sandbox" ${FEATURES} ; then
 eerror
