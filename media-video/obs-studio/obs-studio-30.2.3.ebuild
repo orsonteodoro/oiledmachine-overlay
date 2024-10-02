@@ -519,8 +519,7 @@ DEPEND_PLUGINS="
 	)
 	v4l2? (
 		${DEPEND_FFMPEG}
-		>=media-libs/libv4l-1.22.1
-		>=media-tv/v4l-utils-1.22.1
+		>=media-libs/libv4l-1.22.1[utils]
 		virtual/udev
 	)
 	vlc? (
@@ -552,7 +551,7 @@ DEPEND_LIBOBS="
 	${DEPEND_ZLIB}
 	>=sys-apps/dbus-1.12.20
 	dev-libs/uthash
-	sys-libs/libuuid
+	sys-apps/util-linux
 	pulseaudio? (
 		>=media-sound/pulseaudio-15.99.1
 	)
