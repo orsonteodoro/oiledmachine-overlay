@@ -26,7 +26,9 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-build/cmake-3.16
-	clang? ( sys-devel/clang )
+	clang? (
+		sys-devel/clang:${LLVM_MAJOR}
+	)
 	test? (
 		$(python_gen_any_dep ">=dev-python/lit-9.0.1[\${PYTHON_USEDEP}]")
 		=sys-devel/clang-${PV%_*}*:${LLVM_MAX_SLOT}

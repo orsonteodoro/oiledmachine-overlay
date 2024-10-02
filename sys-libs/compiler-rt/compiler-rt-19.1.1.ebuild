@@ -25,6 +25,11 @@ unset -f _llvm_set_globals
 
 PYTHON_COMPAT=( "python3_"{10..13} )
 
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~amd64-linux ~arm64-macos
+~ppc-macos ~x64-macos
+"
+
 inherit cmake crossdev flag-o-matic llvm.org llvm-utils python-any-r1
 inherit toolchain-funcs
 
@@ -47,7 +52,9 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-build/cmake-3.16
-	clang? ( sys-devel/clang )
+	clang? (
+		sys-devel/clang:${LLVM_MAJOR}
+	)
 	test? (
 		$(python_gen_any_dep ">=dev-python/lit-15[\${PYTHON_USEDEP}]")
 		=sys-devel/clang-${LLVM_VERSION}*:${LLVM_MAJOR}
