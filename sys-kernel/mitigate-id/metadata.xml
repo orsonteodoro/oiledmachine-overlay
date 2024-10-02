@@ -81,6 +81,9 @@
     <flag name="ecdh">
       Mitigate against information disclosure in the ecdh symmetric key exchange.
     </flag>
+    <flag name="enforce">
+      Protect against information disclosure by replacing vulnerable versions.
+    </flag>
     <flag name="ext4">
       Mitigate against information disclosure for the ext4 filesystem.
     </flag>

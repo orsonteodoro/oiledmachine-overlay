@@ -72,6 +72,9 @@
     <flag name="custom-kernel">
       Prevent vendor lock-in when doing kernel mitigation checks.
     </flag>
+    <flag name="enforce">
+      Protect against data tampering by replacing vulnerable versions.
+    </flag>
     <flag name="ext4">
       Mitigate against data tampering for the ext4 filesystem.
     </flag>

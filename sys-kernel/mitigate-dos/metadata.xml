@@ -93,6 +93,9 @@
     <flag name="custom-kernel">
       Prevent vendor lock-in when doing kernel mitigation checks.
     </flag>
+    <flag name="enforce">
+      Protect against Denial of Service by replacing vulnerable versions.
+    </flag>
     <flag name="esp-in-tcp">
       Mitigate against Denial of Service for IP: ESP in TCP dependency.
     </flag>
