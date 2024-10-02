@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# Last update:  2024-06-23
+# Last update:  2024-09-30
 
 PYTHON_COMPAT=( "python3_"{10..13} )
 
