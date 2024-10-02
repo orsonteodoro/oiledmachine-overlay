@@ -16,8 +16,8 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM19_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -39,7 +39,7 @@ LICENSE="
 "
 SLOT="0"
 IUSE+="
-${LLVM_EBUILDS_LLVM19_REVISION}
+${LLVM_EBUILDS_LLVM20_REVISION}
 +clang +debug static-libs test
 "
 REQUIRED_USE="
