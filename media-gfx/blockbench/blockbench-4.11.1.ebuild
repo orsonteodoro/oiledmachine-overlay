@@ -748,7 +748,7 @@ LICENSE="
 	(
 		${ELECTRON_APP_LICENSES}
 		Artistic-2
-		electron-30.1.2-chromium.html
+		electron-31.4.0-chromium.html
 	)
 	GPL-3+
 "
@@ -836,7 +836,7 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild-revision-1"
+IUSE+=" ebuild-revision-2"
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
