@@ -506,6 +506,15 @@ SQUASHFS_RDEPEND="
 	${BLOCK_RDEPEND}
 	${FS_RDEPEND}
 "
+#
+# We would like to optimize this with one gather pass and render pass but it is
+# probably not possible with ebuild restrictions.
+#
+# The gather pass would alter the acceptable version table for vulnerable and
+# unvulnerable table based on the conditionals.
+#
+# The render pass would generate the final rdepend.
+#
 ALL_RDEPEND="
 	${SQUASHFS_RDEPEND}
 	${MITIGATE_DOS_RDEPEND}

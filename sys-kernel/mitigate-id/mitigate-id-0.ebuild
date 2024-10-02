@@ -286,6 +286,15 @@ REQUIRED_USE="
 FS_RDEPEND="
 	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS[@]})
 "
+#
+# We would like to optimize this with one gather pass and render pass but it is
+# probably not possible with ebuild restrictions.
+#
+# The gather pass would alter the acceptable version table for vulnerable and
+# unvulnerable table based on the conditionals.
+#
+# The render pass would generate the final rdepend.
+#
 ALL_RDEPEND="
 	${MITIGATE_ID_RDEPEND}
 	!custom-kernel? (
