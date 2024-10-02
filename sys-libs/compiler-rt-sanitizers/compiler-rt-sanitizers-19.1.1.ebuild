@@ -30,6 +30,11 @@ inherit check-reqs cmake flag-o-matic linux-info llvm.org llvm-utils python-any-
 
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~amd64-linux ~ppc-macos
+~x64-macos
+"
+
 DESCRIPTION="Compiler runtime libraries for clang (sanitizers & xray)"
 HOMEPAGE="https://llvm.org/"
 LICENSE="
@@ -41,7 +46,7 @@ LICENSE="
 "
 SLOT="${LLVM_MAJOR}"
 IUSE+="
-+abi_x86_32 abi_x86_64 +clang +ctx-profile +debug hexagon +libfuzzer +memprof
++abi_x86_32 abi_x86_64 +clang +ctx-profile debug hexagon +libfuzzer +memprof
 +orc +profile test +xray
 ebuild-revision-4
 ${LLVM_EBUILDS_LLVM19_REVISION}
@@ -307,7 +312,8 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.16
 	clang? (
-		sys-devel/clang
+		sys-devel/clang:${LLVM_MAJOR}
+		sys-libs/compiler-rt:${LLVM_MAJOR}
 	)
 	elibc_glibc? (
 		net-libs/libtirpc

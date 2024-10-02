@@ -4,15 +4,31 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( "python3_"{10..12} )
+# Last update:  2024-09-22
 
-inherit check-reqs cmake flag-o-matic linux-info llvm llvm.org python-any-r1
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+="
+		fallback-commit
+	"
+fi
+
 inherit llvm-ebuilds
 
+_llvm_set_globals() {
+	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
+llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM19_BRANCH}"
+	fi
+}
+_llvm_set_globals
+unset -f _llvm_set_globals
+
+PYTHON_COMPAT=( "python3_"{10..13} )
+
+inherit check-reqs cmake flag-o-matic linux-info llvm.org llvm-utils python-any-r1
+
 LLVM_MAX_SLOT=${LLVM_MAJOR}
-KEYWORDS="
-amd64 arm arm64 ~loong ppc64 ~riscv x86 ~amd64-linux ~ppc-macos ~x64-macos
-"
 
 DESCRIPTION="Compiler runtime libraries for clang (sanitizers & xray)"
 HOMEPAGE="https://llvm.org/"
@@ -25,9 +41,10 @@ LICENSE="
 "
 SLOT="${LLVM_MAJOR}"
 IUSE+="
-+abi_x86_32 abi_x86_64 +clang debug hexagon +libfuzzer +memprof +orc +profile
-test +xray
-ebuild-revision-6
++abi_x86_32 abi_x86_64 +clang +ctx-profile +debug hexagon +libfuzzer +memprof
++orc +profile test +xray
+ebuild-revision-4
+${LLVM_EBUILDS_LLVM19_REVISION}
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -39,6 +56,8 @@ SANITIZER_FLAGS=(
 	hwasan
 	lsan
 	msan
+	nsan
+	rtsan
 	safestack
 	scudo
 	shadowcallstack
@@ -290,7 +309,8 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.16
 	clang? (
-		sys-devel/clang
+		sys-devel/clang:${LLVM_MAJOR}
+		sys-libs/compiler-rt:${LLVM_MAJOR}
 	)
 	elibc_glibc? (
 		net-libs/libtirpc
@@ -323,8 +343,8 @@ LLVM_COMPONENTS=(
 	"cmake"
 	"llvm/cmake"
 )
-LLVM_PATCHSET="${PV}-r5"
 LLVM_TEST_COMPONENTS=(
+	"llvm/include/llvm/ProfileData"
 	"llvm/lib/Testing/Support"
 	"third-party"
 )
@@ -365,7 +385,6 @@ pkg_setup() {
 		check_extra_config
 	fi
 	check_space
-	LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
 	python-any-r1_pkg_setup
 }
 
@@ -389,18 +408,13 @@ src_prepare() {
 		> test/cfi/CMakeLists.txt || die
 	fi
 
-	if has_version -b ">=sys-libs/glibc-2.37"; then
-		# known failures with glibc-2.37
-		# https://github.com/llvm/llvm-project/issues/60678
-		rm test/dfsan/custom.cpp || die
-		rm test/dfsan/release_shadow_space.c || die
-	fi
-
 	llvm.org_src_prepare
 }
 
 src_configure() {
+	llvm_prepend_path "${LLVM_MAJOR}"
 	llvm-ebuilds_fix_toolchain
+
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
@@ -442,6 +456,7 @@ eerror
 		# builtins & crt installed by sys-libs/compiler-rt
 		-DCOMPILER_RT_BUILD_BUILTINS=OFF
 		-DCOMPILER_RT_BUILD_CRT=OFF
+		-DCOMPILER_RT_BUILD_CTX_PROFILE=$(usex ctx-profile)
 		-DCOMPILER_RT_BUILD_LIBFUZZER=$(usex libfuzzer)
 		-DCOMPILER_RT_BUILD_MEMPROF=$(usex memprof)
 		-DCOMPILER_RT_BUILD_ORC=$(usex orc)

@@ -27,7 +27,7 @@ SLOT="${LLVM_VERSION}"
 IUSE+="
 +abi_x86_32 abi_x86_64 +clang debug hexagon +libfuzzer +memprof +orc +profile
 test +xray
-ebuild-revision-4
+ebuild-revision-5
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -327,7 +327,7 @@ LLVM_TEST_COMPONENTS=(
 	"llvm/lib/Testing/Support"
 	"llvm/utils/unittest"
 )
-LLVM_PATCHSET="${PV/_/-}"
+LLVM_PATCHSET="${PV/_/-}-r6"
 llvm.org_set_globals
 
 python_check_deps() {
