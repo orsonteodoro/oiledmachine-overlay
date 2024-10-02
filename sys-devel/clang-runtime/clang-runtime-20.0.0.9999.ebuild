@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# Last update:  2024-03-18
+# Last update:  2024-07-23
 
 inherit multilib-build toolchain-funcs
 
