@@ -1,0 +1,56 @@
+Subject:  Disallow store data races when using Ofast.
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+
+--- a/build/moz.configure/toolchain.configure.orig	2024-10-01 15:49:14.860634800 -0700
++++ b/build/moz.configure/toolchain.configure	2024-10-01 15:50:24.944183929 -0700
+@@ -2229,6 +2229,19 @@ try_compile(
+     onerror=die_on_old_libstdcxx,
+ )
+ 
++@depends(
++    c_compiler,
++)
++def disable_broken(c_compiler):
++    flags = []
++    if c_compiler.type == "gcc":
++        # Precaution against possible vulnerability
++        flags.append("-fno-allow-store-data-races")
++    return namespace(
++        flags=flags,
++    )
++
++set_config("MOZ_DISABLE_BROKEN_FLAGS", disable_broken.flags)
+ 
+ @depends(c_compiler, target)
+ def default_debug_flags(compiler_info, target):
+--- a/python/mozbuild/mozbuild/frontend/context.py.orig	2024-09-23 11:00:07.000000000 -0700
++++ b/python/mozbuild/mozbuild/frontend/context.py	2024-10-01 15:50:57.139976802 -0700
+@@ -393,7 +393,18 @@ class HostCompileFlags(BaseCompileFlags)
+         # We don't use MOZ_OPTIMIZE here because we don't want
+         # --disable-optimize to make in-tree host tools slow. Doing so can
+         # potentially make build times significantly worse.
+-        return self._context.config.substs.get("HOST_OPTIMIZE_FLAGS") or []
++        optimize_flags = []
++        flags_prev = self._context.config.substs.get("HOST_OPTIMIZE_FLAGS")
++        flags_broken = self._context.config.substs.get("MOZ_DISABLE_BROKEN_FLAGS")
++        if not flags_prev:
++            pass
++        else
++            optimize_flags = flags_prev
++        if not flags_broken:
++            pass
++        else
++            optimize_flags += flags_broken
++        return optimize_flags
+ 
+ 
+ class AsmFlags(BaseCompileFlags):
+@@ -521,7 +532,7 @@ class TargetCompileFlags(BaseCompileFlag
+             if relsrcdir == "js/src" or relsrcdir.startswith("js/src/"):
+                 return self._context.config.substs.get("MOZ_JS_OPTIMIZE_FLAGS")
+ 
+-        return self._context.config.substs.get("MOZ_OPTIMIZE_FLAGS")
++        return self._context.config.substs.get("MOZ_OPTIMIZE_FLAGS") + self._context.config.substs.get("MOZ_DISABLE_BROKEN_FLAGS")
+ 
+     def __setitem__(self, key, value):
+         if key not in self._known_keys:

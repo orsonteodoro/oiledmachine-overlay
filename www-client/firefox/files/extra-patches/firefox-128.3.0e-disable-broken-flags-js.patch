@@ -1,0 +1,20 @@
+--- a/js/src/js-cxxflags.mozbuild.orig	2024-10-01 16:14:47.374775637 -0700
++++ b/js/src/js-cxxflags.mozbuild	2024-10-01 16:15:16.206590151 -0700
+@@ -16,3 +16,17 @@ if CONFIG["CC_TYPE"] in ("clang", "gcc")
+ # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=50044
+ if CONFIG["CC_TYPE"] == "gcc":
+     CXXFLAGS += ["-Wno-attributes"]
++
++if CONFIG["CC_TYPE"] in ("clang"):
++    # Prevent audio from muting always.  Breaks with -Ofast.
++    CXXFLAGS += [
++        "__OFLAG_SAFE__",
++        "-fno-fast-math",
++    ]
++
++if CONFIG["CC_TYPE"] in ("gcc"):
++    # Prevent audio from muting always.  Breaks with -Ofast.
++    CXXFLAGS += [
++        "__OFLAG_SAFE__",
++        "-fno-fast-math",
++    ]
