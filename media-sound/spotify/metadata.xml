@@ -38,6 +38,9 @@
       You may need to click play twice between that and another podcast to
       load the ffmpeg library and then have actual playback.
     </flag>
+    <flag name="firejail">
+      Use Firejail sandboxing
+    </flag>
     <flag name="pulseaudio">
       Controls the dependency on PulseAudio or apulse.
     </flag>

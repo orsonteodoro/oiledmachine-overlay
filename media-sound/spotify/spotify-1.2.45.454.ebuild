@@ -11,11 +11,11 @@ EAPI=8
 # https://www.spotify.com/us/download/linux/
 # https://community.spotify.com/t5/Desktop-Linux/Linux-Spotify-client-1-x-now-in-stable/m-p/1300404
 #
-# CEF_DEPENDS_VERSION="125.0.6422.112"
-# CEF_DEPENDS_VERSION_A="125"
+# CEF_DEPENDS_VERSION="127.0.6533.100"
+# CEF_DEPENDS_VERSION_A="127"
 # CEF_DEPENDS_VERSION_B="0"
-# CEF_DEPENDS_VERSION_C="6422"
-# CEF_DEPENDS_VERSION_D="112"
+# CEF_DEPENDS_VERSION_C="6533"
+# CEF_DEPENDS_VERSION_D="100"
 #
 # Third party licenses:
 #
@@ -45,23 +45,23 @@ EAPI=8
 #
 # For Chromium *DEPENDs and versioning see:
 #
-# https://github.com/chromium/chromium/tree/125.0.6422.112/build/linux/sysroot_scripts/generated_package_lists
-# https://github.com/chromium/chromium/blob/125.0.6422.112/build/install-build-deps.py
-# https://github.com/chromium/chromium/blob/125.0.6422.112/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/tree/127.0.6533.100/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/127.0.6533.100/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/127.0.6533.100/tools/clang/scripts/update.py#L42
 #
 # For vendored Chromium third party *DEPENDs versioning see:
 #
-# https://github.com/chromium/chromium/blob/125.0.6422.112/third_party/fontconfig/include/config.h#L290
-# https://github.com/chromium/chromium/blob/125.0.6422.112/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/127.0.6533.100/third_party/fontconfig/README.chromium#L3
+# https://github.com/chromium/chromium/blob/127.0.6533.100/third_party/zlib/zlib.h#L40
 #
 # Versions only obtainable through tarball:
 #
-# /var/tmp/portage/www-client/chromium-125.0.6422.112/work/chromium-125.0.6422.112/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-125.0.6422.112/work/chromium-125.0.6422.112/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-125.0.6422.112/work/chromium-125.0.6422.112/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-125.0.6422.112/work/chromium-125.0.6422.112/third_party/ffmpeg/libavutil/version.h               ; do not use
-# /var/tmp/portage/www-client/chromium-125.0.6422.112/work/chromium-125.0.6422.112/third_party/ffmpeg/libavcodec/version*.h             ; do not use
-# /var/tmp/portage/www-client/chromium-125.0.6422.112/work/chromium-125.0.6422.112/third_party/ffmpeg/libavformat/version*.h            ; do not use
+# /var/tmp/portage/www-client/chromium-127.0.6533.100/work/chromium-127.0.6533.100/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-127.0.6533.100/work/chromium-127.0.6533.100/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-127.0.6533.100/work/chromium-127.0.6533.100/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-127.0.6533.100/work/chromium-127.0.6533.100/third_party/ffmpeg/libavutil/version.h               ; do not use
+# /var/tmp/portage/www-client/chromium-127.0.6533.100/work/chromium-127.0.6533.100/third_party/ffmpeg/libavcodec/version*.h             ; do not use
+# /var/tmp/portage/www-client/chromium-127.0.6533.100/work/chromium-127.0.6533.100/third_party/ffmpeg/libavformat/version*.h            ; do not use
 #
 
 # Dropped pax-kernel USE flag because of the license plus the CEF version used
@@ -73,7 +73,7 @@ EAPI=8
 # For ffmpeg:0/x.y.z, y must be <= 59.
 ALSA_LIB="1.1.3"
 ATK_PV="2.26.2"
-BUILD_ID_AMD64="g242057a2" # Change this after every bump
+BUILD_ID_AMD64="gc16ec9f6" # Change this after every bump
 CAIRO_PV="1.16.0"
 CLANG_PV="17"
 DEFAULT_CONFIGURATION="stable"
@@ -194,7 +194,7 @@ LICENSE="
 RESTRICT="binchecks mirror strip"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
-emoji ffmpeg libnotify pulseaudio vaapi wayland zenity +X
+emoji ffmpeg firejail libnotify pulseaudio vaapi wayland zenity +X
 ebuild-revision-1
 "
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -271,7 +271,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 # *DEPENDs based on install-build-deps.sh's common_lib_list and lib_list variables.
 
 # For details see:
-# https://github.com/chromium/chromium/blob/125.0.6422.112/build/install-build-deps.py#L329
+# https://github.com/chromium/chromium/blob/127.0.6533.100/build/install-build-deps.py#L329
 
 # The version is obtained in src_prepare
 
@@ -385,6 +385,9 @@ CEFCLIENT_RDEPEND="
 RDEPEND+="
 	${CEFCLIENT_RDEPEND}
 	${CHROMIUM_RDEPEND}
+"
+PDEPEND+="
+	sys-apps/firejail[firejail_profiles_spotify,X?]
 "
 
 # END CEF DEPENDS
