@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# Last update:  2024-06-15
+# Last update:  2024-09-10
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -17,8 +17,8 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM19_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -36,6 +36,10 @@ LLVM_MAX_SLOT=${PV%%.*}
 PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
+
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos
+"
 
 SRC_URI+="
 https://github.com/llvm/llvm-project/commit/ef843c8271027b89419d07ffc2aaa3abf91438ef.patch
@@ -60,7 +64,7 @@ SLOT="0"
 IUSE+="
 hardened +libcxxabi +static-libs test +threads
 ebuild-revision-12
-${LLVM_EBUILDS_LLVM19_REVISION}
+${LLVM_EBUILDS_LLVM20_REVISION}
 "
 RDEPEND="
 	!libcxxabi? (
@@ -468,6 +472,11 @@ src_test() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			local -x LIT_PRESERVES_TMP=1
+			cmake_build install-cxx-test-suite-prefix
+			cp "${BUILD_DIR}"/{"lib","libcxx/test-suite-install/$(get_libdir)"}"/libc++_shared.so" || die
+			if use static-libs; then
+				cp "${BUILD_DIR}"/{"lib","libcxx/test-suite-install/$(get_libdir)"}"/libc++_static.a" || die
+			fi
 			cmake_build check-cxx
 		done
 	}
