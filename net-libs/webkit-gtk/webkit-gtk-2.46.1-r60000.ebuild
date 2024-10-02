@@ -1267,89 +1267,6 @@ eerror
 		fi
 	fi
 
-	if has ia64 ${IUSE_EFFECTIVE} && use ia64 ; then
-		known=1
-		if (( ${page_size} == 64 )) ; then
-			CONFIG_CHECK="
-				~IA64_PAGE_SIZE_64KB
-				~!IA64_PAGE_SIZE_16KB
-				~!IA64_PAGE_SIZE_8KB
-				~!IA64_PAGE_SIZE_4KB
-			"
-			WARNING_IA64_PAGE_SIZE_64KB="CONFIG_IA64_PAGE_SIZE_64KB must be set to =y in the kernel."
-			WARNING_IA64_PAGE_SIZE_16KB="CONFIG_IA64_PAGE_SIZE_16KB must be set to =n in the kernel."
-			WARNING_IA64_PAGE_SIZE_8KB="CONFIG_IA64_PAGE_SIZE_8KB must be set to =n in the kernel."
-			WARNING_IA64_PAGE_SIZE_4KB="CONFIG_IA64_PAGE_SIZE_4KB must be set to =n in the kernel."
-			check_extra_config
-			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "64" ]] ; then
-				die "CUSTOM_PAGE_SIZE=64 must be set as an environment variable"
-			fi
-		elif (( ${page_size} == 16 )) ; then
-			CONFIG_CHECK="
-				~!IA64_PAGE_SIZE_64KB
-				~IA64_PAGE_SIZE_16KB
-				~!IA64_PAGE_SIZE_8KB
-				~!IA64_PAGE_SIZE_4KB
-			"
-			WARNING_IA64_PAGE_SIZE_64KB="CONFIG_IA64_PAGE_SIZE_64KB must be set to =n in the kernel."
-			WARNING_IA64_PAGE_SIZE_16KB="CONFIG_IA64_PAGE_SIZE_16KB must be set to =y in the kernel."
-			WARNING_IA64_PAGE_SIZE_8KB="CONFIG_IA64_PAGE_SIZE_8KB must be set to =n in the kernel."
-			WARNING_IA64_PAGE_SIZE_4KB="CONFIG_IA64_PAGE_SIZE_4KB must be set to =n in the kernel."
-			check_extra_config
-			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "16" ]] ; then
-				die "CUSTOM_PAGE_SIZE=16 must be set as an environment variable"
-			fi
-		elif (( ${page_size} == 8 )) ; then
-			CONFIG_CHECK="
-				~!IA64_PAGE_SIZE_64KB
-				~!IA64_PAGE_SIZE_16KB
-				~IA64_PAGE_SIZE_8KB
-				~!IA64_PAGE_SIZE_4KB
-			"
-			WARNING_IA64_PAGE_SIZE_64KB="CONFIG_IA64_PAGE_SIZE_64KB must be set to =n in the kernel."
-			WARNING_IA64_PAGE_SIZE_16KB="CONFIG_IA64_PAGE_SIZE_16KB must be set to =n in the kernel."
-			WARNING_IA64_PAGE_SIZE_8KB="CONFIG_IA64_PAGE_SIZE_8KB must be set to =y in the kernel."
-			WARNING_IA64_PAGE_SIZE_4KB="CONFIG_IA64_PAGE_SIZE_4KB must be set to =n in the kernel."
-			check_extra_config
-			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "8" ]] ; then
-				die "CUSTOM_PAGE_SIZE=8 must be set as an environment variable"
-			fi
-		elif (( ${page_size} == 4 )) ; then
-			CONFIG_CHECK="
-				~!IA64_PAGE_SIZE_64KB
-				~!IA64_PAGE_SIZE_16KB
-				~!IA64_PAGE_SIZE_8KB
-				~IA64_PAGE_SIZE_4KB
-			"
-			WARNING_IA64_PAGE_SIZE_64KB="CONFIG_IA64_PAGE_SIZE_64KB must be set to =n in the kernel."
-			WARNING_IA64_PAGE_SIZE_16KB="CONFIG_IA64_PAGE_SIZE_16KB must be set to =n in the kernel."
-			WARNING_IA64_PAGE_SIZE_8KB="CONFIG_IA64_PAGE_SIZE_8KB must be set to =n in the kernel."
-			WARNING_IA64_PAGE_SIZE_4KB="CONFIG_IA64_PAGE_SIZE_4KB must be set to =y in the kernel."
-			check_extra_config
-			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "4" ]] ; then
-				die "CUSTOM_PAGE_SIZE=4 must be set as an environment variable"
-			fi
-		else
-			if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
-eerror
-eerror "Invalid value for CUSTOM_PAGE_SIZE."
-eerror
-eerror "Actual value:  ${CUSTOM_PAGE_SIZE}"
-eerror "Expected values:  4, 8, 16, 64"
-eerror
-				die
-			else
-eerror
-eerror "QA:  Invalid value for page_size."
-eerror
-eerror "Actual value:  ${page_size}"
-eerror "Expected values:  4, 8, 16, 64"
-eerror
-				die
-			fi
-		fi
-	fi
-
 	if use loong ; then
 		known=1
 		if (( ${page_size} == 64 )) ; then
@@ -1667,28 +1584,6 @@ eerror "Run menuconfig to fix the kernel config."
 eerror
 			die
 		fi
-	elif [[ "${ARCH}" == "ia64" ]] ; then
-		if linux_config_exists ; then
-			if linux_chkconfig_builtin IA64_PAGE_SIZE_4KB ; then
-				echo "4"
-			elif linux_chkconfig_builtin IA64_PAGE_SIZE_8KB ; then
-				echo "8"
-			elif linux_chkconfig_builtin IA64_PAGE_SIZE_16KB ; then
-				echo "16"
-			elif linux_chkconfig_builtin IA64_PAGE_SIZE_64KB ; then
-				echo "64"
-			else
-eerror
-eerror "Run menuconfig to fix the kernel config."
-eerror
-				die
-			fi
-		else
-eerror
-eerror "Run menuconfig to fix the kernel config."
-eerror
-			die
-		fi
 	elif [[ "${ARCH}" == "hppa" ]] ; then
 		if linux_config_exists ; then
 			if linux_chkconfig_builtin PARISC_PAGE_SIZE_4KB ; then
@@ -1830,8 +1725,6 @@ check_page_size() {
 
 	# These are based on the kernel defaults.
 	if [[ "${ARCH}" == "loong" ]] ; then
-		default_page_size=16
-	elif [[ "${ARCH}" == "ia64" ]] ; then
 		default_page_size=16
 	elif [[ "${ARCH}" == "ppc64" ]] ; then
 		if tc-is-cross-compiler ; then
@@ -2263,9 +2156,6 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	# It does not compile on alpha without this in LDFLAGS
 	# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=648761
 	use alpha && append-ldflags "-Wl,--no-relax"
-
-	# ld segfaults on ia64 with LDFLAGS --as-needed, bug #555504
-	has ia64 ${IUSE_EFFECTIVE} && use ia64 && append-ldflags "-Wl,--no-as-needed"
 
 	# Sigbuses on SPARC with mcpu and co., bug #???
 	use sparc && filter-flags "-mvis"

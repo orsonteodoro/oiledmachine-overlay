@@ -17,7 +17,7 @@ TEST_TARBALL="aspell6-en-2018.04.16-0.tar.bz2"
 inherit autotools flag-o-matic libtool multilib-minimal toolchain-funcs
 
 KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
+~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
 ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
 "
 S="${WORKDIR}/${MY_P}"

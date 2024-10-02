@@ -1539,8 +1539,6 @@ eerror "gcc or clang only supported for max-uptime in kernel .config.  Skipping 
 		arch="alpha"
 	elif grep -q -e "Linux/parisc" "${path_config}" ; then
 		arch="parisc" # HPPA
-	elif grep -q -e "Linux/ia64" "${path_config}" ; then
-		arch="ia64"
 	else
 eerror "USE=max-uptime not supported for ARCH=${ARCH}"
 		die

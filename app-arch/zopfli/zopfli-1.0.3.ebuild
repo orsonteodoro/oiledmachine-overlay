@@ -12,7 +12,7 @@ UOPTS_SUPPORT_TPGO=1
 inherit cmake flag-o-matic uopts
 
 KEYWORDS="
-~alpha amd64 arm arm64 hppa ~ia64 ~loong ppc ppc64 ~riscv ~s390 sparc x86
+~alpha amd64 arm arm64 hppa ~loong ppc ppc64 ~riscv ~s390 sparc x86
 ~amd64-linux ~x86-linux
 "
 S="${WORKDIR}/${PN}-${P}"

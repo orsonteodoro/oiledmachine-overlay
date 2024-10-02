@@ -130,7 +130,6 @@ EXCLUDE_SCS=(
 	amd64
 	arm
 	hppa
-	ia64
 	loong
 	mips
 	ppc
@@ -278,7 +277,7 @@ X86_FLAGS=(
 )
 ZEN_KV="5.15.0"
 
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 # clang is default OFF based on https://github.com/torvalds/linux/blob/v5.15/Documentation/process/changes.rst
 IUSE+="
 ${ARM_FLAGS[@]}
@@ -288,7 +287,6 @@ bbrv2 build c2tcp cfi +cfs -clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
 -exfat -expoline -gdb +genpatches -genpatches_1510 -lto nest multigen_lru orca
 pgo prjc qt5 +retpoline rock-dkms rt shadowcallstack symlink tresor tresor_prompt
 tresor_sysfs uksm zen-multigen_lru zen-sauce
-ia64
 "
 REQUIRED_USE+="
 	dwarf4? (

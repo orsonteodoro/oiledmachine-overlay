@@ -13,7 +13,7 @@ inherit gnome.org gnome2-utils meson python-any-r1 vala xdg
 inherit multilib-minimal
 
 KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86
+~alpha ~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86
 ~amd64-linux ~x86-linux ~sparc-solaris ~x86-solaris
 "
 

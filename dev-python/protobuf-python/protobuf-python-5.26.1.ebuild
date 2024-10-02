@@ -20,7 +20,7 @@ if [[ "${PV}" =~ "9999" ]]; then
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${PARENT_P}"
 	S="${WORKDIR}/${PARENT_P}/python"
 else
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-macos"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-macos"
 	S="${WORKDIR}/protobuf-${PV}"
 	SRC_URI="
 		mirror://pypi/${PN:0:1}/protobuf/protobuf-${PV}.tar.gz

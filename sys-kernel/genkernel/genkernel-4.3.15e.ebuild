@@ -32,7 +32,6 @@ EXCLUDE_SCS=(
 	amd64
 	arm
 	hppa
-	ia64
 	mips
 	ppc
 	ppc64
@@ -152,7 +151,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 		${COMMON_URI}
 	"
 else
-	#KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
+	#KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 	SRC_URI="
 		${COMMON_URI}
 		https://dev.gentoo.org/~bkohler/dist/${MY_P}.tar.xz
@@ -415,7 +414,7 @@ RDEPEND+="
 		sys-process/procps
 	)
 	pgo_trainer_webcam? (
-		media-tv/v4l-utils
+		media-libs/libv4l[utils]
 		media-video/ffmpeg[encode,v4l]
 	)
 	pgo_trainer_yt? (

@@ -55,7 +55,7 @@ ROCM_IUSE=(
 
 inherit cuda flag-o-matic fortran-2 libtool multilib-minimal rocm
 
-KEYWORDS="~alpha amd64 arm arm64 ~ia64 ~loong ~ppc ppc64 ~riscv sparc x86 ~amd64-linux"
+KEYWORDS="~alpha amd64 arm arm64 ~loong ~ppc ppc64 ~riscv sparc x86 ~amd64-linux"
 S="${WORKDIR}/${MY_P}"
 SRC_URI="https://www.open-mpi.org/software/ompi/v$(ver_cut 1-2)/downloads/${MY_P}.tar.bz2"
 

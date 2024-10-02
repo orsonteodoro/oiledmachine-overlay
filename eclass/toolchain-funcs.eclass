@@ -751,7 +751,6 @@ tc-ninja_magic_to_arch() {
 		hexagon*)	echo hexagon;;
 		hppa*)		_tc_echo_kernel_alias parisc hppa;;
 		i?86*)		echo x86;;
-		ia64*)		echo ia64;;
 		loongarch*)	_tc_echo_kernel_alias loongarch loong;;
 		m68*)		echo m68k;;
 		metag*)		echo metag;;
@@ -837,7 +836,6 @@ tc-endian() {
 		cris*)		echo little;;
 		hppa*)		echo big;;
 		i?86*)		echo little;;
-		ia64*)		echo little;;
 		loongarch*)	echo little;;
 		m68*)		echo big;;
 		mips*l*)	echo little;;

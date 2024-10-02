@@ -21,7 +21,6 @@ EXCLUDE_SCS=(
 	amd64
 	arm
 	hppa
-	ia64
 	mips
 	ppc
 	ppc64
@@ -104,7 +103,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 	SRC_URI="${COMMON_URI}"
 else
-	#KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~s390 sparc x86" # EOL version
+	#KEYWORDS="~alpha amd64 arm arm64 ~hppa ~mips ppc ppc64 ~s390 sparc x86" # EOL version
 	SRC_URI="
 		${COMMON_URI}
 		https://dev.gentoo.org/~whissi/dist/genkernel/${MY_P}.tar.xz

@@ -182,7 +182,7 @@ CHROMIUM_RDEPEND="
 	>=x11-libs/libXrender-0.9.10
 	>=x11-libs/pango-1.46.2
 	>=x11-libs/pixman-0.40.0
-	sys-kernel/mitigate-tecv
+	sys-kernel/mitigate-id
 "
 # libcef alone uses aura not gtk
 RDEPEND+="

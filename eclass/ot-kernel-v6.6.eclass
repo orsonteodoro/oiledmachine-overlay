@@ -143,7 +143,6 @@ EXCLUDE_SCS=(
 	amd64
 	arm
 	hppa
-	ia64
 	loong
 	mips
 	ppc
@@ -302,7 +301,7 @@ X86_FLAGS=(
 ZEN_KV="6.6.0"
 
 if ! [[ "${PV}" =~ "9999" ]] ; then
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
 # CET default ON based on CI.
 # clang is default OFF based on https://github.com/torvalds/linux/blob/v6.6/Documentation/process/changes.rst
@@ -316,7 +315,6 @@ bbrv2 bbrv3 build c2tcp +cet +cfs -clang clear -deepcc -debug -dwarf4
 -dwarf5 dwarf-auto -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto
 nest orca pgo prjc qt5 qt6 +retpoline rt -rust shadowcallstack symlink tresor
 tresor_prompt tresor_sysfs zen-sauce
-ia64
 "
 
 REQUIRED_USE+="

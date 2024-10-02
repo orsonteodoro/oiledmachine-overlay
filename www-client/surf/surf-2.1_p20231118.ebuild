@@ -58,7 +58,7 @@ LICENSE="
 	)
 "
 KEYWORDS="
-~alpha ~amd64 ~amd64-fbsd ~amd64-linux ~arm ~arm64 ~ia64 ~ppc ~ppc64 ~sparc ~x86
+~alpha ~amd64 ~amd64-fbsd ~amd64-linux ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86
 ~x86-linux ~x86-macos
 "
 SLOT="0"

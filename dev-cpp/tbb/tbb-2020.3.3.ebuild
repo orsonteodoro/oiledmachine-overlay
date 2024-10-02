@@ -15,7 +15,7 @@ SOVER_TBBBIND="2" # See https://github.com/oneapi-src/oneTBB/blob/v2020.3/build/
 inherit flag-o-matic multilib-minimal multilib toolchain-funcs
 
 KEYWORDS="
-~alpha amd64 arm arm64 ~hppa ~ia64 ppc ppc64 ~riscv ~sparc x86 ~amd64-linux
+~alpha amd64 arm arm64 ~hppa ppc ppc64 ~riscv ~sparc x86 ~amd64-linux
 ~x86-linux
 "
 S="${WORKDIR}/oneTBB-${MY_PV}"

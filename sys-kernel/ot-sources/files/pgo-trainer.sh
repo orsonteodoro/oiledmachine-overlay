@@ -872,7 +872,7 @@ pgo_trainer_webcam() {
 		return
 	fi
 	if ! which v4l2-ctl 2>/dev/null 1>/dev/null ; then
-		print_info 1 "$(get_indent 1)>> Missing ffmpeg.  Install the media-tv/v4l-utils package"
+		print_info 1 "$(get_indent 1)>> Missing ffmpeg.  Install the media-libs/libv4l[utils] package"
 		return
 	fi
 

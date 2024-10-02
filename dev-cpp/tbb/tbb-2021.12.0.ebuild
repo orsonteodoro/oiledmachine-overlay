@@ -31,7 +31,7 @@ VER_SCH="semver" # valid values (left column):
 inherit cmake flag-o-matic multilib-minimal python-r1 toolchain-funcs
 
 KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86 ~amd64-linux
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ppc ~ppc64 ~sparc ~x86 ~amd64-linux
 ~x86-linux
 "
 if [[ "${VER_SCH}" == "marketing" ]] ; then

@@ -7295,8 +7295,7 @@ ot-kernel-pkgflags_nut() { # DONE
 # @DESCRIPTION:
 # Adds a video driver for TTY as the fallback to binary GPU drivers.
 _ot-kernel-pkgflags_tty_fallback() {
-	if [[ "${TTY_DRIVER}" == "efi" ]] \
-		&& [[ "${arch}" != "ia64" ]] ; then
+	if [[ "${TTY_DRIVER}" == "efi" ]] ; then
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_y_configopt "CONFIG_EFI"
 		ot-kernel_set_configopt "CONFIG_FB_EFI" "y"
@@ -10055,7 +10054,7 @@ eerror "Audit is required for dss profile to generate logs.  Set SYSTEMD_CONTAIN
 		#ot-kernel_y_configopt "CONFIG_NLATTR" # [P] Selected by NET
 		if [[ "${SYSTEMD_UEFI:-1}" == "1" ]] ; then
 			if ver_test "${KV_MAJOR_MINOR}" -lt "6.0" ; then
-				if [[ "${arch}" == "x86" || "${arch}" == "x86_64" || "${arch}" == "ia64" ]] ; then
+				if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 					ot-kernel_y_configopt "CONFIG_EFI_VARS" # [W]
 				fi
 			fi

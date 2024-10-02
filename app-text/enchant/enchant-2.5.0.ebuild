@@ -20,7 +20,7 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 inherit multilib-minimal
 
 KEYWORDS="
-~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86
+~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86
 ~amd64-linux ~x86-linux ~ppc-macos
 "
 SRC_URI="

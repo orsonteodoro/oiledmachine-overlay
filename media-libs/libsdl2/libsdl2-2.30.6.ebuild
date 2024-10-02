@@ -79,7 +79,7 @@ LICENSE="
 #   contain all rights reserved without mentioned terms or corresponding license
 #   and are transported with the tarball.
 
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~sparc"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~mips ~ppc ~ppc64 ~riscv ~sparc"
 RESTRICT="
 	!test? (
 		test

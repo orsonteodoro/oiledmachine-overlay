@@ -12,7 +12,7 @@ SONAME="10"				# https://github.com/google/re2/blob/2023-03-01/CMakeLists.txt#L3
 
 inherit cmake-multilib toolchain-funcs
 
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc x86"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc x86"
 S="${WORKDIR}/re2-${RE2_VER}"
 SRC_URI="
 https://github.com/google/re2/archive/${RE2_VER}.tar.gz

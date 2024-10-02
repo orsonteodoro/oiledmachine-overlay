@@ -326,8 +326,6 @@ get_karch() {
 		echo "arm64"
 	elif use arm ; then
 		echo "arm"
-	elif use ia64 ; then
-		echo "ia64"
 	elif use loong ; then
 		echo "loongarch"
 	elif use mips ; then

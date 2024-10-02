@@ -15,7 +15,7 @@ SLOT_MAJOR="${PV%%.*}"
 inherit distutils-r1 toolchain-funcs elisp-common
 
 KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
+~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
 ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
 ~x64-solaris
 "

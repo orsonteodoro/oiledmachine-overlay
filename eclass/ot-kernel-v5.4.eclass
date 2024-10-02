@@ -228,7 +228,7 @@ X86_FLAGS=(
 )
 ZEN_KV="5.4.0"
 
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 # clang is default OFF based on https://github.com/torvalds/linux/blob/v5.4/Documentation/process/changes.rst
 IUSE+="
 ${ARM_FLAGS[@]}

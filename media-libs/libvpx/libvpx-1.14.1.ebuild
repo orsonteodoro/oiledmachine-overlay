@@ -17,7 +17,7 @@ UOPTS_SUPPORT_TPGO=1
 inherit aocc flag-o-matic flag-o-matic-om llvm multilib-minimal toolchain-funcs uopts
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~ia64 ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
+~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
 ~amd64-linux ~x86-linux
 "
 S="${WORKDIR}/${P}"

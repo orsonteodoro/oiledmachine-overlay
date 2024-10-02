@@ -228,9 +228,6 @@ DEPEND+="
 	!minimal? (
 		>=dev-dotnet/libgdiplus-6.0.2
 	)
-	ia64? (
-		sys-libs/libunwind
-	)
 	nls? (
 		sys-devel/gettext
 	)

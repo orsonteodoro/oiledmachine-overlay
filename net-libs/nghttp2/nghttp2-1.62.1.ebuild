@@ -14,7 +14,7 @@ USE_RUBY="ruby31 ruby32 ruby33"
 inherit cmake multilib-minimal python-r1 ruby-single toolchain-funcs
 
 KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
+~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
 ~s390 ~sparc ~x86 ~amd64-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
 "
 S="${WORKDIR}/${P}"

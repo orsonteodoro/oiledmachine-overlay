@@ -19,7 +19,7 @@ else
 	VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/aacid.asc"
 	inherit verify-sig
 	KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
+~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
 ~x64-solaris
 	"

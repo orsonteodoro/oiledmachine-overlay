@@ -11,7 +11,7 @@ DESCRIPTION="A high-level decoding and seeking API for .opus files"
 HOMEPAGE="https://www.opus-codec.org/"
 LICENSE="BSD"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ppc ~ppc64 ~sparc ~x86"
 IUSE="doc fixed-point +float +http libressl static-libs"
 RDEPEND="media-libs/libogg[${MULTILIB_USEDEP}]
 	media-libs/opus[${MULTILIB_USEDEP}]

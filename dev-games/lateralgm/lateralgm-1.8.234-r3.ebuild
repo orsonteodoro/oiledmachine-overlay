@@ -189,8 +189,6 @@ src_prepare_jna() {
 #	elif [[ "${CHOST}" =~ "armel" ]] ; then
 		# QA: redo
 #		d="com/sun/jna/linux-armel"
-	elif [[ "${CHOST}" =~ "ia64" ]] ; then
-		d="com/sun/jna/linux-ia64"
 	elif [[ "${CHOST}" =~ "mips64el" ]] ; then
 		d="com/sun/jna/linux-mips64el"
 	elif [[ "${CHOST}" =~ "powerpc64le" ]] ; then

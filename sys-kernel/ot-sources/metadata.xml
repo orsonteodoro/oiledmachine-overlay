@@ -2580,7 +2580,6 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
         alpha:  4
         arm:  4
         arm64:  4, 16, 64
-        ia64:  4, 8, 16, 64                  (1)
         loongarch:  4, 16, 64
         m68k:  4, 8                          8 for CONFIG_SUN3=y or CONFIG_COLDFIRE=y; 4 for others
         parisc:  4, 16, 64                   (2)

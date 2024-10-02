@@ -753,7 +753,7 @@ PDEPEND+="
 		sys-process/procps
 	)
 	ot_kernel_pgt_webcam? (
-		media-tv/v4l-utils
+		media-libs/libv4l[utils]
 		media-video/ffmpeg[encode,v4l]
 	)
 	ot_kernel_pgt_yt? (
@@ -4900,7 +4900,6 @@ einfo "Using the ${boot_decomp} boot decompressor settings"
 	local XZ_DECS=(
 		ARM
 		ARMTHUMB
-		IA64
 		POWERPC
 		SPARC
 		X86
@@ -4930,10 +4929,6 @@ einfo "Using the ${boot_decomp} boot decompressor settings"
 
 	if [[ "${arch}" == "sparc" || "${arch}" == "sparc32" || "${arch}" == "sparc64" ]] && grep -q -E -e "^CONFIG_XZ_DEC=y" "${path_config}" ; then
 		ot-kernel_y_configopt "CONFIG_XZ_DEC_SPARC"
-	fi
-
-	if [[ "${arch}" == "ia64" ]] && grep -q -E -e "^CONFIG_XZ_DEC=y" "${path_config}" ; then
-		ot-kernel_y_configopt "CONFIG_XZ_DEC_IA64"
 	fi
 
 	if grep -q -E -e "^CONFIG_MODULE_COMPRESS_GZIP=y" "${path_config}" ; then
@@ -7713,79 +7708,6 @@ eerror
 			die
 		fi
 	fi
-	if [[ "${arch}" == "ia64" ]] ; then
-		if [[ \
-			   "${page_size}" == "4" \
-			|| "${page_size}" == "compact" \
-			|| "${page_size}" == "min" \
-			|| "${page_size}" == "security" \
-		]] ; then
-einfo "Page size:  4 KB"
-			ot-kernel_y_configopt "CONFIG_IA64_PAGE_SIZE_4KB"
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_8KB"
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_16KB"
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_64KB"
-		elif [[ \
-			   "${page_size}" == "8" \
-			|| "${page_size}" == "pgsql" \
-		]] ; then
-einfo "Page size:  8 KB"
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_4KB"
-			ot-kernel_y_configopt "CONFIG_IA64_PAGE_SIZE_8KB"
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_16KB"
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_64KB"
-		elif [[ \
-			   "${page_size}" == "16" \
-			|| "${page_size}" == "default" \
-			|| "${page_size}" == "sql" \
-		]] ; then
-einfo "Page size:  16 KB"
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_4KB"
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_8KB"
-			ot-kernel_y_configopt "CONFIG_IA64_PAGE_SIZE_16KB"
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_64KB"
-		elif [[ \
-			"${page_size}" == "64" \
-		]] ; then
-einfo "Page size:  64 KB"
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_4KB"
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_8KB"
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_16KB"
-			ot-kernel_y_configopt "CONFIG_IA64_PAGE_SIZE_64KB"
-
-			if grep -q -E -e "^CONFIG_ITANIUM=y" "${path_config}" ; then
-eerror
-eerror "64 KB pages is not suppored for CONFIG_ITANIUM=y"
-eerror
-				die
-			fi
-		elif [[ \
-			   "${page_size}" == "max" \
-			|| "${page_size}" == "big-data" \
-			|| "${page_size}" == "low-power" \
-		]] ; then
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_4KB"
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_8KB"
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_16KB"
-			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_64KB"
-
-			if ! grep -q -E -e "^CONFIG_ITANIUM=y" "${path_config}" ; then
-einfo "Page size:  64 KB"
-				ot-kernel_y_configopt "CONFIG_IA64_PAGE_SIZE_64KB"
-			else
-einfo "Page size:  16 KB"
-				ot-kernel_y_configopt "CONFIG_IA64_PAGE_SIZE_16KB"
-			fi
-		else
-eerror
-eerror "Incorrect value for OT_KERNEL_PAGE_SIZE."
-eerror
-eerror "Actual:  ${OT_KERNEL_PAGE_SIZE}"
-eerror "Expected:  default, min, max, big-data, security, low-power, 4, 8, 16, 64"
-eerror
-			die
-		fi
-	fi
 	if [[ "${arch}" == "loongarch" ]] ; then
 		if [[ \
 			   "${page_size}" == "4" \
@@ -9377,7 +9299,6 @@ ot-kernel_set_kconfig_clear_hz() {
 		   "${arch}" == "arm64" \
 		|| "${arch}" == "csky" \
 		|| "${arch}" == "hexagon" \
-		|| "${arch}" == "ia64" \
 		|| "${arch}" == "microblaze" \
 		|| "${arch}" == "nds32" \
 		|| "${arch}" == "nios2" \
@@ -9497,7 +9418,7 @@ ot-kernel_get_lib_bitness() {
 	elif objdump -f "${path}" | grep -q -e "file format .*arm" ; then
 		echo "32"
 	elif objdump -f "${path}" | grep -q -e "file format elf64.*" ; then
-		echo "64" # elf64-.*{alpha,hppa,ia64,mips,powerpc,riscv,sparc}.*
+		echo "64" # elf64-.*{alpha,hppa,mips,powerpc,riscv,sparc}.*
 	elif objdump -f "${path}" | grep -q -e "file format elf32.*" ; then
 		echo "32" # elf32-.*{m68k,hppa,mips,powerpc,riscv,sparc}.*
 	fi
@@ -9537,10 +9458,6 @@ eerror
 eerror "OT_KERNEL_ARCH=\"i386\" is not supported.  Use OT_KERNEL_ARCH=\"x86\" instead."
 eerror
 		die
-	fi
-	if [[ "${arch}" == "ia64" ]] ; then
-einfo "Added support for ia64"
-		ot-kernel_y_configopt "CONFIG_64BIT"
 	fi
 	if [[ "${arch}" == "m68k" ]] ; then
 einfo "Added support for m68k"
