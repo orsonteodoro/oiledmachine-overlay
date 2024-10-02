@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# Last update:  2024-05-27
+# Last update:  2024-07-23
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
