@@ -122,7 +122,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 # -system-pajlada-settings is not packaged on this distro
 IUSE+="
--benchmarks -coverage -crashpad -lto -plugins -system-libcommuni
+-benchmarks -coverage -crashpad firejail -lto -plugins -system-libcommuni
 -system-miniaudio -system-qtkeychain -test +qt5 -qt6 +qtkeychain +update-check
 wayland X
 
@@ -205,6 +205,11 @@ BDEPEND="
 	>=dev-build/cmake-3.16.3
 	>=sys-devel/gcc-9.4.0
 	virtual/pkgconfig
+"
+PDEPEND="
+	firejail? (
+		sys-apps/firejail[firejail_profiles_chatterino,X?]
+	)
 "
 
 verify_qt_consistency() {
