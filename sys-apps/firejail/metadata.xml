@@ -136,8 +136,8 @@
     global - add non conflicting wrappers globally in /usr/local/bin without
     changes to PATH.
 
-    conflict - add conflicting wrappers to /usr/local/nonroot-bin so that the
-    non-root user can add PATH="/usr/local/nonroot-bin:${PATH}" to ~/.bashrc
+    conflict - add conflicting wrappers to /usr/local/firejail-bin so that the
+    non-root user can add PATH="/usr/local/firejail-bin:${PATH}" to ~/.bashrc
     for full sandbox coverage.  Do not add it to the root's .bashrc.
     (Aliases:  conflicting)
 
