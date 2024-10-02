@@ -286,7 +286,7 @@ REQUIRED_USE="
 FS_RDEPEND="
 	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS[@]})
 "
-RDEPEND="
+ALL_RDEPEND="
 	${MITIGATE_ID_RDEPEND}
 	!custom-kernel? (
 		zero-tolerance? (
@@ -522,6 +522,11 @@ RDEPEND="
 		)
 	)
 "
+ARDEPEND="
+	enforce? (
+		${ALL_RDEPEND}
+	)
+"
 BDEPEND="
 	sys-apps/util-linux
 "
@@ -746,6 +751,7 @@ ewarn "This ebuild is a Work In Progress (WIP) and may be renamed."
 
 # Unconditionally check
 src_compile() {
+	use enforce || return
 	tc-is-cross-compiler && return
 einfo "Checking for mitigations against Information Disclosure based Transient Execution Vulnerabilities (e.g. Meltdown/Spectre)"
 	if lscpu | grep -q "Vulnerable" ; then
@@ -759,6 +765,7 @@ einfo "PASS"
 }
 
 pkg_postinst() {
+	use enforce || return
 einfo "The optional sys-kernel/mitigate-dos is also provided and can be emerged directly."
 einfo "The optional sys-kernel/mitigate-dt is also provided and can be emerged directly."
 }

@@ -266,7 +266,7 @@ FS_RDEPEND="
 	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS[@]})
 "
 
-RDEPEND="
+ALL_RDEPEND="
 	${MITIGATE_DT_RDEPEND}
 	!custom-kernel? (
 		zero-tolerance? (
@@ -483,6 +483,11 @@ RDEPEND="
 		!custom-kernel? (
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMCI[@]})
 		)
+	)
+"
+ARDEPEND="
+	enforce? (
+		${ALL_RDEPEND}
 	)
 "
 BDEPEND="
@@ -764,6 +769,7 @@ eerror "${pv_major}.${pv_minor}.${pv_patch}${extra_version} failed zero-toleranc
 }
 
 pkg_setup() {
+	use enforce || return
 	mitigate-dt_pkg_setup
 ewarn "This ebuild is a Work In Progress (WIP)."
 	check_drivers
@@ -773,6 +779,7 @@ ewarn "This ebuild is a Work In Progress (WIP)."
 
 # Unconditionally check
 src_compile() {
+	use enforce || return
 	tc-is-cross-compiler && return
 # TODO:  Find similar app
 #einfo "Checking for mitigations against DoS."

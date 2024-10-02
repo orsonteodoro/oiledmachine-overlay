@@ -215,6 +215,7 @@ IUSE+="
 	auto
 	bpf
 	custom-kernel
+	+enforce
 	firmware
 	kvm
 	zero-tolerance
@@ -472,22 +473,6 @@ is_eol() {
 gen_patched_kernel_list() {
 	local kv="${1}"
 	local ATOMS=(
-		sys-kernel/gentoo-kernel-bin
-		sys-kernel/gentoo-kernel
-		sys-kernel/gentoo-sources
-		sys-kernel/vanilla-sources
-		sys-kernel/git-sources
-		sys-kernel/mips-sources
-		sys-kernel/pf-sources
-		sys-kernel/rt-sources
-		sys-kernel/zen-sources
-		sys-kernel/raspberrypi-sources
-		sys-kernel/gentoo-kernel
-		sys-kernel/gentoo-kernel-bin
-		sys-kernel/vanilla-kernel
-		sys-kernel/linux-next
-		sys-kernel/asahi-sources
-		sys-kernel/ot-sources
 		${CUSTOM_KERNEL_ATOM}
 	)
 
@@ -496,6 +481,32 @@ gen_patched_kernel_list() {
 	"
 
 	local active_version
+
+	# Concat is expensive in bash
+	for active_version in ${ACTIVE_VERSIONS[@]} ; do
+		local s1=$(ver_cut 1-2 ${kv})
+		local s2=$(ver_cut 1-2 ${active_version})
+		if ver_test ${s2} -ge ${s1} ; then
+			echo "
+				=sys-kernel/gentoo-kernel-bin-${active_version}*
+				=sys-kernel/gentoo-kernel-${active_version}*
+				=sys-kernel/gentoo-sources-${active_version}*
+				=sys-kernel/vanilla-kernel-${active_version}*
+				=sys-kernel/vanilla-sources-${active_version}*
+				=sys-kernel/git-sources-${active_version}*
+				=sys-kernel/mips-sources-${active_version}*
+				=sys-kernel/pf-sources-${active_version}*
+				=sys-kernel/rt-sources-${active_version}*
+				=sys-kernel/zen-sources-${active_version}*
+				=sys-kernel/raspberrypi-sources-${active_version}*
+				=sys-kernel/linux-next-${active_version}*
+				=sys-kernel/asahi-sources-${active_version}*
+				=sys-kernel/ot-sources-${active_version}*
+			"
+		fi
+	done
+
+
 	local atom
 	for atom in ${ATOMS[@]} ; do
 		for active_version in ${ACTIVE_VERSIONS[@]} ; do
@@ -521,22 +532,6 @@ gen_patched_kernel_list() {
 gen_zero_tolerance_kernel_list() {
 	local PATCHED_VERSIONS=( ${@} )
 	local ATOMS=(
-		sys-kernel/gentoo-kernel-bin
-		sys-kernel/gentoo-kernel
-		sys-kernel/gentoo-sources
-		sys-kernel/vanilla-sources
-		sys-kernel/git-sources
-		sys-kernel/mips-sources
-		sys-kernel/pf-sources
-		sys-kernel/rt-sources
-		sys-kernel/zen-sources
-		sys-kernel/raspberrypi-sources
-		sys-kernel/gentoo-kernel
-		sys-kernel/gentoo-kernel-bin
-		sys-kernel/vanilla-kernel
-		sys-kernel/linux-next
-		sys-kernel/asahi-sources
-		sys-kernel/ot-sources
 		${CUSTOM_KERNEL_ATOM}
 	)
 
@@ -545,6 +540,70 @@ gen_zero_tolerance_kernel_list() {
 	"
 
 	local latest_version
+
+	for latest_version in ${PATCHED_VERSIONS[@]} ; do
+		local s=$(ver_cut 1-2 ${latest_version})
+		echo "
+			(
+				=sys-kernel/gentoo-kernel-bin-${s}*
+				>=sys-kernel/gentoo-kernel-bin-${latest_version}
+			)
+			(
+				=sys-kernel/gentoo-kernel-${s}*
+				>=sys-kernel/gentoo-kernel-${latest_version}
+			)
+			(
+				=sys-kernel/gentoo-sources-${s}*
+				>=sys-kernel/gentoo-sources-${latest_version}
+			)
+			(
+				=sys-kernel/vanilla-kernel-${s}*
+				>=sys-kernel/vanilla-kernel-${latest_version}
+			)
+			(
+				=sys-kernel/vanilla-sources-${s}*
+				>=sys-kernel/vanilla-sources-${latest_version}
+			)
+			(
+				=sys-kernel/git-sources-${s}*
+				>=sys-kernel/git-sources-${latest_version}
+			)
+			(
+				=sys-kernel/mips-sources-${s}*
+				>=sys-kernel/mips-sources-${latest_version}
+			)
+			(
+				=sys-kernel/pf-sources-${s}*
+				>=sys-kernel/pf-sources-${latest_version}
+			)
+			(
+				=sys-kernel/rt-sources-${s}*
+				>=sys-kernel/rt-sources-${latest_version}
+			)
+			(
+				=sys-kernel/zen-sources-${s}*
+				>=sys-kernel/zen-sources-${latest_version}
+			)
+			(
+				=sys-kernel/raspberrypi-sources-${s}*
+				>=sys-kernel/raspberrypi-sources-${latest_version}
+			)
+			(
+				=sys-kernel/linux-next-${s}*
+				>=sys-kernel/linux-next-${latest_version}
+			)
+			(
+				=sys-kernel/asahi-sources-${s}*
+				>=sys-kernel/asahi-sources-${latest_version}
+			)
+			(
+				=sys-kernel/ot-sources-${s}*
+				>=sys-kernel/ot-sources-${latest_version}
+			)
+		"
+	done
+
+
 	local atom
 	for atom in ${ATOMS[@]} ; do
 		for latest_version in ${PATCHED_VERSIONS[@]} ; do
@@ -570,22 +629,6 @@ gen_zero_tolerance_kernel_list() {
 # Generate the patched kernel list
 gen_patched_kernel_driver_list() {
 	local ATOMS=(
-		sys-kernel/gentoo-kernel-bin
-		sys-kernel/gentoo-kernel
-		sys-kernel/gentoo-sources
-		sys-kernel/vanilla-sources
-		sys-kernel/git-sources
-		sys-kernel/mips-sources
-		sys-kernel/pf-sources
-		sys-kernel/rt-sources
-		sys-kernel/zen-sources
-		sys-kernel/raspberrypi-sources
-		sys-kernel/gentoo-kernel
-		sys-kernel/gentoo-kernel-bin
-		sys-kernel/vanilla-kernel
-		sys-kernel/linux-next
-		sys-kernel/asahi-sources
-		sys-kernel/ot-sources
 		${CUSTOM_KERNEL_ATOM}
 	)
 	local PATCHED_VERSIONS=( ${@} )
@@ -596,6 +639,70 @@ gen_patched_kernel_driver_list() {
 	echo "
 		|| (
 	"
+
+	# Concat is expensive in bash
+	for active_version in ${ACTIVE_VERSIONS[@]} ; do
+		if ver_test "${patched_version}" -ge "${active_version}" ; then
+			echo "
+				(
+					=sys-kernel/gentoo-kernel-bin-${active_version}*
+					>=sys-kernel/gentoo-kernel-bin-${patched_version}
+				)
+				(
+					=sys-kernel/gentoo-kernel-${active_version}*
+					>=sys-kernel/gentoo-kernel-${patched_version}
+				)
+				(
+					=sys-kernel/gentoo-sources-${active_version}*
+					>=sys-kernel/gentoo-sources-${patched_version}
+				)
+				(
+					=sys-kernel/vanilla-kernel-${active_version}*
+					>=sys-kernel/vanilla-kernel-${patched_version}
+				)
+				(
+					=sys-kernel/vanilla-sources-${active_version}*
+					>=sys-kernel/vanilla-sources-${patched_version}
+				)
+				(
+					=sys-kernel/git-sources-${active_version}*
+					>=sys-kernel/git-sources-${patched_version}
+				)
+				(
+					=sys-kernel/mips-sources-${active_version}*
+					>=sys-kernel/mips-sources-${patched_version}
+				)
+				(
+					=sys-kernel/pf-sources-${active_version}*
+					>=sys-kernel/pf-sources-${patched_version}
+				)
+				(
+					=sys-kernel/rt-sources-${active_version}*
+					>=sys-kernel/rt-sources-${patched_version}
+				)
+				(
+					=sys-kernel/zen-sources-${active_version}*
+					>=sys-kernel/zen-sources-${patched_version}
+				)
+				(
+					=sys-kernel/raspberrypi-sources-${active_version}*
+					>=sys-kernel/raspberrypi-sources-${patched_version}
+				)
+				(
+					=sys-kernel/linux-next-${active_version}*
+					>=sys-kernel/linux-next-${patched_version}
+				)
+				(
+					=sys-kernel/asahi-sources-${active_version}*
+					>=sys-kernel/asahi-sources-${patched_version}
+				)
+				(
+					=sys-kernel/ot-sources-${active_version}*
+					>=sys-kernel/ot-sources-${patched_version}
+				)
+			"
+		fi
+	done
 
 	# Add last version of patched kernel list
 	local active_version
@@ -611,6 +718,89 @@ gen_patched_kernel_driver_list() {
 				"
 			fi
 		done
+	done
+
+	# Concatination is expensive in bash
+	for patched_version in ${PATCHED_VERSIONS[@]} ; do
+		if [[ "${patched_version}" =~ "V" ]] ; then
+	# Unpatched / vulnerable
+			local slot="${patched_version%.*}"
+			echo "
+				!=sys-kernel/gentoo-kernel-bin-${slot}*
+				!=sys-kernel/gentoo-kernel-${slot}*
+				!=sys-kernel/gentoo-sources-${slot}*
+				!=sys-kernel/vanilla-kernel-${slot}*
+				!=sys-kernel/vanilla-sources-${slot}*
+				!=sys-kernel/git-sources-${slot}*
+				!=sys-kernel/mips-sources-${slot}*
+				!=sys-kernel/pf-sources-${slot}*
+				!=sys-kernel/rt-sources-${slot}*
+				!=sys-kernel/zen-sources-${slot}*
+				!=sys-kernel/raspberrypi-sources-${slot}*
+				!=sys-kernel/linux-next-${slot}*
+				!=sys-kernel/asahi-sources-${slot}*
+				!=sys-kernel/ot-sources-${slot}*
+			"
+		elif is_lts "${patched_version}" ; then
+			echo "
+				(
+					=sys-kernel/gentoo-kernel-bin-${patched_version}*
+					>=sys-kernel/gentoo-kernel-bin-${patched_version}
+				)
+				(
+					=sys-kernel/gentoo-kernel-${patched_version}*
+					>=sys-kernel/gentoo-kernel-${patched_version}
+				)
+				(
+					=sys-kernel/gentoo-sources-${patched_version}*
+					>=sys-kernel/gentoo-sources-${patched_version}
+				)
+				(
+					=sys-kernel/vanilla-kernel-${patched_version}*
+					>=sys-kernel/vanilla-kernel-${patched_version}
+				)
+				(
+					=sys-kernel/vanilla-sources-${patched_version}*
+					>=sys-kernel/vanilla-sources-${patched_version}
+				)
+				(
+					=sys-kernel/git-sources-${patched_version}*
+					>=sys-kernel/git-sources-${patched_version}
+				)
+				(
+					=sys-kernel/mips-sources-${patched_version}*
+					>=sys-kernel/mips-sources-${patched_version}
+				)
+				(
+					=sys-kernel/pf-sources-${patched_version}*
+					>=sys-kernel/pf-sources-${patched_version}
+				)
+				(
+					=sys-kernel/rt-sources-${patched_version}*
+					>=sys-kernel/rt-sources-${patched_version}
+				)
+				(
+					=sys-kernel/zen-sources-${patched_version}*
+					>=sys-kernel/zen-sources-${patched_version}
+				)
+				(
+					=sys-kernel/raspberrypi-sources-${patched_version}*
+					>=sys-kernel/raspberrypi-sources-${patched_version}
+				)
+				(
+					=sys-kernel/linux-next-${patched_version}*
+					>=sys-kernel/linux-next-${patched_version}
+				)
+				(
+					=sys-kernel/asahi-sources-${patched_version}*
+					>=sys-kernel/asahi-sources-${patched_version}
+				)
+				(
+					=sys-kernel/ot-sources-${patched_version}*
+					>=sys-kernel/ot-sources-${patched_version}
+				)
+			"
+		fi
 	done
 
 	# Add LTS versions
@@ -637,29 +827,32 @@ gen_patched_kernel_driver_list() {
 	echo "
 		)
 	"
-
 }
 
 gen_eol_kernels_list() {
 	local ATOMS=(
-		sys-kernel/gentoo-kernel-bin
-		sys-kernel/gentoo-kernel
-		sys-kernel/gentoo-sources
-		sys-kernel/vanilla-sources
-		sys-kernel/git-sources
-		sys-kernel/mips-sources
-		sys-kernel/pf-sources
-		sys-kernel/rt-sources
-		sys-kernel/zen-sources
-		sys-kernel/raspberrypi-sources
-		sys-kernel/gentoo-kernel
-		sys-kernel/gentoo-kernel-bin
-		sys-kernel/vanilla-kernel
-		sys-kernel/linux-next
-		sys-kernel/asahi-sources
-		sys-kernel/ot-sources
 		${CUSTOM_KERNEL_ATOM}
 	)
+
+	# Concat is expensive in bash
+	for eol_version in ${EOL_VERSIONS[@]} ; do
+		echo "
+			!=sys-kernel/gentoo-kernel-bin-${eol_version}*
+			!=sys-kernel/gentoo-kernel-${eol_version}*
+			!=sys-kernel/gentoo-sources-${eol_version}*
+			!=sys-kernel/vanilla-kernel-${eol_version}*
+			!=sys-kernel/vanilla-sources-${eol_version}*
+			!=sys-kernel/git-sources-${eol_version}*
+			!=sys-kernel/mips-sources-${eol_version}*
+			!=sys-kernel/pf-sources-${eol_version}*
+			!=sys-kernel/rt-sources-${eol_version}*
+			!=sys-kernel/zen-sources-${eol_version}*
+			!=sys-kernel/raspberrypi-sources-${eol_version}*
+			!=sys-kernel/linux-next-${eol_version}*
+			!=sys-kernel/asahi-sources-${eol_version}*
+			!=sys-kernel/ot-sources-${eol_version}*
+		"
+	done
 
 	local eol_version
 	for atom in ${ATOMS[@]} ; do

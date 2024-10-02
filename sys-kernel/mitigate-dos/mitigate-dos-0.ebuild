@@ -506,7 +506,7 @@ SQUASHFS_RDEPEND="
 	${BLOCK_RDEPEND}
 	${FS_RDEPEND}
 "
-RDEPEND="
+ALL_RDEPEND="
 	${SQUASHFS_RDEPEND}
 	${MITIGATE_DOS_RDEPEND}
 	!custom-kernel? (
@@ -936,6 +936,11 @@ RDEPEND="
 			${FS_RDEPEND}
 			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XFS[@]})
 		)
+	)
+"
+ARDEPEND="
+	enforce? (
+		${ALL_RDEPEND}
 	)
 "
 BDEPEND="
@@ -1922,6 +1927,7 @@ eerror "${pv_major}.${pv_minor}.${pv_patch}${extra_version} failed zero-toleranc
 }
 
 pkg_setup() {
+	use enforce || return
 	mitigate-dos_pkg_setup
 ewarn "This ebuild is a Work In Progress (WIP)."
 	check_drivers
@@ -1932,6 +1938,7 @@ ewarn "This ebuild is a Work In Progress (WIP)."
 
 # Unconditionally check
 src_compile() {
+	use enforce || return
 	tc-is-cross-compiler && return
 # TODO:  Find similar app
 #einfo "Checking for mitigations against DoS."
