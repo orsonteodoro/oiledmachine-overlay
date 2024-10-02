@@ -25,6 +25,11 @@ unset -f _llvm_set_globals
 
 inherit bash-completion-r1 llvm.org
 
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
+~arm64-macos ~ppc-macos ~x64-macos
+"
+
 DESCRIPTION="Common files shared between multiple slots of clang"
 HOMEPAGE="https://llvm.org/"
 LICENSE="
@@ -46,12 +51,11 @@ PDEPEND="
 	!default-lld? (
 		sys-devel/binutils
 	)
-	sys-devel/clang:*
 	default-compiler-rt? (
 		!llvm-libunwind? (
 			sys-libs/libunwind[static-libs]
 		)
-		sys-devel/clang-runtime[compiler-rt]
+		sys-devel/clang-runtime:${LLVM_MAJOR}[compiler-rt]
 		llvm-libunwind? (
 			sys-libs/llvm-libunwind[static-libs]
 		)
