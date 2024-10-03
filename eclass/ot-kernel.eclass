@@ -11887,9 +11887,11 @@ _ot-kernel_set_bpf_jit() { # DONE
 # Apply mitigations against Spectre-NG (Variant 4).
 ot-kernel_set_kconfig_bpf_spectre_mitigation() {
 	if _ot-kernel_is_hardening_level_least_secure ; then
+einfo "Enabling BPF JIT"
 	# fast-af:  bpf_jit only allowed in this case
 		bpf_jit=1
 	else
+einfo "Disabling BPF JIT"
 	# default:  bpf_jit is off
 	# secure-af:  Mitigate against attacker gaining control.
 		bpf_jit=0
@@ -11907,14 +11909,14 @@ ot-kernel_set_kconfig_bpf_spectre_mitigation() {
 	ewarn "BPF_JIT may lower security or increase the capabilities of the attacker."
 	# Spectre (Variant 2) mitigation trade off with possible ASLR circumvention
 			_ot-kernel_set_bpf_jit
-			ot-kernel_y_configopt "BPF_JIT_ALWAYS_ON"
+			ot-kernel_y_configopt "CONFIG_BPF_JIT_ALWAYS_ON"
 		else
-			ot-kernel_unset_configopt "BPF_JIT"
-			ot-kernel_unset_configopt "BPF_JIT_ALWAYS_ON"
+			ot-kernel_unset_configopt "CONFIG_BPF_JIT"
+			ot-kernel_unset_configopt "CONFIG_BPF_JIT_ALWAYS_ON"
 		fi
 
 	# Spectre-NG (Variant 4) mitigation
-		ot-kernel_y_configopt "BPF_UNPRIV_DEFAULT_OFF"		# Upstream puts it default ON ; For hardening it is ON
+		ot-kernel_y_configopt "CONFIG_BPF_UNPRIV_DEFAULT_OFF"		# Upstream puts it default ON ; For hardening it is ON
 	fi
 }
 
