@@ -850,8 +850,8 @@ ewarn "This ebuild is a Work In Progress (WIP) and may be renamed."
 	check_drivers
 }
 
-# Unconditionally check
 src_compile() {
+	use enforce || ewarn "The USE enforce flag is disabled."
 	use enforce || return
 	tc-is-cross-compiler && return
 einfo "Checking for mitigations against Information Disclosure based Transient Execution Vulnerabilities (e.g. Meltdown/Spectre)"

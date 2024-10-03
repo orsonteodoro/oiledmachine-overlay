@@ -878,8 +878,8 @@ ewarn "This ebuild is a Work In Progress (WIP)."
 	verify_disable_ksm
 }
 
-# Unconditionally check
 src_compile() {
+	use enforce || ewarn "The USE enforce flag is disabled."
 	use enforce || return
 	tc-is-cross-compiler && return
 # TODO:  Find similar app
