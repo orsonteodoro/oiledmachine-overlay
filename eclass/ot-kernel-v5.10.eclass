@@ -390,6 +390,11 @@ gen_clang_llvm_pair() {
 	done
 }
 
+#
+# The highest GCC version required by KCP was chosen to support the latest CPUs
+# without adding too many conditionals or complicating the ebuild with USE flag
+# spam.
+#
 KCP_RDEPEND="
 	amd64? (
 		!clang? (

@@ -6990,7 +6990,7 @@ einfo "OT_KERNEL_LSMS=default"
 		OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
 
 	# Equivalent to upstream settings
-		ot_kernel_lsms="selinux" #
+		ot_kernel_lsms="selinux"
 		ot-kernel_y_configopt "CONFIG_SECURITY"
 		ot-kernel_y_configopt "CONFIG_INTEGRITY"
 
