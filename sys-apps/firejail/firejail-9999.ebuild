@@ -16,6 +16,7 @@ declare -A LANDLOCK_PROC
 declare -A LANDLOCK_READ
 declare -A LANDLOCK_WRITE
 declare -A LANDLOCK_EXECUTE
+declare -A LANDLOCK_SPECIAL
 declare -A OOM
 declare -A SECCOMP
 declare -A SECCOMP_BLOCK
