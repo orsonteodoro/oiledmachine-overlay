@@ -7130,6 +7130,10 @@ einfo "OT_KERNEL_LSMS=auto (secure mode)"
 			ot_kernel_lsms+=",bpf"
 		fi
 
+		if [[ "${ot_kernel_lsms}" =~ ^"," ]] ; then
+			ot_kernel_lsms="${ot_kernel_lsms:1}"
+		fi
+
 		ot-kernel_y_configopt "CONFIG_INTEGRITY"
 
 		if [[ "${_OT_KERNEL_LSM_ADD_APPARMOR}" == "1" ]] && ! has_version "sys-apps/apparmor" ; then
