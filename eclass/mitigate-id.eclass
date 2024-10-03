@@ -18,6 +18,67 @@ esac
 
 if [[ -z ${_MITIGATE_ID_ECLASS} ]] ; then
 _MITIGATE_ID_ECLASS=1
+declare -A _ALL_VERSIONS
+_ALL_VERSIONS['_0']='EOL'
+_ALL_VERSIONS['_1']='EOL'
+_ALL_VERSIONS['_2']='EOL'
+_ALL_VERSIONS['_3']='EOL'
+_ALL_VERSIONS['_4.0']='EOL'
+_ALL_VERSIONS['_4.1']='EOL'
+_ALL_VERSIONS['_4.2']='EOL'
+_ALL_VERSIONS['_4.3']='EOL'
+_ALL_VERSIONS['_4.4']='EOL'
+_ALL_VERSIONS['_4.5']='EOL'
+_ALL_VERSIONS['_4.6']='EOL'
+_ALL_VERSIONS['_4.7']='EOL'
+_ALL_VERSIONS['_4.8']='EOL'
+_ALL_VERSIONS['_4.8']='EOL'
+_ALL_VERSIONS['_4.9']='EOL'
+_ALL_VERSIONS['_4.10']='EOL'
+_ALL_VERSIONS['_4.11']='EOL'
+_ALL_VERSIONS['_4.12']='EOL'
+_ALL_VERSIONS['_4.13']='EOL'
+_ALL_VERSIONS['_4.14']='EOL'
+_ALL_VERSIONS['_4.15']='EOL'
+_ALL_VERSIONS['_4.16']='EOL'
+_ALL_VERSIONS['_4.17']='EOL'
+_ALL_VERSIONS['_4.18']='EOL'
+_ALL_VERSIONS['_4.19']='4.19'
+_ALL_VERSIONS['_4.20']='EOL'
+_ALL_VERSIONS['_5.0']='EOL'
+_ALL_VERSIONS['_5.1']='EOL'
+_ALL_VERSIONS['_5.2']='EOL'
+_ALL_VERSIONS['_5.3']='EOL'
+_ALL_VERSIONS['_5.4']='5.4'
+_ALL_VERSIONS['_5.5']='EOL'
+_ALL_VERSIONS['_5.6']='EOL'
+_ALL_VERSIONS['_5.7']='EOL'
+_ALL_VERSIONS['_5.8']='EOL'
+_ALL_VERSIONS['_5.9']='EOL'
+_ALL_VERSIONS['_5.10']='5.10'
+_ALL_VERSIONS['_5.11']='EOL'
+_ALL_VERSIONS['_5.12']='EOL'
+_ALL_VERSIONS['_5.13']='EOL'
+_ALL_VERSIONS['_5.14']='EOL'
+_ALL_VERSIONS['_5.15']='5.15'
+_ALL_VERSIONS['_5.16']='EOL'
+_ALL_VERSIONS['_5.17']='EOL'
+_ALL_VERSIONS['_5.18']='EOL'
+_ALL_VERSIONS['_5.19']='EOL'
+_ALL_VERSIONS['_6.0']='EOL'
+_ALL_VERSIONS['_6.1']='6.1'
+_ALL_VERSIONS['_6.2']='EOL'
+_ALL_VERSIONS['_6.3']='EOL'
+_ALL_VERSIONS['_6.4']='EOL'
+_ALL_VERSIONS['_6.5']='EOL'
+_ALL_VERSIONS['_6.6']='6.6'
+_ALL_VERSIONS['_6.7']='EOL'
+_ALL_VERSIONS['_6.8']='EOL'
+_ALL_VERSIONS['_6.9']='EOL'
+_ALL_VERSIONS['_6.10']='6.10'
+_ALL_VERSIONS['_6.11']='6.11'
+_INTEL_MICROCODE_PV=0
+_LINUX_FIRMWARE_PV=0
 
 _mitigate_id_set_globals() {
 	FIRMWARE_VENDOR=${FIRMWARE_VENDOR:-""}
@@ -472,57 +533,18 @@ is_eol() {
 # Generate the patched kernel list
 gen_patched_kernel_list() {
 	local kv="${1}"
-	local ATOMS=(
-		${CUSTOM_KERNEL_ATOM}
-	)
-
-	echo "
-		|| (
-	"
 
 	local active_version
 
-	# Concat is expensive in bash
 	for active_version in ${ACTIVE_VERSIONS[@]} ; do
 		local s1=$(ver_cut 1-2 ${kv})
 		local s2=$(ver_cut 1-2 ${active_version})
 		if ver_test ${s2} -ge ${s1} ; then
-			echo "
-				=sys-kernel/gentoo-kernel-bin-${active_version}*
-				=sys-kernel/gentoo-kernel-${active_version}*
-				=sys-kernel/gentoo-sources-${active_version}*
-				=sys-kernel/vanilla-kernel-${active_version}*
-				=sys-kernel/vanilla-sources-${active_version}*
-				=sys-kernel/git-sources-${active_version}*
-				=sys-kernel/mips-sources-${active_version}*
-				=sys-kernel/pf-sources-${active_version}*
-				=sys-kernel/rt-sources-${active_version}*
-				=sys-kernel/zen-sources-${active_version}*
-				=sys-kernel/raspberrypi-sources-${active_version}*
-				=sys-kernel/linux-next-${active_version}*
-				=sys-kernel/asahi-sources-${active_version}*
-				=sys-kernel/ot-sources-${active_version}*
-			"
+			:
+		else
+			_ALL_VERSIONS["_${s2}"]="V"
 		fi
 	done
-
-
-	local atom
-	for atom in ${ATOMS[@]} ; do
-		for active_version in ${ACTIVE_VERSIONS[@]} ; do
-			local s1=$(ver_cut 1-2 ${kv})
-			local s2=$(ver_cut 1-2 ${active_version})
-			if ver_test ${s2} -ge ${s1} ; then
-				echo "
-					=${atom}-${active_version}*
-				"
-			fi
-		done
-	done
-
-	echo "
-		)
-	"
 }
 
 # @FUNCTION: gen_zero_tolerance_kernel_list
@@ -531,96 +553,15 @@ gen_patched_kernel_list() {
 # Generate the latest point release kernel list
 gen_zero_tolerance_kernel_list() {
 	local PATCHED_VERSIONS=( ${@} )
-	local ATOMS=(
-		${CUSTOM_KERNEL_ATOM}
-	)
-
-	echo "
-		|| (
-	"
 
 	local latest_version
 
 	for latest_version in ${PATCHED_VERSIONS[@]} ; do
 		local s=$(ver_cut 1-2 ${latest_version})
-		echo "
-			(
-				=sys-kernel/gentoo-kernel-bin-${s}*
-				>=sys-kernel/gentoo-kernel-bin-${latest_version}
-			)
-			(
-				=sys-kernel/gentoo-kernel-${s}*
-				>=sys-kernel/gentoo-kernel-${latest_version}
-			)
-			(
-				=sys-kernel/gentoo-sources-${s}*
-				>=sys-kernel/gentoo-sources-${latest_version}
-			)
-			(
-				=sys-kernel/vanilla-kernel-${s}*
-				>=sys-kernel/vanilla-kernel-${latest_version}
-			)
-			(
-				=sys-kernel/vanilla-sources-${s}*
-				>=sys-kernel/vanilla-sources-${latest_version}
-			)
-			(
-				=sys-kernel/git-sources-${s}*
-				>=sys-kernel/git-sources-${latest_version}
-			)
-			(
-				=sys-kernel/mips-sources-${s}*
-				>=sys-kernel/mips-sources-${latest_version}
-			)
-			(
-				=sys-kernel/pf-sources-${s}*
-				>=sys-kernel/pf-sources-${latest_version}
-			)
-			(
-				=sys-kernel/rt-sources-${s}*
-				>=sys-kernel/rt-sources-${latest_version}
-			)
-			(
-				=sys-kernel/zen-sources-${s}*
-				>=sys-kernel/zen-sources-${latest_version}
-			)
-			(
-				=sys-kernel/raspberrypi-sources-${s}*
-				>=sys-kernel/raspberrypi-sources-${latest_version}
-			)
-			(
-				=sys-kernel/linux-next-${s}*
-				>=sys-kernel/linux-next-${latest_version}
-			)
-			(
-				=sys-kernel/asahi-sources-${s}*
-				>=sys-kernel/asahi-sources-${latest_version}
-			)
-			(
-				=sys-kernel/ot-sources-${s}*
-				>=sys-kernel/ot-sources-${latest_version}
-			)
-		"
+		if [[ "${_ALL_VERSIONS[_${s}]}" != "EOL" ]] || ! [[ "${_ALL_VERSIONS[_${s}]}" =~ "V" ]] ; then
+			_ALL_VERSIONS["_${s}"]="${latest_version}"
+		fi
 	done
-
-
-	local atom
-	for atom in ${ATOMS[@]} ; do
-		for latest_version in ${PATCHED_VERSIONS[@]} ; do
-			local s=$(ver_cut 1-2 ${latest_version})
-			echo "
-				(
-					=${atom}-${s}*
-					>=${atom}-${latest_version}
-				)
-			"
-		done
-	done
-
-	echo "
-		)
-	"
-
 }
 
 # @FUNCTION: gen_patched_kernel_driver_list
@@ -628,3124 +569,3055 @@ gen_zero_tolerance_kernel_list() {
 # @DESCRIPTION:
 # Generate the patched kernel list
 gen_patched_kernel_driver_list() {
-	local ATOMS=(
-		${CUSTOM_KERNEL_ATOM}
-	)
 	local PATCHED_VERSIONS=( ${@} )
 
 	local patched_version
 	patched_version=${PATCHED_VERSIONS[-1]}
 
-	echo "
-		|| (
-	"
+	local active_version
 
 	# Concat is expensive in bash
 	for active_version in ${ACTIVE_VERSIONS[@]} ; do
-		if ver_test "${patched_version}" -ge "${active_version}" ; then
-			echo "
-				(
-					=sys-kernel/gentoo-kernel-bin-${active_version}*
-					>=sys-kernel/gentoo-kernel-bin-${patched_version}
-				)
-				(
-					=sys-kernel/gentoo-kernel-${active_version}*
-					>=sys-kernel/gentoo-kernel-${patched_version}
-				)
-				(
-					=sys-kernel/gentoo-sources-${active_version}*
-					>=sys-kernel/gentoo-sources-${patched_version}
-				)
-				(
-					=sys-kernel/vanilla-kernel-${active_version}*
-					>=sys-kernel/vanilla-kernel-${patched_version}
-				)
-				(
-					=sys-kernel/vanilla-sources-${active_version}*
-					>=sys-kernel/vanilla-sources-${patched_version}
-				)
-				(
-					=sys-kernel/git-sources-${active_version}*
-					>=sys-kernel/git-sources-${patched_version}
-				)
-				(
-					=sys-kernel/mips-sources-${active_version}*
-					>=sys-kernel/mips-sources-${patched_version}
-				)
-				(
-					=sys-kernel/pf-sources-${active_version}*
-					>=sys-kernel/pf-sources-${patched_version}
-				)
-				(
-					=sys-kernel/rt-sources-${active_version}*
-					>=sys-kernel/rt-sources-${patched_version}
-				)
-				(
-					=sys-kernel/zen-sources-${active_version}*
-					>=sys-kernel/zen-sources-${patched_version}
-				)
-				(
-					=sys-kernel/raspberrypi-sources-${active_version}*
-					>=sys-kernel/raspberrypi-sources-${patched_version}
-				)
-				(
-					=sys-kernel/linux-next-${active_version}*
-					>=sys-kernel/linux-next-${patched_version}
-				)
-				(
-					=sys-kernel/asahi-sources-${active_version}*
-					>=sys-kernel/asahi-sources-${patched_version}
-				)
-				(
-					=sys-kernel/ot-sources-${active_version}*
-					>=sys-kernel/ot-sources-${patched_version}
-				)
-			"
+		if [[ "${active_version}" =~ "EOL" ]] ; then
+			:
+		elif [[ "${active_version}" =~ "V" ]] ; then
+			_ALL_VERSIONS["_${slot}"]="V"
+		elif ver_test "${patched_version}" -ge "${active_version}" ; then
+			:
 		fi
 	done
 
 	# Add last version of patched kernel list
-	local active_version
-	local atom
-	for atom in ${ATOMS[@]} ; do
-		for active_version in ${ACTIVE_VERSIONS[@]} ; do
-			if ver_test "${patched_version}" -ge "${active_version}" ; then
-				echo "
-					(
-						=${atom}-${active_version}*
-						>=${atom}-${patched_version}
-					)
-				"
-			fi
-		done
-	done
 
 	# Concatination is expensive in bash
 	for patched_version in ${PATCHED_VERSIONS[@]} ; do
 		if [[ "${patched_version}" =~ "V" ]] ; then
 	# Unpatched / vulnerable
 			local slot="${patched_version%.*}"
-			echo "
-				!=sys-kernel/gentoo-kernel-bin-${slot}*
-				!=sys-kernel/gentoo-kernel-${slot}*
-				!=sys-kernel/gentoo-sources-${slot}*
-				!=sys-kernel/vanilla-kernel-${slot}*
-				!=sys-kernel/vanilla-sources-${slot}*
-				!=sys-kernel/git-sources-${slot}*
-				!=sys-kernel/mips-sources-${slot}*
-				!=sys-kernel/pf-sources-${slot}*
-				!=sys-kernel/rt-sources-${slot}*
-				!=sys-kernel/zen-sources-${slot}*
-				!=sys-kernel/raspberrypi-sources-${slot}*
-				!=sys-kernel/linux-next-${slot}*
-				!=sys-kernel/asahi-sources-${slot}*
-				!=sys-kernel/ot-sources-${slot}*
-			"
+			_ALL_VERSIONS["_${slot}"]="V"
 		elif is_lts "${patched_version}" ; then
-			echo "
-				(
-					=sys-kernel/gentoo-kernel-bin-${patched_version}*
-					>=sys-kernel/gentoo-kernel-bin-${patched_version}
-				)
-				(
-					=sys-kernel/gentoo-kernel-${patched_version}*
-					>=sys-kernel/gentoo-kernel-${patched_version}
-				)
-				(
-					=sys-kernel/gentoo-sources-${patched_version}*
-					>=sys-kernel/gentoo-sources-${patched_version}
-				)
-				(
-					=sys-kernel/vanilla-kernel-${patched_version}*
-					>=sys-kernel/vanilla-kernel-${patched_version}
-				)
-				(
-					=sys-kernel/vanilla-sources-${patched_version}*
-					>=sys-kernel/vanilla-sources-${patched_version}
-				)
-				(
-					=sys-kernel/git-sources-${patched_version}*
-					>=sys-kernel/git-sources-${patched_version}
-				)
-				(
-					=sys-kernel/mips-sources-${patched_version}*
-					>=sys-kernel/mips-sources-${patched_version}
-				)
-				(
-					=sys-kernel/pf-sources-${patched_version}*
-					>=sys-kernel/pf-sources-${patched_version}
-				)
-				(
-					=sys-kernel/rt-sources-${patched_version}*
-					>=sys-kernel/rt-sources-${patched_version}
-				)
-				(
-					=sys-kernel/zen-sources-${patched_version}*
-					>=sys-kernel/zen-sources-${patched_version}
-				)
-				(
-					=sys-kernel/raspberrypi-sources-${patched_version}*
-					>=sys-kernel/raspberrypi-sources-${patched_version}
-				)
-				(
-					=sys-kernel/linux-next-${patched_version}*
-					>=sys-kernel/linux-next-${patched_version}
-				)
-				(
-					=sys-kernel/asahi-sources-${patched_version}*
-					>=sys-kernel/asahi-sources-${patched_version}
-				)
-				(
-					=sys-kernel/ot-sources-${patched_version}*
-					>=sys-kernel/ot-sources-${patched_version}
-				)
-			"
+			:
 		fi
 	done
-
-	# Add LTS versions
-	local atom
-	for atom in ${ATOMS[@]} ; do
-		for patched_version in ${PATCHED_VERSIONS[@]} ; do
-			if [[ "${patched_version}" =~ "V" ]] ; then
-	# Unpatched / vulnerable
-				local slot="${patched_version%.*}"
-				echo "
-					!=${atom}-${slot}*
-				"
-			elif is_lts "${patched_version}" ; then
-				echo "
-					(
-						=${atom}-${patched_version}*
-						>=${atom}-${patched_version}
-					)
-				"
-			fi
-		done
-	done
-
-	echo "
-		)
-	"
 }
 
-gen_eol_kernels_list() {
+gen_render_kernels_list() {
 	local ATOMS=(
 		${CUSTOM_KERNEL_ATOM}
 	)
 
-	# Concat is expensive in bash
-	for eol_version in ${EOL_VERSIONS[@]} ; do
-		echo "
-			!=sys-kernel/gentoo-kernel-bin-${eol_version}*
-			!=sys-kernel/gentoo-kernel-${eol_version}*
-			!=sys-kernel/gentoo-sources-${eol_version}*
-			!=sys-kernel/vanilla-kernel-${eol_version}*
-			!=sys-kernel/vanilla-sources-${eol_version}*
-			!=sys-kernel/git-sources-${eol_version}*
-			!=sys-kernel/mips-sources-${eol_version}*
-			!=sys-kernel/pf-sources-${eol_version}*
-			!=sys-kernel/rt-sources-${eol_version}*
-			!=sys-kernel/zen-sources-${eol_version}*
-			!=sys-kernel/raspberrypi-sources-${eol_version}*
-			!=sys-kernel/linux-next-${eol_version}*
-			!=sys-kernel/asahi-sources-${eol_version}*
-			!=sys-kernel/ot-sources-${eol_version}*
-		"
-	done
-
-	local eol_version
-	for atom in ${ATOMS[@]} ; do
-		for eol_version in ${EOL_VERSIONS[@]} ; do
-			echo "
-				!=${atom}-${eol_version}*
+	# Concat and echo are expensive in bash
+	local eol_block=""
+	local safe_block=""
+	local atom
+	local version
+	for version in ${!_ALL_VERSIONS[@]} ; do
+		local status="${_ALL_VERSIONS[${version}]}"
+		if [[ "${status}" =~ "EOL" || "${status}" =~ "V" ]] ; then
+			version="${version:1}"
+			eol_block+="
+				!=sys-kernel/gentoo-kernel-bin-${version}*
+				!=sys-kernel/gentoo-kernel-${version}*
+				!=sys-kernel/gentoo-sources-${version}*
+				!=sys-kernel/vanilla-kernel-${version}*
+				!=sys-kernel/vanilla-sources-${version}*
+				!=sys-kernel/git-sources-${version}*
+				!=sys-kernel/mips-sources-${version}*
+				!=sys-kernel/pf-sources-${version}*
+				!=sys-kernel/rt-sources-${version}*
+				!=sys-kernel/zen-sources-${version}*
+				!=sys-kernel/raspberrypi-sources-${version}*
+				!=sys-kernel/linux-next-${version}*
+				!=sys-kernel/asahi-sources-${version}*
+				!=sys-kernel/ot-sources-${version}*
 			"
-		done
+			for atom in ${ATOMS[@]} ; do
+				eol_block+="
+					!=${atom}-${version}*
+				"
+			done
+		else
+			safe_block+="
+				(
+					=sys-kernel/gentoo-kernel-bin-${version}*
+					>=sys-kernel/gentoo-kernel-bin-${version}
+				)
+				(
+					=sys-kernel/gentoo-kernel-${version}*
+					>=sys-kernel/gentoo-kernel-${version}
+				)
+				(
+					=sys-kernel/gentoo-sources-${version}*
+					>=sys-kernel/gentoo-sources-${version}
+				)
+				(
+					=sys-kernel/vanilla-kernel-${version}*
+					>=sys-kernel/vanilla-kernel-${version}
+				)
+				(
+					=sys-kernel/vanilla-sources-${version}*
+					>=sys-kernel/vanilla-sources-${version}
+				)
+				(
+					=sys-kernel/git-sources-${version}*
+					>=sys-kernel/git-sources-${version}
+				)
+				(
+					=sys-kernel/mips-sources-${version}*
+					>=sys-kernel/mips-sources-${version}
+				)
+				(
+					=sys-kernel/pf-sources-${version}*
+					>=sys-kernel/pf-sources-${version}
+				)
+				(
+					=sys-kernel/rt-sources-${version}*
+					>=sys-kernel/rt-sources-${version}
+				)
+				(
+					=sys-kernel/zen-sources-${version}*
+					>=sys-kernel/zen-sources-${version}
+				)
+				(
+					=sys-kernel/raspberrypi-sources-${version}*
+					>=sys-kernel/raspberrypi-sources-${version}
+				)
+				(
+					=sys-kernel/linux-next-${version}*
+					>=sys-kernel/linux-next-${version}
+				)
+				(
+					=sys-kernel/asahi-sources-${version}*
+					>=sys-kernel/asahi-sources-${version}
+				)
+				(
+					=sys-kernel/ot-sources-${version}*
+					>=sys-kernel/ot-sources-${version}
+				)
+			"
+			for atom in ${ATOMS[@]} ; do
+				safe_block+="
+					(
+						=${atom}-${version}*
+						>=${atom}-${version}
+					)
+				"
+			done
+		fi
 	done
+	echo "
+		virtual/libc
+	"
+	true echo "
+		|| (
+			${safe_block}
+		)
+		${eol_block}
+	"
 }
 
+gen_linux_firmware_ge() {
+	local arg="${1}"
+	if ver_test ${arg} -gt ${_LINUX_FIRMWARE_PV} ; then
+		_LINUX_FIRMWARE_PV=${arg}
+	fi
+}
+
+gen_intel_microcode_ge() {
+	local arg="${1}"
+	if ver_test ${arg} -gt ${_INTEL_MICROCODE_PV} ; then
+		_INTEL_MICROCODE_PV=${arg}
+	fi
+}
+
+_use() {
+	local arg="${1}"
+	if [[ "${USE}" =~ (" "|^)"${arg}"(" "|$) ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+
+
 # Mitigated with RFI flush not KPTI
-_MITIGATE_ID_MELTDOWN_RDEPEND_PPC64="
-	cpu_target_ppc_power7? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_ppc_power8? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_ppc_power9? (
-		$(gen_patched_kernel_list 4.15)
-	)
-"
+_mitigate_id_meltdown_rdepend_ppc64() {
+	if _use cpu_target_ppc_power7 ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_ppc_power8 ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_ppc_power9 ; then
+		gen_patched_kernel_list 4.15
+	fi
+}
 
-_MITIGATE_ID_SPECTRE_V1_RDEPEND_X86_64="
-	cpu_target_x86_haswell? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_broadwell? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_skylake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_cooper_lake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_hewitt_lake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_apollo_lake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_denverton? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_ice_lake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_gemini_lake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_snow_ridge_bts? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_parker_ridge? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_tiger_lake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_sapphire_rapids? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_elkhart_lake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_alder_lake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_catlow_golden_cove? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_arizona_beach? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_jasper_lake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_rocket_lake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_meteor_lake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_granite_rapids? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_sierra_forest? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_raptor_lake_gen14? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_catlow_raptor_cove? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_alder_lake_n? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_emerald_rapids? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_x86_cascade_lake? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	kvm? (
-		$(gen_patched_kernel_list 5.6)
-	)
-"
-if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
-	_MITIGATE_ID_SPECTRE_V1_RDEPEND_X86_64+="
-		$(gen_patched_kernel_list 4.16)
-	"
-fi
-if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
-	_MITIGATE_ID_SPECTRE_V1_RDEPEND_X86_64+="
-		$(gen_patched_kernel_list 4.16)
-	"
-fi
-_MITIGATE_ID_SPECTRE_V1_RDEPEND_X86_32="
-	${_MITIGATE_ID_SPECTRE_V1_RDEPEND_X86_64}
-"
+_mitigate_id_spectre_v1_rdepend_x86_64() {
+	if _use cpu_target_x86_haswell ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_broadwell ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_skylake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_cooper_lake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_hewitt_lake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_apollo_lake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_denverton ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_gemini_lake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_snow_ridge_bts ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_parker_ridge ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_sapphire_rapids ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_sapphire_rapids_edge_enhanced ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_elkhart_lake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_catlow_golden_cove ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_arizona_beach ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_jasper_lake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_rocket_lake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_meteor_lake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_granite_rapids ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_sierra_forest ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_raptor_lake_gen13 ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_raptor_lake_gen14 ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_catlow_raptor_cove ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_alder_lake_n ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_emerald_rapids ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_x86_cascade_lake ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use kvm ; then
+		gen_patched_kernel_list 5.6
+	fi
 
-_MITIGATE_ID_SPECTRE_V2_RDEPEND_X86_64="
-	cpu_target_x86_haswell? (
-		$(gen_patched_kernel_list 4.15)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_broadwell? (
-		$(gen_patched_kernel_list 4.15)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_skylake? (
-		$(gen_patched_kernel_list 4.15)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_cooper_lake? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_hewitt_lake? (
-		$(gen_patched_kernel_list 4.15)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_apollo_lake? (
-		$(gen_patched_kernel_list 4.15)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_denverton? (
-		$(gen_patched_kernel_list 4.15)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_ice_lake? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_gemini_lake? (
-		$(gen_patched_kernel_list 4.15)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_snow_ridge_bts? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_parker_ridge? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_tiger_lake? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 4.15)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 4.15)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		$(gen_patched_kernel_list 4.15)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 4.15)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 4.15)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_sapphire_rapids? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_elkhart_lake? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_alder_lake? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_catlow_golden_cove? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_arizona_beach? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_jasper_lake? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 4.15)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 4.15)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		$(gen_patched_kernel_list 4.15)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_rocket_lake? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_meteor_lake? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_granite_rapids? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_sierra_forest? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_raptor_lake_gen14? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_catlow_raptor_cove? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_alder_lake_n? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_emerald_rapids? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_cascade_lake? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_zen? (
-		firmware? (
-			>=sys-kernel/linux-firmware-20181128
-		)
-	)
-	cpu_target_x86_zen_plus? (
-		firmware? (
-			>=sys-kernel/linux-firmware-20181128
-		)
-	)
-	cpu_target_x86_zen_2? (
-		firmware? (
-			>=sys-kernel/linux-firmware-20181128
-		)
-	)
-	cpu_target_x86_zen_3? (
-		firmware? (
-			>=sys-kernel/linux-firmware-20181128
-		)
-	)
-	bpf? (
-		$(gen_patched_kernel_list 5.13)
-	)
-"
+	if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
+		gen_patched_kernel_list 4.16
+	fi
+}
+_mitigate_id_spectre_v1_rdepend_x86_32() {
+	_mitigate_id_spectre_v1_rdepend_x86_64
+}
+
+_mitigate_id_spectre_v2_rdepend_x86_64() {
+	if _use cpu_target_x86_haswell ; then
+		gen_patched_kernel_list 4.15
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_broadwell ; then
+		gen_patched_kernel_list 4.15
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_skylake ; then
+		gen_patched_kernel_list 4.15
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_cooper_lake ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_hewitt_lake ; then
+		gen_patched_kernel_list 4.15
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_apollo_lake ; then
+		gen_patched_kernel_list 4.15
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_denverton ; then
+		gen_patched_kernel_list 4.15
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_gemini_lake ; then
+		gen_patched_kernel_list 4.15
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_snow_ridge_bts ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_parker_ridge ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_patched_kernel_list 4.15
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 4.15
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		gen_patched_kernel_list 4.15
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 4.15
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 4.15
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_sapphire_rapids ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_sapphire_rapids_edge_enhanced ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_elkhart_lake ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_catlow_golden_cove ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_arizona_beach ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_jasper_lake ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 4.15
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 4.15
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_patched_kernel_list 4.15
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_rocket_lake ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_meteor_lake ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_granite_rapids ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_sierra_forest ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_raptor_lake_gen13 ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_raptor_lake_gen14 ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_catlow_raptor_cove ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_alder_lake_n ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_emerald_rapids ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_cascade_lake ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_zen ; then
+		if _use firmware ; then
+			gen_linux_firmware_ge 20181128
+		fi
+	fi
+	if _use cpu_target_x86_zen_plus ; then
+		if _use firmware ; then
+			gen_linux_firmware_ge 20181128
+		fi
+	fi
+	if _use cpu_target_x86_zen_2 ; then
+		if _use firmware ; then
+			gen_linux_firmware_ge 20181128
+		fi
+	fi
+	if _use cpu_target_x86_zen_3 ; then
+		if _use firmware ; then
+			gen_linux_firmware_ge 20181128
+		fi
+	fi
+	if _use bpf ; then
+		gen_patched_kernel_list 5.13
+	fi
+
 # TODO: replace with family
-#	cpu_target_x86_amd_fam_0fh
-if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
-	_MITIGATE_ID_SPECTRE_V2_RDEPEND_X86_64+="
-		$(gen_patched_kernel_list 4.15)
-	"
-fi
-if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
-	_MITIGATE_ID_SPECTRE_V2_RDEPEND_X86_64+="
-		$(gen_patched_kernel_list 4.15)
-	"
-fi
+#	if _use cpu_target_x86_amd_fam_0fh
+	if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
+		gen_patched_kernel_list 4.15
+	fi
+}
 
-_MITIGATE_ID_SPECTRE_V1_V2_V3_RDEPEND_X86_64="
-	cpu_target_x86_arrandale? (
-		$(gen_patched_kernel_list 4.16)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_broxton? (
-		$(gen_patched_kernel_list 4.16)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_clarkdale? (
-		$(gen_patched_kernel_list 4.16)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_gladden? (
-		$(gen_patched_kernel_list 4.16)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_lynnfield? (
-		$(gen_patched_kernel_list 4.16)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_nehalem? (
-		$(gen_patched_kernel_list 4.16)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_westmere? (
-		$(gen_patched_kernel_list 4.16)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
+_mitigate_id_spectre_v1_v2_v3_rdepend_x86_64() {
+	if _use cpu_target_x86_arrandale ; then
+		gen_patched_kernel_list 4.16
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_broxton ; then
+		gen_patched_kernel_list 4.16
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_clarkdale ; then
+		gen_patched_kernel_list 4.16
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_gladden ; then
+		gen_patched_kernel_list 4.16
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_lynnfield ; then
+		gen_patched_kernel_list 4.16
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_nehalem ; then
+		gen_patched_kernel_list 4.16
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_westmere ; then
+		gen_patched_kernel_list 4.16
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
 
-	cpu_target_x86_sandy_bridge? (
-		$(gen_patched_kernel_list 4.16)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_ivy_bridge? (
-		$(gen_patched_kernel_list 4.16)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-	cpu_target_x86_bakerville? (
-		$(gen_patched_kernel_list 4.16)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180425
-		)
-	)
-"
-_MITIGATE_ID_SPECTRE_V1_V2_V3_RDEPEND_X86_32="
-	${_MITIGATE_ID_SPECTRE_V1_V2_V3_RDEPEND_X86_64}
-"
+	if _use cpu_target_x86_sandy_bridge ; then
+		gen_patched_kernel_list 4.16
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_ivy_bridge ; then
+		gen_patched_kernel_list 4.16
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+	if _use cpu_target_x86_bakerville ; then
+		gen_patched_kernel_list 4.16
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180425
+		fi
+	fi
+}
+_mitigate_id_spectre_v1_v2_v3_rdepend_x86_32() {
+	_mitigate_id_spectre_v1_v2_v3_rdepend_x86_64
+}
 
-_MITIGATE_ID_MELTDOWN_RDEPEND_X86_64="
-	$(gen_patched_kernel_list 4.15)
-	cpu_target_x86_haswell? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_broadwell? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_hewitt_lake? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_skylake? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	cpu_target_x86_gemini_lake? (
-		$(gen_patched_kernel_list 4.15)
-	)
-"
+_mitigate_id_meltdown_rdepend_x86_64() {
+	gen_patched_kernel_list 4.15
+	if _use cpu_target_x86_haswell ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_broadwell ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_hewitt_lake ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_skylake ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use cpu_target_x86_gemini_lake ; then
+		gen_patched_kernel_list 4.15
+	fi
+}
 
 # Only if it supports PAE
-_MITIGATE_ID_MELTDOWN_RDEPEND_X86_32="
-	${_MITIGATE_ID_MELTDOWN_RDEPEND_X86_64}
-"
+_mitigate_id_meltdown_rdepend_x86_32() {
+	_mitigate_id_meltdown_rdepend_x86_64
+}
 
-_MITIGATE_ID_MELTDOWN_RDEPEND_ARM64="
-	cpu_target_arm_cortex_a75? (
-		$(gen_patched_kernel_list 4.16)
-	)
-"
+_mitigate_id_meltdown_rdepend_arm64() {
+	if _use cpu_target_arm_cortex_a75 ; then
+		gen_patched_kernel_list 4.16
+	fi
+}
 # Variant 3a (4.16), Variant 4 (4.18) \
-_MITIGATE_ID_SPECTRE_NG_RDEPEND_ARM64="
-	cpu_target_arm_cortex_a15? (
-		$(gen_patched_kernel_list 4.16)
-	)
+_mitigate_id_spectre_ng_rdepend_arm64() {
+	if _use cpu_target_arm_cortex_a15 ; then
+		gen_patched_kernel_list 4.16
+	fi
 
-	cpu_target_arm_cortex_a57? (
-		$(gen_patched_kernel_list 4.18)
-	)
-	cpu_target_arm_cortex_a72? (
-		$(gen_patched_kernel_list 4.18)
-	)
-	cpu_target_arm_cortex_a73? (
-		$(gen_patched_kernel_list 4.18)
-	)
-	cpu_target_arm_cortex_a75? (
-		$(gen_patched_kernel_list 4.18)
-	)
-	cpu_target_arm_cortex_a76? (
-		$(gen_patched_kernel_list 4.20)
-	)
-	cpu_target_arm_cortex_a77? (
-		$(gen_patched_kernel_list 4.18)
-	)
-	cpu_target_arm_neoverse_n1? (
-		$(gen_patched_kernel_list 4.20)
-	)
-	bpf? (
-		$(gen_patched_kernel_list 5.13)
-	)
-"
+	if _use cpu_target_arm_cortex_a57 ; then
+		gen_patched_kernel_list 4.18
+	fi
+	if _use cpu_target_arm_cortex_a72 ; then
+		gen_patched_kernel_list 4.18
+	fi
+	if _use cpu_target_arm_cortex_a73 ; then
+		gen_patched_kernel_list 4.18
+	fi
+	if _use cpu_target_arm_cortex_a75 ; then
+		gen_patched_kernel_list 4.18
+	fi
+	if _use cpu_target_arm_cortex_a76 ; then
+		gen_patched_kernel_list 4.20
+	fi
+	if _use cpu_target_arm_cortex_a77 ; then
+		gen_patched_kernel_list 4.18
+	fi
+	if _use cpu_target_arm_neoverse_n1 ; then
+		gen_patched_kernel_list 4.20
+	fi
+	if _use bpf ; then
+		gen_patched_kernel_list 5.13
+	fi
+}
 
 # Firmware date based on D distro even though it may be removed from microcode repo.
 # List for mitigations against Variant 4 and Variant 3a
-_MITIGATE_ID_SPECTRE_NG_RDEPEND_X86_64="
-	cpu_target_x86_gemini_lake? (
-		$(gen_patched_kernel_list 4.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_haswell? (
-		$(gen_patched_kernel_list 4.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_broadwell? (
-		$(gen_patched_kernel_list 4.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_hewitt_lake? (
-		$(gen_patched_kernel_list 4.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_skylake? (
-		$(gen_patched_kernel_list 4.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 4.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 4.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		$(gen_patched_kernel_list 4.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 4.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 4.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		$(gen_patched_kernel_list 4.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 4.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		$(gen_patched_kernel_list 4.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_ice_lake? (
-		$(gen_patched_kernel_list 4.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_rocket_lake? (
-		$(gen_patched_kernel_list 4.17)
-	)
-	cpu_target_x86_tiger_lake? (
-		$(gen_patched_kernel_list 4.17)
-	)
-	cpu_target_x86_alder_lake? (
-		$(gen_patched_kernel_list 4.17)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		$(gen_patched_kernel_list 4.17)
-	)
-	cpu_target_x86_raptor_lake_gen14? (
-		$(gen_patched_kernel_list 4.17)
-	)
-	cpu_target_x86_meteor_lake? (
-		$(gen_patched_kernel_list 4.17)
-	)
+_mitigate_id_spectre_ng_rdepend_x86_64() {
+	if _use cpu_target_x86_gemini_lake ; then
+		gen_patched_kernel_list 4.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_haswell ; then
+		gen_patched_kernel_list 4.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_broadwell ; then
+		gen_patched_kernel_list 4.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_hewitt_lake ; then
+		gen_patched_kernel_list 4.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_skylake ; then
+		gen_patched_kernel_list 4.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 4.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_patched_kernel_list 4.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		gen_patched_kernel_list 4.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 4.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 4.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_patched_kernel_list 4.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 4.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		gen_patched_kernel_list 4.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		gen_patched_kernel_list 4.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_rocket_lake ; then
+		gen_patched_kernel_list 4.17
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		gen_patched_kernel_list 4.17
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		gen_patched_kernel_list 4.17
+	fi
+	if _use cpu_target_x86_raptor_lake_gen13 ; then
+		gen_patched_kernel_list 4.17
+	fi
+	if _use cpu_target_x86_raptor_lake_gen14 ; then
+		gen_patched_kernel_list 4.17
+	fi
+	if _use cpu_target_x86_meteor_lake ; then
+		gen_patched_kernel_list 4.17
+	fi
 
-	cpu_target_x86_cascade_lake? (
-		$(gen_patched_kernel_list 4.17)
-	)
-	cpu_target_x86_cooper_lake? (
-		$(gen_patched_kernel_list 4.17)
-	)
-	cpu_target_x86_sapphire_rapids? (
-		$(gen_patched_kernel_list 4.17)
-	)
-	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		$(gen_patched_kernel_list 4.17)
-	)
-	cpu_target_x86_granite_rapids? (
-		$(gen_patched_kernel_list 4.17)
-	)
-	cpu_target_x86_emerald_rapids? (
-		$(gen_patched_kernel_list 4.17)
-	)
-	cpu_target_x86_sierra_forest? (
-		$(gen_patched_kernel_list 4.17)
-	)
+	if _use cpu_target_x86_cascade_lake ; then
+		gen_patched_kernel_list 4.17
+	fi
+	if _use cpu_target_x86_cooper_lake ; then
+		gen_patched_kernel_list 4.17
+	fi
+	if _use cpu_target_x86_sapphire_rapids ; then
+		gen_patched_kernel_list 4.17
+	fi
+	if _use cpu_target_x86_sapphire_rapids_edge_enhanced ; then
+		gen_patched_kernel_list 4.17
+	fi
+	if _use cpu_target_x86_granite_rapids ; then
+		gen_patched_kernel_list 4.17
+	fi
+	if _use cpu_target_x86_emerald_rapids ; then
+		gen_patched_kernel_list 4.17
+	fi
+	if _use cpu_target_x86_sierra_forest ; then
+		gen_patched_kernel_list 4.17
+	fi
 
-	cpu_target_x86_catlow_golden_cove? (
-		$(gen_patched_kernel_list 4.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_catlow_raptor_cove? (
-		$(gen_patched_kernel_list 4.17)
-	)
+	if _use cpu_target_x86_catlow_golden_cove ; then
+		gen_patched_kernel_list 4.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_catlow_raptor_cove ; then
+		gen_patched_kernel_list 4.17
+	fi
 
-	bpf? (
-		$(gen_patched_kernel_list 5.13)
-	)
-"
-_MITIGATE_ID_SPECTRE_NG_RDEPEND_X86_32="
-	${_MITIGATE_ID_SPECTRE_NG_RDEPEND_X86_64}
-"
+	if _use bpf ; then
+		gen_patched_kernel_list 5.13
+	fi
+}
+_mitigate_id_spectre_NG_rdepend_x86_32() {
+	_mitigate_id_spectre_ng_rdepend_x86_64
+}
 
-_MITIGATE_ID_SPECTRE_V2_RDEPEND_S390X="
-	$(gen_patched_kernel_list 4.16)
-	bpf? (
-		$(gen_patched_kernel_list 5.13)
-	)
-"
+_mitigate_id_spectre_v2_rdepend_s390x() {
+	gen_patched_kernel_list 4.16
+	if _use bpf ; then
+		gen_patched_kernel_list 5.13
+	fi
+}
 
-_MITIGATE_ID_SPECTRE_RSB_RDEPEND_X86_64="
-	$(gen_patched_kernel_list 4.19)
-"
-_MITIGATE_ID_SPECTRE_RSB_RDEPEND_X86_32="
-	${_MITIGATE_ID_SPECTRE_RSB_RDEPEND_X86_64}
-"
+_mitigate_id_spectre_rsb_rdepend_x86_64() {
+	gen_patched_kernel_list 4.19
+}
+_mitigate_id_spectre_rsb_rdepend_x86_32() {
+	_mitigate_id_spectre_rsb_rdepend_x86_64
+}
 
-_MITIGATE_ID_SPECTRE_RSBA_RDEPEND_X86_64="
-	cpu_target_x86_skylake? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_ice_lake? (
-		$(gen_patched_kernel_list 5.19)
-	)
+_mitigate_id_spectre_rsba_rdepend_x86_64() {
+	if _use cpu_target_x86_skylake ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		gen_patched_kernel_list 5.19
+	fi
 
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		$(gen_patched_kernel_list 5.19)
-	)
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		gen_patched_kernel_list 5.19
+	fi
 
 
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 5.19)
-	)
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 5.19
+	fi
 
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 5.19)
-	)
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 5.19
+	fi
 
-	cpu_target_x86_coffee_lake_gen9? (
-		$(gen_patched_kernel_list 5.19)
-	)
-"
-_MITIGATE_ID_SPECTRE_RSBA_RDEPEND_X86_32="
-	${_MITIGATE_ID_SPECTRE_RSBA_RDEPEND_X86_64}
-"
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_patched_kernel_list 5.19
+	fi
+}
+_mitigate_id_spectre_rsba_rdepend_x86_32() {
+	_mitigate_id_spectre_rsba_rdepend_x86_64
+}
 
 # The firmware is required for mitigation, but the date below is not verified
 # to contain the fix.  It is based on the monotonic numbering of the advisory
 # in the commit summary.
-_MITIGATE_ID_SPECTRE_RRSBA_RDEPEND_X86_64="
-	cpu_target_x86_cooper_lake? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_x86_sapphire_rapids? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_x86_alder_lake? (
-		$(gen_patched_kernel_list 5.17)
-		firmware? (
-			>=sys-firmware/intel-microcode-20230214
-		)
-	)
-	cpu_target_x86_cascade_lake? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_x86_meteor_lake? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_x86_granite_rapids? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_x86_sierra_forest? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_x86_raptor_lake_gen14? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_x86_catlow_raptor_cove? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_x86_emerald_rapids? (
-		$(gen_patched_kernel_list 5.17)
-	)
-"
+_mitigate_id_spectre_rrsba_rdepend_x86_64() {
+	if _use cpu_target_x86_cooper_lake ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_x86_sapphire_rapids ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_x86_sapphire_rapids_edge_enhanced ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		gen_patched_kernel_list 5.17
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230214
+		fi
+	fi
+	if _use cpu_target_x86_cascade_lake ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_x86_meteor_lake ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_x86_granite_rapids ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_x86_sierra_forest ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_x86_raptor_lake_gen13 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_x86_raptor_lake_gen14 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_x86_catlow_raptor_cove ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_x86_emerald_rapids ; then
+		gen_patched_kernel_list 5.17
+	fi
+}
 
-_MITIGATE_ID_SPECTRE_RRSBA_RDEPEND_X86_32="
-	${_MITIGATE_ID_SPECTRE_RRSBA_RDEPEND_X86_64}
-"
+_mitigate_id_spectre_rrsba_rdepend_x86_32() {
+	_mitigate_id_spectre_rrsba_rdepend_x86_64
+}
 
 # broxton needs verification
-_MITIGATE_ID_FORESHADOW_RDEPEND_X86_64="
-	cpu_target_x86_arrandale? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_clarkdale? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_gladden? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_lynnfield? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_bakerville? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
+_mitigate_id_foreshadow_rdepend_x86_64() {
+	if _use cpu_target_x86_arrandale ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_clarkdale ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_gladden ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_lynnfield ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_bakerville ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
 
-	cpu_target_x86_nehalem? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_westmere? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_sandy_bridge? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_ivy_bridge? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_haswell? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_broadwell? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_hewitt_lake? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_skylake? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 4.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20180807
-		)
-	)
-	kvm? (
-		$(gen_patched_kernel_list 5.6)
-	)
-"
-_MITIGATE_ID_FORESHADOW_RDEPEND_X86_32="
-	${_MITIGATE_ID_FORESHADOW_RDEPEND_X86_64}
-"
+	if _use cpu_target_x86_nehalem ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_westmere ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_sandy_bridge ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_ivy_bridge ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_haswell ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_broadwell ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_hewitt_lake ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_skylake ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 4.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20180807
+		fi
+	fi
+	if _use kvm ; then
+		gen_patched_kernel_list 5.6
+	fi
+}
+_mitigate_id_foreshadow_rdepend_x86_32() {
+	_mitigate_id_foreshadow_rdepend_x86_64
+}
 
 
-_MITIGATE_ID_SPECTRE_V2_RDEPEND_PPC32="
-	cpu_target_ppc_85xx? (
-		$(gen_patched_kernel_list 5.0)
-	)
-	cpu_target_ppc_e500mc? (
-		$(gen_patched_kernel_list 5.0)
-	)
-"
+_mitigate_id_spectre_v2_rdepend_ppc32() {
+	if _use cpu_target_ppc_85xx ; then
+		gen_patched_kernel_list 5.0
+	fi
+	if _use cpu_target_ppc_e500mc ; then
+		gen_patched_kernel_list 5.0
+	fi
+}
 
-_MITIGATE_ID_SPECTRE_V2_RDEPEND_PPC64="
-	cpu_target_ppc_e5500? (
-		$(gen_patched_kernel_list 5.0)
-	)
-	cpu_target_ppc_e6500? (
-		$(gen_patched_kernel_list 5.0)
-	)
-"
+_mitigate_id_spectre_v2_rdepend_ppc64() {
+	if _use cpu_target_ppc_e5500 ; then
+		gen_patched_kernel_list 5.0
+	fi
+	if _use cpu_target_ppc_e6500 ; then
+		gen_patched_kernel_list 5.0
+	fi
+}
 
 # MFBDS, MLPDS, MSBDS
-_MITIGATE_ID_MDS_RDEPEND_X86_64="
-	cpu_target_x86_haswell? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_broadwell? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_hewitt_lake? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_skylake? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
+_mitigate_id_MDS_rdepend_x86_64() {
+	if _use cpu_target_x86_haswell ; then
+		gen_patched_kernel_list 5.2
+		if _use firmware ; then
+			gen_intel_microcode_ge 20190618
+		fi
+	fi
+	if _use cpu_target_x86_broadwell ; then
+		gen_patched_kernel_list 5.2
+		if _use firmware ; then
+			gen_intel_microcode_ge 20190618
+		fi
+	fi
+	if _use cpu_target_x86_hewitt_lake ; then
+		gen_patched_kernel_list 5.2
+		if _use firmware ; then
+			gen_intel_microcode_ge 20190618
+		fi
+	fi
+	if _use cpu_target_x86_skylake ; then
+		gen_patched_kernel_list 5.2
+		if _use firmware ; then
+			gen_intel_microcode_ge 20190618
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 5.2
+		if _use firmware ; then
+			gen_intel_microcode_ge 20190618
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_patched_kernel_list 5.2
+		if _use firmware ; then
+			gen_intel_microcode_ge 20190618
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		gen_patched_kernel_list 5.2
+		if _use firmware ; then
+			gen_intel_microcode_ge 20190618
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 5.2
+		if _use firmware ; then
+			gen_intel_microcode_ge 20190618
+		fi
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 5.2
+		if _use firmware ; then
+			gen_intel_microcode_ge 20190618
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_patched_kernel_list 5.2
+		if _use firmware ; then
+			gen_intel_microcode_ge 20190618
+		fi
+	fi
 
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-	cpu_target_x86_ice_lake? (
-		$(gen_patched_kernel_list 5.2)
-		firmware? (
-			>=sys-firmware/intel-microcode-20190618
-		)
-	)
-"
-_MITIGATE_ID_MDS_RDEPEND_X86_32="
-	${_MITIGATE_ID_MDS_RDEPEND_X86_64}
-"
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 5.2
+		if _use firmware ; then
+			gen_intel_microcode_ge 20190618
+		fi
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		gen_patched_kernel_list 5.2
+		if _use firmware ; then
+			gen_intel_microcode_ge 20190618
+		fi
+	fi
+}
+_mitigate_id_MDS_rdepend_x86_32() {
+	_mitigate_id_MDS_rdepend_x86_64
+}
 
-_MITIGATE_ID_SWAPGS_RDEPEND_X86_64="
-	cpu_target_x86_apollo_lake? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_denverton? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_snow_ridge_bts? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_snow_ridge? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_parker_ridge? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_elkhart_lake? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_arizona_beach? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_jasper_lake? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_alder_lake_n? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_gemini_lake? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_haswell? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_broadwell? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_hewitt_lake? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_skylake? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_ice_lake? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_rocket_lake? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_tiger_lake? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_alder_lake? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_raptor_lake_gen14? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_meteor_lake? (
-		$(gen_patched_kernel_list 5.3)
-	)
+_mitigate_id_swapgs_rdepend_x86_64() {
+	if _use cpu_target_x86_apollo_lake ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_denverton ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_snow_ridge_bts ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_snow_ridge ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_parker_ridge ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_elkhart_lake ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_arizona_beach ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_jasper_lake ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_alder_lake_n ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_gemini_lake ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_haswell ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_broadwell ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_hewitt_lake ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_skylake ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_rocket_lake ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_raptor_lake_gen13 ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_raptor_lake_gen14 ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_meteor_lake ; then
+		gen_patched_kernel_list 5.3
+	fi
 
-	cpu_target_x86_cascade_lake? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_cooper_lake? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_sapphire_rapids? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_granite_rapids? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_emerald_rapids? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_sierra_forest? (
-		$(gen_patched_kernel_list 5.3)
-	)
+	if _use cpu_target_x86_cascade_lake ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_cooper_lake ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_sapphire_rapids ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_sapphire_rapids_edge_enhanced ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_granite_rapids ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_emerald_rapids ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_sierra_forest ; then
+		gen_patched_kernel_list 5.3
+	fi
 
-	cpu_target_x86_catlow_golden_cove? (
-		$(gen_patched_kernel_list 5.3)
-	)
-	cpu_target_x86_catlow_raptor_cove? (
-		$(gen_patched_kernel_list 5.3)
-	)
+	if _use cpu_target_x86_catlow_golden_cove ; then
+		gen_patched_kernel_list 5.3
+	fi
+	if _use cpu_target_x86_catlow_raptor_cove ; then
+		gen_patched_kernel_list 5.3
+	fi
 
-"
-_MITIGATE_ID_SWAPGS_RDEPEND_X86_32="
-	${_MITIGATE_ID_SWAPGS_RDEPEND_X86_64}
-"
+}
+_mitigate_id_swapgs_rdepend_x86_32() {
+	_mitigate_id_swapgs_rdepend_x86_64
+}
 
 # Only >= Gen6 firmware
-_MITIGATE_ID_ZOMBIELOAD_V2_RDEPEND_X86_64="
-	cpu_target_x86_haswell? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_broadwell? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_hewitt_lake? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_skylake? (
-		$(gen_patched_kernel_list 5.4)
-		firmware? (
-			>=sys-firmware/intel-microcode-20191112
-		)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 5.4)
-		firmware? (
-			>=sys-firmware/intel-microcode-20191112
-		)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 5.4)
-		firmware? (
-			>=sys-firmware/intel-microcode-20191112
-		)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		$(gen_patched_kernel_list 5.4)
-		firmware? (
-			>=sys-firmware/intel-microcode-20191112
-		)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 5.4)
-		firmware? (
-			>=sys-firmware/intel-microcode-20191112
-		)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 5.4)
-		firmware? (
-			>=sys-firmware/intel-microcode-20191112
-		)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		$(gen_patched_kernel_list 5.4)
-		firmware? (
-			>=sys-firmware/intel-microcode-20191112
-		)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 5.4)
-		firmware? (
-			>=sys-firmware/intel-microcode-20191112
-		)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		$(gen_patched_kernel_list 5.4)
-		firmware? (
-			>=sys-firmware/intel-microcode-20191112
-		)
-	)
+_mitigate_id_zombieload_v2_rdepend_x86_64() {
+	if _use cpu_target_x86_haswell ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_broadwell ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_hewitt_lake ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_skylake ; then
+		gen_patched_kernel_list 5.4
+		if _use firmware ; then
+			gen_intel_microcode_ge 20191112
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 5.4
+		if _use firmware ; then
+			gen_intel_microcode_ge 20191112
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_patched_kernel_list 5.4
+		if _use firmware ; then
+			gen_intel_microcode_ge 20191112
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		gen_patched_kernel_list 5.4
+		if _use firmware ; then
+			gen_intel_microcode_ge 20191112
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 5.4
+		if _use firmware ; then
+			gen_intel_microcode_ge 20191112
+		fi
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 5.4
+		if _use firmware ; then
+			gen_intel_microcode_ge 20191112
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_patched_kernel_list 5.4
+		if _use firmware ; then
+			gen_intel_microcode_ge 20191112
+		fi
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 5.4
+		if _use firmware ; then
+			gen_intel_microcode_ge 20191112
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		gen_patched_kernel_list 5.4
+		if _use firmware ; then
+			gen_intel_microcode_ge 20191112
+		fi
+	fi
 
-	cpu_target_x86_cascade_lake? (
-		$(gen_patched_kernel_list 5.4)
-		firmware? (
-			>=sys-firmware/intel-microcode-20191112
-		)
-	)
-"
-_MITIGATE_ID_ZOMBIELOAD_V2_RDEPEND_X86_32="
-	${_MITIGATE_ID_ZOMBIELOAD_V2_RDEPEND_X86_64}
-"
+	if _use cpu_target_x86_cascade_lake ; then
+		gen_patched_kernel_list 5.4
+		if _use firmware ; then
+			gen_intel_microcode_ge 20191112
+		fi
+	fi
+}
+_mitigate_id_zombieload_v2_rdepend_x86_32() {
+	_mitigate_id_zombieload_v2_rdepend_x86_64
+}
 
-_MITIGATE_ID_CACHEOUT_RDEPEND_X86_64="
-	cpu_target_x86_skylake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_whiskey_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_comet_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
+_mitigate_id_cacheout_rdepend_x86_64() {
+	if _use cpu_target_x86_skylake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
 
-	cpu_target_x86_cascade_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
+	if _use cpu_target_x86_cascade_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
 
-"
-_MITIGATE_ID_CACHEOUT_RDEPEND_X86_32="
-	${_MITIGATE_ID_CACHEOUT_RDEPEND_X86_64}
-"
+}
+_mitigate_id_cacheout_rdepend_x86_32() {
+	_mitigate_id_cacheout_rdepend_x86_64
+}
 
-_MITIGATE_ID_VRSA_RDEPEND_X86_64="
-	cpu_target_x86_skylake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20210125
-		)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20210125
-		)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20210125
-		)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20210125
-		)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20210125
-		)
-	)
-	cpu_target_x86_whiskey_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20210125
-		)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20210125
-		)
-	)
-	cpu_target_x86_comet_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20210125
-		)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20210125
-		)
-	)
+_mitigate_id_vrsa_rdepend_x86_64() {
+	if _use cpu_target_x86_skylake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20210125
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20210125
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20210125
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20210125
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20210125
+		fi
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20210125
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20210125
+		fi
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20210125
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20210125
+		fi
+	fi
 
-	cpu_target_x86_cascade_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20210125
-		)
-	)
+	if _use cpu_target_x86_cascade_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20210125
+		fi
+	fi
 
-"
-_MITIGATE_ID_VRSA_RDEPEND_X86_32="
-	${_MITIGATE_ID_VRSA_RDEPEND_X86_64}
-"
+}
+_mitigate_id_vrsa_rdepend_x86_32() {
+	_mitigate_id_vrsa_rdepend_x86_64
+}
 
 # See commit 80eb5fe
-_MITIGATE_ID_SPECTRE_RSB_RDEPEND_PPC64="
-	$(gen_patched_kernel_list 5.5)
-"
-_MITIGATE_ID_SPECTRE_RSB_RDEPEND_PPC32="
-	${_MITIGATE_ID_SPECTRE_RSB_RDEPEND_PPC64}
-"
+_mitigate_id_spectre_rsb_rdepend_ppc64() {
+	gen_patched_kernel_list 5.5
+}
+_mitigate_id_spectre_rsb_rdepend_ppc32() {
+	_mitigate_id_spectre_rsb_rdepend_ppc64
+}
 
-_MITIGATE_ID_CROSSTALK_RDEPEND_X86_64="
-	cpu_target_x86_skylake? (
-		$(gen_patched_kernel_list 5.8)
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 5.8)
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 5.8)
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		$(gen_patched_kernel_list 5.8)
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 5.8)
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 5.8)
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 5.8)
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		$(gen_patched_kernel_list 5.8)
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		$(gen_patched_kernel_list 5.8)
-		firmware? (
-			>=sys-firmware/intel-microcode-20200609
-		)
-	)
-"
-_MITIGATE_ID_CROSSTALK_RDEPEND_X86_32="
-	${_MITIGATE_ID_CROSSTALK_RDEPEND_X86_64}
-"
+_mitigate_id_crosstalk_rdepend_x86_64() {
+	if _use cpu_target_x86_skylake ; then
+		gen_patched_kernel_list 5.8
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 5.8
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_patched_kernel_list 5.8
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		gen_patched_kernel_list 5.8
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 5.8
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 5.8
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 5.8
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_patched_kernel_list 5.8
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		gen_patched_kernel_list 5.8
+		if _use firmware ; then
+			gen_intel_microcode_ge 20200609
+		fi
+	fi
+}
+_mitigate_id_crosstalk_rdepend_x86_32() {
+	_mitigate_id_crosstalk_rdepend_x86_64
+}
 
-_MITIGATE_ID_SPECTRE_V2_RDEPEND_ARM64="
+_mitigate_id_spectre_v2_rdepend_arm64() {
 
-	cpu_target_arm_brahma_b15? (
-		$(gen_patched_kernel_list 4.18)
-	)
-	cpu_target_arm_cortex_a8? (
-		$(gen_patched_kernel_list 4.18)
-	)
-	cpu_target_arm_cortex_a9? (
-		$(gen_patched_kernel_list 4.18)
-	)
-	cpu_target_arm_cortex_a12? (
-		$(gen_patched_kernel_list 4.18)
-	)
-	cpu_target_arm_cortex_a15? (
-		$(gen_patched_kernel_list 4.18)
-	)
-	cpu_target_arm_cortex_a17? (
-		$(gen_patched_kernel_list 4.18)
-	)
-	cpu_target_arm_cortex_a73? (
-		$(gen_patched_kernel_list 4.18)
-	)
-	cpu_target_arm_cortex_a75? (
-		$(gen_patched_kernel_list 4.18)
-	)
+	if _use cpu_target_arm_brahma_b15 ; then
+		gen_patched_kernel_list 4.18
+	fi
+	if _use cpu_target_arm_cortex_a8 ; then
+		gen_patched_kernel_list 4.18
+	fi
+	if _use cpu_target_arm_cortex_a9 ; then
+		gen_patched_kernel_list 4.18
+	fi
+	if _use cpu_target_arm_cortex_a12 ; then
+		gen_patched_kernel_list 4.18
+	fi
+	if _use cpu_target_arm_cortex_a15 ; then
+		gen_patched_kernel_list 4.18
+	fi
+	if _use cpu_target_arm_cortex_a17 ; then
+		gen_patched_kernel_list 4.18
+	fi
+	if _use cpu_target_arm_cortex_a73 ; then
+		gen_patched_kernel_list 4.18
+	fi
+	if _use cpu_target_arm_cortex_a75 ; then
+		gen_patched_kernel_list 4.18
+	fi
 
-	cpu_target_arm_cortex_a57? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_arm_cortex_a72? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_arm_cortex_a73? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_arm_cortex_a75? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_arm_cortex_r7? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_arm_cortex_r8? (
-		$(gen_patched_kernel_list 4.19)
-	)
-	cpu_target_arm_falkor? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_arm_thunderx2? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	cpu_target_arm_vulkan? (
-		$(gen_patched_kernel_list 4.16)
-	)
-	bpf? (
-		$(gen_patched_kernel_list 5.13)
-	)
-"
-_MITIGATE_ID_SPECTRE_V2_RDEPEND_ARM="
-	${_MITIGATE_ID_SPECTRE_V2_RDEPEND_ARM64}
-"
+	if _use cpu_target_arm_cortex_a57 ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_arm_cortex_a72 ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_arm_cortex_a73 ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_arm_cortex_a75 ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_arm_cortex_r7 ; then
+		gen_patched_kernel_list 4.19
+	fi
+	if _use cpu_target_arm_cortex_r8 ; then
+		gen_patched_kernel_list 4.19
+	fi
+	if _use cpu_target_arm_falkor ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_arm_thunderx2 ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use cpu_target_arm_vulkan ; then
+		gen_patched_kernel_list 4.16
+	fi
+	if _use bpf ; then
+		gen_patched_kernel_list 5.13
+	fi
+}
+_mitigate_id_spectre_v2_rdepend_arm() {
+	_mitigate_id_spectre_v2_rdepend_arm64
+}
 
-_MITIGATE_ID_MMIO_RDEPEND_X86_64="
-	cpu_target_x86_snow_ridge_bts? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_snow_ridge? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_parker_ridge? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_elkhart_lake? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_jasper_lake? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
+_mitigate_id_mmio_rdepend_x86_64() {
+	if _use cpu_target_x86_snow_ridge_bts ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_snow_ridge ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_parker_ridge ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_elkhart_lake ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_jasper_lake ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
 
-	cpu_target_x86_haswell? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_broadwell? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_hewitt_lake? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_skylake? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_ice_lake? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_rocket_lake? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_tiger_lake? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
+	if _use cpu_target_x86_haswell ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_broadwell ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_hewitt_lake ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_skylake ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_rocket_lake ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
 
-	cpu_target_x86_cascade_lake? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_cooper_lake? (
-		$(gen_patched_kernel_list 5.19)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220510
-		)
-	)
-	cpu_target_x86_lakefield? (
-		$(gen_patched_kernel_list 5.19)
-	)
-"
-_MITIGATE_ID_MMIO_RDEPEND_X86_32="
-	${_MITIGATE_ID_MMIO_RDEPEND_X86_64}
-"
+	if _use cpu_target_x86_cascade_lake ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_cooper_lake ; then
+		gen_patched_kernel_list 5.19
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220510
+		fi
+	fi
+	if _use cpu_target_x86_lakefield ; then
+		gen_patched_kernel_list 5.19
+	fi
+}
+_mitigate_id_mmio_rdepend_x86_32() {
+	_mitigate_id_mmio_rdepend_x86_64
+}
 
-_MITIGATE_ID_RETBLEED_RDEPEND_X86_64="
-	cpu_target_x86_skylake? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_cannon_lake? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_lakefield? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_bulldozer? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_piledriver? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_steamroller? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_excavator? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_jaguar? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_puma? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_zen? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_zen_plus? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_zen_2? (
-		$(gen_patched_kernel_list 5.19)
-	)
-	cpu_target_x86_dhyana? (
-		$(gen_patched_kernel_list 5.19)
-	)
-"
+_mitigate_id_retbleed_rdepend_x86_64() {
+	if _use cpu_target_x86_skylake ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_cannon_lake ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_lakefield ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_bulldozer ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_piledriver ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_steamroller ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_excavator ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_jaguar ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_puma ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_zen ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_zen_plus ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_zen_2 ; then
+		gen_patched_kernel_list 5.19
+	fi
+	if _use cpu_target_x86_dhyana ; then
+		gen_patched_kernel_list 5.19
+	fi
+}
 
-_MITIGATE_ID_BHB_RDEPEND_ARM64="
-	cpu_target_arm_ampereone? (
-		$(gen_patched_kernel_list 6.1)
-	)
-	cpu_target_arm_brahma_b15? (
-		$(gen_patched_kernel_list 5.18)
-	)
-	cpu_target_arm_cortex_r7? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_cortex_r8? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_cortex_a15? (
-		$(gen_patched_kernel_list 5.18)
-	)
-	cpu_target_arm_cortex_a57? (
-		$(gen_patched_kernel_list 5.18)
-	)
-	cpu_target_arm_cortex_a65? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_cortex_a65ae? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_cortex_a72? (
-		$(gen_patched_kernel_list 5.18)
-	)
-	cpu_target_arm_cortex_a73? (
-		$(gen_patched_kernel_list 5.18)
-	)
-	cpu_target_arm_cortex_a75? (
-		$(gen_patched_kernel_list 5.18)
-	)
-	cpu_target_arm_cortex_a76? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_cortex_a77? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_cortex_a78? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_cortex_a78ae? (
-		$(gen_patched_kernel_list 5.18)
-	)
-	cpu_target_arm_cortex_a78c? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_cortex_a710? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_cortex_a715? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_neoverse_e1? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_neoverse_n1? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_neoverse_v1? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_neoverse_n2? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_neoverse_v2? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_cortex_x1? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_cortex_x2? (
-		$(gen_patched_kernel_list 5.17)
-	)
-	cpu_target_arm_cortex_x3? (
-		$(gen_patched_kernel_list 5.17)
-	)
-"
+_mitigate_id_bhb_rdepend_arm64() {
+	if _use cpu_target_arm_ampereone ; then
+		gen_patched_kernel_list 6.1
+	fi
+	if _use cpu_target_arm_brahma_b15 ; then
+		gen_patched_kernel_list 5.18
+	fi
+	if _use cpu_target_arm_cortex_r7 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_cortex_r8 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_cortex_a15 ; then
+		gen_patched_kernel_list 5.18
+	fi
+	if _use cpu_target_arm_cortex_a57 ; then
+		gen_patched_kernel_list 5.18
+	fi
+	if _use cpu_target_arm_cortex_a65 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_cortex_a65ae ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_cortex_a72 ; then
+		gen_patched_kernel_list 5.18
+	fi
+	if _use cpu_target_arm_cortex_a73 ; then
+		gen_patched_kernel_list 5.18
+	fi
+	if _use cpu_target_arm_cortex_a75 ; then
+		gen_patched_kernel_list 5.18
+	fi
+	if _use cpu_target_arm_cortex_a76 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_cortex_a77 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_cortex_a78 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_cortex_a78ae ; then
+		gen_patched_kernel_list 5.18
+	fi
+	if _use cpu_target_arm_cortex_a78c ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_cortex_a710 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_cortex_a715 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_neoverse_e1 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_neoverse_n1 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_neoverse_v1 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_neoverse_n2 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_neoverse_v2 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_cortex_x1 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_cortex_x2 ; then
+		gen_patched_kernel_list 5.17
+	fi
+	if _use cpu_target_arm_cortex_x3 ; then
+		gen_patched_kernel_list 5.17
+	fi
+}
 
-_MITIGATE_ID_BHB_RDEPEND_ARM="
-	${_MITIGATE_ID_BHB_RDEPEND_ARM64}
-"
+_mitigate_id_bhb_rdepend_arm() {
+	_mitigate_id_bhb_rdepend_arm64
+}
 
-_MITIGATE_ID_DOWNFALL_RDEPEND_X86_64="
-	cpu_target_x86_skylake? (
-		$(gen_patched_kernel_list 6.5)
-		firmware? (
-			>=sys-firmware/intel-microcode-20230808
-		)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 6.5)
-		firmware? (
-			>=sys-firmware/intel-microcode-20230808
-		)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 6.5)
-		firmware? (
-			>=sys-firmware/intel-microcode-20230808
-		)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		$(gen_patched_kernel_list 6.5)
-		firmware? (
-			>=sys-firmware/intel-microcode-20230808
-		)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 6.5)
-		firmware? (
-			>=sys-firmware/intel-microcode-20230808
-		)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 6.5)
-		firmware? (
-			>=sys-firmware/intel-microcode-20230808
-		)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		$(gen_patched_kernel_list 6.5)
-		firmware? (
-			>=sys-firmware/intel-microcode-20230808
-		)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 6.5)
-		firmware? (
-			>=sys-firmware/intel-microcode-20230808
-		)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		$(gen_patched_kernel_list 6.5)
-		firmware? (
-			>=sys-firmware/intel-microcode-20230808
-		)
-	)
-	cpu_target_x86_ice_lake? (
-		$(gen_patched_kernel_list 6.5)
-		firmware? (
-			>=sys-firmware/intel-microcode-20230808
-		)
-	)
-	cpu_target_x86_rocket_lake? (
-		$(gen_patched_kernel_list 6.5)
-		firmware? (
-			>=sys-firmware/intel-microcode-20230808
-		)
-	)
-	cpu_target_x86_tiger_lake? (
-		$(gen_patched_kernel_list 6.5)
-		firmware? (
-			>=sys-firmware/intel-microcode-20230808
-		)
-	)
+_mitigate_id_downfall_rdepend_x86_64() {
+	if _use cpu_target_x86_skylake ; then
+		gen_patched_kernel_list 6.5
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230808
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 6.5
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230808
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_patched_kernel_list 6.5
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230808
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		gen_patched_kernel_list 6.5
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230808
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 6.5
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230808
+		fi
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 6.5
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230808
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_patched_kernel_list 6.5
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230808
+		fi
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 6.5
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230808
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		gen_patched_kernel_list 6.5
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230808
+		fi
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		gen_patched_kernel_list 6.5
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230808
+		fi
+	fi
+	if _use cpu_target_x86_rocket_lake ; then
+		gen_patched_kernel_list 6.5
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230808
+		fi
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		gen_patched_kernel_list 6.5
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230808
+		fi
+	fi
 
-	cpu_target_x86_cascade_lake? (
-		$(gen_patched_kernel_list 6.5)
-		firmware? (
-			>=sys-firmware/intel-microcode-20230808
-		)
-	)
-	cpu_target_x86_cooper_lake? (
-		$(gen_patched_kernel_list 6.5)
-		firmware? (
-			>=sys-firmware/intel-microcode-20230808
-		)
-	)
+	if _use cpu_target_x86_cascade_lake ; then
+		gen_patched_kernel_list 6.5
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230808
+		fi
+	fi
+	if _use cpu_target_x86_cooper_lake ; then
+		gen_patched_kernel_list 6.5
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230808
+		fi
+	fi
 
-"
-_MITIGATE_ID_DOWNFALL_RDEPEND_X86_32="
-	${_MITIGATE_ID_DOWNFALL_RDEPEND_X86_64}
-"
+}
+_mitigate_id_downfall_rdepend_x86_32() {
+	_mitigate_id_downfall_rdepend_x86_64
+}
 
 # Pick the top set if you have server
-_MITIGATE_ID_INCEPTION_RDEPEND_X86_64="
+_mitigate_id_inception_rdepend_x86_64() {
 
-	cpu_target_x86_milan? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-kernel/linux-firmware-20230724
-		)
-	)
-	cpu_target_x86_milan-x? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-kernel/linux-firmware-20230724
-		)
-	)
-	cpu_target_x86_genoa? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-kernel/linux-firmware-20230809
-		)
-	)
-	cpu_target_x86_genoa-x? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-kernel/linux-firmware-20230809
-		)
-	)
-	cpu_target_x86_bergamo? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-kernel/linux-firmware-20230809
-		)
-	)
+	if _use cpu_target_x86_milan ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_linux_firmware_ge 20230724
+		fi
+	fi
+	if _use cpu_target_x86_milan-x ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_linux_firmware_ge 20230724
+		fi
+	fi
+	if _use cpu_target_x86_genoa ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_linux_firmware_ge 20230809
+		fi
+	fi
+	if _use cpu_target_x86_genoa-x ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_linux_firmware_ge 20230809
+		fi
+	fi
+	if _use cpu_target_x86_bergamo ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_linux_firmware_ge 20230809
+		fi
+	fi
 
-	cpu_target_x86_zen_4? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_zen_3? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_zen_2? (
-		$(gen_patched_kernel_list 6.5)
-	)
-	cpu_target_x86_zen? (
-		$(gen_patched_kernel_list 6.5)
-	)
-"
-_MITIGATE_ID_INCEPTION_RDEPEND_X86_32="
-	${_MITIGATE_ID_INCEPTION_RDEPEND_X86_64}
-"
+	if _use cpu_target_x86_zen_4 ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_zen_3 ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_zen_2 ; then
+		gen_patched_kernel_list 6.5
+	fi
+	if _use cpu_target_x86_zen ; then
+		gen_patched_kernel_list 6.5
+	fi
+}
+_mitigate_id_inception_rdepend_x86_32() {
+	_mitigate_id_inception_rdepend_x86_64
+}
 
-_MITIGATE_ID_RFDS_RDEPEND_X86_64="
-	cpu_target_x86_apollo_lake? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_denverton? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_snow_ridge? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_parker_ridge? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_elkhart_lake? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_arizona_beach? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_jasper_lake? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_alder_lake? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_catlow_golden_cove? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_alder_lake_n? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_raptor_lake_gen14? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_emerald_rapids? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-"
-_MITIGATE_ID_RFDS_RDEPEND_X86_32="
-	${_MITIGATE_ID_RFDS_RDEPEND_X86_64}
-"
+_mitigate_id_rfds_rdepend_x86_64() {
+	if _use cpu_target_x86_apollo_lake ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_denverton ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_snow_ridge ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_parker_ridge ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_elkhart_lake ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_arizona_beach ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_jasper_lake ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_catlow_golden_cove ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_alder_lake_n ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_raptor_lake_gen13 ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_raptor_lake_gen14 ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_emerald_rapids ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+}
+_mitigate_id_rfds_rdepend_x86_32() {
+	_mitigate_id_rfds_rdepend_x86_64
+}
 
 
-_MITIGATE_ID_ZENBLEED_RDEPEND_X86_64="
-	cpu_target_x86_rome? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-kernel/linux-firmware-20231205
-		)
-	)
-	cpu_target_x86_zen_2? (
-		$(gen_patched_kernel_list 6.9)
-	)
+_mitigate_id_zenbleed_rdepend_x86_64() {
+	if _use cpu_target_x86_rome ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_linux_firmware_ge 20231205
+		fi
+	fi
+	if _use cpu_target_x86_zen_2 ; then
+		gen_patched_kernel_list 6.9
+	fi
 
-"
-_MITIGATE_ID_ZENBLEED_RDEPEND_X86_32="
-	${_MITIGATE_ID_ZENBLEED_RDEPEND_X86_64}
-"
+}
+_mitigate_id_zenbleed_rdepend_x86_32() {
+	_mitigate_id_zenbleed_rdepend_x86_64
+}
 
 # The 12th Gen needs microcode but it is not documented for the version
-# requirement.  The date of the advisory is used as a placeholder.
-_MITIGATE_ID_BHI_RDEPEND_X86_64="
-	cpu_target_x86_gemini_lake? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_ice_lake? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_rocket_lake? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_tiger_lake? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_alder_lake? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220308
-		)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_raptor_lake_gen14? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_meteor_lake? (
-		$(gen_patched_kernel_list 6.9)
-	)
+# requirement.  The date of the advisory is _used as a placeholder.
+_mitigate_id_bhi_rdepend_x86_64() {
+	if _use cpu_target_x86_gemini_lake ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_rocket_lake ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220308
+		fi
+	fi
+	if _use cpu_target_x86_raptor_lake_gen13 ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_raptor_lake_gen14 ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_meteor_lake ; then
+		gen_patched_kernel_list 6.9
+	fi
 
-	cpu_target_x86_cascade_lake? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_cooper_lake? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_sapphire_rapids? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_granite_rapids? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_emerald_rapids? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	cpu_target_x86_sierra_forest? (
-		$(gen_patched_kernel_list 6.9)
-	)
+	if _use cpu_target_x86_cascade_lake ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_cooper_lake ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_sapphire_rapids ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_sapphire_rapids_edge_enhanced ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_granite_rapids ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_emerald_rapids ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use cpu_target_x86_sierra_forest ; then
+		gen_patched_kernel_list 6.9
+	fi
 
-	cpu_target_x86_catlow_golden_cove? (
-		$(gen_patched_kernel_list 6.9)
-		firmware? (
-			>=sys-firmware/intel-microcode-20220308
-		)
-	)
-	cpu_target_x86_catlow_raptor_cove? (
-		$(gen_patched_kernel_list 6.9)
-	)
+	if _use cpu_target_x86_catlow_golden_cove ; then
+		gen_patched_kernel_list 6.9
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220308
+		fi
+	fi
+	if _use cpu_target_x86_catlow_raptor_cove ; then
+		gen_patched_kernel_list 6.9
+	fi
 
-"
-_MITIGATE_ID_BHI_RDEPEND_X86_32="
-	${_MITIGATE_ID_BHI_RDEPEND_X86_64}
-"
+}
+_mitigate_id_bhi_rdepend_x86_32() {
+	_mitigate_id_bhi_rdepend_x86_64
+}
 
-_MITIGATE_ID_REPTAR_RDEPEND_X86_64="
-	cpu_target_x86_ice_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-	cpu_target_x86_tiger_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-	cpu_target_x86_sapphire_rapids? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-	cpu_target_x86_alder_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-	cpu_target_x86_catlow_golden_cove? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-	cpu_target_x86_rocket_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-	cpu_target_x86_raptor_lake_gen14? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-"
-_MITIGATE_ID_REPTAR_RDEPEND_X86_32="
-	${_MITIGATE_ID_REPTAR_RDEPEND_X86_64}
-"
+_mitigate_id_reptar_rdepend_x86_64() {
+	if _use cpu_target_x86_ice_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+	if _use cpu_target_x86_sapphire_rapids ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+	if _use cpu_target_x86_catlow_golden_cove ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+	if _use cpu_target_x86_rocket_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+	if _use cpu_target_x86_raptor_lake_gen13 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+	if _use cpu_target_x86_raptor_lake_gen14 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+}
+_mitigate_id_reptar_rdepend_x86_32() {
+	_mitigate_id_reptar_rdepend_x86_64
+}
 
-_MITIGATE_ID_USSB_RDEPEND_ARM64="
-	cpu_target_arm_cortex_a76? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_cortex_a77? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_cortex_a78? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_cortex_a78c? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_cortex_a710? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_cortex_a720? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_cortex_a725? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_cortex_x1? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_cortex_x1c? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_cortex_x2? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_cortex_x3? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_cortex_x4? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_cortex_x925? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_neoverse_n1? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_neoverse_n2? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_neoverse_v1? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_neoverse_v2? (
-		$(gen_patched_kernel_list 6.11)
-	)
-	cpu_target_arm_neoverse_v3? (
-		$(gen_patched_kernel_list 6.11)
-	)
-"
+_mitigate_id_ussb_rdepend_arm64() {
+	if _use cpu_target_arm_cortex_a76 ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_cortex_a77 ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_cortex_a78 ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_cortex_a78c ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_cortex_a710 ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_cortex_a720 ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_cortex_a725 ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_cortex_x1 ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_cortex_x1c ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_cortex_x2 ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_cortex_x3 ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_cortex_x4 ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_cortex_x925 ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_neoverse_n1 ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_neoverse_n2 ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_neoverse_v1 ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_neoverse_v2 ; then
+		gen_patched_kernel_list 6.11
+	fi
+	if _use cpu_target_arm_neoverse_v3 ; then
+		gen_patched_kernel_list 6.11
+	fi
+}
 
-_MITIGATE_ID_IBPB_RDEPEND_X86_64="
-	cpu_target_x86_sapphire_rapids? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_alder_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_catlow_golden_cove? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_catlow_raptor_cove? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_raptor_lake_gen14? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-"
-_MITIGATE_ID_IBPB_RDEPEND_X86_32="
-	${_MITIGATE_ID_IBPB_RDEPEND_X86_64}
-"
+_mitigate_id_ibpb_rdepend_x86_64() {
+	if _use cpu_target_x86_sapphire_rapids ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_sapphire_rapids_edge_enhanced ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_catlow_golden_cove ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_catlow_raptor_cove ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_raptor_lake_gen13 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_raptor_lake_gen14 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+}
+_mitigate_id_ibpb_rdepend_x86_32() {
+	_mitigate_id_ibpb_rdepend_x86_64
+}
 
-_MITIGATE_ID_MPF_RDEPEND_X86_64="
-	cpu_target_x86_snow_ridge? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20220207
-		)
-	)
-	cpu_target_x86_parker_ridge? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20220207
-		)
-	)
-	cpu_target_x86_elkhart_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20220207
-		)
-	)
-	cpu_target_x86_jasper_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20220207
-		)
-	)
-"
-_MITIGATE_ID_MPF_RDEPEND_X86_32="
-	${_MITIGATE_ID_MPF_RDEPEND_X86_64}
-"
+_mitigate_id_mpf_rdepend_x86_64() {
+	if _use cpu_target_x86_snow_ridge ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220207
+		fi
+	fi
+	if _use cpu_target_x86_parker_ridge ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220207
+		fi
+	fi
+	if _use cpu_target_x86_elkhart_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220207
+		fi
+	fi
+	if _use cpu_target_x86_jasper_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220207
+		fi
+	fi
+}
+_mitigate_id_mpf_rdepend_x86_32() {
+	_mitigate_id_mpf_rdepend_x86_64
+}
 
-_MITIGATE_ID_FSFPCD_RDEPEND_X86_64="
-	cpu_target_x86_ice_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20220207
-		)
-	)
-	cpu_target_x86_tiger_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20220207
-		)
-	)
-	cpu_target_x86_rocket_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20220207
-		)
-	)
-"
-_MITIGATE_ID_FSFPCD_RDEPEND_X86_32="
-	${_MITIGATE_ID_FSFPCD_RDEPEND_X86_64}
-"
+_mitigate_id_rsfpcd_rdepend_x86_64() {
+	if _use cpu_target_x86_ice_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220207
+		fi
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220207
+		fi
+	fi
+	if _use cpu_target_x86_rocket_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220207
+		fi
+	fi
+}
+_mitigate_id_rsfpcd_rdepend_x86_32() {
+	_mitigate_id_rsfpcd_rdepend_x86_64
+}
 
-_MITIGATE_ID_AEPIC_RDEPEND_X86_64="
-	cpu_target_x86_ice_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20230214
-		)
-	)
-"
-_MITIGATE_ID_AEPIC_RDEPEND_X86_32="
-	${_MITIGATE_ID_AEPIC_RDEPEND_X86_64}
-"
+_mitigate_id_aepic_rdepend_x86_64() {
+	if _use cpu_target_x86_ice_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20230214
+		fi
+	fi
+}
+_mitigate_id_aepic_rdepend_x86_32() {
+	_mitigate_id_aepic_rdepend_x86_64
+}
 
-_MITIGATE_ID_TECRA_RDEPEND_X86_64="
-	cpu_target_x86_ice_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_sapphire_rapids? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-"
-_MITIGATE_ID_TECRA_RDEPEND_X86_32="
-	${_MITIGATE_ID_TECRA_RDEPEND_X86_64}
-"
+_mitigate_id_tecra_rdepend_x86_64() {
+	if _use cpu_target_x86_ice_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_sapphire_rapids ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_sapphire_rapids_edge_enhanced ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+}
+_mitigate_id_tecra_rdepend_x86_32() {
+	_mitigate_id_tecra_rdepend_x86_64
+}
 
-_MITIGATE_ID_PLATYPUS_RDEPEND_X86_64="
-	cpu_target_x86_skylake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_cascade_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_cooper_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_apollo_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_denverton? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_ice_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_gemini_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_snow_ridge_bts? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_snow_ridge? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_parker_ridge? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_tiger_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_whiskey_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_comet_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_alder_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_catlow_golden_cove? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_jasper_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20201118
-		)
-	)
-"
+_mitigate_id_PLATYPUS_rdepend_x86_64() {
+	if _use cpu_target_x86_skylake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_cascade_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_cooper_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_apollo_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_denverton ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_gemini_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_snow_ridge_bts ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_snow_ridge ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_parker_ridge ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_catlow_golden_cove ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_jasper_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20201118
+		fi
+	fi
+}
 
-_MITIGATE_ID_PLATYPUS_RDEPEND_X86_32="
-	${_MITIGATE_ID_PLATYPUS_RDEPEND_X86_64}
-"
+_mitigate_id_PLATYPUS_rdepend_x86_32() {
+	_mitigate_id_PLATYPUS_rdepend_x86_64
+}
 
-_MITIGATE_ID_SMT_RSB_RDEPEND_X86_64="
-	cpu_target_x86_zen? (
-		$(gen_patched_kernel_list 6.2)
-	)
-	cpu_target_x86_zen_plus? (
-		$(gen_patched_kernel_list 6.2)
-	)
-	cpu_target_x86_zen_2? (
-		$(gen_patched_kernel_list 6.2)
-	)
-	cpu_target_x86_dhyana? (
-		$(gen_patched_kernel_list 6.2)
-	)
-"
-_MITIGATE_ID_SMT_RSB_RDEPEND_X86_32="
-	${_MITIGATE_ID_SMT_RSB_RDEPEND_X86_64}
-"
-
-
-_MITIGATE_ID_PBRSBP_RDEPEND_X86_64="
-	cpu_target_x86_cascade_lake? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_cooper_lake? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_ice_lake? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_tiger_lake? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_sapphire_rapids? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_alder_lake? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_catlow_golden_cove? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_rocket_lake? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_catlow_raptor_cove? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_raptor_lake_gen14? (
-		$(gen_patched_kernel_list 6.0)
-	)
-	cpu_target_x86_emerald_rapids? (
-		$(gen_patched_kernel_list 6.0)
-	)
-"
-_MITIGATE_ID_PBRSBP_RDEPEND_X86_32="
-	${_MITIGATE_ID_PBRSBP_RDEPEND_X86_64}
-"
-
-_MITIGATE_ID_APDB_RDEPEND_X86_64="
-	cpu_target_x86_apollo_lake? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_denverton? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_gemini_lake? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_snow_ridge_bts? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_elkhart_lake? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_jasper_lake? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-"
-_MITIGATE_ID_APDB_RDEPEND_X86_32="
-	${_MITIGATE_ID_APDB_RDEPEND_X86_64}
-"
-
-_MITIGATE_ID_ITDVCP_RDEPEND_X86_64="
-	cpu_target_x86_skylake? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_ice_lake? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_tiger_lake? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_comet_lake? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-"
-_MITIGATE_ID_ITDVCP_RDEPEND_X86_32="
-	${_MITIGATE_ID_ITDVCP_RDEPEND_X86_64}
-"
-
-_MITIGATE_ID_IBRS_GH_RDEPEND_X86_64="
-	cpu_target_x86_cascade_lake? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_cooper_lake? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_ice_lake? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_whiskey_lake? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_comet_lake? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		>=sys-firmware/intel-microcode-20210608
-	)
-"
-_MITIGATE_ID_IBRS_GH_RDEPEND_X86_32="
-	${_MITIGATE_ID_IBRS_GH_RDEPEND_X86_64}
-"
-
-_MITIGATE_ID_CVE_2024_23984_RDEPEND_X86_64="
-	cpu_target_x86_cedar_island? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240910
-		)
-	)
-	cpu_target_x86_whitley? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240910
-		)
-	)
-	cpu_target_x86_idaville? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240910
-		)
-	)
-"
-_MITIGATE_ID_CVE_2024_23984_RDEPEND_X86_32="
-	${_MITIGATE_ID_CVE_2024_23984_RDEPEND_X86_64}
-"
-
-_MITIGATE_ID_SINKCLOSE_RDEPEND_X86_64="
-	cpu_target_x86_naples? (
-		>=sys-kernel/linux-firmware-20240710
-	)
-	cpu_target_x86_rome? (
-		>=sys-kernel/linux-firmware-20240710
-	)
-	cpu_target_x86_milan? (
-		>=sys-kernel/linux-firmware-20240710
-	)
-	cpu_target_x86_milan-x? (
-		>=sys-kernel/linux-firmware-20240710
-	)
-	cpu_target_x86_genoa? (
-		>=sys-kernel/linux-firmware-20240710
-	)
-	cpu_target_x86_genoa-x? (
-		>=sys-kernel/linux-firmware-20240710
-	)
-	cpu_target_x86_bergamo? (
-		>=sys-kernel/linux-firmware-20240710
-	)
-	cpu_target_x86_siena? (
-		>=sys-kernel/linux-firmware-20240710
-	)
-"
-_MITIGATE_ID_SINKCLOSE_RDEPEND_X86_32="
-	${_MITIGATE_ID_SINKCLOSE_RDEPEND_X86_64}
-"
-
-_MITIGATE_ID_CVE_2024_24853_RDEPEND_X86_64="
-	cpu_target_x86_purley_refresh? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_cedar_island? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_greenlow? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_whitley? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_idaville? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_tatlow? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_ice_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_tiger_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_skylake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_whiskey_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_comet_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_rocket_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-"
-_MITIGATE_ID_CVE_2024_24853_RDEPEND_X86_32="
-	${_MITIGATE_ID_CVE_2024_24853_RDEPEND_X86_64}
-"
-
-_MITIGATE_ID_CVE_2024_24980_RDEPEND_X86_64="
-	cpu_target_x86_cooper_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_ice_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_sapphire_rapids? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_emerald_rapids? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-"
-_MITIGATE_ID_CVE_2024_24980_RDEPEND_X86_32="
-	${_MITIGATE_ID_CVE_2024_24980_RDEPEND_X86_64}
-"
-
-_MITIGATE_ID_CVE_2024_42667_RDEPEND_X86_64="
-	cpu_target_x86_meteor_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-"
-_MITIGATE_ID_CVE_2024_42667_RDEPEND_X86_32="
-	${_MITIGATE_ID_CVE_2024_42667_RDEPEND_X86_64}
-"
+_mitigate_id_smt_rsb_rdepend_x86_64() {
+	if _use cpu_target_x86_zen ; then
+		gen_patched_kernel_list 6.2
+	fi
+	if _use cpu_target_x86_zen_plus ; then
+		gen_patched_kernel_list 6.2
+	fi
+	if _use cpu_target_x86_zen_2 ; then
+		gen_patched_kernel_list 6.2
+	fi
+	if _use cpu_target_x86_dhyana ; then
+		gen_patched_kernel_list 6.2
+	fi
+}
+_mitigate_id_smt_rsb_rdepend_x86_32() {
+	_mitigate_id_smt_rsb_rdepend_x86_64
+}
 
 
-_MITIGATE_ID_CVE_2023_49141_RDEPEND_X86_64="
-	cpu_target_x86_eagle_stream? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_catlow_raptor_cove? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_alder_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-"
+_mitigate_id_pbrsbp_rdepend_x86_64() {
+	if _use cpu_target_x86_cascade_lake ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_cooper_lake ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_sapphire_rapids ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_sapphire_rapids_edge_enhanced ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_catlow_golden_cove ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_rocket_lake ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_catlow_raptor_cove ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_raptor_lake_gen13 ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_raptor_lake_gen14 ; then
+		gen_patched_kernel_list 6.0
+	fi
+	if _use cpu_target_x86_emerald_rapids ; then
+		gen_patched_kernel_list 6.0
+	fi
+}
+_mitigate_id_pbrsbp_rdepend_x86_32() {
+	_mitigate_id_pbrsbp_rdepend_x86_64
+}
 
-_MITIGATE_ID_CVE_2023_49141_RDEPEND_X86_32="
-	${_MITIGATE_ID_CVE_2023_49141_RDEPEND_X86_64}
-"
+_mitigate_id_apdb_rdepend_x86_64() {
+	if _use cpu_target_x86_apollo_lake ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_denverton ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_gemini_lake ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_snow_ridge_bts ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_elkhart_lake ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_jasper_lake ; then
+		gen_intel_microcode_ge 20210608
+	fi
+}
+_mitigate_id_apdb_rdepend_x86_32() {
+	_mitigate_id_apdb_rdepend_x86_64
+}
 
-_MITIGATE_ID_AUTO="
-	arm? (
-		$(gen_patched_kernel_list 6.1)
-	)
-	arm64? (
-		$(gen_patched_kernel_list 5.18)
-	)
-	amd64? (
-		$(gen_patched_kernel_list 6.9)
-	)
-	ppc? (
-		$(gen_patched_kernel_list 5.0)
-	)
-	ppc64? (
-		$(gen_patched_kernel_list 5.0)
-	)
-	s390? (
-		$(gen_patched_kernel_list 4.15)
-	)
-	x86? (
-		$(gen_patched_kernel_list 6.9)
-	)
-"
+_mitigate_id_itdvcp_rdepend_x86_64() {
+	if _use cpu_target_x86_skylake ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_intel_microcode_ge 20210608
+	fi
+}
+_mitigate_id_itdvcp_rdepend_x86_32() {
+	_mitigate_id_itdvcp_rdepend_x86_64
+}
+
+_mitigate_id_IBRS_GH_rdepend_x86_64() {
+	if _use cpu_target_x86_cascade_lake ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_cooper_lake ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		gen_intel_microcode_ge 20210608
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_intel_microcode_ge 20210608
+	fi
+}
+_mitigate_id_IBRS_GH_rdepend_x86_32() {
+	_mitigate_id_IBRS_GH_rdepend_x86_64
+}
+
+_mitigate_id_cve_2024_23984_rdepend_x86_64() {
+	if _use cpu_target_x86_cedar_island ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240910
+		fi
+	fi
+	if _use cpu_target_x86_whitley ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240910
+		fi
+	fi
+	if _use cpu_target_x86_idaville ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240910
+		fi
+	fi
+}
+_mitigate_id_cve_2024_23984_rdepend_x86_32() {
+	_mitigate_id_cve_2024_23984_rdepend_x86_64
+}
+
+_mitigate_id_sinkclose_rdepend_x86_64() {
+	if _use cpu_target_x86_naples ; then
+		gen_linux_firmware_ge 20240710
+	fi
+	if _use cpu_target_x86_rome ; then
+		gen_linux_firmware_ge 20240710
+	fi
+	if _use cpu_target_x86_milan ; then
+		gen_linux_firmware_ge 20240710
+	fi
+	if _use cpu_target_x86_milan-x ; then
+		gen_linux_firmware_ge 20240710
+	fi
+	if _use cpu_target_x86_genoa ; then
+		gen_linux_firmware_ge 20240710
+	fi
+	if _use cpu_target_x86_genoa-x ; then
+		gen_linux_firmware_ge 20240710
+	fi
+	if _use cpu_target_x86_bergamo ; then
+		gen_linux_firmware_ge 20240710
+	fi
+	if _use cpu_target_x86_siena ; then
+		gen_linux_firmware_ge 20240710
+	fi
+}
+_mitigate_id_sinkclose_rdepend_x86_32() {
+	_mitigate_id_sinkclose_rdepend_x86_64
+}
+
+_mitigate_id_cve_2024_24853_rdepend_x86_64() {
+	if _use cpu_target_x86_purley_refresh ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_cedar_island ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_greenlow ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_whitley ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_idaville ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_tatlow ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_skylake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_rocket_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+}
+_mitigate_id_cve_2024_24853_rdepend_x86_32() {
+	_mitigate_id_cve_2024_24853_rdepend_x86_64
+}
+
+_mitigate_id_cve_2024_24980_rdepend_x86_64() {
+	if _use cpu_target_x86_cooper_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_sapphire_rapids ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_sapphire_rapids_edge_enhanced ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_emerald_rapids ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+}
+_mitigate_id_cve_2024_24980_rdepend_x86_32() {
+	_mitigate_id_cve_2024_24980_rdepend_x86_64
+}
+
+_mitigate_id_cve_2024_42667_rdepend_x86_64() {
+	if _use cpu_target_x86_meteor_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+}
+_mitigate_id_cve_2024_42667_rdepend_x86_32() {
+	_mitigate_id_cve_2024_42667_rdepend_x86_64
+}
+
+
+_mitigate_id_cve_2023_49141_rdepend_x86_64() {
+	if _use cpu_target_x86_eagle_stream ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_catlow_raptor_cove ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_raptor_lake_gen13 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+}
+
+_mitigate_id_cve_2023_49141_rdepend_x86_32() {
+	_mitigate_id_cve_2023_49141_rdepend_x86_64
+}
+
+_mitigate_id_auto() {
+	if _use arm ; then
+		gen_patched_kernel_list 6.1
+	fi
+	if _use arm64 ; then
+		gen_patched_kernel_list 5.18
+	fi
+	if _use amd64 ; then
+		gen_patched_kernel_list 6.9
+	fi
+	if _use ppc ; then
+		gen_patched_kernel_list 5.0
+	fi
+	if _use ppc64 ; then
+		gen_patched_kernel_list 5.0
+	fi
+	if _use s390 ; then
+		gen_patched_kernel_list 4.15
+	fi
+	if _use x86 ; then
+		gen_patched_kernel_list 6.9
+	fi
+}
 if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
-	_MITIGATE_ID_AUTO+="
-		>=sys-kernel/linux-firmware-20240811
-	"
+	_mitigate_id_auto() {
+		gen_linux_firmware_ge 20240811
+	}
 fi
 if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
-	_MITIGATE_ID_AUTO+="
-		>=sys-firmware/intel-microcode-20240910
-	"
+	_mitigate_id_auto() {
+		gen_intel_microcode_ge 20240910
+	}
 fi
 
 # @ECLASS_VARIABLE: MITIGATE_ID_RDEPEND
 # @INTERNAL
 # @DESCRIPTION:
 # High level RDEPEND
-MITIGATE_ID_RDEPEND="
-	kernel_linux? (
-		!custom-kernel? (
-			auto? (
-				${_MITIGATE_ID_AUTO}
-			)
-			arm? (
-				${_MITIGATE_ID_SPECTRE_V2_RDEPEND_ARM}
-				${_MITIGATE_ID_BHB_RDEPEND_ARM}
-			)
-			arm64? (
-				${_MITIGATE_ID_SPECTRE_V2_RDEPEND_ARM64}
-				${_MITIGATE_ID_MELTDOWN_RDEPEND_ARM64}
-				${_MITIGATE_ID_SPECTRE_NG_RDEPEND_ARM64}
-				${_MITIGATE_ID_BHB_RDEPEND_ARM64}
-				${_MITIGATE_ID_USSB_RDEPEND_ARM64}
-			)
-			amd64? (
-				${_MITIGATE_ID_SPECTRE_V1_V2_V3_RDEPEND_X86_64}
-				${_MITIGATE_ID_SPECTRE_V2_RDEPEND_X86_64}
-				${_MITIGATE_ID_MELTDOWN_RDEPEND_X86_64}
-				${_MITIGATE_ID_SWAPGS_RDEPEND_X86_64}
-				${_MITIGATE_ID_ZOMBIELOAD_V2_RDEPEND_X86_64}
-				${_MITIGATE_ID_CACHEOUT_RDEPEND_X86_64}
-				${_MITIGATE_ID_VRSA_RDEPEND_X86_64}
-				${_MITIGATE_ID_CROSSTALK_RDEPEND_X86_64}
-				${_MITIGATE_ID_SPECTRE_NG_RDEPEND_X86_64}
-				${_MITIGATE_ID_SPECTRE_RSB_RDEPEND_X86_64}
-				${_MITIGATE_ID_SPECTRE_RSBA_RDEPEND_X86_64}
-				${_MITIGATE_ID_SPECTRE_RRSBA_RDEPEND_X86_64}
-				${_MITIGATE_ID_FORESHADOW_RDEPEND_X86_64}
-				${_MITIGATE_ID_BHI_RDEPEND_X86_64}
-				${_MITIGATE_ID_MMIO_RDEPEND_X86_64}
-				${_MITIGATE_ID_RETBLEED_RDEPEND_X86_64}
-				${_MITIGATE_ID_APDB_RDEPEND_X86_64}
-				${_MITIGATE_ID_ITDVCP_RDEPEND_X86_64}
-				${_MITIGATE_ID_MPF_RDEPEND_X86_64}
-				${_MITIGATE_ID_FSFPCD_RDEPEND_X86_64}
-				${_MITIGATE_ID_DOWNFALL_RDEPEND_X86_64}
-				${_MITIGATE_ID_INCEPTION_RDEPEND_X86_64}
-				${_MITIGATE_ID_IBPB_RDEPEND_X86_64}
-				${_MITIGATE_ID_RFDS_RDEPEND_X86_64}
-				${_MITIGATE_ID_AEPIC_RDEPEND_X86_64}
-				${_MITIGATE_ID_SMT_RSB_RDEPEND_X86_64}
-				${_MITIGATE_ID_REPTAR_RDEPEND_X86_64}
-				${_MITIGATE_ID_ZENBLEED_RDEPEND_X86_64}
-				${_MITIGATE_ID_TECRA_RDEPEND_X86_64}
-				${_MITIGATE_ID_CVE_2024_23984_RDEPEND_X86_64}
-				${_MITIGATE_ID_SINKCLOSE_RDEPEND_X86_64}
-				${_MITIGATE_ID_CVE_2023_49141_RDEPEND_X86_64}
-				${_MITIGATE_ID_CVE_2024_24853_RDEPEND_X86_64}
-				${_MITIGATE_ID_CVE_2024_24980_RDEPEND_X86_64}
-				${_MITIGATE_ID_CVE_2024_42667_RDEPEND_X86_64}
-			)
-			ppc? (
-				${_MITIGATE_ID_SPECTRE_V2_RDEPEND_PPC32}
-				${_MITIGATE_ID_SPECTRE_RSB_RDEPEND_PPC32}
-			)
-			ppc64? (
-				${_MITIGATE_ID_MELTDOWN_RDEPEND_PPC64}
-				${_MITIGATE_ID_SPECTRE_V2_RDEPEND_PPC64}
-				${_MITIGATE_ID_SPECTRE_RSB_RDEPEND_PPC64}
-			)
-			s390? (
-				${_MITIGATE_ID_SPECTRE_V2_RDEPEND_S390X}
-			)
-			x86? (
-				${_MITIGATE_ID_SPECTRE_V1_V2_V3_RDEPEND_X86_32}
-				${_MITIGATE_ID_SPECTRE_V2_RDEPEND_X86_32}
-				${_MITIGATE_ID_MELTDOWN_RDEPEND_X86_32}
-				${_MITIGATE_ID_SWAPGS_RDEPEND_X86_32}
-				${_MITIGATE_ID_ZOMBIELOAD_V2_RDEPEND_X86_32}
-				${_MITIGATE_ID_CACHEOUT_RDEPEND_X86_32}
-				${_MITIGATE_ID_VRSA_RDEPEND_X86_32}
-				${_MITIGATE_ID_CROSSTALK_RDEPEND_X86_32}
-				${_MITIGATE_ID_SPECTRE_RSB_RDEPEND_X86_32}
-				${_MITIGATE_ID_SPECTRE_RSBA_RDEPEND_X86_32}
-				${_MITIGATE_ID_SPECTRE_RRSBA_RDEPEND_X86_32}
-				${_MITIGATE_ID_FORESHADOW_RDEPEND_X86_32}
-				${_MITIGATE_ID_SPECTRE_NG_RDEPEND_X86_32}
-				${_MITIGATE_ID_BHI_RDEPEND_X86_32}
-				${_MITIGATE_ID_MMIO_RDEPEND_X86_32}
-				${_MITIGATE_ID_APDB_RDEPEND_X86_32}
-				${_MITIGATE_ID_ITDVCP_RDEPEND_X86_32}
-				${_MITIGATE_ID_MPF_RDEPEND_X86_32}
-				${_MITIGATE_ID_FSFPCD_RDEPEND_X86_32}
-				${_MITIGATE_ID_DOWNFALL_RDEPEND_X86_32}
-				${_MITIGATE_ID_INCEPTION_RDEPEND_X86_32}
-				${_MITIGATE_ID_IBPB_RDEPEND_X86_32}
-				${_MITIGATE_ID_RFDS_RDEPEND_X86_32}
-				${_MITIGATE_ID_AEPIC_RDEPEND_X86_32}
-				${_MITIGATE_ID_SMT_RSB_RDEPEND_X86_32}
-				${_MITIGATE_ID_REPTAR_RDEPEND_X86_32}
-				${_MITIGATE_ID_ZENBLEED_RDEPEND_X86_32}
-				${_MITIGATE_ID_TECRA_RDEPEND_X86_32}
-				${_MITIGATE_ID_CVE_2024_23984_RDEPEND_X86_32}
-				${_MITIGATE_ID_SINKCLOSE_RDEPEND_X86_32}
-				${_MITIGATE_ID_CVE_2023_49141_RDEPEND_X86_32}
-				${_MITIGATE_ID_CVE_2024_24853_RDEPEND_X86_32}
-				${_MITIGATE_ID_CVE_2024_24980_RDEPEND_X86_32}
-				${_MITIGATE_ID_CVE_2024_42667_RDEPEND_X86_32}
-			)
-		)
-	)
-"
+mitigate_id_rdepend() {
+	if _use kernel_linux ; then
+		if ! _use custom-kernel ; then
+			if _use auto ; then
+				_mitigate_id_auto
+			fi
+			if _use arm ; then
+				_mitigate_id_spectre_v2_rdepend_arm
+				_mitigate_id_bhb_rdepend_arm
+			fi
+			if _use arm64 ; then
+				_mitigate_id_spectre_v2_rdepend_arm64
+				_mitigate_id_meltdown_rdepend_arm64
+				_mitigate_id_spectre_ng_rdepend_arm64
+				_mitigate_id_bhb_rdepend_arm64
+				_mitigate_id_ussb_rdepend_arm64
+			fi
+			if _use amd64 ; then
+				_mitigate_id_spectre_v1_v2_v3_rdepend_x86_64
+				_mitigate_id_spectre_v2_rdepend_x86_64
+				_mitigate_id_meltdown_rdepend_x86_64
+				_mitigate_id_swapgs_rdepend_x86_64
+				_mitigate_id_zombieload_v2_rdepend_x86_64
+				_mitigate_id_cacheout_rdepend_x86_64
+				_mitigate_id_vrsa_rdepend_x86_64
+				_mitigate_id_crosstalk_rdepend_x86_64
+				_mitigate_id_spectre_ng_rdepend_x86_64
+				_mitigate_id_spectre_rsb_rdepend_x86_64
+				_mitigate_id_spectre_rsba_rdepend_x86_64
+				_mitigate_id_spectre_rrsba_rdepend_x86_64
+				_mitigate_id_foreshadow_rdepend_x86_64
+				_mitigate_id_bhi_rdepend_x86_64
+				_mitigate_id_mmio_rdepend_x86_64
+				_mitigate_id_retbleed_rdepend_x86_64
+				_mitigate_id_apdb_rdepend_x86_64
+				_mitigate_id_itdvcp_rdepend_x86_64
+				_mitigate_id_mpf_rdepend_x86_64
+				_mitigate_id_rsfpcd_rdepend_x86_64
+				_mitigate_id_downfall_rdepend_x86_64
+				_mitigate_id_inception_rdepend_x86_64
+				_mitigate_id_ibpb_rdepend_x86_64
+				_mitigate_id_rfds_rdepend_x86_64
+				_mitigate_id_aepic_rdepend_x86_64
+				_mitigate_id_smt_rsb_rdepend_x86_64
+				_mitigate_id_reptar_rdepend_x86_64
+				_mitigate_id_zenbleed_rdepend_x86_64
+				_mitigate_id_tecra_rdepend_x86_64
+				_mitigate_id_cve_2024_23984_rdepend_x86_64
+				_mitigate_id_sinkclose_rdepend_x86_64
+				_mitigate_id_cve_2023_49141_rdepend_x86_64
+				_mitigate_id_cve_2024_24853_rdepend_x86_64
+				_mitigate_id_cve_2024_24980_rdepend_x86_64
+				_mitigate_id_cve_2024_42667_rdepend_x86_64
+			fi
+			if _use ppc ; then
+				_mitigate_id_spectre_v2_rdepend_ppc32
+				_mitigate_id_spectre_rsb_rdepend_ppc32
+			fi
+			if _use ppc64 ; then
+				_mitigate_id_meltdown_rdepend_ppc64
+				_mitigate_id_spectre_v2_rdepend_ppc64
+				_mitigate_id_spectre_rsb_rdepend_ppc64
+			fi
+			if _use s390 ; then
+				_mitigate_id_spectre_v2_rdepend_s390x
+			fi
+			if _use x86 ; then
+				_mitigate_id_spectre_v1_v2_v3_rdepend_x86_32
+				_mitigate_id_spectre_v2_rdepend_x86_32
+				_mitigate_id_meltdown_rdepend_x86_32
+				_mitigate_id_swapgs_rdepend_x86_32
+				_mitigate_id_zombieload_v2_rdepend_x86_32
+				_mitigate_id_cacheout_rdepend_x86_32
+				_mitigate_id_vrsa_rdepend_x86_32
+				_mitigate_id_crosstalk_rdepend_x86_32
+				_mitigate_id_spectre_rsb_rdepend_x86_32
+				_mitigate_id_spectre_rsba_rdepend_x86_32
+				_mitigate_id_spectre_rrsba_rdepend_x86_32
+				_mitigate_id_foreshadow_rdepend_x86_32
+				_mitigate_id_spectre_NG_rdepend_x86_32
+				_mitigate_id_bhi_rdepend_x86_32
+				_mitigate_id_mmio_rdepend_x86_32
+				_mitigate_id_apdb_rdepend_x86_32
+				_mitigate_id_itdvcp_rdepend_x86_32
+				_mitigate_id_mpf_rdepend_x86_32
+				_mitigate_id_rsfpcd_rdepend_x86_32
+				_mitigate_id_downfall_rdepend_x86_32
+				_mitigate_id_inception_rdepend_x86_32
+				_mitigate_id_ibpb_rdepend_x86_32
+				_mitigate_id_rfds_rdepend_x86_32
+				_mitigate_id_aepic_rdepend_x86_32
+				_mitigate_id_smt_rsb_rdepend_x86_32
+				_mitigate_id_reptar_rdepend_x86_32
+				_mitigate_id_zenbleed_rdepend_x86_32
+				_mitigate_id_tecra_rdepend_x86_32
+				_mitigate_id_cve_2024_23984_rdepend_x86_32
+				_mitigate_id_sinkclose_rdepend_x86_32
+				_mitigate_id_cve_2023_49141_rdepend_x86_32
+				_mitigate_id_cve_2024_24853_rdepend_x86_32
+				_mitigate_id_cve_2024_24980_rdepend_x86_32
+				_mitigate_id_cve_2024_42667_rdepend_x86_32
+			fi
+		fi
+	fi
+}
 
 # @FUNCTION: _check_kernel_cmdline
 # @INTERNAL

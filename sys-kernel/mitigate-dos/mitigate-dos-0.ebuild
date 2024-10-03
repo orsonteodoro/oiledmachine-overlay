@@ -9,6 +9,15 @@ EAPI=8
 LTS_VERSIONS=("4.19" "5.4" "5.10" "5.15" "6.1" "6.6")
 ACTIVE_VERSIONS=("4.19" "5.4" "5.10" "5.15" "6.1" "6.6" "6.10" "6.11")
 STABLE_OR_MAINLINE_VERSIONS=("6.10" "6.11")
+ALL_VERSIONS=(
+	"0"
+	"1"
+	"2"
+	"3"
+	"4.0" "4.1" "4.2" "4.3" "4.4" "4.5" "4.6" "4.7" "4.8" "4.9" "4.10" "4.11" "4.12" "4.13" "4.14" "4.15" "4.16" "4.17" "4.18" "4.19" "4.20"
+	"5.0" "5.1" "5.2" "5.3" "5.4" "5.5" "5.6" "5.7" "5.8" "5.9" "5.10" "5.11" "5.12" "5.13" "5.14" "5.15" "5.16" "5.17" "5.18" "5.19"
+	"6.0" "6.1" "6.2" "6.3" "6.4" "6.5" "6.6" "6.7" "6.8" "6.9"
+)
 EOL_VERSIONS=(
 	"0"
 	"1"
@@ -479,33 +488,33 @@ REQUIRED_USE="
 #
 
 # From the kernel/ or mm/ subfolder
-CORE_RDEPEND="
-	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_LOCKING[@]})
-	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MM_46847[@]})
-	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SCHED_44958[@]})
-	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_WORKQUEUE[@]})
+core_rdepend() {
+	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_LOCKING[@]}
+	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MM_46847[@]}
+	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SCHED_44958[@]}
+	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_WORKQUEUE[@]}
 
-	hppa? (
-		$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_PARISC_40918[@]})
-	)
-"
+	if _use hppa ; then
+		gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_PARISC_40918[@]}
+	fi
+}
 
-BLOCK_RDEPEND="
-	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLOCK_43854[@]})
-"
-FS_RDEPEND="
-	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS_43882[@]})
-	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS_46701[@]})
-"
-WIFI_RDEPEND="
-	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_CFG80211[@]})
-	$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MAC80211[@]})
-"
+block_rdepend() {
+	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLOCK_43854[@]}
+}
+fs_rdepend() {
+	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS_43882[@]}
+	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS_46701[@]}
+}
+wifi_rdepend() {
+	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_CFG80211[@]}
+	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MAC80211[@]}
+}
 
-SQUASHFS_RDEPEND="
-	${BLOCK_RDEPEND}
-	${FS_RDEPEND}
-"
+squashfs_rdepend() {
+	block_rdepend
+	fs_rdepend
+}
 #
 # We would like to optimize this with one gather pass and render pass but it is
 # probably not possible with ebuild restrictions.
@@ -515,443 +524,466 @@ SQUASHFS_RDEPEND="
 #
 # The render pass would generate the final rdepend.
 #
-ALL_RDEPEND="
-	${SQUASHFS_RDEPEND}
-	${MITIGATE_DOS_RDEPEND}
-	!custom-kernel? (
-		zero-tolerance? (
-			$(gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
-		)
-		$(gen_eol_kernels_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
-		${CORE_RDEPEND}
-	)
-	aacraid? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AACRAID[@]})
-		)
-	)
-	ath12k? (
-		!custom-kernel? (
-			${WIFI_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_ATH12K[@]})
-		)
-	)
-	apparmor? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_APPARMOR[@]})
-		)
-	)
-	ata? (
-		!custom-kernel? (
-			${BLOCK_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_ATA_41087[@]})
-		)
-	)
-	bcrm80211? (
-		!custom-kernel? (
-			${WIFI_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BRCM80211[@]})
-		)
-	)
-	bluetooth? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH_46749[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH_48878[@]})
-		)
-	)
-	bpf? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BPF_45020[@]})
-		)
-	)
-	bridge? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NET_BRIDGE[@]})
-		)
-	)
-	btrfs? (
-		!custom-kernel? (
-			${FS_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS_46687[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS_46749[@]})
-		)
-	)
-	ccp? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_CCP[@]})
-		)
-	)
-	cdrom? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_CDROM[@]})
-		)
-	)
-	cougar? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_COUGAR[@]})
-		)
-	)
-	cpuset? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_CPUSET[@]})
-		)
-	)
-	ext4? (
-		!custom-kernel? (
-			${FS_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4_43828[@]})
-		)
-	)
-	f2fs? (
-		!custom-kernel? (
-			${BLOCK_RDEPEND}
-			${FS_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_F2FS[@]})
-		)
-	)
-	fscache? (
-		!custom-kernel? (
-			${FS_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FSCACHE[@]})
-		)
-	)
-	igb? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IGB[@]})
-		)
-	)
-	igc? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IGC[@]})
-		)
-	)
-	ima? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IMA_40947[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IMA_21505[@]})
-		)
-	)
-	hfs? (
-		!custom-kernel? (
-			${BLOCK_RDEPEND}
-			${FS_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_HFS[@]})
-		)
-	)
-	hfsplus? (
-		!custom-kernel? (
-			${FS_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_HFSPLUS[@]})
-		)
-	)
-	hyperv? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_HYPERV[@]})
-		)
-	)
-	i40e? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_I40E[@]})
-		)
-	)
-	ice? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_ICE[@]})
-		)
-	)
-	ipv4? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_36927[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_44991[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_41041[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_42154[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IP_36971[@]})
-			bpf-stream-parser? (
-				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NET_SOCK_MSG_46783[@]})
-			)
-			esp-in-tcp? (
-				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NET_SOCK_MSG_46783[@]})
-			)
-		)
-	)
-	ipv6? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV6[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IP_36971[@]})
-		)
-	)
-	ivtv? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IVTV[@]})
-		)
-	)
-	iwlwifi? (
-		!custom-kernel? (
-			${WIFI_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_48918[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_48787[@]})
-		)
-	)
-	jfs? (
-		!custom-kernel? (
-			${FS_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_JFS_43858[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_JFS_44938[@]})
-		)
-	)
-	kvm? (
-		!custom-kernel? (
-			amd64? (
-				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_X86_39483[@]})
-			)
-			arm64? (
-				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_ARM64_26598[@]})
-				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_ARM64_46707[@]})
-			)
-			s390? (
-				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_S390_43819[@]})
-			)
-			ppc64? (
-				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_POWERPC_41070[@]})
-			)
-		)
-	)
-	landlock? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_LANDLOCK[@]})
-		)
-	)
-	md-raid1? (
-		!custom-kernel? (
-			${BLOCK_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MD_RAID1[@]})
-		)
-	)
-	md-raid456? (
-		!custom-kernel? (
-			${BLOCK_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MD_RAID456[@]})
-		)
-	)
-	md-raid5? (
-		!custom-kernel? (
-			${BLOCK_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MD_RAID5[@]})
-		)
-	)
-	mlx5? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5_45019[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5_46857[@]})
-		)
-	)
-	mptcp? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MPTCP_46858[@]})
-		)
-	)
-	mt76? (
-		!custom-kernel? (
-			${WIFI_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MT76[@]})
-		)
-	)
-	mt7921? (
-		!custom-kernel? (
-			${WIFI_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MT7921[@]})
-		)
-	)
-	mwifiex? (
-		!custom-kernel? (
-			${WIFI_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MWIFIEX[@]})
-		)
-	)
-	nfs? (
-		!custom-kernel? (
-			${BLOCK_RDEPEND}
-			${FS_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NFSD[@]})
-		)
-	)
-	netfilter? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NETFILTER[@]})
-		)
-	)
-	nftables? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NF_TABLES[@]})
-		)
-	)
-	nilfs2? (
-		!custom-kernel? (
-			${FS_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NILFS2[@]})
-		)
-	)
-	ntfs? (
-		!custom-kernel? (
-			${FS_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NTFS3_42299[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NTFS3_45896[@]})
-		)
-	)
-	nvme? (
-		!custom-kernel? (
-			${BLOCK_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NVME_45013[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NVME_41073[@]})
-		)
-	)
-	pci? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_PCI_46750[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_PCI_42302[@]})
-		)
-	)
-	pci-hotplug? (
-		!custom-kernel? (
-			ppc64? (
-				$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_PCI_HOTPLUG_46761[@]})
-			)
-		)
-	)
-	ppc? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_POWERPC_46797[@]})
-		)
-	)
-	ppc64? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_POWERPC_46797[@]})
-		)
-	)
-	rtw88? (
-		!custom-kernel? (
-			${WIFI_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_RTW88[@]})
-		)
-	)
-	samba? (
-		!custom-kernel? (
-			${BLOCK_RDEPEND}
-			${FS_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMB_46796[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMB_46795[@]})
-		)
-	)
-	sctp? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SCTP[@]})
-		)
-	)
-	selinux? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SELINUX[@]})
-		)
-	)
-	smmu-v3-sva? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IOMMU_IOPF[@]})
-		)
-	)
-	tipc? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_TIPC[@]})
-		)
-	)
-	tls? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_TLS[@]})
-		)
-	)
-	usb? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_USB[@]})
-		)
-	)
-	v4l2? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_V4L2_43833[@]})
-		)
-	)
-	video_cards_amdgpu? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU_46725[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU_46851[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU_46850[@]})
-		)
-	)
-	video_cards_freedreno? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MSM[@]})
-		)
-	)
-	video_cards_intel? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_I915[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XE_46683[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XE_46867[@]})
-		)
-	)
-	video_cards_nouveau? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NOUVEAU[@]})
-		)
-	)
-	video_cards_nvidia? (
-		|| (
-			>=x11-drivers/nvidia-drivers-550.90.07:0/550
-			>=x11-drivers/nvidia-drivers-535.183.01:0/535
-			>=x11-drivers/nvidia-drivers-470.256.02:0/470
-		)
-	)
-	video_cards_radeon? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_RADEON[@]})
-		)
-	)
-	video_cards_v3d? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_V3D[@]})
-		)
-	)
-	video_cards_vmware? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMWGFX[@]})
-		)
-	)
-	vmware? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMCI[@]})
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMXNET3[@]})
-		)
-	)
-	wireguard? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_WIREGUARD[@]})
-		)
-	)
-	xen? (
-		!custom-kernel? (
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XEN[@]})
-		)
-	)
-	xfs? (
-		!custom-kernel? (
-			${BLOCK_RDEPEND}
-			${FS_RDEPEND}
-			$(gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XFS[@]})
-		)
-	)
-"
-ARDEPEND="
+all_rdepend() {
+	squashfs_rdepend
+	mitigate_dos_rdepend
+	if ! _use custom-kernel ; then
+		if _use zero-tolerance ; then
+			gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]}
+		fi
+		core_rdepend
+	fi
+	if _use aacraid ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AACRAID[@]}
+		fi
+	fi
+	if _use ath12k ; then
+		if ! _use custom-kernel ; then
+			wifi_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_ATH12K[@]}
+		fi
+	fi
+	if _use apparmor ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_APPARMOR[@]}
+		fi
+	fi
+	if _use ata ; then
+		if ! _use custom-kernel ; then
+			block_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_ATA_41087[@]}
+		fi
+	fi
+	if _use bcrm80211 ; then
+		if ! _use custom-kernel ; then
+			wifi_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BRCM80211[@]}
+		fi
+	fi
+	if _use bluetooth ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH_46749[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BLUETOOTH_48878[@]}
+		fi
+	fi
+	if _use bpf ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BPF_45020[@]}
+		fi
+	fi
+	if _use bridge ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NET_BRIDGE[@]}
+		fi
+	fi
+	if _use btrfs ; then
+		if ! _use custom-kernel ; then
+			fs_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS_46687[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BTRFS_46749[@]}
+		fi
+	fi
+	if _use ccp ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_CCP[@]}
+		fi
+	fi
+	if _use cdrom ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_CDROM[@]}
+		fi
+	fi
+	if _use cougar ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_COUGAR[@]}
+		fi
+	fi
+	if _use cpuset ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_CPUSET[@]}
+		fi
+	fi
+	if _use ext4 ; then
+		if ! _use custom-kernel ; then
+			fs_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4_43828[@]}
+		fi
+	fi
+	if _use f2fs ; then
+		if ! _use custom-kernel ; then
+			block_rdepend
+			fs_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_F2FS[@]}
+		fi
+	fi
+	if _use fscache ; then
+		if ! _use custom-kernel ; then
+			fs_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FSCACHE[@]}
+		fi
+	fi
+	if _use igb ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IGB[@]}
+		fi
+	fi
+	if _use igc ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IGC[@]}
+		fi
+	fi
+	if _use ima ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IMA_40947[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IMA_21505[@]}
+		fi
+	fi
+	if _use hfs ; then
+		if ! _use custom-kernel ; then
+			block_rdepend
+			fs_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_HFS[@]}
+		fi
+	fi
+	if _use hfsplus ; then
+		if ! _use custom-kernel ; then
+			fs_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_HFSPLUS[@]}
+		fi
+	fi
+	if _use hyperv ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_HYPERV[@]}
+		fi
+	fi
+	if _use i40e ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_I40E[@]}
+		fi
+	fi
+	if _use ice ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_ICE[@]}
+		fi
+	fi
+	if _use ipv4 ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_36927[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_44991[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_41041[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV4_42154[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IP_36971[@]}
+			if _use bpf-stream-parser ; then
+				gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NET_SOCK_MSG_46783[@]}
+			fi
+			if _use esp-in-tcp ; then
+				gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NET_SOCK_MSG_46783[@]}
+			fi
+		fi
+	fi
+	if _use ipv6 ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV6[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IP_36971[@]}
+		fi
+	fi
+	if _use ivtv ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IVTV[@]}
+		fi
+	fi
+	if _use iwlwifi ; then
+		if ! _use custom-kernel ; then
+			wifi_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_48918[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_48787[@]}
+		fi
+	fi
+	if _use jfs ; then
+		if ! _use custom-kernel ; then
+			fs_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_JFS_43858[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_JFS_44938[@]}
+		fi
+	fi
+	if _use kvm ; then
+		if ! _use custom-kernel ; then
+			if _use amd64 ; then
+				gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_X86_39483[@]}
+			fi
+			if _use arm64 ; then
+				gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_ARM64_26598[@]}
+				gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_ARM64_46707[@]}
+			fi
+			if _use s390 ; then
+				gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_S390_43819[@]}
+			fi
+			if _use ppc64 ; then
+				gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_POWERPC_41070[@]}
+			fi
+		fi
+	fi
+	if _use landlock ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_LANDLOCK[@]}
+		fi
+	fi
+	if _use md-raid1 ; then
+		if ! _use custom-kernel ; then
+			block_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MD_RAID1[@]}
+		fi
+	fi
+	if _use md-raid456 ; then
+		if ! _use custom-kernel ; then
+			block_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MD_RAID456[@]}
+		fi
+	fi
+	if _use md-raid5 ; then
+		if ! _use custom-kernel ; then
+			block_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MD_RAID5[@]}
+		fi
+	fi
+	if _use mlx5 ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5_45019[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5_46857[@]}
+		fi
+	fi
+	if _use mptcp ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MPTCP_46858[@]}
+		fi
+	fi
+	if _use mt76 ; then
+		if ! _use custom-kernel ; then
+			wifi_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MT76[@]}
+		fi
+	fi
+	if _use mt7921 ; then
+		if ! _use custom-kernel ; then
+			wifi_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MT7921[@]}
+		fi
+	fi
+	if _use mwifiex ; then
+		if ! _use custom-kernel ; then
+			wifi_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MWIFIEX[@]}
+		fi
+	fi
+	if _use nfs ; then
+		if ! _use custom-kernel ; then
+			block_rdepend
+			fs_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NFSD[@]}
+		fi
+	fi
+	if _use netfilter ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NETFILTER[@]}
+		fi
+	fi
+	if _use nftables ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NF_TABLES[@]}
+		fi
+	fi
+	if _use nilfs2 ; then
+		if ! _use custom-kernel ; then
+			fs_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NILFS2[@]}
+		fi
+	fi
+	if _use ntfs ; then
+		if ! _use custom-kernel ; then
+			fs_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NTFS3_42299[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NTFS3_45896[@]}
+		fi
+	fi
+	if _use nvme ; then
+		if ! _use custom-kernel ; then
+			block_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NVME_45013[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NVME_41073[@]}
+		fi
+	fi
+	if _use pci ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_PCI_46750[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_PCI_42302[@]}
+		fi
+	fi
+	if _use pci-hotplug ; then
+		if ! _use custom-kernel ; then
+			if _use ppc64 ; then
+				gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_PCI_HOTPLUG_46761[@]}
+			fi
+		fi
+	fi
+	if _use ppc ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_POWERPC_46797[@]}
+		fi
+	fi
+	if _use ppc64 ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_POWERPC_46797[@]}
+		fi
+	fi
+	if _use rtw88 ; then
+		if ! _use custom-kernel ; then
+			wifi_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_RTW88[@]}
+		fi
+	fi
+	if _use samba ; then
+		if ! _use custom-kernel ; then
+			block_rdepend
+			fs_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMB_46796[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMB_46795[@]}
+		fi
+	fi
+	if _use sctp ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SCTP[@]}
+		fi
+	fi
+	if _use selinux ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SELINUX[@]}
+		fi
+	fi
+	if _use smmu-v3-sva ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IOMMU_IOPF[@]}
+		fi
+	fi
+	if _use tipc ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_TIPC[@]}
+		fi
+	fi
+	if _use tls ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_TLS[@]}
+		fi
+	fi
+	if _use usb ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_USB[@]}
+		fi
+	fi
+	if _use v4l2 ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_V4L2_43833[@]}
+		fi
+	fi
+	if _use video_cards_amdgpu ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU_46725[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU_46851[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU_46850[@]}
+		fi
+	fi
+	if _use video_cards_freedreno ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MSM[@]}
+		fi
+	fi
+	if _use video_cards_intel ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_I915[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XE_46683[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XE_46867[@]}
+		fi
+	fi
+	if _use video_cards_nouveau ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NOUVEAU[@]}
+		fi
+	fi
+	if _use video_cards_radeon ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_RADEON[@]}
+		fi
+	fi
+	if _use video_cards_v3d ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_V3D[@]}
+		fi
+	fi
+	if _use video_cards_vmware ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMWGFX[@]}
+		fi
+	fi
+	if _use vmware ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMCI[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMXNET3[@]}
+		fi
+	fi
+	if _use wireguard ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_WIREGUARD[@]}
+		fi
+	fi
+	if _use xen ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XEN[@]}
+		fi
+	fi
+	if _use xfs ; then
+		if ! _use custom-kernel ; then
+			block_rdepend
+			fs_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XFS[@]}
+		fi
+	fi
+}
+all_rdepend
+RDEPEND="
 	enforce? (
-		${ALL_RDEPEND}
+		!custom-kernel? (
+			$(gen_render_kernels_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
+		)
+		video_cards_nvidia? (
+			|| (
+				>=x11-drivers/nvidia-drivers-550.90.07:0/550
+				>=x11-drivers/nvidia-drivers-535.183.01:0/535
+				>=x11-drivers/nvidia-drivers-470.256.02:0/470
+			)
+		)
+		xen? (
+			>=app-emulation/xen-${_XEN_PV}
+		)
 	)
 "
+if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
+	RDEPEND+="
+		enforce? (
+			firmware? (
+				>=sys-firmware/intel-microcode-${_INTEL_MICROCODE_PV}
+			)
+		)
+	"
+fi
+if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
+	RDEPEND+="
+		enforce? (
+			firmware? (
+				>=sys-kernel/linux-firmware-${_LINUX_FIRMWARE_PV}
+			)
+		)
+	"
+fi
 BDEPEND="
 	sys-apps/util-linux
 "

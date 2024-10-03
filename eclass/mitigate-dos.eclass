@@ -18,6 +18,68 @@ esac
 
 if [[ -z ${_MITIGATE_DOS_ECLASS} ]] ; then
 _MITIGATE_DOS_ECLASS=1
+declare -A _ALL_VERSIONS
+_ALL_VERSIONS['_0']='EOL'
+_ALL_VERSIONS['_1']='EOL'
+_ALL_VERSIONS['_2']='EOL'
+_ALL_VERSIONS['_3']='EOL'
+_ALL_VERSIONS['_4.0']='EOL'
+_ALL_VERSIONS['_4.1']='EOL'
+_ALL_VERSIONS['_4.2']='EOL'
+_ALL_VERSIONS['_4.3']='EOL'
+_ALL_VERSIONS['_4.4']='EOL'
+_ALL_VERSIONS['_4.5']='EOL'
+_ALL_VERSIONS['_4.6']='EOL'
+_ALL_VERSIONS['_4.7']='EOL'
+_ALL_VERSIONS['_4.8']='EOL'
+_ALL_VERSIONS['_4.8']='EOL'
+_ALL_VERSIONS['_4.9']='EOL'
+_ALL_VERSIONS['_4.10']='EOL'
+_ALL_VERSIONS['_4.11']='EOL'
+_ALL_VERSIONS['_4.12']='EOL'
+_ALL_VERSIONS['_4.13']='EOL'
+_ALL_VERSIONS['_4.14']='EOL'
+_ALL_VERSIONS['_4.15']='EOL'
+_ALL_VERSIONS['_4.16']='EOL'
+_ALL_VERSIONS['_4.17']='EOL'
+_ALL_VERSIONS['_4.18']='EOL'
+_ALL_VERSIONS['_4.19']='4.19'
+_ALL_VERSIONS['_4.20']='EOL'
+_ALL_VERSIONS['_5.0']='EOL'
+_ALL_VERSIONS['_5.1']='EOL'
+_ALL_VERSIONS['_5.2']='EOL'
+_ALL_VERSIONS['_5.3']='EOL'
+_ALL_VERSIONS['_5.4']='5.4'
+_ALL_VERSIONS['_5.5']='EOL'
+_ALL_VERSIONS['_5.6']='EOL'
+_ALL_VERSIONS['_5.7']='EOL'
+_ALL_VERSIONS['_5.8']='EOL'
+_ALL_VERSIONS['_5.9']='EOL'
+_ALL_VERSIONS['_5.10']='5.10'
+_ALL_VERSIONS['_5.11']='EOL'
+_ALL_VERSIONS['_5.12']='EOL'
+_ALL_VERSIONS['_5.13']='EOL'
+_ALL_VERSIONS['_5.14']='EOL'
+_ALL_VERSIONS['_5.15']='5.15'
+_ALL_VERSIONS['_5.16']='EOL'
+_ALL_VERSIONS['_5.17']='EOL'
+_ALL_VERSIONS['_5.18']='EOL'
+_ALL_VERSIONS['_5.19']='EOL'
+_ALL_VERSIONS['_6.0']='EOL'
+_ALL_VERSIONS['_6.1']='6.1'
+_ALL_VERSIONS['_6.2']='EOL'
+_ALL_VERSIONS['_6.3']='EOL'
+_ALL_VERSIONS['_6.4']='EOL'
+_ALL_VERSIONS['_6.5']='EOL'
+_ALL_VERSIONS['_6.6']='6.6'
+_ALL_VERSIONS['_6.7']='EOL'
+_ALL_VERSIONS['_6.8']='EOL'
+_ALL_VERSIONS['_6.9']='EOL'
+_ALL_VERSIONS['_6.10']='6.10'
+_ALL_VERSIONS['_6.11']='6.11'
+_INTEL_MICROCODE_PV=0
+_LINUX_FIRMWARE_PV=0
+_XEN_PV=0
 
 _mitigate_dos_set_globals() {
 	FIRMWARE_VENDOR=${FIRMWARE_VENDOR:-""}
@@ -278,56 +340,18 @@ is_eol() {
 # Generate the patched kernel list
 gen_patched_kernel_list() {
 	local kv="${1}"
-	local ATOMS=(
-		${CUSTOM_KERNEL_ATOM}
-	)
-
-	echo "
-		|| (
-	"
 
 	local active_version
 
-	# Concat is expensive in bash
 	for active_version in ${ACTIVE_VERSIONS[@]} ; do
 		local s1=$(ver_cut 1-2 ${kv})
 		local s2=$(ver_cut 1-2 ${active_version})
 		if ver_test ${s2} -ge ${s1} ; then
-			echo "
-				=sys-kernel/gentoo-kernel-bin-${active_version}*
-				=sys-kernel/gentoo-kernel-${active_version}*
-				=sys-kernel/gentoo-sources-${active_version}*
-				=sys-kernel/vanilla-kernel-${active_version}*
-				=sys-kernel/vanilla-sources-${active_version}*
-				=sys-kernel/git-sources-${active_version}*
-				=sys-kernel/mips-sources-${active_version}*
-				=sys-kernel/pf-sources-${active_version}*
-				=sys-kernel/rt-sources-${active_version}*
-				=sys-kernel/zen-sources-${active_version}*
-				=sys-kernel/raspberrypi-sources-${active_version}*
-				=sys-kernel/linux-next-${active_version}*
-				=sys-kernel/asahi-sources-${active_version}*
-				=sys-kernel/ot-sources-${active_version}*
-			"
+			:
+		else
+			_ALL_VERSIONS["_${s2}"]="V"
 		fi
 	done
-
-	local atom
-	for atom in ${ATOMS[@]} ; do
-		for active_version in ${ACTIVE_VERSIONS[@]} ; do
-			local s1=$(ver_cut 1-2 ${kv})
-			local s2=$(ver_cut 1-2 ${active_version})
-			if ver_test ${s2} -ge ${s1} ; then
-				echo "
-					=${atom}-${active_version}*
-				"
-			fi
-		done
-	done
-
-	echo "
-		)
-	"
 }
 
 # @FUNCTION: gen_zero_tolerance_kernel_list
@@ -336,95 +360,15 @@ gen_patched_kernel_list() {
 # Generate the latest point release kernel list
 gen_zero_tolerance_kernel_list() {
 	local PATCHED_VERSIONS=( ${@} )
-	local ATOMS=(
-		${CUSTOM_KERNEL_ATOM}
-	)
-
-	echo "
-		|| (
-	"
 
 	local latest_version
 
 	for latest_version in ${PATCHED_VERSIONS[@]} ; do
 		local s=$(ver_cut 1-2 ${latest_version})
-		echo "
-			(
-				=sys-kernel/gentoo-kernel-bin-${s}*
-				>=sys-kernel/gentoo-kernel-bin-${latest_version}
-			)
-			(
-				=sys-kernel/gentoo-kernel-${s}*
-				>=sys-kernel/gentoo-kernel-${latest_version}
-			)
-			(
-				=sys-kernel/gentoo-sources-${s}*
-				>=sys-kernel/gentoo-sources-${latest_version}
-			)
-			(
-				=sys-kernel/vanilla-kernel-${s}*
-				>=sys-kernel/vanilla-kernel-${latest_version}
-			)
-			(
-				=sys-kernel/vanilla-sources-${s}*
-				>=sys-kernel/vanilla-sources-${latest_version}
-			)
-			(
-				=sys-kernel/git-sources-${s}*
-				>=sys-kernel/git-sources-${latest_version}
-			)
-			(
-				=sys-kernel/mips-sources-${s}*
-				>=sys-kernel/mips-sources-${latest_version}
-			)
-			(
-				=sys-kernel/pf-sources-${s}*
-				>=sys-kernel/pf-sources-${latest_version}
-			)
-			(
-				=sys-kernel/rt-sources-${s}*
-				>=sys-kernel/rt-sources-${latest_version}
-			)
-			(
-				=sys-kernel/zen-sources-${s}*
-				>=sys-kernel/zen-sources-${latest_version}
-			)
-			(
-				=sys-kernel/raspberrypi-sources-${s}*
-				>=sys-kernel/raspberrypi-sources-${latest_version}
-			)
-			(
-				=sys-kernel/linux-next-${s}*
-				>=sys-kernel/linux-next-${latest_version}
-			)
-			(
-				=sys-kernel/asahi-sources-${s}*
-				>=sys-kernel/asahi-sources-${latest_version}
-			)
-			(
-				=sys-kernel/ot-sources-${s}*
-				>=sys-kernel/ot-sources-${latest_version}
-			)
-		"
+		if [[ "${_ALL_VERSIONS[_${s}]}" != "EOL" ]] || ! [[ "${_ALL_VERSIONS[_${s}]}" =~ "V" ]] ; then
+			_ALL_VERSIONS["_${s}"]="${latest_version}"
+		fi
 	done
-
-	local atom
-	for atom in ${ATOMS[@]} ; do
-		for latest_version in ${PATCHED_VERSIONS[@]} ; do
-			local s=$(ver_cut 1-2 ${latest_version})
-			echo "
-				(
-					=${atom}-${s}*
-					>=${atom}-${latest_version}
-				)
-			"
-		done
-	done
-
-	echo "
-		)
-	"
-
 }
 
 # @FUNCTION: gen_patched_kernel_driver_list
@@ -432,762 +376,701 @@ gen_zero_tolerance_kernel_list() {
 # @DESCRIPTION:
 # Generate the patched kernel list
 gen_patched_kernel_driver_list() {
-	local ATOMS=(
-		${CUSTOM_KERNEL_ATOM}
-	)
 	local PATCHED_VERSIONS=( ${@} )
 
 	local patched_version
 	patched_version=${PATCHED_VERSIONS[-1]}
 
-	echo "
-		|| (
-	"
+	local active_version
 
 	# Concat is expensive in bash
 	for active_version in ${ACTIVE_VERSIONS[@]} ; do
-		if ver_test "${patched_version}" -ge "${active_version}" ; then
-			echo "
-				(
-					=sys-kernel/gentoo-kernel-bin-${active_version}*
-					>=sys-kernel/gentoo-kernel-bin-${patched_version}
-				)
-				(
-					=sys-kernel/gentoo-kernel-${active_version}*
-					>=sys-kernel/gentoo-kernel-${patched_version}
-				)
-				(
-					=sys-kernel/gentoo-sources-${active_version}*
-					>=sys-kernel/gentoo-sources-${patched_version}
-				)
-				(
-					=sys-kernel/vanilla-kernel-${active_version}*
-					>=sys-kernel/vanilla-kernel-${patched_version}
-				)
-				(
-					=sys-kernel/vanilla-sources-${active_version}*
-					>=sys-kernel/vanilla-sources-${patched_version}
-				)
-				(
-					=sys-kernel/git-sources-${active_version}*
-					>=sys-kernel/git-sources-${patched_version}
-				)
-				(
-					=sys-kernel/mips-sources-${active_version}*
-					>=sys-kernel/mips-sources-${patched_version}
-				)
-				(
-					=sys-kernel/pf-sources-${active_version}*
-					>=sys-kernel/pf-sources-${patched_version}
-				)
-				(
-					=sys-kernel/rt-sources-${active_version}*
-					>=sys-kernel/rt-sources-${patched_version}
-				)
-				(
-					=sys-kernel/zen-sources-${active_version}*
-					>=sys-kernel/zen-sources-${patched_version}
-				)
-				(
-					=sys-kernel/raspberrypi-sources-${active_version}*
-					>=sys-kernel/raspberrypi-sources-${patched_version}
-				)
-				(
-					=sys-kernel/linux-next-${active_version}*
-					>=sys-kernel/linux-next-${patched_version}
-				)
-				(
-					=sys-kernel/asahi-sources-${active_version}*
-					>=sys-kernel/asahi-sources-${patched_version}
-				)
-				(
-					=sys-kernel/ot-sources-${active_version}*
-					>=sys-kernel/ot-sources-${patched_version}
-				)
-			"
+		if [[ "${active_version}" =~ "EOL" ]] ; then
+			:
+		elif [[ "${active_version}" =~ "V" ]] ; then
+			_ALL_VERSIONS["_${slot}"]="V"
+		elif ver_test "${patched_version}" -ge "${active_version}" ; then
+			:
 		fi
 	done
 
 	# Add last version of patched kernel list
-	local active_version
-	local atom
-	for atom in ${ATOMS[@]} ; do
-		for active_version in ${ACTIVE_VERSIONS[@]} ; do
-			if ver_test "${patched_version}" -ge "${active_version}" ; then
-				echo "
-					(
-						=${atom}-${active_version}*
-						>=${atom}-${patched_version}
-					)
-				"
-			fi
-		done
-	done
 
 	# Concatination is expensive in bash
 	for patched_version in ${PATCHED_VERSIONS[@]} ; do
 		if [[ "${patched_version}" =~ "V" ]] ; then
 	# Unpatched / vulnerable
 			local slot="${patched_version%.*}"
-			echo "
-				!=sys-kernel/gentoo-kernel-bin-${slot}*
-				!=sys-kernel/gentoo-kernel-${slot}*
-				!=sys-kernel/gentoo-sources-${slot}*
-				!=sys-kernel/vanilla-kernel-${slot}*
-				!=sys-kernel/vanilla-sources-${slot}*
-				!=sys-kernel/git-sources-${slot}*
-				!=sys-kernel/mips-sources-${slot}*
-				!=sys-kernel/pf-sources-${slot}*
-				!=sys-kernel/rt-sources-${slot}*
-				!=sys-kernel/zen-sources-${slot}*
-				!=sys-kernel/raspberrypi-sources-${slot}*
-				!=sys-kernel/linux-next-${slot}*
-				!=sys-kernel/asahi-sources-${slot}*
-				!=sys-kernel/ot-sources-${slot}*
-			"
+			_ALL_VERSIONS["_${slot/./_}"]="V"
 		elif is_lts "${patched_version}" ; then
-			echo "
-				(
-					=sys-kernel/gentoo-kernel-bin-${patched_version}*
-					>=sys-kernel/gentoo-kernel-bin-${patched_version}
-				)
-				(
-					=sys-kernel/gentoo-kernel-${patched_version}*
-					>=sys-kernel/gentoo-kernel-${patched_version}
-				)
-				(
-					=sys-kernel/gentoo-sources-${patched_version}*
-					>=sys-kernel/gentoo-sources-${patched_version}
-				)
-				(
-					=sys-kernel/vanilla-kernel-${patched_version}*
-					>=sys-kernel/vanilla-kernel-${patched_version}
-				)
-				(
-					=sys-kernel/vanilla-sources-${patched_version}*
-					>=sys-kernel/vanilla-sources-${patched_version}
-				)
-				(
-					=sys-kernel/git-sources-${patched_version}*
-					>=sys-kernel/git-sources-${patched_version}
-				)
-				(
-					=sys-kernel/mips-sources-${patched_version}*
-					>=sys-kernel/mips-sources-${patched_version}
-				)
-				(
-					=sys-kernel/pf-sources-${patched_version}*
-					>=sys-kernel/pf-sources-${patched_version}
-				)
-				(
-					=sys-kernel/rt-sources-${patched_version}*
-					>=sys-kernel/rt-sources-${patched_version}
-				)
-				(
-					=sys-kernel/zen-sources-${patched_version}*
-					>=sys-kernel/zen-sources-${patched_version}
-				)
-				(
-					=sys-kernel/raspberrypi-sources-${patched_version}*
-					>=sys-kernel/raspberrypi-sources-${patched_version}
-				)
-				(
-					=sys-kernel/linux-next-${patched_version}*
-					>=sys-kernel/linux-next-${patched_version}
-				)
-				(
-					=sys-kernel/asahi-sources-${patched_version}*
-					>=sys-kernel/asahi-sources-${patched_version}
-				)
-				(
-					=sys-kernel/ot-sources-${patched_version}*
-					>=sys-kernel/ot-sources-${patched_version}
-				)
-			"
+			:
 		fi
 	done
 
-	# Add LTS versions
-	local atom
-	for atom in ${ATOMS[@]} ; do
-		for patched_version in ${PATCHED_VERSIONS[@]} ; do
-			if [[ "${patched_version}" =~ "V" ]] ; then
-	# Unpatched / vulnerable
-				local slot="${patched_version%.*}"
-				echo "
-					!=${atom}-${slot}*
-				"
-			elif is_lts "${patched_version}" ; then
-				echo "
-					(
-						=${atom}-${patched_version}*
-						>=${atom}-${patched_version}
-					)
-				"
-			fi
-		done
-	done
-
-	echo "
-		)
-	"
 }
 
-gen_eol_kernels_list() {
+gen_render_kernels_list() {
 	local ATOMS=(
 		${CUSTOM_KERNEL_ATOM}
 	)
 
-	# Concat is expensive in bash
-	for eol_version in ${EOL_VERSIONS[@]} ; do
-		echo "
-			!=sys-kernel/gentoo-kernel-bin-${eol_version}*
-			!=sys-kernel/gentoo-kernel-${eol_version}*
-			!=sys-kernel/gentoo-sources-${eol_version}*
-			!=sys-kernel/vanilla-kernel-${eol_version}*
-			!=sys-kernel/vanilla-sources-${eol_version}*
-			!=sys-kernel/git-sources-${eol_version}*
-			!=sys-kernel/mips-sources-${eol_version}*
-			!=sys-kernel/pf-sources-${eol_version}*
-			!=sys-kernel/rt-sources-${eol_version}*
-			!=sys-kernel/zen-sources-${eol_version}*
-			!=sys-kernel/raspberrypi-sources-${eol_version}*
-			!=sys-kernel/linux-next-${eol_version}*
-			!=sys-kernel/asahi-sources-${eol_version}*
-			!=sys-kernel/ot-sources-${eol_version}*
-		"
-	done
-
-	local eol_version
-	for atom in ${ATOMS[@]} ; do
-		for eol_version in ${EOL_VERSIONS[@]} ; do
-			echo "
-				!=${atom}-${eol_version}*
+	# Concat and echo are expensive in bash
+	local eol_block=""
+	local safe_block=""
+	local atom
+	local version
+	for version in ${!_ALL_VERSIONS[@]} ; do
+		local status="${_ALL_VERSIONS[${version}]}"
+		if [[ "${status}" =~ "EOL" || "${status}" =~ "V" ]] ; then
+			version="${version:1}"
+			eol_block+="
+				!=sys-kernel/gentoo-kernel-bin-${version}*
+				!=sys-kernel/gentoo-kernel-${version}*
+				!=sys-kernel/gentoo-sources-${version}*
+				!=sys-kernel/vanilla-kernel-${version}*
+				!=sys-kernel/vanilla-sources-${version}*
+				!=sys-kernel/git-sources-${version}*
+				!=sys-kernel/mips-sources-${version}*
+				!=sys-kernel/pf-sources-${version}*
+				!=sys-kernel/rt-sources-${version}*
+				!=sys-kernel/zen-sources-${version}*
+				!=sys-kernel/raspberrypi-sources-${version}*
+				!=sys-kernel/linux-next-${version}*
+				!=sys-kernel/asahi-sources-${version}*
+				!=sys-kernel/ot-sources-${version}*
 			"
-		done
+			for atom in ${ATOMS[@]} ; do
+				eol_block+="
+					!=${atom}-${version}*
+				"
+			done
+		else
+			safe_block+="
+				(
+					=sys-kernel/gentoo-kernel-bin-${version}*
+					>=sys-kernel/gentoo-kernel-bin-${version}
+				)
+				(
+					=sys-kernel/gentoo-kernel-${version}*
+					>=sys-kernel/gentoo-kernel-${version}
+				)
+				(
+					=sys-kernel/gentoo-sources-${version}*
+					>=sys-kernel/gentoo-sources-${version}
+				)
+				(
+					=sys-kernel/vanilla-kernel-${version}*
+					>=sys-kernel/vanilla-kernel-${version}
+				)
+				(
+					=sys-kernel/vanilla-sources-${version}*
+					>=sys-kernel/vanilla-sources-${version}
+				)
+				(
+					=sys-kernel/git-sources-${version}*
+					>=sys-kernel/git-sources-${version}
+				)
+				(
+					=sys-kernel/mips-sources-${version}*
+					>=sys-kernel/mips-sources-${version}
+				)
+				(
+					=sys-kernel/pf-sources-${version}*
+					>=sys-kernel/pf-sources-${version}
+				)
+				(
+					=sys-kernel/rt-sources-${version}*
+					>=sys-kernel/rt-sources-${version}
+				)
+				(
+					=sys-kernel/zen-sources-${version}*
+					>=sys-kernel/zen-sources-${version}
+				)
+				(
+					=sys-kernel/raspberrypi-sources-${version}*
+					>=sys-kernel/raspberrypi-sources-${version}
+				)
+				(
+					=sys-kernel/linux-next-${version}*
+					>=sys-kernel/linux-next-${version}
+				)
+				(
+					=sys-kernel/asahi-sources-${version}*
+					>=sys-kernel/asahi-sources-${version}
+				)
+				(
+					=sys-kernel/ot-sources-${version}*
+					>=sys-kernel/ot-sources-${version}
+				)
+			"
+			for atom in ${ATOMS[@]} ; do
+				safe_block+="
+					(
+						=${atom}-${version}*
+						>=${atom}-${version}
+					)
+				"
+			done
+		fi
 	done
+	echo "
+		virtual/libc
+	"
+	true echo "
+		|| (
+			${safe_block}
+		)
+		${eol_block}
+	"
 }
 
-_MITIGATE_DOS_TECRA_RDEPEND_X86_64="
-	cpu_target_x86_ice_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_sapphire_rapids? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_sapphire_rapids_edge_enhanced? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-"
-_MITIGATE_DOS_TECRA_RDEPEND_X86_32="
-	${_MITIGATE_DOS_TECRA_RDEPEND_X86_64}
-"
+gen_linux_firmware_ge() {
+	local arg="${1}"
+	if ver_test ${arg} -gt ${_LINUX_FIRMWARE_PV} ; then
+		_LINUX_FIRMWARE_PV=${arg}
+	fi
+}
 
-_MITIGATE_DOS_ITLB_MULTIHIT_RDEPEND_X86_64="
-	cpu_target_x86_haswell? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_broadwell? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_skylake? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_cascade_lake? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_cooper_lake? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_hewitt_lake? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_ice_lake? (
-		$(gen_patched_kernel_list 5.4)
-	)
+gen_intel_microcode_ge() {
+	local arg="${1}"
+	if ver_test ${arg} -gt ${_INTEL_MICROCODE_PV} ; then
+		_INTEL_MICROCODE_PV=${arg}
+	fi
+}
 
-	cpu_target_x86_kaby_lake_gen7? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_comet_lake? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_whiskey_lake? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		$(gen_patched_kernel_list 5.4)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		$(gen_patched_kernel_list 5.4)
-	)
-"
-_MITIGATE_DOS_ITLB_MULTIHIT_RDEPEND_X86_32="
-	${_MITIGATE_DOS_ITLB_MULTIHIT_RDEPEND_X86_64}
-"
+gen_xen_ge() {
+	local arg="${1}"
+	if ver_test ${arg} -gt ${_XEN_PV} ; then
+		_XEN_PV=${arg}
+	fi
+}
 
-_MITIGATE_DOS_MPF_RDEPEND_X86_64="
-	cpu_target_x86_snow_ridge? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20220207
-		)
-	)
-	cpu_target_x86_parker_ridge? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20220207
-		)
-	)
-	cpu_target_x86_elkhart_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20220207
-		)
-	)
-	cpu_target_x86_jasper_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20220207
-		)
-	)
-"
-_MITIGATE_DOS_MPF_RDEPEND_X86_32="
-	${_MITIGATE_DOS_MPF_RDEPEND_X86_64}
-"
+_use() {
+	local arg="${1}"
+	if [[ "${USE}" =~ (" "|^)"${arg}"(" "|$) ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+
+_mitigate_dos_tecra_rdepend_x86_64() {
+	if _use cpu_target_x86_ice_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_sapphire_rapids ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_sapphire_rapids_edge_enhanced ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+}
+_mitigate_dos_tecra_rdepend_x86_32() {
+	_mitigate_dos_tecra_rdepend_x86_64
+}
+
+_mitigate_dos_itlb_multihit_rdepend_x86_64() {
+	if _use cpu_target_x86_haswell ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_broadwell ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_skylake ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_cascade_lake ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_cooper_lake ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_hewitt_lake ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		gen_patched_kernel_list 5.4
+	fi
+
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		gen_patched_kernel_list 5.4
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		gen_patched_kernel_list 5.4
+	fi
+}
+_mitigate_dos_itlb_multihit_rdepend_x86_32() {
+	_mitigate_dos_itlb_multihit_rdepend_x86_64
+}
+
+_mitigate_dos_mpf_rdepend_x86_64() {
+	if _use cpu_target_x86_snow_ridge ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220207
+		fi
+	fi
+	if _use cpu_target_x86_parker_ridge ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220207
+		fi
+	fi
+	if _use cpu_target_x86_elkhart_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220207
+		fi
+	fi
+	if _use cpu_target_x86_jasper_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220207
+		fi
+	fi
+}
+_mitigate_dos_mpf_rdepend_x86_32() {
+	_mitigate_dos_mpf_rdepend_x86_64
+}
 
 # The table says that the MCU is required but the git note does not specifically
 # match the security advisory number.  The date is based on the monotonic
 # numbering of the advisory.
-_MITIGATE_DOS_UMH_RDEPEND_X86_64="
-	cpu_target_x86_skylake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20220809
-		)
-		xen? (
-			>=app-emulation/xen-4.17
-		)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		xen? (
-			>=app-emulation/xen-4.17
-		)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		xen? (
-			>=app-emulation/xen-4.17
-		)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		xen? (
-			>=app-emulation/xen-4.17
-		)
-	)
-	cpu_target_x86_amber_lake_gen8? (
-		xen? (
-			>=app-emulation/xen-4.17
-		)
-	)
-	cpu_target_x86_amber_lake_gen10? (
-		xen? (
-			>=app-emulation/xen-4.17
-		)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		xen? (
-			>=app-emulation/xen-4.17
-		)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		xen? (
-			>=app-emulation/xen-4.17
-		)
-	)
-	cpu_target_x86_comet_lake? (
-		xen? (
-			>=app-emulation/xen-4.17
-		)
-	)
-	cpu_target_x86_rocket_lake? (
-		xen? (
-			>=app-emulation/xen-4.17
-		)
-	)
-"
-_MITIGATE_DOS_UMH_RDEPEND_X86_32="
-	${_MITIGATE_DOS_UMH_RDEPEND_X86_64}
-"
+_mitigate_dos_UMH_rdepend_x86_64() {
+	if _use cpu_target_x86_skylake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20220809
+		fi
+		if _use xen ; then
+			gen_zen_ge 4.17
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		if _use xen ; then
+			gen_zen_ge 4.17
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		if _use xen ; then
+			gen_zen_ge 4.17
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		if _use xen ; then
+			gen_zen_ge 4.17
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen8 ; then
+		if _use xen ; then
+			gen_zen_ge 4.17
+		fi
+	fi
+	if _use cpu_target_x86_amber_lake_gen10 ; then
+		if _use xen ; then
+			gen_zen_ge 4.17
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		if _use xen ; then
+			gen_zen_ge 4.17
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		if _use xen ; then
+			gen_zen_ge 4.17
+		fi
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		if _use xen ; then
+			gen_zen_ge 4.17
+		fi
+	fi
+	if _use cpu_target_x86_rocket_lake ; then
+		if _use xen ; then
+			gen_zen_ge 4.17
+		fi
+	fi
+}
+_mitigate_dos_UMH_rdepend_x86_32() {
+	_mitigate_dos_UMH_rdepend_x86_64
+}
 
-_MITIGATE_DOS_REPTAR_RDEPEND_X86_64="
-	cpu_target_x86_ice_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-	cpu_target_x86_tiger_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-	cpu_target_x86_sapphire_rapids? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-	cpu_target_x86_alder_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-	cpu_target_x86_catlow_golden_cove? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-	cpu_target_x86_rocket_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-	cpu_target_x86_raptor_lake_gen14? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20231114
-		)
-	)
-"
-_MITIGATE_DOS_REPTAR_RDEPEND_X86_32="
-	${_MITIGATE_DOS_REPTAR_RDEPEND_X86_64}
-"
+_mitigate_dos_reptar_rdepend_x86_64() {
+	if _use cpu_target_x86_ice_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+	if _use cpu_target_x86_sapphire_rapids ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+	if _use cpu_target_x86_catlow_golden_cove ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+	if _use cpu_target_x86_rocket_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+	if _use cpu_target_x86_raptor_lake_gen13 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+	if _use cpu_target_x86_raptor_lake_gen14 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20231114
+		fi
+	fi
+}
+_mitigate_dos_reptar_rdepend_x86_32() {
+	_mitigate_dos_reptar_rdepend_x86_64
+}
 
-_MITIGATE_DOS_BLR_RDEPEND_X86_64="
-	cpu_target_x86_sapphire_rapids? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_alder_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_catlow_golden_cove? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_raptor_lake_gen14? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-	cpu_target_x86_alder_lake_n? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240312
-		)
-	)
-"
-_MITIGATE_DOS_BLR_RDEPEND_X86_32="
-	${_MITIGATE_DOS_BLR_RDEPEND_X86_64}
-"
+_mitigate_dos_blr_rdepend_x86_64() {
+	if _use cpu_target_x86_sapphire_rapids ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_catlow_golden_cove ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_raptor_lake_gen13 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_raptor_lake_gen14 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+	if _use cpu_target_x86_alder_lake_n ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240312
+		fi
+	fi
+}
+_mitigate_dos_blr_rdepend_x86_32() {
+	_mitigate_dos_blr_rdepend_x86_64
+}
 
-_MITIGATE_DOS_MCEAD_RDEPEND_X86_64="
-	cpu_target_x86_cooper_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_cedar_island? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-"
-_MITIGATE_DOS_MCEAD_RDEPEND_X86_32="
-	${_MITIGATE_DOS_MCEAD_RDEPEND_X86_64}
-"
+_mitigate_dos_mcead_rdepend_x86_64() {
+	if _use cpu_target_x86_cooper_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_cedar_island ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+}
+_mitigate_dos_mcead_rdepend_x86_32() {
+	_mitigate_dos_mcead_rdepend_x86_64
+}
 
-_MITIGATE_DOS_CVE_2024_24968_RDEPEND_X86_64="
-	cpu_target_x86_ice_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240910
-		)
-	)
-	cpu_target_x86_rocket_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240910
-		)
-	)
-	cpu_target_x86_tiger_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240910
-		)
-	)
-	cpu_target_x86_alder_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240910
-		)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240910
-		)
-	)
-	cpu_target_x86_idaville? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240910
-		)
-	)
-	cpu_target_x86_whitley? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240910
-		)
-	)
-"
-_MITIGATE_DOS_CVE_2024_24968_RDEPEND_X86_32="
-	${_MITIGATE_DOS_CVE_2024_24968_RDEPEND_X86_64}
-"
+_mitigate_dos_cve_2024_24968_rdepend_x86_64() {
+	if _use cpu_target_x86_ice_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240910
+		fi
+	fi
+	if _use cpu_target_x86_rocket_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240910
+		fi
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240910
+		fi
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240910
+		fi
+	fi
+	if _use cpu_target_x86_raptor_lake_gen13 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240910
+		fi
+	fi
+	if _use cpu_target_x86_idaville ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240910
+		fi
+	fi
+	if _use cpu_target_x86_whitley ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240910
+		fi
+	fi
+}
+_mitigate_dos_cve_2024_24968_rdepend_x86_32() {
+	_mitigate_dos_cve_2024_24968_rdepend_x86_64
+}
 
-_MITIGATE_DOS_SINKCLOSE_RDEPEND_X86_64="
-	cpu_target_x86_naples? (
-		firmware? (
-			>=sys-kernel/linux-firmware-20240710
-		)
-	)
-	cpu_target_x86_rome? (
-		firmware? (
-			>=sys-kernel/linux-firmware-20240710
-		)
-	)
-	cpu_target_x86_milan? (
-		firmware? (
-			>=sys-kernel/linux-firmware-20240710
-		)
-	)
-	cpu_target_x86_milan-x? (
-		firmware? (
-			>=sys-kernel/linux-firmware-20240710
-		)
-	)
-	cpu_target_x86_genoa? (
-		firmware? (
-			>=sys-kernel/linux-firmware-20240710
-		)
-	)
-	cpu_target_x86_genoa-x? (
-		firmware? (
-			>=sys-kernel/linux-firmware-20240710
-		)
-	)
-	cpu_target_x86_bergamo? (
-		firmware? (
-			>=sys-kernel/linux-firmware-20240710
-		)
-	)
-	cpu_target_x86_siena? (
-		firmware? (
-			>=sys-kernel/linux-firmware-20240710
-		)
-	)
-"
-_MITIGATE_DOS_SINKCLOSE_RDEPEND_X86_32="
-	${_MITIGATE_DOS_SINKCLOSE_RDEPEND_X86_64}
-"
+_mitigate_dos_sinkclose_rdepend_x86_64() {
+	if _use cpu_target_x86_naples ; then
+		if _use firmware ; then
+			gen_linux_firmware_ge 20240710
+		fi
+	fi
+	if _use cpu_target_x86_rome ; then
+		if _use firmware ; then
+			gen_linux_firmware_ge 20240710
+		fi
+	fi
+	if _use cpu_target_x86_milan ; then
+		if _use firmware ; then
+			gen_linux_firmware_ge 20240710
+		fi
+	fi
+	if _use cpu_target_x86_milan-x ; then
+		if _use firmware ; then
+			gen_linux_firmware_ge 20240710
+		fi
+	fi
+	if _use cpu_target_x86_genoa ; then
+		if _use firmware ; then
+			gen_linux_firmware_ge 20240710
+		fi
+	fi
+	if _use cpu_target_x86_genoa-x ; then
+		if _use firmware ; then
+			gen_linux_firmware_ge 20240710
+		fi
+	fi
+	if _use cpu_target_x86_bergamo ; then
+		if _use firmware ; then
+			gen_linux_firmware_ge 20240710
+		fi
+	fi
+	if _use cpu_target_x86_siena ; then
+		if _use firmware ; then
+			gen_linux_firmware_ge 20240710
+		fi
+	fi
+}
+_mitigate_dos_sinkclose_rdepend_x86_32() {
+	_mitigate_dos_sinkclose_rdepend_x86_64
+}
 
-_MITIGATE_DOS_CVE_2024_24853_RDEPEND_X86_64="
-	cpu_target_x86_purley_refresh? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_cedar_island? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_greenlow? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_whitley? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_idaville? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_tatlow? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_ice_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_tiger_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_skylake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_kaby_lake_gen7? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_kaby_lake_gen8? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_whiskey_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_coffee_lake_gen8? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_coffee_lake_gen9? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_comet_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_rocket_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-"
-_MITIGATE_DOS_CVE_2024_24853_RDEPEND_X86_32="
-	${_MITIGATE_DOS_CVE_2024_24853_RDEPEND_X86_64}
-"
+_mitigate_dos_cve_2024_24853_rdepend_x86_64() {
+	if _use cpu_target_x86_purley_refresh ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_cedar_island ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_greenlow ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_whitley ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_idaville ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_tatlow ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_ice_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_tiger_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_skylake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen7 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_kaby_lake_gen8 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_whiskey_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen8 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_coffee_lake_gen9 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_comet_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_rocket_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+}
+_mitigate_dos_cve_2024_24853_rdepend_x86_32() {
+	_mitigate_dos_cve_2024_24853_rdepend_x86_64
+}
 
-_MITIGATE_DOS_CVE_2024_42667_RDEPEND_X86_64="
-	cpu_target_x86_meteor_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-"
-_MITIGATE_DOS_CVE_2024_42667_RDEPEND_X86_32="
-	${_MITIGATE_DOS_CVE_2024_42667_RDEPEND_X86_64}
-"
+_mitigate_dos_cve_2024_42667_rdepend_x86_64() {
+	if _use cpu_target_x86_meteor_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+}
+_mitigate_dos_cve_2024_42667_rdepend_x86_32() {
+	_mitigate_dos_cve_2024_42667_rdepend_x86_64
+}
 
-_MITIGATE_DOS_CVE_2023_49141_RDEPEND_X86_64="
-	cpu_target_x86_eagle_stream? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_catlow_raptor_cove? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_alder_lake? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-	cpu_target_x86_raptor_lake_gen13? (
-		firmware? (
-			>=sys-firmware/intel-microcode-20240813
-		)
-	)
-"
+_mitigate_dos_cve_2023_49141_rdepend_x86_64() {
+	if _use cpu_target_x86_eagle_stream ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_catlow_raptor_cove ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_alder_lake ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+	if _use cpu_target_x86_raptor_lake_gen13 ; then
+		if _use firmware ; then
+			gen_intel_microcode_ge 20240813
+		fi
+	fi
+}
 
-_MITIGATE_DOS_CVE_2023_49141_RDEPEND_X86_32="
-	${_MITIGATE_DOS_CVE_2023_49141_RDEPEND_X86_64}
-"
+_mitigate_dos_cve_2023_49141_rdepend_x86_32() {
+	_mitigate_dos_cve_2023_49141_rdepend_x86_64
+}
 
-_MITIGATE_DOS_AUTO="
-"
-if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
-	_MITIGATE_DOS_AUTO+="
-		>=sys-kernel/linux-firmware-20240811
-	"
-fi
-if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
-	_MITIGATE_DOS_AUTO+="
-		>=sys-firmware/intel-microcode-20240910
-	"
-fi
+_mitigate_dos_auto() {
+	if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
+		gen_linux_firmware_ge 20240811
+	fi
+	if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
+		gen_intel_microcode_ge 20240910
+	fi
+}
 
 # @ECLASS_VARIABLE: MITIGATE_DOS_RDEPEND
 # @INTERNAL
 # @DESCRIPTION:
 # High level RDEPEND
-MITIGATE_DOS_RDEPEND="
-	kernel_linux? (
-		!custom-kernel? (
-			auto? (
-				${_MITIGATE_DOS_AUTO}
-			)
-			amd64? (
-				${_MITIGATE_DOS_TECRA_RDEPEND_X86_64}
-				${_MITIGATE_DOS_ITLB_MULTIHIT_RDEPEND_X86_64}
-				${_MITIGATE_DOS_MPF_RDEPEND_X86_64}
-				${_MITIGATE_DOS_REPTAR_RDEPEND_X86_64}
-				${_MITIGATE_DOS_BLR_RDEPEND_X86_64}
-				${_MITIGATE_DOS_MCEAD_RDEPEND_X86_64}
-				${_MITIGATE_DOS_SINKCLOSE_RDEPEND_X86_64}
-				${_MITIGATE_DOS_CVE_2023_49141_RDEPEND_X86_64}
-				${_MITIGATE_DOS_CVE_2024_24853_RDEPEND_X86_64}
-				${_MITIGATE_DOS_CVE_2024_42667_RDEPEND_X86_64}
-			)
-			x86? (
-				${_MITIGATE_DOS_TECRA_RDEPEND_X86_32}
-				${_MITIGATE_DOS_ITLB_MULTIHIT_RDEPEND_X86_32}
-				${_MITIGATE_DOS_MPF_RDEPEND_X86_32}
-				${_MITIGATE_DOS_REPTAR_RDEPEND_X86_32}
-				${_MITIGATE_DOS_BLR_RDEPEND_X86_32}
-				${_MITIGATE_DOS_MCEAD_RDEPEND_X86_32}
-				${_MITIGATE_DOS_SINKCLOSE_RDEPEND_X86_32}
-				${_MITIGATE_DOS_CVE_2023_49141_RDEPEND_X86_32}
-				${_MITIGATE_DOS_CVE_2024_24853_RDEPEND_X86_32}
-				${_MITIGATE_DOS_CVE_2024_42667_RDEPEND_X86_32}
-			)
-		)
-	)
-"
+mitigate_dos_rdepend() {
+	if _use kernel_linux ; then
+		if ! _use custom-kernel ; then
+			if _use auto ; then
+				_mitigate_dos_auto
+			fi
+			if _use amd64 ; then
+				_mitigate_dos_tecra_rdepend_x86_64
+				_mitigate_dos_itlb_multihit_rdepend_x86_64
+				_mitigate_dos_mpf_rdepend_x86_64
+				_mitigate_dos_reptar_rdepend_x86_64
+				_mitigate_dos_blr_rdepend_x86_64
+				_mitigate_dos_mcead_rdepend_x86_64
+				_mitigate_dos_sinkclose_rdepend_x86_64
+				_mitigate_dos_cve_2023_49141_rdepend_x86_64
+				_mitigate_dos_cve_2024_24853_rdepend_x86_64
+				_mitigate_dos_cve_2024_42667_rdepend_x86_64
+			fi
+			if _use x86 ; then
+				_mitigate_dos_tecra_rdepend_x86_32
+				_mitigate_dos_itlb_multihit_rdepend_x86_32
+				_mitigate_dos_mpf_rdepend_x86_32
+				_mitigate_dos_reptar_rdepend_x86_32
+				_mitigate_dos_blr_rdepend_x86_32
+				_mitigate_dos_mcead_rdepend_x86_32
+				_mitigate_dos_sinkclose_rdepend_x86_32
+				_mitigate_dos_cve_2023_49141_rdepend_x86_32
+				_mitigate_dos_cve_2024_24853_rdepend_x86_32
+				_mitigate_dos_cve_2024_42667_rdepend_x86_32
+			fi
+		fi
+	fi
+}
 
 # @FUNCTION: _check_kernel_cmdline
 # @INTERNAL
