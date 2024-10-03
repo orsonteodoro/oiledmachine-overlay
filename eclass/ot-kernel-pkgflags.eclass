@@ -9979,7 +9979,6 @@ ot-kernel-pkgflags_systemd() { # DONE
 
 		if [[ "${SYSTEMD_FEATURE_RESTRICT_FS:-0}" == "1" ]] ; then
 			_ot-kernel_set_bpf "${pkg}"
-			ot-kernel_y_configopt "CONFIG_BPF_LSM"
 			ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"
 			_OT_KERNEL_LSM_ADD_BPF=1
 		fi

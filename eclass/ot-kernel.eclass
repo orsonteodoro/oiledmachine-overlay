@@ -6960,6 +6960,9 @@ ot-kernel_set_kconfig_lsms() {
 		if [[ "${_OT_KERNEL_LSM_ADD_APPARMOR}" == "1" ]] && ! [[ "${lsms}" =~ "apparmor" ]] ; then
 ewarn "You must manually add apparmor to CONFIG_LSM which was requested by an ebuild-package by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
 		fi
+		if [[ "${_OT_KERNEL_LSM_ADD_BPF}" == "1" ]] && ! [[ "${lsms}" =~ "bpf" ]] ; then
+ewarn "You must manually add bpf to CONFIG_LSM which was requested by an ebuild-package by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
+		fi
 		if [[ "${_OT_KERNEL_LSM_ADD_LANDLOCK}" == "1" ]] && ! [[ "${lsms}" =~ "landlock" ]] ; then
 ewarn "You must manually add landlock to CONFIG_LSM which was requested by an ebuild-package by OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1."
 		fi
@@ -7117,6 +7120,10 @@ einfo "OT_KERNEL_LSMS=auto (secure mode)"
 			if ot-kernel_has_version "sys-apps/tomoyo-tools" ; then
 				ot_kernel_lsms+=",tomoyo"
 			fi
+		fi
+
+		if [[ "${_OT_KERNEL_LSM_ADD_BPF}" == "1" ]] ; then
+			ot_kernel_lsms+=",bpf"
 		fi
 
 		ot-kernel_y_configopt "CONFIG_INTEGRITY"
