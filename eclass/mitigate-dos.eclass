@@ -162,8 +162,6 @@ is_microarch_selected() {
 	return ${selected}
 }
 
-inherit linux-info toolchain-funcs
-
 IUSE+="
 	${CPU_TARGET_X86[@]}
 	auto
@@ -295,6 +293,8 @@ REQUIRED_USE="
 	)
 "
 
+inherit linux-info toolchain-funcs
+
 is_lts() {
 	local kv="${1}"
 	local x
@@ -340,7 +340,6 @@ is_eol() {
 # Generate the patched kernel list
 gen_patched_kernel_list() {
 	local kv="${1}"
-
 	local active_version
 
 	for active_version in ${ACTIVE_VERSIONS[@]} ; do
@@ -545,13 +544,17 @@ gen_xen_ge() {
 
 _use() {
 	local arg="${1}"
-	if [[ "${USE}" =~ (" "|^)"${arg}"(" "|$) ]] ; then
-		return 0
-	else
-		return 1
-	fi
+	local L=(
+		${USE}
+	)
+	local x
+	for x in ${L[@]} ; do
+		if [[ "${x}" == "${arg}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
 }
-
 
 _mitigate_dos_tecra_rdepend_x86_64() {
 	if _use cpu_target_x86_ice_lake ; then

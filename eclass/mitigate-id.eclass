@@ -731,14 +731,17 @@ gen_intel_microcode_ge() {
 
 _use() {
 	local arg="${1}"
-	if [[ "${USE}" =~ (" "|^)"${arg}"(" "|$) ]] ; then
-		return 0
-	else
-		return 1
-	fi
+	local L=(
+		${USE}
+	)
+	local x
+	for x in ${L[@]} ; do
+		if [[ "${x}" == "${arg}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
 }
-
-
 
 # Mitigated with RFI flush not KPTI
 _mitigate_id_meltdown_rdepend_ppc64() {

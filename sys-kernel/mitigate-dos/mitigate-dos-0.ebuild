@@ -263,7 +263,7 @@ VIDEO_CARDS=(
 	video_cards_v3d
 	video_cards_vmware
 )
-IUSE="
+IUSE+="
 ${VIDEO_CARDS[@]}
 aacraid
 ata
