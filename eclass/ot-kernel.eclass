@@ -6990,7 +6990,7 @@ einfo "OT_KERNEL_LSMS=default"
 		OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
 
 	# Equivalent to upstream settings
-		ot_kernel_lsms="selinux,bpf"
+		ot_kernel_lsms="selinux" #
 		ot-kernel_y_configopt "CONFIG_SECURITY"
 		ot-kernel_y_configopt "CONFIG_INTEGRITY"
 
@@ -7093,7 +7093,6 @@ einfo "OT_KERNEL_LSMS=auto (secure mode)"
 			if ot-kernel_has_version "sys-apps/apparmor" ; then
 				ot_kernel_lsms+=",apparmor"
 			fi
-			ot_kernel_lsms+=",bpf"
 		elif ot-kernel_has_version "sys-apps/smack-utils" ; then
 			ot_kernel_lsms+=",smack"
 			if ot-kernel_has_version "sec-policy/selinux-base" ; then
@@ -7105,10 +7104,8 @@ einfo "OT_KERNEL_LSMS=auto (secure mode)"
 			if ot-kernel_has_version "sys-apps/apparmor" ; then
 				ot_kernel_lsms+=",apparmor"
 			fi
-			ot_kernel_lsms+=",bpf"
 		elif ot-kernel_has_version "sys-apps/tomoyo-tools" ; then
 			ot_kernel_lsms+=",tomoyo"
-			ot_kernel_lsms+=",bpf"
 		elif ot-kernel_has_version "sys-apps/apparmor" ; then
 			ot_kernel_lsms+=",apparmor"
 			if ot-kernel_has_version "sec-policy/selinux-base" ; then
@@ -7120,9 +7117,6 @@ einfo "OT_KERNEL_LSMS=auto (secure mode)"
 			if ot-kernel_has_version "sys-apps/tomoyo-tools" ; then
 				ot_kernel_lsms+=",tomoyo"
 			fi
-			ot_kernel_lsms+=",bpf"
-		else
-			ot_kernel_lsms+=",bpf"
 		fi
 
 		ot-kernel_y_configopt "CONFIG_INTEGRITY"
@@ -7234,22 +7228,22 @@ einfo "Default LSM: ${l}"
 			[[ "${ot_kernel_lsms}" =~ "smack" ]] && lsms+=( "smack" )
 			[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( "tomoyo" )
 			[[ "${ot_kernel_lsms}" =~ "apparmor" ]] && lsms+=( "apparmor" )
-			lsms+=( "bpf" )
+			[[ "${ot_kernel_lsms}" =~ "bpf" ]] && lsms+=( "bpf" )
 		elif [[ "${ot_kernel_lsms}" =~ "smack" ]] ; then
 			lsms+=( "smack" )
 			[[ "${ot_kernel_lsms}" =~ "selinux" ]] && lsms+=( "selinux" )
 			[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( "tomoyo" )
 			[[ "${ot_kernel_lsms}" =~ "apparmor" ]] && lsms+=( "apparmor" )
-			lsms+=( "bpf" )
+			[[ "${ot_kernel_lsms}" =~ "bpf" ]] && lsms+=( "bpf" )
 		elif [[ "${ot_kernel_lsms}" =~ "tomoyo" ]] ; then
 			lsms+=( "tomoyo" )
-			lsms+=( "bpf" )
+			[[ "${ot_kernel_lsms}" =~ "bpf" ]] && lsms+=( "bpf" )
 		elif [[ "${ot_kernel_lsms}" =~ "apparmor" ]] ; then
 			lsms+=( "apparmor" )
 			[[ "${ot_kernel_lsms}" =~ "selinux" ]] && lsms+=( "selinux" )
 			[[ "${ot_kernel_lsms}" =~ "smack" ]] && lsms+=( "smack" )
 			[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( "tomoyo" )
-			lsms+=( "bpf" )
+			[[ "${ot_kernel_lsms}" =~ "bpf" ]] && lsms+=( "bpf" )
 		elif [[ "${ot_kernel_lsms}" =~ "bpf" ]] ; then
 			lsms+=( "bpf" )
 		fi
