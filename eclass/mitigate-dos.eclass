@@ -599,52 +599,52 @@ _mitigate_dos_UMH_rdepend_x86_64() {
 			gen_intel_microcode_ge 20220809
 		fi
 		if _use xen ; then
-			gen_zen_ge 4.17
+			gen_xen_ge 4.17
 		fi
 	fi
 	if _use cpu_target_x86_coffee_lake_gen8 ; then
 		if _use xen ; then
-			gen_zen_ge 4.17
+			gen_xen_ge 4.17
 		fi
 	fi
 	if _use cpu_target_x86_kaby_lake_gen7 ; then
 		if _use xen ; then
-			gen_zen_ge 4.17
+			gen_xen_ge 4.17
 		fi
 	fi
 	if _use cpu_target_x86_kaby_lake_gen8 ; then
 		if _use xen ; then
-			gen_zen_ge 4.17
+			gen_xen_ge 4.17
 		fi
 	fi
 	if _use cpu_target_x86_amber_lake_gen8 ; then
 		if _use xen ; then
-			gen_zen_ge 4.17
+			gen_xen_ge 4.17
 		fi
 	fi
 	if _use cpu_target_x86_amber_lake_gen10 ; then
 		if _use xen ; then
-			gen_zen_ge 4.17
+			gen_xen_ge 4.17
 		fi
 	fi
 	if _use cpu_target_x86_coffee_lake_gen8 ; then
 		if _use xen ; then
-			gen_zen_ge 4.17
+			gen_xen_ge 4.17
 		fi
 	fi
 	if _use cpu_target_x86_coffee_lake_gen9 ; then
 		if _use xen ; then
-			gen_zen_ge 4.17
+			gen_xen_ge 4.17
 		fi
 	fi
 	if _use cpu_target_x86_comet_lake ; then
 		if _use xen ; then
-			gen_zen_ge 4.17
+			gen_xen_ge 4.17
 		fi
 	fi
 	if _use cpu_target_x86_rocket_lake ; then
 		if _use xen ; then
-			gen_zen_ge 4.17
+			gen_xen_ge 4.17
 		fi
 	fi
 }
