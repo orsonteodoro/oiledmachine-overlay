@@ -357,91 +357,92 @@ gen_render_kernels_list() {
 		local status="${_ALL_VERSIONS[${version}]}"
 		version="${version:1}"
 		version="${version/_/.}"
+		slot=$(ver_cut 1-3 "${version}")
 		if [[ "${status}" =~ "EOL" || "${status}" =~ "V" ]] ; then
 			eol_block+="
-				!=sys-kernel/gentoo-kernel-bin-${version}*
-				!=sys-kernel/gentoo-kernel-${version}*
-				!=sys-kernel/gentoo-sources-${version}*
-				!=sys-kernel/vanilla-kernel-${version}*
-				!=sys-kernel/vanilla-sources-${version}*
-				!=sys-kernel/git-sources-${version}*
-				!=sys-kernel/mips-sources-${version}*
-				!=sys-kernel/pf-sources-${version}*
-				!=sys-kernel/rt-sources-${version}*
-				!=sys-kernel/zen-sources-${version}*
-				!=sys-kernel/raspberrypi-sources-${version}*
-				!=sys-kernel/linux-next-${version}*
-				!=sys-kernel/asahi-sources-${version}*
-				!=sys-kernel/ot-sources-${version}*
+				!=sys-kernel/gentoo-kernel-bin-${slot}*
+				!=sys-kernel/gentoo-kernel-${slot}*
+				!=sys-kernel/gentoo-sources-${slot}*
+				!=sys-kernel/vanilla-kernel-${slot}*
+				!=sys-kernel/vanilla-sources-${slot}*
+				!=sys-kernel/git-sources-${slot}*
+				!=sys-kernel/mips-sources-${slot}*
+				!=sys-kernel/pf-sources-${slot}*
+				!=sys-kernel/rt-sources-${slot}*
+				!=sys-kernel/zen-sources-${slot}*
+				!=sys-kernel/raspberrypi-sources-${slot}*
+				!=sys-kernel/linux-next-${slot}*
+				!=sys-kernel/asahi-sources-${slot}*
+				!=sys-kernel/ot-sources-${slot}*
 			"
 			for atom in ${ATOMS[@]} ; do
 				eol_block+="
-					!=${atom}-${version}*
+					!=${atom}-${slot}*
 				"
 			done
 		else
 			safe_block+="
 				(
-					=sys-kernel/gentoo-kernel-bin-${version}*
+					=sys-kernel/gentoo-kernel-bin-${slot}*
 					>=sys-kernel/gentoo-kernel-bin-${version}
 				)
 				(
-					=sys-kernel/gentoo-kernel-${version}*
+					=sys-kernel/gentoo-kernel-${slot}*
 					>=sys-kernel/gentoo-kernel-${version}
 				)
 				(
-					=sys-kernel/gentoo-sources-${version}*
+					=sys-kernel/gentoo-sources-${slot}*
 					>=sys-kernel/gentoo-sources-${version}
 				)
 				(
-					=sys-kernel/vanilla-kernel-${version}*
+					=sys-kernel/vanilla-kernel-${slot}*
 					>=sys-kernel/vanilla-kernel-${version}
 				)
 				(
-					=sys-kernel/vanilla-sources-${version}*
+					=sys-kernel/vanilla-sources-${slot}*
 					>=sys-kernel/vanilla-sources-${version}
 				)
 				(
-					=sys-kernel/git-sources-${version}*
+					=sys-kernel/git-sources-${slot}*
 					>=sys-kernel/git-sources-${version}
 				)
 				(
-					=sys-kernel/mips-sources-${version}*
+					=sys-kernel/mips-sources-${slot}*
 					>=sys-kernel/mips-sources-${version}
 				)
 				(
-					=sys-kernel/pf-sources-${version}*
+					=sys-kernel/pf-sources-${slot}*
 					>=sys-kernel/pf-sources-${version}
 				)
 				(
-					=sys-kernel/rt-sources-${version}*
+					=sys-kernel/rt-sources-${slot}*
 					>=sys-kernel/rt-sources-${version}
 				)
 				(
-					=sys-kernel/zen-sources-${version}*
+					=sys-kernel/zen-sources-${slot}*
 					>=sys-kernel/zen-sources-${version}
 				)
 				(
-					=sys-kernel/raspberrypi-sources-${version}*
+					=sys-kernel/raspberrypi-sources-${slot}*
 					>=sys-kernel/raspberrypi-sources-${version}
 				)
 				(
-					=sys-kernel/linux-next-${version}*
+					=sys-kernel/linux-next-${slot}*
 					>=sys-kernel/linux-next-${version}
 				)
 				(
-					=sys-kernel/asahi-sources-${version}*
+					=sys-kernel/asahi-sources-${slot}*
 					>=sys-kernel/asahi-sources-${version}
 				)
 				(
-					=sys-kernel/ot-sources-${version}*
+					=sys-kernel/ot-sources-${slot}*
 					>=sys-kernel/ot-sources-${version}
 				)
 			"
 			for atom in ${ATOMS[@]} ; do
 				safe_block+="
 					(
-						=${atom}-${version}*
+						=${atom}-${slot}*
 						>=${atom}-${version}
 					)
 				"
