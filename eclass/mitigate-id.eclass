@@ -23,60 +23,60 @@ _ALL_VERSIONS['_0']='EOL'
 _ALL_VERSIONS['_1']='EOL'
 _ALL_VERSIONS['_2']='EOL'
 _ALL_VERSIONS['_3']='EOL'
-_ALL_VERSIONS['_4.0']='EOL'
-_ALL_VERSIONS['_4.1']='EOL'
-_ALL_VERSIONS['_4.2']='EOL'
-_ALL_VERSIONS['_4.3']='EOL'
-_ALL_VERSIONS['_4.4']='EOL'
-_ALL_VERSIONS['_4.5']='EOL'
-_ALL_VERSIONS['_4.6']='EOL'
-_ALL_VERSIONS['_4.7']='EOL'
-_ALL_VERSIONS['_4.8']='EOL'
-_ALL_VERSIONS['_4.8']='EOL'
-_ALL_VERSIONS['_4.9']='EOL'
-_ALL_VERSIONS['_4.10']='EOL'
-_ALL_VERSIONS['_4.11']='EOL'
-_ALL_VERSIONS['_4.12']='EOL'
-_ALL_VERSIONS['_4.13']='EOL'
-_ALL_VERSIONS['_4.14']='EOL'
-_ALL_VERSIONS['_4.15']='EOL'
-_ALL_VERSIONS['_4.16']='EOL'
-_ALL_VERSIONS['_4.17']='EOL'
-_ALL_VERSIONS['_4.18']='EOL'
-_ALL_VERSIONS['_4.19']='4.19'
-_ALL_VERSIONS['_4.20']='EOL'
-_ALL_VERSIONS['_5.0']='EOL'
-_ALL_VERSIONS['_5.1']='EOL'
-_ALL_VERSIONS['_5.2']='EOL'
-_ALL_VERSIONS['_5.3']='EOL'
-_ALL_VERSIONS['_5.4']='5.4'
-_ALL_VERSIONS['_5.5']='EOL'
-_ALL_VERSIONS['_5.6']='EOL'
-_ALL_VERSIONS['_5.7']='EOL'
-_ALL_VERSIONS['_5.8']='EOL'
-_ALL_VERSIONS['_5.9']='EOL'
-_ALL_VERSIONS['_5.10']='5.10'
-_ALL_VERSIONS['_5.11']='EOL'
-_ALL_VERSIONS['_5.12']='EOL'
-_ALL_VERSIONS['_5.13']='EOL'
-_ALL_VERSIONS['_5.14']='EOL'
-_ALL_VERSIONS['_5.15']='5.15'
-_ALL_VERSIONS['_5.16']='EOL'
-_ALL_VERSIONS['_5.17']='EOL'
-_ALL_VERSIONS['_5.18']='EOL'
-_ALL_VERSIONS['_5.19']='EOL'
-_ALL_VERSIONS['_6.0']='EOL'
-_ALL_VERSIONS['_6.1']='6.1'
-_ALL_VERSIONS['_6.2']='EOL'
-_ALL_VERSIONS['_6.3']='EOL'
-_ALL_VERSIONS['_6.4']='EOL'
-_ALL_VERSIONS['_6.5']='EOL'
-_ALL_VERSIONS['_6.6']='6.6'
-_ALL_VERSIONS['_6.7']='EOL'
-_ALL_VERSIONS['_6.8']='EOL'
-_ALL_VERSIONS['_6.9']='EOL'
-_ALL_VERSIONS['_6.10']='6.10'
-_ALL_VERSIONS['_6.11']='6.11'
+_ALL_VERSIONS['_4_0']='EOL'
+_ALL_VERSIONS['_4_1']='EOL'
+_ALL_VERSIONS['_4_2']='EOL'
+_ALL_VERSIONS['_4_3']='EOL'
+_ALL_VERSIONS['_4_4']='EOL'
+_ALL_VERSIONS['_4_5']='EOL'
+_ALL_VERSIONS['_4_6']='EOL'
+_ALL_VERSIONS['_4_7']='EOL'
+_ALL_VERSIONS['_4_8']='EOL'
+_ALL_VERSIONS['_4_8']='EOL'
+_ALL_VERSIONS['_4_9']='EOL'
+_ALL_VERSIONS['_4_10']='EOL'
+_ALL_VERSIONS['_4_11']='EOL'
+_ALL_VERSIONS['_4_12']='EOL'
+_ALL_VERSIONS['_4_13']='EOL'
+_ALL_VERSIONS['_4_14']='EOL'
+_ALL_VERSIONS['_4_15']='EOL'
+_ALL_VERSIONS['_4_16']='EOL'
+_ALL_VERSIONS['_4_17']='EOL'
+_ALL_VERSIONS['_4_18']='EOL'
+_ALL_VERSIONS['_4_19']='4.19'
+_ALL_VERSIONS['_4_20']='EOL'
+_ALL_VERSIONS['_5_0']='EOL'
+_ALL_VERSIONS['_5_1']='EOL'
+_ALL_VERSIONS['_5_2']='EOL'
+_ALL_VERSIONS['_5_3']='EOL'
+_ALL_VERSIONS['_5_4']='5.4'
+_ALL_VERSIONS['_5_5']='EOL'
+_ALL_VERSIONS['_5_6']='EOL'
+_ALL_VERSIONS['_5_7']='EOL'
+_ALL_VERSIONS['_5_8']='EOL'
+_ALL_VERSIONS['_5_9']='EOL'
+_ALL_VERSIONS['_5_10']='5.10'
+_ALL_VERSIONS['_5_11']='EOL'
+_ALL_VERSIONS['_5_12']='EOL'
+_ALL_VERSIONS['_5_13']='EOL'
+_ALL_VERSIONS['_5_14']='EOL'
+_ALL_VERSIONS['_5_15']='5.15'
+_ALL_VERSIONS['_5_16']='EOL'
+_ALL_VERSIONS['_5_17']='EOL'
+_ALL_VERSIONS['_5_18']='EOL'
+_ALL_VERSIONS['_5_19']='EOL'
+_ALL_VERSIONS['_6_0']='EOL'
+_ALL_VERSIONS['_6_1']='6.1'
+_ALL_VERSIONS['_6_2']='EOL'
+_ALL_VERSIONS['_6_3']='EOL'
+_ALL_VERSIONS['_6_4']='EOL'
+_ALL_VERSIONS['_6_5']='EOL'
+_ALL_VERSIONS['_6_6']='6.6'
+_ALL_VERSIONS['_6_7']='EOL'
+_ALL_VERSIONS['_6_8']='EOL'
+_ALL_VERSIONS['_6_9']='EOL'
+_ALL_VERSIONS['_6_10']='6.10'
+_ALL_VERSIONS['_6_11']='6.11'
 _INTEL_MICROCODE_PV=0
 _LINUX_FIRMWARE_PV=0
 
@@ -542,7 +542,7 @@ gen_patched_kernel_list() {
 		if ver_test ${s2} -ge ${s1} ; then
 			:
 		else
-			_ALL_VERSIONS["_${s2}"]="V"
+			_ALL_VERSIONS["_${s2/./_}"]="V"
 		fi
 	done
 }
@@ -558,8 +558,8 @@ gen_zero_tolerance_kernel_list() {
 
 	for latest_version in ${PATCHED_VERSIONS[@]} ; do
 		local s=$(ver_cut 1-2 ${latest_version})
-		if [[ "${_ALL_VERSIONS[_${s}]}" != "EOL" ]] || ! [[ "${_ALL_VERSIONS[_${s}]}" =~ "V" ]] ; then
-			_ALL_VERSIONS["_${s}"]="${latest_version}"
+		if [[ "${_ALL_VERSIONS[_${s/./_}]}" != "EOL" ]] || ! [[ "${_ALL_VERSIONS[_${s/./_}]}" =~ "V" ]] ; then
+			_ALL_VERSIONS["_${s/./_}"]="${latest_version}"
 		fi
 	done
 }
@@ -576,12 +576,11 @@ gen_patched_kernel_driver_list() {
 
 	local active_version
 
-	# Concat is expensive in bash
 	for active_version in ${ACTIVE_VERSIONS[@]} ; do
 		if [[ "${active_version}" =~ "EOL" ]] ; then
 			:
 		elif [[ "${active_version}" =~ "V" ]] ; then
-			_ALL_VERSIONS["_${slot}"]="V"
+			_ALL_VERSIONS["_${slot/./_}"]="V"
 		elif ver_test "${patched_version}" -ge "${active_version}" ; then
 			:
 		fi
@@ -589,12 +588,11 @@ gen_patched_kernel_driver_list() {
 
 	# Add last version of patched kernel list
 
-	# Concatination is expensive in bash
 	for patched_version in ${PATCHED_VERSIONS[@]} ; do
 		if [[ "${patched_version}" =~ "V" ]] ; then
 	# Unpatched / vulnerable
 			local slot="${patched_version%.*}"
-			_ALL_VERSIONS["_${slot}"]="V"
+			_ALL_VERSIONS["_${slot/./_}"]="V"
 		elif is_lts "${patched_version}" ; then
 			:
 		fi
@@ -613,8 +611,9 @@ gen_render_kernels_list() {
 	local version
 	for version in ${!_ALL_VERSIONS[@]} ; do
 		local status="${_ALL_VERSIONS[${version}]}"
+		version="${version:1}"
+		version="${version/_/.}"
 		if [[ "${status}" =~ "EOL" || "${status}" =~ "V" ]] ; then
-			version="${version:1}"
 			eol_block+="
 				!=sys-kernel/gentoo-kernel-bin-${version}*
 				!=sys-kernel/gentoo-kernel-${version}*
