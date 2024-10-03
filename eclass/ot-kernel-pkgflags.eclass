@@ -68,9 +68,11 @@ eerror "Lowered security was detected for pkg = ${pkg}, id = ${pkgid}."
 eerror "Cause:  ${2}"
 		if [[ -n "${evaluation}" ]] ; then
 eerror "Security evaluation:  ${3}"
-			[[ "${evaluation}" == "DoS" ]] && eerror "CVSS medium"
-			[[ "${evaluation}" == "ID" ]] && eerror "CVSS medium"
-			[[ "${evaluation}" =~ "DoS" && "${evaluation}" =~ "ID" && "${evaluation}" =~ "DT" ]] && eerror "CVSS high"
+			local severity=""
+			[[ "${evaluation}" == "DoS" ]] && severity="medium"
+			[[ "${evaluation}" == "ID" ]] && severity="medium"
+			[[ "${evaluation}" =~ "DoS" && "${evaluation}" =~ "ID" && "${evaluation}" =~ "DT" ]] && severity="high"
+eerror "Estimated CVSS 3.1 severity:  ${severity}"
 		fi
 eerror
 eerror "To permit security lowering set OT_KERNEL_HALT_ON_LOWERED_SECURITY=0."
@@ -93,9 +95,11 @@ ewarn "Security is lowered for pkg = ${pkg}, id = ${pkgid}."
 ewarn "Cause:  ${2}"
 		if [[ -n "${evaluation}" ]] ; then
 ewarn "Security evaluation:  ${3}"
-			[[ "${evaluation}" == "DoS" ]] && eerror "CVSS medium"
-			[[ "${evaluation}" == "ID" ]] && eerror "CVSS medium"
-			[[ "${evaluation}" =~ "DoS" && "${evaluation}" =~ "ID" && "${evaluation}" =~ "DT" ]] && eerror "CVSS high"
+			local severity=""
+			[[ "${evaluation}" == "DoS" ]] && severity="medium"
+			[[ "${evaluation}" == "ID" ]] && severity="medium"
+			[[ "${evaluation}" =~ "DoS" && "${evaluation}" =~ "ID" && "${evaluation}" =~ "DT" ]] && severity="high"
+ewarn "Estimated CVSS 3.1 severity:  ${severity}"
 		fi
 ewarn
 ewarn "To halt on lowered security, set OT_KERNEL_HALT_ON_LOWERED_SECURITY=1."
@@ -105,10 +109,10 @@ ewarn
 		if [[ -n "${evaluation}" ]] ; then
 ewarn "Glossary:"
 ewarn
-			[[ "${evaluation}" =~ "DoS" ]] && eerror "DoS - Denial of Service"
-			[[ "${evaluation}" =~ "DT" ]] && eerror "DT - Data Tampering"
-			[[ "${evaluation}" =~ "ID" ]] && eerror "ID - Information Disclosure"
-			[[ "${evaluation}" =~ "PE" ]] && eerror "PE - Privilege Escalation"
+			[[ "${evaluation}" =~ "DoS" ]] && ewarn "DoS - Denial of Service"
+			[[ "${evaluation}" =~ "DT" ]] && ewarn "DT - Data Tampering"
+			[[ "${evaluation}" =~ "ID" ]] && ewarn "ID - Information Disclosure"
+			[[ "${evaluation}" =~ "PE" ]] && ewarn "PE - Privilege Escalation"
 ewarn
 		fi
 	fi
