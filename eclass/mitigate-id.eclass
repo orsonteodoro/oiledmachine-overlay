@@ -552,7 +552,7 @@ gen_render_kernels_list() {
 		local status="${_ALL_VERSIONS[${version}]}"
 		version="${version:1}"
 		version="${version/_/.}"
-		slot=$(ver_cut 1-3 "${version}")
+		local slot=$(ver_cut 1-2 "${version}")
 		if [[ "${status}" =~ "EOL" || "${status}" =~ "V" ]] ; then
 			eol_block+="
 				!=sys-kernel/gentoo-kernel-bin-${slot}*
