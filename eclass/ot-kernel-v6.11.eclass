@@ -48,7 +48,7 @@ else
 	RC_PV=""
 	MY_PV="${PV}" # ver_test context
 fi
-KERNEL_RELEASE_DATE="99999999" # of first stable release
+KERNEL_RELEASE_DATE="20240915" # of first stable release
 KV_MAJOR=$(ver_cut 1 "${MY_PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
 if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
