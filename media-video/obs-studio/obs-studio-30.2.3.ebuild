@@ -134,7 +134,7 @@ SLOT="0"
 # qsv is enabled by default upstream
 # vlc is enabled by default upstream
 IUSE+="
-+alsa aja amf +browser +browser-panels coreaudio-encoder -decklink -fdk
++alsa aja amf +browser +browser-panels coreaudio-encoder -decklink -fdk firejail
 +freetype ftl +hevc +ipv6 jack libaom +lua mac-syphon +new-mpegts-output nvafx
 nvenc nvvfx oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
@@ -217,6 +217,11 @@ BDEPEND+="
 		websocket? (
 			>=dev-libs/boost-1.74.0
 		)
+	)
+"
+PDEPEND+="
+	firejail? (
+		sys-apps/firejail[firejail_profiles_obs,X]
 	)
 "
 
