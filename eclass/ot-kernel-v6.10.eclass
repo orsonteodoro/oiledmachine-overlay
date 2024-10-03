@@ -315,7 +315,6 @@ fi
 if [[ "${PV}" =~ "9999" ]] ; then
 	:
 else
-#clear
 IUSE+="
 "
 fi
@@ -327,7 +326,7 @@ ${ARM_FLAGS[@]}
 ${PPC_FLAGS[@]}
 ${RISCV_FLAGS[@]}
 ${X86_FLAGS[@]}
-bbrv2 bbrv3 build c2tcp +cet +cfs -clang deepcc -debug -dwarf4 -dwarf5
+bbrv2 bbrv3 build c2tcp +cet +cfs -clang clear deepcc -debug -dwarf4 -dwarf5
 -dwarf-auto -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto nest
 orca pgo prjc qt5 qt6 +retpoline rt -rust shadowcallstack symlink tresor tresor_prompt
 tresor_sysfs zen-sauce
