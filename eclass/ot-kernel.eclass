@@ -5068,32 +5068,36 @@ einfo "Changed .config to use MuQSS"
 
 	if ! tc-is-cross-compiler ; then
 		ncpus=$(lscpu \
-			| grep "CPU(s)" \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^CPU(s)" \
 			| head -n 1 \
 			| grep -E -o -e "[0-9]+")
 		(( ${ncpus} > 0 )) && smp=1
 
 		nnuma=$(lscpu \
-			| grep "NUMA node(s)" \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^NUMA node(s)" \
 			| head -n 1 \
 			| grep -E -o -e "[0-9]+")
 		[[ -z "${nnuma}" ]] && nnuma=0
 
 		tpc=$(lscpu \
-			| grep  -e "Thread(s) per core:.*" \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep -e "^Thread(s) per core:.*" \
 			| head -n 1 \
 			| grep -E -o "[0-9]+")
 		(( ${tpc} > 1 )) && smt=1
 
-
-		local ncores=$(cat /proc/cpuinfo \
-			| grep "cpu cores" \
+		local ncores=$(cat "/proc/cpuinfo" \
+			| grep "^cpu cores" \
 			| grep -E -o "[0-9]+" \
 			| head -n 1)
 		(( ${ncores} > 1 )) && multicore=1
 
 		if \
-			lscpu | grep -q -E "L3.*[0-9]+" \
+			lscpu \
+				| sed -r -e "s|^[ ]+||g" \
+				| grep -q -E "^L3.*[0-9]+" \
 				&&
 			(( ${multicore} == 1 )) \
 		; then
@@ -8518,23 +8522,29 @@ ot-kernel_set_kconfig_processor_class() {
 	elif [[ \
 		   "${processor_class}" == "auto" \
 	]] ; then
-		local ncpus=$(lscpu | grep "CPU(s):" \
+		local ncpus=$(lscpu \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^CPU(s):" \
 			| head -n 1 \
 			| grep -o -E -e "[0-9]+") # ncores * nsockets * tpc
 		local ncores=$(lscpu \
-			| grep "Core(s) per socket:" \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^Core(s) per socket:" \
 			| head -n 1 \
 			| grep -o -E -e "[0-9]+")
 		local nsockets=$(lscpu \
-			| grep "Socket(s):" \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^Socket(s):" \
 			| head -n 1 \
 			| grep -o -E -e "[0-9]+")
 		local tpc=$(lscpu \
-			| grep "Thread(s) per core:" \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^Thread(s) per core:" \
 			| head -n 1 \
 			| grep -o -E -e "[0-9]+")
 		local n_numa_nodes=$(lscpu \
-			| grep "NUMA node(s):" \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^NUMA node(s):" \
 			| head -n 1 \
 			| grep -o -E -e "[0-9]+")
 		if (( ${ncpus} > 1 )) ; then
@@ -8593,7 +8603,11 @@ ot-kernel_set_kconfig_processor_class() {
 einfo "Processor class is ${processor_class}"
 	local ncpus="${OT_KERNEL_N_CPUS}"
 	if [[ "${ncpus}" == "auto" ]] ; then
-		ncpus=$(lscpu | grep "CPU(s):" | head -n 1 | grep -o -E -e "[0-9]+")
+		ncpus=$(lscpu \
+			| sed -r -e "s|^[ ]+||g" \
+			| grep "^CPU(s):" \
+			| head -n 1 \
+			| grep -o -E -e "[0-9]+")
 		ot-kernel_set_configopt "CONFIG_NR_CPUS" "${ncpus}"
 	elif [[ -n "${ncpus}" ]] ; then
 		ot-kernel_set_configopt "CONFIG_NR_CPUS" "${ncpus}"
@@ -11553,7 +11567,8 @@ eerror
 	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		if ! tc-is-cross-compiler ; then
 			local tpc=$(lscpu \
-				| grep  -e "Thread(s) per core:.*" \
+				| sed -r -e "s|^[ ]+||g" \
+				| grep -e "^Thread(s) per core:.*" \
 				| head -n 1 \
 				| grep -E -o "[0-9]+")
 			if (( ${tpc} > 1 )) && ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
@@ -11626,7 +11641,8 @@ eerror
 	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		if ! tc-is-cross-compiler ; then
 			local tpc=$(lscpu \
-				| grep  -e "Thread(s) per core:.*" \
+				| sed -r -e "s|^[ ]+||g" \
+				| grep -e "^Thread(s) per core:.*" \
 				| head -n 1 \
 				| grep -E -o "[0-9]+")
 			if (( ${tpc} > 1 )) && ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then

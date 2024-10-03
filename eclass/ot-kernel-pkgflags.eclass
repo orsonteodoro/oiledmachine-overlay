@@ -9455,10 +9455,12 @@ einfo "SquashFS 1k block transfer for optimized lowered latency applied"
 		ot-kernel_n_configopt "CONFIG_SQUASHFS_DECOMP_MULTI_PERCPU"
 		if [[ "${SQUASHFS_DECOMPRESSORS_PER_CORE:-auto}" == "auto" ]] ; then
 			local tpc=$(lscpu \
-				| grep "Thread(s) per core:" \
+				| sed -r -e "s|^[ ]+||g" \
+				| grep "^Thread(s) per core:" \
 				| grep -E -o -e "[0-9]+")
 			local mc=$(lscpu \
-				| grep "CPU(s):" \
+				| sed -r -e "s|^[ ]+||g" \
+				| grep "^CPU(s):" \
 				| grep -E -o -e "[0-9]+")
 			if (( "${tpc}" >= 2 )) ; then
 				ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_MULTI"
