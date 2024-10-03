@@ -224,6 +224,9 @@
       Mitigate against Denial of Service for the SMMUv3 Shared Virtual
       Addressing dependency.
     </flag>
+    <flag name="squashfs">
+      Mitigate against Denial of Service for the SquashFS filesystem driver.
+    </flag>
     <flag name="tipc">
       Mitigate against Denial of Service for the TIPC protocol.
     </flag>

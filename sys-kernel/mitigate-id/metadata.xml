@@ -157,6 +157,9 @@
     <flag name="selinux">
       Mitigate against information disclosure for the SELinux security module.
     </flag>
+    <flag name="squashfs">
+      Mitigate against information disclosure for the SquashFS filesystem driver.
+    </flag>
     <flag name="tipc">
       Mitigate against information disclosure for the TIPC protocol.
     </flag>

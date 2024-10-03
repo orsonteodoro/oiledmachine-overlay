@@ -123,6 +123,7 @@ MULTISLOT_KERNEL_JFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.
 MULTISLOT_KERNEL_MLX5=("5.4.185" "5.10.106" "5.15.29" "5.16.15")
 MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
 MULTISLOT_KERNEL_MPTCP_44974=("6.6.48" "6.10.7" "6.11")
+MULTISLOT_KERNEL_MPTCP_46858=("6.1.111" "6.6.52" "6.10.11" "6.11")
 MULTISLOT_KERNEL_MT76=("5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_NFSD=("6.10.8")
@@ -136,6 +137,7 @@ MULTISLOT_KERNEL_SELINUX_48740=("5.10.99" "5.15.22" "5.16.8")
 MULTISLOT_KERNEL_SMB_46796=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_SMACK=("6.6.49" "6.10.8")
 MULTISLOT_KERNEL_SMB_46795=("5.15.167" "6.1.110" "6.6.51" "6.10.10")
+MULTISLOT_KERNEL_SQUASHFS=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_TIPC=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_TLS_0646=("5.4.267" "5.10.208" "5.15.147" "6.1.69" "6.6.7")
 MULTISLOT_KERNEL_V3D=("6.10.8")
@@ -168,6 +170,7 @@ CVE_KVM_POWERPC_41070="CVE-2024-41070"
 CVE_MD_RAID1="CVE-2024-45023"
 CVE_MLX5="CVE-2022-48858"
 CVE_MPTCP_44974="CVE-2024-44974"
+CVE_MPTCP_46858="CVE-2024-46858"
 CVE_MT76="CVE-2024-42225"
 CVE_NET_BRIDGE="CVE-2024-44934"
 CVE_NFSD="CVE-2024-46696"
@@ -181,6 +184,7 @@ CVE_SELINUX_48740="CVE-2022-48740"
 CVE_SMACK="CVE-2024-46695"
 CVE_SMB_46796="CVE-2024-46796"
 CVE_SMB_46795="CVE-2024-46795"
+CVE_SQUASHFS="CVE-2024-46744"
 CVE_TIPC="CVE-2024-42284"
 CVE_TLS_0646="CVE-2024-0646"
 CVE_V3D="CVE-2024-46699"
@@ -240,6 +244,7 @@ pci
 samba
 selinux
 smack
+squashfs
 tipc
 tls
 vmware
@@ -311,6 +316,7 @@ REQUIRED_USE="
 # md-raid1? https://nvd.nist.gov/vuln/detail/CVE-2024-45023 # DT, DoS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2022-48858 # DoS, DT, ID
 # mptcp? https://nvd.nist.gov/vuln/detail/CVE-2024-44974 # DoS, DT, ID
+# mptcp? https://nvd.nist.gov/vuln/detail/CVE-2024-46858 # DoS, DT, ID
 # mt76? https://nvd.nist.gov/vuln/detail/CVE-2024-42225 # DoS, DT, ID
 # nfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
 # nilfs2? https://nvd.nist.gov/vuln/detail/CVE-2024-42104 # DoS, DT, ID
@@ -321,6 +327,7 @@ REQUIRED_USE="
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2024-46695 # DT
 # samba? https://nvd.nist.gov/vuln/detail/CVE-2024-46796 # DoS, DT, ID
 # smack? https://nvd.nist.gov/vuln/detail/CVE-2024-46695 # DT
+# squashfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46744 # DoS, DT, ID
 # tls? https://nvd.nist.gov/vuln/detail/CVE-2024-0646 # DoS, DT, ID
 # tipc? https://nvd.nist.gov/vuln/detail/CVE-2024-42284 # DoS, DT, ID
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
@@ -461,6 +468,7 @@ all_rdepend() {
 	if _use mptcp ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MPTCP_44974[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MPTCP_46858[@]}
 		fi
 	fi
 	if _use mt76 ; then
@@ -511,6 +519,11 @@ all_rdepend() {
 	if _use smack ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMACK[@]}
+		fi
+	fi
+	if _use squashfs ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SQUASHFS[@]}
 		fi
 	fi
 	if _use tipc ; then
@@ -724,6 +737,7 @@ check_drivers() {
 	fi
 	if use mptcp ; then
 		check_kernel_version "mptcp" "${CVE_MPTCP_44974}" ${MULTISLOT_KERNEL_MPTCP_44974[@]}
+		check_kernel_version "mptcp" "${CVE_MPTCP_46858}" ${MULTISLOT_KERNEL_MPTCP_46858[@]}
 	fi
 	if use mt76 ; then
 		check_kernel_version "mt76" "${CVE_MT76}" ${MULTISLOT_KERNEL_MT76[@]}
@@ -756,6 +770,10 @@ check_drivers() {
 	fi
 	if use smack ; then
 		check_kernel_version "smack" "${CVE_SMACK}" ${MULTISLOT_KERNEL_SMACK[@]}
+	fi
+	if use squashfs ; then
+		fs=1
+		check_kernel_version "squashfs" "${CVE_SQUASHFS}" ${MULTISLOT_KERNEL_SQUASHFS[@]}
 	fi
 	if use tipc ; then
 		check_kernel_version "tipc" "${CVE_TIPC}" ${MULTISLOT_KERNEL_TIPC[@]}

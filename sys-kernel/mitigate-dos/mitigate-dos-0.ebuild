@@ -189,6 +189,7 @@ MULTISLOT_KERNEL_SCTP=("5.4.282" "5.10.224" "5.15.165" "6.1.105" "6.6.46" "6.10.
 MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
 MULTISLOT_KERNEL_SMB_46796=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_SMB_46795=("5.15.167" "6.1.110" "6.6.51" "6.10.10")
+MULTISLOT_KERNEL_SQUASHFS=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_TIPC=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_TLS=("5.10.219" "5.15.161" "6.1.93" "6.6.33" "6.9.4")
 MULTISLOT_KERNEL_USB=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.100" "6.6.41" "6.9.10" "6.10")
@@ -290,6 +291,7 @@ CVE_SCTP="CVE-2024-44935"
 CVE_SELINUX="CVE-2022-48740"
 CVE_SMB_46796="CVE-2024-46796"
 CVE_SMB_46795="CVE-2024-46795"
+CVE_SQUASHFS="CVE-2024-46744"
 CVE_TIPC="CVE-2024-42284"
 CVE_TLS="CVE-2024-36489"
 CVE_USB="CVE-2024-41035"
@@ -384,6 +386,7 @@ rtw88
 sctp
 selinux
 smmu-v3-sva
+squashfs
 tipc
 tls
 usb
@@ -504,7 +507,7 @@ REQUIRED_USE="
 # md-raid5? https://nvd.nist.gov/vuln/detail/CVE-2024-43914 # DOS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-46857 # Unofficial: DoS
-# mptcp? https://nvd.nist.gov/vuln/detail/CVE-2024-46858 # Unofficial: DoS
+# mptcp? https://nvd.nist.gov/vuln/detail/CVE-2024-46858 # DoS, DT, ID
 # msm? https://nvd.nist.gov/vuln/detail/CVE-2024-45015 # DoS
 # mt76? https://nvd.nist.gov/vuln/detail/CVE-2024-42225 # DoS, DT, ID
 # mt7921? https://nvd.nist.gov/vuln/detail/CVE-2024-46860 # Unofficial: DoS
@@ -526,6 +529,7 @@ REQUIRED_USE="
 # sctp? https://nvd.nist.gov/vuln/detail/CVE-2024-44935 # DoS
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
 # smmu-v3-sva? https://nvd.nist.gov/vuln/detail/CVE-2024-44994 # Unofficial: DoS
+# squashfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46744 # DoS, DT, ID
 # tipc? https://nvd.nist.gov/vuln/detail/CVE-2024-42284 # DoS, DT, ID
 # tls? https://nvd.nist.gov/vuln/detail/CVE-2024-36489 # DoS
 # usb? https://nvd.nist.gov/vuln/detail/CVE-2024-41035 # Unofficial: DoS
@@ -918,6 +922,11 @@ all_rdepend() {
 	if _use smmu-v3-sva ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IOMMU_IOPF[@]}
+		fi
+	fi
+	if _use squashfs ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SQUASHFS[@]}
 		fi
 	fi
 	if _use tipc ; then
@@ -1337,6 +1346,10 @@ check_drivers() {
 	fi
 	if use smmu-v3-sva ; then
 		check_kernel_version "iommu/iopf" "${CVE_IOMMU_IOPF}" ${MULTISLOT_KERNEL_IOMMU_IOPF[@]}
+	fi
+	if use squashfs ; then
+		fs=1
+		check_kernel_version "squashfs" "${CVE_SQUASHFS}" ${MULTISLOT_KERNEL_SQUASHFS[@]}
 	fi
 	if use tipc ; then
 		check_kernel_version "tipc" "${CVE_TIPC}" ${MULTISLOT_KERNEL_TIPC[@]}
