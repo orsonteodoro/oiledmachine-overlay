@@ -142,7 +142,7 @@ multilib_src_install_all() {
 	if use gtk-doc; then
 		mkdir -p "${ED}/usr/share/gtk-doc/html/" \
 			|| die
-		mv "${ED}/usr/share/doc/"{gck-2,gcr-4} \
+		mv "${ED}/usr/share/doc/"{"gck-2","gcr-4"} \
 			"${ED}/usr/share/gtk-doc/html/" \
 			|| die
 	fi

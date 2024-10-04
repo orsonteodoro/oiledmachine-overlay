@@ -143,18 +143,21 @@ src_install() {
 
 multilib_src_install_all() {
 	# These files are installed by gcr:4
-	local conflicts=(
+	local conflicts=()
+	use ssh && conflicts+=(
 		"${ED}/usr/libexec/gcr-ssh-agent"
 	)
 	use systemd && conflicts+=(
-		"${ED}/usr/lib/systemd/user/gcr-ssh-agent."{service,socket}
+		"${ED}/usr/lib/systemd/user/gcr-ssh-agent."{"service","socket"}
 	)
 	einfo "${conflicts[@]}"
-	rm "${conflicts[@]}" || die
+	if use ssh || use systemd ; then
+		rm "${conflicts[@]}" || die
+	fi
 
 	if use gtk-doc; then
 		mkdir -p "${ED}/usr/share/gtk-doc/html/" || die
-		mv "${ED}/usr/share/doc/"{gck-1,gcr-3,gcr-ui-3} \
+		mv "${ED}/usr/share/doc/"{"gck-1","gcr-3","gcr-ui-3"} \
 			"${ED}/usr/share/gtk-doc/html/" \
 			|| die
 	fi
