@@ -3146,6 +3146,17 @@ user_wants_plugin() {
 	return ${wants}
 }
 
+gen_plugin_array() {
+	L=(
+		# Paste subfolders of plugins folder
+	)
+	local raw_name
+	for raw_name in ${L[@]} ; do
+		local name="${raw_name/./_}"
+		echo "[\"theia_plugin_${name}\"]=\"${raw_name}\""
+	done
+}
+
 src_unpack() {
 einfo "YARN_UPDATE_LOCK=${YARN_UPDATE_LOCK}"
 	yarn_src_unpack
