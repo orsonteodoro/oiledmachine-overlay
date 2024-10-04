@@ -70,8 +70,10 @@ https://github.com/microsoft/ftl-sdk/archive/${FTL_SDK_COMMIT}.tar.gz
 	-> ftl-sdk-${FTL_SDK_COMMIT:0:7}.tar.gz
 https://github.com/obsproject/libdshowcapture/archive/${LIBDSHOWCAPTURE_COMMIT}.tar.gz
 	-> libdshowcapture-${LIBDSHOWCAPTURE_COMMIT:0:7}.tar.gz
+	browser? (
 https://github.com/obsproject/obs-browser/archive/${OBS_BROWSER_COMMIT}.tar.gz
 	-> obs-browser-${OBS_BROWSER_COMMIT:0:7}.tar.gz
+	)
 https://github.com/obsproject/obs-studio/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 https://github.com/obsproject/obs-websocket/archive/${OBS_WEBSOCKET_COMMIT}.tar.gz
@@ -675,6 +677,7 @@ PATCHES=(
 	# https://github.com/obsproject/obs-studio/pull/3335
 	"${FILESDIR}/${PN}-26.1.2-python-3.8.patch"
 	"${FILESDIR}/${PN}-30.2.3-hevc-preprocessor-cond.patch"
+	"${FILESDIR}/${PN}-30.2.3-browser-checks.patch"
 )
 
 qt_check() {
@@ -854,7 +857,9 @@ src_unpack() {
 		dep_prepare_mv "${WORKDIR}/ftl-sdk-${FTL_SDK_COMMIT}" "${S}/plugins/obs-outputs/ftl-sdk"
 		dep_prepare_mv "${WORKDIR}/curl-${CURL_COMMIT}" "${S}/plugins/obs-outputs/ftl-sdk/libcurl"
 		dep_prepare_mv "${WORKDIR}/jansson-${JANSSON_COMMIT}" "${S}/plugins/obs-outputs/ftl-sdk/libjansson"
-		dep_prepare_mv "${WORKDIR}/obs-browser-${OBS_BROWSER_COMMIT}" "${S}/plugins/obs-browser"
+		if use browser ; then
+			dep_prepare_mv "${WORKDIR}/obs-browser-${OBS_BROWSER_COMMIT}" "${S}/plugins/obs-browser"
+		fi
 		dep_prepare_mv "${WORKDIR}/obs-websocket-${OBS_WEBSOCKET_COMMIT}" "${S}/plugins/obs-websocket"
 	fi
 }
@@ -872,12 +877,14 @@ src_prepare() {
 		plugins/obs-ffmpeg/CMakeLists.txt \
 		|| die
 
-	sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
-		plugins/obs-browser/FindCEF.cmake \
-		|| die
-	sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
-		cmake/Modules/FindCEF.cmake \
-		|| die
+	if use browser ; then
+		sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
+			plugins/obs-browser/FindCEF.cmake \
+			|| die
+		sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
+			cmake/Modules/FindCEF.cmake \
+			|| die
+	fi
 }
 
 gen_rtmp_services() {

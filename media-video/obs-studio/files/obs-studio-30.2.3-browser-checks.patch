@@ -1,0 +1,12 @@
+--- a/plugins/CMakeLists.txt.orig	2024-08-15 14:53:35.000000000 -0700
++++ b/plugins/CMakeLists.txt	2024-10-03 21:48:29.901923655 -0700
+@@ -83,7 +83,8 @@ if(NOT ENABLE_PLUGINS)
+ endif()
+ 
+ function(check_obs_browser)
+-  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/obs-browser/CMakeLists.txt)
++  if(NOT ENABLE_BROWSER)
++  elseif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/obs-browser/CMakeLists.txt)
+     add_subdirectory(obs-browser)
+   else()
+     obs_status(FATAL_ERROR "obs-browser submodule not available.")
