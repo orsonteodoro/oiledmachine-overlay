@@ -25,4 +25,9 @@
       monthly - Improvements every month
     </subslots>
   </slots>
+  <use>
+    <flag name="git">
+      Add support for the Git-extension.
+    </flag>
+  </use>
 </pkgmetadata>
