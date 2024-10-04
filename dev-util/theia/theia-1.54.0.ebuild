@@ -3106,8 +3106,10 @@ install_new() {
 		|| die
 	fperms 4711 "/opt/theia/chrome-sandbox"
 	if use plugins ; then
-einfo "TODO"
-		:
+		mv \
+			"plugins" \
+			"${ED}/opt/theia/resources/app" \
+			|| die
 	fi
 	cat "${FILESDIR}/${PN}-v2" > "${T}/${PN}" || die
 }
