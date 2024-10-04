@@ -687,6 +687,94 @@ YARN_EXE_LIST="
 /opt/theia/scripts/deps/rhel.sh
 /opt/theia/scripts/prepare-initial.js
 "
+declare -A THEIA_PLUGINS=(
+["theia_plugin_EditorConfig_EditorConfig"]="EditorConfig.EditorConfig"
+["theia_plugin_vscode_css"]="vscode.css"
+["theia_plugin_vscode_go"]="vscode.go"
+["theia_plugin_vscode_java"]="vscode.java"
+["theia_plugin_vscode_markdown-language-features"]="vscode.markdown-language-features"
+["theia_plugin_vscode_python"]="vscode.python"
+["theia_plugin_vscode_simple-browser"]="vscode.simple-browser"
+["theia_plugin_vscode_theme-solarized-light"]="vscode.theme-solarized-light"
+["theia_plugin_dbaeumer_vscode-eslint"]="dbaeumer.vscode-eslint"
+["theia_plugin_vscode_css-language-features"]="vscode.css-language-features"
+["theia_plugin_vscode_groovy"]="vscode.groovy"
+["theia_plugin_vscode_javascript"]="vscode.javascript"
+["theia_plugin_vscode_markdown-math"]="vscode.markdown-math"
+["theia_plugin_vscode_r"]="vscode.r"
+["theia_plugin_vscode_sql"]="vscode.sql"
+["theia_plugin_vscode_theme-tomorrow-night-blue"]="vscode.theme-tomorrow-night-blue"
+["theia_plugin_eclipse-theia_builtin-extension-pack"]="eclipse-theia.builtin-extension-pack"
+["theia_plugin_vscode_dart"]="vscode.dart"
+["theia_plugin_vscode_grunt"]="vscode.grunt"
+["theia_plugin_vscode_json"]="vscode.json"
+["theia_plugin_vscode_media-preview"]="vscode.media-preview"
+["theia_plugin_vscode_razor"]="vscode.razor"
+["theia_plugin_vscode_swift"]="vscode.swift"
+["theia_plugin_vscode_tunnel-forwarding"]="vscode.tunnel-forwarding"
+["theia_plugin_ms-vscode_js-debug"]="ms-vscode.js-debug"
+["theia_plugin_vscode_debug-auto-launch"]="vscode.debug-auto-launch"
+["theia_plugin_vscode_gulp"]="vscode.gulp"
+["theia_plugin_vscode_json-language-features"]="vscode.json-language-features"
+["theia_plugin_vscode_merge-conflict"]="vscode.merge-conflict"
+["theia_plugin_vscode_references-view"]="vscode.references-view"
+["theia_plugin_vscode_theme-abyss"]="vscode.theme-abyss"
+["theia_plugin_vscode_typescript"]="vscode.typescript"
+["theia_plugin_vscode_bat"]="vscode.bat"
+["theia_plugin_vscode_debug-server-ready"]="vscode.debug-server-ready"
+["theia_plugin_vscode_handlebars"]="vscode.handlebars"
+["theia_plugin_vscode_julia"]="vscode.julia"
+["theia_plugin_vscode_npm"]="vscode.npm"
+["theia_plugin_vscode_restructuredtext"]="vscode.restructuredtext"
+["theia_plugin_vscode_theme-defaults"]="vscode.theme-defaults"
+["theia_plugin_vscode_typescript-language-features"]="vscode.typescript-language-features"
+["theia_plugin_vscode_builtin-notebook-renderers"]="vscode.builtin-notebook-renderers"
+["theia_plugin_vscode_diff"]="vscode.diff"
+["theia_plugin_vscode_hlsl"]="vscode.hlsl"
+["theia_plugin_vscode_latex"]="vscode.latex"
+["theia_plugin_vscode_objective-c"]="vscode.objective-c"
+["theia_plugin_vscode_ruby"]="vscode.ruby"
+["theia_plugin_vscode_theme-kimbie-dark"]="vscode.theme-kimbie-dark"
+["theia_plugin_vscode_vb"]="vscode.vb"
+["theia_plugin_vscode_clojure"]="vscode.clojure"
+["theia_plugin_vscode_docker"]="vscode.docker"
+["theia_plugin_vscode_html"]="vscode.html"
+["theia_plugin_vscode_less"]="vscode.less"
+["theia_plugin_vscode_perl"]="vscode.perl"
+["theia_plugin_vscode_rust"]="vscode.rust"
+["theia_plugin_vscode_theme-monokai"]="vscode.theme-monokai"
+["theia_plugin_vscode_vscode-theme-seti"]="vscode.vscode-theme-seti"
+["theia_plugin_vscode_coffeescript"]="vscode.coffeescript"
+["theia_plugin_vscode_emmet"]="vscode.emmet"
+["theia_plugin_vscode_html-language-features"]="vscode.html-language-features"
+["theia_plugin_vscode_log"]="vscode.log"
+["theia_plugin_vscode_php"]="vscode.php"
+["theia_plugin_vscode_scss"]="vscode.scss"
+["theia_plugin_vscode_theme-monokai-dimmed"]="vscode.theme-monokai-dimmed"
+["theia_plugin_vscode_xml"]="vscode.xml"
+["theia_plugin_vscode_configuration-editing"]="vscode.configuration-editing"
+["theia_plugin_vscode_fsharp"]="vscode.fsharp"
+["theia_plugin_vscode_ini"]="vscode.ini"
+["theia_plugin_vscode_lua"]="vscode.lua"
+["theia_plugin_vscode_php-language-features"]="vscode.php-language-features"
+["theia_plugin_vscode_search-result"]="vscode.search-result"
+["theia_plugin_vscode_theme-quietlight"]="vscode.theme-quietlight"
+["theia_plugin_vscode_yaml"]="vscode.yaml"
+["theia_plugin_vscode_cpp"]="vscode.cpp"
+["theia_plugin_vscode_git"]="vscode.git"
+["theia_plugin_vscode_ipynb"]="vscode.ipynb"
+["theia_plugin_vscode_make"]="vscode.make"
+["theia_plugin_vscode_powershell"]="vscode.powershell"
+["theia_plugin_vscode_shaderlab"]="vscode.shaderlab"
+["theia_plugin_vscode_theme-red"]="vscode.theme-red"
+["theia_plugin_vscode_csharp"]="vscode.csharp"
+["theia_plugin_vscode_git-base"]="vscode.git-base"
+["theia_plugin_vscode_jake"]="vscode.jake"
+["theia_plugin_vscode_markdown"]="vscode.markdown"
+["theia_plugin_vscode_pug"]="vscode.pug"
+["theia_plugin_vscode_shellscript"]="vscode.shellscript"
+["theia_plugin_vscode_theme-solarized-dark"]="vscode.theme-solarized-dark"
+)
 
 inherit desktop electron-app python-r1 yarn
 
@@ -2984,7 +3072,10 @@ LICENSE="
 # || ( Apache-2.0 MPL-2.0 ) - node_modules/dompurify/LICENSE
 
 RESTRICT="mirror"
-IUSE+=" git plugins ebuild-revision-3"
+IUSE+="
+${!THEIA_PLUGINS[@]}
+git ebuild-revision-3
+"
 RDEPEND+="
 	>=app-crypt/libsecret-0.20.5
 	>=x11-libs/libX11-1.7.5
@@ -3044,11 +3135,22 @@ einfo "Adding dependencies"
 #	fi
 }
 
+user_wants_plugin() {
+	local wants=0
+	local x
+	for x in ${!THEIA_PLUGINS[@]} ; do
+		if use "${x}" ; then
+			wants=1
+		fi
+	done
+	return ${wants}
+}
+
 src_unpack() {
 einfo "YARN_UPDATE_LOCK=${YARN_UPDATE_LOCK}"
 	yarn_src_unpack
 	if [[ -z "${YARN_UPDATE_LOCK}" ]] ; then
-		use plugins && get_plugins
+		user_wants_plugin && get_plugins
 	fi
 	local path="${S}/node_modules/electron/dist"
 	mkdir -p "${S}/node_modules/electron/dist" || die
@@ -3105,7 +3207,7 @@ install_new() {
 		"${ED}/opt/theia/resources/app" \
 		|| die
 	fperms 4711 "/opt/theia/chrome-sandbox"
-	if use plugins ; then
+	if user_wants_plugin ; then
 		mv \
 			"plugins" \
 			"${ED}/opt/theia/resources/app" \
@@ -3130,6 +3232,26 @@ src_install() {
 		|| die
 	exeinto "/usr/bin"
 	doexe "${T}/${PN}"
+
+	local x
+	for x in ${!THEIA_PLUGINS[@]} ; do
+		local raw_name
+		raw_name="${THEIA_PLUGINS[${x}]}"
+		if use "${x}" ; then
+			if [[ -e "${ED}/opt/${PN}/resources/apps/plugins/${raw_name}" ]] ; then
+einfo "Keeping ${raw_name}"
+			else
+ewarn "QA:  Missing ${raw_name}"
+			fi
+		else
+			if [[ -e "${ED}/opt/${PN}/resources/apps/plugins/${raw_name}" ]] ; then
+einfo "Removing ${raw_name}"
+				rm "${ED}/opt/${PN}/resources/apps/plugins/${raw_name}" || die
+			else
+ewarn "QA:  Missing ${raw_name}"
+			fi
+		fi
+	done
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
