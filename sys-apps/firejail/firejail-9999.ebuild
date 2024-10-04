@@ -1712,7 +1712,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
-ebuild-revision-14
+ebuild-revision-15
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -3768,6 +3768,9 @@ ewarn "See metadata.xml or \`epkginfo -x sys-apps/firejail::oiledmachine-overlay
 		"google-chrome-stable"
 		"google-chrome-unstable"
 		"spotify"
+
+	# Still broken with browser plugin disabled
+		"obs"
 	)
 
 	local force_system_allocator=0
