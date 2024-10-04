@@ -3141,6 +3141,7 @@ user_wants_plugin() {
 	for x in ${!THEIA_PLUGINS[@]} ; do
 		if use "${x}" ; then
 			wants=1
+			break
 		fi
 	done
 	return ${wants}
