@@ -3227,23 +3227,7 @@ install_new() {
 	cat "${FILESDIR}/${PN}-v2" > "${T}/${PN}" || die
 }
 
-src_install() {
-	install_new
-	newicon "logo/theia.svg" "${PN}.svg"
-	make_desktop_entry \
-		"/usr/bin/${PN}" \
-		"${PN^}" \
-		"${PN}.svg" \
-		"Development"
-	sed -i \
-		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
-		-e "s|\${NODE_ENV}|${NODE_ENV}|g" \
-		-e "s|\${INSTALL_PATH}|${YARN_INSTALL_PATH}|g" \
-		"${T}/${PN}" \
-		|| die
-	exeinto "/usr/bin"
-	doexe "${T}/${PN}"
-
+_install_plugins() {
 	local x
 	for x in ${!THEIA_PLUGINS[@]} ; do
 		local raw_name
@@ -3263,6 +3247,28 @@ ewarn "QA:  Missing ${raw_name}"
 			fi
 		fi
 	done
+}
+
+src_install() {
+	install_new
+	newicon "logo/theia.svg" "${PN}.svg"
+	make_desktop_entry \
+		"/usr/bin/${PN}" \
+		"${PN^}" \
+		"${PN}.svg" \
+		"Development"
+	sed -i \
+		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
+		-e "s|\${NODE_ENV}|${NODE_ENV}|g" \
+		-e "s|\${INSTALL_PATH}|${YARN_INSTALL_PATH}|g" \
+		"${T}/${PN}" \
+		|| die
+	exeinto "/usr/bin"
+	doexe "${T}/${PN}"
+
+	if user_wants_plugin ; then
+		_install_plugins
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
