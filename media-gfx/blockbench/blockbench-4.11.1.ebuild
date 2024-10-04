@@ -9,7 +9,7 @@ MY_PN="${PN^}"
 export NPM_INSTALL_PATH="/opt/${PN}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}_${PV}.AppImage"
-ELECTRON_APP_ELECTRON_PV="31.4.0"
+ELECTRON_APP_ELECTRON_PV="31.6.0"
 ELECTRON_APP_MODE="npm"
 NODE_ENV="development"
 NODE_VERSION=20 # This corresponds to 31.4.0 in releases.json.
@@ -748,7 +748,7 @@ LICENSE="
 	(
 		${ELECTRON_APP_LICENSES}
 		Artistic-2
-		electron-31.4.0-chromium.html
+		electron-31.6.0-chromium.html
 	)
 	GPL-3+
 "
@@ -863,6 +863,7 @@ src_install() {
 	doins -r "dist/linux-unpacked/"*
 	fperms 0755 "${NPM_INSTALL_PATH}/blockbench"
 	lcnr_install_files
+	electron-app_set_sandbox_suid "/opt/blockbench/chrome-sandbox"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
