@@ -1591,6 +1591,7 @@ src_install() {
 	doins -r "dist/linux-unpacked/"*
 	fperms 0755 "${NPM_INSTALL_PATH}/${PN}"
 	lcnr_install_files
+	electron-app_set_sandbox_suid "/opt/caprine/chrome-sandbox"
 }
 
 pkg_postinst() {

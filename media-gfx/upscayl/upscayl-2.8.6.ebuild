@@ -773,6 +773,7 @@ src_install() {
 	if use system-vips ; then
 		find "${ED}" -name "libvips-cpp.so*" -delete
 	fi
+	electron-app_set_sandbox_suid "/opt/upscayl/chrome-sandbox"
 }
 
 pkg_postinst() {

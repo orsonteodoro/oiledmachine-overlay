@@ -4732,6 +4732,7 @@ src_install() {
 	for exe_path in ${exe_file_list[@]} ; do
 		fperms +x "${NPM_INSTALL_PATH}/${exe_path}"
 	done
+	electron-app_set_sandbox_suid "/opt/gdevelop/chrome-sandbox"
 }
 
 pkg_postinst() {

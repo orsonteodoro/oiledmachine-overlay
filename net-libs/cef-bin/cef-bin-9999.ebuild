@@ -642,6 +642,8 @@ src_install() {
 	echo "${MY_PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_PV}_$(get_xrid)${minimal}" \
 		> "${ED}/opt/${PN}/.version" || die
 	find "${ED}" -name "*.o" -delete
+	fperms 4711 "/opt/cef-bin/Release/chrome-sandbox"
+	fowners "root:root" "/opt/cef-bin/Release/chrome-sandbox"
 }
 
 pkg_postinst() {

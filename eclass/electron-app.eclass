@@ -1235,3 +1235,12 @@ einfo "Using system vips for sharp"
 einfo "Using vendored vips for sharp"
 	fi
 }
+
+# @FUNCTION: electron-app_set_sandbox_suid
+# @DESCRIPTION:
+# Set the permissions of the chrome-sandbox
+electron-app_set_sandbox_suid() {
+	local path="${1}"
+	fperms 4711 "${path}"
+	fowners "root:root" "${path}"
+}
