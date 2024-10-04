@@ -29,152 +29,8 @@ declare -A XEPHYR_WH
 declare -A X_BACKEND
 
 declare -A _SCOPE=(
-# These could break the emerge build system, the system login or console, or cause damage if firejailed.
-# Those cli apps that require root user should be added here.
-# Commands that might be used in ebuilds or build scripts should be added.
-	["_7z"]="conflict"
-	["_7za"]="conflict"
-	["_7zr"]="conflict"
-	["Xephyr"]="conflict"
-	["Xvfb"]="conflict"
-	["ar"]="conflict"
-	["b2sum"]="conflict"
-	["bibtex"]="conflict"
-	["brz"]="conflict"
-	["bsdcat"]="conflict"
-	["bsdcpio"]="conflict"
-	["bsdtar"]="conflict"
-	["bunzip2"]="conflict"
-	["bzcat"]="conflict"
-	["bzip2"]="conflict"
-	["cargo"]="conflict"
-	["cksum"]="conflict"
-	["clamav"]="conflict"
-	["clamdscan"]="conflict"
-	["clamdtop"]="conflict"
-	["clamscan"]="conflict"
-	["clamtk"]="conflict"
-	["cmake"]="conflict"
-	["cpio"]="conflict"
-	["curl"]="conflict"
-	["emacs"]="conflict"
-	["file"]="conflict"
-	["freshclam"]="conflict"
-	["gpg"]="conflict"
-	["gpg-agent"]="conflict"
-	["gpg2"]="conflict"
-	["dconf"]="conflict"
-	["gconf"]="conflict"
-	["gconf-editor"]="conflict"
-	["gconf-merge-schema"]="conflict"
-	["gconf-merge-tree"]="conflict"
-	["gconfpkg"]="conflict"
-	["gconftool-2"]="conflict"
-	["git"]="conflict"
-	["gunzip"]="conflict"
-	["gsettings"]="conflict"
-	["gsettings-data-convert"]="conflict"
-	["gsettings-schema-convert"]="conflict"
-	["gtk-update-icon-cache"]="conflict"
-	["gzexe"]="conflict"
-	["gzip"]="conflict"
-	["latex"]="conflict"
-	["lbunzip2"]="conflict"
-	["lbzcat"]="conflict"
-	["lbzip2"]="conflict"
-	["less"]="global"
-	["lrunzip"]="conflict"
-	["lrz"]="conflict"
-	["lrzcat"]="conflict"
-	["lrzip"]="conflict"
-	["lrztar"]="conflict"
-	["lrzuntar"]="conflict"
-	["lz4"]="conflict"
-	["lz4c"]="conflict"
-	["lz4cat"]="conflict"
-	["lzcat"]="conflict"
-	["lzcmp"]="conflict"
-	["lzdiff"]="conflict"
-	["lzegrep"]="conflict"
-	["lzfgrep"]="conflict"
-	["lzgrep"]="conflict"
-	["lzip"]="conflict"
-	["lzless"]="global"
-	["lzma"]="conflict"
-	["lzmadec"]="conflict"
-	["lzmainfo"]="conflict"
-	["lzmore"]="global"
-	["lzop"]="conflict"
-	["make"]="conflict"
-	["man"]="global"
-	["md5sum"]="conflict"
-	["meson"]="conflict"
-	["more"]="global"
-	["nano"]="conflict"
-	["node"]="conflict"
-	["npm"]="conflict"
-	["p7zip"]="conflict"
-	["pandoc"]="conflict"
-	["patch"]="conflict"
-	["pdflatex"]="conflict"
-	["pdftotext"]="conflict"
-	["ping"]="conflict"
-	["pip"]="conflict"
-	["pnpm"]="conflict"
-	["pnpx"]="conflict"
-	["pzstd"]="conflict"
-	["rhash"]="conflict"
-	["sum"]="conflict"
-	["sha1sum"]="conflict"
-	["sha224sum"]="conflict"
-	["sha256sum"]="conflict"
-	["sha384sum"]="conflict"
-	["sha512sum"]="conflict"
-	["ssh"]="conflict"
-	["ssh-agent"]="conflict"
-	["strings"]="conflict"
-	["tar"]="conflict"
-	["tex"]="conflict"
-	["uncompress"]="conflict"
-	["unlz4"]="conflict"
-	["unlzma"]="conflict"
-	["unrar"]="conflict"
-	["unxz"]="conflict"
-	["unzip"]="conflict"
-	["unzstd"]="conflict"
-	["vim"]="conflict"
-	["wget"]="conflict"
-	["wget2"]="conflict"
-	["x-terminal-emulator"]="ban"
 	["xpra"]="ban" # Causes Authorization required, but no authorization protocol specified
-	["xxd"]="conflict"
-	["xz"]="conflict"
-	["xzcat"]="conflict"
-	["xzcmp"]="conflict"
-	["xzdec"]="conflict"
-	["xzdiff"]="conflict"
-	["xzegrep"]="conflict"
-	["xzfgrep"]="conflict"
-	["xzgrep"]="conflict"
-	["xzless"]="global"
-	["xzmore"]="global"
-	["yarn"]="conflict"
-	["zcat"]="conflict"
-	["zcmp"]="conflict"
-	["zdiff"]="conflict"
-	["zegrep"]="conflict"
-	["zfgrep"]="conflict"
-	["zforce"]="conflict"
-	["zgrep"]="conflict"
-	["zless"]="conflict"
-	["zlib-flate"]="conflict"
-	["zmore"]="global"
-	["znew"]="conflict"
-	["zstd"]="conflict"
-	["zstdcat"]="conflict"
-	["zstdgrep"]="conflict"
-	["zstdless"]="global"
-	["zstdmt"]="conflict"
+	["x-terminal-emulator"]="ban"
 )
 
 _PROFILE_GRAPH["_1password"]="electron-common"
@@ -3892,12 +3748,7 @@ ewarn "See metadata.xml or \`epkginfo -x sys-apps/firejail::oiledmachine-overlay
 		pulse_arg+="--keep-config-pulse"
 	fi
 
-	local folder
-	if [[ "${scope}" == "global" ]] ; then
-		folder="bin"
-	else
-		folder="firejail-bin"
-	fi
+	local folder="bin"
 
 	local is_allowed_wrapper=1
 
@@ -3926,7 +3777,9 @@ ewarn "See metadata.xml or \`epkginfo -x sys-apps/firejail::oiledmachine-overlay
 	if (( ${is_allowed_wrapper} == 1 )) ; then
 cat <<EOF > "${ED}/usr/local/${folder}/${wrapper_name}" || die
 #!/bin/bash
-if [[ -n "\${DISPLAY}" ]] ; then
+if [[ "\${EUID}" == "0" || "\${EUID}" == "250" ]] ; then
+	"${exe_path}" "\$@"
+elif [[ -n "\${DISPLAY}" ]] ; then
 	exec firejail ${all_args[@]} "${exe_path}" "\$@"
 else
 	exec firejail ${all_args[@]} "${exe_path}" "\$@"
@@ -4045,7 +3898,7 @@ _install_one_profile() {
 			# Ebuild scope
 			echo "${_SCOPE[${arg}]}"
 		else
-			echo "global"
+			echo ""
 		fi
 	}
 
@@ -4145,7 +3998,6 @@ eerror
 src_install() {
 	local queued_profile_deps=()
 	use wrapper && dodir "/usr/local/bin"
-	use wrapper && dodir "/usr/local/firejail-bin"
 	local impl
 	for impl in $(get_impls) ; do
 		export BUILD_DIR="${S}_${impl}"
@@ -4261,13 +4113,8 @@ ewarn "root user"
 ewarn
 	fi
 ewarn
-ewarn "You need to manually add PATH=\"/usr/local/firejail-bin:\${PATH}\" to"
-ewarn "non-root ~/.bashrc to the increase firejail sandbox coverage."
-ewarn "Do not add it to the root's .bashrc."
-ewarn
-ewarn "If you mistakenly sourced ~/.bashrc with PATH change as root or run into"
-ewarn "strange missing /usr/local/firejail-bin references as root, do"
-ewarn "\`source /etc/profile\` to undo it."
+ewarn "The /usr/local/firejail-bin has been removed.  You should remove"
+ewarn "PATH=\"/usr/local/firejail-bin:\${PATH}\" from ~/.bashrc."
 ewarn
 }
 

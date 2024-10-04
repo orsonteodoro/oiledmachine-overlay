@@ -1,0 +1,10 @@
+#!/bin/bash
+NODE_VERSION=${NODE_VERSION}
+NODE_ENV=${NODE_ENV}
+export PATH="${INSTALL_PATH}/:${PATH}"
+cd "${INSTALL_PATH}"
+if [[ -n "${DISPLAY}" ]] ; then
+	"${INSTALL_PATH}/electron" start --plugins=local-dir:${INSTALL_PATH}/resources/app/plugins "${@}"
+else
+	"${INSTALL_PATH}/electron" --enable-features=UseOzonePlatform --ozone-platform-hint=wayland start --plugins=local-dir:${INSTALL_PATH}/resources/app/plugins "${@}"
+fi

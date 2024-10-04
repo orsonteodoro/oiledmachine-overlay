@@ -10,7 +10,7 @@ ELECTRON_APP_ELECTRON_PV="30.3.1"
 #ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY="1"
 ELECTRON_APP_MODE="yarn"
 ELECTRON_APP_REACT_PV="18.2.0"
-NODE_GYP_PV="10.1.0" # Same as CI
+NODE_GYP_PV="10.2.0" # Same as CI
 NODE_ENV="development"
 NODE_VERSION=18 # Upstream uses in CI 16-20 but 18 is used in release
 NPM_AUDIT_FIX=0
@@ -27,12 +27,12 @@ YARN_LOCKFILE_SOURCE="upstream"
 YARN_OFFLINE=1
 YARN_TEST_SCRIPT="test:theia"
 # Generated from
-# find /var/tmp/portage/dev-util/theia-1.53.2/work/theia-1.53.2/ -type f -executable \
+# find /var/tmp/portage/dev-util/theia-1.54.0/work/theia-1.54.0/ -type f -executable \
 #	| grep -v ".ts$" \
 #	| grep -v "LICENSE" \
 #	| grep -v "README" \
 #	| grep -v ".json$" \
-#	| sed -e "s|/var/tmp/portage/dev-util/theia-1.53.2/work/theia-1.53.2|/opt/theia|" \
+#	| sed -e "s|/var/tmp/portage/dev-util/theia-1.54.0/work/theia-1.54.0|/opt/theia|" \
 #	| LC_COLLATE=C sort
 YARN_EXE_LIST="
 /opt/theia/dev-packages/cli/bin/theia
@@ -57,7 +57,6 @@ YARN_EXE_LIST="
 /opt/theia/node_modules/@istanbuljs/load-nyc-config/node_modules/js-yaml/bin/js-yaml.js
 /opt/theia/node_modules/@lerna/create/node_modules/mkdirp/bin/cmd.js
 /opt/theia/node_modules/@lerna/create/node_modules/rimraf/dist/cjs/src/bin.js
-/opt/theia/node_modules/@lerna/create/node_modules/uuid/dist/bin/uuid
 /opt/theia/node_modules/@lerna/create/node_modules/wrap-ansi/index.js
 /opt/theia/node_modules/@msgpackr-extract/msgpackr-extract-linux-x64/node.abi108.glibc.node
 /opt/theia/node_modules/@msgpackr-extract/msgpackr-extract-linux-x64/node.abi108.musl.node
@@ -206,6 +205,7 @@ YARN_EXE_LIST="
 /opt/theia/node_modules/is-potential-custom-element-name/index.js
 /opt/theia/node_modules/istanbul-lib-instrument/node_modules/semver/bin/semver.js
 /opt/theia/node_modules/istanbul-lib-processinfo/node_modules/rimraf/bin.js
+/opt/theia/node_modules/istanbul-lib-processinfo/node_modules/uuid/dist/bin/uuid
 /opt/theia/node_modules/jake/bin/bash_completion.sh
 /opt/theia/node_modules/jake/bin/cli.js
 /opt/theia/node_modules/js-yaml/bin/js-yaml.js
@@ -217,7 +217,6 @@ YARN_EXE_LIST="
 /opt/theia/node_modules/lerna/node_modules/rimraf/dist/cjs/src/bin.js
 /opt/theia/node_modules/lerna/node_modules/typescript/bin/tsc
 /opt/theia/node_modules/lerna/node_modules/typescript/bin/tsserver
-/opt/theia/node_modules/lerna/node_modules/uuid/dist/bin/uuid
 /opt/theia/node_modules/lerna/node_modules/wrap-ansi/index.js
 /opt/theia/node_modules/less/bin/lessc
 /opt/theia/node_modules/less/node_modules/semver/bin/semver
@@ -521,6 +520,7 @@ YARN_EXE_LIST="
 /opt/theia/node_modules/open-collaboration-yjs/node_modules/lib0/bin/0serve.js
 /opt/theia/node_modules/open-collaboration-yjs/node_modules/lib0/bin/gentesthtml.js
 /opt/theia/node_modules/open/xdg-open
+/opt/theia/node_modules/openai/bin/cli
 /opt/theia/node_modules/opener/bin/opener-bin.js
 /opt/theia/node_modules/os-locale/node_modules/semver/bin/semver
 /opt/theia/node_modules/package-json/node_modules/semver/bin/semver
@@ -600,6 +600,7 @@ YARN_EXE_LIST="
 /opt/theia/node_modules/terser/bin/uglifyjs
 /opt/theia/node_modules/tmp/node_modules/rimraf/bin.js
 /opt/theia/node_modules/trash/lib/macos-trash
+/opt/theia/node_modules/trash/node_modules/uuid/dist/bin/uuid
 /opt/theia/node_modules/traverse/examples/json.js
 /opt/theia/node_modules/traverse/examples/leaves.js
 /opt/theia/node_modules/traverse/examples/negative.js
@@ -670,7 +671,7 @@ YARN_EXE_LIST="
 /opt/theia/packages/core/node_modules/keytar/build/Release/obj.target/keytar.node
 /opt/theia/packages/core/node_modules/prebuild-install/bin.js
 /opt/theia/packages/core/node_modules/semver/bin/semver
-/opt/theia/packages/core/node_modules/uuid/dist/bin/uuid
+/opt/theia/packages/dev-container/node_modules/uuid/dist/bin/uuid
 /opt/theia/packages/git/src/electron-node/askpass/askpass-empty.sh
 /opt/theia/packages/git/src/electron-node/askpass/askpass.sh
 /opt/theia/packages/plugin-ext/node_modules/mime/cli.js
@@ -694,7 +695,7 @@ SLOT="0/monthly"
 if [[ "${SLOT}" =~ "community" ]] ; then
 	SUFFIX="-community"
 fi
-# Initially generated from:  grep "resolved" /var/tmp/portage/dev-util/theia-1.53.2/work/theia-1.53.2/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
+# Initially generated from:  grep "resolved" /var/tmp/portage/dev-util/theia-1.54.0/work/theia-1.54.0/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
 # For the generator script, see typescript/transform-uris.sh ebuild-package.
 # UPDATER_START_YARN_EXTERNAL_URIS
 YARN_EXTERNAL_URIS="
@@ -1057,6 +1058,7 @@ https://registry.yarnpkg.com/@zkochan/js-yaml/-/js-yaml-0.0.6.tgz -> yarnpkg-@zk
 https://registry.yarnpkg.com/JSONStream/-/JSONStream-1.3.5.tgz -> yarnpkg-JSONStream-1.3.5.tgz
 https://registry.yarnpkg.com/abab/-/abab-2.0.6.tgz -> yarnpkg-abab-2.0.6.tgz
 https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz -> yarnpkg-abbrev-1.1.1.tgz
+https://registry.yarnpkg.com/abort-controller/-/abort-controller-3.0.0.tgz -> yarnpkg-abort-controller-3.0.0.tgz
 https://registry.yarnpkg.com/accepts/-/accepts-1.3.8.tgz -> yarnpkg-accepts-1.3.8.tgz
 https://registry.yarnpkg.com/acorn-import-assertions/-/acorn-import-assertions-1.9.0.tgz -> yarnpkg-acorn-import-assertions-1.9.0.tgz
 https://registry.yarnpkg.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz -> yarnpkg-acorn-jsx-5.3.2.tgz
@@ -1477,6 +1479,7 @@ https://registry.yarnpkg.com/estraverse/-/estraverse-5.3.0.tgz -> yarnpkg-estrav
 https://registry.yarnpkg.com/esutils/-/esutils-2.0.3.tgz -> yarnpkg-esutils-2.0.3.tgz
 https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz -> yarnpkg-etag-1.8.1.tgz
 https://registry.yarnpkg.com/event-stream/-/event-stream-3.3.4.tgz -> yarnpkg-event-stream-3.3.4.tgz
+https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-5.0.1.tgz -> yarnpkg-event-target-shim-5.0.1.tgz
 https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-4.0.7.tgz -> yarnpkg-eventemitter3-4.0.7.tgz
 https://registry.yarnpkg.com/events/-/events-3.3.0.tgz -> yarnpkg-events-3.3.0.tgz
 https://registry.yarnpkg.com/execa/-/execa-5.0.0.tgz -> yarnpkg-execa-5.0.0.tgz
@@ -1535,9 +1538,11 @@ https://registry.yarnpkg.com/for-each/-/for-each-0.3.3.tgz -> yarnpkg-for-each-0
 https://registry.yarnpkg.com/foreground-child/-/foreground-child-2.0.0.tgz -> yarnpkg-foreground-child-2.0.0.tgz
 https://registry.yarnpkg.com/foreground-child/-/foreground-child-3.1.1.tgz -> yarnpkg-foreground-child-3.1.1.tgz
 https://registry.yarnpkg.com/forever-agent/-/forever-agent-0.6.1.tgz -> yarnpkg-forever-agent-0.6.1.tgz
+https://registry.yarnpkg.com/form-data-encoder/-/form-data-encoder-1.7.2.tgz -> yarnpkg-form-data-encoder-1.7.2.tgz
 https://registry.yarnpkg.com/form-data/-/form-data-4.0.0.tgz -> yarnpkg-form-data-4.0.0.tgz
 https://registry.yarnpkg.com/form-data/-/form-data-2.1.4.tgz -> yarnpkg-form-data-2.1.4.tgz
 https://registry.yarnpkg.com/form-data/-/form-data-2.3.3.tgz -> yarnpkg-form-data-2.3.3.tgz
+https://registry.yarnpkg.com/formdata-node/-/formdata-node-4.4.1.tgz -> yarnpkg-formdata-node-4.4.1.tgz
 https://registry.yarnpkg.com/forwarded/-/forwarded-0.2.0.tgz -> yarnpkg-forwarded-0.2.0.tgz
 https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz -> yarnpkg-fresh-0.5.2.tgz
 https://registry.yarnpkg.com/from2/-/from2-1.3.0.tgz -> yarnpkg-from2-1.3.0.tgz
@@ -1981,6 +1986,7 @@ https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-3.2.1.tgz -> yarnpk
 https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-4.3.0.tgz -> yarnpkg-node-addon-api-4.3.0.tgz
 https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-5.1.0.tgz -> yarnpkg-node-addon-api-5.1.0.tgz
 https://registry.yarnpkg.com/node-api-version/-/node-api-version-0.1.4.tgz -> yarnpkg-node-api-version-0.1.4.tgz
+https://registry.yarnpkg.com/node-domexception/-/node-domexception-1.0.0.tgz -> yarnpkg-node-domexception-1.0.0.tgz
 https://registry.yarnpkg.com/node-fetch-npm/-/node-fetch-npm-2.0.4.tgz -> yarnpkg-node-fetch-npm-2.0.4.tgz
 https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz -> yarnpkg-node-fetch-2.6.7.tgz
 https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.7.0.tgz -> yarnpkg-node-fetch-2.7.0.tgz
@@ -2049,6 +2055,7 @@ https://registry.yarnpkg.com/object.groupby/-/object.groupby-1.0.2.tgz -> yarnpk
 https://registry.yarnpkg.com/object.hasown/-/object.hasown-1.1.3.tgz -> yarnpkg-object.hasown-1.1.3.tgz
 https://registry.yarnpkg.com/object.values/-/object.values-1.1.7.tgz -> yarnpkg-object.values-1.1.7.tgz
 https://registry.yarnpkg.com/octicons/-/octicons-7.4.0.tgz -> yarnpkg-octicons-7.4.0.tgz
+https://registry.yarnpkg.com/ollama/-/ollama-0.5.8.tgz -> yarnpkg-ollama-0.5.8.tgz
 https://registry.yarnpkg.com/on-finished/-/on-finished-2.4.1.tgz -> yarnpkg-on-finished-2.4.1.tgz
 https://registry.yarnpkg.com/once/-/once-1.4.0.tgz -> yarnpkg-once-1.4.0.tgz
 https://registry.yarnpkg.com/onetime/-/onetime-5.1.2.tgz -> yarnpkg-onetime-5.1.2.tgz
@@ -2056,6 +2063,7 @@ https://registry.yarnpkg.com/open-collaboration-protocol/-/open-collaboration-pr
 https://registry.yarnpkg.com/open-collaboration-yjs/-/open-collaboration-yjs-0.2.0.tgz -> yarnpkg-open-collaboration-yjs-0.2.0.tgz
 https://registry.yarnpkg.com/open/-/open-7.4.2.tgz -> yarnpkg-open-7.4.2.tgz
 https://registry.yarnpkg.com/open/-/open-8.4.2.tgz -> yarnpkg-open-8.4.2.tgz
+https://registry.yarnpkg.com/openai/-/openai-4.55.7.tgz -> yarnpkg-openai-4.55.7.tgz
 https://registry.yarnpkg.com/opener/-/opener-1.5.2.tgz -> yarnpkg-opener-1.5.2.tgz
 https://registry.yarnpkg.com/opener/-/opener-1.4.3.tgz -> yarnpkg-opener-1.4.3.tgz
 https://registry.yarnpkg.com/optionator/-/optionator-0.9.3.tgz -> yarnpkg-optionator-0.9.3.tgz
@@ -2563,6 +2571,7 @@ https://registry.yarnpkg.com/vscode-uri/-/vscode-uri-2.1.2.tgz -> yarnpkg-vscode
 https://registry.yarnpkg.com/w3c-xmlserializer/-/w3c-xmlserializer-4.0.0.tgz -> yarnpkg-w3c-xmlserializer-4.0.0.tgz
 https://registry.yarnpkg.com/watchpack/-/watchpack-2.4.0.tgz -> yarnpkg-watchpack-2.4.0.tgz
 https://registry.yarnpkg.com/wcwidth/-/wcwidth-1.0.1.tgz -> yarnpkg-wcwidth-1.0.1.tgz
+https://registry.yarnpkg.com/web-streams-polyfill/-/web-streams-polyfill-4.0.0-beta.3.tgz -> yarnpkg-web-streams-polyfill-4.0.0-beta.3.tgz
 https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-3.0.1.tgz -> yarnpkg-webidl-conversions-3.0.1.tgz
 https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-7.0.0.tgz -> yarnpkg-webidl-conversions-7.0.0.tgz
 https://registry.yarnpkg.com/webpack-cli/-/webpack-cli-4.7.0.tgz -> yarnpkg-webpack-cli-4.7.0.tgz
@@ -2570,6 +2579,7 @@ https://registry.yarnpkg.com/webpack-merge/-/webpack-merge-5.10.0.tgz -> yarnpkg
 https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-3.2.3.tgz -> yarnpkg-webpack-sources-3.2.3.tgz
 https://registry.yarnpkg.com/webpack/-/webpack-5.90.3.tgz -> yarnpkg-webpack-5.90.3.tgz
 https://registry.yarnpkg.com/whatwg-encoding/-/whatwg-encoding-2.0.0.tgz -> yarnpkg-whatwg-encoding-2.0.0.tgz
+https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-3.6.20.tgz -> yarnpkg-whatwg-fetch-3.6.20.tgz
 https://registry.yarnpkg.com/whatwg-mimetype/-/whatwg-mimetype-3.0.0.tgz -> yarnpkg-whatwg-mimetype-3.0.0.tgz
 https://registry.yarnpkg.com/whatwg-url/-/whatwg-url-12.0.1.tgz -> yarnpkg-whatwg-url-12.0.1.tgz
 https://registry.yarnpkg.com/whatwg-url/-/whatwg-url-5.0.0.tgz -> yarnpkg-whatwg-url-5.0.0.tgz
@@ -2643,6 +2653,8 @@ https://registry.yarnpkg.com/yazl/-/yazl-2.5.1.tgz -> yarnpkg-yazl-2.5.1.tgz
 https://registry.yarnpkg.com/yjs/-/yjs-13.6.15.tgz -> yarnpkg-yjs-13.6.15.tgz
 https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz -> yarnpkg-yocto-queue-0.1.0.tgz
 https://registry.yarnpkg.com/zip-stream/-/zip-stream-4.1.1.tgz -> yarnpkg-zip-stream-4.1.1.tgz
+https://registry.yarnpkg.com/zod-to-json-schema/-/zod-to-json-schema-3.23.2.tgz -> yarnpkg-zod-to-json-schema-3.23.2.tgz
+https://registry.yarnpkg.com/zod/-/zod-3.23.8.tgz -> yarnpkg-zod-3.23.8.tgz
 "
 # UPDATER_END_YARN_EXTERNAL_URIS
 SRC_URI="
@@ -3050,6 +3062,7 @@ src_compile() {
 	eyarn run compile
 	eyarn run browser build
 	eyarn run electron build
+	eyarn run browser-only build
 
 	# Fix for issue #10246
 	eyarn browser rebuild
@@ -3063,24 +3076,57 @@ src_compile() {
 		-e "Rebuild Failed" \
 		"${T}/build.log" \
 		&& die "Build failure"
+
+	sed -i \
+		-e "s|Theia Electron Example|Theia IDE|g" \
+		-e "s|Theia Electron Example|Theia IDE|g" \
+		"resources/app/package.json" \
+		"resources/app/lib/frontend/bundle.js" \
+		|| die
+}
+
+install_old() {
+	yarn_src_install
+	fperms 4711 "/opt/theia/node_modules/electron/dist/chrome-sandbox"
+	cat "${FILESDIR}/${PN}" > "${T}/${PN}" || die
+}
+
+install_new() {
+	# Reconstruct AppImage
+	dodir "/opt/theia"
+	mv \
+		"node_modules/electron/dist/"* \
+		"${ED}/opt/theia" \
+		|| die
+	dodir "/opt/theia/resources/app"
+	mv \
+		"examples/electron/"* \
+		"examples/electron/."* \
+		"${ED}/opt/theia/resources/app" \
+		|| die
+	fperms 4711 "/opt/theia/chrome-sandbox"
+	if use plugins ; then
+einfo "TODO"
+		:
+	fi
+	cat "${FILESDIR}/${PN}-v2" > "${T}/${PN}" || die
 }
 
 src_install() {
-	yarn_src_install
+	install_new
 	newicon "logo/theia.svg" "${PN}.svg"
 	make_desktop_entry \
 		"/usr/bin/${PN}" \
 		"${PN^}" \
 		"${PN}.svg" \
 		"Development"
-	cat "${FILESDIR}/${PN}" > "${T}/${PN}" || die
 	sed -i \
 		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
 		-e "s|\${NODE_ENV}|${NODE_ENV}|g" \
 		-e "s|\${INSTALL_PATH}|${YARN_INSTALL_PATH}|g" \
 		"${T}/${PN}" \
 		|| die
-	exeinto /usr/bin
+	exeinto "/usr/bin"
 	doexe "${T}/${PN}"
 }
 

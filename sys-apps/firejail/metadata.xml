@@ -133,23 +133,10 @@
     SCOPE[PROFILE_NAME] - Scope of the wrapper.
     Valid values
 
-    global - add non conflicting wrappers globally in /usr/local/bin without
-    changes to PATH.
-
-    conflict - add conflicting wrappers to /usr/local/firejail-bin so that the
-    non-root user can add PATH="/usr/local/firejail-bin:${PATH}" to ~/.bashrc
-    for full sandbox coverage.  Do not add it to the root's .bashrc.
-    (Aliases:  conflicting)
-
-
     ban - do not generate wrapper (Aliases:  blacklist, blacklisted)
 
     Note:
 
-    * Conflicting means that the the build system may use that command
-      and adding it in global scope would break emerge and break root.
-    * Non conflicting means that the build system or root never uses that
-      command.
     * The SCOPE[PROFILE_NAME] can override the ebuild defaults for ebuilds that
       use commands that should be in the conflicting set.
 
