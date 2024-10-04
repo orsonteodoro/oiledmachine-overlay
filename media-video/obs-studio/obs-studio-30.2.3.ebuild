@@ -674,6 +674,7 @@ RESTRICT="mirror" # Speed up download of the latest release.
 PATCHES=(
 	# https://github.com/obsproject/obs-studio/pull/3335
 	"${FILESDIR}/${PN}-26.1.2-python-3.8.patch"
+	"${FILESDIR}/${PN}-30.2.3-hevc-preprocessor-cond.patch"
 )
 
 qt_check() {
