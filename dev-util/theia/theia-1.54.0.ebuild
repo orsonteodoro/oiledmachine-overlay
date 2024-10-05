@@ -2548,6 +2548,13 @@ src_compile() {
 		"${T}/build.log" \
 		&& die "Build failure"
 
+	if user_wants_plugin ; then
+		grep -q \
+			-e "Errors downloading some plugins" \
+			"${T}/build.log" \
+			&& die "Build failure"
+	fi
+
 	sed -i \
 		-e "s|Theia Electron Example|Theia IDE|g" \
 		"examples/electron/package.json" \
