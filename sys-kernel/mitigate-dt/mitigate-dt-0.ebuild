@@ -103,6 +103,7 @@ MULTISLOT_KERNEL_AACRAID=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.108" "
 MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
 MULTISLOT_KERNEL_BFQ_1ba0403=("5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
+MULTISLOT_KERNEL_BFQ_18ad4df=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_BLUETOOTH_48878=("5.10.165" "5.15.90" "6.1.8")
 MULTISLOT_KERNEL_BTRFS_46687=("6.6.49" "6.10.8")
 MULTISLOT_KERNEL_BRCM80211=("6.6.48" "6.10.7")
@@ -151,6 +152,7 @@ MULTISLOT_KERNEL_XE=("6.10.8")
 CVE_AMDGPU="CVE-2024-46725"
 CVE_ATA_41087="CVE-2024-41087"
 CVE_BFQ_1ba0403="UAF"
+CVE_BFQ_18ad4df="UAF"
 CVE_BLUETOOTH_48878="CVE-2022-48878"
 CVE_BTRFS_46687="CVE-2024-46687"
 CVE_BRCM80211="CVE-2024-46672"
@@ -303,6 +305,7 @@ REQUIRED_USE="
 # aacraid? https://nvd.nist.gov/vuln/detail/CVE-2024-46673 # DoS, DT, ID
 # ata? https://nvd.nist.gov/vuln/detail/CVE-2024-41087 # DoS, DT, ID
 # bfq? 1ba0403 # Unofficial: DoS, DT, ID UAF # Added as a precaution
+# bfq? 18ad4df # Unofficial: DoS, DT, ID UAF # Added as a precaution
 # bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2022-48878 # DoS, DT, ID
 # bridge? https://nvd.nist.gov/vuln/detail/CVE-2024-44934 # DoS, DT, ID
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46687 # DoS, DT, ID
@@ -376,6 +379,7 @@ all_rdepend() {
 	if _use bfq ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BFQ_1ba0403[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BFQ_18ad4df[@]}
 		fi
 	fi
 	if _use bluetooth ; then
@@ -689,6 +693,7 @@ check_drivers() {
 	fi
 	if use bfq ; then
 		check_kernel_version "bfq" "${CVE_BFQ_1ba0403}" ${MULTISLOT_KERNEL_BFQ_1ba0403[@]}
+		check_kernel_version "bfq" "${CVE_BFQ_18ad4df}" ${MULTISLOT_KERNEL_BFQ_18ad4df[@]}
 	fi
 	if use bluetooth ; then
 		check_kernel_version "bluetooth" "${CVE_BLUETOOTH_48878}" ${MULTISLOT_KERNEL_BLUETOOTH_48878[@]}
