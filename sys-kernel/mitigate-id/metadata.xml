@@ -101,6 +101,9 @@
     <flag name="fscache">
       Mitigate against information disclosure for the FS-Cache filesystem.
     </flag>
+    <flag name="hugetlbfs">
+      Mitigate against information disclosure for the hugetlbfs filesystem.
+    </flag>
     <flag name="ice">
       Mitigate against information disclosure for the E800 network driver.
     </flag>
@@ -150,6 +153,9 @@
     </flag>
     <flag name="nvme">
       Mitigate against information disclosure for the NVMe driver.
+    </flag>
+    <flag name="rtw88">
+      Mitigate against information disclosure for the rtw88 network driver.
     </flag>
     <flag name="samba">
       Mitigate against information disclosure for the Samba network filesystem.

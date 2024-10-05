@@ -133,6 +133,7 @@ MULTISLOT_KERNEL_CPUSET=("6.10.7" "6.11")
 MULTISLOT_KERNEL_HFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_HFSPLUS=("4.19.319" "5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_EXT4_43828=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
+MULTISLOT_KERNEL_EXT4_ccb8c18=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FS_43882=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FS_46701=("6.10.7" "6.11")
@@ -184,7 +185,8 @@ MULTISLOT_KERNEL_PCI_46750=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110"
 MULTISLOT_KERNEL_PCI_42302=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_PCI_HOTPLUG_46761=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_RADEON=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
-MULTISLOT_KERNEL_RTW88=("6.6.51" "6.10.10")
+MULTISLOT_KERNEL_RTW88_46760=("6.6.51" "6.10.10")
+MULTISLOT_KERNEL_RTW88_0e735a4=("5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_SCTP=("5.4.282" "5.10.224" "5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
 MULTISLOT_KERNEL_SMB_46796=("6.6.51" "6.10.10")
@@ -223,6 +225,7 @@ CVE_CFG80211="CVE-2024-42114"
 CVE_COUGAR="CVE-2024-46747"
 CVE_CPUSET="CVE-2024-44975"
 CVE_EXT4_43828="CVE-2024-43828"
+CVE_EXT4_ccb8c18="UAF"
 CVE_F2FS="CVE-2024-44942"
 CVE_FS_43882="CVE-2024-43882"
 CVE_FS_46701="CVE-2024-46701"
@@ -285,7 +288,8 @@ CVE_PCI_46750="CVE-2024-46750"
 CVE_PCI_42302="CVE-2024-42302"
 CVE_PCI_HOTPLUG_46761="CVE-2024-46761"
 CVE_POWERPC_46797="CVE-2024-46797"
-CVE_RTW88="CVE-2024-46760"
+CVE_RTW88_46760="CVE-2024-46760"
+CVE_RTW88_0e735a4="UAF"
 CVE_SCHED_44958="CVE-2024-44958"
 CVE_SCTP="CVE-2024-44935"
 CVE_SELINUX="CVE-2022-48740"
@@ -471,6 +475,7 @@ REQUIRED_USE="
 # cougar? https://nvd.nist.gov/vuln/detail/CVE-2024-46747 # DoS, DT, ID
 # cpuset? https://nvd.nist.gov/vuln/detail/CVE-2024-44975 # DoS
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-43828 # DoS
+# ext4? ccb8c18 # Unofficial: DoS, DT, ID UAF
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-46701 # DoS
@@ -525,6 +530,7 @@ REQUIRED_USE="
 # pci? https://nvd.nist.gov/vuln/detail/CVE-2024-46761 # DoS
 # powerpc? https://nvd.nist.gov/vuln/detail/CVE-2024-46797 # DoS
 # rtw88? https://nvd.nist.gov/vuln/detail/CVE-2024-46760 # DoS
+# rtw88? # 0e735a4 Unofficial: DoS, DT, ID UAF
 # samba? https://nvd.nist.gov/vuln/detail/CVE-2024-46796 # DoS, DT, ID
 # sctp? https://nvd.nist.gov/vuln/detail/CVE-2024-44935 # DoS
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
@@ -667,6 +673,7 @@ all_rdepend() {
 		if ! _use custom-kernel ; then
 			fs_rdepend
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4_43828[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4_ccb8c18[@]}
 		fi
 	fi
 	if _use f2fs ; then
@@ -898,7 +905,8 @@ all_rdepend() {
 	if _use rtw88 ; then
 		if ! _use custom-kernel ; then
 			wifi_rdepend
-			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_RTW88[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_RTW88_46760[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_RTW88_0e735a4[@]}
 		fi
 	fi
 	if _use samba ; then
@@ -1173,6 +1181,7 @@ check_drivers() {
 	if use ext4 ; then
 		fs=1
 		check_kernel_version "ext4" "${CVE_EXT4_43828}" ${MULTISLOT_KERNEL_EXT4_43828[@]}
+		check_kernel_version "ext4" "${CVE_EXT4_ccb8c18}" ${MULTISLOT_KERNEL_ccb8c18[@]}
 	fi
 	if use f2fs ; then
 		block=1
@@ -1330,7 +1339,8 @@ check_drivers() {
 	fi
 	if use rtw88 ; then
 		wifi=1
-		check_kernel_version "rtw88" "${CVE_RTW88}" ${MULTISLOT_KERNEL_RTW88[@]}
+		check_kernel_version "rtw88" "${CVE_RTW88_46760}" ${MULTISLOT_KERNEL_RTW88_46760[@]}
+		check_kernel_version "rtw88" "${CVE_RTW88_0e735a4}" ${MULTISLOT_KERNEL_RTW88_0e735a4[@]}
 	fi
 	if use samba ; then
 		block=1

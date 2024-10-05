@@ -108,6 +108,7 @@ MULTISLOT_KERNEL_BRCM80211=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_CDROM=("6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_COUGAR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_EXT4=("6.10.1")
+MULTISLOT_KERNEL_EXT4_ccb8c18=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FSCACHE=("6.6.51" "6.10.10")
@@ -132,6 +133,7 @@ MULTISLOT_KERNEL_NOUVEAU=("5.0.21" "5.4.284")
 MULTISLOT_KERNEL_NTFS3_45896=("5.15.V" "6.1.V" "6.6" "6.10" "6.11")
 MULTISLOT_KERNEL_NVME_41073=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_PCI_42302=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
+MULTISLOT_KERNEL_RTW88_0e735a4=("5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_SELINUX_46695=("6.6.49" "6.10.8")
 MULTISLOT_KERNEL_SELINUX_48740=("5.10.99" "5.15.22" "5.16.8")
 MULTISLOT_KERNEL_SMB_46796=("6.6.51" "6.10.10")
@@ -153,6 +155,7 @@ CVE_BRCM80211="CVE-2024-46672"
 CVE_CDROM="CVE-2024-42136"
 CVE_COUGAR="CVE-2024-46747"
 CVE_EXT4="CVE-2024-42257"
+CVE_EXT4_ccb8c18="UAF"
 CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
 CVE_FSCACHE="CVE-2024-46786"
@@ -179,6 +182,7 @@ CVE_NOUVEAU="CVE-2023-0030"
 CVE_NTFS3_45896="CVE-2023-45896"
 CVE_NVME_41073="CVE-2024-41073"
 CVE_PCI_42302="CVE-2024-42302"
+CVE_RTW88_0e735a4="UAF"
 CVE_SELINUX_46695="CVE-2024-46695"
 CVE_SELINUX_48740="CVE-2022-48740"
 CVE_SMACK="CVE-2024-46695"
@@ -241,6 +245,7 @@ nilfs2
 ntfs
 nvme
 pci
+rtw88
 samba
 selinux
 smack
@@ -300,6 +305,7 @@ REQUIRED_USE="
 # cdrom? https://nvd.nist.gov/vuln/detail/CVE-2024-42136 # DoS, DT, ID
 # cougar? https://nvd.nist.gov/vuln/detail/CVE-2024-46747 # DoS, DT, ID
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-42257 # DoS, DT, ID
+# ext4? ccb8c18 # Unofficial: DoS, DT, ID UAF # Added for precaution
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # PE, DoS, DT, ID
 # fscache? https://nvd.nist.gov/vuln/detail/CVE-2024-46786 # DoS, DT, ID UAF
@@ -323,6 +329,7 @@ REQUIRED_USE="
 # ntfs? https://nvd.nist.gov/vuln/detail/CVE-2023-45896 # DoS, ID; RH rated it DT (I:L)
 # nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-41073 # DoS, DT, ID
 # pci? https://nvd.nist.gov/vuln/detail/CVE-2024-42302 # DoS, DT, ID
+# rtw88? # 0e735a4 Unofficial: DoS, DT, ID UAF # Added for precaution
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2024-46695 # DT
 # samba? https://nvd.nist.gov/vuln/detail/CVE-2024-46796 # DoS, DT, ID
@@ -392,6 +399,7 @@ all_rdepend() {
 		if ! _use custom-kernel ; then
 			fs_rdepend
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4_ccb8c18[@]}
 		fi
 	fi
 	if _use f2fs ; then
@@ -501,6 +509,11 @@ all_rdepend() {
 	if _use pci ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_PCI_42302[@]}
+		fi
+	fi
+	if _use rtw88 ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_RTW88_0e735a4[@]}
 		fi
 	fi
 	if _use samba ; then
@@ -684,6 +697,7 @@ check_drivers() {
 	if use ext4 ; then
 		fs=1
 		check_kernel_version "ext4" "${CVE_EXT4}" ${MULTISLOT_KERNEL_EXT4[@]}
+		check_kernel_version "ext4" "${CVE_EXT4_ccb8c18}" ${MULTISLOT_KERNEL_ccb8c18[@]}
 	fi
 	if use f2fs ; then
 		fs=1
@@ -758,6 +772,9 @@ check_drivers() {
 	fi
 	if use pci ; then
 		check_kernel_version "pci" "${CVE_PCI_42302}" ${MULTISLOT_KERNEL_PCI_42302[@]}
+	fi
+	if use rtw88 ; then
+		check_kernel_version "rtw88" "${CVE_RTW88_0e735a4}" ${MULTISLOT_KERNEL_RTW88_0e735a4[@]}
 	fi
 	if use samba ; then
 		fs=1

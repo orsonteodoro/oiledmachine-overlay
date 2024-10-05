@@ -89,6 +89,9 @@
     <flag name="hfsplus">
       Mitigate against data tampering for the HFS+ filesystem.
     </flag>
+    <flag name="hugetlbfs">
+      Mitigate against data tampering for the hugetlbfs filesystem.
+    </flag>
     <flag name="ice">
       Mitigate against data tampering for the E800 network driver.
     </flag>
@@ -134,6 +137,9 @@
     </flag>
     <flag name="nvme">
       Mitigate against data tampering for the NVMe driver.
+    </flag>
+    <flag name="rtw88">
+      Mitigate against data tampering for the rtw88 network driver.
     </flag>
     <flag name="samba">
       Mitigate against data tampering for the Samba network filesystem.
