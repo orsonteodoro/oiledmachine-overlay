@@ -61,6 +61,9 @@
     <flag name="bcrm80211">
       Mitigate against Denial of Service for the bcrm80211 network driver.
     </flag>
+    <flag name="bfq">
+      Mitigate against Denial of Service for the BFQ IO scheduler.
+    </flag>
     <flag name="bluetooth">
       Mitigate against Denial of Service for the Bluetooth® subsystem.
     </flag>

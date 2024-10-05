@@ -103,6 +103,7 @@ MULTISLOT_KERNEL_AACRAID=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.108" "
 MULTISLOT_KERNEL_AEAD=("5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
 MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
+MULTISLOT_KERNEL_BFQ_1ba0403=("5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_BLUETOOTH=("5.10.165" "5.15.90" "6.1.8")
 MULTISLOT_KERNEL_BTRFS=("6.6.49" "6.10.8")
 MULTISLOT_KERNEL_CDROM=("6.1.98" "6.6.39" "6.9.9")
@@ -152,6 +153,7 @@ MULTISLOT_KERNEL_XFS=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.V" "6.10.V
 CVE_AEAD="CVE-2024-42229"
 CVE_AMDGPU="CVE-2024-46725"
 CVE_ATA_41087="CVE-2024-41087"
+CVE_BFQ_1ba0403="UAF"
 CVE_BLUETOOTH="CVE-2022-48878"
 CVE_BTRFS="CVE-2024-46687"
 CVE_CDROM="CVE-2024-42136"
@@ -230,6 +232,7 @@ ${VIDEO_CARDS[@]}
 aacraid
 aead
 ata
+bfq
 bluetooth
 bridge
 btrfs
@@ -311,6 +314,7 @@ REQUIRED_USE="
 # aacraid? https://nvd.nist.gov/vuln/detail/CVE-2024-46673 # DoS, DT, ID
 # aead? https://nvd.nist.gov/vuln/detail/CVE-2024-42229 # ID
 # ata? https://nvd.nist.gov/vuln/detail/CVE-2024-41087 # DoS, DT, ID
+# bfq? 1ba0403 # Unofficial: DoS, DT, ID UAF # Added as a precaution
 # bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2022-48878 # DoS, DT, ID
 # bridge? https://nvd.nist.gov/vuln/detail/CVE-2024-44934 # DoS, DT, ID
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46687 # DoS, DT, ID
@@ -392,6 +396,11 @@ all_rdepend() {
 	if _use ata ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_ATA_41087[@]}
+		fi
+	fi
+	if _use bfq ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BFQ_1ba0403[@]}
 		fi
 	fi
 	if _use bluetooth ; then
@@ -717,6 +726,9 @@ check_drivers() {
 	fi
 	if use ata ; then
 		check_kernel_version "ata" "${CVE_ATA_41087}" ${MULTISLOT_KERNEL_ATA_41087[@]}
+	fi
+	if use bfq ; then
+		check_kernel_version "bfq" "${CVE_BFQ_1ba0403}" ${MULTISLOT_KERNEL_BFQ_1ba0403[@]}
 	fi
 	if use bluetooth ; then
 		check_kernel_version "bluetooth" "${CVE_BLUETOOTH}" ${MULTISLOT_KERNEL_BLUETOOTH[@]}

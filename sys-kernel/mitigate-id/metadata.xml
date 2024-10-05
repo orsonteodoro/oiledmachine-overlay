@@ -56,6 +56,9 @@
       This is recommended for Intel® CPUs since the USE flag coverage for
       microarchitectures is incomplete.
     </flag>
+    <flag name="bfq">
+      Mitigate against information disclosure for the BFQ IO scheduler.
+    </flag>
     <flag name="bluetooth">
       Mitigate against information disclosure for the Bluetooth® subsystem.
     </flag>
