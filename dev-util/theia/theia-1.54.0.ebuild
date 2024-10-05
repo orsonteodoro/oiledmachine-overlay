@@ -3135,18 +3135,18 @@ einfo "Adding dependencies"
 #	fi
 }
 
-_WANTS_CACHED=-1
+_WANTS_PLUGIN_CACHED=-1
 user_wants_plugin() {
-	(( ${_WANTS_CACHED} != -1 )) && return ${_WANTS_CACHED}
+	(( ${_WANTS_PLUGIN_CACHED} != -1 )) && return ${_WANTS_PLUGIN_CACHED}
 	local x
 	for x in ${!THEIA_PLUGINS[@]} ; do
 		if use "${x}" ; then
-			_WANTS_CACHED=0
+			_WANTS_PLUGIN_CACHED=0
 			break
 		fi
 	done
-	(( ${_WANTS_CACHED} != 0 )) && _WANTS_CACHED=1
-	return ${_WANTS_CACHED}
+	(( ${_WANTS_PLUGIN_CACHED} != 0 )) && _WANTS_PLUGIN_CACHED=1
+	return ${_WANTS_PLUGIN_CACHED}
 }
 
 gen_plugin_array() {
