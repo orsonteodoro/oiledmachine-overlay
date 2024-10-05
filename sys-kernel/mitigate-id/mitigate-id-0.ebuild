@@ -381,11 +381,6 @@ fs_rdepend() {
 }
 all_rdepend() {
 	mitigate_id_rdepend
-	if ! _use custom-kernel ; then
-		if _use zero-tolerance ; then
-			gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]}
-		fi
-	fi
 	if _use aacraid ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AACRAID[@]}
@@ -622,6 +617,11 @@ all_rdepend() {
 		if ! _use custom-kernel ; then
 			fs_rdepend
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XFS[@]}
+		fi
+	fi
+	if ! _use custom-kernel ; then
+		if _use zero-tolerance ; then
+			gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]}
 		fi
 	fi
 }

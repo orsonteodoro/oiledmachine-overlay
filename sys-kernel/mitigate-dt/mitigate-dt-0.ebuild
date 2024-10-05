@@ -361,11 +361,6 @@ fs_rdepend() {
 
 all_rdepend() {
 	mitigate_dt_rdepend
-	if ! _use custom-kernel ; then
-		if _use zero-tolerance ; then
-			gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]}
-		fi
-	fi
 	if _use aacraid ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AACRAID[@]}
@@ -585,6 +580,11 @@ all_rdepend() {
 	if _use vmware ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_VMCI[@]}
+		fi
+	fi
+	if ! _use custom-kernel ; then
+		if _use zero-tolerance ; then
+			gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]}
 		fi
 	fi
 }

@@ -599,12 +599,6 @@ squashfs_rdepend() {
 all_rdepend() {
 	squashfs_rdepend
 	mitigate_dos_rdepend
-	if ! _use custom-kernel ; then
-		if _use zero-tolerance ; then
-			gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]}
-		fi
-		core_rdepend
-	fi
 	if _use aacraid ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AACRAID[@]}
@@ -1031,6 +1025,12 @@ all_rdepend() {
 			fs_rdepend
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_XFS[@]}
 		fi
+	fi
+	if ! _use custom-kernel ; then
+		if _use zero-tolerance ; then
+			gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]}
+		fi
+		core_rdepend
 	fi
 }
 all_rdepend

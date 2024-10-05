@@ -472,7 +472,6 @@ is_eol() {
 # Generate the patched kernel list
 gen_patched_kernel_list() {
 	local kv="${1}"
-
 	local active_version
 
 	for active_version in ${ACTIVE_VERSIONS[@]} ; do
@@ -481,7 +480,7 @@ gen_patched_kernel_list() {
 		if ver_test ${s2} -ge ${s1} ; then
 			:
 		else
-			_ALL_VERSIONS["_${s2/./_}"]="V"
+			_ALL_VERSIONS["_${s2/./_}"]="${s2}.V"
 		fi
 	done
 }
@@ -517,27 +516,15 @@ gen_patched_kernel_driver_list() {
 	local patched_version
 	patched_version=${PATCHED_VERSIONS[-1]}
 
-	local active_version
-
-	for active_version in ${ACTIVE_VERSIONS[@]} ; do
-		if [[ "${active_version}" =~ "EOL" ]] ; then
-			:
-		elif [[ "${active_version}" =~ "V" ]] ; then
-			_ALL_VERSIONS["_${slot/./_}"]="V"
-		elif ver_test "${patched_version}" -ge "${active_version}" ; then
-			:
-		fi
-	done
-
-	# Add last version of patched kernel list
+	# Check LTS versions
 
 	for patched_version in ${PATCHED_VERSIONS[@]} ; do
-		if [[ "${patched_version}" =~ "V" ]] ; then
+		if is_lts "${patched_version}" ; then
+			if [[ "${patched_version}" =~ "V" ]] ; then
 	# Unpatched / vulnerable
-			local slot="${patched_version%.*}"
-			_ALL_VERSIONS["_${slot/./_}"]="V"
-		elif is_lts "${patched_version}" ; then
-			:
+				local slot=$(ver_cut 1-2 ${patched_version})
+				_ALL_VERSIONS["_${slot/./_}"]="${slot}.V"
+			fi
 		fi
 	done
 }
@@ -582,82 +569,82 @@ gen_render_kernels_list() {
 		else
 			safe_block+="
 				(
+					!<sys-kernel/gentoo-kernel-bin-${version}
 					=sys-kernel/gentoo-kernel-bin-${slot}*
 					>=sys-kernel/gentoo-kernel-bin-${version}
-					!<sys-kernel/gentoo-kernel-bin-${version}
 				)
 				(
+					!<sys-kernel/gentoo-kernel-${version}
 					=sys-kernel/gentoo-kernel-${slot}*
 					>=sys-kernel/gentoo-kernel-${version}
-					!<sys-kernel/gentoo-kernel-${version}
 				)
 				(
+					!<sys-kernel/gentoo-sources-${version}
 					=sys-kernel/gentoo-sources-${slot}*
 					>=sys-kernel/gentoo-sources-${version}
-					!<sys-kernel/gentoo-sources-${version}
 				)
 				(
+					!<sys-kernel/vanilla-kernel-${version}
 					=sys-kernel/vanilla-kernel-${slot}*
 					>=sys-kernel/vanilla-kernel-${version}
-					!<sys-kernel/vanilla-kernel-${version}
 				)
 				(
+					!<sys-kernel/vanilla-sources-${version}
 					=sys-kernel/vanilla-sources-${slot}*
 					>=sys-kernel/vanilla-sources-${version}
-					!<sys-kernel/vanilla-sources-${version}
 				)
 				(
+					!<sys-kernel/git-sources-${version}
 					=sys-kernel/git-sources-${slot}*
 					>=sys-kernel/git-sources-${version}
-					!<sys-kernel/git-sources-${version}
 				)
 				(
+					!<sys-kernel/mips-sources-${version}
 					=sys-kernel/mips-sources-${slot}*
 					>=sys-kernel/mips-sources-${version}
-					!<sys-kernel/mips-sources-${version}
 				)
 				(
+					!<sys-kernel/pf-sources-${version}
 					=sys-kernel/pf-sources-${slot}*
 					>=sys-kernel/pf-sources-${version}
-					!<sys-kernel/pf-sources-${version}
 				)
 				(
+					!<sys-kernel/rt-sources-${version}
 					=sys-kernel/rt-sources-${slot}*
 					>=sys-kernel/rt-sources-${version}
-					!<sys-kernel/rt-sources-${version}
 				)
 				(
+					!<sys-kernel/zen-sources-${version}
 					=sys-kernel/zen-sources-${slot}*
 					>=sys-kernel/zen-sources-${version}
-					!<sys-kernel/zen-sources-${version}
 				)
 				(
+					!<sys-kernel/raspberrypi-sources-${version}
 					=sys-kernel/raspberrypi-sources-${slot}*
 					>=sys-kernel/raspberrypi-sources-${version}
-					!<sys-kernel/raspberrypi-sources-${version}
 				)
 				(
+					!<sys-kernel/linux-next-${version}
 					=sys-kernel/linux-next-${slot}*
 					>=sys-kernel/linux-next-${version}
-					!<sys-kernel/linux-next-${version}
 				)
 				(
+					!<sys-kernel/asahi-sources-${version}
 					=sys-kernel/asahi-sources-${slot}*
 					>=sys-kernel/asahi-sources-${version}
-					!<sys-kernel/asahi-sources-${version}
 				)
 				(
+					!<sys-kernel/ot-sources-${version}
 					=sys-kernel/ot-sources-${slot}*
 					>=sys-kernel/ot-sources-${version}
-					!<sys-kernel/ot-sources-${version}
 				)
 			"
 			for atom in ${ATOMS[@]} ; do
 				safe_block+="
 					(
+						!<${atom}-${version}
 						=${atom}-${slot}*
 						>=${atom}-${version}
-						!<${atom}-${version}
 					)
 				"
 			done
