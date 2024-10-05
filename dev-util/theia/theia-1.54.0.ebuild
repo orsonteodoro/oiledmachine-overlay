@@ -2550,9 +2550,8 @@ src_compile() {
 
 	sed -i \
 		-e "s|Theia Electron Example|Theia IDE|g" \
-		-e "s|Theia Electron Example|Theia IDE|g" \
-		"examples/browser/package.json" \
-		"examples/browser/lib/frontend/bundle.js" \
+		"examples/electron/package.json" \
+		"examples/electron/lib/frontend/bundle.js" \
 		|| die
 }
 
