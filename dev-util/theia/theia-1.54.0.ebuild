@@ -3074,7 +3074,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ebuild-revision-3
+git ebuild-revision-4
 "
 RDEPEND+="
 	>=app-crypt/libsecret-0.20.5
@@ -3135,16 +3135,18 @@ einfo "Adding dependencies"
 #	fi
 }
 
+_WANTS_CACHED=-1
 user_wants_plugin() {
-	local wants=0
+	(( ${_WANTS_CACHED} != -1 )) && return ${_WANTS_CACHED}
 	local x
 	for x in ${!THEIA_PLUGINS[@]} ; do
 		if use "${x}" ; then
-			wants=1
+			_WANTS_CACHED=0
 			break
 		fi
 	done
-	return ${wants}
+	(( ${_WANTS_CACHED} != 0 )) && _WANTS_CACHED=1
+	return ${_WANTS_CACHED}
 }
 
 gen_plugin_array() {
