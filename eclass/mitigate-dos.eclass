@@ -348,13 +348,13 @@ gen_render_kernels_list() {
 	local eol_block=""
 	local safe_block=""
 	local atom
-	local version
-	for version in ${!_ALL_VERSIONS[@]} ; do
-		local status="${_ALL_VERSIONS[${version}]}"
-		version="${version:1}"
-		version="${version/_/.}"
-		local slot=$(ver_cut 1-2 "${version}")
-		if [[ "${status}" =~ "EOL" || "${status}" =~ "V" ]] ; then
+	local slot_version
+	for slot_version in ${!_ALL_VERSIONS[@]} ; do
+		local version="${_ALL_VERSIONS[${slot_version}]}"
+		slot_version="${slot_version:1}"
+		slot_version="${slot_version/_/.}"
+		local slot=$(ver_cut 1-2 "${slot_version}")
+		if [[ "${version}" == "EOL" || "${version}" =~ "V" ]] ; then
 			eol_block+="
 				!=sys-kernel/gentoo-kernel-bin-${slot}*
 				!=sys-kernel/gentoo-kernel-${slot}*
