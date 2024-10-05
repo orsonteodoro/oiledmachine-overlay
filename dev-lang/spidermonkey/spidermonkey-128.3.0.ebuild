@@ -6,10 +6,9 @@ EAPI="8"
 # SECURITY:  If firefox ESR gets bumped, this package should be bumped with the same latest ESR version.
 
 # 115.11.0 -> 115.12.0
-
 # 115.12.0 -> 128.1.0
-
 # 128.1.0 -> 128.2.0
+# 128.2.0 -> 128.3.0
 
 LLVM_COMPAT=( 18 17 ) # Limited by virtual/rust
 
@@ -18,7 +17,9 @@ MY_PN="mozjs"
 MY_PV="${PV/_pre*}" # Handle Gentoo pre-releases
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_LAST_UPDATE=1725303480 # From `date +%s -d "2024-09-02 11:58"` from ftp date matching version in report
+MITIGATION_DATE="Oct 1, 2024"
+MITIGATION_LAST_UPDATE=1727726100 # From `date +%s -d "2024-09-30 12:55"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-47/"
 MOZ_ESR="yes"
 MOZ_PN="firefox"
 MOZ_PV="${PV}"
