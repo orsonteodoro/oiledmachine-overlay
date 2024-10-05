@@ -3236,15 +3236,15 @@ _install_plugins() {
 		local raw_name
 		raw_name="${THEIA_PLUGINS[${x}]}"
 		if use "${x}" ; then
-			if [[ -e "${ED}/opt/${PN}/resources/apps/plugins/${raw_name}" ]] ; then
+			if [[ -e "${ED}/opt/${PN}/resources/app/plugins/${raw_name}" ]] ; then
 einfo "Keeping ${raw_name}"
 			else
 ewarn "QA:  Missing ${raw_name}"
 			fi
 		else
-			if [[ -e "${ED}/opt/${PN}/resources/apps/plugins/${raw_name}" ]] ; then
+			if [[ -e "${ED}/opt/${PN}/resources/app/plugins/${raw_name}" ]] ; then
 einfo "Removing ${raw_name}"
-				rm "${ED}/opt/${PN}/resources/apps/plugins/${raw_name}" || die
+				rm "${ED}/opt/${PN}/resources/app/plugins/${raw_name}" || die
 			else
 ewarn "QA:  Missing ${raw_name}"
 			fi
