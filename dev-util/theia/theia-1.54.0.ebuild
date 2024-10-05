@@ -2591,7 +2591,7 @@ ewarn "QA:  Missing ${raw_name}"
 		else
 			if [[ -e "${ED}/opt/${PN}/resources/app/plugins/${raw_name}" ]] ; then
 einfo "Removing ${raw_name}"
-				rm "${ED}/opt/${PN}/resources/app/plugins/${raw_name}" || die
+				rm -rf "${ED}/opt/${PN}/resources/app/plugins/${raw_name}" || die
 			else
 ewarn "QA:  Missing ${raw_name}"
 			fi

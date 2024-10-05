@@ -302,7 +302,11 @@ gen_zero_tolerance_kernel_list() {
 
 	for latest_version in ${PATCHED_VERSIONS[@]} ; do
 		local s=$(ver_cut 1-2 ${latest_version})
-		if [[ "${_ALL_VERSIONS[_${s/./_}]}" != "EOL" ]] || ! [[ "${_ALL_VERSIONS[_${s/./_}]}" =~ "V" ]] ; then
+		if [[ "${_ALL_VERSIONS[_${s/./_}]}" == "EOL" ]] ; then
+			:
+		elif [[ "${_ALL_VERSIONS[_${s/./_}]}" =~ "V" ]] ; then
+			:
+		else
 			_ALL_VERSIONS["_${s/./_}"]="${latest_version}"
 		fi
 	done
@@ -385,58 +389,72 @@ gen_render_kernels_list() {
 				(
 					=sys-kernel/gentoo-kernel-bin-${slot}*
 					>=sys-kernel/gentoo-kernel-bin-${version}
+					!<sys-kernel/gentoo-kernel-bin-${version}
 				)
 				(
 					=sys-kernel/gentoo-kernel-${slot}*
 					>=sys-kernel/gentoo-kernel-${version}
+					!<sys-kernel/gentoo-kernel-${version}
 				)
 				(
 					=sys-kernel/gentoo-sources-${slot}*
 					>=sys-kernel/gentoo-sources-${version}
+					!<sys-kernel/gentoo-sources-${version}
 				)
 				(
 					=sys-kernel/vanilla-kernel-${slot}*
 					>=sys-kernel/vanilla-kernel-${version}
+					!<sys-kernel/vanilla-kernel-${version}
 				)
 				(
 					=sys-kernel/vanilla-sources-${slot}*
 					>=sys-kernel/vanilla-sources-${version}
+					!<sys-kernel/vanilla-sources-${version}
 				)
 				(
 					=sys-kernel/git-sources-${slot}*
 					>=sys-kernel/git-sources-${version}
+					!<sys-kernel/git-sources-${version}
 				)
 				(
 					=sys-kernel/mips-sources-${slot}*
 					>=sys-kernel/mips-sources-${version}
+					!<sys-kernel/mips-sources-${version}
 				)
 				(
 					=sys-kernel/pf-sources-${slot}*
 					>=sys-kernel/pf-sources-${version}
+					!<sys-kernel/pf-sources-${version}
 				)
 				(
 					=sys-kernel/rt-sources-${slot}*
 					>=sys-kernel/rt-sources-${version}
+					!<sys-kernel/rt-sources-${version}
 				)
 				(
 					=sys-kernel/zen-sources-${slot}*
 					>=sys-kernel/zen-sources-${version}
+					!<sys-kernel/zen-sources-${version}
 				)
 				(
 					=sys-kernel/raspberrypi-sources-${slot}*
 					>=sys-kernel/raspberrypi-sources-${version}
+					!<sys-kernel/raspberrypi-sources-${version}
 				)
 				(
 					=sys-kernel/linux-next-${slot}*
 					>=sys-kernel/linux-next-${version}
+					!<sys-kernel/linux-next-${version}
 				)
 				(
 					=sys-kernel/asahi-sources-${slot}*
 					>=sys-kernel/asahi-sources-${version}
+					!<sys-kernel/asahi-sources-${version}
 				)
 				(
 					=sys-kernel/ot-sources-${slot}*
 					>=sys-kernel/ot-sources-${version}
+					!<sys-kernel/ot-sources-${version}
 				)
 			"
 			for atom in ${ATOMS[@]} ; do
@@ -444,6 +462,7 @@ gen_render_kernels_list() {
 					(
 						=${atom}-${slot}*
 						>=${atom}-${version}
+						!<${atom}-${version}
 					)
 				"
 			done
