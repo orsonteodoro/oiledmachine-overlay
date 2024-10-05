@@ -2570,7 +2570,9 @@ _install() {
 
 	local path
 	for path in ${YARN_EXE_LIST} ; do
-		fperms 0755 "${path}"
+		if [[ -e "${ED}/${path}" ]] ; then
+			fperms 0755 "${path}"
+		fi
 	done
 	fperms 4711 "/opt/${PN}/chrome-sandbox"
 }
