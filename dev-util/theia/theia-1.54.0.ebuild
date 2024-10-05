@@ -2429,7 +2429,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ebuild-revision-4
+git ebuild-revision-5
 "
 RDEPEND+="
 	>=app-crypt/libsecret-0.20.5
@@ -2558,8 +2558,8 @@ src_compile() {
 
 sanitize_permissions() {
 	chmod -R "root:root" "${ED}/opt/${PN}"
-	find "/opt/${PN}" -type f -print0 | xargs -0 chmod 0644
-	find "/opt/${PN}" -type d -print0 | xargs -0 chmod 0755
+	find "${ED}/opt/${PN}" -type f -print0 | xargs -0 chmod 0644
+	find "${ED}/opt/${PN}" -type d -print0 | xargs -0 chmod 0755
 	for x in ${YARN_EXE_LIST} ; do
 		fperms 0755 "${x}"
 	done
