@@ -101,6 +101,7 @@ is_microarch_selected() {
 }
 
 IUSE+="
+	${ACTIVE_VERSIONS[@]/./_}
 	${CPU_TARGET_X86[@]}
 	auto
 	custom-kernel
@@ -228,6 +229,9 @@ REQUIRED_USE="
 	)
 	cpu_target_x86_siena? (
 		firmware
+	)
+	|| (
+		${ACTIVE_VERSIONS[@]/./_}
 	)
 "
 
@@ -373,93 +377,112 @@ gen_render_kernels_list() {
 				"
 			done
 		else
-			safe_block+="
-				(
-					!<sys-kernel/gentoo-kernel-bin-${version}
-					=sys-kernel/gentoo-kernel-bin-${slot}*
-					>=sys-kernel/gentoo-kernel-bin-${version}
-				)
-				(
-					!<sys-kernel/gentoo-kernel-${version}
-					=sys-kernel/gentoo-kernel-${slot}*
-					>=sys-kernel/gentoo-kernel-${version}
-				)
-				(
-					!<sys-kernel/gentoo-sources-${version}
-					=sys-kernel/gentoo-sources-${slot}*
-					>=sys-kernel/gentoo-sources-${version}
-				)
-				(
-					!<sys-kernel/vanilla-kernel-${version}
-					=sys-kernel/vanilla-kernel-${slot}*
-					>=sys-kernel/vanilla-kernel-${version}
-				)
-				(
-					!<sys-kernel/vanilla-sources-${version}
-					=sys-kernel/vanilla-sources-${slot}*
-					>=sys-kernel/vanilla-sources-${version}
-				)
-				(
-					!<sys-kernel/git-sources-${version}
-					=sys-kernel/git-sources-${slot}*
-					>=sys-kernel/git-sources-${version}
-				)
-				(
-					!<sys-kernel/mips-sources-${version}
-					=sys-kernel/mips-sources-${slot}*
-					>=sys-kernel/mips-sources-${version}
-				)
-				(
-					!<sys-kernel/pf-sources-${version}
-					=sys-kernel/pf-sources-${slot}*
-					>=sys-kernel/pf-sources-${version}
-				)
-				(
-					!<sys-kernel/rt-sources-${version}
-					=sys-kernel/rt-sources-${slot}*
-					>=sys-kernel/rt-sources-${version}
-				)
-				(
-					!<sys-kernel/zen-sources-${version}
-					=sys-kernel/zen-sources-${slot}*
-					>=sys-kernel/zen-sources-${version}
-				)
-				(
-					!<sys-kernel/raspberrypi-sources-${version}
-					=sys-kernel/raspberrypi-sources-${slot}*
-					>=sys-kernel/raspberrypi-sources-${version}
-				)
-				(
-					!<sys-kernel/linux-next-${version}
-					=sys-kernel/linux-next-${slot}*
-					>=sys-kernel/linux-next-${version}
-				)
-				(
-					!<sys-kernel/asahi-sources-${version}
-					=sys-kernel/asahi-sources-${slot}*
-					>=sys-kernel/asahi-sources-${version}
-				)
-				(
-					!<sys-kernel/ot-sources-${version}
-					=sys-kernel/ot-sources-${slot}*
-					>=sys-kernel/ot-sources-${version}
-				)
-			"
+			local t=""
 			for atom in ${ATOMS[@]} ; do
-				safe_block+="
-					(
-						!<${atom}-${version}
-						=${atom}-${slot}*
-						>=${atom}-${version}
-					)
+				t+="
+				(
+					=${atom}-${slot}*
+					>=${atom}-${version}
+				)
 				"
 			done
+			local c3=$(ver_cut 3 ${version})
+			[[ -z "${c3}" ]] && c3="0"
+
+	# It is inefficient because each package has a different slotting
+	# template.
+			local i
+			for (( i=0 ; i < ${c3} ; i++ )) ; do
+				eol_block+="
+					!~sys-kernel/gentoo-kernel-bin-${slot}.${i}
+					!~sys-kernel/gentoo-kernel-${slot}.${i}
+					!~sys-kernel/gentoo-sources-${slot}.${i}
+					!~sys-kernel/vanilla-kernel-${slot}.${i}
+					!~sys-kernel/vanilla-sources-${slot}.${i}
+					!~sys-kernel/git-sources-${slot}.${i}
+					!~sys-kernel/mips-sources-${slot}.${i}
+					!~sys-kernel/pf-sources-${slot}.${i}
+					!~sys-kernel/rt-sources-${slot}.${i}
+					!~sys-kernel/zen-sources-${slot}.${i}
+					!~sys-kernel/raspberrypi-sources-${slot}.${i}
+					!~sys-kernel/linux-next-${slot}.${i}
+					!~sys-kernel/asahi-sources-${slot}.${i}
+					!~sys-kernel/ot-sources-${slot}.${i}
+				"
+				for atom in ${ATOMS[@]} ; do
+				eol_block+="
+					!~${atom}-${slot}.${i}
+				"
+				done
+			done
+
+			safe_block+="
+			${slot/./_}? (
+				|| (
+					(
+						=sys-kernel/gentoo-kernel-bin-${slot}*
+						>=sys-kernel/gentoo-kernel-bin-${version}
+					)
+					(
+						=sys-kernel/gentoo-kernel-${slot}*
+						>=sys-kernel/gentoo-kernel-${version}
+					)
+					(
+						=sys-kernel/gentoo-sources-${slot}*
+						>=sys-kernel/gentoo-sources-${version}
+					)
+					(
+						=sys-kernel/vanilla-kernel-${slot}*
+						>=sys-kernel/vanilla-kernel-${version}
+					)
+					(
+						=sys-kernel/vanilla-sources-${slot}*
+						>=sys-kernel/vanilla-sources-${version}
+					)
+					(
+						=sys-kernel/git-sources-${slot}*
+						>=sys-kernel/git-sources-${version}
+					)
+					(
+						=sys-kernel/mips-sources-${slot}*
+						>=sys-kernel/mips-sources-${version}
+					)
+					(
+						=sys-kernel/pf-sources-${slot}*
+						>=sys-kernel/pf-sources-${version}
+					)
+					(
+						=sys-kernel/rt-sources-${slot}*
+						>=sys-kernel/rt-sources-${version}
+					)
+					(
+						=sys-kernel/zen-sources-${slot}*
+						>=sys-kernel/zen-sources-${version}
+					)
+					(
+						=sys-kernel/raspberrypi-sources-${slot}*
+						>=sys-kernel/raspberrypi-sources-${version}
+					)
+					(
+						=sys-kernel/linux-next-${slot}*
+						>=sys-kernel/linux-next-${version}
+					)
+					(
+						=sys-kernel/asahi-sources-${slot}*
+						>=sys-kernel/asahi-sources-${version}
+					)
+					(
+						=sys-kernel/ot-sources-${slot}*
+						>=sys-kernel/ot-sources-${version}
+					)
+					${t}
+				)
+			)
+			"
 		fi
 	done
 	echo "
-		|| (
-			${safe_block}
-		)
+		${safe_block}
 		${eol_block}
 	"
 }
