@@ -1376,6 +1376,10 @@ LICENSE="
 "
 SLOT="0"
 IUSE+=" agent angular ssl"
+# USE=angular is broken
+REQUIRED_USE="
+	!angular
+"
 RESTRICT="test"
 # apache optional: apache2_modules_env, apache2_modules_log_config
 RDEPEND="
