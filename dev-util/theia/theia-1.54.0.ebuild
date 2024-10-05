@@ -2429,7 +2429,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ebuild-revision-5
+git ebuild-revision-6
 "
 RDEPEND+="
 	>=app-crypt/libsecret-0.20.5
@@ -2558,13 +2558,13 @@ src_compile() {
 _install() {
 	# Reconstruct AppImage
 	insinto "/opt/${PN}"
-	doins -R "node_modules/electron/dist/"*
+	doins -r "node_modules/electron/dist/"*
 	insinto "/opt/${PN}/resources/app"
-	doins -R "examples/electron/"*
-	doins -R "examples/electron/."*
+	doins -r "examples/electron/"*
+	doins -r "examples/electron/."*
 	if user_wants_plugin ; then
 		insinto "/opt/${PN}/resources/app"
-		doins -R "plugins"
+		doins -r "plugins"
 	fi
 	cat "${FILESDIR}/${PN}-v2" > "${T}/${PN}" || die
 
