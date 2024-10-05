@@ -1032,9 +1032,10 @@ all_rdepend() {
 		fi
 		core_rdepend
 	fi
+	echo ""
 }
-all_rdepend
 RDEPEND="
+	$(all_rdepend)
 	enforce? (
 		!custom-kernel? (
 			$(gen_render_kernels_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
