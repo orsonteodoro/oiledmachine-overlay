@@ -2558,6 +2558,8 @@ src_compile() {
 
 sanitize_permissions() {
 	chmod -R "root:root" "${ED}/opt/${PN}"
+	find . -type f -print0 | xargs -0 chmod 0644
+	find . -type d -print0 | xargs -0 chmod 0755
 	for x in ${YARN_EXE_LIST} ; do
 		fperms 0755 "${x}"
 	done
