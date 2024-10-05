@@ -2556,37 +2556,24 @@ src_compile() {
 		|| die
 }
 
-sanitize_permissions() {
-	chmod -R "root:root" "${ED}/opt/${PN}" || die
-	find "${ED}/opt/${PN}" -type f -print0 | xargs -0 chmod 0644 || die
-	find "${ED}/opt/${PN}" -type d -print0 | xargs -0 chmod 0755 || die
-	for x in ${YARN_EXE_LIST} ; do
-		fperms 0755 "${x}"
-	done
-	fperms 4711 "/opt/${PN}/chrome-sandbox"
-}
-
 _install() {
 	# Reconstruct AppImage
-	dodir "/opt/${PN}"
-	mv \
-		"node_modules/electron/dist/"* \
-		"${ED}/opt/${PN}" \
-		|| die
-	dodir "/opt/${PN}/resources/app"
-	mv \
-		"examples/electron/"* \
-		"examples/electron/."* \
-		"${ED}/opt/${PN}/resources/app" \
-		|| die
+	insinto "/opt/${PN}"
+	doins -R "node_modules/electron/dist/"*
+	insinto "/opt/${PN}/resources/app"
+	doins -R "examples/electron/"*
+	doins -R "examples/electron/."*
 	if user_wants_plugin ; then
-		mv \
-			"plugins" \
-			"${ED}/opt/${PN}/resources/app" \
-			|| die
+		insinto "/opt/${PN}/resources/app"
+		doins -R "plugins"
 	fi
 	cat "${FILESDIR}/${PN}-v2" > "${T}/${PN}" || die
-	sanitize_permissions
+
+	local path
+	for path in ${YARN_EXE_LIST} ; do
+		fperms 0755 "${path}"
+	done
+	fperms 4711 "/opt/${PN}/chrome-sandbox"
 }
 
 _install_plugins() {
