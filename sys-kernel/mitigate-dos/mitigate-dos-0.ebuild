@@ -1032,7 +1032,6 @@ all_rdepend() {
 		fi
 		core_rdepend
 	fi
-	echo ""
 }
 all_rdepend
 RDEPEND="

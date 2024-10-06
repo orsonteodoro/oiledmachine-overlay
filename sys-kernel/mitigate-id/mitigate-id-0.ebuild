@@ -624,7 +624,6 @@ all_rdepend() {
 			gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]}
 		fi
 	fi
-	echo ""
 }
 all_rdepend
 RDEPEND="
