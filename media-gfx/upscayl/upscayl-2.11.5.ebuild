@@ -847,7 +847,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models
-	ebuild-revision-5
+	ebuild-revision-6
 	firejail
 "
 # Upstream uses U 18.04.6 for CI
