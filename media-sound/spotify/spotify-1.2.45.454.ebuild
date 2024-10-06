@@ -1061,7 +1061,9 @@ gen_wrapper() {
 cat <<-EOF >"${D}/usr/bin/${PN}" || die
 #!/bin/bash
 
-if ! pgrep dbus-launch ; then
+ps -eo "cmd" | grep -q "^dbus-launch.*exit-with-session"
+ret="\$?"
+if which ps >/dev/null && (( \${ret} != 0 )) ; then
 echo
 echo "Did not detect a running dbus-launch.  Please read"
 echo
