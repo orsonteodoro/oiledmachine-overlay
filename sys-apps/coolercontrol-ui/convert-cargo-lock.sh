@@ -16,6 +16,8 @@ declare -A CARGO_PATHS=(
 [tauri-plugin-single-instance]="plugins-workspace-%commit%/plugins/single-instance" # 0.0.0
 [tauri-plugin-store]="plugins-workspace-%commit%/plugins/store" # 0.0.0
 [tauri-plugin-window-state]="plugins-workspace-%commit%/plugins/window-state" # 0.0.0
+[tauri-plugin-cli]="plugins-workspace-%commit%/plugins/cli"
+[tauri-plugin-shell]="plugins-workspace-%commit%/plugins/shell"
 )
 
 main() {

@@ -18,8 +18,8 @@ EAPI=8
 PLUGINS_WORKSPACE_COMMIT="5e3900e682e13f3759b439116ae2f77a6d389ca2" # Same as below
 
 declare -A GIT_CRATES=(
-[tauri-plugin-cli]="https://github.com/tauri-apps/plugins-workspace;fb85e5dd76688f3ae836890160f9bde843b70167;" # 2.0.0-rc.1
-[tauri-plugin-shell]="https://github.com/tauri-apps/plugins-workspace;fb85e5dd76688f3ae836890160f9bde843b70167;" # 2.0.0-rc.3
+[tauri-plugin-cli]="https://github.com/tauri-apps/plugins-workspace;fb85e5dd76688f3ae836890160f9bde843b70167;plugins-workspace-%commit%/plugins/cli" # 2.0.0-rc.1
+[tauri-plugin-shell]="https://github.com/tauri-apps/plugins-workspace;fb85e5dd76688f3ae836890160f9bde843b70167;plugins-workspace-%commit%/plugins/shell" # 2.0.0-rc.3
 [tauri-plugin-store]="https://github.com/tauri-apps/plugins-workspace;fb85e5dd76688f3ae836890160f9bde843b70167;plugins-workspace-%commit%/plugins/store" # 2.0.0-rc.3
 )
 

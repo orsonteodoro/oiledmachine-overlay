@@ -11,6 +11,8 @@ MY_PV="${1}"
 
 # - has ambiguous means
 declare -A CARGO_PATHS=(
+[nvml-wrapper-sys]="plugins-workspace-%commit%/nvml-wrapper-sys"
+[nvml-wrapper]="plugins-workspace-%commit%/nvml-wrapper"
 )
 
 main() {
