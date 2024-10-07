@@ -4290,29 +4290,35 @@ einfo "Building ${MY_PN}.js"
 		if [[ "${NPM_AUDIT_FIX}" == 0 ]] ; then
 ewarn "Skipping audit fix.  Applying security fixes selectively."
 
-# [1] [...] affected by libvpx's heap buffer overflow in vp8 encoding
-# [2] [...] forwards secure headers to untrusted sites
-# [3] [...] template injection vulnerability
-# [4] Arbitrary Code Execution
-# [5] Arbitrary File Creation/Overwrite due to insufficient absolute path sanitization
-# [6] Code injection
-# [7] Command Injection
-# [8] Denial of Service (DoS) or Regular Expression Denial of Service (ReDoS)
-# [9] Exposure of sensitive information in [...] or Exposure of Sensitive Information to an Unauthorized Actor in [...]
-# [10] Improper Privilege Management
-# [11] Insufficient Entropy
-# [12] Prototype pollution [which could lead to DoS or Remote Code Execution]
-# [13] Race Condition [which could lead to lead to local privilege escalation]
-# [14] Server-side request forgery (SSRF)
-# [15] Remote Memory Exposure
-# [16] Insufficient Granularity of Access Control
-# [17] [...] lacks certain pollution protection
-# [18] [...] line return parsing error
-# [19] [...] Open Redirect in malformed URLs
-# [20] [...] improperly handles URLs in the url.parse() function [which could lead to information disclosure, phishing attacks, other security breaches]
-# [21] Cross-Site Request Forgery Vulnerability
-# [22] Proxy-Authorization header kept across hosts
-# [23] [...] can allocate memory for incoming messages well above configured limits
+# DoS = Denial of Service
+# DT = Data Tampering
+# ID = Information Disclosure
+
+# DoS, DT, ID	[1] [...] affected by libvpx's heap buffer overflow in vp8 encoding				# CVE-2023-5217
+# DoS, DT, ID	[2] [...] forwards secure headers to untrusted sites						# CVE-2022-0235
+# DoS, DT, ID	[3] [...] template injection vulnerability							# CVE-2022-29078
+# DoS, DT, ID	[4] Arbitrary Code Execution									# CVE-2020-7729, CVE-2019-20920
+# CI, ID	[5] Arbitrary File Creation/Overwrite due to insufficient absolute path sanitization		# CVE-2021-32804
+# DoS, DT, ID	[6] Code injection										# CVE-2023-45311, GHSA-8j8c-7jfh-h6hx
+# DoS, DT, ID	[7] Command Injection										# CVE-2021-23337
+# DoS		[8] Denial of Service (DoS) or Regular Expression Denial of Service (ReDoS)			# CVE-2022-25883, CVE-2022-3517, CVE-2021-23343, CVE-2020-28500, CVE-2022-38900, GHSA-h6ch-v84p-w6p9, GHSA-v2p6-4mp7-3r9v
+# DoS, DT, ID	[9] Exposure of sensitive information in [...]							# CVE-2022-0155
+# ID		[9] Exposure of Sensitive Information to an Unauthorized Actor in [...]				# CVE-2022-0536
+# DoS, CI	[10] Improper Privilege Management								# CVE-2022-0144
+# DoS, DT, ID	[11] Insufficient Entropy									# CVE-2018-1000620
+# DoS, DT, ID	[12] Prototype pollution [which could lead to DoS or Remote Code Execution]			# CVE-2019-19919, CVE-2021-44906, CVE-2019-10744, CVE-2021-23383, CVE-2019-10746, CVE-2019-10747, CVE-2020-28282, CVE-2018-3750, CVE-2022-37601
+# DoS, DT, ID	[13] Race Condition [which could lead to lead to local privilege escalation]			# CVE-2022-1537
+# DT, ID	[14] Server-side request forgery (SSRF)								# CVE-2020-28168, CVE-2023-28155
+# DoS, ID	[15] Remote Memory Exposure									# CVE-2020-8244
+# DoS, DT, ID	[16] Insufficient Granularity of Access Control							# CVE-2021-20066
+# DoS		[17] [...] lacks certain pollution protection							# CVE-2024-33883
+# DT		[18] [...] line return parsing error								# CVE-2023-44270
+# DT, ID	[19] [...] Open Redirect in malformed URLs							# CVE-2024-29041
+# DT, ID	[20] [...] improperly handles URLs in the url.parse() function					# CVE-2023-26159
+#		[which could lead to information disclosure, phishing attacks, other security breaches]
+# CI		[21] Cross-Site Request Forgery Vulnerability							# CVE-2023-45857
+# CI		[22] Proxy-Authorization header kept across hosts						# CVE-2024-28849
+# DoS		[23] [...] can allocate memory for incoming messages well above configured limits		# CVE-2024-37168
 
 einfo "Fixing critical vulnerabilities"
 			pushd "${S}/GDevelop.js" || die
