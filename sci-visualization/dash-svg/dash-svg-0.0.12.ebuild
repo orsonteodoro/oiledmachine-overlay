@@ -713,7 +713,7 @@ https://registry.npmjs.org/readable-stream/-/readable-stream-1.0.34.tgz -> npmpk
 https://registry.npmjs.org/string_decoder/-/string_decoder-0.10.31.tgz -> npmpkg-string_decoder-0.10.31.tgz
 https://registry.npmjs.org/normalize-path/-/normalize-path-3.0.0.tgz -> npmpkg-normalize-path-3.0.0.tgz
 https://registry.npmjs.org/normalize-url/-/normalize-url-6.1.0.tgz -> npmpkg-normalize-url-6.1.0.tgz
-https://registry.npmjs.org/npm/-/npm-6.14.18.tgz -> npmpkg-npm-6.14.18.tgz
+https://registry.npmjs.org/npm/-/npm-8.12.2.tgz -> npmpkg-npm-8.12.2.tgz
 https://registry.npmjs.org/npm-run-path/-/npm-run-path-2.0.2.tgz -> npmpkg-npm-run-path-2.0.2.tgz
 https://registry.npmjs.org/nth-check/-/nth-check-1.0.2.tgz -> npmpkg-nth-check-1.0.2.tgz
 https://registry.npmjs.org/oauth-sign/-/oauth-sign-0.9.0.tgz -> npmpkg-oauth-sign-0.9.0.tgz
@@ -1170,7 +1170,7 @@ npm_update_lock_audit_post() {
 	sed -i -e "s|\"got\": \"^6.7.1\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die
 
 	# Use v8 which is backwards compatible with v1 lockfile
-	sed -i -e "s|\"npm\": \"^6.1.0\"|\"npm\": \"latest\"|g" "package-lock.json" || die
+	sed -i -e "s|\"npm\": \"^6.1.0\"|\"npm\": \"8.12.2\"|g" "package-lock.json" || die
 
 	sed -i -e "s|\"ip\": \"1.1.5\"|\"ip\": \"1.1.9\"|g" "package-lock.json" || die
 
@@ -1189,6 +1189,7 @@ npm_update_lock_audit_post() {
 	enpm install "tough-cookie@^4.1.3" -D	# CVE-2023-26136	# DT, ID
 	enpm install "got@^11.8.5" -D		# CVE-2022-33987	# DT
 	enpm install "ip@^1.1.9" -D		# CVE-2023-42282	# DoS, DT, ID
+	enpm install "npm@8.12.2" -D		# Fixes deps vulnerabilities
 	# request EOL				# CVE-2023-28155	# DT, ID
 
 	# css loader
