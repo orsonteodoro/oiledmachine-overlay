@@ -202,6 +202,7 @@ https://registry.npmjs.org/aws-sign2/-/aws-sign2-0.7.0.tgz -> npmpkg-aws-sign2-0
 https://registry.npmjs.org/aws4/-/aws4-1.13.2.tgz -> npmpkg-aws4-1.13.2.tgz
 https://registry.npmjs.org/babel-eslint/-/babel-eslint-10.1.0.tgz -> npmpkg-babel-eslint-10.1.0.tgz
 https://registry.npmjs.org/babel-loader/-/babel-loader-8.4.1.tgz -> npmpkg-babel-loader-8.4.1.tgz
+https://registry.npmjs.org/loader-utils/-/loader-utils-2.0.4.tgz -> npmpkg-loader-utils-2.0.4.tgz
 https://registry.npmjs.org/babel-plugin-polyfill-corejs2/-/babel-plugin-polyfill-corejs2-0.4.11.tgz -> npmpkg-babel-plugin-polyfill-corejs2-0.4.11.tgz
 https://registry.npmjs.org/babel-plugin-polyfill-corejs3/-/babel-plugin-polyfill-corejs3-0.10.6.tgz -> npmpkg-babel-plugin-polyfill-corejs3-0.10.6.tgz
 https://registry.npmjs.org/babel-plugin-polyfill-regenerator/-/babel-plugin-polyfill-regenerator-0.6.2.tgz -> npmpkg-babel-plugin-polyfill-regenerator-0.6.2.tgz
@@ -308,8 +309,6 @@ https://registry.npmjs.org/cross-spawn/-/cross-spawn-6.0.5.tgz -> npmpkg-cross-s
 https://registry.npmjs.org/semver/-/semver-5.7.2.tgz -> npmpkg-semver-5.7.2.tgz
 https://registry.npmjs.org/crypto-browserify/-/crypto-browserify-3.12.0.tgz -> npmpkg-crypto-browserify-3.12.0.tgz
 https://registry.npmjs.org/css-loader/-/css-loader-3.6.0.tgz -> npmpkg-css-loader-3.6.0.tgz
-https://registry.npmjs.org/json5/-/json5-1.0.2.tgz -> npmpkg-json5-1.0.2.tgz
-https://registry.npmjs.org/loader-utils/-/loader-utils-1.4.2.tgz -> npmpkg-loader-utils-1.4.2.tgz
 https://registry.npmjs.org/css-select/-/css-select-1.2.0.tgz -> npmpkg-css-select-1.2.0.tgz
 https://registry.npmjs.org/css-what/-/css-what-2.1.3.tgz -> npmpkg-css-what-2.1.3.tgz
 https://registry.npmjs.org/cssesc/-/cssesc-3.0.0.tgz -> npmpkg-cssesc-3.0.0.tgz
@@ -619,7 +618,8 @@ https://registry.npmjs.org/levn/-/levn-0.3.0.tgz -> npmpkg-levn-0.3.0.tgz
 https://registry.npmjs.org/load-json-file/-/load-json-file-5.3.0.tgz -> npmpkg-load-json-file-5.3.0.tgz
 https://registry.npmjs.org/type-fest/-/type-fest-0.3.1.tgz -> npmpkg-type-fest-0.3.1.tgz
 https://registry.npmjs.org/loader-runner/-/loader-runner-2.4.0.tgz -> npmpkg-loader-runner-2.4.0.tgz
-https://registry.npmjs.org/loader-utils/-/loader-utils-2.0.4.tgz -> npmpkg-loader-utils-2.0.4.tgz
+https://registry.npmjs.org/loader-utils/-/loader-utils-1.4.2.tgz -> npmpkg-loader-utils-1.4.2.tgz
+https://registry.npmjs.org/json5/-/json5-1.0.2.tgz -> npmpkg-json5-1.0.2.tgz
 https://registry.npmjs.org/locate-path/-/locate-path-5.0.0.tgz -> npmpkg-locate-path-5.0.0.tgz
 https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz -> npmpkg-lodash-4.17.21.tgz
 https://registry.npmjs.org/lodash.assignin/-/lodash.assignin-4.2.0.tgz -> npmpkg-lodash.assignin-4.2.0.tgz
@@ -918,15 +918,10 @@ https://registry.npmjs.org/strip-bom/-/strip-bom-3.0.0.tgz -> npmpkg-strip-bom-3
 https://registry.npmjs.org/strip-eof/-/strip-eof-1.0.0.tgz -> npmpkg-strip-eof-1.0.0.tgz
 https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-3.1.1.tgz -> npmpkg-strip-json-comments-3.1.1.tgz
 https://registry.npmjs.org/style-loader/-/style-loader-0.23.1.tgz -> npmpkg-style-loader-0.23.1.tgz
-https://registry.npmjs.org/json5/-/json5-1.0.2.tgz -> npmpkg-json5-1.0.2.tgz
-https://registry.npmjs.org/loader-utils/-/loader-utils-1.4.2.tgz -> npmpkg-loader-utils-1.4.2.tgz
 https://registry.npmjs.org/schema-utils/-/schema-utils-1.0.0.tgz -> npmpkg-schema-utils-1.0.0.tgz
 https://registry.npmjs.org/styled-jsx/-/styled-jsx-3.4.7.tgz -> npmpkg-styled-jsx-3.4.7.tgz
 https://registry.npmjs.org/@babel/types/-/types-7.8.3.tgz -> npmpkg-@babel-types-7.8.3.tgz
 https://registry.npmjs.org/convert-source-map/-/convert-source-map-1.7.0.tgz -> npmpkg-convert-source-map-1.7.0.tgz
-https://registry.npmjs.org/emojis-list/-/emojis-list-2.1.0.tgz -> npmpkg-emojis-list-2.1.0.tgz
-https://registry.npmjs.org/json5/-/json5-1.0.2.tgz -> npmpkg-json5-1.0.2.tgz
-https://registry.npmjs.org/loader-utils/-/loader-utils-1.2.3.tgz -> npmpkg-loader-utils-1.2.3.tgz
 https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.1.2.tgz -> npmpkg-safe-buffer-5.1.2.tgz
 https://registry.npmjs.org/source-map/-/source-map-0.7.3.tgz -> npmpkg-source-map-0.7.3.tgz
 https://registry.npmjs.org/stylis/-/stylis-3.5.4.tgz -> npmpkg-stylis-3.5.4.tgz
@@ -1023,12 +1018,9 @@ https://registry.npmjs.org/webpack/-/webpack-4.36.1.tgz -> npmpkg-webpack-4.36.1
 https://registry.npmjs.org/webpack-cli/-/webpack-cli-3.3.6.tgz -> npmpkg-webpack-cli-3.3.6.tgz
 https://registry.npmjs.org/cliui/-/cliui-5.0.0.tgz -> npmpkg-cliui-5.0.0.tgz
 https://registry.npmjs.org/emoji-regex/-/emoji-regex-7.0.3.tgz -> npmpkg-emoji-regex-7.0.3.tgz
-https://registry.npmjs.org/emojis-list/-/emojis-list-2.1.0.tgz -> npmpkg-emojis-list-2.1.0.tgz
 https://registry.npmjs.org/enhanced-resolve/-/enhanced-resolve-4.1.0.tgz -> npmpkg-enhanced-resolve-4.1.0.tgz
 https://registry.npmjs.org/find-up/-/find-up-3.0.0.tgz -> npmpkg-find-up-3.0.0.tgz
 https://registry.npmjs.org/is-fullwidth-code-point/-/is-fullwidth-code-point-2.0.0.tgz -> npmpkg-is-fullwidth-code-point-2.0.0.tgz
-https://registry.npmjs.org/json5/-/json5-1.0.2.tgz -> npmpkg-json5-1.0.2.tgz
-https://registry.npmjs.org/loader-utils/-/loader-utils-1.2.3.tgz -> npmpkg-loader-utils-1.2.3.tgz
 https://registry.npmjs.org/locate-path/-/locate-path-3.0.0.tgz -> npmpkg-locate-path-3.0.0.tgz
 https://registry.npmjs.org/p-locate/-/p-locate-3.0.0.tgz -> npmpkg-p-locate-3.0.0.tgz
 https://registry.npmjs.org/path-exists/-/path-exists-3.0.0.tgz -> npmpkg-path-exists-3.0.0.tgz
@@ -1049,8 +1041,6 @@ https://registry.npmjs.org/eslint-scope/-/eslint-scope-4.0.3.tgz -> npmpkg-eslin
 https://registry.npmjs.org/estraverse/-/estraverse-4.3.0.tgz -> npmpkg-estraverse-4.3.0.tgz
 https://registry.npmjs.org/find-cache-dir/-/find-cache-dir-2.1.0.tgz -> npmpkg-find-cache-dir-2.1.0.tgz
 https://registry.npmjs.org/find-up/-/find-up-3.0.0.tgz -> npmpkg-find-up-3.0.0.tgz
-https://registry.npmjs.org/json5/-/json5-1.0.2.tgz -> npmpkg-json5-1.0.2.tgz
-https://registry.npmjs.org/loader-utils/-/loader-utils-1.4.2.tgz -> npmpkg-loader-utils-1.4.2.tgz
 https://registry.npmjs.org/locate-path/-/locate-path-3.0.0.tgz -> npmpkg-locate-path-3.0.0.tgz
 https://registry.npmjs.org/make-dir/-/make-dir-2.1.0.tgz -> npmpkg-make-dir-2.1.0.tgz
 https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.6.tgz -> npmpkg-mkdirp-0.5.6.tgz
@@ -1128,6 +1118,17 @@ BDEPEND+="
 pkg_setup() {
 	python_setup
 	npm_pkg_setup
+}
+
+npm_update_lock_audit_post() {
+	# DoS = Denial of Service
+	# DT = Data Tampering
+	# ID = Information Disclosure
+	# CVE-2022-37601, DoS, DT, ID
+	sed -i -e "s|\"loader-utils\": \"^1.1.0\"|\"loader-utils\": \"^1.4.2\"|g" "package-lock.json" || die
+	sed -i -e "s|\"loader-utils\": \"^1.2.3\"|\"loader-utils\": \"^1.4.2\"|g" "package-lock.json" || die
+	sed -i -e "s|\"loader-utils\": \"1.2.3\"|\"loader-utils\": \"^1.4.2\"|g" "package-lock.json" || die
+	enpm install "loader-utils@^1.4.2" -D
 }
 
 src_unpack() {
