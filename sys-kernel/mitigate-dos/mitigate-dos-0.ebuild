@@ -100,6 +100,7 @@ MULTISLOT_KERNEL_LOCKING=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "
 MULTISLOT_KERNEL_MM_46847=("6.6.51" "6.10.10" "6.11")
 MULTISLOT_KERNEL_SCHED_44958=("5.15.165" "6.1.105" "6.6.46" "6.10.5" "6.11")
 MULTISLOT_KERNEL_WORKQUEUE=("4.19.V" "5.4.V" "5.10.V" "5.15.167" "6.1.110" "6.6.51" "6.10.10" "6.11")
+MULTISLOT_KERNEL_KTHREAD=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.3" "6.11.2")
 
 # Arch specific
 MULTISLOT_KERNEL_PARISC_40918=("6.6.35" "6.9.6" "6.10")
@@ -107,6 +108,7 @@ MULTISLOT_KERNEL_POWERPC_46797=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_KVM_ARM64_26598=("5.4.269" "5.10.209" "5.15.148" "6.1.75" "6.6.14" "6.7.2")
 MULTISLOT_KERNEL_KVM_ARM64_46707=("5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_KVM_POWERPC_41070=("5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
+MULTISLOT_KERNEL_KVM_RISCV_47d40d9=("6.10.13" "6.11.2")
 MULTISLOT_KERNEL_KVM_S390_43819=("6.10.3")
 MULTISLOT_KERNEL_KVM_X86_39483=("6.4" "6.6.34" "6.9.5")
 
@@ -135,8 +137,9 @@ MULTISLOT_KERNEL_CPUSET=("6.10.7" "6.11")
 MULTISLOT_KERNEL_HFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_HFSPLUS=("4.19.319" "5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_EXT4_43828=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
-MULTISLOT_KERNEL_EXT4_ccb8c18=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
-MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
+MULTISLOT_KERNEL_EXT4_c6b72f5=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
+MULTISLOT_KERNEL_F2FS_44942=("6.6.47" "6.10.6")
+MULTISLOT_KERNEL_F2FS_930c6ab=("6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_FS_43882=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FS_46701=("6.10.7" "6.11")
 MULTISLOT_KERNEL_FSCACHE=("6.6.51" "6.10.10")
@@ -158,6 +161,7 @@ MULTISLOT_KERNEL_IP_36971=("4.19.316" "5.4.278" "5.10.219" "5.15.161" "6.1.94" "
 MULTISLOT_KERNEL_IVTV=("6.1.103" "6.6.44" "6.10.3" "6.11")
 MULTISLOT_KERNEL_IWLWIFI_48918=("5.15.27" "5.16.13")
 MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
+MULTISLOT_KERNEL_IWLWIFI_a949075=("6.11.2")
 MULTISLOT_KERNEL_JFS_43858=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_JFS_44938=("6.6.47" "6.10.6")
 MULTISLOT_KERNEL_LANDLOCK=("6.1.95" "6.6.35" "6.9.6" "6.10")
@@ -169,14 +173,18 @@ MULTISLOT_KERNEL_MLX5_46857=("6.1.111" "6.6.52" "6.10.11" "6.11")
 MULTISLOT_KERNEL_MPTCP_46858=("6.1.111" "6.6.52" "6.10.11" "6.11")
 MULTISLOT_KERNEL_MSM=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_MT76=("5.15.163" "6.1.98" "6.6.39" "6.9.9")
+MULTISLOT_KERNEL_MT76_862bf7c=("6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_MT7921=("6.6.52" "6.10.11" "6.11")
+MULTISLOT_KERNEL_MT7996E_f503ae9=("6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_MWIFIEX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_NTFS3_45896=("5.15.V" "6.1.V" "6.6" "6.10" "6.11")
 MULTISLOT_KERNEL_NTFS3_42299=("6.1.103" "6.6.44" "6.10.3" "6.11")
 MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_NET_SOCK_MSG_46783=("5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10" "6.11")
 MULTISLOT_KERNEL_NILFS2=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
-MULTISLOT_KERNEL_NFSD=("6.10.8")
+MULTISLOT_KERNEL_NILFS2_f9c9635=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
+MULTISLOT_KERNEL_NFSD_46696=("6.10.8")
+MULTISLOT_KERNEL_NFSD_22451a1=("5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_NVME_45013=("6.10.7")
 MULTISLOT_KERNEL_NVME_41073=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_NOUVEAU=("6.6.48" "6.10.7")
@@ -186,6 +194,7 @@ MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" 
 MULTISLOT_KERNEL_PCI_46750=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_PCI_42302=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_PCI_HOTPLUG_46761=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
+MULTISLOT_KERNEL_QAT_cd8d2d7=("6.10.13" "6.11.2")
 MULTISLOT_KERNEL_RADEON=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_RTW88_46760=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_RTW88_0e735a4=("5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
@@ -194,6 +203,7 @@ MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
 MULTISLOT_KERNEL_SMB_46796=("6.6.51" "6.10.10")
 MULTISLOT_KERNEL_SMB_46795=("5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_SQUASHFS=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
+MULTISLOT_KERNEL_TCP_c8770db=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_TIPC=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_TLS=("5.10.219" "5.15.161" "6.1.93" "6.6.33" "6.9.4")
 MULTISLOT_KERNEL_USB=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.100" "6.6.41" "6.9.10" "6.10")
@@ -229,8 +239,9 @@ CVE_CFG80211="CVE-2024-42114"
 CVE_COUGAR="CVE-2024-46747"
 CVE_CPUSET="CVE-2024-44975"
 CVE_EXT4_43828="CVE-2024-43828"
-CVE_EXT4_ccb8c18="UAF"
-CVE_F2FS="CVE-2024-44942"
+CVE_EXT4_c6b72f5="OOB or UAF"
+CVE_F2FS_44942="CVE-2024-44942"
+CVE_F2FS_930c6ab="RC"
 CVE_FS_43882="CVE-2024-43882"
 CVE_FS_46701="CVE-2024-46701"
 CVE_FSCACHE="CVE-2024-46786"
@@ -256,9 +267,12 @@ CVE_IP_36971="CVE-2024-36971"
 CVE_IVTV="CVE-2024-43877"
 CVE_IWLWIFI_48918="CVE-2022-48918"
 CVE_IWLWIFI_48787="CVE-2022-48787"
+CVE_IWLWIFI_a949075="NPD"
+CVE_KTHREAD="RC"
 CVE_KVM_ARM64_26598="CVE-2024-26598"
 CVE_KVM_ARM64_46707="CVE-2024-46707"
 CVE_KVM_POWERPC_41070="CVE-2024-41070"
+CVE_KVM_RISCV_47d40d9="NPD"
 CVE_KVM_S390_43819="CVE-2024-43819"
 CVE_KVM_X86_39483="CVE-2024-39483"
 CVE_LOCKING="CVE-2024-46829"
@@ -269,18 +283,22 @@ CVE_MD_RAID5="CVE-2024-43914"
 CVE_MD_RAID456="CVE-2024-26962"
 CVE_MM_46847="CVE-2024-46847"
 CVE_NET_BRIDGE="CVE-2024-44934"
-CVE_NFSD="CVE-2024-46696"
+CVE_NFSD_46696="CVE-2024-46696"
+CVE_NFSD_22451a1="NPD"
 CVE_MLX5_45019="CVE-2024-45019"
 CVE_MLX5_46857="CVE-2024-46857"
 CVE_MSM="CVE-2024-45015"
 CVE_MPTCP_46858="CVE-2024-46858"
 CVE_MT76="CVE-2024-42225"
+CVE_MT76_862bf7c="OOPS"
 CVE_MT7921="CVE-2024-46860"
+CVE_MT7996E_f503ae9="NPD"
 CVE_MWIFIEX="CVE-2024-46755"
 CVE_NETFILTER="CVE-2024-45018"
 CVE_NET_SOCK_MSG_46783="CVE-2024-46783"
 CVE_NF_TABLES="CVE-2024-27020"
 CVE_NILFS2="CVE-2024-46781"
+CVE_NILFS2_f9c9635="OOB read"
 CVE_NOUVEAU="CVE-2024-45012"
 CVE_NTFS3_45896="CVE-2023-45896"
 CVE_NTFS3_42299="CVE-2024-42299"
@@ -292,6 +310,7 @@ CVE_PCI_46750="CVE-2024-46750"
 CVE_PCI_42302="CVE-2024-42302"
 CVE_PCI_HOTPLUG_46761="CVE-2024-46761"
 CVE_POWERPC_46797="CVE-2024-46797"
+CVE_QAT_cd8d2d7="RC"
 CVE_RTW88_46760="CVE-2024-46760"
 CVE_RTW88_0e735a4="UAF"
 CVE_SCHED_44958="CVE-2024-44958"
@@ -300,6 +319,7 @@ CVE_SELINUX="CVE-2022-48740"
 CVE_SMB_46796="CVE-2024-46796"
 CVE_SMB_46795="CVE-2024-46795"
 CVE_SQUASHFS="CVE-2024-46744"
+CVE_TCP_c8770db="NPD"
 CVE_TIPC="CVE-2024-42284"
 CVE_TLS="CVE-2024-36489"
 CVE_USB="CVE-2024-41035"
@@ -382,6 +402,7 @@ md-raid5
 mlx5
 mt76
 mt7921
+mt7996e
 mwifiex
 netfilter
 nfs
@@ -391,11 +412,13 @@ ntfs
 nvme
 pci
 pci-hotplug
+qat
 rtw88
 sctp
 selinux
 smmu-v3-sva
 squashfs
+tcp
 tipc
 tls
 usb
@@ -438,7 +461,7 @@ REQUIRED_USE="
 # Double free, CVSS 7.8 # DoS, DT, ID
 # Local privilege escalation, CVSS 7.8 # DoS, DT, ID
 # Memory leak, CVSS 5.5 # DoS
-# NULL pointer dereference, CVSS 5.5 # DoS
+# NULL pointer dereference, NPD, CVSS 5.5 # DoS
 # Out of bounds read, CVSS 7.1, # DoS, ID
 # Out of bounds write, CVSS 7.8, # DoS, ID, DT
 # Race condition, CVSS 4.7 # DoS
@@ -482,7 +505,7 @@ REQUIRED_USE="
 # cougar? https://nvd.nist.gov/vuln/detail/CVE-2024-46747 # DoS, DT, ID
 # cpuset? https://nvd.nist.gov/vuln/detail/CVE-2024-44975 # DoS
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-43828 # DoS
-# ext4? ccb8c18 # Unofficial: DoS, DT, ID UAF
+# ext4? c6b72f5 # Unofficial: DoS, DT, ID UAF
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-46701 # DoS
@@ -506,13 +529,15 @@ REQUIRED_USE="
 # hppa? [same as parisc] (https://nvd.nist.gov/vuln/detail/CVE-2024-40918) # Unofficial: DoS
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918 # DoS
 # iwlwifi? [2] https://nvd.nist.gov/vuln/detail/CVE-2022-48787 # DoS, DT, ID
-# jfs https://nvd.nist.gov/vuln/detail/CVE-2024-43858 # DoS, DT, ID
-# jfs https://nvd.nist.gov/vuln/detail/CVE-2024-44938 # DoS
+# iwlwifi? a949075 # Unofficial: DoS NPD
+# jfs? https://nvd.nist.gov/vuln/detail/CVE-2024-43858 # DoS, DT, ID
+# jfs? https://nvd.nist.gov/vuln/detail/CVE-2024-44938 # DoS
 # landlock? https://nvd.nist.gov/vuln/detail/CVE-2024-40938 # Unofficial: DoS
-# kvm https://nvd.nist.gov/vuln/detail/CVE-2024-46707 # DoS
-# kvm https://nvd.nist.gov/vuln/detail/CVE-2024-43819 # DoS
-# kvm https://nvd.nist.gov/vuln/detail/CVE-2024-41070 # DoS, DT, ID
-# kvm https://nvd.nist.gov/vuln/detail/CVE-2024-39483 # DoS
+# kvm? https://nvd.nist.gov/vuln/detail/CVE-2024-46707 # DoS
+# kvm? https://nvd.nist.gov/vuln/detail/CVE-2024-43819 # DoS
+# kvm? https://nvd.nist.gov/vuln/detail/CVE-2024-41070 # DoS, DT, ID
+# kvm? https://nvd.nist.gov/vuln/detail/CVE-2024-39483 # DoS
+# kvm? 47d40d9 # Unofficial: DoS NPD
 # mac80211? https://nvd.nist.gov/vuln/detail/CVE-2024-43911 # DoS
 # md-raid1? https://nvd.nist.gov/vuln/detail/CVE-2024-45023 # DT, DoS
 # md-raid456? https://nvd.nist.gov/vuln/detail/CVE-2024-26962 # Unofficial: DoS
@@ -522,6 +547,7 @@ REQUIRED_USE="
 # mptcp? https://nvd.nist.gov/vuln/detail/CVE-2024-46858 # DoS, DT, ID
 # msm? https://nvd.nist.gov/vuln/detail/CVE-2024-45015 # DoS
 # mt76? https://nvd.nist.gov/vuln/detail/CVE-2024-42225 # DoS, DT, ID
+# mt76? 862bf7c # Unofficial: DoS OOPS
 # mt7921? https://nvd.nist.gov/vuln/detail/CVE-2024-46860 # Unofficial: DoS
 # mwifiex? https://nvd.nist.gov/vuln/detail/CVE-2024-46755 # DoS
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-45018 # DoS
@@ -536,6 +562,7 @@ REQUIRED_USE="
 # pci? https://nvd.nist.gov/vuln/detail/CVE-2024-42302 # DoS, DT, ID
 # pci? https://nvd.nist.gov/vuln/detail/CVE-2024-46761 # DoS
 # powerpc? https://nvd.nist.gov/vuln/detail/CVE-2024-46797 # DoS
+# qat? cd8d2d7 # Unofficial: DoS RC
 # rtw88? https://nvd.nist.gov/vuln/detail/CVE-2024-46760 # DoS
 # rtw88? # 0e735a4 Unofficial: DoS, DT, ID UAF
 # samba? https://nvd.nist.gov/vuln/detail/CVE-2024-46796 # DoS, DT, ID
@@ -543,6 +570,7 @@ REQUIRED_USE="
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
 # smmu-v3-sva? https://nvd.nist.gov/vuln/detail/CVE-2024-44994 # Unofficial: DoS
 # squashfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46744 # DoS, DT, ID
+# tcp? c8770db # Unofficial: DoS NPD
 # tipc? https://nvd.nist.gov/vuln/detail/CVE-2024-42284 # DoS, DT, ID
 # tls? https://nvd.nist.gov/vuln/detail/CVE-2024-36489 # DoS
 # usb? https://nvd.nist.gov/vuln/detail/CVE-2024-41035 # Unofficial: DoS
@@ -680,14 +708,14 @@ all_rdepend() {
 		if ! _use custom-kernel ; then
 			fs_rdepend
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4_43828[@]}
-			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4_ccb8c18[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4_c6b72f5[@]}
 		fi
 	fi
 	if _use f2fs ; then
 		if ! _use custom-kernel ; then
 			block_rdepend
 			fs_rdepend
-			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_F2FS[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_F2FS_44942[@]}
 		fi
 	fi
 	if _use fscache ; then
@@ -771,6 +799,7 @@ all_rdepend() {
 			wifi_rdepend
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_48918[@]}
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_48787[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IWLWIFI_a949075[@]}
 		fi
 	fi
 	if _use jfs ; then
@@ -789,11 +818,14 @@ all_rdepend() {
 				gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_ARM64_26598[@]}
 				gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_ARM64_46707[@]}
 			fi
-			if _use s390 ; then
-				gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_S390_43819[@]}
-			fi
 			if _use ppc64 ; then
 				gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_POWERPC_41070[@]}
+			fi
+			if _use riscv ; then
+				gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_RISCV_47d40d9[@]}
+			fi
+			if _use s390 ; then
+				gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_KVM_S390_43819[@]}
 			fi
 		fi
 	fi
@@ -835,12 +867,19 @@ all_rdepend() {
 		if ! _use custom-kernel ; then
 			wifi_rdepend
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MT76[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MT76_862bf7c[@]}
 		fi
 	fi
 	if _use mt7921 ; then
 		if ! _use custom-kernel ; then
 			wifi_rdepend
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MT7921[@]}
+		fi
+	fi
+	if _use mt7996e ; then
+		if ! _use custom-kernel ; then
+			wifi_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MT7996E_f503ae9[@]}
 		fi
 	fi
 	if _use mwifiex ; then
@@ -853,7 +892,8 @@ all_rdepend() {
 		if ! _use custom-kernel ; then
 			block_rdepend
 			fs_rdepend
-			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NFSD[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NFSD_46696[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NFSD_22451a1[@]}
 		fi
 	fi
 	if _use netfilter ; then
@@ -909,6 +949,11 @@ all_rdepend() {
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_POWERPC_46797[@]}
 		fi
 	fi
+	if _use qat ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_QAT_cd8d2d7[@]}
+		fi
+	fi
 	if _use rtw88 ; then
 		if ! _use custom-kernel ; then
 			wifi_rdepend
@@ -942,6 +987,11 @@ all_rdepend() {
 	if _use squashfs ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SQUASHFS[@]}
+		fi
+	fi
+	if _use tcp ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_TCP_c8770db[@]}
 		fi
 	fi
 	if _use tipc ; then
@@ -1140,7 +1190,18 @@ check_drivers() {
 	block=1
 	fs=1
 
+einfo
+einfo "Glossary of common Denial of Service (DoS) bugs"
+einfo
+einfo "NPD:  Null Pointer Dereference"
+einfo "OOPS:  Restart on Crash if oops=panic [BSOD restart]"
+einfo "OOB:  Out of Bounds"
+einfo "RC:  Race Condition"
+einfo "UAF:  Use After Free"
+einfo
+
 	# Core
+	check_kernel_version "kernel/kthread" "${CVE_KTHREAD}" ${MULTISLOT_KERNEL_KTHREAD[@]}
 	check_kernel_version "kernel/locking" "${CVE_LOCKING}" ${MULTISLOT_KERNEL_LOCKING[@]}
 	check_kernel_version "kernel/sched" "${CVE_SCHED_44958}" ${MULTISLOT_KERNEL_SCHED_44958[@]}
 	check_kernel_version "kernel/workqueue" "${CVE_WORKQUEUE}" ${MULTISLOT_KERNEL_WORKQUEUE[@]}
@@ -1198,12 +1259,12 @@ check_drivers() {
 	if use ext4 ; then
 		fs=1
 		check_kernel_version "ext4" "${CVE_EXT4_43828}" ${MULTISLOT_KERNEL_EXT4_43828[@]}
-		check_kernel_version "ext4" "${CVE_EXT4_ccb8c18}" ${MULTISLOT_KERNEL_ccb8c18[@]}
+		check_kernel_version "ext4" "${CVE_EXT4_c6b72f5}" ${MULTISLOT_KERNEL_c6b72f5[@]}
 	fi
 	if use f2fs ; then
 		block=1
 		fs=1
-		check_kernel_version "f2fs" "${CVE_F2FS}" ${MULTISLOT_KERNEL_F2FS[@]}
+		check_kernel_version "f2fs" "${CVE_F2FS_44942}" ${MULTISLOT_KERNEL_F2FS_44942[@]}
 	fi
 	if use fscache ; then
 		fs=1
@@ -1265,6 +1326,7 @@ check_drivers() {
 		wifi=1
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_48918}" ${MULTISLOT_KERNEL_IWLWIFI_48918[@]}
 		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_48787}" ${MULTISLOT_KERNEL_IWLWIFI_48787[@]}
+		check_kernel_version "iwlwifi" "${CVE_IWLWIFI_a949075}" ${MULTISLOT_KERNEL_IWLWIFI_a949075[@]}
 	fi
 	if use ivtv ; then
 		check_kernel_version "ivtv" "${CVE_IVTV}" ${MULTISLOT_KERNEL_IVTV[@]}
@@ -1285,6 +1347,8 @@ check_drivers() {
 			check_kernel_version "arm64/kvm" "${CVE_KVM_ARM64_46707}" ${MULTISLOT_KERNEL_KVM_ARM64_46707[@]}
 		elif use ppc64 ; then
 			check_kernel_version "powerpc/kvm" "${CVE_KVM_POWERPC_41070}" ${MULTISLOT_KERNEL_KVM_POWERPC_41070[@]}
+		elif use riscv ; then
+			check_kernel_version "riscv/kvm" "${CVE_KVM_RISCV_47d40d9}" ${MULTISLOT_KERNEL_KVM_RISCV_47d40d9[@]}
 		elif use s390 ; then
 			check_kernel_version "s390/kvm" "${CVE_KVM_S390_43819}" ${MULTISLOT_KERNEL_KVM_S390_43819[@]}
 		fi
@@ -1310,9 +1374,13 @@ check_drivers() {
 	fi
 	if use mt76 ; then
 		check_kernel_version "mt76" "${CVE_MT76}" ${MULTISLOT_KERNEL_MT76[@]}
+		check_kernel_version "mt76" "${CVE_MT76_862bf7c}" ${MULTISLOT_KERNEL_MT76_862bf7c[@]}
 	fi
 	if use mt7921 ; then
 		check_kernel_version "mt7921" "${CVE_MT7921}" ${MULTISLOT_KERNEL_MT7921[@]}
+	fi
+	if use mt7996e ; then
+		check_kernel_version "mt7996e" "${CVE_MT7996E_f503ae9}" ${MULTISLOT_KERNEL_MT7996E_f503ae9[@]}
 	fi
 	if use mwifiex ; then
 		check_kernel_version "mwifiex" "${CVE_MWIFIEX}" ${MULTISLOT_KERNEL_MWIFIEX[@]}
@@ -1320,7 +1388,8 @@ check_drivers() {
 	if use nfs ; then
 		block=1
 		fs=1
-		check_kernel_version "nfsd" "${CVE_NFSD}" ${MULTISLOT_KERNEL_NFSD[@]}
+		check_kernel_version "nfsd" "${CVE_NFSD_46696}" ${MULTISLOT_KERNEL_NFSD_46696[@]}
+		check_kernel_version "nfsd" "${CVE_NFSD_22451a1}" ${MULTISLOT_KERNEL_NFSD_22451a1[@]}
 	fi
 	if use netfilter ; then
 		check_kernel_version "netfilter" "${CVE_NETFILTER}" ${MULTISLOT_KERNEL_NETFILTER[@]}
@@ -1354,6 +1423,9 @@ check_drivers() {
 	if use ppc64 || use ppc ; then
 		check_kernel_version "powerpc" "${CVE_POWERPC_46797}" ${MULTISLOT_KERNEL_POWERPC_46797[@]}
 	fi
+	if use qat ; then
+		check_kernel_version "crypto/intel/qat" "${CVE_QAT_cd8d2d7}" ${MULTISLOT_KERNEL_QAT_cd8d2d7[@]}
+	fi
 	if use rtw88 ; then
 		wifi=1
 		check_kernel_version "rtw88" "${CVE_RTW88_46760}" ${MULTISLOT_KERNEL_RTW88_46760[@]}
@@ -1377,6 +1449,9 @@ check_drivers() {
 	if use squashfs ; then
 		fs=1
 		check_kernel_version "squashfs" "${CVE_SQUASHFS}" ${MULTISLOT_KERNEL_SQUASHFS[@]}
+	fi
+	if use tcp ; then
+		check_kernel_version "net/tcp" "${CVE_TCP_c8770db}" ${MULTISLOT_KERNEL_TCP_c8770db[@]}
 	fi
 	if use tipc ; then
 		check_kernel_version "tipc" "${CVE_TIPC}" ${MULTISLOT_KERNEL_TIPC[@]}

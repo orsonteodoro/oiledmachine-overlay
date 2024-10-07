@@ -214,6 +214,10 @@
     <flag name="pci-hotplug">
       Mitigate against Denial of Service for the PCI Hotplug driver.
     </flag>
+    <flag name="qat">
+      Mitigate against Denial of Service for the QAT (QuickAssist Technology)
+      driver.
+    </flag>
     <flag name="rtw88">
       Mitigate against Denial of Service for the rtw88 network driver.
     </flag>
@@ -232,6 +236,10 @@
     </flag>
     <flag name="squashfs">
       Mitigate against Denial of Service for the SquashFS filesystem driver.
+    </flag>
+    <flag name="tcp">
+      Mitigate against Denial of Service for the TCP protocol.
+      [See also TCP port numbers for affected protocols.]
     </flag>
     <flag name="tipc">
       Mitigate against Denial of Service for the TIPC protocol.
