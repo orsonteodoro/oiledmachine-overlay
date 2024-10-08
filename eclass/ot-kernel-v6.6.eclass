@@ -1035,7 +1035,7 @@ fi
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
 ewarn
-ewarn "Upstream backport mitigation:  Grade C"
+ewarn "Upstream backport mitigation:  Grade C (good coverage for common use cases)"
 ewarn "Release quality:  Production ready LTS"
 ewarn
 ewarn "[1] Missing some Transient execution CPU mitigations against information disclosure for newer CPU should try >= 6.10 instead."

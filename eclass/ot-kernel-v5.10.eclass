@@ -714,7 +714,7 @@ fi
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
 ewarn
-ewarn "Upstream backport mitigation:  Grade F (poor or incomplete)"
+ewarn "Upstream backport mitigation:  Grade F (incomplete coverage)"
 ewarn "Release quality:  For recovery purposes only.  Use >= 6.6 series for production."
 ewarn
 }

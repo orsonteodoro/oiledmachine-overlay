@@ -1047,7 +1047,7 @@ fi
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
 ewarn
-ewarn "Upstream backport mitigation:  Grade B"
+ewarn "Upstream backport mitigation:  Grade B-"
 ewarn "Release quality:  Production ready"
 ewarn
 ewarn "[1] XFS users should use >= 6.11 instead."
