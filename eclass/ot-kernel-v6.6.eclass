@@ -1038,7 +1038,7 @@ ewarn
 ewarn "Upstream backport mitigation:  Grade C (good coverage for common use cases)"
 ewarn "Release quality:  Production ready LTS"
 ewarn
-ewarn "[1] Missing some Transient execution CPU mitigations against information disclosure for newer CPU should try >= 6.10 instead."
+ewarn "[1] Missing some Transient execution CPU mitigations against information disclosure.  Newer CPUs should try >= 6.10 instead."
 ewarn "[2] RAID234 users may want to try >= 6.10 instead."
 ewarn "[3] VMware virtual machine users should use >= 6.10 instead for mitigation."
 ewarn "[4] XFS users should use >= 6.11 instead."
