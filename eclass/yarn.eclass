@@ -499,6 +499,7 @@ einfo "Running:\t\tnpm ${cmd[@]}"
 # Check for errors
 _yarn_check_errors() {
 	grep -q -e "FATAL ERROR:" "${T}/build.log" && die "Detected error"
+	grep -q -e "ETIMEDOUT" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: eyarn
@@ -507,7 +508,22 @@ _yarn_check_errors() {
 eyarn() {
 	local cmd=("${@}")
 einfo "Running:\tyarn ${cmd[@]}"
-	yarn "${cmd[@]}" || die
+
+	local tries
+	tries=0
+	while (( ${tries} < ${NPM_TRIES} )) ; do
+einfo "Current directory:\t${PWD}"
+einfo "Tries:\t\t${tries}"
+einfo "Running:\t\tyarn ${cmd[@]}"
+		yarn "${cmd[@]}" || die
+		if ! grep -q -E -r -e "(ETIMEDOUT)" "${HOME}/build.log" ; then
+			break
+		fi
+		if grep -q -E -r -e "(ETIMEDOUT)" "${HOME}/build.log" ; then
+			tries=$((${tries} + 1))
+			sed -i -e "/ETIMEDOUT/d" "build.log"
+		fi
+	done
 	_yarn_check_errors
 }
 
@@ -705,7 +721,11 @@ einfo "Called yarn_src_unpack"
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 		if [[ "${YARN_LOCKFILE_SOURCE:-ebuild}" == "ebuild" ]] ; then
-			_yarn_src_unpack_update_ebuild
+			if declare -f yarn_src_unpack_update_ebuild_custom > /dev/null 2>&1 ; then
+				yarn_src_unpack_update_ebuild_custom
+			else
+				_yarn_src_unpack_update_ebuild
+			fi
 		else
 			_yarn_src_unpack_update_upstream
 		fi

@@ -170,6 +170,7 @@ MULTISLOT_KERNEL_MD_RAID456=("5.15.V" "6.1.V" "6.6.V" "6.10" "6.11")
 MULTISLOT_KERNEL_MD_RAID5=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_MLX5_45019=("6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_MLX5_46857=("6.1.111" "6.6.52" "6.10.11" "6.11")
+MULTISLOT_KERNEL_MLX5_112e6e8=("6.11.2")
 MULTISLOT_KERNEL_MPTCP_46858=("6.1.111" "6.6.52" "6.10.11" "6.11")
 MULTISLOT_KERNEL_MSM=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_MT76=("5.15.163" "6.1.98" "6.6.39" "6.9.9")
@@ -287,6 +288,7 @@ CVE_NFSD_46696="CVE-2024-46696"
 CVE_NFSD_22451a1="NPD"
 CVE_MLX5_45019="CVE-2024-45019"
 CVE_MLX5_46857="CVE-2024-46857"
+CVE_MLX5_112e6e8="NPD"
 CVE_MSM="CVE-2024-45015"
 CVE_MPTCP_46858="CVE-2024-46858"
 CVE_MT76="CVE-2024-42225"
@@ -544,6 +546,7 @@ REQUIRED_USE="
 # md-raid5? https://nvd.nist.gov/vuln/detail/CVE-2024-43914 # DOS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-45019 # DoS
 # mlx5? https://nvd.nist.gov/vuln/detail/CVE-2024-46857 # Unofficial: DoS
+# mlx5? 112e6e8 # Unofficial: DoS
 # mptcp? https://nvd.nist.gov/vuln/detail/CVE-2024-46858 # DoS, DT, ID
 # msm? https://nvd.nist.gov/vuln/detail/CVE-2024-45015 # DoS
 # mt76? https://nvd.nist.gov/vuln/detail/CVE-2024-42225 # DoS, DT, ID
@@ -856,6 +859,7 @@ all_rdepend() {
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5_45019[@]}
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5_46857[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5_112e6e8[@]}
 		fi
 	fi
 	if _use mptcp ; then
@@ -1354,8 +1358,9 @@ einfo
 		fi
 	fi
 	if use mlx5 ; then
-		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_MLX5_45019[@]}
-		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_MLX5_46857[@]}
+		check_kernel_version "mlx5" "${CVE_MLX5_45019}" ${MULTISLOT_KERNEL_MLX5_45019[@]}
+		check_kernel_version "mlx5" "${CVE_MLX5_46857}" ${MULTISLOT_KERNEL_MLX5_46857[@]}
+		check_kernel_version "mlx5" "${CVE_MLX5_112e6e8}" ${MULTISLOT_KERNEL_MLX5_112e6e8[@]}
 	fi
 	if use md-raid1 ; then
 		block=1

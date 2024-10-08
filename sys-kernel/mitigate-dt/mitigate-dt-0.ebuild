@@ -123,7 +123,7 @@ MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6
 MULTISLOT_KERNEL_IP_36971=("4.19.316" "5.4.278" "5.10.219" "5.15.161" "6.1.94" "6.6.34" "6.9.4")
 MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
 MULTISLOT_KERNEL_JFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
-MULTISLOT_KERNEL_MLX5=("5.4.185" "5.10.106" "5.15.29" "5.16.15")
+MULTISLOT_KERNEL_MLX5_48858=("5.4.185" "5.10.106" "5.15.29" "5.16.15")
 MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
 MULTISLOT_KERNEL_MPTCP_44974=("6.6.48" "6.10.7" "6.11")
 MULTISLOT_KERNEL_MPTCP_46858=("6.1.111" "6.6.52" "6.10.11" "6.11")
@@ -175,7 +175,7 @@ CVE_JFS="CVE-2024-43858"
 CVE_KVM_ARM64_26598="CVE-2024-26598"
 CVE_KVM_POWERPC_41070="CVE-2024-41070"
 CVE_MD_RAID1="CVE-2024-45023"
-CVE_MLX5="CVE-2022-48858"
+CVE_MLX5_48858="CVE-2022-48858"
 CVE_MPTCP_44974="CVE-2024-44974"
 CVE_MPTCP_46858="CVE-2024-46858"
 CVE_MT76="CVE-2024-42225"
@@ -478,7 +478,7 @@ all_rdepend() {
 	fi
 	if _use mlx5 ; then
 		if ! _use custom-kernel ; then
-			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MLX5_48858[@]}
 		fi
 	fi
 	if _use mptcp ; then
@@ -764,7 +764,7 @@ check_drivers() {
 		check_kernel_version "md/raid1" "${CVE_MD_RAID1}" ${MULTISLOT_KERNEL_MD_RAID1[@]}
 	fi
 	if use mlx5 ; then
-		check_kernel_version "mlx5" "${CVE_MLX5}" ${MULTISLOT_KERNEL_MLX5[@]}
+		check_kernel_version "mlx5" "${CVE_MLX5_48858}" ${MULTISLOT_KERNEL_MLX5_48858[@]}
 	fi
 	if use mptcp ; then
 		check_kernel_version "mptcp" "${CVE_MPTCP_44974}" ${MULTISLOT_KERNEL_MPTCP_44974[@]}
