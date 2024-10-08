@@ -713,7 +713,10 @@ fi
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
-	:
+ewarn
+ewarn "Upstream backport mitigation:  poor or incomplete"
+ewarn "Release quality:  For recovery purposes only.  Use >= 6.6 series for production."
+ewarn
 }
 
 # @FUNCTION: ot-kernel_apply_tresor_fixes

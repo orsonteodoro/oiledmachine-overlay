@@ -1034,6 +1034,12 @@ fi
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
+ewarn
+ewarn "Upstream backport mitigation:  fair (~70% mitigated, missing some Transient execution CPU mitigations[1] against information disclosure)"
+ewarn "Release quality:  Production ready LTS"
+ewarn
+ewarn "[1] Newer CPUs may want to try >= 6.10 instead for full coverage."
+ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn
 ewarn "You are using the live kernel sources.  This may result in data loss,"

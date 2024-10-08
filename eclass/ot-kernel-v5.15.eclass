@@ -896,6 +896,10 @@ fi
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
+ewarn
+ewarn "Upstream backport mitigation:  poor or incomplete"
+ewarn "Release quality:  For recovery purposes only.  Use >= 6.6 series for production."
+ewarn
 	if use cfi && use amd64 ; then
 ewarn
 ewarn "The CFI patch for x86-64 is in development and originally for the"

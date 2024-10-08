@@ -1053,6 +1053,10 @@ fi
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
+ewarn
+ewarn "Upstream backport mitigation:  better (~99% coverage)"
+ewarn "Release quality:  Production ready"
+ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn
 ewarn "This ebuild series is a WIP / IN DEVELOPMENT."

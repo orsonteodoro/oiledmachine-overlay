@@ -543,6 +543,10 @@ fi
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
+ewarn
+ewarn "Upstream backport mitigation:  poor or incomplete"
+ewarn "Release quality:  For recovery purposes only.  Use >= 6.6 series for production."
+ewarn
 	# TRESOR for x86_64 generic was known to pass crypto testmgr on this
 	# version.
 	if use genpatches ; then

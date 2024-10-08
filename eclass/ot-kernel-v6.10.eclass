@@ -1046,26 +1046,10 @@ fi
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
-	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn
-ewarn "This ebuild series is a WIP / IN DEVELOPMENT."
-ewarn "Expect patchtime failures."
+ewarn "Upstream backport mitigation:  better (~99% coverage)"
+ewarn "Release quality:  Production ready"
 ewarn
-
-ewarn
-ewarn "Patches are not ready.  Please disable all patch USE flags for this"
-ewarn "series."
-ewarn
-
-ewarn
-ewarn "You are using the live kernel sources.  This may result in data loss,"
-ewarn "data format incompatibilities, or vulnerabilities."
-ewarn
-ewarn "The live sources is intended for people that want to submit commits or"
-ewarn "patches to upstream, to use security fixes, for ebuild maintainers or"
-ewarn "modders to smooth out updates before stable."
-ewarn
-	fi
 
 	if use shadowcallstack && ! use arm64 ; then
 ewarn
