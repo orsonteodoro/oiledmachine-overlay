@@ -178,6 +178,7 @@ MULTISLOT_KERNEL_MSM=("6.6.48" "6.10.7")
 MULTISLOT_KERNEL_MT76=("5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_MT76_862bf7c=("6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_MT7921=("6.6.52" "6.10.11" "6.11")
+MULTISLOT_KERNEL_MT7925_9679ca7=("6.10.13" "6.11.2")
 MULTISLOT_KERNEL_MT7996E_f503ae9=("6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_MWIFIEX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_NTFS3_45896=("5.15.V" "6.1.V" "6.6" "6.10" "6.11")
@@ -297,6 +298,7 @@ CVE_MSM="CVE-2024-45015"
 CVE_MPTCP_46858="CVE-2024-46858"
 CVE_MT76="CVE-2024-42225"
 CVE_MT76_862bf7c="OOPS"
+CVE_MT7925_9679ca7="OOB"
 CVE_MT7921="CVE-2024-46860"
 CVE_MT7996E_f503ae9="NPD"
 CVE_MWIFIEX="CVE-2024-46755"
@@ -408,6 +410,7 @@ md-raid5
 mlx5
 mt76
 mt7921
+mt7925
 mt7996e
 mwifiex
 netfilter
@@ -559,6 +562,7 @@ REQUIRED_USE="
 # mt76? https://nvd.nist.gov/vuln/detail/CVE-2024-42225 # DoS, DT, ID
 # mt76? 862bf7c # Unofficial: DoS OOPS
 # mt7921? https://nvd.nist.gov/vuln/detail/CVE-2024-46860 # Unofficial: DoS
+# mt7925? 9679ca7 # Unofficial: DoS
 # mwifiex? https://nvd.nist.gov/vuln/detail/CVE-2024-46755 # DoS
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-45018 # DoS
 # nfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
@@ -889,6 +893,12 @@ all_rdepend() {
 		if ! _use custom-kernel ; then
 			wifi_rdepend
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MT7921[@]}
+		fi
+	fi
+	if _use mt7925 ; then
+		if ! _use custom-kernel ; then
+			wifi_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MT7925_9679ca7[@]}
 		fi
 	fi
 	if _use mt7996e ; then
@@ -1396,6 +1406,9 @@ einfo
 	fi
 	if use mt7921 ; then
 		check_kernel_version "mt7921" "${CVE_MT7921}" ${MULTISLOT_KERNEL_MT7921[@]}
+	fi
+	if use mt7925 ; then
+		check_kernel_version "mt7925" "${CVE_MT7925_9679ca7}" ${MULTISLOT_KERNEL_MT7925_9679ca7[@]}
 	fi
 	if use mt7996e ; then
 		check_kernel_version "mt7996e" "${CVE_MT7996E_f503ae9}" ${MULTISLOT_KERNEL_MT7996E_f503ae9[@]}

@@ -183,8 +183,11 @@
     <flag name="mt76">
       Mitigate against Denial of Service for the mt76 network driver.
     </flag>
-    <flag name="mt76">
+    <flag name="mt7921">
       Mitigate against Denial of Service for the mt7921 network driver.
+    </flag>
+    <flag name="mt7925">
+      Mitigate against Denial of Service for the mt7925 network driver.
     </flag>
     <flag name="mwifiex">
       Mitigate against Denial of Service for the mwifiex network driver.
