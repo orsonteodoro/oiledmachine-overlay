@@ -525,7 +525,7 @@ einfo "Running:\tyarn ${cmd[@]}"
 
 	local tries
 	tries=0
-	while (( ${tries} < ${NPM_TRIES} )) ; do
+	while (( ${tries} < ${YARN_TRIES} )) ; do
 einfo "Current directory:\t${PWD}"
 einfo "Tries:\t\t${tries}"
 einfo "Running:\t\tyarn ${cmd[@]}"
