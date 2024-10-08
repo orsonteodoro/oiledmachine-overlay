@@ -156,7 +156,8 @@ MULTISLOT_KERNEL_IPV4_36927=("4.14.315" "4.19.283" "5.4.243" "5.10.180" "5.15.11
 MULTISLOT_KERNEL_IPV4_41041=("4.19.V" "5.4.280" "5.10.222" "5.15.163" "6.1.100" "6.6.41" "6.10" "6.11")
 MULTISLOT_KERNEL_IPV4_42154=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_IPV4_44991=("6.1.107" "6.6.48" "6.10.7" "6.11")
-MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
+MULTISLOT_KERNEL_IPV6_44987=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
+MULTISLOT_KERNEL_IPV6_04ccecf=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_IP_36971=("4.19.316" "5.4.278" "5.10.219" "5.15.161" "6.1.94" "6.6.34" "6.9.4")
 MULTISLOT_KERNEL_IVTV=("6.1.103" "6.6.44" "6.10.3" "6.11")
 MULTISLOT_KERNEL_IWLWIFI_48918=("5.15.27" "5.16.13")
@@ -263,7 +264,8 @@ CVE_IPV4_36927="CVE-2024-36927"
 CVE_IPV4_41041="CVE-2024-41041"
 CVE_IPV4_42154="CVE-2024-42154"
 CVE_IPV4_44991="CVE-2024-44991"
-CVE_IPV6="CVE-2024-44987"
+CVE_IPV6_44987="CVE-2024-44987"
+CVE_IPV6_04ccecf="NPD"
 CVE_IP_36971="CVE-2024-36971"
 CVE_IVTV="CVE-2024-43877"
 CVE_IWLWIFI_48918="CVE-2022-48918"
@@ -527,6 +529,7 @@ REQUIRED_USE="
 # ipv4? https://nvd.nist.gov/vuln/detail/CVE-2024-41041 # Unofficial: DoS
 # ipv4? https://nvd.nist.gov/vuln/detail/CVE-2024-42154 # DoS, DT, ID
 # ipv6? https://nvd.nist.gov/vuln/detail/CVE-2024-44987 # DoS, DT, ID, UAF
+# ipv6? 04ccecf # Unofficial: DoS
 # ivtv? https://nvd.nist.gov/vuln/detail/ # Unofficial: DoS
 # hppa? [same as parisc] (https://nvd.nist.gov/vuln/detail/CVE-2024-40918) # Unofficial: DoS
 # iwlwifi? [1] https://nvd.nist.gov/vuln/detail/CVE-2022-48918 # DoS
@@ -788,8 +791,9 @@ all_rdepend() {
 	fi
 	if _use ipv6 ; then
 		if ! _use custom-kernel ; then
-			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV6[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV6_44987[@]}
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IP_36971[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV6_04ccecf[@]}
 		fi
 	fi
 	if _use ivtv ; then
@@ -1321,7 +1325,8 @@ einfo
 	fi
 	if use ipv6 ; then
 		ip=1
-		check_kernel_version "ipv6" "${CVE_IPV6}" ${MULTISLOT_KERNEL_IPV6[@]}
+		check_kernel_version "ipv6" "${CVE_IPV6_44987}" ${MULTISLOT_KERNEL_IPV6_44987[@]}
+		check_kernel_version "ipv6" "${CVE_IPV6_04ccecf}" ${MULTISLOT_KERNEL_IPV6_04ccecf[@]}
 	fi
 	if (( ${ip} == 1 )) ; then
 		check_kernel_version "ip" "${CVE_IP_36971}" ${MULTISLOT_KERNEL_IP_36971[@]}
