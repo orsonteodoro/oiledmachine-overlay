@@ -1035,10 +1035,12 @@ fi
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
 ewarn
-ewarn "Upstream backport mitigation:  fair (~70% mitigated, missing some Transient execution CPU mitigations[1] against information disclosure)"
+ewarn "Upstream backport mitigation:  fair (~70% mitigated)"
 ewarn "Release quality:  Production ready LTS"
 ewarn
-ewarn "[1] Newer CPUs may want to try >= 6.10 instead for full coverage."
+ewarn "[1] Missing some Transient execution CPU mitigations against information disclosure for newer CPUs.  Try 6.10 instead for newer CPUs."
+ewarn "[2] RAID234 users may want to try >= 6.10 instead."
+ewarn "[3] VMware virtual machine users should use >= 6.10 instead for mitigation."
 ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn
