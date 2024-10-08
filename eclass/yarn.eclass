@@ -516,12 +516,15 @@ einfo "Current directory:\t${PWD}"
 einfo "Tries:\t\t${tries}"
 einfo "Running:\t\tyarn ${cmd[@]}"
 		yarn "${cmd[@]}" || die
-		if ! grep -q -E -r -e "(ETIMEDOUT)" "${HOME}/build.log" ; then
+		if ! grep -q -E -r -e "(ETIMEDOUT|EAI_AGAIN)" "${HOME}/build.log" ; then
 			break
 		fi
-		if grep -q -E -r -e "(ETIMEDOUT)" "${HOME}/build.log" ; then
+		if grep -q -E -r -e "ETIMEDOUT" "${HOME}/build.log" ; then
 			tries=$((${tries} + 1))
-			sed -i -e "/ETIMEDOUT/d" "build.log"
+			sed -i -e "/ETIMEDOUT/d" "${T}/build.log"
+		elif grep -q -E -r -e "EAI_AGAIN" "${HOME}/build.log" ; then
+			tries=$((${tries} + 1))
+			sed -i -e "/EAI_AGAIN/d" "${T}/build.log"
 		fi
 	done
 	_yarn_check_errors
