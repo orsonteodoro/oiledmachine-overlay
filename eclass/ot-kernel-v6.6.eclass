@@ -1041,6 +1041,7 @@ ewarn
 ewarn "[1] Missing some Transient execution CPU mitigations against information disclosure for newer CPUs.  Try 6.10 instead for newer CPUs."
 ewarn "[2] RAID234 users may want to try >= 6.10 instead."
 ewarn "[3] VMware virtual machine users should use >= 6.10 instead for mitigation."
+ewarn "[4] XFS users should use >= 6.11 instead."
 ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn

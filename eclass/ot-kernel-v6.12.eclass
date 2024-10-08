@@ -1055,7 +1055,7 @@ fi
 ot-kernel_pkg_setup_cb() {
 ewarn
 ewarn "Upstream backport mitigation:  best (~100% coverage)"
-ewarn "Release quality:  Production ready."
+ewarn "Release quality:  Production ready"
 ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn

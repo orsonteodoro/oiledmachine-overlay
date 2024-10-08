@@ -1050,6 +1050,8 @@ ewarn
 ewarn "Upstream backport mitigation:  better (~99% coverage)"
 ewarn "Release quality:  Production ready"
 ewarn
+ewarn "[1] XFS users should use >= 6.11 instead."
+ewarn
 
 	if use shadowcallstack && ! use arm64 ; then
 ewarn
