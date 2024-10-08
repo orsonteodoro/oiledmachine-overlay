@@ -295,6 +295,9 @@ _npm_src_unpack_default_ebuild() {
 		unpack "${P}.tar.gz"
 	fi
 	cd "${S}" || die
+	if declare -f npm_unpack_post >/dev/null 2>&1 ; then
+		npm_unpack_post
+	fi
 	if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
 		_npm_cp_tarballs
 		rm -f "package-lock.json" || true
@@ -360,6 +363,9 @@ _npm_src_unpack_default_upstream() {
 		unpack "${P}.tar.gz"
 	fi
 	cd "${S}" || die
+	if declare -f npm_unpack_post >/dev/null 2>&1 ; then
+		npm_unpack_post
+	fi
 	local args=()
 	if declare -f npm_unpack_install_pre > /dev/null 2>&1 ; then
 		npm_unpack_install_pre
@@ -557,6 +563,9 @@ npm_src_unpack() {
 			unpack "${P}.tar.gz"
 		fi
 		cd "${S}" || die
+		if declare -f npm_unpack_post >/dev/null 2>&1 ; then
+			npm_unpack_post
+		fi
 		rm -f package-lock.json
 
 		if declare -f npm_update_lock_install_pre > /dev/null 2>&1 ; then

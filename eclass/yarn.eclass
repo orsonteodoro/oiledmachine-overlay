@@ -316,8 +316,15 @@ _yarn_src_unpack_default_ebuild() {
 	else
 		unpack "${P}.tar.gz"
 	fi
+
 	yarn_check
+
 	cd "${S}" || die
+
+	if declare -f yarn_unpack_post > /dev/null 2>&1 ; then
+		yarn_unpack_post
+	fi
+
 	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
 		_yarn_cp_tarballs
 		rm -f "package-lock.json" || true
@@ -376,8 +383,15 @@ _yarn_src_unpack_default_upstream() {
 	else
 		unpack "${P}.tar.gz"
 	fi
+
 	yarn_check
+
 	cd "${S}" || die
+
+	if declare -f yarn_unpack_post > /dev/null 2>&1 ; then
+		yarn_unpack_post
+	fi
+
 	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
 		_yarn_cp_tarballs
 		if [[ -n "${YARN_ROOT}" ]] ; then
@@ -516,15 +530,18 @@ einfo "Current directory:\t${PWD}"
 einfo "Tries:\t\t${tries}"
 einfo "Running:\t\tyarn ${cmd[@]}"
 		yarn "${cmd[@]}" || die
-		if ! grep -q -E -r -e "(ETIMEDOUT|EAI_AGAIN)" "${HOME}/build.log" ; then
+		if ! grep -q -E -r -e "(ETIMEDOUT|EAI_AGAIN|ECONNRESET)" "${T}/build.log" ; then
 			break
 		fi
-		if grep -q -E -r -e "ETIMEDOUT" "${HOME}/build.log" ; then
+		if grep -q -E -r -e "ETIMEDOUT" "${T}/build.log" ; then
 			tries=$((${tries} + 1))
 			sed -i -e "/ETIMEDOUT/d" "${T}/build.log"
-		elif grep -q -E -r -e "EAI_AGAIN" "${HOME}/build.log" ; then
+		elif grep -q -E -r -e "EAI_AGAIN" "${T}/build.log" ; then
 			tries=$((${tries} + 1))
 			sed -i -e "/EAI_AGAIN/d" "${T}/build.log"
+		elif grep -q -E -r -e "ECONNRESET" "${T}/build.log" ; then
+			tries=$((${tries} + 1))
+			sed -i -e "/ECONNRESET/d" "${T}/build.log"
 		fi
 	done
 	_yarn_check_errors
@@ -542,7 +559,13 @@ einfo "Updating lockfile"
 		else
 			unpack "${P}.tar.gz"
 		fi
+
 		cd "${S}" || die
+
+		if declare -f yarn_unpack_post > /dev/null 2>&1 ; then
+			yarn_unpack_post
+		fi
+
 		rm -f package-lock.json
 		rm -f yarn.lock
 
@@ -591,7 +614,12 @@ einfo "Updating lockfile"
 		else
 			unpack "${P}.tar.gz"
 		fi
+
 		cd "${S}" || die
+
+		if declare -f yarn_unpack_post > /dev/null 2>&1 ; then
+			yarn_unpack_post
+		fi
 }
 
 # @FUNCTION: __npm_patch
