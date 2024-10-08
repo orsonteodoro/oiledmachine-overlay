@@ -1054,7 +1054,7 @@ fi
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
 ewarn
-ewarn "Upstream backport mitigation:  best (~100% coverage)"
+ewarn "Upstream backport mitigation:  Grade A+"
 ewarn "Release quality:  Production ready"
 ewarn
 	if [[ "${PV}" =~ "9999" ]] ; then
