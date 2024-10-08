@@ -165,6 +165,7 @@ MULTISLOT_KERNEL_IWLWIFI_48787=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15
 MULTISLOT_KERNEL_IWLWIFI_a949075=("6.11.2")
 MULTISLOT_KERNEL_JFS_43858=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_JFS_44938=("6.6.47" "6.10.6")
+MULTISLOT_KERNEL_JFS_e63866a=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_LANDLOCK=("6.1.95" "6.6.35" "6.9.6" "6.10")
 MULTISLOT_KERNEL_MD_RAID1=("6.10.7")
 MULTISLOT_KERNEL_MD_RAID456=("5.15.V" "6.1.V" "6.6.V" "6.10" "6.11")
@@ -259,6 +260,7 @@ CVE_IMA_40947="CVE-2024-40947"
 CVE_IMA_21505="CVE-2022-21505"
 CVE_IOMMU_IOPF="CVE-2024-44994"
 CVE_JFS_43858="CVE-2024-43858"
+CVE_JFS_e63866a="OOB"
 CVE_JFS_44938="CVE-2024-44938"
 CVE_IPV4_36927="CVE-2024-36927"
 CVE_IPV4_41041="CVE-2024-41041"
@@ -511,6 +513,7 @@ REQUIRED_USE="
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-43828 # DoS
 # ext4? c6b72f5 # Unofficial: DoS, DT, ID UAF
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
+# f2fs? 930c6ab # Unofficial: DoS
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-46701 # DoS
 # fscache? https://nvd.nist.gov/vuln/detail/CVE-2024-46786 # DoS, DT, ID UAF
@@ -537,6 +540,7 @@ REQUIRED_USE="
 # iwlwifi? a949075 # Unofficial: DoS NPD
 # jfs? https://nvd.nist.gov/vuln/detail/CVE-2024-43858 # DoS, DT, ID
 # jfs? https://nvd.nist.gov/vuln/detail/CVE-2024-44938 # DoS
+# jfs? e63866a # Unofficial: DoS
 # landlock? https://nvd.nist.gov/vuln/detail/CVE-2024-40938 # Unofficial: DoS
 # kvm? https://nvd.nist.gov/vuln/detail/CVE-2024-46707 # DoS
 # kvm? https://nvd.nist.gov/vuln/detail/CVE-2024-43819 # DoS
@@ -558,8 +562,10 @@ REQUIRED_USE="
 # mwifiex? https://nvd.nist.gov/vuln/detail/CVE-2024-46755 # DoS
 # netfilter? https://nvd.nist.gov/vuln/detail/CVE-2024-45018 # DoS
 # nfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
+# nfs? 22451a1 # Unofficial: DoS
 # nf_tables? https://nvd.nist.gov/vuln/detail/CVE-2022-48935 # DoS UAF
 # nilfs2? https://nvd.nist.gov/vuln/detail/CVE-2024-46781 # DoS
+# nilfs2? f9c9635 Unofficial: DoS
 # ntfs? https://nvd.nist.gov/vuln/detail/CVE-2023-45896 # DoS, ID; RH rated it DT (I:L)
 # ntfs? https://nvd.nist.gov/vuln/detail/CVE-2024-42299 # DoS
 # nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-45013 # DoS
@@ -814,6 +820,7 @@ all_rdepend() {
 			fs_rdepend
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_JFS_43858[@]}
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_JFS_44938[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_JFS_e63866a[@]}
 		fi
 	fi
 	if _use kvm ; then
@@ -1344,6 +1351,7 @@ einfo
 		fs=1
 		check_kernel_version "jfs" "${CVE_JFS_43858}" ${MULTISLOT_KERNEL_JFS_43858[@]}
 		check_kernel_version "jfs" "${CVE_JFS_44938}" ${MULTISLOT_KERNEL_JFS_44938[@]}
+		check_kernel_version "jfs" "${CVE_JFS_e63866a}" ${MULTISLOT_KERNEL_JFS_e63866a[@]}
 	fi
 	if use landlock ; then
 		check_kernel_version "landlock" "${CVE_LANDLOCK}" ${MULTISLOT_KERNEL_LANDLOCK[@]}

@@ -111,7 +111,7 @@ MULTISLOT_KERNEL_CDROM=("6.1.98" "6.6.39" "6.9.9")
 MULTISLOT_KERNEL_COUGAR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
 MULTISLOT_KERNEL_ECDH=("4.19.V" "5.4.V" "5.15.162" "6.1.97" "6.6.37" "6.10", "6.11")
 MULTISLOT_KERNEL_EXT4=("6.10.1")
-MULTISLOT_KERNEL_EXT4_ccb8c18=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
+MULTISLOT_KERNEL_EXT4_c6b72f5=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
 MULTISLOT_KERNEL_FSCACHE=("6.6.51" "6.10.10")
@@ -162,7 +162,7 @@ CVE_CDROM="CVE-2024-42136"
 CVE_COUGAR="CVE-2024-46747"
 CVE_ECDH="CVE-2024-42098"
 CVE_EXT4="CVE-2024-42257"
-CVE_EXT4_ccb8c18="UAF"
+CVE_EXT4_c6b72f5="UAF"
 CVE_F2FS="CVE-2024-44942"
 CVE_FS="CVE-2024-43882"
 CVE_FSCACHE="CVE-2024-46786"
@@ -325,7 +325,7 @@ REQUIRED_USE="
 # cougar? https://nvd.nist.gov/vuln/detail/CVE-2024-46747 # DoS, DT, ID
 # ecdh? https://nvd.nist.gov/vuln/detail/CVE-2024-46747 # Unofficial: ID
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-42257 # DoS, DT, ID
-# ext4? ccb8c18 # Unofficial: DoS, DT, ID UAF # Added for precaution
+# ext4? c6b72f5 # Unofficial: DoS, DT, ID UAF # Added for precaution
 # f2fs? https://nvd.nist.gov/vuln/detail/CVE-2024-44942 # DoS, DT, ID
 # fs? https://nvd.nist.gov/vuln/detail/CVE-2024-43882 # EP, DoS, DT, ID
 # fscache? https://nvd.nist.gov/vuln/detail/CVE-2024-46786 # DoS, DT, ID UAF
@@ -437,7 +437,7 @@ all_rdepend() {
 		if ! _use custom-kernel ; then
 			fs_rdepend
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4[@]}
-			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4_ccb8c18[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXT4_c6b72f5[@]}
 		fi
 	fi
 	if _use f2fs ; then
@@ -757,7 +757,7 @@ check_drivers() {
 	if use ext4 ; then
 		fs=1
 		check_kernel_version "ext4" "${CVE_EXT4}" ${MULTISLOT_KERNEL_EXT4[@]}
-		check_kernel_version "ext4" "${CVE_EXT4_ccb8c18}" ${MULTISLOT_KERNEL_ccb8c18[@]}
+		check_kernel_version "ext4" "${CVE_EXT4_c6b72f5}" ${MULTISLOT_KERNEL_c6b72f5[@]}
 	fi
 	if use f2fs ; then
 		fs=1
