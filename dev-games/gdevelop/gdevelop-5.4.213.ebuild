@@ -4292,7 +4292,6 @@ einfo "Building ${MY_PN}.js"
 		popd || die
 
 		if [[ "${NPM_AUDIT_FIX}" == 0 ]] ; then
-ewarn "Skipping audit fix."
 einfo "Fixing vulnerabilities"
 			patch_edits() {
 				pushd "${S}/GDevelop.js" || die
