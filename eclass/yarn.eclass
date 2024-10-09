@@ -514,6 +514,7 @@ einfo "Running:\t\tnpm ${cmd[@]}"
 _yarn_check_errors() {
 	grep -q -e "FATAL ERROR:" "${T}/build.log" && die "Detected error"
 	grep -q -e "ETIMEDOUT" "${T}/build.log" && die "Detected error"
+	grep -q -e "^Error: Couldn't find package" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: eyarn
