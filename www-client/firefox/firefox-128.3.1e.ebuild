@@ -1372,13 +1372,13 @@ einfo "Patched vulnerabilities:"
 		for x in ${VULNERABILITIES_FIXED[@]} ; do
 			local cve=${x%;*}
 			local vulnerability_classes=${x#*;}
-ewarn "${cve}:  ${vulnerability_classes}"
+einfo "${cve}:  ${vulnerability_classes}"
 		done
-ewarn
-ewarn "DoS = Denial of Service"
-ewarn "DT = Data Tampering"
-ewarn "ID = Information Disclosure"
-ewarn
+einfo
+einfo "DoS = Denial of Service"
+einfo "DT = Data Tampering"
+einfo "ID = Information Disclosure"
+einfo
 	fi
 	if [[ "${MERGE_TYPE}" != "binary" ]] ; then
 		if use pgo ; then
