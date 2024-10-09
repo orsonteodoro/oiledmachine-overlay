@@ -370,8 +370,9 @@ einfo "Applying mitigation"
 		sed -i -e "s|\"rollup\": \"4.20.0\"|\"rollup\": \"^4.22.4\"|g" "package-lock.json" || die
 	}
 	patch_edits
+	# DoS = Denial of Service
 	# DT = Data Tampering
 	# ID = Information Disclosure
-	enpm install "rollup@^4.22.4" -D # DoS, DT, ID		# CVE-2024-47068
+	enpm install "rollup@^4.22.4" -D # DoS, DT, ID		# CVE-2024-47068, GHSA-gcx4-mw62-g8wm
 	patch_edits
 }
