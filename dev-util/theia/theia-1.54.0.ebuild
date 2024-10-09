@@ -132,7 +132,7 @@ declare -A THEIA_PLUGINS=(
 ["theia_plugin_vscode_theme-solarized-dark"]="vscode.theme-solarized-dark"
 )
 
-inherit desktop electron-app python-r1 yarn
+inherit desktop edo electron-app python-r1 yarn
 
 KEYWORDS="~amd64"
 SLOT="0/monthly"
@@ -496,6 +496,8 @@ BDEPEND+="
 	>=sys-devel/gcc-11.2.0
 	virtual/pkgconfig
 "
+PATCHES=(
+)
 
 check_network_sandbox() {
 	if has network-sandbox $FEATURES ; then
@@ -516,10 +518,20 @@ pkg_setup() {
 }
 
 get_plugins() {
-	eyarn add ts-clean --dev -W
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
-	eyarn download:plugins
+
+	local tries=0
+	while (( ${tries} < ${YARN_TRIES} )) ; do
+		eyarn download:plugins
+		if ! grep -q -E -r -e "Errors downloading some plugins" "${T}/build.log" ; then
+			break
+		fi
+		if grep -q -E -r -e "Errors downloading some plugins" "${T}/build.log" ; then
+			tries=$((${tries} + 1))
+			sed -i -e "/Errors downloading some plugins/d" "${T}/build.log"
+		fi
+	done
 }
 
 _WANTS_PLUGIN_CACHED=-1
@@ -555,10 +567,24 @@ einfo "Called yarn_unpack_install_pre()"
 #		|| die
 #	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 einfo "Adding dependencies"
-		eyarn add "node-gyp@${NODE_GYP_PV}" -D --ignore-workspace-root-check
-		eyarn add "keytar" --ignore-workspace-root-check
-		eyarn add "npx" -D --ignore-workspace-root-check
+		local pkgs
+		pkgs=(
+			"node-gyp@^${NODE_GYP_PV}"
+#			"npx"
+		)
+		eyarn add ${pkgs[@]} -D -W
+
+		pkgs=(
+			"keytar" # EOL
+		)
+
+		#eyarn workspace "@theia/core" add ${pkgs[@]} EOL
 #	fi
+}
+
+yarn_unpack_post() {
+	:
+#	eapply ${PATCHES[@]}
 }
 
 yarn_src_unpack_update_ebuild_custom() {
@@ -570,76 +596,194 @@ einfo "Updating lockfile from _yarn_src_unpack_update_ebuild_custom()"
 	else
 		unpack "${P}.tar.gz"
 	fi
-	export PATH="${HOME}/.config/yarn/global/node_modules/.bin:${S}/node_modules/.bin:${PATH}"
+
+	if declare -f yarn_unpack_post >/dev/null 2>&1 ; then
+		yarn_unpack_post
+	fi
+
+	export PATH="${S}/node_modules/.bin:${PATH}"
+	export PATH="${HOME}/.config/yarn/global/node_modules/.bin:${PATH}" # For npx
+	export PATH="${HOME}/.cache/node/corepack/v1/npm/9.8.0/bin:${PATH}" # For npx
+	edo npx --version
 	cd "${S}" || die
 	#rm -f package-lock.json
 	#rm -f yarn.lock
 
-einfo "Dumping PLTR (gov intelligence contractor) package"
+	sed -i -e "s|\"dompurify\": \"^2.2.9\"|\"dompurify\": \"^2.5.4\"|g" "packages/core/package.json" || die
 
-	# See https://en.wikipedia.org/wiki/Palantir_Technologies#WikiLeaks_proposals_(2010)
-	eyarn remove \
-		"tslint" \
-		"@typescript-eslint/eslint-plugin-tslint" \
-		--ignore-workspace-root-check
+	sed -i -e "s|\"body-parser\": \"^1.17.2\"|\"body-parser\": \"^1.20.3\"|g" "packages/core/package.json" || die
+	sed -i -e "s|\"body-parser\": \"^1.18.3\"|\"body-parser\": \"^1.20.3\"|g" "packages/filesystem/package.json" || die
 
-einfo "Adding dev dependencies"
+	# Not listed in lockfile but mentioned by GH security scan.
+	# semver 5.x added by
+	#	@theia/core -> keytar [EOL] -> prebuild-install -> node-abi				# keytar pruning requires modding
+	#	@theia/core -> drivelist -> prebuild-install -> node-abi				# drivelist prning requires modding
+	#	@theia/application-manager -> less -> make-dir						# vulnerable
+	#	@theia/monorepo -> @typescript-eslint/eslint-plugin-tslint -> tslint			# pruned
+	#	@theia/monorepo -> @vscode/vsce -> parse-semver						# can be pruned
 
-	eyarn add "node-gyp@${NODE_GYP_PV}" -D --ignore-workspace-root-check
-	eyarn add "npx" -D --ignore-workspace-root-check
+	sed -i -e "s|\"webpack\": \"^5.76.0\"|\"webpack\": \"^5.94.0\"|g" "dev-packages/native-webpack-plugin/package.json" || die
+	sed -i -e "s|\"webpack\": \"^5.76.0\"|\"webpack\": \"^5.94.0\"|g" "dev-packages/application-manager/package.json" || die
 
-einfo "Adding production dependencies"
+	sed -i -e "s|\"cookie\": \"^0.4.0\"|\"cookie\": \"^0.7.0\"|g" "packages/core/package.json" || die
 
-	eyarn add "keytar" --ignore-workspace-root-check
+	sed -i -e "s|\"ajv\": \"^6.5.3\"|\"ajv\": \"^6.12.3\"|g" "packages/core/package.json" || die
+	sed -i -e "s|\"ajv\": \"^6.5.3\"|\"ajv\": \"^6.12.3\"|g" "packages/toolbar/package.json" || die
+
+	sed -i -e "s|\"ws\": \"^8.17.1\"|\"ws\": \"^8.17.1\"|g" "packages/core/package.json" || die
+
+	local pkgs
+
+einfo "Add/update toolchain"
+	pkgs=(
+#		"npx"
+		"node-gyp@^${NODE_GYP_PV}"
+		"ts-clean"					# For download:plugins
+	)
+	eyarn add ${pkgs[@]} -D -W
+
+# Need to check if tslint package is *backdoored* or introduces a vulnerability
+einfo "Pruning vulnerable packages"
+
+	pkgs=(
+	# Prune pkgs
+	# Mentioned in GH security scan
+	# Temporarily disabled
+#		"hoek"
+	)
+
+	pkgs=(
+		"keytar"					# Adds semver 5.x
+	)
+#	eyarn workspace "@theia/core" remove ${pkgs[@]}
+
+	pkgs=(
+		# See https://en.wikipedia.org/wiki/Palantir_Technologies#WikiLeaks_proposals_(2010)
+		"tslint"					# Adds semver 5.x
+		"@typescript-eslint/eslint-plugin-tslint"	# Adds tslint
+
+#		"@vscode/vsce"					# Adds semver 5.x
+	)
+	eyarn remove ${pkgs[@]} -W
+
+	# This should be pruned
+	pkgs=(
+		"@theia/ffmpeg"
+	)
+#	eyarn workspace "@theia/application-manager" remove ${pkgs[@]} -W
+#	eyarn workspace "@theia/cli" remove ${pkgs[@]} -W
 
 einfo "Updating dependencies"
 
-	eyarn update \
-		"npm@^6.14.6"			# CVE-2019-16777 # DT, CI
-						# CVE-2018-7408  # DoS, DT, ID
-						# CVE-2019-16776 # DT, ID
-						# CVE-2019-16775 # DT, ID
-
-	eyarn upgrade "electron@${ELECTRON_APP_ELECTRON_PV}" --ignore-workspace-root-check
 
 	# ID = Information Disclosure
 	# DoS = Denial of Service
 	# DT = Data Tampering
-	local pkgs=(
-		"dompurify@^2.5.4"		# CVE-2024-45801 # DoS, DT, ID
-		"path-to-regexp@^6.3.0"		# CVE-2024-45296 # DoS
-		"body-parser@^1.20.3"		# CVE-2024-45590 # DoS
-		"axios@^1.7.4"			# CVE-2024-39338 # ID
-		"ws@^8.17.1"			# CVE-2024-37890 # DoS
-		"braces@^3.0.3"			# CVE-2024-4068  # DoS
-		"semver@^5.7.2"			# CVE-2022-25883 # DoS
-		"http-cache-semantics@^4.1.1"	# CVE-2022-25881 # DoS
-		"hoek"				# CVE-2018-3728  # DoS, DT, ID
-		"ssri^6.0.2"			# CVE-2021-27290 # DoS
-		"hawk@^9.0.1"			# CVE-2022-29167 # DoS
-		"ip"				# CVE-2024-29415 # DoS, DT, ID
-		"tar@^6.2.1"			# CVE-2021-37713 # DT, ID
-						# CVE-2021-32804 # DT, ID
-						# CVE-2024-28863 # DoS
-		"send@^0.19.0"			# CVE-2024-43799 # DT, ID
-		"serve-static@^1.16.0"		# CVE-2024-43800 # DT, ID
-		"express@^4.20.0"		# CVE-2024-43796 # DT, ID
-						# CVE-2024-29041 # DT, ID
-		"webpack@^5.94.0"		# CVE-2024-43788 # DoS, DT, ID
-		"micromatch@^4.0.8"		# CVE-2024-4067  # DoS
-		"ejs@^3.1.10"			# CVE-2024-33883 # DoS
-		"ajv@^6.12.3"			# CVE-2020-15366 # DoS, DT, ID
-		"tough-cookie@^4.1.3"		# CVE-2023-26136 # DoS, DT
-		"follow-redirects@^1.15.6"	# CVE-2024-28849 # CI
-		"hosted-git-info@^2.8.9"	# CVE-2021-23362 # DoS
-		"cookie@^0.7.0"			# CVE-2024-47764 # DT
-		"chownr@^1.1.0"			# CVE-2017-18869 # DT
-		"yargs-parser@^13.1.2"		# CVE-2020-7608  # DoS, DT, ID
-		"got@^11.8.5"			# CVE-2022-33987 # DT
+	pkgs=(
+	# Update pkgs
+	# Mentioned in GH security scan
+	# Temporarily disabled
+#		"npm@^6.14.6"
+#						# CVE-2019-16777 # DT, CI
+#						# CVE-2018-7408  # DoS, DT, ID
+#						# CVE-2019-16776 # DT, ID
+#						# CVE-2019-16775 # DT, ID
+#		"hawk@^9.0.1"			# CVE-2022-29167 # DoS
+#		"ip"				# CVE-2024-29415 # DoS, DT, ID
 		# "request"			# CVE-2023-28155 # DT, C ; EOL
 	)
+# warning npx > npm > request > hawk@3.1.3: This module moved to @hapi/hawk.
+# warning npx > npm > request > hawk > cryptiles@2.0.5:
+# warning npx > npm > request > hawk > hoek@2.16.3:
 
-	eyarn upgrade ${pkgs[@]}
+	pkgs=(
+#		"@hapi/hoek"			# CVE-2018-3728 # DoS, DT, ID
+
+		# @theia/core:
+		"dompurify@^2.5.4"		# CVE-2024-45801 # DoS, DT, ID
+		"express@^4.20.0"		# CVE-2024-43796 # DT, ID
+						# CVE-2024-29041 # DT, ID
+		"body-parser@^1.20.3"		# CVE-2024-45590 # DoS
+		"cookie@^0.7.0"			# CVE-2024-47764 # DT
+		"ajv@^6.12.3"			# CVE-2020-15366 # DoS, DT, ID
+		"ws@^8.17.1"			# CVE-2024-37890 # DoS
+		"semver@^5.7.2"			# CVE-2022-25883 # DoS
+
+		# @theia/core -> express:
+		"path-to-regexp@^6.3.0"		# CVE-2024-45296 # DoS
+		"serve-static@^1.16.0"		# CVE-2024-43800 # DT, ID
+		"send@^0.19.0"			# CVE-2024-43799 # DT, ID
+	)
+	eyarn workspace "@theia/core" add ${pkgs[@]}
+
+	pkgs=(
+		"body-parser@^1.20.3"
+	)
+	eyarn workspace "@theia/filesystem" add ${pkgs[@]}
+
+	pkgs=(
+		"ajv@^6.12.3"
+	)
+	eyarn workspace "@theia/toolbar" add ${pkgs[@]}
+
+	pkgs=(
+		"axios@^1.7.4"			# CVE-2024-39338 # ID			# @theia/application-package -> nano
+	)
+	eyarn workspace "@theia/application-package" add ${pkgs[@]}
+
+	pkgs=(
+		# @theia/application-manager
+		"webpack@^5.94.0"		# CVE-2024-43788 # DoS, DT, ID		# @theia/application-manager
+		"follow-redirects@^1.15.6"	# CVE-2024-28849 # CI			# @theia/application-manager -> http-server
+		"braces@^3.0.3"			# CVE-2024-4068  # DoS			# @theia/application-manager -> copy-webpack-plugin -> fast-glob -> micromatch
+		"micromatch@^4.0.8"		# CVE-2024-4067  # DoS
+		"semver@^5.7.2"			# CVE-2022-25883 # DoS
+#		"less"				# Adds semver 5.x
+	)
+	eyarn workspace "@theia/application-manager" add ${pkgs[@]}
+
+	pkgs=(
+		"webpack@^5.94.0"		# CVE-2024-43788 # DoS, DT, ID		# @theia/native-webpack-plugin
+	)
+	eyarn workspace "@theia/native-webpack-plugin" add ${pkgs[@]}
+
+	pkgs=(
+		"follow-redirects@^1.15.6"	# CVE-2024-28849 # CI                   # @theia/cli -> http-server
+		"braces@^3.0.3"			# CVE-2024-4068  # DoS			# @theia/cli -> chokidar -> mocha
+	)
+	eyarn workspace "@theia/cli" add ${pkgs[@]}
+
+	pkgs=(
+		"electron@^${ELECTRON_APP_ELECTRON_PV}"
+		"got@^11.8.5"			# CVE-2022-33987 # DT			# @theia/example-electron -> electron -> @electron/get
+	)
+	eyarn workspace "@theia/example-electron" add ${pkgs[@]} -D
+
+	pkgs=(
+		"electron@^${ELECTRON_APP_ELECTRON_PV}"
+	)
+	eyarn workspace "@theia/electron" add ${pkgs[@]} -P
+
+	pkgs=(
+		# @theia/monorepo
+		# TODO: bump parent packages
+		"http-cache-semantics@^4.1.1"	# CVE-2022-25881 # DoS			# @theia/monorepo -> node-gyp -> make-fetch-happen
+		"hosted-git-info@^2.8.9"	# CVE-2021-23362 # DoS			# @theia/monorepo -> @vscode/vsce
+		"tough-cookie@^4.1.3"		# CVE-2023-26136 # DoS, DT		# @theia/monorepo -> jsdom
+		"semver@^5.7.2"			# CVE-2022-25883 # DoS
+		"axios@^1.7.4"                  # CVE-2024-39338 # ID			# @theia/monorepo -> lerna -> @lerna/create -> nx
+		"chownr@^1.1.0"			# CVE-2017-18869 # DT			# @theia/monorepo -> lerna
+		"yargs-parser@^13.1.2"		# CVE-2020-7608  # DoS, DT, ID		# @theia/monorepo -> lerna
+		"ssri@^6.0.2"			# CVE-2021-27290 # DoS			# @theia/monorepo -> lerna
+		"ejs@^3.1.10"			# CVE-2024-33883 # DoS			# @theia/monorepo -> lerna -> @lerna/create -> @nx/devkit
+		"tar@^6.2.1"			# CVE-2021-37713 # DT, ID		# @theia/monorepo -> lerna
+											# CVE-2021-32804 # DT, ID
+											# CVE-2024-28863 # DoS
+#		"lerna"				# Bumped to remove dep vulnerabilities
+	)
+	eyarn add ${pkgs[@]} -D -W
+
+	eyarn dedupe
 
 einfo "Generating yarn.lock"
 	eyarn install
@@ -750,6 +894,9 @@ examples/api-provider-sample/package.json
 src_unpack() {
 einfo "YARN_UPDATE_LOCK=${YARN_UPDATE_LOCK}"
 	yarn_src_unpack
+	export PATH="${HOME}/.config/yarn/global/node_modules/.bin:${PATH}" # For npx
+	export PATH="${HOME}/.cache/node/corepack/v1/npm/9.8.0/bin:${PATH}" # For npx
+	edo npx --version
 	if [[ -z "${YARN_UPDATE_LOCK}" ]] ; then
 		user_wants_plugin && get_plugins
 	fi
@@ -779,13 +926,6 @@ src_compile() {
 		-e "Rebuild Failed" \
 		"${T}/build.log" \
 		&& die "Build failure"
-
-	if user_wants_plugin ; then
-		grep -q \
-			-e "Errors downloading some plugins" \
-			"${T}/build.log" \
-			&& die "Build failure"
-	fi
 
 	sed -i \
 		-e "s|Theia Electron Example|Theia IDE|g" \
