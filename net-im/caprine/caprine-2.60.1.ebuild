@@ -1523,7 +1523,8 @@ einfo "Applying mitigation"
 		}
 		patch_edits
 
-		enpm install "got@^11.8.5" -P
+	# DT = Data Tampering
+		enpm install "got@^11.8.5" -P					# DT		# CVE-2022-33987
 		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D
 
 		patch_edits
