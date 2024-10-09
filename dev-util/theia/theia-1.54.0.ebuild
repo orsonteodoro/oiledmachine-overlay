@@ -684,7 +684,7 @@ einfo "Updating dependencies"
 	# Mentioned in GH security scan
 	# Temporarily disabled
 #		"npm@^6.14.6"
-#						# CVE-2019-16777 # DT, CI
+#						# CVE-2019-16777 # DT, ID
 #						# CVE-2018-7408  # DoS, DT, ID
 #						# CVE-2019-16776 # DT, ID
 #						# CVE-2019-16775 # DT, ID
@@ -728,14 +728,14 @@ einfo "Updating dependencies"
 
 	pkgs=(
 		"axios@^1.7.4"			# CVE-2024-39338 # ID			# @theia/application-package -> nano
-		"follow-redirects@^1.15.6"	# CVE-2024-28849 # CI                   # nano -> axios -> follow-redirects
+		"follow-redirects@^1.15.6"	# CVE-2024-28849 # ID                   # nano -> axios -> follow-redirects
 	)
 	eyarn workspace "@theia/application-package" add ${pkgs[@]}
 
 	pkgs=(
 		# @theia/application-manager
 		"webpack@^5.94.0"		# CVE-2024-43788 # DoS, DT, ID		# @theia/application-manager
-		"follow-redirects@^1.15.6"	# CVE-2024-28849 # CI			# @theia/application-manager -> http-server
+		"follow-redirects@^1.15.6"	# CVE-2024-28849 # ID			# @theia/application-manager -> http-server
 		"braces@^3.0.3"			# CVE-2024-4068  # DoS			# @theia/application-manager -> copy-webpack-plugin -> fast-glob -> micromatch
 		"micromatch@^4.0.8"		# CVE-2024-4067  # DoS
 		"semver@^5.7.2"			# CVE-2022-25883 # DoS
@@ -749,7 +749,7 @@ einfo "Updating dependencies"
 	eyarn workspace "@theia/native-webpack-plugin" add ${pkgs[@]}
 
 	pkgs=(
-		"follow-redirects@^1.15.6"	# CVE-2024-28849 # CI                   # @theia/cli -> http-server
+		"follow-redirects@^1.15.6"	# CVE-2024-28849 # ID                   # @theia/cli -> http-server
 		"braces@^3.0.3"			# CVE-2024-4068  # DoS			# @theia/cli -> chokidar -> mocha
 	)
 	eyarn workspace "@theia/cli" add ${pkgs[@]}
@@ -783,7 +783,7 @@ einfo "Updating dependencies"
 #		"lerna"				# Bumped to remove dep vulnerabilities
 		"path-to-regexp@^6.3.0"		# CVE-2024-45296 # DoS			# @theia/monorepo -> sinon -> nise
 		"ws@^8.17.1"			# CVE-2024-37890 # DoS			# @theia/monorepo -> jsdom
-		"follow-redirects@^1.15.6"	# CVE-2024-28849 # CI                   # @theia/monorepo -> lerna -> @lerna/create -> nx -> axios -> follow-redirects
+		"follow-redirects@^1.15.6"	# CVE-2024-28849 # ID                   # @theia/monorepo -> lerna -> @lerna/create -> nx -> axios -> follow-redirects
 	)
 	eyarn add ${pkgs[@]} -D -W
 
