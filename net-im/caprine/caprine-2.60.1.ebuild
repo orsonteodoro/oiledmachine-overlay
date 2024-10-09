@@ -1538,18 +1538,17 @@ src_unpack() {
 		enpm audit fix \
 			${NPM_AUDIT_FIX_ARGS[@]}
 
-	# Fix breakage
+einfo "Applying mitigation"
+		patch_edits() {
+			sed -i -e "s|\"got\": \"^11.8.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die
+			sed -i -e "s|\"got\": \"^9.6.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die
+		}
+		patch_edits
 
-	# Change to ^0.51.1
-#		enpm install "eslint-config-xo-typescript@0.51.1"
+		enpm install "got@^11.8.5" -P
+		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D
 
-	# Change to ^5.30.7
-#		enpm install "@typescript-eslint/eslint-plugin@5.30.7"
-
-	# Change to ^5.30.7
-#		enpm install "@typescript-eslint/parser@5.30.7"
-
-		enpm install -D "electron@${ELECTRON_APP_ELECTRON_PV}"
+		patch_edits
 
 		_npm_check_errors
 einfo "Updating lockfile done."
