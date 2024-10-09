@@ -7,6 +7,7 @@ EAPI=8
 # 115.12.0 -> 128.1.0
 # 128.1.0 -> 128.2.0
 # 128.2.0 -> 128.3.0
+# 128.3.0 -> 128.3.1
 
 # SECURITY:  If this gets bumped, then dev-lang/spidermonkey should be bumped too with the same ESR version.
 
@@ -26,28 +27,28 @@ EAPI=8
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/128.3.0/system-requirements/
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/moz.configure
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/build/moz.configure/nss.configure L12
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/gfx/harfbuzz/configure.ac L3
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/media/libaom/config/aom_version.h L7 [old]
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/media/libwebp/moz.yaml L16
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/modules/freetype2/include/freetype/freetype.h L5223
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/taskcluster/ci/fetch/toolchains.yml
+# https://www.mozilla.org/en-US/firefox/128.3.1/system-requirements/
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/moz.configure
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/build/moz.configure/nss.configure L12
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/gfx/harfbuzz/configure.ac L3
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/media/libaom/config/aom_version.h L7 [old]
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/media/libwebp/moz.yaml L16
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/modules/freetype2/include/freetype/freetype.h L5223
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/taskcluster/ci/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, pkgconf-, rust-
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/taskcluster/ci/packages/
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/taskcluster/ci/packages/
 #   Keyword search:  gtk
-# /var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0/taskcluster/ci/toolchain/
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/taskcluster/ci/toolchain/
 #   Keyword search:  nasm, nodejs, zlib
 
 # Due to versioning conflicts and ebuild assumptions, you cannot have stable and esr be the same version
@@ -66,7 +67,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="128.3.0"
+PV="128.3.1"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}esr/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -83,7 +84,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-128.3.0e/work/firefox-128.3.0"
+SRC="/var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -143,9 +144,9 @@ LLVM_COMPAT=( 18 17 ) # Limited based on virtual/rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MEETS_JUMBO_BUILD_MEMORY_REQ=0
-MITIGATION_DATE="Oct 1, 2024"
+MITIGATION_DATE="Oct 9, 2024" # Advisory date
 MITIGATION_LAST_UPDATE=1727726100 # From `date +%s -d "2024-09-30 12:55"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-47/"
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-51/"
 MOZ_ESR="yes"
 MOZ_LANGS=(
 ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
