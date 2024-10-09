@@ -141,22 +141,22 @@ https://registry.npmjs.org/@rollup/plugin-commonjs/-/plugin-commonjs-26.0.1.tgz 
 https://registry.npmjs.org/@rollup/plugin-json/-/plugin-json-6.1.0.tgz -> npmpkg-@rollup-plugin-json-6.1.0.tgz
 https://registry.npmjs.org/@rollup/plugin-node-resolve/-/plugin-node-resolve-15.2.3.tgz -> npmpkg-@rollup-plugin-node-resolve-15.2.3.tgz
 https://registry.npmjs.org/@rollup/pluginutils/-/pluginutils-5.1.2.tgz -> npmpkg-@rollup-pluginutils-5.1.2.tgz
-https://registry.npmjs.org/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.20.0.tgz -> npmpkg-@rollup-rollup-android-arm-eabi-4.20.0.tgz
-https://registry.npmjs.org/@rollup/rollup-android-arm64/-/rollup-android-arm64-4.20.0.tgz -> npmpkg-@rollup-rollup-android-arm64-4.20.0.tgz
-https://registry.npmjs.org/@rollup/rollup-darwin-arm64/-/rollup-darwin-arm64-4.20.0.tgz -> npmpkg-@rollup-rollup-darwin-arm64-4.20.0.tgz
-https://registry.npmjs.org/@rollup/rollup-darwin-x64/-/rollup-darwin-x64-4.20.0.tgz -> npmpkg-@rollup-rollup-darwin-x64-4.20.0.tgz
-https://registry.npmjs.org/@rollup/rollup-linux-arm-gnueabihf/-/rollup-linux-arm-gnueabihf-4.20.0.tgz -> npmpkg-@rollup-rollup-linux-arm-gnueabihf-4.20.0.tgz
-https://registry.npmjs.org/@rollup/rollup-linux-arm-musleabihf/-/rollup-linux-arm-musleabihf-4.20.0.tgz -> npmpkg-@rollup-rollup-linux-arm-musleabihf-4.20.0.tgz
-https://registry.npmjs.org/@rollup/rollup-linux-arm64-gnu/-/rollup-linux-arm64-gnu-4.20.0.tgz -> npmpkg-@rollup-rollup-linux-arm64-gnu-4.20.0.tgz
-https://registry.npmjs.org/@rollup/rollup-linux-arm64-musl/-/rollup-linux-arm64-musl-4.20.0.tgz -> npmpkg-@rollup-rollup-linux-arm64-musl-4.20.0.tgz
-https://registry.npmjs.org/@rollup/rollup-linux-powerpc64le-gnu/-/rollup-linux-powerpc64le-gnu-4.20.0.tgz -> npmpkg-@rollup-rollup-linux-powerpc64le-gnu-4.20.0.tgz
-https://registry.npmjs.org/@rollup/rollup-linux-riscv64-gnu/-/rollup-linux-riscv64-gnu-4.20.0.tgz -> npmpkg-@rollup-rollup-linux-riscv64-gnu-4.20.0.tgz
-https://registry.npmjs.org/@rollup/rollup-linux-s390x-gnu/-/rollup-linux-s390x-gnu-4.20.0.tgz -> npmpkg-@rollup-rollup-linux-s390x-gnu-4.20.0.tgz
-https://registry.npmjs.org/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.20.0.tgz -> npmpkg-@rollup-rollup-linux-x64-gnu-4.20.0.tgz
-https://registry.npmjs.org/@rollup/rollup-linux-x64-musl/-/rollup-linux-x64-musl-4.20.0.tgz -> npmpkg-@rollup-rollup-linux-x64-musl-4.20.0.tgz
-https://registry.npmjs.org/@rollup/rollup-win32-arm64-msvc/-/rollup-win32-arm64-msvc-4.20.0.tgz -> npmpkg-@rollup-rollup-win32-arm64-msvc-4.20.0.tgz
-https://registry.npmjs.org/@rollup/rollup-win32-ia32-msvc/-/rollup-win32-ia32-msvc-4.20.0.tgz -> npmpkg-@rollup-rollup-win32-ia32-msvc-4.20.0.tgz
-https://registry.npmjs.org/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.20.0.tgz -> npmpkg-@rollup-rollup-win32-x64-msvc-4.20.0.tgz
+https://registry.npmjs.org/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.24.0.tgz -> npmpkg-@rollup-rollup-android-arm-eabi-4.24.0.tgz
+https://registry.npmjs.org/@rollup/rollup-android-arm64/-/rollup-android-arm64-4.24.0.tgz -> npmpkg-@rollup-rollup-android-arm64-4.24.0.tgz
+https://registry.npmjs.org/@rollup/rollup-darwin-arm64/-/rollup-darwin-arm64-4.24.0.tgz -> npmpkg-@rollup-rollup-darwin-arm64-4.24.0.tgz
+https://registry.npmjs.org/@rollup/rollup-darwin-x64/-/rollup-darwin-x64-4.24.0.tgz -> npmpkg-@rollup-rollup-darwin-x64-4.24.0.tgz
+https://registry.npmjs.org/@rollup/rollup-linux-arm-gnueabihf/-/rollup-linux-arm-gnueabihf-4.24.0.tgz -> npmpkg-@rollup-rollup-linux-arm-gnueabihf-4.24.0.tgz
+https://registry.npmjs.org/@rollup/rollup-linux-arm-musleabihf/-/rollup-linux-arm-musleabihf-4.24.0.tgz -> npmpkg-@rollup-rollup-linux-arm-musleabihf-4.24.0.tgz
+https://registry.npmjs.org/@rollup/rollup-linux-arm64-gnu/-/rollup-linux-arm64-gnu-4.24.0.tgz -> npmpkg-@rollup-rollup-linux-arm64-gnu-4.24.0.tgz
+https://registry.npmjs.org/@rollup/rollup-linux-arm64-musl/-/rollup-linux-arm64-musl-4.24.0.tgz -> npmpkg-@rollup-rollup-linux-arm64-musl-4.24.0.tgz
+https://registry.npmjs.org/@rollup/rollup-linux-powerpc64le-gnu/-/rollup-linux-powerpc64le-gnu-4.24.0.tgz -> npmpkg-@rollup-rollup-linux-powerpc64le-gnu-4.24.0.tgz
+https://registry.npmjs.org/@rollup/rollup-linux-riscv64-gnu/-/rollup-linux-riscv64-gnu-4.24.0.tgz -> npmpkg-@rollup-rollup-linux-riscv64-gnu-4.24.0.tgz
+https://registry.npmjs.org/@rollup/rollup-linux-s390x-gnu/-/rollup-linux-s390x-gnu-4.24.0.tgz -> npmpkg-@rollup-rollup-linux-s390x-gnu-4.24.0.tgz
+https://registry.npmjs.org/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.24.0.tgz -> npmpkg-@rollup-rollup-linux-x64-gnu-4.24.0.tgz
+https://registry.npmjs.org/@rollup/rollup-linux-x64-musl/-/rollup-linux-x64-musl-4.24.0.tgz -> npmpkg-@rollup-rollup-linux-x64-musl-4.24.0.tgz
+https://registry.npmjs.org/@rollup/rollup-win32-arm64-msvc/-/rollup-win32-arm64-msvc-4.24.0.tgz -> npmpkg-@rollup-rollup-win32-arm64-msvc-4.24.0.tgz
+https://registry.npmjs.org/@rollup/rollup-win32-ia32-msvc/-/rollup-win32-ia32-msvc-4.24.0.tgz -> npmpkg-@rollup-rollup-win32-ia32-msvc-4.24.0.tgz
+https://registry.npmjs.org/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.24.0.tgz -> npmpkg-@rollup-rollup-win32-x64-msvc-4.24.0.tgz
 https://registry.npmjs.org/@swc/core/-/core-1.7.26.tgz -> npmpkg-@swc-core-1.7.26.tgz
 https://registry.npmjs.org/@swc/core-darwin-arm64/-/core-darwin-arm64-1.7.26.tgz -> npmpkg-@swc-core-darwin-arm64-1.7.26.tgz
 https://registry.npmjs.org/@swc/core-darwin-x64/-/core-darwin-x64-1.7.26.tgz -> npmpkg-@swc-core-darwin-x64-1.7.26.tgz
@@ -304,9 +304,8 @@ https://registry.npmjs.org/requires-port/-/requires-port-1.0.0.tgz -> npmpkg-req
 https://registry.npmjs.org/resolve/-/resolve-1.22.8.tgz -> npmpkg-resolve-1.22.8.tgz
 https://registry.npmjs.org/resolve-from/-/resolve-from-4.0.0.tgz -> npmpkg-resolve-from-4.0.0.tgz
 https://registry.npmjs.org/reusify/-/reusify-1.0.4.tgz -> npmpkg-reusify-1.0.4.tgz
-https://registry.npmjs.org/rollup/-/rollup-4.20.0.tgz -> npmpkg-rollup-4.20.0.tgz
+https://registry.npmjs.org/rollup/-/rollup-4.24.0.tgz -> npmpkg-rollup-4.24.0.tgz
 https://registry.npmjs.org/rollup-plugin-swc-minify/-/rollup-plugin-swc-minify-1.1.2.tgz -> npmpkg-rollup-plugin-swc-minify-1.1.2.tgz
-https://registry.npmjs.org/@types/estree/-/estree-1.0.5.tgz -> npmpkg-@types-estree-1.0.5.tgz
 https://registry.npmjs.org/run-parallel/-/run-parallel-1.2.0.tgz -> npmpkg-run-parallel-1.2.0.tgz
 https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.1.2.tgz -> npmpkg-safe-buffer-5.1.2.tgz
 https://registry.npmjs.org/safer-buffer/-/safer-buffer-2.1.2.tgz -> npmpkg-safer-buffer-2.1.2.tgz
@@ -364,3 +363,15 @@ https://github.com/prantlf/jsonlint/archive/refs/tags/v${PV}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror test" # Missing dev dependencies
+
+npm_update_lock_audit_post() {
+einfo "Applying mitigation"
+	patch_edits() {
+		sed -i -e "s|\"rollup\": \"4.20.0\"|\"rollup\": \"^4.22.4\"|g" "package-lock.json" || die
+	}
+	patch_edits
+	# DT = Data Tampering
+	# ID = Information Disclosure
+	enpm install "rollup@^4.22.4" -D # DT, ID	# CVE-2024-47068
+	patch_edits
+}
