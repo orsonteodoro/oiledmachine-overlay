@@ -706,7 +706,7 @@ einfo "Updating dependencies"
 		"body-parser@^1.20.3"		# CVE-2024-45590 # DoS
 		"cookie@^0.7.0"			# CVE-2024-47764 # DT
 		"ajv@^6.12.3"			# CVE-2020-15366 # DoS, DT, ID
-		"ws@^8.17.1"			# CVE-2024-37890 # DoS
+		"ws@^8.17.1"			# CVE-2024-37890 # DoS			@theia/core -> socket.io -> engine.io -> ws
 		"semver@^5.7.2"			# CVE-2022-25883 # DoS
 
 		# @theia/core -> express:
@@ -728,6 +728,7 @@ einfo "Updating dependencies"
 
 	pkgs=(
 		"axios@^1.7.4"			# CVE-2024-39338 # ID			# @theia/application-package -> nano
+		"follow-redirects@^1.15.6"	# CVE-2024-28849 # CI                   # nano -> axios -> follow-redirects
 	)
 	eyarn workspace "@theia/application-package" add ${pkgs[@]}
 
@@ -780,6 +781,9 @@ einfo "Updating dependencies"
 											# CVE-2021-32804 # DT, ID
 											# CVE-2024-28863 # DoS
 #		"lerna"				# Bumped to remove dep vulnerabilities
+		"path-to-regexp@^6.3.0"		# CVE-2024-45296 # DoS			# @theia/monorepo -> sinon -> nise
+		"ws@^8.17.1"			# CVE-2024-37890 # DoS			# @theia/monorepo -> jsdom
+		"follow-redirects@^1.15.6"	# CVE-2024-28849 # CI                   # @theia/monorepo -> lerna -> @lerna/create -> nx -> axios -> follow-redirects
 	)
 	eyarn add ${pkgs[@]} -D -W
 
