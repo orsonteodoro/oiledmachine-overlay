@@ -4416,7 +4416,7 @@ einfo "Fixing vulnerabilities"
 						"grunt-shell@4.0.0"
 						"grunt-string-replace@1.3.3"
 					"js-yaml@3.13.1"			# DoS, CE		# GHSA-8j8c-7jfh-h6hx, GHSA-2pr6-76vf-7546
-					"jsdom@16.6.0"				#														# [14] contained in requests dep
+					"jsdom@16.6.0"				# DT, ID													# [14] contained in requests dep
 					"json-schema@0.4.0"			# DoS, DT, ID		# CVE-2021-3918
 					"lodash@4.17.21"			# DoS, DT		# CVE-2019-10744, CVE-2020-8203, CVE-2021-23337, CVE-2020-28500, CVE-2018-3721
 					"minimist@0.2.4"			# DoS, DT, ID		# CVE-2021-44906, CVE-2020-7598
@@ -4443,7 +4443,7 @@ einfo "Fixing vulnerabilities"
 				enpm uninstall ${pkgs[@]}
 				pkgs=(
 					"@babel/traverse@7.23.2"		# DoS, DT, ID		# CVE-2023-45133
-					"@hapi/cryptiles@5.1.0"			#														# [11]
+					"@hapi/cryptiles@5.1.0"			# DoS, DT, ID													# [11]
 					"braces@3.0.3"				# DoS			# CVE-2024-4068, CVE-2024-4067
 					"ejs@3.1.10"				# DoS			# CVE-2024-33883
 					"express@4.19.2"			# DT, ID		# CVE-2024-43796, CVE-2024-29041
@@ -4451,15 +4451,15 @@ einfo "Fixing vulnerabilities"
 					"getobject@1.0.0"
 					"ini@1.3.6"				# DoS, DT, ID		# CVE-2020-7788
 					"ip@2.0.1"				# DoS, DT, ID		# CVE-2024-29415, CVE-2023-42282							# Still broken
-					"jsdom@16.6.0"				#														# [12]
+					"jsdom@16.6.0"				# DoS, DT, ID													# [12]
 					"json-schema@0.4.0"
-					#"lodash@4.17.21"			#														# * [7] ; No fix for lodash.template
+					#"lodash@4.17.21"			# DoS, DT, ID													# * [7] ; No fix for lodash.template
 					"minimatch@3.0.5"			# DoS			# CVE-2022-3517
 					"minimist@0.2.4"			# DoS, DT, ID		# CVE-2021-44906, CVE-2020-7598
 					"minimist@1.2.6"			# DoS, DT, ID		# CVE-2021-44906, CVE-2020-7598
 					"postcss@8.4.31"			# DT			# CVE-2023-44270
 					"shelljs@0.8.5"				# DoS, ID		# CVE-2022-0144, GHSA-64g7-mvw6-v9qj
-					"workbox-build@7.1.1"			#														# [7 contained in lodash.template dep]
+					"workbox-build@7.1.1"			# DoS, DT, ID													# [7 contained in lodash.template dep]
 					"ws@7.5.10"				# DoS			# CVE-2024-37890
 					"yargs-parser@13.1.2"			# DoS, DT, ID		# CVE-2020-7608
 				)
@@ -4507,7 +4507,7 @@ einfo "Fixing vulnerabilities"
 					"decode-uri-component@0.2.1"		# DoS			# CVE-2022-38900
 					"follow-redirects@1.14.8"		# DoS, DT, ID		# CVE-2022-0155, CVE-2022-0536
 					"follow-redirects@1.15.6"		# DoS, DT, ID		# CVE-2022-0155, CVE-2022-0536
-					"glob-parent@5.1.2"			#														# [8]
+					"glob-parent@5.1.2"			# DoS														# [8]
 					"minimatch@3.0.5"			# DoS			# CVE-2022-3517
 					"minimist@1.2.6"			# DoS, DT, ID		# CVE-2021-44906, CVE-2020-7598
 					"morgan@1.9.1"				# DoS, DT, ID		# CVE-2019-5413
