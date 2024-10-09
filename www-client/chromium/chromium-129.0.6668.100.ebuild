@@ -157,6 +157,10 @@ MESA_PV="20.3.5"
 MITIGATION_DATE="Oct 8, 2024" # Official annoucement (blog)
 MITIGATION_LAST_UPDATE=1728334560 # From `date +%s -d "2024-10-07 1:56 PM PDT"` From tag in GH
 MITIGATION_URI="https://chromereleases.googleblog.com/2024/10/stable-channel-update-for-desktop_8.html"
+VULNERABILITIES_FIXED=(
+	"CVE-2024-9602;DoS, DT, ID"
+	"CVE-2024-9603;DoS, DT, ID"
+)
 NABIS=0 # Global variable
 NODE_VERSION=20
 PGO_LLVM_SUPPORTED_VERSIONS=(
@@ -1854,6 +1858,18 @@ einfo "Release channel:  ${SLOT#*/}"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security announcement date:  ${MITIGATION_DATE}"
 einfo "Security fixes applied:  ${MITIGATION_URI}"
+einfo "Patched vulnerabilities:"
+		local x
+		for x in ${VULNERABILITIES_FIXED[@]} ; do
+			local cve=${x%;*}
+			local vulnerability_classes=${x#*;}
+einfo "${cve}:  ${vulnerability_classes}"
+		done
+einfo
+einfo "DoS = Denial of Service"
+einfo "DT = Data Tampering"
+einfo "ID = Information Disclosure"
+einfo
 	fi
 	pre_build_checks
 
