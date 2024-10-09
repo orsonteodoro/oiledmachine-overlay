@@ -4452,7 +4452,10 @@ einfo "Fixing vulnerabilities"
 			popd || die
 			pushd "${S}/GDJS" || die
 				pkgs=(
+					"braces@3.0.3"				# [8]
+					"lodash@4.17.21"			# [7,12]
 					"minimist@1.2.6"			# [12]
+					"shelljs@0.8.5"				# [10]
 				)
 				enpm install ${pkgs[@]} -D
 			popd || die
@@ -4538,14 +4541,6 @@ einfo "Fixing vulnerabilities"
 				enpm install ${pkgs[@]} -P
 			popd || die
 
-			pushd "${S}/GDJS" || die
-				pkgs=(
-					"braces@3.0.3"				# [8]
-					"lodash@4.17.21"			# [7,12]
-					"shelljs@0.8.5"				# [10]
-				)
-				enpm install ${pkgs[@]} -D
-			popd || die
 			patch_edits
 			_dedupe_lockfiles
 			patch_edits
