@@ -4296,121 +4296,101 @@ ewarn "Skipping audit fix."
 einfo "Fixing vulnerabilities"
 # Lines begining with # or have * are still undergoing testing.
 
+# CE = Code Execution
 # DoS = Denial of Service
 # DT = Data Tampering
 # ID = Information Disclosure
 
 # DoS, DT, ID	[1] [...] affected by libvpx's heap buffer overflow in vp8 encoding				# CVE-2023-5217
-# DoS, DT, ID	[2] [...] forwards secure headers to untrusted sites						# CVE-2022-0235
-# DoS, DT, ID	[3] [...] template injection vulnerability							# CVE-2022-29078
-# DoS, DT, ID	[4] Arbitrary Code Execution									# CVE-2020-7729, CVE-2019-20920
-# DT, ID	[5] Arbitrary File Creation/Overwrite due to insufficient absolute path sanitization		# CVE-2021-32804
-# DoS, DT, ID	[6] Code injection										# CVE-2023-45311, GHSA-8j8c-7jfh-h6hx
 # DoS, DT, ID	[7] Command Injection										# CVE-2021-23337
 # DoS		[8] Denial of Service (DoS) or Regular Expression Denial of Service (ReDoS)			# CVE-2022-25883, CVE-2022-3517, CVE-2021-23343, CVE-2020-28500, CVE-2022-38900, GHSA-h6ch-v84p-w6p9, GHSA-v2p6-4mp7-3r9v
-# DoS, DT, ID	[9] Exposure of sensitive information in [...]							# CVE-2022-0155
-# ID		[9] Exposure of Sensitive Information to an Unauthorized Actor in [...]				# CVE-2022-0536
-# DoS, ID	[10] Improper Privilege Management								# CVE-2022-0144
 # DoS, DT, ID	[11] Insufficient Entropy									# CVE-2018-1000620
 # DoS, DT, ID	[12] Prototype pollution [which could lead to DoS or Remote Code Execution]			# CVE-2019-19919, CVE-2021-44906, CVE-2019-10744, CVE-2021-23383, CVE-2019-10746, CVE-2019-10747, CVE-2020-28282, CVE-2018-3750, CVE-2022-37601
-# DoS, DT, ID	[13] Race Condition [which could lead to lead to local privilege escalation]			# CVE-2022-1537
 # DT, ID	[14] Server-side request forgery (SSRF)								# CVE-2020-28168, CVE-2023-28155
-# DoS, ID	[15] Remote Memory Exposure									# CVE-2020-8244
-# DoS, DT, ID	[16] Insufficient Granularity of Access Control							# CVE-2021-20066
-# DoS		[17] [...] lacks certain pollution protection							# CVE-2024-33883
-# DT		[18] [...] line return parsing error								# CVE-2023-44270
-# DT, ID	[19] [...] Open Redirect in malformed URLs							# CVE-2024-29041
-# DT, ID	[20] [...] improperly handles URLs in the url.parse() function					# CVE-2023-26159
-#		[which could lead to information disclosure, phishing attacks, other security breaches]
-# ID		[21] Cross-Site Request Forgery Vulnerability							# CVE-2023-45857
-# ID		[22] Proxy-Authorization header kept across hosts						# CVE-2024-28849
-# DoS		[23] [...] can allocate memory for incoming messages well above configured limits		# CVE-2024-37168
-# DT, ID	[24] DOM Clobbering Gadget that leads to XSS							# CVE-2024-47068, CVE-2024-43788
-
-
 
 			patch_edits() {
 				pushd "${S}/GDevelop.js" || die
-					sed -i -e "s|\"bl\": \"^1.0.0\"|\"bl\": \"^1.0.0\"|g" "package-lock.json" || die				# [8]
-					sed -i -e "s|\"braces\": \"^1.8.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"ejs\": \"^2.4.1\"|\"ejs\": \"^3.1.10\"|g" "package-lock.json" || die				# [3,17]
-					sed -i -e "s|\"getobject\": \"~0.1.0\"|\"getobject\": \"~1.0.0\"|g" "package-lock.json" || die			# [12]
-					sed -i -e "s|\"js-yaml\": \"~3.5.2\"|\"js-yaml\": \"~3.13.1\"|g" "package-lock.json" || die			# [6]
-					sed -i -e "s|\"jsdom\": \"^16.5.0\"|\"jsdom\": \"^16.6.0\"|g" "package-lock.json" || die			# [14 contained in requests dep]
-					sed -i -e "s|\"json-schema\": \"0.2.3\"|\"json-schema\": \"^0.4.0\"|g" "package-lock.json" || die		# [12]
-					sed -i -e "s|\"lodash\": \"~1.3.1\"|\"lodash\": \"~4.17.21\"|g" "package-lock.json" || die			# [7,12]
-					sed -i -e "s|\"lodash\": \"~3.10.1\"|\"lodash\": \"~4.17.21\"|g" "package-lock.json" || die			# [7,12]
-					sed -i -e "s|\"lodash\": \"~4.3.0\"|\"lodash\": \"~4.17.21\"|g" "package-lock.json" || die			# [7,12]
-					sed -i -e "s|\"lodash\": \"^4.1.0\"|\"lodash\": \"^4.17.21\"|g" "package-lock.json" || die			# [7,12]
-					sed -i -e "s|\"lodash\": \"^4.7.0\"|\"lodash\": \"^4.17.21\"|g" "package-lock.json" || die			# [7,12]
-					sed -i -e "s|\"lodash\": \"^4.8.0\"|\"lodash\": \"^4.17.21\"|g" "package-lock.json" || die			# [7,12]
-					sed -i -e "s|\"lodash\": \"~4.17.12\"|\"lodash\": \"~4.17.21\"|g" "package-lock.json" || die			# [7,12]
-					sed -i -e "s|\"tar\": \"^2.0.0\"|\"tar\": \"^4.4.18\"|g" "package-lock.json" || die				# [7,12]
-					sed -i -e "s|\"tough-cookie\": \"^2.2.0\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die		# [12]
-					sed -i -e "s|\"tough-cookie\": \"^2.3.3\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die		# [12]
-					sed -i -e "s|\"tough-cookie\": \"~2.5.0\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die		# [12]
-					sed -i -e "s|\"tough-cookie\": \"^4.0.0\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die		# [12]
+					sed -i -e "s|\"bl\": \"^1.0.0\"|\"bl\": \"^1.0.0\"|g" "package-lock.json" || die
+					sed -i -e "s|\"braces\": \"^1.8.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
+					sed -i -e "s|\"ejs\": \"^2.4.1\"|\"ejs\": \"^3.1.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"getobject\": \"~0.1.0\"|\"getobject\": \"~1.0.0\"|g" "package-lock.json" || die
+					sed -i -e "s|\"js-yaml\": \"~3.5.2\"|\"js-yaml\": \"~3.13.1\"|g" "package-lock.json" || die
+					sed -i -e "s|\"jsdom\": \"^16.5.0\"|\"jsdom\": \"^16.6.0\"|g" "package-lock.json" || die
+					sed -i -e "s|\"json-schema\": \"0.2.3\"|\"json-schema\": \"^0.4.0\"|g" "package-lock.json" || die
+					sed -i -e "s|\"lodash\": \"~1.3.1\"|\"lodash\": \"~4.17.21\"|g" "package-lock.json" || die
+					sed -i -e "s|\"lodash\": \"~3.10.1\"|\"lodash\": \"~4.17.21\"|g" "package-lock.json" || die
+					sed -i -e "s|\"lodash\": \"~4.3.0\"|\"lodash\": \"~4.17.21\"|g" "package-lock.json" || die
+					sed -i -e "s|\"lodash\": \"^4.1.0\"|\"lodash\": \"^4.17.21\"|g" "package-lock.json" || die
+					sed -i -e "s|\"lodash\": \"^4.7.0\"|\"lodash\": \"^4.17.21\"|g" "package-lock.json" || die
+					sed -i -e "s|\"lodash\": \"^4.8.0\"|\"lodash\": \"^4.17.21\"|g" "package-lock.json" || die
+					sed -i -e "s|\"lodash\": \"~4.17.12\"|\"lodash\": \"~4.17.21\"|g" "package-lock.json" || die
+					sed -i -e "s|\"tar\": \"^2.0.0\"|\"tar\": \"^4.4.18\"|g" "package-lock.json" || die
+					sed -i -e "s|\"tough-cookie\": \"^2.2.0\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die
+					sed -i -e "s|\"tough-cookie\": \"^2.3.3\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die
+					sed -i -e "s|\"tough-cookie\": \"~2.5.0\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die
+					sed -i -e "s|\"tough-cookie\": \"^4.0.0\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die
 				popd || die
 
 				pushd "${S}/newIDE/app" || die
-					sed -i -e "s|\"@grpc/grpc-js\": \"^1.0.0\"|\"@grpc/grpc-js\": \"^1.8.22\"|g" "package-lock.json" || die		# [23]
-					sed -i -e "s|\"axios\": \"^0.21.2\"|\"axios\": \"^0.28.0\"|g" "package-lock.json" || die			# [21]
-					sed -i -e "s|\"d3-color\": \"1 - 2\"|\"d3-color\": \"^3.1.0\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"express\": \"^4.17.3\"|\"express\": \"^4.19.2\"|g" "package-lock.json" || die			# [19]
-					sed -i -e "s|\"follow-redirects\": \"^1.0.0\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die	# [19,20,22]
-					sed -i -e "s|\"follow-redirects\": \"^1.14.0\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die	# [19,20,22]
-					sed -i -e "s|\"follow-redirects\": \"^1.14.7\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die	# [19,20,22]
-					sed -i -e "s|\"jsdom\": \"^16.5.0\"|\"jsdom\": \"^16.6.0\"|g" "package-lock.json" || die			# [8]
+					sed -i -e "s|\"@grpc/grpc-js\": \"^1.0.0\"|\"@grpc/grpc-js\": \"^1.8.22\"|g" "package-lock.json" || die
+					sed -i -e "s|\"axios\": \"^0.21.2\"|\"axios\": \"^0.28.0\"|g" "package-lock.json" || die
+					sed -i -e "s|\"d3-color\": \"1 - 2\"|\"d3-color\": \"^3.1.0\"|g" "package-lock.json" || die
+					sed -i -e "s|\"express\": \"^4.17.3\"|\"express\": \"^4.19.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"follow-redirects\": \"^1.0.0\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die
+					sed -i -e "s|\"follow-redirects\": \"^1.14.0\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die
+					sed -i -e "s|\"follow-redirects\": \"^1.14.7\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die
+					sed -i -e "s|\"jsdom\": \"^16.5.0\"|\"jsdom\": \"^16.6.0\"|g" "package-lock.json" || die
 					sed -i -e "s|\"minimist\": \"0.0.8\"|\"minimist\": \"0.2.4\"|g" "package-lock.json" || die
-					sed -i -e "s|\"node-fetch\": \"^1.0.1\"|\"node-fetch\": \"^2.6.7\"|g" "package-lock.json" || die		# [2]
-					sed -i -e "s|\"node-fetch\": \"^2.0.0\"|\"node-fetch\": \"^2.6.7\"|g" "package-lock.json" || die		# [2]
-					sed -i -e "s|\"node-fetch\": \"2.6.1\"|\"node-fetch\": \"^2.6.7\"|g" "package-lock.json" || die			# [2]
-					sed -i -e "s#\"postcss\": \"^7.0.0 || ^8.0.1\"#\"postcss\": \"^8.4.31\"#g" "package-lock.json" || die		# [18]
-					sed -i -e "s|\"postcss\": \"^7.0.35\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die			# [18]
-					sed -i -e "s|\"postcss\": \"^8.0.0\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die			# [18]
-					sed -i -e "s|\"postcss\": \"^8.0.3\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die			# [18]
-					sed -i -e "s|\"postcss\": \">=8.0.9\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die			# [18]
-					sed -i -e "s|\"postcss\": \"^8.1.0\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die			# [18]
-					sed -i -e "s|\"postcss\": \"^8.1.4\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die			# [18]
-					sed -i -e "s|\"postcss\": \"^8.2\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die			# [18]
-					sed -i -e "s|\"postcss\": \"^8.2.2\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die			# [18]
-					sed -i -e "s|\"postcss\": \"^8.2.14\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die			# [18]
-					sed -i -e "s|\"postcss\": \"^8.2.15\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die			# [18]
-					sed -i -e "s|\"postcss\": \"^8.3\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die			# [18]
-					sed -i -e "s#\"semver\": \"2 || 3 || 4 || 5\"#\"semver\": \"^7.5.2\"#g" "package-lock.json" || die		# [8]
-					sed -i -e "s|\"semver\": \"^5.1.0\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"semver\": \"^5.5.0\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"semver\": \"^5.6.0\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"semver\": \"^6.0.0\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"semver\": \"^6.1.1\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"semver\": \"^6.1.2\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"semver\": \"^6.3.0\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"semver\": \"^6.3.1\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"semver\": \"7.0.0\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die				# [8]
-					sed -i -e "s|\"semver\": \"^7.3.2\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"semver\": \"^7.3.5\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"semver\": \"^7.3.7\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"semver\": \"^7.3.8\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"yargs-parser\": \"^7.0.0\"|\"yargs-parser\": \"^13.1.2\"|g" "package-lock.json" || die		# [8]
-					sed -i -e "s|\"workbox-build\": \"^4.3.1\"|\"workbox-build\": \"^7.1.1\"|g" "package-lock.json" || die		# [7 contained in lodash.template dep]
+					sed -i -e "s|\"node-fetch\": \"^1.0.1\"|\"node-fetch\": \"^2.6.7\"|g" "package-lock.json" || die
+					sed -i -e "s|\"node-fetch\": \"^2.0.0\"|\"node-fetch\": \"^2.6.7\"|g" "package-lock.json" || die
+					sed -i -e "s|\"node-fetch\": \"2.6.1\"|\"node-fetch\": \"^2.6.7\"|g" "package-lock.json" || die
+					sed -i -e "s#\"postcss\": \"^7.0.0 || ^8.0.1\"#\"postcss\": \"^8.4.31\"#g" "package-lock.json" || die
+					sed -i -e "s|\"postcss\": \"^7.0.35\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
+					sed -i -e "s|\"postcss\": \"^8.0.0\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
+					sed -i -e "s|\"postcss\": \"^8.0.3\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
+					sed -i -e "s|\"postcss\": \">=8.0.9\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
+					sed -i -e "s|\"postcss\": \"^8.1.0\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
+					sed -i -e "s|\"postcss\": \"^8.1.4\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
+					sed -i -e "s|\"postcss\": \"^8.2\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
+					sed -i -e "s|\"postcss\": \"^8.2.2\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
+					sed -i -e "s|\"postcss\": \"^8.2.14\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
+					sed -i -e "s|\"postcss\": \"^8.2.15\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
+					sed -i -e "s|\"postcss\": \"^8.3\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
+					sed -i -e "s#\"semver\": \"2 || 3 || 4 || 5\"#\"semver\": \"^7.5.2\"#g" "package-lock.json" || die
+					sed -i -e "s|\"semver\": \"^5.1.0\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"semver\": \"^5.5.0\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"semver\": \"^5.6.0\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"semver\": \"^6.0.0\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"semver\": \"^6.1.1\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"semver\": \"^6.1.2\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"semver\": \"^6.3.0\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"semver\": \"^6.3.1\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"semver\": \"7.0.0\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"semver\": \"^7.3.2\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"semver\": \"^7.3.5\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"semver\": \"^7.3.7\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"semver\": \"^7.3.8\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"yargs-parser\": \"^7.0.0\"|\"yargs-parser\": \"^13.1.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"workbox-build\": \"^4.3.1\"|\"workbox-build\": \"^7.1.1\"|g" "package-lock.json" || die
 				popd || die
 
 				pushd "${S}/newIDE/electron-app/app" || die
-					sed -i -e "s|\"axios\": \"^0.21.2\"|\"axios\": \"^0.28.0\"|g" "package-lock.json" || die			# [21]
-					sed -i -e "s|\"bl\": \"^1.0.0\"|\"bl\": \"^1.0.0\"|g" "package-lock.json" || die				# [8]
-					sed -i -e "s|\"braces\": \"^1.8.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"braces\": \"~3.0.2\"|\"braces\": \"~3.0.3\"|g" "package-lock.json" || die			# [8]
-					sed -i -e "s|\"debug\": \"~2.2.0\"|\"debug\": \"~2.6.9\"|g" "package-lock.json" || die				# [8]
-					sed -i -e "s|\"follow-redirects\": \"^1.14.0\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die	# [19,20,22]
-					sed -i -e "s|\"follow-redirects\": \"^1.14.7\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die	# [19,20,22]
-					sed -i -e "s|\"glob-parent\": \"^2.0.0\"|\"glob-parent\": \"^5.1.2\"|g" "package-lock.json" || die		# [8]
-					sed -i -e "s|\"node-fetch\": \"2.6.0\"|\"node-fetch\": \"^2.6.7\"|g" "package-lock.json" || die			# [2]
-					sed -i -e "s|\"ws\": \"7.1.2\"|\"ws\": \"^7.5.10\"|g" "package-lock.json" || die				# [8]
+					sed -i -e "s|\"axios\": \"^0.21.2\"|\"axios\": \"^0.28.0\"|g" "package-lock.json" || die
+					sed -i -e "s|\"bl\": \"^1.0.0\"|\"bl\": \"^1.0.0\"|g" "package-lock.json" || die
+					sed -i -e "s|\"braces\": \"^1.8.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
+					sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
+					sed -i -e "s|\"braces\": \"~3.0.2\"|\"braces\": \"~3.0.3\"|g" "package-lock.json" || die
+					sed -i -e "s|\"debug\": \"~2.2.0\"|\"debug\": \"~2.6.9\"|g" "package-lock.json" || die
+					sed -i -e "s|\"electron-updater\": \"4.2.0\"|\"electron-updater\": \"6.3.0-alpha.6\"|g" "package-lock.json" || die
+					sed -i -e "s|\"follow-redirects\": \"^1.14.0\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die
+					sed -i -e "s|\"follow-redirects\": \"^1.14.7\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die
+					sed -i -e "s|\"glob-parent\": \"^2.0.0\"|\"glob-parent\": \"^5.1.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"node-fetch\": \"2.6.0\"|\"node-fetch\": \"^2.6.7\"|g" "package-lock.json" || die
+					sed -i -e "s|\"ws\": \"7.1.2\"|\"ws\": \"^7.5.10\"|g" "package-lock.json" || die
 				popd || die
 
 				pushd "${S}/newIDE/electron-app" || die
-					sed -i -e "s|\"app-builder-lib\": \"24.9.1\"|\"app-builder-lib\": \"^24.13.2\"|g" "package-lock.json" || die	# [4]
+					sed -i -e "s|\"app-builder-lib\": \"24.9.1\"|\"app-builder-lib\": \"^24.13.2\"|g" "package-lock.json" || die
 				popd || die
 			}
 			patch_edits
@@ -4419,16 +4399,16 @@ einfo "Fixing vulnerabilities"
 
 			pushd "${S}/GDevelop.js" || die
 				pkgs=(
-					"cryptiles"
+					"cryptiles"				# DoS, DT, ID           # CVE-2018-1000620
 				)
 				enpm uninstall ${pkgs[@]}
 				pkgs=(
-					"@hapi/cryptiles@5.1.0"			# [11]
-					"bl@1.2.3"				# [15]
-					"braces@3.0.3"				# [8]
-					"ejs@3.1.10"				# [3,17]
-					"getobject@1.0.0"			# [12]
-					"grunt@1.6.1"				# [4,13]
+					"@hapi/cryptiles@5.1.0"
+					"bl@1.2.3"				# DoS, ID		# CVE-2020-8244
+					"braces@3.0.3"				# DoS			# CVE-2024-4068, CVE-2018-1109, GHSA-g95f-p29q-9xw4
+					"ejs@3.1.10"				# DoS, DT, ID		# CVE-2022-29078, CVE-2024-33883
+					"getobject@1.0.0"			# DoS, DT, ID		# CVE-2020-28282
+					"grunt@1.6.1"				# DoS, DT, ID, CE	# CVE-2022-1537, CVE-2020-7729, CVE-2022-0436
 						"grunt-contrib-clean@2.0.1"
 						"grunt-contrib-compress@2.0.0"
 						"grunt-contrib-concat@2.1.0"
@@ -4438,24 +4418,24 @@ einfo "Fixing vulnerabilities"
 						"grunt-newer@1.3.0"
 						"grunt-shell@4.0.0"
 						"grunt-string-replace@1.3.3"
-					"js-yaml@3.13.1"			# [6]
-					"jsdom@16.6.0"				# [14 contained in requests dep]
-					"json-schema@0.4.0"			# [12]
-					"lodash@4.17.21"			# [7,12]
-					"minimist@0.2.4"			# [12]
-					"minimist@1.2.6"			# [12]
-					"shelljs@0.8.5"				# [10]
-					"tar@4.4.18"				# [5] ; Windows only
-					"tough-cookie@4.1.3"			# [12]
+					"js-yaml@3.13.1"			# DoS, CE		# GHSA-8j8c-7jfh-h6hx, GHSA-2pr6-76vf-7546
+					"jsdom@16.6.0"				#														# [14] contained in requests dep
+					"json-schema@0.4.0"			# DoS, DT, ID		# CVE-2021-3918
+					"lodash@4.17.21"			# DoS, DT		# CVE-2019-10744, CVE-2020-8203, CVE-2021-23337, CVE-2020-28500, CVE-2018-3721
+					"minimist@0.2.4"			# DoS, DT, ID		# CVE-2021-44906, CVE-2020-7598
+					"minimist@1.2.6"			# DoS, DT, ID           # CVE-2021-44906, CVE-2020-7598
+					"shelljs@0.8.5"				# DoS, ID		# CVE-2022-0144, GHSA-64g7-mvw6-v9qj
+					"tar@4.4.18"				# DT, ID		# CVE-2021-37713, CVE-2021-32804, CVE-2021-32803, CVE-2018-20834
+					"tough-cookie@4.1.3"			# DT, ID		# CVE-2023-26136
 				)
 				enpm install ${pkgs[@]} -D
 			popd || die
 			pushd "${S}/GDJS" || die
 				pkgs=(
-					"braces@3.0.3"				# [8]
-					"lodash@4.17.21"			# [7,12]
-					"minimist@1.2.6"			# [12]
-					"shelljs@0.8.5"				# [10]
+					"braces@3.0.3"				# DoS			# CVE-2024-4068
+					"lodash@4.17.21"			# DoS, DT, ID		# CVE-2021-23337, CVE-2020-28500
+					"minimist@1.2.6"			# DoS, DT, ID		# CVE-2021-44906
+					"shelljs@0.8.5"				# DoS, ID		# CVE-2022-0144, GHSA-64g7-mvw6-v9qj
 				)
 				enpm install ${pkgs[@]} -D
 			popd || die
@@ -4465,49 +4445,49 @@ einfo "Fixing vulnerabilities"
 				)
 				enpm uninstall ${pkgs[@]}
 				pkgs=(
-					"@babel/traverse@7.23.2"		# [4]
-					"@hapi/cryptiles@5.1.0"			# [11]
-					"braces@3.0.3"				# [8]
-					"ejs@3.1.10"				# [3,17]
-					"express@4.19.2"			# [19]
-					"follow-redirects@1.14.8"		# [9]
+					"@babel/traverse@7.23.2"		# DoS, DT, ID		# CVE-2023-45133
+					"@hapi/cryptiles@5.1.0"			#														# [11]
+					"braces@3.0.3"				# DoS			# CVE-2024-4068, CVE-2024-4067
+					"ejs@3.1.10"				# DoS			# CVE-2024-33883
+					"express@4.19.2"			# DT, ID		# CVE-2024-43796, CVE-2024-29041
+					"follow-redirects@1.14.8"		# DoS, DT, ID		# CVE-2022-0155, CVE-2024-28849, CVE-2023-26159, CVE-2022-0536
 					"getobject@1.0.0"
-					"ini@1.3.6"				# [12]
-					"ip@2.0.1"				# [14] ; Still broken
-					"jsdom@16.6.0"				# [12]
+					"ini@1.3.6"				# DoS, DT, ID		# CVE-2020-7788
+					"ip@2.0.1"				# DoS, DT, ID		# CVE-2024-29415, CVE-2023-42282							# Still broken
+					"jsdom@16.6.0"				#														# [12]
 					"json-schema@0.4.0"
-					#"lodash@4.17.21"			# * [7] ; No fix for lodash.template
-					"minimatch@3.0.5"			# [8]
-					"minimist@0.2.4"			# [12]
-					"minimist@1.2.6"			# [12]
-					"postcss@8.4.31"			# [18]
-					"shelljs@0.8.5"				# [10]
-					"workbox-build@7.1.1"			# [7 contained in lodash.template dep]
-					"ws@7.5.10"				# [8]
-					"yargs-parser@13.1.2"			# [12]
+					#"lodash@4.17.21"			#														# * [7] ; No fix for lodash.template
+					"minimatch@3.0.5"			# DoS			# CVE-2022-3517
+					"minimist@0.2.4"			# DoS, DT, ID		# CVE-2021-44906, CVE-2020-7598
+					"minimist@1.2.6"			# DoS, DT, ID		# CVE-2021-44906, CVE-2020-7598
+					"postcss@8.4.31"			# DT			# CVE-2023-44270
+					"shelljs@0.8.5"				# DoS, ID		# CVE-2022-0144, GHSA-64g7-mvw6-v9qj
+					"workbox-build@7.1.1"			#														# [7 contained in lodash.template dep]
+					"ws@7.5.10"				# DoS			# CVE-2024-37890
+					"yargs-parser@13.1.2"			# DoS, DT, ID		# CVE-2020-7608
 				)
 				enpm install ${pkgs[@]} -D
 				pkgs=(
-					"@grpc/grpc-js@1.8.22"			# [23]
-					"axios@0.28.0"				# [8,21 (moderate)]
-					"d3-color@3.1.0"			# [8]
-					"follow-redirects@1.15.6"		# [9,20,22]
-					"lodash@4.17.21"			# [7,12]
-					"node-fetch@2.6.7"			# [2]
-					"protobufjs@6.11.4"			# [12]
-					"semver@7.5.2"				# [8]
-					"ua-parser-js@0.7.33"			# [8]
+					"@grpc/grpc-js@1.8.22"			# DoS			# CVE-2024-37168
+					"axios@0.28.0"				# DoS, ID		# CVE-2021-3749, CVE-2023-45857, CVE-2020-28168
+					"d3-color@3.1.0"			# DoS			# GHSA-36jr-mh4h-2g58
+					"follow-redirects@1.15.6"		# DoS, DT, ID		# CVE-2022-0155, CVE-2024-28849, CVE-2023-26159, CVE-2022-0536
+					"lodash@4.17.21"			# DoS, DT, ID		# CVE-2019-10744, CVE-2019-1010266, CVE-2021-23337, CVE-2020-28500
+					"node-fetch@2.6.7"			# DoS, DT, ID		# CVE-2022-0235
+					"protobufjs@6.11.4"			# DoS, DT, ID		# CVE-2023-36665, CVE-2022-25878
+					"semver@7.5.2"				# DoS			# CVE-2022-25883
+					"ua-parser-js@0.7.33"			# DoS			# CVE-2022-25927, CVE-2020-7793, CVE-2021-27292
 				)
 				enpm install ${pkgs[@]} -P
 				# [24]
 			popd || die
 			pushd "${S}/newIDE/electron-app" || die
 				pkgs=(
-					"app-builder-lib@24.13.2"		# [4] ; For Windows only
-					"ejs@3.1.10"				# [3,17]
-					"electron@${ELECTRON_APP_ELECTRON_PV}"	# [1]
-					"http-cache-semantics@4.1.1"		# [8] ; Depends on electron
-					"shelljs@0.8.5"				# [10]
+					"app-builder-lib@24.13.2"		# DoS, DT, ID		# CVE-2024-27303
+					"ejs@3.1.10"				# DoS			# CVE-2024-33883
+					"electron@${ELECTRON_APP_ELECTRON_PV}"	# DoS, DT, ID		# CVE-2023-5217, CVE-2023-44402, CVE-2023-39956, CVE-2023-29198, CVE-2022-36077
+					"http-cache-semantics@4.1.1"		# DoS			# CVE-2022-25881									# Depends on electron
+					"shelljs@0.8.5"				# DoS, ID		# CVE-2022-0144, GHSA-64g7-mvw6-v9qj
 				)
 				enpm install ${pkgs[@]} -D
 
@@ -4515,28 +4495,28 @@ einfo "Fixing vulnerabilities"
 
 			pushd "${S}/newIDE/electron-app/app" || die
 				pkgs=(
-					"bl@1.2.3"				# [15]
-					"electron@${ELECTRON_APP_ELECTRON_PV}"	# [1]
-					"http-cache-semantics@4.1.1"		# [8] ; Depends on electron
+					"bl@1.2.3"				# DoS, ID		# CVE-2020-8244
+					"electron-updater@6.3.0-alpha.6"	# DoS, DT, ID		# CVE-2024-39698
+					"electron@${ELECTRON_APP_ELECTRON_PV}"	#														# [1]
+					"http-cache-semantics@4.1.1"		# DT, ID		# CVE-2022-25881									# Depends on electron
 				)
 				enpm install ${pkgs[@]} -D
 				pkgs=(
-					"async@2.6.4"				# [12]
-					"axios@0.28.0"				# [8,21]
-					"braces@2.3.1"				# [8]
-					"braces@3.0.3"				# [8]
-					"braces@3.0.3"				# [8]
-					"debug@2.6.9"				# [8]
-					"decode-uri-component@0.2.1"		# [8]
-					"follow-redirects@1.14.8"		# [9]
-					"follow-redirects@1.15.6"		# [9,20,22]
-					"glob-parent@5.1.2"			# [8]
-					"minimatch@3.0.5"			# [8]
-					"minimist@1.2.6"			# [12]
-					"morgan@1.9.1"				# [6]
-					"node-fetch@2.6.7"			# [2]
-					"websocket-extensions@0.1.4"		# [8]
-					"ws@7.5.10"				# [8]
+					"async@2.6.4"				# DoS, DT, ID		# CVE-2021-43138
+					"axios@0.28.0"				# DoS, ID		# CVE-2021-3749, CVE-2020-28168
+					"braces@2.3.1"				# DoS			# CVE-2018-1109, GHSA-g95f-p29q-9xw4
+					"braces@3.0.3"				# DoS			# CVE-2018-1109, GHSA-g95f-p29q-9xw4
+					"debug@2.6.9"				# DoS			# CVE-2017-20165, CVE-2017-16137
+					"decode-uri-component@0.2.1"		# DoS			# CVE-2022-38900
+					"follow-redirects@1.14.8"		# DoS, DT, ID		# CVE-2022-0155, CVE-2022-0536
+					"follow-redirects@1.15.6"		# DoS, DT, ID		# CVE-2022-0155, CVE-2022-0536
+					"glob-parent@5.1.2"			#														# [8]
+					"minimatch@3.0.5"			# DoS			# CVE-2022-3517
+					"minimist@1.2.6"			# DoS, DT, ID		# CVE-2021-44906, CVE-2020-7598
+					"morgan@1.9.1"				# DoS, DT, ID		# CVE-2019-5413
+					"node-fetch@2.6.7"			# DoS, DT, ID		# CVE-2022-0235
+					"websocket-extensions@0.1.4"		# DT, ID		# CVE-2020-7662
+					"ws@7.5.10"				# ID			# CVE-2021-32640
 				)
 				enpm install ${pkgs[@]} -P
 			popd || die
