@@ -6,7 +6,7 @@ EAPI=8
 
 # Upstream uses U 22.04.4
 
-ELECTRON_APP_ELECTRON_PV="33.0.0-beta.7" # cr 130.0.6723.19 ; Originally 30.3.1
+ELECTRON_APP_ELECTRON_PV="33.0.0-beta.9" # cr 130.0.6723.19 ; Originally 30.3.1
 #ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY="1"
 ELECTRON_APP_MODE="yarn"
 ELECTRON_APP_REACT_PV="18.2.0"
@@ -2065,11 +2065,10 @@ THIRD_PARTY_LICENSES="
 		MPL-2.0
 	)
 "
-# The fingerprint of electron-30.1.2-chromium.html and electron-30.3.1-chromium.html are the same.
 LICENSE="
 	${ELECTRON_APP_LICENSES}
 	${THIRD_PARTY_LICENSES}
-	electron-30.1.2-chromium.html
+	electron-33.0.0-beta.9-chromium.html
 	EPL-2.0
 	GPL-2-with-classpath-exception
 "
