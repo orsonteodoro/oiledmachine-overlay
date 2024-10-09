@@ -4389,7 +4389,6 @@ einfo "Fixing vulnerabilities"
 	# DT = Data Tampering
 	# ID = Information Disclosure
 
-	# DoS, DT, ID	[1] [...] affected by libvpx's heap buffer overflow in vp8 encoding
 	# DoS, DT, ID	[7] Command Injection
 	# DoS		[8] Denial of Service (DoS) or Regular Expression Denial of Service (ReDoS)
 	# DoS, DT, ID	[11] Insufficient Entropy
@@ -4496,7 +4495,7 @@ einfo "Fixing vulnerabilities"
 				pkgs=(
 					"bl@1.2.3"				# DoS, ID		# CVE-2020-8244
 					"electron-updater@6.3.0-alpha.6"	# DoS, DT, ID		# CVE-2024-39698
-					"electron@${ELECTRON_APP_ELECTRON_PV}"	#														# [1]
+					"electron@${ELECTRON_APP_ELECTRON_PV}"	# DoS, DT, ID		# CVE-2023-5217, CVE-2023-44402, CVE-2023-39956, CVE-2023-29198
 					"http-cache-semantics@4.1.1"		# DT, ID		# CVE-2022-25881									# Depends on electron
 				)
 				enpm install ${pkgs[@]} -D
