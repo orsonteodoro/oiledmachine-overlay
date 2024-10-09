@@ -4294,20 +4294,6 @@ einfo "Building ${MY_PN}.js"
 		if [[ "${NPM_AUDIT_FIX}" == 0 ]] ; then
 ewarn "Skipping audit fix."
 einfo "Fixing vulnerabilities"
-# Lines begining with # or have * are still undergoing testing.
-
-# CE = Code Execution
-# DoS = Denial of Service
-# DT = Data Tampering
-# ID = Information Disclosure
-
-# DoS, DT, ID	[1] [...] affected by libvpx's heap buffer overflow in vp8 encoding				# CVE-2023-5217
-# DoS, DT, ID	[7] Command Injection										# CVE-2021-23337
-# DoS		[8] Denial of Service (DoS) or Regular Expression Denial of Service (ReDoS)			# CVE-2022-25883, CVE-2022-3517, CVE-2021-23343, CVE-2020-28500, CVE-2022-38900, GHSA-h6ch-v84p-w6p9, GHSA-v2p6-4mp7-3r9v
-# DoS, DT, ID	[11] Insufficient Entropy									# CVE-2018-1000620
-# DoS, DT, ID	[12] Prototype pollution [which could lead to DoS or Remote Code Execution]			# CVE-2019-19919, CVE-2021-44906, CVE-2019-10744, CVE-2021-23383, CVE-2019-10746, CVE-2019-10747, CVE-2020-28282, CVE-2018-3750, CVE-2022-37601
-# DT, ID	[14] Server-side request forgery (SSRF)								# CVE-2020-28168, CVE-2023-28155
-
 			patch_edits() {
 				pushd "${S}/GDevelop.js" || die
 					sed -i -e "s|\"bl\": \"^1.0.0\"|\"bl\": \"^1.0.0\"|g" "package-lock.json" || die
@@ -4396,6 +4382,19 @@ einfo "Fixing vulnerabilities"
 			patch_edits
 
 	# Those marked with * need testing.
+	# Lines begining with # or have * are still undergoing testing.
+
+	# CE = Code Execution
+	# DoS = Denial of Service
+	# DT = Data Tampering
+	# ID = Information Disclosure
+
+	# DoS, DT, ID	[1] [...] affected by libvpx's heap buffer overflow in vp8 encoding
+	# DoS, DT, ID	[7] Command Injection
+	# DoS		[8] Denial of Service (DoS) or Regular Expression Denial of Service (ReDoS)
+	# DoS, DT, ID	[11] Insufficient Entropy
+	# DoS, DT, ID	[12] Prototype pollution [which could lead to DoS or Remote Code Execution]
+	# DT, ID	[14] Server-side request forgery (SSRF)
 
 			pushd "${S}/GDevelop.js" || die
 				pkgs=(
