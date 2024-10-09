@@ -145,8 +145,11 @@ LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MEETS_JUMBO_BUILD_MEMORY_REQ=0
 MITIGATION_DATE="Oct 9, 2024" # Advisory date
-MITIGATION_LAST_UPDATE=1727726100 # From `date +%s -d "2024-09-30 12:55"` from ftp date matching version in report
+MITIGATION_LAST_UPDATE=1728496500 # From `date +%s -d "2024-10-9 10:55"` from ftp date matching version in report
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-51/"
+VULNERABILITIES_FIXED=(
+	"CVE-2024-9680;DoS, DT, ID"
+)
 MOZ_ESR="yes"
 MOZ_LANGS=(
 ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
@@ -1364,6 +1367,18 @@ einfo "Release type:  ESR (Extended Service Release)"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security announcement date:  ${MITIGATION_DATE}"
 einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
+einfo "Patched vulnerabilities:"
+		local x
+		for x in ${VULNERABILITIES_FIXED[@]} ; do
+			local cve=${x%;*}
+			local vulnerability_classes=${x#*;}
+ewarn "${cve}:  ${vulnerability_classes}"
+		done
+ewarn
+ewarn "DoS = Denial of Service"
+ewarn "DT = Data Tampering"
+ewarn "ID = Information Disclosure"
+ewarn
 	fi
 	if [[ "${MERGE_TYPE}" != "binary" ]] ; then
 		if use pgo ; then
