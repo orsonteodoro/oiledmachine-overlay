@@ -649,7 +649,6 @@ einfo "Pruning vulnerable packages"
 	# Prune pkgs
 	# Mentioned in GH security scan
 	# Temporarily disabled
-#		"hoek"
 	)
 
 	pkgs=(
@@ -679,26 +678,8 @@ einfo "Updating dependencies"
 	# ID = Information Disclosure
 	# DoS = Denial of Service
 	# DT = Data Tampering
-	pkgs=(
-	# Update pkgs
-	# Mentioned in GH security scan
-	# Temporarily disabled
-#		"npm@^6.14.6"
-#						# CVE-2019-16777 # DT, ID
-#						# CVE-2018-7408  # DoS, DT, ID
-#						# CVE-2019-16776 # DT, ID
-#						# CVE-2019-16775 # DT, ID
-#		"hawk@^9.0.1"			# CVE-2022-29167 # DoS
-#		"ip"				# CVE-2024-29415 # DoS, DT, ID
-		# "request"			# CVE-2023-28155 # DT, C ; EOL
-	)
-# warning npx > npm > request > hawk@3.1.3: This module moved to @hapi/hawk.
-# warning npx > npm > request > hawk > cryptiles@2.0.5:
-# warning npx > npm > request > hawk > hoek@2.16.3:
 
 	pkgs=(
-#		"@hapi/hoek"			# CVE-2018-3728 # DoS, DT, ID
-
 		# @theia/core:
 		"dompurify@^2.5.4"		# CVE-2024-45801 # DoS, DT, ID
 		"express@^4.20.0"		# CVE-2024-43796 # DT, ID
