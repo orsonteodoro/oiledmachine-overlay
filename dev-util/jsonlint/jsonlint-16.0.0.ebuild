@@ -372,6 +372,6 @@ einfo "Applying mitigation"
 	patch_edits
 	# DT = Data Tampering
 	# ID = Information Disclosure
-	enpm install "rollup@^4.22.4" -D # DT, ID	# CVE-2024-47068
+	enpm install "rollup@^4.22.4" -D # DoS, DT, ID		# CVE-2024-47068
 	patch_edits
 }
