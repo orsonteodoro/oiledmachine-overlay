@@ -27,7 +27,7 @@ EAPI=8
 # /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
 # /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/build/moz.configure/nss.configure L12
 # /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/gfx/harfbuzz/configure.ac L3
+# /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/gfx/harfbuzz/moz.yaml
 # /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/intl/icu/source/common/unicode/uvernum.h L63
 # /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/ipc/chromium/src/third_party/libevent/configure.ac L8
 # /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/media/libaom/config/aom_version.h L7 [old]
@@ -35,16 +35,17 @@ EAPI=8
 # /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/media/libpng/png.h L281
 # /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/media/libvpx/config/vpx_version.h L8
 # /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/media/libwebp/moz.yaml L16
-# /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/modules/freetype2/include/freetype/freetype.h L5223
+# /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/modules/freetype2/include/freetype/freetype.h L5175
 # /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/nsprpub/pr/include/prinit.h L35
 # /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/third_party/dav1d/meson.build L26
 # /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/taskcluster/kinds/toolchain/nasm.yml
+# /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/taskcluster/kinds/toolchain/rust.yml
 # /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/taskcluster/kinds/fetch/toolchains.yml
-#   Keyword searches:  cbindgen-, llvm-, pkgconf-, rust-
-# /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/taskcluster/kinds/packages/
+#   Keyword searches:  cbindgen-, llvm-, pkgconf-, zlib
+# /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/taskcluster
 #   Keyword search:  gtk
-# /var/tmp/portage/www-client/firefox-131.0.2/work/firefox-131.0.2/taskcluster/kinds/toolchain/
-#   Keyword search:  nasm, nodejs, zlib
 
 # Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
 # For security advisories, see https://www.mozilla.org/en-US/security/advisories/
@@ -137,7 +138,7 @@ LICENSE_FINGERPRINT="\
 896855e640d87a943eba993b0e73278a3696e8071e9dbf62ab5e0d87542ba327\
 51fff5197fcbaf233a7fa851b90bf5fb217aab4c355acd68fdda54c4ee765194\
 " # SHA512
-LLVM_COMPAT=( 18 ) # Limited based on virtual/rust
+LLVM_COMPAT=( 18 17 ) # Limited based on virtual/rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MEETS_JUMBO_BUILD_MEMORY_REQ=0

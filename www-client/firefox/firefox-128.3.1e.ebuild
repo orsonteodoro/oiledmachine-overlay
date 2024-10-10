@@ -44,12 +44,13 @@ EAPI=8
 # /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/nsprpub/pr/include/prinit.h L35
 # /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/third_party/dav1d/meson.build L26
 # /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/taskcluster/ci/fetch/toolchains.yml
-#   Keyword searches:  cbindgen-, llvm-, pkgconf-, rust-
-# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/taskcluster/ci/packages/
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/taskcluster/kinds/toolchain/nasm.yml
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/taskcluster/kinds/fetch/toolchains.yml
+#   Keyword searches:  cbindgen-, llvm-, pkgconf-, zlib
+# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/taskcluster
 #   Keyword search:  gtk
-# /var/tmp/portage/www-client/firefox-128.3.1e/work/firefox-128.3.1/taskcluster/ci/toolchain/
-#   Keyword search:  nasm, nodejs, zlib
 
 # Due to versioning conflicts and ebuild assumptions, you cannot have stable and esr be the same version
 
@@ -184,11 +185,11 @@ MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 MOZILLA_FIVE_HOME="" # Global variable
 NABIS=0 # Global variable
 NASM_PV="2.14.02"
-NODE_VERSION=16
+NODE_VERSION=18
 OFLAG="" # Global variable
 PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_PV="1.77.1" # Allow llvm 17
+RUST_PV="1.76" # Allow llvm 17
 SPEECH_DISPATCHER_PV="0.11.4-r1"
 WANT_AUTOCONF="2.1"
 XKBCOMMON_PV="0.4.1"
@@ -644,7 +645,7 @@ CDEPEND="
 	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.2[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.3.1[${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
 	>=x11-libs/pixman-0.36.0[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
