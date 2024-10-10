@@ -2334,7 +2334,7 @@ einfo "Updating lockfile from _yarn_src_unpack_update_ebuild_custom()"
 		sed -i -e "s|\"ajv\": \"^6.5.3\"|\"ajv\": \"^6.12.3\"|g" "packages/core/package.json" || die
 		sed -i -e "s|\"ajv\": \"^6.5.3\"|\"ajv\": \"^6.12.3\"|g" "packages/toolbar/package.json" || die
 
-		sed -i -e "/^axios@^1.0.0, axios@^1.6.2:/,/^%/" "yarn.lock" || die
+		sed -i -e "/^axios@^1.0.0, axios@^1.6.2:/,/^$/" "yarn.lock" || die
 		sed -i -e "s|axios \"^1.0.0\"|axios \"^1.7.4\"|g" "yarn.lock" || die
 		sed -i -e "s|axios \"^1.6.2\"|axios \"^1.7.4\"|g" "yarn.lock" || die
 
