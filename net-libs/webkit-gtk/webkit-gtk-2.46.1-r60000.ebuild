@@ -105,6 +105,16 @@ MESA_PV="18.0.0_rc5"
 MITIGATION_DATE="Sep 25, 2024"
 MITIGATION_LAST_UPDATE=1727686440 # From `date +%s -d "2024-09-30 1:54 AM PDT"` from tag in GH for this version
 MITIGATION_URI="https://webkitgtk.org/security/WSA-2024-0005.html" # Shown if minor version matches in report.
+VULNERABILITIES_FIXED=(
+	"CVE-2024-23271;DoS, DT, ID"
+	"CVE-2024-27808;CE, DoS, DT, ID"
+	"CVE-2024-27820;CE, DoS, DT, ID"
+	"CVE-2024-27833;CE, DoS, DT, ID"
+	"CVE-2024-27838;DT"
+	"CVE-2024-27851;CE, DoS, DT, ID"
+	"CVE-2024-40866;DT"
+	"CVE-2024-44187;ID"
+)
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( python3_{10..12} )
 SELECTED_LTO="" # global var not const
@@ -1953,6 +1963,19 @@ einfo "This is the stable branch."
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security advisory date:  ${MITIGATION_DATE}"
 einfo "Latest security advisory:  ${MITIGATION_URI}"
+einfo "Patched vulnerabilities:"
+		local x
+		for x in ${VULNERABILITIES_FIXED[@]} ; do
+			local cve=${x%;*}
+			local vulnerability_classes=${x#*;}
+einfo "${cve}:  ${vulnerability_classes}"
+		done
+einfo
+einfo "CE = Code Execution"
+einfo "DoS = Denial of Service"
+einfo "DT = Data Tampering"
+einfo "ID = Information Disclosure"
+einfo
 	fi
 	_set_cxx
 	if [[ ${MERGE_TYPE} != "binary" ]] \
