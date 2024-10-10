@@ -2531,24 +2531,12 @@ einfo "Updating dependencies"
 	)
 	eyarn add ${pkgs[@]} -D -W
 
-einfo "Removing old versions from yarn.lock"
-#	pkgs=(
-#		"ejs@^3.1.7"
-#	)
-#	eyarn remove ${pkgs[@]}
-
 	patch_edits
 
 	eyarn dedupe
 
 	# Running `yarn dedupe` will undo patch_edits.
 	patch_edits
-
-	# Prune
-	#path-to-regexp@0.1.10
-	#path-to-regexp@6.2.1
-	#axios-1.6.7
-	#ws-8.11.0
 
 einfo "Generating yarn.lock"
 	eyarn install
