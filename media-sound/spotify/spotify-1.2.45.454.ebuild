@@ -56,9 +56,9 @@ EAPI=8
 #
 # Versions only obtainable through tarball:
 #
-# /var/tmp/portage/www-client/chromium-127.0.6533.100/work/chromium-127.0.6533.100/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-127.0.6533.100/work/chromium-127.0.6533.100/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-127.0.6533.100/work/chromium-127.0.6533.100/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
+# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/127.0.6533.100/third_party/freetype/README.chromium            L165    ; newer than generated_package_lists
+# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/127.0.6533.100/third_party/harfbuzz-ng/README.chromium         L3      ; newer than generated_package_lists
+# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/127.0.6533.100/third_party/libdrm/README.chromium              L24     ; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-127.0.6533.100/work/chromium-127.0.6533.100/third_party/ffmpeg/libavutil/version.h               ; do not use
 # /var/tmp/portage/www-client/chromium-127.0.6533.100/work/chromium-127.0.6533.100/third_party/ffmpeg/libavcodec/version*.h             ; do not use
 # /var/tmp/portage/www-client/chromium-127.0.6533.100/work/chromium-127.0.6533.100/third_party/ffmpeg/libavformat/version*.h            ; do not use
@@ -194,7 +194,7 @@ LICENSE="
 RESTRICT="binchecks mirror strip"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
-emoji ffmpeg firejail libnotify pulseaudio vaapi wayland zenity +X
+emoji ffmpeg firejail bluetooth libnotify pulseaudio vaapi wayland zenity +X
 ebuild-revision-1
 "
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -292,6 +292,9 @@ CHROMIUM_CDEPEND="
 	>=x11-libs/cairo-${CAIRO_PV}
 	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
 	>=x11-libs/libdrm-2.4.115
+	bluetooth? (
+		>=net-wireless/bluez-5.55
+	)
 	wayland? (
 		>=dev-libs/wayland-1.18.0:=
 	)
@@ -311,7 +314,7 @@ UNLISTED_RDEPEND="
 	>=dev-libs/libtasn1-4.16.0
 	>=dev-libs/libunistring-0.9.10
 	>=dev-libs/nettle-3.7.3
-	>=media-libs/harfbuzz-8.2.2
+	>=media-libs/harfbuzz-8.5.0
 	>=media-libs/libglvnd-1.3.2
 "
 # For harfbuzz use vendored list for versioning

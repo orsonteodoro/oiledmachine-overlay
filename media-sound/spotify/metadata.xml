@@ -22,6 +22,9 @@
     <flag name="beta">
       Downloads and installs the latest beta version.
     </flag>
+    <flag name="bluetooth">
+      Support for Bluetooth speakers.
+    </flag>
     <flag name="emoji">
       Install color emojis if not done so yet.
 
