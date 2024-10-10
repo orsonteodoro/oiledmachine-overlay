@@ -2483,7 +2483,7 @@ einfo "Updating dependencies"
 		"micromatch@^4.0.8"		# CVE-2024-4067  # DoS
 		"semver@^5.7.2"			# CVE-2022-25883 # DoS
 #		"less"				# Adds semver 5.x
-		"node-abi"			# A dependency of electron-rebuild.  abi_registry.json:abi >= $(ver_cut 1 ${electron_pv}) is required.
+		"node-abi"			# A dependency of electron-rebuild.  The abi field in abi_registry.json must be >= the major version of Electron.
 	)
 	eyarn workspace "@theia/application-manager" upgrade ${pkgs[@]}
 
