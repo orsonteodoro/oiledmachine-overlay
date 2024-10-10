@@ -17,9 +17,9 @@ MY_PN="mozjs"
 MY_PV="${PV/_pre*}" # Handle Gentoo pre-releases
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_DATE="Oct 1, 2024"
-MITIGATION_LAST_UPDATE=1727726100 # From `date +%s -d "2024-09-30 12:55"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-47/"
+MITIGATION_DATE="Oct 9, 2024" # Advisory date
+MITIGATION_LAST_UPDATE=1728496500 # From `date +%s -d "2024-10-9 10:55"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-51/"
 MOZ_ESR="yes"
 MOZ_PN="firefox"
 MOZ_PV="${PV}"
