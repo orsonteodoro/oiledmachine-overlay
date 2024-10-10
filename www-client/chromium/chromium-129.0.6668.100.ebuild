@@ -3382,14 +3382,41 @@ einfo "Using the system toolchain"
 	rustc_ver=$(chromium_extract_rust_version)
 	if ver_test "${rustc_ver}" -lt "${RUST_PV}"; then
 eerror
-eerror "Rust >=${RUST_PV} is required."
-eerror "Please run 'eselect rust' and select the correct rust version."
+eerror "The selected Rust version is too old."
 eerror
-eerror "The selected rust version is too old."
+eerror "Rust >=${RUST_MIN_VER} is required to build Chromium.  The currently"
+eerror "selected version is ${rustc_ver}.  Please run \`eselect rust\` and"
+eerror "select an appropriate Rust."
 eerror
 		die
 	else
-einfo "Using rust ${rustc_ver} to build"
+einfo "Using Rust ${rustc_ver} to build"
+	fi
+
+	# Chromium requires the Rust profiler library while setting up its build
+	# environment.
+	#
+	# Since a standard Rust comes with the profiler, instead of patching it
+	# out (build/rust/std/BUILD.gn#L103)
+	#
+	# We'll just do a sanity check on the selected slot.
+	#
+	# The -bin always contains profiler support, so we only need to check
+	# for the non-bin version.
+	if [[ "$(eselect --brief rust show 2>/dev/null)" != *"bin"* ]]; then
+		local rust_lib_path="${EPREFIX}$(rustc --print target-libdir)"
+		local profiler_lib=$(find "${rust_lib_path}" -name "libprofiler_builtins-*.rlib" -print -quit)
+		if [[ -z "${profiler_lib}" ]]; then
+eerror
+eerror "Rust ${rustc_ver} is missing the profiler library."
+eerror
+eerror "The ebuild dependency resolution should have ensured that a Rust with"
+eerror "the profiler was installed."
+eerror
+eerror "Please \`eselect\` a Rust slot that has the profiler."
+eerror
+			die
+		fi
 	fi
 
 	# bindgen settings
