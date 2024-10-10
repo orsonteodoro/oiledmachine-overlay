@@ -1859,12 +1859,14 @@ einfo "Release channel:  ${SLOT#*/}"
 einfo "Security announcement date:  ${MITIGATION_DATE}"
 einfo "Security fixes applied:  ${MITIGATION_URI}"
 einfo "Patched vulnerabilities:"
+		IFS=$'\n'
 		local x
 		for x in ${VULNERABILITIES_FIXED[@]} ; do
 			local cve=${x%;*}
 			local vulnerability_classes=${x#*;}
 einfo "${cve}:  ${vulnerability_classes}"
 		done
+		IFS=$' \t\n'
 einfo
 einfo "DoS = Denial of Service"
 einfo "DT = Data Tampering"

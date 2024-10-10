@@ -1959,12 +1959,14 @@ einfo "This is the stable branch."
 einfo "Security advisory date:  ${MITIGATION_DATE}"
 einfo "Latest security advisory:  ${MITIGATION_URI}"
 einfo "Patched vulnerabilities:"
+		IFS=$'\n'
 		local x
 		for x in ${VULNERABILITIES_FIXED[@]} ; do
 			local cve=${x%;*}
 			local vulnerability_classes=${x#*;}
 einfo "${cve}:  ${vulnerability_classes}"
 		done
+		IFS=$' \t\n'
 einfo
 einfo "CE = Code Execution"
 einfo "DoS = Denial of Service"
