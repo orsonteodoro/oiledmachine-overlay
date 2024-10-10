@@ -32,11 +32,11 @@ EAPI=8
 #
 # Additional DEPENDS versioning info:
 #
-# https://github.com/chromium/chromium/blob/129.0.6668.100/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists *
-# https://github.com/chromium/chromium/blob/129.0.6668.100/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists *
+# https://github.com/chromium/chromium/blob/129.0.6668.100/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/129.0.6668.100/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists
 # https://github.com/chromium/chromium/blob/129.0.6668.100/third_party/libpng/png.h#L288						; newer than generated_package_lists
 # https://github.com/chromium/chromium/blob/129.0.6668.100/third_party/libxml/linux/config.h#L160					; older than generated_package_lists
-# https://github.com/chromium/chromium/blob/129.0.6668.100/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists *
+# https://github.com/chromium/chromium/blob/129.0.6668.100/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists
 # https://github.com/chromium/chromium/blob/129.0.6668.100/third_party/node/update_node_binaries#L18
 # https://github.com/chromium/chromium/blob/129.0.6668.100/third_party/re2/README.chromium#L4						; newer than generated_package_lists, (live) [rounded in ebuild]
 # https://github.com/chromium/chromium/blob/129.0.6668.100/third_party/zlib/zlib.h#L40
@@ -44,15 +44,15 @@ EAPI=8
 #   https://github.com/rust-lang/rust/blob/3cf924b934322fd7b514600a7dc84fc517515346/src/version						; live version
 # /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists *
 # /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/icu/source/configure		L585	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists *
 # /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/libjpeg_turbo/jconfig.h		L7	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/libwebp/src/configure.ac		L1	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/openh264/src/meson.build		L2
 # /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/opus/README.chromium		L3	; newer than generated_package_lists, live
-#   https://gitlab.xiph.org/xiph/opus/-/commit/8cf872a1											; see tag
+#   https://gitlab.xiph.org/xiph/opus/-/commit/8cf872a186b96085b1bb3a547afd598354ebeb87							; see tag
 # /var/tmp/portage/www-client/chromium-129.0.6668.100/work/chromium-129.0.6668.100/third_party/zstd/README.chromium			; live version
 #   https://github.com/facebook/zstd/commit/0ff651dd876823b99fa5c5f53292be28381aee9b							; check if commit part of tag
 #   https://github.com/facebook/zstd/blob/0ff651dd876823b99fa5c5f53292be28381aee9b/lib/zstd.h#L107					; version
@@ -994,7 +994,7 @@ COMMON_SNAPSHOT_DEPEND="
 	media-libs/mesa:=
 	proprietary-codecs? (
 		system-openh264? (
-			>=media-libs/openh264-2.3.0[${MULTILIB_USEDEP}]
+			>=media-libs/openh264-2.4.1[${MULTILIB_USEDEP}]
 			media-libs/openh264:=
 		)
 	)
@@ -1007,7 +1007,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/fontconfig:=
 	)
 	system-freetype? (
-		>=media-libs/freetype-2.13.2[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-2.13.3[${MULTILIB_USEDEP}]
 		media-libs/freetype:=
 	)
 	system-harfbuzz? (
@@ -1023,7 +1023,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/libaom:=
 	)
 	system-libdrm? (
-		>=x11-libs/libdrm-2.4.115[${MULTILIB_USEDEP}]
+		>=x11-libs/libdrm-2.4.122[${MULTILIB_USEDEP}]
 		x11-libs/libdrm:=
 	)
 	system-libjpeg-turbo? (
