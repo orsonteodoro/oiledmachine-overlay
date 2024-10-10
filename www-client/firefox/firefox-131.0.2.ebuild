@@ -145,7 +145,7 @@ MITIGATION_DATE="Oct 9, 2024" # Advisory date
 MITIGATION_LAST_UPDATE=1728496440 # From `date +%s -d "2024-10-09 10:54"` from ftp date matching version in report
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-51/"
 VULNERABILITIES_FIXED=(
-	"CVE-2024-9680;DoS, DT, ID"
+	"CVE-2024-9680;CE, DoS, DT, ID"
 )
 MOZ_ESR=
 MOZ_LANGS=(
@@ -1329,6 +1329,7 @@ einfo "${cve}:  ${vulnerability_classes}"
 		done
 		IFS=$' \t\n'
 einfo
+einfo "CE = Code Execution"
 einfo "DoS = Denial of Service"
 einfo "DT = Data Tampering"
 einfo "ID = Information Disclosure"
