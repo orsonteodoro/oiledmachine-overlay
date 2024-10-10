@@ -130,7 +130,7 @@ CHROMIUM_CDEPEND="
 	>=x11-libs/cairo-1.16.0
 	>=x11-libs/gtk+-${GTK3_PV}:3
 	>=x11-libs/libXtst-1.2.3
-	>=x11-libs/libdrm-2.4.115
+	>=x11-libs/libdrm-2.4.122
 "
 # Unlisted based on ldd inspection not found in common_lib_list
 UNLISTED_RDEPEND="
@@ -163,7 +163,7 @@ CHROMIUM_RDEPEND="
 	>=dev-libs/nspr-4.29
 	>=dev-libs/wayland-1.18.0
 	>=media-libs/fontconfig-2.15.0
-	>=media-libs/freetype-2.13.2
+	>=media-libs/freetype-2.13.3
 	>=media-libs/libpng-1.6.43
 	>=sys-devel/gcc-${GCC_PV}[cxx(+)]
 	>=sys-libs/zlib-1.3
