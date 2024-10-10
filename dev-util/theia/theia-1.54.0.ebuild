@@ -2330,10 +2330,33 @@ einfo "Updating lockfile from _yarn_src_unpack_update_ebuild_custom()"
 	#rm -f package-lock.json
 	#rm -f yarn.lock
 
-	sed -i -e "s|\"dompurify\": \"^2.2.9\"|\"dompurify\": \"^2.5.4\"|g" "packages/core/package.json" || die
+	patch_edits() {
+		sed -i -e "s|\"ajv\": \"^6.5.3\"|\"ajv\": \"^6.12.3\"|g" "packages/core/package.json" || die
+		sed -i -e "s|\"ajv\": \"^6.5.3\"|\"ajv\": \"^6.12.3\"|g" "packages/toolbar/package.json" || die
 
-	sed -i -e "s|\"body-parser\": \"^1.17.2\"|\"body-parser\": \"^1.20.3\"|g" "packages/core/package.json" || die
-	sed -i -e "s|\"body-parser\": \"^1.18.3\"|\"body-parser\": \"^1.20.3\"|g" "packages/filesystem/package.json" || die
+		sed -i -e "/^axios@^1.0.0, axios@^1.6.2:/,/^%/" "yarn.lock" || die
+		sed -i -e "s|axios \"^1.0.0\"|axios \"^1.7.4\"|g" "yarn.lock" || die
+		sed -i -e "s|axios \"^1.6.2\"|axios \"^1.7.4\"|g" "yarn.lock" || die
+
+		sed -i -e "s|\"body-parser\": \"^1.17.2\"|\"body-parser\": \"^1.20.3\"|g" "packages/core/package.json" || die
+		sed -i -e "s|\"body-parser\": \"^1.18.3\"|\"body-parser\": \"^1.20.3\"|g" "packages/filesystem/package.json" || die
+
+		sed -i -e "/^braces@^3.0.2, braces@~3.0.2:/,/^$/d" "yarn.lock" || die
+		sed -i -e "s|braces \"^3.0.2\"|braces \"^3.0.3\"|g" "yarn.lock" || die
+		sed -i -e "s|braces \"~3.0.2\"|braces \"^3.0.3\"|g" "yarn.lock" || die
+
+		sed -i -e "/^cookie@~0.4.1:/,/^$/d" "yarn.lock" || die
+		sed -i -e "s|cookie \"~0.4.1\"|cookie \"^0.7.0\"|g" "yarn.lock" || die
+		sed -i -e "s|\"cookie\": \"^0.4.0\"|\"cookie\": \"^0.7.0\"|g" "packages/core/package.json" || die
+
+		sed -i -e "s|\"dompurify\": \"^2.2.9\"|\"dompurify\": \"^2.5.4\"|g" "packages/core/package.json" || die
+
+		sed -i -e "/^ejs@^3.1.7:/,/^$/d" "yarn.lock" || die
+		sed -i -e "s|ejs \"^3.1.7\"|ejs \"^3.1.10\"|g" "yarn.lock" || die
+
+		sed -i -e "/^follow-redirects@^1.0.0, follow-redirects@^1.15.4:/,/^$/d" "yarn.lock" || die
+		sed -i -e "s|follow-redirects \"^1.0.0\"|follow-redirects \"^1.15.6\"|g" "yarn.lock" || die
+		sed -i -e "s|follow-redirects \"^1.15.4\"|follow-redirects \"^1.15.6\"|g" "yarn.lock" || die
 
 	# Not listed in lockfile but mentioned by GH security scan.
 	# semver 5.x added by
@@ -2343,15 +2366,31 @@ einfo "Updating lockfile from _yarn_src_unpack_update_ebuild_custom()"
 	#	@theia/monorepo -> @typescript-eslint/eslint-plugin-tslint -> tslint			# pruned
 	#	@theia/monorepo -> @vscode/vsce -> parse-semver						# can be pruned
 
-	sed -i -e "s|\"webpack\": \"^5.76.0\"|\"webpack\": \"^5.94.0\"|g" "dev-packages/native-webpack-plugin/package.json" || die
-	sed -i -e "s|\"webpack\": \"^5.76.0\"|\"webpack\": \"^5.94.0\"|g" "dev-packages/application-manager/package.json" || die
+		sed -i -e "/^micromatch@^4.0.2, micromatch@^4.0.4:/,/^$/d" "yarn.lock" || die
+		sed -i -e "s|micromatch \"^4.0.2\"|micromatch \"^4.0.8\"|g" "yarn.lock" || die
+		sed -i -e "s|micromatch \"^4.0.4\"|micromatch \"^4.0.8\"|g" "yarn.lock" || die
 
-	sed -i -e "s|\"cookie\": \"^0.4.0\"|\"cookie\": \"^0.7.0\"|g" "packages/core/package.json" || die
+		sed -i -e "/^path-to-regexp@0.1.10:/,/^$/d" "yarn.lock" || die
+		sed -i -e "/^path-to-regexp@^6.2.1:/,/^$/d" "yarn.lock" || die
+		sed -i -e "s|path-to-regexp \"0.1.10\"|path-to-regexp \"^6.3.0\"|g" "yarn.lock" || die
+		sed -i -e "s|path-to-regexp \"^6.2.1\"|path-to-regexp \"^6.3.0\"|g" "yarn.lock" || die
 
-	sed -i -e "s|\"ajv\": \"^6.5.3\"|\"ajv\": \"^6.12.3\"|g" "packages/core/package.json" || die
-	sed -i -e "s|\"ajv\": \"^6.5.3\"|\"ajv\": \"^6.12.3\"|g" "packages/toolbar/package.json" || die
+		sed -i -e "/^tar@6.1.11:/,/^$/d" "yarn.lock" || die
+		sed -i -e "/^tar@^6.0.5, tar@^6.1.11, tar@^6.1.2:/,/^$/d" "yarn.lock" || die
+		sed -i -e "s|tar \"6.1.11\"|tar \"^6.2.1\"|g" "yarn.lock" || die
+		sed -i -e "s|tar \"^6.0.5\"|tar \"^6.2.1\"|g" "yarn.lock" || die
+		sed -i -e "s|tar \"^6.1.11\"|tar \"^6.2.1\"|g" "yarn.lock" || die
+		sed -i -e "s|tar \"^6.1.2\"|tar \"^6.2.1\"|g" "yarn.lock" || die
 
-	sed -i -e "s|\"ws\": \"^8.17.1\"|\"ws\": \"^8.17.1\"|g" "packages/core/package.json" || die
+		sed -i -e "s|\"webpack\": \"^5.76.0\"|\"webpack\": \"^5.94.0\"|g" "dev-packages/application-manager/package.json" || die
+		sed -i -e "s|\"webpack\": \"^5.76.0\"|\"webpack\": \"^5.94.0\"|g" "dev-packages/native-webpack-plugin/package.json" || die
+
+		sed -i -e "/^ws@8.11.0, ws@~8.11.0:/,/^$/d" "yarn.lock" || die
+		sed -i -e "s|ws \"8.11.0\"|ws \"^8.17.1\"|g" "yarn.lock" || die
+		sed -i -e "s|ws \"~8.11.0\"|ws \"^8.17.1\"|g" "yarn.lock" || die
+		sed -i -e "s|\"ws\": \"^8.17.1\"|\"ws\": \"^8.17.1\"|g" "packages/core/package.json" || die
+	}
+	patch_edits
 
 	local pkgs
 
@@ -2492,7 +2531,24 @@ einfo "Updating dependencies"
 	)
 	eyarn add ${pkgs[@]} -D -W
 
+einfo "Removing old versions from yarn.lock"
+#	pkgs=(
+#		"ejs@^3.1.7"
+#	)
+#	eyarn remove ${pkgs[@]}
+
+	patch_edits
+
 	eyarn dedupe
+
+	# Running `yarn dedupe` will undo patch_edits.
+	patch_edits
+
+	# Prune
+	#path-to-regexp@0.1.10
+	#path-to-regexp@6.2.1
+	#axios-1.6.7
+	#ws-8.11.0
 
 einfo "Generating yarn.lock"
 	eyarn install
