@@ -6,14 +6,14 @@ EAPI=8
 
 CARGO_OPTIONAL=1
 CRATES="
-	syn@2.0.68
-	proc-macro2@1.0.86
+	syn@2.0.39
+	proc-macro2@1.0.70
 	quote@1.0.33
 	unicode-ident@1.0.12
 	paste@1.0.14
 "
 GCC_SLOT=12
-LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.121"
+LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.119"
 LIBDRM_USEDEP="\
 video_cards_freedreno?,\
 video_cards_intel?,\
@@ -24,7 +24,7 @@ video_cards_vmware?,\
 "
 LLVM_COMPAT=( {18..15} )
 MY_P="${P/_/-}"
-PYTHON_COMPAT=( python3_{10..13} )
+PYTHON_COMPAT=( python3_{10..12} )
 RADEON_CARDS=(
 	r300
 	r600
@@ -73,8 +73,8 @@ if [[ "${PV}" == "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
-~sparc ~x86 ~amd64-linux ~x86-linux ~x64-solaris
+~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86
+~amd64-linux ~x86-linux ~x64-solaris
 	"
 	SRC_URI="
 		https://archive.mesa3d.org/${MY_P}.tar.xz
@@ -286,7 +286,6 @@ BDEPEND="
 	$(python_gen_any_dep "
 		>=dev-python/mako-0.8.0[\${PYTHON_USEDEP}]
 		dev-python/packaging[\${PYTHON_USEDEP}]
-		dev-python/pyyaml[\${PYTHON_USEDEP}]
 	")
 	${PYTHON_DEPS}
 	>=dev-build/meson-1.3.1
@@ -369,7 +368,6 @@ python_check_deps() {
 	python_has_version -b ">=dev-python/mako-0.8.0[${PYTHON_USEDEP}]" \
 		|| return 1
 	python_has_version -b "dev-python/packaging[${PYTHON_USEDEP}]" \
-		&& python_has_version -b "dev-python/pyyaml[${PYTHON_USEDEP}]" \
 		|| return 1
 	if use llvm && use vulkan && use video_cards_intel && use amd64 ; then
 		python_has_version -b "dev-python/ply[${PYTHON_USEDEP}]" \
@@ -545,7 +543,7 @@ _src_configure() {
 	local emesonargs=()
 
 	# bug #932591 and https://gitlab.freedesktop.org/mesa/mesa/-/issues/11140
-	tc-is-gcc && [[ $(gcc-major-version) -ge 14 ]] && filter-lto
+	filter-lto
 
 	uopts_src_configure
 
@@ -563,7 +561,7 @@ _src_configure() {
 	   use video_cards_r300 ||
 	   use video_cards_r600 ||
 	   use video_cards_radeonsi ||
-	   use video_cards_vmware || # svga
+	   use video_cards_vmware || # swrast
 	   use video_cards_zink \
 	; then
 		emesonargs+=(
@@ -628,8 +626,17 @@ _src_configure() {
 		)
 	fi
 
-	gallium_enable !llvm softpipe
-	gallium_enable llvm llvmpipe
+	if use video_cards_freedreno ||
+	   use video_cards_lima ||
+	   use video_cards_panfrost ||
+	   use video_cards_v3d ||
+	   use video_cards_vc4 ||
+	   use video_cards_vivante \
+	; then
+		gallium_enable -- kmsro
+	fi
+
+	gallium_enable -- swrast
 	gallium_enable video_cards_d3d12 d3d12
 	gallium_enable video_cards_freedreno freedreno
 	gallium_enable video_cards_intel crocus i915 iris
