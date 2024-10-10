@@ -278,7 +278,6 @@ https://registry.yarnpkg.com/@jridgewell/trace-mapping/-/trace-mapping-0.3.23.tg
 https://registry.yarnpkg.com/@jridgewell/trace-mapping/-/trace-mapping-0.3.25.tgz -> yarnpkg-@jridgewell-trace-mapping-0.3.25.tgz
 https://registry.yarnpkg.com/@lerna/child-process/-/child-process-7.4.2.tgz -> yarnpkg-@lerna-child-process-7.4.2.tgz
 https://registry.yarnpkg.com/@lerna/create/-/create-7.4.2.tgz -> yarnpkg-@lerna-create-7.4.2.tgz
-https://registry.yarnpkg.com/@malept/cross-spawn-promise/-/cross-spawn-promise-2.0.0.tgz -> yarnpkg-@malept-cross-spawn-promise-2.0.0.tgz
 https://registry.yarnpkg.com/@msgpackr-extract/msgpackr-extract-darwin-arm64/-/msgpackr-extract-darwin-arm64-3.0.2.tgz -> yarnpkg-@msgpackr-extract-msgpackr-extract-darwin-arm64-3.0.2.tgz
 https://registry.yarnpkg.com/@msgpackr-extract/msgpackr-extract-darwin-x64/-/msgpackr-extract-darwin-x64-3.0.2.tgz -> yarnpkg-@msgpackr-extract-msgpackr-extract-darwin-x64-3.0.2.tgz
 https://registry.yarnpkg.com/@msgpackr-extract/msgpackr-extract-linux-arm64/-/msgpackr-extract-linux-arm64-3.0.2.tgz -> yarnpkg-@msgpackr-extract-msgpackr-extract-linux-arm64-3.0.2.tgz
@@ -802,11 +801,11 @@ https://registry.yarnpkg.com/eastasianwidth/-/eastasianwidth-0.2.0.tgz -> yarnpk
 https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz -> yarnpkg-ee-first-1.1.1.tgz
 https://registry.yarnpkg.com/ejs/-/ejs-3.1.10.tgz -> yarnpkg-ejs-3.1.10.tgz
 https://registry.yarnpkg.com/electron-mocha/-/electron-mocha-12.3.0.tgz -> yarnpkg-electron-mocha-12.3.0.tgz
-https://registry.yarnpkg.com/electron-rebuild/-/electron-rebuild-3.2.9.tgz -> yarnpkg-electron-rebuild-3.2.9.tgz
 https://registry.yarnpkg.com/electron-store/-/electron-store-8.1.0.tgz -> yarnpkg-electron-store-8.1.0.tgz
 https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.35.tgz -> yarnpkg-electron-to-chromium-1.5.35.tgz
+https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.36.tgz -> yarnpkg-electron-to-chromium-1.5.36.tgz
 https://registry.yarnpkg.com/electron-window/-/electron-window-0.8.1.tgz -> yarnpkg-electron-window-0.8.1.tgz
-https://registry.yarnpkg.com/electron/-/electron-33.0.0-beta.9.tgz -> yarnpkg-electron-33.0.0-beta.9.tgz
+https://registry.yarnpkg.com/electron/-/electron-33.0.0-beta.10.tgz -> yarnpkg-electron-33.0.0-beta.10.tgz
 https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz -> yarnpkg-emoji-regex-8.0.0.tgz
 https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-9.2.2.tgz -> yarnpkg-emoji-regex-9.2.2.tgz
 https://registry.yarnpkg.com/emojis-list/-/emojis-list-3.0.0.tgz -> yarnpkg-emojis-list-3.0.0.tgz
@@ -926,7 +925,6 @@ https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz -> yarnpkg-fresh-0.5.2.tgz
 https://registry.yarnpkg.com/from/-/from-0.1.7.tgz -> yarnpkg-from-0.1.7.tgz
 https://registry.yarnpkg.com/fromentries/-/fromentries-1.3.2.tgz -> yarnpkg-fromentries-1.3.2.tgz
 https://registry.yarnpkg.com/fs-constants/-/fs-constants-1.0.0.tgz -> yarnpkg-fs-constants-1.0.0.tgz
-https://registry.yarnpkg.com/fs-extra/-/fs-extra-10.1.0.tgz -> yarnpkg-fs-extra-10.1.0.tgz
 https://registry.yarnpkg.com/fs-extra/-/fs-extra-11.2.0.tgz -> yarnpkg-fs-extra-11.2.0.tgz
 https://registry.yarnpkg.com/fs-extra/-/fs-extra-4.0.3.tgz -> yarnpkg-fs-extra-4.0.3.tgz
 https://registry.yarnpkg.com/fs-extra/-/fs-extra-8.1.0.tgz -> yarnpkg-fs-extra-8.1.0.tgz
@@ -1205,7 +1203,6 @@ https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.18.3.tgz -> yarnpkg-lru-cac
 https://registry.yarnpkg.com/lru-cache/-/lru-cache-10.2.0.tgz -> yarnpkg-lru-cache-10.2.0.tgz
 https://registry.yarnpkg.com/lunr/-/lunr-2.3.9.tgz -> yarnpkg-lunr-2.3.9.tgz
 https://registry.yarnpkg.com/luxon/-/luxon-2.5.2.tgz -> yarnpkg-luxon-2.5.2.tgz
-https://registry.yarnpkg.com/lzma-native/-/lzma-native-8.0.6.tgz -> yarnpkg-lzma-native-8.0.6.tgz
 https://registry.yarnpkg.com/macaddress/-/macaddress-0.5.3.tgz -> yarnpkg-macaddress-0.5.3.tgz
 https://registry.yarnpkg.com/make-dir/-/make-dir-4.0.0.tgz -> yarnpkg-make-dir-4.0.0.tgz
 https://registry.yarnpkg.com/make-dir/-/make-dir-1.3.0.tgz -> yarnpkg-make-dir-1.3.0.tgz
@@ -1294,7 +1291,6 @@ https://registry.yarnpkg.com/node-abort-controller/-/node-abort-controller-3.1.1
 https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-3.2.1.tgz -> yarnpkg-node-addon-api-3.2.1.tgz
 https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-4.3.0.tgz -> yarnpkg-node-addon-api-4.3.0.tgz
 https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-5.1.0.tgz -> yarnpkg-node-addon-api-5.1.0.tgz
-https://registry.yarnpkg.com/node-api-version/-/node-api-version-0.1.4.tgz -> yarnpkg-node-api-version-0.1.4.tgz
 https://registry.yarnpkg.com/node-domexception/-/node-domexception-1.0.0.tgz -> yarnpkg-node-domexception-1.0.0.tgz
 https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz -> yarnpkg-node-fetch-2.6.7.tgz
 https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.7.0.tgz -> yarnpkg-node-fetch-2.7.0.tgz
@@ -2472,12 +2468,12 @@ einfo "Updating dependencies"
 	pkgs=(
 		"electron-rebuild"		# EOL
 	)
-	eyarn remove ${pkgs[@]}
+	eyarn workspace "@theia/application-manager" remove ${pkgs[@]}
 
 	pkgs=(
 		"@electron/rebuild"		# For Electron beta.
 	)
-	eyarn add ${pkgs[@]}
+	eyarn workspace "@theia/application-manager" add ${pkgs[@]}
 
 	pkgs=(
 		# @theia/application-manager

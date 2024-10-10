@@ -44,7 +44,6 @@
     "compression-webpack-plugin": "^9.0.0",
     "copy-webpack-plugin": "^8.1.1",
     "css-loader": "^6.2.0",
-    "electron-rebuild": "^3.2.7",
     "follow-redirects": "^1.15.6",
     "fs-extra": "^4.0.2",
     "http-server": "^14.1.1",
