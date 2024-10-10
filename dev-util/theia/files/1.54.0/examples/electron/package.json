@@ -82,7 +82,9 @@
     "@theia/userstorage": "1.54.0",
     "@theia/variable-resolver": "1.54.0",
     "@theia/vsx-registry": "1.54.0",
-    "@theia/workspace": "1.54.0"
+    "@theia/workspace": "1.54.0",
+    "electron": "^33.0.0-beta.9",
+    "got": "^11.8.5"
   },
   "scripts": {
     "build": "yarn -s compile && yarn -s bundle",
@@ -101,7 +103,6 @@
   },
   "devDependencies": {
     "@theia/cli": "1.54.0",
-    "electron": "^33.0.0-beta.7",
-    "got": "^11.8.5"
+    "electron": "^30.1.2"
   }
 }
