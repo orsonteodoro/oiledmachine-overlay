@@ -6,7 +6,7 @@ EAPI=8
 
 # Upstream uses U 22.04.4
 
-ELECTRON_APP_ELECTRON_PV="33.0.0-beta.9" # cr 130.0.6723.19 ; Originally 30.3.1
+ELECTRON_APP_ELECTRON_PV="33.0.0-beta.9" # cr 130.0.6723.31 ; Originally 30.3.1
 #ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY="1"
 ELECTRON_APP_MODE="yarn"
 ELECTRON_APP_REACT_PV="18.2.0"
@@ -2470,6 +2470,16 @@ einfo "Updating dependencies"
 	eyarn workspace "@theia/application-package" upgrade ${pkgs[@]}
 
 	pkgs=(
+		"electron-rebuild"		# EOL
+	)
+	eyarn remove ${pkgs[@]}
+
+	pkgs=(
+		"@electron/rebuild"		# For Electron beta.
+	)
+	eyarn add ${pkgs[@]}
+
+	pkgs=(
 		# @theia/application-manager
 		"webpack@^5.94.0"		# CVE-2024-43788 # DoS, DT, ID		# @theia/application-manager
 		"follow-redirects@^1.15.6"	# CVE-2024-28849 # ID			# @theia/application-manager -> http-server
@@ -2477,6 +2487,7 @@ einfo "Updating dependencies"
 		"micromatch@^4.0.8"		# CVE-2024-4067  # DoS
 		"semver@^5.7.2"			# CVE-2022-25883 # DoS
 #		"less"				# Adds semver 5.x
+		"node-abi"			# A dependency of electron-rebuild.  abi_registry.json:abi >= $(ver_cut 1 ${electron_pv}) is required.
 	)
 	eyarn workspace "@theia/application-manager" upgrade ${pkgs[@]}
 
