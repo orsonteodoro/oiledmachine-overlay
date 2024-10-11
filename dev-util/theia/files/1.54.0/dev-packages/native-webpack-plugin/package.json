@@ -30,6 +30,6 @@
   },
   "dependencies": {
     "tslib": "^2.6.2",
-    "webpack": "^5.94.0"
+    "webpack": "^5.76.0"
   }
 }

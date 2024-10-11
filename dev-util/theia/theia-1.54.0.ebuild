@@ -6,13 +6,16 @@ EAPI=8
 
 # Upstream uses U 22.04.4
 
-ELECTRON_APP_ELECTRON_PV="33.0.0-beta.9" # cr 130.0.6723.31 ; Originally 30.3.1
+AT_TYPES_NODE_PV="22.7.5"
+# See https://releases.electronjs.org/releases.json
+#ELECTRON_APP_ELECTRON_PV="33.0.0-beta.9" # cr 130.0.6723.31 ; Originally 30.3.1
+ELECTRON_APP_ELECTRON_PV="30.3.1"
 #ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY="1"
 ELECTRON_APP_MODE="yarn"
 ELECTRON_APP_REACT_PV="18.2.0"
 NODE_GYP_PV="10.2.0" # Same as CI
 NODE_ENV="development"
-NODE_VERSION=20 # Upstream uses in CI 16-20 but 18 is used in release
+NODE_VERSION=18 # Upstream uses in CI 16-20 but 18 is used in release.  Limited by openai-node
 NPM_AUDIT_FIX=0
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
@@ -257,8 +260,6 @@ https://registry.yarnpkg.com/@babel/types/-/types-7.23.9.tgz -> yarnpkg-@babel-t
 https://registry.yarnpkg.com/@balena/dockerignore/-/dockerignore-1.0.2.tgz -> yarnpkg-@balena-dockerignore-1.0.2.tgz
 https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz -> yarnpkg-@discoveryjs-json-ext-0.5.7.tgz
 https://registry.yarnpkg.com/@electron/get/-/get-2.0.3.tgz -> yarnpkg-@electron-get-2.0.3.tgz
-https://github.com/electron/node-gyp -> yarnpkg-node-gyp
-https://registry.yarnpkg.com/@electron/rebuild/-/rebuild-3.7.0.tgz -> yarnpkg-@electron-rebuild-3.7.0.tgz
 https://registry.yarnpkg.com/@eslint-community/eslint-utils/-/eslint-utils-4.4.0.tgz -> yarnpkg-@eslint-community-eslint-utils-4.4.0.tgz
 https://registry.yarnpkg.com/@eslint-community/regexpp/-/regexpp-4.10.0.tgz -> yarnpkg-@eslint-community-regexpp-4.10.0.tgz
 https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.4.3.tgz -> yarnpkg-@eslint-eslintrc-0.4.3.tgz
@@ -380,6 +381,8 @@ https://registry.yarnpkg.com/@types/docker-modem/-/docker-modem-3.0.6.tgz -> yar
 https://registry.yarnpkg.com/@types/dockerode/-/dockerode-3.3.23.tgz -> yarnpkg-@types-dockerode-3.3.23.tgz
 https://registry.yarnpkg.com/@types/dompurify/-/dompurify-2.4.0.tgz -> yarnpkg-@types-dompurify-2.4.0.tgz
 https://registry.yarnpkg.com/@types/escape-html/-/escape-html-0.0.20.tgz -> yarnpkg-@types-escape-html-0.0.20.tgz
+https://registry.yarnpkg.com/@types/eslint-scope/-/eslint-scope-3.7.7.tgz -> yarnpkg-@types-eslint-scope-3.7.7.tgz
+https://registry.yarnpkg.com/@types/eslint/-/eslint-8.56.3.tgz -> yarnpkg-@types-eslint-8.56.3.tgz
 https://registry.yarnpkg.com/@types/estree/-/estree-1.0.5.tgz -> yarnpkg-@types-estree-1.0.5.tgz
 https://registry.yarnpkg.com/@types/express-http-proxy/-/express-http-proxy-1.6.6.tgz -> yarnpkg-@types-express-http-proxy-1.6.6.tgz
 https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.17.43.tgz -> yarnpkg-@types-express-serve-static-core-4.17.43.tgz
@@ -475,21 +478,21 @@ https://registry.yarnpkg.com/@vscode/proxy-agent/-/proxy-agent-0.13.2.tgz -> yar
 https://registry.yarnpkg.com/@vscode/ripgrep/-/ripgrep-1.15.9.tgz -> yarnpkg-@vscode-ripgrep-1.15.9.tgz
 https://registry.yarnpkg.com/@vscode/vsce/-/vsce-2.24.0.tgz -> yarnpkg-@vscode-vsce-2.24.0.tgz
 https://registry.yarnpkg.com/@vscode/windows-ca-certs/-/windows-ca-certs-0.3.1.tgz -> yarnpkg-@vscode-windows-ca-certs-0.3.1.tgz
-https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.12.1.tgz -> yarnpkg-@webassemblyjs-ast-1.12.1.tgz
+https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.11.6.tgz -> yarnpkg-@webassemblyjs-ast-1.11.6.tgz
 https://registry.yarnpkg.com/@webassemblyjs/floating-point-hex-parser/-/floating-point-hex-parser-1.11.6.tgz -> yarnpkg-@webassemblyjs-floating-point-hex-parser-1.11.6.tgz
 https://registry.yarnpkg.com/@webassemblyjs/helper-api-error/-/helper-api-error-1.11.6.tgz -> yarnpkg-@webassemblyjs-helper-api-error-1.11.6.tgz
-https://registry.yarnpkg.com/@webassemblyjs/helper-buffer/-/helper-buffer-1.12.1.tgz -> yarnpkg-@webassemblyjs-helper-buffer-1.12.1.tgz
+https://registry.yarnpkg.com/@webassemblyjs/helper-buffer/-/helper-buffer-1.11.6.tgz -> yarnpkg-@webassemblyjs-helper-buffer-1.11.6.tgz
 https://registry.yarnpkg.com/@webassemblyjs/helper-numbers/-/helper-numbers-1.11.6.tgz -> yarnpkg-@webassemblyjs-helper-numbers-1.11.6.tgz
 https://registry.yarnpkg.com/@webassemblyjs/helper-wasm-bytecode/-/helper-wasm-bytecode-1.11.6.tgz -> yarnpkg-@webassemblyjs-helper-wasm-bytecode-1.11.6.tgz
-https://registry.yarnpkg.com/@webassemblyjs/helper-wasm-section/-/helper-wasm-section-1.12.1.tgz -> yarnpkg-@webassemblyjs-helper-wasm-section-1.12.1.tgz
+https://registry.yarnpkg.com/@webassemblyjs/helper-wasm-section/-/helper-wasm-section-1.11.6.tgz -> yarnpkg-@webassemblyjs-helper-wasm-section-1.11.6.tgz
 https://registry.yarnpkg.com/@webassemblyjs/ieee754/-/ieee754-1.11.6.tgz -> yarnpkg-@webassemblyjs-ieee754-1.11.6.tgz
 https://registry.yarnpkg.com/@webassemblyjs/leb128/-/leb128-1.11.6.tgz -> yarnpkg-@webassemblyjs-leb128-1.11.6.tgz
 https://registry.yarnpkg.com/@webassemblyjs/utf8/-/utf8-1.11.6.tgz -> yarnpkg-@webassemblyjs-utf8-1.11.6.tgz
-https://registry.yarnpkg.com/@webassemblyjs/wasm-edit/-/wasm-edit-1.12.1.tgz -> yarnpkg-@webassemblyjs-wasm-edit-1.12.1.tgz
-https://registry.yarnpkg.com/@webassemblyjs/wasm-gen/-/wasm-gen-1.12.1.tgz -> yarnpkg-@webassemblyjs-wasm-gen-1.12.1.tgz
-https://registry.yarnpkg.com/@webassemblyjs/wasm-opt/-/wasm-opt-1.12.1.tgz -> yarnpkg-@webassemblyjs-wasm-opt-1.12.1.tgz
-https://registry.yarnpkg.com/@webassemblyjs/wasm-parser/-/wasm-parser-1.12.1.tgz -> yarnpkg-@webassemblyjs-wasm-parser-1.12.1.tgz
-https://registry.yarnpkg.com/@webassemblyjs/wast-printer/-/wast-printer-1.12.1.tgz -> yarnpkg-@webassemblyjs-wast-printer-1.12.1.tgz
+https://registry.yarnpkg.com/@webassemblyjs/wasm-edit/-/wasm-edit-1.11.6.tgz -> yarnpkg-@webassemblyjs-wasm-edit-1.11.6.tgz
+https://registry.yarnpkg.com/@webassemblyjs/wasm-gen/-/wasm-gen-1.11.6.tgz -> yarnpkg-@webassemblyjs-wasm-gen-1.11.6.tgz
+https://registry.yarnpkg.com/@webassemblyjs/wasm-opt/-/wasm-opt-1.11.6.tgz -> yarnpkg-@webassemblyjs-wasm-opt-1.11.6.tgz
+https://registry.yarnpkg.com/@webassemblyjs/wasm-parser/-/wasm-parser-1.11.6.tgz -> yarnpkg-@webassemblyjs-wasm-parser-1.11.6.tgz
+https://registry.yarnpkg.com/@webassemblyjs/wast-printer/-/wast-printer-1.11.6.tgz -> yarnpkg-@webassemblyjs-wast-printer-1.11.6.tgz
 https://registry.yarnpkg.com/@webpack-cli/configtest/-/configtest-1.2.0.tgz -> yarnpkg-@webpack-cli-configtest-1.2.0.tgz
 https://registry.yarnpkg.com/@webpack-cli/info/-/info-1.5.0.tgz -> yarnpkg-@webpack-cli-info-1.5.0.tgz
 https://registry.yarnpkg.com/@webpack-cli/serve/-/serve-1.7.0.tgz -> yarnpkg-@webpack-cli-serve-1.7.0.tgz
@@ -503,7 +506,7 @@ https://registry.yarnpkg.com/abab/-/abab-2.0.6.tgz -> yarnpkg-abab-2.0.6.tgz
 https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz -> yarnpkg-abbrev-1.1.1.tgz
 https://registry.yarnpkg.com/abort-controller/-/abort-controller-3.0.0.tgz -> yarnpkg-abort-controller-3.0.0.tgz
 https://registry.yarnpkg.com/accepts/-/accepts-1.3.8.tgz -> yarnpkg-accepts-1.3.8.tgz
-https://registry.yarnpkg.com/acorn-import-attributes/-/acorn-import-attributes-1.9.5.tgz -> yarnpkg-acorn-import-attributes-1.9.5.tgz
+https://registry.yarnpkg.com/acorn-import-assertions/-/acorn-import-assertions-1.9.0.tgz -> yarnpkg-acorn-import-assertions-1.9.0.tgz
 https://registry.yarnpkg.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz -> yarnpkg-acorn-jsx-5.3.2.tgz
 https://registry.yarnpkg.com/acorn/-/acorn-7.4.1.tgz -> yarnpkg-acorn-7.4.1.tgz
 https://registry.yarnpkg.com/acorn/-/acorn-8.11.3.tgz -> yarnpkg-acorn-8.11.3.tgz
@@ -739,7 +742,6 @@ https://registry.yarnpkg.com/debounce-fn/-/debounce-fn-4.0.0.tgz -> yarnpkg-debo
 https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz -> yarnpkg-debug-2.6.9.tgz
 https://registry.yarnpkg.com/debug/-/debug-4.3.4.tgz -> yarnpkg-debug-4.3.4.tgz
 https://registry.yarnpkg.com/debug/-/debug-3.2.7.tgz -> yarnpkg-debug-3.2.7.tgz
-https://registry.yarnpkg.com/debug/-/debug-4.3.7.tgz -> yarnpkg-debug-4.3.7.tgz
 https://registry.yarnpkg.com/decamelize-keys/-/decamelize-keys-1.1.1.tgz -> yarnpkg-decamelize-keys-1.1.1.tgz
 https://registry.yarnpkg.com/decamelize/-/decamelize-1.2.0.tgz -> yarnpkg-decamelize-1.2.0.tgz
 https://registry.yarnpkg.com/decamelize/-/decamelize-4.0.0.tgz -> yarnpkg-decamelize-4.0.0.tgz
@@ -771,7 +773,6 @@ https://registry.yarnpkg.com/destroy/-/destroy-1.2.0.tgz -> yarnpkg-destroy-1.2.
 https://registry.yarnpkg.com/detect-indent/-/detect-indent-5.0.0.tgz -> yarnpkg-detect-indent-5.0.0.tgz
 https://registry.yarnpkg.com/detect-libc/-/detect-libc-1.0.3.tgz -> yarnpkg-detect-libc-1.0.3.tgz
 https://registry.yarnpkg.com/detect-libc/-/detect-libc-2.0.2.tgz -> yarnpkg-detect-libc-2.0.2.tgz
-https://registry.yarnpkg.com/detect-libc/-/detect-libc-2.0.3.tgz -> yarnpkg-detect-libc-2.0.3.tgz
 https://registry.yarnpkg.com/detect-node/-/detect-node-2.1.0.tgz -> yarnpkg-detect-node-2.1.0.tgz
 https://registry.yarnpkg.com/devtools-protocol/-/devtools-protocol-0.0.1094867.tgz -> yarnpkg-devtools-protocol-0.0.1094867.tgz
 https://registry.yarnpkg.com/diff-sequences/-/diff-sequences-29.6.3.tgz -> yarnpkg-diff-sequences-29.6.3.tgz
@@ -802,10 +803,11 @@ https://registry.yarnpkg.com/eastasianwidth/-/eastasianwidth-0.2.0.tgz -> yarnpk
 https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz -> yarnpkg-ee-first-1.1.1.tgz
 https://registry.yarnpkg.com/ejs/-/ejs-3.1.10.tgz -> yarnpkg-ejs-3.1.10.tgz
 https://registry.yarnpkg.com/electron-mocha/-/electron-mocha-12.3.0.tgz -> yarnpkg-electron-mocha-12.3.0.tgz
+https://registry.yarnpkg.com/electron-rebuild/-/electron-rebuild-3.2.9.tgz -> yarnpkg-electron-rebuild-3.2.9.tgz
 https://registry.yarnpkg.com/electron-store/-/electron-store-8.1.0.tgz -> yarnpkg-electron-store-8.1.0.tgz
 https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.682.tgz -> yarnpkg-electron-to-chromium-1.4.682.tgz
 https://registry.yarnpkg.com/electron-window/-/electron-window-0.8.1.tgz -> yarnpkg-electron-window-0.8.1.tgz
-https://registry.yarnpkg.com/electron/-/electron-33.0.0-beta.9.tgz -> yarnpkg-electron-33.0.0-beta.9.tgz
+https://registry.yarnpkg.com/electron/-/electron-30.3.1.tgz -> yarnpkg-electron-30.3.1.tgz
 https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz -> yarnpkg-emoji-regex-8.0.0.tgz
 https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-9.2.2.tgz -> yarnpkg-emoji-regex-9.2.2.tgz
 https://registry.yarnpkg.com/emojis-list/-/emojis-list-3.0.0.tgz -> yarnpkg-emojis-list-3.0.0.tgz
@@ -816,7 +818,7 @@ https://registry.yarnpkg.com/end-of-stream/-/end-of-stream-1.4.4.tgz -> yarnpkg-
 https://registry.yarnpkg.com/engine.io-client/-/engine.io-client-6.5.3.tgz -> yarnpkg-engine.io-client-6.5.3.tgz
 https://registry.yarnpkg.com/engine.io-parser/-/engine.io-parser-5.2.2.tgz -> yarnpkg-engine.io-parser-5.2.2.tgz
 https://registry.yarnpkg.com/engine.io/-/engine.io-6.5.4.tgz -> yarnpkg-engine.io-6.5.4.tgz
-https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-5.17.1.tgz -> yarnpkg-enhanced-resolve-5.17.1.tgz
+https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-5.15.0.tgz -> yarnpkg-enhanced-resolve-5.15.0.tgz
 https://registry.yarnpkg.com/enquirer/-/enquirer-2.4.1.tgz -> yarnpkg-enquirer-2.4.1.tgz
 https://registry.yarnpkg.com/enquirer/-/enquirer-2.3.6.tgz -> yarnpkg-enquirer-2.3.6.tgz
 https://registry.yarnpkg.com/entities/-/entities-4.5.0.tgz -> yarnpkg-entities-4.5.0.tgz
@@ -972,7 +974,6 @@ https://registry.yarnpkg.com/glob/-/glob-9.3.5.tgz -> yarnpkg-glob-9.3.5.tgz
 https://registry.yarnpkg.com/global-agent/-/global-agent-3.0.0.tgz -> yarnpkg-global-agent-3.0.0.tgz
 https://registry.yarnpkg.com/globals/-/globals-11.12.0.tgz -> yarnpkg-globals-11.12.0.tgz
 https://registry.yarnpkg.com/globals/-/globals-13.24.0.tgz -> yarnpkg-globals-13.24.0.tgz
-https://registry.yarnpkg.com/globalthis/-/globalthis-1.0.4.tgz -> yarnpkg-globalthis-1.0.4.tgz
 https://registry.yarnpkg.com/globalthis/-/globalthis-1.0.3.tgz -> yarnpkg-globalthis-1.0.3.tgz
 https://registry.yarnpkg.com/globby/-/globby-11.1.0.tgz -> yarnpkg-globby-11.1.0.tgz
 https://registry.yarnpkg.com/globby/-/globby-7.1.1.tgz -> yarnpkg-globby-7.1.1.tgz
@@ -1204,6 +1205,7 @@ https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.18.3.tgz -> yarnpkg-lru-cac
 https://registry.yarnpkg.com/lru-cache/-/lru-cache-10.2.0.tgz -> yarnpkg-lru-cache-10.2.0.tgz
 https://registry.yarnpkg.com/lunr/-/lunr-2.3.9.tgz -> yarnpkg-lunr-2.3.9.tgz
 https://registry.yarnpkg.com/luxon/-/luxon-2.5.2.tgz -> yarnpkg-luxon-2.5.2.tgz
+https://registry.yarnpkg.com/lzma-native/-/lzma-native-8.0.6.tgz -> yarnpkg-lzma-native-8.0.6.tgz
 https://registry.yarnpkg.com/macaddress/-/macaddress-0.5.3.tgz -> yarnpkg-macaddress-0.5.3.tgz
 https://registry.yarnpkg.com/make-dir/-/make-dir-4.0.0.tgz -> yarnpkg-make-dir-4.0.0.tgz
 https://registry.yarnpkg.com/make-dir/-/make-dir-1.3.0.tgz -> yarnpkg-make-dir-1.3.0.tgz
@@ -1288,12 +1290,11 @@ https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz -> yarnpkg-neo-asyn
 https://registry.yarnpkg.com/nise/-/nise-5.1.9.tgz -> yarnpkg-nise-5.1.9.tgz
 https://registry.yarnpkg.com/node-abi/-/node-abi-3.56.0.tgz -> yarnpkg-node-abi-3.56.0.tgz
 https://registry.yarnpkg.com/node-abi/-/node-abi-2.30.1.tgz -> yarnpkg-node-abi-2.30.1.tgz
-https://registry.yarnpkg.com/node-abi/-/node-abi-3.68.0.tgz -> yarnpkg-node-abi-3.68.0.tgz
 https://registry.yarnpkg.com/node-abort-controller/-/node-abort-controller-3.1.1.tgz -> yarnpkg-node-abort-controller-3.1.1.tgz
 https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-3.2.1.tgz -> yarnpkg-node-addon-api-3.2.1.tgz
 https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-4.3.0.tgz -> yarnpkg-node-addon-api-4.3.0.tgz
 https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-5.1.0.tgz -> yarnpkg-node-addon-api-5.1.0.tgz
-https://registry.yarnpkg.com/node-api-version/-/node-api-version-0.2.0.tgz -> yarnpkg-node-api-version-0.2.0.tgz
+https://registry.yarnpkg.com/node-api-version/-/node-api-version-0.1.4.tgz -> yarnpkg-node-api-version-0.1.4.tgz
 https://registry.yarnpkg.com/node-domexception/-/node-domexception-1.0.0.tgz -> yarnpkg-node-domexception-1.0.0.tgz
 https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz -> yarnpkg-node-fetch-2.6.7.tgz
 https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.7.0.tgz -> yarnpkg-node-fetch-2.7.0.tgz
@@ -1441,7 +1442,6 @@ https://registry.yarnpkg.com/prebuild-install/-/prebuild-install-7.1.1.tgz -> ya
 https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.2.1.tgz -> yarnpkg-prelude-ls-1.2.1.tgz
 https://registry.yarnpkg.com/pretty-format/-/pretty-format-29.7.0.tgz -> yarnpkg-pretty-format-29.7.0.tgz
 https://registry.yarnpkg.com/private/-/private-0.1.8.tgz -> yarnpkg-private-0.1.8.tgz
-https://registry.yarnpkg.com/proc-log/-/proc-log-2.0.1.tgz -> yarnpkg-proc-log-2.0.1.tgz
 https://registry.yarnpkg.com/proc-log/-/proc-log-3.0.0.tgz -> yarnpkg-proc-log-3.0.0.tgz
 https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz -> yarnpkg-process-nextick-args-2.0.1.tgz
 https://registry.yarnpkg.com/process-on-spawn/-/process-on-spawn-1.0.0.tgz -> yarnpkg-process-on-spawn-1.0.0.tgz
@@ -1483,7 +1483,6 @@ https://registry.yarnpkg.com/react-perfect-scrollbar/-/react-perfect-scrollbar-1
 https://registry.yarnpkg.com/react-tooltip/-/react-tooltip-4.5.1.tgz -> yarnpkg-react-tooltip-4.5.1.tgz
 https://registry.yarnpkg.com/react-virtuoso/-/react-virtuoso-2.19.1.tgz -> yarnpkg-react-virtuoso-2.19.1.tgz
 https://registry.yarnpkg.com/react/-/react-18.2.0.tgz -> yarnpkg-react-18.2.0.tgz
-https://registry.yarnpkg.com/read-binary-file-arch/-/read-binary-file-arch-1.0.6.tgz -> yarnpkg-read-binary-file-arch-1.0.6.tgz
 https://registry.yarnpkg.com/read-cmd-shim/-/read-cmd-shim-4.0.0.tgz -> yarnpkg-read-cmd-shim-4.0.0.tgz
 https://registry.yarnpkg.com/read-package-json-fast/-/read-package-json-fast-3.0.2.tgz -> yarnpkg-read-package-json-fast-3.0.2.tgz
 https://registry.yarnpkg.com/read-package-json/-/read-package-json-6.0.4.tgz -> yarnpkg-read-package-json-6.0.4.tgz
@@ -1560,7 +1559,6 @@ https://registry.yarnpkg.com/semver/-/semver-5.7.2.tgz -> yarnpkg-semver-5.7.2.t
 https://registry.yarnpkg.com/semver/-/semver-7.5.3.tgz -> yarnpkg-semver-7.5.3.tgz
 https://registry.yarnpkg.com/semver/-/semver-6.3.1.tgz -> yarnpkg-semver-6.3.1.tgz
 https://registry.yarnpkg.com/semver/-/semver-7.6.0.tgz -> yarnpkg-semver-7.6.0.tgz
-https://registry.yarnpkg.com/semver/-/semver-7.6.3.tgz -> yarnpkg-semver-7.6.3.tgz
 https://registry.yarnpkg.com/semver/-/semver-7.6.2.tgz -> yarnpkg-semver-7.6.2.tgz
 https://registry.yarnpkg.com/send/-/send-0.19.0.tgz -> yarnpkg-send-0.19.0.tgz
 https://registry.yarnpkg.com/send/-/send-0.19.1.tgz -> yarnpkg-send-0.19.1.tgz
@@ -1786,7 +1784,7 @@ https://registry.yarnpkg.com/vscode-textmate/-/vscode-textmate-5.2.0.tgz -> yarn
 https://registry.yarnpkg.com/vscode-textmate/-/vscode-textmate-9.0.0.tgz -> yarnpkg-vscode-textmate-9.0.0.tgz
 https://registry.yarnpkg.com/vscode-uri/-/vscode-uri-2.1.2.tgz -> yarnpkg-vscode-uri-2.1.2.tgz
 https://registry.yarnpkg.com/w3c-xmlserializer/-/w3c-xmlserializer-4.0.0.tgz -> yarnpkg-w3c-xmlserializer-4.0.0.tgz
-https://registry.yarnpkg.com/watchpack/-/watchpack-2.4.2.tgz -> yarnpkg-watchpack-2.4.2.tgz
+https://registry.yarnpkg.com/watchpack/-/watchpack-2.4.0.tgz -> yarnpkg-watchpack-2.4.0.tgz
 https://registry.yarnpkg.com/wcwidth/-/wcwidth-1.0.1.tgz -> yarnpkg-wcwidth-1.0.1.tgz
 https://registry.yarnpkg.com/web-streams-polyfill/-/web-streams-polyfill-4.0.0-beta.3.tgz -> yarnpkg-web-streams-polyfill-4.0.0-beta.3.tgz
 https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-3.0.1.tgz -> yarnpkg-webidl-conversions-3.0.1.tgz
@@ -1794,7 +1792,7 @@ https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-7.0.0.tgz -
 https://registry.yarnpkg.com/webpack-cli/-/webpack-cli-4.7.0.tgz -> yarnpkg-webpack-cli-4.7.0.tgz
 https://registry.yarnpkg.com/webpack-merge/-/webpack-merge-5.10.0.tgz -> yarnpkg-webpack-merge-5.10.0.tgz
 https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-3.2.3.tgz -> yarnpkg-webpack-sources-3.2.3.tgz
-https://registry.yarnpkg.com/webpack/-/webpack-5.95.0.tgz -> yarnpkg-webpack-5.95.0.tgz
+https://registry.yarnpkg.com/webpack/-/webpack-5.90.3.tgz -> yarnpkg-webpack-5.90.3.tgz
 https://registry.yarnpkg.com/whatwg-encoding/-/whatwg-encoding-2.0.0.tgz -> yarnpkg-whatwg-encoding-2.0.0.tgz
 https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-3.6.20.tgz -> yarnpkg-whatwg-fetch-3.6.20.tgz
 https://registry.yarnpkg.com/whatwg-mimetype/-/whatwg-mimetype-3.0.0.tgz -> yarnpkg-whatwg-mimetype-3.0.0.tgz
@@ -2302,7 +2300,6 @@ einfo "Adding dependencies"
 
 yarn_unpack_post() {
 	:
-#	eapply ${PATCHES[@]}
 }
 
 yarn_src_unpack_update_ebuild_custom() {
@@ -2352,8 +2349,8 @@ einfo "Updating lockfile from _yarn_src_unpack_update_ebuild_custom()"
 		sed -i -e "s|ejs \"^3.1.7\"|ejs \"^3.1.10\"|g" "yarn.lock" || die
 
 	# Replace vulernable Cr 124 with recent Cr 130 to mitigate.
-		sed -i -e "s|\"electron\": \"^30.1.2\"|\"electron\": \"^${ELECTRON_APP_ELECTRON_PV}\"|g" "packages/electron/package.json" || die
-		sed -i -e "s|\"electron\": \"^30.1.2\"|\"electron\": \"^${ELECTRON_APP_ELECTRON_PV}\"|g" "examples/electron/package.json" || die
+#		sed -i -e "s|\"electron\": \"^30.1.2\"|\"electron\": \"${ELECTRON_APP_ELECTRON_PV}\"|g" "packages/electron/package.json" || die
+#		sed -i -e "s|\"electron\": \"^30.1.2\"|\"electron\": \"${ELECTRON_APP_ELECTRON_PV}\"|g" "examples/electron/package.json" || die
 
 		sed -i -e "/^follow-redirects@^1.0.0, follow-redirects@^1.15.4:/,/^$/d" "yarn.lock" || die
 		sed -i -e "s|follow-redirects \"^1.0.0\"|follow-redirects \"^1.15.6\"|g" "yarn.lock" || die
@@ -2383,8 +2380,8 @@ einfo "Updating lockfile from _yarn_src_unpack_update_ebuild_custom()"
 		sed -i -e "s|tar \"^6.1.11\"|tar \"^6.2.1\"|g" "yarn.lock" || die
 		sed -i -e "s|tar \"^6.1.2\"|tar \"^6.2.1\"|g" "yarn.lock" || die
 
-		sed -i -e "s|\"webpack\": \"^5.76.0\"|\"webpack\": \"^5.94.0\"|g" "dev-packages/application-manager/package.json" || die
-		sed -i -e "s|\"webpack\": \"^5.76.0\"|\"webpack\": \"^5.94.0\"|g" "dev-packages/native-webpack-plugin/package.json" || die
+#		sed -i -e "s|\"webpack\": \"^5.76.0\"|\"webpack\": \"^5.94.0\"|g" "dev-packages/application-manager/package.json" || die
+#		sed -i -e "s|\"webpack\": \"^5.76.0\"|\"webpack\": \"^5.94.0\"|g" "dev-packages/native-webpack-plugin/package.json" || die
 
 		sed -i -e "/^ws@8.11.0, ws@~8.11.0:/,/^$/d" "yarn.lock" || die
 		sed -i -e "s|ws \"8.11.0\"|ws \"^8.17.1\"|g" "yarn.lock" || die
@@ -2399,7 +2396,7 @@ einfo "Add/update toolchain"
 	pkgs=(
 #		"npx"
 		"node-gyp@^${NODE_GYP_PV}"
-		"ts-clean"					# For download:plugins
+		"ts-clean"										# For download:plugins
 	)
 	eyarn add ${pkgs[@]} -D -W
 
@@ -2413,16 +2410,16 @@ einfo "Pruning vulnerable packages"
 	)
 
 	pkgs=(
-		"keytar"					# Adds semver 5.x
+		"keytar"										# Adds semver 5.x
 	)
 #	eyarn workspace "@theia/core" remove ${pkgs[@]}
 
 	pkgs=(
 		# See https://en.wikipedia.org/wiki/Palantir_Technologies#WikiLeaks_proposals_(2010)
-		"tslint"					# Adds semver 5.x
-		"@typescript-eslint/eslint-plugin-tslint"	# Adds tslint
+		"tslint"										# Adds semver 5.x
+		"@typescript-eslint/eslint-plugin-tslint"						# Adds tslint
 
-#		"@vscode/vsce"					# Adds semver 5.x
+#		"@vscode/vsce"										# Adds semver 5.x
 	)
 	eyarn remove ${pkgs[@]} -W
 
@@ -2434,27 +2431,25 @@ einfo "Pruning vulnerable packages"
 #	eyarn workspace "@theia/cli" remove ${pkgs[@]} -W
 
 einfo "Updating dependencies"
-
-
 	# ID = Information Disclosure
 	# DoS = Denial of Service
 	# DT = Data Tampering
 
 	pkgs=(
 		# @theia/core:
-		"dompurify@^2.5.4"		# CVE-2024-45801 # DoS, DT, ID
-		"express@^4.20.0"		# CVE-2024-43796 # DT, ID
-						# CVE-2024-29041 # DT, ID
-		"body-parser@^1.20.3"		# CVE-2024-45590 # DoS
-		"cookie@^0.7.0"			# CVE-2024-47764 # DT
-		"ajv@^6.12.3"			# CVE-2020-15366 # DoS, DT, ID
-		"ws@^8.17.1"			# CVE-2024-37890 # DoS			@theia/core -> socket.io -> engine.io -> ws
-		"semver@^5.7.2"			# CVE-2022-25883 # DoS
+		"dompurify@^2.5.4"				# CVE-2024-45801 # DoS, DT, ID
+		"express@^4.20.0"				# CVE-2024-43796 # DT, ID
+								# CVE-2024-29041 # DT, ID
+		"body-parser@^1.20.3"				# CVE-2024-45590 # DoS
+		"cookie@^0.7.0"					# CVE-2024-47764 # DT
+		"ajv@^6.12.3"					# CVE-2020-15366 # DoS, DT, ID
+		"ws@^8.17.1"					# CVE-2024-37890 # DoS			@theia/core -> socket.io -> engine.io -> ws
+		"semver@^5.7.2"					# CVE-2022-25883 # DoS
 
 		# @theia/core -> express:
-		"path-to-regexp@^6.3.0"		# CVE-2024-45296 # DoS
-		"serve-static@^1.16.0"		# CVE-2024-43800 # DT, ID
-		"send@^0.19.0"			# CVE-2024-43799 # DT, ID
+		"path-to-regexp@^6.3.0"				# CVE-2024-45296 # DoS
+		"serve-static@^1.16.0"				# CVE-2024-43800 # DT, ID
+		"send@^0.19.0"					# CVE-2024-43799 # DT, ID
 	)
 	eyarn workspace "@theia/core" upgrade ${pkgs[@]}
 
@@ -2469,76 +2464,77 @@ einfo "Updating dependencies"
 	eyarn workspace "@theia/toolbar" upgrade ${pkgs[@]}
 
 	pkgs=(
-		"axios@^1.7.4"			# CVE-2024-39338 # ID			# @theia/application-package -> nano
-		"follow-redirects@^1.15.6"	# CVE-2024-28849 # ID                   # nano -> axios -> follow-redirects
+		"axios@^1.7.4"					# CVE-2024-39338 # ID			# @theia/application-package -> nano
+		"follow-redirects@^1.15.6"			# CVE-2024-28849 # ID                   # nano -> axios -> follow-redirects
 	)
 	eyarn workspace "@theia/application-package" upgrade ${pkgs[@]}
 
 	pkgs=(
-		"electron-rebuild"		# EOL
+		"electron-rebuild"				# EOL
 	)
-	eyarn workspace "@theia/application-manager" remove ${pkgs[@]}
+#	eyarn workspace "@theia/application-manager" remove ${pkgs[@]}
 
 	pkgs=(
-		"@electron/rebuild"		# For Electron beta.
+		"@electron/rebuild"				# For Electron beta.
 	)
-	eyarn workspace "@theia/application-manager" add ${pkgs[@]}
+#	eyarn workspace "@theia/application-manager" add ${pkgs[@]}
 
 	pkgs=(
 		# @theia/application-manager
-		"webpack@^5.94.0"		# CVE-2024-43788 # DoS, DT, ID		# @theia/application-manager
-		"follow-redirects@^1.15.6"	# CVE-2024-28849 # ID			# @theia/application-manager -> http-server
-		"braces@^3.0.3"			# CVE-2024-4068  # DoS			# @theia/application-manager -> copy-webpack-plugin -> fast-glob -> micromatch
-		"micromatch@^4.0.8"		# CVE-2024-4067  # DoS
-		"semver@^5.7.2"			# CVE-2022-25883 # DoS
-#		"less"				# Adds semver 5.x
-		"node-abi"			# A dependency of electron-rebuild.  The abi field in abi_registry.json must be >= the major version of Electron.
+#		"webpack@^5.94.0"				# CVE-2024-43788 # DoS, DT, ID		# @theia/application-manager
+		"follow-redirects@^1.15.6"			# CVE-2024-28849 # ID			# @theia/application-manager -> http-server
+		"braces@^3.0.3"					# CVE-2024-4068  # DoS			# @theia/application-manager -> copy-webpack-plugin -> fast-glob -> micromatch
+		"micromatch@^4.0.8"				# CVE-2024-4067  # DoS
+		"semver@^5.7.2"					# CVE-2022-25883 # DoS
+#		"less"											# Adds semver 5.x
+#		"node-abi"										# A dependency of electron-rebuild.  The abi field in abi_registry.json must be >= the major version of Electron.
 	)
 	eyarn workspace "@theia/application-manager" upgrade ${pkgs[@]}
 
 	pkgs=(
-		"webpack@^5.94.0"		# CVE-2024-43788 # DoS, DT, ID		# @theia/native-webpack-plugin
+#		"webpack@^5.94.0"				# CVE-2024-43788 # DoS, DT, ID		# @theia/native-webpack-plugin
 	)
-	eyarn workspace "@theia/native-webpack-plugin" upgrade ${pkgs[@]}
+#	eyarn workspace "@theia/native-webpack-plugin" upgrade ${pkgs[@]}
 
 	pkgs=(
-		"follow-redirects@^1.15.6"	# CVE-2024-28849 # ID                   # @theia/cli -> http-server
-		"braces@^3.0.3"			# CVE-2024-4068  # DoS			# @theia/cli -> chokidar -> mocha
+		"follow-redirects@^1.15.6"			# CVE-2024-28849 # ID                   # @theia/cli -> http-server
+		"braces@^3.0.3"					# CVE-2024-4068  # DoS			# @theia/cli -> chokidar -> mocha
 	)
 	eyarn workspace "@theia/cli" upgrade ${pkgs[@]}
 
 	pkgs=(
-		"electron@${ELECTRON_APP_ELECTRON_PV}"					# Pinned for license file consistency
-		"got@^11.8.5"			# CVE-2022-33987 # DT			# @theia/example-electron -> electron -> @electron/get
+#		"electron@${ELECTRON_APP_ELECTRON_PV}"							# Pinned for license file consistency
+		"got@^11.8.5"					# CVE-2022-33987 # DT			# @theia/example-electron -> electron -> @electron/get
 	)
 	eyarn workspace "@theia/example-electron" upgrade ${pkgs[@]} #-D
 
 	pkgs=(
-		"electron@${ELECTRON_APP_ELECTRON_PV}"					# Pinned for license file consistency
+		"electron@${ELECTRON_APP_ELECTRON_PV}"							# Pinned for license file consistency
 	)
-	eyarn workspace "@theia/electron" upgrade ${pkgs[@]} #-P
+#	eyarn workspace "@theia/electron" upgrade ${pkgs[@]} #-P
 
 	pkgs=(
 		# @theia/monorepo
 		# TODO: bump parent packages
-		"http-cache-semantics@^4.1.1"	# CVE-2022-25881 # DoS			# @theia/monorepo -> node-gyp -> make-fetch-happen
-		"hosted-git-info@^2.8.9"	# CVE-2021-23362 # DoS			# @theia/monorepo -> @vscode/vsce
-		"tough-cookie@^4.1.3"		# CVE-2023-26136 # DoS, DT		# @theia/monorepo -> jsdom
-		"semver@^5.7.2"			# CVE-2022-25883 # DoS
-		"axios@^1.7.4"                  # CVE-2024-39338 # ID			# @theia/monorepo -> lerna -> @lerna/create -> nx
-		"chownr@^1.1.0"			# CVE-2017-18869 # DT			# @theia/monorepo -> lerna
-		"yargs-parser@^13.1.2"		# CVE-2020-7608  # DoS, DT, ID		# @theia/monorepo -> lerna
-		"ssri@^6.0.2"			# CVE-2021-27290 # DoS			# @theia/monorepo -> lerna
-		"ejs@^3.1.10"			# CVE-2024-33883 # DoS			# @theia/monorepo -> lerna -> @lerna/create -> @nx/devkit
-		"tar@^6.2.1"			# CVE-2021-37713 # DT, ID		# @theia/monorepo -> lerna
-											# CVE-2021-32804 # DT, ID
-											# CVE-2024-28863 # DoS
-#		"lerna"				# Bumped to remove dep vulnerabilities
-		"path-to-regexp@^6.3.0"		# CVE-2024-45296 # DoS			# @theia/monorepo -> sinon -> nise
-		"ws@^8.17.1"			# CVE-2024-37890 # DoS			# @theia/monorepo -> jsdom
-		"follow-redirects@^1.15.6"	# CVE-2024-28849 # ID                   # @theia/monorepo -> lerna -> @lerna/create -> nx -> axios -> follow-redirects
+		"http-cache-semantics@^4.1.1"			# CVE-2022-25881 # DoS			# @theia/monorepo -> node-gyp -> make-fetch-happen
+		"hosted-git-info@^2.8.9"			# CVE-2021-23362 # DoS			# @theia/monorepo -> @vscode/vsce
+		"tough-cookie@^4.1.3"				# CVE-2023-26136 # DoS, DT		# @theia/monorepo -> jsdom
+		"semver@^5.7.2"					# CVE-2022-25883 # DoS
+		"axios@^1.7.4"					# CVE-2024-39338 # ID			# @theia/monorepo -> lerna -> @lerna/create -> nx
+		"chownr@^1.1.0"					# CVE-2017-18869 # DT			# @theia/monorepo -> lerna
+		"yargs-parser@^13.1.2"				# CVE-2020-7608  # DoS, DT, ID		# @theia/monorepo -> lerna
+		"ssri@^6.0.2"					# CVE-2021-27290 # DoS			# @theia/monorepo -> lerna
+		"ejs@^3.1.10"					# CVE-2024-33883 # DoS			# @theia/monorepo -> lerna -> @lerna/create -> @nx/devkit
+		"tar@^6.2.1"					# CVE-2021-37713 # DT, ID		# @theia/monorepo -> lerna
+								# CVE-2021-32804 # DT, ID
+								# CVE-2024-28863 # DoS
+#		"lerna"						# Bumped to remove dep vulnerabilities
+		"path-to-regexp@^6.3.0"				# CVE-2024-45296 # DoS			# @theia/monorepo -> sinon -> nise
+		"ws@^8.17.1"					# CVE-2024-37890 # DoS			# @theia/monorepo -> jsdom
+		"follow-redirects@^1.15.6"			# CVE-2024-28849 # ID                   # @theia/monorepo -> lerna -> @lerna/create -> nx -> axios -> follow-redirects
 	)
 	eyarn upgrade ${pkgs[@]} #-D -W
+
 
 	patch_edits
 
@@ -2670,7 +2666,24 @@ einfo "YARN_UPDATE_LOCK=${YARN_UPDATE_LOCK}"
 	[[ "${path}/version" ]] || die "Missing file"
 }
 
+src_prepare() {
+	default
+
+	# Remove Sample Menu
+	sed -i -e "/@theia/api-samples/d" "examples/browser/package.json" || die
+}
+
 src_compile() {
+	yarn_hydrate
+	local pkgs
+	#pkgs=(
+	#)
+	#eyarn workspace "@theia/example-browser-only" add ${pkgs[@]} -D -W
+	pkgs=(
+		"@types/node@18"
+		"@types/mocha^10.0.0"
+	)
+#	eyarn workspace "@theia/example-browser-only" add ${pkgs[@]} -D -W
 	eyarn run compile
 	eyarn run browser build
 	eyarn run electron build
