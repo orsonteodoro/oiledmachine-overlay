@@ -2394,7 +2394,6 @@ einfo "Updating lockfile from _yarn_src_unpack_update_ebuild_custom()"
 
 einfo "Add/update toolchain"
 	pkgs=(
-#		"npx"
 		"node-gyp@^${NODE_GYP_PV}"
 		"ts-clean"										# For download:plugins
 	)
@@ -2402,12 +2401,6 @@ einfo "Add/update toolchain"
 
 # Need to check if tslint package is *backdoored* or introduces a vulnerability
 einfo "Pruning vulnerable packages"
-
-	pkgs=(
-	# Prune pkgs
-	# Mentioned in GH security scan
-	# Temporarily disabled
-	)
 
 	pkgs=(
 		"keytar"										# Adds semver 5.x
@@ -2675,15 +2668,6 @@ src_prepare() {
 
 src_compile() {
 	yarn_hydrate
-	local pkgs
-	#pkgs=(
-	#)
-	#eyarn workspace "@theia/example-browser-only" add ${pkgs[@]} -D -W
-	pkgs=(
-		"@types/node@18"
-		"@types/mocha^10.0.0"
-	)
-#	eyarn workspace "@theia/example-browser-only" add ${pkgs[@]} -D -W
 	eyarn run compile
 	eyarn run browser build
 	eyarn run electron build
