@@ -23,7 +23,7 @@ NPM_AUDIT_FIX_ARGS=(
 NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_11" ) # Upstream uses python 3.11.
 YARN_ELECTRON_OFFLINE=1
 YARN_EXE_LIST="
 /opt/theia/electron
@@ -135,7 +135,7 @@ declare -A THEIA_PLUGINS=(
 ["theia_plugin_vscode_theme-solarized-dark"]="vscode.theme-solarized-dark"
 )
 
-inherit desktop edo electron-app python-r1 yarn
+inherit desktop edo electron-app python-single-r1 yarn
 
 KEYWORDS="~amd64"
 SLOT="0/monthly"
@@ -2308,6 +2308,9 @@ RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
 git ebuild-revision-6
+"
+REQUIRED_USE="
+	${PYTHON_REQUIRED_USE}
 "
 RDEPEND+="
 	>=app-crypt/libsecret-0.20.5
