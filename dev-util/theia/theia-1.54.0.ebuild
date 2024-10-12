@@ -23,7 +23,7 @@ NPM_AUDIT_FIX_ARGS=(
 NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
-PYTHON_COMPAT=( "python3_11" ) # Upstream uses python 3.11.
+PYTHON_COMPAT=( "python3_11" ) # Upstream uses python 3.11, but node-gyp requests py3.12 for node-gyp 10.
 YARN_ELECTRON_OFFLINE=1
 YARN_EXE_LIST="
 /opt/theia/electron
