@@ -8,7 +8,7 @@ EAPI=8
 
 AT_TYPES_NODE_PV="22.7.5"
 # See https://releases.electronjs.org/releases.json
-#ELECTRON_APP_ELECTRON_PV="33.0.0-beta.9" # Cr 130.0.6723.31 ; Also bump node-abi.
+# ELECTRON_APP_ELECTRON_PV is limited by nan
 ELECTRON_APP_ELECTRON_PV="30.3.1" # Cr 124.0.6367.243 ; Original
 #ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY="1"
 ELECTRON_APP_MODE="yarn"
@@ -2392,26 +2392,14 @@ gen_plugin_array() {
 }
 
 yarn_unpack_install_pre() {
+	[[ "${YARN_UPDATE_LOCK}" == "1" ]] && return
 einfo "Called yarn_unpack_install_pre()"
-#	sed -i \
-#		-e "/node-gyp install/d" \
-#		"${S}/package.json" \
-#		|| die
-#	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 einfo "Adding dependencies"
-		local pkgs
-		pkgs=(
-			"node-gyp@^${NODE_GYP_PV}"
-#			"npx"
-		)
-		eyarn add ${pkgs[@]} -D -W
-
-		pkgs=(
-			"keytar" # EOL
-		)
-
-		#eyarn workspace "@theia/core" add ${pkgs[@]} EOL
-#	fi
+	local pkgs
+	pkgs=(
+		"node-gyp@^${NODE_GYP_PV}"
+	)
+	eyarn add ${pkgs[@]} -D -W
 }
 
 yarn_unpack_post() {
