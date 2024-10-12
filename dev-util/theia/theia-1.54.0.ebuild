@@ -2406,7 +2406,6 @@ einfo "Adding dependencies"
 }
 
 yarn_unpack_post() {
-	die
 	:
 }
 
