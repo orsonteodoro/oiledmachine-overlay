@@ -2406,6 +2406,7 @@ einfo "Adding dependencies"
 }
 
 yarn_unpack_post() {
+	die
 	:
 }
 
@@ -2781,6 +2782,11 @@ src_prepare() {
 		"examples/browser-only/package.json" \
 		"examples/electron/package.json" \
 		|| die
+
+	sed -i \
+		-e "s|Theia Electron Example|Theia IDE|g" \
+		"examples/electron/package.json" \
+		|| die
 }
 
 src_compile() {
@@ -2802,12 +2808,6 @@ src_compile() {
 		-e "Rebuild Failed" \
 		"${T}/build.log" \
 		&& die "Build failure"
-
-	sed -i \
-		-e "s|Theia Electron Example|Theia IDE|g" \
-		"examples/electron/package.json" \
-		"examples/browser-only/package.json" \
-		|| die
 }
 
 _install() {
