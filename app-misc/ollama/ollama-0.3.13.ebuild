@@ -357,7 +357,47 @@ fi
 
 DESCRIPTION="Get up and running with Llama 3, Mistral, Gemma, and other language models."
 HOMEPAGE="https://ollama.com"
+LLM_LICENSES="
+	Apache-2.0
+	codellama-USE_POLICY.md
+	Gemma-Prohibited-Use-Policy-20240221
+	Gemma-Terms-of-Use-20240221
+	Gemma-Terms-of-Use-20240401
+	llama2-LICENSE
+	llama2-USE_POLICY.md
+	llama3-LICENSE
+	llama3-USE_POLICY.md
+	llama3_1-LICENSE
+	llama3_1-USE_POLICY.md
+	llama3_2-LICENSE
+	llama3_2-USE_POLICY.md
+	Tongyi-Qianwen-LICENSE-AGREEMENT
+	Tongyi-Qianwen-RESEARCH-LICENSE-AGREEMENT
+	MIT
+"
+# Apache-2.0 - solar - single conversation
+# Apache-2.0 - mistral - chat
+# Apache-2.0 - neural-chat - chatbot
+# Apache-2.0 - qwen2 - multilingual, roleplay, bookworm, web native
+# Apache-2.0 - qwen2.5 - multilingual (29), coding, math, roleplay, chat
+# Apache-2.0 - nomic-embed-text - embeddings (for file summaries)
+# Apache-2.0 - mxbai-embed-large - embeddings (for file summaries)
+# Apache-2.0 - mixtral - germanic-romance fluency, math, coding, detailed recall
+# Apache-2.0 - starling-lm - chat optimized for arts, humanities, and stem
+# Apache-2.0 - llava - chat using visual or language
+# Apache-2.0 - moondream - for low memory devices.  may be rude, imperfect, biased
+# Gemma-Terms-of-Use-20240221 Gemma-Prohibited-Use-Policy-20240221 - gemma - chat, censored clean
+# Gemma-Terms-of-Use-20240221 Gemma-Prohibited-Use-Policy-20240221 - gemma2 - content generation, chat, summaries, linguist, answers
+# llama2-LICENSE llama2-USE_POLICY.md - llama2 - chat
+# llama3-LICENSE llama3-USE_POLICY.md - llama3 - chat
+# llama3_1-LICENSE llama3_1-USE_POLICY.md - llama3.1 - summaries, multilingual chat, coding assistant
+# llama3_2-LICENSE llama3_2-USE_POLICY.md - llama3.2 - multilingual
+# llama2-LICENSE codellama-USE_POLICY.md - codellama
+# MIT - phi3
+# Tongyi-Qianwen-LICENSE-AGREEMENT - Qwen:72B, Qwen-14B, Qwen-7B
+# Tongyi-Qianwen-RESEARCH-LICENSE-AGREEMENT - Qwen:1.8B
 LICENSE="
+	${LLM_LICENSES}
 	(
 		Apache-2.0
 		BSD
@@ -635,6 +675,15 @@ einfo
 einfo "  ${PN} serve"
 einfo "  ${PN} run llama3:70b"
 einfo
-einfo "Models are available at https://ollama.com/library"
+einfo "You still need to download model.  The full list can be found at:"
+einfo
+einfo "  https://ollama.com/library"
+einfo
+einfo "Tip:  Use LLM models that only fit your RAM."
+einfo
+einfo "   ~1 B parameters =   1 GiB RAM required"
+einfo "   ~4 B parameters =   4 GiB RAM required"
+einfo "   ~8 B parameters =   8 GiB RAM required"
+einfo "   ~X B parameters =   X GiB RAM required"
 einfo
 }
