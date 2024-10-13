@@ -388,7 +388,7 @@ SLOT="0"
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-cuda openrc rocm
+cuda openrc rocm systemd
 "
 gen_cuda_required_use() {
 	local x
@@ -611,6 +611,10 @@ src_install() {
 	dobin "${PN}"
 	if use openrc ; then
 		doinitd "${FILESDIR}/${PN}"
+	fi
+	if use systemd ; then
+		insinto "/usr/lib/systemd/system"
+		doins "${FILESDIR}/${PN}.service"
 	fi
 	if ! [[ "${PV}" =~ "9999" ]] ; then
 		LCNR_SOURCE="${S_GO}/src"

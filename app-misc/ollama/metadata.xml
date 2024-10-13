@@ -12,6 +12,9 @@
   Ebuild obtained from guru.
 
   -->
+  <upstream>
+    <remote-id type="github">ollama/ollama</remote-id>
+  </upstream>
   <use>
     <flag name="cuda">
       Support CUDA® for NVIDIA® GPUs.
@@ -20,7 +23,4 @@
       Support ROCm™ for AMD GPUs.
     </flag>
   </use>
-  <upstream>
-    <remote-id type="github">ollama/ollama</remote-id>
-  </upstream>
 </pkgmetadata>
