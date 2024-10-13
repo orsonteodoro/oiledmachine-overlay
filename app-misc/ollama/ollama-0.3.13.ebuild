@@ -568,11 +568,11 @@ src_prepare() {
 
 src_configure() {
 	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.4*" ; then
-		export CC="${CHOST}-gcc-11"
-		export CXX="${CHOST}-g++-11"
-	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
 		export CC="${CHOST}-gcc-13"
 		export CXX="${CHOST}-g++-13"
+	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
+		export CC="${CHOST}-gcc-11"
+		export CXX="${CHOST}-g++-11"
 	elif use rocm ; then
 		export CC="${CHOST}-gcc-12"
 		export CXX="${CHOST}-g++-12"
