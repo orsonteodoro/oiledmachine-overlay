@@ -376,7 +376,7 @@ LLM_LICENSES="
 	Tongyi-Qianwen-RESEARCH-LICENSE-AGREEMENT
 "
 # Apache-2.0 - solar - single conversation
-# Apache-2.0 - mistral - chat
+# Apache-2.0 - mistral - chat, trivia
 # Apache-2.0 - neural-chat - chatbot
 # Apache-2.0 - qwen2 - multilingual, roleplay, bookworm, web native
 # Apache-2.0 - qwen2.5 - multilingual (29), coding, math, roleplay, chat
@@ -389,13 +389,15 @@ LLM_LICENSES="
 # Gemma-Terms-of-Use-20240221 Gemma-Prohibited-Use-Policy-20240221 - gemma - chat, censored clean
 # Gemma-Terms-of-Use-20240221 Gemma-Prohibited-Use-Policy-20240221 - gemma2 - content generation, chat, summaries, linguist, answers
 # llama2-LICENSE llama2-USE_POLICY.md - llama2 - chat
-# llama3-LICENSE llama3-USE_POLICY.md - llama3 - chat
+# llama3-LICENSE llama3-USE_POLICY.md - llama3 - chat, trivia
 # llama3_1-LICENSE llama3_1-USE_POLICY.md - llama3.1 - summaries, multilingual chat, coding assistant
 # llama3_2-LICENSE llama3_2-USE_POLICY.md - llama3.2 - multilingual
 # llama2-LICENSE codellama-USE_POLICY.md - codellama - coding assistant
 # MIT - phi3 - mulilingual, chat, common sense, logic
+# MIT - phi3:medium - mulilingual, chat, common sense, logic, coding, math, trivia
 # Tongyi-Qianwen-LICENSE-AGREEMENT - Qwen:72B, Qwen-14B, Qwen-7B
 # Tongyi-Qianwen-RESEARCH-LICENSE-AGREEMENT - Qwen:1.8B
+# Models marked with instruct tag have follow instructions capability.
 LICENSE="
 	${LLM_LICENSES}
 	(
