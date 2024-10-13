@@ -30,7 +30,7 @@
       Add support for the Git-extension.
     </flag>
     <flag name="ollama">
-      Add support for Ollama large language models (LLMs).
+      Add support for Llama 3 LLMs (Large Language Models) and Gemma 2 LLMs.
     </flag>
   </use>
 </pkgmetadata>
