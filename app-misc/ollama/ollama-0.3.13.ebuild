@@ -405,7 +405,8 @@ LLM_LICENSES="
 # MIT - phi3:medium - mulilingual, chat, common sense, logic, coding, math, trivia
 # Tongyi-Qianwen-LICENSE-AGREEMENT - qwen:72b, qwen-14b, qwen-7b - multilingual, roleplay
 # Tongyi-Qianwen-RESEARCH-LICENSE-AGREEMENT - qwen:1.8b - multilingual, roleplay
-# Models marked with instruct tag have may follow instructions capability.
+# Models marked with instruct tag may have follow instructions capabilities.
+# Models with higher parameters are generally more knowledgable or more proficient.
 LICENSE="
 	${LLM_LICENSES}
 	(
