@@ -371,9 +371,9 @@ LLM_LICENSES="
 	llama3_1-USE_POLICY.md
 	llama3_2-LICENSE
 	llama3_2-USE_POLICY.md
+	MIT
 	Tongyi-Qianwen-LICENSE-AGREEMENT
 	Tongyi-Qianwen-RESEARCH-LICENSE-AGREEMENT
-	MIT
 "
 # Apache-2.0 - solar - single conversation
 # Apache-2.0 - mistral - chat
