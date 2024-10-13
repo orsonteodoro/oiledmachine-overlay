@@ -459,8 +459,11 @@ src_install() {
 	if use systemd ; then
 		doinitd "${FILESDIR}/${PN}"
 	fi
-	LCNR_SOURCE="${S_GO}/src"
-	lcnr_install_files
+	if ! [[ "${PV}" =~ "9999" ]] ; then
+		LCNR_SOURCE="${S_GO}/src"
+		lcnr_install_files
+	# TODO:  handle live case
+	fi
 }
 
 pkg_preinst() {
