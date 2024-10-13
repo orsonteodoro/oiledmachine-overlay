@@ -29,5 +29,8 @@
     <flag name="git">
       Add support for the Git-extension.
     </flag>
+    <flag name="ollama">
+      Add support for Ollama large language models (LLMs).
+    </flag>
   </use>
 </pkgmetadata>

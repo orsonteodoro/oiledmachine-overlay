@@ -7,7 +7,7 @@
     "node": ">=18"
   },
   "resolutions": {
-    "**/@types/node": "18",
+    "[*][*]/@types/node": "20",
     "**/nan": "2.20.0"
   },
   "devDependencies": {
@@ -15,7 +15,7 @@
     "@types/chai-spies": "1.0.3",
     "@types/chai-string": "^1.4.0",
     "@types/jsdom": "^21.1.7",
-    "@types/node": "18",
+    "@types/node": "20",
     "@types/sinon": "^10.0.6",
     "@types/temp": "^0.9.1",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
@@ -121,6 +121,7 @@
     "follow-redirects": "^1.15.6",
     "hosted-git-info": "^2.8.9",
     "http-cache-semantics": "^4.1.1",
+    "nan": "2.22.0",
     "path-to-regexp": "^6.3.0",
     "semver": "^5.7.2",
     "ssri": "^6.0.2",
