@@ -392,8 +392,8 @@ LLM_LICENSES="
 # llama3-LICENSE llama3-USE_POLICY.md - llama3 - chat
 # llama3_1-LICENSE llama3_1-USE_POLICY.md - llama3.1 - summaries, multilingual chat, coding assistant
 # llama3_2-LICENSE llama3_2-USE_POLICY.md - llama3.2 - multilingual
-# llama2-LICENSE codellama-USE_POLICY.md - codellama
-# MIT - phi3
+# llama2-LICENSE codellama-USE_POLICY.md - codellama - coding assistant
+# MIT - phi3 - mulilingual, chat, common sense, logic
 # Tongyi-Qianwen-LICENSE-AGREEMENT - Qwen:72B, Qwen-14B, Qwen-7B
 # Tongyi-Qianwen-RESEARCH-LICENSE-AGREEMENT - Qwen:1.8B
 LICENSE="
