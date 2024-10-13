@@ -388,7 +388,7 @@ SLOT="0"
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-cuda rocm systemd
+cuda openrc rocm
 "
 gen_cuda_required_use() {
 	local x
@@ -609,7 +609,7 @@ src_install() {
 		cd "${S_GO}/bin" || die
 	fi
 	dobin "${PN}"
-	if use systemd ; then
+	if use openrc ; then
 		doinitd "${FILESDIR}/${PN}"
 	fi
 	if ! [[ "${PV}" =~ "9999" ]] ; then
