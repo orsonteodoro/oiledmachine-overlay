@@ -576,6 +576,7 @@ src_configure() {
 		export CC="${CHOST}-gcc-12"
 		export CXX="${CHOST}-g++-12"
 	fi
+	strip-unsupported-flags
 }
 
 src_compile() {
