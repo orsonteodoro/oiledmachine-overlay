@@ -516,6 +516,7 @@ BDEPEND="
 			~dev-libs/rocm-opencl-runtime-${HIP_6_1_VERSION}:${ROCM_VERSION%.*}
 			>=dev-libs/rocm-opencl-runtime-6.1.2:0/6.1
 		)
+		dev-libs/rocm-opencl-runtime:=
 		=sys-devel/gcc-${HIP_6_1_GCC_SLOT}*
 		sci-libs/clblast
 	)
