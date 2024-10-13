@@ -9,8 +9,34 @@ EAPI=8
 # U20
 # For depends see
 # https://github.com/ollama/ollama/blob/main/docs/development.md
-# ROCm:  https://github.com/ollama/ollama/blob/main/.github/workflows/test.yaml#L119
-# CUDA:  https://github.com/ollama/ollama/blob/main/.github/workflows/release.yaml#L194
+# ROCm:  https://github.com/ollama/ollama/blob/v0.3.13/.github/workflows/test.yaml
+# CUDA:  https://github.com/ollama/ollama/blob/v0.3.13/.github/workflows/release.yaml#L194
+# Hardware support:  https://github.com/ollama/ollama/blob/v0.3.13/docs/gpu.md
+AMDGPU_TARGETS_COMPAT=(
+	gfx900
+	gfx906
+	gfx908
+	gfx90a
+	gfx940
+	gfx941
+	gfx942
+	gfx1030
+	gfx1100
+	gfx1101
+	gfx1102
+)
+CUDA_TARGETS_COMPAT=(
+	sm_50
+	sm_52
+	sm_60
+	sm_61
+	sm_70
+	sm_75
+	sm_80
+	sm_86
+	sm_89
+	sm_90
+)
 GEN_EBUILD=0
 ROCM_VERSION="6.1.2"
 if ! [[ "${PV}" =~ "9999" ]] ; then
@@ -359,7 +385,39 @@ LICENSE="
 # W3C Test Suite License, W3C 3-clause BSD License - go_build/src/gonum.org/v1/gonum/graph/formats/rdf/testdata/LICENSE.md
 
 SLOT="0"
-IUSE+=" cuda rocm systemd"
+IUSE+="
+${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+cuda rocm systemd
+"
+gen_cuda_required_use() {
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		echo "
+			cuda_targets_${x}? (
+				cuda
+			)
+		"
+	done
+}
+gen_rocm_required_use() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				rocm
+			)
+		"
+	done
+}
+REQUIRED_USE+="
+	$(gen_cuda_required_use)
+	$(gen_rocm_required_use)
+	?? (
+		cuda
+		rocm
+	)
+"
 RDEPEND="
 	acct-group/ollama
 	acct-user/ollama
