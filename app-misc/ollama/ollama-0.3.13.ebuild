@@ -378,7 +378,10 @@ BDEPEND="
 		)
 	)
 	rocm? (
-		~dev-libs/rocm-opencl-runtime-${HIP_6_1_VERSION}:${ROCM_VERSION%.*}
+		|| (
+			~dev-libs/rocm-opencl-runtime-${HIP_6_1_VERSION}:${ROCM_VERSION%.*}
+			>=dev-libs/rocm-opencl-runtime-6.1.2:0/6.1
+		)
 		sci-libs/clblast
 	)
 "
