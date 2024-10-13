@@ -425,21 +425,98 @@ RDEPEND="
 IDEPEND="
 	${RDEPEND}
 "
+# The CUDA 11 requirement is relaxed.  Upstream tests with 11.3, 12.4.
+CUDA_11_8_BDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-11.8*
+		=sys-devel/gcc-11*[cxx]
+	)
+"
+CUDA_12_4_BDEPEND="
+	(
+		=dev-util/nvidia-cuda-toolkit-12.4*
+		=sys-devel/gcc-13*[cxx]
+	)
+"
 BDEPEND="
 	>=dev-build/cmake-3.24
 	>=dev-lang/go-1.22.5
 	>=sys-devel/gcc-11.4.0
 	cuda? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11.8*
-			=dev-util/nvidia-cuda-toolkit-12.4*
+		cuda_targets_sm_50? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_4_BDEPEND}
+			)
 		)
+		cuda_targets_sm_52? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_4_BDEPEND}
+			)
+		)
+		cuda_targets_sm_60? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_4_BDEPEND}
+			)
+		)
+		cuda_targets_sm_61? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_4_BDEPEND}
+			)
+		)
+		cuda_targets_sm_70? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_4_BDEPEND}
+			)
+		)
+		cuda_targets_sm_75? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_4_BDEPEND}
+			)
+		)
+		cuda_targets_sm_80? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_4_BDEPEND}
+			)
+		)
+		cuda_targets_sm_86? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_4_BDEPEND}
+			)
+		)
+		cuda_targets_sm_89? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_4_BDEPEND}
+			)
+		)
+		cuda_targets_sm_90? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_4_BDEPEND}
+			)
+		)
+		cuda_targets_sm_90? (
+			|| (
+				${CUDA_11_8_BDEPEND}
+				${CUDA_12_4_BDEPEND}
+			)
+		)
+		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
 		|| (
 			~dev-libs/rocm-opencl-runtime-${HIP_6_1_VERSION}:${ROCM_VERSION%.*}
 			>=dev-libs/rocm-opencl-runtime-6.1.2:0/6.1
 		)
+		=sys-devel/gcc-${HIP_6_1_GCC_SLOT}*
 		sci-libs/clblast
 	)
 "
@@ -486,6 +563,19 @@ src_prepare() {
 	sed -i -e "s|// import \"gorgonia.org/tensor\"||g" "${S_GO}/src/github.com/pdevine/tensor/tensor.go" || die
 	sed -i -e "s|// import \"gorgonia.org/tensor/internal/storage\"||g" "${S_GO}/src/github.com/pdevine/tensor/internal/storage/header.go" || die
 	sed -i -e "s|// import \"gorgonia.org/tensor/internal/execution\"||g" "${S_GO}/src/github.com/pdevine/tensor/internal/execution/e.go" || die
+}
+
+src_configure() {
+	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.4" ; then
+		export CC="${CHOST}-gcc-11"
+		export CXX="${CHOST}-g++-11"
+	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8" ; then
+		export CC="${CHOST}-gcc-13"
+		export CXX="${CHOST}-g++-13"
+	elif use rocm ; then
+		export CC="${CHOST}-gcc-12"
+		export CXX="${CHOST}-g++-12"
+	fi
 }
 
 src_compile() {
