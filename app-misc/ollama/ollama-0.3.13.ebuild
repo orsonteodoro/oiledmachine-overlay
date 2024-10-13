@@ -672,10 +672,11 @@ pkg_postinst() {
 einfo
 einfo "Quick guide:"
 einfo
-einfo "  ${PN} serve"
-einfo "  ${PN} run llama3:70b"
+einfo "  ${PN} serve			# Starts server"
+einfo "  ${PN} run llama3:70b		# Downloads and loads a llama3 Large Language Model (LLM) with 70 billion parameters"
 einfo
-einfo "You still need to download model.  The full list can be found at:"
+einfo "You still need to download a pregenerated model.  The full list can be"
+einfo "found at:"
 einfo
 einfo "  https://ollama.com/library"
 einfo
