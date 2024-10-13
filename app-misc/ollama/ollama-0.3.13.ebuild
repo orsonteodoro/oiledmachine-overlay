@@ -523,7 +523,7 @@ BDEPEND="
 
 pkg_pretend() {
 	if use rocm ; then
-ewarn "ROCm support for ${PN} is experimental and incomplete on ebuild level."
+ewarn "ROCm support for ${PN} is experimental."
 	fi
 	if use cuda ; then
 ewarn "CUDA support for ${PN} is experimental."
