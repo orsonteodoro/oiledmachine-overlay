@@ -17,7 +17,7 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go_build"
 fi
 
-inherit go-module hip-versions
+inherit go-module hip-versions lcnr
 
 gen_go_dl_gh_url()
 {
@@ -332,8 +332,32 @@ fi
 DESCRIPTION="Get up and running with Llama 3, Mistral, Gemma, and other language models."
 HOMEPAGE="https://ollama.com"
 LICENSE="
+	(
+		Apache-2.0
+		BSD
+		BSD-2
+		MIT
+		UoI-NCSA
+	)
+	(
+		BSD-2
+		ISC
+	)
+	Apache-2.0
+	BSD
 	MIT
+	Boost-1.0
+	W3C-Test-Suite-Licence
 "
+# Apache-2.0 BSD BSD-2 MIT UoI-NCSA - go_build/src/github.com/apache/arrow/NOTICE.txt
+# Apache-2.0 - go_build/src/golang.org/x/exp/shiny/materialdesign/icons/LICENSE
+# BSD - go_build/src/go4.org/unsafe/assume-no-moving-gc/LICENSE
+# MIT - go_build/src/gorgonia.org/vecf64/LICENSE
+# Boost-1.0 - go_build/src/github.com/bytedance/sonic/licenses/LICENSE-Drachennest
+# BSD-2 - go_build/src/github.com/nlpodyssey/gopickle/LICENSE
+# BSD-2 ISC - go_build/src/github.com/emirpasic/gods/LICENSE
+# W3C Test Suite License, W3C 3-clause BSD License - go_build/src/gonum.org/v1/gonum/graph/formats/rdf/testdata/LICENSE.md
+
 SLOT="0"
 IUSE+=" cuda rocm systemd"
 RDEPEND="
@@ -361,7 +385,7 @@ BDEPEND="
 
 pkg_pretend() {
 	if use rocm ; then
-ewarn "ROCm support for ${PN} is experimental."
+ewarn "ROCm support for ${PN} is experimental and incomplete on ebuild level."
 	fi
 	if use cuda ; then
 ewarn "CUDA support for ${PN} is experimental."
@@ -435,6 +459,8 @@ src_install() {
 	if use systemd ; then
 		doinitd "${FILESDIR}/${PN}"
 	fi
+	LCNR_SOURCE="${S_GO}/src"
+	lcnr_install_files
 }
 
 pkg_preinst() {
