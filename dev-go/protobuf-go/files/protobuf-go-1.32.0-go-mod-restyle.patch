@@ -1,0 +1,11 @@
+diff '--color=auto' -urp protobuf-go-1.32.0.orig/go.mod protobuf-go-1.32.0/go.mod
+--- protobuf-go-1.32.0.orig/go.mod	2023-12-22 01:30:25.000000000 -0800
++++ protobuf-go-1.32.0/go.mod	2024-10-14 08:41:08.451242770 -0700
+@@ -7,4 +7,6 @@ require (
+ 	github.com/google/go-cmp v0.5.5
+ )
+ 
+-require golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 // indirect
++require (
++	golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 // indirect
++)
