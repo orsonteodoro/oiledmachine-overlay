@@ -50,6 +50,8 @@ GEN_EBUILD=0
 LLAMA_CPP_COMMIT="8962422b1c6f9b8b15f5aeaea42600bcc2d44177"
 KOMPUTE_COMMIT="4565194ed7c32d1d2efa32ceab4d3c6cae006306"
 ROCM_SLOTS=(
+	"5.7"
+	"6.0"
 	"6.1"
 )
 gen_rocm_iuse() {
@@ -63,6 +65,8 @@ gen_rocm_iuse() {
 ROCM_IUSE=( $(gen_rocm_iuse) )
 inherit hip-versions
 declare -A ROCM_VERSIONS=(
+	["5_7"]="${HIP_5_7_VERSION}"
+	["6_0"]="${HIP_6_0_VERSION}"
 	["6_1"]="${HIP_6_1_VERSION}"
 )
 ROCM_VERSION="6.1.2"
@@ -683,6 +687,13 @@ pkg_setup() {
 	if use rocm ; then
 		if use rocm_6_1 ; then
 			export ROCM_SLOT="6.1"
+			export LLVM_SLOT=17
+		elif use rocm_6_0 ; then
+			export ROCM_SLOT="6.0"
+			export LLVM_SLOT=17
+		elif use rocm_5_7 ; then
+			export ROCM_SLOT="5.7"
+			export LLVM_SLOT=17
 		fi
 		rocm_pkg_setup
 	else
