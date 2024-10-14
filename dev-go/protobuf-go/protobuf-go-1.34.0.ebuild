@@ -1,7 +1,10 @@
+# Copyright 2022-2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
+# Patch snapshot parts are from ollama ebuild.
 
 # See integration_test.go:protobufVersion for bindings compatibility
 GEN_EBUILD=0
