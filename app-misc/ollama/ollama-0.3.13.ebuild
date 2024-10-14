@@ -69,7 +69,7 @@ declare -A ROCM_VERSIONS=(
 	["6_0"]="${HIP_6_0_VERSION}"
 	["6_1"]="${HIP_6_1_VERSION}"
 )
-ROCM_VERSION="6.1.2"
+#ROCM_VERSION="6.1.2"
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go_build"
 fi
@@ -114,7 +114,6 @@ get_col2_unpack() {
 	unset REPO_URI_FRAG
 	declare -A REPO_URI_FRAG=(
 		# The right value is based on GH URI fragment as in the repository section.
-#		[""]=""
 		["golang.org/x/arch"]="golang/arch"
 		["golang.org/x/crypto"]="golang/crypto"
 		["golang.org/x/exp"]="golang/exp"
@@ -480,7 +479,7 @@ ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
-cuda openrc rocm systemd
+cuda mkl openrc rocm systemd video_cards_intel
 ebuild-revision-1
 "
 gen_rocm_required_use() {
@@ -576,6 +575,21 @@ gen_rocm_rdepend() {
 		"
 	done
 }
+# Missing mkl_sycl_blas in =dev-libs/intel-compute-runtime-2023*
+RDEPEND="
+	mkl? (
+		sci-libs/mkl:=
+	)
+	video_cards_intel? (
+		>=dev-libs/intel-compute-runtime-2024[l0]
+		dev-libs/intel-compute-runtime:=
+		sys-devel/DPC++:=
+		sci-libs/mkl:=
+	)
+"
+DEPEND="
+	${RDEPEND}
+"
 BDEPEND="
 	>=dev-build/cmake-3.24
 	>=dev-lang/go-1.22.5
@@ -659,7 +673,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"A${FILESDIR}/${PN}-0.3.13-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-0.3.13-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.3.13-disable-git-submodule-update.patch"
 )
 
@@ -686,7 +700,8 @@ einfo "Generating tag done"
 }
 
 pkg_setup() {
-	local llvm_path
+	einfo "Called pkg_setup()"
+	local llvm_base_path
 	if use rocm ; then
 		if use rocm_6_1 ; then
 			export ROCM_SLOT="6.1"
@@ -704,12 +719,14 @@ pkg_setup() {
 		if use llvm_slot_17 ; then
 			llvm_slot=17
 		fi
-		llvm_path="/usr/lib/llvm/${llvm_slot}/bin"
+		llvm_base_path="/usr/lib/llvm/${llvm_slot}"
+einfo "PATH (before):  ${PATH}"
 		export PATH=$(echo "${PATH}" \
 			| tr ":" "\n" \
 			| sed -E -e "/llvm\/[0-9]+/d" \
 			| tr "\n" ":" \
-			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
+			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${llvm_base_path}/bin|g")
+einfo "PATH (after):  ${PATH}"
 	fi
 }
 
@@ -778,7 +795,25 @@ src_configure() {
 		export AMDGPU_TARGETS="$(get_amdgpu_flags)"
 	fi
 
+	if use mkl ; then
+		local pv=$(best_version "sci-libs/mkl" | sed -e "s|sci-libs/mkl-||g")
+		pv=$(ver_cut 1-3 ${pv})
+		local path="/opt/intel/oneapi/mkl/${pv}/env/vars.sh"
+		[[ -e "${path}" ]] || die
+		source "${path}"
+		local args=(
+			-DCMAKE_C_COMPILER=icx
+			-DCMAKE_CXX_COMPILER=icpx
+			-DLLAMA_BLAS=ON
+			-DLLAMA_BLAS_VENDOR=Intel10_64lp
+			-DLLAMA_NATIVE=ON
+		)
+		export OLLAMA_CUSTOM_CPU_DEFS="${args[@]}"
+	fi
+
 	strip-unsupported-flags
+	which clang || die
+	clang --version || die
 }
 
 src_compile() {

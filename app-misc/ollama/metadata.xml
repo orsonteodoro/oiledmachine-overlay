@@ -19,8 +19,14 @@
     <flag name="cuda">
       Support CUDA® for NVIDIA® GPUs.
     </flag>
+    <flag name="mkl">
+      Support CPU optimized linear math.
+    </flag>
     <flag name="rocm">
       Support ROCm™ for AMD GPUs.
+    </flag>
+    <flag name="video_cards_intel">
+      Support SYCL MKL acceleration for Intel® GPUs.
     </flag>
   </use>
 </pkgmetadata>
