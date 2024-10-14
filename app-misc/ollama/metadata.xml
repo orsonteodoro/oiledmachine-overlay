@@ -26,7 +26,7 @@
       Support CPU optimized linear math via the older LAPACK.
     </flag>
     <flag name="mkl">
-      Support CPU optimized linear math via MLK.
+      Support CPU optimized linear math via oneMKL.
     </flag>
     <flag name="openblas">
       Support CPU optimized linear math via OpenBLAS.
