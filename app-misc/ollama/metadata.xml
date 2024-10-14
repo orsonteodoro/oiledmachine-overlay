@@ -19,8 +19,17 @@
     <flag name="cuda">
       Support CUDA® for NVIDIA® GPUs.
     </flag>
+    <flag name="blis">
+      Support CPU optimized linear math via BLIS.
+    </flag>
+    <flag name="lapack">
+      Support CPU optimized linear math via the older LAPACK.
+    </flag>
     <flag name="mkl">
-      Support CPU optimized linear math.
+      Support CPU optimized linear math via MLK.
+    </flag>
+    <flag name="openblas">
+      Support CPU optimized linear math via OpenBLAS.
     </flag>
     <flag name="rocm">
       Support ROCm™ for AMD GPUs.

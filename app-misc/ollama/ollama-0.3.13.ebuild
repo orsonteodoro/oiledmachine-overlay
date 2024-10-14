@@ -479,7 +479,7 @@ ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
-cuda mkl openrc rocm systemd tbb video_cards_intel
+blis cuda lapack mkl openblas openrc rocm systemd tbb video_cards_intel
 ebuild-revision-1
 "
 gen_rocm_required_use() {
@@ -527,6 +527,12 @@ REQUIRED_USE+="
 	?? (
 		cuda
 		rocm
+	)
+	?? (
+		blis
+		lapack
+		mkl
+		openblas
 	)
 "
 RDEPEND="
@@ -577,8 +583,14 @@ gen_rocm_rdepend() {
 }
 # Missing mkl_sycl_blas in =dev-libs/intel-compute-runtime-2023*
 RDEPEND="
+	blis? (
+		sci-libs/blis:=
+	)
 	mkl? (
 		sci-libs/mkl:=
+	)
+	openblas? (
+		sci-libs/openblas:=
 	)
 	video_cards_intel? (
 		>=dev-libs/intel-compute-runtime-2024[l0]
@@ -795,19 +807,49 @@ src_configure() {
 		export AMDGPU_TARGETS="$(get_amdgpu_flags)"
 	fi
 
-	if use mkl ; then
+	if use blis ; then
+		local cflags="-D/usr/include/blis"
+		local libs="-lblis"
+		sed -i \
+			-e "s|linux CFLAGS: -D_GNU_SOURCE|linux CFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
+			-e "s|linux CXXFLAGS: -D_GNU_SOURCE|linux CXXFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
+			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64 ${libs}|g" \
+			"llama/llama.go" \
+			|| die
+	elif use mkl ; then
 		local thread_libs
 		local mkl_pv=$(best_version "sci-libs/mkl" | sed -e "s|sci-libs/mkl-||g")
 		mkl_pv=$(ver_cut 1-3 ${pv})
+	# We force tbb to dedupe thread libs.  GPU acceleration already uses tbb unconditionally.
+		local cflags=$(pkg-config --cflags mkl-dynamic-lp64-tbb)
+		local libs=$(pkg-config --libs mkl-dynamic-lp64-tbb)
 		sed -i \
-			-e "s|linux CFLAGS: -D_GNU_SOURCE|linux CFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS -DGGML_BLAS_USE_MKL=1|g" \
-			-e "s|linux CXXFLAGS: -D_GNU_SOURCE|linux CXXFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS -DGGML_BLAS_USE_MKL=1|g" \
-			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64 -L/opt/intel/oneapi/mkl/${mkl_pv}/lib/intel64 -lmkl_core -lmkl_intel_lp64 -lmkl_tbb_thread -ltbb|g" \
+			-e "s|linux CFLAGS: -D_GNU_SOURCE|linux CFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS -DGGML_BLAS_USE_MKL=1 ${cflags}|g" \
+			-e "s|linux CXXFLAGS: -D_GNU_SOURCE|linux CXXFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS -DGGML_BLAS_USE_MKL=1 ${cflags}|g" \
+			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64 ${libs}|g" \
 			"llama/llama.go" \
 			|| die
 		local path="/opt/intel/oneapi/mkl/${mkl_pv}/env/vars.sh"
 		[[ -e "${path}" ]] || die
 		source "${path}"
+	elif use lapack ; then
+		local cflags=$(pkg-config --cflags blas)
+		local libs=$(pkg-config --libs blas)
+		sed -i \
+			-e "s|linux CFLAGS: -D_GNU_SOURCE|linux CFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
+			-e "s|linux CXXFLAGS: -D_GNU_SOURCE|linux CXXFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
+			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64 ${libs}|g" \
+			"llama/llama.go" \
+			|| die
+	elif use openblas ; then
+		local cflags=$(pkg-config --cflags openblas)
+		local libs=$(pkg-config --libs openblas)
+		sed -i \
+			-e "s|linux CFLAGS: -D_GNU_SOURCE|linux CFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
+			-e "s|linux CXXFLAGS: -D_GNU_SOURCE|linux CXXFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
+			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64 ${libs}|g" \
+			"llama/llama.go" \
+			|| die
 	fi
 
 	strip-unsupported-flags
