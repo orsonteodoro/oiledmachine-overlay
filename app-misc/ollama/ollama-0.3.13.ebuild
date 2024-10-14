@@ -431,6 +431,7 @@ LICENSE="
 	)
 	Apache-2.0
 	BSD
+	GO-PATENTS
 	MIT
 	Boost-1.0
 	W3C-Test-Suite-Licence
@@ -442,6 +443,7 @@ LICENSE="
 # Boost-1.0 - go_build/src/github.com/bytedance/sonic/licenses/LICENSE-Drachennest
 # BSD-2 - go_build/src/github.com/nlpodyssey/gopickle/LICENSE
 # BSD-2 ISC - go_build/src/github.com/emirpasic/gods/LICENSE
+# GO-PATENTS - go_build/src/golang.org/x/arch/PATENTS
 # W3C Test Suite License, W3C 3-clause BSD License - go_build/src/gonum.org/v1/gonum/graph/formats/rdf/testdata/LICENSE.md
 
 SLOT="0"
