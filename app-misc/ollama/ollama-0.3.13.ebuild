@@ -820,7 +820,6 @@ src_configure() {
 			"llama/llama.go" \
 			|| die
 	elif use mkl ; then
-		local thread_libs
 		local mkl_pv=$(best_version "sci-libs/mkl" | sed -e "s|sci-libs/mkl-||g")
 		mkl_pv=$(ver_cut 1-3 ${pv})
 	# We force tbb to dedupe thread libs.  GPU acceleration already uses tbb unconditionally.
