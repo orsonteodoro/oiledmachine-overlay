@@ -586,6 +586,9 @@ RDEPEND="
 	blis? (
 		sci-libs/blis:=
 	)
+	lapack? (
+		sci-libs/lapack:=
+	)
 	mkl? (
 		sci-libs/mkl:=
 	)
