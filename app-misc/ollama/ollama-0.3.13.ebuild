@@ -577,9 +577,6 @@ gen_rocm_rdepend() {
 }
 # Missing mkl_sycl_blas in =dev-libs/intel-compute-runtime-2023*
 RDEPEND="
-	!mkl? (
-		virtual/blas
-	)
 	mkl? (
 		sci-libs/mkl:=
 	)
