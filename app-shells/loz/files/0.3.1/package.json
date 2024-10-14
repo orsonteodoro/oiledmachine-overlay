@@ -1,0 +1,45 @@
+{
+  "name": "loz",
+  "version": "0.3.1",
+  "description": "CLI for various knowledge services",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joone/loz.git"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "test": "mocha -r ts-node/register src/**/*test.ts test/**/*test.ts",
+    "lint": "eslint 'src/**/*.{js,ts}'",
+    "style": "npx prettier --write ."
+  },
+  "author": "Joone Hur",
+  "license": "BSD3",
+  "devDependencies": {
+    "@types/chai": "^4.2.9",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.11.28",
+    "@types/yargs": "^17.0.32",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "chai": "^4.2.0",
+    "eslint": "^8.57.0",
+    "mocha": "^10.2.0",
+    "mock-stdin": "^1.0.0",
+    "prettier": "^3.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "ollama-node": "^0.1.27",
+    "openai": "^4.20.1",
+    "yargs": "^17.7.2"
+  },
+  "bin": {
+    "loz": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ]
+}
