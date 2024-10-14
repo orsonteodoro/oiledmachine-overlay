@@ -1,6 +1,6 @@
 diff '--color=auto' -urp ollama.orig/gpu/amd_linux.go ollama/gpu/amd_linux.go
 --- ollama.orig/gpu/amd_linux.go	2024-10-10 11:21:51.000000000 -0700
-+++ ollama/gpu/amd_linux.go	2024-10-14 12:28:53.964436705 -0700
++++ ollama/gpu/amd_linux.go	2024-10-14 13:02:54.582749594 -0700
 @@ -43,7 +43,7 @@ const (
  var (
  	// Used to validate if the given ROCm lib is usable
@@ -12,7 +12,7 @@ diff '--color=auto' -urp ollama.orig/gpu/amd_linux.go ollama/gpu/amd_linux.go
  // Gather GPU information from the amdgpu driver if any supported GPUs are detected
 diff '--color=auto' -urp ollama.orig/gpu/gpu_linux.go ollama/gpu/gpu_linux.go
 --- ollama.orig/gpu/gpu_linux.go	2024-10-10 11:21:51.000000000 -0700
-+++ ollama/gpu/gpu_linux.go	2024-10-14 12:28:53.964436705 -0700
++++ ollama/gpu/gpu_linux.go	2024-10-14 13:02:54.582749594 -0700
 @@ -10,16 +10,16 @@ import (
  )
  
@@ -51,8 +51,8 @@ diff '--color=auto' -urp ollama.orig/gpu/gpu_linux.go ollama/gpu/gpu_linux.go
  }
 diff '--color=auto' -urp ollama.orig/llama/Makefile ollama/llama/Makefile
 --- ollama.orig/llama/Makefile	2024-10-10 11:21:51.000000000 -0700
-+++ ollama/llama/Makefile	2024-10-14 12:28:53.964436705 -0700
-@@ -12,9 +12,9 @@ ifeq ($(OS),windows)
++++ ollama/llama/Makefile	2024-10-14 13:05:23.104583804 -0700
+@@ -12,11 +12,17 @@ ifeq ($(OS),windows)
  	HIP_PATH_83 := $(shell cygpath -m -s "$(subst \,/,$(HIP_PATH))" 2>/dev/null)
  	HIP_LIB_DIR := $(shell ls -d $(HIP_PATH_83)/lib 2>/dev/null)
  else ifeq ($(OS),linux)
@@ -60,13 +60,23 @@ diff '--color=auto' -urp ollama.orig/llama/Makefile ollama/llama/Makefile
 +	HIP_PATH?=/opt/rocm-@ROCM_VERSION@
  	HIP_LIB_DIR := $(shell ls -d $(HIP_PATH)/lib 2>/dev/null)
 -	CUDA_PATH?=/usr/local/cuda
+-	CUDA_11:=$(shell ls -d $(CUDA_PATH)-11 2>/dev/null)
+-	CUDA_12:=$(shell ls -d $(CUDA_PATH)-12 2>/dev/null)
 +	CUDA_PATH?=/opt/cuda
- 	CUDA_11:=$(shell ls -d $(CUDA_PATH)-11 2>/dev/null)
- 	CUDA_12:=$(shell ls -d $(CUDA_PATH)-12 2>/dev/null)
++	CUDA_SLOT?=12
++	ifeq ($(CUDA_SLOT),12)
++		CUDA_11:=
++		CUDA_12:=1
++	else
++		CUDA_11:=1
++		CUDA_12:=
++	fi
  endif
+ 
+ ifeq ($(OLLAMA_SKIP_CUDA_GENERATE),)
 diff '--color=auto' -urp ollama.orig/llama/llama.go ollama/llama/llama.go
 --- ollama.orig/llama/llama.go	2024-10-10 11:21:51.000000000 -0700
-+++ ollama/llama/llama.go	2024-10-14 12:28:53.964436705 -0700
++++ ollama/llama/llama.go	2024-10-14 13:02:54.582749594 -0700
 @@ -29,12 +29,12 @@ package llama
  #cgo rocm CFLAGS: -DGGML_USE_CUDA -DGGML_USE_HIPBLAS -DGGML_CUDA_DMMV_X=32 -DGGML_CUDA_PEER_MAX_BATCH_SIZE=128 -DGGML_CUDA_MMV_Y=1 -D__HIP_PLATFORM_AMD__=1 -D__HIP_ROCclr__=1
  #cgo rocm CXXFLAGS: -DGGML_USE_CUDA -DGGML_USE_HIPBLAS -DGGML_CUDA_DMMV_X=32 -DGGML_CUDA_PEER_MAX_BATCH_SIZE=128 -DGGML_CUDA_MMV_Y=1 -D__HIP_PLATFORM_AMD__=1 -D__HIP_ROCclr__=1
@@ -85,7 +95,7 @@ diff '--color=auto' -urp ollama.orig/llama/llama.go ollama/llama/llama.go
  #include "llama.h"
 diff '--color=auto' -urp ollama.orig/llama/make/Makefile.rocm ollama/llama/make/Makefile.rocm
 --- ollama.orig/llama/make/Makefile.rocm	2024-10-10 11:21:51.000000000 -0700
-+++ ollama/llama/make/Makefile.rocm	2024-10-14 12:28:53.964436705 -0700
++++ ollama/llama/make/Makefile.rocm	2024-10-14 13:02:54.582749594 -0700
 @@ -17,7 +17,7 @@ ifeq ($(OS),windows)
  	GPU_COMPILER_WIN := $(HIP_PATH)bin/hipcc.bin.exe
  	GPU_COMPILER:=$(GPU_COMPILER_WIN)
@@ -97,7 +107,7 @@ diff '--color=auto' -urp ollama.orig/llama/make/Makefile.rocm ollama/llama/make/
  	GPU_COMPILER:=$(GPU_COMPILER_LINUX)
 diff '--color=auto' -urp ollama.orig/llama/make/cuda.make ollama/llama/make/cuda.make
 --- ollama.orig/llama/make/cuda.make	2024-10-10 11:21:51.000000000 -0700
-+++ ollama/llama/make/cuda.make	2024-10-14 12:28:53.964436705 -0700
++++ ollama/llama/make/cuda.make	2024-10-14 13:02:54.582749594 -0700
 @@ -20,7 +20,7 @@ GPU_COMPILER_CFLAGS_LINUX = $(CFLAGS) -X
  GPU_COMPILER_CXXFLAGS_WIN = $(CXXFLAGS) -D_WIN32_WINNT=0x602
  GPU_COMPILER_CXXFLAGS_LINUX = $(CXXFLAGS) -Xcompiler -fPIC -D_GNU_SOURCE
@@ -109,7 +119,7 @@ diff '--color=auto' -urp ollama.orig/llama/make/cuda.make ollama/llama/make/cuda
  GPU_RUNNER_ARCH_FLAGS := $(foreach arch,$(subst ;,$(space),$(CUDA_ARCHITECTURES)),--generate-code=arch=compute_$(arch)$(comma)code=[compute_$(arch)$(comma)sm_$(arch)]) \
 diff '--color=auto' -urp ollama.orig/llm/generate/gen_linux.sh ollama/llm/generate/gen_linux.sh
 --- ollama.orig/llm/generate/gen_linux.sh	2024-10-10 11:21:51.000000000 -0700
-+++ ollama/llm/generate/gen_linux.sh	2024-10-14 12:28:53.964436705 -0700
++++ ollama/llm/generate/gen_linux.sh	2024-10-14 13:02:54.582749594 -0700
 @@ -45,8 +45,8 @@ amdGPUs() {
  
  echo "Starting linux generate script"
@@ -143,7 +153,7 @@ diff '--color=auto' -urp ollama.orig/llm/generate/gen_linux.sh ollama/llm/genera
  if [ -z "${CLBlast_DIR}" ]; then
 diff '--color=auto' -urp ollama.orig/llm/llama.cpp/Makefile ollama/llm/llama.cpp/Makefile
 --- ollama.orig/llm/llama.cpp/Makefile	2024-09-03 10:58:54.000000000 -0700
-+++ ollama/llm/llama.cpp/Makefile	2024-10-14 12:29:29.047917009 -0700
++++ ollama/llm/llama.cpp/Makefile	2024-10-14 13:02:54.586749535 -0700
 @@ -605,11 +605,7 @@ ifdef GGML_CUDA
  		MK_LDFLAGS   += -lmusa -lmublas -lmusart -lpthread -ldl -lrt -L$(CUDA_PATH)/lib -L/usr/lib64
  		MK_NVCCFLAGS += -x musa -mtgpu --cuda-gpu-arch=mp_22
@@ -184,7 +194,7 @@ diff '--color=auto' -urp ollama.orig/llm/llama.cpp/Makefile ollama/llm/llama.cpp
  	GGML_CUDA_MMV_Y        ?= 1
 diff '--color=auto' -urp ollama.orig/llm/llama.cpp/ggml/src/CMakeLists.txt ollama/llm/llama.cpp/ggml/src/CMakeLists.txt
 --- ollama.orig/llm/llama.cpp/ggml/src/CMakeLists.txt	2024-09-03 10:58:54.000000000 -0700
-+++ ollama/llm/llama.cpp/ggml/src/CMakeLists.txt	2024-10-14 12:28:53.968436645 -0700
++++ ollama/llm/llama.cpp/ggml/src/CMakeLists.txt	2024-10-14 13:02:54.586749535 -0700
 @@ -400,11 +400,7 @@ endif()
  
  if (GGML_HIPBLAS)
@@ -209,7 +219,7 @@ diff '--color=auto' -urp ollama.orig/llm/llama.cpp/ggml/src/CMakeLists.txt ollam
              message(WARNING "Setting hipcc as the C++ compiler is legacy behavior."
 diff '--color=auto' -urp ollama.orig/scripts/install.sh ollama/scripts/install.sh
 --- ollama.orig/scripts/install.sh	2024-10-10 11:21:51.000000000 -0700
-+++ ollama/scripts/install.sh	2024-10-14 12:28:53.968436645 -0700
++++ ollama/scripts/install.sh	2024-10-14 13:02:54.586749535 -0700
 @@ -209,7 +209,7 @@ if check_gpu lspci amdgpu || check_gpu l
          exit 0
      fi

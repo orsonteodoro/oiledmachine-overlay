@@ -652,7 +652,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.3.13-hardcoded-paths.patch"
+	"A${FILESDIR}/${PN}-0.3.13-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.3.13-disable-git-submodule-update.patch"
 )
 
@@ -753,13 +753,17 @@ src_configure() {
 	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.4*" ; then
 		export CC="${CHOST}-gcc-13"
 		export CXX="${CHOST}-g++-13"
+		export CUDA_SLOT=12
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
+		export CUDA_SLOT=11
 	elif use rocm ; then
 		export CC="${CHOST}-gcc-12"
 		export CXX="${CHOST}-g++-12"
+		export AMDGPU_TARGETS="$(get_amdgpu_flags)"
 	fi
+
 	strip-unsupported-flags
 }
 
