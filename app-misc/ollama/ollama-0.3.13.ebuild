@@ -495,6 +495,9 @@ gen_rocm_required_use() {
 }
 REQUIRED_USE="
 	$(gen_rocm_required_use)
+	?? (
+		${ROCM_IUSE[@]}
+	)
 	|| (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
