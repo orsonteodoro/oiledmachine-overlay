@@ -802,8 +802,7 @@ src_configure() {
 		[[ -e "${path}" ]] || die
 		source "${path}"
 		local args=(
-			-DCMAKE_C_COMPILER=icx
-			-DCMAKE_CXX_COMPILER=icpx
+			-DCMAKE_CXX_FLAGS="-DGGML_BLAS_USE_MKL=1"
 			-DLLAMA_BLAS=ON
 			-DLLAMA_BLAS_VENDOR=Intel10_64lp
 			-DLLAMA_NATIVE=ON
