@@ -162,16 +162,8 @@ einfo "Unpacking ${dest_name}.tar.gz"
 		|| die
 }
 
-# From:  date -d "${EGIT_COMMIT_TIMESTAMP}" -u
-TIMESTAMP_YYMMDD="20240414"
-TIMESTAMP_HHMMSS="155828" # In UTC without :
-
-# Version template obtained from https://pkg.go.dev/github.com/probonopd/go-appimage?tab=versions
-#MY_PV="v0.0.0-${TIMESTAMP_YYMMDD}${TIMESTAMP_HHMMSS}-${EGIT_COMMIT:0:12}" # Keep below TIMESTAMP_*
 MY_PV="v${PV}"
 
-# Manual edit
-# github.com/bytedance/sonic needs v0.1.1 -> loader/v0.1.1 tag
 unpack_go()
 {
 	unpack_go_pkg github.com/protocolbuffers/protobuf-go protocolbuffers/protobuf-go ${MY_PV}
@@ -199,7 +191,8 @@ HOMEPAGE="http://protobuf.dev"
 LICENSE="BSD"
 SLOT="0/${PROTOBUF_SLOT}"
 RDEPEND="
-	dev-libs/protobuf:${PROTOBUF_SLOT}
+	=dev-libs/protobuf-${PROTOBUF_SLOT#*.}*
+	dev-libs/protobuf:=
 "
 
 src_unpack() {

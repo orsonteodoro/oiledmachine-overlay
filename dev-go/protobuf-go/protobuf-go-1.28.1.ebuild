@@ -9,7 +9,7 @@ EAPI=8
 # See integration_test.go:protobufVersion for bindings compatibility
 GEN_EBUILD=0
 MY_PV="v${PV}"
-PROTOBUF_SLOT="4.22"
+PROTOBUF_SLOT="3.15"
 export S_GO="${WORKDIR}/go_build"
 
 inherit go-module
@@ -189,7 +189,7 @@ HOMEPAGE="http://protobuf.dev"
 LICENSE="BSD"
 SLOT="0/${PROTOBUF_SLOT}"
 RDEPEND="
-	=dev-libs/protobuf-${PROTOBUF_SLOT#*.}*
+	=dev-libs/protobuf-${PROTOBUF_SLOT%.*}*
 	dev-libs/protobuf:=
 "
 
