@@ -611,6 +611,7 @@ BDEPEND="
 	$(gen_clang_bdepend)
 	>=sys-devel/gcc-11.4.0
 	dev-go/protobuf-go:=
+	dev-go/protoc-gen-go-grpc:=
 	cuda? (
 		cuda_targets_sm_50? (
 			|| (
