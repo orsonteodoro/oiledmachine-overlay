@@ -41,12 +41,14 @@ CUDA_TARGETS_COMPAT=(
 	sm_90
 )
 GEN_EBUILD=0
+LLAMA_CPP_COMMIT="8962422b1c6f9b8b15f5aeaea42600bcc2d44177"
+KOMPUTE_COMMIT="4565194ed7c32d1d2efa32ceab4d3c6cae006306"
 ROCM_VERSION="6.1.2"
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go_build"
 fi
 
-inherit go-module hip-versions lcnr
+inherit dep-prepare go-module hip-versions lcnr
 
 gen_go_dl_gh_url()
 {
@@ -291,6 +293,10 @@ else
 	SRC_URI="
 https://github.com/ollama/ollama/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/ggerganov/llama.cpp/archive/${LLAMA_CPP_COMMIT}.tar.gz
+	-> llama.cpp-${LLAMA_CPP_COMMIT:0:7}.tar.gz
+https://github.com/nomic-ai/kompute/archive/${KOMPUTE_COMMIT}.tar.gz
+	-> kompute-${KOMPUTE_COMMIT:0:7}.tar.gz
 $(gen_go_dl_gh_url github.com/ollama/ollama ollama/ollama ${MY_PV})
 $(gen_go_dl_gh_url github.com/containerd/console containerd/console v1.0.3)
 $(gen_go_dl_gh_url github.com/emirpasic/gods emirpasic/gods v1.18.1)
@@ -443,6 +449,7 @@ IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda openrc rocm systemd
+ebuild-revision-1
 "
 gen_cuda_required_use() {
 	local x
@@ -604,12 +611,18 @@ src_unpack() {
 		git-r3_src_unpack
 		go-module_live_vendor
 	else
-		unpack "${P}.tar.gz"
+		unpack \
+			"${P}.tar.gz" \
+			"llama.cpp-${LLAMA_CPP_COMMIT:0:7}.tar.gz" \
+			"kompute-${KOMPUTE_COMMIT:0:7}.tar.gz"
+
 		[[ "${GEN_EBUILD}" == "1" ]] && generate_ebuild_snapshot
 		unpack_go
 		export S="${S_GO}/src/github.com/ollama/${PN}"
 		cd "${S}" || die
 		gen_git_tag
+		dep_prepare_mv "${WORKDIR}/llama.cpp-${LLAMA_CPP_COMMIT}" "${S}/llm/llama.cpp"
+		dep_prepare_mv "${WORKDIR}/kompute-${KOMPUTE_COMMIT}" "${S}/llm/llama.cpp/ggml/src/kompute"
 	fi
 }
 
