@@ -49,35 +49,6 @@ diff '--color=auto' -urp ollama.orig/gpu/gpu_linux.go ollama/gpu/gpu_linux.go
  	"/usr/lib*/libcuda.so*",
  	"/usr/local/lib*/libcuda.so*",
  }
-diff '--color=auto' -urp ollama.orig/llama/Dockerfile ollama/llama/Dockerfile
---- ollama.orig/llama/Dockerfile	2024-10-10 11:21:51.000000000 -0700
-+++ ollama/llama/Dockerfile	2024-10-14 12:28:53.964436705 -0700
-@@ -22,9 +22,9 @@ ARG GOLANG_VERSION
- ARG CUDA_VERSION_11
- ARG CUDA_VERSION_12
- COPY ./scripts/rh_linux_deps.sh /
--ENV PATH /opt/rh/devtoolset-10/root/usr/bin:/usr/local/cuda/bin:$PATH
--ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
--ENV LIBRARY_PATH=/usr/local/cuda/lib64/stubs:/opt/amdgpu/lib64
-+ENV PATH /opt/rh/devtoolset-10/root/usr/bin:/opt/cuda/bin:$PATH
-+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/cuda/lib64
-+ENV LIBRARY_PATH=/opt/cuda/lib64/stubs:/opt/amdgpu/lib64
- RUN CMAKE_VERSION=${CMAKE_VERSION} GOLANG_VERSION=${GOLANG_VERSION} sh /rh_linux_deps.sh
- RUN yum-config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-rhel7.repo && \
-     dnf clean all && \
-@@ -58,9 +58,9 @@ RUN yum-config-manager --add-repo https:
-     zsh \
-     cuda-toolkit-$(echo ${CUDA_VERSION_11} | cut -f1-2 -d. | sed -e "s/\./-/g") \
-     cuda-toolkit-$(echo ${CUDA_VERSION_12} | cut -f1-2 -d. | sed -e "s/\./-/g")
--ENV PATH /opt/rh/gcc-toolset-10/root/usr/bin:$PATH:/usr/local/cuda/bin
--ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
--ENV LIBRARY_PATH=/usr/local/cuda/lib64/stubs:/opt/amdgpu/lib64
-+ENV PATH /opt/rh/gcc-toolset-10/root/usr/bin:$PATH:/opt/cuda/bin
-+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/cuda/lib64
-+ENV LIBRARY_PATH=/opt/cuda/lib64/stubs:/opt/amdgpu/lib64
- ENV GOARCH amd64
- ENV CGO_ENABLED 1
- WORKDIR /go/src/github.com/ollama/ollama/
 diff '--color=auto' -urp ollama.orig/llama/Makefile ollama/llama/Makefile
 --- ollama.orig/llama/Makefile	2024-10-10 11:21:51.000000000 -0700
 +++ ollama/llama/Makefile	2024-10-14 12:28:53.964436705 -0700
