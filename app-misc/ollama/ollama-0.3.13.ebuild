@@ -811,7 +811,7 @@ src_configure() {
 	fi
 
 	if use blis ; then
-		local cflags="-D/usr/include/blis"
+		local cflags="-I/usr/include/blis"
 		local libs="-lblis"
 		sed -i \
 			-e "s|linux CFLAGS: -D_GNU_SOURCE|linux CFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
