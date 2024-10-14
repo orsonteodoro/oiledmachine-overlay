@@ -479,7 +479,7 @@ ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
-cuda mkl openrc rocm systemd video_cards_intel
+cuda mkl openrc rocm systemd tbb video_cards_intel
 ebuild-revision-1
 "
 gen_rocm_required_use() {
@@ -577,6 +577,9 @@ gen_rocm_rdepend() {
 }
 # Missing mkl_sycl_blas in =dev-libs/intel-compute-runtime-2023*
 RDEPEND="
+	!mkl? (
+		virtual/blas
+	)
 	mkl? (
 		sci-libs/mkl:=
 	)
@@ -796,18 +799,18 @@ src_configure() {
 	fi
 
 	if use mkl ; then
-		local pv=$(best_version "sci-libs/mkl" | sed -e "s|sci-libs/mkl-||g")
-		pv=$(ver_cut 1-3 ${pv})
-		local path="/opt/intel/oneapi/mkl/${pv}/env/vars.sh"
+		local thread_libs
+		local mkl_pv=$(best_version "sci-libs/mkl" | sed -e "s|sci-libs/mkl-||g")
+		mkl_pv=$(ver_cut 1-3 ${pv})
+		sed -i \
+			-e "s|linux CFLAGS: -D_GNU_SOURCE|linux CFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS -DGGML_BLAS_USE_MKL=1|g" \
+			-e "s|linux CXXFLAGS: -D_GNU_SOURCE|linux CXXFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS -DGGML_BLAS_USE_MKL=1|g" \
+			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64 -L/opt/intel/oneapi/mkl/${mkl_pv}/lib/intel64 -lmkl_core -lmkl_intel_lp64 -lmkl_tbb_thread -ltbb|g" \
+			"llama/llama.go" \
+			|| die
+		local path="/opt/intel/oneapi/mkl/${mkl_pv}/env/vars.sh"
 		[[ -e "${path}" ]] || die
 		source "${path}"
-		local args=(
-			-DCMAKE_CXX_FLAGS="-DGGML_BLAS_USE_MKL=1"
-			-DLLAMA_BLAS=ON
-			-DLLAMA_BLAS_VENDOR=Intel10_64lp
-			-DLLAMA_NATIVE=ON
-		)
-		export OLLAMA_CUSTOM_CPU_DEFS="${args[@]}"
 	fi
 
 	strip-unsupported-flags
