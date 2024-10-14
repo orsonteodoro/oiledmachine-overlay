@@ -17,12 +17,15 @@ EAPI=8
 # Hardware support:  https://github.com/ollama/ollama/blob/v0.3.13/docs/gpu.md
 AMDGPU_TARGETS_COMPAT=(
 	gfx900
-	gfx906
-	gfx908
-	gfx90a
+	gfx906_xnack_minus
+	gfx908_xnack_minus
+	gfx90a_xnack_plus
+	gfx90a_xnack_minus
 	gfx940
 	gfx941
 	gfx942
+	gfx1010
+	gfx1012
 	gfx1030
 	gfx1100
 	gfx1101
@@ -199,13 +202,14 @@ einfo "Unpacking ${dest_name}.tar.gz"
 		|| die
 }
 
-# From:  date -d "${EGIT_COMMIT_TIMESTAMP}" -u
-TIMESTAMP_YYMMDD="20240414"
-TIMESTAMP_HHMMSS="155828" # In UTC without :
-
-# Version template obtained from https://pkg.go.dev/github.com/probonopd/go-appimage?tab=versions
-#MY_PV="v0.0.0-${TIMESTAMP_YYMMDD}${TIMESTAMP_HHMMSS}-${EGIT_COMMIT:0:12}" # Keep below TIMESTAMP_*
-MY_PV="v${PV}"
+if [[ "${PV}" =~ "9999" ]] ; then
+# Placeholder.  The timestamp is in localtime but it should be in UTC.
+	TIMESTAMP_YYMMDD=$(printf "%(%Y%m%d %H:%M:%S)T")
+	TIMESTAMP_HHMMSS=$(printf "%(%H%M%S)T") # In UTC without :
+	#MY_PV="v0.0.0-${TIMESTAMP_YYMMDD}${TIMESTAMP_HHMMSS}-${EGIT_COMMIT:0:12}" # Keep below TIMESTAMP_*
+else
+	MY_PV="v${PV}"
+fi
 
 # Manual edit
 # github.com/bytedance/sonic needs v0.1.1 -> loader/v0.1.1 tag
@@ -276,6 +280,7 @@ unpack_go()
 	unpack_go_pkg google.golang.org/protobuf protocolbuffers/protobuf-go v1.34.1
 	unpack_go_pkg gopkg.in/yaml.v3 go-yaml/yaml v3.0.1
 }
+# protobuf-go 1.34.1 tests with protobuf 5.27.0-rc1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ollama/ollama.git"
@@ -285,7 +290,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 	inherit git-r3
 else
-	KEYWORDS="~amd64"
+#	KEYWORDS="~amd64"
 	S="${WORKDIR}/${P}"
 
 # Manual edit
@@ -505,6 +510,7 @@ BDEPEND="
 	>=dev-build/cmake-3.24
 	>=dev-lang/go-1.22.5
 	>=sys-devel/gcc-11.4.0
+	dev-go/protobuf-go:=
 	cuda? (
 		cuda_targets_sm_50? (
 			|| (
@@ -584,6 +590,9 @@ BDEPEND="
 		sci-libs/clblast
 	)
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-0.3.13-disable-git-submodule-update.patch"
+)
 
 pkg_pretend() {
 	if use rocm ; then
@@ -608,6 +617,7 @@ einfo "Generating tag done"
 }
 
 src_unpack() {
+ewarn "The ${PN} ebuild is under development and does not work."
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_src_unpack
@@ -660,16 +670,20 @@ src_compile() {
 	export GOFLAGS="'-ldflags=-w -s \"-X=github.com/${PN}/${PN}/version.Version=${VERSION}\"'"
 
 	if [[ "${PV}" =~ "9999" ]] ; then
-		ego generate ./...
+		ego generate -x ./...
 		ego build .
 	else
 		export GOPATH="${WORKDIR}/go_build"
 		export GOBIN="${GOPATH}/bin"
 		export GO111MODULE=auto
+		pushd "${GOPATH}/src" >/dev/null 2>&1 || die
+			go generate -x ./... || die
+		popd >/dev/null 2>&1 || die
 		mkdir -p "${GOBIN}" || die
-		pushd "${GOBIN}" || die
-			go build "github.com/ollama/${PN}" || die
-		popd
+		go build || die
+#		pushd "${GOBIN}" >/dev/null 2>&1 || die
+#			go build "github.com/ollama/${PN}" || die
+#		popd >/dev/null 2>&1 || die
 	fi
 }
 
