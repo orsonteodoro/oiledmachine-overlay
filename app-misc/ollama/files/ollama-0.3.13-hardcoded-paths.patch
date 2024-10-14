@@ -1,0 +1,250 @@
+diff '--color=auto' -urp ollama.orig/gpu/amd_linux.go ollama/gpu/amd_linux.go
+--- ollama.orig/gpu/amd_linux.go	2024-10-10 11:21:51.000000000 -0700
++++ ollama/gpu/amd_linux.go	2024-10-14 12:28:53.964436705 -0700
+@@ -43,7 +43,7 @@ const (
+ var (
+ 	// Used to validate if the given ROCm lib is usable
+ 	ROCmLibGlobs          = []string{"libhipblas.so.2*", "rocblas"} // TODO - probably include more coverage of files here...
+-	RocmStandardLocations = []string{"/opt/rocm/lib", "/usr/lib64"}
++	RocmStandardLocations = []string{"/opt/rocm-@ROCM_VERSION@/lib", "/usr/lib64"}
+ )
+ 
+ // Gather GPU information from the amdgpu driver if any supported GPUs are detected
+diff '--color=auto' -urp ollama.orig/gpu/gpu_linux.go ollama/gpu/gpu_linux.go
+--- ollama.orig/gpu/gpu_linux.go	2024-10-10 11:21:51.000000000 -0700
++++ ollama/gpu/gpu_linux.go	2024-10-14 12:28:53.964436705 -0700
+@@ -10,16 +10,16 @@ import (
+ )
+ 
+ var CudartGlobs = []string{
+-	"/usr/local/cuda/lib64/libcudart.so*",
++	"/opt/cuda/lib64/libcudart.so*",
+ 	"/usr/lib/x86_64-linux-gnu/nvidia/current/libcudart.so*",
+ 	"/usr/lib/x86_64-linux-gnu/libcudart.so*",
+ 	"/usr/lib/wsl/lib/libcudart.so*",
+ 	"/usr/lib/wsl/drivers/*/libcudart.so*",
+ 	"/opt/cuda/lib64/libcudart.so*",
+-	"/usr/local/cuda*/targets/aarch64-linux/lib/libcudart.so*",
++	"/opt/cuda*/targets/aarch64-linux/lib/libcudart.so*",
+ 	"/usr/lib/aarch64-linux-gnu/nvidia/current/libcudart.so*",
+ 	"/usr/lib/aarch64-linux-gnu/libcudart.so*",
+-	"/usr/local/cuda/lib*/libcudart.so*",
++	"/opt/cuda/lib*/libcudart.so*",
+ 	"/usr/lib*/libcudart.so*",
+ 	"/usr/local/lib*/libcudart.so*",
+ }
+@@ -27,13 +27,13 @@ var CudartGlobs = []string{
+ var NvmlGlobs = []string{}
+ 
+ var NvcudaGlobs = []string{
+-	"/usr/local/cuda*/targets/*/lib/libcuda.so*",
++	"/opt/cuda*/targets/*/lib/libcuda.so*",
+ 	"/usr/lib/*-linux-gnu/nvidia/current/libcuda.so*",
+ 	"/usr/lib/*-linux-gnu/libcuda.so*",
+ 	"/usr/lib/wsl/lib/libcuda.so*",
+ 	"/usr/lib/wsl/drivers/*/libcuda.so*",
+ 	"/opt/cuda/lib*/libcuda.so*",
+-	"/usr/local/cuda/lib*/libcuda.so*",
++	"/opt/cuda/lib*/libcuda.so*",
+ 	"/usr/lib*/libcuda.so*",
+ 	"/usr/local/lib*/libcuda.so*",
+ }
+diff '--color=auto' -urp ollama.orig/llama/Dockerfile ollama/llama/Dockerfile
+--- ollama.orig/llama/Dockerfile	2024-10-10 11:21:51.000000000 -0700
++++ ollama/llama/Dockerfile	2024-10-14 12:28:53.964436705 -0700
+@@ -22,9 +22,9 @@ ARG GOLANG_VERSION
+ ARG CUDA_VERSION_11
+ ARG CUDA_VERSION_12
+ COPY ./scripts/rh_linux_deps.sh /
+-ENV PATH /opt/rh/devtoolset-10/root/usr/bin:/usr/local/cuda/bin:$PATH
+-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
+-ENV LIBRARY_PATH=/usr/local/cuda/lib64/stubs:/opt/amdgpu/lib64
++ENV PATH /opt/rh/devtoolset-10/root/usr/bin:/opt/cuda/bin:$PATH
++ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/cuda/lib64
++ENV LIBRARY_PATH=/opt/cuda/lib64/stubs:/opt/amdgpu/lib64
+ RUN CMAKE_VERSION=${CMAKE_VERSION} GOLANG_VERSION=${GOLANG_VERSION} sh /rh_linux_deps.sh
+ RUN yum-config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel7/x86_64/cuda-rhel7.repo && \
+     dnf clean all && \
+@@ -58,9 +58,9 @@ RUN yum-config-manager --add-repo https:
+     zsh \
+     cuda-toolkit-$(echo ${CUDA_VERSION_11} | cut -f1-2 -d. | sed -e "s/\./-/g") \
+     cuda-toolkit-$(echo ${CUDA_VERSION_12} | cut -f1-2 -d. | sed -e "s/\./-/g")
+-ENV PATH /opt/rh/gcc-toolset-10/root/usr/bin:$PATH:/usr/local/cuda/bin
+-ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
+-ENV LIBRARY_PATH=/usr/local/cuda/lib64/stubs:/opt/amdgpu/lib64
++ENV PATH /opt/rh/gcc-toolset-10/root/usr/bin:$PATH:/opt/cuda/bin
++ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/cuda/lib64
++ENV LIBRARY_PATH=/opt/cuda/lib64/stubs:/opt/amdgpu/lib64
+ ENV GOARCH amd64
+ ENV CGO_ENABLED 1
+ WORKDIR /go/src/github.com/ollama/ollama/
+diff '--color=auto' -urp ollama.orig/llama/Makefile ollama/llama/Makefile
+--- ollama.orig/llama/Makefile	2024-10-10 11:21:51.000000000 -0700
++++ ollama/llama/Makefile	2024-10-14 12:28:53.964436705 -0700
+@@ -12,9 +12,9 @@ ifeq ($(OS),windows)
+ 	HIP_PATH_83 := $(shell cygpath -m -s "$(subst \,/,$(HIP_PATH))" 2>/dev/null)
+ 	HIP_LIB_DIR := $(shell ls -d $(HIP_PATH_83)/lib 2>/dev/null)
+ else ifeq ($(OS),linux)
+-	HIP_PATH?=/opt/rocm
++	HIP_PATH?=/opt/rocm-@ROCM_VERSION@
+ 	HIP_LIB_DIR := $(shell ls -d $(HIP_PATH)/lib 2>/dev/null)
+-	CUDA_PATH?=/usr/local/cuda
++	CUDA_PATH?=/opt/cuda
+ 	CUDA_11:=$(shell ls -d $(CUDA_PATH)-11 2>/dev/null)
+ 	CUDA_12:=$(shell ls -d $(CUDA_PATH)-12 2>/dev/null)
+ endif
+diff '--color=auto' -urp ollama.orig/llama/llama.go ollama/llama/llama.go
+--- ollama.orig/llama/llama.go	2024-10-10 11:21:51.000000000 -0700
++++ ollama/llama/llama.go	2024-10-14 12:28:53.964436705 -0700
+@@ -29,12 +29,12 @@ package llama
+ #cgo rocm CFLAGS: -DGGML_USE_CUDA -DGGML_USE_HIPBLAS -DGGML_CUDA_DMMV_X=32 -DGGML_CUDA_PEER_MAX_BATCH_SIZE=128 -DGGML_CUDA_MMV_Y=1 -D__HIP_PLATFORM_AMD__=1 -D__HIP_ROCclr__=1
+ #cgo rocm CXXFLAGS: -DGGML_USE_CUDA -DGGML_USE_HIPBLAS -DGGML_CUDA_DMMV_X=32 -DGGML_CUDA_PEER_MAX_BATCH_SIZE=128 -DGGML_CUDA_MMV_Y=1 -D__HIP_PLATFORM_AMD__=1 -D__HIP_ROCclr__=1
+ #cgo rocm LDFLAGS: -L${SRCDIR} -lggml_rocm -lhipblas -lamdhip64 -lrocblas
+-#cgo cuda_v11 LDFLAGS: -lggml_cuda_v11 -L/usr/local/cuda-11/lib64
+-#cgo cuda_v12 LDFLAGS: -lggml_cuda_v12 -L/usr/local/cuda-12/lib64
++#cgo cuda_v11 LDFLAGS: -lggml_cuda_v11 -L/opt/cuda/lib64
++#cgo cuda_v12 LDFLAGS: -lggml_cuda_v12 -L/opt/cuda/lib64
+ #cgo windows,cuda LDFLAGS: -lcuda -lcudart -lcublas -lcublasLt
+ #cgo windows,rocm LDFLAGS: -lggml_rocm -lhipblas -lamdhip64 -lrocblas
+ #cgo linux,cuda LDFLAGS: -lcuda -lcudart -lcublas -lcublasLt -lpthread -ldl -lrt -lresolv
+-#cgo linux,rocm LDFLAGS: -L/opt/rocm/lib -lpthread -ldl -lrt -lresolv
++#cgo linux,rocm LDFLAGS: -L/opt/rocm-@ROCM_VERSION@/lib -lpthread -ldl -lrt -lresolv
+ 
+ #include <stdlib.h>
+ #include "llama.h"
+diff '--color=auto' -urp ollama.orig/llama/make/Makefile.rocm ollama/llama/make/Makefile.rocm
+--- ollama.orig/llama/make/Makefile.rocm	2024-10-10 11:21:51.000000000 -0700
++++ ollama/llama/make/Makefile.rocm	2024-10-14 12:28:53.964436705 -0700
+@@ -17,7 +17,7 @@ ifeq ($(OS),windows)
+ 	GPU_COMPILER_WIN := $(HIP_PATH)bin/hipcc.bin.exe
+ 	GPU_COMPILER:=$(GPU_COMPILER_WIN)
+ else ifeq ($(OS),linux)
+-	HIP_PATH?=/opt/rocm
++	HIP_PATH?=/opt/rocm-@ROCM_VERSION@
+ 	GPU_LIB_DIR_LINUX := $(HIP_PATH)/lib
+ 	GPU_COMPILER_LINUX := $(shell X=$$(which hipcc 2>/dev/null) && echo $$X)
+ 	GPU_COMPILER:=$(GPU_COMPILER_LINUX)
+diff '--color=auto' -urp ollama.orig/llama/make/cuda.make ollama/llama/make/cuda.make
+--- ollama.orig/llama/make/cuda.make	2024-10-10 11:21:51.000000000 -0700
++++ ollama/llama/make/cuda.make	2024-10-14 12:28:53.964436705 -0700
+@@ -20,7 +20,7 @@ GPU_COMPILER_CFLAGS_LINUX = $(CFLAGS) -X
+ GPU_COMPILER_CXXFLAGS_WIN = $(CXXFLAGS) -D_WIN32_WINNT=0x602
+ GPU_COMPILER_CXXFLAGS_LINUX = $(CXXFLAGS) -Xcompiler -fPIC -D_GNU_SOURCE
+ ifeq ($(OS),linux)
+-	CUDA_PATH?=/usr/local/cuda
++	CUDA_PATH?=/opt/cuda
+ 	GPU_COMPILER_FPIC = -fPIC -Wno-unused-function -std=c++11
+ endif
+ GPU_RUNNER_ARCH_FLAGS := $(foreach arch,$(subst ;,$(space),$(CUDA_ARCHITECTURES)),--generate-code=arch=compute_$(arch)$(comma)code=[compute_$(arch)$(comma)sm_$(arch)]) \
+diff '--color=auto' -urp ollama.orig/llm/generate/gen_linux.sh ollama/llm/generate/gen_linux.sh
+--- ollama.orig/llm/generate/gen_linux.sh	2024-10-10 11:21:51.000000000 -0700
++++ ollama/llm/generate/gen_linux.sh	2024-10-14 12:28:53.964436705 -0700
+@@ -45,8 +45,8 @@ amdGPUs() {
+ 
+ echo "Starting linux generate script"
+ if [ -z "${CUDACXX}" ]; then
+-    if [ -x /usr/local/cuda/bin/nvcc ]; then
+-        export CUDACXX=/usr/local/cuda/bin/nvcc
++    if [ -x /opt/cuda/bin/nvcc ]; then
++        export CUDACXX=/opt/cuda/bin/nvcc
+     else
+         # Try the default location in case it exists
+         export CUDACXX=$(command -v nvcc)
+@@ -142,8 +142,8 @@ else
+ fi
+ 
+ # If needed, look for the default CUDA toolkit location
+-if [ -z "${CUDA_LIB_DIR}" ] && [ -d /usr/local/cuda/lib64 ]; then
+-    CUDA_LIB_DIR=/usr/local/cuda/lib64
++if [ -z "${CUDA_LIB_DIR}" ] && [ -d /opt/cuda/lib64 ]; then
++    CUDA_LIB_DIR=/opt/cuda/lib64
+ fi
+ 
+ # If needed, look for CUDA on Arch Linux
+@@ -235,7 +235,7 @@ fi
+ 
+ if [ -z "${ROCM_PATH}" ]; then
+     # Try the default location in case it exists
+-    ROCM_PATH=/opt/rocm
++    ROCM_PATH=/opt/rocm-@ROCM_VERSION@
+ fi
+ 
+ if [ -z "${CLBlast_DIR}" ]; then
+diff '--color=auto' -urp ollama.orig/llm/llama.cpp/Makefile ollama/llm/llama.cpp/Makefile
+--- ollama.orig/llm/llama.cpp/Makefile	2024-09-03 10:58:54.000000000 -0700
++++ ollama/llm/llama.cpp/Makefile	2024-10-14 12:29:29.047917009 -0700
+@@ -605,11 +605,7 @@ ifdef GGML_CUDA
+ 		MK_LDFLAGS   += -lmusa -lmublas -lmusart -lpthread -ldl -lrt -L$(CUDA_PATH)/lib -L/usr/lib64
+ 		MK_NVCCFLAGS += -x musa -mtgpu --cuda-gpu-arch=mp_22
+ 	else
+-		ifneq ('', '$(wildcard /opt/cuda)')
+-			CUDA_PATH ?= /opt/cuda
+-		else
+-			CUDA_PATH ?= /usr/local/cuda
+-		endif
++		CUDA_PATH ?= /opt/cuda
+ 
+ 		MK_CPPFLAGS  += -DGGML_USE_CUDA -I$(CUDA_PATH)/include -I$(CUDA_PATH)/targets/$(UNAME_M)-linux/include -DGGML_CUDA_USE_GRAPHS
+ 		MK_LDFLAGS   += -lcuda -lcublas -lculibos -lcudart -lcublasLt -lpthread -ldl -lrt -L$(CUDA_PATH)/lib64 -L/usr/lib64 -L$(CUDA_PATH)/targets/$(UNAME_M)-linux/lib -L$(CUDA_PATH)/lib64/stubs -L/usr/lib/wsl/lib
+@@ -714,7 +710,7 @@ endif # GGML_CUDA_FA_ALL_QUANTS
+ 
+ ifdef JETSON_EOL_MODULE_DETECT
+ define NVCC_COMPILE
+-	$(NVCC) -I. -Icommon -D_XOPEN_SOURCE=600 -D_GNU_SOURCE -DNDEBUG -DGGML_USE_CUDA -I/usr/local/cuda/include -I/opt/cuda/include -I/usr/local/cuda/targets/aarch64-linux/include -std=c++11 -O3 $(NVCCFLAGS) $(CPPFLAGS) -Xcompiler "$(CUDA_CXXFLAGS)" -c $< -o $@
++	$(NVCC) -I. -Icommon -D_XOPEN_SOURCE=600 -D_GNU_SOURCE -DNDEBUG -DGGML_USE_CUDA -I/opt/cuda/include -I/opt/cuda/targets/aarch64-linux/include -std=c++11 -O3 $(NVCCFLAGS) $(CPPFLAGS) -Xcompiler "$(CUDA_CXXFLAGS)" -c $< -o $@
+ endef # NVCC_COMPILE
+ else
+ 	ifdef GGML_MUSA
+@@ -800,13 +796,8 @@ vulkan-shaders-gen: ggml/src/vulkan-shad
+ endif # GGML_VULKAN
+ 
+ ifdef GGML_HIPBLAS
+-	ifeq ($(wildcard /opt/rocm),)
+-		ROCM_PATH      ?= /usr
+-		AMDGPU_TARGETS ?= $(shell $(shell which amdgpu-arch))
+-	else
+-		ROCM_PATH	?= /opt/rocm
+-		AMDGPU_TARGETS ?= $(shell $(ROCM_PATH)/llvm/bin/amdgpu-arch)
+-	endif
++	ROCM_PATH	?= /opt/rocm-@ROCM_VERSION@
++	AMDGPU_TARGETS ?= $(shell $(ROCM_PATH)/llvm/bin/amdgpu-arch)
+ 
+ 	GGML_CUDA_DMMV_X       ?= 32
+ 	GGML_CUDA_MMV_Y        ?= 1
+diff '--color=auto' -urp ollama.orig/llm/llama.cpp/ggml/src/CMakeLists.txt ollama/llm/llama.cpp/ggml/src/CMakeLists.txt
+--- ollama.orig/llm/llama.cpp/ggml/src/CMakeLists.txt	2024-09-03 10:58:54.000000000 -0700
++++ ollama/llm/llama.cpp/ggml/src/CMakeLists.txt	2024-10-14 12:28:53.968436645 -0700
+@@ -400,11 +400,7 @@ endif()
+ 
+ if (GGML_HIPBLAS)
+     if (NOT EXISTS $ENV{ROCM_PATH})
+-        if (NOT EXISTS /opt/rocm)
+-            set(ROCM_PATH /usr)
+-        else()
+-            set(ROCM_PATH /opt/rocm)
+-        endif()
++        set(ROCM_PATH /opt/rocm-@ROCM_VERSION@)
+     else()
+         set(ROCM_PATH $ENV{ROCM_PATH})
+     endif()
+@@ -422,7 +418,7 @@ if (GGML_HIPBLAS)
+     if (CXX_IS_HIPCC)
+         if (LINUX)
+             if (NOT ${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+-                message(WARNING "Only LLVM is supported for HIP, hint: CXX=/opt/rocm/llvm/bin/clang++")
++                message(WARNING "Only LLVM is supported for HIP, hint: CXX=/opt/rocm-@ROCM_VERSION@/llvm/bin/clang++")
+             endif()
+ 
+             message(WARNING "Setting hipcc as the C++ compiler is legacy behavior."
+diff '--color=auto' -urp ollama.orig/scripts/install.sh ollama/scripts/install.sh
+--- ollama.orig/scripts/install.sh	2024-10-10 11:21:51.000000000 -0700
++++ ollama/scripts/install.sh	2024-10-14 12:28:53.968436645 -0700
+@@ -209,7 +209,7 @@ if check_gpu lspci amdgpu || check_gpu l
+         exit 0
+     fi
+     # Look for pre-existing ROCm v6 before downloading the dependencies
+-    for search in "${HIP_PATH:-''}" "${ROCM_PATH:-''}" "/opt/rocm" "/usr/lib64"; do
++    for search in "${HIP_PATH:-''}" "${ROCM_PATH:-''}" "/opt/rocm-@ROCM_VERSION@" "/usr/lib64"; do
+         if [ -n "${search}" ] && [ -e "${search}/libhipblas.so.2" -o -e "${search}/lib/libhipblas.so.2" ]; then
+             status "Compatible AMD GPU ROCm library detected at ${search}"
+             install_success

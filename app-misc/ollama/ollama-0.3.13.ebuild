@@ -7,6 +7,8 @@ EAPI=8
 # TODO:  Re-evaluate/assess the security of file permissions related if the environment
 # variable were changed to having one folder of models.
 
+# TODO:  Fix hardcoded paths for cuda and rocm
+
 # Snapshot code came from go-appimage ebuild.
 
 # U20
@@ -43,15 +45,32 @@ CUDA_TARGETS_COMPAT=(
 	sm_89
 	sm_90
 )
+LLVM_COMPAT=( 17 )
 GEN_EBUILD=0
 LLAMA_CPP_COMMIT="8962422b1c6f9b8b15f5aeaea42600bcc2d44177"
 KOMPUTE_COMMIT="4565194ed7c32d1d2efa32ceab4d3c6cae006306"
+ROCM_SLOTS=(
+	"6.1"
+)
+gen_rocm_iuse() {
+	local s
+	for s in ${ROCM_SLOTS[@]} ; do
+		echo "
+			rocm_${s/./_}
+		"
+	done
+}
+ROCM_IUSE=( $(gen_rocm_iuse) )
+inherit hip-versions
+declare -A ROCM_VERSIONS=(
+	["6_1"]="${HIP_6_1_VERSION}"
+)
 ROCM_VERSION="6.1.2"
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go_build"
 fi
 
-inherit dep-prepare go-module hip-versions lcnr
+inherit dep-prepare edo go-module lcnr rocm
 
 gen_go_dl_gh_url()
 {
@@ -455,8 +474,26 @@ SLOT="0"
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${LLVM_COMPAT[@]/#/llvm_slot_}
+${ROCM_IUSE[@]}
 cuda openrc rocm systemd
 ebuild-revision-1
+"
+gen_rocm_required_use() {
+	local s
+	for s in ${ROCM_SLOTS[@]} ; do
+		echo "
+			rocm_${s/./_}? (
+				rocm
+			)
+		"
+	done
+}
+REQUIRED_USE="
+	$(gen_rocm_required_use)
+	|| (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
 "
 gen_cuda_required_use() {
 	local x
@@ -506,9 +543,36 @@ CUDA_12_4_BDEPEND="
 		=sys-devel/gcc-13*[cxx]
 	)
 "
+gen_clang_bdepend() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo  "
+		llvm_slot_${s}? (
+			sys-devel/clang:${s}
+			sys-devel/llvm:${s}
+		)
+		"
+	done
+}
+gen_rocm_rdepend() {
+	# DEPENDs listed in llama/llama.go
+	local s
+	for s in ${ROCM_SLOTS[@]} ; do
+		local s1="${s/./_}"
+		echo "
+			rocm_${s/./_}? (
+				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}
+				~sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}
+				~sci-libs/hipBLAS-${ROCM_VERSIONS[${s1}]}:${s}
+				~dev-libs/rocm-opencl-runtime-${ROCM_VERSIONS[${s1}]}:${s}
+			)
+		"
+	done
+}
 BDEPEND="
 	>=dev-build/cmake-3.24
 	>=dev-lang/go-1.22.5
+	$(gen_clang_bdepend)
 	>=sys-devel/gcc-11.4.0
 	dev-go/protobuf-go:=
 	cuda? (
@@ -581,16 +645,14 @@ BDEPEND="
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
-		|| (
-			~dev-libs/rocm-opencl-runtime-${HIP_6_1_VERSION}:${ROCM_VERSION%.*}
-			>=dev-libs/rocm-opencl-runtime-6.1.2:0/6.1
-		)
-		dev-libs/rocm-opencl-runtime:=
+		$(gen_rocm_rdepend)
 		=sys-devel/gcc-${HIP_6_1_GCC_SLOT}*
+		sci-libs/rocBLAS:=
 		sci-libs/clblast
 	)
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-0.3.13-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.3.13-disable-git-submodule-update.patch"
 )
 
@@ -614,6 +676,27 @@ einfo "Generating tag start"
 	git commit -m "Dummy" || die
 	git tag v${PV} || die
 einfo "Generating tag done"
+}
+
+pkg_setup() {
+	local llvm_path
+	if use rocm ; then
+		if use rocm_6_1 ; then
+			export ROCM_SLOT="6.1"
+		fi
+		rocm_pkg_setup
+	else
+		local llvm_slot
+		if use llvm_slot_17 ; then
+			llvm_slot=17
+		fi
+		llvm_path="/usr/lib/llvm/${llvm_slot}/bin"
+		export PATH=$(echo "${PATH}" \
+			| tr ":" "\n" \
+			| sed -E -e "/llvm\/[0-9]+/d" \
+			| tr "\n" ":" \
+			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
+	fi
 }
 
 src_unpack() {
@@ -677,13 +760,13 @@ src_compile() {
 		export GOBIN="${GOPATH}/bin"
 		export GO111MODULE=auto
 		pushd "${GOPATH}/src" >/dev/null 2>&1 || die
-			go generate -x ./... || die
+			edo go generate -x ./...
 		popd >/dev/null 2>&1 || die
 		mkdir -p "${GOBIN}" || die
-		go build || die
-#		pushd "${GOBIN}" >/dev/null 2>&1 || die
-#			go build "github.com/ollama/${PN}" || die
-#		popd >/dev/null 2>&1 || die
+		pushd "${GOBIN}" >/dev/null 2>&1 || die
+			edo go build
+#			edo go build "github.com/ollama/${PN}"
+		popd >/dev/null 2>&1 || die
 	fi
 }
 
