@@ -598,8 +598,8 @@ RDEPEND="
 	video_cards_intel? (
 		>=dev-libs/intel-compute-runtime-2024[l0]
 		dev-libs/intel-compute-runtime:=
-		sys-devel/DPC++:=
 		sci-libs/mkl:=
+		sys-devel/DPC++:=
 	)
 "
 DEPEND="
