@@ -858,6 +858,8 @@ src_configure() {
 	strip-unsupported-flags
 	which clang || die
 	clang --version || die
+	protoc --version || die
+	protoc-gen-go-grpc --version || die
 }
 
 src_compile() {
