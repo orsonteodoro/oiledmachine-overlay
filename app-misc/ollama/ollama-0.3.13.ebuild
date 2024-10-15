@@ -2246,9 +2246,6 @@ pwd
 }
 
 src_install() {
-	if ! [[ "${PV}" =~ "9999" ]] ; then
-		cd "${WORKDIR}/go-mod" || die
-	fi
 	dobin "${PN}"
 	if use openrc ; then
 		doinitd "${FILESDIR}/${PN}"
@@ -2257,11 +2254,27 @@ src_install() {
 		insinto "/usr/lib/systemd/system"
 		doins "${FILESDIR}/${PN}.service"
 	fi
-	if ! [[ "${PV}" =~ "9999" ]] ; then
-		LCNR_SOURCE="${WORKDIR}/go-mod"
-		lcnr_install_files
-	# TODO:  handle live case
+
+	LCNR_SOURCE="${WORKDIR}/go-mod"
+	LCNR_TAG="third_party"
+	lcnr_install_files
+
+	LCNR_SOURCE="${S}"
+	LCNR_TAG="ollama"
+	lcnr_install_files
+
+	local runner_path
+	if use cpu_flags_x86_avx2 ; then
+		runner_path="${S}/dist/linux-amd64/lib/ollama/runners/cpu_avx2"
+	elif use cpu_flags_x86_avx ; then
+		runner_path="${S}/dist/linux-amd64/lib/ollama/runners/cpu_avx"
+	else
+		runner_path="${S}/dist/linux-amd64/lib/ollama/runners/cpu"
 	fi
+	pushd "${runner_path}" >/dev/null 2>&1 || die
+		dolib.so "libggml.so" "libllama.so"
+		doexe "ollama_llama_server"
+	popd >/dev/null 2>&1 || die
 }
 
 pkg_preinst() {
