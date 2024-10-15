@@ -1,4 +1,4 @@
-# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -9,10 +9,6 @@ EAPI=8
 
 # TODO:  Re-evaluate/assess the security of file permissions related if the environment
 # variable were changed to having one folder of models.
-
-# Snapshot code came from go-appimage ebuild.
-# It is to prevent this error with EGO_SUM when performing `go generate`:
-# package [...]: can only use path@version syntax with 'go get' and 'go install' in module-aware mode
 
 # U20
 # For depends see
