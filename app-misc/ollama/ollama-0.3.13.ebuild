@@ -7,8 +7,6 @@ EAPI=8
 # TODO:  Re-evaluate/assess the security of file permissions related if the environment
 # variable were changed to having one folder of models.
 
-# TODO:  Fix hardcoded paths for cuda and rocm
-
 # Snapshot code came from go-appimage ebuild.
 
 # U20

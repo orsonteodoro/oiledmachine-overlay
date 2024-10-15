@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oildmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  * Ebuild from pentoo overlay.
+  * Bumped to latest release.
+  * Add array generator for new ebuild maintainers.
+  * Update LICENSE variable.
+
+  -->
+  <upstream>
+    <remote-id type="github">grpc/grpc-go</remote-id>
+  </upstream>
+</pkgmetadata>
