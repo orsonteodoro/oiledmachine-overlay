@@ -1960,12 +1960,15 @@ pkg_setup() {
 		if use rocm_6_1 ; then
 			export ROCM_SLOT="6.1"
 			export LLVM_SLOT=17
+			export ROCM_VERSION="${HIP_6_1_VERSION}"
 		elif use rocm_6_0 ; then
 			export ROCM_SLOT="6.0"
 			export LLVM_SLOT=17
+			export ROCM_VERSION="${HIP_6_0_VERSION}"
 		elif use rocm_5_7 ; then
 			export ROCM_SLOT="5.7"
 			export LLVM_SLOT=17
+			export ROCM_VERSION="${HIP_5_7_VERSION}"
 		fi
 		rocm_pkg_setup
 	else
@@ -2119,15 +2122,29 @@ eerror
 	fi
 }
 
+get_cuda_flags() {
+	local arches=""
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		if use "cuda_targets_${x}" ; then
+			arches+=";${x#*_}"
+		fi
+	done
+	arches="${arches:1}"
+	echo "${arches}"
+}
+
 src_configure() {
 	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.4*" ; then
 		export CC="${CHOST}-gcc-13"
 		export CXX="${CHOST}-g++-13"
 		export CUDA_SLOT=12
+		export CMAKE_CUDA_ARCHITECTURES="$(get_cuda_flags)"
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
 		export CUDA_SLOT=11
+		export CMAKE_CUDA_ARCHITECTURES="$(get_cuda_flags)"
 	elif use rocm ; then
 		export CC="${CHOST}-gcc-12"
 		export CXX="${CHOST}-g++-12"
@@ -2226,8 +2243,44 @@ build_binary() {
 }
 
 build_new_runner() {
-	emake -C llama -j 5
-	edo go build -x .
+	# The documentation is sloppy.
+
+	if use cuda ; then
+		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
+			emake -C llama "libggml_cuda_v12.so"
+		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
+			emake -C llama "libggml_cuda_v11.so"
+		fi
+	elif use rocm ; then
+		emake -C llama "libggml_rocm_v${ROCM_VERSION}.so"
+	fi
+
+	# See also
+	# https://github.com/ollama/ollama/blob/v0.3.13/llama/llama.go
+	if use cpu_flags_x86_avx2 && use cuda ; then
+		edo go build -x avx2,cuda .
+	elif use cpu_flags_x86_avx && use cuda ; then
+		edo go build -x avx,cuda .
+	elif use cuda ; then
+		edo go build -x cuda .
+	elif use cpu_flags_x86_avx2 && use rocm ; then
+		edo go build -x avx2,rocm .
+	elif use cpu_flags_x86_avx && use rocm ; then
+		edo go build -x avx,rocm .
+	elif use rocm ; then
+		edo go build -x rocm .
+	elif use cpu_flags_x86_avx2 ; then
+		edo go env -w "CGO_CFLAGS_ALLOW=-mfma|-mf16c"
+		edo go env -w "CGO_CXXFLAGS_ALLOW=-mfma|-mf16c"
+		emake -C llama
+		edo go build -x -tags=avx,avx2 .
+	elif use cpu_flags_x86_avx ; then
+		emake -C llama
+		edo go build -x -tags=avx .
+	else
+		emake -C llama
+		edo go build -x .
+	fi
 }
 
 src_compile() {
@@ -2247,7 +2300,6 @@ src_compile() {
 		export GOPATH="${WORKDIR}/go-mod"
 		export GO111MODULE=on
 		pushd "${WORKDIR}/${P}" >/dev/null 2>&1 || die
-pwd
 			generate_deps
 			build_binary
 		popd >/dev/null 2>&1 || die
@@ -2266,22 +2318,50 @@ eerror "ARCH=${ARCH} ABI=${ABI} is not supported"
 	fi
 }
 
-src_install() {
-	dobin "${PN}"
-
-	local runner_path
+install_cpu_runner() {
+	local cpu_runner_path
 	if use cpu_flags_x86_avx2 ; then
-		runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu_avx2"
+		cpu_runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu_avx2"
 	elif use cpu_flags_x86_avx ; then
-		runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu_avx"
+		cpu_runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu_avx"
 	else
-		runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu"
+		cpu_runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu"
 	fi
 
-	pushd "${runner_path}" >/dev/null 2>&1 || die
+	pushd "${cpu_runner_path}" >/dev/null 2>&1 || die
 		dolib.so "libggml.so" "libllama.so"
 		dobin "ollama_llama_server"
 	popd >/dev/null 2>&1 || die
+}
+
+install_gpu_runner() {
+	local gpu_runner_path
+	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
+		gpu_runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cuda_v12"
+	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
+		gpu_runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cuda_v11"
+	elif use rocm ; then
+		gpu_runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/rocm"
+	fi
+
+	pushd "${gpu_runner_path}" >/dev/null 2>&1 || die
+		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
+			dolib.so "libggml_cuda_v12.so"
+		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
+			dolib.so "libggml_cuda_v11.so"
+		elif use rocm ; then
+			dolib.so "libggml_rocm_v${ROCM_VERSION}.so"
+		fi
+	popd >/dev/null 2>&1 || die
+
+}
+
+src_install() {
+	dobin "${PN}"
+
+	install_cpu_runner
+	install_gpu_runner
+
 	if use openrc ; then
 		doinitd "${FILESDIR}/${PN}"
 	fi
