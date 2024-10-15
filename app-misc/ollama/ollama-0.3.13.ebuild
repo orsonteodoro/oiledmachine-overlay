@@ -1759,6 +1759,13 @@ REQUIRED_USE+="
 RDEPEND="
 	acct-group/ollama
 	acct-user/ollama
+	openrc? (
+		sys-apps/openrc[bash]
+		|| (
+			app-admin/sysklogd
+			sys-apps/util-linux[logger]
+		)
+	)
 "
 IDEPEND="
 	${RDEPEND}
