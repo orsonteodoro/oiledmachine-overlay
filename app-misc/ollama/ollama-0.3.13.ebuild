@@ -2065,17 +2065,6 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 			-e "s|\"ragel\"|\"ragel-go\"|g" \
 			"${WORKDIR}/go-mod/github.com/dgryski/trifles@"*"/matcher/main.go" \
 			|| die
-	elif has_version "<dev-util/ragel-7.0.0.10" ; then
-		:
-	else
-eerror
-eerror "Your ragel version is not supported."
-eerror
-eerror "Install either:"
-eerror "  >=dev-util/ragel-7.0.1"
-eerror "  <dev-util/ragel-7.0.0.10"
-eerror
-		die
 	fi
 }
 
@@ -2086,7 +2075,12 @@ check_toolchain() {
 	protoc-gen-go-grpc --version || die
 	pigz --version || die
 	git --version || die
-	pkg-config --version || ie
+	pkg-config --version || die
+	if has_version ">=dev-util/ragel-7.0.1" ; then
+		ragel-go --version || die
+	else
+		ragel --version || die
+	fi
 }
 
 src_configure() {
