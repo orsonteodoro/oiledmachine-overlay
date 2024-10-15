@@ -7,7 +7,7 @@ DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 ${PV})
-PROTOBUF_SLOT="0/4.24"
+PROTOBUF_SLOT="0/4.25"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 flag-o-matic multiprocessing prefix
@@ -26,8 +26,8 @@ SLOT="0"
 IUSE+=" doc ebuild-revision-1"
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
-# See https://github.com/grpc/grpc/blob/v1.59.4/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.59.4/third_party
+# See https://github.com/grpc/grpc/blob/v1.60.2/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.60.2/third_party
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-20230802.0:0/20230802[cxx17(+)]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-)]

@@ -26,14 +26,14 @@ SLOT="0"
 IUSE+=" doc ebuild-revision-1"
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
-# See https://github.com/grpc/grpc/blob/v1.60.1/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.60.1/third_party
+# See https://github.com/grpc/grpc/blob/v1.61.3/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.61.3/third_party
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-20230802.0:0/20230802[cxx17(+)]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-)]
 	>=dev-libs/re2-0.2022.04.01:=
 	>=net-dns/c-ares-1.19.1:=
-	>=sys-libs/zlib-1.2.13:=
+	>=sys-libs/zlib-1.3:=
 	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 "
 DEPEND+="
