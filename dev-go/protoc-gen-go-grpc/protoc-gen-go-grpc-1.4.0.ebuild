@@ -8,6 +8,12 @@ GEN_EBUILD=0
 GRPC_PV="1.65.0" # From version.go
 EGO_PN="github.com/grpc/grpc-go/cmd/protoc-gen-go-grpc"
 EGO_SUM=(
+	"github.com/google/go-cmp v0.5.5"
+	"github.com/google/go-cmp v0.5.5/go.mod"
+	"golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543"
+	"golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod"
+	"google.golang.org/protobuf v1.34.1"
+	"google.golang.org/protobuf v1.34.1/go.mod"
 	"cel.dev/expr v0.15.0"
 	"cel.dev/expr v0.15.0/go.mod"
 	"cloud.google.com/go/compute/metadata v0.3.0"
@@ -98,7 +104,7 @@ src_unpack() {
 	if [[ "${GEN_EBUILD}" == "1" ]] ; then
 einfo "Replace EGO_SUM contents with the following:"
 		IFS=$'\n'
-		for x in $(cat "${WORKDIR}/grpc-go-cmd-${PN}-v${PV}/go.sum" | cut -f 1-2 -d " ") ; do
+		for x in $(cat "${WORKDIR}/grpc-go-cmd-${PN}-v${PV}/cmd/protoc-gen-go-grpc/go.sum" "${WORKDIR}/grpc-go-cmd-${PN}-v${PV}/go.sum" | cut -f 1-2 -d " ") ; do
 			echo -e "\t\"${x}\""
 		done
 		IFS=$' \t\n'
