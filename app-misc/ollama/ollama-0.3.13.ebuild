@@ -2072,6 +2072,7 @@ check_toolchain() {
 	# The project doesn't check it so it creates strange error messages and
 	# a undocumented list of required tools.
 einfo "Checking toolchain"
+	# Still check if *DEPEND is bypassed via `emerge -O` or `ebuild`
 	clang --version || die
 	protoc --version || die
 	protoc-gen-go-grpc --version || die
@@ -2082,6 +2083,28 @@ einfo "Checking toolchain"
 		ragel-go --version || die
 	else
 		ragel --version || die
+		ragel_pv=$(ragel --version | head -n 1 | cut -f 6 -d " ")
+		if ver_test ${ragel_pv} -lt "7.0.0.10" ; then
+			:
+		else
+eerror
+eerror "Detected an old version of ragel."
+eerror
+eerror "Actual:  ${ragel_pv}"
+eerror "Required:"
+eerror
+eerror "One of the following"
+eerror
+eerror "  <dev-util/ragel-7.0.0.10"
+eerror "  >=dev-util/ragel-7.0.1"
+eerror
+eerror "Do the following:"
+eerror
+eerror "emaint sync -A"
+eerror "emerge dev-util/ragel"
+eerror
+			die
+		fi
 	fi
 }
 
