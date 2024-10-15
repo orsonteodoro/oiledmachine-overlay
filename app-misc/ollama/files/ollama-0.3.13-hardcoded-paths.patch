@@ -70,7 +70,7 @@ diff '--color=auto' -urp ollama.orig/llama/Makefile ollama/llama/Makefile
 +	else
 +		CUDA_11:=1
 +		CUDA_12:=
-+	fi
++	endif
  endif
  
  ifeq ($(OLLAMA_SKIP_CUDA_GENERATE),)
