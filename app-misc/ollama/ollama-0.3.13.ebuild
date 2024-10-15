@@ -11,7 +11,7 @@ EAPI=8
 # variable were changed to having one folder of models.
 
 # Snapshot code came from go-appimage ebuild.
-# It is to prevent this error with EGO_SUM when performing go generate:
+# It is to prevent this error with EGO_SUM when performing `go generate`:
 # package [...]: can only use path@version syntax with 'go get' and 'go install' in module-aware mode
 
 # U20
