@@ -1970,6 +1970,25 @@ einfo "Generating tag start for ${path}"
 einfo "Generating tag done"
 }
 
+check_libstdcxx() {
+	local slot="${1}"
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot=${gcc_current_profile##*-}
+
+	if ver_test "${gcc_current_profile_slot}" -ne "${slot}" ; then
+eerror
+eerror "You must switch to GCC ${slot}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${slot}"
+eerror "  source /etc/profile"
+eerror
+eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
+eerror "to the default immediately after this package has been merged."
+eerror
+		die
+	fi
+}
+
 pkg_setup() {
 	local llvm_base_path
 	if use rocm ; then
@@ -2156,15 +2175,18 @@ src_configure() {
 		export CXX="${CHOST}-g++-13"
 		export CUDA_SLOT=12
 		export CMAKE_CUDA_ARCHITECTURES="$(get_cuda_flags)"
+		check_libstdcxx "13"
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
 		export CUDA_SLOT=11
 		export CMAKE_CUDA_ARCHITECTURES="$(get_cuda_flags)"
+		check_libstdcxx "11"
 	elif use rocm ; then
 		export CC="${CHOST}-gcc-12"
 		export CXX="${CHOST}-g++-12"
 		export AMDGPU_TARGETS="$(get_amdgpu_flags)"
+		check_libstdcxx "12"
 	fi
 
 	if ! use cuda ; then
