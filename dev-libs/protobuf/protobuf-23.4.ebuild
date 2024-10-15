@@ -9,7 +9,7 @@ JSONCPP_COMMIT="9059f5cad030ba11d37818847443a53918c327b1"
 
 inherit cmake-multilib elisp-common flag-o-matic multilib-minimal toolchain-funcs
 
-if [[ "${PV}" == *9999 ]]; then
+if [[ "${PV}" == *"9999" ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/protocolbuffers/protobuf.git"
 	EGIT_SUBMODULES=()
@@ -36,6 +36,7 @@ RESTRICT="
 "
 SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # version : slot
+# 27 : 5.27 From CMakeLists.txt's protobuf_VERSION_STRING
 # 26 : 5.26 From CMakeLists.txt's protobuf_VERSION_STRING
 # 25 : 4.25 From CMakeLists.txt's protobuf_VERSION_STRING
 # 24 : 4.24 From CMakeLists.txt's protobuf_VERSION_STRING

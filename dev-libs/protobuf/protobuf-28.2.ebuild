@@ -4,7 +4,7 @@
 
 EAPI=8
 
-INTERNAL_VERSION="4.24.4" # From CMakeLists.txt L82
+INTERNAL_VERSION="5.28.2" # From CMakeLists.txt L82
 
 inherit cmake-multilib elisp-common flag-o-matic multilib-minimal toolchain-funcs
 
@@ -53,7 +53,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-cpp/abseil-cpp-20230125.3:0/20230125[${MULTILIB_USEDEP},test-helpers(-)]
+	>=dev-cpp/abseil-cpp-20240116.0:0/20240116[${MULTILIB_USEDEP},test-helpers(-)]
 	dev-libs/utf8_range:0/${INTERNAL_VERSION%.*}[${MULTILIB_USEDEP}]
 	zlib? (
 		>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
