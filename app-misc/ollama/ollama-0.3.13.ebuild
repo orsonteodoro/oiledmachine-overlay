@@ -95,7 +95,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 	inherit git-r3
 else
-#	KEYWORDS="~amd64"
+	KEYWORDS="~amd64 ~arm64"
 	S="${WORKDIR}/${P}"
 
 	EGO_SUM=(
@@ -2136,14 +2136,20 @@ src_configure() {
 
 	if ! use cuda ; then
 		export OLLAMA_SKIP_CUDA_GENERATE=1
+	else
+		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported for USE=cuda"
 	fi
 
 	if ! use rocm ; then
 		export OLLAMA_SKIP_ROCM_GENERATE=1
+	else
+		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported for USE=rocm"
 	fi
 
 	if ! use video_cards_intel ; then
 		export OLLAMA_SKIP_ONEAPI_GENERATE=1
+	else
+		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported for USE=video_cards_intel"
 	fi
 
 	if [[ -n "${OLLAMA_CUSTOM_CPU_DEFS}" ]] ; then
@@ -2167,9 +2173,11 @@ src_configure() {
 			-e "s|linux CFLAGS: -D_GNU_SOURCE|linux CFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
 			-e "s|linux CXXFLAGS: -D_GNU_SOURCE|linux CXXFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
 			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64 ${libs}|g" \
+			-e "s|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/Linux/arm64|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/Linux/arm64 ${libs}|g" \
 			"llama/llama.go" \
 			|| die
 	elif use mkl ; then
+		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported"
 		local mkl_pv=$(best_version "sci-libs/mkl" | sed -e "s|sci-libs/mkl-||g")
 		mkl_pv=$(ver_cut 1-3 ${pv})
 	# We force tbb to dedupe thread libs.  GPU acceleration already uses tbb unconditionally.
@@ -2191,6 +2199,7 @@ src_configure() {
 			-e "s|linux CFLAGS: -D_GNU_SOURCE|linux CFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
 			-e "s|linux CXXFLAGS: -D_GNU_SOURCE|linux CXXFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
 			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64 ${libs}|g" \
+			-e "s|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/Linux/arm64|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/Linux/arm64 ${libs}|g" \
 			"llama/llama.go" \
 			|| die
 	elif use openblas ; then
@@ -2200,6 +2209,7 @@ src_configure() {
 			-e "s|linux CFLAGS: -D_GNU_SOURCE|linux CFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
 			-e "s|linux CXXFLAGS: -D_GNU_SOURCE|linux CXXFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
 			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64 ${libs}|g" \
+			-e "s|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/Linux/arm64|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/Linux/arm64 ${libs}|g" \
 			"llama/llama.go" \
 			|| die
 	fi
@@ -2245,8 +2255,29 @@ pwd
 	build_new_runner
 }
 
+get_arch() {
+	if use amd64 ; then
+		echo "amd64"
+	elif use arm64 ; then
+		echo "arm64"
+	else
+eerror "ARCH=${ARCH} ABI=${ABI} is not supported"
+		die
+	fi
+}
+
 src_install() {
 	dobin "${PN}"
+
+	local runner_path
+	if use cpu_flags_x86_avx2 ; then
+		runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu_avx2"
+	elif use cpu_flags_x86_avx ; then
+		runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu_avx"
+	else
+		runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu"
+	fi
+
 	pushd "${runner_path}" >/dev/null 2>&1 || die
 		dolib.so "libggml.so" "libllama.so"
 		dobin "ollama_llama_server"
@@ -2266,15 +2297,6 @@ src_install() {
 	LCNR_SOURCE="${S}"
 	LCNR_TAG="ollama"
 	lcnr_install_files
-
-	local runner_path
-	if use cpu_flags_x86_avx2 ; then
-		runner_path="${S}/dist/linux-amd64/lib/ollama/runners/cpu_avx2"
-	elif use cpu_flags_x86_avx ; then
-		runner_path="${S}/dist/linux-amd64/lib/ollama/runners/cpu_avx"
-	else
-		runner_path="${S}/dist/linux-amd64/lib/ollama/runners/cpu"
-	fi
 }
 
 pkg_preinst() {
