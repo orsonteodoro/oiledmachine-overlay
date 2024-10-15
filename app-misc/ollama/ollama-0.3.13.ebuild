@@ -2197,7 +2197,7 @@ src_configure() {
 			"llama/llama.go" \
 			|| die
 	elif use mkl ; then
-		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported"
+		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported for USE=mkl"
 		local mkl_pv=$(best_version "sci-libs/mkl" | sed -e "s|sci-libs/mkl-||g")
 		mkl_pv=$(ver_cut 1-3 ${pv})
 	# We force tbb to dedupe thread libs.  GPU acceleration already uses tbb unconditionally.
