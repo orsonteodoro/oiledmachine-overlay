@@ -6,7 +6,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/llama/sync.sh ollama-0.3.13/llama/sy
  # TODO remove once we no longer use the submodule
  if [ -z "${OLLAMA_SKIP_PATCHING}" ]; then
 -  (cd ../ && git submodule init && git submodule update --force ./llm/llama.cpp)
-+#  (cd ../ && git submodule init && git submodule update --force ./llm/llama.cpp)
++  (cd ../ && git submodule init && true git submodule update --force ./llm/llama.cpp)
  
    # apply patches
    for patch in $dst_dir/patches/*.diff; do
@@ -19,8 +19,8 @@ diff '--color=auto' -urp ollama-0.3.13.orig/llm/generate/gen_common.sh ollama-0.
      fi
 -    git submodule init
 -    git submodule update --force ${LLAMACPP_DIR}
-+#    git submodule init
-+#    git submodule update --force ${LLAMACPP_DIR}
++    git submodule init
++    true git submodule update --force ${LLAMACPP_DIR}
  
  }
  
@@ -29,5 +29,5 @@ diff '--color=auto' -urp ollama-0.3.13.orig/llm/generate/gen_common.sh ollama-0.
  # Keep the local tree clean after we're done with the build
  cleanup() {
 -    git submodule update --force ${LLAMACPP_DIR}
-+: #    git submodule update --force ${LLAMACPP_DIR}
++:   true git submodule update --force ${LLAMACPP_DIR}
  }

@@ -1934,13 +1934,17 @@ ewarn "CUDA support for ${PN} is experimental."
 }
 
 gen_git_tag() {
-einfo "Generating tag start"
-	git init || die
-	git config user.email "name@example.com" || die
-	git config user.name "John Doe" || die
-	git add * || die
-	git commit -m "Dummy" || die
-	git tag v${PV} || die
+	local path="${1}"
+	local tag_name="${2}"
+einfo "Generating tag start for ${path}"
+	pushd "${path}" >/dev/null 2>&1 || die
+		git init || die
+		git config user.email "name@example.com" || die
+		git config user.name "John Doe" || die
+		git add * || die
+		git commit -m "Dummy" || die
+		git tag ${tag_name} || die
+	popd >/dev/null 2>&1 || die
 einfo "Generating tag done"
 }
 
@@ -2014,9 +2018,11 @@ ewarn "The ${PN} ebuild is under development and does not work."
 		fi
 
 		cd "${S}" || die
-		gen_git_tag
 		dep_prepare_mv "${WORKDIR}/llama.cpp-${LLAMA_CPP_COMMIT}" "${S}/llm/llama.cpp"
 		dep_prepare_mv "${WORKDIR}/kompute-${KOMPUTE_COMMIT}" "${S}/llm/llama.cpp/ggml/src/kompute"
+		gen_git_tag "${S}/llm/llama.cpp" "b3922"						# placeholder
+		gen_git_tag "${S}/llm/llama.cpp/ggml/src/kompute" "0.8.1.${KOMPUTE_COMMIT:0:7}"		# placeholder, no tags
+		gen_git_tag "${S}" "v${PV}"
 	fi
 }
 
