@@ -11,6 +11,8 @@ EAPI=8
 # variable were changed to having one folder of models.
 
 # Snapshot code came from go-appimage ebuild.
+# It is to prevent this error with EGO_SUM when performing go generate:
+# package [...]: can only use path@version syntax with 'go get' and 'go install' in module-aware mode
 
 # U20
 # For depends see
@@ -156,6 +158,7 @@ generate_ebuild_snapshot() {
 	IFS=$'\n'
 	L=(
 		"github.com/ollama/${PN} MY_PV"
+		$(find "${WORKDIR}" -name "go.sum")
 		$(grep -E "/" "${S}/go.sum" | cut -f 1-2 -d " ")
 	)
 
@@ -788,8 +791,10 @@ ewarn "The ${PN} ebuild is under development and does not work."
 			"llama.cpp-${LLAMA_CPP_COMMIT:0:7}.tar.gz" \
 			"kompute-${KOMPUTE_COMMIT:0:7}.tar.gz"
 
-		[[ "${GEN_EBUILD}" == "1" ]] && generate_ebuild_snapshot
+	# Generating requires 2 phases for dependency of dependency
+#		[[ "${GEN_EBUILD}" == "1" ]] && generate_ebuild_snapshot
 		unpack_go
+		[[ "${GEN_EBUILD}" == "1" ]] && generate_ebuild_snapshot
 		export S="${S_GO}/src/github.com/ollama/${PN}"
 		cd "${S}" || die
 		gen_git_tag
