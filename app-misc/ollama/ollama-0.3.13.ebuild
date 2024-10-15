@@ -208,14 +208,14 @@ unpack_go_pkg()
 	local uri_frag="${2}"
 	local proj_name="${2#*/}"
 	local tag="${3}"
-	local dest="${S_GO}/${pkg_name}"
+	local dest="${S_GO}/src/${pkg_name}"
 	local dest_name="${pkg_name//\//-}-${tag//\//-}"
 einfo "Unpacking ${dest_name}.tar.gz"
 
 	local n_frags=$(echo "${pkg_name}" | tr '/' $'\n' | wc -l)
 	if [[ "${pkg_name}" =~ "github.com" ]] && (( "${n_frags}" != 3 )) ; then
 		local path=$(echo "${pkg_name}" | cut -f 1-3 -d "/")
-		dest="${S_GO}/${path}"
+		dest="${S_GO}/src/${path}"
 	fi
 
 	mkdir -p "${dest}" || die
@@ -790,7 +790,7 @@ ewarn "The ${PN} ebuild is under development and does not work."
 
 		[[ "${GEN_EBUILD}" == "1" ]] && generate_ebuild_snapshot
 		unpack_go
-		export S="${S_GO}/github.com/ollama/${PN}"
+		export S="${S_GO}/src/github.com/ollama/${PN}"
 		cd "${S}" || die
 		gen_git_tag
 		dep_prepare_mv "${WORKDIR}/llama.cpp-${LLAMA_CPP_COMMIT}" "${S}/llm/llama.cpp"
@@ -800,9 +800,9 @@ ewarn "The ${PN} ebuild is under development and does not work."
 
 src_prepare() {
 	default
-	sed -i -e "s|// import \"gorgonia.org/tensor\"||g" "${S_GO}/github.com/pdevine/tensor/tensor.go" || die
-	sed -i -e "s|// import \"gorgonia.org/tensor/internal/storage\"||g" "${S_GO}/github.com/pdevine/tensor/internal/storage/header.go" || die
-	sed -i -e "s|// import \"gorgonia.org/tensor/internal/execution\"||g" "${S_GO}/github.com/pdevine/tensor/internal/execution/e.go" || die
+	sed -i -e "s|// import \"gorgonia.org/tensor\"||g" "${S_GO}/src/github.com/pdevine/tensor/tensor.go" || die
+	sed -i -e "s|// import \"gorgonia.org/tensor/internal/storage\"||g" "${S_GO}/src/github.com/pdevine/tensor/internal/storage/header.go" || die
+	sed -i -e "s|// import \"gorgonia.org/tensor/internal/execution\"||g" "${S_GO}/src/github.com/pdevine/tensor/internal/execution/e.go" || die
 	if use rocm ; then
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:
@@ -827,9 +827,9 @@ src_prepare() {
 
 	if has_version ">=dev-util/ragel-7.0.1" ; then
 		local L=(
-			"${WORKDIR}/go-mod/gonum.org/v1/gonum/graph/formats/rdf/rdf.go"
-			"${WORKDIR}/go-mod/github.com/dgryski/trifles/matcher/main.go"
-			"${WORKDIR}/go-mod/github.com/dgryski/trifles/cstbucket/main.go"
+			"${WORKDIR}/go-mod/src/gonum.org/v1/gonum/graph/formats/rdf/rdf.go"
+			"${WORKDIR}/go-mod/src/github.com/dgryski/trifles/matcher/main.go"
+			"${WORKDIR}/go-mod/src/github.com/dgryski/trifles/cstbucket/main.go"
 		)
 		local x
 		for x in ${L[@]} ; do
@@ -838,11 +838,11 @@ src_prepare() {
 		sed -i \
 			-e "s|\(RAGEL\) -Z|(RAGEL) |g" \
 			-e "s|RAGEL := ragel|RAGEL := ragel-go|g" \
-			"${WORKDIR}/go-mod/github.com/leodido/go-urn/makefile" \
+			"${WORKDIR}/go-mod/src/github.com/leodido/go-urn/makefile" \
 			|| die
 		sed -i \
 			-e "s|\"ragel\"|\"ragel-go\"|g" \
-			"${WORKDIR}/go-mod/github.com/dgryski/trifles/matcher/main.go" \
+			"${WORKDIR}/go-mod/src/github.com/dgryski/trifles/matcher/main.go" \
 			|| die
 	elif has_version "<dev-util/ragel-7.0.0.10" ; then
 		:
@@ -954,7 +954,7 @@ src_compile() {
 		export GOPATH="${WORKDIR}/go-mod"
 		export PATH="${GOBIN}:${PATH}"
 		export GO111MODULE=auto
-		pushd "${GOPATH}" >/dev/null 2>&1 || die
+		pushd "${GOPATH}/src" >/dev/null 2>&1 || die
 			generate_deps
 			build_binary
 		popd >/dev/null 2>&1 || die
@@ -964,7 +964,7 @@ src_compile() {
 
 src_install() {
 	if ! [[ "${PV}" =~ "9999" ]] ; then
-		cd "${WORKDIR}/go-mod" || die
+		cd "${WORKDIR}/go-mod/src" || die
 	fi
 	dobin "${PN}"
 	if use openrc ; then
@@ -975,7 +975,7 @@ src_install() {
 		doins "${FILESDIR}/${PN}.service"
 	fi
 	if ! [[ "${PV}" =~ "9999" ]] ; then
-		LCNR_SOURCE="${WORKDIR}/go-mod"
+		LCNR_SOURCE="${WORKDIR}/go-mod/src"
 		lcnr_install_files
 	# TODO:  handle live case
 	fi
