@@ -2078,6 +2078,15 @@ eerror
 	fi
 }
 
+check_toolchain() {
+	which clang || die
+	clang --version || die
+	protoc --version || die
+	protoc-gen-go-grpc --version || die
+	pigz --version || die
+	git --version || die
+}
+
 src_configure() {
 	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.4*" ; then
 		export CC="${CHOST}-gcc-13"
@@ -2138,10 +2147,8 @@ src_configure() {
 	fi
 
 	strip-unsupported-flags
-	which clang || die
-	clang --version || die
-	protoc --version || die
-	protoc-gen-go-grpc --version || die
+
+	check-toolchain
 }
 
 generate_deps() {
