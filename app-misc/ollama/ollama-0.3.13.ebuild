@@ -2212,12 +2212,12 @@ generate_deps() {
 }
 
 build_binary() {
-	edo go build .
+	edo go build -x .
 }
 
 build_new_runner() {
 	emake -C llama -j 5
-	edo go build .
+	edo go build -x .
 }
 
 src_compile() {
@@ -2247,6 +2247,10 @@ pwd
 
 src_install() {
 	dobin "${PN}"
+	pushd "${runner_path}" >/dev/null 2>&1 || die
+		dolib.so "libggml.so" "libllama.so"
+		dobin "ollama_llama_server"
+	popd >/dev/null 2>&1 || die
 	if use openrc ; then
 		doinitd "${FILESDIR}/${PN}"
 	fi
@@ -2271,10 +2275,6 @@ src_install() {
 	else
 		runner_path="${S}/dist/linux-amd64/lib/ollama/runners/cpu"
 	fi
-	pushd "${runner_path}" >/dev/null 2>&1 || die
-		dolib.so "libggml.so" "libllama.so"
-		doexe "ollama_llama_server"
-	popd >/dev/null 2>&1 || die
 }
 
 pkg_preinst() {
