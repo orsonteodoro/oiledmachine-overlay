@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# Scan the following for dependencies
+# //go:generate
+
 # TODO:  Re-evaluate/assess the security of file permissions related if the environment
 # variable were changed to having one folder of models.
 
@@ -69,7 +72,7 @@ declare -A ROCM_VERSIONS=(
 )
 #ROCM_VERSION="6.1.2"
 if ! [[ "${PV}" =~ "9999" ]] ; then
-	export S_GO="${WORKDIR}/go_build"
+	export S_GO="${WORKDIR}/go-mod"
 fi
 
 inherit dep-prepare edo go-module lcnr rocm
@@ -133,6 +136,7 @@ get_col2_unpack() {
 		["gonum.org/v1/gonum"]="gonum/gonum"
 		["gorgonia.org/vecf32"]="gorgonia/vecf32"
 		["gorgonia.org/vecf64"]="gorgonia/vecf64"
+		["gopkg.in/check.v1"]="go-check/check"
 	)
 	if [[ "${uri}" =~ "github.com/" ]] ; then
 		echo "${uri}" | cut -f 2-3 -d "/"
@@ -152,7 +156,7 @@ generate_ebuild_snapshot() {
 	IFS=$'\n'
 	L=(
 		"github.com/ollama/${PN} MY_PV"
-		$(grep -E "/" "${S}/go.mod" | sed -e "1d" | sed -e "s|// indirect.*||g")
+		$(grep -E "/" "${S}/go.sum" | cut -f 1-2 -d " ")
 	)
 
 
@@ -160,6 +164,7 @@ einfo
 einfo "Replace SRC_URI section:"
 einfo
 	for row in ${L[@]} ; do
+		[[ "${row}" =~ "go.mod" ]] && continue
 		local c1=$(echo "${row}" | cut -f 1 -d " " | sed -E -e "s|[[:space:]]+||g")
 
 		local n_frags=$(echo "${c1}" | tr '/' $'\n' | wc -l)
@@ -177,6 +182,7 @@ einfo
 einfo "Replace unpack_go section:"
 einfo
 	for row in ${L[@]} ; do
+		[[ "${row}" =~ "go.mod" ]] && continue
 		local c1=$(echo "${row}" | cut -f 1 -d " " | sed -E -e "s|[[:space:]]+||g")
 
 		local n_frags=$(echo "${c1}" | tr '/' $'\n' | wc -l)
@@ -202,14 +208,16 @@ unpack_go_pkg()
 	local uri_frag="${2}"
 	local proj_name="${2#*/}"
 	local tag="${3}"
-	local dest="${S_GO}/src/${pkg_name}"
+#	local dest="${S_GO}/src/${pkg_name}"
+	local dest="${S_GO}/${pkg_name}"
 	local dest_name="${pkg_name//\//-}-${tag//\//-}"
 einfo "Unpacking ${dest_name}.tar.gz"
 
 	local n_frags=$(echo "${pkg_name}" | tr '/' $'\n' | wc -l)
 	if [[ "${pkg_name}" =~ "github.com" ]] && (( "${n_frags}" != 3 )) ; then
 		local path=$(echo "${pkg_name}" | cut -f 1-3 -d "/")
-		dest="${S_GO}/src/${path}"
+#		dest="${S_GO}/src/${path}"
+		dest="${S_GO}/${path}"
 	fi
 
 	mkdir -p "${dest}" || die
@@ -236,69 +244,78 @@ fi
 unpack_go()
 {
 	unpack_go_pkg github.com/ollama/ollama ollama/ollama ${MY_PV}
-	unpack_go_pkg github.com/containerd/console containerd/console v1.0.3
-	unpack_go_pkg github.com/emirpasic/gods emirpasic/gods v1.18.1
-	unpack_go_pkg github.com/gin-gonic/gin gin-gonic/gin v1.10.0
-	unpack_go_pkg github.com/golang/protobuf golang/protobuf v1.5.4
-	unpack_go_pkg github.com/google/uuid google/uuid v1.1.2
-	unpack_go_pkg github.com/olekukonko/tablewriter olekukonko/tablewriter v0.0.5
-	unpack_go_pkg github.com/spf13/cobra spf13/cobra v1.7.0
-	unpack_go_pkg github.com/stretchr/testify stretchr/testify v1.9.0
-	unpack_go_pkg github.com/x448/float16 x448/float16 v0.8.4
-	unpack_go_pkg golang.org/x/sync golang/sync v0.3.0
 	unpack_go_pkg github.com/agnivade/levenshtein agnivade/levenshtein v1.1.1
-	unpack_go_pkg github.com/d4l3k/go-bfloat16 d4l3k/go-bfloat16 v0.0.0-20211005043715-690c3bdd05f1
-	unpack_go_pkg github.com/google/go-cmp google/go-cmp v0.6.0
-	unpack_go_pkg github.com/mattn/go-runewidth mattn/go-runewidth v0.0.14
-	unpack_go_pkg github.com/nlpodyssey/gopickle nlpodyssey/gopickle v0.3.0
-	unpack_go_pkg github.com/pdevine/tensor pdevine/tensor v0.0.0-20240510204454-f88f4562727c
 	unpack_go_pkg github.com/apache/arrow apache/arrow v0.0.0-20211112161151-bc219186db40
+	unpack_go_pkg github.com/arbovm/levenshtein arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0
+	unpack_go_pkg github.com/bytedance/sonic bytedance/sonic v1.11.6
 	unpack_go_pkg github.com/bytedance/sonic bytedance/sonic loader/v0.1.1
 	unpack_go_pkg github.com/chewxy/hm chewxy/hm v1.0.0
 	unpack_go_pkg github.com/chewxy/math32 chewxy/math32 v1.10.1
 	unpack_go_pkg github.com/cloudwego/base64x cloudwego/base64x v0.1.4
 	unpack_go_pkg github.com/cloudwego/iasm cloudwego/iasm v0.2.0
+	unpack_go_pkg github.com/containerd/console containerd/console v1.0.3
+	unpack_go_pkg github.com/d4l3k/go-bfloat16 d4l3k/go-bfloat16 v0.0.0-20211005043715-690c3bdd05f1
 	unpack_go_pkg github.com/davecgh/go-spew davecgh/go-spew v1.1.1
-	unpack_go_pkg github.com/gogo/protobuf gogo/protobuf v1.3.2
-	unpack_go_pkg github.com/google/flatbuffers google/flatbuffers v24.3.25+incompatible
-	unpack_go_pkg github.com/kr/text kr/text v0.2.0
-	unpack_go_pkg github.com/pkg/errors pkg/errors v0.9.1
-	unpack_go_pkg github.com/pmezard/go-difflib pmezard/go-difflib v1.0.0
-	unpack_go_pkg github.com/rivo/uniseg rivo/uniseg v0.2.0
-	unpack_go_pkg github.com/xtgo/set xtgo/set v1.0.0
-	unpack_go_pkg go4.org/unsafe/assume-no-moving-gc go4org/unsafe-assume-no-moving-gc v0.0.0-20231121144256-b99613f794b6
-	unpack_go_pkg golang.org/x/xerrors golang/xerrors v0.0.0-20200804184101-5ec99f83aff1
-	unpack_go_pkg gonum.org/v1/gonum gonum/gonum v0.15.0
-	unpack_go_pkg gorgonia.org/vecf32 gorgonia/vecf32 v0.9.0
-	unpack_go_pkg gorgonia.org/vecf64 gorgonia/vecf64 v0.9.0
-	unpack_go_pkg github.com/bytedance/sonic bytedance/sonic v1.11.6
+	unpack_go_pkg github.com/dgryski/trifles dgryski/trifles v0.0.0-20200323201526-dd97f9abfb48
+	unpack_go_pkg github.com/emirpasic/gods emirpasic/gods v1.18.1
 	unpack_go_pkg github.com/gabriel-vasile/mimetype gabriel-vasile/mimetype v1.4.3
 	unpack_go_pkg github.com/gin-contrib/cors gin-contrib/cors v1.7.2
 	unpack_go_pkg github.com/gin-contrib/sse gin-contrib/sse v0.1.0
+	unpack_go_pkg github.com/gin-gonic/gin gin-gonic/gin v1.10.0
+	unpack_go_pkg github.com/go-playground/assert go-playground/assert v2.2.0
 	unpack_go_pkg github.com/go-playground/locales go-playground/locales v0.14.1
 	unpack_go_pkg github.com/go-playground/universal-translator go-playground/universal-translator v0.18.1
 	unpack_go_pkg github.com/go-playground/validator go-playground/validator v10.20.0
 	unpack_go_pkg github.com/goccy/go-json goccy/go-json v0.10.2
+	unpack_go_pkg github.com/gogo/protobuf gogo/protobuf v1.3.2
+	unpack_go_pkg github.com/golang/protobuf golang/protobuf v1.5.4
+	unpack_go_pkg github.com/golang/snappy golang/snappy v0.0.3
+	unpack_go_pkg github.com/google/flatbuffers google/flatbuffers v24.3.25+incompatible
+	unpack_go_pkg github.com/google/go-cmp google/go-cmp v0.6.0
+	unpack_go_pkg github.com/google/uuid google/uuid v1.1.2
 	unpack_go_pkg github.com/inconshreveable/mousetrap inconshreveable/mousetrap v1.1.0
 	unpack_go_pkg github.com/json-iterator/go json-iterator/go v1.1.12
+	unpack_go_pkg github.com/klauspost/compress klauspost/compress v1.13.1
 	unpack_go_pkg github.com/klauspost/cpuid klauspost/cpuid v2.2.7
+	unpack_go_pkg github.com/kr/pretty kr/pretty v0.3.0
+	unpack_go_pkg github.com/kr/text kr/text v0.2.0
 	unpack_go_pkg github.com/leodido/go-urn leodido/go-urn v1.4.0
 	unpack_go_pkg github.com/mattn/go-isatty mattn/go-isatty v0.0.20
+	unpack_go_pkg github.com/mattn/go-runewidth mattn/go-runewidth v0.0.14
 	unpack_go_pkg github.com/modern-go/concurrent modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
 	unpack_go_pkg github.com/modern-go/reflect2 modern-go/reflect2 v1.0.2
+	unpack_go_pkg github.com/nlpodyssey/gopickle nlpodyssey/gopickle v0.3.0
+	unpack_go_pkg github.com/olekukonko/tablewriter olekukonko/tablewriter v0.0.5
+	unpack_go_pkg github.com/pdevine/tensor pdevine/tensor v0.0.0-20240510204454-f88f4562727c
 	unpack_go_pkg github.com/pelletier/go-toml pelletier/go-toml v2.2.2
+	unpack_go_pkg github.com/pierrec/lz4 pierrec/lz4 v4.1.8
+	unpack_go_pkg github.com/pkg/errors pkg/errors v0.9.1
+	unpack_go_pkg github.com/pmezard/go-difflib pmezard/go-difflib v1.0.0
+	unpack_go_pkg github.com/rivo/uniseg rivo/uniseg v0.2.0
+	unpack_go_pkg github.com/rogpeppe/go-internal rogpeppe/go-internal v1.8.0
+	unpack_go_pkg github.com/spf13/cobra spf13/cobra v1.7.0
 	unpack_go_pkg github.com/spf13/pflag spf13/pflag v1.0.5
+	unpack_go_pkg github.com/stretchr/testify stretchr/testify v1.9.0
 	unpack_go_pkg github.com/twitchyliquid64/golang-asm twitchyliquid64/golang-asm v0.15.1
 	unpack_go_pkg github.com/ugorji/go ugorji/go v1.2.12
+	unpack_go_pkg github.com/x448/float16 x448/float16 v0.8.4
+	unpack_go_pkg github.com/xtgo/set xtgo/set v1.0.0
+	unpack_go_pkg go4.org/unsafe/assume-no-moving-gc go4org/unsafe-assume-no-moving-gc v0.0.0-20231121144256-b99613f794b6
 	unpack_go_pkg golang.org/x/arch golang/arch v0.8.0
 	unpack_go_pkg golang.org/x/crypto golang/crypto v0.23.0
 	unpack_go_pkg golang.org/x/exp golang/exp v0.0.0-20231110203233-9a3e6036ecaa
 	unpack_go_pkg golang.org/x/net golang/net v0.25.0
+	unpack_go_pkg golang.org/x/sync golang/sync v0.3.0
 	unpack_go_pkg golang.org/x/sys golang/sys v0.20.0
 	unpack_go_pkg golang.org/x/term golang/term v0.20.0
 	unpack_go_pkg golang.org/x/text golang/text v0.15.0
+	unpack_go_pkg golang.org/x/xerrors golang/xerrors v0.0.0-20200804184101-5ec99f83aff1
+	unpack_go_pkg gonum.org/v1/gonum gonum/gonum v0.15.0
 	unpack_go_pkg google.golang.org/protobuf protocolbuffers/protobuf-go v1.34.1
+	unpack_go_pkg gopkg.in/check.v1 go-check/check v1.0.0-20201130134442-10cb98267c6c
 	unpack_go_pkg gopkg.in/yaml.v3 go-yaml/yaml v3.0.1
+	unpack_go_pkg gorgonia.org/vecf32 gorgonia/vecf32 v0.9.0
+	unpack_go_pkg gorgonia.org/vecf64 gorgonia/vecf64 v0.9.0
 }
 # protobuf-go 1.34.1 tests with protobuf 5.27.0-rc1
 
@@ -323,69 +340,78 @@ https://github.com/ggerganov/llama.cpp/archive/${LLAMA_CPP_COMMIT}.tar.gz
 https://github.com/nomic-ai/kompute/archive/${KOMPUTE_COMMIT}.tar.gz
 	-> kompute-${KOMPUTE_COMMIT:0:7}.tar.gz
 $(gen_go_dl_gh_url github.com/ollama/ollama ollama/ollama ${MY_PV})
-$(gen_go_dl_gh_url github.com/containerd/console containerd/console v1.0.3)
-$(gen_go_dl_gh_url github.com/emirpasic/gods emirpasic/gods v1.18.1)
-$(gen_go_dl_gh_url github.com/gin-gonic/gin gin-gonic/gin v1.10.0)
-$(gen_go_dl_gh_url github.com/golang/protobuf golang/protobuf v1.5.4)
-$(gen_go_dl_gh_url github.com/google/uuid google/uuid v1.1.2)
-$(gen_go_dl_gh_url github.com/olekukonko/tablewriter olekukonko/tablewriter v0.0.5)
-$(gen_go_dl_gh_url github.com/spf13/cobra spf13/cobra v1.7.0)
-$(gen_go_dl_gh_url github.com/stretchr/testify stretchr/testify v1.9.0)
-$(gen_go_dl_gh_url github.com/x448/float16 x448/float16 v0.8.4)
-$(gen_go_dl_gh_url golang.org/x/sync golang/sync v0.3.0)
 $(gen_go_dl_gh_url github.com/agnivade/levenshtein agnivade/levenshtein v1.1.1)
-$(gen_go_dl_gh_url github.com/d4l3k/go-bfloat16 d4l3k/go-bfloat16 v0.0.0-20211005043715-690c3bdd05f1)
-$(gen_go_dl_gh_url github.com/google/go-cmp google/go-cmp v0.6.0)
-$(gen_go_dl_gh_url github.com/mattn/go-runewidth mattn/go-runewidth v0.0.14)
-$(gen_go_dl_gh_url github.com/nlpodyssey/gopickle nlpodyssey/gopickle v0.3.0)
-$(gen_go_dl_gh_url github.com/pdevine/tensor pdevine/tensor v0.0.0-20240510204454-f88f4562727c)
 $(gen_go_dl_gh_url github.com/apache/arrow apache/arrow v0.0.0-20211112161151-bc219186db40)
+$(gen_go_dl_gh_url github.com/arbovm/levenshtein arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0)
+$(gen_go_dl_gh_url github.com/bytedance/sonic bytedance/sonic v1.11.6)
 $(gen_go_dl_gh_url github.com/bytedance/sonic bytedance/sonic loader/v0.1.1)
 $(gen_go_dl_gh_url github.com/chewxy/hm chewxy/hm v1.0.0)
 $(gen_go_dl_gh_url github.com/chewxy/math32 chewxy/math32 v1.10.1)
 $(gen_go_dl_gh_url github.com/cloudwego/base64x cloudwego/base64x v0.1.4)
 $(gen_go_dl_gh_url github.com/cloudwego/iasm cloudwego/iasm v0.2.0)
+$(gen_go_dl_gh_url github.com/containerd/console containerd/console v1.0.3)
+$(gen_go_dl_gh_url github.com/d4l3k/go-bfloat16 d4l3k/go-bfloat16 v0.0.0-20211005043715-690c3bdd05f1)
 $(gen_go_dl_gh_url github.com/davecgh/go-spew davecgh/go-spew v1.1.1)
-$(gen_go_dl_gh_url github.com/gogo/protobuf gogo/protobuf v1.3.2)
-$(gen_go_dl_gh_url github.com/google/flatbuffers google/flatbuffers v24.3.25+incompatible)
-$(gen_go_dl_gh_url github.com/kr/text kr/text v0.2.0)
-$(gen_go_dl_gh_url github.com/pkg/errors pkg/errors v0.9.1)
-$(gen_go_dl_gh_url github.com/pmezard/go-difflib pmezard/go-difflib v1.0.0)
-$(gen_go_dl_gh_url github.com/rivo/uniseg rivo/uniseg v0.2.0)
-$(gen_go_dl_gh_url github.com/xtgo/set xtgo/set v1.0.0)
-$(gen_go_dl_gh_url go4.org/unsafe/assume-no-moving-gc go4org/unsafe-assume-no-moving-gc v0.0.0-20231121144256-b99613f794b6)
-$(gen_go_dl_gh_url golang.org/x/xerrors golang/xerrors v0.0.0-20200804184101-5ec99f83aff1)
-$(gen_go_dl_gh_url gonum.org/v1/gonum gonum/gonum v0.15.0)
-$(gen_go_dl_gh_url gorgonia.org/vecf32 gorgonia/vecf32 v0.9.0)
-$(gen_go_dl_gh_url gorgonia.org/vecf64 gorgonia/vecf64 v0.9.0)
-$(gen_go_dl_gh_url github.com/bytedance/sonic bytedance/sonic v1.11.6)
+$(gen_go_dl_gh_url github.com/dgryski/trifles dgryski/trifles v0.0.0-20200323201526-dd97f9abfb48)
+$(gen_go_dl_gh_url github.com/emirpasic/gods emirpasic/gods v1.18.1)
 $(gen_go_dl_gh_url github.com/gabriel-vasile/mimetype gabriel-vasile/mimetype v1.4.3)
 $(gen_go_dl_gh_url github.com/gin-contrib/cors gin-contrib/cors v1.7.2)
 $(gen_go_dl_gh_url github.com/gin-contrib/sse gin-contrib/sse v0.1.0)
+$(gen_go_dl_gh_url github.com/gin-gonic/gin gin-gonic/gin v1.10.0)
+$(gen_go_dl_gh_url github.com/go-playground/assert go-playground/assert v2.2.0)
 $(gen_go_dl_gh_url github.com/go-playground/locales go-playground/locales v0.14.1)
 $(gen_go_dl_gh_url github.com/go-playground/universal-translator go-playground/universal-translator v0.18.1)
 $(gen_go_dl_gh_url github.com/go-playground/validator go-playground/validator v10.20.0)
 $(gen_go_dl_gh_url github.com/goccy/go-json goccy/go-json v0.10.2)
+$(gen_go_dl_gh_url github.com/gogo/protobuf gogo/protobuf v1.3.2)
+$(gen_go_dl_gh_url github.com/golang/protobuf golang/protobuf v1.5.4)
+$(gen_go_dl_gh_url github.com/golang/snappy golang/snappy v0.0.3)
+$(gen_go_dl_gh_url github.com/google/flatbuffers google/flatbuffers v24.3.25+incompatible)
+$(gen_go_dl_gh_url github.com/google/go-cmp google/go-cmp v0.6.0)
+$(gen_go_dl_gh_url github.com/google/uuid google/uuid v1.1.2)
 $(gen_go_dl_gh_url github.com/inconshreveable/mousetrap inconshreveable/mousetrap v1.1.0)
 $(gen_go_dl_gh_url github.com/json-iterator/go json-iterator/go v1.1.12)
+$(gen_go_dl_gh_url github.com/klauspost/compress klauspost/compress v1.13.1)
 $(gen_go_dl_gh_url github.com/klauspost/cpuid klauspost/cpuid v2.2.7)
+$(gen_go_dl_gh_url github.com/kr/pretty kr/pretty v0.3.0)
+$(gen_go_dl_gh_url github.com/kr/text kr/text v0.2.0)
 $(gen_go_dl_gh_url github.com/leodido/go-urn leodido/go-urn v1.4.0)
 $(gen_go_dl_gh_url github.com/mattn/go-isatty mattn/go-isatty v0.0.20)
+$(gen_go_dl_gh_url github.com/mattn/go-runewidth mattn/go-runewidth v0.0.14)
 $(gen_go_dl_gh_url github.com/modern-go/concurrent modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd)
 $(gen_go_dl_gh_url github.com/modern-go/reflect2 modern-go/reflect2 v1.0.2)
+$(gen_go_dl_gh_url github.com/nlpodyssey/gopickle nlpodyssey/gopickle v0.3.0)
+$(gen_go_dl_gh_url github.com/olekukonko/tablewriter olekukonko/tablewriter v0.0.5)
+$(gen_go_dl_gh_url github.com/pdevine/tensor pdevine/tensor v0.0.0-20240510204454-f88f4562727c)
 $(gen_go_dl_gh_url github.com/pelletier/go-toml pelletier/go-toml v2.2.2)
+$(gen_go_dl_gh_url github.com/pierrec/lz4 pierrec/lz4 v4.1.8)
+$(gen_go_dl_gh_url github.com/pkg/errors pkg/errors v0.9.1)
+$(gen_go_dl_gh_url github.com/pmezard/go-difflib pmezard/go-difflib v1.0.0)
+$(gen_go_dl_gh_url github.com/rivo/uniseg rivo/uniseg v0.2.0)
+$(gen_go_dl_gh_url github.com/rogpeppe/go-internal rogpeppe/go-internal v1.8.0)
+$(gen_go_dl_gh_url github.com/spf13/cobra spf13/cobra v1.7.0)
 $(gen_go_dl_gh_url github.com/spf13/pflag spf13/pflag v1.0.5)
+$(gen_go_dl_gh_url github.com/stretchr/testify stretchr/testify v1.9.0)
 $(gen_go_dl_gh_url github.com/twitchyliquid64/golang-asm twitchyliquid64/golang-asm v0.15.1)
 $(gen_go_dl_gh_url github.com/ugorji/go ugorji/go v1.2.12)
+$(gen_go_dl_gh_url github.com/x448/float16 x448/float16 v0.8.4)
+$(gen_go_dl_gh_url github.com/xtgo/set xtgo/set v1.0.0)
+$(gen_go_dl_gh_url go4.org/unsafe/assume-no-moving-gc go4org/unsafe-assume-no-moving-gc v0.0.0-20231121144256-b99613f794b6)
 $(gen_go_dl_gh_url golang.org/x/arch golang/arch v0.8.0)
 $(gen_go_dl_gh_url golang.org/x/crypto golang/crypto v0.23.0)
 $(gen_go_dl_gh_url golang.org/x/exp golang/exp v0.0.0-20231110203233-9a3e6036ecaa)
 $(gen_go_dl_gh_url golang.org/x/net golang/net v0.25.0)
+$(gen_go_dl_gh_url golang.org/x/sync golang/sync v0.3.0)
 $(gen_go_dl_gh_url golang.org/x/sys golang/sys v0.20.0)
 $(gen_go_dl_gh_url golang.org/x/term golang/term v0.20.0)
 $(gen_go_dl_gh_url golang.org/x/text golang/text v0.15.0)
+$(gen_go_dl_gh_url golang.org/x/xerrors golang/xerrors v0.0.0-20200804184101-5ec99f83aff1)
+$(gen_go_dl_gh_url gonum.org/v1/gonum gonum/gonum v0.15.0)
 $(gen_go_dl_gh_url google.golang.org/protobuf protocolbuffers/protobuf-go v1.34.1)
+$(gen_go_dl_gh_url gopkg.in/check.v1 go-check/check v1.0.0-20201130134442-10cb98267c6c)
 $(gen_go_dl_gh_url gopkg.in/yaml.v3 go-yaml/yaml v3.0.1)
+$(gen_go_dl_gh_url gorgonia.org/vecf32 gorgonia/vecf32 v0.9.0)
+$(gen_go_dl_gh_url gorgonia.org/vecf64 gorgonia/vecf64 v0.9.0)
 	"
 fi
 
@@ -461,15 +487,15 @@ LICENSE="
 	Boost-1.0
 	W3C-Test-Suite-Licence
 "
-# Apache-2.0 BSD BSD-2 MIT UoI-NCSA - go_build/src/github.com/apache/arrow/NOTICE.txt
-# Apache-2.0 - go_build/src/golang.org/x/exp/shiny/materialdesign/icons/LICENSE
-# BSD - go_build/src/go4.org/unsafe/assume-no-moving-gc/LICENSE
-# MIT - go_build/src/gorgonia.org/vecf64/LICENSE
-# Boost-1.0 - go_build/src/github.com/bytedance/sonic/licenses/LICENSE-Drachennest
-# BSD-2 - go_build/src/github.com/nlpodyssey/gopickle/LICENSE
-# BSD-2 ISC - go_build/src/github.com/emirpasic/gods/LICENSE
-# GO-PATENTS - go_build/src/golang.org/x/arch/PATENTS
-# W3C Test Suite License, W3C 3-clause BSD License - go_build/src/gonum.org/v1/gonum/graph/formats/rdf/testdata/LICENSE.md
+# Apache-2.0 BSD BSD-2 MIT UoI-NCSA - go-mod/github.com/apache/arrow/NOTICE.txt
+# Apache-2.0 - go-mod/golang.org/x/exp/shiny/materialdesign/icons/LICENSE
+# BSD - go-mod/go4.org/unsafe/assume-no-moving-gc/LICENSE
+# MIT - go-mod/gorgonia.org/vecf64/LICENSE
+# Boost-1.0 - go-mod/github.com/bytedance/sonic/licenses/LICENSE-Drachennest
+# BSD-2 - go-mod/github.com/nlpodyssey/gopickle/LICENSE
+# BSD-2 ISC - go-mod/github.com/emirpasic/gods/LICENSE
+# GO-PATENTS - go-mod/golang.org/x/arch/PATENTS
+# W3C Test Suite License, W3C 3-clause BSD License - go-mod/gonum.org/v1/gonum/graph/formats/rdf/testdata/LICENSE.md
 
 SLOT="0"
 IUSE+="
@@ -611,7 +637,13 @@ BDEPEND="
 	>=dev-go/protobuf-go-1.34.2
 	dev-go/protobuf-go:=
 	>=dev-go/protoc-gen-go-grpc-1.5.1
+	app-shells/bash
+	dev-build/make
 	dev-go/protoc-gen-go-grpc:=
+	|| (
+		<dev-util/ragel-7.0.0.10
+		>=dev-util/ragel-7.0.1
+	)
 	cuda? (
 		cuda_targets_sm_50? (
 			|| (
@@ -760,7 +792,8 @@ ewarn "The ${PN} ebuild is under development and does not work."
 
 		[[ "${GEN_EBUILD}" == "1" ]] && generate_ebuild_snapshot
 		unpack_go
-		export S="${S_GO}/src/github.com/ollama/${PN}"
+#		export S="${S_GO}/src/github.com/ollama/${PN}"
+		export S="${S_GO}/github.com/ollama/${PN}"
 		cd "${S}" || die
 		gen_git_tag
 		dep_prepare_mv "${WORKDIR}/llama.cpp-${LLAMA_CPP_COMMIT}" "${S}/llm/llama.cpp"
@@ -770,9 +803,13 @@ ewarn "The ${PN} ebuild is under development and does not work."
 
 src_prepare() {
 	default
-	sed -i -e "s|// import \"gorgonia.org/tensor\"||g" "${S_GO}/src/github.com/pdevine/tensor/tensor.go" || die
-	sed -i -e "s|// import \"gorgonia.org/tensor/internal/storage\"||g" "${S_GO}/src/github.com/pdevine/tensor/internal/storage/header.go" || die
-	sed -i -e "s|// import \"gorgonia.org/tensor/internal/execution\"||g" "${S_GO}/src/github.com/pdevine/tensor/internal/execution/e.go" || die
+#	sed -i -e "s|// import \"gorgonia.org/tensor\"||g" "${S_GO}/src/github.com/pdevine/tensor/tensor.go" || die
+#	sed -i -e "s|// import \"gorgonia.org/tensor/internal/storage\"||g" "${S_GO}/src/github.com/pdevine/tensor/internal/storage/header.go" || die
+#	sed -i -e "s|// import \"gorgonia.org/tensor/internal/execution\"||g" "${S_GO}/src/github.com/pdevine/tensor/internal/execution/e.go" || die
+
+	sed -i -e "s|// import \"gorgonia.org/tensor\"||g" "${S_GO}/github.com/pdevine/tensor/tensor.go" || die
+	sed -i -e "s|// import \"gorgonia.org/tensor/internal/storage\"||g" "${S_GO}/github.com/pdevine/tensor/internal/storage/header.go" || die
+	sed -i -e "s|// import \"gorgonia.org/tensor/internal/execution\"||g" "${S_GO}/github.com/pdevine/tensor/internal/execution/e.go" || die
 	if use rocm ; then
 		# Speed up symbol replacmenet for @...@ by reducing the search space
 		# Generated from below one liner ran in the same folder as this file:
@@ -793,6 +830,31 @@ src_prepare() {
 		)
 
 		rocm_src_prepare
+	fi
+
+	if has_version ">=dev-util/ragel-7.0.1" ; then
+		local L=(
+			"${WORKDIR}/go-mod/gonum.org/v1/gonum/graph/formats/rdf/rdf.go"
+			"${WORKDIR}/go-mod/github.com/dgryski/trifles/matcher/main.go"
+			"${WORKDIR}/go-mod/github.com/dgryski/trifles/cstbucket/main.go"
+		)
+		local x
+		for x in ${L[@]} ; do
+			sed -i -e "s|ragel -Z|ragel-go|g" "${x}" || die
+		done
+		sed -i -e "s|\(RAGEL\) -Z|(RAGEL) |g" "${WORKDIR}/go-mod/github.com/leodido/go-urn/makefile" || die
+		sed -i -e "s|RAGEL := ragel|RAGEL := ragel-go|g" "${WORKDIR}/go-mod/github.com/leodido/go-urn/makefile" || die
+	elif has_version "<dev-util/ragel-7.0.0.10" ; then
+		:
+	else
+eerror
+eerror "Your ragel version is not supported."
+eerror
+eerror "Install either:"
+eerror "  >=dev-util/ragel-7.0.1"
+eerror "  <dev-util/ragel-7.0.0.10"
+eerror
+		die
 	fi
 }
 
@@ -862,6 +924,19 @@ src_configure() {
 	protoc-gen-go-grpc --version || die
 }
 
+generate_deps() {
+	edo go generate ./...
+}
+
+build_binary() {
+	edo go build .
+}
+
+build_new_runner() {
+	emake -C llama -j 5
+	edo go build .
+}
+
 src_compile() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		VERSION=$(
@@ -873,26 +948,23 @@ src_compile() {
 	export GOFLAGS="'-ldflags=-w -s \"-X=github.com/${PN}/${PN}/version.Version=${VERSION}\"'"
 
 	if [[ "${PV}" =~ "9999" ]] ; then
-		ego generate -x ./...
-		ego build .
+		generate_deps
+		build_binary
 	else
-		export GOPATH="${WORKDIR}/go_build"
-		export GOBIN="${GOPATH}/bin"
+		export GOPATH="${WORKDIR}/go-mod"
+		export PATH="${GOBIN}:${PATH}"
 		export GO111MODULE=auto
-		pushd "${GOPATH}/src" >/dev/null 2>&1 || die
-			edo go generate -x ./...
-		popd >/dev/null 2>&1 || die
-		mkdir -p "${GOBIN}" || die
-		pushd "${GOBIN}" >/dev/null 2>&1 || die
-			edo go build
-#			edo go build "github.com/ollama/${PN}"
+		pushd "${GOPATH}" >/dev/null 2>&1 || die
+			generate_deps
+			build_binary
 		popd >/dev/null 2>&1 || die
 	fi
+	build_new_runner
 }
 
 src_install() {
 	if ! [[ "${PV}" =~ "9999" ]] ; then
-		cd "${S_GO}/bin" || die
+		cd "${WORKDIR}/go-mod" || die
 	fi
 	dobin "${PN}"
 	if use openrc ; then
@@ -903,7 +975,7 @@ src_install() {
 		doins "${FILESDIR}/${PN}.service"
 	fi
 	if ! [[ "${PV}" =~ "9999" ]] ; then
-		LCNR_SOURCE="${S_GO}/src"
+		LCNR_SOURCE="${WORKDIR}/go-mod"
 		lcnr_install_files
 	# TODO:  handle live case
 	fi
