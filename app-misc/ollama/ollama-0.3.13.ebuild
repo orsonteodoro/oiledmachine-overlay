@@ -835,8 +835,15 @@ src_prepare() {
 		for x in ${L[@]} ; do
 			sed -i -e "s|ragel -Z|ragel-go|g" "${x}" || die
 		done
-		sed -i -e "s|\(RAGEL\) -Z|(RAGEL) |g" "${WORKDIR}/go-mod/github.com/leodido/go-urn/makefile" || die
-		sed -i -e "s|RAGEL := ragel|RAGEL := ragel-go|g" "${WORKDIR}/go-mod/github.com/leodido/go-urn/makefile" || die
+		sed -i \
+			-e "s|\(RAGEL\) -Z|(RAGEL) |g" \
+			-e "s|RAGEL := ragel|RAGEL := ragel-go|g" \
+			"${WORKDIR}/go-mod/github.com/leodido/go-urn/makefile" \
+			|| die
+		sed -i \
+			-e "s|\"ragel\"||g" \
+			"${WORKDIR}/go-mod/github.com/dgryski/trifles/matcher/main.go" \
+			|| die
 	elif has_version "<dev-util/ragel-7.0.0.10" ; then
 		:
 	else
