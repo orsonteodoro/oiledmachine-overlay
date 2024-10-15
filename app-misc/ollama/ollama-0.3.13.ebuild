@@ -36,6 +36,10 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+CPU_FLAGS_X86=(
+	cpu_flags_x86_avx
+	cpu_flags_x86_avx2
+)
 CUDA_TARGETS_COMPAT=(
 	sm_50
 	sm_52
@@ -1692,6 +1696,7 @@ LICENSE="
 SLOT="0"
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
+${CPU_FLAGS_X86[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
@@ -2127,6 +2132,30 @@ src_configure() {
 		export CC="${CHOST}-gcc-12"
 		export CXX="${CHOST}-g++-12"
 		export AMDGPU_TARGETS="$(get_amdgpu_flags)"
+	fi
+
+	if ! use cuda ; then
+		export OLLAMA_SKIP_CUDA_GENERATE=1
+	fi
+
+	if ! use rocm ; then
+		export OLLAMA_SKIP_ROCM_GENERATE=1
+	fi
+
+	if ! use video_cards_intel ; then
+		export OLLAMA_SKIP_ONEAPI_GENERATE=1
+	fi
+
+	if [[ -n "${OLLAMA_CUSTOM_CPU_DEFS}" ]] ; then
+	# These may allow for AVX512 and later but causes a performance regression.
+	# See https://github.com/ollama/ollama/blob/v0.3.13/llm/generate/gen_linux.sh#L77
+		export OLLAMA_CUSTOM_CPU_DEFS
+	elif use cpu_flags_x86_avx2 ; then
+		export OLLAMA_CPU_TARGET="cpu_avx2"
+	elif use cpu_flags_x86_avx ; then
+		export OLLAMA_CPU_TARGET="cpu_avx"
+	else
+		export OLLAMA_CPU_TARGET="cpu" # Generic
 	fi
 
 	check_toolchain
