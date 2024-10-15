@@ -1752,6 +1752,16 @@ REQUIRED_USE+="
 		mkl
 		openblas
 	)
+	cuda? (
+		|| (
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		)
+	)
+	rocm? (
+		|| (
+			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
+		)
+	)
 "
 RDEPEND="
 	acct-group/ollama
