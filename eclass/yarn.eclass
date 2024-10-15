@@ -531,16 +531,16 @@ einfo "Current directory:\t${PWD}"
 einfo "Tries:\t\t${tries}"
 einfo "Running:\t\tyarn ${cmd[@]}"
 		yarn "${cmd[@]}" || die
-		if ! grep -q -E -r -e "(ETIMEDOUT|EAI_AGAIN|ECONNRESET)" "${T}/build.log" ; then
+		if ! grep -q -E -e "(ETIMEDOUT|EAI_AGAIN|ECONNRESET)" "${T}/build.log" ; then
 			break
 		fi
-		if grep -q -E -r -e "ETIMEDOUT" "${T}/build.log" ; then
+		if grep -q -E -e "ETIMEDOUT" "${T}/build.log" ; then
 			tries=$((${tries} + 1))
 			sed -i -e "/ETIMEDOUT/d" "${T}/build.log"
-		elif grep -q -E -r -e "EAI_AGAIN" "${T}/build.log" ; then
+		elif grep -q -E -e "EAI_AGAIN" "${T}/build.log" ; then
 			tries=$((${tries} + 1))
 			sed -i -e "/EAI_AGAIN/d" "${T}/build.log"
-		elif grep -q -E -r -e "ECONNRESET" "${T}/build.log" ; then
+		elif grep -q -E -e "ECONNRESET" "${T}/build.log" ; then
 			tries=$((${tries} + 1))
 			sed -i -e "/ECONNRESET/d" "${T}/build.log"
 		fi
