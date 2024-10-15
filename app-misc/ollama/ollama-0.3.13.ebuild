@@ -1934,10 +1934,13 @@ PATCHES=(
 
 pkg_pretend() {
 	if use rocm ; then
-ewarn "ROCm support for ${PN} is experimental."
+ewarn "USE=rocm support for ${PN} is experimental."
 	fi
 	if use cuda ; then
-ewarn "CUDA support for ${PN} is experimental."
+ewarn "USE=cuda support for ${PN} is experimental."
+	fi
+	if use video_cards_intel ; then
+ewarn "USE=video_cards_intel support for ${PN} is experimental."
 	fi
 }
 
@@ -1957,7 +1960,6 @@ einfo "Generating tag done"
 }
 
 pkg_setup() {
-	einfo "Called pkg_setup()"
 	local llvm_base_path
 	if use rocm ; then
 		if use rocm_6_1 ; then
