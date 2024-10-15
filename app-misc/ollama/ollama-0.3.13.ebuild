@@ -2069,7 +2069,9 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 }
 
 check_toolchain() {
-	which clang || die
+	# The project doesn't check it so it creates strange error messages and
+	# a undocumented list of required tools.
+einfo "Checking toolchain"
 	clang --version || die
 	protoc --version || die
 	protoc-gen-go-grpc --version || die
