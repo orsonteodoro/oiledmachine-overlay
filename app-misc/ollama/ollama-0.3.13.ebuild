@@ -2148,7 +2148,7 @@ src_configure() {
 
 	strip-unsupported-flags
 
-	check-toolchain
+	check_toolchain
 }
 
 generate_deps() {
