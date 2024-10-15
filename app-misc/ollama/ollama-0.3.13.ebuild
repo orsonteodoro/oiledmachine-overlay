@@ -841,7 +841,7 @@ src_prepare() {
 			"${WORKDIR}/go-mod/github.com/leodido/go-urn/makefile" \
 			|| die
 		sed -i \
-			-e "s|\"ragel\"||g" \
+			-e "s|\"ragel\"|\"ragel-go\"|g" \
 			"${WORKDIR}/go-mod/github.com/dgryski/trifles/matcher/main.go" \
 			|| die
 	elif has_version "<dev-util/ragel-7.0.0.10" ; then
