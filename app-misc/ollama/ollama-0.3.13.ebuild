@@ -1744,6 +1744,7 @@ REQUIRED_USE+="
 	?? (
 		cuda
 		rocm
+		video_cards_intel
 	)
 	?? (
 		blis
