@@ -533,7 +533,7 @@ einfo "Replace EGO_SUM contents with the following:"
 }
 
 src_compile() {
-	env GOBIN="${S}/bin" \
+	GOBIN="${S}/bin" \
 	edo go install ./...
 }
 
