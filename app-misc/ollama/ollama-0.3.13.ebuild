@@ -804,9 +804,9 @@ src_prepare() {
 	sed -i -e "s|// import \"gorgonia.org/tensor/internal/storage\"||g" "${S_GO}/github.com/pdevine/tensor/internal/storage/header.go" || die
 	sed -i -e "s|// import \"gorgonia.org/tensor/internal/execution\"||g" "${S_GO}/github.com/pdevine/tensor/internal/execution/e.go" || die
 	if use rocm ; then
-		# Speed up symbol replacmenet for @...@ by reducing the search space
-		# Generated from below one liner ran in the same folder as this file:
-		# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
+	# Speed up symbol replacmenet for @...@ by reducing the search space
+	# Generated from below one liner ran in the same folder as this file:
+	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 		PATCH_PATHS=(
 			"${S}/gpu/amd_linux.go"
 			"${S}/gpu/gpu_linux.go"
