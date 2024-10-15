@@ -2070,7 +2070,7 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 
 check_toolchain() {
 	# The project doesn't check it so it creates strange error messages and
-	# a undocumented list of required tools.
+	# an undocumented list of required tools.
 einfo "Checking toolchain"
 	# Still check if *DEPEND is bypassed via `emerge -O` or `ebuild`
 	clang --version || die
