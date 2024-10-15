@@ -2258,25 +2258,25 @@ build_new_runner() {
 	# See also
 	# https://github.com/ollama/ollama/blob/v0.3.13/llama/llama.go
 	if use cpu_flags_x86_avx2 && use cuda ; then
-		edo go build -x avx2,cuda .
+		edo go build -x -tags avx2,cuda .
 	elif use cpu_flags_x86_avx && use cuda ; then
-		edo go build -x avx,cuda .
+		edo go build -x -tags avx,cuda .
 	elif use cuda ; then
-		edo go build -x cuda .
+		edo go build -x -tags cuda .
 	elif use cpu_flags_x86_avx2 && use rocm ; then
-		edo go build -x avx2,rocm .
+		edo go build -x -tags avx2,rocm .
 	elif use cpu_flags_x86_avx && use rocm ; then
-		edo go build -x avx,rocm .
+		edo go build -x -tags avx,rocm .
 	elif use rocm ; then
-		edo go build -x rocm .
+		edo go build -x -tags rocm .
 	elif use cpu_flags_x86_avx2 ; then
 		edo go env -w "CGO_CFLAGS_ALLOW=-mfma|-mf16c"
 		edo go env -w "CGO_CXXFLAGS_ALLOW=-mfma|-mf16c"
 		emake -C llama
-		edo go build -x -tags=avx,avx2 .
+		edo go build -x -tags avx,avx2 .
 	elif use cpu_flags_x86_avx ; then
 		emake -C llama
-		edo go build -x -tags=avx .
+		edo go build -x -tags avx .
 	else
 		emake -C llama
 		edo go build -x .
