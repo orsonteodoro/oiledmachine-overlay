@@ -208,7 +208,6 @@ unpack_go_pkg()
 	local uri_frag="${2}"
 	local proj_name="${2#*/}"
 	local tag="${3}"
-#	local dest="${S_GO}/src/${pkg_name}"
 	local dest="${S_GO}/${pkg_name}"
 	local dest_name="${pkg_name//\//-}-${tag//\//-}"
 einfo "Unpacking ${dest_name}.tar.gz"
@@ -216,7 +215,6 @@ einfo "Unpacking ${dest_name}.tar.gz"
 	local n_frags=$(echo "${pkg_name}" | tr '/' $'\n' | wc -l)
 	if [[ "${pkg_name}" =~ "github.com" ]] && (( "${n_frags}" != 3 )) ; then
 		local path=$(echo "${pkg_name}" | cut -f 1-3 -d "/")
-#		dest="${S_GO}/src/${path}"
 		dest="${S_GO}/${path}"
 	fi
 
@@ -792,7 +790,6 @@ ewarn "The ${PN} ebuild is under development and does not work."
 
 		[[ "${GEN_EBUILD}" == "1" ]] && generate_ebuild_snapshot
 		unpack_go
-#		export S="${S_GO}/src/github.com/ollama/${PN}"
 		export S="${S_GO}/github.com/ollama/${PN}"
 		cd "${S}" || die
 		gen_git_tag
@@ -803,10 +800,6 @@ ewarn "The ${PN} ebuild is under development and does not work."
 
 src_prepare() {
 	default
-#	sed -i -e "s|// import \"gorgonia.org/tensor\"||g" "${S_GO}/src/github.com/pdevine/tensor/tensor.go" || die
-#	sed -i -e "s|// import \"gorgonia.org/tensor/internal/storage\"||g" "${S_GO}/src/github.com/pdevine/tensor/internal/storage/header.go" || die
-#	sed -i -e "s|// import \"gorgonia.org/tensor/internal/execution\"||g" "${S_GO}/src/github.com/pdevine/tensor/internal/execution/e.go" || die
-
 	sed -i -e "s|// import \"gorgonia.org/tensor\"||g" "${S_GO}/github.com/pdevine/tensor/tensor.go" || die
 	sed -i -e "s|// import \"gorgonia.org/tensor/internal/storage\"||g" "${S_GO}/github.com/pdevine/tensor/internal/storage/header.go" || die
 	sed -i -e "s|// import \"gorgonia.org/tensor/internal/execution\"||g" "${S_GO}/github.com/pdevine/tensor/internal/execution/e.go" || die
