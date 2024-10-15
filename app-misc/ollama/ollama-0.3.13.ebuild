@@ -1838,6 +1838,7 @@ BDEPEND="
 	app-shells/bash
 	dev-build/make
 	dev-vcs/git
+	virtual/pkgconfig
 	|| (
 		<dev-util/ragel-7.0.0.10
 		>=dev-util/ragel-7.0.1
@@ -2085,6 +2086,7 @@ check_toolchain() {
 	protoc-gen-go-grpc --version || die
 	pigz --version || die
 	git --version || die
+	pkg-config --version || ie
 }
 
 src_configure() {
@@ -2101,6 +2103,8 @@ src_configure() {
 		export CXX="${CHOST}-g++-12"
 		export AMDGPU_TARGETS="$(get_amdgpu_flags)"
 	fi
+
+	check_toolchain
 
 	if use blis ; then
 		local cflags="-I/usr/include/blis"
@@ -2147,8 +2151,6 @@ src_configure() {
 	fi
 
 	strip-unsupported-flags
-
-	check_toolchain
 }
 
 generate_deps() {
