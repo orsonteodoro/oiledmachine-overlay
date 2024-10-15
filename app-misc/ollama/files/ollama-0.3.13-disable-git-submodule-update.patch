@@ -13,14 +13,6 @@ diff '--color=auto' -urp ollama-0.3.13.orig/llama/sync.sh ollama-0.3.13/llama/sy
 diff '--color=auto' -urp ollama-0.3.13.orig/llm/generate/gen_common.sh ollama-0.3.13/llm/generate/gen_common.sh
 --- ollama-0.3.13.orig/llm/generate/gen_common.sh	2024-10-10 11:21:51.000000000 -0700
 +++ ollama-0.3.13/llm/generate/gen_common.sh	2024-10-14 07:18:39.829182571 -0700
-@@ -54,6 +54,7 @@ init_vars() {
- }
- 
- git_module_setup() {
-+    return
-     if [ -n "${OLLAMA_SKIP_PATCHING}" ]; then
-         echo "Skipping submodule initialization"
-         return
 @@ -63,8 +64,8 @@ git_module_setup() {
          echo "Cleaning up old submodule"
          rm -rf ${LLAMACPP_DIR}
