@@ -1958,7 +1958,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"A${FILESDIR}/${PN}-0.3.13-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-0.3.13-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.3.13-disable-git-submodule-update.patch"
 )
 
