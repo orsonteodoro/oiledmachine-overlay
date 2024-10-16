@@ -134,9 +134,7 @@ PATCHES=(
 )
 DOCS=(
 	"CHANGELOG"
-	"CONTRIBUTING.md"
 	"README.md"
-	"ROADMAP.md"
 )
 
 pkg_setup() {
