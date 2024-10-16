@@ -80,7 +80,7 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
 fi
 
-inherit dep-prepare edo go-module lcnr multiprocessing rocm
+inherit dep-prepare edo flag-o-matic go-module lcnr multiprocessing rocm
 
 
 # protobuf-go 1.34.1 tests with protobuf 5.27.0-rc1
@@ -2215,6 +2215,7 @@ src_configure() {
 		export OLLAMA_SKIP_CUDA_GENERATE=1
 	else
 		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported for USE=cuda"
+		filter-flags -pipe # breaks NVCC
 	fi
 
 	if ! use rocm ; then
