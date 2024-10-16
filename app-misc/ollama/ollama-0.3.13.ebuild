@@ -8,7 +8,7 @@ EAPI=8
 # SECURITY:
 #
 # (1) Check the security advisories each month for both ollama and llama.cpp.
-# (2) if llama.cpp has a critical vulnerability, either bump ollama or manually force bump the commit and LLAMA_CPP_UPDATE=1.
+# (2) if llama.cpp has a critical vulnerability, either bump ollama or manually force bump LLAMA_CPP_COMMIT and LLAMA_CPP_UPDATE=1.
 # (3) REVIEW:  Consider adding hardening flags.
 #
 
