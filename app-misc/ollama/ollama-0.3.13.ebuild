@@ -2448,7 +2448,13 @@ pkg_postinst() {
 einfo
 einfo "Quick guide:"
 einfo
-einfo "  ${PN} serve			# Starts server"
+	if use openrc ; then
+einfo "  rc-service ${PN} start		# Start server"
+	elif use systemd ; then
+einfo "  systemctl start ${PN}		# Start server"
+	else
+einfo "  ${PN} serve			# Start server, note you are reponsible for adding it to your init system."
+	fi
 einfo "  ${PN} run llama3:70b		# Downloads and loads a llama3 Large Language Model (LLM) with 70 billion parameters"
 einfo
 einfo "You still need to download a pregenerated model.  The full list can be"
