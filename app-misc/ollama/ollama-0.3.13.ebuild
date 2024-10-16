@@ -1970,9 +1970,6 @@ pkg_pretend() {
 	if use rocm ; then
 ewarn "USE=rocm support for ${PN} is experimental."
 	fi
-	if use cuda ; then
-ewarn "USE=cuda support for ${PN} is experimental."
-	fi
 	if use video_cards_intel ; then
 ewarn "USE=video_cards_intel support for ${PN} is experimental."
 	fi
