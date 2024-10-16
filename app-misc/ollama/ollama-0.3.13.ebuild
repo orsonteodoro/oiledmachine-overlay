@@ -2333,20 +2333,20 @@ build_new_runner() {
 		-x
 	)
 
-	local args=""
+	local cpu_flags_args=""
 
 	if use cpu_flags_x86_f16c ; then
-		args+="|-mf16c"
+		cpu_flag_args+="|-mf16c"
 	fi
 
 	if use cpu_flags_x86_fma ; then
-		args+="|-mfma"
+		cpu_flag_args+="|-mfma"
 	fi
 
 	if use cpu_flags_x86_f16c || use cpu_flags_x86_fma ; then
-		args="${args:1}"
-		edo go env -w "CGO_CFLAGS_ALLOW=${args}"
-		edo go env -w "CGO_CXXFLAGS_ALLOW=${args}"
+		cpu_flag_args="${cpu_flag_args:1}"
+		edo go env -w "CGO_CFLAGS_ALLOW=${cpu_flag_args}"
+		edo go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
 	fi
 
 	if use cpu_flags_x86_avx2 && use cuda ; then
