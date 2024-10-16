@@ -2295,12 +2295,12 @@ build_new_runner() {
 
 	if use cuda ; then
 		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-			emake -C llama "libggml_cuda_v12.so"
+			emake -C llama cuda_v12
 		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
-			emake -C llama "libggml_cuda_v11.so"
+			emake -C llama cuda_v11
 		fi
 	elif use rocm ; then
-		emake -C llama "libggml_rocm_v${ROCM_VERSION}.so"
+		emake -C llama rocm
 	else
 		emake -C llama
 	fi
@@ -2399,33 +2399,24 @@ eerror "ARCH=${ARCH} ABI=${ABI} is not supported"
 	fi
 }
 
-install_cpu_runner() {
-	local cpu_runner_path
-	if use cpu_flags_x86_avx2 ; then
-		cpu_runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu_avx2"
-	elif use cpu_flags_x86_avx ; then
-		cpu_runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu_avx"
-	else
-		cpu_runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu"
-	fi
+install_runner() {
+	local runner_path
 
-	pushd "${cpu_runner_path}" >/dev/null 2>&1 || die
-		dolib.so "libggml.so" "libllama.so"
-		dobin "ollama_llama_server"
-	popd >/dev/null 2>&1 || die
-}
-
-install_gpu_runner() {
-	local gpu_runner_path
 	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-		gpu_runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cuda_v12"
+		runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cuda_v12"
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
-		gpu_runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cuda_v11"
+		runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cuda_v11"
 	elif use rocm ; then
-		gpu_runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/rocm"
+		runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/rocm"
+	elif use cpu_flags_x86_avx2 ; then
+		runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu_avx2"
+	elif use cpu_flags_x86_avx ; then
+		runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu_avx"
+	else
+		runner_path="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu"
 	fi
 
-	pushd "${gpu_runner_path}" >/dev/null 2>&1 || die
+	pushd "${runner_path}" >/dev/null 2>&1 || die
 		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
 			dolib.so "libggml_cuda_v12.so"
 		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
@@ -2433,6 +2424,8 @@ install_gpu_runner() {
 		elif use rocm ; then
 			dolib.so "libggml_rocm_v${ROCM_VERSION}.so"
 		fi
+		dolib.so "libggml.so" "libllama.so"
+		dobin "ollama_llama_server"
 	popd >/dev/null 2>&1 || die
 
 }
@@ -2440,8 +2433,7 @@ install_gpu_runner() {
 src_install() {
 	dobin "${PN}"
 
-	install_cpu_runner
-	install_gpu_runner
+	install_runner
 
 	if use openrc ; then
 		doinitd "${FILESDIR}/${PN}"
