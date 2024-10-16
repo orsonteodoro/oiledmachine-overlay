@@ -1960,6 +1960,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.3.13-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.3.13-disable-git-submodule-update.patch"
 	"${FILESDIR}/${PN}-0.3.13-rename-CUDA_ARCHITECTURES.patch"
+	"${FILESDIR}/${PN}-0.3.13-fix-os-arch-pair.patch"
 )
 
 pkg_pretend() {
@@ -2250,8 +2251,8 @@ src_configure() {
 		sed -i \
 			-e "s|linux CFLAGS: -D_GNU_SOURCE|linux CFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
 			-e "s|linux CXXFLAGS: -D_GNU_SOURCE|linux CXXFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
-			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64 ${libs}|g" \
-			-e "s|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/Linux/arm64|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/Linux/arm64 ${libs}|g" \
+			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/linux-amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/linux-amd64 ${libs}|g" \
+			-e "s|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/linux-arm64|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/linux-arm64 ${libs}|g" \
 			"llama/llama.go" \
 			|| die
 	elif use mkl ; then
@@ -2264,7 +2265,7 @@ src_configure() {
 		sed -i \
 			-e "s|linux CFLAGS: -D_GNU_SOURCE|linux CFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS -DGGML_BLAS_USE_MKL=1 ${cflags}|g" \
 			-e "s|linux CXXFLAGS: -D_GNU_SOURCE|linux CXXFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS -DGGML_BLAS_USE_MKL=1 ${cflags}|g" \
-			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64 ${libs}|g" \
+			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/linux-amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/linux-amd64 ${libs}|g" \
 			"llama/llama.go" \
 			|| die
 		local path="/opt/intel/oneapi/mkl/${mkl_pv}/env/vars.sh"
@@ -2276,8 +2277,8 @@ src_configure() {
 		sed -i \
 			-e "s|linux CFLAGS: -D_GNU_SOURCE|linux CFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
 			-e "s|linux CXXFLAGS: -D_GNU_SOURCE|linux CXXFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
-			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64 ${libs}|g" \
-			-e "s|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/Linux/arm64|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/Linux/arm64 ${libs}|g" \
+			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/linux-amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/linux-amd64 ${libs}|g" \
+			-e "s|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/linux-arm64|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/linux-arm64 ${libs}|g" \
 			"llama/llama.go" \
 			|| die
 	elif use openblas ; then
@@ -2286,18 +2287,11 @@ src_configure() {
 		sed -i \
 			-e "s|linux CFLAGS: -D_GNU_SOURCE|linux CFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
 			-e "s|linux CXXFLAGS: -D_GNU_SOURCE|linux CXXFLAGS: -D_GNU_SOURCE -DGGML_USE_BLAS ${cflags}|g" \
-			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/Linux/amd64 ${libs}|g" \
-			-e "s|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/Linux/arm64|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/Linux/arm64 ${libs}|g" \
+			-e "s|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/linux-amd64|linux,amd64 LDFLAGS: -L\${SRCDIR}/build/linux-amd64 ${libs}|g" \
+			-e "s|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/linux-arm64|linux,arm64 LDFLAGS: -L\${SRCDIR}/build/linux-arm64 ${libs}|g" \
 			"llama/llama.go" \
 			|| die
 	fi
-
-	# Bug for USE=cuda
-	sed -i \
-		-e "s|/build/Linux/arm64|/build/linux-arm64|g" \
-		-e "s|/build/Linux/amd64|/build/linux-amd64|g" \
-		"llama/llama.go" \
-		|| die
 
 	strip-unsupported-flags
 }
