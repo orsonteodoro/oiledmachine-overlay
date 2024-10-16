@@ -1812,6 +1812,7 @@ gen_rocm_rdepend() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
 		local s1="${s/./_}"
+		local gcc_slot="HIP_${s1}_GCC_SLOT"
 		echo "
 			rocm_${s/./_}? (
 				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}
@@ -1846,7 +1847,20 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
+gen_rocm_bdepend() {
+	local s
+	for s in ${ROCM_SLOTS[@]} ; do
+		local s1="${s/./_}"
+		local gcc_slot="HIP_${s1}_GCC_SLOT"
+		echo "
+			rocm_${s/./_}? (
+				=sys-devel/gcc-${!gcc_slot}*
+			)
+		"
+	done
+}
 BDEPEND="
+	$(gen_rocm_bdepend)
 	$(gen_clang_bdepend)
 	(
 		>=dev-go/protobuf-go-1.34.2
@@ -1939,9 +1953,8 @@ BDEPEND="
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
-		=sys-devel/gcc-${HIP_6_1_GCC_SLOT}*
-		sci-libs/rocBLAS:=
 		sci-libs/clblast[opencl]
+		sci-libs/rocBLAS:=
 	)
 "
 PATCHES=(
