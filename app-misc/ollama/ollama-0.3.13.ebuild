@@ -4,6 +4,14 @@
 
 EAPI=8
 
+#
+# SECURITY:
+#
+# (1) Check the security advisories each month for both ollama and llama.cpp.
+# (2) if llama.cpp has a critical vulnerability, either bump ollama or manually force bump the commit and LLAMA_CPP_UPDATE=1.
+# (3) REVIEW:  Consider adding hardening flags.
+#
+
 # Scan the following for dependencies
 # //go:generate
 
@@ -55,6 +63,7 @@ GEN_EBUILD=0
 EGO_PN="github.com/ollama/ollama"
 LLAMA_CPP_COMMIT="8962422b1c6f9b8b15f5aeaea42600bcc2d44177"
 KOMPUTE_COMMIT="4565194ed7c32d1d2efa32ceab4d3c6cae006306"
+LLAMA_CPP_UPDATE=0
 ROCM_SLOTS=(
 	"5.7"
 	"6.0"
@@ -2086,6 +2095,12 @@ ewarn "The ${PN} ebuild is under development and does not work."
 		gen_git_tag "${S}/llm/llama.cpp" "b3922"						# placeholder
 		gen_git_tag "${S}/llm/llama.cpp/ggml/src/kompute" "0.8.1.${KOMPUTE_COMMIT:0:7}"		# placeholder, no tags
 		gen_git_tag "${S}" "v${PV}"
+
+		if [[ "${LLAMA_CPP_UPDATE}" == "1" ]] ; then
+			pushd "${S}/llama.cpp" >/dev/null 2>&1 || die
+				./sync.sh
+			popd >/dev/null 2>&1 || die
+		fi
 	fi
 }
 
