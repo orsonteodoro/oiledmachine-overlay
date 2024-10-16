@@ -1721,16 +1721,6 @@ gen_rocm_required_use() {
 		"
 	done
 }
-# OpenCL support (via CLBlast) removed in >= 0.1.45 in favor of vulkan which is not supported yet.
-REQUIRED_USE="
-	$(gen_rocm_required_use)
-	?? (
-		${ROCM_IUSE[@]}
-	)
-	|| (
-		${LLVM_COMPAT[@]/#/llvm_slot_}
-	)
-"
 gen_cuda_required_use() {
 	local x
 	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
@@ -1751,9 +1741,13 @@ gen_rocm_required_use() {
 		"
 	done
 }
-REQUIRED_USE+="
+# OpenCL support (via CLBlast) removed in >= 0.1.45 in favor of vulkan which is not supported yet.
+REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
+	?? (
+		${ROCM_IUSE[@]}
+	)
 	?? (
 		cuda
 		rocm
@@ -1778,6 +1772,9 @@ REQUIRED_USE+="
 		|| (
 			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 		)
+	)
+	|| (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 "
 RDEPEND="
