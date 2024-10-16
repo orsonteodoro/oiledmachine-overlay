@@ -33,6 +33,8 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 CPU_FLAGS_X86=(
+	cpu_flags_x86_f16c
+	cpu_flags_x86_fma
 	cpu_flags_x86_avx
 	cpu_flags_x86_avx2
 )
@@ -2305,6 +2307,23 @@ build_new_runner() {
 		-p $(get_makeopts_jobs)
 		-x
 	)
+
+	local args=""
+
+	if use cpu_flags_x86_f16c ; then
+		args+="|-mf16c"
+	fi
+
+	if use cpu_flags_x86_fma ; then
+		args+="|-mfma"
+	fi
+
+	if use cpu_flags_x86_f16c || use cpu_flags_x86_fma ; then
+		args="${args:1}"
+		edo go env -w "CGO_CFLAGS_ALLOW=${args}"
+		edo go env -w "CGO_CXXFLAGS_ALLOW=${args}"
+	fi
+
 	if use cpu_flags_x86_avx2 && use cuda ; then
 		args+=(
 			-tags avx2,cuda
@@ -2330,8 +2349,6 @@ build_new_runner() {
 			-tags rocm
 		)
 	elif use cpu_flags_x86_avx2 ; then
-		edo go env -w "CGO_CFLAGS_ALLOW=-mfma|-mf16c"
-		edo go env -w "CGO_CXXFLAGS_ALLOW=-mfma|-mf16c"
 		args+=(
 			-tags avx,avx2
 		)
