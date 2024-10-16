@@ -2080,6 +2080,7 @@ src_prepare() {
 	sed -i -e "s|// import \"gorgonia.org/tensor\"||g" "${S_GO}/github.com/pdevine/tensor@"*"/tensor.go" || die
 	sed -i -e "s|// import \"gorgonia.org/tensor/internal/storage\"||g" "${S_GO}/github.com/pdevine/tensor@"*"/internal/storage/header.go" || die
 	sed -i -e "s|// import \"gorgonia.org/tensor/internal/execution\"||g" "${S_GO}/github.com/pdevine/tensor@"*"/internal/execution/e.go" || die
+	local jobs=$(get_makeopts_jobs)
 	if use rocm ; then
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:
@@ -2194,6 +2195,8 @@ src_configure() {
 		export AMDGPU_TARGETS="$(get_amdgpu_flags)"
 		check_libstdcxx "12"
 	fi
+
+	sed -i -e "s|-j8|-j${jobs}|g" "llm/generate/gen_common.sh" || die
 
 	if ! use cuda ; then
 		export OLLAMA_SKIP_CUDA_GENERATE=1
