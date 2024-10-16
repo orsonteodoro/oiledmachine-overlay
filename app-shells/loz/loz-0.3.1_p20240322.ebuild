@@ -4,6 +4,7 @@
 
 EAPI=8
 
+EGIT_COMMIT="55d6998a48eeedc92c3789ba96bea55e3f6cd15f"
 NODE_VERSION=20
 NPM_EXE_LIST="
 /opt/loz/dist/index.js
@@ -95,11 +96,12 @@ NPM_EXE_LIST="
 /opt/loz/tools/git_scripts/pre-commit
 /opt/loz/bump_version.sh
 "
+NPM_TARBALL="${P}-${EGIT_COMMIT:0:7}.tar.gz"
 
 inherit git-r3 npm
 
 KEYWORDS="~amd64"
-S="${WORKDIR}/${P}"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
 https://registry.npmjs.org/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz -> npmpkg-@cspotcode-source-map-support-0.8.1.tgz
@@ -140,7 +142,7 @@ https://registry.npmjs.org/@typescript-eslint/utils/-/utils-7.18.0.tgz -> npmpkg
 https://registry.npmjs.org/@typescript-eslint/visitor-keys/-/visitor-keys-7.18.0.tgz -> npmpkg-@typescript-eslint-visitor-keys-7.18.0.tgz
 https://registry.npmjs.org/@ungap/structured-clone/-/structured-clone-1.2.0.tgz -> npmpkg-@ungap-structured-clone-1.2.0.tgz
 https://registry.npmjs.org/abort-controller/-/abort-controller-3.0.0.tgz -> npmpkg-abort-controller-3.0.0.tgz
-https://registry.npmjs.org/acorn/-/acorn-8.12.1.tgz -> npmpkg-acorn-8.12.1.tgz
+https://registry.npmjs.org/acorn/-/acorn-8.13.0.tgz -> npmpkg-acorn-8.13.0.tgz
 https://registry.npmjs.org/acorn-jsx/-/acorn-jsx-5.3.2.tgz -> npmpkg-acorn-jsx-5.3.2.tgz
 https://registry.npmjs.org/acorn-walk/-/acorn-walk-8.3.4.tgz -> npmpkg-acorn-walk-8.3.4.tgz
 https://registry.npmjs.org/agentkeepalive/-/agentkeepalive-4.5.0.tgz -> npmpkg-agentkeepalive-4.5.0.tgz
@@ -334,8 +336,8 @@ https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz -> npmpkg-yocto-q
 # UPDATER_END_NPM_EXTERNAL_URIS
 SRC_URI="
 ${NPM_EXTERNAL_URIS}
-https://github.com/joone/loz/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
+https://github.com/joone/loz/archive/${EGIT_COMMIT}.tar.gz
+	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz
 "
 
 DESCRIPTION="Loz is a command-line tool that enables your preferred LLM to execute system commands and utilize Unix pipes, integrating AI capabilities with other Unix tools."
