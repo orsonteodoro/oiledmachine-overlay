@@ -78,7 +78,7 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
 fi
 
-inherit dep-prepare edo go-module lcnr rocm
+inherit dep-prepare edo go-module lcnr multiprocessing rocm
 
 
 # protobuf-go 1.34.1 tests with protobuf 5.27.0-rc1
@@ -2277,7 +2277,11 @@ generate_deps() {
 }
 
 build_binary() {
-	edo go build -x .
+	local args=(
+		-p $(get_makeopts_jobs)
+		-x
+	)
+	edo go build ${args[@]} .
 }
 
 build_new_runner() {
@@ -2291,34 +2295,52 @@ build_new_runner() {
 		fi
 	elif use rocm ; then
 		emake -C llama "libggml_rocm_v${ROCM_VERSION}.so"
+	else
+		emake -C llama
 	fi
 
 	# See also
 	# https://github.com/ollama/ollama/blob/v0.3.13/llama/llama.go
+	local args=(
+		-p $(get_makeopts_jobs)
+		-x
+	)
 	if use cpu_flags_x86_avx2 && use cuda ; then
-		edo go build -x -tags avx2,cuda .
+		args+=(
+			-tags avx2,cuda
+		)
 	elif use cpu_flags_x86_avx && use cuda ; then
-		edo go build -x -tags avx,cuda .
+		args+=(
+			-tags avx,cuda
+		)
 	elif use cuda ; then
-		edo go build -x -tags cuda .
+		args+=(
+			-tags cuda
+		)
 	elif use cpu_flags_x86_avx2 && use rocm ; then
-		edo go build -x -tags avx2,rocm .
+		args+=(
+			-tags avx2,rocm
+		)
 	elif use cpu_flags_x86_avx && use rocm ; then
-		edo go build -x -tags avx,rocm .
+		args+=(
+			-tags avx,rocm
+		)
 	elif use rocm ; then
-		edo go build -x -tags rocm .
+		args+=(
+			-tags rocm
+		)
 	elif use cpu_flags_x86_avx2 ; then
 		edo go env -w "CGO_CFLAGS_ALLOW=-mfma|-mf16c"
 		edo go env -w "CGO_CXXFLAGS_ALLOW=-mfma|-mf16c"
-		emake -C llama
-		edo go build -x -tags avx,avx2 .
+		args+=(
+			-tags avx,avx2
+		)
 	elif use cpu_flags_x86_avx ; then
-		emake -C llama
-		edo go build -x -tags avx .
-	else
-		emake -C llama
-		edo go build -x .
+		args+=(
+			-tags avx
+		)
 	fi
+	edo go build ${args[@]} .
 }
 
 src_compile() {
