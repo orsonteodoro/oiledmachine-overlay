@@ -57,6 +57,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_86
 	sm_89
 	sm_90
+	sm_90a
 )
 LLVM_COMPAT=( 17 )
 GEN_EBUILD=0
@@ -1957,6 +1958,11 @@ BDEPEND="
 		cuda_targets_sm_90? (
 			|| (
 				${CUDA_11_8_BDEPEND}
+				${CUDA_12_4_BDEPEND}
+			)
+		)
+		cuda_targets_sm_90a? (
+			|| (
 				${CUDA_12_4_BDEPEND}
 			)
 		)
