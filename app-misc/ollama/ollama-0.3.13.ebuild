@@ -1723,7 +1723,6 @@ gen_rocm_required_use() {
 }
 # OpenCL support (via CLBlast) removed in >= 0.1.45 in favor of vulkan which is not supported yet.
 REQUIRED_USE="
-	!video_cards_intel
 	$(gen_rocm_required_use)
 	?? (
 		${ROCM_IUSE[@]}
