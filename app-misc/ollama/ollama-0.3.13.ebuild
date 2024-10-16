@@ -2351,17 +2351,26 @@ build_new_runner() {
 		edo go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
 	fi
 
+	local cuda_impl=""
+	if use cuda && has_version "" ; then
+		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
+			cuda_impl="cuda_v12"
+		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
+			cuda_impl="cuda_v11"
+		fi
+	fi
+
 	if use cpu_flags_x86_avx2 && use cuda ; then
 		args+=(
-			-tags avx2,cuda
+			-tags avx2,cuda,${cuda_impl}
 		)
 	elif use cpu_flags_x86_avx && use cuda ; then
 		args+=(
-			-tags avx,cuda
+			-tags avx,cuda,${cuda_impl}
 		)
 	elif use cuda ; then
 		args+=(
-			-tags cuda
+			-tags cuda,${cuda_impl}
 		)
 	elif use cpu_flags_x86_avx2 && use rocm ; then
 		args+=(
