@@ -1941,11 +1941,11 @@ BDEPEND="
 		$(gen_rocm_rdepend)
 		=sys-devel/gcc-${HIP_6_1_GCC_SLOT}*
 		sci-libs/rocBLAS:=
-		sci-libs/clblast
+		sci-libs/clblast[opencl]
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.3.13-hardcoded-paths.patch"
+	"A${FILESDIR}/${PN}-0.3.13-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.3.13-disable-git-submodule-update.patch"
 )
 
