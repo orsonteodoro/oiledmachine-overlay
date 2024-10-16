@@ -2292,6 +2292,13 @@ src_configure() {
 			|| die
 	fi
 
+	# Bug for USE=cuda
+	sed -i \
+		-e "s|/build/Linux/arm64|/build/linux-arm64|g" \
+		-e "s|/build/Linux/amd64|/build/linux-amd64|g" \
+		"llama/llama.go" \
+		|| die
+
 	strip-unsupported-flags
 }
 
