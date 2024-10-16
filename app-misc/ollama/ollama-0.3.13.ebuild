@@ -1759,6 +1759,11 @@ REQUIRED_USE="
 		mkl
 		openblas
 	)
+	!rocm? (
+		|| (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
+	)
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_fma
 		cpu_flags_x86_f16c
@@ -1772,9 +1777,6 @@ REQUIRED_USE="
 		|| (
 			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 		)
-	)
-	|| (
-		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 "
 RDEPEND="
@@ -1823,10 +1825,11 @@ gen_rocm_rdepend() {
 		local gcc_slot="HIP_${s1}_GCC_SLOT"
 		echo "
 			rocm_${s/./_}? (
+				~dev-libs/rocm-opencl-runtime-${ROCM_VERSIONS[${s1}]}:${s}
 				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}
 				~sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}
 				~sci-libs/hipBLAS-${ROCM_VERSIONS[${s1}]}:${s}
-				~dev-libs/rocm-opencl-runtime-${ROCM_VERSIONS[${s1}]}:${s}
+				~sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}
 			)
 		"
 	done
