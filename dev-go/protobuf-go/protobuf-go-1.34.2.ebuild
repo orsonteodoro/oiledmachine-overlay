@@ -7,9 +7,9 @@ EAPI=8
 # Patch snapshot parts are from ollama ebuild.
 
 # See integration_test.go:protobufVersion for bindings compatibility
-GEN_EBUILD=1
+GEN_EBUILD=0
 MY_PV="v${PV}"
-PROTOBUF_SLOT="5.26"
+PROTOBUF_SLOT="5.27"
 export S_GO="${WORKDIR}/go_build"
 
 inherit go-module
