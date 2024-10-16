@@ -1,0 +1,14 @@
+diff '--color=auto' -urp ollama-0.3.13.orig/llama/llama.go ollama-0.3.13/llama/llama.go
+--- ollama-0.3.13.orig/llama/llama.go	2024-10-15 22:06:26.294425432 -0700
++++ ollama-0.3.13/llama/llama.go	2024-10-15 22:38:04.541202538 -0700
+@@ -29,8 +29,8 @@ package llama
+ #cgo rocm CFLAGS: -DGGML_USE_CUDA -DGGML_USE_HIPBLAS -DGGML_CUDA_DMMV_X=32 -DGGML_CUDA_PEER_MAX_BATCH_SIZE=128 -DGGML_CUDA_MMV_Y=1 -D__HIP_PLATFORM_AMD__=1 -D__HIP_ROCclr__=1
+ #cgo rocm CXXFLAGS: -DGGML_USE_CUDA -DGGML_USE_HIPBLAS -DGGML_CUDA_DMMV_X=32 -DGGML_CUDA_PEER_MAX_BATCH_SIZE=128 -DGGML_CUDA_MMV_Y=1 -D__HIP_PLATFORM_AMD__=1 -D__HIP_ROCclr__=1
+ #cgo rocm LDFLAGS: -L${SRCDIR} -lggml_rocm -lhipblas -lamdhip64 -lrocblas
+-#cgo cuda_v11 LDFLAGS: -lggml_cuda_v11 -L/opt/cuda/lib64
+-#cgo cuda_v12 LDFLAGS: -lggml_cuda_v12 -L/opt/cuda/lib64
++#cgo cuda_v11 LDFLAGS: -lggml_cuda_v11 -L/opt/cuda/lib64 -L${SRCDIR}/dist/linux-amd64/lib/ollama
++#cgo cuda_v12 LDFLAGS: -lggml_cuda_v12 -L/opt/cuda/lib64 -L${SRCDIR}/dist/linux-amd64/lib/ollama
+ #cgo windows,cuda LDFLAGS: -lcuda -lcudart -lcublas -lcublasLt
+ #cgo windows,rocm LDFLAGS: -lggml_rocm -lhipblas -lamdhip64 -lrocblas
+ #cgo linux,cuda LDFLAGS: -lcuda -lcudart -lcublas -lcublasLt -lpthread -ldl -lrt -lresolv

@@ -1961,6 +1961,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.3.13-disable-git-submodule-update.patch"
 	"${FILESDIR}/${PN}-0.3.13-rename-CUDA_ARCHITECTURES.patch"
 	"${FILESDIR}/${PN}-0.3.13-fix-os-arch-pair.patch"
+	"${FILESDIR}/${PN}-0.3.13-cuda-libs-path.patch"
 )
 
 pkg_pretend() {
