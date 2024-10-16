@@ -194,6 +194,9 @@ RDEPEND="
 	=dev-libs/protobuf-${PROTOBUF_SLOT#*.}*
 	dev-libs/protobuf:=
 "
+BDEPEND="
+	>=dev-lang/go-1.17.13
+"
 
 src_unpack() {
 	unpack "${P}.tar.gz"
