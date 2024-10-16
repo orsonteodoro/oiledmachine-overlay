@@ -1,0 +1,12 @@
+diff '--color=auto' -urp CLBlast-1.6.3.orig/cmake/Modules/FindOpenCL.cmake CLBlast-1.6.3/cmake/Modules/FindOpenCL.cmake
+--- CLBlast-1.6.3.orig/cmake/Modules/FindOpenCL.cmake	2024-06-13 10:47:57.000000000 -0700
++++ CLBlast-1.6.3/cmake/Modules/FindOpenCL.cmake	2024-10-15 19:17:31.692309602 -0700
+@@ -38,7 +38,7 @@ set(OPENCL_PATHS
+   /opt/intel/opencl
+   /usr
+   /usr/local
+-  /opt/rocm/opencl
++  /opt/rocm-@ROCM_VERSION@/opencl
+ )
+ 
+ # Finds the include directories
