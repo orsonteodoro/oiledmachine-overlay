@@ -1860,8 +1860,8 @@ gen_rocm_bdepend() {
 	done
 }
 BDEPEND="
-	$(gen_rocm_bdepend)
 	$(gen_clang_bdepend)
+	$(gen_rocm_bdepend)
 	(
 		>=dev-go/protobuf-go-1.34.2
 		dev-go/protobuf-go:=
