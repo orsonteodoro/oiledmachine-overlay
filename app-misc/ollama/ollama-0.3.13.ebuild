@@ -1754,6 +1754,10 @@ REQUIRED_USE+="
 		mkl
 		openblas
 	)
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_fma
+		cpu_flags_x86_f16c
+	)
 	cuda? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
