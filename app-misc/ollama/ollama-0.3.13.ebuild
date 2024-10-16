@@ -1953,13 +1953,13 @@ BDEPEND="
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
-		sci-libs/clblast[opencl]
 		sci-libs/rocBLAS:=
 	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-0.3.13-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.3.13-disable-git-submodule-update.patch"
+	"${FILESDIR}/${PN}-0.3.13-rename-CUDA_ARCHITECTURES.patch"
 )
 
 pkg_pretend() {
