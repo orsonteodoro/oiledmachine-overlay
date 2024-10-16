@@ -2316,11 +2316,14 @@ build_binary() {
 build_new_runner() {
 	# The documentation is sloppy.
 
+	local cuda_impl=""
 	if use cuda ; then
 		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
 			emake -C llama cuda_v12
+			cuda_impl="cuda_v12"
 		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
 			emake -C llama cuda_v11
+			cuda_impl="cuda_v11"
 		fi
 	elif use rocm ; then
 		emake -C llama rocm
@@ -2349,15 +2352,6 @@ build_new_runner() {
 		cpu_flag_args="${cpu_flag_args:1}"
 		edo go env -w "CGO_CFLAGS_ALLOW=${cpu_flag_args}"
 		edo go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
-	fi
-
-	local cuda_impl=""
-	if use cuda && has_version "" ; then
-		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-			cuda_impl="cuda_v12"
-		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
-			cuda_impl="cuda_v11"
-		fi
 	fi
 
 	if use cpu_flags_x86_avx2 && use cuda ; then
