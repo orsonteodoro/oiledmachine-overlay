@@ -12,7 +12,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/llama/llama.go ollama-0.3.13/llama/l
  #cgo windows,cuda LDFLAGS: -lcuda -lcudart -lcublas -lcublasLt
  #cgo windows,rocm LDFLAGS: -lggml_rocm -lhipblas -lamdhip64 -lrocblas
 -#cgo linux,cuda LDFLAGS: -lcuda -lcudart -lcublas -lcublasLt -lpthread -ldl -lrt -lresolv
-+#cgo linux,cuda LDFLAGS: -L${SRCDIR}/dist/linux-amd64/lib/ollama -lcuda -lcudart -lcublas -lcublasLt -lpthread -ldl -lrt -lresolv
++#cgo linux,cuda LDFLAGS: -L${SRCDIR}/../dist/linux-amd64/lib/ollama -lcuda -lcudart -lcublas -lcublasLt -lpthread -ldl -lrt -lresolv
  #cgo linux,rocm LDFLAGS: -L/opt/rocm-@ROCM_VERSION@/lib -lpthread -ldl -lrt -lresolv
  
  #include <stdlib.h>
