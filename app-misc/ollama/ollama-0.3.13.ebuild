@@ -2279,7 +2279,11 @@ src_configure() {
 }
 
 generate_deps() {
-	edo go generate -x ./...
+	local args=(
+		-p $(get_makeopts_jobs)
+		-x
+	)
+	edo go generate ${args[@]} ./...
 }
 
 build_binary() {
