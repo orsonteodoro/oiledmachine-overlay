@@ -6,7 +6,6 @@
 
 ARGS=( ${@} )
 BACKEND=${BACKEND:-"@BACKEND@"}
-FIREJAIL=1
 
 declare -A backends=(
 	"cpu"
