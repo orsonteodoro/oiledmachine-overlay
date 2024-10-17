@@ -486,7 +486,7 @@ main() {
 	elif [[ "${ARGS[0]}" = "website" ]] ; then
 		xdg-open "https://ollama.com/library/${args[2]}"
 	else
-		ollama run
+		ollama ${args[@]}
 	fi
 }
 
