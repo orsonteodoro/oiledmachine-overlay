@@ -431,7 +431,7 @@ gen_use_desc() {
 		echo "ollama_llms_${x} - Whitelist ${x}"
 	done | sort
 }
-gen_use_desc
+#gen_use_desc
 # END USE_DESC_GENERATOR
 
 # START IUSE_GENERATOR
@@ -473,25 +473,25 @@ main() {
 	cd "/usr/lib64/ollama/${BACKEND}" || exit 1
 	if [[ "${ARGS[0]}" == "run" ]] ; then
 		if is_llm_whitelisted "${ARGS[1]}" ; then
-			ollama run ${args[2]}
+			ollama run ${ARGS[1]}
 		else
-			echo "[Error] ${args[2]} is a blacklisted LLM."
+			echo "[Error] ${ARGS[1]} is a blacklisted LLM."
 		fi
 	elif [[ "${ARGS[0]}" == "model-tags" || "${ARGS[0]}" == "model-use-cases" ]] ; then
-		local model="${args[2]}"
+		local model="${ARGS[1]}"
 		local tags="${llm_use_cases[${model}]}"
 		echo "Model:  ${model}"
 		echo "Tagged use cases:  ${tags}"
 	elif [[ "${ARGS[0]}" == "model-license" ]] ; then
-		local model="${args[2]}"
+		local model="${ARGS[1]}"
 		local licenses="${llm_licenses[${model}]}"
 		echo "Model:  ${model}"
 		echo "License(s):  ${licenses}"
-		ollama run ${args[2]}
+		ollama run ${ARGS[1]}
 	elif [[ "${ARGS[0]}" == "website" ]] ; then
-		xdg-open "https://ollama.com/library/${args[2]}"
+		xdg-open "https://ollama.com/library/${ARGS[2]}"
 	else
-		ollama ${args[@]}
+		ollama ${ARGS[@]}
 	fi
 }
 
