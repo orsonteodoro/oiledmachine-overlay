@@ -22,6 +22,9 @@
     <flag name="blis">
       Support CPU optimized linear math via BLIS.
     </flag>
+    <flag name="firejail">
+      Use Firejail to confine server.
+    </flag>
     <flag name="lapack">
       Support CPU optimized linear math via the older LAPACK.
     </flag>

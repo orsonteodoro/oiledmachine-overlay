@@ -1,0 +1,179 @@
+[For the original license, see https://docs.nvidia.com/ai-foundation-models-community-license.pdf]
+
+NVIDIA AI Foundation Models Community License Agreement
+IMPORTANT NOTICE – PLEASE READ AND AGREE BEFORE USING THE NVIDIA AI FOUNDATION MODELS.
+This license agreement (“Agreement”) is a legal agreement between you, whether an individual or entity (“you”)
+and NVIDIA Corporation (“NVIDIA”) and governs the use of the NVIDIA AI Foundation Models, consisting of models
+including software, checkpoints, learnt weights, algorithms, parameters, configuration files, datasets and
+documentation, if and when available (collectively, “NVIDIA AI Foundation Models”).
+This Agreement can be accepted only by an adult of legal age of majority in the country in which the NVIDIA AI
+Foundation Models are used.
+If you don’t have the required age or authority to accept this Agreement, or if you don’t accept all the terms and
+conditions of this Agreement, do not use the NVIDIA AI Foundation Models.
+1. License Grant.
+1.1 Grants. Subject to the terms of this Agreement, NVIDIA grants you a non-exclusive, revocable, nontransferable, non-sublicensable (except as expressly granted in this Agreement), license to:
+1.1.1 For non-production use without an NVIDIA AI Enterprise subscription: (a) install and use copies of the NVIDIA
+AI Foundation Models, and (b) create Derivative Models (as defined below), all the foregoing for non-production
+uses, including test and evaluation uses; and
+1.1.2 For production use with an NVIDIA AI Enterprise subscription: (a) install and use copies of the NVIDIA AI
+Foundation Models, (b) create Derivative Models (as defined below), (c) deploy NVIDIA AI Foundation Models,
+and Derivative Models you develop as authorized in this section, on infrastructure you own or lease to offer a
+service, without distributing NVIDIA AI Foundation Models and Derivative Models, and (d) distribute the NVIDIA
+AI Foundation Models or Derivative Models in each case with a copy of this Agreement, all the foregoing in
+production uses in combination with an NVIDIA NIM (an NVIDIA inference microservice runtime), available
+through a paid subscription of NVIDIA AI Enterprise except as otherwise expressly permitted in section 1.1.3.
+Contact NVIDIA sales for NVIDIA AI Enterprise (see https://www.nvidia.com/en-us/data-center/products/aienterprise/).
+1.1.3 For production use on PCs or workstations with NVIDIA RTX GPUs without an NVIDIA AI Enterprise
+subscription: (a) install and use copies of the NVIDIA AI Foundation Models, (b) create Derivative Models (as
+defined below), (c) deploy NVIDIA AI Foundation Models, and Derivative Models you develop as authorized in this
+section, on infrastructure you own or lease to offer a service, without distributing NVIDIA AI Foundation Models
+and Derivative Models, and (d) distribute the NVIDIA AI Foundation Models or Derivative Modelsin each case with
+a copy of this Agreement, all the foregoing in production uses solely on PCs or workstations with NVIDIA RTX GPUs.
+1.2 Limited Grants. The grants above are further limited as follows:
+1.2.1 You may use certain NVIDIA AI Foundation Models to create a Custom TTS Application for your own use but
+cannot offer it as a service to third parties or distribute the Custom TTS Application. You acknowledge and agree
+that it is your obligation to have sufficient rights or licenses for content used with a Custom TTS Application to
+generate new content. “Custom TTS Application” means a custom text-to-speech application that enables the
+creation of synthetic voice output that resembles an input voice.
+“Derivative Models” mean all derivatives, adaptations, extensions or enhancements to the NVIDIA AI Foundation
+Models, works based on the NVIDIA AI Foundation Models, or any other model which is created or initialized by
+transfer of patterns of the weights, parameters, activations or output of the NVIDIA AI Foundation Models, to the
+other model, in order to cause the other model to perform similarly to the NVIDIA AI Foundation Models, including
+- but not limited to - distillation methods entailing the use of intermediate data representations or methods based
+on the generation of synthetic data by the NVIDIA AI Foundation Models for training the other model.
+2. Use and Distribution. The following terms apply to the use or distribution of the NVIDIA AI Foundation Models
+and Derivative Models you develop as authorized in Section 1, and you are responsible for the consequences of
+non-conformance with these terms:
+2.1 The NVIDIA AI Foundation Models and Derivative Models must only be used or distributed for purposes that
+are: permitted by this Agreement, consistent with the rights of others, and do not violate any applicable laws or
+regulations.
+2.2 You may not use the NVIDIA AI Foundation Models, Derivative Models or any output or results of them to
+develop or improve any other large language or generative AI models (excluding NVIDIA AI Foundation Models or
+Derivative Models).
+2.3 You may not change or remove copyright or other proprietary notices in the NVIDIA AI Foundation Models or
+misrepresent the authorship of the NVIDIA AI Foundation Models, and you must cause any modified files to carry
+prominent notices stating that you changed the files such that modifications are not misrepresented as an original
+NVIDIA AI Foundation Models. Except as necessary to give attribution to works as described in this section, you
+are not granted any trademark license under this Agreement.
+2.4 You may not use the NVIDIA AI Foundation Models in any manner that would cause them to become subject
+to an open source software license; subject to the terms in the “Components Under Other Licenses” section
+below.
+2.5 You agree to defend, indemnify and hold harmless NVIDIA and its affiliates, and their respective employees,
+contractors, agents, officers and directors, from and against any and all claims, damages, obligations, losses,
+liabilities, costs or debt, fines, restitutions and expenses (including but not limited to attorney’s fees and costs
+incident to establishing the right of indemnification) arising out of: (i) products or services that have been
+developed or deployed with or use the NVIDIA AI Foundation Models or Derivative Models (including results or
+data generated from such use), or claims that they violate laws, or infringe, violate, or misappropriate any third
+party rights; or (ii) a violation of the terms and conditions of this Agreement.
+3. Your Privacy: Collection and Use of Information.
+3.1 Privacy Policy. Please review the NVIDIA Privacy Policy, located at NVIDIA Privacy Policy, which explains
+NVIDIA’s policy for collecting and using data, as well as visit the NVIDIA Privacy Center, located at Privacy Center
+| NVIDIA, to manage your consent and privacy preferences.
+3.2 Collection Purposes. NVIDIA may require certain personal information such as name, email address or
+entitlement information to provide you access to the NVIDIA AI Foundation Models.
+3.3 Third Party Privacy Practices. The NVIDIA AI Foundation Models may contain links to third party websites and
+services. NVIDIA encourages you to review the privacy statements on those sites and services that you choose to
+visit to understand how they may collect, use and share your data. NVIDIA is not responsible for the privacy
+statements or practices of third party sites or services.
+4. AI Ethics. Technology can have a profound impact on people and the world, and NVIDIA is committed to
+enabling trust and transparency in AI development. NVIDIA encourages you to adopt principles of AI ethics and
+trustworthiness to guide your business decisions by doing the following:
+4.1 Ethical Use. Ensure the product or service you develop, use, offer as a service or distribute meets the ethical
+requirements of the relevant industry or use case and that you have taken reasonable measures to address bias
+and inform users of the limitations of the product or service.
+4.2 Development Practices. Ensure that in developing your product or service, you adopt adequate measures to
+mitigate the risk of harming more vulnerable groups, especially those that have been historically disadvantaged
+or are at risk of exclusion.
+4.3 Transparency. Communicate information to stakeholders about the capabilities and limitations of your
+product or service, including transparency about the fact that stakeholders are dealing with an AI system.
+4.4 Distributor or Reseller Duty. If you are a distributor or reseller, ensure you do not sell to anyone who you
+believe will use your products or services in violation of these NVIDIA AI ethics requirements or for an improper
+purpose.
+4.5 Prohibited Uses. NVIDIA expressly prohibits the use of NVIDIA AI Foundation Models (a) for surveillance in
+unauthorized private places, (b) real-time remote biometric identification systems in publicly accessible areas, (c)
+for collecting or processing biometric information without the consent of the subject, (d) to conduct activities that
+infringe on or violate the rights of others, (e) that violate any applicable law or regulation, such as the General
+Data Protection Regulation (GDPR), California Consumer Privacy Act (CCPA), California Privacy Rights Act (CPRA),
+Health Insurance Portability and Accountability Act (HIPAA), and China’s rules and regulations applicable to
+generative artificial intelligence services and deep synthesis services, (f) to engage in, promote, incite or facilitate
+the unanticipated or unwelcome harassment, abuse, threatening or bullying of individuals or groups of individuals
+or intentionally misleading or deceiving others, (g) to engage in the unauthorized or unlicensed practice of any
+profession, or (h) to engage in, promote, incite, facilitate or assist in the planning or development of activities or
+provide products or services that present a risk of death or bodily harm to individuals.
+5. Components Under Other Licenses. The NVIDIA AI Foundation Models may include or be distributed with
+components provided with separate legal notices or terms that accompany the components, such as open source
+software licenses and other license. The components are subject to the applicable other licenses, including any
+proprietary notices, disclaimers, requirements and extended use rights; except that this Agreement will prevail
+regarding the use of third-party open source software, unless a third-party OSS License requires its license terms
+to prevail. ““Open source software license” means any software, data or documentation subject to any license
+identified as an open source license by the Open Source Initiative (http://opensource.org), Free Software
+Foundation (http://www.fsf.org) or other similar open source organization or listed by the Software Package Data
+Exchange (SPDX) Workgroup under the Linux Foundation (http://www.spdx.org).
+6. Termination. This Agreement will automatically terminate without notice from NVIDIA if you fail to comply with
+any of the terms in this Agreement or if you commence or participate in any legal proceeding against NVIDIA with
+respect to the NVIDIA AI Foundation Models, Derivative Models or any output or results of them. Additionally,
+NVIDIA may terminate this Agreement with prior written notice to you if, in NVIDIA’s sole discretion, the continued
+use of the NVIDIA AI Foundation Models is no longer commercially viable or creates liabilities for NVIDIA. Upon
+any termination, you must stop using and destroy all copies of the NVIDIA AI Foundation Models and Derivative
+Models. Upon written request, you will certify in writing that you have complied with your commitments under
+this section. All provisions will survive termination, except for the licenses granted to you.
+7. Ownership.
+7.1 NVIDIA Ownership. The NVIDIA AI Foundation Models, including all intellectual property rights, is and will
+remain the sole and exclusive property of NVIDIA or its licensors. Except as expressly granted in this Agreement,
+(i) NVIDIA reserves all rights, interests and remedies in connection with the NVIDIA AI Foundation Models, and
+(ii) no other license or right is granted to you by implication, estoppel or otherwise.
+7.2 Your Ownership. Subject to the rights of NVIDIA and its suppliers in the NVIDIA AI Foundation Models and to
+the extent permitted by applicable law, as between you and NVIDIA you hold all rights, title and interest in and
+to: (i) Derivative Models that you develop as permitted in this Agreement including their respective intellectual
+property rights, and (ii) outputs of the NVIDIA AI Foundation Models or Derivative Models provided that due to
+the nature of machine learning, your output may not be unique, could be generated by other licensees using the
+NVIDIA AI Foundation Models or derivatives thereof, and outputs created by other licensees are not yours.
+8. Feedback. You may, but are not obligated to, provide suggestions, requests, fixes, modifications,
+enhancements, or other feedback regarding or in connection with NVIDIA AI Foundation Models (“Feedback”).
+Feedback, even if designated as confidential by you, will not create any confidentiality obligation for NVIDIA or its
+affiliates. If you provide Feedback, you hereby grant NVIDIA, its affiliates and its designees a non-exclusive, 
+perpetual, irrevocable, sublicensable, worldwide, royalty-free, fully paid-up and transferable license, under your
+intellectual property rights, to publicly perform, publicly display, reproduce, use, make, have made, sell, offer for
+sale, distribute (through multiple tiers of distribution), import, create derivative works of and otherwise
+commercialize and exploit the Feedback at NVIDIA’s discretion.
+9. Disclaimer of Warranties. THE NVIDIA AI FOUNDATION MODELS, OUTPUT OR RESULTS ARE PROVIDED “AS IS”.
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, NVIDIA DISCLAIMS ALL WARRANTIES AND
+REPRESENTATIONS OF ANY KIND, WHETHER EXPRESS, IMPLIED OR STATUTORY, RELATING TO OR ARISING UNDER
+THIS AGREEMENT, INCLUDING, WITHOUT LIMITATION, THE WARRANTIES OF TITLE, NONINFRINGEMENT,
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, USAGE OF TRADE AND COURSE OF DEALING.
+WITHOUT LIMITING THE FOREGOING, NVIDIA DOES NOT WARRANT THAT THE NVIDIA AI FOUNDATION MODELS,
+OUTPUT OR RESULTS WILL MEET YOUR REQUIREMENTS OR THAT ANY DEFECTS OR ERRORS WILL BE CORRECTED.
+YOU ARE SOLELY RESPONSIBLE FOR DETERMINING THE APPROPRIATENESS OF USING OR REDISTRIBUTING THE
+NVIDIA AI FOUNDATION MODELS, OUTPUTS OR RESULTS AND ASSUME ANY RISKS ASSOCIATED WITH YOUR USE
+OF THE NVIDIA AI FOUNDATION MODELS, OUTPUTS OR RESULTS.
+10. Limitations of Liability. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT WILL
+NVIDIA BE LIABLE FOR ANY (I) INDIRECT, PUNITIVE, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES, OR
+(II) DAMAGES FOR THE (A) COST OF PROCURING SUBSTITUTE GOODS OR (B) LOSS OF PROFITS, REVENUES, USE,
+DATA OR GOODWILL ARISING OUT OF OR RELATED TO THIS AGREEMENT, WHETHER BASED ON BREACH OF
+CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY, OR OTHERWISE, AND EVEN IF NVIDIA HAS BEEN
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGES AND EVEN IF A PARTY'S REMEDIES FAIL THEIR ESSENTIAL
+PURPOSE. ADDITIONALLY, TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, NVIDIA’S TOTAL
+CUMULATIVE AGGREGATE LIABILITY FOR ANY AND ALL LIABILITIES, OBLIGATIONS OR CLAIMS ARISING OUT OF OR
+RELATED TO THIS AGREEMENT WILL NOT EXCEED FIVE U.S. DOLLARS (US$5).
+11. Governing Law and Jurisdiction. This Agreement will be governed in all respects by the laws of the United
+States and the laws of the State of Delaware, without regard to conflict of laws principles or the United Nations
+Convention on Contracts for the International Sale of Goods. The state and federal courts residing in Santa Clara
+County, California will have exclusive jurisdiction over any dispute or claim arising out of or related to this
+Agreement, and the parties irrevocably consent to personal jurisdiction and venue in those courts; except that
+either party may apply for injunctive remedies or an equivalent type of urgent legal relief in any jurisdiction.
+12. Trade and Compliance. You agree to comply with all applicable export, import, trade and economic sanctions
+laws and regulations, as amended, including without limitation U.S. Export Administration Regulations and Office
+of Foreign Assets Control regulations. You confirm (a) your understanding that export or reexport of certain
+NVIDIA products or technologies may require a license or other approval from appropriate authorities and (b) that
+you will not export or reexport any products or technology, directly or indirectly, without first obtaining any
+required license or other approval from appropriate authorities, (i) to any countries that are subject to any U.S.
+or local export restrictions (currently including, but not necessarily limited to, Belarus, Cuba, Iran, North Korea,
+Russia, Syria, the Region of Crimea, Donetsk People’s Republic Region and Luhansk People’s Republic Region); (ii)
+to any end-user who it knows or has reason to know will utilize them in the design, development or production of
+nuclear, chemical or biological weapons, missiles, rocket systems, unmanned air vehicles capable of a maximum
+range of at least 300 kilometers, regardless of payload, or intended for military end-use, or any weapons of mass
+destruction; (iii) to any end-user who has been prohibited from participating in the U.S. or local export transactions
+by any governing authority; or (iv) to any known military or military-intelligence end-user or for any known military
+or military-intelligence end-use in accordance with U.S. trade compliance laws and regulations. Use of the NVIDIA
+AI Foundation Models provided under this Agreement will be consistent with NVIDIA’s Human Rights Policy.
+(v. March 14, 2024)

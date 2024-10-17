@@ -1,0 +1,490 @@
+#!/bin/bash
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
+# License:  MIT
+
+# Wrapper script for ollama
+
+ARGS=( ${@} )
+BACKEND=${BACKEND:-"@BACKEND@"}
+FIREJAIL=1
+
+declare -A backends=(
+	"cpu"
+	"cpu_avx2"
+	"cpu_avx"
+	"rocm"
+	"rocm"
+	"cuda_v12"
+	"cuda_v11"
+)
+
+declare -A llm_use_cases=(
+	["alfred"]=""
+	["all-minilm"]=""
+	["aya"]=""
+	["bakllava"]=""
+	["bespoke-minicheck"]="fact-checking"
+	["bge-large"]=""
+	["bge-m3"]=""
+	["codebooga"]="coding"
+	["codegeex4"]="coding code-generation code-completion"
+	["codegemma"]="coding autocomplete coding-assistant fim fill-in-the-middle"
+	["codellama"]="coding code-generation code-completion code-review unit-test-generator python fim fill-in-the-middle"
+	["codeqwen"]="coding code-generation fixing-bugs"
+	["codestral"]=""
+	["codeup"]="coding code-generation"
+	["command-r"]=""
+	["command-r-plus"]=""
+	["dbrx"]=""
+	["deepseek-coder"]=""
+	["deepseek-coder-v2"]=""
+	["deepseek-llm"]=""
+	["deepseek-v2"]=""
+	["deepseek-v2.5"]=""
+	["dolphin-llama3"]=""
+	["dolphin-mistral"]=""
+	["dolphin-mixtral"]=""
+	["dolphin-phi"]=""
+	["dolphincoder"]=""
+	["duckdb-nsql"]=""
+	["everythinglm"]=""
+	["falcon"]=""
+	["falcon2"]=""
+	["firefunction-v2"]=""
+	["goliath"]=""
+	["granite-code"]="coding code-generation fixing-bugs documentation"
+	["hermes3"]=""
+	["internlm2"]=""
+	["llama-guard3"]=""
+	["llama-pro"]=""
+	["llama2"]=""
+	["llama2-chinese"]=""
+	["llama2-uncensored"]=""
+	["llama3"]=""
+	["llama3-chatqa"]=""
+	["llama3-gradient"]=""
+	["llama3-groq-tool-use"]=""
+	["llama3.1"]=""
+	["llama3.2"]=""
+	["llava"]=""
+	["llava-llama3"]=""
+	["llava-phi3"]=""
+	["gemma"]=""
+	["gemma2"]=""
+	["glm4"]=""
+	["magicoder"]=""
+	["mathstral"]=""
+	["meditron"]=""
+	["medllama2"]=""
+	["megadolphin"]=""
+	["minicpm-v"]=""
+	["mistral"]=""
+	["mistral-large"]=""
+	["mistral-nemo"]=""
+	["mistral-openorca"]=""
+	["mistral-small"]=""
+	["mistrallite"]=""
+	["mixtral"]=""
+	["moondream"]=""
+	["mxbai-embed-large"]=""
+	["nemotron"]=""
+	["nemotron-mini"]=""
+	["neural-chat"]=""
+	["nexusraven"]=""
+	["nomic-embed-text"]=""
+	["notus"]="MIT"
+	["notux"]="MIT"
+	["nous-hermes"]=""
+	["nous-hermes2"]=""
+	["nous-hermes2-mixtral"]=""
+	["nuextract"]=""
+	["open-orca-platypus2"]=""
+	["openchat"]=""
+	["openhermes"]=""
+	["orca-mini"]=""
+	["orca2"]=""
+	["paraphrase-multilingual"]=""
+	["phi"]=""
+	["phi3"]=""
+	["phi3.5"]=""
+	["phind-codellama"]=""
+	["qwen"]=""
+	["qwen2"]=""
+	["qwen2-math"]=""
+	["qwen2.5"]=""
+	["qwen2.5-coder"]="coding code-generation documentation fixing-bugs"
+	["reader-lm"]=""
+	["reflection"]=""
+	["samantha-mistral"]=""
+	["shieldgemma"]=""
+	["smollm"]=""
+	["snowflake-arctic-embed"]=""
+	["solar"]=""
+	["solar-pro"]=""
+	["sqlcoder"]="coding code-generation sql"
+	["stable-beluga"]=""
+	["stable-code"]=""
+	["stablelm-zephyr"]=""
+	["stablelm2"]=""
+	["starcoder"]="coding code-generation"
+	["starcoder2"]="coding code-generation"
+	["starling-lm"]=""
+	["tinydolphin"]=""
+	["tinyllama"]=""
+	["vicuna"]=""
+	["wizard-math"]="math logic"
+	["wizard-vicuna"]=""
+	["wizard-vicuna-uncensored"]=""
+	["wizardcoder"]="coding code-generation"
+	["wizardcoder:python"]="coding code-generation python"
+	["wizardlm"]=""
+	["wizardlm-uncensored"]=""
+	["wizardlm2"]=""
+	["xwinlm"]=""
+	["yarn-llama2"]=""
+	["yarn-mistral"]=""
+	["yi"]="multilingual english chinese"
+	["yi-coder"]="coding"
+	["zephyr"]=""
+
+)
+
+declare -A llm_licenses=(
+	["alfred"]=""
+	["all-minilm"]="Apache-2.0"
+	["aya"]="CC-BY-NC-4.0"
+	["bakllava"]=""
+	["bespoke-minicheck"]=""
+	["bge-large"]="MIT"
+	["bge-m3"]="MIT"
+	["codebooga"]=""
+	["codegeex4"]="glm-4-9b-LICENSE"
+	["codegemma"]="Gemma-Terms-of-Use-20240221"
+	["codellama"]="llama2-LICENSE codellama-USE_POLICY.md"
+	["codeqwen"]="Tongyi-Qianwen-LICENSE-AGREEMENT"
+	["codestral"]="Mistral-AI-Non-Production-License"
+	["codeup"]=""
+	["command-r"]="CC-BY-NC-4.0"
+	["command-r-plus"]="CC-BY-NC-4.0"
+	["dbrx"]="Databricks-Open-Model-License"
+	["deepseek-coder"]="DEEPSEEK-LICENSE-AGREEMENT-1.0"
+	["deepseek-coder-v2"]="MIT DEEPSEEK-LICENSE-AGREEMENT-1.0"
+	["deepseek-llm"]=""
+	["deepseek-v2"]="DEEPSEEK-LICENSE-AGREEMENT-1.0"
+	["deepseek-v2.5"]="DEEPSEEK-LICENSE-AGREEMENT-1.0"
+	["dolphin-llama3"]="llama3-USE_POLICY.md"
+	["dolphin-mistral"]="Apache-2.0"
+	["dolphin-mixtral"]="Apache-2.0"
+	["dolphin-phi"]="MICROSOFT-RESEARCH-LICENSE-TERMS"
+	["dolphincoder"]="BigCode-Open-RAIL-M-v1-License-Agreement"
+	["duckdb-nsql"]=""
+	["everythinglm"]="llama2-USE_POLICY.md"
+	["falcon"]=""
+	["falcon2"]="Falcon-2-11B-TII-License-1.0"
+	["firefunction-v2"]="llama3-USE_POLICY.md"
+	["goliath"]=""
+	["granite-code"]="Apache-2.0"
+	["hermes3"]="llama3-USE_POLICY.md"
+	["internlm2"]="Apache-2.0"
+	["llama-guard3"]="llama3_1-USE_POLICY.md"
+	["llama-pro"]=""
+	["llama2"]="llama2-LICENSE llama2-USE_POLICY.md"
+	["llama2-chinese"]=""
+	["llama2-uncensored"]="llama2-LICENSE llama2-USE_POLICY.md"
+	["llama3"]="llama3-LICENSE llama3-USE_POLICY.md"
+	["llama3-chatqa"]="llama3-USE_POLICY.md"
+	["llama3-gradient"]="llama3-USE_POLICY.md"
+	["llama3-groq-tool-use"]="llama3-USE_POLICY.md"
+	["llama3.1"]="llama3_1-LICENSE llama3_1-USE_POLICY.md"
+	["llama3.2"]="llama3_2-LICENSE llama3_2-USE_POLICY.md"
+	["llava"]="Apache-2.0"
+	["llava-llama3"]=""
+	["llava-phi3"]=""
+	["gemma"]="Gemma-Terms-of-Use-20240221 Gemma-Prohibited-Use-Policy-20240221"
+	["gemma2"]="Gemma-Terms-of-Use-20240221 Gemma-Prohibited-Use-Policy-20240221"
+	["glm4"]="glm-4-9b-LICENSE"
+	["magicoder"]=""
+	["mathstral"]="Apache-2.0"
+	["meditron"]=""
+	["medllama2"]=""
+	["megadolphin"]="llama2-USE_POLICY.md"
+	["minicpm-v"]="Apache-2.0"
+	["mistral"]="Apache-2.0"
+	["mistral-large"]="MRL-0.1.md"
+	["mistral-nemo"]="Apache-2.0"
+	["mistral-openorca"]=""
+	["mistral-small"]="MRL-0.1.md"
+	["mistrallite"]=""
+	["mixtral"]="Apache-2.0"
+	["moondream"]="Apache-2.0"
+	["mxbai-embed-large"]="Apache-2.0"
+	["nemotron"]="llama3_1-USE_POLICY.md"
+	["nemotron-mini"]="NVIDIA-AI-Foundation-Models-Community-License-Agreement"
+	["neural-chat"]=""
+	["nexusraven"]="NexusRaven-V2-13B-LICENSE"
+	["nomic-embed-text"]="Apache-2.0"
+	["notus"]="MIT"
+	["notux"]="MIT"
+	["nous-hermes"]=""
+	["nous-hermes2"]="Apache-2.0"
+	["nous-hermes2-mixtral"]="Apache-2.0"
+	["nuextract"]="Apache-2.0"
+	["open-orca-platypus2"]=""
+	["openchat"]="Apache-2.0"
+	["openhermes"]=""
+	["orca-mini"]=""
+	["orca2"]="MICROSOFT-RESEARCH-LICENSE-TERMS"
+	["paraphrase-multilingual"]="Apache-2.0"
+	["phi"]="MIT"
+	["phi3"]="MIT"
+	["phi3.5"]="MIT"
+	["phind-codellama"]="llama2-USE_POLICY.md"
+	["qwen:0.5b"]="Tongyi-Qianwen-RESEARCH-LICENSE-AGREEMENT"
+	["qwen:1.8b"]="Tongyi-Qianwen-RESEARCH-LICENSE-AGREEMENT"
+	["qwen:4b"]="Tongyi-Qianwen-RESEARCH-LICENSE-AGREEMENT"
+	["qwen:7b"]="Tongyi-Qianwen-LICENSE-AGREEMENT"
+	["qwen:14b"]="Tongyi-Qianwen-LICENSE-AGREEMENT"
+	["qwen:32b"]="Tongyi-Qianwen-LICENSE-AGREEMENT"
+	["qwen:72b"]="Tongyi-Qianwen-LICENSE-AGREEMENT"
+	["qwen:110b"]="Tongyi-Qianwen-LICENSE-AGREEMENT"
+	["qwen2"]="Apache-2.0"
+	["qwen2-math"]="Apache-2.0"
+	["qwen2.5"]="Apache-2.0"
+	["qwen2.5-coder"]="Apache-2.0"
+	["reader-lm"]="CC-BY-NC-4.0"
+	["reflection"]="llama3_1-USE_POLICY.md"
+	["samantha-mistral"]=""
+	["shieldgemma"]="Gemma-Terms-of-Use-20240401"
+	["smollm"]="Apache-2.0"
+	["snowflake-arctic-embed"]="Apache-2.0"
+	["solar"]=""
+	["solar-pro"]="MIT"
+	["sqlcoder"]=""
+	["stable-beluga"]="STABLE-BELUGA-NON-COMMERCIAL-COMMUNITY-LICENSE-AGREEMENT"
+	["stable-code"]="STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT"
+	["stablelm-zephyr"]="STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT"
+	["stablelm2"]="STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT"
+	["starcoder"]=""
+	["starcoder2"]="BigCode-Open-RAIL-M-v1-License-Agreement"
+	["starling-lm"]="Apache-2.0"
+	["tinydolphin"]="Apache-2.0"
+	["tinyllama"]=""
+	["vicuna"]=""
+	["wizard-math"]="MICROSOFT-RESEARCH-LICENSE-TERMS"
+	["wizard-vicuna"]=""
+	["wizard-vicuna-uncensored"]=""
+	["wizardcoder"]=""
+	["wizardlm"]=""
+	["wizardlm-uncensored"]=""
+	["wizardlm2"]="Apache-2.0"
+	["xwinlm"]=""
+	["yarn-llama2"]=""
+	["yarn-mistral"]=""
+	["yi"]="Apache-2.0"
+	["yi-coder"]="Apache-2.0"
+	["zephyr"]="MIT"
+)
+
+declare -A llm_whitelist=(
+	["alfred"]=1
+	["all-minilm"]=1
+	["aya"]=1
+	["bakllava"]=1
+	["bespoke-minicheck"]=1
+	["bge-large"]="MIT"
+	["bge-m3"]="MIT"
+	["codebooga"]=1
+	["codegeex4"]=1
+	["codegemma"]=1
+	["codellama"]=1
+	["codeqwen"]=1
+	["codestral"]=1
+	["codeup"]=1
+	["command-r"]=1
+	["command-r-plus"]=1
+	["dbrx"]=1
+	["deepseek-coder"]=1
+	["deepseek-coder-v2"]=1
+	["deepseek-llm"]=1
+	["deepseek-v2"]=1
+	["deepseek-v2.5"]=1
+	["dolphin-llama3"]=1
+	["dolphin-mistral"]=1
+	["dolphin-mixtral"]=1
+	["dolphin-phi"]=1
+	["dolphincoder"]=1
+	["duckdb-nsql"]=1
+	["everythinglm"]=1
+	["falcon"]=1
+	["falcon2"]=1
+	["firefunction-v2"]=1
+	["goliath"]=1
+	["granite-code"]=1
+	["hermes3"]=1
+	["internlm2"]=1
+	["llama-guard3"]=1
+	["llama-pro"]=1
+	["llama2"]=1
+	["llama2-chinese"]=1
+	["llama2-uncensored"]=1
+	["llama3"]=1
+	["llama3-chatqa"]=1
+	["llama3-gradient"]=1
+	["llama3-groq-tool-use"]=1
+	["llama3.1"]=1
+	["llama3.2"]=1
+	["llava"]=1
+	["llava-llama3"]=1
+	["llava-phi3"]=1
+	["gemma"]=1
+	["gemma2"]=1
+	["glm4"]=1
+	["magicoder"]=1
+	["mathstral"]=1
+	["meditron"]=1
+	["medllama2"]=1
+	["megadolphin"]=1
+	["minicpm-v"]=1
+	["mistral"]=1
+	["mistral-large"]=1
+	["mistral-nemo"]=1
+	["mistral-openorca"]=1
+	["mistral-small"]=1
+	["mistrallite"]=1
+	["mixtral"]=1
+	["moondream"]=1
+	["mxbai-embed-large"]=1
+	["nemotron"]=1
+	["nemotron-mini"]=1
+	["neural-chat"]=1
+	["nexusraven"]=1
+	["nomic-embed-text"]=1
+	["notus"]=1
+	["notux"]=1
+	["nous-hermes"]=1
+	["nous-hermes2"]=1
+	["nous-hermes2-mixtral"]=1
+	["nuextract"]=1
+	["open-orca-platypus2"]=1
+	["openchat"]=1
+	["openhermes"]=1
+	["orca-mini"]=1
+	["orca2"]=1
+	["paraphrase-multilingual"]=1
+	["phi"]="MIT"
+	["phi3"]="MIT"
+	["phi3.5"]="MIT"
+	["phind-codellama"]=1
+	["qwen"]=1
+	["qwen2"]=1
+	["qwen2-math"]=1
+	["qwen2.5"]=1
+	["qwen2.5-coder"]=1
+	["reader-lm"]=1
+	["reflection"]=1
+	["samantha-mistral"]=1
+	["shieldgemma"]=1
+	["smollm"]=1
+	["snowflake-arctic-embed"]=1
+	["solar"]=1
+	["solar-pro"]=1
+	["sqlcoder"]=1
+	["stable-beluga"]=1
+	["stable-code"]=1
+	["stablelm-zephyr"]=1
+	["stablelm2"]=1
+	["starcoder"]=1
+	["starcoder2"]=1
+	["starling-lm"]=1
+	["tinydolphin"]=1
+	["tinyllama"]=1
+	["vicuna"]=1
+	["wizard-math"]=1
+	["wizard-vicuna"]=1
+	["wizard-vicuna-uncensored"]=1
+	["wizardcoder"]=1
+	["wizardlm"]=1
+	["wizardlm-uncensored"]=1
+	["wizardlm2"]=1
+	["xwinlm"]=1
+	["yarn-llama2"]=1
+	["yarn-mistral"]=1
+	["yi"]=1
+	["yi-coder"]=1
+	["zephyr"]=1
+)
+
+# Allow if the license is approved or llm is enabled
+is_llm_whitelisted() {
+	local arg="${1}"
+	local name="${arg%:*}"
+	local variant="${arg#*:}"
+	if [[ -n "${llm_licenses[${name}]}" ]] ; then
+		return 0
+	fi
+	return 1
+}
+
+# START USE_DESC_GENERATOR
+gen_use_desc() {
+	local x
+	for x in ${!llm_whitelist[@]} ; do
+		echo "ollama_llms_${x} - Whitelist ${x}"
+	done | sort
+}
+gen_use_desc
+# END USE_DESC_GENERATOR
+
+# START IUSE_GENERATOR
+gen_iuse() {
+	local x
+	for x in ${!llm_whitelist[@]} ; do
+		echo "${x}"
+	done | sort | fold -s -w 80
+}
+#gen_iuse
+# END IUSE_GENERATOR
+
+
+# START LICENSE_ARRAY_GENERATOR
+gen_licenses() {
+	local x
+	for x in ${!llm_licenses[@]} ; do
+		if [[ -z "${llm_licenses[${x}]}" ]] ; then
+			# Placeholder
+echo "
+	ollama_llms_${x}? (
+		all-rights-reserved
+	)
+"
+		else
+			local t=$(echo ${llm_licenses[${x}]} | tr " " "\n")
+echo "
+	ollama_llms_${x}? (
+		${t}
+	)
+"
+		fi
+	done
+}
+#gen_licenses
+# END LICENSE_ARRAY_GENERATOR
+
+main() {
+	cd "/usr/lib64/ollama/${BACKEND}" || exit 1
+	if [[ "${ARGS[0]}" = "run" ]] && is_llm_whitelisted "${ARGS[1]}" ; then
+		ollama run ${args[2]}
+	elif [[ "${ARGS[0]}" = "model-license" ]] ; then
+		local model="${args[2]}"
+		local licenses="${llm_licenses[${model}]}"
+		echo "Model:  ${model}"
+		echo "License(s):  ${licenses}"
+		ollama run ${args[2]}
+	elif [[ "${ARGS[0]}" = "website" ]] ; then
+		xdg-open "https://ollama.com/library/${args[2]}"
+	else
+		ollama run
+	fi
+}
+
+#main
