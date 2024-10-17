@@ -1851,7 +1851,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_llama-pro? (
-		all-rights-reserved
+		llama2-USE_POLICY.md
 	)
 
 
@@ -1896,12 +1896,12 @@ LLM_LICENSES="
 
 
 	ollama_llms_yarn-mistral? (
-		all-rights-reserved
+		Apache-2.0
 	)
 
 
 	ollama_llms_magicoder? (
-		all-rights-reserved
+		llama2-USE_POLICY.md
 	)
 
 
@@ -1976,7 +1976,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_llama2-chinese? (
-		all-rights-reserved
+		Apache-2.0
 	)
 
 
@@ -2029,7 +2029,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_starcoder? (
-		all-rights-reserved
+		BigCode-Open-RAIL-M-v1-License-Agreement
 	)
 
 
@@ -2049,7 +2049,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_tinyllama? (
-		all-rights-reserved
+		Apache-2.0
 	)
 
 
@@ -2110,7 +2110,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_orca-mini? (
-		all-rights-reserved
+		CC-BY-NC-SA-4.0
 	)
 
 
@@ -2140,7 +2140,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_falcon? (
-		all-rights-reserved
+		Apache-2.0
 	)
 
 
@@ -2207,7 +2207,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_deepseek-llm? (
-		all-rights-reserved
+		DEEPSEEK-LICENSE-AGREEMENT-1.0
 	)
 
 
@@ -2232,7 +2232,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_samantha-mistral? (
-		all-rights-reserved
+		Apache-2.0
 	)
 
 
@@ -2290,39 +2290,30 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 "
-#
-# It is desirable to move descriptions to the metadata.xml and make the
-# license variable section conditional, but there is no
-# incentive since the LLMs are all available currently without a way to hard
-# disable them.  It would require maybe a patch to support conditonal
-# visibility/access.
-#
-# Apache-2.0 - solar - single conversation
-# Apache-2.0 - mistral - chat, trivia
-# Apache-2.0 - neural-chat - chatbot
-# Apache-2.0 - qwen2 - multilingual, roleplay, bookworm, web native
-# Apache-2.0 - qwen2.5 - multilingual (29), coding, math, roleplay, chat
-# Apache-2.0 - nomic-embed-text - embeddings (for file summaries)
-# Apache-2.0 - mxbai-embed-large - embeddings (for file summaries)
-# Apache-2.0 - mixtral - germanic-romance fluency, math, coding, detailed recall
-# Apache-2.0 - starling-lm - chat optimized for arts, humanities, and stem
-# Apache-2.0 - llava - chat using visual or language
-# Apache-2.0 - moondream - for low memory devices.  may be rude, imperfect, biased
+# Apache-2.0 - solar
+# Apache-2.0 - mistral
+# Apache-2.0 - neural-chat
+# Apache-2.0 - qwen2
+# Apache-2.0 - qwen2.5
+# Apache-2.0 - nomic-embed-text
+# Apache-2.0 - mxbai-embed-large
+# Apache-2.0 - mixtral
+# Apache-2.0 - starling-lm
+# Apache-2.0 - llava
+# Apache-2.0 - moondream
 # CC-BY-NC-4.0 - solar:instruct
-# Gemma-Terms-of-Use-20240221 Gemma-Prohibited-Use-Policy-20240221 - gemma - chat, censored clean
-# Gemma-Terms-of-Use-20240221 Gemma-Prohibited-Use-Policy-20240221 - gemma2 - content generation, chat, summaries, linguist, answers
+# Gemma-Terms-of-Use-20240221 Gemma-Prohibited-Use-Policy-20240221 - gemma
+# Gemma-Terms-of-Use-20240221 Gemma-Prohibited-Use-Policy-20240221 - gemma2
 # llama2-LICENSE llama2-USE_POLICY.md - llama2
 # llama2-LICENSE llama2-USE_POLICY.md - llama2-uncensored
 # llama3-LICENSE llama3-USE_POLICY.md - llama3 - chat, trivia
-# llama3_1-LICENSE llama3_1-USE_POLICY.md - llama3.1 - summaries, multilingual chat, coding assistant
-# llama3_2-LICENSE llama3_2-USE_POLICY.md - llama3.2 - multilingual (8), following instructions, summaries
-# llama2-LICENSE codellama-USE_POLICY.md - codellama - coding assistant, python, code completion, code reviewer, find bugs
-# MIT - phi3 - mulilingual, chat, common sense, logic
-# MIT - phi3:medium - mulilingual, chat, common sense, logic, coding, math, trivia
-# Tongyi-Qianwen-LICENSE-AGREEMENT - qwen:72b, qwen-14b, qwen-7b - multilingual, roleplay
-# Tongyi-Qianwen-RESEARCH-LICENSE-AGREEMENT - qwen:1.8b - multilingual, roleplay
-# Models marked with instruct tag may have follow instructions capabilities.
-# Models with higher parameters are generally more knowledgable or more proficient.
+# llama3_1-LICENSE llama3_1-USE_POLICY.md - llama3.1
+# llama3_2-LICENSE llama3_2-USE_POLICY.md - llama3.2
+# llama2-LICENSE codellama-USE_POLICY.md - codellama
+# MIT - phi3
+# MIT - phi3:medium
+# Tongyi-Qianwen-LICENSE-AGREEMENT - qwen:72b, qwen-14b, qwen-7b
+# Tongyi-Qianwen-RESEARCH-LICENSE-AGREEMENT - qwen:1.8b
 LICENSE="
 	${LLM_LICENSES}
 	(
