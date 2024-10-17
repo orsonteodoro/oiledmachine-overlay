@@ -418,7 +418,7 @@ is_llm_whitelisted() {
 	local arg="${1}"
 	local name="${arg%:*}"
 	local variant="${arg#*:}"
-	if [[ -n "${llm_licenses[${name}]}" ]] ; then
+	if [[ "${llm_whitelist[${name}]}" == "1" ]] ; then
 		return 0
 	fi
 	return 1
