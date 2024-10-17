@@ -1747,6 +1747,7 @@ LLM_LICENSES="
 
 	ollama_llms_dbrx? (
 		Databricks-Open-Model-License
+		Databricks-Open-Model-Acceptable-Use-Policy
 	)
 
 
