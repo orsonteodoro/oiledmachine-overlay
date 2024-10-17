@@ -1892,7 +1892,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_bespoke-minicheck? (
-		all-rights-reserved
+		CC-BY-NC-4.0
 	)
 
 
