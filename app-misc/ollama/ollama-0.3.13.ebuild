@@ -1753,7 +1753,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_codeup? (
-		all-rights-reserved
+		CreativeML-Open-RAIL++-M-License-20230726
 	)
 
 
@@ -1881,7 +1881,8 @@ LLM_LICENSES="
 
 
 	ollama_llms_nous-hermes? (
-		all-rights-reserved
+		MIT
+		GPL-2+
 	)
 
 
@@ -2034,17 +2035,17 @@ LLM_LICENSES="
 
 
 	ollama_llms_openhermes? (
-		all-rights-reserved
+		Apache-2.0
 	)
 
 
 	ollama_llms_wizardlm? (
-		all-rights-reserved
+		llama2-USE_POLICY.md
 	)
 
 
 	ollama_llms_xwinlm? (
-		all-rights-reserved
+		llama2-USE_POLICY.md
 	)
 
 
@@ -2105,7 +2106,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_wizardlm-uncensored? (
-		all-rights-reserved
+		llama2-USE_POLICY.md
 	)
 
 
@@ -2282,7 +2283,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_nuextract? (
-		Apache-2.0
+		MIT
 	)
 
 
