@@ -1653,7 +1653,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_open-orca-platypus2? (
-		all-rights-reserved
+		CC-BY-NC-4.0
 	)
 
 
@@ -1668,7 +1668,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_neural-chat? (
-		all-rights-reserved
+		Apache-2.0
 	)
 
 
@@ -1678,7 +1678,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_mistrallite? (
-		all-rights-reserved
+		Apache-2.0
 	)
 
 
@@ -1717,11 +1717,12 @@ LLM_LICENSES="
 
 	ollama_llms_qwen2? (
 		Apache-2.0
+		Tongyi-Qianwen-LICENSE-AGREEMENT
 	)
 
 
 	ollama_llms_mistral-openorca? (
-		all-rights-reserved
+		Apache-2.0
 	)
 
 
@@ -1805,7 +1806,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_duckdb-nsql? (
-		all-rights-reserved
+		llama2-USE_POLICY.md
 	)
 
 
@@ -1845,7 +1846,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_bakllava? (
-		all-rights-reserved
+		Apache-2.0
 	)
 
 
@@ -1905,7 +1906,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_meditron? (
-		all-rights-reserved
+		llama2-USE_POLICY.md
 	)
 
 
@@ -1920,7 +1921,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_solar? (
-		all-rights-reserved
+		CC-BY-NC-4.0
 	)
 
 
@@ -1935,7 +1936,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_sqlcoder? (
-		all-rights-reserved
+		CC-BY-SA-4.0
 	)
 
 
@@ -2001,7 +2002,8 @@ LLM_LICENSES="
 
 
 	ollama_llms_wizardcoder? (
-		all-rights-reserved
+		MICROSOFT-RESEARCH-LICENSE-TERMS
+		llama2-USE_POLICY.md
 	)
 
 
@@ -2022,6 +2024,7 @@ LLM_LICENSES="
 
 	ollama_llms_aya? (
 		CC-BY-NC-4.0
+		C4AI-Acceptable-Use-Policy
 	)
 
 
@@ -2051,7 +2054,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_medllama2? (
-		all-rights-reserved
+		MIT
 	)
 
 
@@ -2062,6 +2065,7 @@ LLM_LICENSES="
 
 	ollama_llms_falcon2? (
 		Falcon-2-11B-TII-License-1.0
+		Falcon-2-11B-TII-Acceptable-Use-Policy-1.0
 	)
 
 
@@ -2111,7 +2115,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_vicuna? (
-		all-rights-reserved
+		llama2-USE_POLICY.md
 	)
 
 
@@ -2173,7 +2177,7 @@ LLM_LICENSES="
 
 
 	ollama_llms_codebooga? (
-		all-rights-reserved
+		llama2-USE_POLICY.md
 	)
 
 
@@ -2263,12 +2267,12 @@ LLM_LICENSES="
 
 
 	ollama_llms_alfred? (
-		all-rights-reserved
+		Apache-2.0
 	)
 
 
 	ollama_llms_goliath? (
-		all-rights-reserved
+		llama2-USE_POLICY.md
 	)
 
 
@@ -2304,10 +2308,11 @@ LLM_LICENSES="
 # Apache-2.0 - starling-lm - chat optimized for arts, humanities, and stem
 # Apache-2.0 - llava - chat using visual or language
 # Apache-2.0 - moondream - for low memory devices.  may be rude, imperfect, biased
+# CC-BY-NC-4.0 - solar:instruct
 # Gemma-Terms-of-Use-20240221 Gemma-Prohibited-Use-Policy-20240221 - gemma - chat, censored clean
 # Gemma-Terms-of-Use-20240221 Gemma-Prohibited-Use-Policy-20240221 - gemma2 - content generation, chat, summaries, linguist, answers
-# llama2-LICENSE llama2-USE_POLICY.md - llama2 - chat
-# llama2-LICENSE llama2-USE_POLICY.md - llama2-uncensored - chat
+# llama2-LICENSE llama2-USE_POLICY.md - llama2
+# llama2-LICENSE llama2-USE_POLICY.md - llama2-uncensored
 # llama3-LICENSE llama3-USE_POLICY.md - llama3 - chat, trivia
 # llama3_1-LICENSE llama3_1-USE_POLICY.md - llama3.1 - summaries, multilingual chat, coding assistant
 # llama3_2-LICENSE llama3_2-USE_POLICY.md - llama3.2 - multilingual (8), following instructions, summaries
