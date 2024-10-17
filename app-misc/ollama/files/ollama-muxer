@@ -13,7 +13,6 @@ declare -A backends=(
 	"cpu_avx2"
 	"cpu_avx"
 	"rocm"
-	"rocm"
 	"cuda_v12"
 	"cuda_v11"
 )
@@ -472,8 +471,12 @@ echo "
 
 main() {
 	cd "/usr/lib64/ollama/${BACKEND}" || exit 1
-	if [[ "${ARGS[0]}" = "run" ]] && is_llm_whitelisted "${ARGS[1]}" ; then
-		ollama run ${args[2]}
+	if [[ "${ARGS[0]}" = "run" ]] ; then
+		if is_llm_whitelisted "${ARGS[1]}" ; then
+			ollama run ${args[2]}
+		else
+			echo "[Error] ${args[2]} is a blacklisted LLM."
+		fi
 	elif [[ "${ARGS[0]}" = "model-license" ]] ; then
 		local model="${args[2]}"
 		local licenses="${llm_licenses[${model}]}"
@@ -487,4 +490,4 @@ main() {
 	fi
 }
 
-#main
+main
