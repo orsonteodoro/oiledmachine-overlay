@@ -486,7 +486,6 @@ main() {
 		local licenses="${llm_licenses[${model}]}"
 		echo "Model:  ${model}"
 		echo "License(s):  ${licenses}"
-		ollama run ${ARGS[1]}
 	elif [[ "${ARGS[0]}" == "website" ]] ; then
 		xdg-open "https://ollama.com/library/${ARGS[2]}"
 	else
