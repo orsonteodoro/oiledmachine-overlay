@@ -427,7 +427,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"bespoke-minicheck": "fact-checking",
 +		"bge-large": "embedding vector-database",
 +		"bge-m3": "embedding multilingual low-memory-footprint",
-+		"chatgph/medix-ph": "medical assistant healtcare phillipines filipino",
++		"chatgph/medix-ph": "medical assistant healtcare philippines filipino",
 +		"codebooga": "coding python",
 +		"codegeex4": "coding code-generation code-completion",
 +		"codegemma": "coding autocomplete coding-assistant fim fill-in-the-middle",
