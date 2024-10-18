@@ -82,6 +82,7 @@ wizardlm wizardlm-uncensored wizardlm2 xwinlm yarn-llama2 yarn-mistral yi
 yi-coder zephyr
 
 ALIENTELLIGENCE-enriquecastillorincon
+benevolentjoker-belial
 benevolentjoker-bethanygpt
 benevolentjoker-nsfwmonika
 benevolentjoker-nsfwvanessa
@@ -2310,6 +2311,13 @@ LLM_LICENSES="
 	ollama_llms_ALIENTELLIGENCE-enriquecastillorincon? (
 		llama3_1-USE_POLICY.md
 	)
+	ollama_llms_benevolentjoker-bethanygpt? (
+		benevolentjoker-Use-Agreement
+		llama3-USE_POLICY.md
+	)
+	ollama_llms_benevolentjoker-belial? (
+		benevolentjoker-Use-Agreement
+	)
 	ollama_llms_disinfozone-telos? (
 		all-rights-reserved
 	)
@@ -3245,6 +3253,7 @@ src_install() {
 
 	declare -A use_alias=(
 		["ALIENTELLIGENCE-enriquecastillorincon"]="ALIENTELLIGENCE/enriquecastillorincon"
+		["benevolentjoker-belial"]="benevolentjoker/belial"
 		["benevolentjoker-bethanygpt"]="benevolentjoker/bethanygpt"
 		["benevolentjoker-nsfwmonika"]="benevolentjoker/nsfwmonika"
 		["benevolentjoker-nsfwvanessa"]="benevolentjoker/nsfwvanessa"
