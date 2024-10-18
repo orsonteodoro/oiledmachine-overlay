@@ -580,14 +580,14 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	name = args[0]
 +	l, r := tagsList[name]
 +	if r && flagsSet == 1 && showType == "tags" {
-+		fmt.Printf("Tags, use cases, personality: %s\n", l)
++		fmt.Printf("Tags, capabilities, personality: %s\n", l)
 +		return nil
 +	} else if flagsSet == 1 && showType == "tags" {
 +		l1 := strings.Split(name, ":")
 +		name := l1[0]
 +		l2, r := tagsList[name]
 +		if r {
-+			fmt.Printf("Tags, use cases, personality: %s\n", l2)
++			fmt.Printf("Tags, capabilities, personality: %s\n", l2)
 +			return nil
 +		}
  	}
@@ -614,7 +614,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
-+	showCmd.Flags().Bool("tags", false, "Show tags, use cases, or personality of a model")
++	showCmd.Flags().Bool("tags", false, "Show tags, capabilities, or personality of a model")
 +	showCmd.Flags().Bool("website", false, "Show website entry of a model")
  
  	runCmd := &cobra.Command{
