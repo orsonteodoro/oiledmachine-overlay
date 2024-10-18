@@ -81,6 +81,7 @@ tinyllama vicuna wizard-math wizard-vicuna wizard-vicuna-uncensored wizardcoder
 wizardlm wizardlm-uncensored wizardlm2 xwinlm yarn-llama2 yarn-mistral yi
 yi-coder zephyr
 
+ALIENTELLIGENCE-enriquecastillorincon
 benevolentjoker-nsfwmonika
 benevolentjoker-nsfwvanessa
 chatgph-medix-ph
@@ -2305,6 +2306,9 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 
+	ollama_llms_ALIENTELLIGENCE-enriquecastillorincon? (
+		llama3_1-USE_POLICY.md
+	)
 	ollama_llms_disinfozone-telos? (
 		all-rights-reserved
 	)
@@ -3239,6 +3243,7 @@ src_install() {
 	sed -i -e "s|@BACKEND@|${default_backend}|g" "${T}/${PN}-muxer"
 
 	declare -A use_alias=(
+		["ALIENTELLIGENCE-enriquecastillorincon"]="ALIENTELLIGENCE/enriquecastillorincon"
 		["benevolentjoker-nsfwmonika"]="benevolentjoker/nsfwmonika"
 		["benevolentjoker-nsfwvanessa"]="benevolentjoker/nsfwvanessa"
 		["chatgph-medix-ph"]="chatgph/medix-ph"

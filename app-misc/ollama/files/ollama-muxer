@@ -18,6 +18,7 @@ declare -A backends=(
 
 declare -A llm_use_cases=(
 	["alfred"]="chat comprehensive-response i-dont-know"
+	["ALIENTELLIGENCE/enriquecastillorincon"]="ufo chat ufo-investigator"
 	["all-minilm"]="embedding"
 	["aya"]="multilingual arabic chinese czech dutch english french german greek hebrew hindi indonesian italian japanese korean persian polish portuguese romanian russian spanish turkish ukrainian vietnamese"
 	["bakllava"]="image-deconstruction image-describe image-to-text image-summary"
@@ -170,6 +171,7 @@ declare -A llm_use_cases=(
 
 declare -A llm_licenses=(
 	["alfred"]="Apache-2.0"
+	["ALIENTELLIGENCE/enriquecastillorincon"]="llama3_1-USE_POLICY.md"
 	["all-minilm"]="Apache-2.0"
 	["aya"]="CC-BY-NC-4.0 C4AI-Acceptable-Use-Policy"
 	["bakllava"]="Apache-2.0"
@@ -326,6 +328,7 @@ declare -A llm_licenses=(
 
 declare -A llm_whitelist=(
 	["alfred"]=1
+	["ALIENTELLIGENCE/enriquecastillorincon"]=1
 	["all-minilm"]=1
 	["aya"]=1
 	["bakllava"]=1
