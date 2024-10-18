@@ -389,7 +389,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	ollama? (
-		app-misc/ollama
+		app-misc/ollama[ollama_llms_llama2,ollama_llms_codellama]
 	)
 "
 RESTRICT="mirror"
