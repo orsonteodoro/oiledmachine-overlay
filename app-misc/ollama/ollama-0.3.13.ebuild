@@ -3282,7 +3282,7 @@ src_install() {
 
 	# Toggle LLM in whitelist to filter out LLM support by license.
 	local n
-	for n in ${use_alias[@]} ; do
+	for n in ${LLMS[@]} ; do
 		if [[ -n "${use_alias[${n}]}" ]] ; then
 			if use "ollama_llms_${n}" ; then
 				sed -i -e "s|[\"${n}\"]=1|[\"${n}\"]=1|g" "${T}/${PN}-muxer"
