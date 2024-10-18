@@ -1,0 +1,17 @@
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+  Ebuild obtained from gentoo-zh overlay
+
+  -->
+  <upstream>
+    <remote-id type="github">pytube/pytube</remote-id>
+    <remote-id type="pypi">pytube</remote-id>
+  </upstream>
+</pkgmetadata>
