@@ -86,6 +86,7 @@ benevolentjoker-belial
 benevolentjoker-bethanygpt
 benevolentjoker-nsfwmonika
 benevolentjoker-nsfwvanessa
+benevolentjoker-satan
 chatgph-medix-ph
 disinfozone-telos
 eramax-aura_v3
@@ -2311,13 +2312,23 @@ LLM_LICENSES="
 	ollama_llms_ALIENTELLIGENCE-enriquecastillorincon? (
 		llama3_1-USE_POLICY.md
 	)
+	ollama_llms_benevolentjoker-belial? (
+		benevolentjoker-Use-Agreement
+	)
 	ollama_llms_benevolentjoker-bethanygpt? (
 		benevolentjoker-Use-Agreement
 		llama3-USE_POLICY.md
 	)
-	ollama_llms_benevolentjoker-belial? (
-		benevolentjoker-Use-Agreement
+	ollama_llms_benevolentjoker-nsfwmonika? (
+		llama3-USE_POLICY.md
 	)
+	ollama_llms_benevolentjoker-nsfwvanessa? (
+		all-rights-reserved
+	)
+	ollama_llms_benevolentjoker-satan? (
+		all-rights-reserved
+	)
+
 	ollama_llms_disinfozone-telos? (
 		all-rights-reserved
 	)
@@ -3257,6 +3268,7 @@ src_install() {
 		["benevolentjoker-bethanygpt"]="benevolentjoker/bethanygpt"
 		["benevolentjoker-nsfwmonika"]="benevolentjoker/nsfwmonika"
 		["benevolentjoker-nsfwvanessa"]="benevolentjoker/nsfwvanessa"
+		["benevolentjoker-satan"]="benevolentjoker/satan"
 		["chatgph-medix-ph"]="chatgph/medix-ph"
 		["disinfozone-telos"]="disinfozone-telos"
 		["jimscard-adult-film-screenwriter-nsfw"]="jimscard/adult-film-screenwriter-nsfw"
