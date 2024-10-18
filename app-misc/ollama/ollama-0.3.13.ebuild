@@ -82,6 +82,7 @@ wizardlm wizardlm-uncensored wizardlm2 xwinlm yarn-llama2 yarn-mistral yi
 yi-coder zephyr
 
 ALIENTELLIGENCE-enriquecastillorincon
+benevolentjoker-bethanygpt
 benevolentjoker-nsfwmonika
 benevolentjoker-nsfwvanessa
 chatgph-medix-ph
@@ -3244,6 +3245,7 @@ src_install() {
 
 	declare -A use_alias=(
 		["ALIENTELLIGENCE-enriquecastillorincon"]="ALIENTELLIGENCE/enriquecastillorincon"
+		["benevolentjoker-bethanygpt"]="benevolentjoker/bethanygpt"
 		["benevolentjoker-nsfwmonika"]="benevolentjoker/nsfwmonika"
 		["benevolentjoker-nsfwvanessa"]="benevolentjoker/nsfwvanessa"
 		["chatgph-medix-ph"]="chatgph/medix-ph"
