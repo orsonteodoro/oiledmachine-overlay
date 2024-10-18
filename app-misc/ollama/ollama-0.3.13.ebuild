@@ -2432,7 +2432,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis cuda lapack mkl openblas openrc rocm systemd tbb unrestrict video_cards_intel
-ebuild-revision-3
+ebuild-revision-5
 "
 gen_rocm_required_use() {
 	local s
@@ -3283,23 +3283,24 @@ src_install() {
 	# Toggle LLM in whitelist to filter out LLM support by license.
 	local n
 	for n in ${LLMS[@]} ; do
-		if [[ -n "${use_alias[${n}]}" ]] ; then
+		local key="${use_alias[${n}]}"
+		if [[ -n "${key}" ]] ; then
 			if use "ollama_llms_${n}" ; then
-				sed -i -e "s|\[\"${n}\"\]=1|[\"${n}\"]=1|g" "${T}/${PN}-muxer"
+				sed -i -e "s|\[\"${key}\"\]=1|[\"${key}\"]=1|g" "${T}/${PN}-muxer"
 			else
-				sed -i -e "s|\[\"${n}\"\]=1|[\"${n}\"]=0|g" "${T}/${PN}-muxer"
+				sed -i -e "s|\[\"${key}\"\]=1|[\"${key}\"]=0|g" "${T}/${PN}-muxer"
 			fi
 		elif use "ollama_llms_${n}" ; then
-			sed -i -e "s|\[\"${n}\"\]=1|[\"${n}\"]=1|g" "${T}/${PN}-muxer"
+			sed -i -e "s|\[\"${n}\"\]=1|[\"${n}\"]=1|g" "${T}/${PN}-muxer" || die
 		else
-			sed -i -e "s|\[\"${n}\"\]=1|[\"${n}\"]=0|g" "${T}/${PN}-muxer"
+			sed -i -e "s|\[\"${n}\"\]=1|[\"${n}\"]=0|g" "${T}/${PN}-muxer" || die
 		fi
 	done
 
 	if use unrestrict ; then
-		sed -i -e "s|@UNRESTRICT@|1|g" "${T}/${PN}-muxer"
+		sed -i -e "s|@UNRESTRICT@|1|g" "${T}/${PN}-muxer" || die
 	else
-		sed -i -e "s|@UNRESTRICT@|0|g" "${T}/${PN}-muxer"
+		sed -i -e "s|@UNRESTRICT@|0|g" "${T}/${PN}-muxer" || die
 	fi
 
 	exeinto "/usr/bin"
