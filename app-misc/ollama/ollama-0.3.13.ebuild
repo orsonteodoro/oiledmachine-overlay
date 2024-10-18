@@ -2431,7 +2431,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
-blis cuda lapack mkl openblas openrc rocm systemd tbb video_cards_intel
+blis cuda lapack mkl openblas openrc rocm systemd tbb unrestrict video_cards_intel
 ebuild-revision-1
 "
 gen_rocm_required_use() {
@@ -3295,6 +3295,12 @@ src_install() {
 			sed -i -e "s|[\"${n}\"]=1|[\"${n}\"]=0|g" "${T}/${PN}-muxer"
 		fi
 	done
+
+	if use unrestrict ; then
+		sed -i -e "s|@UNRESTRICT@|1|g" "${T}/${PN}-muxer"
+	else
+		sed -i -e "s|@UNRESTRICT@|0|g" "${T}/${PN}-muxer"
+	fi
 
 	exeinto "/usr/bin"
 	newexe "${T}/${PN}-muxer" "${PN}"

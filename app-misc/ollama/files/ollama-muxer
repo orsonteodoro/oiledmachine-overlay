@@ -6,6 +6,7 @@
 
 ARGS=( ${@} )
 BACKEND=${BACKEND:-"@BACKEND@"}
+UNRESTRICT=@UNRESTRICT@
 
 declare -A backends=(
 	"cpu"
@@ -60,7 +61,7 @@ declare -A llm_use_cases=(
 	["falcon2"]="llm-research"
 	["firefunction-v2"]="chat instruction-following function-calling parsing"
 	["goliath"]="detailed-response roleplay detailed-roleplay"
-	["granite-code"]="coding code-generation fixing-bugs documentation"
+	["granite-code"]="coding code-generation fixing-bugs documentation assistant fine-tunable"
 	["hermes3"]="roleplaying abstract-reasoning common-sense function-calling structured-output assistant code-generation"
 	["internlm2"]="tool-use word-math-problems"
 	["jimscard/adult-film-screenwriter-nsfw"]="nsfw adult-content"
@@ -536,6 +537,8 @@ echo "
 
 main() {
 	cd "/usr/lib64/ollama/${BACKEND}" || exit 1
+	if [[ "${ARGS[0]}" == "run" && "${UNRESTRICT}" == "1" ]] ; then
+		ollama run ${ARGS[1]}
 	if [[ "${ARGS[0]}" == "run" ]] ; then
 		if is_llm_whitelisted "${ARGS[1]}" ; then
 			ollama run ${ARGS[1]}
