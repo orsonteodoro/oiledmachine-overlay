@@ -80,6 +80,18 @@ stablelm-zephyr stablelm2 starcoder starcoder2 starling-lm tinydolphin
 tinyllama vicuna wizard-math wizard-vicuna wizard-vicuna-uncensored wizardcoder
 wizardlm wizardlm-uncensored wizardlm2 xwinlm yarn-llama2 yarn-mistral yi
 yi-coder zephyr
+
+benevolentjoker-nsfwmonika
+benevolentjoker-nsfwvanessa
+eramax-aura_v3
+jimscard-adult-film-screenwriter-nsfw
+reefer-monica
+sparksammy-samantha
+sparksammy-samantha-3.1
+sparksammy-samantha-eggplant
+sparksammy-samantha-v3-uncensored
+sparksammy-tinysam-goog
+sparksammy-tinysam-msft
 )
 LLVM_COMPAT=( 17 )
 GEN_EBUILD=0
@@ -2290,6 +2302,43 @@ LLM_LICENSES="
 	ollama_llms_yi? (
 		Apache-2.0
 	)
+
+	ollama_llms_jimscard-adult-film-screenwriter-nsfw? (
+		Apache-2.0
+	)
+
+	ollama_llms_reefer-monica? (
+		llama3-USE_POLICY.md
+	)
+
+	ollama_llms_eramax-aura_v3? (
+		Apache-2.0
+	)
+	ollama_llms_sparksammy-samantha? (
+		Apache-2.0
+		llama2-LICENSE
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_sparksammy-samantha-3.1? (
+		llama3_1-USE_POLICY.md
+	)
+	ollama_llms_sparksammy-samantha-eggplant? (
+		Apache-2.0
+		MICROSOFT-RESEARCH-LICENSE-TERMS
+		STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT
+	)
+	ollama_llms_sparksammy-samantha-v3-uncensored? (
+		llama3-USE_POLICY.md
+	)
+	ollama_llms_sparksammy-tinysam-msft? (
+		MIT
+	)
+	ollama_llms_sparksammy-tinysam-goog? (
+		Gemma-Terms-of-Use-20240221
+	)
+
+
+
 "
 # Apache-2.0 - solar
 # Apache-2.0 - mistral
@@ -3184,10 +3233,28 @@ src_install() {
 	# The wrapper can be modified later to confine ollama with firejail or use mimalloc.
 	sed -i -e "s|@BACKEND@|${default_backend}|g" "${T}/${PN}-muxer"
 
+	declare -A use_alias=(
+		["jimscard-adult-film-screenwriter-nsfw"]="jimscard/adult-film-screenwriter-nsfw"
+		["benevolentjoker-nsfwmonika"]="benevolentjoker/nsfwmonika"
+		["benevolentjoker-nsfwvanessa"]="benevolentjoker/nsfwvanessa"
+		["reefer-monica"]="reefer/monica"
+		["sparksammy-samantha"]="sparksammy/samantha"
+		["sparksammy-samantha-3.1"]="sparksammy/samantha-3.1"
+		["sparksammy-samantha-v3-uncensored"]="sparksammy/samantha-v3-uncensored"
+		["sparksammy-tinysam-goog"]="sparksammy/tinysam-goog"
+		["sparksammy-tinysam-msft"]="sparksammy/tinysam-msft"
+	)
+
 	# Toggle LLM in whitelist to filter out LLM support by license.
 	local n
-	for n in ${LLMS[@]} ; do
-		if use "ollama_llms_${n}" ; then
+	for n in ${use_alias[@]} ; do
+		if [[ -n "${use_alias[${n}]}" ]] ; then
+			if use "ollama_llms_${n}" ; then
+				sed -i -e "s|[\"${n}\"]=1|[\"${n}\"]=1|g" "${T}/${PN}-muxer"
+			else
+				sed -i -e "s|[\"${n}\"]=1|[\"${n}\"]=0|g" "${T}/${PN}-muxer"
+			fi
+		elif use "ollama_llms_${n}" ; then
 			sed -i -e "s|[\"${n}\"]=1|[\"${n}\"]=1|g" "${T}/${PN}-muxer"
 		else
 			sed -i -e "s|[\"${n}\"]=1|[\"${n}\"]=0|g" "${T}/${PN}-muxer"
