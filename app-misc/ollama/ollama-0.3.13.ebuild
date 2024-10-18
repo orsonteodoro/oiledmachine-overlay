@@ -2432,7 +2432,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis cuda lapack mkl openblas openrc rocm systemd tbb unrestrict video_cards_intel
-ebuild-revision-5
+ebuild-revision-6
 "
 gen_rocm_required_use() {
 	local s

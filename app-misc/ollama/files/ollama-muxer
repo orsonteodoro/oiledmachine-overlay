@@ -538,12 +538,12 @@ echo "
 main() {
 	cd "/usr/lib64/ollama/${BACKEND}" || exit 1
 	if [[ "${ARGS[0]}" == "run" && "${UNRESTRICT}" == "1" ]] ; then
-		ollama run ${ARGS[1]}
+		../ollama run ${ARGS[1]}
 	elif [[ "${ARGS[0]}" == "run" ]] ; then
 	# Eventually we would like to move this [nsfw, license] check into the
 	# go program, so it doesn't get bypassed.
 		if is_llm_whitelisted "${ARGS[1]}" ; then
-			ollama run ${ARGS[1]}
+			../ollama run ${ARGS[1]}
 		else
 			echo "[Error] ${ARGS[1]} is a blacklisted LLM."
 		fi
@@ -560,7 +560,7 @@ main() {
 	elif [[ "${ARGS[0]}" == "website" ]] ; then
 		xdg-open "https://ollama.com/library/${ARGS[2]}"
 	else
-		ollama ${ARGS[@]}
+		../ollama ${ARGS[@]}
 	fi
 }
 
