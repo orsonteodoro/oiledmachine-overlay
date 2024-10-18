@@ -2432,7 +2432,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis cuda lapack mkl openblas openrc rocm systemd tbb unrestrict video_cards_intel
-ebuild-revision-1
+ebuild-revision-2
 "
 gen_rocm_required_use() {
 	local s
@@ -3260,7 +3260,7 @@ src_install() {
 	fi
 
 	# The wrapper can be modified later to confine ollama with firejail or use mimalloc.
-	sed -i -e "s|@BACKEND@|${default_backend}|g" "${T}/${PN}-muxer"
+	sed -i -e "s|@BACKEND@|${backend}|g" "${T}/${PN}-muxer"
 
 	declare -A use_alias=(
 		["ALIENTELLIGENCE-enriquecastillorincon"]="ALIENTELLIGENCE/enriquecastillorincon"
