@@ -1656,6 +1656,7 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 	ollama_llms_ALIENTELLIGENCE-enriquecastillorincon? (
+		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
 	ollama_llms_all-minilm? (
@@ -1673,9 +1674,11 @@ LLM_LICENSES="
 	)
 	ollama_llms_benevolentjoker-bethanygpt? (
 		benevolentjoker-Use-Agreement
+		llama3-LICENSE
 		llama3-USE_POLICY.md
 	)
 	ollama_llms_benevolentjoker-nsfwmonika? (
+		llama3-LICENSE
 		llama3-USE_POLICY.md
 	)
 	ollama_llms_benevolentjoker-nsfwvanessa? (
@@ -1698,6 +1701,7 @@ LLM_LICENSES="
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_codebooga? (
+		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_codegeex4? (
@@ -1749,6 +1753,7 @@ LLM_LICENSES="
 		all-rights-reserved
 	)
 	ollama_llms_dolphin-llama3? (
+		llama3-LICENSE
 		llama3-USE_POLICY.md
 	)
 	ollama_llms_dolphin-mistral? (
@@ -1764,12 +1769,14 @@ LLM_LICENSES="
 		BigCode-Open-RAIL-M-v1-License-Agreement
 	)
 	ollama_llms_duckdb-nsql? (
+		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_eramax-aura_v3? (
 		Apache-2.0
 	)
 	ollama_llms_everythinglm? (
+		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_falcon? (
@@ -1780,6 +1787,7 @@ LLM_LICENSES="
 		Falcon-2-11B-TII-Acceptable-Use-Policy-1.0
 	)
 	ollama_llms_firefunction-v2? (
+		llama3-LICENSE
 		llama3-USE_POLICY.md
 	)
 	ollama_llms_gemma? (
@@ -1794,12 +1802,14 @@ LLM_LICENSES="
 		glm-4-9b-LICENSE
 	)
 	ollama_llms_goliath? (
+		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_granite-code? (
 		Apache-2.0
 	)
 	ollama_llms_hermes3? (
+		llama3-LICENSE
 		llama3-USE_POLICY.md
 	)
 	ollama_llms_internlm2? (
@@ -1809,9 +1819,11 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 	ollama_llms_llama-guard3? (
+		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
 	ollama_llms_llama-pro? (
+		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_llama2? (
@@ -1830,12 +1842,15 @@ LLM_LICENSES="
 		llama3-USE_POLICY.md
 	)
 	ollama_llms_llama3-chatqa? (
+		llama3-LICENSE
 		llama3-USE_POLICY.md
 	)
 	ollama_llms_llama3-gradient? (
+		llama3-LICENSE
 		llama3-USE_POLICY.md
 	)
 	ollama_llms_llama3-groq-tool-use? (
+		llama3-LICENSE
 		llama3-USE_POLICY.md
 	)
 	ollama_llms_llama3.1? (
@@ -1856,18 +1871,21 @@ LLM_LICENSES="
 		all-rights-reserved
 	)
 	ollama_llms_magicoder? (
+		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_mathstral? (
 		Apache-2.0
 	)
 	ollama_llms_meditron? (
+		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_medllama2? (
 		MIT
 	)
 	ollama_llms_megadolphin? (
+		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_minicpm-v? (
@@ -1897,14 +1915,16 @@ LLM_LICENSES="
 	ollama_llms_mxbai-embed-large? (
 		Apache-2.0
 	)
+	ollama_llms_nemotron? (
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+		Meta-Privacy-Policy
+	)
 	ollama_llms_nemotron-mini? (
 		NVIDIA-AI-Foundation-Models-Community-License-Agreement
 	)
 	ollama_llms_moondream? (
 		Apache-2.0
-	)
-	ollama_llms_nemotron? (
-		llama3_1-USE_POLICY.md
 	)
 	ollama_llms_neural-chat? (
 		Apache-2.0
@@ -1962,6 +1982,7 @@ LLM_LICENSES="
 		MIT
 	)
 	ollama_llms_phind-codellama? (
+		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_qwen? (
@@ -1985,9 +2006,11 @@ LLM_LICENSES="
 		CC-BY-NC-4.0
 	)
 	ollama_llms_reefer-monica? (
+		llama3-LICENSE
 		llama3-USE_POLICY.md
 	)
 	ollama_llms_reflection? (
+		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
 	ollama_llms_samantha-mistral? (
@@ -2014,6 +2037,7 @@ LLM_LICENSES="
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_sparksammy-samantha-3.1? (
+		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
 	ollama_llms_sparksammy-samantha-eggplant? (
@@ -2022,6 +2046,7 @@ LLM_LICENSES="
 		STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT
 	)
 	ollama_llms_sparksammy-samantha-v3-uncensored? (
+		llama3-LICENSE
 		llama3-USE_POLICY.md
 	)
 	ollama_llms_sparksammy-tinysam-goog? (
@@ -2061,6 +2086,7 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 	ollama_llms_vicuna? (
+		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_yarn-llama2? (
@@ -2080,18 +2106,22 @@ LLM_LICENSES="
 	)
 	ollama_llms_wizardcoder? (
 		MICROSOFT-RESEARCH-LICENSE-TERMS
+		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_wizardlm? (
+		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_wizardlm-uncensored? (
+		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_wizardlm2? (
 		Apache-2.0
 	)
 	ollama_llms_xwinlm? (
+		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
 	ollama_llms_yi? (
