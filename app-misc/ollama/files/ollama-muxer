@@ -539,7 +539,7 @@ main() {
 	cd "/usr/lib64/ollama/${BACKEND}" || exit 1
 	if [[ "${ARGS[0]}" == "run" && "${UNRESTRICT}" == "1" ]] ; then
 		ollama run ${ARGS[1]}
-	if [[ "${ARGS[0]}" == "run" ]] ; then
+	elif [[ "${ARGS[0]}" == "run" ]] ; then
 		if is_llm_whitelisted "${ARGS[1]}" ; then
 			ollama run ${ARGS[1]}
 		else
