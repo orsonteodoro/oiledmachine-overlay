@@ -60,44 +60,32 @@ CUDA_TARGETS_COMPAT=(
 	sm_90a
 )
 LLMS=(
-alfred all-minilm aya bakllava bespoke-minicheck bge-large bge-m3 codebooga
-codegeex4 codegemma codellama codeqwen codestral codeup command-r
-command-r-plus dbrx deepseek-coder deepseek-coder-v2 deepseek-llm deepseek-v2
-deepseek-v2.5 dolphin-llama3 dolphin-mistral dolphin-mixtral dolphin-phi
-dolphincoder duckdb-nsql everythinglm falcon falcon2 firefunction-v2 gemma
-gemma2 glm4 goliath granite-code hermes3 internlm2 llama-guard3 llama-pro
-llama2 llama2-chinese llama2-uncensored llama3 llama3-chatqa llama3-gradient
-llama3-groq-tool-use llama3.1 llama3.2 llava llava-llama3 llava-phi3 magicoder
-mathstral meditron medllama2 megadolphin minicpm-v mistral mistral-large
-mistral-nemo mistral-openorca mistral-small mistrallite mixtral moondream
-mxbai-embed-large nemotron nemotron-mini neural-chat nexusraven
-nomic-embed-text notus notux nous-hermes nous-hermes2 nous-hermes2-mixtral
-nuextract open-orca-platypus2 openchat openhermes orca-mini orca2
-paraphrase-multilingual phi phi3 phi3.5 phind-codellama qwen qwen2 qwen2-math
-qwen2.5 qwen2.5-coder reader-lm reflection samantha-mistral shieldgemma smollm
-snowflake-arctic-embed solar solar-pro sqlcoder stable-beluga stable-code
-stablelm-zephyr stablelm2 starcoder starcoder2 starling-lm tinydolphin
-tinyllama vicuna wizard-math wizard-vicuna wizard-vicuna-uncensored wizardcoder
-wizardlm wizardlm-uncensored wizardlm2 xwinlm yarn-llama2 yarn-mistral yi
-yi-coder zephyr
-
-ALIENTELLIGENCE-enriquecastillorincon
-benevolentjoker-belial
-benevolentjoker-bethanygpt
-benevolentjoker-nsfwmonika
-benevolentjoker-nsfwvanessa
-benevolentjoker-satan
-chatgph-medix-ph
-disinfozone-telos
-eramax-aura_v3
-jimscard-adult-film-screenwriter-nsfw
-reefer-monica
-sparksammy-samantha
-sparksammy-samantha-3.1
-sparksammy-samantha-eggplant
-sparksammy-samantha-v3-uncensored
-sparksammy-tinysam-goog
-sparksammy-tinysam-msft
+alfred ALIENTELLIGENCE-enriquecastillorincon all-minilm aya bakllava
+benevolentjoker-belial benevolentjoker-bethanygpt benevolentjoker-nsfwmonika
+benevolentjoker-nsfwvanessa benevolentjoker-satan bespoke-minicheck bge-large
+bge-m3 chatgph-medix-ph codebooga codegeex4 codegemma codellama codeqwen
+codestral codeup command-r command-r-plus dbrx deepseek-coder deepseek-coder-v2
+deepseek-llm deepseek-v2 deepseek-v2.5 disinfozone-telos dolphin-llama3
+dolphin-mistral dolphin-mixtral dolphin-phi dolphincoder duckdb-nsql
+eramax-aura_v3 everythinglm falcon falcon2 firefunction-v2 gemma gemma2 glm4
+goliath granite-code hermes3 internlm2 jimscard-adult-film-screenwriter-nsfw
+llama-guard3 llama-pro llama2 llama2-chinese llama2-uncensored llama3
+llama3-chatqa llama3-gradient llama3-groq-tool-use llama3.1 llama3.2 llava
+llava-llama3 llava-phi3 magicoder mathstral meditron medllama2 megadolphin
+minicpm-v mistral mistral-large mistral-nemo mistral-openorca mistral-small
+mistrallite mixtral moondream mxbai-embed-large nemotron nemotron-mini
+neural-chat nexusraven nomic-embed-text notus notux nous-hermes nous-hermes2
+nous-hermes2-mixtral nuextract open-orca-platypus2 openchat openhermes orca-mini
+orca2 paraphrase-multilingual phi phi3 phi3.5 phind-codellama qwen qwen2
+qwen2-math qwen2.5 qwen2.5-coder reader-lm reefer-monica reflection
+samantha-mistral shieldgemma smollm snowflake-arctic-embed solar solar-pro
+sparksammy-samantha sparksammy-samantha-3.1 sparksammy-samantha-eggplant
+sparksammy-samantha-v3-uncensored sparksammy-tinysam-goog
+sparksammy-tinysam-msft sqlcoder stable-beluga stable-code stablelm-zephyr
+stablelm2 starcoder starcoder2 starling-lm tinydolphin tinyllama vicuna
+wizard-math wizard-vicuna wizard-vicuna-uncensored wizardcoder wizardlm
+wizardlm-uncensored wizardlm2 xwinlm yarn-llama2 yarn-mistral yi yi-coder
+zephyr
 )
 LLVM_COMPAT=( 17 )
 GEN_EBUILD=0
@@ -1664,653 +1652,21 @@ HOMEPAGE="https://ollama.com"
 # If the LLM is marked all-rights-reserved, it is a placeholder until it is
 # resolved by the model gallery or on discovery.
 LLM_LICENSES="
-	ollama_llms_llama2-uncensored? (
-		llama2-LICENSE
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_open-orca-platypus2? (
-		CC-BY-NC-4.0
-	)
-
-
-	ollama_llms_dolphincoder? (
-		BigCode-Open-RAIL-M-v1-License-Agreement
-	)
-
-
-	ollama_llms_paraphrase-multilingual? (
+	ollama_llms_alfred? (
 		Apache-2.0
 	)
-
-
-	ollama_llms_neural-chat? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_starcoder2? (
-		BigCode-Open-RAIL-M-v1-License-Agreement
-	)
-
-
-	ollama_llms_mistrallite? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_llama3.1? (
-		llama3_1-LICENSE
+	ollama_llms_ALIENTELLIGENCE-enriquecastillorincon? (
 		llama3_1-USE_POLICY.md
 	)
-
-
-	ollama_llms_gemma2? (
-		Gemma-Terms-of-Use-20240221
-		Gemma-Prohibited-Use-Policy-20240221
-	)
-
-
-	ollama_llms_llama3.2? (
-		llama3_2-LICENSE
-		llama3_2-USE_POLICY.md
-	)
-
-
-	ollama_llms_everythinglm? (
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_bge-large? (
-		MIT
-	)
-
-
-	ollama_llms_command-r? (
-		CC-BY-NC-4.0
-	)
-
-
-	ollama_llms_qwen2? (
-		Apache-2.0
-		Tongyi-Qianwen-LICENSE-AGREEMENT
-	)
-
-
-	ollama_llms_mistral-openorca? (
+	ollama_llms_all-minilm? (
 		Apache-2.0
 	)
-
-
-	ollama_llms_phi3.5? (
-		MIT
-	)
-
-
-	ollama_llms_qwen2.5-coder? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_deepseek-v2.5? (
-		DEEPSEEK-LICENSE-AGREEMENT-1.0
-	)
-
-
-	ollama_llms_mistral? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_dbrx? (
-		Databricks-Open-Model-License
-		Databricks-Open-Model-Acceptable-Use-Policy
-	)
-
-
-	ollama_llms_codeup? (
-		CreativeML-Open-RAIL++-M-License-20230726
-	)
-
-
-	ollama_llms_bge-m3? (
-		MIT
-	)
-
-
-	ollama_llms_qwen? (
-		Tongyi-Qianwen-LICENSE-AGREEMENT
-		Tongyi-Qianwen-RESEARCH-LICENSE-AGREEMENT
-	)
-
-
-	ollama_llms_starling-lm? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_dolphin-mixtral? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_deepseek-coder-v2? (
-		MIT
-		DEEPSEEK-LICENSE-AGREEMENT-1.0
-	)
-
-
-	ollama_llms_stable-beluga? (
-		STABLE-BELUGA-NON-COMMERCIAL-COMMUNITY-LICENSE-AGREEMENT
-	)
-
-
-	ollama_llms_mixtral? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_gemma? (
-		Gemma-Terms-of-Use-20240221
-		Gemma-Prohibited-Use-Policy-20240221
-	)
-
-
-	ollama_llms_nemotron? (
-		llama3_1-USE_POLICY.md
-	)
-
-
-	ollama_llms_duckdb-nsql? (
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_orca2? (
-		MICROSOFT-RESEARCH-LICENSE-TERMS
-	)
-
-
-	ollama_llms_wizard-vicuna? (
-		all-rights-reserved
-	)
-
-
-	ollama_llms_solar-pro? (
-		MIT
-	)
-
-
-	ollama_llms_nexusraven? (
-		NexusRaven-V2-13B-LICENSE
-	)
-
-
-	ollama_llms_snowflake-arctic-embed? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_codegemma? (
-		Gemma-Terms-of-Use-20240221
-	)
-
-
-	ollama_llms_glm4? (
-		glm-4-9b-LICENSE
-	)
-
-
-	ollama_llms_bakllava? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_llama-pro? (
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_mistral-small? (
-		MRL-0.1.md
-	)
-
-
-	ollama_llms_nous-hermes2-mixtral? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_phind-codellama? (
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_reader-lm? (
-		CC-BY-NC-4.0
-	)
-
-
-	ollama_llms_llama-guard3? (
-		llama3_1-USE_POLICY.md
-	)
-
-
-	ollama_llms_nous-hermes? (
-		MIT
-		GPL-2+
-	)
-
-
-	ollama_llms_shieldgemma? (
-		Gemma-Terms-of-Use-20240401
-	)
-
-
-	ollama_llms_bespoke-minicheck? (
-		CC-BY-NC-4.0
-	)
-
-
-	ollama_llms_yarn-mistral? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_magicoder? (
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_meditron? (
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_mistral-nemo? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_yarn-llama2? (
-		all-rights-reserved
-	)
-
-
-	ollama_llms_solar? (
-		CC-BY-NC-4.0
-	)
-
-
-	ollama_llms_dolphin-mistral? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_phi3? (
-		MIT
-	)
-
-
-	ollama_llms_sqlcoder? (
-		CC-BY-SA-4.0
-	)
-
-
-	ollama_llms_moondream? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_firefunction-v2? (
-		llama3-USE_POLICY.md
-	)
-
-
-	ollama_llms_phi? (
-		MIT
-	)
-
-
-	ollama_llms_dolphin-phi? (
-		MICROSOFT-RESEARCH-LICENSE-TERMS
-	)
-
-
-	ollama_llms_minicpm-v? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_mathstral? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_codegeex4? (
-		glm-4-9b-LICENSE
-	)
-
-
-	ollama_llms_llama2-chinese? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_mistral-large? (
-		MRL-0.1.md
-	)
-
-
-	ollama_llms_deepseek-v2? (
-		DEEPSEEK-LICENSE-AGREEMENT-1.0
-	)
-
-
-	ollama_llms_codellama? (
-		llama2-LICENSE
-		codellama-USE_POLICY.md
-	)
-
-
-	ollama_llms_internlm2? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_wizardcoder? (
-		MICROSOFT-RESEARCH-LICENSE-TERMS
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_mxbai-embed-large? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_wizard-vicuna-uncensored? (
-		all-rights-reserved
-	)
-
-
-	ollama_llms_dolphin-llama3? (
-		llama3-USE_POLICY.md
-	)
-
-
 	ollama_llms_aya? (
 		CC-BY-NC-4.0
 		C4AI-Acceptable-Use-Policy
 	)
-
-
-	ollama_llms_starcoder? (
-		BigCode-Open-RAIL-M-v1-License-Agreement
-	)
-
-
-	ollama_llms_openhermes? (
+	ollama_llms_bakllava? (
 		Apache-2.0
-	)
-
-
-	ollama_llms_wizardlm? (
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_xwinlm? (
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_tinyllama? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_medllama2? (
-		MIT
-	)
-
-
-	ollama_llms_llava-llama3? (
-		all-rights-reserved
-	)
-
-
-	ollama_llms_falcon2? (
-		Falcon-2-11B-TII-License-1.0
-		Falcon-2-11B-TII-Acceptable-Use-Policy-1.0
-	)
-
-
-	ollama_llms_openchat? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_wizard-math? (
-		MICROSOFT-RESEARCH-LICENSE-TERMS
-	)
-
-
-	ollama_llms_yi-coder? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_codestral? (
-		MNPL-0.1.md
-	)
-
-
-	ollama_llms_wizardlm2? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_nemotron-mini? (
-		NVIDIA-AI-Foundation-Models-Community-License-Agreement
-	)
-
-
-	ollama_llms_all-minilm? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_wizardlm-uncensored? (
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_orca-mini? (
-		CC-BY-NC-SA-4.0
-	)
-
-
-	ollama_llms_vicuna? (
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_llama3-groq-tool-use? (
-		llama3-USE_POLICY.md
-	)
-
-
-	ollama_llms_codeqwen? (
-		Tongyi-Qianwen-LICENSE-AGREEMENT
-	)
-
-
-	ollama_llms_smollm? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_llama3-chatqa? (
-		llama3-USE_POLICY.md
-	)
-
-
-	ollama_llms_falcon? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_stablelm-zephyr? (
-		STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT
-	)
-
-
-	ollama_llms_llama3-gradient? (
-		llama3-USE_POLICY.md
-	)
-
-
-	ollama_llms_llava? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_llama2? (
-		llama2-LICENSE
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_llama3? (
-		llama3-LICENSE
-		llama3-USE_POLICY.md
-	)
-
-
-	ollama_llms_qwen2-math? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_codebooga? (
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_reflection? (
-		llama3_1-USE_POLICY.md
-	)
-
-
-	ollama_llms_hermes3? (
-		llama3-USE_POLICY.md
-	)
-
-
-	ollama_llms_nomic-embed-text? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_granite-code? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_llava-phi3? (
-		all-rights-reserved
-	)
-
-
-	ollama_llms_deepseek-llm? (
-		DEEPSEEK-LICENSE-AGREEMENT-1.0
-	)
-
-
-	ollama_llms_stablelm2? (
-		STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT
-	)
-
-
-	ollama_llms_megadolphin? (
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_nous-hermes2? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_deepseek-coder? (
-		DEEPSEEK-LICENSE-AGREEMENT-1.0
-	)
-
-
-	ollama_llms_samantha-mistral? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_stable-code? (
-		STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT
-	)
-
-
-	ollama_llms_zephyr? (
-		MIT
-	)
-
-
-	ollama_llms_command-r-plus? (
-		CC-BY-NC-4.0
-	)
-
-
-	ollama_llms_tinydolphin? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_qwen2.5? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_notux? (
-		MIT
-	)
-
-
-	ollama_llms_alfred? (
-		Apache-2.0
-	)
-
-
-	ollama_llms_goliath? (
-		llama2-USE_POLICY.md
-	)
-
-
-	ollama_llms_notus? (
-		MIT
-	)
-
-
-	ollama_llms_nuextract? (
-		MIT
-	)
-
-
-	ollama_llms_yi? (
-		Apache-2.0
-	)
-
-	ollama_llms_ALIENTELLIGENCE-enriquecastillorincon? (
-		llama3_1-USE_POLICY.md
 	)
 	ollama_llms_benevolentjoker-belial? (
 		benevolentjoker-Use-Agreement
@@ -2328,22 +1684,308 @@ LLM_LICENSES="
 	ollama_llms_benevolentjoker-satan? (
 		all-rights-reserved
 	)
-
-	ollama_llms_disinfozone-telos? (
-		all-rights-reserved
+	ollama_llms_bespoke-minicheck? (
+		CC-BY-NC-4.0
+	)
+	ollama_llms_bge-large? (
+		MIT
+	)
+	ollama_llms_bge-m3? (
+		MIT
+	)
+	ollama_llms_deepseek-llm? (
+		DEEPSEEK-LICENSE-AGREEMENT-1.0
+	)
+	ollama_llms_dolphin-mixtral? (
+		Apache-2.0
+	)
+	ollama_llms_dolphin-phi? (
+		MICROSOFT-RESEARCH-LICENSE-TERMS
+	)
+	ollama_llms_dolphincoder? (
+		BigCode-Open-RAIL-M-v1-License-Agreement
 	)
 	ollama_llms_chatgph-medix-ph? (
 		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
+	ollama_llms_codebooga? (
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_codegeex4? (
+		glm-4-9b-LICENSE
+	)
+	ollama_llms_codegemma? (
+		Gemma-Terms-of-Use-20240221
+	)
+	ollama_llms_codellama? (
+		llama2-LICENSE
+		codellama-USE_POLICY.md
+	)
+	ollama_llms_codeqwen? (
+		Tongyi-Qianwen-LICENSE-AGREEMENT
+	)
+	ollama_llms_codestral? (
+		MNPL-0.1.md
+	)
+	ollama_llms_codeup? (
+		CreativeML-Open-RAIL++-M-License-20230726
+	)
+	ollama_llms_command-r? (
+		CC-BY-NC-4.0
+	)
+	ollama_llms_command-r-plus? (
+		CC-BY-NC-4.0
+	)
+	ollama_llms_dbrx? (
+		Databricks-Open-Model-License
+		Databricks-Open-Model-Acceptable-Use-Policy
+	)
+	ollama_llms_deepseek-coder? (
+		DEEPSEEK-LICENSE-AGREEMENT-1.0
+	)
+	ollama_llms_deepseek-coder-v2? (
+		MIT
+		DEEPSEEK-LICENSE-AGREEMENT-1.0
+	)
+	ollama_llms_deepseek-v2? (
+		DEEPSEEK-LICENSE-AGREEMENT-1.0
+	)
+	ollama_llms_deepseek-v2.5? (
+		DEEPSEEK-LICENSE-AGREEMENT-1.0
+	)
+	ollama_llms_disinfozone-telos? (
+		all-rights-reserved
+	)
+	ollama_llms_dolphin-llama3? (
+		llama3-USE_POLICY.md
+	)
+	ollama_llms_dolphin-mistral? (
+		Apache-2.0
+	)
+	ollama_llms_duckdb-nsql? (
+		llama2-USE_POLICY.md
+	)
 	ollama_llms_eramax-aura_v3? (
+		Apache-2.0
+	)
+	ollama_llms_everythinglm? (
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_falcon? (
+		Apache-2.0
+	)
+	ollama_llms_falcon2? (
+		Falcon-2-11B-TII-License-1.0
+		Falcon-2-11B-TII-Acceptable-Use-Policy-1.0
+	)
+	ollama_llms_firefunction-v2? (
+		llama3-USE_POLICY.md
+	)
+	ollama_llms_gemma? (
+		Gemma-Terms-of-Use-20240221
+		Gemma-Prohibited-Use-Policy-20240221
+	)
+	ollama_llms_gemma2? (
+		Gemma-Terms-of-Use-20240221
+		Gemma-Prohibited-Use-Policy-20240221
+	)
+	ollama_llms_glm4? (
+		glm-4-9b-LICENSE
+	)
+	ollama_llms_goliath? (
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_granite-code? (
+		Apache-2.0
+	)
+	ollama_llms_hermes3? (
+		llama3-USE_POLICY.md
+	)
+	ollama_llms_internlm2? (
 		Apache-2.0
 	)
 	ollama_llms_jimscard-adult-film-screenwriter-nsfw? (
 		Apache-2.0
 	)
-	ollama_llms_reefer-monica? (
+	ollama_llms_llama3-groq-tool-use? (
 		llama3-USE_POLICY.md
+	)
+	ollama_llms_nous-hermes2-mixtral? (
+		Apache-2.0
+	)
+	ollama_llms_llama-guard3? (
+		llama3_1-USE_POLICY.md
+	)
+	ollama_llms_llama-pro? (
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_llama2? (
+		llama2-LICENSE
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_llama2-chinese? (
+		Apache-2.0
+	)
+	ollama_llms_llama2-uncensored? (
+		llama2-LICENSE
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_llama3? (
+		llama3-LICENSE
+		llama3-USE_POLICY.md
+	)
+	ollama_llms_llama3-chatqa? (
+		llama3-USE_POLICY.md
+	)
+	ollama_llms_llama3-gradient? (
+		llama3-USE_POLICY.md
+	)
+	ollama_llms_llama3.1? (
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+	)
+	ollama_llms_llama3.2? (
+		llama3_2-LICENSE
+		llama3_2-USE_POLICY.md
+	)
+	ollama_llms_llava? (
+		Apache-2.0
+	)
+	ollama_llms_llava-llama3? (
+		all-rights-reserved
+	)
+	ollama_llms_llava-phi3? (
+		all-rights-reserved
+	)
+	ollama_llms_magicoder? (
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_mathstral? (
+		Apache-2.0
+	)
+	ollama_llms_meditron? (
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_medllama2? (
+		MIT
+	)
+	ollama_llms_megadolphin? (
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_minicpm-v? (
+		Apache-2.0
+	)
+	ollama_llms_mistral? (
+		Apache-2.0
+	)
+	ollama_llms_mistral-large? (
+		MRL-0.1.md
+	)
+	ollama_llms_mistral-nemo? (
+		Apache-2.0
+	)
+	ollama_llms_mistral-openorca? (
+		Apache-2.0
+	)
+	ollama_llms_mistral-small? (
+		MRL-0.1.md
+	)
+	ollama_llms_mistrallite? (
+		Apache-2.0
+	)
+	ollama_llms_mixtral? (
+		Apache-2.0
+	)
+	ollama_llms_nemotron-mini? (
+		NVIDIA-AI-Foundation-Models-Community-License-Agreement
+	)
+	ollama_llms_moondream? (
+		Apache-2.0
+	)
+	ollama_llms_nous-hermes? (
+		MIT
+		GPL-2+
+	)
+	ollama_llms_mxbai-embed-large? (
+		Apache-2.0
+	)
+	ollama_llms_nemotron? (
+		llama3_1-USE_POLICY.md
+	)
+	ollama_llms_neural-chat? (
+		Apache-2.0
+	)
+	ollama_llms_nexusraven? (
+		NexusRaven-V2-13B-LICENSE
+	)
+	ollama_llms_nomic-embed-text? (
+		Apache-2.0
+	)
+	ollama_llms_notus? (
+		MIT
+	)
+	ollama_llms_notux? (
+		MIT
+	)
+	ollama_llms_nous-hermes2? (
+		Apache-2.0
+	)
+	ollama_llms_nuextract? (
+		MIT
+	)
+	ollama_llms_open-orca-platypus2? (
+		CC-BY-NC-4.0
+	)
+	ollama_llms_openchat? (
+		Apache-2.0
+	)
+	ollama_llms_openhermes? (
+		Apache-2.0
+	)
+	ollama_llms_orca-mini? (
+		CC-BY-NC-SA-4.0
+	)
+	ollama_llms_orca2? (
+		MICROSOFT-RESEARCH-LICENSE-TERMS
+	)
+	ollama_llms_phi? (
+		MIT
+	)
+	ollama_llms_phi3? (
+		MIT
+	)
+	ollama_llms_phi3.5? (
+		MIT
+	)
+	ollama_llms_phind-codellama? (
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_qwen? (
+		Tongyi-Qianwen-LICENSE-AGREEMENT
+		Tongyi-Qianwen-RESEARCH-LICENSE-AGREEMENT
+	)
+	ollama_llms_qwen2? (
+		Apache-2.0
+		Tongyi-Qianwen-LICENSE-AGREEMENT
+	)
+	ollama_llms_qwen2-math? (
+		Apache-2.0
+	)
+	ollama_llms_qwen2.5? (
+		Apache-2.0
+	)
+	ollama_llms_qwen2.5-coder? (
+		Apache-2.0
+	)
+	ollama_llms_reader-lm? (
+		CC-BY-NC-4.0
+	)
+	ollama_llms_shieldgemma? (
+		Gemma-Terms-of-Use-20240401
+	)
+	ollama_llms_smollm? (
+		Apache-2.0
 	)
 	ollama_llms_sparksammy-samantha? (
 		Apache-2.0
@@ -2361,13 +2003,106 @@ LLM_LICENSES="
 	ollama_llms_sparksammy-samantha-v3-uncensored? (
 		llama3-USE_POLICY.md
 	)
-	ollama_llms_sparksammy-tinysam-msft? (
-		MIT
-	)
 	ollama_llms_sparksammy-tinysam-goog? (
 		Gemma-Terms-of-Use-20240221
 	)
-
+	ollama_llms_sparksammy-tinysam-msft? (
+		MIT
+	)
+	ollama_llms_stable-code? (
+		STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT
+	)
+	ollama_llms_paraphrase-multilingual? (
+		Apache-2.0
+	)
+	ollama_llms_reefer-monica? (
+		llama3-USE_POLICY.md
+	)
+	ollama_llms_reflection? (
+		llama3_1-USE_POLICY.md
+	)
+	ollama_llms_samantha-mistral? (
+		Apache-2.0
+	)
+	ollama_llms_solar? (
+		CC-BY-NC-4.0
+	)
+	ollama_llms_solar-pro? (
+		MIT
+	)
+	ollama_llms_snowflake-arctic-embed? (
+		Apache-2.0
+	)
+	ollama_llms_sqlcoder? (
+		CC-BY-SA-4.0
+	)
+	ollama_llms_stable-beluga? (
+		STABLE-BELUGA-NON-COMMERCIAL-COMMUNITY-LICENSE-AGREEMENT
+	)
+	ollama_llms_stablelm-zephyr? (
+		STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT
+	)
+	ollama_llms_stablelm2? (
+		STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT
+	)
+	ollama_llms_starcoder? (
+		BigCode-Open-RAIL-M-v1-License-Agreement
+	)
+	ollama_llms_starcoder2? (
+		BigCode-Open-RAIL-M-v1-License-Agreement
+	)
+	ollama_llms_starling-lm? (
+		Apache-2.0
+	)
+	ollama_llms_tinydolphin? (
+		Apache-2.0
+	)
+	ollama_llms_tinyllama? (
+		Apache-2.0
+	)
+	ollama_llms_vicuna? (
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_yarn-llama2? (
+		all-rights-reserved
+	)
+	ollama_llms_yarn-mistral? (
+		Apache-2.0
+	)
+	ollama_llms_wizard-math? (
+		MICROSOFT-RESEARCH-LICENSE-TERMS
+	)
+	ollama_llms_wizard-vicuna? (
+		all-rights-reserved
+	)
+	ollama_llms_wizard-vicuna-uncensored? (
+		all-rights-reserved
+	)
+	ollama_llms_wizardlm? (
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_wizardlm-uncensored? (
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_wizardlm2? (
+		Apache-2.0
+	)
+	ollama_llms_wizardcoder? (
+		MICROSOFT-RESEARCH-LICENSE-TERMS
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_xwinlm? (
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_yi? (
+		Apache-2.0
+	)
+	ollama_llms_yi-coder? (
+		Apache-2.0
+	)
+	ollama_llms_zephyr? (
+		MIT
+	)
 "
 # Apache-2.0 - solar
 # Apache-2.0 - mistral
@@ -2432,7 +2167,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis cuda lapack mkl openblas openrc rocm systemd tbb unrestrict video_cards_intel
-ebuild-revision-6
+ebuild-revision-7
 "
 gen_rocm_required_use() {
 	local s
@@ -2704,6 +2439,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.3.13-rename-CUDA_ARCHITECTURES.patch"
 	"${FILESDIR}/${PN}-0.3.13-fix-os-arch-pair.patch"
 	"${FILESDIR}/${PN}-0.3.13-gpu-libs-path.patch"
+	"${FILESDIR}/${PN}-0.3.13-cmd-changes.patch"
 )
 
 pkg_pretend() {
@@ -2955,6 +2691,51 @@ src_configure() {
 		export AMDGPU_TARGETS="$(get_amdgpu_flags)"
 		check_libstdcxx "12"
 	fi
+
+	if use unrestrict ; then
+		sed -i -e "s|@UNRESTRICT@|1|g" "cmd/cmd.go" || die
+	else
+		sed -i -e "s|@UNRESTRICT@|0|g" "cmd/cmd.go" || die
+	fi
+
+	declare -A use_alias=(
+		["ALIENTELLIGENCE-enriquecastillorincon"]="ALIENTELLIGENCE/enriquecastillorincon"
+		["benevolentjoker-belial"]="benevolentjoker/belial"
+		["benevolentjoker-bethanygpt"]="benevolentjoker/bethanygpt"
+		["benevolentjoker-nsfwmonika"]="benevolentjoker/nsfwmonika"
+		["benevolentjoker-nsfwvanessa"]="benevolentjoker/nsfwvanessa"
+		["benevolentjoker-satan"]="benevolentjoker/satan"
+		["chatgph-medix-ph"]="chatgph/medix-ph"
+		["disinfozone-telos"]="disinfozone/telos"
+		["eramax-aura_v3"]="eramax/aura_v3"
+		["jimscard-adult-film-screenwriter-nsfw"]="jimscard/adult-film-screenwriter-nsfw"
+		["reefer-monica"]="reefer/monica"
+		["sparksammy-samantha"]="sparksammy/samantha"
+		["sparksammy-samantha-3.1"]="sparksammy/samantha-3.1"
+		["sparksammy-samantha-eggplant"]="sparksammy/samantha-eggplant"
+		["sparksammy-samantha-v3-uncensored"]="sparksammy/samantha-v3-uncensored"
+		["sparksammy-tinysam-goog"]="sparksammy/tinysam-goog"
+		["sparksammy-tinysam-msft"]="sparksammy/tinysam-msft"
+	)
+
+	# Toggle LLM in whitelist to filter out LLM support by license.
+	local n
+	for n in ${LLMS[@]} ; do
+		local key="${use_alias[${n}]}"
+		if [[ -n "${key}" ]] ; then
+			if use "ollama_llms_${n}" ; then
+				sed -i -e "s|\"${key}\": 1|\"${key}\": 1|g" "cmd/cmd.go" || die
+			else
+				sed -i -e "s|\"${key}\": 1|\"${key}\": 0|g" "cmd/cmd.go" || die
+			fi
+		elif use "ollama_llms_${n}" ; then
+			sed -i -e "s|\"${n}\": 1|\"${n}\": 1|g" "cmd/cmd.go" || die
+		else
+			sed -i -e "s|\"${n}\": 1|\"${n}\": 0|g" "cmd/cmd.go" || die
+		fi
+	done
+
+
 
 	local jobs=$(get_makeopts_jobs)
 	sed -i -e "s|-j8|-j${jobs}|g" "llm/generate/gen_common.sh" || die
@@ -3262,47 +3043,6 @@ src_install() {
 	# The wrapper can be modified later to confine ollama with firejail or use mimalloc.
 	sed -i -e "s|@BACKEND@|${backend}|g" "${T}/${PN}-muxer"
 
-	declare -A use_alias=(
-		["ALIENTELLIGENCE-enriquecastillorincon"]="ALIENTELLIGENCE/enriquecastillorincon"
-		["benevolentjoker-belial"]="benevolentjoker/belial"
-		["benevolentjoker-bethanygpt"]="benevolentjoker/bethanygpt"
-		["benevolentjoker-nsfwmonika"]="benevolentjoker/nsfwmonika"
-		["benevolentjoker-nsfwvanessa"]="benevolentjoker/nsfwvanessa"
-		["benevolentjoker-satan"]="benevolentjoker/satan"
-		["chatgph-medix-ph"]="chatgph/medix-ph"
-		["disinfozone-telos"]="disinfozone-telos"
-		["jimscard-adult-film-screenwriter-nsfw"]="jimscard/adult-film-screenwriter-nsfw"
-		["reefer-monica"]="reefer/monica"
-		["sparksammy-samantha"]="sparksammy/samantha"
-		["sparksammy-samantha-3.1"]="sparksammy/samantha-3.1"
-		["sparksammy-samantha-v3-uncensored"]="sparksammy/samantha-v3-uncensored"
-		["sparksammy-tinysam-goog"]="sparksammy/tinysam-goog"
-		["sparksammy-tinysam-msft"]="sparksammy/tinysam-msft"
-	)
-
-	# Toggle LLM in whitelist to filter out LLM support by license.
-	local n
-	for n in ${LLMS[@]} ; do
-		local key="${use_alias[${n}]}"
-		if [[ -n "${key}" ]] ; then
-			if use "ollama_llms_${n}" ; then
-				sed -i -e "s|\[\"${key}\"\]=1|[\"${key}\"]=1|g" "${T}/${PN}-muxer"
-			else
-				sed -i -e "s|\[\"${key}\"\]=1|[\"${key}\"]=0|g" "${T}/${PN}-muxer"
-			fi
-		elif use "ollama_llms_${n}" ; then
-			sed -i -e "s|\[\"${n}\"\]=1|[\"${n}\"]=1|g" "${T}/${PN}-muxer" || die
-		else
-			sed -i -e "s|\[\"${n}\"\]=1|[\"${n}\"]=0|g" "${T}/${PN}-muxer" || die
-		fi
-	done
-
-	if use unrestrict ; then
-		sed -i -e "s|@UNRESTRICT@|1|g" "${T}/${PN}-muxer" || die
-	else
-		sed -i -e "s|@UNRESTRICT@|0|g" "${T}/${PN}-muxer" || die
-	fi
-
 	exeinto "/usr/bin"
 	newexe "${T}/${PN}-muxer" "${PN}"
 
@@ -3342,13 +3082,17 @@ einfo
 einfo "Quick guide:"
 einfo
 	if use openrc ; then
-einfo "  rc-service ${PN} start		# Start server"
+einfo "  rc-service ${PN} start			# Start server"
 	elif use systemd ; then
-einfo "  systemctl start ${PN}		# Start server"
+einfo "  systemctl start ${PN}			# Start server"
 	else
-einfo "  ${PN} serve			# Start server, note you are reponsible for adding it to your init system."
+einfo "  ${PN} serve				# Start server, note you are reponsible for adding it to your init system."
 	fi
-einfo "  ${PN} run llama3:70b		# Downloads and loads a llama3 Large Language Model (LLM) with 70 billion parameters"
+einfo "  ${PN} avail				# Lists whitelisted models available to download"
+einfo "  ${PN} run llama3:70b			# Downloads and loads a llama3 Large Language Model (LLM) with 70 billion parameters"
+einfo "  ${PN} ollama show llama3 --tags		# Shows descriptive tags, use cases, personality of the llama3 model"
+einfo "  ${PN} ollama show llama3 --website	# Shows the ${PN} website entry for the llama3 model"
+einfo "  ${PN} ollama show llama3 --licence	# Shows the model license of the llama3 model"
 einfo
 einfo "You still need to download a pregenerated model.  The full list can be"
 einfo "found at:"

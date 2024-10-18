@@ -1,3 +1,5 @@
+[For a copy of the original license, see https://mistral.ai/licenses/MNPL-0.1.md]
+
 # Mistral AI Non-Production License 
 
 ## 1. Scope and acceptance

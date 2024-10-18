@@ -1,0 +1,643 @@
+diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
+--- ollama-0.3.13.orig/cmd/cmd.go	2024-10-10 11:21:51.000000000 -0700
++++ ollama-0.3.13/cmd/cmd.go	2024-10-18 11:56:03.055661383 -0700
+@@ -17,6 +17,7 @@ import (
+ 	"net"
+ 	"net/http"
+ 	"os"
++	"os/exec" // oteodoro:  added line
+ 	"os/signal"
+ 	"path/filepath"
+ 	"regexp"
+@@ -47,6 +48,153 @@ import (
+ 	"github.com/ollama/ollama/version"
+ )
+ 
++// oteodoro:  added section
++var whitelist = map[string]int{
++	"alfred": 1,
++	"ALIENTELLIGENCE/enriquecastillorincon": 1,
++	"all-minilm": 1,
++	"aya": 1,
++	"bakllava": 1,
++	"bespoke-minicheck": 1,
++	"bge-large": 1,
++	"bge-m3": 1,
++	"benevolentjoker/belial": 1,
++	"benevolentjoker/bethanygpt": 1,
++	"benevolentjoker/nsfwmonika": 1,
++	"benevolentjoker/nsfwvanessa": 1,
++	"benevolentjoker/satan": 1,
++	"chatgph/medix-ph": 1,
++	"codebooga": 1,
++	"codegeex4": 1,
++	"codegemma": 1,
++	"codellama": 1,
++	"codeqwen": 1,
++	"codestral": 1,
++	"codeup": 1,
++	"command-r": 1,
++	"command-r-plus": 1,
++	"dbrx": 1,
++	"disinfozone/telos": 1,
++	"deepseek-coder": 1,
++	"deepseek-coder-v2": 1,
++	"deepseek-llm": 1,
++	"deepseek-v2": 1,
++	"deepseek-v2.5": 1,
++	"dolphin-llama3": 1,
++	"dolphin-mistral": 1,
++	"dolphin-mixtral": 1,
++	"dolphin-phi": 1,
++	"dolphincoder": 1,
++	"duckdb-nsql": 1,
++	"eramax/aura_v3": 1,
++	"everythinglm": 1,
++	"falcon": 1,
++	"falcon2": 1,
++	"firefunction-v2": 1,
++	"goliath": 1,
++	"granite-code": 1,
++	"hermes3": 1,
++	"internlm2": 1,
++	"jimscard/adult-film-screenwriter-nsfw": 1,
++	"llama-guard3": 1,
++	"llama-pro": 1,
++	"llama2": 1,
++	"llama2-chinese": 1,
++	"llama2-uncensored": 1,
++	"llama3": 1,
++	"llama3-chatqa": 1,
++	"llama3-gradient": 1,
++	"llama3-groq-tool-use": 1,
++	"llama3.1": 1,
++	"llama3.2": 1,
++	"llava": 1,
++	"llava-llama3": 1,
++	"llava-phi3": 1,
++	"gemma": 1,
++	"gemma2": 1,
++	"glm4": 1,
++	"magicoder": 1,
++	"mathstral": 1,
++	"meditron": 1,
++	"medllama2": 1,
++	"megadolphin": 1,
++	"minicpm-v": 1,
++	"mistral": 1,
++	"mistral-large": 1,
++	"mistral-nemo": 1,
++	"mistral-openorca": 1,
++	"mistral-small": 1,
++	"mistrallite": 1,
++	"mixtral": 1,
++	"moondream": 1,
++	"mxbai-embed-large": 1,
++	"nemotron": 1,
++	"nemotron-mini": 1,
++	"neural-chat": 1,
++	"nexusraven": 1,
++	"nomic-embed-text": 1,
++	"notus": 1,
++	"notux": 1,
++	"nous-hermes": 1,
++	"nous-hermes2": 1,
++	"nous-hermes2-mixtral": 1,
++	"nuextract": 1,
++	"open-orca-platypus2": 1,
++	"openchat": 1,
++	"openhermes": 1,
++	"orca-mini": 1,
++	"orca2": 1,
++	"paraphrase-multilingual": 1,
++	"phi": 1,
++	"phi3": 1,
++	"phi3.5": 1,
++	"phind-codellama": 1,
++	"qwen": 1,
++	"qwen2": 1,
++	"qwen2-math": 1,
++	"qwen2.5": 1,
++	"qwen2.5-coder": 1,
++	"reader-lm": 1,
++	"reefer/monica": 1,
++	"reflection": 1,
++	"samantha-mistral": 1,
++	"shieldgemma": 1,
++	"smollm": 1,
++	"snowflake-arctic-embed": 1,
++	"solar": 1,
++	"solar-pro": 1,
++	"sparksammy/samantha": 1,
++	"sparksammy/samantha-3.1": 1,
++	"sparksammy/samantha-eggplant": 1,
++	"sparksammy/samantha-v3-uncensored": 1,
++	"sparksammy/tinysam-goog": 1,
++	"sparksammy/tinysam-msft": 1,
++	"sqlcoder": 1,
++	"stable-beluga": 1,
++	"stable-code": 1,
++	"stablelm-zephyr": 1,
++	"stablelm2": 1,
++	"starcoder": 1,
++	"starcoder2": 1,
++	"starling-lm": 1,
++	"tinydolphin": 1,
++	"tinyllama": 1,
++	"vicuna": 1,
++	"wizard-math": 1,
++	"wizard-vicuna": 1,
++	"wizard-vicuna-uncensored": 1,
++	"wizardcoder": 1,
++	"wizardlm": 1,
++	"wizardlm-uncensored": 1,
++	"wizardlm2": 1,
++	"xwinlm": 1,
++	"yarn-llama2": 1,
++	"yarn-mistral": 1,
++	"yi": 1,
++	"yi-coder": 1,
++	"zephyr": 1,
++}
++
+ func CreateHandler(cmd *cobra.Command, args []string) error {
+ 	filename, _ := cmd.Flags().GetString("file")
+ 	filename, err := filepath.Abs(filename)
+@@ -382,6 +530,25 @@ func StopHandler(cmd *cobra.Command, arg
+ func RunHandler(cmd *cobra.Command, args []string) error {
+ 	interactive := true
+ 
++	if @UNRESTRICT@ == 1 {
++		//
++	} else {
++		name := args[0]
++		v, r := whitelist[name]
++		if r && v == 1 {
++			//
++		} else {
++			l := strings.Split(name, ":")
++			name := l[0]
++			v, r := whitelist[name]
++			if r && v == 1 {
++				//
++			} else {
++				return errors.New(name + " is blacklisted")
++			}
++		}
++	}
++
+ 	opts := runOptions{
+ 		Model:    args[0],
+ 		WordWrap: os.Getenv("TERM") == "xterm-256color",
+@@ -711,9 +878,11 @@ func ShowHandler(cmd *cobra.Command, arg
+ 	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
+ 	parameters, errParams := cmd.Flags().GetBool("parameters")
+ 	system, errSystem := cmd.Flags().GetBool("system")
++	tags, errTags := cmd.Flags().GetBool("tags")
+ 	template, errTemplate := cmd.Flags().GetBool("template")
++	website, errWebsite := cmd.Flags().GetBool("website")
+ 
+-	for _, boolErr := range []error{errLicense, errModelfile, errParams, errSystem, errTemplate} {
++	for _, boolErr := range []error{errLicense, errModelfile, errParams, errSystem, errTags, errTemplate, errWebsite} {
+ 		if boolErr != nil {
+ 			return errors.New("error retrieving flags")
+ 		}
+@@ -742,13 +911,380 @@ func ShowHandler(cmd *cobra.Command, arg
+ 		showType = "system"
+ 	}
+ 
++	if tags {
++		flagsSet++
++		showType = "tags"
++	}
++
+ 	if template {
+ 		flagsSet++
+ 		showType = "template"
+ 	}
+ 
++	if website {
++		flagsSet++
++		showType = "website"
++	}
++
+ 	if flagsSet > 1 {
+-		return errors.New("only one of '--license', '--modelfile', '--parameters', '--system', or '--template' can be specified")
++		return errors.New("only one of '--license', '--modelfile', '--parameters', '--system', '--tags', '--template', or '--website' can be specified")
++	}
++
++	// oteodoro:  added section
++	licenses := map[string]string {
++		"alfred": "Apache-2.0",
++		"ALIENTELLIGENCE/enriquecastillorincon": "Llama 3.1 Acceptable Use Policy",
++		"all-minilm": "Apache-2.0",
++		"aya": "CC-BY-NC-4.0, Cohere For AI Acceptable Use Policy",
++		"bakllava": "Apache-2.0",
++		"bespoke-minicheck": "CC-BY-NC-4.0",
++		"bge-large": "MIT",
++		"bge-m3": "MIT",
++		"benevolentjoker/belial": "benevolentjoker's Use Agreement",
++		"benevolentjoker/bethanygpt": "Meta Llama 3 Acceptable Use Policy, benevolentjoker's Use Agreement",
++		"benevolentjoker/nsfwmonika": "Meta Llama 3 Acceptable Use Policy",
++		"benevolentjoker/nsfwvanessa": "",
++		"benevolentjoker/satan": "",
++		"chatgph/medix-ph": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
++		"codebooga": "Llama 2 Acceptable Use Policy",
++		"codegeex4": "glm-4-9b-LICENSE",
++		"codegemma": "Gemma Terms of Use 20240221",
++		"codellama": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama Code Acceptable Use Policy",
++		"codeqwen": "Tongyi Qianwen LICENSE AGREEMENT",
++		"codestral": "MNPL-0.1",
++		"codeup": "CreativeML Open RAIL++-M License",
++		"command-r": "CC-BY-NC-4.0",
++		"command-r-plus": "CC-BY-NC-4.0",
++		"dbrx": "Databricks Open Model License, Databricks Open Model Acceptable Use Policy",
++		"deepseek-coder": "DEEPSEEK LICENSE AGREEMENT 1.0",
++		"deepseek-coder-v2": "MIT DEEPSEEK LICENSE AGREEMENT 1.0",
++		"deepseek-llm": "DEEPSEEK LICENSE AGREEMENT 1.0",
++		"deepseek-v2": "DEEPSEEK LICENSE AGREEMENT 1.0",
++		"deepseek-v2.5": "DEEPSEEK LICENSE AGREEMENT 1.0",
++		"disinfozone/telos": "",
++		"dolphin-llama3": "Meta Llama 3 Acceptable Use Policy",
++		"dolphin-mistral": "Apache-2.0",
++		"dolphin-mixtral": "Apache-2.0",
++		"dolphin-phi": "MICROSOFT RESEARCH LICENSE TERMS",
++		"dolphincoder": "BigCode Open RAIL-M v1 License Agreement",
++		"duckdb-nsql": "Llama 2 Acceptable Use Policy",
++		"eramax/aura_v3": "Apache-2.0",
++		"everythinglm": "Llama 2 Acceptable Use Policy",
++		"falcon": "Apache-2.0",
++		"falcon2": "Falcon 2 11B TII License 1.0",
++		"firefunction-v2": "Meta Llama 3 Acceptable Use Policy",
++		"goliath": "Llama 2 Acceptable Use Policy",
++		"granite-code": "Apache-2.0",
++		"hermes3": "Meta Llama 3 Acceptable Use Policy",
++		"internlm2": "Apache-2.0",
++		"jimscard/adult-film-screenwriter-nsfw": "Apache-2.0",
++		"llama-guard3": "Llama 3.1 Acceptable Use Policy",
++		"llama-pro": "Llama 2 Acceptable Use Policy",
++		"llama2": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
++		"llama2-chinese": "Apache-2.0",
++		"llama2-uncensored": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
++		"llama3": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
++		"llama3-chatqa": "Meta Llama 3 Acceptable Use Policy",
++		"llama3-gradient": "Meta Llama 3 Acceptable Use Policy",
++		"llama3-groq-tool-use": "Meta Llama 3 Acceptable Use Policy",
++		"llama3.1": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
++		"llama3.2": "LLAMA 3.2 COMMUNITY LICENSE AGREEMENT, Llama 3.2 Acceptable Use Policy",
++		"llava": "Apache-2.0",
++		"llava-llama3": "",
++		"llava-phi3": "",
++		"gemma": "Gemma Terms of Use 20240221, Gemma Prohibited Use Policy 20240221",
++		"gemma2": "Gemma Terms of Use 20240221, Gemma Prohibited Use Policy 20240221",
++		"glm4": "The glm-4-9b License",
++		"magicoder": "Llama 2 Acceptable Use Policy",
++		"mathstral": "Apache-2.0",
++		"meditron": "Llama 2 Acceptable Use Policy",
++		"medllama2": "MIT",
++		"megadolphin": "Llama 2 Acceptable Use Policy",
++		"minicpm-v": "Apache-2.0",
++		"mistral": "Apache-2.0",
++		"mistral-large": "MRL-0.1",
++		"mistral-nemo": "Apache-2.0",
++		"mistral-openorca": "Apache-2.0",
++		"mistral-small": "MRL-0.1",
++		"mistrallite": "Apache-2.0",
++		"mixtral": "Apache-2.0",
++		"moondream": "Apache-2.0",
++		"mxbai-embed-large": "Apache-2.0",
++		"nemotron": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy, Meta Privacy Policy",
++		"nemotron-mini": "NVIDIA AI Foundation Models Community License Agreement",
++		"neural-chat": "Apache-2.0",
++		"nexusraven": "NexusRaven-V2-13B-LICENSE",
++		"nomic-embed-text": "Apache-2.0",
++		"notus": "MIT",
++		"notux": "MIT",
++		"nous-hermes": "MIT, GPL-2+",
++		"nous-hermes:7b": "MIT",
++		"nous-hermes:13b": "GPL-2+",
++		"nous-hermes:13b-llama2": "MIT",
++		"nous-hermes2": "Apache-2.0",
++		"nous-hermes2-mixtral": "Apache-2.0",
++		"nuextract": "MIT", // Ollama site says Apache-2.0.  HuggingFace site says MIT.
++		"open-orca-platypus2": "CC-BY-NC-4.0",
++		"openchat": "Apache-2.0",
++		"openhermes": "Apache-2.0",
++		"orca-mini": "CC-BY-NC-SA-4.0",
++		"orca2": "MICROSOFT RESEARCH LICENSE TERMS",
++		"paraphrase-multilingual": "Apache-2.0",
++		"phi": "MIT",
++		"phi3": "MIT",
++		"phi3.5": "MIT",
++		"phind-codellama": "Llama 2 Acceptable Use Policy",
++		"qwen:0.5b": "Tongyi Qianwen RESEARCH LICENSE AGREEMENT",
++		"qwen:1.8b": "Tongyi Qianwen RESEARCH LICENSE AGREEMENT",
++		"qwen:4b": "Tongyi Qianwen RESEARCH LICENSE AGREEMENT",
++		"qwen:7b": "Tongyi Qianwen LICENSE AGREEMENT",
++		"qwen:14b": "Tongyi Qianwen LICENSE AGREEMENT",
++		"qwen:32b": "Tongyi Qianwen LICENSE AGREEMENT",
++		"qwen:72b": "Tongyi Qianwen LICENSE AGREEMENT",
++		"qwen:110b": "Tongyi Qianwen LICENSE AGREEMENT",
++		"qwen2": "Apache-2.0",
++		"qwen2:72b": "Tongyi Qianwen LICENSE AGREEMENT",
++		"qwen2-math": "Apache-2.0",
++		"qwen2.5": "Apache-2.0",
++		"qwen2.5-coder": "Apache-2.0",
++		"reader-lm": "CC-BY-NC-4.0",
++		"reefer/monica": "Meta Llama 3 Acceptable Use Policy",
++		"reflection": "Llama 3.1 Acceptable Use Policy",
++		"samantha-mistral": "Apache-2.0",
++		"shieldgemma": "Gemma Terms of Use 20240401",
++		"smollm": "Apache-2.0",
++		"snowflake-arctic-embed": "Apache-2.0",
++		"solar": "Apache-2.0",
++		"solar:instruct": "CC-BY-NC-4.0",
++		"solar-pro": "MIT",
++		"sparksammy/samantha": "Apache-2.0, LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
++		"sparksammy/samantha-3.1": "Llama 3.1 Acceptable Use Policy",
++		"sparksammy/samantha-eggplant": "Apache-2.0, STABILITY AI NON-COMMERCIAL RESEARCH COMMUNITY LICENSE AGREEMENT, MICROSOFT RESEARCH LICENSE TERMS",
++		"sparksammy/samantha-v3-uncensored": "Meta Llama 3 Acceptable Use Policy",
++		"sparksammy/tinysam-msft": "MIT",
++		"sparksammy/tinysam-goog": "Gemma Terms of Use 20240221",
++		"sqlcoder": "CC-BY-SA-4.0",
++		"stable-beluga": "STABLE BELUGA NON-COMMERCIAL COMMUNITY LICENSE AGREEMENT",
++		"stable-code": "STABILITY AI NON-COMMERCIAL RESEARCH COMMUNITY LICENSE AGREEMENT",
++		"stablelm-zephyr": "STABILITY AI NON-COMMERCIAL RESEARCH COMMUNITY LICENSE AGREEMENT",
++		"stablelm2": "STABILITY AI NON-COMMERCIAL RESEARCH COMMUNITY LICENSE AGREEMENT",
++		"starcoder": "BigCode Open RAIL-M v1 License Agreement",
++		"starcoder2": "BigCode Open RAIL-M v1 License Agreement",
++		"starling-lm": "Apache-2.0",
++		"tinydolphin": "Apache-2.0",
++		"tinyllama": "Apache-2.0",
++		"vicuna": "Llama 2 Acceptable Use Policy",
++		"wizard-math": "MICROSOFT RESEARCH LICENSE TERMS",
++		"wizard-vicuna": "",
++		"wizard-vicuna-uncensored": "",
++		"wizardcoder:33b": "MICROSOFT RESEARCH LICENSE TERMS",
++		"wizardcoder:python": "Llama 2 Acceptable Use Policy",
++		"wizardlm": "Llama 2 Acceptable Use Policy",
++		"wizardlm-uncensored": "",
++		"wizardlm-uncensored:13b-llama2": "Llama 2 Acceptable Use Policy",
++		"wizardlm2": "Apache-2.0",
++		"xwinlm": "Llama 2 Acceptable Use Policy",
++		"yarn-llama2": "",
++		"yarn-mistral": "Apache-2.0",
++		"yi": "Apache-2.0",
++		"yi-coder": "Apache-2.0",
++		"zephyr": "MIT",
++	}
++
++	// oteodoro:  modified --license with correction or missing info
++	name := args[0]
++	l, r1 := licenses[name]
++	if r1 && flagsSet == 1 && showType == "license" {
++		fmt.Println("Model license:  " + l)
++		return nil
++	} else {
++		l1 := strings.Split(name, ":")
++		name := l1[0]
++		l2, r2 := licenses[name]
++		if r2 && flagsSet == 1 && showType == "license" {
++			fmt.Println("Model license:  " + l2)
++			return nil
++		}
++	}
++
++	// oteodoro:  added --website
++	if r1 && flagsSet == 1 && showType == "website" {
++		program := "xdg-open"
++		arg0 := "https://ollama.com/library/" + name
++		cmd := exec.Command(program, arg0)
++		_ = cmd.Run()
++		return nil
++	}
++
++	// oteodoro:  added --tags
++	tagsList := map[string]string{
++		"alfred": "chat comprehensive-response i-dont-know",
++		"ALIENTELLIGENCE/enriquecastillorincon": "ufo chat ufo-investigator",
++		"all-minilm": "embedding",
++		"aya": "multilingual arabic chinese czech dutch english french german greek hebrew hindi indonesian italian japanese korean persian polish portuguese romanian russian spanish turkish ukrainian vietnamese",
++		"bakllava": "image-deconstruction image-describe image-to-text image-summary",
++		"benevolentjoker/bethanygpt": "nsfw adult-content multiple-personalities",
++		"benevolentjoker/belial": "devil fiction dark-personality",
++		"benevolentjoker/nsfwmonika": "nsfw adult-content adult-fiction ai-girlfriend girlfriend",
++		"benevolentjoker/nsfwvanessa": "nsfw adult-content ai-girlfriend girlfriend",
++		"benevolentjoker/satan": "satan satanism devil occult qa religion",
++		"bespoke-minicheck": "fact-checking",
++		"bge-large": "embedding vector-database",
++		"bge-m3": "embedding multilingual low-memory-footprint",
++		"chatgph/medix-ph": "medical assistant healtcare phillipines filipino",
++		"codebooga": "coding python",
++		"codegeex4": "coding code-generation code-completion",
++		"codegemma": "coding autocomplete coding-assistant fim fill-in-the-middle",
++		"codellama": "coding code-generation code-completion code-review unit-test-generator python fim fill-in-the-middle",
++		"codeqwen": "coding code-generation fixing-bugs",
++		"codestral": "coding code-generation solving-basic-programming-problems fim fill-in-the-middle unit-test-generator python",
++		"codeup": "coding code-generation",
++		"command-r": "rag tool-use english french spanish italian german brazilian portuguese japanese korean chinese arabic",
++		"command-r-plus": "rag tool-use enterprise english french spanish italian german brazilian portuguese japanese korean chinese arabic",
++		"dbrx": "coding code-generation math-word-problems general-purpose common-sense",
++		"deepseek-coder": "coding english chinese code-completion fim fill-in-the-middle python",
++		"deepseek-coder-v2": "coding code-completion code-insertion code-generator",
++		"deepseek-llm": "bilingual common-sense trivia chinese english general-knowledge",
++		"deepseek-v2": "bilinugual chinese english math-word-problems",
++		"deepseek-v2:236b": "bilinugual chinese english math-word-problems general-knowledge",
++		"deepseek-v2.5": "chat coding code-generator python",
++		"disinfozone/telos": "continental-philosophy philosophy conspiracy conspiracies creative-tasking funny wit witty",
++		"dolphin-llama3": "uncensored coding function-calling chat fine-tunable-alignment",
++		"dolphin-mistral": "uncensored coding function-calling chat fine-tunable-alignment",
++		"dolphin-mixtral": "uncensored coding chat function-calling fine-tunable-alignment game-design humor prank-suggestions confessions",
++		"dolphin-phi": "uncensored coding fine-tunable-alignment",
++		"dolphincoder": "uncensored coding coding-assistant",
++		"duckdb-nsql": "coding sql",
++		"eramax/aura_v3": "nsfw erotica roleplay",
++		"everythinglm": "uncensored detailed-replies story-telling",
++		"falcon": "llm-research",
++		"falcon2": "llm-research",
++		"firefunction-v2": "chat instruction-following function-calling parsing",
++		"goliath": "detailed-response roleplay detailed-roleplay",
++		"granite-code": "coding code-generation fixing-bugs documentation assistant fine-tunable",
++		"hermes3": "roleplaying abstract-reasoning common-sense function-calling structured-output assistant code-generation",
++		"internlm2": "tool-use word-math-problems",
++		"jimscard/adult-film-screenwriter-nsfw": "nsfw adult-content",
++		"llama-guard3": "content-moderation",
++		"llama-pro": "coding math common-sense",
++		"llama2": "multilingual chat",
++		"llama2-chinese": "chinese chat chinese-alignment chinese-bias",
++		"llama2-uncensored": "chat llm-criticism llm-testing creative-writing humor research",
++		"llama3": "chat math-word-problems",
++		"llama3:text": "abstract-reasoning",
++		"llama3:70b-text": "abstract-reasoning general-knowledge",
++		"llama3:70b-instruct": "chat math-word-problems coding code-completion python general-knowledge typescript",
++		"llama3-chatqa": "chat rag qa answering-questions",
++		"llama3-gradient": "assistant",
++		"llama3-groq-tool-use": "function-calling tool-use",
++		"llama3.1": "multilingual chat translation summaries coding coding-assistant general-knowledge",
++		"llama3.2": "multilingual chat instruction-following summaries",
++		"llava": "ocr optical-character-recognition image-to-text chat chatbot",
++		"llava-llama3": "image-to-text",
++		"llava-phi3": "image-to-text",
++		"gemma": "text-generation qa summaries common-sense programming-tutor answering-questions",
++		"gemma2": "chat content-generation summaries grammar-correction language-tutor trivia multilingual",
++		"glm4": "math-word-problems coding multilingual",
++		"glm4:-chat": "math-word-problems coding chat function-calling comprehensive-response multilingual",
++		"magicoder": "coding code-generation open-source-coding",
++		"mathstral": "math-word-problems",
++		"meditron": "medical diseases health-information medical-exam qa",
++		"medllama2": "medical qa",
++		"megadolphin": "uncensored common-sense empathy advice detailed-reponse fine-tunable-alignment nsfw-content detailed-roleplay",
++		"minicpm-v": "text-to-speech ocr optical-character-recognition code-screenshot-bugfixes how-to-generator translating-screenshots translation",
++		"mistral": "multilingual function-calling fine-tuneable",
++		"mistral-large": "multilingual french german spanish italian dutch portuguese russian japanese chinese coding code-generation solving-basic-programming-problems math-word-problems function-calling json",
++		"mistral-nemo": "multilingual english french german spanish italian portuguese chinese korean arabic hindi common-sense trivia function-calling",
++		"mistral-openorca": "common-sense",
++		"mistral-small": "translation summaries",
++		"mistrallite": "answering-long-questions qa common-sense",
++		"mixtral": "multilingual english french italian german spanish coding code-generation common-sense solving-basic-programming-problems math-word-problems trivia fine-tuneable",
++		"moondream": "picture-to-text qa image-deconstruction whats-that identify-in-picture",
++		"mxbai-embed-large": "embeddings",
++		"nemotron": "training-data-generator llm-creation",
++		"nemotron-mini": "roleplay rag qa function-calling",
++		"neural-chat": "chat chatbot common-sense",
++		"nexusraven": "coding documentation python functional-programming",
++		"nomic-embed-text": "embedding",
++		"notus": "common-sense chat",
++		"notux": "multilingual english spanish italian german french common-sense general-knowledge",
++		"nous-hermes": "general-use creative-text instruction-following",
++		"nous-hermes2": "science coding code-assistant code-generator",
++		"nous-hermes2-mixtral": "fantasy-poems text-to-code-visualization coding code-generator code-assistant",
++		"nuextract": "structured-data-generation",
++		"open-orca-platypus2": "chat coding code-generation text-generation common-sense",
++		"openchat": "math-word-problems",
++		"openhermes": "chat cooking-recipes coding-by-example college-level-response",
++		"orca-mini": "general-purpose writing-letters",
++		"orca2": "assistant summaries abstract-reasoning",
++		"paraphrase-multilingual": "embedding",
++		"phi": "chat street-directions coding code-generator code-competion text-completion qa answering-questions",
++		"phi3": "common-sense trivia english math logic math-word-problems solving-basic-programming-problems",
++		"phi3.5": "coding math logic teacher fact-check chat multilingual arabic chinese czech danish dutch english finnish french german hebrew hungarian italian japanese korean norwegian polish portuguese russian spanish swedish thai turkish ukrainian",
++		"phind-codellama": "coding code-generation",
++		"phind-codellama:34b-python": "coding code-generation python",
++		"qwen": "china-alignment china-bias multilingual chat chinese english coding solving-basic-programming-problems",
++		"qwen2": "china-alignment china-bias multilingual german french spanish portuguese italian dutch russian czech polish arabic persian hebrew turkish japanese korean vietnamese thai indonesian malay lao burmese cebuano khmer tagalog hindi bengali urdu coding code-generation math-word-problems coding solving-basic-programming-problems math-word-problems stem science technology engineering mathematics",
++		"qwen2-math": "china-alignment china-bias math-word-problems stem science technology engineering mathematics",
++		"qwen2.5": "china-alignment china-bias multilingual chat roleplay coding parsing json math instruction-following chinese english french spanish portuguese german italian russian japanese korean vietnamese thai arabic",
++		"qwen2.5-coder": "china-alignment china-bias coding code-generation documentation fixing-bugs",
++		"reader-lm": "html-to-markdown",
++		"reefer/monica": "erotica assistant adult-content ai-girlfriend girlfriend appimage-creation app-questions computer-technician",
++		"reflection": "reasoning",
++		"samantha-mistral": "philosopher psychologist dating-coach",
++		"shieldgemma": "content-moderator",
++		"smollm": "common-sense qa low-memory-footprint",
++		"snowflake-arctic-embed": "embeddings",
++		"solar": "chat rag fine-tuneable",
++		"solar-pro": "common-sense math-word-problems fine-tuneable",
++		"sparksammy/samantha": "gay femboy nerdy boyfriend ai-boyfriend nerd assistant blogging coding resume",
++		"sparksammy/samantha-3.1": "gay femboy nerdy boyfriend ai-boyfriend texas-alignment american-alignment gender-pronouns",
++		"sparksammy/samantha-eggplant": "gay femboy nerdy gender-pronouns coding blogging texas-alignment american-alignment covid-era",
++		"sparksammy/samantha-v3-uncensored": "gay femboy nerdy uncensored boyfriend ai-boyfriend coding blogging texas-alignment american-alignment gender-pronouns",
++		"sparksammy/tinysam-goog": "gay femboy nerdy gender-pronouns coding blogging",
++		"sparksammy/tinysam-msft": "gay femboy nerdy uncensored boyfriend ai-boyfriend coding writer texas-alignment american-alignment gender-pronouns",
++		"sqlcoder": "coding code-generation sql",
++		"stable-beluga": "general-use",
++		"stable-code": "coding code-completion fim fill-in-the-middle fine-tunable",
++		"stablelm-zephyr": "chat qa instruction-following",
++		"stablelm2": "common-sense",
++		"starcoder": "coding code-generation",
++		"starcoder2": "coding code-generation",
++		"starling-lm": "chat chatbot roleplay writing humanities stem science technology engineering math reasoning structured-data-generation",
++		"tinydolphin": "low-memory-footprint text-generation letter-writing poems",
++		"tinyllama": "game-dialog-generator low-memory-footprint",
++		"vicuna": "american-alignment american-bias chat assistant",
++		"wizard-math": "math logic",
++		"wizard-vicuna": "american-alignment american-bias",
++		"wizard-vicuna-uncensored": "removed-alignment removed-morals",
++		"wizardcoder": "coding code-generation",
++		"wizardcoder:python": "coding code-generation python",
++		"wizardlm": "general-use math-word-problems",
++		"wizardlm-uncensored": "uncensored removed-alignment removed-moralizing general-use math-word-problems",
++		"wizardlm2": "chat multilingual",
++		"wizardlm2:70b": "chat multilingual reasoning",
++		"xwinlm": "common-sense detailed-response",
++		"xwinlm:70b-v0.1": "common-sense abstract-reasoning wrinkled detailed-response",
++		"yarn-llama2": "text-generation",
++		"yarn-mistral": "common-sense",
++		"yi": "multilingual english chinese",
++		"yi-coder": "coding",
++		"zephyr": "assistant writing roleplay humanities stem science technology engineering math structured-data-generation",
++	}
++
++	name = args[0]
++	l, r := tagsList[name]
++	if r && flagsSet == 1 && showType == "tags" {
++		fmt.Printf("Tags, use cases, personality: %s\n", l)
++		return nil
++	} else if flagsSet == 1 && showType == "tags" {
++		l1 := strings.Split(name, ":")
++		name := l1[0]
++		l2, r := tagsList[name]
++		if r {
++			fmt.Printf("Tags, use cases, personality: %s\n", l2)
++			return nil
++		}
+ 	}
+ 
+ 	req := api.ShowRequest{Name: args[0]}
+@@ -927,6 +1463,16 @@ func PullHandler(cmd *cobra.Command, arg
+ 	return nil
+ }
+ 
++//oteodoro:  added function
++func AvailHandler(cmd *cobra.Command, args []string) error {
++	for key, value := range whitelist {
++		if value == 1 {
++			fmt.Printf("%s\n", key)
++		}
++	}
++	return nil
++}
++
+ type generateContextKey string
+ 
+ type runOptions struct {
+@@ -1332,6 +1878,8 @@ func NewCLI() *cobra.Command {
+ 	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
+ 	showCmd.Flags().Bool("template", false, "Show template of a model")
+ 	showCmd.Flags().Bool("system", false, "Show system message of a model")
++	showCmd.Flags().Bool("tags", false, "Show tags, use cases, or personality of a model")
++	showCmd.Flags().Bool("website", false, "Show website entry of a model")
+ 
+ 	runCmd := &cobra.Command{
+ 		Use:     "run MODEL [PROMPT]",
+@@ -1414,6 +1962,14 @@ func NewCLI() *cobra.Command {
+ 		RunE:    DeleteHandler,
+ 	}
+ 
++	availCmd := &cobra.Command{
++		Use:     "avail",
++		Short:   "List available models to download",
++		Aliases: []string{"a"},
++		PreRunE: checkServerHeartbeat,
++		RunE:    AvailHandler,
++	}
++
+ 	envVars := envconfig.AsMap()
+ 
+ 	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
+@@ -1430,6 +1986,7 @@ func NewCLI() *cobra.Command {
+ 		copyCmd,
+ 		deleteCmd,
+ 		serveCmd,
++		availCmd,
+ 	} {
+ 		switch cmd {
+ 		case runCmd:
+@@ -1469,6 +2026,7 @@ func NewCLI() *cobra.Command {
+ 		psCmd,
+ 		copyCmd,
+ 		deleteCmd,
++		availCmd,
+ 	)
+ 
+ 	return rootCmd
