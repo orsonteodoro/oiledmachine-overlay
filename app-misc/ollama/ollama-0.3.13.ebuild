@@ -84,6 +84,7 @@ yi-coder zephyr
 benevolentjoker-nsfwmonika
 benevolentjoker-nsfwvanessa
 chatgph-medix-ph
+disinfozone-telos
 eramax-aura_v3
 jimscard-adult-film-screenwriter-nsfw
 reefer-monica
@@ -2304,6 +2305,9 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 
+	ollama_llms_disinfozone-telos? (
+		all-rights-reserved
+	)
 	ollama_llms_chatgph-medix-ph? (
 		llama2-LICENSE
 		llama2-USE_POLICY.md
@@ -3238,6 +3242,7 @@ src_install() {
 		["benevolentjoker-nsfwmonika"]="benevolentjoker/nsfwmonika"
 		["benevolentjoker-nsfwvanessa"]="benevolentjoker/nsfwvanessa"
 		["chatgph-medix-ph"]="chatgph/medix-ph"
+		["disinfozone-telos"]="disinfozone-telos"
 		["jimscard-adult-film-screenwriter-nsfw"]="jimscard/adult-film-screenwriter-nsfw"
 		["reefer-monica"]="reefer/monica"
 		["sparksammy-samantha"]="sparksammy/samantha"
