@@ -540,6 +540,8 @@ main() {
 	if [[ "${ARGS[0]}" == "run" && "${UNRESTRICT}" == "1" ]] ; then
 		ollama run ${ARGS[1]}
 	elif [[ "${ARGS[0]}" == "run" ]] ; then
+	# Eventually we would like to move this [nsfw, license] check into the
+	# go program, so it doesn't get bypassed.
 		if is_llm_whitelisted "${ARGS[1]}" ; then
 			ollama run ${ARGS[1]}
 		else

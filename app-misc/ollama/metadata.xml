@@ -38,7 +38,8 @@
       Support ROCm™ for AMD GPUs.
     </flag>
     <flag name="unrestrict">
-      Allow unrestricted downloading of ollama models.
+      Allow unrestricted downloading of ollama models.  Otherwise, only allow
+      whitelisted models for downloading.
     </flag>
     <flag name="video_cards_intel">
       Support SYCL MKL acceleration for Intel® GPUs.
