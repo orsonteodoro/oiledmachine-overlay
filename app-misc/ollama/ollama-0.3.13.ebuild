@@ -83,6 +83,7 @@ yi-coder zephyr
 
 benevolentjoker-nsfwmonika
 benevolentjoker-nsfwvanessa
+chatgph-medix-ph
 eramax-aura_v3
 jimscard-adult-film-screenwriter-nsfw
 reefer-monica
@@ -2303,16 +2304,18 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 
+	ollama_llms_chatgph-medix-ph? (
+		llama2-LICENSE
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_eramax-aura_v3? (
+		Apache-2.0
+	)
 	ollama_llms_jimscard-adult-film-screenwriter-nsfw? (
 		Apache-2.0
 	)
-
 	ollama_llms_reefer-monica? (
 		llama3-USE_POLICY.md
-	)
-
-	ollama_llms_eramax-aura_v3? (
-		Apache-2.0
 	)
 	ollama_llms_sparksammy-samantha? (
 		Apache-2.0
@@ -2336,8 +2339,6 @@ LLM_LICENSES="
 	ollama_llms_sparksammy-tinysam-goog? (
 		Gemma-Terms-of-Use-20240221
 	)
-
-
 
 "
 # Apache-2.0 - solar
@@ -3234,9 +3235,10 @@ src_install() {
 	sed -i -e "s|@BACKEND@|${default_backend}|g" "${T}/${PN}-muxer"
 
 	declare -A use_alias=(
-		["jimscard-adult-film-screenwriter-nsfw"]="jimscard/adult-film-screenwriter-nsfw"
 		["benevolentjoker-nsfwmonika"]="benevolentjoker/nsfwmonika"
 		["benevolentjoker-nsfwvanessa"]="benevolentjoker/nsfwvanessa"
+		["chatgph-medix-ph"]="chatgph/medix-ph"
+		["jimscard-adult-film-screenwriter-nsfw"]="jimscard/adult-film-screenwriter-nsfw"
 		["reefer-monica"]="reefer/monica"
 		["sparksammy-samantha"]="sparksammy/samantha"
 		["sparksammy-samantha-3.1"]="sparksammy/samantha-3.1"
