@@ -60,11 +60,12 @@ CUDA_TARGETS_COMPAT=(
 	sm_90a
 )
 LLMS=(
-alfred ALIENTELLIGENCE-enriquecastillorincon all-minilm aya bakllava
+alfred ALIENTELLIGENCE-enriquecastillorincon all-minilm Artalius-lixi aya bakllava
 benevolentjoker-belial benevolentjoker-bethanygpt benevolentjoker-nsfwmonika
 benevolentjoker-nsfwvanessa benevolentjoker-satan bespoke-minicheck bge-large
-bge-m3 chatgph-medix-ph codebooga codegeex4 codegemma codellama codeqwen
-codestral codeup command-r command-r-plus dbrx deepseek-coder deepseek-coder-v2
+bge-m3 chatgph-70b-instruct chatgph-gph-main chatgph-medix-ph codebooga
+codegeex4 codegemma codellama codeqwen codestral codeup command-r
+command-r-plus dbrx deepseek-coder deepseek-coder-v2
 deepseek-llm deepseek-v2 deepseek-v2.5 disinfozone-telos dolphin-llama3
 dolphin-mistral dolphin-mixtral dolphin-phi dolphincoder duckdb-nsql
 eramax-aura_v3 everythinglm falcon falcon2 firefunction-v2 gemma gemma2 glm4
@@ -1662,6 +1663,10 @@ LLM_LICENSES="
 	ollama_llms_all-minilm? (
 		Apache-2.0
 	)
+	ollama_llms_Artalius-lixi? (
+		llama3_2-LICENSE
+		llama3_2-USE_POLICY.md
+	)
 	ollama_llms_aya? (
 		CC-BY-NC-4.0
 		C4AI-Acceptable-Use-Policy
@@ -1695,6 +1700,12 @@ LLM_LICENSES="
 	)
 	ollama_llms_bge-m3? (
 		MIT
+	)
+	ollama_llms_chatgph-70b-instruct? (
+		Apache-2.0
+	)
+	ollama_llms_chatgph-gph-main? (
+		all-rights-reserved
 	)
 	ollama_llms_chatgph-medix-ph? (
 		llama2-LICENSE
@@ -2730,11 +2741,14 @@ src_configure() {
 
 	declare -A use_alias=(
 		["ALIENTELLIGENCE-enriquecastillorincon"]="ALIENTELLIGENCE/enriquecastillorincon"
+		["Artalius-lixi"]="Artalius/lixi"
 		["benevolentjoker-belial"]="benevolentjoker/belial"
 		["benevolentjoker-bethanygpt"]="benevolentjoker/bethanygpt"
 		["benevolentjoker-nsfwmonika"]="benevolentjoker/nsfwmonika"
 		["benevolentjoker-nsfwvanessa"]="benevolentjoker/nsfwvanessa"
 		["benevolentjoker-satan"]="benevolentjoker/satan"
+		["chatgph-70b-instruct"]="chatgph/70b-instruct"
+		["chatgph-gph-main"]="chatgph/gph-main"
 		["chatgph-medix-ph"]="chatgph/medix-ph"
 		["disinfozone-telos"]="disinfozone/telos"
 		["eramax-aura_v3"]="eramax/aura_v3"

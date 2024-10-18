@@ -126,3 +126,24 @@ ollama_llms_yarn-mistral - Whitelist yarn-mistral
 ollama_llms_yi - Whitelist yi
 ollama_llms_yi-coder - Whitelist yi-coder
 ollama_llms_zephyr - Whitelist zephyr
+
+ollama_llms_ALIENTELLIGENCE-enriquecastillorincon - Whitelist ALIENTELLIGENCE/enriquecastillorincon
+ollama_llms_Artalius-lixi - Whitelist Artalius/lixi
+ollama_llms_benevolentjoker-belial - Whitelist benevolentjoker/belial
+ollama_llms_benevolentjoker-bethanygpt - Whitelist benevolentjoker/bethanygpt
+ollama_llms_benevolentjoker-nsfwmonika - Whitelist benevolentjoker/nsfwmonika
+ollama_llms_benevolentjoker-nsfwvanessa - Whitelist benevolentjoker/nsfwvanessa
+ollama_llms_benevolentjoker-satan - Whitelist benevolentjoker/satan
+ollama_llms_chatgph-70b-instruct - Whitelist chatgph/70b-instruct
+ollama_llms_chatgph-gph-main - Whitelist chatgph/gph-main
+ollama_llms_chatgph-medix-ph - Whitelist chatgph/medix-ph
+ollama_llms_disinfozone-telos - Whitelist disinfozone/telos
+ollama_llms_eramax-aura_v3 - Whitelist eramax/aura_v3
+ollama_llms_jimscard-adult-film-screenwriter-nsfw - Whitelist jimscard/adult-film-screenwriter-nsfw
+ollama_llms_reefer-monica - Whitelist reefer/monica
+ollama_llms_sparksammy-samantha - Whitelist sparksammy/samantha
+ollama_llms_sparksammy-samantha-3.1 - Whitelist sparksammy/samantha-3.1
+ollama_llms_sparksammy-samantha-eggplant - Whitelist sparksammy/samantha-eggplant
+ollama_llms_sparksammy-samantha-v3-uncensored - Whitelist sparksammy/samantha-v3-uncensored
+ollama_llms_sparksammy-tinysam-goog - Whitelist sparksammy/tinysam-goog
+ollama_llms_sparksammy-tinysam-msft - Whitelist sparksammy/tinysam-msft
