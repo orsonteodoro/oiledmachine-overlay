@@ -299,7 +299,7 @@ DEPEND="
 		dev-util/directx-headers[${MULTILIB_USEDEP}]
 	)
 	wayland? (
-		>=dev-libs/wayland-protocols-1.24
+		>=dev-libs/wayland-protocols-1.34
 	)
 	X? (
 		x11-base/xorg-proto
