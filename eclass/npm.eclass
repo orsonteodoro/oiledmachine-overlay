@@ -82,7 +82,7 @@ unset -f _npm_set_globals
 
 # @ECLASS_VARIABLE: NPM_LOCKFILE_SOURCE
 # @DESCRIPTION:
-# The preferred yarn.lock file source.
+# The preferred package-lock.json file source.
 # Acceptable values:  upstream, ebuild
 
 # @ECLASS_VARIABLE: NPM_OFFLINE
