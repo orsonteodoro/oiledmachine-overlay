@@ -41,6 +41,7 @@ RDEPEND="
 		>=dev-python/pypdf-4.2.0[${PYTHON_USEDEP}]
 		>=dev-python/pytube-15.0.0[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
+		>=gui-libs/gtksourceview-5[introspection]
 	')
 	app-misc/ollama
 	dev-libs/appstream
