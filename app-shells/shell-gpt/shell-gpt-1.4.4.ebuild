@@ -19,26 +19,18 @@ HOMEPAGE="https://github.com/TheR1D/shell_gpt"
 LICENSE="MIT"
 RESTRICT="test" # untested
 SLOT="0"
-IUSE="dev openai ollama test"
-REQUIRED_USE="
-	|| (
-		openai
-		ollama
-	)
-"
+IUSE="dev ollama test"
 RDEPEND="
 	>=dev-python/click-7.1.1[${PYTHON_USEDEP}]
 	>=dev-python/distro-1.8.0[${PYTHON_USEDEP}]
 	>=dev-python/instructor-0.4.5[${PYTHON_USEDEP}]
+	>=dev-python/openai-1.34.0[${PYTHON_USEDEP}]
 	>=dev-python/pyreadline3-3.4.1[${PYTHON_USEDEP}]
 	>=dev-python/rich-13.1.0[${PYTHON_USEDEP}]
 	>=dev-python/typer-0.7.0[${PYTHON_USEDEP}]
 	ollama? (
 		dev-python/litellm[${PYTHON_USEDEP}]
 		app-misc/ollama
-	)
-	openai? (
-		>=dev-python/openai-1.34.0[${PYTHON_USEDEP}]
 	)
 "
 DEPEND="
