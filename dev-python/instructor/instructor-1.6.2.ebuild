@@ -154,6 +154,7 @@ DEPEND+="
 "
 BDEPEND+="
 	dev-python/poetry-core[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
 		dev-python/mkdocs[${PYTHON_USEDEP}]
 		dev-python/pillow[${PYTHON_USEDEP}]
