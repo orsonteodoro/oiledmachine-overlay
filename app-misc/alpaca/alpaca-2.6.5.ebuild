@@ -43,12 +43,12 @@ RDEPEND="
 		>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
 	')
 	>=gui-libs/gtksourceview-5[introspection]
-	app-misc/ollama
+	>=x11-libs/vte-0.78.0[introspection]
+	>=app-misc/ollama-0.3.12
 	dev-libs/appstream
 	dev-libs/gobject-introspection[${PYTHON_SINGLE_USEDEP}]
 	gui-libs/gtk[wayland?,X?]
 	gui-libs/libadwaita[introspection]
-	x11-libs/vte[introspection]
 "
 DEPEND="
 	${RDEPEND}
