@@ -3,10 +3,6 @@
 
 EAPI=8
 
-# TODO package:
-# instructor
-# pyreadline3
-
 DISTUTILS_USE_PEP517="hatchling"
 PYTHON_COMPAT=( "python3_"{9..11} ) # Upstream tests up to 3.11
 
