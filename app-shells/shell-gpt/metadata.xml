@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">TheR1D/shell_gpt</remote-id>
+  </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Ebuild obtained from gig overlay.
+
+  -->
+  <use>
+    <flag name="ollama">
+      Support Ollama LLMs
+    </flag>
+  </use>
+</pkgmetadata>
