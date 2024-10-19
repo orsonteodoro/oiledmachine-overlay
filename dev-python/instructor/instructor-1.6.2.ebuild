@@ -35,7 +35,11 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" anthropic cerebras_cloud_sdk cohere diskcache doc examples fastapi fireworks-ai google-cloud-aiplatform google-generativeai groq jsonref litellm mistralai pandas pydantic_extra_types redis tabulate test-docs vertexai xmltodict"
+IUSE+="
+anthropic cerebras_cloud_sdk cohere diskcache doc examples fastapi fireworks-ai
+google-cloud-aiplatform google-generativeai groq jsonref litellm mistralai
+pandas pydantic_extra_types redis tabulate test-docs vertexai xmltodict
+"
 REQUIRED_USE="
 	anthropic? (
 		xmltodict
