@@ -423,7 +423,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"alfred": "chat comprehensive-response i-dont-know",
 +		"ALIENTELLIGENCE/enriquecastillorincon": "ufo chat ufo-investigator",
 +		"all-minilm": "embedding",
-+		"Artalius/lixi": "writer developer companion code-optimization fun-facts idea-generator wordsmith cloud-developer coding coding-assistant computer-science anime manga erotica nsfw japanese-alignment japanese-pop-culture uncensored ai-girlfriend girlfriend funny",
++		"Artalius/lixi": "writer developer companion code-optimization fun-facts idea-generator wordsmith cloud-developer coding coding-assistant computer-science anime manga erotica nsfw japanese-alignment japanese-pop-culture uncensored gamer gamer-girl ai-girlfriend girlfriend funny",
 +		"aya": "multilingual arabic chinese czech dutch english french german greek hebrew hindi indonesian italian japanese korean persian polish portuguese romanian russian spanish turkish ukrainian vietnamese",
 +		"bakllava": "image-deconstruction image-describe image-to-text image-summary",
 +		"benevolentjoker/bethanygpt": "nsfw adult-content multiple-personalities",
