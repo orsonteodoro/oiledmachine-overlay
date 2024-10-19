@@ -8,13 +8,13 @@ EAPI=8
 # types-pyaudio
 # types-tqdm
 
-DISTUTILS_USE_PEP517="poetry"
+DISTUTILS_USE_PEP517="hatchling"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
 
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${PN}-python-${PV}"
 SRC_URI="
 https://github.com/openai/openai-python/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
