@@ -1180,7 +1180,7 @@ npm_update_lock_audit_post() {
 
 src_install() {
 	electron-app_gen_wrapper \
-		"${MY_PN}" \
+		"${PN}" \
 		"${NPM_INSTALL_PATH}/${PN}"
 	newicon "resources/icon.png" "${PN}.png"
 	make_desktop_entry \
