@@ -64,7 +64,7 @@ pkg_postinst() {
 einfo
 einfo "Upstream recommends mistral:7b-instruct llm for ollama for best results."
 einfo
-einfo "You must add/change the following in ~/.config/shell_gpt/.sgptrc:"
+einfo "You must add/change the following in ~/.config/shell_gpt/.sgptrc"
 einfo
 einfo "  DEFAULT_MODEL=\"ollama/mistral:7b-instruct\""
 einfo "  OPENAI_USE_FUNCTIONS=\"false\""
