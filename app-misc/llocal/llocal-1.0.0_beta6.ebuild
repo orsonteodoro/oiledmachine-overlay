@@ -4,6 +4,7 @@
 EAPI=8
 
 ELECTRON_APP_ELECTRON_PV="28.3.1"
+MY_PN="LLocal"
 NODE_VERSION=18
 NPM_AUDIT_FIX=0
 NPM_LOCKFILE_SOURCE="ebuild"
@@ -1179,12 +1180,12 @@ npm_update_lock_audit_post() {
 
 src_install() {
 	electron-app_gen_wrapper \
-		"${PN}" \
+		"${MY_PN}" \
 		"${NPM_INSTALL_PATH}/${PN}"
 	newicon "resources/icon.png" "${PN}.png"
 	make_desktop_entry \
 		"/usr/bin/${PN}" \
-		"${PN^}" \
+		"${MY_PN}" \
 		"${PN}.png" \
 		"Utility"
 	insinto "${NPM_INSTALL_PATH}"
