@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO package (required):
-# coqui-tts-trainer
 # coqpit
 # encodec
 # gruut
