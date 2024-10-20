@@ -26,7 +26,7 @@ LICENSE="Apache-2.0"
 RESTRICT=""
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=" cpu cuda jax pytorch tensorflow test r2"
+IUSE=" cpu cuda jax pytorch tensorflow test ebuild-revision-3"
 REQUIRED_USE="
 	cpu? (
 		jax
@@ -160,4 +160,9 @@ python_install() {
 		esetup.py install
 		python_optimize
 	popd >/dev/null 2>&1 || die
+	delete_benchmark() {
+		local path=$(python_get_sitedir)
+		rm -rf "${ED}/${path}/benchmarks" || die
+	}
+	python_foreach_impl delete_benchmark
 }

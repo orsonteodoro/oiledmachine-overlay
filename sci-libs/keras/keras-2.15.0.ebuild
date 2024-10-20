@@ -36,7 +36,7 @@ LICENSE="Apache-2.0"
 RESTRICT=""
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=" test r2"
+IUSE=" test ebuild-revision-3"
 PROTOBUF_PV="3.21.9" # From WORKSPACE which differs from requirements.txt
 PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
 RDEPEND="
@@ -112,4 +112,9 @@ python_install() {
 		esetup.py install
 		python_optimize
 	popd >/dev/null 2>&1 || die
+	delete_benchmark() {
+		local path=$(python_get_sitedir)
+		rm -rf "${ED}/${path}/benchmarks" || die
+	}
+	python_foreach_impl delete_benchmark
 }
