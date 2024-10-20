@@ -2484,7 +2484,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.3.13-rename-CUDA_ARCHITECTURES.patch"
 	"${FILESDIR}/${PN}-0.3.13-fix-os-arch-pair.patch"
 	"${FILESDIR}/${PN}-0.3.13-gpu-libs-path.patch"
-	"A${FILESDIR}/${PN}-0.3.13-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.3.13-cmd-changes.patch"
 )
 
 pkg_pretend() {
