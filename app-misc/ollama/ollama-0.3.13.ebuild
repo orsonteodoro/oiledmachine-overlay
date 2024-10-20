@@ -78,7 +78,8 @@ mistrallite mixtral moondream mxbai-embed-large nemotron nemotron-mini
 neural-chat nexusraven nomic-embed-text notus notux nous-hermes nous-hermes2
 nous-hermes2-mixtral nuextract open-orca-platypus2 openchat openhermes orca-mini
 orca2 paraphrase-multilingual phi phi3 phi3.5 phind-codellama qwen qwen2
-qwen2-math qwen2.5 qwen2.5-coder reader-lm reefer-monica reflection
+qwen2-math qwen2.5 qwen2.5-coder reader-lm reefer-minimonica reefer-monica
+reflection
 samantha-mistral shieldgemma smollm snowflake-arctic-embed solar solar-pro
 sparksammy-samantha sparksammy-samantha-3.1 sparksammy-samantha-eggplant
 sparksammy-samantha-v3-uncensored sparksammy-tinysam-goog
@@ -2016,6 +2017,9 @@ LLM_LICENSES="
 	ollama_llms_reader-lm? (
 		CC-BY-NC-4.0
 	)
+	ollama_llms_reefer-minimonica? (
+		all-rights-reserved
+	)
 	ollama_llms_reefer-monica? (
 		llama3-LICENSE
 		llama3-USE_POLICY.md
@@ -2480,7 +2484,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.3.13-rename-CUDA_ARCHITECTURES.patch"
 	"${FILESDIR}/${PN}-0.3.13-fix-os-arch-pair.patch"
 	"${FILESDIR}/${PN}-0.3.13-gpu-libs-path.patch"
-	"${FILESDIR}/${PN}-0.3.13-cmd-changes.patch"
+	"A${FILESDIR}/${PN}-0.3.13-cmd-changes.patch"
 )
 
 pkg_pretend() {
@@ -2753,6 +2757,7 @@ src_configure() {
 		["disinfozone-telos"]="disinfozone/telos"
 		["eramax-aura_v3"]="eramax/aura_v3"
 		["jimscard-adult-film-screenwriter-nsfw"]="jimscard/adult-film-screenwriter-nsfw"
+		["reefer-minimonica"]="reefer/minimonica"
 		["reefer-monica"]="reefer/monica"
 		["sparksammy-samantha"]="sparksammy/samantha"
 		["sparksammy-samantha-3.1"]="sparksammy/samantha-3.1"
