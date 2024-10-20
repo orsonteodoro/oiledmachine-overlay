@@ -3137,6 +3137,8 @@ einfo "  ${PN} run llama3:70b			# Downloads and loads a llama3 Large Language Mo
 einfo "  ${PN} ollama show llama3 --tags		# Shows descriptive tags, capabilities, personality of the llama3 model"
 einfo "  ${PN} ollama show llama3 --website	# Shows the ${PN} website entry for the llama3 model"
 einfo "  ${PN} ollama show llama3 --licence	# Shows the model license of the llama3 model"
+einfo "  ${PN} ollama find-size 4GB		# Shows the models to download that are 4GB or less"
+einfo "  ${PN} ollama find-size 500MB		# Shows the models to download that are 100MB or less"
 einfo
 einfo "You still need to download a pregenerated model.  The full list can be"
 einfo "found at:"
