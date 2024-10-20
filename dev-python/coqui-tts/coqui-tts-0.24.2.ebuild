@@ -25,6 +25,7 @@ EAPI=8
 
 MY_PN="coqui-ai-TTS"
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 LANGS=(
@@ -34,7 +35,7 @@ LANGS=(
 	"zh"
 )
 
-inherit python-single-r1
+inherit distutils-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
