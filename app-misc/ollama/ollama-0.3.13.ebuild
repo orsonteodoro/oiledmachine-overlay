@@ -60,10 +60,12 @@ CUDA_TARGETS_COMPAT=(
 	sm_90a
 )
 LLMS=(
-alfred ALIENTELLIGENCE-enriquecastillorincon all-minilm Artalius-lixi aya bakllava
+alfred ALIENTELLIGENCE-enriquecastillorincon ALIENTELLIGENCE-sarah
+ALIENTELLIGENCE-sarahv2 all-minilm Artalius-lixi aya bakllava
 benevolentjoker-belial benevolentjoker-bethanygpt benevolentjoker-nsfwmonika
 benevolentjoker-nsfwvanessa benevolentjoker-satan bespoke-minicheck bge-large
-bge-m3 chatgph-70b-instruct chatgph-gph-main chatgph-medix-ph codebooga
+bge-m3 canadiangamer-neena canadiangamer-priya chatgph-70b-instruct
+chatgph-gph-main chatgph-medix-ph codebooga
 codegeex4 codegemma codellama codeqwen codestral codeup command-r
 command-r-plus dbrx deepseek-coder deepseek-coder-v2
 deepseek-llm deepseek-v2 deepseek-v2.5 disinfozone-telos dolphin-llama3
@@ -1661,6 +1663,14 @@ LLM_LICENSES="
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
+	ollama_llms_ALIENTELLIGENCE-sarah? (
+		llama3-LICENSE
+		llama3-USE_POLICY.md
+	)
+	ollama_llms_ALIENTELLIGENCE-sarahv2? (
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+	)
 	ollama_llms_all-minilm? (
 		Apache-2.0
 	)
@@ -1701,6 +1711,14 @@ LLM_LICENSES="
 	)
 	ollama_llms_bge-m3? (
 		MIT
+	)
+	ollama_llms_canadiangamer-neena? (
+		llama2-LICENSE
+		llama2-USE_POLICY.md
+	)
+	ollama_llms_canadiangamer-priya? (
+		llama2-LICENSE
+		llama2-USE_POLICY.md
 	)
 	ollama_llms_chatgph-70b-instruct? (
 		Apache-2.0
@@ -2745,12 +2763,16 @@ src_configure() {
 
 	declare -A use_alias=(
 		["ALIENTELLIGENCE-enriquecastillorincon"]="ALIENTELLIGENCE/enriquecastillorincon"
+		["ALIENTELLIGENCE-sarah"]="ALIENTELLIGENCE/sarah"
+		["ALIENTELLIGENCE-sarahv2"]="ALIENTELLIGENCE/sarahv2"
 		["Artalius-lixi"]="Artalius/lixi"
 		["benevolentjoker-belial"]="benevolentjoker/belial"
 		["benevolentjoker-bethanygpt"]="benevolentjoker/bethanygpt"
 		["benevolentjoker-nsfwmonika"]="benevolentjoker/nsfwmonika"
 		["benevolentjoker-nsfwvanessa"]="benevolentjoker/nsfwvanessa"
 		["benevolentjoker-satan"]="benevolentjoker/satan"
+		["canadiangamer-neena"]="canadiangamer/neena"
+		["canadiangamer-priya"]="canadiangamer/priya"
 		["chatgph-70b-instruct"]="chatgph/70b-instruct"
 		["chatgph-gph-main"]="chatgph/gph-main"
 		["chatgph-medix-ph"]="chatgph/medix-ph"
