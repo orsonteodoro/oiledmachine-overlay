@@ -3180,3 +3180,6 @@ einfo "   ~8 B parameters =   8 GiB RAM required"
 einfo "   ~X B parameters =   X GiB RAM required"
 einfo
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  passed (0.3.13, 20241020)
+# cpu test: passed
