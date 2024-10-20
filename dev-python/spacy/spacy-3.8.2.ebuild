@@ -1,0 +1,102 @@
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+# TODO package (required):
+# catalogue
+# cymem
+# langcodes
+# ml_datasets
+# murmurhash
+# preshed
+# spacy-legacy
+# spacy-loggers
+# srsly
+# thinc
+# wasabi
+# weasel
+# TODO package (optional):
+# cython-lint
+
+MY_PN="spaCy-release"
+DISTUTILS_USE_PEP517="setuptools"
+PYTHON_COMPAT=( "python3_"{10..12} )
+
+inherit distutils-r1 pypi
+
+#KEYWORDS="~amd64 ~arm64"
+S="${WORKDIR}/${MY_PN}-v${PV}"
+SRC_URI="
+https://github.com/explosion/spaCy/archive/refs/tags/release-v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+
+DESCRIPTION="💫 Industrial-strength Natural Language Processing (NLP) in Python"
+HOMEPAGE="
+	https://github.com/explosion/spaCy
+	https://pypi.org/project/spacy
+"
+LICENSE="
+	MIT
+"
+RESTRICT="mirror"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+=" dev"
+RDEPEND+="
+	>=dev-python/catalogue-2.0.6[${PYTHON_USEDEP}]
+	>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
+	>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
+	>=dev-python/jinja-2[${PYTHON_USEDEP}]
+	>=dev-python/langcodes-3.2.0[${PYTHON_USEDEP}]
+	>=dev-python/ml_datasets-0.2.0[${PYTHON_USEDEP}]
+	>=dev-python/murmurhash-0.28.0[${PYTHON_USEDEP}]
+	>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
+	>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]
+	>=dev-python/pydantic-1.7.4[${PYTHON_USEDEP}]
+	>=dev-python/requests-2.13.0[${PYTHON_USEDEP}]
+	>=dev-python/srsly-2.4.3[${PYTHON_USEDEP}]
+	>=dev-python/thinc-8.3.0[${PYTHON_USEDEP}]
+	>=dev-python/tqdm-4.38.0[${PYTHON_USEDEP}]
+	>=dev-python/typer-0.3.0[${PYTHON_USEDEP}]
+	>=dev-python/wasabi-0.9.1[${PYTHON_USEDEP}]
+	>=dev-python/weasel-0.1.0[${PYTHON_USEDEP}]
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/spacy-legacy[${PYTHON_USEDEP}]
+	dev-python/spacy-loggers[${PYTHON_USEDEP}]
+"
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.25[${PYTHON_USEDEP}]
+	>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]
+	>=dev-python/murmurhash-0.28.0[${PYTHON_USEDEP}]
+	>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
+	>=dev-python/thinc-8.3.0[${PYTHON_USEDEP}]
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev? (
+		!~dev-python/pytest-7.1.0
+		>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
+		>=dev-python/cython-0.25[${PYTHON_USEDEP}]
+		>=dev-python/cython-lint-0.15.0[${PYTHON_USEDEP}]
+		>=dev-python/hypothesis-3.27.0[${PYTHON_USEDEP}]
+		>=dev-python/isort-5.0[${PYTHON_USEDEP}]
+		>=dev-python/flake8-3.8.0[${PYTHON_USEDEP}]
+		>=dev-python/mock-2.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pre-commit-2.13.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-5.2.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-timeout-1.3.0[${PYTHON_USEDEP}]
+		>=dev-python/types-mock-0.1.1[${PYTHON_USEDEP}]
+		>=dev-python/types-setuptools-57.0.0[${PYTHON_USEDEP}]
+		dev-python/types-requests[${PYTHON_USEDEP}]
+		!arm64? (
+			>=dev-python/mypy-1.5.0[${PYTHON_USEDEP}]
+		)
+	)
+"
+DOCS=( "CITATION.cff" "README.md" )
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
