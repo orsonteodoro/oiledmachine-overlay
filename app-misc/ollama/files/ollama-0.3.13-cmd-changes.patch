@@ -103,7 +103,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"qwen2.5:0.5b-base": "398MB",
 +	"qwen2.5:0.5b-instruct": "398MB",
 +	"qwen2.5:1.5b-instruct": "986MB",
-+	"qwen2.5:3b-instruct": "1.9MB",
++	"qwen2.5:3b-instruct": "1.9GB",
 +	"qwen2.5:7b-instruct": "4.7GB",
 +	"qwen2.5:14b-instruct": "9.0GB",
 +	"qwen2.5:32b-instruct": "20GB",
