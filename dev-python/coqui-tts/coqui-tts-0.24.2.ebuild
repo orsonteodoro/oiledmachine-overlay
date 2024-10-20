@@ -6,7 +6,6 @@ EAPI=8
 
 # TODO package (required):
 # gruut
-# librosa
 # spacy
 
 # TODO package (optional):
