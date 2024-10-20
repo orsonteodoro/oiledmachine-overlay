@@ -7,7 +7,6 @@ EAPI=8
 # TODO package (required):
 # gruut
 # librosa
-# pysbd
 # spacy
 
 # TODO package (optional):
