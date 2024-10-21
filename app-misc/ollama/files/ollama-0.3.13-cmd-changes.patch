@@ -1,7 +1,7 @@
 diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 --- ollama-0.3.13.orig/cmd/cmd.go	2024-10-10 11:21:51.000000000 -0700
-+++ ollama-0.3.13/cmd/cmd.go	2024-10-20 23:16:18.060505150 -0700
-@@ -17,6 +17,7 @@ import (
++++ ollama-0.3.13/cmd/cmd.go	2024-10-21 07:58:51.462495489 -0700
+@@ -17,11 +17,13 @@ import (
  	"net"
  	"net/http"
  	"os"
@@ -9,12 +9,19 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	"os/signal"
  	"path/filepath"
  	"regexp"
-@@ -47,6 +48,1014 @@ import (
+ 	"runtime"
+ 	"slices"
++	"sort"
+ 	"strconv"
+ 	"strings"
+ 	"sync/atomic"
+@@ -47,6 +49,1282 @@ import (
  	"github.com/ollama/ollama/version"
  )
  
 +var sizeTable = map[string]string{
 +	"adens/quran-guide": "2.0GB",
++	"akx/viking-7b": "4.6GB",
 +	"ALIENTELLIGENCE/christiancounselor": "4.7GB",
 +	"ALIENTELLIGENCE/crisisintervention": "4.7GB",
 +	"ALIENTELLIGENCE/enriquecastillorincon": "4.7GB",
@@ -41,12 +48,17 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"aya:35b": "20GB",
 +	"aya:8b-23": "4.8GB",
 +	"aya:35b-23": "20GB",
++	"aya:8b-23-q6_K": "6.6GB",
++	"aya:8b-23-q8_0": "8.5GB",
++	"aya:35b-23-q6_K": "29GB",
++	"aya:35b-23-q8_0": "37GB",
 +	"benevolentjoker/belial": "4.9GB",
 +	"benevolentjoker/bethanygpt": "4.7GB",
 +	"benevolentjoker/nsfwmonika": "4.7GB",
 +	"benevolentjoker/nsfwvanessa": "4.9GB",
 +	"benevolentjoker/satan": "4.9GB",
 +	"bge-m3:567m": "1.2GB",
++	"bge-m3:567m-fp16": "1.2GB",
 +	"canadiangamer/neena": "3.8GB",
 +	"canadiangamer/priya": "3.8GB",
 +	"captainkyd/whiterabbitneo7b": "7.2GB",
@@ -54,6 +66,8 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"chatgph/gph-main": "5.5GB",
 +	"chatgph/medix-ph": "3.8GB",
 +	"codegeex4:9b": "5.5GB",
++	"codegeex4:9b-all-q6_K": "8.3GB",
++	"codegeex4:9b-all-q8_0": "10.0GB",
 +	"codegeex4:9b-all-fp16": "19GB",
 +	"codegemma:2b": "1.6GB",
 +	"codegemma:7b": "5.0GB",
@@ -64,6 +78,14 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"codegemma:7b-code": "5.0GB",
 +	"codegemma:7b-instruct": "5.0GB",
 +	"codegemma:7b-v1.1": "5.0GB",
++	"codegemma:2b-code-q8_0": "2.7GB",
++	"codegemma:2b-code-v1.1-q8_0": "2.7GB",
++	"codegemma:7b-code-q6_K": "7.0GB",
++	"codegemma:7b-instruct-q6_K": "7.0GB",
++	"codegemma:7b-instruct-v1.1-q6_K": "7.0GB",
++	"codegemma:7b-code-q8_0": "9.1GB",
++	"codegemma:7b-instruct-q8_0": "9.1GB",
++	"codegemma:7b-instruct-v1.1-q8_0": "9.1GB",
 +	"codegemma:2b-code-fp16": "5.0GB",
 +	"codegemma:2b-code-v1.1-fp16": "5.0GB",
 +	"codegemma:7b-code-fp16": "17GB",
@@ -88,6 +110,19 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"codellama:70b-code": "39GB",
 +	"codellama:70b-instruct": "39GB",
 +	"codellama:70b-python": "39GB",
++	"codellama:7b-code-q8_0": "7.2GB",
++	"codellama:7b-instruct-q8_0": "7.2GB",
++	"codellama:7b-python-q8_0": "7.2GB",
++	"codellama:13b-code-q8_0": "14GB",
++	"codellama:13b-instruct-q8_0": "14GB",
++	"codellama:13b-python-q8_0": "14GB",
++	"codellama:34b-instruct-q6_K": "28GB",
++	"codellama:34b-python-q6_K": "28GB",
++	"codellama:34b-instruct-q8_0": "36GB",
++	"codellama:34b-python-q8_0": "36GB",
++	"codellama:70b-code-q8_0": "73GB",
++	"codellama:70b-instruct-q8_0": "73GB",
++	"codellama:70b-python-q8_0": "73GB",
 +	"codellama:7b-code-fp16": "13GB",
 +	"codellama:7b-instruct-fp16": "13GB",
 +	"codellama:7b-python-fp16": "13GB",
@@ -107,21 +142,33 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"codeqwen:v1.5-code": "4.2GB",
 +	"codeqwen:7b-chat": "4.2GB",
 +	"codeqwen:7b-code": "4.2GB",
++	"codeqwen:7b-chat-v1.5-q8_0": "7.7GB",
++	"codeqwen:7b-code-v1.5-q8_0": "7.7GB",
 +	"codeqwen:7b-chat-v1.5-fp16": "15GB",
 +	"codeqwen:7b-code-v1.5-fp16": "15GB",
 +	"codeup:13b": "7.4GB",
 +	"codeup:13b-llama2": "7.4GB",
 +	"codeup:13b-llama2-chat": "7.4GB",
++	"codeup:13b-llama2-chat-q8_0": "14GB",
 +	"codeup:13b-llama2-chat-fp16": "26GB",
 +	"command-r:35b": "19GB",
++	"command-r:35b-08-2024-q6_K": "27GB",
++	"command-r:35b-v0.1-q6_K": "29GB",
++	"command-r:35b-08-2024-q8_0": "34GB",
++	"command-r:35b-v0.1-q8_0": "37GB",
 +	"command-r:35b-08-2024-fp16": "65GB",
 +	"command-r:35b-v0.1-fp16": "70GB",
 +	"command-r:v0.1": "20GB",
 +	"command-r-plus:104b": "59GB",
++	"command-r-plus:104b-08-2024-q8_0": "110GB",
 +	"command-r-plus:104b-08-2024-fp16": "208GB",
 +	"deepseek-coder-v2:16b": "8.9GB",
 +	"deepseek-coder-v2:236b": "133GB",
 +	"deepseek-coder-v2:lite": "8.9GB",
++	"deepseek-coder-v2:16b-lite-base-q8_0": "17GB",
++	"deepseek-coder-v2:16b-lite-instruct-q8_0": "17GB",
++	"deepseek-coder-v2:236b-lite-base-q8_0": "251GB",
++	"deepseek-coder-v2:236b-lite-instruct-q8_0": "251GB",
 +	"deepseek-coder-v2:16b-lite-base-fp16": "31GB",
 +	"deepseek-coder-v2:16b-lite-instruct-fp16": "31GB",
 +	"deepseek-coder-v2:236b-lite-base-fp16": "472GB",
@@ -139,6 +186,12 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"gemma:7b-instruct": "5.0GB",
 +	"gemma:7b-text": "5.2GB",
 +	"gemma:7b-v1.1": "5.0GB",
++	"gemma:2b-instruct-q8_0": "2.7GB",
++	"gemma:2b-instruct-v1.1-q8_0": "2.7GB",
++	"gemma:2b-text-q8_0": "2.7GB",
++	"gemma:7b-instruct-q8_0": "9.1GB",
++	"gemma:7b-instruct-v1.1-q8_0": "9.1GB",
++	"gemma:7b-text-q8_0": "9.1GB",
 +	"gemma:2b-instruct-fp16": "4.5GB",
 +	"gemma:2b-instruct-v1.1-fp16": "5.0GB",
 +	"gemma:2b-text-fp16": "4.5GB",
@@ -148,6 +201,12 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"gemma2:2b": "1.6GB",
 +	"gemma2:9b": "5.4GB",
 +	"gemma2:27b": "16GB",
++	"gemma2:2b-instruct-q8_0": "2.8GB",
++	"gemma2:2b-text-q8_0": "2.8GB",
++	"gemma2:9b-instruct-q8_0": "9.8GB",
++	"gemma2:9b-text-q8_0": "9.8GB",
++	"gemma2:27b-instruct-q8_0": "29GB",
++	"gemma2:27b-text-q8_0": "29GB",
 +	"gemma2:2b-instruct-fp16": "5.2GB",
 +	"gemma2:2b-text-fp16": "5.2GB",
 +	"gemma2:9b-instruct-fp16": "18GB",
@@ -164,6 +223,23 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"granite-code:8b-instruct": "4.6GB",
 +	"granite-code:20b-base": "12GB",
 +	"granite-code:34b-base": "19GB",
++	"granite-code:3b-base-q8_0": "3.7GB",
++	"granite-code:3b-instruct-q8_0": "3.7GB",
++	"granite-code:3b-128k-instruct-q8_0": "3.7GB",
++	"granite-code:8b-base-q6_K": "6.6GB",
++	"granite-code:8b-base-q8_0": "8.6GB",
++	"granite-code:8b-instruct-q6_K": "6.6GB",
++	"granite-code:8b-instruct-q8_0": "8.6GB",
++	"granite-code:8b-instruct-128k-q4_0": "4.6GB",
++	"granite-code:8b-instruct-128k-q4_1": "5.1GB",
++	"granite-code:20b-base-q5_K_M": "15GB",
++	"granite-code:20b-base-q8_0": "21GB",
++	"granite-code:20b-instruct-8k-q6_K": "15GB",
++	"granite-code:20b-instruct-8k-q8_0": "21GB",
++	"granite-code:34b-base-q6_K": "28GB",
++	"granite-code:34b-base-q8_0": "36GB",
++	"granite-code:34b-instruct-q6_K": "28GB",
++	"granite-code:34b-instruct-q8_0": "36GB",
 +	"granite-code:3b-base-fp16": "7.0GB",
 +	"granite-code:3b-instruct-fp16": "7.0GB",
 +	"granite-code:3b-128k-instruct-fp16": "7.0GB",
@@ -182,6 +258,14 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"llava:7b-v1.6": "4.7GB",
 +	"llava:13b-v1.6": "8.0GB",
 +	"llava:34b-v1.6": "20.0GB",
++	"llava:7b-v1.5-q8_0": "7.8GB",
++	"llava:7b-v1.6-mistral-q6_K": "6.6GB",
++	"llava:7b-v1.6-mistral-q8_0": "8.3GB",
++	"llava:7b-v1.6-vicuna-q8_0": "7.8GB",
++	"llava:13b-v1.5-q8_0": "14GB",
++	"llava:13b-v1.6-vicuna-q8_0": "14GB",
++	"llava:34b-v1.6-q6_K": "29GB",
++	"llava:34b-v1.6-q8_0": "37GB",
 +	"llava:7b-v1.5-fp16": "14GB",
 +	"llava:7b-v1.6-mistral-fp16": "15GB",
 +	"llava:7b-v1.6-vicuna-fp16": "14GB",
@@ -197,6 +281,14 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"llama2:7b-text": "3.8GB",
 +	"llama2:70b-chat": "39GB",
 +	"llama2:70b-text": "39GB",
++	"llama2:7b-chat-q8_0": "7.2GB",
++	"llama2:7b-text-q8_0": "7.2GB",
++	"llama2:13b-chat-q8_0": "14GB",
++	"llama2:13b-text-q8_0": "14GB",
++	"llama2:70b-chat-q6_K": "57GB",
++	"llama2:70b-text-q6_K": "57GB",
++	"llama2:70b-chat-q8_0": "73GB",
++	"llama2:70b-text-q8_0": "73GB",
 +	"llama2:7b-chat-fp16": "13GB",
 +	"llama2:7b-text-fp16": "13GB",
 +	"llama2:13b-chat-fp16": "26GB",
@@ -207,6 +299,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"llama2-uncensored:70b": "39GB",
 +	"llama2-uncensored:7b-chat": "3.8GB",
 +	"llama2-uncensored:70b-chat": "39GB",
++	"llama2-uncensored:7b-chat-q8_0":"7.2GB",
++	"llama2-uncensored:70b-chat-q6_K":"57GB",
++	"llama2-uncensored:70b-chat-q8_0":"73GB",
 +	"llama2-uncensored:7b-chat-fp16": "13GB",
 +	"llama3:8b": "4.7GB",
 +	"llama3:70b": "40GB",
@@ -215,6 +310,14 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"llama3:8b-text": "4.7GB",
 +	"llama3:70b-instruct": "40GB",
 +	"llama3:70b-text": "40GB",
++	"llama3:8b-instruct-q6_K": "6.6GB",
++	"llama3:8b-text-q6_K": "6.6GB",
++	"llama3:8b-instruct-q8_0": "8.5GB",
++	"llama3:8b-text-q8_0": "8.5GB",
++	"llama3:70b-instruct-q6_K": "58GB",
++	"llama3:70b-text-q6_K": "58GB",
++	"llama3:70b-instruct-q8_0": "75GB",
++	"llama3:70b-text-q8_0": "75GB",
 +	"llama3:8b-instruct-fp16": "16GB",
 +	"llama3:8b-text-fp16": "16GB",
 +	"llama3:70b-instruct-fp16": "141GB",
@@ -222,6 +325,16 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"llama3.1:8b": "4.7GB",
 +	"llama3.1:70b": "40GB",
 +	"llama3.1:405b": "229GB",
++	"llama3.1:8b-instruct-q6_K": "6.6GB",
++	"llama3.1:8b-text-q6_K": "6.6GB",
++	"llama3.1:8b-instruct-q8_0": "8.5GB",
++	"llama3.1:8b-text-q8_0": "8.5GB",
++	"llama3.1:70b-instruct-q6_K": "58GB",
++	"llama3.1:70b-text-q6_K": "58GB",
++	"llama3.1:70b-instruct-q8_0": "75GB",
++	"llama3.1:70b-text-q8_0": "75GB",
++	"llama3.1:405b-instruct-q8_0": "431GB",
++	"llama3.1:405b-text-q8_0": "431GB",
 +	"llama3.1:8b-instruct-fp16": "16GB",
 +	"llama3.1:8b-text-fp16": "16GB",
 +	"llama3.1:70b-instruct-fp16": "141GB",
@@ -230,15 +343,28 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"llama3.1:405b-text-fp16": "812GB",
 +	"llama3.2:3b": "2.0GB",
 +	"llama3.2:1b": "1.3GB",
++	"llama3.2:1b-instruct-q5_1": "953MB",
++	"llama3.2:1b-text-q5_1": "953MB",
++	"llama3.2:1b-instruct-q6_K": "1.0GB",
++	"llama3.2:1b-text-q6_K": "1.0GB",
++	"llama3.2:1b-instruct-q8.0": "1.3GB",
++	"llama3.2:1b-text-q8_0": "1.3GB",
++	"llama3.2:3b-instruct-q8_0": "3.4GB",
++	"llama3.2:3b-text-q8_0": "3.4GB",
 +	"llama3.2:1b-instruct-fp16": "2.5GB",
 +	"llama3.2:1b-text-fp16": "2.5GB",
 +	"llama3.2:3b-instruct-fp16": "6.4GB",
 +	"llama3.2:3b-text-fp16": "6.4GB",
 +	"llama-guard3:1b": "1.6GB",
 +	"llama-guard3:8b": "4.9GB",
++	"llama-guard3:1b-q4_1": "996GB",
++	"llama-guard3:1b-q8_0": "1.6GB",
++	"llama-guard3:8b-q6_K": "6.6GB",
++	"llama-guard3:8b-q8_0": "8.5GB",
 +	"llama-guard3:1b-fp16": "3.0GB",
 +	"llama-guard3:8b-fp16": "16GB",
 +	"magicoder:7b": "3.8GB",
++	"magicoder:7b-s-cl-q8_0": "7.2GB",
 +	"magicoder:7b-s-cl-fp16": "13GB",
 +	"mannix/replete-adapted-llama3-8b:iq4_xs": "4.4GB",
 +	"mannix/replete-adapted-llama3-8b:iq4_nl": "4.7GB",
@@ -262,16 +388,33 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"mistral:v0.3": "4.1GB",
 +	"mistral:7b-instruct": "4.1GB",
 +	"mistral:7b-text": "4.1GB",
++	"mistral:7b-instruct-q6_K": "5.9GB",
++	"mistral:7b-instruct-v0.2-q6_K": "5.9GB",
++	"mistral:7b-instruct-v0.3-q6_K": "5.9GB",
++	"mistral:7b-text-q6_K": "5.9GB",
++	"mistral:7b-text-v0.2-q6_K": "5.9GB",
++	"mistral:7b-instruct-q8_0": "7.7GB",
++	"mistral:7b-instruct-v0.2-q8_0": "7.7GB",
++	"mistral:7b-instruct-v0.3-q8_0": "7.7GB",
++	"mistral:7b-text-q8_0": "7.7GB",
++	"mistral:7b-text-v0.2-q8_0": "7.7GB",
 +	"mistral:7b-instruct-fp16": "14GB",
 +	"mistral:7b-instruct-v0.2-fp16": "14GB",
 +	"mistral:7b-instruct-v0.3-fp16": "14GB",
 +	"mistral:7b-text-fp16": "14GB",
 +	"mistral:7b-text-v0.2-fp16": "14GB",
 +	"mistral-large:123b": "69GB",
++	"mistral-large:123b-instruct-2407-q6_K": "101GB",
++	"mistral-large:123b-instruct-2407-q8_0": "130GB",
 +	"mistral-large:123b-instruct-2407-fp16": "245GB",
 +	"mistral-nemo:12b": "7.1GB",
++	"mistral-nemo:12b-instruct-2407-q8_0": "13GB",
 +	"mistral-nemo:12b-instruct-2407-fp16": "25GB",
 +	"mistral-small:22b": "13GB",
++	"mistral-small:22b-instruct-2409-q5_0": "15GB",
++	"mistral-small:22b-instruct-2409-q5_K_S": "15GB",
++	"mistral-small:22b-instruct-2409-q5_K_M": "16GB",
++	"mistral-small:22b-instruct-2409-q8_0": "24GB",
 +	"mistral-small:22b-instruct-2409-fp16": "44GB",
 +	"mixtral:8x7b": "26GB",
 +	"mixtral:8x22b": "80GB",
@@ -281,6 +424,12 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"mixtral:v0.1-instruct": "80GB",
 +	"mixtral:8x22b-instruct": "80GB",
 +	"mixtral:8x22b-text": "80GB",
++	"mixtral:8x7b-instruct-v0.1-q8_0": "50GB",
++	"mixtral:8x7b-text-v0.1-q8_0": "50GB",
++	"mixtral:8x22b-instruct-v0.1-q6_K": "115GB",
++	"mixtral:8x22b-text-v0.1-q6_K": "115GB",
++	"mixtral:8x22b-instruct-v0.1-q8_0": "149GB",
++	"mixtral:8x22b-text-v0.1-q8_0": "149GB",
 +	"mixtral:8x7b-instruct-v0.1-fp16": "93GB",
 +	"mixtral:8x7b-text-v0.1-fp16": "93GB",
 +	"mixtral:8x22b-instruct-v0.1-fp16": "281GB",
@@ -288,29 +437,61 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"monotykamary/whiterabbitneo-v1.5a:7b": "4.1GB",
 +	"monotykamary/whiterabbitneo-v1.5a:7b_q4_K_M": "4.1GB",
 +	"nemotron:70b": "43GB",
++	"nemotron:70b-instruct-q6_K": "58GB",
++	"nemotron:70b-instruct-q8_0": "75GB",
 +	"nemotron:70b-instruct-fp16": "141GB",
 +	"nemotron-mini:4b": "2.7GB",
++	"nemotron-mini:4b-instruct-q6_K": "3.4GB",
++	"nemotron-mini:4b-instruct-q8_0": "4.5GB",
 +	"nemotron-mini:4b-instruct-fp16": "8.4GB",
 +	"meditron:7b": "3.8GB",
 +	"meditron:70b": "39GB",
++	"meditron:7b-q8_0": "7.2GB",
++	"meditron:70b-q5_1": "52GB",
 +	"meditron:7b-fp16": "13GB",
 +	"medllama2:7b": "3.8GB",
++	"medllama2:7b-q8_0": "7.2GB",
 +	"medllama2:7b-fp16": "13GB",
 +	"moondream:1.8b": "1.7GB",
 +	"moondream:v2": "1.7GB",
++	"moondream:1.8b-v2-q5_0": "1.9GB",
++	"moondream:1.8b-v2-q5_1": "2.0GB",
++	"moondream:1.8b-v2-q8_0": "2.4GB",
 +	"moondream:1.8b-v2-fp16": "3.7GB",
 +	"nomic-embed-text:v1.5": "274MB",
 +	"nomic-embed-text:137m-v1.5-fp16": "274MB",
++	"nqduc/gemsura:2b": "5.0GB",
++	"nqduc/gemsura:7b": "17.0GB",
++	"nqduc/gemsura:2b-q4_0": "1.6GB",
++	"nqduc/gemsura:2b-q8_0": "2.7GB",
++	"nqduc/gemsura:7b-q4_0": "5.0GB",
++	"nqduc/gemsura:7b-q8_0": "9.1GB",
++	"nqduc/mixsura:mixsura-q4_0": "26GB",
++	"nqduc/mixsura:mixsura-q4_1": "29GB",
++	"nqduc/mixsura:mixsura-q5_0": "32GB",
++	"nqduc/mixsura:mixsura-q5_1": "35GB",
++	"nqduc/mixsura:mixsura-q6_K": "38GB",
++	"nqduc/mixsura:mixsura-q8_0": "50GB",
++	"nqduc/mixsura:mixsura-fp16": "93GB",
++	"nqduc/mixsura-sft:mixsura-sft-fp16": "93GB",
++	"nqduc/mixsura-sft:mixsura-sft-q4_0": "26GB",
++	"nqduc/mixsura-sft:mixsura-sft-q4_1": "29GB",
++	"nqduc/mixsura-sft:mixsura-sft-q5_0": "32GB",
++	"nqduc/mixsura-sft:mixsura-sft-q5_1": "35GB",
++	"nqduc/mixsura-sft:mixsura-sft-q6_K": "38GB",
++	"nqduc/mixsura-sft:mixsura-sft-q8_0": "50GB",
 +	"nxbai-embed-large:335m": "670MB",
 +	"nxbai-embed-large:v1": "670MB",
 +	"nxbai-embed-large:335m-v1-fp16": "670MB",
 +	"orca2:7b": "3.8GB",
 +	"orca2:13b": "7.4GB",
++	"orca2:7b-q8_0": "7.2GB",
++	"orca2:13b-q8_0": "14GB",
 +	"orca2:7b-fp16": "13GB",
 +	"orca2:13b-fp16": "26GB",
-+	"partai/dorna-llama3:8b-instruct-q8_0": "8.5GB",
 +	"partai/dorna-llama3:8b-instruct-q4_0": "4.7GB",
 +	"partai/dorna-llama3:8b-instruct-q5_0": "5.6GB",
++	"partai/dorna-llama3:8b-instruct-q8_0": "8.5GB",
 +	"phi3:3.8b": "2.2GB",
 +	"phi3:14b": "7.9GB",
 +	"phi3:instruct": "2.2GB",
@@ -322,11 +503,16 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"phi3:mini-4k": "2.2GB",
 +	"phi3:3.8b-instruct": "2.2GB",
 +	"phi3:14b-instruct": "7.9GB",
++	"phi3:3.8b-mini-128k-instruct-q8_0": "4.1GB",
++	"phi3:3.8b-mini-4k-instruct-q8_0": "4.1GB",
++	"phi3:14b-medium-128k-instruct-q8_0": "15GB",
++	"phi3:14b-medium-4k-instruct-q8_0": "15GB",
 +	"phi3:3.8b-mini-128k-instruct-fp16": "7.6GB",
 +	"phi3:3.8b-mini-4k-instruct-fp16": "7.6GB",
 +	"phi3:14b-medium-128k-instruct-fp16": "28GB",
 +	"phi3:14b-medium-4k-instruct-fp16": "28GB",
 +	"phi3.5:3.8b": "2.2GB",
++	"phi3.5:3.8b-mini-instruct-q8_0": "4.1GB",
 +	"phi3.5:3.8b-mini-instruct-fp16": "7.6GB",
 +	"qwen:0.5b": "395MB",
 +	"qwen:1.8b": "1.1GB",
@@ -352,6 +538,29 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"qwen:72b-text": "63GB",
 +	"qwen:110b-chat": "63GB",
 +	"qwen:7b-fp16": "15GB",
++	"qwen:0.5b-chat-v1.5-q8_0": "556MB",
++	"qwen:0.5b-text-v1.5-q8_0": "665MB",
++	"qwen:1.8b-chat-q8_0": "2.0GB",
++	"qwen:1.8b-chat-v1.5-q8_0": "2.0GB",
++	"qwen:1.8b-text-q8_0": "2.0GB",
++	"qwen:1.8b-text-v1.5-q8_0": "2.0GB",
++	"qwen:4b-chat-v1.5-q8_0": "4.2GB",
++	"qwen:4b-text-v1.5-q8_0": "4.2GB",
++	"qwen:7b-chat-q8_0": "8.2GB",
++	"qwen:7b-chat-v1.5-q8_0": "8.2GB",
++	"qwen:7b-text-v1.5-q8_0": "8.2GB",
++	"qwen:14b-chat-q8_0": "15GB",
++	"qwen:14b-chat-v1.5-q8_0": "15GB",
++	"qwen:14b-text-q8_0": "15GB",
++	"qwen:14b-text-v1.5-q8_0": "15GB",
++	"qwen:32b-chat-v1.5-q8_0": "35GB",
++	"qwen:32b-text-v1.5-q8_0": "35GB",
++	"qwen:72b-chat-q8_0": "77GB",
++	"qwen:72b-chat-v1.5-q8_0": "77GB",
++	"qwen:72b-text-q8_0": "77GB",
++	"qwen:72b-text-v1.5-q8_0": "77GB",
++	"qwen:110b-chat-v1.5-q8_0": "118GB",
++	"qwen:110b-text-v1.5-q8_0": "118GB",
 +	"qwen:0.5b-chat-v1.5-fp16": "1.2GB",
 +	"qwen:0.5b-text-v1.5-fp16": "1.2GB",
 +	"qwen:1.8b-chat-fp16": "3.7GB",
@@ -384,6 +593,12 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"qwen2:7b-text": "4.4GB",
 +	"qwen2:72b-instruct": "41GB",
 +	"qwen2:72b-text": "41GB",
++	"qwen2:0.5b-instruct-q8_0": "531MB",
++	"qwen2:1.5b-instruct-q8_0": "1.6GB",
++	"qwen2:7b-instruct-q8_0": "8.1GB",
++	"qwen2:7b-text-q8_0": "8.1GB",
++	"qwen2:72b-instruct-q8_0": "77GB",
++	"qwen2:72b-text-q8_0": "77GB",
 +	"qwen2:0.5b-instruct-fp16": "994MB",
 +	"qwen2:1.5b-instruct-fp16": "3.1GB",
 +	"qwen2:7b-instruct-fp16": "15GB",
@@ -395,6 +610,11 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"qwen2-math:1.5b-instruct": "935MB",
 +	"qwen2-math:7b-instruct": "4.4GB",
 +	"qwen2-math:72b-instruct": "41GB",
++	"qwen2-math:1.5b-instruct-q8_0": "1.6GB",
++	"qwen2-math:7b-instruct-q6_K": "6.3GB",
++	"qwen2-math:7b-instruct-q8_0": "8.1GB",
++	"qwen2-math:72b-instruct-q6_K": "64GB",
++	"qwen2-math:72b-instruct-q8_0": "77GB",
 +	"qwen2-math:1.5b-instruct-fp16": "3.1GB",
 +	"qwen2-math:7b-instruct-fp16": "15GB",
 +	"qwen2-math:72b-instruct-fp16": "145GB",
@@ -413,6 +633,16 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"qwen2.5:14b-instruct": "9.0GB",
 +	"qwen2.5:32b-instruct": "20GB",
 +	"qwen2.5:72b-instruct": "47GB",
++	"qwen2.5:7b-instruct-q6_K": "6.3GB",
++	"qwen2.5:32b-instruct-q6_K": "27GB",
++	"qwen2.5:72b-instruct-q6_K": "64GB",
++	"qwen2.5:0.5b-instruct-q8_0": "531MB",
++	"qwen2.5:1.5b-instruct-q8_0": "1.6GB",
++	"qwen2.5:3b-instruct-q8_0": "3.3GB",
++	"qwen2.5:7b-instruct-q8_0": "8.1GB",
++	"qwen2.5:14b-instruct-q8_0": "16GB",
++	"qwen2.5:32b-instruct-q8_0": "35GB",
++	"qwen2.5:72b-instruct-q8_0": "77GB",
 +	"qwen2.5:0.5b-instruct-fp16": "994MB",
 +	"qwen2.5:1.5b-instruct-fp16": "3.1GB",
 +	"qwen2.5:3b-instruct-fp16": "6.2GB",
@@ -446,6 +676,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"samantha-mistral:7b": "4.1GB",
 +	"samantha-mistral:7b-text": "4.1GB",
 +	"samantha-mistral:7b-v1.2-text": "4.1GB",
++	"samantha-mistral:7b-instruct-q8_0": "7.7GB",
++	"samantha-mistral:7b-text-q8_0": "7.7GB",
++	"samantha-mistral:7b-v1.2-text-q8_0": "7.7GB",
 +	"samantha-mistral:7b-instruct-fp16": "14GB",
 +	"samantha-mistral:7b-text-fp16": "14GB",
 +	"samantha-mistral:7b-v1.2-text-fp16": "14GB",
@@ -550,10 +783,17 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"smollm:1.7b-instruct-v0.2-q6_K": "1.4GB",
 +	"smollm:1.7b-instruct-v0.2-q8_K": "1.8GB",
 +	"solar:10.7b": "6.1GB",
++	"solar:10.7b-instruct-v1-q5_0": "7.4GB",
++	"solar:10.7b-text-v1-q5_0": "7.4GB",
++	"solar:10.7b-instruct-v1-q8_0": "11GB",
++	"solar:10.7b-text-v1-q8_0": "11GB",
 +	"solar:10.7b-instruct-v1-fp16": "21GB",
 +	"solar:10.7b-text-v1-fp16": "21GB",
 +	"solar-pro:22b": "13GB",
 +	"solar-pro:preview": "13GB",
++	"solar-pro:22b-preview-instruct-q5_K_S": "15GB",
++	"solar-pro:22b-preview-instruct-q5_K_M": "16GB",
++	"solar-pro:22b-preview-instruct-q8_0": "24GB",
 +	"solar-pro:22b-preview-instruct-fp16": "44GB",
 +	"sparksammy/samantha": "3.8GB",
 +	"sparksammy/samantha-3.1": "4.7GB",
@@ -563,6 +803,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"sparksammy/tinysam-msft": "2.3GB",
 +	"sqlcoder:7b": "4.1GB",
 +	"sqlcoder:15b": "9GB",
++	"sqlcoder:7b-q8_0": "7.7GB",
++	"sqlcoder:15b-q6_K": "13GB",
++	"sqlcoder:70b-alpha-q6_K": "57GB",
 +	"sqlcoder:7b-fp16": "14GB",
 +	"sqlcoder:15b-fp16": "32GB",
 +	"sqlcoder:70b-alpha-fp16": "138GB",
@@ -575,6 +818,15 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"starcoder:7b-base": "4.3GB",
 +	"starcoder:15b-base": "9.0GB",
 +	"starcoder:15b-plus": "9.0GB",
++	"starcoder:15b-q6_K": "13GB",
++	"starcoder:15b-q8_0": "17GB",
++	"starcoder:1b-base-q8_0": "1.3GB",
++	"starcoder:3b-base-q8_0": "3.4GB",
++	"starcoder:7b-base-q8_0": "8GB",
++	"starcoder:15b-base-q6_K": "13GB",
++	"starcoder:15b-plus-q6_K": "13GB",
++	"starcoder:15b-base-q8_0": "17GB",
++	"starcoder:15b-plus-q8_0": "17GB",
 +	"starcoder:15b-fp16": "32GB",
 +	"starcoder:1b-base-fp16": "2.5GB",
 +	"starcoder:3b-base-fp16": "6.4GB",
@@ -586,9 +838,12 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"starcoder2:15b": "9.1GB",
 +	"starcoder2:instruct": "9.1GB",
 +	"starcoder2:15b-instruct": "9.1GB",
-+	"starcoder2:3b-fp16": "6.1GB",
-+	"starcoder2:7b-fp16": "14GB",
-+	"starcoder2:15b-fp16": "32GB",
++	"starcoder2:3b-q8_0": "3.2GB",
++	"starcoder2:7b-q8_0": "7.6GB",
++	"starcoder2:15b-q6_K": "13GB",
++	"starcoder2:15b-q8_0": "17GB",
++	"starcoder2:15b-instruct-v0.1-q6_K": "13GB",
++	"starcoder2:15b-instruct-v0.1-q8_0": "17GB",
 +	"starcoder2:15b-instruct-v0.1-fp16": "32GB",
 +	"tinydolphin:1.1b": "637MB",
 +	"tinydolphin:v2.8": "637MB",
@@ -645,11 +900,16 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"wizard-vicuna-uncensored:7b": "3.8GB",
 +	"wizard-vicuna-uncensored:13b": "7.4GB",
 +	"wizard-vicuna-uncensored:30b": "18GB",
++	"wizard-vicuna-uncensored:7b-q8_0": "7.2GB",
++	"wizard-vicuna-uncensored:13b-q8_0": "14GB",
++	"wizard-vicuna-uncensored:30b-q6_K": "27GB",
++	"wizard-vicuna-uncensored:30b-q8_0": "35GB",
 +	"wizard-vicuna-uncensored:7b-fp16": "13GB",
 +	"wizard-vicuna-uncensored:13b-fp16": "26GB",
 +	"wizard-vicuna-uncensored:30b-fp16": "65GB",
 +	"wizardlm-uncensored:13b": "7.4GB",
 +	"wizardlm-uncensored:13b-llama2": "7.4GB",
++	"wizardlm-uncensored:13b-llama2-q8_0": "14GB",
 +	"wizardlm-uncensored:13b-llama2-fp16": "26GB",
 +	"yi-coder:1.5b": "886MB",
 +	"yi-coder:9b": "5.0GB",
@@ -657,6 +917,12 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"yi-coder:1.5b-chat": "866MB",
 +	"yi-coder:9b-base": "5.0GB",
 +	"yi-coder:9b-chat": "5.0GB",
++	"yi-coder:1.5b-base-q8_0": "1.6GB",
++	"yi-coder:1.5b-chat-q8_0": "1.6GB",
++	"yi-coder:9b-base-q6_K": "7.2GB",
++	"yi-coder:9b-chat-q6_K": "7.2GB",
++	"yi-coder:9b-base-q8_0": "9.4GB",
++	"yi-coder:9b-chat-q8_0": "9.4GB",
 +	"yi-coder:1.5b-base-fp16": "3.0GB",
 +	"yi-coder:1.5b-chat-fp16": "3.0GB",
 +	"yi-coder:9b-base-fp16": "18GB",
@@ -666,6 +932,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +// oteodoro:  added section
 +var whitelist = map[string]int{
 +	"adens/quran-guide": 1,
++	"akx/viking-7b": 1,
 +	"alfred": 1,
 +	"ALIENTELLIGENCE/christiancounselor": 1,
 +	"ALIENTELLIGENCE/crisisintervention": 1,
@@ -763,6 +1030,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"mistrallite": 1,
 +	"mixtral": 1,
 +	"moondream": 1,
++	"nqduc/gemsura": 1,
++	"nqduc/mixsura": 1,
++	"nqduc/mixsura-sft": 1,
 +	"monotykamary/whiterabbitneo-v1.5a": 1,
 +	"mxbai-embed-large": 1,
 +	"nemotron": 1,
@@ -841,6 +1111,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +// oteodoro:  added --tags
 +var tagsList = map[string]string{
 +	"adens/quran-guide": "quran muslim islam allah",
++	"akx/viking-7b": "multilingual finnish english swedish danish norwegian icelandic coding code-generator",
 +	"alfred": "chat comprehensive-response i-dont-know",
 +	"ALIENTELLIGENCE/christiancounselor": "christian christianity protestant catholic eastern-orthodox western-church eastern-church theologist counselor philosopher spirituality mental-health marriage",
 +	"ALIENTELLIGENCE/crisisintervention": "psychotherapist counselor mental-health male",
@@ -954,6 +1225,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"nous-hermes": "general-use creative-text instruction-following",
 +	"nous-hermes2": "science coding code-assistant code-generator",
 +	"nous-hermes2-mixtral": "fantasy-poems text-to-code-visualization coding code-generator code-assistant",
++	"nqduc/gemsura": "vietnamese vietnam-alignment english text-generator qa summary classification translation coding code-generator reasoning",
++	"nqduc/mixsura": "vietnamese vietnam-alignment english text-generator qa summary classification translation coding code-generator reasoning",
++	"nqduc/mixsura-sft": "vietnamese vietnam-alignment english text-generator qa summary classification translation coding code-generator reasoning",
 +	"nuextract": "structured-data-generation",
 +	"open-orca-platypus2": "chat coding code-generation text-generation common-sense",
 +	"openchat": "math-word-problems",
@@ -1024,7 +1298,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	filename, _ := cmd.Flags().GetString("file")
  	filename, err := filepath.Abs(filename)
-@@ -382,6 +1391,25 @@ func StopHandler(cmd *cobra.Command, arg
+@@ -382,6 +1660,25 @@ func StopHandler(cmd *cobra.Command, arg
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -1050,7 +1324,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	opts := runOptions{
  		Model:    args[0],
  		WordWrap: os.Getenv("TERM") == "xterm-256color",
-@@ -711,9 +1739,11 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -711,9 +2008,11 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -1063,7 +1337,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -742,13 +1772,252 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -742,13 +2041,253 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -1090,6 +1364,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	// oteodoro:  added section
 +	licenses := map[string]string {
 +		"adens/quran-guide": "LLAMA 3.2 COMMUNITY LICENSE AGREEMENT, Llama 3.2 Acceptable Use Policy",
++		"akx/viking-7b": "Apache-2.0",
 +		"alfred": "Apache-2.0",
 +		"ALIENTELLIGENCE/christiancounselor": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"ALIENTELLIGENCE/crisisintervention": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
@@ -1317,7 +1592,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	}
  
  	req := api.ShowRequest{Name: args[0]}
-@@ -927,6 +2196,95 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -927,6 +2466,138 @@ func PullHandler(cmd *cobra.Command, arg
  	return nil
  }
  
@@ -1331,10 +1606,34 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	return nil
 +}
 +
++//oteodoro:  added struct
++type FindModelSizeResult struct {
++	Name string
++	MbSize int
++	RawSize string
++}
++
++//oteodoro:  added struct
++type FindKeywordsResult struct {
++	Name string
++	Tags string
++}
++
++type FindModelSizeResults []*FindModelSizeResult
++type FindKeywordsResults []*FindKeywordsResult
++func (results FindModelSizeResults) Len() int { return len(results) }
++func (results FindKeywordsResults) Len() int { return len(results) }
++func (results FindModelSizeResults) Swap(i, j int) { results[i], results[j] = results[j], results[i] }
++func (results FindKeywordsResults) Swap(i, j int) { results[i], results[j] = results[j], results[i] }
++type ByModelSize struct { FindModelSizeResults }
++type ByName struct{ FindKeywordsResults }
++func (s ByModelSize) Less(i, j int) bool { return s.FindModelSizeResults[i].MbSize < s.FindModelSizeResults[j].MbSize }
++func (s ByName) Less(i, j int) bool { return s.FindKeywordsResults[i].Name < s.FindKeywordsResults[j].Name }
++
 +//oteodoro:  added function
 +func FindSizeHandler(cmd *cobra.Command, args []string) error {
 +	requestedSizeRaw := args[0]
-+	requestedSize := 0.0 // As in MB in base 10
++	requestedSize := 0 // As in MB in base 10
 +	re := regexp.MustCompile("[0-9.]+")
 +	s := re.FindAllString(requestedSizeRaw, -1)
 +	if s != nil {
@@ -1343,42 +1642,44 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +			return errors.New("You need to add the memory size in GB or MB for the preferred size.  Examples:  4GB, 500MB")
 +		}
 +		if strings.Contains(requestedSizeRaw, "GB") {
-+			requestedSize = _requestedSize * 1000.0
++			requestedSize = int(_requestedSize * 1000)
 +		} else if strings.Contains(requestedSizeRaw, "MB") {
-+			requestedSize = _requestedSize
++			requestedSize = int(_requestedSize)
 +		} else {
 +			return errors.New("You need to add GB or MB to your number.  Examples:  4GB, 500MB")
 +		}
 +	} else {
 +		return errors.New("You need to add a number as an arg.  Examples:  4GB, 500MB")
 +	}
-+	found := false
-+	for key, value := range sizeTable {
-+		s = re.FindAllString(value, -1)
-+		value_f := 0.0
-+		_value_f := 0.0
++
++	var results []*FindModelSizeResult
++	for key, valueRaw := range sizeTable {
++		s = re.FindAllString(valueRaw, -1)
++		value := 0
++		_value := 0.0
 +		if s != nil {
-+			__value_f, err := strconv.ParseFloat(s[0], 64)
++			__value, err := strconv.ParseFloat(s[0], 64)
 +			if err != nil {
 +				return err
 +			}
-+			_value_f = __value_f
++			_value = __value
 +		} else {
 +			return errors.New("QA:  You need to add a number as an arg to " + key)
 +		}
 +
-+		if strings.Contains(value, "GB") {
-+			value_f = _value_f * 1000.0
-+		} else if strings.Contains(value, "MB") {
-+			value_f = _value_f
++		if strings.Contains(valueRaw, "GB") {
++			value = int(_value * 1000)
++		} else if strings.Contains(valueRaw, "MB") {
++			value = int(_value)
 +		}
-+		//fmt.Printf("%f <= %f : %s\n", requestedSize, value_f, key)
-+		if value_f <= requestedSize {
-+			fmt.Printf("%s %s\n", value, key)
-+			found = true
++		if value <= requestedSize {
++			result := &FindModelSizeResult{key, value, valueRaw}
++			results = append(results, result)
 +		}
 +	}
-+	if found {
++	sort.Sort(ByModelSize{results})
++	printModelSizeResults(results)
++	if len(results) != 0 {
 +		fmt.Println()
 +		fmt.Printf("About compressed floats (aka f16), or int4 (aka q4) compression....\n")
 +		fmt.Printf("f16 support should only be used on f16 native hardware.\n")
@@ -1387,12 +1688,19 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	return nil
 +}
 +
++//oteodoro:  added function
++func printModelSizeResults(results []*FindModelSizeResult) {
++	for _, result := range results {
++		fmt.Printf("%s %s\n", result.RawSize, result.Name)
++	}
++}
 +
 +//oteodoro:  added function
 +func FindKeywordsHandler(cmd *cobra.Command, args []string) error {
 +	if len(args) == 0 {
 +		return errors.New("Add space delimited keywords as args")
 +	}
++	var results []*FindKeywordsResult
 +	for name, tags := range tagsList {
 +		found := false
 +
@@ -1404,16 +1712,26 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		}
 +
 +		if found {
-+			fmt.Printf("%s: %s\n", name, tags)
++			result := &FindKeywordsResult{name, tags}
++			results = append(results, result)
 +		}
 +	}
++	sort.Sort(ByName{results})
++	printKeywordsResults(results)
 +	return nil
++}
++
++//oteodoro:  added function
++func printKeywordsResults(results []*FindKeywordsResult) {
++	for _, result := range results {
++		fmt.Printf("%s :  %s\n", result.Name, result.Tags)
++	}
 +}
 +
  type generateContextKey string
  
  type runOptions struct {
-@@ -1332,6 +2690,8 @@ func NewCLI() *cobra.Command {
+@@ -1332,6 +2991,8 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -1422,7 +1740,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -1414,6 +2774,30 @@ func NewCLI() *cobra.Command {
+@@ -1414,6 +3075,30 @@ func NewCLI() *cobra.Command {
  		RunE:    DeleteHandler,
  	}
  
@@ -1453,7 +1771,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -1430,6 +2814,9 @@ func NewCLI() *cobra.Command {
+@@ -1430,6 +3115,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -1463,7 +1781,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	} {
  		switch cmd {
  		case runCmd:
-@@ -1469,6 +2856,9 @@ func NewCLI() *cobra.Command {
+@@ -1469,6 +3157,9 @@ func NewCLI() *cobra.Command {
  		psCmd,
  		copyCmd,
  		deleteCmd,

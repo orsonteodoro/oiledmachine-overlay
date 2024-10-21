@@ -61,6 +61,7 @@ CUDA_TARGETS_COMPAT=(
 )
 LLMS=(
 adens-quran-guide
+akx-viking-7b
 alfred ALIENTELLIGENCE-christiancounselor ALIENTELLIGENCE-crisisintervention
 ALIENTELLIGENCE-enriquecastillorincon ALIENTELLIGENCE-gamemasterroleplaying
 ALIENTELLIGENCE-holybible
@@ -94,7 +95,8 @@ minicpm-v mistral mistral-large mistral-nemo mistral-openorca mistral-small
 mistrallite mixtral moondream monotykamary-whiterabbitneo-v1.5a
 mxbai-embed-large nemotron nemotron-mini
 neural-chat nexusraven nomic-embed-text notus notux nous-hermes nous-hermes2
-nous-hermes2-mixtral nuextract open-orca-platypus2 openchat openhermes orca-mini
+nous-hermes2-mixtral nqduc-gemsura nqduc-mixsura nqduc-mixsura-sft nuextract
+open-orca-platypus2 openchat openhermes orca-mini
 orca2 paraphrase-multilingual partai-dorna-llama3 phi phi3 phi3.5
 phind-codellama qwen qwen2
 qwen2-math qwen2.5 qwen2.5-coder reader-lm reefer-minimonica reefer-monica
@@ -1682,6 +1684,9 @@ LLM_LICENSES="
 		llama3_2-LICENSE
 		llama3_2-USE_POLICY.md
 	)
+	ollama_llms_akx-viking-7b? (
+		Apache-2.0
+	)
 	ollama_llms_alfred? (
 		Apache-2.0
 	)
@@ -2073,6 +2078,15 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 	ollama_llms_nous-hermes2-mixtral? (
+		Apache-2.0
+	)
+	ollama_llms_nqduc-gemsura? (
+		Apache-2.0
+	)
+	ollama_llms_nqduc-mixsura? (
+		Apache-2.0
+	)
+	ollama_llms_nqduc-mixsura-sft? (
 		Apache-2.0
 	)
 	ollama_llms_nuextract? (
@@ -2876,6 +2890,7 @@ src_configure() {
 
 	declare -A use_alias=(
 		["adens-quran-guide"]="adens/quran-guide"
+		["akx-viking-7b"]="akx/viking-7b"
 		["ALIENTELLIGENCE-christiancounselor"]="ALIENTELLIGENCE/christiancounselor"
 		["ALIENTELLIGENCE-crisisintervention"]="ALIENTELLIGENCE/crisisintervention"
 		["ALIENTELLIGENCE-enriquecastillorincon"]="ALIENTELLIGENCE/enriquecastillorincon"
@@ -2907,6 +2922,9 @@ src_configure() {
 		["mannix-replete-adapted-llama3-8b"]="mannix/replete-adapted-llama3-8b"
 		["mannix-replete-coder-llama3-8b"]="mannix/replete-coder-llama3-8b"
 		["monotykamary-whiterabbitneo-v1.5a"]="monotykamary/whiterabbitneo-v1.5a"
+		["nqduc-gemsura"]="nqduc/gemsura"
+		["nqduc-mixsura"]="nqduc/mixsura"
+		["nqduc-mixsura-sft"]="nqduc/mixsura-sft"
 		["partai-dorna-llama3"]="partai/dorna-llama3"
 		["reefer-minimonica"]="reefer/minimonica"
 		["reefer-monica"]="reefer/monica"
