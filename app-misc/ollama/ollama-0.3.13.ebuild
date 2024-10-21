@@ -63,6 +63,7 @@ LLMS=(
 adens-quran-guide
 akx-viking-7b
 alfred ALIENTELLIGENCE-christiancounselor ALIENTELLIGENCE-crisisintervention
+ALIENTELLIGENCE-doomsdayurvivalist
 ALIENTELLIGENCE-enriquecastillorincon ALIENTELLIGENCE-gamemasterroleplaying
 ALIENTELLIGENCE-holybible
 ALIENTELLIGENCE-mentalwellness
@@ -85,8 +86,14 @@ deepseek-llm deepseek-v2 deepseek-v2.5 disinfozone-telos dolphin-llama3
 dolphin-mistral dolphin-mixtral dolphin-phi dolphincoder duckdb-nsql
 eramax-aura_v3 everythinglm falcon falcon2 firefunction-v2 gemma gemma2 glm4
 goliath granite-code
+granite3-dense
+granite3-moe
 hemanth-chessplayer
-hermes3 internlm2 jimscard-adult-film-screenwriter-nsfw
+hermes3
+fixt-home-3b-v3
+fixt-home-3b-v2
+hookingai-monah-8b
+internlm2 jimscard-adult-film-screenwriter-nsfw
 jimscard-whiterabbit-neo
 llama-guard3 llama-pro llama2 llama2-chinese llama2-uncensored llama3
 llama3-chatqa llama3-gradient llama3-groq-tool-use llama3.1 llama3.2 llava
@@ -1700,6 +1707,10 @@ LLM_LICENSES="
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
+	ollama_llms_ALIENTELLIGENCE-doomsdayurvivalist? (
+		llama3-LICENSE
+		llama3-USE_POLICY.md
+	)
 	ollama_llms_ALIENTELLIGENCE-enriquecastillorincon? (
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
@@ -1876,10 +1887,6 @@ LLM_LICENSES="
 	ollama_llms_dolphincoder? (
 		BigCode-Open-RAIL-M-v1-License-Agreement
 	)
-	ollama_llms_partai-dorna-llama3? (
-		llama3-LICENSE
-		llama3-USE_POLICY.md
-	)
 	ollama_llms_duckdb-nsql? (
 		llama2-LICENSE
 		llama2-USE_POLICY.md
@@ -1902,6 +1909,9 @@ LLM_LICENSES="
 		llama3-LICENSE
 		llama3-USE_POLICY.md
 	)
+	ollama_llms_fixt-home-3b-v3? (
+		STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT
+	)
 	ollama_llms_gemma? (
 		Gemma-Terms-of-Use-20240221
 		Gemma-Prohibited-Use-Policy-20240221
@@ -1920,6 +1930,12 @@ LLM_LICENSES="
 	ollama_llms_granite-code? (
 		Apache-2.0
 	)
+	ollama_llms_granite3-dense? (
+		Apache-2.0
+	)
+	ollama_llms_granite3-moe? (
+		Apache-2.0
+	)
 	ollama_llms_hemanth-chessplayer? (
 		llama2-LICENSE
 		llama2-USE_POLICY.md
@@ -1927,6 +1943,9 @@ LLM_LICENSES="
 	ollama_llms_hermes3? (
 		llama3-LICENSE
 		llama3-USE_POLICY.md
+	)
+	ollama_llms_hookingai-monah-8b? (
+		Apache-2.0
 	)
 	ollama_llms_internlm2? (
 		Apache-2.0
@@ -2115,6 +2134,10 @@ LLM_LICENSES="
 	)
 	ollama_llms_paraphrase-multilingual? (
 		Apache-2.0
+	)
+	ollama_llms_partai-dorna-llama3? (
+		llama3-LICENSE
+		llama3-USE_POLICY.md
 	)
 	ollama_llms_phi? (
 		MIT
@@ -2362,7 +2385,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
-blis cuda lapack mkl openblas openrc rocm systemd unrestrict video_cards_intel
+blis cuda emoji lapack mkl openblas openrc rocm systemd unrestrict video_cards_intel
 ebuild-revision-7
 "
 gen_rocm_required_use() {
@@ -2439,6 +2462,17 @@ REQUIRED_USE="
 RDEPEND="
 	acct-group/ollama
 	acct-user/ollama
+	emoji? (
+		>=media-libs/fontconfig-2.15.0
+		>=media-libs/freetype-2.13.2[png]
+		>=x11-libs/cairo-1.16.0
+		|| (
+			media-fonts/noto-color-emoji
+			media-fonts/noto-color-emoji-bin
+			media-fonts/noto-emoji
+			media-fonts/twemoji
+		)
+	)
 	openrc? (
 		sys-apps/openrc[bash]
 		|| (
@@ -2899,6 +2933,7 @@ src_configure() {
 		["akx-viking-7b"]="akx/viking-7b"
 		["ALIENTELLIGENCE-christiancounselor"]="ALIENTELLIGENCE/christiancounselor"
 		["ALIENTELLIGENCE-crisisintervention"]="ALIENTELLIGENCE/crisisintervention"
+		["ALIENTELLIGENCE-doomsdayurvivalist"]="ALIENTELLIGENCE/doomsdayurvivalist"
 		["ALIENTELLIGENCE-enriquecastillorincon"]="ALIENTELLIGENCE/enriquecastillorincon"
 		["ALIENTELLIGENCE-gamemasterroleplaying"]="ALIENTELLIGENCE/gamemasterroleplaying"
 		["ALIENTELLIGENCE-holybible"]="ALIENTELLIGENCE/holybible"
@@ -2923,7 +2958,10 @@ src_configure() {
 		["chatgph-medix-ph"]="chatgph/medix-ph"
 		["disinfozone-telos"]="disinfozone/telos"
 		["eramax-aura_v3"]="eramax/aura_v3"
+		["fixt-home-3b-v3"]="fixt/home-3b-v3"
+		["fixt-home-3b-v2"]="fixt/home-3b-v2"
 		["hemanth-chessplayer"]="hemanth/chessplayer"
+		["hookingai-monah-8b"]="hookingai/monah-8b"
 		["jimscard-adult-film-screenwriter-nsfw"]="jimscard/adult-film-screenwriter-nsfw"
 		["jimscard-whiterabbit-neo"]="jimscard/whiterabbit-neo"
 		["mannix-replete-adapted-llama3-8b"]="mannix/replete-adapted-llama3-8b"
