@@ -60,11 +60,18 @@ CUDA_TARGETS_COMPAT=(
 	sm_90a
 )
 LLMS=(
-alfred ALIENTELLIGENCE-enriquecastillorincon ALIENTELLIGENCE-sarah
-ALIENTELLIGENCE-sarahv2 all-minilm Artalius-lixi aya bakllava
+adens-quran-guide
+alfred ALIENTELLIGENCE-enriquecastillorincon ALIENTELLIGENCE-gamemasterroleplaying
+ALIENTELLIGENCE-sarah
+ALIENTELLIGENCE-sarahv2
+ALIENTELLIGENCE-whiterabbit
+ALIENTELLIGENCE-whiterabbitv2 all-minilm
+Artalius-lixi aya bakllava
 benevolentjoker-belial benevolentjoker-bethanygpt benevolentjoker-nsfwmonika
 benevolentjoker-nsfwvanessa benevolentjoker-satan bespoke-minicheck bge-large
-bge-m3 canadiangamer-neena canadiangamer-priya chatgph-70b-instruct
+bge-m3 canadiangamer-neena canadiangamer-priya
+captainkyd-whiterabbitneo7b
+chatgph-70b-instruct
 chatgph-gph-main chatgph-medix-ph codebooga
 codegeex4 codegemma codellama codeqwen codestral codeup command-r
 command-r-plus dbrx deepseek-coder deepseek-coder-v2
@@ -72,21 +79,30 @@ deepseek-llm deepseek-v2 deepseek-v2.5 disinfozone-telos dolphin-llama3
 dolphin-mistral dolphin-mixtral dolphin-phi dolphincoder duckdb-nsql
 eramax-aura_v3 everythinglm falcon falcon2 firefunction-v2 gemma gemma2 glm4
 goliath granite-code hermes3 internlm2 jimscard-adult-film-screenwriter-nsfw
+jimscard-whiterabbit-neo
 llama-guard3 llama-pro llama2 llama2-chinese llama2-uncensored llama3
 llama3-chatqa llama3-gradient llama3-groq-tool-use llama3.1 llama3.2 llava
-llava-llama3 llava-phi3 magicoder mathstral meditron medllama2 megadolphin
+llava-llama3 llava-phi3 magicoder mannix-replete-adapted-llama3-8b
+mannix-replete-coder-llama3-8b
+mathstral meditron medllama2 megadolphin
 minicpm-v mistral mistral-large mistral-nemo mistral-openorca mistral-small
-mistrallite mixtral moondream mxbai-embed-large nemotron nemotron-mini
+mistrallite mixtral moondream monotykamary-whiterabbitneo-v1.5a
+mxbai-embed-large nemotron nemotron-mini
 neural-chat nexusraven nomic-embed-text notus notux nous-hermes nous-hermes2
 nous-hermes2-mixtral nuextract open-orca-platypus2 openchat openhermes orca-mini
 orca2 paraphrase-multilingual phi phi3 phi3.5 phind-codellama qwen qwen2
 qwen2-math qwen2.5 qwen2.5-coder reader-lm reefer-minimonica reefer-monica
 reflection
-samantha-mistral shieldgemma smollm snowflake-arctic-embed solar solar-pro
+rfc-whiterabbitneo
+rouge-replete-coder-qwen2-1.5b
+samantha-mistral
+savethedoctor-whiterabbitneo13bq8_0
+shieldgemma smollm snowflake-arctic-embed solar solar-pro
 sparksammy-samantha sparksammy-samantha-3.1 sparksammy-samantha-eggplant
 sparksammy-samantha-v3-uncensored sparksammy-tinysam-goog
 sparksammy-tinysam-msft sqlcoder stable-beluga stable-code stablelm-zephyr
-stablelm2 starcoder starcoder2 starling-lm tinydolphin tinyllama vicuna
+stablelm2 starcoder starcoder2 starling-lm themanofrod-travel-agent
+tinydolphin tinyllama vicuna
 wizard-math wizard-vicuna wizard-vicuna-uncensored wizardcoder wizardlm
 wizardlm-uncensored wizardlm2 xwinlm yarn-llama2 yarn-mistral yi yi-coder
 zephyr
@@ -1656,10 +1672,18 @@ HOMEPAGE="https://ollama.com"
 # If the LLM is marked all-rights-reserved, it is a placeholder until it is
 # resolved by the model gallery or on discovery.
 LLM_LICENSES="
+	ollama_llms_adens-quran-guide? (
+		llama3_2-LICENSE
+		llama3_2-USE_POLICY.md
+	)
 	ollama_llms_alfred? (
 		Apache-2.0
 	)
 	ollama_llms_ALIENTELLIGENCE-enriquecastillorincon? (
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+	)
+	ollama_llms_ALIENTELLIGENCE-gamemasterroleplaying? (
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
@@ -1670,6 +1694,18 @@ LLM_LICENSES="
 	ollama_llms_ALIENTELLIGENCE-sarahv2? (
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
+	)
+	ollama_llms_ALIENTELLIGENCE-whiterabbit? (
+		llama3-LICENSE
+		llama3-USE_POLICY.md
+		WhiteRabbitNeo-Terms-of-Use
+		WhiteRabbitNeo-Usage-Restrictions
+	)
+	ollama_llms_ALIENTELLIGENCE-whiterabbitv2? (
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+		WhiteRabbitNeo-Terms-of-Use
+		WhiteRabbitNeo-Usage-Restrictions
 	)
 	ollama_llms_all-minilm? (
 		Apache-2.0
@@ -1719,6 +1755,11 @@ LLM_LICENSES="
 	ollama_llms_canadiangamer-priya? (
 		llama2-LICENSE
 		llama2-USE_POLICY.md
+	)
+	ollama_llms_captainkyd-whiterabbitneo7b? (
+		DEEPSEEK-LICENSE-AGREEMENT-1.0
+		WhiteRabbitNeo-Terms-of-Use
+		WhiteRabbitNeo-Usage-Restrictions
 	)
 	ollama_llms_chatgph-70b-instruct? (
 		Apache-2.0
@@ -1848,6 +1889,12 @@ LLM_LICENSES="
 	ollama_llms_jimscard-adult-film-screenwriter-nsfw? (
 		Apache-2.0
 	)
+	ollama_llms_jimscard-whiterabbit-neo? (
+		llama2-LICENSE
+		llama2-USE_POLICY.md
+		WhiteRabbitNeo-Terms-of-Use
+		WhiteRabbitNeo-Usage-Restrictions
+	)
 	ollama_llms_llama-guard3? (
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
@@ -1904,6 +1951,14 @@ LLM_LICENSES="
 		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
+	ollama_llms_mannix-replete-adapted-llama3-8b? (
+		llama3-LICENSE
+		llama3-USE_POLICY.md
+	)
+	ollama_llms_mannix-replete-coder-llama3-8b? (
+		llama3-LICENSE
+		llama3-USE_POLICY.md
+	)
 	ollama_llms_mathstral? (
 		Apache-2.0
 	)
@@ -1955,6 +2010,11 @@ LLM_LICENSES="
 	)
 	ollama_llms_moondream? (
 		Apache-2.0
+	)
+	ollama_llms_monotykamary-whiterabbitneo-v1.5a? (
+		DEEPSEEK-LICENSE-AGREEMENT-1.0
+		WhiteRabbitNeo-Terms-of-Use
+		WhiteRabbitNeo-Usage-Restrictions
 	)
 	ollama_llms_neural-chat? (
 		Apache-2.0
@@ -2046,8 +2106,23 @@ LLM_LICENSES="
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
+	ollama_llms_rfc-whiterabbitneo? (
+		llama2-LICENSE
+		llama2-USE_POLICY.md
+		WhiteRabbitNeo-Terms-of-Use
+		WhiteRabbitNeo-Usage-Restrictions
+	)
+	ollama_llms_rouge-replete-coder-qwen2-1.5b? (
+		Apache-2.0
+	)
 	ollama_llms_samantha-mistral? (
 		Apache-2.0
+	)
+	ollama_llms_savethedoctor-whiterabbitneo13bq8_0? (
+		llama2-LICENSE
+		llama2-USE_POLICY.md
+		WhiteRabbitNeo-Terms-of-Use
+		WhiteRabbitNeo-Usage-Restrictions
 	)
 	ollama_llms_shieldgemma? (
 		Gemma-Terms-of-Use-20240401
@@ -2111,6 +2186,9 @@ LLM_LICENSES="
 	)
 	ollama_llms_starling-lm? (
 		Apache-2.0
+	)
+	ollama_llms_themanofrod-travel-agent? (
+		Gemma-Terms-of-Use-20240221
 	)
 	ollama_llms_tinydolphin? (
 		Apache-2.0
@@ -2762,9 +2840,13 @@ src_configure() {
 	fi
 
 	declare -A use_alias=(
+		["adens-quran-guide"]="adens/quran-guide"
 		["ALIENTELLIGENCE-enriquecastillorincon"]="ALIENTELLIGENCE/enriquecastillorincon"
+		["ALIENTELLIGENCE-gamemasterroleplaying"]="ALIENTELLIGENCE/gamemasterroleplaying"
 		["ALIENTELLIGENCE-sarah"]="ALIENTELLIGENCE/sarah"
 		["ALIENTELLIGENCE-sarahv2"]="ALIENTELLIGENCE/sarahv2"
+		["ALIENTELLIGENCE-whiterabbit"]="ALIENTELLIGENCE/whiterabbit"
+		["ALIENTELLIGENCE-whiterabbitv2"]="ALIENTELLIGENCE/whiterabbitv2"
 		["Artalius-lixi"]="Artalius/lixi"
 		["benevolentjoker-belial"]="benevolentjoker/belial"
 		["benevolentjoker-bethanygpt"]="benevolentjoker/bethanygpt"
@@ -2773,20 +2855,29 @@ src_configure() {
 		["benevolentjoker-satan"]="benevolentjoker/satan"
 		["canadiangamer-neena"]="canadiangamer/neena"
 		["canadiangamer-priya"]="canadiangamer/priya"
+		["captainkyd-whiterabbitneo7b"]="captainkyd/whiterabbitneo7b"
 		["chatgph-70b-instruct"]="chatgph/70b-instruct"
 		["chatgph-gph-main"]="chatgph/gph-main"
 		["chatgph-medix-ph"]="chatgph/medix-ph"
 		["disinfozone-telos"]="disinfozone/telos"
 		["eramax-aura_v3"]="eramax/aura_v3"
 		["jimscard-adult-film-screenwriter-nsfw"]="jimscard/adult-film-screenwriter-nsfw"
+		["jimscard-whiterabbit-neo"]="jimscard/whiterabbit-neo"
+		["mannix-replete-adapted-llama3-8b"]="mannix/replete-adapted-llama3-8b"
+		["mannix-replete-coder-llama3-8b"]="mannix/replete-coder-llama3-8b"
+		["monotykamary-whiterabbitneo-v1.5a"]="monotykamary/whiterabbitneo-v1.5a"
 		["reefer-minimonica"]="reefer/minimonica"
 		["reefer-monica"]="reefer/monica"
+		["rfc-whiterabbitneo"]="rfc/whiterabbitneo"
+		["rouge-replete-coder-qwen2-1.5b"]="rouge/replete-coder-qwen2-1.5b"
+		["savethedoctor-whiterabbitneo13bq8_0"]="savethedoctor/whiterabbitneo13bq8_0"
 		["sparksammy-samantha"]="sparksammy/samantha"
 		["sparksammy-samantha-3.1"]="sparksammy/samantha-3.1"
 		["sparksammy-samantha-eggplant"]="sparksammy/samantha-eggplant"
 		["sparksammy-samantha-v3-uncensored"]="sparksammy/samantha-v3-uncensored"
 		["sparksammy-tinysam-goog"]="sparksammy/tinysam-goog"
 		["sparksammy-tinysam-msft"]="sparksammy/tinysam-msft"
+		["themanofrod-travel-agent"]="themanofrod/travel-agent"
 	)
 
 	# Toggle LLM in whitelist to filter out LLM support by license.
