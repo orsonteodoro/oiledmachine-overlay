@@ -84,7 +84,9 @@ command-r-plus dbrx deepseek-coder deepseek-coder-v2
 deepseek-llm deepseek-v2 deepseek-v2.5 disinfozone-telos dolphin-llama3
 dolphin-mistral dolphin-mixtral dolphin-phi dolphincoder duckdb-nsql
 eramax-aura_v3 everythinglm falcon falcon2 firefunction-v2 gemma gemma2 glm4
-goliath granite-code hermes3 internlm2 jimscard-adult-film-screenwriter-nsfw
+goliath granite-code
+hemanth-chessplayer
+hermes3 internlm2 jimscard-adult-film-screenwriter-nsfw
 jimscard-whiterabbit-neo
 llama-guard3 llama-pro llama2 llama2-chinese llama2-uncensored llama3
 llama3-chatqa llama3-gradient llama3-groq-tool-use llama3.1 llama3.2 llava
@@ -1918,6 +1920,10 @@ LLM_LICENSES="
 	ollama_llms_granite-code? (
 		Apache-2.0
 	)
+	ollama_llms_hemanth-chessplayer? (
+		llama2-LICENSE
+		llama2-USE_POLICY.md
+	)
 	ollama_llms_hermes3? (
 		llama3-LICENSE
 		llama3-USE_POLICY.md
@@ -2917,6 +2923,7 @@ src_configure() {
 		["chatgph-medix-ph"]="chatgph/medix-ph"
 		["disinfozone-telos"]="disinfozone/telos"
 		["eramax-aura_v3"]="eramax/aura_v3"
+		["hemanth-chessplayer"]="hemanth/chessplayer"
 		["jimscard-adult-film-screenwriter-nsfw"]="jimscard/adult-film-screenwriter-nsfw"
 		["jimscard-whiterabbit-neo"]="jimscard/whiterabbit-neo"
 		["mannix-replete-adapted-llama3-8b"]="mannix/replete-adapted-llama3-8b"
