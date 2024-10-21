@@ -2307,7 +2307,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
-blis cuda lapack mkl openblas openrc rocm systemd tbb unrestrict video_cards_intel
+blis cuda lapack mkl openblas openrc rocm systemd unrestrict video_cards_intel
 ebuild-revision-7
 "
 gen_rocm_required_use() {
@@ -3256,7 +3256,7 @@ einfo "  ${PN} ollama show llama3 --tags		# Shows descriptive tags, capabilities
 einfo "  ${PN} ollama show llama3 --website	# Shows the ${PN} website entry for the llama3 model"
 einfo "  ${PN} ollama show llama3 --licence	# Shows the model license of the llama3 model"
 einfo "  ${PN} ollama find-size 4GB		# Shows the models to download that are 4GB or less"
-einfo "  ${PN} ollama find-size 500MB		# Shows the models to download that are 100MB or less"
+einfo "  ${PN} ollama find-size 500MB		# Shows the models to download that are 500MB or less"
 einfo
 einfo "You still need to download a pregenerated model.  The full list can be"
 einfo "found at:"
