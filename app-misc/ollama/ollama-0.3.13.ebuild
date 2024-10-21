@@ -61,7 +61,12 @@ CUDA_TARGETS_COMPAT=(
 )
 LLMS=(
 adens-quran-guide
-alfred ALIENTELLIGENCE-enriquecastillorincon ALIENTELLIGENCE-gamemasterroleplaying
+alfred ALIENTELLIGENCE-christiancounselor ALIENTELLIGENCE-crisisintervention
+ALIENTELLIGENCE-enriquecastillorincon ALIENTELLIGENCE-gamemasterroleplaying
+ALIENTELLIGENCE-holybible
+ALIENTELLIGENCE-mentalwellness
+ALIENTELLIGENCE-pcarchitect
+ALIENTELLIGENCE-prayerline
 ALIENTELLIGENCE-sarah
 ALIENTELLIGENCE-sarahv2
 ALIENTELLIGENCE-whiterabbit
@@ -90,7 +95,8 @@ mistrallite mixtral moondream monotykamary-whiterabbitneo-v1.5a
 mxbai-embed-large nemotron nemotron-mini
 neural-chat nexusraven nomic-embed-text notus notux nous-hermes nous-hermes2
 nous-hermes2-mixtral nuextract open-orca-platypus2 openchat openhermes orca-mini
-orca2 paraphrase-multilingual phi phi3 phi3.5 phind-codellama qwen qwen2
+orca2 paraphrase-multilingual partai-dorna-llama3 phi phi3 phi3.5
+phind-codellama qwen qwen2
 qwen2-math qwen2.5 qwen2.5-coder reader-lm reefer-minimonica reefer-monica
 reflection
 rfc-whiterabbitneo
@@ -1679,11 +1685,35 @@ LLM_LICENSES="
 	ollama_llms_alfred? (
 		Apache-2.0
 	)
+	ollama_llms_ALIENTELLIGENCE-christiancounselor? (
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+	)
+	ollama_llms_ALIENTELLIGENCE-crisisintervention? (
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+	)
 	ollama_llms_ALIENTELLIGENCE-enriquecastillorincon? (
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
 	ollama_llms_ALIENTELLIGENCE-gamemasterroleplaying? (
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+	)
+	ollama_llms_ALIENTELLIGENCE-holybible? (
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+	)
+	ollama_llms_ALIENTELLIGENCE-mentalwellness? (
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+	)
+	ollama_llms_ALIENTELLIGENCE-pcarchitect? (
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+	)
+	ollama_llms_ALIENTELLIGENCE-prayerline? (
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
 	)
@@ -1838,6 +1868,10 @@ LLM_LICENSES="
 	)
 	ollama_llms_dolphincoder? (
 		BigCode-Open-RAIL-M-v1-License-Agreement
+	)
+	ollama_llms_partai-dorna-llama3? (
+		llama3-LICENSE
+		llama3-USE_POLICY.md
 	)
 	ollama_llms_duckdb-nsql? (
 		llama2-LICENSE
@@ -2152,6 +2186,7 @@ LLM_LICENSES="
 		Apache-2.0
 		MICROSOFT-RESEARCH-LICENSE-TERMS
 		STABILITY-AI-NON-COMMERCIAL-RESEARCH-COMMUNITY-LICENSE-AGREEMENT
+		SPL-R5-SR1
 	)
 	ollama_llms_sparksammy-samantha-v3-uncensored? (
 		llama3-LICENSE
@@ -2841,8 +2876,14 @@ src_configure() {
 
 	declare -A use_alias=(
 		["adens-quran-guide"]="adens/quran-guide"
+		["ALIENTELLIGENCE-christiancounselor"]="ALIENTELLIGENCE/christiancounselor"
+		["ALIENTELLIGENCE-crisisintervention"]="ALIENTELLIGENCE/crisisintervention"
 		["ALIENTELLIGENCE-enriquecastillorincon"]="ALIENTELLIGENCE/enriquecastillorincon"
 		["ALIENTELLIGENCE-gamemasterroleplaying"]="ALIENTELLIGENCE/gamemasterroleplaying"
+		["ALIENTELLIGENCE-holybible"]="ALIENTELLIGENCE/holybible"
+		["ALIENTELLIGENCE-mentalwellness"]="ALIENTELLIGENCE/mentalwellness"
+		["ALIENTELLIGENCE-pcarchitect"]="ALIENTELLIGENCE/pcarchitect"
+		["ALIENTELLIGENCE-prayerline"]="ALIENTELLIGENCE/prayerline"
 		["ALIENTELLIGENCE-sarah"]="ALIENTELLIGENCE/sarah"
 		["ALIENTELLIGENCE-sarahv2"]="ALIENTELLIGENCE/sarahv2"
 		["ALIENTELLIGENCE-whiterabbit"]="ALIENTELLIGENCE/whiterabbit"
@@ -2866,6 +2907,7 @@ src_configure() {
 		["mannix-replete-adapted-llama3-8b"]="mannix/replete-adapted-llama3-8b"
 		["mannix-replete-coder-llama3-8b"]="mannix/replete-coder-llama3-8b"
 		["monotykamary-whiterabbitneo-v1.5a"]="monotykamary/whiterabbitneo-v1.5a"
+		["partai-dorna-llama3"]="partai/dorna-llama3"
 		["reefer-minimonica"]="reefer/minimonica"
 		["reefer-monica"]="reefer/monica"
 		["rfc-whiterabbitneo"]="rfc/whiterabbitneo"
