@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO package (required):
-# gruut_lang_en
 # python-crfsuite
 
 # TODO package (optional):
@@ -19,7 +18,20 @@ EAPI=8
 DISTUTILS_USE_PEP517="setuptools"
 LANGS=(
 	"ar"
+	"ca"
+	"cs"
+	"de"
+	"en"
+	"es"
 	"fa"
+	"fr"
+	"it"
+	"lb"
+	"nl"
+	"pt"
+	"ru"
+	"sv"
+	"sw"
 )
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream only list up to 3.9
 
@@ -45,6 +57,9 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LANGS[@]/#/l10n_}
 align g2p train
+"
+REQUIRED_USE="
+	l10n_en
 "
 RDEPEND+="
 	>=dev-python/Babel-2.8.0[${PYTHON_USEDEP}]
@@ -81,5 +96,51 @@ DEPEND+="
 BDEPEND+="
 "
 DOCS=( "README.md" )
+
+src_compile() {
+	S="${WORKDIR}/${PN}-${PV}"
+	distutils-r1_src_compile
+	local lang
+	for lang in ${LANGS[@]} ; do
+		if use "l10n_${lang}" ; then
+			S="${WORKDIR}/${PN}-${PV}/gruut-lang-${lang}"
+			pushd "${S}" >/dev/null 2>&1 || die
+				distutils-r1_src_compile
+			popd || die
+		fi
+	done
+}
+
+python_install() {
+	[[ "${SKIP}" == "1" ]] && return
+	distutils-r1_python_install
+	delete_tests() {
+		local path=$(python_get_sitedir)
+		rm -rf "${ED}/${path}/tests" || die
+	}
+	python_foreach_impl delete_tests
+}
+
+src_install() {
+	SKIP=0
+	S="${WORKDIR}/${PN}-${PV}"
+	distutils-r1_src_install
+	SKIP=1
+	local lang
+	for lang in ${LANGS[@]} ; do
+		if use "l10n_${lang}" ; then
+einfo "Installing gruut-lang-${lang}"
+			install_lang() {
+				pushd "${S}/gruut-lang-${lang}-${EPYTHON/./_}/install/usr/lib/${EPYTHON}/site-packages" >/dev/null 2>&1 || die
+					insinto "/usr/lib/${EPYTHON}/site-packages"
+					doins -r *
+				popd >/dev/null 2>&1 || die
+			}
+
+			python_foreach_impl install_lang
+
+		fi
+	done
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
