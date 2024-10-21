@@ -1778,7 +1778,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	}
  
  	req := api.ShowRequest{Name: args[0]}
-@@ -927,6 +2652,137 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -927,6 +2652,138 @@ func PullHandler(cmd *cobra.Command, arg
  	return nil
  }
  
@@ -1866,6 +1866,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	sort.Sort(ByModelSize{results})
 +	printModelSizeResults(results)
 +	if len(results) != 0 {
++		fmt.Println()
 +		fmt.Printf("About compressed floats (aka f16), or int4 (aka q4) compression....\n")
 +		fmt.Printf("f16 support should only be used on f16 native hardware.\n")
 +		fmt.Printf("Ollama uses q4 quantization by default if without q suffix, but may reduce AGI.\n")
