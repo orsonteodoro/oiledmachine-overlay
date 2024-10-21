@@ -3356,7 +3356,7 @@ einfo "  systemctl start ${PN}			# Start server"
 einfo "  ${PN} serve				# Start server, note you are reponsible for adding it to your init system."
 	fi
 einfo "  ${PN} avail				# Lists whitelisted models available to download"
-einfo "  ${PN} run llama3:70b			# Downloads and loads a llama3 Large Language Model (LLM) with 70 billion parameters"
+einfo "  ${PN} run llama3:70b			# Downloads, load, and chat to a llama3 Large Language Model (LLM) with 70 billion parameters"
 einfo "  ${PN} ollama show llama3 --tags		# Shows descriptive tags, capabilities, personality of the llama3 model"
 einfo "  ${PN} ollama show llama3 --website	# Shows the ${PN} website entry for the llama3 model"
 einfo "  ${PN} ollama show llama3 --licence	# Shows the model license of the llama3 model"
