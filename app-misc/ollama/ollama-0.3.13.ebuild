@@ -96,6 +96,7 @@ hermes3
 hookingai-monah-8b
 internlm2 jimscard-adult-film-screenwriter-nsfw
 jimscard-whiterabbit-neo
+joefamous-grok-1
 leeplenty-lumimaid-v0.2
 llama-guard3 llama-pro llama2 llama2-chinese llama2-uncensored llama3
 llama3-chatqa llama3-gradient llama3-groq-tool-use llama3.1 llama3.2 llava
@@ -1965,6 +1966,9 @@ LLM_LICENSES="
 		WhiteRabbitNeo-Terms-of-Use
 		WhiteRabbitNeo-Usage-Restrictions
 	)
+	ollama_llms_joefamous-grok-1? (
+		Apache-2.0
+	)
 	ollama_llms_llama-guard3? (
 		llama3_1-LICENSE
 		llama3_1-USE_POLICY.md
@@ -2981,6 +2985,7 @@ src_configure() {
 		["hookingai-monah-8b"]="hookingai/monah-8b"
 		["jimscard-adult-film-screenwriter-nsfw"]="jimscard/adult-film-screenwriter-nsfw"
 		["jimscard-whiterabbit-neo"]="jimscard/whiterabbit-neo"
+		["joefamous-grok-1"]="joefamous/grok-1"
 		["leeplenty-lumimaid-v0.2"]="leeplenty/lumimaid-v0.2"
 		["mannix-replete-adapted-llama3-8b"]="mannix/replete-adapted-llama3-8b"
 		["mannix-replete-coder-llama3-8b"]="mannix/replete-coder-llama3-8b"
