@@ -86,13 +86,13 @@ command-r-plus dbrx deepseek-coder deepseek-coder-v2
 deepseek-llm deepseek-v2 deepseek-v2.5 disinfozone-telos dolphin-llama3
 dolphin-mistral dolphin-mixtral dolphin-phi dolphincoder duckdb-nsql
 eramax-aura_v3 everythinglm falcon falcon2 firefunction-v2 gemma gemma2 glm4
+fixt-home-3b-v3
+fixt-home-3b-v2
 goliath granite-code
 granite3-dense
 granite3-moe
 hemanth-chessplayer
 hermes3
-fixt-home-3b-v3
-fixt-home-3b-v2
 hookingai-monah-8b
 internlm2 jimscard-adult-film-screenwriter-nsfw
 jimscard-whiterabbit-neo
@@ -103,14 +103,15 @@ llava-llama3 llava-phi3 magicoder mannix-replete-adapted-llama3-8b
 mannix-replete-coder-llama3-8b
 mathstral meditron medllama2 megadolphin
 minicpm-v mistral mistral-large mistral-nemo mistral-openorca mistral-small
-mistrallite mixtral moondream monotykamary-whiterabbitneo-v1.5a
+mistrallite mixtral monotykamary-whiterabbitneo-v1.5a
+moondream
 mxbai-embed-large nemotron nemotron-mini
 neural-chat nexusraven nomic-embed-text notus notux nous-hermes nous-hermes2
 nous-hermes2-mixtral nqduc-gemsura nqduc-mixsura nqduc-mixsura-sft nuextract
 open-orca-platypus2 openchat openhermes orca-mini
 orca2 paraphrase-multilingual partai-dorna-llama3 phi phi3 phi3.5
 phind-codellama qwen qwen2
-qwen2-math qwen2.5 qwen2.5-coder reader-lm reefer-minimonica reefer-monica
+qwen2-math qwen2.5 qwen2.5-coder reader-lm reefer-her2 reefer-minimonica reefer-monica
 reflection
 rfc-whiterabbitneo
 rouge-replete-coder-qwen2-1.5b
@@ -2183,6 +2184,10 @@ LLM_LICENSES="
 	ollama_llms_reader-lm? (
 		CC-BY-NC-4.0
 	)
+	ollama_llms_reefer-her2? (
+		llama3-LICENSE
+		llama3-USE_POLICY.md
+	)
 	ollama_llms_reefer-minimonica? (
 		all-rights-reserved
 	)
@@ -2984,6 +2989,7 @@ src_configure() {
 		["nqduc-mixsura"]="nqduc/mixsura"
 		["nqduc-mixsura-sft"]="nqduc/mixsura-sft"
 		["partai-dorna-llama3"]="partai/dorna-llama3"
+		["reefer-her2"]="reefer/her2"
 		["reefer-minimonica"]="reefer/minimonica"
 		["reefer-monica"]="reefer/monica"
 		["rfc-whiterabbitneo"]="rfc/whiterabbitneo"
