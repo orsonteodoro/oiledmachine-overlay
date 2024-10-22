@@ -63,14 +63,14 @@ declare -A _ALL_VERSIONS=(
 ["_6_7"]="EOL"
 ["_6_8"]="EOL"
 ["_6_9"]="EOL"
-["_6_10"]="6.10"
+["_6_10"]="EOL"
 ["_6_11"]="6.11"
 )
 _INTEL_MICROCODE_PV=0
 _LINUX_FIRMWARE_PV=0
 
 LTS_VERSIONS=("4.19" "5.4" "5.10" "5.15" "6.1" "6.6")
-ACTIVE_VERSIONS=("4.19" "5.4" "5.10" "5.15" "6.1" "6.6" "6.10" "6.11")
+ACTIVE_VERSIONS=("4.19" "5.4" "5.10" "5.15" "6.1" "6.6" "6.11")
 STABLE_OR_MAINLINE_VERSIONS=("6.11")
 ALL_VERSIONS=(
 	"0"
