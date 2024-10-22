@@ -1,0 +1,23 @@
+diff '--color=auto' -urp numpy-2.1.2.orig/numpy/distutils/command/config.py numpy-2.1.2/numpy/distutils/command/config.py
+--- numpy-2.1.2.orig/numpy/distutils/command/config.py	2024-10-04 21:13:55.000000000 -0700
++++ numpy-2.1.2/numpy/distutils/command/config.py	2024-10-22 07:56:34.848874118 -0700
+@@ -16,7 +16,7 @@ from distutils.file_util import copy_fil
+ from distutils.ccompiler import CompileError, LinkError
+ import distutils
+ from numpy.distutils.exec_command import filepath_from_subprocess_output
+-from numpy.distutils.mingw32ccompiler import generate_manifest
++#from numpy.distutils.mingw32ccompiler import generate_manifest
+ from numpy.distutils.command.autodist import (check_gcc_function_attribute,
+                                               check_gcc_function_attribute_with_intrinsics,
+                                               check_gcc_variable_attribute,
+@@ -157,8 +157,8 @@ class config(old_config):
+                 if fileexists: continue
+                 log.warn('could not find library %r in directories %s' \
+                          % (libname, library_dirs))
+-        elif self.compiler.compiler_type == 'mingw32':
+-            generate_manifest(self)
++#        elif self.compiler.compiler_type == 'mingw32':
++#            generate_manifest(self)
+         return self._wrap_method(old_config._link, lang,
+                                  (body, headers, include_dirs,
+                                   libraries, library_dirs, lang))
