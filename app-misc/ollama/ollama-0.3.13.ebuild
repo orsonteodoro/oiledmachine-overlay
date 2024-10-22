@@ -74,6 +74,7 @@ ALIENTELLIGENCE-sarahv2
 ALIENTELLIGENCE-whiterabbit
 ALIENTELLIGENCE-whiterabbitv2 all-minilm
 Artalius-lixi aya bakllava
+artifish-mlewd-v2.4
 benevolentjoker-belial benevolentjoker-bethanygpt benevolentjoker-nsfwmonika
 benevolentjoker-nsfwvanessa benevolentjoker-satan bespoke-minicheck bge-large
 bge-m3 canadiangamer-neena canadiangamer-priya
@@ -95,6 +96,7 @@ fixt-home-3b-v2
 hookingai-monah-8b
 internlm2 jimscard-adult-film-screenwriter-nsfw
 jimscard-whiterabbit-neo
+leeplenty-lumimaid-v0.2
 llama-guard3 llama-pro llama2 llama2-chinese llama2-uncensored llama3
 llama3-chatqa llama3-gradient llama3-groq-tool-use llama3.1 llama3.2 llava
 llava-llama3 llava-phi3 magicoder mannix-replete-adapted-llama3-8b
@@ -1762,6 +1764,9 @@ LLM_LICENSES="
 		llama3_2-LICENSE
 		llama3_2-USE_POLICY.md
 	)
+	ollama_llms_artifish-mlewd-v2.4? (
+		CC-BY-NC-4.0
+	)
 	ollama_llms_aya? (
 		CC-BY-NC-4.0
 		C4AI-Acceptable-Use-Policy
@@ -2010,6 +2015,12 @@ LLM_LICENSES="
 	)
 	ollama_llms_llava-phi3? (
 		all-rights-reserved
+	)
+	ollama_llms_leeplenty-lumimaid-v0.2? (
+		Apache-2.0
+		CC-BY-NC-4.0
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
 	)
 	ollama_llms_magicoder? (
 		llama2-LICENSE
@@ -2945,6 +2956,7 @@ src_configure() {
 		["ALIENTELLIGENCE-whiterabbit"]="ALIENTELLIGENCE/whiterabbit"
 		["ALIENTELLIGENCE-whiterabbitv2"]="ALIENTELLIGENCE/whiterabbitv2"
 		["Artalius-lixi"]="Artalius/lixi"
+		["artifish-mlewd-v2.4"]="artifish/mlewd-v2.4"
 		["benevolentjoker-belial"]="benevolentjoker/belial"
 		["benevolentjoker-bethanygpt"]="benevolentjoker/bethanygpt"
 		["benevolentjoker-nsfwmonika"]="benevolentjoker/nsfwmonika"
@@ -2964,6 +2976,7 @@ src_configure() {
 		["hookingai-monah-8b"]="hookingai/monah-8b"
 		["jimscard-adult-film-screenwriter-nsfw"]="jimscard/adult-film-screenwriter-nsfw"
 		["jimscard-whiterabbit-neo"]="jimscard/whiterabbit-neo"
+		["leeplenty-lumimaid-v0.2"]="leeplenty/lumimaid-v0.2"
 		["mannix-replete-adapted-llama3-8b"]="mannix/replete-adapted-llama3-8b"
 		["mannix-replete-coder-llama3-8b"]="mannix/replete-coder-llama3-8b"
 		["monotykamary-whiterabbitneo-v1.5a"]="monotykamary/whiterabbitneo-v1.5a"
