@@ -3376,11 +3376,12 @@ einfo "  ${PN} serve				# Start server, note you are reponsible for adding it to
 	fi
 einfo "  ${PN} avail				# Lists whitelisted models available to download"
 einfo "  ${PN} run llama3:70b			# Downloads, load, and chat to a llama3 Large Language Model (LLM) with 70 billion parameters"
-einfo "  ${PN} ollama show llama3 --tags		# Shows descriptive tags, capabilities, personality of the llama3 model"
-einfo "  ${PN} ollama show llama3 --website	# Shows the ${PN} website entry for the llama3 model"
-einfo "  ${PN} ollama show llama3 --licence	# Shows the model license of the llama3 model"
-einfo "  ${PN} ollama find-size 4GB		# Shows the models to download that are 4GB or less"
-einfo "  ${PN} ollama find-size 500MB		# Shows the models to download that are 500MB or less"
+einfo "  ${PN} show llama3 --tags		# Shows descriptive tags, capabilities, personality of the llama3 model"
+einfo "  ${PN} show llama3 --website		# Shows the ${PN} website entry for the llama3 model"
+einfo "  ${PN} show llama3 --licence		# Shows the model license of the llama3 model"
+einfo "  ${PN} find-size 500MB			# Shows the models to download that are 500MB or less"
+einfo "  ${PN} find-size 4GB			# Shows the models to download that are 4GB or less"
+einfo "  ${PN} find-size 4GB | grep orca	# Shows orca models less than or equal to 4GB"
 einfo
 einfo "You still need to download a pregenerated model.  The full list can be"
 einfo "found at:"
