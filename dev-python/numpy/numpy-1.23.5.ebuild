@@ -67,7 +67,8 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/numpy-1.22.0-no-hardcode-blasv2.patch"
+	"${FILESDIR}/${PN}-1.22.0-no-hardcode-blasv2.patch"
+	"${FILESDIR}/${PN}-2.1.2-disable-generate-manifest.patch" # unbreak ModuleNotFoundError: No module named 'distutils.msvccompiler' with distutils 74.x
 )
 
 distutils_enable_tests "pytest"
