@@ -1948,7 +1948,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"internlm2": "Apache-2.0",
 +		"jimscard/adult-film-screenwriter-nsfw": "Apache-2.0",
 +		"jimscard/whiterabbit-neo": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy, WhiteRabbitNeo-Terms-of-Use, WhiteRabbitNeo-Usage-Restrictions",
-+		"leeplenty/lumimaid-v0.2": "CC-BY-NC-4.0",
++		"leeplenty/lumimaid-v0.2": "Apache-2.0, CC-BY-NC-4.0, LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"llama-guard3": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"llama-pro": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"llama2": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
