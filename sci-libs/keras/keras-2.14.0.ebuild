@@ -38,6 +38,7 @@ KEYWORDS="~amd64"
 IUSE=" test ebuild-revision-3"
 PROTOBUF_PV="3.21.9" # From WORKSPACE which differs from requirements.txt
 PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
+# TensorFlow 2.14.0 needs numpy 1.x
 RDEPEND="
 	(
 		>=dev-python/numpy-1.24.3[${PYTHON_USEDEP}]

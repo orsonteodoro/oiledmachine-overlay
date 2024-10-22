@@ -36,6 +36,7 @@ REQUIRED_USE="
 "
 PROTOBUF_PV="3.21.9" # From WORKSPACE which differs from requirements.txt
 PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
+# TensorFlow 3.2.1 needs numpy 1.x
 RDEPEND="
 	$(python_gen_cond_dep '
 		(
