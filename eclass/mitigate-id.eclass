@@ -4647,7 +4647,7 @@ eerror ">=sys-kernel/linux-firmware-20230809 is required for INCEPTION mitigatio
 		check_extra_config
 	fi
 	if [[ "${FIRMWARE_VENDOR}" == "amd" ]] ; then
-ewarn "A BIOS firmware is required for non datacenters for INCEPTION mitigation."
+ewarn "A BIOS firmware update is required for non datacenters for INCEPTION mitigation."
 	fi
 }
 
