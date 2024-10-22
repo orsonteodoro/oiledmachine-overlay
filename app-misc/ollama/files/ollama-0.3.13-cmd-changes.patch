@@ -1130,7 +1130,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"reflection:70b": "40GB",
 +	"reflection:70b-q6_K": "58GB",
 +	"reflection:70b-q8_0": "75GB",
-+	"reflection:70b-fp16": "41GB",
++	"reflection:70b-fp16": "141GB",
 +	"rfc/whiterabbitneo": "7.4GB",
 +	"rouge/replete-coder-qwen2-1.5b:latest": "6.2GB",
 +	"rouge/replete-coder-qwen2-1.5b:Q8": "1.9GB",
