@@ -639,7 +639,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"llama3.2:3b-text-fp16": "6.4GB",
 +	"llama-guard3:1b": "1.6GB",
 +	"llama-guard3:8b": "4.9GB",
-+	"llama-guard3:1b-q4_1": "996GB",
++	"llama-guard3:1b-q4_1": "996MB",
 +	"llama-guard3:1b-q8_0": "1.6GB",
 +	"llama-guard3:8b-q6_K": "6.6GB",
 +	"llama-guard3:8b-q8_0": "8.5GB",
