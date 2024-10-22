@@ -9,7 +9,6 @@ EAPI=8
 # cymem
 # langcodes
 # ml_datasets
-# murmurhash
 # preshed
 # spacy-legacy
 # spacy-loggers
