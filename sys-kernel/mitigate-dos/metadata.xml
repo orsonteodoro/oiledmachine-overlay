@@ -84,14 +84,17 @@
       Mitigate against Denial of Service for the Cryptographic Co-Processor
       driver.
     </flag>
-    <flag name="cpuset">
-      Mitigate against Denial of Service for cgroup's cpuset support.
-    </flag>
     <flag name="cdrom">
       Mitigate against Denial of Service for the cdrom driver.
     </flag>
     <flag name="cougar">
       Mitigate against Denial of Service for the Cougar 500K gaming keyboard.
+    </flag>
+    <flag name="cpuset">
+      Mitigate against Denial of Service for cgroup's cpuset support.
+    </flag>
+    <flag name="crypto-keys">
+      Mitigate against Denial of Service for crypto/keys subsystem.
     </flag>
     <flag name="custom-kernel">
       Prevent vendor lock-in when doing kernel mitigation checks.
@@ -115,6 +118,9 @@
     </flag>
     <flag name="fscache">
       Mitigate against Denial of Service for the FS-Cache filesystem.
+    </flag>
+    <flag name="fuse">
+      Mitigate against Denial of Service for the FUSE driver.
     </flag>
     <flag name="hfs">
       Mitigate against Denial of Service for the HFS filesystem.

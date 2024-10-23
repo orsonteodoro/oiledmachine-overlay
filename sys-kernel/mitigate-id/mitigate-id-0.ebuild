@@ -134,6 +134,7 @@ MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
 MULTISLOT_KERNEL_NETFILTER=("5.15" "6.1.107" "6.6.48" "6.10.7")
 MULTISLOT_KERNEL_NFSD=("6.10.8")
 MULTISLOT_KERNEL_NILFS2=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
+MULTISLOT_KERNEL_NILFS2_47757=("4.19.V" "5.4.V" "5.10.227" "5.15.168" "6.1.113" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" "6.6.29" "6.8.8")
 MULTISLOT_KERNEL_NOUVEAU=("5.0.21" "5.4.284")
 MULTISLOT_KERNEL_NTFS3_45896=("5.15.V" "6.1.V" "6.6" "6.10" "6.11")
@@ -188,6 +189,7 @@ CVE_NETFILTER="CVE-2024-44983"
 CVE_NFSD="CVE-2024-46696"
 CVE_NF_TABLES="CVE-2024-27020"
 CVE_NILFS2="CVE-2024-42104"
+CVE_NILFS2_47757="CVE-2024-47757"
 CVE_NOUVEAU="CVE-2023-0030"
 CVE_NTFS3_45896="CVE-2023-45896"
 CVE_NVME_41073="CVE-2024-41073"
@@ -346,6 +348,7 @@ REQUIRED_USE="
 # mt76? https://nvd.nist.gov/vuln/detail/CVE-2024-42225 # DoS, DT, ID
 # nfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46696 # DoS, DT, ID
 # nilfs2? https://nvd.nist.gov/vuln/detail/CVE-2024-42104 # DoS, DT, ID
+# nilfs2? https://nvd.nist.gov/vuln/detail/CVE-2024-47757 # DoS, ID
 # ntfs? https://nvd.nist.gov/vuln/detail/CVE-2023-45896 # DoS, ID; RH rated it DT (I:L)
 # nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-41073 # DoS, DT, ID
 # nvme? https://nvd.nist.gov/vuln/detail/CVE-2024-41079 # ID
@@ -537,6 +540,7 @@ all_rdepend() {
 	if _use nilfs2 ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NILFS2[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NILFS2_47757[@]}
 		fi
 	fi
 	if _use ntfs ; then
@@ -830,6 +834,7 @@ check_drivers() {
 	fi
 	if use nilfs2 ; then
 		check_kernel_version "nilfs2" "${CVE_NILFS2}" ${MULTISLOT_KERNEL_NILFS2[@]}
+		check_kernel_version "nilfs2" "${CVE_NILFS2_47757}" ${MULTISLOT_KERNEL_NILFS2_47757[@]}
 	fi
 	if use ntfs ; then
 		fs=1
