@@ -2966,17 +2966,19 @@ src_configure() {
 	replace-flags '-O0' '-O1'
 
 	# Use similar hardening flags like TF for community generated LLMs.
-	# As a precaution prevent CE, DT, ID, DoS
+	# These are used as a precaution to prevent CE, DT, ID, DoS (CWE-121).
 	# CE = Code Execution
 	# DT = Data Tampering
 	# ID = Information Disclosure
-	# Buffer overflow protection.
+	# DoS = Denial of Service
+	# _FORTIFY_SOURCE levels:
 	# 1 = compile time check.
 	# 2 = compile time + runtime check with constant value.
 	# 3 = compile time + runtime check with size().
 	# TF uses 1
 	# The distro by default uses _FORTIFY_SOURCE=2 and PIE when maybe sys-devel/gcc[-vanilla]
 	if tc-enables-fortify-source ; then
+	# Buffer overflow mitigation
 einfo "-D_FORTIFY_SOURCE is already enabled."
 	else
 		append-flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1
@@ -2991,6 +2993,7 @@ einfo "-fstack-protector* is already enabled."
 	fi
 
 	if tc-enables-pie ; then
+	# ASLR (buffer overflow mitigation)
 einfo "__PIE__ is already enabled."
 	fi
 
