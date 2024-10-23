@@ -1,6 +1,6 @@
 diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 --- ollama-0.3.13.orig/cmd/cmd.go	2024-10-10 11:21:51.000000000 -0700
-+++ ollama-0.3.13/cmd/cmd.go	2024-10-22 13:39:10.962386081 -0700
++++ ollama-0.3.13/cmd/cmd.go	2024-10-22 16:57:34.745153648 -0700
 @@ -17,11 +17,13 @@ import (
  	"net"
  	"net/http"
@@ -15,7 +15,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	"strconv"
  	"strings"
  	"sync/atomic"
-@@ -47,6 +49,2019 @@ import (
+@@ -47,6 +49,2006 @@ import (
  	"github.com/ollama/ollama/version"
  )
  
@@ -27,6 +27,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	// For security based LLMs >= q5
 +	"adens/quran-guide": "2.0GB",
 +	"akx/viking-7b": "4.6GB",
++	"agcobra/liberated-qwen1.5-72b": "44GB",
 +	"alfred:40b": "24GB",
 +	"alfred:40b-1023-q5_0": "29GB",
 +	"alfred:40b-1023-q5_1": "32GB",
@@ -321,6 +322,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"duckdb-nsql:7b": "3.8GB",
 +	"duckdb-nsql:7b-q8_0": "7.2GB",
 +	"duckdb-nsql:7b-fp16": "13GB",
++	"ehartford/theprofessor:155b-q4_K_M": "93GB",
 +	"eramax/aura_v3:Q5": "5.1GB",
 +	"everythinglm:13b": "7.4GB",
 +	"everythinglm:13b-16k": "7.4GB",
@@ -675,6 +677,9 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"magicoder:7b": "3.8GB",
 +	"magicoder:7b-s-cl-q8_0": "7.2GB",
 +	"magicoder:7b-s-cl-fp16": "13GB",
++	"mannix/llamax3-8b-alpaca:q4_0": "4.7GB",
++	"mannix/llamax3-8b-alpaca:q6_K": "6.6GB",
++	"mannix/llamax3-8b-alpaca:q8_0": "8.5GB",
 +	"mannix/replete-adapted-llama3-8b:iq4_xs": "4.4GB",
 +	"mannix/replete-adapted-llama3-8b:iq4_nl": "4.7GB",
 +	"mannix/replete-adapted-llama3-8b:q4_0": "4.7GB",
@@ -689,6 +694,10 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"mannix/replete-adapted-llama3-8b:fp16": "16GB",
 +	"mannix/replete-coder-llama3-8b:q8_0": "8.5GB",
 +	"mannix/replete-coder-llama3-8b:fp16": "16GB",
++	"mannix/smaug-qwen2-72b:q4_0": "41GB",
++	"mannix/smaug-qwen2-72b:q5_1": "55GB",
++	"mannix/smaug-qwen2-72b:q6_K": "64GB",
++	"mannix/smaug-qwen2-72b:q8_0": "77GB",
 +	"mathstral:7b": "4.1GB",
 +	"mathstral:7b-v0.1-q8_0": "7.7GB",
 +	"mathstral:7b-v0.1-fp16": "14GB",
@@ -1145,6 +1154,8 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"samantha-mistral:7b-instruct-fp16": "14GB",
 +	"samantha-mistral:7b-text-fp16": "14GB",
 +	"samantha-mistral:7b-v1.2-text-fp16": "14GB",
++	"sammcj/smaug-mixtral-v0.1:70b-q4_k_m": "28GB",
++	"sammcj/smaug-mixtral-v0.1:8x7b-70b-q4_k_m": "28GB",
 +	"savethedoctor/whiterabbitneo13bq8_0": "14GB",
 +	"shieldgemma:2b": "1.7GB",
 +	"shieldgemma:9b": "5.8GB",
@@ -1156,10 +1167,6 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"smollm:360m": "229MB",
 +	"smollm:1.7b": "991MB",
 +	"smollm:135m-base-v0.2-fp16": "271MB",
-+	"smollm:135m-base-v0.2-q2_K": "88MB",
-+	"smollm:135m-base-v0.2-q3_K_S": "88MB",
-+	"smollm:135m-base-v0.2-q3_K_M": "88MB",
-+	"smollm:135m-base-v0.2-q3_K_L": "94MB",
 +	"smollm:135m-base-v0.2-q4_0": "92MB",
 +	"smollm:135m-base-v0.2-q4_1": "98MB",
 +	"smollm:135m-base-v0.2-q4_K_S": "102MB",
@@ -1171,10 +1178,6 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"smollm:135m-base-v0.2-q6_K": "138MB",
 +	"smollm:135m-base-v0.2-q6_0": "145MB",
 +	"smollm:135m-instruct-v0.2-fp16": "271MB",
-+	"smollm:135m-instruct-v0.2-q2_K": "88MB",
-+	"smollm:135m-instruct-v0.2-q3_K_S": "88MB",
-+	"smollm:135m-instruct-v0.2-q3_K_M": "94MB",
-+	"smollm:135m-instruct-v0.2-q3_K_L": "98MB",
 +	"smollm:135m-instruct-v0.2-q4_0": "92MB",
 +	"smollm:135m-instruct-v0.2-q4_1": "98MB",
 +	"smollm:135m-instruct-v0.2-q4_K_S": "102MB",
@@ -1186,10 +1189,6 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"smollm:135m-instruct-v0.2-q6_K": "138MB",
 +	"smollm:135m-instruct-v0.2-q8_0": "145MB",
 +	"smollm:360m-base-v0.2-fp16": "726MB",
-+	"smollm:360m-base-v0.2-q2_K": "219MB",
-+	"smollm:360m-base-v0.2-q3_K_S": "219MB",
-+	"smollm:360m-base-v0.2-q3_K_M": "219MB",
-+	"smollm:360m-base-v0.2-q3_K_L": "246MB",
 +	"smollm:360m-base-v0.2-q4_0": "229MB",
 +	"smollm:360m-base-v0.2-q4_1": "249MB",
 +	"smollm:360m-base-v0.2-q4_K_S": "260MB",
@@ -1201,10 +1200,6 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"smollm:360m-base-v0.2-q6_K": "367MB",
 +	"smollm:360m-base-v0.2-q8_K": "386MB",
 +	"smollm:360m-instruct-v0.2-fp16": "726MB",
-+	"smollm:360m-instruct-v0.2-q2_K": "219MB",
-+	"smollm:360m-instruct-v0.2-q3_K_S": "219MB",
-+	"smollm:360m-instruct-v0.2-q3_K_M": "235MB",
-+	"smollm:360m-instruct-v0.2-q3_K_L": "246MB",
 +	"smollm:360m-instruct-v0.2-q4_0": "229MB",
 +	"smollm:360m-instruct-v0.2-q4_1": "249MB",
 +	"smollm:360m-instruct-v0.2-q4_K_S": "260MB",
@@ -1216,10 +1211,6 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"smollm:360m-instruct-v0.2-q6_K": "367MB",
 +	"smollm:360m-instruct-v0.2-q8_0": "386MB",
 +	"smollm:1.7b-base-v0.2-fp16": "3.4GB",
-+	"smollm:1.7b-base-v0.2-q2_K": "675MB",
-+	"smollm:1.7b-base-v0.2-q3_K_S": "777MB",
-+	"smollm:1.7b-base-v0.2-q3_K_M": "860MB",
-+	"smollm:1.7b-base-v0.2-q3_K_L": "933MB",
 +	"smollm:1.7b-base-v0.2-q4_0": "991MB",
 +	"smollm:1.7b-base-v0.2-q4_1": "1.1GB",
 +	"smollm:1.7b-base-v0.2-q4_K_S": "999MB",
@@ -1231,10 +1222,6 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"smollm:1.7b-base-v0.2-q6_K": "1.4GB",
 +	"smollm:1.7b-base-v0.2-q8_K": "1.8GB",
 +	"smollm:1.7b-instruct-v0.2-fp16": "3.4GB",
-+	"smollm:1.7b-instruct-v0.2-q2_K": "675MB",
-+	"smollm:1.7b-instruct-v0.2-q3_K_S": "777MB",
-+	"smollm:1.7b-instruct-v0.2-q3_K_M": "860MB",
-+	"smollm:1.7b-instruct-v0.2-q3_K_L": "933MB",
 +	"smollm:1.7b-instruct-v0.2-q4_0": "991MB",
 +	"smollm:1.7b-instruct-v0.2-q4_1": "1.1GB",
 +	"smollm:1.7b-instruct-v0.2-q4_K_S": "999MB",
@@ -1384,10 +1371,6 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"tinydolphin:1.1b": "637MB",
 +	"tinydolphin:v2.8": "637MB",
 +	"tinydolphin:1.1b-v2.8-fp16": "2.2GB",
-+	"tinydolphin:1.1b-v2.8-q2_K": "432MB",
-+	"tinydolphin:1.1b-v2.8-q3_K_S": "499MB",
-+	"tinydolphin:1.1b-v2.8-q3_K_M": "548MB",
-+	"tinydolphin:1.1b-v2.8-q3_K_L": "592MB",
 +	"tinydolphin:1.1b-v2.8-q4_0": "637MB",
 +	"tinydolphin:1.1b-v2.8-q4_1": "701MB",
 +	"tinydolphin:1.1b-v2.8-q4_K_S": "640MB",
@@ -1403,10 +1386,6 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"tinyllama:v0.6": "638MB",
 +	"tinyllama:v1": "638MB",
 +	"tinyllama:1.1b-chat": "638MB",
-+	"tinyllama:1.1b-chat-v0.6-q2_K": "483MB",
-+	"tinyllama:1.1b-chat-v0.6-q3_K_S": "500MB",
-+	"tinyllama:1.1b-chat-v0.6-q3_K_M": "551MB",
-+	"tinyllama:1.1b-chat-v0.6-q3_K_L": "593MB",
 +	"tinyllama:1.1b-chat-v0.6-q4_0": "638MB",
 +	"tinyllama:1.1b-chat-v0.6-q4_1": "702MB",
 +	"tinyllama:1.1b-chat-v0.6-q4_K_S": "644MB",
@@ -1418,10 +1397,6 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"tinyllama:1.1b-chat-v0.6-q6_K": "904MB",
 +	"tinyllama:1.1b-chat-v0.6-q8_0": "1.2GB",
 +	"tinyllama:1.1b-chat-v1-fp16": "2.2GB",
-+	"tinyllama:1.1b-chat-v1-q2_K": "483MB",
-+	"tinyllama:1.1b-chat-v1-q3_K_S": "500MB",
-+	"tinyllama:1.1b-chat-v1-q3_K_M": "551MB",
-+	"tinyllama:1.1b-chat-v1-q3_K_L": "593MB",
 +	"tinyllama:1.1b-chat-v1-q4_0": "638MB",
 +	"tinyllama:1.1b-chat-v1-q4_1": "702MB",
 +	"tinyllama:1.1b-chat-v1-q4_K_S": "644MB",
@@ -1647,6 +1622,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +// oteodoro:  added section
 +var whitelist = map[string]int{
 +	"adens/quran-guide": 1,
++	"agcobra/liberated-qwen1.5-72b": 1,
 +	"akx/viking-7b": 1,
 +	"alfred": 1,
 +	"ALIENTELLIGENCE/christiancounselor": 1,
@@ -1703,6 +1679,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"dolphin-phi": 1,
 +	"dolphincoder": 1,
 +	"duckdb-nsql": 1,
++	"ehartford/theprofessor": 1,
 +	"eramax/aura_v3": 1,
 +	"everythinglm": 1,
 +	"falcon": 1,
@@ -1740,8 +1717,10 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"gemma2": 1,
 +	"glm4": 1,
 +	"magicoder": 1,
++	"mannix/llamax3-8b-alpaca": 1,
 +	"mannix/replete-adapted-llama3-8b": 1,
 +	"mannix/replete-coder-llama3-8b": 1,
++	"mannix/smaug-qwen2-72b": 1,
 +	"mathstral": 1,
 +	"meditron": 1,
 +	"medllama2": 1,
@@ -1795,6 +1774,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"rfc/whiterabbitneo": 1,
 +	"rouge/replete-coder-qwen2-1.5b": 1,
 +	"samantha-mistral": 1,
++	"sammcj/smaug-mixtral-v0.1": 1,
 +	"savethedoctor/whiterabbitneo13bq8_0": 1,
 +	"shieldgemma": 1,
 +	"smollm": 1,
@@ -1836,7 +1816,10 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +
 +// oteodoro:  added --tags
 +var tagsList = map[string]string{
++	// Quality control:
++	// It is preferred to drop languages or capabilities if they are below 70% score
 +	"adens/quran-guide": "quran muslim islam allah",
++	"agcobra/liberated-qwen1.5-72b": "uncensored safety-off multilingual general-knowledge math-word-problems arabic french vietnamese korean japanese spanish indonesian portuguese russian",
 +	"akx/viking-7b": "multilingual finnish english swedish danish norwegian icelandic coding code-generator",
 +	"alfred": "chat comprehensive-response i-dont-know",
 +	"ALIENTELLIGENCE/christiancounselor": "christian christianity protestant catholic eastern-orthodox western-church eastern-church theologist counselor philosopher spirituality mental-health marriage",
@@ -1893,6 +1876,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"dolphin-phi": "uncensored coding fine-tunable-alignment",
 +	"dolphincoder": "uncensored coding coding-assistant",
 +	"duckdb-nsql": "coding sql",
++	"ehartford/theprofessor": "brainstorming research reasoning science medical math computer-science physics cosmology professor theoretical-explanations",
 +	"eramax/aura_v3": "nsfw erotica roleplay",
 +	"everythinglm": "uncensored detailed-replies story-telling",
 +	"falcon": "llm-research",
@@ -1934,6 +1918,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"glm4": "math-word-problems coding multilingual",
 +	"glm4:-chat": "math-word-problems coding chat function-calling comprehensive-response multilingual",
 +	"magicoder": "coding code-generation open-source-coding",
++	"mannix/llamax3-8b-alpaca": "multilingual intruction-following akrikaans amharic arabic armenian assamese asturian azerbaijani belarusian bengali bosnian bulgarian burmese catalan cebuano chinese simplified-chinese traditional-chinese croatian czech danish dutch english estonian filipino finnish french fulah galician ganda georgian german greek gujarati hausa hebrew hindi hungarian icelandic igbo indonesian irish italian japanese javanese kabuverdianu kamba kannada kazakh khmer korean kyrgyz lao latvian lingala lithuanian luo luxembourgish macedonian malay malayalam maltese maori marathi mongolian nepali northern sotho norwegian nyanja occitan oriya oromo pashto persian polish portuguese punjabi romanian russian serbian shona sindhi slovak slovenian somali sorani kurdish spanish swahili swedish tajik tamil telugu thai turkish ukrainian umbundu urdu uzbek vietnamese welsh wolof xhosa yoruba zulu",
 +	"mannix/replete-adapted-llama3-8b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention low-end-hardware",
 +	"mannix/replete-coder-llama3-8b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention",
 +	"mathstral": "math-word-problems",
@@ -1990,9 +1975,11 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"rfc/whiterabbitneo": "cybersecurity it-security how-to security-research open-source-tools vulnerability-checks",
 +	"rouge/replete-coder-qwen2-1.5b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention mobile",
 +	"samantha-mistral": "philosopher psychologist dating-coach",
++	"sammcj/smaug-mixtral-v0.1": "fine-tuned-mixtral optimized-mixtral multilingual english french italian german spanish coding code-generation common-sense solving-basic-programming-problems math-word-problems trivia fine-tuneable abstract-reasoning",
 +	"savethedoctor/whiterabbitneo13bq8_0": "cybersecurity it-security how-to security-research open-source-tools vulnerability-checks",
 +	"shieldgemma": "content-moderator",
 +	"smollm": "common-sense qa low-memory-footprint parent",
++	"mannix/smaug-qwen2-72b": "fine-tuned-qwen2 optimized-qwen2 china-alignment china-bias multilingual german french spanish portuguese italian dutch russian czech polish arabic persian hebrew turkish japanese korean vietnamese thai indonesian malay lao burmese cebuano khmer tagalog hindi bengali urdu coding code-generation math-word-problems coding solving-basic-programming-problems math-word-problems stem science technology engineering mathematics",
 +	"snowflake-arctic-embed": "embeddings",
 +	"solar": "chat rag fine-tuneable",
 +	"solar-pro": "common-sense math-word-problems fine-tuneable",
@@ -2035,7 +2022,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	filename, _ := cmd.Flags().GetString("file")
  	filename, err := filepath.Abs(filename)
-@@ -382,6 +2397,25 @@ func StopHandler(cmd *cobra.Command, arg
+@@ -382,6 +2384,25 @@ func StopHandler(cmd *cobra.Command, arg
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -2061,7 +2048,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	opts := runOptions{
  		Model:    args[0],
  		WordWrap: os.Getenv("TERM") == "xterm-256color",
-@@ -711,9 +2745,11 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -711,9 +2732,11 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -2074,7 +2061,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -742,13 +2778,264 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -742,13 +2765,269 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -2101,6 +2088,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	// oteodoro:  added section
 +	licenses := map[string]string {
 +		"adens/quran-guide": "LLAMA 3.2 COMMUNITY LICENSE AGREEMENT, Llama 3.2 Acceptable Use Policy",
++		"agcobra/liberated-qwen1.5-72b": "Tongyi Qianwen LICENSE AGREEMENT",
 +		"akx/viking-7b": "Apache-2.0",
 +		"alfred": "Apache-2.0",
 +		"ALIENTELLIGENCE/christiancounselor": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
@@ -2157,6 +2145,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"dolphin-phi": "MICROSOFT RESEARCH LICENSE TERMS",
 +		"dolphincoder": "BigCode Open RAIL-M v1 License Agreement",
 +		"duckdb-nsql": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
++		"ehartford/theprofessor": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"eramax/aura_v3": "Apache-2.0",
 +		"everythinglm": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"falcon": "Apache-2.0",
@@ -2194,6 +2183,8 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"llava-llama3": "",
 +		"llava-phi3": "",
 +		"magicoder": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
++		"mannix/llamax3-8b-alpaca": "MIT",
++		"mannix/smaug-qwen2-72b": "Tongyi Qianwen LICENSE AGREEMENT",
 +		"mannix/replete-adapted-llama3-8b": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"mannix/replete-coder-llama3-8b": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"mathstral": "Apache-2.0",
@@ -2257,6 +2248,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +		"rfc/whiterabbitneo": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy, WhiteRabbitNeo-Terms-of-Use, WhiteRabbitNeo-Usage-Restrictions",
 +		"rouge/replete-coder-qwen2-1.5b": "Apache-2.0",
 +		"samantha-mistral": "Apache-2.0",
++		"sammcj/smaug-mixtral-v0.1": "Apache-2.0",
 +		"savethedoctor/whiterabbitneo13bq8_0": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy, WhiteRabbitNeo-Terms-of-Use, WhiteRabbitNeo-Usage-Restrictions",
 +		"shieldgemma": "Gemma Terms of Use 20240401",
 +		"smollm": "Apache-2.0",
@@ -2340,7 +2332,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	}
  
  	req := api.ShowRequest{Name: args[0]}
-@@ -927,6 +3214,138 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -927,6 +3206,138 @@ func PullHandler(cmd *cobra.Command, arg
  	return nil
  }
  
@@ -2479,7 +2471,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  type generateContextKey string
  
  type runOptions struct {
-@@ -1332,6 +3751,8 @@ func NewCLI() *cobra.Command {
+@@ -1332,6 +3743,8 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -2488,7 +2480,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -1414,6 +3835,30 @@ func NewCLI() *cobra.Command {
+@@ -1414,6 +3827,30 @@ func NewCLI() *cobra.Command {
  		RunE:    DeleteHandler,
  	}
  
@@ -2519,7 +2511,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -1430,6 +3875,9 @@ func NewCLI() *cobra.Command {
+@@ -1430,6 +3867,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -2529,7 +2521,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	} {
  		switch cmd {
  		case runCmd:
-@@ -1469,6 +3917,9 @@ func NewCLI() *cobra.Command {
+@@ -1469,6 +3909,9 @@ func NewCLI() *cobra.Command {
  		psCmd,
  		copyCmd,
  		deleteCmd,

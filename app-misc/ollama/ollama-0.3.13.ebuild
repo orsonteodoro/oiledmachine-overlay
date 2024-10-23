@@ -61,6 +61,7 @@ CUDA_TARGETS_COMPAT=(
 )
 LLMS=(
 adens-quran-guide
+agcobra-liberated-qwen1.5-72b
 akx-viking-7b
 alfred ALIENTELLIGENCE-christiancounselor ALIENTELLIGENCE-crisisintervention
 ALIENTELLIGENCE-doomsdayurvivalist
@@ -85,6 +86,7 @@ codegeex4 codegemma codellama codeqwen codestral codeup command-r
 command-r-plus dbrx deepseek-coder deepseek-coder-v2
 deepseek-llm deepseek-v2 deepseek-v2.5 disinfozone-telos dolphin-llama3
 dolphin-mistral dolphin-mixtral dolphin-phi dolphincoder duckdb-nsql
+ehartford-theprofessor
 eramax-aura_v3 everythinglm falcon falcon2 firefunction-v2 gemma gemma2 glm4
 fixt-home-3b-v3
 fixt-home-3b-v2
@@ -101,6 +103,8 @@ leeplenty-lumimaid-v0.2
 llama-guard3 llama-pro llama2 llama2-chinese llama2-uncensored llama3
 llama3-chatqa llama3-gradient llama3-groq-tool-use llama3.1 llama3.2 llava
 llava-llama3 llava-phi3 magicoder mannix-replete-adapted-llama3-8b
+mannix-llamax3-8b-alpaca
+mannix-smaug-qwen2-72b
 mannix-replete-coder-llama3-8b
 mathstral meditron medllama2 megadolphin
 minicpm-v mistral mistral-large mistral-nemo mistral-openorca mistral-small
@@ -117,6 +121,7 @@ reflection
 rfc-whiterabbitneo
 rouge-replete-coder-qwen2-1.5b
 samantha-mistral
+sammcj-smaug-mixtral-v0.1
 savethedoctor-whiterabbitneo13bq8_0
 shieldgemma smollm snowflake-arctic-embed solar solar-pro
 sparksammy-samantha sparksammy-samantha-3.1 sparksammy-samantha-eggplant
@@ -1697,6 +1702,9 @@ LLM_LICENSES="
 		llama3_2-LICENSE
 		llama3_2-USE_POLICY.md
 	)
+	ollama_llms_agcobra-liberated-qwen1.5-72b? (
+		Tongyi-Qianwen-LICENSE-AGREEMENT
+	)
 	ollama_llms_akx-viking-7b? (
 		Apache-2.0
 	)
@@ -1898,6 +1906,10 @@ LLM_LICENSES="
 		llama2-LICENSE
 		llama2-USE_POLICY.md
 	)
+	ollama_llms_ehartford-theprofessor? (
+		llama2-LICENSE
+		llama2-USE_POLICY.md
+	)
 	ollama_llms_eramax-aura_v3? (
 		Apache-2.0
 	)
@@ -2030,6 +2042,12 @@ LLM_LICENSES="
 	ollama_llms_magicoder? (
 		llama2-LICENSE
 		llama2-USE_POLICY.md
+	)
+	ollama_llms_mannix-llamax3-8b-alpaca? (
+		MIT
+	)
+	ollama_llms_mannix-smaug-qwen2-72b? (
+		Tongyi-Qianwen-LICENSE-AGREEMENT
 	)
 	ollama_llms_mannix-replete-adapted-llama3-8b? (
 		llama3-LICENSE
@@ -2213,6 +2231,9 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 	ollama_llms_samantha-mistral? (
+		Apache-2.0
+	)
+	ollama_llms_sammcj-smaug-mixtral-v0.1? (
 		Apache-2.0
 	)
 	ollama_llms_savethedoctor-whiterabbitneo13bq8_0? (
@@ -2950,6 +2971,7 @@ src_configure() {
 
 	declare -A use_alias=(
 		["adens-quran-guide"]="adens/quran-guide"
+		["agcobra-liberated-qwen1.5-72b"]="agcobra/liberated-qwen1.5-72b"
 		["akx-viking-7b"]="akx/viking-7b"
 		["ALIENTELLIGENCE-christiancounselor"]="ALIENTELLIGENCE/christiancounselor"
 		["ALIENTELLIGENCE-crisisintervention"]="ALIENTELLIGENCE/crisisintervention"
@@ -2978,6 +3000,7 @@ src_configure() {
 		["chatgph-gph-main"]="chatgph/gph-main"
 		["chatgph-medix-ph"]="chatgph/medix-ph"
 		["disinfozone-telos"]="disinfozone/telos"
+		["ehartford-theprofessor"]="ehartford/theprofessor"
 		["eramax-aura_v3"]="eramax/aura_v3"
 		["fixt-home-3b-v3"]="fixt/home-3b-v3"
 		["fixt-home-3b-v2"]="fixt/home-3b-v2"
@@ -2987,6 +3010,7 @@ src_configure() {
 		["jimscard-whiterabbit-neo"]="jimscard/whiterabbit-neo"
 		["joefamous-grok-1"]="joefamous/grok-1"
 		["leeplenty-lumimaid-v0.2"]="leeplenty/lumimaid-v0.2"
+		["mannix-llamax3-8b-alpaca"]="mannix/llamax3-8b-alpaca"
 		["mannix-replete-adapted-llama3-8b"]="mannix/replete-adapted-llama3-8b"
 		["mannix-replete-coder-llama3-8b"]="mannix/replete-coder-llama3-8b"
 		["monotykamary-whiterabbitneo-v1.5a"]="monotykamary/whiterabbitneo-v1.5a"
