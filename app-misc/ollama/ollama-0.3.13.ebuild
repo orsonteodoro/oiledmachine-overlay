@@ -9,7 +9,6 @@ EAPI=8
 #
 # (1) Check the security advisories each month for both ollama and llama.cpp.
 # (2) if llama.cpp has a critical vulnerability, either bump ollama or manually force bump LLAMA_CPP_COMMIT and LLAMA_CPP_UPDATE=1.
-# (3) REVIEW:  Consider adding hardening flags.
 #
 
 # Scan the following for dependencies
@@ -2426,7 +2425,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
-blis cuda emoji lapack mkl openblas openrc rocm systemd unrestrict video_cards_intel
+blis cuda debug emoji lapack mkl openblas openrc rocm systemd unrestrict video_cards_intel
 ebuild-revision-7
 "
 gen_rocm_required_use() {
@@ -2963,6 +2962,47 @@ src_configure() {
 		check_libstdcxx "12"
 	fi
 
+	# For proper _FORTIFY_SOURCE
+	replace-flags '-O0' '-O1'
+
+	# Use similar flags like TF for community generated LLMs.
+	# As a precaution prevent CE, DT, ID, DoS
+	# CE = Code Execution
+	# DT = Data Tampering
+	# ID = Information Disclosure
+	# Buffer overflow protection.
+	# 1 = compile time check
+	# 2 = compile time + runtime check with const
+	# 3 = compile time + runtime check with size().
+	# TF uses 1
+	# The distro by default uses _FORTIFY_SOURCE=2 and PIE when maybe sys-devel/gcc[-vanilla]
+	if tc-enables-fortify-source ; then
+einfo "-D_FORTIFY_SOURCE is already enabled."
+	else
+		append-flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1
+	fi
+	if tc-enables-ssp ; then
+einfo "-fstack-protector* is already enabled."
+	else
+	# As a precaution prevent CE, DT, ID, DoS
+	# Stack based buffer overflow protection
+		append-flags -fstack-protector
+	fi
+	if tc-enables-pie ; then
+einfo "__PIE__ is already enabled."
+	fi
+	strip-unsupported-flags
+
+	if use debug ; then
+	# Increase build verbosity
+		append-flags -g
+	fi
+
+	export CGO_CFLAGS="${CFLAGS}"
+	export CGO_CXXFLAGS="${CXXFLAGS}"
+	export CGO_CPPFLAGS="${CPPFLAGS}"
+	export CGO_LDFLAGS="${LDFLAGS}"
+
 	if use unrestrict ; then
 		sed -i -e "s|@UNRESTRICT@|1|g" "cmd/cmd.go" || die
 	else
@@ -3144,6 +3184,12 @@ generate_deps() {
 		-p $(get_makeopts_jobs)
 		-x
 	)
+	if ! tc-enables-pie ; then
+		args+=(
+	# ASLR (buffer overflow mitigation)
+			-buildmode=pie
+		)
+	fi
 	edo go generate ${args[@]} ./...
 }
 
@@ -3152,6 +3198,12 @@ build_binary() {
 		-p $(get_makeopts_jobs)
 		-x
 	)
+	if ! tc-enables-pie ; then
+		args+=(
+	# ASLR (buffer overflow mitigation)
+			-buildmode=pie
+		)
+	fi
 	edo go build ${args[@]} .
 }
 
@@ -3179,6 +3231,12 @@ build_new_runner() {
 		-p $(get_makeopts_jobs)
 		-x
 	)
+	if ! tc-enables-pie ; then
+		args+=(
+	# ASLR (buffer overflow mitigation)
+			-buildmode=pie
+		)
+	fi
 
 	local cpu_flags_args=""
 
