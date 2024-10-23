@@ -188,8 +188,8 @@ DESCRIPTION="Go support for Google's protocol buffers"
 HOMEPAGE="http://protobuf.dev"
 LICENSE="BSD"
 SLOT="0/${PROTOBUF_SLOT}"
+#	=dev-libs/protobuf-${PROTOBUF_SLOT#*.}*
 RDEPEND="
-	=dev-libs/protobuf-${PROTOBUF_SLOT#*.}*
 	dev-libs/protobuf:=
 "
 BDEPEND="
