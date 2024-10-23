@@ -230,6 +230,9 @@
     <flag name="rtw88">
       Mitigate against Denial of Service for the rtw88 network driver.
     </flag>
+    <flag name="scsi-sd">
+      Mitigate against Denial of Service for the SCSI disk driver.
+    </flag>
     <flag name="sctp">
       Mitigate against Denial of Service for the SCTP network protocol.
     </flag>

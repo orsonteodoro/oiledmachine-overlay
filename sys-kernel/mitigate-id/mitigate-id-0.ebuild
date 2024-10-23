@@ -95,63 +95,67 @@ EOL_VERSIONS=(
 MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.227" "5.15.168" "6.1.113" "6.6.57" "6.11.4")
 
 # Arch specific
-MULTISLOT_KERNEL_KVM_ARM64_26598=("5.4.269" "5.10.209" "5.15.148" "6.1.75" "6.6.14" "6.7.2")
-MULTISLOT_KERNEL_KVM_POWERPC_41070=("5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
+MULTISLOT_KERNEL_KVM_ARM64_26598=("5.4.269" "5.10.209" "5.15.148" "6.1.75" "6.6.14" "6.7.2" "6.8_rc1")
+MULTISLOT_KERNEL_KVM_POWERPC_41070=("5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11" "6.10")
 
 # More than one row is added to increase LTS coverage.
-MULTISLOT_KERNEL_AACRAID=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.108" "6.6.49" "6.10.8")
-MULTISLOT_KERNEL_AEAD=("5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
-MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9")
-MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
+MULTISLOT_KERNEL_AACRAID=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.108" "6.6.49" "6.10.8" "6.11_rc6")
+MULTISLOT_KERNEL_AEAD=("5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9" "6.10")
+MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9" "6.11")
+MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8" "6.10")
 MULTISLOT_KERNEL_BFQ_1ba0403=("5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_BFQ_18ad4df=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
-MULTISLOT_KERNEL_BLUETOOTH=("5.10.165" "5.15.90" "6.1.8")
-MULTISLOT_KERNEL_BTRFS=("6.6.49" "6.10.8")
-MULTISLOT_KERNEL_CDROM=("6.1.98" "6.6.39" "6.9.9")
-MULTISLOT_KERNEL_COUGAR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
+MULTISLOT_KERNEL_BLUETOOTH=("5.10.165" "5.15.90" "6.1.8" "6.2")
+MULTISLOT_KERNEL_BTRFS=("6.6.49" "6.10.8" "6.11_rc6")
+MULTISLOT_KERNEL_CDROM=("6.1.98" "6.6.39" "6.9.9" "6.10")
+MULTISLOT_KERNEL_COUGAR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10" "6.11")
 MULTISLOT_KERNEL_ECDH=("4.19.V" "5.4.V" "5.15.162" "6.1.97" "6.6.37" "6.10", "6.11")
-MULTISLOT_KERNEL_EXT4=("6.10.1")
+MULTISLOT_KERNEL_EXT4=("6.10.1" "6.11_rc1")
 MULTISLOT_KERNEL_EXT4_c6b72f5=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
-MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6")
-MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6")
-MULTISLOT_KERNEL_FSCACHE=("6.6.51" "6.10.10")
-MULTISLOT_KERNEL_FUSE=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
-MULTISLOT_KERNEL_HFSPLUS=("4.19.319" "5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
-MULTISLOT_KERNEL_I915=("5.10.211" "5.15.162" "6.1.97" "6.6.37" "6.9.8")
-MULTISLOT_KERNEL_ICE=("6.10.10")
-MULTISLOT_KERNEL_IMA_39494=("6.1.97" "6.6.35" "6.9.6")
+MULTISLOT_KERNEL_F2FS=("6.6.47" "6.10.6" "6.11_rc1")
+MULTISLOT_KERNEL_FS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.106" "6.6.47" "6.10.6" "6.11_rc4")
+MULTISLOT_KERNEL_FSCACHE=("6.6.51" "6.10.10" "6.11")
+MULTISLOT_KERNEL_FUSE=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7" "6.11_rc4")
+MULTISLOT_KERNEL_HFSPLUS=("4.19.319" "5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11" "6.11")
+MULTISLOT_KERNEL_HUGETLBFS_47676=("6.10.13" "6.11.2" "6.12")
+MULTISLOT_KERNEL_I915=("5.10.211" "5.15.162" "6.1.97" "6.6.37" "6.9.8" "6.10")
+MULTISLOT_KERNEL_ICE=("6.10.10" "6.11")
+MULTISLOT_KERNEL_IMA_39494=("6.1.97" "6.6.35" "6.9.6" "6.10_rc1")
 MULTISLOT_KERNEL_IMA_21505=("5.4.208" "5.15.58" "6.1" "6.6" "6.10" "6.11")
-MULTISLOT_KERNEL_IP_36971=("4.19.316" "5.4.278" "5.10.219" "5.15.161" "6.1.94" "6.6.34" "6.9.4")
-MULTISLOT_KERNEL_IPV4_42154=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
-MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7")
+MULTISLOT_KERNEL_IP_36971=("4.19.316" "5.4.278" "5.10.219" "5.15.161" "6.1.94" "6.6.34" "6.9.4" "6.10_rc2")
+MULTISLOT_KERNEL_IPV4_42154=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9" "6.10")
+MULTISLOT_KERNEL_IPV6=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.107" "6.6.48" "6.10.7" "6.11_rc5")
+MULTISLOT_KERNEL_IPV6_NETFILTER=("5.10.227" "5.15.168" "6.1.113" "6.6.54" "6.10.13" "6.11.2" "6.12_rc1")
 MULTISLOT_KERNEL_IWLWIFI=("4.14.268" "4.19.231" "5.4.181" "5.10.102" "5.15.25" "5.16.11")
-MULTISLOT_KERNEL_JFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
-MULTISLOT_KERNEL_MLX5=("5.4.185" "5.10.106" "5.15.29" "5.16.15")
-MULTISLOT_KERNEL_MPTCP_44974=("6.6.48" "6.10.7" "6.11")
+MULTISLOT_KERNEL_JFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3" "6.11_rc1")
+MULTISLOT_KERNEL_MLX5=("5.4.185" "5.10.106" "5.15.29" "5.16.15" "5.17")
+MULTISLOT_KERNEL_MPTCP_44974=("6.6.48" "6.10.7" "6.11_rc5")
 MULTISLOT_KERNEL_MPTCP_46858=("6.1.111" "6.6.52" "6.10.11" "6.11")
-MULTISLOT_KERNEL_MT76=("5.15.163" "6.1.98" "6.6.39" "6.9.9")
-MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5")
-MULTISLOT_KERNEL_NETFILTER=("5.15" "6.1.107" "6.6.48" "6.10.7")
-MULTISLOT_KERNEL_NFSD=("6.10.8")
-MULTISLOT_KERNEL_NILFS2=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9")
-MULTISLOT_KERNEL_NILFS2_47757=("4.19.V" "5.4.V" "5.10.227" "5.15.168" "6.1.113" "6.6.54" "6.10.13" "6.11.2")
-MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" "6.6.29" "6.8.8")
+MULTISLOT_KERNEL_MT76=("5.15.163" "6.1.98" "6.6.39" "6.9.9" "6.10")
+MULTISLOT_KERNEL_NET_BRIDGE=("5.15.165" "6.1.105" "6.6.46" "6.10.5" "6.11_rc3")
+MULTISLOT_KERNEL_NETFILTER=("5.15" "6.1.107" "6.6.48" "6.10.7" "6.11_rc5")
+MULTISLOT_KERNEL_NFSD=("6.10.8" "6.11_rc6")
+MULTISLOT_KERNEL_NILFS2=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9" "6.10")
+MULTISLOT_KERNEL_NILFS2_47757=("4.19.V" "5.4.V" "5.10.227" "5.15.168" "6.1.113" "6.6.54" "6.10.13" "6.11.2" "6.12_rc1")
+MULTISLOT_KERNEL_NF_TABLES=("4.19.313" "5.4.275" "5.10.216" "5.15.157" "6.1.88" "6.6.29" "6.8.8" "6.9_rc5")
 MULTISLOT_KERNEL_NOUVEAU=("5.0.21" "5.4.284")
 MULTISLOT_KERNEL_NTFS3_45896=("5.15.V" "6.1.V" "6.6" "6.10" "6.11")
-MULTISLOT_KERNEL_NVME_41073=("5.15.164" "6.1.101" "6.6.42" "6.9.11")
+MULTISLOT_KERNEL_NVME_41073=("5.15.164" "6.1.101" "6.6.42" "6.9.11" "6.10")
 MULTISLOT_KERNEL_NVME_41079=("6.1.101" "6.6.42" "6.10" "6.11")
-MULTISLOT_KERNEL_PCI_42302=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
+MULTISLOT_KERNEL_PCI_42302=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3" "6.11_rc1")
 MULTISLOT_KERNEL_RTW88_0e735a4=("5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
-MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8")
-MULTISLOT_KERNEL_SMB=("6.6.51" "6.10.10")
-MULTISLOT_KERNEL_SQUASHFS=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
-MULTISLOT_KERNEL_TIPC=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
-MULTISLOT_KERNEL_V3D=("6.10.8")
-MULTISLOT_KERNEL_XE=("6.10.8")
-MULTISLOT_KERNEL_VMCI=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10")
+MULTISLOT_KERNEL_SCSI_SD=("6.1.113" "6.6.54" "6.10.13" "6.11.2" "6.12_rc1")
+MULTISLOT_KERNEL_SELINUX=("5.10.99" "5.15.22" "5.16.8" "5.17")
+MULTISLOT_KERNEL_SMB=("6.6.51" "6.10.10" "5.11")
+MULTISLOT_KERNEL_SQUASHFS=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10" "6.11")
+MULTISLOT_KERNEL_TIPC=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3" "6.11_rc1")
+MULTISLOT_KERNEL_V3D=("6.10.8" "6.11_rc6")
+MULTISLOT_KERNEL_XE=("6.10.8" "6.11_rc5")
+MULTISLOT_KERNEL_VMCI=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10" "6.11")
 MULTISLOT_KERNEL_VMWGFX=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.111" "6.6.52")
-MULTISLOT_KERNEL_XFS=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.V" "6.10.V" "6.11")
+MULTISLOT_KERNEL_XFS=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.V" "6.10.V" "6.11_rc1")
 
+CVE_AACRAID="CVE-2024-46673"
 CVE_AEAD="CVE-2024-42229"
 CVE_AMDGPU="CVE-2024-46725"
 CVE_ATA_41087="CVE-2024-41087"
@@ -169,12 +173,14 @@ CVE_FS="CVE-2024-43882"
 CVE_FSCACHE="CVE-2024-46786"
 CVE_FUSE="CVE-2024-44947"
 CVE_HFSPLUS="CVE-2024-41059"
+CVE_HUGETLBFS_47676="CVE-2024-47676"
 CVE_I915="CVE-2024-41092"
 CVE_ICE="CVE-2024-46766"
 CVE_IMA_39494="CVE-2024-39494"
-CVE_IMA_21505="CVE-2022-21505"
+CVE_IMA_21505="CVE-2022-21505" # unlisted
 CVE_IPV4_42154="CVE-2024-42154"
 CVE_IPV6="CVE-2024-44987"
+CVE_IPV6_NETFILTER="CVE-2024-47685"
 CVE_IP_36971="CVE-2024-36971"
 CVE_IWLWIFI="CVE-2022-48787"
 CVE_JFS="CVE-2024-43858"
@@ -196,6 +202,7 @@ CVE_NVME_41073="CVE-2024-41073"
 CVE_NVME_41079="CVE-2024-41079"
 CVE_PCI_42302="CVE-2024-42302"
 CVE_RTW88_0e735a4="UAF"
+CVE_SCSI_SD="CVE-2024-47682"
 CVE_SELINUX="CVE-2022-48740"
 CVE_SMB="CVE-2024-46796"
 CVE_SQUASHFS="CVE-2024-46744"
@@ -248,6 +255,7 @@ f2fs
 fscache
 fuse
 hfsplus
+hugetlbfs
 ice
 ima
 ipv4
@@ -266,6 +274,7 @@ ntfs
 nvme
 pci
 rtw88
+scsi-sd
 samba
 selinux
 squashfs
@@ -333,6 +342,7 @@ REQUIRED_USE="
 # fscache? https://nvd.nist.gov/vuln/detail/CVE-2024-46786 # DoS, DT, ID UAF
 # fuse? https://nvd.nist.gov/vuln/detail/CVE-2024-44947 # ID
 # hfsplus? https://nvd.nist.gov/vuln/detail/CVE-2024-41059 # DoS, DT, ID
+# hugetlbfs? https://nvd.nist.gov/vuln/detail/CVE-2024-47676 # DoS, DT, ID
 # ice? https://nvd.nist.gov/vuln/detail/CVE-2024-46766 # DoS, DT, ID
 # ima? https://nvd.nist.gov/vuln/detail/CVE-2024-39494 # DoS, DT, ID
 # ima? https://nvd.nist.gov/vuln/detail/CVE-2022-21505 # DoS, DT, ID, PE
@@ -357,6 +367,7 @@ REQUIRED_USE="
 # rtw88? # 0e735a4 Unofficial: DoS, DT, ID UAF # Added for precaution
 # selinux? https://nvd.nist.gov/vuln/detail/CVE-2022-48740 # DoS, DT, ID
 # samba? https://nvd.nist.gov/vuln/detail/CVE-2024-46796 # # DoS, DT, ID
+# scsi-sd? https://nvd.nist.gov/vuln/detail/CVE-2024-47682 # DoS, DT, ID
 # squashfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46744 # DoS, DT, ID
 # tipc? https://nvd.nist.gov/vuln/detail/CVE-2024-42284 # DoS, DT, ID
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
@@ -467,6 +478,12 @@ all_rdepend() {
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_HFSPLUS[@]}
 		fi
 	fi
+	if _use hugetlbfs ; then
+		if ! _use custom-kernel ; then
+			fs_rdepend
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_HUGETLBFS_47676[@]}
+		fi
+	fi
 	if _use ice ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_ICE[@]}
@@ -524,6 +541,9 @@ all_rdepend() {
 	if _use netfilter ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NETFILTER[@]}
+			if _use ipv6 ; then
+				gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IPV6_NETFILTER[@]}
+			fi
 		fi
 	fi
 	if _use nfs ; then
@@ -569,6 +589,11 @@ all_rdepend() {
 		if ! _use custom-kernel ; then
 			fs_rdepend
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMB[@]}
+		fi
+	fi
+	if _use scsi-sd ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SCSI_SD[@]}
 		fi
 	fi
 	if _use selinux ; then
@@ -779,6 +804,10 @@ check_drivers() {
 		fs=1
 		check_kernel_version "hfsplus" "${CVE_HFSPLUS}" ${MULTISLOT_KERNEL_HFSPLUS[@]}
 	fi
+	if use hugetlbfs ; then
+		fs=1
+		check_kernel_version "hugetlbfs" "${CVE_HUGETLBFS_47676}" ${MULTISLOT_KERNEL_HUGETLBFS_47676[@]}
+	fi
 	if use ice ; then
 		check_kernel_version "net/ethernet/intel/ice" "${CVE_ICE}" ${MULTISLOT_KERNEL_ICE[@]}
 	fi
@@ -828,6 +857,9 @@ check_drivers() {
 	fi
 	if use netfilter ; then
 		check_kernel_version "netfilter" "${CVE_NETFILTER}" ${MULTISLOT_KERNEL_NETFILTER[@]}
+		if use ipv6 ; then
+			check_kernel_version "net/ipv6/netfilter" "${CVE_IPV6_NETFILTER}" ${MULTISLOT_KERNEL_IPV6_NETFILTER[@]}
+		fi
 	fi
 	if use nftables ; then
 		check_kernel_version "nftables" "${CVE_NF_TABLES}" ${MULTISLOT_KERNEL_NF_TABLES[@]}
@@ -853,6 +885,9 @@ check_drivers() {
 	if use samba ; then
 		fs=1
 		check_kernel_version "smb" "${CVE_SMB}" ${MULTISLOT_KERNEL_SMB[@]}
+	fi
+	if use scsi-sd ; then
+		check_kernel_version "scsi/sd" "${CVE_SCSI_SD}" ${MULTISLOT_KERNEL_SCSI_SD[@]}
 	fi
 	if use selinux ; then
 		check_kernel_version "selinux" "${CVE_SELINUX}" ${MULTISLOT_KERNEL_SELINUX[@]}

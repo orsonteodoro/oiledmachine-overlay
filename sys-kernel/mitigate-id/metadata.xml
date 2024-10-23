@@ -163,6 +163,9 @@
     <flag name="samba">
       Mitigate against information disclosure for the Samba network filesystem.
     </flag>
+    <flag name="scsi-sd">
+      Mitigate against information disclosure for the SCSI disk driver.
+    </flag>
     <flag name="selinux">
       Mitigate against information disclosure for the SELinux security module.
     </flag>

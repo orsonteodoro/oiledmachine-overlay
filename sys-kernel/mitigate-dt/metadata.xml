@@ -128,6 +128,9 @@
     <flag name="mt76">
       Mitigate against data tampering for the mt76 network driver.
     </flag>
+    <flag name="netfilter">
+      Mitigate against data tampering for the netfilter firewall.
+    </flag>
     <flag name="nfs">
       Mitigate against data tampering for the NFS server network
       filesystem driver.
@@ -146,6 +149,9 @@
     </flag>
     <flag name="samba">
       Mitigate against data tampering for the Samba network filesystem.
+    </flag>
+    <flag name="scsi-sd">
+      Mitigate against data tampering for the SCSI disk driver.
     </flag>
     <flag name="selinux">
       Mitigate against data tampering for the SELinux security module.
