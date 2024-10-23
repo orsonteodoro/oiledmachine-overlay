@@ -2548,6 +2548,20 @@ gen_clang_bdepend() {
 		"
 	done
 }
+gen_rocm_bdepend() {
+	# DEPENDs listed in llama/llama.go
+	local s
+	for s in ${ROCM_SLOTS[@]} ; do
+		local s1="${s/./_}"
+		local gcc_slot="HIP_${s1}_GCC_SLOT"
+		echo "
+			rocm_${s/./_}? (
+				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}
+				~sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}
+			)
+		"
+	done
+}
 gen_rocm_rdepend() {
 	# DEPENDs listed in llama/llama.go
 	local s
@@ -2556,10 +2570,14 @@ gen_rocm_rdepend() {
 		local gcc_slot="HIP_${s1}_GCC_SLOT"
 		echo "
 			rocm_${s/./_}? (
+				~dev-libs/rocm-comgr-${ROCM_VERSIONS[${s1}]}:${s}
 				~dev-libs/rocm-opencl-runtime-${ROCM_VERSIONS[${s1}]}:${s}
+				~dev-libs/rocr-runtime-${ROCM_VERSIONS[${s1}]}:${s}
 				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}
-				~sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}
 				~sci-libs/hipBLAS-${ROCM_VERSIONS[${s1}]}:${s}
+				~sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}
+				~sci-libs/rocSPARSE-${ROCM_VERSIONS[${s1}]}:${s}
+				~sci-libs/rocSOLVER-${ROCM_VERSIONS[${s1}]}:${s}
 				~sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}
 			)
 		"
@@ -2578,6 +2596,11 @@ RDEPEND="
 	)
 	openblas? (
 		sci-libs/openblas:=
+	)
+	rocm? (
+		$(gen_rocm_rdepend)
+		sci-libs/rocBLAS:=
+		x11-libs/libdrm[video_cards_amdgpu]
 	)
 	video_cards_intel? (
 		>=dev-libs/intel-compute-runtime-2024[l0]
@@ -2699,8 +2722,7 @@ BDEPEND="
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
-		$(gen_rocm_rdepend)
-		sci-libs/rocBLAS:=
+		$(gen_rocm_bdepend)
 	)
 "
 PATCHES=(
@@ -2999,10 +3021,10 @@ einfo "__PIE__ is already enabled."
 
 	strip-unsupported-flags
 
-	if use debug ; then
+#	if use debug ; then
 	# Increase build verbosity
 		append-flags -g
-	fi
+#	fi
 
 	export CGO_CFLAGS="${CFLAGS}"
 	export CGO_CXXFLAGS="${CXXFLAGS}"
