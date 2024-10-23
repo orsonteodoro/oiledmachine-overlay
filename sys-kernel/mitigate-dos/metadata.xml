@@ -40,6 +40,9 @@
     <flag name="aacraid">
       Mitigate against Denial of Service for the AAC RAID driver.
     </flag>
+    <flag name="acpi">
+      Mitigate against Denial of Service for the ACPI driver.
+    </flag>
     <flag name="apparmor">
       Mitigate against Denial of Service for the AppArmor security module.
     </flag>
@@ -225,6 +228,9 @@
     </flag>
     <flag name="pci-hotplug">
       Mitigate against Denial of Service for the PCI Hotplug driver.
+    </flag>
+    <flag name="powercap">
+      Mitigate against Denial of Service for the powercap driver.
     </flag>
     <flag name="qat">
       Mitigate against Denial of Service for the QAT (QuickAssist Technology)

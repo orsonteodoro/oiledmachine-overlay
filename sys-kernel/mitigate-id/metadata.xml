@@ -41,6 +41,9 @@
     <flag name="aacraid">
       Mitigate against information disclosure for the AAC RAID driver.
     </flag>
+    <flag name="acpi">
+      Mitigate against information disclosure for the ACPI driver.
+    </flag>
     <flag name="aead">
       Mitigate against information disclosure for the AEAD crypto driver.
     </flag>
@@ -63,7 +66,8 @@
       Mitigate against information disclosure for the Bluetooth® subsystem.
     </flag>
     <flag name="bpf">
-      Apply BPF mitigations for Spectre (Variant 2) or Spectre-NG.
+      Apply BPF mitigations for Spectre (Variant 2) or Spectre-NG and
+      mitigation against information disclosure.
     </flag>
     <flag name="bridge">
       Mitigate against information disclosure for Ethernet bridge support.
@@ -159,6 +163,9 @@
     </flag>
     <flag name="nvme">
       Mitigate against information disclosure for the NVMe driver.
+    </flag>
+    <flag name="powercap">
+      Mitigate against information disclosure for the powercap driver.
     </flag>
     <flag name="rtw88">
       Mitigate against information disclosure for the rtw88 network driver.

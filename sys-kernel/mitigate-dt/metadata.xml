@@ -59,6 +59,10 @@
     <flag name="bluetooth">
       Mitigate against data tampering for the Bluetooth® subsystem.
     </flag>
+    <flag name="bpf">
+      Mitigate against data tampering for BPF used in network socket packet
+      filtering and syscall blacklist/whitelists for app/browser sandboxes.
+    </flag>
     <flag name="bridge">
       Mitigate against data tampering for Ethernet bridge support.
     </flag>

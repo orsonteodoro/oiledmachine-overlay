@@ -103,11 +103,14 @@ MULTISLOT_KERNEL_KVM_POWERPC_41070=("5.4.281" "5.10.223" "5.15.164" "6.1.101" "6
 
 # More than one row is added to increase LTS coverage.
 MULTISLOT_KERNEL_AACRAID=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.108" "6.6.49" "6.10.8" "6.11_rc6")
-MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9" "6.11")
+MULTISLOT_KERNEL_AMDGPU_46725=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9" "6.11")
+MULTISLOT_KERNEL_AMDGPU_46871=("6.1.109" "6.6.50" "6.10.9" "6.11")
 MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8" "6.10")
 MULTISLOT_KERNEL_BFQ_49854=("5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_BFQ_18ad4df=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_BLUETOOTH_48878=("5.10.165" "5.15.90" "6.1.8" "6.2")
+MULTISLOT_KERNEL_BPF_47675=("6.6.54" "6.10.13" "6.11.2" "6.12_rc1")
+MULTISLOT_KERNEL_BPF_49861=("6.6.54" "6.10.13" "6.11.2" "6.12_rc1")
 MULTISLOT_KERNEL_BTRFS_46687=("6.6.49" "6.10.8" "6.11_rc6")
 MULTISLOT_KERNEL_BRCM80211=("6.6.48" "6.10.7" "6.11_rc4")
 MULTISLOT_KERNEL_CDROM=("6.1.98" "6.6.39" "6.9.9" "6.10")
@@ -145,7 +148,8 @@ MULTISLOT_KERNEL_RTW88_0e735a4=("5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.
 MULTISLOT_KERNEL_SCSI_SD=("6.1.113" "6.6.54" "6.10.13" "6.11.2" "6.12_rc1")
 MULTISLOT_KERNEL_SELINUX_46695=("6.6.49" "6.10.8" "6.11_rc6")
 MULTISLOT_KERNEL_SELINUX_48740=("5.10.99" "5.15.22" "5.16.8" "5.17")
-MULTISLOT_KERNEL_SMACK=("6.6.49" "6.10.8" "6.11_rc6")
+MULTISLOT_KERNEL_SMACK_46695=("6.6.49" "6.10.8" "6.11_rc6")
+MULTISLOT_KERNEL_SMACK_47659=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9" "6.11")
 MULTISLOT_KERNEL_SMB_46796=("6.6.51" "6.10.10" "6.11")
 MULTISLOT_KERNEL_SMB_46795=("5.15.167" "6.1.110" "6.6.51" "6.10.10" "6.11")
 MULTISLOT_KERNEL_SQUASHFS=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10" "6.11")
@@ -157,11 +161,14 @@ MULTISLOT_KERNEL_VMWGFX=("6.6.49" "6.9" "6.10.8" "6.11_rc6")
 MULTISLOT_KERNEL_XE=("6.10.8" "6.11_rc5")
 
 CVE_AACRAID="CVE-2024-46673"
-CVE_AMDGPU="CVE-2024-46725"
+CVE_AMDGPU_46725="CVE-2024-46725"
+CVE_AMDGPU_46871="CVE-2024-46871"
 CVE_ATA_41087="CVE-2024-41087"
 CVE_BFQ_49854="CVE-2024-49854"
 CVE_BFQ_18ad4df="UAF"
 CVE_BLUETOOTH_48878="CVE-2022-48878"
+CVE_BPF_47675="CVE-2024-47675"
+CVE_BPF_49861="CVE-2024-49861"
 CVE_BTRFS_46687="CVE-2024-46687"
 CVE_BRCM80211="CVE-2024-46672"
 CVE_CDROM="CVE-2024-42136"
@@ -202,7 +209,8 @@ CVE_RTW88_0e735a4="UAF"
 CVE_SCSI_SD="CVE-2024-47682"
 CVE_SELINUX_46695="CVE-2024-46695"
 CVE_SELINUX_48740="CVE-2022-48740"
-CVE_SMACK="CVE-2024-46695"
+CVE_SMACK_47659="CVE-2024-47659"
+CVE_SMACK_46695="CVE-2024-46695"
 CVE_SMB_46796="CVE-2024-46796"
 CVE_SMB_46795="CVE-2024-46795"
 CVE_SQUASHFS="CVE-2024-46744"
@@ -326,6 +334,8 @@ REQUIRED_USE="
 # bfq? https://nvd.nist.gov/vuln/detail/CVE-2024-49854 # DoS, DT, ID UAF
 # bfq? 18ad4df # Unofficial: DoS, DT, ID UAF # Added as a precaution
 # bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2022-48878 # DoS, DT, ID
+# bpf? https://nvd.nist.gov/vuln/detail/CVE-2024-47675 # DoS, DT, ID
+# bpf? https://nvd.nist.gov/vuln/detail/CVE-2024-49861 # DoS, DT
 # bridge? https://nvd.nist.gov/vuln/detail/CVE-2024-44934 # DoS, DT, ID
 # btrfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46687 # DoS, DT, ID
 # cdrom? https://nvd.nist.gov/vuln/detail/CVE-2024-42136 # DoS, DT, ID
@@ -363,10 +373,12 @@ REQUIRED_USE="
 # samba? https://nvd.nist.gov/vuln/detail/CVE-2024-46796 # DoS, DT, ID
 # scsi-sd? https://nvd.nist.gov/vuln/detail/CVE-2024-47682 # DoS, DT, ID
 # smack? https://nvd.nist.gov/vuln/detail/CVE-2024-46695 # DT
+# smack? https://nvd.nist.gov/vuln/detail/CVE-2024-47659 # DoS, DT, ID
 # squashfs? https://nvd.nist.gov/vuln/detail/CVE-2024-46744 # DoS, DT, ID
 # tls? https://nvd.nist.gov/vuln/detail/CVE-2024-0646 # DoS, DT, ID
 # tipc? https://nvd.nist.gov/vuln/detail/CVE-2024-42284 # DoS, DT, ID
 # video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46725 # DoS, DT, ID
+# video_cards_amdgpu? https://nvd.nist.gov/vuln/detail/CVE-2024-46871 # DoS, DT, ID
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2023-0030 # PE, ID, DoS, DT.  Fixed in >= 5.0.
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2021-20292 # PE, CE, ID, DoS, DT.  Fixed in >= 5.9.
 # video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, DT, CE, PE
@@ -410,6 +422,12 @@ all_rdepend() {
 	if _use bridge ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_NET_BRIDGE[@]}
+		fi
+	fi
+	if _use bpf ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BPF_47675[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BPF_49861[@]}
 		fi
 	fi
 	if _use btrfs ; then
@@ -587,7 +605,8 @@ all_rdepend() {
 	fi
 	if _use smack ; then
 		if ! _use custom-kernel ; then
-			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMACK[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMACK_46695[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SMACK_47659[@]}
 		fi
 	fi
 	if _use squashfs ; then
@@ -607,7 +626,8 @@ all_rdepend() {
 	fi
 	if _use video_cards_amdgpu ; then
 		if ! _use custom-kernel ; then
-			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU_46725[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_AMDGPU_46871[@]}
 		fi
 	fi
 	if _use video_cards_nouveau ; then
@@ -751,6 +771,10 @@ check_drivers() {
 	if use bluetooth ; then
 		check_kernel_version "bluetooth" "${CVE_BLUETOOTH_48878}" ${MULTISLOT_KERNEL_BLUETOOTH_48878[@]}
 	fi
+	if use bpf ; then
+		check_kernel_version "bpf" "${CVE_BPF_47675}" ${MULTISLOT_KERNEL_BPF_47675[@]}
+		check_kernel_version "bpf" "${CVE_BPF_47675}" ${MULTISLOT_KERNEL_BPF_49861[@]}
+	fi
 	if use bridge ; then
 		check_kernel_version "net/bridge" "${CVE_NET_BRIDGE}" ${MULTISLOT_KERNEL_NET_BRIDGE[@]}
 	fi
@@ -871,7 +895,8 @@ check_drivers() {
 		check_kernel_version "selinux" "${CVE_SELINUX_48740}" ${MULTISLOT_KERNEL_SELINUX_48740[@]}
 	fi
 	if use smack ; then
-		check_kernel_version "smack" "${CVE_SMACK}" ${MULTISLOT_KERNEL_SMACK[@]}
+		check_kernel_version "smack" "${CVE_SMACK_46695}" ${MULTISLOT_KERNEL_SMACK_46695[@]}
+		check_kernel_version "smack" "${CVE_SMACK_47659}" ${MULTISLOT_KERNEL_SMACK_47659[@]}
 	fi
 	if use squashfs ; then
 		fs=1
@@ -884,7 +909,8 @@ check_drivers() {
 		check_kernel_version "tls" "${CVE_TLS_0646}" ${MULTISLOT_KERNEL_TLS_0646[@]}
 	fi
 	if use video_cards_amdgpu ; then
-		check_kernel_version "amdgpu" "${CVE_AMDGPU}" ${MULTISLOT_KERNEL_AMDGPU[@]}
+		check_kernel_version "amdgpu" "${CVE_AMDGPU_46725}" ${MULTISLOT_KERNEL_AMDGPU_46725[@]}
+		check_kernel_version "amdgpu" "${CVE_AMDGPU_46871}" ${MULTISLOT_KERNEL_AMDGPU_46871[@]}
 	fi
 	if use video_cards_nouveau ; then
 		check_kernel_version "nouveau" "${CVE_NOUVEAU}" ${MULTISLOT_KERNEL_NOUVEAU[@]}
