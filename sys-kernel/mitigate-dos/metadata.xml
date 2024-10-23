@@ -137,6 +137,9 @@
     <flag name="i40e">
       Mitigate against Denial of Service for the XL710 network driver
     </flag>
+    <flag name="iaa">
+      Mitigate against Denial of Service for the IAA Compression Accelerator driver.
+    </flag>
     <flag name="ice">
       Mitigate against Denial of Service for the E800 network driver.
     </flag>

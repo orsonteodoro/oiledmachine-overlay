@@ -99,8 +99,8 @@ MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.227" "5.15.168" "6.1
 MULTISLOT_KERNEL_LOCKING=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.110" "6.6.51" "6.10.10" "6.11")
 MULTISLOT_KERNEL_MM_46847=("6.6.51" "6.10.10" "6.11")
 MULTISLOT_KERNEL_MM_47674=("6.1.111" "6.6.52" "6.10.11" "6.11")
+MULTISLOT_KERNEL_MM_47745=("6.6.54" "6.10.13" "6.11.2" "6.12_rc1")
 MULTISLOT_KERNEL_SCHED_44958=("5.15.165" "6.1.105" "6.6.46" "6.10.5" "6.11_rc2")
-MULTISLOT_KERNEL_WORKQUEUE=("4.19.V" "5.4.V" "5.10.V" "5.15.167" "6.1.110" "6.6.51" "6.10.10" "6.11")
 MULTISLOT_KERNEL_KTHREAD=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.3" "6.11.2")
 
 # Arch specific
@@ -123,7 +123,7 @@ MULTISLOT_KERNEL_AMDGPU_47683=("6.1.113" "6.6.54" "6.10.13" "6.11.2" "6.12_rc1")
 MULTISLOT_KERNEL_APPARMOR=("4.19.322" "5.4.284" "5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9" "6.11")
 MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8" "6.10")
 MULTISLOT_KERNEL_ATH12K=("6.6.51" "6.10.10" "6.11")
-MULTISLOT_KERNEL_BFQ_1ba0403=("5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
+MULTISLOT_KERNEL_BFQ_49854=("5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_BFQ_18ad4df=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_BLOCK_43854=("5.15.165" "6.1.103" "6.6.44" "6.10.3" "6.11_rc1")
 MULTISLOT_KERNEL_BLUETOOTH_46749=("6.6.51" "6.10.10" "6.11")
@@ -155,6 +155,7 @@ MULTISLOT_KERNEL_HUGETLBFS_47676=("6.10.13" "6.11.2" "6.12_rc1")
 MULTISLOT_KERNEL_HYPERV=("5.10.V" "5.15.V" "6.1.V" "6.6.52" "6.10.11" "6.11")
 MULTISLOT_KERNEL_I40E=("4.19.313" "5.4.275" "5.10.216" "5.15.158" "6.1.90" "6.6.30" "6.8.9" "6.9")
 MULTISLOT_KERNEL_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8" "6.10")
+MULTISLOT_KERNEL_IAA=("6.10.13" "6.11.2" "6.12_rc1")
 MULTISLOT_KERNEL_ICE=("6.10.10" "6.11")
 MULTISLOT_KERNEL_IGB=("6.6.48" "6.10.7" "6.11_rc5")
 MULTISLOT_KERNEL_IGC=("5.15.163" "6.1.98" "6.6.39" "6.9.9" "6.10")
@@ -244,7 +245,7 @@ CVE_AMDGPU_47683="CVE-2024-47683"
 CVE_APPARMOR="CVE-2024-46721"
 CVE_ATA_41087="CVE-2024-41087"
 CVE_ATH12K="CVE-2024-46827"
-CVE_BFQ_1ba0403="UAF"
+CVE_BFQ_49854="CVE-2024-49854"
 CVE_BFQ_18ad4df="UAF"
 CVE_BLOCK_43854="CVE-2024-43854"
 CVE_BLUETOOTH_46749="CVE-2024-46749"
@@ -276,6 +277,7 @@ CVE_HUGETLBFS_47676="CVE-2024-47676"
 CVE_HYPERV="CVE-2024-46864"
 CVE_I40E="CVE-2024-36004"
 CVE_I915="CVE-2024-41092"
+CVE_IAA="CVE-2024-47732"
 CVE_ICE="CVE-2024-46766"
 CVE_IGB="CVE-2024-45030"
 CVE_IGC="CVE-2024-42116"
@@ -313,6 +315,7 @@ CVE_MD_RAID5="CVE-2024-43914"
 CVE_MD_RAID456="CVE-2024-26962"
 CVE_MM_46847="CVE-2024-46847"
 CVE_MM_47674="CVE-2024-47674"
+CVE_MM_47745="CVE-2024-47745"
 CVE_NET_BRIDGE="CVE-2024-44934"
 CVE_NFSD_46696="CVE-2024-46696"
 CVE_NFSD_22451a1="NPD"
@@ -364,7 +367,6 @@ CVE_VMCI="CVE-2024-46738"
 CVE_VMWGFX="CVE-2024-46709"
 CVE_VMXNET3="CVE-2024-40923"
 CVE_WIREGUARD="CVE-2024-42247"
-CVE_WORKQUEUE="CVE-2024-46839" # rejected
 CVE_XE_46683="CVE-2024-46683"
 CVE_XE_46867="CVE-2024-46867"
 CVE_XEN="CVE-2024-46762"
@@ -421,6 +423,7 @@ hfsplus
 hugetlbfs
 hyperv
 i40e
+iaa
 ice
 igb
 igc
@@ -520,16 +523,18 @@ REQUIRED_USE="
 #
 # The latest to near past vulnerabilities are reported below.
 #
-# locking - https://nvd.nist.gov/vuln/detail/CVE-2024-46829 # Unofficial: DoS
-# mm - https://nvd.nist.gov/vuln/detail/CVE-2024-46847 # Unofficial: DoS
-# sched - https://nvd.nist.gov/vuln/detail/CVE-2024-44958 # Unofficial: DoS
-# workqueue - https://nvd.nist.gov/vuln/detail/CVE-2024-46839 # Unofficial: DoS
+# locking - https://nvd.nist.gov/vuln/detail/CVE-2024-46829 # DoS
+# mm - https://nvd.nist.gov/vuln/detail/CVE-2024-46847 # DoS
+# mm - https://nvd.nist.gov/vuln/detail/CVE-2024-47674 # DoS
+# mm - https://nvd.nist.gov/vuln/detail/CVE-2024-47745 # DoS, DT, ID
+# sched - https://nvd.nist.gov/vuln/detail/CVE-2024-44958 # DoS
+# workqueue - https://nvd.nist.gov/vuln/detail/CVE-2024-46839 # Rejected
 #
 # aacraid? https://nvd.nist.gov/vuln/detail/CVE-2024-46673 # DoS, DT, ID
 # ath12k? https://nvd.nist.gov/vuln/detail/CVE-2024-46827 # Unofficial: DoS
 # apparmor? https://nvd.nist.gov/vuln/detail/CVE-2024-46721 # DoS
 # ata? https://nvd.nist.gov/vuln/detail/CVE-2024-41087 # DoS, DT, ID
-# bfq? 1ba0403 # Unofficial: DoS, DT, ID UAF # Added as a precaution
+# bfq? https://nvd.nist.gov/vuln/detail/CVE-2024-49854 # DoS, DT, ID UAF
 # bfq? 18ad4df # Unofficial: DoS, DT, ID UAF # Added as a precaution
 # block? https://nvd.nist.gov/vuln/detail/CVE-2024-43854 # DoS
 # bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2024-46749 # DoS
@@ -566,6 +571,7 @@ REQUIRED_USE="
 # hfsplus? https://nvd.nist.gov/vuln/detail/CVE-2024-41059 # DoS, DT, ID
 # hugetlbfs? https://nvd.nist.gov/vuln/detail/CVE-2024-47676 # DoS, DT, ID
 # hyperv? https://nvd.nist.gov/vuln/detail/CVE-2024-46864 # Unofficial: DoS
+# iaa? https://nvd.nist.gov/vuln/detail/CVE-2024-47732 # DoS, DT, ID
 # ice? https://nvd.nist.gov/vuln/detail/CVE-2024-46766 # DoS, DT, ID
 # ip? https://nvd.nist.gov/vuln/detail/CVE-2024-36971 # DoS, DT, ID
 # ipv4? https://nvd.nist.gov/vuln/detail/CVE-2024-36927 # DoS
@@ -660,8 +666,8 @@ core_rdepend() {
 	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_LOCKING[@]}
 	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MM_46847[@]}
 	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MM_47674[@]}
+	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MM_47745[@]}
 	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_SCHED_44958[@]}
-	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_WORKQUEUE[@]}
 
 	if _use hppa ; then
 		gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_PARISC_40918[@]}
@@ -717,7 +723,7 @@ all_rdepend() {
 	fi
 	if _use bfq ; then
 		if ! _use custom-kernel ; then
-			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BFQ_1ba0403[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BFQ_49854[@]}
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BFQ_18ad4df[@]}
 		fi
 	fi
@@ -846,6 +852,11 @@ all_rdepend() {
 	if _use i40e ; then
 		if ! _use custom-kernel ; then
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_I40E[@]}
+		fi
+	fi
+	if _use iaa ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IAA[@]}
 		fi
 	fi
 	if _use ice ; then
@@ -1311,9 +1322,9 @@ einfo
 	check_kernel_version "kernel/kthread" "${CVE_KTHREAD}" ${MULTISLOT_KERNEL_KTHREAD[@]}
 	check_kernel_version "kernel/locking" "${CVE_LOCKING}" ${MULTISLOT_KERNEL_LOCKING[@]}
 	check_kernel_version "kernel/sched" "${CVE_SCHED_44958}" ${MULTISLOT_KERNEL_SCHED_44958[@]}
-	check_kernel_version "kernel/workqueue" "${CVE_WORKQUEUE}" ${MULTISLOT_KERNEL_WORKQUEUE[@]}
 	check_kernel_version "mm" "${CVE_MM_46847}" ${MULTISLOT_KERNEL_MM_46847[@]}
 	check_kernel_version "mm" "${CVE_MM_47674}" ${MULTISLOT_KERNEL_MM_47674[@]}
+	check_kernel_version "mm" "${CVE_MM_47745}" ${MULTISLOT_KERNEL_MM_47745[@]}
 
 	if use aacraid ; then
 		check_kernel_version "scsi/aacraid" "${CVE_AACRAID}" ${MULTISLOT_KERNEL_AACRAID[@]}
@@ -1334,7 +1345,7 @@ einfo
 		check_kernel_version "bcrm80211" "${CVE_BRCM80211}" ${MULTISLOT_KERNEL_BRCM80211[@]}
 	fi
 	if use bfq ; then
-		check_kernel_version "bfq" "${CVE_BFQ_1ba0403}" ${MULTISLOT_KERNEL_BFQ_1ba0403[@]}
+		check_kernel_version "bfq" "${CVE_BFQ_49854}" ${MULTISLOT_KERNEL_BFQ_49854[@]}
 		check_kernel_version "bfq" "${CVE_BFQ_18ad4df}" ${MULTISLOT_KERNEL_BFQ_18ad4df[@]}
 	fi
 	if use bluetooth ; then
@@ -1412,6 +1423,9 @@ einfo
 	fi
 	if use i40e ; then
 		check_kernel_version "net/ethernet/intel/i40e" "${CVE_I40E}" ${MULTISLOT_KERNEL_I40E[@]}
+	fi
+	if use iaa ; then
+		check_kernel_version "crypto/iaa" "${CVE_IAA}" ${MULTISLOT_KERNEL_IAA[@]}
 	fi
 	if use ice ; then
 		check_kernel_version "net/ethernet/intel/ice" "${CVE_ICE}" ${MULTISLOT_KERNEL_ICE[@]}

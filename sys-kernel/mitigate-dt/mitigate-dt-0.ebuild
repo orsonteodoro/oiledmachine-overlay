@@ -94,6 +94,9 @@ EOL_VERSIONS=(
 # For zero-tolerance mode
 MULTISLOT_LATEST_KERNEL_RELEASE=("4.19.322" "5.4.284" "5.10.227" "5.15.168" "6.1.113" "6.6.57" "6.11.4")
 
+# Core
+MULTISLOT_KERNEL_MM_47745=("6.6.54" "6.10.13" "6.11.2" "6.12_rc1")
+
 # Arch specific
 MULTISLOT_KERNEL_KVM_ARM64_26598=("5.4.269" "5.10.209" "5.15.148" "6.1.75" "6.6.14" "6.7.2" "6.8_rc1")
 MULTISLOT_KERNEL_KVM_POWERPC_41070=("5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11" "6.10")
@@ -102,7 +105,7 @@ MULTISLOT_KERNEL_KVM_POWERPC_41070=("5.4.281" "5.10.223" "5.15.164" "6.1.101" "6
 MULTISLOT_KERNEL_AACRAID=("4.19.321" "5.4.283" "5.10.225" "5.15.166" "6.1.108" "6.6.49" "6.10.8" "6.11_rc6")
 MULTISLOT_KERNEL_AMDGPU=("5.10.226" "5.15.167" "6.1.109" "6.6.50" "6.10.9" "6.11")
 MULTISLOT_KERNEL_ATA_41087=("4.19.317" "5.4.279" "5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8" "6.10")
-MULTISLOT_KERNEL_BFQ_1ba0403=("5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
+MULTISLOT_KERNEL_BFQ_49854=("5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_BFQ_18ad4df=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_BLUETOOTH_48878=("5.10.165" "5.15.90" "6.1.8" "6.2")
 MULTISLOT_KERNEL_BTRFS_46687=("6.6.49" "6.10.8" "6.11_rc6")
@@ -117,6 +120,7 @@ MULTISLOT_KERNEL_FSCACHE=("6.6.51" "6.10.10" "6.11")
 MULTISLOT_KERNEL_HFSPLUS=("4.19.319" "5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11" "6.10")
 MULTISLOT_KERNEL_HUGETLBFS_47676=("6.10.13" "6.11.2" "6.12_rc1")
 MULTISLOT_KERNEL_I915=("5.10.221" "5.15.162" "6.1.97" "6.6.37" "6.9.8" "6.10")
+MULTISLOT_KERNEL_IAA=("6.10.13" "6.11.2" "6.12_rc1")
 MULTISLOT_KERNEL_ICE=("6.10.10" "6.11")
 MULTISLOT_KERNEL_IMA_39494=("6.1.97" "6.6.35" "6.9.6" "6.10_rc1")
 MULTISLOT_KERNEL_IPV4_42154=("4.19.318" "5.4.280" "5.10.222" "5.15.163" "6.1.98" "6.6.39" "6.9.9" "6.10")
@@ -155,7 +159,7 @@ MULTISLOT_KERNEL_XE=("6.10.8" "6.11_rc5")
 CVE_AACRAID="CVE-2024-46673"
 CVE_AMDGPU="CVE-2024-46725"
 CVE_ATA_41087="CVE-2024-41087"
-CVE_BFQ_1ba0403="UAF"
+CVE_BFQ_49854="CVE-2024-49854"
 CVE_BFQ_18ad4df="UAF"
 CVE_BLUETOOTH_48878="CVE-2022-48878"
 CVE_BTRFS_46687="CVE-2024-46687"
@@ -170,6 +174,7 @@ CVE_FSCACHE="CVE-2024-46786"
 CVE_HFSPLUS="CVE-2024-41059"
 CVE_HUGETLBFS_47676="CVE-2024-47676"
 CVE_I915="CVE-2024-41092"
+CVE_IAA="CVE-2024-47732"
 CVE_ICE="CVE-2024-46766"
 CVE_IMA_39494="CVE-2024-39494"
 CVE_IPV4_42154="CVE-2024-42154"
@@ -182,6 +187,7 @@ CVE_KVM_ARM64_26598="CVE-2024-26598"
 CVE_KVM_POWERPC_41070="CVE-2024-41070"
 CVE_MD_RAID1="CVE-2024-45023"
 CVE_MLX5_48858="CVE-2022-48858"
+CVE_MM_47745="CVE-2024-47745"
 CVE_MPTCP_44974="CVE-2024-44974"
 CVE_MPTCP_46858="CVE-2024-46858"
 CVE_MT76="CVE-2024-42225"
@@ -242,6 +248,7 @@ f2fs
 fscache
 hfsplus
 hugetlbfs
+iaa
 ice
 ima
 ipv4
@@ -312,9 +319,11 @@ REQUIRED_USE="
 #
 # The latest to near past vulnerabilities are reported below.
 #
+# mm - https://nvd.nist.gov/vuln/detail/CVE-2024-47745 # DoS, DT, ID
+#
 # aacraid? https://nvd.nist.gov/vuln/detail/CVE-2024-46673 # DoS, DT, ID
 # ata? https://nvd.nist.gov/vuln/detail/CVE-2024-41087 # DoS, DT, ID
-# bfq? 1ba0403 # Unofficial: DoS, DT, ID UAF # Added as a precaution
+# bfq? https://nvd.nist.gov/vuln/detail/CVE-2024-49854 # DoS, DT, ID UAF
 # bfq? 18ad4df # Unofficial: DoS, DT, ID UAF # Added as a precaution
 # bluetooth? https://nvd.nist.gov/vuln/detail/CVE-2022-48878 # DoS, DT, ID
 # bridge? https://nvd.nist.gov/vuln/detail/CVE-2024-44934 # DoS, DT, ID
@@ -328,6 +337,7 @@ REQUIRED_USE="
 # fscache? https://nvd.nist.gov/vuln/detail/CVE-2024-46786 # DoS, DT, ID UAF
 # hfsplus? https://nvd.nist.gov/vuln/detail/CVE-2024-41059 # DoS, DT, ID
 # hugetlbfs? https://nvd.nist.gov/vuln/detail/CVE-2024-47676 # DoS, DT, ID
+# iaa? https://nvd.nist.gov/vuln/detail/CVE-2024-47732 # DoS, DT, ID
 # ice? https://nvd.nist.gov/vuln/detail/CVE-2024-46766 # DoS, DT, ID
 # ima? https://nvd.nist.gov/vuln/detail/CVE-2024-39494 # DoS, DT, ID
 # ip? https://nvd.nist.gov/vuln/detail/CVE-2024-36971 # DoS, DT, ID
@@ -367,6 +377,9 @@ REQUIRED_USE="
 # Usually stable versions get security checked.
 # The betas and dev versions usually do not get security reports.
 #
+core_rdepend() {
+	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_MM_47745[@]}
+}
 fs_rdepend() {
 	gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_FS[@]}
 }
@@ -385,7 +398,7 @@ all_rdepend() {
 	fi
 	if _use bfq ; then
 		if ! _use custom-kernel ; then
-			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BFQ_1ba0403[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BFQ_49854[@]}
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_BFQ_18ad4df[@]}
 		fi
 	fi
@@ -444,6 +457,11 @@ all_rdepend() {
 		if ! _use custom-kernel ; then
 			fs_rdepend
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_HUGETLBFS_47676[@]}
+		fi
+	fi
+	if _use iaa ; then
+		if ! _use custom-kernel ; then
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_IAA[@]}
 		fi
 	fi
 	if _use ice ; then
@@ -616,6 +634,7 @@ all_rdepend() {
 		if _use zero-tolerance ; then
 			gen_zero_tolerance_kernel_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]}
 		fi
+		core_rdepend
 	fi
 }
 all_rdepend
@@ -715,6 +734,10 @@ check_drivers() {
 	# Check for USE=custom-kernels only which bypass RDEPEND
 	use custom-kernel || return
 	local fs=0
+
+	# Core
+	check_kernel_version "mm" "${CVE_MM_47745}" ${MULTISLOT_KERNEL_MM_47745[@]}
+
 	if use aacraid ; then
 		check_kernel_version "scsi/aacraid" "${CVE_AACRAID}" ${MULTISLOT_KERNEL_AACRAID[@]}
 	fi
@@ -722,7 +745,7 @@ check_drivers() {
 		check_kernel_version "ata" "${CVE_ATA_41087}" ${MULTISLOT_KERNEL_ATA_41087[@]}
 	fi
 	if use bfq ; then
-		check_kernel_version "bfq" "${CVE_BFQ_1ba0403}" ${MULTISLOT_KERNEL_BFQ_1ba0403[@]}
+		check_kernel_version "bfq" "${CVE_BFQ_49854}" ${MULTISLOT_KERNEL_BFQ_49854[@]}
 		check_kernel_version "bfq" "${CVE_BFQ_18ad4df}" ${MULTISLOT_KERNEL_BFQ_18ad4df[@]}
 	fi
 	if use bluetooth ; then
@@ -761,6 +784,9 @@ check_drivers() {
 	if use hugetlbfs ; then
 		fs=1
 		check_kernel_version "hugetlbfs" "${CVE_HUGETLBFS_47676}" ${MULTISLOT_KERNEL_HUGETLBFS_47676[@]}
+	fi
+	if use iaa ; then
+		check_kernel_version "crypto/iaa" "${CVE_IAA}" ${MULTISLOT_KERNEL_IAA[@]}
 	fi
 	if use ice ; then
 		check_kernel_version "net/ethernet/intel/ice" "${CVE_ICE}" ${MULTISLOT_KERNEL_ICE[@]}

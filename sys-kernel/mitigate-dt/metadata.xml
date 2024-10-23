@@ -95,6 +95,9 @@
     <flag name="hugetlbfs">
       Mitigate against data tampering for the hugetlbfs filesystem.
     </flag>
+    <flag name="iaa">
+      Mitigate against data tampering for the IAA Compression Accelerator driver.
+    </flag>
     <flag name="ice">
       Mitigate against data tampering for the E800 network driver.
     </flag>
