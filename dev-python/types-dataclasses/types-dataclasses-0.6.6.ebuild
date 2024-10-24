@@ -4,7 +4,7 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517="poetry"
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -21,7 +21,7 @@ HOMEPAGE="
 LICENSE="
 	Apache-2.0
 "
-RESTRICT="mirror"
+RESTRICT="mirror test" # no tests
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
