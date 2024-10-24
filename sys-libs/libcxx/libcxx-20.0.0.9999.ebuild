@@ -24,7 +24,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-GCC_SLOT=13
+GCC_SLOT=14
 CMAKE_ECLASS="cmake"
 LLVM_COMPONENTS=(
 	"runtimes"
@@ -106,7 +106,7 @@ check_libstdcxx() {
 
 	if ver_test "${gcc_current_profile_slot}" -lt "${GCC_SLOT}" ; then
 # Fixes:
-# warning "Libc++ only supports GCC 13 and later"
+# warning "Libc++ only supports GCC 14 and later"
 eerror
 eerror "You must switch to >= GCC ${GCC_SLOT}.  Do"
 eerror
