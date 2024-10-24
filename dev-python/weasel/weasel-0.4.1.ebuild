@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# cloudpathli
-
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -35,7 +32,7 @@ RDEPEND+="
 	>=dev-python/wasabi-0.9.1[${PYTHON_USEDEP}]
 	>=dev-python/srsly-2.4.3[${PYTHON_USEDEP}]
 	>=dev-python/typer-0.3.0[${PYTHON_USEDEP}]
-	>=dev-python/cloudpathli-0.7.0[${PYTHON_USEDEP}]
+	>=dev-python/cloudpathlib-0.7.0[${PYTHON_USEDEP}]
 	>=dev-python/smart-open-5.2.1[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.13.0[${PYTHON_USEDEP}]
 	>=dev-python/pydantic-1.7.4[${PYTHON_USEDEP}]

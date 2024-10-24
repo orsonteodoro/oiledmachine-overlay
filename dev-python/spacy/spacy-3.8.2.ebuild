@@ -11,7 +11,6 @@ EAPI=8
 # spacy-legacy
 # spacy-loggers
 # thinc
-# weasel
 # TODO package (optional):
 # cython-lint
 
