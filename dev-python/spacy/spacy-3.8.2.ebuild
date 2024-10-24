@@ -7,7 +7,6 @@ EAPI=8
 # TODO package (required):
 # catalogue
 # cymem
-# langcodes
 # ml_datasets
 # preshed
 # spacy-legacy
