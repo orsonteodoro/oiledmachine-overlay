@@ -6,10 +6,8 @@ EAPI=8
 
 # TODO package (required):
 # ml_datasets
-# preshed
 # spacy-legacy
 # spacy-loggers
-# thinc
 # TODO package (optional):
 # cython-lint
 

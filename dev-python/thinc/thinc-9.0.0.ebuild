@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# preshed
-#
 # TODO package (optional)
 # cupy-wheel
 # ml_datasets
