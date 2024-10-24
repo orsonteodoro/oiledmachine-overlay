@@ -7,7 +7,6 @@ EAPI=8
 # TODO package:
 # cymem
 # preshed
-# confection
 #
 # TODO package (optional)
 # cupy-wheel
