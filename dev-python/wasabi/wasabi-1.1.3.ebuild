@@ -37,17 +37,18 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
+	>=dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
 	dev? (
-		dev-python/pytest
-		dev-python/mypy
-		dev-python/types-colorama
-		dev-python/nbconvert
-		dev-python/ipykernel
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/mypy[${PYTHON_USEDEP}]
+		dev-python/types-colorama[${PYTHON_USEDEP}]
+		dev-python/nbconvert[${PYTHON_USEDEP}]
+		dev-python/ipykernel[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
