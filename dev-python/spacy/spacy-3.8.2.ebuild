@@ -5,13 +5,11 @@
 EAPI=8
 
 # TODO package (required):
-# catalogue
 # cymem
 # ml_datasets
 # preshed
 # spacy-legacy
 # spacy-loggers
-# srsly
 # thinc
 # weasel
 # TODO package (optional):
