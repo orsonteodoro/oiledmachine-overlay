@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/python/typeshed/issues</bugs-to>
+    <changelog>https://github.com/typeshed-internal/stub_uploader/blob/main/data/changelogs/dataclasses.md</changelog>
+    <remote-id type="github">python/typeshed</remote-id>
+    <remote-id type="pypi">types-dataclasses</remote-id>
+  </upstream>
+</pkgmetadata>
