@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO package:
-# cymem
 # preshed
 #
 # TODO package (optional)
