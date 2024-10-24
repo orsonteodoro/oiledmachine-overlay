@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# pathlib_abc
-#
 # TODO package (optional)
 # mathy_pydoc
 # typer-cli
@@ -40,7 +37,7 @@ IUSE+=" dev"
 RDEPEND+="
 	>=dev-python/smart-open-5.2.1[${PYTHON_USEDEP}]
 	>=dev-python/typer-0.3.0[${PYTHON_USEDEP}]
-	>=dev-python/pathlib_abc-0.1.1[${PYTHON_USEDEP}]
+	>=dev-python/pathlib-abc-0.1.1[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
