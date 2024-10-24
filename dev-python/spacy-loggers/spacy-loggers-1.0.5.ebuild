@@ -33,9 +33,11 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/spacy-3.0.0[${PYTHON_USEDEP}]
 	>=dev-python/pytest-5.0.1[${PYTHON_USEDEP}]
 	>=dev-python/flake8-3.8.0[${PYTHON_USEDEP}]
+"
+PDEPEND+="
+	>=dev-python/spacy-3.0.0[${PYTHON_USEDEP}]
 "
 DOCS=( "README.md" )
 

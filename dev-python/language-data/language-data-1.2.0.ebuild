@@ -28,7 +28,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 RDEPEND+="
-	>=dev-python/language-data-1.2[${PYTHON_USEDEP}]
+	>=dev-python/marisa-trie-0.7.7[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
