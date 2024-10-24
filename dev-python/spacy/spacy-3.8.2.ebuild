@@ -14,7 +14,6 @@ EAPI=8
 # spacy-loggers
 # srsly
 # thinc
-# wasabi
 # weasel
 # TODO package (optional):
 # cython-lint
