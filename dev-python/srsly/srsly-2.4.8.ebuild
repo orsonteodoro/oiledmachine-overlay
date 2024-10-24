@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -39,7 +40,10 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/cython-0.29.1[${PYTHON_USEDEP}]
+	(
+		>=dev-python/cython-0.29.1[${PYTHON_USEDEP}]
+		<dev-python/cython-3
+	)
 	dev? (
 		>=dev-python/pytest-4.6.5[${PYTHON_USEDEP}]
 		>=dev-python/pytest-timeout-1.3.3[${PYTHON_USEDEP}]
@@ -49,5 +53,27 @@ BDEPEND+="
 	)
 "
 DOCS=( "README.md" )
+
+src_configure() {
+	local actual_cython_pv=$(cython --version 2>&1 \
+		| cut -f 3 -d " " \
+		| sed -e "s|a|_alpha|g" \
+		| sed -e "s|b|_beta|g" \
+		| sed -e "s|rc|_rc|g")
+	local expected_cython_pv="0.29.37"
+	local actual_cython_major=$(ver_cut 1 ${actual_cython_pv})
+	local required_cython_major=$(ver_cut 1 ${expected_cython_pv})
+	if ver_test ${actual_cython_major} -gt ${required_cython_major} ; then
+eerror
+eerror "Switch cython to >= ${expected_cython_pv} and < 3 via eselect-cython"
+eerror
+eerror "Actual cython version:\t${actual_cython_pv}"
+eerror "Expected cython version\t${expected_cython_pv}"
+eerror
+		die
+	fi
+	distutils-r1_src_configure
+}
+
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

@@ -24,20 +24,24 @@ HOMEPAGE="
 LICENSE="
 	MIT
 "
-RESTRICT="mirror"
+RESTRICT="mirror test" # untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" dev"
 RDEPEND+="
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/pytest-4.6.5[${PYTHON_USEDEP}]
-	dev-python/mypy[${PYTHON_USEDEP}]
-	dev-python/pydantic[${PYTHON_USEDEP}]
-	dev-python/types-dataclasses[${PYTHON_USEDEP}]
-	dev-python/typing-extensions[${PYTHON_USEDEP}]
+	dev? (
+		>=dev-python/pytest-4.6.5[${PYTHON_USEDEP}]
+		dev-python/mypy[${PYTHON_USEDEP}]
+		dev-python/pydantic[${PYTHON_USEDEP}]
+		dev-python/types-dataclasses[${PYTHON_USEDEP}]
+		dev-python/typing-extensions[${PYTHON_USEDEP}]
+	)
+"
+PDEPEND+="
 	dev-python/srsly[${PYTHON_USEDEP}]
 "
 DOCS=( "README.md" )
