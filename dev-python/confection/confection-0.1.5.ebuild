@@ -6,7 +6,6 @@ EAPI=8
 
 # TODO package:
 # srsly
-# pathy
 # catalogue
 
 DISTUTILS_USE_PEP517="setuptools"
