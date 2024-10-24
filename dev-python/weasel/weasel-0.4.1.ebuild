@@ -5,8 +5,6 @@
 EAPI=8
 
 # TODO package:
-# confection
-# srsly
 # cloudpathli
 
 DISTUTILS_USE_PEP517="setuptools"

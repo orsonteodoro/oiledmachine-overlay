@@ -4,10 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# srsly
-# catalogue
-
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 

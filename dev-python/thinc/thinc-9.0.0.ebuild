@@ -7,8 +7,6 @@ EAPI=8
 # TODO package:
 # cymem
 # preshed
-# srsly
-# catalogue
 # confection
 #
 # TODO package (optional)
