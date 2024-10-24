@@ -6,7 +6,6 @@ EAPI=8
 
 # TODO package (optional)
 # cupy-wheel
-# ml_datasets
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -52,7 +51,7 @@ RDEPEND+="
 		>=dev-python/cupy-wheel-11.0.0[${PYTHON_USEDEP}]
 	)
 	datasets? (
-		>=dev-python/ml_datasets-0.2.0[${PYTHON_USEDEP}]
+		>=dev-python/ml-datasets-0.2.0[${PYTHON_USEDEP}]
 	)
 	mxnet? (
 		>=dev-python/mxnet-1.5.1[${PYTHON_USEDEP}]

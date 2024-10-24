@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO package (required):
-# ml_datasets
 # spacy-legacy
 # spacy-loggers
 # TODO package (optional):
@@ -41,7 +40,7 @@ RDEPEND+="
 	>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
 	>=dev-python/jinja-2[${PYTHON_USEDEP}]
 	>=dev-python/langcodes-3.2.0[${PYTHON_USEDEP}]
-	>=dev-python/ml_datasets-0.2.0[${PYTHON_USEDEP}]
+	>=dev-python/ml-datasets-0.2.0[${PYTHON_USEDEP}]
 	>=dev-python/murmurhash-0.28.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
 	>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]
