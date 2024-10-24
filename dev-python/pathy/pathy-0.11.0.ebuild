@@ -9,7 +9,6 @@ EAPI=8
 # typer-cli
 # pytest-coverage
 # types-mock
-# types-dataclasses
 
 DISTUTILS_USE_PEP517="poetry"
 PYTHON_COMPAT=( "python3_"{10..12} )
