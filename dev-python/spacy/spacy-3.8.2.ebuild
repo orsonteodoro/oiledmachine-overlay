@@ -67,6 +67,9 @@ BDEPEND+="
 	>=dev-python/thinc-8.3.0[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev? (
+		$(python_gen_any_dep '
+			>=dev-vcs/pre-commit-2.13.0[${PYTHON_SINGLE_USEDEP}]
+		')
 		!~dev-python/pytest-7.1.0
 		>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
 		>=dev-python/cython-0.25[${PYTHON_USEDEP}]
@@ -75,7 +78,6 @@ BDEPEND+="
 		>=dev-python/isort-5.0[${PYTHON_USEDEP}]
 		>=dev-python/flake8-3.8.0[${PYTHON_USEDEP}]
 		>=dev-python/mock-2.0.0[${PYTHON_USEDEP}]
-		>=dev-python/pre-commit-2.13.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-5.2.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-timeout-1.3.0[${PYTHON_USEDEP}]
 		>=dev-python/types-mock-0.1.1[${PYTHON_USEDEP}]

@@ -66,7 +66,7 @@ BDEPEND+="
 		>=dev-python/trio-0.22.2[${PYTHON_USEDEP}]
 		>=dev-python/types-pyaudio-0.2.16.20240106[${PYTHON_USEDEP}]
 		>=dev-python/types-tqdm-4.66.0.2[${PYTHON_USEDEP}]
-		>=dev-util/ruff-0.6.5[${PYTHON_USEDEP}]
+		>=dev-util/ruff-0.6.5
 	)
 "
 DOCS=()

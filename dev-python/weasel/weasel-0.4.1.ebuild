@@ -41,13 +41,15 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 	dev? (
+		$(python_gen_any_dep '
+			>=dev-vcs/pre-commit-3.2.0[${PYTHON_SINGLE_USEDEP}]
+		')
 		>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-5.2.0[${PYTHON_USEDEP}]
 		>=dev-python/mypy-1.5.0[${PYTHON_USEDEP}]
 		>=dev-python/types-setuptools-57.0.0[${PYTHON_USEDEP}]
 		>=dev-util/ruff-0.0.259
 		>=dev-python/isort-5.12.0[${PYTHON_USEDEP}]
-		>=dev-vcs/pre-commit-3.2.0[${PYTHON_USEDEP}]
 		dev-python/types-requests[${PYTHON_USEDEP}]
 	)
 "

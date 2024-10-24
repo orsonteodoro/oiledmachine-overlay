@@ -185,8 +185,8 @@ FABRIC_TEST_BDEPEND="
 		>=dev-python/coverage-6.5.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.2.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cov-4.0.0[${PYTHON_USEDEP}]
-		>=dev-vcs/pre-commit-2.20.0[${PYTHON_USEDEP}]
 	')
+	>=dev-vcs/pre-commit-2.20.0[${PYTHON_SINGLE_USEDEP}]
 "
 BDEPEND="
 	$(python_gen_cond_dep '

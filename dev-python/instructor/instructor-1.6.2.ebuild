@@ -92,10 +92,12 @@ RDEPEND+="
 		>=dev-python/diskcache-5.6.3[${PYTHON_USEDEP}]
 	)
 	examples? (
+		$(python_gen_any_dep '
+			>=dev-vcs/pre-commit-3.5.0[${PYTHON_SINGLE_USEDEP}]
+		')
 		>=dev-python/openai-1.1.0[${PYTHON_USEDEP}]
 		>=dev-python/pyright-1.1.360[${PYTHON_USEDEP}]
-		>=dev-util/ruff-0.1.7[${PYTHON_USEDEP}]
-		>=dev-vcs/pre-commit-3.5.0[${PYTHON_USEDEP}]
+		>=dev-util/ruff-0.1.7
 		dev-python/pydantic[${PYTHON_USEDEP}]
 		dev-python/docstring-parser[${PYTHON_USEDEP}]
 		dev-python/rich[${PYTHON_USEDEP}]

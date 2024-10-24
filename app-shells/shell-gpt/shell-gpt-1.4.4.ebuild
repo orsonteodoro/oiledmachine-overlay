@@ -38,8 +38,10 @@ DEPEND="
 "
 BDEPEND="
 	dev? (
-		>=dev-util/ruff-0.0.256[${PYTHON_USEDEP}]
-		>=dev-vcs/pre-commit-3.1.1[${PYTHON_USEDEP}]
+		$(python_gen_any_dep '
+			>=dev-vcs/pre-commit-3.1.1[${PYTHON_SINGLE_USEDEP}]
+		')
+		>=dev-util/ruff-0.0.256
 	)
 	test? (
 		>=dev-python/pytest-7.2.2[${PYTHON_USEDEP}]

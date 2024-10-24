@@ -102,7 +102,7 @@ BDEPEND+="
 		<dev-python/urllib3-2.0.1[${PYTHON_USEDEP}]
 		>=dev-python/hf-doc-builder-0.3.0[${PYTHON_USEDEP}]
 		>=dev-python/isort-5.5.4[${PYTHON_USEDEP}]
-		>=dev-util/ruff-0.1.5[${PYTHON_USEDEP}]
+		>=dev-util/ruff-0.1.5
 		dev-python/black[${PYTHON_USEDEP}]
 	)
 	doc? (

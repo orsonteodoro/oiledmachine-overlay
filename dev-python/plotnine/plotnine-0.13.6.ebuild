@@ -72,10 +72,12 @@ BDEPEND+="
 	dev-python/build[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	dev? (
+		$(python_gen_any_dep '
+			dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
+		')
 		dev-util/ruff
 
 		dev-python/twine[${PYTHON_USEDEP}]
-		dev-vcs/pre-commit[${PYTHON_USEDEP}]
 
 		dev-python/pyright[${PYTHON_USEDEP}]
 		dev-python/ipython[${PYTHON_USEDEP}]

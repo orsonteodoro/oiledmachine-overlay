@@ -41,8 +41,10 @@ BDEPEND+="
 	dev-python/packaging[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev? (
+		$(python_gen_any_dep '
+			dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
+		')
 		>=dev-python/flake8-3.8[${PYTHON_USEDEP}]
-		dev-vcs/pre-commit[${PYTHON_USEDEP}]
 	)
 	doc? (
 		dev-python/changelog[${PYTHON_USEDEP}]

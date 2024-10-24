@@ -121,8 +121,7 @@ BDEPEND+="
 			>=dev-python/black-24.2.0[${PYTHON_USEDEP}]
 			>=dev-python/coverage-7[${PYTHON_USEDEP},toml(+)]
 			>=dev-python/nose2-0.15[${PYTHON_USEDEP}]
-			>=dev-util/ruff-0.4.9[${PYTHON_USEDEP}]
-			>=dev-vcs/pre-commit-3[${PYTHON_USEDEP}]
+			>=dev-util/ruff-0.4.9
 		)
 		doc? (
 			>=dev-python/furo-2023.5.20[${PYTHON_USEDEP}]
@@ -138,6 +137,7 @@ BDEPEND+="
 			>=dev-python/tomli-2[${PYTHON_USEDEP}]
 		)
 	' python3_{10..11})
+	>=dev-vcs/pre-commit-3[${PYTHON_SINGLE_USEDEP}]
 "
 DOCS=( "CHANGELOG" "README.md" )
 

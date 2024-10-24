@@ -339,8 +339,8 @@ PYTORCH_TEST_BDEPEND="
 		>=dev-python/pytest-cov-4.0.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-forked-1.4.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-rerunfailures-10.3[${PYTHON_USEDEP}]
-		>=dev-vcs/pre-commit-2.20.0[${PYTHON_USEDEP}]
 	')
+	>=dev-vcs/pre-commit-2.20.0[${PYTHON_SINGLE_USEDEP}]
 "
 BDEPEND="
 	$(python_gen_cond_dep '

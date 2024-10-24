@@ -47,6 +47,9 @@ BDEPEND+="
 	>=dev-python/poetry-core-1.0.0[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	dev? (
+		$(python_gen_any_dep '
+			>=dev-vcs/pre-commit-2.17.0[${PYTHON_SINGLE_USEDEP}]
+		')
 		>=dev-python/bandit-1.7.4[${PYTHON_USEDEP}]
 		>=dev-python/flake8-6.1.0[${PYTHON_USEDEP}]
 		>=dev-python/flake8-docstrings-1.6.0[${PYTHON_USEDEP}]
@@ -58,7 +61,6 @@ BDEPEND+="
 		>=dev-python/safety-2.3.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-5.3.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-autobuild-2021.3.14[${PYTHON_USEDEP}]
-		>=dev-vcs/pre-commit-2.17.0[${PYTHON_USEDEP}]
 
 		dev-python/black[${PYTHON_USEDEP}]
 		dev-python/mypy[${PYTHON_USEDEP}]

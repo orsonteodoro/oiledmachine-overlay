@@ -55,7 +55,7 @@ BDEPEND+="
 		>=dev-python/mypy-1.4.1[${PYTHON_USEDEP}]
 		>=dev-python/rich-10.11.0[${PYTHON_USEDEP}]
 		>=dev-python/shellingham-1.3.0[${PYTHON_USEDEP}]
-		>=dev-util/ruff-0.2.0[${PYTHON_USEDEP}]
+		>=dev-util/ruff-0.2.0
 	)
 "
 DOCS=( "README.md" )
