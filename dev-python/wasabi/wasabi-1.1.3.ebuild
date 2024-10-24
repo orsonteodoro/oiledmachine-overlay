@@ -11,16 +11,16 @@ EAPI=8
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit distutils-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PV}"
 SRC_URI="
 https://github.com/explosion/wasabi/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Create, fill a temporary directory"
+DESCRIPTION="🍣 A lightweight console printing and formatting toolkit"
 HOMEPAGE="
 	https://github.com/explosion/wasabi
 	https://pypi.org/project/wasabi
