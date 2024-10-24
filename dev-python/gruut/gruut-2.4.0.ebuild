@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO package (required):
-# python-crfsuite
-
 # TODO package (optional):
 # aeneas
 # phonetisaurus

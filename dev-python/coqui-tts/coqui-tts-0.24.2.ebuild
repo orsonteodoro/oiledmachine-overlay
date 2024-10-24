@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO package (required):
-# gruut
 # spacy
 
 # TODO package (optional):
