@@ -2556,8 +2556,8 @@ gen_rocm_bdepend() {
 		local gcc_slot="HIP_${s1}_GCC_SLOT"
 		echo "
 			rocm_${s/./_}? (
-				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}
-				~sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}
+				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[rocm]
+				~sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
 			)
 		"
 	done
@@ -2573,12 +2573,12 @@ gen_rocm_rdepend() {
 				~dev-libs/rocm-comgr-${ROCM_VERSIONS[${s1}]}:${s}
 				~dev-libs/rocm-opencl-runtime-${ROCM_VERSIONS[${s1}]}:${s}
 				~dev-libs/rocr-runtime-${ROCM_VERSIONS[${s1}]}:${s}
-				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}
-				~sci-libs/hipBLAS-${ROCM_VERSIONS[${s1}]}:${s}
-				~sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}
-				~sci-libs/rocSPARSE-${ROCM_VERSIONS[${s1}]}:${s}
-				~sci-libs/rocSOLVER-${ROCM_VERSIONS[${s1}]}:${s}
-				~sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}
+				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[rocm]
+				~sci-libs/hipBLAS-${ROCM_VERSIONS[${s1}]}:${s}[rocm]
+				~sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}$(get_rocm_usedep ROCBLAS)
+				~sci-libs/rocSPARSE-${ROCM_VERSIONS[${s1}]}:${s}$(get_rocm_usedep ROCSPARSE)
+				~sci-libs/rocSOLVER-${ROCM_VERSIONS[${s1}]}:${s}$(get_rocm_usedep ROCSOLVER)
+				~sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
 			)
 		"
 	done
