@@ -1691,12 +1691,19 @@ ewarn "QA:  Remove ${lib} arg from rocm_verify_glibcxx"
 			| tail -n 1 \
 			| cut -f 2 -d "_")
 		if ver_test ${lib_glibcxx_ver} -gt ${glibcxx_ver} ; then
+			local gcc_pv="${_GLIBCXX_VER[GLIBCXX_${glibcxx_ver//./_}]}"
+			local gcc_slot="${gcc_pv%%.*}"
 eerror
 eerror "Detected missing versioned symbol."
-eerror "Rebuild ${ROCM_PATH}/lib/lib${lib}.so with GCC ${_GLIBCXX_VER[GLIBCXX_${glibcxx_ver//./_}]} or less"
+eerror "Rebuild ${ROCM_PATH}/lib/lib${lib}.so with GCC ${gcc_pv} or less"
 eerror
 eerror "Actual GLIBCXX version:  ${lib_glibcxx_ver}, GCC ${_GLIBCXX_VER[GLIBCXX_${lib_glibcxx_ver//./_}]}"
-eerror "Expected GLIBCXX version:  ${glibcxx_ver}, GCC ${_GLIBCXX_VER[GLIBCXX_${glibcxx_ver//./_}]}"
+eerror "Expected GLIBCXX version:  ${glibcxx_ver}, GCC ${gcc_pv}"
+eerror
+eerror "Do the following to switch:"
+eerror
+eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
+eerror "  source /etc/profile"
 eerror
 			die
 		else
