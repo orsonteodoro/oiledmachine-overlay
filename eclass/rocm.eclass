@@ -885,13 +885,13 @@ verify_libstdcxx() {
 		['GLIBCXX_3_1']="3.1.1"
 	)
 
-	local hip_libstdcxx_ver=$(strings "${EROCM_PATH}/$(rocm_get_libdir)/libamdhip64.so" \
+	local hip_glibcxx_ver=$(strings "${EROCM_PATH}/$(rocm_get_libdir)/libamdhip64.so" \
 		| grep -E "GLIBCXX_[0-9]\.[0-9]\.[0-9]+" \
 		| sort -V \
 		| grep -E "^GLIBCXX" \
 		| tail -n 1 \
 		| cut -f 2 -d "_")
-	local hsa_runtime_libstdcxx_ver=$(strings "${EROCM_PATH}/$(rocm_get_libdir)/libhsa-runtime64.so" \
+	local hsa_runtime_glibcxx_ver=$(strings "${EROCM_PATH}/$(rocm_get_libdir)/libhsa-runtime64.so" \
 		| grep -E "GLIBCXX_[0-9]\.[0-9]\.[0-9]+" \
 		| sort -V \
 		| grep -E "^GLIBCXX" \
@@ -899,79 +899,69 @@ verify_libstdcxx() {
 		| cut -f 2 -d "_")
 	local gcc_current_profile=$(gcc-config -c)
 	local gcc_current_profile_slot=${gcc_current_profile##*-}
-	local libstdcxx_ver=$(strings "/usr/lib/gcc/${CHOST}/${gcc_current_profile_slot}/libstdc++.so" \
+	local gcc_current_glibcxx_ver=$(strings "/usr/lib/gcc/${CHOST}/${gcc_current_profile_slot}/libstdc++.so" \
 		| grep -E "GLIBCXX_[0-9]\.[0-9]\.[0-9]+" \
 		| sort -V \
 		| grep -E "^GLIBCXX" \
 		| tail -n 1 \
 		| cut -f 2 -d "_")
 einfo
-einfo "libstdcxx used:"
+einfo "GLIBCXX used:"
 einfo
-printf " \e[32m*\e[0m %-30s%s\n" "dev-libs/rocr-runtime:${ROCM_SLOT}" "GCC ${_GLIBCXX_VER[GLIBCXX_${hsa_runtime_libstdcxx_ver//./_}]} (libstdcxx version ${hsa_runtime_libstdcxx_ver})"
-printf " \e[32m*\e[0m %-30s%s\n" "sys-deve/gcc:${_GLIBCXX_VER[GLIBCXX_${libstdcxx_ver//./_}]}" "GCC ${_GLIBCXX_VER[GLIBCXX_${libstdcxx_ver//./_}]} (libstdcxx version ${libstdcxx_ver})"
-printf " \e[32m*\e[0m %-30s%s\n" "sys-devel/hip:${ROCM_SLOT}" "GCC ${_GLIBCXX_VER[GLIBCXX_${hip_libstdcxx_ver//./_}]} (libstdcxx version ${hip_libstdcxx_ver})"
+printf " \e[32m*\e[0m %-30s%s\n" "dev-libs/rocr-runtime:${ROCM_SLOT}" "GCC ${_GLIBCXX_VER[GLIBCXX_${hsa_runtime_glibcxx_ver//./_}]} (GLIBCXX version ${hsa_runtime_glibcxx_ver})"
+	local gcc_current_pv="${_GLIBCXX_VER[GLIBCXX_${gcc_current_glibcxx_ver//./_}]}"
+printf " \e[32m*\e[0m %-30s%s\n" "sys-deve/gcc:${gcc_current_pv%%.*}" "GCC ${gcc_current_pv} (GLIBCXX version ${gcc_current_glibcxx_ver})"
+printf " \e[32m*\e[0m %-30s%s\n" "sys-devel/hip:${ROCM_SLOT}" "GCC ${_GLIBCXX_VER[GLIBCXX_${hip_glibcxx_ver//./_}]} (GLIBCXX version ${hip_glibcxx_ver})"
 einfo
-	local t="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
-	local gcc_slot="${!t}"
+
+	local _rocm_slot_glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
+	local rocm_slot_glibcxx_ver=${!_rocm_slot_glibcxx_ver}
+	local gcc_pv="${_GLIBCXX_VER[GLIBCXX_${rocm_slot_glibcxx_ver//./_}]}"
+	local gcc_slot="${_gcc_slot%%.*}"
 
 	# Check eselect gcc
-	local built_gcc_slot
-	built_gcc_slot="${_GLIBCXX_VER[GLIBCXX_${libstdcxx_ver//./_}]}"
-	if ver_test "${built_gcc_slot}" -gt "${gcc_slot}" ; then
+	if ver_test "${gcc_current_glibcxx_ver}" -gt "${rocm_slot_glibcxx_ver}" ; then
 eerror
-eerror "You must switch to <= GCC ${gcc_slot}.  Do"
+eerror "You must switch to <= GCC ${gcc_pv}.  Do"
 eerror
-eerror "  eselect gcc set ${CHOST}-${built_gcc_slot}"
+eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
 eerror "  source /etc/profile"
 eerror
 eerror "Error 1"
-eerror
-eerror "Uninstall all dev-libs/rocr-runtime slots and rebuild with GCC ${gcc_slot}."
 eerror
 		die
 	fi
 
 	# Check hip
-	built_gcc_slot="${_GLIBCXX_VER[GLIBCXX_${libstdcxx_ver//./_}]}"
-	if ver_test "${libstdcxx_ver}" -gt "${gcc_slot}" ; then
-		local built_gcc_slot="${_GLIBCXX_VER[GLIBCXX_${hip_libstdcxx_ver//./_}]}"
+	if ver_test "${hip_glibcxx_ver}" -gt "${rocm_slot_glibcxx_ver}" ; then
+		gcc_slot="${gcc_pv%%.*}"
 eerror
-eerror "You must switch to <= GCC ${gcc_slot}.  Do"
+eerror "You must switch to <= GCC ${gcc_pv}.  Do"
 eerror
-eerror "  eselect gcc set ${CHOST}-${built_gcc_slot}"
+eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
 eerror "  source /etc/profile"
 eerror
 eerror "Error 2"
 eerror
-eerror "Uninstall all dev-libs/rocr-runtime slots and rebuild with GCC ${gcc_slot}."
+eerror "Uninstall all sys-devel/hip slots and rebuild with GCC ${gcc_slot}."
 eerror
 		die
 	fi
 
 	# Check rocr-runtime
-	if ver_test "${hsa_runtime_libstdcxx_ver}" -gt "${gcc_slot}" ; then
-		local built_gcc_slot="${_GLIBCXX_VER[GLIBCXX_${hip_libstdcxx_ver//./_}]}"
+	if ver_test "${hsa_runtime_glibcxx_ver}" -gt "${rocm_slot_glibcxx_ver}" ; then
+		gcc_slot="${gcc_pv%%.*}"
 eerror
 eerror "You must switch to <= GCC ${gcc_slot}.  Do"
 eerror
-eerror "  eselect gcc set ${CHOST}-${built_gcc_slot}"
+eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
 eerror "  source /etc/profile"
 eerror
-eerror "Error 2"
+eerror "Error 3"
 eerror
 eerror "Uninstall all dev-libs/rocr-runtime slots and rebuild with GCC ${gcc_slot}."
 eerror
 		die
-	fi
-
-	# Check rocr-runtime
-	if ver_test "${hsa_runtime_libstdcxx_ver}" -gt "${gcc_slot}" ; then
-ewarn
-ewarn "Detected dev-util/hip:${ROCM_SLOT} and dev-libs/rocr-runtime:${ROCM_SLOT}"
-ewarn "with mismatched libstdcxx.  Please rebuild the entire HIP/ROCm stack"
-ewarn "with the same libstdcxx/gcc version."
-ewarn
 	fi
 }
 
