@@ -797,6 +797,29 @@ pkg_setup() {
 		done
 		llvm_pkg_setup
 	fi
+
+	if use rocm ; then
+		local libs=(
+			"amd_comgr"
+			"amdhip64"
+			"hipblas"
+			"hsa-runtime64"
+			"rocblas"
+			"rocm_smi64"
+			"rocsparse"
+			"rocsolver"
+		)
+		if use roctracer ; then
+			libs+=(
+				"roctracer64"
+			)
+		fi
+		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
+	# Avoid missing versioned symbols
+	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
+		rocm_verify_glibcxx "${!glibcxx_ver}" ${libs[@]}
+	fi
+
 	python-single-r1_pkg_setup
 }
 

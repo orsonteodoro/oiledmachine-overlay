@@ -721,6 +721,22 @@ einfo
 	fi
 	if use rocm ; then
 		rocm_pkg_setup
+
+		local libs=(
+			"amd_comgr"
+			"amdhip64"
+			"hipblas"
+			"hsa-runtime64"
+			"rocblas"
+			"rocm_smi64"
+			"rocsparse"
+			"roctracer64"
+		)
+		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
+	# Avoid missing versioned symbols
+	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
+		rocm_verify_glibcxx "${!glibcxx_ver}" ${libs[@]}
+
 	#else
 	#	llvm_pkg_setup is called in use_clang
 	fi

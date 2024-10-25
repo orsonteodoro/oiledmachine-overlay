@@ -75,6 +75,7 @@ prepare_chroot() {
 		cp -a "/lib64/libc.so.6" "lib64"
 		cp -a "/lib64/libm.so.6" "lib64"
 	# CWE-122, Mitigate against CE, ID, DoS, DT
+	# AC = Access Control
 	# CE = Code Execution
 	# ID = Information Disclosure
 	# DoS = Denial of Service
@@ -139,11 +140,13 @@ start() {
 	fi
 
 	if [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc" ]] ; then
+	# TODO:  Verify hardened heap allocator.
 		args+=(
 			-e LD_PRELOAD=usr/lib64/libmimalloc.so.2
 		)
 	fi
 
+	# TODO:  Review or use sys-apps/sandbox or firejail for namespace isolation.
 	exec >> >(logger -t "$RC_SVCNAME Start daemon" -p daemon.info)
 	start-stop-daemon --start --background --user "$command_user" --group "$command_group" \
 			--pidfile "$pidfile" --make-pidfile ${args[@]} --exec $command $command_args -1 $log -2 $log

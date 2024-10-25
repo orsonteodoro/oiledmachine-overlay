@@ -1092,6 +1092,23 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 		local _gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
 		local gcc_slot="${!_gcc_slot}"
 		check_libstdcxx ${gcc_slot}
+
+		local libs=(
+			"amd_comgr"
+			"amdhip64"
+			"hipblas"
+			"hsa-runtime64"
+			"rocblas"
+			"rocm_smi64"
+			"rocsparse"
+			"rocsolver"
+			"roctracer64"
+		)
+		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
+	# Avoid missing versioned symbols
+	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
+		rocm_verify_glibcxx "${!glibcxx_ver}" ${libs[@]}
+
 	elif tc-is-clang || use clang ; then
 		use_gcc
 		use_clang
