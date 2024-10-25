@@ -13,16 +13,148 @@ log="/var/log/ollama/ollama.log"
 # Additional origins can be configured with OLLAMA_ORIGINS.
 # export OLLAMA_ORIGINS="<ip>"
 
+prepare_chroot() {
+	[[ -e "/var/lib/ollama" ]] || exit 1
+	[[ -e "/var/lib/ollama" ]] || return
+	pushd "/var/lib/ollama" >/dev/null 2>&1 || exit 1
+		paths=(
+			"lib64"
+			"bin"
+			"usr"
+			"var"
+			"etc"
+			"tmp"
+		)
+		rm -rf ${paths[@]}
+
+		umount -l "proc" >/dev/null 2>&1
+		umount -l "sys" >/dev/null 2>&1
+		umount -l "dev" >/dev/null 2>&1
+		umount -l "run" >/dev/null 2>&1
+
+		mkdir -p "proc"
+		mkdir -p "sys"
+		mkdir -p "dev"
+		mkdir -p "run"
+
+		local gcc_slot=$(ldd "/usr/lib64/ollama/ollama" \
+			| grep "libstdc++.so" \
+			| grep -E -o -e "/[0-9]+/" \
+			| sed -e "s|/||g")
+		local chost=$(cat "/var/db/pkg/app-misc/ollama"*"/CHOST")
+
+		mkdir -p "etc"
+		mkdir -p "lib64"
+		mkdir -p "bin"
+		mkdir -p "usr/bin"
+		mkdir -p "usr/lib64"
+		mkdir -p "usr/lib/gcc/${chost}/${gcc_slot}"
+		mkdir -p "var/log/ollama"
+		mkdir -p "var/lib/ollama"
+		touch "var/log/ollama/ollama.log"
+		chown -R "ollama:ollama" "var/log/ollama"
+		chown "ollama:ollama" "var/lib/ollama"
+		chmod 0755 "var/lib"
+		chmod 0700 "var/lib/ollama"
+		mkdir -p "tmp"
+		chmod 1777 "tmp"
+
+		mount --types proc /proc proc
+		mount --rbind /sys sys
+		mount --make-rslave sys
+		mount --rbind /dev dev
+		mount --make-rslave dev
+		mount --bind /run run
+		mount --make-slave run
+
+		cp -a "/etc/ld.so.cache" "etc/"
+		cp -a "/etc/ld.so.preload" "etc/"
+		cp -a "/bin/bash" "bin/"
+		cp -a "/usr/bin/ollama" "usr/bin/"
+		cp -a "/usr/lib64/ollama" "usr/lib64"
+		cp -a "/lib64/libc.so.6" "lib64"
+		cp -a "/lib64/libm.so.6" "lib64"
+	# CWE-122, Mitigate against CE, ID, DoS, DT
+	# CE = Code Execution
+	# ID = Information Disclosure
+	# DoS = Denial of Service
+	# DT = Data Tampering
+		if [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc" ]] ; then
+			if grep -q -e "hardened" "/var/db/pkg/dev-libs/mimalloc"*"/USE" ; then
+				cp -a "$(realpath /usr/lib64/libmimalloc-secure.so.2)" "usr/lib64"
+				cp -a "/usr/lib64/libmimalloc-secure.so" "usr/lib64"
+				cp -a "/usr/lib64/libmimalloc-secure.so.2" "usr/lib64"
+			fi
+			cp -a "$(realpath /usr/lib64/libmimalloc-secure.so.2)" "usr/lib64"
+			cp -a "/usr/lib64/libmimalloc.so.2" "usr/lib64"
+		fi
+		if grep -q "openblas" "/var/db/pkg/app-misc/ollama"*"/USE" ; then
+			cp -a "$(realpath /usr/lib64/libopenblas.so.0)" "usr/lib64"
+			cp -a "/usr/lib64/libopenblas.so.0" "usr/lib64"
+			cp -a "/usr/lib64/libopenblas.so" "usr/lib64"
+		fi
+		cp -a "$(realpath /usr/lib/gcc/${chost}/${gcc_slot}/libstdc++.so.6)" "usr/lib/gcc/${chost}/${gcc_slot}"
+		cp -a "/usr/lib/gcc/${chost}/${gcc_slot}/libstdc++.so.6" "usr/lib/gcc/${chost}/${gcc_slot}"
+		cp -a "/usr/lib/gcc/${chost}/${gcc_slot}/libgcc_s.so.1" "usr/lib/gcc/${chost}/${gcc_slot}"
+		cp -a "/lib64/ld-linux-x86-64.so.2" "lib64"
+		cp -a "$(realpath /usr/lib/gcc/${chost}/${gcc_slot}/libgfortran.so.5)" "usr/lib/gcc/${chost}/${gcc_slot}"
+		cp -a "/usr/lib/gcc/${chost}/${gcc_slot}/libgfortran.so.5" "usr/lib/gcc/${chost}/${gcc_slot}"
+		cp -a "$(realpath /usr/lib64/libreadline.so)" "usr/lib64"
+		cp -a "/usr/lib64/libreadline.so.8" "usr/lib64"
+		cp -a "/usr/lib64/libreadline.so" "usr/lib64"
+		cp -a "$(realpath /lib64/libtinfo.so.6)" "lib64"
+		cp -a "/lib64/libtinfo.so.6" "lib64"
+		cp -a "$(realpath /lib64/libtinfow.so.6)" "lib64"
+		cp -a "/lib64/libtinfow.so.6" "lib64"
+		cp -a "/bin/grep" "bin"
+		cp -a "/bin/mkdir" "bin"
+
+		#find .
+	popd >/dev/null 2>&1
+}
+
+stop_chroot() {
+	[[ -e "/var/lib/ollama" ]] || exit 1
+	[[ -e "/var/lib/ollama" ]] || return
+	pushd "/var/lib/ollama" >/dev/null 2>&1 || exit 1
+		umount -l "proc" >/dev/null 2>&1
+		umount -l "sys" >/dev/null 2>&1
+		umount -l "dev" >/dev/null 2>&1
+		umount -l "run" >/dev/null 2>&1
+	popd >/dev/null 2>&1
+}
+
 start() {
 	ebegin "Starting $description"
+	if [[ "${OLLAMA_CHROOT}" == "1" ]] ; then
+		prepare_chroot
+	fi
+
+	local args=()
+
+	if [[ "${OLLAMA_CHROOT}" == "1" ]] ; then
+		args+=(
+			--chroot "/var/lib/ollama"
+		)
+	fi
+
+	if [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc" ]] ; then
+		args+=(
+			-e LD_PRELOAD=usr/lib64/libmimalloc.so.2
+		)
+	fi
+
 	exec >> >(logger -t "$RC_SVCNAME Start daemon" -p daemon.info)
 	start-stop-daemon --start --background --user "$command_user" --group "$command_group" \
-			--pidfile "$pidfile" --make-pidfile --exec $command $command_args -1 $log -2 $log
+			--pidfile "$pidfile" --make-pidfile ${args[@]} --exec $command $command_args -1 $log -2 $log
 	eend $?
 }
 
 stop() {
 	ebegin "Stopping $description"
+	if [[ "${OLLAMA_CHROOT}" == "1" ]] ; then
+		stop_chroot
+	fi
 	exec >> >(logger -t "$RC_SVCNAME Stop daemon" -p daemon.info)
 	start-stop-daemon --stop --pidfile "$pidfile"
 	eend $?

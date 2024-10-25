@@ -58,9 +58,70 @@ AOCC_5_7_SLOT="17"
 AOCC_6_0_SLOT="17"
 AOCC_6_1_SLOT="17"
 
+# rocBLAS_PV  GCC_VER  U_VER
+# 4.1.0       6.1.0
+# 4.5.2       6.1.0
+# 5.1.3       6.1.0
+# 5.2.3       6.1.0
+# 5.3.3       12.1.0   22.04
+# 5.5.3       9.1.0    20.04
+# 6.1.0       12.1.0   22.04
+# 6.2.2       9.1.0    20.04
+# 6.2.2       12.1.0   22.04
+# 6.2.2       13.2.0   24.04
+
+# Upstream preference
+HIP_4_1_GLIBCXX_MIN="3.4.22" # GCC 6.1.0
+HIP_4_5_GLIBCXX_MIN="3.4.22" # GCC 6.1.0
+HIP_5_1_GLIBCXX_MIN="3.4.22" # GCC 6.1.0
+HIP_5_2_GLIBCXX_MIN="3.4.22" # GCC 6.1.0
+HIP_5_3_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
+HIP_5_4_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
+HIP_5_5_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
+HIP_5_6_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
+HIP_5_7_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
+HIP_6_0_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
+HIP_6_1_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
+HIP_6_2_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
+
+# Upstream preference
+HIP_4_1_GLIBCXX_MAX="3.4.22" # GCC 6.1.0
+HIP_4_5_GLIBCXX_MAX="3.4.22" # GCC 6.1.0
+HIP_5_1_GLIBCXX_MAX="3.4.22" # GCC 6.1.0
+HIP_5_2_GLIBCXX_MAX="3.4.22" # GCC 6.1.0
+HIP_5_3_GLIBCXX_MAX="3.4.30" # GCC 12.1.0
+HIP_5_4_GLIBCXX_MAX="3.4.30" # GCC 12.1.0
+HIP_5_5_GLIBCXX_MAX="3.4.30" # GCC 12.1.0
+HIP_5_6_GLIBCXX_MAX="3.4.30" # GCC 12.1.0
+HIP_5_7_GLIBCXX_MAX="3.4.30" # GCC 12.1.0
+HIP_6_0_GLIBCXX_MAX="3.4.30" # GCC 12.1.0
+HIP_6_1_GLIBCXX_MAX="3.4.30" # GCC 12.1.0
+HIP_6_2_GLIBCXX_MAX="3.4.32" # GCC 13.2.0
+
+# oiledmachine-overlay preference
+# The choice of GLIBCXX and GCC_SLOT maximum currently is based on rebuild mood.
+# You can fork this eclass and change it, but it should not be more than upstream's GLIBCXX_MAX.
+# The limits can change based on...
+# 1. The highest upstream preference (GLIBCXX_MAX).
+# 2. HIPIFY CUDA requirement.
+# 3. Testing between HIP and CUDA.
+HIP_4_1_GLIBCXX="3.4.30" # GCC 12.1.0
+HIP_4_5_GLIBCXX="3.4.30" # GCC 12.1.0
+HIP_5_1_GLIBCXX="3.4.30" # GCC 12.1.0
+HIP_5_2_GLIBCXX="3.4.30" # GCC 12.1.0
+HIP_5_3_GLIBCXX="3.4.30" # GCC 12.1.0
+HIP_5_4_GLIBCXX="3.4.30" # GCC 12.1.0
+HIP_5_5_GLIBCXX="3.4.30" # GCC 12.1.0
+HIP_5_6_GLIBCXX="3.4.30" # GCC 12.1.0
+HIP_5_7_GLIBCXX="3.4.30" # GCC 12.1.0
+HIP_6_0_GLIBCXX="3.4.30" # GCC 12.1.0
+HIP_6_1_GLIBCXX="3.4.30" # GCC 12.1.0
+HIP_6_2_GLIBCXX="3.4.30" # GCC 12.1.0
+
 _hip_set_globals() {
 	local hip_platform="${HIP_PLATFORM:-amd}"
 	if [[ "${hip_platform}" == "amd" ]] ; then
+		# Based on rocBLAS linking to libstdc++
 		# For HIP_PLATFORM == amd.
 		HIP_4_1_GCC_SLOT="12"
 		HIP_4_5_GCC_SLOT="12"

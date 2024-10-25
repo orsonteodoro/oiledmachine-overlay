@@ -150,7 +150,7 @@ src_configure() {
 	distutils-r1_src_configure
 
 	if use client; then
-		check_pkg_glibcxx "dev-libs/boost" "/usr/$(get_libdir)/libboost_program_options.so" "${HIP_4_5_GCC_SLOT}"
+		check_pkg_glibcxx "dev-libs/boost" "/usr/$(get_libdir)/libboost_program_options.so" "${HIP_4_5_GLIBCXX}"
 
 		local mycmakeargs=(
 			-DCMAKE_SKIP_RPATH=ON

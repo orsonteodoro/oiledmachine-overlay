@@ -2978,10 +2978,26 @@ src_configure() {
 		export CMAKE_CUDA_ARCHITECTURES="$(get_cuda_flags)"
 		check_libstdcxx "11"
 	elif use rocm ; then
-		export CC="${CHOST}-gcc-12"
-		export CXX="${CHOST}-g++-12"
+		local _gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
+		local gcc_slot="${!_gcc_slot}"
+		export CC="${CHOST}-gcc-${gcc_slot}"
+		export CXX="${CHOST}-g++-${gcc_slot}"
 		export AMDGPU_TARGETS="$(get_amdgpu_flags)"
-		check_libstdcxx "12"
+		check_libstdcxx "${gcc_slot}"
+		local libs=(
+			"amd_comgr"
+			"amdhip64"
+			"amdocl64"
+			"hipblas"
+			"hsa-runtime64"
+			"rocblas"
+			"rocsparse"
+			"rocsolver"
+		)
+		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
+	# Avoid missing versioned symbols
+	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
+		rocm_verify_glibcxx "${!glibcxx_ver}" ${libs[@]}
 	fi
 
 	# For proper _FORTIFY_SOURCE

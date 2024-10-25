@@ -100,6 +100,50 @@ BDEPEND+="
 	dev-util/patchelf
 "
 
+declare -A _GLIBCXX_VER_INV=(
+	# See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html
+	# ["$GLIBCXX"]=$GCC_PV
+	['GCC_14_1_0']="3.4.33"
+	['GCC_13_2_0']="3.4.32"
+	['GCC_13_1_0']="3.4.31"
+	['GCC_12_1_0']="3.4.30"
+	['GCC_11_1_0']="3.4.29"
+	['GCC_10_1_0']="3.4.28"
+	['GCC_9_2_0']="3.4.27"
+	['GCC_9_1_0']="3.4.26"
+	['GCC_8_1_0']="3.4.25"
+	['GCC_7_2_0']="3.4.24"
+	['GCC_7_1_0']="3.4.23"
+	['GCC_6_1_0']="3.4.22"
+	['GCC_5_1_0']="3.4.21"
+	['GCC_4_9_0']="3.4.20"
+	['GCC_4_8_3']="3.4.19"
+	['GCC_4_8_0']="3.4.18"
+	['GCC_4_7_0']="3.4.17"
+	['GCC_4_6_1']="3.4.16"
+	['GCC_4_6_0']="3.4.15"
+	['GCC_4_5_0']="3.4.14"
+	['GCC_4_4_2']="3.4.13"
+	['GCC_4_4_1']="3.4.12"
+	['GCC_4_4_0']="3.4.11"
+	['GCC_4_3_0']="3.4.10"
+	['GCC_4_2_0']="3.4.9"
+	['GCC_4_1_1']="3.4.8"
+	['GCC_4_0_3']="3.4.7"
+	['GCC_4_0_2']="3.4.6"
+	['GCC_4_0_1']="3.4.5"
+	['GCC_4_0_0']="3.4.4"
+	['GCC_3_4_3']="3.4.3"
+	['GCC_3_4_2']="3.4.2"
+	['GCC_3_4_1']="3.4.1"
+	['GCC_3_4']="3.4.0"
+	['GCC_3_3_3']="3.2.3"
+	['GCC_3_3_0']="3.2.2"
+	['GCC_3_2_1']="3.2.1"
+	['GCC_3_2_0']="3.2"
+	['GCC_3_1_1']="3.1"
+)
+
 # @ECLASS_VARIABLE: ROCM_VERSION
 # @REQUIRED
 # @PRE_INHERIT
@@ -796,31 +840,51 @@ rocm_src_prepare() {
 verify_libstdcxx() {
 	has_version "dev-util/hip:${ROCM_SLOT}" || return # For libamdhip64.so checks
 	has_version "dev-libs/rocr-runtime:${ROCM_SLOT}" || return # For libhsa-runtime64.so.1 checks
-	# GLIBCXX_3.4.28 - GCC 10
-	# GLIBCXX_3.4.29 - GCC 11
-	# GLIBCXX_3.4.30 - GCC 12
-	unset _glibc_ver
-	declare -A _glibc_ver=(
-		["3.4.45"]="25" # guessed
-		["3.4.44"]="24" # guessed
-		["3.4.43"]="23" # guessed
-		["3.4.42"]="22" # guessed
-		["3.4.41"]="21" # guessed
-		["3.4.40"]="20" # guessed
-		["3.4.39"]="19" # guessed
-		["3.4.38"]="18" # guessed
-		["3.4.37"]="17" # guessed
-		["3.4.36"]="16" # guessed
-		["3.4.35"]="15" # guessed
-		["3.4.34"]="14" # guessed
-		["3.4.32"]="13" # guessed
-		["3.4.31"]="13" # guessed
-		["3.4.30"]="12"
-		["3.4.29"]="11"
-		["3.4.28"]="10"
-		["3.4.27"]="9" # guessed
-		["3.4.28"]="8" # guessed
+
+	declare -A _GLIBCXX_VER=(
+	# See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html
+		# ["$GLIBCXX"]=$GCC_PV
+		['GLIBCXX_3_4_33']="14.1.0"
+		['GLIBCXX_3_4_32']="13.2.0"
+		['GLIBCXX_3_4_31']="13.1.0"
+		['GLIBCXX_3_4_30']="12.1.0"
+		['GLIBCXX_3_4_29']="11.1.0"
+		['GLIBCXX_3_4_28']="10.1.0"
+		['GLIBCXX_3_4_27']="9.2.0"
+		['GLIBCXX_3_4_26']="9.1.0"
+		['GLIBCXX_3_4_25']="8.1.0"
+		['GLIBCXX_3_4_24']="7.2.0"
+		['GLIBCXX_3_4_23']="7.1.0"
+		['GLIBCXX_3_4_22']="6.1.0"
+		['GLIBCXX_3_4_21']="5.1.0"
+		['GLIBCXX_3_4_20']="4.9.0"
+		['GLIBCXX_3_4_19']="4.8.3"
+		['GLIBCXX_3_4_18']="4.8.0"
+		['GLIBCXX_3_4_17']="4.7.0"
+		['GLIBCXX_3_4_16']="4.6.1"
+		['GLIBCXX_3_4_15']="4.6.0"
+		['GLIBCXX_3_4_14']="4.5.0"
+		['GLIBCXX_3_4_13']="4.4.2"
+		['GLIBCXX_3_4_12']="4.4.1"
+		['GLIBCXX_3_4_11']="4.4.0"
+		['GLIBCXX_3_4_10']="4.3.0"
+		['GLIBCXX_3_4_9']="4.2.0"
+		['GLIBCXX_3_4_8']="4.1.1"
+		['GLIBCXX_3_4_7']="4.0.3"
+		['GLIBCXX_3_4_6']="4.0.2"
+		['GLIBCXX_3_4_5']="4.0.1"
+		['GLIBCXX_3_4_4']="4.0.0"
+		['GLIBCXX_3_4_3']="3.4.3"
+		['GLIBCXX_3_4_2']="3.4.2"
+		['GLIBCXX_3_4_1']="3.4.1"
+		['GLIBCXX_3_4_0']="3.4"
+		['GLIBCXX_3_2_3']="3.3.3"
+		['GLIBCXX_3_2_2']="3.3.0"
+		['GLIBCXX_3_2_1']="3.2.1"
+		['GLIBCXX_3_2']="3.2.0"
+		['GLIBCXX_3_1']="3.1.1"
 	)
+
 	local hip_libstdcxx_ver=$(strings "${EROCM_PATH}/$(rocm_get_libdir)/libamdhip64.so" \
 		| grep -E "GLIBCXX_[0-9]\.[0-9]\.[0-9]+" \
 		| sort -V \
@@ -844,39 +908,65 @@ verify_libstdcxx() {
 einfo
 einfo "libstdcxx used:"
 einfo
-printf " \e[32m*\e[0m %-30s%s\n" "dev-libs/rocr-runtime:${ROCM_SLOT}" "GCC ${_glibc_ver[${hsa_runtime_libstdcxx_ver}]} (libstdcxx version ${hsa_runtime_libstdcxx_ver})"
-printf " \e[32m*\e[0m %-30s%s\n" "sys-deve/gcc:${_glibc_ver[${libstdcxx_ver}]}" "GCC ${_glibc_ver[${libstdcxx_ver}]} (libstdcxx version ${libstdcxx_ver})"
-printf " \e[32m*\e[0m %-30s%s\n" "sys-devel/hip:${ROCM_SLOT}" "GCC ${_glibc_ver[${hip_libstdcxx_ver}]} (libstdcxx version ${hip_libstdcxx_ver})"
+printf " \e[32m*\e[0m %-30s%s\n" "dev-libs/rocr-runtime:${ROCM_SLOT}" "GCC ${_GLIBCXX_VER[GLIBCXX_${hsa_runtime_libstdcxx_ver//./_}]} (libstdcxx version ${hsa_runtime_libstdcxx_ver})"
+printf " \e[32m*\e[0m %-30s%s\n" "sys-deve/gcc:${_GLIBCXX_VER[GLIBCXX_${libstdcxx_ver//./_}]}" "GCC ${_GLIBCXX_VER[GLIBCXX_${libstdcxx_ver//./_}]} (libstdcxx version ${libstdcxx_ver})"
+printf " \e[32m*\e[0m %-30s%s\n" "sys-devel/hip:${ROCM_SLOT}" "GCC ${_GLIBCXX_VER[GLIBCXX_${hip_libstdcxx_ver//./_}]} (libstdcxx version ${hip_libstdcxx_ver})"
 einfo
-	if ver_test "${libstdcxx_ver}" -lt "${hsa_runtime_libstdcxx_ver}" ; then
-		local built_gcc_slot="${_glibc_ver[${hsa_runtime_libstdcxx_ver}]}"
+	local t="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
+	local gcc_slot="${!t}"
+
+	# Check eselect gcc
+	local built_gcc_slot
+	built_gcc_slot="${_GLIBCXX_VER[GLIBCXX_${libstdcxx_ver//./_}]}"
+	if ver_test "${built_gcc_slot}" -gt "${gcc_slot}" ; then
 eerror
-eerror "You must switch to >= GCC ${built_gcc_slot}.  Do"
+eerror "You must switch to <= GCC ${gcc_slot}.  Do"
 eerror
 eerror "  eselect gcc set ${CHOST}-${built_gcc_slot}"
 eerror "  source /etc/profile"
 eerror
 eerror "Error 1"
 eerror
-eerror "Uninstall all dev-libs/rocr-runtime slots and rebuild with gcc 12."
+eerror "Uninstall all dev-libs/rocr-runtime slots and rebuild with GCC ${gcc_slot}."
 eerror
 		die
 	fi
-	if ver_test "${libstdcxx_ver}" -lt "${hip_libstdcxx_ver}" ; then
-		local built_gcc_slot="${_glibc_ver[${hip_libstdcxx_ver}]}"
+
+	# Check hip
+	built_gcc_slot="${_GLIBCXX_VER[GLIBCXX_${libstdcxx_ver//./_}]}"
+	if ver_test "${libstdcxx_ver}" -gt "${gcc_slot}" ; then
+		local built_gcc_slot="${_GLIBCXX_VER[GLIBCXX_${hip_libstdcxx_ver//./_}]}"
 eerror
-eerror "You must switch to >= GCC ${built_gcc_slot}.  Do"
+eerror "You must switch to <= GCC ${gcc_slot}.  Do"
 eerror
 eerror "  eselect gcc set ${CHOST}-${built_gcc_slot}"
 eerror "  source /etc/profile"
 eerror
 eerror "Error 2"
 eerror
-eerror "Uninstall all dev-libs/rocr-runtime slots and rebuild with gcc 12."
+eerror "Uninstall all dev-libs/rocr-runtime slots and rebuild with GCC ${gcc_slot}."
 eerror
 		die
 	fi
-	if ver_test "${hsa_runtime_libstdcxx_ver}" -ne "${hip_libstdcxx_ver}" ; then
+
+	# Check rocr-runtime
+	if ver_test "${hsa_runtime_libstdcxx_ver}" -gt "${gcc_slot}" ; then
+		local built_gcc_slot="${_GLIBCXX_VER[GLIBCXX_${hip_libstdcxx_ver//./_}]}"
+eerror
+eerror "You must switch to <= GCC ${gcc_slot}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${built_gcc_slot}"
+eerror "  source /etc/profile"
+eerror
+eerror "Error 2"
+eerror
+eerror "Uninstall all dev-libs/rocr-runtime slots and rebuild with GCC ${gcc_slot}."
+eerror
+		die
+	fi
+
+	# Check rocr-runtime
+	if ver_test "${hsa_runtime_libstdcxx_ver}" -gt "${gcc_slot}" ; then
 ewarn
 ewarn "Detected dev-util/hip:${ROCM_SLOT} and dev-libs/rocr-runtime:${ROCM_SLOT}"
 ewarn "with mismatched libstdcxx.  Please rebuild the entire HIP/ROCm stack"
@@ -1536,6 +1626,93 @@ hip_nvcc_get_gcc_slot() {
 	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" ; then
 		echo "11"
 	fi
+}
+
+# @FUNCTION: rocm_verify_glibcxx
+# @DESCRIPTION:
+# Verify the list of libraries are built with a lower glibcxx version.
+rocm_verify_glibcxx() {
+	# It breaks if _GLIBCXX_VER is global.
+	declare -A _GLIBCXX_VER=(
+	# See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html
+		# ["$GLIBCXX"]=$GCC_PV
+		['GLIBCXX_3_4_33']="14.1.0"
+		['GLIBCXX_3_4_32']="13.2.0"
+		['GLIBCXX_3_4_31']="13.1.0"
+		['GLIBCXX_3_4_30']="12.1.0"
+		['GLIBCXX_3_4_29']="11.1.0"
+		['GLIBCXX_3_4_28']="10.1.0"
+		['GLIBCXX_3_4_27']="9.2.0"
+		['GLIBCXX_3_4_26']="9.1.0"
+		['GLIBCXX_3_4_25']="8.1.0"
+		['GLIBCXX_3_4_24']="7.2.0"
+		['GLIBCXX_3_4_23']="7.1.0"
+		['GLIBCXX_3_4_22']="6.1.0"
+		['GLIBCXX_3_4_21']="5.1.0"
+		['GLIBCXX_3_4_20']="4.9.0"
+		['GLIBCXX_3_4_19']="4.8.3"
+		['GLIBCXX_3_4_18']="4.8.0"
+		['GLIBCXX_3_4_17']="4.7.0"
+		['GLIBCXX_3_4_16']="4.6.1"
+		['GLIBCXX_3_4_15']="4.6.0"
+		['GLIBCXX_3_4_14']="4.5.0"
+		['GLIBCXX_3_4_13']="4.4.2"
+		['GLIBCXX_3_4_12']="4.4.1"
+		['GLIBCXX_3_4_11']="4.4.0"
+		['GLIBCXX_3_4_10']="4.3.0"
+		['GLIBCXX_3_4_9']="4.2.0"
+		['GLIBCXX_3_4_8']="4.1.1"
+		['GLIBCXX_3_4_7']="4.0.3"
+		['GLIBCXX_3_4_6']="4.0.2"
+		['GLIBCXX_3_4_5']="4.0.1"
+		['GLIBCXX_3_4_4']="4.0.0"
+		['GLIBCXX_3_4_3']="3.4.3"
+		['GLIBCXX_3_4_2']="3.4.2"
+		['GLIBCXX_3_4_1']="3.4.1"
+		['GLIBCXX_3_4_0']="3.4"
+		['GLIBCXX_3_2_3']="3.3.3"
+		['GLIBCXX_3_2_2']="3.3.0"
+		['GLIBCXX_3_2_1']="3.2.1"
+		['GLIBCXX_3_2']="3.2.0"
+		['GLIBCXX_3_1']="3.1.1"
+	)
+
+einfo "Verifying libstdc++ version symbol compatibility for ROCm ${ROCM_VERSION}"
+	local glibcxx_ver="${1}" # maximum
+	shift
+	local libs=( $@ )
+
+	# Problem:  Avoid version symbols error:
+	# ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
+	# It happens when the questioned library is built with a newer version.
+	local lib
+	for lib in ${libs[@]} ; do
+		if ! [[ -e "${ROCM_PATH}/lib/lib${lib}.so" ]] ; then
+ewarn "Missing ${ROCM_PATH}/lib/lib${lib}.so"
+			die
+		fi
+		if ! strings "${ROCM_PATH}/lib/lib${lib}.so" | grep -q -e "^GLIBCXX" ; then
+ewarn "QA:  Remove ${lib} arg from rocm_verify_glibcxx"
+			continue
+		fi
+		local lib_glibcxx_ver=$(strings "${ROCM_PATH}/lib/lib${lib}.so" \
+			| grep -e "^GLIBCXX" \
+			| sort -V \
+			| tail -n 1 \
+			| cut -f 2 -d "_")
+		if ver_test ${lib_glibcxx_ver} -gt ${glibcxx_ver} ; then
+eerror
+eerror "Detected missing versioned symbol."
+eerror "Rebuild ${ROCM_PATH}/lib/lib${lib}.so with GCC ${_GLIBCXX_VER[GLIBCXX_${glibcxx_ver//./_}]} or less"
+eerror
+eerror "Actual GLIBCXX version:  ${lib_glibcxx_ver}, GCC ${_GLIBCXX_VER[GLIBCXX_${lib_glibcxx_ver//./_}]}"
+eerror "Expected GLIBCXX version:  ${glibcxx_ver}, GCC ${_GLIBCXX_VER[GLIBCXX_${glibcxx_ver//./_}]}"
+eerror
+			die
+		else
+einfo "${lib} PASSED"
+		fi
+	done
 }
 
 #Do it manually
