@@ -853,14 +853,13 @@ einfo
 		rocm_pkg_setup
 
 		local libs=(
-			"amd_comgr"
-			"amdhip64"
-			"hipblas"
-			"hsa-runtime64"
-			"rocblas"
-			"rocm_smi64"
-			"rocsparse"
-			"roctracer64"
+			"amd_comgr:dev-libs/rocm-comgr"
+			"amdhip64:dev-util/hip"
+			"hipblas:sci-libs/hipBLAS"
+			"hsa-runtime64:dev-libs/rocr-runtime"
+			"rocblas:sci-libs/rocBLAS"
+			"rocm_smi64:dev-util/rocm-smi"
+			"roctracer64:dev-util/roctracer"
 		)
 		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
 	# Avoid missing versioned symbols

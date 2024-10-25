@@ -2985,14 +2985,14 @@ src_configure() {
 		export AMDGPU_TARGETS="$(get_amdgpu_flags)"
 		check_libstdcxx "${gcc_slot}"
 		local libs=(
-			"amd_comgr"
-			"amdhip64"
-			"amdocl64"
-			"hipblas"
-			"hsa-runtime64"
-			"rocblas"
-			"rocsparse"
-			"rocsolver"
+			"amd_comgr:dev-libs/rocm-comgr"
+			"amdhip64:dev-util/hip"
+			"amdocl64:dev-libs/rocm-opencl-runtime"
+			"hipblas:sci-libs/hipBLAS"
+			"hsa-runtime64:dev-libs/rocr-runtime"
+			"rocblas:sci-libs/rocBLAS"
+			"rocsparse:sci-libs/rocSPARSE"
+			"rocsolver:sci-libs/rocSOLVER"
 		)
 		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
 	# Avoid missing versioned symbols

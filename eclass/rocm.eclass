@@ -1675,8 +1675,10 @@ einfo "Verifying libstdc++ version symbol compatibility for ROCm ${ROCM_VERSION}
 	# Problem:  Avoid version symbols error:
 	# ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
 	# It happens when the questioned library is built with a newer version.
-	local lib
-	for lib in ${libs[@]} ; do
+	local _lib
+	for _lib in ${libs[@]} ; do
+		local lib="${_lib%:*}"
+		local pkg="${_lib#*:}"
 		if ! [[ -e "${ROCM_PATH}/lib/lib${lib}.so" ]] ; then
 ewarn "Missing ${ROCM_PATH}/lib/lib${lib}.so"
 			die
@@ -1700,10 +1702,11 @@ eerror
 eerror "Actual GLIBCXX version:  ${lib_glibcxx_ver}, GCC ${_GLIBCXX_VER[GLIBCXX_${lib_glibcxx_ver//./_}]}"
 eerror "Expected GLIBCXX version:  ${glibcxx_ver}, GCC ${gcc_pv}"
 eerror
-eerror "Do the following to switch:"
+eerror "Do the following to switch and rebuild:"
 eerror
 eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
 eerror "  source /etc/profile"
+eerror "  emerge -1vO ${pkg}:${ROCM_SLOT}"
 eerror
 			die
 		else

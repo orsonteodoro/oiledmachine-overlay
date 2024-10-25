@@ -846,18 +846,14 @@ pkg_setup() {
 
 	if use rocm ; then
 		local libs=(
-			"amd_comgr"
-			"amdhip64"
-			"hipblas"
-			"hsa-runtime64"
-			"rocblas"
-			"rocm_smi64"
-			"rocsparse"
-			"rocsolver"
+			"amd_comgr:dev-libs/rocm-comgr"
+			"amdhip64:dev-util/hip"
+			"hsa-runtime64:dev-libs/rocr-runtime"
+			"rocblas:sci-libs/rocBLAS"
 		)
 		if use roctracer ; then
 			libs+=(
-				"roctracer64"
+				"roctracer64:dev-util/roctracer"
 			)
 		fi
 		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
