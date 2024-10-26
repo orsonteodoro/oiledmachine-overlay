@@ -99,7 +99,7 @@ prepare_chroot() {
 			"/bin/bash;libs"
 			"/bin/sh"
 			"/usr/bin/ollama"
-			"/usr/lib64/ollama;recursive-copy"
+			"/usr/lib64/ollama"
 			"/usr/lib64/ollama;libs-recursive"
 			"/bin/mkdir"
 			"/lib64/ld-linux-x86-64.so.2"
@@ -112,7 +112,7 @@ prepare_chroot() {
 		elif [[ "${OLLAMA_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
 			paths+=(
 				"/etc/sandbox.conf"
-				"/usr/share/sandbox;recursive-copy"
+				"/usr/share/sandbox"
 				"/usr/lib64/libsandbox.so"
 				"/usr/bin/sandbox"
 				"/usr/bin/unshare"
@@ -181,14 +181,6 @@ prepare_chroot() {
 					fi
 				done
 				IFS=$' \t\n'
-			elif [[ "${path}" =~ ";recursive-copy" ]] ; then
-	# Copy folder recursively
-				local src="${path%;*}"
-				local dest="${path%;*}"
-				dest=$(dirname "${dest}")
-				dest="${dest:1}"
-				mkdir -p "${dest}"
-				cp -a "${src}" "${dest}"
 			elif [[ "${path}" =~ ";libs" ]] ; then
 	# Direct copy with copy ldd libs
 				local src="${path%;*}"
