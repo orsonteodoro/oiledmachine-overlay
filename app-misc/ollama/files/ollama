@@ -295,7 +295,7 @@ start() {
 		sandbox_args=""
 		args+=(
 	# CWE-653 mitigation, ID
-			-e SANDBOX_DENY="/proc:/home:/dev/mem:/dev/kmem:/proc/kcore:/mnt:/etc/passwd:/etc/groups:${OLLAMA_SANDBOX_BLACKLISTED_PATHS}"
+			-e SANDBOX_DENY="/proc:/dev/input:/root:/home:/dev/mem:/dev/kmem:/proc/kcore:/mnt:/etc/passwd:/etc/groups:${OLLAMA_SANDBOX_BLACKLISTED_PATHS}"
 			--exec $sandbox_command -- $sandbox_args $real_command $real_command_args
 		)
 	else
