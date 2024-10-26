@@ -2,7 +2,7 @@
 
 description="Ollama Service"
 real_command="/usr/bin/ollama"
-command_args="serve"
+real_command_args="serve"
 command_user="ollama"
 command_group="ollama"
 command_background="yes"
@@ -15,11 +15,7 @@ log="/var/log/ollama/ollama.log"
 # DoS = Denial of Service
 # DT = Data Tampering
 
-# CWE-122 mitigation, CE, DoS, DT, ID
-# mimalloc - performance allocator
-# mimalloc-secure - hardened allocator
-# hardened_malloc - hardened allocator
-OLLAMA_MALLOC_PROVIDER=${OLLAMA_MALLOC_PROVIDER:-"@OLLAMA_MALLOC_PROVIDER@"}
+# CWE-122 mitigation with hardened malloc, CE, DoS, DT, ID
 
 # CWE-653 mitigation
 OLLAMA_CHROOT=${OLLAMA_CHROOT:-@OLLAMA_CHROOT@}
@@ -29,6 +25,8 @@ OLLAMA_SANDBOX_PROVIDER=${OLLAMA_SANDBOX_PROVIDER:-"@OLLAMA_SANDBOX_PROVIDER@"}
 
 OLLAMA_BACKEND=${OLLAMA_BACKEND:-"@OLLAMA_BACKEND@"}
 _OLLAMA_DEBUG=${_OLLAMA_DEBUG:-"0"}
+
+OLLAMA_OOM=${OLLAMA_OOM:-900} # 0 immune, [0,999] increased probability of being oom killed, 1000 always kill
 
 # Ollama allows cross-origin requests from 127.0.0.1 and 0.0.0.0 by default.
 # Additional origins can be configured with OLLAMA_ORIGINS.
@@ -69,13 +67,6 @@ prepare_chroot() {
 			| sed -e "s|/||g")
 		local chost=$(cat "/var/db/pkg/app-misc/ollama"*"/CHOST")
 
-		mkdir -p "etc"
-		mkdir -p "lib64"
-		mkdir -p "bin"
-		mkdir -p "usr/bin"
-		mkdir -p "usr/lib64"
-		mkdir -p "usr/lib/gcc/${chost}/${gcc_slot}"
-		mkdir -p "usr/share"
 		mkdir -p "var/log/ollama"
 		mkdir -p "var/lib/ollama"
 		touch "var/log/ollama/ollama.log"
@@ -87,100 +78,158 @@ prepare_chroot() {
 		mkdir -p "tmp"
 		chmod 1777 "tmp"
 
-		if [[ "${OLLAMA_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
-			mount --types proc /proc proc
-			mount --rbind /sys sys
-			mount --make-rslave sys
-			mount --rbind /dev dev
-			mount --make-rslave dev
-			mount --bind /run run
-			mount --make-slave run
+		if [[ "${OLLAMA_SANDBOX_PROVIDER}" != "bwrap" ]] ; then
+			mount --types "proc" "/proc" "proc"
+			mount --rbind "/sys" "sys"
+			mount --make-rslave "sys"
+			mount --rbind "/dev" "dev"
+			mount --make-rslave "dev"
+			mount --bind "/run" "run"
+			mount --make-slave "run"
 		fi
 
-		cp -a "/etc/ld.so.cache" "etc/"
-		cp -a "/etc/ld.so.preload" "etc/"
-		cp -a "/bin/bash" "bin/"
-		cp -a "/bin/sh" "bin/"
-		cp -a "/usr/bin/ollama" "usr/bin/"
-		cp -a "/usr/lib64/ollama" "usr/lib64"
-		cp -a "/lib64/libc.so.6" "lib64"
-		cp -a "/lib64/libm.so.6" "lib64"
-
-		if [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc-secure" ]] ; then
-			cp -a "$(realpath /usr/lib64/libmimalloc-secure.so.2)" "usr/lib64"
-			cp -a "/usr/lib64/libmimalloc-secure.so" "usr/lib64"
-			cp -a "/usr/lib64/libmimalloc-secure.so.2" "usr/lib64"
-		elif [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc" ]] ; then
-			cp -a "$(realpath /usr/lib64/libmimalloc.so.2)" "usr/lib64"
-			cp -a "/usr/lib64/libmimalloc.so.2" "usr/lib64"
-		elif [[ "${OLLAMA_MALLOC_PROVIDER}" == "hardened_malloc" ]] ; then
-			cp -a "/usr/lib64/libhardened_malloc.so" "usr/lib64"
-		fi
-		if grep -q "openblas" "/var/db/pkg/app-misc/ollama"*"/USE" ; then
-			cp -a "$(realpath /usr/lib64/libopenblas.so.0)" "usr/lib64"
-			cp -a "/usr/lib64/libopenblas.so.0" "usr/lib64"
-			cp -a "/usr/lib64/libopenblas.so" "usr/lib64"
-		fi
-		cp -a "$(realpath /usr/lib/gcc/${chost}/${gcc_slot}/libstdc++.so.6)" "usr/lib/gcc/${chost}/${gcc_slot}"
-		cp -a "/usr/lib/gcc/${chost}/${gcc_slot}/libstdc++.so.6" "usr/lib/gcc/${chost}/${gcc_slot}"
-		cp -a "/usr/lib/gcc/${chost}/${gcc_slot}/libgcc_s.so.1" "usr/lib/gcc/${chost}/${gcc_slot}"
-		cp -a "/lib64/ld-linux-x86-64.so.2" "lib64"
-		cp -a "$(realpath /usr/lib/gcc/${chost}/${gcc_slot}/libgfortran.so.5)" "usr/lib/gcc/${chost}/${gcc_slot}"
-		cp -a "/usr/lib/gcc/${chost}/${gcc_slot}/libgfortran.so.5" "usr/lib/gcc/${chost}/${gcc_slot}"
-		cp -a "$(realpath /usr/lib64/libreadline.so)" "usr/lib64"
-		cp -a "/usr/lib64/libreadline.so.8" "usr/lib64"
-		cp -a "/usr/lib64/libreadline.so" "usr/lib64"
-		cp -a "$(realpath /lib64/libtinfo.so.6)" "lib64"
-		cp -a "/lib64/libtinfo.so.6" "lib64"
-		cp -a "$(realpath /lib64/libtinfow.so.6)" "lib64"
-		cp -a "/lib64/libtinfow.so.6" "lib64"
-		cp -a "/bin/mkdir" "bin"
+		local paths=()
+		paths=(
+			"/etc/ld.so.cache"
+			"/etc/ld.so.preload"
+			"/bin/bash;libs"
+			"/bin/sh"
+			"/usr/bin/ollama"
+			"/usr/lib64/ollama;recursive-copy"
+			"/usr/lib64/ollama;libs-recursive"
+			"/bin/mkdir"
+			"/lib64/ld-linux-x86-64.so.2"
+		)
 
 		if [[ "${OLLAMA_SANDBOX_PROVIDER}" == "bwrap" ]] ; then
-			cp -a "/usr/bin/bwrap" "usr/bin"
-			cp -a "$(realpath /usr/lib64/libcap.so.2)" "usr/lib64"
-			cp -a "/usr/lib64/libcap.so.2" "usr/lib64"
-			cp -a "/usr/lib64/libcap.so" "usr/lib64"
+			paths+=(
+				"/usr/bin/bwrap;libs"
+			)
 		elif [[ "${OLLAMA_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
-			cp -a "/etc/sandbox.conf" "etc"
-			cp -a "/usr/share/sandbox" "usr/share"
-			cp -a "/usr/lib64/libsandbox.so" "usr/lib64"
-			cp -a "/usr/bin/sandbox" "usr/bin"
-			cp -a "/usr/bin/unshare" "usr/bin"
+			paths+=(
+				"/etc/sandbox.conf"
+				"/usr/share/sandbox;recursive-copy"
+				"/usr/lib64/libsandbox.so"
+				"/usr/bin/sandbox"
+				"/usr/bin/unshare"
+			)
 		fi
 
 	# For debugging only
-	if [[ "${_OLLAMA_DEBUG}" == "1" ]] ; then
-		cp -a "/bin/ls" "bin"
-		cp -a "/bin/cat" "bin"
-		cp -a "/bin/grep" "bin"
-		cp -a "/bin/echo" "bin"
-		cp -a "/bin/pwd" "bin"
-		cp -a "/usr/bin/top" "usr/bin"
-		cp -a "/bin/ps" "bin"
-		cp -a "$(realpath /usr/lib64/libproc2.so.0)" "usr/lib64"
-		cp -a "/usr/lib64/libproc2.so.0" "usr/lib64"
-		cp -a "/usr/lib64/libproc2.so" "usr/lib64"
-		cp -a "/usr/bin/id" "usr/bin"
-		cp -a "/usr/bin/ping" "usr/bin"
-		chmod 4711 "usr/bin/ping"
-	fi
+		if [[ "${_OLLAMA_DEBUG}" == "0" ]] ; then
+			paths+=(
+				"/bin/ls"
+				"/bin/cat"
+				"/bin/grep"
+				"/bin/echo"
+				"/bin/pwd"
+				"/usr/bin/top;libs"
+				"/bin/ps;libs"
+				"/usr/bin/id"
+				"/usr/bin/ping"
+			)
+		fi
 
-		cp -a "/bin/getcwd" "bin"
-		cp -a "$(realpath /lib64/libexecline.so.2.9)" "lib64"
-		cp -a "/lib64/libexecline.so.2.9" "lib64"
-		cp -a "/lib64/libexecline.so" "lib64"
-		cp -a "$(realpath /lib64/libskarnet.so.2.14)" "lib64"
-		cp -a "/lib64/libskarnet.so.2.14" "lib64"
-		cp -a "/lib64/libskarnet.so" "lib64"
+		paths+=(
+			"/bin/getcwd;libs"
+		)
 
 		if [[ "${OLLAMA_BACKEND}" == "rocm" ]] ; then
 			mkdir -p "opt/rocm-@ROCM_VERSION@"
 			mount -o ro --bind "/opt/rocm-@ROCM_VERSION@" "opt/rocm-@ROCM_VERSION@"
+
+			paths+=(
+				"/opt/rocm-@ROCM_VERSION@;libs-recursive"
+			)
 		elif [[ "${OLLAMA_BACKEND}" == "cuda" ]] ; then
 			mkdir -p "opt/cuda"
 			mount -o ro --bind "/opt/cuda" "opt/cuda"
+			paths+=(
+				"/opt/cuda;libs-recursive"
+			)
 		fi
+
+		local path
+		for path in ${paths[@]} ; do
+			if [[ "${path}" =~ ";libs-recursive" ]] ; then
+	# Copy ldd libs recursively without copying folder
+				local src="${path%;*}"
+				IFS=$'\n'
+				local pair
+				for pair in $(ldd $(find "${src}" -executable -type f)) ; do
+					[[ "${pair}" =~ "=>" ]] || continue
+					local lib_path=$(echo "${pair}" \
+						| cut -f 2 -d ">" \
+						| cut -f 1 -d '(' \
+						| sed -r -e "s|^[ ]+||g" -e "s|[ ]+$||g")
+					local dir_path=$(dirname "${lib_path}")
+					dir_path="${dir_path:1}"
+					[[ -z "${dir_path}" ]] && continue
+					[[ "${dir_path}" =~ "opt/rocm" ]] && continue
+					[[ "${dir_path}" =~ "opt/cuda" ]] && continue
+					mkdir -p "${dir_path}"
+					cp -a "${lib_path}" "${dir_path}"
+					if [[ -L "${lib_path}" ]] ; then
+							local path2=$(realpath "${lib_path}")
+						if [[ -f "${path2}" ]] ; then
+							cp -a "${path2}" "${dir_path}"
+						fi
+					fi
+				done
+				IFS=$' \t\n'
+			elif [[ "${path}" =~ ";recursive-copy" ]] ; then
+	# Copy folder recursively
+				local src="${path%;*}"
+				local dest="${path%;*}"
+				dest=$(dirname "${dest}")
+				dest="${dest:1}"
+				mkdir -p "${dest}"
+				cp -a "${src}" "${dest}"
+			elif [[ "${path}" =~ ";libs" ]] ; then
+	# Direct copy with copy ldd libs
+				local src="${path%;*}"
+
+	# Direct copy
+				local dest
+				dest=$(dirname "${src}")
+				dest="${dest:1}"
+				mkdir -p "${dest}"
+				cp -a "${src}" "${dest}"
+
+	# Copy libs depends
+				IFS=$'\n'
+				local pair
+				for pair in $(ldd "${src}") ; do
+					[[ "${pair}" =~ "=>" ]] || continue
+					local lib_path=$(echo "${pair}" \
+						| cut -f 2 -d ">" \
+						| cut -f 1 -d '(' \
+						| sed -r -e "s|^[ ]+||g" -e "s|[ ]+$||g")
+					local dir_path=$(dirname "${lib_path}")
+					dir_path="${dir_path:1}"
+					[[ -z "${dir_path}" ]] && continue
+					[[ "${dir_path}" =~ "opt/rocm" ]] && continue
+					[[ "${dir_path}" =~ "opt/cuda" ]] && continue
+					mkdir -p "${dir_path}"
+					cp -a "${lib_path}" "${dir_path}"
+					if [[ -L "${lib_path}" ]] ; then
+						local path2=$(realpath "${lib_path}")
+						if [[ -f "${path2}" ]] ; then
+							cp -a "${path2}" "${dir_path}"
+						fi
+					fi
+				done
+				IFS=$' \t\n'
+			else
+	# Direct copy
+				local dest
+				dest=$(dirname "${path}")
+				dest="${dest:1}"
+				mkdir -p "${dest}"
+				cp -a "${path}" "${dest}"
+			fi
+		done
+
 	popd >/dev/null 2>&1
 }
 
@@ -218,19 +267,25 @@ start() {
 	args+=(
 #		-e OLLAMA_UID=${uid}
 #		-e OLLAMA_GID=${gid}
-		--background
 	)
 
-	if [[ "${OLLAMA_CHROOT}" == "1" ]] ; then
+	if "${OLLAMA_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+		: # Broken
+	elif "${OLLAMA_SANDBOX_PROVIDER}" == "bwrap" ]] ; then
+		: # Duplicate functionality
+	elif [[ "${OLLAMA_CHROOT}" == "1" ]] ; then
 		args+=(
 			--chroot "/var/lib/ollama"
-			-1 "/var/lib/ollama/$log" \
-			-2 "/var/lib/ollama/$log" \
 		)
+	fi
+
+	if [[ "${_OLLAMA_DEBUG}" == "1" ]] ; then
+		:
 	else
 		args+=(
-			-1 "$log" \
-			-2 "$log" \
+			--background
+			--stdout "$log"
+			--stderr "$log"
 		)
 	fi
 
@@ -240,15 +295,15 @@ start() {
 		sandbox_args=""
 		args+=(
 	# CWE-653 mitigation, ID
-			-e SANDBOX_DENY="/proc:/home"
-			--exec $sandbox_command -- $sandbox_args $real_command $command_args
+			-e SANDBOX_DENY="/proc:/home:/dev/mem:/dev/kmem:/proc/kcore:/mnt:/etc/passwd:/etc/groups:${OLLAMA_SANDBOX_BLACKLISTED_PATHS}"
+			--exec $sandbox_command -- $sandbox_args $real_command $real_command_args
 		)
 	else
-		sandbox_command=""
 		args+=(
-			--exec $real_command -- $command_args
+			--exec $real_command -- $real_command_args
 		)
 	fi
+
 
 	start-stop-daemon \
 		--start \
@@ -258,13 +313,15 @@ start() {
 		--group "$command_group" \
 		${args[@]}
 
-#	if choom --version >/dev/null 2>&1 ; then
-#		local pid
-#		for pid in $(pgrep ollama) ; do
-#			echo "Ollama OOM 90%"
-#			choom -p ${pid} -n 900
-#		done
-#	fi
+	# CWE-401, DoS
+	# Kill on OOM
+	sleep 1
+	if choom --version >/dev/null 2>&1 ; then
+		local pid
+		for pid in $(pgrep -U ollama) ; do
+			choom -p ${pid} -n ${OLLAMA_OOM}
+		done
+	fi
 
 	eend $?
 }
