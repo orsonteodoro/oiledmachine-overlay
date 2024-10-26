@@ -269,9 +269,9 @@ start() {
 #		-e OLLAMA_GID=${gid}
 	)
 
-	if "${OLLAMA_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+	if [[ "${OLLAMA_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
 		: # Broken
-	elif "${OLLAMA_SANDBOX_PROVIDER}" == "bwrap" ]] ; then
+	elif [[ "${OLLAMA_SANDBOX_PROVIDER}" == "bwrap" ]] ; then
 		: # Duplicate functionality
 	elif [[ "${OLLAMA_CHROOT}" == "1" ]] ; then
 		args+=(
