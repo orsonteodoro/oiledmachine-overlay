@@ -116,7 +116,7 @@ prepare_chroot() {
 		fi
 
 	# For debugging only
-		if [[ "${_OLLAMA_DEBUG}" == "0" ]] ; then
+		if [[ "${_OLLAMA_DEBUG}" == "1" ]] ; then
 			paths+=(
 				"/bin/ls"
 				"/bin/cat"
