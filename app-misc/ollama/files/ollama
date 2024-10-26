@@ -207,10 +207,8 @@ start() {
 		prepare_chroot
 	fi
 
-	# TODO:  Review or use sys-apps/sandbox or firejail for namespace isolation.
 	ebegin "Starting $description"
-#	exec >> >(logger -t "$RC_SVCNAME Start daemon" -p "daemon.info")
-
+	exec >> >(logger -t "$RC_SVCNAME Start daemon" -p "daemon.info")
 
 	local args=()
 
@@ -222,9 +220,7 @@ start() {
 #		-e OLLAMA_GID=${gid}
 	)
 
-	if true ; then
-		:
-	elif [[ "${OLLAMA_CHROOT}" == "1" ]] ; then
+	if [[ "${OLLAMA_CHROOT}" == "1" ]] ; then
 		args+=(
 			--chroot "/var/lib/ollama"
 			-1 "/var/lib/ollama/$log" \
