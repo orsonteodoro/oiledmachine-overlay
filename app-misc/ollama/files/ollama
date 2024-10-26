@@ -218,6 +218,7 @@ start() {
 	args+=(
 #		-e OLLAMA_UID=${uid}
 #		-e OLLAMA_GID=${gid}
+		--background
 	)
 
 	if [[ "${OLLAMA_CHROOT}" == "1" ]] ; then
@@ -240,7 +241,6 @@ start() {
 		args+=(
 	# CWE-653 mitigation, ID
 			-e SANDBOX_DENY="/proc:/home"
-			--background
 			--exec $sandbox_command -- $sandbox_args $real_command $command_args
 		)
 	else
