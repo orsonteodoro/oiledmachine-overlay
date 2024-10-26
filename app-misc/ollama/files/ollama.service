@@ -9,6 +9,18 @@ ExecStart=/usr/bin/ollama serve
 Restart=always
 RestartSec=3
 Environment="PATH=$PATH"
+#
+# TODO: test settings
+#
+# ID = Information Disclosure
+# DoS = Denial of Service
+# DT = Data Tampering
+#
+# ProtectHome=yes # ID
+# ProtectSystem=full # ID
+# ProtectProc=noaccess # ID
+# PrivateDevices=true # ID
+# RestrictRealtime=true # DoS
 
 [Install]
 WantedBy=default.target
