@@ -1,7 +1,7 @@
 #!/sbin/openrc-run
 
 description="Ollama Service"
-command="/usr/bin/ollama"
+real_command="/usr/bin/ollama"
 command_args="serve"
 command_user="ollama"
 command_group="ollama"
@@ -9,9 +9,35 @@ command_background="yes"
 pidfile="/run/ollama.pid"
 log="/var/log/ollama/ollama.log"
 
+# AC = Access Control
+# CE = Code Execution
+# ID = Information Disclosure
+# DoS = Denial of Service
+# DT = Data Tampering
+
+# CWE-122 mitigation, CE, DoS, DT, ID
+# mimalloc - performance allocator
+# mimalloc-secure - hardened allocator
+# hardened_malloc - hardened allocator
+OLLAMA_MALLOC_PROVIDER=${OLLAMA_MALLOC_PROVIDER:-"@OLLAMA_MALLOC_PROVIDER@"}
+
+# CWE-653 mitigation
+OLLAMA_CHROOT=${OLLAMA_CHROOT:-@OLLAMA_CHROOT@}
+
+# CWE-653 mitigation
+OLLAMA_SANDBOX_PROVIDER=${OLLAMA_SANDBOX_PROVIDER:-"@OLLAMA_SANDBOX_PROVIDER@"}
+
+OLLAMA_BACKEND=${OLLAMA_BACKEND:-"@OLLAMA_BACKEND@"}
+_OLLAMA_DEBUG=${_OLLAMA_DEBUG:-"0"}
+
 # Ollama allows cross-origin requests from 127.0.0.1 and 0.0.0.0 by default.
 # Additional origins can be configured with OLLAMA_ORIGINS.
 # export OLLAMA_ORIGINS="<ip>"
+
+bind_mount_file() {
+	local path="${1}"
+	local dir
+}
 
 prepare_chroot() {
 	[[ -e "/var/lib/ollama" ]] || exit 1
@@ -49,6 +75,7 @@ prepare_chroot() {
 		mkdir -p "usr/bin"
 		mkdir -p "usr/lib64"
 		mkdir -p "usr/lib/gcc/${chost}/${gcc_slot}"
+		mkdir -p "usr/share"
 		mkdir -p "var/log/ollama"
 		mkdir -p "var/lib/ollama"
 		touch "var/log/ollama/ollama.log"
@@ -56,38 +83,38 @@ prepare_chroot() {
 		chown "ollama:ollama" "var/lib/ollama"
 		chmod 0755 "var/lib"
 		chmod 0700 "var/lib/ollama"
+		chmod 0755 "/var/lib/ollama"
 		mkdir -p "tmp"
 		chmod 1777 "tmp"
 
-		mount --types proc /proc proc
-		mount --rbind /sys sys
-		mount --make-rslave sys
-		mount --rbind /dev dev
-		mount --make-rslave dev
-		mount --bind /run run
-		mount --make-slave run
+		if [[ "${OLLAMA_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+			mount --types proc /proc proc
+			mount --rbind /sys sys
+			mount --make-rslave sys
+			mount --rbind /dev dev
+			mount --make-rslave dev
+			mount --bind /run run
+			mount --make-slave run
+		fi
 
 		cp -a "/etc/ld.so.cache" "etc/"
 		cp -a "/etc/ld.so.preload" "etc/"
 		cp -a "/bin/bash" "bin/"
+		cp -a "/bin/sh" "bin/"
 		cp -a "/usr/bin/ollama" "usr/bin/"
 		cp -a "/usr/lib64/ollama" "usr/lib64"
 		cp -a "/lib64/libc.so.6" "lib64"
 		cp -a "/lib64/libm.so.6" "lib64"
-	# CWE-122, Mitigate against CE, ID, DoS, DT
-	# AC = Access Control
-	# CE = Code Execution
-	# ID = Information Disclosure
-	# DoS = Denial of Service
-	# DT = Data Tampering
-		if [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc" ]] ; then
-			if grep -q -e "hardened" "/var/db/pkg/dev-libs/mimalloc"*"/USE" ; then
-				cp -a "$(realpath /usr/lib64/libmimalloc-secure.so.2)" "usr/lib64"
-				cp -a "/usr/lib64/libmimalloc-secure.so" "usr/lib64"
-				cp -a "/usr/lib64/libmimalloc-secure.so.2" "usr/lib64"
-			fi
+
+		if [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc-secure" ]] ; then
 			cp -a "$(realpath /usr/lib64/libmimalloc-secure.so.2)" "usr/lib64"
+			cp -a "/usr/lib64/libmimalloc-secure.so" "usr/lib64"
+			cp -a "/usr/lib64/libmimalloc-secure.so.2" "usr/lib64"
+		elif [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc" ]] ; then
+			cp -a "$(realpath /usr/lib64/libmimalloc.so.2)" "usr/lib64"
 			cp -a "/usr/lib64/libmimalloc.so.2" "usr/lib64"
+		elif [[ "${OLLAMA_MALLOC_PROVIDER}" == "hardened_malloc" ]] ; then
+			cp -a "/usr/lib64/libhardened_malloc.so" "usr/lib64"
 		fi
 		if grep -q "openblas" "/var/db/pkg/app-misc/ollama"*"/USE" ; then
 			cp -a "$(realpath /usr/lib64/libopenblas.so.0)" "usr/lib64"
@@ -107,10 +134,53 @@ prepare_chroot() {
 		cp -a "/lib64/libtinfo.so.6" "lib64"
 		cp -a "$(realpath /lib64/libtinfow.so.6)" "lib64"
 		cp -a "/lib64/libtinfow.so.6" "lib64"
-		cp -a "/bin/grep" "bin"
 		cp -a "/bin/mkdir" "bin"
 
-		#find .
+		if [[ "${OLLAMA_SANDBOX_PROVIDER}" == "bwrap" ]] ; then
+			cp -a "/usr/bin/bwrap" "usr/bin"
+			cp -a "$(realpath /usr/lib64/libcap.so.2)" "usr/lib64"
+			cp -a "/usr/lib64/libcap.so.2" "usr/lib64"
+			cp -a "/usr/lib64/libcap.so" "usr/lib64"
+		elif [[ "${OLLAMA_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+			cp -a "/etc/sandbox.conf" "etc"
+			cp -a "/usr/share/sandbox" "usr/share"
+			cp -a "/usr/lib64/libsandbox.so" "usr/lib64"
+			cp -a "/usr/bin/sandbox" "usr/bin"
+			cp -a "/usr/bin/unshare" "usr/bin"
+		fi
+
+	# For debugging only
+	if [[ "${_OLLAMA_DEBUG}" == "1" ]] ; then
+		cp -a "/bin/ls" "bin"
+		cp -a "/bin/cat" "bin"
+		cp -a "/bin/grep" "bin"
+		cp -a "/bin/echo" "bin"
+		cp -a "/bin/pwd" "bin"
+		cp -a "/usr/bin/top" "usr/bin"
+		cp -a "/bin/ps" "bin"
+		cp -a "$(realpath /usr/lib64/libproc2.so.0)" "usr/lib64"
+		cp -a "/usr/lib64/libproc2.so.0" "usr/lib64"
+		cp -a "/usr/lib64/libproc2.so" "usr/lib64"
+		cp -a "/usr/bin/id" "usr/bin"
+		cp -a "/usr/bin/ping" "usr/bin"
+		chmod 4711 "usr/bin/ping"
+	fi
+
+		cp -a "/bin/getcwd" "bin"
+		cp -a "$(realpath /lib64/libexecline.so.2.9)" "lib64"
+		cp -a "/lib64/libexecline.so.2.9" "lib64"
+		cp -a "/lib64/libexecline.so" "lib64"
+		cp -a "$(realpath /lib64/libskarnet.so.2.14)" "lib64"
+		cp -a "/lib64/libskarnet.so.2.14" "lib64"
+		cp -a "/lib64/libskarnet.so" "lib64"
+
+		if [[ "${OLLAMA_BACKEND}" == "rocm" ]] ; then
+			mkdir -p "opt/rocm-@ROCM_VERSION@"
+			mount -o ro --bind "/opt/rocm-@ROCM_VERSION@" "opt/rocm-@ROCM_VERSION@"
+		elif [[ "${OLLAMA_BACKEND}" == "cuda" ]] ; then
+			mkdir -p "opt/cuda"
+			mount -o ro --bind "/opt/cuda" "opt/cuda"
+		fi
 	popd >/dev/null 2>&1
 }
 
@@ -118,38 +188,88 @@ stop_chroot() {
 	[[ -e "/var/lib/ollama" ]] || exit 1
 	[[ -e "/var/lib/ollama" ]] || return
 	pushd "/var/lib/ollama" >/dev/null 2>&1 || exit 1
-		umount -l "proc" >/dev/null 2>&1
-		umount -l "sys" >/dev/null 2>&1
-		umount -l "dev" >/dev/null 2>&1
-		umount -l "run" >/dev/null 2>&1
+		if [[ "${OLLAMA_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+			umount -l "proc" >/dev/null 2>&1
+			umount -l "sys" >/dev/null 2>&1
+			umount -l "dev" >/dev/null 2>&1
+			umount -l "run" >/dev/null 2>&1
+		fi
+		if [[ "${OLLAMA_BACKEND}" == "rocm" ]] ; then
+			umount -l "opt/rocm-@ROCM_VERSION@"
+		elif [[ "${OLLAMA_BACKEND}" == "cuda" ]] ; then
+			umount -l "opt/cuda"
+		fi
 	popd >/dev/null 2>&1
 }
 
 start() {
-	ebegin "Starting $description"
 	if [[ "${OLLAMA_CHROOT}" == "1" ]] ; then
 		prepare_chroot
 	fi
 
+	# TODO:  Review or use sys-apps/sandbox or firejail for namespace isolation.
+	ebegin "Starting $description"
+#	exec >> >(logger -t "$RC_SVCNAME Start daemon" -p "daemon.info")
+
+
 	local args=()
 
-	if [[ "${OLLAMA_CHROOT}" == "1" ]] ; then
+	local uid=$(grep "^ollama:" "/etc/passwd" | cut -f 3 -d ":")
+	local gid=$(grep "^ollama:" "/etc/passwd" | cut -f 4 -d ":")
+
+	args+=(
+#		-e OLLAMA_UID=${uid}
+#		-e OLLAMA_GID=${gid}
+	)
+
+	if true ; then
+		:
+	elif [[ "${OLLAMA_CHROOT}" == "1" ]] ; then
 		args+=(
 			--chroot "/var/lib/ollama"
+			-1 "/var/lib/ollama/$log" \
+			-2 "/var/lib/ollama/$log" \
 		)
-	fi
-
-	if [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc" ]] ; then
-	# TODO:  Verify hardened heap allocator.
+	else
 		args+=(
-			-e LD_PRELOAD=usr/lib64/libmimalloc.so.2
+			-1 "$log" \
+			-2 "$log" \
 		)
 	fi
 
-	# TODO:  Review or use sys-apps/sandbox or firejail for namespace isolation.
-	exec >> >(logger -t "$RC_SVCNAME Start daemon" -p daemon.info)
-	start-stop-daemon --start --background --user "$command_user" --group "$command_group" \
-			--pidfile "$pidfile" --make-pidfile ${args[@]} --exec $command $command_args -1 $log -2 $log
+	if [[ "${OLLAMA_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+	# CWE-653 mitigation
+		sandbox_command="/usr/bin/sandbox"
+		sandbox_args=""
+		args+=(
+	# CWE-653 mitigation, ID
+			-e SANDBOX_DENY="/proc:/home"
+			--background
+			--exec $sandbox_command -- $sandbox_args $real_command $command_args
+		)
+	else
+		sandbox_command=""
+		args+=(
+			--exec $real_command -- $command_args
+		)
+	fi
+
+	start-stop-daemon \
+		--start \
+		--make-pidfile \
+		--pidfile "$pidfile" \
+		--user "$command_user" \
+		--group "$command_group" \
+		${args[@]}
+
+#	if choom --version >/dev/null 2>&1 ; then
+#		local pid
+#		for pid in $(pgrep ollama) ; do
+#			echo "Ollama OOM 90%"
+#			choom -p ${pid} -n 900
+#		done
+#	fi
+
 	eend $?
 }
 

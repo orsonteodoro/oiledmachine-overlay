@@ -22,11 +22,29 @@
     <flag name="blis">
       Support CPU optimized linear math via BLIS.
     </flag>
+    <flag name="chroot">
+      Isolate the ollama daemon filesystem instance to limit breach.
+      (EXPERIMENTAL)
+    </flag>
     <flag name="emoji">
       Support emojis.
     </flag>
+    <flag name="hardened_malloc">
+      Use a hardened allocator to mitigate against heap based buffer overflow
+      (CE, DoS, DT, ID).
+      (EXPERIMENTAL)
+    </flag>
     <flag name="lapack">
       Support CPU optimized linear math via the older LAPACK.
+    </flag>
+    <flag name="mimalloc">
+      Use a performance heap allocator.
+      (EXPERIMENTAL)
+    </flag>
+    <flag name="mimalloc-secure">
+      Use the hardened allocator to mitigate against heap based buffer overflow
+      (CE, DoS, DT, ID).
+      (EXPERIMENTAL)
     </flag>
     <flag name="mkl">
       Support CPU optimized linear math via oneMKL.
@@ -37,12 +55,18 @@
     <flag name="rocm">
       Support ROCm™ for AMD GPUs.
     </flag>
+    <flag name="sandbox">
+      Isolate the ollama daemon filesystem instance to limit reconnasiance and
+      information disclosure
+      (EXPERIMENTAL)
+    </flag>
     <flag name="unrestrict">
       Allow unrestricted downloading of ollama models.  Otherwise, only allow
       whitelisted models for downloading.
     </flag>
     <flag name="video_cards_intel">
       Support SYCL MKL acceleration for Intel® GPUs.
+      (EXPERIMENTAL)
     </flag>
   </use>
 </pkgmetadata>

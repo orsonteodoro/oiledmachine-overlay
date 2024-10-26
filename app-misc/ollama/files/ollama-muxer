@@ -5,7 +5,11 @@
 # Wrapper script for ollama
 
 ARGS=( ${@} )
-BACKEND=${BACKEND:-"@BACKEND@"}
+OLLAMA_BACKEND=${OLLAMA_BACKEND:-"@OLLAMA_BACKEND@"}
+OLLAMA_MALLOC_PROVIDER=${OLLAMA_MALLOC_PROVIDER:-"@OLLAMA_MALLOC_PROVIDER@"} # CWE-122 mitigation, CE, DoS, DT, ID
+
+# CWE-653 mitigation
+OLLAMA_SANDBOX_PROVIDER=${OLLAMA_SANDBOX_PROVIDER:-"@OLLAMA_SANDBOX_PROVIDER@"}
 
 declare -A backends=(
 	"cpu"
@@ -17,8 +21,54 @@ declare -A backends=(
 )
 
 main() {
-	cd "/usr/lib64/ollama/${BACKEND}" || exit 1
-	../ollama ${ARGS[@]}
+	if [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc-secure" ]] ; then
+		export LD_PRELOAD="/usr/lib64/libmimalloc-secure.so.2"
+	elif [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc-secure" ]] ; then
+		export LD_PRELOAD="/usr/lib64/libmimalloc.so.2"
+	elif [[ "${OLLAMA_MALLOC_PROVIDER}" == "hardened_malloc" ]] ; then
+		export LD_PRELOAD="/usr/lib64/libhardened_malloc.so"
+	fi
+
+	if [[ "${OLLAMA_BACKEND}" == "rocm" ]] ; then
+		export LD_LIBRARY_PATH="/opt/rocm-@ROCM_VERSION@/lib:${LD_LIBRARY_PATH}"
+	elif [[ "${OLLAMA_BACKEND}" == "cuda" ]] ; then
+		export LD_LIBRARY_PATH="/opt/cuda/lib64:${LD_LIBRARY_PATH}"
+	fi
+	export LD_LIBRARY_PATH="/usr/lib64/ollama/${OLLAMA_BACKEND}:${LD_LIBRARY_PATH}"
+	export PATH="/usr/lib64/ollama/${OLLAMA_BACKEND}:${PATH}"
+	cd "/usr/lib64/ollama/${OLLAMA_BACKEND}" || exit 1
+	if [[ "${OLLAMA_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+# Unshare may be broken
+#echo "Sandbox provider:  sandbox"
+		unshare -i || echo "unshare -i, for ipc off failed" # requires root
+		unshare -p || echo "unshare -p, for pid off failed" # requires root
+		unshare -m || echo "unshare -m, for mount off failed" # requires root
+		unshare -u || echo "unshare -u, for uts off failed" # requires root
+#		unshare -C || echo "unshare -C, for cgroup off failed" # requires root ; breaks client
+		unshare -T || echo "unshare -T, for time off failed" # requires root
+#		unshare -U || echo "unshare -U, for user off failed" # Causes strange behavior with client or wrapper
+		../ollama ${ARGS[@]}
+	elif [[ "${OLLAMA_SANDBOX_PROVIDER}" == "bwrap" ]] ; then
+# Network is broken even with bash.
+#echo "Sandbox provider:  bwrap"
+		local args=(
+			--bind /var/lib/ollama /
+			--dev /dev
+			--proc /proc
+			--bind /run /run
+			--bind /sys /sys
+			--tmpfs /tmp
+			--new-session
+		)
+#		echo "bwrap ${args[@]} -- bash"
+		bwrap \
+			${args[@]} \
+			-- \
+			../ollama ${ARGS[@]}
+	else
+#echo "Sandbox provider:  none"
+		../ollama ${ARGS[@]}
+	fi
 }
 
 main

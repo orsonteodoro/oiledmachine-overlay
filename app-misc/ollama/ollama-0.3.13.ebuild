@@ -4,6 +4,10 @@
 
 EAPI=8
 
+# Hardened because of CVE-2024-37032 implications of similar attacks.
+
+# TODO:  Fix or remove bwrap
+
 #
 # SECURITY:
 #
@@ -135,6 +139,11 @@ zephyr
 LLVM_COMPAT=( 17 )
 GEN_EBUILD=0
 EGO_PN="github.com/ollama/ollama"
+HARDENED_ALLOCATORS=(
+	"hardened_malloc"
+	"mimalloc"
+	"mimalloc-secure"
+)
 LLAMA_CPP_COMMIT="8962422b1c6f9b8b15f5aeaea42600bcc2d44177"
 KOMPUTE_COMMIT="4565194ed7c32d1d2efa32ceab4d3c6cae006306"
 LLAMA_CPP_UPDATE=0
@@ -2418,15 +2427,18 @@ LICENSE="
 # W3C Test Suite License, W3C 3-clause BSD License - go-mod/gonum.org/v1/gonum/graph/formats/rdf/testdata/LICENSE.md
 
 SLOT="0"
+
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS_X86[@]}
+${HARDENED_ALLOCATORS[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
-blis cuda debug emoji lapack mkl openblas openrc rocm systemd unrestrict video_cards_intel
-ebuild-revision-7
+blis chroot cuda debug emoji lapack mkl openblas openrc rocm sandbox systemd
+unrestrict video_cards_intel ebuild-revision-7
+
 "
 gen_rocm_required_use() {
 	local s
@@ -2463,6 +2475,9 @@ REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
 	?? (
+		${HARDENED_ALLOCATORS[@]}
+	)
+	?? (
 		${ROCM_IUSE[@]}
 	)
 	?? (
@@ -2481,19 +2496,30 @@ REQUIRED_USE="
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)
+	chroot? (
+		openrc
+	)
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_fma
 		cpu_flags_x86_f16c
 	)
 	cuda? (
+		cpu_flags_x86_avx
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
 	rocm? (
+		cpu_flags_x86_avx
 		|| (
 			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 		)
+	)
+	sandbox? (
+		openrc
+	)
+	video_cards_intel? (
+		openrc
 	)
 	|| (
 		${LLMS[@]/#/ollama_llms_}
@@ -2591,6 +2617,15 @@ RDEPEND="
 	lapack? (
 		sci-libs/lapack:=
 	)
+	hardened_malloc? (
+		dev-libs/hardened_malloc
+	)
+	mimalloc? (
+		dev-libs/mimalloc
+	)
+	mimalloc-secure? (
+		dev-libs/mimalloc[hardened]
+	)
 	mkl? (
 		sci-libs/mkl:=
 	)
@@ -2601,6 +2636,9 @@ RDEPEND="
 		$(gen_rocm_rdepend)
 		sci-libs/rocBLAS:=
 		x11-libs/libdrm[video_cards_amdgpu]
+	)
+	sandbox? (
+		sys-apps/sandbox
 	)
 	video_cards_intel? (
 		>=dev-libs/intel-compute-runtime-2024[l0]
@@ -2735,9 +2773,6 @@ PATCHES=(
 )
 
 pkg_pretend() {
-	if use rocm ; then
-ewarn "USE=rocm support for ${PN} is experimental."
-	fi
 	if use video_cards_intel ; then
 ewarn "USE=video_cards_intel support for ${PN} is experimental."
 	fi
@@ -2998,6 +3033,15 @@ src_configure() {
 	# Avoid missing versioned symbols
 	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
 		rocm_verify_glibcxx "${!glibcxx_ver}" ${libs[@]}
+
+		# Speed up build
+		local gpus="${AMDGPU_TARGETS}"
+		sed -i -e "s|HIP_ARCHS_COMMON := gfx900 gfx940 gfx941 gfx942 gfx1010 gfx1012 gfx1030 gfx1100 gfx1101 gfx1102|HIP_ARCHS_COMMON := ${gpus//;/ }|g" \
+			"llama/make/Makefile.rocm" \
+			|| die
+		sed -i -e "s|HIP_ARCHS_LINUX := gfx906:xnack- gfx908:xnack- gfx90a:xnack+ gfx90a:xnack-|HIP_ARCHS_LINUX := |g" \
+			"llama/make/Makefile.rocm" \
+			|| die
 	fi
 
 	# For proper _FORTIFY_SOURCE
@@ -3037,10 +3081,26 @@ einfo "__PIE__ is already enabled."
 
 	strip-unsupported-flags
 
-#	if use debug ; then
+	if use debug ; then
 	# Increase build verbosity
 		append-flags -g
-#	fi
+	fi
+
+	if use rocm ; then
+	# Fixes
+# ld: /opt/rocm-6.1.2/lib/libamdhip64.so: undefined reference to `hsa_queue_load_write_index_relaxed'
+# ld: /opt/rocm-6.1.2/lib/libamdhip64.so: undefined reference to `hsa_executable_get_symbol_by_name'
+# ld: /opt/rocm-6.1.2/lib/libamdhip64.so: undefined reference to `hsa_code_object_reader_destroy'
+# ld: /opt/rocm-6.1.2/lib/libamdhip64.so: undefined reference to `hsa_amd_signal_value_pointer'
+# ld: /opt/rocm-6.1.2/lib/libamdhip64.so: undefined reference to `hsa_iterate_agents'
+# ld: /opt/rocm-6.1.2/lib/libamdhip64.so: undefined reference to `numa_node_to_cpus'
+# ld: /opt/rocm-6.1.2/lib/libamdhip64.so: undefined reference to `hsa_amd_signal_create'
+# ld: /opt/rocm-6.1.2/lib/libamdhip64.so: undefined reference to `hsa_signal_destroy'
+# ld: /opt/rocm-6.1.2/lib/libamdhip64.so: undefined reference to `hsa_amd_svm_attributes_set'
+# ld: /opt/rocm-6.1.2/lib/libamdhip64.so: undefined reference to `hsa_init'
+# ld: /opt/rocm-6.1.2/lib/libamdhip64.so: undefined reference to `hsa_status_string'
+		filter-flags "-Wl,--as-needed"
+	fi
 
 	export CGO_CFLAGS="${CFLAGS}"
 	export CGO_CXXFLAGS="${CXXFLAGS}"
@@ -3422,7 +3482,7 @@ install_gpu_runner() {
 		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
 			doexe "libggml_cuda_v11.so"
 		elif use rocm ; then
-			doexe "libggml_rocm_v${ROCM_VERSION}.so"
+			doexe "libggml_rocm.so"
 		fi
 	popd >/dev/null 2>&1 || die
 }
@@ -3458,7 +3518,9 @@ src_install() {
 	fi
 
 	# The wrapper can be modified later to confine ollama with firejail or use mimalloc.
-	sed -i -e "s|@BACKEND@|${backend}|g" "${T}/${PN}-muxer"
+	sed -i -e "s|@OLLAMA_BACKEND@|${backend}|g" \
+		"${T}/${PN}-muxer" \
+		|| die
 
 	exeinto "/usr/bin"
 	newexe "${T}/${PN}-muxer" "${PN}"
@@ -3472,13 +3534,46 @@ src_install() {
 	install_cpu_runner
 	install_gpu_runner
 
+	local malloc
+	if use mimalloc ; then
+		malloc="mimalloc"
+	elif use mimalloc-secure ; then
+		malloc="mimalloc-secure"
+	elif use hardened_malloc ; then
+		malloc="hardened_malloc"
+	fi
+
+	local chroot=$(usex chroot "1" "0")
+	local sandbox=$(usex sandbox "sandbox" "")
+
 	if use openrc ; then
 		doinitd "${FILESDIR}/${PN}"
+		sed -i -e "s|@OLLAMA_BACKEND@|${backend}|g" \
+			"${ED}/etc/init.d/${PN}" \
+			|| die
+		if use rocm ; then
+			sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" \
+				"${ED}/etc/init.d/${PN}" \
+				"${ED}/usr/bin/${PN}" \
+				|| die
+		fi
+		sed -i \
+			-e "s|@OLLAMA_MALLOC_PROVIDER@|${malloc}|g" \
+			-e "s|@OLLAMA_CHROOT@|${chroot}|" \
+			-e "s|@OLLAMA_SANDBOX_PROVIDER@|${sandbox}|g" \
+			"${ED}/etc/init.d/${PN}" \
+			|| die
 	fi
 	if use systemd ; then
 		insinto "/usr/lib/systemd/system"
 		doins "${FILESDIR}/${PN}.service"
 	fi
+
+	sed -i \
+		-e "s|@OLLAMA_MALLOC_PROVIDER@|${malloc}|g" \
+		-e "s|@OLLAMA_SANDBOX@|${sandbox}|g" \
+		"${ED}/usr/bin/${PN}" \
+		|| die
 
 	LCNR_SOURCE="${WORKDIR}/go-mod"
 	LCNR_TAG="third_party"
@@ -3526,6 +3621,9 @@ einfo "   ~4 B parameters =   4 GiB RAM required"
 einfo "   ~8 B parameters =   8 GiB RAM required"
 einfo "   ~X B parameters =   X GiB RAM required"
 einfo
+	if use systemd ; then
+ewarn "The chroot and sandbox mitigation edits has not been implemented for systemd init script."
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.3.13, 20241020)
