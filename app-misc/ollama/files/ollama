@@ -26,7 +26,11 @@ OLLAMA_SANDBOX_PROVIDER=${OLLAMA_SANDBOX_PROVIDER:-"@OLLAMA_SANDBOX_PROVIDER@"}
 OLLAMA_BACKEND=${OLLAMA_BACKEND:-"@OLLAMA_BACKEND@"}
 _OLLAMA_DEBUG=${_OLLAMA_DEBUG:-"0"}
 
-OLLAMA_OOM=${OLLAMA_OOM:-900} # 0 immune, [0,999] increased probability of being oom killed, 1000 always kill
+# 0 back of the line OOM kill list
+# <500 back of the OOM kill list
+# >=500 front of the OOM kill list
+# 1000 front of the line OOM kill
+OLLAMA_OOM=${OLLAMA_OOM:-500}
 
 # Ollama allows cross-origin requests from 127.0.0.1 and 0.0.0.0 by default.
 # Additional origins can be configured with OLLAMA_ORIGINS.
