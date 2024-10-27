@@ -4,19 +4,36 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_10 ) # Constrained by tensorflow
-inherit python-r1 git-r3
+PYTHON_COMPAT=( "python3_"{10..12} ) # Constrained by tensorflow
+
+inherit python-r1
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="master"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+	EGIT_REPO_URI="https://github.com/Soheil-ab/Orca.git"
+	FALLBACK_COMMIT="cafaf9a31cb63a5b8754e1f410776d35b8ce47d0"
+	inherit git-r3
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
+else
+	KEYWORDS="~amd64" # Ebuild needs testing
+	S="${WORKDIR}/${P}"
+	SRC_URI="
+		FIXME
+	"
+fi
 
 DESCRIPTION="Orca: Towards Mastering Congestion Control In the Internet"
 HOMEPAGE="
 https://github.com/Soheil-ab/Orca
 "
 LICENSE="MIT"
-#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild needs testing
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-build-models cellular-traces evaluate fallback-commit kernel-patch polkit +sudo
-r4
+build-models cellular-traces evaluate kernel-patch polkit +sudo
+ebuild-revision-4
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -61,30 +78,29 @@ BDEPEND+="
 	dev-python/virtualenv[${PYTHON_USEDEP}]
 	sys-devel/gcc
 "
-SRC_URI="
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 PATCHES+=(
 	"${FILESDIR}/${PN}-1.0_p9999-production-with-agnostic-sudo.patch"
 )
 
-src_unpack() {
-	EGIT_REPO_URI="https://github.com/Soheil-ab/Orca.git"
-	EGIT_BRANCH="master"
-	if use fallback-commit ; then
-		EGIT_COMMIT="cafaf9a31cb63a5b8754e1f410776d35b8ce47d0"
-	else
-		EGIT_COMMIT="HEAD"
-	fi
+unpack_live() {
+	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
 	git-r3_checkout
 }
 
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		unpack_live
+	else
+		unpack ${A}
+	fi
+}
+
 src_prepare() {
 	default
-	chmod +x build.sh || die
+	chmod +x "build.sh" || die
 }
+
 src_configure() {
 	local L=(
 		"actor.sh"
@@ -97,13 +113,13 @@ src_configure() {
 	for path in ${L[@]} ; do
 		if use polkit ; then
 einfo "Modding ${path} for polkit"
-			sed -i -e "s|:-sudo|:-pkexec|g" "${path}"
+			sed -i -e "s|:-sudo|:-pkexec|g" "${path}" || die
 		elif use sudo ; then
 einfo "Modding ${path} for sudo"
-			sed -i -e "s|:-sudo|:-sudo|g" "${path}"
+			sed -i -e "s|:-sudo|:-sudo|g" "${path}" || die
 		else
 einfo "Modding ${path} to remove sudo"
-			sed -i -e "s|:-sudo|:-\" \"|g" "${path}"
+			sed -i -e "s|:-sudo|:-\" \"|g" "${path}" || die
 		fi
 	done
 	if use polkit ; then
@@ -120,19 +136,21 @@ einfo "Modding src/define.h to remove sudo"
 
 src_compile() {
 	cd "${S}" || die
-	ORCA_ELEVATE_CMD=" " ./build.sh || die
+	ORCA_ELEVATE_CMD=" " \
+	"./build.sh" || die
 	if use cellular-traces ; then
-		cp -a /usr/share/celluar-traces-nyc/* traces || die
+		cp -a "/usr/share/celluar-traces-nyc/"* "traces" || die
 	fi
 	rm -rf "build.sh" || die
 	if use kernel-patch ; then
-		rm -rf "linux/"*.deb
+		rm -rf "linux/"*".deb"
 	else
 		rm -rf "linux"
 	fi
 }
+
 src_install() {
-	insinto /opt/orca
+	insinto "/opt/orca"
 	doins -r "${S}/"*
 	local path
 	for path in $(find "${ED}" -type f) ; do
@@ -145,7 +163,7 @@ src_install() {
 			fperms 0755 "${path}"
 		fi
 	done
-	dosym orca-real-network.sh /opt/orca/drl-agent
+	dosym "orca-real-network.sh" "/opt/orca/drl-agent"
 }
 
 pkg_postinst() {

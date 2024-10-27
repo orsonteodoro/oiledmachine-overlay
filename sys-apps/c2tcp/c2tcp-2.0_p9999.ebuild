@@ -4,18 +4,33 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
-inherit python-r1 git-r3
+PYTHON_COMPAT=( "python3_"{8..12} )
+
+inherit python-r1
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="master"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+	EGIT_REPO_URI="https://github.com/Soheil-ab/c2tcp.git"
+	FALLBACK_COMMIT="4b5b2413543eec935144172330cd96c230294f0f"
+	inherit git-r3
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
+else
+	KEYWORDS="~amd64" # Ebuild needs testing
+	S="${WORKDIR}/${P}"
+	SRC_URI="FIXME"
+fi
 
 DESCRIPTION="C2TCP: A Flexible Cellular TCP to Meet Stringent Delay \
 Requirements."
 HOMEPAGE="
-https://github.com/Soheil-ab/c2tcp
+	https://github.com/Soheil-ab/c2tcp
 "
 LICENSE="MIT"
-#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild needs testing
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" fallback-commit kernel-patch polkit sudo"
+IUSE+=" kernel-patch polkit sudo"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -44,23 +59,22 @@ BDEPEND+="
 	app-alternatives/sh
 	sys-devel/gcc
 "
-SRC_URI=""
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/c2tcp-2.0_p9990-bash-edits.patch"
 )
 
-src_unpack() {
-	EGIT_REPO_URI="https://github.com/Soheil-ab/c2tcp.git"
-	EGIT_BRANCH="master"
-	if use fallback-commit ; then
-		EGIT_COMMIT="4b5b2413543eec935144172330cd96c230294f0f"
-	else
-		EGIT_COMMIT="HEAD"
-	fi
+unpack_live() {
+	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
 	git-r3_checkout
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		unpack_live
+	else
+		unpack ${A}
+	fi
 }
 
 src_configure() {
@@ -85,26 +99,26 @@ einfo "Modding ${path} to remove sudo"
 
 src_compile() {
 	cd "${S}" || die
-	./build.sh || die
+	"./build.sh" || die
 	local L=(
-		$(cat /var/db/pkg/sys-apps/cellular-traces-y2018*/CONTENTS \
+		$(cat "/var/db/pkg/sys-apps/cellular-traces-y2018"*"/CONTENTS" \
 			| cut -f 2 -d " ")
 	)
 	local path
 	for path in ${L[@]} ; do
 		if [[ -f "${path}" ]] ; then
-			cp -a "${path}" traces || die
+			cp -a "${path}" "traces" || die
 		fi
 	done
 	rm -rf "build.sh" || die
 	if use kernel-patch ; then
-		rm -rf "linux-patch/"*.deb || die
+		rm -rf "linux-patch/"*".deb" || die
 	else
 		rm -rf "linux-patch" || die
 	fi
 }
 src_install() {
-	insinto /opt/${PN}
+	insinto "/opt/${PN}"
 	doins -r *
 	local path
 	for path in $(find "${ED}" -type f) ; do
@@ -112,7 +126,10 @@ src_install() {
 		if [[ "${path}" =~ ".sh"$ ]] ; then
 			einfo "fperms 0755 ${path}"
 			fperms 0755 "${path}"
-		elif file "${ED}/${path}" | grep -E -q -e "(executable|shell script)" ; then
+		elif \
+			file "${ED}/${path}" \
+				| grep -E -q -e "(executable|shell script)" \
+		; then
 			einfo "fperms 0755 ${path}"
 			fperms 0755 "${path}"
 		fi

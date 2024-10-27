@@ -4,8 +4,25 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_10 ) # Constrained by tensorflow
-inherit python-r1 git-r3
+PYTHON_COMPAT=( "python3_"{10..12} ) # Constrained by tensorflow
+
+inherit python-r1
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="master"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+	EGIT_REPO_URI="https://github.com/Soheil-ab/DeepCC.v1.0.git"
+	FALLBACK_COMMIT="4edbed5ed0534ad6be84aa2c347b80c74c987cf5"
+	inherit git-r3
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
+else
+	KEYWORDS="~amd64" # Ebuild needs testing
+	S="${WORKDIR}/${P}"
+	SRC_URI="
+		FIXME
+	"
+fi
 
 DESCRIPTION="DeepCC: A Deep Reinforcement Learning Plug-in to Boost the \
 performance of your TCP scheme in Cellular Networks!"
@@ -13,9 +30,9 @@ HOMEPAGE="
 https://github.com/Soheil-ab/DeepCC.v1.0
 "
 LICENSE="MIT"
-#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild needs testing
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" build-models evaluate fallback-commit kernel-patch polkit +sudo r3"
+IUSE+=" build-models evaluate kernel-patch polkit +sudo ebuild-revision-3"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -62,24 +79,22 @@ PDEPEND+="
 		)
 	)
 "
-SRC_URI="
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/${PN}-1.0_p9999-real-network-with-agnostic-sudo.patch"
 )
 
-src_unpack() {
-	EGIT_REPO_URI="https://github.com/Soheil-ab/DeepCC.v1.0.git"
-	EGIT_BRANCH="master"
-	if use fallback-commit ; then
-		EGIT_COMMIT="4edbed5ed0534ad6be84aa2c347b80c74c987cf5"
-	else
-		EGIT_COMMIT="HEAD"
-	fi
+unpack_live() {
+	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
 	git-r3_checkout
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		unpack_live
+	else
+		unpack ${A}
+	fi
 
 	cd "${S}/models" || die
 	local p
@@ -105,13 +120,13 @@ src_configure() {
 	for path in ${L[@]} ; do
 		if use polkit ; then
 einfo "Modding ${path} for polkit"
-			sed -i -e "s|:-sudo|:-pkexec|g" "${path}"
+			sed -i -e "s|:-sudo|:-pkexec|g" "${path}" || die
 		elif use sudo ; then
 einfo "Modding ${path} for sudo"
-			sed -i -e "s|:-sudo|:-sudo|g" "${path}"
+			sed -i -e "s|:-sudo|:-sudo|g" "${path}" || die
 		else
 einfo "Modding ${path} to remove sudo"
-			sed -i -e "s|:-sudo|:-\" \"|g" "${path}"
+			sed -i -e "s|:-sudo|:-\" \"|g" "${path}" || die
 		fi
 	done
 	if use polkit ; then
@@ -128,17 +143,19 @@ einfo "Modding src/define.h to remove sudo"
 
 src_compile() {
 	cd "${S}/deepcc.v1.0" || die
-	DEEPCC_ELEVATE_CMD=" " ./build.sh || die
+	DEEPCC_ELEVATE_CMD=" " \
+	"./build.sh" || die
 	if use build-models ; then
 ewarn "The build-models USE flag is a work in progress."
 		die "Unfinished / untested"
-		./training.sh &
+		"./training.sh" &
 	fi
 	rm -rf "build.sh" || die
 	rm -rf "linux" || die
 }
+
 src_install() {
-	insinto /opt/deepcc
+	insinto "/opt/deepcc"
 	doins -r "${S}/deepcc.v1.0/"*
 	local path
 	for path in $(find "${ED}" -type f) ; do
@@ -146,12 +163,15 @@ src_install() {
 		if [[ "${path}" =~ ".sh"$ ]] ; then
 			einfo "fperms 0755 ${path}"
 			fperms 0755 "${path}"
-		elif file "${ED}/${path}" | grep -E -q -e "(executable|shell script)" ; then
+		elif \
+			file "${ED}/${path}" \
+				| grep -E -q -e "(executable|shell script)" \
+		; then
 			einfo "fperms 0755 ${path}"
 			fperms 0755 "${path}"
 		fi
 	done
-	dosym real-network.sh /opt/deepcc/drl-agent
+	dosym "real-network.sh" "/opt/deepcc/drl-agent"
 }
 
 pkg_postinst() {

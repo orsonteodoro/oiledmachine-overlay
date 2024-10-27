@@ -4,18 +4,21 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 inherit autotools
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	EGIT_REPO_URI="https://github.com/ravinet/mahimahi.git"
 	EGIT_BRANCH="master"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+	EGIT_REPO_URI="https://github.com/ravinet/mahimahi.git"
 	FALLBACK_COMMIT="0bd12164388bc109bbbd8ffa03a09e94adcbec5a" # May 5, 2023
 	inherit git-r3
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 else
-	SRC_URI=""
+	SRC_URI="
+		FIXME
+	"
 	S="${WORKDIR}/${P}"
 	die "FIXME"
 fi
