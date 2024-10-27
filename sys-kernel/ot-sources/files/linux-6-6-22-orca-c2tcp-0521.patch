@@ -325,7 +325,7 @@ diff -urpN a/net/ipv4/tcp.c b/net/ipv4/tcp.c
 +	case TCP_CWND:
 +		if(sysctl_tcp_bbr_init_cwnd<=val)
 +		{
-+			tcp_snd_cwnd_set(tp, min(val,tp->snd_cwnd_clamp));
++			tcp_snd_cwnd_set(tp, min((u32)val,tp->snd_cwnd_clamp));
 +		}
 +		else
 +		{
