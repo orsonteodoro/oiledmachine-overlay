@@ -869,7 +869,7 @@ diff -x '*.rej' -x '*.orig' -urpN a/net/ipv4/tcp_deepcc.c b/net/ipv4/tcp_deepcc.
 +	 * without any lock. We want to make sure compiler wont store
 +	 * intermediate values in this location.
 +	 */
-+	WRITE_ONCE(sk->sk_pacing_rate, min_t(u64, rate,sk->sk_max_pacing_rate);
++	WRITE_ONCE(sk->sk_pacing_rate, min_t(u64, rate,sk->sk_max_pacing_rate));
 +}
 +
 +void deepcc_update_cwnd(struct sock *sk)
