@@ -1849,14 +1849,14 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
     
     Features
 
-      init system | supervisor | sandboxing | realtime | use cases | notes
+      init system | supervisor | sandboxing[4] | realtime | use cases | notes
       dinit            y             n           n              p
       epoch            y             n           n           e 
       finit            y             n           n[1]       d   p
-      openrc           y           full[3]       y          d  mps
-      runit            y         partial[2]      n              p
+      openrc           y             n[3]        y          d  mps
+      runit            y             n[2]        n              p
       s6               y             n           n           e 
-      systemd          y            full         y         Dd  mps    Support for on demand services for user or sockets, numa scheduling
+      systemd          y             y           y         Dd  mps    Support for on demand services for user or sockets, numa scheduling
       sysvinit         n             n           n            l
     
     Meaning:
@@ -1877,9 +1877,9 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
            SSH server
     
       [1] - achieveable with OpenRC compatibility wrappers but not native
-      [2] - chroot yes, capabilities no
-      [3] - there are more capabilities coverage with init files on systemd
-            compared to OpenRC
+      [2] - chroot yes, unsharing namespaces no
+      [3] - chroot yes, unsharing namespaces requires sys-apps/sandbox
+      [4] - Native support similar to bubblewrap and sys-apps/sandbox
 
     Notes
 
