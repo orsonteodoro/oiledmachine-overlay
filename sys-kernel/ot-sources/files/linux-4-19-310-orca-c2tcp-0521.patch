@@ -1223,26 +1223,26 @@ diff -x '*.rej' -x '*.orig' -urpN a/include/uapi/linux/tcp.h b/include/uapi/linu
 +/*
 + * Defining custom Socket TCP Options
 +*/
-+#define TCP_BBR_EN_MAXDEL 33
-+#define TCP_BBR_EN_PRBRTT 34
-+#define TCP_BBR_TRGTDEL_US 35
-+#define TCP_BBR_MINRTTWIN_SEC 36
-+#define TCP_BBR_PRBERTTMDE_MS 37
-+#define TCP_BBR_BWAUTO 38
-+#define TCP_BBR_BWVAL 39
-+#define TCP_BBR_CWNDRVGAIN 40
-+#define TCP_BBR_DEBUG 41
-+#define TCP_CWND_CLAMP 42
-+#define TCP_CWND 43
-+#define TCP_DEEPCC_ENABLE 44
-+#define TCP_CWND_CAP 45
++#define TCP_BBR_EN_MAXDEL 37
++#define TCP_BBR_EN_PRBRTT 38
++#define TCP_BBR_TRGTDEL_US 39
++#define TCP_BBR_MINRTTWIN_SEC 40
++#define TCP_BBR_PRBERTTMDE_MS 41
++#define TCP_BBR_BWAUTO 42
++#define TCP_BBR_BWVAL 43
++#define TCP_BBR_CWNDRVGAIN 44
++#define TCP_BBR_DEBUG 45
++#define TCP_CWND_CLAMP 46
++#define TCP_CWND 47
++#define TCP_DEEPCC_ENABLE 48
++#define TCP_CWND_CAP 49
 +
-+#define TCP_DEEPCC_INFO		46	/* Get Congestion Control (optional) DeepCC info */
-+#define TCP_CWND_MIN		47
++#define TCP_DEEPCC_INFO		50	/* Get Congestion Control (optional) DeepCC info */
++#define TCP_CWND_MIN		51
 +
 +/*C2TCP*/
-+#define  TCP_C2TCP_ENABLE 50
-+#define  TCP_C2TCP_ALPHA 51
++#define  TCP_C2TCP_ENABLE 54
++#define  TCP_C2TCP_ALPHA 55
 +
 +/*
 + * End of Custom Socket Defines
