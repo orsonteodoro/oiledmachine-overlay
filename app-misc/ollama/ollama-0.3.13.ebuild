@@ -2437,7 +2437,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji lapack mkl openblas openrc rocm sandbox systemd
-unrestrict video_cards_intel ebuild-revision-16
+unrestrict video_cards_intel ebuild-revision-17
 
 "
 gen_rocm_required_use() {
@@ -3548,9 +3548,6 @@ src_install() {
 
 	if use openrc ; then
 		doinitd "${FILESDIR}/${PN}"
-		sed -i -e "s|@OLLAMA_BACKEND@|${backend}|g" \
-			"${ED}/etc/init.d/${PN}" \
-			|| die
 		if use rocm ; then
 			sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" \
 				"${ED}/etc/init.d/${PN}" \
@@ -3558,8 +3555,8 @@ src_install() {
 				|| die
 		fi
 		sed -i \
-			-e "s|@OLLAMA_MALLOC_PROVIDER@|${malloc}|g" \
-			-e "s|@OLLAMA_CHROOT@|${chroot}|" \
+			-e "s|@OLLAMA_BACKEND@|${backend}|g" \
+			-e "s|@OLLAMA_CHROOT@|${chroot}|g" \
 			-e "s|@OLLAMA_SANDBOX_PROVIDER@|${sandbox}|g" \
 			"${ED}/etc/init.d/${PN}" \
 			|| die
@@ -3567,11 +3564,17 @@ src_install() {
 	if use systemd ; then
 		insinto "/usr/lib/systemd/system"
 		doins "${FILESDIR}/${PN}.service"
+		if use rocm ; then
+			sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" \
+				"${ED}/usr/bin/${PN}" \
+				|| die
+		fi
 	fi
 
 	sed -i \
+		-e "s|@OLLAMA_BACKEND@|${backend}|g" \
 		-e "s|@OLLAMA_MALLOC_PROVIDER@|${malloc}|g" \
-		-e "s|@OLLAMA_SANDBOX@|${sandbox}|g" \
+		-e "s|@OLLAMA_SANDBOX_PROVIDER@|${sandbox}|g" \
 		"${ED}/usr/bin/${PN}" \
 		|| die
 
