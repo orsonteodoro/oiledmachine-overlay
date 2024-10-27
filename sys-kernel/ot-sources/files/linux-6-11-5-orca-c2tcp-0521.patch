@@ -629,7 +629,7 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urp linux-6.11.5-builder.orig/net/ip
 +		size_t sz = 0;
 +		int attr;
 +
-+		if (get_user(len, optlen))
++		if (copy_from_sockptr(&len, optlen, sizeof(int)))
 +			return -EFAULT;
 +
 +		if(!tp->deepcc_enable && !sysctl_tcp_deepcc_enable)

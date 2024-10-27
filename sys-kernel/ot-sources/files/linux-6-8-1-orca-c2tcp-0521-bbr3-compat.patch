@@ -383,7 +383,7 @@ diff -x '*.rej' -x '*.orig' -urpN a/net/ipv4/tcp.c b/net/ipv4/tcp.c
 +		size_t sz = 0;
 +		int attr;
 +
-+		if (get_user(len, optlen))
++		if (copy_from_sockptr(&len, optlen, sizeof(int)))
 +			return -EFAULT;
 +
 +		if(!tp->deepcc_enable && !sysctl_tcp_deepcc_enable)
