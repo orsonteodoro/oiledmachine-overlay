@@ -956,8 +956,8 @@ diff -x '*.orig' -x '*.rej' -urpN a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
  
 +	if (icsk->icsk_ca_ops->pkts_acked) {
 +		struct ack_sample sample = { .pkts_acked = pkts_acked,
-+					     .rtt_us = sack->rate->rtt_us,
-+					     .in_flight = last_in_flight };
++					     .rtt_us = sack->rate->rtt_us };
++
  		sample.in_flight = tp->mss_cache *
  			(tp->delivered - sack->rate->prior_delivered);
  		icsk->icsk_ca_ops->pkts_acked(sk, &sample);
