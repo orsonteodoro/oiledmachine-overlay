@@ -1389,7 +1389,7 @@ einfo "Already applied ${path} upstream"
 		elif use bbrv2 ; then
 			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-8-1-orca-c2tcp-0521-bbr2-compat.patch"
 		else
-			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-8-1-orca-c2tcp-0521.patch"
+			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-11-5-orca-c2tcp-0521.patch"
 		fi
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-1e924b1.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
