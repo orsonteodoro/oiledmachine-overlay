@@ -394,7 +394,7 @@ diff -x '*.rej' -x '*.orig' -urpN a/net/ipv4/tcp.c b/net/ipv4/tcp.c
 +		len = min_t(unsigned int, len, sz);
 +		if (copy_to_sockptr(optlen, &len, sizeof(int)))
 +			return -EFAULT;
-+		if (copy_to_user(optval, &info, len))
++		if (copy_to_sockptr(optval, &info, len))
 +			return -EFAULT;
 +		return 0;
 +	}
