@@ -16,7 +16,7 @@ Environment="PATH=$PATH"
 # DoS = Denial of Service
 # DT = Data Tampering
 #
-# ProtectHome=yes # ID
+# ProtectHome=true # ID
 # ProtectSystem=full # ID
 # ProtectProc=noaccess # ID
 # PrivateDevices=true # ID

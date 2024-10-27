@@ -102,7 +102,6 @@ prepare_chroot() {
 			"/usr/lib64/ollama"
 			"/usr/lib64/ollama;libs-recursive"
 			"/bin/mkdir"
-			"/lib64/ld-linux-x86-64.so.2"
 		)
 
 		if [[ "${OLLAMA_SANDBOX_PROVIDER}" == "bwrap" ]] ; then
@@ -174,12 +173,28 @@ prepare_chroot() {
 					mkdir -p "${dir_path}"
 					cp -a "${lib_path}" "${dir_path}"
 					if [[ -L "${lib_path}" ]] ; then
-							local path2=$(realpath "${lib_path}")
+						local path2=$(realpath "${lib_path}")
 						if [[ -f "${path2}" ]] ; then
 							cp -a "${path2}" "${dir_path}"
 						fi
 					fi
 				done
+
+				local row
+				for row in $(ldd $(find "${src}" -executable -type f)) ; do
+					[[ "${pair}" =~ "(" ]] || continue
+					[[ "${pair}" =~ "=>" ]] && continue
+					local lib_path=$(echo "${row}" \
+						| cut -f 1 -d "(" \
+						| sed -r -e "s|^[[:space:]]+||g" -e "s|[[:space:]]+$||g")
+					local dir_path=$(dirname "${lib_path}")
+					dir_path="${dir_path:1}"
+					if [[ -e "${lib_path}" ]] ; then
+						mkdir -p "${dir_path}"
+						cp -a "${lib_path}" "${dir_path}"
+					fi
+				done
+
 				IFS=$' \t\n'
 			elif [[ "${path}" =~ ";libs" ]] ; then
 	# Direct copy with copy ldd libs
@@ -215,6 +230,22 @@ prepare_chroot() {
 						fi
 					fi
 				done
+
+				local row
+				for row in $(ldd $(find "${src}" -executable -type f)) ; do
+					[[ "${pair}" =~ "(" ]] || continue
+					[[ "${pair}" =~ "=>" ]] && continue
+					local lib_path=$(echo "${row}" \
+						| cut -f 1 -d "(" \
+						| sed -r -e "s|^[[:space:]]+||g" -e "s|[[:space:]]+$||g")
+					local dir_path=$(dirname "${lib_path}")
+					dir_path="${dir_path:1}"
+					if [[ -e "${lib_path}" ]] ; then
+						mkdir -p "${dir_path}"
+						cp -a "${lib_path}" "${dir_path}"
+					fi
+				done
+
 				IFS=$' \t\n'
 			else
 	# Direct copy
