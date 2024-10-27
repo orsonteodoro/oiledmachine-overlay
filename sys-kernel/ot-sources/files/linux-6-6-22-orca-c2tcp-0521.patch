@@ -317,7 +317,7 @@ diff -urpN a/net/ipv4/tcp.c b/net/ipv4/tcp.c
 +		if(sysctl_tcp_bbr_init_cwnd<=val)
 +		{
 +			tp->snd_cwnd_clamp = val;
-+			tp->snd_cwnd =min(tp->snd_cwnd,tp->snd_cwnd_clamp);
++			tcp_snd_cwnd_set(tp, min(tcp_snd_cwnd(tp),tp->snd_cwnd_clamp));
 +			tcp_push_pending_frames(sk);
 +		}
 +		break;
@@ -325,11 +325,11 @@ diff -urpN a/net/ipv4/tcp.c b/net/ipv4/tcp.c
 +	case TCP_CWND:
 +		if(sysctl_tcp_bbr_init_cwnd<=val)
 +		{
-+			tp->snd_cwnd =min(val,tp->snd_cwnd_clamp);
++			tcp_snd_cwnd_set(tp, min(val,tp->snd_cwnd_clamp));
 +		}
 +		else
 +		{
-+			tp->snd_cwnd =min(sysctl_tcp_bbr_init_cwnd,tp->snd_cwnd_clamp);
++			tcp_snd_cwnd_set(tp, min(sysctl_tcp_bbr_init_cwnd,tp->snd_cwnd_clamp));
 +		}
 +		if (icsk->icsk_ca_ops->update_by_app)
 +		{
@@ -347,8 +347,8 @@ diff -urpN a/net/ipv4/tcp.c b/net/ipv4/tcp.c
 +		{
 +			tp->cwnd_min =sysctl_tcp_bbr_init_cwnd;
 +		}
-+		tp->snd_cwnd =max(tp->cwnd_min,tp->snd_cwnd);
-+		tp->snd_cwnd =min(tp->snd_cwnd,tp->snd_cwnd_clamp);
++		tcp_snd_cwnd_set(tp, max(tp->cwnd_min,tcp_snd_cwnd(tp)));
++		tcp_snd_cwnd_set(tp, min(tcp_snd_cwnd(tp),tp->snd_cwnd_clamp));
 +		if (icsk->icsk_ca_ops->update_by_app)
 +		{
 +			icsk->icsk_ca_ops->update_by_app(sk);
@@ -638,18 +638,18 @@ diff -urpN a/net/ipv4/tcp_cubic.c b/net/ipv4/tcp_cubic.c
 +       tp->first_above_time=0;
 +       tp->cnt_rtt=1;
 +       //tp->first_time=0;
-+//     bictcp_update(ca, tp->snd_cwnd);
++//     bictcp_update(ca, tcp_snd_cwnd(tp));
 +       tmp2=(rtt_us/USEC_PER_MSEC);
 +       if (tmp2==0)
 +           tmp2++;
 +       tmp=(tmp)/(tmp2);
 +
 +       tp->snd_cwnd_cnt += tmp;
-+       if (tp->snd_cwnd_cnt >= tp->snd_cwnd) {
-+    	   u32 delta = tp->snd_cwnd_cnt / tp->snd_cwnd;
-+    	   tp->snd_cwnd_cnt -= delta * tp->snd_cwnd;
-+    	   tp->snd_cwnd += delta;
-+           tp->snd_cwnd = min(tp->snd_cwnd, tp->snd_cwnd_clamp);
++       if (tp->snd_cwnd_cnt >= tcp_snd_cwnd(tp)) {
++    	   u32 delta = tp->snd_cwnd_cnt / tcp_snd_cwnd(tp);
++    	   tp->snd_cwnd_cnt -= delta * tcp_snd_cwnd(tp);
++    	   tcp_snd_cwnd_set(tp, tcp_snd_cwnd(tp) + delta);
++           tcp_snd_cwnd_set(tp, min(tcp_snd_cwnd(tp), tp->snd_cwnd_clamp));
 +       }
 +  }
 +  else if (tp->first_above_time==0)
@@ -671,7 +671,7 @@ diff -urpN a/net/ipv4/tcp_cubic.c b/net/ipv4/tcp_cubic.c
 +
 +       tp->prior_ssthresh = tcp_current_ssthresh(sk);
 +       tp->snd_ssthresh = icsk->icsk_ca_ops->ssthresh(sk);
-+       tp->snd_cwnd       = 1;
++       tcp_snd_cwnd_set(tp, 1);
 +       tp->snd_cwnd_cnt   = 0;
 +//     printk(KERN_INFO "c2tcp triggerd! cnt:%d, changing ssthresh from %d to %d\n",tp->cnt_rtt-1,tp->prior_ssthresh,tp->snd_ssthresh);
 +   }
@@ -695,8 +695,8 @@ diff -urpN a/net/ipv4/tcp_cubic.c b/net/ipv4/tcp_cubic.c
 +{
 +	struct tcp_sock *tp = tcp_sk(sk);
 +	printk("natcp_update_by_app:snd_cwnd:%d\cwnd_clamp:%d\n",
-+			tp->snd_cwnd,tp->snd_cwnd_clamp);
-+	tp->snd_cwnd =min(tp->snd_cwnd,tp->snd_cwnd_clamp);
++			tcp_snd_cwnd(tp),tp->snd_cwnd_clamp);
++	tcp_snd_cwnd_set(tp, min(tcp_snd_cwnd(tp),tp->snd_cwnd_clamp));
 +}
 +
 +static size_t c2tcp_get_info(struct sock *sk, u32 ext, int *attr,
@@ -823,7 +823,7 @@ diff -urpN a/net/ipv4/tcp_deepcc.c b/net/ipv4/tcp_deepcc.c
 +		info->deepcc.cnt			= tp->deepcc_api.cnt;
 +		info->deepcc.avg_thr		= tp->deepcc_api.avg_thr * tp->mss_cache * USEC_PER_SEC >> THR_SCALE_DEEPCC;
 +		info->deepcc.thr_cnt		= tp->deepcc_api.thr_cnt;
-+		info->deepcc.cwnd			= tp->snd_cwnd;
++		info->deepcc.cwnd			= tcp_snd_cwnd(tp);
 +		info->deepcc.pacing_rate	= sk->sk_pacing_rate;
 +		info->deepcc.lost_bytes		= (tp->lost - tp->deepcc_api.pre_lost)* tp->mss_cache;
 +		info->deepcc.srtt_us		= tp->srtt_us;				/* smoothed round trip time << 3 in usecs */
@@ -855,7 +855,7 @@ diff -urpN a/net/ipv4/tcp_deepcc.c b/net/ipv4/tcp_deepcc.c
 +
 +	rate *= USEC_PER_SEC;
 +
-+	rate *= max(tp->snd_cwnd, tp->packets_out);
++	rate *= max(tcp_snd_cwnd(tp), tp->packets_out);
 +
 +	if (likely(tp->srtt_us>>3))
 +		do_div(rate, tp->srtt_us>>3);
@@ -870,8 +870,8 @@ diff -urpN a/net/ipv4/tcp_deepcc.c b/net/ipv4/tcp_deepcc.c
 +void deepcc_update_cwnd(struct sock *sk)
 +{
 +	struct tcp_sock *tp = tcp_sk(sk);
-+	tp->snd_cwnd = max(tp->snd_cwnd,tp->cwnd_min);
-+	tp->snd_cwnd =min(tp->snd_cwnd,tp->snd_cwnd_clamp);
++	tcp_snd_cwnd_set(tp, max(tcp_snd_cwnd(tp),tp->cwnd_min));
++	tcp_snd_cwnd_set(tp, min(tcp_snd_cwnd(tp),tp->snd_cwnd_clamp));
 +	if(tp->deepcc_enable>1)
 +		deepcc_update_pacing_rate(sk);
 +}

@@ -563,7 +563,7 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urp linux-6.11.5-builder.orig/net/ip
 +		if(sysctl_tcp_bbr_init_cwnd<=val)
 +		{
 +			tp->snd_cwnd_clamp = val;
-+			tp->snd_cwnd =min(tp->snd_cwnd,tp->snd_cwnd_clamp);
++			tcp_snd_cwnd_set(tp, min(tcp_snd_cwnd(tp),tp->snd_cwnd_clamp));
 +			tcp_push_pending_frames(sk);
 +		}
 +		break;
@@ -571,11 +571,11 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urp linux-6.11.5-builder.orig/net/ip
 +	case TCP_CWND:
 +		if(sysctl_tcp_bbr_init_cwnd<=val)
 +		{
-+			tp->snd_cwnd =min(val,tp->snd_cwnd_clamp);
++			tcp_snd_cwnd_set(tp, min(val,tp->snd_cwnd_clamp));
 +		}
 +		else
 +		{
-+			tp->snd_cwnd =min(sysctl_tcp_bbr_init_cwnd,tp->snd_cwnd_clamp);
++			tcp_snd_cwnd_set(tp, min(sysctl_tcp_bbr_init_cwnd,tp->snd_cwnd_clamp));
 +		}
 +		if (icsk->icsk_ca_ops->update_by_app)
 +		{
@@ -593,8 +593,8 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urp linux-6.11.5-builder.orig/net/ip
 +		{
 +			tp->cwnd_min =sysctl_tcp_bbr_init_cwnd;
 +		}
-+		tp->snd_cwnd =max(tp->cwnd_min,tp->snd_cwnd);
-+		tp->snd_cwnd =min(tp->snd_cwnd,tp->snd_cwnd_clamp);
++		tcp_snd_cwnd_set(tp, max(tp->cwnd_min,tcp_snd_cwnd(tp)));
++		tcp_snd_cwnd_set(tp, min(tcp_snd_cwnd(tp),tp->snd_cwnd_clamp));
 +		if (icsk->icsk_ca_ops->update_by_app)
 +		{
 +			icsk->icsk_ca_ops->update_by_app(sk);
@@ -884,18 +884,18 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urp linux-6.11.5-builder.orig/net/ip
 +       tp->first_above_time=0;
 +       tp->cnt_rtt=1;
 +       //tp->first_time=0;
-+//     bictcp_update(ca, tp->snd_cwnd);
++//     bictcp_update(ca, tcp_snd_cwnd(tp));
 +       tmp2=(rtt_us/USEC_PER_MSEC);
 +       if (tmp2==0)
 +           tmp2++;
 +       tmp=(tmp)/(tmp2);
 +
 +       tp->snd_cwnd_cnt += tmp;
-+       if (tp->snd_cwnd_cnt >= tp->snd_cwnd) {
-+    	   u32 delta = tp->snd_cwnd_cnt / tp->snd_cwnd;
-+    	   tp->snd_cwnd_cnt -= delta * tp->snd_cwnd;
-+    	   tp->snd_cwnd += delta;
-+           tp->snd_cwnd = min(tp->snd_cwnd, tp->snd_cwnd_clamp);
++       if (tp->snd_cwnd_cnt >= tcp_snd_cwnd(tp)) {
++    	   u32 delta = tp->snd_cwnd_cnt / tcp_snd_cwnd(tp);
++    	   tp->snd_cwnd_cnt -= delta * tcp_snd_cwnd(tp);
++    	   tcp_snd_cwnd_set(tp, tcp_snd_cwnd(tp) + delta);
++           tcp_snd_cwnd_set(tp, min(tcp_snd_cwnd(tp), tp->snd_cwnd_clamp));
 +       }
 +  }
 +  else if (tp->first_above_time==0)
@@ -917,7 +917,7 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urp linux-6.11.5-builder.orig/net/ip
 +
 +       tp->prior_ssthresh = tcp_current_ssthresh(sk);
 +       tp->snd_ssthresh = icsk->icsk_ca_ops->ssthresh(sk);
-+       tp->snd_cwnd       = 1;
++       tcp_snd_cwnd_set(tp, 1);
 +       tp->snd_cwnd_cnt   = 0;
 +//     printk(KERN_INFO "c2tcp triggerd! cnt:%d, changing ssthresh from %d to %d\n",tp->cnt_rtt-1,tp->prior_ssthresh,tp->snd_ssthresh);
 +   }
@@ -941,8 +941,8 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urp linux-6.11.5-builder.orig/net/ip
 +{
 +	struct tcp_sock *tp = tcp_sk(sk);
 +	printk("natcp_update_by_app:snd_cwnd:%d\cwnd_clamp:%d\n",
-+			tp->snd_cwnd,tp->snd_cwnd_clamp);
-+	tp->snd_cwnd =min(tp->snd_cwnd,tp->snd_cwnd_clamp);
++			tcp_snd_cwnd(tp),tp->snd_cwnd_clamp);
++	tcp_snd_cwnd_set(tp, min(tcp_snd_cwnd(tp),tp->snd_cwnd_clamp));
 +}
 +
 +static size_t c2tcp_get_info(struct sock *sk, u32 ext, int *attr,
