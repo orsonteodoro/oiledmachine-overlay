@@ -638,7 +638,7 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urp linux-6.11.5-builder.orig/net/ip
 +		sz = deepcc_get_info(sk, ~0U, &attr, &info);
 +
 +		len = min_t(unsigned int, len, sz);
-+		if (put_user(len, optlen))
++		if (copy_to_sockptr(optlen, &len, sizeof(int)))
 +			return -EFAULT;
 +		if (copy_to_user(optval, &info, len))
 +			return -EFAULT;
