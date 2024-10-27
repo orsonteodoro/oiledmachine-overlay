@@ -50,6 +50,12 @@
     <flag name="ata">
       Mitigate against information disclosure for the ATA driver.
     </flag>
+    <flag name="ath11k">
+      Mitigate against information disclosure for the ath11k network driver.
+    </flag>
+    <flag name="ath12k">
+      Mitigate against information disclosure for the ath12k network driver.
+    </flag>
     <flag name="auto">
       Auto resolves firmware and kernel version required for full mitigation,
       instead of manually selecting microarchitecture which determines the
@@ -206,6 +212,9 @@
     </flag>
     <flag name="vmware">
       Mitigate against information disclosure for VMware support.
+    </flag>
+    <flag name="xen">
+      Mitigate against information disclosure for Xen support.
     </flag>
     <flag name="xfs">
       Mitigate against information disclosure for XFS filesystem.

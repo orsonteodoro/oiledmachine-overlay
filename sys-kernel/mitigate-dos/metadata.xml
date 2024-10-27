@@ -46,6 +46,9 @@
     <flag name="apparmor">
       Mitigate against Denial of Service for the AppArmor security module.
     </flag>
+    <flag name="ath11k">
+      Mitigate against Denial of Service for the ath11k network driver.
+    </flag>
     <flag name="ath12k">
       Mitigate against Denial of Service for the ath12k network driver.
     </flag>
@@ -300,6 +303,9 @@
     </flag>
     <flag name="vmware">
       Mitigate against Denial of Service for VMware support.
+    </flag>
+    <flag name="xen">
+      Mitigate against Denial of Service for Xen support.
     </flag>
     <flag name="xfs">
       Mitigate against Denial of Service for XFS filesystem.

@@ -44,6 +44,12 @@
     <flag name="ata">
       Mitigate against data tampering for the ATA driver.
     </flag>
+    <flag name="ath11k">
+      Mitigate against data tampering for the ath11k network driver.
+    </flag>
+    <flag name="ath12k">
+      Mitigate against data tampering for the ath12k network driver.
+    </flag>
     <flag name="auto">
       Auto resolves firmware and kernel version required for full mitigation,
       instead of manually selecting microarchitecture which determines the
@@ -178,6 +184,9 @@
     <flag name="video_cards_amdgpu">
       Mitigate against data tampering for the amdgpu driver.
     </flag>
+    <flag name="video_cards_intel">
+      Mitigate against data tampering for the Xe video driver.
+    </flag>
     <flag name="video_cards_nouveau">
       Mitigate against data tampering for the nouveau video driver.
     </flag>
@@ -193,6 +202,9 @@
     </flag>
     <flag name="vmware">
       Mitigate against data tampering for VMware support.
+    </flag>
+    <flag name="xen">
+      Mitigate against data tampering for Xen support.
     </flag>
     <flag name="zero-tolerance">
       Bump to the latest patched kernel point releases when the changelog
