@@ -12324,7 +12324,10 @@ eerror
 		cd "${BUILD_DIR}" || die
 
 		local args=()
+		MAKEOPTS_ORIG="${MAKEOPTS}"
+		MAKEOPTS=""
 		ot-kernel_setup_tc
+		MAKEOPTS="${MAKEOPTS_ORIG}"
 
 		if [[ "${OT_KERNEL_CONFIG_MODE:-assisted}" =~ "assist" ]] ; then
 			ot-kernel_src_configure_assisted

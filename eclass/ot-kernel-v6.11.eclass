@@ -1384,10 +1384,10 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-cf9b1da.patch" ]] ; then
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-6.3.patch"
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
-		if use bbrv2 ; then
-			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-8-1-orca-c2tcp-0521-bbr3-compat.patch"
+		if use bbrv3 ; then
+			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-11-5-orca-c2tcp-0521-bbr3-compat.patch"
 		elif use bbrv2 ; then
-			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-8-1-orca-c2tcp-0521-bbr2-compat.patch"
+			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-11-5-orca-c2tcp-0521-bbr2-compat.patch"
 		else
 			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-11-5-orca-c2tcp-0521.patch"
 		fi
@@ -1417,8 +1417,8 @@ einfo "Already applied ${path} upstream"
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-40f1ce9-fix-for-6.6.0-git-6bc986a.patch"
 	elif [[ "${path}" =~ "bbrv3-7542cc7-6.4.0-aa27c22.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-aa27c22-fix-for-6.6.0-git-6bc986a.patch"
+		_tpatch "${PATCH_OPTS}" "${path}" 5 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-aa27c22-fix-for-6.11.5-git-6bc986a.patch"
 	elif [[ "${path}" =~ "bbrv3-7542cc7-6.4.0-a1d32ad.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-a1d32ad-fix-for-6.6.0-git-6bc986a.patch"

@@ -26,7 +26,7 @@ QA:  Review READ_ONCE/WRITE_ONCE sections for correctness/validity.
  	do_div(bw, rtt_us);
  	WRITE_ONCE(sk->sk_pacing_rate,
 -		   bbr_bw_to_pacing_rate(sk, bw, bbr_high_gain));
-+		   bbr_bw_to_pacing_rate(sk, bbr_param(sk, startup_pacing_gain)));
++		   bbr_bw_to_pacing_rate(sk, bw, bbr_param(sk, startup_pacing_gain)));
  }
  
  /* Pace using current bw estimate and a gain factor. */
