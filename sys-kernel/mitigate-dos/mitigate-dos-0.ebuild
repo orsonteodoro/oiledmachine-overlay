@@ -153,6 +153,7 @@ MULTISLOT_KERNEL_CRYPTO_KEYS=("6.1.113" "6.6.54" "6.10.13" "6.11.2" "6.12_rc1")
 MULTISLOT_KERNEL_HFS=("4.19.320" "5.4.282" "5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3")
 MULTISLOT_KERNEL_HFSPLUS=("4.19.319" "5.4.281" "5.10.223" "5.15.164" "6.1.101" "6.6.42" "6.9.11")
 MULTISLOT_KERNEL_EXFAT_47677=("6.10.13" "6.11.2" "6.12_rc1")
+MULTISLOT_KERNEL_EXFAT_50013=("5.10.227" "5.15.168" "6.1.113" "6.6.55" "6.10.14" "6.11.3" "6.12_rc1")
 MULTISLOT_KERNEL_EXT4_43828=("5.10.224" "5.15.165" "6.1.103" "6.6.44" "6.10.3" "6.11_rc1")
 MULTISLOT_KERNEL_EXT4_c6b72f5=("4.19.V" "5.4.V" "5.10.V" "5.15.V" "6.1.V" "6.6.54" "6.10.13" "6.11.2")
 MULTISLOT_KERNEL_EXT4_49889=("5.10.227" "5.15.168" "6.1.113" "6.6.55" "6.10.14" "6.11.3" "6.12_rc1")
@@ -293,6 +294,7 @@ CVE_COUGAR="CVE-2024-46747"
 CVE_CPUSET="CVE-2024-44975"
 CVE_CRYPTO_KEYS="CVE-2024-47743"
 CVE_EXFAT_47677="CVE-2024-47677"
+CVE_EXFAT_50013="CVE-2024-50013"
 CVE_EXT4_43828="CVE-2024-43828"
 CVE_EXT4_c6b72f5="OOB or UAF"
 CVE_EXT4_49889="CVE-2024-49889"
@@ -606,6 +608,7 @@ REQUIRED_USE="
 # cpuset? https://nvd.nist.gov/vuln/detail/CVE-2024-44975 # DoS
 # crypto-keys? https://nvd.nist.gov/vuln/detail/CVE-2024-47743 # DoS
 # exfat? https://nvd.nist.gov/vuln/detail/CVE-2024-47677 # DoS
+# exfat? https://nvd.nist.gov/vuln/detail/CVE-2024-50013 # DoS
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-43828 # DoS
 # ext4? c6b72f5 # Unofficial: DoS, DT, ID UAF
 # ext4? https://nvd.nist.gov/vuln/detail/CVE-2024-49889 # DoS, DT, ID
@@ -864,6 +867,7 @@ all_rdepend() {
 		if ! _use custom-kernel ; then
 			fs_rdepend
 			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXTFAT_47677[@]}
+			gen_patched_kernel_driver_list ${MULTISLOT_KERNEL_EXTFAT_50013[@]}
 		fi
 	fi
 	if _use ext4 ; then
@@ -1500,6 +1504,7 @@ einfo
 	if use exfat ; then
 		fs=1
 		check_kernel_version "exfat" "${CVE_EXFAT_47677}" ${MULTISLOT_KERNEL_EXFAT_47677[@]}
+		check_kernel_version "exfat" "${CVE_EXFAT_47677}" ${MULTISLOT_KERNEL_EXFAT_50013[@]}
 	fi
 	if use ext4 ; then
 		fs=1
