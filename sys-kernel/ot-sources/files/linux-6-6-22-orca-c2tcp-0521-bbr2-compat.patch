@@ -22,6 +22,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+
+Set CONFIG_TCP_CONG_CUBIC=y in .config to prevent missing symbol problem.
+
 diff '--color=auto' -x '*.orig' -x '*.rej' -urpN linux-6.6.58-builder.orig/net/ipv4/Makefile linux-6.6.58-builder/net/ipv4/Makefile
 --- linux-6.6.58-builder.orig/net/ipv4/Makefile	2024-10-27 20:09:43.947019120 -0700
 +++ linux-6.6.58-builder/net/ipv4/Makefile	2024-10-27 20:10:49.342123087 -0700
