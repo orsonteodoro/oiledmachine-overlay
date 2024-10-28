@@ -10935,6 +10935,22 @@ ewarn "Early KMS is disabled for the simpledrm driver."
 	fi
 
 	if \
+		   has c2tcp ${IUSE_EFFECTIVE} && ot-kernel_use c2tcp \
+		|| has orca ${IUSE_EFFECTIVE} && ot-kernel_use orca \
+		|| has deepcc ${IUSE_EFFECTIVE} && ot-kernel_use deepcc \
+	; then
+#
+# Problem:
+# ...ld.bfd: vmlinux.o:(.data+[REDACTED]): undefined reference to `sysctl_tcp_c2tcp_enable'
+#
+# Solution:
+# Convert =m to =y
+#
+		ot-kernel_y_configopt "CONFIG_TCP_CONG_CUBIC"
+	fi
+
+
+	if \
 		has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms \
 	; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
