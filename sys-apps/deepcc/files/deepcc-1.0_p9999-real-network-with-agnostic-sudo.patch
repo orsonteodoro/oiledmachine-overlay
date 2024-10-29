@@ -166,7 +166,7 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh deepcc-1.0_p9999/deep
 -    a=""
 +    if [ "$scheme" == "cubic" ] || [ "$scheme" == "bbr" ] || [ "$scheme" == "westwood" ] || [ "$scheme" == "illinois" ]
 +    then
-+        :;
++        :
 +    else
 +        echo "WARN:  Only cubic, bbr, westwood, illinois supported with prebuilt learned models."
 +    fi

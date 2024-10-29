@@ -66,7 +66,7 @@ diff -urpN c2tcp-2.0_p9999.orig/run-sample.sh c2tcp-2.0_p9999/run-sample.sh
  cat log/summary.tr
 -firefox log/fig-$log.svg
 +if [[ "${C2TCP_BROWSER}" =~ ("none"|"skip"|"disable") || "${C2TCP_BROWSER}" == " " || -z "${C2TCP_BROWSER}" ]] ; then
-+    :;
++    :
 +elif [[ -n "${C2TCP_BROWSER}" ]] ; then
 +    ${C2TCP_BROWSER} log/fig-$log.svg
 +fi
