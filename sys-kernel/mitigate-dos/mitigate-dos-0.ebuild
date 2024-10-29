@@ -716,6 +716,7 @@ REQUIRED_USE="
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2024-45012 # DoS; requires >= 6.11 for fix
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2024-42101 # DoS; requires >= 6.10 for fix
 # video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, DT, CE, PE
+# video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5586 # DoS, ID, DT, CE, PE
 # video_cards_radeon? https://nvd.nist.gov/vuln/detail/CVE-2024-41060 # DoS
 # video_cards_v3d? https://nvd.nist.gov/vuln/detail/CVE-2024-46699 # DoS, DT, ID
 # video_cards_vmware? https://nvd.nist.gov/vuln/detail/CVE-2024-46709 # DoS
@@ -1317,10 +1318,12 @@ RDEPEND="
 		)
 		video_cards_nvidia? (
 			|| (
-				>=x11-drivers/nvidia-drivers-550.90.07:0/550
-				>=x11-drivers/nvidia-drivers-535.183.01:0/535
+				>=x11-drivers/nvidia-drivers-565.57.01:0/565
+				>=x11-drivers/nvidia-drivers-550.127.05:0/550
+				>=x11-drivers/nvidia-drivers-535.216.01:0/535
 				>=x11-drivers/nvidia-drivers-470.256.02:0/470
 			)
+			x11-drivers/nvidia-drivers:=
 		)
 		xen? (
 			>=app-emulation/xen-${_XEN_PV}

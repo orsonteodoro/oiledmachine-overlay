@@ -430,6 +430,7 @@ REQUIRED_USE="
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2023-0030 # PE, ID, DoS, DT.  Fixed in >= 5.0.
 # video_cards_nouveau? https://nvd.nist.gov/vuln/detail/CVE-2021-20292 # PE, CE, ID, DoS, DT.  Fixed in >= 5.9.
 # video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5551 # DoS, ID, DT, CE, PE
+# video_cards_nvidia? https://nvidia.custhelp.com/app/answers/detail/a_id/5586 # DoS, ID, DT, CE, PE
 # video_cards_v3d? https://nvd.nist.gov/vuln/detail/CVE-2024-46699 # DoS, DT, ID
 # video_cards_vmware? https://nvd.nist.gov/vuln/detail/CVE-2022-22942 # PE, DoS, DT, ID
 # vmware? https://nvd.nist.gov/vuln/detail/CVE-2024-46738 # DoS, DT, ID
@@ -746,10 +747,12 @@ RDEPEND="
 		)
 		video_cards_nvidia? (
 			|| (
-				>=x11-drivers/nvidia-drivers-550.90.07:0/550
-				>=x11-drivers/nvidia-drivers-535.183.01:0/535
+				>=x11-drivers/nvidia-drivers-565.57.01:0/565
+				>=x11-drivers/nvidia-drivers-550.127.05:0/550
+				>=x11-drivers/nvidia-drivers-535.216.01:0/535
 				>=x11-drivers/nvidia-drivers-470.256.02:0/470
 			)
+			x11-drivers/nvidia-drivers:=
 		)
 	)
 "
