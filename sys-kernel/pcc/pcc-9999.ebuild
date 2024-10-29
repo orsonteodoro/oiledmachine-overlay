@@ -216,7 +216,16 @@ _src_compile_one() {
 		d="${WORKDIR}/vivace-${k}"
 	fi
 	cd "${d}" || die
+
 	KERNEL_DIR="/usr/src/linux-${k}"
+
+	export CC=$(grep -E -e "CONFIG_CC_VERSION_TEXT" "${KERNEL_DIR}/.config" \
+		| cut -f 1 -d " " \
+		| cut -f 2 -d "=" \
+		| sed -e "s/[\"|']//g")
+	strip-unsupported-flags
+	einfo "CC: ${CC}"
+
 	local modargs=(
 		NIH_SOURCE="${KERNEL_DIR}"
 	)
