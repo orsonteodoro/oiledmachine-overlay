@@ -3138,7 +3138,7 @@ unset OT_KERNEL_PRIVATE_KEY
       bic       | RPC goodput for MiB+ payloads, default in earlier 2.6
                 | Incast at ~0.06% packet loss
       bbr       | Latency, streaming, production code quality, energy efficient
-                | Greedy, deprecated, high latency for small RPC payloads, incast at ~15% packet loss
+                | Greedy, deprecated, high latency for small RPC payloads, incast at ~30% packet loss
       bbr2      | Latency, fair, ECN support
                 | Alpha code quality, experimental, deprecated, energy inefficient
       bbr3      | BBR v1 upgraded with latency improvement with higher throughput, streaming, fair, ECN support, actively maintained, incast at ~1% packet loss
@@ -3178,7 +3178,7 @@ unset OT_KERNEL_PRIVATE_KEY
       Algorithm | Possible use cases
       ==========+===================================================================================================================
       bic       | Historical, to re-live the mid 2000s Linux experience
-      bbr       | Video streaming, video conferencing, VOIP, data centers, power savings
+      bbr       | Video streaming, video conferencing, VOIP, data centers, incast mitigation, power savings
       bbr2      | Video streaming, video conferencing, VOIP, data centers
       bbr3      | Video streaming, video conferencing, VOIP, data centers
       c2tcp     | VOIP, IPTV, live/radio broadcasting, interactive applications
