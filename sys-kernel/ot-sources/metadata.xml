@@ -3177,7 +3177,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
       Algorithm | Possible use cases
       ==========+===================================================================================================================
-      bic       | Historical, re-live mid 2000s Linux experience
+      bic       | Historical, to re-live the mid 2000s Linux experience
       bbr       | Video streaming, video conferencing, VOIP, data centers, power savings
       bbr2      | Video streaming, video conferencing, VOIP, data centers
       bbr3      | Video streaming, video conferencing, VOIP, data centers
@@ -3195,7 +3195,7 @@ unset OT_KERNEL_PRIVATE_KEY
       nv        | VOIP, radio broadcasting
       orca      | Cellular road trip, continental/intercontental transfer
       pcc       | Cellular road trip, intra-/inter- data center(s), CDN, satellite, incast mitigation
-      reno      | Historical, re-live 1999s-2004 Linux experience
+      reno      | Historical, to re-live the 1999s-2004 Linux experience
       scalable  | Gigabit connections with high latency
       veno      | Wireless downloads
       yeah      | Parallel downloads, P2P
