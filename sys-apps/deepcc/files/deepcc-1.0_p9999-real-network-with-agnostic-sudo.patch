@@ -22,18 +22,18 @@ This file has inconsistent line endings.
 LF files are real-network.sh, run-dcubic.sh,
 CRLF files are server.cc
 
-diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/build.sh deepcc-1.0_p9999/deepcc.v1.0/build.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/build.sh	2023-02-16 12:56:49.628369426 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/build.sh	2023-02-16 11:25:38.556189141 -0800
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/build.sh deepcc-1.0_p9999/deepcc.v1.0/build.sh
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/build.sh	2024-10-29 00:49:29.471915102 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/build.sh	2024-10-29 00:49:50.583643293 -0700
 @@ -1,3 +1,5 @@
 +#!/bin/bash
 +cd $(dirname "$0")
  g++ -pthread src/server.cc src/flow.cc -o rl-server
  g++ src/client.c -o client
  
-diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/evaluate.sh deepcc-1.0_p9999/deepcc.v1.0/evaluate.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/evaluate.sh	2023-02-16 12:56:49.628369426 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/evaluate.sh	2023-02-16 11:29:01.336195823 -0800
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/evaluate.sh deepcc-1.0_p9999/deepcc.v1.0/evaluate.sh
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/evaluate.sh	2024-10-29 00:49:29.471915102 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/evaluate.sh	2024-10-29 00:49:50.587643242 -0700
 @@ -1,17 +1,21 @@
 +#!/bin/bash
 +export ELEVATE_CMD=${DEEPCC_ELEVATE_CMD:-sudo}
@@ -60,9 +60,9 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/evaluate.sh deepcc-1.0_p9999/deepcc
  report_period=20
  ./run-deep.sh $port ${trace_index} $target $report_period $latency 2 $scheme
  
-diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/real-network.sh deepcc-1.0_p9999/deepcc.v1.0/real-network.sh
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/real-network.sh deepcc-1.0_p9999/deepcc.v1.0/real-network.sh
 --- deepcc-1.0_p9999.orig/deepcc.v1.0/real-network.sh	1969-12-31 16:00:00.000000000 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/real-network.sh	2023-02-16 21:04:41.101333993 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/real-network.sh	2024-10-29 00:49:50.587643242 -0700
 @@ -0,0 +1,64 @@
 +#!/bin/bash
 +export DEEPCC_TARGET_DELAY=${DEEPCC_TARGET_DELAY:-50} # ms
@@ -128,9 +128,9 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/real-network.sh deepcc-1.0_p9999/de
 +
 +cd $(dirname "$0")
 +./evaluate.sh 8000 ${DEEPCC_SCHEME}
-diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh deepcc-1.0_p9999/deepcc.v1.0/run-dcubic.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh	2023-02-16 12:57:00.516369785 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/run-dcubic.sh	2023-02-16 11:25:38.580189142 -0800
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh deepcc-1.0_p9999/deepcc.v1.0/run-dcubic.sh
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh	2024-10-29 00:49:29.627913095 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/run-dcubic.sh	2024-10-29 00:49:50.587643242 -0700
 @@ -1,14 +1,15 @@
  #!/bin/bash
 -
@@ -161,7 +161,7 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh deepcc-1.0_p9999/deep
  EOF
  
 -if [ "$scheme" == "cubic" ] || [ "$scheme" == "bbr" ] || [ "$scheme" == "westwood" ] || [ "$scheme" == "illinois" ]
-+if grep -E -q -e "${scheme}( |$)" "/proc/sys/net/ipv4/tcp_available_congestion_control" ; then
++if grep -E -q -e "${scheme}( |$)" "/proc/sys/net/ipv4/tcp_available_congestion_control"
  then
 -    a=""
 +    if [ "$scheme" == "cubic" ] || [ "$scheme" == "bbr" ] || [ "$scheme" == "westwood" ] || [ "$scheme" == "illinois" ]
@@ -194,9 +194,9 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh deepcc-1.0_p9999/deep
  sleep 10
  echo "Experiment is finished."
  if [ ${training} -eq 2 ] || [ ${training} -eq 4 ]
-diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-deep.sh deepcc-1.0_p9999/deepcc.v1.0/run-deep.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/run-deep.sh	2023-02-16 12:57:00.516369785 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/run-deep.sh	2023-02-16 11:25:38.580189142 -0800
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-deep.sh deepcc-1.0_p9999/deepcc.v1.0/run-deep.sh
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/run-deep.sh	2024-10-29 00:49:29.627913095 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/run-deep.sh	2024-10-29 00:49:50.587643242 -0700
 @@ -1,5 +1,6 @@
  #!/bin/bash
 -
@@ -205,9 +205,9 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-deep.sh deepcc-1.0_p9999/deepcc
  source setup.sh
  #sudo killall verus_server sprout*
  sudo killall rl-server client python
-diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/setup.sh deepcc-1.0_p9999/deepcc.v1.0/setup.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/setup.sh	2023-02-16 12:57:00.516369785 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/setup.sh	2023-02-16 11:25:38.580189142 -0800
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/setup.sh deepcc-1.0_p9999/deepcc.v1.0/setup.sh
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/setup.sh	2024-10-29 00:49:29.627913095 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/setup.sh	2024-10-29 00:49:50.587643242 -0700
 @@ -1,4 +1,6 @@
 -
 +#!/bin/bash
@@ -240,9 +240,9 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/setup.sh deepcc-1.0_p9999/deepcc.v1
 -sudo killall rl-server rl-server-eval client python
 +${ELEVATE_CMD} killall rl-server rl-server-eval client python
  
-diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/define.h deepcc-1.0_p9999/deepcc.v1.0/src/define.h
---- deepcc-1.0_p9999.orig/deepcc.v1.0/src/define.h	2023-02-16 12:57:00.520369785 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/src/define.h	2023-02-16 11:25:38.612189143 -0800
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/define.h deepcc-1.0_p9999/deepcc.v1.0/src/define.h
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/src/define.h	2024-10-29 00:49:29.627913095 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/src/define.h	2024-10-29 00:49:50.587643242 -0700
 @@ -80,6 +80,8 @@ u32 report_period=5;//5s
  #define FLOW_NUM 1
  int sock[FLOW_NUM];
@@ -252,9 +252,9 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/define.h deepcc-1.0_p9999/deepc
  
  struct tcp_deepcc_info {
      u32 min_rtt;      /* min-filtered RTT in uSec */
-diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc deepcc-1.0_p9999/deepcc.v1.0/src/server.cc
---- deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc	2023-02-16 12:57:00.520369785 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/src/server.cc	2023-02-16 11:25:38.628189144 -0800
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc deepcc-1.0_p9999/deepcc.v1.0/src/server.cc
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc	2024-10-29 00:49:29.627913095 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/src/server.cc	2024-10-29 00:51:27.494354735 -0700
 @@ -23,6 +23,9 @@
  #define DBGSERVER 0
  #include <cstdlib>
@@ -338,7 +338,7 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc deepcc-1.0_p9999/deep
      if (first_time==1){
 -        sprintf(cmd,"sudo /home/`logname`/venv/bin/python drl_agent.py --target=%.7f --tb_interval=1 --scheme=%s --train_dir=\".\" --mem_r=%d --mem_w=%d &",
 -                (double)target,congestion,(int)key,(int)key_rl);
-+        sprintf(cmd,"%s /home/`logname`/venv/bin/python drl_agent.py --target=%.7f --tb_interval=1 --scheme=%s --train_dir=\".\" --mem_r=%d --mem_w=%d &",
++        sprintf(cmd,"%s @PYTHON@ drl_agent.py --target=%.7f --tb_interval=1 --scheme=%s --train_dir=\".\" --mem_r=%d --mem_w=%d &",
 +                elevate_arg,(double)target,congestion,(int)key,(int)key_rl);
          DBGPRINT(0,0,"Starting RL Module (Without load) ...\n");
      }
@@ -346,7 +346,7 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc deepcc-1.0_p9999/deep
 -        sprintf(cmd,"sudo /home/`logname`/venv/bin/python drl_agent.py --target=%.7f --tb_interval=1 --load=1 --eval --scheme=%s --train_dir=\".\" --mem_r=%d --mem_w=%d &",
 -                (double)target,congestion,(int)key,(int)key_rl);
 +    else if (first_time==2 || first_time==4 || production==1){
-+        sprintf(cmd,"%s /home/`logname`/venv/bin/python drl_agent.py --target=%.7f --tb_interval=1 --load=1 --eval --scheme=%s --train_dir=\".\" --mem_r=%d --mem_w=%d &",
++        sprintf(cmd,"%s @PYTHON@ drl_agent.py --target=%.7f --tb_interval=1 --load=1 --eval --scheme=%s --train_dir=\".\" --mem_r=%d --mem_w=%d &",
 +                elevate_arg,(double)target,congestion,(int)key,(int)key_rl);
          DBGPRINT(0,0,"Starting RL Module (No learning) ...\n");
      }
@@ -354,7 +354,7 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc deepcc-1.0_p9999/deep
      {
 -        sprintf(cmd,"sudo /home/`logname`/venv/bin/python drl_agent.py --target=%.7f --load=1 --tb_interval=1 --scheme=%s --train_dir=\".\" --mem_r=%d --mem_w=%d &",
 -                (double)target,congestion,(int)key,(int)key_rl);
-+        sprintf(cmd,"%s /home/`logname`/venv/bin/python drl_agent.py --target=%.7f --load=1 --tb_interval=1 --scheme=%s --train_dir=\".\" --mem_r=%d --mem_w=%d &",
++        sprintf(cmd,"%s @PYTHON@ drl_agent.py --target=%.7f --load=1 --tb_interval=1 --scheme=%s --train_dir=\".\" --mem_r=%d --mem_w=%d &",
 +                elevate_arg,(double)target,congestion,(int)key,(int)key_rl);
          DBGPRINT(0,0,"Starting RL Module (With load) ...\n");
      }
@@ -369,9 +369,9 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc deepcc-1.0_p9999/deep
      
      //Start listen
  	//The maximum number of concurrent connections is 10
-diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/training.sh deepcc-1.0_p9999/deepcc.v1.0/training.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/training.sh	2023-02-16 12:57:06.580369985 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/training.sh	2023-02-16 11:25:38.648189144 -0800
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/training.sh deepcc-1.0_p9999/deepcc.v1.0/training.sh
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/training.sh	2024-10-29 00:49:31.071894519 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/training.sh	2024-10-29 00:49:50.587643242 -0700
 @@ -1,11 +1,14 @@
 +#!/bin/bash
 +export ELEVATE_CMD=${DEEPCC_ELEVATE_CMD:-sudo}

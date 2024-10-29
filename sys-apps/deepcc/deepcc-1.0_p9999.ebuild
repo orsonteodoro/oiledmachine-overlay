@@ -6,7 +6,7 @@ EAPI=8
 
 PYTHON_COMPAT=( "python3_"{10..12} ) # Constrained by tensorflow
 
-inherit python-r1
+inherit python-single-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -36,11 +36,13 @@ IUSE+=" build-models evaluate kernel-patch polkit +sudo ebuild-revision-3"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
-DEPEND+="
+RDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/sysv_ipc-1.0.0[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/sysv_ipc-1.0.0[${PYTHON_USEDEP}]
+		>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
+	')
 	>=net-misc/iperf-3.1.3
-	>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
 	app-alternatives/sh
 	sys-process/procps
 	sys-process/psmisc
@@ -61,14 +63,16 @@ DEPEND+="
 		sys-apps/util-linux[su]
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	${PYTHON_DEPS}
+	$(python_gen_cond_dep '
+		dev-python/pip[${PYTHON_USEDEP}]
+		dev-python/virtualenv[${PYTHON_USEDEP}]
+	')
 	app-alternatives/sh
-	dev-python/pip[${PYTHON_USEDEP}]
-	dev-python/virtualenv[${PYTHON_USEDEP}]
 	sys-devel/gcc
 "
 PDEPEND+="
@@ -139,6 +143,8 @@ einfo "Modding src/define.h for sudo"
 einfo "Modding src/define.h to remove sudo"
 		sed -i -e "s|elevate_cmd=0|elevate_cmd=2|g" "src/define.h" || die
 	fi
+
+	sed -i -e "s|@PYTHON@|${PYTHON}|g" "src/server.cc" || die
 }
 
 src_compile() {
