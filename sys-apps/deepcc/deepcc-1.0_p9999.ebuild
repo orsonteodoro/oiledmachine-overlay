@@ -4,6 +4,7 @@
 
 EAPI=8
 
+MAINTAINER_MODE=0
 PYTHON_COMPAT=( "python3_"{10..12} ) # Constrained by tensorflow
 
 inherit python-single-r1
@@ -37,14 +38,26 @@ REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
 # FIXME: migrate to tf 2.x
+if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
+	RDEPEND+="
+		$(python_gen_cond_dep '
+			>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
+		')
+	"
+else
+	RDEPEND+="
+		$(python_gen_cond_dep '
+			(
+				>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
+				<sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
+			)
+		')
+	"
+fi
 RDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
 		>=dev-python/sysv_ipc-1.0.0[${PYTHON_USEDEP}]
-		(
-			>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
-			<sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
-		)
 	')
 	>=net-misc/iperf-3.1.3
 	app-alternatives/sh
