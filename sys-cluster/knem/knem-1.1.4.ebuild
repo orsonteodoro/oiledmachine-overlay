@@ -236,6 +236,16 @@ src_configure() {
 einfo "KERNEL_RELEASE:  ${KERNEL_RELEASE}"
 einfo "KERNEL_DIR_SUFFIX:  ${KERNEL_DIR_SUFFIX}"
 	fi
+
+	if [[ -e "${KERNEL_DIR}/.config" ]] ; then
+		export CC=$(grep -E -e "CONFIG_CC_VERSION_TEXT" "${KERNEL_DIR}/.config" \
+			| cut -f 1 -d " " \
+			| cut -f 2 -d "=" \
+			| sed -e "s/[\"|']//g")
+		strip-unsupported-flags
+		einfo "CC: ${CC}"
+	fi
+
 	local myconf=(
 		$(use_enable debug)
 		--enable-hwloc
