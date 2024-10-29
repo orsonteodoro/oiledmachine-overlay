@@ -55,7 +55,7 @@ www-client/firefox telemetry
 net-libs/webkit-gtk libbacktrace
 
 # Untested
-sys-kernel/ot-sources c2tcp deepcc orca
+#sys-kernel/ot-sources c2tcp deepcc orca
 
 # No rocr-runtime, llvm-roc version correspondance
 =sys-libs/libomp-18* llvm_targets_AMDGPU
