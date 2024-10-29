@@ -1453,6 +1453,7 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
       1 - Turn on
       0 - Turn off
       default - Turn on with default buffer sizes
+      debug - Increase logging sizes and log level for debug analysis
       unset - Unset will use manual or previous settings.
 
     The ebuild will override the user choice in order for certain features to
