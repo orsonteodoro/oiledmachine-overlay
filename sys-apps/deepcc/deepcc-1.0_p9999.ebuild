@@ -4,7 +4,6 @@
 
 EAPI=8
 
-MAINTAINER_MODE=1
 PYTHON_COMPAT=( "python3_"{10..12} ) # Constrained by tensorflow
 
 inherit python-single-r1
@@ -37,27 +36,11 @@ IUSE+=" build-models evaluate kernel-patch polkit +sudo ebuild-revision-3"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
-# FIXME: migrate to tf 2.x
-if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
-	RDEPEND+="
-		$(python_gen_cond_dep '
-			>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
-		')
-	"
-else
-	RDEPEND+="
-		$(python_gen_cond_dep '
-			(
-				>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
-				<sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
-			)
-		')
-	"
-fi
 RDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
 		>=dev-python/sysv-ipc-1.0.0[${PYTHON_USEDEP}]
+		>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
 	')
 	>=net-misc/iperf-3.1.3
 	app-alternatives/sh
@@ -101,7 +84,8 @@ PDEPEND+="
 	)
 "
 PATCHES=(
-	"A${FILESDIR}/${PN}-1.0_p9999-real-network-with-agnostic-sudo.patch"
+	"${FILESDIR}/${PN}-1.0_p9999-real-network-with-agnostic-sudo.patch"
+	"${FILESDIR}/${PN}-1.0_p9999-tf2.patch"
 )
 
 unpack_live() {

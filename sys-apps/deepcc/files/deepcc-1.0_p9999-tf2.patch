@@ -1,0 +1,244 @@
+WARNING line 134:4: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
+WARNING line 44:12: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
+WARNING line 48:12: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
+
+diff '--color=auto' -urpN deepcc.v1.0.orig/rl-module/drl_agent.py deepcc.v1.0/rl-module/drl_agent.py
+--- a/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 10:06:34.190190430 -0700
++++ b/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 10:08:24.164524279 -0700
+@@ -38,7 +38,7 @@ import collections
+ from time import sleep
+ import argparse
+ #import random
+-tf.logging.set_verbosity(tf.logging.ERROR)
++tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+ FORCE_ALPHA_INIT = 2     #if not "0",will force action to be FORCE_ALPHA*100
+ 
+ state_dim = 6
+@@ -130,7 +130,7 @@ def handler_ctrlc(signum, frame):
+ 
+ 
+ def terminated_save():
+-    saver = tf.train.Saver()
++    saver = tf.compat.v1.train.Saver()
+     saver.save(sess, os.path.join(train_dir, 'model'))
+     print("--------save checkpoint model at{}--------".format(train_dir))
+     logger.info("--------save checkpoint model at{}--------".format(train_dir))
+@@ -476,9 +476,9 @@ def main_tcp():
+     )
+     train_dir = str(config.train_dir)+'/train_dir-'+str(config.scheme)
+ 
+-    sess = tf.Session()
+-    global_step = tf.train.get_or_create_global_step(graph=None)
+-    summary_writer = tf.summary.FileWriter(train_dir, sess.graph)
++    sess = tf.compat.v1.Session()
++    global_step = tf.compat.v1.train.get_or_create_global_step(graph=None)
++    summary_writer = tf.compat.v1.summary.FileWriter(train_dir, sess.graph)
+ 
+     logger = configure_logging(train_dir)
+     #logger.info("--------------------------------------------------------------------------------")
+@@ -526,7 +526,7 @@ def main_tcp():
+                     action_range=action_range, summary_writer=summary_writer)
+     learner.initialize()
+ 
+-    saver = tf.train.Saver()
++    saver = tf.compat.v1.train.Saver()
+ 
+     summary_writer.add_graph(sess.graph)
+     normalizer = Normalizer(input_dim)
+@@ -616,7 +616,7 @@ def main_tcp():
+ 
+             if (j+1) % config.tb_interval == 0:
+                 # tensorboard
+-                act_summary = tf.Summary()
++                act_summary = tf.compat.v1.Summary()
+                 act_summary.value.add(tag='Step/0-Actions-Eval', simple_value=map_a0)
+                 for i in range(0,len(s1)):
+                     act_summary.value.add(tag='Step/1-Input-Eval'+str(i), simple_value=s1[i])
+@@ -638,7 +638,7 @@ def main_tcp():
+             ep_r += rew0
+ 
+             if done:
+-                ret_summary = tf.Summary()
++                ret_summary = tf.compat.v1.Summary()
+                 ret_summary.value.add(tag='Performance/ReturnInEpisode-Eval', simple_value=ep_r)
+                 summary_writer.add_summary(ret_summary, episode_counter)
+                 break
+@@ -694,7 +694,7 @@ def main_tcp():
+ 
+             if (j+1) % config.tb_interval == 0:
+                 # tensorboard
+-                act_summary = tf.Summary()
++                act_summary = tf.compat.v1.Summary()
+                 act_summary.value.add(tag='Step/0-Actions', simple_value=map_a0)
+                 for i in range(0,len(s1)):
+                     act_summary.value.add(tag='Step/1-Input'+str(i), simple_value=s1[i])
+@@ -721,7 +721,7 @@ def main_tcp():
+             ep_r += rew0
+ 
+             if done:
+-                ret_summary = tf.Summary()
++                ret_summary = tf.compat.v1.Summary()
+                 ret_summary.value.add(tag='Performance/ReturnInEpisode', simple_value=ep_r)
+                 summary_writer.add_summary(ret_summary, episode_counter)
+                 break
+diff '--color=auto' -urpN deepcc.v1.0.orig/rl-module/models.py deepcc.v1.0/rl-module/models.py
+--- a/deepcc.v1.0/rl-module/models.py	2024-10-29 10:06:34.190190430 -0700
++++ b/deepcc.v1.0/rl-module/models.py	2024-10-29 10:08:24.448519977 -0700
+@@ -39,22 +39,22 @@ def create_input_op_shape(obs, tensor):
+ 
+ 
+ def fc(input, output_shape, name='fc'):
+-    with tf.variable_scope(name):
++    with tf.compat.v1.variable_scope(name):
+         in_shape = input.get_shape()[-1]
+-        w = tf.get_variable('w', [in_shape, output_shape],
+-                            initializer=tf.contrib.layers.variance_scaling_initializer())
++        w = tf.compat.v1.get_variable('w', [in_shape, output_shape],
++                            initializer=tf.compat.v1.keras.initializers.VarianceScaling(scale=2.0))
+         # relu: tf.contrib.layers.variance_scaling_initializer()
+         # tanh: tf.contrib.layers.xavier_initializer()
+-        b = tf.get_variable('b', [output_shape], initializer=tf.constant_initializer(0.0))
++        b = tf.compat.v1.get_variable('b', [output_shape], initializer=tf.compat.v1.constant_initializer(0.0))
+         return tf.matmul(input, w) + b
+ 
+ def target_init(target, vars):
+ 
+-    return [tf.assign(target[i], vars[i]) for i in range(len(vars))]
++    return [tf.compat.v1.assign(target[i], vars[i]) for i in range(len(vars))]
+ 
+ def target_update(target, vars, tau):
+     # update target network
+-    return [tf.assign(target[i], vars[i]*tau + target[i]*(1-tau)) for i in range(len(vars))]
++    return [tf.compat.v1.assign(target[i], vars[i]*tau + target[i]*(1-tau)) for i in range(len(vars))]
+ 
+ 
+ 
+@@ -76,17 +76,17 @@ class Learner(object):
+         self.action_noise = action_noise
+         self.action_range = action_range
+         self.summary_writer = summary_writer
+-        self.s0 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='s0')
+-        self.s1 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='s1')
+-        self.reward = tf.placeholder(tf.float32, shape=[None, 1], name='reward')
+-        self.action = tf.placeholder(tf.float32, shape=[None, action_dim], name='action')
+-        self.is_terminal = tf.placeholder(tf.float32, shape=[None, 1], name='is_terminal')
+-        self.critic_target = tf.placeholder(tf.float32, shape=(None, 1), name='critic_target')
+-
+-        self.actor_optimizer = tf.train.AdamOptimizer(self.lr_a)
+-        self.critic_optimizer = tf.train.AdamOptimizer(self.lr_c)
+-        self.is_training = tf.placeholder(tf.bool, name='Actor_is_training')
+-        self.is_training_c = tf.placeholder(tf.bool, name='Critic_is_training')
++        self.s0 = tf.compat.v1.placeholder(tf.float32, shape=[None, self.s_dim], name='s0')
++        self.s1 = tf.compat.v1.placeholder(tf.float32, shape=[None, self.s_dim], name='s1')
++        self.reward = tf.compat.v1.placeholder(tf.float32, shape=[None, 1], name='reward')
++        self.action = tf.compat.v1.placeholder(tf.float32, shape=[None, action_dim], name='action')
++        self.is_terminal = tf.compat.v1.placeholder(tf.float32, shape=[None, 1], name='is_terminal')
++        self.critic_target = tf.compat.v1.placeholder(tf.float32, shape=(None, 1), name='critic_target')
++
++        self.actor_optimizer = tf.compat.v1.train.AdamOptimizer(self.lr_a)
++        self.critic_optimizer = tf.compat.v1.train.AdamOptimizer(self.lr_c)
++        self.is_training = tf.compat.v1.placeholder(tf.bool, name='Actor_is_training')
++        self.is_training_c = tf.compat.v1.placeholder(tf.bool, name='Critic_is_training')
+         # Actor
+         target_actor = copy(actor)
+         self.target_actor = target_actor
+@@ -121,7 +121,7 @@ class Learner(object):
+         self.target_q = self.reward + (1. - self.is_terminal) * gamma * self.q_s1
+         self.target_q_debug =  gamma * self.q_s1
+ 
+-        self.extra_update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
++        self.extra_update_ops = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.UPDATE_OPS)
+ 
+         #with tf.control_dependencies(self.extra_update_ops):
+         self.actor_train_op = self.build_actor_train_op()
+@@ -129,7 +129,7 @@ class Learner(object):
+ 
+         if self.summary_writer is not None:
+             # All tf.summaries should have been defined prior to running this.
+-            self._merged_summaries = tf.summary.merge_all()
++            self._merged_summaries = tf.compat.v1.summary.merge_all()
+ 
+ 
+     def get_target_actor_out(self, obs):
+@@ -149,12 +149,12 @@ class Learner(object):
+         self.a_gradients = self.actor_optimizer.compute_gradients(self.a_loss, var_list=self.actor.trainable_vars())
+         #print(self.actor.trainable_vars())
+         if self.summary_writer is not None:
+-            with tf.variable_scope('Losses'):
++            with tf.compat.v1.variable_scope('Losses'):
+                 a_loss_summary = tf.summary.scalar('ActorLoss', self.a_loss)
+                 for index, grad in enumerate(self.a_gradients):
+                     a_grad_summary = tf.summary.histogram("{}-grad".format(self.a_gradients[index][1].name), self.a_gradients[index])
+ 
+-                self._merged_summaries_actor = tf.summary.merge([a_loss_summary, a_grad_summary])
++                self._merged_summaries_actor = tf.compat.v1.summary.merge([a_loss_summary, a_grad_summary])
+ #                tf.summary.histogram('Actor_grad', self.a_gradients)
+ 
+         #self.a_gradients = list(zip(grads, self.actor.trainable_vars()))
+@@ -185,9 +185,9 @@ class Learner(object):
+         self.c_loss += reg_loss
+ 
+         if self.summary_writer is not None:
+-            with tf.variable_scope('Losses'):
++            with tf.compat.v1.variable_scope('Losses'):
+                 c_loss_summary = tf.summary.scalar('CriticLoss', self.c_loss)
+-            self._merged_summaries_critic = tf.summary.merge([c_loss_summary])
++            self._merged_summaries_critic = tf.compat.v1.summary.merge([c_loss_summary])
+ 
+         self.c_gradients = self.critic_optimizer.compute_gradients(self.c_loss, var_list=self.critic.trainable_vars())
+         #for i, (grad, var) in enumerate(self.c_gradients):
+@@ -200,7 +200,7 @@ class Learner(object):
+ 
+     def initialize(self):
+ 
+-        self.sess.run(tf.global_variables_initializer())
++        self.sess.run(tf.compat.v1.global_variables_initializer())
+         self.sess.run(self.target_actor_update_init)
+         self.sess.run(self.target_critic_update_init)
+ 
+@@ -242,7 +242,7 @@ class Learner(object):
+ 
+     def train_step(self):
+         #print("Hello:", tf.get_collection(tf.GraphKeys.UPDATE_OPS))
+-        extra_update_ops = [v for v in tf.get_collection(tf.GraphKeys.UPDATE_OPS) if "actor" in v.name and "target" not in v.name]
++        extra_update_ops = [v for v in tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.UPDATE_OPS) if "actor" in v.name and "target" not in v.name]
+         #extra_update_ops_c = [v for v in tf.get_collection(tf.GraphKeys.UPDATE_OPS) if "critic/" in v.name and "target" not in v.name]
+         #extra_update_ops_c1 = [v for v in tf.get_collection(tf.GraphKeys.UPDATE_OPS) if "critic_1" in v.name and "target" not in v.name]
+         #extra_update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+@@ -322,17 +322,17 @@ class Actor(object):
+         #self.obs0 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='obs0')
+ 
+     def trainable_vars(self):
+-        return tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
++        return tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
+ 
+     def create_actor_network(self, obs, is_training, reuse=False):
+         #inputs = tf.placeholder(tf.float32, [None, self.s_dim])
+ 
+-        with tf.variable_scope(self.name, reuse=tf.AUTO_REUSE):
++        with tf.compat.v1.variable_scope(self.name, reuse=tf.compat.v1.AUTO_REUSE):
+             h1 = fc(obs, H1_SHAPE, name='fc1')
+-            h1 = tf.layers.batch_normalization(h1, training = is_training, scale=False)
++            h1 = tf.compat.v1.layers.batch_normalization(h1, training = is_training, scale=False)
+             h1 = tf.nn.relu(h1)
+             h2 = fc(h1, H2_SHAPE, name='fc2')
+-            h2 = tf.layers.batch_normalization(h2, training = is_training, scale=False)
++            h2 = tf.compat.v1.layers.batch_normalization(h2, training = is_training, scale=False)
+             h2 = tf.nn.relu(h2)
+ 
+             #out = tf.layers.dense(h2, self.action_dim, kernel_initializer=tf.random_uniform_initializer(minval=-3e-3, maxval=3e-3))
+@@ -359,12 +359,12 @@ class Critic(object):
+         # self.obs0 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='obs0')
+ 
+     def trainable_vars(self):
+-        return tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
++        return tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
+ 
+     def create_critic_network(self, obs, action, is_training, reuse=False):
+         # inputs = tf.placeholder(tf.float32, [None, self.s_dim])
+ 
+-        with tf.variable_scope(self.name, reuse=tf.AUTO_REUSE):
++        with tf.compat.v1.variable_scope(self.name, reuse=tf.compat.v1.AUTO_REUSE):
+             '''
+             h1 = fc(tf.concat([obs, action], axis=-1), H1_SHAPE, name='fc1')
+             h1 = tf.nn.relu(h1)
