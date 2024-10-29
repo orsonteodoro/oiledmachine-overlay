@@ -477,6 +477,66 @@ UKSM_BASE_URI=\
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
+MITIGATION_DATE="Oct 22, 2024" # Advisory date
+MITIGATION_LAST_UPDATE=1729607820 # From `date +%s -d "2024-10-22 7:37"` from matching timmestamp of release with report
+MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
+VULNERABILITIES_FIXED=(
+# Only high and critical noted and only those that are fixed on this release day
+	"CVE-2024-50067;UAF"
+	"CVE-2024-47685;DoS, ID;Critical"
+	"CVE-2024-42256;DoS, DT, ID;Critical"
+	"CVE-2024-50061;DoS, DT, ID;High"
+	"CVE-2024-50059;DoS, DT, ID;High"
+	"CVE-2024-50055;DoS, DT, ID;High"
+	"CVE-2024-50047;DoS, DT, ID;High"
+	"CVE-2024-50043;DoS, DT, ID;High"
+	"CVE-2024-50036;DoS, DT, ID;High"
+	"CVE-2024-50030;DoS, DT, ID;High"
+	"CVE-2024-50029;DoS, DT, ID;High"
+	"CVE-2024-49995;DoS, DT, ID;High"
+	"CVE-2024-49992;DoS, DT, ID;High"
+	"CVE-2024-49982;DoS, DT, ID;High"
+	"CVE-2024-49981;DoS, DT, ID;High"
+	"CVE-2024-49969;DoS, DT, ID;High"
+	"CVE-2024-49936;DoS, DT, ID;High"
+	"CVE-2024-49930;DoS, DT, ID;High"
+	"CVE-2024-49924;DoS, DT, ID;High"
+	"CVE-2024-49903;DoS, DT, ID;High"
+	"CVE-2024-49895;DoS, DT, ID;High"
+	"CVE-2024-49894;DoS, DT, ID;High"
+	"CVE-2024-49889;DoS, DT, ID;High"
+	"CVE-2024-49884;DoS, DT, ID;High"
+	"CVE-2024-49883;DoS, DT, ID;High"
+	"CVE-2024-49855;DoS, DT, ID;High"
+	"CVE-2024-49854;DoS, DT, ID;High"
+	"CVE-2024-49853;DoS, DT, ID;High"
+	"CVE-2024-49852;DoS, DT, ID;High"
+	"CVE-2024-47751;DoS, DT, ID;High"
+	"CVE-2024-47750;DoS, DT, ID;High"
+	"CVE-2024-47748;DoS, DT, ID;High"
+	"CVE-2024-47747;DoS, DT, ID;High"
+	"CVE-2024-47742;DoS, DT, ID;High"
+	"CVE-2024-47730;DoS, DT, ID;High"
+	"CVE-2024-47727;DoS, DT, ID;High"
+	"CVE-2024-47718;DoS, DT, ID;High"
+	"CVE-2024-47701;DoS, DT, ID;High"
+	"CVE-2024-47698;DoS, DT, ID;High"
+	"CVE-2024-47697;DoS, DT, ID;High"
+	"CVE-2024-47696;DoS, DT, ID;High"
+	"CVE-2024-47695;DoS, DT, ID;High"
+	"CVE-2024-47682;DoS, DT, ID;High"
+	"CVE-2024-50035;DoS, ID;High"
+	"CVE-2024-50033;DoS, ID;High"
+	"CVE-2024-49900;DoS, ID;High"
+	"CVE-2024-49860;DoS, ID;High"
+	"CVE-2024-47757;DoS, ID;High"
+	"CVE-2024-47723;DoS, ID;High"
+	"CVE-2024-47686;DoS, ID;High"
+	"CVE-2024-49875;DT;Medium"
+	"CVE-2024-47734;ID;Medium"
+	"CVE-2024-47678;ID;Medium"
+)
+
 ZEN_MULTIGEN_LRU_BASE_URI=\
 "https://github.com/torvalds/linux/compare/${ZEN_MULTIGEN_LRU_COMMITS}"
 ZEN_MULTIGEN_LRU_COMMITS=\
@@ -1241,6 +1301,27 @@ ewarn "patching process to build more secure and higher performant"
 ewarn "configurations and to override the scheduler default."
 ewarn
 	_report_eol
+
+	if [[ -n "${MITIGATION_URI}" ]] ; then
+einfo "Security announcement date:  ${MITIGATION_DATE}"
+einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
+einfo "Patched vulnerabilities:"
+		IFS=$'\n'
+		local x
+		for x in ${VULNERABILITIES_FIXED[@]} ; do
+			local cve=$(echo "${x}" | cut -f 1 -d ";")
+			local vulnerability_classes=$(echo "${x}" | cut -f 2 -d ";")
+			local severity=$(echo "${x}" | cut -f 3 -d ";")
+einfo "${cve}:  ${vulnerability_classes} (CVSS 3.1 ${severity})"
+		done
+		IFS=$' \t\n'
+einfo
+einfo "CE = Code Execution"
+einfo "DoS = Denial of Service"
+einfo "DT = Data Tampering"
+einfo "ID = Information Disclosure"
+einfo
+	fi
 
 	if declare -f ot-kernel_pkg_setup_cb > /dev/null ; then
 		ot-kernel_pkg_setup_cb
@@ -5491,10 +5572,8 @@ ot-kernel_set_kconfig_dmesg() {
 		ot-kernel_unset_configopt "CONFIG_X86_VERBOSE_BOOTUP"
 	fi
 	if [[ "${dmesg}" == "1" ]] ; then
+	# Settings based on disabled default
 		ot-kernel_y_configopt "CONFIG_PRINTK"
-#		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-#			ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
-#		fi
 	elif [[ "${dmesg}" == "0" ]] ; then
 		ot-kernel_unset_configopt "CONFIG_PRINTK"
 		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
@@ -5504,13 +5583,18 @@ ot-kernel_set_kconfig_dmesg() {
 		_OT_KERNEL_PRINK_DISABLED=1
 	elif [[ "${dmesg}" == "default" ]] ; then
 		ot-kernel_y_configopt "CONFIG_PRINTK"
-#		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-#			ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
-#		fi
 		# See https://www.kernel.org/doc/html/latest/core-api/printk-basics.html
 		ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "7" # Excludes >= pr_info
 		ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "4"
 		ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "4"
+		ot-kernel_set_configopt "CONFIG_LOG_BUF_SHIFT" "17"
+	elif [[ "${dmesg}" == "debug" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PRINTK"
+		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
+		ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "7" # For console output
+		ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "4" # For quiet kernel command line
+		ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "7" # For printk
+		ot-kernel_set_configopt "CONFIG_LOG_BUF_SHIFT" "25"
 	fi
 }
 
