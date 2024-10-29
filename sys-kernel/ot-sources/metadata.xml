@@ -3143,7 +3143,8 @@ unset OT_KERNEL_PRIVATE_KEY
       bbr3      | BBR v1 upgraded with latency improvement with higher throughput, streaming, fair, ECN support, actively maintained, incast at ~1% packet loss
                 | Not mainlined
       c2tcp     | Lowest latencies and lowest jitter
-      cdg       | Latency
+      cdg       | Latency.  Throughput like cubic but with lower latency, lower queuing delays.
+                | Incast at 2% packet loss
       clear     | Do not add any (Ebuild only)
       dctcp     | High throughput and low cap data center low-latency
                 | High latency for KiB RPC payloads
@@ -3154,7 +3155,7 @@ unset OT_KERNEL_PRIVATE_KEY
       hstcp     | Throughput
       htcp      | Throughput and internal fairness for LFNs (Large Fat Networks) [ADSL2+, cable, or larger]; in packet loss scenarios, marginally better throughput versus cubic 
       hybla     | Throughput over satellite
-      illinois  | Throughput between inter data centers
+      illinois  | Average throughput in high speed networks
                 | Incast at ~0.0025% packet loss
       lp        | Full bandwidth utilization
                 | May studder sound
@@ -3162,20 +3163,48 @@ unset OT_KERNEL_PRIVATE_KEY
       orca      | Low CPU usage, consistent high performance in different networks
                 | TensorFlow [heavy dependency], high memory footprint
       pcc       | Send throughput, low requirements, better stability over time
-                | Higher CPU usage, incast at ~4% packet loss
+                | Higher CPU usage, incast at ~2.5% packet loss
       reno      | New Reno fallback algorithm
                 | Old algorithm, incast at ~0.0015% packet loss
       scalable  | Throughput
                 | High packet loss, incast at ~0.02% packet loss
       veno      | Throughput with wireless
       yeah      | Throughput, high network utilization and internal fairness for high BDP/RTT
-      vegas     | Lower latency, lower packet loss
+      vegas     | Lower latency, lower packet loss, lower queuing delays
       westwood  | Throughput over wireless
+
+
+      Algorithm | Possible use cases
+      ==========+===================================================================================================================
+      bic       | Historical, re-live mid 2000s Linux experience
+      bbr       | Video streaming, video conferencing, VOIP, data centers, power savings
+      bbr2      | Video streaming, video conferencing, VOIP, data centers
+      bbr3      | Video streaming, video conferencing, VOIP, data centers
+      c2tcp     | VOIP, IPTV, live/radio broadcasting, interactive applications
+      cdg       | Home network with wireless internet, incast mitigation
+      clear     | Resetting to defaults
+      dctcp     | Supercomputer, data centers
+      deepcc    | Maximizes production possiblities with high throughput and low latency, optimized cubic
+      cubic     | Broadband downloads
+      hstcp     | Throughput
+      htcp      | Broadband downloads
+      hybla     | Satellite
+      illinois  | Downloading in high speed networks
+      lp        | Background downloads, background updates
+      nv        | VOIP, radio broadcasting
+      orca      | Cellular road trip, continental/intercontental transfer
+      pcc       | Cellular road trip, intra-/inter- data center(s), CDN, satellite, incast mitigation
+      reno      | Historical, re-live 1999s-2004 Linux experience
+      scalable  | Gigabit connections with high latency
+      veno      | Wireless downloads
+      yeah      | Parallel downloads, P2P
+      vegas     | Web browsing
+      westwood  | Wireless downloads
 
 
       * bbr2, c2tcp, deepcc, hstcp, illinois, lp, nv, orca, pcc, scalable, yeah
         cannot be made the default.
-      * c2tcp, deep, orca has not been tested in this overlay yet.
+      * deep, orca has not been tested in this overlay yet.
       * Throughput alone implies high throughput.
       * Latency alone implies low latency.
       * Incast is more than half drop in throughput but results from drop rate
