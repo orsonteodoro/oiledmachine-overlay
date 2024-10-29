@@ -4641,6 +4641,12 @@ eerror ">=sys-kernel/linux-firmware-20230809 is required for INCEPTION mitigatio
 	fi
 	if ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "${ver}" ; then
 		CONFIG_CHECK="
+			MITIGATION_SRSO
+		"
+		ERROR_CPU_SRSO="CONFIG_CPU_SRSO is required for INCEPTION mitigation for datacenters."
+		check_extra_config
+	elif ver_test "${KV_MAJOR}.${KV_MINOR}" -ge "${ver}" ; then
+		CONFIG_CHECK="
 			CPU_SRSO
 		"
 		ERROR_CPU_SRSO="CONFIG_CPU_SRSO is required for INCEPTION mitigation for datacenters."
@@ -4994,9 +5000,9 @@ _mitigate_id_verify_mitigation_ussb() {
 			|| use cpu_target_arm_cortex_a77 \
 			|| use cpu_target_arm_cortex_a78 \
 			|| use cpu_target_arm_cortex_a78c \
-			|| use cpu_target_arm_cortex_710 \
-			|| use cpu_target_arm_cortex_720 \
-			|| use cpu_target_arm_cortex_725 \
+			|| use cpu_target_arm_cortex_a710 \
+			|| use cpu_target_arm_cortex_a720 \
+			|| use cpu_target_arm_cortex_a725 \
 			|| use cpu_target_arm_cortex_x1 \
 			|| use cpu_target_arm_cortex_x1c \
 			|| use cpu_target_arm_cortex_x2 \
