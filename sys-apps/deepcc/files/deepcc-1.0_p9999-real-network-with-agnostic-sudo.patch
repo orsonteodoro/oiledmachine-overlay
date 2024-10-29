@@ -23,8 +23,8 @@ LF files are real-network.sh, run-dcubic.sh,
 CRLF files are server.cc
 
 diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/build.sh deepcc-1.0_p9999/deepcc.v1.0/build.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/build.sh	2024-10-29 00:49:29.471915102 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/build.sh	2024-10-29 00:49:50.583643293 -0700
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/build.sh	2024-10-29 01:26:52.820779598 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/build.sh	2024-10-29 01:27:15.820445076 -0700
 @@ -1,3 +1,5 @@
 +#!/bin/bash
 +cd $(dirname "$0")
@@ -32,8 +32,8 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1
  g++ src/client.c -o client
  
 diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/evaluate.sh deepcc-1.0_p9999/deepcc.v1.0/evaluate.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/evaluate.sh	2024-10-29 00:49:29.471915102 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/evaluate.sh	2024-10-29 00:49:50.587643242 -0700
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/evaluate.sh	2024-10-29 01:26:52.820779598 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/evaluate.sh	2024-10-29 01:27:15.820445076 -0700
 @@ -1,17 +1,21 @@
 +#!/bin/bash
 +export ELEVATE_CMD=${DEEPCC_ELEVATE_CMD:-sudo}
@@ -62,7 +62,7 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1
  
 diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/real-network.sh deepcc-1.0_p9999/deepcc.v1.0/real-network.sh
 --- deepcc-1.0_p9999.orig/deepcc.v1.0/real-network.sh	1969-12-31 16:00:00.000000000 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/real-network.sh	2024-10-29 00:49:50.587643242 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/real-network.sh	2024-10-29 01:30:06.505974802 -0700
 @@ -0,0 +1,64 @@
 +#!/bin/bash
 +export DEEPCC_TARGET_DELAY=${DEEPCC_TARGET_DELAY:-50} # ms
@@ -76,19 +76,19 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1
 +	# sweetspot = ${RTT_at_80_pct_utilization} / ${minRTT}
 +    if [[ ${DEEPCC_SCHEME} == "bbr" ]] ; then
 +        max_rtt_at_100_pct_utilization=58
-+        DEEPCC_TARGET_DELAY=$(python -c "(int(2.2 * ${delay}))")
++        DEEPCC_TARGET_DELAY=$(@PYTHON@ -c "(int(2.2 * ${delay}))")
 +    elif [[ ${DEEPCC_SCHEME} == "cubic" ]] ; then
 +        max_rtt_at_100_pct_utilization=59
-+        DEEPCC_TARGET_DELAY=$(python -c "(int(2.15 * ${delay}))")
++        DEEPCC_TARGET_DELAY=$(@PYTHON@ -c "(int(2.15 * ${delay}))")
 +    elif [[ ${DEEPCC_SCHEME} == "illinois" ]] ; then
 +        max_rtt_at_100_pct_utilization=72
-+        DEEPCC_TARGET_DELAY=$(python -c "(int(2.05 * ${delay}))")
++        DEEPCC_TARGET_DELAY=$(@PYTHON@ -c "(int(2.05 * ${delay}))")
 +    elif [[ ${DEEPCC_SCHEME} == "westwood" ]] ; then
 +        max_rtt_at_100_pct_utilization=42
-+        DEEPCC_TARGET_DELAY=$(python -c "print(int(1.6 * ${delay}))")
++        DEEPCC_TARGET_DELAY=$(@PYTHON@ -c "print(int(1.6 * ${delay}))")
 +    else
 +        # 2.0 coefficient obtained by mean average of above coefficients.
-+        DEEPCC_TARGET_DELAY=$(python -c "print(int(2.0 * ${delay}))")
++        DEEPCC_TARGET_DELAY=$(@PYTHON@ -c "print(int(2.0 * ${delay}))")
 +    fi
 +}
 +
@@ -108,11 +108,11 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1
 +    if [[ "${DEEPCC_TARGET_DELAY}" == "min" ]] ; then
 +        DEEPCC_TARGET_DELAY="${delay%.*}"
 +    elif [[ "${DEEPCC_TARGET_DELAY}" == "max" ]] ; then
-+        DEEPCC_TARGET_DELAY=$(python -c "print(int(5.0 * ${delay}))")
++        DEEPCC_TARGET_DELAY=$(@PYTHON@ -c "print(int(5.0 * ${delay}))")
 +    elif [[ "${DEEPCC_TARGET_DELAY}" =~ ("sweetspot"|"sweet"|"ss"|"sw"|"swt"|"auto") ]] ; then
 +        set_sweetspot_target_delay
 +    else
-+        DEEPCC_TARGET_DELAY=$(python -c "print(int(2.0 * ${delay}))")
++        DEEPCC_TARGET_DELAY=$(@PYTHON@ -c "print(int(2.0 * ${delay}))")
 +        set_sweetspot_target_delay
 +    fi
 +}
@@ -129,8 +129,8 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1
 +cd $(dirname "$0")
 +./evaluate.sh 8000 ${DEEPCC_SCHEME}
 diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh deepcc-1.0_p9999/deepcc.v1.0/run-dcubic.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh	2024-10-29 00:49:29.627913095 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/run-dcubic.sh	2024-10-29 00:49:50.587643242 -0700
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh	2024-10-29 01:26:52.980777270 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/run-dcubic.sh	2024-10-29 01:27:15.820445076 -0700
 @@ -1,14 +1,15 @@
  #!/bin/bash
 -
@@ -195,8 +195,8 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1
  echo "Experiment is finished."
  if [ ${training} -eq 2 ] || [ ${training} -eq 4 ]
 diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-deep.sh deepcc-1.0_p9999/deepcc.v1.0/run-deep.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/run-deep.sh	2024-10-29 00:49:29.627913095 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/run-deep.sh	2024-10-29 00:49:50.587643242 -0700
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/run-deep.sh	2024-10-29 01:26:52.980777270 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/run-deep.sh	2024-10-29 01:27:15.820445076 -0700
 @@ -1,5 +1,6 @@
  #!/bin/bash
 -
@@ -206,8 +206,8 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1
  #sudo killall verus_server sprout*
  sudo killall rl-server client python
 diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/setup.sh deepcc-1.0_p9999/deepcc.v1.0/setup.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/setup.sh	2024-10-29 00:49:29.627913095 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/setup.sh	2024-10-29 00:49:50.587643242 -0700
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/setup.sh	2024-10-29 01:26:52.980777270 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/setup.sh	2024-10-29 01:27:15.820445076 -0700
 @@ -1,4 +1,6 @@
 -
 +#!/bin/bash
@@ -241,8 +241,8 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1
 +${ELEVATE_CMD} killall rl-server rl-server-eval client python
  
 diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/define.h deepcc-1.0_p9999/deepcc.v1.0/src/define.h
---- deepcc-1.0_p9999.orig/deepcc.v1.0/src/define.h	2024-10-29 00:49:29.627913095 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/src/define.h	2024-10-29 00:49:50.587643242 -0700
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/src/define.h	2024-10-29 01:26:52.980777270 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/src/define.h	2024-10-29 01:27:15.820445076 -0700
 @@ -80,6 +80,8 @@ u32 report_period=5;//5s
  #define FLOW_NUM 1
  int sock[FLOW_NUM];
@@ -253,8 +253,8 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1
  struct tcp_deepcc_info {
      u32 min_rtt;      /* min-filtered RTT in uSec */
 diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc deepcc-1.0_p9999/deepcc.v1.0/src/server.cc
---- deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc	2024-10-29 00:49:29.627913095 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/src/server.cc	2024-10-29 00:51:27.494354735 -0700
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc	2024-10-29 01:26:52.980777270 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/src/server.cc	2024-10-29 01:27:15.820445076 -0700
 @@ -23,6 +23,9 @@
  #define DBGSERVER 0
  #include <cstdlib>
@@ -370,8 +370,8 @@ diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1
      //Start listen
  	//The maximum number of concurrent connections is 10
 diff '--color=auto' -x '*.rej' -x '*.orig' -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/training.sh deepcc-1.0_p9999/deepcc.v1.0/training.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/training.sh	2024-10-29 00:49:31.071894519 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/training.sh	2024-10-29 00:49:50.587643242 -0700
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/training.sh	2024-10-29 01:26:54.440756022 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/training.sh	2024-10-29 01:27:15.820445076 -0700
 @@ -1,11 +1,14 @@
 +#!/bin/bash
 +export ELEVATE_CMD=${DEEPCC_ELEVATE_CMD:-sudo}

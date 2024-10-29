@@ -219,6 +219,9 @@ einfo
 ewarn
 ewarn "real-network.sh is in TESTING."
 ewarn
+ewarn
+ewarn "FIXME:  The package indescriminately kills all running python instances."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
