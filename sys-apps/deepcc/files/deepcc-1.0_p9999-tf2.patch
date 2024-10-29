@@ -2,10 +2,9 @@ deepcc.v1.0.orig/rl-module/drl_agent.py:134:4: WARNING: *.save requires manual c
 deepcc.v1.0.orig/rl-module/models.py:44:12: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
 deepcc.v1.0.orig/rl-module/models.py:48:12: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
 
-
 diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.py deepcc-1.0_p9999/deepcc.v1.0/rl-module/drl_agent.py
---- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 10:40:45.747445090 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 10:41:06.899132923 -0700
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 13:36:56.134519013 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 13:38:42.452927283 -0700
 @@ -38,7 +38,7 @@ import collections
  from time import sleep
  import argparse
@@ -83,8 +82,8 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.p
                  summary_writer.add_summary(ret_summary, episode_counter)
                  break
 diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py deepcc-1.0_p9999/deepcc.v1.0/rl-module/models.py
---- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py	2024-10-29 10:40:45.747445090 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/models.py	2024-10-29 10:48:42.352397296 -0700
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py	2024-10-29 13:36:56.134519013 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/models.py	2024-10-29 13:39:56.675815650 -0700
 @@ -39,22 +39,22 @@ def create_input_op_shape(obs, tensor):
  
  
@@ -176,7 +175,15 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
  #                tf.summary.histogram('Actor_grad', self.a_gradients)
  
          #self.a_gradients = list(zip(grads, self.actor.trainable_vars()))
-@@ -185,9 +185,9 @@ class Learner(object):
+@@ -181,13 +181,16 @@ class Learner(object):
+         self.c_loss = tf.reduce_mean(tf.square(self.critic_out - self.target_q))
+ 
+         reg_var = [x for x in  self.critic.trainable_vars() if (x.name.endswith('w:0') or x.name.endswith('kernel:0'))]
+-        reg_loss =  tc.layers.apply_regularization( tc.layers.l2_regularizer(1e-2), weights_list = reg_var  )
++        l2_regularizer = tf.keras.regularizers.l2(1e-2)
++        reg_loss = 0
++        for var in reg_var:
++            reg_loss += l2_regularizer(var)
          self.c_loss += reg_loss
  
          if self.summary_writer is not None:
@@ -188,7 +195,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
  
          self.c_gradients = self.critic_optimizer.compute_gradients(self.c_loss, var_list=self.critic.trainable_vars())
          #for i, (grad, var) in enumerate(self.c_gradients):
-@@ -200,7 +200,7 @@ class Learner(object):
+@@ -200,7 +203,7 @@ class Learner(object):
  
      def initialize(self):
  
@@ -197,7 +204,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
          self.sess.run(self.target_actor_update_init)
          self.sess.run(self.target_critic_update_init)
  
-@@ -242,7 +242,7 @@ class Learner(object):
+@@ -242,7 +245,7 @@ class Learner(object):
  
      def train_step(self):
          #print("Hello:", tf.get_collection(tf.GraphKeys.UPDATE_OPS))
@@ -206,7 +213,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
          #extra_update_ops_c = [v for v in tf.get_collection(tf.GraphKeys.UPDATE_OPS) if "critic/" in v.name and "target" not in v.name]
          #extra_update_ops_c1 = [v for v in tf.get_collection(tf.GraphKeys.UPDATE_OPS) if "critic_1" in v.name and "target" not in v.name]
          #extra_update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-@@ -322,22 +322,22 @@ class Actor(object):
+@@ -322,22 +325,22 @@ class Actor(object):
          #self.obs0 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='obs0')
  
      def trainable_vars(self):
@@ -236,7 +243,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
              #out = tf.layers.batch_normalization(out, training = is_training)
              out = tf.nn.tanh(out)
  
-@@ -359,12 +359,12 @@ class Critic(object):
+@@ -359,12 +362,12 @@ class Critic(object):
          # self.obs0 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='obs0')
  
      def trainable_vars(self):
@@ -251,7 +258,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
              '''
              h1 = fc(tf.concat([obs, action], axis=-1), H1_SHAPE, name='fc1')
              h1 = tf.nn.relu(h1)
-@@ -387,8 +387,8 @@ class Critic(object):
+@@ -387,8 +390,8 @@ class Critic(object):
              #b2 = tf.get_variable('b', [H2_SHAPE])
              #h2 = tf.nn.relu(tf.matmul(h1, w2_s) + tf.matmul(action, w2_a) + b2)
  
