@@ -208,6 +208,9 @@ ewarn "GPUs to finish in 6 hours.  ~400 combined cores and 13.04% are"
 ewarn "learning servers and remaining actor clients."
 ewarn
 	fi
+ewarn
+ewarn "This package indiscriminately kills all python instances."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
