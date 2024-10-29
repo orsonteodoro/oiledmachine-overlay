@@ -482,7 +482,7 @@ MITIGATION_LAST_UPDATE=1729607820 # From `date +%s -d "2024-10-22 7:37"` from ma
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # Only high and critical noted and only those that are fixed on this release day
-	"CVE-2024-50067;UAF"
+	"CVE-2024-50067;UAF;N/A"
 	"CVE-2024-47685;DoS, ID;Critical"
 	"CVE-2024-42256;DoS, DT, ID;Critical"
 	"CVE-2024-50061;DoS, DT, ID;High"
@@ -1316,10 +1316,35 @@ einfo "${cve}:  ${vulnerability_classes} (CVSS 3.1 ${severity})"
 		done
 		IFS=$' \t\n'
 einfo
+
+	# Glossary
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CE" ]] ; then
 einfo "CE = Code Execution"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DoS" ]] ; then
 einfo "DoS = Denial of Service"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DT" ]] ; then
 einfo "DT = Data Tampering"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ID" ]] ; then
 einfo "ID = Information Disclosure"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UAF" ]] ; then
+einfo "UAF = Use After Free"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "NPD" ]] ; then
+einfo "NPD = Null Pointer Dereference"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "RC" ]] ; then
+einfo "RC = Race Condition"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "OOB" ]] ; then
+einfo "OOB = Out Of Bounds"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "PE" ]] ; then
+einfo "PE = Privilege Execution"
+		fi
 einfo
 	fi
 
