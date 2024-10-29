@@ -36,11 +36,15 @@ IUSE+=" build-models evaluate kernel-patch polkit +sudo ebuild-revision-3"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
+# FIXME: migrate to tf 2.x
 RDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
 		>=dev-python/sysv_ipc-1.0.0[${PYTHON_USEDEP}]
-		>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
+		(
+			>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
+			<sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
+		)
 	')
 	>=net-misc/iperf-3.1.3
 	app-alternatives/sh
