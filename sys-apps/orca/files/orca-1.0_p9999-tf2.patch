@@ -1,9 +1,9 @@
 rl-module.orig/agent.py:396:8: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
 
-diff '--color=auto' -urpN rl-module.orig/agent.py rl-module/agent.py
---- a/rl-module.orig/agent.py	2024-10-29 09:52:54.422770817 -0700
-+++ b/rl-module/agent.py	2024-10-29 10:00:12.300038527 -0700
-@@ -49,18 +49,18 @@ class Actor():
+diff '--color=auto' -urp orca-1.0_p9999.orig/rl-module/agent.py orca-1.0_p9999/rl-module/agent.py
+--- orca-1.0_p9999.orig/rl-module/agent.py	2024-10-29 10:34:36.344846558 -0700
++++ orca-1.0_p9999/rl-module/agent.py	2024-10-29 10:38:20.533576115 -0700
+@@ -49,21 +49,21 @@ class Actor():
  
  
      def train_var(self):
@@ -15,18 +15,24 @@ diff '--color=auto' -urpN rl-module.orig/agent.py rl-module/agent.py
 -        with tf.variable_scope(self.name, reuse=tf.AUTO_REUSE):
 +        with tf.compat.v1.variable_scope(self.name, reuse=tf.compat.v1.AUTO_REUSE):
  
-             h1 = tf.layers.dense(s, units=self.h1_shape, name='fc1')
+-            h1 = tf.layers.dense(s, units=self.h1_shape, name='fc1')
 -            h1 = tf.layers.batch_normalization(h1, training=is_training, scale=False)
++            h1 = tf.keras.layers.Dense(units=self.h1_shape, name='fc1')(s)
 +            h1 = tf.compat.v1.layers.batch_normalization(h1, training=is_training, scale=False)
              h1 = tf.nn.leaky_relu(h1)
  
-             h2 = tf.layers.dense(h1, units=self.h2_shape,  name='fc2')
+-            h2 = tf.layers.dense(h1, units=self.h2_shape,  name='fc2')
 -            h2 = tf.layers.batch_normalization(h2, training=is_training, scale=False)
++            h2 = tf.keras.layers.Dense(units=self.h2_shape,  name='fc2')(h1)
 +            h2 = tf.compat.v1.layers.batch_normalization(h2, training=is_training, scale=False)
              h2 = tf.nn.leaky_relu(h2)
  
-             output = tf.layers.dense(h2, units=self.a_dim, activation=tf.nn.tanh)
-@@ -84,12 +84,12 @@ class Critic():
+-            output = tf.layers.dense(h2, units=self.a_dim, activation=tf.nn.tanh)
++            output = tf.keras.layers.Dense(units=self.a_dim, activation=tf.nn.tanh)(h2)
+ 
+             scale_output = tf.multiply(output, self.action_scale)
+ 
+@@ -84,17 +84,17 @@ class Critic():
  
  
      def train_var(self):
@@ -39,7 +45,15 @@ diff '--color=auto' -urpN rl-module.orig/agent.py rl-module/agent.py
 -        with tf.variable_scope(self.name, reuse=tf.AUTO_REUSE):
 +        with tf.compat.v1.variable_scope(self.name, reuse=tf.compat.v1.AUTO_REUSE):
  
-             h1 = tf.layers.dense(s, units=self.h1_shape, activation=tf.nn.leaky_relu, name='fc1')
+-            h1 = tf.layers.dense(s, units=self.h1_shape, activation=tf.nn.leaky_relu, name='fc1')
++            h1 = tf.keras.layers.Dense(units=self.h1_shape, activation=tf.nn.leaky_relu, name='fc1')(s)
+ 
+-            h2 = tf.layers.dense(tf.concat([h1, action], -1), units=self.h2_shape, activation=tf.nn.leaky_relu, name='fc2')
+-            output = tf.layers.dense(h2, units=1)
++            h2 = tf.keras.layers.Dense(units=self.h2_shape, activation=tf.nn.leaky_relu, name='fc2')(tf.concat([h1, action], -1))
++            output = tf.keras.layers.Dense(units=1)(h2)
+ 
+         return output
  
 @@ -112,13 +112,13 @@ class Agent():
          self.gamma = gamma
@@ -152,9 +166,9 @@ diff '--color=auto' -urpN rl-module.orig/agent.py rl-module/agent.py
  
      def get_step_epochs(self):
  
-diff '--color=auto' -urpN rl-module.orig/d5.py rl-module/d5.py
---- a/rl-module.orig/d5.py	2024-10-29 09:52:54.422770817 -0700
-+++ b/rl-module/d5.py	2024-10-29 10:00:11.960043754 -0700
+diff '--color=auto' -urp orca-1.0_p9999.orig/rl-module/d5.py orca-1.0_p9999/rl-module/d5.py
+--- orca-1.0_p9999.orig/rl-module/d5.py	2024-10-29 10:34:36.344846558 -0700
++++ orca-1.0_p9999/rl-module/d5.py	2024-10-29 10:34:54.536581510 -0700
 @@ -99,7 +99,7 @@ def evaluate_TCP(env, agent, epoch, summ
  
              if (step_counter+1) % params.dict['tb_interval'] == 0:
