@@ -1346,6 +1346,9 @@ einfo "OOB = Out Of Bounds"
 einfo "PE = Privilege Execution"
 		fi
 einfo
+		local now=$(date +%s)
+		local dhms_passed=$(dhms_get ${MITIGATION_LAST_UPDATE} ${now})
+einfo "Time since the last security update:  ${dhms_passed}"
 	fi
 
 	if declare -f ot-kernel_pkg_setup_cb > /dev/null ; then
