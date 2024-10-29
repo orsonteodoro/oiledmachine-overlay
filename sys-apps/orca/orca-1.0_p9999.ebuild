@@ -47,7 +47,7 @@ REQUIRED_USE+="
 RDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
-		>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
+		>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
 		dev-python/sysv-ipc[${PYTHON_USEDEP}]
 		sci-libs/gym[${PYTHON_USEDEP}]
 	')
@@ -84,6 +84,7 @@ BDEPEND+="
 "
 PATCHES+=(
 	"${FILESDIR}/${PN}-1.0_p9999-production-with-agnostic-sudo.patch"
+	"${FILESDIR}/${PN}-1.0_p9999-tf2.patch"
 )
 
 unpack_live() {
