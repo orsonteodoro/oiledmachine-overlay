@@ -18,9 +18,10 @@ This file has inconsistent line endings.
 * LF is used for actor.sh, orca-real-network.sh.
 * CRLF is used for orca-server-mahimahi.sh.
 
-diff -urpN orca-1.0_p9999.orig/actor.sh orca-1.0_p9999/actor.sh
---- orca-1.0_p9999.orig/actor.sh	2023-02-13 16:23:30.780236806 -0800
-+++ orca-1.0_p9999/actor.sh	2023-02-13 16:27:19.828244353 -0800
+
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN orca-1.0_p9999.orig/actor.sh orca-1.0_p9999/actor.sh
+--- orca-1.0_p9999.orig/actor.sh	2024-10-29 00:59:32.255203128 -0700
++++ orca-1.0_p9999/actor.sh	2024-10-29 00:59:54.502885075 -0700
 @@ -1,4 +1,6 @@
  #!/bin/bash
 +export ELEVATE_CMD=${ORCA_ELEVATE_CMD:-sudo} # Valid values: sudo, pkexec, " "
@@ -37,9 +38,9 @@ diff -urpN orca-1.0_p9999.orig/actor.sh orca-1.0_p9999/actor.sh
  #sleep 10
  echo "Finished."
  if [ ${first_time} -eq 2 ] || [ ${first_time} -eq 4 ]
-diff -urpN orca-1.0_p9999.orig/build.sh orca-1.0_p9999/build.sh
---- orca-1.0_p9999.orig/build.sh	2023-02-13 16:23:30.780236806 -0800
-+++ orca-1.0_p9999/build.sh	2023-02-13 16:27:19.828244353 -0800
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN orca-1.0_p9999.orig/build.sh orca-1.0_p9999/build.sh
+--- orca-1.0_p9999.orig/build.sh	2024-10-29 00:59:32.259203071 -0700
++++ orca-1.0_p9999/build.sh	2024-10-29 00:59:54.502885075 -0700
 @@ -1,8 +1,11 @@
 +#!/bin/bash
 +export ELEVATE_CMD=${ORCA_ELEVATE_CMD:-sudo} # Valid values: sudo, pkexec, " "
@@ -54,9 +55,9 @@ diff -urpN orca-1.0_p9999.orig/build.sh orca-1.0_p9999/build.sh
 +${ELEVATE_CMD} chmod +x rl-module/orca-server-mahimahi
  
  
-diff -urpN orca-1.0_p9999.orig/learner.sh orca-1.0_p9999/learner.sh
---- orca-1.0_p9999.orig/learner.sh	2023-02-13 16:23:30.780236806 -0800
-+++ orca-1.0_p9999/learner.sh	2023-02-13 16:27:19.828244353 -0800
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN orca-1.0_p9999.orig/learner.sh orca-1.0_p9999/learner.sh
+--- orca-1.0_p9999.orig/learner.sh	2024-10-29 00:59:32.259203071 -0700
++++ orca-1.0_p9999/learner.sh	2024-10-29 01:01:51.845217130 -0700
 @@ -1,5 +1,5 @@
  #!/bin/bash
 -
@@ -64,17 +65,34 @@ diff -urpN orca-1.0_p9999.orig/learner.sh orca-1.0_p9999/learner.sh
  if [ $# != 2 ]
  then
      echo -e "usage:$0 [path to train_dir & d5.py] [first_time==1]"
-diff -urpN orca-1.0_p9999.orig/orca-real-network.sh orca-1.0_p9999/orca-real-network.sh
+@@ -11,12 +11,12 @@ fi
+ path=$1
+ first_time=$2
+ ##Bring up the learner:
+-if [ $first_time -eq 1 ];
++if [ $first_time -eq 1 ]
+ then
+-    /home/`whoami`/venv/bin/python $path/d5.py --job_name=learner --task=0 --base_path=$path &
++    @PYTHON@ $path/d5.py --job_name=learner --task=0 --base_path=$path &
+ elif [ $first_time -eq 4 ]
+ then
+-    /home/`whoami`/venv/bin/python $path/d5.py --job_name=learner --task=0 --base_path=$path --load --eval &
++    @PYTHON@ $path/d5.py --job_name=learner --task=0 --base_path=$path --load --eval &
+ else
+-    /home/`whoami`/venv/bin/python $path/d5.py --job_name=learner --task=0 --base_path=$path --load &
++    @PYTHON@ $path/d5.py --job_name=learner --task=0 --base_path=$path --load &
+ fi
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN orca-1.0_p9999.orig/orca-real-network.sh orca-1.0_p9999/orca-real-network.sh
 --- orca-1.0_p9999.orig/orca-real-network.sh	1969-12-31 16:00:00.000000000 -0800
-+++ orca-1.0_p9999/orca-real-network.sh	2023-02-13 16:27:19.828244353 -0800
++++ orca-1.0_p9999/orca-real-network.sh	2024-10-29 00:59:54.502885075 -0700
 @@ -0,0 +1,4 @@
 +#!/bin/bash
 +export ORCA_PRODUCTION=1
 +cd $(dirname "$0")
 +./orca-standalone-emulation.sh 44444
-diff -urpN orca-1.0_p9999.orig/orca-standalone-emulation.sh orca-1.0_p9999/orca-standalone-emulation.sh
---- orca-1.0_p9999.orig/orca-standalone-emulation.sh	2023-02-13 16:23:32.400236859 -0800
-+++ orca-1.0_p9999/orca-standalone-emulation.sh	2023-02-13 16:27:19.828244353 -0800
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN orca-1.0_p9999.orig/orca-standalone-emulation.sh orca-1.0_p9999/orca-standalone-emulation.sh
+--- orca-1.0_p9999.orig/orca-standalone-emulation.sh	2024-10-29 00:59:33.751181722 -0700
++++ orca-1.0_p9999/orca-standalone-emulation.sh	2024-10-29 00:59:54.502885075 -0700
 @@ -1,3 +1,6 @@
 +#!/bin/bash
 +export ELEVATE_CMD=${ORCA_ELEVATE_CMD:-sudo} # Valid values: sudo, pkexec, " "
@@ -111,9 +129,9 @@ diff -urpN orca-1.0_p9999.orig/orca-standalone-emulation.sh orca-1.0_p9999/orca-
      done
  else
      echo "usage: $0 [base port number]"
-diff -urpN orca-1.0_p9999.orig/orca.sh orca-1.0_p9999/orca.sh
---- orca-1.0_p9999.orig/orca.sh	2023-02-13 16:23:32.404236859 -0800
-+++ orca-1.0_p9999/orca.sh	2023-02-13 16:27:19.828244353 -0800
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN orca-1.0_p9999.orig/orca.sh orca-1.0_p9999/orca.sh
+--- orca-1.0_p9999.orig/orca.sh	2024-10-29 00:59:33.751181722 -0700
++++ orca-1.0_p9999/orca.sh	2024-10-29 01:01:49.685247699 -0700
 @@ -1,3 +1,6 @@
 +#!/bin/bash
 +export ELEVATE_CMD=${ORCA_ELEVATE_CMD:-sudo} # Valid values: sudo, pkexec, " "
@@ -152,6 +170,20 @@ diff -urpN orca-1.0_p9999.orig/orca.sh orca-1.0_p9999/orca.sh
          done
      else
      # If you are here: You are going to start/continue learning a better model!
+@@ -66,11 +69,11 @@ then
+       if [ $1 -eq 1 ];
+       then
+           # Start the learning from the scratch
+-           /home/`logname`/venv/bin/python ${dir}/d5.py --job_name=learner --task=0 --base_path=${dir} &
++           @PYTHON@ ${dir}/d5.py --job_name=learner --task=0 --base_path=${dir} &
+            lpid=$!
+        else
+           # Continue the learning on top of previous model
+-           /home/`logname`/venv/bin/python ${dir}/d5.py --job_name=learner --task=0 --base_path=${dir} --load &
++           @PYTHON@ ${dir}/d5.py --job_name=learner --task=0 --base_path=${dir} --load &
+            lpid=$!
+        fi
+        sleep 10
 @@ -103,7 +106,7 @@ then
         done
  
@@ -172,9 +204,9 @@ diff -urpN orca-1.0_p9999.orig/orca.sh orca-1.0_p9999/orca.sh
         done
      fi
  else
-diff -urpN orca-1.0_p9999.orig/setup.sh orca-1.0_p9999/setup.sh
---- orca-1.0_p9999.orig/setup.sh	2023-02-13 16:23:32.512236863 -0800
-+++ orca-1.0_p9999/setup.sh	2023-02-13 16:27:19.832244353 -0800
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN orca-1.0_p9999.orig/setup.sh orca-1.0_p9999/setup.sh
+--- orca-1.0_p9999.orig/setup.sh	2024-10-29 00:59:33.863180119 -0700
++++ orca-1.0_p9999/setup.sh	2024-10-29 00:59:54.502885075 -0700
 @@ -1,10 +1,13 @@
 -sudo sysctl -q net.ipv4.tcp_wmem="4096 32768 4194304" #Doubling the default value from 16384 to 32768
 -sudo sysctl -w -q net.ipv4.tcp_low_latency=1
@@ -196,9 +228,9 @@ diff -urpN orca-1.0_p9999.orig/setup.sh orca-1.0_p9999/setup.sh
 +${ELEVATE_CMD} sysctl -w -q fs.inotify.max_user_watches=524288
 +${ELEVATE_CMD} sysctl -w -q fs.inotify.max_user_instances=524288
  
-diff -urpN orca-1.0_p9999.orig/src/define.h orca-1.0_p9999/src/define.h
---- orca-1.0_p9999.orig/src/define.h	2023-02-13 16:23:32.512236863 -0800
-+++ orca-1.0_p9999/src/define.h	2023-02-13 16:27:19.868244355 -0800
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN orca-1.0_p9999.orig/src/define.h orca-1.0_p9999/src/define.h
+--- orca-1.0_p9999.orig/src/define.h	2024-10-29 00:59:33.867180062 -0700
++++ orca-1.0_p9999/src/define.h	2024-10-29 00:59:54.502885075 -0700
 @@ -96,6 +96,8 @@ int target_ratio=150;
  u32 target=50; //50ms
  u32 report_period=5;//5s
@@ -208,9 +240,9 @@ diff -urpN orca-1.0_p9999.orig/src/define.h orca-1.0_p9999/src/define.h
  
  #define FLOW_NUM 1
  int sock[FLOW_NUM];
-diff -urpN orca-1.0_p9999.orig/src/orca-server-mahimahi.cc orca-1.0_p9999/src/orca-server-mahimahi.cc
---- orca-1.0_p9999.orig/src/orca-server-mahimahi.cc	2023-02-13 16:23:32.512236863 -0800
-+++ orca-1.0_p9999/src/orca-server-mahimahi.cc	2023-02-13 16:32:02.144253656 -0800
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN orca-1.0_p9999.orig/src/orca-server-mahimahi.cc orca-1.0_p9999/src/orca-server-mahimahi.cc
+--- orca-1.0_p9999.orig/src/orca-server-mahimahi.cc	2024-10-29 00:59:33.867180062 -0700
++++ orca-1.0_p9999/src/orca-server-mahimahi.cc	2024-10-29 01:01:46.581291637 -0700
 @@ -29,6 +29,9 @@
  #include <sys/select.h>
  #include "define.h"
@@ -284,17 +316,24 @@ diff -urpN orca-1.0_p9999.orig/src/orca-server-mahimahi.cc orca-1.0_p9999/src/or
      info->trace=trace;
      info->num_lines=num_lines;
      /**
-@@ -192,7 +223,7 @@ void start_server(int flow_num, int clie
-         sprintf(cmd,"/home/`whoami`/venv/bin/python %s/d5.py --tb_interval=1 --base_path=%s --task=%d --job_name=actor --train_dir=%s --mem_r=%d --mem_w=%d &",path,path,actor_id,path,(int)key,(int)key_rl);
+@@ -189,19 +220,19 @@ void start_server(int flow_num, int clie
+         return;
+     } 
+     if (first_time==1){
+-        sprintf(cmd,"/home/`whoami`/venv/bin/python %s/d5.py --tb_interval=1 --base_path=%s --task=%d --job_name=actor --train_dir=%s --mem_r=%d --mem_w=%d &",path,path,actor_id,path,(int)key,(int)key_rl);
++        sprintf(cmd,"@PYTHON@ %s/d5.py --tb_interval=1 --base_path=%s --task=%d --job_name=actor --train_dir=%s --mem_r=%d --mem_w=%d &",path,path,actor_id,path,(int)key,(int)key_rl);
          DBGPRINT(0,0,"Starting RL Module (Without load) ...\n%s",cmd);
      }
 -    else if (first_time==2 || first_time==4){
+-        sprintf(cmd,"/home/`whoami`/venv/bin/python %s/d5.py --tb_interval=1 --base_path=%s --load --eval --task=%d --job_name=actor --train_dir=%s  --mem_r=%d --mem_w=%d &",path,path,actor_id,path,(int)key,(int)key_rl);
 +    else if (first_time==2 || first_time==4 || production==1){
-         sprintf(cmd,"/home/`whoami`/venv/bin/python %s/d5.py --tb_interval=1 --base_path=%s --load --eval --task=%d --job_name=actor --train_dir=%s  --mem_r=%d --mem_w=%d &",path,path,actor_id,path,(int)key,(int)key_rl);
++        sprintf(cmd,"@PYTHON@ %s/d5.py --tb_interval=1 --base_path=%s --load --eval --task=%d --job_name=actor --train_dir=%s  --mem_r=%d --mem_w=%d &",path,path,actor_id,path,(int)key,(int)key_rl);
          DBGPRINT(0,0,"Starting RL Module (No learning) ...\n%s",cmd);
      }
-@@ -201,7 +232,7 @@ void start_server(int flow_num, int clie
-         sprintf(cmd,"/home/`whoami`/venv/bin/python %s/d5.py --load --tb_interval=1 --base_path=%s --task=%d --job_name=actor --train_dir=%s  --mem_r=%d --mem_w=%d &",path,path,actor_id,path,(int)key,(int)key_rl);
+     else
+     {
+-        sprintf(cmd,"/home/`whoami`/venv/bin/python %s/d5.py --load --tb_interval=1 --base_path=%s --task=%d --job_name=actor --train_dir=%s  --mem_r=%d --mem_w=%d &",path,path,actor_id,path,(int)key,(int)key_rl);
++        sprintf(cmd,"@PYTHON@ %s/d5.py --load --tb_interval=1 --base_path=%s --task=%d --job_name=actor --train_dir=%s  --mem_r=%d --mem_w=%d &",path,path,actor_id,path,(int)key,(int)key_rl);
          DBGPRINT(0,0,"Starting RL Module (With load) ...\n%s",cmd);
      }
 - 

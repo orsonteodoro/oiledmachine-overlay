@@ -6,7 +6,7 @@ EAPI=8
 
 PYTHON_COMPAT=( "python3_"{10..12} ) # Constrained by tensorflow
 
-inherit python-r1
+inherit python-single-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -44,15 +44,19 @@ REQUIRED_USE+="
 		)
 	)
 "
-DEPEND+="
+RDEPEND+="
 	${PYTHON_DEPS}
-	>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
+	$(python_gen_cond_dep '
+		>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
+		dev-python/sysv_ipc[${PYTHON_USEDEP}]
+	')
 	app-alternatives/sh
-	dev-python/sysv_ipc[${PYTHON_USEDEP}]
 	sys-process/procps
 	sys-process/psmisc
 	build-models? (
-		sci-libs/gym[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			sci-libs/gym[${PYTHON_USEDEP}]
+		')
 		www-misc/mahimahi
 	)
 	cellular-traces? (
@@ -68,14 +72,16 @@ DEPEND+="
 		app-admin/sudo
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	${PYTHON_DEPS}
+	$(python_gen_cond_dep '
+		dev-python/pip[${PYTHON_USEDEP}]
+		dev-python/virtualenv[${PYTHON_USEDEP}]
+	')
 	app-alternatives/sh
-	dev-python/pip[${PYTHON_USEDEP}]
-	dev-python/virtualenv[${PYTHON_USEDEP}]
 	sys-devel/gcc
 "
 PATCHES+=(
