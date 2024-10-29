@@ -9,6 +9,7 @@ EAPI=8
 # TODO package:
 # cibuildwheel
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..12} ) # Upstream tests up to 3.12
 
@@ -41,6 +42,9 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	$(python_gen_cond_dep '
+		>=dev-python/pybind11-2.10.0
+	')
 	>=dev-python/setuptools-61[${PYTHON_USEDEP}]
 	>=dev-build/cmake-3.22
 	dev-build/ninja
@@ -52,6 +56,10 @@ BDEPEND+="
 		>=sci-libs/gymnasium-1.0.0_alpha1[${PYTHON_USEDEP}]
 	)
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-0.9.0-offline-install.patch"
+)
+
 
 distutils_enable_tests "pytest"
 

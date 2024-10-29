@@ -9,6 +9,7 @@ EAPI=8
 # TODO package:
 # cibuildwheel
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream tests up to 3.11
 
@@ -42,10 +43,14 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	$(python_gen_cond_dep '
+		>=dev-python/pybind11-2.10.0
+	')
 	>=dev-python/setuptools-61[${PYTHON_USEDEP}]
 	>=dev-build/cmake-3.22
 	dev-build/ninja
 	dev-python/wheel[${PYTHON_USEDEP}]
+	dev-vcs/git
 	cibuildwheel? (
 		dev-python/cibuildwheel[${PYTHON_USEDEP}]
 	)
@@ -54,6 +59,20 @@ BDEPEND+="
 		>=sci-libs/gym-0.23[${PYTHON_USEDEP}]
 	)
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-0.9.0-offline-install.patch"
+	"${FILESDIR}/${PN}-0.8.1-includes.patch"
+)
+
+python_configure() {
+	git init || die
+	touch dummy || die
+	git config user.email "name@example.com" || die
+	git config user.name "John Doe" || die
+	git add dummy || die
+	git commit -m "Dummy" || die
+	git tag v${PV} || die
+}
 
 distutils_enable_tests "pytest"
 

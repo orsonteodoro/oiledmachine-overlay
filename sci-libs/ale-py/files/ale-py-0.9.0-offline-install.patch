@@ -1,0 +1,11 @@
+--- a/setup.py.orig	2024-10-29 07:30:57.986510135 -0700
++++ b/setup.py	2024-10-29 07:31:33.293982003 -0700
+@@ -40,6 +40,8 @@ class CMakeBuild(build_ext):
+             f"-DCMAKE_BUILD_TYPE={config}",
+             f"-DPython3_EXECUTABLE={sys.executable}",
+             f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}",
++            "-DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS",
++            "-DFETCHCONTENT_FULLY_DISCONNECTED=1",
+             "-DSDL_SUPPORT=ON",
+             "-DSDL_DYNLOAD=ON",
+             "-DBUILD_CPP_LIB=OFF",
