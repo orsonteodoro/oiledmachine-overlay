@@ -6,7 +6,7 @@ EAPI=8
 
 PYTHON_COMPAT=( "python3_"{8..12} )
 
-inherit python-r1
+inherit python-single-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -34,9 +34,11 @@ IUSE+=" kernel-patch polkit sudo"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
-DEPEND+="
+RDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/sysv_ipc-1.0.0[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/sysv_ipc-1.0.0[${PYTHON_USEDEP}]
+	')
 	>=net-misc/iperf-3.1.3
 	app-alternatives/sh
 	dev-lang/perl
@@ -51,8 +53,8 @@ DEPEND+="
 		app-admin/sudo
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	${PYTHON_DEPS}
