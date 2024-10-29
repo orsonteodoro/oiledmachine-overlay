@@ -105,6 +105,11 @@ src_unpack() {
 src_prepare() {
 	default
 	chmod +x "build.sh" || die
+	sed -i -e "s|@PYTHON@|${PYTHON}|g" \
+		"learner.sh" \
+		"orca.sh" \
+		"src/orca-server-mahimahi.cc" \
+		|| die
 }
 
 src_configure() {
