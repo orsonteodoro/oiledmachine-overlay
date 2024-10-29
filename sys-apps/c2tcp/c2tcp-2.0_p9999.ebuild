@@ -37,7 +37,7 @@ REQUIRED_USE+="
 RDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
-		>=dev-python/sysv_ipc-1.0.0[${PYTHON_USEDEP}]
+		>=dev-python/sysv-ipc-1.0.0[${PYTHON_USEDEP}]
 	')
 	>=net-misc/iperf-3.1.3
 	app-alternatives/sh

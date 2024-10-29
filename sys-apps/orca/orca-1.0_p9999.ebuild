@@ -48,7 +48,7 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
 		>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
-		dev-python/sysv_ipc[${PYTHON_USEDEP}]
+		dev-python/sysv-ipc[${PYTHON_USEDEP}]
 		sci-libs/gym[${PYTHON_USEDEP}]
 	')
 	app-alternatives/sh

@@ -4,7 +4,7 @@
 
 EAPI=8
 
-MAINTAINER_MODE=0
+MAINTAINER_MODE=1
 PYTHON_COMPAT=( "python3_"{10..12} ) # Constrained by tensorflow
 
 inherit python-single-r1
@@ -57,7 +57,7 @@ fi
 RDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
-		>=dev-python/sysv_ipc-1.0.0[${PYTHON_USEDEP}]
+		>=dev-python/sysv-ipc-1.0.0[${PYTHON_USEDEP}]
 	')
 	>=net-misc/iperf-3.1.3
 	app-alternatives/sh
@@ -101,7 +101,7 @@ PDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-1.0_p9999-real-network-with-agnostic-sudo.patch"
+	"A${FILESDIR}/${PN}-1.0_p9999-real-network-with-agnostic-sudo.patch"
 )
 
 unpack_live() {
