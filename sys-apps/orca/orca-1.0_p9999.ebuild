@@ -49,14 +49,12 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
 		dev-python/sysv_ipc[${PYTHON_USEDEP}]
+		sci-libs/gym[${PYTHON_USEDEP}]
 	')
 	app-alternatives/sh
 	sys-process/procps
 	sys-process/psmisc
 	build-models? (
-		$(python_gen_cond_dep '
-			sci-libs/gym[${PYTHON_USEDEP}]
-		')
 		www-misc/mahimahi
 	)
 	cellular-traces? (
