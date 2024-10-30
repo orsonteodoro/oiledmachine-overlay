@@ -80,10 +80,10 @@ LICENSE="MPL-2.0"
 IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-clang debug +jit lto -simd test
+clang debug +jit lto rust-simd test
 "
 REQUIRED_USE="
-	simd? (
+	rust-simd? (
 		!llvm_slot_18
 	)
 "
@@ -123,7 +123,8 @@ BDEPEND="
 	${PYTHON_DEPS}
 	virtual/pkgconfig
 	!clang? (
-		simd? (
+		rust-simd? (
+			>=virtual/rust-1.66.0
 			<virtual/rust-1.78.0
 		)
 		virtual/rust:=
@@ -131,14 +132,15 @@ BDEPEND="
 	!elibc_glibc? (
 		|| (
 			(
-				dev-lang/rust
-				simd? (
+				rust-simd? (
+					>=dev-lang/rust-1.66.0
 					<dev-lang/rust-1.78.0
 				)
 				dev-lang/rust:=
 			)
 			(
-				simd? (
+				rust-simd? (
+					>=dev-lang/rust-bin-1.66.0
 					<dev-lang/rust-bin-1.78.0
 				)
 				<dev-lang/rust-bin-1.73
@@ -489,23 +491,20 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 		)
 	fi
 
-	if has_version ">=virtual/rust-1.78.0" ; then
-		# We always end up disabling this at some point due to newer rust versions. bgo#933372
+	if use rust-simd ; then
+		local rust_pv=$(rustc --version | cut -f 2 -d " ")
+		if ver_test "${rust_pv}" -gt "1.78" ; then
+eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
+			die
+		fi
+		myeconfargs+=(
+			--enable-rust-simd
+		)
+	else
+	# We always end up disabling this at some point due to newer rust versions. bgo#933372
 		myeconfargs+=(
 			--disable-rust-simd
 		)
-	else
-		if ! use x86 && [[ "${CHOST}" != "armv"*"h"* ]] ; then
-			if use simd ; then
-				myeconfargs+=(
-					--enable-rust-simd
-				)
-			else
-				myeconfargs+=(
-					--disable-rust-simd
-				)
-			fi
-		fi
 	fi
 
 	# Modifications to better support ARM, bug 717344

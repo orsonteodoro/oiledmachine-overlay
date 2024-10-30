@@ -426,9 +426,10 @@ alsa cups +dbus debug eme-free +ffvpx firejail +hardened -hwaccel jack +jemalloc
 +jit +jumbo-build libcanberra libnotify libproxy libsecret mold +openh264 +pgo
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+pulseaudio selinux sndio speech +system-av1 +system-ffmpeg +system-harfbuzz
-+system-icu +system-jpeg +system-libevent +system-libvpx system-png +system-webp
-systemd -telemetry +vaapi +wayland +webrtc wifi webspeech +X
++pulseaudio rust-simd selinux sndio speech +system-av1 +system-ffmpeg
++system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx
+system-png +system-webp systemd -telemetry +vaapi +wayland +webrtc wifi
+webspeech +X
 "
 
 # Firefox-only IUSE
@@ -503,6 +504,9 @@ REQUIRED_USE="
 	)
 	pgo? (
 		X
+	)
+	rust-simd? (
+		!llvm_slot_18
 	)
 	vaapi? (
 		wayland
@@ -832,7 +836,7 @@ gen_llvm_bdepend() {
 				sys-devel/clang:${LLVM_SLOT}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${LLVM_SLOT}
 				sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
-				virtual/rust:0/llvm-${LLVM_SLOT}
+				virtual/rust:0/llvm-${LLVM_SLOT}[${MULTILIB_USEDEP}]
 				pgo? (
 					=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*[${MULTILIB_USEDEP},profile]
 					sys-libs/compiler-rt-sanitizers:=
@@ -842,7 +846,10 @@ gen_llvm_bdepend() {
 	done
 }
 GCC_BDEPEND="
-	>=virtual/rust-1.76
+	>=virtual/rust-1.76[${MULTILIB_USEDEP}]
+	rust-simd? (
+		<virtual/rust-1.78[${MULTILIB_USEDEP}]
+	)
 "
 # The >=2.0 of mold is used for legal reasons.
 BDEPEND+="
@@ -854,13 +861,21 @@ BDEPEND+="
 	>=dev-lang/perl-5.006
 	>=dev-util/cbindgen-0.26.0
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
-	>=virtual/rust-${RUST_PV}[${MULTILIB_USEDEP}]
+	(
+		>=virtual/rust-${RUST_PV}[${MULTILIB_USEDEP}]
+		rust-simd? (
+			<virtual/rust-1.78[${MULTILIB_USEDEP}]
+		)
+	)
 	app-alternatives/awk
 	app-arch/unzip
 	app-arch/zip
 	app-eselect/eselect-nodejs
 	!elibc_glibc? (
 		dev-lang/rust
+		rust-simd? (
+			<dev-lang/rust-1.78
+		)
 	)
 	amd64? (
 		>=dev-lang/nasm-${NASM_PV}
@@ -2265,8 +2280,15 @@ einfo
 	[[ -n ${MOZ_ESR} ]] && update_channel=esr
 	mozconfig_add_options_ac '' --update-channel=${update_channel}
 
-	if ! use x86 ; then
-		mozconfig_add_options_ac '' --enable-rust-simd
+	if use rust-simd ; then
+		local rust_pv=$(rustc --version | cut -f 2 -d " ")
+		if ver_test "${rust_pv}" -gt "1.78" ; then
+eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
+			die
+		fi
+		mozconfig_add_options_ac '+rust-simd' --enable-rust-simd
+	else
+		mozconfig_add_options_ac '-rust-simd' --disable-rust-simd
 	fi
 
 	# For future keywording: This is currently (97.0) only supported on:

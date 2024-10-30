@@ -424,7 +424,7 @@ alsa cpu_flags_arm_neon cups +dbus debug eme-free +ffvpx firejail +hardened
 -hwaccel jack +jemalloc +jit +jumbo-build libcanberra libnotify libproxy
 libsecret mold +openh264 +pgo +pulseaudio proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
-proprietary-codecs-disable-nc-user selinux sndio speech +system-av1
+proprietary-codecs-disable-nc-user rust-simd selinux sndio speech +system-av1
 +system-ffmpeg +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
@@ -505,6 +505,9 @@ REQUIRED_USE="
 	)
 	pgo? (
 		X
+	)
+	rust-simd? (
+		!llvm_slot_18
 	)
 	vaapi? (
 		wayland
@@ -830,7 +833,7 @@ gen_llvm_bdepend() {
 				sys-devel/clang:${LLVM_SLOT}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${LLVM_SLOT}
 				sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
-				virtual/rust:0/llvm-${LLVM_SLOT}
+				virtual/rust:0/llvm-${LLVM_SLOT}[${MULTILIB_USEDEP}]
 				pgo? (
 					=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*:=[${MULTILIB_USEDEP},profile]
 				)
@@ -853,12 +856,19 @@ BDEPEND+="
 	app-eselect/eselect-nodejs
 	!elibc_glibc? (
 		dev-lang/rust[${MULTILIB_USEDEP}]
+		rust-simd? (
+			>=dev-lang/rust-1.66[${MULTILIB_USEDEP}]
+			<dev-lang/rust-1.78[${MULTILIB_USEDEP}]
+		)
 	)
 	amd64? (
 		>=dev-lang/nasm-${NASM_PV}
 	)
 	elibc_glibc? (
 		>=virtual/rust-${RUST_PV}[${MULTILIB_USEDEP}]
+		rust-simd? (
+			<virtual/rust-1.78[${MULTILIB_USEDEP}]
+		)
 	)
 	mold? (
 		>=sys-devel/mold-2.0
@@ -2216,8 +2226,15 @@ einfo
 	[[ -n ${MOZ_ESR} ]] && update_channel=esr
 	mozconfig_add_options_ac '' --update-channel=${update_channel}
 
-	if ! use x86 ; then
-		mozconfig_add_options_ac '' --enable-rust-simd
+	if use rust-simd ; then
+		local rust_pv=$(rustc --version | cut -f 2 -d " ")
+		if ver_test "${rust_pv}" -gt "1.78" ; then
+eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
+			die
+		fi
+		mozconfig_add_options_ac '+rust-simd' --enable-rust-simd
+	else
+		mozconfig_add_options_ac '-rust-simd' --disable-rust-simd
 	fi
 
 	# For future keywording: This is currently (97.0) only supported on:
