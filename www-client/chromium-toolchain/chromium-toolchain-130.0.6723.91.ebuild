@@ -6,19 +6,19 @@ EAPI=8
 
 inherit dhms
 
-# https://github.com/chromium/chromium/blob/129.0.6668.58/tools/clang/scripts/update.py#L38C41-L38C49 \
+# https://github.com/chromium/chromium/blob/130.0.6723.91/tools/clang/scripts/update.py#L38 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
-GN_PV="0.2188"
-GN_COMMIT="d010e218ca7077928ad7c9e9cc02fe43b5a8a0ad"
-LLVM_COMMIT="7088a5ed"
-LLVM_N_COMMITS="1009"
+GN_PV="0.2198"
+GN_COMMIT="20806f79c6b4ba295274e3a589d85db41a02fdaa"
+LLVM_COMMIT="69c43468"
+LLVM_N_COMMITS="3847"
 LLVM_OFFICIAL_SLOT="20" # Cr official slot
-LLVM_SUB_REV="10"
-# https://github.com/chromium/chromium/blob/129.0.6668.58/tools/rust/update_rust.py#L37 \
+LLVM_SUB_REV="28"
+# https://github.com/chromium/chromium/blob/130.0.6723.91/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-RUST_COMMIT="595316b4006932405a63862d8fe65f71a6356293"
-RUST_SUB_REV="5"
-RUST_PV="1.80.0" # See https://github.com/rust-lang/rust/blob/595316b4006932405a63862d8fe65f71a6356293/RELEASES.md
+RUST_COMMIT="009e73825af0e59ad4fc603562e038b3dbd6593a"
+RUST_SUB_REV="2"
+RUST_PV="1.81.0" # See https://github.com/rust-lang/rust/blob/009e73825af0e59ad4fc603562e038b3dbd6593a/RELEASES.md
 VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${LLVM_N_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 
@@ -316,6 +316,8 @@ src_install() {
 
 pkg_preinst() {
 	dhms_end
+	local count=$(find "/usr/share/chromium/toolchain/" -type f | wc -l)
+einfo "QA:  Update chromium ebuild with tc_count_expected=${count}"
 }
 
 pkg_postrm() {
