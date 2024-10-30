@@ -44,6 +44,7 @@ RDEPEND+="
 	')
 	>=net-misc/iperf-3.1.3
 	app-alternatives/sh
+	sci-visualization/tensorboard
 	sys-process/procps
 	sys-process/psmisc
 	build-models? (
