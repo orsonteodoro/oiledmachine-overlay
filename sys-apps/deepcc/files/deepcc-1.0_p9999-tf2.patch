@@ -3,8 +3,8 @@ deepcc.v1.0.orig/rl-module/models.py:44:12: WARNING: tf.get_variable requires ma
 deepcc.v1.0.orig/rl-module/models.py:48:12: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
 
 diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.py deepcc-1.0_p9999/deepcc.v1.0/rl-module/drl_agent.py
---- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 16:58:35.978801413 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 16:59:01.866430293 -0700
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 17:22:00.650268448 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 17:22:54.749452288 -0700
 @@ -38,7 +38,7 @@ import collections
  from time import sleep
  import argparse
@@ -23,7 +23,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.p
      saver.save(sess, os.path.join(train_dir, 'model'))
      print("--------save checkpoint model at{}--------".format(train_dir))
      logger.info("--------save checkpoint model at{}--------".format(train_dir))
-@@ -476,9 +476,9 @@ def main_tcp():
+@@ -476,9 +476,10 @@ def main_tcp():
      )
      train_dir = str(config.train_dir)+'/train_dir-'+str(config.scheme)
  
@@ -32,11 +32,12 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.p
 -    summary_writer = tf.summary.FileWriter(train_dir, sess.graph)
 +    sess = tf.compat.v1.Session()
 +    global_step = tf.compat.v1.train.get_or_create_global_step(graph=None)
++    tf.compat.v1.disable_eager_execution()
 +    summary_writer = tf.compat.v1.summary.FileWriter(train_dir, sess.graph)
  
      logger = configure_logging(train_dir)
      #logger.info("--------------------------------------------------------------------------------")
-@@ -526,7 +526,7 @@ def main_tcp():
+@@ -526,7 +527,7 @@ def main_tcp():
                      action_range=action_range, summary_writer=summary_writer)
      learner.initialize()
  
@@ -45,7 +46,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.p
  
      summary_writer.add_graph(sess.graph)
      normalizer = Normalizer(input_dim)
-@@ -616,7 +616,7 @@ def main_tcp():
+@@ -616,7 +617,7 @@ def main_tcp():
  
              if (j+1) % config.tb_interval == 0:
                  # tensorboard
@@ -54,7 +55,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.p
                  act_summary.value.add(tag='Step/0-Actions-Eval', simple_value=map_a0)
                  for i in range(0,len(s1)):
                      act_summary.value.add(tag='Step/1-Input-Eval'+str(i), simple_value=s1[i])
-@@ -638,7 +638,7 @@ def main_tcp():
+@@ -638,7 +639,7 @@ def main_tcp():
              ep_r += rew0
  
              if done:
@@ -63,7 +64,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.p
                  ret_summary.value.add(tag='Performance/ReturnInEpisode-Eval', simple_value=ep_r)
                  summary_writer.add_summary(ret_summary, episode_counter)
                  break
-@@ -694,7 +694,7 @@ def main_tcp():
+@@ -694,7 +695,7 @@ def main_tcp():
  
              if (j+1) % config.tb_interval == 0:
                  # tensorboard
@@ -72,7 +73,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.p
                  act_summary.value.add(tag='Step/0-Actions', simple_value=map_a0)
                  for i in range(0,len(s1)):
                      act_summary.value.add(tag='Step/1-Input'+str(i), simple_value=s1[i])
-@@ -721,7 +721,7 @@ def main_tcp():
+@@ -721,7 +722,7 @@ def main_tcp():
              ep_r += rew0
  
              if done:
@@ -82,8 +83,8 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.p
                  summary_writer.add_summary(ret_summary, episode_counter)
                  break
 diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py deepcc-1.0_p9999/deepcc.v1.0/rl-module/models.py
---- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py	2024-10-29 16:58:35.978801413 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/models.py	2024-10-29 17:01:45.804079922 -0700
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py	2024-10-29 17:22:00.650268448 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/models.py	2024-10-29 17:22:24.853903262 -0700
 @@ -26,7 +26,6 @@ SOFTWARE.
  
  from copy import copy
