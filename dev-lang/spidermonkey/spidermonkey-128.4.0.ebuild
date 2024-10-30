@@ -9,17 +9,22 @@ EAPI="8"
 # 115.12.0 -> 128.1.0
 # 128.1.0 -> 128.2.0
 # 128.2.0 -> 128.3.0
+# 128.3.1 -> 128.4.0
+
+CPU_FLAGS_ARM=(
+	cpu_flags_arm_neon
+)
 
 LLVM_COMPAT=( 18 17 ) # Limited by virtual/rust
 
 MY_MAJOR=$(ver_cut 1)
 MY_PN="mozjs"
-MY_PV="${PV/_pre*}" # Handle Gentoo pre-releases
+MY_PV="${PV/_pre*}"
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_DATE="Oct 9, 2024" # Advisory date
-MITIGATION_LAST_UPDATE=1728496500 # From `date +%s -d "2024-10-9 10:55"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-51/"
+MITIGATION_DATE="Oct 29, 2024" # Advisory date
+MITIGATION_LAST_UPDATE=1730147160 # From `date +%s -d "2024-10-28 13:26"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-56/"
 MOZ_ESR="yes"
 MOZ_PN="firefox"
 MOZ_PV="${PV}"
@@ -44,9 +49,9 @@ if [[ "${PV}" == *"_rc"* ]] ; then
 fi
 
 # Patch version
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-04.tar.xz"
 #SPIDERMONKEY_PATCHSET="spidermonkey-${PV%%.*}-patches-01.tar.xz"
-SPIDERMONKEY_PATCHSET="spidermonkey-115-patches-01.tar.xz"
+SPIDERMONKEY_PATCHSET="spidermonkey-128-patches-02.tar.xz"
 PATCH_URIS=(
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${FIREFOX_PATCHSET}
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${SPIDERMONKEY_PATCHSET}
@@ -59,27 +64,36 @@ WANT_AUTOCONF="2.1"
 
 inherit autotools check-reqs dhms flag-o-matic llvm-r1 multiprocessing prefix python-any-r1 toolchain-funcs
 
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
-S="${WORKDIR}/firefox-${MY_PV}/js/src"
+KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86"
+S="${WORKDIR}/firefox-${PV%_*}"
 SRC_URI="
 	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
 	${PATCH_URIS[@]}
 "
 
-DESCRIPTION="SpiderMonkey is Mozilla's JavaScript engine written in C and C++"
+DESCRIPTION="A JavaScript engine written in C and C++"
 HOMEPAGE="
 	https://spidermonkey.dev
 	https://firefox-source-docs.mozilla.org/js/index.html
 "
 LICENSE="MPL-2.0"
-RESTRICT="test" # Not tested
 RESTRICT="
+	test
 	!test? (
 		test
 	)
-"
+" # Not tested
 SLOT="$(ver_cut 1)"
-IUSE="clang cpu_flags_arm_neon debug +jit lto -simd test"
+IUSE="
+${CPU_FLAGS_ARM[@]}
+${LLVM_COMPAT[@]/#/llvm_slot_}
+clang debug +jit lto -simd test
+"
+REQUIRED_USE="
+	simd? (
+		!llvm_slot_18
+	)
+"
 gen_clang_bdepend() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
@@ -90,6 +104,7 @@ gen_clang_bdepend() {
 					sys-devel/clang:${s}
 					sys-devel/lld:${s}
 					virtual/rust:0/llvm-${s}
+					virtual/rust:=
 				)
 			)
 		"
@@ -110,9 +125,20 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
+	>=dev-util/cbindgen-0.26.0
 	virtual/pkgconfig
 	!clang? (
 		>=virtual/rust-0.77.1
+		simd? (
+			<virtual/rust-1.78.0
+		)
+		virtual/rust:=
+	)
+	!elibc_glibc? (
+		simd? (
+			<dev-lang/rust-1.78.0
+		)
+		dev-lang/rust:=
 	)
 	test? (
 		$(python_gen_any_dep '
@@ -125,14 +151,14 @@ BDEPEND="
 "
 
 llvm_check_deps() {
-	if ! has_version -b "sys-devel/llvm:${LLVM_SLOT}" ; then
-einfo "sys-devel/llvm:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
-		return 1
-	fi
-
 	if use clang ; then
 		if ! has_version -b "sys-devel/clang:${LLVM_SLOT}" ; then
 einfo "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+			return 1
+		fi
+
+		if ! has_version -b "sys-devel/llvm:${LLVM_SLOT}" ; then
+einfo "sys-devel/llvm:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
 		fi
 
@@ -152,6 +178,50 @@ einfo "sys-devel/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} 
 einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 }
 
+
+mozconfig_add_options_ac() {
+	debug-print-function ${FUNCNAME} "$@"
+
+	if (( ${#} < 2 )) ; then
+		die "${FUNCNAME} requires at least two arguments"
+	fi
+
+	local reason="${1}"
+	shift
+
+	local option
+	for option in ${@} ; do
+		echo "ac_add_options ${option} # ${reason}" >>${MOZCONFIG}
+	done
+}
+
+mozconfig_add_options_mk() {
+	debug-print-function ${FUNCNAME} "$@"
+
+	if (( ${#} < 2 )) ; then
+		die "${FUNCNAME} requires at least two arguments"
+	fi
+
+	local reason="${1}"
+	shift
+
+	local option
+	for option in ${@} ; do
+		echo "mk_add_options ${option} # ${reason}" >>${MOZCONFIG}
+	done
+}
+
+mozconfig_use_enable() {
+	debug-print-function ${FUNCNAME} "$@"
+
+	if (( ${#} < 1 )) ; then
+		die "${FUNCNAME} requires at least one arguments"
+	fi
+
+	local flag=$(use_enable "${@}")
+	mozconfig_add_options_ac "$(use ${1} && echo +${1} || echo -${1})" "${flag}"
+}
+
 python_check_deps() {
 	if use test ; then
 		python_has_version "dev-python/six[${PYTHON_USEDEP}]"
@@ -169,7 +239,7 @@ tc-ld-is-mold() {
 
 	# First check the linker directly.
 	local out=$($(tc-getLD "$@") --version 2>&1)
-	if [[ ${out} == *"mold"* ]] ; then
+	if [[ "${out}" == *"mold"* ]] ; then
 		return 0
 	fi
 
@@ -177,12 +247,12 @@ tc-ld-is-mold() {
 	# Note: We're assuming they're using LDFLAGS to hold the
 	# options and not CFLAGS/CXXFLAGS.
 	local base="${T}/test-tc-linker"
-	cat <<-EOF > "${base}.c"
-	int main() { return 0; }
-	EOF
+cat <<-EOF > "${base}.c"
+int main() { return 0; }
+EOF
 	out=$($(tc-getCC "$@") ${CFLAGS} ${CPPFLAGS} ${LDFLAGS} -Wl,--version "${base}.c" -o "${base}" 2>&1)
 	rm -f "${base}"*
-	if [[ ${out} == *"mold"* ]] ; then
+	if [[ "${out}" == *"mold"* ]] ; then
 		return 0
 	fi
 
@@ -192,20 +262,21 @@ tc-ld-is-mold() {
 
 pkg_pretend() {
 	if use test ; then
-		CHECKREQS_DISK_BUILD="4000M"
+		CHECKREQS_DISK_BUILD="4400M"
 	else
-		CHECKREQS_DISK_BUILD="3600M"
+		CHECKREQS_DISK_BUILD="4300M"
 	fi
 
 	check-reqs_pkg_pretend
 }
 
 pkg_setup() {
-	if [[ ${MERGE_TYPE} != binary ]] ; then
+	dhms_start
+	if [[ "${MERGE_TYPE}" != "binary" ]] ; then
 		if use test ; then
-			CHECKREQS_DISK_BUILD="4000M"
+			CHECKREQS_DISK_BUILD="4400M"
 		else
-			CHECKREQS_DISK_BUILD="3600M"
+			CHECKREQS_DISK_BUILD="4300M"
 		fi
 
 		check-reqs_pkg_setup
@@ -276,13 +347,9 @@ ewarn "/dev/shm is not mounted -- expect build failures!"
 }
 
 src_prepare() {
-	pushd "../.." &>/dev/null || die
-
-	use lto && rm -v "${WORKDIR}/firefox-patches/"*"-LTO-Only-enable-LTO-"*".patch"
-
-#	if ! use ppc64; then
-#		rm -v "${WORKDIR}/firefox-patches/"*"ppc64"*".patch" || die
-#	fi
+	if use lto ; then
+		rm -v "${WORKDIR}/firefox-patches/"*"-LTO-Only-enable-LTO-"*".patch" || die
+	fi
 
 	# Workaround for bgo #915651, 915651, 929013 on musl.
 	if use elibc_glibc ; then
@@ -290,17 +357,18 @@ src_prepare() {
 	fi
 
 	eapply "${WORKDIR}/firefox-patches"
-	pushd "${WORKDIR}/firefox-${MY_PV}" >/dev/null 2>&1 || die
-		rm "${WORKDIR}/spidermonkey-patches/0003-tests-Increase-the-test-timeout-for-slower-builds.patch" || die
-		local x
-		for x in $(ls "${WORKDIR}/spidermonkey-patches") ; do
-			if [[ "${x}" =~ "0008" ]] ; then
-				eapply --fuzz=1 "${FILESDIR}/spidermonkey-128.1.0-0008-spidermonkey-91.5.0-dont-fail-gcc-sanity-checks.patch"
-				continue
-			fi
-			eapply "${WORKDIR}/spidermonkey-patches/${x}"
-		done
-	popd >/dev/null 2>&1 || die
+
+#	pushd "${WORKDIR}/firefox-${MY_PV}" >/dev/null 2>&1 || die
+#		rm "${WORKDIR}/spidermonkey-patches/0003-tests-Increase-the-test-timeout-for-slower-builds.patch" || die
+#		local x
+#		for x in $(ls "${WORKDIR}/spidermonkey-patches") ; do
+#			if [[ "${x}" =~ "0008" ]] ; then
+#				eapply --fuzz=1 "${FILESDIR}/spidermonkey-128.1.0-0008-spidermonkey-91.5.0-dont-fail-gcc-sanity-checks.patch"
+#				continue
+#			fi
+#			eapply "${WORKDIR}/spidermonkey-patches/${x}"
+#		done
+#	popd >/dev/null 2>&1 || die
 
 	default
 
@@ -309,10 +377,14 @@ src_prepare() {
 
 	# Workaround for bgo #915651, 915651, 929013 on musl.
 	if ! use elibc_glibc ; then
-		if use amd64 ; then
+		  if use amd64 ; then
 			export RUST_TARGET="x86_64-unknown-linux-musl"
 		elif use x86 ; then
 			export RUST_TARGET="i686-unknown-linux-musl"
+		elif use arm64 ; then
+			export RUST_TARGET="aarch64-unknown-linux-musl"
+		elif use ppc64 ; then
+			export RUST_TARGET="powerpc64le-unknown-linux-musl"
 		else
 eerror
 eerror "Unknown musl chost, please post your rustc -vV along with"
@@ -328,11 +400,8 @@ eerror
 		"python/mozbuild/mozbuild/configure/check_debug_ranges.py" \
 		|| die "sed failed to set toolchain prefix"
 
-	# use prefix shell in wrapper linker scripts, bug #789660
-	hprefixify "${S}/../../build/cargo-"{,host-}"linker"
-
-einfo "Removing pre-built binaries ..."
-	find third_party \
+	einfo "Removing pre-built binaries ..."
+	find "third_party" \
 		-type f \
 		\( \
 			   -name '*.so' \
@@ -342,10 +411,12 @@ einfo "Removing pre-built binaries ..."
 		-delete \
 		|| die
 
-	MOZJS_BUILDDIR="${WORKDIR}/build"
-	mkdir "${MOZJS_BUILDDIR}" || die
+	# use prefix shell in wrapper linker scripts, bug #789660
+	hprefixify "${S}/../../build/cargo-"{,host-}"linker"
 
-	popd &>/dev/null || die
+	# Create build dir
+	BUILD_DIR="${WORKDIR}/${PN}_build"
+	mkdir -p "${BUILD_DIR}" || die
 }
 
 check_security_expire() {
@@ -393,13 +464,19 @@ einfo "Time passed since the last security update:  ${dhms_passed}"
 src_configure() {
 	check_security_expire
 	# Show flags set at the beginning
+einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
 einfo "Current CFLAGS:    ${CFLAGS}"
 einfo "Current CXXFLAGS:  ${CXXFLAGS}"
 einfo "Current LDFLAGS:   ${LDFLAGS}"
 einfo "Current RUSTFLAGS: ${RUSTFLAGS}"
 
+	if tc-is-clang && ! use clang ; then
+eerror "Detected clang.  Set USE=clang."
+		die
+	fi
+
 	local have_switched_compiler=
-	if use clang; then
+	if use clang ; then
 	# Force clang
 einfo "Enforcing the use of clang due to USE=clang ..."
 
@@ -421,8 +498,9 @@ einfo "Enforcing the use of clang due to USE=clang ..."
 		CXX="${CHOST}-clang++-${version_clang}"
 		NM="llvm-nm"
 		RANLIB="llvm-ranlib"
-
-	elif ! use clang && ! tc-is-gcc ; then
+		READELF="llvm-readelf"
+		OBJDUMP="llvm-objdump"
+	else
 	# Force gcc
 		have_switched_compiler="yes"
 einfo "Enforcing the use of gcc due to USE=-clang ..."
@@ -431,6 +509,8 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 		CXX="${CHOST}-g++"
 		NM="gcc-nm"
 		RANLIB="gcc-ranlib"
+		READELF="readelf"
+		OBJDUMP="objdump"
 	fi
 
 	if [[ -n "${have_switched_compiler}" ]] ; then
@@ -444,9 +524,13 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 	export HOST_CC="$(tc-getBUILD_CC)"
 	export HOST_CXX="$(tc-getBUILD_CXX)"
 	export AS="$(tc-getCC) -c"
-	tc-export CC CXX LD AR AS NM OBJDUMP RANLIB PKG_CONFIG
 
-	cd "${MOZJS_BUILDDIR}" || die
+	tc-export CC CXX LD AR AS NM OBJDUMP RANLIB READELF PKG_CONFIG
+
+	# Pass the correct toolchain paths through cbindgen
+	if tc-is-cross-compiler ; then
+		export BINDGEN_CFLAGS="${SYSROOT:+--sysroot=${ESYSROOT}} --target=${CHOST} ${BINDGEN_CFLAGS-}"
+	fi
 
 	# ../python/mach/mach/mixin/process.py fails to detect SHELL
 	export SHELL="${EPREFIX}/bin/bash"
@@ -461,146 +545,170 @@ eerror "JIT must be turned on"
 	# Modifications to better support ARM, bug 717344
 	# Tell build system that we want to use LTO
 	# Thumb options aren't supported when using clang, bug 666966
-	local -a myeconfargs=(
-		$(! use x86 && [[ ${CHOST} != armv*h* ]] && echo "
-			$(usex simd "--enable-rust-simd" "--disable-rust-simd" )
-		")
-		$(use cpu_flags_arm_neon && echo "
-			--with-fpu=neon
-		")
-		$(use cpu_flags_arm_neon && ! tc-is-clang && echo "
-			--with-thumb=yes
-			--with-thumb-interwork=no
-		")
-		$(use debug && echo "
-			--disable-optimize
-			--enable-debug-symbols
-			--enable-real-time-tracing
-		")
-		$(use debug || echo "
-			--enable-optimize
-			--disable-debug-symbols
-			--disable-real-time-tracing
-		")
-		$(use lto && ! use clang && echo "
-			--enable-linker=bfd
-			--enable-lto=full
 
-		")
-		$(use lto && use clang && tc-ld-is-mold && echo "
-			--enable-linker=mold
-			--enable-lto=cross
-		")
-		$(use lto && use clang && ! tc-ld-is-mold && echo "
-			--enable-linker=lld
-			--enable-lto=cross
-		")
-		$(use_enable debug)
-		$(use_enable jit)
-		$(use_enable test tests)
-		--disable-ctype
-		--disable-jemalloc
-		--disable-smoosh
-		--disable-strip
-		--enable-project=js
-		--enable-readline
-		--enable-release
-		--enable-shared-js
-		--host="${CBUILD:-${CHOST}}"
-		--target="${CHOST}"
-		--with-intl-api
-		--with-system-icu
-		--with-system-nspr
-		--with-system-zlib
-		--with-toolchain-prefix="${CHOST}-"
-	)
+	# Set state path
+	export MOZBUILD_STATE_PATH="${BUILD_DIR}"
+
+	# Set MOZCONFIG
+	export MOZCONFIG="${S}/.mozconfig"
+
+	# Initialize MOZCONFIG
+	mozconfig_add_options_ac '' --enable-project=js
+
+	mozconfig_add_options_ac 'Gentoo default' \
+		--host="${CBUILD:-${CHOST}}" \
+		--target="${CHOST}" \
+		--disable-ctype \
+		--disable-jemalloc \
+		--disable-smoosh \
+		--disable-strip \
+		--enable-readline \
+		--enable-release \
+		--enable-shared-js \
+		--libdir="${EPREFIX}/usr/$(get_libdir)" \
+		--prefix="${EPREFIX}/usr" \
+		--with-intl-api \
+		--with-system-icu \
+		--with-system-nspr \
+		--with-system-zlib \
+		--with-toolchain-prefix="${CHOST}-" \
+		--x-includes="${ESYSROOT}/usr/include" \
+		--x-libraries="${ESYSROOT}/usr/$(get_libdir)"
+
+	mozconfig_use_enable debug
+	mozconfig_use_enable jit
+	mozconfig_use_enable test tests
+
+	if use debug ; then
+		mozconfig_add_options_ac '+debug' --disable-optimize
+		mozconfig_add_options_ac '+debug' --enable-debug-symbols
+		mozconfig_add_options_ac '+debug' --enable-real-time-tracing
+	else
+		mozconfig_add_options_ac '-debug' --enable-optimize
+		mozconfig_add_options_ac '-debug' --disable-debug-symbols
+		mozconfig_add_options_ac '-debug' --disable-real-time-tracing
+	fi
+
+	if has_version ">=virtual/rust-1.78.0" ; then
+		# We always end up disabling this at some point due to newer rust versions. bgo#933372
+		mozconfig_add_options_ac '-simd' --disable-rust-simd
+	else
+		if ! use x86 && [[ "${CHOST}" != "armv"*"h"* ]] ; then
+			if use simd ; then
+				mozconfig_add_options_ac '+simd' --enable-rust-simd
+			else
+				mozconfig_add_options_ac '-simd' --disable-rust-simd
+			fi
+		else
+			mozconfig_add_options_ac '-simd' --disable-rust-simd
+		fi
+	fi
+
+	# Modifications to better support ARM, bug 717344
+	if use cpu_flags_arm_neon ; then
+		mozconfig_add_options_ac '+cpu_flags_arm_neon' --with-fpu=neon
+
+		if ! tc-is-clang ; then
+			# thumb options aren't supported when using clang, bug 666966
+			mozconfig_add_options_ac '+cpu_flags_arm_neon' --with-thumb=yes
+			mozconfig_add_options_ac '+cpu_flags_arm_neon' --with-thumb-interwork=no
+		fi
+	fi
+
+	# Tell build system that we want to use LTO
+	if use lto ; then
+		if use clang ; then
+			if tc-ld-is-mold ; then
+				mozconfig_add_options_ac '+lto' --enable-linker=mold
+			else
+				mozconfig_add_options_ac '+lto' --enable-linker=lld
+			fi
+			mozconfig_add_options_ac '+lto' --enable-lto=cross
+
+		else
+			mozconfig_add_options_ac '+lto' --enable-linker=bfd
+			mozconfig_add_options_ac '+lto' --enable-lto=full
+		fi
+	fi
 
 	# LTO flag was handled via configure
 	filter-lto
 
 	# Use system's Python environment
 	export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="none"
-	export PIP_NETWORK_INSTALL_RESTRICTED_VIRTUALENVS=mach
+	export PIP_NETWORK_INSTALL_RESTRICTED_VIRTUALENVS="mach"
+
+	# Disable notification when build system has finished
+	export MOZ_NOSPAM=1
+
+	# Portage sets XARGS environment variable to "xargs -r" by default which
+	# breaks build system's check_prog() function which doesn't support arguments
+	mozconfig_add_options_ac 'Gentoo default' "XARGS=${EPREFIX}/usr/bin/xargs"
+
+	# Set build dir
+	mozconfig_add_options_mk 'Gentoo default' "MOZ_OBJDIR=${BUILD_DIR}"
 
 	# Show flags we will use
+einfo "Build BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
 einfo "Build CFLAGS:    ${CFLAGS}"
 einfo "Build CXXFLAGS:  ${CXXFLAGS}"
 einfo "Build LDFLAGS:   ${LDFLAGS}"
 einfo "Build RUSTFLAGS: ${RUSTFLAGS}"
 
-	# Forcing system-icu allows us to skip patching bundled ICU for PPC
-	# and other minor arches
-	ECONF_SOURCE="${S}" \
-		econf \
-		${myeconfargs[@]} \
-		XARGS="${EPREFIX}/usr/bin/xargs"
+	./mach configure || die
 }
 
 src_compile() {
-	cd "${MOZJS_BUILDDIR}" || die
-	default
+	./mach build --verbose || die
 }
 
 src_test() {
-	if "${MOZJS_BUILDDIR}/js/src/js" -e 'print("Hello world!")'; then
+	if "${BUILD_DIR}/js/src/js" -e 'print("Hello world!")'; then
 einfo "Smoke-test successful, continuing with full test suite"
 	else
 eerror "Smoke-test failed: did interpreter initialization fail?"
 		die
 	fi
 
-	if use sparc ; then
-		echo "non262/Array/regress-157652.js" >> "${T}"/known_failures.list
-		echo "non262/regress/regress-422348.js" >> "${T}"/known_failures.list
-		echo "test262/built-ins/TypedArray/prototype/set/typedarray-arg-set-values-same-buffer-other-type.js" >> "${T}"/known_failures.list
-	fi
-
 	cp \
 		"${FILESDIR}/spidermonkey-${SLOT}-known-test-failures.txt" \
-		"${T}/known_failures.list" \
+		"${T}/known_test_failures.list" \
 		|| die
 
 	if use x86 ; then
-		echo "non262/Date/timeclip.js" >> "${T}/known_failures.list"
-		echo "test262/built-ins/Date/UTC/fp-evaluation-order.js" >> "${T}/known_failures.list"
-		echo "test262/language/types/number/S8.5_A2.1.js" >> "${T}/known_failures.list"
-		echo "test262/language/types/number/S8.5_A2.2.js" >> "${T}/known_failures.list"
+		echo \
+			"non262/Intl/DateTimeFormat/timeZone_version.js" \
+			>> \
+			"${T}/known_test_failures.list" \
+			|| die
+		echo \
+			"test262/intl402/Locale/constructor-non-iana-canon.js" \
+			>> \
+			"${T}/known_test_failures.list" \
+			|| die
 	fi
 
-	${EPYTHON} \
-		"${S}/tests/jstests.py" \
-		-d \
-		-s \
-		-t 1800 \
-		--wpt=disabled \
-		--no-progress \
-		--exclude-file="${T}/known_failures.list" \
-		"${MOZJS_BUILDDIR}/js/src/js" \
-		|| die
-
-	use jit && \
-	${EPYTHON} \
-		"${S}/tests/jstests.py" \
-		-d \
-		-s \
-		-t 1800 \
-		--wpt=disabled \
-		--no-progress \
-		--exclude-file="${T}/known_failures.list" \
-		"${MOZJS_BUILDDIR}/js/src/js" \
-		basic \
-		|| die
+	./mach jstests --exclude-file="${T}/known_test_failures.list" || die
 }
 
 src_install() {
-	cd "${MOZJS_BUILDDIR}" || die
+	cd "${BUILD_DIR}" || die
 	default
 
 	# Fix soname links
 	pushd "${ED}/usr/$(get_libdir)" &>/dev/null || die
-		mv "lib${MY_PN}-${MY_MAJOR}.so" "lib${MY_PN}-${MY_MAJOR}.so.0.0.0" || die
-		ln -s "lib${MY_PN}-${MY_MAJOR}.so.0.0.0" "lib${MY_PN}-${MY_MAJOR}.so.0" || die
-		ln -s "lib${MY_PN}-${MY_MAJOR}.so.0" "lib${MY_PN}-${MY_MAJOR}.so" || die
+		mv \
+			"lib${MY_PN}-${MY_MAJOR}.so" \
+			"lib${MY_PN}-${MY_MAJOR}.so.0.0.0" \
+			|| die
+		ln -s \
+			"lib${MY_PN}-${MY_MAJOR}.so.0.0.0" \
+			"lib${MY_PN}-${MY_MAJOR}.so.0" \
+			|| die
+		ln -s \
+			"lib${MY_PN}-${MY_MAJOR}.so.0" \
+			"lib${MY_PN}-${MY_MAJOR}.so" \
+			|| die
 	popd &>/dev/null || die
 
 	# Remove unneeded files
@@ -614,4 +722,5 @@ src_install() {
 		"${ED}/usr/$(get_libdir)/pkgconfig/"*".pc" \
 		"${ED}/usr/include/mozjs-${MY_MAJOR}/js-config.h" \
 		|| die
+	dhms_end
 }
