@@ -17,7 +17,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 else
-	KEYWORDS="~amd64" # Ebuild needs testing
+	#KEYWORDS="~amd64" # Ebuild needs testing
 	S="${WORKDIR}/${P}"
 	SRC_URI="
 		FIXME

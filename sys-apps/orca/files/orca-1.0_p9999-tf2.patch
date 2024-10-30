@@ -1,3 +1,5 @@
+# Patch Status: Work In Progress (WIP)
+
 rl-module.orig/agent.py:396:8: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
 
 diff '--color=auto' -urp orca-1.0_p9999.orig/rl-module/agent.py orca-1.0_p9999/rl-module/agent.py
