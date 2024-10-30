@@ -8,7 +8,7 @@ EAPI=8
 # 128.1.0 -> 128.2.0
 # 128.2.0 -> 128.3.0
 # 128.3.0 -> 128.3.1
-# 128.3.1 ->
+# 128.3.1 -> 128.4.0
 
 # SECURITY:  If this gets bumped, then dev-lang/spidermonkey should be bumped too with the same ESR version.
 
@@ -133,7 +133,7 @@ FFMPEG_COMPAT=(
 	"0/51.53.53" # 0.10
 	"0/50.53.53" # 0.8
 )
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-04.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"

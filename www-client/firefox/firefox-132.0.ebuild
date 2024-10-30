@@ -8,7 +8,7 @@ EAPI=8
 # 129.0.2 -> 130.0.0
 # 130.0 -> 131.0
 # 131.0 -> 131.0.2
-# 131.0.3 ->
+# 131.0.3 -> 132.0
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
