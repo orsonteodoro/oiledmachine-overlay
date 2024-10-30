@@ -3,8 +3,8 @@ deepcc.v1.0.orig/rl-module/models.py:44:12: WARNING: tf.get_variable requires ma
 deepcc.v1.0.orig/rl-module/models.py:48:12: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
 
 diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.py deepcc-1.0_p9999/deepcc.v1.0/rl-module/drl_agent.py
---- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 13:36:56.134519013 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 13:38:42.452927283 -0700
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 16:58:35.978801413 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 16:59:01.866430293 -0700
 @@ -38,7 +38,7 @@ import collections
  from time import sleep
  import argparse
@@ -82,9 +82,17 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.p
                  summary_writer.add_summary(ret_summary, episode_counter)
                  break
 diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py deepcc-1.0_p9999/deepcc.v1.0/rl-module/models.py
---- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py	2024-10-29 13:36:56.134519013 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/models.py	2024-10-29 13:39:56.675815650 -0700
-@@ -39,22 +39,22 @@ def create_input_op_shape(obs, tensor):
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py	2024-10-29 16:58:35.978801413 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/models.py	2024-10-29 17:01:45.804079922 -0700
+@@ -26,7 +26,6 @@ SOFTWARE.
+ 
+ from copy import copy
+ import tensorflow as tf
+-import tensorflow.contrib as tc
+ import numpy as np
+ import math
+ H1_SHAPE = 1000
+@@ -39,22 +38,22 @@ def create_input_op_shape(obs, tensor):
  
  
  def fc(input, output_shape, name='fc'):
@@ -113,7 +121,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
  
  
  
-@@ -76,17 +76,17 @@ class Learner(object):
+@@ -76,17 +75,17 @@ class Learner(object):
          self.action_noise = action_noise
          self.action_range = action_range
          self.summary_writer = summary_writer
@@ -142,7 +150,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
          # Actor
          target_actor = copy(actor)
          self.target_actor = target_actor
-@@ -121,7 +121,7 @@ class Learner(object):
+@@ -121,7 +120,7 @@ class Learner(object):
          self.target_q = self.reward + (1. - self.is_terminal) * gamma * self.q_s1
          self.target_q_debug =  gamma * self.q_s1
  
@@ -151,7 +159,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
  
          #with tf.control_dependencies(self.extra_update_ops):
          self.actor_train_op = self.build_actor_train_op()
-@@ -129,7 +129,7 @@ class Learner(object):
+@@ -129,7 +128,7 @@ class Learner(object):
  
          if self.summary_writer is not None:
              # All tf.summaries should have been defined prior to running this.
@@ -160,7 +168,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
  
  
      def get_target_actor_out(self, obs):
-@@ -149,12 +149,12 @@ class Learner(object):
+@@ -149,12 +148,12 @@ class Learner(object):
          self.a_gradients = self.actor_optimizer.compute_gradients(self.a_loss, var_list=self.actor.trainable_vars())
          #print(self.actor.trainable_vars())
          if self.summary_writer is not None:
@@ -175,7 +183,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
  #                tf.summary.histogram('Actor_grad', self.a_gradients)
  
          #self.a_gradients = list(zip(grads, self.actor.trainable_vars()))
-@@ -181,13 +181,16 @@ class Learner(object):
+@@ -181,13 +180,16 @@ class Learner(object):
          self.c_loss = tf.reduce_mean(tf.square(self.critic_out - self.target_q))
  
          reg_var = [x for x in  self.critic.trainable_vars() if (x.name.endswith('w:0') or x.name.endswith('kernel:0'))]
@@ -195,7 +203,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
  
          self.c_gradients = self.critic_optimizer.compute_gradients(self.c_loss, var_list=self.critic.trainable_vars())
          #for i, (grad, var) in enumerate(self.c_gradients):
-@@ -200,7 +203,7 @@ class Learner(object):
+@@ -200,7 +202,7 @@ class Learner(object):
  
      def initialize(self):
  
@@ -204,7 +212,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
          self.sess.run(self.target_actor_update_init)
          self.sess.run(self.target_critic_update_init)
  
-@@ -242,7 +245,7 @@ class Learner(object):
+@@ -242,7 +244,7 @@ class Learner(object):
  
      def train_step(self):
          #print("Hello:", tf.get_collection(tf.GraphKeys.UPDATE_OPS))
@@ -213,7 +221,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
          #extra_update_ops_c = [v for v in tf.get_collection(tf.GraphKeys.UPDATE_OPS) if "critic/" in v.name and "target" not in v.name]
          #extra_update_ops_c1 = [v for v in tf.get_collection(tf.GraphKeys.UPDATE_OPS) if "critic_1" in v.name and "target" not in v.name]
          #extra_update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-@@ -322,22 +325,22 @@ class Actor(object):
+@@ -322,23 +324,23 @@ class Actor(object):
          #self.obs0 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='obs0')
  
      def trainable_vars(self):
@@ -227,23 +235,25 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
 +        with tf.compat.v1.variable_scope(self.name, reuse=tf.compat.v1.AUTO_REUSE):
              h1 = fc(obs, H1_SHAPE, name='fc1')
 -            h1 = tf.layers.batch_normalization(h1, training = is_training, scale=False)
-+            h1 = tf.compat.v1.layers.batch_normalization(h1, training = is_training, scale=False)
++            h1 = tf.keras.layers.BatchNormalization(scale=False)(h1, training = is_training)
              h1 = tf.nn.relu(h1)
              h2 = fc(h1, H2_SHAPE, name='fc2')
 -            h2 = tf.layers.batch_normalization(h2, training = is_training, scale=False)
-+            h2 = tf.compat.v1.layers.batch_normalization(h2, training = is_training, scale=False)
++            h2 = tf.keras.layers.BatchNormalization(scale=False)(h2, training = is_training)
              h2 = tf.nn.relu(h2)
  
 -            #out = tf.layers.dense(h2, self.action_dim, kernel_initializer=tf.random_uniform_initializer(minval=-3e-3, maxval=3e-3))
 -            #out = tf.layers.dense(h2, self.action_dim, kernel_initializer=tf.contrib.layers.xavier_initializer())
 -            out = tf.layers.dense(h2, self.action_dim)#, kernel_initializer=tf.contrib.layers.xavier_initializer())
+-            #out = tf.layers.batch_normalization(out, training = is_training)
 +            #out = tf.keras.layers.Dense(units=self.action_dim, kernel_initializer=tf.random_uniform_initializer(minval=-3e-3, maxval=3e-3))(h2)
 +            #out = tf.keras.layers.Dense(units=self.action_dim, kernel_initializer=tf.contrib.layers.xavier_initializer())(h2)
 +            out = tf.keras.layers.Dense(units=self.action_dim)(h2) #, kernel_initializer=tf.contrib.layers.xavier_initializer())
-             #out = tf.layers.batch_normalization(out, training = is_training)
++            #out = tf.keras.layers.BatchNormalization()(out, training = is_training)
              out = tf.nn.tanh(out)
  
-@@ -359,12 +362,12 @@ class Critic(object):
+             # scale the output here, [-action_bound, action_bound]
+@@ -359,12 +361,12 @@ class Critic(object):
          # self.obs0 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='obs0')
  
      def trainable_vars(self):
@@ -258,7 +268,16 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
              '''
              h1 = fc(tf.concat([obs, action], axis=-1), H1_SHAPE, name='fc1')
              h1 = tf.nn.relu(h1)
-@@ -387,8 +390,8 @@ class Critic(object):
+@@ -373,7 +375,7 @@ class Critic(object):
+             h2 = tf.nn.relu(h2)
+             '''
+             h1 = fc(obs, H1_SHAPE, name='fc1')
+-            #h1 = tf.layers.batch_normalization(h1, training = is_training, scale=False)
++            #h1 = tf.keras.layers.BatchNormalization(scale=False)(h1, training = is_training)
+             #h1 = tf.contrib.layers.layer_norm(h1)
+             h1 = tf.nn.relu(h1)
+ 
+@@ -387,8 +389,8 @@ class Critic(object):
              #b2 = tf.get_variable('b', [H2_SHAPE])
              #h2 = tf.nn.relu(tf.matmul(h1, w2_s) + tf.matmul(action, w2_a) + b2)
  
