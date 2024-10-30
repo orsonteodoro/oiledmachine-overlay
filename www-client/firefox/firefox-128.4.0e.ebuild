@@ -2404,8 +2404,11 @@ einfo "Building without Mozilla API key ..."
 			--enable-default-toolkit="cairo-gtk3-x11-only"
 	fi
 
-	# LTO is handled via configure
+	# LTO is handled via configure.
+	# -Werror=lto-type-mismatch -Werror=odr are going to fail with GCC,
+	# bmo#1516758, bgo#942288
 	filter-lto
+	filter-flags -Werror=lto-type-mismatch -Werror=odr
 
 	if ! use mold && is-flagq '-fuse-ld=mold' ; then
 eerror
@@ -2632,10 +2635,6 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 	# System-av1 fix
 	use system-av1 && \
 	append-ldflags "-Wl,--undefined-version"
-
-	# Allow elfhack to work in combination with unstripped binaries
-	# when they would normally be larger than 2GiB.
-	append-ldflags "-Wl,--compress-debug-sections=zlib"
 
 	# Make revdep-rebuild.sh happy; Also required for musl
 	append-ldflags -Wl,-rpath="${MOZILLA_FIVE_HOME}",--enable-new-dtags
@@ -3036,8 +3035,6 @@ EOF
 	sed -i \
 		-e "s:@PREFIX@:${EPREFIX}/usr:" \
 		-e "s:@LIBDIR@:$(get_libdir):" \
-		-e "s:@MOZ_FIVE_HOME@:${MOZILLA_FIVE_HOME}:" \
-		-e "s:@APULSELIB_DIR@:${apulselib}:" \
 		-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
 		"${ED}/usr/bin/${PN}-${ABI}" \
 		|| die
@@ -3051,26 +3048,6 @@ src_install() {
 		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
-}
-
-pkg_preinst() {
-	xdg_pkg_preinst
-
-	# If the apulse libs are available in MOZILLA_FIVE_HOME then apulse
-	# does not need to be forced into the LD_LIBRARY_PATH
-	if use pulseaudio && has_version ">=media-sound/apulse-0.1.12-r4" ; then
-einfo "APULSE found; Generating library symlinks for sound support ..."
-		local lib
-		pushd "${ED}${MOZILLA_FIVE_HOME}" &>/dev/null || die
-			for lib in "../apulse/libpulse"{".so"{"",".0"},"-simple.so"{"",".0"}} ; do
-	# A quickpkg rolled by hand will grab symlinks as part of the package,
-	# so we need to avoid creating them if they already exist.
-				if [[ ! -L "${lib##*/}" ]] ; then
-					ln -s "${lib}" "${lib##*/}" || die
-				fi
-			done
-		popd &>/dev/null || die
-	fi
 }
 
 pkg_postinst() {
@@ -3087,14 +3064,6 @@ einfo
 		for plugin in "${MOZ_GMP_PLUGIN_LIST[@]}" ; do
 einfo "\t ${plugin}"
 		done
-einfo
-	fi
-
-	if use pulseaudio && has_version ">=media-sound/apulse-0.1.12-r4" ; then
-einfo
-einfo "Apulse was detected at merge time on this system and so it will always be"
-einfo "used for sound.  If you wish to use pulseaudio instead please unmerge"
-einfo "media-sound/apulse."
 einfo
 	fi
 
