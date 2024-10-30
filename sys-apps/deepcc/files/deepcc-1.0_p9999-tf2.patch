@@ -5,8 +5,8 @@ deepcc.v1.0.orig/rl-module/models.py:44:12: WARNING: tf.get_variable requires ma
 deepcc.v1.0.orig/rl-module/models.py:48:12: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
 
 diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.py deepcc-1.0_p9999/deepcc.v1.0/rl-module/drl_agent.py
---- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 17:22:00.650268448 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 17:22:54.749452288 -0700
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 22:36:39.401415649 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 22:39:14.752615484 -0700
 @@ -38,7 +38,7 @@ import collections
  from time import sleep
  import argparse
@@ -39,7 +39,14 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.p
  
      logger = configure_logging(train_dir)
      #logger.info("--------------------------------------------------------------------------------")
-@@ -526,7 +527,7 @@ def main_tcp():
+@@ -521,12 +522,13 @@ def main_tcp():
+         action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(action_dim), sigma=float(STDDEV) * np.ones(action_dim),dt=0.5)
+ #        action_noise = None
+ 
+-    learner = Learner(sess, actor, critic, replay_memory, final_state_dim*rec_dim, 1, action_noise, batch_size=BATCHSIZE,
++    learning = not config.eval
++    learner = Learner(sess, learning, actor, critic, replay_memory, final_state_dim*rec_dim, 1, action_noise, batch_size=BATCHSIZE,
+                     gamma=GAMMA, tau=TAU, lr_a=LR_A, lr_c=LR_C,
                      action_range=action_range, summary_writer=summary_writer)
      learner.initialize()
  
@@ -48,7 +55,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.p
  
      summary_writer.add_graph(sess.graph)
      normalizer = Normalizer(input_dim)
-@@ -616,7 +617,7 @@ def main_tcp():
+@@ -616,7 +618,7 @@ def main_tcp():
  
              if (j+1) % config.tb_interval == 0:
                  # tensorboard
@@ -57,7 +64,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.p
                  act_summary.value.add(tag='Step/0-Actions-Eval', simple_value=map_a0)
                  for i in range(0,len(s1)):
                      act_summary.value.add(tag='Step/1-Input-Eval'+str(i), simple_value=s1[i])
-@@ -638,7 +639,7 @@ def main_tcp():
+@@ -638,7 +640,7 @@ def main_tcp():
              ep_r += rew0
  
              if done:
@@ -66,7 +73,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.p
                  ret_summary.value.add(tag='Performance/ReturnInEpisode-Eval', simple_value=ep_r)
                  summary_writer.add_summary(ret_summary, episode_counter)
                  break
-@@ -694,7 +695,7 @@ def main_tcp():
+@@ -694,7 +696,7 @@ def main_tcp():
  
              if (j+1) % config.tb_interval == 0:
                  # tensorboard
@@ -75,7 +82,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.p
                  act_summary.value.add(tag='Step/0-Actions', simple_value=map_a0)
                  for i in range(0,len(s1)):
                      act_summary.value.add(tag='Step/1-Input'+str(i), simple_value=s1[i])
-@@ -721,7 +722,7 @@ def main_tcp():
+@@ -721,7 +723,7 @@ def main_tcp():
              ep_r += rew0
  
              if done:
@@ -85,8 +92,8 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.p
                  summary_writer.add_summary(ret_summary, episode_counter)
                  break
 diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py deepcc-1.0_p9999/deepcc.v1.0/rl-module/models.py
---- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py	2024-10-29 17:22:00.650268448 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/models.py	2024-10-29 17:22:24.853903262 -0700
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py	2024-10-29 22:36:39.401415649 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/models.py	2024-10-29 22:40:54.976580210 -0700
 @@ -26,7 +26,6 @@ SOFTWARE.
  
  from copy import copy
@@ -95,7 +102,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
  import numpy as np
  import math
  H1_SHAPE = 1000
-@@ -39,22 +38,22 @@ def create_input_op_shape(obs, tensor):
+@@ -39,31 +38,32 @@ def create_input_op_shape(obs, tensor):
  
  
  def fc(input, output_shape, name='fc'):
@@ -115,16 +122,27 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
  def target_init(target, vars):
  
 -    return [tf.assign(target[i], vars[i]) for i in range(len(vars))]
-+    return [tf.compat.v1.assign(target[i], vars[i]) for i in range(len(vars))]
++    return [tf.compat.v1.assign(target[i], vars[i]) for i in range(min(len(vars),len(target)))]
  
  def target_update(target, vars, tau):
      # update target network
 -    return [tf.assign(target[i], vars[i]*tau + target[i]*(1-tau)) for i in range(len(vars))]
-+    return [tf.compat.v1.assign(target[i], vars[i]*tau + target[i]*(1-tau)) for i in range(len(vars))]
++    return [tf.compat.v1.assign(target[i], vars[i]*tau + target[i]*(1-tau)) for i in range(min(len(vars),len(target)))]
  
  
  
-@@ -76,17 +75,17 @@ class Learner(object):
+ class Learner(object):
+-    def __init__(self, sess, actor, critic, memory, state_dim, action_dim, action_noise, batch_size=32,
++    def __init__(self, sess, learning, actor, critic, memory, state_dim, action_dim, action_noise, batch_size=32,
+ #                 gamma=0.99, tau=0.01, lr_a=0.001, lr_c=0.002, action_range=(-1., 1.), summary_writer=None):
+ #   actor'a rl is 10x smaller in the paper (0.001)
+                   gamma=0.9, tau=0.1, lr_a=0.01, lr_c=0.01, action_range=(-1., 1.), summary_writer=None):
+         self.sess = sess
++        self.learning = learning
+         self.s_dim = state_dim
+         self.actor = actor
+         self.critic = critic
+@@ -76,27 +76,27 @@ class Learner(object):
          self.action_noise = action_noise
          self.action_range = action_range
          self.summary_writer = summary_writer
@@ -148,12 +166,24 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
 +
 +        self.actor_optimizer = tf.compat.v1.train.AdamOptimizer(self.lr_a)
 +        self.critic_optimizer = tf.compat.v1.train.AdamOptimizer(self.lr_c)
-+        self.is_training = tf.compat.v1.placeholder(tf.bool, name='Actor_is_training')
-+        self.is_training_c = tf.compat.v1.placeholder(tf.bool, name='Critic_is_training')
++        self.is_training = tf.compat.v1.placeholder(tf.bool, shape=(), name='Actor_is_training')
++        self.is_training_c = tf.compat.v1.placeholder(tf.bool, shape=(), name='Critic_is_training')
          # Actor
          target_actor = copy(actor)
          self.target_actor = target_actor
-@@ -121,7 +120,7 @@ class Learner(object):
+         self.target_actor.name = 'target_actor'
+         #self.target_actor.training = False
+ 
+-        self.actor_out, self.scaled_actor_out = actor.create_actor_network(self.s0, self.is_training)
++        self.actor_out, self.scaled_actor_out = actor.create_actor_network(self.s0, self.learning)
+ 
+         # create target network
+-        self.target_actor_out_s1, self.target_scaled_actor_out_s1 = self.target_actor.create_actor_network(self.s1, self.is_training)
++        self.target_actor_out_s1, self.target_scaled_actor_out_s1 = self.target_actor.create_actor_network(self.s1, self.learning)
+ 
+         self.target_actor_update_init = target_init(self.target_actor.trainable_vars(), self.actor.trainable_vars())
+         self.target_actor_update = target_update(self.target_actor.trainable_vars(), self.actor.trainable_vars(), self.tau)
+@@ -121,7 +121,7 @@ class Learner(object):
          self.target_q = self.reward + (1. - self.is_terminal) * gamma * self.q_s1
          self.target_q_debug =  gamma * self.q_s1
  
@@ -162,7 +192,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
  
          #with tf.control_dependencies(self.extra_update_ops):
          self.actor_train_op = self.build_actor_train_op()
-@@ -129,7 +128,7 @@ class Learner(object):
+@@ -129,7 +129,7 @@ class Learner(object):
  
          if self.summary_writer is not None:
              # All tf.summaries should have been defined prior to running this.
@@ -171,7 +201,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
  
  
      def get_target_actor_out(self, obs):
-@@ -149,12 +148,12 @@ class Learner(object):
+@@ -149,12 +149,12 @@ class Learner(object):
          self.a_gradients = self.actor_optimizer.compute_gradients(self.a_loss, var_list=self.actor.trainable_vars())
          #print(self.actor.trainable_vars())
          if self.summary_writer is not None:
@@ -186,7 +216,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
  #                tf.summary.histogram('Actor_grad', self.a_gradients)
  
          #self.a_gradients = list(zip(grads, self.actor.trainable_vars()))
-@@ -181,13 +180,16 @@ class Learner(object):
+@@ -181,13 +181,16 @@ class Learner(object):
          self.c_loss = tf.reduce_mean(tf.square(self.critic_out - self.target_q))
  
          reg_var = [x for x in  self.critic.trainable_vars() if (x.name.endswith('w:0') or x.name.endswith('kernel:0'))]
@@ -206,7 +236,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
  
          self.c_gradients = self.critic_optimizer.compute_gradients(self.c_loss, var_list=self.critic.trainable_vars())
          #for i, (grad, var) in enumerate(self.c_gradients):
-@@ -200,7 +202,7 @@ class Learner(object):
+@@ -200,7 +203,7 @@ class Learner(object):
  
      def initialize(self):
  
@@ -215,7 +245,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
          self.sess.run(self.target_actor_update_init)
          self.sess.run(self.target_critic_update_init)
  
-@@ -242,7 +244,7 @@ class Learner(object):
+@@ -242,7 +245,7 @@ class Learner(object):
  
      def train_step(self):
          #print("Hello:", tf.get_collection(tf.GraphKeys.UPDATE_OPS))
@@ -224,25 +254,26 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
          #extra_update_ops_c = [v for v in tf.get_collection(tf.GraphKeys.UPDATE_OPS) if "critic/" in v.name and "target" not in v.name]
          #extra_update_ops_c1 = [v for v in tf.get_collection(tf.GraphKeys.UPDATE_OPS) if "critic_1" in v.name and "target" not in v.name]
          #extra_update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-@@ -322,23 +324,23 @@ class Actor(object):
+@@ -322,23 +325,23 @@ class Actor(object):
          #self.obs0 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='obs0')
  
      def trainable_vars(self):
 -        return tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
 +        return tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
  
-     def create_actor_network(self, obs, is_training, reuse=False):
+-    def create_actor_network(self, obs, is_training, reuse=False):
++    def create_actor_network(self, obs, learning, reuse=False):
          #inputs = tf.placeholder(tf.float32, [None, self.s_dim])
  
 -        with tf.variable_scope(self.name, reuse=tf.AUTO_REUSE):
 +        with tf.compat.v1.variable_scope(self.name, reuse=tf.compat.v1.AUTO_REUSE):
              h1 = fc(obs, H1_SHAPE, name='fc1')
 -            h1 = tf.layers.batch_normalization(h1, training = is_training, scale=False)
-+            h1 = tf.keras.layers.BatchNormalization(scale=False)(h1, training = is_training)
++            h1 = tf.keras.layers.BatchNormalization(scale=False)(h1, training = learning)
              h1 = tf.nn.relu(h1)
              h2 = fc(h1, H2_SHAPE, name='fc2')
 -            h2 = tf.layers.batch_normalization(h2, training = is_training, scale=False)
-+            h2 = tf.keras.layers.BatchNormalization(scale=False)(h2, training = is_training)
++            h2 = tf.keras.layers.BatchNormalization(scale=False)(h2, training = learning)
              h2 = tf.nn.relu(h2)
  
 -            #out = tf.layers.dense(h2, self.action_dim, kernel_initializer=tf.random_uniform_initializer(minval=-3e-3, maxval=3e-3))
@@ -256,7 +287,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
              out = tf.nn.tanh(out)
  
              # scale the output here, [-action_bound, action_bound]
-@@ -359,12 +361,12 @@ class Critic(object):
+@@ -359,12 +362,12 @@ class Critic(object):
          # self.obs0 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='obs0')
  
      def trainable_vars(self):
@@ -271,7 +302,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
              '''
              h1 = fc(tf.concat([obs, action], axis=-1), H1_SHAPE, name='fc1')
              h1 = tf.nn.relu(h1)
-@@ -373,7 +375,7 @@ class Critic(object):
+@@ -373,7 +376,7 @@ class Critic(object):
              h2 = tf.nn.relu(h2)
              '''
              h1 = fc(obs, H1_SHAPE, name='fc1')
@@ -280,7 +311,7 @@ diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py d
              #h1 = tf.contrib.layers.layer_norm(h1)
              h1 = tf.nn.relu(h1)
  
-@@ -387,8 +389,8 @@ class Critic(object):
+@@ -387,8 +390,8 @@ class Critic(object):
              #b2 = tf.get_variable('b', [H2_SHAPE])
              #h2 = tf.nn.relu(tf.matmul(h1, w2_s) + tf.matmul(action, w2_a) + b2)
  
