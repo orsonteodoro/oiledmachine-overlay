@@ -1410,7 +1410,7 @@ einfo "DoS = Denial of Service"
 einfo "DT = Data Tampering"
 einfo "ID = Information Disclosure"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UAF" ]] ; then
-einfo "UAF = Use After Free (DT ^ DoS ^ CE, DoS, DT, ID )"
+einfo "UAF = Use After Free"
 		fi
 einfo
 	fi
