@@ -5,6 +5,11 @@
 EAPI=8
 
 PYTHON_COMPAT=( "python3_"{10..12} ) # Constrained by tensorflow
+TENSORFLOW_SLOTS=(
+	"2.14"
+	"2.15"
+	"2.16"
+)
 
 inherit python-single-r1
 
@@ -38,13 +43,34 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	${PYTHON_DEPS}
+	|| (
+		(
+			$(python_gen_cond_dep '
+				=sci-libs/tensorflow-2.14*[${PYTHON_USEDEP},python]
+				=sci-libs/keras-2.14*[${PYTHON_USEDEP}]
+			')
+			=sci-visualization/tensorboard-2.14*[${PYTHON_SINGLE_USEDEP}]
+		)
+		(
+			$(python_gen_cond_dep '
+				=sci-libs/tensorflow-2.15*[${PYTHON_USEDEP},python]
+				=sci-libs/keras-2.15[${PYTHON_USEDEP}]
+			')
+			=sci-visualization/tensorboard-2.15*[${PYTHON_SINGLE_USEDEP}]
+		)
+		(
+			$(python_gen_cond_dep '
+				=sci-libs/tensorflow-2.16*[${PYTHON_USEDEP},python]
+				>=sci-libs/keras-3.1[${PYTHON_USEDEP}]
+			')
+			=sci-visualization/tensorboard-2.16*[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 	$(python_gen_cond_dep '
 		>=dev-python/sysv-ipc-1.0.0[${PYTHON_USEDEP}]
-		>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
 	')
 	>=net-misc/iperf-3.1.3
 	app-alternatives/sh
-	sci-visualization/tensorboard
 	sys-process/procps
 	sys-process/psmisc
 	build-models? (
