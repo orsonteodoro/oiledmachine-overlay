@@ -9,7 +9,7 @@ EGIT_COMMIT="1e805500dc14a507598cebdd49557c32e514899f"
 
 inherit meson-multilib
 
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-v${PV}-${EGIT_COMMIT}"
 SRC_URI="
 https://code.videolan.org/rist/librist/-/archive/v${PV}/${PN}-v${PV}.tar.bz2
