@@ -139,7 +139,7 @@ LICENSE_FINGERPRINT="\
 896855e640d87a943eba993b0e73278a3696e8071e9dbf62ab5e0d87542ba327\
 51fff5197fcbaf233a7fa851b90bf5fb217aab4c355acd68fdda54c4ee765194\
 " # SHA512
-LLVM_COMPAT=( 18 17 ) # Limited based on virtual/rust
+LLVM_COMPAT=( 18 ) # Limited based on virtual/rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MEETS_JUMBO_BUILD_MEMORY_REQ=0
@@ -200,7 +200,7 @@ NODE_VERSION=18
 OFLAG="" # Global variable
 PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_PV="1.79.0"
+RUST_PV="1.79.0" # Min required for llvm 18
 SPEECH_DISPATCHER_PV="0.11.4-r1"
 WANT_AUTOCONF="2.1"
 XKBCOMMON_PV="0.4.1"
