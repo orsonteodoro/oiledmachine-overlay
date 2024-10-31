@@ -3,9 +3,9 @@
 
 EAPI=8
 
-# Assumed U 22.04.1
+# U24
 # For deps, see
-# https://github.com/libvips/libvips/blob/v8.14.5/.github/workflows/ci.yml
+# https://github.com/libvips/libvips/blob/v8.16.0/.github/workflows/ci.yml
 
 # See CI logs for deps versioning.
 
@@ -13,20 +13,20 @@ EAPI=8
 # Going with the CI tested interpretation.
 # CI disables deprecated but enabled by default in meson_options.txt
 
-GCC_PV="11.3.0"
+GCC_PV="14"
 LIBJPEG_TURBO_V="2.1.2"
-LLVM_COMPAT=( 14 ) # CI uses 14
+LLVM_COMPAT=( 18 ) # CI uses 14
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( "python3_"{8..11} )
-SO_C=58
-SO_R=3
-SO_A=16
+SO_C=60
+SO_R=0
+SO_A=18
 SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 
 inherit flag-o-matic llvm meson-multilib multilib-minimal vala
 inherit python-r1 toolchain-funcs
 
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/libvips-${PV}"
 SRC_URI="
 https://github.com/libvips/libvips/archive/v${PV}.tar.gz -> ${P}.tar.gz
@@ -39,11 +39,12 @@ RESTRICT="mirror"
 SLOT="0/${SO_MAJOR}"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-+analyze +aom +cairo +cgif +cxx debug +deprecated -doxygen +examples +exif +fftw
-+fits fuzz-testing +gif -graphicsmagick +gsf -gtk-doc +fontconfig +hdr +heif
-+imagemagick +imagequant +introspection +jpeg +jpeg2k -jxl +lcms +libde265
-+matio -minimal -nifti +openexr +openslide +orc +pangocairo +png +poppler
-+python -rav1e +ppm -spng +svg test +tiff +vala +webp +x265 +zlib
++analyze +archive +aom +cairo +cgif +cxx debug +deprecated -doxygen +examples
++exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc +fontconfig
++hdr +heif -highway +imagemagick +imagequant -introspection +jpeg +jpeg2k +jxl
++lcms +libde265 +matio -minimal -nifti +openexr +openslide +orc +pangocairo +png
++poppler +python -rav1e +ppm -spng +svg test +tiff +vala +webp +x265
++zlib
 ebuild-revision-1
 "
 REQUIRED_USE="
@@ -82,6 +83,9 @@ RDEPEND+="
 	>=dev-libs/libffi-3.4.2[${MULTILIB_USEDEP}]
 	>=sci-libs/gsl-2.7.1
 	sys-libs/libomp:14[${MULTILIB_USEDEP}]
+	archive? (
+		>=app-arch/libarchive-3.6.0[${MULTILIB_USEDEP}]
+	)
 	cairo? (
 		>=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}]
 	)
@@ -103,14 +107,14 @@ RDEPEND+="
 	gif? (
 		media-libs/libnsgif[${MULTILIB_USEDEP}]
 	)
-	gsf? (
-		>=gnome-extra/libgsf-1.14.47
-	)
 	heif? (
 		>=media-libs/libheif-1.12.0[aom?,libde265?,rav1e?,x265?,${MULTILIB_USEDEP}]
 		libde265? (
 			>=media-libs/libde265-1.0.8[${MULTILIB_USEDEP}]
 		)
+	)
+	highway? (
+		>=dev-cpp/highway-0.16.0[${MULTILIB_USEDEP}]
 	)
 	imagemagick? (
 		!graphicsmagick? (
@@ -198,7 +202,6 @@ gen_llvm_bdepend()
 
 gen_llvm_test_bdepend()
 {
-	local o=""
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
@@ -506,15 +509,15 @@ eerror
 		-Dmodules=enabled
 		-Dpdfium=disabled
 		-Dquantizr=disabled
+		$(meson_feature archive)
 		$(meson_feature fits cfitsio)
-		$(meson_feature cgif)
 		$(meson_feature exif)
 		$(meson_feature fftw)
 		$(meson_feature fontconfig)
-		$(meson_feature gsf)
 		$(meson_feature heif)
 #		$(meson_feature heif-module)
 		$(meson_feature imagequant)
+		$(meson_feature highway)
 		$(meson_feature jpeg)
 		$(meson_feature jxl jpeg-xl)
 #		$(meson_feature jpeg-xl-module)
@@ -536,7 +539,7 @@ eerror
 		$(meson_feature zlib)
 		$(meson_native_use_bool doxygen)
 		$(meson_native_use_bool gtk-doc gtk_doc)
-		$(meson_native_use_bool introspection)
+		$(meson_native_use_feature introspection)
 		$(meson_use analyze)
 		$(meson_use cxx cplusplus)
 		$(meson_use debug)

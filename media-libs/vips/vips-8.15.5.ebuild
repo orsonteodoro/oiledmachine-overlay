@@ -3,9 +3,9 @@
 
 EAPI=8
 
-# Assumed U 22.04.1
+# U22
 # For deps, see
-# https://github.com/libvips/libvips/blob/v8.15.1/.github/workflows/ci.yml
+# https://github.com/libvips/libvips/blob/v8.15.5/.github/workflows/ci.yml
 
 # See CI logs for deps versioning.
 
@@ -15,18 +15,18 @@ EAPI=8
 
 GCC_PV="11.3.0"
 LIBJPEG_TURBO_V="2.1.2"
-LLVM_COMPAT=( 14 ) # CI uses 14
+LLVM_COMPAT=( 15 ) # CI uses 15
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( "python3_"{8..11} )
 SO_C=59
-SO_R=0
+SO_R=5
 SO_A=17
 SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 
 inherit flag-o-matic llvm meson-multilib multilib-minimal vala
 inherit python-r1 toolchain-funcs
 
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/libvips-${PV}"
 SRC_URI="
 https://github.com/libvips/libvips/archive/v${PV}.tar.gz -> ${P}.tar.gz
