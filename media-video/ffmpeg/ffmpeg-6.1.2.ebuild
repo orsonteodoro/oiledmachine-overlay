@@ -1708,6 +1708,12 @@ eprintf() {
 }
 
 pkg_setup() {
+	if [[ "${PV}" =~ "m" ]] ; then
+ewarn
+ewarn "You are installing a multislot ${PN} designed for indirect use."
+ewarn "For direct use with /usr/bin/${PN} use the unislot version."
+ewarn
+	fi
 	FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE=${FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE:-100} # You must update gen_autosample_suffix
 	if use pgo && has_version "media-video/ffmpeg" ; then
 ewarn "The PGO use flag is a Work In Progress (WIP)"
