@@ -4,8 +4,6 @@
 
 EAPI=8
 
-# TODO package (required):
-# spacy-legacy
 # TODO package (optional):
 # cython-lint
 
