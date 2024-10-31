@@ -8,13 +8,13 @@ EAPI=8
 # https://grpc.io/docs/what-is-grpc/faq/#how-long-are-grpc-releases-supported-for
 
 # For supported java versions, see
-# https://github.com/grpc/grpc-java/blob/v1.59.1/.github/workflows/testing.yml#L20
+# https://github.com/grpc/grpc-java/blob/v1.59.5/.github/workflows/testing.yml#L20
 
 # For supported python versions, see
-# https://github.com/grpc/grpc/blob/v1.59.4/setup.py#L100
+# https://github.com/grpc/grpc/blob/v1.59.5/setup.py#L100
 
 # For supported ruby versions, see
-# https://github.com/grpc/grpc/blob/v1.59.4/Rakefile#L147
+# https://github.com/grpc/grpc/blob/v1.59.5/Rakefile#L147
 
 MY_PV="${PV//_pre/-pre}"
 OPENCENSUS_PROTO_PV="0.3.0"

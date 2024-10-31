@@ -8,7 +8,7 @@ EAPI=8
 # https://grpc.io/docs/what-is-grpc/faq/#how-long-are-grpc-releases-supported-for
 
 # For supported java versions, see
-# https://github.com/grpc/grpc-java/blob/v1.53.1/.github/workflows/testing.yml#L20
+# https://github.com/grpc/grpc-java/blob/v1.53.2/.github/workflows/testing.yml#L20
 
 # For supported python versions, see
 # https://github.com/grpc/grpc/blob/v1.53.2/setup.py#L100
