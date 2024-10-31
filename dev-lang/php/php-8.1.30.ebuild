@@ -31,8 +31,8 @@ WANT_AUTOMAKE="none"
 inherit autotools flag-o-matic llvm multilib systemd uopts
 
 KEYWORDS="
-~alpha ~amd64 arm arm64 ~hppa ~loong ~mips ~ppc ppc64 ~riscv ~s390 ~sparc
-~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
+~alpha amd64 arm arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 sparc x86
+~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
 "
 SRC_URI="
 	https://www.php.net/distributions/${P}.tar.xz
@@ -459,6 +459,7 @@ PATCHES=(
 	"${FILESDIR}/php-8.1.27-gcc14-libxml.patch"
 	"${FILESDIR}/php-8.1.27-implicit-decls.patch"
 	"${FILESDIR}/fix-musl-llvm.patch"
+	"${FILESDIR}/php-8.1.29-gcc14-intl.patch"
 )
 
 php_install_ini() {

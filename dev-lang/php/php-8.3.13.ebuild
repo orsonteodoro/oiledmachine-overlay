@@ -8,6 +8,7 @@ GCC_SLOT=12
 LLVM_COMPAT=( {19..15} )
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 PHP_MV="$(ver_cut 1)"
+POSTGRES_COMPAT=( {15..17} )
 # ARM/Windows functions (bug 923335)
 QA_CONFIG_IMPL_DECL_SKIP=(
 	__crc32d
@@ -28,7 +29,7 @@ UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 WANT_AUTOMAKE="none"
 
-inherit autotools flag-o-matic llvm multilib systemd uopts
+inherit autotools flag-o-matic llvm multilib postgres systemd uopts
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
@@ -346,7 +347,7 @@ COMMON_DEPEND="
 		)
 	)
 	postgres? (
-		dev-db/postgresql:*
+		${POSTGRES_DEP}
 	)
 	qdbm? (
 		dev-db/qdbm
@@ -544,6 +545,8 @@ use_dba() {
 }
 
 pkg_setup() {
+	use postgres && postgres_pkg_setup
+
 	if use pgo || use bolt ; then
 		llvm_pkg_setup
 einfo "Disabling ccache"
@@ -886,7 +889,7 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 		$(use_with kerberos)
 		$(use_with mhash mhash "${EPREFIX}/usr")
 		$(use_with nls gettext "${EPREFIX}/usr")
-		$(use_with postgres pgsql "${EPREFIX}/usr")
+		$(use_with postgres pgsql "$("${PG_CONFIG:-true}" --bindir)/..")
 		$(use_with selinux fpm-selinux)
 		$(use_with snmp snmp "${EPREFIX}/usr")
 		$(use_with sodium)

@@ -71,7 +71,7 @@ ${SAPIS_DEFAULTS}
 -curl debug -enchant -exif -ffi +fileinfo +filter -firebird +flatfile -ftp -gd
 -gdbm +gmp +iconv imap -inifile -intl -iodbc -ipv6 +jit -kerberos -ldap
 -ldap-sasl -libedit -lmdb -mhash -mssql -mysql -mysqli -nls -oci8-instant-client
--odbc +opcache -pcntl +pdo +phar +posix -postgres -qdbm -readline selinux
+-odbc +opcache +opcache-jit -pcntl +pdo +phar +posix -postgres -qdbm -readline selinux
 +session session-mm -sharedmem +simplexml -snmp -soap -sockets -sodium -spell
 +sqlite -ssl -sysvipc -systemd test -tidy threads +tokenizer -tokyocabinet
 -truetype -unicode valgrind -webp +xml +xmlreader +xmlwriter -xpm -xslt -zip
@@ -461,6 +461,8 @@ PATCHES=(
 	"${FILESDIR}/php-iodbc-header-location.patch"
 	"${FILESDIR}/php-capstone-optional.patch"
 	"${FILESDIR}/php-8.2.8-openssl-tests.patch"
+	"${FILESDIR}/php-8.2.20-implicit-printf.patch"
+	"${FILESDIR}/php-8.2.23-fix-ub.patch"
 )
 
 php_install_ini() {
@@ -680,7 +682,7 @@ src_prepare() {
 	# limits are surpassed... they get increased... but in the meantime,
 	# the tests fail. This is not really a test that end users should
 	# be running pre-install, in my opinion. Bug 927461.
-		ext/fileinfo/tests/bug78987.phpt
+#		ext/fileinfo/tests/bug78987.phpt
 
 	# glibc-2.39 compatibility, fixed upstream in
 	# https://github.com/php/php-src/pull/14097
@@ -814,6 +816,7 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 		$(use_enable intl)
 		$(use_enable ipv6)
 		$(use_enable opcache)
+		$(use_enable opcache-jit)
 		$(use_enable pcntl)
 		$(use_enable phar)
 		$(use_enable pdo)
