@@ -2164,7 +2164,6 @@ einfo
 		--disable-strip \
 		--disable-tests \
 		--disable-updater \
-		--disable-wasm-function-references \
 		--disable-wasm-gc \
 		--disable-wmf \
 		--enable-negotiateauth \
@@ -2181,7 +2180,6 @@ einfo
 		--without-ccache \
 		--without-wasm-sandboxed-libraries \
 		--with-intl-api \
-		\
 		--with-system-nspr \
 		--with-system-nss \
 		--with-system-zlib \

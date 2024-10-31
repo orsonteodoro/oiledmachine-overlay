@@ -13,7 +13,8 @@
  
 -@depends(target)
 +@depends("--with-ffvpx", target)
- def ffvpx(target):
+-def ffvpx(target):
++def ffvpx(values, target):
 -    use_nasm = True
 +    if any("default" in value for value in values) or any("yes" in value for value in values):
 +        use_nasm = True
