@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# U22.04
+# U24
 
 MRUBY_COMMIT="32279e4128527bab4c961854b9cce727a060abea"
 MUNIT_COMMIT="7f53fea8901089d46233302b3af35bf8be93cfc5"
@@ -14,8 +14,7 @@ USE_RUBY="ruby31 ruby32 ruby33"
 inherit cmake multilib-minimal python-r1 ruby-single toolchain-funcs
 
 KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
-~s390 ~sparc ~x86 ~amd64-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
+~amd64 ~arm64 ~x86
 "
 S="${WORKDIR}/${P}"
 SRC_URI="
@@ -81,27 +80,27 @@ REQUIRED_USE="
 "
 SSL_DEPEND="
 	>=dev-libs/libevent-2.0.8[${MULTILIB_USEDEP},ssl]
-	>=net-libs/ngtcp2-1.5.0[${MULTILIB_USEDEP},openssl]
+	>=net-libs/ngtcp2-1.8.1[${MULTILIB_USEDEP},openssl]
 	|| (
 		(
 			>=dev-libs/openssl-1.1.1w:0[${MULTILIB_USEDEP},-bindist(-)]
 			=dev-libs/openssl-1*:=[${MULTILIB_USEDEP},-bindist(-)]
 		)
 		(
-			>=dev-libs/openssl-3.1.5:0[${MULTILIB_USEDEP},-bindist(-)]
+			>=dev-libs/openssl-3.1.7:0[${MULTILIB_USEDEP},-bindist(-)]
 			=dev-libs/openssl-3*:=[${MULTILIB_USEDEP},-bindist(-)]
 		)
 	)
 "
 RDEPEND="
 	bpf? (
-		>=dev-libs/libbpf-0.7.0
+		>=dev-libs/libbpf-1.4.6
 	)
 	hpack-tools? (
 		>=dev-libs/jansson-2.5:=
 	)
 	http3? (
-		>=net-libs/nghttp3-1.3.0[${MULTILIB_USEDEP}]
+		>=net-libs/nghttp3-1.6.0[${MULTILIB_USEDEP}]
 	)
 	jemalloc? (
 		dev-libs/jemalloc:=[${MULTILIB_USEDEP}]
@@ -136,8 +135,8 @@ BDEPEND="
 		sys-devel/bison
 	)
 	|| (
-		>=sys-devel/gcc-12
-		>=sys-devel/clang-15
+		>=sys-devel/gcc-14
+		>=sys-devel/clang-18
 	)
 "
 
