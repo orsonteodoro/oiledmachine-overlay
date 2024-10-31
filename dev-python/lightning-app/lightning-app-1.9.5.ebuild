@@ -81,9 +81,9 @@ APP_BASE_RDEPEND="
 			)
 		)
 		(
-			>=sci-libs/lightning-utilities-0.6.0_p0[${PYTHON_USEDEP}]
+			>=dev-python/lightning-utilities-0.6.0_p0[${PYTHON_USEDEP}]
 			strict? (
-				<sci-libs/lightning-utilities-0.7.0[${PYTHON_USEDEP}]
+				<dev-python/lightning-utilities-0.7.0[${PYTHON_USEDEP}]
 			)
 		)
 		(
@@ -130,7 +130,7 @@ APP_BASE_RDEPEND="
 			<dev-python/websocket-client-1.5.2[${PYTHON_USEDEP}]
 			<dev-python/websockets-10.4.1[${PYTHON_USEDEP}]
 		)
-		>=sci-libs/lightning-cloud-0.5.27[${PYTHON_USEDEP}]
+		>=dev-python/lightning-cloud-0.5.27[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 	')
 "
@@ -170,7 +170,7 @@ APP_COMPONENTS_RDEPEND="
 				<dev-python/pytorch-lightning-2.0.0[${PYTHON_USEDEP}]
 			)
 		)
-		>=sci-libs/lightning-api-access-0.0.3[${PYTHON_USEDEP}]
+		>=dev-python/lightning-api-access-0.0.3[${PYTHON_USEDEP}]
 	')
 "
 APP_UI_RDEPEND="

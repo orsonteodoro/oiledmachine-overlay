@@ -87,9 +87,9 @@ APP_BASE_RDEPEND="
 			)
 		)
 		(
-			>=sci-libs/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
+			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
 			strict? (
-				<sci-libs/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+				<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 			)
 		)
 		(
@@ -141,7 +141,7 @@ APP_BASE_RDEPEND="
 			<dev-python/websockets-11.1.0[${PYTHON_USEDEP}]
 		)
 		>=dev-python/pydantic-1.7.4[${PYTHON_USEDEP}]
-		>=sci-libs/lightning-cloud-0.5.69[${PYTHON_USEDEP}]
+		>=dev-python/lightning-cloud-0.5.69[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/starlette[${PYTHON_USEDEP}]
 	')
@@ -177,8 +177,8 @@ APP_COMPONENTS_RDEPEND="
 			)
 		)
 		>=dev-python/pytorch-lightning-1.9.0[${PYTHON_USEDEP}]
-		>=sci-libs/lightning-api-access-0.0.3[${PYTHON_USEDEP}]
-		>=sci-libs/lightning-fabric-1.9.0[${PYTHON_USEDEP}]
+		>=dev-python/lightning-api-access-0.0.3[${PYTHON_USEDEP}]
+		>=dev-python/lightning-fabric-1.9.0[${PYTHON_USEDEP}]
 	')
 "
 APP_UI_RDEPEND="
@@ -204,9 +204,9 @@ DOCS_BDEPEND="
 			)
 		)
 		(
-			>=sci-libs/lightning-utilities-0.11.1[${PYTHON_USEDEP}]
+			>=dev-python/lightning-utilities-0.11.1[${PYTHON_USEDEP}]
 			strict? (
-				<sci-libs/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+				<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 			)
 		)
 		(

@@ -227,9 +227,9 @@ VISUAL_RDEPEND="
 BASE_RDEPEND="
 	$(python_gen_cond_dep '
 		(
-			>=sci-libs/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
+			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
 			strict? (
-				<sci-libs/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+				<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 			)
 		)
 		>dev-python/numpy-1.20.0[${PYTHON_USEDEP}]
@@ -346,7 +346,7 @@ DOCS_BDEPEND="
 		>=dev-python/sphinx-paramlinks-0.6.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-togglebutton-0.3.2[${PYTHON_USEDEP}]
 		>=dev-python/sphinxcontrib-fulltoc-1.0[${PYTHON_USEDEP}]
-		>=sci-libs/lightning-utilities-0.11.2[${PYTHON_USEDEP}]
+		>=dev-python/lightning-utilities-0.11.2[${PYTHON_USEDEP}]
 		dev-python/lai-sphinx-theme[${PYTHON_USEDEP}]
 		dev-python/sphinxcontrib-mockautodoc[${PYTHON_USEDEP}]
 	')

@@ -4,6 +4,10 @@
 
 EAPI=8
 
+PYTHON_COMPAT=( "python3_10" )
+
+inherit python-single-r1
+
 DESCRIPTION="The Deep Learning framework to train, deploy, and ship AI \
 products Lightning fast."
 HOMEPAGE="
@@ -18,13 +22,13 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" app fabric pytorch"
 RDEPEND+="
 	app? (
-		~sci-libs/lightning-app-${PV}:${SLOT}
+		~dev-python/lightning-app-${PV}:${SLOT}[${PYTHON_SINGLE_USEDEP}]
 	)
 	fabric? (
-		~sci-libs/lightning-fabric-${PV}:${SLOT}
+		~dev-python/lightning-fabric-${PV}:${SLOT}[${PYTHON_SINGLE_USEDEP}]
 	)
 	pytorch? (
-		~sci-libs/pytorch-lightning-${PV}:${SLOT}
+		~dev-python/pytorch-lightning-${PV}:${SLOT}[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="

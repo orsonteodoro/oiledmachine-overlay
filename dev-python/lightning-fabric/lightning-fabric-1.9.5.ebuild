@@ -43,9 +43,9 @@ FABRIC_BASE_RDEPEND="
 			)
 		)
 		(
-			>=sci-libs/lightning-utilities-0.6.0_p0[${PYTHON_USEDEP}]
+			>=dev-python/lightning-utilities-0.6.0_p0[${PYTHON_USEDEP}]
 			strict? (
-				<sci-libs/lightning-utilities-0.7.0[${PYTHON_USEDEP}]
+				<dev-python/lightning-utilities-0.7.0[${PYTHON_USEDEP}]
 			)
 		)
 		(
