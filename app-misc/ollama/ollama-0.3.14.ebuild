@@ -7,6 +7,7 @@ EAPI=8
 # Hardened because of CVE-2024-37032 implications of similar attacks.
 
 # TODO:  Fix or remove bwrap
+# FIXME:  Fix model download issue
 
 #
 # SECURITY:
@@ -172,7 +173,7 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
 fi
 
-inherit dep-prepare edo flag-o-matic go-module lcnr multiprocessing rocm
+inherit dep-prepare edo flag-o-matic go-module lcnr multiprocessing optfeature rocm
 
 
 # protobuf-go 1.34.1 tests with protobuf 5.27.0-rc1
@@ -3063,7 +3064,7 @@ src_configure() {
 	# Buffer overflow mitigation
 einfo "-D_FORTIFY_SOURCE is already enabled."
 	else
-		append-flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1
+: #		append-flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1
 	fi
 
 	if tc-enables-ssp ; then
@@ -3071,7 +3072,7 @@ einfo "-fstack-protector* is already enabled."
 	else
 	# As a precaution prevent CE, DT, ID, DoS
 	# Stack based buffer overflow protection
-		append-flags -fstack-protector
+: #		append-flags -fstack-protector
 	fi
 
 	if tc-enables-pie ; then
@@ -3291,7 +3292,7 @@ generate_deps() {
 	if ! tc-enables-pie ; then
 		args+=(
 	# ASLR (buffer overflow mitigation)
-			-buildmode=pie
+#			-buildmode=pie
 		)
 	fi
 	edo go generate ${args[@]} ./...
@@ -3305,7 +3306,7 @@ build_binary() {
 	if ! tc-enables-pie ; then
 		args+=(
 	# ASLR (buffer overflow mitigation)
-			-buildmode=pie
+#			-buildmode=pie
 		)
 	fi
 	edo go build ${args[@]} .
@@ -3627,6 +3628,11 @@ einfo
 	if use systemd ; then
 ewarn "The chroot and sandbox mitigation edits has not been implemented for systemd init script."
 	fi
+
+	# TODO:  Add more orphaned packages or move into overlay's README.md
+	optfeature "GUI frontend" "app-misc/llocal"
+	#optfeature "Piped AI command line execution" "app-shells/loz"
+	#optfeature "Text-to-speech and speech-to-text" "app-accessibility/june"
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.3.13, 20241020)
