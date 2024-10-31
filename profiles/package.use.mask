@@ -83,7 +83,7 @@ app-crypt/hashtopolis angular
 net-libs/nghttp2 mruby
 
 # Build time failure
-sci-libs/jaxlib clang
+dev-python/jaxlib clang
 
 # Runtime segmentation fault.  Use 4.4.4
 >=media-video/ffmpeg-5 tensorflow

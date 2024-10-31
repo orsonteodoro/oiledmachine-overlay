@@ -249,8 +249,8 @@ BDEPEND_TEST_CONSTRAINTS="
 		>=dev-python/pytest-5.0[${PYTHON_USEDEP}]
 		<dev-python/pytest-7.5[${PYTHON_USEDEP}]
 	)
-	<sci-libs/jax-0.4.15[${PYTHON_USEDEP}]
-	<sci-libs/jaxlib-0.4.15[${PYTHON_USEDEP}]
+	<dev-python/jax-0.4.15[${PYTHON_USEDEP}]
+	<dev-python/jaxlib-0.4.15[${PYTHON_USEDEP}]
 	>=dev-python/attrs-23.1.0[${PYTHON_USEDEP}]
 	>=dev-python/defusedxml-0.7.1[${PYTHON_USEDEP}]
 	>=dev-python/distro-1.8.0[${PYTHON_USEDEP}]
@@ -308,8 +308,8 @@ BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS="
 	dev-python/torch[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	sci-libs/datasets[${PYTHON_USEDEP}]
-	sci-libs/sentencepiece[${PYTHON_USEDEP},python]
-	sci-libs/timm[${PYTHON_USEDEP}]
+	dev-python/sentencepiece[${PYTHON_USEDEP},python]
+	dev-python/timm[${PYTHON_USEDEP}]
 	sci-libs/transformers[${PYTHON_USEDEP}]
 "
 # tests/model_hub_tests/torch_tests/requirements_secondary.txt \
@@ -364,8 +364,8 @@ BDEPEND_LAYER_TESTS="
 	sci-libs/transformers[${PYTHON_USEDEP}]
 	kernel_linux? (
 		amd64? (
-			sci-libs/jax[${PYTHON_USEDEP}]
-			sci-libs/jaxlib[${PYTHON_USEDEP}]
+			dev-python/jax[${PYTHON_USEDEP}]
+			dev-python/jaxlib[${PYTHON_USEDEP}]
 		)
 	)
 	$(python_gen_cond_dep '

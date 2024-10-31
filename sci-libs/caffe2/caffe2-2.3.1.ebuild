@@ -778,7 +778,7 @@ DEPEND="
 		>=dev-libs/FXdiv-2020.04.17
 		>=dev-libs/pocketfft-2023.12.30
 		>=dev-libs/psimd-2020.05.17
-		>=sci-libs/kineto-0.4.0_p20240131
+		>=sci-misc/kineto-0.4.0_p20240131
 		cuda? (
 			>=dev-libs/cutlass-3.4.1
 		)

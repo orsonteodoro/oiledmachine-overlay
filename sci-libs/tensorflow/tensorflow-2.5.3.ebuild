@@ -636,20 +636,20 @@ DEPEND="
 	python? (
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		test? (
-			>=sci-libs/jax-0.4.7[${PYTHON_USEDEP}]
+			>=dev-python/jax-0.4.7[${PYTHON_USEDEP}]
 			dev-python/mock[${PYTHON_USEDEP}]
 		)
 	)
 "
 PDEPEND="
 	models? (
-		sci-libs/tf-models-official:0/${PV%.*}[${PYTHON_USEDEP}]
+		sci-misc/tf-models-official:0/${PV%.*}[${PYTHON_USEDEP}]
 	)
 	python? (
 		$(python_gen_cond_dep '
 			=sci-libs/tensorflow-io-0.35.0[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
 		' python3_{10,11})
-		=sci-libs/keras-${DEP_VER}*[${PYTHON_USEDEP}]
+		=dev-python/keras-${DEP_VER}*[${PYTHON_USEDEP}]
 		=sci-libs/tensorflow-estimator-${DEP_VER}*[${PYTHON_USEDEP}]
 	)
 "

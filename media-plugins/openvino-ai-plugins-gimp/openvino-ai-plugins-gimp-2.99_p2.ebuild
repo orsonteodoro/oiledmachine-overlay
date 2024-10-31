@@ -46,7 +46,7 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 		>=sci-libs/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
 		>=sci-libs/torchmetrics-0.11.0[${PYTHON_SINGLE_USEDEP}]
 		>=sci-libs/torchvision-0.14.1[${PYTHON_SINGLE_USEDEP}]
-		sci-libs/pytorch-lightning[${PYTHON_SINGLE_USEDEP}]
+		dev-python/pytorch-lightning[${PYTHON_SINGLE_USEDEP}]
 	')
 	(
 		>=sci-libs/tensorflow-2.5[${PYTHON_USEDEP}]
@@ -89,7 +89,7 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 	>=dev-python/seaborn-0.11.0[${PYTHON_USEDEP}]
 	>=dev-python/scikit-image-0.19.2[${PYTHON_USEDEP}]
 
-	>=sci-libs/diffusers-0.9.0[${PYTHON_USEDEP}]
+	>=dev-python/diffusers-0.9.0[${PYTHON_USEDEP}]
 	>=sci-libs/huggingface_hub-0.9.1[${PYTHON_USEDEP}]
 
 	>=dev-python/diffusers-0.23.0[${PYTHON_USEDEP}]
@@ -114,7 +114,7 @@ PLUGIN_RDEPEND="
 RDEPEND+="
 	${PLUGIN_RDEPEND}
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_USEDEP}]
-	>=sci-libs/timm-0.4.5[${PYTHON_USEDEP}]
+	>=dev-python/timm-0.4.5[${PYTHON_USEDEP}]
 	dev-python/diffusers[${PYTHON_USEDEP}]
 	dev-python/matplotlib[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]

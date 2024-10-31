@@ -50,8 +50,8 @@ RDEPEND="
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/tabulate[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
-		sci-visualization/dash-bootstrap-components[${PYTHON_USEDEP}]
-		sci-visualization/dash-svg[${PYTHON_USEDEP}]
+		dev-python/dash-bootstrap-components[${PYTHON_USEDEP}]
+		dev-python/dash-svg[${PYTHON_USEDEP}]
 	')
 "
 DEPEND="

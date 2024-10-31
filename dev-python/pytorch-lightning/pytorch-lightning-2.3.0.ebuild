@@ -48,9 +48,9 @@ PYTORCH_BASE_RDEPEND="
 			)
 		)
 		(
-			>=sci-libs/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
+			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
 			strict? (
-				<sci-libs/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+				<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 			)
 		)
 		(
@@ -100,9 +100,9 @@ PYTORCH_BASE_RDEPEND="
 PYTORCH_EXAMPLES_RDEPEND="
 	$(python_gen_cond_dep '
 		(
-			>=sci-libs/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
+			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
 			strict? (
-				<sci-libs/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+				<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 			)
 		)
 		!strict? (
@@ -194,9 +194,9 @@ DOCS_BDEPEND="
 			)
 		)
 		(
-			>=sci-libs/lightning-utilities-0.11.1[${PYTHON_USEDEP}]
+			>=dev-python/lightning-utilities-0.11.1[${PYTHON_USEDEP}]
 			strict? (
-				<sci-libs/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+				<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 			)
 		)
 		(

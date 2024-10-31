@@ -221,10 +221,10 @@ BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/tqdm[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
-	sci-libs/Farama-Notifications[${PYTHON_USEDEP}]
+	dev-python/Farama-Notifications[${PYTHON_USEDEP}]
 	test? (
-		sci-libs/ale-py[${PYTHON_USEDEP}]
-		sci-libs/multi-agent-ale-py[${PYTHON_USEDEP}]
+		dev-python/ale-py[${PYTHON_USEDEP}]
+		dev-python/multi-agent-ale-py[${PYTHON_USEDEP}]
 	)
 "
 _PATCHES=(

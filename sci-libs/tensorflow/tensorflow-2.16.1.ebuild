@@ -718,14 +718,14 @@ DEPEND="
 	python? (
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		test? (
-			>=sci-libs/jax-0.4.7[${PYTHON_USEDEP}]
+			>=dev-python/jax-0.4.7[${PYTHON_USEDEP}]
 			dev-python/mock[${PYTHON_USEDEP}]
 		)
 	)
 "
 PDEPEND="
 	models? (
-		sci-libs/tf-models-official:0/${PV%.*}[${PYTHON_USEDEP}]
+		sci-misc/tf-models-official:0/${PV%.*}[${PYTHON_USEDEP}]
 	)
 	python? (
 		$(python_gen_cond_dep '
@@ -734,7 +734,7 @@ PDEPEND="
 				=sci-libs/tensorflow-io-0.37.0[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
 			)
 		' python3_{10,11})
-		>=sci-libs/keras-3.0.0[${PYTHON_USEDEP}]
+		>=dev-python/keras-3.0.0[${PYTHON_USEDEP}]
 	)
 "
 gen_llvm_bdepend() {

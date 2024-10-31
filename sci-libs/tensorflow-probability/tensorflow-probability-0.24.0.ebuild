@@ -21,12 +21,12 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 	PDEPEND+="
 		jax? (
-			sci-libs/jax[${PYTHON_USEDEP}]
-			sci-libs/jaxlib[${PYTHON_USEDEP}]
+			dev-python/jax[${PYTHON_USEDEP}]
+			dev-python/jaxlib[${PYTHON_USEDEP}]
 		)
 		tensorflow? (
 			=sci-libs/tensorflow-9999[${PYTHON_USEDEP}]
-			=sci-libs/keras-9999[${PYTHON_USEDEP}]
+			=dev-python/keras-9999[${PYTHON_USEDEP}]
 		)
 		tfds? (
 			=sci-libs/tensorflow-datasets-9999[${PYTHON_USEDEP}]
@@ -41,12 +41,12 @@ https://github.com/tensorflow/probability/archive/refs/tags/v${PV}.tar.gz
 	"
 	PDEPEND+="
 		jax? (
-			sci-libs/jax[${PYTHON_USEDEP}]
-			sci-libs/jaxlib[${PYTHON_USEDEP}]
+			dev-python/jax[${PYTHON_USEDEP}]
+			dev-python/jaxlib[${PYTHON_USEDEP}]
 		)
 		tensorflow? (
 			>=sci-libs/tensorflow-2.16[${PYTHON_USEDEP}]
-			>=sci-libs/keras-2.16[${PYTHON_USEDEP}]
+			>=dev-python/keras-2.16[${PYTHON_USEDEP}]
 		)
 		tfds? (
 			>=sci-libs/tensorflow-datasets-2.2.0[${PYTHON_USEDEP}]
@@ -72,7 +72,7 @@ RDEPEND+="
 	>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/decorator[${PYTHON_USEDEP}]
-	sci-libs/dm-tree[${PYTHON_USEDEP}]
+	dev-python/dm-tree[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}

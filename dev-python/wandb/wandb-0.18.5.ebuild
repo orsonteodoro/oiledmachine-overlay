@@ -102,7 +102,7 @@ BDEPEND+="
 			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
 			sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 		')
-		sci-libs/jax[${PYTHON_USEDEP},cpu]
+		dev-python/jax[${PYTHON_USEDEP},cpu]
 		dev-python/lightning[${PYTHON_USEDEP}]
 		dev-python/ray[${PYTHON_USEDEP},air,tune]
 

@@ -139,10 +139,10 @@ RDEPEND+="
 		dev-python/tqdm[${PYTHON_USEDEP}]
 	)
 	etree-dm? (
-		sci-libs/dm-tree[${PYTHON_USEDEP}]
+		dev-python/dm-tree[${PYTHON_USEDEP}]
 	)
 	etree-jax? (
-		sci-libs/jax[${PYTHON_USEDEP},cpu]
+		dev-python/jax[${PYTHON_USEDEP},cpu]
 	)
 	etree-tf? (
 		sci-libs/tensorflow[${PYTHON_USEDEP}]
@@ -167,7 +167,7 @@ BDEPEND+="
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-subtests[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
-		sci-libs/chex[${PYTHON_USEDEP}]
+		dev-python/chex[${PYTHON_USEDEP}]
 		$(python_gen_any_dep '
 			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
 		')

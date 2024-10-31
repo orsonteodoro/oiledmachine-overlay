@@ -189,9 +189,9 @@ TEXT_RDEPEND="
 			)
 		)
 		(
-			>=sci-libs/sentencepiece-0.2.0[${PYTHON_USEDEP}]
+			>=dev-python/sentencepiece-0.2.0[${PYTHON_USEDEP}]
 			strict? (
-				<sci-libs/sentencepiece-0.3.0[${PYTHON_USEDEP}]
+				<dev-python/sentencepiece-0.3.0[${PYTHON_USEDEP}]
 			)
 		)
 		(

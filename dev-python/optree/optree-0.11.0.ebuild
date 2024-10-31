@@ -30,7 +30,7 @@ IUSE+=" benchmark doc jax numpy test torch"
 RDEPEND+="
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
 	jax? (
-		sci-libs/jax[${PYTHON_USEDEP}]
+		dev-python/jax[${PYTHON_USEDEP}]
 	)
 	numpy? (
 		dev-python/numpy[${PYTHON_USEDEP}]
@@ -58,12 +58,12 @@ BDEPEND+="
 			sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 		')
 		(
-			>=sci-libs/jax-0.4.6[${PYTHON_USEDEP},cpu]
-			<sci-libs/jax-0.5.0_alpha0[${PYTHON_USEDEP},cpu]
+			>=dev-python/jax-0.4.6[${PYTHON_USEDEP},cpu]
+			<dev-python/jax-0.5.0_alpha0[${PYTHON_USEDEP},cpu]
 		)
 		(
-			>=sci-libs/dm-tree-0.1[${PYTHON_USEDEP}]
-			<sci-libs/dm-tree-0.2.0_alpha0[${PYTHON_USEDEP}]
+			>=dev-python/dm-tree-0.1[${PYTHON_USEDEP}]
+			<dev-python/dm-tree-0.2.0_alpha0[${PYTHON_USEDEP}]
 		)
 		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/tabulate[${PYTHON_USEDEP}]
@@ -72,7 +72,7 @@ BDEPEND+="
 	doc? (
 		>=dev-python/sphinx-5.2.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-autodoc-typehints-1.19.2[${PYTHON_USEDEP}]
-		>=sci-libs/jax-0.3[${PYTHON_USEDEP},cpu]
+		>=dev-python/jax-0.3[${PYTHON_USEDEP},cpu]
 		dev-python/sphinx-autoapi[${PYTHON_USEDEP}]
 		dev-python/sphinx-autobuild[${PYTHON_USEDEP}]
 		dev-python/sphinx-copybutton[${PYTHON_USEDEP}]

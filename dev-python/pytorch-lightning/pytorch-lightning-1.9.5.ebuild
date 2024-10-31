@@ -62,9 +62,9 @@ PYTORCH_BASE_RDEPEND="
 			)
 		)
 		(
-			>=sci-libs/lightning-utilities-0.6.0_p0[${PYTHON_USEDEP}]
+			>=dev-python/lightning-utilities-0.6.0_p0[${PYTHON_USEDEP}]
 			strict? (
-				<sci-libs/lightning-utilities-0.7.0[${PYTHON_USEDEP}]
+				<dev-python/lightning-utilities-0.7.0[${PYTHON_USEDEP}]
 			)
 		)
 		(
@@ -102,9 +102,9 @@ PYTORCH_BASE_RDEPEND="
 PYTORCH_EXAMPLES_RDEPEND="
 	$(python_gen_cond_dep '
 		(
-			>=sci-libs/gym-0.17.0[${PYTHON_USEDEP},classic_control(+)]
+			>=dev-python/gym-0.17.0[${PYTHON_USEDEP},classic_control(+)]
 			strict? (
-				<sci-libs/gym-0.26.3[${PYTHON_USEDEP},classic_control(+)]
+				<dev-python/gym-0.26.3[${PYTHON_USEDEP},classic_control(+)]
 			)
 		)
 		strict? (
@@ -321,7 +321,7 @@ PYTORCH_TEST_BDEPEND="
 			dev-python/fastapi[${PYTHON_USEDEP}]
 			dev-python/onnx[${PYTHON_USEDEP}]
 			dev-python/onnxruntime[${PYTHON_USEDEP}]
-			dev-python/protobuf-3.20.2:0/3.21[${PYTHON_USEDEP}]
+			>=dev-python/protobuf-python-3.20.2:0/3.21[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
 			dev-python/uvicorn[${PYTHON_USEDEP}]
 		)
@@ -329,7 +329,7 @@ PYTORCH_TEST_BDEPEND="
 			<dev-python/fastapi-0.87.0[${PYTHON_USEDEP}]
 			<dev-python/onnx-1.14.0[${PYTHON_USEDEP}]
 			<dev-python/onnxruntime-1.14.0[${PYTHON_USEDEP}]
-			<dev-python/protobuf-3.20.2:0/3.21[${PYTHON_USEDEP}]
+			<dev-python/protobuf-python-3.20.2:0/3.21[${PYTHON_USEDEP}]
 			<dev-python/psutil-5.9.5[${PYTHON_USEDEP}]
 			<dev-python/uvicorn-0.19.1[${PYTHON_USEDEP}]
 		)

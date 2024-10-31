@@ -178,7 +178,7 @@ if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
 			(
 				>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
 			)
-			sci-libs/keras[${PYTHON_USEDEP}]
+			dev-python/keras[${PYTHON_USEDEP}]
 		')
 	"
 else
@@ -188,7 +188,7 @@ else
 				>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
 				<sci-libs/tensorflow-2.16[${PYTHON_USEDEP},python]
 			)
-			<sci-libs/keras-3[${PYTHON_USEDEP}]
+			<dev-python/keras-3[${PYTHON_USEDEP}]
 		')
 	"
 fi

@@ -135,7 +135,7 @@ RDEPEND="
 	)
 	nnef? (
 		system-nnef-parser? (
-			sci-libs/nnef-parser[${PYTHON_USEDEP}]
+			dev-python/nnef-parser[${PYTHON_USEDEP}]
 		)
 	)
 	onnx? (

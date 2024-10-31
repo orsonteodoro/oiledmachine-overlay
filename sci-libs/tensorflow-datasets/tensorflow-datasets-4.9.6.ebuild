@@ -111,7 +111,7 @@ HUGGINGFACE_RDEPEND="
 	dev-python/wrapt[${PYTHON_USEDEP}]
 	dev-python/zarr[${PYTHON_USEDEP}]
 	media-libs/opencv[${PYTHON_USEDEP}]
-	sci-libs/dm-tree[${PYTHON_USEDEP}]
+	dev-python/dm-tree[${PYTHON_USEDEP}]
 	sci-libs/gcld3[${PYTHON_USEDEP}]
 	sci-libs/tensorflow[${PYTHON_USEDEP}]
 	sci-libs/tensorflow-data-validation[${PYTHON_USEDEP}]
@@ -143,7 +143,7 @@ RDEPEND+="
 	dev-python/toml[${PYTHON_USEDEP}]
 	dev-python/tqdm[${PYTHON_USEDEP}]
 	dev-python/wrapt[${PYTHON_USEDEP}]
-	sci-libs/dm-tree[${PYTHON_USEDEP}]
+	dev-python/dm-tree[${PYTHON_USEDEP}]
 	aflw2k3d? (
 		dev-python/scipy[${PYTHON_USEDEP}]
 	)
@@ -286,7 +286,7 @@ BDEPEND+="
 		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/pydub[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
-		sci-libs/jax[${PYTHON_USEDEP},cpu]
+		dev-python/jax[${PYTHON_USEDEP},cpu]
 
 		>=dev-python/pylint-2.6.0[${PYTHON_USEDEP}]
 		dev-python/yapf[${PYTHON_USEDEP}]

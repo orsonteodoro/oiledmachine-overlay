@@ -56,7 +56,7 @@ BDEPEND+="
 	)
 	test? (
 		>=dev-python/pytest-7.0[${PYTHON_USEDEP}]
-		>=sci-libs/gym-0.23[${PYTHON_USEDEP}]
+		>=dev-python/gym-0.23[${PYTHON_USEDEP}]
 	)
 "
 PATCHES=(

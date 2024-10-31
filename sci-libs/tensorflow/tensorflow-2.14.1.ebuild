@@ -663,20 +663,20 @@ DEPEND="
 	python? (
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		test? (
-			>=sci-libs/jax-0.4.7[${PYTHON_USEDEP}]
+			>=dev-python/jax-0.4.7[${PYTHON_USEDEP}]
 			dev-python/mock[${PYTHON_USEDEP}]
 		)
 	)
 "
 PDEPEND="
 	models? (
-		sci-libs/tf-models-official:0/${PV%.*}[${PYTHON_USEDEP}]
+		sci-misc/tf-models-official:0/${PV%.*}[${PYTHON_USEDEP}]
 	)
 	python? (
 		$(python_gen_cond_dep '
 			=sci-libs/tensorflow-io-0.35.0[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
 		' python3_{10,11})
-		=sci-libs/keras-${DEP_VER}*[${PYTHON_USEDEP}]
+		=dev-python/keras-${DEP_VER}*[${PYTHON_USEDEP}]
 		=sci-libs/tensorflow-estimator-${DEP_VER}*[${PYTHON_USEDEP}]
 	)
 "
@@ -771,9 +771,6 @@ BDEPEND="
 		)
 		rocm_5_6? (
 			sys-devel/gcc:${HIP_5_6_GCC_SLOT}
-		)
-		rocm_5_7? (
-			sys-devel/gcc:${HIP_5_7_GCC_SLOT}
 		)
 		sys-devel/gcc:=
 	)
@@ -924,9 +921,7 @@ einfo "FORCE_LLVM_SLOT may be specified."
 	fi
 
 	if use rocm ; then
-		if has rocm_5_7 ${IUSE_EFFECTIVE} && use rocm_5_7 ; then
-			_LLVM_COMPAT=( 17 )
-		elif has rocm_5_6 ${IUSE_EFFECTIVE} && use rocm_5_6 ; then
+		if has rocm_5_6 ${IUSE_EFFECTIVE} && use rocm_5_6 ; then
 			_LLVM_COMPAT=( 16 )
 		elif has rocm_5_5 ${IUSE_EFFECTIVE} && use rocm_5_5 ; then
 			_LLVM_COMPAT=( 16 )
@@ -1042,12 +1037,7 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 
 		local gcc_slot
 		# Build with GCC but initialize LLVM_SLOT.
-		if has rocm_5_7 ${IUSE_EFFECTIVE} && use rocm_5_7 ; then
-			LLVM_SLOT=17
-			ROCM_SLOT="5.7"
-			ROCM_VERSION="${HIP_5_7_VERSION}"
-			gcc_slot="${HIP_5_7_GCC_SLOT}"
-		elif has rocm_5_6 ${IUSE_EFFECTIVE} && use rocm_5_6 ; then
+		if has rocm_5_6 ${IUSE_EFFECTIVE} && use rocm_5_6 ; then
 			LLVM_SLOT=16
 			ROCM_SLOT="5.6"
 			ROCM_VERSION="${HIP_5_6_VERSION}"
