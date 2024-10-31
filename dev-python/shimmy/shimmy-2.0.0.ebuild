@@ -57,7 +57,7 @@ RDEPEND+="
 		dev-python/imageio[${PYTHON_USEDEP}]
 	)
 	openspiel? (
-		>=dev-python/open_spiel-1.2[${PYTHON_USEDEP}]
+		>=dev-python/open-spiel-1.2[${PYTHON_USEDEP}]
 		>=dev-python/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
 	)
 "

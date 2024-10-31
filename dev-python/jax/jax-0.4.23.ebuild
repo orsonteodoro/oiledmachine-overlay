@@ -49,7 +49,7 @@ DEPEND+="
 		>=dev-python/scipy-1.11.1[${PYTHON_USEDEP}]
 	' python3_12)
 	>=dev-python/jaxlib-${PV}[${PYTHON_USEDEP},cpu=,cuda=,rocm=]
-	>=dev-python/ml_dtypes-0.2.0[${PYTHON_USEDEP}]
+	>=dev-python/ml-dtypes-0.2.0[${PYTHON_USEDEP}]
 	dev-python/opt-einsum[${PYTHON_USEDEP}]
 	australis? (
 		dev-libs/protobuf:0/3.21

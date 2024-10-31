@@ -4,6 +4,8 @@
 
 EAPI=8
 
+MY_PN="${PN/-/_}"
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.9
 
@@ -19,7 +21,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-	S="${WORKDIR}/${PN}-${PV}"
+	S="${WORKDIR}/${MY_PN}-${PV}"
 	SRC_URI="
 https://github.com/huggingface/controlnet_aux/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
