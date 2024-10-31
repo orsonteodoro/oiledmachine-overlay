@@ -1022,6 +1022,13 @@
   </flag>
 </use>
 <slots>
+  <!--
+
+  We would like to free the user to allow them to use newer features or
+  capabilities and to unstuck from forced lower versions only caused by either
+  older CI images or anti rolling release developers in downstream packages.
+
+  -->
   <slot name="0">
     For unislot with prefix set to /usr
   </slot>
