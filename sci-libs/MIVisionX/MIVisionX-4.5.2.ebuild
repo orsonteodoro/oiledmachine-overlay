@@ -111,7 +111,10 @@ RDEPEND="
 		')
 	)
 	ffmpeg? (
-		>=media-video/ffmpeg-4.0.4:0/56.58.58[fdk,gpl,libass,x264,x265,nonfree]
+		|| (
+			>=media-video/ffmpeg-4.0.4:56.58.58[fdk,gpl,libass,x264,x265,nonfree]
+			>=media-video/ffmpeg-4.0.4:0/56.58.58[fdk,gpl,libass,x264,x265,nonfree]
+		)
 	)
 	neural-net? (
 		$(python_gen_cond_dep '
