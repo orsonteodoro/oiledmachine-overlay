@@ -50,7 +50,7 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/cloudpickle-1.2.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
-	>=sci-libs/ale-py-0.8.0[${PYTHON_USEDEP}]
+	>=dev-python/ale-py-0.8.0[${PYTHON_USEDEP}]
 	>=sci-libs/gym-notices-0.0.4[${PYTHON_USEDEP}]
 
 	>=dev-python/lz4-3.1.0[${PYTHON_USEDEP}]
@@ -59,10 +59,10 @@ RDEPEND+="
 	>=media-libs/opencv-3.0[${PYTHON_USEDEP},python]
 
 	atari? (
-		>=sci-libs/ale-py-0.8.0[${PYTHON_USEDEP}]
+		>=dev-python/ale-py-0.8.0[${PYTHON_USEDEP}]
 	)
 	accept-rom-license? (
-		>=sci-libs/autorom-accept-rom-license-0.4.2[${PYTHON_USEDEP}]
+		>=dev-python/autorom-accept-rom-license-0.4.2[${PYTHON_USEDEP}]
 	)
 	box2d? (
 		>=dev-lang/swig-4

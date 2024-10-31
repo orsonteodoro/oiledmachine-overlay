@@ -207,7 +207,7 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	${PYTHON_DEPS}
-	>=sci-libs/autorom-${PV}:${SLOT}[${PYTHON_USEDEP}]
+	>=dev-python/autorom-${PV}:${SLOT}[${PYTHON_USEDEP}]
 	dev-python/click[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 "

@@ -34,7 +34,7 @@ RDEPEND+="
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 	>=sci-libs/gymnasium-0.27.0[${PYTHON_USEDEP}]
 	atari? (
-		>=sci-libs/ale-py-0.8.1[${PYTHON_USEDEP}]
+		>=dev-python/ale-py-0.8.1[${PYTHON_USEDEP}]
 	)
 	bsuite? (
 		>=sci-libs/bsuite-0.3.5[${PYTHON_USEDEP}]
@@ -78,7 +78,7 @@ BDEPEND+="
 	test? (
 		>=dev-python/pillow-9.3.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.1.3[${PYTHON_USEDEP}]
-		>=sci-libs/autorom-0.6.0[${PYTHON_USEDEP}]
+		>=dev-python/autorom-0.6.0[${PYTHON_USEDEP}]
 	)
 "
 

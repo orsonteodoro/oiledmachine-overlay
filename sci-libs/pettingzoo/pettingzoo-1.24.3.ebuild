@@ -86,7 +86,7 @@ BDEPEND+="
 		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-markdown-docs-0.5.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-xdist-3.5.0[${PYTHON_USEDEP}]
-		>=sci-libs/autorom-0.6.1[${PYTHON_USEDEP}]
+		>=dev-python/autorom-0.6.1[${PYTHON_USEDEP}]
 		dev-python/black[${PYTHON_USEDEP}]
 	)
 "

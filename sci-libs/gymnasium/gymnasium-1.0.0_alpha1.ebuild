@@ -54,7 +54,7 @@ RDEPEND+="
 		<sci-libs/shimmy-1.0[${PYTHON_USEDEP}]
 	)
 	accept-rom-license? (
-		>=sci-libs/autorom-accept-rom-license-0.4.2[${PYTHON_USEDEP}]
+		>=dev-python/autorom-accept-rom-license-0.4.2[${PYTHON_USEDEP}]
 	)
 	box2d? (
 		>=dev-lang/swig-4
