@@ -4,7 +4,7 @@
 
 EAPI=8
 
-inherit git-r3 linux-info linux-mod-r1
+inherit flag-o-matic git-r3 linux-info linux-mod-r1
 
 S="${WORKDIR}"
 SRC_URI="

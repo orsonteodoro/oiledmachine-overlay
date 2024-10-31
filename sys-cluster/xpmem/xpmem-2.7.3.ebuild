@@ -13,7 +13,7 @@ DKMS_MODULES=(
 )
 MODULE_NAMES="knem(misc:${S}/driver/linux)"
 
-inherit autotools linux-mod linux-info toolchain-funcs udev
+inherit autotools flag-o-matic linux-mod linux-info toolchain-funcs udev
 
 if [[ ${PV} =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/openucx/xpmem.git"

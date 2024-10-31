@@ -50,7 +50,7 @@ else
 	KV_SUPPORTED_MIN="5.15"
 fi
 
-inherit linux-info toolchain-funcs
+inherit flag-o-matic linux-info toolchain-funcs
 
 #KEYWORDS="~amd64"
 S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
@@ -717,6 +717,7 @@ set_cc() {
 		| cut -f 1 -d " ")
 einfo "CC:  ${CC}"
 	${CC} --version || die
+	strip-unsupported-flags
 
 	sed -r \
 		-i \

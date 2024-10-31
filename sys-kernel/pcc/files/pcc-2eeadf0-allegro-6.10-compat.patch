@@ -1,0 +1,23 @@
+diff '--color=auto' -urp allegro.orig/src/tcp_pcc.c allegro/src/tcp_pcc.c
+--- a/allegro/src/tcp_pcc.c	2024-10-30 21:25:09.674984163 -0700
++++ b/allegro/src/tcp_pcc.c	2024-10-30 21:26:28.273890355 -0700
+@@ -9,6 +9,7 @@
+ #include <linux/module.h>
+ #include <net/tcp.h>
+ #include <linux/random.h>
++#include <linux/version.h>
+ 
+ /* Ignore the first and last packets of every interval because they might
+  * contain data of the previous / next interval. */
+@@ -457,7 +458,11 @@ pcc_update_interval(struct pcc_interval
+ 	interval->delivered += tcp_sk(sk)->delivered - pcc->delivered_base;
+ }
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,10,0)
++static void pcc_process_sample(struct sock *sk, u32 ack, int flag, const struct rate_sample *rs)
++#else
+ static void pcc_process_sample(struct sock *sk, const struct rate_sample *rs)
++#endif
+ {
+ 	struct pcc_data *pcc = inet_csk_ca(sk);
+ 	struct tcp_sock *tsk = tcp_sk(sk);

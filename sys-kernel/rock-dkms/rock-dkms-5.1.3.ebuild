@@ -44,7 +44,7 @@ else
 	KV_SUPPORTED_MIN="5.4"
 fi
 
-inherit linux-info toolchain-funcs
+inherit flag-o-matic linux-info toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
@@ -708,13 +708,13 @@ set_cc() {
 		| cut -f 1 -d " ")
 einfo "CC:  ${CC}"
 	${CC} --version || die
+	strip-unsupported-flags
 
 	sed -r \
 		-i \
 		-e "s/ CC=('|\"|)[a-z0-9._-]+('|\"|)//g" \
 		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/dkms.conf" \
 		|| die
-
 	sed -i \
 		-e "s/make /make CC=${CC} /" \
 		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/dkms.conf" \

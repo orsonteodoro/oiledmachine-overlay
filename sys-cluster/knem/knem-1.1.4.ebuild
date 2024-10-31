@@ -12,7 +12,7 @@ DKMS_MODULES=(
 	"knem driver/linux /kernel/../updates/"
 )
 
-inherit autotools linux-mod linux-info toolchain-funcs udev
+inherit autotools flag-o-matic linux-mod linux-info toolchain-funcs udev
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"

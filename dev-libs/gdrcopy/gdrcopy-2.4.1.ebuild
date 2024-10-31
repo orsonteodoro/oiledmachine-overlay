@@ -22,7 +22,7 @@ declare -A CUDA_GCC_SLOT=(
 	["11.8"]="11"
 )
 
-inherit linux-mod-r1
+inherit flag-o-matic linux-mod-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -134,8 +134,8 @@ src_configure() {
 	for ver in ${!CUDA_GCC_SLOT[@]} ; do
 		if has_version "=dev-util/nvidia-cuda-toolkit-${ver}*" ; then
 			found=1
-			local gcc_slot=${CUDA_GCC_SLOT["${ver}"]}
-			libstdcxx_check ${gcc_slot}
+			local cuda_gcc_slot=${CUDA_GCC_SLOT["${ver}"]}
+			libstdcxx_check ${cuda_gcc_slot}
 			break
 		fi
 	done
@@ -197,6 +197,26 @@ eerror "  sources not your own manually installed one installed directly in"
 eerror "  /usr/src/linux.  (i.e. emerge the gentoo-sources package)"
 eerror
 		die
+	fi
+
+	if [[ -e "${KERNEL_DIR}/.config" ]] ; then
+		export CC=$(grep -E -e "CONFIG_CC_VERSION_TEXT" "${KERNEL_DIR}/.config" \
+			| cut -f 1 -d " " \
+			| cut -f 2 -d "=" \
+			| sed -e "s/[\"|']//g")
+		strip-unsupported-flags
+		einfo "CC: ${CC}"
+		local kernel_gcc_slot=$(gcc-major-version)
+		if tc-is-gcc && ver_test ${kernel_gcc_slot} -ne ${cuda_gcc_slot} ; then
+eerror
+eerror "The kernel slot must be the same as the max supported GCC for"
+eerror "dev-util/nvidia-cuda-toolkit."
+eerror
+eerror "GCC slot of dev-util/nvidia-cuda-toolkit:  ${cuda_gcc_slot}"
+eerror "GCC slot of kernel:  ${kernel_gcc_slot}"
+eerror
+			die
+		fi
 	fi
 }
 

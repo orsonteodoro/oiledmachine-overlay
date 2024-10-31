@@ -18,7 +18,7 @@ ERROR_USB_GSPCA="${P} requires GSPCA based webcams (CONFIG_USB_GSPCA)"
 ERROR_VIDEO_V4L2="${P} requires CONFIG_VIDEO_V4L2"
 MODULE_NAMES="ep800(kernel/drivers/media/usb/gspca:${S})"
 
-inherit linux-mod
+inherit flag-o-matic linux-mod
 
 KEYWORDS="~amd64 ~x86"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}/trunk"

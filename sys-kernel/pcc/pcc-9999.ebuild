@@ -7,7 +7,7 @@ EAPI=8
 MAINTAINER_MODE=0
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit linux-info linux-mod-r1
+inherit flag-o-matic linux-info linux-mod-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -174,6 +174,15 @@ _src_prepare_one() {
 
 src_prepare() {
 	default
+
+	if use allegro ; then
+		eapply "${FILESDIR}/${PN}-2eeadf0-allegro-6.10-compat.patch"
+	fi
+
+	if use vivace ; then
+		eapply "${FILESDIR}/${PN}-2eeadf0-vivace-6.10-compat.patch"
+	fi
+
 	local k
 	for k in ${PCC_KERNELS} ; do
 		if [[ "${k}" =~ "*" ]] ; then
