@@ -1,6 +1,13 @@
-This patch enables us to tell CMake to find a particular python
-impl on a multi-impl system.
+https://github.com/Cisco-Talos/clamav/commit/f4280e9a690f2a5b657118e515b089f494a1e464
+From: Matt Jolly <Matt.Jolly@footclan.ninja>
+Date: Wed, 30 Nov 2022 16:14:39 +1100
+Subject: [PATCH] CMake: Enable selection of a specific python impl
 
+On distros with multiple python impls it can be useful to select
+a specific version rather than whatever CMake thinks is appopriate.
+
+This patch enables users to instruct CMake to look for a specific
+version of python by passing `-DPYTHON_FIND_VER`.
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -223,20 +223,26 @@ if(ENABLE_TESTS)

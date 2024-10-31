@@ -27,53 +27,57 @@ EAPI=8
 # rust-bin < 1.71 has an executable stack
 # which is not supported on selinux #911589
 
+GENERATE_LOCKFILE=0
 MY_P="${P//_/-}"
 
-# From "./convert-cargo-lock.sh 1.4.0 1.4.0"
+declare -A GIT_CRATES=(
+	[onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;29c08532252b917543ff268284f926f30876bb79;onenote.rs-%commit%" # 0.3.1
+)
+
+# From "./convert-cargo-lock.sh 1.4.1 1.4.1"
 CRATES="
-adler-1.0.2
+adler2-2.0.0
 adler32-1.2.0
 aho-corasick-1.1.3
 android-tzdata-0.1.1
 android_system_properties-0.1.5
-autocfg-1.3.0
+autocfg-1.4.0
 base64-0.21.7
 bindgen-0.65.1
 bit_field-0.10.2
 bitflags-1.3.2
-bitflags-2.5.0
+bitflags-2.6.0
 block-buffer-0.10.4
 bumpalo-3.16.0
-bytemuck-1.15.0
+bytemuck-1.19.0
 byteorder-1.5.0
-bytes-1.6.0
+bytes-1.8.0
 bzip2-rs-0.1.2
 cbindgen-0.25.0
-cc-1.0.97
+cc-1.1.31
 cexpr-0.6.0
 cfg-if-1.0.0
 chrono-0.4.38
-clang-sys-1.7.0
+clang-sys-1.8.1
 color_quant-1.1.0
-core-foundation-sys-0.8.6
-cpufeatures-0.2.12
-crc32fast-1.4.0
+core-foundation-sys-0.8.7
+cpufeatures-0.2.14
+crc32fast-1.4.2
 crossbeam-deque-0.8.5
 crossbeam-epoch-0.9.18
-crossbeam-utils-0.8.19
+crossbeam-utils-0.8.20
 crunchy-0.2.2
 crypto-common-0.1.6
 delharc-0.6.1
 digest-0.10.7
-either-1.11.0
-encoding_rs-0.8.34
+either-1.13.0
+encoding_rs-0.8.35
 enum-primitive-derive-0.2.2
-errno-0.3.8
-exr-1.72.0
-fastrand-2.1.0
-fdeflate-0.3.4
-flate2-1.0.30
-flume-0.11.0
+errno-0.3.9
+exr-1.73.0
+fastrand-2.1.1
+fdeflate-0.3.6
+flate2-1.0.34
 generic-array-0.14.7
 gif-0.13.1
 glob-0.3.1
@@ -83,7 +87,7 @@ heck-0.4.1
 hex-0.4.3
 hex-literal-0.4.1
 home-0.5.9
-iana-time-zone-0.1.60
+iana-time-zone-0.1.61
 iana-time-zone-haiku-0.1.2
 image-0.24.9
 indexmap-1.9.3
@@ -91,90 +95,85 @@ inflate-0.4.5
 itertools-0.10.5
 itoa-1.0.11
 jpeg-decoder-0.3.1
-js-sys-0.3.69
-lazy_static-1.4.0
+js-sys-0.3.72
+lazy_static-1.5.0
 lazycell-1.3.0
 lebe-0.5.2
-libc-0.2.155
-libloading-0.8.3
-linux-raw-sys-0.4.13
-lock_api-0.4.12
-log-0.4.21
-memchr-2.7.2
+libc-0.2.161
+libloading-0.8.5
+linux-raw-sys-0.4.14
+log-0.4.22
+memchr-2.7.4
 minimal-lexical-0.2.1
-miniz_oxide-0.7.2
+miniz_oxide-0.8.0
 nom-7.1.3
-num-complex-0.4.5
+num-complex-0.4.6
 num-integer-0.1.46
 num-traits-0.2.19
-once_cell-1.19.0
-paste-1.0.14
+once_cell-1.20.2
+paste-1.0.15
 peeking_take_while-0.1.2
-png-0.17.13
-prettyplease-0.2.19
-primal-check-0.3.3
-proc-macro2-1.0.81
+png-0.17.14
+prettyplease-0.2.25
+primal-check-0.3.4
+proc-macro2-1.0.89
 qoi-0.4.1
-quote-1.0.36
+quote-1.0.37
 rayon-1.10.0
 rayon-core-1.12.1
-regex-1.10.4
-regex-automata-0.4.6
-regex-syntax-0.8.3
+regex-1.11.1
+regex-automata-0.4.8
+regex-syntax-0.8.5
 rustc-hash-1.1.0
 rustdct-0.7.1
 rustfft-6.2.0
-rustix-0.38.34
-ryu-1.0.17
-scopeguard-1.2.0
-serde-1.0.200
-serde_derive-1.0.200
-serde_json-1.0.116
+rustix-0.38.38
+ryu-1.0.18
+serde-1.0.214
+serde_derive-1.0.214
+serde_json-1.0.132
 sha1-0.10.6
 sha2-0.10.8
 shlex-1.3.0
 simd-adler32-0.3.7
 smallvec-1.13.2
-spin-0.9.8
 strength_reduce-0.2.4
 syn-1.0.109
-syn-2.0.60
-tempfile-3.10.1
-thiserror-1.0.59
-thiserror-impl-1.0.59
+syn-2.0.85
+tempfile-3.13.0
+thiserror-1.0.65
+thiserror-impl-1.0.65
 tiff-0.9.1
-tinyvec-1.6.0
+tinyvec-1.8.0
 toml-0.5.11
 transpose-0.2.3
 typenum-1.17.0
-unicode-ident-1.0.12
-unicode-segmentation-1.11.0
-uuid-1.8.0
-version_check-0.9.4
-wasm-bindgen-0.2.92
-wasm-bindgen-backend-0.2.92
-wasm-bindgen-macro-0.2.92
-wasm-bindgen-macro-support-0.2.92
-wasm-bindgen-shared-0.2.92
+unicode-ident-1.0.13
+unicode-segmentation-1.12.0
+uuid-1.11.0
+version_check-0.9.5
+wasm-bindgen-0.2.95
+wasm-bindgen-backend-0.2.95
+wasm-bindgen-macro-0.2.95
+wasm-bindgen-macro-support-0.2.95
+wasm-bindgen-shared-0.2.95
 weezl-0.1.8
 which-4.4.2
 widestring-1.1.0
 windows-core-0.52.0
 windows-sys-0.52.0
-windows-targets-0.52.5
-windows_aarch64_gnullvm-0.52.5
-windows_aarch64_msvc-0.52.5
-windows_i686_gnu-0.52.5
-windows_i686_gnullvm-0.52.5
-windows_i686_msvc-0.52.5
-windows_x86_64_gnu-0.52.5
-windows_x86_64_gnullvm-0.52.5
-windows_x86_64_msvc-0.52.5
+windows-sys-0.59.0
+windows-targets-0.52.6
+windows_aarch64_gnullvm-0.52.6
+windows_aarch64_msvc-0.52.6
+windows_i686_gnu-0.52.6
+windows_i686_gnullvm-0.52.6
+windows_i686_msvc-0.52.6
+windows_x86_64_gnu-0.52.6
+windows_x86_64_gnullvm-0.52.6
+windows_x86_64_msvc-0.52.6
 zune-inflate-0.2.54
 "
-declare -A GIT_CRATES=(
-[onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;8b450447e58143004b68dd21c11b710fdb79be92;onenote.rs-%commit%" # 0.3.1
-)
 CURL_PV="7.68.0"
 LLVM_MAX_SLOT=14
 PYTEST_PV="7.2.0"
@@ -183,7 +182,10 @@ PYTHON_COMPAT=( python3_{10..12} ) # CI uses 3.8
 inherit cargo cmake flag-o-matic lcnr llvm python-any-r1 systemd tmpfiles
 
 if ! [[ "${PV}" =~ "_rc" ]] ; then
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos"
+	KEYWORDS="
+~alpha amd64 arm arm64 ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~x86-linux
+~ppc-macos
+	"
 fi
 S="${WORKDIR}/clamav-${MY_P}"
 SRC_URI="
@@ -209,12 +211,18 @@ THIRD_PARTY_LICENSES+="
 	MPL-2.0
 	public-domain
 	unRAR
+	Unicode-DFS-2016
 	Unlicense
 	UoI-NCSA
 	ZLIB
-	Unicode-DFS-2016
-	|| ( Unlicense MIT )
-	|| ( MIT Apache-2.0 )
+	|| (
+		MIT
+		Unlicense
+	)
+	|| (
+		Apache-2.0
+		MIT
+	)
 "
 LICENSE="
 	${THIRD_PARTY_LICENSES}
@@ -244,7 +252,12 @@ LICENSE="
 # || ( Unlicense MIT ) - cargo_home/gentoo/byteorder-1.4.3/COPYING
 # || ( MIT Apache-2.0 ) - cargo_home/gentoo/half-2.1.0/LICENSE
 
-#RESTRICT="!test? ( test )"
+#
+#RESTRICT="
+#	!test? (
+#		test
+#	)
+#"
 SLOT="0/sts"
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
@@ -366,10 +379,11 @@ echo
 }
 
 PATCHES=(
-	"${FILESDIR}/${PN}-1.0.0-CMakeLists-allow-llvm16.patch"
-	"${FILESDIR}/${PN}-1.0.0-llvm14-noreturn.patch"
-	"${FILESDIR}/${PN}-1.0.0-llvm14.patch"
-	"${FILESDIR}/${PN}-1.0.0-llvm15.patch"
+	"${FILESDIR}/extra-patches/${PN}-1.0.0-CMakeLists-allow-llvm16.patch"
+	"${FILESDIR}/extra-patches/${PN}-1.0.0-llvm14-noreturn.patch"
+	"${FILESDIR}/extra-patches/${PN}-1.0.0-llvm14.patch"
+	"${FILESDIR}/extra-patches/${PN}-1.0.0-llvm15.patch"
+	"${FILESDIR}/${PN}-1.4.1-pointer-types.patch"
 )
 
 _lockfile_gen_unpack() {
@@ -408,7 +422,7 @@ src_prepare() {
 	cmake_src_prepare
 	if ver_test "${LLVM_SLOT}" -ge "16" ; then
 einfo "LLVM_SLOT:\t${LLVM_SLOT}"
-		eapply "${FILESDIR}/${PN}-1.0.0-llvm16.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-1.0.0-llvm16.patch"
 		ewarn "JIT is still broken for LLVM 16"
 	fi
 	if ver_test "${LLVM_SLOT}" -ge "15" ; then
@@ -456,7 +470,7 @@ src_configure() {
 	use ppc64 && append-flags -mminimal-toc
 
 	if ! use custom-cflags ; then
-		# Upstream default in CI is just -O3.
+	# Upstream default in CI is just -O3.
 		strip-flags
 		filter-flags \
 			'-march=*' \
@@ -466,11 +480,11 @@ src_configure() {
 
 	clang --version
 	local mycmakeargs=(
-		-DAPP_CONFIG_DIRECTORY="${EPREFIX}"/etc/clamav
+		-DAPP_CONFIG_DIRECTORY="${EPREFIX}/etc/clamav"
 		-DBYTECODE_RUNTIME=$(usex jit llvm interpreter)
 		-DCLAMAV_GROUP="clamav"
 		-DCLAMAV_USER="clamav"
-		-DDATABASE_DIRECTORY="${EPREFIX}"/var/lib/clamav
+		-DDATABASE_DIRECTORY="${EPREFIX}/var/lib/clamav"
 		-DENABLE_APP=$(usex clamapp ON OFF)
 		-DENABLE_CLAMONACC=$(usex clamonacc ON OFF)
 		-DENABLE_DOXYGEN=$(usex doc)
@@ -488,10 +502,10 @@ src_configure() {
 	)
 
 	if use test ; then
-		# https://bugs.gentoo.org/818673
-		# Used to enable some more tests but doesn't behave well in
-		# sandbox necessarily(?) + needs certain debug symbols present
-		# in e.g. glibc.
+	# https://bugs.gentoo.org/818673
+	# Used to enable some more tests but doesn't behave well in
+	# sandbox necessarily(?) + needs certain debug symbols present
+	# in e.g. glibc.
 		mycmakeargs+=(
 			-DCMAKE_DISABLE_FIND_PACKAGE_Valgrind=$(usex valgrind OFF ON)
 			-DPYTHON_FIND_VERSION="${EPYTHON#python}"
@@ -518,9 +532,9 @@ src_configure() {
 	fi
 
 	if use jit ; then
-		# Suppress CMake warnings that variables aren't consumed if we aren't using LLVM
-		# https://github.com/Cisco-Talos/clamav/blob/main/INSTALL.md#llvm-optional-see-bytecode-runtime-section
-		# https://github.com/Cisco-Talos/clamav/blob/main/INSTALL.md#bytecode-runtime
+	# Suppress CMake warnings that variables aren't consumed if we aren't using LLVM
+	# https://github.com/Cisco-Talos/clamav/blob/main/INSTALL.md#llvm-optional-see-bytecode-runtime-section
+	# https://github.com/Cisco-Talos/clamav/blob/main/INSTALL.md#bytecode-runtime
 		mycmakeargs+=(
 			-DLLVM_ROOT_DIR="$(get_llvm_prefix -d ${LLVM_MAX_SLOT})"
 			-DLLVM_FIND_VERSION="$(best_version sys-devel/llvm:${LLVM_MAX_SLOT} | cut -c 16-)"
@@ -533,99 +547,87 @@ src_configure() {
 src_test() {
 	use valgrind && ewarn "Testing with valgrind may likely fail."
 	cd "${BUILD_DIR}" || die
-	use jit && unit_tests/check_clamav || die
+	use jit && "unit_tests/check_clamav" || die
 	cmake_src_test
 }
 
 src_install() {
 	cmake_src_install
-	# init scripts
-	newinitd "${FILESDIR}/clamd.initd" clamd
-	newinitd "${FILESDIR}/freshclam.initd" freshclam
+	# Init scripts
+	newinitd "${FILESDIR}/clamd.initd" "clamd"
+	newinitd "${FILESDIR}/freshclam.initd" "freshclam"
 	use clamonacc \
-		&& newinitd "${FILESDIR}/clamonacc.initd" clamonacc
+		&& newinitd "${FILESDIR}/clamonacc.initd" "clamonacc"
 	use milter \
-		&& newinitd "${FILESDIR}/clamav-milter.initd" clamav-milter
+		&& newinitd "${FILESDIR}/clamav-milter.initd" "clamav-milter"
 
 	if ! use libclamav-only ; then
 		if use systemd ; then
-			# The tmpfiles entry is behind USE=systemd because the
-			# upstream OpenRC service files should (and do) ensure that
-			# the directories they need exist and have the correct
-			# permissions without the help of opentmpfiles. There are
-			# years-old root exploits in opentmpfiles, the design is
-			# fundamentally flawed, and the maintainer is not up to
-			# the task of fixing it.
-			dotmpfiles "${FILESDIR}/tmpfiles.d/clamav.conf"
-			systemd_newunit "${FILESDIR}/clamd_at.service-0.104.0" "clamd@.service"
-			systemd_dounit "${FILESDIR}/clamd.service"
-			systemd_newunit "${FILESDIR}/freshclamd.service-r1" \
-				"freshclamd.service"
+	# OpenRC services ensure their own permissions, so we can avoid a"
+	# dependency on sys-apps/systemd-utils[tmpfiles] here, though we can"
+	# change our minds and use it if we want to.
+			dotmpfiles "${FILESDIR}/tmpfiles.d/clamav-r1.conf"
 		fi
 
 		if use clamapp ; then
-			# Modify /etc/{clamd,freshclam}.conf to be usable out of the box
-			sed \
-				-e "s:^\(Example\):\# \1:" \
-				-e "s/^#\(PidFile .*\)/\1/" \
+	# Modify /etc/{clamd,freshclam}.conf to be usable out of the box
+			sed -e "s:^\(Example\):\# \1:" \
+				-e "s:^#\(PidFile\) .*:\1 ${EPREFIX}/run/clamd.pid:" \
 				-e "s/^#\(LocalSocket .*\)/\1/" \
 				-e "s/^#\(User .*\)/\1/" \
 				-e "s:^\#\(LogFile\) .*:\1 ${EPREFIX}/var/log/clamav/clamd.log:" \
 				-e "s:^\#\(LogTime\).*:\1 yes:" \
 				-e "s/^#\(DatabaseDirectory .*\)/\1/" \
-				"${ED}"/etc/clamav/clamd.conf.sample > \
-				"${ED}"/etc/clamav/clamd.conf || die
+				"${ED}/etc/clamav/clamd.conf.sample" > \
+				"${ED}/etc/clamav/clamd.conf" || die
 
-			sed \
-				-e "s:^\(Example\):\# \1:" \
-				-e "s/^#\(PidFile .*\)/\1/" \
+			sed -e "s:^\(Example\):\# \1:" \
+				-e "s:^#\(PidFile\) .*:\1 ${EPREFIX}/run/freshclam.pid:" \
 				-e "s/^#\(DatabaseOwner .*\)/\1/" \
 				-e "s:^\#\(UpdateLogFile\) .*:\1 ${EPREFIX}/var/log/clamav/freshclam.log:" \
 				-e "s:^\#\(NotifyClamd\).*:\1 ${EPREFIX}/etc/clamav/clamd.conf:" \
 				-e "s:^\#\(ScriptedUpdates\).*:\1 yes:" \
 				-e "s/^#\(DatabaseDirectory .*\)/\1/" \
-				"${ED}"/etc/clamav/freshclam.conf.sample > \
-				"${ED}"/etc/clamav/freshclam.conf || die
+				"${ED}/etc/clamav/freshclam.conf.sample" > \
+				"${ED}/etc/clamav/freshclam.conf" || die
 
 			if use milter ; then
-				# Note: only keep the "unix" ClamdSocket and MilterSocket!
-				sed \
-					-e "s:^\(Example\):\# \1:" \
-					-e "s/^#\(PidFile .*\)/\1/" \
+	# Note: only keep the "unix" ClamdSocket and MilterSocket!
+				sed -e "s:^\(Example\):\# \1:" \
+					-e "s:^\#\(PidFile\) .*:\1 ${EPREFIX}/run/clamav-milter.pid:" \
 					-e "s/^#\(ClamdSocket unix:.*\)/\1/" \
 					-e "s/^#\(User .*\)/\1/" \
-					-e "s/^#\(MilterSocket unix:.*\)/\1/" \
 					-e "s:^\#\(LogFile\) .*:\1 ${EPREFIX}/var/log/clamav/clamav-milter.log:" \
-					"${ED}"/etc/clamav/clamav-milter.conf.sample > \
-					"${ED}"/etc/clamav/clamav-milter.conf || die
+					"${ED}/etc/clamav/clamav-milter.conf.sample" > \
+					"${ED}/etc/clamav/clamav-milter.conf" || die
 
-				systemd_newunit "${FILESDIR}/clamav-milter.service-0.104.0" clamav-milter.service
+				systemd_newunit "${FILESDIR}/clamav-milter.service-0.104.0" "clamav-milter.service"
 			fi
 
 			local i
-			for i in clamd freshclam clamav-milter
+			for i in "clamd" "freshclam" "clamav-milter"
 			do
-				if [[ -f "${ED}"/etc/"${i}".conf.sample ]] ; then
-					mv "${ED}"/etc/"${i}".conf{.sample,} || die
+				if [[ -f "${ED}/etc/${i}.conf.sample" ]] ; then
+					mv "${ED}/etc/${i}.conf"{".sample",""} || die
 				fi
 			done
 
-			# These both need to be writable by the clamav user.
-			# TODO: use syslog by default; that's what it's for.
-			diropts -o clamav -g clamav
-			keepdir /var/lib/clamav
-			keepdir /var/log/clamav
+	# These both need to be writable by the clamav user
+	# TODO: use syslog by default; that's what it's for.
+			diropts -o "clamav" -g "clamav"
+			keepdir "/var/lib/clamav"
+			keepdir "/var/log/clamav"
 		fi
 	fi
 
 	if use doc ; then
-		local HTML_DOCS=( docs/html/. )
+		local HTML_DOCS=( "docs/html/." )
 		einstalldocs
 	fi
 
 	# Don't install man pages for utilities we didn't install
 	if use libclamav-only ; then
-		rm -r "${ED}"/usr/share/man || die
+		rm -r "${ED}/usr/share/man" || die
 	fi
 
 	find "${ED}" -name '*.la' -delete || die
@@ -636,7 +638,7 @@ src_install() {
 	lcnr_install_files
 
 	# ecompress/unxz is being stupid
-	mv "${S}/COPYING/COPYING.lzma"{,_} || die
+	mv "${S}/COPYING/COPYING.lzma"{"","_"} || die
 
 	LCNR_TAG="${PN}"
 	LCNR_SOURCE="${S}"
@@ -646,7 +648,7 @@ src_install() {
 pkg_postinst() {
 	if ! use libclamav-only ; then
 		if use systemd ; then
-			tmpfiles_process clamav.conf
+			tmpfiles_process "clamav-r1.conf"
 		fi
 	fi
 	if use milter ; then
@@ -655,20 +657,38 @@ einfo "For simple instructions how to setup the clamav-milter read the"
 einfo "clamav-milter.README.gentoo in /usr/share/doc/${PF}"
 einfo
 	fi
-	local databases=( "${EROOT}"/var/lib/clamav/main.c[lv]d )
+	local databases=( "${EROOT}/var/lib/clamav/main.c"[lv]"d" )
 	if [[ ! -f "${databases}" ]] ; then
-ewarn
+einfo
 ewarn "You must run freshclam manually to populate the virus database before"
 ewarn "starting clamav for the first time."
-ewarn
+einfo
 	fi
-	if ! systemd_is_booted ; then
+
+	 if ! systemd_is_booted ; then
 ewarn
 ewarn "This version of ClamAV provides separate OpenRC services for clamd,"
 ewarn "freshclam, clamav-milter, and clamonacc. The clamd service now starts"
 ewarn "only the clamd daemon itself. You should add freshclam (and perhaps"
 ewarn "clamav-milter) to any runlevels that previously contained clamd."
 ewarn
+	else
+		if [[ -n "${REPLACING_VERSIONS}" ]] && ver_test "${REPLACING_VERSIONS}" -le "1.3.1" ; then
+ewarn
+ewarn "From 1.3.1-r1 the Gentoo-provided systemd services have been retired in"
+ewarn "favour of using the units shipped by upstream.  Ensure that any required"
+ewarn "services are configured and started.  clamd@.service has been retired as"
+ewarn "part of this transition."
+ewarn
+		fi
+	fi
+
+	if [[ -z ${REPLACING_VERSIONS} ]] && use clamonacc; then
+einfo
+einfo "'clamonacc' requires additional configuration before it can be enabled,"
+einfo "and may not produce any output if not properly configured. Read the"
+ewarn "appropriate man page if clamonacc is desired."
+einfo
 	fi
 }
 
