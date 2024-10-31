@@ -218,6 +218,7 @@ REQUIRED_USE+="
 gen_ffmpeg_depends() {
 	echo "
 		|| (
+			media-video/ffmpeg:56.58.58
 	"
 	local s
 	for s in ${FFMPEG_COMPAT[@]} ; do
@@ -1073,6 +1074,10 @@ echo
 echo "https://wiki.gentoo.org/wiki/D-Bus#The_session_bus"
 echo "https://wiki.gentoo.org/wiki/Dwm#Starting"
 echo
+fi
+
+if [[ -e "/usr/lib64/ffmpeg/56.58.58/lib64" ]] ; then
+	export LD_LIBRARY_PATH="/usr/lib64/ffmpeg/56.58.58/lib64:${LD_LIBRARY_PATH}"
 fi
 
 INIT_SYSTEM="${init_system}"
