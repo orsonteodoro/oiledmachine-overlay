@@ -12,11 +12,11 @@ UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
-PYTHON_COMPAT=( python3_{10..12} ) # Limited by distro for dev-python/mkdocs-material
+PYTHON_COMPAT=( "python3_"{10..12} ) # Limited by distro for dev-python/mkdocs-material
 
 inherit flag-o-matic meson multilib-build python-any-r1 toolchain-funcs uopts
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/randy408/libspng/archive/v${PV}.tar.gz
@@ -150,7 +150,7 @@ _src_configure() {
 }
 
 src_configure() {
-	:;
+	:
 }
 
 train_trainer_list() {
@@ -224,7 +224,7 @@ src_install() {
 
 multilib_src_install_all() {
 	cd "${S}" || die
-	dodoc LICENSE
+	dodoc "LICENSE"
 }
 
 pkg_postinst() {
