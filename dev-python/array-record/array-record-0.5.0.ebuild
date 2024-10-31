@@ -4,6 +4,8 @@
 
 EAPI=8
 
+MY_PN="${PN/-/_}"
+
 ABSEIL_PY_COMMIT="127c98870edf5f03395ce9cf886266fa5f24455e"			# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L19
 ABSEIL_CPP_PV="20230125.0"							# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L12
 BAZEL_SKYLIB_PV="1.0.2"								# https://github.com/protocolbuffers/protobuf/blob/v21.12/protobuf_deps.bzl#L34
@@ -37,12 +39,11 @@ inherit bazel distutils-r1 flag-o-matic pypi
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 	EGIT_BRANCH="main"
-	EGIT_CHECKOUT_DIR="${WORKDIR}/${PN}-${PV}"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_PN}-${PV}"
 	EGIT_REPO_URI="https://github.com/google/array_record.git"
 	FALLBACK_COMMIT="b1403b579135671a364278bcefa2b36f3ba31fbf" # Oct 20, 2023
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 bazel_external_uris="
 https://github.com/abseil/abseil-cpp/archive/refs/tags/${ABSEIL_CPP_PV}.tar.gz -> abseil-cpp-${ABSEIL_CPP_PV}.tar.gz
 https://github.com/abseil/abseil-py/archive/${ABSEIL_PY_COMMIT}.zip -> abseil-py-${ABSEIL_PY_COMMIT}.zip
@@ -69,16 +70,17 @@ https://mirror.bazel.build/bazel_coverage_output_generator/releases/coverage_out
 https://mirror.bazel.build/openjdk/azul-zulu${ZULU_VER}/zulu${ZULU_VER}-linux_x64.tar.gz -> zulu${ZULU_VER}-linux_x64.tar.gz
 http://zlib.net/fossils/zlib-${ZLIB_PV}.tar.gz -> zlib-${ZLIB_PV}.tar.gz
 "
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 	SRC_URI="
 	${bazel_external_uris}
 https://github.com/google/array_record/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${MY_PN}-${PV}"
 PATCHES=(
-	"${FILESDIR}/${PN}-0.5.0-pin-versions.patch"
-	"${FILESDIR}/${PN}-0.5.0-abseil-py-tarball.patch"
+	"${FILESDIR}/${MY_PN}-0.5.0-pin-versions.patch"
+	"${FILESDIR}/${MY_PN}-0.5.0-abseil-py-tarball.patch"
 )
 
 DESCRIPTION="A file format that achieves a new frontier of IO efficiency"
@@ -162,7 +164,7 @@ python_compile() {
 
 		mkdir -p "${T}/out-${EPYTHON/./_}" || die
 
-		pushd "${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}-bazel-base/execroot/array_record/" >/dev/null 2>&1 || die
+		pushd "${WORKDIR}/${MY_PN}-${PV}-${EPYTHON/./_}-bazel-base/execroot/array_record/" >/dev/null 2>&1 || die
 			cp -L "setup.py" "${T}/out-${EPYTHON/./_}"
 			cp -L "LICENSE" "${T}/out-${EPYTHON/./_}"
 
@@ -205,8 +207,8 @@ python_compile() {
 			distutils-r1_python_compile
 		popd >/dev/null 2>&1 || die
 
-		local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
-		local wheel_path=$(realpath "${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/wheel/array_record-"*".whl")
+		local d="${WORKDIR}/${MY_PN}-${PV}_${EPYTHON}/install"
+		local wheel_path=$(realpath "${WORKDIR}/${MY_PN}-${PV}-${EPYTHON/./_}/wheel/array_record-"*".whl")
 		distutils_wheel_install "${d}" \
 			"${wheel_path}"
 

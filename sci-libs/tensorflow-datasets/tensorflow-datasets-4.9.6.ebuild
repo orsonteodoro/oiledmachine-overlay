@@ -70,7 +70,7 @@ HUGGINGFACE_RDEPEND="
 	$(python_gen_cond_dep '
 		dev-python/envlogger[${PYTHON_USEDEP}]
 	' python3_10)
-	>=dev-python/array_record-0.5.0[${PYTHON_USEDEP}]
+	>=dev-python/array-record-0.5.0[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-python-3.20:0/3.21[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.19.0[${PYTHON_USEDEP}]
 	>=dev-python/scikit-learn-0.20.3[${PYTHON_USEDEP}]
@@ -127,7 +127,7 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/etils-1.9.1[${PYTHON_USEDEP},enp,epath,epy,etree]
 	' python3_{11,12})
-	>=dev-python/array_record-0.5.0[${PYTHON_USEDEP}]
+	>=dev-python/array-record-0.5.0[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-python-3.20:0/3.21[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.19.0[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
