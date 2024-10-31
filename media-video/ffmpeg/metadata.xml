@@ -602,6 +602,9 @@
   <flag name="libilbc">
     Enables iLBC de/encoding via <pkg>media-libs/libilbc</pkg>.
   </flag>
+  <flag name="liblc3">
+    Enables lc3 decoding via <pkg>media-sound/liblc3</pkg>.
+  </flag>
   <flag name="liblensfun">
     Enables the use of lens correction via <pkg>media-libs/lensfun</pkg> with
     the lensfun filter.

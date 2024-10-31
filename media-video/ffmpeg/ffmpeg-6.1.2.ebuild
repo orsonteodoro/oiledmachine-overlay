@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# 6.1.1 -> 6.1.2
+
 #
 # Subslot: libavutil_major.libavcodec_major.libavformat_major
 #
@@ -101,12 +103,12 @@ FFMPEG_FLAG_MAP=(
 	# Decoders
 	amr:libopencore-amrwb
 	amr:libopencore-amrnb
+	bluray:libbluray
 	codec2:libcodec2
 	+dav1d:libdav1d
 	fdk:libfdk-aac
 	jpeg2k:libopenjpeg
 	jpegxl:libjxl
-	bluray:libbluray
 	gme:libgme
 	gsm:libgsm
 	libaribb24
@@ -145,6 +147,7 @@ FFMPEG_FLAG_MAP=(
 	libtesseract
 	lv2
 	truetype:libfreetype
+	truetype:libharfbuzz
 	vidstab:libvidstab
 	rubberband:librubberband
 	shaderc:libshaderc
@@ -166,6 +169,7 @@ MULTILIB_WRAPPED_HEADERS=(
 N_SAMPLES=1
 NV_CODEC_HEADERS_PV="9.1.23.1"
 SCM=""
+SOC_PATCH="ffmpeg-rpi-6.1-r3.patch"
 TRAINERS=(
 	"trainer-audio-cbr"
 	"trainer-audio-lossless"
@@ -195,6 +199,8 @@ ARM_CPU_FEATURES=(
 	cpu_flags_arm_vfp:vfp
 	cpu_flags_arm_vfpv3:vfpv3
 	cpu_flags_arm_v8:armv8
+	cpu_flags_arm_asimddp:dotprod
+	cpu_flags_arm_i8mm:i8mm
 )
 ARM_CPU_REQUIRED_USE="
 	arm64? (
@@ -362,7 +368,7 @@ inherit flag-o-matic-om llvm uopts
 
 if [[ "${PV#9999}" == "${PV}" ]] ; then
 	KEYWORDS="
-~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv sparc ~x86
+~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86
 ~amd64-linux ~x86-linux ~arm64-macos ~x64-macos
 	"
 fi
@@ -380,16 +386,41 @@ else # Release
 	inherit verify-sig
 	SRC_URI="
 		https://ffmpeg.org/releases/${P/_/-}.tar.xz
+		soc? (
+			https://dev.gentoo.org/~chewi/distfiles/${SOC_PATCH}.asc
+		)
 		verify-sig? (
 			https://ffmpeg.org/releases/${P/_/-}.tar.xz.asc
 		)
 	"
 	BDEPEND+="
+		soc? (
+			sec-keys/openpgp-keys-gentoo-developers
+		)
 		verify-sig? (
 			sec-keys/openpgp-keys-ffmpeg
 		)
 	"
+
+	src_unpack() {
+		if use verify-sig; then
+			verify-sig_verify_detached \
+				"${DISTDIR}/${P/_/-}.tar.xz"{"",".asc"} \
+				"/usr/share/openpgp-keys/ffmpeg.asc"
+			if use soc ; then
+				verify-sig_verify_detached \
+					"${DISTDIR}/${SOC_PATCH}"{"",".asc"} \
+					"/usr/share/openpgp-keys/gentoo-developers.asc"
+			fi
+		fi
+		default
+	}
 fi
+SRC_URI+="
+	soc? (
+		https://dev.gentoo.org/~chewi/distfiles/${SOC_PATCH}
+	)
+"
 S="${WORKDIR}/${P/_/-}"
 S_orig="${WORKDIR}/${P/_/-}"
 
@@ -472,9 +503,9 @@ ${LICENSE_USE[@]}
 ${TRAINERS[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
 jack-audio-connection-kit jack2 liblensfun mold opencl-icd-loader openvino oss
-pgo pic pipewire proprietary-codecs proprietary-codecs-disable
+pgo +pic pipewire proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+re-codecs sndio sr static-libs tensorflow test v4l wayland
++re-codecs sndio soc sr static-libs tensorflow test v4l wayland
 
 ebuild-revision-17
 "
@@ -870,6 +901,9 @@ REQUIRED_USE+="
 		proprietary-codecs-disable-nc-developer
 		proprietary-codecs-disable-nc-user
 	)
+	chromium? (
+		opus
+	)
 	cuda? (
 		|| (
 			cuda-filters
@@ -978,6 +1012,9 @@ REQUIRED_USE+="
 			apache2_0
 		)
 	)
+	soc? (
+		libdrm
+	)
 	test? (
 		encode
 	)
@@ -1052,7 +1089,7 @@ RDEPEND+="
 		>=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}]
 	)
 	amf? (
-		media-video/amdgpu-pro-amf
+		media-video/amdgpu-pro-amf:=
 	)
 	amr? (
 		>=media-libs/opencore-amr-0.1.3-r1[${MULTILIB_USEDEP}]
@@ -1087,14 +1124,14 @@ RDEPEND+="
 		)
 	)
 	dav1d? (
-		>=media-libs/dav1d-0.4.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-0.5.0:0=[${MULTILIB_USEDEP}]
 	)
 	encode? (
 		amrenc? (
 			>=media-libs/vo-amrwbenc-0.1.2-r1[${MULTILIB_USEDEP}]
 		)
 		kvazaar? (
-			>=media-libs/kvazaar-1.2.0[${MULTILIB_USEDEP}]
+			>=media-libs/kvazaar-2.0.0[${MULTILIB_USEDEP}]
 		)
 		mp3? (
 			>=media-sound/lame-3.99.5-r1[${MULTILIB_USEDEP}]
@@ -1103,7 +1140,7 @@ RDEPEND+="
 			>=media-libs/openh264-1.4.0-r1:=[${MULTILIB_USEDEP}]
 		)
 		rav1e? (
-			>=media-video/rav1e-0.4:=[capi]
+			>=media-video/rav1e-0.5:=[capi]
 		)
 		snappy? (
 			>=app-arch/snappy-1.1.2-r1:=[${MULTILIB_USEDEP}]
@@ -1174,10 +1211,10 @@ RDEPEND+="
 		virtual/jack[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
-		>=media-libs/openjpeg-2:2[${MULTILIB_USEDEP}]
+		>=media-libs/openjpeg-2.1:2[${MULTILIB_USEDEP}]
 	)
 	jpegxl? (
-		>=media-libs/libjxl-0.7.0[$MULTILIB_USEDEP]
+		>=media-libs/libjxl-0.7.0:=[$MULTILIB_USEDEP]
 	)
 	lcms? (
 		>=media-libs/lcms-2.13:2[$MULTILIB_USEDEP]
@@ -1283,6 +1320,9 @@ RDEPEND+="
 	sndio? (
 		media-sound/sndio:=[${MULTILIB_USEDEP}]
 	)
+	soc? (
+		virtual/libudev:=[${MULTILIB_USEDEP}]
+	)
 	speex? (
 		>=media-libs/speex-1.2_rc1-r1[${MULTILIB_USEDEP}]
 	)
@@ -1290,20 +1330,25 @@ RDEPEND+="
 		>=net-libs/srt-1.3.0:=[${MULTILIB_USEDEP}]
 	)
 	ssh? (
-		>=net-libs/libssh-0.5.5:=[${MULTILIB_USEDEP},sftp]
+		>=net-libs/libssh-0.6.0:=[${MULTILIB_USEDEP},sftp]
 	)
 	svg? (
 		gnome-base/librsvg:2=[${MULTILIB_USEDEP}]
 		x11-libs/cairo[${MULTILIB_USEDEP}]
 	)
+	nvenc? (
+		>=media-libs/nv-codec-headers-11.1.5.3
+	)
 	svt-av1? (
 		>=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}]
+		media-libs/svt-av1:=
 	)
 	tensorflow? (
 		>=sci-libs/tensorflow-2
 	)
 	truetype? (
 		>=media-libs/freetype-2.5.0.1:2[${MULTILIB_USEDEP}]
+		media-libs/harfbuzz:=[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
 		>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},drm(+),X?]
@@ -1326,7 +1371,7 @@ RDEPEND+="
 		>=media-libs/libvpx-1.4.0:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
-		>=media-libs/vulkan-loader-1.2.189:=[${MULTILIB_USEDEP}]
+		>=media-libs/vulkan-loader-1.3.255:=[${MULTILIB_USEDEP}]
 	)
 	X? (
 		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
@@ -1338,7 +1383,7 @@ RDEPEND+="
 		!media-libs/libpostproc
 	)
 	zeromq? (
-		>=net-libs/zeromq-4.1.6
+		>=net-libs/zeromq-4.2.1
 	)
 	zimg? (
 		>=media-libs/zimg-2.7.4:=[${MULTILIB_USEDEP}]
@@ -1359,6 +1404,9 @@ DEPEND+="
 	)
 	v4l? (
 		sys-kernel/linux-headers
+	)
+	vulkan? (
+		>=dev-util/vulkan-headers-1.3.255
 	)
 "
 # += for verify-sig above
@@ -1402,22 +1450,20 @@ PDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/chromium-r1.patch"
-	"${FILESDIR}/${PN}-5.1.2-get_cabac_inline_x86-32-bit.patch"
-	"${FILESDIR}/${PN}-6.0-libplacebo-remove-deprecated-field.patch"
+	"${FILESDIR}/chromium-r2.patch"
+	"${FILESDIR}/${PN}-6.1-wint-conversion.patch"
 	"${FILESDIR}/${PN}-6.0-fix-lto-type-mismatch.patch"
-	"${FILESDIR}/${PN}-4.4.4-opencl-parallel-gmake-fix.patch"
+	"${FILESDIR}/${PN}-6.1-opencl-parallel-gmake-fix.patch"
+	"${FILESDIR}/${PN}-6.1-gcc-14.patch"
 	"${FILESDIR}/${PN}-6.0.1-alignment.patch"
-	"${FILESDIR}/${PN}-6.0.1-libjxl-0.9.patch"
+	"${FILESDIR}/${PN}-6.1.1-wint-inconversion-libgcrypt.patch"
+	"${FILESDIR}/${PN}-6.1.1-amd-av1-vaapi.patch"
+
+#	"${FILESDIR}/${PN}-6.1.1-memory-leak.patch"
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"			# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
-	"${FILESDIR}/extra-patches/${PN}-6.0.1-convert_from_tensorflow-tensorflow2-compat.patch"
 )
-
-build_separate_libffmpeg() {
-	use opencl
-}
 
 get_av_device_ids() {
 	local types=(
@@ -1827,15 +1873,28 @@ src_prepare() {
 		export revision=git-N-${FFMPEG_REVISION}
 	fi
 
+	if use soc ; then
+		eapply "${DISTDIR}/${SOC_PATCH}"
+	fi
+
 	default
 
 	use cuda && cuda_src_prepare
 
 	# -fdiagnostics-color=auto gets appended after user flags which
 	# will ignore user's preference.
-	sed -i -e '/check_cflags -fdiagnostics-color=auto/d' configure || die
+	sed -i -e '/check_cflags -fdiagnostics-color=auto/d' "configure" || die
 
-	echo 'include $(SRC_PATH)/ffbuild/libffmpeg.mak' >> Makefile || die
+	ln -snf "${FILESDIR}/chromium.c" "chromium.c" || die
+	echo 'include $(SRC_PATH)/ffbuild/libffmpeg.mak' >> "Makefile" || die
+
+	# We need to detect LTO usage before multilib stuff and filter-lto is called (bug #923491)
+	if tc-is-lto ; then
+		# Respect -flto value, e.g -flto=thin
+		local v="$(get-flag flto)"
+		[[ ${v} != -flto ]] && LTO_FLAG="--enable-lto=${v}" || LTO_FLAG="--enable-lto"
+	fi
+	filter-lto
 
 einfo "Copying sources, please wait"
 	prepare_abi() {
@@ -1992,6 +2051,15 @@ _src_configure() {
 
 einfo "Configuring ${lib_type} with PGO_PHASE=${PGO_PHASE}"
 ewarn "The tensorflow USE flag requires ffmpeg 4.x.x."
+
+	# Conditional patch options
+	if use soc ; then
+		myconf+=(
+			--enable-v4l2-request
+			--enable-libudev
+			--enable-sand
+		)
+	fi
 
 	if use clear-config-first ; then
 # The clear-config-pre and clear-config-post are the same.
@@ -2266,6 +2334,12 @@ eerror
 		fi
 	done
 
+	# Bug #917277, #917278
+	myconf+=(
+		--disable-dotprod
+		--disable-i8mm
+	)
+
 	if use pic ; then
 		myconf+=(
 			--enable-pic
@@ -2299,16 +2373,30 @@ eerror
 	done
 
 	# Disabling LTO is a security risk.  It disables Clang CFI.
-	# LTO support, bug #566282, bug #754654, bug #772854
-	#if [[ "${ABI}" != "x86" ]] && tc-is-lto ; then
-	#	myconf+=(
-	#		"--enable-lto"
-	#	)
+	#if [[ "${ABI}" != "x86" ]] && is-flagq "-flto*"; then
+	#	# Respect -flto value, e.g -flto=thin
+	#	local v="$(get-flag flto)"
+	#	if [[ -n ${v} ]] ; then
+	#		myconf+=(
+	#			"--enable-lto=${v}"
+	#		)
+	#	else
+	#		myconf+=(
+	#			"--enable-lto"
+	#		)
+	#	fi
 	#fi
 	#filter-lto
 
+	# LTO support, bug #566282, bug #754654, bug #772854
+	if [[ "${ABI}" != "x86" && ! -z "${LTO_FLAG}" ]]; then
+		myconf+=( "${LTO_FLAG}" )
+	fi
+
 	# Mandatory configuration
 	myconf=(
+	# libaribcaption is not packaged yet?
+		--disable-libaribcaption
 		--enable-avfilter
 		--disable-stripping
 	# This is only for hardcoded cflags; those are used in configure checks that may
@@ -2429,20 +2517,6 @@ einfo
 		${EXTRA_FFMPEG_CONF}
 	echo "${@}"
 	"${@}" || die
-
-	if multilib_is_native_abi && use chromium && build_separate_libffmpeg ; then
-einfo "Configuring for Chromium"
-		mkdir -p ../chromium || die
-		pushd ../chromium >/dev/null || die
-			set -- "${@}" \
-				--disable-shared \
-				--enable-static \
-				--enable-pic \
-				--disable-opencl
-			echo "${@}"
-			"${@}" || die
-		popd >/dev/null || die
-	fi
 }
 
 _adecode() {
@@ -4185,16 +4259,8 @@ _src_compile() {
 			fi
 		done
 
-		if use chromium; then
-			if build_separate_libffmpeg; then
-einfo "Compiling for Chromium"
-				pushd ../chromium >/dev/null || die
-					emake V=1 libffmpeg
-				popd >/dev/null || die
-			else
-				emake V=1 libffmpeg
-			fi
-		fi
+		use chromium &&
+			emake V=1 libffmpeg
 	fi
 }
 
@@ -4310,20 +4376,8 @@ einfo "Running dobin tools/${i}$(get_exeext)"
 			fi
 		done
 
-		if use chromium; then
-			if build_separate_libffmpeg; then
-einfo "Installing for Chromium"
-				pushd ../chromium >/dev/null || die
-					emake V=1 DESTDIR="${D}" install-libffmpeg
-				popd >/dev/null || die
-			else
-				emake V=1 DESTDIR="${D}" install-libffmpeg
-
-				# When not built separately, libffmpeg has no code of
-				# its own so this QA check raises a false positive.
-				QA_FLAGS_IGNORED+=" usr/$(get_libdir)/chromium/.*"
-			fi
-		fi
+		use chromium &&
+			emake V=1 DESTDIR="${D}" install-libffmpeg
 	fi
 }
 
@@ -4347,9 +4401,6 @@ src_install() {
 		cd "${S}/tools/python" || die
 		insinto "/usr/$(get_libdir)/${PN}/scripts"
 		local L=(
-			"convert.py"
-			"convert_from_tensorflow.py"
-			"convert_header.py"
 			"tf_sess_config.py"
 		)
 		doins ${L[@]}
@@ -4361,10 +4412,8 @@ src_install() {
 }
 
 multilib_src_install_all() {
-	dodoc Changelog README.md CREDITS doc/*.txt doc/APIchanges
+	dodoc "Changelog" "README.md" "CREDITS" "doc/"*".txt" "doc/APIchanges"
 	[ -f "RELEASE_NOTES" ] && dodoc "RELEASE_NOTES"
-
-	use amf && elog "To use AMF, prefix the ffmpeg call with the 'vk_pro' wrapper script, e.g. `vk_pro ffmpeg -vcodec h264_amf [...]`"
 }
 
 pkg_postinst() {
