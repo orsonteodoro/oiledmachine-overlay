@@ -1077,7 +1077,7 @@ echo
 fi
 
 if [[ -e "/usr/lib64/ffmpeg/56.58.58/lib64" ]] ; then
-	export LD_LIBRARY_PATH="/usr/lib64/ffmpeg/56.58.58/lib64:${LD_LIBRARY_PATH}"
+	export LD_LIBRARY_PATH="/usr/lib64/ffmpeg/56.58.58/lib64:\${LD_LIBRARY_PATH}"
 fi
 
 INIT_SYSTEM="${init_system}"
