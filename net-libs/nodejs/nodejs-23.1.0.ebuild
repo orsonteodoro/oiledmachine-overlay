@@ -10,7 +10,7 @@ EAPI=8
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Sep 17, 2024
+# Last deps commit date:  Oct 23, 2024
 
 ACORN_PV="8.12.1"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
@@ -56,11 +56,11 @@ TRAINER_TYPES=(
 	worker
 	zlib
 )
-COREPACK_PV="0.29.3"
+COREPACK_PV="0.29.4"
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
 NGHTTP2_PV="1.63.0"
-NPM_PV="10.8.3" # See https://github.com/nodejs/node/blob/v22.9.0/deps/npm/package.json
+NPM_PV="10.9.2" # See https://github.com/nodejs/node/blob/v23.1.0/deps/npm/package.json
 PYTHON_COMPAT=( "python3_"{8..12} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -150,8 +150,8 @@ RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.1.0
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.48.0:=
-	>=net-dns/c-ares-1.33.1
+	>=dev-libs/libuv-1.49.1:=
+	>=net-dns/c-ares-1.34.2
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3
 	sys-kernel/mitigate-id
@@ -159,7 +159,7 @@ RDEPEND+="
 		>=dev-libs/icu-75.1:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.13:0=
+		>=dev-libs/openssl-3.0.15:0=
 	)
 "
 DEPEND+="
