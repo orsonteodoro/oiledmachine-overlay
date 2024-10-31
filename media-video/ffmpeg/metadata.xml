@@ -1023,9 +1023,27 @@
 </use>
 <slots>
   <slot name="0">
-    For building against. This is the only slot that provides headers and
-    command line tools. Binary compatibility slots come and go as required, so
-    always pin dependencies to this slot when appropriate.
-   </slot>
+    For unislot with prefix set to /usr
+  </slot>
+  <slot name="56.58.58">
+    For multislot 4.4.x build with prefix set to
+    /usr/$(get_libdir)/ffmpeg/${SLOT}
+  </slot>
+  <slot name="57.59.59">
+    Reserved for multislot 5.1.x build with prefix set to
+    /usr/$(get_libdir)/ffmpeg/${SLOT}
+  </slot>
+  <slot name="58.60.60">
+    Reserved for multislot 6.1.x build with prefix set to
+    /usr/$(get_libdir)/ffmpeg/${SLOT}
+  </slot>
+  <slot name="59.61.61">
+    Reserved for multislot 7.0.x or 7.1.x build with prefix set to
+    /usr/$(get_libdir)/ffmpeg/${SLOT}
+  </slot>
+  <subslots>
+    If unislot, reflect the libavutil_major.libavcodec_major.libavformat_major.
+    Increases in these components reflect gained capabilities.
+  </subslots>
 </slots>
 </pkgmetadata>

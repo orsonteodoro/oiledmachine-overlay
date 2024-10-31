@@ -17,6 +17,10 @@ EAPI=8
 # doing so since such a case is unlikely.
 #
 
+MY_PV="${PV/m/}"
+MY_P="${PN}-${MY_PV}"
+MY_PVR="${PVR/m/}"
+
 CUDA_TARGETS_COMPAT=(
 	sm_30
 	sm_60
@@ -162,7 +166,7 @@ FFMPEG_FLAG_MAP=(
 	# We only support pthread for now but FFmpeg supports more.
 	+threads:pthreads
 )
-FFMPEG_REVISION="${PV#*_p}"
+FFMPEG_REVISION="${MY_PV#*_p}"
 FFMPEG_SUBSLOT="59.61.61"
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/libavutil/avconfig.h"
@@ -374,31 +378,31 @@ LICENSE_USE=(
 inherit cuda flag-o-matic multilib multilib-minimal toolchain-funcs ${SCM}
 inherit flag-o-matic-om llvm uopts
 
-if [[ "${PV#9999}" == "${PV}" ]] ; then
+if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	KEYWORDS="
 ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
 ~x86 ~amd64-linux ~x86-linux ~x64-macos
 	"
 fi
-if [[ "${PV#9999}" != "${PV}" ]] ; then
+if [[ "${MY_PV#9999}" != "${MY_PV}" ]] ; then
 	SCM="git-r3"
 	EGIT_MIN_CLONE_TYPE="single"
 	EGIT_REPO_URI="https://git.ffmpeg.org/ffmpeg.git"
 fi
-if [[ "${PV#9999}" != "${PV}" ]] ; then
+if [[ "${MY_PV#9999}" != "${MY_PV}" ]] ; then
 	SRC_URI=""
-elif [[ "${PV%_p*}" != "${PV}" ]] ; then # Snapshot
-	SRC_URI="mirror://gentoo/${P}.tar.xz"
+elif [[ "${MY_PV%_p*}" != "${MY_PV}" ]] ; then # Snapshot
+	SRC_URI="mirror://gentoo/${MY_P}.tar.xz"
 else # Release
 	VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}/usr/share/openpgp-keys/ffmpeg.asc"
 	inherit verify-sig
 	SRC_URI="
-		https://ffmpeg.org/releases/${P/_/-}.tar.xz
+		https://ffmpeg.org/releases/${MY_P/_/-}.tar.xz
 		soc? (
 			https://dev.gentoo.org/~chewi/distfiles/${SOC_PATCH}.asc
 		)
 		verify-sig? (
-			https://ffmpeg.org/releases/${P/_/-}.tar.xz.asc
+			https://ffmpeg.org/releases/${MY_P/_/-}.tar.xz.asc
 		)
 	"
 	BDEPEND+="
@@ -413,7 +417,7 @@ else # Release
 	src_unpack() {
 		if use verify-sig; then
 			verify-sig_verify_detached \
-				"${DISTDIR}/${P/_/-}.tar.xz"{"",".asc"} \
+				"${DISTDIR}/${MY_P/_/-}.tar.xz"{"",".asc"} \
 				"/usr/share/openpgp-keys/ffmpeg.asc"
 			if use soc ; then
 				verify-sig_verify_detached \
@@ -429,8 +433,8 @@ SRC_URI+="
 		https://dev.gentoo.org/~chewi/distfiles/${SOC_PATCH}
 	)
 "
-S="${WORKDIR}/${P/_/-}"
-S_orig="${WORKDIR}/${P/_/-}"
+S="${WORKDIR}/${MY_P/_/-}"
+S_ORIG="${WORKDIR}/${MY_P/_/-}"
 
 DESCRIPTION="Complete solution to record/convert/stream audio and video. Includes libavcodec"
 HOMEPAGE="https://ffmpeg.org/"
@@ -445,7 +449,11 @@ RESTRICT="
 		bindist
 	)
 "
-SLOT="0/${FFMPEG_SUBSLOT}"
+if [[ "${PV}" =~ "m" ]] ; then
+	SLOT="${FFMPEG_SUBSLOT}"
+else
+	SLOT="0/${FFMPEG_SUBSLOT}"
+fi
 # The project license is LGPL-2.1+
 # BSD - libavcodec/ilbcdec.c
 LICENSE="
@@ -1931,7 +1939,7 @@ eerror
 
 src_prepare() {
 	verify_subslot
-	if [[ "${PV%_p*}" != "${PV}" ]] ; then # Snapshot
+	if [[ "${MY_PV%_p*}" != "${MY_PV}" ]] ; then # Snapshot
 		export revision=git-N-${FFMPEG_REVISION}
 	fi
 
@@ -1954,8 +1962,8 @@ einfo "Copying sources, please wait"
 	prepare_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-einfo "Copying sources to ${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
-			cp -a "${S_orig}" "${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
+einfo "Copying sources to ${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			cp -a "${S_ORIG}" "${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
 			uopts_src_prepare
 		done
 	}
@@ -2578,12 +2586,22 @@ einfo
 		)
 	fi
 
+	local root
+	if [[ "${SLOT%/*}" == "0" ]] ; then
+		local root="${EPREFIX}/usr"
+	else
+		local root="${EPREFIX}/usr/$(get_libdir)/ffmpeg/${FFMPEG_SUBSLOT}"
+	fi
+
+	myconf+=(
+		--prefix="${root}/"
+		--libdir="${root}/$(get_libdir)"
+		--shlibdir="${root}/$(get_libdir)"
+		--docdir="${root}/share/doc/${PF}/html"
+		--mandir="${root}/share/man"
+	)
+
 	set -- "${S}/configure" \
-		--prefix="${EPREFIX}/usr" \
-		--libdir="${EPREFIX}/usr/$(get_libdir)" \
-		--shlibdir="${EPREFIX}/usr/$(get_libdir)" \
-		--docdir="${EPREFIX}/usr/share/doc/${PF}/html" \
-		--mandir="${EPREFIX}/usr/share/man" \
 		--cc="$(tc-getCC)" \
 		--cxx="$(tc-getCXX)" \
 		--ar="$(tc-getAR)" \
@@ -4220,7 +4238,7 @@ run_trainer_audio_codecs() {
 run_trainer_video_codecs() {
 ewarn
 ewarn "The format for environment variables has changed recently."
-ewarn "See metadata.xml or \`epkginfo -x =${CATEGORY}/${PN}-${PVR}::oiledmachine-overlay\` for details."
+ewarn "See metadata.xml or \`epkginfo -x =${CATEGORY}/${PN}-${MY_PVR}::oiledmachine-overlay\` for details."
 ewarn
 	for codec in ${FFMPEG_TRAINING_VIDEO_CODECS} ; do
 		local video_scenario=$(echo "${codec}" | cut -f 1 -d ":")
@@ -4376,7 +4394,7 @@ src_compile() {
 	compile_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export S="${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 einfo "Build type is ${lib_type}"
@@ -4398,7 +4416,7 @@ src_test() {
 	test_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export S="${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			export LD_LIBRARY_PATH=\
@@ -4420,37 +4438,44 @@ ${BUILD_DIR}/libavresample" \
 _install() {
 	emake V=1 DESTDIR="${D}" install install-doc
 
+	local root
+	if [[ "${SLOT%/*}" == "0" ]] ; then
+		local prefix="usr"
+	else
+		local prefix="usr/$(get_libdir)/ffmpeg/${FFMPEG_SUBSLOT}"
+	fi
+
 	# Prevent clobbering so that we can pgo optimize external codecs in different ABIs
 	local btype="${lib_type/-*}"
 	if ! multilib_is_native_abi ; then
-		mv "${ED}/usr/bin/ffmpeg"{"","-${btype}-${ABI}"} || die
-		mv "${ED}/usr/bin/ffprobe"{"","-${btype}-${ABI}"} || die
-		if [[ -e "${ED}/usr/bin/ffplay" ]] ; then
-			mv "${ED}/usr/bin/ffplay"{"","-${btype}-${ABI}"} || die
+		mv "${ED}/${prefix}/bin/ffmpeg"{"","-${btype}-${ABI}"} || die
+		mv "${ED}/${prefix}/bin/ffprobe"{"","-${btype}-${ABI}"} || die
+		if [[ -e "${ED}/${prefix}/bin/ffplay" ]] ; then
+			mv "${ED}/${prefix}/bin/ffplay"{"","-${btype}-${ABI}"} || die
 		fi
 	else
-		mv "${ED}/usr/bin/ffmpeg"{"","-${btype}"} || die
-		mv "${ED}/usr/bin/ffprobe"{"","-${btype}"} || die
-		dosym "/usr/bin/ffmpeg-${btype}" "/usr/bin/ffmpeg"
-		dosym "/usr/bin/ffprobe-${btype}" "/usr/bin/ffprobe"
-		if [[ -e "${ED}/usr/bin/ffplay" ]] ; then
-			mv "${ED}/usr/bin/ffplay"{"","-${btype}"} || die
-			dosym "/usr/bin/ffplay-${btype}" "/usr/bin/ffplay"
+		mv "${ED}/${prefix}/bin/ffmpeg"{"","-${btype}"} || die
+		mv "${ED}/${prefix}/bin/ffprobe"{"","-${btype}"} || die
+		dosym "/${prefix}/bin/ffmpeg-${btype}" "/${prefix}/bin/ffmpeg"
+		dosym "/${prefix}/bin/ffprobe-${btype}" "/${prefix}/bin/ffprobe"
+		if [[ -e "${ED}/${prefix}/bin/ffplay" ]] ; then
+			mv "${ED}/${prefix}/bin/ffplay"{"","-${btype}"} || die
+			dosym "/${prefix}/bin/ffplay-${btype}" "/${prefix}/bin/ffplay"
 		fi
 	fi
 
 	if multilib_is_native_abi; then
-		exeinto /usr/bin
+		exeinto /${prefix}/bin
 		local i
 		for i in "${FFTOOLS[@]}" ; do
 			if use fftools_${i} ; then
 einfo "Running dobin tools/${i}$(get_exeext)"
 				if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 					# Bugged dobin
-					mkdir -p "${ED}/usr/bin" || die
+					mkdir -p "${ED}/${prefix}/bin" || die
 					cp -a "tools/${i}$(get_exeext)" \
-						"${ED}/usr/bin" || die
-					chmod 0755 "${ED}/usr/bin/${i}$(get_exeext)" || die
+						"${ED}/${prefix}/bin" || die
+					chmod 0755 "${ED}/${prefix}/bin/${i}$(get_exeext)" || die
 				else
 					dobin tools/${i}$(get_exeext)
 				fi
@@ -4466,7 +4491,7 @@ src_install() {
 	install_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export S="${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			_install
@@ -4479,15 +4504,22 @@ src_install() {
 	multilib_install_wrappers
 	multilib_src_install_all
 	if use tensorflow ; then
+		local root
+		if [[ "${SLOT%/*}" == "0" ]] ; then
+			local prefix="usr"
+		else
+			local prefix="usr/$(get_libdir)/ffmpeg/${FFMPEG_SUBSLOT}"
+		fi
+
 		cd "${S}/tools/python" || die
-		insinto "/usr/$(get_libdir)/${PN}/scripts"
+		insinto "/${prefix}/$(get_libdir)/${PN}/scripts"
 		local L=(
 			"tf_sess_config.py"
 		)
 		doins ${L[@]}
 		local f
 		for f in ${L[@]} ; do
-			fperms 0775 "/usr/$(get_libdir)/${PN}/scripts/${f}"
+			fperms 0775 "/${prefix}/$(get_libdir)/${PN}/scripts/${f}"
 		done
 	fi
 }
