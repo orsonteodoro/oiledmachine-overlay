@@ -1028,8 +1028,8 @@
   <!--
 
   We would like to free the user to allow them to use newer features or
-  capabilities and to unstuck from forced lower versions only caused by either
-  closed source packages containing older CI images or anti rolling release
+  capabilities and to unstuck from forced lower versions only caused by
+  closed source packages, older CI images, anti rolling release
   developers in downstream packages.
 
   -->
@@ -1038,19 +1038,19 @@
   </slot>
   <slot name="56.58.58">
     For multislot 4.4.x build with prefix set to
-    /usr/$(get_libdir)/ffmpeg/${SLOT}
+    /usr/$(get_libdir)/ffmpeg/56.58.58
   </slot>
   <slot name="57.59.59">
     Reserved for multislot 5.1.x build with prefix set to
-    /usr/$(get_libdir)/ffmpeg/${SLOT}
+    /usr/$(get_libdir)/ffmpeg/57.59.59
   </slot>
   <slot name="58.60.60">
     Reserved for multislot 6.1.x build with prefix set to
-    /usr/$(get_libdir)/ffmpeg/${SLOT}
+    /usr/$(get_libdir)/ffmpeg/58.60.60
   </slot>
   <slot name="59.61.61">
     Reserved for multislot 7.0.x or 7.1.x build with prefix set to
-    /usr/$(get_libdir)/ffmpeg/${SLOT}
+    /usr/$(get_libdir)/ffmpeg/59.61.61
   </slot>
   <subslots>
     If unislot, reflect the libavutil_major.libavcodec_major.libavformat_major.
