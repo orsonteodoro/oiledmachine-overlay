@@ -1,5 +1,5 @@
 # Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -8,9 +8,11 @@ inherit dhms
 
 KEYWORDS="~amd64 ~arm64 ~ppc64"
 S="${WORKDIR}"
+# The URI for 130.0.6723.91 came from the distro chromium ebuild.
 SRC_URI="
-	https://commondatastorage.googleapis.com/chromium-browser-official/chromium-${PV}.tar.xz
+	https://chromium-tarballs.syd1.cdn.digitaloceanspaces.com/chromium-${PV}.tar.xz
 "
+#	https://commondatastorage.googleapis.com/chromium-browser-official/chromium-${PV}.tar.xz
 
 DESCRIPTION="Chromium sources"
 HOMEPAGE="https://www.chromium.org/"
