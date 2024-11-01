@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Originators -->
+    <email>jpizarrocallejas@gmail.com</email>
+    <name>Jorge Pizarro Callejas</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Ebuild obtained from science overlay.
+  Reason:  Hard pytorch requirement
+
+  -->
+  <use>
+    <flag name="rocm">
+      Enable ROCm gpu computing support
+    </flag>
+  </use>
+  <upstream>
+    <remote-id type="github">pytorch/vision</remote-id>
+  </upstream>
+</pkgmetadata>
