@@ -218,7 +218,9 @@ REQUIRED_USE+="
 gen_ffmpeg_depends() {
 	echo "
 		|| (
-			media-video/ffmpeg:56.58.58
+			!firejail? (
+				media-video/ffmpeg:56.58.58
+			)
 	"
 	local s
 	for s in ${FFMPEG_COMPAT[@]} ; do
@@ -552,9 +554,11 @@ einfo
 einfo "Expected BLAKE2B:\t${GPG_PUBLIC_KEY_BLAKE2B}"
 einfo "Actual BLAKE2B:\t${actual_blake2b}"
 einfo
-	if [[ "${actual_sha512}" == "${GPG_PUBLIC_KEY_SHA512}" \
-		&& "${actual_blake2b}" == "${GPG_PUBLIC_KEY_BLAKE2B}" ]] ; then
-		:;
+	if [[ \
+		   "${actual_sha512}" == "${GPG_PUBLIC_KEY_SHA512}" \
+		&& "${actual_blake2b}" == "${GPG_PUBLIC_KEY_BLAKE2B}" \
+	]] ; then
+		:
 	else
 eerror
 eerror "The fingerprint of the public key changed."
@@ -977,10 +981,10 @@ check_cr() {
 		wget "https://raw.githubusercontent.com/chromium/chromium/${CR_VERSION}/build/install-build-deps.sh" || die
 		local CR_DEPENDS=$(\
 			sed -n '/# List of required run-time libraries/,/^"$/p' \
-				install-build-deps.sh)
+				"install-build-deps.sh")
 		local ACTUAL_CR_DEPENDS_FINGERPRINT=$(\
 			sed -n '/# List of required run-time libraries/,/^"$/p' \
-				install-build-deps.sh \
+				"install-build-deps.sh" \
 			| sha512sum \
 			| cut -f 1 -d " ")
 einfo
@@ -1011,9 +1015,11 @@ eerror
 _missing_libs() {
 	for f in $(find \
 			"${ED}/opt/${PN}/${PN}-client" \
-			-type f \( \
-				-executable -o -name "*.so*" \
-			\)\
+			-type f \
+			\( \
+				   -executable
+				-o -name "*.so*" \
+			\) \
 		) ; do
 		# The man page says ldd is insecure.
 		local lib_list=(
@@ -1024,9 +1030,10 @@ _missing_libs() {
 		for lib in ${lib_list[@]} ; do
 			if ! ldconfig -p | grep -q "${lib} " ; then
 				local n=$(find \
-					"${ED}/opt/${PN}/${PN}-client" \
-					-maxdepth 1 \
-					-name "${lib}" | wc -l)
+						"${ED}/opt/${PN}/${PN}-client" \
+						-maxdepth 1 \
+						-name "${lib}" \
+						| wc -l)
 				(( ${n} == 0 )) && echo "${lib}"
 			fi
 		done
@@ -1084,7 +1091,7 @@ INIT_SYSTEM="${init_system}"
 if test -n "\${DISPLAY}" ; then
 	"${DEST}/${PN}" "\$@"
 else
-	LD_PRELOAD=/usr/$(get_libdir)/${PN}-xstub.so \
+	LD_PRELOAD="/usr/$(get_libdir)/${PN}-xstub.so" \
 	"${DEST}/${PN}" \
 		--enable-features=UseOzonePlatform \
 		--ozone-platform=wayland \
@@ -1094,11 +1101,11 @@ EOF
 }
 
 src_install() {
-	gunzip usr/share/doc/${PN}-client/changelog.gz || die
-	dodoc usr/share/doc/${PN}-client/changelog
+	gunzip "usr/share/doc/${PN}-client/changelog.gz" || die
+	dodoc "usr/share/doc/${PN}-client/changelog"
 
 	SHARE_PATH="usr/share/${PN}"
-	insinto /usr/share/pixmaps
+	insinto "/usr/share/pixmaps"
 	doins "${SHARE_PATH}/icons/"*".png"
 
 	# Install in /opt/${PN}
