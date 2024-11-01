@@ -3630,7 +3630,9 @@ ewarn "The chroot and sandbox mitigation edits has not been implemented for syst
 	fi
 
 	# TODO:  Add more orphaned packages or move into overlay's README.md
-	optfeature "GUI frontend" "app-misc/llocal"
+	optfeature_header "Install optional packages:"
+	optfeature "Electron GUI frontend" "app-misc/llocal"
+	optfeature "GTK4 GUI frontend" "app-misc/alpaca"
 	#optfeature "Piped AI command line execution" "app-shells/loz"
 	#optfeature "Text-to-speech and speech-to-text" "app-accessibility/june"
 }
