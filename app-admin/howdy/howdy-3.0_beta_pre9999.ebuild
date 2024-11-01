@@ -14,7 +14,7 @@ EAPI=8
 # opencv - works
 # pyv4l2 - USE flag broken
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit git-r3 meson python-single-r1
 
@@ -148,12 +148,18 @@ src_unpack() {
 		git-r3_checkout
 	fi
 	unpack ${A}
-	mv dlib_face_recognition_resnet_model_v1-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat \
-		dlib_face_recognition_resnet_model_v1.dat || die
-	mv mmod_human_face_detector-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat \
-		mmod_human_face_detector.dat || die
-	mv shape_predictor_5_face_landmarks-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat \
-		shape_predictor_5_face_landmarks.dat || die
+	mv \
+		"dlib_face_recognition_resnet_model_v1-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat" \
+		"dlib_face_recognition_resnet_model_v1.dat" \
+		|| die
+	mv \
+		"mmod_human_face_detector-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat" \
+		"mmod_human_face_detector.dat" \
+		|| die
+	mv \
+		"shape_predictor_5_face_landmarks-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat" \
+		"shape_predictor_5_face_landmarks.dat" \
+		|| die
 
 	local EXPECTED_VERSION="Howdy 3.0.0 BETA"
 	local actual_version=$(grep -E -o \
@@ -197,12 +203,12 @@ ewarn
 einfo "Changing python3 -> ${EPYTHON}"
 	sed -i \
 		-e "s|python3|${EPYTHON}|g" \
-		howdy/src/cli.py \
-		howdy/src/compare.py \
-		howdy/src/pam/main.cc \
-		howdy/src/bin/howdy.in \
-		howdy-gtk/bin/howdy-gtk.in \
-		howdy-gtk/src/init.py \
+		"howdy/src/cli.py" \
+		"howdy/src/compare.py" \
+		"howdy/src/pam/main.cc" \
+		"howdy/src/bin/howdy.in" \
+		"howdy-gtk/bin/howdy-gtk.in" \
+		"howdy-gtk/src/init.py" \
 		|| die
 }
 
@@ -211,19 +217,19 @@ src_configure() {
 		if use cuda ; then
 			sed -i \
 				-e "s|use_cnn = false|use_cnn = true|g" \
-				config.ini \
+				"config.ini" \
 				|| die
 		fi
 		if use ffmpeg ; then
 			sed -i \
 				-e "s|recording_plugin = opencv|recording_plugin = ffmpeg|g" \
-				config.ini \
+				"config.ini" \
 				|| die
 		fi
 		if use pyv4l2 ; then
 			sed -i \
 				-e "s|recording_plugin = opencv|recording_plugin = pyv4l2|g" \
-				config.ini \
+				"config.ini" \
 				|| die
 		fi
 		sed -i \
@@ -234,7 +240,7 @@ src_configure() {
 		# Set default camera
 		sed -i \
 			-e "s|device_path = none|device_path = /dev/video0|g" \
-			config.ini \
+			"config.ini" \
 			|| die
 
 		# Increase match
@@ -248,24 +254,24 @@ src_configure() {
 		# Men false positives are around 4.50-7.2.
 		sed -i \
 			-e "s|from 1 to 10, values above 5 are not recommended|from 1 to 5, values above 5 must not be used|g" \
-			config.ini \
+			"config.ini" \
 			|| die
 	popd
 	pushd "${S}" || die
 		if has_version "media-fonts/liberation-fonts" ; then
 			sed -i \
 				-e "s|Arial|Liberation Sans|g" \
-				howdy-gtk/src/authsticky.py \
+				"howdy-gtk/src/authsticky.py" \
 				|| die
 		elif has_version "media-fonts/urw-fonts" ; then
 			sed -i \
 				-e "s|Arial|Nimbus Sans|g" \
-				howdy-gtk/src/authsticky.py \
+				"howdy-gtk/src/authsticky.py" \
 				|| die
 		elif has_version "media-fonts/ttf-bitstream-vera" ; then
 			sed -i \
 				-e "s|Arial|Bitstream Vera Sans|g" \
-				howdy-gtk/src/authsticky.py \
+				"howdy-gtk/src/authsticky.py" \
 				|| die
 		fi
 	popd
@@ -283,7 +289,7 @@ src_compile() {
 
 src_install() {
 	meson_src_install
-	dodir /$(get_libdir)/security
+	dodir "/$(get_libdir)/security"
 	mv \
 		"${ED}/usr/$(get_libdir)/security/pam_howdy.so" \
 		"${ED}/$(get_libdir)/security" \
@@ -295,19 +301,19 @@ src_install() {
 	if ! use bash-completion ; then
 		rm -rf "${ED}/usr/share/bash-completion" || die
 	fi
-	fperms 0755 /usr/share/dlib-data
-	fperms 0755 /usr/$(get_libdir)/howdy/recorders
+	fperms 0755 "/usr/share/dlib-data"
+	fperms 0755 "/usr/$(get_libdir)/howdy/recorders"
 
-	insinto /usr/share/dlib-data
+	insinto "/usr/share/dlib-data"
 	doins "${WORKDIR}/dlib_face_recognition_resnet_model_v1.dat"
 	doins "${WORKDIR}/mmod_human_face_detector.dat"
 	doins "${WORKDIR}/shape_predictor_5_face_landmarks.dat"
 
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 
-	insinto /etc/howdy
-	doins howdy/src/config.ini
+	insinto "/etc/howdy"
+	doins "howdy/src/config.ini"
 }
 
 verify_folder_permissions() {

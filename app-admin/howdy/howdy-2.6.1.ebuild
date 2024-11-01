@@ -14,7 +14,7 @@ EAPI=8
 # opencv - works
 # pyv4l2 - USE flag broken
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit python-single-r1
 
@@ -120,12 +120,18 @@ ewarn
 
 src_unpack() {
 	unpack ${A}
-	mv dlib_face_recognition_resnet_model_v1-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat \
-		dlib_face_recognition_resnet_model_v1.dat || die
-	mv mmod_human_face_detector-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat \
-		mmod_human_face_detector.dat || die
-	mv shape_predictor_5_face_landmarks-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat \
-		shape_predictor_5_face_landmarks.dat || die
+	mv \
+		"dlib_face_recognition_resnet_model_v1-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat" \
+		"dlib_face_recognition_resnet_model_v1.dat" \
+		|| die
+	mv \
+		"mmod_human_face_detector-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat" \
+		"mmod_human_face_detector.dat" \
+		|| die
+	mv \
+		"shape_predictor_5_face_landmarks-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat" \
+		"shape_predictor_5_face_landmarks.dat" \
+		|| die
 }
 
 src_prepare() {
@@ -149,10 +155,10 @@ ewarn
 einfo "Changing python3 -> ${EPYTHON}"
 	sed -i \
 		-e "s|python3|${EPYTHON}|g" \
-		tests/importing.sh \
-		tests/compare.sh \
-		src/cli.py \
-		src/pam.py \
+		"tests/importing.sh" \
+		"tests/compare.sh" \
+		"src/cli.py" \
+		"src/pam.py" \
 		|| die
 }
 
@@ -161,19 +167,19 @@ src_configure() {
 		if use cuda ; then
 			sed -i \
 				-e "s|use_cnn = false|use_cnn = true|g" \
-				config.ini \
+				"config.ini" \
 				|| die
 		fi
 		if use ffmpeg ; then
 			sed -i \
 				-e "s|recording_plugin = opencv|recording_plugin = ffmpeg|g" \
-				config.ini \
+				"config.ini" \
 				|| die
 		fi
 		if use pyv4l2 ; then
 			sed -i \
 				-e "s|recording_plugin = opencv|recording_plugin = pyv4l2|g" \
-				config.ini \
+				"config.ini" \
 				|| die
 		fi
 
@@ -181,19 +187,19 @@ src_configure() {
 		sed -i \
 			-e "s|capture_failed = true|capture_failed = false|g" \
 			-e "s|capture_successful = true|capture_successful = false|g" \
-			config.ini \
+			"config.ini" \
 			|| die
 
 		# Set default camera
 		sed -i \
 			-e "s|device_path = none|device_path = /dev/video0|g" \
-			config.ini \
+			"config.ini" \
 			|| die
 
 		# Increase match
 		sed -i \
 			-i -e "s|certainty = 3.5|certainty = 4|g" \
-			config.ini \
+			"config.ini" \
 			|| die
 
 		# Change message
@@ -201,7 +207,7 @@ src_configure() {
 		# Men false positives are around 4.50-7.2.
 		sed -i \
 			-i -e "s|from 1 to 10, values above 5 are not recommended|from 1 to 5, values above 5 must not be used|g" \
-			config.ini \
+			"config.ini" \
 			|| die
 	popd
 }
@@ -211,8 +217,8 @@ src_compile() {
 }
 
 src_install() {
-	insinto /$(get_libdir)/security/${PN}
-	doins -r src/*
+	insinto "/$(get_libdir)/security/${PN}"
+	doins -r "src/"*
 	pushd "${ED}" || die
 		local x
 		for x in $(find "$(get_libdir)/security/${PN}" -type d) ; do
@@ -235,26 +241,26 @@ einfo "DIR: fperms 0755 ${x}"
 # https://github.com/boltgolt/howdy/issues/450
 		fperms 0755 "/$(get_libdir)/security/${PN}/recorders"
 	popd
-	exeinto /usr/bin
-	dosym ../../$(get_libdir)/security/${PN}/cli.py /usr/bin/${PN}
-	fperms 0755 /$(get_libdir)/security/${PN}/cli.py
+	exeinto "/usr/bin"
+	dosym "../../$(get_libdir)/security/${PN}/cli.py" "/usr/bin/${PN}"
+	fperms 0755 "/$(get_libdir)/security/${PN}/cli.py"
 	if use bash-completion ; then
-		insinto /usr/share/bash-completion/completions
-		doins autocomplete/howdy
+		insinto "/usr/share/bash-completion/completions"
+		doins "autocomplete/howdy"
 	fi
 
-	insinto /$(get_libdir)/security/${PN}/dlib-data
+	insinto "/$(get_libdir)/security/${PN}/dlib-data"
 	doins "${WORKDIR}/dlib_face_recognition_resnet_model_v1.dat"
 	doins "${WORKDIR}/mmod_human_face_detector.dat"
 	doins "${WORKDIR}/shape_predictor_5_face_landmarks.dat"
 
 	rm -rf "${ED}/$(get_libdir)/security/howdy/pam-config"
 
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 
-	insinto /etc/howdy
-	doins src/config.ini
+	insinto "/etc/howdy"
+	doins "src/config.ini"
 	rm -rf "${ED}/$(get_libdir)/security/howdy/config.ini" || die
 	dosym \
 		"/etc/howdy/config.ini" \
