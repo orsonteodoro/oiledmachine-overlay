@@ -66,13 +66,13 @@ EAPI=8
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
-CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
+CHROMIUM_EBUILD_MAINTAINER=1 # See also GEN_ABOUT_CREDITS
 
 #
 # Set to 1 below to generate an about_credits.html including bundled internal
 # dependencies.
 #
-GEN_ABOUT_CREDITS=0
+GEN_ABOUT_CREDITS=1
 #
 
 # One of the major sources of lag comes from dependencies
@@ -1267,8 +1267,8 @@ BDEPEND+="
 	${COMMON_SNAPSHOT_DEPEND}
 	${PYTHON_DEPS}
 	dev-util/patchutils
-	www-client/chromium-toolchain:0/${PV}[clang,gn,rust]
-	www-client/chromium-sources:0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_PV}
+	www-client/chromium-sources:0/${PV}[clang,gn,rust]
+	www-client/chromium-toolchain:0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_PV}
 	>=app-arch/gzip-1.7
 	>=dev-build/ninja-1.7.2
 	>=dev-util/gperf-3.0.3
@@ -1884,7 +1884,7 @@ einfo "Patched vulnerabilities:"
 		for x in ${VULNERABILITIES_FIXED[@]} ; do
 			local cve=$(echo "${x}" | cut -f 1 -d ";")
 			local vulnerability_classes=$(echo "${x}" | cut -f 2 -d ";")
-			local severity=$(echo "${x}" | cut -f 2 -d ";")
+			local severity=$(echo "${x}" | cut -f 3 -d ";")
 einfo "${cve}:  ${vulnerability_classes} (CVSS 3.1 ${severity})"
 		done
 		IFS=$' \t\n'
@@ -1979,7 +1979,7 @@ ewarn
 		export CPP="clang++ -E"
 	fi
 
-	if ver_test ${PV%%.*} -ne ${PATCH_VER%%.*} ; then
+	if ver_test ${PV%%.*} -ne ${PATCH_VER%%-*} ; then # This line is always false, deadcode
 		if tc-is-gcc ; then
 eerror
 eerror "GCC is disallowed.  Still waiting for the GCC patchset."
@@ -2208,17 +2208,17 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 	# Same as USE="ungoogled-chromium cromite" or USE=ungoogled-chromium
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-129.0.6668.70-mold-ungoogled-chromium.patch"
+			"${FILESDIR}/extra-patches/${PN}-130.0.6723.91-mold-ungoogled-chromium.patch"
 		)
 	elif has cromite ${IUSE_EFFECTIVE} && use cromite ; then
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-128.0.6613.84-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-130.0.6723.91-mold.patch"
 		)
 	else
 		PATCHES+=(
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-numeric_h-for-iota.patch"
 			"${FILESDIR}/extra-patches/${PN}-129.0.6668.58-include-thread-pool.patch"
-			"${FILESDIR}/extra-patches/${PN}-128.0.6613.84-mold.patch"
+			"${FILESDIR}/extra-patches/${PN}-130.0.6723.91-mold.patch"
 		)
 	fi
 
