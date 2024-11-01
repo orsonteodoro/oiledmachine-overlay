@@ -1,0 +1,27 @@
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
+
+inherit python-r1
+
+DESCRIPTION="Virtual for python pillow packages"
+LICENSE="metapackage"
+SLOT="0"
+KEYWORDS="~amd64"
+IUSE="pillow-simd"
+
+RDEPEND="
+	!pillow-simd? (
+		!dev-python/pillow-simd
+		>=dev-python/pillow-${PV}[${PYTHON_USEDEP}]
+		dev-python/pillow:=[${PYTHON_USEDEP}]
+	)
+	pillow-simd? (
+		!dev-python/pillow
+		>=dev-python/pillow-simd-${PV}[${PYTHON_USEDEP}]
+		dev-python/pillow-simd:=[${PYTHON_USEDEP}]
+	)
+"

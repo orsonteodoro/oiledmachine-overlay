@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/uploadcare/pillow-simd/issues</bugs-to>
+    <changelog>https://github.com/uploadcare/pillow-simd/blob/main/CHANGELOG</changelog>
+    <remote-id type="github">uploadcare/pillow-simd</remote-id>
+    <remote-id type="pypi">Pillow-SIMD</remote-id>
+  </upstream>
+</pkgmetadata>
