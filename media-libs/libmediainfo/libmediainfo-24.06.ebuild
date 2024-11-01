@@ -16,7 +16,7 @@ https://mediaarea.net/mediainfo/
 https://github.com/MediaArea/MediaInfoLib
 "
 LICENSE="BSD-2"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 # Tests try to fetch data from online sources.
 RESTRICT="test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
