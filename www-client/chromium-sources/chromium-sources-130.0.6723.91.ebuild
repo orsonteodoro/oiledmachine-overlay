@@ -49,7 +49,7 @@ ewarn
 ewarn "Options"
 ewarn
 ewarn "(1) Press Control C to cancel and wait for the official URI on the next release cycle."
-ewarn "(2) Wait 60 seconds and continue to allow download and merge."
+ewarn "(2) Wait 60 seconds to continue to allow to download and merge."
 ewarn
 	sleep 60
 	dhms_start
