@@ -44,6 +44,7 @@ ewarn "Ebuild developer message:"
 ewarn
 ewarn "The domain chromium-tarballs.syd1.cdn.digitaloceanspaces.com is doubious and not an official domain."
 ewarn "The URI in question is https://chromium-tarballs.syd1.cdn.digitaloceanspaces.com/chromium-${PV}.tar.xz"
+ewarn "The URI was obtained from https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/chromium-130.0.6723.91.ebuild#n37"
 ewarn "The URI was accepted and displayed by the distro."
 ewarn
 ewarn "Options"
