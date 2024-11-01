@@ -12,8 +12,12 @@ MY_PV="${PV/_p/.post}"
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} "pypy3" )
+CPU_X86_FLAGS=(
+	cpu_flags_x86_sse4
+	cpu_flags_x86_avx2
+)
 
-inherit distutils-r1 pypi
+inherit distutils-r1 pypi toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -32,7 +36,15 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc imagequant jpeg jpeg2k lcms test tiff truetype webp xcb zlib"
+IUSE+="
+${CPU_X86_FLAGS[@]}
+doc imagequant jpeg jpeg2k lcms test tiff truetype webp xcb zlib
+"
+REQUIRED_USE="
+	|| (
+		${CPU_X86_FLAGS[@]}
+	)
+"
 RDEPEND+="
 	imagequant? (
 		>=media-gfx/libimagequant-4.2.0
@@ -96,5 +108,18 @@ BDEPEND+="
 	)
 "
 DOCS=( "CHANGES.rst" "README.md" )
+
+python_configure() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	strip-flags
+	filter-flags '-m*'
+	local cpu_flags=()
+	if use cpu_flags_x86_avx2 ; then
+		append-flags -mavx2
+	fi
+	einfo "CFLAGS:  ${CFLAGS}"
+	einfo "CXXFLAGS:  ${CXXFLAGS}"
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
