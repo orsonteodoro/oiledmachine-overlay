@@ -12,4 +12,12 @@
     <remote-id type="github">uploadcare/pillow-simd</remote-id>
     <remote-id type="pypi">Pillow-SIMD</remote-id>
   </upstream>
+  <use>
+    <flag name="imagequant">
+      Build with Image Quantization Library support
+    </flag>
+    <flag name="xcb">
+      Add support for X11 screen grabbing.
+    </flag>
+  </use>
 </pkgmetadata>

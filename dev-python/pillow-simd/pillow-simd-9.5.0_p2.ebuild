@@ -32,8 +32,40 @@ LICENSE="
 "
 RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc test"
+IUSE+=" doc imagequant jpeg jpeg2k lcms test tiff truetype webp xcb zlib"
 RDEPEND+="
+	imagequant? (
+		>=media-gfx/libimagequant-4.2.0
+		media-gfx/libimagequant:=
+	)
+	jpeg? (
+		media-libs/libjpeg-turbo:=
+	)
+	jpeg2k? (
+		>=media-libs/openjpeg-2.5.0:2
+		media-libs/openjpeg:=
+	)
+	lcms? (
+		media-libs/lcms:2=
+	)
+	tiff? (
+		media-libs/tiff[jpeg,zlib]
+		media-libs/tiff:=
+	)
+	truetype? (
+		media-libs/freetype:2
+		media-libs/freetype:=
+	)
+	webp? (
+		>=media-libs/libwebp-1.3.2
+		media-libs/libwebp:=
+	)
+	xcb? (
+		x11-libs/libxcb
+	)
+	zlib? (
+		sys-libs/zlib:=
+	)
 "
 DEPEND+="
 	${RDEPEND}
