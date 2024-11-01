@@ -2256,7 +2256,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	fi
 
 	PATCHES+=(
-		"${FILESDIR}/extra-patches/${PN}-128.0.6613.119-custom-optimization-level.patch"
+		"${FILESDIR}/extra-patches/${PN}-130.0.6723.91-custom-optimization-level.patch"
 	)
 	if ! use official ; then
 	# This section contains significant changes.  The above sections contains minor changes.
