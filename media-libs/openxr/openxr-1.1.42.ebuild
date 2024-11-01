@@ -9,12 +9,18 @@ CMAKE_BUILD_TYPE="Release"
 MESA_PV="22.0.1"
 MY_PN="OpenXR-SDK-Source"
 NV_DRIVER_VERSION_VULKAN="390.132"
-PYTHON_COMPAT=( "python3_"{8..11} )
+PYTHON_COMPAT=( "python3_"{8..13} )
+VIDEO_CARDS=(
+	video_cards_amdgpu
+	video_cards_intel
+	video_cards_nvidia
+	video_cards_radeonsi
+)
 XORG_SERVER_PV="21.1.4"
 
 inherit cmake flag-o-matic python-any-r1 toolchain-funcs
 
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 S="${WORKDIR}/${MY_PN}-release-${PV}"
 SRC_URI="
 https://github.com/KhronosGroup/${MY_PN}/archive/release-${PV}.tar.gz
@@ -24,6 +30,7 @@ https://github.com/KhronosGroup/${MY_PN}/archive/release-${PV}.tar.gz
 DESCRIPTION="Generated headers and sources for OpenXR loader."
 LICENSE="
 	Apache-2.0
+	Boost-1.0
 	BSD
 	CC-BY-4.0
 	MIT
@@ -36,8 +43,8 @@ HOMEPAGE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-doc gles2 +system-jsoncpp video_cards_amdgpu video_cards_intel
-video_cards_nvidia video_cards_radeonsi wayland xcb +xlib
+${VIDEO_CARDS[@]}
+doc gles2 +system-jsoncpp wayland xcb +xlib
 "
 REQUIRED_USE+="
 	^^ (
@@ -119,11 +126,17 @@ src_configure() {
 		-DBUILD_WITH_SYSTEM_JSONCPP=$(usex system-jsoncpp)
 	)
 	if use xlib ; then
-		mycmakeargs+=( -DPRESENTATION_BACKEND=xlib )
+		mycmakeargs+=(
+			-DPRESENTATION_BACKEND=xlib
+		)
 	elif use xcb ; then
-		mycmakeargs+=( -DPRESENTATION_BACKEND=xcb )
+		mycmakeargs+=(
+			-DPRESENTATION_BACKEND=xcb
+		)
 	elif use wayland ; then
-		mycmakeargs+=( -DPRESENTATION_BACKEND=wayland )
+		mycmakeargs+=(
+			-DPRESENTATION_BACKEND=wayland
+		)
 	else
 		die "Must choose a PRESENTATION_BACKEND"
 	fi
@@ -132,10 +145,10 @@ src_configure() {
 
 src_install() {
 	cmake_src_install
-	docinto licenses
-	dodoc .reuse/dep5
-	dodoc LICENSES/*
-	dodoc COPYING.adoc
+	docinto "licenses"
+	dodoc ".reuse/dep5"
+	dodoc "LICENSES/"*
+	dodoc "COPYING.adoc"
 	mv \
 		"${ED}/usr/share/doc/${PN}/LICENSE" \
 		"${ED}/usr/share/doc/${PN}-${PVR}/licenses" \
@@ -144,8 +157,8 @@ src_install() {
 		"${ED}/usr/share/doc/${PN}" \
 		|| die
 	if use doc ; then
-		docinto readmes
-		dodoc CHANGELOG.SDK.md
+		docinto "readmes"
+		dodoc "CHANGELOG.SDK.md"
 		mv \
 			"${ED}/usr/share/doc/${P}/README.md" \
 			"${ED}/usr/share/doc/${P}/readmes" \
