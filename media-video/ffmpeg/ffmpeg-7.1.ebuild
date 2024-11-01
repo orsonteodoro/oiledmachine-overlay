@@ -45,6 +45,7 @@ FFMPEG_ENCODER_FLAG_MAP=(
 	amrenc:libvo-amrwbenc
 	kvazaar:libkvazaar
 	libaom
+	libvvenc
 	mp3:libmp3lame
 	openh264:libopenh264
 	rav1e:librav1e
@@ -52,7 +53,6 @@ FFMPEG_ENCODER_FLAG_MAP=(
 	svt-av1:libsvtav1
 	theora:libtheora
 	twolame:libtwolame
-	vvenc
 	webp:libwebp
 	x264:libx264
 	x265:libx265
@@ -1312,6 +1312,9 @@ RDEPEND+="
 	libv4l? (
 		>=media-libs/libv4l-0.9.5[${MULTILIB_USEDEP}]
 	)
+	libvvenc? (
+		>=media-libs/vvenc-1.6.1
+	)
 	libxml2? (
 		dev-libs/libxml2:=[${MULTILIB_USEDEP}]
 	)
@@ -1433,9 +1436,6 @@ RDEPEND+="
 	)
 	vulkan? (
 		>=media-libs/vulkan-loader-1.3.277:=[${MULTILIB_USEDEP}]
-	)
-	vvenc? (
-		>=media-libs/vvenc-1.6.1
 	)
 	X? (
 		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]

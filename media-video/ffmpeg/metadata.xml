@@ -631,6 +631,9 @@
     Uses <pkg>media-libs/libv4l</pkg> for video4linux instead of direct calls.
     Adds support for more devices via the userspace library.
   </flag>
+  <flag name="libvvenc">
+    Add support for VVenC via <pkg>media-libs/vvenc</pkg>.
+  </flag>
   <flag name="libxml2">
     Uses <pkg>dev-libs/libxml2</pkg> to enable dash demuxing support.
   </flag>
@@ -1026,7 +1029,8 @@
 
   We would like to free the user to allow them to use newer features or
   capabilities and to unstuck from forced lower versions only caused by either
-  older CI images or anti rolling release developers in downstream packages.
+  closed source packages containing older CI images or anti rolling release
+  developers in downstream packages.
 
   -->
   <slot name="0">
