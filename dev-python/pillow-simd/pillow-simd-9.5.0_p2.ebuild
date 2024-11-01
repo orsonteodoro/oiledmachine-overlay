@@ -13,7 +13,7 @@ MY_PV="${PV/_p/.post}"
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} "pypy3" )
 CPU_X86_FLAGS=(
-	cpu_flags_x86_sse4
+	cpu_flags_x86_sse4_1
 	cpu_flags_x86_avx2
 )
 
@@ -108,6 +108,12 @@ BDEPEND+="
 	)
 "
 DOCS=( "CHANGES.rst" "README.md" )
+
+python_prepare_all() {
+	sed -i -e "s|__SSE4_2__|__SSE4_1__|g" "src/libImaging/ImagingSIMD.h" || die
+	sed -i -e "s|-msse4|-msse4.1|g" "setup.py" || die
+	distutils-r1_python_prepare_all
+}
 
 python_configure() {
 	export CC=$(tc-getCC)
