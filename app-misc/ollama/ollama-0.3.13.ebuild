@@ -3064,7 +3064,7 @@ src_configure() {
 	# Buffer overflow mitigation
 einfo "-D_FORTIFY_SOURCE is already enabled."
 	else
-: #		append-flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1
+		append-flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1
 	fi
 
 	if tc-enables-ssp ; then
@@ -3072,12 +3072,12 @@ einfo "-fstack-protector* is already enabled."
 	else
 	# As a precaution prevent CE, DT, ID, DoS
 	# Stack based buffer overflow protection
-: #		append-flags -fstack-protector
+		append-flags -fstack-protector
 	fi
 
 	if tc-enables-pie ; then
 	# ASLR (buffer overflow mitigation)
-einfo "__PIE__ is already enabled."
+einfo "PIE is already enabled."
 	fi
 
 	strip-unsupported-flags
@@ -3292,7 +3292,7 @@ generate_deps() {
 	if ! tc-enables-pie ; then
 		args+=(
 	# ASLR (buffer overflow mitigation)
-#			-buildmode=pie
+			-buildmode=pie
 		)
 	fi
 	edo go generate ${args[@]} ./...
@@ -3306,7 +3306,7 @@ build_binary() {
 	if ! tc-enables-pie ; then
 		args+=(
 	# ASLR (buffer overflow mitigation)
-#			-buildmode=pie
+			-buildmode=pie
 		)
 	fi
 	edo go build ${args[@]} .
