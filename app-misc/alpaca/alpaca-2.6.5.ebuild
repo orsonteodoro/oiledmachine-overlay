@@ -5,6 +5,7 @@
 EAPI=8
 
 # U22
+# FIXME:  Fix open file dialog with link button
 
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream tests with python3.11
 
