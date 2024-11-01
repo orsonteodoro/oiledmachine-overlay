@@ -5,7 +5,6 @@
 EAPI=8
 
 # U22
-# FIXME:  Fix open file dialog with link button
 
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream tests with python3.11
 
@@ -50,6 +49,7 @@ RDEPEND="
 	gui-libs/gtk[wayland?,X?]
 	gui-libs/libadwaita[introspection]
 	gui-libs/vte[introspection]
+	sys-apps/xdg-desktop-portal
 "
 DEPEND="
 	${RDEPEND}
@@ -74,4 +74,17 @@ einfo
 einfo "Preferences > Use Remote Connection To Ollama"
 einfo "Server URL:  http://127.0.0.1:11434"
 einfo
+ewarn
+ewarn "DWM users:"
+ewarn
+ewarn "To show the FileChooser dialog window for visual LLMs, add the following to ~/.xinitrc and restart dwm:"
+ewarn
+ewarn "/usr/libexec/xdg-desktop-portal -r &"
+ewarn
+	optfeature_header "Install a package with FileChooser support required for visual LLM support:"
+	optfeature "gnome FileChooser support" "sys-apps/xdg-desktop-portal-gnome"
+	optfeature "gtk FileChooser support" "sys-apps/xdg-desktop-portal-gtk"
+	optfeature "kde FileChooser support" "kde-plasma/xdg-desktop-portal-kde"
+	optfeature "lxqt FileChooser support" "gui-libs/xdg-desktop-portal-lxqt"
+	optfeature "wlroots FileChooser support" "gui-libs/xdg-desktop-portal-wlr"
 }
