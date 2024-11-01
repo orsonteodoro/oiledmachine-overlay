@@ -30,7 +30,7 @@ HOMEPAGE="
 LICENSE="
 	HPND
 "
-RESTRICT="mirror test"
+RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc imagequant jpeg jpeg2k lcms test tiff truetype webp xcb zlib"
 RDEPEND+="

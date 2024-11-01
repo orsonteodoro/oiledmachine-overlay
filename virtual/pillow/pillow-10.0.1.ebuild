@@ -19,12 +19,12 @@ zlib
 RDEPEND="
 	!pillow-simd? (
 		!dev-python/pillow-simd
-		>=dev-python/pillow-${PV}[${PYTHON_USEDEP},examples?,imagequant?,jpeg?,jpeg2k?,lcms?,pillow-simd?,test?,tiff?,tk?,truetype?,webp?,xcb?,zlib?]
+		>=dev-python/pillow-${PV}[${PYTHON_USEDEP},examples?,imagequant?,jpeg?,jpeg2k?,lcms?,test?,tiff?,tk?,truetype?,webp?,xcb?,zlib?]
 		dev-python/pillow:=
 	)
 	pillow-simd? (
 		!dev-python/pillow
-		>=dev-python/pillow-simd-${PV}[${PYTHON_USEDEP},imagequant?,jpeg?,jpeg2k?,lcms?,pillow-simd?,test?,tiff?,truetype?,webp?,xcb?,zlib?]
+		>=dev-python/pillow-simd-${PV}[${PYTHON_USEDEP},imagequant?,jpeg?,jpeg2k?,lcms?,test?,tiff?,truetype?,webp?,xcb?,zlib?]
 		dev-python/pillow-simd:=
 	)
 "
