@@ -12,7 +12,7 @@ LICENSE="all-rights-reserved ZLIB"
 # The vanilla ZLIB does not have all rights reserved but stated explictly in the
 # README.md
 SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 IUSE+=" doc static-libs"
 BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
