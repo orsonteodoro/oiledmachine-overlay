@@ -8,7 +8,7 @@ EAPI=8
 
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream tests with python3.11
 
-inherit python-single-r1 meson xdg
+inherit python-single-r1 meson optfeature xdg
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN^}-${PV}"
