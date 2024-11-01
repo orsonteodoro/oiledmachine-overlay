@@ -1028,7 +1028,7 @@
   <!--
 
   We would like to free the user to allow them to use newer features or
-  capabilities and to unstuck from forced lower versions only caused by
+  capabilities and to unstuck from forced lower versions caused by
   closed source packages, older builder container images, anti rolling release
   developers in downstream packages.
 
