@@ -395,7 +395,7 @@ BDEPEND_LAYER_TESTS="
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/onnxruntime[${PYTHON_USEDEP}]
 	dev-python/packaging[${PYTHON_USEDEP}]
-	dev-python/pillow[${PYTHON_USEDEP}]
+	virtual/pillow[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/sympy[${PYTHON_USEDEP}]

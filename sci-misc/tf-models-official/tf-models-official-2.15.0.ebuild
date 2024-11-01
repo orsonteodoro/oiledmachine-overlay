@@ -66,7 +66,7 @@ RDEPEND+="
 	dev-python/immutabledict[${PYTHON_USEDEP}]
 	dev-python/matplotlib[${PYTHON_USEDEP}]
 	dev-python/oauth2client[${PYTHON_USEDEP}]
-	dev-python/pillow[${PYTHON_USEDEP}]
+	virtual/pillow[${PYTHON_USEDEP}]
 	dev-python/pycocotools[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
 	sci-libs/tensorflow-datasets[${PYTHON_USEDEP}]

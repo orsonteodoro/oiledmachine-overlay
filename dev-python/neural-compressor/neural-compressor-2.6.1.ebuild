@@ -76,7 +76,7 @@ RDEPEND+="
 		<dev-python/numpy-2.0[${PYTHON_USEDEP}]
 		dev-python/opencv-python-headless[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
-		dev-python/pillow[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
 		dev-python/prettytable[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/py-cpuinfo[${PYTHON_USEDEP}]

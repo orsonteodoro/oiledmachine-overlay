@@ -163,7 +163,7 @@ BDEPEND+="
 	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
 		dev-python/mkdocs[${PYTHON_USEDEP}]
-		dev-python/pillow[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
 		dev-python/mkdocs-minify-plugin[${PYTHON_USEDEP}]
 		dev-python/mkdocstrings[${PYTHON_USEDEP}]
 		dev-python/mkdocstrings-python[${PYTHON_USEDEP}]

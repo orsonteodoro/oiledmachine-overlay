@@ -200,7 +200,7 @@ DEPEND+="
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
 			dev-python/numpy[${PYTHON_USEDEP}]
-			dev-python/pillow[${PYTHON_USEDEP}]
+			virtual/pillow[${PYTHON_USEDEP}]
 			dev-python/requests[${PYTHON_USEDEP}]
 			dev-python/tqdm[${PYTHON_USEDEP}]
 			media-libs/opencv[${PYTHON_USEDEP},ffmpeg?,gstreamer?,python]

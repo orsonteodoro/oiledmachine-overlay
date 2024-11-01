@@ -44,7 +44,7 @@ BDEPEND+="
 		<dev-python/pytest-mock-3.12.0[${PYTHON_USEDEP}]
 		>=dev-python/coveralls-4.0.1[${PYTHON_USEDEP}]
 		>=dev-python/flake8-7.0.0[${PYTHON_USEDEP}]
-		>=dev-python/pillow-10.3.0[${PYTHON_USEDEP}]
+		>=virtual/pillow-10.3.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-8.2.3[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cache-1.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cov-5.0.0[${PYTHON_USEDEP}]

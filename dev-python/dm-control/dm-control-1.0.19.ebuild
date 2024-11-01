@@ -63,7 +63,7 @@ BDEPEND+="
 		>=dev-python/mock-5.1.0[${PYTHON_USEDEP}]
 		>=dev-python/nose-1.3.7[${PYTHON_USEDEP}]
 		>=dev-python/nose_xunitmp-0.4.1[${PYTHON_USEDEP}]
-		>=dev-python/pillow-10.3.0[${PYTHON_USEDEP}]
+		>=virtual/pillow-10.3.0[${PYTHON_USEDEP}]
 	)
 "
 

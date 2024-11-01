@@ -93,7 +93,7 @@ RDEPEND+="
 		${PYTHON_DEPS}
 		examples? (
 			$(python_gen_cond_dep '
-				dev-python/pillow[${PYTHON_USEDEP}]
+				virtual/pillow[${PYTHON_USEDEP}]
 			')
 		)
 	)

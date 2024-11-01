@@ -38,7 +38,7 @@ RDEPEND+="
 	media-libs/libv4l
 	examples? (
 		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/pillow[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="

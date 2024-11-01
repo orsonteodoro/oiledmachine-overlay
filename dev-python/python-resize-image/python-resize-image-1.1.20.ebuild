@@ -29,7 +29,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 RDEPEND+="
-	>=dev-python/pillow-5.1.0[${PYTHON_USEDEP}]
+	>=virtual/pillow-5.1.0[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.19.1[${PYTHON_USEDEP}]
 "
 DEPEND+="

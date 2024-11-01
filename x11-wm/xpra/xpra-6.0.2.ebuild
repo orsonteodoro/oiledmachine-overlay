@@ -282,7 +282,7 @@ RENCODE_PV="1.0.6"
 # See https://github.com/Xpra-org/xpra/blob/v4.2/docs/Build/Dependencies.md for the full list.
 
 PILLOW_DEPEND="
-	dev-python/pillow[${PYTHON_USEDEP},jpeg?,tiff?,webp?,zlib?]
+	virtual/pillow[${PYTHON_USEDEP},jpeg?,tiff?,webp?,zlib?]
 "
 
 # The media-video/nvidia-video-codec-sdk is a placeholder.  You need to package

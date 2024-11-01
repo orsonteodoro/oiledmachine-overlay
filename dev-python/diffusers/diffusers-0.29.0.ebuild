@@ -65,7 +65,7 @@ RDEPEND+="
 	dev-python/importlib-metadata[${PYTHON_USEDEP}]
 	dev-python/note_seq[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/pillow[${PYTHON_USEDEP}]
+	virtual/pillow[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/torchsde[${PYTHON_USEDEP}]
 	sci-libs/onnx[${PYTHON_USEDEP}]

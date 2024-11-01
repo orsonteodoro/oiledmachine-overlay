@@ -37,7 +37,7 @@ REQUIRED_USE="
 RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/html2text-2024.2.26[${PYTHON_USEDEP}]
-		>=dev-python/pillow-10.3.0[${PYTHON_USEDEP}]
+		>=virtual/pillow-10.3.0[${PYTHON_USEDEP}]
 		>=dev-python/pypdf-4.2.0[${PYTHON_USEDEP}]
 		>=dev-python/pytube-15.0.0[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]

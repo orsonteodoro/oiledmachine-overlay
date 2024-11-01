@@ -80,7 +80,7 @@ BDEPEND+="
 		dev-python/sphinxext-opengraph[${PYTHON_USEDEP}]
 	)
 	test? (
-		>=dev-python/pillow-9.3.0[${PYTHON_USEDEP}]
+		>=virtual/pillow-9.3.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.1.3[${PYTHON_USEDEP}]
 		>=dev-python/autorom-0.6.0[${PYTHON_USEDEP}]
 	)

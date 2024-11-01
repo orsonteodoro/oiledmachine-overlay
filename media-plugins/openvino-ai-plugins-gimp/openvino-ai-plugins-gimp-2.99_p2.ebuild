@@ -63,7 +63,7 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 	)
 	>=dev-python/librosa-0.8.1[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
-	>=dev-python/pillow-8.3.2[${PYTHON_USEDEP}]
+	>=virtual/pillow-8.3.2[${PYTHON_USEDEP}]
 	>=dev-python/pytube-12.1.0[${PYTHON_USEDEP}]
 	>=dev-python/shapely-1.7.1[${PYTHON_USEDEP}]
 	dev-python/psutil[${PYTHON_USEDEP}]

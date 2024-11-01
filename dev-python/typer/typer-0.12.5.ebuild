@@ -42,7 +42,7 @@ BDEPEND+="
 		>=dev-python/mdx-include-1.4.1[${PYTHON_USEDEP}]
 		>=dev-python/mkdocs-redirects-1.2.1[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.3.1[${PYTHON_USEDEP}]
-		>=dev-python/pillow-10.4.0[${PYTHON_USEDEP}]
+		>=virtual/pillow-10.4.0[${PYTHON_USEDEP}]
 		>=dev-python/cairosvg-2.7.1[${PYTHON_USEDEP}]
 		>=dev-python/mkdocs-macros-plugin-1.0.5[${PYTHON_USEDEP}]
 	)

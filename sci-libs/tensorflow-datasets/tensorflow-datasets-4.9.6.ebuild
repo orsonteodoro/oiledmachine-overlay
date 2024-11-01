@@ -92,7 +92,7 @@ HUGGINGFACE_RDEPEND="
 	dev-python/nltk[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/pandas[${PYTHON_USEDEP}]
-	dev-python/pillow[${PYTHON_USEDEP}]
+	virtual/pillow[${PYTHON_USEDEP}]
 	dev-python/pretty_midi[${PYTHON_USEDEP}]
 	dev-python/promise[${PYTHON_USEDEP}]
 	dev-python/psutil[${PYTHON_USEDEP}]
@@ -168,7 +168,7 @@ RDEPEND+="
 		dev-python/matplotlib[${PYTHON_USEDEP}]
 	)
 	colorectal_histology? (
-		dev-python/pillow[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
 	)
 	common_voice? (
 		dev-python/pydub[${PYTHON_USEDEP}]
@@ -249,7 +249,7 @@ RDEPEND+="
 		dev-python/scipy[${PYTHON_USEDEP}]
 	)
 	wider_face? (
-		dev-python/pillow[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
 	)
 	wiki_dialog? (
 		dev-db/apache-beam[${PYTHON_USEDEP}]

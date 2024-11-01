@@ -28,7 +28,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 RDEPEND+="
-	dev-python/pillow[${PYTHON_USEDEP},zlib]
+	virtual/pillow[${PYTHON_USEDEP},zlib]
 	dev-python/reportlab[${PYTHON_USEDEP}]
 "
 DEPEND+="

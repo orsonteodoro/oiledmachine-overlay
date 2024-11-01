@@ -63,7 +63,7 @@ BDEPEND+="
 		dev-python/mypy[${PYTHON_USEDEP}]
 		dev-python/nbautoexport[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
-		dev-python/pillow[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/pydantic[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]

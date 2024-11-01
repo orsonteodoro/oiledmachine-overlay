@@ -62,7 +62,7 @@ RDEPEND+="
 		>=dev-python/pymunk-${PYMUNK_PV}[${PYTHON_USEDEP}]
 	)
 	other? (
-		>=dev-python/pillow-8.0.1[${PYTHON_USEDEP}]
+		>=virtual/pillow-8.0.1[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="

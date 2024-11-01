@@ -30,7 +30,7 @@ RDEPEND="
 	dev-python/scipy[${PYTHON_USEDEP}]
 	image? (
 		>=dev-python/cipy-0.14[${PYTHON_USEDEP}]
-		>=dev-python/pillow-5.2.0[${PYTHON_USEDEP}]
+		>=virtual/pillow-5.2.0[${PYTHON_USEDEP}]
 	)
 "
 BDEPEND+="
@@ -40,7 +40,7 @@ BDEPEND+="
 	test? (
 		dev-python/keras[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
-		dev-python/pillow[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]

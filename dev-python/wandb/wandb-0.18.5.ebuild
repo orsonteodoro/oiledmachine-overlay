@@ -80,7 +80,7 @@ BDEPEND+="
 		dev-python/hypothesis[${PYTHON_USEDEP}]
 		dev-python/hypothesis-fspaths[${PYTHON_USEDEP}]
 
-		dev-python/pillow[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/polars[${PYTHON_USEDEP}]
 		dev-python/moviepy[${PYTHON_USEDEP}]

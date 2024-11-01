@@ -42,17 +42,14 @@ RESTRICT="
 "
 RDEPEND="
 	$(python_gen_cond_dep '
-		!>=dev-python/pillow-8.3*[${PYTHON_USEDEP}]
+		!=virtual/pillow-8.3*
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
 		scipy? (
 			dev-python/scipy[${PYTHON_USEDEP}]
 		)
-		|| (
-			>=dev-python/pillow-5.3[${PYTHON_USEDEP}]
-			>=dev-python/pillow-simd-5.3[${PYTHON_USEDEP}]
-		)
+		>=virtual/pillow-5.3[${PYTHON_USEDEP}]
 	')
 	media-video/ffmpeg:=
 	sci-libs/caffe2[cuda?,rocm?]
