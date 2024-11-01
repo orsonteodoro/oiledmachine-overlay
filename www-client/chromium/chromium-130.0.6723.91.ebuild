@@ -196,7 +196,7 @@ RUSTC_VER="" # Global variable
 SHADOW_CALL_STACK=0 # Global variable
 S_CROMITE="${WORKDIR}/cromite-${CROMITE_COMMIT}"
 S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
-TESTDATA_P="${PN}-130.0.6723.69"
+TESTDATA_P="${PN}-${PV}"
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 ZLIB_PV="1.3"
 
@@ -232,10 +232,12 @@ SRC_URI="
 		https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
 	)
 	test? (
-		https://commondatastorage.googleapis.com/chromium-browser-official/${TESTDATA_P}-testdata.tar.xz
+		https://chromium-tarballs.syd1.cdn.digitaloceanspaces.com/${P}-testdata.tar.xz
 		https://chromium-fonts.storage.googleapis.com/${TEST_FONT} -> chromium-${PV%%\.*}-testfonts.tar.gz
 	)
 "
+#		https://chromium-fonts.storage.googleapis.com/${TEST_FONT} -> chromium-${PV%%\.*}-testfonts.tar.gz
+#		https://commondatastorage.googleapis.com/chromium-browser-official/${TESTDATA_P}-testdata.tar.xz
 if is_cromite_compatible ; then
 	IUSE+="
 		cromite
@@ -1858,7 +1860,7 @@ ewarn "Expected file count:  ${tc_count_expected}"
 ewarn
 	fi
 
-	local sources_count_expected=1134205
+	local sources_count_expected=738477
 	local sources_count_actual=$(find "/usr/share/chromium/sources" -type f | wc -l)
 	if (( ${sources_count_actual} != ${sources_count_expected} )) ; then
 ewarn
@@ -2974,10 +2976,6 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 	#	| grep 'third_party' \
 	#	| awk '{print $NF}'
 		$(use test && echo "
-			chrome/test/data/third_party
-			content/test/data/gpu/third_party
-			third_party/breakpad/breakpad/src/processor/testdata/symbols
-			third_party/catapult/tracing/test_data
 			third_party/google_benchmark/src/include/benchmark
 			third_party/google_benchmark/src/src
 			third_party/perfetto/protos/third_party/pprof
