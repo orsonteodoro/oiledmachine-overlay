@@ -2878,8 +2878,11 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" coqui debug ollama stt tray wayland X"
+IUSE+=" coqui debug ollama tray voice-recognition wayland whisper-cpp X"
 REQUIRED_USE="
+	whisper-cpp? (
+		voice-recognition
+	)
 	|| (
 		X
 		wayland
@@ -2901,7 +2904,7 @@ gen_webkit_depend() {
 
 	# stt - voice recognition / input
 		echo "
-				stt? (
+				voice-recognition? (
 					=net-libs/webkit-gtk-${s}*:4[mediastream,pulseaudio,gstreamer]
 				)
 			)
@@ -2944,6 +2947,9 @@ RDEPEND+="
 	)
 	ollama? (
 		app-misc/ollama
+	)
+	whisper-cpp? (
+		app-accessibility/whisper-cpp
 	)
 "
 DEPEND+="

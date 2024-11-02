@@ -18,8 +18,11 @@
     <flag name="ollama">
       Enable local Large Language Model (LLM) support.
     </flag>    
-    <flag name="stt">
+    <flag name="voice-recognition">
       Enable voice recognition support
+    </flag>
+    <flag name="whisper-cpp">
+      Enable offline voice recognition support with whisper.cpp.
     </flag>
   </use>
 </pkgmetadata>
