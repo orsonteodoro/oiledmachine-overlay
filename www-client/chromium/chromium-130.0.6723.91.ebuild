@@ -178,7 +178,7 @@ PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
 QT5_PV="5.15.2"
 QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="129.0.6668.70-1"
+UNGOOGLED_CHROMIUM_PV="130.0.6723.91-1"
 USE_LTO=0 # Global variable
 # https://github.com/chromium/chromium/blob/130.0.6723.91/tools/clang/scripts/update.py#L38 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
@@ -2929,9 +2929,6 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		")
 		$(use !system-libstdcxx && echo "
 			third_party/libc++
-		")
-		$(use !system-toolchain && echo "
-			third_party/llvm
 		")
 		$(use !system-libwebp && echo "
 			third_party/libwebp
