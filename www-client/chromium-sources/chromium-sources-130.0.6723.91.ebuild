@@ -311,7 +311,7 @@ _method1() {
 	# Bypass scanelf and writing to /var/pkg/db
 	# Use filesystem tricks (pointer change) to speed up merge time.
 	mv "${WORKDIR}/chromium-${PV}/"* "/usr/share/chromium/sources" || die
-	mv $(find "${WORKDIR}/chromium-${PV}/" -maxdepth 1 -name ".*" -type f) "/usr/share/chromium/sources" || true
+	mv $(find "${WORKDIR}/chromium-${PV}/" -maxdepth 1 -name ".*" -type f) "/usr/share/chromium/sources" || die
 # Completion time:  0 days, 0 hrs, 26 mins, 22 secs
 }
 
