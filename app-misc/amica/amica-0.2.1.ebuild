@@ -2902,7 +2902,7 @@ gen_webkit_depend() {
 		echo "
 		"
 
-	# stt - voice recognition / input
+	# stt - voice recognition, add microphone support
 		echo "
 				voice-recognition? (
 					=net-libs/webkit-gtk-${s}*:4[mediastream,pulseaudio,gstreamer]
