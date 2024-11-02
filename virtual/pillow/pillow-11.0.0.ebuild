@@ -24,7 +24,7 @@ RDEPEND="
 	)
 	pillow-simd? (
 		!dev-python/pillow
-		>=dev-python/pillow-simd-${PV}[${PYTHON_USEDEP},imagequant?,jpeg?,jpeg2k?,lcms?,test?,tiff?,truetype?,webp?,xcb?,zlib?]
+		>=dev-python/pillow-simd-${PV}[${PYTHON_USEDEP},imagequant?,jpeg?,jpeg2k?,lcms?,test?,tiff?,tk?,truetype?,webp?,xcb?,zlib?]
 		dev-python/pillow-simd:=
 	)
 "
