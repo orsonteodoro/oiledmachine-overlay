@@ -4489,13 +4489,8 @@ einfo "Running dobin tools/${i}$(get_exeext)"
 		for x in $(ls "${ED}/${prefix}/$(get_libdir)/"*".so" ) ; do
 			patchelf --add-rpath "/${prefix}" "${x}" || die
 		done
-		local names=(
-			"ffmpeg-shared"
-			"ffplay-shared"
-			"ffprobe-shared"
-		)
-		for x in ${names[@]} ; do
-			patchelf --add-rpath "/${prefix}" "/${prefix}/bin/${x}" || die
+		for x in $(ls "${ED}/${prefix}/bin/"*) ; do
+			patchelf --add-rpath "/${prefix}" "${x}" || die
 		done
 	fi
 }
