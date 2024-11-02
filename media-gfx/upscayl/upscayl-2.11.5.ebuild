@@ -873,6 +873,7 @@ PDEPEND+="
 "
 
 pkg_setup() {
+	export NEXT_TELEMETRY_DISABLED=1
 	if ! use system-vips ; then
 # Vendored vips requires SSE 4.2.
 ewarn
