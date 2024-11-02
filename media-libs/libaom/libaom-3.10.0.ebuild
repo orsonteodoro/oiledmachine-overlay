@@ -49,7 +49,7 @@ fi
 
 DESCRIPTION="Alliance for Open Media AV1 Codec SDK"
 HOMEPAGE="https://aomedia.org"
-LICENSE="BSD-2"
+LICENSE="Alliance-for-Open-Media-Patent-License-1.0 BSD-2"
 # Don't strip CFI \
 RESTRICT="
 	test
