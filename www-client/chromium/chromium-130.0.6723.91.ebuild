@@ -3669,6 +3669,10 @@ ewarn
 		fi
 	fi
 
+	if is_generating_credits ; then
+		myconf_gn+=" generate_about_credits=true"
+	fi
+
 	# See dependency logic in third_party/BUILD.gn
 	myconf_gn+=" use_system_harfbuzz=$(usex system-harfbuzz true false)"
 
