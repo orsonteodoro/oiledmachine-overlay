@@ -2888,8 +2888,9 @@ REQUIRED_USE="
 gen_webkit_depend() {
 	local s
 	for s in ${WEBKIT_GTK_STABLE[@]} ; do
-	# There is a bug with webkit-gtk's jit that causes it to crash.
-		echo "=net-libs/webkit-gtk-${s}*:4[-jit,introspection,wayland?,X?]"
+	# TODO:  add audio minimum requirement for webkit-gtk for tts/stt
+	# onnxruntime-web needs webassembly
+		echo "=net-libs/webkit-gtk-${s}*:4[jit,introspection,wayland?,webassembly,X?]"
 	done
 }
 RUST_BINDINGS_DEPEND="
