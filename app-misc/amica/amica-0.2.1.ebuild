@@ -2758,7 +2758,7 @@ https://registry.npmjs.org/yn/-/yn-3.1.1.tgz -> npmpkg-yn-3.1.1.tgz
 https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz -> npmpkg-yocto-queue-0.1.0.tgz
 "
 # UPDATER_END_NPM_EXTERNAL_URIS
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-app-v${PV}"
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
