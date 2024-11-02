@@ -4362,11 +4362,13 @@ einfo "Installing for Chromium"
 
 	if [[ "${lib_type}" == "shared" && "${SLOT%/*}" == "${FFMPEG_SUBSLOT}" ]] ; then
 		local x
-		for x in $(ls "${ED}/${prefix}/$(get_libdir)/"*".so" ) ; do
+		for x in $(ls "${ED}/${prefix}/$(get_libdir)/"*".so"* ) ; do
+			[[ -L "${x}" ]] && continue
 einfo "Adding /${prefix} to rpath for ${x}"
 			patchelf --add-rpath "/${prefix}/$(get_libdir)" "${x}" || die
 		done
 		for x in $(ls "${ED}/${prefix}/bin/"*) ; do
+			[[ -L "${x}" ]] && continue
 einfo "Adding /${prefix} to rpath for ${x}"
 			patchelf --add-rpath "/${prefix}/$(get_libdir)" "${x}" || die
 		done
