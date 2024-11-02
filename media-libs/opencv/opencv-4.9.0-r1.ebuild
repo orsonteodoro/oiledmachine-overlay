@@ -277,7 +277,7 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 IUSE="
 	debug doc +eigen gflags glog +java -non-free +opencvapps +python
 	-system-flatbuffers test -testprograms
-	ebuild-revision-6
+	ebuild-revision-7
 "
 # hal for acceleration
 IUSE+="
