@@ -33,7 +33,7 @@ SRC_URI="
 
 DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
-LICENSE="BSD"
+LICENSE="BSD libvpx-PATENTS"
 SLOT="0/9"
 PPC_IUSE="
 	cpu_flags_ppc_vsx3

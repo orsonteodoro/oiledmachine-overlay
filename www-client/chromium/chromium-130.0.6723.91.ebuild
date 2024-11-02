@@ -313,6 +313,7 @@ LICENSE="
 	LGPL-2+
 	LGPL-2.1+
 	libpng2
+	libvpx-PATENTS
 	libwebrtc-PATENTS
 	MIT
 	MPL-1.1
@@ -468,6 +469,7 @@ fi
 # LGPL-2.1+ - third_party/blink/renderer/core/paint/paint_layer.h
 # LGPL-2.1+ - third_party/libsecret/LICENSE
 # libpng2 - third_party/pdfium/third_party/libpng16/LICENSE
+# libvpx-PATENTS - third_party/libvpx/source/libvpx/PATENTS
 # MIT CC0-1.0 - third_party/node/node_modules/eslint/node_modules/lodash/LICENSE
 # MIT SGI-B-2.0 - third_party/khronos/LICENSE
 # MIT Unicode-DFS-2016 CC-BY-4.0 W3C W3C-Community-Final-Specification-Agreement - third_party/node/node_modules/typescript/ThirdPartyNoticeText.txt
