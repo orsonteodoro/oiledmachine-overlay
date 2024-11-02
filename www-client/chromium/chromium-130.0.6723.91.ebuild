@@ -282,6 +282,7 @@ LICENSE="
 		all-rights-reserved
 		HPND
 	)
+	Alliance-for-Open-Media-Patent-License-1.0
 	APSL-2
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -392,6 +393,7 @@ fi
 #        reevaluated.
 # TODO:  scan all font files for embedded licenses
 #
+# Alliance-for-Open-Media-Patent-License-1.0 third_party/libaom/source/libaom/PATENTS
 # APSL-2 - third_party/apple_apsl/LICENSE
 # APSL-2 Apache-2.0 BSD MIT - third_party/breakpad/LICENSE
 # Apache-2.0 - CIPD - https://chromium.googlesource.com/infra/luci/luci-go/+/refs/heads/main/cipd
