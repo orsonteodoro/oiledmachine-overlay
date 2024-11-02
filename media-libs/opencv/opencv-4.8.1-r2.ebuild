@@ -511,7 +511,9 @@ RDEPEND="
 	)
 	ffmpeg? (
 		|| (
+			media-video/ffmpeg:58.60.60[${MULTILIB_USEDEP},libaom?,openh264?,vpx?]
 			media-video/ffmpeg:56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,vpx?]
+			media-video/ffmpeg:0/58.60.60[${MULTILIB_USEDEP},libaom?,openh264?,vpx?]
 			media-video/ffmpeg:0/56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,vpx?]
 		)
 		media-video/ffmpeg:=[${MULTILIB_USEDEP}]
@@ -1174,7 +1176,10 @@ eerror "OpenVINO is not supported for ${ARCH}"
 		)
 	fi
 
-	if use ffmpeg && has_version "media-video/ffmpeg:56.58.58" ; then
+	# CI tested versions
+	if use ffmpeg && has_version "media-video/ffmpeg:58.60.60" ; then # 6.1.x
+		export PKG_CONFIG_PATH="/usr/$(get_libdir)/ffmpeg/58.60.60/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	elif use ffmpeg && has_version "media-video/ffmpeg:56.58.58" ; then # 4.x
 		export PKG_CONFIG_PATH="/usr/$(get_libdir)/ffmpeg/56.58.58/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 	fi
 
