@@ -239,7 +239,7 @@ CPU_FEATURES_MAP=(
 inherit cuda java-pkg-opt-2 java-ant-2 cmake-multilib flag-o-matic hip-versions
 inherit python-r1 toolchain-funcs
 
-KEYWORDS="amd64 ~arm arm64 ~loong ~ppc ~ppc64 ~riscv x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~x86"
 SRC_URI="
 	https://github.com/${PN}/${PN}/archive/${PV}.tar.gz
 		-> ${P}.tar.gz

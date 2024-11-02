@@ -217,7 +217,7 @@ QT6_PV="6.2.4"
 inherit cuda java-pkg-opt-2 java-ant-2 cmake-multilib flag-o-matic hip-versions
 inherit python-r1 toolchain-funcs virtualx
 
-if [[ ${PV} = *9999* ]] ; then
+if [[ "${PV}" == *"9999"* ]] ; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/${PN}/${PN}.git"
 else
@@ -230,7 +230,7 @@ else
 	XFEATURES2D_BOOSTDESC_COMMIT="34e4206aef44d50e6bbcd0ab06354b52e7466d26"		# See https://github.com/opencv/opencv_contrib/blob/4.9.0/modules/xfeatures2d/cmake/download_boostdesc.cmake#L2
 	XFEATURES2D_VGG_COMMIT="fccf7cd6a4b12079f73bbfb21745f9babcd4eb1d"		# See https://github.com/opencv/opencv_contrib/blob/4.9.0/modules/xfeatures2d/cmake/download_vgg.cmake#L2
 
-	KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
+	KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~x86"
 	SRC_URI="
 		https://github.com/${PN}/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz
 		https://github.com/opencv/ade/archive/v${ADE_PV}.tar.gz -> ade-${ADE_PV}.tar.gz
