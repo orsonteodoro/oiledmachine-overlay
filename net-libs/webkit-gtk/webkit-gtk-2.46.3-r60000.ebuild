@@ -2298,6 +2298,12 @@ ewarn
 		$(cmake_use_find_package opengl OpenGL)
 	)
 
+	if ! has_version "dev-util/sysprof-capture" ; then
+		mycmakeargs+=(
+			-DUSE_SYSTEM_SYSPROF_CAPTURE=NO
+		)
+	fi
+
 	if (( ${ram_gib_per_core%.*} >= 2 )) ; then # 4 core, 8 GiB RAM total
 	# Only allow if not swappy
 		mycmakeargs+=(
