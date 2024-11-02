@@ -145,8 +145,8 @@ GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-65aa2f7fe67bb4b869f365386f2244730d55b97b64d22b65cd55b6df2e7e09a9\
-fb4cc7682092c47f04655658e18270d4cd1f0a1009e9cdce61b60de95ef1b916\
+bf40306865f31b7115feeab6d767da4b56c812d4e0bb9aa69ed4703c8a9061e0\
+886a9fc90f54fe8a500885a315e5917907953649d8cf56c157b73261b55d1814\
 "
 LLVM_COMPAT=( 20 19 ) # [inclusive, inclusive] high to low ; LLVM_OFFICIAL_SLOT+1 or LLVM_OFFICIAL_SLOT-1 major version allowed.
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is the same slot listed in https://github.com/chromium/chromium/blob/130.0.6723.91/tools/clang/scripts/update.py#L42
