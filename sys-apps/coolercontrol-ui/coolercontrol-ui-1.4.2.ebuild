@@ -1094,7 +1094,7 @@ gen_webkit_depend() {
 	local s
 	for s in ${WEBKIT_GTK_STABLE[@]} ; do
 	# There is a bug with webkit-gtk's jit that causes it to crash.
-		echo "=net-libs/webkit-gtk-${s}*:4[-jit,introspection,wayland?,X?]"
+		echo "=net-libs/webkit-gtk-${s}*:4[javascript,-jit,introspection,wayland?,X?]"
 	done
 }
 RUST_BINDINGS_DEPEND="

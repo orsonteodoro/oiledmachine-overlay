@@ -2878,7 +2878,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" debug tray wayland X"
+IUSE+=" coqui debug ollama stt tray wayland X"
 REQUIRED_USE="
 	|| (
 		X
@@ -2890,7 +2890,22 @@ gen_webkit_depend() {
 	for s in ${WEBKIT_GTK_STABLE[@]} ; do
 	# TODO:  add audio minimum requirement for webkit-gtk for tts/stt
 	# onnxruntime-web needs webassembly
-		echo "=net-libs/webkit-gtk-${s}*:4[jit,introspection,wayland?,webassembly,X?]"
+		echo "
+			(
+				=net-libs/webkit-gtk-${s}*:4[javascript,jit,introspection,wayland?,webassembly,X?,webgl]
+		"
+
+	# tts - voice synthesis
+		echo "
+		"
+
+	# stt - voice recognition / input
+		echo "
+				stt? (
+					=net-libs/webkit-gtk-${s}*:4[mediastream,pulseaudio,gstreamer]
+				)
+			)
+		"
 	done
 }
 RUST_BINDINGS_DEPEND="
@@ -2924,6 +2939,12 @@ RUST_BINDINGS_BDEPEND="
 RDEPEND+="
 	$(gen_webkit_depend)
 	${RUST_BINDINGS_DEPEND}
+	coqui? (
+		dev-python/coqui-tts
+	)
+	ollama? (
+		app-misc/ollama
+	)
 "
 DEPEND+="
 	${RDEPEND}

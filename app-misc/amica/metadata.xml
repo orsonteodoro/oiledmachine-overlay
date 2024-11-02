@@ -11,4 +11,15 @@
     <changelog>https://github.com/semperai/amica/blob/main/CHANGELOG</changelog>
     <remote-id type="github">semperai/amica</remote-id>
   </upstream>
+  <use>
+    <flag name="coqui">
+      Enable for local voice synthesis.
+    </flag>
+    <flag name="ollama">
+      Enable local Large Language Model (LLM) support.
+    </flag>    
+    <flag name="stt">
+      Enable voice recognition support
+    </flag>
+  </use>
 </pkgmetadata>
