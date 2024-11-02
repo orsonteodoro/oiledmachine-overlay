@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# docker-pycreds
-#
 # TODO package (optional):
 # hypothesis-fspaths
 # lightning

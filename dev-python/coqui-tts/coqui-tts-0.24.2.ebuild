@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO package (required):
-# spacy
-
 # TODO package (optional):
 # bangla
 # bnnumerizer
