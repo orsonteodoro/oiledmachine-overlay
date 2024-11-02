@@ -3019,10 +3019,10 @@ einfo "Adding Cargo.lock"
 
 src_unpack() {
 	unpack ${P}.tar.gz
-einfo "Unpack npm packages"
+einfo "Unpacking npm packages"
 	S="${WORKDIR}/${PN}-app-v${PV}/" \
 	npm_src_unpack
-einfo "Unpack cargo packages"
+einfo "Unpacking cargo packages"
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		S="${WORKDIR}/${PN}-app-v${PV}/src-tauri" \
 		_lockfile_gen_unpack
