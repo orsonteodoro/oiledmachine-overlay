@@ -2212,7 +2212,7 @@ eerror
 		die
 	fi
 
-	if use system-alloc ; then
+	if use system-malloc ; then
 ewarn
 ewarn "Disabling bmalloc for ABI=${ABI} may lower security.  Consider using an"
 ewarn "LD_PRELOAD wrapper script to a hardened allocator library instead when"
