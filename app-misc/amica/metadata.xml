@@ -8,7 +8,6 @@
   </maintainer>
   <upstream>
     <bugs-to>https://github.com/semperai/amica/issues</bugs-to>
-    <changelog>https://github.com/semperai/amica/blob/main/CHANGELOG</changelog>
     <remote-id type="github">semperai/amica</remote-id>
   </upstream>
   <use>
