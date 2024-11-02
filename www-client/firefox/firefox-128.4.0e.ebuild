@@ -151,18 +151,17 @@ MITIGATION_LAST_UPDATE=1730147160 # From `date +%s -d "2024-10-28 13:26"` from f
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-56/"
 VULNERABILITIES_FIXED=(
 # Upstream severity
-	"CVE-2024-10458;ID;High"
-	"CVE-2024-10459;CE, DoS, DT, ID, UAF;High"
-	"CVE-2024-10460;DT;Moderate"
-
-	"CVE-2024-10461;DT, ID;Medium"
-	"CVE-2024-10462;DT;High"
-	"CVE-2024-10463;ID;High"
-	"CVE-2024-10468;DoS, DT, ID;Critical"
-	"CVE-2024-10464;DoS;High"
-	"CVE-2024-10465;DT;High"
-	"CVE-2024-10466;DoS;High"
 	"CVE-2024-10467;CE, DoS, DT, ID;Critical"
+	"CVE-2024-10468;DoS, DT, ID;Critical"
+	"CVE-2024-10461;DT, ID;Medium"
+	"CVE-2024-10458;ID;High"
+	"CVE-2024-10463;ID;High"
+	"CVE-2024-10460;ID;Moderate"
+	"CVE-2024-10462;DT;High"
+	"CVE-2024-10465;DT;High"
+	"CVE-2024-10464;DoS;High"
+	"CVE-2024-10459;DoS;High"
+	"CVE-2024-10466;DoS;High"
 )
 MOZ_ESR="yes"
 MOZ_LANGS=(
