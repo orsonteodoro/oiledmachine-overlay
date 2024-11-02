@@ -5,4 +5,10 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <use>
+    <flag name="pillow-simd">
+      Use the pillow-simd implementation that is 6x-35x times faster in some
+      operations requiring either sse4.1 or avx2.
+    </flag>
+  </use>
 </pkgmetadata>
