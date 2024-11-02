@@ -3633,6 +3633,7 @@ ewarn "The chroot and sandbox mitigation edits has not been implemented for syst
 	optfeature_header "Install optional packages:"
 	optfeature "Electron GUI frontend" "app-misc/llocal"
 	optfeature "GTK4 GUI frontend" "app-misc/alpaca"
+	optfeature "Tauri GUI frontend with speech synthesis and speech recognition" "app-misc/amica"
 	#optfeature "Piped AI command line execution" "app-shells/loz"
 	#optfeature "Text-to-speech and speech-to-text" "app-accessibility/june"
 }
