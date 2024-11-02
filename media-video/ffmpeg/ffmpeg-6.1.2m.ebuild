@@ -518,7 +518,7 @@ pgo +pic pipewire proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 +re-codecs sndio soc sr static-libs tensorflow test v4l wayland
 
-ebuild-revision-18
+ebuild-revision-19
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.
@@ -4393,35 +4393,39 @@ _install() {
 		fi
 	fi
 
-	if multilib_is_native_abi; then
-		exeinto /${prefix}/bin
+	if multilib_is_native_abi ; then
+		exeinto "/${prefix}/bin"
 		local i
 		for i in "${FFTOOLS[@]}" ; do
-			if use fftools_${i} ; then
+			if use "fftools_${i}" ; then
 einfo "Running dobin tools/${i}$(get_exeext)"
 				if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 					# Bugged dobin
 					mkdir -p "${ED}/${prefix}/bin" || die
-					cp -a "tools/${i}$(get_exeext)" \
-						"${ED}/${prefix}/bin" || die
+					cp -a \
+						"tools/${i}$(get_exeext)" \
+						"${ED}/${prefix}/bin" \
+						|| die
 					chmod 0755 "${ED}/${prefix}/bin/${i}$(get_exeext)" || die
 				else
-					dobin tools/${i}$(get_exeext)
+					dobin "tools/${i}$(get_exeext)"
 				fi
 			fi
 		done
 
-		use chromium &&
+		use chromium && \
 			emake V=1 DESTDIR="${D}" install-libffmpeg
 	fi
 
-	if [[ "${lib_type}" == "${shared}" && "${SLOT%/*}" == "${FFMPEG_SUBSLOT}" ]] ; then
+	if [[ "${lib_type}" == "shared" && "${SLOT%/*}" == "${FFMPEG_SUBSLOT}" ]] ; then
 		local x
 		for x in $(ls "${ED}/${prefix}/$(get_libdir)/"*".so" ) ; do
-			patchelf --add-rpath "/${prefix}" "${x}" || die
+einfo "Adding /${prefix} to rpath for ${x}"
+			patchelf --add-rpath "/${prefix}/$(get_libdir)" "${x}" || die
 		done
 		for x in $(ls "${ED}/${prefix}/bin/"*) ; do
-			patchelf --add-rpath "/${prefix}" "${x}" || die
+einfo "Adding /${prefix} to rpath for ${x}"
+			patchelf --add-rpath "/${prefix}/$(get_libdir)" "${x}" || die
 		done
 	fi
 }
