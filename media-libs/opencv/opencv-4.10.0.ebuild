@@ -1343,9 +1343,7 @@ eerror "OpenVINO is not supported for ${ARCH}"
 	fi
 
 	if use ffmpeg && has_version "media-video/ffmpeg:56.58.58" ; then
-		mycmakeargs+=(
-			-DFFMPEG_DIR="/usr/$(get_libdir)/ffmpeg/56.58.58/$(get_libdir)/pkgconfig"
-		)
+		export PKG_CONFIG_PATH="/usr/$(get_libdir)/ffmpeg/56.58.58/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 	fi
 
 	if multilib_is_native_abi && use python ; then
