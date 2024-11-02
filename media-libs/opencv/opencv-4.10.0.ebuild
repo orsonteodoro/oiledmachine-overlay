@@ -1512,12 +1512,14 @@ einfo "Fixing rpath for ${path}"
 		local x
 		for x in $(ls "${ED}/usr/$(get_libdir)/libopencv"*".so") ; do
 			local path=$(ldd "${x}" | grep -q "libav" && echo "${x}")
-			if has_version "media-video/ffmpeg:58.60.60" ; then # 6.1.x
-einfo "Fixing rpath for ${path}"
-				patchelf --add-rpath "/usr/$(get_libdir)/ffmpeg/58.60.60/$(get_libdir)" "${path}" || die
+			if [[ -z "${path}" ]] ; then
+				:
+			elif has_version "media-video/ffmpeg:58.60.60" ; then # 6.1.x
+einfo "Fixing rpath for ${x}"
+				patchelf --add-rpath "/usr/$(get_libdir)/ffmpeg/58.60.60/$(get_libdir)" "${x}" || die
 			elif has_version "media-video/ffmpeg:56.58.58" ; then # 4.x
-einfo "Fixing rpath for ${path}"
-				patchelf --add-rpath "/usr/$(get_libdir)/ffmpeg/56.58.58/$(get_libdir)" "${path}" || die
+einfo "Fixing rpath for ${x}"
+				patchelf --add-rpath "/usr/$(get_libdir)/ffmpeg/56.58.58/$(get_libdir)" "${x}" || die
 			fi
 		done
 	fi
