@@ -238,6 +238,9 @@
     <flag name="mediastream">
       Enables support for MediaStream API (IN DEVELOPMENT / DRAFT).
     </flag>
+    <flag name="microphone">
+      Enable microphone support
+    </flag
     <flag name="mold">
       Use the Mold linker to reduce linking times.
     </flag>

@@ -521,7 +521,7 @@ ${MSE_VCODECS_IUSE}
 aqua +avif -bmalloc -cache-partitioning dash +doc -eme -gamepad +gbm
 +geolocation gles2 gnome-keyring +gstreamer gstwebrtc hardened +introspection
 +javascript +jit +journald +jpegxl +libpas +lcms -libbacktrace +libhyphen
--libwebrtc -mediarecorder -mediastream +minibrowser mold +opengl openmp
+-libwebrtc -mediarecorder -mediastream +microphone +minibrowser mold +opengl openmp
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 -seccomp speech-synthesis -spell -system-malloc test thunder +unified-builds
@@ -698,6 +698,11 @@ REQUIRED_USE+="
 	)
 	hls? (
 		gstreamer
+	)
+	microphone? (
+		gstreamer
+		mediastream
+		pulseaudio
 	)
 	opengl? (
 		!gles2
@@ -2009,10 +2014,6 @@ einfo "CXX:  ${CXX}"
 	fi
 
 	tc-is-clang && llvm_pkg_setup
-
-	if ! use pulseaudio ; then
-ewarn "Microphone support requires pulseaudio USE flag enabled."
-	fi
 
 	if use v4l ; then
 		local gst_plugins_v4l2_repo=\
