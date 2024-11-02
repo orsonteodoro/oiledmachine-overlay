@@ -2874,6 +2874,7 @@ LICENSE="
 	${NPM_PACKAGES_LICENSES}
 	MIT
 "
+# The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" debug tray wayland X"
