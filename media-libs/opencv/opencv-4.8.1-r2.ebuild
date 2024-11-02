@@ -511,6 +511,7 @@ RDEPEND="
 	)
 	ffmpeg? (
 		|| (
+			media-video/ffmpeg:56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,vpx?]
 			media-video/ffmpeg:0/56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,vpx?]
 		)
 		media-video/ffmpeg:=[${MULTILIB_USEDEP}]
@@ -1170,6 +1171,12 @@ eerror "OpenVINO is not supported for ${ARCH}"
 
 		use vtk && mycmakeargs+=(
 			-DCMAKE_CUDA_FLAGS="-forward-unknown-opts ${NVCCFLAGS//\;/ }"
+		)
+	fi
+
+	if use ffmpeg && has_version "media-video/ffmpeg:56.58.58" ; then
+		mycmakeargs+=(
+			-DFFMPEG_DIR="/usr/$(get_libdir)/ffmpeg/56.58.58/$(get_libdir)/pkgconfig"
 		)
 	fi
 
