@@ -1349,7 +1349,7 @@ einfo "Patched vulnerabilities:"
 			local cve=$(echo "${x}" | cut -f 1 -d ";")
 			local vulnerability_classes=$(echo "${x}" | cut -f 2 -d ";")
 			local severity=$(echo "${x}" | cut -f 3 -d ";")
-einfo "${cve}:  ${vulnerability_classes} (${severity})"
+einfo "${cve}:  ${vulnerability_classes} (CVSS 3.1 ${severity})"
 		done
 		IFS=$' \t\n'
 einfo
