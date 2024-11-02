@@ -21,6 +21,12 @@ examples imagequant +jpeg jpeg2k lcms test tiff tk truetype webp xcb
 zlib
 "
 
+# >dev-python/pillow-simd-10.0.1 does not exist yet
+REQUIRED_USE="
+	cpu_flags_x86_sse4_1
+	cpu_flags_x86_avx2
+"
+
 PILLOW_RDEPEND="
 	!dev-python/pillow-simd
 	>=dev-python/pillow-${PV}[${PYTHON_USEDEP},examples?,imagequant?,jpeg?,jpeg2k?,lcms?,test?,tiff?,tk?,truetype?,webp?,xcb?,zlib?]

@@ -98,5 +98,3 @@ dev-python/jaxlib clang
 www-client/chromium system-toolchain
 
 sys-apps/firejail -suid
-
-#app-misc/ollama mimalloc mimalloc-secure hardened_malloc sandbox chroot
