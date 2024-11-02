@@ -3682,6 +3682,7 @@ ewarn
 	myconf_gn+=" enable_plugins=$(usex plugins true false)"
 	myconf_gn+=" enable_ppapi=false"
 	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
+	myconf_gn+=" enable_service_discovery=true" # Required by chrome/browser/extensions/api/BUILD.gn.  mdns may be a dependency.
 	myconf_gn+=" enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
 	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/130.0.6723.91/device/vr#platform-support
