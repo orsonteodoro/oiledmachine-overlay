@@ -4329,6 +4329,19 @@ einfo "Installing for Chromium"
 			fi
 		fi
 	fi
+
+	if [[ "${lib_type}" == "${shared}" && "${SLOT%/*}" == "${FFMPEG_SUBSLOT}" ]] ; then
+		local x
+		for x in $(ls "${ED}/${prefix}/$(get_libdir)/"*".so" ) ; do
+			local path=$(ldd "${x}" | grep -q "libav" && echo "${x}")
+			if [[ -z "${path}" ]] ; then
+				:
+			else
+einfo "Fixing rpath for ${x}"
+				patchelf --add-rpath "/${prefix}" "${x}" || die
+			fi
+		done
+	fi
 }
 
 src_install() {

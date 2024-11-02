@@ -1422,6 +1422,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-build/make-3.81
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	dev-util/patchelf
 	cpu_flags_x86_mmx? (
 		|| (
 			>=dev-lang/nasm-2.13
@@ -4409,6 +4410,21 @@ einfo "Running dobin tools/${i}$(get_exeext)"
 
 		use chromium &&
 			emake V=1 DESTDIR="${D}" install-libffmpeg
+	fi
+
+	if [[ "${lib_type}" == "${shared}" && "${SLOT%/*}" == "${FFMPEG_SUBSLOT}" ]] ; then
+		local x
+		for x in $(ls "${ED}/${prefix}/$(get_libdir)/"*".so" ) ; do
+			patchelf --add-rpath "/${prefix}" "${x}" || die
+		done
+		local names=(
+			"ffmpeg-shared"
+			"ffplay-shared"
+			"ffprobe-shared"
+		)
+		for x in ${names[@]} ; do
+			patchelf --add-rpath "/${prefix}" "/${prefix}/bin/${x}" || die
+		done
 	fi
 }
 

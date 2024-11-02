@@ -490,7 +490,7 @@ pgo +pic pipewire proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 +re-codecs sndio sr static-libs tensorflow test v4l wayland
 
-ebuild-revision-17
+ebuild-revision-18
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.
@@ -1363,6 +1363,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-build/make-3.81
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	dev-util/patchelf
 	cpu_flags_x86_mmx? (
 		|| (
 			>=dev-lang/nasm-2.13
@@ -4331,6 +4332,21 @@ einfo "Installing for Chromium"
 				QA_FLAGS_IGNORED+=" usr/$(get_libdir)/chromium/.*"
 			fi
 		fi
+	fi
+
+	if [[ "${lib_type}" == "${shared}" && "${SLOT%/*}" == "${FFMPEG_SUBSLOT}" ]] ; then
+		local x
+		for x in $(ls "${ED}/${prefix}/$(get_libdir)/"*".so" ) ; do
+			patchelf --add-rpath "/${prefix}" "${x}" || die
+		done
+		local names=(
+			"ffmpeg-shared"
+			"ffplay-shared"
+			"ffprobe-shared"
+		)
+		for x in ${names[@]} ; do
+			patchelf --add-rpath "/${prefix}" "/${prefix}/bin/${x}" || die
+		done
 	fi
 }
 
