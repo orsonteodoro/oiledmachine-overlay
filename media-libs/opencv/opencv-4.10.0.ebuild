@@ -730,6 +730,7 @@ BDEPEND="
 	>=dev-build/cmake-${CMAKE_PV}
 	>=dev-util/patchelf-0.10
 	virtual/pkgconfig
+	dev-util/patchelf
 	cuda? (
 		${CUDA_DEPEND}
 		sys-apps/grep[pcre]
@@ -1503,6 +1504,20 @@ einfo "Fixing rpath for ${path}"
 			elif ldd "${path}" | grep -F -q "libtbb.so.12" ; then
 	# oneTBB
 				:
+			fi
+		done
+	fi
+
+	if use ffmpeg ; then
+		local x
+		for x in $(ls "${ED}/usr/$(get_libdir)/libopencv"*".so") ; do
+			local path=$(ldd "${x}" | grep -q "libav" && echo "${x}")
+			if has_version "media-video/ffmpeg:58.60.60" ; then # 6.1.x
+einfo "Fixing rpath for ${path}"
+				patchelf --add-rpath "/usr/$(get_libdir)/ffmpeg/58.60.60/$(get_libdir)" "${path}" || die
+			elif has_version "media-video/ffmpeg:56.58.58" ; then # 4.x
+einfo "Fixing rpath for ${path}"
+				patchelf --add-rpath "/usr/$(get_libdir)/ffmpeg/56.58.58/$(get_libdir)" "${path}" || die
 			fi
 		done
 	fi
