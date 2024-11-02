@@ -2769,6 +2769,7 @@ https://github.com/semperai/amica/archive/refs/tags/app-v${PV}.tar.gz
 
 DESCRIPTION="Amica is an open source interface for interactive communication with 3D characters with voice synthesis and speech recognition."
 HOMEPAGE="
+	https://heyamica.com/
 	https://github.com/semperai/amica
 "
 CARGO_PACKAGES_LICENSES="

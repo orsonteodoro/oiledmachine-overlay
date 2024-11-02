@@ -7,9 +7,8 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <bugs-to>https://github.com/rec/tdir/issues</bugs-to>
-    <changelog>https://github.com/rec/tdir/blob/main/CHANGELOG</changelog>
-    <remote-id type="github">rec/tdir</remote-id>
-    <remote-id type="pypi">tdir</remote-id>
+    <bugs-to>https://github.com/semperai/amica/issues</bugs-to>
+    <changelog>https://github.com/semperai/amica/blob/main/CHANGELOG</changelog>
+    <remote-id type="github">semperai/amica</remote-id>
   </upstream>
 </pkgmetadata>
