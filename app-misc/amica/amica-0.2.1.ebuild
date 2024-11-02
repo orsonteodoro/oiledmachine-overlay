@@ -2956,16 +2956,16 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	=net-libs/nodejs-18*[npm]
-	>=virtual/rust-1.75
 	${RUST_BINDINGS_BDEPEND}
+	>=virtual/rust-1.75
+	=net-libs/nodejs-18*[npm]
 	virtual/pkgconfig
 	virtual/rust
 "
 DOCS=( "README.md" )
 
 check_sandbox() {
-	if  has network-sandbox ${FEATURES} ; then
+	if has network-sandbox ${FEATURES} ; then
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
 eerror "env to be able to download fonts and to compile."
