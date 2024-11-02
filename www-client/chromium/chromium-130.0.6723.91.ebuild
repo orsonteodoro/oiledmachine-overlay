@@ -1267,8 +1267,8 @@ BDEPEND+="
 	${COMMON_SNAPSHOT_DEPEND}
 	${PYTHON_DEPS}
 	dev-util/patchutils
-	www-client/chromium-sources:0/${PV}[clang,gn,rust]
-	www-client/chromium-toolchain:0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_PV}
+	www-client/chromium-sources:0/${PV}
+	www-client/chromium-toolchain:0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_PV}[clang,gn,rust]
 	>=app-arch/gzip-1.7
 	>=dev-build/ninja-1.7.2
 	>=dev-util/gperf-3.0.3
