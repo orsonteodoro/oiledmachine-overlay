@@ -108,6 +108,14 @@
       https://github.com/WebKit/WebKit/commit/790a01a3ec741d8752990a809d1ab489d9637e3d
 
 
+    The -Oshit metaflag.
+
+    If -Oshit is added to CFLAGS/CXXFLAGS, it will build everything as -O1
+    for fastest build speed while retaining _FORTIFY_SOURCE buffer overflow
+    protection but flags with OSHIT_OPT_LEVEL_* set can be used to optimize
+    performance sensitive code to that level.
+
+
     OSHIT_OPT_LEVEL_ANGLE="3" - Optimize ANGLE matrix operations at -O3
     Valid values:  1, 2, 3, fast
     Using fast is in testing.
@@ -148,14 +156,6 @@
 
     The top teirs include the bottom teirs.
     The performance measurement is relative to the best teir.
-
-
-    The -Oshit metaflag.
-
-    If -Oshit is added to CFLAGS/CXXFLAGS, it will build everything as -O1 but
-    flags with OSHIT_OPT_LEVEL_* set can be used to optimize performance
-    sensitive parts to that level.
-    
 
 
     Proposed ebuild changes
