@@ -638,10 +638,7 @@ RDEPEND="
 		')
 	)
 	python? (
-		training? (
-			>=sci-libs/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
-			sci-libs/pytorch-ort[${PYTHON_SINGLE_USEDEP}]
-		)
+		>=sci-libs/transformers-4.18.0[${PYTHON_SINGLE_USEDEP}]
 		$(python_gen_cond_dep '
 			quant? (
 				dev-python/neural-compressor[${PYTHON_USEDEP}]
@@ -656,7 +653,6 @@ RDEPEND="
 			)
 			>=dev-python/flatbuffers-23.5.26[${PYTHON_USEDEP}]
 			>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
-			>=sci-libs/transformers-4.18.0[${PYTHON_USEDEP}]
 			dev-python/coloredlogs[${PYTHON_USEDEP}]
 			dev-python/packaging[${PYTHON_USEDEP}]
 			dev-python/protobuf-python[${PYTHON_USEDEP}]
@@ -664,6 +660,10 @@ RDEPEND="
 			dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 			>=dev-python/sympy-1.12[${PYTHON_USEDEP}]
 		')
+		training? (
+			>=sci-libs/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
+			sci-libs/pytorch-ort[${PYTHON_SINGLE_USEDEP}]
+		)
 	)
 "
 DEPEND+="

@@ -68,6 +68,9 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
+	ort? (
+		>=sci-libs/transformers-4.34.0[${PYTHON_SINGLE_USEDEP}]
+	)
 	pytorch? (
 		>=sci-libs/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
 	)
@@ -92,7 +95,6 @@ RDEPEND+="
 			>=sci-libs/mxnet-1.9.1[${PYTHON_USEDEP}]
 		)
 		ort? (
-			>=sci-libs/transformers-4.34.0[${PYTHON_USEDEP}]
 			>=sci-libs/onnx-1.15.0[${PYTHON_USEDEP}]
 			>=dev-python/onnxruntime-1.17.1[${PYTHON_USEDEP},extensions,training-ort]
 			dev-python/numpy[${PYTHON_USEDEP}]
@@ -123,6 +125,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	>=sci-libs/transformers-4.30.2[${PYTHON_SINGLE_USEDEP}]
 	$(python_gen_cond_dep '
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		doc? (
@@ -141,7 +144,6 @@ BDEPEND+="
 			>=sci-libs/onnx-1.15.0[${PYTHON_USEDEP}]
 			>=dev-python/onnxruntime-1.17.1[${PYTHON_USEDEP}]
 			>=sci-libs/torchvision-0.17.1[${PYTHON_USEDEP}]
-			>=sci-libs/transformers-4.30.2[${PYTHON_USEDEP}]
 			sci-libs/auto-round[${PYTHON_USEDEP}]
 			sci-libs/horovod[${PYTHON_USEDEP}]
 			sci-libs/mxnet-mkl[${PYTHON_USEDEP}]

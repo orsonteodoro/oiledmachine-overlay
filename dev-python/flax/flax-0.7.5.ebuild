@@ -102,7 +102,9 @@ BDEPEND+="
 		dev-python/ml-collections[${PYTHON_USEDEP}]
 		sci-libs/tensorflow[${PYTHON_USEDEP}]
 		sci-libs/tensorflow-datasets[${PYTHON_USEDEP}]
-		sci-libs/transformers[${PYTHON_USEDEP}]
+		$(python_gen_any_dep '
+			sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
+		')
 	)
 	test? (
 		>=dev-python/black-23.7.0[${PYTHON_USEDEP}]

@@ -195,9 +195,11 @@ BDEPEND+="
 		test? (
 			dev-python/black[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
-			sci-libs/transformers[${PYTHON_USEDEP}]
 		)
 	')
+	test? (
+		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
+	)
 "
 DOCS=( "AUTHORS" "usage.md" )
 

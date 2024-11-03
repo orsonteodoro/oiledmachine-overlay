@@ -290,6 +290,7 @@ BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS="
 	$(python_gen_any_dep '
 		sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
 	')
 	>=dev-python/auto-gptq-0.5.1[${PYTHON_USEDEP}]
 	dev-python/av[${PYTHON_USEDEP}]
@@ -310,7 +311,6 @@ BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS="
 	sci-libs/datasets[${PYTHON_USEDEP}]
 	dev-python/sentencepiece[${PYTHON_USEDEP},python]
 	dev-python/timm[${PYTHON_USEDEP}]
-	sci-libs/transformers[${PYTHON_USEDEP}]
 "
 # tests/model_hub_tests/torch_tests/requirements_secondary.txt \
 BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS_SECONDARY="
@@ -355,22 +355,22 @@ BDEPEND_LAYER_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_any_dep '
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
 	')
+	$(python_gen_cond_dep '
+		sci-libs/tensorflow-addons[${PYTHON_USEDEP}]
+	' python3_10)
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]
 	dev-python/onnxruntime[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/torch[${PYTHON_USEDEP}]
-	sci-libs/transformers[${PYTHON_USEDEP}]
 	kernel_linux? (
 		amd64? (
 			dev-python/jax[${PYTHON_USEDEP}]
 			dev-python/jaxlib[${PYTHON_USEDEP}]
 		)
 	)
-	$(python_gen_cond_dep '
-		sci-libs/tensorflow-addons[${PYTHON_USEDEP}]
-	' python3_10)
 "
 # tests/time_tests/scripts/requirements.txt \
 BDEPEND_TIME_TESTS_SCRIPTS="

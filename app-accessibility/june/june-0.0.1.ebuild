@@ -41,10 +41,10 @@ RDEPEND+="
 		>=dev-python/PyAudio-0.2.14[${PYTHON_USEDEP}]
 		>=dev-python/pydantic-settings-2.3.1[${PYTHON_USEDEP}]
 		>=dev-python/pygame-2.5.2[${PYTHON_USEDEP}]
-		>=sci-libs/transformers-4.40.2[${PYTHON_USEDEP}]
 	')
 	>=sci-libs/pytorch-2.3.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/torchaudio-2.3.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-libs/transformers-4.40.2[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 

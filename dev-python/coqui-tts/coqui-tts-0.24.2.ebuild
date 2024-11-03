@@ -52,6 +52,7 @@ ${LANGS[@]/#/l10n_}
 dev doc notebooks server
 "
 RDEPEND+="
+	>=sci-libs/transformers-4.42.0[${PYTHON_SINGLE_USEDEP}]
 	$(python_gen_cond_dep '
 		>=dev-python/anyascii-0.3.0[${PYTHON_USEDEP}]
 		>=dev-python/coqui-tts-trainer-0.1.4[${PYTHON_USEDEP}]
@@ -72,7 +73,6 @@ RDEPEND+="
 		>=dev-python/soundfile-0.12.0[${PYTHON_USEDEP}]
 		>=dev-python/spacy-3[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.64.1[${PYTHON_USEDEP}]
-		>=sci-libs/transformers-4.42.0[${PYTHON_USEDEP}]
 		l10n_bn? (
 			>=dev-python/bangla-0.0.2[${PYTHON_USEDEP}]
 			>=dev-python/bnnumerizer-0.0.2[${PYTHON_USEDEP}]

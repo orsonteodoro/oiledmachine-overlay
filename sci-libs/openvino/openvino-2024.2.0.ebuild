@@ -323,6 +323,9 @@ BDEPEND_E2E_TESTS="
 "
 # model_hub_tests/tensorflow/requirements.txt \
 BDEPEND_MODEL_HUB_TENSORFLOW_TESTS="
+	$(python_gen_any_dep '
+		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
+	')
 	${BDEPEND_TEST_CONSTRAINTS}
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]
@@ -331,7 +334,6 @@ BDEPEND_MODEL_HUB_TENSORFLOW_TESTS="
 	sci-libs/tensorflow[${PYTHON_USEDEP}]
 	sci-libs/tensorflow-hub[${PYTHON_USEDEP}]
 	sci-libs/tensorflow-text[${PYTHON_USEDEP}]
-	sci-libs/transformers[${PYTHON_USEDEP}]
 "
 # tests/model_hub_tests/performance_tests/requirements.txt \
 BDEPEND_MODEL_HUB_TESTS_PERFORMANCE_TESTS="
@@ -348,6 +350,7 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 	$(python_gen_any_dep '
 		sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
 	')
 	>=dev-python/auto-gptq-0.5.1[${PYTHON_USEDEP}]
 	dev-python/av[${PYTHON_USEDEP}]
@@ -371,7 +374,6 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 	sci-libs/datasets[${PYTHON_USEDEP}]
 	dev-python/sentencepiece[${PYTHON_USEDEP},python]
 	dev-python/timm[${PYTHON_USEDEP}]
-	sci-libs/transformers[${PYTHON_USEDEP}]
 "
 # tests/model_hub_tests/pytorch/requirements_secondary.txt \
 BDEPEND_MODEL_HUB_TESTS_PYTORCH_SECONDARY="
@@ -382,7 +384,11 @@ BDEPEND_LAYER_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_any_dep '
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
 	')
+	$(python_gen_cond_dep '
+		sci-libs/tensorflow-addons[${PYTHON_USEDEP}]
+	' python3_10)
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/onnxruntime[${PYTHON_USEDEP}]
 	dev-python/packaging[${PYTHON_USEDEP}]
@@ -391,16 +397,12 @@ BDEPEND_LAYER_TESTS="
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/sympy[${PYTHON_USEDEP}]
 	dev-python/torch[${PYTHON_USEDEP}]
-	sci-libs/transformers[${PYTHON_USEDEP}]
 	kernel_linux? (
 		amd64? (
 			dev-python/jax[${PYTHON_USEDEP}]
 			dev-python/jaxlib[${PYTHON_USEDEP}]
 		)
 	)
-	$(python_gen_cond_dep '
-		sci-libs/tensorflow-addons[${PYTHON_USEDEP}]
-	' python3_10)
 "
 # tests/time_tests/scripts/requirements.txt \
 BDEPEND_TIME_TESTS_SCRIPTS="

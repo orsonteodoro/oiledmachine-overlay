@@ -46,6 +46,7 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 		>=sci-libs/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
 		>=sci-libs/torchmetrics-0.11.0[${PYTHON_SINGLE_USEDEP}]
 		>=sci-libs/torchvision-0.14.1[${PYTHON_SINGLE_USEDEP}]
+		>=sci-libs/transformers-4.38.0[${PYTHON_SINGLE_USEDEP}]
 		dev-python/pytorch-lightning[${PYTHON_SINGLE_USEDEP}]
 	')
 	(
@@ -81,7 +82,6 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 		<dev-python/monai-1.0.0[${PYTHON_USEDEP}]
 	)
 	>=sci-libs/safetensors-0.3.2[${PYTHON_USEDEP}]
-	>=sci-libs/transformers-4.38.0[${PYTHON_USEDEP}]
 
 	>=dev-python/jedi-0.17.2[${PYTHON_USEDEP}]
 	>=dev-python/pygments-2.7.4[${PYTHON_USEDEP}]
@@ -98,6 +98,9 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_USEDEP}]
 "
 PLUGIN_RDEPEND="
+	$(python_gen_any_dep '
+		>=sci-libs/transformers-4.38.0[${PYTHON_SINGLE_USEDEP}]
+	')
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_USEDEP}]
 	>=dev-python/diffusers-0.22.0[${PYTHON_USEDEP}]
 	>=dev-python/ftfy-6.1.1[${PYTHON_USEDEP}]
@@ -105,13 +108,15 @@ PLUGIN_RDEPEND="
 	>=dev-python/tqdm-4.64.0[${PYTHON_USEDEP}]
 	>=dev-python/watchdog-2.1.9[${PYTHON_USEDEP}]
 	>=sci-libs/safetensors-0.4.1[${PYTHON_USEDEP}]
-	>=sci-libs/transformers-4.38.0[${PYTHON_USEDEP}]
 	dev-python/accelerate[${PYTHON_USEDEP}]
 	sci-libs/huggingface_hub[${PYTHON_USEDEP}]
 	sci-libs/openvino[${PYTHON_USEDEP}]
 "
 #	${STABLE_DIFFUSION_MODEL_RDEPEND}
 RDEPEND+="
+	$(python_gen_any_dep '
+		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
+	')
 	${PLUGIN_RDEPEND}
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_USEDEP}]
 	>=dev-python/timm-0.4.5[${PYTHON_USEDEP}]
@@ -126,7 +131,6 @@ RDEPEND+="
 	media-libs/opencv[${PYTHON_USEDEP}]
 	media-gfx/gimp:0/3
 	net-misc/gdown[${PYTHON_USEDEP}]
-	sci-libs/transformers[${PYTHON_USEDEP}]
 	sci-libs/openvino[${PYTHON_USEDEP}]
 "
 DEPEND+="
