@@ -2293,7 +2293,7 @@ ewarn
 		$(cmake_use_find_package opengl OpenGL)
 	)
 
-	if ! has_version "dev-util/sysprof-capture" ; then
+	if ! has_version "dev-util/sysprof-capture:4" ; then
 		mycmakeargs+=(
 			-DUSE_SYSTEM_SYSPROF_CAPTURE=NO
 		)
