@@ -58,7 +58,6 @@ RDEPEND+="
 		>=dev-python/coqpit-0.0.16[${PYTHON_USEDEP}]
 		>=dev-python/cython-3.0.0[${PYTHON_USEDEP}]
 		>=dev-python/einops-0.6.0[${PYTHON_USEDEP}]
-		>=dev-python/encodec-0.1.1[${PYTHON_USEDEP}]
 		>=dev-python/fsspec-2023.6.0[${PYTHON_USEDEP},http(+)]
 		>=dev-python/gruut-2.4.0[${PYTHON_USEDEP}]
 		>=dev-python/inflect-5.6.0[${PYTHON_USEDEP}]
@@ -102,6 +101,7 @@ RDEPEND+="
 			>=dev-python/flask-3.0.0[${PYTHON_USEDEP}]
 		)
 	')
+	>=dev-python/encodec-0.1.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/pytorch-2.1[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
 "
