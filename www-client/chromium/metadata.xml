@@ -239,7 +239,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     Note:  May be set to 1 if disinterested in AI/ML.
 
 
-    OSHIT_OPT_LEVEL_V8="2" - Optimize v8 at O2
+    OSHIT_OPT_LEVEL_V8="3" - Optimize v8 at O2
     Valid values:  2, 3
 
 
@@ -264,6 +264,29 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     1 - explicitly optimize
     0 - linker defaults
     unset - explicitly optimize if USE=official
+
+
+  How to apply -Oshit or other build time environment variable flags:
+
+  Contents of /etc/portage/env/chromium.conf:
+
+    CFLAGS="${CFLAGS} -Oshit"
+    CXXFLAGS="${CXXFLAGS} -Oshit"
+    OSHIT_OPT_LEVEL_DAV1D="2"
+    OSHIT_OPT_LEVEL_LIBAOM="3"
+    OSHIT_OPT_LEVEL_LIBVPX="fast"
+    OSHIT_OPT_LEVEL_OPENH264="2"
+    OSHIT_OPT_LEVEL_RNNOISE="1"
+    OSHIT_OPT_LEVEL_RUY="1"
+    OSHIT_OPT_LEVEL_TFLITE="1"
+    OSHIT_OPT_LEVEL_V8="3"
+    OSHIT_OPT_LEVEL_XNNPACK="1"
+    JIT_LEVEL_OVERRIDE="6"
+
+
+  Contents of /etc/portage/package.env:
+
+    www-client/chromium chromium.conf
 
 
   References:
