@@ -1080,7 +1080,9 @@ check_icu_build() {
 	local gcc_slot=$(gcc-major-version)
 	local gcc_cxxabi_ver=$(strings "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libstdc++.so" \
 		| grep "CXXABI_1" \
-		| sort -V)
+		| sort -V \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
 
 	local icu_gcc_ver=""
 	if ver_test "${icu_cxxabi_ver}" -eq "1.3.15" ; then
