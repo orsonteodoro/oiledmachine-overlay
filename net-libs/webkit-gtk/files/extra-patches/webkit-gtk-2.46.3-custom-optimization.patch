@@ -19,7 +19,7 @@ diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/ThirdParty/skia/CMakeLists
  )
  
  WEBKIT_ADD_TARGET_CXX_FLAGS(Skia
-+    -O$ENV{OSHIT_OPT_LEVEL_SKIA}
++    -O$ENV{OSHIT_OPT_LEVEL_SKIA} -fno-allow-store-data-races
      -ffp-contract=off
      -fstrict-aliasing
  
