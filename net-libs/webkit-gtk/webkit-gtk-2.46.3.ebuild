@@ -2230,6 +2230,7 @@ src_prepare() {
 	# Precautions
 	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.39.1-jsc-disable-fast-math.patch"
 	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.39.1-webcore-honor-finite-math-and-nan.patch"
+	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.46.3-custom-optimization.patch"
 
 ewarn
 ewarn "Try adding -Wl,--no-keep-memory to per-package LDFLAGS if out of memory (OOM)"
@@ -2238,8 +2239,6 @@ ewarn
 	# You still can have swapping + O(n^2) or swapping + O(1).
 
 	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.39.90-linkers.patch"
-
-	die
 
 	eapply "${_PATCHES[@]}"
 	cmake_src_prepare
