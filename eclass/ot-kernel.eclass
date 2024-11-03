@@ -5569,7 +5569,15 @@ ot-kernel_set_kconfig_dmesg() {
 		ot-kernel_unset_configopt "CONFIG_EARLY_PRINTK"
 		ot-kernel_unset_configopt "CONFIG_X86_VERBOSE_BOOTUP"
 	fi
-	if [[ "${dmesg}" == "1" ]] ; then
+	if [[ "${work_profile}" == "dss" ]] ; then
+	# Increase the logging for apparmor
+		ot-kernel_y_configopt "CONFIG_PRINTK"
+		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
+		ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "7"
+		ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "7"
+		ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "7"
+		ot-kernel_set_configopt "CONFIG_LOG_BUF_SHIFT" "25"
+	elif [[ "${dmesg}" == "1" ]] ; then
 	# Settings based on disabled default
 		ot-kernel_y_configopt "CONFIG_PRINTK"
 	elif [[ "${dmesg}" == "0" ]] ; then
