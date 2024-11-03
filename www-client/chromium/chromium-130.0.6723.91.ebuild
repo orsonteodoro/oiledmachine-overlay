@@ -832,6 +832,9 @@ REQUIRED_USE+="
 	vaapi-hevc? (
 		vaapi
 	)
+	webassembly? (
+		jit
+	)
 	widevine? (
 		!arm64
 		!ppc64
@@ -3822,7 +3825,8 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 		fi
 
 		if use webassembly && (( ${jit_level} < 2 )) ; then
-ewarn "WebAssembly enablement needs >= -O1 or JIT_LEVEL_OVERRIDE=2 or higher."
+einfo "WebAssembly is forcing from jit_level=${jit_level} to jit_level=2."
+			jit_level=2
 		fi
 	fi
 	myconf_gn+=" v8_enable_vtunejit=false"
