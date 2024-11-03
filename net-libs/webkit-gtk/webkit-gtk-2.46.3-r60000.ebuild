@@ -1074,6 +1074,7 @@ check_icu_build() {
 		| tail -n 1 \
 		| cut -f 2 -d "_")
 
+	local gcc_pv=$(gcc-fullversion)
 	local gcc_current_profile=$(gcc-config -c)
 	local gcc_current_profile_slot=${gcc_current_profile##*-}
 
@@ -1127,14 +1128,16 @@ check_icu_build() {
 		icu_gcc_ver="3.1.1"
 	fi
 
-	if ver_test "${icu_cxxabi_ver}" -ne "${gcc_cxxabi_ver}" ; then
+	if ver_test "${gcc_current_profile_slot}" -ne "${icu_gcc_ver%%.*}" ; then
 eerror
-eerror "ICU was built with GCC ${icu_gcc_ver} is not supported."
 eerror "Please use the same GCC for both ICU and ${PN}."
 eerror
 eerror "Actual GCC slot:  ${gcc_current_profile_slot}"
+eerror "Actual dev-libs/icu slot:  ${icu_gcc_ver}"
 eerror "Expected dev-libs/icu GCC slot:  ${icu_gcc_ver%%.*}"
 eerror "Upstream GCC supported slots:  10, 11, 12, 13"
+eerror "gcc_cxxabi_ver:  ${gcc_cxxabi_ver} ${gcc_pv}"
+eerror "icu_cxxabi_ver:  ${icu_cxxabi_ver} ${icu_gcc_ver}"
 eerror
 eerror "Example solution:"
 eerror
@@ -1193,6 +1196,7 @@ eerror "Downgrade CXX to either GCC 10.x, 11.x, 12.x, 13.x."
 eerror "Rebuild dev-libs/icu and ${with} with the same GCC 10.x, 11.x, 12.x, 13.x"
 				die
 			fi
+			strip-unsupported-flags
 		fi
 	fi
 }
@@ -1217,8 +1221,8 @@ einfo "Checking for sufficient disk space to build ${PN} with debugging CFLAGS"
 			check-reqs_pkg_pretend
 		fi
 	fi
-	check_icu_build
 	_set_cxx
+	check_icu_build
 
 	if ! use opengl && ! use gles2; then
 ewarn
@@ -2093,8 +2097,8 @@ einfo "DT = Data Tampering"
 einfo "ID = Information Disclosure"
 einfo
 	fi
-	check_icu_build
 	_set_cxx
+	check_icu_build
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
 		&& ! is-flagq "-g*0" ; then
