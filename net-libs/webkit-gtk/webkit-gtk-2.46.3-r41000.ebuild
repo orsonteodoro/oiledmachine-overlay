@@ -1182,7 +1182,7 @@ _set_cxx() {
 
 			if ver_test "${gcc_current_profile_slot}" -gt "13" ; then
 ewarn "Upstream only supports GCC 10.x, 11.x, 12.x, 13.x."
-ewarn "Build dev-libs/icu and ${PN} with the same slot if problems encountered."
+ewarn "Build dev-libs/icu and ${PN} with the same GCC slot if problems encountered."
 				export CC="${CHOST}-gcc-${gcc_current_profile_slot}"
 				export CXX="${CHOST}-g++-${gcc_current_profile_slot}"
 			elif has_version "sys-devel/gcc:13" ; then
