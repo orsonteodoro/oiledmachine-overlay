@@ -2563,7 +2563,7 @@ einfo "OSHIT_OPT_LEVEL_JSC: ${OSHIT_OPT_LEVEL_JSC}"
 einfo "OSHIT_OPT_LEVEL_SHA1: ${OSHIT_OPT_LEVEL_SHA1}"
 einfo "OSHIT_OPT_LEVEL_SKIA: ${OSHIT_OPT_LEVEL_SKIA}"
 einfo "OSHIT_OPT_LEVEL_WEBCORE: ${OSHIT_OPT_LEVEL_WEBCORE}"
-einfo "OSHIT_OPT_LEVEL_XXHASH: ${OSHIT_OPT_LEVEL_XXHASH1}"
+einfo "OSHIT_OPT_LEVEL_XXHASH: ${OSHIT_OPT_LEVEL_XXHASH}"
 	else
 		local olast=$(get_olast)
 		if [[ "${olast}" == "-O3" || "${olast}" == "-O4" || "${olast}" == "-Ofast" ]] ; then
