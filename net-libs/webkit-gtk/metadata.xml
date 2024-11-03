@@ -134,6 +134,14 @@
     The performance measurement is relative to the best teir.
 
 
+    The -Oshit metaflag.
+
+    If -Oshit is added to CFLAGS/CXXFLAGS, it will build everything as -O1 but
+    flags with OSHIT_OPT_LEVEL_* set can be used to optimize performance
+    sensitive parts to that level.
+    
+
+
     Proposed ebuild changes
 
     Investigate shuffle-sections linker option for ROP mitigation.
