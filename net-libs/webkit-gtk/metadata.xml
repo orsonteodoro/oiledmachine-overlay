@@ -108,15 +108,30 @@
       https://github.com/WebKit/WebKit/commit/790a01a3ec741d8752990a809d1ab489d9637e3d
 
 
-    OSHIT_OPT_LEVEL_JSC="2" - Optimize JSC/JIT at -O2
+    OSHIT_OPT_LEVEL_ANGLE="3" - Optimize ANGLE matrix operations at -O3
+    Valid values:  1, 2, 3, fast
+    Using fast is in testing.
+
+
+    OSHIT_OPT_LEVEL_JSC="3" - Optimize JSC/JIT at -O3
     Valid values:  2, 3
 
 
-    OSHIT_OPT_LEVEL_WEBCORE="2" - Optimize WebCore rendering engine at -O2
-    Valid values:  1, 2, 3
+    OSHIT_OPT_LEVEL_SHA1="3" - Optimize SHA1 at -O3
+    Valid values:  1, 2, 3, fast
+    Using fast is in testing.
 
 
     OSHIT_OPT_LEVEL_SKIA="2" - Optimize Skia graphics engine at -O2
+    Valid values:  1, 2, 3, fast
+    Using fast is in testing.
+
+
+    OSHIT_OPT_LEVEL_WEBCORE="1" - Optimize WebCore rendering engine at -O2
+    Valid values:  1, 2, 3
+
+
+    OSHIT_OPT_LEVEL_XXHASH="3" - Optimize xxhash at -O3
     Valid values:  1, 2, 3, fast
     Using fast is in testing.
 

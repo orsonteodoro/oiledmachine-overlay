@@ -2465,6 +2465,18 @@ ewarn
 	if [[ "${OSHIT}" == "1" ]] ; then
 		replace-flags "-O*" "-O1"
 	# Input validate to prevent artifacts or weakend security.
+		if [[ -n "${OSHIT_OPT_LEVEL_ANGLE}" ]] ; then
+			if [[ "${OSHIT_OPT_LEVEL_ANGLE}" == "1" || "${OSHIT_OPT_LEVEL_ANGLE}" == "2" || "${OSHIT_OPT_LEVEL_ANGLE}" == "3" || "${OSHIT_OPT_LEVEL_ANGLE}" == "fast" ]] ; then
+				export OSHIT_OPT_LEVEL_ANGLE
+			elif [[ "${OSHIT_OPT_LEVEL_ANGLE}" == "4" ]] ; then
+				export OSHIT_OPT_LEVEL_ANGLE="3"
+			else
+				export OSHIT_OPT_LEVEL_ANGLE="1"
+			fi
+		else
+			export OSHIT_OPT_LEVEL_ANGLE="1"
+		fi
+
 		if [[ -n "${OSHIT_OPT_LEVEL_JSC}" ]] ; then
 			if [[ "${OSHIT_OPT_LEVEL_JSC}" == "2" || "${OSHIT_OPT_LEVEL_JSC}" == "3" ]] ; then
 				export OSHIT_OPT_LEVEL_JSC
@@ -2477,16 +2489,16 @@ ewarn
 			export OSHIT_OPT_LEVEL_JSC="2" # ~90% to ~95% optimized
 		fi
 
-		if [[ -n "${OSHIT_OPT_LEVEL_WEBCORE}" ]] ; then
-			if [[ "${OSHIT_OPT_LEVEL_WEBCORE}" == "1" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "2" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "3" ]] ; then
-				export OSHIT_OPT_LEVEL_WEBCORE
-			elif [[ "${OSHIT_OPT_LEVEL_WEBCORE}" == "fast" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "4" ]] ; then
-				export OSHIT_OPT_LEVEL_WEBCORE="3"
+		if [[ -n "${OSHIT_OPT_LEVEL_SHA1}" ]] ; then
+			if [[ "${OSHIT_OPT_LEVEL_SHA1}" == "1" || "${OSHIT_OPT_LEVEL_SHA1}" == "2" || "${OSHIT_OPT_LEVEL_SHA1}" == "3" || "${OSHIT_OPT_LEVEL_SHA1}" == "fast" ]] ; then
+				export OSHIT_OPT_LEVEL_SHA1
+			elif [[ "${OSHIT_OPT_LEVEL_SHA1}" == "4" ]] ; then
+				export OSHIT_OPT_LEVEL_SHA1="3"
 			else
-				export OSHIT_OPT_LEVEL_WEBCORE="1"
+				export OSHIT_OPT_LEVEL_SHA1="1"
 			fi
 		else
-			export OSHIT_OPT_LEVEL_WEBCORE="1"
+			export OSHIT_OPT_LEVEL_SHA1="1"
 		fi
 
 		if [[ -n "${OSHIT_OPT_LEVEL_SKIA}" ]] ; then
@@ -2501,26 +2513,62 @@ ewarn
 			export OSHIT_OPT_LEVEL_SKIA="1"
 		fi
 
+		if [[ -n "${OSHIT_OPT_LEVEL_WEBCORE}" ]] ; then
+			if [[ "${OSHIT_OPT_LEVEL_WEBCORE}" == "1" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "2" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "3" ]] ; then
+				export OSHIT_OPT_LEVEL_WEBCORE
+			elif [[ "${OSHIT_OPT_LEVEL_WEBCORE}" == "fast" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "4" ]] ; then
+				export OSHIT_OPT_LEVEL_WEBCORE="3"
+			else
+				export OSHIT_OPT_LEVEL_WEBCORE="1"
+			fi
+		else
+			export OSHIT_OPT_LEVEL_WEBCORE="1"
+		fi
+
+		if [[ -n "${OSHIT_OPT_LEVEL_XXHASH}" ]] ; then
+			if [[ "${OSHIT_OPT_LEVEL_XXHASH}" == "1" || "${OSHIT_OPT_LEVEL_XXHASH}" == "2" || "${OSHIT_OPT_LEVEL_XXHASH}" == "3" || "${OSHIT_OPT_LEVEL_XXHASH}" == "fast" ]] ; then
+				export OSHIT_OPT_LEVEL_XXHASH
+			elif [[ "${OSHIT_OPT_LEVEL_XXHASH}" == "4" ]] ; then
+				export OSHIT_OPT_LEVEL_XXHASH="3"
+			else
+				export OSHIT_OPT_LEVEL_XXHASH="1"
+			fi
+		else
+			export OSHIT_OPT_LEVEL_XXHASH="1"
+		fi
+
+einfo "OSHIT_OPT_LEVEL_ANGLE: ${OSHIT_OPT_LEVEL_ANGLE}"
 einfo "OSHIT_OPT_LEVEL_JSC: ${OSHIT_OPT_LEVEL_JSC}"
-einfo "OSHIT_OPT_LEVEL_WEBCORE: ${OSHIT_OPT_LEVEL_WEBCORE}"
+einfo "OSHIT_OPT_LEVEL_SHA1: ${OSHIT_OPT_LEVEL_SHA1}"
 einfo "OSHIT_OPT_LEVEL_SKIA: ${OSHIT_OPT_LEVEL_SKIA}"
+einfo "OSHIT_OPT_LEVEL_WEBCORE: ${OSHIT_OPT_LEVEL_WEBCORE}"
+einfo "OSHIT_OPT_LEVEL_XXHASH: ${OSHIT_OPT_LEVEL_XXHASH1}"
 	else
 		local olast=$(get_olast)
 		if [[ "${olast}" == "-O3" || "${olast}" == "-O4" || "${olast}" == "-Ofast" ]] ; then
 			replace-flags "-O*" "-O3"
+			OSHIT_OPT_LEVEL_ANGLE=3
 			OSHIT_OPT_LEVEL_JSC=3
-			OSHIT_OPT_LEVEL_WEBCORE=3
+			OSHIT_OPT_LEVEL_SHA1=3
 			OSHIT_OPT_LEVEL_SKIA=3
+			OSHIT_OPT_LEVEL_WEBCORE=3
+			OSHIT_OPT_LEVEL_XXHASH=3
 		elif [[ "${olast}" == "-O2" ]] ; then
 			replace-flags "-O*" "-O2"
+			OSHIT_OPT_LEVEL_ANGLE=2
 			OSHIT_OPT_LEVEL_JSC=2
-			OSHIT_OPT_LEVEL_WEBCORE=2
+			OSHIT_OPT_LEVEL_SHA1=2
 			OSHIT_OPT_LEVEL_SKIA=2
+			OSHIT_OPT_LEVEL_WEBCORE=2
+			OSHIT_OPT_LEVEL_XXHASH=2
 		else
 			replace-flags "-O*" "-O1"
+			OSHIT_OPT_LEVEL_ANGLE=1
 			OSHIT_OPT_LEVEL_JSC=1
-			OSHIT_OPT_LEVEL_WEBCORE=1
+			OSHIT_OPT_LEVEL_SHA1=1
 			OSHIT_OPT_LEVEL_SKIA=1
+			OSHIT_OPT_LEVEL_WEBCORE=1
+			OSHIT_OPT_LEVEL_XXHASH=1
 		fi
 	fi
 
