@@ -1074,6 +1074,9 @@ check_icu_build() {
 		| tail -n 1 \
 		| cut -f 2 -d "_")
 
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot=${gcc_current_profile##*-}
+
 	local gcc_slot=$(gcc-major-version)
 	local gcc_cxxabi_ver=$(strings "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libstdc++.so" \
 		| grep "CXXABI_1" \
@@ -1122,18 +1125,18 @@ check_icu_build() {
 		icu_gcc_ver="3.1.1"
 	fi
 
-	if ver_test "${icu_cxxabi_ver}" -ge "1.3.15" ; then
-# Tested webkit-gtk with GCC 14 and dev-libs/icu with GCC 14.
+	if ver_test "${icu_cxxabi_ver}" -ne "${gcc_cxxabi_ver}" ; then
 eerror
-eerror "ICU was built with GCC ${icu_gcc_ver} is not supported.  Please rebuild dev-libs/icu"
-eerror "with GCC 13 instead."
+eerror "ICU was built with GCC ${icu_gcc_ver} is not supported."
+eerror "Please use the same GCC for both ICU and ${PN}."
 eerror
-eerror "Actual dev-libs/icu GCC slot:  ${icu_gcc_ver%%.*}"
-eerror "Expected dev-libs/icu GCC slot:  Either 10, 11, 12, 13."
+eerror "Actual GCC slot:  ${gcc_current_profile_slot}"
+eerror "Expected dev-libs/icu GCC slot:  ${icu_gcc_ver%%.*}"
+eerror "Upstream GCC supported slots:  10, 11, 12, 13"
 eerror
 eerror "Example solution:"
 eerror
-eerror "  eselect gcc set ${CHOST}-gcc-13"
+eerror "  eselect gcc set ${CHOST}-gcc-${icu_gcc_ver%%.*}"
 eerror "  source /etc/profile"
 eerror "  emerge -1vO dev-libs/icu"
 eerror "  emerge -1vO =${CATEGORY}/${PN}-${PVR}"
