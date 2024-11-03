@@ -110,7 +110,7 @@ BDEPEND+="
 		>=dev-python/pyink-23.5.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-xdist-1.34.0[${PYTHON_USEDEP}]
 		>=dev-python/gymnasium-0.18.3[${PYTHON_USEDEP},atari,accept-rom-license]
-		>=sci-libs/tensorflow_text-2.11.0[${PYTHON_USEDEP}]
+		>=sci-libs/tensorflow-text-2.11.0[${PYTHON_USEDEP}]
 		dev-python/clu[${PYTHON_USEDEP}]
 		dev-python/einops[${PYTHON_USEDEP}]
 		dev-python/mypy[${PYTHON_USEDEP}]
