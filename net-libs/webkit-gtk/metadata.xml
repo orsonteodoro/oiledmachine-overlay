@@ -158,6 +158,26 @@
     The performance measurement is relative to the best teir.
 
 
+    How to apply -Oshit and other build time environment flags:
+
+    Contents of /etc/portage/env/webkit-gtk.conf:
+
+      CFLAGS="${CFLAGS} -Oshit"
+      CXXFLAGS="${CXXFLAGS} -Oshit"
+      OSHIT_OPT_LEVEL_ANGLE="fast"
+      OSHIT_OPT_LEVEL_JSC="fast"
+      OSHIT_OPT_LEVEL_SHA1="fast"
+      OSHIT_OPT_LEVEL_SKIA="fast"
+      OSHIT_OPT_LEVEL_WEBCORE="1"
+      OSHIT_OPT_LEVEL_XXHASH="fast"
+      JIT_LEVEL_OVERRIDE="6"
+
+    Contents of /etc/portage/package.env:
+
+      net-libs/webkit-gtk webkit-gtk.conf
+
+
+
     Proposed ebuild changes
 
     Investigate shuffle-sections linker option for ROP mitigation.
