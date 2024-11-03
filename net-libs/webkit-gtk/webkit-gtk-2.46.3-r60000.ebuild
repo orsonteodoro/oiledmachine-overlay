@@ -2478,7 +2478,7 @@ ewarn
 		fi
 
 		if [[ -n "${OSHIT_OPT_LEVEL_WEBCORE}" ]] ; then
-			if [[ "${OSHIT_OPT_LEVEL_SKIA}" == "1" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "2" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "3" ]] ; then
+			if [[ "${OSHIT_OPT_LEVEL_WEBCORE}" == "1" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "2" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "3" ]] ; then
 				export OSHIT_OPT_LEVEL_WEBCORE
 			elif [[ "${OSHIT_OPT_LEVEL_WEBCORE}" == "fast" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "4" ]] ; then
 				export OSHIT_OPT_LEVEL_WEBCORE="3"
@@ -2490,9 +2490,9 @@ ewarn
 		fi
 
 		if [[ -n "${OSHIT_OPT_LEVEL_SKIA}" ]] ; then
-			if [[ "${OSHIT_OPT_LEVEL_SKIA}" == "1" || "${OSHIT_OPT_LEVEL_SKIA}" == "2" || "${OSHIT_OPT_LEVEL_SKIA}" == "3" ]] ; then
+			if [[ "${OSHIT_OPT_LEVEL_SKIA}" == "1" || "${OSHIT_OPT_LEVEL_SKIA}" == "2" || "${OSHIT_OPT_LEVEL_SKIA}" == "3" || "${OSHIT_OPT_LEVEL_SKIA}" == "fast" ]] ; then
 				export OSHIT_OPT_LEVEL_SKIA
-			elif [[ "${OSHIT_OPT_LEVEL_SKIA}" == "fast" || "${OSHIT_OPT_LEVEL_SKIA}" == "4" ]] ; then
+			elif [[ "${OSHIT_OPT_LEVEL_SKIA}" == "4" ]] ; then
 				export OSHIT_OPT_LEVEL_SKIA="3"
 			else
 				export OSHIT_OPT_LEVEL_SKIA="1"

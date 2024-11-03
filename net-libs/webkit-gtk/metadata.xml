@@ -117,7 +117,8 @@
 
 
     OSHIT_OPT_LEVEL_SKIA="2" - Optimize Skia graphics engine at -O2
-    Valid values:  1, 2, 3
+    Valid values:  1, 2, 3, fast
+    Using fast is in testing.
 
 
     JIT -Oflags consistency
