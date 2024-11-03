@@ -79,6 +79,8 @@
       0 - -O0 [without JIT, worst case -O0]
       unset - It automatically changes based on -Oflag level.
 
+    The JIT_LEVEL_OVERRIDE can be used to change the preferred JIT teir when using -Oshit.
+
 
     ULIMIT - Sets the maximum open file limit.
     Default values:  Mold - 16384, BFD/LLD - 1024
@@ -106,6 +108,18 @@
       https://github.com/WebKit/WebKit/commit/790a01a3ec741d8752990a809d1ab489d9637e3d
 
 
+    OSHIT_OPT_LEVEL_JSC="2" - Optimize JSC/JIT at -O2
+    Valid values:  2, 3
+
+
+    OSHIT_OPT_LEVEL_WEBCORE="2" - Optimize WebCore rendering engine at -O2
+    Valid values:  1, 2, 3
+
+
+    OSHIT_OPT_LEVEL_SKIA="2" - Optimize Skia graphics engine at -O2
+    Valid values:  1, 2, 3
+
+
     JIT -Oflags consistency
 
     If -Oshit was not added to CFLAGS, JIT tier selection will be tuned based on
@@ -124,23 +138,6 @@
 
     Investigate shuffle-sections linker option for ROP mitigation.
 
-    Investigate the -Oshit compiler metaflag to build most as -O1 and
-    performance sensitive parts at -O2 or higher.  Since most libs are
-    unvendored, only a few subprojects may be considered.
-
-    OSHIT_OPT_LEVEL_JSC="2" - Optimize JSC/JIT at -O2
-    Valid values:  2, 3
-
-    OSHIT_OPT_LEVEL_WEBCORE="2" - Optimize WebCore rendering engine at -O2
-    Valid values:  1, 2, 3
-
-    OSHIT_OPT_LEVEL_SKIA="2" - Optimize Skia graphics engine at -O2
-    Valid values:  1, 2, 3
-
-    Use JIT_LEVEL_OVERRIDE to change the preferred JIT teir when using -Oshit.
-
-    The top teirs include the bottom teirs.
-    The performance measurement is relative to the best teir.
 
   -->
   <upstream>
