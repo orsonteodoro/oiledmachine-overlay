@@ -1125,7 +1125,7 @@ check_icu_build() {
 	if ver_test "${icu_cxxabi_ver}" -ge "1.3.15" ; then
 # Tested webkit-gtk with GCC 14 and dev-libs/icu with GCC 14.
 eerror
-eerror "ICU was built with GCC 14 is not supported.  Please rebuild dev-libs/icu"
+eerror "ICU was built with GCC ${icu_gcc_ver} is not supported.  Please rebuild dev-libs/icu"
 eerror "with GCC 13 instead."
 eerror
 eerror "Actual dev-libs/icu GCC slot:  ${icu_gcc_ver%%.*}"
