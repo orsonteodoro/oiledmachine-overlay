@@ -2075,6 +2075,13 @@ eerror
 }
 
 pkg_setup() {
+	if is-flagq '-Oshit' ; then
+einfo "Detected -Oshit"
+		replace-flags '-O*' '-O1'
+		export OSHIT=1
+	else
+		export OSHIT=0
+	fi
 	dhms_start
 einfo "This is the stable branch."
 	if [[ -n "${MITIGATION_URI}" ]] ; then
@@ -2183,13 +2190,6 @@ einfo
 	verify_codecs
 	check_security_expire
 	check_ulimit
-
-	if is-flagq '-Oshit' ; then
-		replace-flags '-O*' '-O1'
-		export OSHIT=1
-	else
-		export OSHIT=0
-	fi
 }
 
 _check_langs() {
@@ -2494,6 +2494,9 @@ ewarn
 		else
 			export OSHIT_OPT_LEVEL_SKIA="1"
 		fi
+einfo "OSHIT_OPT_LEVEL_JSC: ${OSHIT_OPT_LEVEL_JSC}"
+einfo "OSHIT_OPT_LEVEL_WEBCORE: ${OSHIT_OPT_LEVEL_WEBCORE}"
+einfo "OSHIT_OPT_LEVEL_SKIA: ${OSHIT_OPT_LEVEL_SKIA}"
 	else
 		local olast=$(get_olast)
 		if [[ "${olast}" == "-O3" || "${olast}" == "-O4" || "${olast}" == "-Ofast" ]] ; then
