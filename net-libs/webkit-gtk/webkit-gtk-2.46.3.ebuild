@@ -1067,25 +1067,127 @@ _PATCHES=(
 	"${FILESDIR}/webkit-gtk-2.43.2-custom-page-size.patch"
 )
 
+check_icu_build() {
+	local icu_cxxabi_ver=$(strings "${ESYSROOT}/usr/$(get_libdir)/libicui18n.so" \
+		| grep "CXXABI_1" \
+		| sort -V \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+
+	local gcc_slot=$(gcc-major-version)
+	local gcc_cxxabi_ver=$(strings "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libstdc++.so" \
+		| grep "CXXABI_1" \
+		| sort -V)
+
+	local icu_gcc_ver=""
+	if ver_test "${icu_cxxabi_ver}" -eq "1.3.15" ; then
+		icu_gcc_ver="14.1.0"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.14" ; then
+		icu_gcc_ver="13.2.0"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.13" ; then
+		icu_gcc_ver="12.1.0"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.13" ; then
+		icu_gcc_ver="12.1.0"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.12" ; then
+		icu_gcc_ver="10.1.0"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.11" ; then
+		icu_gcc_ver="8.1.0"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.10" ; then
+		icu_gcc_ver="6.1.0"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.9" ; then
+		icu_gcc_ver="5.1.0"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.8" ; then
+		icu_gcc_ver="4.9.0"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.7" ; then
+		icu_gcc_ver="4.8.3"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.6" ; then
+		icu_gcc_ver="4.7.0"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.5" ; then
+		icu_gcc_ver="4.6.1"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.4" ; then
+		icu_gcc_ver="4.5.0"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.3" ; then
+		icu_gcc_ver="4.4.2"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.2" ; then
+		icu_gcc_ver="4.3.0"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.1" ; then
+		icu_gcc_ver="4.0.0"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.3" ; then
+		icu_gcc_ver="3.4.1"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.2.1" ; then
+		icu_gcc_ver="3.3.3"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1.2" ; then
+		icu_gcc_ver="3.2.3"
+	elif ver_test "${icu_cxxabi_ver}" -eq "1" ; then
+		icu_gcc_ver="3.1.1"
+	fi
+
+	if ver_test "${icu_cxxabi_ver}" -ge "1.3.15" ; then
+# Tested webkit-gtk with GCC 14 and dev-libs/icu with GCC 14.
+eerror
+eerror "ICU was built with GCC 14 is not supported.  Please rebuild dev-libs/icu"
+eerror "with GCC 13 instead."
+eerror
+eerror "Actual dev-libs/icu GCC slot:  ${icu_gcc_ver%%.*}"
+eerror "Expected dev-libs/icu GCC slot:  Either 10, 11, 12, 13."
+eerror
+eerror "Example solution:"
+eerror
+eerror "  eselect gcc set ${CHOST}-gcc-13"
+eerror "  source /etc/profile"
+eerror "  emerge -1vO dev-libs/icu"
+eerror "  emerge -1vO =${CATEGORY}/${PN}-${PVR}"
+eerror
+		die
+	fi
+
+	if ver_test "${gcc_slot}" -eq "13" ; then
+		:
+	elif ver_test "${gcc_slot}" -eq "12" ; then
+		:
+	elif ver_test "${gcc_slot}" -eq "11" ; then
+		:
+	elif ver_test "${gcc_slot}" -eq "10" ; then
+		:
+	else
+eerror
+eerror "GCC ${gcc_slot} is not supported upstream."
+eerror
+eerror "Downgrade CXX to either GCC 10.x, 11.x, 12.x, 13.x."
+eerror "Rebuild dev-libs/icu and ${with} with the same GCC 10.x, 11.x, 12.x, 13.x"
+eerror
+		die
+	fi
+}
+
 _set_cxx() {
 	if [[ ${MERGE_TYPE} != "binary" ]] ; then
 	# See https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
-	# Based on D 11, D 12, U 22.04
+	# Based on D 11, D 12, U 22, U 24
+	# D12 - gcc 12.2
+	# D11 - gcc 10.2
+	# U20 - gcc 11.2
+	# U22 - gcc 13.2
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
 		if true || tc-is-gcc ; then
-			if has_version "sys-devel/gcc:12" ; then
+			if has_version "sys-devel/gcc:13" ; then
+				export CC="${CHOST}-gcc-13"
+				export CXX="${CHOST}-g++-13"
+			elif has_version "sys-devel/gcc:12" ; then
 				export CC="${CHOST}-gcc-12"
 				export CXX="${CHOST}-g++-12"
 			elif has_version "sys-devel/gcc:11" ; then
 				export CC="${CHOST}-gcc-11"
 				export CXX="${CHOST}-g++-11"
+			elif has_version "sys-devel/gcc:10" ; then
+				export CC="${CHOST}-gcc-10"
+				export CXX="${CHOST}-g++-10"
+			else
+eerror "Downgrade CXX to either GCC 10.x, 11.x, 12.x, 13.x."
+eerror "Rebuild dev-libs/icu and ${with} with the same GCC 10.x, 11.x, 12.x, 13.x"
+				die
 			fi
-		fi
-		if false && tc-is-clang && has_version "sys-devel/clang:14" ; then
-ewarn "Building for clang may be broken.  Use gcc instead by changing CC=gcc CXX=g++."
-			export CC="${CHOST}-clang-14"
-			export CXX="${CHOST}-clang++-14"
 		fi
 	fi
 }
@@ -1110,6 +1212,7 @@ einfo "Checking for sufficient disk space to build ${PN} with debugging CFLAGS"
 			check-reqs_pkg_pretend
 		fi
 	fi
+	check_icu_build
 	_set_cxx
 
 	if ! use opengl && ! use gles2; then
@@ -1980,6 +2083,7 @@ einfo "DT = Data Tampering"
 einfo "ID = Information Disclosure"
 einfo
 	fi
+	check_icu_build
 	_set_cxx
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
