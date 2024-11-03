@@ -132,7 +132,10 @@
     Valid values:  2, 3
 
     OSHIT_OPT_LEVEL_WEBCORE="2" - Optimize WebCore rendering engine at -O2
-    Valid values:  2, 3
+    Valid values:  1, 2, 3
+
+    OSHIT_OPT_LEVEL_SKIA="2" - Optimize Skia graphics engine at -O2
+    Valid values:  1, 2, 3
 
     Use JIT_LEVEL_OVERRIDE to change the preferred JIT teir when using -Oshit.
 

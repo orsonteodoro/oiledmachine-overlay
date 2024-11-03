@@ -1,0 +1,37 @@
+diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/JavaScriptCore/CMakeLists.txt webkitgtk-2.46.3/Source/JavaScriptCore/CMakeLists.txt
+--- webkitgtk-2.46.3.orig/Source/JavaScriptCore/CMakeLists.txt	2024-11-02 20:42:52.757791674 -0700
++++ webkitgtk-2.46.3/Source/JavaScriptCore/CMakeLists.txt	2024-11-02 20:49:27.351549982 -0700
+@@ -1445,8 +1445,8 @@ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+ 
+ if (COMPILER_IS_GCC_OR_CLANG)
+     # Prevent segfaults with -Ofast
+-    WEBKIT_ADD_TARGET_CXX_FLAGS(LowLevelInterpreterLib -O3 -fno-strict-aliasing -fno-fast-math)
+-    WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -O3 -fno-strict-aliasing -fno-fast-math)
++    WEBKIT_ADD_TARGET_CXX_FLAGS(LowLevelInterpreterLib -O$ENV{OSHIT_OPT_LEVEL_JSC} -fno-strict-aliasing -fno-fast-math)
++    WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -O$ENV{OSHIT_OPT_LEVEL_JSC} -fno-strict-aliasing -fno-fast-math)
+ 
+     # Avoid using fused multiply-add instructions since this could give different results
+     # for e.g. parseInt depending on the platform and compilation flags.
+diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/ThirdParty/skia/CMakeLists.txt webkitgtk-2.46.3/Source/ThirdParty/skia/CMakeLists.txt
+--- webkitgtk-2.46.3.orig/Source/ThirdParty/skia/CMakeLists.txt	2024-10-21 02:00:02.683247000 -0700
++++ webkitgtk-2.46.3/Source/ThirdParty/skia/CMakeLists.txt	2024-11-02 20:51:54.369262943 -0700
+@@ -921,6 +921,7 @@ target_link_libraries(Skia PRIVATE
+ )
+ 
+ WEBKIT_ADD_TARGET_CXX_FLAGS(Skia
++    -O$ENV{OSHIT_OPT_LEVEL_SKIA}
+     -ffp-contract=off
+     -fstrict-aliasing
+ 
+diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/WebCore/CMakeLists.txt webkitgtk-2.46.3/Source/WebCore/CMakeLists.txt
+--- webkitgtk-2.46.3.orig/Source/WebCore/CMakeLists.txt	2024-11-02 20:42:52.773791417 -0700
++++ webkitgtk-2.46.3/Source/WebCore/CMakeLists.txt	2024-11-02 20:47:47.545122572 -0700
+@@ -2899,6 +2899,8 @@ if (APPLE)
+     set_target_properties(WebCore PROPERTIES LINK_FLAGS "-weak-lxslt -sub_library libobjc -umbrella WebKit -allowable_client WebCoreTestSupport -allowable_client WebKit2 -allowable_client WebKitLegacy")
+ endif ()
+ 
++WEBKIT_ADD_TARGET_CXX_FLAGS(WebCore -O$ENV{OSHIT_OPT_LEVEL_WEBCORE})
++
+ # Prevent tables from collapsing too much with -Ofast and possible ofast.
+ # It also prevents element alignment errors with -Ofast.
+ if (COMPILER_IS_CLANG)

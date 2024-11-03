@@ -1064,7 +1064,7 @@ BDEPEND+="
 #	)
 _PATCHES=(
 #	"${FILESDIR}/webkit-gtk-2.43.2-CaptionUserPreferencesDisplayMode-conditional.patch"
-	"${FILESDIR}/webkit-gtk-2.43.2-custom-page-size.patch"
+	"${FILESDIR}/extra-patches/webkit-gtk-2.43.2-custom-page-size.patch"
 )
 
 get_gcc_ver_from_cxxabi() {
@@ -2183,6 +2183,13 @@ einfo
 	verify_codecs
 	check_security_expire
 	check_ulimit
+
+	if is-flagq '-Oshit' ; then
+		replace-flags '-Oshit' '-O1'
+		export OSHIT=1
+	else
+		export OSHIT=0
+	fi
 }
 
 _check_langs() {
@@ -2223,6 +2230,7 @@ src_prepare() {
 	# Precautions
 	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.39.1-jsc-disable-fast-math.patch"
 	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.39.1-webcore-honor-finite-math-and-nan.patch"
+	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.46.3-custom-optimization.patch"
 
 ewarn
 ewarn "Try adding -Wl,--no-keep-memory to per-package LDFLAGS if out of memory (OOM)"
@@ -2442,6 +2450,70 @@ ewarn
 		append-cppflags -DCUSTOM_PAGE_SIZE=${CUSTOM_PAGE_SIZE}
 	fi
 
+	# Anything less than -O2 may break rendering.
+	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
+	# Clang -Os:  slower than expected rendering.
+	# Forced >= -O3 to be about same relative performance to other browser engines.
+	# -O2 feels like C- grade relative other browser engines.
+
+	if [[ "${OSHIT}" == "1" ]] ; then
+		replace-flags "-O*" "-O1"
+	# Input validate to prevent artifacts or weakend security.
+		if [[ -n "${OSHIT_OPT_LEVEL_JSC}" ]] ; then
+			if [[ "${OSHIT_OPT_LEVEL_JSC}" == "2" || "${OSHIT_OPT_LEVEL_JSC}" == "3" ]] ; then
+				export OSHIT_OPT_LEVEL_JSC
+			elif [[ "${OSHIT_OPT_LEVEL_JSC}" == "fast" || "${OSHIT_OPT_LEVEL_JSC}" == "4" ]] ; then
+				export OSHIT_OPT_LEVEL_JSC="3"
+			else
+				export OSHIT_OPT_LEVEL_JSC="2"
+			fi
+		else
+			export OSHIT_OPT_LEVEL_JSC="2" # ~90% to ~95% optimized
+		fi
+
+		if [[ -n "${OSHIT_OPT_LEVEL_WEBCORE}" ]] ; then
+			if [[ "${OSHIT_OPT_LEVEL_SKIA}" == "1" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "2" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "3" ]] ; then
+				export OSHIT_OPT_LEVEL_WEBCORE
+			elif [[ "${OSHIT_OPT_LEVEL_WEBCORE}" == "fast" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "4" ]] ; then
+				export OSHIT_OPT_LEVEL_WEBCORE="3"
+			else
+				export OSHIT_OPT_LEVEL_WEBCORE="1"
+			fi
+		else
+			export OSHIT_OPT_LEVEL_WEBCORE="1"
+		fi
+
+		if [[ -n "${OSHIT_OPT_LEVEL_SKIA}" ]] ; then
+			if [[ "${OSHIT_OPT_LEVEL_SKIA}" == "1" || "${OSHIT_OPT_LEVEL_SKIA}" == "2" || "${OSHIT_OPT_LEVEL_SKIA}" == "3" ]] ; then
+				export OSHIT_OPT_LEVEL_SKIA
+			elif [[ "${OSHIT_OPT_LEVEL_SKIA}" == "fast" || "${OSHIT_OPT_LEVEL_SKIA}" == "4" ]] ; then
+				export OSHIT_OPT_LEVEL_SKIA="3"
+			else
+				export OSHIT_OPT_LEVEL_SKIA="1"
+			fi
+		else
+			export OSHIT_OPT_LEVEL_SKIA="1"
+		fi
+	else
+		local olast=$(get_olast)
+		if [[ "${olast}" == "-O3" || "${olast}" == "-O4" || "${olast}" == "-Ofast" ]] ; then
+			replace-flags "-O*" "-O3"
+			OSHIT_OPT_LEVEL_JSC=3
+			OSHIT_OPT_LEVEL_WEBCORE=3
+			OSHIT_OPT_LEVEL_SKIA=3
+		elif [[ "${olast}" == "-O2" ]] ; then
+			replace-flags "-O*" "-O2"
+			OSHIT_OPT_LEVEL_JSC=2
+			OSHIT_OPT_LEVEL_WEBCORE=2
+			OSHIT_OPT_LEVEL_SKIA=2
+		else
+			replace-flags "-O*" "-O1"
+			OSHIT_OPT_LEVEL_JSC=1
+			OSHIT_OPT_LEVEL_WEBCORE=1
+			OSHIT_OPT_LEVEL_SKIA=1
+		fi
+	fi
+
 	# See Source/cmake/WebKitFeatures.cmake
 	local pointer_size=$(tc-get-ptr-size)
 
@@ -2571,7 +2643,13 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 	}
 
 	local olast=$(get_olast)
-	if [[ "${olast}" =~ "-Ofast" ]] ; then
+	if [[ "${OSHIT}" == "1" ]] ; then
+		if [[ "${OSHIT_OPT_LEVEL_JSC}" == "3" ]] ; then
+			jit_level=6
+		else
+			jit_level=5
+		fi
+	elif [[ "${olast}" =~ "-Ofast" ]] ; then
 		jit_level=7
 	elif [[ "${olast}" =~ "-O3" ]] ; then
 		jit_level=6
@@ -2856,13 +2934,6 @@ eerror
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
 
-	# Anything less than -O2 may break rendering.
-	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
-	# Clang -Os:  slower than expected rendering.
-	# Forced >= -O3 to be about same relative performance to other browser engines.
-	# -O2 feels like C- grade relative other browser engines.
-
-	replace-flags "-O*" "-O3"
 	filter-flags '-ffast-math'
 
 	if is-flagq "-Ofast" ; then
