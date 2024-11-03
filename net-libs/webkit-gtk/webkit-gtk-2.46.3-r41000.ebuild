@@ -519,7 +519,7 @@ ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
 
 aqua +avif -bmalloc -cache-partitioning dash +doc -eme -gamepad +gbm
-+geolocation gles2 gnome-keyring +gstreamer gstwebrtc hardened +introspection
++geolocation gles2 gnome-keyring +gstreamer gstwebrtc +introspection
 +javascript +jit +journald +jpegxl +libpas +lcms -libbacktrace +libhyphen
 -libwebrtc -mediarecorder -mediastream +microphone +minibrowser mold +opengl openmp
 proprietary-codecs proprietary-codecs-disable
@@ -692,9 +692,6 @@ REQUIRED_USE+="
 	gstwebrtc? (
 		gstreamer
 		webrtc
-	)
-	hardened? (
-		!jit
 	)
 	hls? (
 		gstreamer
@@ -2310,6 +2307,36 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 
 	# https://bugs.webkit.org/show_bug.cgi?id=42070 , #301634
 	use ppc64 && append-flags "-mminimal-toc"
+
+	# CE - Code Execution
+	# DoS - Denial of Service
+	# DT - Data Tamperint
+	# ID - Information Disclosure
+
+	# Prevent the sys-devel/gcc[vanilla] unintended consequences.
+	if tc-enables-ssp ; then
+einfo "SSP is already enabled."
+	else
+	# As a precaution mitigate CE, DT, ID, DoS
+einfo "Adding SSP protection"
+		append-flags -fstack-protector
+	fi
+
+	if tc-enables-fortify-source ; then
+einfo "_FORITIFY_SOURCE is already enabled."
+	else
+	# A precaution to mitigate CE, DT, ID, DoS (CWE-121).
+einfo "Adding _FORITIFY_SOURCE=2"
+		append-flags -D_FORTIFY_SOURCE=2
+	fi
+
+	if tc-enables-pie ; then
+einfo "PIC is already enabled."
+	else
+	# ASLR (buffer overflow mitigation)
+einfo "Adding -fPIC"
+		append-flags -fPIC
+	fi
 
 	# Add more swap if linker OOMs computer.
 
