@@ -1067,6 +1067,53 @@ _PATCHES=(
 	"${FILESDIR}/webkit-gtk-2.43.2-custom-page-size.patch"
 )
 
+get_gcc_ver_from_cxxabi() {
+	local cxxabi_ver="${1}"
+	local gcc_ver
+	if ver_test "${cxxabi_ver}" -eq "1.3.15" ; then
+		gcc_ver="14.1.0"
+	elif ver_test "${cxxabi_ver}" -eq "1.3.14" ; then
+		gcc_ver="13.2.0"
+	elif ver_test "${cxxabi_ver}" -eq "1.3.13" ; then
+		gcc_ver="12.1.0"
+	elif ver_test "${cxxabi_ver}" -eq "1.3.13" ; then
+		gcc_ver="12.1.0"
+	elif ver_test "${cxxabi_ver}" -eq "1.3.12" ; then
+		gcc_ver="10.1.0"
+	elif ver_test "${cxxabi_ver}" -eq "1.3.11" ; then
+		gcc_ver="8.1.0"
+	elif ver_test "${cxxabi_ver}" -eq "1.3.10" ; then
+		gcc_ver="6.1.0"
+	elif ver_test "${cxxabi_ver}" -eq "1.3.9" ; then
+		gcc_ver="5.1.0"
+	elif ver_test "${cxxabi_ver}" -eq "1.3.8" ; then
+		gcc_ver="4.9.0"
+	elif ver_test "${cxxabi_ver}" -eq "1.3.7" ; then
+		gcc_ver="4.8.3"
+	elif ver_test "${cxxabi_ver}" -eq "1.3.6" ; then
+		gcc_ver="4.7.0"
+	elif ver_test "${cxxabi_ver}" -eq "1.3.5" ; then
+		gcc_ver="4.6.1"
+	elif ver_test "${cxxabi_ver}" -eq "1.3.4" ; then
+		gcc_ver="4.5.0"
+	elif ver_test "${cxxabi_ver}" -eq "1.3.3" ; then
+		gcc_ver="4.4.2"
+	elif ver_test "${cxxabi_ver}" -eq "1.3.2" ; then
+		gcc_ver="4.3.0"
+	elif ver_test "${cxxabi_ver}" -eq "1.3.1" ; then
+		gcc_ver="4.0.0"
+	elif ver_test "${cxxabi_ver}" -eq "1.3" ; then
+		gcc_ver="3.4.1"
+	elif ver_test "${cxxabi_ver}" -eq "1.2.1" ; then
+		gcc_ver="3.3.3"
+	elif ver_test "${cxxabi_ver}" -eq "1.2" ; then
+		gcc_ver="3.2.3"
+	elif ver_test "${cxxabi_ver}" -eq "1" ; then
+		gcc_ver="3.1.1"
+	fi
+	echo "${gcc_ver}"
+}
+
 check_icu_build() {
 	local icu_cxxabi_ver=$(strings "${ESYSROOT}/usr/$(get_libdir)/libicui18n.so" \
 		| grep "CXXABI_1" \
@@ -1085,48 +1132,7 @@ check_icu_build() {
 		| tail -n 1 \
 		| cut -f 2 -d "_")
 
-	local icu_gcc_ver=""
-	if ver_test "${icu_cxxabi_ver}" -eq "1.3.15" ; then
-		icu_gcc_ver="14.1.0"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.14" ; then
-		icu_gcc_ver="13.2.0"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.13" ; then
-		icu_gcc_ver="12.1.0"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.13" ; then
-		icu_gcc_ver="12.1.0"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.12" ; then
-		icu_gcc_ver="10.1.0"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.11" ; then
-		icu_gcc_ver="8.1.0"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.10" ; then
-		icu_gcc_ver="6.1.0"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.9" ; then
-		icu_gcc_ver="5.1.0"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.8" ; then
-		icu_gcc_ver="4.9.0"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.7" ; then
-		icu_gcc_ver="4.8.3"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.6" ; then
-		icu_gcc_ver="4.7.0"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.5" ; then
-		icu_gcc_ver="4.6.1"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.4" ; then
-		icu_gcc_ver="4.5.0"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.3" ; then
-		icu_gcc_ver="4.4.2"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.2" ; then
-		icu_gcc_ver="4.3.0"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3.1" ; then
-		icu_gcc_ver="4.0.0"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.3" ; then
-		icu_gcc_ver="3.4.1"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.2.1" ; then
-		icu_gcc_ver="3.3.3"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1.2" ; then
-		icu_gcc_ver="3.2.3"
-	elif ver_test "${icu_cxxabi_ver}" -eq "1" ; then
-		icu_gcc_ver="3.1.1"
-	fi
+	local icu_gcc_ver=$(get_gcc_ver_from_cxxabi "${icu_cxxabi_ver}")
 
 	if ver_test "${gcc_current_profile_slot}" -ne "${icu_gcc_ver%%.*}" ; then
 eerror
@@ -1157,14 +1163,6 @@ eerror
 		:
 	elif ver_test "${gcc_slot}" -eq "10" ; then
 		:
-	else
-eerror
-eerror "GCC ${gcc_slot} is not supported upstream."
-eerror
-eerror "Downgrade CXX to either GCC 10.x, 11.x, 12.x, 13.x."
-eerror "Rebuild dev-libs/icu and ${with} with the same GCC 10.x, 11.x, 12.x, 13.x"
-eerror
-		die
 	fi
 }
 
@@ -1179,7 +1177,15 @@ _set_cxx() {
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
 		if true || tc-is-gcc ; then
-			if has_version "sys-devel/gcc:13" ; then
+			local gcc_current_profile=$(gcc-config -c)
+			local gcc_current_profile_slot="${gcc_current_profile##*-}"
+
+			if ver_test "${gcc_current_profile_slot}" -gt "13" ; then
+ewarn "Upstream only supports GCC 10.x, 11.x, 12.x, 13.x."
+ewarn "Build dev-libs/icu and ${PN} with the same slot if problems encountered."
+				export CC="${CHOST}-gcc-${gcc_current_profile_slot}"
+				export CXX="${CHOST}-g++-${gcc_current_profile_slot}"
+			elif has_version "sys-devel/gcc:13" ; then
 				export CC="${CHOST}-gcc-13"
 				export CXX="${CHOST}-g++-13"
 			elif has_version "sys-devel/gcc:12" ; then
@@ -1192,8 +1198,7 @@ _set_cxx() {
 				export CC="${CHOST}-gcc-10"
 				export CXX="${CHOST}-g++-10"
 			else
-eerror "Downgrade CXX to either GCC 10.x, 11.x, 12.x, 13.x."
-eerror "Rebuild dev-libs/icu and ${with} with the same GCC 10.x, 11.x, 12.x, 13.x"
+eerror "GCC must be >= 10"
 				die
 			fi
 			strip-unsupported-flags
