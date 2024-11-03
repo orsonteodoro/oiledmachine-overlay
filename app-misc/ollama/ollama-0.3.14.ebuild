@@ -3049,7 +3049,7 @@ src_configure() {
 	replace-flags '-O0' '-O1'
 
 	# Use similar hardening flags like TF for community generated LLMs.
-	# These are used as a precaution to prevent CE, DT, ID, DoS (CWE-121).
+	# These are used as a precaution to mitigate CE, DT, ID, DoS (CWE-121).
 	# CE = Code Execution
 	# DT = Data Tampering
 	# ID = Information Disclosure
@@ -3070,7 +3070,7 @@ einfo "-D_FORTIFY_SOURCE is already enabled."
 	if tc-enables-ssp ; then
 einfo "-fstack-protector* is already enabled."
 	else
-	# As a precaution prevent CE, DT, ID, DoS
+	# As a precaution mitigate CE, DT, ID, DoS
 	# Stack based buffer overflow protection
 		append-flags -fstack-protector
 	fi
