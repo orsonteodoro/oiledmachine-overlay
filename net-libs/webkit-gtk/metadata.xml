@@ -116,7 +116,7 @@
     performance sensitive code to that level.
 
 
-    OSHIT_OPT_LEVEL_ANGLE="3" - Optimize ANGLE matrix operations at -O3
+    OSHIT_OPT_LEVEL_ANGLE="fast" - Optimize ANGLE matrix operations at -Ofast
     Valid values:  1, 2, 3, fast
     Using fast is in testing.
 
@@ -125,21 +125,21 @@
     Valid values:  2, 3
 
 
-    OSHIT_OPT_LEVEL_SHA1="3" - Optimize SHA1 at -O3
+    OSHIT_OPT_LEVEL_SHA1="fast" - Optimize SHA1 at -Ofast
     Valid values:  1, 2, 3, fast
     Using fast is in testing.
 
 
-    OSHIT_OPT_LEVEL_SKIA="2" - Optimize Skia graphics engine at -O2
+    OSHIT_OPT_LEVEL_SKIA="fast" - Optimize Skia graphics engine at -Ofast
     Valid values:  1, 2, 3, fast
     Using fast is in testing.
 
 
-    OSHIT_OPT_LEVEL_WEBCORE="1" - Optimize WebCore rendering engine at -O2
+    OSHIT_OPT_LEVEL_WEBCORE="1" - Optimize WebCore rendering engine for build speed at -O1
     Valid values:  1, 2, 3
 
 
-    OSHIT_OPT_LEVEL_XXHASH="3" - Optimize xxhash at -O3
+    OSHIT_OPT_LEVEL_XXHASH="fast" - Optimize xxhash at -Ofast
     Valid values:  1, 2, 3, fast
     Using fast is in testing.
 
