@@ -3780,6 +3780,11 @@ ewarn
 			jit_level=0
 		fi
 
+		if use webassembly && (( ${jit_level} < 2 )) ; then
+einfo "WebAssembly is forcing from jit_level=${jit_level} to jit_level=2."
+			jit_level=2
+		fi
+
 		if [[ -n "${JIT_LEVEL_OVERRIDE}" ]] ; then
 			jit_level=${JIT_LEVEL_OVERRIDE}
 		fi
@@ -3822,11 +3827,6 @@ einfo "JIT is similar to -O${jit_level_desc} best case."
 		else
 einfo "JIT off is similar to -O${jit_level_desc} worst case."
 			_jit_level_0
-		fi
-
-		if use webassembly && (( ${jit_level} < 2 )) ; then
-einfo "WebAssembly is forcing from jit_level=${jit_level} to jit_level=2."
-			jit_level=2
 		fi
 	fi
 	myconf_gn+=" v8_enable_vtunejit=false"
