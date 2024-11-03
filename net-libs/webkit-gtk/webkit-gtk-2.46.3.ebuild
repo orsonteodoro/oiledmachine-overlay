@@ -2185,7 +2185,7 @@ einfo
 	check_ulimit
 
 	if is-flagq '-Oshit' ; then
-		replace-flags '-Oshit' '-O1'
+		replace-flags '-O*' '-O1'
 		export OSHIT=1
 	else
 		export OSHIT=0
