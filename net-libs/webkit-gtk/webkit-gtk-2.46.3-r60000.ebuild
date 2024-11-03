@@ -2596,7 +2596,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 	fi
 
 	if use webassembly && (( ${jit_level} < 5 )) ; then
-einfo "Changing jit_level=${jit_level} to jit_level=5 for webassembly."
+einfo "Changing jit_level=${jit_level} to jit_level=5 for WebAssembly."
 		jit_level=5
 	fi
 

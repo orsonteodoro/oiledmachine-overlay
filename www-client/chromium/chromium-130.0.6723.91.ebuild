@@ -3781,7 +3781,7 @@ ewarn
 		fi
 
 		if use webassembly && (( ${jit_level} < 2 )) ; then
-einfo "WebAssembly is forcing from jit_level=${jit_level} to jit_level=2."
+einfo "Changing jit_level=${jit_level} to jit_level=2 for WebAssembly."
 			jit_level=2
 		fi
 
