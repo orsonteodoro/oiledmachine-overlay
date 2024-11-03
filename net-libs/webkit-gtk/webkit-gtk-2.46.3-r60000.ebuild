@@ -2595,6 +2595,11 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		jit_level=0
 	fi
 
+	if use webassembly && (( ${jit_level} < 5 )) ; then
+einfo "Changing jit_level=${jit_level} to jit_level=5 for webassembly."
+		jit_level=5
+	fi
+
 	if [[ -n "${JIT_LEVEL_OVERRIDE}" ]] ; then
 		jit_level=${JIT_LEVEL_OVERRIDE}
 	fi
@@ -2672,6 +2677,7 @@ ewarn "(1) Enable the jit USE flag."
 ewarn "(2) Change the kernel config to use memory page sizes less than 64 KB."
 ewarn "(3) Set CUSTOM_PAGE_SIZE environment variable less than 64 KB."
 ewarn "(4) Set to at least -O2 or JIT_LEVEL_OVERRIDE=5 or higher."
+ewarn "(5) Use a supported architecture and ABI (amd64, arm64, riscv)."
 ewarn
 	fi
 
