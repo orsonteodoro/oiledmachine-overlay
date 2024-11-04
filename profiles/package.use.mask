@@ -100,3 +100,6 @@ www-client/chromium system-toolchain
 sys-apps/firejail -suid
 
 >virtual/pillow-10.0.1 pillow-simd
+
+# Breaks binary packages
+>=dev-libs/icu-75
