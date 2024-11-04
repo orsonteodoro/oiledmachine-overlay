@@ -2989,7 +2989,13 @@ eerror
 		append_all $(test-flags -fno-allow-store-data-races)
 	fi
 
-	WK_USE_CCACHE=NO cmake_src_configure
+	if [[ "${FEATURES}" =~ "ccache" ]] ; then
+		export WK_USE_CCACHE=ON
+	else
+		export WK_USE_CCACHE=OFF
+	fi
+
+	cmake_src_configure
 }
 
 _src_compile() {
