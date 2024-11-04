@@ -2350,6 +2350,7 @@ ewarn
 	fi
 	if use libpas ; then
 		if [[ "${ABI}" =~ ("amd64"|"arm64") ]] ; then
+	# The B before ENABLE is not a typo
 			append-cppflags -DBENABLE_LIBPAS=1
 			append-cppflags -DPAS_BMALLOC=1
 		else
