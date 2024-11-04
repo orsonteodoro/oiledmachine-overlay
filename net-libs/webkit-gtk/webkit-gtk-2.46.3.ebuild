@@ -2424,7 +2424,7 @@ ewarn
 		)
 	fi
 
-	if (( ${total_ram_gib} >= 8 )) ; then # 4 core, 8 GiB RAM total
+	if (( ${total_ram_gib} >= 7 )) ; then # 4 core, 8 GiB RAM total
 einfo "Unified builds on"
 		mycmakeargs+=(
 			-DENABLE_UNIFIED_BUILDS=ON
