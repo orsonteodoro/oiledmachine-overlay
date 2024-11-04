@@ -2395,6 +2395,7 @@ ewarn
 		-DENABLE_SPEECH_SYNTHESIS=$(usex speech-synthesis)
 		-DENABLE_SPELLCHECK=$(usex spell)
 		-DENABLE_THUNDER=$(usex thunder)
+		-DENABLE_UNIFIED_BUILDS=ON
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
@@ -2427,18 +2428,6 @@ ewarn
 	if ! has_version "dev-util/sysprof-capture:4" ; then
 		mycmakeargs+=(
 			-DUSE_SYSTEM_SYSPROF_CAPTURE=NO
-		)
-	fi
-
-	if (( ${total_ram_gib} >= 8 )) ; then # 4 core, 8 GiB RAM total
-einfo "Unified builds on"
-		mycmakeargs+=(
-			-DENABLE_UNIFIED_BUILDS=ON
-		)
-	else
-einfo "Unified builds off"
-		mycmakeargs+=(
-			-DENABLE_UNIFIED_BUILDS=OFF
 		)
 	fi
 
