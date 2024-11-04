@@ -122,10 +122,6 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
   <flag name="hwaccel">
     Force-enable hardware-accelerated rendering (Mozilla bug 594876)
   </flag>
-  <flag name="jumbo-build">
-    Enable unified build - combines source files to speed up build process, but
-    requires more memory
-  </flag>
   <flag name="libproxy">
     Enable libproxy support
   </flag>

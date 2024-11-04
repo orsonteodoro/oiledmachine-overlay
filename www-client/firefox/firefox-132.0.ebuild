@@ -422,7 +422,7 @@ IUSE+="
 ${CODEC_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alsa cpu_flags_arm_neon cups +dbus debug eme-free +ffvpx firejail +hardened
--hwaccel jack +jemalloc +jit +jumbo-build libcanberra libnotify libproxy
+-hwaccel jack +jemalloc +jit libcanberra libnotify libproxy
 libsecret mold +openh264 +pgo +pulseaudio proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user rust-simd selinux sndio speech +system-av1
@@ -1283,14 +1283,16 @@ ewarn "No swap detected."
 ewarn "Downgrading MAKEOPTS=-j${njobs} to prevent lock-up"
 	fi
 
-	if (( ${ram_gib_per_core%.*} >= 2 )) ; then # 4 core, 8 GiB RAM total
-	# Only allow if not swappy
+	if (( ${total_ram_gib} >= 8 )) ; then # 4 core, 8 GiB RAM total
+einfo "Jumbo build on"
 		MEETS_JUMBO_BUILD_MEMORY_REQ=1
+	else
+einfo "Jumbo build off"
 	fi
 }
 
 _is_jumbo_build_ready() {
-	if use jumbo-build && (( ${MEETS_JUMBO_BUILD_MEMORY_REQ} == 1 )) ; then
+	if (( ${MEETS_JUMBO_BUILD_MEMORY_REQ} == 1 )) ; then
 		return 0
 	fi
 	return 1
