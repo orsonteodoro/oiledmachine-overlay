@@ -1283,7 +1283,7 @@ ewarn "No swap detected."
 ewarn "Downgrading MAKEOPTS=-j${njobs} to prevent lock-up"
 	fi
 
-	if (( ${total_ram_gib} >= 8 )) ; then # 4 core, 8 GiB RAM total
+	if (( ${total_ram_gib} >= 7 )) ; then # 4 core, 8 GiB RAM total
 einfo "Jumbo build on"
 		MEETS_JUMBO_BUILD_MEMORY_REQ=1
 	else
