@@ -1819,7 +1819,7 @@ einfo "Removing pre-built binaries ..."
 	# moz_clear_vendor_checksums xyz
 
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
-	if [[ -n "${FILES_PER_UNIFIED_FILE}" ]] ; then
+	if [[ -n "${FILES_PER_UNIFIED_FILE}" ]] && ! use debug ; then
 		local my_files_per_unified_file=${FILES_PER_UNIFIED_FILE:=16}
 ewarn
 ewarn "FILES_PER_UNIFIED_FILE (default):  16"
@@ -2071,7 +2071,8 @@ eerror
 
 _set_cc() {
 	local have_switched_compiler=
-	if tc-is-clang ; then
+	# Disabled jumbo-build requires clang
+	if tc-is-clang || use debug ; then
 	# Force clang
 einfo "Switching to clang"
 		local version_clang=$(clang --version 2>/dev/null \
@@ -2398,6 +2399,11 @@ einfo "Building without Mozilla API key ..."
 			| sed -e "s|,$||g") # Cannot be empty
 
 	mozconfig_use_enable wifi necko-wifi
+
+	# Reduce longer *rebuilds* when debug testing experimental code changes.
+	use debug && mozconfig_add_options_ac \
+		'--disable-unified-build' \
+		--disable-unified-build
 
 	if use X && use wayland ; then
 		mozconfig_add_options_ac \
