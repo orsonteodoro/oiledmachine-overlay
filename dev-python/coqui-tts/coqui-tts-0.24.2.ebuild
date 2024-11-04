@@ -65,13 +65,27 @@ RDEPEND+="
 		>=dev-python/librosa-0.10.1[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.7.0[${PYTHON_USEDEP}]
 		>=dev-python/num2words-0.5.11[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.25.2[${PYTHON_USEDEP}]
 		>=dev-python/packaging-23.1[${PYTHON_USEDEP}]
 		>=dev-python/pysbd-0.3.4[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-6.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.11.2[${PYTHON_USEDEP}]
 		>=dev-python/soundfile-0.12.0[${PYTHON_USEDEP}]
-		>=dev-python/spacy-3[${PYTHON_USEDEP}]
+		|| (
+			(
+				(
+					>=dev-python/numpy-1.25.2[${PYTHON_USEDEP}]
+					>=dev-python/numpy-2[${PYTHON_USEDEP}]
+				)
+				>=dev-python/spacy-3.8[${PYTHON_USEDEP}]
+			)
+			(
+				(
+					>=dev-python/numpy-1.25.2[${PYTHON_USEDEP}]
+					<dev-python/numpy-2[${PYTHON_USEDEP}]
+				)
+				<dev-python/spacy-3.8[${PYTHON_USEDEP}]
+			)
+		)
 		>=dev-python/tqdm-4.64.1[${PYTHON_USEDEP}]
 		l10n_bn? (
 			>=dev-python/bangla-0.0.2[${PYTHON_USEDEP}]
@@ -111,7 +125,7 @@ DEPEND+="
 BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/cython-3.0.0[${PYTHON_USEDEP}]
-		>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.25.2[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		dev-python/setuptools-scm[${PYTHON_USEDEP}]
 		dev? (
