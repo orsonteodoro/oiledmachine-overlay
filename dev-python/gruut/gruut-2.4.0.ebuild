@@ -62,7 +62,6 @@ RDEPEND+="
 	>=dev-python/Babel-2.8.0[${PYTHON_USEDEP}]
 	>=dev-python/dateparser-1.1.1[${PYTHON_USEDEP}]
 	>=dev-python/gruut-ipa-0.12.0[${PYTHON_USEDEP}]
-	>=dev-python/gruut_lang_en-2.0.0[${PYTHON_USEDEP}]
 	>=dev-python/jsonlines-1.2.0[${PYTHON_USEDEP}]
 	>=dev-python/networkx-2.5.0[${PYTHON_USEDEP}]
 	>=dev-python/num2words-0.5.10[${PYTHON_USEDEP}]
