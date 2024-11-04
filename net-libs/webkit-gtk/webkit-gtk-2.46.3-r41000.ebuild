@@ -657,13 +657,16 @@ NON_FREE_REQUIRED_USE="
 	)
 "
 
-REQUIRED_USE+="
-	${NON_FREE_REQUIRED_USE}
+_TRASH="
 	^^ (
 		bmalloc
 		libpas
 		system-malloc
 	)
+"
+
+REQUIRED_USE+="
+	${NON_FREE_REQUIRED_USE}
 	alsa? (
 		!pulseaudio
 		gstreamer

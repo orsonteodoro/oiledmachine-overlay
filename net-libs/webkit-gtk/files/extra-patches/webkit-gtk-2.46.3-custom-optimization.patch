@@ -1,6 +1,6 @@
 diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/JavaScriptCore/CMakeLists.txt webkitgtk-2.46.3/Source/JavaScriptCore/CMakeLists.txt
---- webkitgtk-2.46.3.orig/Source/JavaScriptCore/CMakeLists.txt	2024-11-03 08:05:23.187987298 -0800
-+++ webkitgtk-2.46.3/Source/JavaScriptCore/CMakeLists.txt	2024-11-03 08:05:46.563615677 -0800
+--- webkitgtk-2.46.3.orig/Source/JavaScriptCore/CMakeLists.txt	2024-11-04 06:35:49.096580963 -0800
++++ webkitgtk-2.46.3/Source/JavaScriptCore/CMakeLists.txt	2024-11-04 06:36:08.832261288 -0800
 @@ -1445,8 +1445,8 @@ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
  
  if (COMPILER_IS_GCC_OR_CLANG)
@@ -14,7 +14,7 @@ diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/JavaScriptCore/CMakeLists.
      # for e.g. parseInt depending on the platform and compilation flags.
 diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/ThirdParty/ANGLE/CMakeLists.txt webkitgtk-2.46.3/Source/ThirdParty/ANGLE/CMakeLists.txt
 --- webkitgtk-2.46.3.orig/Source/ThirdParty/ANGLE/CMakeLists.txt	2024-10-21 02:00:02.683247000 -0700
-+++ webkitgtk-2.46.3/Source/ThirdParty/ANGLE/CMakeLists.txt	2024-11-03 08:16:49.917131621 -0800
++++ webkitgtk-2.46.3/Source/ThirdParty/ANGLE/CMakeLists.txt	2024-11-04 06:36:08.832261288 -0800
 @@ -244,6 +244,12 @@ if (ENABLE_WEBGL)
      add_dependencies(GLESv2Framework ANGLE-webgl-headers)
  endif ()
@@ -30,7 +30,7 @@ diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/ThirdParty/ANGLE/CMakeList
          if (TARGET ${angle_target})
 diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/ThirdParty/skia/CMakeLists.txt webkitgtk-2.46.3/Source/ThirdParty/skia/CMakeLists.txt
 --- webkitgtk-2.46.3.orig/Source/ThirdParty/skia/CMakeLists.txt	2024-10-21 02:00:02.683247000 -0700
-+++ webkitgtk-2.46.3/Source/ThirdParty/skia/CMakeLists.txt	2024-11-03 08:05:46.563615677 -0800
++++ webkitgtk-2.46.3/Source/ThirdParty/skia/CMakeLists.txt	2024-11-04 06:36:08.832261288 -0800
 @@ -921,6 +921,7 @@ target_link_libraries(Skia PRIVATE
  )
  
@@ -41,7 +41,7 @@ diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/ThirdParty/skia/CMakeLists
  
 diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/WTF/wtf/CMakeLists.txt webkitgtk-2.46.3/Source/WTF/wtf/CMakeLists.txt
 --- webkitgtk-2.46.3.orig/Source/WTF/wtf/CMakeLists.txt	2024-10-21 02:00:02.687247000 -0700
-+++ webkitgtk-2.46.3/Source/WTF/wtf/CMakeLists.txt	2024-11-03 08:08:53.136655103 -0800
++++ webkitgtk-2.46.3/Source/WTF/wtf/CMakeLists.txt	2024-11-04 06:36:08.832261288 -0800
 @@ -735,6 +735,10 @@ WEBKIT_COPY_FILES(WTF_CopyHeaders
  
  WEBKIT_FRAMEWORK(WTF)
@@ -54,8 +54,8 @@ diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/WTF/wtf/CMakeLists.txt web
      set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
 diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/WebCore/CMakeLists.txt webkitgtk-2.46.3/Source/WebCore/CMakeLists.txt
---- webkitgtk-2.46.3.orig/Source/WebCore/CMakeLists.txt	2024-11-03 08:05:23.199987107 -0800
-+++ webkitgtk-2.46.3/Source/WebCore/CMakeLists.txt	2024-11-03 08:05:46.563615677 -0800
+--- webkitgtk-2.46.3.orig/Source/WebCore/CMakeLists.txt	2024-11-04 06:35:49.104580833 -0800
++++ webkitgtk-2.46.3/Source/WebCore/CMakeLists.txt	2024-11-04 06:36:08.832261288 -0800
 @@ -2899,6 +2899,8 @@ if (APPLE)
      set_target_properties(WebCore PROPERTIES LINK_FLAGS "-weak-lxslt -sub_library libobjc -umbrella WebKit -allowable_client WebCoreTestSupport -allowable_client WebKit2 -allowable_client WebKitLegacy")
  endif ()
@@ -65,3 +65,14 @@ diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/WebCore/CMakeLists.txt web
  # Prevent tables from collapsing too much with -Ofast and possible ofast.
  # It also prevents element alignment errors with -Ofast.
  if (COMPILER_IS_CLANG)
+diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/bmalloc/CMakeLists.txt webkitgtk-2.46.3/Source/bmalloc/CMakeLists.txt
+--- webkitgtk-2.46.3.orig/Source/bmalloc/CMakeLists.txt	2024-08-18 23:28:40.231246500 -0700
++++ webkitgtk-2.46.3/Source/bmalloc/CMakeLists.txt	2024-11-04 06:37:22.703065604 -0800
+@@ -715,6 +715,7 @@ WEBKIT_COPY_FILES(bmalloc_CopyHeaders
+ WEBKIT_FRAMEWORK(bmalloc)
+ 
+ WEBKIT_ADD_TARGET_CXX_FLAGS(bmalloc
++    -findirect-inlining
+     -Wno-missing-field-initializers
+     -Wno-cast-align)
+ 
