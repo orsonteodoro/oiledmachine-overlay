@@ -391,9 +391,6 @@
     <flag name="thunder">
       Links to a framework with pluginable CDM (content decryption module) support.
     </flag>
-    <flag name="unified-build">
-      Reduces the build time by half by parsing the headers once
-    </flag>
     <flag name="v4l">
       Adds and checks for proper v4l camera support.
     </flag>
