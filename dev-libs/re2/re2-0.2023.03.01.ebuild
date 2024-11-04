@@ -26,7 +26,8 @@ SLOT="0/${SONAME}"
 IUSE="-debug icu test"
 RDEPEND="
 	icu? (
-		dev-libs/icu:0=[${MULTILIB_USEDEP}]
+		dev-libs/icu:0[${MULTILIB_USEDEP}]
+		dev-libs/icu:=
 	)
 "
 DEPEND="

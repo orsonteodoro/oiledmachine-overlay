@@ -32,7 +32,8 @@ SLOT="0/${SONAME}"
 IUSE="-debug icu python test"
 RDEPEND="
 	icu? (
-		dev-libs/icu:0=[${MULTILIB_USEDEP}]
+		dev-libs/icu:0[${MULTILIB_USEDEP}]
+		dev-libs/icu:=
 	)
 	python? (
 		dev-python/absl-py[${PYTHON_USEDEP}]
