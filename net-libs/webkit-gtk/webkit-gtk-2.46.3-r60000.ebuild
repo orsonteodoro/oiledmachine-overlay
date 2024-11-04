@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# D11, D12, U20, U22, U24
+# D12, U22, U24
 
 # -r revision notes
 # -rabcde
@@ -1047,9 +1047,11 @@ BDEPEND+="
 		>=dev-util/gperf-3.0.1
 	)
 	|| (
+		>=sys-devel/gcc-13.2.0:13
 		>=sys-devel/gcc-12.2.0:12
 		>=sys-devel/gcc-11.2:11
 	)
+	sys-devel/gcc:=
 "
 #		$(gen_depend_llvm)
 #	test? (
@@ -1152,26 +1154,15 @@ eerror "  emerge -1vO =${CATEGORY}/${PN}-${PVR}"
 eerror
 		die
 	fi
-
-	if ver_test "${gcc_slot}" -eq "13" ; then
-		:
-	elif ver_test "${gcc_slot}" -eq "12" ; then
-		:
-	elif ver_test "${gcc_slot}" -eq "11" ; then
-		:
-	elif ver_test "${gcc_slot}" -eq "10" ; then
-		:
-	fi
 }
 
 _set_cxx() {
 	if [[ ${MERGE_TYPE} != "binary" ]] ; then
 	# See https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
-	# Based on D 11, D 12, U 22, U 24
+	# Based on D 12, U 22, U 24
 	# D12 - gcc 12.2
-	# D11 - gcc 10.2
-	# U20 - gcc 11.2
-	# U22 - gcc 13.2
+	# U22 - gcc 11.2
+	# U24 - gcc 13.2
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
 		if true || tc-is-gcc ; then
@@ -1192,11 +1183,8 @@ ewarn "Build dev-libs/icu and ${PN} with the same GCC slot if problems encounter
 			elif has_version "sys-devel/gcc:11" ; then
 				export CC="${CHOST}-gcc-11"
 				export CXX="${CHOST}-g++-11"
-			elif has_version "sys-devel/gcc:10" ; then
-				export CC="${CHOST}-gcc-10"
-				export CXX="${CHOST}-g++-10"
 			else
-eerror "GCC must be >= 10"
+eerror "GCC must be >= 11"
 				die
 			fi
 			strip-unsupported-flags
