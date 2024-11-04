@@ -1,0 +1,54 @@
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+BLIS_COMMIT="8137f660d8351c3a3c3b38f4606121578e128b70"
+DISTUTILS_USE_PEP517="setuptools"
+PYTHON_COMPAT=( "python3_"{10..12} )
+
+inherit dep-prepare distutils-r1 pypi
+
+KEYWORDS="~amd64 ~arm64"
+S="${WORKDIR}/${PN}-${PV}"
+SRC_URI="
+https://github.com/explosion/cython-blis/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/explosion/blis/archive/${BLIS_COMMIT}.tar.gz
+	-> blis-${BLIS_COMMIT:0:7}.tar.gz
+"
+
+DESCRIPTION="💥 Fast matrix-multiplication as a self-contained Python library – no system dependencies!"
+HOMEPAGE="
+	https://github.com/explosion/blis
+	https://pypi.org/project/blis
+"
+LICENSE="
+	BSD
+"
+RESTRICT="mirror"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+=" test"
+RDEPEND+="
+	>=dev-python/numpy-1.15.0[${PYTHON_USEDEP}]
+"
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	>=dev-python/cython-0.25[${PYTHON_USEDEP}]
+	>=dev-python/numpy-1.15.0[${PYTHON_USEDEP}]
+	test? (
+		>=dev-python/hypothesis-4.0.0
+		dev-python/pytest
+	)
+"
+DOCS=( "README.md" )
+
+src_unpack() {
+	unpack ${A}
+	dep_prepare_mv "${WORKDIR}/blis-${BLIS_COMMIT}" "flame-blis"
+}
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
