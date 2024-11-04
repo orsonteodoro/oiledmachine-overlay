@@ -41,13 +41,15 @@ DEPEND+="
 BDEPEND+="
 	dev-python/setuptools-scm[${PYTHON_USEDEP}]
 	dev? (
-		>=dev-util/ruff-0.4.10
-		dev-python/coverage[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-vcs/pre-commit[${PYTHON_USEDEP}]
+		$(python_gen_any_dep '
+			dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
+		')
 		$(python_gen_cond_dep '
 			dev-python/tomli[${PYTHON_USEDEP}]
 		' python3_{10..11})
+		>=dev-util/ruff-0.4.10
+		dev-python/coverage[${PYTHON_USEDEP}]
+		dev-python/pytest[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
