@@ -518,7 +518,7 @@ ${LANGS[@]/#/l10n_}
 ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
 
-aqua +avif -bmalloc -cache-partitioning dash +doc -eme -gamepad +gbm
+aqua +avif -bmalloc -cache-partitioning dash debug +doc -eme -gamepad +gbm
 +geolocation gles2 gnome-keyring +gstreamer gstwebrtc +introspection
 +javascript +jit +journald +jpegxl +libpas +lcms -libbacktrace +libhyphen
 -libwebrtc -mediarecorder -mediastream +microphone +minibrowser mold +opengl openmp
@@ -2398,7 +2398,7 @@ ewarn
 		-DENABLE_SPEECH_SYNTHESIS=$(usex speech-synthesis)
 		-DENABLE_SPELLCHECK=$(usex spell)
 		-DENABLE_THUNDER=$(usex thunder)
-		-DENABLE_UNIFIED_BUILDS=ON
+		-DENABLE_UNIFIED_BUILDS=$(usex debug)
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
@@ -2427,6 +2427,12 @@ ewarn
 		$(cmake_use_find_package gles2 OpenGLES2)
 		$(cmake_use_find_package opengl OpenGL)
 	)
+
+	if use debug ; then
+		mycmakeargs+=(
+			-DCMAKE_BUILD_TYPE="Debug"
+		)
+	fi
 
 	if ! has_version "dev-util/sysprof-capture:4" ; then
 		mycmakeargs+=(
