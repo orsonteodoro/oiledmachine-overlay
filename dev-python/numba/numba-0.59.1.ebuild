@@ -60,8 +60,12 @@ RDEPEND+="
 		<dev-python/numpy-1.27[${PYTHON_USEDEP}]
 	)
 	(
-		>=dev-python/llvmlite-0.42.0_pre[${PYTHON_USEDEP}]
-		<dev-python/llvmlite-0.43[${PYTHON_USEDEP}]
+		llvm_slot_15? (
+			=dev-python/llvmlite-0.43*[${PYTHON_USEDEP}]
+		)
+		llvm_slot_14? (
+			=dev-python/llvmlite-0.42*[${PYTHON_USEDEP}]
+		)
 	)
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-11.2
@@ -121,14 +125,16 @@ python_configure() {
 	if use clang ; then
 		local s
 		for s in ${LLVM_COMPAT[@]} ; do
-			export CC="${CHOST}-clang-${s}"
-			export CXX="${CHOST}-clang++-${s}"
-			export CPP="${CC} -E"
-			if \
-				   has_version "sys-devel/llvm:${s}" \
-				&& has_version "sys-devel/clang:${s}" \
-				&& clang --version \
-			; then
+			if use "llvm_slot_${s}" ; then
+			        export PATH=$(echo "${PATH}" \
+			                | tr ":" "\n" \
+			                | sed -E -e "/llvm\/[0-9]+/d" \
+			                | tr "\n" ":" \
+			                | sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${s}/bin|g")
+				export CC="${CHOST}-clang-${s}"
+				export CXX="${CHOST}-clang++-${s}"
+				export CPP="${CC} -E"
+				clang --version || die
 				break
 			fi
 		done
