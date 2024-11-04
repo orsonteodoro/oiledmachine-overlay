@@ -53,7 +53,7 @@ RDEPEND+="
 	>=dev-python/langcodes-3.2.0[${PYTHON_USEDEP}]
 	>=dev-python/ml-datasets-0.2.0[${PYTHON_USEDEP}]
 	>=dev-python/murmurhash-0.28.0[${PYTHON_USEDEP}]
-	>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
+	>=dev-python/numpy-1.19.0[${PYTHON_USEDEP}]
 	>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]
 	>=dev-python/pydantic-1.7.4[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.13.0[${PYTHON_USEDEP}]
@@ -94,7 +94,7 @@ BDEPEND+="
 	>=dev-python/cython-0.25[${PYTHON_USEDEP}]
 	>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]
 	>=dev-python/murmurhash-0.28.0[${PYTHON_USEDEP}]
-	>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
+	>=dev-python/numpy-1.19.0[${PYTHON_USEDEP}]
 	>=dev-python/thinc-8.3.0[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev? (

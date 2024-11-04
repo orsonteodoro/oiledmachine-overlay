@@ -134,3 +134,6 @@ dev-db/mariadb
 >=dev-libs/protobuf-22
 >=net-libs/grpc-1.55
 >=sci-libs/tensorstore-0.1.38
+
+# Block numpy-2 dependent packages to keep tensorflow/keras that require numpy 1.x
+>=dev-python/spacy-3.8

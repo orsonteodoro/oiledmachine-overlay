@@ -24,7 +24,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
 
-KEYWORDS="~amd64 ~arm64"
+#KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_PN}-v${PV}"
 SRC_URI="
 https://github.com/explosion/spaCy/archive/refs/tags/release-v${PV}.tar.gz
