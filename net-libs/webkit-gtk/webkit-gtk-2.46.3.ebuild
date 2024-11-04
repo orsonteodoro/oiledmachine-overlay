@@ -2393,7 +2393,7 @@ ewarn
 		-DENABLE_SPEECH_SYNTHESIS=$(usex speech-synthesis)
 		-DENABLE_SPELLCHECK=$(usex spell)
 		-DENABLE_THUNDER=$(usex thunder)
-		-DENABLE_UNIFIED_BUILDS=$(usex debug) # Reduce rebuild cost for debug
+		-DENABLE_UNIFIED_BUILDS=$(usex debug "OFF" "ON") # Reduce rebuild cost for debug
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
