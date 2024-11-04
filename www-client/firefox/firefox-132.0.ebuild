@@ -142,7 +142,6 @@ LICENSE_FINGERPRINT="\
 LLVM_COMPAT=( 18 ) # Limited based on virtual/rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MEETS_JUMBO_BUILD_MEMORY_REQ=0
 MITIGATION_DATE="Oct 29, 2024" # Advisory date
 MITIGATION_LAST_UPDATE=1730147280 # From `date +%s -d "2024-10-28 13:28"` from ftp date matching version in report
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-55/"
@@ -1282,20 +1281,6 @@ ewarn "No swap detected."
 		MAKEOPTS="-j${njobs}"
 ewarn "Downgrading MAKEOPTS=-j${njobs} to prevent lock-up"
 	fi
-
-	if (( ${total_ram_gib} >= 8 )) ; then # 4 core, 8 GiB RAM total
-einfo "Jumbo build on"
-		MEETS_JUMBO_BUILD_MEMORY_REQ=1
-	else
-einfo "Jumbo build off"
-	fi
-}
-
-_is_jumbo_build_ready() {
-	if (( ${MEETS_JUMBO_BUILD_MEMORY_REQ} == 1 )) ; then
-		return 0
-	fi
-	return 1
 }
 
 check_kernel_flags() {
@@ -1781,12 +1766,14 @@ einfo "Removing pre-built binaries ..."
 	# moz_clear_vendor_checksums xyz
 
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
-	if [[ -n "${FILES_PER_UNIFIED_FILE}" ]] && _is_jumbo_build_ready ; then
+	if [[ -n "${FILES_PER_UNIFIED_FILE}" ]] ; then
 		local my_files_per_unified_file=${FILES_PER_UNIFIED_FILE:=16}
 ewarn
-ewarn "jumbo-build defaults modified to ${my_files_per_unified_file}."
-ewarn "if you get a build failure, try undefining FILES_PER_UNIFIED_FILE,"
-ewarn "if that fails try -jumbo-build before opening a bug report."
+ewarn "FILES_PER_UNIFIED_FILE (default):  16"
+ewarn "FILES_PER_UNIFIED_FILE (current):  ${my_files_per_unified_file}"
+ewarn
+ewarn "You may tune the number of files unified by adjusting this number, but"
+ewarn "if you get a build failure, set FILES_PER_UNIFIED_FILE=16."
 ewarn
 
 		sed -i -e "s/\"FILES_PER_UNIFIED_FILE\", 16/\"FILES_PER_UNIFIED_FILE\", "${my_files_per_unified_file}"/" \
@@ -2031,10 +2018,7 @@ eerror
 
 _set_cc() {
 	local have_switched_compiler=
-	if tc-is-clang || _is_jumbo_build_ready ; then
-	# The logic is inverted in the commit below.
-	# https://gitweb.gentoo.org/repo/gentoo.git/commit/www-client/firefox?id=bbf20ce6d62985723c948f5dcb5d0d23b975ac01
-
+	if tc-is-clang ; then
 	# Force clang
 einfo "Switching to clang"
 		local version_clang=$(clang --version 2>/dev/null \
@@ -2358,11 +2342,6 @@ einfo "Building without Mozilla API key ..."
 			| sed -e "s|,$||g") # Cannot be empty
 
 	mozconfig_use_enable wifi necko-wifi
-
-	! _is_jumbo_build_ready && \
-		mozconfig_add_options_ac \
-			'--disable-unified-build' \
-			--disable-unified-build
 
 	if use X && use wayland ; then
 		mozconfig_add_options_ac \
