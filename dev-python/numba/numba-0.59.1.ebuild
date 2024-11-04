@@ -59,17 +59,15 @@ RDEPEND+="
 		>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
 		<dev-python/numpy-1.27[${PYTHON_USEDEP}]
 	)
-	(
-		llvm_slot_15? (
-			=dev-python/llvmlite-0.43*[${PYTHON_USEDEP}]
-		)
-		llvm_slot_14? (
-			=dev-python/llvmlite-0.42*[${PYTHON_USEDEP}]
-		)
-	)
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-11.2
 		dev-python/cuda-python[${PYTHON_USEDEP}]
+	)
+	llvm_slot_15? (
+		=dev-python/llvmlite-0.43*[${PYTHON_USEDEP}]
+	)
+	llvm_slot_14? (
+		=dev-python/llvmlite-0.42*[${PYTHON_USEDEP}]
 	)
 	tbb? (
 		>=dev-cpp/tbb-2021.1
