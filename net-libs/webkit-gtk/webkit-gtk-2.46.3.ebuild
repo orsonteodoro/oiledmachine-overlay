@@ -1134,10 +1134,11 @@ check_icu_build() {
 # The CXXABI is less accurate than GLIBCXX
 eerror
 eerror "Detected missing symbol.  Please use the same GCC for both ICU and ${PN}."
+eerror "Only GCC 11, 12, 13 supported."
 eerror
 eerror "Example solution:"
 eerror
-eerror "  eselect gcc set ${CHOST}-gcc-${icu_gcc_ver%%.*}"
+eerror "  eselect gcc set ${CHOST}-gcc-13"
 eerror "  source /etc/profile"
 eerror "  emerge -C dev-libs/icu"
 eerror "  emerge -1vuDN dev-libs/icu"
