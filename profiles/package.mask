@@ -137,3 +137,4 @@ dev-db/mariadb
 
 # Block numpy-2 dependent packages to keep tensorflow/keras that require numpy 1.x
 >=dev-python/spacy-3.8
+>=dev-python/blis-1.0.1
