@@ -85,7 +85,7 @@ RDEPEND+="
 				)
 				(
 					>=dev-python/spacy-3[${PYTHON_USEDEP}]
-					<dev-python/spacy-3.8[${PYTHON_USEDEP}]
+					<dev-python/spacy-3.7.7[${PYTHON_USEDEP}]
 				)
 			)
 		)
