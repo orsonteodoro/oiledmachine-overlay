@@ -525,7 +525,7 @@ aqua +avif -bmalloc -cache-partitioning dash +doc -eme -gamepad +gbm
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 -seccomp speech-synthesis -spell -system-malloc test thunder
-+variation-fonts wayland +webassembly +webcore -webdriver +webgl webm-eme
++variation-fonts wayland +webassembly -webdriver +webgl webm-eme
 -webrtc webvtt -webxr +woff2 +X
 "
 
@@ -1025,6 +1025,7 @@ BDEPEND+="
 	>=dev-lang/ruby-1.9
 	>=dev-build/cmake-3.20
 	>=dev-util/glib-utils-${GLIB_PV}
+	>=dev-util/gperf-3.0.1
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=dev-util/unifdef-2.10
 	>=sys-devel/gettext-0.19.8.1[${MULTILIB_USEDEP}]
@@ -1042,9 +1043,6 @@ BDEPEND+="
 	)
 	thunder? (
 		net-libs/thunder
-	)
-	webcore? (
-		>=dev-util/gperf-3.0.1
 	)
 	|| (
 		>=sys-devel/gcc-13.2.0:13
@@ -2139,20 +2137,6 @@ ewarn
 ewarn "WebRTC support is currently in development and feature incomplete."
 	fi
 
-	if ! use webcore ; then
-ewarn
-ewarn "Disabling webcore disables rendering support."
-ewarn "Only disable if you want JavaScript support."
-ewarn
-	fi
-
-	if ! use javascript ; then
-ewarn
-ewarn "Disabling webcore disables website scripts completely"
-ewarn "or any contemporary websites."
-ewarn
-	fi
-
 	if ! use mold && is-flagq '-fuse-ld=mold' ; then
 eerror "-fuse-ld=mold requires the mold USE flag."
 		die
@@ -2409,7 +2393,7 @@ ewarn
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
 		-DENABLE_WEB_RTC=$(usex webrtc)
-		-DENABLE_WEBCORE=$(usex webcore)
+		-DENABLE_WEBCORE=ON
 		-DENABLE_WEBDRIVER=$(usex webdriver)
 		-DENABLE_WEBGL=$(usex webgl)
 		-DENABLE_X11_TARGET=$(usex X)
