@@ -45,7 +45,7 @@ IUSE+="
 "
 REQUIRED_USE="
 	clang? (
-		|| (
+		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)
