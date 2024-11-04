@@ -524,7 +524,7 @@ aqua +avif -bmalloc -cache-partitioning dash +doc -eme -gamepad +gbm
 -libwebrtc -mediarecorder -mediastream +microphone +minibrowser mold +opengl openmp
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
--seccomp speech-synthesis -spell -system-malloc test thunder +unified-builds
+-seccomp speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly +webcore -webdriver +webgl webm-eme
 -webrtc webvtt -webxr +woff2 +X
 "
@@ -2446,12 +2446,13 @@ ewarn
 		)
 	fi
 
-	if (( ${ram_gib_per_core%.*} >= 2 )) ; then # 4 core, 8 GiB RAM total
-	# Only allow if not swappy
+	if (( ${ram_gib_per_core%.*} >= 2 && ${total_ram_gib} >= 8 )) || (( ${total_ram_gib} >= 8 )) ; then # 4 core, 8 GiB RAM total
+einfo "Unified builds on"
 		mycmakeargs+=(
-			-DENABLE_UNIFIED_BUILDS=$(usex unified-builds)
+			-DENABLE_UNIFIED_BUILDS=ON
 		)
 	else
+einfo "Unified builds off"
 		mycmakeargs+=(
 			-DENABLE_UNIFIED_BUILDS=OFF
 		)
