@@ -83,7 +83,10 @@ RDEPEND+="
 					>=dev-python/numpy-1.25.2[${PYTHON_USEDEP}]
 					<dev-python/numpy-2[${PYTHON_USEDEP}]
 				)
-				<dev-python/spacy-3.8[${PYTHON_USEDEP}]
+				(
+					>=dev-python/spacy-3[${PYTHON_USEDEP}]
+					<dev-python/spacy-3.8[${PYTHON_USEDEP}]
+				)
 			)
 		)
 		>=dev-python/tqdm-4.64.1[${PYTHON_USEDEP}]
