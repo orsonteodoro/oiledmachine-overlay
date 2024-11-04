@@ -11,7 +11,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 inherit dep-prepare distutils-r1 pypi
 
 KEYWORDS="~amd64 ~arm64"
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/cython-${PN}-${PV}"
 SRC_URI="
 https://github.com/explosion/cython-blis/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
