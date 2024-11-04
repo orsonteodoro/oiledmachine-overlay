@@ -1165,12 +1165,7 @@ _set_cxx() {
 			local gcc_current_profile=$(gcc-config -c)
 			local gcc_current_profile_slot="${gcc_current_profile##*-}"
 
-			if ver_test "${gcc_current_profile_slot}" -gt "13" ; then
-ewarn "Upstream only supports GCC 10.x, 11.x, 12.x, 13.x."
-ewarn "Build dev-libs/icu and ${PN} with the same GCC slot if problems encountered."
-				export CC="${CHOST}-gcc-${gcc_current_profile_slot}"
-				export CXX="${CHOST}-g++-${gcc_current_profile_slot}"
-			elif has_version "sys-devel/gcc:13" ; then
+			if has_version "sys-devel/gcc:13" ; then
 				export CC="${CHOST}-gcc-13"
 				export CXX="${CHOST}-g++-13"
 			elif has_version "sys-devel/gcc:12" ; then
@@ -1180,7 +1175,16 @@ ewarn "Build dev-libs/icu and ${PN} with the same GCC slot if problems encounter
 				export CC="${CHOST}-gcc-11"
 				export CXX="${CHOST}-g++-11"
 			else
-eerror "GCC must be >= 11"
+eerror
+eerror "GCC must be either 11, 12, 13"
+eerror
+eerror "Example:"
+eerror
+eerror "  eselect gcc set ${CHOST}-gcc-13"
+eerror "  source /etc/profile"
+eerror "  emerge -1vO dev-libs/icu"
+eerror "  emerge -1vO =${CATEGORY}/${PN}-${PVR}"
+eerror
 				die
 			fi
 			strip-unsupported-flags
