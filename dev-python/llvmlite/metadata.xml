@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>spiderx@spiderx.dp.ua</email>
+		<name>Vladimir Pavljuchenkov</name>
+	</maintainer>
+	<maintainer type="project">
+		<email>proxy-maint@gentoo.org</email>
+		<name>Proxy Maintainers</name>
+	</maintainer>
+	<longdescription lang="en">
+	llvmlite is a project originally tailored for Numba's needs, using the following approach:
+	A small C wrapper around the parts of the LLVM C++ API we need that are not already exposed by the LLVM C API.
+	A ctypes Python wrapper around the C API.
+	A pure Python implementation of the subset of the LLVM IR builder that we need for Numba.
+	</longdescription>
+	<upstream>
+		<remote-id type="github">numba/llvmlite</remote-id>
+		<remote-id type="pypi">llvmlite</remote-id>
+	</upstream>
+</pkgmetadata>

@@ -1,0 +1,67 @@
+diff --git a/llvmlite/tests/test_binding.py b/llvmlite/tests/test_binding.py
+index 4a38dd5f7..d728f7a95 100644
+--- a/llvmlite/tests/test_binding.py
++++ b/llvmlite/tests/test_binding.py
+@@ -1364,13 +1364,12 @@ def test_global_ctors_dtors(self):
+         del rt
+         self.assertNotEqual(shared_value.value, 20)
+ 
++    # LLVM-17 orcjit now loads process by default
+     def test_lookup_current_process_symbol_fails(self):
+         # An attempt to lookup a symbol in the current process (Py_GetVersion,
+         # in this case) should fail with an appropriate error if we have not
+         # enabled searching the current process for symbols.
+-        msg = 'Failed to materialize symbols:.*getversion'
+-        with self.assertRaisesRegex(RuntimeError, msg):
+-            self.jit(asm_getversion, "getversion", suppress_errors=True)
++        self.jit(asm_getversion, "getversion", suppress_errors=True)
+ 
+     def test_lookup_current_process_symbol(self):
+         self.jit(asm_getversion, "getversion", None, True)
+diff --git a/llvmlite/tests/test_binding.py b/llvmlite/tests/test_binding.py
+index c28be12c9..735d99a93 100644
+--- a/llvmlite/tests/test_binding.py
++++ b/llvmlite/tests/test_binding.py
+@@ -405,11 +405,11 @@ def no_de_locale():
+     'addi\tsp, sp, -16',
+     'sw\ta1, 8(sp)',
+     'sw\ta2, 12(sp)',
+-    'fld\tft0, 8(sp)',
+-    'fmv.w.x\tft1, a0',
+-    'fcvt.d.s\tft1, ft1',
+-    'fadd.d\tft0, ft1, ft0',
+-    'fsd\tft0, 8(sp)',
++    'fld\tfa5, 8(sp)',
++    'fmv.w.x\tfa4, a0',
++    'fcvt.d.s\tfa4, fa4',
++    'fadd.d\tfa5, fa4, fa5',
++    'fsd\tfa5, 8(sp)',
+     'lw\ta0, 8(sp)',
+     'lw\ta1, 12(sp)',
+     'addi\tsp, sp, 16',
+@@ -421,10 +421,10 @@ def no_de_locale():
+     'addi\tsp, sp, -16',
+     'sw\ta0, 8(sp)',
+     'sw\ta1, 12(sp)',
+-    'fld\tft0, 8(sp)',
+-    'fcvt.d.s\tft1, fa0',
+-    'fadd.d\tft0, ft1, ft0',
+-    'fsd\tft0, 8(sp)',
++    'fld\tfa5, 8(sp)',
++    'fcvt.d.s\tfa4, fa0',
++    'fadd.d\tfa5, fa4, fa5',
++    'fsd\tfa5, 8(sp)',
+     'lw\ta0, 8(sp)',
+     'lw\ta1, 12(sp)',
+     'addi\tsp, sp, 16',
+@@ -433,8 +433,8 @@ def no_de_locale():
+ 
+ 
+ riscv_asm_ilp32d = [
+-    'fcvt.d.s\tft0, fa0',
+-    'fadd.d\tfa0, ft0, fa1',
++    'fcvt.d.s\tfa5, fa0',
++    'fadd.d\tfa0, fa5, fa1',
+     'ret'
+ ]
+ 
